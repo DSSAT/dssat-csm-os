@@ -232,8 +232,6 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
       CASE ('SCCAN')
         READ (C360,1500,IOSTAT=ERRNUM) VARTY, VRNAME, PLAINTXT
 
-!     This is the change
-
 !     Casupro: Florida-Colombia Sugarcane model **
       CASE ('SCCSP')
 !!!     READ (C255,1050,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
