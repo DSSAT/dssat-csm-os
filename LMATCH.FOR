@@ -46,7 +46,7 @@ C     Definition of layers and soil depths moved to IPEXP
 C*----------------------------------------------------------------------
 C     This subroutine assumes that DSI(L) values are depths to the
 C     bottom of layer L
-      VS = 0.0
+      VS = -99.
       K   = 1
       ZIL = 0.0
       ZOL = 0.0

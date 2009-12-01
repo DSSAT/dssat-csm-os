@@ -74,9 +74,9 @@ C-GH  WRESR  = 1.0
       ICRID  = 0.0
 C-GH  ICRID  = 15.0
 C
-      SWINIT = 0.
-      INO3   = 0.
-      INH4   = 0.
+      SWINIT = -99.
+      INO3   = -99.
+      INH4   = -99.
 
       IF (PEDON .NE. SLNO) RETURN
       IF (LNIC  .LE. 0)    RETURN
@@ -155,7 +155,7 @@ C
               CALL ERROR (ERRKEY,10,FILEX,LINEXP)
            ENDIF
            IF (SWINIT(L) .LT. 0.00) THEN
-               SWINIT(L) = DUL(NLAYRI)
+               SWINIT(L) = DUL(L)
            ENDIF
         ENDIF
 
@@ -254,6 +254,14 @@ C=======================================================================
 
       IF (LNSA  .LE. 0)    RETURN
       IF (PEDON .NE. SLNO) RETURN
+
+      SADM = -99.
+      SAOC = -99.
+      SANI = -99.
+      SAPHW = -99.
+      SAPHB = -99.
+      SAPX = -99.
+      SASC = -99.
 
       OPEN (LUNEXP,FILE = FILEX_P,STATUS = 'OLD',IOSTAT=ERRNUM)
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,0)

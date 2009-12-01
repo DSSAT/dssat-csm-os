@@ -552,6 +552,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
         IF (OC(L) .LT. 1.E-3) THEN
           NO_OC = .TRUE.
+          OC(L) = 0.0
         ENDIF
 
 !       Calcium carbonate - convert from g/kg to %
@@ -625,10 +626,10 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
             WRITE(MSG(1),'("Insufficient data available to classify",
      &      " soil layer ",I2)') L
             WRITE(MSG(2),'("Default characteristics will be used.")')
-            WRITE(MSG(3),'("  CaCO3 =",F8.2)') CaCO3(L)
-            WRITE(MSG(4),'("  CEC   =",F8.2)') CEC(L)
+            WRITE(MSG(3),'("  CaCO3 =",F8.2,"%")') CaCO3(L)
+            WRITE(MSG(4),'("  CEC   =",F8.2," cmol/kg")') CEC(L)
             WRITE(MSG(5),'("  pH    =",F8.1)') pH(L)
-            WRITE(MSG(6),'("  Clay  =",F8.1)') CLAY(L)
+            WRITE(MSG(6),'("  Clay  =",F8.1,"%")') CLAY(L)
             WRITE(MSG(7),
      &        '("This may affect results of soil phosphorus model.")')
             CALL INFO(7,ERRKEY,MSG)
@@ -642,7 +643,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         DO L = 1, NLAYR
           SELECT CASE(SOILLAYERTYPE(L))
           CASE('CALCAREOUS       ')
-            WRITE(MSG(L+2),'(I3,I7,2X,A17," CaCO3:",F6.2)')  
+            WRITE(MSG(L+2),'(I3,I7,2X,A17," CaCO3:",F6.2,"%")')  
      &        L, NINT(DS(L)),SOILLAYERTYPE(L), CaCO3(L)
           CASE('ANDISOL          ')
             LEN1 = MIN(39,LENSTRING(SLDESC))
@@ -651,13 +652,25 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
      &        L, NINT(DS(L)),SOILLAYERTYPE(L), SLDESC(1:LEN1), 
      &        TAXON(1:LEN2)
           CASE DEFAULT
-            WRITE(MSG(L+2),'(I3,I7,2X,A17," CaCO3:",F6.2,"; CEC:",F6.1,
-     &        "; CLAY:",F6.1)')  
+            WRITE(MSG(L+2),'(I3,I7,2X,A17," CaCO3:",F6.2,"%; CEC:",F6.1,
+     &        " cmol/kg; CLAY:",F6.1,"%")')  
      &        L, NINT(DS(L)),SOILLAYERTYPE(L), CaCO3(L), CEC(L), CLAY(L)
           END SELECT
         ENDDO
         CALL INFO(NLAYR+2,ERRKEY,MSG)
       ENDIF
+
+!     Organic C data missing - write message to WARNING.OUT file 
+!       and end program.
+      IF (NO_OC) THEN
+        MSG(1)= 'Organic C data was' // 
+     &  ' missing or zero for one or more soil layers.'
+        MSG(2)='Missing values were set to zero for this simulation.'
+!       10/15/2008 Allow zero OC values.
+!       MSG(4)='Model run will stop.'
+        CALL WARNING(2, ERRKEY, MSG)
+!       CALL ERROR(ERRKEY,10,FILEIO,0)
+      ENDIF     
 
 !     Warning message for Century
 !      (non-sequenced runs or any first run)
@@ -674,17 +687,6 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         CALL WARNING(5, ERRKEY, MSG)
         ENDIF
 
-!       Organic C data missing - write message to WARNING.OUT file 
-!         and end program.
-        IF (NO_OC) THEN
-          MSG(1)='The CENTURY-based soil-organic-matter module needs'
-          MSG(2)='soil organic carbon data, but the specified soil '
-          MSG(3)='does not have that data for some layers.'
-!         10/15/2008 Allow zero OC values.
-!         MSG(4)='Model run will stop.'
-          CALL WARNING(3, ERRKEY, MSG)
-!         CALL ERROR(ERRKEY,10,FILEIO,0)
-        ENDIF     
       ENDIF     !End of IF block on MESOM & RNMODE
 
 !-----------------------------------------------------------------------
@@ -795,7 +797,6 @@ C  tillage and rainfall kinetic energy
       DS_SOM   = DS
       LL_SOM   = LL
       DLAYR_SOM= DLAYR
-
 
       TILLED    =.FALSE.
       CRAIN     = 0.

@@ -95,7 +95,7 @@ C=======================================================================
              PH(L) = 0.0
          ENDIF
          IF (OC(L) .LE. 0.0) THEN
-             OC(L) = 0.0
+             OC(L) = -99.0
          ENDIF
          IF (TOTN(L) .LT. -9.0) THEN
              TOTN(L) = -9.0                   ! Keeps from format error
@@ -126,31 +126,33 @@ C=======================================================================
       TSW  = TSWINI
       PESW = MAX (0.0,TSW - TLL)
 
+!-----------------------------------------------------------------------
+!     chp 11/24/2009 - remove this section.  Adding applied residue to 
+!     initial conditions removes users selection of  residue type.
+!     First application may be manure or something besides previous crop.
+!     Keep first application as a residue applicaton, not initial conditions.
+!C-----------------------------------------------------------------------
+!C    Move residue information from residue variables to initial condtions
+!C    if there is only one application.
+!C    Fix to accomodate changes from DSSAT v3.0 to DSSAT v3.5.
+!C-----------------------------------------------------------------------
+!      IF (NARES .EQ. 1 .AND. RESDAY(1) .EQ. YRSIM .AND. ICRES .LE. 0.00)
+!     & THEN
+!         ICRES      = RESIDUE(1)
+!         RESIDUE(1) = 0.0
+!         ICREN      = RESN(1)
+!         RESN(1)    = 0.0
+!         ICREP      = RESP(1)
+!         RESP(1)    = 0.0
+!         ICRIP      = RINP(1)
+!         RINP(1)    = 0.0
+!         ICRID      = DEPRES(1)
+!         DEPRES(1)  = 0.0
+!         RESAMT     = RESAMT - ICRES
+!         NARES      = 0
+!      ENDIF
 C-----------------------------------------------------------------------
-C    Move residue information from residue variables to initial condtions
-C    if there is only one application.
-C    Fix to accomodate changes from DSSAT v3.0 to DSSAT v3.5.
-C-----------------------------------------------------------------------
-      IF (NARES .EQ. 1 .AND. RESDAY(1) .EQ. YRSIM .AND. ICRES .LE. 0.00)
-     & THEN
-         ICRES      = RESIDUE(1)
-         RESIDUE(1) = 0.0
-         ICREN      = RESN(1)
-         RESN(1)    = 0.0
-         ICREP      = RESP(1)
-         RESP(1)    = 0.0
-         ICRIP      = RINP(1)
-         RINP(1)    = 0.0
-         ICRID      = DEPRES(1)
-         DEPRES(1)  = 0.0
-         RESAMT     = RESAMT - ICRES
-         NARES      = 0
-      ENDIF
-C-----------------------------------------------------------------------
-C    Move residue information from residue variables to initial condtions
-C    if there is only one application.
-C    Fix to accomodate changes from DSSAT v3.0 to DSSAT v3.5.
-C-----------------------------------------------------------------------
+
       J = 0
       K = 0
       DO L = 1, 4

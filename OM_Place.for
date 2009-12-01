@@ -155,6 +155,9 @@
       RNMODE  = CONTROL % RNMODE
       YRDIF   = CONTROL % YRDIF
       YRSIM   = CONTROL % YRSIM
+
+      RESLIGNIN = 0.0
+
 !     ------------------------------------------------------------------
 !     Read RPLACE data from FILEIO
 !     ------------------------------------------------------------------

@@ -1244,7 +1244,7 @@
       REAL          TDIFNUM       ! Temperature difference,# data  #
       REAL          TDIFSUM       ! Temperature difference,sum     C
       REAL          TFAC4         ! Temperature factor function    #
-      REAL          TFAC4P        ! Temperature factor function    #
+      !REAL          TFAC4P        ! Temperature factor function    #
       INTEGER       TFCOLNUM      ! T-file column number           #
       REAL          TFD           ! Temperature factor,development #
       INTEGER       TFDAP         ! T-file days after planting     #
@@ -1593,7 +1593,9 @@
       CHARACTER (LEN=12)  OUTPG2        ! Growth output file2 code
       CHARACTER (LEN=12)  OUTPGF        ! Growth factors file2 code
       CHARACTER (LEN=12)  OUTPN         ! GrowthN output file code
-      CHARACTER (LEN=80)  PATHCR        ! Path to genotype files
+      CHARACTER (LEN=80)  PATHCR        ! Path to genotype (CUL) files
+      CHARACTER (LEN=80)  PATHEC        ! Path to genotype (ECO) files
+      CHARACTER (LEN=80)  PATHSP        ! Path to genotype (SPE) files
       CHARACTER (LEN=1)   PLME          ! Planting method (code)        
       CHARACTER (LEN=2)   PPSEN         ! Code,photoperiod sensitivity
       CHARACTER (LEN=5)   PSABV(PSX)    ! Principal stage abbreviation
@@ -1934,6 +1936,7 @@
           ! WARNING AND WORK FILES
           INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
           IF (.NOT.FOPEN) OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+          write(fnumwrk,*)' fileioin ',fileioin,FILEIOT
           
           WRITE(fnumwrk,*) ' '
           WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
@@ -2169,10 +2172,13 @@
           ! Genotype file names and locations
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'CFILE',cufile)
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'CDIR',pathcr)
+          write(fnumwrk,*) ' pathcr ',pathcr
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'EFILE',ecfile)
-          CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'EDIR',pathcr)
+          CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'EDIR',pathec)
+          write(fnumwrk,*) ' pathec ',pathec
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'SPFILE',spfile)
-          CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'SPDIR',pathcr)
+          CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'SPDIR',pathsp)
+          write(fnumwrk,*) ' pathsp ',pathsp
           ! A-file location
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'ADIR',fileadir)
         ENDIF
@@ -2266,25 +2272,25 @@
               ENDIF
             ENDIF
             ! Ecotype
-            PATHL = INDEX(PATHCR,BLANK)
-            IF (PATHL.LE.5.OR.PATHCR(1:3).EQ.'-99') THEN
+            PATHL = INDEX(PATHEC,BLANK)
+            IF (PATHL.LE.5.OR.PATHEC(1:3).EQ.'-99') THEN
               ECDIRFLE = ECFILE
             ELSE
-              IF (PATHCR(PATHL-1:PATHL-1) .NE. SLASH) THEN
-                ECDIRFLE = PATHCR(1:(PATHL-1)) // SLASH // ECFILE
+              IF (PATHEC(PATHL-1:PATHL-1) .NE. SLASH) THEN
+                ECDIRFLE = PATHEC(1:(PATHL-1)) // SLASH // ECFILE
               ELSE
-                ECDIRFLE = PATHCR(1:(PATHL-1)) // ECFILE
+                ECDIRFLE = PATHEC(1:(PATHL-1)) // ECFILE
               ENDIF
             ENDIF
             ! Species
-            PATHL = INDEX(PATHCR,BLANK)
-            IF (PATHL.LE.5.OR.PATHCR(1:3).EQ.'-99') THEN
+            PATHL = INDEX(PATHSP,BLANK)
+            IF (PATHL.LE.5.OR.PATHSP(1:3).EQ.'-99') THEN
               SPDIRFLE = SPFILE
             ELSE
-              IF (PATHCR(PATHL-1:PATHL-1) .NE. SLASH) THEN
-                SPDIRFLE = PATHCR(1:(PATHL-1)) // SLASH // SPFILE
+              IF (PATHSP(PATHL-1:PATHL-1) .NE. SLASH) THEN
+                SPDIRFLE = PATHSP(1:(PATHL-1)) // SLASH // SPFILE
               ELSE
-                SPDIRFLE = PATHCR(1:(PATHL-1)) // SPFILE
+                SPDIRFLE = PATHSP(1:(PATHL-1)) // SPFILE
               ENDIF
             ENDIF
         ELSE
@@ -2352,7 +2358,13 @@
         INQUIRE (FILE = CUDIRFLE,EXIST = FFLAG)
         IF (.NOT.(FFLAG)) THEN
           ! Following added Sept 2008 for running under VB environment.
+          WRITE(fnumwrk,*) ' '
+          WRITE(fnumwrk,*) 'Cultivar file not found!     '
+          WRITE(fnumwrk,*) 'File sought was:          '  
+          WRITE(fnumwrk,*) Cudirfle(1:78)
+          WRITE(fnumwrk,*) 'Will search in the working directory for:'
           CUDIRFLE = CUFILE
+          WRITE(fnumwrk,*)  Cudirfle(1:78)
           INQUIRE (FILE = CUDIRFLE,EXIST = FFLAG)
           IF (.NOT.(FFLAG)) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
@@ -2373,7 +2385,13 @@
         INQUIRE (FILE = ECDIRFLE,EXIST = FFLAG)
         IF (.NOT.(FFLAG)) THEN
           ! Following added Sept 2008 for running under VB environment.
+          WRITE(fnumwrk,*) ' '
+          WRITE(fnumwrk,*) 'Ecotype file not found!     '
+          WRITE(fnumwrk,*) 'File sought was:          '  
+          WRITE(fnumwrk,*) Ecdirfle
+          WRITE(fnumwrk,*) 'Will search in the working directory for:'
           ECDIRFLE = ECFILE
+          WRITE(fnumwrk,*)  Ecdirfle
           INQUIRE (FILE = ECDIRFLE,EXIST = FFLAG)
           IF (.NOT.(FFLAG)) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
@@ -2929,7 +2947,8 @@
               ENDDO
             ENDIF
             PSABVO(L) = PSABV(L)
-            PSABVO(L)(5:5) = 'P'
+            ! LAH Oct 2009 Was 'P' ... DON'T KNOW WHY!
+            ! PSABVO(L)(5:5) = 'P'
           ENDIF
         ENDDO
         DO L = 1,SSNUM
@@ -3134,7 +3153,7 @@
         IF (GWTS.LE.0.0) THEN  
           GWTS = 30.0
           Messageno = Min(Messagenox,Messageno+1)
-          WRITE(MESSAGE(Messageno),'(A51)')
+          WRITE(MESSAGE(Messageno),'(A33)')
      &    'Grain weight missing. Set to 30.0'
         ENDIF
         IF (GWTCF.LE.0.0) GWTCF = 0.0
@@ -6579,7 +6598,7 @@ C  yet built into the model.
             ENDIF
 
             IF (RSWT.LT.0.0) THEN
-              IF (ABS(RSWT).GT.1.0E-8) THEN
+              IF (ABS(RSWT).GT.1.0E-6) THEN
                 WRITE(Message(1),'(A30,A11,F12.9)')
      &           'Reserves weight reset to zero.',
      &           'Weight was ',rswt
@@ -7611,9 +7630,11 @@ C  yet built into the model.
             LNUMSTG(INT(10)) = LNUM
             CNADSTG(INT(10)) = CNAD
             IF (MDAYFR.LT.0.0) THEN
-              WRITE(Message(1),'(A26)')
-     &         'Harvest/failure triggered '                 
-              CALL WARNING(1,'CSCRP',MESSAGE)
+              IF (CFLFAIL.EQ.'Y') THEN
+                WRITE(Message(1),'(A26)')
+     &           'Harvest/failure triggered '                 
+                CALL WARNING(1,'CSCRP',MESSAGE)
+              ENDIF  
             ENDIF
           ENDIF
 
@@ -9186,7 +9207,6 @@ C  yet built into the model.
               IF (EVHEADNM.LE.EVHEADNMMAX) THEN
                 WRITE (FNUMEVAL,994)
   994           FORMAT ('@RUN EXCODE     TRTNO RN CR EDAPS EDAPM',\)
-!     &          ' GDAPS GDAPM EDAPS EDAPM',\)
                 DO L = 1,KEYSTX
                   IF (KEYPS(L).GT.0) WRITE (FNUMEVAL,9941)
      &             PSABVO(KEYPS(L)),'S',PSABVO(KEYPS(L)),'M'

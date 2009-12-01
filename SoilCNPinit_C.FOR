@@ -204,13 +204,7 @@
 !       Find and Read Residue Lignin and Root C:N ratio and
 !       integration depth.
 !       ----------------------------------------------------------------
-!       Get the root C:N ratio and the residue lignin concentration from
-!       RESCH045.SDA. Set the residue type to a default value. Read the
-!       depth to which C and N are integrated for output purposes. Set
-!       the residue type to a default value. Replace those variables
-!       that are not used by a dummy (RDUMMY because it are REAL
-!       variables).
-!       This lignin value should be set in fileX for the initial residues.
+!       Get residue characteristics from RESCH045.SDA. 
         CALL IPSOIL (CONTROL, CROP=PREV_CROP,             !Input
      &    AM=AM, DSNC=DSNC, PRLIG = PRLIG, RCN = RCN,     !Output
      &    RCP = RCP, SCN = SCN, SCP = SCP, WATFAC=WATFAC, !Output

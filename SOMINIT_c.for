@@ -249,7 +249,11 @@
 !           Total SOM N available based on TotOrgN:
 !           SSOME(L,N) = TOTN(L) * BD(L) * DLAYR(L) * 1000.
             SSOME(L,N) = TotOrgN(L) !kg/ha
-            Ratio = TotOrgN(L) / SSOMN_DEFAULT(L)
+            IF (SSOMN_DEFAULT(L) > 1.E-6) THEN
+              Ratio = TotOrgN(L) / SSOMN_DEFAULT(L)
+            ELSE
+              Ratio = 0.0
+            ENDIF
             SOM1E(L,N) = SOM1N_DEFAULT(L) * Ratio
             SOM2E(L,N) = SOM2N_DEFAULT(L) * Ratio
             SOM3E(L,N) = SOM3N_DEFAULT(L) * Ratio
@@ -651,8 +655,16 @@
           CALL INFO(MNUM, ERRKEY, MSG)
 
 !         Recalculate C:E ratios and sum of SOME pools,
-          CES1(L,P)  = SOM1C(L)  / SOM1E(L,P)
-          CES23(L,P) = SOM23C(L) / SOM23E(L,P)
+          IF (SOM1E(L,P) > 1.E-7) THEN
+            CES1(L,P)  = SOM1C(L)  / SOM1E(L,P)
+          ELSE
+            CES1(L,P) = CES1X(SOIL,P)
+          ENDIF
+          IF (SOM23E(L,P) > 1.E-7) THEN
+            CES23(L,P) = SOM23C(L) / SOM23E(L,P)
+          ELSE
+            CES23(L,P) = CES23X(SOIL,P)
+          ENDIF
           SSOME(L,P) = SOM1E(L,P) + SOM23E(L,P)
 
         ENDDO LayerLoopP1
