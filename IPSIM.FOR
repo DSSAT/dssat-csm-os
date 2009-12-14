@@ -13,6 +13,7 @@ C  02/21/2006 GH  Removed crop model selection
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2009 CHP IPSIM separate file.  Separate routine for checking data
 !                   used by both IPSIM and Default_SimControls
+!  12/14/2009 CHP Change check on simulation controls.
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
