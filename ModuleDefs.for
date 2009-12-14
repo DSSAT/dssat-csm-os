@@ -501,7 +501,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data from weather
       Type WeathType
-        Character*8 WSTA
+        Character*8 WSTAT
       End Type WeathType
 
 !     Data which can be transferred between modules
@@ -960,7 +960,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SELECT CASE (ModuleName)
       Case ('WEATHER')
         SELECT CASE (VarName)
-        Case ('WSTA');  Value = SAVE_data % WEATHER % WSTA
+        Case ('WSTA');  Value = SAVE_data % WEATHER % WSTAT
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -990,7 +990,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SELECT CASE (ModuleName)
       Case ('WEATHER')
         SELECT CASE (VarName)
-        Case ('WSTA');  SAVE_data % WEATHER % WSTA  = Value
+        Case ('WSTA');  SAVE_data % WEATHER % WSTAT  = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

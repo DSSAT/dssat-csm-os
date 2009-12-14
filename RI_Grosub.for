@@ -157,7 +157,7 @@ C=======================================================================
      &    CO2X, CO2Y, MODELVER, PHINT, PORMIN, 
      &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
 
-      FILECC   = FILEC
+      FILECC   = TRIM(PATHCR) // FILEC
       FSLFP    = 0.050  
 	! FRACTION OF LEAF SENESECED DUE TO 100% P STRESS /DAY
       FSLFK    = 0.050   

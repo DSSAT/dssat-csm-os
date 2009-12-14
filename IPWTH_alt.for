@@ -21,7 +21,7 @@ C  Calls:     None
 C=======================================================================
 
       SUBROUTINE IPWTH(CONTROL,
-     &    CCO2, FILEW, MEWTH, PAR, PATHWT,                !Output
+     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,            !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -36,7 +36,7 @@ C=======================================================================
       CHARACTER*1  BLANK, MEWTH, RNMODE, UPCASE
       CHARACTER*4  INSI
       CHARACTER*6  SECTION, ERRKEY
-      CHARACTER*8  WSTA
+      CHARACTER*8  WSTAT
       CHARACTER*10 TEXT
       CHARACTER*12 FILEW, LastFILEW
       CHARACTER*30 FILEIO
@@ -193,8 +193,8 @@ C     The components are copied into local variables for use here.
           CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
           RETURN
         ENDIF
-        WSTA = FILEW(1:8)
-        CALL PUT('WEATHER','WSTA',WSTA)
+        WSTAT = FILEW(1:8)
+        CALL PUT('WEATHER','WSTA',WSTAT)
 
         INSI  = '-99 '
         XLAT  = -99.
@@ -439,8 +439,8 @@ C       Substitute default values if REFHT or WINDHT are missing.
             CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
             RETURN
           ENDIF
-          WSTA = FILEW(1:8)
-          CALL PUT('WEATHER','WSTA',WSTA)
+          WSTAT = FILEW(1:8)
+          CALL PUT('WEATHER','WSTA',WSTAT)
 
 C         Read in weather file header.
   500     CONTINUE
@@ -941,12 +941,15 @@ C         Read in weather file header.
       IF (RAIN < 0.) ErrCode = 3
       IF (NINT(TMAX * 100.) == 0 .AND. NINT(TMIN * 100.) == 0)
      &  ErrCode = 4
-      IF (TMAX < TMIN) ErrCode = 6
-      IF (TMAX - TMIN < 0.05) ErrCode = 5
+      IF (TMAX < TMIN) THEN 
+        ErrCode = 6
+      ELSEIF (TMAX - TMIN < 0.05) THEN
+        ErrCode = 5
+      ENDIF
 
       IF (ErrCode > 0) THEN
         MSG(1) = "Error in weather data:"
-        NChar = MIN(78,LEN(Trim(FILEWW)))
+        NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)
         WRITE(MSG(3),'(A,I4)') "Line ", RecNum
         WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD 
@@ -955,7 +958,10 @@ C         Read in weather file header.
         WRITE(MSG(7),'("RAIN = ",F6.2)') RAIN
         MSG(8) = "This run will stop."
         CALL WARNING(8,ERRKEY,MSG)
-        CALL GET(CONTROL)
+
+        IF (ERRKEY == 'WTHMOD') ErrCode = ErrCode + 70
+        IF (ERRKEY == 'WGEN  ') ErrCode = ErrCode + 80  
+      
         CALL WeatherError(CONTROL, ErrCode, FILEWW, 
      &                  RecNum, YRDOYW, YREND)
         RETURN
@@ -1007,15 +1013,17 @@ c                   available.
       IMPLICIT NONE
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'IPWTH '
-      CHARACTER*78 MSG(3)
+      CHARACTER*78 MSG(4)
       CHARACTER*92 FILEWW
 
       INTEGER DOYY, ErrCode, I, LNUM, YRDOYW, YREND, YRY
+      INTEGER LenString, NCHAR, NMSG
       TYPE (ControlType) CONTROL
 
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRDOYW, YRY, DOYY)
       SELECT CASE(ErrCode)
+!       Weather data read from file
         CASE (1); MSG(1)="Header section not found in weather file."
         CASE (2); WRITE(MSG(1),'(A,I5,I4)') 
      &      "Solar radiation data error on YR DOY: ", YRY, DOYY
@@ -1035,11 +1043,48 @@ c                   available.
         CASE (30); MSG(1) = "Error opening weather file."
         CASE (59); MSG(1) = "Invalid format in weather file."
         CASE (64); MSG(1) = "Syntax error."
+
+!       Weather modification
+        CASE (72); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Solar radiation data error on YR DOY: ", YRY, DOYY
+        CASE (73); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Precipitation data error on YR DOY: ", YRY, DOYY
+        CASE (74); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Tmax and Tmin are both set to 0 on YR DOY: ", YRY, DOYY
+        CASE (75); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Tmax and Tmin have identical values on YR DOY: ", YRY, DOYY
+        CASE (76); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Tmax is less than Tmin on YR DOY: ", YRY, DOYY
+
+!       Generated weather data
+        CASE (82); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Solar radiation data error on YR DOY: ", YRY, DOYY
+        CASE (83); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Precipitation data error on YR DOY: ", YRY, DOYY
+        CASE (84); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Tmax and Tmin are both set to 0 on YR DOY: ", YRY, DOYY
+        CASE (85); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Tmax and Tmin have identical values on YR DOY: ", YRY, DOYY
+        CASE (86); WRITE(MSG(1),'(A,I5,I4)') 
+     &      "Tmax is less than Tmin on YR DOY: ", YRY, DOYY
+
       END SELECT
 
-      WRITE(MSG(2),'(2X,A)') FILEWW(1:76)
-      MSG(3) = "End of simulation."
-      CALL WARNING(3,ERRKEY,MSG)
+      NMSG = 3
+      IF (ErrCode > 80) THEN
+        MSG(2) = "Generated weather data"
+        NMSG = 4
+      ELSEIF (ErrCode > 70) THEN
+        MSG(2) = "Modified weather data"
+        NMSG = 4
+      ENDIF
+
+      NCHAR = LenString(FILEWW)
+      NCHAR = MIN(76,NCHAR)
+      WRITE(MSG(NMSG-1),'(2X,A)') FILEWW(1:NCHAR)
+
+      MSG(NMSG) = "End of simulation."
+      CALL WARNING(NMSG,ERRKEY,MSG)
       YREND = CONTROL%YRDOY
       CONTROL % ErrCode = ErrCode
       CALL PUT(CONTROL)

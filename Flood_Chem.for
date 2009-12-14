@@ -126,11 +126,8 @@ C  FLDU   : Floodwater urea (kg N/ha)
 
       BD1 = BD(1)
       BD2 = BD(2)
-      OXLT  = 0.50 - 0.1*OC(1)
+      OXLT  = MAX(0.50 - 0.1*OC(1), 0.01)
       OXFAC = 1.0/(BD1*OXLT*1.0E-01)
-      IF (OXLT .LE. 0.0) THEN
-        OXLT = 0.01       
-      ENDIF
 
       CUMFNRO  = 0.0      !Cumulative N in flood runoff over bund
       CUMPERCN = 0.0      !Cumulative N in flood water which percs

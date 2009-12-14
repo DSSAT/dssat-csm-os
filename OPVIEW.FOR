@@ -17,9 +17,10 @@ C=======================================================================
      &    STNAME, WTNCAN, XLAI, YIELD, YRPLT, RSTAGE)
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE HeaderMod
+!      USE ModuleDefs     !Definitions of constructed variable types, 
+!                         ! which contain control information, soil
+!                         ! parameters, hourly weather data.
       IMPLICIT NONE
       SAVE
 
@@ -34,6 +35,7 @@ C=======================================================================
       CHARACTER*12 FILEA, OUTO
       CHARACTER*25 TITLET
       CHARACTER*30 FILEIO
+      CHARACTER*84 SimText
 
       INTEGER DAP, DOY, DSTRES, DYNAMIC, ERRNUM, FOUND
       INTEGER I, IPX, ISENS, LINC, LNUM, LUNIO
@@ -166,12 +168,8 @@ C-----------------------------------------------------------------------
      &        IOSTAT = ERRNUM)
             WRITE(NOUTDO,'("*SIMULATION OVERVIEW FILE")')
           ENDIF
-          CALL HEADER(RUNINIT, NOUTDO, RUN)
         ENDIF
 
-C-----------------------------------------------------------------------
-C    WRITE HEADER TO SCREEN and overview.out file
-C-----------------------------------------------------------------------
         PRINT_STAGES = .FALSE.
         DO I = 1, 20
           IF (LenString(STNAME(I)) > 0) THEN
@@ -179,23 +177,8 @@ C-----------------------------------------------------------------------
             EXIT
           ENDIF
         ENDDO
-      
-        IF (INDEX('IE',RNMODE) .GT. 0 .AND. NYRS .LE. 1 
-     &       .AND. PRINT_STAGES) THEN
-          WRITE(*,3050) RUN, TITLET, TITLE
- 3050     FORMAT(//,
-     &     '*SIMULATED CROP AND SOIL STATUS AT MAIN DEVELOPMENT STAGES',
-     &      //,' RUN NO.',I6,4X,A25,/,3(/,A64))
-        ENDIF
-      
-        IF (IDETO .EQ. 'Y' .AND. PRINT_STAGES) THEN
-          WRITE (NOUTDO,3055) RUN,TITLET, (TITLE(I), TITLE2(I), I=1,3)
- 3055     FORMAT(//,
-     &     '*SIMULATED CROP AND SOIL STATUS AT MAIN DEVELOPMENT STAGES',
-     &      //,' RUN NO.',I6,4X,A25,/,3(/,A55,A))
-        ENDIF
       ENDIF
-
+      
 !     Initialize simulated values
       SIMULATED = '     -99'
       MEASURED =  '     -99'
@@ -220,6 +203,34 @@ C-----------------------------------------------------------------------
       ELSE IF (DYNAMIC .EQ. OUTPUT) THEN
 C-----------------------------------------------------------------------
       IF (CROP == 'FA') RETURN
+
+      IF (YRDOY == YRPLT) THEN
+        IF (CONTROL%MULTI > 1 .OR. INDEX('NQF',CONTROL%RNMODE) > 0) THEN
+          CALL MULTIRUN(RUN,YRPLT)
+        ENDIF
+C-----------------------------------------------------------------------
+C    WRITE HEADER TO SCREEN and overview.out file
+C-----------------------------------------------------------------------
+        CALL HEADER(RUNINIT, NOUTDO, RUN)
+
+        IF (INDEX('IE',RNMODE) .GT. 0 .AND. NYRS .LE. 1 
+     &       .AND. PRINT_STAGES) THEN
+          WRITE(*,3050) RUN, TITLET, TITLE
+ 3050     FORMAT(//,
+     &     '*SIMULATED CROP AND SOIL STATUS AT MAIN DEVELOPMENT STAGES',
+     &      //,' RUN NO.',I6,4X,A25,/,3(/,A64))
+        ENDIF
+      
+        IF (IDETO .EQ. 'Y' .AND. PRINT_STAGES) THEN
+          WRITE (NOUTDO,3055) RUN,TITLET, (TITLE(I), TITLE2(I), I=1,3)
+ 3055     FORMAT(//,
+     &     '*SIMULATED CROP AND SOIL STATUS AT MAIN DEVELOPMENT STAGES',
+     &      //,' RUN NO.',I6,4X,A25,/,3(/,A55,A))
+          IF (YRPLT > CONTROL%YRSIM) THEN
+            WRITE(NOUTDO,'(A)') SimText
+          ENDIF
+        ENDIF
+      ENDIF
 
 !     Accumulate water and N and P stresses since last stage printout
       DSTRES = DSTRES + 1
@@ -274,11 +285,14 @@ C-----------------------------------------------------------------------
             ENDIF
 
             IF (IDETO .EQ. 'Y') THEN
-              WRITE(NOUTDO,4605) IPX, RMM, DAP, STNAME(I), NINT(BIOMAS),
+              WRITE(SimText,4605) IPX, RMM, DAP, STNAME(I),NINT(BIOMAS),
      &          XLAI, LFNUM, NINT(WTNCAN*10.), WTN, AVDSTR, AVNSTR,
      &          AVPSTR1, AVPSTR2, RSTAGE
  4605         FORMAT (1X,I2,1X,A3,1X,I4,1X,A10,I8,1X,F6.2,1X,F5.1,
      &                  1X,I4,1X,F4.1,1X,F5.2,1X,F5.2,2(1X,F5.2),I6)
+              IF (YRDOY >= YRPLT) THEN
+                WRITE(NOUTDO,'(A)') SimText
+              ENDIF
             ENDIF
           ENDIF
         ENDDO

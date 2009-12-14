@@ -31,12 +31,15 @@
 
         CONTAINS
 
-        SUBROUTINE MULTIRUN(RUN)
+        SUBROUTINE MULTIRUN(RUN, YRPLT)
 !       Updates header for multi-year runs
         IMPLICIT NONE
         CHARACTER*3 RMS
+        CHARACTER*8 WSTAT
+        CHARACTER*11 TEXT
         CHARACTER*80 HEADER2
-        INTEGER I, IDYS, IPYRS, ISIM, RUN
+        INTEGER I, IDYS, IPLT, IPYRS, ISIM, RUN, YRPLT
+        INTEGER LenString
         TYPE (ControlType) CONTROL
         CALL GET(CONTROL)
 
@@ -61,6 +64,31 @@
             EXIT
           ENDIF
         ENDDO
+
+        IF (YRPLT > 0) THEN
+          DO I = 2, Headers%ICOUNT
+            IF (HEADERS % Header(I)(1:6) .EQ. ' PLANT') THEN
+!             Update planting date
+              CALL YR_DOY (YRPLT,IPYRS,IPLT)
+              CALL NAILUJ (IPLT,IPYRS,RMS,IDYS)
+              WRITE(TEXT,'(A3,1X,I2,1X,I4)') RMS,IDYS,IPYRS
+              HEADERS%Header(I)(19:29) = TEXT
+              EXIT
+            ENDIF
+          ENDDO
+        ENDIF
+
+        DO I = 2, Headers%ICOUNT
+          IF (HEADERS % Header(I)(1:6) .EQ. ' WEATH') THEN
+!           Update WEATHER file
+            CALL GET("WEATHER", "WSTA", WSTAT)
+            IF (LenString(WSTAT) > 0) THEN
+             WRITE(HEADERS%HEADER(I),"(1X,'WEATHER',8X,':',1X,A8)")WSTAT
+            ENDIF
+            EXIT
+          ENDIF
+        ENDDO
+
         RETURN
         END SUBROUTINE MULTIRUN
 
@@ -251,7 +279,7 @@ c     IHARI is harvest management option
 c     (e.g. 'R' = 'On reported date', 'M' = 'At maturity')
 c     HDATE(1) is harvest date (YYYYDOY)
 c     ::::::::::::::::::::::::::::::::::
-      IF (IHARI  .EQ. 'R') THEN
+      IF (IHARI  .EQ. 'R' .AND. INDEX('FQN',RNMODE)<1) THEN
 
 c         Get Day Of Year (DOY) date
           HDATE_YR = HDATE(1)/1000
@@ -262,7 +290,6 @@ c         Write to output
           WRITE (HEADER(I),425) RMS,IDYS,HDATE_YR; I=I+1
       ENDIF
 c     ::::::::::::::::::::::::::::::::::
-
 
 c     MJ, Mar 2008: weather station and year:
       WRITE (HEADER(I),500) WSTA, YEAR; I=I+1
@@ -818,9 +845,9 @@ C========================================================================
       IF (RUN /= PREV_RUN) THEN
         NOHEADER = .TRUE.
         PREV_RUN = RUN
-        IF (CONTROL % MULTI > 1 .OR. CONTROL % RNMODE == 'Q') THEN
-          CALL MULTIRUN(RUN)
-        ENDIF
+!        IF (CONTROL % MULTI > 1 .OR. CONTROL % RNMODE == 'Q') THEN
+!          CALL MULTIRUN(RUN)
+!        ENDIF
       ENDIF
 
 !     Write Model info and date-time stamp to all headers

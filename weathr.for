@@ -56,6 +56,7 @@ C=======================================================================
       CHARACTER*12 FILEW
       CHARACTER*78 MESSAGE(10)
       CHARACTER*80 PATHWT
+      CHARACTER*92 FILEWW
 
       INTEGER DOY, MULTI, NEV, RUN, YEAR, YRDOY, YRSIM, YYDDD
       INTEGER RSEED1, RSEED(4), REPNO
@@ -109,14 +110,14 @@ C=======================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
       CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, MEWTH, PAR, PATHWT,                !Output
+     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,            !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    RUNINIT)
 
       CALL WTHMOD(RUNINIT,
-     &    CONTROL, XLAT, YYDDD,                           !Input
+     &    CONTROL, FILEWW, XLAT, YYDDD,                   !Input
      &    CO2, DAYL, PAR, RAIN, SRAD, TDEW,               !Input/Output
      &    TMAX, TMIN, TWILEN, WINDSP,                     !Input/Output
      &    DEC, NEV, SNUP, SNDN, YREND)                    !Output
@@ -131,7 +132,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
         IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
           CALL IPWTH(CONTROL,
-     &      CCO2, FILEW, MEWTH, PAR, PATHWT,              !Output
+     &      CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,      !Output
      &      RAIN, REFHT, RHUM, RSEED1, SRAD,              !Output
      &      TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,          !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
@@ -206,7 +207,7 @@ C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
       IF (NEV .GT. 0) THEN
         CALL WTHMOD(SEASINIT, 
-     &    CONTROL, XLAT, YYDDD,                           !Input
+     &    CONTROL, FILEWW, XLAT, YYDDD,                   !Input
      &    CO2, DAYL, PAR, RAIN, SRAD, TDEW,               !Input/Output
      &    TMAX, TMIN, TWILEN, WINDSP,                     !Input/Output
      &    DEC, NEV, SNUP, SNDN, YREND)                    !Output
@@ -255,7 +256,7 @@ C     Compute daily normal temperature.
 C     Read new weather record.
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, MEWTH, PAR, PATHWT,                !Output
+     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,            !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -294,7 +295,7 @@ C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
       IF (NEV .GT. 0) THEN
         CALL WTHMOD(RATE, 
-     &    CONTROL, XLAT, YYDDD,                           !Input
+     &    CONTROL, FILEWW, XLAT, YYDDD,                   !Input
      &    CO2, DAYL, PAR, RAIN, SRAD, TDEW,               !Input/Output
      &    TMAX, TMIN, TWILEN, WINDSP,                     !Input/Output
      &    DEC, NEV, SNUP, SNDN, YREND)                    !Output
@@ -341,7 +342,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, MEWTH, PAR, PATHWT,                !Output
+     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,            !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output

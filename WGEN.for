@@ -209,7 +209,7 @@ C     Set default values for dew point temp and windspeed
 !      WINDSP = 86.4
 
       CALL DailyWeatherCheck(CONTROL, 
-     &    ERRKEY, "Generated weater data", RAIN, 0, RHUM, !Input
+     &    ERRKEY, FILEW, RAIN, 0, RHUM,                   !Input
      &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
      &    YREND)                                          !Output
 
@@ -321,10 +321,12 @@ C=======================================================================
      &    CF, TAMP, TAV, XLAT, XLONG, Y)                  !Output
 
 !-----------------------------------------------------------------------
+      USE ModuleData
       IMPLICIT NONE
 
       CHARACTER BLANK*1,FILEW*12,FILEWW*92,LINE*100
       CHARACTER*6 ERRKEY,FINDCH
+      CHARACTER*8 WSTAT
       CHARACTER*80 PATHWT
 
       INTEGER NM,M,I,J,MTH,FOUND,LNUM,NUMDAY(12),LUNCLI,ERRNUM
@@ -353,6 +355,8 @@ C=======================================================================
       CALL GETLUN('FILEW', LUNCLI)
       OPEN (LUNCLI,FILE=FILEWW,STATUS='OLD',IOSTAT=ERRNUM)
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEW,LNUM)
+      WSTAT = FILEW(1:8)
+      CALL PUT('WEATHER','WSTA',WSTAT)
 
       FINDCH = '*CLIMA'
       CALL FIND (LUNCLI,FINDCH,LNUM,FOUND)
@@ -451,10 +455,12 @@ C=======================================================================
      &    CF, TAMP, TAV, XLAT, XLONG, Y)                  !Output
 
 !-----------------------------------------------------------------------
+      USE ModuleData
       IMPLICIT NONE
 
       CHARACTER BLANK*1,FILEW*12,FILEWW*92,LINE*100
       CHARACTER*6 ERRKEY,FINDCH
+      CHARACTER*8 WSTAT
       CHARACTER*80 PATHWT
 
       INTEGER NM,M,I,MTH,FOUND,LNUM,NUMDAY(12),LUNCLI,ERRNUM, PATHL
@@ -484,6 +490,9 @@ C=======================================================================
       CALL GETLUN('FILEW', LUNCLI)
       OPEN (LUNCLI,FILE=FILEWW,STATUS='OLD',IOSTAT=ERRNUM)
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEW,LNUM)
+      WSTAT = FILEW(1:8)
+      CALL PUT('WEATHER','WSTA',WSTAT)
+
       FINDCH = '*CLIMA'
       CALL FIND (LUNCLI,FINDCH,LNUM,FOUND)
       IF (FOUND .EQ. 1) THEN

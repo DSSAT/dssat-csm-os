@@ -13,7 +13,7 @@ C  09/10/2003 CHP Changed Evaluate.out headers to have "S" (simulated)
 C                    and "M" (measured) suffixes rather than "P" (predicted) 
 C                    and "O" (observed)
 C  01/04/2005 CHP Changed screen output to HWAH instead of HWAM
-C  02/04/2005 CHP Added new variables to Summary.out: WSTA, SLNO, PWAM, LAIX,
+C  02/04/2005 CHP Added new variables to Summary.out: WSTAT, SLNO, PWAM, LAIX,
 C                   HIAM, EPCM, ESCM
 !  08/12/2005 CHP Changed P variable headers
 !  12/12/2005 CHP Add OCTAM, ONTAM, OPAM, and OPTAM variables
@@ -100,7 +100,7 @@ C-----------------------------------------------------------------------
 !     Added 2/6/2005 for v4.0.2.0
       REAL LAIX, HIAM
       INTEGER PWAM, EPCM, ESCM
-      CHARACTER* 8 WSTA
+      CHARACTER* 8 WSTAT, WSTATION
       CHARACTER*10 SLNO
 
 !     Added 12/12/2005 
@@ -215,7 +215,7 @@ C-----------------------------------------------------------------------
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
         READ(LUNIO,'(3X,A8,1X,A8,49X,A10)',IOSTAT=ERRNUM) 
-     &        FLDNAM, WSTA, SLNO
+     &        FLDNAM, WSTATION, SLNO
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
       ENDIF
@@ -301,7 +301,10 @@ C     Initialize OPSUM variables.
       SUMDAT % YPEM   = -99.0 !Yield-ET productivity(kg[yield]/m3[ET]
       SUMDAT % YPTM   = -99.0 !Yield-EP productivity(kg[yield]/m3[EP]
 
-      CALL GET('WEATHER','WSTA',WSTA)
+      CALL GET('WEATHER','WSTA',WSTAT)
+!      IF (LenString(WSTAT) < 1) THEN
+!        WSTAT = WSTATION
+!      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -438,7 +441,7 @@ C-------------------------------------------------------------------
 
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
-     &    CROP, TITLET(1:19), FLDNAM, WSTA, SLNO,
+     &    CROP, TITLET(1:19), FLDNAM, WSTAT, SLNO,
      &    YRSIM, YRPLT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
@@ -461,7 +464,7 @@ C-------------------------------------------------------------------
 !       RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
   500   FORMAT (I9,1X,I6,3(I3),               
 
-!       CROP, TITLET(1:19), FLDNAM, WSTA, SLNO,
+!       CROP, TITLET(1:19), FLDNAM, WSTAT, SLNO,
      &  1X,A2,1X,A19,1X,A8,1X,A8,1X,A10,      
 
 !       YRSIM, YRPLT, ADAT, MDAT, YRDOY, 

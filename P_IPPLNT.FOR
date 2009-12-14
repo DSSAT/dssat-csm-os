@@ -54,6 +54,11 @@
       SECTION = '*PHOSP'
       CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
       IF (FOUND .EQ. 0) THEN
+        MSG(1) = 'Phosphorus input section not found in species file.'
+        MSG(2) = FILECC
+        MSG(3) = 
+     &   'Can not simulate phosphorus for this crop. Program will stop.'
+        CALL WARNING(3,ERRKEY,MSG)
         CALL ERROR(SECTION, 42, FILECC, LNUM)
       ELSE
 !       Shoot optimum P concentrations 

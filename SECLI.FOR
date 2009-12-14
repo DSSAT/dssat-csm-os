@@ -30,12 +30,13 @@ C=======================================================================
       SUBROUTINE SECLI (FILEW,RNMODE,WMODI,WTHADJ,PATHWT,MEWTH,YEAR,
      &                  RSEED1,DSSATP,FILEWT)
 
-      USE ModuleDefs
+      USE ModuleData
       IMPLICIT     NONE
 
       CHARACTER*1  RNMODE,MEWTH,LINE(80),BLANK,WMODI
       CHARACTER*3  PROCOD
       CHARACTER*6  ERRKEY
+      CHARACTER*8  WSTAT
       CHARACTER*7  FILEWT
       CHARACTER*12 FILEW,WTHTEM,NAMEF
       CHARACTER*15 WTMANT,WGMANT
@@ -180,6 +181,8 @@ C
      &         DSSATP,FILEWT,RSEED1)
 
       ENDIF
+      WSTAT = FILEW(1:8)
+      CALL PUT('WEATHER','WSTA',WSTAT)
 
       GO TO 100
 

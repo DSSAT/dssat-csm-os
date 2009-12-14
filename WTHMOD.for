@@ -28,7 +28,7 @@ C  Calls:     DECL, WTHSET
 C=======================================================================
 
       SUBROUTINE WTHMOD(DYNAMIC,
-     &    CONTROL, XLAT, YYDDD,                           !Input
+     &    CONTROL, FILEWW, XLAT, YYDDD,                   !Input
      &    CO2, DAYL, PAR, RAIN, SRAD, TDEW,               !Input/Output
      &    TMAX, TMIN, TWILEN, WINDSP,                     !Input/Output
      &    DEC, NEV, SNUP, SNDN, YREND)                    !Output
@@ -48,6 +48,7 @@ C=======================================================================
       CHARACTER*6  SECTION, ERRKEY
       CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
+      CHARACTER*92 FILEWW
 
       INTEGER LINWTH
       PARAMETER (LINWTH=0)
@@ -255,7 +256,7 @@ C       Adjustment of wind speed.
 !        ENDIF
 
         CALL DailyWeatherCheck(CONTROL,
-     &    ERRKEY, "Modified weather data", RAIN, 0, RHUM, !Input 
+     &    ERRKEY, FILEWW, RAIN, 0, RHUM,                  !Input 
      &    SRAD, TDEW, TMAX, TMIN, WINDSP, YYDDD,          !Input
      &    YREND)                                          !Output
 

@@ -64,7 +64,7 @@ C=======================================================================
           ENDIF
 
           WRITE(LUN,'(/,78("*"))')
-          IF (CONTROL % MULTI > 1) CALL MULTIRUN(RUN)
+          IF (CONTROL % MULTI > 1) CALL MULTIRUN(RUN, 0)
           IF (Headers % RUN == RUN) THEN
             CALL HEADER(SEASINIT, LUN, RUN)
             FIRST = .FALSE.

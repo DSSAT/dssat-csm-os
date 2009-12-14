@@ -112,7 +112,14 @@
 !     Find and Read Phosphorus Section
       SECTION = '*PHOSP'
       CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
-      IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILECC, LNUM)
+      IF (FOUND .EQ. 0) THEN
+        MSG(1) = 'Phosphorus input section not found in species file.'
+        MSG(2) = FILECC
+        MSG(3) = 
+     &   'Can not simulate phosphorus for this crop. Program will stop.'
+        CALL WARNING(3,ERRKEY,MSG)
+        CALL ERROR(SECTION, 42, FILECC, LNUM)
+      ENDIF
 
       ROOTRAD = -99.
 !     Look for ROOTRAD text
