@@ -73,6 +73,7 @@
               CALL NAILUJ (IPLT,IPYRS,RMS,IDYS)
               WRITE(TEXT,'(A3,1X,I2,1X,I4)') RMS,IDYS,IPYRS
               HEADERS%Header(I)(19:29) = TEXT
+              HEADERS%Header(I)(30:36) = '       '
               EXIT
             ENDIF
           ENDDO
@@ -399,7 +400,7 @@ C-----------------------------------------------------------------------
 
   400 FORMAT (1X,'STARTING DATE  :',1X,A3,1X,I2,1X,I4)
   425 FORMAT (1X,'HARVEST DATE   :',1X,A3,1X,I2,1X,I4)
-  450 FORMAT (1X,'PLANTING DATE  :',1X,A3,1X,I2,1X,I4,4X,
+  450 FORMAT (1X,'PLANTING DATE  :',1X,A3,1X,I2,1X,I4,8X,
      &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')
   475 FORMAT (1X,'PLANTING DATE  :',1X,'AUTOMATIC PLANTING',1X,
      &       'PLANTS/m2 :',F5.1,5X,'ROW SPACING :',F5.0,'cm ')

@@ -211,8 +211,6 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C    WRITE HEADER TO SCREEN and overview.out file
 C-----------------------------------------------------------------------
-        CALL HEADER(RUNINIT, NOUTDO, RUN)
-
         IF (INDEX('IE',RNMODE) .GT. 0 .AND. NYRS .LE. 1 
      &       .AND. PRINT_STAGES) THEN
           WRITE(*,3050) RUN, TITLET, TITLE
@@ -221,6 +219,10 @@ C-----------------------------------------------------------------------
      &      //,' RUN NO.',I6,4X,A25,/,3(/,A64))
         ENDIF
       
+        IF (IDETO .EQ. 'Y') THEN
+          CALL HEADER(RUNINIT, NOUTDO, RUN)
+        ENDIF
+
         IF (IDETO .EQ. 'Y' .AND. PRINT_STAGES) THEN
           WRITE (NOUTDO,3055) RUN,TITLET, (TITLE(I), TITLE2(I), I=1,3)
  3055     FORMAT(//,
