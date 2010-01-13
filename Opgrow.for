@@ -41,7 +41,7 @@ C  Calls:     None
 
       INTEGER COUNT, DAP, DAS, DOY, DYNAMIC, ERRNUM, FROP, I, L
       INTEGER N_LYR, NLAYR, NOUTDG, NOUTPC, NOUTPN, RUN, RSTAGE
-      INTEGER TIMDIF, YEAR, YRDOY, MDATE, YRPLT
+      INTEGER TIMDIF, YEAR, YRDOY, MDATE, YRPLT, VWAD
 
       REAL CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD
       REAL GROWTH, GRWRES, HI, HIP, MAINR, NSTRES
@@ -150,7 +150,7 @@ C  Calls:     None
         WRITE (NOUTDG,200, ADVANCE='NO')
   200   FORMAT('@YEAR DOY   DAS   DAP',
      &         '   L#SD   GSTD   LAID   LWAD   SWAD   GWAD',
-     &         '   RWAD   CWAD   G#AD    GWGD   HIAD   PWAD',
+     &         '   RWAD   VWAD   CWAD   G#AD    GWGD   HIAD   PWAD',
      &         '   P#AD   WSPD   WSGD   NSTD')
 
 !        IF (ISWPHO .EQ. 'Y') THEN
@@ -346,14 +346,16 @@ C-----------------------------------------------------------------------
             COUNT = 0
           ENDIF
 
+          VWAD = NINT(WTLF*10. + STMWT*10.)
+
           WRITE (NOUTDG,310, ADVANCE='NO')
      &        YEAR, DOY, DAS, DAP, VSTAGE, RSTAGE, XLAI,
      &        NINT(WTLF*10.), NINT(STMWT*10.), NINT(SDWT*10.),
-     &        NINT(RTWT*10.), NINT(TOPWT*10.), NINT(SEEDNO), SDSIZE, HI,
-     &        NINT(PODWT*10.), NINT(PODNO), SWF_AV, TUR_AV,
+     &        NINT(RTWT*10.), VWAD, NINT(TOPWT*10.), NINT(SEEDNO), 
+     &        SDSIZE, HI, NINT(PODWT*10.), NINT(PODNO), SWF_AV, TUR_AV,
      &        NST_AV
   310     FORMAT (1X,I4,1X,I3.3,2(1X,I5),
-     &        1X,F6.1,1X,I6,1X,F6.3,   6(1X,I6),
+     &        1X,F6.1,1X,I6,1X,F6.3,   7(1X,I6),
      &        1X,F7.1,1X,F6.3,2(1X,I6),3(1X,F6.3))
 
 !          IF (ISWPHO .EQ. 'Y') THEN

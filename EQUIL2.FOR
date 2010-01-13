@@ -2,10 +2,12 @@ C=======================================================================
 C  EQUIL2, Subroutine, U. Singh
 C  Determines diffusive fluxes between the floodwater and surface soil
 C  layer for each of ammonium, nitrate and urea
+!  Also used for oxidation layer calculations for non-flooded conditions.
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C             US  Written
 C  03/29/2002 CHP modular format
+!  01/12/2009 CHP fixed bug introduced with correction of underflow errors
 C=======================================================================
 
       SUBROUTINE EQUIL2 (
@@ -222,7 +224,8 @@ C=======================================================================
       ! (=360)=( s to hr)*1.E-6(mg to kg)/[1.E3(lit to cm3)*
       ! 1.E-8 (cm2 to ha)]
       !
-      IF (DELC > 1.E-10 .AND. DE > 1.E-10) THEN
+!     CHP prevent underflow errors
+      IF (ABS(DELC) > 1.E-10 .AND. ABS(DE) > 1.E-10) THEN
         DIFFN = DELC/DELX*DE*360.0*24.0/FLOAT(IHDAY)
       ELSE
         DIFFN = 0.0

@@ -37,7 +37,7 @@ C  Calls:     None
 
       INTEGER TIMDIF, COUNT
       INTEGER DAP, DAS, DOY, I, N_LYR, RSTAGE, RUN
-      INTEGER MDATE, YEAR, YRDOY, YRPLT, YRSIM
+      INTEGER MDATE, YEAR, YRDOY, YRPLT, YRSIM, VWAD
 
       REAL VSTAGE, XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, PODWT, SEEDNO
       REAL SLA, PCNL, TURFAC, CANHT, CANWH, HI, SHELPC, SATFAC, KSTRES
@@ -112,7 +112,7 @@ C  Calls:     None
           WRITE (NOUTDG,201, ADVANCE='NO')
   201     FORMAT('@YEAR DOY   DAS   DAP',
      &   '   L#SD   GSTD   LAID   LWAD   SWAD   GWAD',
-     &   '   RWAD   CWAD   G#AD   GWGD   HIAD   PWAD',
+     &   '   RWAD   VWAD   CWAD   G#AD   GWGD   HIAD   PWAD',
      &   '   P#AD   WSPD   WSGD   NSTD   EWSD  PST1A  PST2A',
      &   '   KSTD   LN%D   SH%D   HIPD   PWDD   PWTD',
      &   '     SLAD   CHTD   CWID   RDPD') 
@@ -192,17 +192,19 @@ C  Calls:     None
               KST_AV = KST_AV / COUNT
               COUNT = 0
             ENDIF
+
+            VWAD = NINT(WTLF*10. + STMWTO*10.)
       
             WRITE(NOUTDG,400,ADVANCE='NO')
      &        YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
      &        NINT(WTLF*10.),NINT(STMWTO*10.),NINT(SDWT*10.),
-     &        NINT(RTWT*10.*PLTPOP),NINT(TOPWT*10.),NINT(SEEDNO),SDSIZE,
-     &        HI,NINT(PODWT*10.),NINT(PODNO),
+     &        NINT(RTWT*10.*PLTPOP), VWAD, NINT(TOPWT*10.),
+     &        NINT(SEEDNO),SDSIZE,HI,NINT(PODWT*10.),NINT(PODNO),
      &        SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, KST_AV,
      &        PCNL,SHELPC,HIP, NINT(PODWTD*10.),
      &        NINT((PODWTD+PODWT)*10.),SLA,CANHT,CANWH, (RTDEP/100.)
  400        FORMAT (1X,I4,1X,I3.3,2(1X,I5),1X,F6.1,1X,I6,1X,F6.2,
-     &        6(1X,I6),1X,F6.1,1X,F6.3,2(1X,I6),7(1X,F6.3),3(1X,F6.2),
+     &        7(1X,I6),1X,F6.1,1X,F6.3,2(1X,I6),7(1X,F6.3),3(1X,F6.2),
      &        2(1X,I6),1X,F8.1,2(1X,F6.2),1X,F6.2)
 
             WRITE(NOUTDG,402,ADVANCE='NO')(RLV(I),I=1,N_LYR)

@@ -13,7 +13,6 @@ C  02/21/2006 GH  Removed crop model selection
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2009 CHP IPSIM separate file.  Separate routine for checking data
 !                   used by both IPSIM and Default_SimControls
-!  12/14/2009 CHP Change check on simulation controls.
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
@@ -334,7 +333,7 @@ C
             IDETR = UPCASE(IDETR)
 !           VBOSE = zero, suppress all output except SUMMARY.OUT
             IF (IDETL == '0') THEN
-              IDETO = 'N'
+              IF (INDEX('E',IDETO) < 1) IDETO = 'N'
               IDETG = 'N' 
               IDETC = 'N' 
               IDETW = 'N' 
@@ -552,9 +551,7 @@ C-----------------------------------------------------------------------
         ISWITCH % ISWNIT = ISWNIT  !N simulation
         ISWITCH % ISWPHO = ISWPHO  !P simulation
         ISWITCH % ISWPOT = ISWPOT  !K simulation
-        ISWITCH % ISWDIS = ISWDIS  !pests and disease
-        ISWITCH % ISWCHE = ISWCHE  !chemical application
-        ISWITCH % ISWTIL = ISWTIL  !tillage
+        ISWITCH % ISIMI  = ISIMI   !start of simulation switch
         ISWITCH % ICO2   = ICO2    !atmospheric CO2 data source
         ISWITCH % MEWTH  = MEWTH   !weather data source
         ISWITCH % MESOM  = MESOM   !SOM method
@@ -584,7 +581,9 @@ C-----------------------------------------------------------------------
       ENDIF
  
 !     Use these values for all runs
-      ISWITCH % ISIMI  = ISIMI     !start of simulation switch
+      ISWITCH % ISWDIS = ISWDIS    !pests and disease
+      ISWITCH % ISWCHE = ISWCHE    !chemical application
+      ISWITCH % ISWTIL = ISWTIL    !tillage
       ISWITCH % MELI   = MELI      !light interception
       ISWITCH % IPLTI  = IPLTI     !planting switch
       ISWITCH % IIRRI  = IIRRI     !irrigation switch
@@ -1071,7 +1070,7 @@ D     IPX = 22
 
 !           VBOSE = zero, suppress all output except SUMMARY.OUT
             IF (IDETL == '0') THEN
-              IDETO = 'N'
+              IF (INDEX('E',IDETO) < 1) IDETO = 'N'
               IDETG = 'N' 
               IDETC = 'N' 
               IDETW = 'N' 

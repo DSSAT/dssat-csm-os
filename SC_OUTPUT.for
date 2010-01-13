@@ -42,6 +42,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Define DSSAT composite variables:
 c     [Taken from MZ_CERES.for]
       USE ModuleDefs
+      USE ModuleData
 
 c     Define CANEGRO composite variables:
       USE CNG_ModuleDefs
@@ -129,6 +130,11 @@ c     separately.
 
 c     Loop counter variables
       INTEGER I, J, NUM_OVARS
+
+!     CHP added 08Jan10
+!     Print only if output switch (IDETG) is 'Y'
+      Type (SwitchType) ISWITCH
+      CHARACTER*1 IDETG
 
 c     OUTPUT variables (as they are in PlantGro.out)
 c     ::::::::::::::::::::::::::::::::::::::::::::::
@@ -550,6 +556,10 @@ c
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       ELSEIF (DYNAMIC.EQ.SEASINIT) THEN
 
+          CALL GET(ISWITCH)
+          IDETG = ISWITCH % IDETG
+          IF (IDETG .NE. 'Y') RETURN
+
 c     Open growth aspects output file:
 c     ::::::::::::::::::::::::::::::::
 c         Set file name:
@@ -717,6 +727,7 @@ c
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       ELSEIF(DYNAMIC.EQ.OUTPUT) THEN
       
+          IF (IDETG .NE. 'Y') RETURN
 
 c     Print daily output:
 c     :::::::::::::::::::
@@ -860,6 +871,8 @@ c              DYNAMIC = FINAL
 c
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
+          IF (IDETG .NE. 'Y') RETURN
+
 c     Close the output file
           CLOSE(UNIT=NOUTDG)
 c     END of FINAL

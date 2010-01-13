@@ -302,7 +302,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 !     Read Measured (measured) data from FILEA
 !-----------------------------------------------------------------------
-      IF ((IDETO .EQ. 'Y' .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) .OR.
+      IF ((INDEX('YE',IDETO) .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) .OR.
      &   (INDEX('AY',ISWITCH%IDETS) .GT. 0 .AND.
      &       CONTROL%CROP .NE. 'FA')) THEN
          IF (INDEX('FQ',RNMODE) > 0) THEN

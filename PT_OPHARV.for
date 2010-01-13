@@ -327,8 +327,8 @@ C-----------------------------------------------------------------------
       CTPP   = 0.0
 
 C-----------------------------------------------------------------------
-      IF ((IDETO .EQ. 'Y' .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) .OR.
-     &   (INDEX('AY',ISWITCH%IDETS) .GT. 0 .AND. CROP .NE. 'FA')) THEN
+      IF ((INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) 
+     &  .OR. (INDEX('AY',ISWITCH%IDETS) .GT. 0 .AND. CROP .NE.'FA'))THEN
          IF (INDEX('FQ',RNMODE) > 0) THEN
            TRT_ROT = CONTROL % ROTNUM
          ELSE

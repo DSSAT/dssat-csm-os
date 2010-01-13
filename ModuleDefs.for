@@ -60,11 +60,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 0
-        INTEGER :: Build =38
+        INTEGER :: Build =40
       END TYPE VersionType
       TYPE (VersionType) Version
 
 !     Version history:
+!       4.5.0.40 chp 01/12/2010 Ammonia volatilization bug fixed.
+!       4.5.0.39 chp 01/08/2010 Changes to default switch settings, output options
 !       4.5.0.38 chp 11/02/2009 GIT source control starting version
 !       4.5.0.37 chp 09/09/2009 Gainesville meeting version
 !       4.5.0.36 chp 06/18/2009 Pre-release version
@@ -484,9 +486,9 @@ C             CHP Added TRTNUM to CONTROL variable.
       End Type MgmtType
 
 !     Data transferred from Soil water routine
-      Type WaterType
+      Type WatType
         REAL DRAIN, RUNOFF
-      End Type WaterType
+      End Type WatType
 
 !     Data transferred from Soil Inorganic Nitrogen routine
       Type NiType
@@ -515,8 +517,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (OrgCType)    ORGC
         Type (SoilType)    SOILPROP
         Type (SPAMType)    SPAM
-        Type (WaterType)   WATER
-        Type (WeathType) WEATHER
+        Type (WatType)     WATER
+        Type (WeathType)   WEATHER
       End Type TransferType
 
 !     The variable SAVE_data contains all of the components to be 

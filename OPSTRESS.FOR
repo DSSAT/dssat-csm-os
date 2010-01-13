@@ -10,6 +10,7 @@
 !-----------------------------------------------------------------------
 !  Revision history
 !  10/20/2005 CHP Written based on CROPGRO v3.5 routines SUMWTH and OPSTRS
+!  01/07/2010 CHP Add irrigation water productivity to Overview and Summary
 !-----------------------------------------------------------------------
 
       SUBROUTINE OPSTRESS(CONTROL, IDETO,   
@@ -46,12 +47,13 @@
       REAL P_grow, P_phot
       REAL ET_L, EP_L
       REAL DMP_Rain, GrP_Rain, DMP_ET, GrP_ET, DMP_EP, GrP_EP 
+      REAL DEPIR, DMP_Irr, GrP_Irr
       REAL, DIMENSION(0:MaxStag) :: N_photR, CETR, CEPR, DAYLR, N_growR
-      REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR 
+      REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR,CumIrr
       REAL, DIMENSION(0:MaxStag) :: W_photR, TMAXR, TMINR, W_growR
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 6
+      INTEGER, PARAMETER :: SUMNUM = 8
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -123,6 +125,8 @@
       GrP_ET = -99.
       DMP_EP = -99.
       GrP_EP = -99.
+      DMP_Irr = -99.    
+      GrP_Irr = -99.
 
 !***********************************************************************
 !***********************************************************************
@@ -161,12 +165,15 @@
         P_grow = PlantStres % P_grow  !was PStres2
         P_phot = PlantStres % P_phot  !was PStres1
 
+        CALL GET('MGMT', 'DEPIR', DEPIR)
+
         DO I = 0, PlantStres % NSTAGES
           IF (PlantStres % ACTIVE(I)) THEN
             NNR(I) = NNR(I) + 1
             TMAXR(I) = TMAXR(I) + TMAX
             TMINR(I) = TMINR(I) + TMIN
             RAINR(I) = RAINR(I) + RAIN
+            CumIrr(I)= CumIrr(I)+ DEPIR
             DAYLR(I) = DAYLR(I) + DAYL
             RADR (I) = RADR (I) + SRAD 
             CETR(I)  = CETR(I)  + ET_L
@@ -297,6 +304,11 @@
               GrP_Rain = YIELD  / RAINR(0)
             ENDIF
           
+            IF (CumIrr(0) > 1.E-3) THEN
+              DMP_Irr = Biomas / CumIrr(0) 
+              GrP_Irr = YIELD  / CumIrr(0)
+            ENDIF
+          
             IF (CETR(0) > 1.E-3) THEN
               DMP_ET = Biomas / CETR(0) 
               GrP_ET = YIELD  / CETR(0) 
@@ -314,6 +326,11 @@
      &      RAINR(0), DMP_Rain*0.1, DMP_Rain, GrP_Rain*0.1, GrP_Rain, 
      &      CETR(0),  DMP_ET*0.1,   DMP_ET,   GrP_ET*0.1,   GrP_ET, 
      &      CEPR(0),  DMP_EP*0.1,   DMP_EP,   GrP_EP*0.1,   GrP_EP
+
+            IF (CumIrr(0) > 1.E-3) THEN
+              WRITE(NOUTDO, 1210) 
+     &          CumIrr(0), DMP_Irr*0.1, DMP_Irr, GrP_Irr*0.1, GrP_Irr
+            ENDIF
           ENDIF
         ENDIF
       ENDIF
@@ -325,19 +342,25 @@
      & /,' Growing season length:', I4,' days ',
      &//,' Precipitation during growth season',T42,F7.1,' mm[rain]',
      & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[rain]',
-     &                           T75,'=',F7.1,' kg[DM]/ha per mm[rain]',
+     &                       T75,'=',F7.1,' kg[DM]/ha per mm[rain]',
      & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[rain]',
      &                       T75,'=',F7.1,' kg[yield]/ha per mm[rain]',
      &//,' Evapotranspiration during growth season',T42,F7.1,' mm[ET]',
      & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[ET]',
-     &                            T75,'=',F7.1,' kg[DM]/ha per mm[ET]',
+     &                       T75,'=',F7.1,' kg[DM]/ha per mm[ET]',
      & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[ET]',
      &                       T75,'=',F7.1,' kg[yield]/ha per mm[ET]',
      &//,' Transpiration during growth season',T42,F7.1,' mm[EP]',
      & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[EP]',
-     &                            T75,'=',F7.1,' kg[DM]/ha per mm[EP]',
+     &                       T75,'=',F7.1,' kg[DM]/ha per mm[EP]',
      & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[EP]',
      &                       T75,'=',F7.1,' kg[yield]/ha per mm[EP]')
+ 1210 FORMAT(
+     & /,' Irrigation during growth season',T42,F7.1,' mm[irrig]',
+     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[irrig]',
+     &                       T75,'=',F7.1,' kg[DM]/ha per mm[irrig]',
+     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[irrig]',
+     &                       T75,'=',F7.1,' kg[yield]/ha per mm[irrig]')
       
 !     Reset arrays for next run.
       TMAXR = 0.0
@@ -363,6 +386,8 @@
       LABEL(4)  = 'YPEM '; VALUE(4) = GrP_ET
       LABEL(5)  = 'YPPM '; VALUE(5) = GrP_Rain 
       LABEL(6)  = 'YPTM '; VALUE(6) = GrP_EP
+      LABEL(7)  = 'DMPIM'; VALUE(7) = DMP_Irr
+      LABEL(8)  = 'YPIM '; VALUE(8) = GrP_Irr
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 

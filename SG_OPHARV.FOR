@@ -318,8 +318,8 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
       PBIOMS = BIOMAS * 10.0
 
 !-----------------------------------------------------------------------
-      IF ((IDETO .EQ. 'Y' .OR. INDEX('IAEBCGD',RNMODE) .GT. 0) .OR.
-     &   (INDEX('AY',IDETS) .GT. 0 .AND. CROP .NE. 'FA')) THEN
+      IF ((INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGD',RNMODE) .GT. 0) 
+     &  .OR. (INDEX('AY',IDETS) .GT. 0 .AND. CROP .NE. 'FA')) THEN
          IF (INDEX('FQ',RNMODE) > 0) THEN
            TRT_ROT = CONTROL % ROTNUM
          ELSE

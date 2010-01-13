@@ -340,8 +340,8 @@ c     Green Leaf area index at harvest
 !-----------------------------------------------------------------------
 !     Read Measured (measured) data from FILEA
 !-----------------------------------------------------------------------
-      IF ((IDETO .EQ. 'Y' .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) .OR.
-     &   (INDEX('AY',ISWITCH%IDETS) .GT. 0 .AND. 
+      IF ((INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) 
+     &  .OR. (INDEX('AY',ISWITCH%IDETS) .GT. 0 .AND. 
      &      CONTROL%CROP .NE. 'FA')) THEN
          IF (INDEX('FQ',RNMODE) > 0) THEN
            TRT_ROT = CONTROL % ROTNUM
@@ -409,7 +409,7 @@ c     is running.
 
 !-----------------------------------------------------------------------
       !Send Measured and Simulated datat to OPSUM
-      IF(IDETO .EQ. 'Y' .OR. INDEX('IAEBCGD',RNMODE) .GT. 0) THEN
+      IF(INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGD',RNMODE) .GT. 0) THEN
         CALL EvaluateDat (ACOUNT, Measured, Simulated, DESCRIP, OLAP) 
       ENDIF
 

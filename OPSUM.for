@@ -19,6 +19,8 @@ C                   HIAM, EPCM, ESCM
 !  12/12/2005 CHP Add OCTAM, ONTAM, OPAM, and OPTAM variables
 !  06/27/2007 CHP Add water productivity to Summary.OUT
 !  06/17/2009 CHP Update weather station in SeasInit
+!  01/07/2010 CHP Add irrigation water productivity to Overview and Summary
+!  01/08/2010 CHP Separate switch for Evaluate, but not Overview (IDETO=E)
 C=======================================================================
 
       MODULE SumModule
@@ -45,7 +47,8 @@ C=======================================================================
         INTEGER OCTAM, ONTAM, OPAM, OPTAM
 
 !       Added 06/27/2007 Water Productivity
-        REAL DMPEM, DMPPM, DMPTM, YPEM, YPPM, YPTM
+!       Added 01/07/2010 Irrigation productivity
+        REAL DMPEM, DMPPM, DMPTM, DMPIM, YPEM, YPPM, YPTM, YPIM
 
       End Type SummaryType
 
@@ -107,7 +110,8 @@ C-----------------------------------------------------------------------
       INTEGER OCTAM, ONTAM, OPAM, OPTAM
 
 !     Added 06/27/2007 Water Productivity
-      REAL DMPEM, DMPPM, DMPTM, YPEM, YPPM, YPTM
+!     Added 01/07/2010 Irrigation Productivity
+      REAL DMPEM, DMPPM, DMPTM, DMPIM, YPEM, YPPM, YPTM, YPIM
 
       LOGICAL FEXIST
 
@@ -297,9 +301,11 @@ C     Initialize OPSUM variables.
       SUMDAT % DMPPM  = -99.0 !Dry matter-rain productivity(kg[DM]/m3[P]
       SUMDAT % DMPEM  = -99.0 !Dry matter-ET productivity(kg[DM]/m3[ET]
       SUMDAT % DMPTM  = -99.0 !Dry matter-EP productivity(kg[DM]/m3[EP]
+      SUMDAT % DMPIM  = -99.0 !Dry matter-irr productivity(kg[DM]/m3[I]
       SUMDAT % YPPM   = -99.0 !Yield-rain productivity(kg[yield]/m3[P]
       SUMDAT % YPEM   = -99.0 !Yield-ET productivity(kg[yield]/m3[ET]
       SUMDAT % YPTM   = -99.0 !Yield-EP productivity(kg[yield]/m3[EP]
+      SUMDAT % YPIM   = -99.0 !Yield-irr productivity(kg[yield]/m3[I]
 
       CALL GET('WEATHER','WSTA',WSTAT)
 !      IF (LenString(WSTAT) < 1) THEN
@@ -367,9 +373,11 @@ C     Initialize OPSUM variables.
       DMPPM= SUMDAT % DMPPM   !Dry matter-rain productivity(kg[DM]/m3[P]
       DMPEM= SUMDAT % DMPEM   !Dry matter-ET productivity(kg[DM]/m3[ET]
       DMPTM= SUMDAT % DMPTM   !Dry matter-EP productivity(kg[DM]/m3[EP]
+      DMPIM= SUMDAT % DMPIM   !Dry matter-irr productivity(kg[DM]/m3[I]
       YPPM = SUMDAT % YPPM    !Yield-rain productivity(kg[yield]/m3[P]
       YPEM = SUMDAT % YPEM    !Yield-ET productivity(kg[yield]/m3[ET]
       YPTM = SUMDAT % YPTM    !Yield-EP productivity(kg[yield]/m3[EP]
+      YPIM = SUMDAT % YPIM    !Yield-irr productivity(kg[yield]/m3[I]
 
 C-------------------------------------------------------------------
 C
@@ -421,7 +429,8 @@ C-------------------------------------------------------------------
      &    'PHOSPHORUS............  ',
      &    'POTASSIUM.............  ',
      &    'ORGANIC MATTER..................................   ',
-     &    'WATER PRODUCTIVITY.................................')
+     &    'WATER PRODUCTIVITY.................................',
+     &    '..................')
 
           WRITE (NOUTDS,400)
   400     FORMAT ('@   RUNNO   TRNO R# O# C# CR TNAM                ',
@@ -434,7 +443,8 @@ C-------------------------------------------------------------------
      &    '  PI#M  PICM  PUPC  SPAM',
      &    '  KI#M  KICM  KUPC  SKAM',
      &    '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM',
-     &    '    DMPPM    DMPEM    DMPTM     YPPM     YPEM     YPTM')
+     &    '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
+     &    '     YPTM     YPIM')
         ENDIF
 
         IF (BWAH < -1) BWAH = -9.9
@@ -459,7 +469,8 @@ C-------------------------------------------------------------------
      &    PINUMM, PICM, PUPC, SPAM,        !P data
      &    KINUMM, KICM, KUPC, SKAM,        !K data
      &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
-     &    DMPPM, DMPEM, DMPTM, YPPM, YPEM, YPTM   !Water productivity
+!         Water productivity
+     &    DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM   
 
 !       RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
   500   FORMAT (I9,1X,I6,3(I3),               
@@ -488,8 +499,8 @@ C-------------------------------------------------------------------
 !       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
      &  4(1X,I6),2(1X,I7),       
    
-!       DMPPM, DMPEM, DMPTM, YPPM, YPEM, YPTM
-     &  3F9.1,3F9.2)                          
+!       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
+     &  4F9.1,4F9.2)                          
 
         CLOSE (NOUTDS)
       ENDIF
@@ -568,7 +579,11 @@ C-------------------------------------------------------------------
 !     IF((INDEX('0',IDETL) < 1 .AND. INDEX('IAEBCGDT',RNMODE) > 0) .AND.
 !     Evaluate.OUT printed whenever Overview.OUT is printed (i.e., switch
 !         with IDETO -- CHP 8/31/2007
-      IF (IDETO .EQ. 'Y' .AND. 
+!     Add a separate switch for Evaluate.OUT, but not Overview.OUT
+!     IDETO = Y - both Overview and Evaluate are printed
+!     IDETO = N - neither Overview nor Evaluate are printed
+!     IDETO = E - only Evaluate is printed.
+      IF (INDEX('YE',IDETO) > 0 .AND. 
      &        CROP .NE. 'WH' .AND. CROP .NE. 'BA' .AND.
      &        CROP .NE. 'CS') THEN
 
@@ -723,9 +738,11 @@ C=======================================================================
         CASE ('DMPPM');SUMDAT % DMPPM  = VALUE(I)
         CASE ('DMPEM');SUMDAT % DMPEM  = VALUE(I)
         CASE ('DMPTM');SUMDAT % DMPTM  = VALUE(I)
+        CASE ('DMPIM');SUMDAT % DMPIM  = VALUE(I)
         CASE ('YPPM'); SUMDAT % YPPM   = VALUE(I)
         CASE ('YPEM'); SUMDAT % YPEM   = VALUE(I)
         CASE ('YPTM'); SUMDAT % YPTM   = VALUE(I)
+        CASE ('YPIM'); SUMDAT % YPIM   = VALUE(I)
 
         END SELECT
       ENDDO
