@@ -394,6 +394,14 @@ C           Convert character codes for fertilizer method into integer
               NAPFER(P) = NAPFER(P) + 1
             ENDIF   !End of IF block on HASP.
 
+            IF (HASK) THEN
+!             Set the amount of K to be applied and sum total amount of
+!             K fertilizer
+              FERPOT   = FERPOT + AKFER(I)
+              AMTFER(Kel) = AMTFER(Kel) + AKFER(I)
+              NAPFER(Kel) = NAPFER(Kel) + 1
+            ENDIF   !End of IF block on HASP.
+
             IF (FERNIT > 1.E-3 .OR. FERPHOS > 1.E-3) THEN
               CALL FertApply(
      &        DLAYR, FERDEPTH, ANFER(I), APFER(I), AKFER(I),!Input

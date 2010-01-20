@@ -659,14 +659,14 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('PLANT')
         SELECT CASE (VarName)
-        Case ('CANHT');  Value = SAVE_data % PLANT % CANHT
-        Case ('CANWH');  Value = SAVE_data % PLANT % CANWH
-        Case ('DXR57');  Value = SAVE_data % PLANT % DXR57
+        Case ('CANHT') ; Value = SAVE_data % PLANT % CANHT
+        Case ('CANWH') ; Value = SAVE_data % PLANT % CANWH
+        Case ('DXR57') ; Value = SAVE_data % PLANT % DXR57
         Case ('EXCESS'); Value = SAVE_data % PLANT % EXCESS
         Case ('PLTPOP'); Value = SAVE_data % PLANT % PLTPOP
-        Case ('RNITP');  Value = SAVE_data % PLANT % RNITP
-        Case ('SLAAD');  Value = SAVE_data % PLANT % SLAAD
-        Case ('XPOD');   Value = SAVE_data % PLANT % XPOD
+        Case ('RNITP') ; Value = SAVE_data % PLANT % RNITP
+        Case ('SLAAD') ; Value = SAVE_data % PLANT % SLAAD
+        Case ('XPOD')  ; Value = SAVE_data % PLANT % XPOD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

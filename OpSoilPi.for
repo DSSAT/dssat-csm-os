@@ -15,7 +15,7 @@
       SUBROUTINE OpSoilPi(CONTROL, ISWITCH, 
      &  CImmobP, CMinerP, FertData, PUptake, !FracRts,  
 !    &  ProfLab2Act, ProfAct2Lab, ProfAct2Sta, ProfSta2Act,  
-     &  SOILPROP, SPi_AVAIL, SPiAvlProf,
+     &  SOILPROP, SPi_AVAIL, SPiAvlProf, PiLabile,
      &  SPiSolProf, SPiLabProf, SPiActProf, SPiStaProf, SPiTotProf)
 !    &  SPiSolRtsProf, SPiSolNoRtsProf, SPiLabRtsProf, SPiLabNoRtsProf)
 !    &  PiSolRts, PiSolNoRts, PiLabRts, PiLabNoRts,  
@@ -41,6 +41,7 @@ C-----------------------------------------------------------------------
       Real CumFertP, CMinerP, CImmobP, CumUptakeP
 
       REAL, DIMENSION(NL) :: PUptake, SPi_AVAIL !, FracRts
+      REAL, DIMENSION(NL) :: PiLabile
 !     REAL, DIMENSION(NL) :: PiSolRts, PiSolNoRts
 !     REAL, DIMENSION(NL) :: PiLabRts, PiLabNoRts
 !     REAL, DIMENSION(NL) :: SPiSolRts, SPiSolNoRts
@@ -49,7 +50,7 @@ C-----------------------------------------------------------------------
 !      REAL SPiSolRtsProf, SPiSolNoRtsProf
 !      REAL SPiLabRtsProf, SPiLabNoRtsProf
 
-      LOGICAL FEXIST
+      LOGICAL FEXIST, DOPRINT
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 4
@@ -121,17 +122,19 @@ C-----------------------------------------------------------------------
           LayerText(5) = SOILPROP % LayerText(11)
         ENDIF
 
-        WRITE (LUN,'("!",110(" "),"P avail by soil depth (cm):",
-     &    T157,"P uptake by soil depth (cm):")')
-        WRITE (LUN, '("!",T106,10(1X,A8))') 
-     &    (LayerText(L),L=1,5),(LayerText(L),L=1,5)
+        WRITE (LUN,'("!",T112,"P avail (kg/ha) by soil depth (cm):",
+     &    T157,"P uptake (kg/ha) by soil depth (cm):",
+     &    T202,"Labile P (ppm) by soil depth (cm):")')
+        WRITE (LUN, '("!",T106,15(1X,A8))') 
+     &    (LayerText(L),L=1,5),(LayerText(L),L=1,5),(LayerText(L),L=1,5)
         WRITE (LUN,120)
   120   FORMAT('@YEAR DOY   DAS',
      &  '     PIAD    PAVLD    PSOLD    PLABD    PACTD    PSTAD',
 !    &  '  SPLabRt  SPLabNR  SPSolRt  SPSolNR',
      &  '     PAPC     PMNC     PIMC     PUPC',
      &  '    PAV1D    PAV2D    PAV3D    PAV4D    PAV5D',
-     &  '    PUP1D    PUP2D    PUP3D    PUP4D    PUP5D') !,
+     &  '    PUP1D    PUP2D    PUP3D    PUP4D    PUP5D', !,
+     &  '    PLAB1    PLAB2    PLAB3    PLAB4    PLAB5')
 !!       Temp variables
 !     &  '    ST2AC    AC2ST    AC2LA    LA2AC',
 !     &  '    FRRT1    FRRT2    FRRT3    FRRT4    FRRT5',
@@ -143,6 +146,8 @@ C-----------------------------------------------------------------------
 !     &  '  SPSOLN1  SPSOLN2  SPSOLN3  SPSOLN4  SPSOLN5',
 !     &  '  SPLABR1  SPLABR2  SPLABR3  SPLABR4  SPLABR5',
 !     &  '  SPLABN1  SPLABN2  SPLABN3  SPLABN4  SPLABN5')
+
+      ENDIF
 
       ENDIF
     
@@ -188,7 +193,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 !     OUTPUT
 !***********************************************************************
-      ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
+      IF (DYNAMIC == OUTPUT .OR. DYNAMIC == SEASINIT) THEN
 !-----------------------------------------------------------------------
 
       DO L = 1, NLAYR
@@ -197,14 +202,25 @@ C-----------------------------------------------------------------------
 
 !     Daily printout
       IF (IDETP .NE. 'Y' .OR. ISWPHO .NE. 'Y' .OR. IDETL == '0') RETURN
-      IF (MOD(DAS, FROP) == 0) THEN
+
+      DOPRINT = .FALSE.
+      SELECT CASE(DYNAMIC)
+      CASE (SEASINIT)
+        IF (RUN == 1 .OR. INDEX('QF',RNMODE) <= 0) DOPRINT = .TRUE.
+      CASE (OUTPUT)
+        IF (MOD(DAS, FROP) == 0) DOPRINT = .TRUE.
+      END SELECT
+
+
+      IF (DOPRINT) THEN
         CALL YR_DOY(YRDOY, YEAR, DOY) 
         WRITE (LUN,300) YEAR, DOY, DAS, 
      &    SPiTotProf, SPiAvlProf, SPiSolProf, 
      &    SPiLabProf, SPiActProf, SPiStaProf, 
 !    &    SPiLabRtsProf, SPiLabNoRtsProf, SPiSolRtsProf,SPiSolNoRtsProf,
      &    CumFertP, CMinerP, CImmobP, CumUptakeP,
-     &    SPi_AVAIL(1:5), PUptake(1:5)  !,
+     &    SPi_AVAIL(1:5), PUptake(1:5),   !,
+     &    PiLabile(1:5)
 !!       Temp variables:
 !     &    ProfSta2Act, ProfAct2Sta, ProfAct2Lab, ProfLab2Act, 
 !     &    (FracRts(L),L=1,5), (PiSolRts(L),L=1,5), (PiSolNoRts(L),L=1,5)
@@ -212,7 +228,7 @@ C-----------------------------------------------------------------------
 !     &    (SPiSolRts(L),L=1,5), (SPiSolNoRts(L),L=1,5)
 !     &   ,(SPiLabRts(L),L=1,5), (SPiLabNoRts(L),L=1,5)
   300   FORMAT(1X,I4,1X,I3.3,1X,I5,
-     &    170(1X,F8.3))    
+     &    F9.1, 2F9.3, 3F9.1, F9.1, 3F9.2, 10F9.3, 5F9.2)
       ENDIF
 
 !***********************************************************************

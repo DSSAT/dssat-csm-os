@@ -767,7 +767,7 @@ C-----------------------------------------------------------------------
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL OpSOILPi(CONTROL, ISWITCH, 
      &  CImmobP, CMinerP, FertData, PUptake,   
-     &  SOILPROP, SPi_AVAIL, SPiAvlProf,
+     &  SOILPROP, SPi_AVAIL, SPiAvlProf, PiLabile,
      &  SPiSolProf, SPiLabProf, SPiActProf, SPiStaProf, SPiTotProf)
 
         CALL SoilPiBal (CONTROL, ISWITCH,
@@ -785,7 +785,7 @@ C-----------------------------------------------------------------------
 
       CALL OpSOILPi(CONTROL, ISWITCH, 
      &  CImmobP, CMinerP, FertData, PUptake,   
-     &  SOILPROP, SPi_AVAIL, SPiAvlProf,
+     &  SOILPROP, SPi_AVAIL, SPiAvlProf, PiLabile,
      &  SPiSolProf, SPiLabProf, SPiActProf, SPiStaProf, SPiTotProf)
 
       CALL SoilPiBal (CONTROL, ISWITCH,
@@ -802,7 +802,7 @@ C-----------------------------------------------------------------------
 
       CALL OpSOILPi(CONTROL, ISWITCH, 
      &  CImmobP, CMinerP, FertData, PUptake,   
-     &  SOILPROP, SPi_AVAIL, SPiAvlProf,
+     &  SOILPROP, SPi_AVAIL, SPiAvlProf, PiLabile,
      &  SPiSolProf, SPiLabProf, SPiActProf, SPiStaProf, SPiTotProf)
 
       CALL SoilPiBal (CONTROL, ISWITCH,

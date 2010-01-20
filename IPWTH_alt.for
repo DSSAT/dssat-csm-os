@@ -937,7 +937,7 @@ C         Read in weather file header.
 
 !     Error checking
       ErrCode = 0
-      IF (SRAD < 0.) ErrCode = 2
+      IF (SRAD < 1.E-2) ErrCode = 2
       IF (RAIN < 0.) ErrCode = 3
       IF (NINT(TMAX * 100.) == 0 .AND. NINT(TMIN * 100.) == 0)
      &  ErrCode = 4
@@ -965,6 +965,15 @@ C         Read in weather file header.
         CALL WeatherError(CONTROL, ErrCode, FILEWW, 
      &                  RecNum, YRDOYW, YREND)
         RETURN
+      ENDIF
+
+      IF (SRAD < 1.0) THEN
+        MSG(1) = "Warning: SRAD < 1"
+        NChar = MIN(78,LEN_Trim(FILEWW))
+        WRITE(MSG(2),'(A)') FILEWW(1:NChar)
+        WRITE(MSG(3),'(A,I4)') "Line ", RecNum
+        WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD
+        CALL WARNING(4,ERRKEY,MSG) 
       ENDIF
 
 !     Substitute default values if TDEW or WINDSP are missing.
