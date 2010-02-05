@@ -397,6 +397,7 @@ C           Convert character codes for fertilizer method into integer
             IF (HASK) THEN
 !             Set the amount of K to be applied and sum total amount of
 !             K fertilizer
+!             Change GH
               FERPOT   = FERPOT + AKFER(I)
               AMTFER(Kel) = AMTFER(Kel) + AKFER(I)
               NAPFER(Kel) = NAPFER(Kel) + 1
