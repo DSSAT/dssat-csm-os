@@ -41,7 +41,7 @@ C=======================================================================
       CHARACTER*12 FILEW, LastFILEW
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(8)
-      CHARACTER*80 PATHWT, HDRFMT
+      CHARACTER*80 PATHWT
       CHARACTER*92 FILEWW
       CHARACTER*120 LINE
 
@@ -59,9 +59,6 @@ C=======================================================================
 
       LOGICAL FEXIST, LongFile
 
-      PARAMETER
-     &  ( HDRFMT = '(2X,A4,2(1X,F8.3),1X,F5.0,4(1X,F5.1),1X,F5.0)',
-     &    ERRKEY = 'IPWTH ')
       PARAMETER (BLANK = ' ')
 
 !     ============================================================
@@ -1123,7 +1120,6 @@ c                   available.
 ! FIRST   Indicates first call to subroutine (true or false) 
 ! FOUND   Indicator that good data was read from file by subroutine FIND  
 !           (0- End-of-file encountered, 1 - NAME was found) 
-! HDRFMT  format for weather data header information 
 ! INCYD   Function subroutine increases/decreases date (YRDOY) 
 !           based on variable INC. 
 ! INSI    Location code for weather data 

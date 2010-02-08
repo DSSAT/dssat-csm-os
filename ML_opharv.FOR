@@ -420,11 +420,6 @@ C  02/09/2007 GH  Add path for FileA
 
       ENDIF
 
-      CALL OPVIEW(CONTROL, 
-     &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN,  
-     &    Measured, PlantStres, Simulated, STGDOY, 
-     &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
-
 !-------------------------------------------------------------------
 !     Send information to OPSUM to generate SUMMARY.OUT file
 !-------------------------------------------------------------------
@@ -455,6 +450,11 @@ C  02/09/2007 GH  Add path for FileA
 
       !Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+
+      CALL OPVIEW(CONTROL, 
+     &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN,  
+     &    Measured, PlantStres, Simulated, STGDOY, 
+     &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
 
       !Send Measured and Simulated datat to OPSUM
       CALL EvaluateDat (ACOUNT, Measured, Simulated, DESCRIP, OLAP) 

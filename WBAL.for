@@ -32,7 +32,7 @@ C=====================================================================
       INTEGER RUN, YEAR, YRSIM, YRDOY, NBUND
       INTEGER YR1, DY1, YR2, DY2
 
-      REAL CEO, CEP, CES, CRAIN, EFFIRR 
+      REAL CEO, CEP, CES, CRAIN, EFFIRR
       REAL TDFC, TDFD
       REAL TDRAIN, TOTIR, TRUNOF, TSW, TSWINI
       REAL WBALAN
@@ -114,7 +114,7 @@ C=====================================================================
      & '  RESAD',                                           !Inflows
      & '  MEVAP',                                           !Outflows
      & '   DRND   ROFD   FROD   ESAD   EPAD   EFAD   TDFD', !Outflows
-     & '    WBAL   CUMWBAL',                              !Balance
+     & '    WBAL   CUMWBAL',                                !Balance
      & '        TOTS    TOTU    TOTX    TOTT    TOTL')    !Changes to SW
 
         CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
@@ -191,17 +191,24 @@ C=====================================================================
           SWDELTLTOT = SWDELTLTOT + SWDELTL(L) * DLAYR(L)
         ENDDO
 
-        WRITE (LUNWBL,1300) YEAR, DOY, DAS, 
-     &    (TSW * 10.), FLOOD, SNOW, MULCHWAT,         !State variables
-     &    IRRAMT, RAIN,                               !Inflows
-     &    RESWATADD_T,                                !Inflows
-     &    MULCHEVAP,                                  !Outflows
-!     &    INFILT,                 !Exchange between flood and soil water
-     &    DRAIN, RUNOFF, FRUNOFF, ES, EP, EF, TDFD*10.,!Outflows
-     &    WBALAN, CUMWBAL                             !Balance
+        WRITE (LUNWBL,1300) YEAR, DOY, DAS
+     &    ,(TSW * 10.), FLOOD, SNOW, MULCHWAT         !State variables
+     &    ,IRRAMT, RAIN                               !Inflows
+     &    ,RESWATADD_T                                !Inflows
+     &    ,MULCHEVAP                                  !Outflows
+!!     &    ,INFILT                 !Exchange between flood and soil water
+     &    ,DRAIN, RUNOFF, FRUNOFF, ES, EP, EF, TDFD*10. !Outflows
+     &    ,WBALAN, CUMWBAL                             !Balance
      &    ,SWDELTSTOT*10., SWDELTUTOT*10.,SWDELTXTOT*10., SWDELTTTOT*10.
      &    ,SWDELTLTOT*10.
- 1300   FORMAT(1X,I4,1X,I3.3,1X,I5,3F8.2, 12F7.2, F8.2, F10.2,4X,5F8.3)
+!1300   FORMAT(1X,I4,1X,I3.3,1X,I5,3F8.2, 12F7.2, F8.2, F10.2,4X,5F8.3)
+ 1300   FORMAT(1X,I4,1X,I3.3,1X,I5
+     &      ,3F8.2,F7.2
+     &      ,3F7.2
+     &      ,8F7.2
+     &      ,F8.2,F10.2 !Balances
+     &      ,4X,5F8.2   !SWDELT's
+     &      )
 
         !Save values for comparison tomorrow
         TSWY   = TSW
@@ -242,20 +249,21 @@ C-----------------------------------------------------------------------
      &       /,'!',5X,'========================',T48,'--mm--')
       WRITE (LUNWBL,400)
      &                   YR1, DY1, TSWINI*10,
-     &                   YR2, DY2, TSW*10, TOTEFFIRR,
-     &                   CRAIN, CUMRESWATADD, CUMMULEVAP, 
-     &                   TDRAIN, TDFC*10., TRUNOF,
+     &                   YR2, DY2, TSW*10, 
+     &                   TOTEFFIRR,
+     &                   CRAIN, CUMRESWATADD, 
+     &                   TDRAIN, TDFC*10., TRUNOF, CUMMULEVAP,
      &                   CES, CEP, CEO
   400 FORMAT(
      &    /,'!',5X,'Soil H20 (start) on Year/day',I5,'/',I3.3,T44,F10.2,
      &    /,'!',5X,'Soil H20 (final) on Year/day',I5,'/',I3.3,T44,F10.2,
      &    /,'!',5X,'Effective Irrigation',         T44,F10.2,
      &    /,'!',5X,'Precipitation',                T44,F10.2,
-     &    /,'!',5X,'Water added with new residue', T44,F10.2,
-     &    /,'!',5X,'Mulch evaporation',            T44,F10.2,
+     &    /,'!',5X,'Water added with new mulch',   T44,F10.2,
      &    /,'!',5X,'Drainage',                     T44,F10.2,
      &    /,'!',5X,'Tiledrain flow',               T44,F10.2,
      &    /,'!',5X,'Runoff',                       T44,F10.2,
+     &    /,'!',5X,'Mulch evaporation',            T44,F10.2,
      &    /,'!',5X,'Soil Evaporation',             T44,F10.2,
      &    /,'!',5X,'Transpiration',                T44,F10.2,
      &    /,'!',5X,'Potential ET',                 T44,F10.2)

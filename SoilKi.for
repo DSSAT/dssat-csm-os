@@ -34,7 +34,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: SKi_Avail
 !     ppm
       REAL, DIMENSION(NL) :: Ki_Avail
-      REAL, DIMENSION(NL) :: KAvailIndex, KFertIndex, KExchgIndex
+      REAL, DIMENSION(NL) :: KFertIndex
 
 !==========================================
 !     Define constructed variable types based on definitions in
@@ -67,25 +67,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
         IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
           CALL SoilKi_init (ISWPOT, SOILPROP,             !Input 
-     &    Ki_Avail, SKi_Avail, SKiAvlProf)                !Output
-
-          DO L = 1, NLAYR
-            IF (SOILPROP % OC(L) > 1.E-5) THEN
-               KFertIndex(L) = 1.05 + 0.5 * LOG(SOILPROP % OC(L))
-            ELSE
-               KFertIndex(L) = 0.05   !Value of function at 1.E-6
-            ENDIF
-            IF (SOILPROP % CEC(L) > 1.E-5) THEN
-             KExchgIndex(L) = MIN(1.0, 17.5* SOILPROP % EXK(L) /
-     &                          SOILPROP % CEC(L))
-            ELSE
-               KExchgIndex(L) = 1.00   
-            ENDIF
-
-            KAvailIndex(L) = MIN(KFertIndex(L), KExchgIndex(L), 1.0)
-            Ki_Avail(L) = Ki_Avail(L) * KAvailIndex(L)
-            SKi_Avail(L) = Ki_Avail(L) / KG2PPM(L)
-          ENDDO
+     &    KFertIndex, Ki_Avail, SKi_Avail, SKiAvlProf)    !Output
         ENDIF
 
         KUptake = 0.0
@@ -130,7 +112,7 @@ C-----------------------------------------------------------------------
         DO L = 1, NLAYR
           IF (ADDSKi(L) > 1.E-6) THEN
 !           Add fertilizer to available pool
-            DLTSKiAvail(L) = DLTSKiAvail(L) + ADDSKi(L) 
+            DLTSKiAvail(L) = DLTSKiAvail(L) + ADDSKi(L)
           ENDIF
         ENDDO
       ENDIF

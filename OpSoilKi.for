@@ -35,6 +35,11 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: KUptake
       REAL, DIMENSION(NL) :: Ki_AVAIL
 
+!     Daily balance
+      REAL KFertToday, KUptToday, KUpt_yest
+      REAL K_yest, CumFert_yest, CumUpt_yest
+      REAL DayBal, CumBal
+
       LOGICAL FEXIST, DOPRINT
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
@@ -92,7 +97,6 @@ C-----------------------------------------------------------------------
       ENDIF
 
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
-      
         !For sequenced run, use replicate
         ! number instead of run number in header.
         IF (RNMODE .EQ. 'Q') THEN
@@ -119,7 +123,7 @@ C-----------------------------------------------------------------------
      &  '    KUP1D    KUP2D    KUP3D    KUP4D    KUP5D')
         CALL YR_DOY(INCDAT(YRDOY,-1), YEARi, DOYi)
         WRITE (LUN,300) YEARi, DOYi, DAS, 
-     &    SKiAvlProf, CumFertK, CumUptakeK,
+     &    NINT(SKiAvlProf), 0, 0,
      &    Ki_AVAIL(1:5), KUptake(1:5)
       ENDIF
 
@@ -139,6 +143,18 @@ C-----------------------------------------------------------------------
       CALL HEADER(SEASINIT, LUNK, RUN)
       StartK = SKiAvlProf
 
+      IF (ISWITCH%IDETL == 'D') THEN
+        WRITE(LUNK,'("@YEAR DOY   DAS",
+     &     "     KAVLD      KUPD      KAPD      DAYBAL      CUMBAL")')
+        CALL YR_DOY(INCDAT(YRDOY,-1), YEARi, DOYi)
+        WRITE (LUNK,350) YEARi, DOYi, DAS, SKiAvlProf
+        K_yest = StartK
+        CumFert_yest = 0.0
+        CumUpt_yest  = 0.0
+        CumBal = 0.0
+        KUpt_yest = 0.0
+      ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     OUTPUT
@@ -153,9 +169,24 @@ C-----------------------------------------------------------------------
       IF (DOPRINT .AND. MOD(DAS, FROP) == 0) THEN
         CALL YR_DOY(YRDOY, YEAR, DOY)
         WRITE (LUN,300) YEAR, DOY, DAS, 
-     &    SKiAvlProf, CumFertK, CumUptakeK,
+     &    NINT(SKiAvlProf), NINT(CumFertK), NINT(CumUptakeK),
      &    Ki_AVAIL(1:5), KUptake(1:5)
-  300   FORMAT(1X,I4,1X,I3.3,1X,I5,40(1X,F8.3))    
+  300   FORMAT(1X,I4,1X,I3.3,1X,I5,3I9,5F9.0,5F9.2)    
+      ENDIF
+
+      IF (ISWITCH%IDETL == 'D') THEN
+        KFertToday = CumFertK - CumFert_yest
+        KUptToday  = CumUptakeK - CumUpt_yest
+        DayBal = SkiAvlProf - K_yest - KFertToday + KUpt_yest
+        CumBal = CumBal + DayBal
+        CALL YR_DOY(YRDOY, YEAR, DOY)
+        WRITE(LUNK,350) YEAR, DOY, DAS, 
+     &    SKiAvlProf, KFertToday, KUptToday, DayBal, CumBal 
+  350   FORMAT(1X,I4,1X,I3.3,1X,I5,3F10.2,2F12.3)
+        CumFert_yest = CumFertK
+        CumUpt_yest  = CumUptakeK
+        K_yest = SkiAvlProf
+        KUpt_yest = KUptToday
       ENDIF
 
 !***********************************************************************
@@ -168,7 +199,7 @@ C-----------------------------------------------------------------------
       IF (DOPRINT .AND. MOD(DAS, FROP) .NE. 0) THEN
         CALL YR_DOY(YRDOY, YEAR, DOY) 
         WRITE (LUN,300) YEAR, DOY, DAS, 
-     &  SKiAvlProf, CumFertK, CumUptakeK,
+     &  NINT(SKiAvlProf), NINT(CumFertK), NINT(CumUptakeK),
      &  Ki_AVAIL(1:5), KUptake(1:5)
       ENDIF
 
@@ -177,22 +208,24 @@ C-----------------------------------------------------------------------
 
 !     --------------------------------------------------------
 !     Seasonal K balance
-      WRITE(LUNK,400) StartK, YEARi, DOYi
+      IF (DOPRINT) THEN
+        WRITE(LUNK,400) NINT(StartK), YEARi, DOYi
+      
+        WRITE(LUNK,410) NINT(CumFertK)
+        WRITE(LUNK,420) NINT(CumUptakeK)
+        WRITE(LUNK,430) NINT(SKiAvlProf), YEAR, DOY
+        
+        BALANCE = StartK + CumFertK - CumUptakeK - SKiAvlProf
+        WRITE(LUNK,440) BALANCE
+      ENDIF
 
-      WRITE(LUNK,410) CumFertK
-      WRITE(LUNK,420) CumUptakeK
-      WRITE(LUNK,430) SKiAvlProf, YEAR, DOY
- 
-      BALANCE = StartK + CumFertK - CumUptakeK - SKiAvlProf
-      WRITE(LUNK,440) BALANCE
-
-  400 FORMAT(/,"  Starting K:    ",F6.1," kg/ha on ",I4,1X,I3.3) 
-  410 FORMAT(  "  Fertilizer K: +",F6.1," kg/ha") 
-  420 FORMAT(  "  K Uptake:     -",F6.1," kg/ha") 
-  430 FORMAT(  "  Ending K:     -",F6.1," kg/ha on ",I4,1X,I3.3) 
-  440 FORMAT(  "                  -------------",
-     &       /,"  K Balance:     ",F6.2," kg/ha",
-     &      //,"  -----------------------------------------------",/) 
+  400 FORMAT(/,"!  Starting K:    ",I10," kg/ha on ",I4,1X,I3.3) 
+  410 FORMAT(  "!  Fertilizer K: +",I10," kg/ha") 
+  420 FORMAT(  "!  K Uptake:     -",I10," kg/ha") 
+  430 FORMAT(  "!  Ending K:     -",I10," kg/ha on ",I4,1X,I3.3) 
+  440 FORMAT(  "!                  -------------",
+     &       /,"!  K Balance:     ",F10.1," kg/ha",
+     &      //,"!  -----------------------------------------------",/) 
     
 !     --------------------------------------------------------
 !     Write end of season summary info for SUMMARY.OUT file

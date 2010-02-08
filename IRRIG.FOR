@@ -258,7 +258,7 @@ C
 !         4:  Sprinkler irrigation of specified amount (mm)
 !         5:  Drip or trickle irrigation of specified amount (mm)
 !         6:  Single irrigation to specified total flood depth (mm)
-!         7:  Water table depth (mm)
+!         7:  Water table depth (cm)
 !         8:  Percolation rate (mm/d)
 !         9:  Bund height (mm)
 !        10:  Puddling (Puddled if IRRCOD = 10 record is present)
@@ -294,8 +294,8 @@ C
              JWTBRD(NTBL) = IDLAPL(I)  
 !            JULWTB can be modified for sequenced or multi-year runs  
              JULWTB(NTBL) = IDLAPL(I)
-             WTABL(NTBL)   = AMT(I)         ! New from GH
-             PWAT(NTBL)    = AMT(I)/10.0
+             WTABL(NTBL)   = AMT(I)         !cm
+!            PWAT(NTBL)    = AMT(I)/10.0
 
           !------------------------------
            CASE (8)
@@ -663,10 +663,10 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Transfer data to ModuleData
-      CALL PUT('MGMT','TOTIR', TOTIR)
-      CALL PUT('MGMT','EFFIRR',EFFIRR)
-      CALL PUT('MGMT','IRRAMT',IRRAMT)
-      CALL PUT('MGMT','DEPIR', DEPIR)
+      CALL PUT('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm)
+      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigAtion (mm)
+      CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
+      CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
 
 !***********************************************************************
       ENDIF

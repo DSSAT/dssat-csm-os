@@ -60,11 +60,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 0
-        INTEGER :: Build =40
+        INTEGER :: Build =41
       END TYPE VersionType
       TYPE (VersionType) Version
 
 !     Version history:
+!       4.5.0.41 chp 02/08/2010 Resource productivity.
 !       4.5.0.40 chp 01/12/2010 Ammonia volatilization bug fixed.
 !       4.5.0.39 chp 01/08/2010 Changes to default switch settings, output options
 !       4.5.0.38 chp 11/02/2009 GIT source control starting version

@@ -74,11 +74,10 @@ C=======================================================================
 
       INTERFACE 
         SUBROUTINE OPSTRESS(CONTROL, IDETO,   
-     &    ET, EP, PlantStres, WEATHER, YIELD, BIOMAS)
+     &    PlantStres, WEATHER, YIELD, BIOMAS)
           USE ModuleDefs 
           TYPE (ControlType), Intent(IN)           :: CONTROL
           CHARACTER*1,        Intent(IN), Optional :: IDETO
-          REAL,               Intent(IN), Optional :: ET, EP
           TYPE (PlStresType), Intent(IN), Optional :: PlantStres
           TYPE (WeatherType), Intent(IN), Optional :: WEATHER
           INTEGER,            Intent(IN), Optional :: YIELD

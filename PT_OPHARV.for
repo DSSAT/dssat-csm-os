@@ -421,11 +421,6 @@ C-----------------------------------------------------------------------
         WRITE(Simulated(22),'(I8)') DNR0;WRITE(Measured(22),'(I8)')DEMRG
       ENDIF
 !-------------------------------------------------------------------
-      CALL OPVIEW(CONTROL, 
-     &    BIOMAS*10., ACOUNT, DESCRIP, IDETO, LeafNo, 
-     &    Measured, PlantStres, Simulated, STGDOY, STNAME, 
-     &    WTNCAN*10., XLAI, NINT(YIELD), YRPLT, ISTAGE)
-
 !         Compute values to be sent to OPSUM for SUMMARY.OUT file.
           GPP = 0.0
           WTNFX  = 0.0
@@ -454,6 +449,11 @@ C-----------------------------------------------------------------------
 
           !Send labels and values to OPSUM
           CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+
+      CALL OPVIEW(CONTROL, 
+     &    BIOMAS*10., ACOUNT, DESCRIP, IDETO, LeafNo, 
+     &    Measured, PlantStres, Simulated, STGDOY, STNAME, 
+     &    WTNCAN*10., XLAI, NINT(YIELD), YRPLT, ISTAGE)
 
       !Send Observed and Simulated datat to OPSUM
       CALL EvaluateDat (ACOUNT, Measured, Simulated, DESCRIP, OLAP) 

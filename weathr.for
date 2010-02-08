@@ -76,15 +76,15 @@ C=======================================================================
       PARAMETER (PI=3.14159, RAD=2.0*PI/365.0)
 
       INTERFACE 
-        SUBROUTINE OPSTRESS(C, I, ET, EP, PL, WEATHER, Y, B)
-          USE ModuleDefs
-          TYPE (ControlType), Intent(IN)           :: C
-          CHARACTER*1,        Intent(IN), Optional :: I
-          REAL,               Intent(IN), Optional :: ET,EP
-          TYPE (PlStresType), Intent(IN), Optional :: PL
+        SUBROUTINE OPSTRESS(CONTROL, IDETO,   
+     &    PlantStres, WEATHER, YIELD, BIOMAS)
+          USE ModuleDefs 
+          TYPE (ControlType), Intent(IN)           :: CONTROL
+          CHARACTER*1,        Intent(IN), Optional :: IDETO
+          TYPE (PlStresType), Intent(IN), Optional :: PlantStres
           TYPE (WeatherType), Intent(IN), Optional :: WEATHER
-          INTEGER,            Intent(IN), Optional :: Y
-          REAL,               Intent(IN), Optional :: B
+          INTEGER,            Intent(IN), Optional :: YIELD
+          REAL,               Intent(IN), Optional :: BIOMAS
         END SUBROUTINE OPSTRESS
       END INTERFACE
 
@@ -364,6 +364,8 @@ C-----------------------------------------------------------------------
       WEATHER % REFHT  = REFHT
       WEATHER % WINDHT = WINDHT 
       WEATHER % XLAT   = XLAT  
+      WEATHER % TAMP   = TAMP  
+      WEATHER % TAV    = TAV   
 
 !     Daily data
       WEATHER % AMTRH  = AMTRH
@@ -376,9 +378,7 @@ C-----------------------------------------------------------------------
       WEATHER % SNDN   = SNDN  
       WEATHER % SNUP   = SNUP  
       WEATHER % SRAD   = SRAD  
-      WEATHER % TAMP   = TAMP  
       WEATHER % TA     = TA    
-      WEATHER % TAV    = TAV   
       WEATHER % TAVG   = TAVG  
       WEATHER % TDAY   = TDAY  
       WEATHER % TDEW   = TDEW  

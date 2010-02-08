@@ -48,8 +48,9 @@
       INTEGER NLAYR    
 
 !     Soil properties:
-      REAL, DIMENSION(NL) :: CaCO3, CEC, CLAY, EXCA, EXK, EXNA, KG2PPM 
-      REAL, DIMENSION(NL) :: P_AVAILINDEX, PH, TOTBAS, TOTP
+      REAL, DIMENSION(NL) :: CaCO3, CEC, CLAY, EXK, KG2PPM 
+!     REAL, DIMENSION(NL) :: EXCA, EXNA, TOTP 
+      REAL, DIMENSION(NL) :: P_AVAILINDEX, PH, TOTBAS
       REAL, DIMENSION(NL) :: PiActive, PiLabile, PiStable, PiTotal
 
 !     Rate coefficients:
@@ -70,14 +71,14 @@
       CaCO3  = SOILPROP % CaCO3
       CEC    = SOILPROP % CEC
       CLAY   = SOILPROP % CLAY
-      EXCA   = SOILPROP % EXCA
+!     EXCA   = SOILPROP % EXCA
       EXK    = SOILPROP % EXK 
-      EXNA   = SOILPROP % EXNA
+!     EXNA   = SOILPROP % EXNA
       KG2PPM = SOILPROP % KG2PPM
       NLAYR  = SOILPROP % NLAYR
       PH     = SOILPROP % PH
       TOTBAS = SOILPROP % TOTBAS
-      TOTP   = SOILPROP % TOTP
+!     TOTP   = SOILPROP % TOTP
       SOILLAYERTYPE = SOILPROP % SOILLAYERTYPE
 
 !     ------------------------------------------------------------------

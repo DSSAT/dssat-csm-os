@@ -46,9 +46,12 @@ C=======================================================================
 !       Added 12/12/2005 Organic Matter
         INTEGER OCTAM, ONTAM, OPAM, OPTAM
 
-!       Added 06/27/2007 Water Productivity
+!       Added 06/27/2007 Water productivity
+        REAL DMPEM, DMPPM, DMPTM, YPEM, YPPM, YPTM
 !       Added 01/07/2010 Irrigation productivity
-        REAL DMPEM, DMPPM, DMPTM, DMPIM, YPEM, YPPM, YPTM, YPIM
+        REAL DMPIM, YPIM
+!       Added 01/27/2010 N productivity
+        REAL DPNAM, DPNUM, YPNAM, YPNUM
 
       End Type SummaryType
 
@@ -109,9 +112,12 @@ C-----------------------------------------------------------------------
 !     Added 12/12/2005 
       INTEGER OCTAM, ONTAM, OPAM, OPTAM
 
-!     Added 06/27/2007 Water Productivity
-!     Added 01/07/2010 Irrigation Productivity
-      REAL DMPEM, DMPPM, DMPTM, DMPIM, YPEM, YPPM, YPTM, YPIM
+!     Added 06/27/2007 Water productivity
+      REAL DMPEM, DMPPM, DMPTM, YPEM, YPPM, YPTM
+!     Added 01/07/2010 Irrigation productivity
+      REAL DMPIM, YPIM
+!     Added 01/27/2010 N productivity
+      REAL DPNAM, DPNUM, YPNAM, YPNUM
 
       LOGICAL FEXIST
 
@@ -307,6 +313,11 @@ C     Initialize OPSUM variables.
       SUMDAT % YPTM   = -99.0 !Yield-EP productivity(kg[yield]/m3[EP]
       SUMDAT % YPIM   = -99.0 !Yield-irr productivity(kg[yield]/m3[I]
 
+      SUMDAT % DPNAM  = -99.0 !Dry matter : N applied
+      SUMDAT % DPNUM  = -99.0 !Dry matter : N uptake
+      SUMDAT % YPNAM  = -99.0 !Yield : N applied
+      SUMDAT % YPNUM  = -99.0 !Yield : N uptake
+
       CALL GET('WEATHER','WSTA',WSTAT)
 !      IF (LenString(WSTAT) < 1) THEN
 !        WSTAT = WSTATION
@@ -379,6 +390,11 @@ C     Initialize OPSUM variables.
       YPTM = SUMDAT % YPTM    !Yield-EP productivity(kg[yield]/m3[EP]
       YPIM = SUMDAT % YPIM    !Yield-irr productivity(kg[yield]/m3[I]
 
+      DPNAM  = SUMDAT % DPNAM !Dry matter : N applied
+      DPNUM  = SUMDAT % DPNUM !Dry matter : N uptake
+      YPNAM  = SUMDAT % YPNAM !Yield : N applied
+      YPNUM  = SUMDAT % YPNUM !Yield : N uptake
+
 C-------------------------------------------------------------------
 C
 C  Simulation Summary File
@@ -428,9 +444,10 @@ C-------------------------------------------------------------------
      &    'NITROGEN......................................  ',
      &    'PHOSPHORUS............  ',
      &    'POTASSIUM.............  ',
-     &    'ORGANIC MATTER..................................   ',
-     &    'WATER PRODUCTIVITY.................................',
-     &    '..................')
+     &    'ORGANIC MATTER..................................    ',
+     &    'WATER PRODUCTIVITY..................................',
+     &    '................    ',
+     &    'NITROGEN PRODUCTIVITY...........')
 
           WRITE (NOUTDS,400)
   400     FORMAT ('@   RUNNO   TRNO R# O# C# CR TNAM                ',
@@ -444,7 +461,8 @@ C-------------------------------------------------------------------
      &    '  KI#M  KICM  KUPC  SKAM',
      &    '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM',
      &    '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
-     &    '     YPTM     YPIM')
+     &    '     YPTM     YPIM',
+     &    '    DPNAM    DPNUM    YPNAM    YPNUM')
         ENDIF
 
         IF (BWAH < -1) BWAH = -9.9
@@ -470,7 +488,8 @@ C-------------------------------------------------------------------
      &    KINUMM, KICM, KUPC, SKAM,        !K data
      &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
 !         Water productivity
-     &    DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM   
+     &    DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM,
+     &    DPNAM, DPNUM, YPNAM, YPNUM
 
 !       RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
   500   FORMAT (I9,1X,I6,3(I3),               
@@ -500,7 +519,11 @@ C-------------------------------------------------------------------
      &  4(1X,I6),2(1X,I7),       
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
-     &  4F9.1,4F9.2)                          
+     &  4F9.1,4F9.2,
+
+!       DPNAM, DPNUM, YPNAM, YPNUM
+     &  4F9.1)
+                          
 
         CLOSE (NOUTDS)
       ENDIF
@@ -739,10 +762,15 @@ C=======================================================================
         CASE ('DMPEM');SUMDAT % DMPEM  = VALUE(I)
         CASE ('DMPTM');SUMDAT % DMPTM  = VALUE(I)
         CASE ('DMPIM');SUMDAT % DMPIM  = VALUE(I)
+        CASE ('DPNAM');SUMDAT % DPNAM  = VALUE(I)
+        CASE ('DPNUM');SUMDAT % DPNUM  = VALUE(I)
+
         CASE ('YPPM'); SUMDAT % YPPM   = VALUE(I)
         CASE ('YPEM'); SUMDAT % YPEM   = VALUE(I)
         CASE ('YPTM'); SUMDAT % YPTM   = VALUE(I)
         CASE ('YPIM'); SUMDAT % YPIM   = VALUE(I)
+        CASE ('YPNAM');SUMDAT % YPNAM  = VALUE(I)
+        CASE ('YPNUM');SUMDAT % YPNUM  = VALUE(I)
 
         END SELECT
       ENDDO

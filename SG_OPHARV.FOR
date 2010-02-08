@@ -257,7 +257,7 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
       YRDOY = CONTROL % YRDOY
       IF (YRDOY >= YRPLT) THEN
         IF (MDATE < 0 .OR.
-     &     (MDATE > 0 .AND. YRDOY < MDATE)) THEN
+     &     (MDATE > 0 .AND. YRDOY <= MDATE)) THEN
           PlantStres % ACTIVE(0) = .TRUE.
         ENDIF
       ENDIF
@@ -442,11 +442,6 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
 
       ENDIF
 
-      CALL OPVIEW(CONTROL, 
-     &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN,  
-     &    Measured, PlantStres, Simulated, STGDOY, 
-     &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
-
 !-------------------------------------------------------------------
 !     Send information to OPSUM to generate SUMMARY.OUT file
 !-------------------------------------------------------------------
@@ -477,6 +472,11 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
 
       !Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
+
+      CALL OPVIEW(CONTROL, 
+     &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN,  
+     &    Measured, PlantStres, Simulated, STGDOY, 
+     &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
 
       !Send Measured and Simulated datat to OPSUM
       CALL EvaluateDat (ACOUNT, Measured, Simulated, DESCRIP, OLAP) 

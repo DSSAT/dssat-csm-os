@@ -11,12 +11,13 @@
 !  Revision history
 !  10/20/2005 CHP Written based on CROPGRO v3.5 routines SUMWTH and OPSTRS
 !  01/07/2010 CHP Add irrigation water productivity to Overview and Summary
+!  01/26/2010 CHP Add N productivity
 !-----------------------------------------------------------------------
 
       SUBROUTINE OPSTRESS(CONTROL, IDETO,   
-     &    ET, EP, PlantStres, WEATHER, YIELD, BIOMAS)
+     &    PlantStres, WEATHER, YIELD, BIOMAS)
 
-      USE ModuleDefs 
+      USE SumModule
       USE ModuleData
       IMPLICIT  NONE
       SAVE
@@ -27,7 +28,6 @@
 !     Interface variables
       TYPE (ControlType), Intent(IN)           :: CONTROL
       CHARACTER*1,        Intent(IN), Optional :: IDETO
-      REAL,               Intent(IN), Optional :: ET, EP
       TYPE (PlStresType), Intent(IN), Optional :: PlantStres
       TYPE (WeatherType), Intent(IN), Optional :: WEATHER
       INTEGER,            Intent(IN), Optional :: YIELD
@@ -45,15 +45,18 @@
       REAL TMAX, TMIN, RAIN, DAYL, SRAD
       REAL N_phot, N_grow, W_phot, W_grow
       REAL P_grow, P_phot
-      REAL ET_L, EP_L
+      REAL ET_L, EP_L, TOTIR
       REAL DMP_Rain, GrP_Rain, DMP_ET, GrP_ET, DMP_EP, GrP_EP 
       REAL DEPIR, DMP_Irr, GrP_Irr
+      REAL DMP_NApp, GrP_NApp, DMP_NUpt, GrP_NUpt
+      REAL CumNit
+
       REAL, DIMENSION(0:MaxStag) :: N_photR, CETR, CEPR, DAYLR, N_growR
-      REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR,CumIrr
+      REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR
       REAL, DIMENSION(0:MaxStag) :: W_photR, TMAXR, TMINR, W_growR
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 8
+      INTEGER, PARAMETER :: SUMNUM = 12
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -61,7 +64,7 @@
       TYPE (SwitchType) ISWITCH
 
 !-----------------------------------------------------------------------
-      LOGICAL FIRST !, FEXIST
+      LOGICAL FIRST 
       DATA FIRST /.TRUE./
 
       IF (FIRST) THEN
@@ -150,12 +153,8 @@
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. OUTPUT) THEN
 !-----------------------------------------------------------------------
-      IF (PRESENT(ET)) THEN
-        ET_L = ET
-      ENDIF
-      IF (PRESENT(EP)) THEN
-        EP_L = EP
-      ENDIF
+      CALL GET('SPAM','ET',ET_L)
+      CALL GET('SPAM','EP',EP_L)
 
       IF (PRESENT(PlantStres)) THEN
         W_grow = PlantStres % W_grow  !was TURFAC
@@ -173,7 +172,7 @@
             TMAXR(I) = TMAXR(I) + TMAX
             TMINR(I) = TMINR(I) + TMIN
             RAINR(I) = RAINR(I) + RAIN
-            CumIrr(I)= CumIrr(I)+ DEPIR
+!           CumIrr(I)= CumIrr(I)+ DEPIR
             DAYLR(I) = DAYLR(I) + DAYL
             RADR (I) = RADR (I) + SRAD 
             CETR(I)  = CETR(I)  + ET_L
@@ -186,8 +185,8 @@
             P_photR(I) = P_photR(I) + P_phot
           ENDIF
         ENDDO
-
       ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     SEASONAL OUTPUT
@@ -196,13 +195,8 @@
 !-----------------------------------------------------------------------
       IF (IDETO_SAVE .EQ. 'Y' .AND. STTOT > 0 .AND.
      &      CONTROL % ErrCode == 0) THEN
-!        INQUIRE (FILE = OUTO, EXIST = FEXIST)
-!        IF (.NOT. FEXIST) RETURN !ERROR?
-!
-!        OPEN (UNIT = NOUTDO, FILE = OUTO, STATUS = 'OLD',
-!     &    POSITION = 'APPEND')
         WRITE(NOUTDO,500)
- 500  FORMAT(//,'*ENVIRONMENTAL AND STRESS FACTORS',//,
+ 500    FORMAT(//,'*ENVIRONMENTAL AND STRESS FACTORS',//,
      &' |-----Development Phase------|-------------Environment--------',
      &'------|----------------Stress-----------------|',/,
      &30X,'|--------Average-------|---Cumulative--|         (0=Min, 1=',
@@ -284,18 +278,7 @@
         ENDIF
       ENDIF
 
-
-!      IF (IDETO_SAVE .EQ. 'Y' .AND. STTOT > 0) THEN
-!        WRITE (NOUTDO,1100)
-! 1100   FORMAT (/,67X,'(0.0 = Minimum Stress',/,
-!     &            67X,' 1.0 = Maximum Stress)')
-!      ENDIF
-
-!      IF (RNMODE .EQ. 'I' .AND. NYRS .LE. 1) THEN
-!        WRITE (*,1100)
-!      ENDIF
-
-!     Water productivity calculations
+!       Resource productivity calculations
       IF (CONTROL % ErrCode == 0) THEN
         IF (PRESENT(YIELD) .AND. PRESENT(BIOMAS) .AND. NNR(0) > 0) THEN
           IF (CONTROL % CROP /= 'FA') THEN
@@ -304,9 +287,11 @@
               GrP_Rain = YIELD  / RAINR(0)
             ENDIF
           
-            IF (CumIrr(0) > 1.E-3) THEN
-              DMP_Irr = Biomas / CumIrr(0) 
-              GrP_Irr = YIELD  / CumIrr(0)
+            CALL GET('MGMT','TOTIR', TOTIR)   !Tot applied irrig (mm)
+
+            IF (TOTIR > 1.E-3) THEN
+              DMP_Irr = Biomas / TOTIR 
+              GrP_Irr = YIELD  / TOTIR
             ENDIF
           
             IF (CETR(0) > 1.E-3) THEN
@@ -327,67 +312,101 @@
      &      CETR(0),  DMP_ET*0.1,   DMP_ET,   GrP_ET*0.1,   GrP_ET, 
      &      CEPR(0),  DMP_EP*0.1,   DMP_EP,   GrP_EP*0.1,   GrP_EP
 
-            IF (CumIrr(0) > 1.E-3) THEN
+            IF (TOTIR > 1.E-3) THEN
               WRITE(NOUTDO, 1210) 
-     &          CumIrr(0), DMP_Irr*0.1, DMP_Irr, GrP_Irr*0.1, GrP_Irr
+     &          TOTIR, DMP_Irr*0.1, DMP_Irr, GrP_Irr*0.1, GrP_Irr
             ENDIF
           ENDIF
+
+          IF (ISWITCH % ISWNIT == 'Y') THEN
+            CALL GET('MGMT', 'FERNIT', CumNit)
+            IF (CumNit > 1.E-3) THEN
+              DMP_NApp = Biomas / CumNit
+              GrP_NApp = YIELD  / CumNit
+              WRITE(NOUTDO, 1220) CumNit, DMP_NApp, GrP_NApp 
+            ENDIF
+          
+            IF (SUMDAT % NUCM > 1.E-3) THEN
+              DMP_NUpt = Biomas / float(SUMDAT % NUCM)
+              GrP_NUpt = YIELD  / float(SUMDAT % NUCM)
+              WRITE(NOUTDO, 1230) SUMDAT % NUCM, DMP_NUpt,GrP_NUpt
+            ENDIF
+          
+          ENDIF !ISWNIT == 'Y'
+
+!         Reset arrays for next run.
+          TMAXR = 0.0
+          TMINR = 0.0
+          RAINR = 0.0
+          DAYLR = 0.0
+          RADR  = 0.0
+          CETR  = 0.0
+          W_growR = 0.0
+          W_photR = 0.0
+          N_growR = 0.0
+          N_photR = 0.0
+          P_growR = 0.0
+          P_photR = 0.0
+          NNR   = 0
+
         ENDIF
       ENDIF
 
  1200 FORMAT(
      &'------------------------------------------------------',
      &'--------------------------------------------------------',
-     &//,'*Water Productivity',
+     &//,'*Resource Productivity',
      & /,' Growing season length:', I4,' days ',
-     &//,' Precipitation during growth season',T42,F7.1,' mm[rain]',
+     &//,' Precipitation during growing season',T42,F7.1,' mm[rain]',
      & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[rain]',
      &                       T75,'=',F7.1,' kg[DM]/ha per mm[rain]',
      & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[rain]',
      &                       T75,'=',F7.1,' kg[yield]/ha per mm[rain]',
-     &//,' Evapotranspiration during growth season',T42,F7.1,' mm[ET]',
+     &//,' Evapotranspiration during growing season',T42,F7.1,' mm[ET]',
      & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[ET]',
      &                       T75,'=',F7.1,' kg[DM]/ha per mm[ET]',
      & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[ET]',
      &                       T75,'=',F7.1,' kg[yield]/ha per mm[ET]',
-     &//,' Transpiration during growth season',T42,F7.1,' mm[EP]',
+     &//,' Transpiration during growing season',T42,F7.1,' mm[EP]',
      & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[EP]',
      &                       T75,'=',F7.1,' kg[DM]/ha per mm[EP]',
      & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[EP]',
      &                       T75,'=',F7.1,' kg[yield]/ha per mm[EP]')
  1210 FORMAT(
-     & /,' Irrigation during growth season',T42,F7.1,' mm[irrig]',
+     & /,' Irrigation during growing season',T42,F7.1,' mm[irrig]',
      & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[irrig]',
      &                       T75,'=',F7.1,' kg[DM]/ha per mm[irrig]',
      & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[irrig]',
      &                       T75,'=',F7.1,' kg[yield]/ha per mm[irrig]')
-      
-!     Reset arrays for next run.
-      TMAXR = 0.0
-      TMINR = 0.0
-      RAINR = 0.0
-      DAYLR = 0.0
-      RADR  = 0.0
-      CETR  = 0.0
-      W_growR = 0.0
-      W_photR = 0.0
-      N_growR = 0.0
-      N_photR = 0.0
-      P_growR = 0.0
-      P_photR = 0.0
-      NNR   = 0
+ 1220 FORMAT(
+     & /,' N applied during growing season',T42,F7.0,' kg[N applied]/ha'
+     & /,'   Dry Matter Productivity',T42,F7.1,' kg[DM]/kg[N applied]',
+     & /,'   Yield Productivity',T42,F7.1,' kg[yield]/kg[N applied]')
+ 1230 FORMAT(
+     & /,' N uptake during growing season',T42,I7,' kg[N uptake]/ha'
+     & /,'   Dry Matter Productivity',T42,F7.1,' kg[DM]/kg[N uptake]',
+     & /,'   Yield Productivity',T42,F7.1,' kg[yield]/kg[N uptake]')
 
 !-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  
-      LABEL(1)  = 'DMPEM'; VALUE(1) = DMP_ET
-      LABEL(2)  = 'DMPPM'; VALUE(2) = DMP_Rain
-      LABEL(3)  = 'DMPTM'; VALUE(3) = DMP_EP 
-      LABEL(4)  = 'YPEM '; VALUE(4) = GrP_ET
-      LABEL(5)  = 'YPPM '; VALUE(5) = GrP_Rain 
-      LABEL(6)  = 'YPTM '; VALUE(6) = GrP_EP
-      LABEL(7)  = 'DMPIM'; VALUE(7) = DMP_Irr
-      LABEL(8)  = 'YPIM '; VALUE(8) = GrP_Irr
+      LABEL(1)  = 'DMPPM'; VALUE(1)  = DMP_Rain
+      LABEL(2)  = 'YPPM '; VALUE(2)  = GrP_Rain 
+                                    
+      LABEL(3)  = 'DMPEM'; VALUE(3)  = DMP_ET
+      LABEL(4)  = 'YPEM '; VALUE(4)  = GrP_ET
+                                    
+      LABEL(5)  = 'DMPTM'; VALUE(5)  = DMP_EP 
+      LABEL(6)  = 'YPTM '; VALUE(6)  = GrP_EP
+                                    
+      LABEL(7)  = 'DMPIM'; VALUE(7)  = DMP_Irr
+      LABEL(8)  = 'YPIM '; VALUE(8)  = GrP_Irr
+                                    
+      LABEL(9)  = 'DPNAM'; VALUE(9)  = DMP_NApp
+      LABEL(10) = 'YPNAM'; VALUE(10) = GrP_NApp
+                                    
+      LABEL(11) = 'DPNUM'; VALUE(11) = DMP_NUpt
+      LABEL(12) = 'YPNUM'; VALUE(12) = GrP_NUpt
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 

@@ -522,7 +522,7 @@ C     Print seasonal summaries and close files.
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
 
-C     Call management operations module for seasonal printout.
+!     Call management operations module for seasonal printout.
       CALL MGMTOPS(CONTROL, ISWITCH, 
      &    FLOODWAT, HARVRES, NSTRES, SOILPROP, ST,        !Input 
      &    STGDOY, SW, WEATHER,                            !Input

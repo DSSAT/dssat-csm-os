@@ -75,20 +75,6 @@ C=======================================================================
 !     Flood management variables:
       REAL FLOOD
 
-!     Needed to send ET to OPSTRESS
-      INTERFACE 
-        SUBROUTINE OPSTRESS(C, I, ET, EP, PL, W, Y, B)
-          USE ModuleDefs
-          TYPE (ControlType), Intent(IN)           :: C
-          CHARACTER*1,        Intent(IN), Optional :: I
-          REAL,               Intent(IN), Optional :: ET, EP
-          TYPE (PlStresType), Intent(IN), Optional :: PL
-          TYPE (WeatherType), Intent(IN), Optional :: W
-          INTEGER,            Intent(IN), Optional :: Y
-          REAL,               Intent(IN), Optional :: B
-        END SUBROUTINE OPSTRESS
-      END INTERFACE
-
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -462,7 +448,7 @@ C-----------------------------------------------------------------------
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
 
-      CALL OPSTRESS(CONTROL, ET=ET, EP=EP)
+!      CALL OPSTRESS(CONTROL, ET=ET, EP=EP)
 
 !***********************************************************************
 !***********************************************************************
@@ -485,6 +471,17 @@ C-----------------------------------------------------------------------
      &    WEATHER, XHLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
+
+!     Transfer data to storage routine
+      CALL PUT('SPAM', 'CEF', CEF)
+      CALL PUT('SPAM', 'CEM', CEM)
+      CALL PUT('SPAM', 'CEO', CEO)
+      CALL PUT('SPAM', 'CEP', CEP)
+      CALL PUT('SPAM', 'CES', CES)
+      CALL PUT('SPAM', 'CET', CET)
+      CALL PUT('SPAM', 'ET',  ET)
+
+!      CALL OPSTRESS(CONTROL, ET=ET, EP=EP)
 
 !***********************************************************************
 !***********************************************************************

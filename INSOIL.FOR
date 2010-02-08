@@ -118,7 +118,11 @@ C=======================================================================
             SNH4(L) = INH4(L) / KG2PPM(L)
             AINO3   = AINO3   + SNO3(L)
             AINH4   = AINH4   + SNH4(L)
-            HUM(L)  = OC(L)*1000.0 * BD(L)*DLAYR(L)
+            IF (OC(L) > 1.E-6) THEN
+              HUM(L)  = OC(L)*1000.0 * BD(L)*DLAYR(L)
+            ELSE
+              HUM(L) = 0.0
+            ENDIF
             TSOC    = TSOC    + HUM(L)
          ENDIF
       END DO
