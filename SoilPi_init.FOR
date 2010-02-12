@@ -31,7 +31,7 @@
       SUBROUTINE SoilPi_init (CONTROL, 
      &    ISWPHO, SOILPROP,                               !Input
      &    K_ACT2LAB, K_ACT2STA, K_LAB2ACT, K_STA2ACT,     !Output
-     &    PiActive, PiLabile, PiStable)                   !Output
+     &    PiActive, PiLabile, PiStable, YREND)            !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -45,7 +45,7 @@
       CHARACTER*78 MSG(20), WMSG(10)
 
       INTEGER I, L, NMSG
-      INTEGER NLAYR    
+      INTEGER NLAYR, YREND  
 
 !     Soil properties:
       REAL, DIMENSION(NL) :: CaCO3, CEC, CLAY, EXK, KG2PPM 
@@ -186,9 +186,10 @@
 !           No measured P -- model must stop
             MSG(3) = "Cannot run phosphorus model without" // 
      &            " some soil P measurement."
-            MSG(4) = "Model will stop."
-            CALL WARNING(4,ERRKEY,MSG)
+            CALL WARNING(3,ERRKEY,MSG)
+           !CALL ErrorCode(CONTROL, 101, ERRKEY, YREND)
             CALL ERROR(ERRKEY,1,' ',0)
+            RETURN
           ELSEIF (PMethod == 'SA005' .OR. PMethod == 'SA010') THEN
 !           Labile P measured directly with resin extraction or Pi Strip
             PiLabile(L) = PMeasured(L) 

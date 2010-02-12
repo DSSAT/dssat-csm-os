@@ -191,7 +191,9 @@ C                                                                !BDB
 C-GH      READ  (*, *)
 
       CLOSE (ELUN)
-      CALL WARNING(IMSG-1, ERRKEY, MSG)
+
+      WRITE(MSG(IMSG),'(A)') "Simulations terminated."
+      CALL WARNING(IMSG, ERRKEY, MSG)
 
 !      INQUIRE (FILE = "LUN.LST", EXIST = FEXIST)
 !      IF (FEXIST) THEN
@@ -259,3 +261,39 @@ C-GH      READ  (*, *)
 
       END SUBROUTINE GENERIC_MSG
 !=========================================================================
+
+!=======================================================================
+! ErrorCode, Subroutine, C.H. Porter, 02/09/2010
+! Ends a run for errors by setting YREND variable.  Continue with next
+!     simulation in batch.  Stops sequence simulation.
+
+!-----------------------------------------------------------------------
+! REVISION HISTORY
+! 02/09/2010 CHP Written
+!-----------------------------------------------------------------------
+      SUBROUTINE ErrorCode(CONTROL, ErrCode, ERRKEY, YREND)
+
+      USE ModuleDefs
+      USE ModuleData
+      IMPLICIT NONE
+
+      CHARACTER(*) ERRKEY 
+      CHARACTER*78 MSG(4)
+      INTEGER ErrCode, YREND
+      TYPE (ControlType) CONTROL
+
+!-----------------------------------------------------------------------
+      YREND = CONTROL%YRDOY
+      CONTROL % ErrCode = ErrCode
+      CALL PUT(CONTROL)
+
+!     For sequence runs, stop run with any error
+      IF(INDEX('FQ',CONTROL%RNMODE) > 0)CALL ERROR(ERRKEY,ErrCode,' ',0)
+
+      WRITE(MSG(1),'(A,I8,A)') "Run",CONTROL%RUN, " will be terminated."
+      CALL WARNING(1,ERRKEY,MSG)
+
+      RETURN
+      END SUBROUTINE ErrorCode
+!=======================================================================
+

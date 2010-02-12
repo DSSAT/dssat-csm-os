@@ -59,6 +59,7 @@ C=======================================================================
 
       LOGICAL FEXIST, LongFile
 
+      PARAMETER (ERRKEY = 'IPWTH ')
       PARAMETER (BLANK = ' ')
 
 !     ============================================================
@@ -968,7 +969,7 @@ C         Read in weather file header.
         MSG(1) = "Warning: SRAD < 1"
         NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)
-        WRITE(MSG(3),'(A,I4)') "Line ", RecNum
+        WRITE(MSG(3),'(A,I8)') "Line ", RecNum
         WRITE(MSG(4),'("SRAD = ",F6.2)') SRAD
         CALL WARNING(4,ERRKEY,MSG) 
       ENDIF
@@ -1089,7 +1090,7 @@ c                   available.
       NCHAR = MIN(76,NCHAR)
       WRITE(MSG(NMSG-1),'(2X,A)') FILEWW(1:NCHAR)
 
-      MSG(NMSG) = "End of simulation."
+      MSG(NMSG) = "Simulation will end."
       CALL WARNING(NMSG,ERRKEY,MSG)
       YREND = CONTROL%YRDOY
       CONTROL % ErrCode = ErrCode

@@ -21,6 +21,7 @@ C                   HIAM, EPCM, ESCM
 !  06/17/2009 CHP Update weather station in SeasInit
 !  01/07/2010 CHP Add irrigation water productivity to Overview and Summary
 !  01/08/2010 CHP Separate switch for Evaluate, but not Overview (IDETO=E)
+!  02/10/2010 CHP Added EDAT.
 C=======================================================================
 
       MODULE SumModule
@@ -29,7 +30,7 @@ C=======================================================================
 
 !     Data construct for summary.out data. Used only by SUMVAL and OPSUM.
       Type SummaryType
-        INTEGER ADAT, MDAT, DWAP, CWAM
+        INTEGER ADAT, EDAT, MDAT, DWAP, CWAM
         INTEGER HWAM
         INTEGER HNUMAM, NFXM, NUCM, CNAM, GNAM
         INTEGER IRNUM, IRCM, ETCM
@@ -91,7 +92,7 @@ C-----------------------------------------------------------------------
       CHARACTER*60 ENAME
 
       INTEGER ADAT, CNAM, CRPNO, CWAM, DNR1, DNR7, DRCM, DWAP, DYNAMIC
-      INTEGER ERRNUM, ETCM, FOUND, GNAM, HNUMAM, HWAM
+      INTEGER EDAT, ERRNUM, ETCM, FOUND, GNAM, HNUMAM, HWAM
       INTEGER I, IRCM, LUNIO, LINC, LNUM, MDAT, IRNUM, NINUMM
       INTEGER NFXM, NIAM, NICM, NLCM, NLINES  !, NNAPHO
       INTEGER NOUTDS, NUCM, NYRS, PRCM, RECM, ROCM, ONAM, OCAM
@@ -254,6 +255,7 @@ C       OPSUM.  This file will be written to by various modules and
 C       deleted upon closing.
 C-----------------------------------------------------------------------
 C     Initialize OPSUM variables.
+      SUMDAT % EDAT   = -99
       SUMDAT % ADAT   = -99
       SUMDAT % MDAT   = -99
       SUMDAT % DWAP   = -99
@@ -308,13 +310,13 @@ C     Initialize OPSUM variables.
       SUMDAT % DMPEM  = -99.0 !Dry matter-ET productivity(kg[DM]/m3[ET]
       SUMDAT % DMPTM  = -99.0 !Dry matter-EP productivity(kg[DM]/m3[EP]
       SUMDAT % DMPIM  = -99.0 !Dry matter-irr productivity(kg[DM]/m3[I]
+      SUMDAT % DPNAM  = -99.0 !Dry matter : N applied
+      SUMDAT % DPNUM  = -99.0 !Dry matter : N uptake
+
       SUMDAT % YPPM   = -99.0 !Yield-rain productivity(kg[yield]/m3[P]
       SUMDAT % YPEM   = -99.0 !Yield-ET productivity(kg[yield]/m3[ET]
       SUMDAT % YPTM   = -99.0 !Yield-EP productivity(kg[yield]/m3[EP]
       SUMDAT % YPIM   = -99.0 !Yield-irr productivity(kg[yield]/m3[I]
-
-      SUMDAT % DPNAM  = -99.0 !Dry matter : N applied
-      SUMDAT % DPNUM  = -99.0 !Dry matter : N uptake
       SUMDAT % YPNAM  = -99.0 !Yield : N applied
       SUMDAT % YPNUM  = -99.0 !Yield : N uptake
 
@@ -329,9 +331,10 @@ C     Initialize OPSUM variables.
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
+      EDAT = SUMDAT % EDAT    !Emergence Date
       ADAT = SUMDAT % ADAT    !Anthesis Date
       MDAT = SUMDAT % MDAT    !Physiological Maturity Date
-
+      
       DWAP = SUMDAT % DWAP    !Planting Material Weight (kg/ha)
       CWAM = SUMDAT % CWAM    !Tops Weight at Maturity (kg/ha)
       HWAM = SUMDAT % HWAM    !Yield at Maturity (kg/ha)
@@ -437,7 +440,7 @@ C-------------------------------------------------------------------
   310     FORMAT(/,
      &    '!IDENTIFIERS................ TREATMENT.......... ',
      &    'SITE INFORMATION............ ',
-     &    'DATES..................................  ',
+     &    'DATES..........................................  ',
      &    'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
      &    '..................  ',
      &    'WATER...............................................  ',
@@ -452,7 +455,7 @@ C-------------------------------------------------------------------
           WRITE (NOUTDS,400)
   400     FORMAT ('@   RUNNO   TRNO R# O# C# CR TNAM                ',
      &    'FNAM     WSTA.... SOIL_ID...  ',
-     &    '  SDAT    PDAT    ADAT    MDAT    HDAT',
+     &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
      &    '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
      &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
      &    '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
@@ -470,7 +473,7 @@ C-------------------------------------------------------------------
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
      &    CROP, TITLET(1:19), FLDNAM, WSTAT, SLNO,
-     &    YRSIM, YRPLT, ADAT, MDAT, YRDOY, 
+     &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
         IF     (HWUM < -.01)  THEN; FMT = '(1X,F7.0)'
@@ -497,8 +500,8 @@ C-------------------------------------------------------------------
 !       CROP, TITLET(1:19), FLDNAM, WSTAT, SLNO,
      &  1X,A2,1X,A19,1X,A8,1X,A8,1X,A10,      
 
-!       YRSIM, YRPLT, ADAT, MDAT, YRDOY, 
-     &  5(1X,I7),
+!       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
+     &  6(1X,I7),
 !       DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM,
      &  1X,I5,4(1X,I7),1X,I5)
 
@@ -698,6 +701,7 @@ C=======================================================================
         SELECT CASE(TRIM(LABEL(I)))
 
         !From OPHARV:
+        CASE ('EDAT'); SUMDAT % EDAT   = NINT(VALUE(I))
         CASE ('ADAT'); SUMDAT % ADAT   = NINT(VALUE(I))
         CASE ('MDAT'); SUMDAT % MDAT   = NINT(VALUE(I))
         CASE ('DWAP'); SUMDAT % DWAP   = NINT(VALUE(I))

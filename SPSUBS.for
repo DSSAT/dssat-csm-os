@@ -54,6 +54,9 @@ C=======================================================================
       TYPE (FloodWatType) FLOODWAT
 !      TYPE (SoilType) SOILPROP
 
+      ISWWAT  = ISWITCH % ISWWAT
+      IF (ISWWAT == 'N') RETURN
+
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
       FROP    = CONTROL % FROP
@@ -63,7 +66,6 @@ C=======================================================================
       YRDOY   = CONTROL % YRDOY
 
       IDETW   = ISWITCH % IDETW
-      ISWWAT  = ISWITCH % ISWWAT
 
       CEF     = FLOODWAT % CEF
 

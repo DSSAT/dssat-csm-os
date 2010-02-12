@@ -27,6 +27,8 @@ C  08/12/2003 CHP Added I/O error checking
 !                   albedo (CMSALB) to SOILPROP variable
 !  09/11/2006 CHP Compute total organic N, TotOrgN, & store in SOILPROP
 !  03/26/2007 CHP Soil layer depth labels added to SoilProp variable 
+!  02/11/2009 CHP Do not run SoilDyn when ISWWAT = 'N'
+!                 Changed condition for missing or zero OC.
 C-----------------------------------------------------------------------
 C  Called : Main
 C  Calls  : 
@@ -44,8 +46,8 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 
-      LOGICAL NOTEXTURE, NO_OC, PHFLAG, FIRST
-      CHARACTER*1 ISWTIL, MEINF, MESOM, RNMODE, UPCASE
+      LOGICAL NOTEXTURE, PHFLAG, FIRST  !, NO_OC
+      CHARACTER*1 ISWTIL, ISWWAT, MEINF, MESOM, RNMODE, UPCASE
       CHARACTER*6 SECTION
       CHARACTER*7, PARAMETER :: ERRKEY = 'SOILDYN'
       CHARACTER*30 FILEIO
@@ -234,6 +236,13 @@ C-----------------------------------------------------------------------
       EXCA   = -99.
       EXK    = -99.
       EXNA   = -99.
+
+!-----------------------------------------------------------------------
+!     Should not need to run this unless soil water is being simulated.
+!     However, currently roots are grown even with no soil water simulation.
+!     Need to fix this in the future
+      ISWWAT = ISWITCH % ISWWAT
+
 !-----------------------------------------------------------------------
 !     Read FILEIO
       OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
@@ -357,7 +366,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
-      IF (CN .LE. 25.0 .OR. CN .GT. 98.0) THEN
+      IF (CN .LE. 25.0 .OR. CN .GT. 98.0 .AND. ISWWAT == 'Y') THEN
         TEMP = CN
         IF (CN .LE. 0.0) THEN
           CN = 80.
@@ -514,7 +523,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
 !     Add additional checks:
       NOTEXTURE = .FALSE.
-      NO_OC     = .FALSE.
+!      NO_OC     = .FALSE.
 
 !     Check for soil texture validity.
       COARSE = .FALSE.
@@ -550,9 +559,22 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         SAND(L) = 100. - CLAY(L) - SILT(L)
         SAND(L) = AMAX1 (SAND(L), 0.)
 
-        IF (OC(L) .LT. 1.E-3) THEN
-          NO_OC = .TRUE.
-          OC(L) = 0.0
+        IF (OC(L) .LT. 1.E-3 .AND. ISWWAT == 'Y') THEN
+          IF (DS(L) > 29.) THEN
+            MSG(1) = "Organic C in lower soil layer is zero or missing."
+            WRITE(MSG(2),'("Layer",I3," Depth =",F5.0)') L, DS(L)
+            CALL WARNING(2,ERRKEY,MSG)
+            OC(L) = 0.0
+          ELSE
+            MSG(1) = "Total organic C in top 30cm is zero or missing."
+            WRITE(MSG(2),'("Layer",I3," Depth =",F5.0)') L, DS(L)
+            MSG(3) = "Please provide an estimate of OC for all soil " //
+     &          "layers in the top 30 cm."
+            MSG(2) = "Model must stop."
+            CALL WARNING(2,ERRKEY,MSG)
+            CALL ERROR(ERRKEY,10," ",0)
+          ENDIF
+!          NO_OC = .TRUE.
         ENDIF
 
 !       Calcium carbonate - convert from g/kg to %
@@ -660,17 +682,17 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         CALL INFO(NLAYR+2,ERRKEY,MSG)
       ENDIF
 
-!     Organic C data missing - write message to WARNING.OUT file 
-!       and end program.
-      IF (NO_OC) THEN
-        MSG(1)= 'Organic C data was' // 
-     &  ' missing or zero for one or more soil layers.'
-        MSG(2)='Missing values were set to zero for this simulation.'
-!       10/15/2008 Allow zero OC values.
-!       MSG(4)='Model run will stop.'
-        CALL WARNING(2, ERRKEY, MSG)
-!       CALL ERROR(ERRKEY,10,FILEIO,0)
-      ENDIF     
+!!     Organic C data missing - write message to WARNING.OUT file 
+!!       and end program.
+!      IF (NO_OC) THEN
+!        MSG(1)= 'Organic C data was' // 
+!     &  ' missing or zero for one or more soil layers.'
+!        MSG(2)='Missing values were set to zero for this simulation.'
+!!       10/15/2008 Allow zero OC values.
+!!       MSG(4)='Model run will stop.'
+!        CALL WARNING(2, ERRKEY, MSG)
+!!       CALL ERROR(ERRKEY,10,FILEIO,0)
+!      ENDIF     
 
 !     Warning message for Century
 !      (non-sequenced runs or any first run)
@@ -770,8 +792,11 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % SLDESC        = SLDESC
       SOILPROP % TAXON         = TAXON
 
-      CALL PRINT_SOILPROP(SOILPROP)
       CALL PUT(SOILPROP)
+
+      IF (ISWWAT == 'N') RETURN
+
+      CALL PRINT_SOILPROP(SOILPROP)
       
 !-----------------------------------------------------------------------
 !     Initialization
@@ -808,6 +833,8 @@ C  tillage and rainfall kinetic energy
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
       ISWTIL = ISWITCH % ISWTIL
       NTIL = TILLVALS % NTIL
 
@@ -869,6 +896,8 @@ C  tillage and rainfall kinetic energy
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
 !     Initial SOM not established until end of SEASINIT section so 
 !     remember initial values here.  Units are kg[Organic matter]/ha
       IF (FIRST) THEN
@@ -1049,8 +1078,11 @@ C  tillage and rainfall kinetic energy
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
-C  Initialize surface soil properties 
-C-----------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
+!-----------------------------------------------------------------------
+!  Initialize surface soil properties 
+!-----------------------------------------------------------------------
 !     Update Organic C variable OC (%):
       DO L = 1, NLAYR
         OC(L) = SomLitC(L) * 1.E-5 / (BD(L) * DLAYR(L)) * 100.
@@ -1248,6 +1280,8 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !***********************************************************************
       ELSEIF (DYNAMIC == OUTPUT .OR. DYNAMIC == SEASEND) THEN
 !-----------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
      &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
      &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)

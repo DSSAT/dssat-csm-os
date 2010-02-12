@@ -207,7 +207,7 @@ C-----------------------------------------------------------------------
       CLOSE (LUNIO)
 
 !-------------------------------------------------------------------
-!     Determine how many elements are to be simulated (i.e., N, P, ...)
+!     Determine how many elements are to be simulated (i.e., N, P, K)
       IF (ISWWAT == 'Y') THEN
         IF (ISWNIT == 'Y') THEN
           IF (ISWPHO == 'Y' .OR. ISWPHO == 'H') THEN

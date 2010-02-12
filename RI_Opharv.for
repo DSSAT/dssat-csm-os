@@ -74,7 +74,7 @@ C=======================================================================
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
-      INTEGER, PARAMETER :: SUMNUM = 17
+      INTEGER, PARAMETER :: SUMNUM = 18
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -364,7 +364,11 @@ C-----------------------------------------------------------------------
            DNR0 = -99
         ENDIF
 
-        YREMRG = STGDOY(9)
+        IF (STGDOY(9) < 9999999) THEN
+          YREMRG = STGDOY(9)    !emergence  
+        ELSE
+          YREMRG = STGDOY(11)   !transplant
+        ENDIF
         IF (YRPLT .GT. 0) THEN
           D_emerge = TIMDIF (YRPLT,YREMRG)
           IF (D_emerge .LE. 0)  THEN
@@ -433,7 +437,7 @@ C     SDRATE  = PSDWT * PLTPOP * 10.0
 
 !       Store Summary.out labels and values in arrays to send to
 !       OPSUM routines for printing.  Integers are temporarily 
-!       saved aS real numbers for placement in real array.
+!       saved as real numbers for placement in real array.
         LABEL(1)  = 'ADAT'; VALUE(1)  = FLOAT(YRNR1)
         LABEL(2)  = 'MDAT'; VALUE(2)  = FLOAT(YRNR7)
         LABEL(3)  = 'DWAP'; VALUE(3)  = SDRATE
@@ -451,6 +455,7 @@ C     SDRATE  = PSDWT * PLTPOP * 10.0
         LABEL(15) = 'PWAM'; VALUE(15) = PODWT*10. !chp 7/21/05 added *10
         LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
         LABEL(17) = 'HIAM'; VALUE(17) = HI
+        LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
 
         !Send labels and values to OPSUM
         CALL SUMVALS (SUMNUM, LABEL, VALUE) 

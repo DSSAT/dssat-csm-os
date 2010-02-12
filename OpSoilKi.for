@@ -14,7 +14,7 @@
 
       SUBROUTINE OpSoilKi(CONTROL, ISWITCH, 
      &    FertData, KUptake,    
-     &    SOILPROP, Ki_AVAIL, SKiAvlProf) 
+     &    SOILPROP, Ki_AVAIL, SKiAvlProf, SkiTotProf) 
 
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -30,7 +30,7 @@ C-----------------------------------------------------------------------
       INTEGER DAS, DOY, DOYi, DYNAMIC, ERRNUM, FROP, INCDAT
       INTEGER L, LUN, LUNK, NLAYR, REPNO, RUN, YEAR, YEARi, YRDOY  
 
-      REAL SKiAvlProf, CumUptakeK, CumFertK
+      REAL SKiAvlProf, SkiTotProf, CumUptakeK, CumFertK
       REAL StartK, BALANCE
       REAL, DIMENSION(NL) :: KUptake
       REAL, DIMENSION(NL) :: Ki_AVAIL
@@ -112,18 +112,18 @@ C-----------------------------------------------------------------------
           LayerText(5) = SOILPROP % LayerText(11)
         ENDIF
 
-        WRITE (LUN, '("!",T49,"K avail by soil depth (cm):",
-     &    T94,"K uptake by soil depth (cm):")')
+        WRITE (LUN, '("!",T58,"K avail by soil depth (cm):",
+     &    T103,"K uptake by soil depth (cm):")')
         WRITE (LUN, '("!",T43,10(1X,A8))') 
      &    (LayerText(L),L=1,5),(LayerText(L),L=1,5)
         WRITE (LUN,120)
   120   FORMAT('@YEAR DOY   DAS',
-     &  '    KAVLD     KAPC     KUPC',
+     &  '    KTOTD    KAVLD     KAPC     KUPC',
      &  '    KAV1D    KAV2D    KAV3D    KAV4D    KAV5D',
      &  '    KUP1D    KUP2D    KUP3D    KUP4D    KUP5D')
         CALL YR_DOY(INCDAT(YRDOY,-1), YEARi, DOYi)
         WRITE (LUN,300) YEARi, DOYi, DAS, 
-     &    NINT(SKiAvlProf), 0, 0,
+     &    NINT(SKiTotProf), NINT(SKiAvlProf), 0, 0,
      &    Ki_AVAIL(1:5), KUptake(1:5)
       ENDIF
 
@@ -141,13 +141,13 @@ C-----------------------------------------------------------------------
       ENDIF
 
       CALL HEADER(SEASINIT, LUNK, RUN)
-      StartK = SKiAvlProf
+      StartK = SKiTotProf
 
       IF (ISWITCH%IDETL == 'D') THEN
         WRITE(LUNK,'("@YEAR DOY   DAS",
-     &     "     KAVLD      KUPD      KAPD      DAYBAL      CUMBAL")')
+     &     "     KTOTD      KUPD      KAPD      DAYBAL      CUMBAL")')
         CALL YR_DOY(INCDAT(YRDOY,-1), YEARi, DOYi)
-        WRITE (LUNK,350) YEARi, DOYi, DAS, SKiAvlProf
+        WRITE (LUNK,350) YEARi, DOYi, DAS, SKiTotProf
         K_yest = StartK
         CumFert_yest = 0.0
         CumUpt_yest  = 0.0
@@ -169,23 +169,24 @@ C-----------------------------------------------------------------------
       IF (DOPRINT .AND. MOD(DAS, FROP) == 0) THEN
         CALL YR_DOY(YRDOY, YEAR, DOY)
         WRITE (LUN,300) YEAR, DOY, DAS, 
-     &    NINT(SKiAvlProf), NINT(CumFertK), NINT(CumUptakeK),
+     &    NINT(SKiTotProf), NINT(SKiAvlProf), 
+     &    NINT(CumFertK), NINT(CumUptakeK),
      &    Ki_AVAIL(1:5), KUptake(1:5)
-  300   FORMAT(1X,I4,1X,I3.3,1X,I5,3I9,5F9.0,5F9.2)    
+  300   FORMAT(1X,I4,1X,I3.3,1X,I5,4I9,5F9.0,5F9.2)    
       ENDIF
 
       IF (ISWITCH%IDETL == 'D') THEN
         KFertToday = CumFertK - CumFert_yest
         KUptToday  = CumUptakeK - CumUpt_yest
-        DayBal = SkiAvlProf - K_yest - KFertToday + KUpt_yest
+        DayBal = SkiTotProf - K_yest - KFertToday + KUpt_yest
         CumBal = CumBal + DayBal
         CALL YR_DOY(YRDOY, YEAR, DOY)
         WRITE(LUNK,350) YEAR, DOY, DAS, 
-     &    SKiAvlProf, KFertToday, KUptToday, DayBal, CumBal 
+     &    SKiTotProf, KFertToday, KUptToday, DayBal, CumBal 
   350   FORMAT(1X,I4,1X,I3.3,1X,I5,3F10.2,2F12.3)
         CumFert_yest = CumFertK
         CumUpt_yest  = CumUptakeK
-        K_yest = SkiAvlProf
+        K_yest = SkiTotProf
         KUpt_yest = KUptToday
       ENDIF
 
@@ -199,8 +200,9 @@ C-----------------------------------------------------------------------
       IF (DOPRINT .AND. MOD(DAS, FROP) .NE. 0) THEN
         CALL YR_DOY(YRDOY, YEAR, DOY) 
         WRITE (LUN,300) YEAR, DOY, DAS, 
-     &  NINT(SKiAvlProf), NINT(CumFertK), NINT(CumUptakeK),
-     &  Ki_AVAIL(1:5), KUptake(1:5)
+     &    NINT(SKiTotProf), NINT(SKiAvlProf), 
+     &    NINT(CumFertK), NINT(CumUptakeK),
+     &    Ki_AVAIL(1:5), KUptake(1:5)
       ENDIF
 
 !     Close daily output files.
@@ -213,9 +215,9 @@ C-----------------------------------------------------------------------
       
         WRITE(LUNK,410) NINT(CumFertK)
         WRITE(LUNK,420) NINT(CumUptakeK)
-        WRITE(LUNK,430) NINT(SKiAvlProf), YEAR, DOY
+        WRITE(LUNK,430) NINT(SKiTotProf), YEAR, DOY
         
-        BALANCE = StartK + CumFertK - CumUptakeK - SKiAvlProf
+        BALANCE = StartK + CumFertK - CumUptakeK - SKiTotProf
         WRITE(LUNK,440) BALANCE
       ENDIF
 
@@ -228,10 +230,6 @@ C-----------------------------------------------------------------------
      &      //,"!  -----------------------------------------------",/) 
     
 !     --------------------------------------------------------
-!     Write end of season summary info for SUMMARY.OUT file
-!     Scratch file has been opened by subroutine OPSUM, so
-!     just need to retrieve correct unit number.
-
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.

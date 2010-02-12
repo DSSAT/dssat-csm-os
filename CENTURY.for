@@ -30,7 +30,8 @@
 !  08/30/2004 AJG Corrected some layout irregularities.
 !  05/19.2005 AJG Rearranged the variable declarations.
 !  07/14/2006 CHP Put revised DSSAT-Century with P model into CSM v4.6
-!
+!  02/11/2010 CHP No simulation of organic matter when water is not 
+!                   simulated.
 !-----------------------------------------------------------------------
 !  Called: SOIL
 !  Calls : CE_RATIO_C, DECRAT_C, IMMOBLIMIT_C, INCORPOR_C, LITDEC_C, 
@@ -57,7 +58,7 @@
 
       LOGICAL ADDMETABEFLAG, FRMETFLAG
       LOGICAL DOCULT(0:NL)
-      CHARACTER*1  IDETL, RNMODE
+      CHARACTER*1  IDETL, RNMODE, ISWWAT
       CHARACTER*2  CROP
 
       INTEGER DISTURBENDMAX, DISTURBNUM, DNUM, DOY, DYNAMIC, 
@@ -190,6 +191,19 @@
 !***********************************************************************
       IF (DYNAMIC == RUNINIT) THEN
 !     ------------------------------------------------------------------
+      ISWWAT = ISWITCH % ISWWAT
+      IF (ISWWAT == 'N') THEN
+        IMM     = 0.0
+        LITC    = 0.0
+        MNR     = 0.0
+        SomLit  = 0.0
+        SomLitC = 0.0
+        SomLitE = 0.0
+        SSOMC   = 0.0
+        MULCH % MULCHMASS = 0.0
+        RETURN
+      ENDIF
+        
       N_ELEMS = CONTROL % N_ELEMS
 
       CALL OPSOMLIT_C (CONTROL, ISWITCH,
@@ -206,6 +220,8 @@
 !***********************************************************************
       ELSEIF (DYNAMIC == SEASINIT) THEN
 !     ------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
       DLTMETABC = 0.0
       DLTSTRUCC = 0.0
       DLTLIGC   = 0.0
@@ -397,6 +413,8 @@
 !***********************************************************************
       ELSEIF (DYNAMIC == RATE) THEN
 !     ------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
 !     Set variables to zero at the start of a new day.
       MIXDEP = 0.
       IMMOB = 0.
@@ -683,6 +701,8 @@
 !     First limit immobilization to what is available in the soil.
 !***********************************************************************
       ELSEIF (DYNAMIC == INTEGR) THEN
+!-----------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
 
 !-----------------------------------------------------------------------
 !     Loop through soil layers for integration.
@@ -790,6 +810,8 @@
 !***********************************************************************
       ELSEIF (DYNAMIC == OUTPUT) THEN
 !---------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
 !       Get detailed SOM and litter output.
       IF (IDETL == 'D') THEN
         CALL SOMLITPRINT_C (CONTROL,
@@ -828,6 +850,8 @@
 !***********************************************************************
       ELSEIF (DYNAMIC == SEASEND) THEN
 !     ------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
 !     Close output files.
       IF (IDETL == 'D') THEN
         CALL SOMLITPRINT_C (CONTROL,

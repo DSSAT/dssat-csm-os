@@ -145,7 +145,7 @@
       INTEGER       LNUMX         ! Maximum number of leaves       #
       PARAMETER     (LNUMX = 25)  ! Maximum number of leaves       #
       INTEGER       SUMNUM        ! Number of variables passed     #
-      PARAMETER     (SUMNUM = 22) ! Number of variables passed     #
+      PARAMETER     (SUMNUM = 23) ! Number of variables passed     #
 
       INTEGER       A1DATM        ! Apex 1cm date,measured         #
       INTEGER       ADAP          ! Anthesis,days after planting   d
@@ -6045,9 +6045,10 @@
             LABEL(17) = 'DMPPM'; VALUE(17) = DMP_Rain !CHP added 7/29/08
             LABEL(18) = 'DMPEM'; VALUE(18) = DMP_ET   !CHP added 7/29/08
             LABEL(19) = 'DMPTM'; VALUE(19) = DMP_EP   !CHP added 7/29/08
-            LABEL(20) = 'YPPM ' ; VALUE(20) = GrP_Rain!CHP added 7/29/08
-            LABEL(21) = 'YPEM ' ; VALUE(21) = GrP_ET  !CHP added 7/29/08
-            LABEL(22) = 'YPTM ' ; VALUE(22) = GrP_EP  !CHP added 7/29/08
+            LABEL(20) = 'YPPM '; VALUE(20) = GrP_Rain!CHP added 7/29/08
+            LABEL(21) = 'YPEM '; VALUE(21) = GrP_ET  !CHP added 7/29/08
+            LABEL(22) = 'YPTM '; VALUE(22) = GrP_EP  !CHP added 7/29/08
+            LABEL(23) = 'EDAT '; VALUE(23) = FLOAT(EDATm) !CHP 2/10/10
             
             IF (FILEIOT(1:2).EQ.'DS') CALL SUMVALS (SUMNUM,LABEL,VALUE)
             

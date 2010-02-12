@@ -12,6 +12,7 @@ C  08/12/2003 CHP Added I/O error checking and changed call to READA
 !  05/03/2004 CHP Added P stresses to OPVIEW call 
 !  10/24/2005 CHP Added environmental & stress factors to Overview.OUT
 C  02/09/2007 GH  Add path for FileA
+!  02/11/2010 CHP Added EDAT to output
 C=======================================================================
 
       SUBROUTINE CSP_OPHARV(CONTROL, ISWITCH, 
@@ -42,7 +43,7 @@ C-----------------------------------------------------------------------
       INTEGER DYNAMIC, EDAT0, EDAT1, EDAT2    
       INTEGER MaxStkDay, ERRNUM, TillerCount, ISENS, LAIXD
       INTEGER LNUM, LUNIO, RUN, SPDAT, YIELD
-      INTEGER YRDOY, YRPLT,YRSIM
+      INTEGER YRDOY, YRPLT,YRSIM, YREMRG, INCDAT
       INTEGER PhenoStage
       INTEGER TIMDIF, TRT_ROT
       INTEGER STGDOY(20)
@@ -66,7 +67,7 @@ C-----------------------------------------------------------------------
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
-      INTEGER, PARAMETER :: SUMNUM = 9
+      INTEGER, PARAMETER :: SUMNUM = 10
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -500,6 +501,8 @@ C-----------------------------------------------------------------------
      
       ENDIF  
 
+      YREMRG = INCDAT(YRPLT, EDAT0)
+
 !-----------------------------------------------------------------------
 !     Send data to OPSUM for SUMMARY.OUT file.
 !-----------------------------------------------------------------------
@@ -517,6 +520,7 @@ C-----------------------------------------------------------------------
       LABEL(7) = 'CNAM'; VALUE(7) = WTNCAN*10.
       LABEL(8) = 'HIAM'; VALUE(8) = HIAM
 	Label(9) = 'LAIX'; VALUE(9) = LAIMX
+      LABEL(10)= 'EDAT'; VALUE(10)= YREMRG
 
       !Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 

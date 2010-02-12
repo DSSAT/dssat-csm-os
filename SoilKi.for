@@ -23,15 +23,15 @@ C-----------------------------------------------------------------------
 
       INTEGER DYNAMIC, FERTDAY, L, NLAYR, RUN, YRDOY
 
-      REAL SKiAvlProf
+      REAL SKiAvlProf, SKiTotProf
       REAL MIXPCT, TDEP   !Tillage mixing percent and depth
 
       REAL, DIMENSION(NL) :: DLAYR, KG2PPM
-      REAL, DIMENSION(NL) :: DLTSKiAvail
+      REAL, DIMENSION(NL) :: DLTSKiAvail, DLTSKiTot
       REAL, DIMENSION(NL) :: ADDSKi, KUptake
 
 !     K pools (kg/ha):
-      REAL, DIMENSION(NL) :: SKi_Avail
+      REAL, DIMENSION(NL) :: SKi_Avail, SKi_Tot
 !     ppm
       REAL, DIMENSION(NL) :: Ki_Avail
       REAL, DIMENSION(NL) :: KFertIndex
@@ -65,17 +65,16 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       IF (DYNAMIC == SEASINIT) THEN
 !-----------------------------------------------------------------------
-        IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
-          CALL SoilKi_init (ISWPOT, SOILPROP,             !Input 
-     &    KFertIndex, Ki_Avail, SKi_Avail, SKiAvlProf)    !Output
-        ENDIF
+        CALL SoilKi_init (CONTROL, ISWPOT, SOILPROP,      !Input 
+     &    KFertIndex, Ki_Avail, SKi_Avail,                !Output
+     &    SKi_Tot, SKiAvlProf, SKiTotProf)                !Output
 
         KUptake = 0.0
         DLTSKiAvail = 0.0
 
         CALL OpSOILKi(CONTROL, ISWITCH, 
      &    FertData, KUptake,      
-     &    SOILPROP, Ki_AVAIL, SKiAvlProf)  
+     &    SOILPROP, Ki_AVAIL, SKiAvlProf, SkiTotProf)  
 
 !***********************************************************************
 !***********************************************************************
@@ -101,6 +100,7 @@ C-----------------------------------------------------------------------
             SKi_Avail(L) = 0.0
           ELSE 
             SKi_Avail(L) =  SKi_Avail(L) - KUptake(L)
+            SKi_Tot(L)   =  SKi_Tot(L)   - KUptake(L)
           ENDIF
         ENDIF
       ENDDO
@@ -112,7 +112,9 @@ C-----------------------------------------------------------------------
         DO L = 1, NLAYR
           IF (ADDSKi(L) > 1.E-6) THEN
 !           Add fertilizer to available pool
+!           All fertilizer goes to available?? 
             DLTSKiAvail(L) = DLTSKiAvail(L) + ADDSKi(L)
+            DLTSKiTot(L)   = DLTSKiTot(L)   + ADDSKi(L)
           ENDIF
         ENDDO
       ENDIF
@@ -124,6 +126,7 @@ C-----------------------------------------------------------------------
           MIXPCT = TILLVALS % TILMIX
           TDEP = TILLVALS % TILDEP
           CALL SoilMix(SKi_Avail,DLTSKiAvail,1,DLAYR,MIXPCT,NLAYR,TDEP)
+          CALL SoilMix(SKi_Tot  ,DLTSKiTot  ,1,DLAYR,MIXPCT,NLAYR,TDEP)
         ENDIF
       ENDIF
 
@@ -136,15 +139,20 @@ C-----------------------------------------------------------------------
       IF (ISWPOT .EQ. 'N') RETURN
 
       SKiAvlProf = 0.
+      SKiTotProf = 0.
 
       DO L = 1, NLAYR
 !       Update soil K content
         SKi_Avail(L) = SKi_Avail(L) + DLTSKiAvail(L)
-        Ki_Avail(L) = SKi_Avail(L) * KG2PPM(L) 
+        Ki_Avail(L)  = SKi_Avail(L) * KG2PPM(L) 
         SKiAvlProf = SKiAvlProf + SKi_Avail(L)
+
+        SKi_Tot(L) = SKi_Tot(L) + DLTSKiTot(L)
+        SKiTotProf = SKiTotProf + SKi_Tot(L)
       ENDDO
 
       DLTSKiAvail = 0.
+      DLTSKiTot   = 0.
 
 !***********************************************************************
 !***********************************************************************
@@ -156,7 +164,7 @@ C-----------------------------------------------------------------------
 
       CALL OpSOILKi(CONTROL, ISWITCH, 
      &    FertData, KUptake,      
-     &    SOILPROP, Ki_AVAIL, SKiAvlProf)  
+     &    SOILPROP, Ki_AVAIL, SKiAvlProf, SkiTotProf)  
 
 C***********************************************************************
 C***********************************************************************

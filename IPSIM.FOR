@@ -11,8 +11,9 @@ C  02/21/2006 GH  Removed crop model selection
 !  10/25/2006 CHP CRMODEL from FILEX overrides MODEL in DSSATPRO 
 !  05/09/2007 CHP Make Sulieman-Ritchie the default soil evaporation method
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
-!  12/09/2009 CHP IPSIM separate file.  Separate routine for checking data
-!                   used by both IPSIM and Default_SimControls
+!  12/09/2009 CHP IPSIM separate file.  
+!  02/11/2010 CHP Added checks for P model linked with crop models.
+
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
@@ -55,6 +56,7 @@ C=======================================================================
       CHARACTER*6   ERRKEY,FINDCH
       CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL
       CHARACTER*12  FILEX
+      CHARACTER*16  CROPD
       CHARACTER*25  TITSIM
       CHARACTER*78  MSG(7)
       CHARACTER*120 FILECTL
@@ -199,10 +201,9 @@ C
             ISWTIL = 'N'
          ENDIF
          IF (ISWWAT .EQ. 'N') THEN
-            IF (ISWNIT .EQ. 'Y') ISWNIT = 'N'
-            IF (ISWPHO .EQ. 'Y') ISWPHO = 'N'
-!            IF (ISWTIL .EQ. 'Y') ISWTIL = 'N'
-            IF (ISWCHE .EQ. 'Y') ISWCHE = 'N'
+            ISWNIT = 'N'
+            ISWPHO = 'N'
+            ISWCHE = 'N'
          ENDIF
 
          IF (INDEX('FNQS',RNMODE) > 0) THEN
@@ -448,8 +449,9 @@ C-----------------------------------------------------------------------
 
 !     Check Simulation control file for control overrides 
       CALL Default_SimControls(
-     &    CONTROL, DSSATP, FILECTL, ISWITCH, MODELARG, PLDATE, !Input
-     &    UseSimCtr, CRMODEL, MODEL)                           !Output
+     &    CONTROL, CRMODEL, DSSATP, FILECTL, ISWITCH,     !Input
+     &    MODELARG, PLDATE,                               !Input
+     &    UseSimCtr, MODEL)                               !Output
 
       IF (UseSimCtr) THEN
         IOX     = ISWITCH % FNAME 
@@ -501,6 +503,95 @@ C-----------------------------------------------------------------------
 
       CALL PUT(CONTROL)  
       CALL PUT(ISWITCH)
+
+!     --------------------------------------------------------------------
+!     Check for phosphorus model compatible with crop model
+      IF (ISWPHO /= 'N') THEN
+!       Check for validity of P model for this crop
+        SELECT CASE(MODEL(1:5))
+        CASE('CRGRO','MZCER','RICER')
+          SELECT CASE(CONTROL % CROP)
+          CASE('SB','FA','MZ','RI') 
+!           Phosphorus model has been enabled and tested for these crops, do nothing
+
+          CASE DEFAULT
+!           P model has NOT been tested for the remainder of the CROPGRO crops
+!           Print a warning message, but allow the user to continue.
+            CALL GET_CROPD(CROP, CROPD)
+            CROPD = ADJUSTL(CROPD)
+
+            WRITE(MSG(1),
+     &         '("Phosphorus model has not been tested for "
+     &         ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
+            MSG(2)="Model will run if soils and species P data" //
+     &         " are supplied."
+            MSG(3)="User must verify validity of crop response."
+            MSG(4)="Please contact the CSM development team if " // 
+     &         "you wish to "
+            WRITE(MSG(5),'("contribute to development of a P model for "
+     &          ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
+            CALL WARNING(5,ERRKEY,MSG)
+          END SELECT
+
+        CASE DEFAULT
+!         Crop model has not been linked to P model.
+!         Print a warning message. stop the run.
+          WRITE(MSG(1),
+     &       '("Phosphorus model has not been enabled for ",
+     &       A5," model.")') MODEL(1:5)
+          MSG(2)="Please contact the CSM development team if you " //
+     &          "wish to contribute to "
+          WRITE(MSG(3),'("development of a P model for ",A5,".")')
+     &        MODEL(1:5)
+          CALL WARNING(3,ERRKEY,MSG)
+          CALL ERROR('IPSIM', 6, "", 0)
+        END SELECT
+      ENDIF
+
+!     --------------------------------------------------------------------
+!     Check for potassium model compatible with crop model
+      IF (ISWPOT /= 'N') THEN
+!       Check for validity of K model for this crop
+        SELECT CASE(MODEL(1:5))
+        CASE('MZCER','RICER')
+          SELECT CASE(CONTROL % CROP)
+          CASE('MZ','RI') 
+!           Potassium model has been enabled and tested for these crops, do nothing
+
+          CASE DEFAULT
+!           K model has NOT been tested for the remainder of the CROPGRO crops
+!           Print a warning message, but allow the user to continue.
+            CALL GET_CROPD(CROP, CROPD)
+            CROPD = ADJUSTL(CROPD)
+
+            WRITE(MSG(1),
+     &         '("Potassium model has not been tested for "
+     &         ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
+            MSG(2)="Model will run if soils and species K data" //
+     &         " are supplied."
+            MSG(3)="User must verify validity of crop response."
+            MSG(4)="Please contact the CSM development team if " // 
+     &         "you wish to "
+            WRITE(MSG(5),'("contribute to development of a K model for "
+     &          ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
+            CALL WARNING(5,ERRKEY,MSG)
+          END SELECT
+
+        CASE DEFAULT
+!         Crop model has not been linked to K model.
+!         Print a warning message. stop the run.
+          WRITE(MSG(1),
+     &       '("Potassium model has not been enabled for ",
+     &       A5," model.")') MODEL(1:5)
+          MSG(2)="Please contact the CSM development team if you " //
+     &          "wish to contribute to "
+          WRITE(MSG(3),'("development of a K model for ",A5,".")')
+     &        MODEL(1:5)
+          CALL WARNING(3,ERRKEY,MSG)
+          CALL ERROR('IPSIM', 7, "", 0)
+        END SELECT
+      ENDIF
+
       RETURN
 
 C-----------------------------------------------------------------------
@@ -621,8 +712,9 @@ C-----------------------------------------------------------------------
 !=======================================================================
 
       SUBROUTINE Default_SimControls(
-     &    CONTROL, DSSATP, FILECTL, ISWITCH, MODELARG, PLDATE, !Input
-     &    UseSimCtr, CRMODEL, MODEL)                           !Output
+     &    CONTROL, CRMODEL, DSSATP, FILECTL, ISWITCH,     !Input
+     &    MODELARG, PLDATE,                               !Input
+     &    UseSimCtr, MODEL)                               !Output
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -713,7 +805,12 @@ D     IPX = 22
         SECTION = '@CTRNO'
         FOUND = FIND_IN_FILE(SECTION,SCLun)
         IF (FOUND == 1) THEN
-          READ(SCLun,"(I6)",IOSTAT=ERRNUM) CTRNO
+          CALL IGNORE(SCLun,LINEXP,ISECT,CHARTEST)
+          IF (ISECT == 1) THEN
+            READ(CHARTEST,"(I6)",IOSTAT=ERRNUM) CTRNO
+          ELSE
+            ERRNUM = 100
+          ENDIF
           IF (ERRNUM > 0) THEN
             MSG(1) = "Error reading simulation control file."
             WRITE(MSG(2),'(A,A)') "File: ",SIMCTR(1:72)
@@ -793,7 +890,7 @@ D     IPX = 22
         IDETL   = ' '
         IDETH   = ' '
         IDETR   = ' '
-        CRMODEL = '     '
+!        CRMODEL = '     '
 
 !       Read FIRST line of simulation control
         REWIND(SCLun)
@@ -907,8 +1004,10 @@ D     IPX = 22
               ISWCHE = 'N'
             ENDIF
 
-            IF (ISWNIT .EQ. 'N') ISWPHO = 'N'
-            IF (ISWNIT .EQ. 'N') ISWPOT = 'N'
+            IF (ISWNIT .EQ. 'N') THEN
+              ISWPHO = 'N'
+              ISWPOT = 'N'
+            ENDIF
 
 !         Third line of simulation controls
           CASE('@N MET')

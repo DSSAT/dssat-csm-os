@@ -46,6 +46,8 @@
 !  04/21/2005 CHP Added IMMOBP, IMMOBN (was IMMOB)
 !  12/15/2005 CHP Modified to allow organic matter computation even 
 !                   when N is not simulated.
+!  02/11/2010 CHP No simulation of organic matter when water is not 
+!                   simulated.
 !-----------------------------------------------------------------------
 !  Called : SOIL
 !  Calls  : IPSOIL, MULCHLAYER, NCHECK_organic, OpSoilOrg, SoilOrg_init
@@ -67,6 +69,7 @@
       IMPLICIT  NONE
       SAVE
 !-----------------------------------------------------------------------
+      CHARACTER*1 ISWWAT
       CHARACTER(LEN=2) PREV_CROP
 
       INTEGER DYNAMIC, IEL, L, N_ELEMS
@@ -143,7 +146,8 @@
       LL     = SOILPROP % LL     
       NLAYR  = SOILPROP % NLAYR  
       PH     = SOILPROP % PH     
-      SAT    = SOILPROP % SAT    
+      SAT    = SOILPROP % SAT   
+
 
       FLOOD = FLOODWAT % FLOOD
 
@@ -157,6 +161,19 @@
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !     ------------------------------------------------------------------
+      ISWWAT = ISWITCH % ISWWAT 
+      IF (ISWITCH%ISWWAT == 'N') THEN
+        IMM     = 0.0
+        LITC    = 0.0
+        MNR     = 0.0
+        SomLit  = 0.0
+        SomLitC = 0.0
+        SomLitE = 0.0
+        SSOMC   = 0.0
+        MULCH % MULCHMASS = 0.0
+        RETURN
+      ENDIF
+
 
 !     These used to come from RESCH045.SDA, but were never varied
 !     in that file.  File has been changed to provide Century data, so
@@ -173,6 +190,8 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !     ------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
 !     Set initial SOM and nitrogen conditions for each soil layer.
 !     Default characteristics for residue and senesced matter 
       CALL IPSOIL (CONTROL, CROP=CONTROL % CROP,          !Input
@@ -236,6 +255,8 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !     ------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
 !     Initialize
       DLTFON   = 0.0
       DLTFOP   = 0.0
@@ -636,6 +657,8 @@ C         recruit (NREQ-N CONC) g of N
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT .OR. DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
 !     Loop through soil layers for integration
       DO L = 1, NLAYR
         SSOMC(L)   = SSOMC(L)   + DLTHUMC(L)
@@ -725,6 +748,8 @@ C***********************************************************************
       IF (DYNAMIC == SEASINIT .OR. DYNAMIC == OUTPUT .OR. 
      &        DYNAMIC == SEASEND) THEN
 C-----------------------------------------------------------------------
+      IF (ISWWAT == 'N') RETURN
+
 C     Write seasonal output
       CALL OpSoilOrg(CONTROL, ISWITCH, 
      &  DSNC, NLAYR, OMADATA, SOILPROP, SomLitC, SomLitE, !Input

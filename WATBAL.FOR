@@ -205,18 +205,20 @@ C=======================================================================
      &    DRN, SWDELTT, TDFC, TDFD, TDLNO)                !Output
       ENDIF
 
-!     Water balance output initialization
-      CALL Wbal(CONTROL, ISWITCH, 
+      IF (ISWWAT == 'Y') THEN
+!       Water balance output initialization
+        CALL Wbal(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, DRAIN, FLOODWAT, 
      &    IRRAMT, MULCH, NLAYR, RAIN, RUNOFF, SNOW, 
      &    SWDELTS, SWDELTT, SWDELTU, SWDELTX, SWDELTL,
      &    TDFC, TDFD, TDRAIN, TRUNOF, TSW, TSWINI)
 
-!     Call OPWBAL to write headers to output file
-      CALL OPWBAL(CONTROL, ISWITCH, 
+!       Call OPWBAL to write headers to output file
+        CALL OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
      &    TDRAIN, TRUNOF, WTDEP)                          !Input
+      ENDIF
 
       DRAIN  = 0.0
       DRN    = 0.0
@@ -492,6 +494,8 @@ C         Calculate soil water table depth
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
 C-----------------------------------------------------------------------
+      IF (ISWWAT .NE. 'Y') RETURN
+
       CALL OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input
@@ -516,6 +520,8 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
+      IF (ISWWAT .NE. 'Y') RETURN
+
       CALL OPWBAL(CONTROL, ISWITCH, 
      &    CRAIN, DLAYR, FLOODWAT, IRRAMT, LL, MULCH,      !Input
      &    NLAYR, RUNOFF, SOILPROP, SW, TDFC, TDFD,        !Input

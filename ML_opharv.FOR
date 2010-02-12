@@ -65,7 +65,7 @@ C  02/09/2007 GH  Add path for FileA
       REAL, DIMENSION(2) :: HARVFRAC
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 17
+      INTEGER, PARAMETER :: SUMNUM = 18
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -447,6 +447,7 @@ C  02/09/2007 GH  Add path for FileA
       LABEL(15) = 'PWAM'; VALUE(15) = PODWT*10.
       LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
       LABEL(17) = 'HIAM'; VALUE(17) = HI
+      LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
 
       !Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 

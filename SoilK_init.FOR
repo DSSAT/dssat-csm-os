@@ -10,8 +10,9 @@
 !  Called by: SoilKi
 !=======================================================================
 
-      SUBROUTINE SoilKi_init (ISWPOT, SOILPROP,           !Input 
-     &    KFertIndex, Ki_Avail, SKi_Avail, SKiAvlProf)    !Output
+      SUBROUTINE SoilKi_init (CONTROL, ISWPOT, SOILPROP,  !Input 
+     &    KFertIndex, Ki_Avail, SKi_Avail,                !Output
+     &    SKi_Tot, SKiAvlProf, SKiTotProf)                !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
@@ -21,34 +22,43 @@
       CHARACTER*1  ISWPOT
       CHARACTER*6, PARAMETER :: ERRKEY = 'SKINIT'
       CHARACTER*78 MSG(3)
+      TYPE (ControlType) CONTROL
 
       INTEGER L
       INTEGER NLAYR    
 
 !     Soil properties:
-      REAL SKiAvlProf
-      REAL, DIMENSION(NL) :: Ki_Avail, Ki_Tot, SKi_Avail, KG2PPM
-      REAL, DIMENSION(NL) :: KFertIndex, KExchgIndex, KAvailIndex
+      REAL SKiAvlProf, SKiTotProf
+      REAL, DIMENSION(NL) :: Ki_Avail, Ki_Tot, SKi_Avail, SKi_Tot
+      REAL, DIMENSION(NL) :: KFertIndex, KExchgIndex, KAvailIndex,KG2PPM
       TYPE (SoilType)    SOILPROP
 
+!     ------------------------------------------------------------------
       IF (ISWPOT .NE. 'Y') RETURN
 
-      KG2PPM   = SOILPROP % KG2PPM
       NLAYR    = SOILPROP % NLAYR
+      KG2PPM   = SOILPROP % KG2PPM
 
+!     Initialize total soil K only once
+      IF (CONTROL % RUN == 1 .OR. INDEX('QF',CONTROL % RNMODE) <= 0)THEN
+        DO L = 1, NLAYR
+          IF (SOILPROP % EXK(L) < 0.0) THEN
+            MSG(1) = "Negative value found in soil file for potassium."
+            MSG(2) = "Cannot run potassium model for this data."
+            MSG(3) = "Model will stop."
+            CALL WARNING(3,ERRKEY,MSG)
+            CALL ERROR(ERRKEY,0," ",0)
+          ENDIF
+          Ki_Tot(L) = SOILPROP % EXK(L) * 391.
+        ENDDO
+      ENDIF
+
+!     Update availability indices every season. May be important for 
+!       long-term sequence simulations.
       SKiAvlProf = 0.
+      SKiTotProf = 0.
+
       DO L = 1, NLAYR
-
-        IF (SOILPROP % EXK(L) < 0.0) THEN
-          MSG(1) = "Negative value found in soil file for potassium."
-          MSG(2) = "Cannot run potassium model for this data."
-          MSG(3) = "Model will stop."
-          CALL WARNING(3,ERRKEY,MSG)
-          CALL ERROR(ERRKEY,0," ",0)
-        ENDIF
-
-        Ki_Tot(L) = SOILPROP % EXK(L) * 391.
-
         IF (SOILPROP % OC(L) > 1.E-5) THEN
            KFertIndex(L) = 1.05 + 0.5 * LOG(SOILPROP % OC(L))
         ELSE
@@ -66,9 +76,12 @@
 
         Ki_Avail(L) = Ki_Tot(L) * KAvailIndex(L)
         SKi_Avail(L) = Ki_Avail(L) / KG2PPM(L)
+        SKi_Tot(L)   = Ki_Tot(L)   / KG2PPM(L)
         SKiAvlProf = SKiAvlProf + SKi_Avail(L)
+        SKiTotProf = SKiTotProf + SKi_Tot(L)
       ENDDO
 
+!     ------------------------------------------------------------------
       RETURN
       END SUBROUTINE SoilKi_init
 

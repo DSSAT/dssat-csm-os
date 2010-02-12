@@ -68,7 +68,7 @@ C=======================================================================
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
-      INTEGER, PARAMETER :: SUMNUM = 17
+      INTEGER, PARAMETER :: SUMNUM = 18
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -446,6 +446,7 @@ C-----------------------------------------------------------------------
           LABEL(15) = 'PWAM'; VALUE(15) = 0.0
           LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
           LABEL(17) = 'HIAM'; VALUE(17) = HI
+          LABEL(18)  ='EDAT'; VALUE(18) = FLOAT(YREMRG)
 
           !Send labels and values to OPSUM
           CALL SUMVALS (SUMNUM, LABEL, VALUE) 

@@ -49,7 +49,7 @@
       CHARACTER*6, PARAMETER :: ERRKEY='RTSOLV'
       CHARACTER*6 SECTION
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(4) 
+      CHARACTER*78 MSG(5) 
       CHARACTER*120 CHAR
 
       INTEGER ERR, FOUND, ISECT
@@ -113,10 +113,10 @@
       SECTION = '*PHOSP'
       CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
       IF (FOUND .EQ. 0) THEN
-        MSG(1) = 'Phosphorus input section not found in species file.'
-        MSG(2) = FILECC
-        MSG(3) = 
-     &   'Can not simulate phosphorus for this crop. Program will stop.'
+        MSG(1)='Phosphorus input section not found in species file.'
+        MSG(2)=FILECC
+        MSG(3)= 'Can not simulate phosphorus for this crop. ' //
+     &          'Program will stop.'
         CALL WARNING(3,ERRKEY,MSG)
         CALL ERROR(SECTION, 42, FILECC, LNUM)
       ENDIF
@@ -131,14 +131,14 @@
           IF (ERR == 0) EXIT
         ENDIF
       ENDDO
-      CLOSE (LUNCRP)
 
       IF (ROOTRAD < 1.E-6) ROOTRAD = 0.002 !default value 2mm
-
       WRITE(MSG(1),'(A,F7.4,A)') 
-     &    "Radius around root from which P can be extracted = ", 
-     &    ROOTRAD, " mm"
+     &  "Radius around root from which P can be extracted = ", 
+     &  ROOTRAD, " mm"
       CALL INFO(1,ERRKEY,MSG)
+
+      CLOSE (LUNCRP)
 
 !***********************************************************************
 !***********************************************************************

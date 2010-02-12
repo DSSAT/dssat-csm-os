@@ -18,7 +18,7 @@ C=====================================================================
       SUBROUTINE SoilPi(CONTROL, ISWITCH, FLOODWAT,
      &    FERTDATA, IMM, MNR, PUptake, SOILPROP,          !Input
      &    FracRts, SW, TillVals,                          !Input
-     &    SPi_AVAIL, SPi_Labile)                          !Output
+     &    SPi_AVAIL, SPi_Labile, YREND)                   !Output
 
 C-----------------------------------------------------------------------
       USE ModuleDefs
@@ -30,7 +30,7 @@ C-----------------------------------------------------------------------
       CHARACTER*1  ISWPHO, RNMODE
       CHARACTER*17 SOILLAYERTYPE(NL)
 
-      INTEGER DYNAMIC, FERTDAY, L, NLAYR, RUN, YRDOY, NBUND
+      INTEGER DYNAMIC, FERTDAY, L, NLAYR, RUN, YRDOY, NBUND, YREND
       REAL FLOOD
       REAL FerLabFracRts, FerLabFracNoRts
       REAL FracLabRts, FracActRts, FracLabNoRts, FracActNoRts
@@ -219,7 +219,10 @@ C-----------------------------------------------------------------------
         CALL SoilPi_init (CONTROL,       
      &    ISWPHO, SOILPROP,                               !Input
      &    K_ACT2LAB, K_ACT2STA, K_LAB2ACT, K_STA2ACT,     !Output
-     &    PiActive, PiLabile, PiStable)                   !Output
+     &    PiActive, PiLabile, PiStable, YREND)            !Output
+
+!       Error in initialization
+        IF (YREND == YRDOY) RETURN
 
         DO L = 1, NLAYR
 !         03/01/2007 US/CHP added fraction of P in solution

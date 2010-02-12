@@ -38,7 +38,7 @@ C=====================================================================
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF)                     !Output
+     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -65,13 +65,13 @@ C=====================================================================
       REAL, DIMENSION(NL), INTENT(IN) :: SWDELTX
       TYPE (TillType)    , INTENT(IN) :: TILLVALS
       REAL, DIMENSION(NL), INTENT(IN) :: UNH4, UNO3
-      REAL, DIMENSION(NL), INTENT(INOUT) :: UPFLOW
       TYPE (WeatherType) , INTENT(IN) :: WEATHER
       REAL               , INTENT(IN) :: XHLAI
 
       REAL, DIMENSION(NL) :: SomLit 
 
 !     Input/Output:
+      REAL, DIMENSION(NL), INTENT(INOUT) :: UPFLOW
       TYPE (FloodNType)   FLOODN
       TYPE (FloodWatType) FLOODWAT
       TYPE (MulchType)    MULCH
@@ -86,6 +86,8 @@ C=====================================================================
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTS
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
       REAL               , INTENT(OUT) :: WINF
+      INTEGER            , INTENT(OUT) :: YREND
+
 !-----------------------------------------------------------------------
 !     Local variables:
       CHARACTER*1  MESOM
@@ -156,10 +158,10 @@ C=====================================================================
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 
      &    FERTDATA, IMM, MNR, PUptake, SOILPROP,          !Input
      &    FracRts, SW, TillVals,                          !Input
-     &    SPi_AVAIL, SPi_Labile)                          !Output
+     &    SPi_AVAIL, SPi_Labile, YREND)                   !Output
 
 !     Inorganic K
-      CALL SoilKi(CONTROL, ISWITCH,  
+      CALL SoilKi(CONTROL, ISWITCH, 
      &    FERTDATA, KUptake, SOILPROP, TILLVALS,          !Input
      &    SKi_Avail)                                      !Output
 

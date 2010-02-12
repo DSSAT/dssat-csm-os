@@ -80,10 +80,8 @@ C=======================================================================
      &                YRPLT, MDATE, YREND)
       
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-      USE FloodModule    ! which contain control information, soil
-                         ! parameters, hourly weather data and flooded
-                         ! conditions.
+      USE ModuleDefs      
+      USE FloodModule    
 
       IMPLICIT NONE
       SAVE
@@ -217,7 +215,7 @@ C-----------------------------------------------------------------------
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF)                     !Output
+     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
 
 C-----------------------------------------------------------------------
 C     Read initial soil-plant-atmosphere data
@@ -296,7 +294,7 @@ C-----------------------------------------------------------------------
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF)                     !Output
+     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
 
 C-----------------------------------------------------------------------
 C     Initialize PLANT routines (including phenology and pest)
@@ -352,7 +350,7 @@ C-----------------------------------------------------------------------
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF)                     !Output
+     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
 
 C-----------------------------------------------------------------------
 C     Call Soil-plant-atmosphere module to determine today's
@@ -398,7 +396,7 @@ C-----------------------------------------------------------------------
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF)                     !Output
+     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
 
 C-----------------------------------------------------------------------
 C     Compute cumulative totals for soil-plant-atmosphere processes
@@ -453,7 +451,7 @@ C***********************************************************************
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF)                     !Output
+     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
 
         CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
@@ -501,7 +499,7 @@ C     Print seasonal summaries and close files.
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF)                     !Output
+     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
 
       CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
@@ -547,13 +545,14 @@ C-----------------------------------------------------------------------
 !      WRITE(200,'(1X,"RUN ",I3,3X,F10.3)') RUN, DELTA_TIME
 !      TIME0 = TIME1
 
-      WRITE(MSG(1),'(A,I8)') "End of run ", CONTROL % RUN
       IF (CONTROL % ERRCODE > 0) THEN
+        WRITE(MSG(1),'(A,I8)') "End of run ", CONTROL % RUN
         WRITE(MSG(2),'("Simulation ended with error code ",I3)') 
      &      CONTROL % ERRCODE
         CALL WARNING(2,'ENDRUN',MSG)
         CALL INFO(2,'ENDRUN',MSG)
       ELSE
+        WRITE(MSG(1),'(A,I8)') "Normal end of run ", CONTROL % RUN
         CALL WARNING(0,'ENDRUN',MSG)
         CALL INFO(1,'ENDRUN',MSG)
       ENDIF
@@ -569,7 +568,7 @@ C***********************************************************************
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF)                     !Output
+     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
 
 !!     Temporary timer function
 !      CALL DATE_AND_TIME (VALUES=DATE_TIME)

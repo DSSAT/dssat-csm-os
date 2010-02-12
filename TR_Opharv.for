@@ -6,6 +6,7 @@ C-----------------------------------------------------------------------
 C  Revision history
 C
 C  12/13/2004 MUS/RO Converted to modular format for inclusion in CSM.
+!  02/11/2010 CHP Added EDAT to output
 C=======================================================================
 
       SUBROUTINE TR_OPHARV (CONTROL, ISWITCH, 
@@ -41,6 +42,7 @@ C=======================================================================
       INTEGER DFLR, DMAT, LEAFNO, YIELD, ISTAGE
       INTEGER DNR0, IFLR, TIMDIF, IMAT, IPIN    !, DPIN
       INTEGER MeasADAT, MeasADAP
+      INTEGER IEMRG, DEMRG, YREMRG, DNR_EMRG
 
       REAL MAXLAI,TOTNUP,PSDWT,PSPP,HI, LAI !,ACREFC
       REAL WTNCAN,PLANTS
@@ -60,7 +62,7 @@ C=======================================================================
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
-      INTEGER, PARAMETER :: SUMNUM = 17
+      INTEGER, PARAMETER :: SUMNUM = 18
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -92,7 +94,7 @@ C=======================================================================
       IDETO = ISWITCH % IDETO
       IPLTI = ISWITCH % IPLTI
 
-      ACOUNT = 18  !Number of possible FILEA headers for this crop
+      ACOUNT = 19  !Number of possible FILEA headers for this crop
 
 !     Define headings for observed data file (FILEA)
       DATA OLAB / ! 
@@ -117,11 +119,11 @@ C=======================================================================
      &  'SNAM  ', !16 Stem N at maturity (kg/ha)
      &  'GN%M  ', !17 Corm N at maturity (%)
      &  'MDAP  ', !18 Maturity date (dap)
-!     &  'PD1T', !19 
+     &  'EDAT  ', !19 Emergence date (dap)
 !     &  'PDFT', !20       
 !     &  'PWAM', !21 
 !     &  'THAM', !22 
-     &  22*'      '/
+     &  21*'      '/
 
 !***********************************************************************
 !***********************************************************************
@@ -306,7 +308,7 @@ C-----------------------------------------------------------------------
         ELSE
           DMAT = -99
         ENDIF
-        ACOUNT = 17
+
         OLAP(2) = 'MDAP  '
         CALL GetDesc(1,OLAP(2), DESCRIP(2))
 
@@ -318,6 +320,29 @@ C-----------------------------------------------------------------------
         DNR0 = TIMDIF (YRPLT,YRNR2)
         IF (DNR0 .LE. 0) THEN
            DNR0 = -99
+        ENDIF
+
+        CALL READA_Dates(X(19), YRSIM, IEMRG)
+        IF (IEMRG .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
+          DEMRG = TIMDIF(YRPLT,IEMRG)
+        ELSE
+          DEMRG  = -99
+        ENDIF
+        OLAP(19) = 'EDAP  '
+        CALL GetDesc(1,OLAP(19), DESCRIP(19))
+
+        IF (STGDOY(9) < 9999999) THEN
+          YREMRG = STGDOY(9)
+        ELSE
+          YREMRG = YRPLT
+        ENDIF
+        IF (YRPLT .GT. 0) THEN
+          DNR_EMRG = TIMDIF (YRPLT,YREMRG)
+          IF (DNR_EMRG .LE. 0)  THEN
+            DNR_EMRG = -99
+          ENDIF
+        ELSE
+          DNR_EMRG = -99
         ENDIF
 
       YIELD  = NINT(DYIELD) * 3.0 ! fresh yield calc. RMO
@@ -353,6 +378,8 @@ C-----------------------------------------------------------------------
                                          WRITE(Measured(16),'(A8)')X(16)
       WRITE(Simulated(17),'(F8.2)') PCORMN
                                          WRITE(Measured(17),'(A8)')X(17)
+      WRITE(Simulated(19),'(I8)') DNR_EMRG;
+                                         WRITE(Measured(19),'(I8)')DEMRG
       ENDIF  
 
 !-----------------------------------------------------------------------
@@ -378,7 +405,7 @@ C     SDRATE  = PSDWT * PLTPOP * 10.0
 !       Store Summary.out labels and values in arrays to send to
 !       OPSUM routines for printing.  Integers are temporarily 
 !       saved aS real numbers for placement in real array.
-        LABEL(1)  = 'ADAT'; VALUE(1)  = FLOAT(YRNR1)
+        LABEL(1)  = 'ADAT'; VALUE(1)  = -99.
         LABEL(2)  = 'MDAT'; VALUE(2)  = FLOAT(YRNR7)
         LABEL(3)  = 'DWAP'; VALUE(3)  = SDRATE
         LABEL(4)  = 'CWAM'; VALUE(4)  = TOPWT*10.
@@ -395,6 +422,7 @@ C     SDRATE  = PSDWT * PLTPOP * 10.0
         LABEL(15) = 'PWAM'; VALUE(15) = PODWT*10. !chp 7/21/05 added *10
         LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
         LABEL(17) = 'HIAM'; VALUE(17) = HI
+        LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
 
         !Send labels and values to OPSUM
         CALL SUMVALS (SUMNUM, LABEL, VALUE) 

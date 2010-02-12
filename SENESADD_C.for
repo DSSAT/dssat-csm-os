@@ -40,7 +40,7 @@
       INTEGER DYNAMIC, L, LAYER, N_ELEMS, NLAYR 
       INTEGER, PARAMETER :: SRFC = 0  !, N = 1, P = 2
 
-      REAL ADDC, ADDLIG, ADDN, ADDP, FRMETI, FRMETS, RESDAX,
+      REAL ADDC, ADDLIG, ADDN, ADDP, FRMETI, FRMETS, RESDAX, SENSUM,
      &  SENESSUMC, SENESSUMN, SENESSUMP, SEN_AM, SEN_EXTFAC, SEN_WATFAC
       REAL CEDAM(NELEM), CESTR(NELEM), DLAYR(NL), DLTLIGC(0:NL),
      &  DLTMETABC(0:NL), DLTMETABE(0:NL,NELEM), 
@@ -78,6 +78,9 @@
 !     ------------------------------------------------------------------
 !       If it is a fallow treatment, there is no senescence.
         IF (CROP == 'FA') RETURN
+
+        SENSUM = SUM(SENESCE % ResWt)
+        IF (SENSUM < 1.E-10) RETURN
 
 !       -----------------
 !       Shoot senescence.

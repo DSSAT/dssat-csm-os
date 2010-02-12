@@ -131,6 +131,11 @@
       DMP_Irr = -99.    
       GrP_Irr = -99.
 
+      DMP_NApp = -99.
+      GrP_NApp = -99.
+      DMP_NUpt = -99.
+      GrP_NUpt = -99.
+
 !***********************************************************************
 !***********************************************************************
 !     RATE
@@ -299,6 +304,7 @@
               GrP_ET = YIELD  / CETR(0) 
             ENDIF
           
+            CALL GET('SPAM','CEP',CEPR(0))
             IF (CEPR(0) > 1.E-3) THEN
               DMP_EP = Biomas / CEPR(0) 
               GrP_EP = YIELD  / CEPR(0) 
@@ -316,23 +322,22 @@
               WRITE(NOUTDO, 1210) 
      &          TOTIR, DMP_Irr*0.1, DMP_Irr, GrP_Irr*0.1, GrP_Irr
             ENDIF
-          ENDIF
 
-          IF (ISWITCH % ISWNIT == 'Y') THEN
-            CALL GET('MGMT', 'FERNIT', CumNit)
-            IF (CumNit > 1.E-3) THEN
-              DMP_NApp = Biomas / CumNit
-              GrP_NApp = YIELD  / CumNit
-              WRITE(NOUTDO, 1220) CumNit, DMP_NApp, GrP_NApp 
-            ENDIF
-          
-            IF (SUMDAT % NUCM > 1.E-3) THEN
-              DMP_NUpt = Biomas / float(SUMDAT % NUCM)
-              GrP_NUpt = YIELD  / float(SUMDAT % NUCM)
-              WRITE(NOUTDO, 1230) SUMDAT % NUCM, DMP_NUpt,GrP_NUpt
-            ENDIF
-          
-          ENDIF !ISWNIT == 'Y'
+            IF (ISWITCH % ISWNIT == 'Y') THEN
+              CALL GET('MGMT', 'FERNIT', CumNit)
+              IF (CumNit > 1.E-3) THEN
+                DMP_NApp = Biomas / CumNit
+                GrP_NApp = YIELD  / CumNit
+                WRITE(NOUTDO, 1220) CumNit, DMP_NApp, GrP_NApp 
+              ENDIF
+            
+              IF (SUMDAT % NUCM > 1.E-3) THEN
+                DMP_NUpt = Biomas / float(SUMDAT % NUCM)
+                GrP_NUpt = YIELD  / float(SUMDAT % NUCM)
+                WRITE(NOUTDO, 1230) SUMDAT % NUCM, DMP_NUpt,GrP_NUpt
+              ENDIF
+            ENDIF !ISWNIT == 'Y'
+          ENDIF
 
 !         Reset arrays for next run.
           TMAXR = 0.0
