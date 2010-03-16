@@ -4,9 +4,7 @@
 !  Potassium
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
-!  01/24/2005 CHP Written
-!  06/17/2006 AJG Renamed all root-zone and no-root-zone variables with
-!                 Rts and noRts.
+!  10/31/2007 CHP Written 
 !-----------------------------------------------------------------------
 !  Called: SoilKi
 !  Calls: GETLUN, HEADER, YR_DOY, SUMVALS

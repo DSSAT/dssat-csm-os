@@ -46,12 +46,12 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 
-      LOGICAL NOTEXTURE, PHFLAG, FIRST  !, NO_OC
+      LOGICAL NOTEXTURE, PHFLAG, FIRST, NO_OC
       CHARACTER*1 ISWTIL, ISWWAT, MEINF, MESOM, RNMODE, UPCASE
       CHARACTER*6 SECTION
       CHARACTER*7, PARAMETER :: ERRKEY = 'SOILDYN'
       CHARACTER*30 FILEIO
-      CHARACTER*78 MSG(NL+2)
+      CHARACTER*78 MSG(NL+4)
       CHARACTER*200 CHAR
 
       INTEGER DAS, DYNAMIC, ERRNUM, FOUND, I, L, Length 
@@ -112,8 +112,8 @@ C-----------------------------------------------------------------------
 
 !     ---------------------------------------------------------------
 !     Soil dynamics variables
-      INTEGER NTIL, TILDATE
-      REAL AS, CANCOV, CRAIN, CUMDEP  !, FF
+      INTEGER NTIL, TILDATE, NMSG
+      REAL AS, CANCOV, CRAIN, CUMDEP   !, FF
       REAL LCRAIN, MCUMDEP, MIXPCT, MULCHALB, MULCHCOVER
       REAL RAIN, RSTL, SOILCOV, SRATE
       REAL SUMKE, SUMKEL, SUMKET, TDEP, TIL_IRR, XHLAI
@@ -523,7 +523,6 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 
 !     Add additional checks:
       NOTEXTURE = .FALSE.
-!      NO_OC     = .FALSE.
 
 !     Check for soil texture validity.
       COARSE = .FALSE.
@@ -559,24 +558,6 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         SAND(L) = 100. - CLAY(L) - SILT(L)
         SAND(L) = AMAX1 (SAND(L), 0.)
 
-        IF (OC(L) .LT. 1.E-3 .AND. ISWWAT == 'Y') THEN
-          IF (DS(L) > 29.) THEN
-            MSG(1) = "Organic C in lower soil layer is zero or missing."
-            WRITE(MSG(2),'("Layer",I3," Depth =",F5.0)') L, DS(L)
-            CALL WARNING(2,ERRKEY,MSG)
-            OC(L) = 0.0
-          ELSE
-            MSG(1) = "Total organic C in top 30cm is zero or missing."
-            WRITE(MSG(2),'("Layer",I3," Depth =",F5.0)') L, DS(L)
-            MSG(3) = "Please provide an estimate of OC for all soil " //
-     &          "layers in the top 30 cm."
-            MSG(2) = "Model must stop."
-            CALL WARNING(2,ERRKEY,MSG)
-            CALL ERROR(ERRKEY,10," ",0)
-          ENDIF
-!          NO_OC = .TRUE.
-        ENDIF
-
 !       Calcium carbonate - convert from g/kg to %
         IF (CACO(L) .LT. 1.E-4) THEN
           CACO3 = -99.
@@ -592,6 +573,49 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
      &    TEXTURE(L), COARSE(L))                          !Output
 
       ENDDO   !End of soil layer loop.
+
+      NO_OC = .FALSE.
+      DO L = 1, NLAYR
+        IF (OC(L) .LT. 1.E-3 .AND. ISWWAT == 'Y') THEN
+!       Organic C data missing - write message to WARNING.OUT file 
+!       10/15/2008 Allow zero OC values.
+!       02/19/2010 Estimate using Adiku eqn.
+!       Ultimately, we want to require OC in the top layers.  But some of our DSSAT
+!       soils do not currently include OC, so estimate with Adiku eqn. and give
+!       warning.
+          IF (.NOT. NO_OC) THEN
+!           First layer with missing data - write general message and header
+            MSG(1) = "Organic C data in one or more soil " //
+     &        "layers are zero or missing."
+            MSG(2) = "A minimum value of OC in this layer " // 
+     &        " will be estimated using soil texture."
+            MSG(3) = "      Depth  Clay  Silt    OC"
+            MSG(4) = "Layer  (cm)   (%)   (%)   (%)"
+!                         1    42  63.2  22.1  0.97
+            NMSG = 4
+            IF (L > 1) THEN
+              DO i = 1, L-1
+                NMSG = NMSG + 1
+                WRITE(MSG(NMSG),'(I5,I6,2F6.1,F6.2)') 
+     &              i, NINT(DS(i)), CLAY(i), SILT(i), OC(i)
+              ENDDO
+            ENDIF
+          ENDIF
+
+          OC(L) = (0.15 * (CLAY(L) + SILT(L)) + 0.69) / 10.    !g/100g
+          NMSG = NMSG+1
+          WRITE(MSG(NMSG),'(I5,I6,2F6.1,F6.2," (estimated)")') 
+     &          L, NINT(DS(L)), CLAY(L), SILT(L), OC(L)
+          NO_OC = .TRUE.
+        ELSEIF (NO_OC) THEN
+          NMSG = NMSG + 1
+          WRITE(MSG(NMSG),'(I5,I6,2F6.2,F6.3)') 
+     &              L, NINT(DS(L)), CLAY(L), SILT(L), OC(L)
+        ENDIF
+      ENDDO
+      IF (NO_OC) THEN
+        CALL WARNING(NMSG,ERRKEY,MSG)
+      ENDIF
 
 !     Define the type of soil layer. 
 !     First check soil name for occurrence of 'ANDOSOL', 'ANDISOL', 
@@ -681,18 +705,6 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         ENDDO
         CALL INFO(NLAYR+2,ERRKEY,MSG)
       ENDIF
-
-!!     Organic C data missing - write message to WARNING.OUT file 
-!!       and end program.
-!      IF (NO_OC) THEN
-!        MSG(1)= 'Organic C data was' // 
-!     &  ' missing or zero for one or more soil layers.'
-!        MSG(2)='Missing values were set to zero for this simulation.'
-!!       10/15/2008 Allow zero OC values.
-!!       MSG(4)='Model run will stop.'
-!        CALL WARNING(2, ERRKEY, MSG)
-!!       CALL ERROR(ERRKEY,10,FILEIO,0)
-!      ENDIF     
 
 !     Warning message for Century
 !      (non-sequenced runs or any first run)

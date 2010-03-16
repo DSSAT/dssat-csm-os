@@ -120,7 +120,8 @@ C-----------------------------------------------------------------------
 !       IF (INDEX('RSN',MEINF) <= 0) THEN   
         IF (INDEX('RSM',MEINF) > 0) THEN   
 !         New print format includes mulch, tiledrain and runoff info
-          WRITE (NOUTDW, '("!",T99,"Soil water by soil depth (cm):",
+          WRITE (NOUTDW, '("!",T99,
+     &    "Soil water content (mm3/mm3) by soil depth (cm):",
      &    /,"!",T94,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
           WRITE (NOUTDW,1120, ADVANCE='NO')
  1120     FORMAT('@YEAR DOY   DAS',
@@ -128,7 +129,8 @@ C-----------------------------------------------------------------------
      &    '    MWTD  TDFD  TDFC   ROFD')
 
         ELSE      !Old print format
-          WRITE (NOUTDW, '("!",T72,"Soil water by soil depth (cm):",
+          WRITE (NOUTDW, '("!",T72,
+     &    "Soil water content (mm3/mm3) by soil depth (cm):",
      &    /,"!",T67,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
           WRITE (NOUTDW,1123,ADVANCE='NO')
  1123     FORMAT('@YEAR DOY   DAS',

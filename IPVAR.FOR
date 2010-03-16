@@ -165,7 +165,7 @@ C
 
 !        IF (INDEX('WH',CROP) > 0) THEN
 !          READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-!     &      VNEED, VNMIN, VNODR, PPS1, PPS2, 
+!     &      VREQ, VBASE, VEFF, PPS1, PPS2, 
 !     &      P1, P2, P3, P4, P5, P6, P7, P8, 
 !     &      GRNOW, GRWTX, SHWMS, PHINT
 !
@@ -177,8 +177,9 @@ C
 
 !     Ceres-wheat: wheat, barley **
       CASE ('CSCER')
-        READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &            P1V,P1D,P5,G1,G2,G3,PHINT
+!       READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+!    &            P1V,P1D,P5,G1,G2,G3,PHINT
+        READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, PLAINTXT
 
 !     Ceres Maize: maize, sweet corn **
       CASE ('MZCER','SWCER')

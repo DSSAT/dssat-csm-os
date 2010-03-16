@@ -195,7 +195,7 @@ C=======================================================================
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
-     &    ES_LYR)   !, SOILPROP)
+     &    ES_LYR, SOILPROP)
       ENDIF
 
 !     Transfer data to storage routine
@@ -411,7 +411,7 @@ C         Calculate actual soil water uptake and transpiration rates
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
-     &    ES_LYR)   !, SOILPROP)
+     &    ES_LYR, SOILPROP)
       ENDIF
 
 !     Transfer data to storage routine
@@ -439,7 +439,7 @@ C-----------------------------------------------------------------------
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
-     &    ES_LYR)   !, SOILPROP)
+     &    ES_LYR, SOILPROP)
 
       IF (CROP .NE. 'FA' .AND. MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
@@ -459,7 +459,7 @@ C-----------------------------------------------------------------------
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
-     &    ES_LYR)   !, SOILPROP)
+     &    ES_LYR, SOILPROP)
 
       CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input

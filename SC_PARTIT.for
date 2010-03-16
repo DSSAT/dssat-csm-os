@@ -314,7 +314,7 @@ c         Set stalk partitioning factor to maximum from cultivar file
 c          STKPF=STKPFMAX 
 
 C     sdb added 16/10/2003
-	    stkpf = 0.65 + exp(-0.5 * (((tempmx+tempmn)/2.0)-7.5))
+	    stkpf = STKPFMAX + exp(-0.5 * (((tempmx+tempmn)/2.0)-7.5))
 
 
 c         If the stalk has not yet emerged, 0 biomass is allocated to the

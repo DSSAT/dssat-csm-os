@@ -5,7 +5,7 @@
 !----------------------------------------------------------------------
 !  Revision history
 !
-!  10/31/2007 CHP Written based on MZ_NUPTAK
+!  10/31/2007 US / CHP Written based on MZ_NUPTAK
 !----------------------------------------------------------------------
 !  Called : MZ_GROSUB 
 !

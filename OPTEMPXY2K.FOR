@@ -242,16 +242,25 @@ C-----------------------------------------------------------------------
 !     Cultivar
       IF (INDEX(MODEL,'CSCER') > 0) THEN
 !       CSCER - Wheat & barley
-        WRITE (LUNIO,'(/,"*CULTIVARS",/,"@C  CR INGENO CNAME...",1X,
-     &         "ECO#     P1V   P1D    P5    G1    G2    G3 PHINT")')
-        WRITE (LUNIO,156,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
-     &  ECONO,P1V,P1D,P5,G1,G2,G3,PHINT
+        ! Below taken out LAH Dec 2009
+!       WRITE (LUNIO,'(/,"*CULTIVARS",/,"@C  CR INGENO CNAME...",1X,
+!    &         "ECO#     P1V   P1D    P5    G1    G2    G3 PHINT")')
+        ! LAH Added Dec 2009
+        WRITE (LUNIO,157)
+  157   FORMAT(/,"*CULTIVARS")
+        ATLINE(2:23) = 'C  CR INGENO CNAME... '
+        WRITE(LUNIO,'(A)') TRIM(ATLINE)
+        ! Below taken out LAH Dec 2009
+!       WRITE (LUNIO,156,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
+!    &  ECONO,P1V,P1D,P5,G1,G2,G3,PHINT
 156     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,5(1X,F5.1),1X,F5.2,1X,F5.1)
+!       Put text string in LAH DEC 2009
+        WRITE (LUNIO,158,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
+     &    ECONO, TRIM(PLAINTXT)
 
       ELSEIF (INDEX(MODEL,'CSCRP') > 0) THEN
 !       CSCRP Cassava,Wheat,Barley,etc..
         WRITE (LUNIO,157)
-  157   FORMAT(/,"*CULTIVARS")
         ATLINE(2:23) = 'C  CR INGENO CNAME... '
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
 
@@ -263,7 +272,7 @@ C-----------------------------------------------------------------------
 !        IF (INDEX('WH',CROP) > 0) THEN
 !          WRITE (LUNIO,158,IOSTAT=ERRNUM) 
 !     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO, 
-!     &      VNEED, VNMIN, VNODR, PPS1, PPS2, 
+!     &      VREQ, VBASE, VEFF, PPS1, PPS2, 
 !     &      P1, P2, P3, P4, P5, P6, P7, P8, 
 !     &      GRNOW, GRWTX, SHWMS, PHINT
 !  158     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,

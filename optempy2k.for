@@ -588,7 +588,7 @@ C-----------------------------------------------------------------------
 
 !          IF (INDEX('WH',CROP) > 0) THEN
 !            WRITE (LUNIO,158,IOSTAT=ERRNUM) VARNO,VRNAME(1:8), ECONO, 
-!     &        VNEED, VNMIN, VNODR, PPS1, PPS2, 
+!     &        VREQ, VBASE, VEFF, PPS1, PPS2, 
 !     &        P1, P2, P3, P4, P5, P6, P7, P8, 
 !     &        GRNOW, GRWTX, SHWMS, PHINT
 !  158       FORMAT (A6,1X,A8,1X,A6,

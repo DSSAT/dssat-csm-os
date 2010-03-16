@@ -8,7 +8,7 @@
 !  09/22/2008 CHP Written
 !=======================================================================
 
-      SUBROUTINE OPGENERIC (CONTROL, 
+      SUBROUTINE OPGENERIC ( 
      &    NVars, Width, HeaderTxt, FormatTxt,  
      &    VAR1, VAR2, VAR3, VAR4, VAR5, VAR6, 
      &    VAR7, VAR8, VAR9, VAR10,VAR11,VAR12)
@@ -23,13 +23,13 @@
 !-----------------------------------------------------------------------
 
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT  NONE
       SAVE
 
-      TYPE (ControlType), INTENT(IN) :: CONTROL
       CHARACTER*80      , INTENT(IN) :: FormatTxt 
       CHARACTER*120     , INTENT(IN) :: HeaderTxt
-      INTEGER           , INTENT(IN) :: NVars
+      INTEGER           , INTENT(IN) :: NVars, Width
       REAL              , INTENT(IN) :: Var1, Var2, Var3, Var4, Var5
       REAL              , INTENT(IN) :: Var6, Var7, Var8, Var9, Var10
       REAL              , INTENT(IN) :: Var11, Var12
@@ -37,8 +37,10 @@
       CHARACTER*11, PARAMETER :: OUTG = 'Generic.OUT'
       CHARACTER*95 FMT_STRING
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, LUN
-      INTEGER RUN, Width, YEAR, YRDOY
+      INTEGER RUN, YEAR, YRDOY
       LOGICAL FEXIST
+      TYPE (ControlType) CONTROL
+      CALL GET(CONTROL)
 
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC

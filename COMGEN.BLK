@@ -8,7 +8,7 @@
       REAL          LAXNO, LAFS, LAFNO, LAWS, LLIFA, STFR
 
 !     For CSCRP-wheat
-      REAL VNEED, VNMIN, VNODR, PPS2
+      REAL VREQ, VBASE, VEFF, PPS2
       REAL P6, P7, P8
       REAL GRNOW, GRWTX, SHWMS
       
@@ -36,7 +36,7 @@
      &                  PBASE, PSAT,AX,LX,LFN,PANTH
      &        , P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS
      &        , LAXNO, LAFS, LAFNO, LAWS, LLIFA, STFR
-     &        , VNEED, VNMIN, VNODR, PPS1, PPS2
+     &        , VREQ, VBASE, VEFF, PPS1, PPS2
      &        , P6, P7, P8
      &        , GRNOW, GRWTX, SHWMS
       COMMON /GEN02/PD,TC,GPROT,LT50H

@@ -281,7 +281,7 @@ C-----------------------------------------------------------------------
 C     Regenarate short headers now that Run Title is known.
       CALL OPHEAD (RUNINIT,99,0.0,0.0,"                ",0.0,0.0, 
      &     "      ",RUN,MODEL,TITLER,WTHSTR, RNMODE,
-     &     CONTROL, ISWITCH, UseSimCtr)
+     &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
 
 C-----------------------------------------------------------------------
 C     Call INSOIL to calculate initial conditions for each soil layer
@@ -331,7 +331,7 @@ C-----------------------------------------------------------------------
       CALL OPGEN (CUMDEP,TPESW,VRNAME,AINO3,AINH4,TLL,TDUL,TSAT,
      &     TSWINI,RUN,MODEL,CROP,CROPD,TITLET,ECONO,VARTY,
      &     ESW,SWINIT,INO3,INH4,TSOC,WTHSTR,NYRS, RNMODE, 
-     &     CONTROL, ISWITCH, UseSimCtr)
+     &     CONTROL, ISWITCH, UseSimCtr, ATLINE, PATHEX)
 
 C-----------------------------------------------------------------------
 C     FORMAT Strings

@@ -398,7 +398,7 @@ C     IF (I .LT. TRTN) GO TO 50
 !     Generate header information for Warnings or Errors in input module
       CALL OPHEAD (RUNINIT,99,0.0,0.0,"                ",0.0,0.0, 
      &     "      ",RUN,"        ",TITLET,WTHSTR, RNMODE,
-     &     CONTROL, ISWITCH, UseSimCtr)
+     &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -539,7 +539,7 @@ C-----------------------------------------------------------------------
 !     Regen short headers now that MODEL is known.
       CALL OPHEAD (RUNINIT,99,0.0,0.0,"                ",0.0,0.0, 
      &     "      ",RUN,MODEL,TITLET,WTHSTR, RNMODE,
-     &     CONTROL, ISWITCH, UseSimCtr)
+     &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
 
 C-----------------------------------------------------------------------
 C

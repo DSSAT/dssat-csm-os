@@ -5,7 +5,7 @@
 !     soil file (EXK).
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
-!  10/31/2007 CHP Written 
+!  10/31/2007 US / CHP Written 
 !-----------------------------------------------------------------------
 !  Called by: SoilKi
 !=======================================================================
@@ -43,7 +43,7 @@
       IF (CONTROL % RUN == 1 .OR. INDEX('QF',CONTROL % RNMODE) <= 0)THEN
         DO L = 1, NLAYR
           IF (SOILPROP % EXK(L) < 0.0) THEN
-            MSG(1) = "Negative value found in soil file for potassium."
+            MSG(1) = "Missing value found in soil file for potassium."
             MSG(2) = "Cannot run potassium model for this data."
             MSG(3) = "Model will stop."
             CALL WARNING(3,ERRKEY,MSG)

@@ -33,7 +33,7 @@ C=======================================================================
       SUBROUTINE OPGEN (CUMDEP,TPESW,VRNAME,AINO3,AINH4,TLL,TDUL,TSAT,
      &     TSWINI,RUN,MODEL,CROP,CROPD,TITLET,ECONO,VARTY,
      &     ESW,SWINIT,INO3,INH4,TSOC,WTHSTR,NYRS, RNMODE, 
-     &     CONTROL, ISWITCH, UseSimCtr)
+     &     CONTROL, ISWITCH, UseSimCtr, ATLINE, PATHEX)
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -47,7 +47,9 @@ C=======================================================================
       CHARACTER*  8 MODEL
       CHARACTER* 16 CROPD, VRNAME
       CHARACTER* 25 TITLET
+      CHARACTER* 80 PATHEX
       CHARACTER*120 WTHSTR
+      CHARACTER*360 ATLINE
 
       INTEGER NYRS,RUN
       INTEGER LUNOV,LUNOUT
@@ -69,7 +71,7 @@ C     Generate header file to be used by model output routines.
 C-----------------------------------------------------------------------
       CALL OPHEAD(SEASINIT,LUNOV, CUMDEP,TPESW,VRNAME,AINO3,AINH4,
      &     ECONO,RUN,MODEL,TITLET,WTHSTR, RNMODE,
-     &     CONTROL, ISWITCH, UseSimCtr)
+     &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
 
 C-----------------------------------------------------------------------
 C     Generate a summary output for the screen
@@ -80,14 +82,15 @@ C-----------------------------------------------------------------------
           WRITE (6,50)                                    
           CALL OPHEAD (SEASINIT,6,CUMDEP,TPESW,VRNAME,AINO3,AINH4, 
      &     ECONO,RUN,MODEL,TITLET,WTHSTR, RNMODE,
-     &     CONTROL, ISWITCH, UseSimCtr)
+     &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
        ENDIF
 
       CALL OPSOIL (LL,DUL,SAT,
      &     DLAYR,SWINIT,DS,NLAYR,ESW,SHF,BD,PH,INO3,INH4,OC,
      &     TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4,TSOC,
      &     SWCON,U,SALB,CN2,CROPD,VRNAME,VARTY,SLPF,
-     &     ECONO,SLNF,CROP, RNMODE, RUN, CONTROL % MODEL, ISWITCH)
+     &     ECONO,SLNF,CROP, RNMODE, RUN, CONTROL % MODEL, ISWITCH
+     &      , ATLINE)
       IF (RNMODE .EQ. 'I' .AND.  NYRS .LE. 1) THEN
         WRITE (*,2900)
         READ (5,'(1A1)') ANS

@@ -34,7 +34,7 @@ C=======================================================================
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
       REAL SNOW, KCAN, KEP, DEPMAX, DAYLT, DEWDUR
       REAL NSTRES, XLAI, NFP, MSALB, ALBEDO
-      REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP
+      REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP, TWILEN
       REAL CANHT, EO, WINDSP, PARIP, PARIPA
       REAL GSTAGE, CAID 
       REAL TAIRHR(TS), TDEW, SLPF
@@ -179,6 +179,7 @@ C=======================================================================
       CLOUDS = WEATHER % CLOUDS
       CO2    = WEATHER % CO2
       DAYL   = WEATHER % DAYL 
+      TWILEN= WEATHER % TWILEN
       RAIN   = WEATHER % RAIN
       SRAD   = WEATHER % SRAD
       TAIRHR = WEATHER % TAIRHR
@@ -194,7 +195,7 @@ C-----------------------------------------------------------------------
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather
      & DRAIN, RUNOFF, IRRAMT,                              !Water
-     & DAYLT, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,    !Weather
+     & TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,   !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
      & SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                 !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                             !N components

@@ -14,7 +14,7 @@ C=======================================================================
       SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
-     &    ES_LYR)   !, SOILPROP)
+     &    ES_LYR, SOILPROP)
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -29,8 +29,8 @@ C=======================================================================
       CHARACTER*50 FMT
 
       INTEGER DAS, DOY, DYNAMIC, FROP, LUN
-      INTEGER NAVWB, RUN, YEAR, YRDOY  !, L
-      INTEGER REPNO
+      INTEGER NAVWB, RUN, YEAR, YRDOY, L
+      INTEGER REPNO, N_LYR
 
       REAL EF, EM, EO, EP, ES, ET, EOS, EOP
       REAL CEF, CEM, CEO, CEP, CES, CET
@@ -38,7 +38,7 @@ C=======================================================================
       REAL AVTMX, AVTMN, AVSRAD
       REAL TMAX, TMIN, SRAD
 !      REAL SALB, SWALB, MSALB, CMSALB
-      REAL ES_LYR(NL)
+      REAL ES_LYR(NL), ES10
       LOGICAL FEXIST
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
@@ -52,7 +52,7 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       TYPE (SwitchType) ISWITCH
       TYPE (FloodWatType) FLOODWAT
-!      TYPE (SoilType) SOILPROP
+      TYPE (SoilType) SOILPROP
 
       ISWWAT  = ISWITCH % ISWWAT
       IF (ISWWAT == 'N') RETURN
@@ -105,19 +105,31 @@ C-----------------------------------------------------------------------
             CALL HEADER(SEASINIT, LUN, RUN)
           ENDIF
 
-          WRITE (LUN,120,ADVANCE='NO')
-  120     FORMAT('@YEAR DOY   DAS   SRAA   TMXA   TMNA',
-     &   '   EOAA   EOPA   EOSA',
-     &   '   ETAA   EPAA   ESAA   EFAA   EMAA',
-     &   '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
-!     &   '   SALB  SWALB  MSALB CMSALB',    
           IF (ISWITCH % MESEV == 'S') THEN
-            WRITE(LUN,121)
-  121       FORMAT(
-     &   '   ES1D   ES2D   ES3D   ES4D   ES5D',
-     &   '   ES6D   ES7D   ES8D   ES9D   ES10')
+!           Include soil evap by soil layer for Suleiman-Ritchie method
+
+!           Number of soil layers to print between 4 and 10.
+            N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+            WRITE(LUN,'("!",T146,
+     &        "Soil evaporation (mm/d) by soil depth (cm):"
+     &        ,/,"!",T141,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
+
+            WRITE (LUN,120,ADVANCE='NO')
+  120       FORMAT('@YEAR DOY   DAS   SRAA   TMXA   TMNA',
+     &      '   EOAA   EOPA   EOSA',
+     &      '   ETAA   EPAA   ESAA   EFAA   EMAA',
+     &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
+!     &      '   SALB  SWALB  MSALB CMSALB',    
+
+            IF (N_LYR < 10) THEN
+              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR)
+  121         FORMAT(9("    ",A2,I1,A1))
+            ELSE
+              WRITE (LUN,122) ("ES",L,"D",L=1,9), "    ES10"
+  122         FORMAT(9("    ",A2,I1,A1),A8)
+            ENDIF
           ELSE
-            WRITE(LUN,'(" ")')
+            WRITE (LUN,120)
           ENDIF
         ENDIF
 
@@ -204,7 +216,15 @@ C-----------------------------------------------------------------------
 !     &      8(F7.3),6(F8.2))     
 !     &    ,4F7.2 ,10(F7.3))
           IF (ISWITCH % MESEV == 'S') THEN
-            WRITE(LUN,'(10F7.3)') ES_LYR(1:10)    
+            IF (SOILPROP % NLAYR < 11) THEN
+              WRITE(LUN,'(10F8.3)') ES_LYR(1:N_LYR)
+            ELSE
+              ES10 = 0.0
+              DO L = 10, SOILPROP % NLAYR
+                ES10 = ES10 + ES_LYR(L)
+              ENDDO
+              WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
+            ENDIF    
           ELSE
             WRITE(LUN,'(" ")')
           ENDIF

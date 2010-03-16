@@ -49,6 +49,7 @@
       REAL, INTENT(OUT):: ES           !Actual soil evaporation (mm/d)
       REAL, INTENT(OUT):: SWDELTU(NL)  !Change in soil water (cm3/cm3)
       REAL, INTENT(OUT):: UPFLOW(NL)   !Flow or N transport (cm/d)
+      REAL, INTENT(OUT):: ES_LYR(NL)   !Actual soil evap by layer (mm/d)
 !     UPFLOW(1:NL) refers to water which moves up from layer L to
 !       layer L-1, and includes upflow from lower layers.
 !     ------------------------------------------------
@@ -56,7 +57,7 @@
 !      CHARACTER*12, PARAMETER :: ERRKEY = 'SAL_SoilEvap'
       INTEGER L, NLAYR, ProfileType
       REAL A, B, RedFac, SW_threshold
-      REAL, DIMENSION(NL) :: DLAYR, DS, DUL, ES_LYR, LL, MEANDEP
+      REAL, DIMENSION(NL) :: DLAYR, DS, DUL, LL, MEANDEP
       REAL, DIMENSION(NL) :: SWAD, SWTEMP, SW_AVAIL, ES_Coef
 
 !-----------------------------------------------------------------------

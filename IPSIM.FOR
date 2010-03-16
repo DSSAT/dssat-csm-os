@@ -207,8 +207,10 @@ C
          ENDIF
 
          IF (INDEX('FNQS',RNMODE) > 0) THEN
+!          For sequence, seasonal runs, default CO2 uses static value
            IF (INDEX ('WMD', ICO2) < 1) ICO2 = 'D'
          ELSE
+!          For experimental runs, default CO2 uses measured values
            IF (INDEX ('WMD', ICO2) < 1) ICO2 = 'M'
          ENDIF
 
@@ -332,9 +334,12 @@ C
                IDETR = 'Y'
             ENDIF
             IDETR = UPCASE(IDETR)
-!           VBOSE = zero, suppress all output except SUMMARY.OUT
+
+!           Verbose output switch
             IF (IDETL == '0') THEN
-              IF (INDEX('E',IDETO) < 1) IDETO = 'N'
+!             VBOSE = zero, suppress all output except Summary and Evaluate
+              IDETS = 'Y'
+              IDETO = 'E'
               IDETG = 'N' 
               IDETC = 'N' 
               IDETW = 'N' 
@@ -343,7 +348,22 @@ C
               IDETD = 'N' 
               IDETH = 'N' 
               IDETR = 'N' 
+            ELSEIF (IDETL == 'A') THEN
+!             VBOSE = 'A', generate all output
+              IDETS = 'A'
+              IDETO = 'Y'
+              IDETG = 'Y' 
+              IDETC = 'Y' 
+              IDETW = 'Y' 
+              IDETN = 'Y' 
+              IDETP = 'Y' 
+              IDETD = 'Y' 
+              IDETH = 'Y' 
+              IDETR = 'Y' 
+!             Set IDETL back to "D" so no need for changes elsewhere
+              IDETL = 'D' 
             ENDIF
+
             IF (FROP .LE. 0) FROP = 10
          ENDIF
 C
@@ -516,21 +536,22 @@ C-----------------------------------------------------------------------
 
           CASE DEFAULT
 !           P model has NOT been tested for the remainder of the CROPGRO crops
-!           Print a warning message, but allow the user to continue.
+!           Print a warning message.
             CALL GET_CROPD(CROP, CROPD)
             CROPD = ADJUSTL(CROPD)
 
             WRITE(MSG(1),
      &         '("Phosphorus model has not been tested for "
      &         ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
-            MSG(2)="Model will run if soils and species P data" //
-     &         " are supplied."
-            MSG(3)="User must verify validity of crop response."
-            MSG(4)="Please contact the CSM development team if " // 
+!            MSG(2)="Model will run if soils and species P data" //
+!     &         " are supplied."
+!            MSG(3)="User must verify validity of crop response."
+            MSG(2)="Please contact the CSM development team if " // 
      &         "you wish to "
-            WRITE(MSG(5),'("contribute to development of a P model for "
+            WRITE(MSG(3),'("contribute to development of a P model for "
      &          ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
-            CALL WARNING(5,ERRKEY,MSG)
+            CALL WARNING(3,ERRKEY,MSG)
+            CALL ERROR('IPSIM', 6, "", 0)
           END SELECT
 
         CASE DEFAULT
@@ -554,11 +575,11 @@ C-----------------------------------------------------------------------
 !       Check for validity of K model for this crop
         SELECT CASE(MODEL(1:5))
         CASE('MZCER','RICER')
-          SELECT CASE(CONTROL % CROP)
-          CASE('MZ','RI') 
-!           Potassium model has been enabled and tested for these crops, do nothing
-
-          CASE DEFAULT
+!          SELECT CASE(CONTROL % CROP)
+!          CASE('MZ','RI') 
+!!           Potassium model has been enabled and tested for these crops, do nothing
+!
+!          CASE DEFAULT
 !           K model has NOT been tested for the remainder of the CROPGRO crops
 !           Print a warning message, but allow the user to continue.
             CALL GET_CROPD(CROP, CROPD)
@@ -567,15 +588,16 @@ C-----------------------------------------------------------------------
             WRITE(MSG(1),
      &         '("Potassium model has not been tested for "
      &         ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
-            MSG(2)="Model will run if soils and species K data" //
-     &         " are supplied."
-            MSG(3)="User must verify validity of crop response."
-            MSG(4)="Please contact the CSM development team if " // 
+!            MSG(2)="Model will run if soils and species K data" //
+!     &         " are supplied."
+!            MSG(3)="User must verify validity of crop response."
+            MSG(2)="Please contact the CSM development team if " // 
      &         "you wish to "
-            WRITE(MSG(5),'("contribute to development of a K model for "
+            WRITE(MSG(3),'("contribute to development of a K model for "
      &          ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
-            CALL WARNING(5,ERRKEY,MSG)
-          END SELECT
+            CALL WARNING(3,ERRKEY,MSG)
+            CALL ERROR('IPSIM', 7, "", 0)
+!          END SELECT
 
         CASE DEFAULT
 !         Crop model has not been linked to K model.
@@ -838,8 +860,8 @@ D     IPX = 22
         MSG(1) = "Simulation Controls override with file:"
         WRITE(MSG(2),'(A)') CONTROL % SimControl(1:SimLen)
         WRITE(MSG(3),'(A,I6)') "Control Level: ", CTRNO
-        MSG(4) = "The following switches and options will override"
-        MSG(5) = "  values found in the Experiment files:"
+        MSG(4)="The following switches and options will override values"
+        MSG(5)="  found in the Experiment files, if appropriate:"
         NMSG = 5
 
 !       Initialize override values
@@ -1167,9 +1189,11 @@ D     IPX = 22
             IDETH = UPCASE(IDETH)
             IDETR = UPCASE(IDETR)
 
-!           VBOSE = zero, suppress all output except SUMMARY.OUT
+!           Verbose output switch
             IF (IDETL == '0') THEN
-              IF (INDEX('E',IDETO) < 1) IDETO = 'N'
+!             VBOSE = zero, suppress all output except Summary and Evaluate
+              IDETS = 'Y'
+              IDETO = 'E'
               IDETG = 'N' 
               IDETC = 'N' 
               IDETW = 'N' 
@@ -1178,6 +1202,20 @@ D     IPX = 22
               IDETD = 'N' 
               IDETH = 'N' 
               IDETR = 'N' 
+            ELSEIF (IDETL == 'A') THEN
+!             VBOSE = 'A', generate all output
+              IDETS = 'A'
+              IDETO = 'Y'
+              IDETG = 'Y' 
+              IDETC = 'Y' 
+              IDETW = 'Y' 
+              IDETN = 'Y' 
+              IDETP = 'Y' 
+              IDETD = 'Y' 
+              IDETH = 'Y' 
+              IDETR = 'Y' 
+!             Set IDETL back to "D" so no need for changes elsewhere
+              IDETL = 'D' 
             ENDIF
 
           END SELECT

@@ -191,7 +191,6 @@ C-----------------------------------------------------------------------
 ! SDIDOT  Number of seeds destroyed on the current day (#/m2/d)
 ! SHIDOT  Number of shells destroyed on current day (#/m2/d)
 ! SWIDOT  Daily seed mass damage (g/m2/day)
-! TITLET  Treatment description
 ! WLIDOT  Daily pest or freeze damage to leaf mass (g/m2/day)
 ! WRIDOT  Daily pest damage to root mass (g/m2/day)
 ! WSHIDT  Daily shell mass damage (g/m2/day)

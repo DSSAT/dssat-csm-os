@@ -185,9 +185,15 @@ C     The components are copied into local variables for use here.
         LINWTH = 0
         LongFile = .FALSE.
 
+        INQUIRE(FILE=FILEWW,EXIST=FEXIST)
+        IF (.NOT. FEXIST) THEN
+          ErrCode = 30
+          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
+          RETURN
+        ENDIF
         OPEN (LUNWTH,FILE=FILEWW,STATUS='OLD',IOSTAT=ERR)
         IF (ERR /= 0) THEN
-          ErrCode = 30
+          ErrCode = 29
           CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
           RETURN
         ENDIF
@@ -431,9 +437,16 @@ C       Substitute default values if REFHT or WINDHT are missing.
              FILEWW = PATHWT(1:(PATHL-1)) // FILEW
           ENDIF
 
+          INQUIRE(FILE=FILEWW,EXIST=FEXIST)
+          IF (.NOT. FEXIST) THEN
+            ErrCode = 30
+            CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
+            RETURN
+          ENDIF
+      
           OPEN (LUNWTH,FILE=FILEWW,STATUS='OLD',IOSTAT=ERR)
           IF (ERR /= 0) THEN
-            ErrCode = 30
+            ErrCode = 29
             CALL WeatherError(CONTROL, ErrCode, FILEWW, 0,YRDOYWY,YREND)
             RETURN
           ENDIF
@@ -965,6 +978,7 @@ C         Read in weather file header.
         RETURN
       ENDIF
 
+!     Warnings: issue message, but do not end simulation
       IF (SRAD < 1.0) THEN
         MSG(1) = "Warning: SRAD < 1"
         NChar = MIN(78,LEN_Trim(FILEWW))
@@ -1095,6 +1109,12 @@ c                   available.
       YREND = CONTROL%YRDOY
       CONTROL % ErrCode = ErrCode
       CALL PUT(CONTROL)
+
+!!     Stop the run for these errors:
+!      SELECT CASE(ErrCode)
+!        CASE (29,30)
+!        CALL ERROR(ERRKEY,ErrCode,FILEWW(I-11:I),0)
+!      END SELECT
 
       IF (INDEX('FQ',CONTROL%RNMODE) > 0) THEN
         I = LEN_TRIM(FILEWW)

@@ -141,7 +141,7 @@ C  Calls:     None
 !        IF (ISWPHO == 'Y') THEN
           WRITE (NOUTDG, 100) "Root Dens. (cm/cm3) by soil ",
      &      "depth (cm):",(SoilProp%LayerText(L), L=1,N_LYR)
-  100     FORMAT("!",237X,A,A,/,"!",232X,10A8) 
+  100     FORMAT("!",244X,A,A,/,"!",239X,10A8) 
 !        ELSE
 !          WRITE (NOUTDG,102) (SoilProp%LayerText(L), L=1,N_LYR)
 !  102     FORMAT("!",216X,"Soil Layer depths (cm):",/,"!",211X,10A8)

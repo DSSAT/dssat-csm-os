@@ -136,7 +136,7 @@ C=======================================================================
 
       SUBROUTINE OPHEAD (DYNAMIC, LUNOV,CUMDEP,TPESW,VRNAME,AINO3,AINH4,
      &     ECONO,RUN,MODEL,TITLET,WTHSTR, RNMODE,
-     &     CONTROL, ISWITCH, UseSimCtr)
+     &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
 
       USE ModuleDefs
       USE HeaderMod
@@ -153,6 +153,7 @@ C=======================================================================
       CHARACTER*8   MODEL
       CHARACTER*16  VRNAME
       CHARACTER*25  TITLET
+      CHARACTER*80  PATHEX
       CHARACTER*80  HEADER(100) !Simulation header
       CHARACTER*120 WTHSTR
 
@@ -203,7 +204,8 @@ c     MJ, Mar 2008: added HDATE_YR and HDATE_DOY
       WRITE (HEADER(1),100) Version,MonthTxt(DATE_TIME(2)),DATE_TIME(3),
      &    DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
       WRITE (HEADER(2),'(" ")')
-      WRITE (HEADER(3),200) MOD(RUN,1000),TITLET
+!     WRITE (HEADER(3),200) MOD(RUN,1000),TITLET
+      WRITE (HEADER(3),201) MOD(RUN,1000),TITLET,MODEL
       I = INDEX(MODEL," ")
       IF (I < 1) THEN
         WRITE (HEADER(4),300) MODEL(1:8),CROPD
@@ -211,13 +213,15 @@ c     MJ, Mar 2008: added HDATE_YR and HDATE_DOY
         WRITE(HEADER(4),*) " "
       ENDIF
       WRITE (HEADER(5),310) EXPER,CG,ENAME(1:50)
+      WRITE (HEADER(6),312) PATHEX(1:62)
+  312 FORMAT (1X,'DATA PATH ',5X,':',1X,A)
       IF (INDEX('FQ',RNMODE) > 0) THEN
-        WRITE (HEADER(6),320) MOD(CONTROL%ROTNUM,1000),TITLET
+        WRITE (HEADER(7),320) MOD(CONTROL%ROTNUM,1000),TITLET, MODEL
       ELSE
-        WRITE (HEADER(6),320) MOD(TRTNO,1000),TITLET
+        WRITE (HEADER(7),320) MOD(TRTNO,1000),TITLET, MODEL
       ENDIF
-      WRITE (HEADER(7),'(" ")')
-      I = 8; HEADERS%ShortCount = I-2
+      WRITE (HEADER(8),'(" ")')
+      I = 9; HEADERS%ShortCount = I-2
       HEADERS % ICOUNT  = I-1
       HEADERS % HEADER = HEADER
       HEADERS % RUN    = RUN
@@ -391,10 +395,11 @@ C-----------------------------------------------------------------------
   100 FORMAT ("*DSSAT Cropping System Model Ver. ",I1,".",I1,".",I1,
      &     ".",I3.3,15X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
   200 FORMAT ('*RUN ',I3,8X,': ',A25)
+  201 FORMAT ('*RUN ',I3,8X,': ',A25,1X,A8)
 
   300 FORMAT (1X,'MODEL',10X,':',1X,A8,' - ',A16)
   310 FORMAT (1X,'EXPERIMENT',5X,':',1X,A8,1X,A2,1X,A50)
-  320 FORMAT (1X,'TREATMENT',I3, 3X,':',1X,A25)
+  320 FORMAT (1X,'TREATMENT',I3, 3X,':',1X,A25,1X,A8)
   330 FORMAT (1X,'CROP',11X,':',1X,A16,1X,'CULTIVAR :',A17,1X,
      &        'ECOTYPE :',A6)
 
@@ -498,7 +503,7 @@ C=======================================================================
      &   DLAYR,SWINIT,DS,NLAYR,ESW,SHF,BD,PH,INO3,INH4,OC,
      &   TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4,TSOC,
      &   SWCON,U,SALB,CN2,CROPD,VRNAME,VARTY,SLPF,
-     &   ECONO,SLNF,CROP, RNMODE, RUN, MODEL, ISWITCH)
+     &   ECONO,SLNF,CROP, RNMODE, RUN, MODEL, ISWITCH, ATLINE)
 
       USE ModuleDefs
       USE HeaderMod
@@ -513,8 +518,10 @@ C=======================================================================
       CHARACTER*16 CROPD
       CHARACTER*16 VRNAME
       CHARACTER*80  HEADER(100) !Simulation header
+      CHARACTER*360 ATLINE
 
       INTEGER      NLAYR,I,L, RUN
+      INTEGER      J, J1, J2, LENGTH, LENSTRING
 
       REAL         LL(NL),DUL(NL),SAT(NL),DLAYR(NL),DS(NL),SWINIT(NL)
       REAL         ESW(NL),SHF(NL),BD(NL),PH(NL),INO3(NL),INH4(NL)
@@ -584,21 +591,33 @@ C-----------------------------------------------------------------------
         WRITE (HEADER(I),853) THRESH, SDPRO, SDLIP; I=I+1
 
 !     CropSim cassava & wheat
-      ELSEIF (INDEX (MODEL, 'CSCRP') > 0) THEN
-        IF (INDEX('WH',CROP) > 0) THEN
-          WRITE(HEADER(I), 870) VNEED, VNMIN, VNODR, PPS1, PPS2; I=I+1
-          WRITE(HEADER(I), 871) P1, P2, P3, P4; I=I+1
-          WRITE(HEADER(I), 872) P5, P6, P7, P8; I=I+1
-          WRITE(HEADER(I), 873) GRNOW, GRWTX, SHWMS, PHINT; I=I+1
+      ELSEIF (INDEX (MODEL, 'CSCRP') > 0 .OR. 
+     &        INDEX (MODEL, 'CSCER') > 0) THEN
+        LENGTH = LenString(PLAINTXT)
+        DO J=1,5
+          J1 = (J-1)*78+1
+          J2 = J1 + 77
+          WRITE( HEADER(I),'(A)') TRIM(ATLINE(J1+29:J2+29))
+          WRITE( HEADER(I+1),'(A)') TRIM(PLAINTXT(J1:J2))
+          I = I + 2
+          IF (J2 > LENGTH) EXIT
+        ENDDO
+!        WRITE( HEADER(I+1),'(7X,A6,1X,A10,1X,A6,A)')
+!     &       VARTY, VRNAME, ECONO, TRIM(PLAINTXT)
+!        IF (INDEX('WH',CROP) > 0) THEN
+!          WRITE(HEADER(I), 870)  VREQ, VBASE, VEFF, PPS1, PPS2; I=I+1
+!          WRITE(HEADER(I), 871) P1, P2, P3, P4; I=I+1
+!          WRITE(HEADER(I), 872) P5, P6, P7, P8; I=I+1
+!          WRITE(HEADER(I), 873) GRNOW, GRWTX, SHWMS, PHINT; I=I+1
 
-        ELSEIF (INDEX('CS',CROP) > 0) THEN
-          WRITE (HEADER(I), 880) PPS1, P1L, P2L, P4L; I=I+1
-          WRITE (HEADER(I), 881) P5L, SRNOW, SRFR, LA1S; I=I+1
-          WRITE (HEADER(I), 882) LAXS, LAXNO, LAFS, LAFNO; I=I+1
-          WRITE (HEADER(I), 883) LAWS, PHINT, LLIFA, STFR; I=I+1
-        ENDIF
+!        ELSEIF (INDEX('CS',CROP) > 0) THEN
+!          WRITE (HEADER(I), 880) PPS1, P1L, P2L, P4L; I=I+1
+!          WRITE (HEADER(I), 881) P5L, SRNOW, SRFR, LA1S; I=I+1
+!          WRITE (HEADER(I), 882) LAXS, LAXNO, LAFS, LAFNO; I=I+1
+!          WRITE (HEADER(I), 883) LAWS, PHINT, LLIFA, STFR; I=I+1
+!        ENDIF
 
-      ELSEIF (INDEX ('MZ,WH,SG,BA,ML',CROP) .GT. 0) THEN
+      ELSEIF (INDEX ('MZ,SG,ML',CROP) .GT. 0) THEN
          IF (CROP .EQ. 'MZ') THEN
            IF (MODEL .EQ. 'MZCER045') THEN
             WRITE (HEADER(I),900) P1,P2,P5; I=I+1
@@ -619,18 +638,14 @@ C-----------------------------------------------------------------------
          ELSE IF (CROP .EQ. 'ML') THEN
             WRITE (HEADER(I), 903) P1,P2O,P2R,P5; I=I+1
             WRITE (HEADER(I),1003) G1,G4,PHINT; I=I+1
-         ELSE IF (CROP .EQ. 'BA') THEN
-C-GH     ELSE IF (CROP .EQ. 'BA' .OR. CROP .EQ. 'WH') THEN
-            WRITE (HEADER(I), 904) P1V,P1D,P5; I=I+1
-            WRITE (HEADER(I),1004) G1,G2,G3,PHINT; I=I+1
-         ELSE IF (CROP .EQ. 'WH') THEN
-            WRITE (HEADER(I), 954) P1V,P1D,P5; I=I+1  !,LT50H
-            WRITE (HEADER(I),1054) G1,G2,G3,PHINT; I=I+1
+!         ELSE IF (CROP .EQ. 'BA') THEN
+!C-GH     ELSE IF (CROP .EQ. 'BA' .OR. CROP .EQ. 'WH') THEN
+!            WRITE (HEADER(I), 904) P1V,P1D,P5; I=I+1
+!            WRITE (HEADER(I),1004) G1,G2,G3,PHINT; I=I+1
+!         ELSE IF (CROP .EQ. 'WH') THEN
+!            WRITE (HEADER(I), 954) P1V,P1D,P5; I=I+1  !,LT50H
+!            WRITE (HEADER(I),1054) G1,G2,G3,PHINT; I=I+1
          ENDIF
-      ELSEIF (INDEX ('CS',CROP) .GT. 0) THEN
-         WRITE (HEADER(I),2000) (GCOEFF(L),L= 1, 5); I=I+1
-         WRITE (HEADER(I),2001) (GCOEFF(L),L= 6,10); I=I+1
-         WRITE (HEADER(I),2002) (GCOEFF(L),L=11,15); I=I+1
 
       ELSEIF (INDEX ('PT',CROP) .GT. 0) THEN
          WRITE (HEADER(I), 905) G2,G3,G4; I=I+1
@@ -700,7 +715,7 @@ C-----------------------------------------------------------------------
   852 FORMAT (1X,'WTPSD  :',F5.3,'  SDPDVR :',F5.1,
      &         '  SDFDUR :',F5.2,'  PODDUR :',F5.2,'  XFRUIT  :',F6.2)
 
-  870 FORMAT (1X,'VNEED  :',F6.1,'  VNMIN  :',F6.1,'  VNODR  :',F6.2,
+  870 FORMAT (1X,'VREQ   :',F6.1,'  VBASE  :',F6.1,'  VEFF   :',F6.2,
      &         '  PPS1   :',F6.3,'  PPS2   :',F6.1)
   871 FORMAT (1X,'P1     :',F6.1,'  P2     :',F6.1,'  P3     :',F6.1,
      &         '  P4     :',F6.1)

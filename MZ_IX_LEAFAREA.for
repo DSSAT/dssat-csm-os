@@ -254,11 +254,12 @@ C    Calculated from Salah and Tardieu, 1996. J of Exp Bot 47:1689-1698
            TRED = 1.15*(1.0-EXP(-0.2*(TEMPM-9.8)))	     
         ENDIF
         TRED = AMIN1(TRED,1.0)
-        TRED = AMAX1(TRED,0.0)
+        TRED = AMAX1(TRED,1.E-8)   !JIL 03/03/2010
 
 C ** Reducing leaf expansion due to water, oxygen, nitrogen or phosphorus stresses
 C    Included PStres2 here
         SRED = AMIN1(TURFAC,(1-SATFAC),AGEFAC,PStres2)
+        SRED = AMAX1(SRED,1.E-8)   !JIL 03/03/2010        
 
         LATOT = 0.0
         PLAG = 0.0

@@ -438,8 +438,8 @@ C-------------------------------------------------------------------
 
           WRITE(NOUTDS,310)
   310     FORMAT(/,
-     &    '!IDENTIFIERS................ TREATMENT.......... ',
-     &    'SITE INFORMATION............ ',
+     &    '!IDENTIFIERS......................... ',
+     &    'TREATMENT................ SITE INFORMATION............ ',
      &    'DATES..........................................  ',
      &    'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
      &    '..................  ',
@@ -453,8 +453,8 @@ C-------------------------------------------------------------------
      &    'NITROGEN PRODUCTIVITY...........')
 
           WRITE (NOUTDS,400)
-  400     FORMAT ('@   RUNNO   TRNO R# O# C# CR TNAM                ',
-     &    'FNAM     WSTA.... SOIL_ID...  ',
+  400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL    ',
+     &    'TNAM                      FNAM     WSTA.... SOIL_ID...  ',
      &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
      &    '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
      &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
@@ -470,11 +470,25 @@ C-------------------------------------------------------------------
 
         IF (BWAH < -1) BWAH = -9.9
 
+        MODEL = CONTROL % MODEL
+
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
-     &    CROP, TITLET(1:19), FLDNAM, WSTAT, SLNO,
+     &    CROP, MODEL, TITLET, FLDNAM, WSTAT, SLNO,
      &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
+
+!       RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
+  500   FORMAT (I9,1X,I6,3(I3),               
+
+!       CROP, MODEL, TITLET, FLDNAM, WSTAT, SLNO,
+     &  1X,A2,1X,A8,1X,A25,1X,A8,1X,A8,1X,A10,      
+
+!       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
+     &  6(1X,I7),
+
+!       DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM,
+     &  1X,I5,4(1X,I7),1X,I5)
 
         IF     (HWUM < -.01)  THEN; FMT = '(1X,F7.0)'
         ELSEIF (HWUM < 1.)    THEN; FMT = '(1X,F7.4)'
@@ -493,17 +507,6 @@ C-------------------------------------------------------------------
 !         Water productivity
      &    DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM,
      &    DPNAM, DPNUM, YPNAM, YPNUM
-
-!       RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
-  500   FORMAT (I9,1X,I6,3(I3),               
-
-!       CROP, TITLET(1:19), FLDNAM, WSTAT, SLNO,
-     &  1X,A2,1X,A19,1X,A8,1X,A8,1X,A10,      
-
-!       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
-     &  6(1X,I7),
-!       DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM,
-     &  1X,I5,4(1X,I7),1X,I5)
 
   503   FORMAT(     
                                               
@@ -635,15 +638,16 @@ C-------------------------------------------------------------------
      &      IOSTAT = ERRNUM)
           CALL DATE_AND_TIME (VALUES=DATE_TIME)
           WRITE (SLUN,700) EXPER, CG, ENAME, Version,
+!         WRITE (SLUN,700) MODEL, EXPER, CG, ENAME, Version,
      &        MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1), 
      &        DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
   700     FORMAT ('*EVALUATION : ',A8,A2,1X,A60,1X,
+! 700     FORMAT ('*EVALUATION : ',A8,1X,A8,A2,1X,A60,1X,
      &    'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',I3.3,
      &     5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
         ENDIF
 
 !       Write headers if new crop is being processed
-        MODEL = CONTROL % MODEL
         IF (MODEL .NE. MODEL_LAST) THEN
           WRITE(SLUN,
      &       '(/,"@RUN EXCODE        TN RN CR",80(1X,A7))')   
