@@ -201,7 +201,7 @@ C     Call IPVAR
 C-----------------------------------------------------------------------
       IF (CROP .NE. 'FA') THEN
         CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,PATHGE,
-     &              ECONO, MODEL, ATLINE)
+     &              ECONO, MODEL, ATLINE, CROP)
       ENDIF
 
 C-----------------------------------------------------------------------

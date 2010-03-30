@@ -365,10 +365,18 @@
 !             Sharpley et al. (1984), Table 2.
 !             PiLabile(L) = 0.55 * P_OLSEN(L) + 2.1
 
-            CASE('SA002')   !Bray No. 1                   
-              PiLabile(L) = MAX(0.0, 1.34 * PMeasured(L) - 0.30)
-!             Sharpley et al. (1989), Table 3. IFDC (2008)
-!             PiLabile(L) = 0.41 * P_BRAY1(L) + 5.55
+            CASE('SA002')   !Bray No. 1  
+              PMin = 1.0
+              IF (PMeasured(L) > 6.29) THEN  
+!               US Table 3. IFDC (2008)             
+                PiLabile(L) = MAX(0.0, 1.34 * PMeasured(L) - 0.30)
+              ELSEIF (PMeasured(L) > PMin) THEN
+!               Sharpley et al. (1989) 
+                PiLabile(L) = 0.41 * PMeasured(L) + 5.55
+              ELSE
+!               Extension thru origin 
+                PiLabile(L) = (0.41 * PMin + 5.55) * PMeasured(L) / PMin
+              ENDIF
 
             CASE('SA004')   !Mehlich I (double acid, 1:5)
 !             PiLabile(L) = MAX(0.0, 5.97 * PMeasured(L) - 0.21)
@@ -573,7 +581,7 @@
 
         END SELECT  !soil layer type
 
-        P_AVAILINDEX(L) = MIN(P_AVAILINDEX(L), 1.0)
+        P_AVAILINDEX(L) = MIN(P_AVAILINDEX(L), 0.99)
         P_AVAILINDEX(L) = MAX(P_AVAILINDEX(L), 0.1)
 
 !       ----------------------------------------------------------------

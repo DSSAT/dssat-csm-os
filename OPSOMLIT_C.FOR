@@ -493,7 +493,7 @@
      &    METABE(0,N), TMETABE(N), (MEN(L), L=1, 5), 
      &    STRUCE(0,N), TSTRUCE(N), (STN(L), L=1, 5), 
      &    NINT(CUMRESE(N))
-  310   FORMAT (1X,I4,1X,I3.3,1X,I5, 2(I8,F8.2), 27I8, 21F8.2, I8)
+  310   FORMAT (1X,I4,1X,I3.3,1X,I5, 2(I8,F8.3), 27I8, 21F8.2, I8)
 
 !!       C:N ratios
 !        TCNTD = 0.0; TCN0D = 0.0; TCNSD = 0.0
@@ -571,7 +571,7 @@
      &    METABE(0,P), TMETABE(P),(MEP(L), L=1, 5), 
      &    STRUCE(0,P), TSTRUCE(P),(STP(L), L=1, 5), 
      &    CUMRESE(P)
-  320   FORMAT (1X,I4,1X,I3.3,1X,I5,  2(I8,F8.2), 50(F8.2))
+  320   FORMAT (1X,I4,1X,I3.3,1X,I5,  2(I8,F8.4), 50(F8.2))
       ENDIF
 
 !==================================================================

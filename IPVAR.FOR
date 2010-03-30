@@ -34,13 +34,14 @@ C
 C  HDLAY  :
 C=======================================================================
       SUBROUTINE IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,
-     &                  PATHGE,ECONO, MODEL, ATLINE)
+     &                  PATHGE,ECONO, MODEL, ATLINE, CROP)
 
       IMPLICIT NONE
 
       INCLUDE 'COMGEN.BLK'
 
       CHARACTER*1   LINE(80),RNMODE,BLANK,ANS
+      CHARACTER*2   CROP
       CHARACTER*6   VARTY,VARNO,ERRKEY,ECONO
       CHARACTER*8   MODEL
       CHARACTER*12  FILEG
@@ -158,28 +159,37 @@ C
 !        IF (SDPRO  .LE. 0) CALL ERROR (ERRKEY,51,FILEG,LINVAR)
 !        IF (SDLIP  .LE. 0) CALL ERROR (ERRKEY,52,FILEG,LINVAR)
 
-!     CropSim: cassava, wheat **
+!     CropSim: cassava, wheat, barley
       CASE ('CSCRP')
 !       For now, CropSim will just have a text string for cultivar info
-        READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, PLAINTXT
+!        READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, PLAINTXT
+!CASSAVA
+!@VAR#  VAR-NAME........ EXPNO   ECO#  PPS1   P1L   P2L   P4L   P5L SRNOW  SRFR  LA1S  LAXS LAXNO  LAFS LAFNO  LAWS PHINT LLIFA  STFR
+!DFAULT DEFAULT              . DFAULT     0    10    20    30   200  0.25  0.30   300  1900   100    30   150   200    24    10  0.35
 
-!        IF (INDEX('WH',CROP) > 0) THEN
-!          READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-!     &      VREQ, VBASE, VEFF, PPS1, PPS2, 
-!     &      P1, P2, P3, P4, P5, P6, P7, P8, 
-!     &      GRNOW, GRWTX, SHWMS, PHINT
-!
-!        ELSEIF (INDEX('CS',CROP) > 0) THEN
-!          READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-!     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
-!     &      LAXNO, LAFS, LAFNO, LAWS, PHINT, LLIFA, STFR
-!        ENDIF
+!WHEAT & BARLEY
+!@VAR#  VAR-NAME........ EXPNO   ECO#  VREQ VBASE  VEFF  PPS1  PPS2    P1    P2    P3    P4    P5    P6    P7    P8 GNOWT  GWTS SHWTS PHINT  LA1S  LAFV  LAFR
+!DFAULT DEFAULT              . DFAULT     0     0     0     0     0   600    80   150   350   140    35   175   600    25    58  3.50    60   2.0   0.1   0.5
+
+        IF (INDEX('WH,BA',CROP) > 0) THEN
+          READ (C360,810,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
+     &      VREQ, VBASE, VEFF, PPS1, PPS2, 
+     &      P1, P2, P3, P4, P5, P6, P7, P8, 
+     &      GNOWT, GWTS, SHWTS, PHINT, LA1S, LAFV, LAFR, PLAINTXT
+
+        ELSEIF (INDEX('CS',CROP) > 0) THEN
+          READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
+     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
+     &      LAXNO, LAFS, LAFNO, LAWS, PHINT, LLIFA, STFR, PLAINTXT
+        ENDIF
 
 !     Ceres-wheat: wheat, barley **
       CASE ('CSCER')
 !       READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-!    &            P1V,P1D,P5,G1,G2,G3,PHINT
-        READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, PLAINTXT
+!     &            P1V,P1D,P5,G1,G2,G3,PHINT, PLAINTXT
+!       READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, PLAINTXT
+       READ (C360, 830,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+     &            P1V,P1D,P5,G1,G2,G3,PHINT, PLAINTXT
 
 !     Ceres Maize: maize, sweet corn **
       CASE ('MZCER','SWCER')
@@ -308,7 +318,10 @@ C-----------------------------------------------------------------------
   800 FORMAT (A6,1X,A16,7X,A6,18F6.0)                     !11/8/07
 
 ! 820 FORMAT (A6,1X,A16,1X,A6,1X,A)
-  820 FORMAT (A6,1X,A16,7X,A6,A)                       !11/8/07
+! 820 FORMAT (A6,1X,A16,7X,A6,18F6.0,A)                       !11/8/07
+  810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010
+  820 FORMAT (A6,1X,A16,7X,A6,16F6.0,A)         !CSCRP        03/16/2010
+  830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
 
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
  1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 

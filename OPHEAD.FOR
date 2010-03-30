@@ -535,6 +535,8 @@ C=======================================================================
 
       ISWWAT = ISWITCH % ISWWAT
 
+!=======================================================================
+!     SOILS
 !-----------------------------------------------------------------------
 !      CHP 08/12/2005 Don't report initial conditions for
 !           sequenced runs.
@@ -572,62 +574,120 @@ C=======================================================================
         WRITE(HEADER(I),'(" ")'); I=I+1
       ENDIF
 
-C-----------------------------------------------------------------------
+!=======================================================================
+!     GENOTYPE
+!-----------------------------------------------------------------------
 !     Write genetic coefficients
       WRITE (HEADER(I),800) CROPD(1:10),VARTY,VRNAME,ECONO; I=I+1
 
+      SELECT CASE (MODEL(1:5))
+
+!-----------------------------------------------------------------------
 !     CROPGRO
-      IF (INDEX (MODEL, 'CRGRO') > 0) THEN
+      CASE ('CRGRO')
+!      IF (INDEX (MODEL, 'CRGRO') > 0) THEN
         IF (INDEX ('BN,PN,SB,PE,CH,PP,VB,CP,BR,FB,NP,GB,PE,LT',CROP) 
      &    > 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
+
         ELSEIF (INDEX ('TM,PR,CB,CO,CT',CROP) .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),852) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
         ENDIF
+
         WRITE (HEADER(I),853) THRESH, SDPRO, SDLIP; I=I+1
 
-!     CropSim cassava & wheat
-      ELSEIF (INDEX (MODEL, 'CSCRP') > 0 .OR. 
-     &        INDEX (MODEL, 'CSCER') > 0) THEN
+!-----------------------------------------------------------------------
+!     CSCER - Wheat, barley
+      CASE ('CSCER')
+        WRITE (HEADER(I),'(A)')
+     &    "   P1V   P1D    P5    G1    G2    G3 PHINT"
+        I=I+1
+        WRITE (HEADER(I),'(5(1X,F5.1),1X,F5.2,1X,F5.1)') 
+     &    P1V,P1D,P5,G1,G2,G3,PHINT
+        I=I+1
+
+!       Print optional extra stuff from ecotype file
         LENGTH = LenString(PLAINTXT)
-        DO J=1,5
-          J1 = (J-1)*78+1
-          J2 = J1 + 77
-          WRITE( HEADER(I),'(A)') TRIM(ATLINE(J1+29:J2+29))
-          WRITE( HEADER(I+1),'(A)') TRIM(PLAINTXT(J1:J2))
-          I = I + 2
-          IF (J2 > LENGTH) EXIT
-        ENDDO
-!        WRITE( HEADER(I+1),'(7X,A6,1X,A10,1X,A6,A)')
-!     &       VARTY, VRNAME, ECONO, TRIM(PLAINTXT)
-!        IF (INDEX('WH',CROP) > 0) THEN
-!          WRITE(HEADER(I), 870)  VREQ, VBASE, VEFF, PPS1, PPS2; I=I+1
-!          WRITE(HEADER(I), 871) P1, P2, P3, P4; I=I+1
-!          WRITE(HEADER(I), 872) P5, P6, P7, P8; I=I+1
-!          WRITE(HEADER(I), 873) GRNOW, GRWTX, SHWMS, PHINT; I=I+1
+        IF (LENGTH > 0) THEN
+          DO J=1,5
+            J1 = (J-1)*78+1
+            J2 = J1 + 77
+            WRITE( HEADER(I),'(A)') TRIM(ATLINE(J1+29:J2+29))
+            WRITE( HEADER(I+1),'(A)') TRIM(PLAINTXT(J1:J2))
+            I = I + 2
+            IF (J2 > LENGTH) EXIT
+          ENDDO
+        ENDIF
 
-!        ELSEIF (INDEX('CS',CROP) > 0) THEN
-!          WRITE (HEADER(I), 880) PPS1, P1L, P2L, P4L; I=I+1
-!          WRITE (HEADER(I), 881) P5L, SRNOW, SRFR, LA1S; I=I+1
-!          WRITE (HEADER(I), 882) LAXS, LAXNO, LAFS, LAFNO; I=I+1
-!          WRITE (HEADER(I), 883) LAWS, PHINT, LLIFA, STFR; I=I+1
-!        ENDIF
+!-----------------------------------------------------------------------
+!     CSCRP - Wheat, barley, cassava
+      CASE ('CSCRP')
+!       -----------------------------------
+!       wheat, barley
+        IF (INDEX('WH,BA',CROP) > 0) THEN
+          WRITE (HEADER(I),'(A,A)')
+     &      "  VREQ VBASE  VEFF  PPS1  PPS2",
+     &      "    P1    P2    P3    P4    P5    P6    P7    P8"
+          I=I+1
+          WRITE (HEADER(I),'(2F6.1,2F6.2,9F6.1)') 
+     &      VREQ, VBASE, VEFF, PPS1, PPS2, 
+     &      P1, P2, P3, P4, P5, P6, P7, P8
+          I=I+1
+          WRITE (HEADER(I),'(A)')
+     &      " GNOWT  GWTS SHWTS PHINT  LA1S  LAFV  LAFR"
+          I=I+1
+          WRITE (HEADER(I),'(2F6.1, F6.2,F6.1, 3F6.2)') 
+     &      GNOWT, GWTS, SHWTS, PHINT, LA1S, LAFV, LAFR 
+          I=I+1
+!       -----------------------------------
+!       cassava
+        ELSEIF (INDEX('CS',CROP) > 0) THEN
+          WRITE (HEADER(I),'(A,A)')
+     &      "  PPS1   P1L   P2L   P4L   P5L SRNOW  SRFR  LA1S  LAXS",
+     &      " LAXNO  LAFS LAFNO  LAWS"
+          I=I+1
+          WRITE (HEADER(I),'(4F6.1,F6.0,2F6.2,6F6.0)') 
+     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
+     &      LAXNO, LAFS, LAFNO, LAWS
+          I=I+1
+          WRITE (HEADER(I),'(A)') " PHINT LLIFA  STFR"
+          I=I+1
+          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
+          I=I+1
+        ENDIF
 
-      ELSEIF (INDEX ('MZ,SG,ML',CROP) .GT. 0) THEN
-         IF (CROP .EQ. 'MZ') THEN
-           IF (MODEL .EQ. 'MZCER045') THEN
+!       Print optional extra stuff from ecotype file
+        LENGTH = LenString(PLAINTXT)
+        IF (LENGTH > 0) THEN
+          DO J=1,3
+            J1 = (J-1)*78+1
+            J2 = J1 + 77
+            WRITE( HEADER(I),'(A)') TRIM(ATLINE(J1+149:J2+149))
+            WRITE( HEADER(I+1),'(A)') TRIM(PLAINTXT(J1:J2))
+            I = I + 2
+            IF (J2 > LENGTH) EXIT
+          ENDDO
+        ENDIF
+
+!-----------------------------------------------------------------------
+!     CERES-Maize
+      CASE ('MZCER')
             WRITE (HEADER(I),900) P1,P2,P5; I=I+1
             WRITE (HEADER(I),901) G2,G3,PHINT; I=I+1
-           ELSEIF (MODEL .EQ. 'MZIXM045') THEN
+
+!-----------------------------------------------------------------------
+!     IXIM-Maize
+      CASE ('MZIXM')
              WRITE (HEADER(I),915) P1,P2,P5,AX; I=I+1
              WRITE (HEADER(I),916) G2,G3,PHINT,LX; I=I+1
-           ENDIF
-!        Sorghum
-         ELSE IF (CROP .EQ. 'SG') THEN
+
+!-----------------------------------------------------------------------
+!     Sorghum
+      CASE ('SGCER')
             WRITE (HEADER(I), 902) P1,P2O,P2R,P5; I=I+1
             WRITE (HEADER(I),1002) G1,G2,PHINT,P3,P4; I=I+1
             !Print optional parameters if used.
@@ -635,25 +695,40 @@ C-----------------------------------------------------------------------
               WRITE(HEADER(I), 1010) PBASE, PSAT; I=I+1
             ENDIF
 
-         ELSE IF (CROP .EQ. 'ML') THEN
+!-----------------------------------------------------------------------
+!     Millet
+      CASE ('MLCER')
             WRITE (HEADER(I), 903) P1,P2O,P2R,P5; I=I+1
             WRITE (HEADER(I),1003) G1,G4,PHINT; I=I+1
-!         ELSE IF (CROP .EQ. 'BA') THEN
-!C-GH     ELSE IF (CROP .EQ. 'BA' .OR. CROP .EQ. 'WH') THEN
-!            WRITE (HEADER(I), 904) P1V,P1D,P5; I=I+1
-!            WRITE (HEADER(I),1004) G1,G2,G3,PHINT; I=I+1
-!         ELSE IF (CROP .EQ. 'WH') THEN
-!            WRITE (HEADER(I), 954) P1V,P1D,P5; I=I+1  !,LT50H
-!            WRITE (HEADER(I),1054) G1,G2,G3,PHINT; I=I+1
-         ENDIF
 
-      ELSEIF (INDEX ('PT',CROP) .GT. 0) THEN
+!-----------------------------------------------------------------------
+!     Potato
+      CASE ('PTSUB')
+!      ELSEIF (INDEX ('PT',CROP) .GT. 0) THEN
          WRITE (HEADER(I), 905) G2,G3,G4; I=I+1
          WRITE (HEADER(I),1005) PD,P2,TC; I=I+1
-      ELSEIF (INDEX ('RI',CROP) .GT. 0) THEN
+
+!-----------------------------------------------------------------------
+!     Rice
+      CASE ('RICER')
+!      ELSEIF (INDEX ('RI',CROP) .GT. 0) THEN
          WRITE (HEADER(I), 906) P1,P2R,P5,P2O; I=I+1
          WRITE (HEADER(I),1006) G1,G2,G3,G4; I=I+1
 
+!-----------------------------------------------------------------------
+!     Aroids
+      CASE ('TNARO','TRARO')
+!      ELSEIF (INDEX ('TNTR',CROP) .GT. 0) THEN
+         WRITE (HEADER(I), 911) P1,P3,P4,P5; I=I+1
+         WRITE (HEADER(I),1011) G3,G4,PHINT,PCINT,PCGRD; I=I+1
+
+!-----------------------------------------------------------------------
+!     Sugarcane - Canegro
+      CASE ('SCCAN')
+
+!-----------------------------------------------------------------------
+!     Sugarcane - CASUPRO
+      CASE ('SCCSP')
 !     Not currently correct for either CaneGro or Casupro
 !     CHP removed 8/3/07
 !      ELSEIF (INDEX ('SC',CROP) .GT. 0) THEN
@@ -665,19 +740,23 @@ C-----------------------------------------------------------------------
 !          WRITE (HEADER(I),1057) M1, M2, LA, WTPSD, SLAVAR, SIZLF; I=I+1
 !        ENDIF
 
-      ELSEIF (INDEX ('SU',CROP) .GT. 0) THEN
-         WRITE (HEADER(I), 908) P1,P2,P5; I=I+1
-         WRITE (HEADER(I),1008) G2,G3,O1; I=I+1
-      ELSEIF (INDEX ('PI',CROP) .GT. 0) THEN
-         WRITE (HEADER(I), 909) P2,P3,P4; I=I+1
-         WRITE (HEADER(I),1009) G2,G3,PHINT; I=I+1
-      ELSEIF (INDEX ('TNTR',CROP) .GT. 0) THEN
-         WRITE (HEADER(I), 911) P1,P3,P4,P5; I=I+1
-         WRITE (HEADER(I),1011) G3,G4,PHINT,PCINT,PCGRD; I=I+1
-      ELSEIF (INDEX ('CO',CROP) .GT. 0) THEN
-         WRITE (HEADER(I), 912) SCPB,RESPC,SQCON; I=I+1
-         WRITE (HEADER(I),1012) FCUT,FLAI,DDISQ
-      ENDIF
+!-----------------------------------------------------------------------
+!!     Sunflower
+!      ELSEIF (INDEX ('SU',CROP) .GT. 0) THEN
+!         WRITE (HEADER(I), 908) P1,P2,P5; I=I+1
+!         WRITE (HEADER(I),1008) G2,G3,O1; I=I+1
+!!     Pineapple
+!      ELSEIF (INDEX ('PI',CROP) .GT. 0) THEN
+!         WRITE (HEADER(I), 909) P2,P3,P4; I=I+1
+!         WRITE (HEADER(I),1009) G2,G3,PHINT; I=I+1
+
+!!     ?? old cotton model??
+!      ELSEIF (INDEX ('CO',CROP) .GT. 0) THEN
+!         WRITE (HEADER(I), 912) SCPB,RESPC,SQCON; I=I+1
+!         WRITE (HEADER(I),1012) FCUT,FLAI,DDISQ
+!      ENDIF
+
+      END SELECT
 
       Headers % ICOUNT  = I - 1
       Headers % Header = HEADER

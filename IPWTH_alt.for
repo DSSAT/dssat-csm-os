@@ -413,6 +413,32 @@ C       Substitute default values if REFHT or WINDHT are missing.
       PAR   = PAR_A(I)
       RHUM  = RHUM_A(I)
 
+!     Error checking
+      CALL DailyWeatherCheck(CONTROL,
+     &    "WTHINIT", FILEWW, RAIN, RecNum, RHUM,             !Input
+     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    YREND)                                          !Output
+
+      IF (YREND > 0) THEN
+!       Try again with next weather day (only for initialization)
+        SRAD  = SRAD_A(I+1)
+        TMAX  = TMAX_A(I+1)
+        TMIN  = TMIN_A(I+1)
+        RAIN  = RAIN_A(I+1)
+        TDEW  = TDEW_A(I+1)
+        WINDSP= WINDSP_A(I+1)
+        PAR   = PAR_A(I+1)
+        RHUM  = RHUM_A(I+1)
+        YREND = -99
+      
+!       Error checking
+        CALL DailyWeatherCheck(CONTROL,
+     &    ERRKEY, FILEWW, RAIN, RecNum, RHUM,             !Input
+     &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
+     &    YREND)                                          !Output
+
+      ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     RATE (Daily input of weather data)
@@ -959,6 +985,19 @@ C         Read in weather file header.
       ENDIF
 
       IF (ErrCode > 0) THEN
+!       For seasonal initialization, try next weather day
+!       ERRKEY="INIT" indicates using weather for day before start 
+!         of simulation.  YREND = ErrCode indicates that error was
+!         found in the data.
+        IF (INDEX(ERRKEY,"INIT") > 0) THEN
+          YREND = ErrCode  !
+          MSG(1) = "Error in weather data on day before " // 
+     &      "start of simulation date."
+          MSG(2) = "Will attempt to intitialize with data " // 
+     &      "for start of simulation date."
+          CALL WARNING(2,ERRKEY,MSG)
+          RETURN
+        ENDIF
         MSG(1) = "Error in weather data:"
         NChar = MIN(78,LEN_Trim(FILEWW))
         WRITE(MSG(2),'(A)') FILEWW(1:NChar)

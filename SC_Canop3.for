@@ -700,6 +700,10 @@ c         Canopy heights, etc
 c         Init tempop:
           TEMPOP = 0.
 
+
+!         CHP 3/26/2010
+          STDAYC = 0.0
+
 !      CALL GETLUN('WORK.OUT',SCLUN)
 c                    WRITE(SCLUN, '(A, 30(F10.0))') 'TEMPOP is ',TEMPOP
 

@@ -548,7 +548,7 @@ C-----------------------------------------------------------------------
      &      DS(I), EXTP(I), TOTP(I), ORGP(I), CACO(I), EXTAL(I), 
      &      EXTFE(I), EXTMN(I), TOTBAS(I), PTERMA(I), PTERMB(I), 
      &      EXK(I), EXMG(I), EXNA(I), EXTS(I), SLEC(I), EXCA(I)
-  991     FORMAT (1X,F5.0,10(1X,F5.1),F6.2,5F6.1)
+  991     FORMAT (1X,F5.0,F6.2,9(1X,F5.1),F6.2,5F6.1)
 !         04/21/2008 CHP added SASC - stable organic C (%)
           IF (SASC(I) > 0) THEN
             WRITE (LUNIO,'(F6.3)',IOSTAT=ERRNUM) SASC(I)
@@ -581,27 +581,10 @@ C-----------------------------------------------------------------------
      &           LFMAX,SLAVAR,SIZELF,XFRUIT,WTPSD,SFDUR,SDPDVR,PODUR,
      &           THRESH, SDPRO, SDLIP
 
+!       Ceres wheat, barley
 !       CropSim - wheat, cassava
-        CASE('CSCRP')
-          WRITE(LUNIO,1550,IOSTAT=ERRNUM) VARNO, VRNAME, ECONO,
-     &        trim(PLAINTXT)
-
-!          IF (INDEX('WH',CROP) > 0) THEN
-!            WRITE (LUNIO,158,IOSTAT=ERRNUM) VARNO,VRNAME(1:8), ECONO, 
-!     &        VREQ, VBASE, VEFF, PPS1, PPS2, 
-!     &        P1, P2, P3, P4, P5, P6, P7, P8, 
-!     &        GRNOW, GRWTX, SHWMS, PHINT
-!  158       FORMAT (A6,1X,A8,1X,A6,
-!     &        F6.1,F6.1,F6.2,F6.2,F6.1,8F6.1,
-!     &        2F6.1, F6.2,F6.1)
-!        
-!          ELSEIF (INDEX('CS',CROP) > 0) THEN
-!            WRITE (LUNIO,159,IOSTAT=ERRNUM) VARNO,VRNAME(1:8), ECONO, 
-!     &        PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
-!     &        LAXNO, LAFS, LAFNO, LAWS, PHINT, LLIFA, STFR
-!  159       FORMAT (A6,1X,A8,1X,A6,
-!     &        4F6.1,F6.0,2F6.2,8F6.1,F6.2)
-!          ENDIF
+        CASE('WHCER', 'BACER', 'CSCRP')
+!       Do nothing - these models read the INH file written by OPTEMPXY2K
 
 !       Ceres Maize, sweetcorn
         CASE('MZCER','SWCER')
@@ -625,13 +608,6 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
         CASE('MLCER')
                WRITE (LUNIO,1950,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
      &               P1,P2O,P2R,P5,G1,G4,PHINT
-
-!       Ceres wheat, barley
-        CASE('WHCER', 'BACER')
-               WRITE (LUNIO,1700,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &               P1V,P1D,P5,G1,G2,G3,PHINT
-               WRITE (LUNIO,1700,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &               P1V,P1D,P5,G1,G2,G3,PHINT
 
 !       Ceres rice
         CASE ('RICER')

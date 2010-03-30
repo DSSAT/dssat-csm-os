@@ -489,6 +489,11 @@
           FRSTM = FRSTMF
         ENDIF
       ENDIF
+
+!     This is where to modify partitioning for extra root growth:
+!     check units!!! fraction vs percentage
+!     FRLF = FRLF - FRLF/(FRLF+FRSTM) * (extra root value)
+!     FRSTM= FRSTM - FRSTM/(FRLF+FRSTM) * (extra root value)
       FRRT = 1. - FRLF - FRSTM
 
 !-----------------------------------------------------------------------

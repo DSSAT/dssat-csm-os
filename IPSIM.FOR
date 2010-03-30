@@ -339,7 +339,6 @@ C
             IF (IDETL == '0') THEN
 !             VBOSE = zero, suppress all output except Summary and Evaluate
               IDETS = 'Y'
-              IDETO = 'E'
               IDETG = 'N' 
               IDETC = 'N' 
               IDETW = 'N' 
@@ -348,6 +347,9 @@ C
               IDETD = 'N' 
               IDETH = 'N' 
               IDETR = 'N' 
+              IDETO = 'E'
+!             Seasonal and spatial runs do not get evaluate file when IDETL=0
+              IF (INDEX('SN',RNMODE) > 0) IDETO = 'N'
             ELSEIF (IDETL == 'A') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
@@ -1193,7 +1195,6 @@ D     IPX = 22
             IF (IDETL == '0') THEN
 !             VBOSE = zero, suppress all output except Summary and Evaluate
               IDETS = 'Y'
-              IDETO = 'E'
               IDETG = 'N' 
               IDETC = 'N' 
               IDETW = 'N' 
@@ -1202,6 +1203,9 @@ D     IPX = 22
               IDETD = 'N' 
               IDETH = 'N' 
               IDETR = 'N' 
+              IDETO = 'E'
+!             Seasonal and spatial runs do not get evaluate file when IDETL=0
+              IF (INDEX('SN',CONTROL%RNMODE) > 0) IDETO = 'N'
             ELSEIF (IDETL == 'A') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'

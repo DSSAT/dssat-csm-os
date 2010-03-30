@@ -152,6 +152,8 @@ c     ::::
         SW(I)    = Soil%SW(I)
       ENDDO
 
+      REPEATS = 0
+
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
@@ -499,7 +501,7 @@ c         MJ: If at least one new 'secondary' tiller cohort has developed:
           IF (NTLGRP .GT. 1) THEN
 c             MJ: Add up tiller populations in each cohort
               DO N1=1,NTLGRP-1
-                  TEMPTOT=TEMPTOT+TEMPOP(N1)
+                  TEMPTOT = TEMPTOT + TEMPOP(N1)
               ENDDO
           ENDIF
 
@@ -536,23 +538,49 @@ c     ---------------------------------------------------------------
 c       ...and put here:
         REPEATS = 0
 
+c     MJ, Mar 2010: Execute code from here until 10 if LOSING is true
+c     i.e. population is falling.
+c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     3   CONTINUE 
 
 
-        TEMPTOT=0.0
-         DO 4 N1=1,NTLGRP
-    4    TEMPTOT=TEMPTOT+TEMPOP(N1)
-        EXTRA= max(TEMPTOT-TOTPOP,0.0) 
-        IF(EXTRA.LT.TEMPOP(NTLGRP)) THEN 
-             TEMPOP(NTLGRP)=TEMPOP(NTLGRP)-EXTRA
-             go to 10
-        ENDIF
+c     MJ, Mar 2010: TEMPTOT represents "yesterday's" population: the
+c     sum of population in each of the cohort groups (TEMPOP)
+c     Add up population:
+c     ::::::::::::::::::
+      TEMPTOT=0.0
+      DO N1=1, NTLGRP
+        TEMPTOT = TEMPTOT + TEMPOP(N1)
+      ENDDO
+c     :::::::::::::::::::    
 
-        IF(EXTRA.GE.TEMPOP(NTLGRP)) THEN 
+c     EXTRA is the difference between polynomial-calculated stalk
+c     population and the population of the cohorts.
+      EXTRA= max(TEMPTOT-TOTPOP,0.0) 
+
+c     If population fell by less than the number of tillers stored in the
+c     'youngest' tiller group, simply reduce this number by EXTRA and
+c     exit
+!        MJ, Mar 2010: correct the nasty loop error...
+!      IF(EXTRA.LT.TEMPOP(NTLGRP)) THEN 
+      IF(EXTRA.LE.TEMPOP(NTLGRP)) THEN 
+        TEMPOP(NTLGRP)=TEMPOP(NTLGRP)-EXTRA
+        go to 10
+      ENDIF
+
+c     On the other hand, if the decrease in population exceeds the youngest
+c     tiller group/cohort size, then the decrease needs to span more than one
+c     tiler group.
+!        MJ, Mar 2010: correct the nasty loop error...
+!        IF(EXTRA.GE.TEMPOP(NTLGRP)) THEN 
+        IF(EXTRA.GT.TEMPOP(NTLGRP)) THEN 
 c          Inserted by MJ, 2006/09/27
            REPEATS = REPEATS + 1
-           EXTRA=EXTRA-TEMPOP(NTLGRP)
+c          Reduce EXTRA by the number of tillers in the youngest cohort:
+           EXTRA = EXTRA-TEMPOP(NTLGRP)
+c          Set the size of the youngest cohort to zero           
            TEMPOP(NTLGRP)=0.0
+c          Then reduce the number of cohorts by 1           
            NTLGRP=AMAX0(NTLGRP-1,1)
 
 c          Inserted by MJ, 2006/09/27
@@ -564,8 +592,10 @@ c          This is left here to alert me if the problem happens again.
            IF (REPEATS .GE. MAX_TILLER_COHORTS) THEN
               WRITE(*, '(2A)') 'In a nasty loop!! - please ',
      &          'contact Matthew Jones, matthew.jones@sugar.org.za '
-              WRITE(*, '(A, F10.0)') 'Thermal time is ', TT
-              WRITE(*, '(A, F10.5)') 'Delta is ', DELTA
+              WRITE(*, '(A, I10)') 'EXTRA is ', EXTRA
+!              WRITE(*, '(A, F10.5)') 'Delta is ', DELTA
+              WRITE(*, '(A)') 'Please check rowspacing is specified '//
+     &                       ' in CENTIMETRES.'
 c              PAUSE
               GOTO 10
            ENDIF

@@ -251,12 +251,14 @@ C-----------------------------------------------------------------------
         ATLINE(2:23) = 'C  CR INGENO CNAME... '
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
         ! Below taken out LAH Dec 2009
-!       WRITE (LUNIO,156,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
+!       WRITE (LUNIO,160,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
 !    &  ECONO,P1V,P1D,P5,G1,G2,G3,PHINT
-156     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,5(1X,F5.1),1X,F5.2,1X,F5.1)
+  160   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,5(1X,F5.1),1X,F5.2,1X,F5.1)
 !       Put text string in LAH DEC 2009
-        WRITE (LUNIO,158,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
-     &    ECONO, TRIM(PLAINTXT)
+        WRITE (LUNIO,162,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
+     &    ECONO, P1V,P1D,P5,G1,G2,G3,PHINT, TRIM(PLAINTXT)
+  162   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
+     &          5(1X,F5.1),1X,F5.2,1X,F5.1,A)
 
       ELSEIF (INDEX(MODEL,'CSCRP') > 0) THEN
 !       CSCRP Cassava,Wheat,Barley,etc..
@@ -265,28 +267,29 @@ C-----------------------------------------------------------------------
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
 
 !       Put text string back in 2/11/09
-        WRITE (LUNIO,158,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
-     &    ECONO, TRIM(PLAINTXT)
-  158   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,A)
+!        WRITE (LUNIO,158,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
+!     &    ECONO, TRIM(PLAINTXT)
 
-!        IF (INDEX('WH',CROP) > 0) THEN
-!          WRITE (LUNIO,158,IOSTAT=ERRNUM) 
-!     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO, 
-!     &      VREQ, VBASE, VEFF, PPS1, PPS2, 
-!     &      P1, P2, P3, P4, P5, P6, P7, P8, 
-!     &      GRNOW, GRWTX, SHWMS, PHINT
-!  158     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-!     &      F6.1,F6.1,F6.2,F6.2,F6.1,8F6.1,
-!     &      2F6.1, F6.2,F6.1)
-!
-!        ELSEIF (INDEX('CS',CROP) > 0) THEN
-!          WRITE (LUNIO,159,IOSTAT=ERRNUM) 
-!     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
-!     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
-!     &      LAXNO, LAFS, LAFNO, LAWS, PHINT, LLIFA, STFR
-!  159     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-!     &      4F6.1,F6.0,2F6.2,8F6.0,F6.2)
-!        ENDIF
+        IF (INDEX('WH,BA',CROP) > 0) THEN
+          WRITE (LUNIO,164,IOSTAT=ERRNUM) 
+     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO, 
+     &      VREQ, VBASE, VEFF, PPS1, PPS2, 
+     &      P1, P2, P3, P4, P5, P6, P7, P8, 
+     &      GNOWT, GWTS, SHWTS, PHINT, LA1S, LAFV, LAFR, TRIM(PLAINTXT) 
+
+  164     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
+     &      F6.1,F6.1,F6.2,F6.2,F6.1, 
+     &      8F6.1,
+     &      2F6.1, F6.2,F6.1, 3F6.2, A)
+
+        ELSEIF (INDEX('CS',CROP) > 0) THEN
+          WRITE (LUNIO,166,IOSTAT=ERRNUM) 
+     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
+     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
+     &      LAXNO, LAFS, LAFNO, LAWS, PHINT, LLIFA, STFR, TRIM(PLAINTXT)
+  166     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
+     &      4F6.1,F6.0,2F6.2,8F6.0,F6.2,A)
+        ENDIF
 
       ELSE     
         WRITE (LUNIO,'(/,"*CULTIVARS",/,"@C  CR INGENO CNAME")')
