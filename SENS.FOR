@@ -57,7 +57,7 @@ C=======================================================================
       CHARACTER*30 IRMANT
       CHARACTER*40 PSMANT
 	CHARACTER*92 FILEX_P
-      CHARACTER*360 ATLINE
+      CHARACTER*1000 ATLINE
 
       INTEGER MENU,FROP,NSENS,NLOOP
       INTEGER LNIC,LNSA,YRIC,ISIM,NYRS
@@ -243,7 +243,7 @@ C
           IF (CROP .NE. CROPC) THEN
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,VARTY,VRNAME,
      &                  PATHGE,ECONO, MODEL, ATLINE, CROP)
-             IF (INDEX('GROCSMCANCER',MODEL(3:6)) .GT. 0) THEN 
+             IF (INDEX('GRO,CSM,CAN,CER',MODEL(3:6)) .GT. 0) THEN 
                 NSENS =  0
                 CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &               ECONO,IVRGRP,MODEL)

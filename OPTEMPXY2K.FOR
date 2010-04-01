@@ -57,7 +57,7 @@ C=======================================================================
       CHARACTER*30 FILEIO,FILEIOH
       CHARACTER*42 CHEXTR(NAPPL)
 	CHARACTER*80 PATHEX
-      CHARACTER*360 ATLINE	
+      CHARACTER*1000 ATLINE	
 
       INTEGER NYRS,I,LUNIO,ERRNUM,FROP,YRIC
       INTEGER LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE
@@ -240,15 +240,17 @@ C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
 !     Cultivar
-      IF (INDEX(MODEL,'CSCER') > 0) THEN
+      WRITE (LUNIO,157)
+  157 FORMAT(/,"*CULTIVARS")
+      ATLINE(2:23) = 'C  CR INGENO CNAME... '
+
+      SELECT CASE (MODEL(1:5))
+      CASE ('CSCER')
 !       CSCER - Wheat & barley
         ! Below taken out LAH Dec 2009
 !       WRITE (LUNIO,'(/,"*CULTIVARS",/,"@C  CR INGENO CNAME...",1X,
 !    &         "ECO#     P1V   P1D    P5    G1    G2    G3 PHINT")')
         ! LAH Added Dec 2009
-        WRITE (LUNIO,157)
-  157   FORMAT(/,"*CULTIVARS")
-        ATLINE(2:23) = 'C  CR INGENO CNAME... '
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
         ! Below taken out LAH Dec 2009
 !       WRITE (LUNIO,160,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME(1:8),
@@ -260,10 +262,8 @@ C-----------------------------------------------------------------------
   162   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
      &          5(1X,F5.1),1X,F5.2,1X,F5.1,A)
 
-      ELSEIF (INDEX(MODEL,'CSCRP') > 0) THEN
+      CASE ('CSCRP')
 !       CSCRP Cassava,Wheat,Barley,etc..
-        WRITE (LUNIO,157)
-        ATLINE(2:23) = 'C  CR INGENO CNAME... '
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
 
 !       Put text string back in 2/11/09
@@ -291,12 +291,23 @@ C-----------------------------------------------------------------------
      &      4F6.1,F6.0,2F6.2,8F6.0,F6.2,A)
         ENDIF
 
-      ELSE     
-        WRITE (LUNIO,'(/,"*CULTIVARS",/,"@C  CR INGENO CNAME")')
+      CASE ('SCCAN')
+        WRITE(LUNIO,'(A)') TRIM(ATLINE)
+        WRITE(LUNIO,170,IOSTAT=ERRNUM)
+     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      LFMAX, MXLFAREA, MXLFARNO, PI1, PI2, PSWITCH, TTPLNTEM, 
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
+     &      LG_AMBASE 
+  170   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
+     &      4F15.2,16F15.1)
+
+      CASE DEFAULT     
+        WRITE (LUNIO,'("@C  CR INGENO CNAME")')
         WRITE (LUNIO,56,IOSTAT=ERRNUM) LNCU,CROP,VARNO,VRNAME
  56     FORMAT(I3,1X,A2,1X,A6,1X,A16)
  
-      ENDIF
+      END SELECT
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------

@@ -60,11 +60,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 0
-        INTEGER :: Build =43
+        INTEGER :: Build =44
       END TYPE VersionType
       TYPE (VersionType) Version
 
 !     Version history:
+!       4.5.0.44 chp 03/19/2010 Canegro cultivar file has EXPNO.
 !       4.5.0.43 chp 03/19/2010 Sensitivity analysis parameters updated or disabled.
 !       4.5.0.42 chp 02/09/2010 Error handling, batch continues.
 !       4.5.0.41 chp 02/08/2010 Resource productivity.

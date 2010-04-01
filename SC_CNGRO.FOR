@@ -211,6 +211,9 @@ c     Error variable for species coefficient read
 
 c     temp output file (remove)
       CHARACTER TFILENAME*25
+      
+c     Row-spacing warning text:
+      CHARACTER*78 WARNINGS(2)      
 
 c     REMOVE??
 !      INTEGER INIDOY 
@@ -266,6 +269,73 @@ c              DYNAMIC = RUNINIT
 c
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       IF (DYNAMIC.EQ.RUNINIT) THEN
+       STGDOY  =  0
+       ALLOWLODG  =  0 
+       CANOPY_ROUTINE  =  0
+       DYNAMIC  =  0
+       I  =  0
+       IWS  =  0
+       MDL  =  0
+       NEGGRO  =  0
+       newbat  =  0
+       CANHT  =  0.0
+!       EORATIO  =  0.0
+!       KCAN  =  0.0
+!       KTRANS  =  0.0
+       NSTRES  =  1.
+       PORMIN  =  0.0
+       RLV  =  0.0
+!       RWUMX  =  0.0
+       UNH4  =  0.0
+       UNO3  =  0.0
+       XHLAI   =  0.0
+       XLAI  =  0.0
+       pplast  =  0.0
+       rowspc  =  0.0
+       stdaye  =  0.0
+       stddiv  =  0.0
+       RATNUM  =  0.0
+       HU_CANESIM  =  0.0
+       CHU_CANESIM  =  0.0
+       ALAT  =  0.0
+       cCOEFF  =  0.0
+       CHU10    =  0.0
+       CHU16  =  0.0
+       CHUBaseLeaf  =  0.0
+       CHUBaseEm  =  0.0
+       CHUBasePop  =  0.0
+       CODERD  =  0.0
+       CRITSW  =  0.0
+       CWSI  =  0.0
+       DWDT  =  0.0
+       HU10  =  0.0
+       HU16  =  0.0
+       HUBaseLeaf  =  0.0
+       HUBaseEm  =  0.0
+       HUBasePop  =  0.0
+       HuRecover  =  0.0
+       LODGE_LI  =  0.0
+       MAXLAI  =  0.0
+       RECTIM   =  0.0
+       RUNOFF  =  0.0
+       STDAYC  =  0.0
+       SENESF    =  0.0
+       EXPLA  =  0.0
+       PER  =  0.0
+       RESET  =  0.0
+       BOOTLI  =  0.0
+       STKDMC   =  0.0
+       STKWAT  =  0.0
+       STRPOP  =  0.0
+       BEST  =  0.0
+       SWDFMN  =  0.0
+       T0  =  0.0
+       TBaseLeaf  =  0.0
+       TBaseEm  =  0.0
+       TBasePop  =  0.0
+       TT_EMERG  =  0.0
+
+
 
 c     Which canopy to use?  Default will be set to Canesim
 c     because of the simpler inputs (2)
@@ -328,6 +398,42 @@ c     likelihood and possibly increment this number.
      &    XLAI, YRPLT)     !Input
 
 c     :::::::::::::::::::::::::::
+
+c     Initialise stalk population routine
+c     :::::::::::::::::::::::::::::::::::
+          CALL POPLT3 (CHUBasePop+HUBasePop,t0,pplast,newbat,rowspc,
+     -             stdaye, stddiv,WATERBAL, CANECROP, SOIL, ISWITCH, 
+     -             CONTROL, STGDOY)
+c     :::::::::::::::::::::::::::::::::::
+
+
+c     Initialise Partitioning variables
+c     ::::::::::::::::::::::::::::::::::::::::::::::::::
+      CALL PARTIT (WaterBal, Part, Climate, CaneCrop, Growth, 
+     &             Out, Control, ISWITCH,
+     -             STGDOY)
+c     ::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+c     Initialise canopy
+c     :::::::::::::::::
+            CALL CANOP3(CHUBaseEm,CHUBasePop,IWS,STDAYC,
+     -        SENESF, expla,PER,KTRANS,pplast,newbat,stdaye,stddiv, 
+     -        reset, rowspc,strpop,BEST, 
+     -        LODGE_LI, CLIMATE, CaneCrop, Soil, Growth, WaterBal,
+     -        CONTROL, ISWITCH)
+c     ::::::::::::::::::::::::::::::::::::::::::::::::::
+
+c     Initialise the Growth composite variables:
+c     ::::::::::::::::::::::::::::::::::::::::::
+      Growth%GRORT = 0.
+      Growth%LAI = 0.
+      Growth%TLAI = 0.
+      Growth%LI = 0.
+      Growth%GERMDY = 0.
+      Growth%RTCMPG = 0.
+
+
 c     Ratoon considerations
           CALL CARRYOVER_RATOON(Control, INT(RATNUM), 
      &                          CaneCrop%CARRY_OVER)
@@ -338,8 +444,14 @@ c          WRITE(*, '(A, F10.5)') 'Just read SNWT: ', cCOEFF
 
 
       
-c     Set model number (CANEGRO dependency, to removed eventually)
+c     Set model number (CANEGRO dependency, to be removed eventually)
           MDL = 1
+          
+      RECTIM = 0.    
+      CWSI = 0.
+c      WRITE(*, '(A, F10.4)') 'CWSI is ', CWSI      
+
+
 
 c     END of RUNINIT
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -423,6 +535,20 @@ c         READ from fileX!!!
 c         Set the standard rowspacing
           rowspc = 1.4
           CALL FIND_INP(ROWSPC, 'ROWSPC', Control)
+          
+c         MJ, March 2010: check rowspacing
+c         ::::::::::::::::::::::::::::::::
+c         Issue a warning if row-spacing is less than 3 cm.  The reason
+c         being that someone might inadvertantly enter 1.5, thinking the input
+c         is metres.  Rowspacing is unlikely to exceed 3 m, hence this threshold.
+c         Note: rowspc is converted as a special case from cm to m by the FIND_INP
+c         routine.
+          IF (ROWSPC .LT. .03) THEN
+            WARNINGS(1) = "Warning: please check that " 
+     &      // "row-spacing is specified in CENTIMETRES"
+            WARNINGS(2) = "[Row-spacing appears to be very low]"
+            CALL WARNING(2, "SCCAN045: SCCNGRO", WARNINGS)
+          ENDIF          
 
 
 c     Initialise CaneCrop object:

@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-// #include "resource.h"
+#include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -27,8 +27,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,5,0,43
- PRODUCTVERSION 4,5,0,43
+ FILEVERSION 4,5,0,44
+ PRODUCTVERSION 4,5,0,44
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -45,12 +45,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "University of Florida"
             VALUE "FileDescription", "CSM45"
-            VALUE "FileVersion", "4, 5, 0, 43"
+            VALUE "FileVersion", "4, 5, 0, 44"
             VALUE "InternalName", "CSM45"
             VALUE "LegalCopyright", "Copyright © 2010"
             VALUE "OriginalFilename", "DSCSM045.exe"
             VALUE "ProductName", "University of Florida DSCSM45"
-            VALUE "ProductVersion", "4, 5, 0, 43"
+            VALUE "ProductVersion", "4, 5, 0, 44"
         END
     END
     BLOCK "VarFileInfo"
@@ -76,6 +76,11 @@ END
 BEGIN
     "\r\n"
     "\0"
+END
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.\0"
 END
 
 #endif    // APSTUDIO_INVOKED

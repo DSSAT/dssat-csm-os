@@ -49,7 +49,7 @@ C=======================================================================
       CHARACTER* 25 TITLET
       CHARACTER* 80 PATHEX
       CHARACTER*120 WTHSTR
-      CHARACTER*360 ATLINE
+      CHARACTER*1000 ATLINE
 
       INTEGER NYRS,RUN
       INTEGER LUNOV,LUNOUT

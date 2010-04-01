@@ -518,7 +518,7 @@ C=======================================================================
       CHARACTER*16 CROPD
       CHARACTER*16 VRNAME
       CHARACTER*80  HEADER(100) !Simulation header
-      CHARACTER*360 ATLINE
+      CHARACTER*1000 ATLINE
 
       INTEGER      NLAYR,I,L, RUN
       INTEGER      J, J1, J2, LENGTH, LENSTRING

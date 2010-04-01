@@ -136,6 +136,100 @@ c     Temporary stress array:
 c     ================================================================
 c                              CODE
 c     ================================================================
+
+
+
+
+
+c     ================================================================
+c     Initialise:
+c     ===========
+      IF (CONTROL%DYNAMIC .EQ. RUNINIT) THEN
+         WaterBal%ICSDUR  =  0
+         WaterBal%IDRSW  =  0
+         WaterBal%ANAER  =  0.0
+         WaterBal%ANAERF  =  0.0
+         WaterBal%CANWAT  =  0.0
+         WaterBal%CEP  =  0.0
+         WaterBal%CES  =  0.0
+         WaterBal%CET  =  0.0
+         WaterBal%CIRR  =  0.0
+         WaterBal%CRAIN  =  0.0
+         WaterBal%CSD1  =  0.0
+         WaterBal%CSD2  =  0.0
+         WaterBal%CUMDEP  =  0.0
+         WaterBal%DRAIN  =  0.0
+         WaterBal%EO  =  0.0
+         WaterBal%EOP  =  0.0
+         WaterBal%EOS  =  0.0
+         WaterBal%EP  =  0.0
+         WaterBal%ES  =  0.0
+         WaterBal%ESW  =  0.0
+         WaterBal%ET  =  0.0
+         WaterBal%PESW  =  0.0
+         WaterBal%PETFAC  =  0.0
+         WaterBal%PRECIP  =  0.0
+         WaterBal%RLV  =  0.0
+         WaterBal%RTDEP  =  0.0
+         WaterBal%RUNOFF  =  0.0
+         WaterBal%RWUEP1  =  0.0
+         WaterBal%RWUEP2  =  0.0
+         WaterBal%RWUMX  =  0.0
+         WaterBal%SI1  =  0.0
+         WaterBal%SI2  =  0.0
+         WaterBal%SUMES1  =  0.0
+         WaterBal%SUMES2  =  0.0
+         WaterBal%SWDF1  =  0.0
+         WaterBal%SWDF2  =  0.0
+         WaterBal%SWDF30  =  0.0
+         WaterBal%SWDF9  =  0.0
+         WaterBal%T  =  0.0
+         WaterBal%TLL  =  0.0
+         WaterBal%TPESW  =  0.0
+         WaterBal%TRWU  =  0.0
+         WaterBal%TRWUP  =  0.0
+         WaterBal%TSW  =  0.0
+         
+         L  =  0 
+         L1  =  0 
+         I  =  0 
+         NLAYR  =  0 
+         DO I = 1, NL   
+             RLDF(I)  =  0.0
+             BD(I)  =  0.0
+             DLAYR(I)  =  0.0
+             DUL(I)  =  0.0
+             ESW(I)     =  0.0
+             LL(I)  =  0.0
+             RLV(I)     =  0.0
+             SW(I)  =  0.0
+             WR(I)  =  0.0
+             ROOTSWDF(I)  =  0.0
+         ENDDO
+
+           AERFAC  =  0.0
+           PO  =  0.0
+           RLNEW  =  0.0
+           RLVMIN  =  0.0
+           RNFAC  =  0.0
+           RNLF  =  0.0
+           SWDF  =  0.0
+           SWDF3  =  0.0
+           TRLDF  =  0.0
+           CUMDEP  =  0.0
+           DEPMAX  =  0.0
+           RTDEP   =  0.0
+           SWDF1   =  0.0
+           SWDF2   =  0.0
+           SWDF9   =  0.0
+           DL2    =  0.0
+           DL1  =  0.0
+           DTT  =  0.0
+           GRORT  =  0.0
+           RTCMPG  =  0.0
+         
+       ENDIF
+       
 c     Copy values to local variables from composite types:
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -167,14 +261,8 @@ c     :::::::::::::::::
 
 c     Climate variables:
 c     ::::::::::::::::::
-          DTT    = Climate%DTT
-
-
-
-
-c     ================================================================
-c     Initialise:
-c     ===========
+          DTT    = Climate%DTT       
+      
       IF (CONTROL%DYNAMIC .EQ. SEASINIT) THEN
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
           L      = 0
@@ -196,7 +284,8 @@ c     Init the 'CANEGRO-global' Root length density variable
 c     Calculate depmax (is just cumulative depth of soil layers)
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       DEPMAX = 0.
-      DO L=1,NLayr
+!     MvdL, Feb 2010: replaced NL with NLAYR in following line      
+      DO L=1,NLAYR
           DEPMAX=DEPMAX+DLAYR(L)
       ENDDO
 

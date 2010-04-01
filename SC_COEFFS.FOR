@@ -103,6 +103,8 @@ c         The name of the cultivar file
 c         The name of the ecotype file
           CHARACTER*256 ECO_FNAME
 
+!         Name of INH file (temporary input, like INP)
+          CHARACTER*30 FILEIOH
 
 c         The Code (IB***) of the cultivar (internal var) and eco type:
           CHARACTER*6 CULT_CODE, ECOTYPE
@@ -149,6 +151,7 @@ C-KRT&    PATHCR*80,SECTION*6, ERRMSG*78(1)
 C-KRT *****************************************************************
           
           INTEGER LUNIO, ERRNUM, LNUM, FOUND, PATHL, FIND_IN_FILE
+          INTEGER NParams
 
           PARAMETER (BLANK=' ')
 
@@ -276,6 +279,7 @@ c                 Very difficult to do this without GOTO statements.  Yuck.
 c                 ::: end of error handling ::::
 c                 ::::::::::::::::::::::::::::::
 
+
 c                 And close the file
 c                  CLOSE(FILEX)
 c                 Cultivar code is now known.
@@ -290,14 +294,14 @@ c                 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c                 Get fileIO unit number:
 c                 Note: no specific file number is allocated to the cultivar file.
 c                 DSSAT will select an unused one (hopefully) and return that.
-                  CALL GETLUN('CULT', CFILE)
+!                  CALL GETLUN('CULT', CFILE)
                   CALL GETLUN('ECO', ECOFILE)
 
-c                 Open the file:
-c                 ::::::::::::::
-c                 Set filename (comes from INP file, but this is the default):
-                  FILENAME = STDPATH//'Genotype'//SLASH//'SCCAN045.CUL'
-
+!c                 Open the file:
+!c                 ::::::::::::::
+!c                 Set filename (comes from INP file, but this is the default):
+!                  FILENAME = STDPATH//'Genotype'//SLASH//'SCCAN045.CUL'
+!
 c                 Code copied from ETPHOT.FOR:
 c                 ::::::::::::::::::::::::::::
 c                 Get the cultivar/eco filenames from the INP file:
@@ -318,90 +322,106 @@ c                 Read ecotype file name
                   IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,
      &                                          LNUM)
 
-c                 Read cultivar file name
-                  READ(LUNIO,'(15X,A,1X,A)',IOSTAT=ERRNUM) 
-     &                                              FILEC, PATHCR
-
-                  LNUM = LNUM + 1
-                  IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,
-     &                                          LNUM)
+!c                 Read cultivar file name
+!                  READ(LUNIO,'(15X,A,1X,A)',IOSTAT=ERRNUM) 
+!     &                                              FILEC, PATHCR
+!
+!                  LNUM = LNUM + 1
+!                  IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,
+!     &                                          LNUM)
 
 c                 Close the file
                   CLOSE(LUNIO)
 
-!                 08/04/09 CHP Separated FILECC from FILEEE, to allow separate pathnames
-                  PATHL  = INDEX(PATHCR,BLANK)
-                  IF (PATHL .LE. 1) THEN
-                    FILECC = FILEC
-                  ELSE
-                    FILECC = PATHCR(1:(PATHL-1)) // FILEC
-                  ENDIF
-                  FILENAME = FILECC
-
-c                 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-c                 End of cultivar file path acquisition
-c                 Open:
-                  OPEN(UNIT=CFILE, FILE=FILENAME, ACCESS='SEQUENTIAL', 
-     -                 ACTION='READ')
-
-c                 Now, read the file until the line started '@var' is
-c                 encountered.  'var' no doubt stands for 'variety'
-c                 I would like to read this line, and then read the line
-c                 containing the actual cultivar.  Then the string of 
-c                 headings can be parsed into an array, along with the 
-c                 values (column widths defined by headings).
-
-c     ****   MATT: check that this will not be an infinite loop if the @var tokenc
-c     does not exist ******
-c     Ok, I think it will crash (EOF) if it cannot find @var
-                  DO WHILE(.TRUE.)
-c                     Clear line:
-                      DO I=1, 1024
-                           LINE(I:I) = ' '
-                           LINE2(I:I) = ' '
-                      ENDDO
-c                     Read a line:
-                      READ(CFILE, '(A)') LINE
-c                     Ignore comments:
-                      IF ((LINE(1:1)      .NE. '!') .AND.
-     -                    (LEN_TRIM(LINE) .GT.  0)) THEN
-c                         If the first bit is '@VAR#', we have found the headings
-                          IF (LINE(1:5) .EQ. '@VAR#') THEN
-!                             chp write to INFO.OUT
-                              !WRITE(*, '(A)') LINE
-                              MSG(1) = LINE(1:78)
-                              CALL INFO(1,'SCCAN_CULT',MSG)
-c                             We have discovered the heading line!
-c                             Search for cultivar
-                              DO WHILE(.TRUE.)
-                                  READ(CFILE, '(A)') LINE2
-!                                 chp write to INFO.OUT
-                                  !WRITE(*, '(A)') LINE2
-                                  MSG(1) = LINE2(1:78)
-                                  CALL INFO(1,'SCCAN_CULT',MSG)
-                                  IF (LINE2(1:1) .NE. '!') THEN
-c                                     If the line begins with the cultivar name, 
-c                                     we have found the cultivar
-                                      IF (LINE2(1:6) .EQ. CULT_CODE) 
-     &                                THEN
-c                                         Exit from loop, because LINE2 contains the
-c                                         cultivar info
-                                          EXIT
-                                      ENDIF
-                                  ENDIF
-                              ENDDO
-c                             Exit from loop, because LINE contains headings
-                              EXIT
-                          ENDIF
-                      ENDIF
-                  ENDDO
-c                 Close the cultivar file
-                  CLOSE(CFILE)
+!!                 08/04/09 CHP Separated FILECC from FILEEE, to allow separate pathnames
+!                  PATHL  = INDEX(PATHCR,BLANK)
+!                  IF (PATHL .LE. 1) THEN
+!                    FILECC = FILEC
+!                  ELSE
+!                    FILECC = PATHCR(1:(PATHL-1)) // FILEC
+!                  ENDIF
+!                  FILENAME = FILECC
+!
+!c                 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!c                 End of cultivar file path acquisition
+!c                 Open:
+!                  OPEN(UNIT=CFILE, FILE=FILENAME, ACCESS='SEQUENTIAL', 
+!     -                 ACTION='READ')
+!
+!c                 Now, read the file until the line started '@var' is
+!c                 encountered.  'var' no doubt stands for 'variety'
+!c                 I would like to read this line, and then read the line
+!c                 containing the actual cultivar.  Then the string of 
+!c                 headings can be parsed into an array, along with the 
+!c                 values (column widths defined by headings).
+!
+!c     ****   MATT: check that this will not be an infinite loop if the @var tokenc
+!c     does not exist ******
+!c     Ok, I think it will crash (EOF) if it cannot find @var
+!                  DO WHILE(.TRUE.)
+!c                     Clear line:
+!                      DO I=1, 1024
+!                           LINE(I:I) = ' '
+!                           LINE2(I:I) = ' '
+!                      ENDDO
+!c                     Read a line:
+!                      READ(CFILE, '(A)') LINE
+!c                     Ignore comments:
+!                      IF ((LINE(1:1)      .NE. '!') .AND.
+!     -                    (LEN_TRIM(LINE) .GT.  0)) THEN
+!c                         If the first bit is '@VAR#', we have found the headings
+!                          IF (LINE(1:5) .EQ. '@VAR#') THEN
+!!                             chp write to INFO.OUT
+!                              !WRITE(*, '(A)') LINE
+!                              MSG(1) = LINE(1:78)
+!                              CALL INFO(1,'SCCAN_CULT',MSG)
+!c                             We have discovered the heading line!
+!c                             Search for cultivar
+!                              DO WHILE(.TRUE.)
+!                                  READ(CFILE, '(A)') LINE2
+!!                                 chp write to INFO.OUT
+!                                  !WRITE(*, '(A)') LINE2
+!                                  MSG(1) = LINE2(1:78)
+!                                  CALL INFO(1,'SCCAN_CULT',MSG)
+!                                  IF (LINE2(1:1) .NE. '!') THEN
+!c                                     If the line begins with the cultivar name, 
+!c                                     we have found the cultivar
+!                                      IF (LINE2(1:6) .EQ. CULT_CODE) 
+!     &                                THEN
+!c                                         Exit from loop, because LINE2 contains the
+!c                                         cultivar info
+!                                          EXIT
+!                                      ENDIF
+!                                  ENDIF
+!                              ENDDO
+!c                             Exit from loop, because LINE contains headings
+!                              EXIT
+!                          ENDIF
+!                      ENDIF
+!                  ENDDO
+!c                 Close the cultivar file
+!                  CLOSE(CFILE)
 
 c                 LINE contains headings.
 c                 LINE2 contains cultivar values.
 c                 These are still in a single string, and need to be parsed.
 
+!                 CHP 4/1/2010 Read cultivar info directly from INH file
+                  I = LEN(TRIM(CONTROL % FILEIO))
+                  FILEIOH = CONTROL % FILEIO
+                  WRITE(FILEIOH(I:I),'(A1)') 'H'
+
+                  OPEN(LUNIO,FILE=FILEIOH,STATUS='OLD',IOSTAT=ERRNUM)
+                  IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIOH,0)
+
+                  SECTION = '*CULTIVARS'
+                  CALL FIND(LUNIO,SECTION,LNUM,FOUND)
+                  IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO,LNUM)
+
+c                 Read cultivar header info
+                  READ(LUNIO,'(A)',IOSTAT=ERRNUM) LINE
+                  READ(LUNIO,'(A)',IOSTAT=ERRNUM) LINE2
+                  LNUM = LNUM + 2
 
 c                 :::::::::::::::::::::::::::::::::::::::::::::::::::
 c                 MJ, Mar 2008:
@@ -430,7 +450,8 @@ c                 Open ECO file:
      -                 ACTION='READ') 
 
 c                 Read ecotype code from cultivar file:
-                  READ(LINE2, '(26X, A6)') ECOTYPE
+!chp              READ(LINE2, '(26X, A6)') ECOTYPE
+                  READ(LINE2, '(23X, A6)') ECOTYPE
 c                  WRITE(*, '(A)') 'Ecotype is ', ECOTYPE
 
 
@@ -455,7 +476,7 @@ c                         If the first bit is '@ECO#', we have found the heading
 c                             We have discovered the heading line!
 c                             Search for ecotype
                               DO WHILE(.TRUE.)
-                                  READ(ECOFILE, '(A)') ELINE2
+                                  READ(ECOFILE, '(A)',END=1000) ELINE2
 !                                 chp write to INFO.OUT
                                   !WRITE(*, '(A)') ELINE2
                                   MSG(1) = ELINE2(1:78)
@@ -491,6 +512,8 @@ c                 * excluding the initial text (25 characters) *
 
 c                 :::::::::::::::::::::::::::::::::::::::::::::::::::
 
+c                 Read the cultivar name from the string read from file:
+                  READ(LINE2, '(7X, A16)') CULTIVAR
 
 c                 Parsing of variable name strings:
 c                 :::::::::::::::::::::::::::::::::
@@ -498,13 +521,12 @@ c                 :::::::::::::::::::::::::::::::::
                   ENDI = 1
                   PREVE = 0
                   VARNAME = '                    '
-c                 Skip first three tokens:
-                  CALL FINDNEXT(BEGI, ENDI, 2, VARNAME, LINE)
-                  CALL FINDNEXT(BEGI, ENDI, ENDI, VARNAME, LINE)
-                  CALL FINDNEXT(BEGI, ENDI, ENDI, VARNAME, LINE)
-c                 Read the cultivar name from the string read from file:
-                  READ(LINE2, '(7X, A16)') CULTIVAR
-c                  CALL FINDNEXT(BEGI, ENDI, ENDI, VARNAME, LINE)
+c                 Skip first three tokens:  Skip 5 - chp (from INH file now)
+                  CALL FINDNEXT(BEGI, ENDI, 2, VARNAME, LINE)    !C
+                  CALL FINDNEXT(BEGI, ENDI, ENDI, VARNAME, LINE) !CR
+                  CALL FINDNEXT(BEGI, ENDI, ENDI, VARNAME, LINE) !INGENO
+                  CALL FINDNEXT(BEGI, ENDI, ENDI, VARNAME, LINE) !CNAME
+                  CALL FINDNEXT(BEGI, ENDI, ENDI, VARNAME, LINE) !ECO#
 
 c                 Assign End index of current token to end index of 
 c                 'previous' token
@@ -548,17 +570,18 @@ c                     'previous' token
                       PREVE = ENDI
                       I = I+1
                   ENDDO
+                  NParams = I-1
 c                 END of parsing of variable name strings:
 c                 ::::::::::::::::::::::::::::::::::::::::
 
 c                 Now, print array neatly:
 c                 ::::::::::::::::::::::::
-                  DO I=1,100
+                  DO I=1,NParams
 !                     CHP - write to INFO.out
                       WRITE(MSG(I), '(2H| ,A20,2H| ,F20.10, 2H| )') 
      -                              CF_NAMES(I), CF_VALUES(I)
                   ENDDO
-                  CALL INFO(100,'SCCAN_CULT',MSG)
+                  CALL INFO(NParams,'SCCAN_CULT',MSG)
                   CONTINUE
 c                 ::::::::::::::
 c             End of 'is the file opened?' condition statement
@@ -622,7 +645,15 @@ c         End of CONTROL%DYNAMIC condition
 c     ========================================================================
 c     END of subroutine
 c     ========================================================================
+          WRITE(MSG(1),'(A15," = ",F15.5)') TRIM(COEFF_NAME), COEFF
+          CALL INFO(1,"SC_COEFFS",MSG)
           RETURN
+
+!     Error handling - EOF Ecotype file
+ 1000 CONTINUE
+      CALL ERROR(ERRKEY,1,FILEEE,1)
+      RETURN
+
       END SUBROUTINE GET_CULTIVAR_COEFF
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     ========================================================================

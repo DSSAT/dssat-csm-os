@@ -112,16 +112,62 @@ c     after peak population
 
 c     Phenological stages (events with dates)
       INTEGER STGDOY(20)
-
+      
 c     Counter:
       INTEGER REPEATS
-
+      
 c     Cultivar coeff temporary vars:
       LOGICAL CF_ERR
 
 c     ====================================================================
 c     ========  CODE  =======
 c     ====================================================================
+
+c     Run Initialisation (MJ, March 2010)
+c     :::::::::::::::::::::::::::::::::::
+      IF (Control%DYNAMIC .EQ. RUNINIT) THEN
+         I  =  0
+         INC  =  0
+         KSTRES  =  0
+         LOSING  =  0
+         N1  =  0
+         NEWBAT  =  0
+         NLAYR  =  0
+         NTLGRP  =  0
+         REPEATS  =  0
+         STGDOY(20)  =  0
+  
+         CDEP  =  0.0
+         DELTA  =  0.0
+         DLAYR(NL)  =  0.0
+         DUL(NL)  =  0.0
+         EXTRA  =  0.0
+         FX  =  0.0
+         LL  =  0.0
+         MAX_POP  =  0.0
+         POPCF  =  0.0
+         POPN  =  0.0
+         PPLAST  =  0.0
+         ROWSPC  =  0.0
+         STDAYE  =  0.0
+         STDDIV  =  0.0
+         STRPOP  =  0.0
+         SW(NL)  =  0.0
+         SWDF2  =  0.0
+         SWDF30  =  0.0
+         SWDFAR  =  0.0
+         T0  =  0.0
+         T1  =  0.0
+         TEMPOP  =  0.0
+         TEMPTOT  =  0.0
+         TOTMAX  =  0.0
+         TOTPOP  =  0.0
+         TT  =  0.0
+         TT_POPGROWTH  =  0.0
+         XS  =  0.0
+         POPDECAY  =  0.0
+         TOTMAX_YEST  =  0.0
+      ENDIF
 
 c     Copy values from composite type to local variables:
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -172,6 +218,7 @@ c         ::::::::::::::::::::::::::::::::::::::::::::::::::::::
           t0 = 0.
           SWDF30 = 1.
           WaterBal%SWDF30 = 1.
+
 
 c         READ FROM CULTIVAR FILE:
 c         ------------------------

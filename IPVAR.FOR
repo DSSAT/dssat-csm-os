@@ -48,7 +48,7 @@ C=======================================================================
       CHARACTER*16  VRNAME
       CHARACTER*80  PATHGE
       CHARACTER*92  FILEGG
-      CHARACTER*360 C360,ATLINE
+      CHARACTER*1000 C360,ATLINE
 
       INTEGER       I,NSENS,NLVAR,LUNVAR,LINVAR,ISECT,NLOOP
       INTEGER       ERRNUM,PATHL
@@ -217,8 +217,6 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !           Read optional PBASE and PSAT parameters
 !           If these parameters are non-zero, then optional 
 !             method is used
-!***        NOTE: these new sorghum parameters have not been added to 
-!             sensitivity analysis yet.  chp 10/29/2004
      &            ,PBASE, PSAT
 !       Optional cultivar parameters
         IF (PBASE < 1.E-2) PBASE = -99.
@@ -241,13 +239,14 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 
 !     CaneGro: South African Sugarcane model **
       CASE ('SCCAN')
-        READ (C360,1500,IOSTAT=ERRNUM) VARTY, VRNAME, PLAINTXT
+        READ (C360,1060,IOSTAT=ERRNUM) VARTY, VRNAME, ECONO,
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      LFMAX, MXLFAREA, MXLFARNO, PI1, PI2, PSWITCH, TTPLNTEM, 
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
+     &      LG_AMBASE 
 
 !     Casupro: Florida-Colombia Sugarcane model **
       CASE ('SCCSP')
-!!!     READ (C255,1050,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-!!!  &          PI1,PI2,DTPI,SMAX,SO,GMAX,GO,M1,M2,LA,WTPSD,SLAVR,SIZLF 
-
         READ (C360,1055,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
      &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,empty,PLF,
      &          Gamma,StkB,StkM,empty,empty,
@@ -256,21 +255,21 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
      &          TO2(2),TM(2),Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,
      &          MinKg,empty,RES30C,RLF30C,R30C2,empty,empty 
 
-!     Sunflower **
-      CASE ('SUOIL')
-        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &           P1,P2,P5,G2,G3,O1
-
-!     Pineapple **
-      CASE ('PIALO')
-        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &           P2,P3,P4,G2,G3,PHINT
-
 !     Taro, tanier **
       CASE ('TRARO','TNARO')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
      &           P1,P3,P4,P5,G3,G4,PHINT,PCINT,PCGRD
 
+!!     Sunflower **
+!      CASE ('SUOIL')
+!        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+!     &           P1,P2,P5,G2,G3,O1
+!
+!!     Pineapple **
+!      CASE ('PIALO')
+!        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+!     &           P2,P3,P4,G2,G3,PHINT
+!
       END SELECT
 
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEG,LINVAR)
@@ -287,7 +286,8 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
         READ (LUNVAR,'(A)') C360
         IF (C360(1:1).EQ.'@') THEN
 !         Skip the EXPNO column (CHP 1/29/2009)
-          ATLINE = C360(1:23) // C360(31:360)
+!         ATLINE = C360(1:23) // C360(31:360)
+          ATLINE = C360(1:23) // C360(31:1000)
           EXIT
         ENDIF
       ENDDO
@@ -326,6 +326,7 @@ C-----------------------------------------------------------------------
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
  1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 
 !!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)       !02/10/2009 
+ 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                   !02/10/2009 
 
 !1500 FORMAT (A6,1X,A16,1X,A255)
  1500 FORMAT (A6,1X,A16,7X,A)                             !11/8/07

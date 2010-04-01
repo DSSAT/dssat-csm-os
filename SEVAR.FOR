@@ -39,7 +39,7 @@ C=======================================================================
       CHARACTER*16 VRNAME,ECONAM
       CHARACTER*80 PATHGE,PATHEC
       CHARACTER*92 FILEGG
-      CHARACTER*360 ATLINE
+      CHARACTER*1000 ATLINE
 
       INTEGER      MENU,NSENS,IVRGRP,NLOOP,PATHL
 
@@ -84,10 +84,13 @@ C     Get menu choice
 C
       READ (5,'(I2)',ERR = 100) MENU
 C
+!=======================================================================
 C     Branch to menu choice
 C
       IF (MENU .EQ. 0) THEN
           RETURN
+
+!=======================================================================
       ELSE IF (MENU .EQ. 1) THEN
           CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
@@ -97,6 +100,8 @@ C
      &            ECONO,IVRGRP,MODEL)
           ENDIF
           NSENS = 1
+
+!=======================================================================
       ELSE IF (MENU .EQ. 2) THEN
           CALL IDGEN (FILEG,RNMODE,PATHGE)
           PATHL  = INDEX(PATHGE,BLANK)
@@ -110,30 +115,28 @@ C
              NSENS = 0
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
-	       IF (INDEX('GROCSMCSPCER',MODEL(3:5)) .GT. 0) THEN 
+	       IF (INDEX('GRO,CSM,CSP,CER',MODEL(3:5)) .GT. 0) THEN 
                  CALL IPECO(FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &               ECONO,IVRGRP,MODEL)
              ENDIF
              NSENS = 1
           ENDIF
+
+!=======================================================================
+!     Cultivar parameter modification
       ELSE IF (MENU .EQ. 3) THEN
-          SELECT CASE (CROP)
-!          IF (INDEX 
-!     &       ('BNPNSBTMPECHPPPRC3C4BHG1G2G3G4G5G6G7G8BRVBCPCBFBCOCT',
-!     &                CROP) .GT. 0) THEN
-           CASE ('BN','PN','SB','TM','PE','CH','PP','PR','C3','C4','BH',
-     &          'BR','VB','CP','CB','FB','CO','CT','NP','GB','LT')
-             CALL INVRLE (FILEG,RNMODE,VARTY,VRNAME,PATHGE,ECONO)
-!           ELSEIF (INDEX ('MZWHMLSGBAPTRISUSCPITRTNCO',CROP) .GT. 0)
-!     &     THEN
-           CASE ('MZ','WH','ML','SG','BA','PT','RI','SU','SC','PI',
-     &          'TR','TN')
-             CALL INVRCE (CROP, MODEL)
-!           ELSEIF (INDEX ('CS',CROP) .GT. 0) THEN
-           CASE ('CS')
-             CALL INVRCS
+          SELECT CASE (MODEL(1:5))
+          CASE ('CRGRO')
+            CALL INVRLE (FILEG,RNMODE,VARTY,VRNAME,PATHGE,ECONO)
+          CASE('MLCER','MZCER','SWCER','MZIXM','SGCER',
+     &         'PTSUB','RICER','TRARO','TNARO',
+     &         'SCCAN','SCCSP')
+            CALL INVRCE (CROP, MODEL)
+          CASE ('CSCER','CSCRP')
+!           CALL INVRCS
+            CALL INVRCE (CROP, MODEL)
           END SELECT
-!          ENDIF
+
           PATHL  = INDEX (PATHGE,BLANK)
           IF (PATHL .LE. 1) THEN
              FILEGG = FILEG
@@ -144,8 +147,10 @@ C
           IF (.NOT. FEXIST) THEN
              GO TO 100
           ENDIF
+
+!=======================================================================
       ELSE IF (MENU .EQ. 4) THEN
-	    IF (INDEX('GROCSMCSPCER',MODEL(3:5)) .GT. 0) THEN 
+	    IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN',MODEL(3:5)) .GT. 0) THEN 
               CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &            ECONO,IVRGRP,MODEL)
           ENDIF

@@ -21,6 +21,14 @@
       REAL      RTNNO,RES30C,RLF30C,R30C2 
       REAL      StkH2OFac,SuH2OFac 
 
+!     For CaneGro
+      REAL
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      MXLFAREA, MXLFARNO, PSWITCH, TTPLNTEM, 
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
+     &      LG_AMBASE 
+!    &      LFMAX, PI1, PI2, 
+
       REAL          CSDVAR,PHTHRS(20),SDPDVR,SLAVAR,LFMAX,XFRUIT,WTPSD
       REAL          SFDUR,PODUR,PPSEN,PH2T5,SIZELF
       REAL          RATPOT,PI1,PI2,DTTPI
@@ -57,4 +65,11 @@
      &        , StkB,StkM,LI1,TELOM,LSFAC
      &        , Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,MinKg
      &        , RTNNO,RES30C,RLF30C,R30C2 
+      COMMON /GEN12/
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      MXLFAREA, MXLFARNO, PSWITCH, TTPLNTEM, 
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
+     &      LG_AMBASE 
+!    &      LFMAX, PI1, PI2, 
+
 

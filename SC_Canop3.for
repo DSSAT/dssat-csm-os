@@ -286,10 +286,160 @@ c     Temp values read from file
 !     Unit number for output
 !      INTEGER SCLUN   !CHP
 
-
-
 c     ~~~~~~  CODE  ~~~~~~~~~
 c     ~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+c     ---------------------------------------------------------------------
+      IF (CONTROL%DYNAMIC .EQ. RUNINIT) THEN
+c         MJ, March 2010: zero composite variables:
+c         :::::::::::::::::::::::::::::::::::::::::
+         CaneCrop%GROPHASE  = 0
+         CaneCrop%LFMAX  = 0
+         CaneCrop%LFN(MAX_TILLER_COHORTS)  = 0
+         CaneCrop%LFNMXEXT  = 0
+         CaneCrop%LOSING  = 0
+         CaneCrop%LT  = 0
+         CaneCrop%MXLFAREA  = 0
+         CaneCrop%MXLFARNO  = 0
+         CaneCrop%NTLGRP  = 0
+         CaneCrop%RATOON  = 0
+         CaneCrop%AREAMX  = 0.
+         CaneCrop%CANHEIGHT  = 0.
+         CaneCrop%DEDLFN  = 0.
+         CaneCrop%DEDSTK  = 0.
+         CaneCrop%EXTCFN  = 0.
+         CaneCrop%EXTCFST  = 0.
+         CaneCrop%GLFN  = 0.
+         CaneCrop%LEN  = 0.
+         CaneCrop%LMAX  = 0.
+         CaneCrop%PHYLO  = 0.
+         CaneCrop%PHYLSWTCH  = 0.
+         CaneCrop%popcf  = 0.
+         CaneCrop%poplfn  = 0.
+         CaneCrop%popmax = 0.
+         CaneCrop%POPN  = 0.
+         CaneCrop%SHGT  = 0.
+         CaneCrop%TEMPOP  = 0.
+         CaneCrop%TMEANDEDLF  = 0.
+         CaneCrop%TMEANLF  = 0.
+         CaneCrop%TOTPOP  = 0.
+         CaneCrop%WIDCOR  = 0.
+         CaneCrop%WIDTH  = 0.
+         CaneCrop%WMAX  = 0.  
+
+c     MJ, March 2010: zero local variables
+c     ::::::::::::::::::::::::::::::::::::
+         GLFN  =  0
+         I  =  0
+         ISTAGE  =  0
+         IW  =  0
+         J  =  0
+         L  =  0
+         LAST  =  0
+         LCOUNT  =  0
+         LFN  =  0
+         LFNMXEXT  =  0
+         LFNX  =  0
+         LOSING  =  0
+         LT  =  0
+         LTILL  =  0
+         LTX  =  0
+         M  =  0
+         MDL  =  0
+         N1  =  0
+         NATLI6  =  0
+         NEWBAT  =  0
+         NLAYR  =  0
+         NTLGRP  =  0
+         NTLX  =  0
+  
+           ALT  =  0.0
+          AREAMX  =  0.0
+          AREDUC  =  0.0
+          B  =  0.0
+          BEST  =  0.0
+          CHTCoeff  =  0.0
+          CHUPI  =  0.0
+          CHUPOP  =  0.0
+          DEDLFN  =  0.0
+          DEPTH  =  0.0
+          DLAYR  =  0.0
+          dPERdT = 0.
+          TBASEPER  =  0.0
+          DTT  =  0.0
+          ESW120  =  0.0
+          EXPA  =  0.0
+          EXPAL  =  0.0
+          EXPLA  =  0.0
+          EXTCFN  =  0.0
+          EXTCFST  =  0.0
+          EXTINC  =  0.0
+          FR  =  0.0
+          GLAHA  =  0.0
+          GLASHT  =  0.0
+          GLFMAT  =  0.0
+          GLFMAX  =  0.0
+          GLFMX1  =  0.0
+          GLFMX2  =  0.0
+          GLFN1  =  0.0
+          LAI  =  0.0
+          LDG_LI_EFF  =  0.0
+          LEN  =  0.0
+          LI  =  0.0
+          LL  =  0.0
+          LMAX  =  0.0
+          MXLFARNO  =  0.0
+          LODGE_LI  =  0.0
+          MAXLFLENGTH  =  0.0
+          MAXLFWIDTH  =  0.0
+          PER  =  0.0
+          PERCoeff  =  0.0
+          PHYLO  =  0.0
+          PHYLSWTCH  =  0.0
+          POP  =  0.0
+          PPLAST  =  0.0
+          PRECIP  =  0.0
+          RESET  =  0.0
+          ROWSPC  =  0.0
+          SENESF  =  0.0
+          SHGT  =  0.0
+          SHOOTX  =  0.0
+          STDAYC  =  0.0
+          STDAYD  =  0.0
+          STDAYE  =  0.0
+          STDDIV  =  0.0
+          STRPOP   =  0.0
+          SW  =  0.0
+          SWDF2  =  1.
+          T_LFNMXEXT  =  0.0 
+          T_MXLFAREA  =  0.0
+          AL  =  0.0
+          T0  =  0.0
+          TAPER  =  0.0
+          TEMPMN  =  0.0
+          TEMPMX  =  0.0
+          TEMPOP  =  0.0
+          TLAHA  =  0.0
+          TLAI  =  0.0
+          TLASHT  =  0.0
+          TLFN  =  0.0
+          TMEAN  =  0.0
+          TMEANDEDLF  =  0.0
+          TMEANLF  =  0.0
+          TOTPOP  =  0.0
+          TTEMPOP  =  0.0
+          TTREF  =  0.0
+          WIDCOR  =  0.0
+          WIDTH  =  0.0
+          WMAX  =  0.0
+          XLI  =  0.0         
+ 
+      ENDIF
+
+
 c     Copy values from modules:
 c     Climate:
       DTT    = CLIMATE%DTT
@@ -299,7 +449,6 @@ c     Climate:
 c      ISWWAT = ISWITCH%ISWWAT
       ISWWAT = 'N'
 
-c     ---------------------------------------------------------------------
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Initialise (once!)
 c     ::::::::::::::::::

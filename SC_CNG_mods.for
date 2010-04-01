@@ -242,7 +242,7 @@ c         :::::::::::::::::::::::::::::::::::::::::
               REAL     NSUCMAS
               REAL     PARCE
               REAL     PCB
-              REAL     PERLST(10)
+!              REAL     PERLST(10)
               REAL     PURITY
               REAL     RESPCF
               REAL     RFA
@@ -1606,6 +1606,9 @@ c         Init variables with default values
 c          CULT_PREV = '         '
 
           CARRY_OVER = .FALSE.
+          
+
+     
 
 
 c     -----------------------------------------------------

@@ -106,7 +106,7 @@ C=======================================================================
       CHARACTER* 92 FILEX_P 
       CHARACTER*120 INPUTX
       CHARACTER*120 WTHSTR, FILECTL
-      CHARACTER*360 ATLINE
+      CHARACTER*1000 ATLINE
 
       INTEGER       NLOOP,FROP,FTYPEN,RUN,IIRV(NAPPL)
       INTEGER       LUNIO,NYRS,ERRNUM,NSENS,YRIC

@@ -104,6 +104,101 @@ c     For reading coeffs:
 
 c     *******************************************************************
 c     Init:
+      IF (CONTROL%DYNAMIC .EQ. RUNINIT) THEN
+c       MJ, Mar 2010: zero all of the partitioning variables in the composite variable:
+         Part%AERDWDT  = 0.0
+         Part%AERLDM  = 0.0
+         Part%AMPLIF  = 0.0
+         Part%APFMX  = 0.0
+         Part%BRXPDM  = 0.0
+         Part%CHUPIBASE  = 0.0
+         Part%DELTAOUT  = 0.0
+         Part%DELTTMAX  = 0.0
+         Part%DMMAS(150)  = 0.0
+         Part%FDWDT  = 0.0
+         Part%FLODGE  = 0.0
+         Part%FTCON  = 0.0
+         Part%NSUCMAS  = 0.0
+         Part%PARCE  = 0.0
+         Part%PCB  = 0.0
+         Part%PURITY  = 0.0
+         Part%RESPCF  = 0.0
+         Part%RFA  = 0.0
+         Part%RFB  = 0.0
+         Part%RFC  = 0.0
+         Part%ROOTF  = 0.0
+         Part%STKDM  = 0.0
+         Part%STKPFMAX  = 0.0
+         Part%STKWM  = 0.0
+         Part%SUCA  = 0.0
+         Part%SUCB  = 0.0
+         Part%SUCMAS  = 0.0
+         Part%SUCNEWMAS  = 0.0
+         Part%SURCON  = 0.0
+         Part%SWDF2AMP  = 0.0
+         Part%TBASEFNS  = 0.0
+         Part%TBASETOT  = 0.0
+         Part%TBDELTT  = 0.0
+         Part%TBFT  = 0.0
+         Part%TDMAS  = 0.0
+         Part%TOPDM  = 0.0
+         Part%TOPRATE  = 0.0
+         Part%TOPTFNS  = 0.0
+         Part%TOPTTOT  = 0.0
+         Part%TOTBASE  = 0.0
+
+c      Now zero local variables 
+         CHUPI = 0.
+         ROOTDM = 0.
+         TRASDM = 0.    
+         AERDWDT  = 0.0
+         AERLDM  = 0.0
+         APFMX  = 0.0
+         CHUPIBASE  = 0.0
+         DELTAOUT  = 0.0
+         DELTTMAX  = 0.0
+         FDWDT  = 0.0
+         FTCON  = 0.0
+         NSUCMAS  = 0.0
+         PCB  = 0.0
+         STKDM  = 0.0
+         STKPFMAX  = 0.0
+         SUCA  = 0.0
+         SUCMAS  = 0.0
+         SURCON  = 0.0
+         SWDF2AMP  = 0.0
+         TBFT  = 0.0
+         TDMAS  = 0.0
+         TOPDM  = 0.0
+         SWDF2  = 0.0
+         TEMPMN  = 0.0
+         TEMPMX  = 0.0
+         TMEANDEDLF  = 0.0
+         TMEANLF  = 0.0
+         DELTA  = 0.0
+         DELTT  = 0.0
+         DNSTKDT  = 0.0
+         DNSUCDT  = 0.0
+         DNSUCTEMP  = 0.0
+         DSTKDT  = 0.0
+         DSUCDT  = 0.0
+         DSUCTEMP  = 0.0
+         FTDELTA  = 0.0
+         FWDELTA  = 0.0
+         MEANTEMP  = 0.0
+         NNSTK  = 0.0
+         NSUCCAP  = 0.0
+         ROOTDWDT  = 0.0
+         ROOTPF  = 0.0
+         STKPF  = 0.0
+         SUCCAP  = 0.0
+         SUCEQ  = 0.0
+         SUCPF  = 0.0
+         MAX_ROOTPF  = 0.0
+     
+      ENDIF
+
+
       IF (CONTROL%DYNAMIC .EQ. SEASINIT) THEN
 c         These values should come from cultivar / species file
 
@@ -314,6 +409,7 @@ c         Set stalk partitioning factor to maximum from cultivar file
 c          STKPF=STKPFMAX 
 
 C     sdb added 16/10/2003
+c     MJ, Feb 2010: replaced hard-coded value with STKPFMAX, as was meant to be:
 	    stkpf = STKPFMAX + exp(-0.5 * (((tempmx+tempmn)/2.0)-7.5))
 
 
@@ -338,7 +434,8 @@ c         Update stalk drymass
 	    STKDM=STKDM+DSTKDT
 
 c         MJ: changed 1 to 1. in following eq.
-	    DNSTKDT=AERDWDT*(1.-STKPF) !DAILY INCREMENT IN NON-STALK (TOPS AND TRASH)
+!DAILY INCREMENT IN NON-STALK (TOPS AND TRASH)
+	    DNSTKDT=AERDWDT*(1.-STKPF) 
 	 
 c     NONSTALK IS PROPORTIONALLY DIVIDED BETWEEN TRASH AND TOPS
 c     CALCULATE TOPDM AND TRASHDM IN THE FOLLOWING BLOCK

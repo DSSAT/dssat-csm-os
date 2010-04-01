@@ -260,413 +260,17 @@ C
 3001  CONTINUE
       CALL CLEAR
       WRITE (*,5000)
-
-      IF (CROP .EQ. 'ML') THEN
-         WRITE (*,5300) P1,P2O,P2R,P5,G1,G4,PHINT
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-
-         CALL SELPRO (0,7,IPARAM,NDEX,IERR)
-
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (P1,'P1   ',  1.0,800.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (P2O,'P2O  ',  5.0, 19.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (P2R,'P2R  ',  5.0,9000.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (P5,'P5   ',100.0,900.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (G1,'G1   ',  0.0, 50.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (G4,'G4   ',  0.0,  1.0)
-         ELSE IF (IPARAM .EQ. 7) THEN
-             CALL GETREAL (PHINT,'PHINT',1.0,200.0)
-         ENDIF
-
-!       ELSE IF (CROP .EQ. 'MZ') THEN
-       ELSE IF(MODEL(1:5).EQ.'MZCER'.OR.MODEL(1:5).EQ.'SWCER') THEN
-         WRITE (*,5400) P1,P2,P5,G2,G3,PHINT
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,6,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (P1,'P1   ', 80.0, 500.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (P2,'P2   ',  0.0,  10.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (P5,'P5   ',100.0,2000.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (G2,'G2   ',100.0,2000.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (G3,'G3   ',  1.0,  15.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (PHINT,'PHINT',1.0,200.0)
-         ENDIF
-
-       ELSE IF (MODEL(1:5) .EQ. 'MZIXM') THEN
-         WRITE (*,5450) P1,P2,P5,G2,G3,PHINT,AX,LX
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,8,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (P1,'P1   ', 80.0, 500.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (P2,'P2   ',  0.0,  10.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (P5,'P5   ',100.0,2000.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (G2,'G2   ',100.0,2000.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (G3,'G3   ',  1.0,  15.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (PHINT,'PHINT',1.0,200.0)
-         ELSE IF (IPARAM .EQ. 7) THEN
-             CALL GETREAL (AX,'AX   ',400.0,1500.0)
-         ELSE IF (IPARAM .EQ. 8) THEN
-             CALL GETREAL (LX,'LX   ',500.0,2000.0)
-         ENDIF
-
-
-       ELSE IF (CROP .EQ. 'SG') THEN
-         WRITE (*,5500) P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,PBASE,PSAT
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,11,IPARAM,NDEX,IERR)
-         IF(NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         SELECT CASE(IPARAM)
-           CASE(0);  RETURN
-           CASE(1);  CALL GETREAL (P1,   'P1   ',150.0, 500.0)
-           CASE(2);  CALL GETREAL (P2O,  'P2O  ',  5.0,  30.0)
-           CASE(3);  CALL GETREAL (P2R,  'P2R  ', 10.0,9000.0)
-           CASE(4);  CALL GETREAL (P5,   'P5   ',100.0, 900.0)
-           CASE(5);  CALL GETREAL (G1,   'G1   ',  1.0,  20.0)
-           CASE(6);  CALL GETREAL (G2,   'G2   ',  1.0,   8.0)
-           CASE(7);  CALL GETREAL (PHINT,'PHINT',  1.0, 200.0)
-	     CASE(8);  CALL GETREAL (P3,   'P3   ',100.0, 900.0)
-           CASE(9);  CALL GETREAL (P4,   'P4   ',100.0, 900.0)
-           CASE(10); CALL GETREAL (PBASE,'PBASE',  5.0,  24.0)
-           CASE(11); CALL GETREAL (PSAT, 'PSAT ',  5.0,  24.0)
-         END SELECT
-
-	ELSE IF ((CROP .EQ. 'WH') .OR. (CROP .EQ. 'BA')) THEN
-	   WRITE (*,5600) P1V,P1D,P5,G1,G2,G3,PHINT
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,10,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (P1V,'P1V  ',0.0,10000.)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (P1D,'P1D  ',0.0,10000.)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (P5,'P5   ',0.0,10000.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (G1,'G1   ',0.0,10000.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (G2,'G2   ',0.0,10000.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (G3,'G3   ',0.0,10000.0)
-         ELSE IF (IPARAM .EQ. 7) THEN
-             CALL GETREAL (PHINT,'PHINT',0.0,10000.0)
-	   ENDIF
-
-       ELSE IF (CROP .EQ. 'PT') THEN
-         WRITE (*,5700) G2,G3,PD,P2,TC
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,5,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (G2,'G2   ',0.0,3000.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (G3,'G3   ',0.0,3000.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (PD,'PD   ',0.0,3000.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (P2,'P2   ',0.0,3000.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (TC,'TC   ',0.0,3000.0)
-         ENDIF
-
-       ELSE IF (CROP .EQ. 'RI') THEN
-         WRITE (*,5800) P1,P2R,P5,P2O,G1,G2,G3,G4
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,8,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (P1,  'P1   ',0.0,5000.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (P2R,'P2R  ',0.0,5000.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (P5,  'P5   ',0.0,5000.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (P2O,'P2O  ',0.0,5000.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (G1,  'G1   ',0.0,5000.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (G2,  'G2   ',0.0,5000.0)
-         ELSE IF (IPARAM .EQ. 7) THEN
-             CALL GETREAL (G3,  'G3   ',0.0,5000.0)
-         ELSE IF (IPARAM .EQ. 8) THEN
-             CALL GETREAL (G4,  'G4   ',0.0,5000.0)
-         ENDIF
-
-       ELSE IF (CROP .EQ. 'SC') THEN
-!-----------------------------------------------
-!        CASUPRO sugarcane model
-         IF (INDEX(MODEL,'SCCSP') > 0) THEN
-           WRITE (*,5950) PI1, PI2, DTPI, SMAX, SO, GMAX, GO,
-     &                    M1, M2, LA, WTPSD, SLAVAR, SIZLF
-           WRITE (*,5100)
-
-C          Get menu choice
-
-           READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-           CALL SELPRO (0,13,IPARAM,NDEX,IERR)
-           IF (NDEX .EQ. 2) GOTO 3001
-C
-C          Branch to menu choice
-           SELECT CASE (IPARAM)
-             CASE (0); RETURN
-             CASE (1); CALL GETREAL (PI1,   'PI1  ', 1.0, 500.0)
-             CASE (2); CALL GETREAL (PI2,   'PI2  ', 1.0, 500.0)
-             CASE (3); CALL GETREAL (DTPI,  'DTPI ', 0.0,9999.9)
-             CASE (4); CALL GETREAL (SMAX,  'SMAX ', 0.0,9999.9)
-             CASE (5); CALL GETREAL (SO,    'SO   ', 0.0,9999.9)
-             CASE (6); CALL GETREAL (GMAX,  'GMAX ', 1.0,9999.9)
-             CASE (7); CALL GETREAL (GO,    'GO   ', 1.0,9999.9)
-             CASE (8); CALL GETREAL (M1,    'M1   ', 1.0,9999.9)
-             CASE (9); CALL GETREAL (M2,    'M2   ', 1.0,9999.9)
-             CASE(10); CALL GETINT  (LA,    'LA   ',   0,9999)
-             CASE(11); CALL GETREAL (WTPSD, 'WTPSD', 0.0,9999.9)
-             CASE(12); CALL GETREAL (SLAVAR,'SLAVAR',1.0,9999.9)
-             CASE(13); CALL GETREAL (SIZLF, 'SIZLF', 1.0,9999.9)
-           END SELECT
-!-----------------------------------------------
-!        CANEGRO sugarcane model
-         ELSEIF (INDEX(MODEL,'SCCAN') > 0) THEN
-           WRITE (*,5900) P1,RATPOT,LFMAX,G1,PI1,PI2,DTTPI
-           WRITE (*,5100)
-C
-C          Get menu choice
-
-           READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-           CALL SELPRO (0,7,IPARAM,NDEX,IERR)
-           IF (NDEX .EQ. 2) GOTO 3001
-C
-C          Branch to menu choice
-C
-           IF (IPARAM .EQ. 0) THEN
-               RETURN
-           ELSE IF (IPARAM .EQ. 1) THEN
-               CALL GETREAL (P1,'P1   ',500.0,9999.9)
-           ELSE IF (IPARAM .EQ. 2) THEN
-               CALL GETREAL (RATPOT,'RATPT',0.0,10.0)
-           ELSE IF (IPARAM .EQ. 3) THEN
-               CALL GETREAL (LFMAX,'LFMAX',1.0,100.0)
-           ELSE IF (IPARAM .EQ. 4) THEN
-               CALL GETREAL (G1,'G1   ',1.0,3.0)
-           ELSE IF (IPARAM .EQ. 5) THEN
-               CALL GETREAL (PI1,'PI1  ',1.0,500.0)
-           ELSE IF (IPARAM .EQ. 6) THEN
-               CALL GETREAL (PI2,'PI2  ',1.0,500.0)
-           ELSE IF (IPARAM .EQ. 7) THEN
-               CALL GETREAL (DTTPI,'DTTPI',0.0,9999.9)
-           ENDIF
-
-!-----------------------------------------------
-!        Invalid sugarcane model
-         ELSE
-           WRITE (*,'(A)') "Invalid sugarcane model."
-         ENDIF
-
-       ELSE IF (CROP .EQ. 'SU') THEN
-         WRITE (*,6000) P1,P2,P5,G2,G3,O1
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,6,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (P1,'P1   ', 80.0, 700.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (P2,'P2   ',  0.0,  15.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (P5,'P5   ',400.0,1500.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (G2,'G2   ',300.0,4000.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (G3,'G3   ',  1.0,  15.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (O1,'O1   ',  1.0, 100.0)
-         ENDIF
-       ELSE IF (CROP .EQ. 'PI') THEN
-         WRITE (*,6100) P2,P3,P4,G2,G3,PHINT
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,6,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (P2,'P2   ',  1.0, 999.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (P3,'P3   ',  1.0, 999.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (P4,'P4   ',  1.0,9999.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (G2,'G2   ',  1.0, 999.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (G3,'G3   ',  1.0,  99.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (PHINT,'PHINT',  1.0, 999.0)
-         ENDIF
-       ELSE IF ((CROP .EQ. 'TR') .OR. (CROP .EQ. 'TN')) THEN
-         WRITE (*,6200) P1,P3,P4,P5,G3,G4,PHINT,PCINT,PCGRD
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,9,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (P1,'P1  ',0.0,4000.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (P3,'P3  ',1.0,4000.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (P4,'P4   ',1.0,4000.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (P5,'P5   ',1.0,4000.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (G3,'G3   ',1.0,7.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (G4,'G4   ',1.0,7.0)
-         ELSE IF (IPARAM .EQ. 7) THEN
-             CALL GETREAL (PHINT,'PHINT',1.0,2000.0)
-         ELSE IF (IPARAM .EQ. 7) THEN
-             CALL GETREAL (PCINT,'PCINT',1.0,2000.0)
-         ELSE IF (IPARAM .EQ. 7) THEN
-             CALL GETREAL (PCGRD,'PCGRD',1.0,2000.0)
-         ENDIF
-       ELSE IF (CROP .EQ. 'CO') THEN
-         WRITE (*,6300) SCPB,RESPC,SQCON,FCUT,FLAI,DDISQ
-         WRITE (*,5100)
-C
-C        Get menu choice
-C
-         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
-         CALL SELPRO (0,7,IPARAM,NDEX,IERR)
-         IF (NDEX .EQ. 2) GOTO 3001
-C
-C        Branch to menu choice
-C
-         IF (IPARAM .EQ. 0) THEN
-             RETURN
-         ELSE IF (IPARAM .EQ. 1) THEN
-             CALL GETREAL (SCPB,'SCPB ',0.0,100.0)
-         ELSE IF (IPARAM .EQ. 2) THEN
-             CALL GETREAL (RESPC,'RESPC',0.0,1.0)
-         ELSE IF (IPARAM .EQ. 3) THEN
-             CALL GETREAL (SQCON,'SQCON',0.0,1.0)
-         ELSE IF (IPARAM .EQ. 4) THEN
-             CALL GETREAL (FCUT,'FCUT ',0.0,1.0)
-         ELSE IF (IPARAM .EQ. 5) THEN
-             CALL GETREAL (FLAI,'FLAI ',0.0,10.0)
-         ELSE IF (IPARAM .EQ. 6) THEN
-             CALL GETREAL (DDISQ,'DDISQ',0.0,1000.0)
-         ENDIF
-      ENDIF
-
-      GOTO 3001
-
-C-----------------------------------------------------------------------
-C     Format Strings
-C-----------------------------------------------------------------------
-
 5000  FORMAT (/,20X,'========================================',/,
      1          20X,'Current Values of Coefficients to Modify',/,
      2          20X,'========================================',///)
-5100  FORMAT (/,'  Parameter choice [Default = 0] ===>  ',$)
 
-5300  FORMAT (12X,'0. End of changes ',//,
+      SELECT CASE (MODEL(1:5))
+
+!=======================================================================
+!     Millet
+      CASE ('MLCER')
+        WRITE (*,5300) P1,P2O,P2R,P5,G1,G4,PHINT
+5300    FORMAT (12X,'0. End of changes ',//,
      1  12X,'1. P1  (Cumulative growing degree days from',/,
      2  12X,'        seedling emergence to end of juvenile)..[',F7.1,/,
      3  12X,'2. P2O (Optimal photoperiod for development)....[',F7.1,/,
@@ -678,7 +282,32 @@ C-----------------------------------------------------------------------
      9  12X,'6. G4  (Scalar for partitioning to panicle).....[',F7.2,/,
      9  12X,'7. PHINT (Phyllochron interval).................[',F7.1,/)
 
-5400  FORMAT (12X,'0. End of changes',//,
+         WRITE (*,5100)
+5100     FORMAT (/,'  Parameter choice [Default = 0] ===>  ',$)
+
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,7,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE (IPARAM)
+         CASE (0); RETURN
+         CASE (1); CALL GETREAL (P1,   'P1   ',   1.0,  800.0)
+         CASE (2); CALL GETREAL (P2O,  'P2O  ',   5.0,   19.0)
+         CASE (3); CALL GETREAL (P2R,  'P2R  ',   5.0, 9000.0)
+         CASE (4); CALL GETREAL (P5,   'P5   ', 100.0,  900.0)
+         CASE (5); CALL GETREAL (G1,   'G1   ',   0.0,   50.0)
+         CASE (6); CALL GETREAL (G4,   'G4   ',   0.0,    1.0)
+         CASE (7); CALL GETREAL (PHINT,'PHINT',   1.0,  200.0)
+         END SELECT
+
+!=======================================================================
+!     Maize, sweet corn
+      CASE ('MZCER', 'SWCER')
+
+        WRITE (*,5400) P1,P2,P5,G2,G3,PHINT
+5400    FORMAT (12X,'0. End of changes',//,
      1  12X,'1. P1 (Growing degree days from emergence to',/,
      2  12X,'       end of juvenile phase)...................[',F7.1,/,
      3  12X,'2. P2 (Photoperiod sensitivity).................[',F7.1,/,
@@ -688,7 +317,29 @@ C-----------------------------------------------------------------------
      7  12X,'5. G3 (Potential kernel growth rate)............[',F7.1,/,
      8  12X,'6. PHINT (Phyllochron interval).................[',F7.1,/)
 
-5450  FORMAT (12X,'0. End of changes',//,
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,6,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE (IPARAM)
+         CASE (0); RETURN
+         CASE (1); CALL GETREAL (P1,'P1   ', 80.0, 500.0)
+         CASE (2); CALL GETREAL (P2,'P2   ',  0.0,  10.0)
+         CASE (3); CALL GETREAL (P5,'P5   ',100.0,2000.0)
+         CASE (4); CALL GETREAL (G2,'G2   ',100.0,2000.0)
+         CASE (5); CALL GETREAL (G3,'G3   ',  1.0,  15.0)
+         CASE (6); CALL GETREAL (PHINT,'PHINT',1.0,200.0)
+         END SELECT
+
+!=======================================================================
+!     Maize - IXIM
+      CASE ('MZIXM')
+        WRITE (*,5450) P1,P2,P5,G2,G3,PHINT,AX,LX
+5450    FORMAT (12X,'0. End of changes',//,
      1  12X,'1. P1 (Growing degree days from emergence to',/,
      2  12X,'       end of juvenile phase)...................[',F7.1,/,
      3  12X,'2. P2 (Photoperiod sensitivity).................[',F7.1,/,
@@ -696,13 +347,36 @@ C-----------------------------------------------------------------------
      5  12X,'       silking to maturity).....................[',F7.1,/,
      6  12X,'4. G2 (Potential kernel number).................[',F7.1,/,
      7  12X,'5. G3 (Potential kernel growth rate)............[',F7.1,/,
-!JIL     8  12X,'6. PHINT (Phyllochron interval).................[',F7.1,/)
      8  12X,'6. PHINT (Phyllochron interval).................[',F7.1,/,
      9  12X,'7. AX (Surface area of largest leaf, cm2).......[',F7.1,/,
      9  12X,'8. LX (Longevity of most long-lived leaf, GDD)..[',F7.1,/)
 
-5500  FORMAT 
-     & (12X,'0. End of changes',//,
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,8,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE (IPARAM)
+         CASE (0); RETURN
+         CASE (1); CALL GETREAL (P1,'P1   ', 80.0, 500.0)
+         CASE (2); CALL GETREAL (P2,'P2   ',  0.0,  10.0)
+         CASE (3); CALL GETREAL (P5,'P5   ',100.0,2000.0)
+         CASE (4); CALL GETREAL (G2,'G2   ',100.0,2000.0)
+         CASE (5); CALL GETREAL (G3,'G3   ',  1.0,  15.0)
+         CASE (6); CALL GETREAL (PHINT,'PHINT',1.0,200.0)
+         CASE (7); CALL GETREAL (AX,'AX   ',400.0,1500.0)
+         CASE (8); CALL GETREAL (LX,'LX   ',500.0,2000.0)
+         END SELECT
+
+!=======================================================================
+!     Sorghum
+      CASE ('SGCER')
+        WRITE (*,5500) P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PBASE,PSAT
+5500    FORMAT 
+     &  (12X,'0. End of changes',//,
      1  12X,'1. P1    (Cumulative growing degree days from',/,
      2  12X,'          seedling emergence to end of juvenile)[',F7.1,/,
      3  12X,'2. P2O   (Optimal photoperiod for development)..[',F7.1,/,
@@ -717,26 +391,70 @@ C-----------------------------------------------------------------------
      &  12X,'          panicle init to end of leaf growth....[',F7.1,/,
      &  12X,'9. P4    (Cum growing degree days from end of',/,
      &  12X,'          leaf growth to end of pannicle growth)[',F7.1,/,
-     &  12X,'10.PBASE (Ceiling ppd. to delay devel. indef.)..[',F7.2,/,
-     &  12X,'11.PSAT  (Photoperiod below which no dev. delay)[',F7.2,/)
+     &  12X,'10.P2    (Thermal time from end of juvenile to ',/,
+     &  12X,'          tassel initiation under short days    [',F7.1,/,
+     &  12X,'11.PANTH (Thermal time, end tassel init to anth)[',F7.1,/,
+     &  12X,'12.PBASE (Ceiling ppd. to delay devel. indef.)..[',F7.2,/,
+     &  12X,'13.PSAT  (Photoperiod below which no dev. delay)[',F7.2,/)
 
-5600  FORMAT (12X,'0. End of changes',//,
-     1  12X,'1. P1V (Vernalization, days)....................[',F7.2,/,
-     3  12X,'2. P1D (Photoperiod effect).....................[',F7.2,/,
-     3  12X,'3. P5  (Grain filling duration, oC.d)...........[',F7.2,/,
-     5  12X,'4. G1  (Kernel number per unit weight at anth.).[',F7.2,/,
-     6  12X,'5. G2  (Kernel weight under optimum conditions).[',F7.2,/,
-     7  12X,'6. G3  (Standard stem+spike dry weight at mat.).[',F7.2,/,
-     9  12X,'7. PHINT (Phyllochron interval).................[',F7.2)
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,13,IPARAM,NDEX,IERR)
+         IF(NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE(IPARAM)
+         CASE(0);  RETURN
+         CASE(1);  CALL GETREAL (P1,   'P1   ',150.0, 500.0)
+         CASE(2);  CALL GETREAL (P2O,  'P2O  ',  5.0,  30.0)
+         CASE(3);  CALL GETREAL (P2R,  'P2R  ', 10.0,9000.0)
+         CASE(4);  CALL GETREAL (P5,   'P5   ',100.0, 900.0)
+         CASE(5);  CALL GETREAL (G1,   'G1   ',  1.0,  20.0)
+         CASE(6);  CALL GETREAL (G2,   'G2   ',  1.0,   8.0)
+         CASE(7);  CALL GETREAL (PHINT,'PHINT',  1.0, 200.0)
+	   CASE(8);  CALL GETREAL (P3,   'P3   ',100.0, 900.0)
+         CASE(9);  CALL GETREAL (P4,   'P4   ',100.0, 900.0)
+         CASE(10); CALL GETREAL (P2,   'P2   ',100.0, 900.0)
+         CASE(11); CALL GETREAL (PANTH,'PANTH',  0.0,9000.0)
+         CASE(12); CALL GETREAL (PBASE,'PBASE',  5.0,  24.0)
+         CASE(13); CALL GETREAL (PSAT, 'PSAT ',  5.0,  24.0)
+         END SELECT
 
-5700  FORMAT (12X,'0. End of changes ',//,
+!=======================================================================
+!     Potato
+      CASE ('PTSUB')
+        WRITE (*,5700) G2,G3,PD,P2,TC
+5700    FORMAT (12X,'0. End of changes ',//,
      2  12X,'1. G2 (Leaf expansion rate (cmý/mý/d))..........[',F7.1,/,
      3  12X,'2. G3 (Tuber growth rate (g/mý/d))..............[',F7.1,/,
      4  12X,'3. PD (Determinancy)............................[',F7.1,/,
      5  12X,'4. P2 (Photoperiod sensitivity (dimensionless)).[',F7.2,/,
      6  12X,'5. TC (Critical temperature (øC)................[',F7.1,/)
 
-5800  FORMAT (12X,'0. End of changes ',//,
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,5,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE(IPARAM)
+         CASE(0);  RETURN
+         CASE(1);  CALL GETREAL (G2,'G2   ',0.0,3000.0)
+         CASE(2);  CALL GETREAL (G3,'G3   ',0.0,3000.0)
+         CASE(3);  CALL GETREAL (PD,'PD   ',0.0,3000.0)
+         CASE(4);  CALL GETREAL (P2,'P2   ',0.0,3000.0)
+         CASE(5);  CALL GETREAL (TC,'TC   ',0.0,3000.0)
+         END SELECT
+
+!=======================================================================
+!     Rice
+      CASE ('RICER')
+        WRITE (*,5800) P1,P2R,P5,P2O,G1,G2,G3,G4
+5800    FORMAT (12X,'0. End of changes ',//,
      1  12X,'1. P1..(10.00 -  800.0)..........................[',F7.1,/,
      2  12X,'2. P2R.( 5.00 -  500.0)..........................[',F7.2,/,
      3  12X,'3. P5..(50.00 - 1500.0)..........................[',F7.2,/,
@@ -746,77 +464,449 @@ C-----------------------------------------------------------------------
      7  12X,'7. G3..( 0.01 -    2.0)..........................[',F7.2,/,
      8  12X,'8. G4..( 0.01 -    2.0)..........................[',F7.2,/)
 
-5900  FORMAT (12X,'0. End of changes',//,
-     &  12X,'1. P1  (Growing degree days from emergence to',/,
-     &  12X,'        harvest maturity)........................[',F7.1,/,
-     &  12X,'2. RATPOT (Maximum # of ratoon crops before',/,
-     &  12X,'        reseeding)...............................[',F7.1,/,
-     &  12X,'3. LFMAX (Maximum # of green leaves on shoot)....[',F7.1,/,
-     &  12X,'4. G1  (General leaf type : 1=narrow,width<30 mm',/,
-     &  12X,'        2=medium,30<width<50 mm;3=broad width)...[',F7.1,/,
-     &  12X,'5. PI1 (Phyllochron interval # 1)................[',F7.1,/,
-     &  12X,'6. PI2 (Phylochron interval # 2).................[',F7.1,/,
-     &  12X,'7. DTTPI (Growing degree day threshold between',/,
-     &  12X,'        phyllochron interval #1 and #2)..........[',F7.1,/)
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,8,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE(IPARAM)
+         CASE(0);  RETURN
+         CASE(1);  CALL GETREAL (P1,  'P1   ',0.0,5000.0)
+         CASE(2);  CALL GETREAL (P2R, 'P2R  ',0.0,5000.0)
+         CASE(3);  CALL GETREAL (P5,  'P5   ',0.0,5000.0)
+         CASE(4);  CALL GETREAL (P2O, 'P2O  ',0.0,5000.0)
+         CASE(5);  CALL GETREAL (G1,  'G1   ',0.0,5000.0)
+         CASE(6);  CALL GETREAL (G2,  'G2   ',0.0,5000.0)
+         CASE(7);  CALL GETREAL (G3,  'G3   ',0.0,5000.0)
+         CASE(8);  CALL GETREAL (G4,  'G4   ',0.0,5000.0)
+         END SELECT
 
-5950  FORMAT (12X,'0. End of changes',//,
-     &  12X,'1. PI1   (Phyllocron interval 1).................[',F7.1,/,
-     &  12X,'2. PI2   (Phyllocron interval 2).................[',F7.1,/,
-     &  12X,'3. DTPI  (Thermal time threshold for phyllocron  ',/,
-     &  12X,'          interval changes from Ph1 to Ph2)......[',F7.1,/,
-     &  12X,'4. SMAX  (Max # of stalks).......................[',F7.1,/,
-     &  12X,'5. SO    (Max stable stalk # in a stubble).......[',F7.1,/, 
-     &  12X,'6. GMAX  (Threshold thermal time at which max ',/,
-     &  12X,'          stalk number reached)..................[',F7.1,/,
-     &  12X,'7. GO    (Threshold thermal time at which stable ',/,
-     &  12X,'          stalk number set)......................[',F7.1,/,
-     &  12X,'8. M1    (Slope of accumulated leaf area 1)......[',F7.1,/,
-     &  12X,'9. M2    (Slope of accumulated leaf area 2)......[',F7.1,/,
-     &  12X,'10.LA    (Leaf # at which no change to leaf area)[',I7,/,
-     &  12X,'11.WTPSD (Maximum weight per seed g).............[',F7.3,/,
-     &  12X,'12.SLAVAR(Specific leaf area of cultivar cm2/g)..[',F7.1,/,
-     &  12X,'13.SIZLF (Max size of full leaf cm2).............[',F7.1,/)
+!=======================================================================
+!     CSCER - Wheat, barley
+      CASE ('CSCER')
+	  WRITE (*,5600) P1V,P1D,P5,G1,G2,G3,PHINT
+5600    FORMAT (12X,'0. End of changes',//,
+     1  12X,'1. P1V (Vernalization, days)....................[',F7.2,/,
+     3  12X,'2. P1D (Photoperiod effect).....................[',F7.2,/,
+     3  12X,'3. P5  (Grain filling duration, oC.d)...........[',F7.2,/,
+     5  12X,'4. G1  (Kernel number per unit weight at anth.).[',F7.2,/,
+     6  12X,'5. G2  (Kernel weight under optimum conditions).[',F7.2,/,
+     7  12X,'6. G3  (Standard stem+spike dry weight at mat.).[',F7.2,/,
+     9  12X,'7. PHINT (Phyllochron interval).................[',F7.2)
 
-6000  FORMAT (12X,'0. End of changes',//,
-     1  12X,'1. P1 (Growing degree days from emergence to',/,
-     2  12X,'       end of juvenile phase - 4ø base).........[',F7.1,/,
-     3  12X,'2. P2 (Photoperiod sensitivity).................[',F7.2,/,
-     4  12X,'3. P5 (Cumulative growing degree days from',/,
-     5  12X,'       first anthesis to maturity)..............[',F7.1,/,
-     6  12X,'4. G2 (Potential grains per head)...............[',F7.0,/,
-     7  12X,'5. G3 (Potential kernel growth rate)............[',F7.2,/,
-     8  12X,'6. Maximum kernel oil content (%)...............[',F7.0,/)
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,10,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE(IPARAM)
+         CASE(0);  RETURN
+         CASE(1);  CALL GETREAL (P1V,  'P1V  ',  0.0,  60.0)
+         CASE(2);  CALL GETREAL (P1D,  'P1D  ',  0.0,  200.)
+         CASE(3);  CALL GETREAL (P5,   'P5   ', 100., 1000.)
+         CASE(4);  CALL GETREAL (G1,   'G1   ', 10.0,  50.0)
+         CASE(5);  CALL GETREAL (G2,   'G2   ', 10.0,  80.0)
+         CASE(6);  CALL GETREAL (G3,   'G3   ',  0.5,   8.0)
+         CASE(7)
+           SELECT CASE (CROP)
+           CASE('WH'); CALL GETREAL (PHINT,'PHINT', 30.0,  150.)
+           CASE('BA'); CALL GETREAL (PHINT,'PHINT', 30.0,  100.)
+           END SELECT
+         END SELECT
 
+!=======================================================================
+!     CSCRP - CropSim wheat, barley, cassava
+      CASE ('CSCRP')
+        SELECT CASE (CROP)
 
-6100  FORMAT (12X,'0. End of changes',//,
-     1  12X,'1. P2 (Growing degree days from forcing sepals',/,
-     2  12X,'       closed on youngest flower)...............[',F6.1,/,
-     3  12X,'2. P3 (Growing degree days from SCY to',/,
-     4  12X,'       ealy flowering)..........................[',F6.1,/,
-     5  12X,'3. P4 (Cumulative growing degree days from',/,
-     6  12X,'       EF to maturity)..........................[',F6.0,/,
-     7  12X,'4. G2 (Potential eye number)....................[',F6.1,/,
-     8  12X,'5. G3 (Potential eye growth rate)...............[',F6.2,/,
-     9  12X,'6. PHINT (Phyllochron interval).................[',F6.1,/)
+!     --------------------------------------------------------------
+!       CSCRP wheat
+        CASE ('WH')
+          WRITE (*,5920) VREQ, VBASE, VEFF, PPS1, PPS2, 
+     &      P1, P2, P3, P4, P5, P6, P7, P8, GNOWT, GWTS, 
+     &      SHWTS, PHINT, LA1S, LAFV, LAFR
+5920      FORMAT (12X,'0. End of changes ',//,
+     1  12X,' 1. VREQ ( 0.00 -   60.0)............[',F7.1,/,
+     2  12X,' 2. VBASE( 0.00 -   30.0)............[',F7.2,/,
+     3  12X,' 3. VEFF ( 0.00 -   1.00)............[',F7.2,/,
+     4  12X,' 4. PPS1 ( 0.00 -  200.0)............[',F7.2,/,
+     4  12X,' 5. PPS2 ( 0.00 -  200.0)............[',F7.2,/,
+     5  12X,' 6. P1.. (200.0 -  800.0)............[',F7.2,/,
+     6  12X,' 7. P2.. ( 60.0 -  100.0)............[',F7.2,/,
+     6  12X,' 8. P3.. (100.0 -  300.0)............[',F7.2,/,
+     6  12X,' 9. P4.. (100.0 -  500.0)............[',F7.2,/,
+     6  12X,'10. P5.. ( 50.0 -  400.0)............[',F7.2,/,
+     6  12X,'11. P6.. ( 10.0 -  100.0)............[',F7.2,/,
+     6  12X,'12. P7.. ( 50.0 -  300.0)............[',F7.2,/,
+     6  12X,'13. P8.. (100.0 -  800.0)............[',F7.2,/,
+     7  12X,'14. GNOWT( 10.0 -   50.0)............[',F7.2,/,
+     7  12X,'15. GWTS ( 10.0 -   75.0)............[',F7.2,/,
+     7  12X,'16. SHWTS( 0.50 -   5.00)............[',F7.2,/,
+     7  12X,'17. PHINT( 40.0 -  120.0)............[',F7.2,/,
+     7  12X,'18. LA1S ( 0.10 -   10.0)............[',F7.2,/,
+     7  12X,'19. LAFV (0.010 -  0.500)............[',F7.3,/,
+     7  12X,'20. LAFR ( 0.10 -   1.00)............[',F7.2,/)
 
-6200  FORMAT (12X,'0. End of changes',//,
+          WRITE (*,5100)
+C
+C         Get menu choice
+          READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+          CALL SELPRO (0,20,IPARAM,NDEX,IERR)
+          IF (NDEX .EQ. 2) GOTO 3001
+C
+C         Branch to menu choice
+          SELECT CASE(IPARAM)
+          CASE(0);  RETURN
+          CASE( 1);  CALL GETREAL (VREQ ,'VREQ ', 0.00,  60.0)
+          CASE( 2);  CALL GETREAL (VBASE,'VBASE', 0.00,  30.0)
+          CASE( 3);  CALL GETREAL (VEFF ,'VEFF ', 0.00,  1.00)
+          CASE( 4);  CALL GETREAL (PPS1 ,'PPS1 ', 0.00, 200.0)
+          CASE( 5);  CALL GETREAL (PPS2 ,'PPS2 ', 0.00, 200.0)
+          CASE( 6);  CALL GETREAL (P1   ,'P1   ',200.0, 800.0)
+          CASE( 7);  CALL GETREAL (P2   ,'P2   ', 60.0, 100.0)
+          CASE( 8);  CALL GETREAL (P3   ,'P3   ',100.0, 300.0)
+          CASE( 9);  CALL GETREAL (P4   ,'P4   ',100.0, 500.0)
+          CASE(10);  CALL GETREAL (P5   ,'P5   ', 50.0, 400.0)
+          CASE(11);  CALL GETREAL (P6   ,'P6   ', 10.0, 100.0)
+          CASE(12);  CALL GETREAL (P7   ,'P7   ', 50.0, 300.0)
+          CASE(13);  CALL GETREAL (P8   ,'P8   ',100.0, 800.0)
+          CASE(14);  CALL GETREAL (GNOWT,'GNOWT', 10.0,  50.0)
+          CASE(15);  CALL GETREAL (GWTS ,'GWTS ', 10.0,  75.0)
+          CASE(16);  CALL GETREAL (SHWTS,'SHWTS', 0.50,  5.00)
+          CASE(17);  CALL GETREAL (PHINT,'PHINT', 40.0, 120.0)
+          CASE(18);  CALL GETREAL (LA1S ,'LA1S ', 0.10,  10.0)
+          CASE(19);  CALL GETREAL (LAFV ,'LAFV ',0.010, 0.500)
+          CASE(20);  CALL GETREAL (LAFR ,'LAFR ', 0.10,  1.00)
+          END SELECT
+
+!     --------------------------------------------------------------
+!       CSCRP barley
+        CASE ('BA')
+          WRITE (*,5930) VREQ, VBASE, VEFF, PPS1, PPS2, 
+     &      P1, P2, P3, P4, P5, P6, P7, P8, GNOWT, GWTS, 
+     &      SHWTS, PHINT, LA1S, LAFV, LAFR
+5930      FORMAT (12X,'0. End of changes ',//,
+     1  12X,' 1. VREQ ( 0.00 -   60.0)........................[',F7.1,/,
+     2  12X,' 2. VBASE( 0.00 -   30.0)........................[',F7.2,/,
+     3  12X,' 3. VEFF ( 0.00 -   1.00)........................[',F7.2,/,
+     4  12X,' 4. PPS1 ( 0.00 -  200.0)........................[',F7.2,/,
+     4  12X,' 5. PPS2 ( 0.00 -  200.0)........................[',F7.2,/,
+     5  12X,' 6. P1.. (100.0 -  800.0)........................[',F7.2,/,
+     6  12X,' 7. P2.. (100.0 -  500.0)........................[',F7.2,/,
+     6  12X,' 8. P3.. (100.0 -  300.0)........................[',F7.2,/,
+     6  12X,' 9. P4.. (100.0 -  500.0)........................[',F7.2,/,
+     6  12X,'10. P5.. ( 50.0 -  400.0)........................[',F7.2,/,
+     6  12X,'11. P6.. ( 10.0 -  100.0)........................[',F7.2,/,
+     6  12X,'12. P7.. ( 50.0 -  300.0)........................[',F7.2,/,
+     6  12X,'13. P8.. (100.0 -  800.0)........................[',F7.2,/,
+     7  12X,'14. GNOWT( 10.0 -   50.0)........................[',F7.2,/,
+     7  12X,'15. GWTS ( 10.0 -   75.0)........................[',F7.2,/,
+     7  12X,'16. SHWTS( 0.50 -   5.00)........................[',F7.2,/,
+     7  12X,'17. PHINT( 40.0 -  120.0)........................[',F7.2,/,
+     7  12X,'18. LA1S ( 0.10 -   10.0)........................[',F7.2,/,
+     7  12X,'19. LAFV (0.010 -  0.500)........................[',F7.3,/,
+     7  12X,'20. LAFR ( 0.10 -   1.00)........................[',F7.2,/)
+
+          WRITE (*,5100)
+C
+C         Get menu choice
+          READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+          CALL SELPRO (0,20,IPARAM,NDEX,IERR)
+          IF (NDEX .EQ. 2) GOTO 3001
+C
+C         Branch to menu choice
+          SELECT CASE(IPARAM)
+          CASE(0);  RETURN
+          CASE( 1);  CALL GETREAL (VREQ ,'VREQ ', 0.00,  60.0)
+          CASE( 2);  CALL GETREAL (VBASE,'VBASE', 0.00,  30.0)
+          CASE( 3);  CALL GETREAL (VEFF ,'VEFF ', 0.00,  1.00)
+          CASE( 4);  CALL GETREAL (PPS1 ,'PPS1 ', 0.00, 200.0)
+          CASE( 5);  CALL GETREAL (PPS2 ,'PPS2 ', 0.00, 200.0)
+          CASE( 6);  CALL GETREAL (P1   ,'P1   ',100.0, 800.0)
+          CASE( 7);  CALL GETREAL (P2   ,'P2   ',100.0, 100.0)
+          CASE( 8);  CALL GETREAL (P3   ,'P3   ',100.0, 300.0)
+          CASE( 9);  CALL GETREAL (P4   ,'P4   ',100.0, 500.0)
+          CASE(10);  CALL GETREAL (P5   ,'P5   ', 50.0, 400.0)
+          CASE(11);  CALL GETREAL (P6   ,'P6   ', 10.0, 100.0)
+          CASE(12);  CALL GETREAL (P7   ,'P7   ', 50.0, 300.0)
+          CASE(13);  CALL GETREAL (P8   ,'P8   ',100.0, 800.0)
+          CASE(14);  CALL GETREAL (GNOWT,'GNOWT', 10.0,  50.0)
+          CASE(15);  CALL GETREAL (GWTS ,'GWTS ', 10.0,  75.0)
+          CASE(16);  CALL GETREAL (SHWTS,'SHWTS', 0.50,  5.00)
+          CASE(17);  CALL GETREAL (PHINT,'PHINT', 40.0, 120.0)
+          CASE(18);  CALL GETREAL (LA1S ,'LA1S ', 0.10,  10.0)
+          CASE(19);  CALL GETREAL (LAFV ,'LAFV ',0.010, 0.500)
+          CASE(20);  CALL GETREAL (LAFR ,'LAFR ', 0.10,  1.00)
+          END SELECT
+
+!     --------------------------------------------------------------
+!       CSCRP cassava
+        CASE ('CS')
+          WRITE(*,5940)  P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S,
+     &      LAXS, LAXNO, LAFS, LAFNO, LAWS, PHINT, LLIFA, STFR
+5940      FORMAT (12X,'0. End of changes ',//,
+!    1  12X,' 1. PPS1 ( 0.00 -   0.00)........................[',F7.1,/,
+     2  12X,' 2. P1L. ( 0.00 -  100.0)........................[',F7.2,/,
+     3  12X,' 3. P2L. ( 0.00 -  100.0)........................[',F7.2,/,
+     4  12X,' 4. P4L. ( 0.00 -  100.0)........................[',F7.2,/,
+     4  12X,' 5. P5L. ( 0.00 -  200.0)........................[',F7.2,/,
+     5  12X,' 6. SRNOW(0.200 -  0.350)........................[',F7.3,/,
+     6  12X,' 7. SRFR (0.250 -  0.350)........................[',F7.3,/,
+     6  12X,' 8. LA1S (200.0 -  400.0)........................[',F7.2,/,
+     6  12X,' 9. LAXS (1000. -  2000.)........................[',F7.1,/,
+     6  12X,'10. LAXNO( 80.0 -  200.0)........................[',F7.2,/,
+     6  12X,'11. LAFS ( 20.0 -   50.0)........................[',F7.2,/,
+     6  12X,'12. LAFNO(100.0 -  350.0)........................[',F7.2,/,
+     6  12X,'13. LAWS (100.0 -  400.0)........................[',F7.2,/,
+     7  12X,'14. PHINT( 15.0 -   30.0)........................[',F7.2,/,
+     7  12X,'15. LLIFA(  8.0 -   15.0)........................[',F7.2,/,
+     7  12X,'16. STFR (0.250 -  0.450)........................[',F7.3,/)
+
+          WRITE (*,5100)
+C
+C         Get menu choice
+          READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+          CALL SELPRO (0,16,IPARAM,NDEX,IERR)
+          IF (NDEX .EQ. 2) GOTO 3001
+C
+C         Branch to menu choice
+          SELECT CASE(IPARAM)
+          CASE(0);  RETURN
+!         CASE( 1);  CALL GETREAL (PPS1 ,'PPS1 ', 0.00,  0.00)
+          CASE( 2);  CALL GETREAL (P1L  ,'P1L  ', 0.00, 100.0)
+          CASE( 3);  CALL GETREAL (P2L  ,'P2L  ', 0.00, 100.0)
+          CASE( 4);  CALL GETREAL (P4L  ,'P4L  ', 0.00, 100.0)
+          CASE( 5);  CALL GETREAL (P5L  ,'P5L  ', 0.00, 200.0)
+          CASE( 6);  CALL GETREAL (SRNOW,'SRNOW',0.200, 0.350)
+          CASE( 7);  CALL GETREAL (SRFR ,'SRFR ',0.250, 0.350)
+          CASE( 8);  CALL GETREAL (LA1S ,'LA1S ',200.0, 400.0)
+          CASE( 9);  CALL GETREAL (LAXS ,'LAXS ',1000., 2000.)
+          CASE(10);  CALL GETREAL (LAXNO,'LAXNO', 80.0, 200.0)
+          CASE(11);  CALL GETREAL (LAFS ,'LAFS ', 20.0,  50.0)
+          CASE(12);  CALL GETREAL (LAFNO,'LAFNO',100.0, 350.0)
+          CASE(13);  CALL GETREAL (LAWS ,'LAWS ',100.0, 400.0)
+          CASE(14);  CALL GETREAL (PHINT,'PHINT', 15.0,  30.0)
+          CASE(15);  CALL GETREAL (LLIFA,'LLIFA',  8.0,  15.0)
+          CASE(16);  CALL GETREAL (STFR ,'STFR ',0.250, 0.450)
+        END SELECT
+
+      END SELECT
+
+!=======================================================================
+!     CANEGRO sugarcane model
+!     CANEGRO currently reads from the cultivar file directly.  It
+!     reads the header line and the cultivar info as text, then
+!     parses the data into the variables.  Can't run sensitivity
+!     for canegro at this time.
+      CASE ('SCCAN')
+        WRITE (*,5900) 
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      LFMAX, MXLFAREA, MXLFARNO, PI1, PI2, PSWITCH, TTPLNTEM, 
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
+     &      LG_AMBASE 
+
+5900    FORMAT (12X,'0. End of changes',//,
+     &  12X,' 1. MaxPARCE (Max radiation conversion eff).....[',F7.2,/,
+     &  12X,' 2. APFMX (Max fraction to aerial DM)...........[',F7.1,/,
+     &  12X,' 3. STKPFMAX (Frac aerial DM to stalk)..........[',F7.1,/,
+     &  12X,' 4. SUCA (Max sucrose in stalk base)............[',F7.1,/,
+     &  12X,' 5. TBFT (Temp for 50% partitioning to sucrose).[',F7.1,/,
+     &  12X,' 6. Tthalfo (Thermal time to half canopy).......[',F7.1,/,
+     &  12X,' 7. TBase (Base temperature for canopy dev).....[',F7.1,/,
+     &  12X,' 8. LFMAX (Max number leaves)...................[',F7.1,/,
+     &  12X,' 9. MXLFAREA (Max leaf area above MXLFARNO).....[',F7.1,/,
+     &  12X,'10. MXLFARNO (Leaf # for MXLFAREA)..............[',F7.1,/,
+     &  12X,'11. PI1 (Phyllocron interal 1)..................[',F7.1,/,
+     &  12X,'12. PI2 (Phyllocron interal 2)..................[',F7.1,/,
+     &  12X,'13. PSWITCH (Leaf #, switch between PI1 & PI2)..[',F7.1,/,
+     &  12X,'14. TTPLNTEM (Thermal time to emergence, plant).[',F7.1,/,
+     &  12X,'15. TTRATNEM (Thermal time to emergence, ratoon)[',F7.1,/,
+     &  12X,'16. CHUPIBASE (Thermal time emerg to stalk gr)..[',F7.1,/,
+     &  12X,'17. TT_POPGROWTH (Thermal time to peak tiller)..[',F7.1,/,
+     &  12X,'18. MAX_POP (Maximum tiller population).........[',F7.1,/,
+     &  12X,'19. POPTT16 (Stalk population, 1600 dd).........[',F7.1,/,
+     &  12X,'20. LG_AMBASE (Aerial mass for lodging).........[',F7.1,/)
+
+           WRITE (*,5100)
+C
+C          Get menu choice
+           READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+           CALL SELPRO (0,20,IPARAM,NDEX,IERR)
+           IF (NDEX .EQ. 2) GOTO 3001
+C
+C          Branch to menu choice
+           SELECT CASE (IPARAM)
+             CASE (0)
+                RETURN
+             CASE (1); CALL GETREAL (MaxPARCE,'MaxPARCE', 0.0, 100.)
+             CASE (2); CALL GETREAL (APFMX,   'APFMX',    0.0, 1.)
+             CASE (3); CALL GETREAL (STKPFMAX,'STKPFMAX', 0.0, 1.)
+             CASE (4); CALL GETREAL (SUCA,    'SUCA',     0.0, 1.)
+             CASE (5); CALL GETREAL (TBFT,    'TBFT',     0.0, 45.)
+             CASE (6); CALL GETREAL (Tthalfo, 'Tthalfo',  0.0, 10000.)
+             CASE (7); CALL GETREAL (TBase,   'TBase',    0.0, 10000.)
+             CASE (8); CALL GETREAL (LFMAX,   'LFMAX',    0.0, 10000.)
+             CASE (9); CALL GETREAL (MXLFAREA,'MXLFAREA', 0.0, 10000.)
+             CASE(10); CALL GETREAL (MXLFARNO,'MXLFARNO', 0.0, 10000.)
+             CASE(11); CALL GETREAL (PI1,     'PI1',      0.0, 10000.)
+             CASE(12); CALL GETREAL (PI2,     'PI2',      0.0, 10000.)
+             CASE(13); CALL GETREAL (PSWITCH, 'PSWITCH',  0.0, 10000.)
+             CASE(14); CALL GETREAL (TTPLNTEM,'TTPLNTEM', 0.0, 10000.)
+             CASE(15); CALL GETREAL (TTRATNEM,'TTRATNEM', 0.0, 10000.)
+             CASE(16); CALL GETREAL (CHUPIBASE,'CHUPIBASE',0.0, 10000.)
+             CASE(17); CALL GETREAL (TT_POPGROWTH,'TT_POPGROWTH',0.0,
+     &                                                         10000.)
+             CASE(18); CALL GETREAL (MAX_POP, 'MAX_POP',  0.0, 10000.)
+             CASE(19); CALL GETREAL (POPTT16, 'POPTT16',  0.0, 10000.)
+             CASE(20); CALL GETREAL (LG_AMBASE,'LG_AMBASE',0.0,10000.)
+           END SELECT 
+
+!=======================================================================
+!     CASUPRO sugarcane model
+      CASE ('SCCSP')
+        WRITE (*,5950) 
+     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,PLF,
+     &          Gamma,StkB,StkM,
+     &          SIZLF,LIsun,LIshd,TB(1),TO1(1),TO2(1),TM(1),
+     &          PI1,PI2,DTPI,LSFAC,LI1,TELOM,TB(2),TO1(2),
+     &          TO2(2),TM(2),Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,
+     &          MinKg,RES30C,RLF30C,R30C2
+
+5950    FORMAT (12X,'0. End of changes',//,
+     &  12X,'1. LFMAX (Max leaf photosynthesis rate)..........[',F7.1,/,
+     &  12X,'2. PHTMAX(Max CH20 which can be produced)........[',F7.1,/,
+     &  12X,'3. StkH2OFac(Stalk fresh weight factor for DM)...[',F7.1,/,
+     &  12X,'4. SuH2OFac (Stalk fresh wt factor for sucrose)..[',F7.1,/,
+     &  12X,'5. PLF   (Max portion CH2O to leaves, source lim)[',F7.1,/,
+     &  12X,'6. Gamma (fraction excess CH2O to stalk)......  .[',F7.1,/,
+     &  12X,'7. StkB  (Intercept for rate stalk wt increase)..[',F7.1,/,
+     &  12X,'8  StkM  (Slope for rate of stalk wt increase)...[',F7.1,/,
+     &  12X,'9. SIZLF (Maximum size of largest leaf)..........[',F7.1,/,
+     &  12X,'10.LIsun (PAR intercepted by uppermost canopy)...[',F7.1,/,
+     &  12X,'11.LIshd (PAR intercepted by top & mid canopy)...[',F7.1,/,
+     &  12X,'12.TB(1) (Base temp for leaf primary stalk emerg)[',F7.1,/,
+     &  12X,'13.TO1(1)(Lower optimum temp, leaf development)..[',F7.1,/,
+     &  12X,'14.TO2(1)(Upper optimum temp, leaf development)..[',F7.1,/,
+     &  12X,'15.TM(1) (Maximum temperature, leaf development).[',F7.1,/,
+     &  12X,'16.PI1   (Phyllocron interval 1).................[',F7.1,/,
+     &  12X,'17.PI2   (Phyllocron interval 2).................[',F7.1,/,
+     &  12X,'18.DTPI  (Therm time for change from PT1 to PT2).[',F7.1,/,
+     &  12X,'19.LSFAC (Ratio leaf sheath DM to leaf blade DM).[',F7.1,/,
+     &  12X,'20.LI1   (Light intercep for no tiller comp).....[',F7.1,/,
+     &  12X,'21.TELOM (Threshold to tiller emergence).........[',F7.1,/,
+     &  12X,'22.TB(2) (Base temperature for tiller appearance)[',F7.1,/,
+     &  12X,'23.TO1(2)(Lower optimum temp, tiller development)[',F7.1,/,
+     &  12X,'24.TO2(2)(Upper optimum temp, tiller development)[',F7.1,/,
+     &  12X,'25.TM(2) (Max temperature, tiller development)...[',F7.1,/,
+     &  12X,'26.Ph1P  (Threshold to sprouting, plant cane)....[',F7.1,/,
+     &  12X,'27.Ph1R  (Threshold to sprouting, ratoon cane)...[',F7.1,/,
+     &  12X,'28.Ph2   (Growth rate of primary stalk)..........[',F7.1,/,
+     &  12X,'29.Ph3   (Threshold for growth of primary stalk).[',F7.1,/,
+     &  12X,'30.Ph4   (Threshold  for tillering)..............[',F7.1,/,
+     &  12X,'31.StkHrNO(# mature stalks/stool, recent harvest)[',F7.1,/,
+     &  12X,'32.RTNFAC(# primary shoots/mature stalk )........[',F7.1,/,
+     &  12X,'33.MinKg (Threshold wt for tiller senesce).......[',F7.1,/,
+     &  12X,'34.RES30C(Respiration coef for stalk & root).....[',F7.1,/,
+     &  12X,'35.RLF30C(Respiration coef for leaf).............[',F7.1,/,
+     &  12X,'36.R30C2 (Respiration coef for photosynthesis)...[',F7.1,/)
+
+           WRITE (*,5100)
+
+C          Get menu choice
+           READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+           CALL SELPRO (0,36,IPARAM,NDEX,IERR)
+           IF (NDEX .EQ. 2) GOTO 3001
+C
+C          Branch to menu choice
+           SELECT CASE (IPARAM)
+             CASE (0); RETURN
+             CASE (1); CALL GETREAL (LFMAX    ,'LFMAX    ', 0.5, 1.5)
+             CASE (2); CALL GETREAL (PHTMAX   ,'PHTMAX   ', 100.,400.)
+             CASE (3); CALL GETREAL (StkH2OFac,'StkH2OFac', 2.0, 7.0)
+             CASE (4); CALL GETREAL (SuH2OFac ,'SuH2OFac ', 1.0, 4.0)
+             CASE (5); CALL GETREAL (PLF      ,'PLF      ', 0.0, 1.0)
+             CASE (6); CALL GETREAL (Gamma    ,'Gamma    ', 0.0, 1.0)
+             CASE (7); CALL GETREAL (StkB     ,'StkB     ', 0.3, 1.3)
+             CASE (8); CALL GETREAL (StkM     ,'StkM     ', 0.0, 2.0)
+             CASE (9); CALL GETREAL (SIZLF    ,'SIZLF    ', 300., 400.)
+             CASE(10); CALL GETREAL (LIsun    ,'LIsun    ', 0.0, 1.0)
+             CASE(11); CALL GETREAL (LIshd    ,'LIshd    ', 0.0, 1.0)
+             CASE(12); CALL GETREAL (TB(1)    ,'TB(1)    ',5.0, 20.)
+             CASE(13); CALL GETREAL (TO1(1)   ,'TO1(1)   ', 15.0, 40.)
+             CASE(14); CALL GETREAL (TO2(1)   ,'TO2(1)   ', 20., 40.)
+             CASE(15); CALL GETREAL (TM(1)    ,'TM(1)    ', 20., 50.)
+             CASE(16); CALL GETREAL (PI1      ,'PI1      ', 60.0, 120.)
+             CASE(17); CALL GETREAL (PI2      ,'PI2      ', 60.0, 140.)
+             CASE(18); CALL GETREAL (DTPI     ,'DTPI     ', 800., 1600.)
+             CASE(19); CALL GETREAL (LSFAC    ,'LSFAC    ', 0.25, 0.75)
+             CASE(20); CALL GETREAL (LI1      ,'LI1      ', 0.0, 1.0)
+             CASE(21); CALL GETREAL (TELOM    ,'TELOM    ', 100., 300.)
+             CASE(22); CALL GETREAL (TB(2)    ,'TB(2)    ',  5.0, 24.)
+             CASE(23); CALL GETREAL (TO1(2)   ,'TO1(2)   ', 15.0, 40.)
+             CASE(24); CALL GETREAL (TO2(2)   ,'TO2(2)   ', 20.0, 40.)
+             CASE(25); CALL GETREAL (TM(2)    ,'TM(2)    ', 20.0, 50.)
+             CASE(26); CALL GETREAL (Ph1P     ,'Ph1P     ', 50., 500.)
+             CASE(27); CALL GETREAL (Ph1R     ,'Ph1R     ', 50., 500.)
+             CASE(28); CALL GETREAL (Ph2      ,'Ph2      ', 0.5, 3.0)
+             CASE(29); CALL GETREAL (Ph3      ,'Ph3      ', 1000.,2000.)
+             CASE(30); CALL GETREAL (Ph4      ,'Ph4      ', 5000.,8000.)
+             CASE(31); CALL GETREAL (StkHrNO  ,'StkHrNO  ', 1.0, 20.0)
+             CASE(32); CALL GETREAL (RTNFAC   ,'RTNFAC   ', 0.5, 4.0)
+             CASE(33); CALL GETREAL (MinKg    ,'MinKg    ', 0.1, 3.0)
+             CASE(34); CALL GETREAL (RES30C   ,'RES30C   ', 0.1, 0.6)
+             CASE(35); CALL GETREAL (RLF30C   ,'RLF30C   ', 0.5, 3.0)
+             CASE(36); CALL GETREAL (R30C2    ,'R30C2    ', 3.0, 5.0)
+           END SELECT                                 
+                                                      
+!=======================================================================
+      CASE ('TRARO', 'TNARO')
+        WRITE (*,6200) P1,P3,P4,P5,G2,G3,G4,PHINT,PCINT,PCGRD
+6200    FORMAT (12X,'0. End of changes',//,
      1  12X,'1. P1 ..........................................[',F7.1,/,
      3  12X,'2. P3 ..........................................[',F7.2,/,
      4  12X,'3. P4 ..........................................[',F7.1,/,
      6  12X,'4. P5 ..........................................[',F7.2,/,
-     7  12X,'5. G3 ..........................................[',F7.3,/,
-     8  12X,'6. G4 ..........................................[',F7.3,/,
-     9  12X,'6. PHINT .......................................[',F7.3,/,
-     1  12X,'6. PCINT .......................................[',F7.3,/,
-     2  12X,'6. PCGRD .......................................[',F7.3,/)
+     6  12X,'5. G2 ..........................................[',F7.2,/,
+     7  12X,'6. G3 ..........................................[',F7.3,/,
+     8  12X,'7. G4 ..........................................[',F7.3,/,
+     9  12X,'8. PHINT .......................................[',F7.3,/,
+     1  12X,'9. PCINT .......................................[',F7.3,/,
+     2  12X,'10.PCGRD .......................................[',F7.3,/)
 
-6300  FORMAT (12X,'0. End of changes',//,
-     1  12X,'1. SCPB (Seed cotton per boll, g)...............[',F7.1,/,
-     3  12X,'2. RESPC (Respiration constant).................[',F7.3,/,
-     4  12X,'3. SQCON (Squaring constant)....................[',F7.3,/,
-     6  12X,'4. FCUT (Cut out factor)........................[',F7.3,/,
-     7  12X,'5. FLAI (Relative difference in leaf area)......[',F7.2,/,
-     8  12X,'6. DDISQ (Thermal time to 1st square)...........[',F7.1,/)
+         WRITE (*,5100)
+C
+C        Get menu choice
+         READ  (5,'(I2)',IOSTAT=IERR) IPARAM
+         CALL SELPRO (0,10,IPARAM,NDEX,IERR)
+         IF (NDEX .EQ. 2) GOTO 3001
+C
+C        Branch to menu choice
+         SELECT CASE (IPARAM)
+         CASE (0); RETURN
+         CASE (1); CALL GETREAL (P1,   'P1   ', 0.0, 4000.0)
+         CASE (2); CALL GETREAL (P3,   'P3   ', 1.0, 4000.0)
+         CASE (3); CALL GETREAL (P4,   'P4   ', 1.0, 4000.0)
+         CASE (4); CALL GETREAL (P5,   'P5   ', 1.0, 4000.0)
+         CASE (5); CALL GETREAL (G2,   'G2   ', 1.0, 7.0)
+         CASE (6); CALL GETREAL (G3,   'G3   ', 1.0, 7.0)
+         CASE (7); CALL GETREAL (G4,   'G4   ', 1.0, 7.0)
+         CASE (8); CALL GETREAL (PHINT,'PHINT', 1.0, 2000.0)
+         CASE (9); CALL GETREAL (PCINT,'PCINT', 1.0, 2000.0)
+         CASE (10);CALL GETREAL (PCGRD,'PCGRD', 1.0, 2000.0)
+         END SELECT                                  
+
+      END SELECT
+      GOTO 3001
+
+C-----------------------------------------------------------------------
+C     Format Strings
+C-----------------------------------------------------------------------
 
       END SUBROUTINE INVRCE
 
@@ -1038,7 +1128,7 @@ C=======================================================================
 
       IMPLICIT    NONE
 
-      CHARACTER*5 VNAME
+      CHARACTER*(*) VNAME
       INTEGER     IERR,INDEX
       REAL        VARIABLE,VHI,VLO,VARTMP
 
@@ -1055,7 +1145,7 @@ C-----------------------------------------------------------------------
 C     Format strings
 C-----------------------------------------------------------------------
 
-  200 FORMAT (/,' The current value of ',A5, ' is ',F8.3)
+  200 FORMAT (/,' The current value of ',A, ' is ',F10.3)
   300 FORMAT (/,' Input new value : ')
 
       END SUBROUTINE GETREAL
@@ -1119,6 +1209,7 @@ C=======================================================================
       IF (FTEST .LT. FLOW .OR. FTEST .GT. FHIGH) THEN
          WRITE (*, 5) BEEP
          WRITE (*,10) MESS1
+         WRITE (*,20) FLOW, FHIGH
          INDEX = 2
        ELSE
          INDEX = 1
@@ -1132,6 +1223,7 @@ C-----------------------------------------------------------------------
 
     5 FORMAT (1X,A1)
    10 FORMAT (2X,A70,/)
+   20 FORMAT (2X,"Minimum: ",F12.5,10X,"Maximum: ",F12.5)
 
       END SUBROUTINE FSELPRO
 
@@ -1183,6 +1275,7 @@ C=======================================================================
       IF (VARTMP .LT. VLO .OR. VARTMP .GT. VHI) THEN
          WRITE (*, 5) BEEP
          WRITE (*,10) MESS1
+         WRITE (*,20) VLO, VHI
          INDEX = 2
        ELSE
          INDEX = 1
@@ -1199,6 +1292,7 @@ C-----------------------------------------------------------------------
 
     5 FORMAT (1X,A1)
    10 FORMAT (2X,A70,/)
+   20 FORMAT (2X,"Minimum: ",I12,10X,"Maximum: ",I12)
   200 FORMAT (/,' The current value of ',A5, ' is ',I8)
   300 FORMAT (/,' Input new value : ')
 

@@ -417,7 +417,6 @@ C-----------------------------------------------------------------------
       CNOD   = 0.0
       CNODMN = 0.0
       CTONOD = 0.0
-!!      MAINR  = 0.0
       NAVL   = 0.0
       PgAvalPD = 0.0	
 
@@ -601,8 +600,6 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 
       IF (YRDOY .GT. YRPLT .AND. YRPLT .NE. -99) THEN 
-!!! Changed IF statement from GE to GT to avoid out-of-bounds subscript
-!!!  due to use of DAS-1 when simulation start = planting date () 
 
          IF (YRDOY .GT. YREMRG .AND. YREMRG .GT. 0 
      &                    .AND. ISWWAT .EQ. 'Y') THEN
@@ -740,15 +737,12 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
 C-----------------------------------------------------------------------
-!!!        IF (ISWWAT .EQ. 'Y') THEN
-!!!       CALL CSP_ROOTS(CONTROL, DYNAMIC,
           CALL CSP_ROOTS(CONTROL, EMERG,
      &  AGRRT, CROP, DLAYR, DS, DTX, DUL, ESW, FILECC,       !Input
      &  FRRT, ISWWAT, LL, NLAYR, PGT, PLTPOP, PLWT, RO, RP,  !Input
      &  RTDWP, RTWTHa, SAT, SW, SWFAC,                       !Input
      &  VSTAGE, WR, WRDOTN, WTNEW,                           !Input
      &  CUMDEP, RLV, RTDEP, SATFAC, SENRT, SRDOT)            !Output
-!!!        ENDIF
 !-----------------------------------------------------------------------
       ENDIF
 !----------------------------------------------------------------------
