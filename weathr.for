@@ -240,7 +240,7 @@ C     Compute daily normal temperature.
       CALL OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, PAR, RAIN, SRAD,         !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP)                       !Daily values
+     &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
 !***********************************************************************
 !***********************************************************************
@@ -332,7 +332,7 @@ C-----------------------------------------------------------------------
       CALL OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, PAR, RAIN, SRAD,         !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP)                       !Daily values
+     &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
 !***********************************************************************
 !***********************************************************************
@@ -352,7 +352,7 @@ C-----------------------------------------------------------------------
       CALL OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, PAR, RAIN, SRAD,         !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP)                       !Daily values
+     &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
 !***********************************************************************
 !***********************************************************************

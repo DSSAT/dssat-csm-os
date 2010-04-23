@@ -128,7 +128,7 @@ C***********************************************************************
       TORGNI = TSOMNI + TFONI + RESLEFTNI
 
 !     If detailed printout requested, print daily soil N balance
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 !       Cumulative values (yesterday)
         CUMRESNY = 0.0
         CUMSENNY = 0.0
@@ -168,7 +168,7 @@ C***********************************************************************
       CUMMINER = CUMMINER + TMINER
       CUMIMMOB = CUMIMMOB + TIMMOB
 
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 !       Compute daily rates from cumulative values
         ResNToday  = CumResN - CumResNY
         SenNToday  = CumSenN - CumSenNY

@@ -13,7 +13,7 @@ C=======================================================================
       SUBROUTINE OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, PAR, RAIN, SRAD,         !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP)                       !Daily values
+     &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
 !     Daily values:
 !     SRAD,TMAX,TMIN,RAIN,TDEW,WINDSP,PAR,RHUM
@@ -39,6 +39,7 @@ C=======================================================================
      &  TMAX, TMIN, TWILEN, WINDSP
 
       LOGICAL FEXIST
+      TYPE (WeatherType) WEATHER
 
 C-----------------------------------------------------------------------
 C     Define constructed variable types based on definitions in
@@ -107,6 +108,10 @@ C       Generate output for file Weather.OUT
         IF ((DYNAMIC .EQ. OUTPUT .AND. MOD(DAS,FROP) .EQ. 0) .OR.
      &      (DYNAMIC .EQ. SEASEND  .AND. MOD(DAS,FROP) .NE. 0) .OR. 
      &       DAS == 1) THEN 
+
+!         These can be modified by ETPHOT during hourly energy balance
+          TGROAV = WEATHER % TGROAV
+          TGRODY = WEATHER % TGRODY
       
           CALL YR_DOY(YRDOY, YEAR, DOY)
           !Daily printout

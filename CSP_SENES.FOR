@@ -108,8 +108,8 @@ C========================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
       CALL GET(ISWITCH)
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
 	  ! Open temp file to write results from CSP_PHENOL.FOR
         CALL GETLUN('CSP_SENES', LUN)
@@ -274,8 +274,8 @@ C------ Find particular ECOTYPE ----------------------------------------
 !-----------------------------------------------------------------------
 ! Open output file to write results from CSP_SENES.FOR
 !-----------------------------------------------------------------------
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
 !       Variable heading for CSP_SENES.OUT
         WRITE(LUN,'(1X,"RESULTS FROM CSP_SENES.FOR")')
@@ -573,8 +573,8 @@ C	 LeafNum(DAS,Stalk) for VSTAGE.  FSR
 !**********************************************************************
 !	Write growth details by stalk to output file CSP_SENES.OUT - FSR 
 
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
         WRITE(LUN,'(/1X,I7,1X,I3,1X,I3,4X,I2,1X,F5.2)',
      &      ADVANCE="NO"), 

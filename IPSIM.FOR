@@ -190,7 +190,7 @@ C
          SELECT CASE (CROP)
          CASE ('BN','SB','PN','PE','CH','PP',
      &          'VB','CP','CB','FB','GB','LT')
-!          Do nothing -- CROPGRO crops can have Y or N
+!          Do nothing -- these crops fix N and can have Y or N
          CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
          END SELECT
 !        ENDIF
@@ -363,7 +363,8 @@ C
               IDETH = 'Y' 
               IDETR = 'Y' 
 !             Set IDETL back to "D" so no need for changes elsewhere
-              IDETL = 'D' 
+!             IDETL = 'D' 
+              IDETL = 'A' 
             ENDIF
 
             IF (FROP .LE. 0) FROP = 10
@@ -518,7 +519,7 @@ C-----------------------------------------------------------------------
         NYRS  = CONTROL % NYRS  
         YRSIM = CONTROL % YRSIM 
         MODEL = CONTROL % MODEL 
-        MESIC = CONTROL % MESIC     
+!       MESIC = CONTROL % MESIC     
         FROP  = CONTROL % FROP
 
       ENDIF
@@ -708,7 +709,7 @@ C-----------------------------------------------------------------------
     
       CONTROL % YRSIM  = YRSIM     !simulation start date
       CONTROL % MODEL  = MODEL     !crop growth model
-      CONTROL % MESIC  = MESIC     !initial conditions (no longer used)
+!     CONTROL % MESIC  = MESIC     !initial conditions (no longer used)
 
 !     chp moved 12/9/2009
       ISWITCH % ISWSYM = ISWSYM    !symbiosis (N-fixation)
@@ -1219,7 +1220,8 @@ D     IPX = 22
               IDETH = 'Y' 
               IDETR = 'Y' 
 !             Set IDETL back to "D" so no need for changes elsewhere
-              IDETL = 'D' 
+!             IDETL = 'D' 
+              IDETL = 'A' 
             ENDIF
 
           END SELECT
@@ -1351,7 +1353,7 @@ C-----------------------------------------------------------------------
 !       Fill CONTROL variable (partial)
       IF (MODEL(1:1) /= ' ' .AND. MODEL(1:1) /= '.') 
      &                                     CONTROL % MODEL = MODEL
-      IF (MESIC /= ' ' .AND. MESIC /= '.') CONTROL % MESIC = MESIC  
+!     IF (MESIC /= ' ' .AND. MESIC /= '.') CONTROL % MESIC = MESIC  
       IF (NYRS  /= -99) CONTROL % NYRS  = NYRS
       IF (YRSIM /= -99) CONTROL % YRSIM = YRSIM  
       IF (FROP  > 0)    CONTROL % FROP  = FROP   

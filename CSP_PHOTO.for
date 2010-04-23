@@ -157,8 +157,8 @@ C***********************************************************************
 C-----------------------------------------------------------------------
 ! Open file to write results from CSP_PHOTO.FOR
       CALL GET(ISWITCH)
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
         CALL GETLUN('CSP_PHOTO',PLUN)
         OPEN(UNIT = PLUN, FILE = "CSP_PHOTO.OUT", STATUS = "UNKNOWN", 
@@ -880,8 +880,8 @@ C-----------------------------------------------------------------------
 
 !---------------END STALK-BASED PHOTOSYNTHESIS METHOD---------------
 !***********************************************************************
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
         WRITE(PLUN,'(/1X,I7,1X,I4,10(1X,F5.2),2(1X,F6.2),3(1X,F4.1),
      &  2(1X,F6.2),4(1X,F5.2),1X,F6.2,7(1X,F6.2))',

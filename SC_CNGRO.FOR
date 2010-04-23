@@ -358,7 +358,7 @@ c      PAUSE
 !     -     STATUS='REPLACE')
 c      WRITE(SCLUN, '(A, I3)') 'Run number', CONTROL%RUN
 
-      IF (INDEX('YD',ISWITCH % IDETL) > 0) THEN
+      IF (INDEX('YDA',ISWITCH % IDETL) > 0) THEN
         TFILENAME = 'Work.OUT'
         CALL GETLUN('WORK.OUT', SCLUN)
         INQUIRE(FILE=TFILENAME, EXIST=FILE_EXISTS)
@@ -915,7 +915,7 @@ c     -       EO, EOP, EOS, WaterBal%SWDF1, WaterBal%SWDF2,
 c     -       DOT_PRODUCT(SW(1:3), Soil%DLAYR(1:3)), 
 c     -       DOT_PRODUCT(SW(1:20), Soil%DLAYR(1:20)),
 c     -       SW(1:10)
-      IF (INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('YDA',ISWITCH%IDETL) > 0) THEN
         WRITE(SCLUN, '(I10, 2X, 2(F10.5, 2X))') Control%YRDOY, CHU10, 
      -                                      CHUBaseEm
       ENDIF

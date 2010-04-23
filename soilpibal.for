@@ -104,7 +104,7 @@
       CUMBAL = 0.0
 
 !     If detailed printout requested, print daily soil P balance
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 !       Cumulative values (yesterday)
 !       Save today's cumulative values for use tomorrow
         AMTFERY = 0.0
@@ -164,7 +164,7 @@
       CUMMINER = CUMMINER + TMINER
       CUMIMMOB = CUMIMMOB + TIMMOB
 
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 !       Compute daily rates from cumulative values
         AMTFERTODAY = AMTFER - AMTFERY
 

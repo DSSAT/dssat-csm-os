@@ -48,7 +48,7 @@ C=======================================================================
       IDETW = ISWITCH % IDETW
 !      PRINTBAL = .TRUE.
       PRINTDAY = .TRUE.
-!      IF (IDETL .NE. 'D') PRINTBAL = .FALSE.
+!      IF (INDEX('AD',IDETL) < 1) PRINTBAL = .FALSE.
       IF (IDETW .NE. 'Y' .OR. IDETL == '0') THEN
         PRINTDAY = .FALSE.
 !        PRINTBAL = .FALSE.

@@ -33,7 +33,8 @@ c     Define CANEGRO composite variables:
       INTEGER ACOUNT, DAS
       INTEGER DYNAMIC, ERRNUM   
       INTEGER LUNIO, RUN, YIELD
-      INTEGER YRDOY, YRPLT,YRSIM
+      INTEGER YRDOY, YREMRG, YRPLT,YRSIM
+      INTEGER DNR_EMRG, TIMDIF
       INTEGER PhenoStage
       INTEGER TRT_ROT
       INTEGER STGDOY(20)
@@ -47,7 +48,7 @@ c     Define CANEGRO composite variables:
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
 !       (OPSUM subroutine)
-      INTEGER, PARAMETER :: SUMNUM = 6
+      INTEGER, PARAMETER :: SUMNUM = 7
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -93,7 +94,7 @@ c     The Canegro output type
       IDETO = ISWITCH % IDETO
       IPLTI = ISWITCH % IPLTI
 
-      ACOUNT = 9  !Number of possible FILEA headers for this crop
+      ACOUNT = 10  !Number of possible FILEA headers for this crop
 
 !     Define headings for observed data file (FILEA)
       DATA OLAB / !  Definition
@@ -106,7 +107,8 @@ c     The Canegro output type
      & 'CHTA  ', ! 7   Canopy Height (m)
      & 'HIAM  ', ! 8   Harvest index               
      & 'L#SM  ', ! 9   Green leaf number at harvest
-     & 31*'      '/  !31 labels of 40 not used for sugarcane
+     & 'EDAP  ', !10   Emergence dap
+     & 30*'      '/  !31 labels of 40 not used for sugarcane
 
 !     chp 4/7/2009 added stage names so that developmental phases
 !       will be printed to Overview.OUT
@@ -276,23 +278,6 @@ c     peak pop has NOT yet been reached.
         PlantStres % ACTIVE(3) = .FALSE.  
       ENDIF
 
-
-c     Condition for Stalk emerg. - harvest
-c     While STGDOY(4) is NOT 0 (a date has been assigned),
-c     and the plant is emerged, and this is after STGDOY(4)
-c      IF (YRDOY >= YRPLT 
-c     -    .AND. 
-c     -     EMERGED 
-c     -    .AND. 
-c     -     YRDOY >= STGDOY(4)
-c     -    .AND.    
-c     -    STGDOY(4) .NE. 0) 
-c     -THEN
-c        PlantStres % ACTIVE(3) = .TRUE.
-c      ELSE
-c        PlantStres % ACTIVE(3) = .FALSE.  
-c      ENDIF
-
 !     Send data to Overview.out data on days where stages occur
       CALL OPVIEW(CONTROL, 
      &    BIOMAS, ACOUNT, DESCRIP, IDETO, LFNUM, 
@@ -337,6 +322,20 @@ c     Green Leaf area index at harvest
          HIAM = 0.0
       ENDIF
 
+      IF (STGDOY(10) < 9999999) THEN
+        YREMRG = STGDOY(10)
+      ELSE
+        YREMRG = YRPLT
+      ENDIF
+      IF (YRPLT .GT. 0) THEN
+        DNR_EMRG = TIMDIF (YRPLT,YREMRG)
+        IF (DNR_EMRG .LE. 0)  THEN
+          DNR_EMRG = -99
+        ENDIF
+      ELSE
+        DNR_EMRG = -99
+      ENDIF
+
 !-----------------------------------------------------------------------
 !     Read Measured (measured) data from FILEA
 !-----------------------------------------------------------------------
@@ -351,16 +350,18 @@ c     Green Leaf area index at harvest
          CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !     Store Simulated and Measured data for this season.
-      WRITE(Simulated(1),'(F8.2)') SUCH;WRITE(Measured(1),'(A8)')X(1)
-      WRITE(Simulated(2),'(F8.2)') AELH;WRITE(Measured(2),'(A8)')X(2)
-      WRITE(Simulated(3),'(F8.2)') STKH;WRITE(Measured(3),'(A8)')X(3)
-      WRITE(Simulated(4),'(F8.2)') TRSH;WRITE(Measured(4),'(A8)')X(4)
-      WRITE(Simulated(5),'(F8.2)') GLAI  ; WRITE(Measured(5),'(A8)')X(5)
+      WRITE(Simulated(1),'(F8.2)') SUCH;   WRITE(Measured(1),'(A8)')X(1)
+      WRITE(Simulated(2),'(F8.2)') AELH;   WRITE(Measured(2),'(A8)')X(2)
+      WRITE(Simulated(3),'(F8.2)') STKH;   WRITE(Measured(3),'(A8)')X(3)
+      WRITE(Simulated(4),'(F8.2)') TRSH;   WRITE(Measured(4),'(A8)')X(4)
+      WRITE(Simulated(5),'(F8.2)') GLAI;   WRITE(Measured(5),'(A8)')X(5)
       WRITE(Simulated(6),'(F8.2)') MAXLAI; WRITE(Measured(6),'(A8)')X(6)
       WRITE(Simulated(7),'(F8.2)') CaneCrop%CANHEIGHT
                                            WRITE(Measured(7),'(A8)')X(7)
       WRITE(Simulated(8),'(F8.2)') HIAM;   WRITE(Measured(8),'(A8)')X(8)
       WRITE(Simulated(9),'(F8.2)') L_SH;   WRITE(Measured(9),'(A8)')X(9)
+      WRITE(Simulated(10),'(I8)')  DNR_EMRG
+                                         WRITE(Measured(10),'(A8)')X(10)
 
 
 
@@ -389,12 +390,12 @@ c      LABEL(6) = 'HIAM'; VALUE(6) = HIAM
       LABEL(4) = 'TRSH'; VALUE(4) = TRSH
       LABEL(5) = 'LAIX'; VALUE(5) = MAXLAI
       LABEL(6) = 'HIAM'; VALUE(6) = HIAM
-
+      LABEL(7) = 'EDAT'; VALUE(7) = FLOAT(YREMRG)
 
       !Send labels and values to OPSUM
 c     MJ, Mar 08: I believe this line is used to pass information
 c     via the label/value arrays to the screen output when the model
-c     is running.
+c     is running.  ** (CHP) and to Summary.OUT
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
 !-----------------------------------------------------------------------

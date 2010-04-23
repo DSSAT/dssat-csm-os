@@ -154,7 +154,7 @@
         TORGEI(IEL) = TSOMEI(IEL) + TLITEI(IEL) + RESLEFTEI(IEL)
 
 !       If detailed printout requested, print daily soil IEL balance
-        IF (IDETL == 'D') THEN
+        IF (INDEX('AD',IDETL) > 0) THEN
 !         Cumulative values (yesterday)
           CumResEY(IEL) = 0.0
           CumSenEY(IEL) = 0.0
@@ -237,7 +237,7 @@
         CUMMINER(IEL) = CUMMINER(IEL) + TMINER(IEL)
         CUMIMMOB(IEL) = CUMIMMOB(IEL) + TIMMOB(IEL)
 
-        IF (IDETL == 'D') THEN
+        IF (INDEX('AD',IDETL) > 0) THEN
 !         Compute daily rates from cumulative values
           ResEToday(IEL) = CumResE(IEL) - CumResEY(IEL)
           SenEToday(IEL) = CumSenE(IEL) - CumSenEY(IEL)

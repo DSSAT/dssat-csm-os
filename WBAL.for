@@ -105,7 +105,7 @@ C=====================================================================
 
       CALL HEADER(SEASINIT, LUNWBL, RUN)
 
-      IF (IDETL .EQ. 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
         !Write header for daily output
         WRITE (LUNWBL,1120)
  1120   FORMAT('@YEAR DOY   DAS',
@@ -151,7 +151,7 @@ C=====================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
 !-----------------------------------------------------------------------
-      IF (IDETL .EQ. 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 
 !       Transfer data from constructed variable to local variables
         CALL Get('SPAM','CEO',CEO)

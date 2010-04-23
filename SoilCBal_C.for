@@ -58,7 +58,7 @@
       !Don't print unless C output requested.
       IDETC   = ISWITCH % IDETC
       IDETL   = ISWITCH % IDETL
-      IF (IDETC == 'N' .OR. IDETL .NE. 'D') RETURN
+      IF (IDETC == 'N' .OR. INDEX('AD',IDETL) < 1) RETURN
 
 !     ------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.

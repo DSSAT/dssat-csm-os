@@ -164,18 +164,18 @@ C
 !       For now, CropSim will just have a text string for cultivar info
 !        READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, PLAINTXT
 !CASSAVA
-!@VAR#  VAR-NAME........ EXPNO   ECO#  PPS1   P1L   P2L   P4L   P5L SRNOW  SRFR  LA1S  LAXS LAXNO  LAFS LAFNO  LAWS PHINT LLIFA  STFR
-!DFAULT DEFAULT              . DFAULT     0    10    20    30   200  0.25  0.30   300  1900   100    30   150   200    24    10  0.35
+!@VAR#  VAR-NAME........  EXP#   ECO#  PPS1   P1L   P2L   P4L   P5L SR#WT  SRFR  LA1S  LAXS LAXND  LAFS LAFND LAWS PHINT LLIFA  STFR
+!DFAULT DEFAULT              . DFAULT     0    10    20    30   200  0.25  0.30   300  1900   100    30   150  200    24    10  0.35
 
 !WHEAT & BARLEY
-!@VAR#  VAR-NAME........ EXPNO   ECO#  VREQ VBASE  VEFF  PPS1  PPS2    P1    P2    P3    P4    P5    P6    P7    P8 GNOWT  GWTS SHWTS PHINT  LA1S  LAFV  LAFR
-!DFAULT DEFAULT              . DFAULT     0     0     0     0     0   600    80   150   350   140    35   175   600    25    58  3.50    60   2.0   0.1   0.5
+!@VAR#  VAR-NAME........  EXP#   ECO#  VREQ  PPS1    P8 G#WTS  GWTS SHWTS PHINT    P1    P2    P3    P4    P5    P6    P7  LA1S  LAFV  LAFR VBASE  VEFF  PPS2
+!DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0   0.1   0.5     0     0     0
 
         IF (INDEX('WH,BA',CROP) > 0) THEN
           READ (C360,810,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      VREQ, VBASE, VEFF, PPS1, PPS2, 
-     &      P1, P2, P3, P4, P5, P6, P7, P8, 
-     &      GNOWT, GWTS, SHWTS, PHINT, LA1S, LAFV, LAFR, PLAINTXT
+     &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, PHINT, 
+     &      P1, P2, P3, P4, P5, P6, P7, 
+     &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
 
         ELSEIF (INDEX('CS',CROP) > 0) THEN
           READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 

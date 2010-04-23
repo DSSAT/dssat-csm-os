@@ -141,7 +141,7 @@ C-----------------------------------------------------------------------
       CALL HEADER(SEASINIT, LUNK, RUN)
       StartK = SKiTotProf
 
-      IF (ISWITCH%IDETL == 'D') THEN
+      IF (INDEX('DA',ISWITCH%IDETL) > 0) THEN
         WRITE(LUNK,'("@YEAR DOY   DAS",
      &     "     KTOTD      KUPD      KAPD      DAYBAL      CUMBAL")')
         CALL YR_DOY(INCDAT(YRDOY,-1), YEARi, DOYi)
@@ -173,7 +173,7 @@ C-----------------------------------------------------------------------
   300   FORMAT(1X,I4,1X,I3.3,1X,I5,4I9,5F9.0,5F9.2)    
       ENDIF
 
-      IF (ISWITCH%IDETL == 'D') THEN
+      IF (INDEX('AD',ISWITCH%IDETL) > 0) THEN
         KFertToday = CumFertK - CumFert_yest
         KUptToday  = CumUptakeK - CumUpt_yest
         DayBal = SkiTotProf - K_yest - KFertToday + KUpt_yest

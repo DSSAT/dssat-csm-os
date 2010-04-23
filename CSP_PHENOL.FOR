@@ -170,8 +170,8 @@
 !     CASE ('OUTPHNL'); LUN = 48  !PHENOLOGY.OUT - FSR 
   
 !     IF (IDETG .EQ. 'Y') THEN !Whenever PlantGrow.Out is selected
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
         OUTPHNL  = 'CSP_PHEN.OUT'
         CALL GETLUN('OUTPHNL',  NOUTPHN)
@@ -319,8 +319,8 @@
       ELSE IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
 
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
 !FSR - Initialize daily phenology.out file
         INQUIRE (FILE = OUTPHNL, EXIST = FEXIST)
@@ -1070,8 +1070,8 @@
 !        IF (IDETG .EQ. 'Y') THEN !Whenever PlantGrow.Out is selected
 
 !-----------------Phenology.Out-----------------------------------------
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
         WRITE(NOUTPHN,'(/1X,I4,1X, I3, 1X,I3,1X,I3,4X,I2,3X,I3,1X,F7.1,
      &      1X,F5.2,1X,F6.1,1X,F5.1)', ADVANCE="NO"),

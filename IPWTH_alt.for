@@ -499,6 +499,7 @@ C         Read in weather file header.
           ErrCode = 10
           CALL WeatherError(CONTROL, ErrCode, FILEWW, LINWTH, 
      &      YRDOY, YREND)
+          RETURN
         ELSEIF (LongFile) THEN
           YRDOYWY = LastWeatherDay
         ENDIF

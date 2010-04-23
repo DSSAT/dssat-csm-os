@@ -133,7 +133,7 @@
       TORGNI = TSOMEI(N) + TLITEI(N) + LITEI(SRFC,N) + SOM1EI(SRFC,N)
 
 !     If detailed printout requested, print daily soil N balance
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 !       Cumulative values (yesterday)
         CUMRESNY = 0.0
         CUMSENNY = 0.0
@@ -154,7 +154,7 @@
       CUMMINER = 0.0
       CUMIMMOB = 0.0
 
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
         CALL YR_DOY(INCDAT(YRDOY,-1), YR2, DOY2)
 !       Write daily output to SoilNoBal.OUT.
         WRITE (LUNSNC,50) YR2, DOY2, 0, 
@@ -189,7 +189,7 @@
       CUMMINER = CUMMINER + TMINER
       CUMIMMOB = CUMIMMOB + TIMMOB
 
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 !       Compute daily rates from cumulative values
         ResNToday  = CumResN - CumResNY
         SenNToday  = CumSenN - CumSenNY

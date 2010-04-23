@@ -18,7 +18,7 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      CHARACTER*1   IDETG, IDETL, IDETO, ISWWAT, ISWNIT, RNMODE
+      CHARACTER*1   IDETG, IDETL, IDETO, IDETS, ISWWAT, ISWNIT, RNMODE
       CHARACTER*2   CROP
       CHARACTER*30  FILEIO
       CHARACTER*120 FILEIOCS
@@ -33,7 +33,7 @@ C=======================================================================
       REAL SNOW, KCAN, KEP, DEPMAX
       REAL NSTRES, XLAI, LAI, NFP, SLPF
       REAL DAYL, TWILEN, PORMIN, RAIN, RWUMX, SRFTEMP
-      REAL CANHT, EO, WINDSP
+      REAL CANHT, EO, TOTIR, WINDSP
 
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SAT, SHF
@@ -65,6 +65,7 @@ C=======================================================================
       IDETG   = ISWITCH % IDETG
       IDETL   = ISWITCH % IDETL
       IDETO   = ISWITCH % IDETO
+      IDETS   = ISWITCH % IDETS
 
       BD     = SOILPROP % BD     
       DLAYR  = SOILPROP % DLAYR  
@@ -94,12 +95,14 @@ C=======================================================================
         REP = 1
         STEP = 1
         RUNI = 1
+        TOTIR = 0.0
       ELSEIF (DYNAMIC == RATE) THEN
         CALL GET('SPAM','EO',  EO)
         CALL GET('SPAM','EP',  EP)
         CALL GET('SPAM','UH2O',UH2O)
       ELSEIF (DYNAMIC == INTEGR) THEN
         CALL GET('SPAM','ET',  ET)
+        CALL Get('MGMT','TOTIR', TOTIR)
       ENDIF
 
       SOILTEMP(0) = SRFTEMP
@@ -118,9 +121,9 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
       CALL CSCER040 (FILEIOCS, RUN, TN, RN, RNMODE,        !Command line
-     & ISWWAT, ISWNIT, IDETO, IDETG, IDETL, FROP,          !Controls
+     & ISWWAT, ISWNIT, IDETS, IDETO, IDETG, IDETL, FROP,   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
-     & SRAD, TMAX, TMIN, CO2, RAIN,                        !Weather
+     & SRAD, TMAX, TMIN, CO2, RAIN, TOTIR,                 !Weather
      & TWILEN, WINDSP, SOILTEMP, EO,                       !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
      & SNOW, SW, NO3, NH4,                                 !H2o,N states

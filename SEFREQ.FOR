@@ -150,10 +150,10 @@ C
           ENDIF
       ELSE IF (MENU .EQ. 12) THEN
           IF (RUN .EQ. 1) THEN
-             IF (IDETL .EQ. 'Y') THEN
-                IDETL = 'N'
+             IF (IDETL .EQ. 'A') THEN
+                IDETL = '0'
               ELSE
-                IDETL = 'Y'
+                IDETL = 'A'
              ENDIF
           ENDIF
       ENDIF
@@ -179,7 +179,7 @@ C-----------------------------------------------------------------------
      & 5X,' 9. Pest Output File ..............................',3X,A1,/,
      & 5X,'10. Frequency of Simulation Output (in days).......',1X,I3,/,
      & 5X,'11. Save Output Files with Experiment Code ........',3X,A1,/
-     & 5X,'12. Write Output Files with Long Format ...........',3X,A1)
+     & 5X,'12. Toggle all output on or off ...................',3X,A1)
   275 FORMAT (/, 8X,'SELECTION ? [ Default = 0 ] ===> ',$)
   500 FORMAT (//,8X,'OPTION SELECTED       ===>',1X,I3,/,
      &           8X,'FREQUENCY OF OUTPUT ? --->',2X,' ',$)

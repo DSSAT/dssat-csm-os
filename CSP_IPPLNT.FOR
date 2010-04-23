@@ -566,7 +566,7 @@ C------ Find particular ECOTYPE ----------------------------------------
 !            continues (°C)
 ! FREEZ2   Temperature below which plant growth stops completely. (°C)
 ! IDETG    Flag to print growth output file
-! IDETL    Switch for detailed printout (Y or N) 
+! IDETL    Switch for detailed printout (0,N,Y,D,A) 
 ! IDETO    Switch for printing OVERVIEW.OUT file 
 ! ISECT    Data record code (0 - End of file encountered, 1 - Found a good 
 !            line to read, 2 - End of Section in file encountered, denoted 

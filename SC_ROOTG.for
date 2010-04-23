@@ -305,7 +305,7 @@ c         Minimum Root length density
 
 c     Switches:
 c     :::::::::
-          IF (INDEX('YD',ISWITCH%IDETL) > 0) THEN
+          IF (INDEX('YDA',ISWITCH%IDETL) > 0) THEN
             CALL GETLUN('WORK.OUT',SCLUN)
             IF (ISWITCH%ISWWAT .EQ. 'Y') THEN
                 ISWATBAL = .TRUE.

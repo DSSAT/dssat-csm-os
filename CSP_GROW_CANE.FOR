@@ -256,8 +256,8 @@ C=======================================================================
 
 !---------------------------------------------------------------------   
       CALL GET(ISWITCH)
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. 
-     &    INDEX('YD',ISWITCH%IDETL) > 0) THEN
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
+     &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
 ! Open file to write results from CSP_Grow_Cane.FOR
         CALL GETLUN('CSP_GRO',CGLUN)
@@ -1366,9 +1366,9 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 !     Write growth details by stalk to output file CSP_GROW_CANE.OUT 
 !     after emergence (NVEG0)  FSR
-      IF (INDEX('Y' ,ISWITCH%IDETG) > 0 .AND. !Growth output
-     &    INDEX('YD',ISWITCH%IDETL) > 0 .AND. !Detailed output
-     &    (DAS .GE. NVEG0+1) .AND.            !after emergence
+      IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. !Growth output
+     &    INDEX('YDA',ISWITCH%IDETL) > 0 .AND. !Detailed output
+     &    (DAS .GE. NVEG0+1) .AND.             !after emergence
      &   (MOD(DAS,CONTROL%FROP) == 0      !Daily output every FROP days,
      &  .OR. YRDOY == YRPLT)) THEN        !and on planting date
 

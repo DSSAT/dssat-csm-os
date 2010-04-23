@@ -84,7 +84,7 @@ C-----------------------------------------------------------------------
       PARAMETER (TINCR=24.0/TS)
       REAL PHTHRS10, PLTPOP
       REAL PORMIN, RWUMX
-      REAL PALBW, SALBW, SRAD
+      REAL PALBW, SALBW, SRAD, DayRatio
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
 
@@ -307,6 +307,11 @@ C         instantaeous vs. daily rates and convert to mm/h.
 C       Compute hourly rates of canopy photosynthesis and evapotranspiration
 C       and sum for day (TS=24 for hourly).
 
+!       Accounting for hours of high transpiration compared to 24 hours which
+!       is used by daily model.  The 2.0 accounts for lower transpiration
+!       during early morning hours, with high relative humidity.
+        DayRatio = 24.0 / (WEATHER % DAYL - 2.0)
+
         DO H=1,TS
 
 C         Calculate real and solar time.
@@ -355,6 +360,9 @@ C  KJB and SPSUM hourly.
 
           RWUH = TRWUP * RADHR(H) / SRAD * 3600. / 1.E6 * 10.
 !         mm/h = cm/d *  J/m2-s  / MJ/m2-d  * s/hr / J/MJ * mm/cm
+
+!         Need multiplier to account for hourly : daily uptake rate
+          RWUH = RWUH * DayRatio
 
           CALL ETPHR(
      &      CANHT, CEC, CEN, CLOUDS, CO2HR, DAYTIM,       !Input
@@ -523,9 +531,9 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
           ENDIF
           PG = PG * EXCESS
 
-         ! CALL OpETPhot(CONTROL, ISWITCH,
-     &   !     PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &   !     PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+          CALL OpETPhot(CONTROL, ISWITCH,
+     &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
 !***********************************************************************
 !***********************************************************************
@@ -557,6 +565,7 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
 
       WEATHER % TGROAV = TGROAV   !I/O
       WEATHER % TGRO   = TGRO     !I/O
+      WEATHER % TGRODY = TGRODY
 
       RETURN
       END SUBROUTINE ETPHOT

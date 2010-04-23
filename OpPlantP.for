@@ -151,8 +151,8 @@ C  Calls:     None
       CALL HEADER(SEASINIT, LUNPPC, RUN)
 
 !     ------------------------------------------------------------------
-!     Optional daily P balance (if IDETL = 'D')
-      IF (IDETL == 'D') THEN
+!     Optional daily P balance (if IDETL = 'D' or 'A')
+      IF (INDEX('AD',IDETL) > 0) THEN
         PPLANT_Y = PPLANTinit
         WRITE(LUNPPC, 80)
    80   FORMAT('@YEAR DOY   DAS   DAP',
@@ -240,7 +240,7 @@ C-----------------------------------------------------------------------
 
 !     -------------------------------------------------------------
 !     Daily P balance
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 
         CumSenTot = CumSenSurfP + CumSenSoilP
         CumPestTot = PestShutCumP + PestRootCumP + PestShelCumP 

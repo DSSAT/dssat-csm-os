@@ -123,7 +123,7 @@
       TORGPI = TSOMPI + TFOPI + RESLEFTPI
 
 !     If detailed printout requested, print daily soil P balance
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 !       Cumulative values (yesterday)
         CumResPY = 0.0
         CumSenPY = 0.0
@@ -162,7 +162,7 @@
       CUMMINER = CUMMINER + TMINER
       CUMIMMOB = CUMIMMOB + TIMMOB
 
-      IF (IDETL == 'D' .AND. DAS /= 0) THEN
+      IF (INDEX('AD',IDETL) > 0 .AND. DAS /= 0) THEN
 !       Compute daily rates from cumulative values
         ResPToday = CumResP - CumResPY
         SenPToday = CumSenP - CumSenPY

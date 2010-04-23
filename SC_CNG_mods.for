@@ -1238,7 +1238,7 @@ c     Print out soil properties:
           INTEGER SCLUN
 
           CALL GET(ISWITCH)
-          IF (INDEX('YD',ISWITCH%IDETL)< 1) RETURN
+          IF (INDEX('YDA',ISWITCH%IDETL)< 1) RETURN
 
           CALL GETLUN('WORK.OUT',SCLUN)
 c         Print soil layer properties in CANEGRO-compatible form:

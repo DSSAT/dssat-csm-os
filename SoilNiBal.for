@@ -97,7 +97,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       ALGFIXI = ALGFIX
 
 !     If detailed printout requested, print daily soil N balance
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
 !       Cumulative values (yesterday)
 !       Save today's cumulative values for use tomorrow
         TLCHY    = 0.0
@@ -137,7 +137,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !***********************************************************************
       ELSEIF (DYNAMIC == OUTPUT) THEN
 !     ------------------------------------------------------------------
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
         !Compute daily rates from cumulative values
 
 !       Additions:

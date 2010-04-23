@@ -274,7 +274,7 @@
 !     initialization (litter has not yet been set and will be printed
 !     from CENTURY section SEASINIT). Use RUN to prevent it from printing
 !     again with a SEASINIT of a follow-up year in a sequential run.
-      IF (IDETL == 'D' .AND. RUN == 1) THEN
+      IF (INDEX('AD',IDETL) > 0 .AND. RUN == 1) THEN
         CALL SOMLITPRINT_C (CONTROL,
      &    DLAYR, LITC, LITE, METABC, METABE, N_ELEMS,     !Input
      &    NLAYR, SOM1C, SOM1E, SOM2C, SOM2E, SOM23E,      !Input
@@ -379,7 +379,7 @@
 
 !       Get detailed SOM and litter output for checking the litter
 !     initialization (SOM initialization was printed from SoilCNPinit_C
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
         CALL SOMLITPRINT_C (CONTROL,
      &    DLAYR, LITC, LITE, METABC, METABE, N_ELEMS,     !Input
      &    NLAYR, SOM1C, SOM1E, SOM2C, SOM2E, SOM23E,      !Input
@@ -813,7 +813,7 @@
       IF (ISWWAT == 'N') RETURN
 
 !       Get detailed SOM and litter output.
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
         CALL SOMLITPRINT_C (CONTROL,
      &    DLAYR, LITC, LITE, METABC, METABE, N_ELEMS,     !Input
      &    NLAYR, SOM1C, SOM1E, SOM2C, SOM2E, SOM23E,      !Input
@@ -853,7 +853,7 @@
       IF (ISWWAT == 'N') RETURN
 
 !     Close output files.
-      IF (IDETL == 'D') THEN
+      IF (INDEX('AD',IDETL) > 0) THEN
         CALL SOMLITPRINT_C (CONTROL,
      &    DLAYR, LITC, LITE, METABC, METABE, N_ELEMS,     !Input
      &    NLAYR, SOM1C, SOM1E, SOM2C, SOM2E, SOM23E,      !Input
