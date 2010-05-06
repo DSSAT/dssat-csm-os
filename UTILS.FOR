@@ -818,9 +818,9 @@ C=======================================================================
       SUBROUTINE OPCLEAR
       USE ModuleDefs
 !cDEC$ IF (COMPILER == 0) 
-        USE DFPORT
+!        USE DFPORT
 !cDEC$ ELSE
-!        USE IFPORT
+        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
 
@@ -902,9 +902,9 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
 !!!!cDEC$ IF (COMPILER == 0) 
-        USE DFPORT
+!        USE DFPORT
 !!!!cDEC$ ELSE
-!!!!        USE IFPORT
+        USE IFPORT
 !!!!cDEC$ ENDIF
       IMPLICIT NONE
 

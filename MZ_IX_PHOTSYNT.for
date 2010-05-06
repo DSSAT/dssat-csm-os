@@ -200,7 +200,7 @@ C=======================================================================
         CALL ERROR(SECTION, 42, FILECC, LNUM)
       ELSE
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(X,F8.6,F7.4)',IOSTAT=ERR) RES30C, R30C2
+        READ(C80,'(1X,F8.6,F7.4)',IOSTAT=ERR) RES30C, R30C2
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
       ENDIF

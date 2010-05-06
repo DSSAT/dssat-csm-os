@@ -264,7 +264,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IF (CROP .NE. 'FA') THEN
-        CALL DEMAND(RUNINIT,
+        CALL DEMAND(RUNINIT, CONTROL,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
      &  LNGPEG, NDLEAF, NSTRES, PAR, PCNL, PCNRT, PCNST,  !Input
@@ -277,7 +277,7 @@ C=======================================================================
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
      &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
      &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT)                       !Output
+     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
 
 !-----------------------------------------------------------------------
 C    Call plant COMPosition INitialization (for data input)
@@ -489,7 +489,7 @@ C     Initialize pest coupling point and damage variables
 !         to INCOMP and GROW (need to initialize values of F, FRLF,
 !         FRRT, and FRSTM for use in those routines)  chp 9/22/98
 !-----------------------------------------------------------------------
-      CALL DEMAND(SEASINIT,
+      CALL DEMAND(SEASINIT, CONTROL,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
      &  LNGPEG, NDLEAF, NSTRES, PAR, PCNL, PCNRT, PCNST,  !Input
@@ -502,7 +502,7 @@ C     Initialize pest coupling point and damage variables
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
      &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
      &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT)                       !Output
+     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
 
 !-----------------------------------------------------------------------
 !     Call plant COMPosition INitialization
@@ -781,7 +781,8 @@ C-----------------------------------------------------------------------
      &    RLV, RTDEP, SATFAC, SENRT, SRDOT)               !Output
 
 !-----------------------------------------------------------------------
-        CALL DEMAND(EMERG, 
+!       DYNAMIC = EMERG (not INTEGR) here
+        CALL DEMAND(EMERG, CONTROL, 
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
      &  LNGPEG, NDLEAF, NSTRES, PAR, PCNL, PCNRT, PCNST,  !Input
@@ -794,7 +795,7 @@ C-----------------------------------------------------------------------
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
      &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
      &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT)                       !Output
+     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
 
 !-----------------------------------------------------------------------
         CALL PODS(EMERG, 
@@ -909,7 +910,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C    Call Subroutine to calculate Nitrogen and Carbon Demand for new growth
 C-----------------------------------------------------------------------
-      CALL DEMAND(INTEGR, 
+      CALL DEMAND(INTEGR, CONTROL, 
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
      &  LNGPEG, NDLEAF, NSTRES, PAR, PCNL, PCNRT, PCNST,  !Input
@@ -922,7 +923,9 @@ C-----------------------------------------------------------------------
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
      &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
      &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT)                       !Output
+     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
+
+      IF (YRDOY == YREND) RETURN
 
 C-----------------------------------------------------------------------
 C    Compute N Available From Seed, During Early Growth

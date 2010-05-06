@@ -364,7 +364,7 @@ C
               IDETR = 'Y' 
 !             Set IDETL back to "D" so no need for changes elsewhere
 !             IDETL = 'D' 
-              IDETL = 'A' 
+              FROP  = 1
             ENDIF
 
             IF (FROP .LE. 0) FROP = 10
@@ -1221,7 +1221,7 @@ D     IPX = 22
               IDETR = 'Y' 
 !             Set IDETL back to "D" so no need for changes elsewhere
 !             IDETL = 'D' 
-              IDETL = 'A' 
+              FROP  = 1 
             ENDIF
 
           END SELECT

@@ -1695,7 +1695,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
         CALL HEADER(SEASINIT, DLUN, CONTROL % RUN)
         WRITE(DLUN,"(/,
      &     '@YEAR DOY   DAS   CRAIN  SOLCOV   SUMKE    ROCN   TOTAW',
-     &  ' KECHGE1 KECHGE2 KECHGE3 KECHGE4',
+     &  '  KECHG1  KECHG2  KECHG3  KECHG4',
      &  '  DLAYR1  DLAYR2  DLAYR3  DLAYR4',
      &  '     BD1     BD2     BD3     BD4',
      &  '   SWCN1   SWCN2   SWCN3   SWCN4',

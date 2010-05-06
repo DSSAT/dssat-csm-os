@@ -49,12 +49,6 @@ C  02/20/2006 GH  Add RNMODE="G" option for GENCALC
 C=======================================================================
       PROGRAM CSM
 
-!cDEC$ IF (COMPILER == 0) 
-        USE DFPORT
-!cDEC$ ELSE
-!        USE IFPORT
-!cDEC$ ENDIF
-
       USE ModuleDefs 
       USE ModuleData
 

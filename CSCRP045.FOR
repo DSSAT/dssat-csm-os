@@ -107,12 +107,12 @@
       INTEGER,PARAMETER::OUTPUT=5   ! Program output indicator
       INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator
 
+      CHARACTER(LEN=1),PARAMETER::BLANK = ' '
+      CHARACTER(LEN=3),PARAMETER::DASH = ' - '
+
       !REAL,PARAMETER::PATM=101300.0! Pressure of air,Pa
       !REAL,PARAMETER::SHAIR=1005.0 ! Specific heat of air,MJ/kg
       !REAL,PARAMETER::SBZCON=4.903E-9 !Stefan Boltzmann,MJ/K4/m2/d
-
-      CHARACTER(LEN=1),PARAMETER::BLANK = ' '
-      CHARACTER(LEN=3),PARAMETER::DASH = ' - '
       
       INTEGER       ADAP          ! Anthesis,days after planting   d
       REAL          ADAPFR        ! Anthesis DAP+fraction          #
@@ -125,10 +125,11 @@
       REAL          ADAYEFR       ! Anthesis end,fraction of day   #
       REAL          ADAYFR        ! Anthesis,fraction of day       #
       INTEGER       ADOY          ! Anthesis day of year           d
-!     INTEGER       ADOYM         ! Anthesis day of year,measured  d
       REAL          AEDAPFR       ! Anthesis end date (DAP+fr)     #
       INTEGER       AEDAPM        ! Anthesis end date,measured     #
       REAL          AFLF(0:LNUMX) ! CH2O factor for leaf,average   #
+      REAL          AH2OROOTZONE  ! Available h2o in root zone     mm
+      REAL          AH2OPROFILE   ! Available H2o,profile          mm
       REAL          ALBEDO        ! Canopy+soil albedo             fr
       REAL          ALBEDOS       ! soil albedo                    fr
       REAL          AMTNIT        ! Cumulative amount of N applied kg/ha
@@ -171,9 +172,9 @@
       REAL          CARBOTMPR     ! Ch2o avail,resistances calc    g/p
       INTEGER       CCOUNTV       ! Counter for days after max lf# #
       INTEGER       CDAYS         ! Crop cycle duration            PVoCd
+      REAL          CHFR          ! Chaff growth rate,fr stem gr   #
       REAL          CHPHASE(2)    ! Chaff gr. start,etc.,stages    #
       REAL          CHPHASEDU(2)  ! Chaff gr. start,etc.,stages    PVTt
-      REAL          CHFR          ! Chaff growth rate,fr stem gr   #
       REAL          CHRSWAD       ! Chaff reserves                 kg/ha
       REAL          CHRSWT        ! Chaff reserves                 g/p
       REAL          CHTFR(10)     ! Canopy ht fraction for lf area #
@@ -243,7 +244,7 @@
       INTEGER       DAP           ! Days after planting            d
       INTEGER       DAPCALC       ! DAP output from funcion        #
       INTEGER       DAS           ! Days after start of simulation d
-      INTEGER       DATE          ! Date (Yr+Doy)                  #
+      INTEGER       DATE          ! Date (Year+Doy)                #
       INTEGER       DATECOL       ! Date column number             #
       REAL          DAYL          ! Daylength,6deg below horizon   h
       REAL          DAYLCAV       ! Daylength (6deg) av for cycle  h
@@ -283,17 +284,20 @@
       REAL          DLAYRTMP(20)  ! Depth of soil layers with root cm
       REAL          DMP_EP        ! Dry matter per unit EP         g/mm
       REAL          DMP_ET        ! Dry matter per unit ET         g/mm 
-      REAL          DMP_Rain      ! Dry matter per unit water      g/mm
       REAL          DMP_Irr       ! Dry matter per unit irrigation g/mm
       REAL          DMP_NApp      ! Dry matter per unit N applied  kg/kg
       REAL          DMP_NUpt      ! Dry matter per unit N taken uo kg/kg
+      REAL          DMP_Rain      ! Dry matter per unit water      g/mm
       INTEGER       DOM           ! Day of month                   #
       INTEGER       DOY           ! Day of year                    d
       INTEGER       DOYCOL        ! Day of year column number      #
       REAL          DRAIN         ! Drainage from soil profile     mm/d
       REAL          DRAINC        ! Drainage from profile,cumulat  mm  
       INTEGER       DRDAT         ! Double ridges date             #
-      INTEGER       DRDATM        ! Double ridges date,measured    #
+!     INTEGER       DRDATM        ! Double ridges date,measured    #
+      REAL          DRF1          ! Double ridges factor 1         #
+      REAL          DRF2          ! Double ridges factor 2         #
+      REAL          DRF3          ! Double ridges factor 3         #
       REAL          DRSTAGE       ! Double ridges stage            #
       REAL          DSTAGE        ! Develoment stage,linear        #
       REAL          DTRY          ! Effective depth of soil layer  cm
@@ -350,8 +354,8 @@
       REAL          ETCC          ! Evapotranspiration cycle sum   mm 
       REAL          ETPC(0:12)    ! Evapotranspiration phase sum   mm 
       INTEGER       EVALOUT       ! Evaluate output lines for exp  #
-      INTEGER       EVHEADNMMAX   ! Maximum no headings in ev file #
       INTEGER       EVHEADNM      ! Number of headings in ev file  #
+      INTEGER       EVHEADNMMAX   ! Maximum no headings in ev file #
       REAL          EWAD          ! Ear weight                     kg/ha
       INTEGER       EYEARDOY      ! Emergence Year+DOY             #
       REAL          FAC(20)       ! Factor ((mg/Mg)/(kg/ha))       #
@@ -390,9 +394,6 @@
       REAL          FSOILH2O      ! Final soil water               cm   
       REAL          FSOILN        ! Final soil inorganic N         kg/ha
       REAL          G2A(0:3)      ! Grain growth rate,adjusted     mg/du
-      REAL          GWTS          ! Cultivar coefficient,grain wt  mg
-      REAL          GWTA          ! Cultivar coeff,gr.wt.adjusted  mg
-      REAL          GWTAS         ! Cultivar coeff,gr.wt.adj.sress mg
       REAL          G3            ! Cultivar coefficient,stem wt   g
       INTEGER       GDAP          ! Germination DAP                d
       REAL          GDAPFR        ! Germination DAP+fr             #
@@ -420,14 +421,14 @@
       REAL          GNOAMM        ! Grain #,mature,measured        #/m2
       REAL          GNOGM         ! Grains/tiller (group),maturity #/gr
       REAL          GNOGMM        ! Grain#/group,mature,measured   #/gr
+      REAL          GNONADJ       ! Grain # N stress adj.factor    # 
+      REAL          GNONF         ! Grain # N stress adj.factor    % 
       REAL          GNOPD         ! Grains per plant               #/p
       REAL          GNOPM         ! Grains per plant,maturity      #/p
-      REAL          GNOWTM        ! Grains/non-grain wt,maturity   #/g
-      REAL          GNOWS         ! Cultivar coefficient,grain #   #/g
       REAL          GNOWADJ       ! Grain # H2O stress adj.factor  # 
-      REAL          GNONADJ       ! Grain # N stress adj.factor    # 
       REAL          GNOWF         ! Grain # H2O stress adj.factor  % 
-      REAL          GNONF         ! Grain # N stress adj.factor    % 
+      REAL          GNOWS         ! Cultivar coefficient,grain #   #/g
+      REAL          GNOWTM        ! Grains/non-grain wt,maturity   #/g
       REAL          GNPCM         ! Harvest N%,maturity            %
       REAL          GNPCMM        ! Harvest N,mature,measured      %
       REAL          GNPH          ! Grain N harvested              g/p
@@ -470,8 +471,6 @@
       REAL          GROSTPSTORE   ! Stem growth potential,previous g/p 
       REAL          GRP_ET        ! Harvest product per unit water g/mm
       REAL          GRP_Rain      ! Harvest product per unit water g/mm
-      REAL          GWTAA         ! Grain weight adjustment,above  %/g
-      REAL          GWTAT         ! Grain weight adj threshold     g/p
       REAL          GRWT          ! Grain weight                   g/p
       REAL          GRWTM         ! Grain weight at maturity       g/p
       REAL          GRWTSGE       ! Grain weight,stem growth end   g/p
@@ -486,7 +485,12 @@
       REAL          GWLFR         ! Grain weight end lag,fraction  #
       REAL          GWPH          ! Grain wt harvested             g/p
       REAL          GWPHC         ! Grain wt harvested,cumulative  g/p
+      REAL          GWTA          ! Cultivar coeff,gr.wt.adjusted  mg
+      REAL          GWTAA         ! Grain weight adjustment,above  %/g
+      REAL          GWTAS         ! Cultivar coeff,gr.wt.adj.sress mg
+      REAL          GWTAT         ! Grain weight adj threshold     g/p
       REAL          GWTCF         ! Grain wt compensation factor   #
+      REAL          GWTS          ! Cultivar coefficient,grain wt  mg
       REAL          GWUD          ! Grain size                     g
       REAL          GWUDELAG      ! Grain size,end lag period      g
       REAL          GWUM          ! Grain size,maturity            g
@@ -497,6 +501,8 @@
       REAL          GrP_NApp      ! Harvest dm per unit N appllied kg/kg
       REAL          GrP_NUpt      ! Harvest dm per unit N taken up kg/kg
       REAL          H2OA          ! Water available in root zone   mm
+      REAL          H2OPROFILE    ! Total h2o in soil profile      mm   
+      REAL          H2OROOTZONE   ! Total h2o in root zone         mm   
       INTEGER       HADOY         ! Harvest day of year            d
       REAL          HAFR          ! Harvested fraction             kg/ha
       REAL          HAMT(HANUMX)  ! Harvest amount                 #
@@ -530,12 +536,16 @@
       REAL          HNAMERR       ! Harvest N,error                %
       REAL          HNAMM         ! Harvest N,mature,measured      kg/ha
       REAL          HNC           ! Product N concentration,fr     #
+      REAL          HNPCM         ! Harvest N%,maturity            %
+      REAL          HNPCMERR      ! Harvest N%,error               %
+      REAL          HNPCMM        ! Harvest N,mature,measured      %
       INTEGER       HNUMACOL      ! Harvest number per area column #
       REAL          HNUMAD        ! Harvest product#/unit area     #/m2
       REAL          HNUMAERR      ! Harvest #,maturity,error       %
       REAL          HNUMAM        ! Harvest no/area,maturity       #/m2
       REAL          HNUMAMM       ! Harvest no/area,mature,measure #/m2
       REAL          HNUMAT        ! Harvest number/area,t file     #/m2
+      INTEGER       HNUMBER       ! Number of harvest instructions #
       INTEGER       HNUMECOL      ! Harvest number per ear column  #
       REAL          HNUMET        ! Harvest number/ear,t file      #/s
       REAL          HNUMGERR      ! Harvest #/group,error          %
@@ -543,10 +553,6 @@
       REAL          HNUMGMM       ! Harvest #,mature,measured      #/g
       REAL          HNUMPM        ! Product# per plant,maturity    #/p
       REAL          HNUMPMM       ! Product #,mature,measured      #/p
-      REAL          HNPCM         ! Harvest N%,maturity            %
-      REAL          HNPCMERR      ! Harvest N%,error               %
-      REAL          HNPCMM        ! Harvest N,mature,measured      %
-      INTEGER       HNUMBER       ! Number of harvest instructions #
       REAL          HPC(HANUMX)   ! Harvest percentage             %
       REAL          HPCF          ! Harvest percentage,final       %
       REAL          HPRODN        ! Harvest product N              g/p
@@ -627,8 +633,8 @@
       REAL          LAPS(LNUMX)   ! Leaf area senesced,leaf posn   cm2/p
       REAL          LAPSTMP       ! Leaf area senesced,temporary   cm2/p
       REAL          LATL(1,LNUMX) ! Leaf area,tiller1,leaf pos     cm2/l
-      REAL          LAWCF         ! Leaf area/wt change,fr.st      #
-      REAL          LAWFF         ! Leaf area/wt flexibility,fr.st #
+      REAL          LAWCF         ! Leaf area/wt change,fr.st      fr
+      REAL          LAWFF         ! Leaf area/wt flexibility,fr.st fr
       REAL          LAWL(2)       ! Area to wt ratio,n=youngest lf cm2/g
       REAL          LAWS          ! Leaf area/wt ratio,standard    cm2/g
       REAL          LAWTR         ! Leaf area/weight,temp response  fr/C
@@ -642,7 +648,6 @@
       REAL          LEAFN         ! Leaf N                         g/p
       INTEGER       LENDIS        ! Length,ISWDIS flag             #
       INTEGER       LENENAME      ! Length,experiment description  #
-      INTEGER       LENFILEI      ! Length,input file name         #
       INTEGER       LENGROUP      ! Length of group name           #
       INTEGER       LENLINE       ! Length of character string     #
       INTEGER       LENLINESTAR   ! Length of character string     #
@@ -671,7 +676,6 @@
       REAL          LLIGP         ! Leaf lignin percentage         #
       REAL          LLNAD         ! Leaf lamina nitrogen           kg/ha
       REAL          LLOSA         ! Leaf area loss,accelerated sen fr
-      REAL          LSEWF         ! Leaf wt loss,normal senesce    fr
       REAL          LLRSWAD       ! Leaf lamina reserves weight    kg/ha
       REAL          LLRSWT        ! Leaf lamina reserves           g/p
       INTEGER       LLSTG         ! Last leaf fully expanded stage #
@@ -681,7 +685,6 @@
       REAL          LNCGU         ! N concentration,growth,upper   fr
       REAL          LNCM          ! Leaf N conc,minimum            fr
       REAL          LNCMN(0:1)    ! Leaf N conc,minimum            fr
-      REAL          LNPCMN(0:1)   ! Leaf N conc,minimum            %
       REAL          LNCPL         ! Leaf N concentration,phs,lower fr
       REAL          LNCPU         ! Leaf N concentration,phs,upper fr
       REAL          LNCR          ! Leaf N relative to maximum     #
@@ -691,9 +694,10 @@
       REAL          LNCTU         ! Leaf N conc,tillering,upper    fr
       REAL          LNCX          ! Leaf N conc,maximum            fr
       REAL          LNCXS(0:1)    ! Leaf N conc,maximum,stage      fr
-      REAL          LNPCS(0:1)    ! Leaf N conc,standard,stage     %
       REAL          LNDEM         ! Leaf demand for N              g/p
       REAL          LNGU          ! Leaf N supplied from uptake    g/p
+      REAL          LNPCMN(0:1)   ! Leaf N conc,minimum            %
+      REAL          LNPCS(0:1)    ! Leaf N conc,standard,stage     %
       REAL          LNPH          ! Leaf N harvested               g/p
       REAL          LNPHC         ! Leaf N harvested,cumulative    g/p
       REAL          LNUM          ! Leaf number,Haun stage         #
@@ -710,27 +714,27 @@
       REAL          LNUMT         ! Leaf number from t file        #
       REAL          LNUMTS        ! Leaf number,terminal spikelet  #
       REAL          LNUSE(0:3)    ! Leaf N use,overall and parts   g   
-      REAL          NPTFL         ! Minimum N uptake used by leaf  frFR
       REAL          LRETS         ! Stage --> dead leaves retained #
       REAL          LRETSDU       ! Stage --> dead leaves retained PVoCd
       INTEGER       LRTIP         ! Layer with root tip            #
+      REAL          LSAW          ! Leaf sheath area/wt            cm2/g
+      REAL          LSAWR         ! Leaf sheath area/wt,end leaf   cm2/g
+      REAL          LSAWV         ! Leaf sheath area/wt,veg.phases cm2/g
       INTEGER       LSEED         ! Layer with seed                #
       REAL          LSENE         ! Leaf senescence,end stage      #
       REAL          LSENEDU       ! Leaf senescence,end stage      #
       REAL          LSENI         ! Leaf senescence,injury         %/d
       REAL          LSENS         ! Leaf senescence,start stage    #
       REAL          LSENSDU       ! Leaf senescence,start stage    PVoCd
+      REAL          LSEWF         ! Leaf wt loss,normal senesce    fr
       REAL          LSHAI         ! Leaf sheath area index         m2/m2
-      REAL          LSAW          ! Leaf sheath area/wt            cm2/g
-      REAL          LSAWR         ! Leaf sheath area/wt,end leaf   cm2/g
-      REAL          LSAWV         ! Leaf sheath area/wt,veg.phases cm2/g
       REAL          LSHFR         ! Leaf sheath fraction of total  #
+      REAL          LSHRSWAD      ! Leaf sheath reserves weight    kg/ha
       REAL          LSHRSWT       ! Leaf sheath reserves           g/p
+      REAL          LSHWAD        ! Leaf sheath weight             kg/ha
       REAL          LSNDEM        ! Leaf and stem N demand         g/p
       REAL          LSNUM(HANUMX) ! Livestock number               #/ha
       REAL          LSTAGE        ! Leaf stage 0-1 over leaf phase #
-      REAL          LSHWAD        ! Leaf sheath weight             kg/ha
-      REAL          LSHRSWAD      ! Leaf sheath reserves weight    kg/ha
       REAL          LSWT(HANUMX)  ! Livestock weight (individual)  kg
       REAL          LWPH          ! Leaf weight harvested          g/p
       REAL          LWPHC         ! Leaf wt harvested,cumulative   g/p
@@ -751,19 +755,19 @@
       REAL          NFG           ! N factor,growth 0-1            #
       REAL          NFGCAV        ! N factor,growth,average,cycle  #
       REAL          NFGCC         ! N factor,growh,cycle sum       # 
+      REAL          NFGL          ! N factor,gr,lower limit        #
       REAL          NFGPAV(0:12)  ! N factor,growth,average,phase  #
       REAL          NFGPC         ! N factor,growth,cumulative     #
-      REAL          NFGL          ! N factor,gr,lower limit        #
       REAL          NFGU          ! N factor,gr,upper limit        #
       REAL          NFLF(LNUMX)   ! N factor for leaf,average      #
       REAL          NFLFP(LNUMX)  ! N factor phs leaf,average      #
       REAL          NFP           ! N factor,photosynthesis 0-1    #
-      REAL          NFPL          ! N factor,phs,lower limit       #
-      REAL          NFPU          ! N factor,phs,upper limit       #
       REAL          NFPCAV        ! N factor,phs,average,cycle     #
       REAL          NFPCC         ! N factor,phs,cumulative,cycle  #
+      REAL          NFPL          ! N factor,phs,lower limit       #
       REAL          NFPPAV(0:12)  ! N factor,phs,average,phase     #
       REAL          NFPPC         ! N factor,phs,cumulative,phase  #
+      REAL          NFPU          ! N factor,phs,upper limit       #
       REAL          NFRG          ! N factor,root growth 0-1       #
       REAL          NFS           ! N factor,senescence            #
       REAL          NFSF          ! N factor,final sen.trigger fr  #
@@ -772,9 +776,9 @@
       REAL          NFTU          ! N factor,tillering,upper limit #
       REAL          NH4FN         ! NH4 conc factor,NH4 uptake 0-1 #
       REAL          NH4LEFT(20)   ! NH4 concentration in soil      mg/Mg
+      REAL          NLABPC        ! N labile fraction,standard     %
       INTEGER       NLAYR         ! Number of layers in soil       #
       INTEGER       NLAYRROOT     ! Number of layers with roots    #
-      REAL          NLABPC        ! N labile fraction,standard     %
       INTEGER       NLIMIT        ! N limited grain growth  (Days) #
       REAL          NO3FN         ! NO3 conc factor,NO3 uptake 0-1 #
       REAL          NO3LEFT(20)   ! NO3 concentration in soil      mg/Mg
@@ -783,9 +787,10 @@
       INTEGER       NOUTPGF       ! Number for growth factors file #
       INTEGER       NOUTPGN       ! Number for growthN output file #
       REAL          NPOOLL        ! Leaf N pool (ie.above minimum) g/p
-      REAL          NPOOLNEED     ! N required for grain growth    g/p
+!     REAL          NPOOLNEED     ! N required for grain growth    g/p
       REAL          NPOOLR        ! Root N pool (ie.above minimum) g/p
       REAL          NPOOLS        ! Stem N pool (ie.above minimum) g/p
+      REAL          NPTFL         ! Minimum N uptake used by leaf  frFR
       INTEGER       NSDAYS        ! N stress days                  #
       REAL          NTUPF         ! N top-up fraction              /d
       REAL          NUF           ! Plant N supply/demand,max=1.0  #
@@ -799,6 +804,8 @@
       REAL          NUPC          ! N uptake,cumulative            g/p
       REAL          NUPD          ! N uptake                       g/p
       REAL          NUPRATIO      ! N uptake potential/demand      #
+      REAL          NUSEFAC       ! N use factor;mx nuselim,navfr  #
+      REAL          NUSELIM       ! N limit on N for grain filling #
       INTEGER       ON            ! Option number (sequence runs)  #
       INTEGER       ONI           ! Option number,initial value    #
       INTEGER       OUTCOUNT      ! Output counter                 #
@@ -817,8 +824,8 @@
       REAL          PARMJIADJ     ! PAR intercepted adjustment     MJ/m2
       REAL          PARMJIC       ! PAR intercepted,cumulative     MJ/m2
       REAL          PARU          ! PAR utilization effic          g/MJ
-      REAL          PARUE         ! PAR use efficiency,standard    g/MJ
       REAL          PARU2         ! PAR use efficiency,afterchange g/MJ
+      REAL          PARUE         ! PAR use efficiency,standard    g/MJ
       REAL          PARUEC        ! PAR use efficiency to today    g/MJ
       REAL          PARURFR       ! PAR utilize factor,reprod fr   #
       INTEGER       PATHL         ! Path length                    #
@@ -833,17 +840,17 @@
       REAL          PDSRI         ! Storage root initiation phase  oC.d
       REAL          PECM          ! Phase duration,emergence       Cd/cm
       REAL          PEGD          ! Phase duration,germ+dormancy   deg.d
-      REAL          PFGPAV(0:12)  ! P factor,growh,phase,av 0-1    # 
-      REAL          PFPPAV(0:12)  ! P factor,phs,phase,average 0-1 #
       REAL          PFGCAV        ! P factor,growh,cycle,av 0-1    # 
+      REAL          PFGPAV(0:12)  ! P factor,growh,phase,av 0-1    # 
       REAL          PFPCAV        ! P factor,phs,cycle,average 0-1 #
+      REAL          PFPPAV(0:12)  ! P factor,phs,phase,average 0-1 #
       INTEGER       PGDAP         ! Plantgro file days after plt   #
       REAL          PGERM         ! Phase duration,germination     deg.d
       INTEGER       PGROCOL(20)   ! Plantgro column = t-file data  #
       REAL          PGVAL         ! Plantgro file value            #
       REAL          PHINT         ! Phylochron interval            deg.d
-      REAL          PHINTL(PHSX)  ! Phylochron interval,change lf# #
       REAL          PHINTF(PHSX)  ! Phylochron interval,factor lf# #
+      REAL          PHINTL(PHSX)  ! Phylochron interval,change lf# #
       REAL          PHINTOUT      ! Phylochron interval,adjusted   deg.d
       REAL          PHINTS        ! Phylochron interval,standard   deg.d
       INTEGER       PHINTSTG      ! Phylochron stage               #    
@@ -954,15 +961,15 @@
       REAL          RNAMM         ! Root N at maturity,measured    kg/ha
       REAL          RNCM          ! Root N conc,minimum            fr
       REAL          RNCMN(0:1)    ! Root N conc,minimum            fr
-      REAL          RNPCMN(0:1)   ! Root N conc,minimum            %
       REAL          RNCR          ! Roots N relative to maximum    #
       REAL          RNCX          ! Root N concentration,maximum   fr
       REAL          RNCXS(0:1)    ! Roots N conc,maximum,by stage  fr
-      REAL          RNPCS(0:1)    ! Roots N conc,standard,by stage %
       REAL          RNDEM         ! Root demand for N              g/p
       REAL          RNH4U(20)     ! Potential ammonium uptake      kg/ha
       INTEGER       RNI           ! Replicate number,initial value #
       REAL          RNO3U(20)     ! Potential nitrate uptake       kg/ha
+      REAL          RNPCMN(0:1)   ! Root N conc,minimum            %
+      REAL          RNPCS(0:1)    ! Roots N conc,standard,by stage %
       REAL          RNUMX         ! Root N uptake,maximum          mg/cm
       REAL          RNUSE(0:3)    ! Root N use,overall and parts   g   
       REAL          ROOTN         ! Root N                         g/p
@@ -986,8 +993,6 @@
       REAL          RSFRS         ! Reserves fraction,standard     #
       REAL          RSN           ! Reserve N                      g/p
       REAL          RSNAD         ! Reserve N                      kg/ha
-      REAL          RSNCX         ! Reserve N conc,maximum.        fr  
-      REAL          RSNPCX        ! Reserve N conc,maximum.        %  
       REAL          RSNEED        ! Reserves need to bring to min  g/p
       REAL          RSNPH         ! Reserves N harvested           g/p
       REAL          RSNPHC        ! Reserves N harvested,cum       g/p
@@ -1030,13 +1035,13 @@
       REAL          RTWTSGE       ! Root weight,stem growth end    g/p
       REAL          RTWTSL(20)    ! Root weight senesced by layer  g/p
       REAL          RTWTUL(20)    ! Root weight used for tops,lyr  g/p
+      REAL          RUESTG        ! Stage at which RUE changes     #
+      REAL          RUESTGDU      ! Stage at which RUE changes     PVoCD
       INTEGER       RUN           ! Run (from command line) number #
       INTEGER       RUNCRP        ! Run (internal within module)   #
       INTEGER       RUNI          ! Run (internal for sequences)   #
       REAL          RUNOFF        ! Calculated runoff              mm/d
       REAL          RUNOFFC       ! Calculated runoff,cumulative   mm   
-      REAL          RUESTG        ! Stage at which RUE changes     #
-      REAL          RUESTGDU      ! Stage at which RUE changes     PVoCD
       REAL          RWAD          ! Root weight                    kg/ha
       REAL          RWAM          ! Root weight,maturity           kg/ha
       REAL          RWAMM         ! Root wt at maturity,measured   kg/ha
@@ -1134,26 +1139,26 @@
       REAL          SNAD          ! Stem N (stem+sheath+rs)        kg/ha
       REAL          SNCM          ! Stem N conc,minimum            fr
       REAL          SNCMN(0:1)    ! Stem N conc,minimum            fr
-      REAL          SNPCMN(0:1)   ! Stem N conc,minimum            %
       REAL          SNCR          ! Stem N relative to maximum     #
       REAL          SNCX          ! Stem N conc,maximum            fr
       REAL          SNCXS(0:1)    ! Stem N conc,maximum,stage      fr
-      REAL          SNPCS(0:1)    ! Stem N conc,standard,stage     %
       REAL          SNDEM         ! Stem demand for N              g/p
       REAL          SNDEMMIN      ! Stem demand for N,minimum      g/p
       REAL          SNGU          ! Stem N growth from uptake      g/p
       REAL          SNGUL         ! Stem N from uptake used for lv g/p
       REAL          SNH4(20)      ! Soil NH4 N                     kg/ha
-      REAL          SNO3PROFILE   ! Soil NO3 N in profile          kg/ha
       REAL          SNH4PROFILE   ! Soil NH4 N in profile          kg/ha
-      REAL          SNO3ROOTZONE  ! Soil NO3 N in root zone        kg/ha
       REAL          SNH4ROOTZONE  ! Soil NH4 N in root zone        kg/ha
       INTEGER       SNI           ! Sequence number,as initiated   #
       REAL          SNO3(20)      ! Soil NO3 N                     kg/ha
+      REAL          SNO3PROFILE   ! Soil NO3 N in profile          kg/ha
+      REAL          SNO3ROOTZONE  ! Soil NO3 N in root zone        kg/ha
       REAL          SNOFX         ! Shoot number per fork          #
       REAL          SNOT          ! Shoot number/tiller (>forking) #
       REAL          SNOTPREV      ! Shoot number/tiller,previous   #
       REAL          SNOW          ! Snow                           cm
+      REAL          SNPCMN(0:1)   ! Stem N conc,minimum            %
+      REAL          SNPCS(0:1)    ! Stem N conc,standard,stage     %
       REAL          SNPH          ! Stem N harvested               g/p
       REAL          SNPHC         ! Stem N harvested,cumulative    g/p
       REAL          SNUSE(0:3)    ! Shoot N use,overall and parts  g    
@@ -1206,10 +1211,10 @@
       INTEGER       SSDAT(SSX)    ! Secondary stage dates          Yrdoy
       INTEGER       SSDATM(SSX)   ! Stage date,measured            #
       REAL          SSDAYFR(SSX)  ! Stage fraction of day          #
-      REAL          SSPHASE(2)    ! Stem senesce phase start,end   #
-      REAL          SSPHASEDU(2)  ! Stem senesce phase start,end   Du
       REAL          SSENF         ! Stem N loss fr when senesce    #
       INTEGER       SSNUM         ! Secondary stage number         #
+      REAL          SSPHASE(2)    ! Stem senesce phase start,end   #
+      REAL          SSPHASEDU(2)  ! Stem senesce phase start,end   Du
       REAL          SSTG(SSX)     ! Secondary stage occurence,rstg #
       REAL          SSTH(SSX)     ! Secondary stage thresholds     du
       REAL          ST(0:NL)      ! Soil temperature in soil layer C
@@ -1229,6 +1234,16 @@
       INTEGER       STGEDAT       ! Stem growth end date (Yrdoy)   #
       REAL          STGEFR        ! Stem growth end time,fr day    #
       INTEGER       STGYEARDOY(20)! Stage dates (Year+Doy)         #
+      REAL          STRESS(20)
+      REAL          STRESS20 
+      REAL          STRESS20GS
+      REAL          STRESS20N
+      REAL          STRESS20NS 
+      REAL          STRESS20S 
+      REAL          STRESS20W
+      REAL          STRESS20WS 
+      REAL          STRESSN(20)
+      REAL          STRESSW(20)
       REAL          STRSWAD       ! Stem reserves                  kg/ha
       REAL          STRSWT        ! Stem reserves                  g/p
       REAL          STSTAGE       ! Stem stage 0-1 over stem phase #
@@ -1269,7 +1284,6 @@
       REAL          TDIFNUM       ! Temperature difference,# data  #
       REAL          TDIFSUM       ! Temperature difference,sum     C
       REAL          TFAC4         ! Temperature factor function    #
-      !REAL          TFAC4P        ! Temperature factor function    #
       INTEGER       TFCOLNUM      ! T-file column number           #
       REAL          TFD           ! Temperature factor,development #
       INTEGER       TFDAP         ! T-file days after planting     #
@@ -1302,15 +1316,16 @@
       REAL          TILIP         ! Tiller initiation phase Leaves #
       REAL          TILPE         ! Tiller number growth end stg   #
       REAL          TILPEDU       ! Tiller number growth end stg   PVoCd
+      REAL          TILSF         ! Tiller death stress 0-2 factor # 
       REAL          TILSW         ! Tiller standard weight         g/s
       REAL          TILWT         ! Tiller weight                  g/s
       REAL          TILWTR        ! Tiller wt relative to standard #
       REAL          TIMENEED      ! Time needed to finish phase    fr
       REAL          TINOX         ! Shoot number,maximum           #/p
       REAL          TKFH          ! Start kill temp.fully hardened C
+      REAL          TKILL         ! Temperature for plant death    C
       REAL          TKLF          ! Start killing temp,leaves      C
       REAL          TKLFD         ! Start killing temp,leaves v pl C
-      REAL          TKILL         ! Temperature for plant death    C
       REAL          TKSPAN        ! Temperature span for kill,etc. C
       REAL          TKTI          ! Start kill temperature,tillers C
       REAL          TKTID         ! Start kill difference,till/pl  C
@@ -1363,7 +1378,6 @@
       REAL          TNIMBSOM      ! Total N immobilised by SOM     kg/ha
       REAL          TNOXC         ! Cumulative N denitrified       kg/ha
       REAL          TNOXD         ! N denitrified this day         kg/ha
-      REAL          TILSF         ! Tiller death stress 0-2 factor # 
       REAL          TNUM          ! Tiller (incl.main stem) number #/p
       REAL          TNUMAD        ! Tiller (incl.main stem) number #/m2
       REAL          TNUMAERR      ! Shoot #,error                  %
@@ -1440,12 +1454,13 @@
       INTEGER       VARNUM(30)    ! Variable number in sum         #
       REAL          VARSUM(30)    ! Temporary variables sum        #
       REAL          VARVAL        ! Temporary variable             #
+      REAL          VBASE         ! Vrn requirement before devment d
       REAL          VCNC          ! Vegetative critical N conc     #
       REAL          VDLOS         ! Vernalization lost (de-vern)   d
       REAL          VEEND         ! Vernalization effect end Rstge #
       REAL          VEENDDU       ! Vernalization effect end DU    #
-      REAL          VF            ! Vernalization factor 0-1       #
       REAL          VEFF          ! Vernalization effect,max.reduc fr
+      REAL          VF            ! Vernalization factor 0-1       #
       REAL          VFNEXT        ! Vernalization factor,next ph   #
       REAL          VLOSS0STG     ! Vernalization stage for 0 loss #
       REAL          VLOSSFR       ! Fraction of vernalization lost fr
@@ -1454,8 +1469,6 @@
       REAL          VNAD          ! Vegetative canopy nitrogen     kg/ha
       REAL          VNAM          ! Vegetative N,mature            kg/ha
       REAL          VNAMM         ! Vegetative N,mature,measured   kg/ha
-      REAL          VREQ          ! Vernalization requirement      d
-      REAL          VBASE         ! Vrn requirement before devment d
       REAL          VNPCM         ! Vegetative N %,maturity        %
       REAL          VNPCMM        ! Vegetative N,mature,measure    %
       REAL          VPD           ! Vapour pressure deficit        KPa
@@ -1463,6 +1476,7 @@
       REAL          VPEND         ! Vernalization process end Rstg #
       REAL          VPENDDU       ! Vernalization process end DU   #
       REAL          VPENDFR       ! Vernalization process end frdy #
+      REAL          VREQ          ! Vernalization requirement      d
       REAL          VRNSTAGE      ! Vernalization stage            #
       REAL          VWAD          ! Vegetative canopy weight       kg/ha
       REAL          VWAM          ! Vegetative canopy wt,maturity  kg/ha
@@ -1475,24 +1489,24 @@
       REAL          WFGCC         ! H20 factor,growh,cycle sum     #
       REAL          WFGE          ! Water factor,germ,emergence    #
       REAL          WFGEM         ! Water factor,germ,emergence    #
+      REAL          WFGL          ! Water factor,growth,lower      #
       REAL          WFGPAV(0:12)  ! Water factor,growth,average    #
       REAL          WFGPC         ! Water factor,growth,cumulative #
       REAL          WFGU          ! Water factor,growth,upper      #
-      REAL          WFGL          ! Water factor,growth,lower      #
       REAL          WFLAW         ! Water factor,leaf area/weight  #
       REAL          WFLF(LNUMX)   ! H2O factor for leaf,average    #
       REAL          WFLFP(LNUMX)  ! H2O factor,phs leaf,average    #
       REAL          WFNU          ! Water factor,N uptake          #
+      REAL          WFNUL         ! Water factor,N uptake,lower    #
+      REAL          WFNUU         ! Water factor,N uptake,upper    #
       REAL          WFP           ! Water factor,photosynthsis 0-1 #
       REAL          WFPCAV        ! Water factor,phs,av 0-1,cycle  #
       REAL          WFPCC         ! H20 factor,phs,cycle sum       # 
+      REAL          WFPL          ! Water factor,phs,lower         #
       REAL          WFPPAV(0:12)  ! Water factor,phs,average 0-1   #
       REAL          WFPPC         ! Water factor,phs,cumulative    #
       REAL          WFPU          ! Water factor,phs,upper         #
-      REAL          WFPL          ! Water factor,phs,lower         #
       REAL          WFRG          ! Water factor,root growth,0-1   #
-      REAL          WFNUU         ! Water factor,N uptake,upper    #
-      REAL          WFNUL         ! Water factor,N uptake,lower    #
       REAL          WFRTG         ! Water factor,root gr           #
       REAL          WFS           ! Water factor,senescence 0-1    #
       REAL          WFSF          ! WFS trigger,final senescence   #
@@ -1506,29 +1520,16 @@
       REAL          WUPRD(20)     ! Water pot.uptake/demand,ind dy #
       REAL          XDEP          ! Depth to bottom of layer       cm
       REAL          XDEPL         ! Depth to top of layer          cm
-      REAL          XWTDP         ! Water table depth              cm
       INTEGER       YEAR          ! Year                           #
       INTEGER       YEARCOL       ! Colum number for year data     #
       INTEGER       YEARDOY       ! Year+Doy (7digits)             #
       INTEGER       YEARDOYHARF   ! Harvest year+doy,fixed         #
       INTEGER       YEARDOYPREV   ! Year+Doy (7digits),previous    #
       INTEGER       YEARM         ! Year of measurement            #
-      REAL          YVALXY        ! Y value from function          #
-      INTEGER       YRPLT         ! Planting year*1000+DOY,CSM     #
       INTEGER       YEARSIM       ! Year+Doy for simulation start  #
+      INTEGER       YRPLT         ! Planting year*1000+DOY,CSM     #
+      REAL          YVALXY        ! Y value from function          #
       REAL          ZSTAGE        ! Zadoks stage of development    #
-
-      REAL          STRESS(20)
-      REAL          STRESSN(20)
-      REAL          STRESSW(20)
-      REAL          STRESS20S 
-      REAL          STRESS20NS 
-      REAL          STRESS20WS 
-      REAL          STRESS20 
-      REAL          STRESS20GS
-      REAL          STRESS20N
-      REAL          STRESS20W
-      
 
       CHARACTER (LEN=128) ARG           ! Argument component
       CHARACTER (LEN=6)   CAIC          ! Canopy area index
@@ -1669,7 +1670,6 @@
       CHARACTER (LEN=6)   VARNOPREV     ! Variety identification code
       CHARACTER (LEN=16)  VRNAME        ! Variety name
 
-
       LOGICAL             FEXIST        ! File existence indicator
       LOGICAL             FEXISTA       ! File A existence indicator
       LOGICAL             FEXISTT       ! File T existence indicator
@@ -1708,14 +1708,6 @@
       !      Need reserves to be pumped into chaff somehow!
 
       SAVE
-
-      !DATA BASTGNAM/'Max Prim  ','End Veg   ','End Ear Gr',
-      !              'Bg Gr Fill','End Gr Fil','Harvest   ',
-      !              'Sowing    ','Germinate ','Emergence ',
-      !              'Failure   ','End Crop  ','          ',
-      !              '          ','          ','          ',
-      !              '          ','          ','          ',
-      !              '          ','          '/
 
 !-----------------------------------------------------------------------
 !       Set date, environmental equivalents, and run flag
@@ -2050,7 +2042,590 @@
           ENDIF
 
         ENDIF ! End of first time through stuff
+        
+!-----------------------------------------------------------------------
+!       Initialize both state and rate variables                   
+!-----------------------------------------------------------------------
 
+        adap = -99
+        adat = -99
+        adatend = -99
+        adayfr = -99
+        adoy = -99
+        aflf = 0.0
+        amtnit = 0.0
+        andem = 0.0
+        awnai = 0.0
+        caid = 0.0
+        canht = 0.0
+        canhtg = 0.0
+        carboadj = 0.0
+        carbobeg = 0.0
+        carbobegi = 0.0
+        carbobegp = 0.0
+        carbobegr = 0.0
+        carboc = 0.0
+        carboend = 0.0
+        carbogf = 0.0
+        carbolim = 0
+        carbor = 0.0
+        carborrs = 0.0
+        carbot = 0.0
+        ccountv = 0
+        cdays  = 0
+        cflfail = 'n'
+        cflfln = 'n'
+        cflharmsg = 'n'
+        cflsdrsmsg = 'n'
+        chrswt = 0.0
+        chwad = 0.0
+        chwt = 0.0
+        cnaa = -99.0
+        cnaam = -99.0
+        cnad = 0.0
+        cnadstg = 0.0
+        cnam = -99.0
+        cnamm = -99.0
+        cnpca = 0.0
+        co2fp = 1.0
+        co2intppm = 0.0
+        co2intppmp = 0.0
+        co2pav = -99.0
+        co2pc = 0.0
+        cumdu = 0.0
+        cumdulag = 0.0
+        cumdulf = 0.0
+        cumdulin = 0.0
+        cumdus = 0.0
+        cumtt = 0.0
+        cumvd = 0.0
+        cwaa = -99.0
+        cwaam = -99.0
+        cwad = 0.0
+        cwadstg = 0.0
+        cwahc = 0.0
+        cwahcm = -99.0
+        cwam = -99.0
+        cwamm = -99.0
+        dae = -99
+        dap = -99
+        daylcc = 0.0
+        daylpav = -99.0
+        daylpc = 0.0
+        daylst = 0.0
+        daysum = 0.0
+        deadn = 0.0
+        deadnad = 0.0
+        deadwad = 0.0
+        deadwam = 0.0
+        deadwt = 0.0
+        deadwtm = 0.0
+        deadwtr = 0.0
+        deadwts = 0.0
+        deadwtsge = 0.0
+        dewdur = -99.0
+        df = 1.0
+        dfout = 1.0
+        dglf = 0
+        drainc = 0.0
+        dstage = 0.0
+        du = 0.0
+        dulag = 0.0
+        dulf = 0.0
+        dulfnext = 0.0
+        dulin = 0.0
+        duneed = 0.0
+        dwrphc = 0.0
+        dynamicprev = 99999
+        edap = -99
+        edapfr = 0.0
+        edapm = -99
+        edayfr = 0.0
+        emrgfr = 0.0
+        emrgfrprev = 0.0
+        eoc = 0.0
+        eoebud = 0.0
+        eoebudc = 0.0
+        eoebudcrp = 0.0
+        eoebudcrp2 = 0.0
+        eompen = 0.0
+        eompenc = 0.0
+        eop330 = 0.0
+        eopco2 = 0.0
+        eopen = 0.0
+        eopenc = 0.0
+        eopt = 0.0
+        eoptc = 0.0
+        eosoil = 0.0
+        epcc   = 0.0
+        epsratio = 0.0
+        established = 'n'
+        etcc   = 0.0
+        ewad = 0.0
+        eyeardoy = -99
+        fappline = ' '
+        fappnum = 0
+        fernitprev = 0.0
+        fldap = 0
+        fln = 0.0
+        fsdu = -99.0
+        g2a = -99.0
+        gdap = -99
+        gdap = -99
+        gdapm = -99
+        gdayfr = 0.0
+        gedayse = 0.0
+        gedaysg = 0.0
+        germfr = -99.0
+        gestage = 0.0
+        gestageprev = 0.0
+        geucum = 0.0
+        gfdat = -99
+        gfdayfr = -99
+        gnad = 0.0
+        gnoad = 0.0
+        gnoam = 0.0
+        gnopd = 0.0
+        gnpcm = 0.0
+        gplasenf = 0.0
+        grainanc = 0.0
+        grainn = 0.0
+        grainndem = 0.0
+        grainngl = 0.0
+        grainngr = 0.0
+        grainngrs = 0.0
+        grainngs = 0.0
+        grainngu = 0.0
+        grainntmp = 0.0
+        groch = 0.0
+        grogr = 0.0
+        grogrp = 0.0
+        grogrpa = 0.0
+        grolf = 0.0
+        grors = 0.0
+        grorsgr = 0.0
+        grorspm = 0.0
+        grosr = 0.0
+        grost = 0.0
+        grwt = 0.0
+        grwtm = 0.0
+        grwtsge = 0.0
+        grwttmp = 0.0
+        gstage = 0.0
+        gwad = 0.0
+        gwam = 0.0
+        gwph = 0.0
+        gwphc = 0.0
+        gwud = 0.0
+        gwudelag = 0.0
+        gwum = -99.0
+        gyeardoy = -99
+        hardays = 0.0
+        hiad = 0.0
+        hiam = -99.0
+        hiamm = -99.0
+        hind = 0.0
+        hinm = -99.0
+        hinmm = -99.0
+        hnad = 0.0
+        hnam = -99.0
+        hnamm = -99.0
+        hnpcm = -99.0
+        hnpcmm = -99.0
+        hnumam = -99.0
+        hnumamm = -99.0
+        hnumgm = -99.0
+        hnumgmm = -99.0
+        hnumgmm = -99.0
+        hstage = 0.0
+        hwam = -99.0 
+        hwamm = -99.0
+        hwum = -99.0
+        hwummchar = ' -99.0'
+        idetgnum = 0
+        irramtc = 0.0
+        lafswitch = -99.0
+        lage = 0.0
+        lagep = 0.0
+        lai = 0.0
+        lail = 0.0
+        laila = 0.0
+        laistg = 0.0
+        laix = 0.0
+        laixm = -99.0
+        lanc = 0.0
+        lap = 0.0
+        lapotchg = 0
+        lapp = 0.0
+        laps = 0.0
+        latl = 0.0
+        lcnum = 0
+        lcoa = 0.0
+        lcoas = 0.0
+        leafn = 0.0
+        lfwaa = -99.0
+        lfwaam = -99.0
+        lfwt = 0.0
+        lfwtm = 0.0
+        lfwtsge = 0.0
+        llnad = 0.0
+        llrswad = 0.0
+        llrswt = 0.0
+        llwad = 0.0
+        lncr = 0.0
+        lncx = 0.0
+        lndem = 0.0
+        lngu = 0.0
+        lnum = 0.0
+        lnumend = 0.0
+        lnumg = 0.0
+        lnumprev = 0.0
+        lnumsg = 0
+        lnumsm = -99.0
+        lnumsmm = -99.0
+        lnumstg = 0.0
+        lnumts = 0.0
+        lnuse = 0.0
+        lseed = -99
+        lshai = 0.0
+        lshrswad = 0.0
+        lshrswt = 0.0
+        lshwad = 0.0
+        lsndem = 0.0
+        lstage = 0.0
+        lwphc = 0.0
+        mdap = -99
+        mdat = -99
+        mdayfr = -99
+        mdoy = -99
+        nfg = 1.0
+        nfgcc = 0.0
+        nfgcc = 0.0
+        nfgpav = 1.0
+        nfgpc = 0.0
+        nflf = 0.0
+        nflfp = 0.0
+        nfp = 1.0
+        nfpcav = 1.0
+        nfpcc = 0.0
+        nfppav = 1.0
+        nfppc = 0.0
+        nft = 1.0
+        nlimit = 0
+        nsdays = 0
+        nuf = 1.0
+        nupac = 0.0
+        nupad = 0.0
+        nupap = 0.0
+        nupapcsm = 0.0
+        nupc = 0.0
+        nupd = 0.0
+        nupratio = 0.0
+        parif = 0.0
+        parip = -99.0
+        paripa = -99.0
+        pariue = 0.0
+        parmjc = 0.0
+        parmjic = 0.0
+        paru = 0.0
+        pdadj = -99.0
+        pdays  = 0
+        phintout = 0.0
+        photqr = 0.0
+        pla = 0.0
+        plagt = 0.0
+        plas = 0.0
+        plasc = 0.0
+        plascsum = 0.0
+        plasfs = 0.0
+        plasi = 0.0
+        plasl = 0.0
+        plasp = 0.0
+        plaspm = 0.0
+        plass = 0.0
+        plast = 0.0
+        plax = 0.0
+        pltpop = 0.0
+        plwtgs = 0.0
+        plyear = -99
+        plyeardoy = 9999999
+        psdap = -99
+        psdapm = -99
+        psdat = -99
+        psdayfr = 0.0
+        ptf = 0.0
+        rainc = 0.0
+        rainca = 0.0
+        raincc = 0.0
+        rainpav = -99.0
+        rainpc = 0.0
+        ranc = 0.0
+        rescal = 0.0
+        rescalg = 0.0
+        reslgal = 0.0
+        reslgalg = 0.0
+        resnal = 0.0
+        resnalg = 0.0
+        respc = 0.0
+        respgf = 0.0
+        resprc = 0.0
+        resptc = 0.0
+        reswal = 0.0
+        reswalg = 0.0
+        rlf = 0.0
+        rlfc = 0.0
+        rlv = 0.0
+        rnad = 0.0
+        rnam = -99.0
+        rnamm = -99.0
+        rncr = 0.0
+        rndem = 0.0
+        rnuse = 0.0
+        rootn = 0.0
+        rootns = 0.0
+        rsadj = 0.0
+        rscd = 0.0
+        rscm = 0.0
+        rsco2 = 0.0
+        rscx = 0.0
+        rsfp = 1.0
+        rsn = 0.0
+        rsnad = 0.0
+        rsnuse = 0.0
+        rstage = 0.0
+        rstagefs = -99.0
+        rstagep = 0.0
+        rswaa = -99.0
+        rswaam = -99.0
+        rswad = 0.0
+        rswadpm = 0.0
+        rswam = -99.0
+        rswamm = -99.0
+        rswphc = 0.0
+        rswt = 0.0
+        rswtm = 0.0
+        rswtpm = 0.0
+        rswtsge = 0.0
+        rswtx = 0.0
+        rtdep = 0.0
+        rtdepg = 0.0
+        rtnsl = 0.0
+        rtresp = 0.0
+        rtslxdate = -99 
+        rtwt = 0.0
+        rtwtal = 0.0
+        rtwtg = 0.0
+        rtwtgl = 0.0
+        rtwtl = 0.0
+        rtwtm = 0.0
+        rtwtsl = 0.0
+        runoffc = 0.0
+        rwad = 0.0
+        rwam = -99.0
+        rwamm = -99.0
+        said = 0.0
+        sanc = 0.0
+        sancout = 0.0
+        sdnad = 0.0
+        sdnc = 0.0
+        sdwad = 0.0
+        sdwam = -99.0
+        !seednl = 0.0
+        !seednr = 0.0
+        seeduse = 0.0
+        seeduser = 0.0
+        seeduset = 0.0
+        sencags = 0.0
+        sencalg = 0.0
+        sencas = 0.0
+        sencl = 0.0
+        sencs = 0.0
+        sengf = 0.0
+        senla = 0.0
+        senlags = 0.0
+        senlalg = 0.0
+        senlas = 0.0
+        senlfg = 0.0
+        senlfgrs = 0.0
+        senll = 0.0
+        senls = 0.0
+        sennags = 0.0
+        sennal = 0.0
+        sennalg = 0.0
+        sennas = 0.0
+        sennatc = -99.0
+        sennatcm = -99.0
+        sennl = 0.0
+        sennlfg = 0.0
+        sennlfgrs = 0.0
+        senns = 0.0
+        sennstg = 0.0
+        sennstgrs = 0.0
+        senrtg = 0.0
+        senrtggf = 0.0
+        senstg = 0.0
+        senstgrs = 0.0
+        sentopg = 0.0
+        sentopggf = 0.0
+        senwacm = -99.0
+        senwacmm = -99.0
+        senwags = 0.0
+        senwal = 0.0
+        senwalg = 0.0
+        senwas = 0.0
+        senwl = 0.0
+        senws = 0.0
+        shrtd = 0.0
+        shrtm = 0.0
+        sla = -99.0
+        snad = 0.0
+        sncr = 0.0
+        sngu = 0.0
+        sngul = 0.0
+        snow = 0.0
+        sno3profile = 0.0
+        sno3profile = 0.0
+        sno3rootzone = 0.0
+        snh4rootzone = 0.0
+        snuse = 0.0
+        spnumhc = 0.0
+        spnumhcm = -99.0
+        srad20a = -99.0
+        sradc = 0.0
+        sradcav  = -99.0
+        sradcc = 0.0
+        sradd = 0.0
+        sradpav  = -99.0
+        sradpc = 0.0
+        sradprev = 0.0
+        srnam = -99.0
+        srnc = 0.0
+        srndem = 0.0
+        srnoad = 0.0
+        srnoam = 0.0
+        srnogm = 0.0
+        srnopd = 0.0
+        srnuse = 0.0
+        srootn = 0.0
+        srwt = 0.0
+        srwtgrs = 0.0
+        srwud = 0.0
+        srwum = 0.0
+        srwum = 0.0
+        ssdap = -99
+        ssdat = -99
+        stai = 0.0
+        staig = 0.0
+        stais = 0.0
+        stemn = 0.0
+        stemngl = 0.0
+        stgedat = 0
+        stgyeardoy = 9999999
+        strswt = 0.0
+        ststage = 0.0
+        stvwt = 0.0
+        stwaa = -99.0
+        stwaam = -99.0
+        stwaam = -99.0
+        stwad = 0.0
+        stwt = 0.0
+        stwtm = 0.0
+        stwtsge = 0.0
+        swphc = 0.0
+        tcan = 0.0
+        tdifav = -99.0
+        tdifnum = 0
+        tdifsum = 0.0
+        tfd = 0.0
+        tfg = 1.0
+        tflf = 0.0
+        tfp = 1.0
+        tilbirthl = 0.0
+        tildat = 0.0
+        tkill = -99.0 
+        tla = 0.0
+        tlas = 0.0
+        tlchc = 0.0
+        tlimit = 0
+        tmaxcav  = -99.0
+        tmaxcc = 0.0
+        tmaxm = -99.0
+        tmaxpav  = -99.0
+        tmaxpc = 0.0
+        tmaxsum = 0.0
+        tmean = (tmax+tmin)/2.0
+        tmean20a = -99.0
+        tmeanav = -99.0
+        tmeancc = 0.0
+        tmeand = 0.0
+        tmeane  = 0.0
+        tmeanec = 0.0
+        tmeang  = 0.0
+        tmeangc = 0.0
+        tmeannum = 0.0
+        tmeanpc = 0.0
+        tmeansum = 0.0
+        tmincav  = -99.0
+        tmincc = 0.0
+        tminm = 999.0
+        tminpav  = -99.0
+        tminpc = 0.0
+        tminsum = 0.0
+        tnad = 0.0
+        tnoxc = 0.0
+        tnum = 0.0
+        tnumad = 0.0
+        tnumam = -99.0
+        tnumamm = -99.0
+        tnuml = 1.0
+        tnumprev = 0.0
+        tnumx = 0.0
+        tofixc = 0.0
+        tominc = 0.0
+        tominfomc = 0.0
+        tominsom1c = 0.0
+        tominsom2c = 0.0
+        tominsom3c = 0.0
+        tominsomc = 0.0
+        tratio = 0.0
+        trwup = 0.0
+        tt = 0.0
+        tt20 = -99.0
+        ttcum = 0.0
+        ttd = 0.0
+        twad = 0.0
+        uh2o = 0.0
+        unh4 = 0.0
+        uno3 = 0.0
+        vanc = 0.0
+        vcnc = 0.0
+        vf = -99.0
+        vmnc = 0.0
+        vnad = 0.0
+        vnam = -99.0
+        vnamm = -99.0
+        vnpcm = -99.0
+        vnpcmm = -99.0
+        vpdfp = 1.0
+        vrnstage = 0.0
+        vwad = 0.0
+        vwam = -99.0
+        vwamm = -99.0
+        wfg = 1.0
+        wfgcc = 0.0
+        wfgpav = 1.0
+        wfgpc = 0.0
+        wflf = 0.0
+        wflfp = 0.0
+        wfp = 1.0
+        wfpcav = 1.0
+        wfpcc = 0.0
+        wfppc = 0.0
+        wft = 1.0
+        wsdays = 0
+        wupr = 1.0
+        zstage = 0.0
+        
 !-----------------------------------------------------------------------
 !       Read experiment information from Dssat input or X- file
 !-----------------------------------------------------------------------
@@ -2235,6 +2810,7 @@
           hpcf = 100.0
           hbpcf = 0.0
         ENDIF  
+        IF (spnumhfac.LE.0.0) spnumhfac = 0.1
 
 !-----------------------------------------------------------------------
 !       Set planting/harvesting dates (Will change if runs repeated)
@@ -2433,59 +3009,6 @@
           CLOSE (fnumerr)
           STOP ' '
         ENDIF
-
-!-----------------------------------------------------------------------
-!       Initialize genotype coeffs that can come from CUL,ECO,or SPE fle
-!-----------------------------------------------------------------------
-
-        ! Grain 
-        !   GWTAA           CUL          SPP
-        !   GWTAT           CUL          SPP
-        !   GWTCF           CUL   ECO    SPP
-        !   GNOWF           CUL   ECO    SPP
-        !   GNONF           CUL   ECO    SPP
-        ! Nitrogen uptake
-        !   WFNUL           CUL   ECO    SPP
-        !   WFNUU           CUL   ECO    SPP
-        !   NCNU            CUL   ECO    SPP
-        !   RLFNU           CUL   ECO    SPP
-        ! Radiation use efficiency
-        !   PARUE           CUL   ECO
-        !   PARU2           CUL   ECO
-        ! Leaf area
-        !   LA1S            CUL   ECO
-        !   LAFV            CUL   ECO
-        !   LAFR            CUL   ECO
-        !   LAXS            CUL   ECO
-        ! Roots
-        !   RDGS            CUL   ECO    SPP
-        ! Tillers
-        !   TILDF           CUL   ECO    SPP
-        !   TILSF           CUL   ECO    SPP
-        GWTAA = -99.0        
-        GWTAT = -99.0        
-        GWTCF = -99.0
-        GNOWF = -99.0        
-        GNONF = -99.0        
-        WFNUL = -99.0
-        WFNUU = -99.0
-        NCNU = -99.0
-        RLFNU = -99.0
-        PARUE = -99.0
-        PARU2 = -99.0
-        LA1S = -99.0
-        LAFV = - 99.0
-        LAFR = -99.0
-        LAXS = - 99.0
-        RDGS = -99.0
-        TILDF = -99.0
-        TILSF = -99.0
-        PHINTF = 0.0
-        PHINTL = 0.0
-        NFPU = -99.0   
-        NFPL = -99.0   
-        NFGU = -99.0   
-        NFGL = -99.0   
         
 !-----------------------------------------------------------------------
 !       Read cultivar information
@@ -2780,7 +3303,6 @@
           CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)
           CALL SPREADR (SPDIRFLE,'RSFPL',rsfpl)
           CALL SPREADR (SPDIRFLE,'RSFPU',rsfpu)
-          CALL SPREADR (SPDIRFLE,'RSN%X',rsnpcx)
           CALL SPREADR (SPDIRFLE,'RSUSE',rsuse)
           CALL SPREADR (SPDIRFLE,'RTUFR',rtufr)
           CALL SPREADR (SPDIRFLE,'RUESG',ruestg)
@@ -3238,7 +3760,6 @@
         SNCMN(L) = SNPCMN(L)/100.0
         RNCMN(L) = RNPCMN(L)/100.0
         ENDDO
-        RSNCX = RSNPCX/100.0
                 
         IF (LA1S.LE.0.0) THEN
           LA1S = 5.0
@@ -3353,7 +3874,6 @@
         IF (NPTFL.LE.0.0) NPTFL = 0.5
         IF (PPEXP.LT.0.0) PPEXP = 2.0
         IF (RLFWU.LT.0.0) RLFWU = 0.5  
-        IF (RSNCX.LT.0.0) RSNCX = 0.005
         IF (RTUFR.LT.0.0) RTUFR = 0.05
         IF (SNOFX.LE.0.0) SNOFX = 1.0
         IF (SSPHASEDU(1).LT.0.0) SSPHASEDU(1) = 99999
@@ -3468,9 +3988,6 @@
         LNCM = LNCMN(0)
         SNCM = SNCMN(0)
         RNCM = RNCMN(0)
-        LANC = LNCX
-        SANC = SNCX
-        RANC = RNCX
 
         ! Storage root N  NB.Conversion protein->N factor = 6.25
         IF (SRNS.LE.0.0) THEN
@@ -3525,9 +4042,9 @@
           SEEDN = 0.0
           SDNAP = 0.0
           SEEDNI = 0.0
-        ENDIF    
-        
-        IF (SPNUMHFAC.LE.0.0) SPNUMHFAC = 0.1
+        ENDIF
+        TKILL = TKUH
+        VF = (1.0-VEFF)    
 
         ! Water table depth
         WTDEP = ICWT
@@ -3763,10 +4280,10 @@
         WRITE(fnumwrk,*)'  Srfr   ',Srfr
         WRITE(fnumwrk,*)' Nitrogen concentrations'
         WRITE(fnumwrk,*)'  Ln%s   ',LNPCS           
-        WRITE(fnumwrk,*)'  Sn%s   ',SNPCS           
-        WRITE(fnumwrk,*)'  Rn%s   ',RNPCS           
         WRITE(fnumwrk,*)'  Ln%mn  ',LNPCMN            
+        WRITE(fnumwrk,*)'  Sn%s   ',SNPCS           
         WRITE(fnumwrk,*)'  Sn%mn  ',SNPCMN           
+        WRITE(fnumwrk,*)'  Rn%s   ',RNPCS           
         WRITE(fnumwrk,*)'  Rn%mn  ',RNPCMN          
         WRITE(fnumwrk,*)' Nitrogen stress limits '
         WRITE(fnumwrk,*)'  Nfpu,L ',NFPU,NFPL       
@@ -3808,591 +4325,9 @@
         ENDIF
 
 !-----------------------------------------------------------------------
-!       Initialize variables
+!       Set equivalences to avoid compile errors
 !-----------------------------------------------------------------------
-
-        ! LAH WORK
-        LAPOTCHG = 0
-        
-        ADAP = -99
-        ADAT = -99
-        ADATEND = -99
-        ADAYFR = -99
-        ADOY = -99
-        AFLF = 0.0
-        AMTNIT = 0.0
-        ANDEM = 0.0
-        AWNAI = 0.0
-        AWNAI = 0.0
-        CAID = 0.0
-        CANHT = 0.0
-        CANHTG = 0.0
-        CARBOADJ = 0.0
-        CARBOBEG = 0.0
-        CARBOBEGI = 0.0
-        CARBOBEGP = 0.0
-        CARBOBEGR = 0.0
-        CARBORRS = 0.0
-        CARBOC = 0.0
-        CARBOEND = 0.0
-        CARBOGF = 0.0
-        CARBOLIM = 0
-        CARBOR = 0.0
-        CARBOT = 0.0
-        CCOUNTV = 0
-        CFLFLN = 'N'
-        CFLHARMSG = 'N'
-        CFLSDRSMSG = 'N'
-        CHRSWT = 0.0
-        CHWAD = 0.0
-        CHWT = 0.0
-        CNAA = 0.0
-        CNAD = 0.0
-        CNADSTG = 0.0
-        CNPCA = 0.0
-        CO2PAV = -99.0
-        CO2FP = 1.0
-        CO2INTPPM = 0.0
-        CO2INTPPMP = 0.0
-        CO2PC = 0.0
-        CUMDU = 0.0
-        CUMDULAG = 0.0
-        CUMDULF = 0.0
-        CUMDULIN = 0.0
-        CUMDUS = 0.0
-        CUMTT = 0.0
-        CUMVD = 0.0
-        CWAA = 0.0
-        CWAD = 0.0
-        CWADSTG = 0.0
-        CWAHC = 0.0
-        CWAHCM = -99.0
-        CWAM = 0.0
-        DAE = -99
-        DAP = -99
-        DAYLPAV = -99.0
-        DAYLPC = 0.0
-        DAYLST = 0.0
-        DAYSUM = 0.0
-        DEADN = 0.0
-        DEADNAD = 0.0
-        DEADWAD = 0.0
-        DEADWAM = 0.0
-        DEADWT = 0.0
-        DEADWTM = 0.0
-        DEADWTR = 0.0
-        DEADWTS = 0.0
-        DEADWTSGE = 0.0
-        DEWDUR = -99.0
-        DFOUT = DFPE
-        DGLF = 0
-        DRAINC = 0.0
-        DSTAGE = 0.0
-        DU = 0.0
-        DULAG = 0.0
-        DULF = 0.0
-        DULFNEXT = 0.0
-        DULIN = 0.0
-        DUNEED = 0.0
-        DWRPHC = 0.0
-        DYNAMICPREV = 99999
-        EDAPFR = 0.0
-        EDAYFR = 0.0
-        EMRGFR = 0.0
-        EMRGFRPREV = 0.0
-        EOC = 0.0
-        EOEBUDC = 0.0
-        EOMPENC = 0.0
-        EOP330 = 0.0
-        EOPCO2 = 0.0
-        EOPENC = 0.0
-        EOPTC = 0.0
-        EOSOIL = 0.0
-        EPSRATIO = 0.0
-        EWAD = 0.0
-        EYEARDOY = -99
-        FAPPLINE = ' '
-        FAPPNUM = 0
-        FERNITPREV = 0.0
-        FLDAP = 0
-        FLN = 0.0
-        FSDU = -99.0
-        G2A = -99.0
-        GDAP = -99
-        GDAYFR = 0.0
-        GEDAYSE = 0.0
-        GEDAYSG = 0.0
-        GERMFR = -99.0
-        GESTAGE = 0.0
-        GESTAGEPREV = 0.0
-        GEUCUM = 0.0
-        GFDAT = -99
-        GFDAYFR = -99
-        GNAD = 0.0
-        GNOAD = 0.0
-        GNOAM = 0.0
-        GNOPD = 0.0
-        GPLASENF = 0.0
-        GRAINANC = 0.0
-        GRAINN = 0.0
-        GRAINNDEM = 0.0
-        GRAINNGL = 0.0
-        GRAINNGR = 0.0
-        GRAINNGRS = 0.0
-        GRAINNGS = 0.0
-        GRAINNGU = 0.0
-        GRAINNTMP = 0.0
-        GROCH = 0.0
-        GROGR = 0.0
-        GROGRP = 0.0
-        GROGRPA = 0.0
-        GROLF = 0.0
-        GRORS = 0.0
-        GRORSGR = 0.0
-        GRORSPM = 0.0
-        GROSR = 0.0
-        GROST = 0.0
-        GRWT = 0.0
-        GRWTM = 0.0
-        GRWTSGE = 0.0
-        GRWTTMP = 0.0
-        GSTAGE = 0.0
-        GWAD = 0.0
-        GWAM = 0.0
-        GWPH = 0.0
-        GWPHC = 0.0
-        GWUD = 0.0
-        GWUDELAG = 0.0
-        GWUM = 0.0
-        GYEARDOY = -99
-        HARDAYS = 0.0
-        HIAD = 0.0
-        HIAM = 0.0
-        HIND = 0.0
-        HNAD = 0.0
-        HNUMAM = 0.0
-        HNUMGM = 0.0
-        HNUMGMM = -99
-        HSTAGE = 0.0
-        IDETGNUM = 0
-        IRRAMTC = 0.0
-        LAFSWITCH = -99.0
-        LAGE = 0.0
-        LAGEP = 0.0
-        LAI = 0.0
-        LAIL = 0.0
-        LAILA = 0.0
-        LAISTG = 0.0
-        LAIX = 0.0
-        LANC = 0.0
-        LAP = 0.0
-        LAPP = 0.0
-        LAPS = 0.0
-        LATL = 0.0
-        LCNUM = 0
-        LCOA = 0.0
-        LCOAS = 0.0
-        LEAFN = 0.0
-        LFWAAM = -99
-        LFWT = 0.0
-        LFWTM = 0.0
-        LFWTSGE = 0.0
-        LLNAD = 0.0
-        LLRSWAD = 0.0
-        LLRSWT = 0.0
-        LLWAD = 0.0
-        LNCR = 0.0
-        LNCX = 0.0
-        LNDEM = 0.0
-        LNGU = 0.0
-        LNUM = 0.0
-        LNUMEND = 0.0
-        LNUMG = 0.0
-        LNUMPREV = 0.0
-        LNUMSG = 0
-        LNUMSTG = 0.0
-        LNUMTS = 0.0
-        LNUSE = 0.0
-        LSEED = -99
-        LSHAI = 0.0
-        LSHRSWT = 0.0
-        LSNDEM = 0.0
-        LSTAGE = 0.0
-        LSHWAD = 0.0
-        LSHRSWAD = 0.0
-        LWPHC = 0.0
-        MDAP = -99
-        MDAT = -99
-        MDAYFR = -99
-        MDOY = -99
-        NFG = 1.0
-        NFGPAV = 1.0
-        NFGCC = 0.0
-        NFGPC = 0.0
-        NFLF = 0.0
-        NFLFP = 0.0
-        NFP = 1.0
-        NFPPAV = 1.0
-        NFPCC = 0.0
-        NFPCAV = 1.0
-        NFPPC = 0.0
-        NFT = 1.0
-        NLIMIT = 0
-        NSDAYS = 0
-        NUF = 1.0
-        NUPAC = 0.0
-        NUPAD = 0.0
-        NUPAP = 0.0
-        NUPAPCSM = 0.0
-        NUPC = 0.0
-        NUPRATIO = 0.0
-        PARIF = 0.0
-        PARIP = -99.0
-        PARIPA = -99.0
-        PARIUE = 0.0
-        PARMJC = 0.0
-        PARMJIC = 0.0
-        PARU = 0.0
-        PDADJ = -99.0
-        PDAYS  = 0
-        CDAYS  = 0
-        PHINTOUT = 0.0
-        PHOTQR = 0.0
-        PLA = 0.0
-        PLAGT = 0.0
-        PLAS = 0.0
-        PLASC = 0.0
-        PLASCSUM = 0.0
-        PLASFS = 0.0
-        PLASI = 0.0
-        PLASP = 0.0
-        PLASPM = 0.0
-        PLASS = 0.0
-        PLASL = 0.0
-        PLAST = 0.0
-        PLAX = 0.0
-        PLTPOP = 0.0
-        PLWTGS = 0.0
-        PLYEAR = -99
-        PLYEARDOY = 9999999
-        PSDAP = -99
-        PSDAT = -99
-        PSDAYFR = 0.0
-        PTF = 0.0
-        RAINPAV = -99.0
-        RAINC = 0.0
-        RAINCA = 0.0
-        RAINPC = 0.0
-        RAINCC = 0.0
-        RANC = 0.0
-        RESCAL = 0.0
-        RESCALG = 0.0
-        RESLGAL = 0.0
-        RESLGALG = 0.0
-        RESNAL = 0.0
-        RESNALG = 0.0
-        RESPC = 0.0
-        RESPGF = 0.0
-        RESPRC = 0.0
-        RESPTC = 0.0
-        RESWAL = 0.0
-        RESWALG = 0.0
-        RLF = 0.0
-        RLFC = 0.0
-        RLV = 0.0
-        RNAD = 0.0
-        RNCR = 0.0
-        RNDEM = 0.0
-        ROOTN = 0.0
-        ROOTNS = 0.0
-        RSADJ = 0.0
-        RSCD = 0.0
-        RSCM = 0.0
-        RSNUSE = 0.0
-        RSCO2 = 0.0
-        RSCX = 0.0
-        RSFP = 1.0
-        RSN = 0.0
-        RSNAD = 0.0
-        RSUSE = 0.0
-        RSTAGE = 0.0
-        RSTAGEFS = -99.0
-        RSWAAM = -99
-        RSWAD = 0.0
-        RSWADPM = 0.0
-        RSWPHC = 0.0
-        RSWT = 0.0
-        RSWTM = 0.0
-        RSWTPM = 0.0
-        RSWTSGE = 0.0
-        RSWTX = 0.0
-        RTDEP = 0.0
-        RTDEPG = 0.0
-        RTNSL = 0.0
-        RTRESP = 0.0
-        RTSLXDATE = -99 
-        RTWT = 0.0
-        RTWTAL = 0.0
-        RTWTG = 0.0
-        RTWTGL = 0.0
-        RTWTL = 0.0
-        RTWTM = 0.0
-        RTWTSL = 0.0
-        RUNOFFC = 0.0
-        RWAD = 0.0
-        RWAM = 0.0
-        SAID = 0.0
-        SANC = 0.0
-        SANCOUT = 0.0
-        SDNAD = 0.0
-        SDNC = 0.0
-        SDWAD = 0.0
-        !SEEDNL = 0.0
-        !SEEDNR = 0.0
-        SEEDUSE = 0.0
-        SEEDUSER = 0.0
-        SEEDUSET = 0.0
-        SENCAGS = 0.0
-        SENCALG = 0.0
-        SENCAS = 0.0
-        SENCL = 0.0
-        SENCS = 0.0
-        SENGF = 0.0
-        SENLA = 0.0
-        SENLAGS = 0.0
-        SENLALG = 0.0
-        SENLAS = 0.0
-        SENLFG = 0.0
-        SENLFGRS = 0.0
-        SENLL = 0.0
-        SENLS = 0.0
-        SENNAGS = 0.0
-        SENNAL = 0.0
-        SENNALG = 0.0
-        SENNAS = 0.0
-        SENNL = 0.0
-        SENNLFG = 0.0
-        SENNLFGRS = 0.0
-        SENNS = 0.0
-        SENNSTG = 0.0
-        SENNSTGRS = 0.0
-        SENRTG = 0.0
-        SENSTG = 0.0
-        SENSTGRS = 0.0
-        SENTOPG = 0.0
-        SENWAGS = 0.0
-        SENWAL = 0.0
-        SENWALG = 0.0
-        SENWAS = 0.0
-        SENWL = 0.0
-        SENWS = 0.0
-        SHRTD = 0.0
-        SHRTM = 0.0
-        SLA = -99.0
-        SNAD = 0.0
-        SNCR = 0.0
-        SNGU = 0.0
-        SNGUL = 0.0
-        SNOW = 0.0
-        SPNUMHC = 0.0
-        SPNUMHCM = -99.0
-        SRAD20A = -99.0
-        SRADPAV  = -99.0
-        SRADCAV  = -99.0
-        SRADC = 0.0
-        SRADD = 0.0
-        SRADPC = 0.0
-        SRADPREV = 0.0
-        SRNC = 0.0
-        SRNDEM = 0.0
-        SRNOAD = 0.0
-        SRNOAM = 0.0
-        SRNOGM = 0.0
-        SRNOPD = 0.0
-        SROOTN = 0.0
-        SRWT = 0.0
-        SRWTGRS = 0.0
-        SRWUD = 0.0
-        SRWUM = 0.0
-        SRWUM = 0.0
-        SSDAP = -99
-        SSDAT = -99
-        STAI = 0.0
-        STAIG = 0.0
-        STAIS = 0.0
-        STEMN = 0.0
-        STEMNGL = 0.0
-        STGEDAT = 0
-        STGYEARDOY = 9999999
-        STRSWT = 0.0
-        STSTAGE = 0.0
-        STVWT = 0.0
-        STWAAM = -99
-        STWAD = 0.0
-        STWT = 0.0
-        STWTM = 0.0
-        STWTSGE = 0.0
-        SWPHC = 0.0
-        TDIFAV = -99.0
-        TDIFNUM = 0
-        TDIFSUM = 0.0
-        TFG = 1.0
-        TFLF = 0.0
-        TFP = 1.0
-        TILBIRTHL = 0.0
-        TILDAT = 0.0
-        TLA = 0.0
-        TLAS = 0.0
-        TLCHC = 0.0
-        TLIMIT = 0
-        TMINPAV  = -99.0
-        TMINCAV  = -99.0
-        TMAXCAV  = -99.0
-        TMAXPAV  = -99.0
-        ETCC   = 0.0
-        EPCC   = 0.0
-        NFPCC = 0.0
-        NFGCC = 0.0
-        WFPCC = 0.0
-        WFGCC = 0.0
-        TMAXCC = 0.0
-        TMINCC = 0.0
-        TMEANCC = 0.0
-        SRADCC = 0.0
-        DAYLCC = 0.0
-        TMEAN = (TMAX+TMIN)/2.0
-        Tfd = TFAC4(trdv1,tmean,TT)
-        TKILL = TKUH 
-        TMAXM = -99.0
-        TMAXPC = 0.0
-        TMAXSUM = 0.0
-        TMEAN20A = -99.0
-        TMEANAV = -99.0
-        TMEAND = 0.0
-        TMEANE  = 0.0
-        TMEANEC = 0.0
-        TMEANG  = 0.0
-        TMEANGC = 0.0
-        TMEANNUM = 0.0
-        TMEANPC = 0.0
-        TMEANSUM = 0.0
-        TMINPAV  = 0.0
-        TMINM = 999.0
-        TMINPC = 0.0
-        TMINSUM = 0.0
-        TNAD = 0.0
-        TNOXC = 0.0
-        TNUM = 0.0
-        TNUMAD = 0.0
-        TNUML = 1.0
-        TNUMPREV = 0.0
-        TNUMX = 0.0
-        TOFIXC = 0.0
-        TOMINC = 0.0
-        TOMINFOMC = 0.0
-        TOMINSOM1C = 0.0
-        TOMINSOM2C = 0.0
-        TOMINSOM3C = 0.0
-        TOMINSOMC = 0.0
-        TRATIO = 0.0
-        TRWUP = 0.0
-        TT = 0.0
-        TT20 = -99.0
-        TTCUM = 0.0
-        TTD = 0.0
-        TWAD = 0.0
-        UH2O = 0.0
-        UNH4 = 0.0
-        UNO3 = 0.0
-        VANC = 0.0
-        VCNC = 0.0
-        VF = (1.0-VEFF)
-        VNAD = 0.0
-        VPDFP = 1.0
-        VRNSTAGE = 0.0
-        VWAD = 0.0
-        VWAM = 0.0
-        WFG = 1.0
-        WFGPAV = 1.0
-        WFGPC = 0.0
-        WFLF = 0.0
-        WFLFP = 0.0
-        WFP = 1.0
-        WFPCAV = 1.0
-        WFPCC = 0.0
-        WFPPC = 0.0
-        WFT = 1.0
-        WSDAYS = 0
-        WUPR = 1.0
-        ZSTAGE = 0.0
-        
-        
-        ! Overview outputs
-        gdap = -99
-        gdapm = -99
-        edap = -99
-        edapm = -99
-        PSDap = -99
-        PSDapm = -99
-        cwam = -99.0
-        cwamm = -99.0
-        rwam = -99.0
-        sdwam = -99.0
-        rwamm = -99.0
-        senwacm = -99.0
-        senwacmm = -99.0
-        gwum = -99.0
-        hwam = -99.0 
-        hwamm = -99.0
-        vwam = -99.0
-        vwamm = -99.0
-        hiam = -99.0
-        hiamm = -99.0
-        rswam = -99.0
-        rswamm = -99.0
-        hwumchar = ' -99.0'
-        hwummchar = ' -99.0'
-        hnumam = -99.0
-        hnumamm = -99.0
-        hnumgm = -99.0
-        hnumgmm = -99.0
-        hwum = -99.0
-        tnumam = -99.0
-        tnumamm = -99.0
-        laix = -99.0
-        laixm = -99.0
-        lnumsm = -99.0
-        lnumsmm = -99.0
-        cnam = -99.0
-        cnamm = -99.0
-        rnam = -99.0
-        rnamm = -99.0
-        srnam = -99.0
-        sennatc = -99.0
-        sennatcm = -99.0
-        hnam = -99.0
-        hnamm = -99.0
-        vnam = -99.0
-        vnamm = -99.0
-        hinm = -99.0
-        hinmm = -99.0
-        hnpcm = -99.0
-        hnpcmm = -99.0
-        vnpcm = -99.0
-        vnpcmm = -99.0
-        cwaa = -99.0
-        cwaam = -99.0
-        cnaa = -99.0
-        cnaam = -99.0
-        lfwaa = -99.0
-        lfwaam = -99.0
-        stwaa = -99.0
-        stwaam = -99.0
-        rswaa = -99.0
-        rswaam = -99.0
-
   
-        ! To avoid compile warnings
         tvr1 = tairhr(1)
         ! When running in CSM
         IF (FILEIOT.EQ.'DS4') THEN
@@ -4403,8 +4338,6 @@
         ENDIF
 
         ! Set flags
-
-        CFLFAIL = 'N'
 
 !-----------------------------------------------------------------------
 !       Record starting values and files
@@ -4418,8 +4351,6 @@
         SNI = SN
         TNI = TN
         KEPI = KEP
-
-        ESTABLISHED = 'N'
 
 !-----------------------------------------------------------------------
 !       Check controls
@@ -4629,8 +4560,7 @@
           ! comparative purposes only. The root water uptake module 
           ! is not necessary when running in CSM, but is necessary for
           ! CROPSIM.                                               
-          IF (FILEIOT.EQ.'DS4'.AND.IDETL.EQ.'D'.OR.
-     &        FILEIOT.EQ.'DS4'.AND.IDETL.EQ.'A'.OR.
+          IF (FILEIOT.EQ.'DS4'.AND.IDETG.NE.'N'.OR.
      &        FILEIOT.NE.'DS4') THEN                  
             IF (ISWWAT.NE.'N') THEN
             ! Co2 effect
@@ -4668,7 +4598,8 @@
             IF (EOSOIL.GT.0.0) EPSRATIO = EOPCO2 / EOSOIL
             TRATIO = 1.0
             IF (EOP330.GT.0.0) TRATIO = EOPCO2 / EOP330
-            EOP = MAX(0.0,EO/EOSOIL*EOPCO2 * (1.0-EXP(-LAI*KEP)))
+            IF (fileiot(1:2).NE.'DS')
+     &       EOP = MAX(0.0,EO/EOSOIL*EOPCO2 * (1.0-EXP(-LAI*KEP)))
             ! Ratio necessary because EO method may not be Monteith
             ENDIF
             IF (fileiot(1:2).NE.'DS') THEN
@@ -4852,7 +4783,11 @@
             ENDIF
             
             ! Set daylength factor for output (Is dfpe before emergence)
-            IF (EMRGFR.GE.1.0) DFOUT = DF
+            IF (EMRGFR.GE.1.0) THEN
+              DFOUT = DF
+            ELSE
+              DFOUT = DFPE
+            ENDIF 
 
 !-----------------------------------------------------------------------
 !           Calculate development units
@@ -4977,7 +4912,6 @@
      &               'PD(3) NEW,OLD                   ',PD(3),PD(3)-TVR2
                     WRITE(fnumwrk,'(A34,F5.1,F7.1)')
      &               'PD(4) NEW,OLD                   ',PD(4),PD(4)+TVR2
-
 
         ! Re-calculate thresholds
         LAFSTDU = 0.
@@ -5591,8 +5525,6 @@ C  yet built into the model.
                 IF (LAI.GT.LAIXX) THEN
                  PLASL = (LAI-LAIXX) / (PLTPOP*0.0001)
                 ENDIF
-
-
               ENDIF
 
               ! Leaf senescence - overall
@@ -5661,14 +5593,9 @@ C  yet built into the model.
                 ELSE
                   ! Assumes that all reserve N in leaves
                   IF (LFWT.GT.0.0) LANCRS = (LEAFN+RSN) / LFWT
-                  IF (LANCRS.LT.(LNCX+RSNCX)) THEN
                     SENNLFG = AMIN1(LEAFN,(SENLFG+SENLFGRS)*LNCM)
-                    SENNLFGRS =
-     &               AMIN1(LEAFN-SENNLFG,(SENLFG+SENLFGRS)*(LANC-LNCM))
-                  ELSE
-                    ! All N lost to avoid too high reserve N conc.
-                    SENNLFG = AMIN1(LEAFN,(SENLFG+SENLFGRS)*LANCRS)
-                  ENDIF
+                    SENNLFGRS = AMIN1(LEAFN-SENNLFG,
+     &                               (SENLFG+SENLFGRS)*(LANC-LNCM))
                 ENDIF
                 IF (SANC.GT.0.0) SSENF = (1.0-((SANC-SNCM)/SANC))
                 SENNSTG = SENSTG*SANC*SSENF
@@ -5869,8 +5796,6 @@ C  yet built into the model.
                 Gnowadj = stress20w+(1.0-stress20w)*(1.0-(gnowf/100.0))
                 ! 100 because is read as percentage
                 WRITE(FNUMWRK,*)' '
-!                WRITE(FNUMWRK,'(A50)')
-!     &          ' Reached the start of the grain fill lag phase    '
                 WRITE(FNUMWRK,'(A50)')
      &          ' GRAIN SET                                        '
                 WRITE(FNUMWRK,'(A35,3F6.1)')
@@ -6272,7 +6197,7 @@ C  yet built into the model.
                 STAIG = STVWTG*SAWS*PLTPOP*0.0001
               ELSE    ! Visible stem senescing
                 IF (CUMDU.LE.FSDU) THEN
-                  STAIG = STVWTG*SAWS*PLTPOP*0.0001*(FSDU-CUMDU)
+                  STAIG = STVWTG*SAWS*PLTPOP*0.0001
                   STAISS = STAI + STAIG
                   IF ((PSTART(MSTG)-FSDU).GT.0.0) THEN
                     STAIS = STAISS*(CUMDU+DU-FSDU)/(PSTART(MSTG)-FSDU)
@@ -6498,6 +6423,23 @@ C  yet built into the model.
             ENDIF
 
 !-----------------------------------------------------------------------
+!           Water in profile and rootzone
+!-----------------------------------------------------------------------
+            
+              AH2OPROFILE = 0.0
+              H2OPROFILE = 0.0
+              AH2OROOTZONE = 0.0
+              H2OROOTZONE = 0.0
+              DO L = 1, NLAYR
+                AH2OPROFILE = AH2OPROFILE+((SW(L)-LL(L))*DLAYR(L))*10.
+                H2OPROFILE = H2OPROFILE + SW(L)*DLAYR(L)*10.0
+                IF (RLV(L).GT.0.0) THEN
+                 AH2OROOTZONE=AH2OROOTZONE+((SW(L)-LL(L))*DLAYR(L))*10.
+                 H2OROOTZONE = H2OROOTZONE+SW(L)*DLAYR(L)*10.
+                ENDIF
+              END DO
+
+!-----------------------------------------------------------------------
 !           Nitrogen movement and uptake
 !-----------------------------------------------------------------------
 
@@ -6552,7 +6494,6 @@ C  yet built into the model.
               LSNDEM = LNDEM + SNDEM
               RNDEM = RTWTG*RNCX + 
      &              (RTWT-SENRTG-GROLFRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))
-     
               SRNDEM = (GROSR+SRWTGRS)*SRNS
               
               ! Seed use if no roots
@@ -6639,11 +6580,10 @@ C  yet built into the model.
                     RNO3U(L) = NO3LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NO3FN)
                     !Original: 
                     !RNO3U(L) = RNUMX*RLV(L)*DLAYR(L)*100.0*WFNU*FNO3
-                    RNH4U(L) = NH4LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NO3FN)
+                    RNH4U(L) = NH4LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NH4FN)
                     NUPAP = NUPAP + RNO3U(L) + RNH4U(L)
                   ENDIF
                 END DO
-              !ENDIF
 
               ! Ratio (NUPRATIO) to indicate N supply for output
               IF (ANDEM.GT.0) THEN
@@ -6739,12 +6679,19 @@ C  yet built into the model.
               SRNUSE(0) = SRNUSE(1) + SRNUSE(2) + SRNUSE(3)
 
               ! N Pools available for re-mobilization
+              ! (Labile N increases during grain fill)
+              IF (RSTAGE.GE.8.0.AND.RSTAGE.LE.9.0) THEN
+                NUSELIM = AMIN1(1.0,RSTAGE-8.0)
+                NUSEFAC = AMAX1(NUSELIM,(NLABPC/100.0))
+              ELSE  
+                NUSEFAC = NLABPC/100.0
+              ENDIF
               NPOOLR = AMAX1 (0.0,
-     &         ((RTWT-SENRTG)*(RANC-RNCM)*NLABPC/100.0))
+     &         ((RTWT-SENRTG)*(RANC-RNCM)*NUSEFAC))
               NPOOLL = AMAX1 (0.0, 
-     &            ((LFWT-SENLFG-SENLFGRS)*(LANC-LNCM)*NLABPC/100.0))
+     &            ((LFWT-SENLFG-SENLFGRS)*(LANC-LNCM)*NUSEFAC))
               NPOOLS = AMAX1 (0.0,
-     &         ((STWT-SENSTG)*(SANC-SNCM)*NLABPC/100.0))
+     &         ((STWT-SENSTG)*(SANC-SNCM)*NUSEFAC))
 
               ! Move N to grain from roots and tops if necessary
               GRAINNGR = 0.0
@@ -6752,23 +6699,10 @@ C  yet built into the model.
               GRAINNGS = 0.0
               GRAINNDEMLSR = AMAX1(0.0,(GRAINNDEM-GRAINNGRS-GRAINNGU))
               ! Draw N from roots,then stems,then leaves.
-              ! Availability drops as concentration drops
-!              GRAINNGR = AMIN1(NPOOLR*RNCR,GRAINNDEMLSR)
-!              GRAINNGS = AMIN1(NPOOLS*SNCR,GRAINNDEMLSR-GRAINNGR)
-!              GRAINNGL = AMIN1(NPOOLL*LNCR,
-!     &                            GRAINNDEMLSR-GRAINNGR-GRAINNGS)
-!              ! LAH Temporary Jan 2009 - everything available
-!              GRAINNGR = AMIN1(NPOOLR,GRAINNDEMLSR)
-!              GRAINNGS = AMIN1(NPOOLS,GRAINNDEMLSR-GRAINNGR)
-!              GRAINNGL = AMIN1(NPOOLL,
-!     &                            GRAINNDEMLSR-GRAINNGR-GRAINNGS)
-              ! LAH April 2010 - draw in proportion to size of pools
-              IF (GRAINNDEMLSR.gt.1.0E-10) THEN
-               NPOOLNEED = AMIN1(1.,GRAINNDEMLSR/(npoolr+npools+npooll))
-               GRAINNGR = NPOOLR*NPOOLNEED
-               GRAINNGS = NPOOLS*NPOOLNEED
-               GRAINNGL = NPOOLL*NPOOLNEED
-              ENDIF
+               GRAINNGR = AMIN1(NPOOLR,GRAINNDEMLSR)
+               GRAINNGS = AMIN1(NPOOLS,GRAINNDEMLSR-GRAINNGR)
+               GRAINNGL = AMIN1(NPOOLL,
+     &                            GRAINNDEMLSR-GRAINNGR-GRAINNGS)
 
               ! Move N to stem from leaves if necessary.
               STEMNGL = 0.0
@@ -6844,7 +6778,7 @@ C  yet built into the model.
               SENNAGS = SENNAGS + SENNALG(L)
             ENDDO
 
-            IF (ESTABLISHED.EQ.'N'.AND.SHRTD.GT.2.0) ESTABLISHED = 'Y'
+            IF (ESTABLISHED.NE.'Y'.AND.SHRTD.GT.2.0) ESTABLISHED = 'Y'
 
 !=======================================================================
           ENDIF  ! End of after germinated section
@@ -6853,7 +6787,6 @@ C  yet built into the model.
 !=======================================================================
         ENDIF  ! End of after planted (rate) section
 !=======================================================================
-
 
 !***********************************************************************
       ELSEIF (DYNAMIC.EQ.INTEGR) THEN
@@ -7129,20 +7062,21 @@ C  yet built into the model.
 !         Update leaf sheath,stem,and awn area
 !-----------------------------------------------------------------------
 
-          LSHAI = (LFWT*LSHFR*LSAWV)*PLTPOP*0.0001
           IF (HPROD.EQ.'SR') THEN
             LSHAI = (LFWT*LSHFR*LSAWV)*PLTPOP*0.0001
           ELSE
             IF (TSSTG.LE.0.OR.LLSTG.LE.0) THEN
               LSHAI = (LFWT*LSHFR*LSAWV)*PLTPOP*0.0001
             ELSE
-              LSHAI = (LFWT*LSHFR*LSAWV)*PLTPOP*0.0001
-              IF ((PSTART(LLSTG)-PSTART(TSSTG)).GT.0.0) THEN
-                LSAW = LSAWV+(LSAWR-LSAWV) * 
-     &            AMAX1(0.0,AMIN1(1.0,((CUMDU+DU)-PSTART(TSSTG))/
-     &            (PSTART(LLSTG)-PSTART(TSSTG))))
-                LSHAI = (LFWT*LSHFR)*PLTPOP*0.0001*LSAW
-              ENDIF
+              IF (RSTAGE.LE.TSSTG) THEN
+                LSHAI = (LFWT*LSHFR*LSAWV)*PLTPOP*0.0001
+              ELSEIF (RSTAGE.GT.TSSTG.AND.RSTAGE.LT.LLSTG) THEN
+                LSAW = LSAWV+((LSAWR-LSAWV)*(RSTAGE-TSSTG))
+                LSHAI = (LFWT*LSHFR*LSAW)*PLTPOP*0.0001
+              ELSE
+                ! Use RSEN as temporary fix for sheath senescence
+                LSHAI = LSHAI * (1.0-(RSEN/100.0)*TT/STDAY)  
+              ENDIF  
             ENDIF  
           ENDIF
 
@@ -7350,21 +7284,21 @@ C  yet built into the model.
 
           ! STAGES:Apical development - double ridges. 
           !  Factors by calibration from LAMS
-          !IF (CROP.NE.'CS') THEN
-            !drf1 = 1.9
-            !drf2 = 0.058
-            !drf3 = 3.3
-            !DRSTAGE = AMAX1(1.1,drf1-drf2*(LNUMSD-drf3))
-            !DRSTAGE = AMAX1(1.1,1.9-0.058*(LNUM-3.3))
-            !IF (DRDAT.EQ.-99 .AND. RSTAGE.GE.DRSTAGE) THEN
-              !DRDAT = YEARDOY
-              !WRITE(fnumwrk,*)'Double ridges. Rstage,Drtage,Leaf#: ',
- !    &         RSTAGE,DRSTAGE,LNUM
+          !  Only used for comparison with calc based on spe input
+          IF (CROP.NE.'CS') THEN
+            drf1 = 1.9
+            drf2 = 0.058
+            drf3 = 3.3
+            DRSTAGE = AMAX1(1.1,drf1-drf2*(LNUM-drf3))
+            IF (DRDAT.EQ.-99 .AND. RSTAGE.GE.DRSTAGE) THEN
+              DRDAT = YEARDOY
+              WRITE(fnumwrk,*)'Double ridges. Rstage,Drtage,Leaf#: ',
+     &         RSTAGE,DRSTAGE,LNUM
                ! NB. Experimental. DR occurs at later apical stage when
                !     leaf # less, earlier when leaf # greater (ie.when
                !     early planting of winter type).
-            !ENDIF
-          !ENDIF  
+            ENDIF
+          ENDIF  
   
           ! STAGES:Stem development (Ststages)
           IF (CUMDU.GT.SGPHASEDU(1).AND.
@@ -8014,14 +7948,17 @@ C  yet built into the model.
           RNAD = ROOTN*PLTPOP*10.0
           RSNAD = RSN*PLTPOP*10.0
           SDNAD = SEEDN*PLTPOP*10.0
-          SNAD = (STEMN+LEAFN*LSHFR)*PLTPOP*10.0
+!lah          SNAD = (STEMN+LEAFN*LSHFR)*PLTPOP*10.0
+          SNAD = STEMN*PLTPOP*10.0
           TNAD = (ROOTN+LEAFN+STEMN+RSN+HPRODN+SEEDN+DEADN)*PLTPOP*10.0
           VNAD = (LEAFN+STEMN+RSN+DEADN)*PLTPOP*10.0
           
           ! LAH Note that no reserves included in sancout
           ! SANCOUT = SNAD/(STWAD+STRSWAD + LSHWAD+LSHRSWAD)
-          IF ((STWAD + LSHWAD).GT.1.0E-5)
-     &     SANCOUT = SNAD/(STWAD + LSHWAD)
+clah          IF ((STWAD + LSHWAD).GT.1.0E-5)
+clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
+          IF (STWAD.GT.1.0E-5)
+     &     SANCOUT = SNAD/STWAD
 
           IF (HPROD.EQ.'SR') THEN
             HWAD = SRWAD
@@ -8657,11 +8594,10 @@ C  yet built into the model.
      A               '  GSTD  L#SD',
      B               '  PARI PARUE  AWAG',
      C               '  LAID  SAID  CAID',
-     D               '  TWAD SDWAD  RWAD  CWAD  LWAD',
-     E               '  SWAD CHWAD RSWAD  HWAD  EWAD  DWAD SNW0D SNW1D',
+     D               '  TWAD SDWAD  RWAD  CWAD  LWAD  SWAD  HWAD  HIAD',
+     E               ' CHWAD  EWAD RSWAD SNWPD SNW0D SNW1D',
      F               '  RS%D',
      G               '  H#AD  HWUD',
-     H               '  HIAD  HIND',
      I               '  T#AD  LAWD  RDPD  PTFD',
      J               '  SWXD  WAVR',
      K               '  WUPR  WFTD  WFPD  WFGD',
@@ -8676,9 +8612,10 @@ C  yet built into the model.
      B      PARIFOUT,PARIUE,AMIN1(999.9,CARBOBEG*PLTPOP*10.0),
      &      LAIC,SAID,CAIC,
      C      NINT(TWAD),NINT(SDWAD),NINT(RWAD),NINT(CWAD),
-     D      NINT(LLWADOUT),NINT(STWADOUT),NINT(CHWADOUT),NINT(RSWAD),
-     E      NINT(HWAD),NINT(EWAD),NINT(DEADWAD),SENW0C,SENWSC,
-     F      RSCD*100.0,NINT(HNUMAD),HWUDC,HIAD,HINDC,
+     D      NINT(LLWADOUT),NINT(STWADOUT),NINT(HWAD),HIAD,
+     E      NINT(CHWADOUT),NINT(EWAD),NINT(RSWAD),
+     &      NINT(DEADWAD),SENW0C,SENWSC,
+     F      RSCD*100.0,NINT(HNUMAD),HWUDC,
      G      NINT(TNUMAD),NINT(SLAOUT),RTDEP/100.0,PTF,H2OA,
      H      AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),
      I      1.0-WFT,1.0-WFP,1.0-WFG,
@@ -8686,9 +8623,9 @@ C  yet built into the model.
      K      1.0-TFP,1.0-TFG,1.0-VF,1.0-DFOUT
   501       FORMAT(
      A      I5,I4,2I6,F6.1,F6.1,A6,F6.1,F6.3,F6.2,
-     B      F6.1,A6,F6.2,A6,
-     C      11I6,2A6,
-     D      F6.1,I6,A6,F6.3,A6,
+     B      F6.1,A6,F6.3,A6,
+     C      7I6,F6.3,4I6,2A6,
+     D      F6.1,I6,A6,
      E      2I6,2F6.2,F6.1,
      F      F6.1,F6.2,
      G      3F6.2,
@@ -8720,14 +8657,14 @@ C  yet built into the model.
      1               ' .......PHOTOSYNTHESIS....... ', 
      M               ' .....GROWTH.....  ..TILLERS. ',
      2               '..WATER STRESS DETERMINANTS..',
-     2               '  NITROGEN STATUS            ')
+     2               '  N STRESS DETERMINANTS      ')
               WRITE (NOUTPGF,2205)
  2205         FORMAT ('@YEAR DOY   DAS   DAP  TMND TCDIF  GSTD',
      N               '  TFDD VRNFD DYLFD',
      1               '  TFPD  WFPD  NFPD CO2FP RSFPD', 
      M               '  TFGD  WFGD  NFGD  WFTD  NFTD',
-     &               '  WAVR  WUPR TRWUP  SWXD   EOP',
-     &               '  LN%R  SN%R  RN%R            ')
+     &               '  WAVR  WUPR TRWUP  SWXD  EOPD',
+     &               '  SNXD  LN%R  SN%R  RN%R            ')
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPGF,507)
      A      YEAR,DOY,DAS,DAP,TMEAN,TCAN-TMEAN,GSTAGEC,
@@ -8735,14 +8672,14 @@ C  yet built into the model.
      C      1.0-TFP,1.0-WFP,1.0-NFP,1.0-CO2FP,1.0-RSFP,
      D      1.0-TFG,1.0-WFG,1.0-NFG,1.0-WFT,1.0-NFT,
      H      AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),TRWUP,H2OA,EOP,
-     I      LNCR,SNCR,RNCR
+     I      SNO3PROFILE+SNH4PROFILE,LNCR,SNCR,RNCR
   507       FORMAT(
      a      I5,I4,2I6,2F6.1,A6,
      b      3F6.2,
      c      5F6.2,
      d      5F6.2,
      e      3F6.2,2F6.1,
-     F      3F6.2)
+     F      F6.1,3F6.2)
             ! End Plantgro reduction factor writes
             
             ! PlantGr2
@@ -8806,35 +8743,32 @@ C  yet built into the model.
                 ENDIF 
                 WRITE (NOUTPGN,2252)
  2252           FORMAT ('@YEAR DOY   DAS   DAP  TMND  GSTD  NUAD',
-     A           '  TNAD  RNAD SDNAD  CNAD  LNAD  SNAD  HNAD',
-     F           ' RSNAD  DNAD',
+     A           '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
+     F           ' RSNAD SNNPD SNN0D SNN1D',
      B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D  VN%C VN%MN',
      C           '  RN%C RN%MN  LN%R  SN%R  RN%R  NFPD  NFGD  NUPR',
-     D           ' NDEMD',
-     E           ' SNN0D SNN1D')
+     D           ' NDEMD')
               ENDIF  ! Plantn header writes
               CALL Csopline(senn0c,sennal(0))
               CALL Csopline(sennsc,sennas)
               WRITE (NOUTPGN,503)
      A         YEAR,DOY,DAS,DAP,TMEAN,GSTAGEC,NUPAC,
-     B         TNAD,RNAD,SDNAD,CNAD,LLNAD,SNAD,HNAD,
-     H         RSNAD,DEADNAD,
+     B         TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD,HNAD,HINDC,
+     H         RSNAD,DEADNAD,SENN0C,SENNSC,
      C         RANC*100.0,LANC*100.0,SANCOUT*100.0,
      D         HNC*100.0,SDNC*100.0,AMIN1(9.9,VANC*100.0),
      &         VCNC*100.0,vmnc*100.0,
      E         rncx*100.0,rncm*100.0,LNCR,SNCR,RNCR,1.0-NFP,1.0-NFG,
-     F         AMIN1(2.,NUPRATIO),ANDEM,
-     G         SENN0C,SENNSC
+     F         AMIN1(2.,NUPRATIO),ANDEM
   503          FORMAT(
      1         I5,I4,2I6,F6.1,A6,F6.1,
-     2         F6.1,2F6.2,4F6.1,
-     3         2F6.2,
+     2         F6.1,2F6.2,4F6.1,A6,
+     3         2F6.2,2A6,
      4         3F6.3,
      5         3F6.3,
      6         2F6.3,
      7         5F6.3,2F6.2,
-     8         F6.2,F6.1,
-     9         2A6)
+     8         F6.2,F6.1)
             ENDIF  ! ISWNIT  Plantn writes
 
           ELSE ! For (IDETL.NE.'0' .AND. IDETG.NE.'N').OR.IDETL.EQ.'A'
@@ -9476,7 +9410,7 @@ C  yet built into the model.
             IF (HNUMGMM.LE.0.AND.TNUMAMM.GT.0.AND.HNUMAMM.GT.0) THEN
               HNUMGMM = HNUMAMM/TNUMAMM
               Messageno = Min(Messagenox,Messageno+1)
-              WRITE(Message(messageno),'(A39)')
+              WRITE(Message(messageno),'(A38)')
      &         'ProductNo/area/ShootNo used for H#GMM '
             ENDIF
           
@@ -9619,8 +9553,8 @@ C  yet built into the model.
      &          ' H#AMS H#AMM H#GMS H#GMM',
      &          ' LAIXS LAIXM L#SMS L#SMM',
      &          ' T#AMS T#AMM CWAMS CWAMM',
-     &          ' HIAMS HIAMM HN%MS HN%MM',
-     &          ' CNAMS CNAMM HNAMS HNAMM',
+     &          ' HIAMS HIAMM HN%MS HN%MM VN%MS VN%MM',
+     &          ' CNAMS CNAMM HNAMS HNAMM HINMS HINMM',
      &          ' CWACS CWACM ')
                 CLOSE(FNUMEVAL)
               ENDIF  
@@ -9659,8 +9593,10 @@ C  yet built into the model.
      H       laix,laixm,lnumsm,lnumsmm,
      I       NINT(tnumam),NINT(tnumamm),
      J       NINT(cwam),NINT(cwamm),
-     L       AMAX1(-99.0,hiam*100.0),AMAX1(-99.0,hiamm*100.0),
-     M       hnpcm,hnpcmm,NINT(cnam),NINT(cnamm),NINT(hnam),NINT(hnamm),
+     L       AMAX1(-99.0,hiam),AMAX1(-99.0,hiamm),
+     M       hnpcm,hnpcmm,vnpcm,vnpcmm,
+     &       NINT(cnam),NINT(cnamm),NINT(hnam),NINT(hnamm),
+     &       hinm,hinmm,
      N       NINT(cwahc),NINT(cwahcm)
  8406       FORMAT (
      A      I6,I6,
@@ -9668,8 +9604,11 @@ C  yet built into the model.
      H      F6.1,F6.1,F6.1,F6.1,
      I      I6,I6,
      J      I6,I6,
-     L      F6.1,F6.1,
-     M      F6.1,F6.1,I6,I6,I6,I6,I6,I6)
+     L      F6.2,F6.2,
+     M      F6.1,F6.1,F6.1,F6.1,
+     &      I6,I6,I6,I6,
+     &      F6.2,F6.2,
+     &      I6,I6)
             Close(FNUMEVAL)
             ! End of Evaluation.Out writes
           
@@ -10056,7 +9995,8 @@ C  yet built into the model.
                 ENDDO
               ENDIF
               WRITE(FNUMWRK,*) ' '
-              WRITE(FNUMWRK,'(A28)') ' INORGANIC N (kg/ha) IN SOIL'
+              WRITE(FNUMWRK,'(A45)')
+     &          ' INORGANIC N (kg/ha) LEFT IN SOIL AT MATURITY'
               WRITE(FNUMWRK,'(A28,2F6.1)')
      &         '  NO3 and NH4 N in PROFILE: ',
      &         SNO3PROFILE,SNH4PROFILE
@@ -10064,6 +10004,15 @@ C  yet built into the model.
      &         '  NO3 and NH4 N in ROOTZONE:',
      &         SNO3ROOTZONE,SNH4ROOTZONE
             ENDIF   ! End Iswnit NE N
+            WRITE(FNUMWRK,*) ' '
+            WRITE(FNUMWRK,'(A34)')
+     &        ' H2O (mm) LEFT IN SOIL AT MATURITY'
+            WRITE(FNUMWRK,'(A36,2F6.1)')
+     &       '  H2O and AVAILABLE H2O in PROFILE: ',
+     &       H2OPROFILE,AH2OPROFILE
+            WRITE(FNUMWRK,'(A36,2F6.1)')
+     &       '  H2O and AVAILABLE H2O in ROOTZONE:',
+     &       H2OROOTZONE,AH2OROOTZONE
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A32,A10,I3)')
      &       ' CRITICAL PERIOD CONDITIONS FOR ',excode,tn
@@ -10669,7 +10618,7 @@ C  yet built into the model.
               WRITE (fnumwrk,'(A25,A10,I3)')' N BALANCE (g/plant) FOR ',
      &         excode,tn
               WRITE (fnumwrk,'(A34,F8.4)')
-     &         '   N UPTAKE + SEED (A)            ', NUPC+SEEDNI
+     &         '   N UPTAKE + SEED (A)            ', NUPC+SEEDN
               WRITE (fnumwrk,'(A33,F9.4,2F11.4)')
      &         '   TOTAL N SENESCED (B) Tops,Root',
      &         SENNL(0)+SENNS,SENNL(0),SENNS
@@ -10841,11 +10790,11 @@ C  yet built into the model.
      E         NINT(hnumam),hnumpm,NINT(hnumgm),
      F         laix,lnumsm,
      G         NINT(cwam),NINT(vwam),
-     H         rscm*100.0, hiam*100.0,
+     H         rscm*100.0, hiam,
      I         NINT(rwam), AMIN1(99.9,shrtm),
      J         hnpcm,
      K         NINT(AMAX1(-99.0,cnam+rnam)),NINT(cnam),NINT(gnam),
-     L         hinm*100.0,pltpop,NINT(tnumpm*pltpop),
+     L         hinm,pltpop,NINT(tnumpm*pltpop),
      M         SRADPAV(4),TMAXPAV(4),TMINPAV(4),
      M         (TMAXPAV(4)+TMINPAV(4))/2.0,
      N         RAINPAV(4),DAYLPAV(2),NINT(CO2PAV(4)),
@@ -10860,7 +10809,7 @@ C  yet built into the model.
      E         I6,F6.1,I6,                       !N(gnoam),gnopm,N(g#gm)
      F         F6.2,F6.1,                        !laix,lnumsm
      G         I6,I6,                            !Cwam,vwam
-     H         F6.1,F7.3,                        !rs%m, hiam*100.0
+     H         F6.1,F7.3,                        !rs%m, hiam
      I         I5,F6.1,                          !N(rwam),shrtm
      J         F6.1,                             !hnpcm
      K         I6,I6,I6,                         !N(cnam+rnam),(cn),(gn)
@@ -10921,10 +10870,10 @@ C  yet built into the model.
      F           NINT(amtnit),NINT(hwamm),hwummchar,
      G           NINT(hnumamm),hnumpmm,NINT(hnumgmm),
      H           laixm,lnumsmm, 
-     I           NINT(cwamm),NINT(vwamm),rscmm,AMAX1(-99.0,hiamm*100.0),
+     I           NINT(cwamm),NINT(vwamm),rscmm,AMAX1(-99.0,hiamm),
      J           NINT(rwamm),shrtmm,
      K           hnpcmm,NINT(tnamm),NINT(cnamm),NINT(hnamm),
-     L           AMAX1(-99.0,hinmm*100.),pltpop,
+     L           AMAX1(-99.0,hinmm),pltpop,
      M           MAX(-99,NINT(tnumpmm*pltpop))
                 CLOSE(FNUMPREM)
               ENDIF  
@@ -11449,6 +11398,119 @@ C  yet built into the model.
      x       hiam,hiamm,
      x       NINT(rswam),NINT(rswamm)
           ENDIF ! End IDETD.EQ.'S' 
+
+!-----------------------------------------------------------------------
+!         Screen writes for Dssat sensitivity mode
+!-----------------------------------------------------------------------
+            
+            IF (FILEIOT(1:3).EQ.'DS4' .AND. CN.EQ.1
+     &                                .AND. RNMODE.EQ.'E') THEN         
+            
+              CALL CSCLEAR5
+              WRITE(*,9589)
+              WRITE(*,*) ' '
+              WRITE(*,9588)
+              WRITE(*,9600)
+              DO L = 1, PSNUM
+                CALL Csopline(laic,laistg(l))
+                IF (STGYEARDOY(L).LT.9999999.AND.
+     &              L.NE.10.AND.L.NE.11) THEN
+                  CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                  CALL Calendar(year,doy,dom,month)
+                  CNCTMP = 0.0
+                  IF (CWADSTG(L).GT.0.0)
+     &             CNCTMP = CNADSTG(L)/CWADSTG(L)*100
+                  WRITE (*,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,
+     &            F6.1,I6,F6.2,F6.2,F6.2)')
+     &            STGYEARDOY(L),DOM,MONTH,
+     &            Dapcalc(stgyeardoy(L),(plyeardoy/1000),plday),
+     &            l,psname(l),
+     &            NINT(CWADSTG(L)),LAIC,LNUMSTG(L),
+     &            NINT(CNADSTG(L)),CNCTMP,1.0-WFPPAV(L),1.0-NFPPAV(L)
+                ENDIF
+              ENDDO
+              ! For harvest at specified date
+              IF (YEARDOYHARF.EQ.YEARDOY) THEN
+                CALL Csopline(laic,lai)
+                  CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                  CALL Calendar(year,doy,dom,month)
+                  CNCTMP = 0.0
+                  IF (CWAD.GT.0.0)CNCTMP = CNAD/CWAD*100
+                  WRITE (*,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,
+     &            F6.1,I6,F6.2,F6.2,F6.2)')
+     &            YEARDOY,DOM,MONTH,
+     &            Dapcalc(yeardoy,(plyeardoy/1000),plday),
+     &            l,'Harvest      ',
+     &            NINT(CWAD),LAIC,LNUM,
+     &            NINT(CNAD),CNCTMP,1.0-WFPCAV,1.0-NFPCAV
+              ENDIF 
+            
+              WRITE(*,*)' '
+              WRITE(*,*)' Press ENTER to continue'
+              PAUSE ' '
+              CALL CSCLEAR5
+           
+              !WRITE (*,206)
+              WRITE(*,'(A36,A10,I3)')
+     &        ' SIMULATED-MEASURED COMPARISONS FOR ',EXCODE,TN
+              WRITE(*,*)' '
+              WRITE (*,206)
+              WRITE (*,290) MAX(-99,gdap),MAX(-99,gdapm),
+     A         MAX(-99,edap),MAX(-99,edapm)
+              DO L = 1,KEYSTX
+                IF (KEYPS(L).GT.0) WRITE (*,291)
+     &           psname(KEYPS(L)),PSDap(KEYPS(L)),PSDapm(KEYPS(L))
+              ENDDO
+              WRITE (*,305)
+     H         NINT(cwam),NINT(cwamm),
+     I         MAX(-99,NINT(rwam+sdwam)),NINT(rwamm),
+     J         NINT(senwacm),NINT(senwacmm),
+     L         NINT(hwam),NINT(hwamm),
+     M         NINT(vwam),NINT(vwamm),
+     N         hiam,hiamm,
+     O         NINT(rswam),NINT(rswamm)
+              IF (lwphc+swphc.GT.0.0) WRITE (*,3051)
+     &         NINT(cwahc),NINT(cwahcm),
+     &         NINT(spnumhc*pltpop),MAX(-99,NINT(spnumhcm*pltpop))
+            
+              WRITE(*,*)' '
+              WRITE(*,*)' Press ENTER to continue'
+              PAUSE ' '
+              CALL CSCLEAR5
+     
+              WRITE (*,2061)
+2061        FORMAT(
+     &    /,   
+     &       "@",5X,"VARIABLE",T42,"SIMULATED   MEASURED",/,  
+     &           6X,"--------",T42,"---------   --------")  
+              WRITE (*,3052)
+     A         hwumchar,hwummchar,
+     B         NINT(hnumam),NINT(hnumamm),
+     C         hnumgm,hnumgmm,
+     D         NINT(tnumam),NINT(tnumamm),
+     E         laix,laixm,
+     F         lnumsm,lnumsmm,
+     G         nupac,nupacm,
+     H         cnam,cnamm,
+     I         rnam,rnamm,
+     J         sennatc,sennatcm,
+     K         hnam,hnamm,
+     L         vnam,vnamm,
+     M         hinm,hinmm,
+     N         hnpcm,hnpcmm,
+     O         vnpcm,vnpcmm
+
+              WRITE(*,*)' '
+              WRITE(*,*)' Press ENTER to continue'
+              PAUSE ' '
+              CALL CSCLEAR5
+              CALL CSCLEAR5
+              CALL CSCLEAR5
+              CALL CSCLEAR5
+            
+            ENDIF
+            
+            ! END OF SCREEN WRITES FOR DSSAT SENSITIVITY MODE
         
 !-----------------------------------------------------------------------
 !         Store variables for sending to CSM summary output routines

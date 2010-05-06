@@ -296,4 +296,34 @@ C-GH      READ  (*, *)
       RETURN
       END SUBROUTINE ErrorCode
 !=======================================================================
+! Current error codes:
 
+! Daily weather data
+!  1 Header section not found in weather file.
+!  2 Solar radiation data error
+!  3 Precipitation data error
+!  4 Tmax and Tmin are both set to 0
+!  5 Tmax and Tmin have identical values
+!  6 Tmax is less than Tmin
+!  8 Non-sequential data in file
+! 10 Weather record not found
+! 29 Weather file not found
+! 30 Error opening weather file
+! 59 Invalid format in weather file
+! 64 Syntax error.
+!
+! Weather modification
+! 72 Solar radiation data error
+! 73 Precipitation data error
+! 74 Tmax and Tmin are both set to 0
+! 75 Tmax and Tmin have identical values
+! 76 Tmax is less than Tmin
+!
+! Generated weather data
+! 82 Solar radiation data error
+! 83 Precipitation data error
+! 84 Tmax and Tmin are both set to 0
+! 85 Tmax and Tmin have identical values
+! 86 Tmax is less than Tmin
+
+!100 Number of cohorts exceeds maximum.

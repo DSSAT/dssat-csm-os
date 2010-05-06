@@ -18,7 +18,7 @@
 !  Calls:      SDCOMP, IPDMND
 !=======================================================================
 
-      SUBROUTINE DEMAND(DYNAMIC,
+      SUBROUTINE DEMAND(DYNAMIC, CONTROL,
      &  AGRLF, AGRRT, AGRSH2, AGRSTM, CROP, DRPP, DXR57,  !Input
      &  FILECC, FILEGC, FILEIO, FNINSH, FRACDN, LAGSD,    !Input
      &  LNGPEG, NDLEAF, NSTRES, PAR, PCNL, PCNRT, PCNST,  !Input
@@ -32,7 +32,7 @@
      &  FNINR, FNINS, FNINSD, FRLF, FRRT, FRSTM, GDMSD,   !Output
      &  GRRAT1, NDMNEW,  NDMOLD, NDMREP, NDMSDR, NDMTOT,  !Output
      &  NDMVEG, NMINEP, NMOBR, PHTIM, PNTIM, POTCAR,      !Output
-     &  POTLIP, SDGR, TURADD, XFRT)                       !Output
+     &  POTLIP, SDGR, TURADD, XFRT, YREND)                !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -42,12 +42,15 @@
 
       CHARACTER*2 CROP
       CHARACTER*3 TYPSDT
+      CHARACTER*6   ERRKEY
+      PARAMETER (ERRKEY = 'DEMAND')
       CHARACTER*30 FILEIO
+      CHARACTER*78 MSG(2)
       CHARACTER*92 FILECC, FILEGC
 
       INTEGER DYNAMIC   !, TIMDIF
       INTEGER NPP, I, NAGE, DAS
-      INTEGER NDLEAF, NR1, NR2, NR5, NR7, NVEG0
+      INTEGER NDLEAF, NR1, NR2, NR5, NR7, NVEG0, YREND
 
       REAL FRLFM, FRSTMM, YY, XX, TMPFAC
       REAL REDPUN,TMPFCS,PAGE,REDSHL,SDMAX,CDMSH,GDMSH,ADDSHL
@@ -105,7 +108,7 @@
 !CHP - puncture variables, not functional
       REAL PUNCSD, PUNCTR, RPRPUN
 
-      TYPE (ControlType) CONTROL     
+      TYPE (ControlType) CONTROL
 
 !***********************************************************************
 !***********************************************************************
@@ -238,6 +241,14 @@
 !-----------------------------------------------------------------------
 !     Accumulate physiological age of flower (PNTIM) and pod (PHTIM) cohorts
 !-----------------------------------------------------------------------
+        IF (DAS - NR1 + 1 > NCOHORTS) THEN
+          WRITE(MSG(1),'(A,I5)')
+     &      'Number of flower cohorts exceeds maximum limit of',NCOHORTS
+          CALL WARNING(1,ERRKEY,MSG)
+          CALL ErrorCode(CONTROL, 100, ERRKEY, YREND)
+          RETURN
+        ENDIF
+
         IF (DAS .EQ. NR1) THEN
           PNTIM(1) = 0.0
         ELSE
@@ -621,7 +632,7 @@
 !***********************************************************************
       ENDIF
 !-----------------------------------------------------------------------
-
+      
       RETURN
       END SUBROUTINE DEMAND
 !=======================================================================
@@ -934,6 +945,8 @@
       RETURN
 !-----------------------------------------------------------------------
       END  SUBROUTINE IPDMND
+!=======================================================================
+
 !=======================================================================
 !       Variable definitions for DEMAND and IPDMND
 !         Updated 25 Feb 2004

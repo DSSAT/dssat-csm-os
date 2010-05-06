@@ -302,9 +302,9 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 !     Read Measured (measured) data from FILEA
 !-----------------------------------------------------------------------
-      IF ((INDEX('YE',IDETO) .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) .OR.
-     &   (INDEX('AY',ISWITCH%IDETS) .GT. 0 .AND.
-     &       CONTROL%CROP .NE. 'FA')) THEN
+      IF ((INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGDT',RNMODE) > 0) .OR.
+     &    (INDEX('AY',ISWITCH%IDETS) > 0 .AND. CONTROL%CROP .NE. 'FA')) 
+     &  THEN
          IF (INDEX('FQ',RNMODE) > 0) THEN
            TRT_ROT = CONTROL % ROTNUM
          ELSE

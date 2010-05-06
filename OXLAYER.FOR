@@ -291,6 +291,12 @@ C=======================================================================
          SWF     = AMAX1 (SWF,0.0)
          UALGCT  = 0.25*ALGACT
          OXUHYDR = AMAX1 (AK,UALGCT)*AMIN1 (SWF,TEMPFU)*TMPOXU
+
+!        CHP added this check, but still get negative urea 
+!        need to overhaul this routine - prevent negative values for 
+!        all N species.
+         OXUHYDR = AMIN1(TMPUREA, OXUHYDR)  !CHP 5/4/2010
+
          TMPOXU     = TMPOXU     - OXUHYDR
          TMPOXH4    = TMPOXH4    + OXUHYDR
          TMPUREA = TMPUREA - OXUHYDR

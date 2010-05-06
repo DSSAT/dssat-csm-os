@@ -60,11 +60,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 0
-        INTEGER :: Build =46
+        INTEGER :: Build =47
       END TYPE VersionType
       TYPE (VersionType) Version
 
 !     Version history:
+!       4.5.0.47 chp 05/06/2010 Griffin Workshop.
 !       4.5.0.46 chp 04/22/2010 Further changes to CSCRP genotype files.
 !       4.5.0.45 chp 04/16/2010 Changes to CSCER, CSCRP genotype files.
 !       4.5.0.44 chp 03/19/2010 Canegro cultivar file has EXPNO.
@@ -162,7 +163,9 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) FILEX
         CHARACTER (len=30) FILEIO
         CHARACTER (len=102)DSSATP
-        CHARACTER (len=120)SimControl
+        CHARACTER (len=120) :: SimControl = 
+     &  "                                                            "//
+     &  "                                                            "
         INTEGER   DAS, DYNAMIC, FROP, ErrCode, LUNIO, MULTI, N_ELEMS
         INTEGER   NYRS, REPNO, ROTNUM, RUN, TRTNUM
         INTEGER   YRDIF, YRDOY, YRSIM

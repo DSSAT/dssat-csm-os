@@ -35,21 +35,21 @@ C-----------------------------------------------------------------------
         WRITE(MSG(1),100) YRDOY, L
   100   FORMAT('Negative soil N value on day ',I7,' in layer ',I3)
 
-        IF (SNO3(L).LT. -0.001) THEN
+        IF (SNO3(L).LT. -0.1) THEN
           WRITE(MSG(2),"('Nitrate (SNO3) =',F10.3,'kg[N]/ha')")SNO3(L)
           CALL WARNING(3, "NCHECK", MSG)
           SNO3(L) = 0.0
           NO3(L) = 0.0
         ENDIF
 
-        IF (SNH4(L).LT. -0.001) THEN
+        IF (SNH4(L).LT. -0.1) THEN
           WRITE(MSG(2),"('Ammonium (SNH4) =',F10.3,'kg[N]/ha')")SNH4(L)
           CALL WARNING(3, "NCHECK", MSG)
           SNH4(L) = 0.0
           NH4(L) = 0.0
         ENDIF
 
-        IF (UREA(L).LT. -0.001) THEN
+        IF (UREA(L).LT. -0.1) THEN
           WRITE(MSG(2),"('Urea =',F10.3,'kg[N]/ha')") UREA(L)
           CALL WARNING(3, "NCHECK", MSG)
           UREA(L) = 0.0

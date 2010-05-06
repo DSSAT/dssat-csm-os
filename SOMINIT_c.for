@@ -478,7 +478,7 @@
             SSOME(L,P) = SOM1E(L,P) + SOM23E(L,P)
             ORGP(L) = SSOME(L,P) * KG2PPM(L)
             MSG(2) = "Organic P from Hedley fractionation data."
-            WRITE(MSG(3),'()') "Organic P: ",ORGP(L), " ppm"
+            WRITE(MSG(3),'(A,F6.2,A)') "Organic P: ",ORGP(L), " ppm"
             MNUM = 3
 
 !         **********************************************************

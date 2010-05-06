@@ -1148,7 +1148,7 @@ C     Format strings
 C-----------------------------------------------------------------------
 
   200 FORMAT (/,' The current value of ',A, ' is ',F10.3)
-  300 FORMAT (/,' Input new value : ')
+  300 FORMAT (/,' Input new value : ',$)
 
       END SUBROUTINE GETREAL
 
@@ -1296,7 +1296,7 @@ C-----------------------------------------------------------------------
    10 FORMAT (2X,A70,/)
    20 FORMAT (2X,"Minimum: ",I12,10X,"Maximum: ",I12)
   200 FORMAT (/,' The current value of ',A5, ' is ',I8)
-  300 FORMAT (/,' Input new value : ')
+  300 FORMAT (/,' Input new value : ',$)
 
       END SUBROUTINE GETINT
 

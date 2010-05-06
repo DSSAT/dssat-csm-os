@@ -427,7 +427,7 @@ C-------------------------------------------------------------------
 
           ELSE
             WRITE (NOUTDS,305) EXPER, CG, ENAME, 
-     &        "Simulation Control file: ", CONTROL%SimControl(1:SimLen), 
+     &        "Simulation Control file: ", CONTROL%SimControl(1:SimLen),
      &        Version, MonthTxt(DATE_TIME(2)), DATE_TIME(3), 
      &        DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
   305       FORMAT (
