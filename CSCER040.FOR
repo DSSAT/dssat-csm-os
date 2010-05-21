@@ -1,6 +1,7 @@
 !=======================================================================
-!  CROPSIM-CERES CEREAL MODEL V4.5   Developed from V4.0 (which was 
-!  based on Cropsim and Ceres3.5). LAST EDIT 09/09/09 LAH
+!  CROPSIM-CERES CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
+!  Developed from V4.0 (which was based on Cropsim and Ceres3.5) 
+!  Last edit 06/05/10 LAH
 !=======================================================================
 
 !     SUBROUTINE CSCER040 (FILEIOIN, RUN, TN, RN,          !Command line
@@ -485,17 +486,21 @@
       REAL          HIAD          ! Harvest index,above ground     #
       REAL          HIADT         ! Harvest index from t file      #
       REAL          HIAM          ! Harvest index,mature           %
+      CHARACTER*6   HIAMC         ! Harvest index,mature           char
       REAL          HIAMEAA       ! Harvest index abs error avg    #
       REAL          HIAMEAV       ! Harvest index average error    #
       REAL          HIAMERR       ! Harvest index,maturity,error   %
       REAL          HIAMM         ! Harvest index,mature,measure   #
+      CHARACTER*6   HIAMMC        ! Harvest index,mature,measure   char
       REAL          HIAMMTMP      ! Harvest index,mature,temporary #
       INTEGER       HIAMNUM       ! Harvest index error #          #
       REAL          HIAMSUA       ! Harvest index abs error #      #
       REAL          HIAMSUM       ! Harvest index error sum        #
       REAL          HIND          ! Harvest index,N,above ground   #
       REAL          HINM          ! Harvest index,N,abground,mat   #
+      CHARACTER*6   HINMC         ! Harvest index,N,abground,mat   char
       REAL          HINMM         ! Harvest N index,mature,meas    %
+      character*6   HINMMC        ! Harvest N index,mature,meas    char
       INTEGER       HLAST         ! Last date for harvest          #
       REAL          HNUMAEAA      ! Harvest #/area abs error avg   #
       REAL          HNUMAEAV      ! Harvest #/area average error   #
@@ -1168,7 +1173,9 @@
       REAL          VNAM          ! Vegetative N,mature            kg/ha
       REAL          VNAMM         ! Vegetative N,mature,measured   kg/ha
       REAL          VNPCM         ! Vegetative N %,maturity        %
+      CHARACTER*6   VNPCMC        ! Vegetative N %,maturity        char
       REAL          VNPCMM        ! Vegetative N,mature,measure    %
+      CHARACTER*6   VNPCMMC       ! Vegetative N,mature,measure    char
       CHARACTER*16  VRNAME        ! Variety name or identifier     text
       REAL          VWAM          ! Vegetative wt,mature           kg/ha
       REAL          VWAMEAA       ! Vegetative wt/area abs err avg #
@@ -2998,19 +3005,17 @@
           IF (XSTAGE.GT.6.0) CARBO = AMAX1(0.0,CARBO*(6.3-XSTAGE)/0.3)
           
           ! Available carbohydrate for growth
-
           IF (ISTAGE.EQ.6) THEN
             CARBOAT = 0.0
             CARBOAR = 0.0
             CARBOASD = 0.0
             CARBOAPM = CARBO
           ELSE
-!           CHP 5/6/10 - prevent underflow
-            IF (SEEDRSAV > 1.E-9) THEN
+            IF (SEEDRSAV.GT.1.0E-9) THEN
               CARBOASD = SDAFR*(TT/STDDAY)*SEEDRSAV
             ELSE
-              CARBOASD = 0.0
-            ENDIF
+              CARBOASD = 0.0 
+            ENDIF  
             SEEDRSAV = SEEDRSAV - CARBOASD
             CARBOAT = CARBOASD+CARBO*PTF
             CARBOAR = CARBO*(1.0-PTF)
@@ -5600,6 +5605,24 @@
             adapm = Dapcalc(adatm,plyear,plday)
             mdap = Dapcalc(stgdoy(5),plyear,plday)
             mdapm = Dapcalc(mdatm,plyear,plday)
+
+            ! Check that -99 not multiplied or divided 
+            IF (hnumgm.LT.0.0) hnumgm = -99
+            IF (hnumam.LT.0.0) hnumam = -99
+            IF (hnumgmm.LT.0.0) hnumgmm = -99
+            IF (hnumamm.LT.0.0) hnumamm = -99
+
+            ! Put N variables to -99 if N switched off
+            IF (ISWNIT.EQ.'N') THEN
+              gnpcm = -99
+              vnpcm = -99
+              cnam = -99
+              gnam = -99
+              hinm = -99
+              sdnap = -99
+              rnam = -99
+              nuam = -99
+            ENDIF
             
             WRITE (fnumwrk,*) ' '
 
@@ -6332,12 +6355,10 @@
 !-----------------------------------------------------------------------
             
             ! Check that -99 not multiplied or divided 
-            IF (hnumgm.LT.0.0) hnumgm = -99
-            IF (hnumam.LT.0.0) hnumam = -99
             IF (hnumgmm.LT.0.0) hnumgmm = -99
             IF (hnumamm.LT.0.0) hnumamm = -99
-
-            ! Character equivalents for output
+          
+            ! Create character equivalents for outputing
             IF (gwumm.LE.0) THEN
               gwummc = ' -99.0'
             ELSE
@@ -6349,6 +6370,45 @@
             ELSE
               gwumc = ' '
               WRITE (gwumc,'(F6.3)') gwum
+            ENDIF
+
+            IF (hiamm.LE.0) THEN
+              hiammc = ' -99.0'
+            ELSE
+              hiammc = ' '
+              WRITE (hiammc,'(F6.3)') hiamm
+            ENDIF
+            IF (hiam.LE.0) THEN
+              hiamc = ' -99.0'
+            ELSE
+              hiamc = ' '
+              WRITE (hiamc,'(F6.3)') hiam
+            ENDIF
+
+            IF (hinmm.LE.0) THEN
+              hinmmc = ' -99.0'
+            ELSE
+              hinmmc = ' '
+              WRITE (hinmmc,'(F6.3)') hinmm
+            ENDIF
+            IF (hinm.LE.0) THEN
+              hinmc = ' -99.0'
+            ELSE
+              hinmc = ' '
+              WRITE (hinmc,'(F6.3)') hinm
+            ENDIF
+
+            IF (vnpcmm.LE.0) THEN
+              vnpcmmc = ' -99.0'
+            ELSE
+              vnpcmmc = ' '
+              WRITE (vnpcmmc,'(F6.3)') vnpcmm
+            ENDIF
+            IF (vnpcm.LE.0) THEN
+              vnpcmc = ' -99.0'
+            ELSE
+              vnpcmc = ' '
+              WRITE (vnpcmc,'(F6.3)') vnpcm
             ENDIF
             
 !-----------------------------------------------------------------------
@@ -6565,12 +6625,12 @@
      x      NINT(tnumam),NINT(tnumamm),
      x      NINT(cwam),NINT(cwamm),
      x      NINT(vwam),NINT(vwamm),
-     x      AMAX1(-99.0,hiam),AMAX1(-99.0,hiamm),
+     x      hiamc,hiammc,
      x      gnpcm,gnpcmm,
-     x      vnpcm,vnpcmm,
+     x      vnpcmc,vnpcmmc,
      x      NINT(cnam),NINT(cnamm),
      x      NINT(gnam),NINT(gnamm),
-     x      AMAX1(-99.0,hinm),AMAX1(-99.0,hinmm),              
+     x      hinmc,hinmmc,              
      x      Dapcalc(stgdoy(9),plyear,plday),Dapcalc(edatm,plyear,plday),
      x      Dapcalc(drdat,plyear,plday),Dapcalc(drdatm,plyear,plday),
      x      Dapcalc(tsdat,plyear,plday),Dapcalc(tsdatm,plyear,plday),
@@ -6588,12 +6648,12 @@
      x       I6,I6,
      x       I6,I6,
      x       I6,I6,
-     x       F6.2,F6.2,
+     x       A6,A6,
      x       F6.1,F6.1,
-     x       F6.2,F6.2,
+     x       A6,A6,
      x       I6,I6,
      x       I6,I6,
-     x       F6.2,F6.2,
+     x       A6,A6,
      x       I6,I6,
      x       I7,I7,
      x       I7,I7,

@@ -1527,6 +1527,7 @@
 
       INTEGER   CSDOC,DOY1,DOY2,YR1,YR2,YRDOY1,YRDOY2,YRDOY1IN,YRDOY2IN
       INTEGER   CSTIMDIF
+      INTEGER   NLEAP,DOC1,DOC2
 
       INTRINSIC INT
 
@@ -1538,19 +1539,24 @@
       ! Simple time difference two days in the same year attempted first
       CSTIMDIF = YRDOY2 - YRDOY1
 
-      ! If time difference involves year change, use CSDOC calculations.
+      ! If time difference involves year change
       IF (CSTIMDIF .GT. 365 .OR. CSTIMDIF .LT. -365) THEN
         IF (YRDOY1.GT.2000000) YRDOY1 = YRDOY1-2000000
         IF (YRDOY1.GT.1900000) YRDOY1 = YRDOY1-1900000
         YR1  = INT(YRDOY1 / 1000)
         DOY1 = YRDOY1 - YR1 * 1000
-        IF (YR1.LT.10) YR1 = YR1+100
+        NLEAP = (YR1-1)/4
+        DOC1 = NLEAP*366 + (YR1-NLEAP-1)*365 + DOY1
         IF (YRDOY2.GT.2000000) YRDOY2 = YRDOY2-2000000
         IF (YRDOY2.GT.1900000) YRDOY2 = YRDOY2-1900000
         YR2  = INT(YRDOY2 / 1000)
         DOY2 = YRDOY2 - YR2 * 1000
-        IF (YR2.LT.10) YR2 = YR2+100
-        CSTIMDIF = CSDOC(YR2,DOY2) - CSDOC(YR1,DOY1)
+        NLEAP = (YR2-1)/4
+        DOC2 = NLEAP*366 + (YR2-NLEAP-1)*365 + DOY2
+        ! No 'trap' for inverted inputs
+        ! Comparison used to shows if into new millenium
+        IF (YR2.LT.YR1) DOC2 = DOC2 + 36524
+        CSTIMDIF = DOC2 - DOC1
       ENDIF
 
       END

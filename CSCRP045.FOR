@@ -1,21 +1,7 @@
-!***********************************************************************
-!  Crop growth/development
 !-----------------------------------------------------------------------
-!  Revision history
-!  2. Header revision and minor changes           P.W.W.      2-7-93
-!  1. Modified from original as MAIZE.FOR+subs    W.D.B      3-25-01
-!  2. Modified from MAIZE.FOR+all subroutines     L.A.H     31-07-02
-!  3. Modified further at DSSAT workshop,Florida  L.A.H.    20-08-02
-!  4. Modified further in Guelph                  L.A.H.    11-09-02
-!  5. Modified further in Florida                 L.A.H.    05-11-02
-!  6. Changed to use run/seasinit,inserted ROOTWU L.A.H.    05-01-03
-!  7. Changed N routines.                         L.A.H.    10-02-03
-!  8. Further changes to all routines for DSSAT4  L.A.H.    24-04-03
-!  9. Initialisation changes for DSSAT4           L.A.H.    24-10-03
-! 10. Combined GROSUB,etc.with main program       L.A.H.     2003-05
-! 11. Many code changes                           L.A.H.     2003-05
-! 12. Changed completely to Cropsim               L.A.H.     2005-07 
-!***********************************************************************
+!  CROPSIM CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
+!  Last edit 06/05/10 LAH
+!-----------------------------------------------------------------------
 
       SUBROUTINE CSCROP (FILEIOIN, RUN, TN, RN, RNMODE,    !Command line
      & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols
@@ -294,7 +280,7 @@
       REAL          DRAIN         ! Drainage from soil profile     mm/d
       REAL          DRAINC        ! Drainage from profile,cumulat  mm  
       INTEGER       DRDAT         ! Double ridges date             #
-!     INTEGER       DRDATM        ! Double ridges date,measured    #
+      INTEGER       DRDATM        ! Double ridges date,measured    #
       REAL          DRF1          ! Double ridges factor 1         #
       REAL          DRF2          ! Double ridges factor 2         #
       REAL          DRF3          ! Double ridges factor 3         #
@@ -787,7 +773,7 @@
       INTEGER       NOUTPGF       ! Number for growth factors file #
       INTEGER       NOUTPGN       ! Number for growthN output file #
       REAL          NPOOLL        ! Leaf N pool (ie.above minimum) g/p
-!     REAL          NPOOLNEED     ! N required for grain growth    g/p
+      REAL          NPOOLNEED     ! N required for grain growth    g/p
       REAL          NPOOLR        ! Root N pool (ie.above minimum) g/p
       REAL          NPOOLS        ! Stem N pool (ie.above minimum) g/p
       REAL          NPTFL         ! Minimum N uptake used by leaf  frFR
@@ -1585,7 +1571,13 @@
       CHARACTER (LEN=120) FNAMEPSUM     ! File name,plant summary
       CHARACTER (LEN=1)   GROUP         ! Flag for type of group
       CHARACTER (LEN=6)   GSTAGEC       ! Growth stage
+      CHARACTER (LEN=6)   HIAMCHAR      ! Harvest indx,at maturity
+      CHARACTER (LEN=6)   HIAMMCHAR     ! Harvest indx,mat,measured
       CHARACTER (LEN=6)   HINDC         ! Harvest index,nitrogen   
+      CHARACTER (LEN=6)   HINMCHAR      ! Harvest N index,at maturity
+      CHARACTER (LEN=6)   HINMMCHAR     ! Harvest N index,mat,measured
+      CHARACTER (LEN=6)   HNPCMCHAR     ! Harvest product N %,maturity  
+      CHARACTER (LEN=6)   HNPCMMCHAR    ! Harvest product N%,mature,meas
       CHARACTER (LEN=1)   HOP(HANUMX)   ! Harvest operation code  
       CHARACTER (LEN=2)   HPROD         ! Code,harvested part of plant
       CHARACTER (LEN=6)   HWUDC         ! Harvest wt/unit
@@ -1668,6 +1660,8 @@
       CHARACTER (LEN=8)   VARCHAR       ! Temporary variable,character
       CHARACTER (LEN=6)   VARNO         ! Variety identification code
       CHARACTER (LEN=6)   VARNOPREV     ! Variety identification code
+      CHARACTER (LEN=6)   VNPCMCHAR     ! Vegetative N %,maturity     
+      CHARACTER (LEN=6)   VNPCMMCHAR    ! Vegetative N,mature,measured
       CHARACTER (LEN=16)  VRNAME        ! Variety name
 
       LOGICAL             FEXIST        ! File existence indicator
@@ -3556,7 +3550,7 @@
           IF (SSABV(L).EQ.'CHPHS') CHPHASE(1) = SSTG(L)
           IF (SSABV(L).EQ.'CHPHE') CHPHASE(2) = SSTG(L)
           IF (SSABV(L).EQ.'SRIN '.OR.SSABV(L).EQ.' SRIN' 
-     &     .OR.SSABV(L).EQ.'SRINI') SRSTAGE = L 
+     &     .OR.SSABV(L).EQ.'SRINI'.OR.SSABV(L).EQ.'SRDAT') SRSTAGE = L 
         ENDDO
         
         ! Set stage defaults if necessary
@@ -8803,9 +8797,6 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &      DYNAMIC.EQ.SEASEND) THEN         ! If harvest/failure day
 !***********************************************************************
 
-          ! Create character equivalents for outputing
-          CALL Csopline(hwumchar,hwum)
-
 !-----------------------------------------------------------------------
 !         IDETO OUTPUTS (AND NECESSARY DATA INPUTS)
 !-------------------------------------------------------------------------
@@ -9489,9 +9480,30 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             IF (hnumam.LT.0.0) hnumam = -99
             IF (hnumgmm.LT.0.0) hnumgmm = -99
             IF (hnumamm.LT.0.0) hnumamm = -99
+            
+            ! Put N variables to -99 if N switched off
+            IF (ISWNIT.EQ.'N') THEN
+              hnpcm = -99
+              vnpcm = -99
+              cnam = -99
+              hnam = -99
+              hinm = -99
+              sdnap = -99
+              rnam = -99
+              nupac = -99
+            ENDIF  
           
             ! Create character equivalents for outputing
-            CALL Csopline(hwummchar,hwumm)
+            CALL Csopline(hwumchar,hwum)
+            CALL Csopline(hwummchar,AMAX1(-99.0,hwumm))
+            CALL Csopline(hiamchar,AMAX1(-99.0,hiam))
+            CALL Csopline(hiammchar,AMAX1(-99.0,hiamm))
+            CALL Csopline(hinmchar,AMAX1(-99.0,hinm))
+            CALL Csopline(hinmmchar,AMAX1(-99.0,hinmm))
+            CALL Csopline(hnpcmchar,AMAX1(-99.0,hnpcm))
+            CALL Csopline(hnpcmmchar,AMAX1(-99.0,hnpcmm))
+            CALL Csopline(vnpcmchar,AMAX1(-99.0,vnpcm))
+            CALL Csopline(vnpcmmchar,AMAX1(-99.0,vnpcmm))
           
             ! Evaluate
             EVHEADER = ' '
@@ -9529,20 +9541,20 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                 DO L = 1,KEYSTX
                   IF (KEYPS(L).GT.0) THEN
                     IF (PSABVO(KEYPS(L))(1:1).NE.' ') 
-     &                WRITE (FNUMEVAL,'(A1,\)') ' '
+     &               WRITE (FNUMEVAL,'(A1,\)') ' '
                     WRITE (FNUMEVAL,'(A5,A1,\)') PSABVO(KEYPS(L)),'S'
                     IF (PSABVO(KEYPS(L))(1:1).NE.' ') 
-     &                WRITE (FNUMEVAL,'(A1,\)') ' '
+     &               WRITE (FNUMEVAL,'(A1,\)') ' '
                     WRITE (FNUMEVAL,'(A5,A1,\)') PSABVO(KEYPS(L)),'M'
                   ENDIF 
                 ENDDO
                 DO L = 1,KEYSTX
                   IF (KEYSS(L).GT.0) THEN 
                     IF (SSABVO(KEYSS(L))(1:1).NE.' ') 
-     &                WRITE (FNUMEVAL,'(A1,\)') ' '
+     &               WRITE (FNUMEVAL,'(A1,\)') ' '
                     WRITE (FNUMEVAL,'(A5,A1,\)') SSABVO(KEYSS(L)),'S'
                     IF (SSABVO(KEYSS(L))(1:1).NE.' ') 
-     &                WRITE (FNUMEVAL,'(A1,\)') ' '
+     &               WRITE (FNUMEVAL,'(A1,\)') ' '
                     WRITE (FNUMEVAL,'(A5,A1,\)') SSABVO(KEYSS(L)),'M'
                   ENDIF
                 ENDDO
@@ -9593,10 +9605,10 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      H       laix,laixm,lnumsm,lnumsmm,
      I       NINT(tnumam),NINT(tnumamm),
      J       NINT(cwam),NINT(cwamm),
-     L       AMAX1(-99.0,hiam),AMAX1(-99.0,hiamm),
-     M       hnpcm,hnpcmm,vnpcm,vnpcmm,
+     L       hiamchar,hiammchar,
+     M       hnpcmchar,hnpcmmchar,vnpcmchar,vnpcmmchar,
      &       NINT(cnam),NINT(cnamm),NINT(hnam),NINT(hnamm),
-     &       hinm,hinmm,
+     &       hinmchar,hinmmchar,
      N       NINT(cwahc),NINT(cwahcm)
  8406       FORMAT (
      A      I6,I6,
@@ -9604,10 +9616,10 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      H      F6.1,F6.1,F6.1,F6.1,
      I      I6,I6,
      J      I6,I6,
-     L      F6.2,F6.2,
-     M      F6.1,F6.1,F6.1,F6.1,
+     L      A6,A6,
+     M      A6,A6,A6,A6,
      &      I6,I6,I6,I6,
-     &      F6.2,F6.2,
+     &      A6,A6,
      &      I6,I6)
             Close(FNUMEVAL)
             ! End of Evaluation.Out writes
@@ -10168,8 +10180,8 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      E        NINT(hwam*hpcf/100.0),NINT(vwam),
      F        hwumchar,NINT(hnumam),NINT(hnumgm),
      G        sdnap,NINT(cnam),NINT(hnam),NINT(rnam),
-     H        NINT(cnam+rnam),NINT(nupac),
-     I        hnpcm,vnpcm,
+     H        NINT(AMAX1(-99.0,cnam+rnam)),NINT(nupac),
+     I        hnpcmchar,vnpcmchar,
      J        didoy(1),didoy(2),didoy(3)
   401       FORMAT (
      &       F6.1,I6, 
@@ -10180,7 +10192,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      F       A6,I6,I6,
      G       F6.1,I6,I6,I6,
      H       I6,I6,
-     I       F6.2,F6.2,3I6,
+     I       2A6,
      J       3I6)
             CLOSE(fnumpsum)  
           ELSE  
