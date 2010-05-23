@@ -496,9 +496,16 @@ C-------------------------------------------------------------------
         ELSEIF (HWUM < 100.)  THEN; FMT = '(1X,F7.2)'
         ELSEIF (HWUM < 1000.) THEN; FMT = '(1X,F7.1)'
         ENDIF
-        WRITE (NOUTDS,FMT,ADVANCE='NO') HWUM
- 
-        WRITE (NOUTDS,503) HNUMAM, HNUMUM, HIAM, LAIX, 
+        WRITE (NOUTDS,FMT,ADVANCE="NO") HWUM
+
+        WRITE (NOUTDS,'(1X,I5,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
+
+        IF (HIAM < -.01)  THEN; FMT = '(1X,F5.0)'
+        ELSE                  ; FMT = '(1X,F5.3)'
+        ENDIF
+        WRITE (NOUTDS,FMT,ADVANCE='NO') HIAM
+
+        WRITE (NOUTDS,503) LAIX, 
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
      &    NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, CNAM, GNAM, 
      &    PINUMM, PICM, PUPC, SPAM,        !P data
@@ -510,10 +517,10 @@ C-------------------------------------------------------------------
 
   503   FORMAT(     
                                               
-!!       HWUM, HNUMAM, HNUMUM, HIAM, LAIX,
-!     &  1X,F7.4,1X,I5,1X,F7.1, F6.2, F6.1,    
-!       HNUMAM, HNUMUM, HIAM, LAIX,
-     &  1X,I5,1X,F7.1, F6.2, F6.1,    
+!!       HNUMAM, HNUMUM, HIAM, LAIX,
+!     &  1X,I5,1X,F7.1, F6.2, F6.1,    
+!       LAIX,
+     &  F6.1,    
 
 !       IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
 !       NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, CNAM, GNAM, 

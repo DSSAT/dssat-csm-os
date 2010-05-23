@@ -226,15 +226,15 @@ C-----------------------------------------------------------------------
         ENDDO TILLOPS  !Tillage operations loop
         CLOSE (LUNTIL)
 
-!       Echo tillage operations to INFO file
-        MSG(1) = "Tillage operations read from experiment file"
-        MSG(2) = " YEAR DOY CODE  DEP Description"
-        DO I = 1, NTIL
-          CALL YR_DOY(TILLDATE(I),YR,IDATE)
-          WRITE(MSG(I+2),'(I5,I4.3,1X,A5,I4,1X,A)')
-     &          YR, IDATE, TILOP(I), NINT(TDEP(I)), TIL_DESC(I)
-        ENDDO
-        CALL INFO(NTIL+2,ERRKEY,MSG)
+!!       Echo tillage operations to INFO file
+!        MSG(1) = "Tillage operations read from experiment file"
+!        MSG(2) = " YEAR DOY CODE  DEP Description"
+!        DO I = 1, NTIL
+!          CALL YR_DOY(TILLDATE(I),YR,IDATE)
+!          WRITE(MSG(I+2),'(I5,I4.3,1X,A5,I4,1X,A)')
+!     &          YR, IDATE, TILOP(I), NINT(TDEP(I)), TIL_DESC(I)
+!        ENDDO
+!        CALL INFO(NTIL+2,ERRKEY,MSG)
       ELSE        !No tillage operations if NTIL <= 0
         NTIL = 0
       ENDIF

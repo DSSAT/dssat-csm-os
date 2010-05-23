@@ -685,6 +685,7 @@ C         Read in weather file header.
       TYPE (ControlType) CONTROL
       CHARACTER*1  RNMODE
       CHARACTER*6, PARAMETER :: ERRKEY = "IPWTH "
+      CHARACTER*78 MSG(2)
       CHARACTER*120 LINE  
       CHARACTER*92 FILEWW
 
@@ -838,6 +839,10 @@ C         Read in weather file header.
           IF (NRecords > 1) THEN
             IF (YRDOY_A(NRecords) < YRDOY_A(NRecords-1)) THEN
               ErrCode = 8
+              WRITE(MSG(1),'("Record",I7,I8)') NRecords-1,
+     &          YRDOY_A(NRecords-1)
+              WRITE(MSG(2),'("Record",I7,I8)')NRecords,YRDOY_A(NRecords)
+              CALL WARNING(2,ERRKEY,MSG)
               CALL WeatherError(CONTROL, ErrCode, FILEWW, 
      &                  LINWTH, YRDOYW, YREND)
               RETURN
