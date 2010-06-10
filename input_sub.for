@@ -103,7 +103,7 @@ C=======================================================================
       CHARACTER* 30 FILEIO
       CHARACTER* 42 CHEXTR(NAPPL)
       CHARACTER* 80 PATHEX
-      CHARACTER* 92 FILEX_P 
+      CHARACTER* 92 FILEX_P
       CHARACTER*120 INPUTX
       CHARACTER*120 WTHSTR, FILECTL
       CHARACTER*1000 ATLINE

@@ -60,11 +60,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 0
-        INTEGER :: Build =47
+        INTEGER :: Build =48
       END TYPE VersionType
       TYPE (VersionType) Version
 
 !     Version history:
+!       4.5.0.48 chp 06/09/2010 Post-Griffin Workshop.
 !       4.5.0.47 chp 05/06/2010 Griffin Workshop.
 !       4.5.0.46 chp 04/22/2010 Further changes to CSCRP genotype files.
 !       4.5.0.45 chp 04/16/2010 Changes to CSCER, CSCRP genotype files.

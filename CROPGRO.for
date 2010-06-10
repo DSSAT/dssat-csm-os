@@ -1347,7 +1347,7 @@ C-----------------------------------------------------------------------
       Call PUT('PLANT', 'PLTPOP', PLTPOP)
       Call PUT('PLANT', 'RNITP',  RNITP) 
       Call PUT('PLANT', 'SLAAD',  SLAAD) 
-      Call PUT('PLANT', 'XPOD',   XPOD)  
+      Call PUT('PLANT', 'XPOD',   XPOD)
 
       RETURN
       END SUBROUTINE CROPGRO

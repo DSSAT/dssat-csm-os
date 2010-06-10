@@ -1,4 +1,5 @@
 !  Utility routines/functions
+!  Last edit 17/05/10 LAH
 
       ! Subroutines: Calendar, Csopline, Csdaylen, Csincmth, Csyr_doy
       !              Emod, Emod2
@@ -1569,10 +1570,8 @@
 
       IMPLICIT NONE
 
-      INTEGER   dapcalc,datein,year,day,yeartmp,dateinwr
-      INTEGER   pdoy,pdoyin,pyr,pyrin
-
-      INTRINSIC MOD
+      INTEGER   dapcalc,datein,year,day,yeartmp,dateinwr,dateinadj
+      INTEGER   pdoy,pdoyin,pyr,pyrin,pyeardoyin,cstimdif
 
       SAVE
 
@@ -1582,86 +1581,21 @@
       ENDIF
 
       dapcalc=-99
+      
+      PYEARDOYIN = PYRIN*1000 + PDOYIN
 
-      DATEINWR = DATEIN
-      IF(DATEIN.GT.2000000)DATEINWR=DATEIN-2000000
-      IF(DATEIN.GT.1900000)DATEINWR=DATEIN-1900000
-
-      pdoy=pdoyin
-      IF(pyrin.GT.99)THEN
-       pyr=MOD(pyrin,100)
+      IF (DATEIN.LT.1000) THEN
+        IF (DATEIN.GT.PDOYIN) THEN
+          DATEINADJ = PYRIN*1000 + DATEIN
+        ELSE  
+          ! Simply add 1 year
+          DATEINADJ = (PYRIN+1)*1000 + DATEIN
+        ENDIF
       ELSE
-       pyr=pyrin
+         DATEINADJ = DATEIN  
       ENDIF
-      IF(pyr.LT.20)THEN
-       pyr=2000+pyr
-      ELSE
-       pyr=1900+pyr
-      ENDIF
-
-      IF(dateinwr.GT.1000)THEN
-       day=MOD(dateinwr,1000)
-       yeartmp=(dateinwr-day)/1000
-       IF(yeartmp.GT.99)THEN
-        year=MOD(yeartmp,1000)
-        IF(year.GT.99)year=MOD(year,100)
-       ELSE
-        year=yeartmp
-       ENDIF
-      ELSE
-       day=dateinwr
-       year=-99
-      ENDIF
-
-      IF(year.GT.-99)THEN
-       IF(year.LT.20)THEN
-        year=2000+year
-       ELSE
-        year=1900+year
-       ENDIF
-      ENDIF
-
-      IF(year.EQ.-99)THEN
-       IF(day.LE.pdoy)THEN
-        IF(MOD(pyr,4).EQ.0)THEN
-         dapcalc=(366-pdoy)+day
-        ELSE
-         dapcalc=(365-pdoy)+day
-        ENDIF
-       ELSE
-        dapcalc=day-pdoy
-       ENDIF
-      ENDIF
-
-      IF(year.NE.-99)THEN
-       IF(year.EQ.pyr)THEN
-        dapcalc=day-pdoy
-       ELSEIF(year.EQ.pyr+1)THEN
-        IF(MOD(pyr,4).EQ.0)THEN
-         dapcalc=(366-pdoy)+day
-        ELSE
-         dapcalc=(365-pdoy)+day
-        ENDIF
-       ELSEIF(year.EQ.pyr+2)THEN
-        IF(MOD(pyr,4).EQ.0)THEN
-         dapcalc=(366-pdoy)+365+day
-        ELSEIF(MOD(pyr+1,4).EQ.0)THEN
-         dapcalc=(365-pdoy)+366+day
-        ELSE
-         dapcalc=(365-pdoy)+365+day
-        ENDIF
-       ELSEIF(year.EQ.pyr+3)THEN
-        IF(MOD(pyr,4).EQ.0)THEN
-         dapcalc=(366-pdoy)+365+365+day
-        ELSEIF(MOD(pyr+1,4).EQ.0)THEN
-         dapcalc=(365-pdoy)+366+365+day
-        ELSEIF(MOD(pyr+2,4).EQ.0)THEN
-         dapcalc=(365-pdoy)+365+366+day
-        ELSE
-         dapcalc=(365-pdoy)+365+365+day
-        ENDIF
-       ENDIF
-      ENDIF
+      
+      DAPCALC = MAX(0,CSTIMDIF(PYEARDOYIN,DATEINADJ))
 
       IF(dapcalc.LT.0)dapcalc=-99
 

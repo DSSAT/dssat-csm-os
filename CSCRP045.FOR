@@ -1,6 +1,6 @@
 !-----------------------------------------------------------------------
 !  CROPSIM CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
-!  Last edit 06/05/10 LAH
+!  Last edit 20/05/10 LAH
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCROP (FILEIOIN, RUN, TN, RN, RNMODE,    !Command line
@@ -65,8 +65,6 @@
       !   12. Protection of N supply for leaf growth added. (Problem 
       !       with N on growth because lack of N->reduced growth->
       !       reduced uptake!
-
-      ! Switches combinations for outputs
 
 
       USE CRSIMDEF
@@ -395,7 +393,7 @@
       REAL          GFDAPFR       ! Grain filling start DAP+fr     #
       INTEGER       GFDAPM        ! Grain filling date,measured    #
       REAL          GFDAT         ! Grain filling start DAP        #
-      REAL          GFDAYFR       ! Linear grain fill,fraction day #
+      REAL          GFDUR         ! Linear grain fill duration     d
       REAL          GGPHASE(4)    ! Grain set start,etc.,stages    #
       REAL          GGPHASEDU(4)  ! Grain set start,etc.,stages    PVTt
       REAL          GLIGP         ! Grain lignin content           %
@@ -495,6 +493,7 @@
       INTEGER       HANUM         ! Harvest instruction number     # 
       REAL          HARDAYS       ! Accumulated hardening days     #
       REAL          HARDILOS      ! Hardening index loss           #
+      REAL          HARVFRAC(2)   ! Harvest fraction as brought in #
       REAL          HAWAD         ! Harvested weight (grazing,etc) kg/ha
       INTEGER       HAYEAR        ! Harvest year                   #
       REAL          HBPC(HANUMX)  ! Harvest by-product percentage  #
@@ -799,7 +798,7 @@
       REAL          PARIF         ! PAR interception fraction      #
       REAL          PARIF1        ! PAR interception fr,1-crop mdl #
       REAL          PARIFOUT      ! PAR interception fr for output #
-      REAL          PARIFPREV        ! PAR interception fr,previous   #
+      REAL          PARIFPREV     ! PAR interception fr,previous   #
       REAL          PARIP         ! PAR interception percentage    %
       REAL          PARIPA        ! PAR interception %, active     %
       REAL          PARIUE        ! PAR intercepted use efficiency g/MJ
@@ -1220,16 +1219,16 @@
       INTEGER       STGEDAT       ! Stem growth end date (Yrdoy)   #
       REAL          STGEFR        ! Stem growth end time,fr day    #
       INTEGER       STGYEARDOY(20)! Stage dates (Year+Doy)         #
-      REAL          STRESS(20)
-      REAL          STRESS20 
-      REAL          STRESS20GS
-      REAL          STRESS20N
-      REAL          STRESS20NS 
-      REAL          STRESS20S 
-      REAL          STRESS20W
-      REAL          STRESS20WS 
-      REAL          STRESSN(20)
-      REAL          STRESSW(20)
+      REAL          STRESS(20)    ! Min h2o,n factors for growth   #
+      REAL          STRESS20      ! 20d av.,min h2o,n gr.factors   #
+      REAL          STRESS20GS    ! 20d stress factor,grain set    # 
+      REAL          STRESS20N     ! 20d av.,n gr.factor            #
+      REAL          STRESS20NS    ! 20d sum,n gr.factors           #
+      REAL          STRESS20S     ! 20d sum.,min h2o,n gr.factors  #
+      REAL          STRESS20W     ! 20d av.,h2o gr.factor          #
+      REAL          STRESS20WS    ! 20d sum,h2o gr.factors         #
+      REAL          STRESSN(20)   ! 20d n gr.factors               #
+      REAL          STRESSW(20)   ! 20d h2o gr.factors             #
       REAL          STRSWAD       ! Stem reserves                  kg/ha
       REAL          STRSWT        ! Stem reserves                  g/p
       REAL          STSTAGE       ! Stem stage 0-1 over stem phase #
@@ -1598,6 +1597,8 @@
       CHARACTER (LEN=1)   ISWWATEARLY   ! Control flag,H20 stress early
       CHARACTER (LEN=6)   LAIC          ! Leaf area index
       CHARACTER (LEN=6)   LAIPRODC      ! Leaf area index produced
+      CHARACTER (LEN=6)   LAIXCHAR      ! Leaf area index,maximum
+      CHARACTER (LEN=6)   LAIXMCHAR     ! Leaf area index,max,measured
       CHARACTER (LEN=6)   LAPC          ! Area of cohort of leaves
       CHARACTER (LEN=6)   LAPOTXC       ! Leaf area,potential
       CHARACTER (LEN=6)   LAPSC         ! Senesced area,cohort of leaves
@@ -1674,8 +1675,6 @@
       INTEGER,      PARAMETER :: SUMNUM = 29
       CHARACTER*5,  DIMENSION(SUMNUM) :: LABEL
       REAL,         DIMENSION(SUMNUM) :: VALUE
-
-      REAL, DIMENSION(2)  :: HARVFRAC
 
       INTRINSIC AMAX1,AMIN1,EXP,FLOAT,INDEX,INT,LEN,MAX,MIN,MOD,NINT
       INTRINSIC SQRT,ABS,TRIM
@@ -2175,7 +2174,7 @@
         gestageprev = 0.0
         geucum = 0.0
         gfdat = -99
-        gfdayfr = -99
+        gfdur = -99
         gnad = 0.0
         gnoad = 0.0
         gnoam = 0.0
@@ -3009,437 +3008,431 @@
 !-----------------------------------------------------------------------
 
         IF (FILEIOT(1:2).EQ.'DS') THEN
-          !IF (CROP.NE.CROPPREV .OR. VARNO.NE.VARNOPREV) THEN
-            CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VREQ',vreq)
-            IF (VREQ.LT.0.0)
-     &       CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VREQX',vreq)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VBASE',vbase)
-            IF (VBASE.LT.0.0)
-     &       CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VREQN',vbase)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VEFF',veff)
-            IF (VEFF.LT.0.0)
-     &       CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VEFFX',veff)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS1',dayls(1))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS2',dayls(2))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS3',dayls(3))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS4',dayls(4))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS5',dayls(5))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS6',dayls(6))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS7',dayls(7))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS8',dayls(8))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS9',dayls(9))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPEXP',ppexp) ! Trial
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPFPE',dfpe)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'G#WTS',gnows)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GWTS',gwts)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SHWTS',g3)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHINT',phints)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P1',pd(1))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P2',pd(2))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P3',pd(3))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P4',pd(4))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P5',pd(5))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P6',pd(6))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P7',pd(7))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P8',pd(8))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P9',pd(9))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P1L',pdl(1))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P2L',pdl(2))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P3L',pdl(3))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P4L',pdl(4))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P5L',pdl(5))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P6L',pdl(6))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P7L',pdl(7))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P8L',pdl(8))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P9L',pdl(9))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LLIFA',llifa)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'STFR',swfrs)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SR#WT',srnow)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SRFR',srfr)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXS',laxs)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFS',lafs)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAF#',lafno)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAWS',laws)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUU',wfnuu)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUL',wfnul)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NCNU',ncnu)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RLFNU',rlfnu)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPU',nfpu)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPL',nfpl)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFGU',nfgu)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFGL',nfgl)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RDGS',rdgs)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RLWR',rlwr)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARUE',parue)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARU2',paru2)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'TDFAC',tildf)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'TDSF',tilsf)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SHWAS',gwtat)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GWWF',gwtaa)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GW#F',gwtcf)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'G#WSF',gnowf)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'G#NSF',gnonf)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',la1s)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFV',lafv)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFR',lafr)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHL2',phintl(2))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHF3',phintf(3))
-          !ENDIF
+          CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VREQ',vreq)
+          IF (VREQ.LT.0.0)
+     &     CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VREQX',vreq)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VBASE',vbase)
+          IF (VBASE.LT.0.0)
+     &     CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VREQN',vbase)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VEFF',veff)
+          IF (VEFF.LT.0.0)
+     &     CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VEFFX',veff)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS1',dayls(1))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS2',dayls(2))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS3',dayls(3))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS4',dayls(4))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS5',dayls(5))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS6',dayls(6))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS7',dayls(7))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS8',dayls(8))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS9',dayls(9))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPEXP',ppexp) ! Trial
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPFPE',dfpe)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'G#WTS',gnows)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GWTS',gwts)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SHWTS',g3)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHINT',phints)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P1',pd(1))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P2',pd(2))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P3',pd(3))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P4',pd(4))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P5',pd(5))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P6',pd(6))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P7',pd(7))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P8',pd(8))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P9',pd(9))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P1L',pdl(1))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P2L',pdl(2))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P3L',pdl(3))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P4L',pdl(4))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P5L',pdl(5))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P6L',pdl(6))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P7L',pdl(7))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P8L',pdl(8))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P9L',pdl(9))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LLIFA',llifa)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'STFR',swfrs)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SR#WT',srnow)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SRFR',srfr)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXS',laxs)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFS',lafs)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAF#',lafno)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAWS',laws)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUU',wfnuu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUL',wfnul)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NCNU',ncnu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RLFNU',rlfnu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPU',nfpu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPL',nfpl)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFGU',nfgu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFGL',nfgl)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RDGS',rdgs)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RLWR',rlwr)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARUE',parue)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARU2',paru2)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'TDFAC',tildf)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'TDSF',tilsf)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SHWAS',gwtat)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GWWF',gwtaa)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GW#F',gwtcf)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'G#WSF',gnowf)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'G#NSF',gnonf)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',la1s)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFV',lafv)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFR',lafr)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHL2',phintl(2))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHF3',phintf(3))
         ELSE
-          !IF (CUDIRFLE.NE.CUDIRFLPREV .OR. VARNO.NE.VARNOPREV) THEN
-            CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
-            CALL CUREADR (CUDIRFLE,VARNO,'VREQ',vreq)
-            IF (VREQ.LT.0.0)CALL CUREADR (CUDIRFLE,VARNO,'VREQX',vreq)
-            CALL CUREADR (CUDIRFLE,VARNO,'VBASE',vbase)
-            IF (VBASE.LT.0.0)CALL CUREADR (CUDIRFLE,VARNO,'VREQN',vbase)
-            CALL CUREADR (CUDIRFLE,VARNO,'VEFF',veff)
-            IF (VEFF.LT.0.0)CALL CUREADR (CUDIRFLE,VARNO,'VEFFX',veff)
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS1',dayls(1))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS2',dayls(2))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS3',dayls(3))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS4',dayls(4))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS5',dayls(5))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS6',dayls(6))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS7',dayls(7))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS8',dayls(8))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS9',dayls(9))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPEXP',ppexp)! Trial
-            CALL CUREADR (CUDIRFLE,VARNO,'PPFPE',dfpe)
-            CALL CUREADR (CUDIRFLE,VARNO,'P1',pd(1))
-            CALL CUREADR (CUDIRFLE,VARNO,'P2',pd(2))
-            CALL CUREADR (CUDIRFLE,VARNO,'P3',pd(3))
-            CALL CUREADR (CUDIRFLE,VARNO,'P4',pd(4))
-            CALL CUREADR (CUDIRFLE,VARNO,'P5',pd(5))
-            CALL CUREADR (CUDIRFLE,VARNO,'P6',pd(6))
-            CALL CUREADR (CUDIRFLE,VARNO,'P7',pd(7))
-            CALL CUREADR (CUDIRFLE,VARNO,'P8',pd(8))
-            CALL CUREADR (CUDIRFLE,VARNO,'P9',pd(9))
-            CALL CUREADR (CUDIRFLE,VARNO,'P1L',pdl(1))
-            CALL CUREADR (CUDIRFLE,VARNO,'P2L',pdl(2))
-            CALL CUREADR (CUDIRFLE,VARNO,'P3L',pdl(3))
-            CALL CUREADR (CUDIRFLE,VARNO,'P4L',pdl(4))
-            CALL CUREADR (CUDIRFLE,VARNO,'P5L',pdl(5))
-            CALL CUREADR (CUDIRFLE,VARNO,'P6L',pdl(6))
-            CALL CUREADR (CUDIRFLE,VARNO,'P7L',pdl(7))
-            CALL CUREADR (CUDIRFLE,VARNO,'P8L',pdl(8))
-            CALL CUREADR (CUDIRFLE,VARNO,'P9L',pdl(9))
-            CALL CUREADR (CUDIRFLE,VARNO,'G#WTS',gnows)
-            CALL CUREADR (CUDIRFLE,VARNO,'GWTS',gwts)
-            CALL CUREADR (CUDIRFLE,VARNO,'SHWTS',g3)
-            CALL CUREADR (CUDIRFLE,VARNO,'PHINT',phints)
-            CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
-            CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs)
-            CALL CUREADR (CUDIRFLE,VARNO,'SR#WT',srnow)
-            CALL CUREADR (CUDIRFLE,VARNO,'SRFR',srfr)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAXND',laxno)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAFS',lafs)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAF#',lafno)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAWS',laws)
-            CALL CUREADR (CUDIRFLE,VARNO,'WFNUU',wfnuu)
-            CALL CUREADR (CUDIRFLE,VARNO,'WFNUL',wfnul)
-            CALL CUREADR (CUDIRFLE,VARNO,'NCNU',ncnu)
-            CALL CUREADR (CUDIRFLE,VARNO,'RLFNU',rlfnu)
-            CALL CUREADR (CUDIRFLE,VARNO,'NFPU',nfpu)
-            CALL CUREADR (CUDIRFLE,VARNO,'NFPL',nfpl)
-            CALL CUREADR (CUDIRFLE,VARNO,'NFGU',nfgu)
-            CALL CUREADR (CUDIRFLE,VARNO,'NFGL',nfgl)
-            CALL CUREADR (CUDIRFLE,VARNO,'RDGS',rdgs)
-            CALL CUREADR (CUDIRFLE,VARNO,'RLWR',rlwr)
-            CALL CUREADR (CUDIRFLE,VARNO,'PARUE',parue)
-            CALL CUREADR (CUDIRFLE,VARNO,'PARU2',paru2)
-            CALL CUREADR (CUDIRFLE,VARNO,'TDFAC',tildf)
-            CALL CUREADR (CUDIRFLE,VARNO,'TDSF',tilsf)
-            CALL CUREADR (CUDIRFLE,VARNO,'SHWAS',gwtat)
-            CALL CUREADR (CUDIRFLE,VARNO,'GWWF',gwtaa)
-            CALL CUREADR (CUDIRFLE,VARNO,'GW#F',gwtcf)
-            CALL CUREADR (CUDIRFLE,VARNO,'G#WSF',gnowf)
-            CALL CUREADR (CUDIRFLE,VARNO,'G#NSF',gnonf)
-            CALL CUREADR (CUDIRFLE,VARNO,'LA1S',la1s)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAFV',lafv)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAFR',lafr)
-            CALL CUREADR (CUDIRFLE,VARNO,'PHL2',phintl(2))
-            CALL CUREADR (CUDIRFLE,VARNO,'PHF3',phintf(3))
-          !ENDIF
+          CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
+          CALL CUREADR (CUDIRFLE,VARNO,'VREQ',vreq)
+          IF (VREQ.LT.0.0)CALL CUREADR (CUDIRFLE,VARNO,'VREQX',vreq)
+          CALL CUREADR (CUDIRFLE,VARNO,'VBASE',vbase)
+          IF (VBASE.LT.0.0)CALL CUREADR (CUDIRFLE,VARNO,'VREQN',vbase)
+          CALL CUREADR (CUDIRFLE,VARNO,'VEFF',veff)
+          IF (VEFF.LT.0.0)CALL CUREADR (CUDIRFLE,VARNO,'VEFFX',veff)
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS1',dayls(1))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS2',dayls(2))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS3',dayls(3))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS4',dayls(4))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS5',dayls(5))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS6',dayls(6))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS7',dayls(7))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS8',dayls(8))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPS9',dayls(9))
+          CALL CUREADR (CUDIRFLE,VARNO,'PPEXP',ppexp)! Trial
+          CALL CUREADR (CUDIRFLE,VARNO,'PPFPE',dfpe)
+          CALL CUREADR (CUDIRFLE,VARNO,'P1',pd(1))
+          CALL CUREADR (CUDIRFLE,VARNO,'P2',pd(2))
+          CALL CUREADR (CUDIRFLE,VARNO,'P3',pd(3))
+          CALL CUREADR (CUDIRFLE,VARNO,'P4',pd(4))
+          CALL CUREADR (CUDIRFLE,VARNO,'P5',pd(5))
+          CALL CUREADR (CUDIRFLE,VARNO,'P6',pd(6))
+          CALL CUREADR (CUDIRFLE,VARNO,'P7',pd(7))
+          CALL CUREADR (CUDIRFLE,VARNO,'P8',pd(8))
+          CALL CUREADR (CUDIRFLE,VARNO,'P9',pd(9))
+          CALL CUREADR (CUDIRFLE,VARNO,'P1L',pdl(1))
+          CALL CUREADR (CUDIRFLE,VARNO,'P2L',pdl(2))
+          CALL CUREADR (CUDIRFLE,VARNO,'P3L',pdl(3))
+          CALL CUREADR (CUDIRFLE,VARNO,'P4L',pdl(4))
+          CALL CUREADR (CUDIRFLE,VARNO,'P5L',pdl(5))
+          CALL CUREADR (CUDIRFLE,VARNO,'P6L',pdl(6))
+          CALL CUREADR (CUDIRFLE,VARNO,'P7L',pdl(7))
+          CALL CUREADR (CUDIRFLE,VARNO,'P8L',pdl(8))
+          CALL CUREADR (CUDIRFLE,VARNO,'P9L',pdl(9))
+          CALL CUREADR (CUDIRFLE,VARNO,'G#WTS',gnows)
+          CALL CUREADR (CUDIRFLE,VARNO,'GWTS',gwts)
+          CALL CUREADR (CUDIRFLE,VARNO,'SHWTS',g3)
+          CALL CUREADR (CUDIRFLE,VARNO,'PHINT',phints)
+          CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
+          CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs)
+          CALL CUREADR (CUDIRFLE,VARNO,'SR#WT',srnow)
+          CALL CUREADR (CUDIRFLE,VARNO,'SRFR',srfr)
+          CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
+          CALL CUREADR (CUDIRFLE,VARNO,'LAXND',laxno)
+          CALL CUREADR (CUDIRFLE,VARNO,'LAFS',lafs)
+          CALL CUREADR (CUDIRFLE,VARNO,'LAF#',lafno)
+          CALL CUREADR (CUDIRFLE,VARNO,'LAWS',laws)
+          CALL CUREADR (CUDIRFLE,VARNO,'WFNUU',wfnuu)
+          CALL CUREADR (CUDIRFLE,VARNO,'WFNUL',wfnul)
+          CALL CUREADR (CUDIRFLE,VARNO,'NCNU',ncnu)
+          CALL CUREADR (CUDIRFLE,VARNO,'RLFNU',rlfnu)
+          CALL CUREADR (CUDIRFLE,VARNO,'NFPU',nfpu)
+          CALL CUREADR (CUDIRFLE,VARNO,'NFPL',nfpl)
+          CALL CUREADR (CUDIRFLE,VARNO,'NFGU',nfgu)
+          CALL CUREADR (CUDIRFLE,VARNO,'NFGL',nfgl)
+          CALL CUREADR (CUDIRFLE,VARNO,'RDGS',rdgs)
+          CALL CUREADR (CUDIRFLE,VARNO,'RLWR',rlwr)
+          CALL CUREADR (CUDIRFLE,VARNO,'PARUE',parue)
+          CALL CUREADR (CUDIRFLE,VARNO,'PARU2',paru2)
+          CALL CUREADR (CUDIRFLE,VARNO,'TDFAC',tildf)
+          CALL CUREADR (CUDIRFLE,VARNO,'TDSF',tilsf)
+          CALL CUREADR (CUDIRFLE,VARNO,'SHWAS',gwtat)
+          CALL CUREADR (CUDIRFLE,VARNO,'GWWF',gwtaa)
+          CALL CUREADR (CUDIRFLE,VARNO,'GW#F',gwtcf)
+          CALL CUREADR (CUDIRFLE,VARNO,'G#WSF',gnowf)
+          CALL CUREADR (CUDIRFLE,VARNO,'G#NSF',gnonf)
+          CALL CUREADR (CUDIRFLE,VARNO,'LA1S',la1s)
+          CALL CUREADR (CUDIRFLE,VARNO,'LAFV',lafv)
+          CALL CUREADR (CUDIRFLE,VARNO,'LAFR',lafr)
+          CALL CUREADR (CUDIRFLE,VARNO,'PHL2',phintl(2))
+          CALL CUREADR (CUDIRFLE,VARNO,'PHF3',phintf(3))
         ENDIF     ! End Cultivar reads
 
 !-----------------------------------------------------------------------
 !       Read ecotype information
 !-----------------------------------------------------------------------
 
-        !IF (ECDIRFLE.NE.ECDIRFLPREV .OR. ECONO.NE.ECONOPREV) THEN
-         CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',canhts)
-         CALL ECREADR (ECDIRFLE,ECONO,'AWNS',awns)
-         CALL ECREADR (ECDIRFLE,ECONO,'RS%A',rsca)
-         CALL ECREADR (ECDIRFLE,ECONO,'TIPHS',ti1lf)
-         CALL ECREADR (ECDIRFLE,ECONO,'TIFAC',tifac)
-         CALL ECREADR (ECDIRFLE,ECONO,'TIPHE',tilpe)
-         CALL ECREADR (ECDIRFLE,ECONO,'TDPHS',tilds)
-         CALL ECREADR (ECDIRFLE,ECONO,'TDPHE',tilde)
-         CALL ECREADR (ECDIRFLE,ECONO,'GN%S',grns)
-         CALL ECREADR (ECDIRFLE,ECONO,'SRN%S',srns)
-         IF (SRNS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
-         IF (SRPRS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRPRS',srprs)
-         CALL ECREADR (ECDIRFLE,ECONO,'TKFH',tkfh)
-         CALL ECREADR (ECDIRFLE,ECONO,'LSPHS',lsens)
-         CALL ECREADR (ECDIRFLE,ECONO,'LSPHE',lsene)
-         CALL ECREADR (ECDIRFLE,ECONO,'SSPHS',ssphase(1))
-         CALL ECREADR (ECDIRFLE,ECONO,'SSPHE',ssphase(2))
-         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
-         IF (PHINTL(2).LE.0) 
-     &    CALL ECREADR(ECDIRFLE,ECONO,'PHL2',phintl(2))
-         IF (PHINTF(3).LE.0)
-     &    CALL ECREADR(ECDIRFLE,ECONO,'PHF3',phintf(3))
-         CALL ECREADR (ECDIRFLE,ECONO,'S#FX',snofx)
-         IF (SNOFX.LE.0.0)
-     &    CALL ECREADR (ECDIRFLE,ECONO,'SNOFX',snofx)
-         ! LAH Following set up to allow for change in stem fraction
-         ! Currently not used ... just one stem fraction (STFR)
-         CALL ECREADR (ECDIRFLE,ECONO,'SWFRX',swfrx)
-         CALL ECREADR (ECDIRFLE,ECONO,'SWFRN',swfrn)
-         CALL ECREADR (ECDIRFLE,ECONO,'SWFNL',swfrnl)
-         CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl)
-         CALL ECREADR (ECDIRFLE,ECONO,'LAWCF',lawcf)
-         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
-         ! Following may have been (temporarily) in the CUL file
-         ! Grains
-         IF (GWTCF.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'GW#F',gwtcf)
-         IF (GNOWF.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'G#WSF',gnowf)
-         IF (GNONF.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'G#NSF',gnonf)
-         IF (GWTAT.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SHWAS',gwtat)
-         IF (GWTAA.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'GWWF',gwtaa)
-         ! Nitrogen uptake
-         IF (WFNUU.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'WFNUU',wfnuu)
-         IF (WFNUL.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'WFNUL',wfnul)
-         IF (NCNU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NCNU',ncnu)
-         IF (RLFNU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RLFNU',rlfnu)
-         ! Radiation use efficiency
-         IF (PARUE.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
-         IF (PARU2.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',paru2)
-         ! Leaf area
-         IF (LA1S.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)
-         IF (LAXS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAXS',laxs)
-         IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAWS',laws)
-         IF (LAFV.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
-         IF (LAFR.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFR',lafr)
-         ! Roots
-         IF (RDGS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RDGS',rdgs)
-         ! Tillers
-         IF (TILDF.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'TDFAC',tildf)
-         IF (TILSF.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'TDSF',tilsf)
-         ! Reduction factors
-         IF (NFGU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
-         IF (NFGL.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
-        !ENDIF
+        CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',canhts)
+        CALL ECREADR (ECDIRFLE,ECONO,'AWNS',awns)
+        CALL ECREADR (ECDIRFLE,ECONO,'RS%A',rsca)
+        CALL ECREADR (ECDIRFLE,ECONO,'TIPHS',ti1lf)
+        CALL ECREADR (ECDIRFLE,ECONO,'TIFAC',tifac)
+        CALL ECREADR (ECDIRFLE,ECONO,'TIPHE',tilpe)
+        CALL ECREADR (ECDIRFLE,ECONO,'TDPHS',tilds)
+        CALL ECREADR (ECDIRFLE,ECONO,'TDPHE',tilde)
+        CALL ECREADR (ECDIRFLE,ECONO,'GN%S',grns)
+        CALL ECREADR (ECDIRFLE,ECONO,'SRN%S',srns)
+        IF (SRNS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
+        IF (SRPRS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRPRS',srprs)
+        CALL ECREADR (ECDIRFLE,ECONO,'TKFH',tkfh)
+        CALL ECREADR (ECDIRFLE,ECONO,'LSPHS',lsens)
+        CALL ECREADR (ECDIRFLE,ECONO,'LSPHE',lsene)
+        CALL ECREADR (ECDIRFLE,ECONO,'SSPHS',ssphase(1))
+        CALL ECREADR (ECDIRFLE,ECONO,'SSPHE',ssphase(2))
+        CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
+        IF (PHINTL(2).LE.0) 
+     &   CALL ECREADR(ECDIRFLE,ECONO,'PHL2',phintl(2))
+        IF (PHINTF(3).LE.0)
+     &   CALL ECREADR(ECDIRFLE,ECONO,'PHF3',phintf(3))
+        CALL ECREADR (ECDIRFLE,ECONO,'S#FX',snofx)
+        IF (SNOFX.LE.0.0)
+     &   CALL ECREADR (ECDIRFLE,ECONO,'SNOFX',snofx)
+        ! LAH Following set up to allow for change in stem fraction
+        ! Currently not used ... just one stem fraction (STFR)
+        CALL ECREADR (ECDIRFLE,ECONO,'SWFRX',swfrx)
+        CALL ECREADR (ECDIRFLE,ECONO,'SWFRN',swfrn)
+        CALL ECREADR (ECDIRFLE,ECONO,'SWFNL',swfrnl)
+        CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl)
+        CALL ECREADR (ECDIRFLE,ECONO,'LAWCF',lawcf)
+        CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
+        ! Following may have been (temporarily) in the CUL file
+        ! Grains
+        IF (GWTCF.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'GW#F',gwtcf)
+        IF (GNOWF.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'G#WSF',gnowf)
+        IF (GNONF.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'G#NSF',gnonf)
+        IF (GWTAT.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SHWAS',gwtat)
+        IF (GWTAA.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'GWWF',gwtaa)
+        ! Nitrogen uptake
+        IF (WFNUU.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'WFNUU',wfnuu)
+        IF (WFNUL.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'WFNUL',wfnul)
+        IF (NCNU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NCNU',ncnu)
+        IF (RLFNU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RLFNU',rlfnu)
+        ! Radiation use efficiency
+        IF (PARUE.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
+        IF (PARU2.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',paru2)
+        ! Leaf area
+        IF (LA1S.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)
+        IF (LAXS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAXS',laxs)
+        IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAWS',laws)
+        IF (LAFV.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
+        IF (LAFR.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFR',lafr)
+        ! Roots
+        IF (RDGS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RDGS',rdgs)
+        ! Tillers
+        IF (TILDF.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'TDFAC',tildf)
+        IF (TILSF.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'TDSF',tilsf)
+        ! Reduction factors
+        IF (NFGU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
+        IF (NFGL.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
 
 !-----------------------------------------------------------------------
 !       Read species information
 !-----------------------------------------------------------------------
 
-          CALL SPREADR (SPDIRFLE,'CHFR' ,chfr)
-          CALL SPREADR (SPDIRFLE,'CO2CC',co2cc)
-          CALL SPREADR (SPDIRFLE,'CO2EX',co2ex)
-          CALL SPREADR (SPDIRFLE,'GLIG%',gligp)
-          CALL SPREADR (SPDIRFLE,'GN%MN',grnmn)
-          CALL SPREADR (SPDIRFLE,'GN%MX',grnmx)
-          CALL SPREADR (SPDIRFLE,'GWLAG',gwlfr)
-          CALL SPREADR (SPDIRFLE,'GWLIN',gwefr)
-          CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)
-          CALL SPREADR (SPDIRFLE,'HLOSF',hlossfr)
-          CALL SPREADR (SPDIRFLE,'HLOST',hlosstemp)
-          CALL SPREADR (SPDIRFLE,'HMPC', hmpc)
-          CALL SPREADR (SPDIRFLE,'LAFST',lafst)
-          CALL SPREADR (SPDIRFLE,'LAWFF',lawff)
-          CALL SPREADR (SPDIRFLE,'LAWTR',lawtr)
-          CALL SPREADR (SPDIRFLE,'LAWTS',lawts)
-          CALL SPREADR (SPDIRFLE,'LAWWR',lawwr)
-          CALL SPREADR (SPDIRFLE,'LLIFG',LLIFG)
-          CALL SPREADR (SPDIRFLE,'LLIFS',llifs)
-          CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
-          CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
-          CALL SPREADR (SPDIRFLE,'LWLOS',lsewf)
-          CALL SPREADR (SPDIRFLE,'NFS'  ,nfs)
-          CALL SPREADR (SPDIRFLE,'NFSF' ,nfsf)
-          CALL SPREADR (SPDIRFLE,'NFTL ',nftl)
-          CALL SPREADR (SPDIRFLE,'NFTU ',nftu)
-          IF (lsene.LE.0.0) CALL SPREADR (SPDIRFLE,'LSENE',lsene)
-          CALL SPREADR (SPDIRFLE,'LSHAR',lsawr)
-          CALL SPREADR (SPDIRFLE,'LSHAW',lsawv)
-          CALL SPREADR (SPDIRFLE,'LSHFR',lshfr)
-          CALL SPREADR (SPDIRFLE,'NCRG',ncrg)
-          CALL SPREADR (SPDIRFLE,'NTUPF',ntupf)
-          CALL SPREADR (SPDIRFLE,'NPTFL',nptfl)
-          CALL SPREADR (SPDIRFLE,'PARIX',parix)
-          CALL SPREADR (SPDIRFLE,'PARFC',parfc)
-          CALL SPREADR (SPDIRFLE,'PEMRG',pecm)
-          CALL SPREADR (SPDIRFLE,'PGERM',pgerm)
-          CALL SPREADR (SPDIRFLE,'PDMH' ,pdmtohar)
-          CALL SPREADR (SPDIRFLE,'PSRI',pdsri)
-          IF (PDSRI.LE.0.0)
-     &     CALL SPREADR (SPDIRFLE,'PDSRI',pdsri)
-          CALL SPREADR (SPDIRFLE,'PHSV' ,phsv)
-          CALL SPREADR (SPDIRFLE,'PHTV' ,phtv)
-          CALL SPREADR (SPDIRFLE,'PPTHR',ppthr)
-          CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)
-          CALL SPREADR (SPDIRFLE,'PTFMN',ptfmn)
-          CALL SPREADR (SPDIRFLE,'PTFMX',ptfmx)
-          CALL SPREADR (SPDIRFLE,'RATM' ,ratm)
-          CALL SPREADR (SPDIRFLE,'RCROP',rcrop)
-          CALL SPREADR (SPDIRFLE,'RDGAF',rdgaf)
-          CALL SPREADR (SPDIRFLE,'RWULF',rlfwu)
-          CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
-          !CALL SPREADR (SPDIRFLE,'RNUMX',rnumx) ! Taken out of spp file
-          CALL SPREADR (SPDIRFLE,'RRESP',rresp)
-          CALL SPREADR (SPDIRFLE,'RS%LX',rsclx)
-          CALL SPREADR (SPDIRFLE,'RS%S' ,rscs)
-          CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)
-          CALL SPREADR (SPDIRFLE,'RSFPL',rsfpl)
-          CALL SPREADR (SPDIRFLE,'RSFPU',rsfpu)
-          CALL SPREADR (SPDIRFLE,'RSUSE',rsuse)
-          CALL SPREADR (SPDIRFLE,'RTUFR',rtufr)
-          CALL SPREADR (SPDIRFLE,'RUESG',ruestg)
-          CALL SPREADR (SPDIRFLE,'RWUMX',rwumx)
-          CALL SPREADR (SPDIRFLE,'RWUPM',rwupm)
-          CALL SPREADR (SPDIRFLE,'SAWS' ,saws)
-          CALL SPREADR (SPDIRFLE,'SDDUR',sddur)
-          CALL SPREADR (SPDIRFLE,'SDN%',sdnpci)
-          CALL SPREADR (SPDIRFLE,'SDRS%',sdrsf)
-          CALL SPREADR (SPDIRFLE,'SDWT' ,sdsz)
-          CALL SPREADR (SPDIRFLE,'SLIG%',sligp)
-          CALL SPREADR (SPDIRFLE,'TGR02',tgr(2))
-          CALL SPREADR (SPDIRFLE,'TGR20',tgr(20))
-          IF (tilde.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHE',tilde)
-          IF (tilds.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHS',tilds)
-          CALL SPREADR (SPDIRFLE,'TILIP',tilip)
-          IF (tilpe.LE.0.0) CALL SPREADR (SPDIRFLE,'TILPE',tilpe)
-          CALL SPREADR (SPDIRFLE,'TI#X',tinox)
-          CALL SPREADR (SPDIRFLE,'TKLFD',tklfd)
-          CALL SPREADR (SPDIRFLE,'TKSPN',tkspan)
-          CALL SPREADR (SPDIRFLE,'TKTID',tktid)
-          CALL SPREADR (SPDIRFLE,'TKUH' ,tkuh)
-          CALL SPREADR (SPDIRFLE,'TPAR' ,tpar)
-          CALL SPREADR (SPDIRFLE,'TSRAD',tsrad)
-          CALL SPREADR (SPDIRFLE,'VEEND',veend)
-          CALL SPREADR (SPDIRFLE,'VLOSF',vlossfr)
-          CALL SPREADR (SPDIRFLE,'VLOSS',vloss0stg)
-          CALL SPREADR (SPDIRFLE,'VLOST',vlosstemp)
-          CALL SPREADR (SPDIRFLE,'VPEND',vpend)
-          CALL SPREADR (SPDIRFLE,'WFEU' ,wfeu)
-          CALL SPREADR (SPDIRFLE,'WFGEU',wfgem)
-          CALL SPREADR (SPDIRFLE,'WFGU' ,wfgu)
-          CALL SPREADR (SPDIRFLE,'WFGL' ,wfgl)
-          CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
-          CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
-          CALL SPREADR (SPDIRFLE,'WFRGU',wfrtg)
-          CALL SPREADR (SPDIRFLE,'WFS'  ,wfs)
-          CALL SPREADR (SPDIRFLE,'WFSF' ,wfsf)
-          CALL SPREADR (SPDIRFLE,'WFTL' ,wftl)
-          CALL SPREADR (SPDIRFLE,'WFTU' ,wftu)
-          CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
-          ! LAH Following set up to allow for change in stem fraction
-          ! Currently not used ... just one stem fraction (STFR)
-          IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
-          IF (SWFRN.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRN',swfrn)
-          IF (SWFRNL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRNL',swfrnl)
-          IF (SWFRXL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFXL',swfrxl)
-          IF (SWFRX.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx)
-          ! Following may be temporarily in ECO or CUL file
-          IF (LLIFA.LE.0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
+        CALL SPREADR (SPDIRFLE,'CHFR' ,chfr)
+        CALL SPREADR (SPDIRFLE,'CO2CC',co2cc)
+        CALL SPREADR (SPDIRFLE,'CO2EX',co2ex)
+        CALL SPREADR (SPDIRFLE,'GLIG%',gligp)
+        CALL SPREADR (SPDIRFLE,'GN%MN',grnmn)
+        CALL SPREADR (SPDIRFLE,'GN%MX',grnmx)
+        CALL SPREADR (SPDIRFLE,'GWLAG',gwlfr)
+        CALL SPREADR (SPDIRFLE,'GWLIN',gwefr)
+        CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)
+        CALL SPREADR (SPDIRFLE,'HLOSF',hlossfr)
+        CALL SPREADR (SPDIRFLE,'HLOST',hlosstemp)
+        CALL SPREADR (SPDIRFLE,'HMPC', hmpc)
+        CALL SPREADR (SPDIRFLE,'LAFST',lafst)
+        CALL SPREADR (SPDIRFLE,'LAWFF',lawff)
+        CALL SPREADR (SPDIRFLE,'LAWTR',lawtr)
+        CALL SPREADR (SPDIRFLE,'LAWTS',lawts)
+        CALL SPREADR (SPDIRFLE,'LAWWR',lawwr)
+        CALL SPREADR (SPDIRFLE,'LLIFG',LLIFG)
+        CALL SPREADR (SPDIRFLE,'LLIFS',llifs)
+        CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
+        CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
+        CALL SPREADR (SPDIRFLE,'LWLOS',lsewf)
+        CALL SPREADR (SPDIRFLE,'NFS'  ,nfs)
+        CALL SPREADR (SPDIRFLE,'NFSF' ,nfsf)
+        CALL SPREADR (SPDIRFLE,'NFTL ',nftl)
+        CALL SPREADR (SPDIRFLE,'NFTU ',nftu)
+        IF (lsene.LE.0.0) CALL SPREADR (SPDIRFLE,'LSENE',lsene)
+        CALL SPREADR (SPDIRFLE,'LSHAR',lsawr)
+        CALL SPREADR (SPDIRFLE,'LSHAW',lsawv)
+        CALL SPREADR (SPDIRFLE,'LSHFR',lshfr)
+        CALL SPREADR (SPDIRFLE,'NCRG',ncrg)
+        CALL SPREADR (SPDIRFLE,'NTUPF',ntupf)
+        CALL SPREADR (SPDIRFLE,'NPTFL',nptfl)
+        CALL SPREADR (SPDIRFLE,'PARIX',parix)
+        CALL SPREADR (SPDIRFLE,'PARFC',parfc)
+        CALL SPREADR (SPDIRFLE,'PEMRG',pecm)
+        CALL SPREADR (SPDIRFLE,'PGERM',pgerm)
+        CALL SPREADR (SPDIRFLE,'PDMH' ,pdmtohar)
+        CALL SPREADR (SPDIRFLE,'PSRI',pdsri)
+        IF (PDSRI.LE.0.0)
+     &   CALL SPREADR (SPDIRFLE,'PDSRI',pdsri)
+        CALL SPREADR (SPDIRFLE,'PHSV' ,phsv)
+        CALL SPREADR (SPDIRFLE,'PHTV' ,phtv)
+        CALL SPREADR (SPDIRFLE,'PPTHR',ppthr)
+        CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)
+        CALL SPREADR (SPDIRFLE,'PTFMN',ptfmn)
+        CALL SPREADR (SPDIRFLE,'PTFMX',ptfmx)
+        CALL SPREADR (SPDIRFLE,'RATM' ,ratm)
+        CALL SPREADR (SPDIRFLE,'RCROP',rcrop)
+        CALL SPREADR (SPDIRFLE,'RDGAF',rdgaf)
+        CALL SPREADR (SPDIRFLE,'RWULF',rlfwu)
+        CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
+        !CALL SPREADR (SPDIRFLE,'RNUMX',rnumx) ! Taken out of spp file
+        CALL SPREADR (SPDIRFLE,'RRESP',rresp)
+        CALL SPREADR (SPDIRFLE,'RS%LX',rsclx)
+        CALL SPREADR (SPDIRFLE,'RS%S' ,rscs)
+        CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)
+        CALL SPREADR (SPDIRFLE,'RSFPL',rsfpl)
+        CALL SPREADR (SPDIRFLE,'RSFPU',rsfpu)
+        CALL SPREADR (SPDIRFLE,'RSUSE',rsuse)
+        CALL SPREADR (SPDIRFLE,'RTUFR',rtufr)
+        CALL SPREADR (SPDIRFLE,'RUESG',ruestg)
+        CALL SPREADR (SPDIRFLE,'RWUMX',rwumx)
+        CALL SPREADR (SPDIRFLE,'RWUPM',rwupm)
+        CALL SPREADR (SPDIRFLE,'SAWS' ,saws)
+        CALL SPREADR (SPDIRFLE,'SDDUR',sddur)
+        CALL SPREADR (SPDIRFLE,'SDN%',sdnpci)
+        CALL SPREADR (SPDIRFLE,'SDRS%',sdrsf)
+        CALL SPREADR (SPDIRFLE,'SDWT' ,sdsz)
+        CALL SPREADR (SPDIRFLE,'SLIG%',sligp)
+        CALL SPREADR (SPDIRFLE,'TGR02',tgr(2))
+        CALL SPREADR (SPDIRFLE,'TGR20',tgr(20))
+        IF (tilde.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHE',tilde)
+        IF (tilds.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHS',tilds)
+        CALL SPREADR (SPDIRFLE,'TILIP',tilip)
+        IF (tilpe.LE.0.0) CALL SPREADR (SPDIRFLE,'TILPE',tilpe)
+        CALL SPREADR (SPDIRFLE,'TI#X',tinox)
+        CALL SPREADR (SPDIRFLE,'TKLFD',tklfd)
+        CALL SPREADR (SPDIRFLE,'TKSPN',tkspan)
+        CALL SPREADR (SPDIRFLE,'TKTID',tktid)
+        CALL SPREADR (SPDIRFLE,'TKUH' ,tkuh)
+        CALL SPREADR (SPDIRFLE,'TPAR' ,tpar)
+        CALL SPREADR (SPDIRFLE,'TSRAD',tsrad)
+        CALL SPREADR (SPDIRFLE,'VEEND',veend)
+        CALL SPREADR (SPDIRFLE,'VLOSF',vlossfr)
+        CALL SPREADR (SPDIRFLE,'VLOSS',vloss0stg)
+        CALL SPREADR (SPDIRFLE,'VLOST',vlosstemp)
+        CALL SPREADR (SPDIRFLE,'VPEND',vpend)
+        CALL SPREADR (SPDIRFLE,'WFEU' ,wfeu)
+        CALL SPREADR (SPDIRFLE,'WFGEU',wfgem)
+        CALL SPREADR (SPDIRFLE,'WFGU' ,wfgu)
+        CALL SPREADR (SPDIRFLE,'WFGL' ,wfgl)
+        CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
+        CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
+        CALL SPREADR (SPDIRFLE,'WFRGU',wfrtg)
+        CALL SPREADR (SPDIRFLE,'WFS'  ,wfs)
+        CALL SPREADR (SPDIRFLE,'WFSF' ,wfsf)
+        CALL SPREADR (SPDIRFLE,'WFTL' ,wftl)
+        CALL SPREADR (SPDIRFLE,'WFTU' ,wftu)
+        CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
+        ! LAH Following set up to allow for change in stem fraction
+        ! Currently not used ... just one stem fraction (STFR)
+        IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
+        IF (SWFRN.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRN',swfrn)
+        IF (SWFRNL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRNL',swfrnl)
+        IF (SWFRXL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFXL',swfrxl)
+        IF (SWFRX.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx)
+        ! Following may be temporarily in ECO or CUL file
+        IF (LLIFA.LE.0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
 
-          IF (PHINTL(1).LE.0) CALL SPREADR (SPDIRFLE,'PHL1',phintl(1))
-          IF (PHINTF(1).LE.0) CALL SPREADR (SPDIRFLE,'PHF1',phintf(1))
-          IF (PHINTL(2).LE.0) CALL SPREADR (SPDIRFLE,'PHL2',phintl(2))
-          IF (PHINTF(1).LE.0) CALL SPREADR (SPDIRFLE,'PHF2',phintf(2))
-          IF (PHINTF(3).LE.0) CALL SPREADR (SPDIRFLE,'PHF3',phintf(3))
+        IF (PHINTL(1).LE.0) CALL SPREADR (SPDIRFLE,'PHL1',phintl(1))
+        IF (PHINTF(1).LE.0) CALL SPREADR (SPDIRFLE,'PHF1',phintf(1))
+        IF (PHINTL(2).LE.0) CALL SPREADR (SPDIRFLE,'PHL2',phintl(2))
+        IF (PHINTF(1).LE.0) CALL SPREADR (SPDIRFLE,'PHF2',phintf(2))
+        IF (PHINTF(3).LE.0) CALL SPREADR (SPDIRFLE,'PHF3',phintf(3))
 
-          IF (SRFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr)
-          IF (WFNUU.LE.0.0) CALL SPREADR (SPDIRFLE,'WFNUU',wfnuu)
-          IF (WFNUL.LE.0.0) CALL SPREADR (SPDIRFLE,'WFNUL',wfnul)
-          IF (TILDF.LE.0.0) CALL SPREADR (SPDIRFLE,'TDFAC',tildf)
-          IF (RDGS.LE.0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
-          IF (LAXS.LE.0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
-          IF (RLFNU.LE.0.0) CALL SPREADR (SPDIRFLE,'RLFNU',rlfnu)
-          IF (RLWR.LE.0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
-          IF (NFGU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
-          IF (NFPU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
-          IF (NFPL.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
-          IF (NCNU.LE.0.0) CALL SPREADR (SPDIRFLE,'NCNU',ncnu)
-          IF (KCAN.LE.0.0) CALL SPREADR (SPDIRFLE,'KCAN',kcan)
-          IF (LAFR.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFR',lafr)
-          IF (LAFV.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFV',lafv)
-          IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'LAWCF',lawcf)
-          IF (Dfpe.LT.0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
-          IF (PPEXP.LT.0.0) CALL SPREADR (SPDIRFLE,'PPEXP',ppexp)
-          IF (NFGL.LT.0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
-          IF (TILSF.LT.0.0) CALL SPREADR (SPDIRFLE,'TDSF',tilsf)
-          ! Grain coefficients
-          IF (GWTAA.LT.0.0) CALL SPREADR (SPDIRFLE,'GWWF',gwtaa)
-          IF (GWTAT.LT.0.0) CALL SPREADR (SPDIRFLE,'SHWAS',gwtat)
-          IF (GWTCF.LT.0.0) CALL SPREADR (SPDIRFLE,'GW#F',gwtcf)
-          IF (GNOWF.LT.0.0) CALL SPREADR (SPDIRFLE,'G#WSF',gnowf)
-          IF (GNONF.LT.0.0) CALL SPREADR (SPDIRFLE,'G#NSF',gnonf)
+        IF (SRFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr)
+        IF (WFNUU.LE.0.0) CALL SPREADR (SPDIRFLE,'WFNUU',wfnuu)
+        IF (WFNUL.LE.0.0) CALL SPREADR (SPDIRFLE,'WFNUL',wfnul)
+        IF (TILDF.LE.0.0) CALL SPREADR (SPDIRFLE,'TDFAC',tildf)
+        IF (RDGS.LE.0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
+        IF (LAXS.LE.0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
+        IF (RLFNU.LE.0.0) CALL SPREADR (SPDIRFLE,'RLFNU',rlfnu)
+        IF (RLWR.LE.0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
+        IF (NFGU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
+        IF (NFPU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
+        IF (NFPL.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
+        IF (NCNU.LE.0.0) CALL SPREADR (SPDIRFLE,'NCNU',ncnu)
+        IF (KCAN.LE.0.0) CALL SPREADR (SPDIRFLE,'KCAN',kcan)
+        IF (LAFR.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFR',lafr)
+        IF (LAFV.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFV',lafv)
+        IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'LAWCF',lawcf)
+        IF (Dfpe.LT.0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
+        IF (PPEXP.LT.0.0) CALL SPREADR (SPDIRFLE,'PPEXP',ppexp)
+        IF (NFGL.LT.0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
+        IF (TILSF.LT.0.0) CALL SPREADR (SPDIRFLE,'TDSF',tilsf)
+        ! Grain coefficients
+        IF (GWTAA.LT.0.0) CALL SPREADR (SPDIRFLE,'GWWF',gwtaa)
+        IF (GWTAT.LT.0.0) CALL SPREADR (SPDIRFLE,'SHWAS',gwtat)
+        IF (GWTCF.LT.0.0) CALL SPREADR (SPDIRFLE,'GW#F',gwtcf)
+        IF (GNOWF.LT.0.0) CALL SPREADR (SPDIRFLE,'G#WSF',gnowf)
+        IF (GNONF.LT.0.0) CALL SPREADR (SPDIRFLE,'G#NSF',gnonf)
 
-          CALL SPREADC (SPDIRFLE,'HPROD',hprod)
-          CALL SPREADC (SPDIRFLE,'PPSEN',ppsen)
+        CALL SPREADC (SPDIRFLE,'HPROD',hprod)
+        CALL SPREADC (SPDIRFLE,'PPSEN',ppsen)
 
-          CALL SPREADRA (SPDIRFLE,'LN%S','2',lnpcs)
-          CALL SPREADRA (SPDIRFLE,'RN%S','2',rnpcs)
-          CALL SPREADRA (SPDIRFLE,'SN%S','2',snpcs)
-          CALL SPREADRA (SPDIRFLE,'LN%MN','2',lnpcmn)
-          CALL SPREADRA (SPDIRFLE,'RN%MN','2',rnpcmn)
-          CALL SPREADRA (SPDIRFLE,'SN%MN','2',snpcmn)
+        CALL SPREADRA (SPDIRFLE,'LN%S','2',lnpcs)
+        CALL SPREADRA (SPDIRFLE,'RN%S','2',rnpcs)
+        CALL SPREADRA (SPDIRFLE,'SN%S','2',snpcs)
+        CALL SPREADRA (SPDIRFLE,'LN%MN','2',lnpcmn)
+        CALL SPREADRA (SPDIRFLE,'RN%MN','2',rnpcmn)
+        CALL SPREADRA (SPDIRFLE,'SN%MN','2',snpcmn)
 
-          CALL SPREADRA (SPDIRFLE,'CHTFR','10',chtfr)
-          CALL SPREADRA (SPDIRFLE,'CLAFR','10',clafr)
+        CALL SPREADRA (SPDIRFLE,'CHTFR','10',chtfr)
+        CALL SPREADRA (SPDIRFLE,'CLAFR','10',clafr)
 
-          CALL SPREADRA (SPDIRFLE,'CO2RF','10',co2rf)
-          CALL SPREADRA (SPDIRFLE,'CO2FR','10',co2fr)
+        CALL SPREADRA (SPDIRFLE,'CO2RF','10',co2rf)
+        CALL SPREADRA (SPDIRFLE,'CO2FR','10',co2fr)
 
-          DO I = 1,9
-            TL10 = TL10FROMI(I) 
-            TVTRDV = 'TRDV'//TL10(1:1)
-            CALL SPREADRA (SPDIRFLE,TVTRDV,'4',trdvx)
-            IF (I.EQ.1) TRDV1 = TRDVX
-            ! Temperature responses for each phase put into 2D array
-            DO L = 1,4
-              IF (trdvx(1).GT.-98.0) THEN
-                TRDEV(L,I) = TRDVX(L)
+        DO I = 1,9
+          TL10 = TL10FROMI(I) 
+          TVTRDV = 'TRDV'//TL10(1:1)
+          CALL SPREADRA (SPDIRFLE,TVTRDV,'4',trdvx)
+          IF (I.EQ.1) TRDV1 = TRDVX
+          ! Temperature responses for each phase put into 2D array
+          DO L = 1,4
+            IF (trdvx(1).GT.-98.0) THEN
+              TRDEV(L,I) = TRDVX(L)
+            ELSE
+              IF (I.GT.1) THEN
+                TRDEV(L,I) = TRDEV(L,I-1)
               ELSE
-                IF (I.GT.1) THEN
-                  TRDEV(L,I) = TRDEV(L,I-1)
-                ELSE
-                  OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
-                  WRITE(fnumerr,*) ' '
-                  WRITE(fnumerr,*) ' No temp response data for phase 1'
-                  WRITE(fnumerr,*) ' Please check'
-                  WRITE(*,*) ' No temperature response data for phase 1'
-                  WRITE(*,*) ' Program will have to stop'
-                  CLOSE (fnumerr)
-                  STOP ' '
-                ENDIF
+                OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
+                WRITE(fnumerr,*) ' '
+                WRITE(fnumerr,*) ' No temp response data for phase 1'
+                WRITE(fnumerr,*) ' Please check'
+                WRITE(*,*) ' No temperature response data for phase 1'
+                WRITE(*,*) ' Program will have to stop'
+                CLOSE (fnumerr)
+                STOP ' '
               ENDIF
-             IF (I.EQ.2) TRDV2(L) = TRDEV(L,2)
-            ENDDO
+            ENDIF
+           IF (I.EQ.2) TRDV2(L) = TRDEV(L,2)
           ENDDO
+        ENDDO
 
-          CALL SPREADRA (SPDIRFLE,'TRGFW','4',trgfc)
-          CALL SPREADRA (SPDIRFLE,'TRGFN','4',trgfn)
-          CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
-          CALL SPREADRA (SPDIRFLE,'TRHAR','4',trcoh)
-          CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
-          CALL SPREADRA (SPDIRFLE,'TRVRN','4',trvrn)
-          IF (diffacr(1).LT.0.0)
-     &     CALL SPREADRA (SPDIRFLE,'DIFFR','3',diffacr)
+        CALL SPREADRA (SPDIRFLE,'TRGFW','4',trgfc)
+        CALL SPREADRA (SPDIRFLE,'TRGFN','4',trgfn)
+        CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
+        CALL SPREADRA (SPDIRFLE,'TRHAR','4',trcoh)
+        CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
+        CALL SPREADRA (SPDIRFLE,'TRVRN','4',trvrn)
+        IF (diffacr(1).LT.0.0)
+     &   CALL SPREADRA (SPDIRFLE,'DIFFR','3',diffacr)
 
-          CALL SPREADCA (SPDIRFLE,'PSNAME','20',psname)
-          CALL SPREADCA (SPDIRFLE,'SSNAME','20',ssname)
-          CALL SPREADCA (SPDIRFLE,'PSABV','20',psabv)
-          CALL SPREADCA (SPDIRFLE,'SSABV','20',ssabv)
-          CALL SPREADCA (SPDIRFLE,'PSTYP','20',pstyp)
-          CALL SPREADCA (SPDIRFLE,'SSTYP','20',sstyp)
-          CALL SPREADRA (SPDIRFLE,'SSTG','20',sstg)
+        CALL SPREADCA (SPDIRFLE,'PSNAME','20',psname)
+        CALL SPREADCA (SPDIRFLE,'SSNAME','20',ssname)
+        CALL SPREADCA (SPDIRFLE,'PSABV','20',psabv)
+        CALL SPREADCA (SPDIRFLE,'SSABV','20',ssabv)
+        CALL SPREADCA (SPDIRFLE,'PSTYP','20',pstyp)
+        CALL SPREADCA (SPDIRFLE,'SSTYP','20',sstyp)
+        CALL SPREADRA (SPDIRFLE,'SSTG','20',sstg)
 
 !-----------------------------------------------------------------------
 !       Determine 'key' principal and secondary stages,and adjust names
@@ -3560,56 +3553,55 @@
 !       Calculate PHASE DURATIONS FROM phint if missing
 !-----------------------------------------------------------------------
                   
-          ! BASED ON ORIGINAL CERES -- FOR INITIAL CALIBRATION
-          IF (CROP.EQ.'WH') THEN
-            IF (PD(1).LE.0.0) THEN
-              PD(1) = 400 * PHINTS / 95
-              TVR1 = (3.0*PHINTS)
-              PD(2) = 0.25 * (3.0*PHINTS)
-              PD(3) = 0.75 * (3.0*PHINTS)
-              PD(4) = 2.4 * PHINTS
-              PD(5) = 0.25 * (2.4*PHINTS)
-              PD(6) = 0.10 * (2.4*PHINTS)
-              PD(7) = 0.65 * (2.4*PHINTS)
-              Write (fnumwrk,*) ' '
-              Write (fnumwrk,*) 'CALCULATED phase duration being used'
-              Write (fnumwrk,*) ' P1 (400*PHINT/95)     = ',PD(1)
-              Write (fnumwrk,*) ' P2 (0.25*(3.0*PHINT)) = ',PD(2)
-              Write (fnumwrk,*) ' P3 (0.75*(3.0*PHINT)) = ',PD(3)
-              Write (fnumwrk,*) ' P4 (2.40*PHINT)       = ',PD(4)
-              Write (fnumwrk,*) ' P5 (0.25*(2.4*PHINT)) = ',PD(5)
-              Write (fnumwrk,*) ' P6 (0.10*(2.4*PHINT)) = ',PD(6)
-              Write (fnumwrk,*) ' P7 (0.65*(2.4*PHINT)) = ',PD(7)
-              Write (fnumwrk,*) ' '
-              Write (fnumwrk,*) ' PHINT                 = ',PHINTS
-            ENDIF  
+        ! BASED ON ORIGINAL CERES -- FOR INITIAL CALIBRATION
+        IF (CROP.EQ.'WH') THEN
+          IF (PD(1).LE.0.0) THEN
+            PD(1) = 400 * PHINTS / 95
+            TVR1 = (3.0*PHINTS)
+            PD(2) = 0.25 * (3.0*PHINTS)
+            PD(3) = 0.75 * (3.0*PHINTS)
+            PD(4) = 2.4 * PHINTS
+            PD(5) = 0.25 * (2.4*PHINTS)
+            PD(6) = 0.10 * (2.4*PHINTS)
+            PD(7) = 0.65 * (2.4*PHINTS)
+            Write (fnumwrk,*) ' '
+            Write (fnumwrk,*) 'CALCULATED phase duration being used'
+            Write (fnumwrk,*) ' P1 (400*PHINT/95)     = ',PD(1)
+            Write (fnumwrk,*) ' P2 (0.25*(3.0*PHINT)) = ',PD(2)
+            Write (fnumwrk,*) ' P3 (0.75*(3.0*PHINT)) = ',PD(3)
+            Write (fnumwrk,*) ' P4 (2.40*PHINT)       = ',PD(4)
+            Write (fnumwrk,*) ' P5 (0.25*(2.4*PHINT)) = ',PD(5)
+            Write (fnumwrk,*) ' P6 (0.10*(2.4*PHINT)) = ',PD(6)
+            Write (fnumwrk,*) ' P7 (0.65*(2.4*PHINT)) = ',PD(7)
+            Write (fnumwrk,*) ' '
+            Write (fnumwrk,*) ' PHINT                 = ',PHINTS
           ENDIF  
-          IF (CROP.EQ.'BA') THEN
-            IF (PD(1).LE.0.0) THEN
-              PD(1) = 300 * PHINTS / 70
-              TVR1 = 225.0   ! Original vallue in CERES
-              PD(2) = 0.25 * (3.2*PHINTS)
-              PD(3) = 0.75 * (3.2*PHINTS)
-              ! Original = 150
-              PD(4) = 2.15 * PHINTS
-              ! Original = 200
-              PD(5) = 0.25 * (2.9*PHINTS)    ! Original = 60
-              PD(6) = 0.10 * (2.9*PHINTS)
-              PD(7) = 0.65 * (2.9*PHINTS)
-              Write (fnumwrk,*) ' '
-              Write (fnumwrk,*) 'CALCULATED phase duration being used'
-              Write (fnumwrk,*) ' P1 (300*PHINT/70)     = ',PD(1)
-              Write (fnumwrk,*) ' P2 (0.25*(3.2*PHINT)) = ',PD(2)
-              Write (fnumwrk,*) ' P3 (0.75*(3.2*PHINT)) = ',PD(3)
-              Write (fnumwrk,*) ' P4 (2.415*PHINT)      = ',PD(4)
-              Write (fnumwrk,*) ' P5 (0.25*(2.9*PHINT)) = ',PD(5)
-              Write (fnumwrk,*) ' P6 (0.10*(2.9*PHINT)) = ',PD(6)
-              Write (fnumwrk,*) ' P7 (0.65*(2.9*PHINT)) = ',PD(7)
-              Write (fnumwrk,*) ' '
-              Write (fnumwrk,*) ' PHINT                 = ',PHINTS
-            ENDIF  
+        ENDIF  
+        IF (CROP.EQ.'BA') THEN
+          IF (PD(1).LE.0.0) THEN
+            PD(1) = 300 * PHINTS / 70
+            TVR1 = 225.0   ! Original vallue in CERES
+            PD(2) = 0.25 * (3.2*PHINTS)
+            PD(3) = 0.75 * (3.2*PHINTS)
+            ! Original = 150
+            PD(4) = 2.15 * PHINTS
+            ! Original = 200
+            PD(5) = 0.25 * (2.9*PHINTS)    ! Original = 60
+            PD(6) = 0.10 * (2.9*PHINTS)
+            PD(7) = 0.65 * (2.9*PHINTS)
+            Write (fnumwrk,*) ' '
+            Write (fnumwrk,*) 'CALCULATED phase duration being used'
+            Write (fnumwrk,*) ' P1 (300*PHINT/70)     = ',PD(1)
+            Write (fnumwrk,*) ' P2 (0.25*(3.2*PHINT)) = ',PD(2)
+            Write (fnumwrk,*) ' P3 (0.75*(3.2*PHINT)) = ',PD(3)
+            Write (fnumwrk,*) ' P4 (2.415*PHINT)      = ',PD(4)
+            Write (fnumwrk,*) ' P5 (0.25*(2.9*PHINT)) = ',PD(5)
+            Write (fnumwrk,*) ' P6 (0.10*(2.9*PHINT)) = ',PD(6)
+            Write (fnumwrk,*) ' P7 (0.65*(2.9*PHINT)) = ',PD(7)
+            Write (fnumwrk,*) ' '
+            Write (fnumwrk,*) ' PHINT                 = ',PHINTS
           ENDIF  
-
+        ENDIF  
 
 !-----------------------------------------------------------------------
 !       Calculate/adjust phase durations and thresholds
@@ -4133,158 +4125,159 @@
 !       Write run information to Overview and Work output files
 !-------------------------------------------------------------------
                     
-          WRITE(fnumwrk,*)' '
-          WRITE(fnumwrk,'(A18,A10,I3)')' GENERAL INFO FOR ',
-     &         excode,tn
-          WRITE(fnumwrk,*)' FILE       ',FILEIO(1:60)
-          WRITE(fnumwrk,*)' EXPERIMENT ',EXCODE
-          WRITE(fnumwrk,*)' TREATMENT  ',TN
-          WRITE(fnumwrk,*)' REPLICATE  ',RN
-          WRITE(fnumwrk,*)' '
-          WRITE(fnumwrk,*)' MODEL      ',MODEL
-          WRITE(fnumwrk,*)' MODULE     ',MODNAME
-          WRITE(fnumwrk,*)' PRODUCT    ',HPROD
-          WRITE(fnumwrk,*)' RNMODE     ',RNMODE
-          IF (RUN.LT.10) THEN
-            WRITE(fnumwrk,'(A13,I1)')' RUN        ',RUN   
-          ELSEIF (RUN.GE.10.AND.RUN.LT.1000) THEN
-            WRITE(fnumwrk,'(A13,I2)')' RUN        ',RUN   
+        WRITE(fnumwrk,*)' '
+        WRITE(fnumwrk,'(A18,A10,I3)')' GENERAL INFO FOR ',
+     &       excode,tn
+        WRITE(fnumwrk,*)' FILE       ',FILEIO(1:60)
+        WRITE(fnumwrk,*)' EXPERIMENT ',EXCODE
+        WRITE(fnumwrk,*)' TREATMENT  ',TN
+        WRITE(fnumwrk,*)' REPLICATE  ',RN
+        WRITE(fnumwrk,*)' '
+        WRITE(fnumwrk,*)' MODEL      ',MODEL
+        WRITE(fnumwrk,*)' MODULE     ',MODNAME
+        WRITE(fnumwrk,*)' PRODUCT    ',HPROD
+        WRITE(fnumwrk,*)' RNMODE     ',RNMODE
+        IF (RUN.LT.10) THEN
+          WRITE(fnumwrk,'(A13,I1)')' RUN        ',RUN   
+        ELSEIF (RUN.GE.10.AND.RUN.LT.1000) THEN
+          WRITE(fnumwrk,'(A13,I2)')' RUN        ',RUN   
+        ELSE
+          WRITE(fnumwrk,'(A13,I3)')' RUN        ',RUN   
+        ENDIF
+        WRITE(fnumwrk,*)' CULTIVAR   ',CUDIRFLE(1:60)
+        WRITE(fnumwrk,*)' ECOTYPE    ',ECDIRFLE(1:60)
+        WRITE(fnumwrk,*)' SPECIES    ',SPDIRFLE(1:60)
+        WRITE(fnumwrk,*)' METHODS '
+        IF (MEEXP.EQ.'E')
+     &   WRITE(fnumwrk,'(A26,A1)')'   EXPERIMENTAL ALGORITHM ',MEEXP
+         WRITE(fnumwrk,'(A26,A1)') '   PHOTOSYNTHESIS         ',MEPHS
+         WRITE(fnumwrk,'(A26,A1,1X,A1)') '   WATER AND N SWITCHES   '
+     &     ,ISWWAT,ISWNIT
+         WRITE(fnumwrk,'(A26,A1)') '   WATER AND N UPTAKE     ',MEWNU
+         WRITE(fnumwrk,'(A26,I1)') ' '
+         WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
+         WRITE(fnumwrk,'(A26,A6,2X,A16)')
+     &     '  CULTIVAR                ',VARNO,VRNAME
+        IF (IPLTI.NE.'A') THEN
+          WRITE(fnumwrk,'(A23,I7)')
+     &     '  PLANTING DATE TARGET:',PLYEARDOYT
+        ELSE
+          WRITE (fnumwrk,*) 'PFIRST,PLAST : ',pwdinf,pwdinl
+          WRITE (fnumwrk,*) 'HFIRST,HLAST : ',hfirst,hlast
+        ENDIF
+        WRITE (fnumwrk,'(A15,2F7.1)')'  PLTPOP,ROWSPC',PLTPOPP,ROWSPC
+        WRITE (fnumwrk,'(A15,2F7.1)')'  SDEPTH,SDRATE',SDEPTH,SDRATE
+        IF (sdepthu.LT.sdepth)
+     &   WRITE (fnumwrk,'(A15,F7.1)')'  SHOOT DEPTH  ',SDEPTHU      
+        WRITE (fnumwrk,'(A15,2F7.1,A6)')'  SEEDRS,SEEDN ',
+     &                   SEEDRSI*PLTPOPP*10.0,SEEDNI*PLTPOPP*10.0,
+     &                   ' kg/ha'
+        WRITE (fnumwrk,'(A15, F7.1)') '  PLMAGE       ',PLMAGE
+        ! LAH NEED TO CHECK HARVEST OPTIONS FOR dap,growth stage.
+        ! DISCUSS WITH CHP
+        IF (IHARI.NE.'M') THEN
+          IF (IHARI.NE.'A') THEN
+            WRITE(fnumwrk,'(A22,I7)')
+     &      '  HARVEST DATE TARGET:',YEARDOYHARF 
           ELSE
-            WRITE(fnumwrk,'(A13,I3)')' RUN        ',RUN   
-          ENDIF
-          WRITE(fnumwrk,*)' CULTIVAR   ',CUDIRFLE(1:60)
-          WRITE(fnumwrk,*)' ECOTYPE    ',ECDIRFLE(1:60)
-          WRITE(fnumwrk,*)' SPECIES    ',SPDIRFLE(1:60)
-          WRITE(fnumwrk,*)' METHODS '
-          IF (MEEXP.EQ.'E')
-     &     WRITE(fnumwrk,'(A26,A1)')'   EXPERIMENTAL ALGORITHM ',MEEXP
-           WRITE(fnumwrk,'(A26,A1)') '   PHOTOSYNTHESIS         ',MEPHS
-           WRITE(fnumwrk,'(A26,A1,1X,A1)') '   WATER AND N SWITCHES   '
-     &       ,ISWWAT,ISWNIT
-           WRITE(fnumwrk,'(A26,A1)') '   WATER AND N UPTAKE     ',MEWNU
-           WRITE(fnumwrk,'(A26,I1)') ' '
-           WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
-           WRITE(fnumwrk,'(A26,A6,2X,A16)')
-     &       '  CULTIVAR                ',VARNO,VRNAME
-          IF (IPLTI.NE.'A') THEN
-            WRITE(fnumwrk,'(A23,I7)')
-     &       '  PLANTING DATE TARGET:',PLYEARDOYT
-          ELSE
-            WRITE (fnumwrk,*) 'PFIRST,PLAST : ',pwdinf,pwdinl
-            WRITE (fnumwrk,*) 'HFIRST,HLAST : ',hfirst,hlast
-          ENDIF
-          WRITE (fnumwrk,'(A15,2F7.1)')'  PLTPOP,ROWSPC',PLTPOPP,ROWSPC
-          WRITE (fnumwrk,'(A15,2F7.1)')'  SDEPTH,SDRATE',SDEPTH,SDRATE
-          IF (sdepthu.LT.sdepth)
-     &     WRITE (fnumwrk,'(A15,F7.1)')'  SHOOT DEPTH  ',SDEPTHU      
-          WRITE (fnumwrk,'(A15,2F7.1,A6)')'  SEEDRS,SEEDN ',
-     &                     SEEDRSI*PLTPOPP*10.0,SEEDNI*PLTPOPP*10.0,
-     &                     ' kg/ha'
-          WRITE (fnumwrk,'(A15, F7.1)') '  PLMAGE       ',PLMAGE
-          ! LAH NEED TO CHECK HARVEST OPTIONS FOR dap,growth stage.
-          ! DISCUSS WITH CHP
-          IF (IHARI.NE.'M') THEN
-            IF (IHARI.NE.'A') THEN
-              WRITE(fnumwrk,'(A22,I7)')
-     &        '  HARVEST DATE TARGET:',YEARDOYHARF 
-            ELSE
-              WRITE(fnumwrk,'(A22,A9)')
-     &        '  HARVEST DATE TARGET:','AUTOMATIC'  
-            ENDIF 
-          ELSE
-            WRITE(fnumwrk,'(A22,A8)')
-     &       '  HARVEST DATE TARGET:','MATURITY'  
-          ENDIF
-          WRITE (fnumwrk,'(A15,2F7.1)') '  HPCF,HBPCF   ',HPCF,HBPCF
+            WRITE(fnumwrk,'(A22,A9)')
+     &      '  HARVEST DATE TARGET:','AUTOMATIC'  
+          ENDIF 
+        ELSE
+          WRITE(fnumwrk,'(A22,A8)')
+     &     '  HARVEST DATE TARGET:','MATURITY'  
+        ENDIF
+        WRITE (fnumwrk,'(A15,2F7.1)') '  HPCF,HBPCF   ',HPCF,HBPCF
 
         IF (IDETG.NE.'N') THEN
-        WRITE(fnumwrk,*)' '
-        WRITE(fnumwrk,*)' MAJOR COEFFICIENTS AFTER CHECKING'
-        WRITE(fnumwrk,*)' Development '
-        WRITE(fnumwrk,*)'  Vreq   ',Vreq 
-        WRITE(fnumwrk,*)'  Vbase  ',Vbase
-        WRITE(fnumwrk,*)'  Veff   ',Veff 
-        WRITE(fnumwrk,*)'  Vpend  ',Vpend
-        WRITE(fnumwrk,*)'  Veend  ',Veend
-        WRITE(fnumwrk,*)'  Ppsen  ',Ppsen   
-        WRITE(fnumwrk,*)'  Ppfpe  ',Dfpe 
-        IF (Ppsen.EQ.'LQ') WRITE(fnumwrk,*)'  Ppexp  ',Ppexp   
-        WRITE(fnumwrk,*)'  Ppthr  ',Ppthr   
-        WRITE(fnumwrk,*)'  Pps1   ',Dayls(1)
-        WRITE(fnumwrk,*)'  Pps2   ',Dayls(2)
-        WRITE(fnumwrk,*)'  P1     ',Pd(1)
-        WRITE(fnumwrk,*)'  P2     ',Pd(2)
-        WRITE(fnumwrk,*)'  P3     ',Pd(3)
-        WRITE(fnumwrk,*)'  P4     ',Pd(4)
-        WRITE(fnumwrk,*)'  P5     ',Pd(5)
-        WRITE(fnumwrk,*)'  P6     ',Pd(6)
-        WRITE(fnumwrk,*)'  P7     ',Pd(7)
-        WRITE(fnumwrk,*)'  P8     ',Pd(8)
-        WRITE(fnumwrk,*)'  P9     ',Pd(9)
-        WRITE(fnumwrk,*)' Chaff stages '
-        WRITE(fnumwrk,*)'  S1     ',Chphase(1),Chphasedu(1)
-        WRITE(fnumwrk,*)'  S2     ',Chphase(2),Chphasedu(2)
-        WRITE(fnumwrk,*)' Shoot weights '
-        WRITE(fnumwrk,*)'  Shwas  ',Gwtat
-        WRITE(fnumwrk,*)'  Shwts  ',G3
-        WRITE(fnumwrk,*)' Grain stages '
-        WRITE(fnumwrk,*)'  S1     ',GGphase(1),Ggphasedu(1)
-        WRITE(fnumwrk,*)'  S2     ',GGphase(2),Ggphasedu(2)
-        WRITE(fnumwrk,*)'  s3     ',GGphase(3),Ggphasedu(3)
-        WRITE(fnumwrk,*)'  S4     ',GGphase(4),Ggphasedu(4)
-        WRITE(fnumwrk,*)' Grain weight '
-        WRITE(fnumwrk,*)'  Gwts   ',Gwts 
-        WRITE(fnumwrk,*)'  Gwlag,Gwlin   ',Gwlfr,gwefr
-        WRITE(fnumwrk,*)'  Gw#f   ',Gwtcf
-        WRITE(fnumwrk,*)'  Gwwf   ',Gwtaa
-        WRITE(fnumwrk,*)' Grain number '
-        WRITE(fnumwrk,*)'  G#wts  ',Gnows
-        WRITE(fnumwrk,*)'  G#wsf  ',Gnowf
-        WRITE(fnumwrk,*)'  G#nsf  ',Gnonf
-        WRITE(fnumwrk,*)' Nitrogen uptake'
-        WRITE(fnumwrk,*)'  Wfnul  ',Wfnul
-        WRITE(fnumwrk,*)'  Wfnuu  ',Wfnuu
-        WRITE(fnumwrk,*)'  Ncnu   ',Ncnu
-        WRITE(fnumwrk,*)'  Rlfnu  ',Rlfnu
-        WRITE(fnumwrk,*)' Radiation use  '
-        WRITE(fnumwrk,*)'  Parue  ',Parue
-        WRITE(fnumwrk,*)'  Paru2  ',Paru2
-        WRITE(fnumwrk,*)' Tillers  '
-        WRITE(fnumwrk,*)'  Shwts  ',g3
-        WRITE(fnumwrk,*)'  Tdfac  ',Tildf
-        WRITE(fnumwrk,*)'  Tdsf   ',Tilsf
-        WRITE(fnumwrk,*)' Leaves     '
-        WRITE(fnumwrk,*)'  La1s   ',La1s
-        WRITE(fnumwrk,*)'  Lafv   ',Lafv
-        WRITE(fnumwrk,*)'  Lafr   ',Lafr
-        WRITE(fnumwrk,*)'  Laxs   ',Laxs
-        WRITE(fnumwrk,*)'  Phints ',Phints                
-        WRITE(fnumwrk,*)'  Phl1,Phf1 ',Phintl(1),Phintf(1)
-        WRITE(fnumwrk,*)'  Phl2,Phf2 ',Phintl(2),Phintf(2)
-        WRITE(fnumwrk,*)'  Phl3,Phf3 ',Phintl(3),Phintf(3)
-        WRITE(fnumwrk,*)'  Lsens,Lsendsdu ',Lsens,lsensdu
-        WRITE(fnumwrk,*)'  Lsene,Lsendedu ',Lsene,lsenedu
-        WRITE(fnumwrk,*)' Stems      '
-        WRITE(fnumwrk,*)'  Ssphs,Ssphasedu(1) ',Ssphase(1),Ssphasedu(1)
-        WRITE(fnumwrk,*)'  Ssphe,Ssphasedu(2) ',Ssphase(2),Ssphasedu(2)
-        WRITE(fnumwrk,*)' Roots  '
-        WRITE(fnumwrk,*)'  Rdgs   ',Rdgs
-        WRITE(fnumwrk,*)'  Rresp  ',Rresp
-        WRITE(fnumwrk,*)' Storage roots '
-        WRITE(fnumwrk,*)'  Srfr   ',Srfr
-        WRITE(fnumwrk,*)' Nitrogen concentrations'
-        WRITE(fnumwrk,*)'  Ln%s   ',LNPCS           
-        WRITE(fnumwrk,*)'  Ln%mn  ',LNPCMN            
-        WRITE(fnumwrk,*)'  Sn%s   ',SNPCS           
-        WRITE(fnumwrk,*)'  Sn%mn  ',SNPCMN           
-        WRITE(fnumwrk,*)'  Rn%s   ',RNPCS           
-        WRITE(fnumwrk,*)'  Rn%mn  ',RNPCMN          
-        WRITE(fnumwrk,*)' Nitrogen stress limits '
-        WRITE(fnumwrk,*)'  Nfpu,L ',NFPU,NFPL       
-        WRITE(fnumwrk,*)'  Nfgu,L ',NFGU,NFGL       
-        WRITE(fnumwrk,*)'  Nftu,L ',NFTU,NFTL       
-        WRITE(fnumwrk,*)'  Nfs,Sf ',NFS,NFSF      
-
+          WRITE(fnumwrk,*)' '
+          WRITE(fnumwrk,*)' MAJOR COEFFICIENTS AFTER CHECKING'
+          WRITE(fnumwrk,*)' Development '
+          WRITE(fnumwrk,*)'  Vreq   ',Vreq 
+          WRITE(fnumwrk,*)'  Vbase  ',Vbase
+          WRITE(fnumwrk,*)'  Veff   ',Veff 
+          WRITE(fnumwrk,*)'  Vpend  ',Vpend
+          WRITE(fnumwrk,*)'  Veend  ',Veend
+          WRITE(fnumwrk,*)'  Ppsen  ',Ppsen   
+          WRITE(fnumwrk,*)'  Ppfpe  ',Dfpe 
+          IF (Ppsen.EQ.'LQ') WRITE(fnumwrk,*)'  Ppexp  ',Ppexp   
+          WRITE(fnumwrk,*)'  Ppthr  ',Ppthr   
+          WRITE(fnumwrk,*)'  Pps1   ',Dayls(1)
+          WRITE(fnumwrk,*)'  Pps2   ',Dayls(2)
+          WRITE(fnumwrk,*)'  P1     ',Pd(1)
+          WRITE(fnumwrk,*)'  P2     ',Pd(2)
+          WRITE(fnumwrk,*)'  P3     ',Pd(3)
+          WRITE(fnumwrk,*)'  P4     ',Pd(4)
+          WRITE(fnumwrk,*)'  P5     ',Pd(5)
+          WRITE(fnumwrk,*)'  P6     ',Pd(6)
+          WRITE(fnumwrk,*)'  P7     ',Pd(7)
+          WRITE(fnumwrk,*)'  P8     ',Pd(8)
+          WRITE(fnumwrk,*)'  P9     ',Pd(9)
+          WRITE(fnumwrk,*)' Chaff stages '
+          WRITE(fnumwrk,*)'  S1     ',Chphase(1),Chphasedu(1)
+          WRITE(fnumwrk,*)'  S2     ',Chphase(2),Chphasedu(2)
+          WRITE(fnumwrk,*)' Shoot weights '
+          WRITE(fnumwrk,*)'  Shwas  ',Gwtat
+          WRITE(fnumwrk,*)'  Shwts  ',G3
+          WRITE(fnumwrk,*)' Grain stages '
+          WRITE(fnumwrk,*)'  S1     ',GGphase(1),Ggphasedu(1)
+          WRITE(fnumwrk,*)'  S2     ',GGphase(2),Ggphasedu(2)
+          WRITE(fnumwrk,*)'  s3     ',GGphase(3),Ggphasedu(3)
+          WRITE(fnumwrk,*)'  S4     ',GGphase(4),Ggphasedu(4)
+          WRITE(fnumwrk,*)' Grain weight '
+          WRITE(fnumwrk,*)'  Gwts   ',Gwts 
+          WRITE(fnumwrk,*)'  Gwlag,Gwlin   ',Gwlfr,gwefr
+          WRITE(fnumwrk,*)'  Gw#f   ',Gwtcf
+          WRITE(fnumwrk,*)'  Gwwf   ',Gwtaa
+          WRITE(fnumwrk,*)' Grain number '
+          WRITE(fnumwrk,*)'  G#wts  ',Gnows
+          WRITE(fnumwrk,*)'  G#wsf  ',Gnowf
+          WRITE(fnumwrk,*)'  G#nsf  ',Gnonf
+          WRITE(fnumwrk,*)' Nitrogen uptake'
+          WRITE(fnumwrk,*)'  Wfnul  ',Wfnul
+          WRITE(fnumwrk,*)'  Wfnuu  ',Wfnuu
+          WRITE(fnumwrk,*)'  Ncnu   ',Ncnu
+          WRITE(fnumwrk,*)'  Rlfnu  ',Rlfnu
+          WRITE(fnumwrk,*)' Radiation use  '
+          WRITE(fnumwrk,*)'  Parue  ',Parue
+          WRITE(fnumwrk,*)'  Paru2  ',Paru2
+          WRITE(fnumwrk,*)' Tillers  '
+          WRITE(fnumwrk,*)'  Shwts  ',g3
+          WRITE(fnumwrk,*)'  Tdfac  ',Tildf
+          WRITE(fnumwrk,*)'  Tdsf   ',Tilsf
+          WRITE(fnumwrk,*)' Leaves     '
+          WRITE(fnumwrk,*)'  La1s   ',La1s
+          WRITE(fnumwrk,*)'  Lafv   ',Lafv
+          WRITE(fnumwrk,*)'  Lafr   ',Lafr
+          WRITE(fnumwrk,*)'  Laxs   ',Laxs
+          WRITE(fnumwrk,*)'  Phints ',Phints                
+          WRITE(fnumwrk,*)'  Phl1,Phf1 ',Phintl(1),Phintf(1)
+          WRITE(fnumwrk,*)'  Phl2,Phf2 ',Phintl(2),Phintf(2)
+          WRITE(fnumwrk,*)'  Phl3,Phf3 ',Phintl(3),Phintf(3)
+          WRITE(fnumwrk,*)'  Lsens,Lsendsdu ',Lsens,lsensdu
+          WRITE(fnumwrk,*)'  Lsene,Lsendedu ',Lsene,lsenedu
+          WRITE(fnumwrk,*)' Stems      '
+          WRITE(fnumwrk,*)'  Ssphs,Ssphasedu(1)',Ssphase(1),Ssphasedu(1)
+          WRITE(fnumwrk,*)'  Ssphe,Ssphasedu(2)',Ssphase(2),Ssphasedu(2)
+          WRITE(fnumwrk,*)'  Saws,Serx          ',Saws,Serx            
+          WRITE(fnumwrk,*)' Roots  '
+          WRITE(fnumwrk,*)'  Rdgs   ',Rdgs
+          WRITE(fnumwrk,*)'  Rresp  ',Rresp
+          WRITE(fnumwrk,*)' Storage roots '
+          WRITE(fnumwrk,*)'  Srfr   ',Srfr
+          WRITE(fnumwrk,*)' Nitrogen concentrations'
+          WRITE(fnumwrk,*)'  Ln%s   ',LNPCS           
+          WRITE(fnumwrk,*)'  Ln%mn  ',LNPCMN            
+          WRITE(fnumwrk,*)'  Sn%s   ',SNPCS           
+          WRITE(fnumwrk,*)'  Sn%mn  ',SNPCMN           
+          WRITE(fnumwrk,*)'  Rn%s   ',RNPCS           
+          WRITE(fnumwrk,*)'  Rn%mn  ',RNPCMN          
+          WRITE(fnumwrk,*)' Nitrogen stress limits '
+          WRITE(fnumwrk,*)'  Nfpu,L ',NFPU,NFPL       
+          WRITE(fnumwrk,*)'  Nfgu,L ',NFGU,NFGL       
+          WRITE(fnumwrk,*)'  Nftu,L ',NFTU,NFTL       
+          WRITE(fnumwrk,*)'  Nfs,Sf ',NFS,NFSF      
+         
           WRITE(FNUMWRK,*)' '
           WRITE(FNUMWRK,'(A17)')' PHASE THRESHOLDS'
           WRITE(FNUMWRK,'(A18)')'   PHASE START(DU)'
@@ -4387,7 +4380,6 @@
 !-----------------------------------------------------------------------
 !       Create and write warning messages re. input and output variables
 !-----------------------------------------------------------------------
-
 
         IF (SLPF.LT.1.0) THEN
           WRITE (fnumwrk,*) ' '
@@ -4543,7 +4535,7 @@
         IF (YEARDOY.GT.PLYEARDOY) THEN ! If planted (assumed in evening)
 !=======================================================================
 
-           IF (PLYEAR.LE.0) PLYEAR = YEAR
+          IF (PLYEAR.LE.0) PLYEAR = YEAR
 
 !-----------------------------------------------------------------------
 !         Calculate potential plant evaporation,water uptake if neeeded
@@ -4806,20 +4798,12 @@
                 DUPNEXT = TTNEXT*(1.0-TIMENEED)*VFNEXT*DFNEXT
               ENDIF
             ELSE
-              OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
-              WRITE(fnumerr,*) ' '
-              WRITE(fnumerr,*)
-     &         'Number of developmental stages over the limit of 10 '
-              WRITE(fnumerr,*)
-     &         'Please change the species file of contact the developer'
-              WRITE(*,*)
-     &         'Number of developmental stages over the limit of 10 '
-              WRITE(*,*)
-     &         'Please change the species file or contact the developer'
-              WRITE(*,*) 'Program will have to stop'
-              PAUSE
-              CLOSE (fnumerr)
-              STOP ' '
+              WRITE (fnumwrk,*)' '                  
+              WRITE (fnumwrk,'(A54,/,A54,/,A26)')
+     &         ' Maximum number (10) of developmental stages reached! ',
+     &         ' Presumably,the phase lengths specified were too short',
+     &         ' Will assume crop failure.'
+               CFLFAIL = 'Y'
             ENDIF
             
             DU = DUPHASE+DUPNEXT
@@ -4847,20 +4831,22 @@
                     FLN = LNUMTS+(PD(2)+PD(3))/PHINT
                     ! Calculate FLN using Aitken formula-for comparison
                     FLNAITKEN = LNUMTS + (2.8 + 0.1*LNUMTS) 
-          ! Maybe calculated FLN using Jamieson model
-          !DAYLSAT = 15.0
-          !LNUMDLR = 0.70
-          !LNUMMIN = 7.0
-          !PRNUM = 4.0 + 2.0*LNUM 
-          !PRNUMCRIT = 2.0
-          !TVR1 = LNUMMIN+AMAX1(0.0,LNUMDLR*(DAYLSAT-DAYL))
-          !IF (PRNUM.GE.TVR1+PRNUMCRIT.AND.LNUM.GT.0.0.AND.
-     &     ! CFLFLN.NE.'Y') THEN
-           ! CFLFLN = 'Y'
-           ! FLDAP = DAP
-           ! FLN = LNUMMIN+AMAX1(0.0,LNUMDLR*(DAYLSAT-DAYL))
-          !ENDIF
-          ! END JAMIESON MODEL
+                    
+                    ! Maybe calculated FLN using Jamieson model
+                    !DAYLSAT = 15.0
+                    !LNUMDLR = 0.70
+                    !LNUMMIN = 7.0
+                    !PRNUM = 4.0 + 2.0*LNUM 
+                    !PRNUMCRIT = 2.0
+                    !TVR1 = LNUMMIN+AMAX1(0.0,LNUMDLR*(DAYLSAT-DAYL))
+                    !IF (PRNUM.GE.TVR1+PRNUMCRIT.AND.LNUM.GT.0.0.AND.
+     &               ! CFLFLN.NE.'Y') THEN
+                     ! CFLFLN = 'Y'
+                     ! FLDAP = DAP
+                     ! FLN = LNUMMIN+AMAX1(0.0,LNUMDLR*(DAYLSAT-DAYL))
+                    !ENDIF
+                    ! END JAMIESON MODEL
+                    
                     ! LAH WORKING FLN if last leaf expands 90% 
                     ! FLN = FLN+1.0-MOD(FLN,(FLOAT(INT(FLN))))-0.1
                     ! WRITE(FNUMWRK,*) ' NEW FLN ',TVR1
@@ -4875,111 +4861,136 @@
                     ! ELSE
                     !  FLN = FLOAT(INT(FLN))+0.999
                     ! ENDIF
-            CFLPDADJ = 'N'
-            IF (CFLPDADJ.EQ.'Y') THEN
-              IF (PHINTL(2).GT.0.0.AND.FLN+1.0.LE.PHINTL(2)) THEN
-                PD2ADJ = (FLN-LNUMTS) * PHINTS*PHINTF(2)  
-              ELSEIF (PHINTL(2).GT.0.0.AND.FLN+1.0.GT.PHINTL(2)) THEN
-                IF (LNUM.GE.PHINTL(2)) THEN
-                  PD2ADJ = (FLN-LNUMTS) * PHINTS*PHINTF(3)  
-                ELSE
-                  PD2ADJ = ((FLN-PHINTL(2)))*PHINTS*PHINTF(2)  
-     &                  + (PHINTL(2)-LNUMTS)*PHINTS*PHINTF(3) 
-                ENDIF   
-              ELSE  
-                PD2ADJ = ((FLN-LNUMTS)) * PHINT
-              ENDIF
-              TVR2 = AMAX1(0.0,PD2ADJ-(PD(2)+PD(3)))
-              PD(3) = PD(3)+TVR2
-              PD(4) = PD(4)-TVR2
-                    WRITE(fnumwrk,*)' '  
-                    WRITE(fnumwrk,'(A22,I7)')
-     &               ' TERMINAL SPIKELET ON ',YEARDOY
-                    WRITE(fnumwrk,'(A32,F5.1)')
-     &               '  T.SPK LEAF NUMBER             ',LNUMTS
-                    WRITE(fnumwrk,'(A34,F5.1,2X,F5.1)')
-     &               '  FINAL LEAF NUMBER CUL,AITKEN    ',FLN,FLNAITKEN 
-                    WRITE(fnumwrk,'(A34,I5,I7)')
-     &               '  P2+3 DURATIONS CUL FILE,ADJUSTED',
-     &               INT(PD(2)+PD(3)),INT(PD2ADJ)
-                    WRITE(fnumwrk,'(A34,F5.1,F7.1)')
-     &               'PD(3) NEW,OLD                   ',PD(3),PD(3)-TVR2
-                    WRITE(fnumwrk,'(A34,F5.1,F7.1)')
-     &               'PD(4) NEW,OLD                   ',PD(4),PD(4)+TVR2
+                    CFLPDADJ = 'N'
+                    IF (CFLPDADJ.EQ.'Y') THEN
+                      IF (PHINTL(2).GT.0..AND.FLN+1..LE.PHINTL(2)) THEN
+                        PD2ADJ = (FLN-LNUMTS) * PHINTS*PHINTF(2)  
+                      ELSEIF (PHINTL(2).GT.0. .AND.
+     &                 FLN+1..GT.PHINTL(2)) THEN
+                        IF (LNUM.GE.PHINTL(2)) THEN
+                          PD2ADJ = (FLN-LNUMTS) * PHINTS*PHINTF(3)  
+                        ELSE
+                          PD2ADJ = ((FLN-PHINTL(2)))*PHINTS*PHINTF(2)  
+     &                          + (PHINTL(2)-LNUMTS)*PHINTS*PHINTF(3) 
+                        ENDIF   
+                      ELSE  
+                        PD2ADJ = ((FLN-LNUMTS)) * PHINT
+                      ENDIF
+                      TVR2 = AMAX1(0.0,PD2ADJ-(PD(2)+PD(3)))
+                      PD(3) = PD(3)+TVR2
+                      PD(4) = PD(4)-TVR2
+                      WRITE(fnumwrk,*)' '  
+                      WRITE(fnumwrk,'(A22,I7)')
+     &                 ' TERMINAL SPIKELET ON ',YEARDOY
+                      WRITE(fnumwrk,'(A32,F5.1)')
+     &                 '  T.SPK LEAF NUMBER             ',LNUMTS
+                      WRITE(fnumwrk,'(A32,F5.1,2X,F5.1)')
+     &                 '  FINAL LEAF NUMBER CUL,AITKEN  ',FLN,FLNAITKEN 
+                      WRITE(fnumwrk,'(A32,I5,I7)')
+     &                 '  P2+3 DURATIONS C FILE,ADJUSTED',
+     &                 INT(PD(2)+PD(3)),INT(PD2ADJ)
+                      WRITE(fnumwrk,'(A32,F5.1,F7.1)')
+     &                 'PD(3) NEW,OLD                 ',PD(3),PD(3)-TVR2
+                      WRITE(fnumwrk,'(A32,F5.1,F7.1)')
+     &                 'PD(4) NEW,OLD                 ',PD(4),PD(4)+TVR2
 
-        ! Re-calculate thresholds
-        LAFSTDU = 0.
-        VEENDDU = 0.
-        VPENDDU = 0.
-        RUESTGDU = 0.
-        LSENSDU = 0.
-        TILPEDU = 0.
-        TILDSDU = 0.
-        TILDEDU = 0.
-        LRETSDU = 0.0
-        GGPHASEDU = 0.0
-        CHPHASEDU = 0.0
-        LGPHASEDU = 0.0
-        SGPHASEDU = 0.0
-        SSPHASEDU = 0.0
-        STVSTGDU = 0.0
-        DO L = 1,MSTG
-          PSTART(L) = PSTART(L-1) + PD(L-1)
-        ENDDO
-        DO L = 1,MSTG
-          DO L1 = 1,SSNUM
-            IF (INT(SSTG(L1)).EQ.L)
-     &        SSTH(L1) = PSTART(L)+(SSTG(L1)-FLOAT(INT(SSTG(L1))))*PD(L)
-          ENDDO       
-          IF (L.EQ.INT(LAFST))
-     &      LAFSTDU = PSTART(L)+(LAFST-FLOAT(INT(LAFST)))*PD(L)
-          IF (L.EQ.INT(VEEND))
-     &      VEENDDU = PSTART(L)+(VEEND-FLOAT(INT(VEEND)))*PD(L)
-          IF (L.EQ.INT(VPEND))
-     &      VPENDDU = PSTART(L)+(VPEND-FLOAT(INT(VPEND)))*PD(L)
-          IF (L.EQ.INT(RUESTG))
-     &      RUESTGDU = PSTART(L)+(RUESTG-FLOAT(INT(RUESTG)))*PD(L)
-          IF (L.EQ.INT(LSENS))
-     &      LSENSDU = PSTART(L)+(LSENS-FLOAT(INT(LSENS)))*PD(L)
-          IF (L.EQ.INT(LSENE))
-     &      LSENEDU = PSTART(L)+(LSENE-FLOAT(INT(LSENE)))*PD(L)
-          IF (L.EQ.INT(SSPHASE(1))) SSPHASEDU(1) =
-     &     PSTART(L)+(SSPHASE(1)-FLOAT(INT(SSPHASE(1))))*PD(L)
-          IF (L.EQ.INT(SSPHASE(2))) SSPHASEDU(2) =
-     &     PSTART(L)+(SSPHASE(2)-FLOAT(INT(SSPHASE(2))))*PD(L)
-          IF (L.EQ.INT(TILPE))
-     &      TILPEDU = PSTART(L)+(TILPE-FLOAT(INT(TILPE)))*PD(L)
-          IF (L.EQ.INT(TILDS))
-     &      TILDSDU = PSTART(L)+(TILDS-FLOAT(INT(TILDS)))*PD(L)
-          IF (L.EQ.INT(TILDE))
-     &      TILDEDU = PSTART(L)+(TILDE-FLOAT(INT(TILDE)))*PD(L)
-          IF (L.EQ.INT(LRETS))
-     &      LRETSDU = PSTART(L)+(LRETS-FLOAT(INT(LRETS)))*PD(L)
-          IF (L.EQ.INT(CHPHASE(1))) CHPHASEDU(1) = 
-     &     PSTART(L)+(CHPHASE(1)-FLOAT(INT(CHPHASE(1))))*PD(L)
-          IF (L.EQ.INT(CHPHASE(2))) CHPHASEDU(2) = 
-     &     PSTART(L)+(CHPHASE(2)-FLOAT(INT(CHPHASE(2))))*PD(L)
-          IF (L.EQ.INT(GGPHASE(1))) GGPHASEDU(1) =
-     &     PSTART(L)+(GGPHASE(1)-FLOAT(INT(GGPHASE(1))))*PD(L)
-          IF (L.EQ.INT(GGPHASE(2))) GGPHASEDU(2) =
-     &     PSTART(L)+(GGPHASE(2)-FLOAT(INT(GGPHASE(2))))*PD(L)
-          IF (L.EQ.INT(GGPHASE(3))) GGPHASEDU(3) =
-     &     PSTART(L)+(GGPHASE(3)-FLOAT(INT(GGPHASE(3))))*PD(L)
-          IF (L.EQ.INT(GGPHASE(4))) GGPHASEDU(4) =
-     &     PSTART(L)+(GGPHASE(4)-FLOAT(INT(GGPHASE(4))))*PD(L)
-          IF (L.EQ.INT(LGPHASE(1))) LGPHASEDU(1) =
-     &     PSTART(L)+(LGPHASE(1)-FLOAT(INT(LGPHASE(1))))*PD(L)
-          IF (L.EQ.INT(LGPHASE(2))) LGPHASEDU(2) =
-     &     PSTART(L)+(LGPHASE(2)-FLOAT(INT(LGPHASE(2))))*PD(L)
-          IF (L.EQ.INT(SGPHASE(1))) SGPHASEDU(1) =
-     &     PSTART(L)+(SGPHASE(1)-FLOAT(INT(SGPHASE(1))))*PD(L)
-          IF (L.EQ.INT(SGPHASE(2))) SGPHASEDU(2) =
-     &     PSTART(L)+(SGPHASE(2)-FLOAT(INT(SGPHASE(2))))*PD(L)
-          IF (L.EQ.INT(STVSTG)) STVSTGDU =
-     &     PSTART(L)+(STVSTG-FLOAT(INT(STVSTG)))*PD(L)
-        ENDDO
-            ENDIF  ! End CFLPDADJ
-                 ELSE  
+                      ! Re-calculate thresholds
+                      LAFSTDU = 0.
+                      VEENDDU = 0.
+                      VPENDDU = 0.
+                      RUESTGDU = 0.
+                      LSENSDU = 0.
+                      TILPEDU = 0.
+                      TILDSDU = 0.
+                      TILDEDU = 0.
+                      LRETSDU = 0.0
+                      GGPHASEDU = 0.0
+                      CHPHASEDU = 0.0
+                      LGPHASEDU = 0.0
+                      SGPHASEDU = 0.0
+                      SSPHASEDU = 0.0
+                      STVSTGDU = 0.0
+                      DO L = 1,MSTG
+                        PSTART(L) = PSTART(L-1) + PD(L-1)
+                      ENDDO
+                      DO L = 1,MSTG
+                        DO L1 = 1,SSNUM
+                          IF (INT(SSTG(L1)).EQ.L)
+     &                      SSTH(L1) = PSTART(L)
+     &                          + (SSTG(L1)-FLOAT(INT(SSTG(L1))))*PD(L)
+                        ENDDO       
+                        IF (L.EQ.INT(LAFST))
+     &                    LAFSTDU = PSTART(L)
+     &                            + (LAFST-FLOAT(INT(LAFST)))*PD(L)
+                        IF (L.EQ.INT(VEEND))
+     &                    VEENDDU = PSTART(L)
+     &                            + (VEEND-FLOAT(INT(VEEND)))*PD(L)
+                        IF (L.EQ.INT(VPEND))
+     &                    VPENDDU = PSTART(L)
+     &                            + (VPEND-FLOAT(INT(VPEND)))*PD(L)
+                        IF (L.EQ.INT(RUESTG))
+     &                    RUESTGDU = PSTART(L)
+     &                             + (RUESTG-FLOAT(INT(RUESTG)))*PD(L)
+                        IF (L.EQ.INT(LSENS))
+     &                    LSENSDU = PSTART(L)
+     &                            + (LSENS-FLOAT(INT(LSENS)))*PD(L)
+                        IF (L.EQ.INT(LSENE))
+     &                    LSENEDU = PSTART(L)
+     &                            + (LSENE-FLOAT(INT(LSENE)))*PD(L)
+                        IF (L.EQ.INT(SSPHASE(1)))
+     &                    SSPHASEDU(1) = PSTART(L) + (SSPHASE(1)
+     &                                  -FLOAT(INT(SSPHASE(1))))*PD(L)
+                        IF (L.EQ.INT(SSPHASE(2))) 
+     &                    SSPHASEDU(2) = PSTART(L) + (SSPHASE(2)
+     &                            - FLOAT(INT(SSPHASE(2))))*PD(L)
+                        IF (L.EQ.INT(TILPE))
+     &                    TILPEDU = PSTART(L)
+     &                            + (TILPE-FLOAT(INT(TILPE)))*PD(L)
+                        IF (L.EQ.INT(TILDS))
+     &                    TILDSDU = PSTART(L)
+     &                            + (TILDS-FLOAT(INT(TILDS)))*PD(L)
+                        IF (L.EQ.INT(TILDE))
+     &                    TILDEDU = PSTART(L)
+     &                            + (TILDE-FLOAT(INT(TILDE)))*PD(L)
+                        IF (L.EQ.INT(LRETS))
+     &                    LRETSDU = PSTART(L)
+     &                            + (LRETS-FLOAT(INT(LRETS)))*PD(L)
+                        IF (L.EQ.INT(CHPHASE(1))) 
+     &                   CHPHASEDU(1) = PSTART(L) + (CHPHASE(1)
+     &                                - FLOAT(INT(CHPHASE(1))))*PD(L)
+                        IF (L.EQ.INT(CHPHASE(2))) 
+     &                   CHPHASEDU(2) = PSTART(L) + (CHPHASE(2)
+     &                        -FLOAT(INT(CHPHASE(2))))*PD(L)
+                        IF (L.EQ.INT(GGPHASE(1))) 
+     &                   GGPHASEDU(1) = PSTART(L) + (GGPHASE(1)
+     &                                 - FLOAT(INT(GGPHASE(1))))*PD(L)
+                        IF (L.EQ.INT(GGPHASE(2))) 
+     &                   GGPHASEDU(2) = PSTART(L) + (GGPHASE(2)
+     &                                - FLOAT(INT(GGPHASE(2))))*PD(L)
+                        IF (L.EQ.INT(GGPHASE(3))) 
+     &                   GGPHASEDU(3) = PSTART(L) + (GGPHASE(3)
+     &                                - FLOAT(INT(GGPHASE(3))))*PD(L)
+                        IF (L.EQ.INT(GGPHASE(4))) 
+     &                   GGPHASEDU(4) = PSTART(L) + (GGPHASE(4)
+     &                                - FLOAT(INT(GGPHASE(4))))*PD(L)
+                        IF (L.EQ.INT(LGPHASE(1))) 
+     &                   LGPHASEDU(1) = PSTART(L) + (LGPHASE(1)
+     &                                - FLOAT(INT(LGPHASE(1))))*PD(L)
+                        IF (L.EQ.INT(LGPHASE(2))) 
+     &                   LGPHASEDU(2) = PSTART(L) + (LGPHASE(2)
+     &                                - FLOAT(INT(LGPHASE(2))))*PD(L)
+                        IF (L.EQ.INT(SGPHASE(1))) 
+     &                   SGPHASEDU(1) = PSTART(L) + (SGPHASE(1)
+     &                                 - FLOAT(INT(SGPHASE(1))))*PD(L)
+                        IF (L.EQ.INT(SGPHASE(2))) 
+     &                   SGPHASEDU(2) = PSTART(L) + (SGPHASE(2)
+     &                                - FLOAT(INT(SGPHASE(2))))*PD(L)
+                        IF (L.EQ.INT(STVSTG)) 
+     &                   STVSTGDU = PSTART(L) + (STVSTG
+     &                            - FLOAT(INT(STVSTG)))*PD(L)
+                      ENDDO
+                    ENDIF  ! End CFLPDADJ
+                  ELSE  
                     ! After TS 
                     DULF = DU*EMRGFR*LFENDFR  ! Development units
                   ENDIF                
@@ -5008,7 +5019,7 @@
 !=======================================================================
 
 !-----------------------------------------------------------------------
-!         Determine if today has a harvest instruction
+!             Determine if today has a harvest instruction
 !-----------------------------------------------------------------------
 
               DO I = 1, 20
@@ -5028,22 +5039,22 @@
 !             Determine amounts removed by grazing,etc.   
 !-----------------------------------------------------------------------
 
-	        IF (HANUM.GT.0) THEN
-	          IF (HOP(HANUM).EQ.'G'.AND.
+	      IF (HANUM.GT.0) THEN
+	        IF (HOP(HANUM).EQ.'G'.AND.
      &	         CWAD.GT.0.0.AND.CWAD.GT.CWAN(HANUM)) THEN
                   IF (LSNUM(HANUM).GT.0) THEN
-                     ! LAH To fit with Zhang should have Animal routine
-!                    CALL ANIMAL(TMAX,TMIN,LSNUM(HANUM),
-!    &               LSWT(HANUM),CWAD,CWAN(HANUM),hawad)
+                    ! LAH To fit with Zhang should have Animal routine
+!                   CALL ANIMAL(TMAX,TMIN,LSNUM(HANUM),
+!    &              LSWT(HANUM),CWAD,CWAN(HANUM),hawad)
                   ELSE
-	              HAWAD = AMIN1((CWAD-CWAN(HANUM)),HAMT(HANUM))
-	            ENDIF  
-	            HAWAD = AMAX1(0.0,HAWAD)
+	            HAWAD = AMIN1((CWAD-CWAN(HANUM)),HAMT(HANUM))
+	          ENDIF  
+	          HAWAD = AMAX1(0.0,HAWAD)
                   HAFR = AMAX1(0.0,HAWAD/CWAD)
-	          ELSE   
-	            HAWAD = 0.0
-	            HAFR = 0.0
-	          ENDIF
+	        ELSE   
+	          HAWAD = 0.0
+	          HAFR = 0.0
+	        ENDIF
               ENDIF
               
               IF (HAFR.GT.0.0)
@@ -5219,18 +5230,18 @@
               ! CO2 factor
               CO2FP = YVALXY(CO2RF,CO2FR,CO2)
 
-!  LAH Notes from original cassava model 
-!        IF (TEMPM .LT. SenCritTemp) THEN
-!           Life(I) = Life(I)-SenTempFac*(SenCritTemp-TEMPM)
-!        ENDIF
-!        IF (CumLAI .GT. SenCritLai) THEN
-!           Life(I) = Life(I)-SenLaiFac*(CumLAI-SenCritLai)
-!        ENDIF
-!        IF (Life(I) .LT. 0.0) Life(I) = 0.0
-! LSCL   0.4  Leaf senescence,critical LAI
-! LSCT  18.0  Leaf senescence,critical temperature (C)
-! LSSL  0.05  Leaf senescence,sensitivity to LAI
-! LSST   0.3  Leaf senescence,sensitivity to temperature (fr d-1)
+              !  LAH Notes from original cassava model                                                          
+              !  IF (TEMPM .LT. SenCritTemp) THEN
+              !     Life(I) = Life(I)-SenTempFac*(SenCritTemp-TEMPM)
+              !  ENDIF
+              !  IF (CumLAI .GT. SenCritLai) THEN
+              !     Life(I) = Life(I)-SenLaiFac*(CumLAI-SenCritLai)
+              !  ENDIF
+              !  IF (Life(I) .LT. 0.0) Life(I) = 0.0
+              ! LSCL   0.4  Leaf senescence,critical LAI
+              ! LSCT  18.0  Leaf senescence,critical temperature (C)
+              ! LSSL  0.05  Leaf senescence,sensitivity to LAI
+              ! LSST   0.3  Leaf senescence,sensitivity to temperature (fr d-1)
 
 !-----------------------------------------------------------------------
 !             Calculate leaf number at end of day;adjust PHINT if needed
@@ -5285,14 +5296,15 @@
 !             Calculate senescence of leaves,stems,etc..
 !-----------------------------------------------------------------------
 
-C  LAH Notes from original cassava model. May need to take into account.
-C  Procedure to calculate leaf senescence. Leaves are assumed to have a
-C  variety-specific maximum life, which can be influenced by temperature
-C  and shading by leaves above. Water stress is assumed not to have any
-C  effect on leaf life (Cock, pers. comm.). However, on release of stress
-C  leaves drop off and are replaced by a flush of new leaves. This is not
-C  yet built into the model.
-
+              ! LAH Notes from original cassava model. May need to take
+              ! into account procedure to calculate leaf senescence. 
+              ! Leaves are assumed to have a variety-specific maximum 
+              ! life, which can be influenced by temperature and shading
+              ! by leaves above. Water stress is assumed not to have any
+              ! effect on leaf life (Cock, pers. comm.). However, on 
+              ! release of stress leaves drop off and are replaced by a 
+              ! flush of new leaves. This is not yet built into the 
+              ! model.
 
               TNUMLOSS = 0.0
               PLTLOSS = 0.0
@@ -5360,11 +5372,12 @@ C  yet built into the model.
                 ELSE
                   CFLFAIL = 'Y'
                   Messageno = Min(Messagenox,Messageno+1)
-                  WRITE (Message(Messageno),1100)
+                  IF (Messageno.LT.Messagenox)
+     &               WRITE (Message(Messageno),1100)
      &            TKILL,(TMIN+TMAX)/2.0,HSTAGE,PLTPOP,PLTLOSS
- 1100             FORMAT ('Plant kill over 95%',
+ 1100             FORMAT ('Kill > 95%',
      &             ' TKILL =',F5.1,1X,'TMEAN =',F5.1,1X,
-     &             'HSTAGE =',F5.1,1X,'PNO =',  F5.1,1X,'LOSS =',F5.1)
+     &             'HSTAGE =',F5.1,1X,'P# =',F5.1,1X,'LOSS =',F5.1)
                 ENDIF
               ENDIF
 
@@ -5564,11 +5577,12 @@ C  yet built into the model.
                   IF (CUMDU.GT.SSPHASE(1)+(FSDU-LSENSDU)) THEN
 !                 IF (CUMDU+DU.GT.SSPHASEDU(1)) THEN
 !                  IF (CUMDU.GT.SSPHASEDU(1)) THEN
-                   SENSTFR = 
-     &             AMAX1(0.0,AMIN1(1.0,DU/(SSPHASEDU(2)-SSPHASEDU(1))))
+                    IF ((SSPHASEDU(2)-SSPHASEDU(1)).GT.0.0) SENSTFR = 
+     &              AMAX1(0.0,AMIN1(1.0,DU/(SSPHASEDU(2)-SSPHASEDU(1))))
                   ELSE
-                   SENSTFR = AMAX1(0.0,AMIN1(1.0,
-     &             ((CUMDU+DU)-SSPHASEDU(1))/
+                   IF ((SSPHASEDU(2)-SSPHASEDU(1)).GT.0.0)
+     &               SENSTFR = AMAX1(0.0,AMIN1(1.0,
+     &                 ((CUMDU+DU)-SSPHASEDU(1))/
      &                             (SSPHASEDU(2)-SSPHASEDU(1))))
                   ENDIF
                   ! LAH JAN 2010 NB No weight loss from stem. 
@@ -5957,20 +5971,21 @@ C  yet built into the model.
                   !ENDIF
                 ENDIF
 
-! Original CROPSIM calculations .. changes potential of growing leaf
-!                IF (LAFSWITCH.LE.0.0.AND.
-!     &           LAFSTDU.GT.0.0.AND.CUMDU+DU.GT.LAFSTDU) THEN
-!                  ! Change potential of growing leaf at switch point 
-!                  LAFSWITCH = LNUM+LNUMG*((LAFSTDU-CUMDU)/DU)
-!                  LAPOTX(LNUMSG) = LAPOTX(LNUMSG-1)
-!     &                           + LA1S*LAFV*((LAFSTDU-CUMDU)/DU)
-!     &                           + LA1S*LAFR*(1.0-((LAFSTDU-CUMDU)/DU))
-!                  LAPOTX(LNUMSG+1) = LAPOTX(LNUMSG)+LA1S*LAFR
-!                  LAPOTXCHANGE = LAPOTX(LNUMSG-1)
-!     &                         + LA1S*LAFV*(LAFSWITCH-FLOAT(LNUMSG-1))
-!     &                         + LA1S*LAFR*(FLOAT(LNUMSG)-LAFSWITCH)
-!                ENDIF
-                  ! Simpler calculations from CROPSIM-CERES
+                ! Original CROPSIM calculations 
+                !   .. changes potential of growing leaf
+!               IF (LAFSWITCH.LE.0.0.AND.
+!     &          LAFSTDU.GT.0.0.AND.CUMDU+DU.GT.LAFSTDU) THEN
+!                 ! Change potential of growing leaf at switch point 
+!                 LAFSWITCH = LNUM+LNUMG*((LAFSTDU-CUMDU)/DU)
+!                 LAPOTX(LNUMSG) = LAPOTX(LNUMSG-1)
+!     &                          + LA1S*LAFV*((LAFSTDU-CUMDU)/DU)
+!     &                          + LA1S*LAFR*(1.0-((LAFSTDU-CUMDU)/DU))
+!                 LAPOTX(LNUMSG+1) = LAPOTX(LNUMSG)+LA1S*LAFR
+!                 LAPOTXCHANGE = LAPOTX(LNUMSG-1)
+!     &                        + LA1S*LAFV*(LAFSWITCH-FLOAT(LNUMSG-1))
+!     &                        + LA1S*LAFR*(FLOAT(LNUMSG)-LAFSWITCH)
+!               ENDIF
+                ! Simpler calculations from CROPSIM-CERES
                 IF (RSTAGE.GE.LAFST) THEN
                   IF(LNUMSG.GT.0 .AND. LAFSWITCH.LE.0.0) THEN
                   LAFSWITCH = LNUMSG
@@ -6195,6 +6210,7 @@ C  yet built into the model.
                   STAISS = STAI + STAIG
                   IF ((PSTART(MSTG)-FSDU).GT.0.0) THEN
                     STAIS = STAISS*(CUMDU+DU-FSDU)/(PSTART(MSTG)-FSDU)
+                    IF (STAIS.LT.1.0E-6) STAIS = 0.0
                   ELSE
                     STAIS = 0.0
                   ENDIF 
@@ -6420,18 +6436,18 @@ C  yet built into the model.
 !           Water in profile and rootzone
 !-----------------------------------------------------------------------
             
-              AH2OPROFILE = 0.0
-              H2OPROFILE = 0.0
-              AH2OROOTZONE = 0.0
-              H2OROOTZONE = 0.0
-              DO L = 1, NLAYR
-                AH2OPROFILE = AH2OPROFILE+((SW(L)-LL(L))*DLAYR(L))*10.
-                H2OPROFILE = H2OPROFILE + SW(L)*DLAYR(L)*10.0
-                IF (RLV(L).GT.0.0) THEN
-                 AH2OROOTZONE=AH2OROOTZONE+((SW(L)-LL(L))*DLAYR(L))*10.
-                 H2OROOTZONE = H2OROOTZONE+SW(L)*DLAYR(L)*10.
-                ENDIF
-              END DO
+            AH2OPROFILE = 0.0
+            H2OPROFILE = 0.0
+            AH2OROOTZONE = 0.0
+            H2OROOTZONE = 0.0
+            DO L = 1, NLAYR
+              AH2OPROFILE = AH2OPROFILE+((SW(L)-LL(L))*DLAYR(L))*10.
+              H2OPROFILE = H2OPROFILE + SW(L)*DLAYR(L)*10.0
+              IF (RLV(L).GT.0.0) THEN
+               AH2OROOTZONE=AH2OROOTZONE+((SW(L)-LL(L))*DLAYR(L))*10.
+               H2OROOTZONE = H2OROOTZONE+SW(L)*DLAYR(L)*10.
+              ENDIF
+            END DO
 
 !-----------------------------------------------------------------------
 !           Nitrogen movement and uptake
@@ -6533,12 +6549,16 @@ C  yet built into the model.
                   IF (SW(L) .LE. DUL(L)) THEN
                     IF (WFNUU-WFNUL.GT.0.0) WFNU = 
      &                AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
+                  ! CSM SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
                   ELSE
                     WFNU = 1.0-(SW(L)-DUL(L))/(SAT(L)-DUL(L))
                   ENDIF
                   IF (WFNU.LT.0.0) WFNU = 0.0
                   RNO3U(L) = RNUMX*RLV(L)*DLAYR(L)*100.0*WFNU*FNO3
-                  RNH4U(L) = RNUMX*RLV(L)*DLAYR(L)*100.0*WFNU*FNH4
+                  ! CSM RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+                  ! CSM RNO3U(L) = RFAC * FNO3 * RTNO3
+                  ! HENCE CSM RNO3U(L) = RTNO3*RLV(L)*DLAYR(L)*100.0*SMDFR*SMDFR*FNO3
+                  RNH4U(L) = RNUMX*RLV(L)*DLAYR(L)*100.0*WFNU*WFNU*FNH4
                   RNO3U(L) = MAX(0.0,RNO3U(L))
                   RNH4U(L) = MAX(0.0,RNH4U(L))
                   NUPAP = NUPAP + RNO3U(L) + RNH4U(L) !kg[N]/ha
@@ -6547,7 +6567,6 @@ C  yet built into the model.
               ENDDO
               
               ! Basic calculation below
-              !IF (MEWNU.EQ.'N'.OR.MEWNU.EQ.'B') THEN
                 WFNU = 0.0
                 NUPAP = 0.0
                 RNO3U = 0.0
@@ -6572,8 +6591,6 @@ C  yet built into the model.
                     ! The 1000 is because read as cm/dm3,not cm/cm3
                     ! Original also had SHF as a limitant
                     RNO3U(L) = NO3LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NO3FN)
-                    !Original: 
-                    !RNO3U(L) = RNUMX*RLV(L)*DLAYR(L)*100.0*WFNU*FNO3
                     RNH4U(L) = NH4LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NH4FN)
                     NUPAP = NUPAP + RNO3U(L) + RNH4U(L)
                   ENDIF
@@ -7118,13 +7135,7 @@ C  yet built into the model.
             Write (Message(1),'(A23)') 'Plant population < 0.0  '
             Write (Message(2),'(A12,F4.1)') 'Plant loss: ',pltloss      
             WRITE (Message(3),'(A20)') 'Crop failure assumed'
-            WRITE (Message(4),'(A34)') 
-     &       'May need to check with programers '
             CALL WARNING(4,'CSCRP',MESSAGE)
-            Write (*,*) 'Plant population <= 0.0!   '
-            Write (*,*) 'Plant loss: ',pltloss         
-            WRITE (*,*) 'Will assume crop failure'
-            WRITE (*,*) 'Check WORK.OUT for details of run'
             CFLFAIL = 'Y'
           ENDIF
 
@@ -7473,6 +7484,7 @@ C  yet built into the model.
                 WRITE (Message(5),'(A26,F6.1)')
      &           '  Leaf area index       = ',lai
                 CALL WARNING(5,'CSCRP',MESSAGE)
+                Message = ' '
               ENDIF
             ENDIF
             IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN
@@ -7481,6 +7493,7 @@ C  yet built into the model.
               MDAP = DAP
               MDAYFR = TIMENEED
               MDAPFR = FLOAT(MDAP) + MDAYFR
+              GFDUR = (MDAPFR-GFDAPFR)
             ENDIF
             IF (PSABV(L).EQ.'GFDAT') THEN
               GFDAPFR = FLOAT(DAP) + TIMENEED
@@ -7649,7 +7662,7 @@ C  yet built into the model.
 !-----------------------------------------------------------------------
 
           IF (ISWNIT.NE.'N') THEN
-          ! Critical and minimum N concentrations
+            ! Critical and minimum N concentrations
             LNCX = LNCXS(0) + LSTAGE*(LNCXS(1)-LNCXS(0))
             SNCX = SNCXS(0) + STSTAGE*(SNCXS(1)-SNCXS(0))
             RNCX = RNCXS(0) + DSTAGE*(RNCXS(1)-RNCXS(0))
@@ -7715,63 +7728,64 @@ C  yet built into the model.
               PSTART(L) = PSTART(L) + AMAX1(0.0,PDADJ-1.0)*PD(2)
             ENDDO
 
-        ! Re-calculate thresholds
-        LAFSTDU = 0.
-        VEENDDU = 0.
-        VPENDDU = 0.
-        RUESTGDU = 0.
-        LSENSDU = 0.
-        TILPEDU = 0.
-        TILDSDU = 0.
-        TILDEDU = 0.
-        LRETSDU = 0.0
-        GGPHASEDU(1) = 0.0
-        LGPHASEDU(1) = 0.0
-        LGPHASEDU(2) = 0.0
-        SGPHASEDU(1) = 0.0
-        SGPHASEDU(2) = 0.0
-        SGPHASEDU(1) = 0.0
-        DO L = 1,MSTG
-          PSTART(L) = PSTART(L-1) + PD(L-1)
-        ENDDO
-        DO L = 1,MSTG
-          IF (INT(SSTG(L1)).EQ.L)
-     &      SSTH(L) = PSTART(L)+(SSTG(L1)-FLOAT(INT(SSTG(L1))))*PD(L)
-          IF (L.EQ.INT(LAFST))
-     &      LAFSTDU = PSTART(L)+(LAFST-FLOAT(INT(LAFST)))*PD(L)
-          IF (L.EQ.INT(VEEND))
-     &      VEENDDU = PSTART(L)+(VEEND-FLOAT(INT(VEEND)))*PD(L)
-          IF (L.EQ.INT(VPEND))
-     &      VPENDDU = PSTART(L)+(VPEND-FLOAT(INT(VPEND)))*PD(L)
-          IF (L.EQ.INT(RUESTG))
-     &      RUESTGDU = PSTART(L)+(RUESTG-FLOAT(INT(RUESTG)))*PD(L)
-          IF (L.EQ.INT(LSENS))
-     &      LSENSDU = PSTART(L)+(LSENS-FLOAT(INT(LSENS)))*PD(L)
-          IF (L.EQ.INT(LSENE))
-     &      LSENEDU = PSTART(L)+(LSENE-FLOAT(INT(LSENE)))*PD(L)
-          IF (L.EQ.INT(SSPHASE(1))) SSPHASEDU(1) =
-     &     PSTART(L)+(SSPHASE(1)-FLOAT(INT(SSPHASE(1))))*PD(L)
-          IF (L.EQ.INT(SSPHASE(2))) SSPHASEDU(2) =
-     &     PSTART(L)+(SSPHASE(2)-FLOAT(INT(SSPHASE(2))))*PD(L)
-          IF (L.EQ.INT(TILPE))
-     &      TILPEDU = PSTART(L)+(TILPE-FLOAT(INT(TILPE)))*PD(L)
-          IF (L.EQ.INT(TILDS))
-     &      TILDSDU = PSTART(L)+(TILDS-FLOAT(INT(TILDS)))*PD(L)
-          IF (L.EQ.INT(TILDE))
-     &      TILDEDU = PSTART(L)+(TILDE-FLOAT(INT(TILDE)))*PD(L)
-          IF (L.EQ.INT(LRETS))
-     &      LRETSDU = PSTART(L)+(LRETS-FLOAT(INT(LRETS)))*PD(L)
-          IF (L.EQ.INT(GGPHASE(1))) GGPHASEDU(1) =
-     &     PSTART(L)+(GGPHASE(1)-FLOAT(INT(GGPHASE(1))))*PD(L)
-          IF (L.EQ.INT(LGPHASE(1))) LGPHASEDU(1) =
-     &     PSTART(L)+(LGPHASE(1)-FLOAT(INT(LGPHASE(1))))*PD(L)
-          IF (L.EQ.INT(LGPHASE(2))) LGPHASEDU(2) =
-     &     PSTART(L)+(LGPHASE(2)-FLOAT(INT(LGPHASE(2))))*PD(L)
-          IF (L.EQ.INT(SGPHASE(1))) SGPHASEDU(1) =
-     &     PSTART(L)+(SGPHASE(1)-FLOAT(INT(SGPHASE(1))))*PD(L)
-          IF (L.EQ.INT(SGPHASE(2))) SGPHASEDU(2) =
-     &     PSTART(L)+(SGPHASE(2)-FLOAT(INT(SGPHASE(2))))*PD(L)
-        ENDDO
+            ! Re-calculate thresholds
+            LAFSTDU = 0.
+            VEENDDU = 0.
+            VPENDDU = 0.
+            RUESTGDU = 0.
+            LSENSDU = 0.
+            TILPEDU = 0.
+            TILDSDU = 0.
+            TILDEDU = 0.
+            LRETSDU = 0.0
+            GGPHASEDU(1) = 0.0
+            LGPHASEDU(1) = 0.0
+            LGPHASEDU(2) = 0.0
+            SGPHASEDU(1) = 0.0
+            SGPHASEDU(2) = 0.0
+            SGPHASEDU(1) = 0.0
+            DO L = 1,MSTG
+              PSTART(L) = PSTART(L-1) + PD(L-1)
+            ENDDO
+            DO L = 1,MSTG
+              IF (INT(SSTG(L1)).EQ.L)
+     &          SSTH(L) = PSTART(L)
+     &                      +(SSTG(L1)-FLOAT(INT(SSTG(L1))))*PD(L)
+              IF (L.EQ.INT(LAFST))
+     &          LAFSTDU = PSTART(L)+(LAFST-FLOAT(INT(LAFST)))*PD(L)
+              IF (L.EQ.INT(VEEND))
+     &          VEENDDU = PSTART(L)+(VEEND-FLOAT(INT(VEEND)))*PD(L)
+              IF (L.EQ.INT(VPEND))
+     &          VPENDDU = PSTART(L)+(VPEND-FLOAT(INT(VPEND)))*PD(L)
+              IF (L.EQ.INT(RUESTG))
+     &          RUESTGDU = PSTART(L)+(RUESTG-FLOAT(INT(RUESTG)))*PD(L)
+              IF (L.EQ.INT(LSENS))
+     &          LSENSDU = PSTART(L)+(LSENS-FLOAT(INT(LSENS)))*PD(L)
+              IF (L.EQ.INT(LSENE))
+     &          LSENEDU = PSTART(L)+(LSENE-FLOAT(INT(LSENE)))*PD(L)
+              IF (L.EQ.INT(SSPHASE(1))) SSPHASEDU(1) =
+     &         PSTART(L)+(SSPHASE(1)-FLOAT(INT(SSPHASE(1))))*PD(L)
+              IF (L.EQ.INT(SSPHASE(2))) SSPHASEDU(2) =
+     &         PSTART(L)+(SSPHASE(2)-FLOAT(INT(SSPHASE(2))))*PD(L)
+              IF (L.EQ.INT(TILPE))
+     &          TILPEDU = PSTART(L)+(TILPE-FLOAT(INT(TILPE)))*PD(L)
+              IF (L.EQ.INT(TILDS))
+     &          TILDSDU = PSTART(L)+(TILDS-FLOAT(INT(TILDS)))*PD(L)
+              IF (L.EQ.INT(TILDE))
+     &          TILDEDU = PSTART(L)+(TILDE-FLOAT(INT(TILDE)))*PD(L)
+              IF (L.EQ.INT(LRETS))
+     &          LRETSDU = PSTART(L)+(LRETS-FLOAT(INT(LRETS)))*PD(L)
+              IF (L.EQ.INT(GGPHASE(1))) GGPHASEDU(1) =
+     &         PSTART(L)+(GGPHASE(1)-FLOAT(INT(GGPHASE(1))))*PD(L)
+              IF (L.EQ.INT(LGPHASE(1))) LGPHASEDU(1) =
+     &         PSTART(L)+(LGPHASE(1)-FLOAT(INT(LGPHASE(1))))*PD(L)
+              IF (L.EQ.INT(LGPHASE(2))) LGPHASEDU(2) =
+     &         PSTART(L)+(LGPHASE(2)-FLOAT(INT(LGPHASE(2))))*PD(L)
+              IF (L.EQ.INT(SGPHASE(1))) SGPHASEDU(1) =
+     &         PSTART(L)+(SGPHASE(1)-FLOAT(INT(SGPHASE(1))))*PD(L)
+              IF (L.EQ.INT(SGPHASE(2))) SGPHASEDU(2) =
+     &         PSTART(L)+(SGPHASE(2)-FLOAT(INT(SGPHASE(2))))*PD(L)
+            ENDDO
           ENDIF
           
  6666     CONTINUE    
@@ -7816,13 +7830,13 @@ C  yet built into the model.
 
           ! Determine if to harvest
           CFLHAR = 'N'
-           IF (IHARI.EQ.'R'.AND.YEARDOYHARF.EQ.YEARDOY .OR.
-     &         IHARI.EQ.'D'.AND.YEARDOYHARF.EQ.DAP .OR.
-     &         IHARI.EQ.'G'.AND.YEARDOYHARF.LE.RSTAGE .OR.
-     &         IHARI.EQ.'A'.AND.YEARDOYHARF.EQ.YEARDOY .OR.
-     &         IHARI.EQ.'M'.AND.CUMDU.GE.PSTART(MSTG)) THEN
-                 CFLHAR = 'Y'
-            ENDIF    
+          IF (IHARI.EQ.'R'.AND.YEARDOYHARF.EQ.YEARDOY .OR.
+     &     IHARI.EQ.'D'.AND.YEARDOYHARF.EQ.DAP .OR.
+     &     IHARI.EQ.'G'.AND.YEARDOYHARF.LE.RSTAGE .OR.
+     &     IHARI.EQ.'A'.AND.YEARDOYHARF.EQ.YEARDOY .OR.
+     &     IHARI.EQ.'M'.AND.CUMDU.GE.PSTART(MSTG)) THEN
+            CFLHAR = 'Y'
+          ENDIF    
 
           IF(IHARI.EQ.'R'.AND.CFLHAR.EQ.'N')THEN
             IF (CUMDU.GT.PSTART(HSTG) .AND. CFLHARMSG .NE. 'Y') THEN
@@ -8320,6 +8334,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
           hwam = -99.0
           hiam = -99.0
           sennatc = -99.0
+          gfdur = -99
         ENDIF
 
         DAS = MAX(0,CSTIMDIF(YEARSIM,YEARDOY))
@@ -8350,7 +8365,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
         PARIFOUT = (1.0 - EXP((-KCAN)*LAI))
 
 !-----------------------------------------------------------------------
-!       IDETG OUTPUTS
+!       TIME SEQUENCE OUTPUTS (WorkPlantgro,gr2,grf)
 !-----------------------------------------------------------------------
 
         IF (  (MOD(DAS,FROPADJ).EQ.0.AND.YEARDOY.GE.PLYEARDOY)
@@ -8358,8 +8373,11 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &   .OR. (YEARDOY.EQ.STGYEARDOY(1))
      &   .OR. (YEARDOY.EQ.STGYEARDOY(HSTG))
      &   .OR. (YEARDOY.EQ.STGYEARDOY(11))) THEN
-     
-          ! WORK Details ... only when IDETL switch = A
+
+!-----------------------------------------------------------------------
+!         IDETL = A OUTPUTS (Work details)
+!-----------------------------------------------------------------------     
+
           IF (IDETL.EQ.'A') THEN
             WRITE(fnumwrk,*)' '
             WRITE(fnumwrk,'(A25,I16)')
@@ -8482,12 +8500,12 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &         ' Surplus assimilates sent to roots'
               IF (LRTIP.EQ.1) WRITE(fnumwrk,'(A21)')
      &         ' Root tip in layer 1 '
-              WRITE(fnumwrk,'(A34,2F7.2)')
-     &         ' N uptake potential,CSM,CRS       ',nupapcsm,nupap
-              IF (NUPAP.LT.ANDEM) WRITE(fnumwrk,'(A34,F7.2)')
-     &         ' N uptake shortage                ',andem-nupap
-              WRITE(FNUMWRK,*)
-     &         'N demand (kg/ha)                 ',andem 
+              WRITE(fnumwrk,'(A38,2F7.2)')
+     &         ' N uptake potential (kg/ha) CSCRP,CSM ',nupap,nupapcsm
+              IF (NUPAP.LT.ANDEM) WRITE(fnumwrk,'(A38,F7.2)')
+     &         ' N uptake shortage                    ',andem-nupap
+              WRITE(FNUMWRK,'(A38,F7.2)')
+     &         ' N demand (kg/ha)                     ',andem 
               IF (ANDEM.LE.0.0) THEN
                 WRITE(FNUMWRK,'(A44)')
      &            ' N demand at zero! Components of demand/use:' 
@@ -8555,9 +8573,13 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                 ENDDO
               ENDIF
             ENDIF ! End EYEARDOY.LE.YEARDOY
-          ENDIF ! End detailed WORK writes     
+          ENDIF ! End detailed WORK writes  IDDETL = 'A'   
 
-          IF ((IDETL.NE.'0'.AND.IDETG.NE.'N').OR.IDETL.EQ.'A') THEN
+!-----------------------------------------------------------------------
+!         IDETG NE N OUTPUTS (Plantgro,gr2,grf,n)
+!-----------------------------------------------------------------------     
+
+          IF ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A') THEN
           
             ! PlantGro
             IF (YEARDOY.EQ.PLYEARDOY) THEN
@@ -8586,16 +8608,16 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
               WRITE (NOUTPG,2201)
  2201         FORMAT ('@YEAR DOY   DAS   DAP  TMND TKILL',
      A               '  GSTD  L#SD',
-     B               '  PARI PARUE  AWAG',
+     B               ' PARID PARUD  AWAD',
      C               '  LAID  SAID  CAID',
      D               '  TWAD SDWAD  RWAD  CWAD  LWAD  SWAD  HWAD  HIAD',
      E               ' CHWAD  EWAD RSWAD SNWPD SNW0D SNW1D',
      F               '  RS%D',
      G               '  H#AD  HWUD',
      I               '  T#AD  LAWD  RDPD  PTFD',
-     J               '  SWXD  WAVR',
-     K               '  WUPR  WFTD  WFPD  WFGD',
-     L               '  NFTD  NFPD  NFGD  NUPR',
+     J               '  SWXD WAVRD',
+     K               ' WUPRD  WFTD  WFPD  WFGD',
+     L               '  NFTD  NFPD  NFGD NUPRD',
      M               '  TFPD  TFGD',
      N               ' VRNFD DYLFD',
      O               '      ',
@@ -8653,12 +8675,12 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      2               '..WATER STRESS DETERMINANTS..',
      2               '  N STRESS DETERMINANTS      ')
               WRITE (NOUTPGF,2205)
- 2205         FORMAT ('@YEAR DOY   DAS   DAP  TMND TCDIF  GSTD',
+ 2205         FORMAT ('@YEAR DOY   DAS   DAP  TMND TCADD  GSTD',
      N               '  TFDD VRNFD DYLFD',
-     1               '  TFPD  WFPD  NFPD CO2FP RSFPD', 
+     1               '  TFPD  WFPD  NFPD CO2FD RSFPD', 
      M               '  TFGD  WFGD  NFGD  WFTD  NFTD',
      &               '  WAVR  WUPR TRWUP  SWXD  EOPD',
-     &               '  SNXD  LN%R  SN%R  RN%R            ')
+     &               '  SNXD LN%RD SN%RD RN%RD            ')
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPGF,507)
      A      YEAR,DOY,DAS,DAP,TMEAN,TCAN-TMEAN,GSTAGEC,
@@ -8739,8 +8761,8 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
  2252           FORMAT ('@YEAR DOY   DAS   DAP  TMND  GSTD  NUAD',
      A           '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      F           ' RSNAD SNNPD SNN0D SNN1D',
-     B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D  VN%C VN%MN',
-     C           '  RN%C RN%MN  LN%R  SN%R  RN%R  NFPD  NFGD  NUPR',
+     B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D VN%CD VN%LD',
+     C           ' RN%CD RN%LD LN%RD SN%RD RN%RD  NFPD  NFGD NUPRD',
      D           ' NDEMD')
               ENDIF  ! Plantn header writes
               CALL Csopline(senn0c,sennal(0))
@@ -8765,7 +8787,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      8         F6.2,F6.1)
             ENDIF  ! ISWNIT  Plantn writes
 
-          ELSE ! For (IDETL.NE.'0' .AND. IDETG.NE.'N').OR.IDETL.EQ.'A'
+          ELSE ! (IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A'
 
             IF (IDETGNUM.LE.0) THEN
               OPEN (UNIT=FNUMTMP, FILE=OUTPG, STATUS = 'UNKNOWN')
@@ -8779,18 +8801,19 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
               IDETGNUM = IDETGNUM + 1 
             ENDIF  
 
-          ENDIF ! End ((IDETL.NE.'0' .AND. IDETG.NE.'N').OR.IDETL.EQ.'A'
+          ENDIF ! End ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A'
 
-        ! Automatic planting
         ELSEIF(YEARDOY.LT.PLYEARDOY.AND.(MOD(DAS,FROPADJ)).EQ.0.AND.
-     &     IPLTI.EQ.'A') THEN
+     &   IPLTI.EQ.'A') THEN
      
-            WRITE (fnumwrk,*) 'Water thresholds ',swpltl,swplth
-            WRITE (fnumwrk,*) 'Water ',avgsw
-            WRITE (fnumwrk,*) 'Temperature thresholds ',pttn,ptx
-            WRITE (fnumwrk,*) 'Temperature ',tsdep
+          ! Automatic planting
+          WRITE (fnumwrk,*) 'Water thresholds ',swpltl,swplth
+          WRITE (fnumwrk,*) 'Water ',avgsw
+          WRITE (fnumwrk,*) 'Temperature thresholds ',pttn,ptx
+          WRITE (fnumwrk,*) 'Temperature ',tsdep
 
-        ENDIF  ! End appropriate day, etc.
+        ENDIF  ! End time-course outputs (appropriate day, etc.)
+               ! (MOD(DAS,FROPADJ).EQ.0.AND.YEARDOY.GE.PLYEARDOY),etc..
         
 !***********************************************************************
         IF (STGYEARDOY(11).EQ.YEARDOY .OR.
@@ -8798,10 +8821,10 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
 !***********************************************************************
 
 !-----------------------------------------------------------------------
-!         IDETO OUTPUTS (AND NECESSARY DATA INPUTS)
-!-------------------------------------------------------------------------
+!         IDETO OUTPUTS AND NECESSARY DATA INPUTS (Evaluate & Overview)
+!-----------------------------------------------------------------------
           
-          IF (IDETL.EQ.'0' .OR. IDETO.NE.'N') THEN
+          IF (IDETO.NE.'N'.OR.IDETL.EQ.'0') THEN
 
             tiernum = 0
           
@@ -9177,169 +9200,169 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
               ENDIF ! End t-file reads,measured.out writes
               
               IF (IDETL.EQ.'A') THEN
-              ! Use T-data if A-data missing (whem output=all)
-              IF (FEXISTT) THEN
-                WRITE(Fnumwrk,*)' '
-                WRITE(Fnumwrk,'(A27)') ' EXAMINING TIME-COURSE DATA'
-                IF (HWAMM.LE.0.0) THEN
-                  IF (HWADT.GT.0.0) THEN
-                    HWAMM = HWADT
-                    Messageno = Min(Messagenox,Messageno+1)
-                    WRITE(Message(messageno),'(A30)')
-     &               'Time-course data used for HWAM'
-                    WRITE(Fnumwrk,'(A32)')
-     &               '  Time-course data used for HWAM'
-                  ENDIF
-                ELSE
-                  IF (HWADT.GT.0.0) THEN
-                    IF (ABS(100.0*ABS(HWAMM-HWADT)/HWAMM).GT.0.0) THEN
-                    Messageno = Min(Messagenox,Messageno+1)
-                    WRITE(Message(messageno),'(A48,F8.2)')
-     &              'Pc difference between final,time-course yields =',
-     &              100.0*ABS(HWAMM-HWADT)/HWAMM
-                    Messageno = Min(Messagenox,Messageno+1)
-                    WRITE(Message(messageno),'(A20,I6)')
-     &              'Final yield         ',NINT(HWAMM)
-                    Messageno = Min(Messagenox,Messageno+1)
-                    WRITE(Message(messageno),'(A20,I6)')
-     &              'Time-course yield   ',NINT(HWADT)
+                ! Use T-data if A-data missing (whem output=all)
+                IF (FEXISTT) THEN
+                  WRITE(Fnumwrk,*)' '
+                  WRITE(Fnumwrk,'(A27)') ' EXAMINING TIME-COURSE DATA'
+                  IF (HWAMM.LE.0.0) THEN
+                    IF (HWADT.GT.0.0) THEN
+                      HWAMM = HWADT
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A30)')
+     &                 'Time-course data used for HWAM'
+                      WRITE(Fnumwrk,'(A32)')
+     &                 '  Time-course data used for HWAM'
+                    ENDIF
+                  ELSE
+                    IF (HWADT.GT.0.0) THEN
+                      IF (ABS(100.0*ABS(HWAMM-HWADT)/HWAMM).GT.0.0) THEN
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A48,F8.2)')
+     &                'Pc difference between final,time-course yields ='
+     &                ,100.0*ABS(HWAMM-HWADT)/HWAMM
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A20,I6)')
+     &                'Final yield         ',NINT(HWAMM)
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A20,I6)')
+     &                'Time-course yield   ',NINT(HWADT)
+                      ENDIF
                     ENDIF
                   ENDIF
-                ENDIF
-                IF (CWAMM.LE.0.0) THEN
-                  IF (CWADT.GT.0.0) THEN
-                    CWAMM = CWADT
-                    Messageno = Min(Messagenox,Messageno+1)
-                    WRITE(Message(messageno),'(A31)')
-     &               'Time-course data used for CWAMM'
-                    WRITE(Fnumwrk,'(A33)')
-     &               '  Time-course data used for CWAMM'
-                  ENDIF
-                ELSE
-                  IF (CWADT.GT.0.0) THEN
-                    IF (ABS(100.0*ABS(CWAMM-CWADT)/CWAMM).GT.0.0) THEN
-                    Messageno = Min(Messagenox,Messageno+1)
-                    WRITE(Message(messageno),'(A48,F8.2)')
-     &              'Pc difference between final,time-course canopy =',
-     &              100.0*ABS(CWAMM-CWADT)/CWAMM
-                    Messageno = Min(Messagenox,Messageno+1)
-                    WRITE(Message(messageno),'(A19,I6)')
-     &              'Final canopy       ',NINT(CWAMM)
-                    Messageno = Min(Messagenox,Messageno+1)
-                    WRITE(Message(messageno),'(A19,I6)')
-     &              'Time-course canopy ',NINT(CWADT)
+                  IF (CWAMM.LE.0.0) THEN
+                    IF (CWADT.GT.0.0) THEN
+                      CWAMM = CWADT
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A31)')
+     &                 'Time-course data used for CWAMM'
+                      WRITE(Fnumwrk,'(A33)')
+     &                 '  Time-course data used for CWAMM'
+                    ENDIF
+                  ELSE
+                    IF (CWADT.GT.0.0) THEN
+                      IF (ABS(100.0*ABS(CWAMM-CWADT)/CWAMM).GT.0.0) THEN
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A48,F8.2)')
+     &                'Pc difference between final,time-course canopy ='
+     &                ,100.0*ABS(CWAMM-CWADT)/CWAMM
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A19,I6)')
+     &                'Final canopy       ',NINT(CWAMM)
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A19,I6)')
+     &                'Time-course canopy ',NINT(CWADT)
+                      ENDIF
                     ENDIF
                   ENDIF
-                ENDIF
-                IF (LAIXM.LE.0.0.AND.LAIXT.GT.0.0) THEN
-                  LAIXM = LAIXT
-                  Messageno = Min(Messagenox,Messageno+1)
-                  WRITE(Message(messageno),'(A31)')
-     &             'Time-course data used for LAIXM'
-                  WRITE(Fnumwrk,'(A33)')
-     &             '  Time-course data used for LAIXM'
-                ENDIF
-                IF (LNUMSMM.LE.0.0.AND.LNUMSMM.GT.0.0) THEN
-                  LNUMSMM = LNUMT
-                  Messageno = Min(Messagenox,Messageno+1)
-                  WRITE(Message(messageno),'(A33)')
-     &             'Time-course data used for LNUMSMM'
-                  WRITE(Fnumwrk,'(A35)')
-     &             '  Time-course data used for LNUMSMM'
-                ENDIF
-                IF (TNUMAMM.LE.0.0.AND.TNUMT.GT.0.0) THEN
-                  TNUMAMM = TNUMT
-                  Messageno = Min(Messagenox,Messageno+1)
-                  WRITE(Message(messageno),'(A33)')
-     &             'Time-course data used for TNUMAMM'
-                  WRITE(Fnumwrk,'(A35)')
-     &             '  Time-course data used for TNUMAMM'
-                ENDIF
-                IF (HIAMM.LE.0.0.AND.HIADT.GT.0.0) THEN
-                  HIAMM = HIADT
-                  Messageno = Min(Messagenox,Messageno+1)
-                  WRITE(Message(messageno),'(A31)')
-     &             'Time-course data used for HIAMM'
-                  WRITE(Fnumwrk,'(A33)')
-     &             '  Time-course data used for HIAMM'
-                ENDIF
-                IF (HWUMM.LE.0.0.AND.HWUT.GT.0.0) THEN
-                  HWUMM = HWUT
-                  Messageno = Min(Messagenox,Messageno+1)
-                  WRITE(Message(messageno),'(A31)')
-     &             'Time-course data used for HWUMM'
-                  WRITE(Fnumwrk,'(A33)')
-     &             '  Time-course data used for HWUMM'
-                ENDIF
-                IF (HNUMAMM.LE.0.0.AND.HNUMAT.GT.0.0) THEN
-                  HNUMAMM = HNUMAT
-                  WRITE(Message(messageno),'(A31)')
-     &             'Time-course data used for H#AT'
-                  WRITE(Fnumwrk,'(A33)')
-     &             '  Time-course data used for H#AT'
-                ENDIF
-                IF (HNUMGMM.LE.0.0.AND.HNUMET.GT.0.0) THEN
-                  HNUMGMM = HNUMET
-                  Messageno = Min(Messagenox,Messageno+1)
-                  WRITE(Message(messageno),'(A32)')
-     &             'Time-course data used for H#GMM'
-                  WRITE(Fnumwrk,'(A34)')
-     &             '  Time-course data used for H#GMM'
-                ENDIF
-              ENDIF
-              DO L = 1,PSNUM
-                IF (PSABV(L).EQ.'ADAT'.AND.PSDATM(L).LE.0.0) THEN
-                  IF (ADATT.GT.0) THEN
-                    PSDATM(L) = INT(ADATT)
+                  IF (LAIXM.LE.0.0.AND.LAIXT.GT.0.0) THEN
+                    LAIXM = LAIXT
                     Messageno = Min(Messagenox,Messageno+1)
                     WRITE(Message(messageno),'(A31)')
-     &               'Time-course data used for ADATM'
+     &               'Time-course data used for LAIXM'
                     WRITE(Fnumwrk,'(A33)')
-     &               '  Time-course data used for ADATM'
-                  ENDIF  
-                ENDIF
-                IF (PSABV(L).EQ.'MDAT'.AND.PSDATM(L).LE.0.0) THEN
-                  IF (MDATT.GT.0) THEN
-                    PSDATM(L) = INT(MDATT)
+     &               '  Time-course data used for LAIXM'
+                  ENDIF
+                  IF (LNUMSMM.LE.0.0.AND.LNUMSMM.GT.0.0) THEN
+                    LNUMSMM = LNUMT
+                    Messageno = Min(Messagenox,Messageno+1)
+                    WRITE(Message(messageno),'(A33)')
+     &               'Time-course data used for LNUMSMM'
+                    WRITE(Fnumwrk,'(A35)')
+     &               '  Time-course data used for LNUMSMM'
+                  ENDIF
+                  IF (TNUMAMM.LE.0.0.AND.TNUMT.GT.0.0) THEN
+                    TNUMAMM = TNUMT
+                    Messageno = Min(Messagenox,Messageno+1)
+                    WRITE(Message(messageno),'(A33)')
+     &               'Time-course data used for TNUMAMM'
+                    WRITE(Fnumwrk,'(A35)')
+     &               '  Time-course data used for TNUMAMM'
+                  ENDIF
+                  IF (HIAMM.LE.0.0.AND.HIADT.GT.0.0) THEN
+                    HIAMM = HIADT
                     Messageno = Min(Messagenox,Messageno+1)
                     WRITE(Message(messageno),'(A31)')
-     &               'Time-course data used for MDATM'
+     &               'Time-course data used for HIAMM'
                     WRITE(Fnumwrk,'(A33)')
-     &               '  Time-course data used for MDATM'
-                  ENDIF  
+     &               '  Time-course data used for HIAMM'
+                  ENDIF
+                  IF (HWUMM.LE.0.0.AND.HWUT.GT.0.0) THEN
+                    HWUMM = HWUT
+                    Messageno = Min(Messagenox,Messageno+1)
+                    WRITE(Message(messageno),'(A31)')
+     &               'Time-course data used for HWUMM'
+                    WRITE(Fnumwrk,'(A33)')
+     &               '  Time-course data used for HWUMM'
+                  ENDIF
+                  IF (HNUMAMM.LE.0.0.AND.HNUMAT.GT.0.0) THEN
+                    HNUMAMM = HNUMAT
+                    WRITE(Message(messageno),'(A31)')
+     &               'Time-course data used for H#AT'
+                    WRITE(Fnumwrk,'(A33)')
+     &               '  Time-course data used for H#AT'
+                  ENDIF
+                  IF (HNUMGMM.LE.0.0.AND.HNUMET.GT.0.0) THEN
+                    HNUMGMM = HNUMET
+                    Messageno = Min(Messagenox,Messageno+1)
+                    WRITE(Message(messageno),'(A32)')
+     &               'Time-course data used for H#GMM'
+                    WRITE(Fnumwrk,'(A34)')
+     &               '  Time-course data used for H#GMM'
+                  ENDIF
                 ENDIF
-              ENDDO
+                DO L = 1,PSNUM
+                  IF (PSABV(L).EQ.'ADAT'.AND.PSDATM(L).LE.0.0) THEN
+                    IF (ADATT.GT.0) THEN
+                      PSDATM(L) = INT(ADATT)
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A31)')
+     &                 'Time-course data used for ADATM'
+                      WRITE(Fnumwrk,'(A33)')
+     &                 '  Time-course data used for ADATM'
+                    ENDIF  
+                  ENDIF
+                  IF (PSABV(L).EQ.'MDAT'.AND.PSDATM(L).LE.0.0) THEN
+                    IF (MDATT.GT.0) THEN
+                      PSDATM(L) = INT(MDATT)
+                      Messageno = Min(Messagenox,Messageno+1)
+                      WRITE(Message(messageno),'(A31)')
+     &                 'Time-course data used for MDATM'
+                      WRITE(Fnumwrk,'(A33)')
+     &                 '  Time-course data used for MDATM'
+                    ENDIF  
+                  ENDIF
+                ENDDO
               ENDIF ! END OF USE T-DATA TO FILL IN FOR MISSING A-DATA
               
             ELSE  ! For IDETG.NE.'N'.OR.IDETL.EQ.'A' 
               ! No call for measured.out! Delete old files.
               OPEN (UNIT=FNUMTMP,FILE=FNAMEMEAS,STATUS = 'UNKNOWN')
               CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
-              
+                
             ENDIF ! End A-file reads,T-file reads,Measured writes,T->A
                  
             ! Check data and calculate equivalents,if needed
-          
+            
             ! Emergence and maturity dates 
             IF (edatm.LE.0) edatm = edatmx ! If no Afile data,use Xfile
             IF (mdatm.LE.0) mdatm = psdatm(mstg)
-          
+            
             ! Product wt at maturity
             IF (hwahm.GT.0.AND.hwamm.LE.0) hwamm = hwahm/(hpcf/100.0)
-          
+            
             ! Product wt at harvest
             IF (hwamm.GT.0.AND.hwahm.LE.0) hwahm = hwamm*(hpcf/100.0)
-          
+            
             ! Canopy wt at maturity
             IF (vwamm.GT.0.AND.hwamm.GT.0) cwamm = vwamm+hwamm
-          
+            
             ! Vegetative wt at maturity
             IF (HPROD.NE.'SR') THEN
               IF (hwamm.GT.0.AND.cwamm.GT.0) vwamm = cwamm-hwamm
             ELSE
               IF (cwamm.GT.0) vwamm = cwamm
             ENDIF
-          
+            
             ! Harvest index at maturity
             IF (hiamm.LE.0.0) THEN
               IF (cwamm.GT.0.AND.hwamm.GT.0) THEN
@@ -9363,7 +9386,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                 ENDIF
               ENDIF
             ENDIF
-          
+            
             ! Product unit wt at maturity
             IF (hwumm.GT.1.0) hwumm = hwumm/1000.0 ! mg->g
             IF (hwumm.LE.0.AND.hnumamm.GT.0) THEN
@@ -9385,7 +9408,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                 ENDIF
               ENDIF
             ENDIF
-          
+            
             ! Product number at maturity
             IF (HNUMAMM.LE..0.AND.HNUMGMM.GT..0.AND.TNUMAMM.GT..0) THEN
               HNUMAMM = HNUMGMM * TNUMAMM
@@ -9394,7 +9417,11 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &         'ShootNo * product/shoot used for H#AMM'
             ENDIF
             IF (HNUMAMM.GT.0.0) THEN
-              HNUMPMM = HNUMAMM/PLTPOP
+              IF (PLTPOPP.GT.0) THEN 
+                HNUMPMM = HNUMAMM/PLTPOPP
+              ELSE
+                HNUMPMM = -99.0
+              ENDIF  
             ELSE
               HNUMPMM = -99.0
             ENDIF
@@ -9404,53 +9431,54 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
               WRITE(Message(messageno),'(A38)')
      &         'ProductNo/area/ShootNo used for H#GMM '
             ENDIF
-          
+            
             ! Tiller number at maturity
             IF (tnumamm.LE.0.AND.hnumamm.GT.0.AND.hnumgmm.GT.0)
      &         tnumamm = hnumamm/hnumgmm
-            IF (pltpop.GT.0..AND.tnumamm.GT.0.) tnumpmm = tnumamm/pltpop
-          
+            IF (pltpopp.GT.0..AND.tnumamm.GT.0.) tnumpmm=tnumamm/pltpopp
+            
             ! Shoot/root ratio at maturity
             IF (rwamm.GT.0.0) shrtmm = cwamm/rwamm
-          
+            
             ! Reserves concentration at maturity
             IF (vwamm+rwamm.GT.0.AND.rswamm.GT.0.0)
      &       rscmm = rswamm/(vwamm+rwamm)
-          
+            
             ! Canopy N at maturity
             IF (vnamm.GT.0.AND.gnamm.GT.0.AND.cnamm.LE.0)
      &        cnamm = vnamm + gnamm
-          
+            
             ! Total N at maturity
             IF (CNAMM.GT.0.0.AND.RNAMM.GT.0.0) THEN
               tnamm = cnamm+rnamm
             ELSE
               tnamm = -99.0
             ENDIF
-          
+            
             ! Vegetative N at maturity
             IF (vnamm.LE.0) THEN
              IF (hnamm.GE.0.AND.cnamm.GT.0) vnamm=cnamm-hnamm
             ENDIF
-          
+            
             ! Product N harvest index at maturity
             IF (cnamm.GT.0.AND.hnamm.GT.0) hinmm=hnamm/cnamm
-          
+            
             ! Vegetative N concentration at maturity
             IF (vnpcmm.LE.0) THEN
              IF (vwamm.GT.0.AND.vnamm.GT.0) vnpcmm = (vnamm/vwamm)*100
             ENDIF
-          
+            
             ! Product N concentration at maturity
             IF (hnpcmm.LE.0) THEN
              IF (hwamm.GT.0.AND.hnamm.GT.0) hnpcmm = (hnamm/hwamm)*100
             ENDIF
-          
+            
             ! Leaf N concentration at maturity
             IF (cnpcmm.LE.0.AND.cnamm.GT.0.AND.cwamm.GT.0.0)
      &        cnpcmm = cnamm/cwamm
-          
+            
             ! Express dates as days after planting
+            edapm = -99
             edapm = Dapcalc(edatm,plyear,plday)
             IF (edapm.GT.200) THEN
               Messageno = Min(Messagenox,Messageno+1)
@@ -9463,17 +9491,11 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             adapm = Dapcalc(adatm,plyear,plday)
             IF (mdapm.LE.0) mdapm = Dapcalc(mdatm,plyear,plday)
 
-!-----------------------------------------------------------------------
-!           Write messages re.measured variables to Warning.out
-!-----------------------------------------------------------------------
-
-            ! Write to warning.out
+            ! Write messages re.measured variables to Warning.out
             IF (Messageno.GT.0) THEN
               CALL WARNING(Messageno,'CSCRP',MESSAGE)
             ENDIF  
             Messageno = 0
-          
-!-------------------------------------------------------------------------
 
             ! Check that -99 not multiplied or divided 
             IF (hnumgm.LT.0.0) hnumgm = -99
@@ -9492,7 +9514,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
               rnam = -99
               nupac = -99
             ENDIF  
-          
+            
             ! Create character equivalents for outputing
             CALL Csopline(hwumchar,hwum)
             CALL Csopline(hwummchar,AMAX1(-99.0,hwumm))
@@ -9504,7 +9526,9 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             CALL Csopline(hnpcmmchar,AMAX1(-99.0,hnpcmm))
             CALL Csopline(vnpcmchar,AMAX1(-99.0,vnpcm))
             CALL Csopline(vnpcmmchar,AMAX1(-99.0,vnpcmm))
-          
+            CALL Csopline(laixchar,AMAX1(-99.0,laix))
+            CALL Csopline(laixmchar,AMAX1(-99.0,laixm))
+            
             ! Evaluate
             EVHEADER = ' '
             EVHEADER(1:14) = '*EVALUATION : '
@@ -9541,21 +9565,25 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                 DO L = 1,KEYSTX
                   IF (KEYPS(L).GT.0) THEN
                     IF (PSABVO(KEYPS(L))(1:1).NE.' ') 
-     &               WRITE (FNUMEVAL,'(A1,\)') ' '
-                    WRITE (FNUMEVAL,'(A5,A1,\)') PSABVO(KEYPS(L)),'S'
+     &               WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
+                    WRITE (FNUMEVAL,'(A5,A1)',ADVANCE='NO') 
+     &                      PSABVO(KEYPS(L)),'S'
                     IF (PSABVO(KEYPS(L))(1:1).NE.' ') 
-     &               WRITE (FNUMEVAL,'(A1,\)') ' '
-                    WRITE (FNUMEVAL,'(A5,A1,\)') PSABVO(KEYPS(L)),'M'
+     &               WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
+                    WRITE (FNUMEVAL,'(A5,A1)',ADVANCE='NO') 
+     &                      PSABVO(KEYPS(L)),'M'
                   ENDIF 
                 ENDDO
                 DO L = 1,KEYSTX
                   IF (KEYSS(L).GT.0) THEN 
                     IF (SSABVO(KEYSS(L))(1:1).NE.' ') 
-     &               WRITE (FNUMEVAL,'(A1,\)') ' '
-                    WRITE (FNUMEVAL,'(A5,A1,\)') SSABVO(KEYSS(L)),'S'
+     &               WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
+                    WRITE (FNUMEVAL,'(A5,A1)',ADVANCE='NO') 
+     &                      SSABVO(KEYSS(L)),'S'
                     IF (SSABVO(KEYSS(L))(1:1).NE.' ') 
-     &               WRITE (FNUMEVAL,'(A1,\)') ' '
-                    WRITE (FNUMEVAL,'(A5,A1,\)') SSABVO(KEYSS(L)),'M'
+     &               WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
+                    WRITE (FNUMEVAL,'(A5,A1)',ADVANCE='NO') 
+     &                      SSABVO(KEYSS(L)),'M'
                   ENDIF
                 ENDDO
 !9941           FORMAT (A5,A1,A5,A1)
@@ -9580,21 +9608,21 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             DO L = 1,KEYSTX
               IF (KEYPS(L).GT.0) THEN 
                 IF (PSABVO(KEYPS(L))(1:1).NE.' ') 
-     &            WRITE (FNUMEVAL,'(A1,\)') ' '
-                WRITE (FNUMEVAL,'(I6,\)') PSDAP(KEYPS(L))
+     &            WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
+                WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') PSDAP(KEYPS(L))
                 IF (PSABVO(KEYPS(L))(1:1).NE.' ') 
-     &            WRITE (FNUMEVAL,'(A1,\)') ' '
-                WRITE (FNUMEVAL,'(I6,\)') PSDAPM(KEYPS(L))
+     &            WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
+                WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') PSDAPM(KEYPS(L))
               ENDIF
             ENDDO
             DO L = 1,KEYSTX
               IF (KEYSS(L).GT.0) THEN 
                 IF (SSABVO(KEYSS(L))(1:1).NE.' ') 
-     &            WRITE (FNUMEVAL,'(A1,\)') ' '
-                WRITE (FNUMEVAL,'(I6,\)') SSDAP(KEYSS(L))
+     &            WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
+                WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') SSDAP(KEYSS(L))
                 IF (SSABVO(KEYSS(L))(1:1).NE.' ') 
-     &            WRITE (FNUMEVAL,'(A1,\)') ' '
-                WRITE (FNUMEVAL,'(I6,\)') SSDAPM(KEYSS(L))
+     &            WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
+                WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') SSDAPM(KEYSS(L))
               ENDIF
             ENDDO
 !8405       FORMAT (2I6)
@@ -9623,8 +9651,6 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &      I6,I6)
             Close(FNUMEVAL)
             ! End of Evaluation.Out writes
-          
-!-------------------------------------------------------------------------
 
             ! Overview
             IF (IDETO.NE.'E') THEN  ! No Overview if only need Evaluate
@@ -9729,6 +9755,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &             '  Drainage: ',F10.1,
      &             '  Final:    ',F8.1)
                 ENDIF
+                ! LAH CHECK THIS .. ARE IN FILEIOT.NE.'DS4' !!!!
                 IF (FILEIOT.EQ.'DS4'.AND.IDETL.EQ.'D'.OR.
      &           FILEIOT.EQ.'DS4'.AND.IDETL.EQ.'A'.OR.
      &           FILEIOT.NE.'DS4') THEN                  
@@ -9969,170 +9996,107 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
               ENDIF  
               WRITE(FNUMOV,'(110("*"))')
               CLOSE(FNUMOV)  ! Overview.out
-            ENDIF 
-            ! End of Overview writes (IDETO.NE.'E')
-          
-            ! Basic info.to Work.out
-            !  Summary of various environmental aspects
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,'(A28,A10,I3)')
-     &        ' OVERVIEW OF CONDITIONS FOR ',
-     &          excode,tn
-            WRITE(fnumwrk,*) ' '
-            WRITE (fnumwrk,209) tmaxx,tmaxm,tminn,tminm              
-            IF (ISWNIT.NE.'N') THEN
-              WRITE(fnumwrk,2095)cnad+rnad+hnad,hnad,vnad
-              WRITE(fnumwrk,2096)sennal(0),sennas            
-              WRITE(fnumwrk,2093)isoiln,amtnit,fsoiln
-              WRITE(fnumwrk,2094)
-     &          tnoxc,tlchc,tominsomc+tominfomc-tnimbsom
-              WRITE(fnumwrk,2099)tnimbsom,tominfomc,tominsomc   
-              IF (tominsom1.GT.0.0)
-     &          WRITE(fnumwrk,2098)NINT(tominsom1c),NINT(tominsom2c),
-     &           NINT(tominsom3c)
-              IF (FILEIOT.EQ.'DS4'.AND.IDETL.EQ.'D'.OR.
-     &           FILEIOT.EQ.'DS4'.AND.IDETL.EQ.'A'.OR.
-     &           FILEIOT.NE.'DS4') THEN                  
-                WRITE(fnumwrk,2090)isoilh2o,rainc/10.0,irramtc/10.0
-                WRITE(fnumwrk,2091)runoffc/10.0,drainc/10.0,fsoilh2o
-                WRITE(fnumwrk,2089)eoc/10.0,eopenc/10.0,eompenc/10.0
-                WRITE(fnumwrk,2097)eoptc/10.0,eoebudc/10.0
-              ENDIF
-              IF (FAPPNUM.GT.0) THEN
-                WRITE (fnumwrk,*) ' '
-                WRITE (fnumwrk,'(A18,A10,I3)')
-     &            ' N FERTILIZER FOR ',excode,tn
-                DO L = 1,FAPPNUM
-                   WRITE (fnumwrk,'(A80)') FAPPLINE(L)
-                ENDDO
-              ENDIF
+              ENDIF 
+              ! Basic info.to Work.out when calling for Overview
+              !  Summary of various environmental aspects
+              WRITE(fnumwrk,*) ' '
+              WRITE(fnumwrk,'(A28,A10,I3)')
+     &          ' OVERVIEW OF CONDITIONS FOR ',
+     &            excode,tn
+              WRITE(fnumwrk,*) ' '
+              WRITE (fnumwrk,209) tmaxx,tmaxm,tminn,tminm              
+              IF (ISWNIT.NE.'N') THEN
+                WRITE(fnumwrk,2095)cnad+rnad+hnad,hnad,vnad
+                WRITE(fnumwrk,2096)sennal(0),sennas            
+                WRITE(fnumwrk,2093)isoiln,amtnit,fsoiln
+                WRITE(fnumwrk,2094)
+     &            tnoxc,tlchc,tominsomc+tominfomc-tnimbsom
+                WRITE(fnumwrk,2099)tnimbsom,tominfomc,tominsomc   
+                IF (tominsom1.GT.0.0)
+     &            WRITE(fnumwrk,2098)NINT(tominsom1c),NINT(tominsom2c),
+     &             NINT(tominsom3c)
+                IF (FILEIOT.EQ.'DS4'.AND.IDETL.EQ.'D'.OR.
+     &             FILEIOT.EQ.'DS4'.AND.IDETL.EQ.'A'.OR.
+     &             FILEIOT.NE.'DS4') THEN                  
+                  WRITE(fnumwrk,2090)isoilh2o,rainc/10.0,irramtc/10.0
+                  WRITE(fnumwrk,2091)runoffc/10.0,drainc/10.0,fsoilh2o
+                  WRITE(fnumwrk,2089)eoc/10.0,eopenc/10.0,eompenc/10.0
+                  WRITE(fnumwrk,2097)eoptc/10.0,eoebudc/10.0
+                ENDIF
+                IF (FAPPNUM.GT.0) THEN
+                  WRITE (fnumwrk,*) ' '
+                  WRITE (fnumwrk,'(A18,A10,I3)')
+     &              ' N FERTILIZER FOR ',excode,tn
+                  DO L = 1,FAPPNUM
+                     WRITE (fnumwrk,'(A80)') FAPPLINE(L)
+                  ENDDO
+                ENDIF
+                WRITE(FNUMWRK,*) ' '
+                WRITE(FNUMWRK,'(A45)')
+     &            ' INORGANIC N (kg/ha) LEFT IN SOIL AT MATURITY'
+                WRITE(FNUMWRK,'(A28,2F6.1)')
+     &           '  NO3 and NH4 N in PROFILE: ',
+     &           SNO3PROFILE,SNH4PROFILE
+                WRITE(FNUMWRK,'(A28,2F6.1)')
+     &           '  NO3 and NH4 N in ROOTZONE:',
+     &           SNO3ROOTZONE,SNH4ROOTZONE
+              ENDIF   ! End Iswnit NE N
               WRITE(FNUMWRK,*) ' '
-              WRITE(FNUMWRK,'(A45)')
-     &          ' INORGANIC N (kg/ha) LEFT IN SOIL AT MATURITY'
-              WRITE(FNUMWRK,'(A28,2F6.1)')
-     &         '  NO3 and NH4 N in PROFILE: ',
-     &         SNO3PROFILE,SNH4PROFILE
-              WRITE(FNUMWRK,'(A28,2F6.1)')
-     &         '  NO3 and NH4 N in ROOTZONE:',
-     &         SNO3ROOTZONE,SNH4ROOTZONE
-            ENDIF   ! End Iswnit NE N
-            WRITE(FNUMWRK,*) ' '
-            WRITE(FNUMWRK,'(A34)')
-     &        ' H2O (mm) LEFT IN SOIL AT MATURITY'
-            WRITE(FNUMWRK,'(A36,2F6.1)')
-     &       '  H2O and AVAILABLE H2O in PROFILE: ',
-     &       H2OPROFILE,AH2OPROFILE
-            WRITE(FNUMWRK,'(A36,2F6.1)')
-     &       '  H2O and AVAILABLE H2O in ROOTZONE:',
-     &       H2OROOTZONE,AH2OROOTZONE
-            WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A32,A10,I3)')
-     &       ' CRITICAL PERIOD CONDITIONS FOR ',excode,tn
-            WRITE (fnumwrk,'(A38,F6.1)')
-     &       '  Temperature mean,germination         ',TMEANG
-            WRITE (fnumwrk,'(A38,F6.1)')
-     &       '  Temperature mean,germ-emergence      ',TMEANE
-            WRITE (fnumwrk,'(A38,F6.1)')
-     &       '  Temperature mean,first 20 days       ',TMEAN20P
-            IF (HPROD.NE.'SR') THEN
-              IF (TMEAN20A.GT.0.0) WRITE (fnumwrk,'(A38,F6.1)')
-     &         '  Temperature mean,20d around anthesis ',TMEAN20A
-              IF (CUMDU.GE.MSTG-1) WRITE (fnumwrk,'(A38,F6.1)')
-     &         '  Temperature mean,grain filling       ',
-     &         TMEANAV(MSTG-1)
-              IF (SRAD20A.GT.0.0) THEN
-                WRITE (fnumwrk,*)' '
-                WRITE (fnumwrk,'(A38,F6.1)')
-     &           '  Solar radn. mean,20d around anthesis ',SRAD20A
-              ENDIF
+              WRITE(FNUMWRK,'(A34)')
+     &          ' H2O (mm) LEFT IN SOIL AT MATURITY'
+              WRITE(FNUMWRK,'(A36,2F6.1)')
+     &         '  H2O and AVAILABLE H2O in PROFILE: ',
+     &         H2OPROFILE,AH2OPROFILE
+              WRITE(FNUMWRK,'(A36,2F6.1)')
+     &         '  H2O and AVAILABLE H2O in ROOTZONE:',
+     &         H2OROOTZONE,AH2OROOTZONE
+              WRITE (fnumwrk,*) ' '
+              WRITE (fnumwrk,'(A32,A10,I3)')
+     &         ' CRITICAL PERIOD CONDITIONS FOR ',excode,tn
               WRITE (fnumwrk,'(A38,F6.1)')
-     &         '  Stress fac. mean,20d before grain set',STRESS20GS
-            END IF
+     &         '  Temperature mean,germination         ',TMEANG
+              WRITE (fnumwrk,'(A38,F6.1)')
+     &         '  Temperature mean,germ-emergence      ',TMEANE
+              WRITE (fnumwrk,'(A38,F6.1)')
+     &         '  Temperature mean,first 20 days       ',TMEAN20P
+              IF (HPROD.NE.'SR') THEN
+                IF (TMEAN20A.GT.0.0) WRITE (fnumwrk,'(A38,F6.1)')
+     &           '  Temperature mean,20d around anthesis ',TMEAN20A
+                IF (CUMDU.GE.MSTG-1) WRITE (fnumwrk,'(A38,F6.1)')
+     &           '  Temperature mean,grain filling       ',
+     &           TMEANAV(MSTG-1)
+                IF (SRAD20A.GT.0.0) THEN
+                  WRITE (fnumwrk,*)' '
+                  WRITE (fnumwrk,'(A38,F6.1)')
+     &             '  Solar radn. mean,20d around anthesis ',SRAD20A
+                ENDIF
+                WRITE (fnumwrk,'(A38,F6.1)')
+     &           '  Stress fac. mean,20d before grain set',STRESS20GS
+              END IF
+              
+            ELSE   ! For Overview
             
-            ELSE  
               OPEN (UNIT=FNUMOV, FILE=FNAMEOV, STATUS = 'UNKNOWN')
               CLOSE (UNIT=FNUMOV, STATUS = 'DELETE')
-            ENDIF                                      
-     
+              
+            ENDIF  ! For Overview  (IDETO.NE.'E')                                  
+          
           ELSE ! For Evaluate,Overview  IDETL.EQ.'0'.OR.IDETO.NE.'N'
-
-           OPEN (UNIT=FNUMMEAS, FILE=FNAMEMEAS, STATUS = 'UNKNOWN')
-           CLOSE (UNIT=FNUMMEAS, STATUS = 'DELETE')
-           OPEN (UNIT=FNUMEVAL, FILE=FNAMEEVAL, STATUS = 'UNKNOWN')
-           CLOSE (UNIT=FNUMEVAL, STATUS = 'DELETE')
-           OPEN (UNIT=FNUMOV, FILE=FNAMEOV, STATUS = 'UNKNOWN')
-           CLOSE (UNIT=FNUMOV, STATUS = 'DELETE')
-
-          ENDIF  ! End Evaluate,Overview  IDETL.EQ.'0'.OR.IDETO.NE.'N'
-
- 9589 FORMAT
-     & (//,'*SIMULATED CROP AND SOIL STATUS AT MAIN DEVELOPMENT STAGES')
- 9588 FORMAT(
-     &/,' ...... DATE ....... GROWTH STAGE    BIOMASS   LEAF  
-     &     CROP N      STRESS')     
- 9600 FORMAT(' YEARDOY DOM MON DAP ................ kg/ha AREA NUMBER
-     &  kg/ha   %   H2O    N')
-  206       FORMAT(
-     &    /,"*MAIN GROWTH AND DEVELOPMENT VARIABLES",//,   
-     &       "@",5X,"VARIABLE",T42,"SIMULATED   MEASURED",/,  
-     &           6X,"--------",T42,"---------   --------")  
- 500  FORMAT(/,'*ENVIRONMENTAL AND STRESS FACTORS',//,
-     &' |-----Development Phase------|-------------Environment--------',
-     &'------|----------------Stress-----------------|',/,
-     &30X,'|--------Average-------|---Cumulative--|         (0=Min, 1=',
-     &'Max Stress)         |',/,
-     &25X,'Time  Temp  Temp Solar Photop         Evapo |----Water---|-',
-     &'-Nitrogen--|--Phosphorus-|',/,
-     &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
-     &'to         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ',
-     &'synth Growth  synth Growth',/,110('-'))
-  270 FORMAT(/,'------------------------------------------------------',
-     &'--------------------------------------------------------')
-  300 FORMAT(/,10X,A," YIELD : ",I8," kg/ha    [Dry weight] ",/)
- 1200     FORMAT(
-     &'------------------------------------------------------',
-     &'--------------------------------------------------------',
-     &///,'*RESOURCE PRODUCTIVITY',
-     &//,' Growing season length:', I4,' days ',
-     &//,' Precipitation during growth season',T42,F7.1,' mm[rain]',
-     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[rain]',
-     &                           T75,'=',F7.1,' kg[DM]/ha per mm[rain]',
-     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[rain]',
-     &                       T75,'=',F7.1,' kg[yield]/ha per mm[rain]',
-     &//,' Evapotranspiration during growth season',T42,F7.1,' mm[ET]',
-     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[ET]',
-     &                            T75,'=',F7.1,' kg[DM]/ha per mm[ET]',
-     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[ET]',
-     &                       T75,'=',F7.1,' kg[yield]/ha per mm[ET]',
-     &//,' Transpiration during growth season',T42,F7.1,' mm[EP]',
-     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[EP]',
-     &                            T75,'=',F7.1,' kg[DM]/ha per mm[EP]',
-     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[EP]',
-     &                       T75,'=',F7.1,' kg[yield]/ha per mm[EP]')
-
- 1210 FORMAT(
-     & /,' Irrigation during growing season',T42,F7.1,' mm[irrig]',
-     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[irrig]',
-     &                       T75,'=',F7.1,' kg[DM]/ha per mm[irrig]',
-     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[irrig]',
-     &                       T75,'=',F7.1,' kg[yield]/ha per mm[irrig]')
-
- 1220 FORMAT(
-     & /,' N applied during growing season',T42,F7.1,' kg[N applied]/ha'
-     & /,'   Dry Matter Productivity',T42,F7.1,' kg[DM]/kg[N applied]',
-     & /,'   Yield Productivity',T42,F7.1,' kg[yield]/kg[N applied]')
-
- 1230 FORMAT(
-     & /,' N uptake during growing season',T42,F7.1,' kg[N uptake]/ha'
-     & /,'   Dry Matter Productivity',T42,F7.1,' kg[DM]/kg[N uptake]',
-     & /,'   Yield Productivity',T42,F7.1,' kg[yield]/kg[N uptake]')
+          
+            OPEN (UNIT=FNUMMEAS, FILE=FNAMEMEAS, STATUS = 'UNKNOWN')
+            CLOSE (UNIT=FNUMMEAS, STATUS = 'DELETE')
+            OPEN (UNIT=FNUMEVAL, FILE=FNAMEEVAL, STATUS = 'UNKNOWN')
+            CLOSE (UNIT=FNUMEVAL, STATUS = 'DELETE')
+            OPEN (UNIT=FNUMOV, FILE=FNAMEOV, STATUS = 'UNKNOWN')
+            CLOSE (UNIT=FNUMOV, STATUS = 'DELETE')
+          
+          ENDIF  ! End Ideto outputs (Evaluate,Overview)'
 
 !-----------------------------------------------------------------------
-!         IDETS OUTPUTS
+!         IDETS OUTPUTS (Plantsum)
 !-----------------------------------------------------------------------
            
-          IF ((IDETL.NE.'0'.AND.IDETS.NE.'N').OR.IDETL.EQ.'A') THEN
+          IF ((IDETS.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A') THEN
           
             ! PLANT SUMMARY (SIMULATED)'
             IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN
@@ -10141,12 +10105,12 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
  9953         FORMAT (/,'*SUMMARY')
               WRITE (FNUMPSUM,99,ADVANCE='NO')
    99         FORMAT ('@  RUN EXCODE      TRNO RN',
-     A        ' REP  RUNI S O C    CR  YEAR  PDOY')
+     A        ' REP  RUNI S O C    CR PYEAR  PDOY')
               DO L = 1,KEYSTX
                 IF (KEYPS(L).GT.0) THEN
-                  WRITE (FNUMPSUM,'(A6,\)') PSABVO(KEYPS(L))
+                  WRITE (FNUMPSUM,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
                   IF (PSABVO(KEYPS(L)).EQ.'TSDAP') THEN
-                   WRITE (FNUMPSUM,'(A6,\)') '  DAYL'
+                   WRITE (FNUMPSUM,'(A6)',ADVANCE='NO') '  DAYL'
                   ENDIF
                 ENDIF
               ENDDO
@@ -10199,9 +10163,11 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             OPEN (UNIT=FNUMPSUM,FILE=FNAMEPSUM,STATUS='UNKNOWN')
             CLOSE (UNIT=FNUMPSUM, STATUS = 'DELETE')
           ENDIF
-          ! End of Plantsum.Out          
+          ! End IDETS Outputs (Plantsum.Out)          
 
-!-------------------------------------------------------------------------
+!-----------------------------------------------------------------------
+!         IDETL = Y or D OUTPUTS (Leaves,Phases)
+!-----------------------------------------------------------------------
 
           IF (IDETL.EQ.'Y'.OR.IDETL.EQ.'D'.OR.IDETL.EQ.'A') THEN
           
@@ -10245,667 +10211,667 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &           '! NB. Cassava data are summed over all fork branches'
                 WRITE(fnumlvs,*)' '
               ENDIF
-                WRITE(fnumlvs,'(A36)')
-     &            '! LNUM = Number of leaf on one axis '
-                WRITE(fnumlvs,'(A52)')
-     &            '! AREAP = Potential area of leaf on main axis (cm2) '
-                WRITE(fnumlvs,'(A41,A16)')
-     &            '! AREA1 = Area of youngest mature leaf on', 
-     &            ' main axis (cm2)'
-                WRITE(fnumlvs,'(A42,A16)')
-     &            '! AREAT = Area of cohort of leaves at leaf',
-     &            ' position (cm2) '
-                WRITE(fnumlvs,'(A43,A35)')
-     &            '! AREAS = Senesced area of cohort of leaves',
-     &            ' at maturity at leaf position (cm2)'
-                WRITE(fnumlvs,'(A45)')
-     &            '! T#PL = Tiller number/plant at leaf position'
-                WRITE(fnumlvs,'(A48)')
-     &            '! T#AL = Tiller number/area(m2) at leaf position'
-                WRITE(fnumlvs,'(A38,A17)')
-     &            '! WFLF  = Water stress factor for leaf',
-     &            ' (0-1,1=0 stress)'
-                WRITE(fnumlvs,'(A48,A17)')
-     &            '! WFLFP = Water stress factor for photosynthesis',
-     &            ' (0-1,1=0 stress)'
-                WRITE(fnumlvs,'(A51)')
-     &            '! NFLF  = N stress factor for leaf (0-1,1=0 stress)'
-                WRITE(fnumlvs,'(A44,A17)')
-     &            '! NFLFP = N stress factor for photosynthesis',
-     &            ' (0-1,1=0 stress)'
-                WRITE(fnumlvs,'(A36,A24)')
-     &            '! AFLF  = Assimilate factor for leaf',
-     &            ' (0-1,1=0 no limitation)'
-                WRITE(fnumlvs,'(A37,A24)')
-     &            '! TFLF  = Temperature factor for leaf',
-     &            ' (0-1,1=0 no limitation)'
-                WRITE(fnumlvs,'(A37)')
-     &            '! DAYSG = Number of days of growth   '
-              ENDIF
-              CLOSE (FNUMLVS)
-              ! End of Leaves.out
-          
-!-------------------------------------------------------------------------
-          
-              ! Phase conditions (Simulated;PHASES.OUT)
-              OPEN(UNIT=FNUMPHA,FILE=FNAMEPHASES,POSITION='APPEND')
-              WRITE (FNUMPHA,'(/,A79,/)') OUTHED
-              WRITE (fnumpha,'(A42,A24,A12)')
-     &         '@PHASE  SRAD  TMXA  TMNA  PREA  DYLA  CO2A',
-     &         '  WFPA  WFGA  NFPA  NFGA',
-     &         ' PHASE_END  '
-              DO L=1,PSNUM
-                IF (STGYEARDOY(L).LT.9999999.AND.
-     &           L.NE.0.AND.L.NE.10.AND.L.NE.11)
-     &           WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')
-     &           L,sradpav(L),tmaxpav(L),tminpav(L),
-     &           rainpav(L),daylpav(L),NINT(co2pav(L)),
-     &           1.0-wfppav(L),1.0-wfgpav(L),
-     &           1.0-nfppav(L),1.0-nfgpav(L),
-     &           psname(MIN(L+1,PSX))
-              ENDDO
-              CLOSE (FNUMPHA)
-            ELSE
-              OPEN (UNIT=FNUMLVS,FILE=FNAMELEAVES,STATUS='UNKNOWN')
-              CLOSE (UNIT=FNUMLVS, STATUS = 'DELETE')
-              OPEN (UNIT=FNUMPHA,FILE=FNAMEPHASES,STATUS = 'UNKNOWN')
-              CLOSE (UNIT=FNUMPHA, STATUS = 'DELETE')
+              WRITE(fnumlvs,'(A36)')
+     &          '! LNUM = Number of leaf on one axis '
+              WRITE(fnumlvs,'(A52)')
+     &          '! AREAP = Potential area of leaf on main axis (cm2) '
+              WRITE(fnumlvs,'(A41,A16)')
+     &          '! AREA1 = Area of youngest mature leaf on', 
+     &          ' main axis (cm2)'
+              WRITE(fnumlvs,'(A42,A16)')
+     &          '! AREAT = Area of cohort of leaves at leaf',
+     &          ' position (cm2) '
+              WRITE(fnumlvs,'(A43,A35)')
+     &          '! AREAS = Senesced area of cohort of leaves',
+     &          ' at maturity at leaf position (cm2)'
+              WRITE(fnumlvs,'(A45)')
+     &          '! T#PL = Tiller number/plant at leaf position'
+              WRITE(fnumlvs,'(A48)')
+     &          '! T#AL = Tiller number/area(m2) at leaf position'
+              WRITE(fnumlvs,'(A38,A17)')
+     &          '! WFLF  = Water stress factor for leaf',
+     &          ' (0-1,1=0 stress)'
+              WRITE(fnumlvs,'(A48,A17)')
+     &          '! WFLFP = Water stress factor for photosynthesis',
+     &          ' (0-1,1=0 stress)'
+              WRITE(fnumlvs,'(A51)')
+     &          '! NFLF  = N stress factor for leaf (0-1,1=0 stress)'
+              WRITE(fnumlvs,'(A44,A17)')
+     &          '! NFLFP = N stress factor for photosynthesis',
+     &          ' (0-1,1=0 stress)'
+              WRITE(fnumlvs,'(A36,A24)')
+     &          '! AFLF  = Assimilate factor for leaf',
+     &          ' (0-1,1=0 no limitation)'
+              WRITE(fnumlvs,'(A37,A24)')
+     &          '! TFLF  = Temperature factor for leaf',
+     &          ' (0-1,1=0 no limitation)'
+              WRITE(fnumlvs,'(A37)')
+     &          '! DAYSG = Number of days of growth   '
             ENDIF
-            ! End of Leaves and Phases writes
+            CLOSE (FNUMLVS)
+            ! End of Leaves.out
+          
+            ! Phase conditions (Simulated;PHASES.OUT)
+            OPEN(UNIT=FNUMPHA,FILE=FNAMEPHASES,POSITION='APPEND')
+            WRITE (FNUMPHA,'(/,A79,/)') OUTHED
+            WRITE (fnumpha,'(A42,A24,A12)')
+     &       '@PHASE  SRAA  TMXA  TMNA  PREA  TWLA  CO2A',
+     &       '  WFPA  WFGA  NFPA  NFGA',
+     &       ' PHASE_END  '
+            DO L=1,PSNUM
+              IF (STGYEARDOY(L).LT.9999999.AND.
+     &         L.NE.0.AND.L.NE.10.AND.L.NE.11)
+     &         WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')
+     &         L,sradpav(L),tmaxpav(L),tminpav(L),
+     &         rainpav(L),daylpav(L),NINT(co2pav(L)),
+     &         1.0-wfppav(L),1.0-wfgpav(L),
+     &         1.0-nfppav(L),1.0-nfgpav(L),
+     &         psname(MIN(L+1,PSX))
+            ENDDO
+            CLOSE (FNUMPHA)
+              
+          ELSE
+          
+            OPEN (UNIT=FNUMLVS,FILE=FNAMELEAVES,STATUS='UNKNOWN')
+            CLOSE (UNIT=FNUMLVS, STATUS = 'DELETE')
+            OPEN (UNIT=FNUMPHA,FILE=FNAMEPHASES,STATUS = 'UNKNOWN')
+            CLOSE (UNIT=FNUMPHA, STATUS = 'DELETE')
             
-            ! If have not read measured data cannot produce A summaries
-            IF (IDETL.EQ.'D'.AND.IDETO.EQ.'N') THEN
-              WRITE(Message(1),'(A35)')
-     &         'IDETL flag called for detail files.'
-              WRITE(Message(2),'(A31,A31)')
-     &         'But IDETO flag set at N so that',
-     &         'measured data not read.        '
-              WRITE(Message(3),'(A45)')
-     &         'Therefore,could not write detailed summaries.'
-              CALL WARNING(3,'CSCRP',MESSAGE)
-            ENDIF
+          ENDIF
+          ! End of Leaves and Phases writes
           
-!-------------------------------------------------------------------------
+          ! If have not read measured data cannot produce A summaries
+          IF (IDETL.EQ.'D'.AND.IDETO.EQ.'N') THEN
+            WRITE(Message(1),'(A35)')
+     &       'IDETL flag called for detail files.'
+            WRITE(Message(2),'(A31,A31)')
+     &       'But IDETO flag set at N so that',
+     &       'measured data not read.        '
+            WRITE(Message(3),'(A45)')
+     &       'Therefore,could not write detailed summaries.'
+            CALL WARNING(3,'CSCRP',MESSAGE)
+          ENDIF
+          
+!-----------------------------------------------------------------------
+!         IDETL = D OUTPUTS (Work details;Phenols,m;Plantres,m)
+!-----------------------------------------------------------------------
            
-            IF ((IDETL.EQ.'D'.AND.IDETO.NE.'N').OR.IDETL.EQ.'A') THEN
-                    
-              ! WORK
+          IF ((IDETL.EQ.'D'.AND.IDETO.NE.'N').OR.IDETL.EQ.'A') THEN
+                  
+            ! WORK
+            WRITE(fnumwrk,*) ' '
+            WRITE(fnumwrk,'(A26,A10,I3)')' HARVEST/FAILURE DATA FOR ',
+     &       excode,tn
+            WRITE(fnumwrk,*)' '
+            IF (DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
+              WRITE(fnumwrk,*)  ' Program terminated      ',YEARDOY
+            ELSE 
+              WRITE(fnumwrk,*)  ' Harvest reached         ',YEARDOY
+            ENDIF  
+            WRITE(fnumwrk,*) ' '
+            WRITE(fnumwrk,'(A27,F11.2)')'  Harvest product (kg/ha)  ',
+     &       HWAM
+            WRITE(fnumwrk,'(A27,F11.2)')'  Product/Total wt (HI)    ',
+     &       HIAM
+            IF (GNOWS.GT.0.0.AND.CWAM.GT.0.0) THEN
+              WRITE(fnumwrk,'(A28,F10.2)')
+     &         '  Grain #/(Total wt)        ',HNUMAM/(CWAM*.1)
+              WRITE(fnumwrk,'(A28,F10.2)')
+     &         '  Grain #/(Total product)   ',HNUMAM/((CWAM-HWAM)*.1)
               WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,'(A26,A10,I3)')' HARVEST/FAILURE DATA FOR ',
-     &         excode,tn
-              WRITE(fnumwrk,*)' '
-              IF (DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
-                WRITE(fnumwrk,*)  ' Program terminated      ',YEARDOY
-              ELSE 
-                WRITE(fnumwrk,*)  ' Harvest reached         ',YEARDOY
-              ENDIF  
-              WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,'(A27,F11.2)')'  Harvest product (kg/ha)  ',
-     &         HWAM
-              WRITE(fnumwrk,'(A27,F11.2)')'  Product/Total wt (HI)    ',
-     &         HIAM
-              IF (GNOWS.GT.0.0.AND.CWAM.GT.0.0) THEN
-                WRITE(fnumwrk,'(A28,F10.2)')
-     &           '  Grain #/(Total wt)        ',HNUMAM/(CWAM*.1)
-                WRITE(fnumwrk,'(A28,F10.2)')
-     &           '  Grain #/(Total product)   ',HNUMAM/((CWAM-HWAM)*.1)
-                WRITE(fnumwrk,*) ' '
-                WRITE(fnumwrk,'(A28,F10.2,A1)')
-     &          '  (Grain #/Total standard   ',GNOWS,')'
-              ENDIF
-              IF (GNOWS.GT.0.0) THEN
-               WRITE (fnumwrk,*)' '
-               IF (gnopd.GT.0.0) WRITE (fnumwrk,'(A22,F7.1)')
-     &          '  Grain weight mg     ',GRWT/GNOPM*1000.0
-               WRITE (fnumwrk,'(A22,F7.1)')
-     &          '  Grain weight coeff  ',gwta
-               IF (carbolim.GT.0.OR.NLIMIT.GT.0.OR.TLIMIT.GT.0) THEN
-                 WRITE (fnumwrk,'(A38)')
-     &            '  Grain growth limited by some factor!'
-                 WRITE(fnumwrk,'(A24,I5)')
-     &            '   Days of Ch2o limit   ',carbolim
-                 WRITE(fnumwrk,'(A24,I5)')
-     &            '   Days of N limit      ',nlimit
-                 WRITE(fnumwrk,'(A24,I5)')
-     &            '   Days of temp limit   ',tlimit
-               ENDIF
+              WRITE(fnumwrk,'(A28,F10.2,A1)')
+     &        '  (Grain #/Total standard   ',GNOWS,')'
+            ENDIF
+            IF (GNOWS.GT.0.0) THEN
+             WRITE (fnumwrk,*)' '
+             IF (gnopd.GT.0.0) WRITE (fnumwrk,'(A22,F7.1)')
+     &        '  Grain weight mg     ',GRWT/GNOPM*1000.0
+             WRITE (fnumwrk,'(A22,F7.1)')
+     &        '  Grain weight coeff  ',gwta
+             IF (carbolim.GT.0.OR.NLIMIT.GT.0.OR.TLIMIT.GT.0) THEN
+               WRITE (fnumwrk,'(A38)')
+     &          '  Grain growth limited by some factor!'
                WRITE(fnumwrk,'(A24,I5)')
-     &          '  Days of linear fill   ',pdays(MSTG-1)
-               IF (grwt.GT.0.0) WRITE (fnumwrk,'(A24,F7.1)')
-     &          '  Grain nitrogen %       ',grainn/grwt*100.0
-               WRITE (fnumwrk,'(A24,F7.1)')
-     &          '  Minimum nitrogen %     ',grnmn
-               WRITE (fnumwrk,'(A24,F7.1)')
-     &          '  Standard nitrogen %   ',grns
-              ENDIF
-              WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,'(A28,A10,I3)')
-     &         ' CH2O BALANCE (g/plant) FOR ',excode,tn
-              WRITE(fnumwrk,'(A27,3F11.4)')
-     &         '  SEED+FIXED (A) Seed,fixed',
-     &         SEEDRSI+SDCOAT+CARBOC,SEEDRSI+SDCOAT,CARBOC
-              WRITE(fnumwrk,'(A27,3F11.4)')
-     &         '  RESPIRED (B)  Tops,root  ',RESPC,RESPTC,RESPRC
-              WRITE(fnumwrk,'(A27,3F11.4)')
-     &         '  SENESCED (C)  Tops,root  ',
-     &         SENWL(0)+SENWS,SENWL(0),SENWS
-              WRITE(fnumwrk,'(A27,3F11.4)')
-     &         '  LIVE+DEAD (D) Live,dead  ',
-     &         (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR),
-     &         (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT),DEADWTR
-              WRITE(fnumwrk,'(A27,3F11.4)')
-     &         '  PLANT+SEED_RESIDUE Pl,sd ',
-     &         (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT),
-     &         (RTWT+SRWT+LFWT+STWT+GRWT+RSWT),
-     &         (SEEDRS+SDCOAT)
-              WRITE(fnumwrk,'(A27,2F11.4)')
-     &         '  RESERVES (E)  Post-mat   ',RSWT,RSWTPM
-              WRITE(fnumwrk,'(A29, F9.4)')
-     &         '  HARVESTED DURING CYCLE (F) ',
-     &         LWPHC+SWPHC+RSWPHC+GWPHC+DWRPHC
-              WRITE(fnumwrk,'(A27, F11.4)')
-     &         '  BALANCE (A-(B+C+D+F))    ',
-     &           SEEDRSI+SDCOAT+CARBOC
-     &          -RESPC
-     &          -(SENWL(0)+SENWS)
-     &          -(SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR)
-     &          - (LWPHC+SWPHC+RSWPHC+GWPHC+DWRPHC) 
-              IF ((SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR)
-     &           .GT.0.0
-     &         .AND. ABS(SEEDRSI+SDCOAT+CARBOC-RESPC-(SENWL(0)+SENWS)
-     &          - (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR)
-     &          - (LWPHC+SWPHC+RSWPHC+GWPHC+DWRPHC))/
-     &             (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR)
-     &         .GT. 0.01)
-     &         WRITE(fnumwrk,'(A29,A10,A1,I2)')
-     &         '  PROBLEM WITH CH2O BALANCE  ',EXCODE,' ',TN
-              IF (GNOWS.GT.0.0.AND.lfwtsge.GT.0.0) THEN
-                WRITE (fnumwrk,*) ' '
-                WRITE (fnumwrk,'(A42,A10,I3)')
-     &           ' CH2O BALANCE FROM END OF STEM GROWTH FOR ',excode,tn
-                WRITE (fnumwrk,'(A53)')
-     &           '  NB.Balance assumes that no dead matter is shed     '
-                WRITE (fnumwrk,'(A22,F7.1)')'  Above ground at SGE ',
-     &           (lfwtsge+stwtsge+rswtsge+grwtsge+deadwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Leaves at SGE       ',
-     &           (lfwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Stems at SGE        ',
-     &           (stwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Reserves at SGE     ',
-     &           (rswtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Grain at SGE        ',
-     &           (grwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Dead at SGE         ',
-     &           (deadwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Roots at SGE        ',
-     &           (rtwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Above ground at end ',
-     &           (lfwt+stwt+rswt+grwt+deadwtr)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Leaves at end       ',
-     &           (lfwt)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Stems at end        ',
-     &           (stwt)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Reserves at end     ',
-     &           (rswt)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Grain at end        ',
-     &           (grwt)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Dead at end         ',
-     &           (deadwtr)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Roots at end        ',
-     &           (rtwt)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Assimilation > SGE  ',
-     &           carbogf*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Respiration > SGE   ',
-     &           (respgf)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Senesced > SGE      ',
-     &           sengf*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Leaves > SGE        ',
-     &           (lfwt-lfwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Stems > SGE         ',
-     &           (stwt-stwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Reserves > SGE      ',
-     &           (rswt-rswtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Grain > SGE         ',
-     &           (grwt-grwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Dead > SGE          ',
-     &           (deadwtr-deadwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Roots > SGE         ',
-     &           (rtwt-rtwtsge)*pltpop*10.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Total > SGE         ',
-     &           ((lfwt+stwt+rswt+grwt+deadwtr+rtwt)*pltpop*10.0) -
-     &           ((lfwtsge+stwtsge+rswtsge+grwtsge+deadwtsge+rtwtsge)
-     &           *pltpop*10.0)
-                WRITE (fnumwrk,'(A22,F7.1)')'  Assim-R-S-Diff > SGE',
-     &          ((carbogf-respgf)*pltpop*10.0) - sengf*pltpop*10.0 -
-     &          (((lfwt+stwt+rswt+grwt+deadwtr+rtwt)*pltpop*10.0) -
-     &          ((lfwtsge+stwtsge+rswtsge+grwtsge+deadwtsge+rtwtsge)
-     &          *pltpop*10.0))
-              ENDIF
+     &          '   Days of Ch2o limit   ',carbolim
+               WRITE(fnumwrk,'(A24,I5)')
+     &          '   Days of N limit      ',nlimit
+               WRITE(fnumwrk,'(A24,I5)')
+     &          '   Days of temp limit   ',tlimit
+             ENDIF
+             WRITE(fnumwrk,'(A24,I5)')
+     &        '  Days of linear fill   ',pdays(MSTG-1)
+             IF (grwt.GT.0.0) WRITE (fnumwrk,'(A24,F7.1)')
+     &        '  Grain nitrogen %       ',grainn/grwt*100.0
+             WRITE (fnumwrk,'(A24,F7.1)')
+     &        '  Minimum nitrogen %     ',grnmn
+             WRITE (fnumwrk,'(A24,F7.1)')
+     &        '  Standard nitrogen %   ',grns
+            ENDIF
+            WRITE(fnumwrk,*) ' '
+            WRITE(fnumwrk,'(A28,A10,I3)')
+     &       ' CH2O BALANCE (g/plant) FOR ',excode,tn
+            WRITE(fnumwrk,'(A27,3F11.4)')
+     &       '  SEED+FIXED (A) Seed,fixed',
+     &       SEEDRSI+SDCOAT+CARBOC,SEEDRSI+SDCOAT,CARBOC
+            WRITE(fnumwrk,'(A27,3F11.4)')
+     &       '  RESPIRED (B)  Tops,root  ',RESPC,RESPTC,RESPRC
+            WRITE(fnumwrk,'(A27,3F11.4)')
+     &       '  SENESCED (C)  Tops,root  ',
+     &       SENWL(0)+SENWS,SENWL(0),SENWS
+            WRITE(fnumwrk,'(A27,3F11.4)')
+     &       '  LIVE+DEAD (D) Live,dead  ',
+     &       (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR),
+     &       (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT),DEADWTR
+            WRITE(fnumwrk,'(A27,3F11.4)')
+     &       '  PLANT+SEED_RESIDUE Pl,sd ',
+     &       (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT),
+     &       (RTWT+SRWT+LFWT+STWT+GRWT+RSWT),
+     &       (SEEDRS+SDCOAT)
+            WRITE(fnumwrk,'(A27,2F11.4)')
+     &       '  RESERVES (E)  Post-mat   ',RSWT,RSWTPM
+            WRITE(fnumwrk,'(A29, F9.4)')
+     &       '  HARVESTED DURING CYCLE (F) ',
+     &       LWPHC+SWPHC+RSWPHC+GWPHC+DWRPHC
+            WRITE(fnumwrk,'(A27, F11.4)')
+     &       '  BALANCE (A-(B+C+D+F))    ',
+     &         SEEDRSI+SDCOAT+CARBOC
+     &        -RESPC
+     &        -(SENWL(0)+SENWS)
+     &        -(SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR)
+     &        - (LWPHC+SWPHC+RSWPHC+GWPHC+DWRPHC) 
+            IF ((SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR)
+     &         .GT.0.0
+     &       .AND. ABS(SEEDRSI+SDCOAT+CARBOC-RESPC-(SENWL(0)+SENWS)
+     &        - (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR)
+     &        - (LWPHC+SWPHC+RSWPHC+GWPHC+DWRPHC))/
+     &           (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+GRWT+RSWT+DEADWTR)
+     &       .GT. 0.01)
+     &       WRITE(fnumwrk,'(A29,A10,A1,I2)')
+     &       '  PROBLEM WITH CH2O BALANCE  ',EXCODE,' ',TN
+            IF (GNOWS.GT.0.0.AND.lfwtsge.GT.0.0) THEN
               WRITE (fnumwrk,*) ' '
-              WRITE (fnumwrk,'(A21,A10,I3)')
-     &         ' RESERVES STATUS FOR ',excode,tn
-              IF (HPROD.NE.'SR') THEN
-                WRITE (fnumwrk,'(A22,F7.2)')'  Reserves coeff      ',
-     &           RSFRS
-                WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at anthesis   ',
-     &           RSWTA*PLTPOP*10.0
-                IF (rswta+stwta+lfwta.GT.0) WRITE (fnumwrk,'(A22,F7.1)')
-     &          '  % above ground      ',rswta/(rswta+stwta+lfwta)*100.0
-                IF (stwta.GT.0) WRITE (fnumwrk,'(A22,F7.1)')
-     &          '  % stem+reserves     ',rswta/(rswta+stwta)*100.0
-                WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at grain set  ',
-     &          RSWTAE*PLTPOP*10.0
-                IF (rswtae+stwtae+lfwtae.GT.0) 
-     &           WRITE(fnumwrk,'(A22,F7.1)') '  % above ground      ',
-     &           rswtae/(rswtae+stwtae+lfwtae)*100.
-                WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at end stem   ',
-     &          RSWTSGE*PLTPOP*10.0
-                IF ((rswtsge+stwtsge+lfwtsge).GT.0)
-     &          WRITE(fnumwrk,'(A22,F7.1)') '  % above ground      ',
-     &          rswtsge/(rswtsge+stwtsge+lfwtsge)*100.
-                IF (stwtsge.GT.0) WRITE (fnumwrk,'(A22,F7.1)')
-     &          '  Pc stem+reserves    ',rswtsge/(rswtsge+stwtsge)*100.0
-              ENDIF
-              WRITE (fnumwrk,'(A22,F7.1)')
-     &         '  Kg/ha at maximum    ',RSWTX*PLTPOP*10.0
-              WRITE (fnumwrk,'(A22,F7.1)')
-     &         '  % above ground      ',RSCX*100.
-              WRITE (fnumwrk,'(A22,F7.1)')
-     &         '  Kg/ha at maturity   ',RSWAD
-              IF (lfwt+stwt+rswt.GT.0) WRITE (fnumwrk,'(A22,F7.1)')
-     &         '  % above ground      ',rswt/(lfwt+stwt+rswt)*100.0
-              WRITE (fnumwrk,*) ' '
-              WRITE (fnumwrk,'(A34,A10,I3)')
-     &         ' SEED USE (KG/HA or PER CENT) FOR ',excode,tn
-              WRITE (fnumwrk,'(A22,F7.3)')'  Initial reserves    ',
-     &         seedrsi*pltpop*10.0
-              WRITE (fnumwrk,'(A22,F7.3)')'  Use for tops        ',
-     &         seeduset*pltpop*10.0
-              WRITE (fnumwrk,'(A22,F7.3)')'  Use for roots       ',
-     &         seeduser*pltpop*10.0
-              WRITE (fnumwrk,'(A22,F7.3)')'  Total use           ',
-     &         (seeduset+seeduser)*pltpop*10.0
-              IF (seeduser+seeduset.GT.0.0)
-     &         WRITE (fnumwrk,'(A22,F7.3)')'  Percent to tops     ',
-     &          seeduset/(seeduset+seeduser)*100.0
-              WRITE(fnumwrk,*)' '
-              WRITE (fnumwrk,'(A35,A10,I3)')
-     &         ' DEAD MATTER AND ROOTS (KG/HA) FOR ',excode,tn
-              WRITE(fnumwrk,'(A32,F8.1)')
-     &         '  DEAD MATERIAL LEFT ON SURFACE  ',SENWAL(0)
-              WRITE(fnumwrk,'(A32,F8.1)')
-     &         '  DEAD MATERIAL LEFT IN SOIL     ',SENWAS
-              WRITE(fnumwrk,'(A32,F8.1)')
-     &         '  ROOT WEIGHT AT HARVEST/FAILURE ',RWAD
-              WRITE (fnumwrk,*) ' '
-              WRITE (fnumwrk,'(A20,A10,I3)')
-     &         ' ROOTS BY LAYER FOR ',excode,tn
-              WRITE (fnumwrk,'(A19)')
-     &         '  LAYER  RTWT   RLV'
-              DO L=1,NLAYR
-                IF (RTWTAL(L).GT.0.0) WRITE (fnumwrk,'(I6,F7.1,F6.2)')
-     &          L,RTWTAL(L),RLV(L)
-              ENDDO
-              IF (RTSLXDATE.GT.0) THEN
-                WRITE(fnumwrk,'(A30,I7)')
-     &           '  FINAL SOIL LAYER REACHED ON ',RTSLXDATE
-                WRITE(fnumwrk,'(A15,I7,A1)')
-     &           '  (MATURITY ON ',YEARDOY,')'
-              ELSE  
-               WRITE(fnumwrk,*)' FINAL SOIL LAYER NOT REACHED '
-              ENDIF
-              WRITE (fnumwrk,*) ' '
-              WRITE (fnumwrk,'(A40)')
-     &         ' PRINCIPAL AND SECONDARY STAGES         '
-              WRITE (fnumwrk,'(A40)')
-     &         '  STAGE NAME   DAYS > PLANTING          '
+              WRITE (fnumwrk,'(A42,A10,I3)')
+     &         ' CH2O BALANCE FROM END OF STEM GROWTH FOR ',excode,tn
+              WRITE (fnumwrk,'(A53)')
+     &         '  NB.Balance assumes that no dead matter is shed     '
+              WRITE (fnumwrk,'(A22,F7.1)')'  Above ground at SGE ',
+     &         (lfwtsge+stwtsge+rswtsge+grwtsge+deadwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Leaves at SGE       ',
+     &         (lfwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Stems at SGE        ',
+     &         (stwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Reserves at SGE     ',
+     &         (rswtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Grain at SGE        ',
+     &         (grwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Dead at SGE         ',
+     &         (deadwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Roots at SGE        ',
+     &         (rtwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Above ground at end ',
+     &         (lfwt+stwt+rswt+grwt+deadwtr)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Leaves at end       ',
+     &         (lfwt)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Stems at end        ',
+     &         (stwt)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Reserves at end     ',
+     &         (rswt)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Grain at end        ',
+     &         (grwt)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Dead at end         ',
+     &         (deadwtr)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Roots at end        ',
+     &         (rtwt)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Assimilation > SGE  ',
+     &         carbogf*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Respiration > SGE   ',
+     &         (respgf)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Senesced > SGE      ',
+     &         sengf*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Leaves > SGE        ',
+     &         (lfwt-lfwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Stems > SGE         ',
+     &         (stwt-stwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Reserves > SGE      ',
+     &         (rswt-rswtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Grain > SGE         ',
+     &         (grwt-grwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Dead > SGE          ',
+     &         (deadwtr-deadwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Roots > SGE         ',
+     &         (rtwt-rtwtsge)*pltpop*10.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Total > SGE         ',
+     &         ((lfwt+stwt+rswt+grwt+deadwtr+rtwt)*pltpop*10.0) -
+     &         ((lfwtsge+stwtsge+rswtsge+grwtsge+deadwtsge+rtwtsge)
+     &         *pltpop*10.0)
+              WRITE (fnumwrk,'(A22,F7.1)')'  Assim-R-S-Diff > SGE',
+     &        ((carbogf-respgf)*pltpop*10.0) - sengf*pltpop*10.0 -
+     &        (((lfwt+stwt+rswt+grwt+deadwtr+rtwt)*pltpop*10.0) -
+     &        ((lfwtsge+stwtsge+rswtsge+grwtsge+deadwtsge+rtwtsge)
+     &        *pltpop*10.0))
+            ENDIF
+            WRITE (fnumwrk,*) ' '
+            WRITE (fnumwrk,'(A21,A10,I3)')
+     &       ' RESERVES STATUS FOR ',excode,tn
+            IF (HPROD.NE.'SR') THEN
+              WRITE (fnumwrk,'(A22,F7.2)')'  Reserves coeff      ',
+     &         RSFRS
+              WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at anthesis   ',
+     &         RSWTA*PLTPOP*10.0
+              IF (rswta+stwta+lfwta.GT.0) WRITE (fnumwrk,'(A22,F7.1)')
+     &        '  % above ground      ',rswta/(rswta+stwta+lfwta)*100.0
+              IF (stwta.GT.0) WRITE (fnumwrk,'(A22,F7.1)')
+     &        '  % stem+reserves     ',rswta/(rswta+stwta)*100.0
+              WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at grain set  ',
+     &        RSWTAE*PLTPOP*10.0
+              IF (rswtae+stwtae+lfwtae.GT.0) 
+     &         WRITE(fnumwrk,'(A22,F7.1)') '  % above ground      ',
+     &         rswtae/(rswtae+stwtae+lfwtae)*100.
+              WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at end stem   ',
+     &        RSWTSGE*PLTPOP*10.0
+              IF ((rswtsge+stwtsge+lfwtsge).GT.0)
+     &        WRITE(fnumwrk,'(A22,F7.1)') '  % above ground      ',
+     &        rswtsge/(rswtsge+stwtsge+lfwtsge)*100.
+              IF (stwtsge.GT.0) WRITE (fnumwrk,'(A22,F7.1)')
+     &        '  Pc stem+reserves    ',rswtsge/(rswtsge+stwtsge)*100.0
+            ENDIF
+            WRITE (fnumwrk,'(A22,F7.1)')
+     &       '  Kg/ha at maximum    ',RSWTX*PLTPOP*10.0
+            WRITE (fnumwrk,'(A22,F7.1)')
+     &       '  % above ground      ',RSCX*100.
+            WRITE (fnumwrk,'(A22,F7.1)')
+     &       '  Kg/ha at maturity   ',RSWAD
+            IF (lfwt+stwt+rswt.GT.0) WRITE (fnumwrk,'(A22,F7.1)')
+     &       '  % above ground      ',rswt/(lfwt+stwt+rswt)*100.0
+            WRITE (fnumwrk,*) ' '
+            WRITE (fnumwrk,'(A34,A10,I3)')
+     &       ' SEED USE (KG/HA or PER CENT) FOR ',excode,tn
+            WRITE (fnumwrk,'(A22,F7.3)')'  Initial reserves    ',
+     &       seedrsi*pltpop*10.0
+            WRITE (fnumwrk,'(A22,F7.3)')'  Use for tops        ',
+     &       seeduset*pltpop*10.0
+            WRITE (fnumwrk,'(A22,F7.3)')'  Use for roots       ',
+     &       seeduser*pltpop*10.0
+            WRITE (fnumwrk,'(A22,F7.3)')'  Total use           ',
+     &       (seeduset+seeduser)*pltpop*10.0
+            IF (seeduser+seeduset.GT.0.0)
+     &       WRITE (fnumwrk,'(A22,F7.3)')'  Percent to tops     ',
+     &        seeduset/(seeduset+seeduser)*100.0
+            WRITE(fnumwrk,*)' '
+            WRITE (fnumwrk,'(A35,A10,I3)')
+     &       ' DEAD MATTER AND ROOTS (KG/HA) FOR ',excode,tn
+            WRITE(fnumwrk,'(A32,F8.1)')
+     &       '  DEAD MATERIAL LEFT ON SURFACE  ',SENWAL(0)
+            WRITE(fnumwrk,'(A32,F8.1)')
+     &       '  DEAD MATERIAL LEFT IN SOIL     ',SENWAS
+            WRITE(fnumwrk,'(A32,F8.1)')
+     &       '  ROOT WEIGHT AT HARVEST/FAILURE ',RWAD
+            WRITE (fnumwrk,*) ' '
+            WRITE (fnumwrk,'(A20,A10,I3)')
+     &       ' ROOTS BY LAYER FOR ',excode,tn
+            WRITE (fnumwrk,'(A19)')
+     &       '  LAYER  RTWT   RLV'
+            DO L=1,NLAYR
+              IF (RTWTAL(L).GT.0.0) WRITE (fnumwrk,'(I6,F7.1,F6.2)')
+     &        L,RTWTAL(L),RLV(L)
+            ENDDO
+            IF (RTSLXDATE.GT.0) THEN
+              WRITE(fnumwrk,'(A30,I7)')
+     &         '  FINAL SOIL LAYER REACHED ON ',RTSLXDATE
+              WRITE(fnumwrk,'(A15,I7,A1)')
+     &         '  (MATURITY ON ',YEARDOY,')'
+            ELSE  
+             WRITE(fnumwrk,*)' FINAL SOIL LAYER NOT REACHED '
+            ENDIF
+            WRITE (fnumwrk,*) ' '
+            WRITE (fnumwrk,'(A40)')
+     &       ' PRINCIPAL AND SECONDARY STAGES         '
+            WRITE (fnumwrk,'(A40)')
+     &       '  STAGE NAME   DAYS > PLANTING          '
+            WRITE (fnumwrk,'(A15,F7.1)')
+     &       '   Germination ',gdapfr
+            WRITE (fnumwrk,'(A15,F7.1)')
+     &       '   Emergence   ',edapfr
+            IF (CROP.EQ.'WH'.OR.CROP.EQ.'BA') THEN
               WRITE (fnumwrk,'(A15,F7.1)')
-     &         '   Germination ',gdapfr
-              WRITE (fnumwrk,'(A15,F7.1)')
-     &         '   Emergence   ',edapfr
-              IF (CROP.EQ.'WH'.OR.CROP.EQ.'BA') THEN
-                WRITE (fnumwrk,'(A15,F7.1)')
-     &          '   Tillering   ',tildap
-              ENDIF 
-              DO L = 2,PSNUM
-                CALL CSUCASE (PSNAME(L))
-                IF (PSNAME(L)(1:3).EQ.'HAR'.AND.PSDAPFR(l).LE.0.0)
-     &           psdapfr(l) = psdapfr(mstg)
-                IF (PSNAME(L)(1:3).EQ.'END'.AND.PSDAPFR(l).LE.0.0)
-     &           psdapfr(l) = psdapfr(mstg)
-                IF (PSNAME(L)(1:3).NE.'FAI') THEN
-                  IF (psdapfr(l).GT.0) WRITE (FNUMWRK,'(A3,A13,F6.1)')
-     &              '   ',psname(l),psdapfr(l)
-                ELSE
-                  IF (CFLFAIL.EQ.'Y'.AND.psdapfr(l).GT.0)
-     &             WRITE (FNUMWRK,'(A3,A13,F6.1)')
-     &               '   ',psname(l),psdapfr(l)
-                ENDIF
-                IF (TVILENT(PSNAME(L)).LT.5) EXIT
-              ENDDO
-              IF (SSNUM.GT.0) WRITE (FNUMWRK,*) ' '
-              DO L = 1,SSNUM
-               IF (ssdapfr(l).GT.0.0)
-     &          WRITE(FNUMWRK,'(A3,A13,F6.1)')'   ',ssname(l),ssdapfr(l)
-                IF (TVILENT(SSNAME(L)).LT.5) EXIT
-              ENDDO
-              WRITE (fnumwrk,*) ' '
-              WRITE (fnumwrk,'(A28,A10,I3)')
-     &         ' STRESS FACTOR AVERAGES FOR ',excode,tn
-              WRITE (fnumwrk,'(A55)')
-     &         '  PHASE  H2O(PS)   H2O(GR)   N(PS)     N(GR)  PHASE_END'
-              DO L=1,PSNUM
-                IF (STGYEARDOY(L).LT.9999999.AND.
-     &           L.NE.1.AND.L.NE.10.AND.L.NE.11)
-     &           WRITE (fnumwrk,'(I6,F8.2,3F10.2,2X,A13)')
-     &           l,1.0-wfppav(l),1.0-wfgpav(l),
-     &           1.0-nfppav(l),1.0-nfgpav(l),psname(MIN(L+1,PSX))
-              ENDDO
-              WRITE (fnumwrk,'(A42)')
-     &         '  NB 0.0 = minimum ; 1.0 = maximum stress.'
-              ! LAH  Must change from daily leaf cohorts to bigger unit
-              ! Too much to output if daily
-              !WRITE (fnumwrk,*)' '
-              !WRITE (fnumwrk,'(A23)') ' COHORT   AREA    AREAS'
-              !DO L = 1, LCNUM
-              !  WRITE (fnumwrk,'(I7,2F8.3)') L,LCOA(L),LCOAS(L)
-              !ENDDO
-              WRITE (fnumwrk,*) ' '
-              WRITE (fnumwrk,'(A18,A10,I3)')
-     &         ' TILLER SIZES FOR ',excode,tn
-              WRITE (fnumwrk,'(A25,F6.1)')
-     &         '   MAXIMUM TILLER NUMBER ',tnumx
-              WRITE (fnumwrk,'(A31)') '   TILL   BIRTH   AREAP   AREAS'
-              DO I = 1,INT(TNUMX)
-                WRITE (fnumwrk,'(I7,3I8)')
-     &            I,NINT(TILBIRTHL(I)),NINT(TLA(I)),NINT(TLAS(I))
-              ENDDO
-              IF (INT(TNUMX-FLOAT(INT(TNUMX))).GT.0) THEN
-                I = INT(TNUMX) + 1
-                WRITE (fnumwrk,'(I7,3I8)')
-     &            I,NINT(TILBIRTHL(I)),NINT(TLA(I)),NINT(TLAS(I))
+     &        '   Tillering   ',tildap
+            ENDIF 
+            DO L = 2,PSNUM
+              CALL CSUCASE (PSNAME(L))
+              IF (PSNAME(L)(1:3).EQ.'HAR'.AND.PSDAPFR(l).LE.0.0)
+     &         psdapfr(l) = psdapfr(mstg)
+              IF (PSNAME(L)(1:3).EQ.'END'.AND.PSDAPFR(l).LE.0.0)
+     &         psdapfr(l) = psdapfr(mstg)
+              IF (PSNAME(L)(1:3).NE.'FAI') THEN
+                IF (psdapfr(l).GT.0) WRITE (FNUMWRK,'(A3,A13,F6.1)')
+     &            '   ',psname(l),psdapfr(l)
+              ELSE
+                IF (CFLFAIL.EQ.'Y'.AND.psdapfr(l).GT.0)
+     &           WRITE (FNUMWRK,'(A3,A13,F6.1)')
+     &             '   ',psname(l),psdapfr(l)
               ENDIF
-              IF (ISWNIT.NE.'N') THEN
-              WRITE (fnumwrk,*) ' '
-              WRITE (fnumwrk,'(A25,A10,I3)')' N BALANCE (g/plant) FOR ',
-     &         excode,tn
-              WRITE (fnumwrk,'(A34,F8.4)')
-     &         '   N UPTAKE + SEED (A)            ', NUPC+SEEDN
-              WRITE (fnumwrk,'(A33,F9.4,2F11.4)')
-     &         '   TOTAL N SENESCED (B) Tops,Root',
-     &         SENNL(0)+SENNS,SENNL(0),SENNS
-              WRITE (fnumwrk,'(A34,F8.4)')
-     &         '   N IN DEAD MATTER               ', DEADN
-              WRITE (fnumwrk,'(A34,F8.4)')
-     &         '   TOTAL N IN PLANT (C)           ',
-     &         (ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN)
-              WRITE (fnumwrk,'(A33, F9.4)')
-     &         '   HARVESTED DURING CYCLE (D)    ',
-     &         LNPHC+SNPHC+RSNPHC+GNPHC             
-              WRITE (fnumwrk,'(A34,F8.4)')
-     &         '   BALANCE (A-(B+C+D))            ',
-     &         NUPC+SEEDNI
-     &         -(SENNL(0)+SENNS)
-     &         -(ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN)
-     &         - (LNPHC+SNPHC+RSNPHC+GNPHC) 
-              IF ((ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN)
-     &         .GT.0.0 .AND. ABS(NUPC+SEEDNI-(SENNL(0)+SENNS)
-     &         -(ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN)
-     &         - (LNPHC+SNPHC+RSNPHC+GNPHC))/
-     &         (ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN).GT..01)
-     &         WRITE(fnumwrk,'(A26,A10,A1,I2)')
-     &         '   PROBLEM WITH N BALANCE ',EXCODE,' ',TN
-              ENDIF
-              ! End of Detailed WORK writes
+              IF (TVILENT(PSNAME(L)).LT.5) EXIT
+            ENDDO
+            IF (SSNUM.GT.0) WRITE (FNUMWRK,*) ' '
+            DO L = 1,SSNUM
+             IF (ssdapfr(l).GT.0.0)
+     &        WRITE(FNUMWRK,'(A3,A13,F6.1)')'   ',ssname(l),ssdapfr(l)
+              IF (TVILENT(SSNAME(L)).LT.5) EXIT
+            ENDDO
+            WRITE (fnumwrk,*) ' '
+            WRITE (fnumwrk,'(A28,A10,I3)')
+     &       ' STRESS FACTOR AVERAGES FOR ',excode,tn
+            WRITE (fnumwrk,'(A55)')
+     &       '  PHASE  H2O(PS)   H2O(GR)   N(PS)     N(GR)  PHASE_END'
+            DO L=1,PSNUM
+              IF (STGYEARDOY(L).LT.9999999.AND.
+     &         L.NE.1.AND.L.NE.10.AND.L.NE.11)
+     &         WRITE (fnumwrk,'(I6,F8.2,3F10.2,2X,A13)')
+     &         l,1.0-wfppav(l),1.0-wfgpav(l),
+     &         1.0-nfppav(l),1.0-nfgpav(l),psname(MIN(L+1,PSX))
+            ENDDO
+            WRITE (fnumwrk,'(A42)')
+     &       '  NB 0.0 = minimum ; 1.0 = maximum stress.'
+            ! LAH  Must change from daily leaf cohorts to bigger unit
+            ! Too much to output if daily
+            !WRITE (fnumwrk,*)' '
+            !WRITE (fnumwrk,'(A23)') ' COHORT   AREA    AREAS'
+            !DO L = 1, LCNUM
+            !  WRITE (fnumwrk,'(I7,2F8.3)') L,LCOA(L),LCOAS(L)
+            !ENDDO
+            WRITE (fnumwrk,*) ' '
+            WRITE (fnumwrk,'(A18,A10,I3)')
+     &       ' TILLER SIZES FOR ',excode,tn
+            WRITE (fnumwrk,'(A25,F6.1)')
+     &       '   MAXIMUM TILLER NUMBER ',tnumx
+            WRITE (fnumwrk,'(A31)') '   TILL   BIRTH   AREAP   AREAS'
+            DO I = 1,INT(TNUMX)
+              WRITE (fnumwrk,'(I7,3I8)')
+     &          I,NINT(TILBIRTHL(I)),NINT(TLA(I)),NINT(TLAS(I))
+            ENDDO
+            IF (INT(TNUMX-FLOAT(INT(TNUMX))).GT.0) THEN
+              I = INT(TNUMX) + 1
+              WRITE (fnumwrk,'(I7,3I8)')
+     &          I,NINT(TILBIRTHL(I)),NINT(TLA(I)),NINT(TLAS(I))
+            ENDIF
+            IF (ISWNIT.NE.'N') THEN
+            WRITE (fnumwrk,*) ' '
+            WRITE (fnumwrk,'(A25,A10,I3)')' N BALANCE (g/plant) FOR ',
+     &       excode,tn
+            WRITE (fnumwrk,'(A34,F8.4)')
+     &       '   N UPTAKE + SEED (A)            ', NUPC+SEEDN
+            WRITE (fnumwrk,'(A33,F9.4,2F11.4)')
+     &       '   TOTAL N SENESCED (B) Tops,Root',
+     &       SENNL(0)+SENNS,SENNL(0),SENNS
+            WRITE (fnumwrk,'(A34,F8.4)')
+     &       '   N IN DEAD MATTER               ', DEADN
+            WRITE (fnumwrk,'(A34,F8.4)')
+     &       '   TOTAL N IN PLANT (C)           ',
+     &       (ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN)
+            WRITE (fnumwrk,'(A33, F9.4)')
+     &       '   HARVESTED DURING CYCLE (D)    ',
+     &       LNPHC+SNPHC+RSNPHC+GNPHC             
+            WRITE (fnumwrk,'(A34,F8.4)')
+     &       '   BALANCE (A-(B+C+D))            ',
+     &       NUPC+SEEDNI
+     &       -(SENNL(0)+SENNS)
+     &       -(ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN)
+     &       - (LNPHC+SNPHC+RSNPHC+GNPHC) 
+            IF ((ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN)
+     &       .GT.0.0 .AND. ABS(NUPC+SEEDNI-(SENNL(0)+SENNS)
+     &       -(ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN)
+     &       - (LNPHC+SNPHC+RSNPHC+GNPHC))/
+     &       (ROOTN+SROOTN+LEAFN+STEMN+RSN+GRAINN+SEEDN+DEADN).GT..01)
+     &       WRITE(fnumwrk,'(A26,A10,A1,I2)')
+     &       '   PROBLEM WITH N BALANCE ',EXCODE,' ',TN
+            ENDIF
+            ! End of Detailed WORK writes
     
-!-------------------------------------------------------------------------
-          
-              ! Phenology (Simulated;PHENOLS.OUT)
-              OPEN(UNIT=FNUMPHES,FILE=FNAMEPHENOLS,POSITION='APPEND')
+            ! Phenology (Simulated;PHENOLS.OUT)
+            OPEN(UNIT=FNUMPHES,FILE=FNAMEPHENOLS,POSITION='APPEND')
+            IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN
+              WRITE (FNUMPHES,'(/,A14,A10)')
+     &         '*PHENOLOGY(S):',EXCODE
+              WRITE (FNUMPHES,'(A16,A24)',ADVANCE='NO') 
+     &         '@ EXCODE    TRNO',' PYEAR  PDOY  GDAP  EDAP'
+              DO L = 1,KEYSTX
+                IF (KEYPS(L).GT.0)THEN
+                  WRITE (FNUMPHES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
+                ENDIF
+              ENDDO
+              DO L = 1,KEYSTX
+                IF (KEYSS(L).GT.0) WRITE (FNUMPHES,'(A6)',ADVANCE='NO')
+     &           SSABVO(KEYSS(L))
+              ENDDO
+            ENDIF  ! End Phenology simulated header writes
+            WRITE (fnumphes,'(/,A10,I6,2I6,2F6.1)',ADVANCE='NO')
+     &      EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
+            DO L = 1,KEYSTX
+              IF (KEYPS(L).GT.0) WRITE (FNUMPHES,'(I6)',ADVANCE='NO')
+     &         PSDAP(KEYPS(L))
+            ENDDO
+            DO L = 1,KEYSTX
+             IF (KEYSS(L).GT.0) WRITE (FNUMPHES,'(I6)',ADVANCE='NO')
+     &         SSDAP(KEYSS(L))
+            ENDDO
+            CLOSE (FNUMPHES)
+            ! End Phenology simulated writes              
+            
+            ! Phenology (Measured;PHENOLM.OUT)
+            IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
+              WRITE (fnumwrk,*)
+     &          ' No data so cannot write PHENOLOGY (MEASURED)'
+              OPEN (UNIT=FNUMPHEM,FILE=FNAMEPHENOLM,STATUS ='UNKNOWN')
+              CLOSE (UNIT=FNUMPHEM, STATUS = 'DELETE')
+            ELSE
+              OPEN(UNIT=FNUMPHEM,FILE=FNAMEPHENOLM,POSITION='APPEND')
               IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN
-                WRITE (FNUMPHES,'(/,A14,A10)')
-     &           '*PHENOLOGY(S):',EXCODE
-                WRITE (FNUMPHES,'(A16,A24,\)') '@ EXCODE    TRNO',
-     &           ' PYEAR  PDOY  GDAP  EDAP'
+                WRITE (FNUMPHEM,'(/,A14,A10)')
+     &            '*PHENOLOGY(M):',EXCODE
+                WRITE (FNUMPHEM,'(A16,A24)',ADVANCE='NO') 
+     &            '@EXCODE     TRNO',' PYEAR  PDOY  GDAP  EDAP'
                 DO L = 1,KEYSTX
-                  IF (KEYPS(L).GT.0)THEN
-                    WRITE (FNUMPHES,'(A6,\)') PSABVO(KEYPS(L))
-                  ENDIF
+                  IF (KEYPS(L).GT.0) THEN
+                    WRITE (FNUMPHEM,'(A6)',ADVANCE='NO')PSABVO(KEYPS(L))
+                  ENDIF 
                 ENDDO
                 DO L = 1,KEYSTX
-                  IF (KEYSS(L).GT.0) WRITE (FNUMPHES,'(A6,\)')
+                  IF (KEYSS(L).GT.0) WRITE(FNUMPHEM,'(A6)',ADVANCE='NO')
      &             SSABVO(KEYSS(L))
                 ENDDO
-              ENDIF  ! End Phenology simulated header writes
-              WRITE (fnumphes,'(/,A10,I6,2I6,2F6.1,\)')
+              ENDIF ! End Phenology measured header writes
+              WRITE (FNUMPHEM,'(/,A10,I6,2I6,2F6.1)',ADVANCE='NO')
      &        EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
               DO L = 1,KEYSTX
-                IF (KEYPS(L).GT.0) WRITE (FNUMPHES,'(I6,\)')
-     &           PSDAP(KEYPS(L))
+                IF (KEYPS(L).GT.0) WRITE (FNUMPHEM,'(I6)',ADVANCE='NO')
+     &           PSDAPM(KEYPS(L))
               ENDDO
               DO L = 1,KEYSTX
-               IF (KEYSS(L).GT.0) WRITE (FNUMPHES,'(I6,\)')
-     &           SSDAP(KEYSS(L))
+                IF (KEYSS(L).GT.0) WRITE (FNUMPHEM,'(I6)',ADVANCE='NO')
+     &           SSDAPM(KEYSS(L))
               ENDDO
-              CLOSE (FNUMPHES)
-              ! End Phenology simulated writes              
-              
-              ! Phenology (Measured;PHENOLM.OUT)
-              IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
-                WRITE (fnumwrk,*)
-     &            ' No data so cannot write PHENOLOGY (MEASURED)'
-                OPEN (UNIT=FNUMPHEM,FILE=FNAMEPHENOLM,STATUS ='UNKNOWN')
-                CLOSE (UNIT=FNUMPHEM, STATUS = 'DELETE')
-              ELSE
-                OPEN(UNIT=FNUMPHEM,FILE=FNAMEPHENOLM,POSITION='APPEND')
-                IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN
-                  WRITE (FNUMPHEM,'(/,A14,A10)')
-     &              '*PHENOLOGY(M):',EXCODE
-                  WRITE (FNUMPHEM,'(A16,A24,\)') '@ EXCODE    TRNO',
-     &              ' PYEAR  PDOY  GDAP  EDAP'
-                  DO L = 1,KEYSTX
-                    IF (KEYPS(L).GT.0) THEN
-                      WRITE (FNUMPHEM,'(A6,\)') PSABVO(KEYPS(L))
-                    ENDIF 
-                  ENDDO
-                  DO L = 1,KEYSTX
-                    IF (KEYSS(L).GT.0) WRITE (FNUMPHEM,'(A6,\)')
-     &               SSABVO(KEYSS(L))
-                  ENDDO
-                ENDIF ! End Phenology measured header writes
-                WRITE (FNUMPHEM,'(/,A10,I6,2I6,2F6.1,\)')
-     &          EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
-                DO L = 1,KEYSTX
-                  IF (KEYPS(L).GT.0) WRITE (FNUMPHEM,'(I6,\)')
-     &             PSDAPM(KEYPS(L))
-                ENDDO
-                DO L = 1,KEYSTX
-                  IF (KEYSS(L).GT.0) WRITE (FNUMPHEM,'(I6,\)')
-     &             SSDAPM(KEYSS(L))
-                ENDDO
-                CLOSE (FNUMPHEM)
-              ENDIF  
-              ! End Phenology (Measured)
+              CLOSE (FNUMPHEM)
+            ENDIF  
+            ! End Phenology (Measured)
 
-              ! Plant responses (Simulated)'
-              ! Set temporary planting date for overlapping year end
-              IF (RUNCRP.EQ.1) PLDAYTMP = -99
-              IF (PLDAY.LT.PLDAYTMP) THEN
-                IF (VARNO.EQ.VARNOPREV) THEN
-                  PLDAYTMP = PLDAY + 365
-                ELSE
-                  PLDAYTMP = PLDAY
-                ENDIF
+            ! Plant responses (Simulated)'
+            ! Set temporary planting date for overlapping year end
+            IF (RUNCRP.EQ.1) PLDAYTMP = -99
+            IF (PLDAY.LT.PLDAYTMP) THEN
+              IF (VARNO.EQ.VARNOPREV) THEN
+                PLDAYTMP = PLDAY + 365
               ELSE
                 PLDAYTMP = PLDAY
               ENDIF
+            ELSE
               PLDAYTMP = PLDAY
-              IF (EXCODE.NE.EXCODEPREV) AMTNITPREV = 0.0
-              OPEN (UNIT = FNUMPRES,FILE = FNAMEPRES)
-              DO WHILE (.true.)
-                READ(FNUMPRES,'(A180)',end=9950)TLINETMP
+            ENDIF
+            PLDAYTMP = PLDAY
+            IF (EXCODE.NE.EXCODEPREV) AMTNITPREV = 0.0
+            OPEN (UNIT = FNUMPRES,FILE = FNAMEPRES)
+            DO WHILE (.true.)
+              READ(FNUMPRES,'(A180)',end=9950)TLINETMP
+            ENDDO
+ 9950       CONTINUE    
+            CLOSE(FNUMPRES)
+            READ(TLINETMP,'(7X,A10)') EXCODEPREV
+            READ(TLINETMP,'(74X,I6)',IOSTAT=ERRNUM) AMTNITPREV
+            IF (ERRNUM /= 0) AMTNITPREV = 0.0
+            ! LAH Here should write new header if new response group
+            IF (CFLPRES.NE.'Y'.OR.TNAME(1:1).EQ.'*') THEN
+              CFLPRES = 'Y'
+              OPEN(UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
+              WRITE (FNUMPRES,*) ' '
+              IF (TNAME(1:1).EQ.'*') THEN
+                WRITE (FNUMPRES,9951) EXCODE,TNAME(2:25)
+ 9951           FORMAT ('*RESPONSES(S):',A10,'  ',A24)
+              ELSEIF (AMTNIT.LT.AMTNITPREV.OR.
+     &                PLYEARDOY.LT.PLYEARDOYPREV)THEN
+                WRITE (FNUMPRES,9951) EXCODE,TNAME(1:24)
+              ELSE
+                WRITE (FNUMPRES,995) EXCODE,ENAME(1:55)
+  995           FORMAT ('*RESPONSES(S):',A10,'  ',A55)
+              ENDIF
+              WRITE (FNUMPRES,97,ADVANCE='NO')
+   97         FORMAT ('@  RUN',
+     A        ' EXCODE     ',
+     B        ' TRNO RN',
+     D        '  PDOY  EDAP')
+              DO L = 1,KEYSTX
+                IF (KEYPS(L).GT.0) THEN
+                  WRITE (FNUMPRES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
+                ENDIF  
               ENDDO
- 9950         CONTINUE    
-              CLOSE(FNUMPRES)
-              READ(TLINETMP,'(7X,A10)') EXCODEPREV
-              READ(TLINETMP,'(74X,I6)',IOSTAT=ERRNUM) AMTNITPREV
-              IF (ERRNUM /= 0) AMTNITPREV = 0.0
-              ! LAH Here should write new header if new response group
-              IF (CFLPRES.NE.'Y'.OR.TNAME(1:1).EQ.'*') THEN
-                CFLPRES = 'Y'
-                OPEN(UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
-                WRITE (FNUMPRES,*) ' '
+              WRITE (FNUMPRES,297)
+  297         FORMAT (
+     F        '  NICM',
+     G        '  HWAM  HWUM',
+     H        '  H#AM  H#PM  H#GM  LAIX  L#SM',
+     I        '  CWAM  VWAM  RS%M  HIAM  RWAM SHRTM',
+     J        '  HN%M  TNAM',
+     K        '  CNAM  HNAM',
+     L        '  HINM PLPOP  T#AM',
+     M        '  SRAA  TMXA  TMNA  TAVA  PREC  TWLD',
+     N        ' PARIU PARUE GFDUR WSDAY NSDAY')
+            ELSE
+              OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
+            ENDIF  ! End Responses simulated header writes
+            WRITE (FNUMPRES,7401,ADVANCE='NO') RUN,EXCODE,TN,RN,
+     A       PLDAYTMP,EDAPFR
+            DO L = 1,KEYSTX
+              IF (KEYPS(L).GT.0) WRITE (FNUMPRES,'(I6)',ADVANCE='NO')
+     &        PSDAP(KEYPS(L))
+            ENDDO
+            WRITE (fnumpres,409)
+     C       NINT(amtnit),
+     D       NINT(hwam),hwumchar,
+     E       NINT(hnumam),NINT(hnumpm),NINT(hnumgm),
+     F       laixchar,lnumsm,
+     G       NINT(cwam),NINT(vwam),
+     H       rscm*100.0, hiamchar,
+     I       NINT(rwam), AMIN1(99.9,shrtm),
+     J       hnpcmchar,
+     K       NINT(AMAX1(-99.0,cnam+rnam)),NINT(cnam),NINT(gnam),
+     L       hinmchar,pltpop,NINT(tnumpm*pltpop),
+     M       sradcav,tmaxcav,tmincav,
+     M       (tmaxcav+tmincav)/2.0,
+     N       NINT(raincc),daylcav,
+     O       pariued,paruec,gfdur,
+     P       wsdays,nsdays
+ 7401       FORMAT (I6,1X,A10,I6,I3,           !Run,excode,tn,rn
+     A       I6,                               !Pldaytmp
+     B       F6.2)                             !Edapfr
+  409       FORMAT (
+     C       I6,                               !Amtnit
+     D       I6,A6,                            !gwam,hwum
+     E       I6,I6,I6,                         !g#am,g#pm,g#gm
+     F       A6,F6.1,                          !laix,lnumsm
+     G       I6,I6,                            !Cwam,vwam
+     H       F6.1,A6,                          !rs%m, hiam
+     I       I6,F6.1,                          !N(rwam),shrtm
+     J       A6,                               !hnpcm
+     K       I6,I6,I6,                         !N(cnam+rnam),(cn),(gn)
+     L       A6,F6.1,I6,                       !hinm,pltpop,tnumpm
+     M       4F6.1,                            !RAD,TX,TN,TMEAN
+     N       I6,F6.2,                          !RN,DL
+     O       F6.3,F6.3,F6.2,                   !PIRUED,PARUEC,GFDUR
+     P       2I6)                              !WSDAYS,NSDAYS
+            CLOSE(FNUMPRES)
+            ! End Responses simulated writes
+            
+            ! Plant responses (Measured)
+            IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
+              WRITE (fnumwrk,*)
+     &         ' No data so cannot write PLANT RESPONSES (MEASURED)'
+              OPEN (UNIT = FNUMTMP,FILE = FNAMEPREM,STATUS='UNKNOWN')
+              CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+            ELSE
+               IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN                
+                OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
+                WRITE (FNUMPREM,*) ' '
                 IF (TNAME(1:1).EQ.'*') THEN
-                  WRITE (FNUMPRES,9951) EXCODE,TNAME(2:25)
- 9951             FORMAT ('*RESPONSES(S):',A10,'  ',A24)
+                  WRITE (FNUMPREM,8951) EXCODE,TNAME(2:25)
+ 8951             FORMAT ('*RESPONSES(M):',A10,'  ',A24)
                 ELSEIF (AMTNIT.LT.AMTNITPREV.OR.
      &                  PLYEARDOY.LT.PLYEARDOYPREV)THEN
-                  WRITE (FNUMPRES,9951) EXCODE,TNAME(1:24)
+                  WRITE (FNUMPREM,9952) EXCODE,TNAME(1:24)
+ 9952             FORMAT ('*RESPONSES(M):',A10,'  ',A24)
                 ELSE
-                  WRITE (FNUMPRES,995) EXCODE,ENAME(1:55)
-  995             FORMAT ('*RESPONSES(S):',A10,'  ',A55)
+                  WRITE (FNUMPREM,895) EXCODE,ENAME(1:55)
+  895             FORMAT ('*RESPONSES(M):',A10,'  ',A55)
                 ENDIF
-                WRITE (FNUMPRES,97,ADVANCE='NO')
-   97           FORMAT ('@  RUN',
-     A          ' EXCODE     ',
-     B          ' TRNO RN',
-     C          '  DWAM',
-     D          '  PDAY  EDAP')
+                WRITE (FNUMPREM,97,ADVANCE='NO')
                 DO L = 1,KEYSTX
                   IF (KEYPS(L).GT.0) THEN
-                    WRITE (FNUMPRES,'(A6,\)') PSABVO(KEYPS(L))
-                  ENDIF  
+                   WRITE (FNUMPREM,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
+                  ENDIF 
                 ENDDO
-                WRITE (FNUMPRES,297)
-  297           FORMAT (
-     F          '  NICM',
-     G          '  HWAM  HWUM',
-     H          '  H#AM  H#PM  H#GM  LAIX  L#SM',
-     I          '  CWAM  VWAM  RS%M  HIAM  RWAM SHRTM',
-     J          '  HN%M  TNAM',
-     K          '  CNAM  HNAM',
-     L          '  HINM PLPOP  T#AM',
-     M          '  SRAD  TMAX  TMIN  TMND  RAIN DAYL    CO2',
-     N          ' PARIU PARUE GFDUR WSDAY NSDAY')
+                WRITE (FNUMPREM,298)
+  298         FORMAT (
+     F        '  NICM',
+     G        '  HWAM  HWUM',
+     H        '  H#AM  H#PM  H#GM  LAIX  L#SM',
+     I        '  CWAM  VWAM RSPCM  HIAM  RWAM SHRTM',
+     J        '  HN%M  TNAM',
+     K        '  CNAM  HNAM',
+     L        '  HINM PLPOP  T#AM')
               ELSE
-                OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
-              ENDIF  ! End Responses simulated header writes
-              WRITE (FNUMPRES,7401,ADVANCE='NO') RUN,EXCODE,TN,RN,
-     A         NINT(DEADWAM),PLDAYTMP,EDAPFR
+                OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
+              ENDIF ! End Responses measured header writes
+              WRITE (FNUMPREM,7401,ADVANCE='NO') RUN,EXCODE,TN,RN,
+     A         PLDAYTMP,EDAPFR
               DO L = 1,KEYSTX
-                IF (KEYPS(L).GT.0) WRITE (FNUMPRES,'(I6,\)')
-     &          PSDAP(KEYPS(L))
+                IF (KEYPS(L).GT.0) WRITE (FNUMPREM,'(I6)',ADVANCE='NO')
+     &           PSDAPM(KEYPS(L))
               ENDDO
-              WRITE (fnumpres,409)
-     C         NINT(amtnit),
-     D         NINT(hwam),hwumchar,
-     E         NINT(hnumam),hnumpm,NINT(hnumgm),
-     F         laix,lnumsm,
-     G         NINT(cwam),NINT(vwam),
-     H         rscm*100.0, hiam,
-     I         NINT(rwam), AMIN1(99.9,shrtm),
-     J         hnpcm,
-     K         NINT(AMAX1(-99.0,cnam+rnam)),NINT(cnam),NINT(gnam),
-     L         hinm,pltpop,NINT(tnumpm*pltpop),
-     M         SRADPAV(4),TMAXPAV(4),TMINPAV(4),
-     M         (TMAXPAV(4)+TMINPAV(4))/2.0,
-     N         RAINPAV(4),DAYLPAV(2),NINT(CO2PAV(4)),
-     O         PARIUED,PARUEC,(MDAPFR-GFDAPFR),
-     P         WSDAYS,NSDAYS
- 7401         FORMAT (I6,1X,A10,I6,I3,I6,        !Run,excode,tn,rn,deadw
-     A         I6,                               !Pldaytmp
-     B         F6.2)                           !Edapfr
-  409         FORMAT (
-     C         I6,                               !Amtnit
-     D         I6,A6,                            !gwam,hwum
-     E         I6,F6.1,I6,                       !N(gnoam),gnopm,N(g#gm)
-     F         F6.2,F6.1,                        !laix,lnumsm
-     G         I6,I6,                            !Cwam,vwam
-     H         F6.1,F7.3,                        !rs%m, hiam
-     I         I5,F6.1,                          !N(rwam),shrtm
-     J         F6.1,                             !hnpcm
-     K         I6,I6,I6,                         !N(cnam+rnam),(cn),(gn)
-     L         F6.1,F6.1,I6,                     !hinm,pltpop,tnumpm
-     M         4F6.1,                            !RAD,TX,TN,TMEAN
-     N         2F6.2,I6,                         !RN,DL,CO2
-     O         F6.3,F6.3,F6.2,                   !PIRUED,PARUEC,GFDUR
-     P         2I6)                              !WSDAYS,NSDAYS
-              CLOSE(FNUMPRES)
-              ! End Responses simulated writes
-              
-              ! Plant responses (Measured)
-              IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
-                WRITE (fnumwrk,*)
-     &           ' No data so cannot write PLANT RESPONSES (MEASURED)'
-                OPEN (UNIT = FNUMTMP,FILE = FNAMEPREM,STATUS='UNKNOWN')
-                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
-              ELSE
-                 IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN                
-                  OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
-                  WRITE (FNUMPREM,*) ' '
-                  IF (TNAME(1:1).EQ.'*') THEN
-                    WRITE (FNUMPREM,8951) EXCODE,TNAME(2:25)
- 8951               FORMAT ('*RESPONSES(M):',A10,'  ',A24)
-                  ELSEIF (AMTNIT.LT.AMTNITPREV.OR.
-     &                    PLYEARDOY.LT.PLYEARDOYPREV)THEN
-                    WRITE (FNUMPREM,9952) EXCODE,TNAME(1:24)
- 9952               FORMAT ('*RESPONSES(M):',A10,'  ',A24)
-                  ELSE
-                    WRITE (FNUMPREM,895) EXCODE,ENAME(1:55)
-  895               FORMAT ('*RESPONSES(M):',A10,'  ',A55)
-                  ENDIF
-                  WRITE (FNUMPREM,97,ADVANCE='NO')
-                  DO L = 1,KEYSTX
-                    IF (KEYPS(L).GT.0) THEN
-                     WRITE (FNUMPREM,'(A6,\)') PSABVO(KEYPS(L))
-                    ENDIF 
-                  ENDDO
-                  WRITE (FNUMPREM,298)
-  298           FORMAT (
-     F          '  NICM',
-     G          '  HWAM  HWUM',
-     H          '  H#AM  H#PM  H#GM  LAIX  L#SM',
-     I          '  CWAM  VWAM RSPCM  HIAM  RWAM SHRTM',
-     J          '  HN%M  TNAM',
-     K          '  CNAM  HNAM',
-     L          '  HINM PLPOP  T#AM')
-                ELSE
-                  OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
-                ENDIF ! End Responses measured header writes
-                WRITE (FNUMPREM,7401,ADVANCE='NO') RUN,EXCODE,TN,RN,
-     A           NINT(DEADWAM),PLDAYTMP,EDAPFR
-                DO L = 1,KEYSTX
-                  IF (KEYPS(L).GT.0) WRITE (FNUMPREM,'(I6,\)')
-     &             PSDAPM(KEYPS(L))
-                ENDDO
-                WRITE (FNUMPREM,409)
-     F           NINT(amtnit),NINT(hwamm),hwummchar,
-     G           NINT(hnumamm),hnumpmm,NINT(hnumgmm),
-     H           laixm,lnumsmm, 
-     I           NINT(cwamm),NINT(vwamm),rscmm,AMAX1(-99.0,hiamm),
-     J           NINT(rwamm),shrtmm,
-     K           hnpcmm,NINT(tnamm),NINT(cnamm),NINT(hnamm),
-     L           AMAX1(-99.0,hinmm),pltpop,
-     M           MAX(-99,NINT(tnumpmm*pltpop))
-                CLOSE(FNUMPREM)
-              ENDIF  
-              ! End Responses (Measured)
-              
-            ELSE  ! IDETL = 'D'
+              WRITE (FNUMPREM,409)
+     F         NINT(amtnit),NINT(hwamm),hwummchar,
+     G         NINT(hnumamm),NINT(hnumpmm),NINT(hnumgmm),
+     H         laixmchar,lnumsmm, 
+     I         NINT(cwamm),NINT(vwamm),rscmm,hiammchar,
+     J         NINT(rwamm),shrtmm,
+     K         hnpcmmchar,NINT(tnamm),NINT(cnamm),NINT(hnamm),
+     L         hinmmchar,pltpopp,
+     M         MAX(-99,NINT(tnumpmm*pltpopp))
+              CLOSE(FNUMPREM)
+            ENDIF  
+            ! End Responses (Measured)
+            
+          ELSE  ! IDETL = 'D'
 
-              OPEN (UNIT=FNUMPHES,FILE=FNAMEPHENOLS,STATUS = 'UNKNOWN')
-              CLOSE (UNIT=FNUMPHES, STATUS = 'DELETE')
-              OPEN (UNIT=FNUMPHEM,FILE=FNAMEPHENOLM,STATUS = 'UNKNOWN')
-              CLOSE (UNIT=FNUMPHEM, STATUS = 'DELETE')
-              OPEN (UNIT = FNUMPRES,FILE = FNAMEPRES,STATUS='UNKNOWN')
-              CLOSE (UNIT=FNUMPRES, STATUS = 'DELETE')
-              OPEN (UNIT = FNUMPREM,FILE = FNAMEPREM,STATUS='UNKNOWN')
-              CLOSE (UNIT=FNUMPREM, STATUS = 'DELETE')
-            
-            ENDIF ! IDETL = 'D'
-            
+            OPEN (UNIT=FNUMPHES,FILE=FNAMEPHENOLS,STATUS = 'UNKNOWN')
+            CLOSE (UNIT=FNUMPHES, STATUS = 'DELETE')
+            OPEN (UNIT=FNUMPHEM,FILE=FNAMEPHENOLM,STATUS = 'UNKNOWN')
+            CLOSE (UNIT=FNUMPHEM, STATUS = 'DELETE')
+            OPEN (UNIT = FNUMPRES,FILE = FNAMEPRES,STATUS='UNKNOWN')
+            CLOSE (UNIT=FNUMPRES, STATUS = 'DELETE')
+            OPEN (UNIT = FNUMPREM,FILE = FNAMEPREM,STATUS='UNKNOWN')
+            CLOSE (UNIT=FNUMPREM, STATUS = 'DELETE')
+          
+          ENDIF ! IDETL = 'D'
+
 !-----------------------------------------------------------------------
-!         ERROR OUTPUTS
+!         IDETL = A OUTPUTS (Errora,Errort,Errors)
 !-----------------------------------------------------------------------
 
           IF (IDETL.EQ.'A') THEN     ! Write some error outputs
@@ -10927,416 +10893,416 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
               WRITE (fnumwrk,*)'  Intermediate stage = ',l             
               WRITE (fnumwrk,*)' '
             ENDIF
-          
-             ! Errors (A-data)
-             IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
-               WRITE (fnumwrk,*)' '
-               WRITE (fnumwrk,*)' No data so cannot write PLANTERA'
-               OPEN (UNIT=FNUMTMP,FILE=FNAMEERA,STATUS='UNKNOWN')
-               CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
-             ELSE ! If data availabe
-               IF (edapm.GT.0) THEN
-                emdaterr = 100.0*(Edap-Edapm)/edapm
-               ELSE
-                emdaterr = -99
-               Endif
-               IF (adapm.GT.0) THEN
-                adaterr = 100.0*(adap-adapm)/adapm
-               ELSE
-                adaterr = -99
-               Endif
-               IF (psidapm.GT.0) THEN
-                psidaterr = 100.0*(psidap-psidapm)/psidapm
-               ELSE
-                psidaterr = -99
-               Endif
-               IF (mdatm.GT.0) THEN
-                mdaterr = 100.0*(mdap-mdapm)/mdapm
-               ELSE
-                mdaterr = -99
-               Endif
-               IF (hwahm.GT.0.AND.hwam.GT.0.AND.hpcf.GT.0) THEN
-                hwaherr = 100.*(hwam*hpcf/100.-hwahm)/(hwahm*hpcf/100.)
-                IF (hwaherr.GT.99999.0) hwaherr = 99999.0
-                IF (hwaherr.LT.-9999.0) hwaherr = -9999.0
-               ELSE
-                hwaherr = -99
-               ENDIF
-               IF (hwumm.GT.0.AND.hwum.GT.0) THEN
-                hwumerr = 100.0*(hwum-hwumm)/hwumm
-               ELSE
-                hwumerr = -99
-               ENDIF
-               IF (hnumamm.GT.0.AND.hnumam.GT.0) THEN
-                hnumaerr = 100.0*(hnumam-hnumamm)/(hnumamm)
-               ELSE
-                hnumaerr = -99
-               ENDIF
-               IF (hnumgmm.GT.0.AND.hnumgm.GT.0) THEN
-                hnumgerr = 100.0*((hnumgm-hnumgmm)/hnumgmm)
-               ELSE
-                hnumgerr = -99
-               ENDIF
-               IF (laixm.GT.0.AND.laix.GT.0) THEN
-                laixerr = 100.0*((laix-laixm)/laixm)
-               ELSE
-                laixerr = -99
-               ENDIF
-               IF (lnumsmm.GT.0.AND.lnumsm.GT.0) THEN
-                lnumserr = 100.0*((lnumsm-lnumsmm)/lnumsmm)
-               ELSE
-                lnumserr = -99
-               ENDIF
-               IF (tnumamm.GT.0.AND.tnumam.GT.0) THEN
-                tnumaerr = 100.0*((tnumam-tnumamm)/tnumamm)
-               ELSE
-                tnumaerr = -99
-               Endif
-               IF (cwamm.GT.0.AND.cwam.GT.0) THEN
-                cwamerr = 100.0*(cwam-cwamm)/cwamm
-               ELSE
-                cwamerr = -99
-               Endif
-               IF (vwamm.GT.0.AND.vwam.GT.0) THEN
-                vwamerr = 100.0*(vwam-vwamm)/vwamm
-               ELSE
-                vwamerr = -99
-               Endif
-               IF (hiamm.GT.0.AND.hiam.GT.0) THEN
-                hiamerr = 100.0*(hiam-hiamm)/hiamm
-               ELSE
-                hiamerr = -99
-               Endif
-               IF (hnpcmm.GT.0.AND.hnpcm.GT.0) THEN
-                hnpcmerr = 100.0*(hnpcm-hnpcmm)/hnpcmm
-               ELSE
-                hnpcmerr = -99
-               Endif
-               IF (cnamm.GT.0.AND.cnam.GT.0) THEN
-                cnamerr = 100.0*(cnam-cnamm)/cnamm
-               ELSE
-                cnamerr = -99
-               Endif
-               IF (gnamm.GT.0.AND.gnam.GT.0) THEN
-                hnamerr = 100.0*(hnam-hnamm)/hnamm
-               ELSE
-                hnamerr = -99
-               Endif
-               IF (RUN.EQ.1) THEN
-                 OPEN (UNIT=FNUMERA,FILE=FNAMEERA,POSITION='APPEND')
-                 WRITE (FNUMERA,996)
-  996            FORMAT (/,'*ERRORS(A)',/)
-                 WRITE (FNUMERA,896)
-  896            FORMAT ('@  RUN',
-     A           ' EXCODE     ',
-     B           '  TRNO RN',
-     C           '    CR',
-     D           '    EDAP   EDAPE',
-     E           '    IDAP   IDAPE',
-     F           '    MDAP   MDAPE',
-     G           '    HWAH   HWAHE',
-     H           '    HWUM   HWUME',
-     I           '    H#AM   H#AME',
-     J           '    H#GM   H#GME',
-     K           '    LAIX   LAIXE',
-     L           '    L#SM   L#SME',
-     M           '    S#AM   S#AME',
-     N           '    CWAM   CWAME',
-     O           '    VWAM   VWAME',
-     P           '    HIAM   HIAME',
-     Q           '    HN%M   HN%ME',
-     R           '    CNAM   CNAME',
-     S           '    HNAM   HNAME')
-                 CLOSE(FNUMERA)
-               ENDIF  ! End ErrorA header writes
-               OPEN (UNIT = FNUMERA,FILE = FNAMEERA,POSITION = 'APPEND')
-               WRITE (FNUMERA,8401) RUN,EXCODE,TN,RN,CROP,
-     A          Edap,emdaterr,
-     B          psidap,psidaterr,
-     C          mdap,mdaterr,
-     D          NINT(hwam),NINT(hwaherr),
-     E          hwum,NINT(hwumerr),
-     F          NINT(hnumam),NINT(hnumaerr),
-     G          hnumgm,NINT(hnumgerr),
-     H          laix,NINT(laixerr),
-     I          lnumsm,NINT(lnumserr),
-     J          NINT(tnumam),NINT(tnumaerr),
-     K          NINT(cwam),NINT(cwamerr),
-     L          NINT(vwam),NINT(vwamerr),
-     M          hiam,NINT(hiamerr),
-     N          hnpcm,NINT(hnpcmerr),
-     O          NINT(cnam),NINT(cnamerr),
-     P          NINT(hnam),NINT(hnamerr)
- 8401          FORMAT (I6,1X,A10,1X,I6,I3,4X,A2,
-     A          I8,  I8,
-     B          I8,  I8,
-     C          I8,  I8,
-     D          I8,  I8,
-     E          F8.3,I8,
-     F          I8,  I8,
-     G          F8.1,I8,
-     H          F8.1,I8,
-     I          F8.1,I8,
-     J          I8  ,I8,
-     K          I8,  I8,
-     L          I8,  I8,
-     M          F8.2,I8,
-     N          F8.1,I8,
-     O          I8,  I8,
-     P          I8,  I8)
-               CLOSE(FNUMERA)
-             ENDIF ! End ErrorA writes (If data available)
-
-            ! Errors summary (S)'
+            
+            ! Errors (A-data)
+            IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
+              WRITE (fnumwrk,*)' '
+              WRITE (fnumwrk,*)' No data so cannot write PLANTERA'
+              OPEN (UNIT=FNUMTMP,FILE=FNAMEERA,STATUS='UNKNOWN')
+              CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+            ELSE ! If data availabe
+              IF (edapm.GT.0) THEN
+               emdaterr = 100.0*(Edap-Edapm)/edapm
+              ELSE
+               emdaterr = -99
+              Endif
+              IF (adapm.GT.0) THEN
+               adaterr = 100.0*(adap-adapm)/adapm
+              ELSE
+               adaterr = -99
+              Endif
+              IF (psidapm.GT.0) THEN
+               psidaterr = 100.0*(psidap-psidapm)/psidapm
+              ELSE
+               psidaterr = -99
+              Endif
+              IF (mdatm.GT.0) THEN
+               mdaterr = 100.0*(mdap-mdapm)/mdapm
+              ELSE
+               mdaterr = -99
+              Endif
+              IF (hwahm.GT.0.AND.hwam.GT.0.AND.hpcf.GT.0) THEN
+               hwaherr = 100.*(hwam*hpcf/100.-hwahm)/(hwahm*hpcf/100.)
+               IF (hwaherr.GT.99999.0) hwaherr = 99999.0
+               IF (hwaherr.LT.-9999.0) hwaherr = -9999.0
+              ELSE
+               hwaherr = -99
+              ENDIF
+              IF (hwumm.GT.0.AND.hwum.GT.0) THEN
+               hwumerr = 100.0*(hwum-hwumm)/hwumm
+              ELSE
+               hwumerr = -99
+              ENDIF
+              IF (hnumamm.GT.0.AND.hnumam.GT.0) THEN
+               hnumaerr = 100.0*(hnumam-hnumamm)/(hnumamm)
+              ELSE
+               hnumaerr = -99
+              ENDIF
+              IF (hnumgmm.GT.0.AND.hnumgm.GT.0) THEN
+               hnumgerr = 100.0*((hnumgm-hnumgmm)/hnumgmm)
+              ELSE
+               hnumgerr = -99
+              ENDIF
+              IF (laixm.GT.0.AND.laix.GT.0) THEN
+               laixerr = 100.0*((laix-laixm)/laixm)
+              ELSE
+               laixerr = -99
+              ENDIF
+              IF (lnumsmm.GT.0.AND.lnumsm.GT.0) THEN
+               lnumserr = 100.0*((lnumsm-lnumsmm)/lnumsmm)
+              ELSE
+               lnumserr = -99
+              ENDIF
+              IF (tnumamm.GT.0.AND.tnumam.GT.0) THEN
+               tnumaerr = 100.0*((tnumam-tnumamm)/tnumamm)
+              ELSE
+               tnumaerr = -99
+              Endif
+              IF (cwamm.GT.0.AND.cwam.GT.0) THEN
+               cwamerr = 100.0*(cwam-cwamm)/cwamm
+              ELSE
+               cwamerr = -99
+              Endif
+              IF (vwamm.GT.0.AND.vwam.GT.0) THEN
+               vwamerr = 100.0*(vwam-vwamm)/vwamm
+              ELSE
+               vwamerr = -99
+              Endif
+              IF (hiamm.GT.0.AND.hiam.GT.0) THEN
+               hiamerr = 100.0*(hiam-hiamm)/hiamm
+              ELSE
+               hiamerr = -99
+              Endif
+              IF (hnpcmm.GT.0.AND.hnpcm.GT.0) THEN
+               hnpcmerr = 100.0*(hnpcm-hnpcmm)/hnpcmm
+              ELSE
+               hnpcmerr = -99
+              Endif
+              IF (cnamm.GT.0.AND.cnam.GT.0) THEN
+               cnamerr = 100.0*(cnam-cnamm)/cnamm
+              ELSE
+               cnamerr = -99
+              Endif
+              IF (gnamm.GT.0.AND.gnam.GT.0) THEN
+               hnamerr = 100.0*(hnam-hnamm)/hnamm
+              ELSE
+               hnamerr = -99
+              Endif
               IF (RUN.EQ.1) THEN
-                OPEN(UNIT = FNUMERS,FILE = FNAMEERS,POSITION = 'APPEND')
-                WRITE (FNUMERS,1996)
- 1996           FORMAT ('*ERRORSUM',/)
-                WRITE (FNUMERS,1896)
- 1896           FORMAT ('@ RUNS',
-     A          ' ADDED:EXCD ',
+                OPEN (UNIT=FNUMERA,FILE=FNAMEERA,POSITION='APPEND')
+                WRITE (FNUMERA,996)
+  996           FORMAT (/,'*ERRORS(A)',/)
+                WRITE (FNUMERA,896)
+  896           FORMAT ('@  RUN',
+     A          ' EXCODE     ',
      B          '  TRNO RN',
      C          '    CR',
-     D          '   EDAP#   EDAPE',
-     E          '   IDAP#   IDAPE',
-     F          '   MDAP#   MDAPE',
-     G          '   HWAH#   HWAHE',
-     H          '   HWUM#   HWUME',
-     I          '   H#AM#   H#AME',
-     J          '   H#GM#   H#GME',
-     K          '   LAIX#   LAIXE',
-     L          '   L#SM#   L#SME',
-     M          '   S#AM#   S#AME',
-     N          '   CWAM#   CWAME',
-     O          '   VWAM#   VWAME',
-     P          '   HIAM#   HIAME',
-     Q          '   HN%M#   HN%ME',
-     R          '   CNAM#   CNAME',
-     S          '   HNAM#   HNAME')
-                CLOSE(FNUMERS)
-              ENDIF  ! END ErrorS header writes
-              VARSUM = 0
-              VARNUM = 0
-              OPEN (UNIT = FNUMERA,FILE = FNAMEERA,STATUS = 'UNKNOWN')
-              DO
-                READ(FNUMERA,'(A354)',END = 7759)LINEERA
-                IF (LINEERA(1:1).EQ.'@') EXIT
-              ENDDO
-              LINENUM = 0
-              DO
-                READ(FNUMERA,'(A354)',END = 7759)LINEERA
-                LINENUM = LINENUM + 1
-                DO L = 1,16
-                  STARTPOS = 42 + (L-1)*16
-                  VARCHAR = LINEERA(STARTPOS:STARTPOS+7)
-                  IF (VARCHAR.NE.'     -99') THEN
-                    READ (VARCHAR,'(F8.0)') VARVAL
-                    VARSUM(L) = VARSUM(L) + VARVAL*VARVAL
-                    VARNUM(L) = VARNUM(L) + 1
-                  ENDIF
-                ENDDO
-              ENDDO
- 7759         CONTINUE
-              CLOSE (FNUMERA)
+     D          '    EDAP   EDAPE',
+     E          '    IDAP   IDAPE',
+     F          '    MDAP   MDAPE',
+     G          '    HWAH   HWAHE',
+     H          '    HWUM   HWUME',
+     I          '    H#AM   H#AME',
+     J          '    H#GM   H#GME',
+     K          '    LAIX   LAIXE',
+     L          '    L#SM   L#SME',
+     M          '    S#AM   S#AME',
+     N          '    CWAM   CWAME',
+     O          '    VWAM   VWAME',
+     P          '    HIAM   HIAME',
+     Q          '    HN%M   HN%ME',
+     R          '    CNAM   CNAME',
+     S          '    HNAM   HNAME')
+                CLOSE(FNUMERA)
+              ENDIF  ! End ErrorA header writes
+              OPEN (UNIT = FNUMERA,FILE = FNAMEERA,POSITION = 'APPEND')
+              WRITE (FNUMERA,8401) RUN,EXCODE,TN,RN,CROP,
+     A         Edap,emdaterr,
+     B         psidap,psidaterr,
+     C         mdap,mdaterr,
+     D         NINT(hwam),NINT(hwaherr),
+     E         hwum,NINT(hwumerr),
+     F         NINT(hnumam),NINT(hnumaerr),
+     G         hnumgm,NINT(hnumgerr),
+     H         laix,NINT(laixerr),
+     I         lnumsm,NINT(lnumserr),
+     J         NINT(tnumam),NINT(tnumaerr),
+     K         NINT(cwam),NINT(cwamerr),
+     L         NINT(vwam),NINT(vwamerr),
+     M         hiam,NINT(hiamerr),
+     N         hnpcm,NINT(hnpcmerr),
+     O         NINT(cnam),NINT(cnamerr),
+     P         NINT(hnam),NINT(hnamerr)
+ 8401         FORMAT (I6,1X,A10,1X,I6,I3,4X,A2,
+     A         I8,  I8,
+     B         I8,  I8,
+     C         I8,  I8,
+     D         I8,  I8,
+     E         F8.3,I8,
+     F         I8,  I8,
+     G         F8.1,I8,
+     H         F8.1,I8,
+     I         F8.1,I8,
+     J         I8  ,I8,
+     K         I8,  I8,
+     L         I8,  I8,
+     M         F8.2,I8,
+     N         F8.1,I8,
+     O         I8,  I8,
+     P         I8,  I8)
+              CLOSE(FNUMERA)
+            ENDIF ! End ErrorA writes (If data available)
+          
+            ! Errors summary (S)'
+            IF (RUN.EQ.1) THEN
+              OPEN(UNIT = FNUMERS,FILE = FNAMEERS,POSITION = 'APPEND')
+              WRITE (FNUMERS,1996)
+ 1996         FORMAT ('*ERRORSUM',/)
+              WRITE (FNUMERS,1896)
+ 1896         FORMAT ('@ RUNS',
+     A        ' ADDED:EXCD ',
+     B        '  TRNO RN',
+     C        '    CR',
+     D        '   EDAP#   EDAPE',
+     E        '   IDAP#   IDAPE',
+     F        '   MDAP#   MDAPE',
+     G        '   HWAH#   HWAHE',
+     H        '   HWUM#   HWUME',
+     I        '   H#AM#   H#AME',
+     J        '   H#GM#   H#GME',
+     K        '   LAIX#   LAIXE',
+     L        '   L#SM#   L#SME',
+     M        '   S#AM#   S#AME',
+     N        '   CWAM#   CWAME',
+     O        '   VWAM#   VWAME',
+     P        '   HIAM#   HIAME',
+     Q        '   HN%M#   HN%ME',
+     R        '   CNAM#   CNAME',
+     S        '   HNAM#   HNAME')
+              CLOSE(FNUMERS)
+            ENDIF  ! END ErrorS header writes
+            VARSUM = 0
+            VARNUM = 0
+            OPEN (UNIT = FNUMERA,FILE = FNAMEERA,STATUS = 'UNKNOWN')
+            DO
+              READ(FNUMERA,'(A354)',END = 7759)LINEERA
+              IF (LINEERA(1:1).EQ.'@') EXIT
+            ENDDO
+            LINENUM = 0
+            DO
+              READ(FNUMERA,'(A354)',END = 7759)LINEERA
+              LINENUM = LINENUM + 1
               DO L = 1,16
-                IF (VARNUM(L).GT.0) THEN
-                  RMSE(L) = (VARSUM(L)/VARNUM(L))**0.5
-                ELSE
-                  RMSE(L) = -99
+                STARTPOS = 42 + (L-1)*16
+                VARCHAR = LINEERA(STARTPOS:STARTPOS+7)
+                IF (VARCHAR.NE.'     -99') THEN
+                  READ (VARCHAR,'(F8.0)') VARVAL
+                  VARSUM(L) = VARSUM(L) + VARVAL*VARVAL
+                  VARNUM(L) = VARNUM(L) + 1
                 ENDIF
               ENDDO
-              OPEN (UNIT = FNUMERS,FILE = FNAMEERS,POSITION = 'APPEND')
-              WRITE (FNUMERS,6401) LINENUM,EXCODE,TN,RN,CROP,
-     A         VARNUM(1),RMSE(1),
-     B         VARNUM(2),RMSE(2),
-     C         VARNUM(3),RMSE(3),
-     D         VARNUM(4),RMSE(4),
-     E         VARNUM(5),RMSE(5),
-     F         VARNUM(6),RMSE(6),
-     G         VARNUM(7),RMSE(7),
-     H         VARNUM(8),RMSE(8),
-     I         VARNUM(9),RMSE(9),
-     J         VARNUM(10),RMSE(10),
-     K         VARNUM(11),RMSE(11),
-     L         VARNUM(12),RMSE(12),
-     M         VARNUM(13),RMSE(13),
-     N         VARNUM(14),RMSE(14),
-     O         VARNUM(15),RMSE(15),
-     P         VARNUM(16),RMSE(16)
- 6401          FORMAT (I6,1X,A10,1X,I6,I3,4X,A2,
-     A         I8,  F8.1,
-     B         I8,  F8.1,
-     C         I8,  F8.1,
-     D         I8,  F8.1,
-     E         I8,  F8.1,
-     F         I8,  F8.1,
-     G         I8,  F8.1,
-     H         I8,  F8.1,
-     I         I8,  F8.1,
-     J         I8,  F8.1,
-     K         I8,  F8.1,
-     L         I8,  F8.1,
-     M         I8,  F8.1,
-     N         I8,  F8.1,
-     O         I8,  F8.1,
-     P         I8,  F8.1)
-              CLOSE(FNUMERS)
-              ! End of ErrorS writes
-
-            ! Errors (T)
-              IF (.NOT.FEXISTT .OR. FROPADJ.GT.1 .OR. IDETG.EQ.'N') THEN
-                WRITE (fnumwrk,*) ' '
-                IF (FROPADJ.GT.1) THEN
-                  WRITE (fnumwrk,*) ' Cannot write PLANT ERRORS (T).',
-     &            ' Frequency of output > 1 day'
-                ELSE  
-                  WRITE (fnumwrk,*)
-     &            ' No data so cannot write PLANT ERRORS (T)'
-                ENDIF      
-                OPEN (UNIT=FNUMTMP,FILE=FNAMEERT,STATUS='UNKNOWN')
-                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+            ENDDO
+ 7759       CONTINUE
+            CLOSE (FNUMERA)
+            DO L = 1,16
+              IF (VARNUM(L).GT.0) THEN
+                RMSE(L) = (VARSUM(L)/VARNUM(L))**0.5
               ELSE
-                INQUIRE (FILE = 'PlantGro.OUT',OPENED = FOPEN)
-                IF (FOPEN) CLOSE (NOUTPG)
-                STARNUM = 0
-                OPEN (UNIT=FNUMT,FILE='Measured.out',STATUS='UNKNOWN')
-                DO WHILE (TLINET(1:1).NE.'@')
-                  TLINET = ' '
-                  READ (FNUMT,1502,END=1600,ERR=1600) TLINET
- 1502             FORMAT(A180)
-                  IF (TLINET(1:1).EQ.'*') STARNUM = STARNUM + 1
-                  IF (TLINET(1:1).EQ.'@') THEN
-                    IF (STARNUM.NE.STARNUMM) THEN
-                      TLINET = ' '
-                      READ (FNUMT,1502,END=1600,ERR=1600) TLINET
-                    ENDIF
+                RMSE(L) = -99
+              ENDIF
+            ENDDO
+            OPEN (UNIT = FNUMERS,FILE = FNAMEERS,POSITION = 'APPEND')
+            WRITE (FNUMERS,6401) LINENUM,EXCODE,TN,RN,CROP,
+     A       VARNUM(1),RMSE(1),
+     B       VARNUM(2),RMSE(2),
+     C       VARNUM(3),RMSE(3),
+     D       VARNUM(4),RMSE(4),
+     E       VARNUM(5),RMSE(5),
+     F       VARNUM(6),RMSE(6),
+     G       VARNUM(7),RMSE(7),
+     H       VARNUM(8),RMSE(8),
+     I       VARNUM(9),RMSE(9),
+     J       VARNUM(10),RMSE(10),
+     K       VARNUM(11),RMSE(11),
+     L       VARNUM(12),RMSE(12),
+     M       VARNUM(13),RMSE(13),
+     N       VARNUM(14),RMSE(14),
+     O       VARNUM(15),RMSE(15),
+     P       VARNUM(16),RMSE(16)
+ 6401        FORMAT (I6,1X,A10,1X,I6,I3,4X,A2,
+     A       I8,  F8.1,
+     B       I8,  F8.1,
+     C       I8,  F8.1,
+     D       I8,  F8.1,
+     E       I8,  F8.1,
+     F       I8,  F8.1,
+     G       I8,  F8.1,
+     H       I8,  F8.1,
+     I       I8,  F8.1,
+     J       I8,  F8.1,
+     K       I8,  F8.1,
+     L       I8,  F8.1,
+     M       I8,  F8.1,
+     N       I8,  F8.1,
+     O       I8,  F8.1,
+     P       I8,  F8.1)
+            CLOSE(FNUMERS)
+            ! End of ErrorS writes
+          
+            ! Errors (T)
+            IF (.NOT.FEXISTT .OR. FROPADJ.GT.1 .OR. IDETG.EQ.'N') THEN
+              WRITE (fnumwrk,*) ' '
+              IF (FROPADJ.GT.1) THEN
+                WRITE (fnumwrk,*) ' Cannot write PLANT ERRORS (T).',
+     &          ' Frequency of output > 1 day'
+              ELSE  
+                WRITE (fnumwrk,*)
+     &          ' No data so cannot write PLANT ERRORS (T)'
+              ENDIF      
+              OPEN (UNIT=FNUMTMP,FILE=FNAMEERT,STATUS='UNKNOWN')
+              CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+            ELSE
+              INQUIRE (FILE = 'PlantGro.OUT',OPENED = FOPEN)
+              IF (FOPEN) CLOSE (NOUTPG)
+              STARNUM = 0
+              OPEN (UNIT=FNUMT,FILE='Measured.out',STATUS='UNKNOWN')
+              DO WHILE (TLINET(1:1).NE.'@')
+                TLINET = ' '
+                READ (FNUMT,1502,END=1600,ERR=1600) TLINET
+ 1502           FORMAT(A180)
+                IF (TLINET(1:1).EQ.'*') STARNUM = STARNUM + 1
+                IF (TLINET(1:1).EQ.'@') THEN
+                  IF (STARNUM.NE.STARNUMM) THEN
+                    TLINET = ' '
+                    READ (FNUMT,1502,END=1600,ERR=1600) TLINET
                   ENDIF
-                ENDDO
-                tlinet(1:1) = ' '
-                STARNUM = 0
-                OPEN (UNIT=NOUTPG,FILE='PlantGro.OUT',STATUS='UNKNOWN')
-                DO WHILE (TLINEGRO(1:1).NE.'@')
-                  TLINEGRO = ' '
-                  READ (NOUTPG,'(A254)') TLINEGRO
-                  IF (TLINEGRO(1:4).EQ.'*RUN') STARNUM = STARNUM + 1
-                  IF (TLINEGRO(1:1).EQ.'@') THEN
-                    IF (STARNUM.NE.STARNUMO) THEN
-                      TLINEGRO = ' '
-                      READ (NOUTPG,'(A254)') TLINEGRO
-                    ENDIF
+                ENDIF
+              ENDDO
+              tlinet(1:1) = ' '
+              STARNUM = 0
+              OPEN (UNIT=NOUTPG,FILE='PlantGro.OUT',STATUS='UNKNOWN')
+              DO WHILE (TLINEGRO(1:1).NE.'@')
+                TLINEGRO = ' '
+                READ (NOUTPG,'(A254)') TLINEGRO
+                IF (TLINEGRO(1:4).EQ.'*RUN') STARNUM = STARNUM + 1
+                IF (TLINEGRO(1:1).EQ.'@') THEN
+                  IF (STARNUM.NE.STARNUMO) THEN
+                    TLINEGRO = ' '
+                    READ (NOUTPG,'(A254)') TLINEGRO
                   ENDIF
-                ENDDO
-                tlinegro(1:1) = ' '
-                ! Find headers from Measured file
-                DO L = 1,20
-                  CALL Getstr(tlinet,l,thead(l))
-                  IF (THEAD(L)(1:3).EQ.'-99') EXIT
-                  IF (THEAD(L)(1:3).EQ.'DAP') tfdapcol = l
-                ENDDO
-                TFCOLNUM = L-1
-                IF (TFCOLNUM.LE.0) THEN
-                  WRITE (FNUMWRK,*) 'No columns found in T-file '
+                ENDIF
+              ENDDO
+              tlinegro(1:1) = ' '
+              ! Find headers from Measured file
+              DO L = 1,20
+                CALL Getstr(tlinet,l,thead(l))
+                IF (THEAD(L)(1:3).EQ.'-99') EXIT
+                IF (THEAD(L)(1:3).EQ.'DAP') tfdapcol = l
+              ENDDO
+              TFCOLNUM = L-1
+              IF (TFCOLNUM.LE.0) THEN
+                WRITE (FNUMWRK,*) 'No columns found in T-file '
+                GO TO 7777
+              ENDIF
+              ! Make new header line
+              TLINETMP = ' '
+              TLINETMP(1:1) = '@'
+              DO L = 1, TFCOLNUM
+                TLPOS = (L-1)*6+1
+                IF (THEAD(L).EQ.'TRNO'.OR.THEAD(L).EQ.'YEAR'.OR.
+     &            THEAD(L).EQ.'DATE') THEN
+                  TLINETMP(TLPOS+2:TLPOS+5)=THEAD(L)(1:4)
+                ELSEIF(THEAD(L).EQ.'DOY'.OR.THEAD(L).EQ.'DAP' .OR.
+     &            THEAD(L).EQ.'DAS'.OR.THEAD(L).EQ.'DAY') THEN
+                  TLINETMP(TLPOS+3:TLPOS+5)=THEAD(L)(1:3)
+                ELSE
+                  WRITE (TCHAR,'(I6)') NINT(ERRORVAL*100.0)
+                  TLINETMP(TLPOS+1:TLPOS+4) = THEAD(L)(1:4)
+                  TLINETMP(TLPOS+5:TLPOS+5) = 'E'
+                ENDIF
+              ENDDO
+              ! Find corresponding columns in PlantGro.OUT
+              DO L = 1,TFCOLNUM
+                pgrocol(l) = Tvicolnm(tlinegro,thead(l))
+              ENDDO
+              OPEN (UNIT=FNUMERT,FILE=FNAMEERT,POSITION='APPEND')
+              WRITE (FNUMERT,2996) OUTHED(12:79)
+ 2996         FORMAT (/,'*ERRORS(T):',A69,/)
+              tlinet(1:1) = '@'
+              WRITE (FNUMERT,'(A180)') TLINETMP
+              ! Read data lines, match dates, calculate errors, write
+              DO L1 = 1,200
+                TLINET = ' '
+                READ (FNUMT,7778,ERR=7777,END=7777) TLINET
+ 7778           FORMAT(A180)
+                IF (TLINET(1:1).EQ.'*') GO TO 7777
+                IF (TLINET(1:6).EQ.'      ') GO TO 7776
+                CALL Getstri(tlinet,tfdapcol,tfdap)
+                IF (TFDAP.LE.0.0) THEN
+                  WRITE (FNUMWRK,*) 'DAP in T-file <= 0 '
                   GO TO 7777
                 ENDIF
-                ! Make new header line
-                TLINETMP = ' '
-                TLINETMP(1:1) = '@'
-                DO L = 1, TFCOLNUM
-                  TLPOS = (L-1)*6+1
-                  IF (THEAD(L).EQ.'TRNO'.OR.THEAD(L).EQ.'YEAR'.OR.
-     &              THEAD(L).EQ.'DATE') THEN
-                    TLINETMP(TLPOS+2:TLPOS+5)=THEAD(L)(1:4)
-                  ELSEIF(THEAD(L).EQ.'DOY'.OR.THEAD(L).EQ.'DAP' .OR.
-     &              THEAD(L).EQ.'DAS'.OR.THEAD(L).EQ.'DAY') THEN
-                    TLINETMP(TLPOS+3:TLPOS+5)=THEAD(L)(1:3)
-                  ELSE
-                    WRITE (TCHAR,'(I6)') NINT(ERRORVAL*100.0)
-                    TLINETMP(TLPOS+1:TLPOS+4) = THEAD(L)(1:4)
-                    TLINETMP(TLPOS+5:TLPOS+5) = 'E'
-                  ENDIF
-                ENDDO
-                ! Find corresponding columns in PlantGro.OUT
-                DO L = 1,TFCOLNUM
-                  pgrocol(l) = Tvicolnm(tlinegro,thead(l))
-                ENDDO
-                OPEN (UNIT=FNUMERT,FILE=FNAMEERT,POSITION='APPEND')
-                WRITE (FNUMERT,2996) OUTHED(12:79)
- 2996           FORMAT (/,'*ERRORS(T):',A69,/)
-                tlinet(1:1) = '@'
-                WRITE (FNUMERT,'(A180)') TLINETMP
-                ! Read data lines, match dates, calculate errors, write
-                DO L1 = 1,200
-                  TLINET = ' '
-                  READ (FNUMT,7778,ERR=7777,END=7777) TLINET
- 7778             FORMAT(A180)
-                  IF (TLINET(1:1).EQ.'*') GO TO 7777
-                  IF (TLINET(1:6).EQ.'      ') GO TO 7776
-                  CALL Getstri(tlinet,tfdapcol,tfdap)
-                  IF (TFDAP.LE.0.0) THEN
-                    WRITE (FNUMWRK,*) 'DAP in T-file <= 0 '
+                DO WHILE (tfdap.NE.pgdap)
+                  TLINEGRO = ' '
+                  READ (NOUTPG,7779,ERR=7777,END=7777) TLINEGRO
+                  CALL Getstri(tlinegro,pgrocol(tfdapcol),pgdap)
+                  IF (PGDAP.LT.0) THEN
+                    WRITE (FNUMWRK,*) 'DAP in Plantgro file < 0 '
                     GO TO 7777
                   ENDIF
-                  DO WHILE (tfdap.NE.pgdap)
-                    TLINEGRO = ' '
-                    READ (NOUTPG,7779,ERR=7777,END=7777) TLINEGRO
-                    CALL Getstri(tlinegro,pgrocol(tfdapcol),pgdap)
-                    IF (PGDAP.LT.0) THEN
-                      WRITE (FNUMWRK,*) 'DAP in Plantgro file < 0 '
-                      GO TO 7777
-                    ENDIF
-                  ENDDO
- 7779             FORMAT(A255)
-                  TLINETMP = ' '
-                  DO L = 1, TFCOLNUM
-                    CALL Getstrr(tlinet,l,tfval)
-                    CALL Getstrr(tlinegro,pgrocol(l),pgval)
-                    ERRORVAL = 0.0
-                    IF(TFVAL.GT.0.0.AND.PGVAL.GT.-99.AND.
-     &               PGVAL.NE.0.0)THEN
-                      ERRORVAL = 100.0 * (PGVAL - TFVAL) / TFVAL
-                    ELSE
-                      ERRORVAL = -99.0
-                    ENDIF
-                    IF (THEAD(L).EQ.'TRNO'.OR.THEAD(L).EQ.'YEAR' .OR.
-     &                THEAD(L).EQ.'DOY'.OR.THEAD(L).EQ.'DAP' .OR.
-     &                THEAD(L).EQ.'DAY' .OR.
-     &                THEAD(L).EQ.'DAS'.OR.THEAD(L).EQ.'DATE') THEN
-                      CALL Getstri(tlinet,l,tvi1)
-                      WRITE (TCHAR,'(I6)') TVI1
-                    ELSE
-                      WRITE (TCHAR,'(I6)') NINT(ERRORVAL)
-                    ENDIF
-                    TLPOS = (L-1)*6+1
-                    TLINETMP(TLPOS:TLPOS+5)=TCHAR
-                  ENDDO
-                  WRITE (FNUMERT,'(A180)') TLINETMP
- 7776             CONTINUE
                 ENDDO
- 7777           CONTINUE
-                GO TO 1601
- 1600           CONTINUE
-                WRITE(fnumwrk,*)'End of file reading Measured.out'
-                WRITE(fnumwrk,*)
-     &           'Starnum and starnumm were: ',starnum,starnumm
- 1601           CONTINUE
-                CLOSE (FNUMERT)
-                CLOSE (FNUMT)
-                CLOSE (NOUTPG)
-                ! Re-open file if open at start of work here
-                IF (FOPEN) 
-     &          OPEN (UNIT=NOUTPG,FILE='PlantGro.OUT',POSITION='APPEND')
-              ENDIF  ! .NOT.FEXISTT .OR. FROPADJ.GT.1 .OR. IDETG.EQ.'N'
-              ! End of ErrorT writes
- 
+ 7779           FORMAT(A255)
+                TLINETMP = ' '
+                DO L = 1, TFCOLNUM
+                  CALL Getstrr(tlinet,l,tfval)
+                  CALL Getstrr(tlinegro,pgrocol(l),pgval)
+                  ERRORVAL = 0.0
+                  IF(TFVAL.GT.0.0.AND.PGVAL.GT.-99.AND.
+     &             PGVAL.NE.0.0)THEN
+                    ERRORVAL = 100.0 * (PGVAL - TFVAL) / TFVAL
+                  ELSE
+                    ERRORVAL = -99.0
+                  ENDIF
+                  IF (THEAD(L).EQ.'TRNO'.OR.THEAD(L).EQ.'YEAR' .OR.
+     &              THEAD(L).EQ.'DOY'.OR.THEAD(L).EQ.'DAP' .OR.
+     &              THEAD(L).EQ.'DAY' .OR.
+     &              THEAD(L).EQ.'DAS'.OR.THEAD(L).EQ.'DATE') THEN
+                    CALL Getstri(tlinet,l,tvi1)
+                    WRITE (TCHAR,'(I6)') TVI1
+                  ELSE
+                    WRITE (TCHAR,'(I6)') NINT(ERRORVAL)
+                  ENDIF
+                  TLPOS = (L-1)*6+1
+                  TLINETMP(TLPOS:TLPOS+5)=TCHAR
+                ENDDO
+                WRITE (FNUMERT,'(A180)') TLINETMP
+ 7776           CONTINUE
+              ENDDO
+ 7777         CONTINUE
+              GO TO 1601
+ 1600         CONTINUE
+              WRITE(fnumwrk,*)'End of file reading Measured.out'
+              WRITE(fnumwrk,*)
+     &         'Starnum and starnumm were: ',starnum,starnumm
+ 1601         CONTINUE
+              CLOSE (FNUMERT)
+              CLOSE (FNUMT)
+              CLOSE (NOUTPG)
+              ! Re-open file if open at start of work here
+              IF (FOPEN) 
+     &        OPEN (UNIT=NOUTPG,FILE='PlantGro.OUT',POSITION='APPEND')
+            ENDIF  ! .NOT.FEXISTT .OR. FROPADJ.GT.1 .OR. IDETG.EQ.'N'
+            ! End of ErrorT writes
+          
           ELSE ! No ERROR files called for ... must be deleted          
- 
+          
             OPEN (UNIT=FNUMTMP,FILE=FNAMEERA,STATUS='UNKNOWN')
             CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
             OPEN (UNIT=FNUMTMP,FILE=FNAMEERS,STATUS='UNKNOWN')
             CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
             OPEN (UNIT=FNUMTMP,FILE=FNAMEERT,STATUS='UNKNOWN')
             CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
- 
+          
           ENDIF ! End of Error writes  IDETL.EQ.'A'
 
 !-----------------------------------------------------------------------
@@ -11344,7 +11310,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
 !-----------------------------------------------------------------------
 
           ! Screen writes
-          ! lah April 2010 Must check this for Cropsimstand-alone
+          ! LAH April 2010 Must check this for Cropsimstand-alone
           IF (IDETD.EQ.'S') THEN
             IF (OUTCOUNT.LE.0) THEN
               CALL CSCLEAR5
@@ -11415,114 +11381,111 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
 !         Screen writes for Dssat sensitivity mode
 !-----------------------------------------------------------------------
             
-            IF (FILEIOT(1:3).EQ.'DS4' .AND. CN.EQ.1
-     &                                .AND. RNMODE.EQ.'E') THEN         
-            
-              CALL CSCLEAR5
-              WRITE(*,9589)
-              WRITE(*,*) ' '
-              WRITE(*,9588)
-              WRITE(*,9600)
-              DO L = 1, PSNUM
-                CALL Csopline(laic,laistg(l))
-                IF (STGYEARDOY(L).LT.9999999.AND.
-     &              L.NE.10.AND.L.NE.11) THEN
-                  CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
-                  CALL Calendar(year,doy,dom,month)
-                  CNCTMP = 0.0
-                  IF (CWADSTG(L).GT.0.0)
-     &             CNCTMP = CNADSTG(L)/CWADSTG(L)*100
-                  WRITE (*,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,
-     &            F6.1,I6,F6.2,F6.2,F6.2)')
-     &            STGYEARDOY(L),DOM,MONTH,
-     &            Dapcalc(stgyeardoy(L),(plyeardoy/1000),plday),
-     &            l,psname(l),
-     &            NINT(CWADSTG(L)),LAIC,LNUMSTG(L),
-     &            NINT(CNADSTG(L)),CNCTMP,1.0-WFPPAV(L),1.0-NFPPAV(L)
-                ENDIF
-              ENDDO
-              ! For harvest at specified date
-              IF (YEARDOYHARF.EQ.YEARDOY) THEN
-                CALL Csopline(laic,lai)
-                  CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
-                  CALL Calendar(year,doy,dom,month)
-                  CNCTMP = 0.0
-                  IF (CWAD.GT.0.0)CNCTMP = CNAD/CWAD*100
-                  WRITE (*,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,
-     &            F6.1,I6,F6.2,F6.2,F6.2)')
-     &            YEARDOY,DOM,MONTH,
-     &            Dapcalc(yeardoy,(plyeardoy/1000),plday),
-     &            l,'Harvest      ',
-     &            NINT(CWAD),LAIC,LNUM,
-     &            NINT(CNAD),CNCTMP,1.0-WFPCAV,1.0-NFPCAV
-              ENDIF 
-            
-              WRITE(*,*)' '
-              WRITE(*,*)' Press ENTER to continue'
-              PAUSE ' '
-              CALL CSCLEAR5
-           
-              !WRITE (*,206)
-              WRITE(*,'(A36,A10,I3)')
-     &        ' SIMULATED-MEASURED COMPARISONS FOR ',EXCODE,TN
-              WRITE(*,*)' '
-              WRITE (*,206)
-              WRITE (*,290) MAX(-99,gdap),MAX(-99,gdapm),
-     A         MAX(-99,edap),MAX(-99,edapm)
-              DO L = 1,KEYSTX
-                IF (KEYPS(L).GT.0) WRITE (*,291)
-     &           psname(KEYPS(L)),PSDap(KEYPS(L)),PSDapm(KEYPS(L))
-              ENDDO
-              WRITE (*,305)
-     H         NINT(cwam),NINT(cwamm),
-     I         MAX(-99,NINT(rwam+sdwam)),NINT(rwamm),
-     J         NINT(senwacm),NINT(senwacmm),
-     L         NINT(hwam),NINT(hwamm),
-     M         NINT(vwam),NINT(vwamm),
-     N         hiam,hiamm,
-     O         NINT(rswam),NINT(rswamm)
-              IF (lwphc+swphc.GT.0.0) WRITE (*,3051)
-     &         NINT(cwahc),NINT(cwahcm),
-     &         NINT(spnumhc*pltpop),MAX(-99,NINT(spnumhcm*pltpop))
-            
-              WRITE(*,*)' '
-              WRITE(*,*)' Press ENTER to continue'
-              PAUSE ' '
-              CALL CSCLEAR5
-     
-              WRITE (*,2061)
+          IF (FILEIOT(1:3).EQ.'DS4' .AND. CN.EQ.1
+     &                              .AND. RNMODE.EQ.'E') THEN         
+            CALL CSCLEAR5
+            WRITE(*,9589)
+            WRITE(*,*) ' '
+            WRITE(*,9588)
+            WRITE(*,9600)
+            DO L = 1, PSNUM
+              CALL Csopline(laic,laistg(l))
+              IF (STGYEARDOY(L).LT.9999999.AND.
+     &            L.NE.10.AND.L.NE.11) THEN
+                CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                CALL Calendar(year,doy,dom,month)
+                CNCTMP = 0.0
+                IF (CWADSTG(L).GT.0.0)
+     &           CNCTMP = CNADSTG(L)/CWADSTG(L)*100
+                WRITE (*,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,
+     &          F6.1,I6,F6.2,F6.2,F6.2)')
+     &          STGYEARDOY(L),DOM,MONTH,
+     &          Dapcalc(stgyeardoy(L),(plyeardoy/1000),plday),
+     &          l,psname(l),
+     &          NINT(CWADSTG(L)),LAIC,LNUMSTG(L),
+     &          NINT(CNADSTG(L)),CNCTMP,1.0-WFPPAV(L),1.0-NFPPAV(L)
+              ENDIF
+            ENDDO
+            ! For harvest at specified date
+            IF (YEARDOYHARF.EQ.YEARDOY) THEN
+              CALL Csopline(laic,lai)
+                CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                CALL Calendar(year,doy,dom,month)
+                CNCTMP = 0.0
+                IF (CWAD.GT.0.0)CNCTMP = CNAD/CWAD*100
+                WRITE (*,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,
+     &          F6.1,I6,F6.2,F6.2,F6.2)')
+     &          YEARDOY,DOM,MONTH,
+     &          Dapcalc(yeardoy,(plyeardoy/1000),plday),
+     &          l,'Harvest      ',
+     &          NINT(CWAD),LAIC,LNUM,
+     &          NINT(CNAD),CNCTMP,1.0-WFPCAV,1.0-NFPCAV
+            ENDIF 
+          
+            WRITE(*,*)' '
+            WRITE(*,*)' Press ENTER to continue'
+            PAUSE ' '
+            CALL CSCLEAR5
+          
+            !WRITE (*,206)
+            WRITE(*,'(A36,A10,I3)')
+     &      ' SIMULATED-MEASURED COMPARISONS FOR ',EXCODE,TN
+            WRITE(*,*)' '
+            WRITE (*,206)
+            WRITE (*,290) MAX(-99,gdap),MAX(-99,gdapm),
+     A       MAX(-99,edap),MAX(-99,edapm)
+            DO L = 1,KEYSTX
+              IF (KEYPS(L).GT.0) WRITE (*,291)
+     &         psname(KEYPS(L)),PSDap(KEYPS(L)),PSDapm(KEYPS(L))
+            ENDDO
+            WRITE (*,305)
+     H       NINT(cwam),NINT(cwamm),
+     I       MAX(-99,NINT(rwam+sdwam)),NINT(rwamm),
+     J       NINT(senwacm),NINT(senwacmm),
+     L       NINT(hwam),NINT(hwamm),
+     M       NINT(vwam),NINT(vwamm),
+     N       hiam,hiamm,
+     O       NINT(rswam),NINT(rswamm)
+            IF (lwphc+swphc.GT.0.0) WRITE (*,3051)
+     &       NINT(cwahc),NINT(cwahcm),
+     &       NINT(spnumhc*pltpop),MAX(-99,NINT(spnumhcm*pltpop))
+          
+            WRITE(*,*)' '
+            WRITE(*,*)' Press ENTER to continue'
+            PAUSE ' '
+            CALL CSCLEAR5
+          
+            WRITE (*,2061)
 2061        FORMAT(
-     &    /,   
+     &       /,   
      &       "@",5X,"VARIABLE",T42,"SIMULATED   MEASURED",/,  
-     &           6X,"--------",T42,"---------   --------")  
-              WRITE (*,3052)
-     A         hwumchar,hwummchar,
-     B         NINT(hnumam),NINT(hnumamm),
-     C         hnumgm,hnumgmm,
-     D         NINT(tnumam),NINT(tnumamm),
-     E         laix,laixm,
-     F         lnumsm,lnumsmm,
-     G         nupac,nupacm,
-     H         cnam,cnamm,
-     I         rnam,rnamm,
-     J         sennatc,sennatcm,
-     K         hnam,hnamm,
-     L         vnam,vnamm,
-     M         hinm,hinmm,
-     N         hnpcm,hnpcmm,
-     O         vnpcm,vnpcmm
-
-              WRITE(*,*)' '
-              WRITE(*,*)' Press ENTER to continue'
-              PAUSE ' '
-              CALL CSCLEAR5
-              CALL CSCLEAR5
-              CALL CSCLEAR5
-              CALL CSCLEAR5
-            
-            ENDIF
-            
-            ! END OF SCREEN WRITES FOR DSSAT SENSITIVITY MODE
+     &         6X,"--------",T42,"---------   --------")  
+             WRITE (*,3052)
+     A       hwumchar,hwummchar,
+     B       NINT(hnumam),NINT(hnumamm),
+     C       hnumgm,hnumgmm,
+     D       NINT(tnumam),NINT(tnumamm),
+     E       laix,laixm,
+     F       lnumsm,lnumsmm,
+     G       nupac,nupacm,
+     H       cnam,cnamm,
+     I       rnam,rnamm,
+     J       sennatc,sennatcm,
+     K       hnam,hnamm,
+     L       vnam,vnamm,
+     M       hinm,hinmm,
+     N       hnpcm,hnpcmm,
+     O       vnpcm,vnpcmm
+          
+            WRITE(*,*)' '
+            WRITE(*,*)' Press ENTER to continue'
+            PAUSE ' '
+            CALL CSCLEAR5
+            CALL CSCLEAR5
+            CALL CSCLEAR5
+            CALL CSCLEAR5
+          
+          ENDIF ! END OF SCREEN WRITES FOR DSSAT SENSITIVITY MODE
         
 !-----------------------------------------------------------------------
 !         Store variables for sending to CSM summary output routines
@@ -11531,7 +11494,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
           ! Store summary labels and values in arrays to send to
           ! CSM OPSUM routine for printing.  Integers are temporarily
           ! saved as real numbers for placement in real array.
-        
+          
           LABEL(1) = 'ADAT'; VALUE(1) = FLOAT(adat)
           IF (stgyeardoy(mstg).LT.9999999) THEN
             LABEL(2) = 'MDAT'; VALUE(2) = FLOAT(stgyeardoy(mstg))
@@ -11564,22 +11527,22 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
           LABEL(20) = 'DMPIM'; VALUE(20) = DMP_Irr
           LABEL(21) = 'DMPNA'; VALUE(21) = DMP_NApp
           LABEL(22) = 'DMPNU'; VALUE(22) = DMP_NUpt
-         
+           
           LABEL(23) = 'YPPM ' ; VALUE(23) = GrP_Rain                  
           LABEL(24) = 'YPEM ' ; VALUE(24) = GrP_ET                   
           LABEL(25) = 'YPTM ' ; VALUE(25) = GrP_EP                    
           LABEL(26) = 'YPIM ' ; VALUE(26) = GrP_Irr
           LABEL(27) = 'YPNAM' ; VALUE(27) = GrP_NApp
           LABEL(28) = 'YPNUM' ; VALUE(28) = GrP_NUpt
-          
+           
           LABEL(29) = 'EDAP ' ; VALUE(29) = FLOAT(EDAP)     
-          
+           
           IF (FILEIOT(1:2).EQ.'DS') CALL SUMVALS (SUMNUM, LABEL, VALUE)
-        
+         
 !-----------------------------------------------------------------------
 !         Re-initialize
 !-----------------------------------------------------------------------
-        
+         
           ! Need to re-initialize following because of automatic
           ! fertilization routines in DSSAT
           NFG = 1.0
@@ -11588,12 +11551,12 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
           WFG = 1.0
           WFP = 1.0
           WFT = 1.0
-         
+          
           UNO3 = 0.0
           UNH4 = 0.0
-        
+          
           RUNCRP = RUNCRP + 1
-        
+          
           WRITE (fnumwrk,*) ' '
           WRITE (fnumwrk,'(A50)')
      &     ' END OF RUN. WILL BEGIN NEW CYCLE IF CALLED FOR.  '
@@ -11676,24 +11639,75 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      & LAIL,LAILA,                          ! Leaf area indices,layers
      & LAIA)                                ! Leaf area index,active
 
+ 9589 FORMAT
+     & (//,'*SIMULATED CROP AND SOIL STATUS AT MAIN DEVELOPMENT STAGES')
+ 9588 FORMAT(
+     &/,' ...... DATE ....... GROWTH STAGE    BIOMASS   LEAF  
+     &     CROP N      STRESS')     
+ 9600 FORMAT(' YEARDOY DOM MON DAP ................ kg/ha AREA NUMBER
+     &  kg/ha   %   H2O    N')
+  206       FORMAT(
+     &    /,"*MAIN GROWTH AND DEVELOPMENT VARIABLES",//,   
+     &       "@",5X,"VARIABLE",T42,"SIMULATED   MEASURED",/,  
+     &           6X,"--------",T42,"---------   --------")  
+ 500  FORMAT(/,'*ENVIRONMENTAL AND STRESS FACTORS',//,
+     &' |-----Development Phase------|-------------Environment--------',
+     &'------|----------------Stress-----------------|',/,
+     &30X,'|--------Average-------|---Cumulative--|         (0=Min, 1=',
+     &'Max Stress)         |',/,
+     &25X,'Time  Temp  Temp Solar Photop         Evapo |----Water---|-',
+     &'-Nitrogen--|--Phosphorus-|',/,
+     &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
+     &'to         Photo',/,
+     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ',
+     &'synth Growth  synth Growth',/,110('-'))
+  270 FORMAT(/,'------------------------------------------------------',
+     &'--------------------------------------------------------')
+  300 FORMAT(/,10X,A," YIELD : ",I8," kg/ha    [Dry weight] ",/)
+ 1200     FORMAT(
+     &'------------------------------------------------------',
+     &'--------------------------------------------------------',
+     &///,'*RESOURCE PRODUCTIVITY',
+     &//,' Growing season length:', I4,' days ',
+     &//,' Precipitation during growth season',T42,F7.1,' mm[rain]',
+     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[rain]',
+     &                           T75,'=',F7.1,' kg[DM]/ha per mm[rain]',
+     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[rain]',
+     &                       T75,'=',F7.1,' kg[yield]/ha per mm[rain]',
+     &//,' Evapotranspiration during growth season',T42,F7.1,' mm[ET]',
+     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[ET]',
+     &                            T75,'=',F7.1,' kg[DM]/ha per mm[ET]',
+     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[ET]',
+     &                       T75,'=',F7.1,' kg[yield]/ha per mm[ET]',
+     &//,' Transpiration during growth season',T42,F7.1,' mm[EP]',
+     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[EP]',
+     &                            T75,'=',F7.1,' kg[DM]/ha per mm[EP]',
+     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[EP]',
+     &                       T75,'=',F7.1,' kg[yield]/ha per mm[EP]')
+
+ 1210 FORMAT(
+     & /,' Irrigation during growing season',T42,F7.1,' mm[irrig]',
+     & /,'   Dry Matter Productivity',T42,F7.2,' kg[DM]/m3[irrig]',
+     &                       T75,'=',F7.1,' kg[DM]/ha per mm[irrig]',
+     & /,'   Yield Productivity',T42,F7.2,' kg[grain yield]/m3[irrig]',
+     &                       T75,'=',F7.1,' kg[yield]/ha per mm[irrig]')
+
+ 1220 FORMAT(
+     & /,' N applied during growing season',T42,F7.1,' kg[N applied]/ha'
+     & /,'   Dry Matter Productivity',T42,F7.1,' kg[DM]/kg[N applied]',
+     & /,'   Yield Productivity',T42,F7.1,' kg[yield]/kg[N applied]')
+
+ 1230 FORMAT(
+     & /,' N uptake during growing season',T42,F7.1,' kg[N uptake]/ha'
+     & /,'   Dry Matter Productivity',T42,F7.1,' kg[DM]/kg[N uptake]',
+     & /,'   Yield Productivity',T42,F7.1,' kg[yield]/kg[N uptake]')
+
       END  ! CSCRP
 
-!***********************************************************************
+!-----------------------------------------------------------------------
 !  CSCRPROOTWU Subroutine
 !  Root water uptake rate for each soil layer and total rate.
 !-----------------------------------------------------------------------
-!  Revision history
-!  01/01/89 JR  Written
-!  12/05/93 NBP Made into subroutine.
-!  01/18/96 JWJ Added flooding effect on water uptake
-!  01/06/96 GH  Added soil water excess stress
-!  10/10/97 CHP Updated for modular format.
-!  09/01/99 GH  Incorporated in CROPGRO
-!  01/10/00 NBP Added SAVE for stored variables and set SWCON2=RWU=0.0
-!  01/12/00 NBP Removed FILECC from input
-!  01/25/00 NBP Added IOSTAT to READ statements to set ERRNUM.  Cleaned.
-!  05/09/01 LAH Modified for CROPSIM-CERES
-!=======================================================================
 
       SUBROUTINE CSCRPROOTWU(ISWWAT,                       !Control
      & NLAYR, DLAYR, LL, SAT, WFEU, MEWNU,                 !Soil
@@ -11749,7 +11763,6 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
       INTRINSIC ALOG,AMAX1,AMIN1,EXP,MAX,MIN
 
       SAVE
-
 
       IF (ISWWAT.EQ.'N') RETURN
 
@@ -11881,10 +11894,6 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
 !  CSCRPLAYERS Subroutine
 !  Leaf distribution module
 !-----------------------------------------------------------------------
-!  Revision history
-!  1. Written for Cropsim                         L.A.H.      ?-?-98
-!  2. Rewritten,Brazil                            L.A.H.    20-01-05
-!=======================================================================
 
       SUBROUTINE Cscrplayers
      X (chtfr,clafr,                   ! Height-leaf area distribution
@@ -12016,21 +12025,10 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
       RETURN
       END
 
-!***********************************************************************
+!-----------------------------------------------------------------------
 !  EVAPO Subroutine
 !  Calculates evapotranspiration,canopy temperature,resistances
 !-----------------------------------------------------------------------
-!  REVISION HISTORY
-!  ??/??/?? JR  Wrote PETPT
-!  02/19/92 NBP Wrote PETPEN .. which used as base for this routine
-!  11/04/93 NBP Renamed routine PET to PETPEN.  Changed XLAI to XHLAI
-!  05/13/94 NBP Converted all vapor pressures to Pa.  Rearranged.
-!  09/16/94 NBP Added limits to prevent EO and ES (PE) < 0.
-!  10/17/97 CHP Updated for modular format.
-!  09/01/99 GH  Incorporated into CROPGRO
-!  08/10/01 LAH Added PETPT and reorganised for CROPSIM
-!  04/04/06 LAH Reorganised for canopy temperature calculations
-!=======================================================================
 
       SUBROUTINE EVAPO(MEEVP,                              !Input file
      & SRAD, CLOUDS, TMAX, TMIN, TDEW, WINDSP,             !Input,wther

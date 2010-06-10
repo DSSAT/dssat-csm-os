@@ -102,13 +102,15 @@ c     The Canegro output type
      & 'AELH  ', ! 2   Biomass (kg/ha) at Harvest Mat.
      & 'STKH  ', ! 3   Stem wt (kg/ha)
      & 'TRSH  ', ! 4   Byproduct 
-     & 'LAIGD ', ! 5   LAI at harvest 
+     & 'LAIGH ', ! 5   LAI at harvest 
      & 'LAIX  ', ! 6   Maximum LAI (m2/m2)
-     & 'CHTA  ', ! 7   Canopy Height (m)
+     & 'CHTH  ', ! 7   Canopy Height (m)
      & 'HIAM  ', ! 8   Harvest index               
      & 'L#SM  ', ! 9   Green leaf number at harvest
      & 'EDAP  ', !10   Emergence dap
-     & 30*'      '/  !31 labels of 40 not used for sugarcane
+     & 'CWAM  ', !11   Aboveground biomass at maturity (kg/ha)
+     & 'SDAH  ', !12   Dead stem weight at harvest (kg/ha)
+     & 28*'      '/  !28 labels of 40 not used for sugarcane
 
 !     chp 4/7/2009 added stage names so that developmental phases
 !       will be printed to Overview.OUT

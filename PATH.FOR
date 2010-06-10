@@ -198,6 +198,7 @@ C=======================================================================
       CHARACTER*3   PROCOD, EXE_STRING    !, MODELVER
       CHARACTER*6   ERRKEY
       CHARACTER*8   MODEL, CRMODEL
+      CHARACTER*78  MSG(4)
       CHARACTER*80  LINE
       CHARACTER*102 DSSATP
 !     CHARACTER*120 PATHX
@@ -253,10 +254,16 @@ C=======================================================================
       PROCOD = 'M' // CROP  
 
       REWIND(LUNPR)
+      LINPR = 0
 
  100  CONTINUE
       CALL IGNORE (LUNPR, LINPR, ISECT,LINE)
       IF (ISECT .EQ. 0) THEN
+         MSG(1) = "Code not found in DSSATPRO file."
+         MSG(2) = "File: " // DSSATP(1:72)
+         WRITE(MSG(3),'("Code = ",A3)') PROCOD
+         MSG(4) = "Program will end."
+         CALL WARNING(4,ERRKEY,MSG)
          CALL ERROR (ERRKEY,3,DSSATP,LINPR)
       ELSEIF (LINE(1:3) .NE. PROCOD) THEN
          GO TO 100
@@ -272,7 +279,7 @@ C=======================================================================
 
 !     Check MODEL for validity.
       ERRNUM = ValidModel(CROP, MODEL)
-      IF (ERRNUM /= 0) CALL ERROR (ERRKEY,ERRNUM,DSSATP,0) 
+      IF (ERRNUM /= 0) CALL ERROR (ERRKEY,ERRNUM,DSSATP,0)
 
 !     CHP 5/13/2008
 !     MODEL(6:8) = '045'

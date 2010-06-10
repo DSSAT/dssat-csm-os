@@ -411,7 +411,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 
 c       MJ: this is apparently necessary.
 c        KSEVAP = KTRANS
-          KTRANS = 1.
+!          KTRANS = 1.
 
 c          WRITE(55, '(A, F10.5)') 'XLAI is ', XLAI
 c      IF (DYNAMIC .EQ. SEASINIT) THEN
