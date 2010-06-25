@@ -50,6 +50,7 @@ C=======================================================================
       REAL GRAINN, GRNWT, GRORT, LFWT, MAXLAI, NSTRES
       REAL PLANTS, PLTPOP, PODWT, ROOTN, RTDEP, RTF
       REAL RTWT, SDWTAH, SDWTPL, SEEDNI, SEEDRV, SRAD, STMWT, STOVN
+      REAL SLPF
       REAL STOVWT, STT, SWFAC, TMAX, TMIN, TOPSN
       REAL TOPWT, TOTNUP, TRNU, TUBN, TUBWT, TURFAC, TWILEN
       REAL WTNCAN, WTNLO, XLAI, XSTAGE
@@ -91,6 +92,7 @@ C=======================================================================
       NLAYR  = SOILPROP % NLAYR  
       SAT    = SOILPROP % SAT    
       SHF    = SOILPROP % WR
+      SLPF   = SOILPROP % SLPF   
    
       IDETG  = ISWITCH % IDETG
       ISWNIT = ISWITCH % ISWNIT
@@ -157,8 +159,8 @@ C=======================================================================
       CALL PT_GROSUB (SEASINIT,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SRAD, STGDOY, STT, SW, SWFAC,    !Input
-     &    TMAX, TMIN, TURFAC, XSTAGE, YRDOY,              !Input
+     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
+     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
      &    GRORT, SEEDRV,                                  !I/O
      &    AGEFAC, BIOMAS, CANNAA, CANWAA, CNSD1, CNSD2,   !Output
      &    DEADLF, GRAINN, LFWT, NSTRES, PLTPOP, ROOTN,    !Output
@@ -229,8 +231,8 @@ C=======================================================================
         CALL PT_GROSUB (RATE,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SRAD, STGDOY, STT, SW, SWFAC,    !Input
-     &    TMAX, TMIN, TURFAC, XSTAGE, YRDOY,              !Input
+     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
+     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
      &    GRORT, SEEDRV,                                  !I/O
      &    AGEFAC, BIOMAS, CANNAA, CANWAA, CNSD1, CNSD2,   !Output
      &    DEADLF, GRAINN, LFWT, NSTRES, PLTPOP, ROOTN,    !Output

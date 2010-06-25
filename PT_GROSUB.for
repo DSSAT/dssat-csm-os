@@ -20,8 +20,8 @@ C=======================================================================
       SUBROUTINE PT_GROSUB (DYNAMIC,
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
-     &    RLV, RTF, SAT, SRAD, STGDOY, STT, SW, SWFAC,    !Input
-     &    TMAX, TMIN, TURFAC, XSTAGE, YRDOY,              !Input
+     &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
+     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
 
      &    GRORT, SEEDRV,                                  !I/O
 
@@ -59,7 +59,7 @@ C-----------------------------------------------------------------------
       REAL RANC, RCNP, RLGR, ROOTN, RTF, RTPAR, RTWT
       REAL RVCAV, RVCHO, RVCMAX, RVCUSD
       REAL SDWTPL, SEEDAV, SEEDN, SEEDNI, SEEDRV
-      REAL SLAN, SLFC, SLFN, SLFT, SLFW, SRAD, STMWT
+      REAL SLAN, SLFC, SLFN, SLFT, SLFW, SLPF, SRAD, STMWT
       REAL STOVN, STOVWT, STT, SWFAC
       REAL TABEX, TANC, TCNP, TEMPM, TIND, TMAX, TMIN
       REAL TMNC, TOPSN, TOPWT, TRNU, TUBANC, TUBCNP, TUBN
@@ -329,7 +329,7 @@ C           SLFT = 0.0
       !
       PCO2   = TABEX (CO2Y,CO2X,CO2,10)
       PCARB  = PCARB*PCO2
-      CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES) + 0.5*DDEADLF
+      CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES)*SLPF + 0.5*DDEADLF
       RVCUSD = 0.0                                   ! Reserve C used
 
       SWFAC  = AMAX1 (SWFAC, 0.1)

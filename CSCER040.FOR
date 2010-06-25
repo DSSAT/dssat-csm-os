@@ -1,7 +1,7 @@
 !=======================================================================
 !  CROPSIM-CERES CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
 !  Developed from V4.0 (which was based on Cropsim and Ceres3.5) 
-!  Last edit 20/05/10 LAH
+!  Last edit 23/06/10 LAH
 !=======================================================================
 
 !     SUBROUTINE CSCER040 (FILEIOIN, RUN, TN, RN,          !Command line
@@ -3874,11 +3874,13 @@
             ELSE
               GROGR = GROGRPA
               GRWTTMP = GRWT + GROGRPA
-              GRAINNTMP = GRAINN +
-     &        (GRAINNG+GRAINNGR+GRAINNGL+GRAINNGS+RSNUSEG)
-              IF (GRAINNTMP/GRWTTMP*100.0 .LT. GRNMN) THEN
-                GRWTTMP = GRAINNTMP*(100.0/GRNMN)
-                GROGR = GRWTTMP - GRWT
+              IF (GRWTTMP.GT.0.0) THEN
+                GRAINNTMP = GRAINN +
+     &          (GRAINNG+GRAINNGR+GRAINNGL+GRAINNGS+RSNUSEG)
+                IF (GRAINNTMP/GRWTTMP*100.0 .LT. GRNMN) THEN
+                  GRWTTMP = GRAINNTMP*(100.0/GRNMN)
+                  GROGR = GRWTTMP - GRWT
+                ENDIF
               ENDIF
             ENDIF
             IF (GROGR.LT.GROGRPA) THEN
@@ -6763,10 +6765,10 @@
               
               IF (run.EQ.1.AND.runi.EQ.1) THEN
             
-              WRITE (FNUMTMP,'(/,A51,/,A51)')
-     x        '  Seed N must be added to N uptake to obtain a     ',
-     x        '  balance with N in above-ground plus root material'
-              WRITE (FNUMTMP,'(/,17(A59,/))')
+              WRITE (FNUMTMP,'(/,A55,/,A55)')
+     x        '  Seed N must be added to N uptake to obtain a         ',
+     x        '  balance with N in above-ground plus root material    '
+              WRITE (FNUMTMP,'(/,17(A55,/))')
      x        '  Measured data are obtained from the A file,either    ',
      x        '  directly or by calculation from other other variables',
      x        '  using the expressions given below:                   ',

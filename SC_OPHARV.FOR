@@ -94,7 +94,7 @@ c     The Canegro output type
       IDETO = ISWITCH % IDETO
       IPLTI = ISWITCH % IPLTI
 
-      ACOUNT = 10  !Number of possible FILEA headers for this crop
+      ACOUNT = 12  !Number of possible FILEA headers for this crop
 
 !     Define headings for observed data file (FILEA)
       DATA OLAB / !  Definition
@@ -104,7 +104,7 @@ c     The Canegro output type
      & 'TRSH  ', ! 4   Byproduct 
      & 'LAIGH ', ! 5   LAI at harvest 
      & 'LAIX  ', ! 6   Maximum LAI (m2/m2)
-     & 'CHTH  ', ! 7   Canopy Height (m)
+     & 'CHTA  ', ! 7   Canopy Height (m)
      & 'HIAM  ', ! 8   Harvest index               
      & 'L#SM  ', ! 9   Green leaf number at harvest
      & 'EDAP  ', !10   Emergence dap
@@ -352,21 +352,18 @@ c     Green Leaf area index at harvest
          CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !     Store Simulated and Measured data for this season.
-      WRITE(Simulated(1),'(F8.2)') SUCH;   WRITE(Measured(1),'(A8)')X(1)
-      WRITE(Simulated(2),'(F8.2)') AELH;   WRITE(Measured(2),'(A8)')X(2)
-      WRITE(Simulated(3),'(F8.2)') STKH;   WRITE(Measured(3),'(A8)')X(3)
-      WRITE(Simulated(4),'(F8.2)') TRSH;   WRITE(Measured(4),'(A8)')X(4)
-      WRITE(Simulated(5),'(F8.2)') GLAI;   WRITE(Measured(5),'(A8)')X(5)
-      WRITE(Simulated(6),'(F8.2)') MAXLAI; WRITE(Measured(6),'(A8)')X(6)
-      WRITE(Simulated(7),'(F8.2)') CaneCrop%CANHEIGHT
+        WRITE(Simulated(1),'(F8.2)') SUCH; WRITE(Measured(1),'(A8)')X(1)
+        WRITE(Simulated(2),'(F8.2)') AELH; WRITE(Measured(2),'(A8)')X(2)
+        WRITE(Simulated(3),'(F8.2)') STKH; WRITE(Measured(3),'(A8)')X(3)
+        WRITE(Simulated(4),'(F8.2)') TRSH; WRITE(Measured(4),'(A8)')X(4)
+        WRITE(Simulated(5),'(F8.2)') GLAI; WRITE(Measured(5),'(A8)')X(5)
+        WRITE(Simulated(6),'(F8.2)')MAXLAI;WRITE(Measured(6),'(A8)')X(6)
+        WRITE(Simulated(7),'(F8.2)') CaneCrop%CANHEIGHT
                                            WRITE(Measured(7),'(A8)')X(7)
-      WRITE(Simulated(8),'(F8.2)') HIAM;   WRITE(Measured(8),'(A8)')X(8)
-      WRITE(Simulated(9),'(F8.2)') L_SH;   WRITE(Measured(9),'(A8)')X(9)
-      WRITE(Simulated(10),'(I8)')  DNR_EMRG
+        WRITE(Simulated(8),'(F8.2)') HIAM; WRITE(Measured(8),'(A8)')X(8)
+        WRITE(Simulated(9),'(F8.2)') L_SH; WRITE(Measured(9),'(A8)')X(9)
+        WRITE(Simulated(10),'(I8)')  DNR_EMRG
                                          WRITE(Measured(10),'(A8)')X(10)
-
-
-
       ENDIF  
 
 

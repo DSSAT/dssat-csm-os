@@ -1,6 +1,6 @@
 !-----------------------------------------------------------------------
 !  CROPSIM CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
-!  Last edit 20/05/10 LAH
+!  Last edit 23/06/10 LAH
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCROP (FILEIOIN, RUN, TN, RN, RNMODE,    !Command line
@@ -5429,7 +5429,11 @@
                    ENDIF
                   ENDIF
                   ! Determine duration of final senescence phase
-                  IF (FSDU.GT.0.0) PDFS = LSENEDU - FSDU
+                  IF (FSDU.GT.0.0) THEN
+                    PDFS = LSENEDU - FSDU
+                  ELSE
+                    PDFS = LSENEDU
+                  ENDIF  
                 ENDIF
 
                 ! Leaf senescence - injury
@@ -5449,7 +5453,7 @@
                 ENDIF
 
                 ! Leaf senescence - final,before end of grain filling
-                IF (RSTAGEFS.GT.0.0) THEN
+                IF (RSTAGEFS.GT.0.0.AND.PDFS.GT.0.0) THEN
                   IF (CUMDU.LT.FSDU.AND.CUMDU+DU.GT.FSDU) THEN
                     PLASFS = AMAX1(0.0,GPLASENF*(CUMDU+DU-FSDU)/PDFS)
                   ELSEIF(CUMDU.GE.FSDU.AND.
@@ -10324,7 +10328,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             ENDIF
             IF (GNOWS.GT.0.0) THEN
              WRITE (fnumwrk,*)' '
-             IF (gnopd.GT.0.0) WRITE (fnumwrk,'(A22,F7.1)')
+             IF (gnopm.GT.0.0) WRITE (fnumwrk,'(A22,F7.1)')
      &        '  Grain weight mg     ',GRWT/GNOPM*1000.0
              WRITE (fnumwrk,'(A22,F7.1)')
      &        '  Grain weight coeff  ',gwta
