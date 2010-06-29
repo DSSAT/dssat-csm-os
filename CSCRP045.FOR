@@ -1,6 +1,6 @@
 !-----------------------------------------------------------------------
 !  CROPSIM CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
-!  Last edit 23/06/10 LAH
+!  Last edit 27/06/10 LAH
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCROP (FILEIOIN, RUN, TN, RN, RNMODE,    !Command line
@@ -1870,7 +1870,7 @@
           ! WORK,ERROR,AND TEMPORARY FILES
           CALL GETLUN ('WORK.OUT',FNUMWRK)
           CALL GETLUN ('ERROR.OUT',FNUMERR)
-          CALL GETLUN ('TMP',FNUMTMP)
+          CALL GETLUN ('FNAMETMP',FNUMTMP)
 
           ! IDETG FILES
           OUTPG = 'PlantGro.'//OUT
@@ -1931,26 +1931,37 @@
           ! WARNING AND WORK FILES
           INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
           IF (.NOT.FOPEN) THEN
-            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-            WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
+            IF (RUN.EQ.1) THEN
+              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+              WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
+            ELSE
+              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND')
+              WRITE(fnumwrk,*) ' '
+              WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
+              IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
+                CLOSE (FNUMWRK)
+                OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+                WRITE(fnumwrk,*) ' '
+                WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
+              ENDIF  
+            ENDIF
           ELSE          
-          IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
-            CLOSE (FNUMWRK)
-            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
-            CALL Getlun('READS.OUT',fnumrea)
-            ! Close and re-open Reads file
-            CLOSE (FNUMREA)
-            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT')
-            WRITE(fnumrea,*)' '
-            WRITE(fnumrea,*)
-     &       ' File closed and re-opened to avoid generating huge file'
-          ELSE  
-            WRITE(fnumwrk,*) ' '
-            WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
-          ENDIF
-
+            IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
+              CLOSE (FNUMWRK)
+              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+              WRITE(fnumwrk,*) ' '
+              WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
+              CALL Getlun('READS.OUT',fnumrea)
+              ! Close and re-open Reads file
+              CLOSE (FNUMREA)
+              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT')
+              WRITE(fnumrea,*)' '
+              WRITE(fnumrea,*)
+     &        ' File closed and re-opened to avoid generating huge file'
+            ELSE  
+              WRITE(fnumwrk,*) ' '
+              WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
+            ENDIF
           ENDIF  
 
           IF (RUN.EQ.1) THEN
@@ -2315,6 +2326,7 @@
         nupd = 0.0
         nupratio = 0.0
         parif = 0.0
+        parif1 = 0.0
         parip = -99.0
         paripa = -99.0
         pariue = 0.0
@@ -2339,6 +2351,7 @@
         plast = 0.0
         plax = 0.0
         pltpop = 0.0
+        pltloss = 0.0
         plwtgs = 0.0
         plyear = -99
         plyeardoy = 9999999
@@ -2567,10 +2580,13 @@
         tnad = 0.0
         tnoxc = 0.0
         tnum = 0.0
+        tnumd = 0.0
+        tnumg = 0.0
         tnumad = 0.0
         tnumam = -99.0
         tnumamm = -99.0
         tnuml = 1.0
+        tnumloss = 0.0
         tnumprev = 0.0
         tnumx = 0.0
         tofixc = 0.0
@@ -5344,6 +5360,7 @@
               ENDIF
 
               ! Tiller kill
+              TNUMLOSS = 0.0
               TKTI = TKILL+TKTID
               IF (TNUM.GT.1.0.AND.TMEAN.LT.TKTI) THEN
                 SPANPOS = AMIN1(1.0,(TKTI-TMEAN)/TKSPAN)
@@ -6069,7 +6086,7 @@
                 ENDDO
 
                 ! Potential leaf weight increase.
-                IF (LAWL(1).GT.0.0)
+                IF (LAWL(1).GT.0.0 .AND. LAWL(2).GT.0.0)
      &           GROLFP = ( PLAGTP(1)/LAWL(1) + PLAGTP(2)/LAWL(2))
      &                  / (1.0-LSHFR)
 
@@ -6580,7 +6597,7 @@
                   IF (RLV(L).GT.0.0) THEN
                     NLAYRROOT = L
                     IF (SW(L).LE.DUL(L)) THEN
-                    IF (WFNUU-WFNUL.GT.0.0) WFNU = 
+                      IF (WFNUU-WFNUL.GT.0.0) WFNU = 
      &                AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
                     ELSE
                       ! LAH Wet soil effect. Not implemented because 
@@ -7114,6 +7131,8 @@
 !-----------------------------------------------------------------------
 
           TNUM = AMIN1(TINOX,AMAX1(1.0,TNUM+TNUMG-TNUMD-TNUMLOSS))
+       WRITE(FNUMWRK,*)' TNUM,TINOX,TNUMG,TNUMD,TNUMLOSS ',
+     &   TNUM,TINOX,TNUMG,TNUMD,TNUMLOSS 
           ! Fof Zhang
           spnumhc = spnumhc + spnumh
           ! End for Zhang
@@ -8517,38 +8536,23 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                 WRITE(FNUMWRK,'(A47)')
      &            ' N demand above zero! Components of demand/use:' 
               ENDIF  
-                WRITE(FNUMWRK,*)
-     &            ' Grain             ',grainndem*pltpop*10.0
-                WRITE(FNUMWRK,*)
-     &            ' Leaves and stem   ',lsndem*pltpop*10.0
-                WRITE(FNUMWRK,*)
-     &            ' Roots             ',rndem*pltpop*10.0
-                WRITE(FNUMWRK,*)
-     &            ' Storage root      ',srndem*pltpop*10.0
-                WRITE(FNUMWRK,*)
-     &            ' Reserves use      ',rsuse*pltpop*10.0
-                WRITE(FNUMWRK,*)
-     &            ' Seed use          ',(seednuse-seednuse2)*pltpop*10.0
-                IF (ANDEM.GT.0.0.AND.NUPAP.LT.ANDEM)
-     &            WRITE(fnumwrk,'(A38)')
-     &             '  N uptake insufficient to meet demand'
-                IF (SEEDNUSE2.GT.0.0) THEN
-                 WRITE(FNUMWRK,*)
-     &           ' Additional seed N use to attempt to offset shortfall'
-                 WRITE(FNUMWRK,*)
-     &           ' Additional seed use ',seednuse2*pltpop*10.0
-                ENDIF
-              IF (ANDEM.GT.0.0) THEN
-                IF (SEEDNUSE2.GT.0.0) THEN
-                 IF (NUPAP+SEEDNUSE2.GE.ANDEM) THEN
-                  WRITE(FNUMWRK,*)
-     &            ' Additional seed use sufficient to meet shortfall'
-                 ELSE 
-                  WRITE(FNUMWRK,*)
-     &            ' Additional seed insufficient to meet shortfall'
-                 ENDIF
-                ENDIF
-              ENDIF
+              !ANDEM = PLTPOP*10.0*
+              ! (GRAINNDEM+LSNDEM+RNDEM+SRNDEM-SEEDNUSE-RSNUSE)
+              WRITE(FNUMWRK,*)
+     &          ' Grain             ',grainndem*pltpop*10.0
+              WRITE(FNUMWRK,*)
+     &          ' Leaves and stem   ',lsndem*pltpop*10.0
+              WRITE(FNUMWRK,*)
+     &          ' Roots             ',rndem*pltpop*10.0
+              WRITE(FNUMWRK,*)
+     &          ' Storage root      ',srndem*pltpop*10.0
+              WRITE(FNUMWRK,*)
+     &          ' Seed use          ',seednuse*pltpop*10.0
+              WRITE(FNUMWRK,*)
+     &          ' Reserves use      ',rsnuse*pltpop*10.0
+              IF (ANDEM.GT.0.0.AND.NUPAP.LT.ANDEM)
+     &         WRITE(fnumwrk,'(A38)')
+     &          '  N uptake insufficient to meet demand'
               IF (ANDEM.GT.10.0)
      &         WRITE(fnumwrk,'(A11,F4.1,A23,F4.1)')
      &         ' N demand (',ANDEM,') very high! Uptake = ',nuf*andem
@@ -8683,7 +8687,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      N               '  TFDD VRNFD DYLFD',
      1               '  TFPD  WFPD  NFPD CO2FD RSFPD', 
      M               '  TFGD  WFGD  NFGD  WFTD  NFTD',
-     &               '  WAVR  WUPR TRWUP  SWXD  EOPD',
+     &               ' WAVRD WUPRD TWUPD  SWXD  EOPD',
      &               '  SNXD LN%RD SN%RD RN%RD            ')
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPGF,507)
@@ -9665,7 +9669,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                 ELSE
                   INQUIRE (FILE = FNAMEOV, EXIST = FEXIST)
                   IF (FEXIST) THEN
-                    OPEN (UNIT = FNUMOV, FILE = FNAMEOV, STATUS = 'OLD',
+                    OPEN (UNIT = FNUMOV, FILE = FNAMEOV, 
      &              POSITION = 'APPEND')
                   ELSE
                     OPEN (UNIT = FNUMOV, FILE = FNAMEOV, STATUS = 'NEW')
@@ -10663,6 +10667,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             
             ! Phenology (Measured;PHENOLM.OUT)
             IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
+              WRITE (fnumwrk,*)' '
               WRITE (fnumwrk,*)
      &          ' No data so cannot write PHENOLOGY (MEASURED)'
               OPEN (UNIT=FNUMPHEM,FILE=FNAMEPHENOLM,STATUS ='UNKNOWN')
@@ -10805,6 +10810,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             
             ! Plant responses (Measured)
             IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
+              WRITE (fnumwrk,*)' '
               WRITE (fnumwrk,*)
      &         ' No data so cannot write PLANT RESPONSES (MEASURED)'
               OPEN (UNIT = FNUMTMP,FILE = FNAMEPREM,STATUS='UNKNOWN')
@@ -11609,6 +11615,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
         CLOSE (NOUTPGN)
+        CLOSE (FNUMWRK)
 
 !***********************************************************************
       ENDIF ! End of INITIATION-RATES-INTEGRATE-OUTPUT-SEASEND construct

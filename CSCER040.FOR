@@ -1372,12 +1372,21 @@
      &    CALL Getlun ('WORK.OUT',fnumwrk)
         INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
         IF (.NOT.fopen) THEN
-          OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
-          WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
+          IF (RUN.EQ.1) THEN
+            OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+            WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
+          ELSE
+            OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT',POSITION='APPEND')
+            WRITE(fnumwrk,*) ' '
+            WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
+          ENDIF
         ENDIF  
         ! Set Reads file #
         IF (FNUMREA.LE.0.OR.FNUMREA.GT.1000) 
      &      CALL Getlun('READS.OUT',fnumrea)
+        ! Set temporary file #
+        IF (FNUMTMP.LE.0.OR.FNUMTMP.GT.1000) 
+     &      CALL Getlun ('FNAMETMP',fnumtmp)
 
         ! Set input file type
         TVI1 = TVILENT(FILEIOIN)
@@ -1426,6 +1435,7 @@
         amtnit = 0.
         awnai = 0.0          ! awns not yet used
         canht = 0.0
+        canhtg = 0.0
         carboc = 0.0
         ccountv = 0
         cflfail = 'n'
@@ -1719,8 +1729,6 @@
             YEARPLTP = (YEAR+1)*1000 + PLDAY
           ENDIF
         ENDIF
-
-        CALL Getlun ('OUTO',fnumtmp)
 
         arg = ' '
         arglen = 0
@@ -2535,7 +2543,6 @@
         IF (FILEIOT.EQ.'DS4'.AND.RNMODE.EQ.'Q') THEN
           YEARPLTP = YRPLT
          ENDIF
-          !WRITE(FNUMWRK,*)' YEARDOY,YEARPLT ',YEARDOY,YEARPLT
 
         IF (FILEIOT.EQ.'XFL') WRITE(fnumwrk,'(A28,I3,I8,2F6.2)')
      &   ' CN,YEARDOY,XSTAGE1,LEAFNUM ',cn,yeardoy,xstage,lnumsd
@@ -3737,9 +3744,6 @@
             END DO
             NUAP = NUPAP 
             ! END CSCER AS NOW USED    #2
-            
-            IF (IDETL.EQ.'A') WRITE(FNUMWRK,'(A37,2F7.2)')
-     &       ' N UPTAKE POTENTIAL kg/ha  CSCER,CSM ',NUAP,NUAPCSM
  
             ! Ratio (NUPR) to indicate N supply for output
             IF (ANDEM.GT.0) THEN
@@ -4484,6 +4488,17 @@
           DAP = MAX(0,CSTIMDIF(STGDOY(7),YEARDOY))
           DAS = MAX(0,CSTIMDIF(YEARSIM,YEARDOY))
           IF (ISTAGE.EQ.6) DAPM = DAPM + 1
+
+          IF (IDETL.EQ.'A') THEN
+            WRITE(fnumwrk,*)' '
+            WRITE(fnumwrk,'(A25,I16)')
+     &       ' Days after planting DAP ',DAP
+            WRITE(fnumwrk,'(A25,I16,I7)')
+     &       ' Year,day                ',YEAR,DOY
+            WRITE(FNUMWRK,'(A37,2F7.2)')
+     &       ' N uptake potential kg/ha  Cscer,Csm ',NUAP,NUAPCSM
+          ENDIF 
+          
           ! Double ridge factors by calibration from LAMS experiment
           drf1 = 1.9
           drf2 = 0.058
@@ -4526,7 +4541,8 @@
           ENDIF  
           IF (JDAT.EQ.-99 .AND. RSTAGE.GE.2.0+PD2(1)/PD(2)) THEN
             JDAT = YEARDOY
-            WRITE (fnumwrk,*) 'Jointing ocurred on: ',jdat
+            WRITE (fnumwrk,*) ' '
+            WRITE (fnumwrk,*) 'Jointing occurred on: ',jdat
           ENDIF
           IF (ADAT.LE.0.0 .AND. RSTAGE.GE.4.0+PD4(1)/PD(4)) THEN
             ADAT = YEARDOY
@@ -4915,8 +4931,7 @@
             END DO
             IF (FILEIOT.EQ.'XFL') WRITE(fnumwrk,*)' '
             WRITE(fnumwrk,'(A24,I4,A6)')
-     &       ' FERTILIZER N PRE-PLANT ',NINT(amtnit),' kg/ha'
-            IF (FILEIOT.EQ.'DS4') WRITE(fnumwrk,*)' '
+     &       ' Fertilizer N pre-plant ',NINT(amtnit),' kg/ha'
           ENDIF
           IF (NFERT.GT.0.AND.IFERI.EQ.'R'.AND.YEARDOY.GT.YEARPLT) THEN
             DO I = 1, NFERT
@@ -4985,7 +5000,7 @@
       ELSEIF (DYNAMIC.EQ.OUTPUT .OR. 
      &        DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
 
-        IF (YEARDOY.GE.YEARPLT .AND. STEP.EQ.STEPNUM) THEN                          
+        IF (YEARDOY.GE.YEARPLT .AND. STEP.EQ.STEPNUM) THEN             
  
           ! General file header
           IF (TN.LT.10) THEN
@@ -5007,10 +5022,10 @@
               OUTPG2 = 'PlantGr2.OUT'
               OUTPGF = 'PlantGrf.OUT'
               OUTPN = 'PlantN.OUT  '
-              CALL GETLUN ('OUTPG',NOUTDG)
-              CALL GETLUN ('OUTPN',NOUTDGN)
-              CALL GETLUN ('OUTPG2',NOUTPG2)
-              CALL GETLUN ('OUTPGF',NOUTPGF)
+              CALL GETLUN ('PlantGro.OUT',NOUTDG)
+              CALL GETLUN ('PlantN.OUT',NOUTDGN)
+              CALL GETLUN ('PlantGr2.OUT',NOUTPG2)
+              CALL GETLUN ('PlantGrf.OUT',NOUTPGF)
             ELSE
               CNCHAR = TL10FROMI(CN)
               OUTPG = 'PlantGro.OU'//CNCHAR(1:1)
@@ -5483,9 +5498,6 @@
             
             IF (tnumam.GT.0.0) hnumgm = hnumam/tnumam
             gwgm = gwum*1000.0    ! mg
- 
-            CALL Getlun ('OUTO',FNUMTMP)                                
-            CALL GETLUN ('OUTPG',NOUTDG)
 
             edap = Dapcalc(stgdoy(9),plyear,plday)
             edapm = Dapcalc(edatm,plyear,plday)
@@ -5659,7 +5671,7 @@
    99          FORMAT ('@  RUN EXCODE    TRNO RN ',                     
      X         'TNAME..................',
      X         '.. REP  RUNI S O C    CR',
-     X         ' PYEAR  PDOY  ADAT  MDAT HYEAR  HDAY SDWAP  CWAM  HWAM',  
+     X         ' PYEAR  PDOY  ADAT  MDAT HYEAR  HDAY SDWAP  CWAM  HWAM',
      X         '  HWAH  BWAH  HWUM  H#AM  H#UM',
      x         ' SDNAP  CNAM  HNAM  RNAM  TNAM  NUAM  HN%M  VN%M')
                CLOSE(fnumtmp)
@@ -5705,14 +5717,14 @@
 
               IF (CN.EQ.1) THEN
                 IF (FNUMLVS.LE.0.OR.FNUMLVS.GT.1000) THEN
-                  CALL Getlun ('Leaves.out',fnumlvs)
+                  CALL Getlun ('Leaves.OUT',fnumlvs)
                 ENDIF
                 IF (RUN.EQ.1 .AND. RUNI.EQ.1) THEN
-                 OPEN(UNIT=FNUMLVS,FILE='Leaves.out',STATUS='UNKNOWN')
+                 OPEN(UNIT=FNUMLVS,FILE='Leaves.OUT',STATUS='UNKNOWN')
                  WRITE (FNUMLVS,'(A11)') '$LEAF SIZES'
                  CLOSE(FNUMLVS)
                 ENDIF
-                OPEN(UNIT=FNUMLVS,FILE='Leaves.out',POSITION='APPEND')
+                OPEN(UNIT=FNUMLVS,FILE='Leaves.OUT',POSITION='APPEND')
                 WRITE (FNUMLVS,'(/,A77,/)') OUTHED
                 WRITE (FNUMLVS,'(A14,F6.1)') '! LEAF NUMBER ',LNUMSD
                 IF (LNSWITCH.GT.0.0) THEN
@@ -5770,7 +5782,7 @@
 
             ELSE
             
-               OPEN (UNIT=FNUMTMP,FILE='Leaves.out',STATUS='UNKNOWN')
+               OPEN (UNIT=FNUMTMP,FILE='Leaves.OUT',STATUS='UNKNOWN')
                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
                
             ENDIF  ! END OF LEAVES
@@ -5970,7 +5982,6 @@
                   WRITE (fnumwrk,*) '   Yield       ',gwamm
                   WRITE (fnumwrk,*) '   Kernel #    ',hnumamm
                   WRITE (fnumwrk,*) ' Will use reported value '
-                  !gwumm=gwumyld
                 ENDIF
               ENDIF
             ENDIF
@@ -6187,7 +6198,7 @@
                     WRITE (FNUMTMP,'(A80)') LINESTAR(1:80)
                     WRITE (FNUMTMP,*) ' '
                     WRITE (FNUMTMP,'(A180)') LINET(1:180)
-                    STARNUMM = STARNUMM + 1       ! Number of datasets      
+                    STARNUMM = STARNUMM + 1       ! Number of datasets  
                     CFLTFILE = 'Y'
                   ELSE
                     CALL Getstri (LINET,COLNUM,VALUEI)
@@ -6478,7 +6489,7 @@
   993              FORMAT (A14,A10,'  ',A25,2X,A8,/)
                  ELSE
                    WRITE (FNUMTMP,1995) EVHEADER, 
-     &              'MANY??????','  REMAINING EXPERIMENTS  ',MODNAME         
+     &              'MANY??????','  REMAINING EXPERIMENTS  ',MODNAME   
  1995              FORMAT (A14,A10,A25,A8,/)
                  ENDIF
                  WRITE (FNUMTMP,994)
@@ -6518,7 +6529,7 @@
               OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,POSITION = 'APPEND') 
               
               WRITE (FNUMTMP,8404) RUN,EXCODE,TN,RN,CR,
-     x        Dapcalc(adat,plyear,plday),Dapcalc(adatm,plyear,plday),       
+     x        Dapcalc(adat,plyear,plday),Dapcalc(adatm,plyear,plday),  
      x        Dapcalc(stgdoy(5),plyear,plday),
      x        Dapcalc(mdatm,plyear,plday),
      x        NINT(gwam),NINT(gwamm),
@@ -6537,7 +6548,7 @@
      x        NINT(gnam),NINT(gnamm),
      x        hinmc,hinmmc,              
      x        Dapcalc(stgdoy(9),plyear,plday),
-     x        Dapcalc(edatm,plyear,plday),                                   
+     x        Dapcalc(edatm,plyear,plday),                            
      x        Dapcalc(drdat,plyear,plday),Dapcalc(drdatm,plyear,plday),
      x        Dapcalc(tsdat,plyear,plday),Dapcalc(tsdatm,plyear,plday),
      x        Dapcalc(jdat,plyear,plday),Dapcalc(jdatm,plyear,plday)
@@ -6592,12 +6603,12 @@
                 ELSE
                   INQUIRE (FILE = FNAMETMP, EXIST = FEXIST)
                   IF (FEXIST) THEN
-                    OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,STATUS = 'OLD',      
-     &              POSITION = 'APPEND')
-                  ELSE
-                    OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,STATUS = 'NEW')
-                    WRITE(FNUMTMP,'("*SIMULATION OVERVIEW FILE")')
-                  ENDIF
+                    INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+                    IF (.NOT.fopen) THEN
+                      OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,
+     &                 POSITION = 'APPEND')
+                    ENDIF
+                  ENDIF  
                 ENDIF
                 WRITE (FNUMTMP,*) ' '
                 CALL HEADER(1, FNUMTMP, RUN)
@@ -6606,7 +6617,7 @@
                   OPEN (UNIT = FNUMTMP, FILE = FNAMETMP)
                   WRITE (FNUMTMP,'(A15)') '$OVERVIEW'
                 ELSE
-                 OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,POSITION='APPEND')       
+                 OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,POSITION='APPEND')
                 ENDIF
               
                 WRITE (FNUMTMP,'(/,A77,/)') OUTHED
@@ -6646,15 +6657,11 @@
               WRITE(FNUMTMP,9589)
               WRITE(fnumtmp,*)' '
               WRITE(FNUMTMP,'(A11,I4,A3,A60)')
-     &         ' RUN NO.   ',RUN,'  ',ENAME                                  
+     &         ' RUN NO.   ',RUN,'  ',ENAME                             
               IF (DYNAMIC.EQ.SEASEND) THEN
                 WRITE(fnumtmp,*)' '
                 WRITE(fnumtmp,'(A50,A25)')
      &          ' NB. RUN TERMINATED PREMATURELY (PROBABLY BECAUSE ',
-     &          'OF MISSING WEATHER DATA) '
-                WRITE (fnumwrk,*)' '
-                WRITE (fnumwrk,'(A46,A25)')
-     &          ' RUN TERMINATED PREMATURELY (PROBABLY BECAUSE ',
      &          'OF MISSING WEATHER DATA) '
               ENDIF
               WRITE(fnumtmp,9588)
@@ -6665,7 +6672,7 @@
                  CNCTMP = 0.0
                  IF (CWADSTG(L).GT.0.0) 
      &             CNCTMP = CNADSTG(L)/CWADSTG(L)*100
-                 WRITE (fnumtmp,'(I8,I4,1X,A3,I4,1X,I1,1X,A10,I6,F6.2,       
+                 WRITE (fnumtmp,'(I8,I4,1X,A3,I4,1X,I1,1X,A10,I6,F6.2, 
      &            F6.1,I6,F6.1,F6.2,F6.2)')
      &            STGDOY(L),DOM,MONTH,
      &            Dapcalc(stgdoy(L),plyear,plday),L,STNAME(L),
@@ -6676,7 +6683,7 @@
                 CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
-                IF (CWADSTG(L).GT.0.0)CNCTMP = CNADSTG(L)/CWADSTG(L)*100     
+                IF (CWADSTG(L).GT.0.0)CNCTMP = CNADSTG(L)/CWADSTG(L)*100
                 IF (STGDOY(L).GT.0.AND.STGDOY(L).LT.9999999) THEN
                   WRITE (fnumtmp,'(I8,I4,1X,A3,I4,1X,I1,1X,A10,I6,F6.2,
      &             F6.1,I6,F6.1,F6.2,F6.2)')
@@ -6695,7 +6702,7 @@
               WRITE(fnumtmp,*)'CROP N  = Above-ground N (kg/ha)'
               WRITE(fnumtmp,*)'CROP N% = Above-ground N conc (%)'
               WRITE(fnumtmp,*)
-     &         'H2O STRESS = Photosynthesis stress,average (0-1,0=none)'    
+     &         'H2O STRESS = Photosynthesis stress,average (0-1,0=none)'
               WRITE(fnumtmp,*)
      &         'N STRESS = Photosynthesis stress,average (0-1,0=none)'
               ENDIF
@@ -7943,6 +7950,7 @@
         CLOSE (NOUTDGN)
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
+        CLOSE (FNUMWRK)
 
       ENDIF   ! Tasks
 
