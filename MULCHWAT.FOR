@@ -75,6 +75,8 @@ C-----------------------------------------------------------------------
 !       Mulch variables computed here.
         MULCH % MULCHWAT = MULCHWAT
         MULCH % MULCHSAT = MULCHSAT
+        MULCH % NEWMULCH = 0.
+        MULCH % NEWMULCHWAT = 0.
 
         CALL OPMULCH(CONTROL, ISWITCH, MULCH)
 !     &  MULWATADD, RESWATADD)

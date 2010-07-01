@@ -180,6 +180,8 @@ C=======================================================================
      &    EOP)                                            !Output
       ENDIF
 
+      CALL MULCH_EVAP(DYNAMIC, MULCH, EOS, EM)
+
 !     ---------------------------------------------------------
       IF (CROP .NE. 'FA') THEN
         IF (MEPHO .EQ. 'L' .OR. MEEVP .EQ. 'Z') THEN

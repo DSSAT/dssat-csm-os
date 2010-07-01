@@ -206,6 +206,11 @@
       SEN_PRCHO = PRCHO
       SEN_PRLIG = PRLIG
 
+      Mulch % Mulch_AM   = AM
+      Mulch % Mul_WATFAC = WATFAC
+      Mulch % Mul_EXTFAC = EXTFAC
+      Mulch % NewMulch   = 0.0
+
       SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
 
       CALL SoilOrg_init(CONTROL, 
@@ -311,7 +316,8 @@
       IF (YRDOY == OMAData % ResDAT) THEN
         CALL IPSOIL (CONTROL, OMAData % RESTYPE,          !Input
      &    PRCEL=PRCEL, PRCHO=PRCHO, PRLIG=PRLIG, AM=AM,   !Output
-     &    RDCEL=RDCEL, RDCHO=RDCHO, RDLIG=RDLIG)          !Output
+     &    RDCEL=RDCEL, RDCHO=RDCHO, RDLIG=RDLIG,          !Output
+     &    WATFAC=WATFAC, EXTFAC=EXTFAC)                   !Output
 
 !       CHP 8/15/08 
         IF (PRLIG < 0) PRLIG = 0.10
@@ -319,6 +325,9 @@
 !       applied organic matter on surface kg/ha
         DltSRF = DltSRF + OMAData % ResWt(SRFC)  !kg[dry weight]/ha
         DltSRF_AM = AM
+        DltSRF_WATFAC = WATFAC
+        DltSRF_EXTFAC = EXTFAC
+
 !       N in senesced plant matter on surface
         IF (N_ELEMS > 0) DltSRFN = DltSRFN + OMAData % ResE(SRFC,N) 
 !       P in senesced plant matter on surface

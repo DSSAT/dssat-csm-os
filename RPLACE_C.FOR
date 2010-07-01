@@ -89,9 +89,10 @@
      &   + RES_WATFAC * RESSRF) / (Mulch%MulchMass + RESSRF)
         Mulch % NewMulch = RESSRF
       ELSE
-        Mulch % Mulch_AM = RES_AM
+        Mulch % Mulch_AM   = RES_AM
         Mulch % Mul_WATFAC = RES_WATFAC
         Mulch % Mul_EXTFAC = EXTFAC
+        Mulch % NewMulch   = 0.0
       ENDIF
 
       RESSOL = 0.0
