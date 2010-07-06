@@ -14,10 +14,10 @@
       REAL GNOWT, GWTS, SHWTS, LAFV, LAFR
       
 !     For SCCSP-SUGARCANE (CASUPRO)
-      REAL      PHTMAX,empty,PLF,Gamma,StkB,StkM
+      REAL      PHTMAX,empty,PLF1,PLF2,Gamma,StkB,StkM
       REAL      LIsun,LIshd,TB(3),TO1(3),TO2(3),TM(3)
       REAL      LI1,TELOM, LSFAC
-      REAL      Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,MinKg
+      REAL      Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,MinGr
       REAL      RTNNO,RES30C,RLF30C,R30C2 
       REAL      StkH2OFac,SuH2OFac 
 
@@ -60,10 +60,10 @@
       COMMON /GEN07/SCPB,RESPC,SQCON,FCUT,FLAI,DDISQ
       COMMON /GEN08/DTPI,SMAX,SO,GMAX,GO,M1,M2,LA,SLAVR,SIZLF 
       COMMON /GEN10/PLAINTXT
-      COMMON /GEN11/PHTMAX,StkH2OFac,SuH2OFac,empty,PLF,Gamma
+      COMMON /GEN11/PHTMAX,StkH2OFac,SuH2OFac,empty,PLF1,PLF2,Gamma
      &        , LIsun,LIshd,TB,TO1,TO2,TM
      &        , StkB,StkM,LI1,TELOM,LSFAC
-     &        , Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,MinKg
+     &        , Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,MinGr
      &        , RTNNO,RES30C,RLF30C,R30C2 
       COMMON /GEN12/
      &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
