@@ -991,7 +991,7 @@ C    Read Cultivars Section
           CALL ERROR(SECTION, 42, FILEIO, LNUM)
         ELSE
 
-          READ(LUNIO,'(36X,F6.0,60X,2F6.2)',IOSTAT=ERR) PHTMAX, LIsun, 
+          READ(LUNIO,'(36X,F6.0,60X,2F6.3)',IOSTAT=ERR) PHTMAX, LIsun, 
      &                                                  LIshd 
 		LNUM = LNUM + 1
 
@@ -1098,7 +1098,7 @@ C-----------------------------------------------------------------------
 ! AGEREF   Reference value calculated at reference leaf N value to 
 !            normalize the effect of N for different plant species 
 ! BETN     Spacing between plants along a row (m / plant)
-! CanLmtFac Proportion fo stalk leaf area that can be moved UP into a 
+! CanLmtFac Proportion of stalk leaf area that can be moved UP into a 
 !           de-populated canopy light interception zone.   
 ! BLANK    Blank character 
 ! CCEFF    Relative efficiency of CO2 assimilation used in equation to 
@@ -1145,9 +1145,9 @@ C-----------------------------------------------------------------------
 !            canopy 
 ! KC_SLOPE Slope of relationship between reduced Kcan (KCANR) and Kcan.
 !           If no value is specified in the species file, then 0.1 is used.
-! LAsun    Leaf area of the stalks in pseudo-zone 1 
-! LAshd    Leaf area of the stalks in pseudo-zone 2
-! LAgnd    Leaf area of the stalks in pseudo-zone 3
+! LAsun    Leaf area in light-interception zone 1 
+! LAshd    Leaf area in light-interception zone 2
+! LAgnd    Leaf area in light-interception zone 3
 ! LFMAX   Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light
 !         (mg CO2/m2-s) Related to LMXSTD below. 
 ! LIgndAvl Light Interception avail. at the inner-most canopy pseudo-zone
@@ -1159,8 +1159,8 @@ C-----------------------------------------------------------------------
 ! LITOTAL  Sum of Light Interception of each stalk
 ! LAITH1   LAI target corresponding to LIsun; the outer-most canopy zone 
 ! LAITH2   LAI target corresponding to LIshd; the middle canopy zone 
-! LaiSunZone  LAI of stalks comprising the outer-most canopy zone 
-! LaiShdZone  stalks comprising the mid canopy zone have LAI = LaiShdZone-LaiSunZone     
+! LaiSunZone  LAI in the outer-most canopy zone 
+! LaiShdZone  LAI in the mid canopy zone have LAI = LaiShdZone-LaiSunZone     
 ! LINC     Line number of input file. 
 ! LMXSTD   Maximum leaf photosyntheses for standard cultivar.  See LFMAX above. 
 ! LNREF    Value of leaf N above which canopy PG is maximum (for standard 

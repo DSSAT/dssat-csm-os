@@ -17,6 +17,7 @@ C  09/16/2007 JIL New inputs for IXIM
 C  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
 C  01/16/2008 GH  Added P2 and PANTH coefficients for sorghum
 C  08/03/2009 FSR Added numerous variables for CASUPRO
+C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -248,12 +249,12 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Casupro: Florida-Colombia Sugarcane model **
       CASE ('SCCSP')
         READ (C360,1055,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,empty,PLF,
-     &          Gamma,StkB,StkM,empty,empty,
+     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,empty,PLF1,
+     &          PLF2,Gamma,StkB,StkM,empty,
      &          SIZLF,LIsun,LIshd,empty,TB(1),TO1(1),TO2(1),TM(1),
      &          PI1,PI2,DTPI,LSFAC,empty,LI1,TELOM,TB(2),TO1(2),
      &          TO2(2),TM(2),Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,
-     &          MinKg,empty,RES30C,RLF30C,R30C2,empty,empty 
+     &          MinGr,empty,RES30C,RLF30C,R30C2,empty,empty 
 
 !     Taro, tanier **
       CASE ('TRARO','TNARO')

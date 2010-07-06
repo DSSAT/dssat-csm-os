@@ -25,7 +25,7 @@ C========================================================================
       SUBROUTINE CSP_SENES(CONTROL, DYNAMIC,
      &    CAB, ECONO, FILECC, FILEGC, GRLF, GRSU, KCAN,    !Input
      &	LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
-     &    MinKg, Ph1P, PhenoStage,                         !Input
+     &    MinGr, Ph1P, PhenoStage,                         !Input
      &    PI1, RATTP, Smax,                                !Input
      &	StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
      &    SumTTStalk, SWFAC, TMIN, XLAI,                   !Input
@@ -61,7 +61,7 @@ C========================================================================
       PARAMETER (NSWAB = 5)
 
       REAL a, GRLF, GRSU  
-      REAL KCAN, MinKg, Ph1P, PI1  
+      REAL KCAN, MinGr, Ph1P, PI1  
       REAL PORLOST, RATTP 
       REAL SENDAY, SLNDOT   
 	REAL Smax, SSDOT, SSNDOT, StkSenFrac, SWFAC   
@@ -140,6 +140,7 @@ C------ Find particular ECOTYPE ----------------------------------------
 			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
 			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
 			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) ! LfShdFac
+			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) ! MINSHD
 
 			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
 			READ(CHAR,'(14X,F6.5)',IOSTAT=ERR) StkSenFrac 
@@ -149,8 +150,8 @@ C------ Find particular ECOTYPE ----------------------------------------
 			READ(CHAR,'(14X,F6.2)',IOSTAT=ERR) SENDAY
  			IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
 	
-			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) !XDAY(3)
-			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) !YSLA(3)
+			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) !XDAY(6)
+			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) !YSLA(6)
 			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) ! XLI
 			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
 			CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
@@ -338,7 +339,8 @@ C   Initialize variables
 		ENDDO
       ENDDO
 
-      !Update value of RATTP.  This causes a delay of NSWAB days? (FSR)
+      !Update value of RATTP.  SWFCAB(I) is a record of last 5 days of 
+      !water stress, which is applied with a lag of NSWAB 
       DO I = NSWAB,2,-1
         SWFCAB(I) = SWFCAB(I-1)
       ENDDO
@@ -431,9 +433,9 @@ C	 LeafNum(DAS,Stalk) for VSTAGE.  FSR
 !   Old code: 
 !!!		WatSEN = SENDAY * (1. - RATTP)
 !!!		IF (WatSEN .GT. 0.0) THEN
-!!!			PORLOST = TABEX(SENMAX, XSENMX, VSTAGE, 4)
-!!!			WatSEN = MIN(WatSEN, PORLOST)
-!!!			WatSEN = MAX(WatSEN, 0.0)
+!!!	    PORLOST = TABEX(SENMAX, XSENMX, VSTAGE, 4)
+!!!		  WatSEN = MIN(WatSEN, PORLOST)
+!!!		  WatSEN = MAX(WatSEN, 0.0)
 
 !!!          DO Stalk = 1,Smax
 !!!			SenLfWat(Stalk) = WatSEN  	   
@@ -497,8 +499,8 @@ C	 LeafNum(DAS,Stalk) for VSTAGE.  FSR
 ! lingered with a miniscule, but above 0, weight, and little or no 
 ! leaf area.  So the following additional test was inserted to kill
 ! stalks if they reach early adulthood (TT beyond CAB X 2 leaves) with 
-! a minimum weight (MinKg).  
-     &	  .OR. (STKWT(DAS-1,Stalk) .LT. MinKg   .AND.       
+! a minimum weight (MinGr).  
+     &	  .OR. (STKWT(DAS-1,Stalk) .LT. MinGr   .AND.       
      &       (SumTTStalk(DAS,Stalk) - Ph1P) > 2 * CAB * PI1)) THEN
 		 
 	          Kill(Stalk) = 1
@@ -730,4 +732,4 @@ C-----------------------------------------------------------------------
 ! YRSIM     Start of simulation date (YYDDD)
 !-----------------------------------------------------------------------
 !     END SUBROUTINE CSP_SENES
-!----------------------------------------------------------------------- 
+!-----------------------------------------------------------------------
