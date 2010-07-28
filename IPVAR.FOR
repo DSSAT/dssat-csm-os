@@ -305,7 +305,8 @@ C-----------------------------------------------------------------------
      &      /,2X,'NO.',1X,'ENTRY',3X,'VARIETY',22X,'GROUP',5X,'GROUP',
      &      /,2X,'---',1X,'------',2X,20('-'),8X,'-------',2X,
      &           '--------')
-  110 FORMAT (A6,1X,A16,1X,A6,6X,A2)
+! 110 FORMAT (A6,1X,A16,1X,A6,6X,A2)
+  110 FORMAT (A6,1X,A16,7X,A6)
   120 FORMAT (I4,') ',A6,2X,A16,13X,A6,6X,A2)
   300 FORMAT (/,'  More.... press < ENTER > key')
   350 FORMAT (/,6X,'VARIETY SELECTED ===>',1X,I4,
