@@ -60,11 +60,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 0
-        INTEGER :: Build =50
+        INTEGER :: Build =51
       END TYPE VersionType
       TYPE (VersionType) Version
 
 !     Version history:
+!       4.5.0.51 chp 07/28/2010 Fixed format error in cultivar sensitivity.
 !       4.5.0.50 chp 07/01/2010 Fixed problem with mulch layer initialization.
 !       4.5.0.49 chp 06/29/2010 Minor changes CSCER, CSCRP.
 !       4.5.0.48 chp 06/09/2010 Post-Griffin Workshop.
