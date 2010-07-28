@@ -1,5 +1,5 @@
 !=======================================================================
-!  COPYRIGHT 1998-2007 Iowa State University, Ames, Iowa
+!  COPYRIGHT 1998-2010 Iowa State University, Ames, Iowa
 !                      University of Florida, Gainesville, Florida
 !                      The University of Georgia, Griffin, Georgia
 !                      International Fertilizer Development Center

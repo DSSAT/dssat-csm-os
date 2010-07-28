@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2008 Mississippi State University, Starkville, MS
+C  COPYRIGHT 1998-2010 Mississippi State University, Starkville, MS
 C                      University of Florida, Gainesville, Florida
 C                      The University of Georgia, Griffin, Georgia
 C                      International Center for Soil Fertility and 

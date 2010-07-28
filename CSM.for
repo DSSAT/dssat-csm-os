@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2007 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
 C                      University of Florida, Gainesville, Florida
 C                      Mississippi State University, Starkville, MS
 C                      International Center for Soil Fertility and 
@@ -14,7 +14,7 @@ C     CROPPING SYSTEM MODEL Version 4.5
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     October 2007  CSM Version 4.5
+C     July 2010  CSM Version 4.5
 C
 C     Gerrit Hoogenboom, J.W. Jones, Cheryl Porter, K.J. Boote, 
 C

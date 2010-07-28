@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2007 Iowa State University, Ames, Iowa
+C  COPYRIGHT 1998-2010 Iowa State University, Ames, Iowa
 C                      University of Florida, Gainesville, Florida
 C                      The University of Georgia, Griffin, Georgia
 C                      International Fertilizer Development Center

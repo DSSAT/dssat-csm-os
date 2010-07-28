@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2008 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
 C                      University of Florida, Gainesville, Florida
 C                      International Center for Soil Fertility and 
 C                       Agricultural Development, Muscle Shoals, Alabama

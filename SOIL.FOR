@@ -1,5 +1,5 @@
 !=======================================================================
-!  COPYRIGHT 1998-2007 The University of Georgia, Griffin, Georgia
+!  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
 !                      University of Florida, Gainesville, Florida
 !                      Iowa State University, Ames, Iowa
 !                      International Center for Soil Fertility and 
