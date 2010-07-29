@@ -7131,8 +7131,6 @@
 !-----------------------------------------------------------------------
 
           TNUM = AMIN1(TINOX,AMAX1(1.0,TNUM+TNUMG-TNUMD-TNUMLOSS))
-       WRITE(FNUMWRK,*)' TNUM,TINOX,TNUMG,TNUMD,TNUMLOSS ',
-     &   TNUM,TINOX,TNUMG,TNUMD,TNUMLOSS 
           ! Fof Zhang
           spnumhc = spnumhc + spnumh
           ! End for Zhang
@@ -10087,7 +10085,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
               OPEN (UNIT=FNUMOV, FILE=FNAMEOV, STATUS = 'UNKNOWN')
               CLOSE (UNIT=FNUMOV, STATUS = 'DELETE')
               
-            ENDIF  ! For Overview  (IDETO.NE.'E')                                  
+            ENDIF  ! For Overview  (IDETO.NE.'E')                    
           
           ELSE ! For Evaluate,Overview  IDETL.EQ.'0'.OR.IDETO.NE.'N'
           
@@ -10651,9 +10649,12 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                 IF (KEYSS(L).GT.0) WRITE (FNUMPHES,'(A6)',ADVANCE='NO')
      &           SSABVO(KEYSS(L))
               ENDDO
-            ENDIF  ! End Phenology simulated header writes
-            WRITE (fnumphes,'(/,A10,I6,2I6,2F6.1)',ADVANCE='NO')
-     &      EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
+              WRITE (fnumphes,'(/,A10,I6,2I6,2F6.1)',ADVANCE='NO')
+     &        EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
+            ELSE  ! End Phenology simulated header writes
+              WRITE (fnumphes,'(A10,I6,2I6,2F6.1)',ADVANCE='NO')
+     &        EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
+            ENDIF
             DO L = 1,KEYSTX
               IF (KEYPS(L).GT.0) WRITE (FNUMPHES,'(I6)',ADVANCE='NO')
      &         PSDAP(KEYPS(L))
@@ -10688,9 +10689,12 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
                   IF (KEYSS(L).GT.0) WRITE(FNUMPHEM,'(A6)',ADVANCE='NO')
      &             SSABVO(KEYSS(L))
                 ENDDO
-              ENDIF ! End Phenology measured header writes
-              WRITE (FNUMPHEM,'(/,A10,I6,2I6,2F6.1)',ADVANCE='NO')
-     &        EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
+                WRITE (FNUMPHEM,'(/,A10,I6,2I6,2F6.1)',ADVANCE='NO')
+     &           EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
+              ELSE ! End Phenology measured header writes
+                WRITE (FNUMPHEM,'(A10,I6,2I6,2F6.1)',ADVANCE='NO')
+     &           EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
+              ENDIF
               DO L = 1,KEYSTX
                 IF (KEYPS(L).GT.0) WRITE (FNUMPHEM,'(I6)',ADVANCE='NO')
      &           PSDAPM(KEYPS(L))

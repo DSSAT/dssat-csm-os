@@ -502,7 +502,7 @@
       REAL          HINM          ! Harvest index,N,abground,mat   #
       CHARACTER*6   HINMC         ! Harvest index,N,abground,mat   char
       REAL          HINMM         ! Harvest N index,mature,meas    %
-      character*6   HINMMC        ! Harvest N index,mature,meas    char
+      CHARACTER*6   HINMMC        ! Harvest N index,mature,meas    char
       INTEGER       HLAST         ! Last date for harvest          #
       REAL          HNUMAEAA      ! Harvest #/area abs error avg   #
       REAL          HNUMAEAV      ! Harvest #/area average error   #
@@ -1784,6 +1784,7 @@
         WRITE(fnumwrk,*)' MODEL   ',MODEL
         WRITE(fnumwrk,*)' MODULE  ',MODNAME
         WRITE(fnumwrk,'(A10,F8.2)')'  VERSION ',VERSION
+        WRITE(fnumwrk,'(A10,I8  )')'  RUN     ',RUN    
 
         ! Create composite run variable
         IF (RUNI.LT.10) THEN
@@ -5900,7 +5901,6 @@
               IF (HIAMM.GE.1.0) HIAMM = HIAMM/100.0
             
               CALL AREADI (FILEA,TN,RN,SN,ON,CN,'EDAT',edatm)
-              WRITE(FNUMWRK,*)' AREAD EDATM ',EDATM
               CALL AREADI (FILEA,TN,RN,SN,ON,CN,'DRDAT',drdatm)
               CALL AREADI (FILEA,TN,RN,SN,ON,CN,'TSDAT',tsdatm)
               CALL AREADI (FILEA,TN,RN,SN,ON,CN,'A1DAT',a1datm)
@@ -6039,7 +6039,8 @@
               ! T-FILE READS AND MEASURED.OUT WRITES
             
               WRITE (fnumwrk,*)' '
-              WRITE (fnumwrk,*)'Reading T-file and writing MEASURED.OUT'
+              WRITE (fnumwrk,*)
+     &         'Trying to read T-file and write MEASURED.OUT'
             
               Fnametmp = ' '
               Fnametmp(1:12) = 'Measured.out'
@@ -6603,7 +6604,7 @@
                 ELSE
                   INQUIRE (FILE = FNAMETMP, EXIST = FEXIST)
                   IF (FEXIST) THEN
-                    INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+                    INQUIRE (FILE = 'OVERVIEW.OUT',OPENED = fopen)
                     IF (.NOT.fopen) THEN
                       OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,
      &                 POSITION = 'APPEND')
@@ -6793,123 +6794,124 @@
      x        '  Harvest index    Product wt (HWAM)/Canopy wt.(CWAM)  ',
      x        '                                                       ',
      x        '  The same procedure is followed for nitrogen aspects  '
-            ENDIF
+     
+              ENDIF
             
-            WRITE(fnumtmp,5500)
+              WRITE(fnumtmp,5500)
             
-            PFPAV = -99.0
-            PFGAV = -99.0
-            DASH = ' - '
-            DO tvI1 = 1,5  
-              IF (TVI1.EQ.1)THEN
-                WRITE(fnumtmp,600) stname(8), dash, stname(tvi1), 
-     &           daysc(tvI1), TMAXav(tvI1),TMINav(tvI1),sRADav(tvI1),
-     &           DAYLav(tvI1),RAINcp(tvI1),ETC(tvI1),1.0-wfpav(tvi1),
-     &           1.0-wfgav(tvi1), 1.0-nfpav(tvi1), 1.0-nfgav(tvi1), 
-     &           PFPAV(TVI1), PFGAV(TVI1)
-              ELSE
-                IF (DAYSC(tvi1).GT.0) THEN
-                  WRITE(fnumtmp,600) stname(tvi1-1),dash,stname(tvi1), 
-     &            daysc(tvI1), TMAXav(tvI1),TMINav(tvI1),sRADav(tvI1),
-     &            DAYLav(tvI1),RAINcp(tvI1),ETC(tvI1),1.0-wfpav(tvi1),
-     &            1.0-wfgav(tvi1), 1.0-nfpav(tvi1), 1.0-nfgav(tvi1), 
-     &            PFPAV(TVI1), PFGAV(TVI1)
+              PFPAV = -99.0
+              PFGAV = -99.0
+              DASH = ' - '
+              DO tvI1 = 1,5  
+                IF (TVI1.EQ.1)THEN
+                  WRITE(fnumtmp,600) stname(8), dash, stname(tvi1), 
+     &             daysc(tvI1), TMAXav(tvI1),TMINav(tvI1),sRADav(tvI1),
+     &             DAYLav(tvI1),RAINcp(tvI1),ETC(tvI1),1.0-wfpav(tvi1),
+     &             1.0-wfgav(tvi1), 1.0-nfpav(tvi1), 1.0-nfgav(tvi1), 
+     &             PFPAV(TVI1), PFGAV(TVI1)
+                ELSE
+                  IF (DAYSC(tvi1).GT.0) THEN
+                    WRITE(fnumtmp,600) stname(tvi1-1),dash,stname(tvi1),
+     &              daysc(tvI1), TMAXav(tvI1),TMINav(tvI1),sRADav(tvI1),
+     &              DAYLav(tvI1),RAINcp(tvI1),ETC(tvI1),1.0-wfpav(tvi1),
+     &              1.0-wfgav(tvi1), 1.0-nfpav(tvi1), 1.0-nfgav(tvi1), 
+     &              PFPAV(TVI1), PFGAV(TVI1)
+                  ENDIF
                 ENDIF
-              ENDIF
-  600         FORMAT(1X,A10,A3,A10,I5,3F6.1,F7.2,2F7.1,4F7.3,2F7.2)
-  610         FORMAT(1X,A10,13X,I5,3F6.1,F7.2,2I7,6F7.3)
-            ENDDO
-            IF (daysc(5).gt.0) then
-            WRITE(fnumtmp,*) ' ' 
-            WRITE(fnumtmp,600) stname(8),dash,stname(5), 
-     &        daysc(0), TMAXav(0),TMINav(0),sRADav(0), 
-     &        DAYLav(0), RAINcp(0),ETC(0), 1.0-wfpav(0), 
-     &        1.0-wfgav(0), 1.0-nfpav(0), 1.0-nfgav(0), 
-     &        PFPAV(0), PFGAV(0)
-            ENDIF     
+  600           FORMAT(1X,A10,A3,A10,I5,3F6.1,F7.2,2F7.1,4F7.3,2F7.2)
+  610           FORMAT(1X,A10,13X,I5,3F6.1,F7.2,2I7,6F7.3)
+              ENDDO
+              IF (daysc(5).gt.0) then
+                WRITE(fnumtmp,*) ' ' 
+                WRITE(fnumtmp,600) stname(8),dash,stname(5), 
+     &           daysc(0), TMAXav(0),TMINav(0),sRADav(0), 
+     &           DAYLav(0), RAINcp(0),ETC(0), 1.0-wfpav(0), 
+     &           1.0-wfgav(0), 1.0-nfpav(0), 1.0-nfgav(0), 
+     &           PFPAV(0), PFGAV(0)
+              ENDIF     
             
-            !Resource productivity calculations
+              !Resource productivity calculations
+   
+              DMP_Rain = -99.
+              GrP_Rain = -99.
+              DMP_ET = -99.
+              GrP_ET = -99.
+              DMP_EP = -99.
+              GrP_EP = -99.
+              DMP_Irr = -99.    
+              GrP_Irr = -99.
  
-            DMP_Rain = -99.
-            GrP_Rain = -99.
-            DMP_ET = -99.
-            GrP_ET = -99.
-            DMP_EP = -99.
-            GrP_EP = -99.
-            DMP_Irr = -99.    
-            GrP_Irr = -99.
+              DMP_NApp = -99.
+              GrP_NApp = -99.
+              DMP_NUpt = -99.
+              GrP_NUpt = -99.
  
-            DMP_NApp = -99.
-            GrP_NApp = -99.
-            DMP_NUpt = -99.
-            GrP_NUpt = -99.
- 
-            IF (RAINCP(0) > 1.E-3) THEN
-              DMP_Rain = CWAM / RAINCp(0) 
-              GrP_Rain = GWAM  / RAINCp(0)
-            ENDIF
-            
-            IF (ETC(0) > 1.E-3) THEN
-              DMP_ET = CWAM / ETC(0) 
-              GrP_ET = GWAM  / ETC(0) 
-            ENDIF
-            
-            IF (EPC(0) > 1.E-3) THEN
-              DMP_EP = CWAM / EPC(0) 
-              GrP_EP = GWAM  / EPC(0) 
-            ENDIF
- 
-            IF (TOTIR > 1.E-3) THEN
-              DMP_Irr = CWAM / TOTIR 
-              GrP_Irr = GWAM  / TOTIR
-            ENDIF
- 
-            IF (ISWNIT.NE.'N') THEN
-              IF (Amtnit > 1.E-3) THEN
-                DMP_NApp = CWAM / Amtnit
-                GrP_NApp = GWAM  / Amtnit
+              IF (RAINCP(0) > 1.E-3) THEN
+                DMP_Rain = CWAM / RAINCp(0) 
+                GrP_Rain = GWAM  / RAINCp(0)
               ENDIF
             
-              IF (NUAD > 1.E-3) THEN
-                DMP_NUpt = CWAM / NUAD
-                GrP_NUpt = GWAM  / NUAD
+              IF (ETC(0) > 1.E-3) THEN
+                DMP_ET = CWAM / ETC(0) 
+                GrP_ET = GWAM  / ETC(0) 
               ENDIF
-            ENDIF !ISWNIT == 'Y'
-                        
-            ! Productiviity outputs not written if run aborted        
-            IF (DYNAMIC.NE.SEASEND) THEN
-              WRITE (FNUMTMP, 1200) daysc(0), 
-     &          RAINCP(0), DMP_Rain*0.1, DMP_Rain,GrP_Rain*0.1,GrP_Rain,
-     &          ETC(0),  DMP_ET*0.1,   DMP_ET,   GrP_ET*0.1,   GrP_ET, 
-     &          EPc(0),  DMP_EP*0.1,   DMP_EP,   GrP_EP*0.1,   GrP_EP
+            
+              IF (EPC(0) > 1.E-3) THEN
+                DMP_EP = CWAM / EPC(0) 
+                GrP_EP = GWAM  / EPC(0) 
+              ENDIF
  
               IF (TOTIR > 1.E-3) THEN
-                WRITE(FNUMTMP, 1210) 
-     &            TOTIR, DMP_Irr*0.1, DMP_Irr, GrP_Irr*0.1, GrP_Irr
+                DMP_Irr = CWAM / TOTIR 
+                GrP_Irr = GWAM  / TOTIR
               ENDIF
  
               IF (ISWNIT.NE.'N') THEN
                 IF (Amtnit > 1.E-3) THEN
-                  WRITE(FNUMTMP, 1220) Amtnit, DMP_NApp, GrP_NApp 
+                  DMP_NApp = CWAM / Amtnit
+                  GrP_NApp = GWAM  / Amtnit
                 ENDIF
-                          
+            
                 IF (NUAD > 1.E-3) THEN
-                  WRITE(FNUMTMP, 1230) NUAD, DMP_NUpt,GrP_NUpt
+                  DMP_NUpt = CWAM / NUAD
+                  GrP_NUpt = GWAM  / NUAD
                 ENDIF
               ENDIF !ISWNIT == 'Y'
-            ENDIF
+                        
+              ! Productiviity outputs not written if run aborted        
+              IF (DYNAMIC.NE.SEASEND) THEN
+                WRITE (FNUMTMP, 1200) daysc(0), 
+     &           RAINCP(0), DMP_Rain*0.1,DMP_Rain,GrP_Rain*0.1,GrP_Rain,
+     &           ETC(0),  DMP_ET*0.1,   DMP_ET,   GrP_ET*0.1,   GrP_ET, 
+     &           EPc(0),  DMP_EP*0.1,   DMP_EP,   GrP_EP*0.1,   GrP_EP
+ 
+                IF (TOTIR > 1.E-3) THEN
+                 WRITE(FNUMTMP, 1210) 
+     &            TOTIR, DMP_Irr*0.1, DMP_Irr, GrP_Irr*0.1, GrP_Irr
+                ENDIF
+ 
+                IF (ISWNIT.NE.'N') THEN
+                  IF (Amtnit > 1.E-3) THEN
+                   WRITE(FNUMTMP, 1220) Amtnit, DMP_NApp, GrP_NApp 
+                  ENDIF
+                          
+                  IF (NUAD > 1.E-3) THEN
+                   WRITE(FNUMTMP, 1230) NUAD, DMP_NUpt,GrP_NUpt
+                  ENDIF
+                ENDIF !ISWNIT == 'Y'
+              ENDIF
             
-            WRITE(FNUMTMP,270)
-            IF (CR.EQ.'WH') THEN 
-              WRITE(FNUMTMP,300) 'WHEAT', NINT(GWAM)
-            ELSEIF (CR.EQ.'BA') THEN 
-              WRITE(FNUMTMP,300) 'BARLEY', NINT(GWAM)
-            ENDIF  
-            WRITE(FNUMTMP,'(110("*"))')
+              WRITE(FNUMTMP,270)
+              IF (CR.EQ.'WH') THEN 
+                WRITE(FNUMTMP,300) 'WHEAT', NINT(GWAM)
+              ELSEIF (CR.EQ.'BA') THEN 
+                WRITE(FNUMTMP,300) 'BARLEY', NINT(GWAM)
+              ENDIF  
+              WRITE(FNUMTMP,'(110("*"))')
             
-            CLOSE(FNUMTMP)   
+              CLOSE(FNUMTMP)   
 
-           ELSE
+            ELSE
             
                OPEN (UNIT=FNUMTMP,FILE='OVERVIEW,OUT')
                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
