@@ -1136,7 +1136,7 @@
       REAL          TRPHS(4)      ! Temp response,photosynthesis   #
       CHARACTER*40  TRUNNAME      ! Treatment+run composite name   text
       REAL          TRVRN(4)      ! Temp response,vernalization    #
-      REAL          TRWUP         ! Total water uptake,potential   mm
+      REAL          TRWUP         ! Total water uptake,potential   cm
       INTEGER       TSDAT         ! Terminal spkelet date          #
       INTEGER       TSDATM        ! Terminal spkelet date,measured #
       REAL          TSDEP         ! Average temp in top 10 cm soil C
@@ -8284,7 +8284,7 @@
       REAL          SWCON1        ! Constant for root water uptake #
       REAL          SWCON2(NL)    ! Variable for root water uptake #
       REAL          SWCON3        ! Constant for root water uptake #
-      REAL          TRWUP         ! Total water uptake,potential   mm
+      REAL          TRWUP         ! Total water uptake,potential   cm
       REAL          TSS(NL)       ! Number of days saturated       d
       REAL          UH2O(NL)      ! Uptake of water                cm/d
       REAL          WFSAT         ! Soil water excess stress fact  #

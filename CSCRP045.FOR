@@ -1406,8 +1406,8 @@
       REAL          TRLV          ! Total root length density      /cm2
       REAL          TRPHS(4)      ! Temp response,photosynthesis   #
       REAL          TRVRN(4)      ! Temp response,vernalization    #
-      REAL          TRWU          ! Total water uptake             mm
-      REAL          TRWUP         ! Total water uptake,potential   mm
+      REAL          TRWU          ! Total water uptake             cm
+      REAL          TRWUP         ! Total water uptake,potential   cm
       REAL          TSDEP         ! Average temp in top 10 cm soil C
       REAL          TSRAD         ! Transmission,SRAD,fraction     #
       INTEGER       TSSTG         ! Terminal spikelet stage        #
@@ -11758,8 +11758,8 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
       REAL          SWCON1        ! Constant for root water uptake #
       REAL          SWCON2(NL)    ! Variable for root water uptake #
       REAL          SWCON3        ! Constant for root water uptake #
-      REAL          TRWU          ! Total water uptake             mm
-      REAL          TRWUP         ! Total water uptake,potential   mm
+      REAL          TRWU          ! Total water uptake             cm
+      REAL          TRWUP         ! Total water uptake,potential   cm
       REAL          TSS(NL)       ! Number of days saturated       d
       REAL          UH2O(NL)      ! Uptake of water                cm/d
       REAL          WTDEP         ! Water table depth              cm
