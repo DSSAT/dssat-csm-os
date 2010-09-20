@@ -664,7 +664,7 @@ C-----------------------------------------------------------------------
 
 !     Transfer data to ModuleData
       CALL PUT('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm)
-      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigAtion (mm)
+      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm)
       CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
       CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
 

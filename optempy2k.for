@@ -180,7 +180,7 @@ C
 C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,915,IOSTAT=ERRNUM) MEWTH,MESIC,MELI,MEEVP,
-     & MEINF,MEPHO,MEHYD,NSWITCH,MESOM, MESEV, MESOL
+     & MEINF,MEPHO,MEHYD,NSWITCH,MESOM, MESEV, MESOL, METMP
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
 C-----------------------------------------------------------------------
 C

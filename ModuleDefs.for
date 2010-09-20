@@ -186,6 +186,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) ISWPHO, ISWPOT, ISWSYM, ISWTIL, ISWWAT
         CHARACTER (len=1) MEEVP, MEHYD, MEINF, MELI, MEPHO
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
+        CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2
         INTEGER NSWI
       END TYPE SwitchType
@@ -491,6 +492,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE PlantType
         REAL CANHT, CANWH, DXR57, EXCESS,
      &    PLTPOP, RNITP, SLAAD, XPOD
+        REAL BIOMAS
         INTEGER NR5
       END TYPE PlantType
 
@@ -501,7 +503,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data transferred from Soil water routine
       Type WatType
-        REAL DRAIN, RUNOFF
+        REAL DRAIN, RUNOFF, SNOW
       End Type WatType
 
 !     Data transferred from Soil Inorganic Nitrogen routine
@@ -513,6 +515,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       Type OrgCType
         REAL TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2
         REAL TOMINSOM3, TNIMBSOM
+        REAL MULCHMASS
       End Type OrgCType
 
 !     Data from weather
@@ -673,6 +676,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('PLANT')
         SELECT CASE (VarName)
+        Case ('BIOMAS'); Value = SAVE_data % PLANT % BIOMAS
         Case ('CANHT') ; Value = SAVE_data % PLANT % CANHT
         Case ('CANWH') ; Value = SAVE_data % PLANT % CANWH
         Case ('DXR57') ; Value = SAVE_data % PLANT % DXR57
@@ -710,6 +714,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('ORGC')
         SELECT CASE (VarName)
+        Case ('MULCHMASS');Value = SAVE_data % ORGC % MULCHMASS
         Case ('TOMINFOM'); Value = SAVE_data % ORGC % TOMINFOM
         Case ('TOMINSOM'); Value = SAVE_data % ORGC % TOMINSOM
         Case ('TOMINSOM1');Value = SAVE_data % ORGC % TOMINSOM1
@@ -776,6 +781,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('PLANT')
         SELECT CASE (VarName)
+        Case ('BIOMAS'); SAVE_data % PLANT % BIOMAS = Value
         Case ('CANHT');  SAVE_data % PLANT % CANHT  = Value
         Case ('CANWH');  SAVE_data % PLANT % CANWH  = Value
         Case ('DXR57');  SAVE_data % PLANT % DXR57  = Value
@@ -801,6 +807,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         SELECT CASE (VarName)
         Case ('DRAIN'); SAVE_data % WATER % DRAIN  = Value
         Case ('RUNOFF');SAVE_data % WATER % RUNOFF = Value
+        Case ('SNOW');  SAVE_data % WATER % SNOW   = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -813,6 +820,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('ORGC')
         SELECT CASE (VarName)
+        Case ('MULCHMASS');SAVE_data % ORGC % MULCHMASS = Value
         Case ('TOMINFOM'); SAVE_data % ORGC % TOMINFOM  = Value
         Case ('TOMINSOM'); SAVE_data % ORGC % TOMINSOM  = Value
         Case ('TOMINSOM1');SAVE_data % ORGC % TOMINSOM1 = Value
