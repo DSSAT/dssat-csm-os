@@ -41,7 +41,7 @@ C-----------------------------------------------------------------------
       INTEGER DOY, DYNAMIC, I, L, NLAYR
       INTEGER RUN, YRDOY, YEAR
       INTEGER ERRNUM, FOUND, LNUM, LUNIO
-      INTEGER WetDay(30), NDays
+      INTEGER WetDay(30), NDays, NWetDays
 
       REAL ABD, B, CUMDPT 
       REAL DP, FX, ICWD, PESW, SRFTEMP 
@@ -232,7 +232,8 @@ C-----------------------------------------------------------------------
       ELSE
         WetDay(NDays) = 0 
       ENDIF
-      WFT = SUM(WetDay) / NDays
+      NWetDays = SUM(WetDay)
+      WFT = Float(NWetDays) / float(NDays)
 
 !     Soil cover function
       CALL GET('PLANT','BIOMAS'   ,BIOMAS)      !kg/ha
@@ -352,7 +353,7 @@ C=======================================================================
       X1=TAV-X3
 
       DO L = 1, NLAYR
-        ZD    = -DSMID(L) / DD  !Eqn 8
+        ZD    = DSMID(L) / DD  !Eqn 8
 !       Eqn 7
         F=ZD/(ZD+EXP(-.8669-2.0775*ZD))
 !       Eqn 6
