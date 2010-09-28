@@ -18,12 +18,12 @@
 !----------------------------------------------------------------------
 !
       SUBROUTINE CSP_PHENOL(CONTROL, ISWITCH, FILECC,
-     &    Kill, LI, M, SOILPROP, TGROAV,                     !Input
+     &    DTPI, Kill, LI, M, SOILPROP, TGROAV,               !Input
      &    TURFAC, XLFNUM, XStkNum, YLfFac, YLFSZ, YRDOY,     !Input
      &    YRPLT, YRSIM,                                      !Input
      &    CropTypeCode, DeltaLeafArea, DeltaLeafNum,         !Output
      &    DLFN, DPLARF, DRPP, DTX, TillerCount,              !Output 
-     &	LeafNum, MinKg, MDATE,                             !Output
+     &	  LeafNum, MinGr, MDATE,                             !Output
      &    NVEG0, PhenoStage, PHTHRS, Ph1P, PI1, PI2, ROWSPC, !Output
      &    Smax, StalkState, STNAME, STGDOY, StkHrNO,         !Output
      &    SumTTD, SumTTG, SumTTStalk, TDUMX, VSTAGE,         !Output
@@ -70,7 +70,7 @@
       REAL TDUMX, ExcsTTD
       REAL CURV  ! Function subroutine
       REAL Tbase, TbaseStalk
-      REAL M, MinKg
+      REAL M, MinGr
       REAL Ph1P, Ph1R, Ph2, Ph3, Ph4
       REAL DTPI, PI1, PI2
       REAL So, Go, Smax, Gmax
@@ -184,7 +184,7 @@
 !----------------------------------------------------------------------
       CALL CSP_IPPHENOL(CONTROL, FILECC,
      &           CROP,  DTPI, Gmax, Go, ISIMI,                !Output
-     &           LI1, MinKg, Ph1P, Ph1R, Ph2, Ph3,            !Output 
+     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,            !Output 
      &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,         !Output
      &           RTNFAC, ROWSPC, SDEPTH, Smax, So,            !Output
      &           StkHrNO, TB, TELOM, TM, TO1,                 !Output
@@ -596,10 +596,11 @@
 	END DO         
 
 !***********************************************************************
-      ! Section for leaf development
-        DO Stalk = 1, Smax
+! Section for leaf development
 !-----------------------------------------------------------------------
-!  Calculates the rate of increase of leaf number in each stalk
+!  Calculates the rate of increase of leaf number on each stalk
+
+        DO Stalk = 1, Smax
 
          IF (StalkState(Stalk,1) .EQ. 'LIVE') THEN   
 

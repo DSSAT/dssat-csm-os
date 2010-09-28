@@ -180,7 +180,7 @@ c      Stalk fresh mass
 
 c      Stalk dry mass
            DATA GROHEAD(1, 11) /'Stalk dry'/
-           DATA GROHEAD(2, 11) /'mass - no'/
+           DATA GROHEAD(2, 11) /'mass with'/
            DATA GROHEAD(3, 11) /'sucro(t/ha)'/
            DATA GROHEAD(4, 11) /'SMDMD'/
 
@@ -578,7 +578,7 @@ c         Output format string for daily values
      &    '  Fresh Fresh  |  Senesced     Phot   Grow   Leaf  Exces' ,
      &   '   Leaf   Leaf   High   Wide  Depth  |',67X,'|   Senes Dry  |',
      &    /'!',11X,'Sim Plant  Stage  Stk#1   live   dead  Plant     M2',
-     &    '  TotWt   Leaf  Stalk  Sucro   Root  Yield Sucro%   Leaf',
+     &    '  Aerial  Leaf  Stalk  Sucro   Root  Yield Sucro%   Leaf',
      &    '  Stalk    H2O    H2O      N    H2O    N %  cm2/g',
      &    '      m      m      m  |',23X,
      &    ' Root Length Density',24X,'|  Surf   Soil | ',
@@ -622,11 +622,11 @@ c         Output format string for daily values
         WRITE (NOUTKG,210,ADVANCE="NO")
 
   210   FORMAT(//'@YEAR DOY   DAS   DAP',
-     &         '   GSTD  L#S1D  LLAID  DLAID',   
-     &         '   S#PD   S#AD   AELD   LWAD',   
+     &         '   GSTD  L#S1D  LAIGD  DLAID',   
+     &         '   T#PD   T#AD  BADMD   LWAD',   
      &         '   SWAD   SUAD',
      &         '   RWAD   HWAH',
-     &         '   HISD   LDAD   SDAD',
+     &         ' SU%FMD   LDAD   SDAD',
      &         '   WSPD   WSGD   NSTD',
      &         '   EWSD   LN%D   SLAD',
      &         '   CHTD   CWID', 
@@ -650,7 +650,7 @@ c         Output format string for daily values
      &    '  Exces   Leaf   Leaf   High   Wide  Depth  ',
      &    '|',67X,'|   Senes Dry  |',
      &  /,'!',11X,'Sim Plant  Stage  Stk#1   live   dead  Plant     M2',
-     &    '   TotWt  Leaf  Stalk  Sucro   Root  Yield Sucro%   Leaf',
+     &    '   Aerial Leaf  Stalk  Sucro   Root  Yield Sucro%   Leaf',
      &    '  Stalk    H2O    H2O      N      P      P    H2O    N % ',
      &    ' cm2/g      m      m      m',
      &    '  |',24X,'Root Length Density',24X,'|  Surf   Soil | ',
@@ -693,11 +693,11 @@ c         Output format string for daily values
           WRITE (NOUTKG,230,ADVANCE="NO")  ! Begin here FSR
 
   230     FORMAT(//'@YEAR DOY   DAS   DAP',
-     &         '   GSTD  L#S1D  LLAID  DLAID',   
-     &         '   S#PD   S#AD   AELD   LWAD',   
+     &         '   GSTD  L#S1D  LAIGD  DLAID',   
+     &         '   T#PD   T#AD  BADMD   LWAD',   
      &         '   SWAD   SUAD',
      &         '   RWAD   HWAH',
-     &         '   HISD   LDAD   SDAD',
+     &         ' SU%FMD   LDAD   SDAD',
      &         '   WSPD   WSGD   NSTD',   
      &         '   PS1D   PS2D', 
      &         '   EWSD   LN%D   SLAD',
@@ -1085,7 +1085,8 @@ C Write PlantGro.Out file
 
         WRITE(NOUTDG,FMT=D_FMT_STR) YEAR, DOY, DAS, DAP, 
      &       INT(LeafNum(DAS,1)),PhenoStage, XLAI, LFWTHa(DAS)/1000, 
-     &       LSWTHa(DAS)/1000, SMFMD/1000, STKWTHa(DAS)/1000,  
+  
+     &       LSWTHa(DAS)/1000, SMFMD/1000, SMDMD/1000,  
      &       SUWTHa(DAS)/1000, RTWTHa(DAS)/1000, BADMD/1000,                 
      &       StalkPopul(DAS), REAL(CountStalk), SUID,  
      &	   (LFWTHalost(DAS)+LSWTHalost(DAS))/1000, XLAI+XLAIlost,             
@@ -1176,7 +1177,7 @@ C-----------------------------------------------------------------------
 ! SHTVD   Stalk height, to top visible dew dewlap (m) 
 ! SKIP    Number of whitespaces that need to be skipped
 ! SLAREF  Specific leaf area for new leaves by Ecotype (cm2[leaf] / g[leaf DM])
-! SMDMD   Stalk (millable) dry mass (t/ha)
+! SMDMD   Stalk (millable; i.e., stalk + sugars) dry mass (t/ha)
 ! SMFMD   Stalk fresh massStalk (millable) fresh mass (t/ha)  
 ! SSTKH   Stalk (structure, no sucrose) dry weight at harvest (t/ha) 
 ! STKWTHa Dry mass of stalk tissue, including C and N (g[stem] / ha[ground)

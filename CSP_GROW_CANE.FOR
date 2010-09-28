@@ -7,27 +7,29 @@ C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  06/15/2005 FSR Written.
 C  10/07/2005 FSR Modified for stalk-based photosynthesis 
-C
+C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C-----------------------------------------------------------------------
 !  Called by: CASUPRO
 !  Calls: 
 C=======================================================================
       SUBROUTINE CSP_GROW_CANE(CONTROL, DYNAMIC,
      &  CAB, CropTypeCode, DeltaLeafArea,              !AGEFAC,!Input 
-     &  DeltaLeafNum, ECONO, EXCESS, FILEIO, FILECC, FILEGC,   !Input
-     &  FINREF, FRSU, GAMMA, GRLF, GRRT, GRST, GRSU, KCAN,     !Input
-     &  Kill, LeafNum, MAINTR, NLAYR, NVEG0,                   !Input
-     &  PAR, PgAvalPD, PGAVAL, PgRatio, PhenoStage, PLTPOP,    !Input
-     &  PLF, PLWT, ROWSPC,SLA, SLAMIN, SLAMAX, SLAPAR, SLAREF, !Input 
+     &  DeltaLeafNum, DTPI, ECONO, EXCESS, FILEIO, FILECC,     !Input
+     &  FILEGC, FINREF, FRSU, GAMMA, GRLF, GRRT, GRST,         !Input
+     &  GRSU, KCAN,Kill, LeafNum, MAINTR, NLAYR, NVEG0,        !Input
+     &  PAR, PgAvalPD, PGAVAL, PgRatio, PhenoStage,            !Input
+     &  PLTPOP, PLF1, PLF2, PLWT, ROWSPC, SLA,                 !Input
+     &  SLAMIN, SLAMAX, SLAPAR, SLAREF,                        !Input 
      &  LSFAC, SENRT, SLDOT, Smax, SRDOT, StkHrNO, StalkState, !Input
-     &  StkB, StkM, TGRO, TURFAC, TURSLA, WEATHER, XDAY, XFRRT,!Input
+     &  StkB, StkM, SumTTStalk, TGRO,                          !Input
+     &  TURFAC, TURSLA, WEATHER, XDAY, XFRRT,                  !Input
      &  XFRSU, XLAI, XLAIlost, XSLATM, XSTKRT, XVSHT, YFRRT,   !Input
      &  YFRSU, YRDOY, YRPLT, YSLA, YSTKRT, YVSHT, ZVSDI,       !Input
      &  CDEM, FRRT, TOTWT, TOTALWT, XHLAI, YSLATM,       !Input/Output
      &  BRDMD, CANHT, CANWH, CountStalk, DeltaLeafArealost,    !Output 
      &  LAIMX, LAIXD, LeafArea, LeafArealost, LeafAreaPlant,   !Output
      &  LFWT, LFWTHa, LSWTlost, LSWT, LSWTHa, LFWTHalost,      !Output 
-     &  LFWTlost, StkH2OFac, STKmntDEF,                        !Output
+     &  LFWTlost, LSWTHalost, StkH2OFac, STKmntDEF,            !Output
      &  RTDWP, RTWTHa, SENESCE, StalkPopul, STKWT, STKFWT,     !Output
      &  STKFWTHa, STKWTHa, STKWTHalost, STKWTP, SuDEF,         !Output
      &  SuH2OFac, SUWT, SUWTHa, TOPWT)                         !Output
@@ -41,6 +43,7 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
+      CHARACTER*1  RNMODE  
       CHARACTER*4 StalkState(NumOfStalks,10)
       !CHARACTER(11) :: CropTypeName
       CHARACTER*30 FILEIO
@@ -50,15 +53,15 @@ C=======================================================================
       INTEGER CAB, CountStalk, CropTypeCode 
       INTEGER DAP, DAS, Day, DOY, DYNAMIC, H, I, L
       INTEGER LAIXD, LUNCRP, NLAYR, NVEG0, OpenStatus  
-      INTEGER PhenoStage, RUN, Stalk, TIMDIF
-      INTEGER XDAY(3), YEAR, YRDOY, YRPLT, YRSIM, CGLUN
+      INTEGER PhenoStage, REPNO, RUN, Stalk, TIMDIF
+      INTEGER XDAY(6), YEAR, YRDOY, YRPLT, YRSIM, CGLUN
 
       INTEGER, DIMENSION(1:NumOfStalks) :: Kill
       
-      REAL BRDMD, CANHT, CANWH, CAVLF, CAVR, CDEF, FRRT
+      REAL BRDMD, CANHT, CANWH, CAVLF, CAVR, CDEF, DTPI, FRRT
       REAL DUMFACF, FFVEG, FINREF, FRACSH, FRSU, FVEG, LAIMX 
       REAL GAMMA, GRLF, GRLS, GRRT, GRST, GRSU, KCAN, LAIMX_Previous 
-      REAL LSFAC, PARSLA, PgAvalPD, PLF, PLTPOP, PLWT, RFPSTKG 
+      REAL LSFAC, PARSLA, PgAvalPD, PLF1, PLF2, PLTPOP, PLWT, RFPSTKG 
       REAL RootFac, ROWSPC, SeedCH2O, ShootCTotDem, ShootCTotSup 
       REAL SLA, SLAMAX, SLAMX, SLAMIN, SLAMN 
       REAL Stk_H2O, StkHrNO, SLAPAR, SRDOT
@@ -71,12 +74,12 @@ C=======================================================================
 
       REAL SLAREF, SLAVAR, StkEx, SuEx, TOPWT, TOTWT, VSTAGE
       REAL WholeLeaf
-      REAL XFRRT(4), XFRSU(4), YFRRT(4), YFRSU(4), YSLA(3)
+      REAL XFRRT(4), XFRSU(4), YFRRT(4), YFRSU(4), YSLA(6)
       REAL TGRO(TS), XSLATM(10), XSTKRT(6), YSLATM(10), YSTKRT(6)
       REAL XVSHT(10), YVSHT(10), ZVSDI(10)
       REAL TABEX  ! Function subroutine - Lookup utility
 !     REAL SIZELF, SIZREF, , SLNDOT 
-      REAL DAYS(3)
+      REAL DAYS(6)
 
       REAL, DIMENSION(0:NumOfDays) ::       CDEM, 
      &                LeafAreaPlant, LeafAreaPlantlost, 
@@ -92,7 +95,7 @@ C=======================================================================
      &                MAINTR, PGAVAL, PGLEFT, PgRatio, SenLfNat,  
      &                SenLfShd, SenLfWat, SLDOT, SuDEF, TOTALWT, temp    
 
-      REAL, DIMENSION(0:NumOfDays,NumOfStalks) :: CAV, CDEMND, 
+      REAL, DIMENSION(0:NumOfDays, NumOfStalks) :: CAV, CDEMND, 
      &                DeltaLeafNum, DeltaLeafArea, DeltaLeafArealost,  
      &                LeafArea, LeafArealost, LeafNum, LFDPW, LSDPW, 
      &                LFDW, LSDW, LFDWlost, LSDWlost, LFWT, LSWT, 
@@ -100,7 +103,7 @@ C=======================================================================
      &                RatioSDC, RTDPW, RTDW, RTWT, ShootCDEM, 
      &                ShootCSUP, STKDPW, STKDW,    ! StkCDEM, 
      &                STKmntDEF, STKFWT, STKWT, STKWTA, STKWTlost, 
-     &                SUDPW, SUDW, SUWT       
+     &                SUDPW, SUDW, SUWT, SumTTStalk       
 
 !-----------------------------------------------------------------------
 !     Surface and soil residue due to daily senescence of plant matter
@@ -121,7 +124,9 @@ C=======================================================================
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
       FILEIO  = CONTROL % FILEIO
+      REPNO   = CONTROL % REPNO  ! FSR
       RUN     = CONTROL % RUN
+      RNMODE  = CONTROL % RNMODE ! FSR
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
 
@@ -357,21 +362,20 @@ C-----------------------------------------------------------------------
 !!!      F = FFVEG
 !      IF (XFRT*FRACDN .GE. 0.05) F = FFVEG * (1.0 - XFRT * FRACDN)
 !-----------------------------------------------------------------------
-! Compute SLAREF based on three observations: XDAY(3) days after planting
-! and YSLA(3).  With sufficient data, may change DAP for thermal time.
+! Compute SLAREF based on six observations: XDAY(6) days after planting
+! and YSLA(6).  With sufficient data, may change DAP for thermal time.
 
       IF (DAP <= XDAY(1)) THEN
           SLAREF = YSLA(1)
 
-        ELSEIF (DAP > XDAY(1) .AND. DAP < XDAY(3)) THEN
+        ELSEIF (DAP > XDAY(1) .AND. DAP < XDAY(6)) THEN
 !         Call to TABEX requires 'REAL' arguments
-          DO I = 1, 3
+          DO I = 1, 6
             DAYS(I) = FLOAT(XDAY(I))
           ENDDO
-!         SLAREF =  TABEX(YSLA, XDAY, DAP, 3) 
-          SLAREF =  TABEX(YSLA, DAYS, FLOAT(DAP), 3) 
-        ELSEIF  (DAP >= XDAY(3)) THEN
-          SLAREF = YSLA(3)
+          SLAREF =  TABEX(YSLA, DAYS, FLOAT(DAP), 6) 
+        ELSEIF  (DAP >= XDAY(6)) THEN
+          SLAREF = YSLA(6)
 
       ENDIF
 !-----------------------------------------------------------------------
@@ -420,10 +424,9 @@ C-----------------------------------------------------------------------
 !       reasonable estimates using per-stalk growth. 
 !
 C Note: Parameter CAB postpones demand for stalk tissue until after leaves 
-C comprising "cabbage" have formed.  Note that there are fewer nodes than  
-C leaves (due to stalkless "cabbage" leaf group), and stalk does not become 
-C apparent until the "great growth" period begins. [FSR-Is this correct, or is
-C there only a lag between leaf and node development?]
+C comprising "cabbage" have formed.  Note that there are fewer internodes than  
+C leaves (or at least very short internodes due to stalkless "cabbage" leaf group) 
+C and stalk does not become apparent until the "great growth" period begins. 
 !
           IF ((LeafNum(DAS-1,Stalk) >= CAB) .AND.
      &        (StalkState(Stalk,1) .EQ. 'LIVE')) THEN
@@ -555,12 +558,19 @@ C there only a lag between leaf and node development?]
 ! DPSUG       potential increase of sucrose accumulation (g [sucrose] / plant)
 ! SUDPW(i,j)  Potential increase in sucrose weight; day i and stalk j
 !             (g[sucrose]/stalk-d)    
-!
-          IF (StalkState(Stalk,1) .EQ. 'LIVE') THEN      
+
+C Note: Parameter CAB postpones demand for stalk tissue until after leaves 
+C comprising "cabbage" have formed, therefore no sugars should be produced.  
+
+  
+          IF ((LeafNum(DAS-1,Stalk) >= CAB) .AND.
+     &        (StalkState(Stalk,1) .EQ. 'LIVE')) THEN
 
               FRSU = TABEX(YFRSU, XFRSU, LeafNum(DAS-1, Stalk), 4)
-              SUDPW(DAS,Stalk) = FRSU 
-     &           * (STKDPW(DAS,Stalk)+LFDPW(DAS,Stalk)+LSDPW(DAS,Stalk))
+
+              SUDPW(DAS,Stalk) = FRSU * (STKDPW(DAS,Stalk)
+     &                         + LFDPW(DAS,Stalk)+LSDPW(DAS,Stalk))
+
           ELSE
               SUDPW(DAS,Stalk) = 0.
 
@@ -718,7 +728,6 @@ C there only a lag between leaf and node development?]
 
           ShootCTotSup = ShootCTotSup + ShootCSUP(DAS,Stalk)
 !-----------------------------------------------------------------------
-!
 ! Total amount of today's potential stalk, leaf, root and sucrose growth 
 ! for all stalks 
 ! 
@@ -729,37 +738,37 @@ C there only a lag between leaf and node development?]
 !             partition between stalk and sucrose.  
 
            IF (SUDW(DAS,Stalk) > 0) THEN  ! if sucrose exists, 
-                                          ! then a stalk must exist
-          
-              SUDWtmp = ((1-GAMMA) * CAV(DAS,Stalk) / GRSU)
+                                           ! then a stalk must exist
+           
+               SUDWtmp = ((1-GAMMA) * CAV(DAS,Stalk) / GRSU)
+ 
+               CAV(DAS,Stalk) = CAV(DAS,Stalk) - (SUDWtmp * GRSU)
+ 
+               SUDW(DAS,Stalk)  = SUDW(DAS,Stalk)  + SUDWtmp 
+ 
+               STKDWtmp =  CAV(DAS,Stalk) / GRST
+ 
+               CAV(DAS,Stalk) = CAV(DAS,Stalk) - (STKDWtmp * GRST)
+               
+               STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
+ 
+!              temp(Stalk) = CAV(DAS,Stalk)   ! debugging 
 
-              CAV(DAS,Stalk) = CAV(DAS,Stalk) - (SUDWtmp * GRSU)
-
-              SUDW(DAS,Stalk)  = SUDW(DAS,Stalk)  + SUDWtmp 
-
-              STKDWtmp =  CAV(DAS,Stalk) / GRST
-
-              CAV(DAS,Stalk) = CAV(DAS,Stalk) - (STKDWtmp * GRST)
-              
-              STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
-
-!             temp(Stalk) = CAV(DAS,Stalk)   ! debugging 
-
-           ELSE  
-!
-              IF (STKDW(DAS,Stalk) > 0) THEN ! if stalk but no sucrose
-                  STKDWtmp = (CAV(DAS,Stalk) / GRST)
-
-                  CAV(DAS,Stalk) = CAV(DAS,Stalk) - (STKDWtmp * GRST)
-                  
-                  STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
-              
-              END IF
-          END IF
+            ELSE  
+ 
+               IF (STKDW(DAS,Stalk) > 0) THEN ! if stalk but no sucrose
+                   STKDWtmp = (CAV(DAS,Stalk) / GRST)
+ 
+                   CAV(DAS,Stalk) = CAV(DAS,Stalk) - (STKDWtmp * GRST)
+                   
+                   STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
+               
+               END IF
+           END IF
           
           SUDWtmp  = 0.0
           STKDWtmp = 0.0
-
+!-----------------------------------------------------------------------
 !  Calculate CH2O-limited growth rates
   
         ELSE ! RatioSDC(DAS,Stalk) < 1   CH2O is limiting on this day
@@ -775,10 +784,18 @@ C there only a lag between leaf and node development?]
                 SEEDCH2O = SEEDCH2O - GroDEF(Stalk)
                 SEEDCH2O = MAX(0., SEEDCH2O)  
           END IF ! (LeafNum(DAS-1,Stalk) < CAB)
- 
-!     Prioritize proportion PLF of limited CH2O to leaf growth
-          CAVLF = PLF * CAV(DAS,Stalk)
-          CAVR  = (1 - PLF) * CAV(DAS,Stalk)
+!----------------------------------------------------------------------- 
+!     Prioritize proportion PLF1 (early stalk development) 
+!     or PLF2 (mature stalk) of limited CH2O to leaf growth
+
+       IF(SumTTStalk(DAS-1, Stalk) .LT. DTPI) THEN   
+          CAVLF = PLF1 * CAV(DAS,Stalk)    ! Primary only here
+          CAVR  = (1 - PLF1) * CAV(DAS,Stalk)
+       ELSE 
+          CAVLF = PLF2 * CAV(DAS,Stalk)
+          CAVR  = (1 - PLF2) * CAV(DAS,Stalk)
+       END IF ! (LeafNum(DAS-1,Stalk) < CAB)
+!-----------------------------------------------------------------------
 
 !     CH2O-limited LEAF growth rate
           LFDW(DAS,Stalk) = LFDPW(DAS,Stalk)
@@ -890,9 +907,17 @@ C there only a lag between leaf and node development?]
 
              END IF ! (LeafNum(DAS-1,Stalk) < CAB)
 !-----------------------------------------------------------------------
-! Partition proportion of limited CH2O to leaf growth
-          CAVLF = PLF * CAV(DAS,Stalk) 
-          CAVR  = (1 - PLF) * CAV(DAS,Stalk)
+!     Prioritize proportion PLF1 (early stalk development) 
+!     or PLF2 (mature stalk) of limited CH2O to leaf growth
+
+       IF(SumTTStalk(DAS-1, Stalk) .LT. DTPI) THEN   
+          CAVLF = PLF1 * CAV(DAS,Stalk)
+          CAVR  = (1 - PLF1) * CAV(DAS,Stalk)
+       ELSE 
+          CAVLF = PLF2 * CAV(DAS,Stalk)
+          CAVR  = (1 - PLF2) * CAV(DAS,Stalk)
+       END IF ! (LeafNum(DAS-1,Stalk) < CAB)
+!-----------------------------------------------------------------------
 
 !     CH2O-limited LEAF growth increments
           LFDW(DAS,Stalk) = LFDPW(DAS,Stalk)
@@ -1546,9 +1571,9 @@ C-----------------------------------------------------------------------
 ! PGAVL     Total daily CH2O available for growth & respiration
 !             (g[CH2O] / m2 / d)
 ! PGLEFT(j)  Excess PG for stalk j after today's tissue growth (g [CH2O] / stalk)
-! PLF        Proportion of CH2O available to leaves under CH2O-limited conditions
+! PLF1       Proportion of CH2O available to leaves under CH2O-limited conditions for young stalk
+! PLF2       Proportion of CH2O available to leaves under CH2O-limited conditions for mature stalk 
 ! PLTPOP     Plant population (# plants / m2)
-! PLF        Max proportion of CH2O to leaves, under CH2O-limited conditions
 ! PLWT       Fresh weight of seed cane planted in field [(kg/ ha)]
 ! RatioSDC(i,j) Ratio of available CH2O to demand for CH2O based on potential growth  
 !               on day i of stalk j

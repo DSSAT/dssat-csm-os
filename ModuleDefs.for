@@ -65,7 +65,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE (VersionType) Version
 
 !     Version history:
-!       4.5.0.51 chp 07/28/2010 Fixed format error in cultivar sensitivity.
+!       4.5.0.51b chp 07/28/2010 Fixed format error in cultivar sensitivity.
+!       4.5.0.51a chp 07/01/2010 CASUPRO bug fixes, with revised cultivar file.
 !       4.5.0.50 chp 07/01/2010 Fixed problem with mulch layer initialization.
 !       4.5.0.49 chp 06/29/2010 Minor changes CSCER, CSCRP.
 !       4.5.0.48 chp 06/09/2010 Post-Griffin Workshop.
