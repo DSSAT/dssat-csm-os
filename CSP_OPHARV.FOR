@@ -112,7 +112,7 @@ C-----------------------------------------------------------------------
      & 'SMFMH ', ! 1   Millable cane fresh weight at harvest, (t/ha)
      & 'SUCH  ', ! 2   Sucrose at harvest (t/ha) 
      & 'SSTKH ', ! 3   Stalk (structure, no sucrose) dry weight at harvest (t/ha) 
-     & 'BADMH ', ! 4   Above-ground biomass (live) at harvest (t/ha)
+     & 'BADMH ', ! 4   Above-ground biomass (live+dead) at harvest (t/ha)
      & 'TRSH  ', ! 5   Above-ground biomass minus stalks harvested (t/ha)
      & 'LAIX  ', ! 6   Maximum leaf area index this season (m2[leaf]/m2[ground])
      & 'LAIXD ', ! 7   Day of max leaf area index (DAP)

@@ -732,40 +732,46 @@ C comprising "cabbage" have formed, therefore no sugars should be produced.
 ! for all stalks 
 ! 
 !             Within these IF statements, remaining CH2O in each
-!             stalk (CAV - CDEMND)is computed and becomes sucrose   
-!             and/or stalk tissue (only if sucrose and stalk
-!             tissue already exist). GAMMA parameter determines 
-!             partition between stalk and sucrose.  
+!             stalk (CAV - CDEMND)is computed and converted into as 
+!             much as another day’s demand (for that day) of sucrose 
+!             or stalk DM. The GAMMA parameter determines the
+!             partition for CH2O to stalk DM or sucrose.  
 
            IF (SUDW(DAS,Stalk) > 0) THEN  ! if sucrose exists, 
                                            ! then a stalk must exist
-           
-               SUDWtmp = ((1-GAMMA) * CAV(DAS,Stalk) / GRSU)
- 
-               CAV(DAS,Stalk) = CAV(DAS,Stalk) - (SUDWtmp * GRSU)
+               SUDWtmp = ((1-GAMMA) * CAV(DAS,Stalk)) / GRSU
+               
+ !             Limits daily sucrose accumulation from excess CH2O
+               SUDWtmp = MIN(SUDWtmp,SUDPW(DAS,Stalk)) 
  
                SUDW(DAS,Stalk)  = SUDW(DAS,Stalk)  + SUDWtmp 
  
-               STKDWtmp =  CAV(DAS,Stalk) / GRST
- 
-               CAV(DAS,Stalk) = CAV(DAS,Stalk) - (STKDWtmp * GRST)
+               STKDWtmp =  (GAMMA * CAV(DAS,Stalk)) / GRST
+               
+ !             Limits daily stalk DM accumulation from excess CH2O
+               STKDWtmp = MIN(STKDWtmp,STKDPW(DAS,Stalk)) 
                
                STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
  
-!              temp(Stalk) = CAV(DAS,Stalk)   ! debugging 
-
             ELSE  
  
-               IF (STKDW(DAS,Stalk) > 0) THEN ! if stalk but no sucrose
-                   STKDWtmp = (CAV(DAS,Stalk) / GRST)
+            IF (STKDW(DAS,Stalk) > 0) THEN ! if stalk but no sucrose 
  
-                   CAV(DAS,Stalk) = CAV(DAS,Stalk) - (STKDWtmp * GRST)
-                   
-                   STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
+               STKDWtmp =  (GAMMA * CAV(DAS,Stalk)) / GRST
                
-               END IF
+ !             Limits daily stalk DM accumulation from excess CH2O
+               STKDWtmp = MIN(STKDWtmp,STKDPW(DAS,Stalk)) 
+               
+               STKDW(DAS,Stalk) = STKDW(DAS,Stalk) + STKDWtmp
+               
+            END IF          
+            
+            CAV(DAS,Stalk) = CAV(DAS,Stalk)
+     &                     -((SUDWtmp*GRSU) + (STKDWtmp*GRST))
+
            END IF
-          
+          temp(Stalk) = CAV(DAS,Stalk)   ! debugging 
+
           SUDWtmp  = 0.0
           STKDWtmp = 0.0
 !-----------------------------------------------------------------------
