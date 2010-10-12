@@ -863,7 +863,7 @@ C          Branch to menu choice
              CASE(31); CALL GETREAL (Ph4      ,'Ph4      ', 5000.,8000.)
              CASE(32); CALL GETREAL (StkHrNO  ,'StkHrNO  ', 1.0, 20.0)
              CASE(33); CALL GETREAL (RTNFAC   ,'RTNFAC   ', 0.5, 4.0)
-             CASE(34); CALL GETREAL (MinGr    ,'MinGr    ', 0.1, 3.0)
+             CASE(34); CALL GETREAL (MinGr    ,'MinGr    ', 40.,100.)
              CASE(35); CALL GETREAL (RES30C   ,'RES30C   ', 0.1, 0.6)
              CASE(36); CALL GETREAL (RLF30C   ,'RLF30C   ', 0.5, 3.0)
              CASE(37); CALL GETREAL (R30C2    ,'R30C2    ', 3.0, 5.0)
