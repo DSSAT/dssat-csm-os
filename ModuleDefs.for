@@ -60,11 +60,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 1
-        INTEGER :: Build = 0
+        INTEGER :: Build = 1
       END TYPE VersionType
       TYPE (VersionType) Version
 
 !     Version history:
+!       4.5.1.1  chp 10/19/2010 ICRISAT workshop modifications
 !       4.5.1.0  chp 10/10/2010 V4.5 Release version
 !       4.0.2.0  chp 08/11/2005 Release
 !       4.0.1.0  chp 01/28/2004 Release Version 
