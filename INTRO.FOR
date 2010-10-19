@@ -57,14 +57,14 @@ C=======================================================================
      & 'ิออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ'/
 
       DATA BOX_DAT/
-     & 'ณ                                  26 October 2007       ณ'/
+     & 'ณ                                  10 October 2010       ณ'/
 
       DATA ZCG/
      & '                         ICASA                          ',
      & '                                                        ',
      & '    G.Hoogenboom, J.W.Jones, C.H.Porter, K.J.Boote,     ',
-     & '          L.A.Hunt, A.J.Gijsman, J.I.Lizaso,            ',
-     & '    P.W.Wilkens, U.Singh, J.W.White, W.D.Batchelor      ',
+     & '          L.A.Hunt, J.W. White, J.I.Lizaso,             ',
+     & '    P.W.Wilkens, U.Singh, F.S. Royce, and R. Ogoshi     ',
      & '                                                        ',
      & ' The Cropping System Model (CSM) is a comprehensive     ',
      & ' simulation model that incorporates the features of the ',
