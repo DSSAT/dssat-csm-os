@@ -3351,7 +3351,9 @@
             IF (RTWTG.LT.RLDGR*RTDEPG/((RLWR*1.0E4)*PLTPOP)) THEN
               RTWTGS = AMAX1(0.0,AMIN1(SDAFR*SEEDRSAV,
      &        (RLDGR*RTDEPG/((RLWR*1.0E4)*PLTPOP) - RTWTG)))
-               SEEDRSAV = SEEDRSAV - RTWTGS
+!             10/22/2010  chp added to prevent underflow later
+              IF (RTWTGS < 1.E-10) RTWTGS = 0.0
+              SEEDRSAV = SEEDRSAV - RTWTGS
             ENDIF
                                                                        
             ! Root dry matter distribution with depth
@@ -3394,7 +3396,10 @@
             DO  L = 1, L1
               TRLDF = TRLDF + RLDF(L)
             END DO
-            IF (TRLDF.GT.0.0) THEN
+            
+!           chp added 10/22/2010
+!           IF (TRLDF.GT.0.0) THEN
+            IF (TRLDF.GT.1.E-8 .AND. (RTWTG+RTWTGS)> 1.E-10) THEN
               DO  L = 1, L1
                 RTWTGL(L) = (RLDF(L)/TRLDF)*(RTWTG+RTWTGS)
               END DO
