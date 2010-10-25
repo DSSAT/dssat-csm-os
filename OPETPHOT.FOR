@@ -88,6 +88,8 @@ C-------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
+        IF (NOUTDC == 0) RETURN
+
         IF ((DYNAMIC .EQ. OUTPUT.AND. MOD(DAS,FROP) .EQ. 0) .OR.
      &      (DYNAMIC .EQ. SEASEND .AND. MOD(DAS,FROP) .NE. 0) .OR. 
      &       DAS == 1) THEN 
