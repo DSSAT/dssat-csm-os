@@ -850,6 +850,10 @@ C  tillage and rainfall kinetic energy
       ISWTIL = ISWITCH % ISWTIL
       NTIL = TILLVALS % NTIL
 
+      CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
+     &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
+     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
+
 !     Skip initialization for sequenced runs:
       IF (INDEX('FQ',RNMODE) > 0 .AND. RUN /= 1) RETURN
 
@@ -897,10 +901,6 @@ C  tillage and rainfall kinetic energy
       SOILPROP % SWCN  = SWCN  
       SOILPROP % TOTN  = TOTN
       SOILPROP % TotOrgN=TotOrgN
-
-      CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
-     &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
-     &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
 
 !***********************************************************************
 !***********************************************************************
