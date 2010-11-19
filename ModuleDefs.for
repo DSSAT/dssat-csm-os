@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 1
-        INTEGER :: Build = 2
-        CHARACTER(len=10) :: Branch = 'Release   '
+        INTEGER :: Build = 3
+        CHARACTER(len=10) :: Branch = ' -Release '
       END TYPE VersionType
       TYPE (VersionType) Version
 
 !     Version history:
+!       4.5.1.3  chp 11/19/2010 Branch added
 !       4.5.1.2  chp 10/22/2010 ICRISAT workshop modifications - part II
 !       4.5.1.1  chp 10/19/2010 ICRISAT workshop modifications
 !       4.5.1.0  chp 10/10/2010 V4.5 Release version
