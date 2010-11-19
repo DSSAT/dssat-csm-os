@@ -29,6 +29,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !  08/21/2008 CHP Add ROTNUM to CONTROL variable
 !  11/25/2008 CHP Mauna Loa CO2 is default
 !  12/09/2008 CHP Remove METMP
+!  11/19/2010 CHP Added "branch" to version to keep track of non-release branches
 !=======================================================================
 
       MODULE ModuleDefs
@@ -61,6 +62,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Minor = 5
         INTEGER :: Model = 1
         INTEGER :: Build = 2
+        CHARACTER(len=10) :: Branch = 'Release   '
       END TYPE VersionType
       TYPE (VersionType) Version
 

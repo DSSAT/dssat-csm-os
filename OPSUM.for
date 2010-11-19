@@ -423,7 +423,7 @@ C-------------------------------------------------------------------
   300       FORMAT (
      &      '*SUMMARY : ',A8,A2,1X,A60,1X,
      &      'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',
-     &       I3.3,5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &       I3.3,A,5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
 
           ELSE
             WRITE (NOUTDS,305) EXPER, CG, ENAME, 
@@ -433,7 +433,7 @@ C-------------------------------------------------------------------
   305       FORMAT (
      &      '*SUMMARY : ',A8,A2,1X,A60,1X,A,A,5X,
      &      'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',
-     &      I3.3,5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &      I3.3,A,5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
           ENDIF
 
           WRITE(NOUTDS,310)
@@ -651,7 +651,7 @@ C-------------------------------------------------------------------
   700     FORMAT ('*EVALUATION : ',A8,A2,1X,A60,1X,
 ! 700     FORMAT ('*EVALUATION : ',A8,1X,A8,A2,1X,A60,1X,
      &    'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',I3.3,
-     &     5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &     A,5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
         ENDIF
 
 !       Write headers if new crop is being processed
