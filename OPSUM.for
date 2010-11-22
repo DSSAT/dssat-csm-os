@@ -417,23 +417,25 @@ C-------------------------------------------------------------------
           IF (SimLen < 1) THEN
       
 !           Version information stored in ModuleDefs.for
-            WRITE (NOUTDS,300) EXPER,CG,ENAME,Version,
+            WRITE (NOUTDS,300) EXPER, CG, ENAME, Version, VBranch,
      &        MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1), 
      &             DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
   300       FORMAT (
      &      '*SUMMARY : ',A8,A2,1X,A60,1X,
      &      'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',
-     &       I3.3,A,5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &       I3.3,1X,A10,4X,
+     &       A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
 
           ELSE
             WRITE (NOUTDS,305) EXPER, CG, ENAME, 
      &        "Simulation Control file: ", CONTROL%SimControl(1:SimLen),
-     &        Version, MonthTxt(DATE_TIME(2)), DATE_TIME(3), 
+     &        Version, VBranch, MonthTxt(DATE_TIME(2)), DATE_TIME(3), 
      &        DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
   305       FORMAT (
      &      '*SUMMARY : ',A8,A2,1X,A60,1X,A,A,5X,
      &      'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',
-     &      I3.3,A,5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &      I3.3,1X,A10,4X,
+     &      A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
           ENDIF
 
           WRITE(NOUTDS,310)
@@ -644,14 +646,14 @@ C-------------------------------------------------------------------
           OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'NEW',
      &      IOSTAT = ERRNUM)
           CALL DATE_AND_TIME (VALUES=DATE_TIME)
-          WRITE (SLUN,700) EXPER, CG, ENAME, Version,
+          WRITE (SLUN,700) EXPER, CG, ENAME, Version, VBranch,
 !         WRITE (SLUN,700) MODEL, EXPER, CG, ENAME, Version,
      &        MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1), 
      &        DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
   700     FORMAT ('*EVALUATION : ',A8,A2,1X,A60,1X,
 ! 700     FORMAT ('*EVALUATION : ',A8,1X,A8,A2,1X,A60,1X,
      &    'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',I3.3,
-     &     A,5X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &     1X,A10,4X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
         ENDIF
 
 !       Write headers if new crop is being processed
