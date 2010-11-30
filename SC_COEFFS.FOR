@@ -100,8 +100,8 @@ c         was actually read from file:
 c         The name of the cultivar file
           CHARACTER*256 FILENAME
 
-c         The name of the ecotype file
-          CHARACTER*256 ECO_FNAME
+!c         The name of the ecotype file
+!          CHARACTER*256 ECO_FNAME
 
 !         Name of INH file (temporary input, like INP)
           CHARACTER*30 FILEIOH

@@ -44,7 +44,7 @@ C=======================================================================
       INTEGER	  DYNAMIC      
       INTEGER     ERR 
       CHARACTER*6     ERRKEY                
-      CHARACTER*12    FILEC     
+!      CHARACTER*12    FILEC     
       CHARACTER*92    FILECC
       CHARACTER*12    FILES      
       INTEGER     FOUND        
