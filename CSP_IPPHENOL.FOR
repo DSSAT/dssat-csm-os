@@ -16,6 +16,7 @@ C  09/26/2001 OHD adapted for the sugarcane model (CASUPRO)
 C  08/12/2003 CHP Added I/O error checking
 C  08/22/2003 FSR updated to DSSAT 4.0
 C  07/26/2004 CHP Removed variables which were not being used
+C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C-----------------------------------------------------------------------
 C  Called by: CSP_PHENOL
 C  Calls    : ERROR, FIND, IGNORE
@@ -23,7 +24,7 @@ C=========================================================================
 
       SUBROUTINE CSP_IPPHENOL(CONTROL, FILECC,
      &           CROP,  DTPI, Gmax, Go, ISIMI,                !Output
-     &           LI1, MinKg, Ph1P, Ph1R, Ph2, Ph3,            !Output 
+     &           LI1, MinGr, Ph1P, Ph1R, Ph2, Ph3,            !Output 
      &           Ph4, PI1, PI2, PLANTS, PLME, PLTPOP,         !Output
      &           RTNFAC, ROWSPC, SDEPTH, Smax, So,            !Output
      &           StkHrNO, TB, TELOM, TM, TO1,                 !Output
@@ -62,13 +63,13 @@ C=========================================================================
       PARAMETER (NPHS = 4)          ! Number of plant phases = 4
 
       REAL AZIR, SDEPTH, PLANTS, PLTPOP, RTNFAC, ROWSPC
-      REAL PI1, PI2, DTPI, Smax, So, Gmax, Go, MinKg
+      REAL PI1, PI2, DTPI, Smax, So, Gmax, Go, MinGr
       REAL Ph1P, Ph1R, Ph2, Ph3, Ph4, PHTMAX
 
       REAL TB(5), TO1(5), TO2(5), TM(5), XLFNUM(7), YLFSZ(7) 
       REAL XStkNum(9), YLfFac(9) 
       REAL XLI(7), YVTR(7)
-	REAL empty, Gamma, LFMAX, LI1, LIsun, LIshd, PLF 
+	REAL empty, Gamma, LFMAX, LI1, LIsun, LIshd, PLF1, PLF2 
 	REAL R30C2, RES30C, RLF30C, SIZLF, LSFAC 
 	REAL StkB, StkM, StkHrNO, StkH2OFac,SuH2OFac, TELOM
 !      REAL NSENP(20), PSENP(20), WSENP(20), 
@@ -149,12 +150,12 @@ C=========================================================================
         CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
         IF (FOUND .EQ. 0) CALL ERROR (SECTION, 42, FILEIO,LNUM)
         READ(LUNIO,165,IOSTAT=ERR) VARNO, VARNAME, ECONO,
-     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,empty,PLF,
-     &          Gamma,StkB,StkM,empty,empty,
+     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,empty,PLF1,
+     &          PLF2,Gamma,StkB,StkM,empty,
      &          SIZLF,LIsun,LIshd,empty,TB(1),TO1(1),TO2(1),TM(1),
      &          PI1,PI2,DTPI,LSFAC,empty,LI1,TELOM,TB(2),TO1(2),
      &          TO2(2),TM(2),Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,
-     &          MinKg,empty,RES30C,RLF30C,R30C2,empty,empty 
+     &          MinGr,empty,RES30C,RLF30C,R30C2,empty,empty 
 
   165   FORMAT(A6,1X,A16,1X,A6,44F6.0)                   !02/10/2009 
 !!!  165   FORMAT(A6,1X,A16,1X,A6,7(1X,F5.0))
@@ -203,11 +204,12 @@ C------ Find particular ECOTYPE ----------------------------------------
 
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  !CAB
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
-		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)	
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)	
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
-		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) !YSLA(3)
+		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)	
+		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
+		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR) !YSLA(6)
 
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
 		READ(CHAR,'(11X,6F9.0)',IOSTAT=ERR) (XLI(II),II=1,6)

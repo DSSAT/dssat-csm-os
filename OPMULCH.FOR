@@ -15,7 +15,7 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      CHARACTER*1 IDETL, IDETW 
+      CHARACTER*1 IDETL, IDETW, ISWWAT
       CHARACTER*13, PARAMETER :: MWBAL = 'MulWatBal.OUT'
 
       INTEGER DAS, DOY, DYNAMIC, FROP, INCDAT 
@@ -44,12 +44,13 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       RUN = CONTROL % RUN
-      IDETL = ISWITCH % IDETL
-      IDETW = ISWITCH % IDETW
+      IDETL  = ISWITCH % IDETL
+      IDETW  = ISWITCH % IDETW
+      ISWWAT = ISWITCH % ISWWAT
 !      PRINTBAL = .TRUE.
       PRINTDAY = .TRUE.
 !      IF (INDEX('AD',IDETL) < 1) PRINTBAL = .FALSE.
-      IF (IDETW .NE. 'Y' .OR. IDETL == '0') THEN
+      IF (IDETW .NE. 'Y' .OR. IDETL == '0' .OR. ISWWAT .NE. 'Y') THEN
         PRINTDAY = .FALSE.
 !        PRINTBAL = .FALSE.
       ENDIF

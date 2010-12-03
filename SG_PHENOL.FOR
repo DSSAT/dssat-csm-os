@@ -500,7 +500,6 @@ C--------------------------------------------------------------------
 !           are present (non-zero) then use alternate method.
          IF (PBASE < 1.E-2 .OR. PSAT < 1.E-2) THEN
 
-
 C-GH-2008
 C        Revised calculation of degree days to panicle initiation
 C          Total degree days to panicle initiation is a function of
@@ -516,14 +515,14 @@ C          Original method
 C
            IF (TWILEN > P2O) THEN
 C-GH         RATEIN = 1. / (P2 +  P2R * (TWILEN - P2O))
-	       RATEIN = P2 +  P2R * (TWILEN - P2O)
+             RATEIN = P2 +  P2R * (TWILEN - P2O)
            ELSE
 C-GH         RATEIN = 1. / P2
              RATEIN = P2
            ENDIF
 C-GH       SIND = SIND + RATEIN * PDTT
            CUMP2 = CUMP2 + PDTT
-	     SIND = AMAX1(SIND,CUMP2/RATEIN)
+           SIND = AMAX1(SIND,CUMP2/RATEIN)
 
 !         -----------------------------------------------------------
 !        Threshold hyperbolic option
@@ -538,12 +537,12 @@ C-GH       SIND = SIND + RATEIN * PDTT
 
 !--------------------------------------------------------------------
 
-C-GH      IF (SIND .LT. 1.0) RETURN
-          IF (CUMP2 .LT. RATEIN) THEN
-		  RETURN
-	    ELSE
-            STGDOY(ISTAGE) = YRDOY
-      	ENDIF
+C-GH     IF (SIND .LT. 1.0) RETURN
+         IF (CUMP2 .LT. RATEIN) THEN
+           RETURN
+         ELSE
+           STGDOY(ISTAGE) = YRDOY
+         ENDIF
   
 C--------------------------------------------------------------------
 C         ISTAGE = 3: Determine end of flag leaf expansion

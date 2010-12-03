@@ -201,8 +201,9 @@ c     MJ, Mar 2008: added HDATE_YR and HDATE_DOY
 !      date_time(8)  The milliseconds of the second (range 0 to 999) - local time  
       
 !     Version information stored in ModuleDefs.for
-      WRITE (HEADER(1),100) Version,MonthTxt(DATE_TIME(2)),DATE_TIME(3),
-     &    DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
+      WRITE (HEADER(1),100) Version, VBranch, MonthTxt(DATE_TIME(2)),
+     &    DATE_TIME(3), DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), 
+     &    DATE_TIME(7)
       WRITE (HEADER(2),'(" ")')
 !     WRITE (HEADER(3),200) MOD(RUN,1000),TITLET
 !     WRITE (HEADER(3),201) MOD(RUN,1000),TITLET,MODEL
@@ -412,7 +413,8 @@ C     Format Strings
 C-----------------------------------------------------------------------
 
   100 FORMAT ("*DSSAT Cropping System Model Ver. ",I1,".",I1,".",I1,
-     &     ".",I3.3,15X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &    ".",I3.3,1X,A10,4X,
+     &    A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
   200 FORMAT ('*RUN ',I3,8X,': ',A25)
 ! 201 FORMAT ('*RUN ',I3,8X,': ',A25,1X,A8)
 
@@ -970,8 +972,9 @@ C========================================================================
         WRITE(LUNDES,'(/,A80)') HEADERS % Header(1)
       ELSE
         CALL DATE_AND_TIME (VALUES=DATE_TIME)
-        WRITE (LUNDES,500)Version,MonthTxt(DATE_TIME(2)),DATE_TIME(3), 
-     &    DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
+        WRITE (LUNDES,500)Version, VBranch, MonthTxt(DATE_TIME(2)),
+     &    DATE_TIME(3), DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), 
+     &    DATE_TIME(7)
         WRITE(LUNDES,1200) MOD(RUN,1000)
         RETURN
       ENDIF
@@ -1021,7 +1024,8 @@ C========================================================================
       RETURN
 
   500   FORMAT ("*DSSAT Cropping System Model Ver. ",I1,".",I1,".",I1,
-     &     ".",I3.3,15X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
+     &    ".",I3.3,1X,A10,4X,
+     &    A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
  1200   FORMAT (/,'*RUN ',I3,/)
 
       END SUBROUTINE HEADER

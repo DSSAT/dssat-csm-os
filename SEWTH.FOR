@@ -422,7 +422,7 @@ C-----------------------------------------------------------------------
      &        /, 6X,'or select another entry')
   300 FORMAT (3X,A12,1X,A26,2(1X,F8.3),1X,F5.0)
   350 FORMAT (4X,A12,1X,A26,2(1X,F8.3),1X,F5.0)
-  400 FORMAT (1X,I3,')',1X,A25,2(1X,F8.3),1X,F6.0,2X,A4,3X,A12)
+  400 FORMAT (I5,')',1X,A25,2(1X,F8.3),1X,F6.0,2X,A4,3X,A12)
   500 FORMAT (/,6X,'More.... PRESS ENTER KEY')
   900 FORMAT (/,6X,'WEATHER DATA SELECTED ===>',1X,I3,
 !chp     &        /,6X,'ALTERNATE SELECTION ? --->',2X,' ',$)

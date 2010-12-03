@@ -29,6 +29,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !  08/21/2008 CHP Add ROTNUM to CONTROL variable
 !  11/25/2008 CHP Mauna Loa CO2 is default
 !  12/09/2008 CHP Remove METMP
+!  11/19/2010 CHP Added "branch" to version to keep track of non-release branches
 !=======================================================================
 
       MODULE ModuleDefs
@@ -59,58 +60,17 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE VersionType
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
-        INTEGER :: Model = 0
-        INTEGER :: Build =51
+        INTEGER :: Model = 1
+        INTEGER :: Build = 3
       END TYPE VersionType
       TYPE (VersionType) Version
+      CHARACTER(len=10) :: VBranch = '-Release  '
 
-!     Version history:
-!       4.5.0.51 chp 07/28/2010 Fixed format error in cultivar sensitivity.
-!       4.5.0.50 chp 07/01/2010 Fixed problem with mulch layer initialization.
-!       4.5.0.49 chp 06/29/2010 Minor changes CSCER, CSCRP.
-!       4.5.0.48 chp 06/09/2010 Post-Griffin Workshop.
-!       4.5.0.47 chp 05/06/2010 Griffin Workshop.
-!       4.5.0.46 chp 04/22/2010 Further changes to CSCRP genotype files.
-!       4.5.0.45 chp 04/16/2010 Changes to CSCER, CSCRP genotype files.
-!       4.5.0.44 chp 03/19/2010 Canegro cultivar file has EXPNO.
-!       4.5.0.43 chp 03/19/2010 Sensitivity analysis parameters updated or disabled.
-!       4.5.0.42 chp 02/09/2010 Error handling, batch continues.
-!       4.5.0.41 chp 02/08/2010 Resource productivity.
-!       4.5.0.40 chp 01/12/2010 Ammonia volatilization bug fixed.
-!       4.5.0.39 chp 01/08/2010 Changes to default switch settings, output options
-!       4.5.0.38 chp 11/02/2009 GIT source control starting version
-!       4.5.0.37 chp 09/09/2009 Gainesville meeting version
-!       4.5.0.36 chp 06/18/2009 Pre-release version
-!       4.5.0.35 chp 03/23/2009 Pre-release workshops
-!       4.5.0.34 chp 01/29/2009 Post-workshop version
-!       4.5.0.33 chp 12/07/2008 Manoa workshop version, Pre-release
-!       4.5.0.32 chp 11/25/2008 Mauna Loa CO2 default
-!       4.5.0.31 chp 10/15/2008 Ksat issues 
-!       4.5.0.30 chp 09/03/2008 Minor changes 
-!       4.5.0.29 chp 08/08/2008 Compiler directives and OPSYS for Linux
-!       4.5.0.28 chp 07/10/2008 Pre-release version -- no more major changes!
-!       4.5.0.27 chp 05/29/2008 Post-workshop version
-!       4.5.0.26 chp 04/28/2008 K model added
-!       4.5.0.25 chp 03/27/2008 P, SOM model modifications
-!       4.5.0.24 chp 02/12/2008 Changes to Century decomposition rates
-!       4.5.0.23 chp 01/23/2008 Added ModuleData -- need to transfer data to Tony's routines.
-!       4.5.0.22 chp 01/02/2008 Happy New Year version
-!       4.5.0.21 chp 11/27/2007 Cultivar file changes
-!       4.5.0.20 chp 10/25/2007 Argentina workshop version (not actually used)
-!       4.5.0.19 chp 10/10/2007 Pre-DSSAT meeting Gainesville
-!       4.5.0.18 chp 09/30/2007 Added simulation control file.
-!       4.5.0.17 chp 08/19/2007 Minor changes.
-!       4.5.0.16 chp 07/24/2007 South Africa Workshop model.
-!       4.5.0.15 chp 07/17/2007 Pre-South Africa Workshop model.
-!       4.5.0.14 chp 07/05/2007 Default simulation control file added.
-!       4.5.0.13 chp 06/29/2007 ISWITCH as input module argument
-!       4.5.0.12 chp 06/27/2007 Revisions to SA-Canegro, OC decomp.
-!       4.5.0.11 chp 06/08/2007 Mulch modeling is default, sweet corn complete
-!       4.5.0.10 chp 05/26/2007 Revised Canegro-SA, added sweet corn (partial)
-!       4.5.0.9  chp 05/09/2007 Added fresh weight option
-!       4.5.0.8  chp 03/20/2007 Changes at IFDC 
-!       4.5.0.7  chp 02/06/2007 Rename pre-release model to v4.5 (was 4.6) 
-
+!     Version history:  
+!       4.5.1.3  chp 11/19/2010 Branch added
+!       4.5.1.2  chp 10/22/2010 ICRISAT workshop modifications - part II
+!       4.5.1.1  chp 10/19/2010 ICRISAT workshop modifications
+!       4.5.1.0  chp 10/10/2010 V4.5 Release version
 !       4.0.2.0  chp 08/11/2005 Release
 !       4.0.1.0  chp 01/28/2004 Release Version 
 

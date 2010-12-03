@@ -29,6 +29,7 @@ C  01/16/2007 GH  Modified sorghum cultivar coefficients
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2008 CHP Remove METMP
 C  08/03/2009 FSR Added numerous variables for CASUPRO
+C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO
@@ -627,12 +628,12 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !       Casupro sugarcane
         CASE ('SCCSP')
               WRITE (LUNIO,1055,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,empty,PLF,
-     &          Gamma,StkB,StkM,empty,empty,
+     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,empty,PLF1,PLF2,
+     &          Gamma,StkB,StkM,empty,
      &          SIZLF,LIsun,LIshd,empty,TB(1),TO1(1),TO2(1),TM(1),
      &          PI1,PI2,DTPI,LSFAC,empty,LI1,TELOM,TB(2),TO1(2),
      &          TO2(2),TM(2),Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,
-     &          MinKg,empty,RES30C,RLF30C,R30C2,empty,empty 
+     &          MinGr,empty,RES30C,RLF30C,R30C2,empty,empty 
 
 !       Sunflower
         CASE ('SUOIL')
@@ -736,7 +737,7 @@ C     &        1X,F5.2,19(1X,F5.1))
 
  1000 FORMAT (A6,1X,A16,1X,A6,1X,7(F6.1))
  1050 FORMAT (A6,1X,A16,1X,A6,9(1X,F5.0),1X,I5,1X,F5.2,1X,F5.0,1X,F5.1)
- 1055 FORMAT (A6,1X,A16,1X,A6,F6.3,F6.0,2F6.3,F6.2,4F6.2,2F6.2,
+ 1055 FORMAT (A6,1X,A16,1X,A6,F6.3,F6.0,2F6.3,F6.2,5F6.3,F6.2,
      &        F6.0,2F6.2,F6.2,7F6.1, 2F6.2, 1X, F5.4,7F6.1,F6.2,2F6.0,
      &        F6.1,F6.2,F6.2,F6.2,3F6.2,2F6.2)
 

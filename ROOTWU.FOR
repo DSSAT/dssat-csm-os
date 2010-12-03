@@ -38,6 +38,7 @@ C-----------------------------------------------------------------------
       REAL SWCON1, SWCON3, PORMIN, RWUMX
       REAL DLAYR(NL), LL(NL), RLV(NL), RWU(NL)
       REAL SAT(NL), SW(NL), SWCON2(NL), TSS(NL)
+      REAL DENOMINATOR
 
       PARAMETER (SWCON1 = 1.32E-3)
       PARAMETER (SWCON3 = 7.01)
@@ -73,8 +74,16 @@ C-----------------------------------------------------------------------
         IF (RLV(L) .LE. 0.00001 .OR. SW(L) .LE. LL(L)) THEN
           RWU(L) = 0.
         ELSE
+          IF (RLV(L) > EXP(SWCON3)) THEN
+            DENOMINATOR = SWCON3 - ALOG(SWCON3)
+          ELSE
+            DENOMINATOR = SWCON3 - ALOG(RLV(L))
+          ENDIF
+
           RWU(L) = SWCON1*EXP(MIN((SWCON2(L)*(SW(L)-LL(L))),40.))/
-     &      (SWCON3-ALOG(RLV(L)))
+     &      DENOMINATOR
+!           Previous denominator - could explode for large RLV - problem with RLV?
+!     &      (SWCON3-ALOG(RLV(L)))  
 !           RWU in cm3[water]/cm[root]-d
 C-----------------------------------------------------------------------
 C           PORMIN = MINIMUM PORE SPACE  REQUIRED FOR SUPPLYING OXYGEN

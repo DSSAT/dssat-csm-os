@@ -52,7 +52,7 @@ C-----------------------------------------------------------------------
 
       REAL AZIR, AZZON(TS), BETA(TS), BETN, ROWSPC, TURFAC 
       REAL CANHT, CANWH, FRACSH, FRSHAV, FRSHV, XHLAI
-      REAL HS, KCAN, PAR, PLTPOP
+      REAL HS, KCAN, MINSHD, PAR, PLTPOP
       REAL HWTEM, RCANHT, RCANWH, PARNOD, HPAR, WPAR
       REAL Smax, SNDN, SNUP, TABEX, TINCR
       REAL XHWPAR(10), XHWTEM(10), YHWPAR(10), YHWTEM(10)
@@ -179,6 +179,11 @@ C------ Find particular ECOTYPE ----------------------------------------
               CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
               CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
               CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
+
+		      CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
+		      READ(CHAR,'(14X,F6.3)',IOSTAT=ERR) MINSHD 
+ 		      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
+ 		      
               CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
               CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
               CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
@@ -321,7 +326,7 @@ C    Calculate rate of increase in canopy width and update width.
 		CANWH = MAX(CANWH, TABEX(YVSWH, XVSHT, 0.0, 10)/100)  
 
 !     Limit Canopy width to row spacing
-		CANWH = MIN(CANWH,ROWSPC)  ! ROWSPC cm --> m
+		CANWH = MIN(CANWH,ROWSPC)  
           
 		tmp = TABEX(YVSWH,XVSHT,LeafNum(DAS,Stalk),10) ! debug temp lines 
 
@@ -386,6 +391,10 @@ C=======================================================================
 
 	ENDIF
 !***********************************************************************
+C===Introduced to avoid excessive, very early in-canopy shading - FSR == 
+      FRSHAV = MAX(FRSHAV,MINSHD)
+!***********************************************************************
+
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
@@ -552,6 +561,7 @@ C           Limit shadow length to within one ROWSPC.
 ! LNUM      Current line number of input file 
 ! LUNCRP    Logical unit number for FILEC (*.spe file) 
 ! LUNECO    Logical unit number for FILEE (*.eco file) 
+! MINSHD    Minimum value allowed for FRSHAV (ground area fraction in plant shadow)
 ! PAR       Daily photosynthetically active radiation or photon flux 
 !             density (moles[quanta]/m2-d)
 ! PARNOD    Effective PAR at growth point (moles[quanta]/m2-d)

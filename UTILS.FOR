@@ -539,10 +539,12 @@ C========================================================================
         CALL DATE_AND_TIME (VALUES=DATE_TIME)
       
 !       Version information stored in ModuleDefs.for
-        WRITE (OUTLUN,100) Version, MonthTxt(DATE_TIME(2)),DATE_TIME(3),
-     &    DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
+        WRITE (OUTLUN,100) Version, VBranch, MonthTxt(DATE_TIME(2)),
+     &    DATE_TIME(3), DATE_TIME(1), DATE_TIME(5), 
+     &    DATE_TIME(6), DATE_TIME(7)
   100   FORMAT ("*DSSAT Cropping System Model Ver. ",I1,".",I1,".",I1,
-     &     ".",I3.3,15X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2,
+     &    ".",I3.3,1X,A10,4X,
+     &    A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2,
      &        //," Unit  Filename")
       ENDIF
 

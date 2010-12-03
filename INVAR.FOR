@@ -225,6 +225,7 @@ C  05/28/1993 PWW Header revision and minor changes
 !  12/14/2005 CHP Added sorghum cultivar coefficients, PBASE and PSAT
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
 !  09/16/2007 JIL Added new inputs for IXIM
+!  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C
 C-----------------------------------------------------------------------
 C  INPUT  : None
@@ -773,50 +774,51 @@ C          Branch to menu choice
 !     CASUPRO sugarcane model
       CASE ('SCCSP')
         WRITE (*,5950) 
-     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,PLF,
-     &          Gamma,StkB,StkM,
+     &          LFMAX,PHTMAX,StkH2OFac,SuH2OFac,PLF1,
+     &          PLF2,Gamma,StkB,StkM,
      &          SIZLF,LIsun,LIshd,TB(1),TO1(1),TO2(1),TM(1),
      &          PI1,PI2,DTPI,LSFAC,LI1,TELOM,TB(2),TO1(2),
      &          TO2(2),TM(2),Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,
-     &          MinKg,RES30C,RLF30C,R30C2
+     &          MinGr,RES30C,RLF30C,R30C2
 
 5950    FORMAT (12X,'0. End of changes',//,
      &  12X,'1. LFMAX (Max leaf photosynthesis rate)..........[',F7.1,/,
      &  12X,'2. PHTMAX(Max CH20 which can be produced)........[',F7.1,/,
      &  12X,'3. StkH2OFac(Stalk fresh weight factor for DM)...[',F7.1,/,
      &  12X,'4. SuH2OFac (Stalk fresh wt factor for sucrose)..[',F7.1,/,
-     &  12X,'5. PLF   (Max portion CH2O to leaves, source lim)[',F7.1,/,
-     &  12X,'6. Gamma (fraction excess CH2O to stalk)......  .[',F7.1,/,
-     &  12X,'7. StkB  (Intercept for rate stalk wt increase)..[',F7.1,/,
-     &  12X,'8  StkM  (Slope for rate of stalk wt increase)...[',F7.1,/,
-     &  12X,'9. SIZLF (Maximum size of largest leaf)..........[',F7.1,/,
-     &  12X,'10.LIsun (PAR intercepted by uppermost canopy)...[',F7.1,/,
-     &  12X,'11.LIshd (PAR intercepted by top & mid canopy)...[',F7.1,/,
-     &  12X,'12.TB(1) (Base temp for leaf primary stalk emerg)[',F7.1,/,
-     &  12X,'13.TO1(1)(Lower optimum temp, leaf development)..[',F7.1,/,
-     &  12X,'14.TO2(1)(Upper optimum temp, leaf development)..[',F7.1,/,
-     &  12X,'15.TM(1) (Maximum temperature, leaf development).[',F7.1,/,
-     &  12X,'16.PI1   (Phyllocron interval 1).................[',F7.1,/,
-     &  12X,'17.PI2   (Phyllocron interval 2).................[',F7.1,/,
-     &  12X,'18.DTPI  (Therm time for change from PT1 to PT2).[',F7.1,/,
-     &  12X,'19.LSFAC (Ratio leaf sheath DM to leaf blade DM).[',F7.1,/,
-     &  12X,'20.LI1   (Light intercep for no tiller comp).....[',F7.1,/,
-     &  12X,'21.TELOM (Threshold to tiller emergence).........[',F7.1,/,
-     &  12X,'22.TB(2) (Base temperature for tiller appearance)[',F7.1,/,
-     &  12X,'23.TO1(2)(Lower optimum temp, tiller development)[',F7.1,/,
-     &  12X,'24.TO2(2)(Upper optimum temp, tiller development)[',F7.1,/,
-     &  12X,'25.TM(2) (Max temperature, tiller development)...[',F7.1,/,
-     &  12X,'26.Ph1P  (Threshold to sprouting, plant cane)....[',F7.1,/,
-     &  12X,'27.Ph1R  (Threshold to sprouting, ratoon cane)...[',F7.1,/,
-     &  12X,'28.Ph2   (Growth rate of primary stalk)..........[',F7.1,/,
-     &  12X,'29.Ph3   (Threshold for growth of primary stalk).[',F7.1,/,
-     &  12X,'30.Ph4   (Threshold  for tillering)..............[',F7.1,/,
-     &  12X,'31.StkHrNO(# mature stalks/stool, recent harvest)[',F7.1,/,
-     &  12X,'32.RTNFAC(# primary shoots/mature stalk )........[',F7.1,/,
-     &  12X,'33.MinKg (Threshold wt for tiller senesce).......[',F7.1,/,
-     &  12X,'34.RES30C(Respiration coef for stalk & root).....[',F7.1,/,
-     &  12X,'35.RLF30C(Respiration coef for leaf).............[',F7.1,/,
-     &  12X,'36.R30C2 (Respiration coef for photosynthesis)...[',F7.1,/)
+     &  12X,'5. PLF1  (Max young stk portion CH2O to leaves)..[',F7.1,/,
+     &  12X,'6. PLF2  (Max old stalk portion CH2O to leaves)..[',F7.1,/,
+     &  12X,'7. Gamma (fraction excess CH2O to stalk)......  .[',F7.1,/,
+     &  12X,'8. StkB  (Intercept for rate stalk wt increase)..[',F7.1,/,
+     &  12X,'9. StkM  (Slope for rate of stalk wt increase)...[',F7.1,/,
+     &  12X,'10.SIZLF (Maximum size of largest leaf)..........[',F7.1,/,
+     &  12X,'11.LIsun (PAR intercepted by uppermost canopy)...[',F7.1,/,
+     &  12X,'12.LIshd (PAR intercepted by top & mid canopy)...[',F7.1,/,
+     &  12X,'13.TB(1) (Base temp for leaf primary stalk emerg)[',F7.1,/,
+     &  12X,'14.TO1(1)(Lower optimum temp, leaf development)..[',F7.1,/,
+     &  12X,'15.TO2(1)(Upper optimum temp, leaf development)..[',F7.1,/,
+     &  12X,'16.TM(1) (Maximum temperature, leaf development).[',F7.1,/,
+     &  12X,'17.PI1   (Phyllocron interval 1).................[',F7.1,/,
+     &  12X,'18.PI2   (Phyllocron interval 2).................[',F7.1,/,
+     &  12X,'19.DTPI  (Therm time for change from PT1 to PT2).[',F7.1,/,
+     &  12X,'20.LSFAC (Ratio leaf sheath DM to leaf blade DM).[',F7.1,/,
+     &  12X,'21.LI1   (Light intercep for no tiller comp).....[',F7.1,/,
+     &  12X,'22.TELOM (Threshold to tiller emergence).........[',F7.1,/,
+     &  12X,'23.TB(2) (Base temperature for tiller appearance)[',F7.1,/,
+     &  12X,'24.TO1(2)(Lower optimum temp, tiller development)[',F7.1,/,
+     &  12X,'25.TO2(2)(Upper optimum temp, tiller development)[',F7.1,/,
+     &  12X,'26.TM(2) (Max temperature, tiller development)...[',F7.1,/,
+     &  12X,'27.Ph1P  (Threshold to sprouting, plant cane)....[',F7.1,/,
+     &  12X,'28.Ph1R  (Threshold to sprouting, ratoon cane)...[',F7.1,/,
+     &  12X,'29.Ph2   (Growth rate of primary stalk)..........[',F7.1,/,
+     &  12X,'30.Ph3   (Threshold for growth of primary stalk).[',F7.1,/,
+     &  12X,'31.Ph4   (Threshold  for tillering)..............[',F7.1,/,
+     &  12X,'32.StkHrNO(# mature stalks/stool, recent harvest)[',F7.1,/,
+     &  12X,'33.RTNFAC(# primary shoots/mature stalk )........[',F7.1,/,
+     &  12X,'34.MinGr (Threshold wt for tiller senesce).......[',F7.1,/,
+     &  12X,'35.RES30C(Respiration coef for stalk & root).....[',F7.1,/,
+     &  12X,'36.RLF30C(Respiration coef for leaf).............[',F7.1,/,
+     &  12X,'37.R30C2 (Respiration coef for photosynthesis)...[',F7.1,/)
 
            WRITE (*,5100)
 
@@ -832,38 +834,39 @@ C          Branch to menu choice
              CASE (2); CALL GETREAL (PHTMAX   ,'PHTMAX   ', 100.,400.)
              CASE (3); CALL GETREAL (StkH2OFac,'StkH2OFac', 2.0, 7.0)
              CASE (4); CALL GETREAL (SuH2OFac ,'SuH2OFac ', 1.0, 4.0)
-             CASE (5); CALL GETREAL (PLF      ,'PLF      ', 0.0, 1.0)
-             CASE (6); CALL GETREAL (Gamma    ,'Gamma    ', 0.0, 1.0)
-             CASE (7); CALL GETREAL (StkB     ,'StkB     ', 0.3, 1.3)
-             CASE (8); CALL GETREAL (StkM     ,'StkM     ', 0.0, 2.0)
-             CASE (9); CALL GETREAL (SIZLF    ,'SIZLF    ', 300., 400.)
-             CASE(10); CALL GETREAL (LIsun    ,'LIsun    ', 0.0, 1.0)
-             CASE(11); CALL GETREAL (LIshd    ,'LIshd    ', 0.0, 1.0)
-             CASE(12); CALL GETREAL (TB(1)    ,'TB(1)    ',5.0, 20.)
-             CASE(13); CALL GETREAL (TO1(1)   ,'TO1(1)   ', 15.0, 40.)
-             CASE(14); CALL GETREAL (TO2(1)   ,'TO2(1)   ', 20., 40.)
-             CASE(15); CALL GETREAL (TM(1)    ,'TM(1)    ', 20., 50.)
-             CASE(16); CALL GETREAL (PI1      ,'PI1      ', 60.0, 120.)
-             CASE(17); CALL GETREAL (PI2      ,'PI2      ', 60.0, 140.)
-             CASE(18); CALL GETREAL (DTPI     ,'DTPI     ', 800., 1600.)
-             CASE(19); CALL GETREAL (LSFAC    ,'LSFAC    ', 0.25, 0.75)
-             CASE(20); CALL GETREAL (LI1      ,'LI1      ', 0.0, 1.0)
-             CASE(21); CALL GETREAL (TELOM    ,'TELOM    ', 100., 300.)
-             CASE(22); CALL GETREAL (TB(2)    ,'TB(2)    ',  5.0, 24.)
-             CASE(23); CALL GETREAL (TO1(2)   ,'TO1(2)   ', 15.0, 40.)
-             CASE(24); CALL GETREAL (TO2(2)   ,'TO2(2)   ', 20.0, 40.)
-             CASE(25); CALL GETREAL (TM(2)    ,'TM(2)    ', 20.0, 50.)
-             CASE(26); CALL GETREAL (Ph1P     ,'Ph1P     ', 50., 500.)
-             CASE(27); CALL GETREAL (Ph1R     ,'Ph1R     ', 50., 500.)
-             CASE(28); CALL GETREAL (Ph2      ,'Ph2      ', 0.5, 3.0)
-             CASE(29); CALL GETREAL (Ph3      ,'Ph3      ', 1000.,2000.)
-             CASE(30); CALL GETREAL (Ph4      ,'Ph4      ', 5000.,8000.)
-             CASE(31); CALL GETREAL (StkHrNO  ,'StkHrNO  ', 1.0, 20.0)
-             CASE(32); CALL GETREAL (RTNFAC   ,'RTNFAC   ', 0.5, 4.0)
-             CASE(33); CALL GETREAL (MinKg    ,'MinKg    ', 0.1, 3.0)
-             CASE(34); CALL GETREAL (RES30C   ,'RES30C   ', 0.1, 0.6)
-             CASE(35); CALL GETREAL (RLF30C   ,'RLF30C   ', 0.5, 3.0)
-             CASE(36); CALL GETREAL (R30C2    ,'R30C2    ', 3.0, 5.0)
+             CASE (5); CALL GETREAL (PLF1     ,'PLF1     ', 0.1, 0.5)
+             CASE (6); CALL GETREAL (PLF2     ,'PLF2     ', 0.1, 0.4)
+             CASE (7); CALL GETREAL (Gamma    ,'Gamma    ', 0.0, 1.0)
+             CASE (8); CALL GETREAL (StkB     ,'StkB     ', 0.3, 1.3)
+             CASE (9); CALL GETREAL (StkM     ,'StkM     ', 0.0, 2.0)
+             CASE(10); CALL GETREAL (SIZLF    ,'SIZLF    ', 300., 400.)
+             CASE(11); CALL GETREAL (LIsun    ,'LIsun    ', 0.0, 1.0)
+             CASE(12); CALL GETREAL (LIshd    ,'LIshd    ', 0.0, 1.0)
+             CASE(13); CALL GETREAL (TB(1)    ,'TB(1)    ',5.0, 20.)
+             CASE(14); CALL GETREAL (TO1(1)   ,'TO1(1)   ', 15.0, 40.)
+             CASE(15); CALL GETREAL (TO2(1)   ,'TO2(1)   ', 20., 40.)
+             CASE(16); CALL GETREAL (TM(1)    ,'TM(1)    ', 20., 50.)
+             CASE(17); CALL GETREAL (PI1      ,'PI1      ', 60.0, 120.)
+             CASE(18); CALL GETREAL (PI2      ,'PI2      ', 60.0, 140.)
+             CASE(19); CALL GETREAL (DTPI     ,'DTPI     ', 800., 1600.)
+             CASE(20); CALL GETREAL (LSFAC    ,'LSFAC    ', 0.25, 0.75)
+             CASE(21); CALL GETREAL (LI1      ,'LI1      ', 0.0, 1.0)
+             CASE(22); CALL GETREAL (TELOM    ,'TELOM    ', 100., 300.)
+             CASE(23); CALL GETREAL (TB(2)    ,'TB(2)    ',  5.0, 24.)
+             CASE(24); CALL GETREAL (TO1(2)   ,'TO1(2)   ', 15.0, 40.)
+             CASE(25); CALL GETREAL (TO2(2)   ,'TO2(2)   ', 20.0, 40.)
+             CASE(26); CALL GETREAL (TM(2)    ,'TM(2)    ', 20.0, 50.)
+             CASE(27); CALL GETREAL (Ph1P     ,'Ph1P     ', 50., 500.)
+             CASE(28); CALL GETREAL (Ph1R     ,'Ph1R     ', 50., 500.)
+             CASE(29); CALL GETREAL (Ph2      ,'Ph2      ', 0.5, 3.0)
+             CASE(30); CALL GETREAL (Ph3      ,'Ph3      ', 1000.,2000.)
+             CASE(31); CALL GETREAL (Ph4      ,'Ph4      ', 5000.,8000.)
+             CASE(32); CALL GETREAL (StkHrNO  ,'StkHrNO  ', 1.0, 20.0)
+             CASE(33); CALL GETREAL (RTNFAC   ,'RTNFAC   ', 0.5, 4.0)
+             CASE(34); CALL GETREAL (MinGr    ,'MinGr    ', 40.,100.)
+             CASE(35); CALL GETREAL (RES30C   ,'RES30C   ', 0.1, 0.6)
+             CASE(36); CALL GETREAL (RLF30C   ,'RLF30C   ', 0.5, 3.0)
+             CASE(37); CALL GETREAL (R30C2    ,'R30C2    ', 3.0, 5.0)
            END SELECT                                 
                                                       
 !=======================================================================

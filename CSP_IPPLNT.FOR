@@ -18,6 +18,7 @@ C  08/19/2003 FSR Modified for DSSAT 4.0 CASUPRO sugarcane
 C  07/26/2004 CHP Removed variables which were not being used
 C  09/02/2004 CHP Added warning for use of default ecotype.
 C                 Added KC_SLOPE to SPE file and KC_ECO to ECO file.
+C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C-----------------------------------------------------------------------
 !  Called by:   CASUPRO (at RUNINIT)
 !  Calls:       FIND, ERROR, IGNORE
@@ -25,9 +26,9 @@ C=======================================================================
       SUBROUTINE CSP_IPPLNT(CONTROL,
      &  CAB, CanLmtFac, CROP, ECONO, EORATIO, FILECC,          !Output  
      &  FILEGC, FINREF,                                        !Output
-     &  FREEZ1, FREEZ2, GAMMA, GRLF, GRRT, GRST, GRSU,         !Output
-     &  KCAN, KEP, LfShdFac, LMF, LSFAC, NOUTDO, PCARSU, PCH2O,!Output 
-     &  PLF, PLIGSU, PLIPSU, PLWT, PMINSU, POASU, PORMIN,      !Output
+     &  FREEZ1, FREEZ2, GAMMA, GRLF, GRRT, GRST, GRSU, KCAN,   !Output
+     &  KEP, LfShdFac, LMF, LSFAC, NOUTDO, PCARSU, PCH2O, PLF1,!Output 
+     &  PLF2, PLIGSU, PLIPSU, PLWT, PMINSU, POASU, PORMIN,     !Output
      &  PROLFI, PRORTI, PROSTI, PROSUI, R30C2, RCH2O, RES30C,  !Output
      &  RLF30C, RLIG, RLIP, RMIN, ROA, RWUEP1, RWUMX, SLAMAX,  !Output
      &  SLAMIN, SLAPAR, SLAREF,                                !Output
@@ -60,7 +61,7 @@ C=======================================================================
 
       INTEGER CAB, LUNCRP, LUNECO, LUNIO, NOUTDO
       INTEGER PATHL, FOUND, ERR, LINC, LNUM, ISECT
-      INTEGER II, XDAY(3)
+      INTEGER II, XDAY(6)
 
       REAL
      &  CanLmtFac, FINREF, FREEZ1, FREEZ2,
@@ -79,10 +80,10 @@ C=======================================================================
 
 !     List of variables added for the CASUPRO sugarcane model
       REAL empty, GAMMA, GRLF, GRRT, GRST, GRSU
-	REAL PCARSU, PLF, PLIGSU, PLIPSU, PMINSU, PLWT 
+	REAL PCARSU, PLF1, PLF2, PLIGSU, PLIPSU, PMINSU, PLWT 
 	REAL POASU, PROSUI, StkB, StkM, StkH2OFac, SuH2OFac 
 	REAL XFRRT(4), XFRSU(4), YFRRT(4), YFRSU(4)
-	REAL XSTKRT(6), YSLA(3), YSTKRT(6) 
+	REAL XSTKRT(6), YSLA(6), YSTKRT(6) 
 	REAL XVSHT(10), YVSHT(10), ZVSDI(10)
 
 !     The variable "CONTROL" is of constructed type "ControlType" as 
@@ -139,9 +140,9 @@ C=======================================================================
           CALL ERROR(SECTION, 42, FILEIO, LNUM)
         ELSE
 
-          READ(LUNIO,'(24X,A6,12X,7F6.0,12X,F6.0,60X,F6.0,96X,3F6.0)'
-     &	     ,IOSTAT=ERR)ECONO, StkH2OFac, SuH2OFac, empty, PLF 
-     &         ,GAMMA ,StkB, StkM, SIZELF 
+          READ(LUNIO,'(24X,A6,12X,8F6.3,6X,F6.3,60X,F6.3,96X,3F6.3)'
+     &	     ,IOSTAT=ERR)ECONO, StkH2OFac, SuH2OFac, empty, PLF1 
+     &         ,PLF2, GAMMA ,StkB, StkM, SIZELF 
      &         ,LSFAC, RES30C, RLF30C, R30C2; LNUM = LNUM + 1
 
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
@@ -325,7 +326,7 @@ C-----------------------------------------------------------------------
  		IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 	
  		CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR) ! SLAREF moved to 
-										    ! ECO as YSLA(3)
+										    ! ECO as YSLA(6)
 		CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
 		READ(CHAR,'(14X,F6.2)',IOSTAT=ERR) SIZREF
 		IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
@@ -468,15 +469,16 @@ C------ Find particular ECOTYPE ----------------------------------------
 		READ(CHAR,'(14X,F6.3)',IOSTAT=ERR) LfShdFac 
  		IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
 
+		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  !MINSHD
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  !StkSenFrac
-          CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  !SENDAY
+                CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  !SENDAY
 
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
-		READ(CHAR,'(14X,3I6)',IOSTAT=ERR) (XDAY(II),II = 1,3) 
+		READ(CHAR,'(14X,6I6)',IOSTAT=ERR) (XDAY(II),II = 1,6) 
   		IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
 
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
-		READ(CHAR,'(14X,3F6.0)',IOSTAT=ERR) (YSLA(II),II = 1,3)
+		READ(CHAR,'(14X,6F6.0)',IOSTAT=ERR) (YSLA(II),II = 1,6)
   		IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
 
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  !XLI(6)
@@ -505,7 +507,7 @@ C------ Find particular ECOTYPE ----------------------------------------
   		IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
 
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)
-		READ(CHAR,'(14X,4F6.2)',IOSTAT=ERR) (YFRSU(II),II = 1,4)
+		READ(CHAR,'(14X,4F6.3)',IOSTAT=ERR) (YFRSU(II),II = 1,4)
   		IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
 
 	  ENDIF
