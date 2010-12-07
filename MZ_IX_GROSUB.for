@@ -407,6 +407,8 @@ C      REAL        PRLF
 
 !     Added 04/19/07 US/CHP - Optional species coefficients for N conc
       REAL CTCNP1, CTCNP2
+!     TEMP TO MATCH EXPERIMENTAL CHANGES TO MZ_GROSUB
+      REAL NF_GN
        
       TYPE (ResidueType) SENESCE 
       TYPE (SwitchType)  ISWITCH
@@ -481,6 +483,9 @@ C      REAL        PRLF
           ENDIF
 
         CLOSE(LUNIO)
+
+!       TEMP TO MATCH EXPERIMENTAL CHANGES TO MZ_GROSUB
+        NF_GN = 0.8
 
 ! ** Using genetic coefficients to estimate initial leaf number
 !	LFN = ((1.4*P1)/(PHINT*0.5))+(10.55-0.0216*P1)
@@ -886,7 +891,7 @@ C ** Use default values if inputs not available
           YIELDB = 0.0
 
           IF (ISWNIT .NE. 'N') THEN
-             CALL MZ_NFACTO(DYNAMIC,TANC,TCNP,TMNC,
+             CALL MZ_NFACTO(DYNAMIC,TANC,TCNP,TMNC,NF_GN, 
      %       AGEFAC,NDEF3,NFAC,NSTRES)         
           ELSE
              AGEFAC = 1.0
@@ -1148,7 +1153,7 @@ C	         ECNP = (5.0 - 0.0114 * XSTAGE)/100.0 !Ear critical [N] (frac)
           !-------------------------------------------------------------
           IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
               CALL MZ_NFACTO(DYNAMIC,                 !Control
-     %        TANC,TCNP,TMNC,                         !Inputs
+     %        TANC,TCNP,TMNC, NF_GN,                         !Inputs
      %        AGEFAC,NDEF3,NFAC,NSTRES)               !Outputs
           ELSE
               AGEFAC = 1.0

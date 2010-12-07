@@ -17,7 +17,7 @@ C  Calls:     None
       SUBROUTINE MZ_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
-     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
+     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, TCNP, TMNC)
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -33,7 +33,7 @@ C  Calls:     None
       INTEGER DAP, DOY, ERRNUM, FROP, L, NLAYR, RUN
       INTEGER TIMDIF, YEAR, YRDOY, YRPLT
 
-      REAL PCNL
+      REAL PCNL, TCNP, TMNC
       REAL WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG
       REAL WTNUP,WTNLF,WTNST,PCNST,PCNRT     
       REAL CUMSENSURFN, CUMSENSOILN   !cumul. senes. N soil and surface
@@ -88,8 +88,8 @@ C  Calls:     None
         CALL HEADER(SEASINIT, NOUTDN, RUN)
         WRITE (NOUTDN,230)
   230   FORMAT('@YEAR DOY   DAS   DAP',
-     &        '   CNAD   GNAD   VNAD   GN%D   VN%D   NUPC',
-     &        '   LNAD   SNAD   LN%D   SN%D   RN%D   SNN0C   SNN1C')
+     &        '   CNAD   GNAD   VNAD   GN%D   VN%D   NUPC   LNAD   SNAD'
+     &       , '   LN%D   SN%D   RN%D   SNN0C   SNN1C  VN%CD  VN%LD')
 
         !cumul. senes. N soil and surface
         CUMSENSURFN = 0.0
@@ -129,9 +129,9 @@ C  Calls:     None
      &       (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0),
      &        PCNGRN, PCNVEG, (WTNUP*10.0),
      &       (WTNLF*10.0), (WTNST*10.0), PCNL, PCNST, PCNRT,
-     &        CUMSENSURFN, CUMSENSOILN
+     &        CUMSENSURFN, CUMSENSOILN, TCNP*100., TMNC*100.
  300        FORMAT (1X,I4,1X,I3.3,2(1X,I5),3(1X,F6.1),2(1X,F6.2),
-     &        4(1X,F6.1),2(1X,F6.2), 2F8.2)
+     &        4(1X,F6.1),2(1X,F6.2), 2F8.2, 2F7.3)
           ENDIF
         ENDIF
       ENDIF

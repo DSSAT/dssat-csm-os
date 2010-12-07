@@ -57,7 +57,7 @@
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES, TCNP, TMNC)                      !Output
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
@@ -139,7 +139,7 @@
       REAL        HI
       REAL        HIP
       INTEGER     ICOLD       
-      INTEGER     ICSDUR      
+      INTEGER     ICSDUR, IDURS4  
       CHARACTER   IDETO*1     
       REAL        IPAR
       INTEGER     ISECT
@@ -168,7 +168,8 @@
       INTEGER     MDATE
       REAL        MAXLAI
       REAL        NDEF3       
-      REAL        NFAC        
+      REAL        NFAC 
+      REAL        NF_GN       
       REAL        NH4(NL)     
       INTEGER     NLAYR       
       REAL        NO3(NL)     
@@ -272,7 +273,7 @@
       REAL        STOVWT      
       REAL        SUMDTT      
       REAL        SUMEX
-      REAL        SUMP   
+      REAL        SUMP, SUM_NFAC  
       REAL        SUMRL     
       REAL        FracRts(NL)   
       REAL        SW(NL) 
@@ -608,6 +609,15 @@
             CTCNP2 = 0.160
           ENDIF
         ENDIF
+
+! CHP/MS/KJB 12/07/2010 Coefficients pulled out to species file.
+!       Default value: NF_GN = 0.8
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(9X,F8.3)',IOSTAT=ERR) NF_GN
+!       If error reading value, use default
+        IF (ERR /= 0 .OR. ISECT /= 1 .OR. NF_GN < 1.E-6) THEN
+          NF_GN = 0.80
+        ENDIF
       ENDIF
       REWIND(LUNCRP)
 
@@ -690,6 +700,7 @@
           HIP    = 0.0
           ICOLD  = 0
           ICSDUR = 0
+          IDURS4 = 0   !DURATION OF STAGE 4
           IPAR   = 0.0
 !         K1     = 0.0
           LAI    = 0.0
@@ -757,6 +768,7 @@
           STOVN  = 0.0
           STOVWT = 0.
           SUMP   = 0.0
+          SUM_NFAC = 0.0
           SUMRL  = 0.0
           SUMEX  = 0.0
           SWEXF  = 0.0
@@ -804,7 +816,7 @@
           YIELDB = 0.0
 
           IF (ISWNIT .NE. 'N') THEN
-             CALL MZ_NFACTO(DYNAMIC,TANC,TCNP,TMNC,
+             CALL MZ_NFACTO(DYNAMIC,TANC,TCNP,TMNC, NF_GN, 
      %       AGEFAC,NDEF3,NFAC,NSTRES)         
           ELSE
               AGEFAC = 1.0
@@ -1029,7 +1041,7 @@
           !-------------------------------------------------------------
           IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
               CALL MZ_NFACTO(DYNAMIC,                 !Control
-     %        TANC,TCNP,TMNC,                         !Inputs
+     %        TANC,TCNP,TMNC, NF_GN,                  !Inputs
      %        AGEFAC,NDEF3,NFAC,NSTRES)               !Outputs
           ELSE
               AGEFAC = 1.0
@@ -1385,6 +1397,7 @@
 !      --------------------------------------------------------------------
 
           ELSEIF (ISTAGE .EQ. 4) THEN
+              IDURS4 = IDURS4 + 1
 !              GROEAR = 0.22*DTT*AMIN1(AGEFAC,TURFAC,(1.0-SATFAC))
               CUMDTTEG = CUMDTTEG + DTT
               GROEAR = 0.22*DTT
@@ -1408,6 +1421,7 @@
               EARWT  = EARWT + GROEAR
               STMWT  = STMWT + GROSTM
               SUMP   = SUMP  + CARBO
+              SUM_NFAC = SUM_NFAC + NDEF3
 
 !             5/11/2005 CHP Added cumulative leaf senescence
               CumLeafSenes = SLAN / 600. * PLTPOP * 10. + Stg2CLS
@@ -1538,7 +1552,12 @@
                       NPOOL  = TNLAB + RNLAB                          !
 
                       IF (ICSDUR .EQ. 1) THEN                         !
-                        GPP  = AMIN1 (GPP*NDEF3,(NPOOL/(0.062*0.0095)))
+!                        GPP  = AMIN1 (GPP*NDEF3,(NPOOL/(0.062*0.0095)))
+
+!       12/07/2010  KJB/MS/CHP  average value of NDEF3 over ISTAGE 4
+                        SUM_NFAC = SUM_NFAC / IDURS4
+                      GPP  = AMIN1 (GPP*SUM_NFAC,(NPOOL/(0.062*0.0095)))
+
 !                   ! Put a max to GPP based on N supply... JIL
                           ! Corrected GPSM calculations .. PWW 2-2-94
                           !

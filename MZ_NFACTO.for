@@ -17,7 +17,7 @@ C  Calls  : None
 C----------------------------------------------------------------------
 
       SUBROUTINE MZ_NFACTO(DYNAMIC,               !Control
-     %    TANC,TCNP,TMNC,                         !Inputs
+     %    TANC,TCNP,TMNC,NF_GN,                   !Inputs
      %    AGEFAC,NDEF3,NFAC,NSTRES)               !Outputs
       
       USE ModuleDefs
@@ -32,7 +32,8 @@ C----------------------------------------------------------------------
       REAL        NSTRES      
       REAL        TANC        
       REAL        TCNP        
-      REAL        TMNC           
+      REAL        TMNC   
+      REAL        NF_GN        
       INTEGER     DYNAMIC     
 C     ----------------------------------------------------------------
 
@@ -87,8 +88,12 @@ C     ----------------------------------------------------------------
 
           !Make grain per plant calculation less sensitive to N stress
           NDEF3  = 1.0
-          IF (NFAC .LT. 0.8) THEN
-              NDEF3 = 0.2 + NFAC
+!          IF (NFAC .LT. 0.8) THEN
+!              NDEF3 = 0.2 + NFAC
+!          ENDIF
+!     MS/KJB 12/07/2010 added grain number N factor
+          IF (NFAC .LT. NF_GN) THEN
+              NDEF3 = (1.0 - NF_GN) + NFAC
           ENDIF
           NDEF3  = AMIN1 (NDEF3, 1.0)
 

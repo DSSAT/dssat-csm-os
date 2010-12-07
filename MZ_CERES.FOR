@@ -157,7 +157,8 @@ C      REAL            PRLF
       REAL            SUMDTT     
       REAL            SUMP        
       REAL            SW(NL)     
-      REAL            SWFAC    
+      REAL            SWFAC 
+      REAL            TCNP, TMNC
       REAL            TLNO 
       REAL            TMIN    
       REAL            TMAX        
@@ -353,7 +354,7 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES, TCNP, TMNC)                      !Output
           CASE ('MZIXM')  !IXIM Maize
           CALL MZ_IX_GROSUB (DYNAMIC, ISWITCH, 
      &      AMTRH,ASMDOT,CDAY,CO2,DLAYR,DS,DTT,DUL,EOP,FILEIO,  !Input
@@ -418,7 +419,7 @@ C----------------------------------------------------------------------
           CALL MZ_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
-     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
+     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, TCNP, TMNC)
        
           CALL MZ_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
@@ -503,7 +504,7 @@ C-----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES, TCNP, TMNC)                      !Output
           CASE ('MZIXM')  !IXIM Maize
           CALL MZ_IX_GROSUB (DYNAMIC, ISWITCH, 
      &      AMTRH,ASMDOT,CDAY,CO2,DLAYR,DS,DTT,DUL,EOP,FILEIO,  !Input
@@ -564,7 +565,7 @@ C-----------------------------------------------------------------------
           CALL MZ_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
-     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
+     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, TCNP, TMNC)
 
 
           CALL MZ_OPHARV(CONTROL, 
@@ -667,7 +668,7 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES, TCNP, TMNC)                      !Output
 
           CASE ('MZIXM')  !IXIM Maize
           CALL MZ_IX_GROSUB (DYNAMIC, ISWITCH, 
@@ -768,7 +769,7 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES, TCNP, TMNC)                      !Output
           CASE ('MZIXM')  !IXIM Maize
           CALL MZ_IX_GROSUB (DYNAMIC, ISWITCH, 
      &      AMTRH,ASMDOT,CDAY,CO2,DLAYR,DS,DTT,DUL,EOP,FILEIO,  !Input
@@ -824,7 +825,7 @@ C----------------------------------------------------------------------
       CALL MZ_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
-     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
+     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, TCNP, TMNC)
 
       CALL MZ_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
@@ -876,7 +877,7 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES, TCNP, TMNC)                      !Output
           CASE ('MZIXM')  !IXIM Maize
           CALL MZ_IX_GROSUB (DYNAMIC, ISWITCH, 
      &      AMTRH,ASMDOT,CDAY,CO2,DLAYR,DS,DTT,DUL,EOP,FILEIO,  !Input
@@ -931,7 +932,7 @@ C----------------------------------------------------------------------
         CALL MZ_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
-     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
+     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT, TCNP, TMNC)
 
         CALL MZ_OPHARV(CONTROL, 
      &    AGEFAC, APTNUP, CANNAA, CANWAA, GNUP, GPP,      !Input
