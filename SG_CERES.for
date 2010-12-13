@@ -1,10 +1,10 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 Mississippi State University, Starkville, MS
-C                      University of Florida, Gainesville, Florida
-C                      The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2010 
+C                      University of Florida, Gainesville, Florida                   
 C                      International Center for Soil Fertility and 
 C                       Agricultural Development, Muscle Shoals, Alabama
 C                      USDA-ARS-ALARC, Phoenix, AZ
+C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C======================================================================
@@ -26,6 +26,7 @@ C  04/21/2007 GH  Added P3 and P4 coefficients for sorghum
 C  04/21/2007 GH  Externalized stem partitioning STPC=0.1
 C  04/21/2007 GH  Externalized root partitioning RTPC=0.25
 C  01/15/2008 GH  Include GDDE for P9 calculation
+C  12/12/2010 GH  Moved STPC and RTPC to Ecotype file
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -83,7 +84,7 @@ C----------------------------------------------------------------------
       REAL            DEPMAX     
       REAL            DGET
 C-GH  REAL            DJTI
-	REAL            P2, PANTH, PFLOWR
+	  REAL            P2, PANTH, PFLOWR
       REAL            DLAYR(NL) 
       REAL            DM         
       INTEGER         DOY 
@@ -271,7 +272,7 @@ C------------------------------------------------------------------------
       REAL P3
       REAL P4
       REAL P9
-	REAL CUMP4
+	  REAL CUMP4
       REAL PANWT
       REAL PGRNWT
       REAL SI2(6)
@@ -718,22 +719,22 @@ C         ***********************************************************
              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
           ENDIF
 
-          !----------------------------------------------------------
-          !        Find and Read Partitioning parameters
-          !----------------------------------------------------------
-          SECTION = '*PARTI'
-          CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
-          IF (FOUND .EQ. 0) THEN
-             CALL ERROR(SECTION, 42, FILECC, LNUM)
-          ELSE
-             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-             READ(C80,'(9X,F6.3)',IOSTAT=ERR) STPC
-             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-
-	       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-             READ(C80,'(9X,F6.3)',IOSTAT=ERR) RTPC
-             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-          ENDIF
+C-GH      !----------------------------------------------------------
+C         !        Find and Read Partitioning parameters
+C         !----------------------------------------------------------
+C         SECTION = '*PARTI'
+C         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+C         IF (FOUND .EQ. 0) THEN
+C            CALL ERROR(SECTION, 42, FILECC, LNUM)
+C         ELSE
+C            CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+C            READ(C80,'(9X,F6.3)',IOSTAT=ERR) STPC
+C            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+C
+C        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+C            READ(C80,'(9X,F6.3)',IOSTAT=ERR) RTPC
+C            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+C-GH      ENDIF
       
           CLOSE (LUNCRP)
 
@@ -769,13 +770,15 @@ C         ***********************************************************
           IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
      &          C255(1:1) .NE. '*') THEN
              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
-     &            ROPT,GDDE,RUE,KCAN
+     &            ROPT,GDDE,RUE,KCAN,STPC,RTPC
+C-GH &            ROPT,GDDE,RUE,KCAN     
 C-gh &            ROPT,DJTI,GDDE,RUE,KCAN
 
 c             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
 c     &            ROPT,DJTI,GDDE,RUE,KCAN,P3,P4
 
-3100         FORMAT (A6,1X,A16,1X,7(1X,F5.0))
+ 3100         FORMAT (A6,1X,A16,1X,8(1X,F5.0))
+C-GH3100         FORMAT (A6,1X,A16,1X,7(1X,F5.0))
 c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
           ELSEIF (ISECT .EQ. 0) THEN
