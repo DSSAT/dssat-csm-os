@@ -45,7 +45,7 @@ C  05/11/2007 GH  Added IDAT as output & renumber output variables
       CHARACTER*80 PATHEX
 
       INTEGER DEMRG, DFLR, DMAT, DPIN
-      INTEGER DNR0, DNR1, DNR7, DYNAMIC, ERRNUM, FOUND
+      INTEGER DNR1, DNR2, DNR7, DNR9, DYNAMIC, ERRNUM, FOUND
       INTEGER IEMRG, IFLR, IMAT, IPIN
       INTEGER ISDATE, ISENS, LINC, LNUM, LUNIO, MDATE, ISTAGE, RUN
       INTEGER TIMDIF, TRTNUM, YRNR1, YRNR2, YRNR3
@@ -329,24 +329,9 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
 
 !-----------------------------------------------------------------------
 !     Convert from YRDOY format to DAP.  Change descriptions to match.
-        CALL READA_Dates(X(2), YRSIM, IFLR)
-        IF (IFLR .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
-          DFLR = TIMDIF(YRPLT,IFLR)
-        ELSE
-          DFLR  = -99
-        ENDIF
-        OLAP(2) = 'ADAP  '
-        CALL GetDesc(1,OLAP(2), DESCRIP(2))
 
-        CALL READA_Dates(X(5), YRSIM, IMAT)
-        IF (IMAT .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
-          DMAT = TIMDIF(YRPLT,IMAT)
-        ELSE
-          DMAT  = -99
-        ENDIF
-        OLAP(5) = 'MDAP  '
-        CALL GetDesc(1,OLAP(5), DESCRIP(5))
-
+!       -----------------------------------------------------------
+!       Panicle initiation - measured
         CALL READA_Dates(X(1), YRSIM, IPIN)
         IF (IPIN .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DPIN = TIMDIF (YRPLT,IPIN)
@@ -356,15 +341,24 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
         OLAP(1) = 'IDAP  '
         CALL GetDesc(1,OLAP(1), DESCRIP(1))
 
-        CALL READA_Dates(X(23), YRSIM, IEMRG)
-        IF (IEMRG .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
-          DEMRG = TIMDIF(YRPLT,IEMRG)
-        ELSE
-          DEMRG  = -99
+!       Panicle initiation - simulated
+        DNR2 = TIMDIF (YRPLT,YRNR2)
+        IF (DNR2 .LE. 0 .OR. YRPLT .LE. 0) THEN
+           DNR2 = -99
         ENDIF
-        OLAP(23) = 'EDAP  '
-        CALL GetDesc(1,OLAP(23), DESCRIP(23))
 
+!       -----------------------------------------------------------
+!       Anthesis - measured
+        CALL READA_Dates(X(2), YRSIM, IFLR)
+        IF (IFLR .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
+          DFLR = TIMDIF(YRPLT,IFLR)
+        ELSE
+          DFLR  = -99
+        ENDIF
+        OLAP(2) = 'ADAP  '
+        CALL GetDesc(1,OLAP(2), DESCRIP(2))
+
+!       Anthesis - simulated
         IF (YRPLT .GT. 0) THEN
           DNR1 = TIMDIF (YRPLT,ISDATE)
           IF (DNR1 .LE. 0) THEN
@@ -374,6 +368,18 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
           DNR1 = -99
         ENDIF
   
+!       -----------------------------------------------------------
+!       Maturity - measured
+        CALL READA_Dates(X(5), YRSIM, IMAT)
+        IF (IMAT .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
+          DMAT = TIMDIF(YRPLT,IMAT)
+        ELSE
+          DMAT  = -99
+        ENDIF
+        OLAP(5) = 'MDAP  '
+        CALL GetDesc(1,OLAP(5), DESCRIP(5))
+
+!       Maturity - simulated
         IF (YRPLT .GT. 0) THEN
           DNR7 = TIMDIF (YRPLT,MDATE)
           IF (DNR7 .LE. 0)  THEN
@@ -383,22 +389,30 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
           DNR7 = -99
         ENDIF
 
-        DNR0 = TIMDIF (YRPLT,YRNR2)
-        IF (DNR0 .LE. 0 .OR. YRPLT .LE. 0) THEN
-           DNR0 = -99
+!       -----------------------------------------------------------
+!       Emergence - measured
+        CALL READA_Dates(X(23), YRSIM, IEMRG)
+        IF (IEMRG .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
+          DEMRG = TIMDIF(YRPLT,IEMRG)
+        ELSE
+          DEMRG  = -99
         ENDIF
+        OLAP(23) = 'EDAP  '
+        CALL GetDesc(1,OLAP(23), DESCRIP(23))
 
+!       Emergence - simulated
         YREMRG = STGDOY(9)
         IF (YRPLT .GT. 0) THEN
-          DNR0 = TIMDIF (YRPLT,YREMRG)
-          IF (DNR0 .LE. 0)  THEN
-            DNR0 = -99
+          DNR9 = TIMDIF (YRPLT,YREMRG)
+          IF (DNR9 .LE. 0)  THEN
+            DNR9 = -99
           ENDIF
         ELSE
-          DNR0 = -99
+          DNR9 = -99
         ENDIF
 
-      WRITE(Simulated(1),'(I8)')DNR0;WRITE(Measured(1),'(I8)')DPIN !IDAT
+!       -----------------------------------------------------------
+      WRITE(Simulated(1),'(I8)')DNR2;WRITE(Measured(1),'(I8)')DPIN !IDAT
       WRITE(Simulated(2),'(I8)')DNR1;WRITE(Measured(2),'(I8)')DFLR !ADAT
       WRITE(Simulated(3),'(I8)')-99 ;WRITE(Measured(3),'(I8)')-99  !PD1T
       WRITE(Simulated(4),'(I8)')-99 ;WRITE(Measured(4),'(I8)')-99  !PDFT
@@ -438,7 +452,7 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
                                     WRITE(Measured(21),'(A8)')X(21)!CNAA
       WRITE(Simulated(22),'(F8.2)')XN
                                     WRITE(Measured(22),'(A8)')X(22)!L#SM
-      WRITE(Simulated(23),'(I8)') DNR0; WRITE(Measured(23),'(I8)') DEMRG
+      WRITE(Simulated(23),'(I8)') DNR9; WRITE(Measured(23),'(I8)') DEMRG
 
       ENDIF
 
