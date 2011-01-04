@@ -23,7 +23,7 @@
      &    YRPLT, YRSIM,                                      !Input
      &    CropTypeCode, DeltaLeafArea, DeltaLeafNum,         !Output
      &    DLFN, DPLARF, DRPP, DTX, TillerCount,              !Output 
-     &	  LeafNum, MinGr, MDATE,                             !Output
+     &	    LeafNum, MinGr, MDATE,                             !Output
      &    NVEG0, PhenoStage, PHTHRS, Ph1P, PI1, PI2, ROWSPC, !Output
      &    Smax, StalkState, STNAME, STGDOY, StkHrNO,         !Output
      &    SumTTD, SumTTG, SumTTStalk, TDUMX, VSTAGE,         !Output
@@ -50,7 +50,7 @@
 
       INTEGER Cond, EndStalk, ERRNUM, FROP, DYNAMIC, DOY, DAS   
       INTEGER DAP, TillerCount, MDATE, NLAYR, NOUTPHN, NVEG0, RUN 
-      INTEGER TIMDIF, YEAR, YREMRG, YRPLT, YRSIM, YRDOY   
+      INTEGER Smax, TIMDIF, YEAR, YREMRG, YRPLT, YRSIM, YRDOY   
       INTEGER livecount, Day, Phase, Stalk    
       INTEGER CropTypeCode
       INTEGER PhenoStage, NewStalk
@@ -73,7 +73,7 @@
       REAL M, MinGr
       REAL Ph1P, Ph1R, Ph2, Ph3, Ph4
       REAL DTPI, PI1, PI2
-      REAL So, Go, Smax, Gmax
+      REAL So, Go, Gmax
       REAL DepthRateOfEmer, DeltaDepthOfEmer, DepthToEmer
       REAL TGROAV, DeltaTTD, SumTTD, DeltaTTG 
       REAL RTNFAC, StkHrNO, SumTTG, TELOM 
@@ -245,7 +245,8 @@
       WRITE(WLUN,'(1X,"Phyllochron interval 2:",F8.1," °C-day")') PI2
       WRITE(WLUN,'(1X,"Phyllochron interval  :",F8.1," °C-day")') DTPI
       WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"Smax:",F8.1," # stalks/stubble")') Smax
+   !!!WRITE(WLUN,'(1X,"Smax:",F8.1," # stalks/stubble")') Smax
+      WRITE(WLUN,'(1X,"Smax:",I8," # stalks/stubble")') Smax
       WRITE(WLUN,'(1X,"So  :",F8.1," # stalks/stubble")') So    
       WRITE(WLUN,'(1X,"Gmax:",F8.1," °C-day")') Gmax    
       WRITE(WLUN,'(1X,"Go  :",F8.1," °C-day")') Go

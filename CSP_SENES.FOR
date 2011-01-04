@@ -24,10 +24,10 @@ C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
       SUBROUTINE CSP_SENES(CONTROL, DYNAMIC,
      &    CAB, ECONO, FILECC, FILEGC, GRLF, GRSU, KCAN,    !Input
-     &	LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
+     &    LeafArea, LeafMaint, LeafNum, LFmntDEF,          !Input
      &    MinGr, Ph1P, PhenoStage,                         !Input
      &    PI1, RATTP, Smax,                                !Input
-     &	StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
+     &	    StalkState, STKmntDEF, STKWT, STKWTP, SuDEF,     !Input
      &    SumTTStalk, SWFAC, TMIN, XLAI,                   !Input
      &    YRDOY, YRPLT, YRSIM,                             !Input
      &    Kill, SLDOT, SLNDOT, SSDOT, SSNDOT)              !Output
@@ -49,7 +49,7 @@ C========================================================================
       PARAMETER (ERRKEY = 'SENES')
 
       INTEGER I, II, CAB, LUNCRP, LUNECO, ERR, ISECT, LNUM, Zone 
-      INTEGER DYNAMIC, Stalk, TIMDIF
+      INTEGER DYNAMIC, Smax, Stalk, TIMDIF
       INTEGER DAS, YRDOY, YRPLT, YRSIM
       INTEGER FOUND
       INTEGER NSWAB
@@ -64,7 +64,7 @@ C========================================================================
       REAL KCAN, MinGr, Ph1P, PI1  
       REAL PORLOST, RATTP 
       REAL SENDAY, SLNDOT   
-	REAL Smax, SSDOT, SSNDOT, StkSenFrac, SWFAC   
+	REAL SSDOT, SSNDOT, StkSenFrac, SWFAC   
       REAL TABEX, TMIN  
       REAL WatSEN, XLAI  
 	REAL SWFCAB(NSWAB)

@@ -53,7 +53,7 @@ C=======================================================================
       INTEGER CAB, CountStalk, CropTypeCode 
       INTEGER DAP, DAS, Day, DOY, DYNAMIC, H, I, L
       INTEGER LAIXD, LUNCRP, NLAYR, NVEG0, OpenStatus  
-      INTEGER PhenoStage, REPNO, RUN, Stalk, TIMDIF
+      INTEGER PhenoStage, REPNO, RUN, Smax, Stalk, TIMDIF
       INTEGER XDAY(6), YEAR, YRDOY, YRPLT, YRSIM, CGLUN
 
       INTEGER, DIMENSION(1:NumOfStalks) :: Kill
@@ -69,7 +69,7 @@ C=======================================================================
       REAL SumLfWt, SumLSWt, SumRtWt, SuH2OFac 
       REAL SumStkTiWt, SumStkSuWt, TPHFAC, TURFAC, TURFSL 
       REAL TURSLA, XHLAI, XLAI, XLAIlost
-      REAL PAR, Smax, xTEMP 
+      REAL PAR, xTEMP 
 !     REAL AGEFAC, ,PGAVL,  DTX
 
       REAL SLAREF, SLAVAR, StkEx, SuEx, TOPWT, TOTWT, VSTAGE
