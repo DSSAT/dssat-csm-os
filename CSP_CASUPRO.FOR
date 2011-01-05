@@ -62,7 +62,7 @@ C=======================================================================
 
       INTEGER CAB, CountStalk, CropTypeCode, DAS, DYNAMIC 
       INTEGER LAIXD, RUN, ZONE, NLAYR, NOUTDO, NVEG0    
-      INTEGER YREND
+      INTEGER Smax, YREND
       INTEGER YREMRG, YRDOY, MDATE, YRPLT, YRSIM 
       INTEGER STGDOY(20), XDAY(6)
 
@@ -103,7 +103,7 @@ C=======================================================================
      &     ROA !, RNH4C, RNO3C, RPRO
       REAL RATTP, RHOL, RO, RP, RTDEP, RHOS   !, ROWSPC
       REAL RSPNO3, RSPNH4   
-      REAL SDNPL, SLAVAR, SIZELF, Smax, TDAY
+      REAL SDNPL, SLAVAR, SIZELF, TDAY
 
 !     Senescence variables computed for soil N routines.
       REAL SENRT(NL)      

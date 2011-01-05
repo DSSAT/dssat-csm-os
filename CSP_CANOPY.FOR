@@ -46,7 +46,7 @@ C-----------------------------------------------------------------------
 
       INTEGER I, II, DAS, DYNAMIC, H, LUNCRP, LUNECO, LUNIO 
       INTEGER ERR, LINC, LNUM, ISECT, NHOUR
-      INTEGER FOUND, Stalk
+      INTEGER FOUND, Smax, Stalk
 
       LOGICAL DAYTIM
 
@@ -54,7 +54,7 @@ C-----------------------------------------------------------------------
       REAL CANHT, CANWH, FRACSH, FRSHAV, FRSHV, XHLAI
       REAL HS, KCAN, MINSHD, PAR, PLTPOP
       REAL HWTEM, RCANHT, RCANWH, PARNOD, HPAR, WPAR
-      REAL Smax, SNDN, SNUP, TABEX, TINCR
+      REAL SNDN, SNUP, TABEX, TINCR
       REAL XHWPAR(10), XHWTEM(10), YHWPAR(10), YHWTEM(10)
       REAL XVSHT(15), YVSHT(15), YVSWH(15)
       REAL TGRO(TS), tmp

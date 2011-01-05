@@ -28,7 +28,7 @@ C=======================================================================
      &    DeltaLeafArealost, FILEGC, FRACSH, FRSHV,       !Input
      &    KCAN, LeafArea,LeafAreaPlant, LeafNum,          !Input 
      &    LfShdFac, PAR,                                  !Input
-     &	PStres2, RNITP, SLAREF, SLAAD,                  !Input
+     &	    PStres2, RNITP, SLAREF, SLAAD,                  !Input
      &    SLPF, Smax, StalkState, StkHt, SWFAC, TAVG,     !Input 
      &    TURFAC, WEATHER, XHLAI,                         !Input
      &    AGEFAC, LeafDist, LI, LITOTAL, PGT, PgRatio,    !Output
@@ -47,7 +47,7 @@ C=======================================================================
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC, FILEGC
 
-      INTEGER DAS, DYNAMIC, H, YRDOY, YRSIM, Zone, PLUN
+      INTEGER DAS, DYNAMIC, H, PLUN, Smax, YRDOY, YRSIM, Zone
 
       REAL AGEFAC, AGEFCC, A0, BETN, CANHT, CanLmtFac, CANWH, 
      &  CCEFF, CCK, CCMAX, CCMP, CO2, COLDSTR, CUMSTR, CURV, 
@@ -58,7 +58,7 @@ C=======================================================================
      &  LI, LIallZone, LITOTAL, SLPF, PGT,
      &  PGLFMX, PGREF, PGSLW, PHTMAX, PLTPOP, PRATIO,   
      &  PStres2, PTSMAX, RNITP, ROWSPC, SHLAI, SLAREF, SLAAD, 
-     &  SLW, Smax, SNDN, SNUP, SWFAC, TABEX, 
+     &  SLW, SNDN, SNUP, SWFAC, TABEX, 
      &  TGRO(TS), TLI, TURFAC, XHLAI, XLAI    
       
       REAL PlantLeafAreaTmp, temp 

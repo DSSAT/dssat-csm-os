@@ -53,7 +53,7 @@ C=========================================================================
       CHARACTER*12 VARNAME
 
       INTEGER NPHS
-      INTEGER LUNIO, LUNCRP, LUNECO, ISECT, PATHL
+      INTEGER LUNIO, LUNCRP, LUNECO, ISECT, PATHL, Smax 
       INTEGER II, WLUN
       INTEGER ERR, LINC, LNUM, FOUND
 !     INTEGER M, 
@@ -63,7 +63,7 @@ C=========================================================================
       PARAMETER (NPHS = 4)          ! Number of plant phases = 4
 
       REAL AZIR, SDEPTH, PLANTS, PLTPOP, RTNFAC, ROWSPC
-      REAL PI1, PI2, DTPI, Smax, So, Gmax, Go, MinGr
+      REAL PI1, PI2, DTPI, So, Gmax, Go, MinGr
       REAL Ph1P, Ph1R, Ph2, Ph3, Ph4, PHTMAX
 
       REAL TB(5), TO1(5), TO2(5), TM(5), XLFNUM(7), YLFSZ(7) 
@@ -199,7 +199,7 @@ C------ Find particular ECOTYPE ----------------------------------------
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  !
 		
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  
-		READ(CHAR,'(14X,F6.0)',IOSTAT=ERR) SMAX 
+		READ(CHAR,'(14X,I6)',IOSTAT=ERR) SMAX 
  		IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
 
 		CALL IGNORE(LUNECO,LNUM,ISECT,CHAR)  !CAB
