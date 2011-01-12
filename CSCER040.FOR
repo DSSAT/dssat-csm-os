@@ -8072,7 +8072,9 @@
      &'-Nitrogen--|--Phosphorus-|',/,
      &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
      &'to         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ',
+!     CHP 1/11/11
+!     changed ø to o for portability to Linux compilers.
+     &25X,'days    oC    oC MJ/m2     hr     mm     mm  synth Growth  ',
      &'synth Growth  synth Growth',/,110('-'))
 
  9588       FORMAT(
