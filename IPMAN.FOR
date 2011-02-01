@@ -523,7 +523,8 @@ C
                CALL ERROR (ERRKEY,14,FILEX,LINEXP)
             ENDIF
             READ (FERCOD(NFERT)(3:5),'(I3)',IOSTAT=ERRNUM) IFFCOD
-            IF (IFFCOD .LT. 1 .OR. IFFCOD .GT. 18 .OR.
+!CHP 2/1/11 IF (IFFCOD .LT. 1 .OR. IFFCOD .GT. 18 .OR.
+            IF (IFFCOD .LT. 1 .OR. IFFCOD .GT. 20 .OR.
      &          ERRNUM .NE. 0) THEN
                WRITE(FERCOD(NFERT)(3:5),'(A3)') '001'
             ENDIF
