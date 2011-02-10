@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 1
-        INTEGER :: Build = 6
+        INTEGER :: Build = 7
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.5.1.7  chp 02/10/2011 CSCER, CSCRP changes to species and ecotype files, LAH
 !       4.5.1.6  chp 02/01/2011 Deep fertilizer placement allowed
 !       4.5.1.5  chp 01/05/2011 CASUPRO - minor changes F.Royce
 !       4.5.1.4  chp 12/14/2010 Minor changes sorghum model - GH, Thailand workshop

@@ -161,11 +161,11 @@
       REAL          CHPHASEDU(2)  ! Chaff gr. start,etc.,stages    PVTt
       REAL          CHRSWAD       ! Chaff reserves                 kg/ha
       REAL          CHRSWT        ! Chaff reserves                 g/p
-      REAL          CHTFR(10)     ! Canopy ht fraction for lf area #
+      REAL          CHTPC(10)     ! Canopy ht % associated w LA%   %
       REAL          CHWAD         ! Chaff weight                   kg/ha
       REAL          CHWADOUT      ! Chaff weight for output        kg/ha
       REAL          CHWT          ! Chaff weight                   g/p
-      REAL          CLAFR(10)     ! Canopy lf area fraction w ht   #
+      REAL          CLAPC(10)     ! Canopy lf area % down to ht    %
       REAL          CLOUDS        ! Cloudiness factor,relative,0-1 #
       INTEGER       CN            ! Crop component (multicrop)     #
       REAL          CNAA          ! Canopy N at anthesis           kg/ha
@@ -186,7 +186,7 @@
       REAL          CO2EX         ! Exponent for CO2-phs function  #
       REAL          CO2FP         ! CO2 factor,photosynthesis      #
       REAL          CO2FPI        ! CO2 factor,phs,internal Co2    #
-      REAL          CO2FR(10)     ! CO2 factor rel values 0-1      #
+      REAL          CO2F(10)      ! CO2 factor rel values 0-2      #
       REAL          CO2INT        ! CO2 concentration,internal     g/m3
       REAL          CO2INTPPM     ! CO2 concentration,internal     ppm
       REAL          CO2INTPPMP    ! CO2 concentration,internal,prv ppm
@@ -1406,7 +1406,7 @@
       REAL          TRLV          ! Total root length density      /cm2
       REAL          TRPHS(4)      ! Temp response,photosynthesis   #
       REAL          TRVRN(4)      ! Temp response,vernalization    #
-      REAL          TRWU          ! Total water uptake             cm
+      REAL          TRWU          ! Total water uptake             mm
       REAL          TRWUP         ! Total water uptake,potential   cm
       REAL          TSDEP         ! Average temp in top 10 cm soil C
       REAL          TSRAD         ! Transmission,SRAD,fraction     #
@@ -3183,7 +3183,8 @@
         CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',canhts)
         CALL ECREADR (ECDIRFLE,ECONO,'AWNS',awns)
         CALL ECREADR (ECDIRFLE,ECONO,'RS%A',rsca)
-        CALL ECREADR (ECDIRFLE,ECONO,'TIPHS',ti1lf)
+        CALL ECREADR (ECDIRFLE,ECONO,'TIL#S',ti1lf)
+        IF (TI1LF.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'TIPHS',ti1lf)
         CALL ECREADR (ECDIRFLE,ECONO,'TIFAC',tifac)
         CALL ECREADR (ECDIRFLE,ECONO,'TIPHE',tilpe)
         CALL ECREADR (ECDIRFLE,ECONO,'TDPHS',tilds)
@@ -3323,7 +3324,7 @@
         IF (tilds.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHS',tilds)
         CALL SPREADR (SPDIRFLE,'TILIP',tilip)
         IF (tilpe.LE.0.0) CALL SPREADR (SPDIRFLE,'TILPE',tilpe)
-        CALL SPREADR (SPDIRFLE,'TI#X',tinox)
+        CALL SPREADR (SPDIRFLE,'TIL#X',tinox)
         CALL SPREADR (SPDIRFLE,'TKLFD',tklfd)
         CALL SPREADR (SPDIRFLE,'TKSPN',tkspan)
         CALL SPREADR (SPDIRFLE,'TKTID',tktid)
@@ -3371,6 +3372,7 @@
         IF (LAXS.LE.0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
         IF (RLFNU.LE.0.0) CALL SPREADR (SPDIRFLE,'RLFNU',rlfnu)
         IF (RLWR.LE.0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
+        IF (NFGL.LT.0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
         IF (NFGU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
         IF (NFPU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
         IF (NFPL.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
@@ -3379,9 +3381,8 @@
         IF (LAFR.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFR',lafr)
         IF (LAFV.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFV',lafv)
         IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'LAWCF',lawcf)
-        IF (Dfpe.LT.0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
+        IF (DFPE.LT.0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
         IF (PPEXP.LT.0.0) CALL SPREADR (SPDIRFLE,'PPEXP',ppexp)
-        IF (NFGL.LT.0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
         IF (TILSF.LT.0.0) CALL SPREADR (SPDIRFLE,'TDSF',tilsf)
         ! Grain coefficients
         IF (GWTAA.LT.0.0) CALL SPREADR (SPDIRFLE,'GWWF',gwtaa)
@@ -3400,11 +3401,11 @@
         CALL SPREADRA (SPDIRFLE,'RN%MN','2',rnpcmn)
         CALL SPREADRA (SPDIRFLE,'SN%MN','2',snpcmn)
 
-        CALL SPREADRA (SPDIRFLE,'CHTFR','10',chtfr)
-        CALL SPREADRA (SPDIRFLE,'CLAFR','10',clafr)
+        CALL SPREADRA (SPDIRFLE,'CHT%','10',chtpc)
+        CALL SPREADRA (SPDIRFLE,'CLA%','10',clapc)
 
         CALL SPREADRA (SPDIRFLE,'CO2RF','10',co2rf)
-        CALL SPREADRA (SPDIRFLE,'CO2FR','10',co2fr)
+        CALL SPREADRA (SPDIRFLE,'CO2F','10',co2f)
 
         DO I = 1,9
           TL10 = TL10FROMI(I) 
@@ -5244,7 +5245,7 @@
               ! COCCC CO2 compensation concentration (80 vpm)
               !CO2FP = PARFC*((1.-EXP(-CO2EX*CO2))-(1.-EXP(-CO2EX*CO2CC)))
               ! CO2 factor
-              CO2FP = YVALXY(CO2RF,CO2FR,CO2)
+              CO2FP = YVALXY(CO2RF,CO2F,CO2)
 
               !  LAH Notes from original cassava model                                                          
               !  IF (TEMPM .LT. SenCritTemp) THEN
@@ -6905,6 +6906,11 @@
 
             RSWTX = AMAX1(RSWTX,RSWT)
             STWT = STWT + GROST - SENSTG - SENSTGRS - SWPH
+            IF (STWT.LT.1.0E-06) THEN
+              IF (STWT.LT.0.0) 
+     &         WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
+              STWT = 0.0
+            ENDIF
             SWPHC = SWPHC +  SWPH
             STVWT = STVWT + STVWTG
             DEADWTR = DEADWTR + (SENLFG+SENSTG)*(1.0-SENFR) - dwrph
@@ -8612,7 +8618,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &           ' plants/m2 in ',I3,' cm rows',/)
               ENDIF
               WRITE (NOUTPG,2201)
- 2201         FORMAT ('@YEAR DOY   DAS   DAP  TMND TKILL',
+ 2201         FORMAT ('@YEAR DOY   DAS   DAP TMEAN TKILL',
      A               '  GSTD  L#SD',
      B               ' PARID PARUD  AWAD',
      C               '  LAID  SAID  CAID',
@@ -8678,14 +8684,14 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      N               ' ...PHENOLOGY.... ',
      1               ' .......PHOTOSYNTHESIS....... ', 
      M               ' .....GROWTH.....  ..TILLERS. ',
-     2               '..WATER STRESS DETERMINANTS..',
-     2               '  N STRESS DETERMINANTS      ')
+     2               'WATER STRESS DETERMINANTS',
+     2               ' N STRESS DETERMINANTS        ')
               WRITE (NOUTPGF,2205)
- 2205         FORMAT ('@YEAR DOY   DAS   DAP  TMND TCADD  GSTD',
+ 2205         FORMAT ('@YEAR DOY   DAS   DAP TMEAN TCDIF  GSTD',
      N               '  TFDD VRNFD DYLFD',
      1               '  TFPD  WFPD  NFPD CO2FD RSFPD', 
      M               '  TFGD  WFGD  NFGD  WFTD  NFTD',
-     &               ' WAVRD WUPRD TWUPD  SWXD  EOPD',
+     &               ' WAVRD WUPRD  SWXD  EOPD',
      &               '  SNXD LN%RD SN%RD RN%RD            ')
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPGF,507)
@@ -8693,14 +8699,14 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      B      1.0-TFD,1.0-VF,1.0-DFOUT,
      C      1.0-TFP,1.0-WFP,1.0-NFP,1.0-CO2FP,1.0-RSFP,
      D      1.0-TFG,1.0-WFG,1.0-NFG,1.0-WFT,1.0-NFT,
-     H      AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),TRWUP,H2OA,EOP,
+     H      AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),H2OA,EOP,
      I      SNO3PROFILE+SNH4PROFILE,LNCR,SNCR,RNCR
   507       FORMAT(
      a      I5,I4,2I6,2F6.1,A6,
      b      3F6.2,
      c      5F6.2,
      d      5F6.2,
-     e      3F6.2,2F6.1,
+     e      2F6.2,F6.1,F6.2,
      F      F6.1,3F6.2)
             ! End Plantgro reduction factor writes
             
@@ -8722,7 +8728,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &           month,dom,plyeardoy,NINT(pltpopp),NINT(rowspc)
               ENDIF 
               WRITE (NOUTPG2,2251)
- 2251         FORMAT ('@YEAR DOY   DAS   DAP  TMND  GSTD  RSTD',
+ 2251         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  RSTD',
      A          ' LAIPD LAISD  LAID  CHTD SDWAD SNW0D SNW1D',
      a          '  H#AD  HWUD',
      B          ' SHRTD  PTFD  RDPD',
@@ -8764,11 +8770,11 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &             month,dom,plyeardoy,NINT(pltpopp),NINT(rowspc)
                 ENDIF 
                 WRITE (NOUTPGN,2252)
- 2252           FORMAT ('@YEAR DOY   DAS   DAP  TMND  GSTD  NUAD',
+ 2252           FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD',
      A           '  TNAD SDNAD  RNAD  CNAD  LNAD  SNAD  HNAD  HIND',
      F           ' RSNAD SNNPD SNN0D SNN1D',
-     B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D VN%CD VN%LD',
-     C           ' RN%CD RN%LD LN%RD SN%RD RN%RD  NFPD  NFGD NUPRD',
+     B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
+     C           ' LN%RD SN%RD RN%RD  NFPD  NFGD NUPRD',
      D           ' NDEMD')
               ENDIF  ! Plantn header writes
               CALL Csopline(senn0c,sennal(0))
@@ -8779,8 +8785,8 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      H         RSNAD,DEADNAD,SENN0C,SENNSC,
      C         RANC*100.0,LANC*100.0,SANCOUT*100.0,
      D         HNC*100.0,SDNC*100.0,AMIN1(9.9,VANC*100.0),
-     &         VCNC*100.0,vmnc*100.0,
-     E         rncx*100.0,rncm*100.0,LNCR,SNCR,RNCR,1.0-NFP,1.0-NFG,
+     E         LNCR,SNCR,RNCR,
+     &         1.0-NFP,1.0-NFG,
      F         AMIN1(2.,NUPRATIO),ANDEM
   503          FORMAT(
      1         I5,I4,2I6,F6.1,A6,F6.1,
@@ -8788,8 +8794,8 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      3         2F6.2,2A6,
      4         3F6.3,
      5         3F6.3,
-     6         2F6.3,
-     7         5F6.3,2F6.2,
+     6         3F6.3,
+     2         2F6.3,
      8         F6.2,F6.1)
             ENDIF  ! ISWNIT  Plantn writes
 
@@ -11648,7 +11654,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
       ENDIF
 
       IF (DYNAMIC.EQ.INTEGR.AND.LNUMSG.GT.0) CALL Cscrplayers
-     & (chtfr,clafr,                        ! Canopy characteristics
+     & (chtpc,clapc,                        ! Canopy characteristics
      & pltpop,lai,canht,                    ! Canopy aspects
      & lnumsg,lap,lapp,laps,                ! Leaf cohort number,size
      & LAIL,LAILA,                          ! Leaf area indices,layers
@@ -11758,7 +11764,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
       REAL          SWCON1        ! Constant for root water uptake #
       REAL          SWCON2(NL)    ! Variable for root water uptake #
       REAL          SWCON3        ! Constant for root water uptake #
-      REAL          TRWU          ! Total water uptake             cm
+      REAL          TRWU          ! Total water uptake             mm
       REAL          TRWUP         ! Total water uptake,potential   cm
       REAL          TSS(NL)       ! Number of days saturated       d
       REAL          UH2O(NL)      ! Uptake of water                cm/d
@@ -11911,7 +11917,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
 !-----------------------------------------------------------------------
 
       SUBROUTINE Cscrplayers
-     X (chtfr,clafr,                   ! Height-leaf area distribution
+     X (chtpc,clapc,                   ! Height-leaf area distribution
      X plpop,                          ! Plant population
      X lai,canht,                      ! Canopy area indices and height
      X lnumsg,lap,lapp,laps,           ! Leaf cohort number and size
@@ -11933,8 +11939,8 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
       REAL          clthick       ! Canopy layer thickness         cm
       REAL          clthick1      ! Canopy top layer thickness     cm
       INTEGER       cltot         ! Canopy layer number,total      #
-      REAL          chtfr(10)     ! Canopy ht fraction for lf area #
-      REAL          clafr(10)     ! Canopy lf area fraction w ht   #
+      REAL          chtpc(10)     ! Canopy ht % for lf area        %
+      REAL          clapc(10)     ! Canopy lf area % down to ht    %
       REAL          lai           ! Leaf lamina area index         m2/m2
       REAL          laia          ! Leaf lamina area index,active  m2/m2
       REAL          lail(clx)     ! Leaf lamina area index         m2/m2
@@ -12002,7 +12008,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
          clbase = clbase - clthick
        ENDIF
        canfrl = clbase / canht
-       lfrltmp = YVALXY(CHTFR,CLAFR,CANFRL)
+       lfrltmp = YVALXY(CHTpc,CLApc,CANFRL)
 
        cailds(spp,tvi1)=caid*(lfrutmp-lfrltmp)
 
