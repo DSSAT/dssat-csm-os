@@ -40,6 +40,8 @@ c     [IO] The growth object
      - Growth, 
 c     [I] The Climate object
      - Climate,
+c     [I] soil photosythesis fertility factor (CHP 2/14/2011)
+     - SLPF, 
 c     [O] Output object
      - Out,
 c     [I] Simulation switches
@@ -129,6 +131,7 @@ c          REAL     LODGE_LI
        
           REAL     ROWSPC
           REAL     RUNOFF
+          REAL     SLPF   !CHP 2/14/2011
 c          REAL     SCV
 c     ::::::::::::::::::::::::::::::::
 
@@ -507,7 +510,10 @@ C  photosynthesis where a Pmax was at 33 deg C.
        ENDIF
 C NET CARBON GAIN IS REDUCED BY WATER AND ANAEROBIC STRESS
 c       RESPWT=PGROSS-DWDT
-       DWDT=AMIN1(DWDT*CWSI*ANAERF,DWDT)
+!      DWDT=AMIN1(DWDT*CWSI*ANAERF,DWDT)
+!      14 Feb 2011 CHP added SLPF factor
+       DWDT=AMIN1(DWDT*CWSI*ANAERF*SLPF,DWDT)
+
 C If negative growth is allowed it cannot occur before a limited TDMAS has 
 C accumulated
        IF(DWDT.LT.0.0) THEN

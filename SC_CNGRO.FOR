@@ -167,6 +167,7 @@ c      REAL SCV
       REAL RECTIM 
       REAL SWDFMN
       REAL CRITSW
+      REAL SLPF
 
 c     Thermal time required to for photosynthesis to recover
 c     from water stress (cultivar param):
@@ -625,10 +626,12 @@ c     ::::::::::::::::::::
 c         Check this...
           Growth%GERMDY = 0.    
       
+          SLPF = SOILPROP % SLPF  !CHP 2/14/2011
           CALL PHOTOS(CWSI,MDL,
      -       WaterBal%ANAERF,
      -      ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
      -      rowspc,RUNOFF, allowlodg, LODGE_LI, Part, Growth, Climate, 
+     -      SLPF,
      -      Out, ISWITCH, Control)
           
 
@@ -867,6 +870,7 @@ c        ... and calculate actual photosynthesis
      -    WaterBal%ANAERF,
      -   ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
      -   rowspc,RUNOFF, allowlodg, LODGE_LI, Part, Growth, Climate, 
+     -   SLPF,
      -   Out, ISWITCH, Control)
 
 
@@ -982,6 +986,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
      -    WaterBal%ANAERF,
      -   ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
      -   rowspc,RUNOFF, allowlodg, LODGE_LI, Part, Growth, Climate, 
+     -   SLPF,
      -   Out, ISWITCH, Control)
 
 
