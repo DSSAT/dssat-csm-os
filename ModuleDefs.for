@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 1
-        INTEGER :: Build = 7
+        INTEGER :: Build = 8
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.5.1.8  chp 02/14/2011 SLPF enabled for Canegro
 !       4.5.1.7  chp 02/10/2011 CSCER, CSCRP changes to species and ecotype files, LAH
 !       4.5.1.6  chp 02/01/2011 Deep fertilizer placement allowed
 !       4.5.1.5  chp 01/05/2011 CASUPRO - minor changes F.Royce
