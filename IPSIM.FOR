@@ -534,7 +534,7 @@ C-----------------------------------------------------------------------
         SELECT CASE(MODEL(1:5))
         CASE('CRGRO','MZCER','RICER')
           SELECT CASE(CONTROL % CROP)
-          CASE('SB','FA','MZ','RI') 
+          CASE('SB','FA','MZ','RI','PN') 
 !           Phosphorus model has been enabled and tested for these crops, do nothing
 
           CASE DEFAULT

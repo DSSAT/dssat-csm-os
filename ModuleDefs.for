@@ -64,7 +64,10 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 8
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-Release  '
+!     2/18/2011 chp
+!     Branch created for Jesse Naab for phosphorus dynamics in peanut research
+      CHARACTER(len=10) :: VBranch = '-P_peanut '
+!     CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
 !       4.5.1.8  chp 02/14/2011 SLPF enabled for Canegro
