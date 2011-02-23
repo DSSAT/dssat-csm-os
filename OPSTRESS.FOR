@@ -12,6 +12,7 @@
 !  10/20/2005 CHP Written based on CROPGRO v3.5 routines SUMWTH and OPSTRS
 !  01/07/2010 CHP Add irrigation water productivity to Overview and Summary
 !  01/26/2010 CHP Add N productivity
+!  02/22/2011 CHP Add environmental factors during growth season, incl. CO2
 !-----------------------------------------------------------------------
 
       SUBROUTINE OPSTRESS(CONTROL, IDETO,   
@@ -50,13 +51,14 @@
       REAL DEPIR, DMP_Irr, GrP_Irr
       REAL DMP_NApp, GrP_NApp, DMP_NUpt, GrP_NUpt
       REAL CumNit
+      REAL TMNA, TMXA, SRDA, DYLA, CO2A, PRCP, ETCP
 
       REAL, DIMENSION(0:MaxStag) :: N_photR, CETR, CEPR, DAYLR, N_growR
-      REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR
+      REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR, CO2R
       REAL, DIMENSION(0:MaxStag) :: W_photR, TMAXR, TMINR, W_growR
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 12
+      INTEGER, PARAMETER :: SUMNUM = 20
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -105,6 +107,7 @@
       RAINR = 0.0
       DAYLR = 0.0
       RADR  = 0.0
+      CO2R  = 0.0
       CETR  = 0.0; CEPR = 0.0
       W_growR = 0.0
       W_photR = 0.0
@@ -180,6 +183,7 @@
 !           CumIrr(I)= CumIrr(I)+ DEPIR
             DAYLR(I) = DAYLR(I) + DAYL
             RADR (I) = RADR (I) + SRAD 
+            CO2R (I) = CO2R (I) + WEATHER % CO2 
             CETR(I)  = CETR(I)  + ET_L
             CEPR(I)  = CEPR(I)  + EP_L
             W_growR(I) = W_growR(I) + W_grow 
@@ -226,6 +230,7 @@
           DAYLR(I) = DAYLR(I)/ NNR(I)
           !RADTR(I) = RADR(I)
           RADR (I) = RADR(I) / NNR(I)
+          CO2R (I) = CO2R(I) / NNR(I)
           W_growR(I) = 1. - (W_growR(I) / NNR(I))
           W_photR(I) = 1. - (W_photR(I) / NNR(I))
           N_growR(I) = 1. - (N_growR(I) / NNR(I))
@@ -240,15 +245,15 @@
      &      CONTROL % ErrCode == 0) THEN
           IF (RAINR(I) < 1000.) THEN
             WRITE(NOUTDO,600) STAG(I), NNR(I), TMAXR(I), TMINR(I), 
-     &        RADR(I), DAYLR(I), RAINR(I), CETR(I), W_photR(I), 
+     &        RADR(I), DAYLR(I), CO2R(I), RAINR(I), CETR(I), W_photR(I),
      &        W_growR(I), N_photR(I), N_growR(I), P_photR(I), P_growR(I)
-  600       FORMAT(1X,A23,I5,3F6.1,F7.2,2F7.1,6F7.3)
+  600       FORMAT(1X,A23,I5,3F6.1,F7.2,3F7.1,6F7.3)
           ELSE
             WRITE(NOUTDO,610) STAG(I), NNR(I), TMAXR(I), TMINR(I), 
-     &        RADR(I), DAYLR(I), NINT(RAINR(I)), NINT(CETR(I)),
+     &        RADR(I), DAYLR(I), CO2R(I), NINT(RAINR(I)), NINT(CETR(I)),
      &        W_photR(I), W_growR(I), N_photR(I), N_growR(I), 
      &        P_photR(I), P_growR(I)
-  610       FORMAT(1X,A23,I5,3F6.1,F7.2,2I7,6F7.3)
+  610       FORMAT(1X,A23,I5,3F6.1,F7.2,F7.1,2I7,6F7.3)
           ENDIF
         ENDIF
 
@@ -271,19 +276,19 @@
      &      CONTROL % ErrCode == 0) THEN
         IF (RAINR(0) < 1000.) THEN
           WRITE(NOUTDO,700) STAG(0), NNR(0), TMAXR(0), TMINR(0), 
-     &      RADR(0), DAYLR(0), RAINR(0), CETR(0), W_photR(0), 
+     &      RADR(0), DAYLR(0), CO2R(0), RAINR(0), CETR(0), W_photR(0), 
      &      W_growR(0), N_photR(0), N_growR(0), P_photR(0), P_growR(0)
-  700     FORMAT(/,1X,A23,I5,3F6.1,F7.2,2F7.1,6F7.3)
+  700     FORMAT(/,1X,A23,I5,3F6.1,F7.2,3F7.1,6F7.3)
         ELSE
           WRITE(NOUTDO,710) STAG(0), NNR(0), TMAXR(0), TMINR(0), 
-     &      RADR(0), DAYLR(0), NINT(RAINR(0)), NINT(CETR(0)),
+     &      RADR(0), DAYLR(0), CO2R(0), NINT(RAINR(0)), NINT(CETR(0)),
      &      W_photR(0), W_growR(0), N_photR(0), N_growR(0), 
      &      P_photR(0), P_growR(0)
-  710     FORMAT(/,1X,A23,I5,3F6.1,F7.2,2I7,6F7.3)
+  710     FORMAT(/,1X,A23,I5,3F6.1,F7.2,F7.1,2I7,6F7.3)
         ENDIF
       ENDIF
 
-!       Resource productivity calculations
+!     Resource productivity calculations
       IF (CONTROL % ErrCode == 0) THEN
         IF (PRESENT(YIELD) .AND. PRESENT(BIOMAS) .AND. NNR(0) > 0) THEN
           IF (CONTROL % CROP /= 'FA') THEN
@@ -309,6 +314,14 @@
               DMP_EP = Biomas / CEPR(0) 
               GrP_EP = YIELD  / CEPR(0) 
             ENDIF
+
+            TMNA = TMINR(0)
+            TMXA = TMAXR(0)
+            SRDA = RADR(0)
+            DYLA = DAYLR(0)
+            CO2A = CO2R(0)
+            PRCP = RAINR(0)
+            ETCP = CETR(0)
           ENDIF
           
           CALL GET(ISWITCH)
@@ -345,6 +358,7 @@
           RAINR = 0.0
           DAYLR = 0.0
           RADR  = 0.0
+          CO2R  = 0.0
           CETR  = 0.0
           W_growR = 0.0
           W_photR = 0.0
@@ -412,6 +426,15 @@
                                     
       LABEL(11) = 'DPNUM'; VALUE(11) = DMP_NUpt
       LABEL(12) = 'YPNUM'; VALUE(12) = GrP_NUpt
+
+      LABEL(13) = 'NDCH' ; VALUE(13) = FLOAT(NNR(0))
+      LABEL(14) = 'TMNA' ; VALUE(14) = TMNA
+      LABEL(15) = 'TMXA' ; VALUE(15) = TMXA
+      LABEL(16) = 'SRDA' ; VALUE(16) = SRDA
+      LABEL(17) = 'DYLA' ; VALUE(17) = DYLA
+      LABEL(18) = 'CO2A' ; VALUE(18) = CO2A
+      LABEL(19) = 'PRCP' ; VALUE(19) = PRCP
+      LABEL(20) = 'ETCP' ; VALUE(20) = ETCP
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
