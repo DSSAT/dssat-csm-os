@@ -51,7 +51,7 @@
       REAL DEPIR, DMP_Irr, GrP_Irr
       REAL DMP_NApp, GrP_NApp, DMP_NUpt, GrP_NUpt
       REAL CumNit
-      REAL TMNA, TMXA, SRDA, DYLA, CO2A, PRCP, ETCP
+      REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP
 
       REAL, DIMENSION(0:MaxStag) :: N_photR, CETR, CEPR, DAYLR, N_growR
       REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR, CO2R
@@ -139,14 +139,14 @@
       DMP_NUpt = -99.
       GrP_NUpt = -99.
 
-      NDCH = -99 
-      TMNA = -99. 
-      TMXA = -99. 
-      SRDA = -99. 
-      DYLA = -99. 
-      CO2A = -99. 
-      PRCP = -99. 
-      ETCP = -99. 
+      NDCH  = -99 
+      TMINA = -99. 
+      TMAXA = -99. 
+      SRADA = -99. 
+      DAYLA = -99. 
+      CO2A  = -99. 
+      PRCP  = -99. 
+      ETCP  = -99. 
 
 !***********************************************************************
 !***********************************************************************
@@ -326,14 +326,14 @@
               GrP_EP = YIELD  / CEPR(0) 
             ENDIF
 
-            NDCH = NNR(0)
-            TMNA = TMINR(0)
-            TMXA = TMAXR(0)
-            SRDA = RADR(0)
-            DYLA = DAYLR(0)
-            CO2A = CO2R(0)
-            PRCP = RAINR(0)
-            ETCP = CETR(0)
+            NDCH  = NNR(0)
+            TMINA = TMINR(0)
+            TMAXA = TMAXR(0)
+            SRADA = RADR(0)
+            DAYLA = DAYLR(0)
+            CO2A  = CO2R(0)
+            PRCP  = RAINR(0)
+            ETCP  = CETR(0)
           ENDIF
           
           CALL GET(ISWITCH)
@@ -440,10 +440,10 @@
       LABEL(12) = 'YPNUM'; VALUE(12) = GrP_NUpt
 
       LABEL(13) = 'NDCH' ; VALUE(13) = FLOAT(NDCH)
-      LABEL(14) = 'TMNA' ; VALUE(14) = TMNA
-      LABEL(15) = 'TMXA' ; VALUE(15) = TMXA
-      LABEL(16) = 'SRDA' ; VALUE(16) = SRDA
-      LABEL(17) = 'DYLA' ; VALUE(17) = DYLA
+      LABEL(14) = 'TMINA'; VALUE(14) = TMINA
+      LABEL(15) = 'TMAXA'; VALUE(15) = TMAXA
+      LABEL(16) = 'SRADA'; VALUE(16) = SRADA
+      LABEL(17) = 'DAYLA'; VALUE(17) = DAYLA
       LABEL(18) = 'CO2A' ; VALUE(18) = CO2A
       LABEL(19) = 'PRCP' ; VALUE(19) = PRCP
       LABEL(20) = 'ETCP' ; VALUE(20) = ETCP

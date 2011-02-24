@@ -57,7 +57,7 @@ C=======================================================================
 
 !       Added 02/23/2011 Seasonal average environmental data
         INTEGER NDCH
-        REAL TMNA, TMXA, SRDA, DYLA, CO2A, PRCP, ETCP
+        REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP
 
       End Type SummaryType
 
@@ -126,7 +126,7 @@ C-----------------------------------------------------------------------
       REAL DPNAM, DPNUM, YPNAM, YPNUM
 !     Added 02/23/2011 Seasonal average environmental data
       INTEGER NDCH
-      REAL TMNA, TMXA, SRDA, DYLA, CO2A, PRCP, ETCP
+      REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP
 
       LOGICAL FEXIST
 
@@ -330,10 +330,10 @@ C     Initialize OPSUM variables.
 
 !     Average or cumulative environmental data, planting to harvest
       SUMDAT % NDCH   = -99   !Number days
-      SUMDAT % TMNA   = -99.9 !Avg min daily temp (C) 
-      SUMDAT % TMXA   = -99.9 !Avg max daily temp (C) 
-      SUMDAT % SRDA   = -99.9 !Avg solar rad (MJ/m2/d)
-      SUMDAT % DYLA   = -99.9 !Avg daylength (hr/d) 
+      SUMDAT % TMINA  = -99.9 !Avg min daily temp (C) 
+      SUMDAT % TMAXA  = -99.9 !Avg max daily temp (C) 
+      SUMDAT % SRADA  = -99.9 !Avg solar rad (MJ/m2/d)
+      SUMDAT % DAYLA  = -99.9 !Avg daylength (hr/d) 
       SUMDAT % CO2A   = -99.9 !Avg atm. CO2 (ppm) 
       SUMDAT % PRCP   = -99.9 !Cumulative rainfall (mm) 
       SUMDAT % ETCP   = -99.9 !Cumulative ET (mm) 
@@ -417,10 +417,10 @@ C     Initialize OPSUM variables.
       YPNUM  = SUMDAT % YPNUM !Yield : N uptake
 
       NDCH   = SUMDAT % NDCH  !Number days 
-      TMNA   = SUMDAT % TMNA  !Avg min daily temp (C) 
-      TMXA   = SUMDAT % TMXA  !Avg max daily temp (C) 
-      SRDA   = SUMDAT % SRDA  !Avg solar rad (MJ/m2/d)
-      DYLA   = SUMDAT % DYLA  !Avg daylength (hr/d) 
+      TMINA  = SUMDAT % TMINA  !Avg min daily temp (C) 
+      TMAXA  = SUMDAT % TMAXA  !Avg max daily temp (C) 
+      SRADA  = SUMDAT % SRADA !Avg solar rad (MJ/m2/d)
+      DAYLA  = SUMDAT % DAYLA !Avg daylength (hr/d) 
       CO2A   = SUMDAT % CO2A  !Avg atm. CO2 (ppm) 
       PRCP   = SUMDAT % PRCP  !Cumulative rainfall (mm) 
       ETCP   = SUMDAT % ETCP  !Cumulative ET (mm) 
@@ -496,7 +496,7 @@ C-------------------------------------------------------------------
      &    '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
      &    '     YPTM     YPIM',
      &    '    DPNAM    DPNUM    YPNAM    YPNUM',
-     &    '  NDCH  TMXA  TMNA  SRDA  DYLA   CO2A   PRCP   ETCP')
+     &    '  NDCH TMAXA TMINA SRADA DAYLA   CO2A   PRCP   ETCP')
         ENDIF
 
         IF (BWAH < -1) BWAH = -9.9
@@ -545,7 +545,7 @@ C-------------------------------------------------------------------
 !         Water productivity
      &    DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM,
      &    DPNAM, DPNUM, YPNAM, YPNUM,
-     &    NDCH, TMXA, TMNA, SRDA, DYLA, CO2A, PRCP, ETCP
+     &    NDCH, TMAXA, TMINA, SRADA, DAYLA, CO2A, PRCP, ETCP
 
   503   FORMAT(     
                                               
@@ -569,7 +569,7 @@ C-------------------------------------------------------------------
 !       DPNAM, DPNUM, YPNAM, YPNUM
      &  4F9.1,
 
-!       NDCH, TMNA, TMXA, SRDA, DYLA, CO2A, PRCP, ETCP
+!       NDCH, TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP
      &  I6,3F6.1,F6.2,3F7.1)
 
         CLOSE (NOUTDS)
@@ -822,10 +822,10 @@ C=======================================================================
         CASE ('YPNUM');SUMDAT % YPNUM  = VALUE(I)
 
         CASE ('NDCH'); SUMDAT % NDCH   = NINT(VALUE(I))
-        CASE ('TMNA'); SUMDAT % TMNA   = VALUE(I)
-        CASE ('TMXA'); SUMDAT % TMXA   = VALUE(I)
-        CASE ('SRDA'); SUMDAT % SRDA   = VALUE(I)
-        CASE ('DYLA'); SUMDAT % DYLA   = VALUE(I)
+        CASE ('TMINA');SUMDAT % TMINA  = VALUE(I)
+        CASE ('TMAXA');SUMDAT % TMAXA  = VALUE(I)
+        CASE ('SRADA');SUMDAT % SRADA  = VALUE(I)
+        CASE ('DAYLA');SUMDAT % DAYLA  = VALUE(I)
         CASE ('CO2A'); SUMDAT % CO2A   = VALUE(I)
         CASE ('PRCP'); SUMDAT % PRCP   = VALUE(I)
         CASE ('ETCP'); SUMDAT % ETCP   = VALUE(I)

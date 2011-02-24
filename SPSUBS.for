@@ -115,7 +115,7 @@ C-----------------------------------------------------------------------
      &        ,/,"!",T141,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
 
             WRITE (LUN,120,ADVANCE='NO')
-  120       FORMAT('@YEAR DOY   DAS   SRAA   TMXA   TMNA',
+  120       FORMAT('@YEAR DOY   DAS   SRAA  TMAXA  TMINA',
      &      '   EOAA   EOPA   EOSA',
      &      '   ETAA   EPAA   ESAA   EFAA   EMAA',
      &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
