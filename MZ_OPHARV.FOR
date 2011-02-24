@@ -241,9 +241,15 @@ C  02/09/2007 GH  Add path for FileA
 
       YRDOY = CONTROL % YRDOY
       IF (YRDOY >= YRPLT) THEN
-        IF (MDATE < 0 .OR.
-     &     (MDATE > 0 .AND. YRDOY < MDATE)) THEN
+!        IF (MDATE < 0 .OR.
+!     &     (MDATE > 0 .AND. YRDOY < MDATE)) THEN
+!          PlantStres % ACTIVE(0) = .TRUE.
+!        ENDIF
+        IF (STGDOY(16) < 0 .OR.
+     &     (STGDOY(16) > 0 .AND. YRDOY < STGDOY(16))) THEN
           PlantStres % ACTIVE(0) = .TRUE.
+        ELSE
+          PlantStres % Active(0) = .FALSE.
         ENDIF
       ENDIF
 

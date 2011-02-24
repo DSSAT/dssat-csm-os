@@ -479,8 +479,8 @@ C-------------------------------------------------------------------
      &    'ORGANIC MATTER..................................    ',
      &    'WATER PRODUCTIVITY..................................',
      &    '................    ',
-     &    'NITROGEN PRODUCTIVITY...........',
-     &    'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..')
+     &    'NITROGEN PRODUCTIVITY...........  ',
+     &    'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)')
 
           WRITE (NOUTDS,400)
   400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL    ',
@@ -496,7 +496,7 @@ C-------------------------------------------------------------------
      &    '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
      &    '     YPTM     YPIM',
      &    '    DPNAM    DPNUM    YPNAM    YPNUM',
-     &    '  NDAY  TMXA  TMNA  SRDA  DYLA   CO2A   PRCP   ETCP')
+     &    '  NDCH  TMXA  TMNA  SRDA  DYLA   CO2A   PRCP   ETCP')
         ENDIF
 
         IF (BWAH < -1) BWAH = -9.9
@@ -545,7 +545,7 @@ C-------------------------------------------------------------------
 !         Water productivity
      &    DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM,
      &    DPNAM, DPNUM, YPNAM, YPNUM,
-     &    NDCH, TMNA, TMXA, SRDA, DYLA, CO2A, PRCP, ETCP
+     &    NDCH, TMXA, TMNA, SRDA, DYLA, CO2A, PRCP, ETCP
 
   503   FORMAT(     
                                               
@@ -570,7 +570,7 @@ C-------------------------------------------------------------------
      &  4F9.1,
 
 !       NDCH, TMNA, TMXA, SRDA, DYLA, CO2A, PRCP, ETCP
-     &  I5,3F6.1,F7.2,3F7.1)
+     &  I6,3F6.1,F6.2,3F7.1)
 
         CLOSE (NOUTDS)
       ENDIF
@@ -820,6 +820,15 @@ C=======================================================================
         CASE ('YPIM'); SUMDAT % YPIM   = VALUE(I)
         CASE ('YPNAM');SUMDAT % YPNAM  = VALUE(I)
         CASE ('YPNUM');SUMDAT % YPNUM  = VALUE(I)
+
+        CASE ('NDCH'); SUMDAT % NDCH   = NINT(VALUE(I))
+        CASE ('TMNA'); SUMDAT % TMNA   = VALUE(I)
+        CASE ('TMXA'); SUMDAT % TMXA   = VALUE(I)
+        CASE ('SRDA'); SUMDAT % SRDA   = VALUE(I)
+        CASE ('DYLA'); SUMDAT % DYLA   = VALUE(I)
+        CASE ('CO2A'); SUMDAT % CO2A   = VALUE(I)
+        CASE ('PRCP'); SUMDAT % PRCP   = VALUE(I)
+        CASE ('ETCP'); SUMDAT % ETCP   = VALUE(I)
 
         END SELECT
       ENDDO

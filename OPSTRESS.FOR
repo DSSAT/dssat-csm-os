@@ -40,10 +40,10 @@
       CHARACTER*12, PARAMETER :: OUTO = 'OVERVIEW.OUT'
       CHARACTER*23 STAG(0:MaxStag)
 
-      INTEGER DYNAMIC, I, NOUTDO, NYRS, STTOT
+      INTEGER DYNAMIC, I, NOUTDO, NYRS, STTOT, NDCH
       INTEGER, DIMENSION(0:MaxStag) :: NNR
 
-      REAL TMAX, TMIN, RAIN, DAYL, SRAD
+      REAL TMAX, TMIN, RAIN, DAYL, SRAD, CO2
       REAL N_phot, N_grow, W_phot, W_grow
       REAL P_grow, P_phot
       REAL ET_L, EP_L, TOTIR
@@ -139,6 +139,15 @@
       DMP_NUpt = -99.
       GrP_NUpt = -99.
 
+      NDCH = -99 
+      TMNA = -99. 
+      TMXA = -99. 
+      SRDA = -99. 
+      DYLA = -99. 
+      CO2A = -99. 
+      PRCP = -99. 
+      ETCP = -99. 
+
 !***********************************************************************
 !***********************************************************************
 !     RATE
@@ -153,6 +162,7 @@
         RAIN = WEATHER % RAIN
         DAYL = WEATHER % DAYL
         SRAD = WEATHER % SRAD 
+        CO2  = WEATHER % CO2
       ENDIF
 
 !***********************************************************************
@@ -183,7 +193,7 @@
 !           CumIrr(I)= CumIrr(I)+ DEPIR
             DAYLR(I) = DAYLR(I) + DAYL
             RADR (I) = RADR (I) + SRAD 
-            CO2R (I) = CO2R (I) + WEATHER % CO2 
+            CO2R (I) = CO2R (I) + CO2 
             CETR(I)  = CETR(I)  + ET_L
             CEPR(I)  = CEPR(I)  + EP_L
             W_growR(I) = W_growR(I) + W_grow 
@@ -206,16 +216,17 @@
      &      CONTROL % ErrCode == 0) THEN
         WRITE(NOUTDO,500)
  500    FORMAT(//,'*ENVIRONMENTAL AND STRESS FACTORS',//,
-     &' |-----Development Phase------|-------------Environment--------',
-     &'------|----------------Stress-----------------|',/,
-     &30X,'|--------Average-------|---Cumulative--|         (0=Min, 1=',
-     &'Max Stress)         |',/,
-     &25X,'Time  Temp  Temp Solar Photop         Evapo |----Water---|-',
-     &'-Nitrogen--|--Phosphorus-|',/,
-     &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
-     &'to         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ',
-     &'synth Growth  synth Growth',/,110('-'))
+     &' |-----Development Phase------',
+     &'|-----------------Environment-----------------',
+     &'|----------------Stress-----------------|',/,
+     &30X,'|-----------Average-----------|---Cumulative--|',
+     &'         (0=Min, 1=Max Stress)         |',/,
+     &25X,'Time  Temp  Temp Solar Photop                Evapo ',
+     &'|----Water---|--Nitrogen--|--Phosphorus-|',/,
+     &25X,'Span   Max   Min   Rad  [day]    CO2   Rain  Trans  Photo',
+     &9X,'Photo         Photo',/,
+     &25X,'days    øC    øC MJ/m2     hr    ppm     mm     mm  synth',
+     &' Growth  synth Growth  synth Growth',/,117('-'))
 
       ENDIF
 
@@ -315,6 +326,7 @@
               GrP_EP = YIELD  / CEPR(0) 
             ENDIF
 
+            NDCH = NNR(0)
             TMNA = TMINR(0)
             TMXA = TMAXR(0)
             SRDA = RADR(0)
@@ -372,7 +384,7 @@
       ENDIF
 
  1200 FORMAT(
-     &'------------------------------------------------------',
+     &'-------------------------------------------------------------',
      &'--------------------------------------------------------',
      &//,'*Resource Productivity',
      & /,' Growing season length:', I4,' days ',
@@ -427,7 +439,7 @@
       LABEL(11) = 'DPNUM'; VALUE(11) = DMP_NUpt
       LABEL(12) = 'YPNUM'; VALUE(12) = GrP_NUpt
 
-      LABEL(13) = 'NDCH' ; VALUE(13) = FLOAT(NNR(0))
+      LABEL(13) = 'NDCH' ; VALUE(13) = FLOAT(NDCH)
       LABEL(14) = 'TMNA' ; VALUE(14) = TMNA
       LABEL(15) = 'TMXA' ; VALUE(15) = TMXA
       LABEL(16) = 'SRDA' ; VALUE(16) = SRDA
