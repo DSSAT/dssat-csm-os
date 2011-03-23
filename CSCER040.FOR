@@ -1,7 +1,7 @@
 !=======================================================================
 !  CROPSIM-CERES CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
 !  Developed from V4.0 (which was based on Cropsim and Ceres3.5) 
-!  Last edit 23/06/10 LAH
+!  Last edit 22/03/11 LAH
 !=======================================================================
 
 !     SUBROUTINE CSCER040 (FILEIOIN, RUN, TN, RN,          !Command line
@@ -146,7 +146,7 @@
       INTEGER       LNUMX         ! Maximum number of leaves       #
       PARAMETER     (LNUMX = 100) ! Maximum number of leaves       #
       INTEGER       SUMNUM        ! Number of variables passed     #
-      PARAMETER     (SUMNUM = 29) ! Number of variables passed     #
+      PARAMETER     (SUMNUM = 37) ! Number of variables passed     #
 
       INTEGER       A1DATM        ! Apex 1cm date,measured         #
       INTEGER       ADAP          ! Anthesis,days after planting   d
@@ -231,10 +231,13 @@
       INTEGER       CNI           ! Crop component,initial value   #
       REAL          CO2           ! CO2 concentration in air       vpm
       REAL          CO2ADJ        ! CO2 adjustment                 vpm
+      REAL          CO2AV(0:9)    ! Average co2 in phase           vpm
       REAL          CO2FP         ! CO2 factor,photosynthesis 0-1  #
       REAL          CO2F(10)      ! CO2 factor rel values 0-1      #
       REAL          CO2MAX        ! CO2 conc,maximum during cycle  vpm
       REAL          CO2RF(10)     ! CO2 reference concentration    vpm
+      REAL          CO2SUM        ! CO2 sum in phase               vpm
+      REAL          CO2SUM0       ! CO2 sum for cycle              vpm
       INTEGER       COLNUM        ! Column number                  #
       CHARACTER*2   CR            ! Crop identifier (ie. WH, BA)   text
       CHARACTER*2   CROP          ! Crop identifier (ie. WH, BA)   text
@@ -484,6 +487,7 @@
       REAL          HARVFRAC(2)   ! Harvested fr from main         #
       INTEGER       HAYEAR        ! Harvest year                   #
       REAL          HBPC          ! Harvest by-product percentage  %
+      INTEGER       HDAY          ! Harvest day as read            #
       INTEGER       HDOYF         ! Earliest doy for harvest       #
       INTEGER       HDOYL         ! Last doy for harvest           #
       REAL          HDUR          ! Hardening duration,days        d
@@ -536,6 +540,7 @@
       REAL          HWAHSUA       ! Harvest wt/area abs error #    #
       REAL          HWAHSUM       ! Harvest wt/area error sum      #
       CHARACTER*6   HWUDC         ! Harvest wt/unit                g
+      INTEGER       HYEAR         ! Harvest year as read           #
       INTEGER       HYEARF        ! Earliest year for harvest      #
       INTEGER       HYEARL        ! Last year for harvest          #
       INTEGER       I             ! Loop counter                   #
@@ -627,7 +632,8 @@
       INTEGER       LLDATM        ! Last leaf (mature) date,measured
       INTEGER       LLIFE         ! Leaf longevity (phyllochrons)  #
       REAL          LLIGP         ! Leaf lignin percentage         #
-      REAL          LLOSN         ! N factor,fraction lost         #
+      REAL          LLOSN         ! Leaf area lost,N accelerated   fr/d
+      REAL          LLOSW         ! Leaf area lost,H2O accelerated fr/d
       REAL          LLRSWAD       ! Leaf lamina reserves weight    kg/ha
       REAL          LLRSWT        ! Leaf lamina reserves           g/p
       REAL          LMNC          ! Leaf minimum N conc            #
@@ -704,7 +710,6 @@
       REAL          NFPL          ! N factor,phs,lower limit       #
       REAL          NFPU          ! N factor,phs,upper limit       #
       REAL          NFRG          ! N factor,root growth 0-1       #  
-      REAL          NFS           ! N factor,senescence 0-1        #
       REAL          NFSF          ! N factor,final senescn trigger #
       REAL          NFSU          ! N factor,sen,upper limit       #
       REAL          NFTI          ! N factor,tillering 0-1         #
@@ -804,9 +809,11 @@
       INTEGER       PLDAYP        ! Planting day of year           #
       REAL          PLMAGE        ! Planting material age          d
       REAL          PLTLOSS       ! Plant popn lost through cold   #/m2
+      INTEGER       PLTOHARYR     ! Planting to harvest years      #
       REAL          PLTPOP        ! Plant Population               #/m2
       REAL          PLTPOPP       ! Plant Population planned       #/m2
       INTEGER       PLYEAR        ! Planting year                  #
+      INTEGER       PLYEARREAD    ! Planting year as read          #
       REAL          PRCADJ        ! Precipitation adjustment       mm
       REAL          PTF           ! Partition fraction to tops     #
       REAL          PTFA(10)      ! Partition fr adjustment coeff. #
@@ -836,7 +843,7 @@
       REAL          RCNC          ! Root critical N concentration  #
       REAL          RCNCS(0:9)    ! Roots critical N conc,by stage #
       REAL          RCNF          ! Roots critical N factor 0-1    #
-      REAL          RCNP 
+      REAL          RCNP          ! Root critical N conc,original  #
       REAL          RDGS1         ! Root depth growth rate,initial cm/d
       REAL          RDGS2         ! Root depth growth rate,2nd     cm/d
       REAL          RDGTH         ! Rooting depth growth thrshold  cm
@@ -851,7 +858,7 @@
       REAL          RLWR          ! Root length/weight ratio       m/mg?
       REAL          RMNC          ! Root minimum N conc            g/g
       REAL          RMNCS(0:9)    ! Roots minimum N conc,by stage  #
-      REAL          RMNP 
+      REAL          RMNP          ! Root minimum N conc,original   g/g
       INTEGER       RN            ! Treatment replicate            #
       REAL          RNAM          ! Root N at maturity             kg/ha
       REAL          RNAMM         ! Root N at maturity,measured    kg/ha
@@ -1209,8 +1216,7 @@
       REAL          WFPU          ! Water factor,phs,upper         #
       REAL          WFRG          ! Water factor,root growth 0-1   #
       REAL          WFRGU         ! Water factor,root gr,up.bound  #
-      REAL          WFS           ! Water factor,senescence        #
-      REAL          WFSF          ! Water factor,fraction senesced #
+      REAL          WFSU          ! Water fact,senescence,up.bound #
       REAL          WFTI          ! Water factor,tillering 0-1     #
       REAL          WFTIL         ! Water factor,tillering,lower   #
       REAL          WFTIU         ! Water factor,tillering,upper   #
@@ -1349,9 +1355,9 @@
         
       IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
 
-          FROPADJ = FROP
-          IF (RNMODE.EQ.'T') FROPADJ = 1
-          IF (IDETL.EQ.'D'.OR.IDETL.EQ.'A') FROPADJ = 1
+        FROPADJ = FROP
+        IF (RNMODE.EQ.'T') FROPADJ = 1
+        IF (IDETL.EQ.'D'.OR.IDETL.EQ.'A') FROPADJ = 1
 
         ! Following is used because Dssat has seasinit after runinit
 
@@ -1389,7 +1395,7 @@
         ! Set temporary file #
         IF (FNUMTMP.LE.0.OR.FNUMTMP.GT.1000) 
      &      CALL Getlun ('FNAMETMP',fnumtmp)
-
+      
         ! Set input file type
         TVI1 = TVILENT(FILEIOIN)
         IF (FILEIOIN(TVI1-2:TVI1).EQ.'INP') THEN
@@ -1423,7 +1429,7 @@
           ENDIF
 
         ENDIF
-
+        
         ISTAGE = 7   ! Pre-planting
         XSTAGE = 7.0 ! Pre-planting
         YEARPLT = 9999999
@@ -1531,7 +1537,6 @@
         nfpav = 1.0
         nfpc = 0.0
         nfpc0 = 0.0
-        nfs = 1.0
         nfti = 1.0
         nlimit = 0
         nupc = 0.0
@@ -1662,6 +1667,8 @@
         rainsum0 = 0.0
         sradsum = 0.0 
         sradsum0 = 0.0
+        co2sum = 0.0
+        co2sum0 = 0.0
         tmaxsump = 0.0 
         tmaxsump0 = 0.0
         tminsump = 0.0 
@@ -1714,6 +1721,7 @@
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PDATE',pdate)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'EDATE',emdatm)
           CALL CSYR_DOY(PDATE,PLYEAR,PLDAY)
+          PLYEARREAD = PLYEAR
           
           ! CHP 2/13/2009 - increment yr for seasonal and sequence runs
           ! IF (INDEX('FQN',RNMODE) > 0) THEN
@@ -1868,6 +1876,11 @@
 
         CALL XREADI (FILEIO,TN,RN,SN,ON,CN,'HDATE',yrharf)
         YEARHARF = CSYEARDOY(yrharf)
+        CALL CSYR_DOY(YRHARF,HYEAR,HDAY)
+        PLTOHARYR = HYEAR - PLYEARREAD
+        ! Upgrade harvest date for seasonal and sequential runs
+        yearharf = (plyear+pltoharyr)*1000 +hday
+        
         CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'HPC',hpc)
         CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'HBPC',hbpc)
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'HARVS',ihari)
@@ -2200,8 +2213,10 @@
         CALL SPREADR (SPDIRFLE,'WFTL',wftil)
         CALL SPREADR (SPDIRFLE,'NFTU',nftiu)
         CALL SPREADR (SPDIRFLE,'NFTL',nftil)
-        CALL SPREADR (SPDIRFLE,'WFS',wfs)
-        CALL SPREADR (SPDIRFLE,'LLOSW',wfsf)
+        CALL SPREADR (SPDIRFLE,'WFSU',wfsu)
+        IF (WFSU.LT.0.0) CALL SPREADR (SPDIRFLE,'WFS',wfsu)
+        CALL SPREADR (SPDIRFLE,'LLOSW',llosw)
+        IF (NFSU.LT.0.0) CALL SPREADR (SPDIRFLE,'NFS',nfsu)
         CALL SPREADR (SPDIRFLE,'NFSU',nfsu)
         CALL SPREADR (SPDIRFLE,'NFSF',nfsf)
         CALL SPREADR (SPDIRFLE,'LLOSN',llosn)
@@ -2406,7 +2421,7 @@
         ! Write-out inputs if required
         WRITE (fnumwrk,*) ' '
         WRITE (fnumwrk,*) 'EXPERIMENTAL DETAILS'
-        WRITE (fnumwrk,*) ' TRUNNAME      ',TRUNNAME
+        WRITE (fnumwrk,*) '  TRUNNAME      ',TRUNNAME
         WRITE (fnumwrk,'(A15,2F7.1)')'   PLTPOP,ROWSPC',PLTPOPP,ROWSPC
         WRITE (fnumwrk,'(A15,2F7.1)')'   SDEPTH,SDRATE',SDEPTH,SDRATE
         WRITE (fnumwrk,'(A15,2F7.1,A6)')'   SEEDRS,SEEDN ',
@@ -2500,7 +2515,7 @@
         WRITE(fnumwrk,'(A17,2F8.2)')'   WFTU,WFTL     ',wftiu,wftil
         WRITE(fnumwrk,'(A17,2F8.2)')'   NFTU,NFTL     ',nftiu,nftil
         WRITE(fnumwrk,'(A17,2F8.2)')'   NFGU,NFGL     ',nfgu,nfgl
-        WRITE(fnumwrk,'(A17,2F8.2)')'   WFS,LLOSW     ',wfs,wfsf
+        WRITE(fnumwrk,'(A17,2F8.2)')'   WFSU,LLOSW    ',wfsu,llosw
         WRITE(fnumwrk,'(A17,2F8.2)')'   NFSU,LLOSN    ',nfsu,llosn
         WRITE(fnumwrk,'(A17, F8.2)')'   NFSF          ',nfsf
         WRITE(fnumwrk,'(A17,2F8.2)')'   WFNUU,WFNUL   ',wfnuu,wfnul
@@ -2868,7 +2883,6 @@
           ! Nitrogen status factors
           NFG = 1.0
           NFP = 1.0
-          NFS = 1.0
           NFTI = 1.0
           IF (ISWNIT.EQ.'Y' .AND. ISTAGE.LT.7) THEN
             LMNCG = LMNC + NFGL * (LCNC-LMNC)
@@ -2881,7 +2895,6 @@
             IF (LFWT.GT.0.0) THEN
               NFG = AMIN1(1.0,AMAX1(0.0,(LANC-LMNCG)/(LCNCG-LMNCG)))
               NFP = AMIN1(1.0,AMAX1(0.0,(LANC-LMNCP)/(LCNCP-LMNCP)))
-              NFS = AMIN1(1.0,AMAX1(0.0,LANC/LCNCSEN))
               NFTI = AMIN1(1.0,AMAX1(0.0,(LANC-LMNCT)/(LCNCT-LMNCT)))
             ENDIF
           ENDIF
@@ -3517,9 +3530,9 @@
           ! Following is to lose some leaf area when tillers die
           IF (TNUMD.GT.0.0) PLAST = TNUMD * ((PLA-SENLA)/TNUM) * LALOSSF
           IF (ISWWAT.NE.'N') THEN
-            IF (PLA-SENLA.GT.0.0.AND.WUPR.LT.WFS) THEN
+            IF (PLA-SENLA.GT.0.0.AND.WUPR.LT.WFSU) THEN
               PLASS = AMAX1(0.0,AMIN1((PLA-SENLA)-PLAS,
-     &            (PLA-SENLA)*WFSF))
+     &            (PLA-SENLA)*LLOSW))
             ENDIF
           ENDIF
           IF (ISWNIT.NE.'N') THEN
@@ -3916,6 +3929,7 @@
                 IF (GRAINNTMP/GRWTTMP*100.0 .LT. GRNMN) THEN
                   GRWTTMP = GRAINNTMP*(100.0/GRNMN)
                   GROGR = GRWTTMP - GRWT
+                  IF (GROGR.LT.GROGRPA) GRORSGR = GROGRPA - GROGR
                 ENDIF
               ENDIF
             ENDIF
@@ -4506,7 +4520,7 @@
           ENDIF
           TCNP  = TCNP/100.0
           TMNC  = (2.97-0.455*XSTAGE)/100.0
-          RCNP  = (2.10-0.14*SQRT(ZSTAGE))*0.01
+          RCNP  = (2.10-0.14*SQRT(ZSTAGE))*0.01 ! RCNC in original Ceres
           RMNP  = 0.75 * RCNP
           ZSTAGE = ZSTAGE * 10.0
 9345      CONTINUE     
@@ -4627,6 +4641,7 @@
             tminsump = tminsump + tmin
             sradsum = sradsum + srad
             daylsum = daylsum + daylt
+            co2sum = co2sum + co2
             rainsum = rainsum + rain
             etsum = etsum + et
             epsum = epsum + ep
@@ -4639,6 +4654,7 @@
             tminsump0 = tminsump0 + tmin
             sradsum0 = sradsum0 + srad
             daylsum0 = daylsum0 + daylt
+            co2sum0 = co2sum0 + co2
             rainsum0 = rainsum0 + rain
             etsum0 = etsum0 + et
             epsum0 = epsum0 + ep
@@ -4652,6 +4668,7 @@
               tminav(ISTAGEP) = tminsump / ICSDUR 
               sradav(ISTAGEP) = sradsum / ICSDUR
               daylav(ISTAGEP) = daylsum / ICSDUR
+              co2av(ISTAGEP) = co2sum / ICSDUR
               raincp(ISTAGEP) = rainsum 
               etc(ISTAGEP)   = etsum 
               epc(ISTAGEP)   = epsum 
@@ -4664,6 +4681,7 @@
               tminav(0) = tminsump0 / ICSDUR0 
               sradav(0) = sradsum0 / ICSDUR0
               daylav(0) = daylsum0 / ICSDUR0
+              co2av(0) = co2sum0 / ICSDUR0
               raincp(0) = rainsum0 
               etc(0)   = etsum0 
               epc(0)   = epsum0 
@@ -4677,6 +4695,7 @@
               tminav(ISTAGE) = -99.0 
               sradav(ISTAGE) = -99.0
               daylav(ISTAGE) = -99.0
+              co2av(ISTAGE) = -99.0
               etc(ISTAGE)   = 0.0
               epc(ISTAGE)   = 0.0
               raincp(ISTAGE) = -99.0
@@ -4689,6 +4708,7 @@
               tminsump = 0.0 
               sradsum = 0.0 
               daylsum = 0.0 
+              co2sum = 0.0 
               rainsum = 0.0 
               etsum = 0.0 
               epsum = 0.0 
@@ -4701,6 +4721,7 @@
                 tminav(ISTAGE) = TMIN 
                 sradav(ISTAGE) = SRAD
                 daylav(ISTAGE) = DAYLT
+                co2av(ISTAGE) = co2
                 etc(ISTAGE)   = 0
                 epc(ISTAGE)   = 0
                 raincp(ISTAGE) = 0
@@ -4801,11 +4822,13 @@
             CFLFAIL = 'Y'
             WRITE (FNUMWRK,*)'No germination within 90 days of sowing!'
           ENDIF
+          
           IF (IHARI.NE.'A'.AND.DAPM.GE.90) THEN
             CFLFAIL = 'Y'
             WRITE (FNUMWRK,*)'90 days after physiological maturity!'
             WRITE (FNUMWRK,*)'Harvesting triggered!'
           ENDIF
+          
           IF (IHARI.NE.'A'.AND.ISTAGE.GE.4.AND.ISTAGE.LT.7) THEN
             IF (TT20.NE.-99.0.AND.TT20.LE.0.0) THEN
               CFLFAIL = 'Y'
@@ -4813,6 +4836,7 @@
               WRITE (FNUMWRK,*)'Harvesting triggered!'
             ENDIF
           ENDIF
+
           IF (CFLFAIL.EQ.'Y' .OR.
      &     IHARI.EQ.'R'.AND.YEARHARF.GT.-99.AND.YEARHARF.EQ.YEARDOY .OR.
      &     IHARI.EQ.'D'.AND.YEARHARF.GT.-99.AND.YEARHARF.EQ.DAP .OR.
@@ -6071,7 +6095,6 @@
             
               ! T-FILE READS AND MEASURED.OUT WRITES
             
-              WRITE (fnumwrk,*)' '
               WRITE (fnumwrk,*)
      &         'Trying to read T-file and write MEASURED.OUT'
             
@@ -6143,7 +6166,7 @@
      &                    L1 = L+1
                         IF (L1.GT.0.AND.L.GT.L1+9.AND.
      &                   LINET(L:L).NE.' ') THEN
-                          L2 = L  ! Start of group information in t-file      
+                          L2 = L  ! Start of group information in t-file
                           EXIT
                         ENDIF
                       ENDDO
@@ -6155,7 +6178,7 @@
      &                  ' '//TNCHAR(1:1)//' C'//
      &                  CNCHAR2//TNAME(1:LENTNAME)//
      &                  ' '//LINET(L2:LENGROUP)
-                      ELSEIF (LEN(TRIM(TNCHAR)).EQ.2) THEN                   
+                      ELSEIF (LEN(TRIM(TNCHAR)).EQ.2) THEN              
                         LINESTAR = '*DATA(T):'//LINET(L1:L1+9)//
      &                  ' '//TNCHAR(1:2)//' C'//CNCHAR2//
      &                  TNAME(1:LENTNAME)//
@@ -6172,7 +6195,7 @@
                       DO L = 1,30
                         IF (LINET(L:L).EQ.' ') L1 = L-1
                         IF (L1.NE.0 .AND. LINET(L:L).NE.' ') THEN
-                          L2 = L  ! Start of group information in t-file     
+                          L2 = L  ! Start of group information in t-file
                           EXIT
                         ENDIF
                       ENDDO
@@ -6199,7 +6222,7 @@
                       DO L = 1,30
                         IF (LINET(L:L).EQ.' ') L1 = L-1
                         IF (L1.NE.0 .AND. LINET(L:L).NE.' ') THEN
-                          L2 = L  ! Start of group information in t-file     
+                          L2 = L  ! Start of group information in t-file
                           EXIT
                         ENDIF
                       ENDDO
@@ -6235,7 +6258,12 @@
                     STARNUMM = STARNUMM + 1       ! Number of datasets  
                     CFLTFILE = 'Y'
                   ELSE
-                    CALL Getstri (LINET,COLNUM,VALUEI)
+                    IF (LINET(1:1).NE.'!') THEN 
+                      LENLINE = LEN(TRIM(LINET))
+                      IF (LENLINE.GT.3)THEN
+                        CALL Getstri (LINET,COLNUM,VALUEI)
+                      ENDIF
+                    ENDIF
                     IF (VALUEI.EQ.TN) THEN
                       IF (DATECOL.GT.0.OR.DOYCOL.GT.0) THEN
                         IF (DATECOL.GT.0) THEN
@@ -7010,6 +7038,15 @@
  
             LABEL(29) = 'EDAP ' ; VALUE(29) = FLOAT(EDAP)     
             
+            LABEL(30) = 'NDCH ' ; VALUE(30) = FLOAT(DAYSC(0)) 
+            LABEL(31) = 'TMINA' ; VALUE(31) = TMINAV(0)       
+            LABEL(32) = 'TMAXA' ; VALUE(32) = TMAXAV(0)       
+            LABEL(33) = 'SRADA' ; VALUE(33) = SRADAV(0)       
+            LABEL(34) = 'DAYLA' ; VALUE(34) = DAYLAV(0)       
+            LABEL(35) = 'CO2A ' ; VALUE(35) = CO2AV(0)        
+            LABEL(36) = 'PRCP ' ; VALUE(36) = RAINCP(0)       
+            LABEL(37) = 'ETCP ' ; VALUE(37) = ETC(0)      
+
             IF (FILEIOT(1:2).EQ.'DS') CALL SUMVALS (SUMNUM,LABEL,VALUE)
             
             ! END OF CSM SUMMARY
@@ -7982,7 +8019,6 @@
             ! fertilization routines in DSSAT
             NFG = 1.0
             NFP = 1.0
-            NFS = 1.0
             NFTI = 1.0
             WFG = 1.0
             WFP = 1.0
