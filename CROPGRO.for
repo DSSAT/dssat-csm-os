@@ -41,7 +41,8 @@ C=======================================================================
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
-     &    NSTRES, PUptake, PORMIN, RLV, RWUMX, SENESCE,   !Output
+     &    NSTRES, PSTRES1,                                !Output
+     &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
 
 !-----------------------------------------------------------------------

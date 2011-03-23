@@ -134,7 +134,7 @@ C     PLANT Module Variables
 C-----------------------------------------------------------------------
       INTEGER MDATE
       INTEGER STGDOY(20)
-      REAL CANHT, EORATIO, NSTRES, PORMIN, RWUMX
+      REAL CANHT, EORATIO, NSTRES, PORMIN, PSTRES1, RWUMX
       REAL XHLAI, XLAI
       REAL KSEVAP, KTRANS
       REAL, Dimension(NL) :: PUptake, RLV, FracRts, UNH4, UNO3, KUptake
@@ -222,7 +222,7 @@ C     Read initial soil-plant-atmosphere data
 C-----------------------------------------------------------------------
       CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP,                   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SW, SWDELTS, WEATHER, WINF, XHLAI, XLAI,        !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
@@ -238,7 +238,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, YREND, YRPLT,                          !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
-     &    KUptake, MDATE, NSTRES,                         !Output
+     &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
 
@@ -279,7 +279,7 @@ C     Seasonal initialization for soil-plant-atmosphere processes
 C-----------------------------------------------------------------------
       CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP,                   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SW, SWDELTS, WEATHER, WINF, XHLAI, XLAI,        !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
@@ -306,7 +306,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, YREND, YRPLT,                          !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
-     &    KUptake, MDATE, NSTRES,                         !Output
+     &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
 C-----------------------------------------------------------------------
@@ -358,7 +358,7 @@ C     rates of evapotranspiration.
 C-----------------------------------------------------------------------
       CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP,                   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SW, SWDELTS, WEATHER, WINF, XHLAI, XLAI,        !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
@@ -378,7 +378,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, YREND, YRPLT,                          !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
-     &    KUptake, MDATE, NSTRES,                         !Output
+     &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
       ENDIF
@@ -403,7 +403,7 @@ C     Compute cumulative totals for soil-plant-atmosphere processes
 C-----------------------------------------------------------------------
       CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP,                   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SW, SWDELTS, WEATHER, WINF, XHLAI, XLAI,        !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
@@ -422,7 +422,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, YREND, YRPLT,                          !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
-     &    KUptake, MDATE, NSTRES,                         !Output
+     &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
       ENDIF
@@ -455,7 +455,7 @@ C***********************************************************************
 
         CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP,                   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SW, SWDELTS, WEATHER, WINF, XHLAI, XLAI,        !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
@@ -472,7 +472,7 @@ C-----------------------------------------------------------------------
      &    WEATHER, YREND, YRPLT,                          !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
-     &    KUptake, MDATE, NSTRES,                         !Output
+     &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
         ENDIF
@@ -503,7 +503,7 @@ C     Print seasonal summaries and close files.
 
       CALL SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PORMIN, RLV, RWUMX, SOILPROP,                   !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
      &    SW, SWDELTS, WEATHER, WINF, XHLAI, XLAI,        !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
@@ -516,7 +516,7 @@ C     Print seasonal summaries and close files.
      &    WEATHER, YREND, YRPLT,                          !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
-     &    KUptake, MDATE, NSTRES,                         !Output
+     &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
 
