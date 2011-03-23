@@ -1,0 +1,530 @@
+*EXPERIMENTAL DETAILS CODES
+! DSSAT v4.5; 09/30/2010
+
+! Headers used in the @ line to identify variables are listed first, codes to
+! identify methods, chemicals, etc. are listed next in sections that relate to
+! specific aspects (Chemicals;Crop and weed species;Diseases and pests;Drainage;
+! Environment modification factors;Fertilizers,inoculants and amendments;
+! Harvest components;Harvest size categories;Methods-fertilizer and chemical
+! applications;Methods-irrigation and water management;Methods-soil analysis;
+! Planting materials;Plant distribution;Residues and organic fertilizers;
+! Rotations;Soil texture;and Tillage implements).
+!
+! The fields in the file are as follows:
+!  CDE   The 'universal' code used to facilitate data interchange.
+!  DESCRIPTION  A description of the code, with units.
+!  SO    The source of the codes (IB=IBSNAT). Codes added by a user should be
+!        referenced in this field and the name and address of the person adding
+!        the code should be entered as a comment (ie.with a '!' in column 1)
+!        below this note. This is important to ensure that information from
+!        different workers can be easily integrated. Users adding codes should
+!        also ensure that those constructed by adding a number to a section
+!        code (eg.FE001,CH001) are clearly identified with a letter in the third
+!        position (eg.FEK01 for a fertilizer code added by someone with a family
+!        name beginning with K).
+
+*Headers
+@CDE     DESCRIPTION                                                          SO
+ADDRESS  Contact address of principal scientist                               IB
+C        Crop component number (default = 1)                                  IB
+CDATE    Application date, year + day or days from planting                   IB
+CHAMT    Chemical application amount, kg ha-1                                 IB
+CHCOD    Chemical material, code                                              IB
+CHDEP    Chemical application depth, cm                                       IB
+CHME     Chemical application method, code                                    IB
+CHNOTES  Chemical notes (Targets, chemical name, etc.)                        IB
+CNAME    Cultivar name                                                        IB
+CNOTES   Cultivar details (Type, pedigree, etc.)                              IB
+CR       Crop code                                                            IB
+CU       Cultivar level                                                       IB
+ECO2     CO2 adjustment, A,S,M,R + vpm                                        IB
+EDATE    Emergence date, earliest treatment                                   IB
+EDAY     Daylength adjustment, A,S,M,R+h (Add;Subtract;Multiply;Replace)      IB
+EDEW     Humidity adjustment, A,S,M,R+oC (Add;Subtract;Multiply;Replace)      IB
+EMAX     Temp (max) adjustment, A,S,M,R+oC (Add;Subtract;Multiply;Replace)    IB
+EMIN     Temp (min) adjustment, A,S,M,R+oC (Add;Subtract;Multiply;Replace)    IB
+ERAD     Radn adjustment, A,S,M,R+MJ m-2day-1 (Add;Subtract;Multiply;Replace) IB
+ERAIN    Precipitation adjustment, A,S,M,R+mm (Add;Subtract;Multiply;Replace) IB
+EWIND    Wind adjustment, A,S,M,R + km day-1 (Add;Subtract;Multiply;Replace)  IB
+FACD     Fertilizer application/placement, code                               IB
+FAMC     Ca in applied fertilizer, kg ha-1                                    IB
+FAMK     K in applied fertilizer, kg ha-1                                     IB
+FAMN     N in applied fertilizer, kg ha-1                                     IB
+FAMO     Other elements in applied fertilizer, kg ha-1                        IB
+FAMP     P in applied fertilizer, kg ha-1                                     IB
+FDATE    Fertilization date, year + day or days from planting                 IB
+FDEP     Fertilizer incorporation/application depth, cm                       IB
+FL       Field level                                                          IB
+FLDD     Drain depth, cm                                                      IB
+FLDS     Drain spacing, m                                                     IB
+FLDT     Drainage type, code                                                  IB
+FLOB     Obstruction to sun, degrees                                          IB
+FLSA     Slope and aspect, degrees from horizontal plus direction (W, NW, etc.IB
+FLST     Surface stones (Abundance, % + Size, S,M,L)                          IB
+FMCD     Fertilizer material, code                                            IB
+FOCD     Other element code, e.g.,. MG                                        IB
+HAREA    Harvest area, m-2                                                    IB
+HARM     Harvest method                                                       IB
+HCOM     Harvest component, code                                              IB
+HDATE    Harvest date, year + day or days from planting                       IB
+HL       Harvest level                                                        IB
+HLEN     Harvest row length, m                                                IB
+HPC      Harvest percentage, %                                                IB
+HRNO     Harvest row number                                                   IB
+HSIZ     Harvest size group, code                                             IB
+HSTG     Harvest stage                                                        IB
+IAME     Method for automatic applications, code                              IB
+IAMT     Amount per automatic irrigation if fixed, mm                         IB
+IC       Initial conditions level                                             IB
+ICBL     Depth, base of layer, cm                                             IB
+ICDAT    Initial conditions measurement date, year + days                     IB
+ICND     Nodule weight from previous crop, kg ha-1                            IB
+ICRE     Rhizobia effectiveness, 0 to 1 scale                                 IB
+ICRN     Rhizobia number, 0 to 1 scale                                        IB
+ICRT     Root weight from previous crop, kg ha-1                              IB
+IDATE    Irrigation date, year + day or days from planting                    IB
+IDEP     Management depth for automatic application, cm                       IB
+ID_FIELD Field ID (Institute + Site + Field)                                  IB
+ID_SOIL  Soil ID (Institute + Site + Year + Soil)                             IB
+IEFF     Irrigation application efficiency, fraction                          IB
+IEPT     End point for automatic appl., % of max. available                   IB
+INGENO   Cultivar identifier                                                  IB
+IOFF     End of automatic applications, growth stage                          IB
+IROP     Irrigation operation, code                                           IB
+IRVAL    Irrigation amount, depth of water/watertable, etc., mm               IB
+ITHR     Threshold for automatic appl., % of max. available                   IB
+MC       Chemical applications level                                          IB
+ME       Environment modifications level                                      IB
+MF       Fertilizer applications level                                        IB
+MH       Harvest level                                                        IB
+MI       Irrigation level                                                     IB
+MP       Planting level                                                       IB
+MR       Residue level                                                        IB
+MT       Tillage level                                                        IB
+NOTES    Notes                                                                IB
+O        Rotation component - option (default = 1)                            IB
+ODATE    Environmental modification date, year + day or days from planting    IB
+PAGE     Transplant age, days                                                 IB
+PAREA    Gross plot area per rep, m-2                                         IB
+PCR      Previous crop code                                                   IB
+PDATE    Planting date, year + days from Jan. 1                               IB
+PENV     Transplant environment, oC                                           IB
+PEOPLE   Names of scientists                                                  IB
+PLAY     Plot layout                                                          IB
+PLDP     Planting depth, cm                                                   IB
+PLDR     Plots relative to drains, degrees                                    IB
+PLDS     Planting distribution, row R, broadcast B, hill H                    IB
+PLEN     Plot length, m                                                       IB
+PLME     Planting method, code                                                IB
+PLOR     Plot orientation, degrees from N                                     IB
+PLPH     Plants per hill (if appropriate)                                     IB
+PLRD     Row direction, degrees from N                                        IB
+PLRS     Row spacing, cm                                                      IB
+PLSP     Plot spacing, cm                                                     IB
+PLWT     Planting material dry weight, kg ha-1                                IB
+PPOE     Plant population at emergence, m-2                                   IB
+PPOP     Plant population at seeding, m-2                                     IB
+PRNO     Rows per plot                                                        IB
+R        Rotation component - number (default = 1)                            IB
+RACD     Residue application/placement, code                                  IB
+RAMT     Residue amount, kg ha-1                                              IB
+RCOD     Residue material, code                                               IB
+RDATE    Incorporation date, year + days                                      IB
+RDEP     Residue incorporation depth, cm                                      IB
+RDMC     Residue dry matter content, %                                        IB
+RESK     Residue potassium concentration, %                                   IB
+RESN     Residue nitrogen concentration, %                                    IB
+RESP     Residue phosphorus concentration, %                                  IB
+RINP     Residue incorporation percentage, %                                  IB
+SA       Soil analysis level                                                  IB
+SABD     Bulk density, moist, g cm-3                                          IB
+SABL     Depth, base of layer, cm                                             IB
+SADAT    Analysis date, year + days from Jan. 1                               IB
+SAHB     pH in buffer                                                         IB
+SAHW     pH in water                                                          IB
+SAKE     Potassium, exchangeable, cmol kg-1                                   IB
+SANI     Total nitrogen, %                                                    IB
+SAOC     Organic carbon, %                                                    IB
+SAPX     Phosphorus, extractable, mg kg-1                                     IB
+SH20     Water, cm3 cm-3                                                      IB
+SITE(S)  Name and location of experimental site(s)                            IB
+SLDP     Soil depth, cm                                                       IB
+SLTX     Soil texture                                                         IB
+SM       Simulation control level                                             IB
+SMHB     pH in buffer determination method, code                              IB
+SMKE     Potassium determination method, code                                 IB
+SMPX     Phosphorus determination method, code                                IB
+SNH4     Ammonium, KCl, g elemental N Mg-1 soil                               IB
+SNO3     Nitrate, KCl, g elemental N Mg-1 soil                                IB
+TDATE    Tillage date, year + day                                             IB
+TDEP     Tillage depth, cm                                                    IB
+TDETAIL  Tillage details                                                      IB
+TIMPL    Tillage implement, code                                              IB
+TL       Tillage level                                                        IB
+TN       Treatment number                                                     IB
+TNAME    Treatment name                                                       IB
+WSTA     Weather station code (Institute + Site)                              IB
+
+*Chemicals (Herbicides, Insecticides, Fungicides, etc.)
+@CDE     DESCRIPTION                                                          SO
+CH001    Alachlor (Lasso), Metolachlor (Dual) [Herbicide]                     IB
+CH002    Propanil [Herbicide]                                                 IB
+CH003    Trifluralin [Herbicide]                                              IB
+CH004    Dalapon [Herbicide]                                                  IB
+CH005    MCPA [Herbicide]                                                     IB
+CH006    2,4-D [Herbicide]                                                    IB
+CH007    2,4,5-T [Herbicide]                                                  IB
+CH008    Pendimethalin [Herbicide]                                            IB
+CH009    Atrazine [Herbicide]                                                 IB
+CH010    Diquat [Herbicide]                                                   IB
+CH011    Paraquat [Herbicide]                                                 IB
+CH021    Carbaryl, Sevin, Septene [Insecticide]                               IB
+CH022    Malathion, Mercaptothion [Insecticide]                               IB
+CH023    Naled [Insecticide]                                                  IB
+CH024    Dimethoate [Insecticide]                                             IB
+CH025    Fention [Insecticide]                                                IB
+CH026    Diazinon, Basudin [Insecticide]                                      IB
+CH027    Ethion, Diethion [Insecticide]                                       IB
+CH028    Oxydemeton-Methyl [Insecticide]                                      IB
+CH029    Azinphos-Methyl [Insecticide]                                        IB
+CH030    Phosphamidon [Insecticide]                                           IB
+CH031    Mevinphosl [Insecticide]                                             IB
+CH032    Methyl Parathion [Insecticide]                                       IB
+CH033    Parathion [Insecticide]                                              IB
+CH034    DDT [Insecticide]                                                    IB
+CH035    BHC, HCH [Insecticide]                                               IB
+CH036    Chlordane [Insecticide]                                              IB
+CH037    Heptachlor [Insecticide]                                             IB
+CH038    Toxaphene [Insecticide]                                              IB
+CH039    Aldrin [Insecticide]                                                 IB
+CH040    Dieldrin [Insecticide]                                               IB
+CH041    Endrin, Nendrin [Insecticide]                                        IB
+CH042    Methomyl, Lannat [Insecticide]                                       IB
+CH043    Thiotex [Insecticide]                                                IB
+CH044    Furadan [Insecticide]                                                IB
+CH045    Endosulfan [Insecticide]                                             IB
+CH051    Captan [Fungicide]                                                   IB
+CH052    Benomyl [Fungicide]                                                  IB
+CH053    Zineb [Fungicide]                                                    IB
+CH054    Maneb [Fungicide]                                                    IB
+CH055    Mancozeb [Fungicide]                                                 IB
+CH056    Tilt [Fungicide]                                                     IB
+CH057    Rhizobium (for legume crops)                                         IB
+CH100    Pix [Mepiquat Chloride; Growth Regulator]                            IB
+
+*Crop and Weed Species
+@CDE     DESCRIPTION                                                          SO
+AL       Alfalfa/Lucerne                                                      IB
+AR       Aroid                                                                IB
+BA       Barley                                                               IB
+BM       Bermuda grass                                                        IB
+BH       Bahia grass                                                          IB
+BN       Dry bean                                                             IB
+BR       Brachiaria                                                           IB
+BS       Sugar beet                                                           IB
+BW       Broad leaf weeds                                                     IB
+CB       Cabbage                                                              IB
+CH       Chickpea                                                             IB
+CT       Citrus                                                               IB 
+CN       Canola                                                               IB
+CO       Cotton                                                               IB
+CP       Cowpea                                                               IB
+CS       Cassava                                                              IB
+CV       Clover                                                               IB
+FA       Fallow                                                               IB
+FB       Faba bean                                                            IB
+GB       Green bean                                                           IB
+GR       Grass vegetation                                                     IB
+GW       Grass weeds                                                          IB
+LT       Lentil                                                               IB
+ML       Pearl millet                                                         IB
+MZ       Maize                                                                IB
+NN       Banana                                                               IB
+NP       Napier grass                                                         IB   
+OA       Oats                                                                 IB
+PE       Pea                                                                  IB
+PI       Pineapple                                                            IB
+PN       Peanut                                                               IB
+PO       Perennial peanut                                                     IB    	
+PP       Pigeonpea                                                            IB
+PR       Pepper                                                               IB
+PT       Potato                                                               IB
+RI       Rice                                                                 IB
+RP       Rhizoma peanut                                                       IB
+SB       Soybean                                                              IB
+SC       Sugarcane                                                            IB
+SG       Grain sorghum                                                        IB
+SI       Switch grass                                                         IB
+SS       Sesame                                                               IB
+SU       Sunflower                                                            IB
+SW       Sweetcorn                                                            IB
+TM       Tomato                                                               IB
+TN       Tanier                                                               IB
+TR       Taro                                                                 IB
+VB       Velvet bean                                                          IB
+VI       Vine                                                                 IB
+WH       Wheat                                                                IB
+
+*Disease and Pest Organisms
+@CDE     DESCRIPTION                                                          SO
+!Examples of codes that have been used are given below.                       IB
+CEW      Corn earworm (Heliothis zea), no. m-2                                IB
+VBC      Velvetbean caterpillar (Anticarsia gemmatalis), no. m-2              IB
+SBL      Soybean looper (Pseudoplusia includens), no. m-2                     IB
+SKB      Southern green stinkbug (Mezara viridula), no. m-2                   IB
+RKN      Root-knot nematode (Meloidogyne spp.), no. cm-3 soil                 IB
+CUT      Cutworm, no. m-2                                                     IB
+
+*Drainage
+@CDE     DESCRIPTION                                                          SO
+DR000    No drainage                                                          IB
+DR001    Ditches                                                              IB
+DR002    Sub-surface tiles                                                    IB
+DR003    Surface furrows                                                      IB
+
+*Element Code
+@CDE     DESCRIPTION                                                          SO
+B        Boron                                                                IB 
+CA       Calcium                                                              IB                            
+FE       Iron                                                                 IB 
+MG       Magnesium                                                            IB 
+N        Nitrogen                                                             IB 
+P        Phosphorus                                                           IB 
+P        Potassium                                                            IB 
+S        Sulfur                                                               IB 
+ZN       Zinc                                                                 IB 
+
+*Environment Modification Factors
+@CDE     DESCRIPTION                                                          SO
+A        Add                                                                  IB
+S        Subtract                                                             IB
+M        Multiply                                                             IB
+R        Replace                                                              IB
+
+*Fertilizers, Inoculants and Amendments
+@CDE     DESCRIPTION                                                          SO
+FE001    Ammonium nitrate                                                     IB
+FE002    Ammonium sulfate                                                     IB
+FE003    Ammonium nitrate sulfate                                             IB
+FE004    Anhydrous ammonia                                                    IB
+FE005    Urea                                                                 IB
+FE006    Diammnoium phosphate                                                 IB
+FE007    Monoammonium phosphate                                               IB
+FE008    Calcium nitrate                                                      IB
+FE009    Aqua ammonia                                                         IB
+FE010    Urea ammonium nitrate solution                                       IB
+FE011    Calcium ammonium nitrate solution                                    IB
+FE012    Ammonium polyphosphate                                               IB
+FE013    Single super phosphate                                               IB
+FE014    Triple super phosphate                                               IB
+FE015    Liquid phosphoric acid                                               IB
+FE016    Potassium chloride                                                   IB
+FE017    Potassium nitrate                                                    IB
+FE018    Potassium sulfate                                                    IB
+FE019    Urea super granules                                                  IB
+FE020    Dolomitic limestone                                                  IB
+FE021    Rock phosphate                                                       IB
+FE022    Calcitic limestone                                                   IB
+FE024    Rhizobium                                                            IB
+FE026    Calcium hydroxide                                                    IB
+FE051    Urea super granules (Control release)                                IB   
+
+*Harvest components
+@CDE     DESCRIPTION                                                          SO
+C        Canopy                                                               IB
+L        Leaves                                                               IB
+H        Harvest product                                                      IB
+
+*Harvest size categories
+@CDE     DESCRIPTION                                                          SO
+A        All                                                                  IB
+S        Small - less than 1/3 full size                                      IB
+M        Medium - from 1/3 to 2/3 full size                                   IB
+L        Large - greater than 2/3 full size                                   IB
+
+*Methods - Fertilizer and Chemical Applications
+@CDE     DESCRIPTION                                                          SO
+AP001    Broadcast, not incorporated                                          IB
+AP002    Broadcast, incorporated                                              IB
+AP003    Banded on surface                                                    IB
+AP004    Banded beneath surface                                               IB
+AP005    Applied in irrigation water                                          IB
+AP006    Foliar spray                                                         IB
+AP007    Bottom of hole, deep placement                                       IB
+AP008    On the seed                                                          IB
+AP009    Injected                                                             IB
+AP011    Broadcast on flooded/saturated soil, none in soil                    IB
+AP012    Broadcast on flooded/saturated soil, 15% in soil                     IB
+AP013    Broadcast on flooded/saturated soil, 30% in soil                     IB
+AP014    Broadcast on flooded/saturated soil, 45% in soil                     IB
+AP015    Broadcast on flooded/saturated soil, 60% in soil                     IB
+AP016    Broadcast on flooded/saturated soil, 75% in soil                     IB
+AP017    Broadcast on flooded/saturated soil, 90% in soil                     IB
+AP018    Band on saturated soil,2cm flood, 92% in soil                        IB
+AP019    Deeply placed urea super granules/pellets, 95% in soil               IB
+AP020    Deeply placed urea super granules/pellets, 100% in soil              IB
+
+*Methods - Irrigation and Water Management (Units for associated data)
+@CDE     DESCRIPTION                                                          SO
+IR001    Furrow, mm                                                           IB
+IR002    Alternating furrows, mm                                              IB
+IR003    Flood, mm                                                            IB
+IR004    Sprinkler, mm                                                        IB
+IR005    Drip or trickle, mm                                                  IB
+IR006    Flood depth, mm                                                      IB
+IR007    Water table depth, mm                                                IB
+IR008    Percolation rate, mm day-1                                           IB
+IR009    Bund height, mm                                                      IB
+IR010    Puddling (for Rice only)                                             IB
+IR011    Constant flood depth, mm                                             IB
+
+*Methods - Soil Analysis
+@CDE     DESCRIPTION                                                          SO
+SA001    Olsen                                                                IB
+SA002    Bray No. 1                                                           IB
+SA003    Bray No. 2                                                           IB
+SA004    Mehlich I (double acid, 1:5)                                         IB
+SA005    Anion exchange resin                                                 IB
+SA006    Truog                                                                IB
+SA007    Mehlich I (double acid, 1:10)                                        IB
+SA008    Colwell                                                              IB
+SA009    Water                                                                IB
+SA010    IFDC Pi strip                                                        IB
+SA011    pH in Water                                                          IB
+SA012    pH in KCl                                                            IB
+SA013    Mehlich 3                                                            IB
+SA014    Morgan's solution                                                    IB
+SA015    NH4OAc                                                               IB
+!
+! K extraction methods
+! NH4OaAc
+! Mehlich I (1:5)
+! Mehlich I (1:10)
+! Mehlich 3
+
+*Planting Material/Method
+@CDE     DESCRIPTION                                                          SO
+B        Bedded                                                               IB
+C        Cutting                                                              IB
+H        Horizontally planted sticks                                          IB
+I        Inclined (45o) sticks                                                IB
+N        Nursery                                                              IB
+P        Pregerminated seed                                                   IB
+R        Ratoon                                                               IB
+S        Dry seed                                                             IB
+T        Transplants                                                          IB
+V        Vertically planted sticks                                            IB
+
+*Plant Distribution
+@CDE     DESCRIPTION                                                          SO
+R        Rows                                                                 IB
+H        Hills                                                                IB
+U        Uniform/Broadcast                                                    IB
+
+*Residues and Organic Fertilizer
+@CDE     DESCRIPTION                                                          SO
+RE001    Generic crop residue                                                 IB
+RE101    Generic legume residue                                               IB
+RE201    Generic cereal crop residue                                          IB
+RE301    Generic grass                                                        IB
+RE999    Decomposed crop residue                                              IB
+RE002    Green manure                                                         IB
+RE003    Barnyard manure                                                      IB
+RE004    Liquid manure                                                        IB
+RE005    Compost                                                              IB
+RE006    Bark                                                                 IB
+RE102    Cowpea residue                                                       IB
+RE103    Mucuna residue                                                       IB
+RE104    Peanut residue                                                       IB
+RE105    Pigeon Pea residue                                                   IB
+RE106    Soybean residue                                                      IB
+RE107    Alfalfa residue                                                      IB
+RE108    chickpea forage                                                      IB
+RE109    Faba bean                                                            IB
+RE110    Pea residue                                                          IB
+RE111    Hairy vetch                                                          IB
+RE202    Pearl millet residue                                                 IB
+RE203    Maize residue                                                        IB
+RE204    Sorghum residue                                                      IB
+RE205    Wheat residue                                                        IB
+RE206    Barley                                                               IB
+RE207    rice                                                                 IB
+RE208    rye                                                                  IB
+RE302    Bahiagrass                                                           IB
+RE303    Bermudagrass                                                         IB
+RE304    Switchgrass                                                          IB
+RE305    brachiaria                                                           IB
+RE306    forage grasses                                                       IB
+RE401    Bush fallow residue                                                  IB
+RE402    Sugarcane                                                            IB
+RE403    Pineapple                                                            IB
+
+*Rotation
+@CDE     DESCRIPTION                                                          SO
+RO001    Continuous arable crops                                              IB
+RO002    Rotation with forages                                                IB
+
+*Soil Texture
+@CDE     DESCRIPTION                                                          SO
+C        Clay                                                                 IB
+CL       Clay loam                                                            IB
+L        Loam                                                                 IB
+LS       Loamy sand                                                           IB
+S        Sand                                                                 IB
+SC       Silty clay                                                           IB
+SCL      Silty clay loam                                                      IB
+SI       Silt                                                                 IB
+SIC      Silty clay                                                           IB
+SICL     Silty clay loam                                                      IB
+SIL      Silty loam                                                           IB
+SL       Sandy loam                                                           IB
+
+*Tillage Implements
+@CDE     DESCRIPTION                                                          SO
+TI001    V-Ripper                                                             IB
+TI002    Subsoiler                                                            IB
+TI003    Moldboard plow 20 cm                                                 IB
+TI004    Chisel plow, sweeps                                                  IB
+TI005    Chisel plow, straight point                                          IB
+TI006    Chisel plow, twisted shovels                                         IB
+TI007    Disk plow                                                            IB
+TI008    Disk, 1-way                                                          IB
+TI009    Disk, tandem                                                         IB
+TI010    Disk, double disk                                                    IB
+TI011    Cultivator, field                                                    IB
+TI012    Cultivator, row                                                      IB
+TI013    Cultivator, ridge till                                               IB
+TI014    Harrow, spike                                                        IB
+TI015    Harrow, tine                                                         IB
+TI016    Lister                                                               IB
+TI017    Bedder                                                               IB
+TI018    Blade cultivator                                                     IB
+TI019    Fertilizer applicator, anhydrous                                     IB
+TI020    Manure injector                                                      IB
+TI021    Animal-drawn implement                                               IB
+TI022    Mulch treader                                                        IB
+TI023    Plank                                                                IB
+TI024    Roller packer                                                        IB
+TI025    Drill, double-disk                                                   IB
+TI026    Drill, deep furrow                                                   IB
+TI031    Drill, no-till                                                       IB
+TI032    Drill, no-till [sod]                                                 IB
+TI033    Planter, row                                                         IB
+TI034    Planter, no-till                                                     IB
+TI035    Planting stick (hand)                                                IB
+TI036    Matraca hand planter                                                 IB
+TI037    Rod weeder                                                           IB
+TI038    Rotary hoe                                                           IB
+TI039    Roller harrow, cultipacker                                           IB
+TI041    Moldboard plow 25 cm                                                 IB
+TI042    Moldboard plow 30 cm                                                 IB
+
+*Field History
+@CDE     DESCRIPTION                                                          SO
+FH101    Cultivated, good mgmt, init default SOM                              IB
+FH102    Cultivated, poor mgmt, init default SOM                              IB
+FH201    Cultivated, good mgmt, init grass or forest                          IB
+FH202    Cultivated, poor mgmt, init grass or forest                          IB
+FH301    Cultivated, good mgmt, init degraded land                            IB
+FH302    Cultivated, poor mgmt, init degraded land                            IB
+

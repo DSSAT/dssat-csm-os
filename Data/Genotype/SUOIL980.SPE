@@ -1,0 +1,11 @@
+*SUNFLOWER SPECIES COEFFICIENTS - SUOIL980 MODEL
+
+*CHARACTERISTICS
+@C X(EN) Y(CH)  YSTD
+SU OPT   CO2X      0  220  330  440  550  660  770  880  990 9999  ! CO2 X axis
+SU OPT   CO2Y   0.00 0.71 1.00 1.08 1.17 1.25 1.32 1.38 1.43 1.50  ! CO2 Y axis
+SU OPT   RWEP   1.50
+SU OPT   PORM   0.02                   ! Minimum pore space
+SU OPT   RWMX   0.03                   ! Max root water uptake
+SU OPT   RLWR   1.70                   ! Root length weight ratio
+SU OPT   SDSZ  .0800                   ! Seed size (g/seed)

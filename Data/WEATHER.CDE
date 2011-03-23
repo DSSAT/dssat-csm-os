@@ -1,0 +1,91 @@
+*WEATHER DATA CODES
+! DSSAT v4.5; 09/30/2010
+
+! Headers used in the @ line to identify variables are listed first; codes
+! ('flags') used to designate data types are listed next.
+!
+! The fields in the file are as follows:
+!  CDE   The 'universal' code used to facilitate data interchange.
+!  DESCRIPTION  A description of the code, with units.
+!  SO    The source of the codes (IB=IBSNAT). Codes added by a user should be
+!        referenced in this field and the name and address of the person adding
+!        the code should be entered as a comment (ie.with a '!' in column 1)
+!        below this note. This is important to ensure that information from
+!        different workers can be easily integrated.
+
+*Headers
+@CDE     DESCRIPTION                                                          SO
+ALPHA    Rainfall distribution scale parameter, monthly, mm-2                 IB
+AMTH     Angstrom 'a' coefficient, monthly, unitless                          IB
+ANGA     Angstrom 'a' coefficient, yearly, unitless                           IB
+ANGB     Angstrom 'b' coefficient, yearly, unitless                           IB
+BMTH     Angstrom 'b' coefficient, monthly, unitless                          IB
+DATE     Date, year + days from Jan. 1                                        IB
+DEWP     Daily dewpoint temperature, C                                        IB
+DURN     Duration of summarization period for climate files, Yr               IB
+ELEV     Elevation, m                                                         IB
+EVAP     Daily pan evaporation (mm d-1)                                       IB
+GSDU     Growing season duration, Day                                         IB
+GSST     Growing season start day, Doy                                        IB
+INSI     Institute and site code                                              IB
+LAT      Latitude, degrees (decimals)                                         IB
+LONG     Longitude, degrees (decimals)                                        IB
+MTH      Month, #                                                             IB
+NAMN     Temperature minimum,all days,monthly average, C                      IB
+NASD     Temperature minimum,all days,monthly standard deviation, C           IB
+PAR      Daily photosynthetic radiation, moles m-2 day-1                      IB
+PDW      Probability of a dry-wet sequence                                    IB
+RAIN     Daily rainfall (incl.snow), mm day-1                                 IB
+RAIY     Rainfall, yearly total, mm                                           IB
+REFHT    Reference height for weather measurements, m                         IB
+RNUM     Rainy days, # month-1                                                IB
+RTOT     Rainfall total, mm month-1                                           IB
+SAMN     Solar radiation,all days,monthly average, MJ m-2 d-1                 IB
+SDMN     Solar radiation,dry days,monthly average, MJ m-2 d-1                 IB
+SDSD     Solar radiation,dry days,monthly standard deviation, MJ m-2 d-1      IB
+SHMN     Daily sunshine duration, monthly average, percent                    IB
+SOURCE   Source of daily weather data, text                                   IB
+SRAD     Daily solar radiation, MJ m-2 day-1                                  IB
+SRAY     Solar radiation,yearly average, MJ m-2 day-1                         IB
+START    Start of summary period for climate (CLI) files, Year                IB
+SUNH     Daily sunshine duration, percent                                     IB
+SWMN     Solar radiation,wet days,monthly average, MJ m-2 d-1                 IB
+SWSD     Solar radiation,wet days,monthly standard deviation, MJ m-2 d-1      IB
+TAMP     Temperature amplitude, monthly averages, C                           IB
+TAV      Temperature average for whole year, C                                IB
+TDRY     Daily dry-bulb temperature, C                                        IB
+TMAX     Daily temperature maximum, C                                         IB
+TMIN     Daily temperature minimum, C                                         IB
+TMNY     Temperature minimum, yearly average, C                               IB
+TMXY     Temperature maximum, yearly average, C                               IB
+TWET     Daily wet-bulb temperature, C                                        IB
+WIND     Daily wind speed (km d-1)                                            IB
+WNDHT    Reference height for windspeed measurements, m                       IB
+XAMN     Temperature maximum,all days,monthly average, C                      IB
+XDMN     Temperature maximum,dry days,monthly average, C                      IB
+XDSD     Temperature maximum,dry days,standard deviation, C                   IB
+XWMN     Temperature maximum,wet days,monthly average, C                      IB
+XWSD     Temperature maximum,wet days,standard deviation, C                   IB
+
+*Flags
+! Flags attached to data to indicate the nature of the original data. Upper
+! case flags = original data replaced; lower-case flags = original data.
+
+@CDE     DESCRIPTION                                                          SO
+A        Above maximum - data replaced                                        IB
+a        Above maximum - but original data left                               IB
+B        Below minimum - data replaced                                        IB
+b        Below minimum - - but original data left                             IB
+D        Decadal averages only in original file - data replaced               IB
+d        Decadal averages only in original file - but original data left      IB
+E        Format error in original file - data replaced                        IB
+e        Format error in original file - but original data left               IB
+H        Solar radiation as sunshine hours - data replaced                    IB
+h        Solar radiation as sunshine hours - but original data left           IB
+M        Monthly averages only in original file - data replaced               IB
+m        Monthly averages only in original file - but original data left      IB
+N        No data in original file - data replaced                             IB
+n        No data in original file - but original data left                    IB
+R        Rate of change exceeded  - data replaced                             IB
+r        Rate of change exceeded  - but original data left                    IB
+

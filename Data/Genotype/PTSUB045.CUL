@@ -1,0 +1,37 @@
+*POTATO CULTIVAR COEFFICIENTS: PTSUB045 MODEL
+
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code or this cultivar, points to the Ecotype in the
+!             ECO file (currently not used).
+! G2          Leaf area expansion rate after tuber initiation (cm2/m2 d)
+! G3          Potential tuber growth rate (g/m2 d)
+! G4          Currently not used in the model
+! PD          Index that supresses tuber growth during the period
+!             that immediately follows tuber induction
+! P2          Tuber initiation sensitivity to long photoperiods
+! TC          Upper critical temperature for tuber initiation (C)
+
+@VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    G4    PD    P2    TC
+IB0001 MAJESTIC             . IB0001 2000.  22.5  0.20   0.8   0.6  17.0
+!IB0002 SEBAGO               . IB0001 2000.  22.5  0.20   0.7   0.8  15.0
+IB0002 SEBAGO               . IB0001 1500.  22.5  0.20   0.9   0.1  19.0
+!IB0003 RUSSET BURBANK       . IB0001 2000.  22.5  0.20   0.6   0.6  17.0
+IB0003 RUSSET BURBANK       . IB0001 2000.  26.0  0.20   0.9   0.6  17.0
+!IB0004 KATHADIN             . IB0001 2000.  25.0  0.20   0.7   0.6  19.0
+IB0004 KATHADIN             . IB0001 2000.  30.0  0.20   0.7   0.9  20.0
+!IB0005 ATLANTIC             . IB0001 2000.  25.0  0.20   0.9   0.6  17.0
+IB0005 ATLANTIC             . IB0001 1000.  25.0  0.20   0.9   0.6  17.0
+IB0006 MARIS PIPER          . IB0001 2000.  25.0  0.20   0.8   0.4  17.0
+IB0007 KING EDWARD          . IB0001 2000.  22.5  0.20   1.0   0.6  17.0
+IB0008 DESIREE              . IB0001 2000.  25.0  0.20   0.9   0.6  17.0
+IB0009 LT-1                 . IB0001 2000.  25.0  0.20   0.9   0.8  21.0
+IB0010 C14-343              . IB0001 2000.  25.0  0.20   0.9   0.4  21.0
+IB0011 NORCHIP              . IB0001 2000.  25.0  0.20   1.0   0.4  17.0
+IB0012 SHEPODY              . IB0001 2000.  25.0  0.20   0.7   0.6  19.0
+UF0001 RED LASODA           . IB0001 2000.  22.0  0.20   0.7   0.4  19.0
+
+

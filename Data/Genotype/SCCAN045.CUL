@@ -1,0 +1,81 @@
+!  SUGARCANE model cultivar file
+!  ::::::::::::::::::::::::::::::::::::::::::::::
+!  Matthew Jones, Nov 2006, Gainesville, Florida.
+!  ::::::::::::::::::::::::::::::::::::::::::::::
+!  Cultivar file for the CANEGRO Sugarcane Plant Module
+!  ------------------------------------------------------------------------------
+!  It is recommended that for any new cultivars that need to be set up, the 
+!  Nco376 cultivar be copied and modified.  Please ensure that values entered 
+!  in this file are right-aligned to correct column heading.
+!
+!  Please modify parameters for your new cultivar in the order described above.
+!  This is essentially the order in which the model performs the simulation.  The
+!  phenology and stalk population parameters should be relatively easy to 
+!  determine.  Only once these are correct should any attempt be made to calibrate 
+!  the remaining parameters.
+!
+!  REAL values (with a decimal point) MUST be entered - e.g. 0., 1.23, 4.0
+!
+!  Please see DSSAT-Canegro documentation for guidance on parameter
+!  determination.
+!  --------------------------------------------------------------------------------
+!
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+! Name         | Value | Category            | Description                                                                     |Reference                                                                       |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+! PARCEmax     |   9.9 | Biomass accumulatio | Maximum (no stress) radiation conversion efficiency expressed as assimilate     |Singels et al., 2005b                                                           |
+!              |       |                     | produced before respiration, per unit PAR. (g/MJ).                              |                                                                                |
+! APFMX        |  0.88 | Biomass partitionin | Maximum fraction of dry mass increments that can be allocated to aerial         | 'ADMPFmax' in Singels & Bezuidenhout, 2002                                     |
+!              |       |                     | dry mass (t/t)                                                                  |                                                                                |
+! PCB          |   0.6 | Biomass partitionin | Partitioning coefficient: extinction coefficient of fraction of dry mass        |Parameter 'B' in Singels & Bezuidenhout, 2002                                   |
+!              |       |                     | increments allocated to above ground biomass                                    |                                                                                |
+! STKPFMAX     |  0.65 | Biomass partitionin | Fraction of daily aerial dry mass increments partitioned to stalk at high       |Singels, A., Donaldson, R.A. & Smit, M.A., 2005 derived from Liu and Bull (2001)|
+!              |       |                     | temperatures in a mature crop (t/t on a dry mass basis)                         |                                                                                |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+! DELTTMAX     |  0.07 | Sucrose accumulatio | Max. change in sucrose content per unit change in stalk mass in the             | 'DELTAMAX' in Singels & Bezuidenhout, 2002                                     |
+!              |       |                     | unripenened section of the stalk (/t)                                           |                                                                                |
+! SUCA         |  0.58 | Sucrose accumulatio | Sucrose partitioning parameter: Maximum sucrose contents in the base of         | 'Scmax' in Singels & Bezuidenhout, 2002                                        |
+!              |       |                     | stalk (t/t)                                                                     |                                                                                |
+! TBFT         |    25 | Sucrose accumulatio | Sucrose partitioning:  Temperature at which partitioning of unstressed          |"T50" in Singels & Bezuidenhout, 2002                                           |
+!              |       |                     | stalk mass increments to sucrose is 50% of the maximum value                    |                                                                                |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+! Tthalfo      |   250 | Canopy - CANESIM    | Thermal time to half canopy (oCd)                                               |                                                                                |
+! Tbase        |    16 | Canopy - CANESIM    | Base temperature for canopy development (oCd)                                   |                                                                                |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+! LFMAX        |    12 | Canopy - leaves     | Maximum number of green leaves a healthy, adequately-watered plant will         |                                                                                |
+!              |       |                     | have after it is old enough to lose some leaves.                                |                                                                                |
+! MXLFAREA     |   360 | Canopy - leaves     | Max leaf area assigned to all leaves above leaf number MXLFARNO (cm2)           |Inman-Bamber (1991)                                                             |
+! MXLFARNO     |    14 | Canopy - leaves     | Leaf number above which leaf area is limited to MXLFAREA                        |Inman-Bamber (1991)                                                             |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+! PI1          |    69 | Leaf phenology      | Phyllocron interval 1 (for leaf numbers below Pswitch,  oC.d (base TTBASELFEX)) |Inman-Bamber (1991)                                                             |                                                                                 
+! PI2          |   169 | Leaf phenology      | Phyllocron interval 2 (for leaf numbers above Pswitch,  oC.d (base TTBASELFEX)) |Inman-Bamber (1991)                                                             |
+! PSWITCH      |    18 | Leaf phenology      | Leaf number at which the phyllocron changes.                                    |Inman-Bamber (1991)                                                             |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+! MAX_POP      |    30 | Tiller phenology    | Maximum tiller population (stalks/m2)                                           |                                                                                |
+! POPTT16      |  13.3 | Tiller phenology    | Stalk population at/after 1600 degree days (/m2)                                |                                                                                |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
+! TTPLNTEM     |   428 | Phenology           | Thermal time to emergence for a plant crop (degree C days, base TTBASEEM)       |                                                                                |
+! TTRATNEM     |   203 | Phenology           | Thermal time to emergence for a ratoon crop (degree C days, base TTBASEEM)      |                                                                                |
+! CHUPIBASE    |  1050 | Phenology           | Thermal time (baseTTBASEEM) from emergence to start of stalk growth             | 'TTskp' in Singels & Bezuidenhout, 2002                                        |
+! TT_POPGROWTH |   600 | Phenology           | Thermal time to peak tiller population (deg C days, TTBASEPOP)                  |                                                                                |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+                                                                                                                                                  
+! LG_AMBASE    |   220 | Lodging             | Aerial mass (fresh mass of stalks, leaves, and water attached to them) at       |                                                                                |
+!              |       |                     | which lodging starts; t/ha                                                      |                                                                                |
+! -------------+-------+---------------------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------+ 
+!
+!::::::::::::::::::::::::    |ECO-  |Max Photos.   | Aboveground b| Stalk mass   |Sucrose accumulation ------->|Canopy (canesim)------------>|--------------| Leaf size    | Canopy - leav| Canopy leaf emergence ----->| Phenology    ------------------------------- Phenology ----------------------------------------------->|--Lodging    -
+!::::::::::::::::::::::::    |type  |rate          | partitioning | partitioning |                             |                             |              |              |              |                             |                                                                             stalks/m2                  |              
+!<NUM>|<-- NAME -------->    |<---->|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>|<------------>
+!                                                 1              2              3              4              5              6              7              8              9             10             11             12             13             14             15             16             17             18             19             20
+@VAR#  VAR-NAME........ EXPNO   ECO#       MaxPARCE          APFMX       STKPFMAX           SUCA           TBFT        Tthalfo          TBase          LFMAX       MXLFAREA       MXLFARNO            PI1            PI2        PSWITCH       TTPLNTEM       TTRATNEM      CHUPIBASE   TT_POPGROWTH        MAX_POP        POPTT16      LG_AMBASE 
+IB0001 NCo376-NO_LODGE      . SC0001           9.90           0.88           0.65           0.58            25.           250.            16.            12.           360.            15.            69.           169.            18.           428.           203.          1050.           600.            30.           13.3           999. 
+IB0002 NCo376               . SC0001           9.90           0.88           0.65           0.58            25.           250.            16.            12.           360.            15.            69.           169.            18.           428.           203.          1050.           600.            30.           13.3           220. 
+IB0003 NCo376-CANESIM       . SC0001           9.90           0.88           0.65           0.58            25.           250.            16.            12.                           15.            69.           169.            18.           428.           203.          1050.           600.            30.           13.3           220. 
+IB0004 N31                  . SC0002           9.90           0.90           0.68           0.57            25.           250.            15.            12.           360.            14.            90.           170.            14.           428.           203.          1050.           600.            30.           12.7           220. 
+IB0005 N37                  . SC0003           9.90           0.88           0.65           0.6             27.           250.            16.            12.           360.            14.            90.           170.            14.           428.           203.          1050.           600.            30.           11.7           220. 
+IB0006 CG1                  . SC0004           9.90           0.88           0.65           0.6             26.           275.            16.            12.           500.            16.           110.           200.            14.           428.           203.          1050.           600.            30.           11.0           220. 
+IB0007 CG2                  . SC0005           9.90           0.88           0.65           0.62            27.           275.            16.            12.           500.            16.           110.           200.            14.           428.           203.          1050.           600.            30.            9.0           220. 
+IB0008 CG3                  . SC0006           9.90           0.88           0.65           0.57            24.           250.            15.            12.           600.            17.            90.           170.            14.           428.           203.          1050.           600.            30.           13.0           220. 
+IB0011 NCo376-Unsafe        . SC0001           9.90           0.88           0.65           0.58            25.           250.            16.            12.           360.            15.            69.           169.            18.           428.           203.          1050.           400.            45.           13.3           220. 
+CP1743 CP 80-1743SC0001     . SC0001           9.90           0.88           0.65           0.58            25.           250.            16.            12.           360.            15.            69.           169.            18.           428.           203.          1050.           600.            30.           13.3           220. 
+CP2143 CP89-2143            . SC0001           9.90           0.88           0.65           0.58            25.           250.            16.            12.           360.            15.            69.           169.            18.           428.           203.          1050.           600.            30.           13.3           220. 

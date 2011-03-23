@@ -1,0 +1,17 @@
+*PEST CODES
+! DSSAT v4.5; 09/30/2010
+
+*Diseases and Pest Organisms
+!Examples of codes that have been used are given below.
+UFCEW   Corn earworm (Heliothis zea), no. m-2
+UFVBC   Velvetbean caterpillar (Anticarsia gemmatalis), no. m-2
+UFSBL   Soybean looper (Pseudoplusia includens), no. m-2
+UFSKB   Southern green stinkbug (Mezara viridula), no. m-2
+UFRKN   Root-knot nematode (Meloidogyne spp.), no. cm-3 soil
+IBCUT   Cutworm, no. m-2
+LFMIN   Leafminer (Aproaerema Modicella-Deventer) no.m-2, m2 m-2 leaf damage
+MOW     Top weight left, kg/ha
+PSTDS   General pest and diseases losses due to rot, tikka, leafminer, etc.
+PCLA    Defoliation, %
+PDLA    Diseased leaf area, %
+PRP     Reduction in photosynthetic rate, %
