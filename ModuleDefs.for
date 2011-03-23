@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 1
-        INTEGER :: Build = 9
+        INTEGER :: Build = 10
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.5.1.10 chp 03/23/2011 Environmental summary for wheat, WH species change
 !       4.5.1.9  chp 02/23/2011 Environmental summary in Summary.OUT
 !       4.5.1.8  chp 02/14/2011 SLPF enabled for Canegro
 !       4.5.1.7  chp 02/10/2011 CSCER, CSCRP changes to species and ecotype files, LAH
