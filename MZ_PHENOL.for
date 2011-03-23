@@ -171,12 +171,6 @@
         IF (DYNAMIC .EQ. RUNINIT) THEN
           CALL GETLUN('OUTO', NOUTDO)
 
-          DO I=1,20
-              STGDOY(I) = 9999999      
-          ENDDO
-          STGDOY(14) = YRSIM
-!          YREMRG = 9999999
-
           !-------------------------------------------------------
           !     Read input file name (ie. DSSAT45.INP) and path
           !-------------------------------------------------------
@@ -339,6 +333,12 @@
         ENDIF
 
       KEP = KCAN/(1-0.07)*(1-0.25)
+
+          DO I=1,20
+              STGDOY(I) = 9999999      
+          ENDDO
+          STGDOY(14) = YRSIM
+!          YREMRG = 9999999
 
       CUMDTT = 0.0
       SUMDTT = 0.0

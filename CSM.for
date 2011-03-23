@@ -51,6 +51,7 @@ C=======================================================================
 
       USE ModuleDefs 
       USE ModuleData
+      USE HeaderMod
 
       IMPLICIT NONE
 C-----------------------------------------------------------------------
@@ -169,7 +170,7 @@ C-----------------------------------------------------------------------
       CASE ('D')  !Debug
         CALL GETARG(NARG+1,FILEIO)  !,IP   !INP file
         DO I = 1, LEN(FILEIO)
-           FILEIO(I:I) = UPCASE(FILEIO(I:I))
+          FILEIO(I:I) = UPCASE(FILEIO(I:I))
           ROTNUM = 0
           TRTNUM = 0
         END DO
@@ -381,6 +382,7 @@ C***********************************************************************
       ENDIF
       IF (MULTI .GT. 1) THEN
         RUN   = RUN + 1
+        CALL MULTIRUN(RUN, 0)  !chp 3/17/2011
         YRSIM = YRSIM_SAVE
         CALL YR_DOY(YRSIM,YR,ISIM)
         YRSIM = (YR + MULTI - 1) * 1000 + ISIM

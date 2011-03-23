@@ -94,7 +94,7 @@ C     Variable heading for Weather.OUT
 C-----------------------------------------------------------------------
           WRITE (LUN,120)
   120     FORMAT('@YEAR DOY   DAS',
-     &    '   PRED   DYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND',
+     &    '   PRED  DAYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND',
      &    '   TAVD   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D')
         ENDIF
 
