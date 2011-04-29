@@ -23,7 +23,7 @@ C=======================================================================
      &  NSLOPE, PARSH, PARSUN, QEREF, RABS, RCUTIC,       !Input
      &  REFHT, RHUMHR, RNITP, RWUH, SHCAP, SLAAD,         !Input
      &  SLWREF, SLWSLO, STCOND, SWE, TAIRHR, TA,          !Input
-     &  TMIN, TYPPGL, TYPPGN, WINDHR, XHLAI,              !Input
+     &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,              !Input
      &  XLMAXT, YLMAXT,                                   !Input
      &  AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,      !Output
      &  PGHR, SLWSH, SLWSL, T0HR, TCAN, THR, TSHR,        !Output
@@ -50,7 +50,7 @@ C=======================================================================
      &  RA,RABS(3),RCUTIC,REFHT,RHUMHR,RNITP,RWUH,SHCAP(NL),SLAAD,
      &  SLWREF,SLWSH,SLWSL,SLWSLO,STCOND(NL),SWE,T0HR,TAIRHR,TA,TMIN,
      &  TCAN,TCPREV,THR,TPREV,TSHR(NL),TSUM,TSURF(3,1),USTAR,
-     &  WINDHR,XHLAI,XLMAXT(6),YLMAXT(6)
+     &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6)
       PARAMETER (ERRBND=0.01)
 
 C     Initialize.
@@ -79,7 +79,7 @@ C     Initialize.
 
 C     Daylight hours with canopy.
 
-      IF (DAYTIM .AND. XHLAI .GT. 0.0) THEN
+      IF (DAYTIM .AND. XLAI .GT. 0.0) THEN
         REPEAT = .TRUE.
         ITER = 1
         TSUM = 0.0
@@ -269,14 +269,14 @@ C=======================================================================
      &  LAISH,LAISL,LMXREF,LFMXSH,LFMXSL,LNREF,NSLOPE,PARSH,
      &  PARSUN(3),PARSL,PGHR,PGSUM,PGSUN,PGSH,PGSL,QEREF,QEFFSH,
      &  QEFFSL,RNITP,SLAAD,TEMPSH,TEMPSL,TSURF(3,1),FNPGN(4),
-     &  FNPGL(4),XLMAXT(6),XHLAI,YLMAXT(6),CSLSTR,CSHSTR,SLWSL,
+     &  FNPGL(4),XLMAXT(6),XLAI,YLMAXT(6),CSLSTR,CSHSTR,SLWSL,
      &  SLWSH,PCNLSL,PCNLSH,SLWSLO,SLWREF,TMIN
 
 C     Initialize.
 
       TEMPSL = TSURF(1,1)
       TEMPSH = TSURF(2,1)
-      XHLAI = LAISL + LAISH
+      XLAI = LAISL + LAISH
       PARSL = PARSUN(2)
 
 C     Calculate leaf photosynthesis parameters with separate layering
@@ -343,7 +343,7 @@ C     Compute canopy photosynthesis (µmol CO2/m2/s).
         ENDIF
       ENDIF
       PGHR = PGSL*LAISL + PGSH*LAISH
-      AGEFAC = (LAISL*AGMXSL+LAISH*AGMXSH) / XHLAI
+      AGEFAC = (LAISL*AGMXSL+LAISH*AGMXSH) / XLAI
 
       RETURN
       END SUBROUTINE CANOPG
@@ -378,6 +378,8 @@ C========================================================================
      &  TYPPGN, XLMAXT, YLMAXT,                           !Input
      &  AGEMXL, LFMAX, QEFF)                              !Output
 
+      USE MODULEDATA
+	 
       IMPLICIT NONE
       SAVE
 
@@ -388,6 +390,8 @@ C========================================================================
      &  TEMPHR,TEMPMX,TK,XLMAXT(6),YLMAXT(6),TMIN,CHILL
       PARAMETER (O2=210000.0,RGAS=8.314)
 
+      REAL BETALS,PDLA,BETAMX
+        
 C     Initialization.  Convert LMXREF from mgCO2/m2/s to µmol/m2/s.
 
       TK = TEMPHR + 273.
@@ -469,11 +473,16 @@ C
       AGEQE =  (0.0094 + (1.0-EXP(-2.0*AGEMXL))) /
      &  (0.0094 + (1.0-EXP(-2.0*1.0)))
       AGEQE = MIN(MAX(AGEQE,0.0),1.0)
+        
+C    25 Apr 2011 KJB,PDA,MPS added code for beta function: PDLA effects on lfmax and QE
+      CALL GET('PDLABETA','BETA',BETALS)
+      CALL GET('PDLABETA','PDLA',PDLA)
+      BETAMX = (1.0-PDLA/100.)**BETALS
 
 C     Calculate QEFF and LFMAX at ambient conditions.
 
-      QEFF = QEREF * CO2QE * AGEQE
-      LFMAX = LXREF * SLWMAX * TEMPMX * AGEMXL * CO2MAX * CHILL
+      QEFF = QEREF * CO2QE * AGEQE * BETAMX
+      LFMAX = LXREF * SLWMAX * TEMPMX * AGEMXL * CO2MAX * CHILL * BETAMX
 
       RETURN
       END SUBROUTINE PGLFEQ
@@ -588,13 +597,13 @@ C=======================================================================
      &  STCOND(NL),TAIRHR,TCAN,THR,TSHR1,TSHR(NL),TSURF(3,1),VHCAIR,
      &  VPD(3,1),VPSAT,WINDHR,CLOUDS,DAIR,DAIRD,DVAPOR,Q,SH,SHEAT(3,1),
      &  SHAIRD,TK,MWATER,RGAS,MAIR,LAISHV,LAISLV,RADBK(3),
-     &  USTAR,XHLAI,ZERO
+     &  USTAR,XLAI,ZERO
       PARAMETER (RGAS=8.314,MWATER=0.01802,MAIR=0.02897,PATM=101300.0,
      &  SHAIRD=1005.0, ZERO=1.0E-6)
 
 C     Initialize.
 
-      XHLAI = LAISH + LAISL
+      XLAI = LAISH + LAISL
       STCND1 = STCOND(1)
       TSHR1 = TSHR(1)
       DLAYR1 = DLAYR2(1) / 100.0
@@ -643,7 +652,7 @@ C     Solve 3-zone model for ET and E (mm/h).
      &  ECAN, G, LH, LHEAT, SH, SHEAT, TCAN, TSURF)       !Output
       ETHR = LH / LHVAP * 3600.0
       EHR = LHEAT(3,1) / LHVAP * 3600.0
-      IF (XHLAI .LE. ZERO) THEN
+      IF (XLAI .LE. ZERO) THEN
         TSURF(1,1) = 0.0
         TSURF(2,1) = 0.0
         THR = 0.0
@@ -680,12 +689,12 @@ C========================================================================
       REAL CANHT,CEC,CEN,CONDSH,CONDSL,FRACSH,FRSHV,KDIRBL,
      &  LAISH,LAISL,LWIDTH,RCUTIC,RA,RB(3),REFHT,RL(3,3),
      &  RMAX,RS(3,3),RSSH,RSSL,RSSS,RSURF(3),TAIRHR,TCAN,
-     &  WINDHR,XHLAI,USTAR
+     &  WINDHR,XLAI,USTAR
       PARAMETER (RMAX=1.0E4)
 
 C     Initialization.
 
-      XHLAI = LAISH + LAISL
+      XLAI = LAISH + LAISL
 
 C     Calculate canopy and soil boundary layer resistances.
 
@@ -696,7 +705,7 @@ C     Calculate canopy and soil boundary layer resistances.
 
 C     Calculate leaf surface resistances.
 
-      IF (XHLAI .GT. 0.0) THEN
+      IF (XLAI .GT. 0.0) THEN
         IF (CONDSL .GT. 0.0) THEN
           RSSL = 1.0/(CONDSL*LAISL) - RB(1)
           RSSL = MAX(RSSL,1.0)
@@ -710,7 +719,7 @@ C     Calculate leaf surface resistances.
           RSSH = RCUTIC / LAISL
         ENDIF
       ELSE
-C       For XHLAI=0.0 set RSURF = 0.0  RBLYR = RMAX in RESBLR, so
+C       For XLAI=0.0 set RSURF = 0.0  RBLYR = RMAX in RESBLR, so
 C       this means RLEAF = RMAX for both heat and vapor.
         RSSL = 0.0
         RSSH = 0.0
@@ -771,7 +780,7 @@ C=======================================================================
       REAL CANHT,D,ETAK,ETAKMX,ETAW,ETAWMX,FRSHV,FRACSH,H,KDIRBL,
      &  KH,LAISH,LAISL,ZMD,HMD,K1,K2,LWIDTH,PSIM,PSIH,RA,
      &  RBLF,RBSH,RBSL,RB(3),REFHT,RMAX,TAIRHR,TCAN,TKAIR,
-     &  WINDHR,WINDSP,XHLAI,Z0H,Z0M,ZS0H,ZS0M,LHZ0M,LZZ0H,LZZ0M,DT,
+     &  WINDHR,WINDSP,XLAI,Z0H,Z0M,ZS0H,ZS0M,LHZ0M,LZZ0H,LZZ0M,DT,
      &  MO,USTAR,X,A,B,PI,RATIO,WINDH,RBSS,ZERO
       PARAMETER (ETAKMX=2.0, ETAWMX=3.0, PI=3.14159, RMAX=1.0E4,
      &  ZERO=1.0E-6)
@@ -779,7 +788,7 @@ C=======================================================================
 C     Initialization and calculation of zero plane displacement height and
 C     canopy surface roughness (Brutsaert, 1982).
 
-      XHLAI = LAISH + LAISL
+      XLAI = LAISH + LAISL
       WINDSP = MAX(WINDHR,1.0)
       H = CANHT
       ZS0M = 0.03                                                  ! m
@@ -833,7 +842,7 @@ C     Aerodynamic resistance.
 
 C     Canopy calculations.
 
-      IF (XHLAI .GT. 0.0) THEN
+      IF (XLAI .GT. 0.0) THEN
 
 C       Calculate windspeed at the top of the canopy.
 
@@ -844,9 +853,9 @@ C       Calculate leaf boundary layer resistances (extension of Choudhury
 C       and Montieth, 1988).
 
         RBLF = ETAW * SQRT(LWIDTH/WINDH)
-     &    / (2.0*0.01*XHLAI*(1.0-EXP(-ETAW/2.0)))         ! s/m
-        K1 = ETAW/2.0+KDIRBL*XHLAI/FRACSH
-        RBSL = SQRT(LWIDTH/WINDH) * K1 / (0.01*XHLAI*(1.0-EXP(-K1)))
+     &    / (2.0*0.01*XLAI*(1.0-EXP(-ETAW/2.0)))         ! s/m
+        K1 = ETAW/2.0+KDIRBL*XLAI/FRACSH
+        RBSL = SQRT(LWIDTH/WINDH) * K1 / (0.01*XLAI*(1.0-EXP(-K1)))
         RBSL = MIN(RBSL,RMAX)
         RBSH = 1.0 / (1.0/RBLF-1.0/RBSL)
         RBSH = MAX(RBSH,1.0)
@@ -1246,14 +1255,14 @@ C=======================================================================
 
       REAL CLOUDS,DELT,EMISA,EMISA0,EMISL,EMISS,EMISS0,FRSHV,
      &  LAISHV,LAISLV,RADBK(3),EAIRHR,SBZCON,TAIRHR,TKAIR,TK4SKY,
-     &  TSKY,XHLAI,EMISAV,RBKLF,RBACK,TCAN,TK4CAN,ZERO
+     &  TSKY,XLAI,EMISAV,RBKLF,RBACK,TCAN,TK4CAN,ZERO
       PARAMETER (SBZCON=5.675E-8, DELT=11.0, EMISL=0.97, EMISS0=0.9,
      &  ZERO=1.0E-6)
 
 C     Initialize.  Apparent atmospheric emissivity from Brutsaert (1982)
 C     and Monteith and Undsworth (1990)
 
-      XHLAI = LAISLV + LAISHV
+      XLAI = LAISLV + LAISHV
       TKAIR = TAIRHR + 273.0
       TK4CAN = (TCAN+273.0)**4
       EMISA0 = 1.24 * (EAIRHR/100.0/TKAIR)**(1.0/7.0)     !EAIRHR in Pa
@@ -1270,7 +1279,7 @@ C     weighted according to leaf area index.  NEED VIEW FACTOR FOR LEAVES!
 
       EMISAV = FRSHV*EMISL + (1.0-FRSHV)*EMISS
       RBACK =  EMISAV * SBZCON * (TK4CAN-TK4SKY)
-      IF (XHLAI .LE. ZERO) THEN
+      IF (XLAI .LE. ZERO) THEN
         RADBK(1) = 0.0
         RADBK(2) = 0.0
       ELSE

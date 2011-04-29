@@ -61,15 +61,15 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 1
-        INTEGER :: Build = 10
+        INTEGER :: Build = 11
       END TYPE VersionType
       TYPE (VersionType) Version
 !     2/18/2011 chp
 !     Branch created for Jesse Naab for phosphorus dynamics in peanut research
-      CHARACTER(len=10) :: VBranch = '-P_peanut '
-!     CHARACTER(len=10) :: VBranch = '-Release  '
+      CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.5.1.11 chp 04/29/2011 P for peanut enabled, PDLA changes KJB
 !       4.5.1.10 chp 03/23/2011 Environmental summary for wheat, WH species change
 !       4.5.1.9  chp 02/23/2011 Environmental summary in Summary.OUT
 !       4.5.1.8  chp 02/14/2011 SLPF enabled for Canegro
@@ -490,6 +490,11 @@ C             CHP Added TRTNUM to CONTROL variable.
         Character*8 WSTAT
       End Type WeathType
 
+      TYPE PDLABETATYPE
+        REAL PDLA
+        REAL BETALS
+      END TYPE
+
 !     Data which can be transferred between modules
       Type TransferType
         Type (ControlType) CONTROL
@@ -503,6 +508,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (SPAMType)    SPAM
         Type (WatType)     WATER
         Type (WeathType)   WEATHER
+        TYPE (PDLABETATYPE) PDLABETA
       End Type TransferType
 
 !     The variable SAVE_data contains all of the components to be 
@@ -700,6 +706,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      CASE ('PDLABETA')
+        SELECT CASE(VarName)
+        CASE('PDLA'); Value = SAVE_data % PDLABETA % PDLA
+        CASE('BETA'); Value = SAVE_data % PDLABETA % BETALS
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT
+            
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 
@@ -792,6 +805,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      CASE ('PDLABETA')
+        SELECT CASE(VarName)
+        CASE('PDLA'); SAVE_data % PDLABETA % PDLA = Value
+        CASE('BETA'); SAVE_data % PDLABETA % BETALS = Value
+        CASE DEFAULT; ERR = .TRUE.
+        END SELECT
+            
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 

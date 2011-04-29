@@ -129,7 +129,7 @@ C=======================================================================
       IF (MEPHO .EQ. 'L' .OR. MEEVP .EQ. 'Z') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XHLAI,                                 !Input
+     &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
 
@@ -190,7 +190,7 @@ C=======================================================================
         IF (MEPHO .EQ. 'L' .OR. MEEVP .EQ. 'Z') THEN
           CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XHLAI,                                 !Input
+     &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
         ENDIF
       ENDIF
@@ -357,7 +357,7 @@ C       and total potential water uptake rate.
           !   (MEPHO = 'L' and MEEVP = 'Z').
           CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XHLAI,                                 !Input
+     &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
         ENDIF
 
@@ -449,7 +449,7 @@ C-----------------------------------------------------------------------
       IF (CROP .NE. 'FA' .AND. MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XHLAI,                                 !Input
+     &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
 
@@ -473,7 +473,7 @@ C-----------------------------------------------------------------------
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XHLAI,                                 !Input
+     &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
 

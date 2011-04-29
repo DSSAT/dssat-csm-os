@@ -36,7 +36,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
+      USE ModuleData     ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
       SAVE
@@ -80,6 +80,7 @@ C     Photosynthesis Variables
       REAL TPSR,PPSR
 C     Weed Leaf Area Variables (Light Competition)
       REAL LAIW,PLAIW
+	REAL BETALS,PNPDLA
 
 !***********************************************************************
 !***********************************************************************
@@ -358,6 +359,10 @@ C             Note:  PLAIW is calculated here, but not used anywhere.
               ENDIF
 
               IF (INDEX (PCPID(I,J),'PDLA').GT.0) THEN
+	        BETALS = PDCF1(I,J)
+			  PNPDLA = PL(K)
+                CALL PUT('PDLABETA','BETA',BETALS)
+                CALL PUT('PDLABETA','PDLA',PNPDLA)
                 PDLA = PDLA + DAM
               ENDIF
 

@@ -44,7 +44,7 @@ C========================================================================
 
       SUBROUTINE ETPHOT (CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XHLAI,                                 !Input
+     &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
 
 C-----------------------------------------------------------------------
@@ -77,7 +77,7 @@ C-----------------------------------------------------------------------
      &  SW(NL),SW2(NL),SWFAC,SWE,SWEF,T0HR,TAIRHR(TS),TA,
      &  TCAN(TS),TCANAV,TCANDY,TDAY,TEMPN,THR,TINCR,TRWUP,
      &  TSHR(NL),TSRF(3),TSRFN(3),TSURF(3,1),HOLDWH,WINDHR(TS),
-     &  XHLAI, 
+     &  XLAI, 
      &  XLMAXT(6),XSW(NL,3),YLMAXT(6),YSCOND(NL,3),YSHCAP(NL,3),TMIN
       REAL SAT(NL),TGRO(TS),TGROAV,TGRODY
       REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR
@@ -267,14 +267,14 @@ C     Initialize DAILY parameters.
         BETN = 0.0
       ENDIF
 
-        HOLDLA = XHLAI
+        HOLDLA = XLAI
         HOLDHT = CANHT
         HOLDWH = CANWH
         FRSHAV = 0.0
         NHOUR = 0
         TCANAV = 0.0
         TCANDY = 0.0
-        IF (XHLAI.GT.0.0 .AND. XHLAI.LT.0.002) XHLAI = 0.002
+        IF (XLAI.GT.0.0 .AND. XLAI.LT.0.002) XLAI = 0.002
         IF (CANHT.GT.0.0 .AND. CANHT.LT.0.01) CANHT = 0.01
         IF (CANWH.GT.0.0 .AND. CANWH.LT.0.01) CANWH = 0.01
 
@@ -332,7 +332,7 @@ C         Calculate hourly radiation absorption by canopy/soil.
      &      AZIR, AZZON(H), BETA(H), BETN, CANHT, CANWH,  !Input
      &      DAYTIM, FRDIFP(H), FRDIFR(H), H, LFANGD,      !Input
      &      MEEVP, MEPHO, PALB, PARHR(H), RADHR(H),       !Input
-     &      ROWSPC, SALB, SCVIR, SCVP, XHLAI,             !Input
+     &      ROWSPC, SALB, SCVIR, SCVP, XLAI,             !Input
      &      FRACSH, FRSHV, KDIRBL, KDRBLV, LAISH, LAISHV, !Output
      &      LAISL, LAISLV, PARSH, PARSUN, PCABSP, PCABSR, !Output
      &      PCINTP, PCINTR, RABS)                         !Output
@@ -374,7 +374,7 @@ C  KJB and SPSUM hourly.
      &      NSLOPE, PARSH, PARSUN, QEREF, RABS, RCUTIC,   !Input
      &      REFHT, RHUMHR(H), RNITP, RWUH, SHCAP, SLAAD,  !Input
      &      SLWREF, SLWSLO, STCOND, SWE, TAIRHR(H), TA,   !Input
-     &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XHLAI,       !Input
+     &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XLAI,       !Input
      &      XLMAXT, YLMAXT,                               !Input
      &      AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,  !Output
      &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
@@ -447,13 +447,13 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
 
 C       Assign daily values.
 
-        XHLAI = HOLDLA
+        XLAI = HOLDLA
         CANHT = HOLDHT
         CANWH = HOLDWH
 
         IF (MEEVP .EQ. 'Z') THEN
-          IF (XHLAI .GT. 1.E-4) THEN
-            DAYKR = -LOG((DAYRAD-DYINTR)/DAYRAD) / XHLAI
+          IF (XLAI .GT. 1.E-4) THEN
+            DAYKR = -LOG((DAYRAD-DYINTR)/DAYRAD) / XLAI
           ELSE
             DAYKR = 0.0
           ENDIF
@@ -487,8 +487,8 @@ C       Assign daily values.
         ENDIF
 
         IF (MEPHO .EQ. 'L') THEN
-          IF (XHLAI .GT. 1.E-4) THEN
-            DAYKP = -LOG((DAYPAR-DYINTP)/DAYPAR) / XHLAI
+          IF (XLAI .GT. 1.E-4) THEN
+            DAYKP = -LOG((DAYPAR-DYINTP)/DAYPAR) / XLAI
           ELSE
             DAYKP = 0.0
           ENDIF
@@ -1134,7 +1134,7 @@ C=======================================================================
      &  AZIR, AZZON, BETA, BETN, CANHT, CANWH,            !Input
      &  DAYTIM, FRDIFP, FRDIFR, H, LFANGD,                !Input
      &  MEEVP, MEPHO, PALB, PARHR, RADHR,                 !Input
-     &  ROWSPC, SALB, SCVIR, SCVP, XHLAI,                 !Input
+     &  ROWSPC, SALB, SCVIR, SCVP, XLAI,                 !Input
      &  FRACSH, FRSHV, KDIRBL, KDRBLV, LAISH, LAISHV,     !Output
      &  LAISL, LAISLV, PARSH, PARSUN, PCABSP, PCABSR,     !Output
      &  PCINTP, PCINTR, RABS)                             !Output
@@ -1150,7 +1150,7 @@ C=======================================================================
      &  FRSHV,KDIFBL,KDIRBL,KDRBLV,LAISH,LAISL,LAISHV,LAISLV,
      &  LFANGD(3),PALB,PARHR,PARSH,PARSUN(3),PARSL,PARSS,PCINTP,
      &  PCABSP,PCINTR,PCABSR,PCREFP,PCREFR,RADHR,RABS(3),RNG,
-     &  PTOT,RTOT,ROWSPC,SALB,SCVP,SCVIR,XHLAI,PARQC,PARW,IRHR,
+     &  PTOT,RTOT,ROWSPC,SALB,SCVP,SCVIR,XLAI,PARQC,PARW,IRHR,
      &  IRALB,FRDIFI,PCABSI,PCINTI,PCREFI,IRSH,IRSUN(3),IRSL,IRSS
       PARAMETER (PARQC=4.6)
 
@@ -1181,7 +1181,7 @@ C     Initialize.
       RABS(2) = 0.0
       RABS(3) = 0.0
 
-      IF (XHLAI .GT. 1.E-4) THEN
+      IF (XLAI .GT. 1.E-4) THEN
 
 C       Calculate fraction shaded and LAI's for vertical sun position.
 
@@ -1190,7 +1190,7 @@ C       Calculate fraction shaded and LAI's for vertical sun position.
      &      AZIR, AZZON, 90.0, BETN, CANHT, CANWH, ROWSPC,!Input
      &      FRSHV)                                        !Output
           CALL LFEXTN(
-     &      90.0, FRSHV, LFANGD, XHLAI,                   !Input
+     &      90.0, FRSHV, LFANGD, XLAI,                   !Input
      &      KDIFBL, KDRBLV, LAISHV, LAISLV, RNG)          !Output
         ENDIF
 
@@ -1202,7 +1202,7 @@ C         Calculate fraction shaded, leaf extinction and LAI's.
      &      AZIR, AZZON, BETA, BETN, CANHT, CANWH, ROWSPC,!Input
      &      FRACSH)                                       !Output
           CALL LFEXTN(
-     &      BETA, FRACSH, LFANGD, XHLAI,                  !Input
+     &      BETA, FRACSH, LFANGD, XLAI,                  !Input
      &      KDIFBL, KDIRBL, LAISH, LAISL, RNG)            !Output
 
 C         Calculate PAR absorbed by canopy during day.
@@ -1407,14 +1407,14 @@ C  Calls:
 C=======================================================================
 
       SUBROUTINE LFEXTN(
-     &  BETA, FRACSH, LFANGD, XHLAI,                      !Input
+     &  BETA, FRACSH, LFANGD, XLAI,                      !Input
      &  KDIFBL, KDIRBL, LAISH, LAISL, RNG)                !Output
 
       IMPLICIT NONE
       SAVE
 
       REAL BETA,F15,F45,F75,FRACSH,K15,K45,K75,KDIRBL,KDIFBL,LAISH,
-     &  LAISL,LFANGD(3),O15,O45,O75,OAV,PI,RAD,RNG,SINB,VARSIN,XHLAI
+     &  LAISL,LFANGD(3),O15,O45,O75,OAV,PI,RAD,RNG,SINB,VARSIN,XLAI
       PARAMETER (PI = 3.14159, RAD = PI/180.0)
 
 C     Initialization.  F15, F45, and F75 are the proportion of leaves
@@ -1443,19 +1443,19 @@ C     Calculate diffuse light extinction coefficient for black leaves.
       K15 = 1.00*F15 + 1.82*F45 + 2.26*F75
       K45 = 0.93*F15 + 0.68*F45 + 0.67*F75
       K75 = 0.93*F15 + 0.68*F45 + 0.29*F75
-      KDIFBL = -ALOG(0.25*EXP(-K15*XHLAI)+0.5*EXP(-K45*XHLAI)
-     &  +0.25*EXP(-K75*XHLAI)) / XHLAI
+      KDIFBL = -ALOG(0.25*EXP(-K15*XLAI)+0.5*EXP(-K45*XLAI)
+     &  +0.25*EXP(-K75*XLAI)) / XLAI
 
 C     Calculate sunlit and shaded leaf area indices.
 !CHP added check to prevent underflow 1/16/03
       IF (KDIRBL .GT. 0.0 .AND. FRACSH .GT. 0.0 .AND. 
-     &        (KDIRBL*XHLAI/FRACSH) .LT. 20.) THEN    
-        LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XHLAI/FRACSH))
+     &        (KDIRBL*XLAI/FRACSH) .LT. 20.) THEN    
+        LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XLAI/FRACSH))
         LAISL = MAX(LAISL,0.02)
       ELSE
         LAISL = 0.02
       ENDIF
-      LAISH = XHLAI - LAISL
+      LAISH = XLAI - LAISL
 
       RETURN
       END SUBROUTINE LFEXTN
@@ -1488,14 +1488,14 @@ C=======================================================================
      &  INCSOI,INTCAN,KDIFBL,KDIRBL,LAISH,LAISL,O,OAV,PATHP,PATHR,
      &  PCTABS,PCTINT,PCTREF,PI,RAD,RADDIF,RADDIR,RADHR,
      &  RADSH,RADSS,RADSUN(3),REFDF,REFDIF,REFDIR,REFDR,REFH,
-     &  REFSOI,REFTOT,RNG,ROWSPC,SCVR,SINB,SQV,XHLAI,RADTOT
+     &  REFSOI,REFTOT,RNG,ROWSPC,SCVR,SINB,SQV,XLAI,RADTOT
       PARAMETER (PI=3.14159, RAD=PI/180.0)
 
 C     Initialization.
 
       SQV = SQRT(1.0-SCVR)
       SINB = SIN(BETA*RAD)
-      XHLAI = LAISH + LAISL
+      XLAI = LAISH + LAISL
 
 C     Compute reflection coefficients for direct and diffuse light.
 
@@ -1513,16 +1513,16 @@ C     (ADDR) and diffuse/scattered (ADDF) components of the direct beam.
 
 !     CHP - Added checks to prevent underflows 1/16/03
       IF (FRACSH .GT. 0.0) THEN
-        IF ((KDIRBL*SQV*XHLAI/FRACSH) .LT. 20.) THEN
+        IF ((KDIRBL*SQV*XLAI/FRACSH) .LT. 20.) THEN
           ADIR = FRACSH * (1.0-REFDR) * RADDIR *
-     &    (1.0-EXP(-KDIRBL*SQV*XHLAI/FRACSH))
+     &    (1.0-EXP(-KDIRBL*SQV*XLAI/FRACSH))
         ELSE
           ADIR = 0.0
         ENDIF
 
-        IF ((KDIRBL*XHLAI/FRACSH) .LT. 20.) THEN
+        IF ((KDIRBL*XLAI/FRACSH) .LT. 20.) THEN
           ADDR = FRACSH * (1.0-SCVR) * RADDIR *
-     &    (1.0-EXP(-KDIRBL*XHLAI/FRACSH))
+     &    (1.0-EXP(-KDIRBL*XLAI/FRACSH))
         ELSE
           ADDR = 0.0
         ENDIF
@@ -1576,7 +1576,7 @@ C     extended for both between plants (P) and rows (R).
       ENDIF
       DIFPR = MIN(MAX(DIFP*DIFR,1.0E-6),1.0)
       ADIF = DIFPR * (1.0-REFDF) * RADDIF *
-     &  (1.0-EXP(-KDIFBL*SQV*XHLAI/DIFPR))
+     &  (1.0-EXP(-KDIFBL*SQV*XLAI/DIFPR))
       ADIFSL = DIFPR * (1.0-REFDF) * RADDIF *
      &  (1.0-EXP(-KDIFBL*SQV*LAISL/DIFPR))
       ADIFSH = ADIF - ADIFSL
@@ -1590,7 +1590,7 @@ C     Absorption handled in the same manner as diffuse skylight.
       INCSOI = RADHR - INTCAN
       REFSOI = ALBEDO * INCSOI
       AREF = DIFPR * (1.0-REFDF) * REFSOI *
-     &  (1.0-EXP(-KDIFBL*SQV*XHLAI/DIFPR))
+     &  (1.0-EXP(-KDIFBL*SQV*XLAI/DIFPR))
       AREFSH = DIFPR * (1.0-REFDF) * REFSOI *
      &  (1.0-EXP(-KDIFBL*SQV*LAISH/DIFPR))
       AREFSL = AREF - AREFSH
@@ -1601,7 +1601,7 @@ C     Determine sunlit radiation for each sunlit leaf class,
 C     shaded leaves and soil.  The average sunlit radiation =RABS(2).
 
       RADSS = INCSOI * (1.0-ALBEDO)
-C     RADSH = (ADDF+ADIF+AREF) / XHLAI
+C     RADSH = (ADDF+ADIF+AREF) / XLAI
       RADSH = (ADDFSH+ADIFSH+AREFSH) / LAISH
       RDIFSL = (ADDFSL+ADIFSL+AREFSL) / LAISL
 
