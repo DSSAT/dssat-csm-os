@@ -64,7 +64,10 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 10
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-Release  '
+!     2/18/2011 chp
+!     Branch created for Jesse Naab for phosphorus dynamics in peanut research
+      CHARACTER(len=10) :: VBranch = '-P_peanut '
+!     CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
 !       4.5.1.10 chp 03/23/2011 Environmental summary for wheat, WH species change

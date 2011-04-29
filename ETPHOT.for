@@ -43,7 +43,7 @@ C  Calls:       ETIND,ETINP,PGINP,PGIND,RADABS,ETPHR,ROOTWU,SOIL05,SWFACS
 C========================================================================
 
       SUBROUTINE ETPHOT (CONTROL, ISWITCH,
-     &    PORMIN, RLV, RWUMX, SOILPROP, ST, SW,           !Input
+     &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XHLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
 
@@ -87,6 +87,8 @@ C-----------------------------------------------------------------------
       REAL PALBW, SALBW, SRAD, DayRatio
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
+      
+      REAL PSTRES1  !3/22/2011
 
 !      SAVE AZIR,BETN,CEC,DLAYR,DLAYR2,DULE,FNPGL,FNPGN,LFANGD,
 !     &  LL,LL2,LLE,LMXREF,LNREF,LWIDTH,NELAYR,NLAYR,NSLOPE,PALB,
@@ -512,11 +514,12 @@ C
 C KJB USE THE REAL MID-DAY WATER STRESS FACTOR HERE, NOT THE DAILY ONE?
 C KJB AT LEAST FOR THE PGNOON?
 C
-            PG = PG * SWFAC
-            PGCO2 = PGCO2 * SWFAC
-            LMXSLN = LMXSLN * SWFAC
-            LMXSHN = LMXSHN * SWFAC
-            PGNOON = PGNOON * SWFAC
+!     CHP 3/22/2011 - multiply by P stress here.
+            PG = PG * SWFAC * PSTRES1
+            PGCO2 = PGCO2 * SWFAC * PSTRES1
+            LMXSLN = LMXSLN * SWFAC * PSTRES1
+            LMXSHN = LMXSHN * SWFAC * PSTRES1
+            PGNOON = PGNOON * SWFAC * PSTRES1
           ENDIF
 
 C         Post-processing for some stress effects (duplicated in PHOTO).
