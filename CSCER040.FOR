@@ -570,7 +570,6 @@
       INTEGER       L1            ! Loop counter                   #
       INTEGER       L2            ! Loop counter                   #
       REAL          LA1FAC        ! Area of early leaves increment #
-      REAL          LA1S          ! Area of leaf 1,standard        cm2
       CHARACTER*5   LABEL(SUMNUM) ! Name of variables passed       text
       REAL          LAFR          ! Leaf area increase factor,rep  #
       REAL          LAFST         ! Leaf area factor change stage  #
@@ -603,10 +602,10 @@
       REAL          LASWITCH      ! Leaf area at increment change  cm2/l
       REAL          LATFR(20)     ! Leaf area of tillers,fr main   #
       REAL          LATL(1,LNUMX) ! Leaf area,tiller1,leaf pos     cm2/l
+      REAL          LAWCF         ! Leaf area/wt change,fr         fr/lf
       REAL          LAWCFCALC     ! Leaf area/wt change,fr,calc    #
       REAL          LAWFRMN       ! Leaf area/wt min.,fr.standard  #
       REAL          LAWR          ! Area to weight ratio,lamina    cm2/g
-      REAL          LAWR2         ! Leaf area/weight ratio,stage2  cm2/g
       REAL          LAWRS         ! Leaf area/wt ratio,standard    cm2/g
       REAL          LAXS          ! Area of biggest leaf,main stem cm2
       REAL          LCNC          ! Leaf critical N conc           #
@@ -691,7 +690,7 @@
       CHARACTER*3   MONTH         ! Month                          text
       INTEGER       MYEAR         ! Maturity year                  #
       INTEGER       MYEARM        ! Maturity year,measured         #
-      REAL          NCNU 
+      REAL          NCNU          ! N conc.for maximum N uptake    ppm  
       REAL          NCRG          ! N concentration for max r.gr.  ppm
       REAL          NDEMSOIL      ! Plant nitrogen demand,soil     g/p
       INTEGER       NFERT         ! Fertilizer applns #            #
@@ -730,6 +729,8 @@
       REAL          NPOOLR        ! Root N available for grain     g/p
       REAL          NPOOLST       ! Stem N available for grain     g/p
       REAL          NPOOLV        ! Vegetative N available for gr  g/p
+      REAL          NSFAC         ! N standard adjustment factor   fr 
+      REAL          NMNFC         ! N minimum adjustment factor    fr 
       REAL          NSINK         ! N demand for grain filling     g/p
       REAL          NTUPF         ! N top-up fraction              /d
       REAL          NUAD          ! N uptake,cumulative            kg/ha
@@ -738,6 +739,7 @@
       REAL          NUAM          ! N uptake,cumulative,maturity   kg/ha
       REAL          NUAP          ! Total root N uptake,potential  kg/ha
       REAL          NUAPCSM       ! N uptake potential,CSM         kg/ha
+      REAL          NUAPCER       ! N uptake potential,Ceres       kg/ha
       REAL          NUF           ! Plant N supply/demand ratio    ft
       REAL          NUFACM        ! N uptake factor,maturation,0-1 #
       REAL          NUPAP         ! N uptake potential             g/p
@@ -1140,7 +1142,7 @@
       REAL          TRLFG(4)      ! Temp response,leaf growth      #
       REAL          TRLTH(4)      ! Temp response,lethal tempature #
       REAL          TRLV          ! Total root length density      cm-2
-      REAL          TRNU 
+      REAL          TRNU          ! Total N uptake,csm apprach     kg/ha
       REAL          TRPHS(4)      ! Temp response,photosynthesis   #
       CHARACTER*40  TRUNNAME      ! Treatment+run composite name   text
       REAL          TRVRN(4)      ! Temp response,vernalization    #
@@ -1465,6 +1467,7 @@
         cwaa = 0.0
         cwadstg = 0.0
         dapm = 0
+        dayltp = 0.0
         daysc = 0
         deadn = 0.0
         deadwt = 0.0
@@ -1506,6 +1509,7 @@
         hind = 0.0
         icsdur = 0
         icsdur0 = 0
+        istagep = 0
         jdat = -99
         lagstage = -99.0
         lai = 0.0
@@ -1576,10 +1580,12 @@
         rsnuser = 0.0
         rsnuset = 0.0
         rstage = 0.0
+        rstagep = 0.0
         rswt = 0.0
         rswtpm = 0.0
         rtdep = 0.0
         rtdepg = 0.0
+        rtslxdate = -99
         rtwt = 0.0
         rtwtl = 0.0
         rtwts = 0.0
@@ -1728,11 +1734,11 @@
           ! What about multiple years with other RNMODE's?  This only 
           !   fixes sequence and seasonal runs.
           ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
-!          09/28/2009 CHP need to account for planting date >> simulation date.
-!           IF (FILEIOT(1:2).EQ.'DS') THEN
-           IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
-             PLYEAR = YEAR
-           ENDIF
+          ! 09/28/2009 CHP need to account for planting date >> simulation date.
+          !  IF (FILEIOT(1:2).EQ.'DS') THEN
+          IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
+            PLYEAR = YEAR
+          ENDIF
 
           IF (PLDAY.GE.DOY) THEN
             YEARPLTP = PLYEAR*1000 + PLDAY
@@ -1795,6 +1801,12 @@
         WRITE(fnumwrk,*)' MODEL   ',MODEL
         WRITE(fnumwrk,*)' MODULE  ',MODNAME
         WRITE(fnumwrk,'(A10,F8.2)')'  VERSION ',VERSION
+
+        WRITE(fnumwrk,*)' '
+        WRITE(fnumwrk,'(A13,A1)')'  N SWITCH   ',ISWNIT
+        WRITE(fnumwrk,'(A13,A1)')'  H2O SWITCH ',ISWWAT
+
+        WRITE(fnumwrk,*)' '
         WRITE(fnumwrk,'(A10,I8  )')'  RUN     ',RUN    
 
         ! Create composite run variable
@@ -1977,13 +1989,29 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VEFF',veff)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARUE',paruv)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARU2',parur)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',LAPOT(1))
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',lapot(1))
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAWS',lawrs)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAW2',lawr2)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFV',lafv)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAF2',lafr)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'TBAM',tbam)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GN%S',grns)
+          ! N uptake variables in species file
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NCNU',ncnu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RLFNU',rlfnu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUU',wfnuu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPU',nfpu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFGU',nfgu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFTU',nftiu)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPL',nfpl)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFGL',nfgl)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFTL',nftil)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RTNO3',rtno3)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RTNH4',rtnh4)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NSFAC',nsfac)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NMNFC',nmnfc)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NLAB%',xnfs)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RDGS',rdgs1)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GN%MN',grnmn)
           ! NB. TBAM is only used experimentally;should not be in coeff.files
           
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'ADIR',fileadir)
@@ -2082,13 +2110,29 @@
             CALL CUREADR (CUDIRFLE,VARNO,'VEFF',veff)
             CALL CUREADR (CUDIRFLE,VARNO,'PARUE',paruv)
             CALL CUREADR (CUDIRFLE,VARNO,'PARU2',parur)
-            CALL CUREADR (CUDIRFLE,VARNO,'LA1S',LAPOT(1))
+            CALL CUREADR (CUDIRFLE,VARNO,'LA1S',lapot(1))
             CALL CUREADR (CUDIRFLE,VARNO,'LAWS',lawrs)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAW2',lawr2)
             CALL CUREADR (CUDIRFLE,VARNO,'LAFV',lafv)
             CALL CUREADR (CUDIRFLE,VARNO,'LAF2',lafr)
             CALL CUREADR (CUDIRFLE,VARNO,'TBAM',tbam)
             CALL CUREADR (CUDIRFLE,VARNO,'GN%S',grns)
+            ! N uptake variables in species file
+            CALL CUREADR (CUDIRFLE,VARNO,'NCNU',ncnu)
+            CALL CUREADR (CUDIRFLE,VARNO,'RLFNU',rlfnu)
+            CALL CUREADR (CUDIRFLE,VARNO,'WFNUU',wfnuu)
+            CALL CUREADR (CUDIRFLE,VARNO,'NFPL',nfpl)
+            CALL CUREADR (CUDIRFLE,VARNO,'NFGL',nfgl)
+            CALL CUREADR (CUDIRFLE,VARNO,'NFTL',nftil)
+            CALL CUREADR (CUDIRFLE,VARNO,'NFPU',nfpu)
+            CALL CUREADR (CUDIRFLE,VARNO,'NFGU',nfgu)
+            CALL CUREADR (CUDIRFLE,VARNO,'NFTU',nftiu)
+            CALL CUREADR (CUDIRFLE,VARNO,'RTNO3',rtno3)
+            CALL CUREADR (CUDIRFLE,VARNO,'RTNH4',rtnh4)
+            CALL CUREADR (CUDIRFLE,VARNO,'NSFAC',nsfac)
+            CALL CUREADR (CUDIRFLE,VARNO,'NMNFC',nmnfc)
+            CALL CUREADR (CUDIRFLE,VARNO,'NLAB%',xnfs)
+            CALL CUREADR (CUDIRFLE,VARNO,'RDGS',rdgs1)
+            CALL CUREADR (CUDIRFLE,VARNO,'GN%MN',grnmn)
             ! NB. TBAM is only used experimentally;should not be in coeff.files
             ! Below are 3.5 expressions
             !P1V = P1V*0.0054545 + 0.0003
@@ -2102,20 +2146,29 @@
         ENDIF
 
         IF (PD(1).LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'P1',PD(1))
-        IF (PD2FR(1).LE..0)CALL ECREADR(ECDIRFLE,ECONO,'P2FR1',PD2FR(1))
+        IF (PD2FR(1).LE.0)CALL ECREADR (ECDIRFLE,ECONO,'P2FR1',PD2FR(1))
         IF (PD(2).LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'P2',PD(2))
         IF (PD(3).LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'P3',PD(3))
         IF (PD(4).LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'P4',PD(4))
-        IF (PD4FR(1).LE.0)CALL ECREADR(ECDIRFLE,ECONO,'P4FR1',PD4FR(1))
-        IF (PD4FR(2).LE.0)CALL ECREADR(ECDIRFLE,ECONO,'P4FR2',PD4FR(2))
+        IF (PD4FR(1).LE.0)CALL ECREADR (ECDIRFLE,ECONO,'P4FR1',PD4FR(1))
+        IF (PD4FR(2).LE.0)CALL ECREADR (ECDIRFLE,ECONO,'P4FR2',PD4FR(2))
         IF (PARUV.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',paruv)
         IF (PARUR.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',parur)
-        IF (LA1S.LE.0.0)CALL ECREADR (ECDIRFLE,ECONO,'LA1S',LAPOT(1))
-        IF (LAWRS.LE.0.0)CALL ECREADR (ECDIRFLE,ECONO,'LAWS',lawrs)
-        IF (LAWR2.LE.0.0)CALL ECREADR (ECDIRFLE,ECONO,'LAW2',lawr2)
-        IF (LAFV.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
-        IF (LAFR.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAF2',lafr)
-        IF (VEFF.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'VEFF',veff)
+        IF (LAPOT(1).LE.0.0) 
+     &   CALL ECREADR (ECDIRFLE,ECONO,'LA1S',lapot(1))
+        IF (LAWRS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAWS',lawrs)
+        IF (LAFV.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
+        IF (LAFR.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAF2',lafr)
+        IF (VEFF.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'VEFF',veff)
+        IF (GRNMN.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'GN%MN',grnmn)
+        IF (GRNS.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'GN%S',grns)
+        IF (NFPU.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'NFPU',nfpu)
+        IF (NFPL.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'NFPL',nfpl)
+        IF (NFGU.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
+        IF (NFGL.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
+        IF (RDGS1.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RDGS',rdgs1)
+        IF (RTNO3.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RTNO3',rtno3)
+        IF (RTNH4.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RTNH4',rtnh4)
         CALL ECREADR (ECDIRFLE,ECONO,'PPFPE',p1dpe)
         CALL ECREADR (ECDIRFLE,ECONO,'SGPHE',P4SGE)
         CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',canhts)
@@ -2125,17 +2178,10 @@
         LLIFE = INT(TVR1)
         CALL ECREADR (ECDIRFLE,ECONO,'RS%S',rsfrs)
         CALL ECREADR (ECDIRFLE,ECONO,'TIL#S',ti1lf)
-        CALL ECREADR (ECDIRFLE,ECONO,'GN%MN',grnmn)
-        IF (GRNS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'GN%S',grns)
         CALL ECREADR (ECDIRFLE,ECONO,'WFPU',wfpu)
         CALL ECREADR (ECDIRFLE,ECONO,'WFGU',wfgu)
-        CALL ECREADR (ECDIRFLE,ECONO,'NFPU',nfpu)
-        CALL ECREADR (ECDIRFLE,ECONO,'NFPL',nfpl)
-        CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
-        CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
         CALL ECREADR (ECDIRFLE,ECONO,'WFPGF',wfpgf)
         CALL ECREADR (ECDIRFLE,ECONO,'TKFH',lt50h)
-        CALL ECREADR (ECDIRFLE,ECONO,'RDGS',rdgs1)
         CALL ECREADR (ECDIRFLE,ECONO,'RDG2',rdgs2)
         CALL ECREADR (ECDIRFLE,ECONO,'TIFAC',tifac)
         CALL ECREADR (ECDIRFLE,ECONO,'TIPHE',tilpe)
@@ -2145,23 +2191,33 @@
         CALL ECREADR (ECDIRFLE,ECONO,'LSPHS',lsens)
         CALL ECREADR (ECDIRFLE,ECONO,'LSPHE',lsene)
 
-        IF(PD4FR(1).LE.0.0) CALL SPREADR (SPDIRFLE,'P4FR1',PD4FR(1))
-        IF(PD4FR(2).LE.0.0) CALL SPREADR (SPDIRFLE,'P4FR2',PD4FR(2))
-        IF(p1dpe.LT.0.0) CALL SPREADR (SPDIRFLE,'PPFPE',p1dpe)
-        IF (LSENS.LE.0.0) CALL SPREADR (SPDIRFLE,'LSPHS',lsens)
-        IF (LSENE.LE.0.0) CALL SPREADR (SPDIRFLE,'LSPHE',lsene)
-        IF (LSEWF.LE.0.0) CALL SPREADR (SPDIRFLE,'LWLOS',lsewf)
-        IF (TILDF.LT.0.0) CALL SPREADR (SPDIRFLE,'TDFAC',tildf)
-        IF (PD2FR(1).LE..0) CALL SPREADR (SPDIRFLE,'P2FR1',pd2fr(1))
-        IF (P4SGE.LE..0) CALL SPREADR (SPDIRFLE,'SGPHE',p4sge)
-        IF (NFGU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
-        IF (NFGL.LT.0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
-        IF (NFPU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
-        IF (NFPL.LT.0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
-        IF (WFPU.LE.0.0) CALL SPREADR (SPDIRFLE,'WFPU',wfpu)
-        IF (WFGU.LT.0.0) CALL SPREADR (SPDIRFLE,'WFGU',wfgu)
-        IF (LLIFE.LE.0) CALL SPREADR (SPDIRFLE,'LLIFE',tvr1)
+        IF (PD4FR(1).LE.0.0) CALL SPREADR (SPDIRFLE,'P4FR1',PD4FR(1))
+        IF (PD4FR(2).LE.0.0) CALL SPREADR (SPDIRFLE,'P4FR2',PD4FR(2))
+        IF (p1dpe.LT.0.0)    CALL SPREADR (SPDIRFLE,'PPFPE',p1dpe)
+        IF (LSENS.LE.0.0)    CALL SPREADR (SPDIRFLE,'LSPHS',lsens)
+        IF (LSENE.LE.0.0)    CALL SPREADR (SPDIRFLE,'LSPHE',lsene)
+        IF (LSEWF.LE.0.0)    CALL SPREADR (SPDIRFLE,'LWLOS',lsewf)
+        IF (TILDF.LT.0.0)    CALL SPREADR (SPDIRFLE,'TDFAC',tildf)
+        IF (PD2FR(1).LE..0)  CALL SPREADR (SPDIRFLE,'P2FR1',pd2fr(1))
+        IF (P4SGE.LE..0)     CALL SPREADR (SPDIRFLE,'SGPHE',p4sge)
+        IF (NFGU.LE.0.0)     CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
+        IF (NFGL.LT.0.0)     CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
+        IF (NFPU.LE.0.0)     CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
+        IF (NFPL.LT.0.0)     CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
+        IF (WFPU.LE.0.0)     CALL SPREADR (SPDIRFLE,'WFPU',wfpu)
+        IF (WFGU.LT.0.0)     CALL SPREADR (SPDIRFLE,'WFGU',wfgu)
+        IF (LLIFE.LE.0)      CALL SPREADR (SPDIRFLE,'LLIFE',tvr1)
         LLIFE = INT(TVR1)
+        IF (NFTIU.LT.0.0)    CALL SPREADR (SPDIRFLE,'NFTU',nftiu)
+        IF (NFTIL.LT.0.0)    CALL SPREADR (SPDIRFLE,'NFTL',nftil)
+        IF (WFSU.LT.0.0)     CALL SPREADR (SPDIRFLE,'WFS',wfsu)
+        IF (NFSU.LT.0.0)     CALL SPREADR (SPDIRFLE,'NFS',nfsu)
+        IF (WFNUU.LE.0.0)    CALL SPREADR (SPDIRFLE,'WFNUU',wfnuu)
+        IF (RLFNU.LE.0.0)    CALL SPREADR (SPDIRFLE,'RLFNU',rlfnu)
+        IF (NCNU.LE.0.0)     CALL SPREADR (SPDIRFLE,'NCNU',ncnu)
+        IF (XNFS.LT.0.0)     CALL SPREADR (SPDIRFLE,'NLAB%',xnfs)
+        IF (RTNO3.LT.0.0)    CALL SPREADR (SPDIRFLE,'RTNO3',rtno3)
+        IF (RTNH4.LT.0.0)    CALL SPREADR (SPDIRFLE,'RTNH4',rtnh4)
         CALL SPREADR (SPDIRFLE,'PGERM',peg)
         CALL SPREADR (SPDIRFLE,'PEMRG',pecm)
         CALL SPREADR (SPDIRFLE,'P0',PD(0))
@@ -2188,13 +2244,14 @@
         LATFR(18) = 0.1 * LATFR(1) !  0.1
         LATFR(19) = 0.1 * LATFR(1) !  0.1
         LATFR(20) = 0.1 * LATFR(1) !  0.1
-        CALL SPREADR (SPDIRFLE,'LRPHS',lrets)
+        CALL SPREADR  (SPDIRFLE,'LRPHS',lrets)
 
         CALL SPREADRA (SPDIRFLE,'PTFS','10',ptfs)
         CALL SPREADRA (SPDIRFLE,'PTFA','10',ptfa)
         CALL SPREADRA (SPDIRFLE,'STFR','10',stfr)
         CALL SPREADRA (SPDIRFLE,'CHT%','10',chtpc)
         CALL SPREADRA (SPDIRFLE,'CLA%','10',clapc)
+        
         CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
         CALL SPREADR (SPDIRFLE,'SLIG%',sligp)
         CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
@@ -2211,27 +2268,19 @@
         CALL SPREADR (SPDIRFLE,'TKUH',lt50s)
         CALL SPREADR (SPDIRFLE,'WFTU',wftiu)
         CALL SPREADR (SPDIRFLE,'WFTL',wftil)
-        CALL SPREADR (SPDIRFLE,'NFTU',nftiu)
-        CALL SPREADR (SPDIRFLE,'NFTL',nftil)
         CALL SPREADR (SPDIRFLE,'WFSU',wfsu)
-        IF (WFSU.LT.0.0) CALL SPREADR (SPDIRFLE,'WFS',wfsu)
         CALL SPREADR (SPDIRFLE,'LLOSW',llosw)
-        IF (NFSU.LT.0.0) CALL SPREADR (SPDIRFLE,'NFS',nfsu)
         CALL SPREADR (SPDIRFLE,'NFSU',nfsu)
         CALL SPREADR (SPDIRFLE,'NFSF',nfsf)
         CALL SPREADR (SPDIRFLE,'LLOSN',llosn)
         CALL SPREADR (SPDIRFLE,'WFNUL',wfnul)
-        CALL SPREADR (SPDIRFLE,'WFNUU',wfnuu)
         CALL SPREADR (SPDIRFLE,'NO3MN',no3mn)
         CALL SPREADR (SPDIRFLE,'NH4MN',nh4mn)
-        CALL SPREADR (SPDIRFLE,'RLFNU',rlfnu)
-        CALL SPREADR (SPDIRFLE,'NCNU',ncnu)
         CALL SPREADR (SPDIRFLE,'P6',pd(6))
         CALL SPREADR (SPDIRFLE,'LSHFR',lshfr)
         CALL SPREADR (SPDIRFLE,'LAXS',laxs)
         CALL SPREADR (SPDIRFLE,'PHF1',phf1)
         CALL SPREADR (SPDIRFLE,'PHL1',phintchg)
-        CALL SPREADR (SPDIRFLE,'NLAB%',xnfs)
         CALL SPREADR (SPDIRFLE,'GN%MX',grnmx)
         CALL SPREADR (SPDIRFLE,'RSEN%',rsen)
         CALL SPREADR (SPDIRFLE,'SSEN%',ssen)
@@ -2248,16 +2297,18 @@
         CALL SPREADR (SPDIRFLE,'CHSTG',chstg)
         CALL SPREADR (SPDIRFLE,'NTUPF',ntupf)
         CALL SPREADR (SPDIRFLE,'RDGTH',rdgth)
+        CALL SPREADR (SPDIRFLE,'TPAR',part)
+        CALL SPREADR (SPDIRFLE,'TSRAD',sradt)
+        KEP = (KCAN/(1.0-PART)) * (1.0-SRADT)
+        IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'LAWCF',lawcf)
 
         CALL SPREADRA (SPDIRFLE,'LASF','10',plasf)
-
         CALL SPREADRA (SPDIRFLE,'LN%S','10',lnpcs)
         CALL SPREADRA (SPDIRFLE,'SN%S','10',snpcs)
         CALL SPREADRA (SPDIRFLE,'RN%S','10',rnpcs)
         CALL SPREADRA (SPDIRFLE,'LN%MN','10',lnpcmn)
         CALL SPREADRA (SPDIRFLE,'SN%MN','10',snpcmn)
         CALL SPREADRA (SPDIRFLE,'RN%MN','10',rnpcmn)
-
         CALL SPREADRA (SPDIRFLE,'TRDV1','4',trdv1)
         CALL SPREADRA (SPDIRFLE,'TRDV2','4',trdv2)
         IF (tbam.gt.-90.0) THEN
@@ -2273,13 +2324,8 @@
         CALL SPREADRA (SPDIRFLE,'TRHAR','4',trlth)
         CALL SPREADRA (SPDIRFLE,'TRGFW','4',trgfw)
         CALL SPREADRA (SPDIRFLE,'TRGFN','4',trgfn)
-
         CALL SPREADRA (SPDIRFLE,'CO2RF','10',co2rf)
         CALL SPREADRA (SPDIRFLE,'CO2F','10',co2f)
-
-        CALL SPREADR (SPDIRFLE,'TPAR',part)
-        CALL SPREADR (SPDIRFLE,'TSRAD',sradt)
-        KEP = (KCAN/(1.0-PART)) * (1.0-SRADT)
 
         ! Variables that should be read-in!
         LALOSSF = 0.2 ! Leaf area lost when tillers die
@@ -2288,12 +2334,36 @@
         
         ! DEFAULTS
         IF (LAXS.LE.0.0) LAXS = 900.0
+        IF (LAWCF.LE.0.0) THEN
+          LAWCF = 0.01    
+          WRITE (fnumwrk,*) ' '
+          WRITE (fnumwrk,*) ' Default of 0.01 used for LAWCF'
+        ENDIF
+          
         IF (VEFF.LE.0.0) VEFF = 0.5
         IF (VEFF.GT.1.0) VEFF = 1.0
 
         IF (PHINTCHG.LE.0.0) PHINTCHG = 2.0 ! Visible lf#,change PHINT
         IF (RDGS2.LE.0.0) RDGS2 = RDGS1
         IF (RDGTH.LE.0.0) RDGTH = 275
+
+        ! For new (but not used!) N uptake routine.
+        IF (NCNU.LE.0.0) NCNU = 30
+        IF (RLFNU.LE.0.0) RLFNU = 2.0
+        IF (WFNUU.LE.0.0) WFNUU = 1.0
+        IF (WFNUL.LE.0.0) WFNUL = 0.0
+
+        ! For CSM N uptake routine 
+        IF (rtno3.le.0.0) THEN
+          RTNO3 = 0.006    ! N uptake/root length (mgN/cm,.006)
+          WRITE (fnumwrk,*) ' '
+          WRITE (fnumwrk,*) ' Default of 0.006 used for RTNO3'
+        ENDIF  
+        IF (rtnh4.le.0.0) THEN
+          RTNH4 = RTNO3     ! N uptake/root length (mgN/cm,.006)
+          WRITE (fnumwrk,*) ' '
+          WRITE (fnumwrk,*) ' Default of ',RTNO3,' used for RTNH4'
+        ENDIF  
         
         ! BASED ON ORIGINAL CERES -- FOR INITIAL CALIBRATION
         IF (CROP.EQ.'WH') THEN
@@ -2326,13 +2396,16 @@
         WRITE (fnumwrk,*) ' '
         WRITE (fnumwrk,*) 'DERIVED COEFFICIENTS'
         
+        ! NSFAC and NMNFAC are used for checking the component N concentrations only
+        IF (nsfac.LE.0.0) NSFAC = 1.0
+        IF (nmnfc.LE.0.0) NMNFC = 1.0
         DO L =0,9
-          LCNCS(L) = LNPCS(L)/100.0
-          SCNCS(L) = SNPCS(L)/100.0
-          RCNCS(L) = RNPCS(L)/100.0
-          LMNCS(L) = LNPCMN(L)/100.0
-          SMNCS(L) = SNPCMN(L)/100.0
-          RMNCS(L) = RNPCMN(L)/100.0
+          LCNCS(L) = LNPCS(L)/100.0*NSFAC
+          SCNCS(L) = SNPCS(L)/100.0*NSFAC
+          RCNCS(L) = RNPCS(L)/100.0*NSFAC
+          LMNCS(L) = LNPCMN(L)/100.0*NMNFC
+          SMNCS(L) = SNPCMN(L)/100.0*NMNFC
+          RMNCS(L) = RNPCMN(L)/100.0*NMNFC
         ENDDO
 
         PD2(1) = PD2FR(1) * PD(2)
@@ -2433,7 +2506,7 @@
         WRITE (fnumwrk,'(A15,2A7  )') '   CROP,VARNO   ',CROP,VARNO
  
         WRITE (fnumwrk,*) ' '
-        WRITE (fnumwrk,*) 'CULTIVAR DETAILS'
+        WRITE (fnumwrk,*) 'CULTIVAR DETAILS  FROM: ',CUDIRFLE
         WRITE (fnumwrk,*) '  Varno,econo :  ',varno,' ',econo
         WRITE (fnumwrk,*) '  P1v,p1d,p5  :  ',p1v,p1d,pd(5)
         WRITE (fnumwrk,*) '  G1,g2kwt,g3 :  ',g1cwt,g2kwt,g3
@@ -2441,7 +2514,7 @@
         WRITE (fnumwrk,*) '  Phint,Veff  :  ',phints,veff
  
         WRITE (fnumwrk,*) ' '
-        WRITE (fnumwrk,*) 'ECOTYPE DETAILS'
+        WRITE (fnumwrk,*) 'ECOTYPE DETAILS  FROM: ',ECDIRFLE
         WRITE (fnumwrk,*) '  TIl#S,TIPHE :  ',ti1lf,tilpe
         WRITE (fnumwrk,*) '  P1,2,3      :  ',(pd(i),i = 1,3)
         WRITE (fnumwrk,*) '  P4,5,6      :  ',(pd(i),i = 4,6)
@@ -2455,7 +2528,7 @@
         WRITE (fnumwrk,*) '  AWNS,SGPHE  :  ',awns,p4sge
         WRITE (fnumwrk,*) '  TKFH        :  ',lt50h
         WRITE (fnumwrk,*) '  HTSTD       :  ',canhts
-        WRITE (fnumwrk,*) '  LAWS,LAW2   :  ',lawrs,lawr2
+        WRITE (fnumwrk,*) '  LAWS,LAWCF  :  ',lawrs,lawcf
         WRITE (fnumwrk,*) '  RS%S        :  ',rsfrs
         WRITE (fnumwrk,*) '  GN%S        :  ',grns 
         WRITE (fnumwrk,*) '  NB.This is the percentage of stem ',
@@ -2468,7 +2541,7 @@
         WRITE (fnumwrk,*) '  WFPGF       :  ',wfpgf
 
         WRITE(fnumwrk,*) ' '
-        WRITE(fnumwrk,*) 'SPECIES DETAILS'
+        WRITE(fnumwrk,*) 'SPECIES DETAILS  FROM: ',SPDIRFLE
 
         WRITE(fnumwrk,'(A17,2F8.2)')'   PGERM,PEMRG : ',peg,pecm
         WRITE(fnumwrk,*)            '  P0          :  ',pd(0)
@@ -3082,7 +3155,7 @@
             IF (LNUMSG.GT.0.AND.LNUMSG.LT.LNUMX) THEN
               IF (LNSWITCH.LE.0.0) THEN
                 LAPOT(LNUMSG+1) = 
-     &            AMAX1(LA1S,LAPOT(LNUMSG))*(1.0+LAFV)
+     &            AMAX1(LAPOT(1),LAPOT(LNUMSG))*(1.0+LAFV)
               ELSE  
                 LAPOT(LNUMSG+1) = LAPOT(LNUMSG)*(1.0+LAFR)
               ENDIF
@@ -3092,12 +3165,7 @@
           
           ! Growth potentials
           IF (ISTAGE.LE.2) THEN
-            LAWCFCALC = (LAWRS-LAWR2)/LAWRS
-     &        *AMAX1(0.0,(XSTAGE-1.0))/lnumsg 
-            ! SLA reduced by WFG,NFG down to minimum. No specific factors.
-            LAWR = AMAX1(LAWRS-
-     &           ((LAWRS-LAWR2)*AMAX1(0.0,(XSTAGE-1.0))),LAWR2)
-     &           * AMAX1(LAWFRMN,WFG*NFG)
+            LAWR = AMAX1(LAWRS*LAWFRMN,LAWRS-(LAWRS*LAWCF)*(LNUMSG-1))
           
             ! NB. Ceres 3.5 used: PLAG(1) = LA1S * (LNUMSD**0.5) * ....
             !     LA1S = 7.5
@@ -3715,8 +3783,9 @@
             ! per unit root length.
              
             ! CSM NUPTAK    #1
-            RTNO3 = 0.006    ! N uptake/root length (mgN/cm,.006)
-            RTNH4 = 0.006    ! N uptake/root length (mgN/cm,.006)
+            ! Temporary below
+            !RTNO3 = 0.012    ! N uptake/root length (mgN/cm,.006)
+            !RTNH4 = 0.012    ! N uptake/root length (mgN/cm,.006)
             TRNU = 0.0
             DO L=1,NLAYR
               RNO3U(L) = 0.0
@@ -3754,7 +3823,7 @@
               NUAPCSM = TRNU  ! END CSM NUPTAK
               ! END CSM NUPTAK     #1
           
-            ! CSCER AS NOW USED   #2
+            ! CSCER   #2
             ! Same as CSCRP
             WFNU = 0.0
             NUPAP = 0.0
@@ -3774,7 +3843,6 @@
      &             (0.,AMIN1(1.,(SW(L)-DUL(L))/(SAT(L)-DUL(L))))
                   WFNU = 1.0
                 ENDIF
-                !NCNU = 30.0
                 FNH4 = AMIN1(1.0,AMAX1(0.0,NH4LEFT(L)/NCNU))
                 FNO3 = AMIN1(1.0,AMAX1(0.0,NO3LEFT(L)/NCNU))
                 !RLFN =  AMAX1(0.,AMIN1(1.,RLV(l)/(RLFNU/1000.0)))
@@ -3786,8 +3854,11 @@
                 NUPAP = NUPAP + RNO3U(L) + RNH4U(L)
               ENDIF
             END DO
-            NUAP = NUPAP 
+            NUAPCER = NUPAP
             ! END CSCER AS NOW USED    #2
+
+            ! Set which N uptake routine to be used
+            NUAP = NUAPCSM 
  
             ! Ratio (NUPR) to indicate N supply for output
             IF (ANDEM.GT.0) THEN
@@ -3914,7 +3985,7 @@
 
           ! Minimum grain N control
           GRORSGR = 0.0
-          IF (GRNMN.GT.0.0) THEN
+          IF (ISWNIT.NE.'N'.AND.GRNMN.GT.0.0) THEN
             GROGRPN =
      &       (GRAINNG+GRAINNGR+GRAINNGL+GRAINNGS+RSNUSEG)*(100./GRNMN)
             IF (GROGRPN.LT.GROGRPA.AND.GRAINANC*100.0.LE.GRNMN) THEN
@@ -4174,7 +4245,7 @@
             !RLV(L)=RTWTL(L)*(RLWR/0.6)*PLTPOP/DLAYR(L)
             RLV(L)=RTWTL(L)*RLWR*PLTPOP/DLAYR(L)
             IF (L.EQ.NLAYR.AND.RLV(L).GT.0.0)THEN
-              IF (RTSLXDATE.LE.0.0) RTSLXDATE = YEARDOY
+              IF (RTSLXDATE.LE.0) RTSLXDATE = YEARDOY
             ENDIF
           END DO
           ! NB. 0.6 above was kept to keep similarity with Ceres,
@@ -4540,14 +4611,14 @@
           DAS = MAX(0,CSTIMDIF(YEARSIM,YEARDOY))
           IF (ISTAGE.EQ.6) DAPM = DAPM + 1
 
-          IF (IDETL.EQ.'A') THEN
+          IF (IDETL.EQ.'A'.AND.ISWNIT.NE.'N') THEN
             WRITE(fnumwrk,*)' '
             WRITE(fnumwrk,'(A25,I16)')
      &       ' Days after planting DAP ',DAP
             WRITE(fnumwrk,'(A25,I16,I7)')
      &       ' Year,day                ',YEAR,DOY
             WRITE(FNUMWRK,'(A37,2F7.2)')
-     &       ' N uptake potential kg/ha  Cscer,Csm ',NUAP,NUAPCSM
+     &       ' N uptake potential kg/ha  Cscer,Csm ',NUAPCER,NUAPCSM
           ENDIF 
           
           ! Double ridge factors by calibration from LAMS experiment
@@ -5173,6 +5244,11 @@
      B        '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
      C        ' LN%RD SN%RD RN%RD  NFPD  NFGD NUPRD',
      &        ' NDEMD')
+  
+              ! Delete PlantN if N switched off   
+              IF (ISWNIT.NE.'Y') THEN
+                CLOSE (UNIT=NOUTDGN, STATUS = 'DELETE')
+              ENDIF
      
               OPEN (UNIT = NOUTPG2, FILE = OUTPG2, STATUS='UNKNOWN',
      &        POSITION = 'APPEND')
@@ -5364,7 +5440,7 @@
             ENDIF    ! IDETG.NE.'N'
             ENDIF    ! IDETG.NE.'N'.OR.IDETL.EQ.'0'
           ENDIF      ! MOD(FROPADJ)
-          
+
           ! Harvest date or failure writes
           IF (STGDOY(11).EQ.YEARDOY .OR.
      &     DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
@@ -5935,6 +6011,8 @@
               CALL AREADR (FILEA,TN,RN,SN,ON,CN,'VNAM',vnamm)
               CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CNAA',cnaam)
               CALL AREADR (FILEA,TN,RN,SN,ON,CN,'GNAM',gnamm)
+              IF (gnamm.LE.0.0) 
+     &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HNAM',gnamm)
               CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LN%A',lnpcam)
               IF (lnpcam.LE.0.0)
      &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LNCA',lnpcam)
@@ -6099,7 +6177,7 @@
      &         'Trying to read T-file and write MEASURED.OUT'
             
               Fnametmp = ' '
-              Fnametmp(1:12) = 'Measured.out'
+              Fnametmp(1:12) = 'Measured.OUT'
               IF (RUN.EQ.1 .AND. RUNI.EQ.1) THEN
                CALL Getlun ('FILET',FNUMT)
                OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,STATUS = 'UNKNOWN')
@@ -6563,7 +6641,7 @@
      x            ' CR',
      x            ' ADAPS ADAPM',
      x            ' MDAPS MDAPM',
-     x            ' AMDAYS AMDAYM',
+     x            ' AMDYS AMDYM',
      x            ' HWAMS HWAMM',
      x            ' HWUMS HWUMM',
      x            ' H#AMS H#AMM',
@@ -6634,7 +6712,7 @@
  8404         FORMAT (I4,1X,A10,I6,I3,1X,A2,
      x        I6,I6,
      x        I6,I6,
-     x        I7,I7,
+     x        I6,I6,
      x        I6,I6,
      x        A6,A6,
      x        I6,I6,
@@ -7059,15 +7137,15 @@
 
               WRITE (fnumwrk,*) 'Writing PLANT RESPONSES (SIMULATED)'
               
-              ! NOTE This does not deal with a set of ON/OFF days
-              CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EDAY',dayadj)
-              CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'ERAD',radadj)
-              CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EMAX',txadj)
-              CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EMIN',tmadj)
-              CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'ERAIN',prcadj)
-              CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'ECO2',co2adj)
-              CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EDEW',dptadj)
-              CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EWIND',wndadj)
+              ! Taken out because use averages/sums  for phases  
+              !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EDAY',dayadj)
+              !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'ERAD',radadj)
+              !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EMAX',txadj)
+              !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EMIN',tmadj)
+              !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'ERAIN',prcadj)
+              !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'ECO2',co2adj)
+              !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EDEW',dptadj)
+              !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'EWIND',wndadj)
               
               IF (DAYADJ.LT.0.0) DAYADJ = 0.0
               IF (RADADJ.LT.0.0) RADADJ = 0.0
@@ -7116,7 +7194,7 @@
      x          '  HN%M  TNAM',
      x          '  CNAM  HNAM',
      x          '  HINM PLPOP',
-     x          '  TWLD  SRAA  TMXA  TMNA  PREC')
+     x          ' DAYLA  SRAA  TMXA  TMNA  PREC   CO2')
               ELSE
                 OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,POSITION ='APPEND')
               ENDIF
@@ -7146,7 +7224,8 @@
      x         gnpcmc,NINT(AMAX1(-99.0,cnam+rnam)),
      x         NINT(cnam),NINT(gnam),
      x         hinmc,pltpop,
-     &         daylav(0),sradav(0),tmaxav(0),tminav(0),NINT(raincp(0))
+     &         daylav(0),sradav(0),tmaxav(0),tminav(0),NINT(raincp(0)),
+     &         co2av(0)
               
  7401          FORMAT (I6,1X,A10,1X,I3,I3,4X,A2,
      x         I6,
@@ -7159,7 +7238,7 @@
      x         A6,I6,
      x         I6,I6,
      x         A6,F6.1,
-     x         4F6.1,I6)
+     x         4F6.1,I6,F6.1)
               
               CLOSE(FNUMTMP)       ! END OF PLANT RESPONSES (SIMULATED)
             
@@ -7222,7 +7301,8 @@
      x         gnpcmmc,NINT(tnamm),
      x         NINT(cnamm),NINT(gnamm),
      x         hinmmc,pltpop,
-     &         daylav(0),sradav(0),tmaxav(0),tminav(0),NINT(raincp(0))
+     &         daylav(0),sradav(0),tmaxav(0),tminav(0),NINT(raincp(0)),
+     &         co2av(0)
               
  7402          FORMAT (I6,1X,A10,1X,I3,I3,4X,A2,
      x         I6,
@@ -7235,7 +7315,7 @@
      x         A6,I6,
      x         I6,I6,
      x         A6,F6.1,
-     x         4F6.1,I6)
+     x         4F6.1,I6,F6.1)
               
               AMTNITP = AMTNIT
               
@@ -8035,7 +8115,8 @@
       ELSEIF (DYNAMIC.EQ.SEASEND) THEN
 
         CLOSE (NOUTDG)
-        CLOSE (NOUTDGN)
+        INQUIRE (FILE = NOUTDGN, EXIST = FEXIST)
+        IF (FEXIST) CLOSE (NOUTDGN)
         CLOSE (NOUTPG2)
         CLOSE (NOUTPGF)
         CLOSE (FNUMWRK)

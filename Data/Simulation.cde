@@ -58,7 +58,7 @@ N        No mulch effects                                                     IB
 @CDE     DESCRIPTION                                                          SO
 C        Canopy curve (daily)                                                 IB
 R        Radiation efficiency                                                 IB
-L        Leaf photosynthesis response curve (hourly)                          IB        
+L        Leaf photosynthesis response curve (hourly)                          IB
 
 *Simulation/Methods/Hydrology
 @CDE     DESCRIPTION                                                          SO
@@ -69,69 +69,69 @@ R        Ritchie water balance                                                IB
 G        Ceres (Godwin)                                                       IB
 P        Century (Parton)                                                     IB
 
-*Simulation/Methods/Soil Evaporation  
+*Simulation/Methods/Soil Evaporation
 @CDE     DESCRIPTION                                                          SO
 R        Ritchie-Ceres                                                        IB
 S        Suleiman-Ritchie                                                     IB
 
-*Simulation/Methods/Soil Layer Distribution  
+*Simulation/Methods/Soil Layer Distribution
 @CDE     DESCRIPTION                                                          SO
-1        Model-specified soil layers                                          IB  
-2        Modified soil profile                                                IB 
-3        Unmodified soil profile                                              IB 
+1        Model-specified soil layers                                          IB
+2        Modified soil profile                                                IB
+3        Unmodified soil profile                                              IB
 
 *Simulation/Management/Planting
 @CDE     DESCRIPTION                                                          SO
 A        Automatic                                                            IB
-R        On reported date                                                     IB    
+R        On reported date                                                     IB
 
 *Simulation/Management/Irrigation
 @CDE     DESCRIPTION                                                          SO
 A        Automatic when required                                              IB
-N        Not irrigated                                                        IB 
+N        Not irrigated                                                        IB
 F        Fixed amount automatic                                               IB
-R        On reported dates                                                    IB 
-D        Days after planting                                                  IB 
+R        On reported dates                                                    IB
+D        Days after planting                                                  IB
 
 *Simulation/Management/Fertilization
 @CDE     DESCRIPTION                                                          SO
 !A       Automatic when required                                              IB
-N        Not fertilized                                                       IB 
+N        Not fertilized                                                       IB
 F        Fixed amount automatic                                               IB
-R        On reported dates                                                    IB 
-D        Days after planting                                                  IB 
+R        On reported dates                                                    IB
+D        Days after planting                                                  IB
 
 *Simulation/Management/Residue
 @CDE     DESCRIPTION                                                          SO
 !A        Automatic when required                                              IB
-N        No applications                                                      IB 
+N        No applications                                                      IB
 !F        Fixed amount automatic                                               IB
-R        On reported dates                                                    IB 
-D        Days after planting                                                  IB 
-        
+R        On reported dates                                                    IB
+D        Days after planting                                                  IB
+
 *Simulation/Management/Harvest
 @CDE     DESCRIPTION                                                          SO
 A        Automatic                                                            IB
-!G       At reported stage(s)                                                 IB 
+!G       At reported stage(s)                                                 IB
 M        At maturity                                                          IB
-R        On reported date(s)                                                  IB 
-D        Days after planting                                                  IB 
+R        On reported date(s)                                                  IB
+D        Days after planting                                                  IB
 
 *Simulation/Outputs
 @CDE     DESCRIPTION                                                          SO
 Y        Experiment                                                           IB
-N        Default                                                              IB 
+N        Default                                                              IB
 
 *Simulation/Outputs/Options
 @CDE     DESCRIPTION                                                          SO
 Y        Yes                                                                  IB
-N        No                                                                   IB  
+N        No                                                                   IB
 
-*Simulation/Outputs/Verbose  
+*Simulation/Outputs/Verbose
 @CDE     DESCRIPTION                                                          SO
 0        Only Summary.OUT                                                     IB
 N        Minimal output                                                       IB
-Y        Normal output                                                        IB         
+Y        Normal output                                                        IB
 D        Detailed output                                                      IB
 A        All outputs                                                          IB
 

@@ -1,53 +1,35 @@
-$CULTIVARS:WHCER045
+$CULTIVARS:WHCER045  
 
-! LAST EDIT: 13/02/11
+! LAST EDIT: 24/04/11
 
 ! Coefficients used in the Cropsim-Ceres model differ from those used
-! in DSSAT Version 3.5 AND 4.0. They can be calculated (approximately) from
+! in DSSAT Version 3.5 AND 4.0. They can be calculated (approximately) from 
 ! V3.5 coefficients as follows:
 
-! P1V   = P1V(v3.5)*10
+! P1V   = P1V(v3.5)*10 
 ! P1D   = P1D(V3.5)*20
 ! P5    = P5(V3.5)*20 + 430
 ! G1    = G1(V3.5)*5 + 5
 ! G2    = (G2(V3.5)*0.35+0.65) * P5/20
-! G3    = G3(V3.5)*0.7
+! G3    = G3(V3.5)*0.7 
 ! PHINT = PHINT(V3.5)
 
 ! Converted coefficients,and those listed below,should always be
-! tested by using them with real experiments and comparing model
-! outputs with measured values.
+! tested by using them with real experiments and comparing model 
+! outputs with measured values. 
 
 *CULTIVARS:WHCER045
 @VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
 !                                        1     2     3     4     5     6     7
 999991 MINIMA               . 999991     0     0   100    10    10   0.5    30
 999992 MAXIMA               . 999992    60   200   999    50    80   8.0   150
-
+                                                                              
 DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
-
-IB1500 MANITOU           1,14 CAWH01     0    60   335    25    26   1.5    86
-IB0488 NEWTON               . USWH01    50    60   480    25    26   1.5    95
-IB1015 MARIS FUNDIN         . UKWH01    60    67   515    14    44   4.0   100
-
-!Use this for UFMX:
-!VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
-AP0001 Yecora               . USWH01     0   10.   660    50    80   8.0   120
-!P0001 Yecora               . USWH01   1.0   1.2   660    24    40   1.9   120
-
-! P1V minimum sensitivity to vernalization = 0.0
-! P1D sensitivity to photoperiod. APSIM 1-5, DSSAT 0-200 = (1.2-1)/(5-1)*(200-0) = 10.
-! P5  same definition, keep APSIM value
-! G1  Kernel number per stem wt (APSIM), per canopy wt (DSSAT)
-! G2  Standard kernal size - DSSAT only
-! G3  Tiller wt (incl. grain) DSSAT.  Stem wt, excluding grain APSIM.
-! PHINT same definition, keep APSIM value
-
-CI0003 Yecora 70            . DS0009    20    20   550    28    40  2.00    90 CI4S7501
-UXMC01 Yecora-rojo          . DS0009     0    00   600    22    50  2.00    95 UXMC9201
-UCMA08 Yecora-70            . DS0013     0    75   600    28    30  1.50    90 UCEA9901
-
-
+                                                                              
+IB1500 MANITOU           1,14 CAWH01     0    40   320    23    23   1.8    86 
+IB0488 NEWTON             1,6 USWH01    45    64   480    26    25   1.0    95  
+IB1015 MARIS FUNDIN       1,8 UKWH01    36    87   515    15    44   3.2   100
+                                                                                                                                                                                                                  
 ! COEFF       DEFINITION
 ! ========    ==========
 ! VAR#        Identification code or number for the specific cultivar.
@@ -61,23 +43,3 @@ UCMA08 Yecora-70            . DS0013     0    75   600    28    30  1.50    90 U
 ! G2          Standard kernel size under optimum conditions (mg)
 ! G3          Standard,non-stressed mature tiller wt (incl grain) (g dwt)
 ! PHINT       Interval between successive leaf tip appearances (oC.d)
-
-!!From some work Jeff White did a few years ago.
-!@VAR#  VAR-NAME........ EXPNO   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT EXPERIMENTS
-!CI0003 Yecora 70            . DS0009    20    20   550    28    40  2.00    90 CI4S7501
-!UXMC01 Yecora-rojo          . DS0009     0    00   600    22    50  2.00    95 UXMC9201
-!UCMA08 Yecora-70            . DS0013     0    75   600    28    30  1.50    90 UCEA9901
-!CA0003 YECORA ROJO          . DSWH04    10    30   500    30    40  1.50    95 CADV8701
-!CA0032 YECORA R 87W         . DSWH04    40    60   800    30    40  1.50    90 CADV8701
-!CA0033 YECORA R 87S         . DSWH04    30    60   800    30    40  1.50    90 CADV8701
-!
-!@ECONO    P1    P2    P3    P4 P4SGE PARUV PARUR  AWNS  LA1S  LAVS  LARS LAWRS LAWR2 LLIFE RSFRS TI1LF GRNMN  GRNS  WFPU  WFGU  NFPU  NFPL  NFGU  NFGL WFPGF RDGS1 RDGS2  TBGF P1DPE HTSTD  KCAN LT50H
-!DSWH04   350   250   240   250  4.45   2.8   2.8   5.0   5.0  10.0  20.0   200   160   4.0   0.3   3.5   0.0   3.0   1.5   2.0  1.00   0.0   1.0   0.0   1.0   3.0   2.0   0.0   0.0   100   .85   -10
-!
-!!from APSIM
-!AP0001 Yecora               . DSWH04   1.0   1.2   660    24    40   1.9   120
-!
-!!.........p1v......p1d.....p5....Grno..Fillrate..stmwt...
-!YECORA  =  1.0    1.2    660.   24.0    1.9     3.00   !
-!phylo =  120   !100   !
-!

@@ -69,7 +69,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
-!       4.5.1.11 chp 04/29/2011 P for peanut enabled, PDLA changes KJB
+!       4.5.1.12 chp 05/04/2011 Revised format for CSCER species, ecotype files
+!                               Other changes to CSCER (see file CSCER040.FOR)
 !       4.5.1.10 chp 03/23/2011 Environmental summary for wheat, WH species change
 !       4.5.1.9  chp 02/23/2011 Environmental summary in Summary.OUT
 !       4.5.1.8  chp 02/14/2011 SLPF enabled for Canegro

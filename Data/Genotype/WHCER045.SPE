@@ -1,6 +1,6 @@
 $SPECIES:WHCER045
 
-! LAST EDIT: 18/03/11
+! LAST EDIT: 24/04/11
 
 ! Coefficients differ from those used in DSSAT  Versions 3.5 and 4.0x. 
 ! They have been developed from 'parameters' embedded in the code of 
@@ -21,8 +21,8 @@ $SPECIES:WHCER045
 @RLIG%  RLWR RSEN% RRESP RLDGR !Lignin%,length/wt,senescence,resp.
   10.0  0.98   .80  0.40   500
 ! Leaves
-@LLIG%  LAXS LSHFR LSHAW  PHL1  PHF1 LAWMN
-  10.0   900  0.33  70.0   2.0   0.8   0.5
+@LLIG%  LAXS LSHFR LSHAW  PHL1  PHF1 LAWMN LAWCF
+  10.0   900  0.33  70.0   2.0   0.8   0.5  0.02
 @LLIFE LWLOS LRPHS                          
    4.0  0.50   3.0                                  
 @ LASF
@@ -105,8 +105,8 @@ $SPECIES:WHCER045
   
 ! NITOGEN uptake,distribution,etc.  
 ! N uptake  
-@NH4MN NO3MN  NCNU RLFNU WFNUU WFNUL
-   0.0   0.0    30   2.0   1.0   0.0
+@NH4MN NO3MN RTNO3 RTNH4
+   0.0   0.0 0.006 0.006
 ! N demand 
 @ NTUPF  ! Fraction of deficit that can be filled per day
    0.05
@@ -127,7 +127,7 @@ $SPECIES:WHCER045
     20
 ! N shortage effects (Fraction of span from lowest to upper N conc.)
 @ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF ! Phs,tillering,senecence
-  1.00  0.00   1.0   0.0   1.0   0.6   0.4   0.1  
+  1.00  0.00   1.0   0.0   1.0   0.0   0.4   0.1  
 ! N shortage effects (Based on soil NO3 and NH4 concentrations)
 @ NCRG 
     30 
@@ -147,6 +147,7 @@ $SPECIES:WHCER045
 ! GN%MX   Grain N,maximum (For when assimilate supply limited) (%)
 ! HDUR    Days for complete cold hardening (d)
 ! LASF    Leaf area senesced (fr,start phase)
+! LAWCF   Leaf area/weight change with leaf position (fr/leaf)
 ! LAWMN   Leaf area/weight,minimum,fr non stressed (#)
 ! LAXS    Maximum area of leaves on main stem (cm2)                                                                                                     
 ! LLIFE   Life of leaves during vegetative phase (phyllochrons)
@@ -159,13 +160,12 @@ $SPECIES:WHCER045
 ! LSHAW   Leaf sheath area/weight ratio (cm2/g)
 ! LSHFR   Leaf sheath fraction (fr of lamina+sheath)
 ! LWLOS   Leaf dry matter loss,normal senescence (fr)
-! NCNU    NO3,NH4 conc factor,N uptake (ppm;30 -> -0.08 for exp response)
 ! NCRG    N concentration factor,root growth (ppm for maximum growth)
 ! NFGL    N stress factor,growth,lower (fr)
 ! NFGU    N stress factor,growth,upper (fr)
 ! NFPL    N stress factor,photosynthesis,lower (fr)
 ! NFPU    N stress factor,photosynthesis,upper (fr)
-! NFSU    N stress factor,senescence,upper threshold (fr)
+! NFSU    N stress factor,senescence,threshold (fr)
 ! NFSF    N factor to trigger final senescence (#)
 ! NFTL    N stress factor,tillering,lower (fr)
 ! NFTU    N stress factor,tillering,upper (fr)
@@ -187,13 +187,14 @@ $SPECIES:WHCER045
 ! PTFS    Partition to tops,standard,by stage (fr)
 ! PTFX    Partition fraction to tops,maximum (fr)
 ! RLDGR   Root length/root depth growth ratio (cm/cm;greater->more early rt.)
-! RLFNU   Root length factor for N uptake (#)
 ! RLIG%   Root lignin (%)
 ! RLWR    Root length weight ratio (m/(0.01g)
 ! RN%MN   Root minimum N (%)
 ! RN%S    Root standard N (%)
 ! RRESP   Root respiration fraction (fr)
 ! RSEN%   Root senescence (%/standard day)
+! RTNO3   NO3 uptake/root length  (mg N/cm.day)
+! RTNH4   NH4 uptake/root length  (mg N/cm.day)
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
 ! RWUPM   Water saturation factor,pore space limit (fr)
 ! SAWS    Stem area/weight ratio,standard (cm2/g)
@@ -222,8 +223,6 @@ $SPECIES:WHCER045
 ! TSRAD   Transmission of solar radiation (fr)
 ! WFGEU   Water factor,seed germination,upper (fr)
 ! WFGU    Water stress factor,growth,upper (fr)
-! WFNUL   Water factor,N uptake,lower (fr)
-! WFNUU   Water factor,N uptake,upper (fr)
 ! WFPU    Water stress factor,photosynthesis,upper (fr)
 ! WFRGU   Water factor,root growth,upper threshold (0-1)
 ! WFSU    Water stress factor,senescence,threshold (fr)
