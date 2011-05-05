@@ -61,16 +61,16 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 5
         INTEGER :: Model = 1
-        INTEGER :: Build = 11
+        INTEGER :: Build = 13
       END TYPE VersionType
       TYPE (VersionType) Version
-!     2/18/2011 chp
-!     Branch created for Jesse Naab for phosphorus dynamics in peanut research
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.5.1.13 chp 05/05/2011 More changes to CSCER (see file CSCER040.FOR)
 !       4.5.1.12 chp 05/04/2011 Revised format for CSCER species, ecotype files
 !                               Other changes to CSCER (see file CSCER040.FOR)
+!       4.5.1.11 chp 04/29/2011 ETPHOT P stress, P for peanut enabled
 !       4.5.1.10 chp 03/23/2011 Environmental summary for wheat, WH species change
 !       4.5.1.9  chp 02/23/2011 Environmental summary in Summary.OUT
 !       4.5.1.8  chp 02/14/2011 SLPF enabled for Canegro
