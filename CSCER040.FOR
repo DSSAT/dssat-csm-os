@@ -684,6 +684,7 @@
       REAL          MDATT         ! Maturity date from t file      YrDoy
       INTEGER       MDAY          ! Maturity day of year           d
       INTEGER       MDAYM         ! Maturity day of year,measured  d
+      CHARACTER*3   MERNU         ! Switch,root N uptake method    code
       CHARACTER*1   MODE          ! Mode of model operation        code
       CHARACTER*8   MODEL         ! Name of model                  text
       CHARACTER*8   MODNAME       ! Name of module                 text
@@ -851,7 +852,7 @@
       REAL          RDGTH         ! Rooting depth growth thrshold  cm
       INTEGER       REP           ! Number of run repetitions      #
       REAL          RESPC         ! Respiration,total,cumulative   g/p
-      REAL          RFAC          ! Root length density fac,uptake #
+      REAL          RFAC          ! Root length & H2O fac,N uptake #
       REAL          RLDF(20)      ! Root length density fac,new gr #
       REAL          RLDGR         ! Root length/root depth g ratio cm/cm
       REAL          RLFNU         ! Root length factor,N uptake    #
@@ -1420,6 +1421,8 @@
           PARADFAC = 0.5  ! PAR in SRAD (fr)
           VERSIOND = 4.50 ! Default version
           STEPNUM = 1     ! Step number per day set to 1
+          
+          MERNU = 'CSM'   ! Root N uptake routine
 
           YEARSIM = YEARDOY
 
@@ -1804,6 +1807,7 @@
 
         WRITE(fnumwrk,*)' '
         WRITE(fnumwrk,'(A13,A1)')'  N SWITCH   ',ISWNIT
+        IF(ISWNIT.NE.'N')WRITE(fnumwrk,'(A13,A3)')'  N METHOD   ',MERNU 
         WRITE(fnumwrk,'(A13,A1)')'  H2O SWITCH ',ISWWAT
 
         WRITE(fnumwrk,*)' '
@@ -3777,52 +3781,50 @@
 
             ANDEM = NDEMSOIL * PLTPOP*10.0
 
-            ! Below is the CSM N uptake routine. It is included here   
-            ! for comparative purposes. Currently the routine used  
-            ! does not use the parameter dealing with uptake rate 
-            ! per unit root length.
+            ! Below is the CSM N uptake routine.    
              
+            IF (MERNU.EQ.'CSM') THEN 
             ! CSM NUPTAK    #1
-            ! Temporary below
-            !RTNO3 = 0.012    ! N uptake/root length (mgN/cm,.006)
-            !RTNH4 = 0.012    ! N uptake/root length (mgN/cm,.006)
             TRNU = 0.0
             DO L=1,NLAYR
               RNO3U(L) = 0.0
               RNH4U(L) = 0.0
             ENDDO
             ! Calculate potential N uptake in soil layers with roots
-              DO L=1,NLAYR
-                IF (RLV(L) .GT. 1.E-6) THEN
-                  FNH4 = 1.0 - EXP(-0.08 * NH4LEFT(L))
-                  FNO3 = 1.0 - EXP(-0.08 * NO3LEFT(L))
-                  IF (FNO3 .LT. 0.04) FNO3 = 0.0  
-                  IF (FNO3 .GT. 1.0)  FNO3 = 1.0
-                  IF (FNH4 .LT. 0.04) FNH4 = 0.0  
-                  IF (FNH4 .GT. 1.0)  FNH4 = 1.0
-                  SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
-                  IF (SMDFR .LT. 0.0) THEN
-                    SMDFR = 0.0
-                  ENDIF
-                  IF (SW(L) .GT. DUL(L)) THEN
-                    SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
-                    ! Wet soil effect not implemented
-                    SMDFR = 1.0
-                  ENDIF
-                  RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
-                  !  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
-                  !  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)  
-                  !  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
-                  RNO3U(L) = RFAC * FNO3 * RTNO3
-                  RNH4U(L) = RFAC * FNH4 * RTNH4
-                  RNO3U(L) = MAX(0.0,RNO3U(L))
-                  RNH4U(L) = MAX(0.0,RNH4U(L))
-                  TRNU = TRNU + RNO3U(L) + RNH4U(L) !kg[N]/ha
+            DO L=1,NLAYR
+              IF (RLV(L) .GT. 1.E-6) THEN
+                FNH4 = 1.0 - EXP(-0.08 * NH4LEFT(L))
+                FNO3 = 1.0 - EXP(-0.08 * NO3LEFT(L))
+                IF (FNO3 .LT. 0.04) FNO3 = 0.0  
+                IF (FNO3 .GT. 1.0)  FNO3 = 1.0
+                IF (FNH4 .LT. 0.04) FNH4 = 0.0  
+                IF (FNH4 .GT. 1.0)  FNH4 = 1.0
+                SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
+                IF (SMDFR .LT. 0.0) THEN
+                  SMDFR = 0.0
                 ENDIF
-              ENDDO
-              NUAPCSM = TRNU  ! END CSM NUPTAK
-              ! END CSM NUPTAK     #1
-          
+                IF (SW(L) .GT. DUL(L)) THEN
+                  SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
+                  ! Wet soil effect not implemented
+                  SMDFR = 1.0
+                ENDIF
+                RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+                !  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
+                !  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)  
+                !  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
+                RNO3U(L) = RFAC * FNO3 * RTNO3
+                RNH4U(L) = RFAC * FNH4 * RTNH4
+                RNO3U(L) = MAX(0.0,RNO3U(L))
+                RNH4U(L) = MAX(0.0,RNH4U(L))
+                TRNU = TRNU + RNO3U(L) + RNH4U(L) !kg[N]/ha
+              ENDIF
+            ENDDO
+            NUAPCSM = TRNU  ! END CSM NUPTAK
+            NUAP = NUAPCSM
+            ! END CSM NUPTAK     #1
+            ENDIF
+
+            IF (MERNU.EQ.'CER') THEN           
             ! CSCER   #2
             ! Same as CSCRP
             WFNU = 0.0
@@ -3831,7 +3833,7 @@
             RNH4U = 0.0
             ! Potential N supply in soil layers with roots (NUPAP)
             DO L = 1, NLAYR
-              IF (RLV(L).GT.0.0) THEN
+              IF (RLV(L) .GT. 1.E-6) THEN
                 NLAYRROOT = L
                 IF (SW(L).LE.DUL(L)) THEN
                 IF (WFNUU-WFNUL.GT.0.0) WFNU = 
@@ -3855,10 +3857,9 @@
               ENDIF
             END DO
             NUAPCER = NUPAP
-            ! END CSCER AS NOW USED    #2
-
-            ! Set which N uptake routine to be used
-            NUAP = NUAPCSM 
+            NUAP = NUAPCER
+            ! END CSCER    #2
+            ENDIF
  
             ! Ratio (NUPR) to indicate N supply for output
             IF (ANDEM.GT.0) THEN
@@ -3872,16 +3873,13 @@
             ENDIF
             ! Factor (NUF) to reduce N uptake to level of demand
             IF (NUAP.GT.0.0) NUF = AMIN1(1.0,ANDEM/NUAP)
-          
             ! Actual N uptake by layer roots based on demand (kg/ha)
             DO L = 1, L1
               UNO3ALG(L) = RNO3U(L)*NUF
-              UNH4ALG(L) = RNH4U(L)*NUF
-              XMIN = NO3MN/FAC(L)
-              ! Original XMIN = 0.25/FAC(L)
+              XMIN = NO3MN/FAC(L) ! Original XMIN = 0.25/FAC(L)
               UNO3ALG(L) = MAX(0.0,MIN (UNO3ALG(L),SNO3(L) - XMIN))
-              ! Original XMIN = 0.5/FAC(L)
-              XMIN = NH4MN/FAC(L)
+              UNH4ALG(L) = RNH4U(L)*NUF
+              XMIN = NH4MN/FAC(L) ! Original XMIN = 0.5/FAC(L)
               UNH4ALG(L) = MAX(0.0,MIN (UNH4ALG(L),SNH4(L) - XMIN))
               NUAG = NUAG + UNO3ALG(L) + UNH4ALG(L)
             END DO
@@ -3890,7 +3888,6 @@
           
             ! Change in above and below ground N
             IF (NDEMSOIL.LE.0.0 .OR. NUPD.LE.0.0) THEN
-!            IF (NDEMSOIL+NUPD.LE.0.0) THEN
               DTOPN = 0.0 + RSNUSET
               DROOTN = 0.0 + RSNUSER
             ELSE
@@ -4610,16 +4607,6 @@
           DAP = MAX(0,CSTIMDIF(STGDOY(7),YEARDOY))
           DAS = MAX(0,CSTIMDIF(YEARSIM,YEARDOY))
           IF (ISTAGE.EQ.6) DAPM = DAPM + 1
-
-          IF (IDETL.EQ.'A'.AND.ISWNIT.NE.'N') THEN
-            WRITE(fnumwrk,*)' '
-            WRITE(fnumwrk,'(A25,I16)')
-     &       ' Days after planting DAP ',DAP
-            WRITE(fnumwrk,'(A25,I16,I7)')
-     &       ' Year,day                ',YEAR,DOY
-            WRITE(FNUMWRK,'(A37,2F7.2)')
-     &       ' N uptake potential kg/ha  Cscer,Csm ',NUAPCER,NUAPCSM
-          ENDIF 
           
           ! Double ridge factors by calibration from LAMS experiment
           drf1 = 1.9
@@ -6210,12 +6197,16 @@
                 COLNUM = 1
                 L1 = 0
                 DO
+8453              CONTINUE                    
                   READ(FNUMT,'(A180)',END = 5555)LINET
+                  IF (LINET(1:1).EQ.'!') GO TO 8453
                   TLINENUM = TLINENUM + 1  ! Only to check if file empty
                   IF (LINET(1:5).EQ.'*FLAG'.OR.LINET(1:5).EQ.'*CODE'.OR.
      &                LINET(1:5).EQ.'*GENE') THEN
                     DO
+8454                  CONTINUE                    
                       READ(FNUMT,'(A180)',END = 5555)LINET
+                      IF (LINET(1:1).EQ.'!') GO TO 8454
                       IF (LINET(1:1).EQ.'*') THEN
                         IF (LINET(1:7).EQ.'*DATA(T') EXIT
                         IF (LINET(1:7).EQ.'*EXP.DA') EXIT
@@ -7908,6 +7899,7 @@
  7778             FORMAT(A180)
                   IF (TLINET(1:1).EQ.'*') GO TO 7777
                   IF (TLINET(1:6).EQ.'      ') GO TO 7776
+                  IF (TLINET(1:1).EQ.'!') GO TO 7776
                   CALL Getstri(tlinet,tfdapcol,tfdap) 
                   IF (TFDAP.LE.0) THEN
                     WRITE (FNUMWRK,*) 'DAP in T-file <= 0!'
@@ -7982,7 +7974,7 @@
               
                 WRITE (fnumwrk,*) 'Writing PLANT ERRORS SUMMARY (T) '
               
-                OPEN (UNIT=FNUMTMP,FILE='Plantert.out',STATUS='UNKNOWN')  
+                OPEN (UNIT=FNUMTMP,FILE='Plantert.out',STATUS='UNKNOWN')
               
                 DO L = 1,10
                   TFLECOL(L) = 0
