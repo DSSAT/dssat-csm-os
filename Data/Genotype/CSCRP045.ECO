@@ -1,6 +1,6 @@
 $ECOTYPES:CSCRP045
 
-! LAST EDIT: 13/02/11
+! LAST EDIT: 14/05/11
 
 ! Coefficients presented here have no direct equivalents in the
 ! previous Dssat cassava model, which did not have a set of
@@ -20,16 +20,19 @@ $ECOTYPES:CSCRP045
 ! in the incoming solar and sky components.
 
 *ECOTYPE:CSCRP045
-@ECO#  ECONAME.......... PARUE HTSTD SRN%S  S#FX  PHL1  PHF2
-!                            1     2     3     4     5     6
-999991 MINIMA             2.00   100   .25  2.00    50   1.0
-999992 MAXIMA             3.00   400  1.00  3.00   100   3.0
+@ECO#  ECONAME.......... PARUE HTSTD SRN%S  S#FX  PHL1  PHF2  PSRI
+!                            1     2     3     4     5     6     7
+999991 MINIMA             2.00   100   .25  2.00    50   1.0   300
+999992 MAXIMA             3.00   400  1.00  3.00   100   3.0  2000
 
-DFAULT DEFAULT            2.80   200   .65  2.61    90   2.0
+DFAULT DEFAULT            2.80   200   .65  2.61    90   2.0   600
 
-990001 STANDARD1          2.80   200   .65  2.61    90   2.0
-990002 STANDARD2          2.80   200   .65  2.61    90   1.2
-990003 STANDARD3          2.80   200   .65  2.61    90   1.0
+991684 FOR MCOL1684       2.50   200   .65  2.61    90   2.0   600
+990001 STANDARD1          2.80   200   .65  2.61    90   2.0   600
+
+990002 STANDARD2          2.80   200   .65  2.61    90   1.2   600
+990003 STANDARD3          2.60   200   .65  2.61    90   1.0   600
+990004 STANDARD4          2.80   200   .65  2.61    90   1.0  1400
 
 ! COEFF   DEFINITION
 ! =====   ==========
@@ -38,6 +41,7 @@ DFAULT DEFAULT            2.80   200   .65  2.61    90   2.0
 ! PARUE   PAR conversion factor,standard (g dry matter/MJ)
 ! PHL1    Leaf number at which PHINT changes (#)
 ! PHF2    Factor to establish PHINT at PHL1 (#,multiplier applied to PHINTS)
+! PSRI    Storage root initiation phase (oC.d)
 ! S#FX    Shoot number per fork (#)
 ! SRN%S   Storage root standard N concentration (% dm)
 ! HTSTD   Standard canopy height (cm)

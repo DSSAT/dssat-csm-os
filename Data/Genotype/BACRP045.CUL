@@ -1,6 +1,6 @@
 $CULTIVARS:BACRP045
 
-! LAST EDIT: 13/02/11
+! LAST EDIT: 14/05/11
 
 ! Coefficients used in the Cropsim model differ from those used in
 ! earlier DSSAT wheat/barley models. They can be calculated
@@ -42,10 +42,13 @@ $CULTIVARS:BACRP045
                                                                                                                                                                 
 DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0   0.1   0.5     0     0     0
 
-IB0101 A.Abiad (2)          . SY0001    10    20   220    16    40   2.7    91   390    73   218   196    66    26   171   4.0   0.1   0.3     0   1.0     0 
-IB0102 Beecher (6)          . SY0002    10    20   220    13    40   2.7    96   411    77   230   206    70    28   181   5.0   0.1   0.4     0   1.0     0 
-IB0030 Maris Badger         . US0001     0    00   750    20    52   1.5    83   356    66   199   178    60    24   156   4.0   0.1   0.3     0   1.0     0 
+IB0101 A.Abiad (2)          . SY0001    10    82   250    16    40   4.0    91   356    56   169   150    50    20   130   4.0  0.10  0.30     0   0.5     0 
+IB0102 Beecher (6)          . SY0002    10    87   270    13    40   4.0    96   356    56   169   150    50    20   130   5.0  0.10  0.40     0   0.5     0 
+IB0030 Maris Badger         . US0001    45   100   780    20    55   3.0    83   356    56   169   150    50    20   130   6.0  0.10  0.30     0   0.5    0 
 
+!B0101 A.Abiad (2)          . SY0001    10    50   220    16    40   2.7    91   390    73   218   196    66    26   171   4.0   0.1   0.3     0   1.0     0 
+!B0102 Beecher (6)          . SY0002    10    50   220    13    40   2.7    96   411    77   230   206    70    28   181   5.0   0.1   0.4     0   1.0     0 
+!B0030 Maris Badger         . US0001     5    70   750    20    55   1.5    83   356    66   199   178    60    24   156   4.0   0.1   0.3     0   1.0     0 
 ! COEFF       DEFINITION
 ! ========    ==========
 ! ECO#        Ecotype code for this cultivar, points to entry in the ECO file

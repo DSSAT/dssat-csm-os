@@ -782,6 +782,7 @@
       REAL          PD2(3)        ! Phase 2 sub-durations;1<joint  deg.d
       REAL          PD2ADJ        ! Phase 2 adjusted               deg.d
       REAL          PD2FR(3)      ! Phase 2 sub-durations;1<joint  fr
+      REAL          PD3FR(3)      ! Phase 3 sub-durations;1<headng fr
       REAL          PD4(3)        ! Phase 4 sub-durations;1<anthes deg.d
       REAL          PD4FR(3)      ! Phase 4 sub-durations;1<anthes fr
       REAL          PDADJ         ! Phase duration adjustment      deg.d
@@ -884,7 +885,7 @@
       REAL          RSEN          ! Root senescence fraction       #
       REAL          RSFP          ! Reserves factor,photosynthesis #
       REAL          RSFR          ! Reserves fraction              fr
-      REAL          RSFRS         ! Reserves fraction,standard     #
+      REAL          RSPCS         ! Reserves %,standard            #
       REAL          RSN           ! Reserve N                      g/p
       REAL          RSNGL         ! Reserves N growth from leaves  g/p
       REAL          RSNGR         ! Reserves N growth from roots   g/p
@@ -961,6 +962,8 @@
       REAL          SENLA         ! Senesced leaf area,total       cm2/p
       REAL          SENLFG        ! Senesced leaf                  g/p
       REAL          SENLFGRS      ! Senesced leaf to reserves      g/p
+      REAL          SENLFGRSLOSS  ! Reserves lost with killed leaf g/p
+      REAL          SENLFGRSLOSSC ! Reserves lost,killed leaf,cum  g/p
       REAL          SENLGL(0:20)  ! Senesced lignin added,by layer g/p
       REAL          SENLGS        ! Senesced lignin added to soil  g/p
       REAL          SENNATC       ! Senesced N,litter+soil,cum     kg/ha
@@ -1605,6 +1608,8 @@
         senla = 0.0
         senlfg = 0.0
         senlfgrs = 0.0
+        senlfgrsloss = 0.0
+        senlfgrslossc = 0.0
         senlgal = 0.0
         senlgl = 0.0
         senlgs = 0.0
@@ -1972,7 +1977,77 @@
             ENDIF
           ENDIF
           
-          LAPOT = 0.0
+          
+          ! Ecotype coefficients re-set
+          PD = -99
+          PD2FR = -99 
+          PD(2) = -99 
+          PD(3) = -99 
+          PD(4) = -99
+          PD4FR = -99
+          paruv = -99
+          parur = -99
+          lapot = -99
+          lawrs = -99
+          lafv = -99
+          lafr = -99
+          veff = -99
+          grnmn = -99
+          grns = -99
+          nfpu = -99
+          nfpl = -99
+          nfgu = -99
+          nfgl = -99
+          rdgs1 = -99
+          rtno3 = -99
+          rtnh4 = -99
+          p1dpe = -99
+          P4SGE = -99
+          canhts = -99
+          awns = -99
+          kcan = -99
+          tvr1 = -99
+          rspcs = -99
+          ti1lf = -99
+          wfpu = -99
+          wfgu = -99
+          wfpgf = -99
+          lt50h = -99
+          rdgs2 = -99
+          tifac = -99
+          tilpe = -99
+          tilds = -99
+          tilde = -99
+          tildf = -99
+          lsens = -99
+          lsene = -99
+
+          ! Species re-set
+          PD4FR = -99
+          p1dpe = -99
+          lsens = -99
+          lsene = -99
+          lsewf = -99
+          tildf = -99
+          pd2fr = -99
+          p4sge = -99
+          nfgu = -99
+          nfgl = -99
+          nfpu = -99
+          nfpl = -99
+          wfpu = -99
+          wfgu = -99
+          tvr1 = -99
+          nftiu = -99
+          nftil = -99
+          wfsu = -99
+          nfsu = -99
+          wfnuu = -99
+          rlfnu = -99
+          ncnu = -99
+          xnfs = -99
+          rtno3 = -99
+          rtnh4 = -99
 
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P1V',p1v)
@@ -1996,7 +2071,7 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',lapot(1))
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAWS',lawrs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFV',lafv)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAF2',lafr)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFR',lafr)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'TBAM',tbam)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'GN%S',grns)
           ! N uptake variables in species file
@@ -2093,7 +2168,7 @@
         GENFLCHK = CROP//GENFLCHK(3:8)
 
         IF (FILEIOT .NE. 'DS4') THEN
-          IF (CUDIRFLE.NE.CUDIRFLP .OR. VARNO.NE.VARNOP) THEN
+          !IF (CUDIRFLE.NE.CUDIRFLP .OR. VARNO.NE.VARNOP) THEN
             WRITE (fnumwrk,*) ' '
             CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
             CALL CUREADR (CUDIRFLE,VARNO,'P1V',p1v)
@@ -2117,7 +2192,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'LA1S',lapot(1))
             CALL CUREADR (CUDIRFLE,VARNO,'LAWS',lawrs)
             CALL CUREADR (CUDIRFLE,VARNO,'LAFV',lafv)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAF2',lafr)
+            CALL CUREADR (CUDIRFLE,VARNO,'LAFR',lafr)
             CALL CUREADR (CUDIRFLE,VARNO,'TBAM',tbam)
             CALL CUREADR (CUDIRFLE,VARNO,'GN%S',grns)
             ! N uptake variables in species file
@@ -2146,7 +2221,7 @@
             !IF (G1 .NE. 0.0) G1 = 5.0 + G1* 5.00
             !IF (G2 .NE. 0.0) G2 = 0.65 + G2* 0.35
             !IF (G3 .NE. 0.0) G3 = -0.005 + G3* 0.35
-          ENDIF
+          !ENDIF
         ENDIF
 
         IF (PD(1).LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'P1',PD(1))
@@ -2157,12 +2232,12 @@
         IF (PD4FR(1).LE.0)CALL ECREADR (ECDIRFLE,ECONO,'P4FR1',PD4FR(1))
         IF (PD4FR(2).LE.0)CALL ECREADR (ECDIRFLE,ECONO,'P4FR2',PD4FR(2))
         IF (PARUV.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',paruv)
-        IF (PARUR.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',parur)
+        IF (PARUR.LT.-92.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',parur)
         IF (LAPOT(1).LE.0.0) 
      &   CALL ECREADR (ECDIRFLE,ECONO,'LA1S',lapot(1))
         IF (LAWRS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAWS',lawrs)
         IF (LAFV.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
-        IF (LAFR.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAF2',lafr)
+        IF (LAFR.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAFR',lafr)
         IF (VEFF.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'VEFF',veff)
         IF (GRNMN.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'GN%MN',grnmn)
         IF (GRNS.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'GN%S',grns)
@@ -2180,7 +2255,7 @@
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
         CALL ECREADR (ECDIRFLE,ECONO,'LLIFE',tvr1)
         LLIFE = INT(TVR1)
-        CALL ECREADR (ECDIRFLE,ECONO,'RS%S',rsfrs)
+        CALL ECREADR (ECDIRFLE,ECONO,'RS%S',rspcs)
         CALL ECREADR (ECDIRFLE,ECONO,'TIL#S',ti1lf)
         CALL ECREADR (ECDIRFLE,ECONO,'WFPU',wfpu)
         CALL ECREADR (ECDIRFLE,ECONO,'WFGU',wfgu)
@@ -2293,7 +2368,7 @@
         CALL SPREADR (SPDIRFLE,'LSHAW',lsaws)
         CALL SPREADR (SPDIRFLE,'SDAFR',sdafr)
         CALL SPREADR (SPDIRFLE,'RLDGR',rldgr)
-        CALL SPREADR (SPDIRFLE,'PTFX',ptfx)
+        CALL SPREADR (SPDIRFLE,'PTFMX',ptfx)
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
         CALL SPREADR (SPDIRFLE,'LAWMN',lawfrmn)
         CALL SPREADR (SPDIRFLE,'HDUR',hdur)
@@ -2529,11 +2604,12 @@
         WRITE (fnumwrk,*) '  NFPU,NFPL   :  ',nfpu,nfpl
         WRITE (fnumwrk,*) '  KCAN,KEP    :  ',kcan,kep
         WRITE (fnumwrk,*) '  LA1S,LLIFE  :  ',lapot(1),llife
+        WRITE (fnumwrk,*) '  LAFV,LAFR   :  ',lafv,lafr      
         WRITE (fnumwrk,*) '  AWNS,SGPHE  :  ',awns,p4sge
         WRITE (fnumwrk,*) '  TKFH        :  ',lt50h
         WRITE (fnumwrk,*) '  HTSTD       :  ',canhts
         WRITE (fnumwrk,*) '  LAWS,LAWCF  :  ',lawrs,lawcf
-        WRITE (fnumwrk,*) '  RS%S        :  ',rsfrs
+        WRITE (fnumwrk,*) '  RS%S        :  ',rspcs
         WRITE (fnumwrk,*) '  GN%S        :  ',grns 
         WRITE (fnumwrk,*) '  NB.This is the percentage of stem ',
      &                          'assimilates going to reserves'
@@ -2599,7 +2675,7 @@
         WRITE(fnumwrk,'(A17,2F8.2)')'   NO3MN,NH4MN   ',no3mn,nh4mn
         WRITE(fnumwrk,'(A17,2F8.2)')'   RLFNU,NCNU    ',rlfnu,ncnu
         WRITE(fnumwrk,'(A17,2F8.2)')'   TKUH,HDUR     ',lt50s,hdur
-        WRITE(fnumwrk,'(A17,2F8.2)')'   PTFX          ',ptfx
+        WRITE(fnumwrk,'(A17,2F8.2)')'   PTFMX         ',ptfx
         WRITE(fnumwrk,'(A17,2F8.2)')'   SSEN%,RSEN%   ',ssen,rsen
         WRITE(fnumwrk,'(A17,2F8.2)')'   SAWS,LSHAWS   ',saws,lsaws
         WRITE(fnumwrk,'(A17,2F8.2)')'   LSHFR,LAXS    ',lshfr,laxs
@@ -2608,6 +2684,62 @@
         WRITE(fnumwrk,'(A17,2F8.2)')'   NTUPF         ',ntupf       
         WRITE(fnumwrk,'(A17,2F8.2)')'   CHFR,CHSTG    ',chfr,chstg
         WRITE(fnumwrk,'(A17,2F8.2)')'   TPAR,TSRAD    ',part,sradt
+
+        IF (CROP.EQ.'WH') THEN
+          WRITE(fnumwrk,*) ' '
+          WRITE(fnumwrk,'(A55)')
+     &     ' PHASE DURATIONS                                       '
+          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES INPUTS     = ',
+     &     PD(1),PD(2),PD(3),PD(4),PD(5)
+          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES from PHINT = ',
+     &     PHINTS*400.0/95.0,PHINTS*3.0,PHINTS*2.0,200.0,PD(5)
+          WRITE(fnumwrk,'(A38)')
+     &     '  ZADOKS FROM CERES INPUTS AND PHINT  '
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P1   ->TS  2 ',
+     &      PD(1),PHINTS*400.0/95.0  
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P2   ->Jt  3 ',
+     &      PD(2)*PD2FR(1),PHINTS*3.0*PD2FR(1)  
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P3  TS->LL 4 ',
+     &     PD(2)*(1.0-PD2FR(1)),PHINTS*3.0*(1.0-PD2FR(1))             
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P4  LL->SE 5 ',
+     &     PD(3),PHINTS*2.0      
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P5 ESG->AN 6 ',
+     &     PD(4)*PD4FR(1),200.0*PD4FR(1)           
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P6  AN->EA 7 ', 
+     &     PD(4)*PD4FR(2),200.0*PD4FR(2)
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P7  EA->EL 8 ',
+     &     PD(4)*(1.0-(PD4FR(1)+PD4FR(2))),200*(1.0-(PD4FR(1)+PD4FR(2)))
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P8  EL->PM 9 ',
+     &     PD(5),PD(5)
+        ENDIF
+
+        IF (CROP.EQ.'BA') THEN
+          WRITE(fnumwrk,*) ' '
+          WRITE(fnumwrk,'(A55)')
+     &     ' PHASE DURATIONS                                       '
+          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES INPUTS     = ',
+     &     PD(1),PD(2),PD(3),PD(4),PD(5)
+          WRITE(fnumwrk,'(A21,5F6.1)') '  CERES from PHINT = ',
+     &     PHINTS*300.0/75.0,225.0,150.0,200.0,PD(5)
+          WRITE(fnumwrk,'(A38)')
+     &     '  ZADOKS FROM CERES INPUTS AND PHINT  '
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P1   ->TS  2 ',
+     &      PD(1),PHINTS*300.0/75.0  
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P2   ->Jt  3 ',
+     &      PD(2)*PD2FR(1),225.0*PD2FR(1)  
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P3  TS->LL 4 ',
+     &     PD(2)*(1.0-PD2FR(1)),225.0*(1.0-PD2FR(1))             
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P4  LL->SE 5 ',
+     &     PD(3),150.0      
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P5 ESG->AN 6 ',
+     &     PD(4)*PD4FR(1),200.0*PD4FR(1)           
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P6  AN->EA 7 ', 
+     &     PD(4)*PD4FR(2),200.0*PD4FR(2)
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P7  EA->EL 8 ',
+     &     PD(4)*(1.0-(PD4FR(1)+PD4FR(2))),200*(1.0-(PD4FR(1)+PD4FR(2)))
+          WRITE(fnumwrk,'(A16,F5.1,2X,F5.1)') '   P8  EL->PM 9 ',
+     &     PD(5),PD(5)
+        ENDIF
 
         ! End of initiation flags,etc..
         CFLINIT = 'Y'
@@ -3096,13 +3228,13 @@
           IF (XSTAGE.GT.P4SGE) THEN
             RSFR = 1.0
           ELSE
-            RSFR = RSFRS/100.0
+            RSFR = RSPCS/100.0
           ENDIF
           
           ! CO2 Assimilation
           PCARB = PARUV * PARAD/PLTPOP * PARI
           IF (XSTAGE.GE.3.0) THEN
-            IF (PARUR.GT.-90) THEN
+            IF (PARUR.GT.0.0) THEN
              PCARB = PARUR * PARAD/PLTPOP * PARI
             ELSE
              PCARB = PARUV * PARAD/PLTPOP * PARI
@@ -3554,8 +3686,10 @@
               ! (0.020*HARDI-0.10)*(TMIN*0.85+TMAX*0.15+10.0+.25*SNOW)))
               PLASC = AMAX1(0.0,
      &              AMIN1(CKCOLD*(PLA-SENLA),((PLA-SENLA)-TNUM*0.035)))
-              IF (PLASC.GT.0.0) WRITE(fnumwrk,'(A30,I4)')
-     &         ' Leaves damaged by cold on day',doy
+              IF (PLASC.GT.0.0.AND.(PLA-SENLA).GT.0.0) 
+     &         WRITE(fnumwrk,'(A30,I4,A14,F4.1)')
+     &         ' Leaves damaged by cold on day',doy,
+     &         ' Fraction lost',plasc/(pla-senla)
           
               ! Tiller and plant death
               IF (TKILL.GT.(TMIN+TMAX)/2.0) THEN
@@ -3597,6 +3731,7 @@
           PLAST = 0.0
           SENLFG = 0.0
           SENLFGRS = 0.0
+          senlfgrsloss = 0.0
           SENNLFG = 0.0
           SENNLFGRS = 0.0
           ! Following is to lose some leaf area when tillers die
@@ -3615,11 +3750,16 @@
           ENDIF
           IF (PLA-SENLA.GT.0.0) THEN
             SENLFG = AMIN1(LFWT*LSEWF,(AMAX1(0.0,
-     &      ((PLAS+PLAST+PLASS+PLASC)*LSEWF)
+     &      ((PLAS+PLASS)*LSEWF+(PLASC+PLAST))
      &      * (LFWT/(PLA-SENLA)))))
             SENLFGRS = AMIN1(LFWT*(1.0-LSEWF),(AMAX1(0.0,
-     &      ((PLAS+PLAST+PLASS+PLASC)*(1.0-LSEWF))
+     &      ((PLAS+PLASS)*(1.0-LSEWF))
      &       * (LFWT/(PLA-SENLA)))))
+            IF (PLASC+PLAST.GT.0.0.AND.(PLA-SENLA).GT.0.0) THEN
+              SENLFGRSLOSS = (PLASC+PLAST)/(PLA-SENLA)*RSWT
+            ELSE
+              SENLFGRSLOSS = 0.0
+            ENDIF 
             SENNLFG = AMIN1((LEAFN-GRAINNGL)*LSENNF,
      &                (SENLFG+SENLFGRS)*LANC*LSENNF)
             SENNLFGRS = AMIN1((LEAFN-GRAINNGL)*(1.0-LSENNF),
@@ -4056,6 +4196,7 @@
           ! Dry weights
           ! LAH No growth/development on planting day
           IF (YEARDOY.GT.YEARPLT) THEN   
+            SENLFGRSLOSSC = SENLFGRSLOSSC + SENLFGRSLOSS
             CARBOC = CARBOC + CARBOPHS
             RESPC = RESPC + RTRESP
             LFWT = LFWT + GROLF - SENLFG - SENLFGRS
@@ -4071,7 +4212,8 @@
               STWT = 0.0
             ENDIF
             GRWT = GRWT + GROGR - GROGRADJ
-            RSWT = RSWT + GRORS + GRORSGR + GROGRADJ + SENLFGRS
+            RSWT = RSWT + GRORS + GRORSGR + GROGRADJ + SENLFGRS - 
+     &             SENLFGRSLOSS
             
             ! Reserves distribution 
             ! Max concentration in leaves increases through life cycle.
@@ -4519,7 +4661,7 @@
             ZSTAGE =  ((XSTAGE-8.0)/2.0)*10.0
           ELSEIF (XSTAGE.GT.9.0) THEN
             ZSTAGE = (0.5+((XSTAGE-9.0)/2.0))*10.0
-          ELSEIF (XSTAGE.GE.0.0 .AND. XSTAGE.LE.2.3) THEN
+          ELSEIF (XSTAGE.GE.0.0 .AND. XSTAGE.LE.(2.0+pd2fr(1))) THEN
             IF (TNUM.LT.2.0) THEN
               ZSTAGE = 10.0 + LNUMSD
             ELSE
@@ -4527,8 +4669,8 @@
             ENDIF
             IF (ZSTAGE.LT.ZSTAGEP) ZSTAGE = ZSTAGEP
             ZSTAGEP = ZSTAGE
-          ELSEIF (XSTAGE.GT.2.3 .AND. XSTAGE.LE.3.0) THEN
-            ZSTAGE = 30.0 + 10.0*(XSTAGE-2.3)/(1.0-0.3)
+          ELSEIF (XSTAGE.GT.(2.0+pd2fr(1)) .AND. XSTAGE.LE.3.0) THEN
+            ZSTAGE = 30.0 + 10.0*(XSTAGE-(2.0+pd2fr(1)))/(1.0-pd2fr(1))
           ELSEIF (XSTAGE.GT.3.0 .AND. XSTAGE.LE.4.0) THEN
             ZSTAGE = 40.0 + 10.0*(XSTAGE-3.0)
           ELSEIF (XSTAGE.GT.4.0 .AND. XSTAGE.LE.5.0) THEN
@@ -5286,7 +5428,7 @@
      2        ' N STRESS DETERMINANTS       ')
               WRITE (NOUTPGF,2205)
  2205         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD',
-     N        '  TFDD VRNFD DYLFD',
+     N        '    DU VRNFD DYLFD',
      1        '  TFPD  WFPD  NFPD CO2FD RSFPD', 
      M        '  TFGD  WFGD  NFGD  WFTD  NFTD',
      &        ' WAVRD WUPRD  SWXD  EOPD',
@@ -5387,14 +5529,14 @@
               ! Plant Growth factors outputs
               WRITE (NOUTPGF,507)
      A        YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,
-     B        1.0-TFout,1.0-VF,1.0-DF,
+     B        DU,1.0-VF,1.0-DF,
      C        1.0-TFP,1.0-WFP,1.0-NFP,1.0-CO2FP,1.0-RSFP,
      D        1.0-TFG,1.0-WFG,1.0-NFG,1.0-WFTI,1.0-NFTI,
      H        AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),H2OA,EOP,
      I        SNH4PROFILE+SNO3PROFILE,LCNF,SCNF,RCNF
   507         FORMAT(
      a        I5,I4,2I6,F6.1,F6.1,
-     b        3F6.2,
+     b        F6.1,2F6.2,
      c        5F6.2,
      d        5F6.2,
      e        3F6.2,F6.1,F6.1,3F6.2)
@@ -5488,8 +5630,11 @@
      &       SDRATE+CARBOAC
             WRITE (fnumwrk,'(A27, F11.4)')'   CH2O RESPIRED B         ',
      &       RESPAC
+     
             WRITE (fnumwrk,'(A27,3F11.4)')'   CH2O SENESCED C  Tops,rt',
-     &       SENWAL(0)+SENWAS,SENWAL(0),SENWAS
+     &       SENWAL(0)+SENWAS,SENWAL(0),SENWAS                          
+            WRITE (fnumwrk,'(A27,F11.4)') '   CH2O LF RESERVES LOST C2',
+     &       SENLFGRSLOSSC*10.0*PLTPOP
             WRITE (fnumwrk,'(A27, F11.4)')'   CH2O IN LIVE+DEAD D     ',
      &       TWAD
             WRITE (fnumwrk,'(A27, F11.4)')'   CH2O IN DEAD MATTER     ',
@@ -5498,14 +5643,16 @@
      &       TWAD-DWAD
             WRITE (fnumwrk,'(A27, F11.4)')'   POST MATURITY RESERVES E',
      &       RSWADPM
-            WRITE (fnumwrk,'(A27, F11.4)')'   BALANCE (A-(B+C+D+E))   ',
+            WRITE (fnumwrk,'(A27, F11.4)')'   BALANCE (A-(B+C+C2+D+E))',
      &         SDRATE+CARBOAC-RESPAC-(SENWAL(0)+SENWAS)
-     &       - TWAD-RSWADPM
+     &       - TWAD-RSWADPM-(SENLFGRSLOSSC*10.0*PLTPOP)
             IF (TWAD.GT.0.0 .AND.
      &       ABS(SDRATE+CARBOAC-RESPAC-(SENWAL(0)+SENWAS)
-     &       - TWAD-RSWADPM)/TWAD .GT. 0.01)
+     &       - TWAD-RSWADPM-(SENLFGRSLOSSC*10.0*PLTPOP)     )
+     &       /TWAD .GT. 0.01)
      &       WRITE(fnumwrk,'(A29,A10,A1,I2)')
      &       '   PROBLEM WITH CH2O BALANCE ',EXCODE,' ',TN
+
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A22,A10,I3)')
      &       ' STAGE CONDITIONS FOR ',excode,tn
@@ -5568,7 +5715,7 @@
             IF (lfwt+stwt+rswt.GT.0) WRITE (fnumwrk,'(A20,F6.1)')
      &       '  % at maturity     ',rswt/(lfwt+stwt+rswt)*100.0
             WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A20,F6.2)')'  Reserves coeff    ',RSFRS
+            WRITE (fnumwrk,'(A20,F6.2)')'  Reserves coeff    ',RSPCS
             WRITE (fnumwrk,'(A20,F6.2)')'  Stem gr end stage ',P4SGE
             WRITE (fnumwrk,'(A20,F6.2)')
      &       '  Anthesis stage    ',(4.0+PD4(1)/PD(4))

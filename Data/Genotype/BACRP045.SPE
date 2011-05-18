@@ -1,6 +1,6 @@
 $SPECIES:BACRP045
 
-! LAST EDIT: 13/02/11
+! LAST EDIT: 14/05/11
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
 ! They have been developed from 'parameters' embedded in the code of
@@ -109,7 +109,7 @@ $SPECIES:BACRP045
   0.75  0.98  0.10
 ! Cold hardiness
 @ TKUH TKLFD TKTID TKSPN  HDUR HLOST HLOSF ! Kill temps,span,time->harden,loss
-  -6.0   5.0   2.0   6.0  10.0  10.0   0.2
+  -6.0  10.0   2.0   2.0  10.0  10.0   0.2
 ! Temperature responses
 ! AFRC vernalization=-4,3,10,17; Reinink=-1,0,4,8,9
 ! Earlier phs=0,5,26,45; gfc,n=-5,0,20,55
@@ -129,7 +129,7 @@ $SPECIES:BACRP045
 ! Water shortage effects
 ! 1. Based on ratio potential uptake/potential loss 
 ! (WFEU only in stand-alone Cropsim)
-@ WFPU  WFPL  WFGU  WFGL  WFTU  WFTL   WFS  WFSF  WFEU !Gr,phs,till,sen,evap
+@ WFPU  WFPL  WFGU  WFGL  WFTU  WFTL  WFSU  WFSF  WFEU !Gr,phs,till,sen,evap
    1.0   0.0   1.3   0.0   1.0   0.5   0.6   0.5   1.5
 @LLOSA
  0.02 ! Fraction of leaf area lost each day that water uptake ratio < WFS
@@ -138,7 +138,10 @@ $SPECIES:BACRP045
   0.50  0.25
 
 ! NITROGEN uptake,distribution,etc.
-! N uptake 
+! For standard CSM uptake routine
+@RTNO3 RTNH4
+ 0.006 0.006 
+! For modified uptake routine (Not generally used)
 @ NCNU RLFNU WFNUU WFNUL ! Length,soil N,soil water
     30   2.0   1.0     0  
 ! N demand 
@@ -148,13 +151,13 @@ $SPECIES:BACRP045
 @GN%MX GN%MN  SDN% ! Grain,seed
    4.5   0.3   1.9 
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
-   6.5   0.8   0.8   0.6  2.00  1.50                               
-   4.0   0.5   0.5   0.4  1.65  1.25                               
+   8.0  0.80  2.50  0.65  2.00  1.50                               
+   1.0  0.55  0.40  0.40  1.70  1.25                               
 ! N distribution/mobilization
 @NLAB% NPTFL ! %N that labile,min.% uptake used by leaf (> minima) 
     20   0.5
 ! N shortage effects (Fraction of span from lowest to upper N concentration)
-@ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL   NFS  NFSF ! Phs,gr,tillering,senesnce
+@ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF ! Phs,gr,tillering,senesnce
    1.0     0   1.0     0   1.0   0.8   0.4   0.1
 ! N shortage effects (Based on soil NO3 or NH4 concentration)
 @ NCRG  ! Root growth 

@@ -1,6 +1,6 @@
 $CULTIVARS:WHCER045  
 
-! LAST EDIT: 05/05/11
+! LAST EDIT: 14/05/11
 
 ! Coefficients used in the Cropsim-Ceres model differ from those used
 ! in DSSAT Version 3.5 AND 4.0. They can be calculated (approximately) from 
@@ -25,10 +25,10 @@ $CULTIVARS:WHCER045
 999992 MAXIMA               . 999992    60   200   999    50    80   8.0   150
                                                                               
 DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
-                                                                              
-IB1500 MANITOU           1,14 CAWH01     0    40   320    23    23   1.8    86 
-IB0488 NEWTON             1,6 USWH01    45    64   480    26    25   1.0    95  
-IB1015 MARIS FUNDIN       1,8 UKWH01    36    87   515    15    44   3.2   100
+
+IB1500 MANITOU           1,14 CAWH01     8   100   320    23    23   2.5    86 
+IB0488 NEWTON             1,6 USWH01    45    75   500    26    25   2.0    95  
+IB1015 MARIS FUNDIN       1,8 UKWH01    30    83   515    15    44   3.2   100
                                                                                                                                                                                                                   
 ! COEFF       DEFINITION
 ! ========    ==========

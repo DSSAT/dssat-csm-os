@@ -1,6 +1,6 @@
 $CULTIVARS:BACER045  
 
-! LAST EDIT: 05/05/11
+! LAST EDIT: 14/05/11
 
 ! Coefficients used in the Cropsim-Ceres model differ from those used
 ! in DSSAT Version 3.5 AND 4.0. They can be calculated (approximately) from 
@@ -25,10 +25,10 @@ $CULTIVARS:BACER045
 999992 MAXIMA               . 999992    60   200   999    50    80   8.0   150
                                                                                 
 DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60 
-                                                                              
-IB0101 A.Abiad (2)        1,2 SY0001     6    21   220    13    40   1.1    89 
-IB0102 Beecher(6)         1,2 SY0001     4    26   230    10    41   2.3    89 
-IB0030 Maris Badger CSM   1,9 US0001     3    31   760    23    49   0.5    89 
+
+IB0101 A.Abiad (2)        1,2 SY0001    10    62   240    13    40   1.0    89 
+IB0102 Beecher(6)         1,2 SY0001    10    70   260    10    41   2.0    89 
+IB0030 Maris Badger CSM   1,9 US0001    10    90   760    23    49   1.0    89 
                        
 ! COEFF       DEFINITION
 ! ========    ==========

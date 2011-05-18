@@ -1,6 +1,6 @@
 $SPECIES:BACER045
 
-! LAST EDIT: 24/04/11
+! LAST EDIT: 14/05/11
 
 ! Coefficients differ from those used in DSSAT  Versions 3.5 and 4.0x. 
 ! They have been developed from 'parameters' embedded in the code of 
@@ -66,7 +66,7 @@ $SPECIES:BACER045
    990  1.43
   9999  1.50
 ! CH2O distribution/mobilization  
-@ PTFX
+@PTFMX
   0.98
 @ PTFS  PTFA  STFR
   0.65  0.10  0.00
@@ -185,7 +185,7 @@ $SPECIES:BACER045
 ! PPTHR   Photoperiod threshold (h above which no effect)
 ! PTFA    Partition to tops,adjustment coeff.by phase (#)
 ! PTFS    Partition to tops,standard,by stage (fr)
-! PTFX    Partition fraction to tops,maximum (fr)
+! PTFMX   Partition fraction to tops,maximum (fr)
 ! RLDGR   Root length/root depth growth ratio (cm/cm;greater->more early rt.)
 ! RLIG%   Root lignin (%)
 ! RLWR    Root length weight ratio (m/(0.01g)

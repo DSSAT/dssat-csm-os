@@ -790,6 +790,7 @@
       REAL          NUPAD         ! N uptake rate (/d)             kg/ha
       REAL          NUPAP         ! Total root N uptake rate,potnl kg/ha
       REAL          NUPAPCSM      ! Total N uptake rate,potnl,CSM  kg/ha
+      REAL          NUPAPCSM1     ! Total N uptake rate,pot,CSMmod kg/ha
       REAL          NUPAPCRP      ! Total N uptake rate,potnl,CSCR kg/ha
       REAL          NUPC          ! N uptake,cumulative            g/p
       REAL          NUPD          ! N uptake                       g/p
@@ -1015,6 +1016,8 @@
       REAL          RTDEP         ! Root depth                     cm
       REAL          RTDEPG        ! Root depth growth              cm/d
       REAL          RTDEPTMP      ! Root depth,temporary value     cm/d
+      REAL          RTNO3         ! N uptake/root length           mg/cm
+      REAL          RTNH4         ! N uptake/root length           mg/cm
       REAL          RTNSL(20)     ! Root N senesced by layer       g/p
       REAL          RTRESP        ! Root respiration               g/p
       INTEGER       RTSLXDATE     ! Roots into last layer date     YYDDD
@@ -1128,6 +1131,7 @@
       REAL          SLAOUT        ! Specific leaf area for output  cm2/g
       REAL          SLIGP         ! Stem lignin concentration      %
       REAL          SLPF          ! Soil factor for photosynthesis %
+      REAL          SMDFR         ! Soil moisture factor,N uptake  #
       INTEGER       SN            ! Sequence number,crop rotation  #
       REAL          SNAD          ! Stem N (stem+sheath+rs)        kg/ha
       REAL          SNCM          ! Stem N conc,minimum            fr
@@ -2346,6 +2350,7 @@
         nupad = 0.0
         nupap = 0.0
         nupapcsm = 0.0
+        nupapcsm1 = 0.0
         nupapcrp = 0.0
         nupc = 0.0
         nupd = 0.0
@@ -3057,6 +3062,83 @@
 !       Read cultivar information
 !-----------------------------------------------------------------------
 
+        ! Ecotype coefficients re-set
+        canhts = -99
+        awns = -99
+        rsca = -99
+        ti1lf = -99
+        tifac = -99
+        tilpe = -99
+        tilds = -99
+        tilde = -99
+        grns = -99
+        srns = -99
+        srprs = -99
+        srprs = -99
+        tkfh = -99
+        lsens = -99
+        lsene = -99
+        ssphase = -99
+        lseni = -99
+        pdsri = -99
+        phintl = -99
+        phintf = -99
+        snofx = -99
+        gwtcf = -99
+        gnowf = -99
+        gnonf = -99
+        gwtat = -99
+        gwtaa = -99
+        parue = -99
+        paru2 = -99
+        la1s = -99
+        laxs = -99
+        laws = -99
+        lafv = -99
+        lafr = -99
+        rdgs = -99
+        tildf = -99
+        tilsf = -99
+        nfgu = -99
+        nfgl = -99
+
+        ! Species coefficients re-set
+        pd = -99
+        lsene = -99 
+        pdsri = -99 
+        pdsri = -99 
+        tilde = -99 
+        tilds = -99 
+        tilpe = -99 
+        llifa = -99 
+        phintl = -99 
+        phintf = -99 
+        srfr = -99 
+        wfnuu = -99 
+        wfnul = -99 
+        tildf = -99 
+        rdgs = -99 
+        laxs = -99 
+        rlfnu = -99 
+        rlwr = -99 
+        nfgl = -99 
+        nfgu = -99 
+        nfpu = -99 
+        nfpl = -99 
+        ncnu = -99 
+        kcan = -99 
+        lafr = -99 
+        lafv = -99 
+        lawcf = -99 
+        dfpe = -99 
+        ppexp = -99 
+        tilsf = -99 
+        gwtaa = -99 
+        gwtat = -99 
+        gwtcf = -99 
+        gnowf = -99 
+        gnonf = -99 
+
         IF (FILEIOT(1:2).EQ.'DS') THEN
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VREQ',vreq)
@@ -3109,9 +3191,7 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFS',lafs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAF#',lafno)
-      WRITE(FNUMWRK,*)' LAWS BEFORE XREAD ',LAWS     
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAWS',laws)
-      WRITE(FNUMWRK,*)' LAWS AFTER XREAD ',LAWS     
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUU',wfnuu)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUL',wfnul)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NCNU',ncnu)
@@ -3235,6 +3315,7 @@
         CALL ECREADR (ECDIRFLE,ECONO,'SSPHS',ssphase(1))
         CALL ECREADR (ECDIRFLE,ECONO,'SSPHE',ssphase(2))
         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
+        CALL ECREADR (ECDIRFLE,ECONO,'PSRI',pdsri)
         IF (PHINTL(1).LE.0) 
      &   CALL ECREADR(ECDIRFLE,ECONO,'PHL1',phintl(1))
         IF (PHINTL(2).LE.0) 
@@ -3243,8 +3324,6 @@
      &   CALL ECREADR(ECDIRFLE,ECONO,'PHF2',phintf(2))
         IF (PHINTF(3).LE.0)
      &   CALL ECREADR(ECDIRFLE,ECONO,'PHF3',phintf(3))
-        WRITE(FNUMWRK,*)' PHL1,PHL2,PHF2,PHF3 ',
-     &    PHINTL(1),PHINTL(2),PHINTF(2),PHINTF(3)
         CALL ECREADR (ECDIRFLE,ECONO,'S#FX',snofx)
         IF (SNOFX.LE.0.0)
      &   CALL ECREADR (ECDIRFLE,ECONO,'SNOFX',snofx)
@@ -3274,9 +3353,7 @@
         ! Leaf area
         IF (LA1S.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)
         IF (LAXS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAXS',laxs)
-      WRITE(FNUMWRK,*)' LAWS BEFORE ECREAD ',LAWS     
         IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAWS',laws)
-      WRITE(FNUMWRK,*)' LAWS AFTER ECREAD ',LAWS     
         IF (LAFV.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
         IF (LAFR.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFR',lafr)
         ! Roots
@@ -3314,11 +3391,10 @@
         CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
         CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
         CALL SPREADR (SPDIRFLE,'LWLOS',lsewf)
-        CALL SPREADR (SPDIRFLE,'NFS'  ,nfs)
+        CALL SPREADR (SPDIRFLE,'NFSU'  ,nfs)
         CALL SPREADR (SPDIRFLE,'NFSF' ,nfsf)
         CALL SPREADR (SPDIRFLE,'NFTL ',nftl)
         CALL SPREADR (SPDIRFLE,'NFTU ',nftu)
-        IF (lsene.LE.0.0) CALL SPREADR (SPDIRFLE,'LSENE',lsene)
         CALL SPREADR (SPDIRFLE,'LSHAR',lsawr)
         CALL SPREADR (SPDIRFLE,'LSHAW',lsawv)
         CALL SPREADR (SPDIRFLE,'LSHFR',lshfr)
@@ -3330,9 +3406,6 @@
         CALL SPREADR (SPDIRFLE,'PEMRG',pecm)
         CALL SPREADR (SPDIRFLE,'PGERM',pgerm)
         CALL SPREADR (SPDIRFLE,'PDMH' ,pdmtohar)
-        CALL SPREADR (SPDIRFLE,'PSRI',pdsri)
-        IF (PDSRI.LE.0.0)
-     &   CALL SPREADR (SPDIRFLE,'PDSRI',pdsri)
         CALL SPREADR (SPDIRFLE,'PHSV' ,phsv)
         CALL SPREADR (SPDIRFLE,'PHTV' ,phtv)
         CALL SPREADR (SPDIRFLE,'PPTHR',ppthr)
@@ -3364,10 +3437,7 @@
         CALL SPREADR (SPDIRFLE,'SLIG%',sligp)
         CALL SPREADR (SPDIRFLE,'TGR02',tgr(2))
         CALL SPREADR (SPDIRFLE,'TGR20',tgr(20))
-        IF (tilde.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHE',tilde)
-        IF (tilds.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHS',tilds)
         CALL SPREADR (SPDIRFLE,'TILIP',tilip)
-        IF (tilpe.LE.0.0) CALL SPREADR (SPDIRFLE,'TILPE',tilpe)
         CALL SPREADR (SPDIRFLE,'TIL#X',tinox)
         CALL SPREADR (SPDIRFLE,'TKLFD',tklfd)
         CALL SPREADR (SPDIRFLE,'TKSPN',tkspan)
@@ -3387,19 +3457,27 @@
         CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
         CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
         CALL SPREADR (SPDIRFLE,'WFRGU',wfrtg)
-        CALL SPREADR (SPDIRFLE,'WFS'  ,wfs)
+        CALL SPREADR (SPDIRFLE,'WFSU'  ,wfs)
         CALL SPREADR (SPDIRFLE,'WFSF' ,wfsf)
         CALL SPREADR (SPDIRFLE,'WFTL' ,wftl)
         CALL SPREADR (SPDIRFLE,'WFTU' ,wftu)
         CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
+        CALL SPREADR (SPDIRFLE,'RTNO3',rtno3)
+        CALL SPREADR (SPDIRFLE,'RTNH4',rtnh4)
         ! LAH Following set up to allow for change in stem fraction
         ! Currently not used ... just one stem fraction (STFR)
-        IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
         IF (SWFRN.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRN',swfrn)
         IF (SWFRNL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRNL',swfrnl)
         IF (SWFRXL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFXL',swfrxl)
         IF (SWFRX.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx)
         ! Following may be temporarily in ECO or CUL file
+        IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
+        IF (lsene.LE.0.0) CALL SPREADR (SPDIRFLE,'LSENE',lsene)
+        IF (PDSRI.LE.0.0) CALL SPREADR (SPDIRFLE,'PSRI',pdsri)
+        IF (PDSRI.LE.0.0) CALL SPREADR (SPDIRFLE,'PDSRI',pdsri)
+        IF (tilde.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHE',tilde)
+        IF (tilds.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHS',tilds)
+        IF (tilpe.LE.0.0) CALL SPREADR (SPDIRFLE,'TILPE',tilpe)
         IF (LLIFA.LE.0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
 
         IF (PHINTL(1).LE.0) CALL SPREADR (SPDIRFLE,'PHL1',phintl(1))
@@ -3610,6 +3688,19 @@
         
         ! Set stage defaults if necessary
         IF (LAFST.LE.0.0) LAFST = MIN(PSX,MSTG+1)
+        
+        ! For CSM N uptake routine 
+        IF (rtno3.le.0.0) THEN
+          RTNO3 = 0.006    ! N uptake/root length (mgN/cm,.006)
+          WRITE (fnumwrk,*) ' '
+          WRITE (fnumwrk,*) ' Default of 0.006 used for RTNO3'
+        ENDIF  
+        IF (rtnh4.le.0.0) THEN
+          RTNH4 = RTNO3     ! N uptake/root length (mgN/cm,.006)
+          WRITE (fnumwrk,*) ' '
+          WRITE (fnumwrk,*) ' Default of ',RTNO3,' used for RTNH4'
+        ENDIF  
+
 
 !-----------------------------------------------------------------------
 !       Calculate PHASE DURATIONS FROM phint if missing
@@ -4337,7 +4428,7 @@
           WRITE(fnumwrk,*)'  Nfpu,L ',NFPU,NFPL       
           WRITE(fnumwrk,*)'  Nfgu,L ',NFGU,NFGL       
           WRITE(fnumwrk,*)'  Nftu,L ',NFTU,NFTL       
-          WRITE(fnumwrk,*)'  Nfs,Sf ',NFS,NFSF      
+          WRITE(fnumwrk,*)'  Nfsu,Sf',NFS,NFSF      
 
           WRITE(fnumwrk,*)' '                            
           WRITE(fnumwrk,*)' CASSAVA                '
@@ -5321,8 +5412,6 @@
               IF(CUMDU.GE.LGPHASEDU(1).AND.CUMDU.LT.LGPHASEDU(2)) THEN
               
                 ! NEW LAH MARCH 2010
-            write(fnumwrk,*)' phintstg,phintl(p),phint ',
-     &       phintstg,phintl(phintstg),phint
                 IF (PHINTL(PHINTSTG).LE.0.0.
      &               OR.LNUM+DULF/PHINT.LE.PHINTL(PHINTSTG)) THEN
                   LNUMEND = LNUM + DULF/PHINT
@@ -5353,7 +5442,6 @@
                 ENDIF
                 ! END NEW
               ENDIF
-          write(fnumwrk,*) ' phint after re-alculating ',phint
               
               ! Restrict to maximum
               LNUMEND = AMIN1(FLOAT(LNUMX),LNUMEND)
@@ -5566,7 +5654,7 @@
      &              PLASN = AMAX1(0.0,AMIN1(
      &              (PLA-SENLA)-PLAS,(PLA-SENLA)*LLOSA))
                 ENDIF
-                PLASS = PLASW + PLASN
+                PLASS = PLASW + PLASN    ! Loss because of stress
 
                 ! Tiller death - physiological
                 TILWTR = 1.0
@@ -5632,11 +5720,11 @@
                   SENRS = AMIN1(RSWT,RSWT*PLASC/(PLA-SENLA))
                 ELSE
                   ! If normal senescence
-                  SENLFG = AMIN1(LFWT*LSEWF,(AMAX1(0.0,
-     &            (((PLAS+PLASS)*LSEWF))
+                  SENLFG = AMIN1(LFWT*LSEWF,(AMAX1(0.0,         
+     &            ((PLAS*LSEWF))
      &            * (LFWT/(PLA-SENLA)))))
-                  SENLFGRS = AMIN1(LFWT*(1.0-LSEWF),(AMAX1(0.0,
-     &            ((PLAS+PLASS)*(1.0-LSEWF))
+                  SENLFGRS = AMIN1(LFWT*(1.0-LSEWF),(AMAX1(0.0,  
+     &            (PLAS*(1.0-LSEWF))
      &            * (LFWT/(PLA-SENLA)))))
                 ENDIF
               ENDIF
@@ -5800,7 +5888,6 @@
               ENDIF
               ! Partition adjustment for stress effects
               PTF = AMIN1(PTFMX,PTF-PTFA*(1.0-AMIN1(WFG,NFG)))
-         WRITE(FNUMWRK,*)' CARBOBEG,PTF ',CARBOBEG,PTF
               CARBOR = AMAX1(0.0,(CARBOBEG+CARBOADJ))*(1.0-PTF)
               CARBOT = CARBO - CARBOR
 
@@ -5860,7 +5947,6 @@
                 ELSEIF(CUMDU.GT.PDSRI)THEN
                   SRDAYFR = 1.0
                 ENDIF
-                WRITE(FNUMWRK,*)' SRFR,CARBOT ',SRFR,CARBOT
                 IF (SRNOPD.GT.0) GROSR = SRFR*CARBOT * SRDAYFR
               ENDIF
 
@@ -5997,8 +6083,6 @@
               ENDIF
 
               LAWL(1) = AMAX1(LAWS*LAWFF,LAWS-(LAWS*LAWCF)*(LNUMSG-1))
-           WRITE(FNUMWRK,*)' LAWL(1),LAWS,LAWFF,LAWS,LAWCF,LNUMSG ',
-     &       LAWL(1),LAWS,LAWFF,LAWS,LAWCF,LNUMSG 
               LAWL(2) = AMAX1(LAWS*LAWFF,LAWS-(LAWS*LAWCF)*LNUMSG)
               LAWL(1) = LAWL(1) * TFLAW * WFLAW
               LAWL(2) = LAWL(2) * TFLAW * WFLAW
@@ -6152,12 +6236,8 @@
                 IF (LAWL(1).GT.0.0 .AND. LAWL(2).GT.0.0)
      &           GROLFP = ( PLAGTP(1)/LAWL(1) + PLAGTP(2)/LAWL(2))
      &                  / (1.0-LSHFR)
-        WRITE(FNUMWRK,*)
-     &   ' GROLFP,PLAGTP(1),LAWL(1),PLAGTP(2),LAWL(2),LSHFR ',
-     &    GROLFP,PLAGTP(1),LAWL(1),PLAGTP(2),LAWL(2),LSHFR 
 
                 ! Potential leaf+stem weight increase.
-           WRITE(FNUMWRK,*)' GROLSP,GROLFP ',GROLSP,GROLFP     
                 IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
                   GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))
                 ELSE
@@ -6167,7 +6247,6 @@
                 IF (GROLSP.GT.0.0) THEN
                   ! Leaf+stem weight increase from assimilates
                   GROLS = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROGRPA-GROSR))
-            WRITE(FNUMWRK,*)' GROLS,GROLSP ',GROLS,GROLSP
                 
                   IF (GROLS.LT.GROLSP) THEN
                     ! Leaf weight increase from seed reserves
@@ -6175,7 +6254,6 @@
                     CARBOLSD = AMIN1((GROLSP-GROLS),SEEDRSAV)
                     SEEDRSAV = SEEDRSAV - CARBOLSD
                     GROLS = GROLS + CARBOLSD
-            WRITE(FNUMWRK,*)' GROLS        ',GROLS             
                     IF (LAI.LE.0.0.AND.CARBOLSD.LE.0.0
      &                            .AND.SEEDRSAV.LE.0.0          
      &                            .AND.ESTABLISHED.NE.'Y') THEN
@@ -6617,80 +6695,119 @@
               ! Uptake
               
               IF (MERNU.EQ.'CSM') THEN
-              ! Original from CSM.  
-              ! RNUMX = RTNO3,RTNH4 = N uptake/root length (mgN/cm,.006)
-              ! RNO3U,RNH4  = Nitrogen uptake (kg N/ha)
-              RNUMX = 0.006    ! Only used for comparative purposes
-              WFNU = 1.0
-              NUPAP = 0.0
-              RNO3U = 0.0
-              RNH4U = 0.0
-              ! LAH WORKING
-              TVR1 = - AMAX1(0.01,(0.20-NCNU*0.004))
-              ! TVR1 originally set at 0.08,which comes from NCNU=30
-              TVR1 = -0.08  ! May 2011
-              DO L=1,NLAYR
-                IF (RLV(L) .GT. 0.0) THEN
-                  NLAYRROOT = L
-                  FNH4 = 1.0-EXP(TVR1 * NH4LEFT(L))
-                  FNO3 = 1.0-EXP(TVR1 * NO3LEFT(L))
-                 ! LAH Note that no uptake below 0.04
-                  IF (FNO3 .LT. 0.04) FNO3 = 0.0
-                  IF (FNO3 .GT. 1.0)  FNO3 = 1.0
-                  IF (FNH4 .LT. 0.04) FNH4 = 0.0
-                  IF (FNH4 .GT. 1.0)  FNH4 = 1.0
-                  IF (SW(L) .LE. DUL(L)) THEN
-                    IF (WFNUU-WFNUL.GT.0.0) WFNU = 
+                ! Original from CSM with some 'modification'.  
+                ! RNUMX = RTNO3,RTNH4 = N uptake/root length (mgN/cm,.006)
+                ! RNO3U,RNH4  = Nitrogen uptake (kg N/ha)
+                !RNUMX = 0.006    
+                WFNU = 1.0
+                NUPAP = 0.0
+                RNO3U = 0.0
+                RNH4U = 0.0
+                ! LAH WORKING
+                TVR1 = - AMAX1(0.01,(0.20-NCNU*0.004))
+                ! TVR1 originally set at 0.08,which comes from NCNU=30
+                TVR1 = -0.08  ! May 2011
+                DO L=1,NLAYR
+                  IF (RLV(L) .GT. 0.0) THEN
+                    NLAYRROOT = L
+                    FNH4 = 1.0-EXP(TVR1 * NH4LEFT(L))
+                    FNO3 = 1.0-EXP(TVR1 * NO3LEFT(L))
+                   ! LAH Note that no uptake below 0.04
+                    IF (FNO3 .LT. 0.04) FNO3 = 0.0
+                    IF (FNO3 .GT. 1.0)  FNO3 = 1.0
+                    IF (FNH4 .LT. 0.04) FNH4 = 0.0
+                    IF (FNH4 .GT. 1.0)  FNH4 = 1.0
+                    IF (SW(L) .LE. DUL(L)) THEN
+                      IF (WFNUU-WFNUL.GT.0.0) WFNU = 
      &                AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
-                  WFNU = (SW(L) - LL(L)) / (DUL(L) - LL(L)) ! May 2011 
-                  ELSE
-                    WFNU = 1.0-(SW(L)-DUL(L))/(SAT(L)-DUL(L))
-                    ! Wet soil effect not implemented
-                    WFNU = 1.0
+                    WFNU = (SW(L) - LL(L)) / (DUL(L) - LL(L)) ! May 2011
+                    ELSE
+                      WFNU = 1.0-(SW(L)-DUL(L))/(SAT(L)-DUL(L))
+                      ! Wet soil effect not implemented
+                      WFNU = 1.0
+                    ENDIF
+                    IF (WFNU.LT.0.0) WFNU = 0.0
+                    !RNO3U(L) = RLV(L)*WFNU*DLAYR(L)*100.0 *RNUMX*FNO3
+                    RFAC = RLV(L) * WFNU * WFNU * DLAYR(L) * 100.0
+                    RNO3U(L) = RFAC * FNO3 * RTNO3
+                    RNH4U(L) = RFAC * FNH4 * RTNH4
+                    RNO3U(L) = MAX(0.0,RNO3U(L))
+                    RNH4U(L) = MAX(0.0,RNH4U(L))
+                    NUPAP = NUPAP + RNO3U(L) + RNH4U(L) !kg[N]/ha
+                    NUPAPCSM1 = NUPAP
                   ENDIF
-                  IF (WFNU.LT.0.0) WFNU = 0.0
-                  !RNO3U(L) = RLV(L)*WFNU*DLAYR(L)*100.0 *RNUMX*FNO3
-                  RFAC = RLV(L) * WFNU * WFNU * DLAYR(L) * 100.0
-                  RNO3U(L) = RFAC * FNO3 * RNUMX
-                  RNH4U(L) = RFAC * FNH4 * RNUMX
+                ENDDO
+                ! Below as in CSCER
+                ! Calculate potential N uptake in soil layers with roots
+                RNO3U = 0.0
+                RNH4U = 0.0
+                NUPAP = 0.0
+                NUPAPCSM = 0.0
+                DO L=1,NLAYR
+                 IF (RLV(L) .GT. 1.E-6) THEN
+                  FNH4 = 1.0 - EXP(-0.08 * NH4LEFT(L))
+                  FNO3 = 1.0 - EXP(-0.08 * NO3LEFT(L))
+                  IF (FNO3 .LT. 0.04) FNO3 = 0.0  
+                  IF (FNO3 .GT. 1.0)  FNO3 = 1.0
+                  IF (FNH4 .LT. 0.04) FNH4 = 0.0  
+                  IF (FNH4 .GT. 1.0)  FNH4 = 1.0
+                  SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
+                  IF (SMDFR .LT. 0.0) THEN
+                    SMDFR = 0.0
+                  ENDIF
+                  IF (SW(L) .GT. DUL(L)) THEN
+                    SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
+                    ! Wet soil effect not implemented
+                    SMDFR = 1.0
+                  ENDIF
+                  RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
+                  !  RLV = Rootlength density (cm/cm3)
+                  !  SMDFR = relative drought factor
+                  !  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)  
+                  !  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
+                  RNO3U(L) = RFAC * FNO3 * RTNO3
+                  RNH4U(L) = RFAC * FNH4 * RTNH4
                   RNO3U(L) = MAX(0.0,RNO3U(L))
                   RNH4U(L) = MAX(0.0,RNH4U(L))
+                  !TRNU = TRNU + RNO3U(L) + RNH4U(L) !kg[N]/ha
                   NUPAP = NUPAP + RNO3U(L) + RNH4U(L) !kg[N]/ha
                   NUPAPCSM = NUPAP
-                ENDIF
-              ENDDO
+                 ENDIF
+                ENDDO
+                ! To choose which one!
+                nupap = nupapcsm
               ENDIF
               
               IF (MERNU.EQ.'CRP') THEN
-              WFNU = 0.0
-              NUPAP = 0.0
-              RNO3U = 0.0
-              RNH4U = 0.0
-              ! Potential N supply in soil layers with roots (NUPAP)
-              DO L = 1, NLAYR
-                IF (RLV(L).GT.0.0) THEN
-                  NLAYRROOT = L
-                  IF (SW(L).LE.DUL(L)) THEN
-                    IF (WFNUU-WFNUL.GT.0.0) WFNU = 
-     &              AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
-                  ELSE
-                    ! LAH Wet soil effect. Not implemented because 
-                    ! problem when irrigated at planting/emergence
-                    WFNU = AMAX1
-     &               (0.,AMIN1(1.,(SW(L)-DUL(L))/(SAT(L)-DUL(L))))
-                    WFNU = 1.0
+                WFNU = 0.0
+                NUPAP = 0.0
+                RNO3U = 0.0
+                RNH4U = 0.0
+                ! Potential N supply in soil layers with roots (NUPAP)
+                DO L = 1, NLAYR
+                  IF (RLV(L).GT.0.0) THEN
+                    NLAYRROOT = L
+                    IF (SW(L).LE.DUL(L)) THEN
+                      IF (WFNUU-WFNUL.GT.0.0) WFNU = 
+     &                AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
+                    ELSE
+                      ! LAH Wet soil effect. Not implemented because 
+                      ! problem when irrigated at planting/emergence
+                      WFNU = AMAX1
+     &                 (0.,AMIN1(1.,(SW(L)-DUL(L))/(SAT(L)-DUL(L))))
+                      WFNU = 1.0
+                    ENDIF
+                    NH4FN = AMIN1(1.0,AMAX1(0.0,NH4LEFT(L)/NCNU))
+                    NO3FN = AMIN1(1.0,AMAX1(0.0,NO3LEFT(L)/NCNU))
+                    RLFN =  AMAX1(0.,AMIN1(1.,RLV(l)/(RLFNU/1000.0)))
+                    ! The 1000 is because read as cm/dm3,not cm/cm3
+                    ! Original also had SHF as a limitant
+                    RNO3U(L) = NO3LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NO3FN)
+                    RNH4U(L) = NH4LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NH4FN)
+                    NUPAP = NUPAP + RNO3U(L) + RNH4U(L)
+                    NUPAPCRP = NUPAP
                   ENDIF
-                  NH4FN = AMIN1(1.0,AMAX1(0.0,NH4LEFT(L)/NCNU))
-                  NO3FN = AMIN1(1.0,AMAX1(0.0,NO3LEFT(L)/NCNU))
-                  RLFN =  AMAX1(0.,AMIN1(1.,RLV(l)/(RLFNU/1000.0)))
-                  ! The 1000 is because read as cm/dm3,not cm/cm3
-                  ! Original also had SHF as a limitant
-                  RNO3U(L) = NO3LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NO3FN)
-                  RNH4U(L) = NH4LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NH4FN)
-                  NUPAP = NUPAP + RNO3U(L) + RNH4U(L)
-                  NUPAPCRP = NUPAP
-                ENDIF
-              END DO
+                END DO
               ENDIF
 
               ! Ratio (NUPRATIO) to indicate N supply for output
@@ -8764,7 +8881,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      2               ' N STRESS DETERMINANTS        ')
               WRITE (NOUTPGF,2205)
  2205         FORMAT ('@YEAR DOY   DAS   DAP TMEAN TCDIF  GSTD',
-     N               '  TFDD VRNFD DYLFD',
+     N               '    DU VRNFD DYLFD',
      1               '  TFPD  WFPD  NFPD CO2FD RSFPD', 
      M               '  TFGD  WFGD  NFGD  WFTD  NFTD',
      &               ' WAVRD WUPRD  SWXD  EOPD',
@@ -8772,14 +8889,14 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPGF,507)
      A      YEAR,DOY,DAS,DAP,TMEAN,TCAN-TMEAN,GSTAGEC,
-     B      1.0-TFD,1.0-VF,1.0-DFOUT,
+     B      DU,1.0-VF,1.0-DFOUT,
      C      1.0-TFP,1.0-WFP,1.0-NFP,1.0-CO2FP,1.0-RSFP,
      D      1.0-TFG,1.0-WFG,1.0-NFG,1.0-WFT,1.0-NFT,
      H      AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),H2OA,EOP,
      I      SNO3PROFILE+SNH4PROFILE,LNCR,SNCR,RNCR
   507       FORMAT(
      a      I5,I4,2I6,2F6.1,A6,
-     b      3F6.2,
+     b      F6.1,2F6.2,
      c      5F6.2,
      d      5F6.2,
      e      2F6.2,F6.1,F6.2,
