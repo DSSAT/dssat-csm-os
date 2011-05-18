@@ -1,6 +1,6 @@
 !-----------------------------------------------------------------------
 !  CROPSIM CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
-!  Last edit 27/06/10 LAH
+!  Last edit 17/05/11 LAH
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCROP (FILEIOIN, RUN, TN, RN, RNMODE,    !Command line
@@ -3191,7 +3191,7 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFS',lafs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAF#',lafno)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAWS',laws)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SLAS',laws)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUU',wfnuu)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUL',wfnul)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NCNU',ncnu)
@@ -3265,7 +3265,7 @@
           CALL CUREADR (CUDIRFLE,VARNO,'LAXND',laxno)
           CALL CUREADR (CUDIRFLE,VARNO,'LAFS',lafs)
           CALL CUREADR (CUDIRFLE,VARNO,'LAF#',lafno)
-          CALL CUREADR (CUDIRFLE,VARNO,'LAWS',laws)
+          CALL CUREADR (CUDIRFLE,VARNO,'SLAS',laws)
           CALL CUREADR (CUDIRFLE,VARNO,'WFNUU',wfnuu)
           CALL CUREADR (CUDIRFLE,VARNO,'WFNUL',wfnul)
           CALL CUREADR (CUDIRFLE,VARNO,'NCNU',ncnu)
@@ -3333,7 +3333,7 @@
         CALL ECREADR (ECDIRFLE,ECONO,'SWFRN',swfrn)
         CALL ECREADR (ECDIRFLE,ECONO,'SWFNL',swfrnl)
         CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl)
-        CALL ECREADR (ECDIRFLE,ECONO,'LAWCF',lawcf)
+        CALL ECREADR (ECDIRFLE,ECONO,'SLACF',lawcf)
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
         ! Following may have been (temporarily) in the CUL file
         ! Grains
@@ -3353,7 +3353,7 @@
         ! Leaf area
         IF (LA1S.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)
         IF (LAXS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAXS',laxs)
-        IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAWS',laws)
+        IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',laws)
         IF (LAFV.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
         IF (LAFR.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFR',lafr)
         ! Roots
@@ -3382,10 +3382,10 @@
         CALL SPREADR (SPDIRFLE,'HLOST',hlosstemp)
         CALL SPREADR (SPDIRFLE,'HMPC', hmpc)
         CALL SPREADR (SPDIRFLE,'LAFST',lafst)
-        CALL SPREADR (SPDIRFLE,'LAWFF',lawff)
-        CALL SPREADR (SPDIRFLE,'LAWTR',lawtr)
-        CALL SPREADR (SPDIRFLE,'LAWTS',lawts)
-        CALL SPREADR (SPDIRFLE,'LAWWR',lawwr)
+        CALL SPREADR (SPDIRFLE,'SLAFF',lawff)
+        CALL SPREADR (SPDIRFLE,'SLATR',lawtr)
+        CALL SPREADR (SPDIRFLE,'SLATS',lawts)
+        CALL SPREADR (SPDIRFLE,'SLAWR',lawwr)
         CALL SPREADR (SPDIRFLE,'LLIFG',LLIFG)
         CALL SPREADR (SPDIRFLE,'LLIFS',llifs)
         CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
@@ -3502,7 +3502,7 @@
         IF (KCAN.LE.0.0) CALL SPREADR (SPDIRFLE,'KCAN',kcan)
         IF (LAFR.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFR',lafr)
         IF (LAFV.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFV',lafv)
-        IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'LAWCF',lawcf)
+        IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'SLACF',lawcf)
         IF (DFPE.LT.0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
         IF (PPEXP.LT.0.0) CALL SPREADR (SPDIRFLE,'PPEXP',ppexp)
         IF (TILSF.LT.0.0) CALL SPREADR (SPDIRFLE,'TDSF',tilsf)
@@ -8819,7 +8819,7 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      E               ' CHWAD  EWAD RSWAD SNWPD SNW0D SNW1D',
      F               '  RS%D',
      G               '  H#AD  HWUD',
-     I               '  T#AD  LAWD  RDPD  PTFD',
+     I               '  T#AD  SLAD  RDPD  PTFD',
      J               '  SWXD WAVRD',
      K               ' WUPRD  WFTD  WFPD  WFGD',
      L               '  NFTD  NFPD  NFGD NUPRD',

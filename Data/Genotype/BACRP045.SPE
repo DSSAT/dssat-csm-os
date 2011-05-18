@@ -1,6 +1,6 @@
 $SPECIES:BACRP045
 
-! LAST EDIT: 14/05/11
+! LAST EDIT: 18/05/11
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
 ! They have been developed from 'parameters' embedded in the code of
@@ -60,7 +60,7 @@ $SPECIES:BACRP045
 @RTUFR ! Fraction useable to re-establish tops after winter-kill, etc..
   0.20  
 ! Leaves
-@LLIG%  LAXS LAWCF LAWFF LSHFR LSHAW LSHAR  PHL1  PHF1
+@LLIG%  LAXS SLACF SLAFF LSHFR LSHAW LSHAR  PHL1  PHF1
   10.0   100  0.02  0.20  0.33    50    80   2.0   0.8 
 @LLIFA LLIFG LLIFS LWLOS
    4.0   1.0   3.0  0.50
@@ -209,8 +209,8 @@ $SPECIES:BACRP045
 ! HLOST   Threshold temperature for hardiness loss (C)
 ! HMPC    Grain moisture percentage,standard (#)
 ! LASTG   Leaf area change stage (#)
-! LAWCF   Leaf area/weight,change with leaf position (fr)
-! LAWFF   Leaf area/weight,flexibility,fr non-stressed (fr)
+! SLACF   Specific leaf area,change with leaf position (fr)
+! SLAFF   Specific leaf area,flexibility,fr non-stressed (fr)
 ! LAXS    Maximum area of leaves on main stem (cm2)                                                                                                     
 ! LGPHE   Leaf growth end stage (GrowthStage)
 ! LLIFA   Leaf full activity period,birth to onset of senescence (phyl)

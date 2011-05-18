@@ -1,6 +1,6 @@
 $CULTIVARS:CSCRP045
 
-! LAST EDIT: 14/05/11
+! LAST EDIT: 18/05/11
 
 ! Coefficients used in the Cropsim cassava module differ from those used
 ! in the earlier DSSAT cassava model. It is best,therefore,not to attempt
@@ -18,7 +18,7 @@ $CULTIVARS:CSCRP045
 ! and other nutrients.
 
 *CULTIVARS:CSCRP045
-@VAR#  VAR-NAME........  EXP#   ECO#  PPS1   P1L   P2L   P4L   P5L SR#WT  SRFR  LA1S  LAXS LAXND  LAFS LAFND LAWS PHINT LLIFA  STFR
+@VAR#  VAR-NAME........  EXP#   ECO#  PPS1   P1L   P2L   P4L   P5L SR#WT  SRFR  LA1S  LAXS LAXND  LAFS LAFND SLAS PHINT LLIFA  STFR
 !                                        1     2     3     4     5     6     7     8     9    10    11    12   13    14    15    16   
 999991 MINIMA               . 999991     0    10    10    10    10  0.20  0.25   200  1000    80    20   100  100    15     8  0.25 
 999992 MAXIMA               . 999992     0   100   100   100   200  0.35  0.35   400  2000   200    50   350  400    30    15  0.45 
@@ -42,13 +42,13 @@ UC0009 MCol-638             . 990004     0    10    20    30   200  0.25  0.35  
 ! LA1S        Area/leaf (cm2) of the first leaves when growing without stress.
 ! LAFND       Node # at which the end of cycle area/leaf reached (#)
 ! LAFS        End of cycle area/leaf multiplied by branch number (cm2)
-! LAWS        Leaf area/weight ratio when crop growing without stress (cm2/g)
 ! LAXND       Node # at which maximum area/leaf reached (#)
 ! LAXS        Area/leaf multiplied by branch# at maximum area/leaf (cm2)
 ! LLIFA       Leaf life,from full expansion to start senescence (phyllocrons)
 ! PHINT       Interval between leaf tip appearances for first leaves (oC.d)
 ! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
 ! PnL         Duration of phase n (leaf number)
+! SLAS        Specific leaf area when crop growing without stress (cm2/g)
 ! SRFR        Storage root fraction of assimilate used for non-root growth (#)
 ! SR#W        Storage root number per unit canopy weight at initiation (#/g)
 ! STFR        Stem fraction of assimilate destined for canopy growth (#)

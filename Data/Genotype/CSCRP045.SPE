@@ -1,6 +1,6 @@
 $SPECIES:CSCRP045
 
-! LAST EDIT: 14/05/11
+! LAST EDIT: 18/05/11
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
@@ -25,7 +25,7 @@ $SPECIES:CSCRP045
 
 ! Users should also be aware that the algorithms using the following coefficients
 ! are being worked upon, but have not yet been implemented in the model:
-! RATM,RCROP; LLOSA; LAWTS,LAWTR,LAWWR; RWUPM,WFS,WFSF; LNCSF.
+! RATM,RCROP; LLOSA; SLATS,SLATR,SLAWR; RWUPM,WFS,WFSF; LNCSF.
 ! Further,the coefficient SDSZ is a default that is used only if no planting-stick
 ! size is entered in the experiment details file.
 
@@ -60,9 +60,9 @@ $SPECIES:CSCRP045
    1.0   3.0 
 @LLOSA LWLOS  ! Loss when accelerated,normal senescence   
    0.0  0.50  
-@LAWCF LAWFF LAWMN  ! Area/weight change,flexibility,minimum  
+@SLACF SLAFF SLAMN  ! Specific leaf area change,flexibility,minimum  
   0.00  0.20   0.5
-@LAWTS LAWTR LAWWR  ! Area/weight temperature and h2o effect parameters
+@SLATS SLATR SLAWR  ! Specific leaf area temperature and h2o effect parameters
   25.0 0.025  0.15  ! Not yet implemented
 @ CHT%   CLA%   ! Canopy height%, leaf area %
      0     0
@@ -163,12 +163,6 @@ $SPECIES:CSCRP045
 ! GDAT    Germination date  (YrDoy)
 ! HPROD   Harvest product (code;SR=storage root)
 ! KCAN    PAR extinction coefficient (#)
-! LAWCF   Leaf area/weight,change with leaf position,fr standard (#)
-! LAWFF   Leaf area/weight,flexibility w.low CH2O,fr non-stressed (#)
-! LAWMN   Leaf area/weight,minimum,fr standard (#)
-! LAWTR   Leaf area/weight,temperature response (fr change per oC)
-! LAWTS   Leaf area/weight,temperature standard (C)
-! LAWWR   Leaf area/weight,water stress response (fr standard,full stress)
 ! LLIFG   Leaf growth (expansion) period (phyl)
 ! LLIFS   Leaf senescence period (phyl)
 ! LLIG%   Leaf lignin (%)
@@ -230,6 +224,12 @@ $SPECIES:CSCRP045
 ! SDRS%   Seed reserves (C) as fraction of seed (#)
 ! SDWT    Seed size (g/seed)
 ! SERX    Shoot elongation rate (cm/std.day)
+! SLACF   Specific leaf area,change with leaf position,fr standard (#)
+! SLAFF   Specific leaf area,flexibility w.low CH2O,fr non-stressed (#)
+! SLAMN   Specific leaf area,minimum,fr standard (#)
+! SLATR   Specific leaf area,temperature response (fr change per oC)
+! SLATS   Specific leaf area,temperature standard (C)
+! SLAWR   Specific leaf area,water stress response (fr standard,full stress)
 ! SLIG%   Stem lignin (%)
 ! SN%MN   Stem N concentration,minimum (fr)
 ! SN%S    Stem N concentration,maximum,stage (fr)

@@ -1,7 +1,7 @@
 !=======================================================================
 !  CROPSIM-CERES CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
 !  Developed from V4.0 (which was based on Cropsim and Ceres3.5) 
-!  Last edit 22/03/11 LAH
+!  Last edit 17/05/11 LAH
 !=======================================================================
 
 !     SUBROUTINE CSCER040 (FILEIOIN, RUN, TN, RN,          !Command line
@@ -2069,7 +2069,7 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARUE',paruv)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARU2',parur)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',lapot(1))
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAWS',lawrs)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SLAS',lawrs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFV',lafv)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFR',lafr)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'TBAM',tbam)
@@ -2190,7 +2190,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'PARUE',paruv)
             CALL CUREADR (CUDIRFLE,VARNO,'PARU2',parur)
             CALL CUREADR (CUDIRFLE,VARNO,'LA1S',lapot(1))
-            CALL CUREADR (CUDIRFLE,VARNO,'LAWS',lawrs)
+            CALL CUREADR (CUDIRFLE,VARNO,'SLAS',lawrs)
             CALL CUREADR (CUDIRFLE,VARNO,'LAFV',lafv)
             CALL CUREADR (CUDIRFLE,VARNO,'LAFR',lafr)
             CALL CUREADR (CUDIRFLE,VARNO,'TBAM',tbam)
@@ -2235,7 +2235,7 @@
         IF (PARUR.LT.-92.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',parur)
         IF (LAPOT(1).LE.0.0) 
      &   CALL ECREADR (ECDIRFLE,ECONO,'LA1S',lapot(1))
-        IF (LAWRS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAWS',lawrs)
+        IF (LAWRS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',lawrs)
         IF (LAFV.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
         IF (LAFR.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAFR',lafr)
         IF (VEFF.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'VEFF',veff)
@@ -2370,7 +2370,7 @@
         CALL SPREADR (SPDIRFLE,'RLDGR',rldgr)
         CALL SPREADR (SPDIRFLE,'PTFMX',ptfx)
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
-        CALL SPREADR (SPDIRFLE,'LAWMN',lawfrmn)
+        CALL SPREADR (SPDIRFLE,'SLAMN',lawfrmn)
         CALL SPREADR (SPDIRFLE,'HDUR',hdur)
         CALL SPREADR (SPDIRFLE,'CHFR',chfr)
         CALL SPREADR (SPDIRFLE,'CHSTG',chstg)
@@ -2379,7 +2379,7 @@
         CALL SPREADR (SPDIRFLE,'TPAR',part)
         CALL SPREADR (SPDIRFLE,'TSRAD',sradt)
         KEP = (KCAN/(1.0-PART)) * (1.0-SRADT)
-        IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'LAWCF',lawcf)
+        IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'SLACF',lawcf)
 
         CALL SPREADRA (SPDIRFLE,'LASF','10',plasf)
         CALL SPREADRA (SPDIRFLE,'LN%S','10',lnpcs)
@@ -5359,7 +5359,7 @@
      &        ' CHWAD  EWAD RSWAD SNWPD SNW0D SNW1D',
      &        '  RS%D',
      &        '  H#AD  HWUD',
-     &        '  T#AD  LAWD  RDPD  PTFD',
+     &        '  T#AD  SLAD  RDPD  PTFD',
      &        '  SWXD WAVRD',
      &        ' WUPRD  WFTD  WFPD  WFGD',
      &        '  NFTD  NFPD  NFGD NUPRD',

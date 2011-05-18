@@ -1,6 +1,6 @@
 $SPECIES:BACER045
 
-! LAST EDIT: 14/05/11
+! LAST EDIT: 18/05/11
 
 ! Coefficients differ from those used in DSSAT  Versions 3.5 and 4.0x. 
 ! They have been developed from 'parameters' embedded in the code of 
@@ -21,7 +21,7 @@ $SPECIES:BACER045
 @RLIG%  RLWR RSEN% RRESP RLDGR !Lignin%,length/wt,senescence,resp.
   10.0  0.98   .80  0.40   500
 ! Leaves
-@LLIG%  LAXS LSHFR LSHAW  PHL1  PHF1 LAWMN LAWCF
+@LLIG%  LAXS LSHFR LSHAW  PHL1  PHF1 SLAMN SLACF
   10.0   900  0.33  70.0   2.0   0.8   0.5  0.02
 @LLIFE LWLOS LRPHS                          
    4.0  0.50   3.0                                  
@@ -147,8 +147,6 @@ $SPECIES:BACER045
 ! GN%MX   Grain N,maximum (For when assimilate supply limited) (%)
 ! HDUR    Days for complete cold hardening (d)
 ! LASF    Leaf area senesced (fr,start phase)
-! LAWCF   Leaf area/weight change with leaf position (fr/leaf)
-! LAWMN   Leaf area/weight,minimum,fr non stressed (#)
 ! LAXS    Maximum area of leaves on main stem (cm2)                                                                                                     
 ! LLIFE   Life of leaves during vegetative phase (phyllochrons)
 ! LLIG%   Leaf lignin (%)
@@ -202,6 +200,8 @@ $SPECIES:BACER045
 ! SDN%    Seed N, standard (%)
 ! SDWT    Seed dry weight (g/seed)
 ! SGPHE   Stem growth phase end stage (GrowthStage)
+! SLACF   Specific leaf area change with leaf position (fr/leaf)
+! SLAMN   Specific leaf area,minimum,fr non stressed (#)
 ! SLIG%   Stem lignin (%)
 ! SN%MN   Stem minimum N (%)
 ! SN%S    Stem standard N (%)
