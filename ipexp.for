@@ -431,7 +431,7 @@ C  12/12/2008 Move planting date read to above simulation controls --
 C-----------------------------------------------------------------------
 
       CALL IPPLNT_Inp (LUNEXP,FILEX,LNPLT,PLME,PLDS,ROWSPC,AZIR,CROP,
-     &     SDEPTH,SDWTPL,PLTPOP,PLANTS,SDAGE,ATEMP,PLPH,IEMRG,
+     &     MODEL,SDEPTH,SDWTPL,PLTPOP,PLANTS,SDAGE,ATEMP,PLPH,IEMRG,
      &     YRPLT,SPRLAP,NFORC,PLTFOR,NDOF,PMTYPE,IPLTI)
 
 C-----------------------------------------------------------------------
@@ -850,7 +850,7 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPPLNT_Inp (
-     &     LUNEXP,FILEX,LNPLT,PLME,PLDS,ROWSPC,AZIR,CROP,
+     &     LUNEXP,FILEX,LNPLT,PLME,PLDS,ROWSPC,AZIR,CROP,MODEL,
      &     SDEPTH,SDWTPL,PLTPOP,PLANTS,SDAGE,ATEMP,PLPH,IEMRG,
      &     YRPLT,SPRLAP,NFORC,PLTFOR,NDOF,PMTYPE,IPLTI)
 
@@ -859,7 +859,9 @@ C=======================================================================
       CHARACTER*1   PLME,PLDS,IPLTI
       CHARACTER*2   CROP
       CHARACTER*6   ERRKEY,FINDCH
+      CHARACTER*8   MODEL
       CHARACTER*12  FILEX
+      CHARACTER*78  MSG(2)
       CHARACTER*110 CHARTEST
 
       INTEGER   LUNEXP,LNPLT,IEMRG,LN,LINEXP,ISECT,IFIND,ERRNUM
@@ -904,10 +906,24 @@ C New variables for pineapple
          IF (PLTPOP .LE. 0.0 .OR. PLTPOP .GT. 999.) THEN
             IF (CROP /= 'SC') CALL ERROR (ERRKEY,11,FILEX,LINEXP)
          ENDIF
-         IF ((ROWSPC .GT. -90. .AND. ROWSPC .LE. 0.0)
-     &      .OR. ROWSPC .GT. 99999.) THEN
-            CALL ERROR (ERRKEY,12,FILEX,LINEXP)
+
+!        chp 5/17/2011
+!        Need to handle missing row spacing data
+!         IF ((ROWSPC .GT. -90. .AND. ROWSPC .LE. 0.0)
+!     &      .OR. ROWSPC .GT. 99999.) THEN
+!            CALL ERROR (ERRKEY,12,FILEX,LINEXP)
+!         ENDIF
+         IF (ROWSPC <= 0.0) THEN
+            SELECT CASE (MODEL(1:5))
+            CASE ('SCCAN'); ROWSPC = 0.0  !Canegro does not need this
+            CASE DEFAULT
+              ROWSPC = 1.0 / SQRT(PLTPOP) * 100.
+              MSG(1) = "Missing row spacing in experiment file."
+              WRITE(MSG(2),'(A,F8.1,A)') "Value set to ", ROWSPC," cm"
+              CALL WARNING(2,ERRKEY,MSG)
+            END SELECT
          ENDIF
+
          IF ((AZIR .GT. -90. .AND. AZIR .LT. 0.0)
      &      .OR. AZIR .GT. 99999.) THEN
             CALL ERROR (ERRKEY,13,FILEX,LINEXP)

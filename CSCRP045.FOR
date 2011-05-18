@@ -182,7 +182,9 @@
       REAL          CNPCMM        ! Canopy N,maturity,measured     %
       REAL          CO2           ! CO2 concentration in air       vpm
       REAL          CO2AIR        ! CO2 concentration in air       g/m3
-      REAL          CO2CC         ! CO2 compensation conc (vpm)    #
+      REAL          CO2COMPC      ! CO2 compensation conc (vpm)    #
+      REAL          CO2CAV        ! Average co2 for crop cycle     vpm
+      REAL          CO2CC         ! CO2 sum for cycle              vpm
       REAL          CO2EX         ! Exponent for CO2-phs function  #
       REAL          CO2FP         ! CO2 factor,photosynthesis      #
       REAL          CO2FPI        ! CO2 factor,phs,internal Co2    #
@@ -498,6 +500,7 @@
       INTEGER       HAYEAR        ! Harvest year                   #
       REAL          HBPC(HANUMX)  ! Harvest by-product percentage  #
       REAL          HBPCF         ! Harvest by-product %,final     #
+      INTEGER       HDAY          ! Harvest day as read            #
       INTEGER       HDOYF         ! Earliest doy for harvest       #
       INTEGER       HDOYL         ! Last doy for harvest           #
       REAL          HDUR          ! Hardening duration,days        d
@@ -558,6 +561,7 @@
       REAL          HWUMYLD       ! Harest wt,mature,calculated    g/#
       REAL          HWUT          ! Product weight/unit,t file     mg
       REAL          HYAMM         ! Harvest product,msured,std.h2o kg/ha
+      INTEGER       HYEAR         ! Harvest year as read           #
       INTEGER       HYEARDOY(HANUMX)! Dates of harvest operations    #
       INTEGER       HYEARF        ! Earliest year for harvest      #
       INTEGER       HYEARL        ! Last year for harvest          #
@@ -618,7 +622,7 @@
       REAL          LAPS(LNUMX)   ! Leaf area senesced,leaf posn   cm2/p
       REAL          LAPSTMP       ! Leaf area senesced,temporary   cm2/p
       REAL          LATL(1,LNUMX) ! Leaf area,tiller1,leaf pos     cm2/l
-      REAL          LAWCF         ! Leaf area/wt change,fr.st      fr
+      REAL          LAWCF         ! Leaf area/wt change,fr.st      fr/lf
       REAL          LAWFF         ! Leaf area/wt flexibility,fr.st fr
       REAL          LAWL(2)       ! Area to wt ratio,n=youngest lf cm2/g
       REAL          LAWS          ! Leaf area/wt ratio,standard    cm2/g
@@ -786,6 +790,7 @@
       REAL          NUPAD         ! N uptake rate (/d)             kg/ha
       REAL          NUPAP         ! Total root N uptake rate,potnl kg/ha
       REAL          NUPAPCSM      ! Total N uptake rate,potnl,CSM  kg/ha
+      REAL          NUPAPCRP      ! Total N uptake rate,potnl,CSCR kg/ha
       REAL          NUPC          ! N uptake,cumulative            g/p
       REAL          NUPD          ! N uptake                       g/p
       REAL          NUPRATIO      ! N uptake potential/demand      #
@@ -868,6 +873,7 @@
       INTEGER       PLDAY         ! Planting day of year           d
       INTEGER       PLDAYTMP      ! Planting day of year           #
       REAL          PLMAGE        ! Planting material age          d
+      INTEGER       PLTOHARYR     ! Planting to harvest years      #
       REAL          PLPH          ! Plants/hill or shoots/cutting  # 
       REAL          PLTLOSS       ! Plant popn lost through cold   #/m2
       REAL          PLTPOP        ! Plant Population               #/m2
@@ -878,6 +884,7 @@
       INTEGER       PLYEARDOY     ! Planting year*1000+DOY         #
       INTEGER       PLYEARDOYPREV ! Year+Doy for planting,previous #
       INTEGER       PLYEARDOYT    ! Planting year*1000+DOY target  #
+      INTEGER       PLYEARREAD    ! Planting year as read          #
       INTEGER       PLYEARTMP     ! Year(Yr)+Doy,planting tem val  #
       REAL          PPEXP         ! Photoperiod response exponent  #
       REAL          PPTHR         ! Photoperiod threshold          h
@@ -929,6 +936,7 @@
       REAL          RESPTC        ! Respiration,tops,cumulative    g/p
       REAL          RESWAL(0:20)  ! Residue om added by layer      kg/ha
       REAL          RESWALG(0:20) ! Residue om at harvest,by layer kg/ha
+      REAL          RFAC          ! Root length & H2O fac,N uptake #
       REAL          RLDF(20)      ! Root length density fac,new gr #
       REAL          RLF           ! Leaf stomatal res,330.0 ppmCO2 s/m
       REAL          RLFC          ! Leaf stomatal resistance       s/m
@@ -1609,8 +1617,10 @@
       CHARACTER (LEN=180) LINET         ! Line from T-file
       CHARACTER (LEN=1)   MEEXP         ! Switch,experimental method = E
       CHARACTER (LEN=1)   MEPHS         ! Switch,photosynthesis method
+      CHARACTER (LEN=3)   MERNU         ! Switch,root N uptake methd
       CHARACTER (LEN=1)   MESOM         ! Switch,OM decay method       
       CHARACTER (LEN=78)  MESSAGE(Messagenox) ! Messages for Warning.out
+      CHARACTER (LEN=1)   MENU          ! Switch,root N uptake methd
       CHARACTER (LEN=1)   MEWNU         ! Switch,root H2O/N uptake methd
       CHARACTER (LEN=8)   MODEL         ! Name of model
       CHARACTER (LEN=8)   MODNAME       ! Name of module
@@ -1672,7 +1682,7 @@
       LOGICAL             FOPEN         ! File open indicator
 
       ! Arrays for passing variables to OPSUM subroutine, CSM model only
-      INTEGER,      PARAMETER :: SUMNUM = 29
+      INTEGER,      PARAMETER :: SUMNUM = 37
       CHARACTER*5,  DIMENSION(SUMNUM) :: LABEL
       REAL,         DIMENSION(SUMNUM) :: VALUE
 
@@ -1759,6 +1769,9 @@
           ! Model standard parameters
           STDAY = 20.0      ! TT in standard day
           STEPNUM = 1       ! Step number per day set to 1
+          
+          ! Model methods that not in control file
+          MERNU = 'CSM'     ! Root N uptake 
 
 !-----------------------------------------------------------------------
 !         Create output file extensions (For different components)
@@ -1978,10 +1991,19 @@
             WRITE (NOUTPGF,'(A27)')
      &      '$GROWTH FACTOR OUTPUTS FILE'
             CLOSE (NOUTPGF)
-            OPEN (UNIT = NOUTPGN, FILE = OUTPN)
-            WRITE (NOUTPGN,'(A35)')
-     &      '$PLANT NITROGEN ASPECTS OUTPUT FILE'
-            CLOSE (NOUTPGN)
+            IF (ISWNIT.NE.'N') THEN
+              OPEN (UNIT = NOUTPGN, FILE = OUTPN)
+              WRITE (NOUTPGN,'(A35)')
+     &        '$PLANT NITROGEN ASPECTS OUTPUT FILE'
+              CLOSE (NOUTPGN)
+            ELSE  
+              INQUIRE (FILE = NOUTPGN,EXIST = FEXIST)
+              IF (FEXIST) THEN
+                OPEN (UNIT = NOUTPGN, FILE = OUTPN, STATUS='UNKNOWN',
+     &          POSITION = 'APPEND')
+                CLOSE (UNIT=NOUTPGN, STATUS = 'DELETE')
+              ENDIF  
+            ENDIF  
 
             ! IDETO FILES
             OPEN (UNIT = FNUMOV, FILE = FNAMEOV)
@@ -2091,9 +2113,11 @@
         cnam = -99.0
         cnamm = -99.0
         cnpca = 0.0
+        co2cc = 0.0
         co2fp = 1.0
         co2intppm = 0.0
         co2intppmp = 0.0
+        co2max = -99.0
         co2pav = -99.0
         co2pc = 0.0
         cumdu = 0.0
@@ -2322,6 +2346,7 @@
         nupad = 0.0
         nupap = 0.0
         nupapcsm = 0.0
+        nupapcrp = 0.0
         nupc = 0.0
         nupd = 0.0
         nupratio = 0.0
@@ -2559,6 +2584,7 @@
         tmaxpav  = -99.0
         tmaxpc = 0.0
         tmaxsum = 0.0
+        tmaxx = -99.0
         tmean = (tmax+tmin)/2.0
         tmean20a = -99.0
         tmeanav = -99.0
@@ -2574,6 +2600,7 @@
         tmincav  = -99.0
         tmincc = 0.0
         tminm = 999.0
+        tminn = 99.0
         tminpav  = -99.0
         tminpc = 0.0
         tminsum = 0.0
@@ -2721,7 +2748,7 @@
         IF (FILEIOT .NE. 'DS4') THEN
           hpcf = harvfrac(1)*100.0   ! Harvest %
           hbpcf = harvfrac(2)*100.0
-        ENDIF  
+        ENDIF
 
         ! Fertilization information (to calculate N appl during cycle)
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'FERTI',iferi)
@@ -2806,6 +2833,7 @@
         CALL CSYR_DOY(HFIRST,HYEARF,HDOYF)
         CALL CSYR_DOY(HLAST,HYEARL,HDOYL)
         CALL CSYR_DOY(PDATE,PLYEARTMP,PLDAY)
+        PLYEARREAD = PLYEARTMP
 
 !-----------------------------------------------------------------------
 !       Insert defaults for missing non-critical aspects
@@ -2831,6 +2859,12 @@
           PLYEAR = YEAR
           PLYEARTMP = YEAR
         ENDIF
+
+        ! Check final harvest date for seasonal runs        
+        CALL CSYR_DOY(YEARDOYHARF,HYEAR,HDAY)
+        PLTOHARYR = HYEAR - PLYEARREAD
+        ! Upgrade harvest date for seasonal and sequential runs
+        yeardoyharf = (plyear+pltoharyr)*1000 +hday
 
         IF (IPLTI.NE.'A') THEN
           IF (PLDAY.GE.DOY) THEN
@@ -3075,7 +3109,9 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFS',lafs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAF#',lafno)
+      WRITE(FNUMWRK,*)' LAWS BEFORE XREAD ',LAWS     
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAWS',laws)
+      WRITE(FNUMWRK,*)' LAWS AFTER XREAD ',LAWS     
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUU',wfnuu)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUL',wfnul)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NCNU',ncnu)
@@ -3199,10 +3235,16 @@
         CALL ECREADR (ECDIRFLE,ECONO,'SSPHS',ssphase(1))
         CALL ECREADR (ECDIRFLE,ECONO,'SSPHE',ssphase(2))
         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
+        IF (PHINTL(1).LE.0) 
+     &   CALL ECREADR(ECDIRFLE,ECONO,'PHL1',phintl(1))
         IF (PHINTL(2).LE.0) 
      &   CALL ECREADR(ECDIRFLE,ECONO,'PHL2',phintl(2))
+        IF (PHINTF(2).LE.0)
+     &   CALL ECREADR(ECDIRFLE,ECONO,'PHF2',phintf(2))
         IF (PHINTF(3).LE.0)
      &   CALL ECREADR(ECDIRFLE,ECONO,'PHF3',phintf(3))
+        WRITE(FNUMWRK,*)' PHL1,PHL2,PHF2,PHF3 ',
+     &    PHINTL(1),PHINTL(2),PHINTF(2),PHINTF(3)
         CALL ECREADR (ECDIRFLE,ECONO,'S#FX',snofx)
         IF (SNOFX.LE.0.0)
      &   CALL ECREADR (ECDIRFLE,ECONO,'SNOFX',snofx)
@@ -3228,11 +3270,13 @@
         IF (RLFNU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RLFNU',rlfnu)
         ! Radiation use efficiency
         IF (PARUE.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
-        IF (PARU2.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',paru2)
+        IF (PARU2.LT.-89.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',paru2)
         ! Leaf area
         IF (LA1S.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)
         IF (LAXS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAXS',laxs)
+      WRITE(FNUMWRK,*)' LAWS BEFORE ECREAD ',LAWS     
         IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAWS',laws)
+      WRITE(FNUMWRK,*)' LAWS AFTER ECREAD ',LAWS     
         IF (LAFV.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
         IF (LAFR.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAFR',lafr)
         ! Roots
@@ -3243,13 +3287,13 @@
         ! Reduction factors
         IF (NFGU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
         IF (NFGL.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
-
+        
 !-----------------------------------------------------------------------
 !       Read species information
 !-----------------------------------------------------------------------
 
         CALL SPREADR (SPDIRFLE,'CHFR' ,chfr)
-        CALL SPREADR (SPDIRFLE,'CO2CC',co2cc)
+        CALL SPREADR (SPDIRFLE,'CO2CC',co2compc)
         CALL SPREADR (SPDIRFLE,'CO2EX',co2ex)
         CALL SPREADR (SPDIRFLE,'GLIG%',gligp)
         CALL SPREADR (SPDIRFLE,'GN%MN',grnmn)
@@ -3361,7 +3405,7 @@
         IF (PHINTL(1).LE.0) CALL SPREADR (SPDIRFLE,'PHL1',phintl(1))
         IF (PHINTF(1).LE.0) CALL SPREADR (SPDIRFLE,'PHF1',phintf(1))
         IF (PHINTL(2).LE.0) CALL SPREADR (SPDIRFLE,'PHL2',phintl(2))
-        IF (PHINTF(1).LE.0) CALL SPREADR (SPDIRFLE,'PHF2',phintf(2))
+        IF (PHINTF(2).LE.0) CALL SPREADR (SPDIRFLE,'PHF2',phintf(2))
         IF (PHINTF(3).LE.0) CALL SPREADR (SPDIRFLE,'PHF3',phintf(3))
 
         IF (SRFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr)
@@ -3489,6 +3533,7 @@
         ! IF HSTG not found, use maximum principal stage number
         IF (HSTG.LE.0) THEN
           HSTG = PSX
+          HSTG = MSTG+1  ! LAH 230311
           pstart(hstg) = 5000   ! Set to very long cycle
         ENDIF
         
@@ -3836,7 +3881,6 @@
 
         ! Radiation use efficiency
         IF (PARUE.LE.0.0) PARUE = 2.3
-        IF (PARU2.LE.0.0) PARU2 = 2.3
         
         ! Leaf area
         IF (LA1S.LT.0.0) LA1S = 5.0
@@ -4170,7 +4214,7 @@
          WRITE(fnumwrk,'(A26,A1)') '   PHOTOSYNTHESIS         ',MEPHS
          WRITE(fnumwrk,'(A26,A1,1X,A1)') '   WATER AND N SWITCHES   '
      &     ,ISWWAT,ISWNIT
-         WRITE(fnumwrk,'(A26,A1)') '   WATER AND N UPTAKE     ',MEWNU
+         WRITE(fnumwrk,'(A26,A3)')  '   N UPTAKE               ',MERNU
          WRITE(fnumwrk,'(A26,I1)') ' '
          WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
          WRITE(fnumwrk,'(A26,A6,2X,A16)')
@@ -4294,6 +4338,11 @@
           WRITE(fnumwrk,*)'  Nfgu,L ',NFGU,NFGL       
           WRITE(fnumwrk,*)'  Nftu,L ',NFTU,NFTL       
           WRITE(fnumwrk,*)'  Nfs,Sf ',NFS,NFSF      
+
+          WRITE(fnumwrk,*)' '                            
+          WRITE(fnumwrk,*)' CASSAVA                '
+          WRITE(fnumwrk,*)' Storage root initiation',PDSRI
+          WRITE(fnumwrk,*)' LLIFG,LLIFA,LLIFS      ',LLIFG,LLIFA,LLIFS
          
           WRITE(FNUMWRK,*)' '
           WRITE(FNUMWRK,'(A17)')' PHASE THRESHOLDS'
@@ -4815,12 +4864,13 @@
                 DUPNEXT = TTNEXT*(1.0-TIMENEED)*VFNEXT*DFNEXT
               ENDIF
             ELSE
-              WRITE (fnumwrk,*)' '                  
-              WRITE (fnumwrk,'(A54,/,A54,/,A26)')
-     &         ' Maximum number (10) of developmental stages reached! ',
-     &         ' Presumably,the phase lengths specified were too short',
-     &         ' Will assume crop failure.'
-               CFLFAIL = 'Y'
+              ! Taken out LAH 230311 to allow progress to specified harvest
+!             WRITE (fnumwrk,*)' '                  
+!             WRITE (fnumwrk,'(A54,/,A54,/,A26)')
+!     &         ' Maximum number (10) of developmental stages reached! ',
+!     &         ' Presumably,the phase lengths specified were too short',
+!     &         ' Will assume crop failure.'
+!              CFLFAIL = 'Y'
             ENDIF
             
             DU = DUPHASE+DUPNEXT
@@ -5243,7 +5293,7 @@
               ! Co2 factor using CROPGRO formula
               ! CO2EX Exponent for CO2-PHS relationship (0.05)  
               ! COCCC CO2 compensation concentration (80 vpm)
-              !CO2FP = PARFC*((1.-EXP(-CO2EX*CO2))-(1.-EXP(-CO2EX*CO2CC)))
+              !CO2FP = PARFC*((1.-EXP(-CO2EX*CO2))-(1.-EXP(-CO2EX*CO2COMPC)))
               ! CO2 factor
               CO2FP = YVALXY(CO2RF,CO2F,CO2)
 
@@ -5271,6 +5321,8 @@
               IF(CUMDU.GE.LGPHASEDU(1).AND.CUMDU.LT.LGPHASEDU(2)) THEN
               
                 ! NEW LAH MARCH 2010
+            write(fnumwrk,*)' phintstg,phintl(p),phint ',
+     &       phintstg,phintl(phintstg),phint
                 IF (PHINTL(PHINTSTG).LE.0.0.
      &               OR.LNUM+DULF/PHINT.LE.PHINTL(PHINTSTG)) THEN
                   LNUMEND = LNUM + DULF/PHINT
@@ -5301,6 +5353,7 @@
                 ENDIF
                 ! END NEW
               ENDIF
+          write(fnumwrk,*) ' phint after re-alculating ',phint
               
               ! Restrict to maximum
               LNUMEND = AMIN1(FLOAT(LNUMX),LNUMEND)
@@ -5344,9 +5397,10 @@
               SSENF = 0.0
 
               ! Leaf senescence - cold kill
-              TKLF = TKILL+TKLFD
+              TKLF = AMIN1(0.0,TKILL+TKLFD)
               IF (PLA-SENLA.GT.0.0.AND.TMEAN.LT.TKLF) THEN
-                SPANPOS = AMIN1(1.0,(TKLF-TMEAN)/TKSPAN)
+                !SPANPOS = AMIN1(1.0,(TKLF-TMEAN)/TKSPAN)
+                !PLASC = (PLA-SENLA)*SPANPOS
                 PLASC = (PLA-SENLA)*SPANPOS
                 PLASCSUM = PLASCSUM + PLASC
                 CARBOADJ = 0.0
@@ -5661,9 +5715,13 @@
                 IF (CUMDU+DU/2.0.LT.RUESTGDU) THEN
                   PARU = PARUE
                 ELSE
-                  ! Following is to make a gradual changeover
-                  PARURFR = AMIN1(1.0,(CUMDU+DU/2-RUESTGDU)/150.0)
-                  PARU = PARUE+(PARU2-PARUE)*PARURFR
+                  IF (PARU2.LT.0.0) THEN
+                    PARU = PARUE
+                  ELSE     
+                    ! Following is to make a gradual changeover
+                    PARURFR = AMIN1(1.0,(CUMDU+DU/2-RUESTGDU)/150.0)
+                    PARU = PARUE+(PARU2-PARUE)*PARURFR
+                  ENDIF
                 ENDIF
               ELSE
                   PARU = PARUE
@@ -5681,10 +5739,10 @@
               CO2INTPPMP = CO2
               DO L = 1,20
                 CO2INT = CO2AIR - CARBOTMPI * (RATM+RSCO2)*1.157407E-05
-                CO2INTPPM = AMAX1(CO2CC+20.0,CO2INT *
+                CO2INTPPM = AMAX1(CO2COMPC+20.0,CO2INT *
      &          (8.314*1.0E7*((TMAX+TMIN)*.5+273.))/(1.0E12*1.0E-6*44.))
                 CO2FPI = PARFC*
-     &           ((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2CC)))
+     &           ((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2COMPC)))
                 CARBOTMPI = CARBOTMP * CO2FPI
                 IF (ABS(CO2INTPPM-CO2INTPPMP).LT.1.0) EXIT
                 CO2INTPPMP = CO2INTPPM
@@ -5695,14 +5753,14 @@
               CO2INTPPMP = CO2
               DO L = 1,20
                 CO2INT = CO2AIR - CARBOTMPI * (RATM+RSADJ)*1.157407E-05
-                CO2INTPPM = AMAX1(CO2CC,CO2INT *
+                CO2INTPPM = AMAX1(CO2COMPC,CO2INT *
      &          (8.314*1.0E7*((TMAX+TMIN)*0.5+273.))/
      &          (1.0E12*1.0E-6*44.0))
                 CO2FPI = PARFC*
-     &          ((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2CC)))
+     &          ((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2COMPC)))
                 CARBOTMPI = CARBOTMP * CO2FPI
                 IF (ABS(CO2INTPPM-CO2INTPPMP).LT.1.0) EXIT
-                IF (ABS(CO2INTPPM-CO2CC).LT.1.0) EXIT
+                IF (ABS(CO2INTPPM-CO2COMPC).LT.1.0) EXIT
                 CO2INTPPMP = CO2INTPPM
               ENDDO
               CARBOBEGI = CARBOTMPI * SLPF * PARIF / PLTPOP * CARBOBEGIA
@@ -5742,6 +5800,7 @@
               ENDIF
               ! Partition adjustment for stress effects
               PTF = AMIN1(PTFMX,PTF-PTFA*(1.0-AMIN1(WFG,NFG)))
+         WRITE(FNUMWRK,*)' CARBOBEG,PTF ',CARBOBEG,PTF
               CARBOR = AMAX1(0.0,(CARBOBEG+CARBOADJ))*(1.0-PTF)
               CARBOT = CARBO - CARBOR
 
@@ -5801,6 +5860,7 @@
                 ELSEIF(CUMDU.GT.PDSRI)THEN
                   SRDAYFR = 1.0
                 ENDIF
+                WRITE(FNUMWRK,*)' SRFR,CARBOT ',SRFR,CARBOT
                 IF (SRNOPD.GT.0) GROSR = SRFR*CARBOT * SRDAYFR
               ENDIF
 
@@ -5937,6 +5997,8 @@
               ENDIF
 
               LAWL(1) = AMAX1(LAWS*LAWFF,LAWS-(LAWS*LAWCF)*(LNUMSG-1))
+           WRITE(FNUMWRK,*)' LAWL(1),LAWS,LAWFF,LAWS,LAWCF,LNUMSG ',
+     &       LAWL(1),LAWS,LAWFF,LAWS,LAWCF,LNUMSG 
               LAWL(2) = AMAX1(LAWS*LAWFF,LAWS-(LAWS*LAWCF)*LNUMSG)
               LAWL(1) = LAWL(1) * TFLAW * WFLAW
               LAWL(2) = LAWL(2) * TFLAW * WFLAW
@@ -6090,8 +6152,12 @@
                 IF (LAWL(1).GT.0.0 .AND. LAWL(2).GT.0.0)
      &           GROLFP = ( PLAGTP(1)/LAWL(1) + PLAGTP(2)/LAWL(2))
      &                  / (1.0-LSHFR)
+        WRITE(FNUMWRK,*)
+     &   ' GROLFP,PLAGTP(1),LAWL(1),PLAGTP(2),LAWL(2),LSHFR ',
+     &    GROLFP,PLAGTP(1),LAWL(1),PLAGTP(2),LAWL(2),LSHFR 
 
                 ! Potential leaf+stem weight increase.
+           WRITE(FNUMWRK,*)' GROLSP,GROLFP ',GROLSP,GROLFP     
                 IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
                   GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))
                 ELSE
@@ -6101,6 +6167,7 @@
                 IF (GROLSP.GT.0.0) THEN
                   ! Leaf+stem weight increase from assimilates
                   GROLS = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROGRPA-GROSR))
+            WRITE(FNUMWRK,*)' GROLS,GROLSP ',GROLS,GROLSP
                 
                   IF (GROLS.LT.GROLSP) THEN
                     ! Leaf weight increase from seed reserves
@@ -6108,6 +6175,7 @@
                     CARBOLSD = AMIN1((GROLSP-GROLS),SEEDRSAV)
                     SEEDRSAV = SEEDRSAV - CARBOLSD
                     GROLS = GROLS + CARBOLSD
+            WRITE(FNUMWRK,*)' GROLS        ',GROLS             
                     IF (LAI.LE.0.0.AND.CARBOLSD.LE.0.0
      &                            .AND.SEEDRSAV.LE.0.0          
      &                            .AND.ESTABLISHED.NE.'Y') THEN
@@ -6547,7 +6615,9 @@
      &          (GRAINNDEM+LSNDEM+RNDEM+SRNDEM-SEEDNUSE-RSNUSE)
 
               ! Uptake
-              ! Original from CSM.  Simply for comparison purposes
+              
+              IF (MERNU.EQ.'CSM') THEN
+              ! Original from CSM.  
               ! RNUMX = RTNO3,RTNH4 = N uptake/root length (mgN/cm,.006)
               ! RNO3U,RNH4  = Nitrogen uptake (kg N/ha)
               RNUMX = 0.006    ! Only used for comparative purposes
@@ -6558,12 +6628,13 @@
               ! LAH WORKING
               TVR1 = - AMAX1(0.01,(0.20-NCNU*0.004))
               ! TVR1 originally set at 0.08,which comes from NCNU=30
+              TVR1 = -0.08  ! May 2011
               DO L=1,NLAYR
                 IF (RLV(L) .GT. 0.0) THEN
                   NLAYRROOT = L
                   FNH4 = 1.0-EXP(TVR1 * NH4LEFT(L))
                   FNO3 = 1.0-EXP(TVR1 * NO3LEFT(L))
-                  ! LAH Note that no uptake below 0.04
+                 ! LAH Note that no uptake below 0.04
                   IF (FNO3 .LT. 0.04) FNO3 = 0.0
                   IF (FNO3 .GT. 1.0)  FNO3 = 1.0
                   IF (FNH4 .LT. 0.04) FNH4 = 0.0
@@ -6571,52 +6642,56 @@
                   IF (SW(L) .LE. DUL(L)) THEN
                     IF (WFNUU-WFNUL.GT.0.0) WFNU = 
      &                AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
-                  ! CSM SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
+                  WFNU = (SW(L) - LL(L)) / (DUL(L) - LL(L)) ! May 2011 
                   ELSE
                     WFNU = 1.0-(SW(L)-DUL(L))/(SAT(L)-DUL(L))
+                    ! Wet soil effect not implemented
+                    WFNU = 1.0
                   ENDIF
                   IF (WFNU.LT.0.0) WFNU = 0.0
-                  RNO3U(L) = RNUMX*RLV(L)*DLAYR(L)*100.0*WFNU*FNO3
-                  ! CSM RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
-                  ! CSM RNO3U(L) = RFAC * FNO3 * RTNO3
-                  ! HENCE CSM RNO3U(L) = RTNO3*RLV(L)*DLAYR(L)*100.0*SMDFR*SMDFR*FNO3
-                  RNH4U(L) = RNUMX*RLV(L)*DLAYR(L)*100.0*WFNU*WFNU*FNH4
+                  !RNO3U(L) = RLV(L)*WFNU*DLAYR(L)*100.0 *RNUMX*FNO3
+                  RFAC = RLV(L) * WFNU * WFNU * DLAYR(L) * 100.0
+                  RNO3U(L) = RFAC * FNO3 * RNUMX
+                  RNH4U(L) = RFAC * FNH4 * RNUMX
                   RNO3U(L) = MAX(0.0,RNO3U(L))
                   RNH4U(L) = MAX(0.0,RNH4U(L))
                   NUPAP = NUPAP + RNO3U(L) + RNH4U(L) !kg[N]/ha
                   NUPAPCSM = NUPAP
                 ENDIF
               ENDDO
+              ENDIF
               
-              ! Basic calculation below
-                WFNU = 0.0
-                NUPAP = 0.0
-                RNO3U = 0.0
-                RNH4U = 0.0
-                ! Potential N supply in soil layers with roots (NUPAP)
-                DO L = 1, NLAYR
-                  IF (RLV(L).GT.0.0) THEN
-                    NLAYRROOT = L
-                    IF (SW(L).LE.DUL(L)) THEN
-                      IF (WFNUU-WFNUL.GT.0.0) WFNU = 
-     &                AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
-                    ELSE
-                      ! LAH Wet soil effect. Not implemented because 
-                      ! problem when irrigated at planting/emergence
-                      WFNU = AMAX1
-     &                 (0.,AMIN1(1.,(SW(L)-DUL(L))/(SAT(L)-DUL(L))))
-                      WFNU = 1.0
-                    ENDIF
-                    NH4FN = AMIN1(1.0,AMAX1(0.0,NH4LEFT(L)/NCNU))
-                    NO3FN = AMIN1(1.0,AMAX1(0.0,NO3LEFT(L)/NCNU))
-                    RLFN =  AMAX1(0.,AMIN1(1.,RLV(l)/(RLFNU/1000.0)))
-                    ! The 1000 is because read as cm/dm3,not cm/cm3
-                    ! Original also had SHF as a limitant
-                    RNO3U(L) = NO3LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NO3FN)
-                    RNH4U(L) = NH4LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NH4FN)
-                    NUPAP = NUPAP + RNO3U(L) + RNH4U(L)
+              IF (MERNU.EQ.'CRP') THEN
+              WFNU = 0.0
+              NUPAP = 0.0
+              RNO3U = 0.0
+              RNH4U = 0.0
+              ! Potential N supply in soil layers with roots (NUPAP)
+              DO L = 1, NLAYR
+                IF (RLV(L).GT.0.0) THEN
+                  NLAYRROOT = L
+                  IF (SW(L).LE.DUL(L)) THEN
+                    IF (WFNUU-WFNUL.GT.0.0) WFNU = 
+     &              AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
+                  ELSE
+                    ! LAH Wet soil effect. Not implemented because 
+                    ! problem when irrigated at planting/emergence
+                    WFNU = AMAX1
+     &               (0.,AMIN1(1.,(SW(L)-DUL(L))/(SAT(L)-DUL(L))))
+                    WFNU = 1.0
                   ENDIF
-                END DO
+                  NH4FN = AMIN1(1.0,AMAX1(0.0,NH4LEFT(L)/NCNU))
+                  NO3FN = AMIN1(1.0,AMAX1(0.0,NO3LEFT(L)/NCNU))
+                  RLFN =  AMAX1(0.,AMIN1(1.,RLV(l)/(RLFNU/1000.0)))
+                  ! The 1000 is because read as cm/dm3,not cm/cm3
+                  ! Original also had SHF as a limitant
+                  RNO3U(L) = NO3LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NO3FN)
+                  RNH4U(L) = NH4LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NH4FN)
+                  NUPAP = NUPAP + RNO3U(L) + RNH4U(L)
+                  NUPAPCRP = NUPAP
+                ENDIF
+              END DO
+              ENDIF
 
               ! Ratio (NUPRATIO) to indicate N supply for output
               IF (ANDEM.GT.0) THEN
@@ -7635,6 +7710,7 @@
             TMINCC = TMINCC + TMIN
             TMEANCC = TMEANCC + TMEAN
             SRADCC = SRADCC + SRAD
+            CO2CC = CO2CC + CO2
             DAYLCC = DAYLCC + DAYL
             RAINCC = RAINCC + RAIN
             
@@ -7677,6 +7753,7 @@
               TMINCAV = TMINCC / CDAYS 
               SRADCAV = SRADCC / CDAYS
               DAYLCAV = DAYLCC / CDAYS
+              CO2CAV = CO2CC / CDAYS
               NFPCAV = NFPCC / CDAYS
               NFGCAV = NFGCC / CDAYS
               WFPCAV = WFPCC / CDAYS
@@ -7866,7 +7943,8 @@
           ENDIF    
 
           IF(IHARI.EQ.'R'.AND.CFLHAR.EQ.'N')THEN
-            IF (CUMDU.GT.PSTART(HSTG) .AND. CFLHARMSG .NE. 'Y') THEN
+!            IF (CUMDU.GT.PSTART(HSTG) .AND. CFLHARMSG .NE. 'Y') THEN
+            IF (CUMDU.GT.PSTART(MSTG) .AND. CFLHARMSG .NE. 'Y') THEN
               WRITE(Message(1),'(A54,I7)')
      &        'Maturity reached but waiting for reported harvest on: ',
      &        YEARDOYHARF 
@@ -8527,8 +8605,6 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
      &         ' Surplus assimilates sent to roots'
               IF (LRTIP.EQ.1) WRITE(fnumwrk,'(A21)')
      &         ' Root tip in layer 1 '
-              WRITE(fnumwrk,'(A38,2F7.2)')
-     &         ' N uptake potential (kg/ha) CSCRP,CSM ',nupap,nupapcsm
               IF (NUPAP.LT.ANDEM) WRITE(fnumwrk,'(A38,F7.2)')
      &         ' N uptake shortage                    ',andem-nupap
               WRITE(FNUMWRK,'(A38,F7.2)')
@@ -11556,6 +11632,15 @@ clah     &     SANCOUT = SNAD/(STWAD + LSHWAD)
           LABEL(28) = 'YPNUM' ; VALUE(28) = GrP_NUpt
            
           LABEL(29) = 'EDAP ' ; VALUE(29) = FLOAT(EDAP)     
+          
+          LABEL(30) = 'NDCH ' ; VALUE(30) = FLOAT(CDAYS) 
+          LABEL(31) = 'TMINA' ; VALUE(31) = TMINCAV       
+          LABEL(32) = 'TMAXA' ; VALUE(32) = TMAXCAV       
+          LABEL(33) = 'SRADA' ; VALUE(33) = SRADCAV       
+          LABEL(34) = 'DAYLA' ; VALUE(34) = DAYLCAV       
+          LABEL(35) = 'CO2A ' ; VALUE(35) = CO2CAV        
+          LABEL(36) = 'PRCP ' ; VALUE(36) = RAINCC       
+          LABEL(37) = 'ETCP ' ; VALUE(37) = ETCC      
            
           IF (FILEIOT(1:2).EQ.'DS') CALL SUMVALS (SUMNUM, LABEL, VALUE)
          

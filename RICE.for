@@ -173,6 +173,9 @@ C-----------------------------------------------------------------------
       TURFAC = 1.0
       PHEFAC = 1.0
 
+!     CHP 5/18/2011
+      MDATE      = -99      
+
 !     Temporary -- until P is integrated with this crop module  US 4/2/08
 !     PConc_Shut = 0.0
 !      PConc_Root = 0.0

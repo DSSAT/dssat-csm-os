@@ -464,6 +464,9 @@ C-----------------------------------------------------------------------
           
           STGDOY(14) = YRSIM
 
+!         CHP 5/18/2011
+          MDATE      = -99      
+
           IF(MODEL(1:5).EQ.'MZCER'.OR.MODEL(1:5).EQ.'SWCER') THEN
             CALL MZ_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,             !C
      &      CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,        !I
