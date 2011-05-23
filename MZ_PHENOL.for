@@ -339,6 +339,7 @@
           ENDDO
           STGDOY(14) = YRSIM
 !          YREMRG = 9999999
+          YREMRG = -99  !CHP 5/19/2011
 
       CUMDTT = 0.0
       SUMDTT = 0.0
