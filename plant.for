@@ -395,7 +395,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         IF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI
         ENDIF
-
+! comment
 !     -------------------------------------------------
 !     Sugarcane - CANEGRO
 !     :::::::::::::::::::
