@@ -165,9 +165,11 @@ MZCER    MZ   CERES-Maize
 MZIXM    MZ   IXIM-Maize
 PTSUB    PT   SUBSTOR-Potato
 RICER    RI   CERES-Rice
+RIORZ    RI   ORYZA-Rice
 SCCAN    SC   CANEGRO-Sugarcane
 SCCSP    SC   CASUPRO-Sugarcane
 SGCER    SG   CERES-Sorghum
 SWCER    SW   CERES-Sweetcorn
 TNARO    TN   AROIDS-Taro
 TRARO    TR   AROIDS-Tanier
+NWAPS    WH   APSIM-N-wheat
