@@ -229,7 +229,7 @@ C=======================================================================
 !              MODELVER = PATHX((IPX-2):IPX)
 !            ENDIF
 !            CRMODEL(6:8) = MODELVER
-             CRMODEL(6:8) = '045'
+             CRMODEL(6:8) = '046'
             EXIT
           ENDIF
         ENDDO
@@ -437,75 +437,75 @@ C-----------------------------------------------------------------------
 C    MODEL and CROP should be modified when model versions change
 C     or when a crop specific model is created.
 C
-C     GRO  - generic cropGRO model Version 4.50 (2006)
-C     CROP = BN for CROPGRO - DRY BEAN    Version 4.5 (2006)
-C     CROP = PN for CROPGRO - PEANUT      Version 4.5 (2006)
-C     CROP = SB for CROPGRO - SOYBEAN     Version 4.5 (2006)
-C     CROP = FA for CROPGRO - FALLOW      Version 4.5 (2006)
-C     CROP = TM for CROPGRO - TOMATO      Version 4.5 (2006)
-C     CROP = PR for CROPGRO - PEPPER      Version 4.5 (2006)
-C     CROP = PE for CROPGRO - PEA         Version 4.5 (2006)
-C     CROP = CH for CROPGRO - CHICKPEA    Version 4.5 (2006)
-C     CROP = PP for CROPGRO - PIGEONPEA   Version 4.5 (2006)
-C     CROP = VB for CROPGRO - VELVETBEAN  Version 4.5 (2006)
-C     CROP = CP for CROPGRO - COWPEA      Version 4.5 (2006)
-C     CROP = CB for CROPGRO - CABBAGE     Version 4.5 (2006)
-C     CROP = C3 for CROPGRO - C4 CROPS    Version 4.5 (2006)
-C     CROP = C4 for CROPGRO - C3 CROPS    Version 4.5 (2006)
-C     CROP = G0 for CROPGRO - BAHIA       Version 4.5 (2006)
-C     CROP = G1 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G2 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G3 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G4 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G5 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G6 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G7 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G8 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = BR for CROPGRO - Brachiaria
-C                               decumbens Version 4.5 (2006)
-C     CROP = FB for CROPGRO - FABA BEAN   Version 4.5 (2006)
-C     CROP = CO for CROPGRO - COTTON      Version 4.5 (2006)
-C     CROP = NP for CROPGRO - Napier grassVersion 4.5 (2006)
-C     CROP = GB for CROPGRO - Green Bean  Version 4.5 (2006)
-C     CROP = PE for CROPGRO - Pea         Version 4.5 (2006)
+C     GRO  - generic cropGRO model Version 4.60 (2006)
+C     CROP = BN for CROPGRO - DRY BEAN    Version 4.6 (2011)
+C     CROP = PN for CROPGRO - PEANUT      Version 4.6 (2011)
+C     CROP = SB for CROPGRO - SOYBEAN     Version 4.6 (2011)
+C     CROP = FA for CROPGRO - FALLOW      Version 4.6 (2011)
+C     CROP = TM for CROPGRO - TOMATO      Version 4.6 (2011)
+C     CROP = PR for CROPGRO - PEPPER      Version 4.6 (2011)
+C     CROP = PE for CROPGRO - PEA         Version 4.6 (2011)
+C     CROP = CH for CROPGRO - CHICKPEA    Version 4.6 (2011)
+C     CROP = PP for CROPGRO - PIGEONPEA   Version 4.6 (2011)
+C     CROP = VB for CROPGRO - VELVETBEAN  Version 4.6 (2011)
+C     CROP = CP for CROPGRO - COWPEA      Version 4.6 (2011)
+C     CROP = CB for CROPGRO - CABBAGE     Version 4.6 (2011)
+C     CROP = C3 for CROPGRO - C4 CROPS    Version 4.6 (2011)
+C     CROP = C4 for CROPGRO - C3 CROPS    Version 4.6 (2011)
+C     CROP = G0 for CROPGRO - BAHIA       Version 4.6 (2011)
+C     CROP = G1 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G2 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G3 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G4 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G5 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G6 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G7 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G8 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = BR for CROPGRO - Brachiaria                
+C                               decumbens Version 4.6 (2011)
+C     CROP = FB for CROPGRO - FABA BEAN   Version 4.6 (2011)
+C     CROP = CO for CROPGRO - COTTON      Version 4.6 (2011)
+C     CROP = NP for CROPGRO - Napier grassVersion 4.6 (2011)
+C     CROP = GB for CROPGRO - Green Bean  Version 4.6 (2011)
+C     CROP = PE for CROPGRO - Pea         Version 4.6 (2011)
+                                                         
+                                                         
 
 
-
-
-C     CROP = CT for CROPGRO - CITRUS      Version 4.5 (2006)
+C     CROP = CT for CROPGRO - CITRUS      Version 4.6 (2011)
 C
-C     CER  - generic CEReal model Version 4.5 (2006)
+C     CER  - generic CEReal model Version 4.6 (2011)
 C
-C     CROP = MZ for CERES - Maize   Version 4.5 (2006)
-C     CROP = WH for CERES - Wheat   Version 4.5 (2006)
-C     CROP = BA for CERES - Barley  Version 4.5 (2006)
-C     CROP = ML for CERES - Millet  Version 4.5 (2006)
-C     CROP = SG for CERES - Sorghum Version 4.5 (2006)
-C     CROP = RI for CERES - Rice    Version 4.5 (2006)
+C     CROP = MZ for CERES - Maize   Version 4.6 (2011)
+C     CROP = WH for CERES - Wheat   Version 4.6 (2011)
+C     CROP = BA for CERES - Barley  Version 4.6 (2011)
+C     CROP = ML for CERES - Millet  Version 4.6 (2011)
+C     CROP = SG for CERES - Sorghum Version 4.6 (2011)
+C     CROP = RI for CERES - Rice    Version 4.6 (2011)
 C
-C     SIM  - generic cropSIM model Version 4.5 (2006)
-C     CROP = CS for CROPSIM Cassava Version 4.5 (2006)
+C     SIM  - generic cropSIM model  Version 4.6 (2011)
+C     CROP = CS for CROPSIM Cassava Version 4.6 (2011)
 C
-C     SUB  - generic SUBstor model Version 4.5 (2006)
-C     CROP = PT for SUBSTOR Potato Version 4.5 (2006)
+C     SUB  - generic SUBstor model Version 4.6 (2011)
+C     CROP = PT for SUBSTOR Potato Version 4.6 (2011)
 C
-C     CAN  - CANegro model Version 4.5 (2006)
-C     CROP = SC for Sugarcane Version 4.5 (2006)
+C     CAN  - CANegro model    Version 4.6 (2011)
+C     CROP = SC for Sugarcane Version 4.6 (2011)
 C
-C     OIL  - OILcrop model Version 4.5 (98.0)
-C     CROP = SU for Sunflower Version 4.5 (2006)
+C     OIL  - OILcrop model    Version 4.6 (2011)
+C     CROP = SU for Sunflower Version 4.6 (2011)
 C
-C     ALO  - ALOha model Version 4.5 (2006)
-C     CROP = PI for Pineapple Version 4.5 (2006)
+C     ALO  - ALOha model      Version 4.6 (2011)
+C     CROP = PI for Pineapple Version 4.6 (2011)
 C
-C     ARO  - AROid model Version 4.5 (2006)
-C     CROP = TR for Taro Version 4.5 (2006)
-C     CROP = TN for Tanier Version 4.5 (2006)
+C     ARO  - AROid model   Version 4.6 (2011)
+C     CROP = TR for Taro   Version 4.6 (2011)
+C     CROP = TN for Tanier Version 4.6 (2011)
 C
-C     COT  - COTton model Version 4.5 (2006)
-C     CROP = CO for Cotton Version 4.5 (2006)
+C     COT  - COTton model  Version 4.6 (2011)
+C     CROP = CO for Cotton Version 4.6 (2011)
 C
-C     CSP  - CaSuPro Cane and Sucrose Production ModelVersion 4.5 (2006)
-C     CROP = SC for CROPSIM Cassava Version 4.5 (2006)
+C     CSP  - CaSuPro Cane and Sucrose Production ModelVersion 4.6 (2011)
+C     CROP = SC for CROPSIM Cassava Version 4.6 (2011)
 C
 C-----------------------------------------------------------------------

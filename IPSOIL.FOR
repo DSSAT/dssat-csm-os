@@ -143,7 +143,7 @@ C-----------------------------------------------------------------------
 !             Read version number
               CALL IGNORE(LUNSOL,LNUM,ISECT,CHAR)
               READ(CHAR,'(A9)',IOSTAT=ERR) VERSION_TXT
-              IF (INDEX(VERSION_TXT,"4.5") < 1 .OR. ERR /= 0) THEN 
+              IF (INDEX(VERSION_TXT,"4.6") < 1 .OR. ERR /= 0) THEN 
 !               Version not found in file, or wrong version
                 EROR = .TRUE.
                 ERR = 50

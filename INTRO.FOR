@@ -97,7 +97,7 @@ C=======================================================================
 
       RETURN
 
-  100 FORMAT (10X,A1,13X,'DSSAT Version 4.5.0 Generic Input',10X,A1)
+  100 FORMAT (10X,A1,13X,'DSSAT Version 4.6.0 Generic Input',10X,A1)
   150 FORMAT (10X,A1,4X,
      &        'Please press < ENTER > key (ÄÄÙ) to continue',7X,A1)
   252 FORMAT (10X,A1,"  DSSAT Cropping System Model (CSM) Version ", 

@@ -59,14 +59,16 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Global CSM Version Number
       TYPE VersionType
         INTEGER :: Major = 4
-        INTEGER :: Minor = 5
-        INTEGER :: Model = 1
-        INTEGER :: Build = 15
+        INTEGER :: Minor = 6
+        INTEGER :: Model = 0
+        INTEGER :: Build = 1 
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.6.0.1  chp 06/28/2011 v4.6
+!                               Changes to CSCER, CSCRP, incl. spe, eco, cul formats
 !       4.5.1.15 chp 06/27/2011 Fixed zero divide in ROOTWU
 !       4.5.1.14 chp 05/18/2011 More changes to CSCER, CSCRP; MDATE initialization
 !       4.5.1.13 chp 05/05/2011 More changes to CSCER (see file CSCER040.FOR)

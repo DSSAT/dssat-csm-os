@@ -2061,7 +2061,7 @@ cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
       CHARACTER (LEN=*)  charnum
       CHARACTER (LEN=10) newchar
       CHARACTER (LEN=78) message(10)
-      INTEGER            pos,i,lenchar,tvilent,fnumerr
+      INTEGER            pos,i,lenchar,tvilent,fnumerr,fnumwrk
       REAL               tvrfromc,number
       LOGICAL            fopen
 
@@ -2143,6 +2143,15 @@ cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
       WRITE(MESSAGE(2),'(A19,A10)')'Trying to convert: ',newchar
       MESSAGE(3) = 'Returned -99. This may affect results'      
       CALL WARNING(3,'CSUTS',MESSAGE)
+            
+      CALL Getlun ('WORK.OUT',fnumwrk)
+      INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+      IF (.NOT.FOPEN)THEN
+        OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+      ENDIF  
+      WRITE (fnumwrk,*) ' Problem in Tvrfromc (real<-character)!'
+      WRITE (fnumwrk,*) ' Trying to convert: ',newchar
+
 
       RETURN
 
@@ -2158,7 +2167,7 @@ cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
       CHARACTER (LEN=*)  charnum,code
       CHARACTER (LEN=10) newchar
       CHARACTER (LEN=78) message(10)
-      INTEGER            pos,i,lenchar,tvilent,fnumerr
+      INTEGER            pos,i,lenchar,tvilent,fnumerr,fnumwrk
       REAL               tvrfromc,number,tvrfromccde
       LOGICAL            fopen
 
@@ -2244,6 +2253,14 @@ cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
       WRITE(MESSAGE(2),'(A19,A10)')'Trying to convert: ',newchar
       MESSAGE(3) = 'Returned -99. This may affect results'      
       CALL WARNING(3,'CSUTS',MESSAGE)
+
+      CALL Getlun ('WORK.OUT',fnumwrk)
+      INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+      IF (.NOT.FOPEN)THEN
+        OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+      ENDIF  
+      WRITE (fnumwrk,*) ' Problem in Tvrfromccde (real<-character)!'
+      WRITE (fnumwrk,*) ' Trying to convert: ',newchar
 
       RETURN
 
