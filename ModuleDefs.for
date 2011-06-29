@@ -64,7 +64,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 2 
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-Release  '
+      CHARACTER(len=10) :: VBranch = '-JTR_drain'
+!     Drainage modifications from JTRitchie
+!     Based on paper: 
+!     Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
+!       drainage model for more accurate soil water dynamics estimation. 
+!       Soil Science 169(11):745-757.
 
 !     Version history:  
 !       4.6.0.2  gh  06/29/2011 Sorghum cul file re-order.
