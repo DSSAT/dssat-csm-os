@@ -12,6 +12,11 @@ C  06/13/1997 WDB Added tile drainage
 !  10/29/2001 CHP Removed read stmts for soil info.  These variables
 !                 now come from soil module.
 !  08/12/2003 CHP Reset EXCS to zero daily.
+!  06/29/2011 CHP Suleiman-Ritchie changes to daily drainage from paper:
+!     Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
+!       drainage model for more accurate soil water dynamics estimation. 
+!       Soil Science 169(11):745-757.
+!  06/29/2011 CHP Combine INFIL and SATFLO - no need for two separate routines.
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !  Calls:     None
@@ -24,14 +29,11 @@ C           depending on their water holding capacity and actual soil
 C           water content.  Then saturated flow is calculated.
 C=======================================================================
       SUBROUTINE INFIL(
-     &    DLAYR, DUL, NLAYR, PINF, SAT, SW, SWCN, SWCON,  !Input
+     &    DLAYR, DUL, NLAYR, PINF, SAT, SW, SWCN,   !Input
      &    DRAIN, DRN, EXCS, SWDELTS)                    !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
-!     NL defined in ModuleDefs.for
+      USE ModuleDefs
       IMPLICIT NONE
       SAVE
 
@@ -41,7 +43,24 @@ C=======================================================================
       REAL DLAYR(NL), DRN(NL), DUL(NL), SAT(NL), SW(NL)
       REAL SWCN(NL), SWDELTS(NL), SWTEMP(NL)
 
+!***********************************************************************
+!***********************************************************************
+!     Initialization
+!***********************************************************************
+      IF (DYNAMIC .EQ. INIT) THEN
 !-----------------------------------------------------------------------
+
+
+
+
+!***********************************************************************
+!***********************************************************************
+!     DAILY RATE CALCULATIONS
+!***********************************************************************
+      ELSEIF (DYNAMIC .EQ. RATE) THEN
+!-----------------------------------------------------------------------
+
+
       DO L = 1, NLAYR
         DRN(L) = 0.0
         SWDELTS(L) = 0.0
@@ -140,6 +159,11 @@ C           If there is excess water, redistribute it in layers above.
           SWDELTS(L) = SWTEMP(L) - SW(L)
       ENDDO
 
+!***********************************************************************
+!***********************************************************************
+!     END OF DYNAMIC IF CONSTRUCT
+!***********************************************************************
+      ENDIF
 !-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE INFIL
