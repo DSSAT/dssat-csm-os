@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.5; 09/30/2010
+! DSSAT v4.6; 06/28/2011
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -225,7 +225,7 @@ BS       Sugar beet                                                           IB
 BW       Broad leaf weeds                                                     IB
 CB       Cabbage                                                              IB
 CH       Chickpea                                                             IB
-CT       Citrus                                                               IB 
+CT       Citrus                                                               IB
 CN       Canola                                                               IB
 CO       Cotton                                                               IB
 CP       Cowpea                                                               IB
@@ -240,12 +240,12 @@ LT       Lentil                                                               IB
 ML       Pearl millet                                                         IB
 MZ       Maize                                                                IB
 NN       Banana                                                               IB
-NP       Napier grass                                                         IB   
+NP       Napier grass                                                         IB
 OA       Oats                                                                 IB
 PE       Pea                                                                  IB
 PI       Pineapple                                                            IB
 PN       Peanut                                                               IB
-PO       Perennial peanut                                                     IB    	
+PO       Perennial peanut                                                     IB
 PP       Pigeonpea                                                            IB
 PR       Pepper                                                               IB
 PT       Potato                                                               IB
@@ -284,15 +284,15 @@ DR003    Surface furrows                                                      IB
 
 *Element Code
 @CDE     DESCRIPTION                                                          SO
-B        Boron                                                                IB 
-CA       Calcium                                                              IB                            
-FE       Iron                                                                 IB 
-MG       Magnesium                                                            IB 
-N        Nitrogen                                                             IB 
-P        Phosphorus                                                           IB 
-P        Potassium                                                            IB 
-S        Sulfur                                                               IB 
-ZN       Zinc                                                                 IB 
+B        Boron                                                                IB
+CA       Calcium                                                              IB
+FE       Iron                                                                 IB
+MG       Magnesium                                                            IB
+N        Nitrogen                                                             IB
+P        Phosphorus                                                           IB
+P        Potassium                                                            IB
+S        Sulfur                                                               IB
+ZN       Zinc                                                                 IB
 
 *Environment Modification Factors
 @CDE     DESCRIPTION                                                          SO
@@ -327,7 +327,7 @@ FE021    Rock phosphate                                                       IB
 FE022    Calcitic limestone                                                   IB
 FE024    Rhizobium                                                            IB
 FE026    Calcium hydroxide                                                    IB
-FE051    Urea super granules (Control release)                                IB   
+FE051    Urea super granules (Control release)                                IB
 
 *Harvest components
 @CDE     DESCRIPTION                                                          SO

@@ -30,6 +30,7 @@ C  01/16/2007 GH  Modified sorghum cultivar coefficients
 !  12/09/2008 CHP Remove METMP
 C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
+C  05/19/2011 GH  Updated for sorghum
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO
@@ -598,7 +599,8 @@ C-----------------------------------------------------------------------
 !       Ceres sorghum
         CASE('SGCER')
                WRITE (LUNIO,1900,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
+     &               P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
+C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
 C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !              Write optional cultivar parameters if present
                IF (PBASE > 1E-2 .AND. PSAT > 1E-2) THEN

@@ -1,5 +1,5 @@
 *CODES FOR SOIL DATA
-! DSSAT v4.5; 09/30/2010
+! DSSAT v4.6; 06/29/2011
 !
 ! Codes currently used for both detailed profile analysis and occasional
 ! analysis of the surface layers are listed. The soil analysis codes are
@@ -91,4 +91,3 @@ SSKS     Sat. hydraulic conductivity, macropore, cm h-1                       IB
 
 
 
-       

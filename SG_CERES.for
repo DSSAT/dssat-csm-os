@@ -1,8 +1,8 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 
+C  COPYRIGHT 1998-2011
 C                      University of Florida, Gainesville, Florida                   
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
+C                      International Fertilizsr Development Center, 
+C                      Muscle Shoals, Alabama
 C                      USDA-ARS-ALARC, Phoenix, AZ
 C                      Washington State University
 C  ALL RIGHTS RESERVED
@@ -27,6 +27,7 @@ C  04/21/2007 GH  Externalized stem partitioning STPC=0.1
 C  04/21/2007 GH  Externalized root partitioning RTPC=0.25
 C  01/15/2008 GH  Include GDDE for P9 calculation
 C  12/12/2010 GH  Moved STPC and RTPC to Ecotype file
+C  05/19/2011 GH  Reorganized cultivar coefficients
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -51,10 +52,6 @@ C----------------------------------------------------------------------
 !      Note 1: Currently the weather data modification from file X is 
 !      not being passed in. Is this a problem, or is the modified Tmax, 
 !      Tmin, etc being passed in?
-!
-!      Note 2: Currently, the ecotype file is hard coded. This needs to 
-!              be changed to read ecotype file name from DSSAT45.INP
-!              as soon as the CSM writes this name in the .inp file.
 !
 !----------------------------------------------------------------------
 
@@ -576,7 +573,8 @@ C--------------------------------------------------------------------
               CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
               READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
-     &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
+     &               P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
+C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
  1800         FORMAT (A6,1X,A16,1X,A6,1X,11F6.0)    
 
 C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
