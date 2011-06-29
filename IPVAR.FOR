@@ -18,6 +18,7 @@ C  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
 C  01/16/2008 GH  Added P2 and PANTH coefficients for sorghum
 C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
+C  05/19/2011 GH  Updated for sorghum
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -213,7 +214,8 @@ C ** Use default values if inputs not available
 !     Ceres Sorghum **
       CASE ('SGCER')
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
+     &            P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
+C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
 C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !           Read optional PBASE and PSAT parameters
 !           If these parameters are non-zero, then optional 
