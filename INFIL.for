@@ -27,21 +27,25 @@ C           water content of a layer reaches saturation, the excess
 C           amount of infiltration is added to the next soil layer(s),
 C           depending on their water holding capacity and actual soil
 C           water content.  Then saturated flow is calculated.
+
+!     Ksat = cm/hr;  SWCN = cm/d
 C=======================================================================
       SUBROUTINE INFIL(
-     &    DLAYR, DUL, NLAYR, PINF, SAT, SW, SWCN,   !Input
-     &    DRAIN, DRN, EXCS, SWDELTS)                    !Output
+     &    DYNAMIC, DLAYR, DUL, KSAT, NLAYR, PINF, SAT,    !Input
+     &    SW, SWCON,                                      !Input
+     &    DRAIN, DRN, EXCS, SWDELTS)                      !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
       SAVE
 
-      INTEGER L, LK, NLAYR
+      INTEGER DYNAMIC, L, LK, NLAYR
 
       REAL DRAIN, DRCM, EXCS, HOLD, PINF, SWCON, TMPEXCS
       REAL DLAYR(NL), DRN(NL), DUL(NL), SAT(NL), SW(NL)
-      REAL SWCN(NL), SWDELTS(NL), SWTEMP(NL)
+      REAL KSAT(NL), SWDELTS(NL), SWTEMP(NL)
+      REAL DrainC(NL)
 
 !***********************************************************************
 !***********************************************************************
@@ -49,9 +53,14 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. INIT) THEN
 !-----------------------------------------------------------------------
-
-
-
+      DO L = 1, NLAYR
+!       Eqns from Suleiman & Ritchie, 2004
+        DrainC = 3.*DUL(L)**2. - 2.6*DUL(L) + 0.85  !Eqn. 23
+        IF (KSAT(L) < -1.E-6) THEN
+!         Eqn. 10
+          KSAT(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24.  !cm/hr
+        ENDIF
+      ENDDO
 
 !***********************************************************************
 !***********************************************************************
@@ -59,8 +68,6 @@ C=======================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
-
-
       DO L = 1, NLAYR
         DRN(L) = 0.0
         SWDELTS(L) = 0.0
@@ -84,11 +91,11 @@ C=======================================================================
 
           DRN(L) = PINF - HOLD + DRCM
 
-!         Failed experiment -- too many problems with zero SWCN and 
+!         Failed experiment -- too many problems with zero KSAT and 
 !           historic soil profiles
-!         IF (SWCN(L) .GE. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
-          IF (SWCN(L) .GT. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
-            DRN(L) = SWCN(L) * 24.0
+!         IF (KSAT(L) .GE. 0.0 .AND. DRN(L) .GT. KSAT(L)*24.0) THEN
+          IF (KSAT(L) .GT. 0.0 .AND. DRN(L) .GT. KSAT(L)*24.0) THEN
+            DRN(L) = KSAT(L) * 24.0
             DRCM = DRN(L) + HOLD - PINF
           ENDIF
 
@@ -137,9 +144,9 @@ C           If there is excess water, redistribute it in layers above.
 
             DRN(L) = DRCM
 
-!           IF (SWCN(L) .GE. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
-            IF (SWCN(L) .GT. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) THEN
-               DRN(L) = SWCN(L) * 24.0
+!           IF (KSAT(L) .GE. 0.0 .AND. DRN(L) .GT. KSAT(L)*24.0) THEN
+            IF (KSAT(L) .GT. 0.0 .AND. DRN(L) .GT. KSAT(L)*24.0) THEN
+               DRN(L) = KSAT(L) * 24.0
                DRCM = DRN(L)
             ENDIF
 
@@ -186,7 +193,7 @@ C           If there is excess water, redistribute it in layers above.
 !               (cm3 [water] / cm3 [soil])
 ! SW(L)       Volumetric soil water content in layer L
 !               (cm3 [water] / cm3 [soil])
-! SWCN(L)     Saturated hydraulic conductivity in layer L (cm/hr)
+! KSAT(L)     Saturated hydraulic conductivity in layer L (cm/hr)
 ! SWCON       Soil water conductivity constant; whole profile drainage rate 
 !               coefficient (1/d)
 ! SWDELTS(L) Change in soil water content due to drainage in layer L

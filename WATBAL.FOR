@@ -37,6 +37,7 @@ C  06/12/2002 CHP/US  Added flooded field options
 !                 MEINF = 'M', Mulch effects modelled.
 !  04/05/2006 CHP Added mixing of SW and variable soil layer depths
 !                 due to tillage
+!  06/29/2011 CHP Removed SATFLO. Can be done in INFIL.
 C-----------------------------------------------------------------------
 C  Called by: SOIL module
 C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.FOR)
@@ -44,7 +45,6 @@ C             UP_FLOW                                  (File WBSUBS.FOR)
 C             INFIL   (File INFIL.FOR)
 C             OPWBAL  (File OPWBAL.FOR)
 C             RNOFF   (File RNOFF.FOR)
-C             SATFLO  (File SATFLO.FOR)
 C=======================================================================
 
       SUBROUTINE WATBAL(CONTROL, ISWITCH, 
@@ -99,7 +99,7 @@ C=======================================================================
       REAL TSW, TSWINI, WATAVL, WTDEP
 
       REAL, DIMENSION(NL) :: DLAYR, DLAYR_YEST, DS, DUL, LL  
-      REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL
+      REAL, DIMENSION(NL) :: SAT, KSAT, SW_AVAIL
 
 !     Flood management variables:
       REAL FLOOD, INFILT, PUDPERC
@@ -133,7 +133,7 @@ C=======================================================================
       LL     = SOILPROP % LL     
       NLAYR  = SOILPROP % NLAYR  
       SAT    = SOILPROP % SAT    
-      SWCN   = SOILPROP % SWCN   
+      KSAT   = SOILPROP % SWCN / 24. !Ksat in cm/hr  
       SWCON  = SOILPROP % SWCON  
 
       FLOOD   = FLOODWAT % FLOOD
@@ -329,12 +329,9 @@ C=======================================================================
 !       Potential for infilitration
         PINF = WINF * 0.1                       !(cm)
 
-!       Call INFIL to calculate infiltration rates on days with irrigation
-!         or rainfall.  Call SATFLO on days with no irrigation or rain
-!         to calculate saturated flow.
-        IF (PINF .GT. 0.0001) THEN
-          CALL INFIL(
-     &      DLAYR, DUL, NLAYR, PINF, SAT, SW, SWCN, SWCON,!Input
+!       Calculate infiltration and drainage rates 
+        CALL INFIL(
+     &      DLAYR, DUL, NLAYR, PINF, SAT, SW, KSAT, SWCON,!Input
      &      DRAIN, DRN, EXCS, SWDELTS)                    !Output
 
           INFILT = 0.0
@@ -348,11 +345,6 @@ C=======================================================================
           IF (EXCS > 0 .AND. .NOT. BUNDED) THEN
             RUNOFF = RUNOFF + EXCS * 10.0
           ENDIF
-
-        ELSE
-          CALL SATFLO(
-     &      DLAYR, DUL, NLAYR, SAT, SW, SWCN, SWCON,      !Input
-     &      DRAIN, DRN, SWDELTS)                          !Output
         ENDIF
 
         IF (TDLNO .GT. 0) THEN
@@ -612,7 +604,7 @@ C=====================================================================
 ! SW_AVAIL(L) Soil water content in layer L available for evaporation, 
 !               plant extraction, or movement through soil
 !               (cm3 [water] / cm3 [soil])
-! SWCN(L)     Saturated hydraulic conductivity in layer L (cm/hr)
+! KSAT(L)     Saturated hydraulic conductivity in layer L (cm/hr)
 ! SWCON       Soil water conductivity constant; whole profile drainage rate 
 !               coefficient (1/d)
 ! SWDELTS(L)  Change in soil water content due to drainage in layer L
