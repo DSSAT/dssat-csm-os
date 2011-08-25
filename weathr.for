@@ -66,7 +66,7 @@ C=======================================================================
      &  CCO2, CLOUDS, CO2, DAYL, DEC, ISINB, PAR, 
      &  PI, RAD, RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
      &  TA, TAMP, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,
-     &  TMAX, TMIN, TWILEN, WINDHT, WINDSP, XELEV, XLAT, XLONG
+     &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDSP, XELEV, XLAT, XLONG
 
       REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR
       REAL, DIMENSION(TS) :: RADHR, RHUMHR, TAIRHR, TGRO, WINDHR
@@ -112,7 +112,7 @@ C=======================================================================
       CALL IPWTH(CONTROL,
      &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
-     &    TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,            !Output
+     &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    RUNINIT)
 
@@ -134,7 +134,7 @@ C=======================================================================
           CALL IPWTH(CONTROL,
      &      CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,      !Output
      &      RAIN, REFHT, RHUM, RSEED1, SRAD,              !Output
-     &      TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,          !Output
+     &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
      &      SEASINIT)
           IF (YREND == YRDOY) RETURN
@@ -258,7 +258,7 @@ C     Read new weather record.
         CALL IPWTH(CONTROL,
      &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
-     &    TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,            !Output
+     &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    RATE)
         IF (YREND == YRDOY) RETURN
@@ -315,8 +315,12 @@ C     Calculate hourly weather data.
      &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
      &    TGROAV, TGRODY, WINDHR)                         !Output
 
-      !Adjust wind speed from reference height to 2m height.
-      WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+C     Adjust wind speed from reference height to 2m height.
+      IF (WINDSP > 0.0) THEN
+        WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+      ELSE
+        WINDSP = 86.4
+      ENDIF
 
 C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
@@ -344,7 +348,7 @@ C-----------------------------------------------------------------------
         CALL IPWTH(CONTROL,
      &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
-     &    TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,            !Output
+     &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    SEASEND)
       ENDIF
@@ -388,6 +392,7 @@ C-----------------------------------------------------------------------
       WEATHER % TMIN   = TMIN  
       WEATHER % TWILEN = TWILEN
       WEATHER % WINDSP = WINDSP
+      WEATHER % VAPR   = VAPR
 
 !     Hourly data
       WEATHER % AZZON  = AZZON 
