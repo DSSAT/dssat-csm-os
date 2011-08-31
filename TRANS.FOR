@@ -120,6 +120,7 @@ C  ??/??/?? JWJ Written as subroutine ETRATIO.
 C  12/05/93 NBP Changed to TRATIO function.  Changed VPDF to VPSLOP.
 C  10/18/95 GH  Modified for multiple species.
 !  10/17/97 CHP Modified for modular format.
+!  08/31/2011 CHP Added C4 crops to list.
 !-----------------------------------------------------------------------
 !  Called by: TRANS
 !  Calls:     BLRRES
@@ -169,10 +170,9 @@ C     (Allen, 1986), Plant responses to rising CO2.
 C     CO2    = CO2    Conc of the increased ATM case
 C     CO2    = 330    Ambient CO2
 C-----------------------------------------------------------------------
-      IF (INDEX('MZMLSGSC',CROP) .GT. 0) THEN  
-!     FSR added SC - no effect found in plant or soil output files
+      IF (INDEX('MZ,ML,SG,SC,SW,BM,BH,BR,NP,SI',CROP) .GT. 0) THEN  
 C     C-4 Crops
-C        EQ 7 from Allen (1986) for corn.
+C       EQ 7 from Allen (1986) for corn.
         RLF  = (1.0/(0.0328 - 5.49E-5*330.0 + 2.96E-8 * 330.0**2)) + RB
         RLFC = (1.0/(0.0328 - 5.49E-5* CO2  + 2.96E-8 * CO2  **2)) + RB
       ELSE
