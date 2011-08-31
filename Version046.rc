@@ -27,8 +27,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,6,0,3
- PRODUCTVERSION 4,6,0,3
+ FILEVERSION 4,6,0,4
+ PRODUCTVERSION 4,6,0,4
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -45,12 +45,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "University of Florida"
             VALUE "FileDescription", "CSM46"
-            VALUE "FileVersion", "4, 6, 0, 3"
+            VALUE "FileVersion", "4, 6, 0, 4"
             VALUE "InternalName", "CSM46"
             VALUE "LegalCopyright", "Copyright © 2011"
             VALUE "OriginalFilename", "DSCSM046.exe"
             VALUE "ProductName", "University of Florida DSCSM46"
-            VALUE "ProductVersion", "4, 6, 0, 3"
+            VALUE "ProductVersion", "4, 6, 0, 4"
         END
     END
     BLOCK "VarFileInfo"
