@@ -61,13 +61,15 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 3 
+        INTEGER :: Build = 4 
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.6.0.4  chp 08/30/2011 Sorghum changes GH, CSCER, CSCRP changes, LAH.
 !       4.6.0.3  chp 08/30/2011 Added vapor pressure as optional weather input.
+!                               v4.6.0.3 is the base model for CO2 comparisons.
 !       4.6.0.2  gh  06/29/2011 Sorghum cul file re-order.
 !       4.6.0.1  chp 06/28/2011 v4.6
 !                               Changes to CSCER, CSCRP, incl. spe, eco, cul formats

@@ -1,6 +1,6 @@
 $CULTIVARS:WHCRP045
 
-! LAST EDIT: 18/06/11
+! LAST EDIT: 22/08/11
 
 ! Coefficients used in the Cropsim model differ from those used in
 ! earlier DSSAT wheat/barley models. They can be calculated
@@ -32,7 +32,7 @@ $CULTIVARS:WHCRP045
 ! of wheat and other cereals.
 
 *CULTIVARS:WHCRP045
-!                                     --- BASIC COEFFICIENTS (AS IN CERES) ---  ------ PHENOLOGY (PHASE DURATIONS) -----  -- LEAF SIZES -- -- P.MODIFIERS --                 
+!                                     --- BASIC COEFFICIENTS (AS IN CERES) ---  ------ PHENOLOGY (PHASE DURATIONS) -----  -- LEAF SIZES -- P.MODIFIERS PPSEN                 
 @VAR#  VAR-NAME........  EXP#   ECO#  VREQ  PPS1    P8 G#WTS  GWTS SHWTS PHINT    P1    P2    P3    P4    P5    P6    P7  LA1S  LAFV  LAFR VBASE  VEFF  PPS2
 !                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20
 999991 MINIMA               . 999991     0     0   100    10    10   0.5    40   100    60   100    50    50    10    50   0.1  0.01  0.01     0     0     0
@@ -57,7 +57,6 @@ IB1015 MARIS FUNDIN       1,2 UK0001    30   103   535    15    44   3.2   100  
 ! PPSn *      Photoperiod sensitivity,phase(n). % drop in rate,10h pp.change.
 ! PHINT       Interval between successive leaf appearances. (oC.d)
 ! SHWTS       Standard,non-stressed shoot dry weight (incl.grain),maturity (g)
-! SLAS        Specific leaf area,standard (cm2/g)                                                                                   
 ! VAR#        Identification code or number for the specific cultivar.
 ! VAR-NAME    Name of cultivar.
 ! VREQ        Vernalization required for max.development rate (VDays)

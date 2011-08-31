@@ -172,7 +172,7 @@
       CHARACTER (LEN=6)   ditotc        ! Total area cm2/p
       CHARACTER (LEN=6)   psizec        ! Pustule size cm2
       CHARACTER (LEN=64)  spdirfle      ! Species directory+file
-      CHARACTER (LEN=70)  outhed        ! Output file heading
+      CHARACTER (LEN=79)  outhed        ! Output file heading
 
       LOGICAL             fopen         ! File open indicator
 
@@ -306,7 +306,7 @@
         ! Leaf details
         OPEN (UNIT = fnumlfdi, FILE = fnamelf, STATUS='UNKNOWN',
      &     POSITION = 'APPEND')
-        WRITE (fnumlfdi,'(/,A70,/)') OUTHED
+        WRITE (fnumlfdi,'(/,A79,/)') OUTHED
         WRITE (fnumlfdi,2103)
  2103   FORMAT('@YEAR DOY   DAP  LAP1  LAD1  LAS1  LAP2  LAD2  LAS2 ',
      x  ' LAP3  LAD3  LAS3  LAP4  LAD4  LAS4  LAP5  LAD5  LAS5  LAP6 ',
@@ -317,7 +317,7 @@
         DO l=0,dinx
         OPEN (UNIT = fnumdis(l), FILE = fnamedis(l), STATUS='UNKNOWN',
      &     POSITION = 'APPEND')
-        WRITE (fnumdis(l),'(/,A70,/)') OUTHED
+        WRITE (fnumdis(l),'(/,A79,/)') OUTHED
         WRITE (fnumdis(l),2102)
  2102   FORMAT('@YEAR DOY   DAP PCNUM  PNUM PSIZE  DIST  DINT   DIT ',
      x  ' DIID  DIDF DISCF  DITF  DIFF  INF1 INF10')

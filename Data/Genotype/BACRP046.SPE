@@ -1,6 +1,6 @@
 $SPECIES:BACRP045
 
-! LAST EDIT: 18/06/11
+! LAST EDIT: 22/08/11
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
 ! They have been developed from 'parameters' embedded in the code of
@@ -17,11 +17,11 @@ $SPECIES:BACRP045
     1      S GDAT  Germinate
     2      K TSAT  Max.Primordia
     3      S PSDAT Pseudo_Stem
-    4      K LLDAT End_Leaf
-    5      K IEDAT Head_Emerge
+    4      S LLDAT End_Leaf
+    5      S IEDAT Head_Emerge
     6      K ADAT  Anthesis
-    7      K AEDAT End_Anthesis
-    8      K GFDAT MilkToDough
+    7      S AEDAT End_Anthesis
+    8      S GFDAT MilkToDough
     9      M MDAT  HardDough
    10      S HDAT  Harvest
    11      S ECDAT End_crop
@@ -45,7 +45,7 @@ $SPECIES:BACRP045
    15      S   9.0 GGPHE GrainEnd              
 ! Phase durations
 @PGERM PEMRG    P0    P9 
-    10    10     0   200
+    10     8     0   200
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN PPEXP VPEND VEEND VLOSS VLOST VLOSF ! Photoperiod,vern
    1.0  20.0    LQ   2.0   2.0   2.0   0.2  30.0   0.5
@@ -108,12 +108,11 @@ $SPECIES:BACRP045
 @ TKUH TKDTI  TKLF TKSPN  HDUR HLOST HLOSF ! Kill temps,span,time->harden,loss
   -6.0   2.0   0.0   2.0  10.0  10.0   0.2
 ! Temperature responses
-! AFRC vernalization=-4,3,10,17; Reinink=-1,0,4,8,9
-@RRATE TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN 
-     0     0     0     0     0     0    -5    -5     0     0 
-   1.0    26    26    30    10     5     0     0    16    16  
-   1.0    50    50    50    20    25     7     5    35    35
-     0    60    60    60    35    35    15    10    45    45
+@RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
+     0     1     0     0     0     0     0    -5    -5     0     0  
+   1.0    26    26    26    30    10     5     0     0    16    16  
+   1.0    50    50    50    50    20    25     7     5    35    35
+     0    60    60    60    60    35    35    15    10    45    45
 
 ! WATER loss,uptake,etc.
 ! Evapotranspiration (Resistances only used in stand-alone Cropsim,not CSM)
@@ -240,7 +239,7 @@ $SPECIES:BACRP045
 ! PEMRG   Emergence phase duration (Thermal units per cm depth)
 ! PGERM   Phase duration,germination (Hydrothermal units)
 ! PHFn    Factor by which PHINTS is multiplied -> PHINT for phase (#)
-! PHLn    Leaf # at end of phyllochron phase (ie,at which PHINT changes) (#) 
+! PHLn    Leaf # produced during phyllochron phase (#) 
 ! PPEXP   Photoperiod response curve exponent (#)
 ! PPFPE   Photoperiod factor,pre emergence (#,0-1,0=No development)
 ! PPSEN   Photoperiod sensitivity (L=Long day response,Q=Quadratic)
@@ -295,6 +294,7 @@ $SPECIES:BACRP045
 ! TOPT2   Highest optimum temperature for disease development (oC)
 ! TPAR    Transmission,photosynthetically active radiation (fr)
 ! TRDVx   Temperature response,development,phase x and on until next x entry
+! TRGEM   Temperature response,germination and pre-emergence growth (oC)
 ! TRGFN   Temperature response,grain filling,nitrogen (oC)
 ! TRGFW   Temperature response,grain filling,dry weight(oC)
 ! TRHAR   Temperature response,hardening for winter survival (oC)

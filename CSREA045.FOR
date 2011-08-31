@@ -2660,7 +2660,8 @@
         WRITE(fnumerr,*)' Most likely the level indicator was not found'
         WRITE(fnumerr,*)' Either the indicator was not present'
         WRITE(fnumerr,*)' Or the indicator or code was wrong'
-        WRITE(fnumerr,*)' The file being used was      ',ADIRFILE(1:48)
+        WRITE(fnumerr,*)' The file being used was:      '
+        WRITE(fnumerr,*)' ',ADIRFILE(1:FILELEN)
         WRITE(fnumerr,*)' AND the level indicator was  ',LEVEL
         WRITE(fnumerr,*)' Program had to stop'
         WRITE(fnumerr,*)' Check READS.OUT for details'
@@ -2668,7 +2669,8 @@
         WRITE(*,*)' Most likely the level indicator was not found'
         WRITE(*,*)' Either the indicator was not present'
         WRITE(*,*)' Or the indicator or code was wrong'
-        WRITE(*,*)' The file being used was      ',ADIRFILE(1:45)
+        WRITE(*,*)' The file being used was:      '
+        WRITE(*,*)' ',ADIRFILE(1:FILELEN)
         WRITE(*,*)' AND the level indicator was  ',LEVEL
         WRITE(*,*)' Program will have to stop'
         WRITE(*,*)' Check READS.OUT for details'

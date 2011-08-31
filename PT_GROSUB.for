@@ -15,6 +15,7 @@ C  10/02/2002 CHP/WM Added bedwidth correction when PLME = 'B'
 C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  08/12/2003 CHP Added Walter Bowen's changes to GROLF from 1/2000
+C  08/23/2011 GH/JIL Added CO2 response to tuber growth
 C=======================================================================
 
       SUBROUTINE PT_GROSUB (DYNAMIC,
@@ -71,9 +72,6 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(10) :: CO2X, CO2Y
       REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
      &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
-
-!     Redundant with SAVE stmt earlier
-!      SAVE RVCHO
 
 !      DATA  LALWR, SLAN /270.,0./
       DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
@@ -451,8 +449,10 @@ C           SLFT = 0.0
           !
           ! Calculation of potential growth .. Set priorities for carbon
           !
-!          PTUBGR  = G3*ETGT/PLANTS
-          PTUBGR  = G3*ETGT/PLTPOP    !CHP
+!          PTUBGR  = G3*ETGT/PLTPOP    !CHP
+           PTUBGR  = G3 * PCO2 * ETGT/PLTPOP          !JIL   (Modified)
+          
+          
           IF (PLME .EQ. 'B') THEN                     !WM
             PTUBGR  = PTUBGR / BWRATIO                !WM
           ENDIF                                       !WM

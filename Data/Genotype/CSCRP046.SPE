@@ -1,6 +1,6 @@
 $SPECIES:CSCRP045
 
-! LAST EDIT: 18/06/11
+! LAST EDIT: 21/08/11
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
@@ -104,11 +104,11 @@ $SPECIES:CSCRP045
 @PTFMN PTFMX  PTFA  ! Partition to tops (max,min,adjustment)
   0.87  0.90  0.10
 ! Temperature responses
-@RRATE TRDV1 TRLFG TRPHS  ! Development, leaf growth, photosynthesis
-     0  13.0   -10    10
-   1.0  30.0    -5    20
-   1.0  30.0    55    30
-     0  42.5    65    35
+@RRATE TRGEM TRDV1 TRLFG TRPHS  ! Germination/emergence,development,leaves, photosynthesis
+     0    13  13.0   -10    10
+   1.0    30  30.0    -5    20
+   1.0    30  30.0    55    30
+     0  42.5  42.5    65    35
 
 ! WATER loss,uptake,etc.
 ! Evapotranspiration (Resistances only used in stand-alone Cropsim,not CSM)
@@ -243,6 +243,7 @@ $SPECIES:CSCRP045
 ! TIL#X   Shoot number per plant,maximum (#)
 ! TPAR    Transmission,photosynthetically active radiation (fr)
 ! TRDVx   Temperature response,development,phase x and on until next x entry
+! TRGEM   Temperature response,germination and pre-emergence growth (oC)
 ! TRLFG   Temperature response,leaf growth (oC)
 ! TRPHS   Temperature response,photosynthesis (oC)
 ! TSRAD   Transmission,solar radiation (fr)
