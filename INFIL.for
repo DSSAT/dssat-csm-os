@@ -55,7 +55,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
 !       Eqns from Suleiman & Ritchie, 2004
-        DrainC = 3.*DUL(L)**2. - 2.6*DUL(L) + 0.85  !Eqn. 23
+        DrainC(L) = 3.*DUL(L)**2. - 2.6*DUL(L) + 0.85  !Eqn. 23
         IF (KSAT(L) < -1.E-6) THEN
 !         Eqn. 10
           KSAT(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24.  !cm/hr
@@ -80,9 +80,11 @@ C=======================================================================
         HOLD = (SAT(L) - SWTEMP(L)) * DLAYR(L)
         IF (PINF .GT. 1.E-4 .AND. PINF .GT. HOLD) THEN
 
+!         F value is function of drainage from above and Drain(C) coefficient
+!         SWCON = f(DrainC(L), PINF)
+
 ! 11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
 !     increased evaporation for wet soils
-
           IF (L == 1) THEN                                        !JTR
             DRCM = 0.9 * SWCON * (SAT(L) - DUL(L)) * DLAYR(L)     !JTR
           ELSE                                                    !JTR
