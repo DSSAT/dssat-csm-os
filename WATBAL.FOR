@@ -331,20 +331,19 @@ C=======================================================================
 
 !       Calculate infiltration and drainage rates 
         CALL INFIL(
-     &      DLAYR, DUL, NLAYR, PINF, SAT, SW, KSAT, SWCON,!Input
-     &      DRAIN, DRN, EXCS, SWDELTS)                    !Output
+     &    DLAYR, DUL, NLAYR, PINF, SAT, SW, KSAT, SWCON,!Input
+     &    DRAIN, DRN, EXCS, SWDELTS)                    !Output
 
-          INFILT = 0.0
-          DO L = 1, NLAYR
-            INFILT = INFILT + SWDELTS(L) * DLAYR(L) * 10.  !(in mm)
-          ENDDO
-          INFILT = INFILT + DRAIN
+        INFILT = 0.0
+        DO L = 1, NLAYR
+          INFILT = INFILT + SWDELTS(L) * DLAYR(L) * 10.  !(in mm)
+        ENDDO
+        INFILT = INFILT + DRAIN
 
-          !Excess water not infiltrated is added to overland runoff. 
-          !If bunded, excess water is accounted for in INFILT variable.
-          IF (EXCS > 0 .AND. .NOT. BUNDED) THEN
-            RUNOFF = RUNOFF + EXCS * 10.0
-          ENDIF
+        !Excess water not infiltrated is added to overland runoff. 
+        !If bunded, excess water is accounted for in INFILT variable.
+        IF (EXCS > 0 .AND. .NOT. BUNDED) THEN
+          RUNOFF = RUNOFF + EXCS * 10.0
         ENDIF
 
         IF (TDLNO .GT. 0) THEN
