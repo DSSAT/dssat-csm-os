@@ -42,7 +42,7 @@ C=======================================================================
 
       NDAT = FLOODN % NDAT    !from rice phenology
 
-      ABUND  = FLOODWAT % ABUND
+      ABUND  = FLOODWAT % ABUND !mm
       EF     = FLOODWAT % EF
       INFILT = FLOODWAT % INFILT
       RUNOFF = FLOODWAT % RUNOFF
@@ -72,7 +72,7 @@ C=======================================================================
 
       FLOODWAT % CEF       = CEF
       FLOODWAT % EF        = EF
-      FLOODWAT % FLOOD     = FLOOD
+      FLOODWAT % FLOOD     = FLOOD      !mm
       FLOODWAT % FRUNOFF   = FRUNOFF
       FLOODWAT % TOTBUNDRO = TOTBUNDRO
       FLOODWAT % YRDRY     = YRDRY

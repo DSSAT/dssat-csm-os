@@ -266,7 +266,7 @@ C-----------------------------------------------------------------------
               AVPSTR2 = 0.0
             ENDIF
 
-            IF (BIOMAS .GT. 1.E-4) THEN
+            IF (BIOMAS .GT. 1.E-4 .AND. WTNCAN > 1.E-8) THEN
               WTN = WTNCAN*10. / BIOMAS * 100.
             ELSE
               WTN = 0.0

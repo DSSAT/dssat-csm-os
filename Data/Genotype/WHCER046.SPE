@@ -1,6 +1,6 @@
 $SPECIES:WHCER045
 
-! LAST EDIT: 18/06/11
+! LAST EDIT: 22/08/11
 
 ! Coefficients differ from those used in DSSAT  Versions 3.5 and 4.0x. 
 ! They have been developed from 'parameters' embedded in the code of 
@@ -13,10 +13,10 @@ $SPECIES:WHCER045
 *SPECIES:WHCER045
 ! Phase durations
 @PGERM PEMRG    P0    P6  ! Germination,emrgence/cm,juvenile,post-maturity
-    10  10.0     0   200
+    10   8.0     0   200
 ! Development rate responses to environment
-@PPFPE PPTHR  ! Photoperiod factor pre-emerge,threshold photoperiod
-   1.0  20.0
+@PPFPE PPTHR PPEND  ! Photoperiod factor pre-emerge,threshold,end sensitivity
+   1.0  20.0   2.0
 ! Roots   
 @RLIG%  RLWR RSEN% RRESP RLDGR !Lignin%,length/wt,senescence,resp.
   10.0  0.98   .80  0.40   500
@@ -79,11 +79,11 @@ $SPECIES:WHCER045
 @ TKUH  HDUR
   -6.0  10.0
 ! Temperature responses
-@TRDV1 TRDV2 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN    
-     0     0     0     0    -5    -5     0     0    
-    26    30    10     5     0     0    16    16    
-    50    50    20    25     7     5    35    35    
-    60    60    35    35    15    10    45    45    
+@TRGEM TRDV1 TRDV2 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN    
+     1     0     0     0     0    -5    -5     0     0    
+    26    26    30    10     5     0     0    16    16    
+    50    50    50    20    25     7     5    35    35    
+    60    60    60    35    35    15    10    45    45    
 
 ! WATER loss,uptake,etc..   
 ! Evapotranspiration
@@ -176,9 +176,9 @@ $SPECIES:WHCER045
 ! P6      Phase duration 6 (post physio.maturity (oC.d)
 ! PEMRG   Emergence phase duration (Thermal units per cm depth)
 ! PGERM   Germination phase duration (Hydrothermal units)
-! PHF1    PHINT factor for first few leaves (#)
 ! PHFn    Factor by which PHINTS is multiplied -> PHINT for phase (#)
-! PHLn    Leaf # at end of phyllochron phase (ie,at which PHINT changes) (#) 
+! PHLn    Leaf # produced during phyllochron phase (#) 
+! PPEND   Photoperiod sensitivity end stage (#)
 ! PPFPE   Photoperiod factor,pre emergence (#,0-1)
 ! PPTHR   Photoperiod threshold (h above which no effect)
 ! PTFA    Partition to tops,adjustment coeff.by phase (#)
@@ -214,6 +214,7 @@ $SPECIES:WHCER045
 ! TPAR    Transmission of photosynthetically active radiation (fr)
 ! TRDV1   Temperature response,development 1 (oC)
 ! TRDV2   Temperature response,development 2 (oC)
+! TRGEM   Temperature response,germination and pre-emergence growth (oC)
 ! TRGFN   Temperature response,grain filling,N (oC)
 ! TRGFW   Temperature response,grain filling,dry weight(oC)
 ! TRHAR   Temperature response,hardening for winter survival (oC)

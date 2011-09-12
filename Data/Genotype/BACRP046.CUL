@@ -1,6 +1,6 @@
 $CULTIVARS:BACRP045
 
-! LAST EDIT: 18/06/11
+! LAST EDIT: 22/08/11
 
 ! Coefficients used in the Cropsim model differ from those used in
 ! earlier DSSAT wheat/barley models. They can be calculated
@@ -40,7 +40,7 @@ $CULTIVARS:BACRP045
 !                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20
 999991 MINIMA               . 999991     0     0   100    10    10   0.5    40   100    60   100    50    50    10    50   0.1  0.01  0.01     0     0     0
 999992 MAXIMA               . 999992    60   300   800    50    75   5.0   120   800   100   300   500   400   100   300  10.0  5.00  5.00    30   1.0   200
-                                                                                                                                                                
+
 DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0   0.1   0.5     0     0     0
 
 IB0101 A.Abiad (2)          . SY0001    10    83   240    15    40   3.0    89   356    56   169   150    50    20   130   2.0  0.25  0.40     0   0.5     0 
