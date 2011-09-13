@@ -45,7 +45,7 @@ C=======================================================================
       REAL DRAIN, DRCM, EXCS, HOLD, PINF, SWCON, TMPEXCS
       REAL DLAYR(NL), DRN(NL), DUL(NL), SAT(NL), SW(NL)
       REAL KSAT(NL), SWDELTS(NL), SWTEMP(NL)
-      REAL DrainC(NL)
+      REAL DrainC(NL), F
 
 !***********************************************************************
 !***********************************************************************
@@ -56,10 +56,6 @@ C=======================================================================
       DO L = 1, NLAYR
 !       Eqns from Suleiman & Ritchie, 2004
         DrainC(L) = 3.*DUL(L)**2. - 2.6*DUL(L) + 0.85  !Eqn. 23
-        IF (KSAT(L) < -1.E-6) THEN
-!         Eqn. 10
-          KSAT(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24.  !cm/hr
-        ENDIF
       ENDDO
 
 !***********************************************************************
@@ -77,11 +73,14 @@ C=======================================================================
       TMPEXCS = 0.0
 
       DO L = 1,NLAYR
-        HOLD = (SAT(L) - SWTEMP(L)) * DLAYR(L)
-        IF (PINF .GT. 1.E-4 .AND. PINF .GT. HOLD) THEN
+        HOLD = (SAT(L) - SWTEMP(L)) * DLAYR(L)      !cm
 
-!         F value is function of drainage from above and Drain(C) coefficient
-!         SWCON = f(DrainC(L), PINF)
+!       Equation 25, PINF and KSAT both in cm/d
+!       F modifies drainage every day, each layer based on current drainage from above
+        F = MAX(0.0, 1.0 - (LOG(PINF + 1.0) / LOG(KSAT(L) + 1.0)))
+        SWCON = F * DrainC(L)
+
+        IF (PINF .GT. 1.E-4 .AND. PINF .GT. HOLD) THEN
 
 ! 11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
 !     increased evaporation for wet soils

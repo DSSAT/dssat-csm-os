@@ -133,7 +133,7 @@ C=======================================================================
       LL     = SOILPROP % LL     
       NLAYR  = SOILPROP % NLAYR  
       SAT    = SOILPROP % SAT    
-      KSAT   = SOILPROP % SWCN / 24. !Ksat in cm/hr  
+      KSAT   = SOILPROP % SWCN * 24. !Ksat in cm/d  
       SWCON  = SOILPROP % SWCON  
 
       FLOOD   = FLOODWAT % FLOOD
@@ -331,8 +331,9 @@ C=======================================================================
 
 !       Calculate infiltration and drainage rates 
         CALL INFIL(
-     &    DLAYR, DUL, NLAYR, PINF, SAT, SW, KSAT, SWCON,!Input
-     &    DRAIN, DRN, EXCS, SWDELTS)                    !Output
+     &    DYNAMIC, DLAYR, DUL, KSAT, NLAYR, PINF, SAT,    !Input
+     &    SW, SWCON,                                      !Input
+     &    DRAIN, DRN, EXCS, SWDELTS)                      !Output
 
         INFILT = 0.0
         DO L = 1, NLAYR
