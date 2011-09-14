@@ -198,6 +198,12 @@ C=======================================================================
       CALL MULCHWATER(CONTROL, ISWITCH,
      &    WATAVL, MULCH)
 
+!     Initialize infiltration and drainage routines 
+        CALL INFIL(
+     &    DYNAMIC, DLAYR, DUL, KSAT, NLAYR, PINF, SAT,    !Input
+     &    SW, SWCON,                                      !Input
+     &    DRAIN, DRN, EXCS, SWDELTS)                      !Output
+
 !     Initialize tile drainage
       IF (TDLNO .GT. 0) THEN
         CALL TILEDRAIN(CONTROL, 

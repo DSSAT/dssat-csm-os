@@ -47,6 +47,13 @@ C=======================================================================
       REAL KSAT(NL), SWDELTS(NL), SWTEMP(NL)
       REAL DrainC(NL), F
 
+!     temp chp
+      CHARACTER*80  :: FormatTxt 
+      CHARACTER*120 :: HeaderTxt
+      INTEGER       :: NVars, Width
+      REAL, DIMENSION(NL) :: FL
+      REAL PINF0
+
 !***********************************************************************
 !***********************************************************************
 !     Initialization
@@ -57,6 +64,21 @@ C=======================================================================
 !       Eqns from Suleiman & Ritchie, 2004
         DrainC(L) = 3.*DUL(L)**2. - 2.6*DUL(L) + 0.85  !Eqn. 23
       ENDDO
+
+!     TEMP CHP
+      NVars = 12
+      Width = 96
+      HeaderTxt = "    PINF      F1    DRN1      F2    DRN2      F3" // 
+     &            "    DRN3      F4    DRN4      F5    DRN5    DRNN"
+      FormatTxt = "(12F8.3))"
+      FL = 0.0
+      DRN = 0.0
+      PINF0 = 0.0
+
+      CALL OPGENERIC(
+     &  NVars, Width, HeaderTxt, FormatTxt,  
+     &  PINF0, FL(1), DRN(1), FL(2), DRN(2), FL(3), 
+     &  DRN(3), FL(4), DRN(4), FL(5), DRN(5), DRN(NLAYR))  
 
 !***********************************************************************
 !***********************************************************************
@@ -72,6 +94,10 @@ C=======================================================================
       EXCS    = 0.0
       TMPEXCS = 0.0
 
+!     TEMP CHP
+      DRN = 0.0
+      PINF0 = PINF
+
       DO L = 1,NLAYR
         HOLD = (SAT(L) - SWTEMP(L)) * DLAYR(L)      !cm
 
@@ -80,21 +106,20 @@ C=======================================================================
         F = MAX(0.0, 1.0 - (LOG(PINF + 1.0) / LOG(KSAT(L) + 1.0)))
         SWCON = F * DrainC(L)
 
+!       TEMP CHP
+        FL(L) = F
+
         IF (PINF .GT. 1.E-4 .AND. PINF .GT. HOLD) THEN
 
-! 11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
-!     increased evaporation for wet soils
-          IF (L == 1) THEN                                        !JTR
-            DRCM = 0.9 * SWCON * (SAT(L) - DUL(L)) * DLAYR(L)     !JTR
-          ELSE                                                    !JTR
-            DRCM = SWCON * (SAT(L) - DUL(L)) * DLAYR(L)
-          ENDIF                                                   !JTR
+          DRCM = SWCON * (SAT(L) - DUL(L)) * DLAYR(L)
+!         11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
+!           increased evaporation for wet soils
+          IF (L == 1) THEN 
+            DRCM = DRCM * 0.9
+          ENDIF      
 
           DRN(L) = PINF - HOLD + DRCM
 
-!         Failed experiment -- too many problems with zero KSAT and 
-!           historic soil profiles
-!         IF (KSAT(L) .GE. 0.0 .AND. DRN(L) .GT. KSAT(L)*24.0) THEN
           IF (KSAT(L) .GT. 0.0 .AND. DRN(L) .GT. KSAT(L)*24.0) THEN
             DRN(L) = KSAT(L) * 24.0
             DRCM = DRN(L) + HOLD - PINF
@@ -128,24 +153,22 @@ C           If there is excess water, redistribute it in layers above.
   760       CONTINUE
 
           ENDIF
+
           PINF = DRN(L)
 
         ELSE
           SWTEMP(L) = SWTEMP(L) + PINF / DLAYR(L)
           IF (SWTEMP(L) .GE. DUL(L) + 0.003) THEN
 
-! 11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
-!     increased evaporation for wet soils
-
-            IF (L == 1) THEN                                        !JTR
-              DRCM = 0.9 * (SWTEMP(L) - DUL(L)) * SWCON * DLAYR(L)  !JTR
-            ELSE                                                    !JTR
-              DRCM = (SWTEMP(L) - DUL(L)) * SWCON * DLAYR(L)
-            ENDIF                                                   !JTR
+            DRCM = SWCON * (SWTEMP(L) - DUL(L)) * DLAYR(L)
+!           11/30/2006 JTR/CHP reduce SWCON in top layer to allow for
+!             increased evaporation for wet soils
+            IF (L == 1) THEN 
+              DRCM = DRCM * 0.9
+            ENDIF      
 
             DRN(L) = DRCM
 
-!           IF (KSAT(L) .GE. 0.0 .AND. DRN(L) .GT. KSAT(L)*24.0) THEN
             IF (KSAT(L) .GT. 0.0 .AND. DRN(L) .GT. KSAT(L)*24.0) THEN
                DRN(L) = KSAT(L) * 24.0
                DRCM = DRN(L)
@@ -155,13 +178,21 @@ C           If there is excess water, redistribute it in layers above.
             PINF = DRCM
 
           ELSE
-            PINF = 0.0
             DRN(L) = 0.0
+            PINF = 0.0
           ENDIF
+
         ENDIF
       ENDDO
 
       DRAIN = PINF * 10.0
+
+!     TEMP CHP
+      CALL OPGENERIC(
+     &  NVars, Width, HeaderTxt, FormatTxt,  
+     &  PINF0, FL(1), DRN(1), FL(2), DRN(2), FL(3), 
+     &  DRN(3), FL(4), DRN(4), FL(5), DRN(5), DRN(NLAYR))  
+
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
           SWDELTS(L) = SWTEMP(L) - SW(L)
