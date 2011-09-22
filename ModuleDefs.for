@@ -61,17 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 4 
+        INTEGER :: Build = 5 
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-JTR_drain'
-!     Drainage modifications from JTRitchie
-!     Based on paper: 
-!     Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
-!       drainage model for more accurate soil water dynamics estimation. 
-!       Soil Science 169(11):745-757.
+      CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.6.0.5  chp 09/22/2011 Drainage modifications JTR
 !       4.6.0.4  chp 08/30/2011 Sorghum changes GH, CSCER, CSCRP changes, LAH.
 !       4.6.0.3  chp 08/30/2011 Added vapor pressure as optional weather input.
 !                               v4.6.0.3 is the base model for CO2 comparisons.
