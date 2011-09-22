@@ -47,12 +47,12 @@ C=======================================================================
       REAL KSAT(NL), SWDELTS(NL), SWTEMP(NL)
       REAL DrainC(NL), F
 
-!     temp chp
-      CHARACTER*80  :: FormatTxt 
-      CHARACTER*120 :: HeaderTxt
-      INTEGER       :: NVars, Width
-      REAL, DIMENSION(NL) :: FL
-      REAL PINF0
+!!     temp chp
+!      CHARACTER*80  :: FormatTxt 
+!      CHARACTER*120 :: HeaderTxt
+!      INTEGER       :: NVars, Width
+!      REAL, DIMENSION(NL) :: FL
+!      REAL PINF0
 
 !***********************************************************************
 !***********************************************************************
@@ -65,20 +65,20 @@ C=======================================================================
         DrainC(L) = 3.*DUL(L)**2. - 2.6*DUL(L) + 0.85  !Eqn. 23
       ENDDO
 
-!     TEMP CHP
-      NVars = 12
-      Width = 96
-      HeaderTxt = "    PINF      F1    DRN1      F2    DRN2      F3" // 
-     &            "    DRN3      F4    DRN4      F5    DRN5    DRNN"
-      FormatTxt = "(12F8.3))"
-      FL = 0.0
-      DRN = 0.0
-      PINF0 = 0.0
-
-      CALL OPGENERIC(
-     &  NVars, Width, HeaderTxt, FormatTxt,  
-     &  PINF0, FL(1), DRN(1), FL(2), DRN(2), FL(3), 
-     &  DRN(3), FL(4), DRN(4), FL(5), DRN(5), DRN(NLAYR))  
+!!     TEMP CHP
+!      NVars = 12
+!      Width = 96
+!      HeaderTxt = "    PINF      F1    DRN1      F2    DRN2      F3" // 
+!     &            "    DRN3      F4    DRN4      F5    DRN5    DRNN"
+!      FormatTxt = "(12F8.3))"
+!      FL = 0.0
+!      DRN = 0.0
+!      PINF0 = 0.0
+!
+!      CALL OPGENERIC(
+!     &  NVars, Width, HeaderTxt, FormatTxt,  
+!     &  PINF0, FL(1), DRN(1), FL(2), DRN(2), FL(3), 
+!     &  DRN(3), FL(4), DRN(4), FL(5), DRN(5), DRN(NLAYR))  
 
 !***********************************************************************
 !***********************************************************************
@@ -96,7 +96,7 @@ C=======================================================================
 
 !     TEMP CHP
       DRN = 0.0
-      PINF0 = PINF
+!      PINF0 = PINF
 
       DO L = 1,NLAYR
         HOLD = (SAT(L) - SWTEMP(L)) * DLAYR(L)      !cm
@@ -106,8 +106,8 @@ C=======================================================================
         F = MAX(0.0, 1.0 - (LOG(PINF + 1.0) / LOG(KSAT(L) + 1.0)))
         SWCON = F * DrainC(L)
 
-!       TEMP CHP
-        FL(L) = F
+!!       TEMP CHP
+!        FL(L) = F
 
         IF (PINF .GT. 1.E-4 .AND. PINF .GT. HOLD) THEN
 
@@ -187,11 +187,11 @@ C           If there is excess water, redistribute it in layers above.
 
       DRAIN = PINF * 10.0
 
-!     TEMP CHP
-      CALL OPGENERIC(
-     &  NVars, Width, HeaderTxt, FormatTxt,  
-     &  PINF0, FL(1), DRN(1), FL(2), DRN(2), FL(3), 
-     &  DRN(3), FL(4), DRN(4), FL(5), DRN(5), DRN(NLAYR))  
+!!     TEMP CHP
+!      CALL OPGENERIC(
+!     &  NVars, Width, HeaderTxt, FormatTxt,  
+!     &  PINF0, FL(1), DRN(1), FL(2), DRN(2), FL(3), 
+!     &  DRN(3), FL(4), DRN(4), FL(5), DRN(5), DRN(NLAYR))  
 
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
