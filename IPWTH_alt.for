@@ -147,6 +147,10 @@ C     The components are copied into local variables for use here.
 
       WYEAR = (ICHAR(FILEW(5:5)) - 48)*10 + (ICHAR(FILEW(6:6)) - 48)
       NYEAR = (ICHAR(FILEW(7:7)) - 48)*10 + (ICHAR(FILEW(8:8)) - 48)
+      IF (LastWeatherDay > FirstWeatherDay) THEN
+        NYEAR = INT(LastWeatherDay)/1000 - INT(FirstWeatherDay)/1000 + 1
+        NYEAR = MAX(1, NYEAR)
+      ENDIF
 
       IF (NYEAR == 1 .AND. MULTI > 1) THEN
         PATHL  = INDEX(PATHWT,BLANK)
