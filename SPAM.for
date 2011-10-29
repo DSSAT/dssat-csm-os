@@ -62,7 +62,7 @@ C=======================================================================
      &    TRWU, TRWUP, U
       REAL EOS, EOP, WINF, MSALB, ET_ALB
       REAL XLAT, TAV, TAMP, SRFTEMP
-      REAL EORATIO, KSEVAP, KTRANS
+      REAL EORATIO, KSEVAP, KTRANS, FACTOR
 
       REAL DLAYR(NL), DUL(NL), LL(NL), RLV(NL), RWU(NL),  
      &    SAT(NL), ST(NL), SW(NL), SW_AVAIL(NL), !SWAD(NL), 
@@ -73,10 +73,11 @@ C=======================================================================
       REAL PORMIN, RWUMX
 
 !     Flood management variables:
-      REAL FLOOD
+      REAL FLOOD, EOS_SOIL
       
 !     P Stress on photosynthesis
       REAL PSTRES1
+
 !-----------------------------------------------------------------------
 !     Jim's suggested order of calculation 9/1/2011
 !     1. Compute E0
@@ -97,8 +98,8 @@ C=======================================================================
 !           puts some energy back into the canopy Eop if the soil does not evaporate enough.
 
 !     Move calculations from TRANS so we can split the order, based on above
-
-      REAL TRATIO, TRAT, FDINT, FACTOR
+!     FUNCTION SUBROUTINES:
+      REAL TRATIO, TRAT, FDINT  !, FACTOR
       REAL EO1, EO2, EOP1, EOP2, EOP3, EOP4, EOS1, EOS2, EVAP
 
 !-----------------------------------------------------------------------
@@ -281,8 +282,6 @@ C       and total potential water uptake rate.
             ET_ALB = MSALB
           ENDIF
 
-          EVAP = 0.0
-
 !         Step 1 - compute EO
           CALL PET(CONTROL, 
      &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
@@ -293,15 +292,13 @@ C       and total potential water uptake rate.
 !-----------------------------------------------------------------------
 !         POTENTIAL SOIL EVAPORATION
 !-----------------------------------------------------------------------
+!         Step 2 - compute EOS(1)
 !         05/26/2007 CHP/MJ Use XLAI instead of XHLAI 
 !         This was important for Canegro and affects CROPGRO crops
 !             only very slightly (max 0.5% yield diff for one peanut
 !             experiment).  No difference to other crop models.
-!         Step 2 - compute EOS(1)
           CALL PSE(EO, KSEVAP, XLAI, EOS)
 
-!         Initialize soil, mulch and flood evaporation
-          ES = 0.; EM = 0.; EF = 0.
 !-----------------------------------------------------------------------
 !         POTENTIAL TRANSPIRATION - initial estimate
 !-----------------------------------------------------------------------
@@ -315,25 +312,49 @@ C       and total potential water uptake rate.
           EOS = EOS * Factor 
 
 !         Step 5
+!         CO2 effects on transpiration
           TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
           EOP = EOP * TRAT
 
 !         Step 6
-          EO = EOP + EOS
+          IF (EOP + EOS < EO) THEN
+            EO = EOP + EOS
+          ENDIF
 
 !-----------------------------------------------------------------------
-!         ACTUAL SOIL OR FLOOD EVAPORATION
+!         ACTUAL SOIL, MULCH AND FLOOD EVAPORATION
 !-----------------------------------------------------------------------
+!         Initialize soil, mulch and flood evaporation
+          ES = 0.; EM = 0.; EF = 0.; EVAP = 0.0
+          UPFLOW = 0.0; ES_LYR = 0.0
+
+!         First meet evaporative demand from floodwater
           IF (FLOOD .GT. 1.E-4) THEN
-            CALL FLOOD_EVAP(XLAI, EO, EF)
-
-          ELSE
-!           Mulch evaporation unless switched off. This modifies EOS
-!           IF (INDEX('RSN',MEINF) .LE. 0) THEN
-            IF (INDEX('RSM',MEINF) > 0) THEN   
-              CALL MULCH_EVAP(DYNAMIC, MULCH, EOS, EM)
+            CALL FLOOD_EVAP(XLAI, EO, EF)   
+            IF (EF > FLOOD) THEN
+!             Floodwater not enough to supply EOS demand
+              EOS_SOIL = MIN(EF - FLOOD, EOS)
+              EF = FLOOD
+            ELSE
+              EOS_SOIL = 0.0
             ENDIF
+          ELSE
+            EOS_SOIL = EOS
+          ENDIF
 
+!         Next meet evaporative demand from mulch
+          IF (EOS_SOIL > 1.E-6 .AND. INDEX('RSM',MEINF) > 0) THEN
+            CALL MULCH_EVAP(DYNAMIC, MULCH, EOS_SOIL, EM)
+            IF (EOS_SOIL > EM) THEN
+!             Some evaporative demand leftover for soil
+              EOS_SOIL = EOS_SOIL - EM
+            ELSE
+              EOS_SOIL = 0.0
+            ENDIF
+          ENDIF
+
+!         Soil evaporation after flood and mulch evaporation
+          IF (EOS_SOIL > 1.E-6) THEN
             SELECT CASE(MESEV)
 !           ------------------------
             CASE ('R')  !Ritchie soil evaporation routine
@@ -342,7 +363,7 @@ C       and total potential water uptake rate.
                 SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
               ENDDO
               CALL SOILEV(RATE,
-     &          DLAYR, DUL, EOS, LL, SW,                  !Input
+     &          DLAYR, DUL, EOS_SOIL, LL, SW,             !Input
      &          SW_AVAIL(1), U, WINF,                     !Input
      &          ES)                                       !Output
 
@@ -351,19 +372,18 @@ C       and total potential water uptake rate.
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
 !             Calculate the availability of soil water for use in SOILEV.
               CALL ESR_SoilEvap(
-     &          EOS, SOILPROP, SW, SWDELTS,               !Input
+     &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
      &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
             END SELECT
 !           ------------------------
           ENDIF
 
+!         Total evaporation from soil, mulch, flood
+          EVAP = ES + EM + EF
+
 !-----------------------------------------------------------------------
 !         ACTUAL TRANSPIRATION
 !-----------------------------------------------------------------------
-          IF (XHLAI .GT. 0.0) THEN
-          ELSE
-            EOP = 0.0
-          ENDIF
 
           IF (XHLAI .GT. 1.E-4 .AND. EOP .GT. 1.E-4) THEN
             !These calcs replace the old SWFACS subroutine
@@ -406,7 +426,7 @@ C       and total potential water uptake rate.
             ENDDO
           END SELECT
 
-C         Calculate actual soil water uptake and transpiration rates
+!         Calculate actual soil water uptake and transpiration rates
           CALL XTRACT(
      &      NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP,        !Input
      &      EP, RWU,                                      !Input/Output

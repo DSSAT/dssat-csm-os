@@ -20,15 +20,12 @@
 !C  01/13/2000 NBP Added DYNAMIC contruct to input KCAN and calc. FDINT
 !C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !!  06/19/2003 JWJ/CHP Replaced KEP with KTRANS
-!!  08/30/2011 JWJ/CHP Revise EOP limitation to (EO - EOS), was (EO*TRAT -ES)
 !!-----------------------------------------------------------------------
 !!  Called by: WATBAL
 !!  Calls:     None
 !C=======================================================================
 !      SUBROUTINE TRANS(DYNAMIC, 
-!!    &    CO2, CROP, EO, ES, KTRANS, TAVG, WINDSP, XHLAI, !Input
-!!    &    CO2, CROP, EO, EOS, KTRANS, TAVG, WINDSP, XHLAI,!Input
-!     &    CO2, CROP, EO, EOS, ES, KTRANS, TAVG, WINDSP, XHLAI,!Input
+!     &    CO2, CROP, EO, ES, KTRANS, TAVG, WINDSP, XHLAI, !Input
 !     &    EOP)                                            !Output
 !
 !!-----------------------------------------------------------------------
@@ -46,35 +43,13 @@
 !!     FUNCTION SUBROUTINES:
 !      REAL TRATIO
 !
-!!     temp chp
-!      CHARACTER*80  :: FormatTxt 
-!      CHARACTER*120 :: HeaderTxt
-!      INTEGER       :: NVars, Width
-!      REAL          :: EOP2, EOS
-!
 !!***********************************************************************
 !!***********************************************************************
 !!     Seasonal initialization - run once per season
 !!***********************************************************************
 !      IF (DYNAMIC .EQ. SEASINIT) THEN
 !!-----------------------------------------------------------------------
-!      EOP = 0.0
-!
-!!     TEMP CHP
-!      NVars = 12
-!      trat = 1.0
-!      fdint = 0.0
-!      eop2 = 0.0
-!
-!      HeaderTxt = "     CO2  WINDSP    TAVG   XHLAI  KTRANS    TRAT" // 
-!     &            "   FDINT      EO     EOS      ES     EOP    EOP2"
-!      Width = 96
-!      FormatTxt = "(3F8.1,2F8.2,2F8.3,5F8.3)"
-!
-!      CALL OPGENERIC(
-!     &  NVars, Width, HeaderTxt, FormatTxt,  
-!     &  co2, windsp, tavg, xhlai, ktrans, trat, 
-!     &  fdint, eo, eos, es, eop, eop2)
+!        EOP = 0.0
 !
 !!***********************************************************************
 !!***********************************************************************
@@ -96,27 +71,17 @@
 !C       all cases, for PT form as well as the Dynamic form for predicting
 !C       soil water balance and predicting measured ET.
 !
-!        FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
-!        EOP = EO * FDINT * TRAT   
+!       FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
+!       EOP = EO * FDINT * TRAT   
 !
 !C       01/15/03 KJB  I think the change to "Same" K for EOS and EOP
 !C       may cause next function to be less driving, but below still
 !C       will depend on whether actual soil evapo (ES) meets EOS
 !
-!!       08/30/2011 CHP / JWJ / KJB
-!!       08/31/2011 chp - go back to old - TEST
-!       IF ((EOP + ES) .GT. (EO * TRAT)) EOP2 = EO * TRAT - ES
-! 
-!!       Note: this caused some large differences in CROPGRO model, MZ OK
-!!        EOP = MIN(EOP, EO - EOS) 
-!
-!!     temp chp
-!      call opgeneric(
-!     &  NVars, Width, HeaderTxt, FormatTxt,  
-!     &  co2, windsp, tavg, xhlai, ktrans, trat, 
-!     &  fdint, eo, eos, es, eop, eop2)
-!
-!        EOP = MAX(EOP2,0.0)
+!        IF ((EOP + ES) .GT. (EO * TRAT)) THEN
+!          EOP = EO * TRAT - ES
+!        ENDIF
+!        EOP = MAX(EOP,0.0)
 !
 !!***********************************************************************
 !!***********************************************************************
@@ -173,8 +138,8 @@ C=======================================================================
       CHARACTER*2 CROP
       REAL CO2, TAVG, WINDSP, XHLAI
       REAL TRATIO
-      REAL CHIGHT, DELTA, GAMMA, LAIMAX, LHV, RA, RB, RATIO, RC1, RC2,
-     &  RL, RLC, RLF, RLFC, RS1, RS2, UAVG, XDEN, XNUM
+      REAL CHIGHT, DELTA, GAMMA, LAIMAX, LHV, RA, RB, !RATIO, RC1, RC2,
+     &  RL, RLC, RLF, RLFC, UAVG, XDEN, XNUM    !, RS1, RS2
 
 !-----------------------------------------------------------------------
 !     FUNCTION SUBROUTINES:
@@ -244,9 +209,6 @@ C     C-3 Crops
 
 !     Replace boundary layer resistance function with this eqn
       RA = 208. / UAVG  !FAO-56
-
-!     temp chp
-      write(5000,*) CO2, RL, RLC, UAVG, RA
 
 !     End changes CHP / JWJ 8/23/2011
 !++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -339,7 +301,7 @@ C     Compute delta and gamma.
 !      RC1 = RC1 - RS1
 !
 !      RETURN
-!      END !SUBROUTINE BLRRES
+!      END SUBROUTINE BLRRES
 !
 !!-----------------------------------------------------------------------
 !!     BLRRES VARIABLE DEFINITIONS:
