@@ -77,6 +77,29 @@ C=======================================================================
       
 !     P Stress on photosynthesis
       REAL PSTRES1
+!-----------------------------------------------------------------------
+!     Jim's suggested order of calculation 9/1/2011
+!     1. Compute E0
+!     2. Compute Eos(1)
+!     3. Compute Eop(1)
+!     4. Compare Eos(1) + Eop(1) with E0. E0 is less than that sum, 
+!           reduce both proportionally (to compute Eos(2) and Eop(2)) 
+!           such that their sum is equal to E0. This will ensure up 
+!           front that our starting point partitioning is accurate (adding to E0).
+!     5. Modify Eop to compute Eop(3) = Eop(2)*TRAT   This will reduce 
+!           potential transpiration based on CO2.
+!     6. Now, re-compute E0. E0(2) = Eos(2) + Eop(3). This will reduce 
+!           potential evapotranspiration but only due to the reduction 
+!           in Eop, not Eos. This E0(2) is our final calculation of potential 
+!           evapotranspiration that should be output, which takes into account 
+!           the CO2 effect on leaves stomatal conduction.
+!     7. Now, compute Es as before, and follow the code from before, which 
+!           puts some energy back into the canopy Eop if the soil does not evaporate enough.
+
+!     Move calculations from TRANS so we can split the order, based on above
+
+      REAL TRATIO, TRAT, FDINT, FACTOR
+      REAL EO1, EO2, EOP1, EOP2, EOP3, EOP4, EOS1, EOS2, EVAP
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -262,6 +285,9 @@ C       and total potential water uptake rate.
             ET_ALB = MSALB
           ENDIF
 
+          EVAP = 0.0
+
+!         Step 1 - compute EO
           CALL PET(CONTROL, 
      &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
      &      EORATIO, !Needed by Penman-Monteith
@@ -275,10 +301,29 @@ C       and total potential water uptake rate.
 !         This was important for Canegro and affects CROPGRO crops
 !             only very slightly (max 0.5% yield diff for one peanut
 !             experiment).  No difference to other crop models.
+!         Step 2 - compute EOS(1)
           CALL PSE(EO, KSEVAP, XLAI, EOS)
 
 !         Initialize soil, mulch and flood evaporation
           ES = 0.; EM = 0.; EF = 0.
+!-----------------------------------------------------------------------
+!         POTENTIAL TRANSPIRATION - initial estimate
+!-----------------------------------------------------------------------
+!         Step 3 - compute EOP(1)
+          FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
+          EOP = EO * FDINT   
+
+!         Step 4 - Adjust EOP and EOS proportionally to add up to EO
+          Factor = EO / (EOP + EOS)
+          EOP = EOP * Factor
+          EOS = EOS * Factor 
+
+!         Step 5
+          TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
+          EOP = EOP * TRAT
+
+!         Step 6
+          EO = EOP + EOS
 
 !-----------------------------------------------------------------------
 !         ACTUAL SOIL OR FLOOD EVAPORATION
