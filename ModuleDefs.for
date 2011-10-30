@@ -69,6 +69,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Version history:  
 !       4.6.0.6  chp 10/29/2011 Modified CO2 effects to transpiration (SPAM, TRANS)
 !       4.6.0.5  chp 09/22/2011 Drainage modifications JTR
+!                               Enabled Canola
+!                               CO2 response for potato
 !       4.6.0.4  chp 08/30/2011 Sorghum changes GH, CSCER, CSCRP changes, LAH.
 !       4.6.0.3  chp 08/30/2011 Added vapor pressure as optional weather input.
 !       4.6.0.2  gh  06/29/2011 Sorghum cul file re-order.
