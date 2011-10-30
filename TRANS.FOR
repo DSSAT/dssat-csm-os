@@ -88,7 +88,7 @@ C       will depend on whether actual soil evapo (EVAP) meets EOS
       ENDIF
 !-----------------------------------------------------------------------
       RETURN
-      END !SUBROUTINE TRANS
+      END SUBROUTINE TRANS
 
 !-----------------------------------------------------------------------
 !     TRANS VARIABLE DEFINITIONS:
