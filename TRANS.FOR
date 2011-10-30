@@ -20,13 +20,14 @@ C  09/01/1999 GH  Incorporated into CROPGRO
 C  01/13/2000 NBP Added DYNAMIC contruct to input KCAN and calc. FDINT
 C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  06/19/2003 JWJ/CHP Replaced KEP with KTRANS
+!  10/31/2011 CHP Use EVAP instead of ES (can include flood and mulch evap)
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !  Calls:     None
 C=======================================================================
       SUBROUTINE TRANS(DYNAMIC, 
-     &    CO2, CROP, EO, ES, KTRANS, TAVG, WINDSP, XHLAI, !Input
-     &    EOP)                                            !Output
+     &    CO2, CROP, EO, EVAP, KTRANS, TAVG, WINDSP, XHLAI, !Input
+     &    EOP)                                              !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -36,7 +37,7 @@ C=======================================================================
 
       INTEGER DYNAMIC
 
-      REAL CO2, EO, ES, FDINT, KTRANS, TAVG, WINDSP, XHLAI
+      REAL CO2, EO, EVAP, FDINT, KTRANS, TAVG, WINDSP, XHLAI
       REAL EOP, TRAT
 
 !     FUNCTION SUBROUTINES:
@@ -75,9 +76,9 @@ C       soil water balance and predicting measured ET.
 
 C       01/15/03 KJB  I think the change to "Same" K for EOS and EOP
 C       may cause next function to be less driving, but below still
-C       will depend on whether actual soil evapo (ES) meets EOS
+C       will depend on whether actual soil evapo (EVAP) meets EOS
 
-        IF ((EOP + ES) .GT. (EO * TRAT)) EOP = EO * TRAT - ES
+        IF ((EOP + EVAP) .GT. (EO * TRAT)) EOP = EO * TRAT - EVAP
         EOP = MAX(EOP,0.0)
 
 !***********************************************************************
@@ -95,7 +96,7 @@ C       will depend on whether actual soil evapo (ES) meets EOS
 ! CO2     Atmospheric carbon dioxide concentration (ppm)
 ! EO      Potential evapotranspiration rate (mm/d)
 ! EOP     Potential plant transpiration  (mm/d)
-! ES      Actual soil evaporation rate (mm/d)
+! EVAP    Actual soil + mulch + flood evaporation rate (mm/d)
 ! FDINT   Fraction of direct solar radiation captured by canopy
 ! KCAN    Canopy light extinction coefficient for daily PAR, for
 !           equidistant plant spacing, modified when in-row and between row

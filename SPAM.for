@@ -58,7 +58,7 @@ C=======================================================================
 
       REAL CANHT, CO2, SRAD, TAVG, 
      &    TMAX, TMIN, WINDSP, XHLAI, XLAI
-      REAL CEF, CEM, CEO, CEP, CES, CET, EF, EM, EO, EP, ES, ET,
+      REAL CEF, CEM, CEO, CEP, CES, CET, EF, EM, EO, EP, ES, ET, EVAP, 
      &    TRWU, TRWUP, U
       REAL EOS, EOP, WINF, MSALB, ET_ALB
       REAL XLAT, TAV, TAMP, SRFTEMP
@@ -341,17 +341,9 @@ C       and total potential water uptake rate.
 !         ACTUAL TRANSPIRATION
 !-----------------------------------------------------------------------
           IF (XHLAI .GT. 0.0) THEN
-            IF (FLOOD .GT. 0.0) THEN
-              !Use flood evaporation rate
-              CALL TRANS (RATE, 
-     &          CO2, CROP, EO, EF, KTRANS, TAVG, WINDSP, XHLAI, !Input
-     &          EOP)                                            !Output
-            ELSE
-              !Use soil evaporation rate
-              CALL TRANS(RATE, 
-     &          CO2, CROP, EO, ES, KTRANS, TAVG, WINDSP, XHLAI, !Input
-     &          EOP)                                            !Output
-            ENDIF
+            CALL TRANS(RATE, 
+     &          CO2, CROP, EO, EVAP, KTRANS, TAVG, WINDSP, XHLAI, !Input
+     &          EOP)                                             !Output
           ELSE
             EOP = 0.0
           ENDIF
@@ -424,7 +416,7 @@ C       and total potential water uptake rate.
 !-----------------------------------------------------------------------
       IF (ISWWAT .EQ. 'Y') THEN
 !       Perform daily summation of water balance variables.
-        ET  = ES  + EM + EP + EF
+        ET  = EVAP + EP
         CEF = CEF + EF
         CEM = CEM + EM
         CEO = CEO + EO
