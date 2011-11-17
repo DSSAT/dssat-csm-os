@@ -179,7 +179,8 @@ C=======================================================================
 
 !       Initialize plant transpiration variables
         CALL TRANS(DYNAMIC, 
-     &    CO2, CROP, EO, ES, KTRANS, TAVG, WINDSP, XHLAI, !Input
+     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+     &    WINDSP, XHLAI,                                  !Input
      &    EOP)                                            !Output
       ENDIF
 
@@ -338,16 +339,20 @@ C       and total potential water uptake rate.
           EVAP = ES + EM + EF
 
 !-----------------------------------------------------------------------
-!         ACTUAL TRANSPIRATION
+!         Potential transpiration
 !-----------------------------------------------------------------------
-          IF (XHLAI .GT. 0.0) THEN
+          IF (XHLAI > 1.E-6) THEN
             CALL TRANS(RATE, 
-     &          CO2, CROP, EO, EVAP, KTRANS, TAVG, WINDSP, XHLAI, !Input
-     &          EOP)                                             !Output
+     &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
+     &        WINDSP, XHLAI,                              !Input
+     &        EOP)                                        !Output
           ELSE
             EOP = 0.0
           ENDIF
 
+!-----------------------------------------------------------------------
+!         ACTUAL TRANSPIRATION
+!-----------------------------------------------------------------------
           IF (XHLAI .GT. 1.E-4 .AND. EOP .GT. 1.E-4) THEN
             !These calcs replace the old SWFACS subroutine
             !Stress factors now calculated as needed in PLANT routines.

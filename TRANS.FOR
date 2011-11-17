@@ -26,8 +26,9 @@ C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  Calls:     None
 C=======================================================================
       SUBROUTINE TRANS(DYNAMIC, 
-     &    CO2, CROP, EO, EVAP, KTRANS, TAVG, WINDSP, XHLAI, !Input
-     &    EOP)                                              !Output
+     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+     &    WINDSP, XHLAI,                                  !Input
+     &    EOP)                                            !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -38,7 +39,7 @@ C=======================================================================
       INTEGER DYNAMIC
 
       REAL CO2, EO, EVAP, FDINT, KTRANS, TAVG, WINDSP, XHLAI
-      REAL EOP, TRAT
+      REAL EOP, TRAT, EOP_reduc, EOP_max
 
 !     FUNCTION SUBROUTINES:
       REAL TRATIO
@@ -71,14 +72,22 @@ C       01/15/03 - Work of Sau et al, shows that a K of 0.5 was better in
 C       all cases, for PT form as well as the Dynamic form for predicting
 C       soil water balance and predicting measured ET.
 
-       FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
-       EOP = EO * FDINT * TRAT   
+        FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
+        EOP = EO * FDINT
+        EOP_reduc = EOP * (1. - TRAT)  
+        EOP = EOP * TRAT
 
 C       01/15/03 KJB  I think the change to "Same" K for EOS and EOP
 C       may cause next function to be less driving, but below still
 C       will depend on whether actual soil evapo (EVAP) meets EOS
 
-        IF ((EOP + EVAP) .GT. (EO * TRAT)) EOP = EO * TRAT - EVAP
+!       IF ((EOP + EVAP) .GT. (EO * TRAT)) EOP = EO * TRAT - EVAP
+
+!       Need to limit EOP to no more than EO (reduced by TRAT effect on EOP) 
+!         minus actual evaporation from soil, mulch and flood
+        EOP_max = EO - EOP_reduc - EVAP
+        EOP = MIN(EOP, EOP_max)
+
         EOP = MAX(EOP,0.0)
 
 !***********************************************************************

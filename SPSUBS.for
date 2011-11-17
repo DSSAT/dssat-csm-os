@@ -340,10 +340,7 @@ C=======================================================================
      &    SWDELTX, TRWU)                                  !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
-!     NL defined in ModuleDefs.for
+      USE ModuleDefs
 
       IMPLICIT NONE
       SAVE
