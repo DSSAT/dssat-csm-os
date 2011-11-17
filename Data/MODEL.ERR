@@ -799,3 +799,6 @@ Syntax error.
 GENERI   64
 Invalid format in file.
 
+GENERI   75
+Array size exceeded.
+
