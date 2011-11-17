@@ -1074,7 +1074,9 @@ c
 
 !       Old computation:
         IF (XLAI .LE. 1.0) THEN   !<-------!
-          EOS = EO*(1.0 - 0.43*XLAI)       !
+!         EOS = EO*(1.0 - 0.43*XLAI)       !
+!         get rid of discontinuity:
+          EOS = EO*(1.0 - 0.39*XLAI)       !
         ELSE                               !-> old code
           EOS = EO/1.1*EXP(-0.4*XLAI)      !
         ENDIF    !<------------------------! 

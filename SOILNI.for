@@ -655,7 +655,10 @@ C         If flooded, lose all nitrate --------REVISED-US
 
 !         chp/us 4/21/2006
           IF (FLOOD .GT. 0.0 .AND. WFDENIT > 0.0) THEN
-            DENITRIF(L) = SNO3_AVAIL
+!            DENITRIF(L) = SNO3_AVAIL
+!           chp 9/6/2011 remove 50% NO3/d = 97% removed in 5 days
+!           previously removed 100% NO3/d
+            DENITRIF(L) = SNO3_AVAIL * 0.5
           ENDIF
 
 !chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
