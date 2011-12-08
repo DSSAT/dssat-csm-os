@@ -114,7 +114,7 @@ C-----------------------------------------------------------------------
         FILEIO  = CONTROL % FILEIO
         LUNIO   = CONTROL % LUNIO
 
-!       FILESS = 'RESCH045.SDA'
+!       FILESS = 'RESCH046.SDA'
         FILESS = 'RESCH' // CONTROL % MODEL(6:8) // '.SDA'
 
         SOILNF = FILESS
@@ -151,7 +151,7 @@ C-----------------------------------------------------------------------
               ENDIF
             ENDIF
 C-----------------------------------------------------------------------
-C     Read Soil Parameters from RESCH045.SDA
+C     Read Soil Parameters from RESCH046.SDA
 C-----------------------------------------------------------------------
             I = 0; ISECT = 1
 !           EOF not portable. CHP 7/24/2007
