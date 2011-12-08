@@ -187,14 +187,14 @@
 
 !     Partition the newly added residue E over the structural and
 !     metabolic pools. The C/E ratio of the structural pool is a
-!     "fixed" parameter (from the SOMFX045.SDA file).
+!     "fixed" parameter (from the SOMFX046.SDA file).
       DO IEL = 1, N_ELEMS
         ADDSTRUCE = ADDSTRUCC / CESTR(IEL)
         ADDMETABE = RESE(L,IEL) - ADDSTRUCE
 
 !       With residues that have a very low E concentration, the
 !       structural residue still gets the C/E ratio as set in
-!       SOMFX045.SDA. This may result in ADDSTRUCE being greater than
+!       SOMFX046.SDA. This may result in ADDSTRUCE being greater than
 !       RESE, and thus negative ADDMETABE. Set a flag for signaling this
 !       and printing a warning in NCHECK.
         IF (ADDMETABE < -1.E-6) THEN

@@ -1,7 +1,7 @@
 C=======================================================================
 C  IPSOIL, Subroutine
 C
-C  Read soil parameters from RESCH045.SDA
+C  Read soil parameters from RESCH???.SDA
 C-----------------------------------------------------------------------
 C  Revision history
 C  06/15/1994 PWW Written
@@ -127,7 +127,7 @@ C-----------------------------------------------------------------------
         INQUIRE (FILE=SOILNF, EXIST=FEXIST)
         IF (FEXIST) THEN
 C-----------------------------------------------------------------------
-C       Open the RESCH045.SDA file 
+C       Open the RESCH???.SDA file 
 C-----------------------------------------------------------------------
           CALL GETLUN('FILESS', LUNSOL)
           OPEN (LUNSOL,FILE = SOILNF, STATUS = 'OLD', IOSTAT=ERR)
@@ -298,7 +298,7 @@ C=======================================================================
 
 ! IPSOIL and SCREATE Variables
 !
-! ACRO(I) List of variables names used in RESCH045.SDA file which contains 
+! ACRO(I) List of variables names used in RESCH???.SDA file which contains 
 !           coefficients needed for simulating the decomposition of soil 
 !           organic matter and organic matter 
 ! CHAR    Contains the contents of last record read 
@@ -310,7 +310,7 @@ C=======================================================================
 ! FILESS  Path plus filename for species file (*.spe) 
 ! I       Loop counter 
 ! J       Loop counter 
-! LUNSOL  Logical unit number for RESCH045.SDA 
+! LUNSOL  Logical unit number for RESCH???.SDA 
 ! PRCEL   Cellulose fraction of the residue (fraction)
 ! PRCHO   Carbohydrate fraction of the residue (fraction)
 ! PRLIG   Lignin fraction of the residue (fraction)
@@ -322,7 +322,7 @@ C=======================================================================
 ! RDCHO   Maximum decomposition rate of carbohydrates (fraction / day)
 ! RDLIG   Maximum decomposition rate of lignin (fraction / day)
 ! RESTYPE Residue application method as sent from calling routine
-! T(I)    Text array with explanatory text of the RESCH045.SDA file 
+! T(I)    Text array with explanatory text of the RESCH???.SDA file 
 !=======================================================================
 
 !=======================================================================

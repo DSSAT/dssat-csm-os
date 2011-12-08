@@ -31,7 +31,7 @@ C-----------------------------------------------------------------------
       PARAMETER (BLANK=' ')
       CHARACTER*6 SECTION
       CHARACTER*7,  PARAMETER :: ERRKEY = 'TILLAGE'
-      CHARACTER*12, PARAMETER :: FILETL = 'TILOP045.SDA'
+      CHARACTER*12, PARAMETER :: FILETL = 'TILOP046.SDA'
       CHARACTER*12 NAMEF
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(NAPPL)
@@ -135,7 +135,7 @@ C----------------------------------------------------------------------
       IF (NTIL .GT. 0) THEN
 
 C-----------------------------------------------------------------------
-C       Open the TILOP045.SDA file 
+C       Open the TILOP046.SDA file 
 C-----------------------------------------------------------------------
         TILFILE = FILETL
         INQUIRE (FILE = TILFILE, EXIST = FEXIST)

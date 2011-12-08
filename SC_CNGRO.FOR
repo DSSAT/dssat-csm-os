@@ -548,7 +548,7 @@ c         routine.
             WARNINGS(1) = "Warning: please check that " 
      &      // "row-spacing is specified in CENTIMETRES"
             WARNINGS(2) = "[Row-spacing appears to be very low]"
-            CALL WARNING(2, "SCCAN045: SCCNGRO", WARNINGS)
+            CALL WARNING(2, "SCCAN046: SCCNGRO", WARNINGS)
           ENDIF          
 
 

@@ -97,9 +97,9 @@ C=======================================================================
          ISWTIL  = 'Y'
 
          IF (INDEX('FNQS',RNMODE) > 0) THEN
-           ICO2 = 'D' !Default CO2 from CO2045.WDA file
+           ICO2 = 'D' !Default CO2 from CO2046.WDA file
          ELSE
-           ICO2 = 'M' !Measured CO2 from CO2045.WDA file
+           ICO2 = 'M' !Measured CO2 from CO2046.WDA file
          ENDIF
 
          MEWTH   = 'M'
@@ -772,7 +772,7 @@ C-----------------------------------------------------------------------
       DATA FIRST /.TRUE./
 
       PARAMETER (ERRKEY = 'SIMCTR')
-!      PARAMETER (DSSATS = 'DSCSM045.CTR')
+!      PARAMETER (DSSATS = 'DSCSM046.CTR')
 
 !-----------------------------------------------------------------------
       IF (FIRST) THEN
@@ -793,7 +793,7 @@ C-----------------------------------------------------------------------
 !     1) Go to pull down menu Project -> Settings -> Fortran (Tab) ->
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
-D     INPUTX = 'C:\DSSAT45\DSCSM045.EXE'
+D     INPUTX = 'C:\DSSAT45\DSCSM046.EXE'
 D     IPX = 22
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

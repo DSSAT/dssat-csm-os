@@ -175,7 +175,7 @@
       ENDIF
 
 
-!     These used to come from RESCH045.SDA, but were never varied
+!     These used to come from RESCH???.SDA, but were never varied
 !     in that file.  File has been changed to provide Century data, so
 !     hardwire here for now. 
       RDCHO = 0.2000     !Potential decomp. rate of carbohydrate

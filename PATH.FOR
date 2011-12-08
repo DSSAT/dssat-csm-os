@@ -282,7 +282,7 @@ C=======================================================================
       IF (ERRNUM /= 0) CALL ERROR (ERRKEY,ERRNUM,DSSATP,0)
 
 !     CHP 5/13/2008
-!     MODEL(6:8) = '045'
+!     MODEL(6:8) = '046'
 
       RETURN
       END SUBROUTINE MODEL_NAME
