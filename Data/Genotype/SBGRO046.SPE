@@ -148,8 +148,8 @@
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN
 
 !*EVAPOTRANSPIRATION
-  0.72   1.1       KEP, EORATIO
-!  0.70   1.1       KEP, EORATIO
+  0.68   1.1       KEP, EORATIO
+!  0.72   1.1       KEP, EORATIO
 
 *PHOSPHORUS CONTENT
 ! Two options for Optimum and minimum P concentrations for shoots: 

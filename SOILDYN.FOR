@@ -1118,7 +1118,7 @@ C     Calculate fraction of soil covered by canopy and residue.
       CANCOV = 1.0 - EXP(-0.75 * XHLAI)
       SOILCOV = CANCOV + MULCHCOVER * (1.0 - CANCOV)
 
-      IF (INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0) THEN
+      IF ((INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0) .OR. TILLED) THEN
 
         TILDATE = TILLVALS % TILDATE
         TIL_IRR = TILLVALS % TIL_IRR
@@ -1701,6 +1701,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
           WRITE(DLUN,'("*SOIL DYNAMICS OUTPUT FILE")')
         ENDIF
 
+!       IF (INDEX('FQ',CONTROL%RNMODE) > 0 .AND. CONTROL%RUN /= 1)RETURN
         CALL HEADER(SEASINIT, DLUN, CONTROL % RUN)
         WRITE(DLUN,"(/,
      &     '@YEAR DOY   DAS   CRAIN  SOLCOV   SUMKE    ROCN   TOTAW',
