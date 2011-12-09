@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 8 
+        INTEGER :: Build = 9 
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.6.0.9  chp 12/08/2011 All codes changed to 046
 !       4.6.0.8  chp 11/17/2011 GFF version - equivalent to v4.5.1.22
 !       4.6.0.7  chp 11/10/2011 Revert to old drainage routines.
 !                               Denitrification rate for flooded field = 50% NO3/d
@@ -374,7 +375,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       DOS, Windows
         SLASH = '\' 
         DSSATPRO = 'DSSATPRO.V46'
-        STDPATH = 'C:\DSSAT45\' !For now - needs to be DSSAT46
+        STDPATH = 'C:\DSSAT46\' !For now - needs to be DSSAT46
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
