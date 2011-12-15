@@ -98,7 +98,7 @@ C     The variable "ISWITCH" is of type "SwitchType".
       CALL OPCLEAR
 
       CALL GETLUN('FILEIO', LUNIO)
-      FILEIO = 'DSSAT45.INP'
+      FILEIO = 'DSSAT46.INP'
 
 C-----------------------------------------------------------------------
 C    Get argument from runtime module to determine path of the EXE files
