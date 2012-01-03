@@ -714,7 +714,8 @@ C     Read crop genetic information
       ELSE
         IF (INDEX ('PT',CROP) .GT. 0) THEN
 !CHP          READ (LUNIO,'(31X,F6.0,F6.1,6X,F6.1)', IOSTAT=ERR) G2, G3, PD
-          READ (LUNIO,'(31X,F6.0,F6.0,6X,F6.0)', IOSTAT=ERR) G2, G3, PD
+          READ (LUNIO,'(31X,F6.0,F6.0,F6.0)', IOSTAT=ERR) G2, G3, PD
+!          READ (LUNIO,'(31X,F6.0,F6.0,6X,F6.0)', IOSTAT=ERR) G2, G3, PD
           LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF
