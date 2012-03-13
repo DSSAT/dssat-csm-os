@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 12 
+        INTEGER :: Build = 13 
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.6.0.13 chp 03/13/2012 CHP / TL Add ORYZA rice model, synch w/ 4.5.1.27
 !       4.6.0.12 chp 01/03/2012 JIL fix potato read stmts 
 !       4.6.0.11 chp 12/15/2011 JIL remove P4 from potato 
 !       4.6.0.10 chp 12/09/2011 Remove ksat estimation
@@ -213,11 +214,20 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) TEXTURE(NL)
         CHARACTER (len=17) SOILLAYERTYPE(NL)
         CHARACTER*50 SLDESC, TAXON
+        
+        LOGICAL COARSE(NL)
+        
         REAL ALES, DMOD, SLPF         !DMOD was SLNF
         REAL CMSALB, MSALB, SWALB, SALB      !Albedo 
         REAL, DIMENSION(NL) :: BD, CEC, CLAY, DLAYR, DS, DUL
         REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL
         REAL, DIMENSION(NL) :: SAND, SAT, SILT, STONES, SWCN
+        
+      !Residual water content
+        REAL, DIMENSION(NL) :: WCR
+
+      !vanGenuchten parameters
+        REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
 
       !Second tier soils data:
         REAL, DIMENSION(NL) :: CACO3, EXTP, ORGP, PTERMA, PTERMB
@@ -378,7 +388,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       DOS, Windows
         SLASH = '\' 
         DSSATPRO = 'DSSATPRO.V46'
-        STDPATH = 'C:\DSSAT46\' !For now - needs to be DSSAT46
+        STDPATH = 'C:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
@@ -406,7 +416,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         LOGICAL BUNDED        
         INTEGER NBUND         
         REAL ABUND            
-        REAL PUDPERC, PERC    
+        REAL PUDPERC, PERC
+        REAL PLOWPAN    !Depth of puddling (m) (ORYZA)
 
         !From Paddy_Mgmt
         INTEGER YRDRY, YRWET  

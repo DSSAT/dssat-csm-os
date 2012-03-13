@@ -567,6 +567,7 @@ C========================================================================
       CASE ('ERRORX');  LUN = 15  !Model.err
       CASE ('FILETL');  LUN = 16  !TILOP???.SDA
       CASE ('PFILE');   LUN = 17  !Phosphorus input files
+!                       LUN = 20 - RESERVE FOR ORYZA
       CASE ('FILEIO');  LUN = 21  !temp. input file; dssat45.inp
       CASE ('DTACDE');  LUN = 22  !DATA.CDE
       CASE ('FILETMP'); LUN = 23  !Tony Hunt temp file

@@ -7,8 +7,8 @@
 
 *PHOTOSYNTHESIS PARAMETERS 
   PARSR   0.50      !Conversion of solar radiation to PAR 
-  CO2X     0   220   330   440   550   660   770   880   990  9999
-  CO2Y  0.00  0.81  1.00  1.03  1.06  1.10  1.13  1.16  1.18  1.25
+  CO2X     0   220   280   330   400   490   570   750   990  9999
+  CO2Y  0.00  0.85  0.95  1.00  1.02  1.04  1.05  1.06  1.07  1.08
 
 *STRESS RESPONSE
   FSLFW   0.050     !Fraction of leaf area senesced under 100% water stress, 1/day
@@ -37,8 +37,6 @@
   TANCE   0.0440    !Nitrogen content in above ground biomass at emergence, g N/g dry matter
   RCNP    0.01060   !Root critical nitrogen concentration, g N/g root dry weight
   RANCE   0.0220    !Root N content at emergence   g N/g root
-!04/19/2007 US/CHP added optional coefficients, CTCNP1 and CTCNP2
-! TCNP = EXP (CTCNP1 - CTCNP2 * XSTAGE) / 100.0 in MZ_GROSUB
   CTCNP1  1.52      !Maximum value for critical tissue N concentration (in developing seed embryo)
   CTCNP2  0.160     !Coefficent for change in conc. with growth stage
 

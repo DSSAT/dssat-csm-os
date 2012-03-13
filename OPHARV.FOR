@@ -626,7 +626,8 @@ C-----------------------------------------------------------------------
       SELECT CASE (CROP)
       CASE ('BN','CH','CN','CP','CT','FB','GB','PE','PP',
      &      'PR','SB','TM','VB','LT')
-        STNAME(1) = 'Emergence '
+!     For stage-dependant irrigation - send GSTAGE back to irrig routine
+        STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
         STNAME(2) = 'Unifoliate'
         STNAME(3) = 'End Juven.'
         STNAME(4) = 'Flower Ind'

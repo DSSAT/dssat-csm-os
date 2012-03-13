@@ -12,6 +12,9 @@
       REAL PTERMA(NL),PTERMB(NL),EXK(NL),EXMG(NL)
       REAL EXNA(NL),EXTS(NL),SLEC(NL), EXCA(NL) !4/07/05 CHP added EXCA
 
+!     09/01/2011 chp added van Genuchten parameters
+      REAL alphaVG(NL), mVG(NL), nVG(NL), WCR(NL)
+
       CHARACTER*5   SLTXS,SMHB,SMPX,SMKE,SGRP,SCOM
       CHARACTER*10  PEDON,SLNO
       CHARACTER*11  SCOUNT
@@ -28,4 +31,5 @@
      &              SHF,SWCN,BD,OC,PH,DLAYR,EXTP,TOTP,ORGP,SLNF,SLPF,
      &              DS,CEC,ADCOEF,STONES,CLAY,SILT,PHKCL,SLAT,SLONG,
      &              CACO,EXTAL,EXTFE,EXTMN,TOTBAS,TOTN,
-     &              PTERMA,PTERMB,EXK,EXMG,EXNA,EXTS,SLEC, EXCA, SASC
+     &              PTERMA,PTERMB,EXK,EXMG,EXNA,EXTS,SLEC, EXCA, SASC,
+     &              alphaVG, mVG, nVG, WCR

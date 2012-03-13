@@ -29,9 +29,9 @@ C  Called : SOILN_inorg
 C  Calls  : ERROR, FIND
 C=======================================================================
 
-      SUBROUTINE SoilNi_init(CONTROL, 
+      SUBROUTINE SoilNi_init(CONTROL, ISWNIT,
      &    SOILPROP, ST,                                   !Input
-     &    NH4, NO3, SNH4, SNO3, TFNITY, UREA)             !Output
+     &    NH4, NO3, SNH4, SNO3, TFNITY, UPPM, UREA)       !Output
       
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -40,7 +40,7 @@ C=======================================================================
       IMPLICIT  NONE
       SAVE
 
-      CHARACTER*1 RNMODE 
+      CHARACTER*1 RNMODE, ISWNIT
       CHARACTER*6 ERRKEY, SECTION, DUMMY
       CHARACTER*30 FILEIO
       PARAMETER (ERRKEY = 'SOILNI')
@@ -53,7 +53,7 @@ C=======================================================================
       REAL NH4(NL), NO3(NL)
       REAL SNH4(NL)
       REAL SNO3(NL), ST(NL), TFNITY(NL) 
-      REAL UREA(NL)
+      REAL UREA(NL), UPPM(NL)
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -74,29 +74,36 @@ C=======================================================================
 
 !***********************************************************************
       IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
-!       --------------------------------------------------------------
-!       Open the FILEIO input file.
-        OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT = ERRNUM)
-        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, 0)
-!       --------------------------------------------------------------
-!       Find and Read INITIAL CONDITIONS Section.
-!       --------------------------------------------------------------
-        SECTION = '*INITI'
-        CALL FIND (LUNIO, SECTION, LNUM, FOUND)
-        IF (FOUND .EQ. 0) CALL ERROR (SECTION, 42, FILEIO, LNUM)
-
-!       Read line before layer data 
-        READ (LUNIO, '(A6)', IOSTAT = ERRNUM) DUMMY
-        LNUM = LNUM + 1
-        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
-
-        DO L = 1, NLAYR
+        IF (INDEX(ISWNIT,'N') < 1) THEN
+!         --------------------------------------------------------------
+!         Open the FILEIO input file.
+          OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT = ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, 0)
+!         --------------------------------------------------------------
+!         Find and Read INITIAL CONDITIONS Section.
+!         --------------------------------------------------------------
+          SECTION = '*INITI'
+          CALL FIND (LUNIO, SECTION, LNUM, FOUND)
+          IF (FOUND .EQ. 0) CALL ERROR (SECTION, 42, FILEIO, LNUM)
+        
+!         Read line before layer data 
+          READ (LUNIO, '(A6)', IOSTAT = ERRNUM) DUMMY
           LNUM = LNUM + 1
-          READ(LUNIO, 100, IOSTAT=ERRNUM) NH4(L),NO3(L)
-100       FORMAT (14X, 2 (1X, F5.1))
           IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
-        ENDDO
-        CLOSE (LUNIO)
+        
+          DO L = 1, NLAYR
+            LNUM = LNUM + 1
+            READ(LUNIO, 100, IOSTAT=ERRNUM) NH4(L),NO3(L)
+100         FORMAT (14X, 2 (1X, F5.1))
+            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
+          ENDDO
+          CLOSE (LUNIO)
+        ELSE
+!         Set some default concentrations, needed for ORYZA even when no N simulated
+          NO3 = 0.1
+          NH4 = 0.1
+          UPPM = 0.0
+        ENDIF
 
 !       !Non-sequenced runs
         DO L = 1, NLAYR

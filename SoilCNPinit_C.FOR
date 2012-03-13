@@ -204,7 +204,7 @@
 !       Find and Read Residue Lignin and Root C:N ratio and
 !       integration depth.
 !       ----------------------------------------------------------------
-!       Get residue characteristics from RESCH046.SDA. 
+!       Get residue characteristics from RESCH???.SDA. 
         CALL IPSOIL (CONTROL, CROP=PREV_CROP,             !Input
      &    AM=AM, DSNC=DSNC, PRLIG = PRLIG, RCN = RCN,     !Output
      &    RCP = RCP, SCN = SCN, SCP = SCP, WATFAC=WATFAC, !Output

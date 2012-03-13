@@ -76,5 +76,3 @@ WORK.OUT           CSCER, CSP information output file
 ! temp chp
 SoilWat_ts.OUT     2d SOIL WATER OUTPUT
 CellDetail.OUT
-SWSensorD.OUT      Soil water @ sensor depths (daily)
-SWSensorH.OUT      Soil water @ sensor depths (hourly)

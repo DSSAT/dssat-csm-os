@@ -146,7 +146,7 @@ SAKE     Potassium, exchangeable, cmol kg-1                                   IB
 SANI     Total nitrogen, %                                                    IB
 SAOC     Organic carbon, %                                                    IB
 SAPX     Phosphorus, extractable, mg kg-1                                     IB
-SH20     Water, cm3 cm-3                                                      IB
+SH2O     Water, cm3 cm-3                                                      IB
 SITE(S)  Name and location of experimental site(s)                            IB
 SLDP     Soil depth, cm                                                       IB
 SLTX     Soil texture                                                         IB
@@ -255,6 +255,7 @@ SB       Soybean                                                              IB
 SC       Sugarcane                                                            IB
 SG       Grain sorghum                                                        IB
 SI       Switch grass                                                         IB
+SQ       Sequence                                                             IB
 SS       Sesame                                                               IB
 SU       Sunflower                                                            IB
 SW       Sweetcorn                                                            IB

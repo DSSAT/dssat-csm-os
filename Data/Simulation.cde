@@ -1,14 +1,14 @@
 *Codes for Simulations Options
-! DSSAT v4.6; 06/29/2011
+! DSSAT v4.6; 11/18/2011
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
 
 *Start Simulation
 @CDE     DESCRIPTION                                                          SO
-E        On reported emergence date                                           IB
-I        When initial conditions measured                                     IB
-P        On reported planting date                                            IB
+!E        On reported emergence date                                          IB
+!I        When initial conditions measured                                    IB
+!P        On reported planting date                                           IB
 S        On specified date                                                    IB
 
 *Simulation/Options/Water
@@ -38,7 +38,7 @@ S        Simulated(SIMMETEO)                                                  IB
 *Simulation/Methods/Initial Soil Conditions
 @CDE     DESCRIPTION                                                          SO
 M        As reported                                                          IB
-S        Simulated output from previous model run                             IB
+!S        Simulated output from previous model run                            IB
 
 *Simulation/Methods/Evapotransportation
 @CDE     DESCRIPTION                                                          SO
@@ -97,15 +97,15 @@ D        Days after planting                                                  IB
 @CDE     DESCRIPTION                                                          SO
 !A       Automatic when required                                              IB
 N        Not fertilized                                                       IB
-F        Fixed amount automatic                                               IB
+!F        Fixed amount automatic                                              IB
 R        On reported dates                                                    IB
 D        Days after planting                                                  IB
 
 *Simulation/Management/Residue
 @CDE     DESCRIPTION                                                          SO
-!A        Automatic when required                                              IB
+!A        Automatic when required                                             IB
 N        No applications                                                      IB
-!F        Fixed amount automatic                                               IB
+!F        Fixed amount automatic                                              IB
 R        On reported dates                                                    IB
 D        Days after planting                                                  IB
 
@@ -143,6 +143,7 @@ CRGRO    BN   CROPGRO-Dry bean
 CRGRO    BR   CROPGRO-Brachiaria
 CRGRO    CB   CROPGRO-Cabbage
 CRGRO    CH   CROPGRO-Chickpea
+CRGRO    CN   CROPGRO-Canola
 CRGRO    CO   CROPGRO-Cotton
 CRGRO    CP   CROPGRO-Cowpea
 CRGRO    FA   CROPGRO-Fallow
@@ -155,8 +156,8 @@ CRGRO    PR   CROPGRO-Bellpepper
 CRGRO    SB   CROPGRO-Soybean
 CRGRO    TM   CROPGRO-Tomato
 CRGRO    VB   CROPGRO-Velvetbean
-CSCER    BA   CSSIM-CERES-Barley
-CSCER    WH   CSSIM-CERES-Wheat
+CSCER    BA   CROPSIM-CERES-Barley
+CSCER    WH   CROPSIM-CERES-Wheat
 CSCRP    BA   CSCRP-Barley
 CSCRP    CS   CSCRP-Cassava
 CSCRP    WH   CSCRP-Wheat

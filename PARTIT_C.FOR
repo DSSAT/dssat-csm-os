@@ -194,7 +194,7 @@
 
 !       With residues that have a very low E concentration, the
 !       structural residue still gets the C/E ratio as set in
-!       SOMFX046.SDA. This may result in ADDSTRUCE being greater than
+!       SOMFX???.SDA. This may result in ADDSTRUCE being greater than
 !       RESE, and thus negative ADDMETABE. Set a flag for signaling this
 !       and printing a warning in NCHECK.
         IF (ADDMETABE < -1.E-6) THEN

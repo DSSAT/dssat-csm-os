@@ -51,9 +51,9 @@ C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
      &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
-     &    NH4, NO3, SKi_Avail, SPi_AVAIL, SNOW,           !Input
-     &    SOILPROP, SRFTEMP, ST, SW, TRWU, TRWUP,         !Input
-     &    WEATHER, YREND, YRPLT,                          !Input
+     &    NH4, NO3, SKi_Avail, SomLitC, SomLitE,          !Input
+     &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
+     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -75,6 +75,8 @@ C-----------------------------------------------------------------------
 !         'SWCER' - CERES-Sweet corn
 !         'MZIXM' - IXIM Maize
 !         'TNARO' - Aroids - Tanier, Taro
+!         'ORYZA' - IRRI Rice model
+
 C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -105,8 +107,8 @@ C-----------------------------------------------------------------------
       REAL TRWUP, TWILEN, XLAI, XHLAI
 
       REAL, DIMENSION(2)  :: HARVFRAC
-      REAL, DIMENSION(NL) :: NH4, NO3, RLV
-      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4
+      REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM
+      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
       LOGICAL FixCanht    !, CRGRO
 c-----------------------------------------------------------------------
@@ -127,6 +129,11 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 
 !     K model
       REAL, DIMENSION(NL) :: KUptake, SKi_Avail
+
+!     ORYZA Rice model
+      REAL, DIMENSION(0:NL) :: SomLitC
+      REAL, DIMENSION(0:NL,NELEM) :: SomLitE
+      LOGICAL, PARAMETER :: OR_OUTPUT = .FALSE.
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -249,6 +256,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       SENESCE % ResE   = 0.0
       UNH4     = 0.0
       UNO3     = 0.0
+      UH2O     = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -389,6 +397,19 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
      &    RLV, SENESCE, STGDOY, FracRts, UNH4, UNO3)      !Output
 
+        IF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
+!     ORYZA2000 Rice 
+      CASE('RIORZ')
+        CALL ORYZA_Interface (CONTROL, ISWITCH,                  !Input
+     &   EOP, FLOODWAT, HARVFRAC, NH4, NO3, SOILPROP,            !Input
+     &   SomLitC, SomLitE,                                       !Input
+     &   ST, SW, TRWUP, UPPM, WEATHER, YRPLT, YREND, OR_OUTPUT,  !Input
+     &   CANHT, HARVRES, KTRANS, KSEVAP, MDATE, NSTRES, PORMIN,  !Output
+     &   RLV, RWUMX, SENESCE, STGDOY, UNH4, UNO3, UH2O, XLAI)    !Output
 
         IF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI

@@ -59,7 +59,7 @@ C=======================================================================
      &    SOILPROP, SSOMC, ST, SW, TDFC, TDLNO, TILLVALS, !Input
      &    UNH4, UNO3, UPFLOW, WEATHER, XHLAI,             !Input
      &    FLOODN,                                         !I/O
-     &    NH4, NO3)                                       !Output
+     &    NH4, NO3, UPPM)                                 !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -92,7 +92,7 @@ C=======================================================================
       REAL KG2PPM(NL), LITC(0:NL), LL(NL) 
       REAL NH4(NL), NO3(NL), PH(NL), SAT(NL), SNH4(NL)
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
-      REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL)
+      REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
 
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
@@ -202,12 +202,12 @@ C=======================================================================
           UNO3(L)       = 0.0
         ENDDO
 
-        IF (INDEX('N',ISWNIT) > 0) RETURN
+!        IF (INDEX('N',ISWNIT) > 0) RETURN
 
 !         Set initial SOM and nitrogen conditions for each soil layer.
-          CALL SoilNi_init(CONTROL, 
+          CALL SoilNi_init(CONTROL, ISWNIT,
      &      SOILPROP, ST,                                   !Input
-     &      NH4, NO3, SNH4, SNO3, TFNITY, UREA)             !Output
+     &      NH4, NO3, SNH4, SNO3, TFNITY, UPPM, UREA)       !Output
 
           CALL NCHECK_inorg(CONTROL, 
      &      NLAYR, NH4, NO3, SNH4, SNO3, UREA)              !Input
@@ -749,7 +749,7 @@ C         If flooded, lose all nitrate --------REVISED-US
 !       Conversions.
         NO3(L)  = SNO3(L) * KG2PPM(L)
         NH4(L)  = SNH4(L) * KG2PPM(L)
-        !UPPM(L) = UREA(L) * KG2PPM(L)
+        UPPM(L) = UREA(L) * KG2PPM(L)
       ENDDO
 
 !     Call NCHECK to check for and fix negative values.

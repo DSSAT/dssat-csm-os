@@ -15,6 +15,7 @@ C  07/01/2003 GH  Add error checking codes for surface values
 !                 defined by location of headers.
 !  08/23/2005 CHP Fixed some error checking for soil water parameters.
 !  05/18/2006 CHP Modifications for input subroutine module
+!  09/01/2011 CHP Added Van Genuchten parameters in optional 3rd tier of data
 C-----------------------------------------------------------------------
 C  INPUT  : RNMODE,FILES,PATHSL,ISWWAT
 C
@@ -221,6 +222,11 @@ C
       SLEC   = -99.
       EXCA   = -99.
 
+      alphaVG= -99.
+      mVG = -99.
+      nVG = -99.
+      WCR = -99.
+
 !     Stable organic C read from soil analysis section only
 !     Output with 2nd tier soil data to INP file.
       SASC   = -99.
@@ -414,6 +420,14 @@ C-KRT*******************************************************************
                    CASE('SLEC'); READ(C255(C1:C2),*,IOSTAT=ERR)  SLEC(L)
                    CASE('SLCA'); READ(C255(C1:C2),*,IOSTAT=ERR)  EXCA(L)
 
+!                  09/01/2011 CHP added 3rd tier data
+!                  Optional Van Genuchten parameters
+                   CASE('ALFVG')
+                                READ(C255(C1:C2),*,IOSTAT=ERR)alphaVG(L)
+                   CASE('MVG'); READ(C255(C1:C2),*,IOSTAT=ERR)  mVG(L)
+                   CASE('NVG'); READ(C255(C1:C2),*,IOSTAT=ERR)  nVG(L)
+                   CASE('WCRES');READ(C255(C1:C2),*,IOSTAT=ERR) WCR(L)
+
                    END SELECT
 
                    !IF (ERR .NE. 0) THEN
@@ -577,7 +591,12 @@ C-KRT*******************************************************************
          CALL LMATCH (NLAYRI, ZLYR, EXTS,  NLAYR, DS)
          CALL LMATCH (NLAYRI, ZLYR, SLEC,  NLAYR, DS)
          CALL LMATCH (NLAYRI, ZLYR, EXCA,  NLAYR, DS)
-      
+
+         CALL LMATCH (NLAYRI, ZLYR, alphaVG,NLAYR, DS)
+         CALL LMATCH (NLAYRI, ZLYR, mVG,  NLAYR, DS)
+         CALL LMATCH (NLAYRI, ZLYR, nVG,  NLAYR, DS)
+         CALL LMATCH (NLAYRI, ZLYR, WCR,  NLAYR, DS)
+     
       ENDIF
 
       RETURN

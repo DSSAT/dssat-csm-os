@@ -7,22 +7,11 @@
 
 *PHOTOSYNTHESIS PARAMETERS 
   PARSR   0.50      !Conversion of solar radiation to PAR 
-!  CO2X     0   220   330   440   550   660   770   880   990  9999 orig
-!  CO2Y  0.00  0.81  1.00  1.03  1.06  1.10  1.13  1.16  1.18  1.25 orig
   CO2X     0   220   280   330   400   490   570   750   990  9999
   CO2Y  0.00  0.85  0.95  1.00  1.02  1.04  1.05  1.06  1.07  1.08
   ASMAX  57.00	 !Max instantaneous assimilation @ 30C, µmol/m2 s
   XC      1.00   !Parameter X to calculate black layer extinction coefficient according to Campbell (1986)
   CANH    2.50   !Potential canopy height (m)
-!Note:  Photosynthesis response to CO2 for C-4 maize, sorghum, millet is reduced from prior.
-!Above 2 lines re-done by K. J. Boote, based on USDA-ARS SAP4.3, 2008, see Tables 2.6 and 2.7
-!and cited references, summarizing a 4% grain yield/biomass increase for doubling of CO2.
-!Maize model now gives 4.59 & 4.24% grain yield increase from 330-660 or 350-700, respectively, and
-!1.17% from 380 to 440 (SAP4.3 cites 1%).  Biomass increase is 3.23 & 2.93%, respectively & 0.88%.
-!Sensitivity for 5 irrigated/non-stressed maize experiments (UFGA, FLSC, IBWA, SIAZ, and IUAF).
-!The ET is reduced 12.74 & 13.50% from 330 to 660, and T reduced 17.08 & 18.12% from 350 to 700ppm.
-!Function based on stomatal resistance method of Allen et al.  CO2 effect on ET and T are good and
-!did not need to be changed.
 
 *STRESS RESPONSE
   FSLFW   0.050     !Fraction of leaf area senesced under 100% water stress, 1/day
@@ -51,8 +40,6 @@
   TANCE   0.0440    !Nitrogen content in above ground biomass at emergence, g N/g dry matter
   RCNP    0.01060   !Root critical nitrogen concentration, g N/g root dry weight
   RANCE   0.0220    !Root N content at emergence   g N/g root
-!04/19/2007 US/CHP added optional coefficients, CTCNP1 and CTCNP2
-! TCNP = EXP (CTCNP1 - CTCNP2 * XSTAGE) / 100.0 in MZ_GROSUB
   CTCNP1  1.52      !Maximum value for critical tissue N concentration (in developing seed embryo)
   CTCNP2  0.160     !Coefficent for change in conc. with growth stage
 
@@ -62,12 +49,12 @@
  380.0   750.0   270.0      SLAX,SLAMX,SLAMN  !Specific leaf area parameters
 
 *KERNEL NUMBER PARAMETERS
- 100.0   250.0              ASGDD,BSGDD       !Ending/beginning of ear growth (GDD after silking)
+ 100.0   250.0              ASGDD,BSGDD       !Ending/beginning of ear growth (GDD after/before silking)
 
 *ROOT PARAMETERS
   PORM    0.05      !Minimum volume required for supplying oxygen to roots for optimum growth (1-1.0)
   RWMX    0.03      !Not used in ceres, but passed through AltPlant for use elsewhere
-  RLWR    0.98      !mz_roots.for Root length to weight ratio, units?
+  RLWR    0.98      !Root length to weight ratio (cm/g * 1E-4)
   RWUEP1  1.50  
 
 *RESPIRATION PARAMETERS

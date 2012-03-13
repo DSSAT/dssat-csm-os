@@ -70,7 +70,7 @@ C=======================================================================
       INTEGER IBDAT(NAPPL), IIRRCV(NAPPL), IPDAT(NAPPL) !, IIRRP(100)
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
-      REAL RAIN, IRRAPL, TIL_IRR
+      REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -249,6 +249,7 @@ C
       WTABL = 0.0
 
       PUDDLED = .FALSE.
+      PLOWPAN = 0.0
 
 !-----------------------------------------------------------------------
 !     Irrigation Codes: IRRCOD
@@ -320,6 +321,11 @@ C
              ! Puddling for rice added
              !
              PUDDLED = .TRUE.
+!            Depth of puddling input in cm, convert to m
+             PLOWPAN = AMT(I) / 100.   
+             IF (PLOWPAN < 1.) THEN
+               PLOWPAN = -1.   
+             ENDIF
 
           !------------------------------
            CASE (11)
@@ -475,6 +481,7 @@ C-----------------------------------------------------------------------
       CALL PUT('MGMT','DEPIR', DEPIR)
 
       FLOODWAT % PUDDLED = PUDDLED
+      FLOODWAT % PLOWPAN = PLOWPAN
 
 !***********************************************************************
 !***********************************************************************

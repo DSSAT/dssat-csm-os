@@ -27,7 +27,7 @@
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 ADAP   Anthesis day    Anthesis day (dap)                                       .
 ADAT   Anthesis date   Anthesis date (YrDoy)                                    Z60D ANTH FL1D ADAY ADOY
-AMDY   Anth to matur   Anthesis to maturity (days)                              .
+AMDAY  Anth to matur   Anthesis to maturity (days)                              .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl kg/ha Fresh cane yield (kg/ha)                                 .

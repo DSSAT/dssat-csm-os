@@ -19,7 +19,7 @@
 ! VAR-NAME    Name of cultivar
 ! EXPNO       Number of experiments used to estimate cultivar parameters
 ! ECO#        Ecotype code or this cultivar, points to the Ecotype in the
-!             ECO file (currently not used).
+!             ECO file.
 ! P1          Thermal time from seedling emergence to the end of the juvenile
 !             phase (expressed in degree days above a base temperature of 8øC)
 !             during which the plant is not responsive to changes in
@@ -30,13 +30,15 @@
 !             considered to be 12.5 hours).
 ! P5          Thermal time from silking to physiological maturity (expressed
 !             in degree days above a base temperature of 8øC).
-! G2          Maximum possible number of kernels per plant.
+! G2          Maximum possible number of kernels on topmost ear.
 ! G3          Kernel filling rate during the linear grain filling stage and
 !             under optimum conditions (mg/day).
 ! PHINT       Phylochron interval; the interval in thermal time (degree days)
 !             between successive leaf tip appearances.
 ! AX          Leaf surface area (cm2/leaf) of largest leaf.
-! ALL         Leaf longevity (degree days) of the most longevous leaf.
+! LX          Leaf longevity (degree days) of the most longevous leaf.
+!             Leaf longevity is thermal time (degree-days) elapsed between 
+!             50% expansion and 50% senescence of each leaf.
 !
 ! PIO         Pioneer
 ! AS          Asgrow (Monsanto)
@@ -44,7 +46,7 @@
 ! LH          Holden (Monsanto)
 ! C/LOL       Land of Lakes
 ! 
-@VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3 PHINT    AX   ALL
+@VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3 PHINT    AX    LX
 !                                        1     2     3     4     5     6     7     8
 
 PC0001 2500-2600 GDD        . IB0001 160.0 0.750 780.0 750.0  8.50 49.00
@@ -69,7 +71,6 @@ IB0008 A654 X F2            . IB0001 135.0 0.000 685.0 907.9 10.00 38.90
 IB0009 DEKALB XL71          . IB0001 140.0 0.300 685.0 907.9 10.50 38.90
 IB0010 F478 X W705A         . IB0001 140.0 0.000 685.0 907.9 10.00 38.90
 IB0011 DEKALBXL45           . IB0001 150.0 0.400 685.0 907.9 10.15 38.90
-!IB0012 PIO 3382             . IB0001 160.0 0.700 890.0 825.0  8.50 38.90
 IB0012 PIO 3382             . IB0001 150.0 0.300 1000. 560.0  8.50 40.00  850.  900.    !Calibrated JIL
 IB0013 B59*OH43             . IB0001 162.0 0.800 685.0 862.4  6.90 38.90
 IB0014 F16 X F19            . IB0001 165.0 0.000 685.0 907.9 10.00 38.90
@@ -93,14 +94,8 @@ IB0031 PIO 3475             . IB0001 200.0 0.700 800.0 797.5  8.60 38.90
 IB0032 PIO 3382             . IB0001 200.0 0.700 800.0 715.0  8.50 38.90
 IB0033 PIO 3780             . IB0001 200.0 0.760 685.0 660.0  9.60 38.90
 IB0034 PIO 3780*            . IB0001 200.0 0.760 685.0 797.5  9.60 38.90
-! DSSAT 3.5 
-!IB0035 McCurdy 84aa         . IB0001 265.0 0.300 940.0 770.0  8.00 38.90
-! DSSAT 4.5 CERES-Maize 
-!IB0035 McCurdy 84aa         . IB0002 265.0 0.300 920.0 990.0  8.50 39.00
-! DSSAT 4.5 IXIM 
 IB0035 McCurdy 84aa         . IB0001 260.0 0.300 955.0 700.0  8.50 43.00  770.  930.    !Calibrated JIL
 IB0155 DEA                  . IB0001 168.0 0.000 476.0 442.0  5.35 39.00  680.  650.    !Calibrated JIL
-
 IB0036 C281                 . IB0001 202.0 0.300 685.0 907.9  5.80 38.90
 IB0037 SWEET CORN           . IB0001 210.0 0.520 625.0 907.5 10.00 38.90
 IB0038 Garst 8555           . IB0001 215.0 0.400 890.0 880.0  9.00 38.90
@@ -125,42 +120,38 @@ IB0056 FM 6                 . IB0001 276.0 0.520 867.0 677.6 10.70 38.90
 IB0057 TOCORON-3            . IB0001 276.0 0.520 867.0 660.0  8.12 38.90
 IB0058 NC+59                . IB0001 280.0 0.300 750.0 907.5 10.00 38.90
 IB0059 H6                   . IB0001 310.0 0.300 685.0 907.9 10.00 38.90
-!IB0060 H610(UH)             . IB0001 345.0 0.520 920.0 638.0  6.40 38.90
 IB0060 H610(UH)             . IB0002 355.0 0.300 870.0 550.0  5.80 45.00  850.  850.    !Calibrated JIL
 IB0061 PB 8                 . IB0001 300.0 0.520 990.0 440.0  7.00 38.90
 IB0062 B56*C131A            . IB0001 318.0 0.500 700.0 885.5  6.40 38.90
-!IB0063 PIO X 304C           . IB0001 385.0 0.520 940.0 687.5  6.00 38.90
 IB0063 PIO X 304C           . IB0002 340.0 0.520 990.0 670.0  5.40 45.00  780.  800.    !Calibrated JIL
 IB0064 H.OBREGON            . IB0001 360.0 0.800 685.0 907.9 10.15 38.90
 IB0065 SUWAN-1              . IB0001 380.0 0.600 780.0 825.0  7.00 38.90
 IB0066 PIO 3165             . IB0001 320.0 0.520 940.0 625.0  6.00 38.90
 IB0067 PIO 3324             . IB0001 250.0 0.520 940.0 625.0  6.00 38.90
 IB0068 PIO 3475             . IB0001 200.0 0.700 750.0 907.0  9.00 38.90                !P1 was 320 G2 was 625 G3 was 6 P5 was 940
-IB0168 PIO 3475 orig        . IB0001 220.0 0.700 850.0 907.0  9.90 38.90  
 IB0069 PIO 3790             . IB0001 212.4 0.520 792.8 625.0  6.00 38.90
-!IB0070 CARGILL 111S         . IB0001 340.0 0.000 1000. 780.0  5.30 38.90
 IB0070 CARGILL 111S         . IB0001 290.0 0.500 1040. 500.0  4.50 48.00  650.  800.    !Calibrated JIL
-!IB0071 PIO 31G98            . IB0003 165.0 0.750 680.0 820.4  6.60 30.00                !Envirotron/2002 Experiment
 IB0071 PIO 31G98            . IB0003 165.0 0.500 500.0 820.4  6.60 48.00  250.  650.    !Envirotron/2002 Experiment (Calibrated JIL)
+IB0072 Dracma (FAO 700)     . IB0001 300.0 0.000 610.0 1000. 10.00 52.00  950.  800.    !JIL
+IB0073 Generic              . IB0001 215.0 0.300 920.0 890.0  8.50 43.00  720.  900.    !Calibrated JIL
+IB0075 CLARICA (FAO 290)    . IB0001 180.0 0.000 630.0 1205   5.75 37.00                !JIL
+IB0076 CECILIA (FAO 600)    . IB0001 289.4 0.000 900.0 678.0  6.24 48.21  950.  800.    !JIL
+IB0077 ELEONORA (FAO 700)   . IB0001 300.0 0.000 1000. 729.0  6.42 51.90  950.  950.    !JIL
+IB0081 PIO 3790             . IB0001 100.0 0.100 600.0 860.0  8.80 30.00  800.  450.    !Calibrated JIL
 IB0089 GL 582               . IB0001 200.0 0.700 750.0 750.0  8.60 38.90  
 IB0090 GL 482               . IB0001 240.0 0.700 990.0 907.0  8.80 38.90  
 IB0091 GL 450               . IB0001 200.0 0.700 850.0 700.0  7.00 38.90  
 IB0092 LAURENT 3733         . IB0001 200.0 0.700 680.0 725.0  9.00 38.90                !LAURENT estimation
 IB0099 AGETI76              . IB0001 325.0 2.000 625.0 580.0  7.30 50.00
 IB0100 PARTAP1              . IB0001 450.0 2.000 580.0 600.0 16.50 50.00
-
+IB1051 AS 740               . IB0001 260.0 0.100 700.0 700.0  5.00 45.00  750.  900.    !Calibrated JIL 
+IB1052 DK 611               . IB0002 275.0 0.100 800.0 750.0  5.00 43.00  650.  850.    !Calibrated JIL 
+IB1053 LH198XLH185          . IB0001 250.0 0.100 770.0 731.0  5.00 44.00  770.  900.    !Calibrated JIL 
+IB0154 PIO 3192             . IB0001 215.0 0.300 990.0 660.0  8.50 48.00 
 IB0171 AG9010               . IB0001 196.0 0.500 745.0 800.0  5.00 43.00  775.  750.    !Calibrated JIL 
 IB0172 DAS CO32             . IB0001 235.0 0.500 740.8 580.0  4.50 43.00  825.  850.    !Calibrated JIL 
 IB0173 DKB 333B             . IB0001 250.0 0.500 855.0 560.0  4.40 40.00  880.  760.    !Calibrated JIL 
 IB0174 EXCELER              . IB0001 220.0 0.500 770.0 600.0  4.40 43.00  720.  800.    !Calibrated JIL 
-
-IB1051 AS 740               . IB0001 260.0 0.100 700.0 700.0  5.00 45.00  750.  900.    !Calibrated JIL 
-IB1052 DK 611               . IB0002 275.0 0.100 800.0 750.0  5.00 43.00  650.  850.    !Calibrated JIL 
-IB1053 LH198XLH185          . IB0001 250.0 0.100 770.0 731.0  5.00 44.00  770.  900.    !Calibrated JIL 
-
-!IB0154 PIO 3192             . IB0001 260.0 0.500 750.0 660.0  8.50 38.90
-IB0154 PIO 3192             . IB0001 215.0 0.300 990.0 660.0  8.50 48.00                ! Calibrated JIL
-
 IB1065 PIO 33Y09            . IB0001 245.0 0.500 905.0 780.0  6.00 48.00
 IB1066 PIO 3489             . IB0001 225.0 0.600 895.0 875.0  8.80 48.00
 IB1067 PIO 3394             . IB0001 240.0 0.500 900.0 820.0  8.50 48.00
@@ -178,8 +169,9 @@ LL0661 C/LOL 661            . IB0001 200.0 0.500 670.0 850.0  9.00 45.00
 LL0674 C/LOL 674            . IB0001 200.0 0.500 670.0 800.0  8.90 45.00
 
 ZA0001 Prisma (FAO 700)     . IB0001 280.0 0.400 850.0 750.0  6.80 38.90
-!ZA0002 Prisma GC Avg        . IB0001 280.0 0.776 789.0 650.0  6.03 38.90
 ZA0002 Prisma GC Avg        . IB0001 312.0 0.100 795.0 760.0  6.03 45.00  750.  850.    !Calibrated JIL 
+
+GH0010 OBATAMPA             . IB0001 280.0 0.000 700.0 550.0  7.74 40.00
 
 IF0001 OBA SUPER 2          . IB0001 270.0 0.600 780.0 840.0  7.80 45.00
 IF0002 EV8728-SR            . IB0001 265.0 0.600 800.0 900.0  7.20 45.00

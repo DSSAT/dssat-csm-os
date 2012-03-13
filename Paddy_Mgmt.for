@@ -96,6 +96,7 @@ C=======================================================================
 
       IF (PUDDLED .AND. NDRY .GT. 12) THEN
          PUDDLED = .FALSE.
+!        Note: change PLOWPAN here?
       ENDIF
 
       FLOODWAT % PUDDLED = PUDDLED

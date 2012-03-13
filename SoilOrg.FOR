@@ -161,19 +161,19 @@
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !     ------------------------------------------------------------------
-      ISWWAT = ISWITCH % ISWWAT 
-      IF (ISWITCH%ISWWAT == 'N') THEN
-        IMM     = 0.0
-        LITC    = 0.0
-        MNR     = 0.0
-        SomLit  = 0.0
-        SomLitC = 0.0
-        SomLitE = 0.0
-        SSOMC   = 0.0
-        MULCH % MULCHMASS = 0.0
-        RETURN
-      ENDIF
-
+!      For ORYZA, need estimate of initial soil carbon, even when N not simulated
+!      ISWWAT = ISWITCH % ISWWAT 
+!      IF (ISWITCH%ISWWAT == 'N') THEN
+!        IMM     = 0.0
+!        LITC    = 0.0
+!        MNR     = 0.0
+!        SomLit  = 0.0
+!        SomLitC = 0.0
+!        SomLitE = 0.0
+!        SSOMC   = 0.0
+!        MULCH % MULCHMASS = 0.0
+!        RETURN
+!      ENDIF
 
 !     These used to come from RESCH???.SDA, but were never varied
 !     in that file.  File has been changed to provide Century data, so
@@ -190,7 +190,8 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !     ------------------------------------------------------------------
-      IF (ISWWAT == 'N') RETURN
+!      For ORYZA, need estimate of initial soil carbon, even when N not simulated
+!      IF (ISWWAT == 'N') RETURN
 
 !     Set initial SOM and nitrogen conditions for each soil layer.
 !     Default characteristics for residue and senesced matter 
@@ -666,7 +667,8 @@ C         recruit (NREQ-N CONC) g of N
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT .OR. DYNAMIC .EQ. INTEGR) THEN
 !-----------------------------------------------------------------------
-      IF (ISWWAT == 'N') RETURN
+!      For ORYZA, need estimate of initial soil carbon, even when N not simulated
+!      IF (ISWWAT == 'N') RETURN
 
 !     Loop through soil layers for integration
       DO L = 1, NLAYR

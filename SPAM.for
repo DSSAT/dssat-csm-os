@@ -34,8 +34,8 @@ C=======================================================================
 
       SUBROUTINE SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
-     &    SW, SWDELTS, WEATHER, WINF, XHLAI, XLAI,        !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,               !Input
+     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
      &    TRWU, TRWUP, UPFLOW)                            !Output
@@ -68,6 +68,11 @@ C=======================================================================
      &    SAT(NL), ST(NL), SW(NL), SW_AVAIL(NL), !SWAD(NL), 
      &    SWDELTS(NL), SWDELTU(NL), SWDELTX(NL), UPFLOW(NL)
       REAL ES_LYR(NL)
+
+!     ORYZA model
+!     Root water uptake computed by some plant routines (optional)
+      REAL UH2O(NL)
+      REAL ETRD, ETAE, TRAT, TRATIO
 
 !     Species-dependant variables imported from PLANT module:
       REAL PORMIN, RWUMX
@@ -339,13 +344,30 @@ C       and total potential water uptake rate.
           EVAP = ES + EM + EF
 
 !-----------------------------------------------------------------------
-!         Potential transpiration
+!         Potential transpiration - model dependent
 !-----------------------------------------------------------------------
           IF (XHLAI > 1.E-6) THEN
-            CALL TRANS(RATE, 
+            SELECT CASE (CONTROL % MODEL(1:5))
+            CASE ('RIORZ')    !ORYZA2000 Rice
+!             07/22/2011 CHP/TL replace TRANS with this (from ET2.F90 in ORYZA2000) 
+!             Estimate radiation-driven and wind- and humidity-driven part
+              ETRD = EO * 0.75  !s/b 1st term in FAO energy balance eqn
+              ETAE = EO - ETRD
+              EOP = ETRD*(1. - EXP(-KTRANS*XHLAI)) +ETAE*MIN(2.0, XHLAI)
+              EOP = MAX(0.0, EOP)
+              EOP = MIN(EO, EOP)
+
+              TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
+              EOP = EOP * TRAT
+
+            CASE DEFAULT
+!             For all models except ORYZA
+              CALL TRANS(RATE, 
      &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
      &        WINDSP, XHLAI,                              !Input
      &        EOP)                                        !Output
+            END SELECT
+            
           ELSE
             EOP = 0.0
           ENDIF
@@ -396,7 +418,7 @@ C       and total potential water uptake rate.
 
 !         Calculate actual soil water uptake and transpiration rates
           CALL XTRACT(
-     &      NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP,        !Input
+     &      NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP, UH2O,  !Input
      &      EP, RWU,                                      !Input/Output
      &      SWDELTX, TRWU)                                !Output
         ENDIF   !ISWWAT = 'Y'

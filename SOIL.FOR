@@ -38,7 +38,8 @@ C=====================================================================
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
-     &    SW, SWDELTS, SWDELTU, WINF, YREND)              !Output
+     &    SomLitC, SomLitE,                               !Output
+     &    SW, SWDELTS, SWDELTU, UPPM, WINF, YREND)        !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -79,6 +80,7 @@ C=====================================================================
 !     Output:
       REAL, DIMENSION(NL), INTENT(OUT) :: NH4
       REAL, DIMENSION(NL), INTENT(OUT) :: NO3
+      REAL, DIMENSION(NL), INTENT(OUT) :: UPPM
       REAL, DIMENSION(NL), INTENT(OUT) :: SPi_AVAIL, SKi_AVAIL
       REAL               , INTENT(OUT) :: SNOW
       TYPE (SoilType)    , INTENT(OUT) :: SOILPROP
@@ -87,6 +89,8 @@ C=====================================================================
       REAL, DIMENSION(NL), INTENT(OUT) :: SWDELTU
       REAL               , INTENT(OUT) :: WINF
       INTEGER            , INTENT(OUT) :: YREND
+      REAL, DIMENSION(0:NL) :: SomLitC
+      REAL, DIMENSION(0:NL,NELEM) :: SomLitE
 
 !-----------------------------------------------------------------------
 !     Local variables:
@@ -96,8 +100,8 @@ C=====================================================================
 
       REAL, DIMENSION(NL) :: DRN
       REAL, DIMENSION(NL) :: SPi_Labile
-      REAL, DIMENSION(0:NL) :: LITC, SSOMC, SomLitC
-      REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR, SomLitE
+      REAL, DIMENSION(0:NL) :: LITC, SSOMC
+      REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
 
 !     Added for tile drainage:
       REAL TDFC
@@ -152,7 +156,7 @@ C=====================================================================
      &    SOILPROP, SSOMC, ST, SW, TDFC, TDLNO, TILLVALS, !Input
      &    UNH4, UNO3, UPFLOW, WEATHER, XHLAI,             !Input
      &    FLOODN,                                         !I/O
-     &    NH4, NO3)                                       !Output
+     &    NH4, NO3, UPPM)                                 !Output
 
 !     Inorganic P
       CALL SoilPi(CONTROL, ISWITCH, FLOODWAT, 

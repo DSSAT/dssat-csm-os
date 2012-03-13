@@ -330,12 +330,13 @@ C  01/01/89 JR  Written
 C  12/05/93 NBP Made into subroutine
 C  07/11/96 GH  Set TRWU and RWU to 0 if EP = 0
 !  10/13/97 CHP Modified for modular format.
+!  07/20/2011 chp added option for root uptake from plant routines 
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !  Calls:     None
 C=======================================================================
       SUBROUTINE XTRACT(
-     &    NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP,          !Input
+     &    NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP, UH2O,    !Input
      &    EP, RWU,                                        !Input/Output
      &    SWDELTX, TRWU)                                  !Output
 
@@ -347,48 +348,60 @@ C=======================================================================
       INTEGER NLAYR
       INTEGER L
 
-      REAL EP, TRWU, TRWUP
+      REAL EP, TRWU, TRWUP, Tot_plant_RWU
       REAL WUF
       REAL DLAYR(NL), LL(NL), SW(NL)
       REAL RWU(NL)
       REAL  SWDELTX(NL),    !Change in SW due to root extraction
      &      SWTEMP(NL),     !New SW value based only on root extraction
-     &      SW_AVAIL(NL)    !Water available for root extraction
-
+     &      SW_AVAIL(NL),   !Water available for root extraction
+     &      UH2O(NL)        !Root water uptake from plant routine (optional)
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
         SWDELTX(L) = 0.0
         SWTEMP(L) = SW(L)
         SW_AVAIL(L) = MAX(0.0,SW_AVAIL(L) - LL(L))
       ENDDO
-      TRWU = TRWUP
 
-      IF (EP .GT. 0.0) THEN
-        IF ((0.1 * EP) .LE. TRWUP) THEN
-          WUF = 0.1 * EP / TRWUP
-        ELSE
-          WUF = 1.0
-        ENDIF
-
+!     Check to see if actual transpiration already done by plant routine
+      Tot_plant_RWU = SUM(UH2O)
+      IF (Tot_plant_RWU > 1.E-6) THEN
+!       Use root water uptake from plant routines
         TRWU = 0.0
         DO L = 1, NLAYR
-          IF (SWTEMP(L) .GT. LL(L)) THEN
-            RWU(L) = RWU(L) * WUF
-            IF (RWU(L) / DLAYR(L) .GT. SW_AVAIL(L)) THEN
-              RWU(L) = SW_AVAIL(L) * DLAYR(L)
-            ENDIF
-            SWTEMP(L) = SWTEMP(L) - RWU(L) / DLAYR(L)
+          RWU(L) = UH2O(L) / 10.
+          SWTEMP(L) = SWTEMP(L) - RWU(L) / DLAYR(L)
           TRWU = TRWU + RWU(L)
+        ENDDO
+
+      ELSE
+!       Calculate root water uptake here
+        IF (EP .GT. 0.0) THEN
+          IF ((0.1 * EP) .LE. TRWUP) THEN
+            WUF = 0.1 * EP / TRWUP
+          ELSE
+            WUF = 1.0
           ENDIF
-        END DO
-
-        EP = TRWU * 10.
-
-      ELSE        !No root extraction of soil water
-        TRWU = 0.0
-        RWU  = 0.0
+      
+          TRWU = 0.0
+          DO L = 1, NLAYR
+            IF (SWTEMP(L) .GT. LL(L)) THEN
+              RWU(L) = RWU(L) * WUF
+              IF (RWU(L) / DLAYR(L) .GT. SW_AVAIL(L)) THEN
+                RWU(L) = SW_AVAIL(L) * DLAYR(L)
+              ENDIF
+              SWTEMP(L) = SWTEMP(L) - RWU(L) / DLAYR(L)
+              TRWU = TRWU + RWU(L)
+            ENDIF
+          END DO
+      
+        ELSE        !No root extraction of soil water
+          TRWU = 0.0
+          RWU  = 0.0
+        ENDIF
       ENDIF
 
+      EP = TRWU * 10.
       DO L = 1, NLAYR
         SWDELTX(L) = SWTEMP(L) - SW(L)
       ENDDO
