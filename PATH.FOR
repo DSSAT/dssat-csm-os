@@ -327,6 +327,7 @@ C=======================================================================
 !    &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.      !ALOHA
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
+     &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.      !ORYZA-rice
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0)) THEN      !OILCROP
 !       Invalid model = error 4
         ValidModel = 4 
@@ -342,7 +343,8 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND.    !Maize IXIM
      &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND.    !Millet
      &    (INDEX(MODEL(1:5),'PTSUB') .EQ. 0) .AND.    !Potato
-     &    (INDEX(MODEL(1:5),'RICER') .EQ. 0) .AND.    !Rice
+     &    (INDEX(MODEL(1:5),'RICER') .EQ. 0) .AND.    !CERES-Rice
+     &    (INDEX(MODEL(1:5),'RIORZ') .EQ. 0) .AND.    !ORYZA-Rice
      &    (INDEX(MODEL(1:5),'SGCER') .EQ. 0) .AND.    !Sorghum
      &    (INDEX(MODEL(1:5),'SCCSP') .EQ. 0) .AND.    !Sugarcane CASUPRO
      &    (INDEX(MODEL(1:5),'SCCAN') .EQ. 0) .AND.    !Sugarcane CaneGro
