@@ -191,6 +191,7 @@ C=======================================================================
 
       SUBROUTINE MODEL_NAME (CROP, DSSATP, CRMODEL, MODEL)
 
+      USE ModuleDefs
       IMPLICIT     NONE
 
       CHARACTER*1   UPCASE
@@ -221,15 +222,8 @@ C=======================================================================
         DO I = 6,8
           J = ICHAR(CRMODEL(I:I))
           IF (J < 48 .OR. J > 57) THEN
-!!           Fill in model version from executable name
-!            CALL GETARG(0,PATHX,IPX)
-!            IF (PATHX(IPX-3:IPX-3) .EQ. '.') THEN
-!              MODELVER = PATHX((IPX-6):(IPX-4))
-!            ELSE
-!              MODELVER = PATHX((IPX-2):IPX)
-!            ENDIF
-!            CRMODEL(6:8) = MODELVER
-             CRMODEL(6:8) = '046'
+!            Fill in model version from executable name
+             CRMODEL(6:8) = ModelVerTxt
             EXIT
           ENDIF
         ENDDO
@@ -281,9 +275,6 @@ C=======================================================================
       ERRNUM = ValidModel(CROP, MODEL)
       IF (ERRNUM /= 0) CALL ERROR (ERRKEY,ERRNUM,DSSATP,0)
 
-!     CHP 5/13/2008
-!     MODEL(6:8) = '046'
-
       RETURN
       END SUBROUTINE MODEL_NAME
 
@@ -317,6 +308,7 @@ C=======================================================================
 
 !    Check for valid crop modeling approaches
       IF ((INDEX(MODEL(3:5),'CER') .EQ. 0) .AND.      !CERES
+     &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.      !ORYZA
      &    (INDEX(MODEL(3:5),'IXM') .EQ. 0) .AND.      !IXIM
      &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.      !CROPGRO
      &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.      !CROPSIM (Cereal)
@@ -327,7 +319,6 @@ C=======================================================================
 !    &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.      !ALOHA
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
-     &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.      !ORYZA-rice
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0)) THEN      !OILCROP
 !       Invalid model = error 4
         ValidModel = 4 

@@ -85,22 +85,6 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       4.6.0.2  gh  06/29/2011 Sorghum cul file re-order.
 !       4.6.0.1  chp 06/28/2011 v4.6
 !                               Changes to CSCER, CSCRP, incl. spe, eco, cul formats
-!       4.5.1.15 chp 06/27/2011 Fixed zero divide in ROOTWU
-!       4.5.1.14 chp 05/18/2011 More changes to CSCER, CSCRP; MDATE initialization
-!       4.5.1.13 chp 05/05/2011 More changes to CSCER (see file CSCER040.FOR)
-!       4.5.1.12 chp 05/04/2011 Revised format for CSCER species, ecotype files
-!                               Other changes to CSCER (see file CSCER040.FOR)
-!       4.5.1.11 chp 04/29/2011 ETPHOT P stress, P for peanut enabled
-!       4.5.1.10 chp 03/23/2011 Environmental summary for wheat, WH species change
-!       4.5.1.9  chp 02/23/2011 Environmental summary in Summary.OUT
-!       4.5.1.8  chp 02/14/2011 SLPF enabled for Canegro
-!       4.5.1.7  chp 02/10/2011 CSCER, CSCRP changes to species and ecotype files, LAH
-!       4.5.1.6  chp 02/01/2011 Deep fertilizer placement allowed
-!       4.5.1.5  chp 01/05/2011 CASUPRO - minor changes F.Royce
-!       4.5.1.4  chp 12/14/2010 Minor changes sorghum model - GH, Thailand workshop
-!       4.5.1.3  chp 11/19/2010 Branch added
-!       4.5.1.2  chp 10/22/2010 ICRISAT workshop modifications - part II
-!       4.5.1.1  chp 10/19/2010 ICRISAT workshop modifications
 !       4.5.1.0  chp 10/10/2010 V4.5 Release version
 !       4.0.2.0  chp 08/11/2005 Release
 !       4.0.1.0  chp 01/28/2004 Release Version 
@@ -140,6 +124,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    Kel = 3         !Potassium
 
       CHARACTER(LEN=1)  SLASH  
+      CHARACTER(LEN=3)  ModelVerTxt
       CHARACTER(LEN=12) DSSATPRO 
       CHARACTER(LEN=11) STDPATH 
       CHARACTER(LEN=6)  LIBRARY    !library required for system calls
@@ -382,6 +367,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       SUBROUTINE SETOP ()
 !     Set variables for current operating system
       IMPLICIT NONE
+
+      WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
       SELECT CASE (OPSYS)
       CASE ('WINDO','DOS  ')

@@ -48,7 +48,7 @@
       CHARACTER*30 FILEIO
       CHARACTER*80 PATHSD
       CHARACTER*92 SOMPF
-      CHARACTER*12, PARAMETER :: SOMFILE = 'SOMFX046.SDA'
+      CHARACTER*12 SOMFILE 
 
       INTEGER ERRNUM, I, LNUM, LUN, LUNIO, PFLAG
 
@@ -81,6 +81,8 @@
       LUNIO   = CONTROL % LUNIO
 
 !     ------------------------------------------------------------------
+        SOMFILE = 'SOMFX' // ModelVerTxt // '.SDA'
+
         SOMPF = SOMFILE
         INQUIRE (FILE = SOMPF, EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN

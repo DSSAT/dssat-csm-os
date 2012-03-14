@@ -115,7 +115,7 @@ C-----------------------------------------------------------------------
         LUNIO   = CONTROL % LUNIO
 
 !       FILESS = 'RESCH046.SDA'
-        FILESS = 'RESCH' // CONTROL % MODEL(6:8) // '.SDA'
+        FILESS = 'RESCH' // ModelVerTxt // '.SDA'
 
         SOILNF = FILESS
         INQUIRE (FILE = SOILNF, EXIST = FEXIST)
