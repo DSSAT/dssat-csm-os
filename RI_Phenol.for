@@ -9,6 +9,7 @@ C                 Written
 C  08-07-1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
+!  02/20/2012 CHP / US Modify temperature response
 C=======================================================================
 
       SUBROUTINE RI_PHENOL (CONTROL, ISWITCH, 
@@ -220,8 +221,8 @@ C=======================================================================
          TOPT = 33.0/G4                     ! MAKE 33 -- CROP SPECIFIC
          IF (TMAX .LT. TBASE) THEN
            DTT = 0.0
-         ELSEIF (TMIN .GT. TOPT) THEN
-           DTT = TOPT - TBASE
+         !ELSEIF (TMIN .GT. TOPT) THEN
+         !  DTT = TOPT - TBASE
            !
            ! Now, modify TMIN, TMAX based on soil conditions
            !
@@ -233,13 +234,17 @@ C=======================================================================
            IF (TDSOIL .LT. TBASE) THEN
              DTT = 0.0
            ELSE
-             IF (TNSOIL .LT. TBASE) THEN
-                 TNSOIL = TBASE
+             IF (TNSOIL .GT. TOPT) THEN
+                 TNSOIL = TOPT - (TNSOIL - TOPT)
              ENDIF
-             IF (TDSOIL .GT. TOPT) THEN
+             IF (TDSOIL .LE. 40.0) THEN
+               IF (TDSOIL .GT. TOPT) THEN
                  TDSOIL = TOPT
+               ENDIF
+             ELSE
+                 TDSOIL = TOPT - (TDSOIL - 40.0)  
+                 ! Delay in development (Snyder & Gesch) 
              ENDIF
-
              TMSOIL = TDSOIL*(DAYL/24.)+TNSOIL*((24.-DAYL)/24.)
              IF (TMSOIL .LT. TBASE) THEN
                  DTT = (TBASE+TDSOIL)/2.0 - TBASE
@@ -261,14 +266,13 @@ C=======================================================================
                 TH = TBASE
              ENDIF
              IF (TH .GT. TOPT) THEN
-                TH = TOPT
+                TH = TOPT - (TH - TOPT)  !Development delay
              ENDIF
              DTT = DTT + (TH-TBASE)/24.0
            END DO
          ELSE
            DTT = (TMAX+TMIN)/2.0 - TBASE
          ENDIF
-
          ! DROUGHT STRESS
          IF (PHEFAC .LT. 1.0) THEN
                 TMPDTT = DTT
@@ -345,9 +349,11 @@ C=======================================================================
            !   is moist  - US Feb04
                 RETURN
              ENDIF
-             IF (TEMPM .LT. 15.0 .OR. TEMPM .GT. 42.0) THEN
-                RETURN
-             ENDIF
+      !   
+      !     Temperature extremes removed
+      !        IF (TEMPM .LT. 15.0 .OR. TEMPM .GT. 42.0) THEN
+      !           RETURN
+      !        ENDIF
              IF (SUMDTT .LT. P8) THEN
                 RETURN
              ENDIF
