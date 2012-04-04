@@ -23,6 +23,7 @@ C                   HIAM, EPCM, ESCM
 !  01/08/2010 CHP Separate switch for Evaluate, but not Overview (IDETO=E)
 !  02/10/2010 CHP Added EDAT.
 !  02/23/2011 CHP Added seasonal average environmental values
+!  03/27/2012 CHP Fixed format bug for very large HWUM
 C=======================================================================
 
       MODULE SumModule
@@ -526,6 +527,7 @@ C-------------------------------------------------------------------
         ELSEIF (HWUM < 10.)   THEN; FMT = '(1X,F7.3)'
         ELSEIF (HWUM < 100.)  THEN; FMT = '(1X,F7.2)'
         ELSEIF (HWUM < 1000.) THEN; FMT = '(1X,F7.1)'
+        ELSE                      ; FMT = '(1X,F7.0)'
         ENDIF
         WRITE (NOUTDS,FMT,ADVANCE="NO") HWUM
 
