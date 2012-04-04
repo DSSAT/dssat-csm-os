@@ -604,9 +604,6 @@ Error opening file.
 IRRIG    10
 Incompatibility between Century SOM method and flooded field management.
 
-*IRRIG   20
-Drip irrigation duration less than 1 minute.
-
 LAND      2
 Planting date is before start of simulation date.  Please fix input file.
 
