@@ -1,4 +1,4 @@
-*SWEET CORN ECOTYPE COEFFICIENTS: SWCER045 MODEL
+*SWEET CORN ECOTYPE COEFFICIENTS: SWCER046 MODEL
 !
 ! COEFF   DEFINITIONS
 ! =====   ===========
@@ -19,7 +19,5 @@
 ! CDAY    Number of cold days parameter (default 15.0 )
 !                            1     2     3     4     5     6     7     8     9    10    11
 @ECO#  ECONAME.........  TBASE  TOPT  ROPT   P20  DJTI  GDDE DSGFT   RUE  KCAN  TSEN  CDAY
-IB0001 GENERIC MIDWEST1    8.0  34.0  34.0  12.5   4.0   6.0  170.   4.2  0.85
-IB0002 GENERIC MIDWEST1    8.0  34.0  34.0  12.5   4.0   6.0  170.   4.5  0.85
-IB0003 GENERIC MIDWEST1    8.0  34.0  34.0  12.5   4.0   6.0  170.   2.0  0.85
+IB0001 GENERIC             8.0  34.0  34.0  12.5   4.0   6.0  170.   4.2  0.85
 DFAULT DEFAULT             8.0  34.0  34.0  12.5   4.0   6.0  170.   4.2  0.85

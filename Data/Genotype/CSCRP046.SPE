@@ -1,6 +1,6 @@
 $SPECIES:CSCRP045
 
-! LAST EDIT: 21/08/11
+! LAST EDIT: 23/02/12
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
@@ -127,8 +127,9 @@ $SPECIES:CSCRP045
 
 ! NITROGEN uptake,distribution,etc.
 ! For standard CSM uptake routine
-@RTNO3 RTNH4
- 0.006 0.006 
+! N uptake  
+@NH4MN NO3MN
+   0.5   0.5
 ! For modified uptake routine (Not generally used)
 @ NCNU RLFNU WFNUU WFNUL  ! N con,length,water factors 
     30   0.5   1.0   0.4      
@@ -182,6 +183,8 @@ $SPECIES:CSCRP045
 ! NFPU    N stress factor,photosynthesis,upper (fr)
 ! NFSU    N stress factor,senescence,upper (fr)
 ! NFSF    N factor to trigger final (maturity) senescence (#)
+! NH4MN   NH4 minimum concentration for uptake (mg/MG)
+! NO3MN   NO3 minimum concentration for uptake (mg/MG)
 ! NPTFL   N use by leaves for growth/top-up after minima satisfied (fr)
 ! NTUPF   N top-up fraction (/d)
 ! PARFC   Maximum photosynthesis relative to phs at 330 vpm CO2 (#)
@@ -213,8 +216,6 @@ $SPECIES:CSCRP045
 ! RS%S    Reserves concentration,standard (fr)
 ! RSEN%   Root senescence rate (%/standard day)
 ! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
-! RTNO3   NO3 uptake/root length  (mg N/cm.day)
-! RTNH4   NH4 uptake/root length  (mg N/cm.day)
 ! RWULF   Root length factor,water uptake (cm/cm3) 
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
 ! RWUPM   Root water upake,minimum pore size for maximum uptake (fr SAT-DUL)

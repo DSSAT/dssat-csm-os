@@ -1,4 +1,4 @@
-*BAHIA ECOTYPE COEFFICIENTS: CRGRO045 Model 
+*BAHIA ECOTYPE COEFFICIENTS: CRGRO046 Model
 !
 ! COEFF   DEFINITIONS
 ! =====   ===========
@@ -27,7 +27,7 @@
 ! R7-R8   Time between physiological (R7) and harvest maturity (R8) (days)
 ! FL-VS   Time from first flower to last leaf on main stem (photothermal
 !         days)
-! TRIFL   Rate of appearance of leaves on the mainstem (leaves per 
+! TRIFL   Rate of appearance of leaves on the mainstem (leaves per
 !         thermal day) default was 0.10, not getting enough leaves, changed to 0.15 2/21/03
 ! RWDTH   Relative width of this ecotype in comparison to the standard
 !         width per node (YVSWH) defined in the species file (*.SPE)

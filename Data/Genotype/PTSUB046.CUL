@@ -1,4 +1,4 @@
-*POTATO CULTIVAR COEFFICIENTS: PTSUB045 MODEL
+*POTATO CULTIVAR COEFFICIENTS: PTSUB046 MODEL
 
 ! COEFF       DEFINITIONS
 ! ========    ===========
@@ -16,13 +16,9 @@
 
 @VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    PD    P2    TC
 IB0001 MAJESTIC             . IB0001 2000.  22.5   0.8   0.6  17.0
-!IB0002 SEBAGO               . IB0001 2000.  22.5   0.7   0.8  15.0 old
 IB0002 SEBAGO               . IB0001 1100.  22.5   0.9   0.0  19.0
-!IB0003 RUSSET BURBANK       . IB0001 2000.  22.5   0.6   0.6  17.0 old
 IB0003 RUSSET BURBANK       . IB0001 1100.  26.0   0.9   0.6  17.0
-!IB0004 KATHADIN             . IB0001 2000.  25.0   0.7   0.6  19.0 old
 IB0004 KATHADIN             . IB0001 2000.  25.0   0.5   0.7  20.0
-!IB0005 ATLANTIC             . IB0001 2000.  25.0   0.9   0.6  17.0 old
 IB0005 ATLANTIC             . IB0001 1000.  25.0   0.9   0.6  17.0
 IB0006 MARIS PIPER          . IB0001 2000.  25.0   0.8   0.4  17.0
 IB0007 KING EDWARD          . IB0001 2000.  22.5   1.0   0.6  17.0
@@ -33,4 +29,7 @@ IB0011 NORCHIP              . IB0001 2000.  25.0   1.0   0.4  17.0
 IB0012 SHEPODY              . IB0001 2000.  25.0   0.7   0.6  19.0
 UF0001 RED LASODA           . IB0001 2000.  22.0   0.7   0.4  19.0
 
-
+!IB0002 SEBAGO               . IB0001 2000.  22.5   0.7   0.8  15.0 old
+!IB0003 RUSSET BURBANK       . IB0001 2000.  22.5   0.6   0.6  17.0 old
+!IB0004 KATHADIN             . IB0001 2000.  25.0   0.7   0.6  19.0 old
+!IB0005 ATLANTIC             . IB0001 2000.  25.0   0.9   0.6  17.0 old

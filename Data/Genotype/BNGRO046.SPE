@@ -1,4 +1,4 @@
-*DRY BEAN SPECIES COEFFICIENTS: CRGRO045 MODEL
+*DRY BEAN SPECIES COEFFICIENTS: CRGRO046 MODEL
 
 !*PHOTOSYNTHESIS PARAMETERS
 ! 38.00 62.00  0.67  0.10                   PARMAX,PHTMAX,KCAN,KC_SLOPE
@@ -8,8 +8,8 @@
   1.23  3.14  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG
   3.00  21.5  28.5  40.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG
 !Old   0.0   7.0  30.0  31.0  36.0  60.0       XLMAXT (6 VALUES)
-   0.0   8.0  32.0  36.0  42.0  60.0       XLMAXT (6 VALUES)   
-!   0.0   7.0  30.0  34.0  42.0  60.0       XLMAXT (6 VALUES)   
+   0.0   8.0  32.0  36.0  42.0  60.0       XLMAXT (6 VALUES)
+!   0.0   7.0  30.0  34.0  42.0  60.0       XLMAXT (6 VALUES)
    0.0   0.0   1.0   0.8   0.0   0.0       YLMAXT (6 VALUES)
 ! -1.00 15.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG
  -1.00 18.00  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG
@@ -141,10 +141,10 @@
   0.70   1.0       KEP, EORATIO
 
 *PHOSPHORUS CONTENT  THESE ARE NOT GOOD FOR DRY BEAN.  MAYBE SOYBEAN????? PLACE HOLDER
-! Two options for Optimum and minimum P concentrations for shoots: 
+! Two options for Optimum and minimum P concentrations for shoots:
 ! (1) supply values for shoots (leaf plus stem)
 ! (2) supply values individually for leaf and for stem
-! If positive values for shoots are supplied, any values supplied for leaf and 
+! If positive values for shoots are supplied, any values supplied for leaf and
 ! stem will be ignored.
    -99.0   -99.0   -99.0  Optimum Shoot Conc (emergence, 1st flower, full seed)
   0.0030  0.0025  0.0015  Optimum Leaf Conc  (emergence, 1st flower, full seed)
