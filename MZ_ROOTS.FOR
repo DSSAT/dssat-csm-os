@@ -239,7 +239,7 @@ C----------------------------------------------------------------------
 ! RLDF(20)  !A root length density factor for soil layer L used to calculate
 !           !new root growth distribution - unitless
 ! RLNEW     !New root length to be added to the total root system length, cm. root cm2 ground
-! RLV(20)   !Root length density, cm root/cm2 soil
+! RLV(20)   !Root length density, cm root/cm3 soil
 ! RLWR      !Root length to weight ratio, cm/g
 ! RNFAC     !Zero to unity factor describing mineral N availability effect on
 !           !root growth in Layer L

@@ -2200,7 +2200,7 @@
 ! RCNP        !Root critical nitrogen concentration, g N/g root dry weight
 ! RGFIL       !Array containing base, optimum and maximum temperature to compute RGFILL function
 ! RGFILL      !Rate of grain fill - mg/day
-! RLV(L)      !Root length density for soil layer L, cm root/cm2 soil
+! RLV(L)      !Root length density for soil layer L, cm root/cm3 soil
 ! RLWR        !Root length weight ratio
 ! RMNC        !Root minimum nitrogen concentration (g N/g root dry weight)
 ! RNLAB
