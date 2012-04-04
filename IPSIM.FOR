@@ -97,9 +97,9 @@ C=======================================================================
          ISWTIL  = 'Y'
 
          IF (INDEX('FNQS',RNMODE) > 0) THEN
-           ICO2 = 'D' !Default CO2 from CO2046.WDA file
+           ICO2 = 'D' !Default CO2 from CO2???.WDA file
          ELSE
-           ICO2 = 'M' !Measured CO2 from CO2046.WDA file
+           ICO2 = 'M' !Measured CO2 from CO2???.WDA file
          ENDIF
 
          MEWTH   = 'M'
@@ -437,7 +437,7 @@ C    Select Model Name and Path -- order of priority:
 !         over all other values if valid. (Done in Default_SimControls)
 !     CRMODEL is read from FILEX.  Use this if no control file.  
 !     MODELARG is from command line argument list. Third priority. 
-!     Last, use value from DSSATPRO.v46.
+!     Last, use value from DSSATPRO.v??.
 C-----------------------------------------------------------------------
 !     First check model name from FILEX
       TRY_MODEL = CRMODEL
@@ -772,7 +772,6 @@ C-----------------------------------------------------------------------
       DATA FIRST /.TRUE./
 
       PARAMETER (ERRKEY = 'SIMCTR')
-!      PARAMETER (DSSATS = 'DSCSM046.CTR')
 
 !-----------------------------------------------------------------------
       IF (FIRST) THEN

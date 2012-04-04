@@ -187,7 +187,7 @@
 
 !     Partition the newly added residue E over the structural and
 !     metabolic pools. The C/E ratio of the structural pool is a
-!     "fixed" parameter (from the SOMFX046.SDA file).
+!     "fixed" parameter (from the SOMFX???.SDA file).
       DO IEL = 1, N_ELEMS
         ADDSTRUCE = ADDSTRUCC / CESTR(IEL)
         ADDMETABE = RESE(L,IEL) - ADDSTRUCE
