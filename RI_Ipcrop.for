@@ -10,10 +10,17 @@ C  02/07/1993 PWW Header revision and minor changes
 C  02/07/1993 PWW Added switch common block, restructured
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  08/12/2003 CHP Added I/O error checking
+C  02/25/2012 JZW make change
+C             Before change, this subroutine read PHINT from *.spe and output PHINT
+C               if *.spe is not available, will call RI_IPCREATE to create default *.spe
+C             After change, this subroutine will not read PHINT and will not output PHINT
+C               if *.spe is not available, will call RI_IPCREATE to create default *.spe, 
+C               but the created *.spe will not have PHINT data. PHIN iss not removed from ACRO 
 C=======================================================================
 
       SUBROUTINE RI_IPCROP (FILEC, PATHCR, CROP, 
-     &    CO2X, CO2Y, MODELVER, PHINT, PORMIN, 
+     &    CO2X, CO2Y, MODELVER, PORMIN, 
+       !&    CO2X, CO2Y, MODELVER, PHINT, PORMIN, 
      &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
 
       IMPLICIT    NONE
@@ -27,7 +34,8 @@ C=======================================================================
       INTEGER     I,J,PATHL,LUNCRP,ERR,LNUM
       INTEGER MODELVER
 
-      REAL PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC
+      REAL PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC
+      ! REAL PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC
       REAL, DIMENSION(10) :: CO2X, CO2Y, CO2X1, CO2Y1
 
 !     LOGICAL EOF
@@ -46,7 +54,7 @@ C=======================================================================
       !
       MODELVER =    1
       SHOCKFAC =  1.0
-      PHINT    = 83.0 !PHENOL
+      !PHINT    = 83.0 !PHENOL  ! JZZW this default was used to create *.spe if *.spe does not exist
       RWUEP1   = 1.50 !RICE
       PORMIN   = 0.00              ! Minimum pore space
       RWUMX    = 0.03              ! Max root water uptake
@@ -68,7 +76,8 @@ C=======================================================================
       IF (ERR .NE. 0) THEN
          CALL RI_IPCREATE (
      &    ACRO, CO2X, CO2Y, CROP, FILECC, LUNCRP,  MODELVER, 
-     &    PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC)
+     &    PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC)
+      ! &    PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC)
          RETURN
       ENDIF
 
@@ -87,7 +96,8 @@ C-----------------------------------------------------------------------
             SELECT CASE (J)
             CASE ( 1); READ (CHAR(16:20),'(  I5  )',IOSTAT=ERR) MODELVER
             CASE ( 2); READ (CHAR(16:20),'(  F5.0)',IOSTAT=ERR) SHOCKFAC
-            CASE ( 3); READ (CHAR(16:20),'(  F5.0)',IOSTAT=ERR) PHINT
+            !CASE ( 3); READ (CHAR(16:20),'(  F5.0)',IOSTAT=ERR) PHINT
+            CASE ( 3); Continue
             CASE ( 4)
               READ (CHAR(16:66),'(10F5.0)',IOSTAT=ERR)(CO2X(I),I=1,10)
             CASE ( 5)
@@ -135,7 +145,8 @@ C=======================================================================
 
       SUBROUTINE RI_IPCREATE (
      &    ACRO, CO2X, CO2Y, CROP, FILECC, LUNCRP,  MODELVER, 
-     &    PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC)
+     &    PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC)
+      !&    PHINT, PORMIN, RLWR, RWUEP1, RWUMX, SHOCKFAC)
 
       IMPLICIT    NONE
 
@@ -154,7 +165,7 @@ C=======================================================================
       WRITE (LUNCRP,110)
       WRITE (LUNCRP,120) CROP, ACRO( 1), MODELVER
       WRITE (LUNCRP,130) CROP, ACRO( 2), SHOCKFAC
-      WRITE (LUNCRP,130) CROP, ACRO( 3), PHINT
+      !WRITE (LUNCRP,130) CROP, ACRO( 3), PHINT
       WRITE (LUNCRP,140) CROP, ACRO( 4), (INT(CO2X(I)),I=1,10)
       WRITE (LUNCRP,150) CROP, ACRO( 5), (CO2Y(I),I=1,10)
       WRITE (LUNCRP,160) CROP, ACRO( 6), RWUEP1

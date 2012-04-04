@@ -19,6 +19,7 @@ C  01/16/2008 GH  Added P2 and PANTH coefficients for sorghum
 C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C  05/19/2011 GH  Updated for sorghum
+C  02/25/2012 JZW add the PHINT data reading from *.cul 
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -239,7 +240,7 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Ceres Rice **
       CASE ('RICER')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &            P1,P2R,P5,P2O,G1,G2,G3,G4
+     &            P1,P2R,P5,P2O,G1,G2,G3,G4, PHINT
 
 !     ORYZA Rice **
 !     Read name of OYRZA crop file
@@ -326,7 +327,7 @@ C-----------------------------------------------------------------------
   510 FORMAT (6X,'ERROR! Variety Selection must be an INTEGER value',/)
 
 ! 800 FORMAT (A6,1X,A16,1X,A6,15(F6.0))
-  800 FORMAT (A6,1X,A16,7X,A6,18F6.0)                     !11/8/07
+  800 FORMAT (A6,1X,A16,7X,A6,19F6.0)                     !11/8/07
 
 ! 820 FORMAT (A6,1X,A16,1X,A6,1X,A)
 ! 820 FORMAT (A6,1X,A16,7X,A6,18F6.0,A)                       !11/8/07

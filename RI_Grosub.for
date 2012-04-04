@@ -10,6 +10,9 @@ C                 Water stress effect on leaf appearance
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
 C  04/02/2008 US/CHP Added P and K models
+C  02/25/2012 This subroutine need data PHINT. JZW makes change 
+C             Before change, called RI_IPCROP to get PHINT from *.spe
+C             After Change, calls RI_IPGROSUB to get PHINT from *.inp
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
@@ -150,11 +153,12 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       CALL RI_IPGROSUB (CONTROL, 
-     &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PATHCR, 
+     &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
      &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
 
       CALL RI_IPCROP (FILEC, PATHCR, CROP, 
-     &    CO2X, CO2Y, MODELVER, PHINT, PORMIN, 
+     &    CO2X, CO2Y, MODELVER, PORMIN, 
+        !&    CO2X, CO2Y, MODELVER, PHINT, PORMIN,  
      &    RLWR, RWUEP1, RWUMX, SHOCKFAC)
 
       FILECC   = TRIM(PATHCR) // FILEC
@@ -1369,7 +1373,7 @@ C  05/07/2002 CHP Written
 C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
       SUBROUTINE RI_IPGROSUB (CONTROL, 
-     &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PATHCR, 
+     &    ATEMP, CROP, FILEC, G1, G2, G3, P5, PHINT, PATHCR, 
      &    PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL)
 
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -1386,7 +1390,7 @@ C=======================================================================
 
       INTEGER LINC, LNUM, LUNIO, ERR, FOUND
 
-      REAL ATEMP, G1, G2, G3, P5
+      REAL ATEMP, G1, G2, G3, P5, PHINT
       REAL PLANTS, PLPH, PLTPOP, ROWSPC, SDWTPL
 
 C     The variable "CONTROL" is of type "ControlType".
@@ -1436,9 +1440,9 @@ C-----------------------------------------------------------------------
       SECTION = '*CULTI'
       CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-      READ (LUNIO,100, IOSTAT=ERR) P5, G1, G2, G3
+      READ (LUNIO,100, IOSTAT=ERR) P5, G1, G2, G3, PHINT
 !CHP  100 FORMAT (30X,12X,F6.1,6X,F6.1,F6.4,F6.2)
-  100 FORMAT (30X,12X,F6.0,6X,3F6.0)
+  100 FORMAT (30X,12X,F6.0,6X,3F6.0, 6X, F6.2)
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
