@@ -1,6 +1,6 @@
 $SPECIES:WHCRP045
 
-! LAST EDIT: 22/08/11
+! LAST EDIT: 22/02/12
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
 ! They have been developed from 'parameters' embedded in the code of
@@ -108,6 +108,7 @@ $SPECIES:WHCRP045
 @ TKUH TKDTI  TKLF TKSPN  HDUR HLOST HLOSF ! Kill temps,span,time->harden,loss
   -6.0   2.0   0.0   2.0  10.0  10.0   0.2
 ! Temperature responses
+! AFRC vernalization=-4,3,10,17; Reinink=-1,0,4,8,9
 @RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
      0     1     0     0     0     0     0    -5    -5     0     0  
    1.0    26    26    26    30    10     5     0     0    16    16  
@@ -125,32 +126,32 @@ $SPECIES:WHCRP045
 ! 1. Based on ratio potential uptake/potential loss 
 ! (WFEU only in stand-alone Cropsim)
 @ WFPU  WFPL  WFGU  WFGL  WFTU  WFTL  WFSU  WFSF  WFEU !Gr,phs,till,sen,evap
-   1.0   0.0   1.3   0.0   1.0   0.5   0.6   0.5   1.5
+   1.0   0.0   1.3   0.0   1.0   0.5   0.3   0.5   1.5
 @LLOSA
- 0.02 ! Fraction of leaf area lost each day that water uptake ratio < WFSU
+ 0.01 ! Fraction of leaf area lost each day that water uptake ratio < WFSU
 ! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
 @WFGEU WFRGU  ! Germination/emergence,root growth
   0.50  0.25
 
 ! NITROGEN uptake,distribution,etc.
 ! For standard CSM uptake routine
-@RTNO3 RTNH4
- 0.006 0.006 
+@NH4MN NO3MN
+   0.5   0.5 
 ! For modified uptake routine (Not generally used)
 @ NCNU RLFNU WFNUU WFNUL ! Length,soil N,soil water
     30   2.0   1.0     0  
 ! N demand 
 @NTUPF  ! Fraction of deficit that can be filled per day
-  0.05
+  0.50    
 ! Nitrogen concentrations
 @GN%MX GN%MN  SDN% ! Grain,seed             
    4.5   0.5   1.9
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
-   8.0  0.80  2.50  0.65  2.00  1.50                               
-   1.0  0.55  0.40  0.40  1.70  1.25                               
+   6.3  0.75  3.00  0.65  2.00  1.50                               
+   1.0  0.55  0.80  0.55  1.70  1.25                               
 ! N distribution/mobilization
-@NLAB% NPTFL ! %N that labile,min.% uptake used by leaf (> minima) 
-    20   0.5
+@NLAB% NPTFL ! %N that labile,fr available > minimum used by leaf  
+    20   1.0   
 ! N shortage effects (Fraction of span from lowest to upper N concentration)
 @ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF ! Phs,gr,tillering,senesnce
    1.0     0   1.0   0.0   1.0   0.0   0.4   0.1
@@ -195,8 +196,8 @@ $SPECIES:WHCRP045
 ! GLIG%   Grain lignin (%)
 ! GLPHS   Grain linear growth ending stage (GrowthStage)
 ! GLPHS   Grain linear growth starting stage (GrowthStage)
-! GN%MN   Minimum grain nitrogen (%)
-! GN%MX   Maximum grain nitrogen (For when assimilate supply limited) (%)
+! GN%MN   Minimum grain nitrogen concentration (%)
+! GN%MX   Maximum grain nitrogen concentration (If assimilates limited) (%)
 ! GWLAG   Grain weight fraction,end lag period (fr standard)
 ! GWLIN   Grain weight fraction,end linear fill ag period (fr standard)
 ! HDUR    Days for complete cold hardening (d)
@@ -211,11 +212,11 @@ $SPECIES:WHCRP045
 ! LLIFG   Leaf growth period,birth to full expansion (phyl)
 ! LLIFS   Leaf senescence period (phyl)
 ! LLIG%   Leaf lignin (%)
-! LLOSA   Leaf area loss each day that water uptake ratio < WFS (fr)
-! LN%MN   Leaf N concentration,minimum (%)
-! LN%S    Leaf N concentration,standard,stage (%)
-! LNCGL   N concentration,growth,lower (fr)
-! LNCGU   N concentration,growth,upper (fr)
+! LLOSA   Leaf area loss each day that water uptake ratio < WFSU (fr)
+! LN%MN   Leaf N concentration,minimum,seedling and maturity stages (%)
+! LN%S    Leaf N concentration,standard,seedling and maturity stages (%)
+! LNCGL   N concentration,growth,lower bound (fr)
+! LNCGU   N concentration,growth,upper bound (fr)
 ! LSHAR   Leaf sheath area/weight,end leaf expansion (cm2/g)            
 ! LSHAW   Leaf sheath area/weight,vegetative phases (cm2/g)           
 ! LSHFR   Leaf sheath fraction (fr of lamina+sheath)
@@ -230,8 +231,10 @@ $SPECIES:WHCRP045
 ! NFSF    N factor to trigger final (maturity) senescence (#)
 ! NFTL    N stress factor,tillering,lower (fr)
 ! NFTU    N stress factor,tillering,upper (fr)
+! NH4MN   NH4 minimum concentration for uptake (mg/MG)
 ! NLAB%   Labile N during grain filling (%)
-! NPTFL   N partition (min) to leaves for growth/top-up after minima met (%)
+! NO3MN   NO3 minimum concentration for uptake (mg/MG)
+! NPTFL   N partition (min) to leaves for growth/top-up after minima met (fr)
 ! NTUPF   N top-up fraction (fr deficit/d)
 ! P0      Juvenile phase duration (oC.days)
 ! P9      Phase duration 6 (post physio.maturity (oC.d)
@@ -251,8 +254,8 @@ $SPECIES:WHCRP045
 ! RLFNU   Root length factor,N uptake (cm/cm3) 
 ! RLIG%   Root lignin (%)
 ! RLWR    Root length/weight ratio (m/(0.01g;multiply by 10000->cm/g)
-! RN%MN   Root N concentration,minimum (%)
-! RN%S    Root N concentration,standard,stage (%)
+! RN%MN   Root N concentration,minimum,seedling and maturity stages (%)
+! RN%S    Root N concentration,standard,,seedling and maturity stages (%)
 ! RRATE   Relative process rate (#)
 ! RRESP   Root respiration fraction (fr)
 ! RS%LX   Reserves concentration,leaf laminae,maximum (%)
@@ -261,8 +264,6 @@ $SPECIES:WHCRP045
 ! RSFPL   Reserves concentration,lower bound for photosynthesis effect (fr)
 ! RSFPU   Reserves concentration,upper bound for photosynthesis effect (fr)
 ! RSUSE   Reserves utilisation fraction,vegetative phases (#)
-! RTNO3   NO3 uptake/root length  (mg N/cm.day)
-! RTNH4   NH4 uptake/root length  (mg N/cm.day)
 ! RTUFR   Max fraction root wt useable for new leaves (fr)
 ! RWULF   Root length factor,water uptake (cm/cm3) (Only stand-alone Cropsim)
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
@@ -277,8 +278,8 @@ $SPECIES:WHCRP045
 ! SLACF   Specific leaf area,change with leaf position (fr)
 ! SLAFF   Specific leaf area,flexibility,fr non-stressed (fr)
 ! SLIG%   Stem lignin (%)
-! SN%MN   Stem N concentration,minimum (%)
-! SN%S    Stem N concentraation,standard,stage (%)
+! SN%MN   Stem N concentration,minimum,,seedling and maturity stages (%)
+! SN%S    Stem N concentraation,standard,,seedling and maturity stages (%)
 ! STNAME  Stage name (Text)
 ! SVPHS   Stem Visible stage (GrowthStage)
 ! TBASE   Temperature above which disease will develop (oC)

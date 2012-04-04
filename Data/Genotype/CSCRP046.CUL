@@ -1,6 +1,6 @@
 $CULTIVARS:CSCRP045
 
-! LAST EDIT: 21/08/11
+! LAST EDIT: 23/02/12
 
 ! Coefficients used in the Cropsim cassava module differ from those used
 ! in the earlier DSSAT cassava model. It is best,therefore,not to attempt
@@ -28,7 +28,7 @@ DFAULT DEFAULT              . DFAULT     0    10    20    30   200  0.25  0.30  
 ! The following cultivars have not been calibrated well and the coefficients are present 
 ! merely to allow the experiments to be run. A user should spend time calibrating for 
 ! his/her own data.
-UC0002 MCol-22              . 990001     0    10    20    30   200  0.25  0.30   600  4900   100    30   150  180    22    10  0.25
+UC0002 MCol-22              . 990001     0    10    20    30   200  0.25  0.30   600  4900   100    30   150  280    22    10  0.25
 UC0006 MCol-1684            . 990001     0  10.4  20.8  29.2   200  0.25  0.30   300  1900   100    30   150  280    22    10  0.35
 UC0007 MVen-77              . 990001     0    10    20    29   200  0.25  0.30   300  1900   100    30   150  280    18    10  0.35
 UC0008 MPtr-26              . 990003     0    10    20    30   200  0.25  0.30   300  1900   100    30   150  240    16    10  0.20
