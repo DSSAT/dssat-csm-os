@@ -61,12 +61,16 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 13 
+        INTEGER :: Build = 14 
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.6.0.14 chp 03/14/2012  
+!                US  rice temperature responses, PHINT moved from SPE to CUL
+!                GH  ecotype file for potato, RUE1 & RUE2
+!                LAH revise CSCRP and CSCER
 !       4.6.0.13 chp 03/13/2012 CHP / TL Add ORYZA rice model, synch w/ 4.5.1.27
 !       4.6.0.12 chp 01/03/2012 JIL fix potato read stmts 
 !       4.6.0.11 chp 12/15/2011 JIL remove P4 from potato 
