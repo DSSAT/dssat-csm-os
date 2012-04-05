@@ -61,12 +61,15 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 14 
+        INTEGER :: Build = 15 
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.6.0.15 chp 04/05/2012 Format changes for rice cultivar input
+!                    potato & rice models OK, 
+!                    need to rollback CSCER & CSCRP next build
 !       4.6.0.14 chp 03/14/2012  
 !                US  rice temperature responses, PHINT moved from SPE to CUL
 !                GH  ecotype file for potato, RUE1 & RUE2
