@@ -247,6 +247,7 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
       CASE ('RIORZ')
         READ (C360,'(A6,1X,A16,7X,A80)',IOSTAT=ERRNUM) VARTY,VRNAME,
      &            PLAINTXT
+        ECONO = '      '
 
 !     CaneGro: South African Sugarcane model **
       CASE ('SCCAN')
