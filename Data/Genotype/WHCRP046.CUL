@@ -1,6 +1,6 @@
 $CULTIVARS:WHCRP045
 
-! LAST EDIT: 22/02/12
+! LAST EDIT: 22/08/11
 
 ! Coefficients used in the Cropsim model differ from those used in
 ! earlier DSSAT wheat/barley models. They can be calculated
@@ -18,7 +18,7 @@ $CULTIVARS:WHCRP045
 ! P6    = 0
 ! P7    = 120
 ! P8    = P5(V3.5)*20 + 430
-! G#WTS = G1(V3.5)*5 + 5
+! G#WTS  = G1(V3.5)*5 + 5
 ! GWTS  = (G2(V3.5)*0.35+0.65) * P5/20
 ! SHWTS = G3(V3.5)*0.7
 ! PHINT = PHINT(V3.5)
@@ -32,7 +32,7 @@ $CULTIVARS:WHCRP045
 ! of wheat and other cereals.
 
 *CULTIVARS:WHCRP045
-!                                     --- BASIC COEFFICIENTS (AS IN CERES) ---  ------ PHENOLOGY (PHASE DURATIONS) -----  -- LEAF SIZES -- -- P.MODIFIERS --                 
+!                                     --- BASIC COEFFICIENTS (AS IN CERES) ---  ------ PHENOLOGY (PHASE DURATIONS) -----  -- LEAF SIZES -- P.MODIFIERS PPSEN                 
 @VAR#  VAR-NAME........  EXP#   ECO#  VREQ  PPS1    P8 G#WTS  GWTS SHWTS PHINT    P1    P2    P3    P4    P5    P6    P7  LA1S  LAFV  LAFR VBASE  VEFF  PPS2
 !                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20
 999991 MINIMA               . 999991     0     0   100    10    10   0.5    40   100    60   100    50    50    10    50   0.1  0.01  0.01     0     0     0
@@ -40,62 +40,28 @@ $CULTIVARS:WHCRP045
                                                                                                                                                                 
 DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0   0.1  0.50     0     0     0
                                                                                                                                                             
-IB1500 MANITOU           1,14 CA0001    20   160   335    25    23   3.0    86   362    65   193   172    50    20   130 2.506 .0972 .3466     0   0.5     0
+IB1500 MANITOU            1,2 CA0001    20   160   335    23    23   3.0    86   362    65   193   172    50    20   130   3.0   .05  0.30     0   0.5     0
 IB0488 NEWTON             1,6 US0001    45    97   500    20    25   3.2    95   400    71   214   190    50    20   130   2.0   .25  0.01     0   1.0     0
-IB1015 MARIS FUNDIN       1,2 UK0001    30   103   535    17    44   3.2   100   421    75   225   200    50    20   130   2.0   .10  0.30     0   0.5     0
-                                                                                                                                                            
-! COEFF       DEFINITION                                                                                                                                    
-! ========    ==========                                                                                                                                    
-! ECO#        Ecotype code for this cultivar, points to entry in the ECO file                                                                               
-! EXP#        Number of experiments,treatments used to estimate coefficients                                                                                
-! G#WTS       Standard grain number per unit canopy weight at anthesis (#/g)                                                                                
-! GWTS        Standard grain size,optimum conditions,normal plant density (mg)                                                                              
-! LA1S        Area of standard first leaf (cm2)                                                                                                             
-! LAFV        Increase in potential area of leaves,vegetative phase (fr/leaf)                                                                               
-! LAFR        Increase in potential area of leaves,reproductive phase (fr/leaf)                                                                             
-! Pn          Duration of phase (n) where n is phase number (PVoC.D)                                                                                        
-! PPSn *      Photoperiod sensitivity,phase(n). % drop in rate,10h pp.change.                                                                               
-! PHINT       Interval between successive leaf appearances. (oC.d)                                                                                          
-! SHWTS       Standard,non-stressed shoot dry weight (incl.grain),maturity (g)                                                                              
-! VAR#        Identification code or number for the specific cultivar.                                                                                      
-! VAR-NAME    Name of cultivar.                                                                                                                             
-! VREQ        Vernalization required for max.development rate (VDays)                                                                                       
-! VBASE       Vernalization requirement before any effect (VDays)                                                                                           
-! VEFF        Vernalization effect (Rate reduction when unvernalized (fr)                                                                                   
-                                                                                                                                                            
-! *  The programme has been written to read sensitivity for all phases so that                                                                              
-!    additional columns for later phases could be added if desired.                                                                                         
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
-                                                                                                                                                            
+IB1015 MARIS FUNDIN       1,2 UK0001    30   103   535    15    44   3.2   100   421    75   225   200    50    20   130   2.0   .10  0.30     0   0.5     0
+
+! COEFF       DEFINITION
+! ========    ==========
+! ECO#        Ecotype code for this cultivar, points to entry in the ECO file
+! EXP#        Number of experiments,treatments used to estimate coefficients
+! G#WTS       Standard grain number per unit canopy weight at anthesis (#/g)
+! GWTS        Standard grain size,optimum conditions,normal plant density (mg)
+! LA1S        Area of standard first leaf (cm2)
+! LAFV        Increase in potential area of leaves,vegetative phase (fr/leaf)
+! LAFR        Increase in potential area of leaves,reproductive phase (fr/leaf)
+! Pn          Duration of phase (n) where n is phase number (PVoC.D)
+! PPSn *      Photoperiod sensitivity,phase(n). % drop in rate,10h pp.change.
+! PHINT       Interval between successive leaf appearances. (oC.d)
+! SHWTS       Standard,non-stressed shoot dry weight (incl.grain),maturity (g)
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+! VREQ        Vernalization required for max.development rate (VDays)
+! VBASE       Vernalization requirement before any effect (VDays)
+! VEFF        Vernalization effect (Rate reduction when unvernalized (fr)
+
+! *  The programme has been written to read sensitivity for all phases so that
+!    additional columns for later phases could be added if desired.

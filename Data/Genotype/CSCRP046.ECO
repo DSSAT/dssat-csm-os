@@ -1,6 +1,6 @@
 $ECOTYPES:CSCRP045
 
-! LAST EDIT: 23/02/12
+! LAST EDIT: 21/08/11
 
 ! Coefficients presented here have no direct equivalents in the
 ! previous Dssat cassava model, which did not have a set of
@@ -19,30 +19,27 @@ $ECOTYPES:CSCRP045
 ! because of variation in the proportion of diffuse radiation
 ! in the incoming solar and sky components.
 
-*ECOTYPE:CSCRP045                                                 
-@ECO#  ECONAME.......... PARUE HTSTD SRN%S  S#FX  PHL1  PHF2  PSRI RTNUP NUPNF NUPWF
-!                            1     2     3     4     5     6     7     8     9    10
-999991 MINIMA             2.00   100   .25  2.00    50   1.0   300 0.001  0.00   0.0
-999992 MAXIMA             3.20   400  1.00  3.00   100   3.0  2000 0.012  0.20   2.0
-                                                                                    
-DFAULT DEFAULT            2.80   200   .65  2.61    90   2.0   600 0.006  1.00   1.0
-                                                                                    
-990001 STANDARD1          2.40   200   .65  2.61    90   2.0   600 0.006  1.00   1.0
-990002 STANDARD2          2.40   200   .65  2.61    90   1.2   600 0.006  1.00   1.0
-990003 STANDARD3          2.40   200   .65  2.61   130   2.0   600 0.006  1.00   1.0
-990004 STANDARD4          2.40   200   .65  2.61    90   1.0  1400 0.006  1.00   1.0
+*ECOTYPE:CSCRP045
+@ECO#  ECONAME.......... PARUE HTSTD SRN%S  S#FX  PHL1  PHF2  PSRI
+!                            1     2     3     4     5     6     7
+999991 MINIMA             2.00   100   .25  2.00    50   1.0   300
+999992 MAXIMA             3.20   400  1.00  3.00   100   3.0  2000
+
+DFAULT DEFAULT            2.80   200   .65  2.61    90   2.0   600
+
+990001 STANDARD1          2.80   200   .65  2.61    90   2.0   600
+990002 STANDARD2          2.80   200   .65  2.61    90   1.2   600
+990003 STANDARD3          2.80   200   .65  2.61   130   2.0   600
+990004 STANDARD4          2.80   200   .65  2.61    90   1.0  1400
 
 ! COEFF   DEFINITION
 ! =====   ==========
 ! ECO#    Ecotype code (text)
 ! ECONAME Ecotype name (text)
-! NUPNF   NO3 uptake vs conc exponent adjustment factor (0-2;0=no uptake,1=standard)
-! NUPWF   Soil water effect on N uptake adjustment factor (0-2;1.0=no effect,1=standard)
 ! PARUE   PAR conversion factor,standard (g dry matter/MJ)
 ! PHL1    Leaf number at which PHINT changes (#)
 ! PHF2    Factor to establish PHINT at PHL1 (#,multiplier applied to PHINTS)
 ! PSRI    Storage root initiation phase (oC.d)
-! RTNUP   NO3 uptake/root length  (mg N/cm.day)
 ! S#FX    Shoot number per fork (#)
 ! SRN%S   Storage root standard N concentration (% dm)
 ! HTSTD   Standard canopy height (cm)
