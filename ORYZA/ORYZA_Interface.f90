@@ -58,7 +58,7 @@
 
 !-----Formal ORYZA parameters
       INTEGER       ITASK , IUNITD, IUNITL, CROPSTA, IDOY, TDATE
-      INTEGER       IUNITD2, IUNITD3
+      INTEGER       IUNITD2, IUNITD3, IUNITDA
       LOGICAL       OR_OUTPUT, TERMNL
       CHARACTER (128) FILEI1, FILEIT, FILEI2
       CHARACTER (32) ESTAB
@@ -314,21 +314,25 @@
             TRW =TRC
         ENDIF
 
-!       CALL GETLUN("ORYZA1",IUNITD)
+        CALL GETLUN("ORYZA1",IUNITD)
+        CALL GETLUN("ORYZA1A",IUNITDA)  !This is because ORYZA routines randomly add 1 to the unit number
         CALL GETLUN("ORYZA2",IUNITL)
         CALL GETLUN("ORYZA3",IUNITD2)
         CALL GETLUN("ORYZA4",IUNITD3)
-        IUNITD = 200
+
+!        IUNITD = IUNITD+10
 !       IUNITL = IUNITL+20
         
         DELT = 1.0  !TIME STEP IS 1.0
         IDOY = INT(DOY)
         DAE = 0.0        
         
-         !open a temporary file for ORYZA2000 outputs
+!       open a temporary file for ORYZA2000 outputs
         OPEN(UNIT = IUNITD2, FILE = "ORYZA_RES.DAT")
         OPEN(UNIT = IUNITD3, FILE = "ORYZA_CLI.DAT")
         WRITE(IUNITD2,'(A)') "DOY,DAE,DVS,ZRT,LAI,LLV,WLVD,WLVG,WST,WSO,WRR14,WRT,GSO,GGR,GST,GLV,WAGT" 
+
+        OPEN(UNIT = IUNITL, FILE = "ORYZA_LOG.OUT")
 
 !***********************************************************************
 !***********************************************************************
