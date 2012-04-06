@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 15 
+        INTEGER :: Build = 16 
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-Release  '
 
 !     Version history:  
+!       4.6.0.16 chp 04/06/2012 Rollback CSCER and CSCRP. ORYZA minor changes.
 !       4.6.0.15 chp 04/05/2012 Format changes for rice cultivar input
 !                    potato & rice models OK, 
 !                    need to rollback CSCER & CSCRP next build
