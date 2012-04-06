@@ -58,6 +58,7 @@
 
 !-----Formal ORYZA parameters
       INTEGER       ITASK , IUNITD, IUNITL, CROPSTA, IDOY, TDATE
+      INTEGER       IUNITD2, IUNITD3
       LOGICAL       OR_OUTPUT, TERMNL
       CHARACTER (128) FILEI1, FILEIT, FILEI2
       CHARACTER (32) ESTAB
@@ -313,19 +314,21 @@
             TRW =TRC
         ENDIF
 
-        CALL GETLUN("ORYZA1",IUNITD)
+!       CALL GETLUN("ORYZA1",IUNITD)
         CALL GETLUN("ORYZA2",IUNITL)
-        IUNITD = IUNITD+10
-        IUNITL = IUNITL+20
+        CALL GETLUN("ORYZA3",IUNITD2)
+        CALL GETLUN("ORYZA4",IUNITD3)
+        IUNITD = 200
+!       IUNITL = IUNITL+20
         
         DELT = 1.0  !TIME STEP IS 1.0
         IDOY = INT(DOY)
         DAE = 0.0        
         
          !open a temporary file for ORYZA2000 outputs
-        OPEN(UNIT = IUNITD+50, FILE = "ORYZA_RES.DAT")
-        OPEN(UNIT = IUNITD+60, FILE = "ORYZA_CLI.DAT")
-        WRITE(IUNITD+50,'(A)') "DOY,DAE,DVS,ZRT,LAI,LLV,WLVD,WLVG,WST,WSO,WRR14,WRT,GSO,GGR,GST,GLV,WAGT" 
+        OPEN(UNIT = IUNITD2, FILE = "ORYZA_RES.DAT")
+        OPEN(UNIT = IUNITD3, FILE = "ORYZA_CLI.DAT")
+        WRITE(IUNITD2,'(A)') "DOY,DAE,DVS,ZRT,LAI,LLV,WLVD,WLVG,WST,WSO,WRR14,WRT,GSO,GGR,GST,GLV,WAGT" 
 
 !***********************************************************************
 !***********************************************************************
@@ -431,15 +434,14 @@
           TERMNL = .TRUE.
           DEALLOCATE(PV) 
           CALL RDDTMP (IUNITD)  !delete all temporary files
-          CLOSE(IUNITD+50)
-          CLOSE(IUNITD+60)
+          CLOSE(IUNITD2)
+          CLOSE(IUNITD3)
         ENDIF
 
       ENDIF
 
 !***********************************************************************
 !***********************************************************************
-
     IF(.NOT.TERMNL .AND. DYNAMIC > RUNINIT) THEN
         IF(INDEX(ISWWAT,"Y").GT.0) THEN
 
@@ -508,9 +510,9 @@
         ENDDO
 
 !       Temporary
-        WRITE(IUNITD+50,5000) DOY,DAE,DVS,ZRT,LAI,LLV,WLVD, WLVG, WST, WSO, WRR14, WRT,&
+        WRITE(IUNITD2,5000) DOY,DAE,DVS,ZRT,LAI,LLV,WLVD, WLVG, WST, WSO, WRR14, WRT,&
                             GSO, GGR, GST, GLV,WAGT
-        WRITE(IUNITD+60,6000) 1,YEAR, DOY, RDD/1000.0, TMMN, TMMX, -99.0, -99.0           
+        WRITE(IUNITD3,6000) 1,YEAR, DOY, RDD/1000.0, TMMN, TMMX, -99.0, -99.0           
         
         IF (DVS >= 0.65 .AND. STGDOY(2) > YRDOY) THEN
 !         Panicle initiation date DVS = 0.65
@@ -617,18 +619,18 @@
       CHARACTER*20  VARNAME
       CHARACTER*30  FILEIO
       CHARACTER*78  MSG(2)
-      CHARACTER*80  PATHEX
+      CHARACTER*80  PATHEX, PATH_GENO
       CHARACTER*92  PATHIB
-      CHARACTER*128 FILEI1, CHAR
+      CHARACTER*128 FILEI1, CHAR, F1_SAVE
 
-      CHARACTER*6  ERRKEY, SECTION
-      PARAMETER (ERRKEY = 'IPRICE')
+      CHARACTER*7  ERRKEY, SECTION
+      PARAMETER (ERRKEY = 'IPORICE')
 
       INTEGER ISECT, LINC, LNUM, LUNIO, ERR, FOUND, STGDOY(20), TRT
       REAL PLANTS, PLTPOP, ROWSPC, PLDP, SDWTPL, PAGE, ATEMP, PLPH
       REAL LAPE, DVSI, WLVGI, WSTI, WRTI, WSOI, ZRTI 
 
-      LOGICAL GoodFile
+      LOGICAL GoodFile, FEXIST
 
 !     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
@@ -646,10 +648,16 @@
 
 !-----------------------------------------------------------------------
 !    Read name of FILEX - to get name of intial biomass file (if present)
+!    Read path for genotype file (for ORYZA CRP file location, if not in
+!       experiment path).
 !-----------------------------------------------------------------------
       READ (LUNIO,'(3(/),15X,A12,1X,A80)',IOSTAT=ERR) FILEX, PATHEX
-      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
       LNUM = LNUM + 4
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+
+      READ (LUNIO,'(4(/),28X,A)') PATH_GENO
+      LNUM = LNUM + 5
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
 !-----------------------------------------------------------------------
 !    Read Planting Details Section
@@ -677,6 +685,23 @@
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
       CLOSE (LUNIO)
+
+!-----------------------------------------------------------------------
+!    Check for location of ORYZA crop file
+!    If not in the current directory, look in the genotype directory
+!-----------------------------------------------------------------------
+    INQUIRE (FILE = FILEI1,EXIST = FEXIST)
+    F1_SAVE = FILEI1
+    IF (.NOT. FEXIST) THEN
+      FILEI1 = TRIM(PATH_GENO) // FILEI1
+      INQUIRE (FILE = FILEI1,EXIST = FEXIST)
+      IF (.NOT. FEXIST) THEN
+        MSG(1) = "ORYZA crop file does not exist."
+        WRITE(MSG(2),'(A)') FILEI1(1:78)
+        CALL WARNING(2,ERRKEY,MSG)
+        CALL ERROR(ERRKEY,29,TRIM(F1_SAVE),0)
+      ENDIF
+    ENDIF
 
 !-----------------------------------------------------------------------
 !   Find and read initial biomass file
