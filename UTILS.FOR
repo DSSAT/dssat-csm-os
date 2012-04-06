@@ -575,7 +575,7 @@ C========================================================================
 
 !     RESERVE FOR ORYZA
       CASE ('ORYZA1');  LUN = 26  !ORYZA
-      CASE ('ORYZA1A'); LUN = 27  !Prevent IUNITD+1 from being used
+      CASE ('ORYZA1A'); LUN = 27  !Prevent ORYZA1+1 from being used
 
 !     Currently 30 is the highest number for reserved logical units
 !     Change value in subroutine OUTFILES if necessary

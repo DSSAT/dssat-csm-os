@@ -1061,12 +1061,12 @@
 !-----------Terminate simulation settings
             IF (DVS.GT.2.0) THEN
                TERMNL = .TRUE.
-               WRITE (*,*) 'Crop reached maturity'
+               WRITE (IUNITL,*) 'Crop reached maturity'
              END IF
 ! BB 2006: Crop growth stops below certain lower threshold T days
             IF (NCOLD.GT.COLDEAD) THEN
                TERMNL = .TRUE.
-               WRITE (*,*) 'Crop died because of low temperature'
+               WRITE (IUNITL,*) 'Crop died because of low temperature'
              END IF
 
 !========END OF SKIP WHOLE RATE CALCULATIONS BEFORE EMERGENCE

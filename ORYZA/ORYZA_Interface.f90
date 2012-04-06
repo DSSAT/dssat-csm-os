@@ -4,6 +4,9 @@
 !-----------------------------------------------------------------------
 !  REVISION       HISTORY
 !  01/26/2011 TL/CHP Written.
+!  04/06/2012 CHP Added dedicated unit numbers for all output files.
+!                 Open ORYZA log file here.
+!                 CRP file can be in data or genotype directory  
 !=======================================================================
       SUBROUTINE ORYZA_Interface (CONTROL, ISWITCH,               &    !Input
           EOP, FLOODWAT, HARVFRAC, NH4, NO3, SOILPROP,            &    !Input
