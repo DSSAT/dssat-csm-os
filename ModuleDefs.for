@@ -383,7 +383,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       DOS, Windows
         SLASH = '\' 
         DSSATPRO = 'DSSATPRO.V46'
-        STDPATH = 'C:\DSSAT46\' 
+!       Note: Use DSSAT45 directory for now. 
+        STDPATH = 'C:\DSSAT45\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
