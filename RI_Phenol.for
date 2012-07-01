@@ -273,6 +273,7 @@ C=======================================================================
          ELSE
            DTT = (TMAX+TMIN)/2.0 - TBASE
          ENDIF
+
          ! DROUGHT STRESS
          IF (PHEFAC .LT. 1.0) THEN
                 TMPDTT = DTT

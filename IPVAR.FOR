@@ -19,7 +19,7 @@ C  01/16/2008 GH  Added P2 and PANTH coefficients for sorghum
 C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C  05/19/2011 GH  Updated for sorghum
-C  02/25/2012 JZW add the PHINT data reading from *.cul 
+C  02/25/2012 JZW add the PHINT data reading from *.cul for RICER
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C

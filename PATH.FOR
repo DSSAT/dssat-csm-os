@@ -1,7 +1,7 @@
 C=======================================================================
 C  PATH, Subroutine
 C
-C  Program to read the PATH from DSSATPRO.V46
+C  Program to read the PATH from DSSATPRO file
 C-----------------------------------------------------------------------
 C  Revision history
 C
@@ -99,9 +99,9 @@ C-SUN       PATHC  = LINE(8:80)
 C=======================================================================
 C  PATHD, Subroutine
 C
-C  Program to read the PATH of DSSATPRO.V46
+C  Program to read the PATH of DSSATPRO file
 C    Assume in current directory first.
-C    If not in current directory, DSSATPRO.V46 is stored with the EXEs
+C    If not in current directory, DSSATPRO file is stored with the EXEs
 C-----------------------------------------------------------------------
 C  Revision history
 C
@@ -138,8 +138,6 @@ C=======================================================================
 
       LOGICAL      FEXIST
 
-!     PARAMETER (DSSATF = 'DSSATPRO.V46')
-
 !     DSSATP(1:12) = DSSATF
       DSSATP(1:12) = DSSATPRO
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
@@ -154,7 +152,6 @@ C=======================================================================
 
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
       IF (.NOT. FEXIST) THEN
-   !     DSSATP = "C:\DSSAT46\" // DSSATF
         DSSATP = STDPATH // TRIM(DSSATPRO)
       ENDIF
 
@@ -169,7 +166,7 @@ C=======================================================================
 C=======================================================================
 C  MODEL_NAME, Subroutine
 C
-C  Program to read the Module name from DSSATPRO.V46
+C  Program to read the Module name from DSSATPRO file
 C-----------------------------------------------------------------------
 C  Revision history
 C

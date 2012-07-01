@@ -114,7 +114,6 @@ C-----------------------------------------------------------------------
         FILEIO  = CONTROL % FILEIO
         LUNIO   = CONTROL % LUNIO
 
-!       FILESS = 'RESCH046.SDA'
         FILESS = 'RESCH' // ModelVerTxt // '.SDA'
 
         SOILNF = FILESS
