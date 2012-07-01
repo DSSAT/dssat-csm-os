@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.6; 06/28/2011
+! DSSAT v4.6; 01/26/2012
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -27,7 +27,7 @@
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 ADAP   Anthesis day    Anthesis day (dap)                                       .
 ADAT   Anthesis date   Anthesis date (YrDoy)                                    Z60D ANTH FL1D ADAY ADOY
-AMDAY  Anth to matur   Anthesis to maturity (days)                              .
+AMDY   Anth to matur   Anthesis to maturity (days)                              .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl kg/ha Fresh cane yield (kg/ha)                                 .
@@ -88,6 +88,7 @@ L#SX   Leaf number #   Leaf number per stem, maximum                            
 LAIH   LAI harvest     Leaf area index, at harvest                              .
 LAIX   LAI maximum     Leaf area index, maximum                                 .
 LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      .
+LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
 NDCH   Days to harvest Number of days from planting to harvest (d)              .
