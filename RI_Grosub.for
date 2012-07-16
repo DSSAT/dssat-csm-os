@@ -10,9 +10,7 @@ C                 Water stress effect on leaf appearance
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
 C  04/02/2008 US/CHP Added P and K models
-C  02/25/2012 This subroutine need data PHINT. JZW makes change 
-C             Before change, called RI_IPCROP to get PHINT from *.spe
-C             After Change, calls RI_IPGROSUB to get PHINT from *.inp
+C  02/25/2012 JZW PHINT from CUL file (remove from SPE)
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C

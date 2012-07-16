@@ -445,7 +445,7 @@ C-----------------------------------------------------------------------
 
 !     If FILEX model name was not acceptable, then try the 
 !       model name read from command line.  If this is not OK, 
-!       MODEL contains value from DSSATPRO.V46
+!       MODEL contains value from DSSATPRO file
       IF (TRY_MODEL /= MODEL) THEN
         CALL MODEL_NAME (CROP, DSSATP, MODELARG, MODEL)
       ENDIF
@@ -1249,7 +1249,7 @@ C    Select Model Name and Path -- order of priority:
 !         over all other values if valid. (Done in Default_SimControls)
 !     CRMODEL is read from FILEX.  Use this if no control file.  
 !     MODELARG is from command line argument list. Third priority. 
-!     Last, use value from DSSATPRO.v46.
+!     Last, use value from DSSATPRO file
 C-----------------------------------------------------------------------
 !     First check model from simulation control file 
       TRY_MODEL = CTRMODEL
@@ -1263,7 +1263,7 @@ C-----------------------------------------------------------------------
 
 !       If FILEX model name was not acceptable, then try the 
 !       model name read from command line.  If this is not OK, 
-!       MODEL contains value from DSSATPRO.V46
+!       MODEL contains value from DSSATPRO file
         IF (TRY_MODEL /= MODEL) THEN
           TRY_MODEL = MODELARG
           CALL MODEL_NAME (CONTROL%CROP, DSSATP, TRY_MODEL, MODEL)
