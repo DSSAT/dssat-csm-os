@@ -30,6 +30,7 @@
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
 !  10/31/2007 CHP Added simple K model.
+!  01/03/2013 CHP Initialization for RLV prevents carryover 
 !----------------------------------------------------------------------
 !
 !  Called : MAIZE
@@ -734,6 +735,8 @@
           SENESCE % ResWt  = 0.0
           SENESCE % ResLig = 0.0
           SENESCE % ResE   = 0.0
+
+          RLV = 0.0     !CHP 1/3/2013
 
           SHELPC = 0.0
           SLA    = 0.0
