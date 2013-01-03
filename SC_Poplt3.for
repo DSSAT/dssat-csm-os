@@ -135,12 +135,12 @@ c     :::::::::::::::::::::::::::::::::::
          NLAYR  =  0
          NTLGRP  =  0
          REPEATS  =  0
-         STGDOY(20)  =  0
+         STGDOY  =  0
   
          CDEP  =  0.0
          DELTA  =  0.0
-         DLAYR(NL)  =  0.0
-         DUL(NL)  =  0.0
+         ! DLAYR(NL)  =  0.0
+         ! DUL(NL)  =  0.0
          EXTRA  =  0.0
          FX  =  0.0
          LL  =  0.0
@@ -152,7 +152,7 @@ c     :::::::::::::::::::::::::::::::::::
          STDAYE  =  0.0
          STDDIV  =  0.0
          STRPOP  =  0.0
-         SW(NL)  =  0.0
+         ! SW(NL)  =  0.0
          SWDF2  =  0.0
          SWDF30  =  0.0
          SWDFAR  =  0.0
@@ -182,6 +182,7 @@ c     :::::::::::
         TOTPOP = CaneCrop%TOTPOP
         DO I = 1,10
             POPCF(I)  = CaneCrop%POPCF(I)
+            SWDFAR(I) = 0.
         ENDDO
         DO I = 1,MAX_TILLER_COHORTS
             TEMPOP(I) = CaneCrop%TEMPOP(I)
@@ -218,6 +219,9 @@ c         ::::::::::::::::::::::::::::::::::::::::::::::::::::::
           t0 = 0.
           SWDF30 = 1.
           WaterBal%SWDF30 = 1.
+          DO I=1, 10
+            SWDFAR(I) = 0.
+          ENDDO
 
 
 c         READ FROM CULTIVAR FILE:
@@ -353,6 +357,7 @@ c            WRITE(*,'(3H   ,F10.5)') FX*DLAYR(I)
          cdep=cdep-dlayr(i)
          swdf30=swdf30/cdep 
          SWDF30 = MIN(1.,SWDF30)
+         ! SWDF30 = 1.
          WaterBal%SWDF30 = SWDF30
 
 c  16     stdaye=stdaye+(1.0-swdf2)

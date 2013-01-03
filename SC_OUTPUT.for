@@ -510,10 +510,21 @@ c     Sucrose % of wet/fresh stalk mass
           DATA GROHEAD(3, 45) /'t/t * 100'/
           DATA GROHEAD(4, 45) /'SU%FMD'/
 
+c     Water stress (CWSI)
+          DATA GROHEAD(1, 46) /'CWSI'/
+          DATA GROHEAD(2, 46) /'water'/
+          DATA GROHEAD(3, 46) /'stress'/
+          DATA GROHEAD(4, 46) /'CWSI'/
+
+c     Respiration rate
+          DATA GROHEAD(1, 47) /'RESPCF'/
+          DATA GROHEAD(2, 47) /'Resp.'/
+          DATA GROHEAD(3, 47) /'Rate'/
+          DATA GROHEAD(4, 47) /'RESPCF'/
 
 c          ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c          Number of output variables (important for output!)
-           DATA NUM_OVARS /45/
+           DATA NUM_OVARS /47/
 
 c          Width of output columns:
            DATA VAR_WIDTH /12/
@@ -844,7 +855,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
      -                     WaterBal%RLV(1:10), EOSA, RTLD,
      -                     LIPD, SLAD, GROSSP, BRDMD, 
      -                     Part%FLODGE, TTEBC, TTSPC, TTLEC, SUDMD,
-     -                     SUFMD
+     -                     SUFMD, Canecrop%CWSI, Part%RESPCF
 
 c         Format statement
 c         Original one

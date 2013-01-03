@@ -721,6 +721,7 @@
           PPLTD  = 0.0  
           PTF    = 0.0
           RANC   = 0.0
+          RLV = 0.0     !CHP 1/3/2013
           RMNC   = 0.0
           RNLAB  = 0.0
           ROOTN  = 0.0
@@ -735,9 +736,6 @@
           SENESCE % ResWt  = 0.0
           SENESCE % ResLig = 0.0
           SENESCE % ResE   = 0.0
-
-          RLV = 0.0     !CHP 1/3/2013
-
           SHELPC = 0.0
           SLA    = 0.0
           SKERWT = 0.0
@@ -782,6 +780,8 @@
               TSS(L) = 0.0
           ENDDO
           TURFAC = 1.0
+          UNO3   = 0.0      !CHP 1/3/2013
+          UNH4   = 0.0      !CHP 1/3/2013
           VANC   = 0.0
           VMNC   = 0.0 
           VSTAGE = 0.0

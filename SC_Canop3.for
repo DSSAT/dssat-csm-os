@@ -1288,7 +1288,9 @@ c     MJ, 2006/09/06
 c     CANESIM lodging!
 c     ::::::::::::::::
 c     Canesim: Fi = Fi * (1 - Flodge * Par2)
-          LI = LI * (1 - LODGE_LI * LDG_LI_EFF)
+! Removed by MJ,2012.  Some confusion.  Lodging is taken into account in
+! photosynthesis routine.
+!          LI = LI * (1 - LODGE_LI * LDG_LI_EFF)
 c     ::::::::::::::::	  
         xli=li
 c Use li from Bootes photosynthesis if selected (mdl>1)
@@ -1342,7 +1344,13 @@ c     MJ, September 2006:
 c     Moved this from Mainnewc.for to this canopy subroutine:
 c     Move 0.16 (PERCoeff) and 0.864 (CHTCoeff) to species file.
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      SHGT = SHGT + (PER * PERCoeff)
+      ! MJ, AUg 2012: only accumulate stalk height after stalks
+      ! have appeared!
+      IF (CaneCrop%GROPHASE .GE. 3) THEN
+        SHGT = SHGT + (PER * PERCoeff)
+      ELSE
+        SHGT = 0.
+      ENDIF
       CANECROP%SHGT = SHGT
       IF (LFN(1).GT.0) 
      -    CANECROP%CANHEIGHT = (SHGT + LMAX(LFN(1)) * CHTCoeff) / 100.

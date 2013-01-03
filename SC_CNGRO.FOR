@@ -632,7 +632,7 @@ c         Check this...
      -      ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
      -      rowspc,RUNOFF, allowlodg, LODGE_LI, Part, Growth, Climate, 
      -      SLPF,
-     -      Out, ISWITCH, Control)
+     -      Out, ISWITCH, Control, CO2)
           
 
 
@@ -651,7 +651,7 @@ c         Init RLV:
           Growth%RTCMPG = 0.
           Soil%WR = SoilProp%WR
           CALL ROOTGROWTH(Control, ISWITCH, Soil, WaterBal, 
-     -                     Growth, Climate, CaneCrop, RWUMX)
+     -                     Growth, Climate, CaneCrop, RWUMX, HU16)
 
 c         Set RLV (subroutine output to DSSAT CSM):
           RLV = WaterBal%RLV
@@ -863,7 +863,8 @@ c             CWSI is a photosynthesis reduction factor
               CWSI = 1.
           ENDIF
 
-c         Echo
+c         Assign CWSI to canecrop variable:
+          Canecrop%CWSI = CWSI
 
 c        ... and calculate actual photosynthesis
          CALL PHOTOS(CWSI,MDL,
@@ -871,7 +872,7 @@ c        ... and calculate actual photosynthesis
      -   ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
      -   rowspc,RUNOFF, allowlodg, LODGE_LI, Part, Growth, Climate, 
      -   SLPF,
-     -   Out, ISWITCH, Control)
+     -   Out, ISWITCH, Control, CO2)
 
 
         ENDIF
@@ -907,7 +908,7 @@ c     Root growth:
 c     ::::::::::::
 
           CALL ROOTGROWTH(Control, ISWITCH, Soil, WaterBal, 
-     -                    Growth, Climate, CaneCrop, RWUMX)
+     -                    Growth, Climate, CaneCrop, RWUMX, HU16)
 
 c     Set RLV (subroutine output to DSSAT CSM):
       RLV = WaterBal%RLV
@@ -987,7 +988,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
      -   ALAT,IWS,NEGGRO,DWDT,coderd,CaneCrop%CANHEIGHT,
      -   rowspc,RUNOFF, allowlodg, LODGE_LI, Part, Growth, Climate, 
      -   SLPF,
-     -   Out, ISWITCH, Control)
+     -   Out, ISWITCH, Control, CO2)
 
 
 c     Call the output routine, to close output files,
@@ -1012,7 +1013,7 @@ c     Ratoon considerations
 c     Actual root information is put in carryover variable
 c     in this subroutine (for now)
           CALL ROOTGROWTH(Control, ISWITCH, Soil, WaterBal, 
-     -                    Growth, Climate, CaneCrop, RWUMX)
+     -                    Growth, Climate, CaneCrop, RWUMX, HU16)
 
 c         Temporary!!
           CLOSE(SCLUN)

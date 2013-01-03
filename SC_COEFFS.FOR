@@ -561,7 +561,7 @@ c                         If the string is empty, the default value should be us
 c                         ignore a string that is just spaces
                           IF (LEN_TRIM(CHTEMP) .GT. 0)  THEN
 c                              WRITE(*, '(2A)') 'Reading from ', CHTEMP
-                              READ(CHTEMP, '(F20.10)') CF_VALUES(I)
+                              READ(CHTEMP, '(F20.0)') CF_VALUES(I)
                               CF_OK(I) = .TRUE.
                           ENDIF
 
@@ -981,13 +981,14 @@ c                                 Increment counter
                                   X = X+1
 c                                 Convert to REAL:
                                   READ(LINE(EQ_IND+1:LEN(LINE)), 
-     &                                    '(F10.5)') REAL_VAL
+     &                                    '(F10.0)') REAL_VAL
 c                                 Echo value:
 c                                  WRITE(*, '(A, F10.5)') LINE(1:EQ_IND),
 c     &                                                   REAL_VAL 
 c                                 Assign to array(s):
 c                                  TMP_STR = TRIM(LINE(1:EQ_IND))
-                                  TMP_STR = LINE(1:EQ_IND)
+                                  TMP_STR = LINE(1:EQ_IND-1)
+                                  WRITE(*, '(A, I3)') TMP_STR, EQ_IND
                                   WRITE(CF_NAMES(X), '(A20)') 
      &                                                TRIM(TMP_STR)
                                   CF_VALUES(X) = REAL_VAL

@@ -47,14 +47,9 @@ c     [O] Output object
 c     [I] Simulation switches
      - ISWITCH, 
 c     [I] The DSSAT control variable
-
-!======================================================================================
-!     11/2/2012 CHP - Temporarily remove CO2 code until I get updated SC_COEFFS from MJ
-     -Control) 
-!     -Control, 
-!c     [I] Atmospheric CO2 concentration
-!     & CO2           )
-!======================================================================================
+     -Control, 
+c     [I] Atmospheric CO2 concentration
+     & CO2           )
 
 c     Use the Canegro modules:
 c     ::::::::::::::::::::::::
@@ -189,27 +184,24 @@ c         Max reduction in fractional interception due to lodging
 c         For reading cultivar values:
           LOGICAL C_ERR
 
-!======================================================================================
-!     11/2/2012 CHP - Temporarily remove CO2 code until I get updated SC_COEFFS from MJ
-!c     MJ, July 2011.  CO2 'fertilisation effect'
-!c     ::::::::::::::::::::::::::::::::::::::::::          
-!c     Array of CO2 concentrations (ppm)
-!      REAL  CO2X(10)    
-!c     Array of corresponding relative photosynthesis rates
-!      REAL  CO2Y(10)    
-!c     Atmospheric CO2 content (ppm)
-!      REAL, INTENT(IN) ::  CO2            
-!c     Linear interpolation function
-!c     (defined in UTILS.FOR, provided by CSM)
-!      REAL  TABEX
-!c     Loop counter
-!      INTEGER I
-!c     Short name for species coeff name:
-!      CHARACTER*10 CO2_READ
-!c     Relative photosynthesis rate:
-!      REAL PCO2
-!
-!======================================================================================
+c     MJ, July 2011.  CO2 'fertilisation effect'
+c     ::::::::::::::::::::::::::::::::::::::::::          
+c     Array of CO2 concentrations (ppm)
+      REAL  CO2X(10)    
+c     Array of corresponding relative photosynthesis rates
+      REAL  CO2Y(10)    
+c     Atmospheric CO2 content (ppm)
+      REAL, INTENT(IN) ::  CO2            
+c     Linear interpolation function
+c     (defined in UTILS.FOR, provided by CSM)
+      REAL  TABEX
+c     Loop counter
+      INTEGER I
+c     Short name for species coeff name:
+      CHARACTER*10 CO2_READ
+c     Relative photosynthesis rate:
+      REAL PCO2
+
 !         Unit number for output
 !          INTEGER SCLUN   !CHP
 
@@ -334,35 +326,32 @@ c         Default:
           CALL GET_SPECIES_COEFF(TBasePhotos,'TBasePhotos',
      &                           Control, SPE_ERR)
 
-!======================================================================================
-!     11/2/2012 CHP - Temporarily remove CO2 code until I get updated SC_COEFFS from MJ
-!c         MJ, July 2011
-!c         Read in the array of CO2 sensitivities:
-!c         This is cumbersome but is compatible with the existing
-!c         coefficient-reading subroutine.
-!c         X-values (CO2 PPM)
-!          DO I=1, 10
-!            WRITE(CO2_READ, '(5HCO2X_, I0)') I
-!c           Initialise default relative values to 1 always:
-!            CO2X(I) = I * 100.  ! 100, 200, etc ppm
-!c           Attempt to read from species file
-!            CALL GET_SPECIES_COEFF(CO2X(I), TRIM(CO2_READ), 
-!     &                           Control, SPE_ERR)
-!          ENDDO
-!c         Y-values (CO2 PPM)
-!          DO I=1, 10
-!            WRITE(CO2_READ, '(5HCO2Y_, I0)') I
-!c           Initialise default relative values to 1 always:
-!            CO2Y(I) = 1.  ! always 1 by default
-!c           Attempt to read from species file
-!            CALL GET_SPECIES_COEFF(CO2Y(I), TRIM(CO2_READ), 
-!     &                           Control, SPE_ERR)
-!          ENDDO
-!
-!
-!!       WRITE(*, '(10(F10.3))') CO2X
-!!       WRITE(*, '(10(F10.3))') CO2Y
-!======================================================================================
+c         MJ, July 2011
+c         Read in the array of CO2 sensitivities:
+c         This is cumbersome but is compatible with the existing
+c         coefficient-reading subroutine.
+c         X-values (CO2 PPM)
+          DO I=1, 10
+            WRITE(CO2_READ, '(5HCO2X_, I0)') I
+c           Initialise default relative values to 1 always:
+            CO2X(I) = I * 100.  ! 100, 200, etc ppm
+c           Attempt to read from species file
+            CALL GET_SPECIES_COEFF(CO2X(I), TRIM(CO2_READ), 
+     &                           Control, SPE_ERR)
+          ENDDO
+c         Y-values (CO2 PPM)
+          DO I=1, 10
+            WRITE(CO2_READ, '(5HCO2Y_, I0)') I
+c           Initialise default relative values to 1 always:
+            CO2Y(I) = 1.  ! always 1 by default
+c           Attempt to read from species file
+            CALL GET_SPECIES_COEFF(CO2Y(I), TRIM(CO2_READ), 
+     &                           Control, SPE_ERR)
+          ENDDO
+
+
+!       WRITE(*, '(10(F10.3))') CO2X
+!       WRITE(*, '(10(F10.3))') CO2Y
 
 c     Initialisation:
 c     :::::::::::::::
@@ -540,28 +529,21 @@ c          WRITE(*,*) 'Lodging: ', LODGE_LI, LODGE, LODGEAM
 
           PAR=SOLRAD*0.5
 
-!======================================================================================
-!     11/2/2012 CHP - Temporarily remove CO2 code until I get updated SC_COEFFS from MJ
-!c         MJ, July 2011
-!c         :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-!c         CO2 'fertilisation effect' - taken from CERES-Maize
-!c         CO2Y, CO2X are arrays defining relative photosynthesis rate
-!c         (Y) to atmospheric CO2 concentration (X, ppm).
-!c         TABEX interpolates a relative pg value for whatever the CO2
-!c         concentration is.  10 is the length of the datapoint array,
-!c         defined in the SPECIES file.
-!          PCO2 = 1.
-!          PCO2  = TABEX (CO2Y,CO2X,CO2,10) 
-!======================================================================================
+c         MJ, July 2011
+c         :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+c         CO2 'fertilisation effect' - taken from CERES-Maize
+c         CO2Y, CO2X are arrays defining relative photosynthesis rate
+c         (Y) to atmospheric CO2 concentration (X, ppm).
+c         TABEX interpolates a relative pg value for whatever the CO2
+c         concentration is.  10 is the length of the datapoint array,
+c         defined in the SPECIES file.
+          PCO2 = 1.
+          PCO2  = TABEX (CO2Y,CO2X,CO2,10) 
           
           
 c         reduce photosynthesis by maximum 28% due to lodging. Based on Singh 1998 ASSCT
 c         PARCE IS g/MJ
-!======================================================================================
-!     11/2/2012 CHP - Temporarily remove CO2 code until I get updated SC_COEFFS from MJ
-!          GROSSP=PARCE*PAR*LI*(1.-(flodge * LG_GP_REDUC)) * PCO2
-          GROSSP=PARCE*PAR*LI*(1.-(flodge * LG_GP_REDUC)) 
-!======================================================================================
+          GROSSP=PARCE*PAR*LI*(1.-(flodge * LG_GP_REDUC)) * PCO2
 
           Out%PAR = PAR
 !      CALL GETLUN('WORK.OUT',SCLUN)
