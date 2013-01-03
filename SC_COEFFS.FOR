@@ -988,7 +988,7 @@ c     &                                                   REAL_VAL
 c                                 Assign to array(s):
 c                                  TMP_STR = TRIM(LINE(1:EQ_IND))
                                   TMP_STR = LINE(1:EQ_IND-1)
-                                  WRITE(*, '(A, I3)') TMP_STR, EQ_IND
+c                                  WRITE(*, '(A, I3)') TMP_STR, EQ_IND
                                   WRITE(CF_NAMES(X), '(A20)') 
      &                                                TRIM(TMP_STR)
                                   CF_VALUES(X) = REAL_VAL
