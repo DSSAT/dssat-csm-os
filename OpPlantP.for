@@ -378,8 +378,8 @@ C-----------------------------------------------------------------------
 ! PSeed_kg       P content in seed (kg[P]/ha)
 ! PShel_kg       P content in shell (kg[P]/ha)
 ! PShut_kg       P in shoots (leaf and stem) (kg[P]/ha)
-! PStres1        P stress which affects vegetative partitioning  (1=no 
-!                  stress, 0=max stress) 
+! PStres1        P stress which affects vegetative partitioning   
+!                  (1=no stress, 0=max stress) 
 ! PStres2        P stress factor for reducing photosynthate (1=no stress, 
 !                  0=max stress) 
 ! PUptake_cum    Seasaonal cumulative P uptake by plant (kg[P]/ha)

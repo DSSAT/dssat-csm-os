@@ -11,7 +11,7 @@ C  12/31/1996 GH  Deleted phenology statements.
 C  09/15/1998 CHP Modified for modular format.
 C  05/10/1999 GH  Incorporaed in CROPGRO
 C-----------------------------------------------------------------------
-C  Called by  : PLANT
+C  Called by  : CROPGRO
 C  Calls      : None
 C========================================================================
       SUBROUTINE FREEZE(
