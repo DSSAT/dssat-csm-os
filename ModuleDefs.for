@@ -392,7 +392,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Linux, Unix
         SLASH = '/' 
         DSSATPRO = 'DSSATPRO.L46'
-        STDPATH = './DSSAT46/'
+        STDPATH = '../DSSAT46/'
       END SELECT
 
       END SUBROUTINE SETOP
