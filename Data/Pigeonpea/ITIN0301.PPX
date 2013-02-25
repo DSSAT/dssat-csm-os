@@ -1,0 +1,96 @@
+*EXP.DETAILS: UFGA8401PP IRRIGATED & NON-IRRIGATED
+
+*GENERAL
+@PEOPLE
+V.S. Bhatia, K.J. Boote and P.D. Alderman
+@ADDRESS
+bhatia_virender_singh@hotmail.com
+@SITE
+National Research Centre for Soybean, Indore, Madhya Pradesh, India lat=22.40 oN, Long = 75.5 oE
+!The experiment was conducted with soybean and pigeonpea intercropping 
+!in which sole pigeonpea was one of the treatment
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 2003 ICPL88039             1  1  0  1  1  1  1  0  0  0  0  1  1
+ 2 1 1 0 2003 76W                   2  1  0  1  1  1  1  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 PP I88039 ICPL88039
+ 2 PP PP0001 76W
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 ITIN0001 ITIN0301   -99     0 IB000     0     0 00000 -99    180  IN00020001 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS
+ 1       -99.00000       -99.00000    -99.00             -99.0 -99.0 -99.0 -99.0
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1   -99   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1     5   -99  0.60   -99   -99   -99   -99   -99 0.006
+ 1    15   -99  0.60   -99   -99   -99   -99   -99 0.006
+ 1    30   -99  0.60   -99   -99   -99   -99   -99 0.006
+ 1    60   -99  0.64   -99   -99   -99   -99   -99 0.006
+ 1    90   -99  0.64   -99   -99   -99   -99   -99 0.006
+ 1   120   -99  0.60   -99   -99   -99   -99   -99 0.006
+ 1   150   -99  0.60   -99   -99   -99   -99   -99 0.006
+ 1   180   -99  0.60   -99   -99   -99   -99   -99 0.006
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    PP 03177   100   -99  1.00  1.00 -99.0   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5 0.265   -99   -99
+ 1    15 0.265   -99   -99
+ 1    30 0.265   -99   -99
+ 1    60 0.207   -99   -99
+ 1    90 0.172   -99   -99
+ 1   120   -99   -99   -99
+ 1   150   -99   -99   -99
+ 1   180   -99   -99   -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 03177   -99   -99   45.     S     R    45     0   2.5   -99   -99 -99.0 -99.0 -99.0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1  0.75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 03300 IB001  55.0
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 03177 FE005   -99     5    20    40    20   -99   -99   -99 -99
+ 
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 04015   -99   -99   -99 100.0   0.0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME....................
+ 1 GE              1     1     S 03001  2150 ICPL88039
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL
+ 1 OP              Y     Y     Y     N     N     N     N     N
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM
+ 1 ME              M     M     E     R     S     L     R     1     P
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT  LONG CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     N     N     Y     Y     Y     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          03177 03177    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    70   100 IB001 IB001    10  0.75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 04365   100     0
+
