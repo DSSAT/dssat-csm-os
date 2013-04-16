@@ -32,6 +32,7 @@ C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C  05/19/2011 GH  Updated for sorghum
 !  09/01/2011 CHP Added van Genuchten parameters for ORYZA
+!  04/16/2013 CHP/KD Added SALUS model
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO
@@ -586,6 +587,11 @@ C-----------------------------------------------------------------------
 
 !     ------------------------------------------------------------------
         SELECT CASE (MODEL(1:5))
+
+!       Generic SALUS crops
+        CASE('SALUS')
+          WRITE(LUNIO,'(A6,1X,A16,A)',IOSTAT=ERRNUM) VARNO,VRNAME,
+     &        trim(PLAINTXT)
 
 !       CROPGRO crops
         CASE('CRGRO')

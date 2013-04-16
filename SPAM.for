@@ -34,11 +34,11 @@ C=======================================================================
 
       SUBROUTINE SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,               !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,      !Input
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
-     &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
-     &    TRWU, TRWUP, UPFLOW)                            !Output
+     &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 

@@ -47,11 +47,12 @@ C  10/08/2004 CHP Removed some unused variables.
 !  09/10/2007 CHP, JIL added sweet corn
 C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
+!  04/16/2013 CHP/KD Added SALUS model
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
      &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
-     &    NH4, NO3, SKi_Avail, SomLitC, SomLitE,          !Input
+     &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
      &    FLOODN,                                         !I/O
@@ -76,6 +77,7 @@ C-----------------------------------------------------------------------
 !         'MZIXM' - IXIM Maize
 !         'TNARO' - Aroids - Tanier, Taro
 !         'ORYZA' - IRRI Rice model
+!         'SALUS' - SALUS generic crop model
 
 C-----------------------------------------------------------------------
 
@@ -107,7 +109,7 @@ C-----------------------------------------------------------------------
       REAL TRWUP, TWILEN, XLAI, XHLAI
 
       REAL, DIMENSION(2)  :: HARVFRAC
-      REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM
+      REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM, RWU
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
       LOGICAL FixCanht    !, CRGRO
@@ -413,6 +415,18 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 
         IF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
+!	Generic Salus crop model
+!	KD 09/14/2009
+	CASE('SALUS') 
+	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,     !Input
+     &        YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,	!Input
+     &        KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	!Output   
+
+	  IF (DYNAMIC .EQ. INTEGR) THEN
+          XLAI = XHLAI
         ENDIF
 
 !     -------------------------------------------------

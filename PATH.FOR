@@ -8,6 +8,7 @@ C
 C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes
 C  09/17/2007 JIL Added codes for IXIM maize model
+!  04/16/2013 CHP/KD Added codes for SALUS model
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -316,7 +317,8 @@ C=======================================================================
 !    &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.      !ALOHA
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
-     &    (INDEX(MODEL(3:5),'OIL') .EQ. 0)) THEN      !OILCROP
+     &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.      !OILCROP
+     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)) THEN      !SALUS
 !       Invalid model = error 4
         ValidModel = 4 
         RETURN
@@ -338,7 +340,8 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'SCCAN') .EQ. 0) .AND.    !Sugarcane CaneGro
      &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND.    !Sweet corn
      &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND.    !Tanier
-     &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0)          !Taro
+     &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND.    !Taro
+     &    (INDEX(MODEL(1:5),'SALUS') .EQ. 0)          !Salus generic 
      &    ) THEN
 !       Invalid module name = error 5
         ValidModel = 5 

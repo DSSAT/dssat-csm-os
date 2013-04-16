@@ -20,6 +20,7 @@ C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C  05/19/2011 GH  Updated for sorghum
 C  02/25/2012 JZW add the PHINT data reading from *.cul for RICER
+!  04/16/2013 CHP/KD Added SALUS model
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -144,6 +145,11 @@ C
 !     ** Formats now include space (6X) for quality parameter between 
 !     variety name and ecotype name
 
+!     Generic SALUS simple crop models
+!     09/21/2009 CHP/KD
+      CASE ('SALUS')
+        READ (C360,'(A6,1X,A16,13X,A)',IOSTAT=ERRNUM) VARTY, VRNAME, 
+     &          PLAINTXT
 !     CROPGRO crops **
       CASE ('CRGRO')  
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,CSDVAR,

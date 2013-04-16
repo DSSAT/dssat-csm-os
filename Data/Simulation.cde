@@ -165,6 +165,7 @@ CSCRP    WH   CSCRP-Wheat
 MLCER    ML   CERES-Millet
 MZCER    MZ   CERES-Maize
 MZIXM    MZ   IXIM-Maize
+SALUS    MZ   SALUS-Maize
 PTSUB    PT   SUBSTOR-Potato
 RICER    RI   CERES-Rice
 RIORZ    RI   ORYZA-Rice

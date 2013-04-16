@@ -38,6 +38,7 @@ C  02/09/2007 GH  Allow for improved path selection for input files
 !  09/18/2007 CHP Added codes for IXIM maize model 
 !  04/21/2008 CHP Added MESOL = 3, user-specified soil layer dist.
 !  12/09/2008 CHP Remove METMP
+!  04/16/2013 CHP/KD Added SALUS model
 C-----------------------------------------------------------------------
 C  INPUT  : MODEL,RUN,DS,SLNO,LNIC,LNSA,NYRS,VARNO,CROP,PATHMO,WMODI
 C           FROP,SLTX
@@ -476,6 +477,12 @@ C        READ GENCALC2.CUL if RNMODE = G & T
 C        READ ???????0.CUL for other modes
 C-----------------------------------------------------------------------
          FILEG(1:12) = CROP//MODEL(3:8)//'.CUL'
+!        09/21/2009
+!        CHP/KD Generic SALUS model used for several crops with single  
+!          cultivar file. Do not include crop code in file name.
+         IF (MODEL(1:5) == 'SALUS') THEN
+            FILEG(1:12) = MODEL(1:8)//'.CUL'
+         ENDIF
          IF (INDEX('GT',RNMODE) .GT. 0) THEN
             WRITE(FILEG(1:8),'(A8)') 'GENCALC2'
          ENDIF
