@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 18 
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-Release  '
+      CHARACTER(len=10) :: VBranch = '-salus    '
 
 !     Version history:  
 !       4.6.0.18 chp 10/25/2012 Sugarcane CO2 response to photosynthesis.
