@@ -175,6 +175,8 @@ C  02/21/2006 GH  Written
 !  10/25/2006 CHP Added CRMODEL, the model name from FILEX which will   
 !                   override MODEL from DSSATPRO, if valid.
 !  09/17/2007 JIL Added codes for IXIM maize model
+!  04/17/2013 CHP Added exception for crop-model matching for 
+!                   SALUS generic crop model
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -354,6 +356,11 @@ C=======================================================================
         CALL ReadCropModels(MaxNum, ModelName, CropName)
         FIRST = .FALSE.
       ENDIF
+
+!     Generic SALUS model can be used for any crop, 
+!       identified in cultivar data
+      IF (MODEL(1:5) == 'SALUS') ValidModel = 0
+      RETURN
 
       ValidModel = 7  !Assume crop does NOT match model
       DO I = 1, MaxNum

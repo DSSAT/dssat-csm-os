@@ -528,6 +528,35 @@ C-----------------------------------------------------------------------
       CALL PUT(ISWITCH)
 
 !     --------------------------------------------------------------------
+!     Check for N model compatible with crop model
+      IF (ISWNIT /= 'N') THEN
+        SELECT CASE(MODEL(1:5))
+        CASE ('SALUS', 'SCCAN', 'SCCSP')
+!           N model has NOT been linked for these models
+!           Print a warning message.
+            CALL GET_CROPD(CROP, CROPD)
+            CROPD = ADJUSTL(CROPD)
+
+            WRITE(MSG(1),
+     &         '("Nitrogen dynamics model has not been developed for "
+     &         ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
+!            MSG(2)="Model will run if soils and species P data" //
+!     &         " are supplied."
+!            MSG(3)="User must verify validity of crop response."
+            MSG(2)="Please contact the CSM development team if " // 
+     &         "you wish to "
+            WRITE(MSG(3),'("contribute to development of a N model for "
+     &          ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
+            MSG(4) = "N simulation will be switched off."
+            CALL WARNING(4,ERRKEY,MSG)
+            ISWNIT = 'N'
+            ISWPHO = 'N'
+            ISWPOT = 'N'
+!           CALL ERROR('IPSIM', 6, "", 0)
+        END SELECT
+      ENDIF
+
+!     --------------------------------------------------------------------
 !     Check for phosphorus model compatible with crop model
       IF (ISWPHO /= 'N') THEN
 !       Check for validity of P model for this crop
