@@ -44,15 +44,6 @@
  1   120 0.076   0.5   0.1
  1   150 0.130   0.5   0.1
  1   180 0.258   0.5   0.1
-! DSSAT35 values 
-! 1     5 0.086   1.5   0.6
-! 1    15 0.086   1.5   0.6
-! 1    30 0.086   1.5   0.6
-! 1    60 0.086   1.5   0.6
-! 1    90 0.076   0.6   0.6
-! 1   120 0.076   0.5   0.6
-! 1   150 0.130   0.5   0.6
-! 1   180 0.258   0.5   0.6 
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
@@ -134,6 +125,3 @@
  1 RE            100     1    20
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 83057   100     0
-
-
-
