@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 18 
+        INTEGER :: Build = 19 
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-salus    '
+      CHARACTER(len=10) :: VBranch = '-Develop  '
 
 !     Version history:  
+!       4.6.0.19 chp 04/19/2013 Salus generic crop model added.
 !       4.6.0.18 chp 10/25/2012 Sugarcane CO2 response to photosynthesis.
 !       4.6.0.17 chp 07/01/2012 Minor changes to match v4.5.2.1 release version.
 !       4.6.0.16 chp 04/06/2012 Rollback CSCER and CSCRP. ORYZA minor changes.
