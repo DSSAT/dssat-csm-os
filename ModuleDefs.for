@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 19 
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-Develop  '
+      CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
 !       4.6.0.19 chp 04/19/2013 Salus generic crop model added.
