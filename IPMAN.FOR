@@ -116,8 +116,12 @@ C
             IF (IIRRI .EQ. 'R' .AND. IDLAPL(NIRR) .LT. YRSIM) 
      &          CALL ERROR (ERRKEY,3,FILEX,LINEXP)
             IF (IIRRI .EQ. 'D' .AND. IDLAPL(NIRR) .LT. 0) GO TO 70
-            IF ((AMT(NIRR) .LT. -1.0) .OR. (AMT(NIRR) .GT. 99999.)) 
-     &         CALL ERROR (ERRKEY,11,FILEX,LINEXP)
+
+!           chp 04/18/2013 remove this requirement. For puddling event, 
+!               irrigation amount is not a required field.
+!            IF ((AMT(NIRR) .LT. -1.0) .OR. (AMT(NIRR) .GT. 99999.)) 
+!     &         CALL ERROR (ERRKEY,11,FILEX,LINEXP)
+
             READ (IRRCOD(NIRR)(3:5),'(I3)',IOSTAT=ERRNUM) IRRCD
             IF (IRRCD .LT. 1 .OR. IRRCD .GT. 11 .OR.  !CHP changed to 11
      &          ERRNUM .NE. 0) CALL ERROR (ERRKEY,12,FILEX,LINEXP)
