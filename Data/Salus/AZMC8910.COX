@@ -22,14 +22,13 @@ Gerrit@griffin.uga.edu [August 10, 2005].
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 0 0 0 Control - 350 ppm          1  1  0  1  1  1  0  0  0  0  1  0  1
- 
-! 2 0 0 0 CO2 Enrichment - 550 ppm   1  1  0  1  1  1  1  0  1  0  2  0  1
+ 1 0 0 0 Control - 350 ppm          1  1  0  1  1  1  1  0  1  0  1  0  1
+ 2 0 0 0 CO2 Enrichment - 550 ppm   1  1  0  1  1  1  1  0  1  0  2  0  1
 ! Chemical applications disabled
 
 *CULTIVARS
 @C CR INGENO CNAME
- 1 MZ CO0001 Cotton Medium
+ 1 CO CO0001 Cotton Medium
 
 ! 1 CO IB0001 Deltapine 77
 
@@ -111,16 +110,16 @@ Gerrit@griffin.uga.edu [August 10, 2005].
  1 89192 CH100     1 AP006   -99   -99  Pix Applications
 
 *ENVIRONMENT MODIFICATIONS
-@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
+@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME
  1 89100 A   0 A   0 A   0 A   0 A 0.0 R 350 A   0 A   0 Control-350 ppm
  2 89100 A   0 A   0 A   0 A   0 A 0.0 R 350 A   0 A   0 CO2 Enrichment-550 ppm
  2 89139 A   0 A   0 A   0 A   0 A 0.0 R 550 A   0 A   0 CO2 Enrichment-550 ppm
 
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 1 GE              1     1     S 89100  2150 FACE EXPERIMENTS          SALUS045
+ 1 GE              1     1     S 89100  2150 FACE EXPERIMENTS          SALUS046
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 1 OP              Y     Y     N     N     N     N     N     Y     M
+ 1 OP              Y     N     N     N     N     N     N     Y     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
  1 ME              M     M     E     R     S     L     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
@@ -140,5 +139,3 @@ Gerrit@griffin.uga.edu [August 10, 2005].
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 90107   100     0
 
-
-
