@@ -22,6 +22,7 @@ C----------------------------------------------------------------------
      %    AGEFAC,NDEF3,NFAC,NSTRES)               !Outputs
       
       USE ModuleDefs
+      USE WH_module
       IMPLICIT NONE
       SAVE
 C----------------------------------------------------------------------
@@ -136,7 +137,7 @@ C----------------------------------------------------------------------
      &      zstage, VSEN,                                        !Input
      &      cnc, mnc)                                           !Output
 !======================================================================
-      USE ModuleDefs
+      USE WH_module
       implicit none
 !      include    'nwheats.inc'          ! CERES_Wheat Common Block
 !      include 'data.pub'                          
@@ -228,6 +229,7 @@ cbak lower boundary for stover n % = 0.25%
      &      nfact)                                              !Output
 !======================================================================
       USE ModuleDefs
+      USE WH_module
       implicit none
    !*!   include 'const.inc'              ! err_internal
    !*!   include    'nwheats.inc'          ! CERES_Wheat Common Block

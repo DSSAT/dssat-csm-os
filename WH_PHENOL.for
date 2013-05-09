@@ -37,6 +37,7 @@
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
 C-----------------------------------------------------------------------
       USE ModuleDefs
+      USE WH_module
       IMPLICIT  NONE
       SAVE
 !----------------------------------------------------------------------
@@ -1181,6 +1182,7 @@ cbak  ears that is not included in lai calculation.
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
 !-----------------------------------------------------------------------     
       USE ModuleDefs
+      USE WH_module
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------

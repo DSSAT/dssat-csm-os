@@ -50,6 +50,7 @@
      &      pl_nit_root, pl_nit_lfsheath)                     !Output
 
       USE ModuleDefs
+      USE WH_module
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
       SAVE

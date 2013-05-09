@@ -55,6 +55,7 @@
      &   stagno)	                                              !Output
 *     ===========================================================
       USE ModuleDefs
+      USE WH_module
       implicit none
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -162,7 +163,7 @@
      &     dtt, gpp,                                       !Input
      &     gndmd)                                         !Output
 *     ===========================================================
-      USE ModuleDefs
+      USE WH_module
       implicit none
 !*!      include 'nwheats.inc'             ! CERES_Wheat Common Block
 !*!      include 'data.pub'                          
@@ -258,6 +259,7 @@ cnh to allow watching of these variables
 *     ==================================================================
 
       USE ModuleDefs
+      USE WH_module
       implicit none
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -488,7 +490,7 @@ cnh added for watch purposes
      &      pl_nit, pcarbo, carbh, cnc,                    !Input 
      &      pndem)	                                      !Output
 *     ===========================================================
-      USE ModuleDefs
+      USE WH_module
       implicit none
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          
@@ -627,6 +629,7 @@ cjh  end of correction
 *     ==================================================================
 
       USE ModuleDefs
+      USE WH_module
       implicit none
       !*! include 'convert.inc'            ! gm2kg, sm2ha
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
@@ -967,7 +970,7 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
      &    mnc,         INGNC,        MNRTN,                !input
      &    pl_nit )                                        !output
 *     ===========================================================
-      USE ModuleDefs
+      USE WH_module
       implicit none
       !*! include 'nwheats.inc'             ! CERES_Wheat Common Block
       !*! include 'data.pub'                          

@@ -45,9 +45,8 @@ C=======================================================================
      &    swdef)                                                 !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs    !Definitions of constructed variable types, 
-                        ! which contain control information, soil
-                        ! parameters, hourly weather data.
+      USE ModuleDefs 
+      USE WH_module
       IMPLICIT NONE
       SAVE
 

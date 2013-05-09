@@ -45,7 +45,7 @@
         !PUptake/FracRts is not calculated for Nwheat, 
         !PORMIN/RWUMX from reading , check unit?
       USE ModuleDefs
-
+      USE WH_module
       IMPLICIT NONE
       SAVE
 
