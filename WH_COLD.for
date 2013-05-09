@@ -1,0 +1,392 @@
+C=======================================================================
+C  WH_COLD, Subroutine, F.S. Royce.  
+C  From APSIM nwheats (v 0.3) routines: vernalization, cold_hardening, 
+C  frost_leaves, frost_tillers  and vfac 
+C-----------------------------------------------------------------------
+C  Calculates vernalization factor, cumulative vernalization, cold  
+C  hardening, senesce leaf area and tillers due to frost
+C-----------------------------------------------------------------------
+C  REVISION HISTORY
+C  09/11/2011     Written for WHAPS wheat model.
+C-----------------------------------------------------------------------
+C  Called by  : WH_PHENOL  (in nwheats.for, by nwheats_crppr only)
+C  Calls      : None
+C-----------------------------------------------------------------------
+C-----------------------------------------------------------------------
+C Call order from nwheats_crppr:
+!*!   nwheats_vernalization 
+!*!   nwheats_cold_hardening
+!*!   nwheats_frost_leaves  
+!*!   nwheats_frost_tillers
+!*!   nwheats_phase 
+C Call from nwheats_phase:
+!*!      nwheats_ppfac  [unless needed for vernal/cold hard, leave in Phenol]
+!*!      nwheats_pstag  [easier using division: sumstgdtt(stagno)/pgdd(stagno)]
+!*!      nwheats_vfac
+C-----------------------------------------------------------------------
+C=======================================================================
+      SUBROUTINE WH_COLD (CONTROL, ISWITCH, FILEIO, IDETO,        !Input
+     &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
+     &    tempcr, tiln, VSEN, weather,                            !Input
+     &    YRDOY, !YRPLT, TMAX, TMIN,                              !Input
+     &    pl_la, plsc,                                      !Input/Outpt
+     &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
+C-----------------------------------------------------------------------
+      USE ModuleDefs
+      IMPLICIT NONE
+      SAVE
+C----------------------------------------------------------------------
+
+C                             Define Variables
+C----------------------------------------------------------------------
+      INTEGER     DYNAMIC         
+
+C  FSR added coefficients from WHAPS cultivar file
+      REAL        cumph_nw(11)
+      REAL        cumvd
+      REAL        frost_fr
+      REAL        frost_temp
+      PARAMETER   (frost_temp = -6.0) ! from NWheat. Is this ecotype?
+      REAL        GRNO
+      REAL        hi     ! Hardening Index ??  (deduced from context)
+      REAL        hti    ! Total Hardening Index ??
+      PARAMETER   (hti = 1.0)  ! from NWheat 
+      REAL        maxsen
+      REAL        nwheats_vfac
+      REAL        P5 
+      REAL        pl_la
+      REAL        PLTPOP   !plant density per m2
+      REAL        plsc(20) !Plant leaf area array by phylochron interval
+      REAL        PPSEN
+      REAL        VREQ
+      REAL        RGFI
+      REAL        sen_la  !Senesced leaf area for plant (NWheat)
+      REAL        snow      
+      REAL        tbase
+      REAL        temkil
+      REAL        tempcr
+      REAL        tiln
+      REAL        TMIN
+      REAL        TMAX
+      REAL        vd
+      REAL        vd1
+      REAL        vd2
+      REAL        vfac
+      REAL        VSEN
+      REAL        XLAT
+      INTEGER     DAP 
+      INTEGER     istage
+      INTEGER     leafno
+      INTEGER     YRDOY     
+      CHARACTER*30 FILEIO  
+      CHARACTER*1  IDETO  
+      CHARACTER*1  ISWWAT
+      CHARACTER*78 MESSAGE(10)
+      INTEGER MDATE, NOUTDO, TIMDIF !, YRPLT
+      REAL  WLFDOT, WTLF, SLDOT, NRUSLF
+      !     ------------------------------------------------------------------
+!     Define constructed variable types based on definitions in
+!     ModuleDefs.for.
+      TYPE (ControlType) CONTROL
+      TYPE (SwitchType)  ISWITCH
+      Type (ResidueType) SENESCE
+      TYPE (WeatherType) WEATHER   
+
+!     Transfer values from constructed data types into local variables.
+      DYNAMIC = CONTROL % DYNAMIC
+      FILEIO  = CONTROL % FILEIO
+      ISWWAT  = ISWITCH % ISWWAT
+      TMAX    = WEATHER % TMAX
+      TMIN    = WEATHER % TMIN
+
+C-----------------------------------------------------------------------
+C      Initialize local variables
+!----------------------------------------------------------------------
+!         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
+! ---------------------------------------------------------------------
+      IF (DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
+!       Do this just once in RUNINIT or SEASINIT
+            cumvd        = 0.
+            nwheats_vfac = 0.
+            vd           = 0.
+            vd1          = 0.
+            vd2          = 0.
+            vfac         = 0.
+       ELSE    !  DYNAMIC = anything except RUNINIT OR SEASINIT? FSR
+
+!*!      DAP   = MAX(0,TIMDIF(YRPLT,YRDOY))
+C-----------------------------------------------------------------------
+C Vervalization calculations 
+C-----------------------------------------------------------------------
+       if     (          cumvd .lt. VREQ  ! VREQ was 'reqvd' in Nwheat
+     &                        .and.
+     &       (istage .eq.emergence .or. istage .eq. germ)   )
+     & then
+ 
+         ! The cumulative vernalization has not reached the required
+         ! level of vernalization
+
+ 
+         if (TMIN .lt. 15. .and. TMAX .gt. 0.0) then
+            vd1 = 1.4 - 0.0778 * tempcr
+            vd2 = 0.5 + 13.44 / (TMAX-TMIN + 3.)**2 * tempcr
+            vd = MIN(vd1, vd2)
+            vd = MAX(vd, 0.0)
+            cumvd = cumvd + vd
+ 
+         else
+            ! too cold or too warm - no vernalization
+         endif
+ 
+         if (TMAX .gt. 30. .and. cumvd .lt. 10.) then
+            ! high temperature will reduce vernalization
+            cumvd = cumvd - 0.5*(TMAX - 30.)
+            cumvd = MAX(cumvd, 0.0)
+         else
+         endif
+ 
+      else
+         ! vernalization is complete
+      endif
+
+C-----------------------------------------------------------------------
+!  Cold hardening section
+C-----------------------------------------------------------------------
+
+      if (istage .lt. emergence .and. istage .gt. mature) then
+!*! this statement currently does not make sense: istage < 1 AND > 6 
+         ! There is no hardening in this growth stage - do nothing
+ 
+cbak i cant see that these do anyhing. neil .... please check.
+ 
+!      else if (hi .lt. hti .and. tempcr .lt. tbase - 1.) then
+!         ! it is too early for cold hardening - do nothing
+ 
+!      else if (hi .eq. 0.0 .and. tempmn .gt. tbase - 1.) then
+!         ! not cold enough to initiate cold hardening - do nothing
+ 
+      else
+         if (hi .lt. hti) then
+            ! early cold hardening
+            ! --------------------
+cbak tempcr is the average crown temperature. things have to be very cold for
+cbak  it to get below tbase-1. maybe this was intended to be tempcn ??????
+ 
+            if (tempcr .lt. tbase -1.) then
+               hi = hi + 0.1 - (tempcr - (tbase + 3.5))**2/506
+ 
+            else
+             ! too warm for early hardening'
+            endif
+         else
+         endif
+ 
+cbak the second stage of cold hardening
+ 
+         if (hi .ge. hti) then
+            ! late cold hardening
+            ! -------------------
+            if (tempcr .le. tbase + 0.) then
+               hi = hi + 0.083
+!*!            hi = u_bound (hi, 2.*hti)
+               hi = MIN(hi, 2.*hti)
+            else
+            endif
+         else
+         endif
+ 
+cbak the "de-hardening process"
+ 
+         if (TMAX .ge. tbase + 10.) then
+            hi = hi + 0.2 - 0.02 * TMAX
+cbak "dehardening" proceeds at twice the sspeed in stage 2 hardening
+ 
+            if (hi.gt.hti) then
+               hi = hi + 0.2 - 0.02 * TMAX
+            else
+            endif
+!*!         hi = l_bound (hi, 0.0)
+            hi = MAX(hi, 0.0)
+         else
+         endif
+ 
+      endif
+ 
+C-----------------------------------------------------------------------
+! Senesce leaf area due to frost
+C-----------------------------------------------------------------------
+      if (istage .ge. emergence .and. istage .le. mature) then
+        if (TMIN .lt. frost_temp) then
+ !            snow = 0.0
+ 
+cbak this next function appears to have a bug in it !!!!!!
+cbak temporarily replaced ..... i know the code is a mess !!!!!!!!!!
+cbak   note hardening is inoperative
+ 
+!            frost_fr = (0.020 * hi - 0.10) *
+!     :         (tempmn * 0.85 + tempmx*.15 + 10.0 + 0.25 * snow)
+ 
+          if (TMIN .le. -5.0)  then
+            ! 10 % of leaf area frosted for every degree less
+            frost_fr = (0.0-TMIN - 5) * 0.10
+          else
+            ! No frost today
+            frost_fr = 0
+          endif
+ 
+!*!         frost_fr = bound (frost_fr, 0.0, 0.96)
+            frost_fr = MAX(frost_fr, 0.0)
+            frost_fr = MIN(frost_fr, 0.96)
+ 
+            ! senesce leaf area due to frost - senescence cannot reduce
+            ! green leaf area per tiller below 500 mm2.
+ 
+            sen_la =  sen_la + frost_fr * (pl_la - sen_la)
+ 
+cbak  maxsen can become -ve when pla <500
+            maxsen = pl_la - 500. * tiln
+ 
+cbak  add a lower boundary on leaf senesence due to frost
+!*!         maxsen = l_bound (maxsen, 0.0)
+            maxsen = MAX(maxsen, 0.0)
+ 
+!*!         sen_la = u_bound (sen_la, maxsen)
+            sen_la = MIN(sen_la, maxsen)
+ 
+        if (maxsen .gt. 0.0) then
+           write (*,*) 'We have frost damage on leaf area today !!!!'
+           write (*,*) 'Min temp = ', TMIN
+            write (*,*) ' current sen_la =', sen_la
+            write (*,*) ' current pla=', pl_la
+         else
+          ! insufficient leaf area per tiller for frosting
+         endif
+ 
+            do 100 leafno = 1, cumph_nw(istage)+2
+               plsc (leafno) = plsc (leafno) * (1.0 - frost_fr)
+  100       continue
+ 
+         else
+            ! not cold enough for frosting
+ 
+         endif
+      else
+         ! There is nothing to frost in this growth stage
+      endif
+ 
+C-----------------------------------------------------------------------
+! Senesce tillers due to frost
+C-----------------------------------------------------------------------
+
+      if (istage .ge. emergence .and. istage .le. mature) then
+         if (TMIN .le. frost_temp) then
+            ! it is cold enough to frost tillers depending on cold
+            ! hardiness of the plant
+!*!            call nwheats_crown_temp (tempcn, tempcx)
+ 
+!*!         tempcr = (tempcn+tempcx)/2.0
+            temkil = tbase - 6. - 6. * hi
+ 
+         ! Kill tillers based on mean crown temperature
+ 
+            if (temkil .gt. tempcr) then
+               if (tiln .ge. 1.) then
+                  tiln = tiln * (0.9 - 0.02 * (tempcr - temkil)**2)
+            write (*,*) ' Killing tillers due to frost'
+               else
+               endif
+ 
+               if (tiln .lt. 1.) then
+            write (*,*) 'Killing tillers due to frost'
+                  PLTPOP = PLTPOP * (0.95 - 0.02 * (tempcr - temkil)**2)
+                  tiln = 1.
+               else
+               endif
+            else
+            endif
+         else
+            ! not cold enough for frosting
+         endif
+      else
+         ! There is nothing to frost in this growth stage
+      endif
+
+C-----------------------------------------------------------------------
+C Low temperature yield warnings
+C-----------------------------------------------------------------------
+
+      if (istage .eq. endear .and. TMIN .lt. -1.0) then
+! later write the the following three commented-out lines to appropriate output locations
+        !*!  write (*,*) 'Risk of frost at flowering lowering yield'     
+        !*!  write (*,*) ' Min. air temperature =', tempmn, 'oC'
+      else
+        !*!  No chance of frost
+      endif
+
+C-----------------------------------------------------------------------
+C Calculation of vernalization factor  (last section)
+C-----------------------------------------------------------------------
+
+       if (istage .ge. emergence
+     &     .and.
+     &     istage .le. endjuv)
+     &    then
+
+         vfac = 1. - VSEN * (VREQ - cumvd)  ! VSEN replaces p1v in CUL
+           nwheats_vfac = MIN(vfac, 1.0)
+           nwheats_vfac = MAX(vfac, 0.0)
+ 
+       else
+         nwheats_vfac = 1.0
+       endif
+C-----------------------------------------------------------------------
+      ENDIF
+      RETURN
+      END SUBROUTINE WH_COLD
+
+!*!      return
+!*!       end
+
+C-----------------------------------------------------------------------
+
+!*!      WLFDOT = WTLF - SLDOT - NRUSLF/0.16
+
+!*!      IF (TMIN .LT. FREEZ2) THEN
+!*!        IF (MDATE .LT. 0) THEN
+!*!          MDATE = YRDOY
+!*!        ENDIF
+!*!      ENDIF
+
+!*!     WRITE(MESSAGE(1),100) DAP
+!*!     WRITE(MESSAGE(2),110) YRDOY
+!*!     CALL WARNING(1, 'FREEZE', MESSAGE)
+!*! 100 FORMAT('Freeze occurred at ',I4,' days after planting.')
+!*! 110 FORMAT('  (DAY : ',I7,' )')
+!*!     WRITE (*,'(/,2X,A78,/,2X,A78)') MESSAGE(1), MESSAGE(2)
+!*!     IF (IDETO .EQ. 'Y')  THEN
+!*!       WRITE (NOUTDO,'(/,5X,A78,/,5X,A78)') MESSAGE(1), MESSAGE(2)
+!*!     ENDIF
+
+C-----------------------------------------------------------------------
+!*!      RETURN
+!*!      END SUBROUTINE FREEZE
+
+C-----------------------------------------------------------------------
+!     WH_COLD VARIABLES: 
+C-----------------------------------------------------------------------
+! DAP    Number of days after planting (d)
+! FREEZ2 Temperature below which plant growth stops completely. (°C)
+! IDETO  Switch for printing OVERVIEW.OUT file 
+! MDATE  Harvest maturity (YYDDD)
+! NOUTDO Logical unit for OVERVIEW.OUT file 
+! NRUSLF N actually mobilized from leaves in a day (g[N]/m2-d)
+! SLDOT  Defoliation due to daily leaf senescence (g/m2/day)
+! TMIN   Minimum daily temperature (°C)
+! VSEN   CULTIVAR parameter: sensitivity to vernalisation  (scale 1-5; NWheat)
+! WLFDOT Leaf weight losses due to freezing (g[leaf]/m2-d)
+! WTLF   Dry mass of leaf tissue including C and N (g[leaf] / m2[ground])
+! YRDOY  Current day of simulation (YYDDD)
+! YRPLT  Planting date (YYDDD)
+!-----------------------------------------------------------------------
+!     END WH_COLD SUBROUTINE
+!-----------------------------------------------------------------------
