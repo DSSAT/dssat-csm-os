@@ -54,7 +54,7 @@ C=======================================================================
       CHARACTER*2   CROP
       CHARACTER*5   NEND,NCODE,IOFF,IAME
       CHARACTER*6   ERRKEY,FINDCH
-      CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL
+      CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL, Try_MODELARG
       CHARACTER*12  FILEX
       CHARACTER*16  CROPD
       CHARACTER*25  TITSIM
@@ -448,8 +448,12 @@ C-----------------------------------------------------------------------
 !       MODEL contains value from DSSATPRO file
       IF (TRY_MODEL /= MODEL) THEN
 !       Fallow must be associated with CRGRO model (for now)
-        IF (CROP == 'FA') MODELARG(1:5) = "CRGRO"
-        CALL MODEL_NAME (CROP, DSSATP, MODELARG, MODEL)
+        IF (CROP == 'FA') THEN
+          Try_MODELARG(1:5) = "CRGRO"
+        ELSE
+          Try_MODELARG = MODELARG
+        ENDIF
+        CALL MODEL_NAME (CROP, DSSATP, Try_MODELARG, MODEL)
       ENDIF
 
       IF (MEPHO .EQ. 'L' .AND. MODEL(1:5) .NE. 'CRGRO') THEN
