@@ -447,6 +447,8 @@ C-----------------------------------------------------------------------
 !       model name read from command line.  If this is not OK, 
 !       MODEL contains value from DSSATPRO file
       IF (TRY_MODEL /= MODEL) THEN
+!       Fallow must be associated with CRGRO model (for now)
+        IF (CROP == 'FA') MODELARG(1:5) = "CRGRO"
         CALL MODEL_NAME (CROP, DSSATP, MODELARG, MODEL)
       ENDIF
 
