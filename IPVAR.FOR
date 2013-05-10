@@ -21,6 +21,7 @@ C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C  05/19/2011 GH  Updated for sorghum
 C  02/25/2012 JZW add the PHINT data reading from *.cul for RICER
 !  04/16/2013 CHP/KD Added SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -200,6 +201,16 @@ C
        READ (C360, 830,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
      &            P1V,P1D,P5,G1,G2,G3,PHINT, PLAINTXT
 
+!     APSIM-NWheat wheat  **
+      CASE ('WHAPS')
+!*!        READ (C360,'(A6,1X,A16,7X,A6,6F6.0)',IOSTAT=ERRNUM)
+        READ (C360,850,IOSTAT=ERRNUM) 
+     &            VARTY,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
+     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
+     &            P2AF,P3AF,P4AF,P5AF,P6AF,
+     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
 !     Ceres Maize: maize, sweet corn **
       CASE ('MZCER','SWCER')
         READ (C360,'(A6,1X,A16,7X,A6,6F6.0)',IOSTAT=ERRNUM) 
@@ -341,7 +352,7 @@ C-----------------------------------------------------------------------
   810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010
   820 FORMAT (A6,1X,A16,7X,A6,16F6.0,A)         !CSCRP        03/16/2010
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
-
+  850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A)
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
  1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 
 !!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)       !02/10/2009 

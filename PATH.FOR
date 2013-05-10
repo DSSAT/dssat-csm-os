@@ -9,6 +9,7 @@ C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes
 C  09/17/2007 JIL Added codes for IXIM maize model
 !  04/16/2013 CHP/KD Added codes for SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -19,21 +20,6 @@ C-----------------------------------------------------------------------
 C  Called : SECLI SEWTH IPEXP
 C
 C  Calls  : ERROR
-C-----------------------------------------------------------------------
-C                         DEFINITIONS
-C
-C  BLANK  :
-C  PROCOD :
-C  ERRKEY :
-C  FILEPR :
-C  LINE   :
-C  PATHC  :
-C  LUNPR  :
-C  ERRNUM :
-C  PATHL  :
-C  I,K    :
-C  PFLAG  :
-C  FEXIST :
 C=======================================================================
 
       SUBROUTINE PATH (PROCOD,DSSATP,PATHC,PFLAG,NAMEF)
@@ -319,6 +305,7 @@ C=======================================================================
 !    &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.      !ALOHA
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
+     &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.      !APSIM N-wheat
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.      !OILCROP
      &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)) THEN      !SALUS
 !       Invalid model = error 4
@@ -329,6 +316,7 @@ C=======================================================================
 !     Check for valid crop modules
       IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND.    !Wheat and Barley
      &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Cassava and wheat
+     &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat 
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES

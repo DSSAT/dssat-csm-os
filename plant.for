@@ -48,6 +48,7 @@ C  10/08/2004 CHP Removed some unused variables.
 C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
 !  04/16/2013 CHP/KD Added SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -59,7 +60,7 @@ C=======================================================================
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:
@@ -78,6 +79,7 @@ C-----------------------------------------------------------------------
 !         'TNARO' - Aroids - Tanier, Taro
 !         'ORYZA' - IRRI Rice model
 !         'SALUS' - SALUS generic crop model
+!         'WHAPS' - APSIM N-wheat
 
 C-----------------------------------------------------------------------
 
@@ -335,6 +337,24 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           KSEVAP = KEP
         ELSEIF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
+!     APSIM N-wheat WHAPS
+      CASE('WHAPS')
+        CALL WH_APSIM (CONTROL, ISWITCH,              !Input
+     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     SPi_AVAIL, SNOW,                               !Input
+     &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
+     &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
+     &     NSTRES, PORMIN, PUptake, RLV,                  !Output
+     &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O)               !Output
+
+        IF (DYNAMIC < RATE) THEN
+!          KTRANS = KCAN + 0.15        !Or use KEP here??
+          KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
+          KSEVAP = KEP        
         ENDIF
 
 !     -------------------------------------------------
