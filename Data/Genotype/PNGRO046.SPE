@@ -179,3 +179,30 @@
 !  1.00          NRAT_FAC            !Operate on NRATIO (VEGGR 297)
 !  0.20  0.50    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
 
+*PHOSPHORUS CONTENT
+! Two options for Optimum and minimum P concentrations for shoots:
+! (1) supply values for shoots (leaf plus stem)
+! (2) supply values individually for leaf and for stem
+! If positive values for shoots are supplied, any values supplied for leaf and
+! stem will be ignored.
+   -99.0   -99.0   -99.0  Optimum Shoot Conc (emergence, 1st flower, full seed)
+  0.0030  0.0025  0.0015  Optimum Leaf Conc  (emergence, 1st flower, full seed)
+  0.0020  0.0016  0.0010  Optimum Stem Conc  (emergence, 1st flower, full seed)
+  0.0014  0.0012  0.0005  Optimum Root Conc  (emergence, 1st flower, full seed)
+   -99.0  0.0040  0.0005  Optimum Shell Conc (emergence, 1st flower, full seed)
+   -99.0  0.0045  0.0040  Optimum Seed Conc  (emergence, 1st flower, full seed)
+
+   -99.0   -99.0   -99.0  Minimum Shoot Conc (emergence, 1st flower, full seed)
+  0.0020  0.0015  0.0010  Minimum Leaf Conc  (emergence, 1st flower, full seed)
+  0.0003  0.0003  0.0003  Minimum Stem Conc  (emergence, 1st flower, full seed)
+  0.0003  0.0003  0.0003  Minimum Root Conc  (emergence, 1st flower, full seed)
+   -99.0  0.0003  0.0003  Minimum Shell Conc (emergence, 1st flower, full seed)
+   -99.0  0.0030  0.0030  Minimum Seed Conc  (emergence, 1st flower, full seed)
+
+    50.0    20.0    10.0  Maximum Veg N:P ratio (emergence, 1st flower, full seed)
+     5.0     5.0     1.0  Minimum Veg N:P ratio (emergence, 1st flower, full seed)
+
+    0.80    1.00  SRATPHOTO, SRATPART
+    0.20          FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
+  0.0020          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m)
+
