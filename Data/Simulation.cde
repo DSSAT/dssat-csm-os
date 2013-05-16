@@ -103,9 +103,9 @@ D        Days after planting                                                  IB
 
 *Simulation/Management/Residue
 @CDE     DESCRIPTION                                                          SO
-!A        Automatic when required                                             IB
+!A        Automatic when required                                              IB
 N        No applications                                                      IB
-!F        Fixed amount automatic                                              IB
+!F        Fixed amount automatic                                               IB
 R        On reported dates                                                    IB
 D        Days after planting                                                  IB
 
@@ -175,5 +175,4 @@ SGCER    SG   CERES-Sorghum
 SWCER    SW   CERES-Sweetcorn
 TNARO    TN   AROIDS-Taro
 TRARO    TR   AROIDS-Tanier
-TRGRO    CT   TREEGRO-Citrus
 SALUS    xx   SALUS-generic crop model

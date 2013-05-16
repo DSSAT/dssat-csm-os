@@ -71,8 +71,3 @@ SOMLIT1.OUT        Detailed Century SOM output                        SLDET
 TEMP.bat                                                              OUTBAT
 WARNING.OUT        Warning messages                                   OUTWARN
 WORK.OUT           CSCER, CSP information output file
-
-
-! temp chp
-SoilWat_ts.OUT     2d SOIL WATER OUTPUT
-CellDetail.OUT
