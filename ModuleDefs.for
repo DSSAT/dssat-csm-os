@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 19 
+        INTEGER :: Build = 20
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.0.20 ghp 04/27/2013 Cassava module added.
 !       4.6.0.19 chp 04/19/2013 Salus generic crop model added.
 !       4.6.0.18 chp 10/25/2012 Sugarcane CO2 response to photosynthesis.
 !       4.6.0.17 chp 07/01/2012 Minor changes to match v4.5.2.1 release version.
@@ -387,7 +388,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         SLASH = '\' 
         DSSATPRO = 'DSSATPRO.V46'
 !       Note: Use DSSAT45 directory for now. 
-        STDPATH = 'C:\DSSAT45\' 
+C-GH    Set to DSSAT46
+        STDPATH = 'C:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
