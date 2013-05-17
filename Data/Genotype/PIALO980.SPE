@@ -1,0 +1,17 @@
+*SPECIES DATA: PINEAPPLE
+
+*CHARACTERISTICS
+@C X(EN) Y(CH)  YSTD
+PI OPT   P1GC     60    ! ADP from first leaf to end of 0 stem growth
+PI OPT   P6GC     30    ! NDAP from root initiation to first leaf emerged
+PI OPT   CONV    1.8    ! Rams dry matter/mj PAR
+PI OPT   P5GC    400    ! GDD from fruit harvest to physiological maturity
+PI OPT   TBAS     16    ! Base temperature during leaf emergence
+PI OPT   CMFC    1.0    ! Management condition factor
+PI OPT   FDMC   0.12    ! Fruit dry matter content (0 to 1.0)
+PI OPT   CO2X      0  220  330  440  550  660  770  880  990 9999  ! CO2 X axis
+PI OPT   CO2Y   0.00 0.81 1.00 1.03 1.06 1.10 1.13 1.16 1.18 1.25  ! CO2 Y axis
+PI OPT   RWEP   1.50
+PI OPT   PORM   0.00                   ! Minimum pore space
+PI OPT   RWMX   0.03                   ! Max root water uptake
+PI OPT   RLWR   0.08                   ! Root length weight ratio

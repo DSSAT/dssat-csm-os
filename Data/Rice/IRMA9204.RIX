@@ -19,13 +19,6 @@ IRRI
  1 1 0 0 0 kg/ha N                  1  1  0  1  1  1  0  0  0  0  0  0  1
  2 1 0 0 180 kg/ha N                1  1  0  1  1  1  1  0  0  0  0  0  1
  3 1 0 0 225 kg/ha N                1  1  0  1  1  1  2  0  0  0  0  0  1
- 4 1 0 0 W limit only, no N stress  1  1  0  1  1  1  0  0  0  0  0  0  2
- 5 1 0 0 Potential production       1  1  0  1  1  0  0  0  0  0  0  0  3
-
-!Double initial N
- 6 1 0 0 0 kg/ha N                  1  1  0  2  1  1  0  0  0  0  0  0  1
- 7 1 0 0 180 kg/ha N                1  1  0  2  1  1  1  0  0  0  0  0  1
- 8 1 0 0 225 kg/ha N                1  1  0  2  1  1  2  0  0  0  0  0  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -50,20 +43,6 @@ IRRI
  1    40  0.61   0.2  0.04
  1    60  0.61  0.01   0.0
  1    80  0.64  0.00   0.0
-
-!Double initial soil N
-@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
- 2    RI 92004  1300   -99     1     1   -99     0     0     0   100    15 UNKNOWN
-@C  ICBL  SH2O  SNH4  SNO3
- 2     5  0.52   96.  19.2
- 2    10  0.52   96.  19.2
- 2    15  0.52   64.  12.8
- 2    20  0.55   99.  25.6
- 2    25  0.55   26.   5.2
- 2    30  0.55   7.6   1.6
- 2    40  0.61   0.4  0.08
- 2    60  0.61  0.02   0.0
- 2    80  0.64  0.00   0.0
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
@@ -90,7 +69,7 @@ IRRI
 
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 1 GE              1     1     S 92004  2150 ORYZA W & N simulated     RIORZ045
+ 1 GE              1     1     S 92004  2150 ORYZA W & N simulated     RIORZ046
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              Y     Y     N     N     N     N     N     N     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
@@ -112,48 +91,3 @@ IRRI
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 86035   100     0
 
-@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 2 GE              1     1     S 92004  2150 ORYZA W simulated, no N   RIORZ045
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 2 OP              Y     N     N     N     N     N     N     N     M
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
- 2 ME              M     M     E     F     S     C     R     1     P     S     2
-@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
- 2 MA              R     R     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 2 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
-
-@  AUTOMATIC MANAGEMENT
-@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
- 2 PL          92001 92365    40   100    30    40    10
-@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
- 2 IR             30    50   100 IB001 IB001    10     1
-@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
- 2 NI             30    50    25 IB001 IB001
-@N RESIDUES    RIPCN RTIME RIDEP
- 2 RE            100     1    20
-@N HARVEST     HFRST HLAST HPCNP HPCNR
- 2 HA              0 86035   100     0
-
-@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 3 GE              1     1     S 92004  2150 ORYZA Potential prod      RIORZ045
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 3 OP              N     N     N     N     N     N     N     N     M
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
- 3 ME              M     M     E     F     S     C     R     1     P     S     2
-@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
- 3 MA              R     R     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 3 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
-
-@  AUTOMATIC MANAGEMENT
-@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
- 3 PL          92001 92365    40   100    30    40    10
-@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
- 3 IR             30    50   100 IB001 IB001    10     1
-@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
- 3 NI             30    50    25 IB001 IB001
-@N RESIDUES    RIPCN RTIME RIDEP
- 3 RE            100     1    20
-@N HARVEST     HFRST HLAST HPCNP HPCNR
- 3 HA              0 86035   100     0

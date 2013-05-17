@@ -1,0 +1,49 @@
+$ECOTYPES:CSCAS046
+
+! LAST EDIT: 27/04/13
+
+! Coefficients presented here have no direct equivalents in the
+! previous Dssat cassava model, which did not have a set of
+! ecotype coefficients. Some of those present have been generated
+! from coefficients present in the cultivar file of the previous
+! Dssat model. Others have been developed by taking into account
+! the characteristics of a limited number of groups of cultivars.
+! The groupings are likely to change as more experience is gained,
+! and they should should not be taken as 'fixed'.
+
+! Users should also be aware that some of the coefficients are likely
+! to vary from region to region, reflecting either an incomplete
+! understanding of the environmental physiology of cassava, or an
+! inadequate incorporation of aspects of current understanding.
+! For example,PARUE may vary from region to region,possibly
+! because of variation in the proportion of diffuse radiation
+! in the incoming solar and sky components.
+
+*ECOTYPE:CSCRP046
+@ECO#  ECONAME.......... PARUE HTSTD DUSRI SRN%S
+!                            1     2     3     4
+!                         g/MJ    cm  oC.d     %
+999991 MINIMA             2.00   100   300   .25
+999992 MAXIMA             3.20   400  2000  1.00
+                                                
+DFAULT DEFAULT            2.80   200   600   .65
+                                                
+990001 STANDARD1          2.30   200   600   .65
+990002 STANDARD2          2.30   200   600   .65
+990003 STANDARD3          2.30   200   600   .65
+990004 STANDARD4          2.30   200  1400   .65
+
+! COEFF   DEFINITION
+! =====   ==========
+! ECO#    Ecotype code (text)
+! ECONAME Ecotype name (text)
+! PARUE   PAR conversion factor,standard (g dry matter/MJ)
+! DUSRI   Degree days at which storage root number determined (oC.d)
+! SRN%S   Storage root standard N concentration (% dm)
+! HTSTD   Standard canopy height (cm)
+
+! Variables that not used but for which coding is present in the program.
+! SWFRX   Stem fraction,maximum (fr)
+! SWFRN   Stem fraction,minimum (fr)
+! SFMNL   Leaf number below which stem fraction at minimum (#)
+! SFMXL   Leaf number above which stem fraction at maximum (#)

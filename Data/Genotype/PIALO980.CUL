@@ -1,0 +1,14 @@
+*GENETICS PARAMETER INPUT FILE - PINEAPPLE GENOTYPE COEFFICIENTS
+!
+! P2 (Growing degree days from forcing to sepals closed on youngest flower)
+! P3 (GDD from SCY to early flowering)
+! P4 (Cumulative growing degree days from EF to maturity
+! G2 (Potential eye number)
+! G3 (Potential eye growth rate)
+!
+!VAR#  HEADER LABELS      ECO#    P2    P3    P4    G2    G3 PHINT
+@VAR#  VAR-NAME........   ECO#    P2    P3    P4    G2    G3 PHINT
+!                                  1     2     3     4     5     6
+IB0066 SC-F153          IB0001 629.0 381.0 2640. 200.0 14.00  40.0
+IB0067 SC-ANGUE         IB0001 629.0 381.0 2640. 210.0 22.00  50.0
+IB0068 SC-ANGUE (old)   IB0001 500.0 500.0 2195. 200.0 14.00  95.0

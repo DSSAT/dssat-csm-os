@@ -1,6 +1,6 @@
-$CULTIVARS:BACRP045
+$CULTIVARS:BACRP046
 
-! LAST EDIT: 22/08/11
+! LAST EDIT: 12/13/2011
 
 ! Coefficients used in the Cropsim model differ from those used in
 ! earlier DSSAT wheat/barley models. They can be calculated
@@ -34,7 +34,7 @@ $CULTIVARS:BACRP045
 ! In Ceres3.5, P1=300 for PHINT=75; P2+P3=225; P4=150; P5+6+7=200,
 ! with anthesis occurring in P4 after 60 units.
 
-*CULTIVARS:BACRP045
+*CULTIVARS:BACRP046
 !                                     --- BASIC COEFFICIENTS (AS IN CERES) ---  ------ PHENOLOGY (PHASE DURATIONS) -----  -- LEAF SIZES -- -- P.MODIFIERS --                 
 @VAR#  VAR-NAME........  EXP#   ECO#  VREQ  PPS1    P8 G#WTS  GWTS SHWTS PHINT    P1    P2    P3    P4    P5    P6    P7  LA1S  LAFV  LAFR VBASE  VEFF  PPS2
 !                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20

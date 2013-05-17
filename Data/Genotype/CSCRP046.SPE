@@ -1,6 +1,6 @@
-$SPECIES:CSCRP045
+$SPECIES:CSCRP046
 
-! LAST EDIT: 21/08/11
+! LAST EDIT: 05/01/12
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
@@ -29,7 +29,7 @@ $SPECIES:CSCRP045
 ! Further,the coefficient SDSZ is a default that is used only if no planting-stick
 ! size is entered in the experiment details file.
 
-*SPECIES:CSCRP045
+*SPECIES:CSCRP046
 ! Harvest product and standard moisture content
 @HPROD  HMPC
     SR    50

@@ -1,6 +1,6 @@
-$CULTIVARS:WHCRP045
+$CULTIVARS:WHCRP046
 
-! LAST EDIT: 22/08/11
+! LAST EDIT: 06/04/13
 
 ! Coefficients used in the Cropsim model differ from those used in
 ! earlier DSSAT wheat/barley models. They can be calculated
@@ -32,7 +32,7 @@ $CULTIVARS:WHCRP045
 ! of wheat and other cereals.
 
 *CULTIVARS:WHCRP045
-!                                     --- BASIC COEFFICIENTS (AS IN CERES) ---  ------ PHENOLOGY (PHASE DURATIONS) -----  -- LEAF SIZES -- P.MODIFIERS PPSEN                 
+!                                     --- BASIC COEFFICIENTS (AS IN CERES) ---  ------ PHENOLOGY (PHASE DURATIONS) -----  -- LEAF SIZES -- -- P.MODIFIERS --                 
 @VAR#  VAR-NAME........  EXP#   ECO#  VREQ  PPS1    P8 G#WTS  GWTS SHWTS PHINT    P1    P2    P3    P4    P5    P6    P7  LA1S  LAFV  LAFR VBASE  VEFF  PPS2
 !                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20
 999991 MINIMA               . 999991     0     0   100    10    10   0.5    40   100    60   100    50    50    10    50   0.1  0.01  0.01     0     0     0
@@ -43,6 +43,8 @@ DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80  
 IB1500 MANITOU            1,2 CA0001    20   160   335    23    23   3.0    86   362    65   193   172    50    20   130   3.0   .05  0.30     0   0.5     0
 IB0488 NEWTON             1,6 US0001    45    97   500    20    25   3.2    95   400    71   214   190    50    20   130   2.0   .25  0.01     0   1.0     0
 IB1015 MARIS FUNDIN       1,2 UK0001    30   103   535    15    44   3.2   100   421    75   225   200    50    20   130   2.0   .10  0.30     0   0.5     0
+
+AW0071 Yecora_Rojo        1,2 CM0001    15    70   570    23    40   3.0    80   390    70   215   215    60    25   150   3.0   0.1  0.50     0     0     0
 
 ! COEFF       DEFINITION
 ! ========    ==========
@@ -57,6 +59,7 @@ IB1015 MARIS FUNDIN       1,2 UK0001    30   103   535    15    44   3.2   100  
 ! PPSn *      Photoperiod sensitivity,phase(n). % drop in rate,10h pp.change.
 ! PHINT       Interval between successive leaf appearances. (oC.d)
 ! SHWTS       Standard,non-stressed shoot dry weight (incl.grain),maturity (g)
+! SLAS        Specific leaf area,standard (cm2/g)                                                                                   
 ! VAR#        Identification code or number for the specific cultivar.
 ! VAR-NAME    Name of cultivar.
 ! VREQ        Vernalization required for max.development rate (VDays)

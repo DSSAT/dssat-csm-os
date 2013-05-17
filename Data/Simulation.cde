@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.6; 11/18/2011
+! DSSAT v4.6; 07/01/2013
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
@@ -160,7 +160,7 @@ CRGRO    VB   CROPGRO-Velvetbean
 CSCER    BA   CROPSIM-CERES-Barley
 CSCER    WH   CROPSIM-CERES-Wheat
 CSCRP    BA   CSCRP-Barley
-CSCRP    CS   CSCRP-Cassava
+CSCAS    CS   CSCAS-Cassava
 CSCRP    WH   CSCRP-Wheat
 MLCER    ML   CERES-Millet
 MZCER    MZ   CERES-Maize
