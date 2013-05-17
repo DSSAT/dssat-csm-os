@@ -1,11 +1,12 @@
 C=======================================================================
 C  CSCAS_Interface, Subroutine
-C  DSSAT interface for CSCERES Wheat growth routine.
+C  DSSAT interface for CSCAS Cassava growth routine.
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  04/16/2002 LAH/CHP Written.
-C  03-12-2003 CHP Changed senescence variable to composite (SENESCE)
+C  08/09/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
+C  08/09/2012 GH  Updated for cassava
 C=======================================================================
       SUBROUTINE CSCAS_Interface (CONTROL, ISWITCH,       !Input
      &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
@@ -195,7 +196,7 @@ C-----------------------------------------------------------------------
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather
      & DRAIN, RUNOFF, IRRAMT,                              !Water
-     & DAYL, WINDSP, DEWDUR, CLOUDS, SOILTEMP, EO, ES,     !Weather
+     & TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,   !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
      & SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                 !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                             !N components
