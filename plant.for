@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2011 DSSAT Foundation
+C  COPYRIGHT 1998-2013 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Washington State University
@@ -47,6 +47,7 @@ C  10/08/2004 CHP Removed some unused variables.
 !  09/10/2007 CHP, JIL added sweet corn
 C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
+C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KD Added SALUS model
 C=======================================================================
 
@@ -65,7 +66,8 @@ C-----------------------------------------------------------------------
 !     The following models are currently supported:
 !         'CRGRO' - CROPGRO 
 !         'CSCER' - CERES Wheat, Barley
-!         'CSCRP' - CropSim Cassava, Wheat
+!         'CSCRP' - CropSim Wheat, Barley
+!         'CSCAS' - CropSim/GumCAS Cassava
 !         'MLCER' - CERES-Millet 
 !         'MZCER' - CERES-Maize
 !         'PTSUB' - SUBSTOR-Potato
@@ -321,9 +323,24 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         ENDIF
 
 !     -------------------------------------------------
-!     Cassava and Wheat CSCRP
+!     Wheat and Barley CSCRP
       CASE('CSCRP')
         CALL CSCRP_Interface (CONTROL, ISWITCH,           !Input
+     &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
+     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
+     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output
+     &    UNH4, UNO3, XLAI)                               !Output
+        IF (DYNAMIC .EQ. SEASINIT) THEN
+          KTRANS = KEP
+          KSEVAP = KEP
+        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
+!     -------------------------------------------------
+!     Cassava CSCAS
+      CASE('CSCAS')
+        CALL CSCAS_Interface (CONTROL, ISWITCH,           !Input
      &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output

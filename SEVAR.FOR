@@ -8,6 +8,7 @@ C
 C  01/01/1990 GH  Written
 C  05/29/1993 PWW Header revision and minor changes 
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
+C  04/24/2013 GH  Updated for CROPSIM-Cassava
 C-----------------------------------------------------------------------
 C  INPUT  : FILEE,FILEG,NSENS,VARNO,VARTY,VRNAME,IVRGRP,IVRTEM,CLDVAR
 C           THVAR,SDPRO,TRIFOL,SIZELF,THRESH,LNGSH,RWIDTH,RHGHT,PATHGE
@@ -67,7 +68,7 @@ C=======================================================================
           SELECT CASE(CROP)
             CASE('BN','PN','SB','TM','PE','CH','PP','PR','C3','C4','BH',
      &              'BR','SC','VB','CP','CB','FB','CO','CT','NP','GB',
-     &              'WH','BA','MZ','SG','ML','LT')
+     &              'WH','BA','MZ','SG','ML','LT','CS')
            WRITE (*, 210) ECOTYP,ECONAM
           END SELECT
 !         ENDIF
@@ -75,7 +76,8 @@ C=======================================================================
             WRITE (*,250) FILEG
           ELSE
 !            IF (FILEG(8:8) .NE. '0') WRITE (*,260) FILEG
-            IF (FILEG(8:8) .NE. '5') WRITE (*,260) FILEG
+C            IF (FILEG(8:8) .NE. '5') WRITE (*,260) FILEG
+            IF (FILEG(8:8) .NE. '6') WRITE (*,260) FILEG
          ENDIF
          WRITE (*,270)
       ENDIF
@@ -95,7 +97,7 @@ C
           CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
           NSENS = 0
-          IF (INDEX('GRO,CSM,CSP,CER',MODEL(3:5)) .GT. 0) THEN 
+          IF (INDEX('GRO,CAS,CSM,CSP,CER',MODEL(3:5)) .GT. 0) THEN 
                   CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &            ECONO,IVRGRP,MODEL)
           ENDIF
@@ -115,7 +117,7 @@ C
              NSENS = 0
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
-	       IF (INDEX('GRO,CSM,CSP,CER',MODEL(3:5)) .GT. 0) THEN 
+	       IF (INDEX('GRO,CAS,CSM,CSP,CER',MODEL(3:5)) .GT. 0) THEN 
                  CALL IPECO(FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &               ECONO,IVRGRP,MODEL)
              ENDIF
@@ -132,7 +134,7 @@ C
      &         'PTSUB','RICER','TRARO','TNARO',
      &         'SCCAN','SCCSP')
             CALL INVRCE (CROP, MODEL)
-          CASE ('CSCER','CSCRP')
+          CASE ('CSCER','CSCAS')
 !           CALL INVRCS
             CALL INVRCE (CROP, MODEL)
           END SELECT
@@ -150,7 +152,7 @@ C
 
 !=======================================================================
       ELSE IF (MENU .EQ. 4) THEN
-	    IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN',MODEL(3:5)) .GT. 0) THEN 
+	    IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS',MODEL(3:5)) .GT. 0) THEN 
               CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &            ECONO,IVRGRP,MODEL)
           ENDIF

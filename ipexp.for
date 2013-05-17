@@ -839,6 +839,7 @@ C
 C  01/01/1990 JWJ Written
 C  05/28/1993 PWW Header revision and minor changes            
 C  02/21/2006 GH  Update 
+C  04/26/2013 GH  Update planting method for cassava
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNPLT
 C
@@ -949,6 +950,11 @@ C New variables for pineapple
 
          IF (INDEX('TSPNRCBHIV',PLME) .LE. 0) 
      &                    CALL ERROR (ERRKEY,19,FILEX,LINEXP)
+C-GH
+         IF (INDEX('CS',CROP) .GT. 0) THEN
+           IF (INDEX('VHI',PLME) .LE. 0)
+     &         CALL ERROR (ERRKEY,19,FILEX,LINEXP)
+         ENDIF
          IF (INDEX('RI',CROP) .LE. 0) THEN    !CHP ADDED
            IF ((INDEX('T',PLME)) .GT. 0) THEN
              IF (SDWTPL .LT. 0.0) THEN

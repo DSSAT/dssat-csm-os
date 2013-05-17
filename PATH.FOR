@@ -8,6 +8,7 @@ C
 C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes
 C  09/17/2007 JIL Added codes for IXIM maize model
+C  08/09/2012 GH  Add codes for CSCAS cassava model
 !  04/16/2013 CHP/KD Added codes for SALUS model
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
@@ -312,6 +313,7 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'IXM') .EQ. 0) .AND.      !IXIM
      &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.      !CROPGRO
      &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.      !CROPSIM (Cereal)
+     &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.      !CSCAS (Cassava)
      &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.      !CROPSIM (Cassava)
      &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.      !SUBSTOR
      &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.      !CANEGRO
@@ -328,7 +330,8 @@ C=======================================================================
 
 !     Check for valid crop modules
       IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND.    !Wheat and Barley
-     &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Cassava and wheat
+     &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Wheat and barley
+     &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND.    !Cassava
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES

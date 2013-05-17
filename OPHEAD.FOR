@@ -499,7 +499,7 @@ C  05/28/1999 PWW Header revision and minor changes
 C  03/11/2005 GH  Remove ANS, RNMODE and NYRS
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
-
+C  08/09/2012 GH  Updated for cassava
 C-----------------------------------------------------------------------
 C  INPUT  : IDETO,NOUTDO,NYRS,LL,DUL,SAT,DLAYR,SWINIT,DS,NLAYR,ESW
 C           SHF,BD,PH,INO3,INH4,OC,TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4
@@ -667,19 +667,51 @@ C=======================================================================
 !       cassava
         ELSEIF (INDEX('CS',CROP) > 0) THEN
           WRITE (HEADER(I),'(A,A)')
-     &      "  PPS1   P1L   P2L   P4L   P5L SRNOW  SRFR  LA1S  LAXS",
-     &      " LAXNO  LAFS LAFNO  LAWS"
+     &      "  PPS1   P1L   P2L   P4L   P5L SRNOW  SRFR"
+C    &      "  LA1S  LAXS"
+C    &      " LAXNO  LAFS LAFNO  LAWS"
           I=I+1
-          WRITE (HEADER(I),'(4F6.1,F6.0,2F6.2,6F6.0)') 
-     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
-     &      LAXNO, LAFS, LAFNO, LAWS
+c          WRITE (HEADER(I),'(4F6.1,F6.0,2F6.2,6F6.0)') 
+c     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
+c     &      LAXNO, LAFS, LAFNO, LAWS
           I=I+1
           WRITE (HEADER(I),'(A)') " PHINT LLIFA  STFR"
           I=I+1
-          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
+c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
           I=I+1
         ENDIF
 
+!       Print optional extra stuff from ecotype file
+        LENGTH = LenString(PLAINTXT)
+        IF (LENGTH > 0) THEN
+          DO J=1,3
+            J1 = (J-1)*78+1
+            J2 = J1 + 77
+            WRITE( HEADER(I),'(A)') TRIM(ATLINE(J1+149:J2+149))
+            WRITE( HEADER(I+1),'(A)') TRIM(PLAINTXT(J1:J2))
+            I = I + 2
+            IF (J2 > LENGTH) EXIT
+          ENDDO
+        ENDIF
+!-----------------------------------------------------------------------
+!     Cassava       
+      CASE ('CSCAS')
+         WRITE (HEADER(I),'(A,A)')
+     &     "  PPS1 B01ND B12ND B23ND B34ND B45ND B56ND",
+     &     "  S#FX SR#WT  SRFR  HMPC PHINT"
+         I=I+1
+          WRITE (HEADER(I),'(F6.2,6F6.1,5F6.2)') 
+     &     PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
+     &     SNFX, SRNWT, SRFR, HMPC, PHINT
+         I=I+1
+         WRITE (HEADER(I),'(A,A)') 
+     &     "  LA1S  LAXS LAXND LAXN2  LAFS LAFND  SLAS",
+     &     " LLIFA LPEFR  STFR"
+        I=I+1
+         WRITE (HEADER(I),'(F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2)') 
+     &    LA1S, LAXS, LAXND, LAXN2, LAFS, LAFND, SLASS, LLIFA,
+     &    LPEFR, STFR
+       I=I+1
 !       Print optional extra stuff from ecotype file
         LENGTH = LenString(PLAINTXT)
         IF (LENGTH > 0) THEN
