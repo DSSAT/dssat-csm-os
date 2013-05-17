@@ -57,10 +57,10 @@ C=======================================================================
      & 'ิออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ'/
 
       DATA BOX_DAT/
-     & 'ณ                                  10 October 2010       ณ'/
+     & 'ณ                                      1 July 2013       ณ'/
 
       DATA ZCG/
-     & '                         ICASA                          ',
+     & '                    DSSAT FOUNDATION                    ',
      & '                                                        ',
      & '    G.Hoogenboom, J.W.Jones, C.H.Porter, K.J.Boote,     ',
      & '          L.A.Hunt, J.W. White, J.I.Lizaso,             ',
