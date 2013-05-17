@@ -60,8 +60,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE VersionType
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
-        INTEGER :: Model = 1
-        INTEGER :: Build = 0
+        INTEGER :: Model = 0
+        INTEGER :: Build = 20
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-release  '
