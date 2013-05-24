@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 0
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-dev       '
+      CHARACTER(len=10) :: VBranch = '-soilread '
 
 !     Version history:  
 !       4.6.0.20 ghp 04/27/2013 Cassava module added.
