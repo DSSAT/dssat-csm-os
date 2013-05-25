@@ -362,8 +362,10 @@ C=======================================================================
 
 !     Generic SALUS model can be used for any crop, 
 !       identified in cultivar data
-      IF (MODEL(1:5) == 'SALUS') ValidModel = 0
-      RETURN
+      IF (MODEL(1:5) == 'SALUS') THEN
+        ValidModel = 0
+        RETURN
+      ENDIF
 
       ValidModel = 7  !Assume crop does NOT match model
       DO I = 1, MaxNum
