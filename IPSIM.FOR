@@ -755,7 +755,8 @@ C-----------------------------------------------------------------------
 !=======================================================================
 !  Default_SimControls, Subroutine
 !
-!  Reads default simulation controls 
+!  Reads default simulation controls file. These values override the 
+!     values in the FileX simulation controls.
 !-----------------------------------------------------------------------
 !  Revision history
 !  06/29/2007 CHP Written
@@ -822,7 +823,7 @@ C-----------------------------------------------------------------------
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
 D     INPUTX = 'C:\DSSAT46\DSCSM046.EXE'
-D     IPX = 22
+D     IPX = 23
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
           IF (IPX > 12) THEN
