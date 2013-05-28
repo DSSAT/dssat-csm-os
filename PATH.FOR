@@ -370,7 +370,7 @@ C=======================================================================
       ValidModel = 7  !Assume crop does NOT match model
       DO I = 1, MaxNum
         IF (CropName(I) == CROP .AND. ModelName(I) == MODEL(1:5)) THEN
-!         Model matches crop -- return with no error
+!         Model matches crop -- return with no e  rror
           ValidModel = 0
           RETURN
         ENDIF

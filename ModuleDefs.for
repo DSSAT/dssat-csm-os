@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 21
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-dev       '
+      CHARACTER(len=10) :: VBranch = '-soilread '
 
 !     Version history:  
 !       4.6.0.21 chp 05/25/2013 Fixed problem with crop-model compatibility check.
