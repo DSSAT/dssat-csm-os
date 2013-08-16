@@ -517,7 +517,7 @@ C=======================================================================
         IF (NSWITCH .EQ. 5) THEN
           ARNTRF = 0.0
         ELSE
-          ARNTRF  = NITRIF * KG2PPM(L)
+          ARNTRF  = NITRIF / KG2PPM(L)
         ENDIF
 
         IF (NH4(L).LE. 0.01) THEN
