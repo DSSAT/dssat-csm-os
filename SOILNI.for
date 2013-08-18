@@ -517,6 +517,8 @@ C=======================================================================
         IF (NSWITCH .EQ. 5) THEN
           ARNTRF = 0.0
         ELSE
+!         chp (via Peter Grace) 8/17/2013
+!         ARNTRF  = NITRIF * KG2PPM(L)
           ARNTRF  = NITRIF / KG2PPM(L)
         ENDIF
 
