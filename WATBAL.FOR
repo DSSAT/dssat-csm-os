@@ -408,8 +408,9 @@ C       extraction (based on yesterday's values) for each soil layer.
       FLOODWAT % INFILT = INFILT
       FLOODWAT % RUNOFF = RUNOFF
 
-      CALL PUT('WATER','RUNOFF',RUNOFF)
-      CALL PUT('WATER','DRAIN', DRAIN)
+      CALL PUT('WATER','RUNOFF', RUNOFF)
+      CALL PUT('WATER','DRAIN' , DRAIN)
+      CALL PUT('WATER','SNOW'  , SNOW)
 
 !***********************************************************************
 !***********************************************************************
