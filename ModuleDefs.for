@@ -64,10 +64,10 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 23
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-EpicSoilT'
+      CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
-!       4.6.0.23 chp 08/26/2013 EPIC Soil Temp
+!       4.6.0.23 chp 08/26/2013 EPIC Soil Temp added as option (METMP = "E")
 !       4.6.0.22 chp 08/18/2013 Bugfix - nitrification units conversion
 !       4.6.0.21 chp 05/25/2013 Fixed problem with crop-model compatibility check.
 !       4.6.0.20 gh  04/27/2013 Cassava module added.
