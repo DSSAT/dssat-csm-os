@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 24
+        INTEGER :: Build = 25
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.0.25 chp 12/03/2013 
 !       4.6.0.24 chp 08/30/2013 Add in Tony's code from email 6/11/2013
 !       4.6.0.23 chp 08/26/2013 EPIC Soil Temp added as option (METMP = "E")
 !       4.6.0.22 chp 08/18/2013 Bugfix - nitrification units conversion
