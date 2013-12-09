@@ -1,7 +1,7 @@
 C=======================================================================
 C  SG_PHENOL, Subroutine
 C
-C  Determines phenological stage
+C  Determines phenological stage for sorghum
 C-----------------------------------------------------------------------
 C  Revision history
 C
@@ -16,6 +16,7 @@ C  02/07/2007 JWW Added P9 calculation
 C  01/15/2008 GH  Include GDDE for P9 calculation
 C  01/16/2008 GH  Rename DJTI to P2 and move to cultivar file
 C  01/16/2008 GH  Add cultivar coefficient PANTH
+C  06/01/2007 GH  Add P-model (unfinished)
 C-----------------------------------------------------------------------
 C  INPUT  : YRDOY
 C
@@ -37,8 +38,8 @@ C  YRDOY  :
 C  NOUTDO :
 C=======================================================================
 
-      SUBROUTINE SG_PHENOL (APTNUP,BIOMAS,BIOMS2,
-     & CSD1, CSD2,
+      SUBROUTINE SG_PHENOL (DYNAMIC,
+     & APTNUP,BIOMAS,BIOMS2,CSD1, CSD2,
      & CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, 
      & EMAT, G1, G2, GDDE, GNUP, GPP, GPSM, GRAINN, GRNWT, ICSDUR,
      & IDETO, IDUR1, IPRINT, ISDATE, ISTAGE, ISWNIT, ISWWAT,
@@ -59,9 +60,10 @@ C      Variables passed through PHENOL to phasei but not used in phenol
      & TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
      & TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
      & XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
-     & DAYL, TWILEN, CANWAA, CANNAA,CUMP4)
+     & DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
+     & SeedFrac, VegFrac)                                 
 
-      USE MODULEDEFS
+      USE ModuleDefs
       IMPLICIT  NONE
       SAVE
 C -----------------------------------------------------------------------
@@ -146,7 +148,7 @@ C-GH  REAL DJTI
       REAL EMAT
       REAL G1
       REAL G2
-	REAL GDDE
+      REAL GDDE
       REAL GNUP
       REAL GPP
       REAL GPSM
@@ -222,6 +224,24 @@ C------------------------------------------------------------------------
 
 !     Variables added for sorghum methods PST/CHP
       REAL PBASE, PSAT
+!     Added for P model
+      REAL SeedFrac, VegFrac
+      REAL SUMDTT_2
+
+      INTEGER DYNAMIC
+!----------------------------------------------------------------------
+!         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
+! ---------------------------------------------------------------------
+      IF (DYNAMIC.EQ.RUNINIT.OR.DYNAMIC.EQ.SEASINIT) THEN
+      SeedFrac = 0.0
+      VegFrac  = 0.0
+      SUMDTT_2 = 0.0
+
+!----------------------------------------------------------------------
+!         DYNAMIC = RATE OR INTEGRATE
+! ---------------------------------------------------------------------
+
+      ELSE    
 
 C--------------------------------------------------------------------
 C                         MAIN CODE
@@ -479,8 +499,19 @@ C--------------------------------------------------------------------
        ELSEIF (ISTAGE .EQ. 1) THEN
           XSTAGE = 2. * SUMDTT / P1
           IDUR1  = IDUR1 + 1
-          IF (SUMDTT .LT. P1) RETURN
-             STGDOY(ISTAGE) = YRDOY
+
+C     For P model, we need to estimate the fraction of time completed 
+C     between emergence and tassel initiation, VegFrac.  Because stage 2 
+C     (end of juvenile stage to tassel initiation) completion is not 
+C     based on physiological time, but rather on daylight hours, we 
+C     will make the assumption that the physical duration of that phase 
+C     is 10 days at optimum temperature.
+
+          VegFrac = SUMDTT / (P1 + 10. * (DOPT - TBASE) + P3 + P4)
+
+        IF (SUMDTT .LT. P1) RETURN
+        STGDOY(ISTAGE) = YRDOY
+
 C -------------------------------------------------------------------
 C         ISTAGE = 2: Determine date of panicle initiation
 C--------------------------------------------------------------------
@@ -535,14 +566,22 @@ C-GH       SIND = SIND + RATEIN * PDTT
          ENDIF
 
 !--------------------------------------------------------------------
+          IF (SUMDTT .GT. (P1 + 10. * (DOPT - TBASE))) THEN
+             VegFrac = SUMDTT / (SUMDTT + P3 + P4)
+          ELSE
+             VegFrac = SUMDTT / (P1 + 10. * (DOPT - TBASE) + P3 + P4)
+          ENDIF
 
 C-GH     IF (SIND .LT. 1.0) RETURN
          IF (CUMP2 .LT. RATEIN) THEN
            RETURN
          ELSE
            STGDOY(ISTAGE) = YRDOY
+           SUMDTT_2 = SUMDTT  
+
+           VegFrac = SUMDTT_2 / (SUMDTT_2 + P3 + P4)
          ENDIF
-  
+
 C--------------------------------------------------------------------
 C         ISTAGE = 3: Determine end of flag leaf expansion
 C                     [formerly end of leaf growth]
@@ -550,11 +589,14 @@ C--------------------------------------------------------------------
        ELSEIF (ISTAGE .EQ. 3) THEN
           IDUR1 = IDUR1 + 1
 C-GH      XSTAGE = 3.0 + 2.0*SUMDTT/P3
-          XSTAGE = 3.0 + 2.0*SUMDTT/(PANTH - P3)
+ 
+          VegFrac = (SUMDTT + SUMDTT_2) / (SUMDTT_2 + P3 + P4)
+          SeedFrac = SUMDTT / (P3 + P4 + P5)
+ 
 C-GH      IF (SUMDTT .LT. P3) THEN
           IF (SUMDTT .LT. (PANTH - P3)) THEN
-		  RETURN
-	    ELSE
+            RETURN
+          ELSE
             STGDOY(ISTAGE) = YRDOY
             MAXLAI = LAI
           ENDIF
@@ -570,7 +612,7 @@ C                     No ISTAGE
 C--------------------------------------------------------------------
 C-GH      PFLOWR = 2.5*PHINT+30.0
           IF (TWILEN .GT. P2O) THEN
-	      PFLOWR = P3 +  P2R * (TWILEN - P2O)
+            PFLOWR = P3 +  P2R * (TWILEN - P2O)
           ELSE
             PFLOWR = P3
           ENDIF
@@ -582,7 +624,7 @@ C-GH      PFLOWR = 2.5*PHINT+30.0
  
           IF (SUMDTT .GE. PFLOWR .AND. IPRINT .EQ. 0) THEN
              STGDOY(16)     = YRDOY
-	       CANNAA = STOVN*PLTPOP
+             CANNAA = STOVN*PLTPOP
              CANWAA = BIOMAS
              BIOMS2 = BIOMAS/PLTPOP
              ISDATE = YRDOY
@@ -590,10 +632,15 @@ C-GH      PFLOWR = 2.5*PHINT+30.0
           ENDIF
 
           CUMP4 = CUMP4 + DTT
-	    IF (SUMDTT .LT. (PFLOWR + P4)) THEN
+
+          VegFrac = (SUMDTT + SUMDTT_2 + P3) / (SUMDTT_2 + P3 + P4)
+          SeedFrac = (SUMDTT + P3) / (P3 + P4 + P5)
+          IF (SUMDTT .LT. (PFLOWR + P4)) THEN
             RETURN
-	    ELSE
+          ELSE
             STGDOY(ISTAGE) = YRDOY
+            VegFrac = 1.0
+
             IF (GPP .LE. 0.0) THEN
               GPP   = 1.0
             ENDIF
@@ -604,7 +651,10 @@ C--------------------------------------------------------------------
        ELSEIF (ISTAGE .EQ. 5) THEN
 	       CUMP4 = CUMP4 + DTT
              XSTAGE = 6.5 + 2.5*SUMDTT/P5
+             SeedFrac = (SUMDTT + P3 + P4) / (P3 + P4 + P5)
+
              IF (SUMDTT .LT. P5) RETURN
+             SeedFrac = 1.0
   
 C--------------------------------------------------------------------
 C       ISTAGE = 6: Determine physiological maturity
@@ -680,6 +730,12 @@ C--------------------------------------------------------------------
      &    TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
      &    VMNC, XNTI, P2O, P2R, TWILEN)
 
+
+! ----------------------------------------------------------------------
+!          ENDIF            ! End Dynamic Loop
+! ----------------------------------------------------------------------
+
+      ENDIF  ! End DYNAMIC STRUCTURE
       RETURN
 
 C-----------------------------------------------------------------------
