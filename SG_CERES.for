@@ -702,11 +702,11 @@ C         ***********************************************************
              READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFN
              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
-	       IF (ISWPHO .NE. 'N') THEN
+             IF (ISWPHO .NE. 'N') THEN
                CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
                READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFP
                IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-	       ENDIF
+             ENDIF
  
           ENDIF
           REWIND(LUNCRP)
