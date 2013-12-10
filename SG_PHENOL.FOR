@@ -443,7 +443,7 @@ C--------------------------------------------------------------------
      &    SWMIN, TANC, TCARBO, TCNP, TDUR, TGROLF, TGROPAN,
      &    TGROSTM, TILN, TLFWT, TLNO, TMNC, TPANWT,
      &    TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
-     &    VMNC, XNTI, P2O, P2R, TWILEN)
+     &    VMNC, XNTI,P2O, P2R, TWILEN)
 
 !         JWW 2/7/07
           P9    = 50.0 +  6.0*SDEPTH
@@ -490,7 +490,7 @@ C--------------------------------------------------------------------
      &    SWMIN, TANC, TCARBO, TCNP, TDUR, TGROLF, TGROPAN,
      &    TGROSTM, TILN, TLFWT, TLNO, TMNC, TPANWT,
      &    TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
-     &    VMNC, XNTI, P2O, P2R, TWILEN)
+     &    VMNC, XNTI,P2O, P2R, TWILEN)
           RETURN
 
 C--------------------------------------------------------------------
@@ -728,8 +728,7 @@ C--------------------------------------------------------------------
      &    SWMIN, TANC, TCARBO, TCNP, TDUR, TGROLF, TGROPAN,
      &    TGROSTM, TILN, TLFWT, TLNO, TMNC, TPANWT,
      &    TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
-     &    VMNC, XNTI, P2O, P2R, TWILEN)
-
+     &    VMNC, XNTI,P2O, P2R, TWILEN)
 
 ! ----------------------------------------------------------------------
 !          ENDIF            ! End Dynamic Loop

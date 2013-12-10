@@ -496,12 +496,12 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Sorghum 
       CASE('SGCER')
         CALL SG_CERES (CONTROL, ISWITCH, 
-     &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,            !Input
-     &     SNOW, SOILPROP, SPi_AVAIL, SRAD, SW, TMAX, TMIN, !Input
-     &     TRWUP, TWILEN, YREND, YRPLT,                   !Input
-     &     CANHT, HARVRES, MDATE, NSTRES, PORMIN, PUptake,  !Output
-     &     RLV, RWUMX, SENESCE, STGDOY, UNO3, UNH4,         !Ouput
-     &     XLAI, KCAN, KEP, FracRts)                        !Output
+     &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,                  !Input
+     &     SNOW, SOILPROP, SPi_AVAIL, SRAD, SW, TMAX, TMIN,     !Input
+     &     TRWUP, TWILEN, YREND, YRPLT,                         !Input
+     &     CANHT, HARVRES, MDATE, NSTRES, PORMIN, PUptake,      !Output
+     &     RLV, RWUMX, SENESCE, STGDOY, UNO3, UNH4,             !Ouput
+     &     XLAI, KCAN, KEP, FracRts)                            !Output
 
         IF (DYNAMIC .EQ. SEASINIT) THEN
 !          KTRANS = KCAN + 0.15        !Or use KEP here??

@@ -273,8 +273,8 @@ C-GH     Check for appropriate equations to be added to the code
 C
          IF (ISWNIT .NE. 'N') THEN
            CALL SG_NFACT(DYNAMIC,
-     &     AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
-     &     NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
+     &       AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
+     &       NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
       
          ELSE
            AGEFAC = 1.0
@@ -284,16 +284,16 @@ C
          ENDIF
 
         CALL SG_NUPTAK(
-     &    RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
-     &    RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
-     &    XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
-     &    SHF,PTF, SENESCE, KG2PPM, PLIGRT)
+     %    RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
+     %    RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
+     %    XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
+     %    SHF,PTF, SENESCE, KG2PPM, PLIGRT)
       
         CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &    CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &    PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
      &    SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
-     &    STMWTO, SW, VegFrac, WLIDOT, WRIDOT, WSIDOT,    !Input
+     &    STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &    WTLF, YRPLT,                                    !Input
      &    SENESCE,                                        !I/O
      &    PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
@@ -325,7 +325,7 @@ C--------------------------------------------------------------------
      &          CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &          PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
      &          SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
-     &          STMWTO, SW, VegFrac, WLIDOT, WRIDOT, WSIDOT,    !Input
+     &          STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &          WTLF, YRPLT,                                    !Input
      &          SENESCE,                                        !I/O
      &          PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
@@ -338,9 +338,9 @@ C--------------------------------------------------------------------
 
       IF (ISWNIT .NE. 'N') THEN
          CALL SG_NFACT(DYNAMIC,
-     &   AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
-     &   NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
-	ELSE
+     &       AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
+     &       NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
+      ELSE
          AGEFAC = 1.0
          NSTRES = 1.0
          NDEF3 = 1.0
@@ -1007,7 +1007,7 @@ C--------------------------------------------------------------
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
      &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
-     &      STMWTO, SW, VegFrac, WLIDOT, WRIDOT, WSIDOT,    !Input
+     &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &      WTLF, YRPLT,                                    !Input
      &      SENESCE,                                        !I/O
      &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
@@ -1022,7 +1022,7 @@ C--------------------------------------------------------------------
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
      &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
-     &      STMWTO, SW, VegFrac, WLIDOT, WRIDOT, WSIDOT,    !Input
+     &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &      WTLF, YRPLT,                                    !Input
      &      SENESCE,                                        !I/O
      &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
@@ -1039,7 +1039,7 @@ C--------------------------------------------------------------------
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
      &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
-     &      STMWTO, SW, VegFrac, WLIDOT, WRIDOT, WSIDOT,    !Input
+     &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &      WTLF, YRPLT,                                    !Input
      &      SENESCE,                                        !I/O
      &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
