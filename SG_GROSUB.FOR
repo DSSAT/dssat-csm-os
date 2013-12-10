@@ -267,7 +267,7 @@ C--------------------------------------------------------------------
          TSIZE  = 0.0
          XN     = 0.0
          CumLeafSenes = 0.0  
-	   Stem2Ear = 0.0
+         Stem2Ear = 0.0
 C
 C-GH     Check for appropriate equations to be added to the code
 C
@@ -321,7 +321,7 @@ C--------------------------------------------------------------------
 
           IF(YRDOY.EQ.STGDOY(9)) THEN
               !Emergence
-	        CALL P_Ceres (EMERG, ISWPHO,                      !Input
+              CALL P_Ceres (EMERG, ISWPHO,                      !Input
      &          CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &          PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
      &          SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
