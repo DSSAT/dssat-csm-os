@@ -225,7 +225,8 @@ C-----------------------------------------------------------------------
      &    PShut_kg, PRoot_kg, PShel_kg, PSeed_kg, PPlant_kg, 
      &    PS1_AV, PS2_AV, 
      &    PUptakeProf, PUptake_Cum, CumSenSurfP, CumSenSoilP,
-     &    Min(1.0,PhFrac1), Min(1.0,PhFrac2),
+C-GH     &    Min(1.0,PhFrac1), Min(1.0,PhFrac2),
+     &    PhFrac1,PhFrac2,
      &    NINT(Shut_kg), NINT(Root_kg), NINT(Shel_kg), NINT(Seed_kg)
      &    , PSTRESS_RATIO, N2P, PTotDem
   100   FORMAT(1X,I4,1X,I3.3,2(1X,I5),

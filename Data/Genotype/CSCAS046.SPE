@@ -1,6 +1,5 @@
-$SPECIES:CSCAS046
+$SPECIES:CSCAS046.280513   Last edit:010513 
 
-! LAST EDIT: 01/05/13
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
@@ -41,9 +40,9 @@ $SPECIES:CSCAS046
     3      K B2DAT 2ndBranch
     4      K B3DAT 3rdBranch
     5      K B4DAT 4thBranch
-    5      K B5DAT 5thBranch
-    5      K B6DAT 6thBranch
-    6      M MDAT  Harvest  
+    6      K B5DAT 5thBranch
+    7      K B6DAT 6thBranch
+    8      M HDAT  Harvest  
 ! Phase durations
 @PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
 ! oC.d  oC.d                                                              

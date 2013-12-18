@@ -113,18 +113,18 @@ C=======================================================================
 
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
-!!     Print warning if Century soil N routine used
-!      IF (DYNAMIC .EQ. RUNINIT .AND. ISWITCH % MESOM .EQ. 'P') THEN
-!        WRITE(MESSAGE(1),100) 
-!        WRITE(MESSAGE(2),110)  
-!        WRITE(MESSAGE(3),120) 
-!        CALL WARNING(3, "WHCER ", MESSAGE)
-!      ENDIF
-!
-!  100 FORMAT('You have selected the Century soil nutrient model. ')
-!  110 FORMAT('The CSCER (wheat/barley) routines have not been ')
-!  120 FORMAT('calibrated for use with this model.' )
-!
+!     Print warning if Century soil N routine used
+      IF (DYNAMIC .EQ. RUNINIT .AND. ISWITCH % MESOM .EQ. 'P') THEN
+        WRITE(MESSAGE(1),100) 
+        WRITE(MESSAGE(2),110)  
+        WRITE(MESSAGE(3),120) 
+        CALL WARNING(3, "WHCER ", MESSAGE)
+      ENDIF
+
+  100 FORMAT('You have selected the Century soil nutrient model. ')
+  110 FORMAT('The CSCER (wheat/barley) routines have not been ')
+  120 FORMAT('calibrated for use with this model.' )
+
       IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
         TN = 0
         RN = 0
@@ -198,7 +198,7 @@ C-----------------------------------------------------------------------
      & DRAIN, RUNOFF, IRRAMT,                              !Water
      & TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,   !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
-     & SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                 !H2o,N states
+     & SW, NO3LEFT, NH4LEFT, FERNIT,                       !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                             !N components
      & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components
      & YRPLT, HARVFRAC,                                    !Pl.date
