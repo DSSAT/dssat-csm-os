@@ -395,7 +395,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         DSSATPRO = 'DSSATPRO.V46'
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
-        STDPATH = 'D:\DSSAT46\' 
+        STDPATH = 'C:\DSSAT46\' 
 D        STDPATH = 'D:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
