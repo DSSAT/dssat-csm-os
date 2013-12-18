@@ -13,6 +13,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE ModuleData
       USE Interface_IpSoil
       IMPLICIT  NONE
       SAVE
@@ -50,6 +51,7 @@ C=======================================================================
       MULCH % MULCHCOVER = MULCHCOVER
       MULCH % MULCHTHICK = MULCHTHICK
 
+      CALL PUT('ORGC','MULCHMASS',MULCH % MULCHMASS)
 !     ----------------------------------------------------------------
       RETURN
       END SUBROUTINE MULCHLAYER

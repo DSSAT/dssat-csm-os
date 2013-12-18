@@ -227,7 +227,8 @@ C     Calculate hourly weather data.
 
 C     Adjust wind speed from reference height to 2m height.
       IF (WINDSP > 0.0) THEN
-        WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+!       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+        WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
       ELSE
         WINDSP = 86.4
       ENDIF
@@ -315,7 +316,8 @@ C     Calculate hourly weather data.
 
 C     Adjust wind speed from reference height to 2m height.
       IF (WINDSP > 0.0) THEN
-        WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+!       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+        WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
       ELSE
         WINDSP = 86.4
       ENDIF
