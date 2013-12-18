@@ -885,10 +885,12 @@ C***********************************************************************
 !         P_FERTINDEX = AMIN1(0.60 + 0.00020 ** (PiLabile), 0.90)
 
       END SELECT
-!  For flooded soil P aavailabilty is higher
-	IF (NBUND. GT. 0. or. FLOOD .GT. 0.0) THEN
-	   P_FERTINDEX = AMAX1(P_FERTINDEX,1.0)
-	ENDIF   
+
+!     For flooded soil, P availabilty is higher
+        IF (NBUND. GT. 0. or. FLOOD .GT. 0.0) THEN
+          P_FERTINDEX = AMAX1(P_FERTINDEX,1.0)
+        ENDIF
+
       RETURN
       END FUNCTION P_FERTINDEX
 

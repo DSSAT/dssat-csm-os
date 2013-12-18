@@ -16,7 +16,8 @@ C                   as defined in ModuleDefs.for
 C  03/30/2006 CHP Added composition of senesced matter for SOM modules
 C  04/21/2007 GH  Externalized stem partitioning STPC=0.1
 C  04/21/2007 GH  Externalized root partitioning RTPC=0.25
-C  08/26/2011	GH  Update early partitioning and decrease root distribution
+C  08/26/2011 GH  Update early partitioning and decrease root distribution
+C  05/31/2007 GH Added P-model (unfinished)
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C
@@ -31,7 +32,7 @@ C
 C  Calls  : SG_NFACT SG_NUPTAK
 C-----------------------------------------------------------------------
 
-      SUBROUTINE SG_GROSUB (DYNAMIC,
+      SUBROUTINE SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
      & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
      & CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
      & GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
@@ -46,7 +47,13 @@ C-----------------------------------------------------------------------
      & XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      & PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
      & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     & KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4)
+     & KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     & FILECC,
+     & DS, ISWPHO, SPi_AVAIL, PUptake,  
+     & RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
+     & PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
+     & PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
+     & STMWTO, WTLF, FSLFP)
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
@@ -197,7 +204,23 @@ C--------------------------------------------------------------------
 !     Added to send messages to WARNING.OUT
       CHARACTER*78 MESSAGE(10)
       CHARACTER*6  ERRKEY          
-      PARAMETER    (ERRKEY='SG_GRO')   
+      PARAMETER    (ERRKEY='SG_GRO') 
+
+!-GH  Added for P model 
+      CHARACTER*1  ISWPHO
+      CHARACTER*92 FILECC
+
+      INTEGER     YRPLT, MDATE
+      INTEGER     STGDOY(20),YRDOY
+
+      REAL        DS(NL), RTDEP, FracRts(NL)      
+      REAL        SPi_AVAIL(NL), PUptake(NL)
+      REAL        FSLFP, PStres1
+      REAL        PStres2, SeedFrac, VegFrac, SLFP      
+      REAL        PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
+      REAL        CumLeafSenes    !today's cumul. leaf senescence
+      REAL        PCNVEG, PODWT, RTWTO, SDWT, Stem2Ear, STMWTO, WTLF
+
 C--------------------------------------------------------------------
 C              DYNAMIC = RUNINIT OR SEASINIT
 C--------------------------------------------------------------------
@@ -243,6 +266,38 @@ C--------------------------------------------------------------------
          TRNU   = 0.0
          TSIZE  = 0.0
          XN     = 0.0
+         CumLeafSenes = 0.0  
+         Stem2Ear = 0.0
+C
+C-GH     Check for appropriate equations to be added to the code
+C
+         IF (ISWNIT .NE. 'N') THEN
+           CALL SG_NFACT(DYNAMIC,
+     &       AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
+     &       NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
+      
+         ELSE
+           AGEFAC = 1.0
+           NSTRES = 1.0
+           NDEF3 = 1.0
+           NFAC = 1.0
+         ENDIF
+
+        CALL SG_NUPTAK(
+     %    RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
+     %    RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
+     %    XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
+     %    SHF,PTF, SENESCE, KG2PPM, PLIGRT)
+      
+        CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
+     &    CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
+     &    PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &    SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
+     &    STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
+     &    WTLF, YRPLT,                                    !Input
+     &    SENESCE,                                        !I/O
+     &    PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
+     &    PStres1, PStres2, PUptake, FracRts)             !Output
 
 C-----------------------------------------------------------------------  
 C-----------------------------------------------------------------------
@@ -264,14 +319,32 @@ C                   DYNAMIC = INTEGRATE
 C--------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.INTEGR) THEN
 
+          IF(YRDOY.EQ.STGDOY(9)) THEN
+              !Emergence
+              CALL P_Ceres (EMERG, ISWPHO,                      !Input
+     &          CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
+     &          PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &          SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
+     &          STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
+     &          WTLF, YRPLT,                                    !Input
+     &          SENESCE,                                        !I/O
+     &          PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
+     &          PStres1, PStres2, PUptake, FracRts)             !Output
+          ENDIF
+
       !----------------------------------------------------------
       !   Compute Nitrogen Stress Factors
       !----------------------------------------------------------
 
       IF (ISWNIT .NE. 'N') THEN
-         CALL SG_NFACT(
-     &   AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
-     &   NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
+         CALL SG_NFACT(DYNAMIC,
+     &       AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
+     &       NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
+      ELSE
+         AGEFAC = 1.0
+         NSTRES = 1.0
+         NDEF3 = 1.0
+         NFAC = 1.0
       ENDIF
 
       !-------------------------------------------------------------
@@ -367,7 +440,9 @@ C      Saturated soil water content reduces RWU and causes damage
 C      through SWFAC. Do not need to also cause reduction through SATFAC
 C WDB 10/20/03      CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES,(1-SATFAC))*SLPF
 
-      CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES)*SLPF
+      CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES, PStres1)*SLPF
+
+C-GH  CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES)*SLPF
       !Reduce CARBO for assimilate pest damage
       CARBO = CARBO - ASMDOT
       CARBO = MAX(CARBO,0.0)
@@ -469,9 +544,12 @@ C--------------------------------------------------------------------
    10 IF (ISTAGE .EQ. 1) THEN
 C      Plant leaf area
          PLAN = A*EXP(XTN)
-         PLAG = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,AGEFAC)
+         PLAG = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,PStres2,AGEFAC)
+
+C-GH     PLAG = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,AGEFAC)
+
          PLAO = PLAN
-	
+
          IF (TILN .GT. 1.0 .AND. CUMPH .GT. 5.0) THEN
             PLATN = (0.79-0.049*(5.0-TILN)**2)*((CUMPH-5.0)**3)*0.5
             PLAGT = (PLATN-PLATO)*AMIN1(TURFAC,TEMF,AGEFAC)
@@ -641,8 +719,8 @@ C-GH        GRF    = CARBO  * 0.75/(GROLF+GROSTM)
          STMWT  = STMWT + GROSTM
          PLA   = PLA   + PLAG
 C-GH     SLAN  = 1.0+200.0*(SUMDTT/P3)**2
-	   SLAN  = 1.0+200.0*(SUMDTT/(PANTH - P3))**2
-	ENDIF
+         SLAN  = 1.0+200.0*(SUMDTT/(PANTH - P3))**2
+      ENDIF
 C--------------------------------------------------------------------
 C                    ISTAGE = 4
 C--------------------------------------------------------------------
@@ -817,6 +895,10 @@ C------------------------------------------------------------
 !     Senescence due to nitrogen
       SLFN   = (1-FSLFN) + FSLFN*NSTRES
 
+!     Senescence due to phosphorus stress
+!     5/9/07 CHP, JIL, KJB change from PStres2 to PStres1
+      SLFP   = (1-FSLFP) + FSLFP * PSTRES1
+
 !     Senescence due to light competition
       SLFC   = 1.00        
       IF (LAI .GT. 4.0) THEN
@@ -828,6 +910,7 @@ C------------------------------------------------------------
       IF (TEMPM .LE. 6.0) THEN
          SLFT   = 1.0-(6.0-TEMPM)/6.0
       ENDIF   
+
       IF (TMIN .LE. 0.0) THEN
          SLFT = 0.0
       ENDIF
@@ -883,12 +966,12 @@ C            EARS = EARS - EARS*PPLTD/100
 C--------------------------------------------------------------
 C    Update State Variables
 C--------------------------------------------------------------
-      PLAS   = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFC,SLFT,SLFN))
+      PLAS   = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFC,SLFT,SLFN,SLFP))
       SENLA  = SENLA + PLAS
       SENLA  = AMAX1 (SENLA,SLAN)
       SENLA  = AMIN1 (SENLA, PLA)
       LAI    = (PLA-SENLA)*PLTPOP*0.0001
- 
+
 !     Specific leaf area (cm2/g)
       IF (LFWT .GT. 0.) THEN
         SLA = LAI*10000/LFWT  
@@ -919,6 +1002,49 @@ C--------------------------------------------------------------
      %    SHF,PTF, SENESCE, KG2PPM, PLIGRT)
       ENDIF
 
+        IF (ISWPHO .NE. 'N') THEN
+          CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
+     &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
+     &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
+     &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
+     &      WTLF, YRPLT,                                    !Input
+     &      SENESCE,                                        !I/O
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
+     &      PStres1, PStres2, PUptake, FracRts)             !Output
+        ENDIF
+C--------------------------------------------------------------------
+C                   DYNAMIC = OUTPUT
+C--------------------------------------------------------------------
+      ELSEIF(DYNAMIC.EQ.OUTPUT) THEN
+	  IF (ISWPHO .NE. 'N') THEN
+          CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
+     &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
+     &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
+     &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
+     &      WTLF, YRPLT,                                    !Input
+     &      SENESCE,                                        !I/O
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
+     &      PStres1, PStres2, PUptake, FracRts)             !Output
+        ENDIF
+
+C--------------------------------------------------------------------
+C                   DYNAMIC = SEASEND
+C--------------------------------------------------------------------
+      ELSEIF(DYNAMIC.EQ.SEASEND) THEN
+
+	  IF (ISWPHO .NE. 'N') THEN
+          CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
+     &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
+     &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &      SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
+     &      STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
+     &      WTLF, YRPLT,                                    !Input
+     &      SENESCE,                                        !I/O
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
+     &      PStres1, PStres2, PUptake, FracRts)             !Output
+        ENDIF
 
 C--------------------------------------------------------------------
 C     END OF DYNAMIC IF-BLOCK
