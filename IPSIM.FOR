@@ -111,9 +111,10 @@ C=======================================================================
          MEHYD   = 'R'
          NSWITCH =  1
          MESOM   = 'G'
-!        METMP   = 'E'
          MESOL   = '2'    !was '1'
          MESEV   = 'S'    !new Sulieman-Ritchie (2006)
+         METMP   = 'D'    !DSSAT original soil temperature
+!        METMP   = 'E' => EPIC soil temp routine.
          IPLTI   = 'R'
          IIRRI   = 'R'
          IFERI   = 'R'
@@ -219,7 +220,7 @@ C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,61,IOSTAT=ERRNUM) LN,MEWTH,MESIC,
      &        MELI,MEEVP,MEINF,MEPHO,MEHYD,NSWITCH, 
-     &        MESOM, MESEV, MESOL   !, METMP
+     &        MESOM, MESEV, MESOL, METMP
          !IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
          MEWTH = UPCASE(MEWTH)
          MESIC = UPCASE(MESIC)
@@ -230,7 +231,7 @@ C
          MESOM = UPCASE(MESOM)
          MEHYD = UPCASE(MEHYD)
          MESEV = UPCASE(MESEV)
-!        METMP = UPCASE(METMP)
+         METMP = UPCASE(METMP)
 
          IF (INDEX('PG',MESOM) .EQ. 0) THEN
             MESOM = 'G'
@@ -262,8 +263,8 @@ C
             MESOL = '2'
          ENDIF
 
-!        Default soil temperature method is original w/ bugfix
-!        IF (INDEX('EPSO',METMP) < 1) METMP = 'E'
+!        Default soil temperature method is DSSAT
+         IF (INDEX('ED',METMP) < 1) METMP = 'D'
 
          SELECT CASE(MESEV)
          CASE('R','r'); MESEV = 'R'
@@ -497,7 +498,7 @@ C-----------------------------------------------------------------------
         MEHYD   = ISWITCH % MEHYD 
         MESEV   = ISWITCH % MESEV 
         MESOL   = ISWITCH % MESOL 
-!       METMP   = ISWITCH % METMP 
+        METMP   = ISWITCH % METMP 
         IPLTI   = ISWITCH % IPLTI 
         IIRRI   = ISWITCH % IIRRI 
         IFERI   = ISWITCH % IFERI 
@@ -704,7 +705,7 @@ C-----------------------------------------------------------------------
         ISWITCH % MEHYD  = MEHYD   !hydrology
         ISWITCH % MESEV  = MESEV   !soil evaporation
         ISWITCH % MESOL  = MESOL   !soil layer distribution
-!       ISWITCH % METMP  = METMP
+        ISWITCH % METMP  = METMP
         ISWITCH % IDETO  = IDETO   !overview file
         ISWITCH % IDETS  = IDETS   !summary file
         ISWITCH % IDETG  = IDETG   !growth output files
@@ -779,7 +780,7 @@ C-----------------------------------------------------------------------
       CHARACTER*1 ISWWAT,ISWNIT,ISWSYM,ISWPHO,ISWPOT,ISWDIS,MEWTH,MESIC
       CHARACTER*1 ICO2
       CHARACTER*1 MELI,MEEVP,MEINF,MEPHO,IPLTI,IIRRI,IFERI,IRESI,IHARI
-      CHARACTER*1 ISWCHE,ISWTIL,MEHYD,MESOM, MESOL, MESEV   !, METMP
+      CHARACTER*1 ISWCHE,ISWTIL,MEHYD,MESOM, MESOL, MESEV, METMP
       CHARACTER*1 IDETO,IDETS,IDETG,IDETC,IDETW,IDETN,IDETP,IDETD,IOX
       CHARACTER*1 IDETH,IDETL, IDETR
       CHARACTER*6 ERRKEY,FINDCH, SECTION
@@ -923,7 +924,7 @@ D     IPX = 23
         MEHYD   = ' '
         NSWITCH = -99
         MESOM   = ' '
-!       METMP   = ' '
+        METMP   = ' '
         MESOL   = ' '
         MESEV   = ' '
         IPLTI   = ' '
@@ -1108,8 +1109,8 @@ D     IPX = 23
             READ (CHARTEST,'(79X,A1)',IOSTAT=ERRNUM) MESOL
             CALL CHECK_A('MESOL', MESOL, ERRNUM, MSG, NMSG)
 
-!           READ (CHARTEST,'(85X,A1)',IOSTAT=ERRNUM) METMP
-!           CALL CHECK_A('METMP', METMP, ERRNUM, MSG, NMSG)
+            READ (CHARTEST,'(85X,A1)',IOSTAT=ERRNUM) METMP
+            CALL CHECK_A('METMP', METMP, ERRNUM, MSG, NMSG)
 
             MEWTH = UPCASE(MEWTH)
             MESIC = UPCASE(MESIC)
@@ -1119,11 +1120,14 @@ D     IPX = 23
             MEPHO = UPCASE(MEPHO)
             MESOM = UPCASE(MESOM)
             MEHYD = UPCASE(MEHYD)
+            MESEV = UPCASE(MESEV)
+            METMP = UPCASE(METMP)
 
-            IF (INDEX('PG',MESOM) == 0) MESOM = ' '
+            IF (INDEX('PG' ,MESOM) == 0) MESOM = ' '
             IF (INDEX('123',MESOL) == 0) MESOL = ' '
-            IF (INDEX('RS',MESEV) == 0) MESEV = ' '
-            IF (INDEX('Z',MEEVP) > 0) MEPHO = 'L'
+            IF (INDEX('RS' ,MESEV) == 0) MESEV = ' '
+            IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
+            IF (INDEX('ED' ,METMP) == 0) METMP = 'D'
 
 !         Fourth line of simulation controls
           CASE('@N MAN')
@@ -1359,7 +1363,7 @@ C-----------------------------------------------------------------------
       IF (MEHYD  /= ' ' .AND. MEHYD  /= '.') ISWITCH % MEHYD  = MEHYD
       IF (MESEV  /= ' ' .AND. MESEV  /= '.') ISWITCH % MESEV  = MESEV
       IF (MESOL  /= ' ' .AND. MESOL  /= '.') ISWITCH % MESOL  = MESOL
-!     IF (METMP  /= ' ' .AND. METMP  /= '.') ISWITCH % METMP  = METMP
+      IF (METMP  /= ' ' .AND. METMP  /= '.') ISWITCH % METMP  = METMP
       IF (IPLTI  /= ' ' .AND. IPLTI  /= '.') ISWITCH % IPLTI  = IPLTI
       IF (IIRRI  /= ' ' .AND. IIRRI  /= '.') ISWITCH % IIRRI  = IIRRI
       IF (IFERI  /= ' ' .AND. IFERI  /= '.') ISWITCH % IFERI  = IFERI
@@ -1472,7 +1476,7 @@ C-----------------------------------------------------------------------
       CASE('MEHYD');  MSG_TEXT="Hydrology method              "
       CASE('MESEV');  MSG_TEXT="Soil evaporation method       "
       CASE('MESOL');  MSG_TEXT="Soil input and partitioning   "
-!     CASE('METMP');  MSG_TEXT="Soil temperature method       "
+      CASE('METMP');  MSG_TEXT="Soil temperature method       "
       CASE('IPLTI');  MSG_TEXT="Planting method switch        "
       CASE('IIRRI');  MSG_TEXT="Irrigation method switch      "
       CASE('IFERI');  MSG_TEXT="Fertilizer switch             "
