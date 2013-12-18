@@ -369,7 +369,7 @@ C-----------------------------------------------------------------------
       TYPE (SwitchType)  ISWITCH
       Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
-
+      
 C      PARAMETER       (ERRKEY='MAIZE') 
 
 !     Transfer values from constructed data types into local variables.

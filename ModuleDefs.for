@@ -396,6 +396,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
         STDPATH = 'C:\DSSAT46\' 
+D       STDPATH = 'D:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
