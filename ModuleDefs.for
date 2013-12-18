@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 22
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-Develop  '
+      CHARACTER(len=10) :: VBranch = '-SorghumP'
 
 !     Version history:  
 !       4.6.0.22 chp 08/18/2013 Bugfix - nitrification units conversion
