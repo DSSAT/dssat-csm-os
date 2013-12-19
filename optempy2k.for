@@ -31,7 +31,9 @@ C  01/16/2007 GH  Modified sorghum cultivar coefficients
 C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C  05/19/2011 GH  Updated for sorghum
+C  08/09/2012 GH  Updated cassava model
 !  09/01/2011 CHP Added van Genuchten parameters for ORYZA
+C  11/14/2012 GH  Add READWRITE for temp file
 !  04/16/2013 CHP/KD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
@@ -89,7 +91,8 @@ C=======================================================================
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      OPEN (LUNIO, FILE = FILEIO,STATUS = 'UNKNOWN',IOSTAT=ERRNUM)
+      OPEN (LUNIO, FILE = FILEIO,STATUS = 'UNKNOWN',IOSTAT=ERRNUM,
+     &      ACTION = 'READWRITE')
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,0)
 C-----------------------------------------------------------------------
 C     Write temp. required variables on top of file
@@ -185,7 +188,7 @@ C
 C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,915,IOSTAT=ERRNUM) MEWTH,MESIC,MELI,MEEVP,
-     & MEINF,MEPHO,MEHYD,NSWITCH,MESOM, MESEV, MESOL
+     & MEINF,MEPHO,MEHYD,NSWITCH,MESOM, MESEV, MESOL, METMP
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
 C-----------------------------------------------------------------------
 C
@@ -607,8 +610,8 @@ C-----------------------------------------------------------------------
      &           THRESH, SDPRO, SDLIP
 
 !       Ceres wheat, barley
-!       CropSim - wheat, cassava
-        CASE('WHCER', 'BACER', 'CSCRP')
+!       CropSim - wheat, barley, cassava
+        CASE('WHCER', 'BACER', 'CSCRP','CSCAS')
 !       Do nothing - these models read the INH file written by OPTEMPXY2K
 
 !       APSIM Wheat (NWheat)

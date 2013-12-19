@@ -1,5 +1,5 @@
 *CSM OUTPUT FILES
-! DSSAT v4.6; 06/28/2011
+! DSSAT v4.6; 07/01/2013
 !
 ! Output files currently created by DSSAT crop simulation models.
 !
@@ -71,8 +71,3 @@ SOMLIT1.OUT        Detailed Century SOM output                        SLDET
 TEMP.bat                                                              OUTBAT
 WARNING.OUT        Warning messages                                   OUTWARN
 WORK.OUT           CSCER, CSP information output file
-
-
-! temp chp
-SoilWat_ts.OUT     2d SOIL WATER OUTPUT
-CellDetail.OUT

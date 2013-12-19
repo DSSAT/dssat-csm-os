@@ -267,6 +267,7 @@ c     MJ, Mar 2008: added HDATE_YR and HDATE_DOY
       MEPHO  = ISWITCH % MEPHO
       MESEV  = ISWITCH % MESEV
       MESOL  = ISWITCH % MESOL
+      METMP  = ISWITCH % METMP
       MEWTH  = ISWITCH % MEWTH
       NSWITCH= ISWITCH % NSWI
 
@@ -394,7 +395,7 @@ c     MJ, Mar 2008: Soil information
       ENDIF
       WRITE (HEADER(I),1300) ISWWAT,ISWNIT,ISWSYM,ISWPHO,ISWDIS; I=I+1
       WRITE (HEADER(I),1350) MEPHO,MEEVP,MEINF,MEHYD,MESOM; I=I+1
-      WRITE (HEADER(I),1355) ICO2, NSWITCH, MESEV, MESOL; I=I+1
+      WRITE (HEADER(I),1355) ICO2, NSWITCH, MESEV, MESOL, METMP; I=I+1
       WRITE (HEADER(I),1400) IPLTI,IIRRI,IFERI,IRESI,IHARI; I=I+1
       WRITE (HEADER(I),1405) MEWTH, ISWTIL; I=I+1
 
@@ -478,7 +479,8 @@ C-----------------------------------------------------------------------
  1350 FORMAT (18X,'PHOTO',3X,':',A1,2X,'ET      :',A1,
      & 2X,'INFIL:',A1,2X,'HYDROL :',A1,2X,'SOM    :',A1)
  1355 FORMAT (18X,'CO2  ',3X,':',A1,2X,'NSWIT   :',I1,
-     & 2X,'EVAP :',A1,2X,'SOIL   :',A1)
+     & 2X,'EVAP :',A1,2X,'SOIL   :',A1,2X,'STEMP  :',A1)
+
  1400 FORMAT (1X,'MANAGEMENT OPT : PLANTING:',A1,2X,'IRRIG',3X,':',A1,
      & 2X,'FERT :',A1,2X,'RESIDUE:',A1,2X,'HARVEST:',A1,2X)
  1405 FORMAT (18X,'WEATHER :',A1,2X,'TILLAGE :',A1)
@@ -499,7 +501,7 @@ C  05/28/1999 PWW Header revision and minor changes
 C  03/11/2005 GH  Remove ANS, RNMODE and NYRS
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
-
+C  08/09/2012 GH  Updated for cassava
 C-----------------------------------------------------------------------
 C  INPUT  : IDETO,NOUTDO,NYRS,LL,DUL,SAT,DLAYR,SWINIT,DS,NLAYR,ESW
 C           SHF,BD,PH,INO3,INH4,OC,TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4
@@ -667,19 +669,51 @@ C=======================================================================
 !       cassava
         ELSEIF (INDEX('CS',CROP) > 0) THEN
           WRITE (HEADER(I),'(A,A)')
-     &      "  PPS1   P1L   P2L   P4L   P5L SRNOW  SRFR  LA1S  LAXS",
-     &      " LAXNO  LAFS LAFNO  LAWS"
+     &      "  PPS1   P1L   P2L   P4L   P5L SRNOW  SRFR"
+C    &      "  LA1S  LAXS"
+C    &      " LAXNO  LAFS LAFNO  LAWS"
           I=I+1
-          WRITE (HEADER(I),'(4F6.1,F6.0,2F6.2,6F6.0)') 
-     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
-     &      LAXNO, LAFS, LAFNO, LAWS
+c          WRITE (HEADER(I),'(4F6.1,F6.0,2F6.2,6F6.0)') 
+c     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
+c     &      LAXNO, LAFS, LAFNO, LAWS
           I=I+1
           WRITE (HEADER(I),'(A)') " PHINT LLIFA  STFR"
           I=I+1
-          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
+c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
           I=I+1
         ENDIF
 
+!       Print optional extra stuff from ecotype file
+        LENGTH = LenString(PLAINTXT)
+        IF (LENGTH > 0) THEN
+          DO J=1,3
+            J1 = (J-1)*78+1
+            J2 = J1 + 77
+            WRITE( HEADER(I),'(A)') TRIM(ATLINE(J1+149:J2+149))
+            WRITE( HEADER(I+1),'(A)') TRIM(PLAINTXT(J1:J2))
+            I = I + 2
+            IF (J2 > LENGTH) EXIT
+          ENDDO
+        ENDIF
+!-----------------------------------------------------------------------
+!     Cassava       
+      CASE ('CSCAS')
+         WRITE (HEADER(I),'(A,A)')
+     &     "  PPS1 B01ND B12ND B23ND B34ND B45ND B56ND",
+     &     "  S#FX SR#WT  SRFR  HMPC PHINT"
+         I=I+1
+          WRITE (HEADER(I),'(F6.2,6F6.1,5F6.2)') 
+     &     PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
+     &     SNFX, SRNWT, SRFR, HMPC, PHINT
+         I=I+1
+         WRITE (HEADER(I),'(A,A)') 
+     &     "  LA1S  LAXS LAXND LAXN2  LAFS LAFND  SLAS",
+     &     " LLIFA LPEFR  STFR"
+        I=I+1
+         WRITE (HEADER(I),'(F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2)') 
+     &    LA1S, LAXS, LAXND, LAXN2, LAFS, LAFND, SLASS, LLIFA,
+     &    LPEFR, STFR
+       I=I+1
 !       Print optional extra stuff from ecotype file
         LENGTH = LenString(PLAINTXT)
         IF (LENGTH > 0) THEN

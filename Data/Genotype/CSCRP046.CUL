@@ -1,6 +1,6 @@
-$CULTIVARS:CSCRP045
+$CULTIVARS:CSCRP046
 
-! LAST EDIT: 21/08/11
+! LAST EDIT: 05/01/2012
 
 ! Coefficients used in the Cropsim cassava module differ from those used
 ! in the earlier DSSAT cassava model. It is best,therefore,not to attempt
@@ -17,7 +17,7 @@ $CULTIVARS:CSCRP045
 ! the initial conditions and computing the microbial release of nitrogen 
 ! and other nutrients.
 
-*CULTIVARS:CSCRP045
+*CULTIVARS:CSCRP046
 @VAR#  VAR-NAME........  EXP#   ECO#  PPS1   P1L   P2L   P4L   P5L SR#WT  SRFR  LA1S  LAXS LAXND  LAFS LAFND SLAS PHINT LLIFA  STFR
 !                                        1     2     3     4     5     6     7     8     9    10    11    12   13    14    15    16   
 999991 MINIMA               . 999991     0    10    10    10    10  0.20  0.25   200  1000    80    20   100  100    15     8  0.25 

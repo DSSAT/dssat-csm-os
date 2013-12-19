@@ -1,10 +1,8 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2013 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
+C                      International Fertilizer Development Center
+C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
@@ -50,7 +48,7 @@ C=======================================================================
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT
-      CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV   !  , METMP
+      CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV, METMP
       CHARACTER*2  CROP
       CHARACTER*6, PARAMETER :: ERRKEY = "SPAM  "
 !      CHARACTER*78 MSG(2)
@@ -111,7 +109,7 @@ C=======================================================================
       MEEVP  = ISWITCH % MEEVP
       MEINF  = ISWITCH % MEINF
       MEPHO  = ISWITCH % MEPHO
-!     METMP  = ISWITCH % METMP
+      METMP  = ISWITCH % METMP
       MESEV  = ISWITCH % MESEV
 
       FLOOD  = FLOODWAT % FLOOD
@@ -156,9 +154,16 @@ C=======================================================================
       TRWU = 0.0
 
 !     ---------------------------------------------------------
-      CALL STEMP(CONTROL, ISWITCH,
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
+      END SELECT
 
 !     ---------------------------------------------------------
       IF (MEEVP .NE. 'Z') THEN
@@ -231,9 +236,17 @@ C=======================================================================
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
       SWDELTX = 0.0
-      CALL STEMP(CONTROL, ISWITCH,
+!     ---------------------------------------------------------
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
+      END SELECT
 
 !-----------------------------------------------------------------------
 !     POTENTIAL ROOT WATER UPTAKE
@@ -478,9 +491,18 @@ C-----------------------------------------------------------------------
 !     Flood water evaporation can be modified by Paddy_Mgmt routine.
       EF = FLOODWAT % EF
 
-      CALL STEMP(CONTROL, ISWITCH,
+!     ---------------------------------------------------------
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
+      END SELECT
+
 
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU, !JZW add TRWU
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
@@ -507,9 +529,17 @@ C-----------------------------------------------------------------------
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
 
-      CALL STEMP(CONTROL, ISWITCH,
+!     ---------------------------------------------------------
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
+      END SELECT
 
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,

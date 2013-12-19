@@ -33,8 +33,6 @@ IRRI farm, Field K3, 14.22N, 121.25E, 23m       *
  6 1 0 0 (1)80N + 0N late           1  1  0  1  1  1  6  0  0  0  0  0  1
  7 1 0 0 (2)40N + 0N late           1  1  0  1  1  1  7  0  0  0  0  0  1
  8 1 0 0 (3)27N + 0N late           1  1  0  1  1  1  8  0  0  0  0  0  1
- 9 1 0 0 No N stresses              1  1  0  1  1  1  0  0  0  0  0  0  2
-10 1 0 0 Potential prod             1  1  0  1  1  0  0  0  0  0  0  0  3
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -60,16 +58,6 @@ IRRI farm, Field K3, 14.22N, 121.25E, 23m       *
  1    60   .61     0     0
  1    80   .64     0     0
 
-! 1     5   .52    96   9.6
-! 1    10   .52    96   9.6
-! 1    15   .52    64   6.4
-! 1    20   .55    99  12.8
-! 1    25   .55    26   2.6
-! 1    30   .55    8.    .8
-! 1    40   .61    .4     0
-! 1    60   .61     0     0
-! 1    80   .64     0     0
-
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
  1 92195   -99   999   125     T     H    20     0     5     0    12    25     5     0                        UNKNOWN
@@ -90,25 +78,21 @@ IRRI farm, Field K3, 14.22N, 121.25E, 23m       *
  1 92207 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
  1 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
  1 92263 FE005 AP018     1    30   -99   -99   -99   -99   -99 -99
-!1 92263 FE005 AP018     1   120   -99   -99   -99   -99   -99 -99
 
  2 92194 FE005 AP018     1    80   -99   -99   -99   -99   -99 -99
  2 92207 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
  2 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
  2 92263 FE005 AP018     1    30   -99   -99   -99   -99   -99 -99
-!2 92263 FE005 AP018     1   120   -99   -99   -99   -99   -99 -99
 
  3 92194 FE005 AP018     1    40   -99   -99   -99   -99   -99 -99
  3 92207 FE005 AP018     1    40   -99   -99   -99   -99   -99 -99
  3 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
  3 92263 FE005 AP018     1    30   -99   -99   -99   -99   -99 -99
-!3 92263 FE005 AP018     1   120   -99   -99   -99   -99   -99 -99
 
  4 92194 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
  4 92207 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
  4 92239 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
  4 92263 FE005 AP018     1    30   -99   -99   -99   -99   -99 -99
-!4 92263 FE005 AP018     1   120   -99   -99   -99   -99   -99 -99
 
  5 92194 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
  5 92207 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
@@ -136,7 +120,7 @@ IRRI farm, Field K3, 14.22N, 121.25E, 23m       *
 
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 1 GE              1     1     S 92183  2150 ORYZA W & N simulated     RIORZ045
+ 1 GE              1     1     S 92183  2150 ORYZA W & N simulated     RIORZ
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              Y     Y     N     N     N     N     N     N     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
@@ -158,51 +142,3 @@ IRRI farm, Field K3, 14.22N, 121.25E, 23m       *
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 86035   100     0
 
-@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 2 GE              1     1     S 92183  2150 ORYZA W simulated, no N   RIORZ045
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 2 OP              Y     N     N     N     N     N     N     N     M
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
- 2 ME              M     M     E     F     S     C     R     1     G     S     2
-@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
- 2 MA              R     R     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 2 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
-
-@  AUTOMATIC MANAGEMENT
-@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
- 2 PL          92001 92365    40   100    30    40    10
-@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
- 2 IR             30    50   100 IB001 IB001    10     1
-@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
- 2 NI             30    50    25 IB001 IB001
-@N RESIDUES    RIPCN RTIME RIDEP
- 2 RE            100     1    20
-@N HARVEST     HFRST HLAST HPCNP HPCNR
- 2 HA              0 86035   100     0
-
-@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 3 GE              1     1     S 92183  2150 ORYZA Potential prod      RIORZ045
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 3 OP              N     N     N     N     N     N     N     N     M
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
- 3 ME              M     M     E     F     S     C     R     1     G     S     2
-@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
- 3 MA              R     R     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 3 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
-
-@  AUTOMATIC MANAGEMENT
-@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
- 3 PL          92001 92365    40   100    30    40    10
-@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
- 3 IR             30    50   100 IB001 IB001    10     1
-@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
- 3 NI             30    50    25 IB001 IB001
-@N RESIDUES    RIPCN RTIME RIDEP
- 3 RE            100     1    20
-@N HARVEST     HFRST HLAST HPCNP HPCNR
- 3 HA              0 86035   100     0
-
-
-

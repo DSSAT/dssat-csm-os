@@ -1,7 +1,7 @@
 !=======================================================================
 !  CROPSIM-CERES CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
 !  Developed from V4.0 (which was based on Cropsim and Ceres3.5) 
-!  Last edit 30/05/11 LAH
+!  Last edit 11/04/13 LAH
 !=======================================================================
 
 !     SUBROUTINE CSCER040 (FILEIOIN, RUN, TN, RN,          !Command line
@@ -200,7 +200,6 @@
       REAL          CARBOASD      ! Carbohydrate available,seed    g/p
       REAL          CARBOAT       ! Carbohydrate available,tops    g/p
       REAL          CARBOC        ! Carbohydrate assimilated,cum   g/p
-      REAL          CARBOPHS      ! Carbohydrate assimilated       g/p
       INTEGER       CCOUNTV       ! Counter for days after max lf# #
       CHARACTER*120 CFGDFILE      ! Configuration directory+file   text
       CHARACTER*1   CFLFAIL       ! Control flag for failure       text
@@ -351,6 +350,7 @@
       INTEGER       EVALOUT       ! Evaluate output lines for exp  #
       CHARACTER*14  EVHEADER      ! Evaluater.out header           text
       INTEGER       EVHEADNM      ! Number of headings in ev file  #
+      INTEGER       EXAMINE       ! Flag for examination of parts  #
       CHARACTER*10  EXCODE        ! Experiment code/name           text
       CHARACTER*10  EXCODEP       ! Previous experiment code/name  text
       REAL          FAC(20)       ! Factor ((mg/Mg)/(kg/ha))       #
@@ -611,8 +611,8 @@
       REAL          LAWCF         ! Leaf area/wt change,fr         fr/lf
       REAL          LAWCFCALC     ! Leaf area/wt change,fr,calc    #
       REAL          LAWFRMN       ! Leaf area/wt min.,fr.standard  #
-      REAL          LAWR          ! Area to weight ratio,lamina    cm2/g
-      REAL          LAWRS         ! Leaf area/wt ratio,standard    cm2/g
+      REAL          LAW           ! Area to weight ratio,lamina    cm2/g
+      REAL          LAWS          ! Leaf area/wt ratio,standard    cm2/g
       REAL          LAXS          ! Area of biggest leaf,main stem cm2
       REAL          LCNC          ! Leaf critical N conc           #
       REAL          LCNCG         ! Critical N conc for growth     #
@@ -673,7 +673,7 @@
       REAL          LSENE         ! Leaf senescence,end stage      #
       REAL          LSENNF        ! Leaf N loss when senesce,fr    #
       REAL          LSENS         ! Leaf senescence,start stage    #
-      REAL          LSWLOS        ! Leaf wt loss when senesce,fr   #
+      REAL          LWLOS         ! Leaf wt loss when senesce,fr   #
       REAL          LSHAI         ! Leaf sheath area index         #
       REAL          LSHFR         ! Leaf sheath fraction of total  #
       REAL          LSHRSWT       ! Leaf sheath reserves           g/p
@@ -760,6 +760,7 @@
       INTEGER       ON            ! Option number (sequence runs)  #
       INTEGER       ONI           ! Option number,initial value    #
       CHARACTER*3   OUT           ! Output file extension          text
+      INTEGER       OUTCHOICE     ! Output choice (+reserves,etc)  #
       INTEGER       OUTCOUNT      ! Output counter                 #
       CHARACTER*77  OUTHED        ! Output file heading            text
       CHARACTER*12  OUTPG         ! Growth output file code        code
@@ -798,8 +799,8 @@
       REAL          PD4FR(3)      ! Phase 4 sub-durations;1<anthes fr
       REAL          PDADJ         ! Phase duration adjustment      deg.d
       INTEGER       PDATE         ! Planting date from X-file      #
-      REAL          PECM          ! Phase duration,emergence       Cd/cm
-      REAL          PEG           ! Phase duration,germination     deg.d
+      REAL          PEMRG         ! Phase duration,emergence       Cd/cm
+      REAL          PGERM         ! Phase duration,germination     deg.d
       REAL          PEGD          ! Phase duration,germ+dormancy   deg.d
       REAL          PFGAV(0:9)    ! Phosphorous factor,growth      #
       REAL          PFPAV(0:9)    ! Phosphorous factor,phs         #
@@ -972,6 +973,8 @@
       REAL          SENCL(0:20)   ! Senesced C,by layer            g/p
       REAL          SENCS         ! Senesced C added to soil       g/p
       REAL          SENLA         ! Senesced leaf area,total       cm2/p
+      REAL          SENLALITTER   ! Senesced leaf area,litter      cm2/p
+      REAL          SENLARETAINED ! Senesced leaf area,retained    cm2/p
       REAL          SENLFG        ! Senesced leaf                  g/p
       REAL          SENLFGRS      ! Senesced leaf to reserves      g/p
       REAL          SENLFGRSLOSS  ! Reserves lost with killed leaf g/p
@@ -1038,7 +1041,7 @@
       INTEGER       STARNUM       ! Star line number,as read file  #
       INTEGER       STARNUMM      ! Star line number,measured data #
       INTEGER       STARNUMO      ! Star line number,output file   #
-      REAL          STDDAY        ! Standard day                   C.d/d
+      REAL          STDAY         ! Standard day                   C.d/d
       REAL          STEMN         ! Stem N                         g/p
       INTEGER       STEP          ! Step number                    #
       INTEGER       STEPNUM       ! Step number per day            #/d
@@ -1093,6 +1096,7 @@
       REAL          TILSW         ! Tiller standard weight         g/s
       REAL          TILWT         ! Tiller weight                  g/s
       REAL          TKILL         ! Temperature for plant death    C
+      REAL          TKLEAVES      ! Temperature for leaf kill      C
       CHARACTER*10  TL10FROMI     ! Temporary line from integer    text
       INTEGER       TLIMIT        ! Number of days temp limited gr #
       CHARACTER*180 TLINEGRO      ! Temporary line from GRO file   text
@@ -1407,7 +1411,8 @@
             OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
             WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
           ELSE
-            OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT',POSITION='APPEND')
+            OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT',POSITION='APPEND',
+     &      ACTION = 'READWRITE')
             WRITE(fnumwrk,*) ' '
             WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
           ENDIF
@@ -1437,7 +1442,7 @@
           GENFLCHK(3:8) = 'CER045'
 
           ! Parameters
-          STDDAY = 20.0   ! TT in standard day
+          STDAY = 20.0    ! TT in standard day
           PARADFAC = 0.5  ! PAR in SRAD (fr)
           VERSIOND = 4.50 ! Default version
           STEPNUM = 1     ! Step number per day set to 1
@@ -1627,6 +1632,8 @@
         sencl = 0.0
         sencs = 0.0
         senla = 0.0
+        senlaretained = 0.0
+        senlalitter = 0.0
         senlfg = 0.0
         senlfgrs = 0.0
         senlfgrsloss = 0.0
@@ -1708,6 +1715,8 @@
         tmaxsump0 = 0.0
         tminsump = 0.0 
         tminsump0 = 0.0
+        xstagefs = 0.0
+        gplasenf = 0.0
 
 
         IF (RUN.EQ.1.AND.RUNI.LE.1) THEN
@@ -1815,13 +1824,15 @@
         
         ! Re-open Work.out and Reads.out if only require 1 run info..   
         IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
-          CLOSE (FNUMWRK)
-          OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-          WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
-          CLOSE (FNUMREA)
-          OPEN (UNIT = FNUMREA,FILE = 'READS.OUT')
-          WRITE(fnumrea,*)' '
-          WRITE(fnumrea,*)
+          CLOSE (FNUMWRK, STATUS = 'DELETE')
+          OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
+     &      ACTION = 'READWRITE')
+          WRITE(FNUMWRK,*) 'CSCER  Cropsim-Ceres Crop Module '
+          CLOSE (FNUMREA, STATUS = 'DELETE')
+          OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+     &      ACTION = 'READWRITE')
+          WRITE(FNUMREA,*)' '
+          WRITE(FNUMREA,*)
      &      ' File closed and re-opened to avoid generating huge file'
         ENDIF
 
@@ -2022,7 +2033,7 @@
           paruv = -99
           parur = -99
           lapot = -99
-          lawrs = -99
+          laws = -99
           lafv = -99
           lafr = -99
           veff = -99
@@ -2063,7 +2074,7 @@
           p1dpe = -99
           lsens = -99
           lsene = -99
-          lswlos = -99
+          lwlos = -99
           tildf = -99
           pd2fr = -99
           p4sge = -99
@@ -2106,7 +2117,7 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARUE',paruv)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARU2',parur)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',lapot(1))
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SLAS',lawrs)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SLAS',laws)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFV',lafv)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFR',lafr)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'TBAM',tbam)
@@ -2238,7 +2249,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'PARUE',paruv)
             CALL CUREADR (CUDIRFLE,VARNO,'PARU2',parur)
             CALL CUREADR (CUDIRFLE,VARNO,'LA1S',lapot(1))
-            CALL CUREADR (CUDIRFLE,VARNO,'SLAS',lawrs)
+            CALL CUREADR (CUDIRFLE,VARNO,'SLAS',laws)
             CALL CUREADR (CUDIRFLE,VARNO,'LAFV',lafv)
             CALL CUREADR (CUDIRFLE,VARNO,'LAFR',lafr)
             CALL CUREADR (CUDIRFLE,VARNO,'TBAM',tbam)
@@ -2283,7 +2294,7 @@
         IF (PARUR.LT.-92.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',parur)
         IF (LAPOT(1).LE.0.0) 
      &   CALL ECREADR (ECDIRFLE,ECONO,'LA1S',lapot(1))
-        IF (LAWRS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',lawrs)
+        IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',laws)
         IF (LAFV.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAFV',lafv)
         IF (LAFR.LE.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'LAFR',lafr)
         IF (VEFF.LT.0.0)  CALL ECREADR (ECDIRFLE,ECONO,'VEFF',veff)
@@ -2325,7 +2336,7 @@
         IF (p1dpe.LT.0.0)    CALL SPREADR (SPDIRFLE,'PPFPE',p1dpe)
         IF (LSENS.LE.0.0)    CALL SPREADR (SPDIRFLE,'LSPHS',lsens)
         IF (LSENE.LE.0.0)    CALL SPREADR (SPDIRFLE,'LSPHE',lsene)
-        IF (LSWLOS.LE.0.0)   CALL SPREADR (SPDIRFLE,'LWLOS',lswlos)
+        IF (LWLOS.LE.0.0)    CALL SPREADR (SPDIRFLE,'LWLOS',lwlos)
         IF (TILDF.LT.0.0)    CALL SPREADR (SPDIRFLE,'TDFAC',tildf)
         IF (PD2FR(1).LE..0)  CALL SPREADR (SPDIRFLE,'P2FR1',pd2fr(1))
         IF (P4SGE.LE..0)     CALL SPREADR (SPDIRFLE,'SGPHE',p4sge)
@@ -2348,8 +2359,8 @@
         IF (XNFS.LT.0.0)     CALL SPREADR (SPDIRFLE,'NLAB%',xnfs)
         IF (RTNO3.LT.0.0)    CALL SPREADR (SPDIRFLE,'RTNO3',rtno3)
         IF (RTNH4.LT.0.0)    CALL SPREADR (SPDIRFLE,'RTNH4',rtnh4)
-        CALL SPREADR (SPDIRFLE,'PGERM',peg)
-        CALL SPREADR (SPDIRFLE,'PEMRG',pecm)
+        CALL SPREADR (SPDIRFLE,'PGERM',pgerm)
+        CALL SPREADR (SPDIRFLE,'PEMRG',pemrg)
         CALL SPREADR (SPDIRFLE,'P0',PD(0))
         CALL SPREADR (SPDIRFLE,'PPTHR',p1dt)
         CALL SPREADR (SPDIRFLE,'PPEND',ppend)
@@ -2415,8 +2426,10 @@
         IF (PHINTF(3).LE.0) CALL SPREADR (SPDIRFLE,'PHF3',phintf(3))
         IF (PHINTL(2).LE.0) CALL SPREADR (SPDIRFLE,'PHL2',phintl(2))
         CALL SPREADR (SPDIRFLE,'GN%MX',grnmx)
-        CALL SPREADR (SPDIRFLE,'RSEN%',rsen)
-        CALL SPREADR (SPDIRFLE,'SSEN%',ssen)
+        CALL SPREADR (SPDIRFLE,'RSEN',rsen)
+        IF (RSEN.LT.0.0) CALL SPREADR (SPDIRFLE,'RSEN%',rsen)
+        CALL SPREADR (SPDIRFLE,'SSEN',ssen)
+        IF (SSEN.LT.0.0) CALL SPREADR (SPDIRFLE,'SSEN%',ssen)
         CALL SPREADR (SPDIRFLE,'SSPHS',ssstg)
         CALL SPREADR (SPDIRFLE,'SAWS',saws)
         CALL SPREADR (SPDIRFLE,'LSHAW',lsaws)
@@ -2465,6 +2478,408 @@
         LALOSSF = 0.2 ! Leaf area lost when tillers die
         LAFST = 1.6   ! Stage at which incremment in leaf size changes
         RSCLX = 0.6   ! Reseves concentration in leaves,maximum      
+        TKLEAVES = -10.0  ! Temperature for leaf kill
+        
+        ! The following are to allow examination of the functioning of 
+        ! different parts of the module, and comparison with CSCRP     
+        
+        !EXAMINE = 1    ! Basic lf,rt gr. No tillering,no development
+        EXAMINE = 100  ! No examination of coefficients
+       
+        IF (EXAMINE.EQ.1) THEN                                       
+          ! For basic leaf and root growth. No tillering,no development 
+          WRITE(fnumwrk,*)' '
+          WRITE(fnumwrk,*)' RUNNING EXAMINE. CODE = 1'
+          WRITE(fnumwrk,*)' '
+          
+          ! CSCER                                    !  CSCRP
+          
+          PGERM = 10.0                               !    PGERM = 10.0  
+          PEMRG = 8.0                                !    PEMRG =  8.0  
+
+          Pd(0) = 0.0                                !    Pd(0) = 0.0   
+          
+          PARUV = 2.7                                !    PARUE = 2.7   
+          PARUR = 2.7                                !    PARU2 = 2.7   
+          
+          KCAN = 0.85                                !    KCAN = 0.85   
+          
+                                                                                                            
+          PTFX = 0.98  ! PTFMX                        
+                                                                        
+          PTFS(1) = 0.75                             !    PTFMN = 0.75  
+          PTFS(2) = 0.75                             !    PTFMX = 0.75 
+          PTFS(3) = 0.75                                             
+          PTFS(4) = 0.75                             
+          PTFS(5) = 0.75                             
+          PTFS(6) = 0.75                             
+          
+          PTFA(1) = 0.0                              !    PTFA = 0.10
+          PTFA(2) = 0.0
+          PTFA(3) = 0.0
+          PTFA(4) = 0.0
+          PTFA(5) = 0.0
+          PTFA(6) = 0.0
+          
+          STFR(1) = 0.0                                              
+          STFR(2) = 0.0                                              
+          STFR(3) = 0.0                                              
+          STFR(4) = 0.0                                              
+          STFR(5) = 0.0                                              
+          STFR(6) = 0.0                                              
+          
+          ! Actuals in SPE file:
+            ! PTFS  PTFA  STFR                       !    PTFMX = 0.98
+            ! 0.65  0.10  0.00
+            ! 0.70  0.10  0.15
+            ! 0.75  0.10  0.51
+            ! 0.80  0.10  1.00
+            ! 0.98  0.35  1.00
+            ! 0.98  0.35  1.00
+
+          P1DPE = 1.0                                !    PPFPE = 1.0   
+          
+          P1V = 100000.0                             !    VREQ = 10000.0
+          VEFF = 1.0                                 !    VEFF = 1.0    
+                                                     !    VBASE = 0.0                                                        
+          
+          LLIFE = 200.0                              !    LLIFA = 200.0 
+                                                     !    LLIFG = 1.0                                                        
+                                                     !    LLIFS = 3.0
+            
+          PHINT =    95.0                            !    PHINT = 95.0
+          PHINTL(1) = 2.0    ! Headed as PHLx        !    PHINTL(1) =2.0
+          PHINTF(1) = 0.8    ! Headed as PHFx        !    PHINTF(1) =0.8
+          PHINTL(2) = 150                            !    PHINTL(2) =150
+          PHINTF(3) = 1.8                            !    PHINTF(3) =1.8
+                                                     
+          LAPOT(1) = 5.0                             !    LA1S = 5.0    
+          LAFV = 0.1                                 !    LAFV = 0.1    
+          LAFR = 0.5                                 !    LAFR = 0.5    
+            
+          LAWS = 400                                 !    LAWS = 400    
+          LAWCF = 0.02                               !    LAWCF = 0.02  
+          LAWFRMN = 0.5  ! SLAMN
+            
+          LSHFR = 0.33                               !    LSHFR = 0.33  
+          LRETS = 3.0                                !    LRPHS
+          
+          LSAWS = 50.0  ! LSHAWS                     !    LSHAWV = 50.0   ! LSHAW
+                                                     !    LSHAWR = 50.0   ! LSHAR
+
+          TI1LF = 200.0                              !    TI1LF = 200.0 
+                                                                                                             
+          TKLEAVES = -50.0                           !    TKDLF = 2.0 
+          LT50S = -50.0                              !    TKUH = -50.0  
+          LT50H = -90.0                              !    TKFH = -90.0  
+                                                     !    TKSPAN = 2.0                                                       
+          HDUR = 10.0                                !    HDUR = 10.0   
+          
+                                                     !    HLOST = 50.0                                                       
+                                                     !    HLOSF = 0.2 
+
+          RSPCS = 20.0                               !    RSPCA = 15.0 
+                                                     !    RSPCO = 80.0
+
+          RRESP = 0.40                               !    RRESP = 0.40 
+          RSEN = 0.1                                 !    RSEN = 0.1
+          
+          SDAFR = 0.10  ! From 0.50
+
+        ENDIF     ! Examine = 1
+            
+        IF (EXAMINE.EQ.2) THEN  ! Everything from all genotype files    
+        
+          WRITE(fnumwrk,*)' '
+          WRITE(fnumwrk,*)' RUNNING EXAMINE. CODE = 2'
+          WRITE(fnumwrk,*)' '
+          
+        ! CSCER                                  !  CSCRP
+        
+        ! CULTIVAR  Newton(IB0488)  
+            P1V =    1000.0                  !45 !    VREQ = 8.0        
+            P1D =     75.0                       !    PPS(1) = 100.0    
+            PD(5) =   500                        !    PD(8) = 500.0     
+            G1CWT =    26.0                      !    GNOWTS = 25.0     
+            G2KWT =    25.0                      !    GWTS = 40.0       
+            G3 =        2.0                      !    G3 = 2.5          
+            PHINT =    95.0                      !    PHINT = 80        
+            
+        ! ECOTYPE
+            PD(1) = 200                          !    PD(1) = 380       
+            PD(2) = 200                          !    PD(2) =  70       
+            PD(3) = 200                          !    PD(3) = 200       
+            PD(4) = 200                          !    PD(4) = 200       
+            PD2FR(1) = 0.25
+            PD4FR(1) = 0.25
+            PD4FR(2) = 0.10
+                                                 !    PD(5) =  60                                                        
+                                                 !    PD(6) =  25                                                        
+                                                 !    PD(7) = 150                                                        
+            ! PSNO PSNAME                        ! PSNO PSTYP PSABV PSNAME                                          
+            !   1  T.Spikelet                    !   1      S GDAT  Germinate                                       
+            !   2  EndVegetative                 !   2      K TSAT  T.Spikelet                                      
+            !   3  EndEarGrowth                  !   3      S PSDAT Pseudo_Stem                                     
+            !   4  BeginGrainFill                !   4      S LLDAT End_Leaf                                        
+            !   5  EndGrainFill                  !   5      S IEDAT Head_Emerge                                     
+            !   6  Harvest                       !   6      K ADAT  Anthesis                                        
+            !   7  Sowing                        !   7      S AEDAT EndAnthesis                                    
+            !   8  Germinate                     !   8      S GFDAT MilkToDough                                     
+            !   9  Emergance                     !   9      M MDAT  HardDough                                       
+
+            LAPOT(1) = 5.0                       !    LA1S = 3.0        
+            LAFV = 0.1                           !    LAFV = 0.1        
+            LAFR = 0.5                           !    LAFR = 0.5        
+
+            VEFF = 0.5                           !    VEFF = 1.0        
+                                                 !    VBASE = 0.0                                                        
+
+                                                 !    PPS(2) = 0.0                                                       
+                                                                                                                         
+                                             !   ECOTYPE:
+                                             
+            PARUV = 2.7                          !    PARUE = 2.7       
+            PARUR = 2.7                          !    PARU2 = 2.7       
+            
+          ! Leaves 
+            PHINTL(2) = 15                       !    PHINTL(2) = 12    
+            PHINTF(3) = 1.8                      !    PHINTF(3) = 1.3   
+            LAWS = 400                           !    LAWS = 400        
+                                                 !    LSENI = 1.5                                                        
+            LSENS = 5.5                          !    LSPHS = 8.0       
+            LSENE = 6.3
+            
+          ! Tillers 
+            TI1LF = 3.5                          !    TI1LF = 4.45      
+            TILPE = 2.5
+            TIFAC = 1.0                          !    TIFAC = 1.0       
+            TILDS = 2.5                          !    TDPHS = 3.0       
+            TILDE = 6.0                          !    TDPHE = 7.0       
+            TILDF = 4.0                          !    TDFAC = 5.0       
+                                                 !    TDSF = 1.0                                                         
+           ! Roots                                                 
+            RDGS1 = 3.0                          !    RDGS = 3.0        
+            CANHTS = 100                         !    HTSTD = 100       
+            AWNS = 0.0                           !    AWNS = 5.0        
+            KCAN = 0.85                          !    KCAN = 0.85       
+            RSPCS = 20.0                         !    RSPCA = 15.0      
+          ! Grain 
+            GRNS = 3.0                           !    GNPCS = 2.0       
+            GRNMN = 0.0
+                                                 !    GWTAA = 0.0    ! GWWF                                              
+          ! Hardiness  
+            LT50H = -10                          !    TKFH = -15        
+            
+          ! Stems  
+                                                 !    SSPHS = 8.0       
+                                                 !    SSPHE = 9.3                                                        
+                                                 !    GWTAT = 1.0    ! SHWTA                                             
+          ! N uptake                                                 
+            RTNO3 = 0.006  ! RTNUP               !    RTNO3 = .006!RTNUP
+                                                 !    NO3CF = 1.0! NUPNF
+                                                 !    NUPWF = 1.0       
+                                                 !                                                                       
+        ! SPECIES                                !                                                                       
+                                                 !    HMPC = 15                                                          
+                                   ! Secondary Stages (S=Standard,K=Key)
+                                   ! SSNO SSTYP  SSTG SSABV SSNAME      
+                                   !   1      S   1.5 LAFST Lafac_change
+                                   !   2      K   1.6 DRAT  DoubleRidges
+                                   !   3      S 3.143 JDAT  Jointing    
+                                   !   4      S   3.3 SGPHS StemStart   
+                                   !   5      S   4.0 RUESG RUE_change  
+                                   !   6      S   4.0 LGPHE LeafEnd     
+                                   !   7      S   4.0 LRPHS LfRetention 
+                                   !   8      S   4.8 CHPHS ChaffStart  
+                                   !   9      S   5.2 SVPHS StemVisible 
+                                   !  10      S   6.5 SGPHE StemEnd     
+                                   !  11      S   6.7 CHPHE ChaffEnd    
+                                   !  12      S   7.0 GGPHS GrainStart  
+                                   !  13      S   8.0 GLPHS GrLinearStar
+                                   !  14      S   8.7 GLPHE GrLinearEnd 
+                                   !  15      S   9.0 GGPHE GrainEnd    
+          ! Phase durations and modifiers 
+            PGERM = 10.0                         !    PGERM = 10.0      
+            PEMRG =  8.0                         !    PEMRG = 8.0      
+            Pd(0) = 0.0                          !    Pd(0) = 0.0       
+            Pd(6) = 200.0                        !    Pd(9) = 200.0     
+            P1DPE= 1.0   ! PPFPE                 !    PPFPE = 1.0       
+            P1DT = 20.0  ! PPTHR                 !    PPTHR = 20.0      
+            PPEND = 2.0
+                                                 !    PPEXP = 2.0                                                        
+                                                 !    VPEND = 2.0                                                        
+                                                 !    VEEND = 2.0                                                        
+                                                 !    VLOSS = 0.2                                                        
+                                                 !    VLOST = 30.0                                                       
+                                                 !    VLOSF = 0.5                                                        
+          ! Roots
+            RLIGP = 10.0  ! RLIG%                !    RLIGPC = 10.0     
+            RLWR = 0.98                          !    RLWR = 0.9        
+            RSEN = 0.10                          !    RSEN = 0.10     
+            RRESP = 0.40                         !    RRESP = 0.80      
+            RLDGR = 500.0
+                                                 !    RDGAF = 0.5                                                        
+                                                 !    RTUFR = 0.20                                                       
+          ! Leaves
+            LLIGP = 10.0  ! LLIG%                !    LLIGPC = 10.0     
+            LAXS = 900.0                         !    LAXS = 100.0      
+            LAWCF = 0.02                         !    LAWCF = 0.02      
+            LAWFRMN = 0.5  ! SLAMN
+            LSHFR = 0.33                         !    LSHFR = 0.33      
+            LRETS = 3.0        ! LRPHS
+            LSAWS = 50.0       ! LSHAWS          !    LSHAWV =50.0!LSHAW
+                                                 !    LSHAWR = 80.0   ! LSHAR                                         
+            PHINTL(1) = 2.0    ! PHL             !    PHINTL(1) =2.0!PHL
+            PHINTF(1) = 0.8    ! PHF             !    PHINTF(1) =0.8!PHF
+            
+            LLIFE = 4.0                          !    LLIFA = 4.0       
+                                                 !    LLIFG = 1.0                                                        
+                                                 !    LLIFS = 3.0                                                        
+            !   LASF
+            !   0.00
+            !   0.10
+            !   0.10
+            !   0.10
+            !   0.10
+            !   1.00
+
+            
+            LWLOS = 0.50    ! LWLOS              !    LWLOS = 0.5!LWLOS
+                                                 !    LAIXX = 14.0
+                                                                                                        
+            ! CHT%  CLA%                         !    ! CHT%  CLA%                                      
+            !    0     0                         !    !    0     0                                                       
+            !   50    50                         !    !   50    50                                                       
+            !  100   100                         !    !  100   100                                                       
+
+            PART = 0.07  ! TPAR                  !    TPAR = 0.07       
+            SRADT = 0.25 ! TSRAD                 !    TSRAD = 0.25      
+          ! Tillers      
+            LATFR(1) = 0.80   ! TGR(2)           !    TGR(2) = 0.80  
+                                                 !    TGR(20) = 0.10                                                     
+                                                 !    TILIP = 6.0                                                        
+                                                 !    TINOX = 20   ! TIL#X                                               
+          ! Reserves
+                                                 !    RSPCS = 20                                                         
+                                                 !    RSPCLX = 80.0                                                      
+                                                 !    RSUSE = 0.1                                                        
+          ! Stems                                                                                                        
+            SLIGP = 10.0  ! SLIG%                !    SLIGPC = 10.0     
+            SAWS = 25.0                          !    SAWS = 25.0       
+            P4SGE = 4.45   ! SGPHE
+            SSSTG = 5.8    ! SSPHS
+            SSEN = 0.53  ! SSEN%
+          ! Chaff                                !    ! Chaff                                                            
+            CHFR = 0.65                          !    CHFR = 0.65       
+            CHSTG = 3.8
+          ! Grain                                !    ! Grain                                                            
+            GLIGP = 10.0  ! GLIG%                !    GLIGPC = 10.0     
+                                                 !    GWLAGFR = 0.05  ! GWLAG                                            
+                                                 !    GWLINFR = 0.90  ! GWLIN                                            
+          ! Seed                                 !    ! Seed                                                             
+            SDSZ = 0.284   ! SDWT                !    SDWT = 0.28       
+                                                 !    SDDUR = 20.0                                                       
+                                                 !    SDRSPC = 80.0                                                      
+            SDAFR = 0.10  ! From 0.50
+          ! Photosynthesis                       !    ! Photosynthesis                                                   
+                                                 !    RSFPU = 3.0                                                        
+                                                 !    RSFPL = 2.0                                                        
+            !CO2RF  CO2F                         !    !CO2RF  CO2F                                                       
+            !    0  0.00                         !    !    0  0.00                                                       
+            !  220  0.71                         !    !  220  0.71                                                       
+            !  330  1.00                         !    !  330  1.00                                                       
+            !  440  1.08                         !    !  440  1.08                                                       
+            !  550  1.17                         !    !  550  1.17                                                       
+            !  660  1.25                         !    !  660  1.25                                                       
+            !  770  1.32                         !    !  770  1.32                                                       
+            !  880  1.38                         !    !  880  1.38                                                       
+            !  990  1.43                         !    !  990  1.43                                                       
+            ! 9999  1.50                         !    ! 9999  1.50                                                       
+
+          ! CH2O distribution/mobilizatio        !    ! CH2O distribution/mobilization                                   
+                                                 !    PTFMN = 0.75                                                       
+            PTFX = 0.98  ! PTFMX                 !    PTFMX = 0.98      
+                                                 !    PTFA = 0.10                                                        
+            ! PTFS  PTFA  STFR
+            ! 0.65  0.10  0.00
+            ! 0.70  0.10  0.15
+            ! 0.75  0.10  0.51
+            ! 0.80  0.10  1.00
+            ! 0.98  0.35  1.00
+            ! 0.98  0.35  1.00
+            
+            ! Cold hardiness                     !    ! Cold hardiness                                                   
+            LT50S = -6.0  ! TKUH                 !    TKUH = -6.0       
+                                                 !    TKDTI = 2.0                                                        
+                                                 !    TKLF = 0.0                                                         
+                                                 !    TKSPAN = 2.0                                                       
+            HDUR = 10.0                          !    HDUR = 10.0       
+                                                 !    HLOST = 10.0                                                       
+                                                 !    HLOSF = 0.2                                                        
+            ! Temperature responses
+            ! CSCRP                                       
+            !RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN 
+            !    0     1     0     0     0     0     0    -5    -5     0     0 
+            !  1.0    26    26    26    30    10     5     0     0    16    16 
+            !  1.0    50    50    50    50    20    25     7     5    35    35 
+            !    0    60    60    60    60    35    35    15    10    45    45 
+            ! CSCER                              
+            !RRATE TRGEM TRDV1 TRDV2 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN             
+            !    0     1     0     0     0     0    -5    -5     0     0             
+            !  1.0    26    26    30    10     5     0     0    16    16             
+            !  1.0    50    50    50    20    25     7     5    35    35             
+            !    0    60    60    60    35    35    15    10    45    45             
+                                                                                                                         
+          ! Water shortage effects                                                                                     
+            RWUPM = 0.02
+            RWUMX = 0.03
+            WFPU = 1.0                           !    WFPU = 1.0        
+            WFPGF = 1.0
+                                                 !    WFPL = 0.0                                                         
+            WFGU = 1.3                           !    WFGU = 1.3        
+                                                 !    WFGL = 0.0                                                         
+            WFTIU = 1.0   ! WFTU                 !    WFTU = 1.0        
+            WFTIL = 0.5   ! WFTL                 !    WFTL = 0.5        
+            WFSU = 0.6                           !    WFSU = 0.6        
+                                                 !    WFSF = 0.5                                                         
+            LLOSW = 0.02                         !    LLOSA = 0.02      
+                                                 !    WFGEU = 0.5                                                        
+                                                 !    WFRGU = 0.25                                                       
+                                                 !                                                                       
+           ! NITROGEN uptake,distribution,      
+             NH4MN = 0.5                         !     NH4MN = 0.5      
+             NO3MN = 0.5                         !     NO3MN = 0.5      
+             NTUPF = 0.05                        !     NTUPF = 0.05     
+           ! Nitrogen concentrations                                                                         
+             GRNMX = 3.2  ! GN%MS                !     GNPCMX = 4.5     
+                                                 !     GNPCMN = 0.5                                                      
+             SDNPCI = 1.9                        !     SDNPCI = 1.9     
+             ! CSCRP
+             ! LN%S LN%MN  SN%S SN%MN  RN%S RN%MN                              
+             !  8.0  0.80  2.50  0.65  2.00  1.50                              
+             !  1.0  0.55  0.40  0.40  1.70  1.25                              
+             ! CSCER
+             ! LN%S  SN%S  RN%S LN%MN SN%MN RN%MN
+             !  8.0   2.5  2.04  0.80  0.65  1.53     
+             !  6.4   2.0  1.97  0.75  0.60  1.47
+             !  5.3   1.0  1.89  0.70  0.55  1.41
+             !  4.0   0.8  1.82  0.65  0.50  1.36
+             !  3.1   0.6  1.77  0.60  0.45  1.33
+             !  2.7   0.5  1.73  0.60  0.40  1.29
+             !  1.5   0.4  1.68  0.60  0.40  1.26
+             !  1.0   0.4  1.68  0.55  0.40  1.26
+             XNFS = 20     ! NLABPC              !     NLABPC = 20      
+             NFPU = 1.0                          !     NFPU = 1.0       
+             NFPL = 0.0                          !     NFPL = 0.0       
+             NFGU = 1.0                          !     NFGU = 1.0       
+             NFGL = 0.0                          !     NFGL = 0.0       
+             NFTIU = 1.0   ! NFTU                !     NFTU = 1.0       
+             NFTIL = 0.0   ! NFTL                !     NFTL = 0.0       
+             NFSU = 0.4                          !     NFSU = 0.4       
+             NFSF = 0.1                          !     NFSF = 0.1       
+             NCRG = 30                           !     NCRG = 30        
+             LLOSN = 0.02
+         ENDIF    !  EXAMINE = 2                                        
         
         ! DEFAULTS
         IF (LAXS.LE.0.0) LAXS = 900.0
@@ -2487,6 +2902,7 @@
 
         IF (RDGS2.LE.0.0) RDGS2 = RDGS1
         IF (RDGTH.LE.0.0) RDGTH = 275
+        IF (RSEN.LT.0.0) RSEN = 0.1
 
         ! For new (but not used!) N uptake routine.
         IF (NCNU.LE.0.0) NCNU = 30
@@ -2604,14 +3020,14 @@
 
         ! Check dormancy
         IF (PLMAGE.LT.0.0) THEN
-          PEGD = PEG - (PLMAGE*STDDAY)
+          PEGD = PGERM - (PLMAGE*STDAY)
           WRITE (fnumwrk,*)' '
           WRITE (fnumwrk,'(A30,F6.2)')
      &     '   Planting material dormancy ',plmage
           WRITE (fnumwrk,'(A30,F6.2)')
      &     '   Emergence+dormancy degdays ',pegd
         ELSE
-          PEGD = PEG
+          PEGD = PGERM
         ENDIF
 
         TKILL = LT50S 
@@ -2675,7 +3091,9 @@
         WRITE (fnumwrk,*) '  P2(1)       :  ',pd2(1)
         WRITE (fnumwrk,*) '  P4(1),P4(2) :  ',pd4(1),pd4(2)
         WRITE (fnumwrk,*) '  P4(1),P4(2) :  ',pd4(1),pd4(2)
-        WRITE (fnumwrk,*) '  PHL2,PHF3   :  ',phintl(2),phintf(3)
+        WRITE (fnumwrk,*) '  PHL1,PHF1   :  ',phintl(1),phintf(1)
+        WRITE (fnumwrk,*) '  PHL2,PHF2   :  ',phintl(2),phintf(2)
+        WRITE (fnumwrk,*) '  PHL3,PHF3   :  ',phintl(3),phintf(3)
         WRITE (fnumwrk,*) '  PARUE,PARU2 :  ',paruv,parur
         WRITE (fnumwrk,*) '  WFGU,WFPU   :  ',wfgu,wfpu
         WRITE (fnumwrk,*) '  WFPGF       :  ',wfpgf
@@ -2686,27 +3104,24 @@
         WRITE (fnumwrk,*) '  AWNS,SGPHE  :  ',awns,p4sge
         WRITE (fnumwrk,*) '  TKFH        :  ',lt50h
         WRITE (fnumwrk,*) '  HTSTD       :  ',canhts
-        WRITE (fnumwrk,*) '  LAWS,LAWCF  :  ',lawrs,lawcf
+        WRITE (fnumwrk,*) '  LAWS,LAWCF  :  ',laws,lawcf
         WRITE (fnumwrk,*) '  RS%S        :  ',rspcs
-        WRITE (fnumwrk,*) '  GN%S        :  ',grns 
         WRITE (fnumwrk,*) '  NB.This is the percentage of stem ',
      &                          'assimilates going to reserves'
-        WRITE (fnumwrk,*) '     instead of structural material.',
-     &                         'Approximate equivalences are:'
-        WRITE (fnumwrk,*) '     10 -> 10% reserves at anthesis ',
-     &                         '80 -> 60% reserves at anthesis'
+        WRITE (fnumwrk,*) '     instead of structural material.'
+        WRITE (fnumwrk,*) '  GN%S        :  ',grns 
         WRITE (fnumwrk,*) '  LSPHS,LSPHE :  ',lsens,lsene
 
         WRITE(fnumwrk,*) ' '
         WRITE(fnumwrk,*) 'SPECIES DETAILS  FROM: ',SPDIRFLE
 
-        WRITE(fnumwrk,'(A17,2F8.2)')'   PGERM,PEMRG : ',peg,pecm
+        WRITE(fnumwrk,'(A17,2F8.2)')'  PGERM,PEMRG :  ',pgerm,pemrg
         WRITE(fnumwrk,*)            '  P0          :  ',pd(0)
         WRITE(fnumwrk,*)            '  PPTHR,PPFPE :  ',p1dt,p1dpe
         WRITE(fnumwrk,*)            '  PPEND       :  ',ppend
-        WRITE(fnumwrk,'(A17,2F8.2)')'   P6          : ',pd(6)
+        WRITE(fnumwrk,'(A17,2F8.2)')'   P6         : ',pd(6)
         WRITE(fnumwrk,*)            '  TDFAC       :  ',tildf
-        WRITE(fnumwrk,*)            '  LWLOS,LRPHS :  ',lswlos,lrets
+        WRITE(fnumwrk,*)            '  LWLOS,LRPHS :  ',lwlos,lrets
         WRITE(fnumwrk,*)            '  TGO02       :  ',latfr(1)
         WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRGEM',(trgem(i),i = 1,4)
         WRITE(fnumwrk,'(A8, 4F7.1)')   ' TRDV1',(trdv1(i),i = 1,4)
@@ -2755,7 +3170,7 @@
         WRITE(fnumwrk,'(A17,2F8.2)')'   RLFNU,NCNU    ',rlfnu,ncnu
         WRITE(fnumwrk,'(A17,2F8.2)')'   TKUH,HDUR     ',lt50s,hdur
         WRITE(fnumwrk,'(A17,2F8.2)')'   PTFMX         ',ptfx
-        WRITE(fnumwrk,'(A17,2F8.2)')'   SSEN%,RSEN%   ',ssen,rsen
+        WRITE(fnumwrk,'(A17,2F8.2)')'   SSEN,RSEN     ',ssen,rsen
         WRITE(fnumwrk,'(A17,2F8.2)')'   SAWS,LSHAWS   ',saws,lsaws
         WRITE(fnumwrk,'(A17,2F8.2)')'   LSHFR,LAXS    ',lshfr,laxs
         WRITE(fnumwrk,'(A17,2F8.2)')'   PHL1,PHF1     ',
@@ -3348,7 +3763,6 @@
           ! LAH 07/08/2008 Added SLPF to match other models.
           !CARBO = AMAX1(0.0,PCARB*CO2FP*TFP*WFP*NFP*RSFP)
           CARBO = AMAX1(0.0,PCARB*CO2FP*TFP*WFP*NFP*RSFP*SLPF)
-          CARBOPHS = CARBO
           ! Following is to stop assim once mature
           IF (XSTAGE.GT.6.0) CARBO = AMAX1(0.0,CARBO*(6.3-XSTAGE)/0.3)
           
@@ -3360,7 +3774,7 @@
             CARBOAPM = CARBO
           ELSE
             IF (SEEDRSAV.GT.1.0E-9) THEN
-              CARBOASD = SDAFR*(TT/STDDAY)*SEEDRSAV
+              CARBOASD = SDAFR*(TT/STDAY)*SEEDRSAV
             ELSE
               CARBOASD = 0.0 
             ENDIF  
@@ -3399,7 +3813,7 @@
           
           ! Growth potentials
           IF (ISTAGE.LE.2) THEN
-            LAWR = AMAX1(LAWRS*LAWFRMN,LAWRS-(LAWRS*LAWCF)*(LNUMSG-1))
+            LAW = AMAX1(LAWS*LAWFRMN,LAWS-(LAWS*LAWCF)*(LNUMSG-1))
           
             ! NB. Ceres 3.5 used: PLAG(1) = LA1S * (LNUMSD**0.5) * ....
             !     LA1S = 7.5
@@ -3458,8 +3872,8 @@
               ENDDO
             ENDIF
           ENDIF
-          IF (LAWR.GT.0.0) 
-     &      GROLFP = ((PLAGTP(1)+PLAGTP(2))/LAWR)/(1.0-LSHFR)          
+          IF (LAW.GT.0.0) 
+     &      GROLFP = ((PLAGTP(1)+PLAGTP(2))/LAW)/(1.0-LSHFR)          
           GROSTP = CARBOAT*(1.0-RSFR)
           IF (LFFRS.GT.0.0) GROSTP = GROLFP*(STFRS/LFFRS)
           GRORSP = CARBOAT*RSFR
@@ -3511,9 +3925,9 @@
           GRORSPM = CARBOAPM
           
           IF (PLAGTP(1)+PLAGTP(2).GT.0.0) THEN
-            PLAGT(1) = GROLF*(1.0-LSHFR)*LAWR*
+            PLAGT(1) = GROLF*(1.0-LSHFR)*LAW*
      &       (PLAGTP(1)/(PLAGTP(1)+PLAGTP(2)))
-            PLAGT(2) = GROLF*(1.0-LSHFR)*LAWR*
+            PLAGT(2) = GROLF*(1.0-LSHFR)*LAW*
      &       (PLAGTP(2)/(PLAGTP(1)+PLAGTP(2)))
           ENDIF
           DO L = 1,2
@@ -3674,9 +4088,9 @@
             IF (ISTAGE.LT.7) THEN                                      
               IF (RTWTG.GT.0.0) THEN                                   
                 IF (CUMTT.LT.RDGTH) THEN
-                  RTDEPG = (TT/STDDAY)*RDGS1                           
+                  RTDEPG = (TT/STDAY)*RDGS1                           
                 ELSE                                                   
-                  RTDEPG = (TT/STDDAY)*RDGS2                           
+                  RTDEPG = (TT/STDAY)*RDGS2                           
                 ENDIF                                                  
                 ! Add water content and hospitality factors 
                 IF (ISWWAT.NE.'N') 
@@ -3684,10 +4098,10 @@
               ELSE                                                     
                 ! This is to handle planting on the surface and to     
                 ! allow root depth growth immediately after emergence  
-                IF (DAE.LT.20) RTDEPG = (TT/STDDAY)*RDGS1               
+                IF (DAE.LT.20) RTDEPG = (TT/STDAY)*RDGS1               
               ENDIF                                                    
             ELSEIF (ISTAGE.GE.9) THEN      ! Germination to emergence  
-              RTDEPG = (TT/STDDAY)*RDGS1                                
+              RTDEPG = (TT/STDAY)*RDGS1                                
             ENDIF                                                      
 !                RTDEPG = TT*RDGS/STDAY*GERMFR
 !     &                 * SQRT(AMAX1(0.3,SHF(LRTIP)))
@@ -3787,7 +4201,7 @@
  500        IF (TMIN.LE.-6.0) THEN
               ! Leaf senescence
               IF ((TMIN+TMAX)/2.0.LT.-10.0) THEN
-                CKCOLD = ABS((TMIN+TMAX)/2.0-(-10.0))*0.20
+                CKCOLD = ABS(TKLEAVES-(TMIN+TMAX)/2.0)*0.20
               ENDIF
               ! Following is original (as CK)
               ! CKCOLD = AMAX1(0.00,AMIN1(0.96,
@@ -3839,7 +4253,7 @@
           PLAST = 0.0
           SENLFG = 0.0
           SENLFGRS = 0.0
-          senlfgrsloss = 0.0
+          SENLFGRSLOSS = 0.0
           SENNLFG = 0.0
           SENNLFGRS = 0.0
           ! Following is to lose some leaf area when tillers die
@@ -3851,23 +4265,24 @@
             ENDIF
           ENDIF
           IF (ISWNIT.NE.'N') THEN
+            ! Low N accelerated senescence
             IF (PLA-SENLA.GT.0.0.AND.LANC.LT.LCNCSEN) THEN
-              PLASS = PLAS +  AMAX1(0.0,AMIN1((PLA-SENLA)-PLAS,
+              PLASS = PLASS +  AMAX1(0.0,AMIN1((PLA-SENLA)-PLAS,
      &            (PLA-SENLA)*LLOSN))
             ENDIF
           ENDIF
           IF (PLA-SENLA.GT.0.0) THEN
-            SENLFG = AMIN1(LFWT*LSWLOS,(AMAX1(0.0,
-     &      ((PLAS+PLASS)*LSWLOS+(PLASC+PLAST))
-     &      * (LFWT/(PLA-SENLA)))))
-            SENLFGRS = AMIN1(LFWT*(1.0-LSWLOS),(AMAX1(0.0,
-     &      ((PLAS+PLASS)*(1.0-LSWLOS))
-     &       * (LFWT/(PLA-SENLA)))))
-            IF (PLASC+PLAST.GT.0.0.AND.(PLA-SENLA).GT.0.0) THEN
-              SENLFGRSLOSS = (PLASC+PLAST)/(PLA-SENLA)*RSWT
+            IF (PLASC.GT.0.0) THEN
+              ! If cold kill
+              SENLFG = AMIN1(LFWT,LFWT*PLASC/(PLA-SENLA))
+              SENLFGRSLOSS = AMIN1(RSWT,RSWT*PLASC/(PLA-SENLA))
             ELSE
-              SENLFGRSLOSS = 0.0
-            ENDIF 
+              ! If normal senescence
+              SENLFG = AMIN1(LFWT*LWLOS,(AMAX1(0.0,         
+     &         (LFWT*((PLAS+PLASS)/(PLA-SENLA))*LWLOS))))
+              SENLFGRS = AMIN1(LFWT*(1.0-LWLOS),(AMAX1(0.0,         
+     &        (LFWT*((PLAS+PLASS)/(PLA-SENLA))*(1.0-LWLOS)))))
+            ENDIF
             SENNLFG = AMIN1((LEAFN-GRAINNGL)*LSENNF,
      &                (SENLFG+SENLFGRS)*LANC*LSENNF)
             SENNLFGRS = AMIN1((LEAFN-GRAINNGL)*(1.0-LSENNF),
@@ -3890,7 +4305,7 @@
           SENNSTGRS = 0.0
           SSENF = 0.0
           IF (XSTAGE.GT.SSSTG .AND. XSTAGE.LT.6.0) THEN
-            SENSTG = AMAX1(0.0,STWT*(SSEN/100.0)*(TT/STDDAY))
+            SENSTG = AMAX1(0.0,STWT*(SSEN/100.0)*(TT/STDAY))
             IF (SANC.GT.0.0) SSENF = (1.0-((SANC-SMNC)/SANC))
             SENNSTG = SENSTG*SANC*SSENF
             SENNSTGRS = SENSTG*SANC*(1.0-SSENF)
@@ -4273,7 +4688,7 @@
 
           ! Growth variables expressed on area basis
           ! C assimilation
-          CARBOA = CARBOPHS*PLTPOP*10.0
+          CARBOA = CARBO*PLTPOP*10.0
           ! N assimilation
           !NUAG = NUPD*PLTPOP*10.0
           ! Above ground senescence
@@ -4309,7 +4724,7 @@
           ! LAH No growth/development on planting day
           IF (YEARDOY.GT.YEARPLT) THEN   
             SENLFGRSLOSSC = SENLFGRSLOSSC + SENLFGRSLOSS
-            CARBOC = CARBOC + CARBOPHS
+            CARBOC = CARBOC + CARBO
             RESPC = RESPC + RTRESP
             LFWT = LFWT + GROLF - SENLFG - SENLFGRS
             IF (LFWT.LT.1.0E-06) THEN
@@ -4393,7 +4808,7 @@
           PARUED = 0.0
           PARADCUM = PARADCUM + PARAD
           IF (PARAD*PARI.GT.0.0) THEN
-            PARUED = CARBOPHS*PLTPOP/(PARAD*PARI)
+            PARUED = CARBO*PLTPOP/(PARAD*PARI)
             PARADICUM = PARADICUM + PARAD*PARI
           ENDIF  
 
@@ -4403,6 +4818,12 @@
           ! Leaf areas
           PLA = PLA + PLAGT(1) + PLAGT(2)
           SENLA = SENLA + PLAS + PLASS + PLASC + PLAST
+          IF (XSTAGE.GE.LRETS) THEN
+            SENLARETAINED = SENLARETAINED
+     &                        + (PLAS+PLASS+PLASC+PLAST)
+          ELSE
+            SENLALITTER = SENLALITTER + (PLAS+PLASS+PLASC+PLAST)
+          ENDIF
           IF (LNUMSG.GT.0) THEN
             LAP(LNUMSG) = LAP(LNUMSG) + PLAGT(1)
             LATL(1,LNUMSG) = LATL(1,LNUMSG)+PLAG(1)
@@ -4459,6 +4880,9 @@
           ! Specific leaf area
           SLA = -99.0
           IF (LFWT.GT.0) SLA = (PLA-SENLA) / (LFWT*(1.0-LSHFR))
+       WRITE(FNUMWRK,*)' SLA,PLA,SENLA,LFWT,LSHFR ',
+     &   SLA,PLA,SENLA,LFWT,LSHFR 
+       IF(SLA.LT.300) WRITE(FNUMWRK,*)' &&&&&& '
           ! Warning if SLA too low
           IF (SLA.LT.0.0.AND.SLA.GT.-90.0) THEN
             WRITE(fnumwrk,'(A21,F8.3,A12)')
@@ -4664,7 +5088,7 @@
           IF (CUMGEU.LT.PEGD) THEN
             GESTAGE = AMIN1(1.0,CUMGEU/PEGD*0.5)
           ELSE
-            GESTAGE = AMIN1(1.0,0.5+0.5*(CUMGEU-PEGD)/(PECM*SDEPTH))
+            GESTAGE = AMIN1(1.0,0.5+0.5*(CUMGEU-PEGD)/(PEMRG*SDEPTH))
           ENDIF
 
           ! STAGES:Leaf numbers
@@ -4791,7 +5215,7 @@
             ZSTAGE = (0.5+((XSTAGE-9.0)/2.0))*10.0
           ELSEIF (XSTAGE.GE.0.0 .AND. XSTAGE.LE.(2.0+pd2fr(1))) THEN
             IF (TNUM.LT.2.0) THEN
-              ZSTAGE = 10.0 + LNUMSD
+              ZSTAGE = AMIN1(20.0,10.0 + LNUMSD)
             ELSE
               ZSTAGE = AMIN1(30.0,20.0 + (TNUM-1.0))
             ENDIF
@@ -5515,7 +5939,7 @@
      &        ' PARID PARUD  AWAD',
      &        '  LAID  SAID  CAID',
      &        '  TWAD SDWAD  RWAD  CWAD  LWAD  SWAD  HWAD  HIAD',
-     &        ' CHWAD  EWAD RSWAD SNWPD SNW0D SNW1D',
+     &        ' CHWAD  EWAD RSWAD SNWPD SNWLD SNWSD',
      &        '  RS%D',
      &        '  H#AD  HWUD',
      &        '  T#AD  SLAD  RDPD  PTFD',
@@ -5555,7 +5979,7 @@
               ENDIF 
               WRITE (NOUTPG2,2252)
  2252         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD  RSTD',
-     A        ' LAIPD LAISD  LAID  CHTD SDWAD SNW0D SNW1D',
+     A        ' LAIPD LAISD  LAID  CHTD SDWAD SNWLD SNWSD',
      a        '  H#AD  HWUD',
      B        ' SHRTD  PTFD  RDPD',
      C        '  RL1D  RL2D  RL3D  RL4D  RL5D  RL6D',
@@ -5614,10 +6038,18 @@
               STWADOUT = AMAX1(0.0,STWAD+STRSWAD + LSHWAD+LSHRSWAD)
               CHWADOUT = AMAX1(0.0,CHWAD+CHRSWAD)
               SLAOUT = -99.0
-              IF (LFWT.GT.1.0E-6) THEN
-                SLAOUT = (PLA-SENLA) / (LFWT*(1.0-LSHFR)+LLRSWT)
-              ENDIF     
-              IF (SLA.LE.0.0) SLAOUT = -99.0
+              OUTCHOICE = 2
+              ! Note possibilities. To change must recompile.
+              IF (OUTCHOICE.EQ.1) THEN
+              ! 1. Include reserves
+              IF (LFWT.GT.1.0E-6) 
+     &          SLAOUT = (PLA-SENLA) / (LFWT*(1.0-LSHFR)+LLRSWT)
+              ELSEIF (OUTCHOICE.EQ.2) THEN
+              ! 2. No reserves
+              IF (LFWT.GT.1.0E-6) 
+     &          SLAOUT = (PLA-SENLA) / (LFWT*(1.0-LSHFR))
+              ENDIF  
+             IF (SLA.LE.0.0) SLAOUT = -99.0
               CALL Csopline(senw0c,senwal(0))
               CALL Csopline(senwsc,senwas)
               IF (PARIP.GE.0.0) THEN
@@ -5761,8 +6193,8 @@
             IF (RTSLXDATE.GT.0) THEN
               WRITE(fnumwrk,'(A30,I7)')
      &         '  FINAL SOIL LAYER REACHED ON ',RTSLXDATE
-              WRITE(fnumwrk,'(A15,I7,A1)')
-     &         '  (MATURITY ON ',YEARDOY,')'
+              WRITE(fnumwrk,'(A23,I7,A1)')
+     &         '  (MATURITY/FAILURE ON ',YEARDOY,')'
             ELSE  
               WRITE(fnumwrk,*)' FINAL SOIL LAYER NOT REACHED '
             ENDIF
@@ -6300,6 +6732,7 @@
             IF (.not.FEXISTA) THEN
               WRITE (fnumwrk,*) 'A-file not found!'
             ELSE
+              WRITE (fnumwrk,*) 'A-file found: ',filea(1:60)
               CALL AREADR (FILEA,TN,RN,SN,ON,CN,'GWAM',gwamm)
               IF (gwamm.LE.0.0)
      &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HWAM',gwamm)

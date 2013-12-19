@@ -1,6 +1,5 @@
-$SPECIES:BACRP045
+$SPECIES:BACRP046.280513   Last edit:060613 
 
-! LAST EDIT: 22/08/11
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
 ! They have been developed from 'parameters' embedded in the code of
@@ -8,26 +7,28 @@ $SPECIES:BACRP045
 ! model,and from the literature. They may change as experience is
 ! gained,and should not be taken as 'fixed'.
 
-*SPECIES:BACRP045
+*SPECIES:BACRP046
 ! Harvest product and standard moisture content
 @HPROD  HMPC
     GR    15
 ! Principal Stages (S=Standard,K=Key(those that may be outputed)
 @ PSNO PSTYP PSABV PSNAME
+! Stg#  Type Abrev Name
     1      S GDAT  Germinate
-    2      K TSAT  Max.Primordia
+    2      K TSDAT Max.Primordia
     3      S PSDAT Pseudo_Stem
-    4      S LLDAT End_Leaf
-    5      S IEDAT Head_Emerge
+    4      K LLDAT End_Leaf
+    5      K IEDAT Head_Emerge
     6      K ADAT  Anthesis
-    7      S AEDAT End_Anthesis
-    8      S GFDAT MilkToDough
+    7      K AEDAT End_Anthesis
+    8      K GFDAT MilkToDough
     9      M MDAT  HardDough
    10      S HDAT  Harvest
    11      S ECDAT End_crop
    12      S FDAT  Failure
 ! Secondary Stages (S=Standard,K=Key(those that outputed to Evaluate.out)
 @ SSNO SSTYP  SSTG SSABV SSNAME
+! Stg#  Type PStg# Abrev Name
     1      S   1.5 LAFST Lafac_change          
     2      K   1.6 DRAT  DoubleRidges
     3      S 3.143 JDAT  Jointing
@@ -45,52 +46,70 @@ $SPECIES:BACRP045
    15      S   9.0 GGPHE GrainEnd              
 ! Phase durations
 @PGERM PEMRG    P0    P9 
+!  HTu Tu/cm  oC.d  oC.d
     10     8     0   200
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN PPEXP VPEND VEEND VLOSS VLOST VLOSF ! Photoperiod,vern
+!  Fac     h  Type   Exp GrStg GrStg V.Stg    oC    fr
    1.0  20.0    LQ   2.0   2.0   2.0   0.2  30.0   0.5
 ! Roots
-@RLIG%  RLWR RSEN% RRESP RDGAF ! Lignin%,length/wt;sen,resp;depth gr adj fac
-  10.0   0.9   .80  0.40   0.5
+@RLIG%  RLWR  RSEN RRESP RDGAF ! Lignin%,length/wt;sen,resp;depth gr adj fac
+!    %  cm/g   %/d    fr   Fac   
+  10.0  0.98  0.10  0.40   0.5
 @RTUFR ! Fraction useable to re-establish tops after winter-kill, etc..
+!   fr
   0.20  
 ! Leaves
-@LLIG%  LAXS SLACF SLAFF LSHFR LSHAW LSHAR  PHL1  PHF1
+@LLIG%  LAXS SLACF SLAFF LSHFR LSHAV LSHAR  PHL1  PHF1
+!    %   cm2 fr/lf    fr    fr cm2/g cm2/g   Lf#   Fac
   10.0   100  0.02  0.20  0.33    50    80   2.0   0.8 
 @LLIFA LLIFG LLIFS LWLOS
+! oC.d  oC.d  oC.d    fr    
    4.0   1.0   3.0  0.50
 @LAIXX ! LAI maximum    
+!m2/m2
   14.0
 @ CHT%  CLA% ! Height%, cumulative leaf area %
+!    %     %
      0     0
     50    50
    100   100
 @ TPAR TSRAD ! Leaf transmission PAR,solar                                     
+!   fr    fr
   0.07  0.25
 ! Tillers
 @TGR02 TGR20 TILIP TIL#X ! Size,phase,maximum
+!   fr    fr   Lvs     #
   0.80  0.10   6.0    20
 ! Reserves
-@ RS%S RS%LX RSUSE ! Standard concentrations,fraction utilizeable/day
+@ RS%X RS%LX RSUSE ! Max concentrations,fraction utilizeable/day
+!    %     %    fr
     80    80   0.1
 ! Stems          
 @SLIG%  SAWS ! Lignin,area/weight
+!    % cm2/g
   10.0  25.0
 ! Chaff
 @ CHFR ! Fraction of stem growth
+!   fr
   0.65
 ! Grain  
 @GLIG% GWLAG GWLIN ! Lignin,wt.endlag,endlinear fill
-  10.0  0.05  0.90 
+!    %    fr    fr
+  10.0  0.10  0.80 
 ! Seed
 @ SDWT SDDUR SDRS% ! Weight,duration,reserves (% whole seed)
+!    g     d     %
  .0284    20    80
 ! Photosynthesis
 @PARFC CO2CC CO2EX ! CO2 response (only for comparison)
+!  Rel   vpm   Exp 
   2.05    80 0.005
 @RSFPU RSFPL ! Reserves effect thresholds (as set->no reserves effect)
+!   fr    fr
    3.0   2.0
 @CO2RF  CO2F
+!  vpm   Rel
      0  0.00
    220  0.71
    330  1.00
@@ -102,14 +121,18 @@ $SPECIES:BACRP045
    990  1.43
   9999  1.50
 ! CH2O distribution/mobilization
-@PTFMN PTFMX  PTFA ! Partition to tops (max,min,max.adjustment)
-  0.75  0.98  0.10
+@PTFMN PTFMX  PTFXS  PTFA ! Partition to tops (max,min,max.adjustment)
+!   fr    fr  GrStg   Fac
+  0.65  0.98      6  0.10
 ! Cold hardiness
-@ TKUH TKDTI  TKLF TKSPN  HDUR HLOST HLOSF ! Kill temps,span,time->harden,loss
-  -6.0   2.0   0.0   2.0  10.0  10.0   0.2
+@ TKUH TKDTI TKDLF TKSPN  HDUR HLOST HLOSF ! Kill temps,span,time->harden,loss
+!   oC    oC    oC    oC     d    oC    fr
+  -6.0   2.0   6.0   2.0  10.0  10.0   0.2
 ! Temperature responses
+! AFRC vernalization=-4,3,10,17; Reinink=-1,0,4,8,9
 @RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
-     0     1     0     0     0     0     0    -5    -5     0     0  
+!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
+     0     1     0     0     5     0     0    -5    -5     0     0  
    1.0    26    26    26    30    10     5     0     0    16    16  
    1.0    50    50    50    50    20    25     7     5    35    35
      0    60    60    60    60    35    35    15    10    45    45
@@ -117,55 +140,65 @@ $SPECIES:BACRP045
 ! WATER loss,uptake,etc.
 ! Evapotranspiration (Resistances only used in stand-alone Cropsim,not CSM)
 @ RATM RCROP EORATIO ! Atmospheric,canopy resistances;FAO formula factor
+!  s/m   s/m     Rel
    300   150     1.0
 ! Water uptake (RWULF only used in stand-alone Cropsim)
-@RWUPM RWUMX RWULF ! Min.pore size for max.uptake,Max uptake rate;length fac
-  0.02  0.03   0.5
+@RWUPM RWUMX ! Min.pore size for max.uptake,Max uptake rate
+!   fr cm3/cm   
+  0.02  0.03
 ! Water shortage effects
 ! 1. Based on ratio potential uptake/potential loss 
 ! (WFEU only in stand-alone Cropsim)
 @ WFPU  WFPL  WFGU  WFGL  WFTU  WFTL  WFSU  WFSF  WFEU !Gr,phs,till,sen,evap
+!  Rel   Rel   Rel   Rel   Rel   Rel   Rel   Rel   Rel    
    1.0   0.0   1.3   0.0   1.0   0.5   0.6   0.5   1.5
 @LLOSA
+!  fr
  0.02 ! Fraction of leaf area lost each day that water uptake ratio < WFSU
 ! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
 @WFGEU WFRGU  ! Germination/emergence,root growth
+!   fr    fr
   0.50  0.25
-
 ! NITROGEN uptake,distribution,etc.
 ! For standard CSM uptake routine
-@RTNO3 RTNH4
- 0.006 0.006 
-! For modified uptake routine (Not generally used)
-@ NCNU RLFNU WFNUU WFNUL ! Length,soil N,soil water
-    30   2.0   1.0     0  
+@NH4MN NO3MN
+!mg/Mg mg/Mg
+   0.5   0.5 
 ! N demand 
 @NTUPF  ! Fraction of deficit that can be filled per day
+! fr/d
   0.05
 ! Nitrogen concentrations
-@GN%MX GN%MN  SDN% ! Grain,seed
-   4.5   0.5   1.9 
+@GN%MX GN%MN  SDN% ! Grain,seed             
+!    %     %     %
+   4.5   0.5   1.9
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
-   8.0  0.80  2.50  0.65  2.00  1.50                               
+!    %     %     %     %     %     %
+   6.0  0.75  2.50  0.65  2.00  1.50                               
    1.0  0.55  0.40  0.40  1.70  1.25                               
 ! N distribution/mobilization
-@NLAB% NPTFL ! %N that labile,min.% uptake used by leaf (> minima) 
-    20   0.5
+@NLAB% ! %N that labile 
+!    %
+    20
 ! N shortage effects (Fraction of span from lowest to upper N concentration)
 @ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF ! Phs,gr,tillering,senesnce
+!  Rel   Rel   Rel   Rel   Rel   Rel   Rel   Rel
    1.0     0   1.0   0.0   1.0   0.0   0.4   0.1
 ! N shortage effects (Based on soil NO3 or NH4 concentration)
 @ NCRG  ! Root growth 
+!mg/Mg
     30
 
 ! Diseases. Only for stand-alone Cropsim. And,not yet well worked out.
 !           Names and characteristics may change.
 @ DI_NAME    DI_ABV
+! Disease    Abrev
   Mildew     PMI
   Leaf_rust  LRS
   Brown_spot LSP
 ! Tan_spot   TSP
 @ DAPX DLDUR DSDUR DDEWN DINMX DITYP TBASE TOPT1 TOPT2  TTOP TKILL DINCO DIFFR
+!  cm2    Bd    Bd     h   #/d  Type    oC    oC    oC    oC    oC    fr   Fac
   .500  10.0  20.0   0.0   3.0    20   0.0  19.0  22.0  27.0  26.5   0.2  35.0
   .012  10.0  20.0   0.0   6.0    10  10.0  20.0  22.0  30.0   -99   0.2  10.0
   1.00   4.0  20.0   0.0   5.0    21  10.0  25.0  30.0  34.0   -99   0.2   4.5
@@ -211,16 +244,15 @@ $SPECIES:BACRP045
 ! LLIFG   Leaf growth period,birth to full expansion (phyl)
 ! LLIFS   Leaf senescence period (phyl)
 ! LLIG%   Leaf lignin (%)
-! LLOSA   Leaf area loss each day that water uptake ratio < WFS (fr)
-! LN%MN   Leaf N concentration,minimum (%)
-! LN%S    Leaf N concentration,standard,stage (%)
-! LNCGL   N concentration,growth,lower (fr)
-! LNCGU   N concentration,growth,upper (fr)
-! LSHAR   Leaf sheath area/weight,end leaf expansion (cm2/g)            
-! LSHAW   Leaf sheath area/weight,vegetative phases (cm2/g)           
+! LLOSA   Leaf area loss each day that water uptake ratio < WFSU (fr)
+! LN%MN   Leaf N concentration,minimum,seedling and maturity stages (%)
+! LN%S    Leaf N concentration,standard,seedling and maturity stages (%)
+! LNCGL   N concentration,growth,lower bound (fr)
+! LNCGU   N concentration,growth,upper bound (fr)
+! LSHAR   Leaf sheath area/weight,after end of lamina expansion (cm2/g)            
+! LSHAV   Leaf sheath area/weight,vegetative phases (cm2/g)           
 ! LSHFR   Leaf sheath fraction (fr of lamina+sheath)
 ! LWLOS   Leaf dry matter loss,normal senescence (fr;1=everything lost)
-! NCNU    NO3,NH4 conc factor,N uptake (ppm;30-> -0.08 for exp response)
 ! NCRG    N concentration factor,root growth (ppm for maximum growth)
 ! NFGL    N stress factor,growth,lower (fr)
 ! NFGU    N stress factor,growth,upper (fr)
@@ -230,8 +262,9 @@ $SPECIES:BACRP045
 ! NFSF    N factor to trigger final (maturity) senescence (#)
 ! NFTL    N stress factor,tillering,lower (fr)
 ! NFTU    N stress factor,tillering,upper (fr)
+! NH4MN   NH4 minimum concentration for uptake (mg/MG)
 ! NLAB%   Labile N during grain filling (%)
-! NPTFL   N partition (min) to leaves for growth/top-up after minima met (%)
+! NO3MN   NO3 minimum concentration for uptake (mg/MG)
 ! NTUPF   N top-up fraction (fr deficit/d)
 ! P0      Juvenile phase duration (oC.days)
 ! P9      Phase duration 6 (post physio.maturity (oC.d)
@@ -245,26 +278,25 @@ $SPECIES:BACRP045
 ! PPSEN   Photoperiod sensitivity (L=Long day response,Q=Quadratic)
 ! PPTHR   Photoperiod threshold (h above which no effect)
 ! PTFA    Partition fraction to tops,adjustment factor (fr)
+! PTFXS   Growth stage at which maximum PTFMX reached (GrStg)
 ! PTFMN   Partition fraction to tops,minimum (fr)
 ! PTFMX   Partition fraction to tops,maximum (fr)
+! RATM    Boundary layer,air,resistance (s/m)
+! RCROP   Stomatal res,crop basis (s/m)
 ! RDGAF   Root depth growth rate,acceleration factor (Not currently used)
-! RLFNU   Root length factor,N uptake (cm/cm3) 
 ! RLIG%   Root lignin (%)
 ! RLWR    Root length/weight ratio (m/(0.01g;multiply by 10000->cm/g)
-! RN%MN   Root N concentration,minimum (%)
-! RN%S    Root N concentration,standard,stage (%)
+! RN%MN   Root N concentration,minimum,seedling and maturity stages (%)
+! RN%S    Root N concentration,standard,,seedling and maturity stages (%)
 ! RRATE   Relative process rate (#)
 ! RRESP   Root respiration fraction (fr)
 ! RS%LX   Reserves concentration,leaf laminae,maximum (%)
-! RS%S    Reserves concentration,standard (%)
-! RSEN    Root senescence (fr/standard day)
+! RS%X    Reserves % above which CH2O overflows to roots (%)
+! RSEN    Root senescence (%/standard day)
 ! RSFPL   Reserves concentration,lower bound for photosynthesis effect (fr)
 ! RSFPU   Reserves concentration,upper bound for photosynthesis effect (fr)
 ! RSUSE   Reserves utilisation fraction,vegetative phases (#)
-! RTNO3   NO3 uptake/root length  (mg N/cm.day)
-! RTNH4   NH4 uptake/root length  (mg N/cm.day)
 ! RTUFR   Max fraction root wt useable for new leaves (fr)
-! RWULF   Root length factor,water uptake (cm/cm3) (Only stand-alone Cropsim)
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
 ! RWUPM   Root water upake,minimum pore size for maximum uptake (fr SAT-DUL)
 ! SAWS    Stem area/weight ratio,standard (cm2/g)
@@ -277,18 +309,18 @@ $SPECIES:BACRP045
 ! SLACF   Specific leaf area,change with leaf position (fr)
 ! SLAFF   Specific leaf area,flexibility,fr non-stressed (fr)
 ! SLIG%   Stem lignin (%)
-! SN%MN   Stem N concentration,minimum (%)
-! SN%S    Stem N concentraation,standard,stage (%)
+! SN%MN   Stem N concentration,minimum,,seedling and maturity stages (%)
+! SN%S    Stem N concentraation,standard,,seedling and maturity stages (%)
 ! STNAME  Stage name (Text)
 ! SVPHS   Stem Visible stage (GrowthStage)
 ! TBASE   Temperature above which disease will develop (oC)
 ! TGRxx   Tiller growth rate of tiller xx (fraction of tiller 1,main shoot)
 ! TIL#X   Tiller number per plant,maximum (#)
 ! TILIP   Tiller initiation phase duration (Leaf # from birth to full size)
+! TKDLF   Killing temperature difference,leaves cf plants (C)
+! TKDTI   Killing temperature difference,tillers cf plant (C)
 ! TKILL   Temperature at which disease killed (oC)
-! TKLF    Killing temperature for leaves (C)
 ! TKSPN   Temperature span over which killing occurs (C)
-! TKDTI   Killing temperature difference,tillers v plant (C)
 ! TKUH    Start kill temperature,unhardened (oC)
 ! TOPT1   Lowest optimum temperature for disease development (oC)
 ! TOPT2   Highest optimum temperature for disease development (oC)
@@ -312,8 +344,6 @@ $SPECIES:BACRP045
 ! WFGEU   Water factor,germination and emergence,upper bound (fr)
 ! WFGL    Water factor,growth,lower (fr)
 ! WFGU    Water factor,growth,upper (fr)
-! WFNUL   Water factor,N uptake,lower (fr)
-! WFNUU   Water factor,N uptake,upper (fr)
 ! WFPL    Water factor,photosynthesis,lower (fr)
 ! WFPU    Water factor,photosynthesis,upper (fr)
 ! WFPUR   Water factor,photosynthesis,upper,reproductive (0-1)

@@ -1,5 +1,5 @@
 !  Utility routines/functions
-!  Last edit 17/05/10 LAH
+!  Last edit 01/04/13 LAH
 
       ! Subroutines: Calendar, Csopline, Csdaylen, Csincmth, Csyr_doy
       !              Emod, Emod2
@@ -3016,10 +3016,13 @@ cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
         CALL Getlun('ERROR.OUT',fnumerr)
         OPEN(UNIT=fnumerr,FILE='ERROR.OUT')
         WRITE(fnumerr,*)' Division by zero in Function CS_YVAL!'
-        WRITE(fnumerr,*) ' Check WORK.OUT for details'
+        WRITE(fnumerr,*)' Values were: '
+        WRITE(fnumerr,*)'   Y1 ',Y1,' Y2 ',Y2
+        WRITE(fnumerr,*)'   X  ',X,' X1 ',X1,' X2 ',X2
+        WRITE(fnumerr,*)' Check WORK.OUT for more information'
         WRITE (*,*) ' Division by zero in Function CS-YVAL!'
         WRITE (*,*) ' Program will have to stop'
-        WRITE (*,*) ' Check WORK.OUT for details'
+        WRITE (*,*) ' Check ERROR.OUT and WORK.OUT for details'
         CLOSE (fnumerr)
         STOP ' '
       ELSE
