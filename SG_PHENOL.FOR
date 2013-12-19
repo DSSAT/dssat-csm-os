@@ -589,7 +589,7 @@ C--------------------------------------------------------------------
        ELSEIF (ISTAGE .EQ. 3) THEN
           IDUR1 = IDUR1 + 1
 C-GH      XSTAGE = 3.0 + 2.0*SUMDTT/P3
- 
+          XSTAGE = 3.0 + 2.0*SUMDTT/(PANTH - P3)
           VegFrac = (SUMDTT + SUMDTT_2) / (SUMDTT_2 + P3 + P4)
           SeedFrac = SUMDTT / (P3 + P4 + P5)
  
