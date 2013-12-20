@@ -15,10 +15,11 @@ C  Calls  :
 C=======================================================================
 
       SUBROUTINE TillEvent(CONTROL, 
-     &    BD, CN, DLAYR, DS, NLAYR,                       !Input
-     &    SAT, SWCN, SC_BASE, TILLVALS,                   !Input
+     &    BD, BD_BASE, CN, CN_BASE, DLAYR, DL_BASE,       !Input
+     &    DS, DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,      !Input
+     &    NLAYR, TILLVALS,                                !Input
      &    BD_TILLED, CN_TILLED, DL_TILLED,                !Output
-     &    DS_TILLED, SAT_TILLED, SC_TILLED)               !Output
+     &    DS_TILLED, SAT_TILLED, SC_TILLED)               !OutpuT
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -35,14 +36,14 @@ C=======================================================================
       INTEGER, DIMENSION(NAPPL) :: NLYRS
       INTEGER NTil_today
 
-      REAL CN, CNTEMP, CN_TILLED, XCN
+      REAL CN, CN_BASE, CNTEMP, CN_TILLED, XCN
       REAL DEPTH, THICK, PREV_DEPTH, CUMDEPTH    !BDPMIN, 
-      REAL, DIMENSION(NL) :: BD,    BDTEMP, BD_TILLED, XBD
-      REAL, DIMENSION(NL) :: DLAYR, DLTEMP, DL_TILLED, XDL
-      REAL, DIMENSION(NL) :: DS,    DSTEMP, DS_TILLED, XDS
+      REAL, DIMENSION(NL) :: BD,    BD_BASE, BDTEMP, BD_TILLED, XBD
+      REAL, DIMENSION(NL) :: DLAYR, DL_BASE, DLTEMP, DL_TILLED, XDL
+      REAL, DIMENSION(NL) :: DS,    DS_BASE, DSTEMP, DS_TILLED, XDS
 !     REAL, DIMENSION(NL) :: RGIMPF,RGTEMP, RG_TILLED, XRGIF, RG_BASE
-      REAL, DIMENSION(NL) :: SAT,   SATTEMP,SAT_TILLED,XSAT
-      REAL, DIMENSION(NL) :: SWCN,  SCTEMP, SC_TILLED, XSWCN
+      REAL, DIMENSION(NL) :: SAT,   SAT_BASE, SATTEMP,SAT_TILLED,XSAT
+      REAL, DIMENSION(NL) :: SWCN,  SWCN_BASE, SCTEMP, SC_TILLED, XSWCN
       REAL, DIMENSION(NL) :: SC_BASE
       REAL, DIMENSION(NAPPL) :: CNP, TDEP
       REAL, DIMENSION(NAPPL, NL) :: DEP, BDP, SWCNP
@@ -94,13 +95,13 @@ C=======================================================================
 !     by tillage operations
 !     X-values have same layering as soil profile,
 !     TEMP-values may have more layers depending on tillage input
-      XBD   = BD        
-      XCN   = CN        
-      XDL   = DLAYR
-      XDS   = DS
+      XBD   = BD_BASE        
+      XCN   = CN_BASE        
+      XDL   = DL_BASE
+      XDS   = DS_BASE
 !     XRGIF = RGIMPF  
-      XSAT  = SAT     
-      XSWCN = SWCN    
+      XSAT  = SAT_BASE
+      XSWCN = SC_BASE
 
       DO I = 1, NTil_today
         !Convert CN from % change to absolute units.
@@ -110,13 +111,13 @@ C=======================================================================
           CNTEMP = XCN * (1.0 + CNP(I)/100.)
           CNTEMP = MIN(CNTEMP, 98.0)
           !Don't allow this tillage event to decrease CN
-          !CHP CNTEMP = MAX(XCN, CNTEMP)
+          CNTEMP = MAX(CN, CNTEMP)
         ELSE
           !--- DECREASE CN -----------------------------------
           !CHP CNTEMP = MAX(CN_BASE, XCN)
           CNTEMP = XCN * (1.0 + CNP(I)/100.)
           !Don't allow this tillage event to increase CN
-          !CHP CNTEMP = MIN(XCN, CNTEMP)
+          CNTEMP = MIN(CN, CNTEMP)
         ENDIF
 
         !Define layers for each tillage / soil layer combination
@@ -151,7 +152,7 @@ C=======================================================================
               !Apply percent change
               BDTEMP(L) = XBD(NS) * (1.0 + BDP(I,M)/100.)
               !Don't allow this tillage event to increase BD
-              !CHP BDTEMP(L) = MIN(XBD(NS), BDTEMP(L))
+              BDTEMP(L) = MIN(BD(NS), BDTEMP(L))
 
 !              !----- INCREASE ROOT GROWTH IMPEDANCE FACTOR  -------
 !              !Calculate effects on root growth impedance factor - 
@@ -177,7 +178,7 @@ C=======================================================================
               !----- INCREASE SATURATED WATER CONTENT  ------------
               SATTEMP(L) = 0.95 * (1.0 - BDTEMP(L) / 2.66)
               !Don't reduce existing SAT value
-              SATTEMP(L) = MAX(XSAT(NS), SATTEMP(L))
+              SATTEMP(L) = MAX(SAT(NS), SATTEMP(L))
 
         !--------- INCREASE BULK DENSITY --------------------------
             ELSE
@@ -187,7 +188,7 @@ C=======================================================================
               !Apply percent change
               BDTEMP(L) = XBD(NS) * (1.0 + BDP(I,M)/100.)
               !Don't allow this tillage event to decrease BD
-              !CHP BDTEMP(L) = MAX(XBD(NS), BDTEMP(L))
+              BDTEMP(L) = MAX(BD(NS), BDTEMP(L))
 
 !              !----- RESET ROOT GROWTH IMPEDANCE FACTOR  ----------
 !              !Soil compaction, go back to original RGIMPF values
@@ -196,7 +197,7 @@ C=======================================================================
               !----- DECREASE SATURATED WATER CONTENT  ------------
               SATTEMP(L) = 0.95 * (1.0 - BDTEMP(L) / 2.66)
               !Don't increase existing SAT value with compaction
-              SATTEMP(L) = MIN(XSAT(NS), SATTEMP(L))
+              SATTEMP(L) = MIN(SAT(NS), SATTEMP(L))
              
             ENDIF
 
@@ -212,7 +213,7 @@ C=======================================================================
                 !Apply percent change
                 SCTEMP(L) = XSWCN(NS) * (1.0 + SWCNP(I,M)/100.)
                 !Don't allow this tillage event to decrease SWCN
-                !CHP SCTEMP(L) = MAX(XSWCN(NS), SCTEMP(L))
+                SCTEMP(L) = MAX(SWCN(NS), SCTEMP(L))
               ELSE
               !----- DECREASE HYDRAULIC CONDUCTIVITY --------------
                 !Compaction of soil, decrease hydraulic conductivity,
@@ -221,7 +222,7 @@ C=======================================================================
                 !Apply percent change
                 SCTEMP(L) = XSWCN(NS) * (1.0 + SWCNP(I,M)/100.)
                 !Don't allow this tillage event to increase SWCN
-                !CHP SCTEMP(L) = MIN(XSWCN(NS), SCTEMP(L))
+                SCTEMP(L) = MIN(SWCN(NS), SCTEMP(L))
               ENDIF
             ELSE    !For -99 value, do nothing
               SCTEMP(L) = SC_BASE(NS)
@@ -251,7 +252,7 @@ C=======================================================================
           ELSE  !.NOT. TILL
             !Below tillage depth set after-tillage values to 
             ! current soil layer values
-            BDTEMP(L)  = XBD(NS)
+            BDTEMP(L)  = BD(NS)
             DLTEMP(L)  = THICK
             CUMDEPTH = CUMDEPTH + THICK
             DSTEMP(L)  = CUMDEPTH
@@ -261,9 +262,9 @@ C=======================================================================
             ELSE
               XDL(NS) = XDS(NS) - XDS(NS-1)
             ENDIF
-            SATTEMP(L) = XSAT(NS)
-            SCTEMP(L)  = XSWCN(NS)
-!           RGTEMP(L)  = XRGIF(NS)
+            SATTEMP(L) = SAT(NS)
+            SCTEMP(L)  = SWCN(NS)
+!           RGTEMP(L)  = RGIF(NS)
             NS = NS + 1
           ENDIF
 
