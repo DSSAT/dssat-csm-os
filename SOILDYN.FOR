@@ -1115,8 +1115,10 @@ C  tillage and rainfall kinetic energy
             BD_SOM(L) = BD_calc(L) / BD_calc_init(L) * BD_init(L)
 
 !           Limit BD to realistic values
-            BD_SOM(L) = MIN(BD_SOM(L), 1.8)
-            BD_SOM(L) = MAX(BD_SOM(L), 0.25)
+!           BD_SOM(L) = MIN(BD_SOM(L), 1.8)
+!           BD_SOM(L) = MAX(BD_SOM(L), 0.25)
+            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) !Upper limit for BD_SOM
+            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) !Lower limit for BD_SOM
 
             dBD_SOM = BD_SOM(L) - BD_INIT(L)
 
@@ -1800,7 +1802,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
           WRITE(DLUN,'("*SOIL DYNAMICS OUTPUT FILE")')
         ENDIF
 
-!       IF (INDEX('FQ',CONTROL%RNMODE) > 0 .AND. CONTROL%RUN /= 1)RETURN
+       IF (INDEX('FQ',CONTROL%RNMODE) > 0 .AND. CONTROL%RUN /= 1)RETURN
         CALL HEADER(SEASINIT, DLUN, CONTROL % RUN)
         WRITE(DLUN,"(/,
      &     '@YEAR DOY   DAS   CRAIN  SOLCOV   SUMKE    ROCN   TOTAW',
@@ -1824,7 +1826,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !-----------------------------------------------------------------------
       IF (PrintDyn .AND.                        !Print on AND
      &   (MOD(CONTROL%DAS,CONTROL%FROP) .EQ. 0  !(Every FROP days
-     &    .OR. TILLED                           !OR Tilled recently
+!    &    .OR. TILLED                           !OR Tilled recently
      &    .OR. Print_today)) THEN    !OR back to normal after tillage)
         CALL YR_DOY(CONTROL % YRDOY, YEAR, DOY) 
         WRITE(DLUN,'(1X,I4,1X,I3.3,1X,I5,
