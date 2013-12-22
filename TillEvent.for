@@ -285,10 +285,13 @@ C=======================================================================
         XSAT  = SATTEMP
         XSWCN = SCTEMP
 
-        MSG(1) = "             -- Lyr Thick (cm)--  --Blk dens (g/cm3)-"
+        MSG(1) = "             -- Lyr Thick (cm)--  --Blk dens (g/cm3)"
+     &    // "- ---- SOM-BD --------"
         MSG(2) = "               DL1    DL2    DL3    BD1    BD2    BD3"
-        WRITE(MSG(3),'(A11,6F7.3)')"Before till",
-     &      DLAYR(1),DLAYR(2),DLAYR(3),BD(1),BD(2),BD(3)
+     &    // "   BDS1   BDS2   BDS3"
+        WRITE(MSG(3),'(A11,9F7.3)')"Before till",
+     &      DLAYR(1), DLAYR(2), DLAYR(3), BD(1), BD(2), BD(3), 
+     &                     BD_BASE(1), BD_BASE(2), BD_BASE(3)
         WRITE(MSG(4),'(A11,6F7.3)')"After till ",
      &      XDL(1),XDL(2),XDL(3),XBD(1),XBD(2),XBD(3)
         CALL INFO(4,ERRKEY,MSG)
