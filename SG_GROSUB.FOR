@@ -991,7 +991,7 @@ C           the following code needs to be turned on to correct this.
 C      LFWT = LFWT - (SENLA/PLA)*LFWT
 
 C--------------------------------------------------------------
-C       Compute Nitrogen Uptake
+C       Compute Nitrogen Uptake (and phosphorus? MA 19dec20113)
 C--------------------------------------------------------------
 
       IF (ISWNIT .NE. 'N') THEN
