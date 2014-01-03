@@ -320,7 +320,12 @@ C--------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.INTEGR) THEN
 
           IF(YRDOY.EQ.STGDOY(9)) THEN
-              !Emergence
+C              Emergence
+          !added for initialization of Pceres     MA 03jan2014
+          WTLF = LFWT * PLTPOP      !Leaf weight, g/m2
+          STMWTO = STMWT * PLTPOP   !Stem weight, g/m2
+          RTWTO = RTWT * PLTPOP     !Root weight, g/m2
+           
               CALL P_Ceres (EMERG, ISWPHO,                      !Input
      &          CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &          PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
