@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 25
+        INTEGER :: Build = 26
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-nwheat   '
 
 !     Version history:  
+!       4.6.0.26 chp 12/22/2013 Fixed issue with tillage routine for crop rotations
 !       4.6.0.25 chp 12/03/2013 
 !       4.6.0.24 chp 08/30/2013 Add in Tony's code from email 6/11/2013
 !       4.6.0.23 chp 08/26/2013 EPIC Soil Temp added as option (METMP = "E")
