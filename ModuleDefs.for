@@ -64,7 +64,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 26
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-abiotic  '
+!     Development branch for expanding the outputs of abiotic stresses
 
 !     Version history:  
 !       4.6.0.26 chp 12/22/2013 Fixed issue with tillage routine for crop rotations
