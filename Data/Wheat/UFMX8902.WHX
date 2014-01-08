@@ -1,0 +1,211 @@
+*EXP.DETAILS: UFMX8902WHX Mexi (NWheat migration to DSSAT)
+
+*GENERAL
+@PEOPLE
+ Fred Royce   froyce@ufl.edu
+@ADDRESS
+ MEXICO
+@SITE
+Yaqui Valley, MEXICO 26.6          
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 Irrig + Nitrogen (WS1)     2  1  0  1  1  3  1  1  0  0  0  1  3
+ 2 1 0 0 Irrig + Nitrogen (WS2)     2  1  0  1  1  2  1  1  0  0  0  1  3
+ 3 1 0 0 Irrig + Nitrogen (WN)      2  1  0  2  1  2  2  1  0  0  0  1  3
+ 4 1 0 0 Luxury Irrigation + N      2  1  0  1  1  1  1  1  0  0  0  1  3
+ 5 1 0 0 NO STRESS                  2  1  0  1  1  0  0  0  0  0  0  1  1
+ 6 1 0 0 Irrigated (no N stress)    2  1  0  1  1  1  0  1  0  0  0  1  2
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 WH IB0012 PIO 3382
+ 2 WH IB0001 YECORA
+ 3 WH IB1500 MANITOU
+ 4 WH IB1015 MARIS FUNDIN
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UFMX0001 UFMX       -99     0 DR000     0     0 00000 -99    151  UFMX000002 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    WH 89345  1500     0     0     0   -99     0   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .211   3.3   2.5
+ 1    15  .211   3.2   2.4
+ 1    25  .211   3.0   2.2
+ 1    40  .211   3.0   2.2
+ 1    55  .211   2.6   2.0
+ 1    70  .211   2.2   1.7
+ 1    90  .211   2.2   1.7
+ 1   120  .211	 2.2   1.7
+ 1   150  .211 	 2.2   1.7
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2    WH 89345  1500     0     0     0   -99     0   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 2     5  .111   3.3   2.5
+ 2    15  .111   3.2   2.4
+ 2    25  .111   3.0   2.2
+ 2    40  .111   3.0   2.2
+ 2    55  .111   2.6   2.0
+ 2    70  .111   2.2   1.7
+ 2    90  .111   2.2   1.7
+ 2   120  .111	 2.2   1.7
+ 2   150  .111 	 2.2   1.7
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 89345   -99   300   300     S     R    16     0     4   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 90001 IR001    30
+ 1 90007 IR001    30
+ 1 90013 IR001    30
+ 1 90019 IR001    30
+ 1 90025 IR001    30
+ 1 90031 IR001    30
+ 1 90037 IR001    30
+ 1 90043 IR001    30
+ 1 90049 IR001    30
+ 1 90055 IR001    30
+ 1 90061 IR001    30
+ 1 90067 IR001    30
+ 1 90073 IR001    30
+ 1 90079 IR001    30
+ 1 90085 IR001    30
+ 1 90091 IR001    30
+ 1 90097 IR001    30
+ 1 90103 IR001    30
+ 1 90109 IR001    30
+ 1 90115 IR001    30
+ 1 90121 IR001    30
+ 1 90127 IR001    30
+ 1 90133 IR001    30
+ 1 90139 IR001    30
+ 1 90145 IR001    30
+ 1 90151 IR001    30
+ 1 90157 IR001    30
+ 1 90163 IR001    30
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 2 90013 IR001    30 
+ 2 90037 IR001    30
+ 2 90097 IR001    30
+ 2 90133 IR001    30
+ 2 90157 IR001    30
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 3     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 3 90001 IR001    30
+ 3 90013 IR001    30
+ 3 90025 IR001    30
+ 3 90037 IR001    30
+ 3 90049 IR001    30
+ 3 90073 IR001    30
+ 3 90097 IR001    30
+ 3 90109 IR001    30
+ 3 90157 IR001    30
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME   
+ 1 89345 FE005 AP002     5   150     0     0     0     0   -99 -99 
+ 1 90040 FE005 AP002     5    50     0     0     0     0   -99 -99
+ 1 90060 FE005 AP002     5    50     0     0     0     0   -99 -99
+ 2 89345 FE005 AP002     5    50     0     0     0     0   -99 -99 
+ 2 90060 FE005 AP002     5    20     0     0     0     0   -99 -99
+ 
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME  RINP have to be 0 (otherwise ES wrong ans DTDEP>150,  RCOD have to be RE002
+ 1 89345 RE003 20000    .8   -99   -99     0     0   -99 -99
+ 
+*ENVIRONMENT MODIFICATIONS
+@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
+ 1 89345 A   0 A   0 A   0 A   0 A 0.0 R 350 A   0 A   0 350ppm CO2/25oC
+ 2 89345 A   0 A   0 A   0 A   0 A 0.0 R 420 A   0 A   0 420ppm CO2/35oC
+ 3 89345 A   0 A   0 A   0 A   0 A 0.0 R 500 A   0 A   0 500ppm CO2/25oC
+ 4 89345 A   0 A   0 A   0 A   0 A 0.0 R 650 A   0 A   0 650ppm CO2/35oC
+ 5 89345 A   0 A   0 A   0 A   0 A 0.0 R 700 A   0 A   0 700ppm CO2/25oC
+ 6 89345 R  16 R18.7 R  35 R  25 A 0.0 R 800 A   0 A   0 800/35
+         
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 90120   -99     G   -99   100     0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL       !WHAPS045  CSCER
+ 1 GE              1     1     S 89345  2150 NWheat No Stress          WHAPS045
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              N     N     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     P     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     D     N     Z
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          89345 89350    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 90120   100     0
+ 
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              1     1     S 89345  2150 NWheat Water Stress       WHAPS045
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     N     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              M     M     E     R     S     C     R     1     P     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 2 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 2 OU              N     Y     Y     1     Y     N     Y     Y     N     N     D     N     Z
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          89345 89350    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 2 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 90120   100     0
+ 
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 3 GE              1     1     S 89345  2150 NWheat Water+N Stress     WHAPS045
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 3 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 3 ME              M     M     E     R     S     C     R     1     P     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 3 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 3 OU              N     Y     Y     1     Y     N     Y     Y     N     N     D     N     Z
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 3 PL          89345 89350    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 3 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 3 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 3 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 3 HA              0 90120   100     0
