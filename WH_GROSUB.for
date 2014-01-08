@@ -2682,9 +2682,13 @@ cbak   add the relevant c and n pools to the soil organic matter cycling
 
 cbak  plsc(mxleaf) accumulates leaf area in an array for each phylochron
 !      interval
- 
-       plsc(int(cumph_nw(istage))+2) = plsc(int(cumph_nw(istage))+2)
-     :                           + gro_wt(leaf_part)*sla_new
+
+!      chp modified 1/8/2014
+!      plsc(int(cumph_nw(istage))+2) = plsc(int(cumph_nw(istage))+2)
+!    :                           + gro_wt(leaf_part)*sla_new
+       i = min(int(cumph_nw(istage))+2,20)
+       plsc(i) = plsc(i) + gro_wt(leaf_part)*sla_new
+
 !----------------------------------------------------------------------
 !*! Begin WHAPS calculation of leaf senescense
 !*! returns the area of leaf that is senesced on a plant (mm^2/plant) 
@@ -2710,7 +2714,10 @@ cbak  plsc(mxleaf) accumulates leaf area in an array for each phylochron
             if (sen_la/pl_la .gt. 0.4 .and. lai .lt. 6.0) then
                slan = 0.0
             else
-               dyingleaf = cumph_nw(istage) + 2 - (greenlfno+1)
+!              chp modified 1/8/2014
+!              dyingleaf = cumph_nw(istage) + 2 - (greenlfno+1)
+               dyingleaf = min(int(cumph_nw(istage) + 2 - (greenlfno+1))
+     &                                                              ,20)
                slan = plsc(dyingleaf)*ti
  
                 ! do a bit of housekeeping - really this is not the place to do
@@ -2778,7 +2785,9 @@ cbak increase slan to account for stresses
  
 cbak  adjust the plsc leaf area array to reflect leaf senesence
  
-      do I = 1, cumph_nw(istage)+2
+!     chp modified 1/8/2014
+!     do I = 1, cumph_nw(istage)+2
+      do I = 1, min(int(cumph_nw(istage))+2, 20)
          plsc(I) = plsc(I) - leafsen/real(greenlfno)
 !*!      plsc(I) = l_bound (plsc(I), 0.0)
          plsc(I) = MAX (plsc(I), 0.0)
