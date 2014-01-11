@@ -56,6 +56,7 @@
       REAL, DIMENSION(0:MaxStag) :: N_photR, CETR, CEPR, DAYLR, N_growR
       REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR, CO2R
       REAL, DIMENSION(0:MaxStag) :: W_photR, TMAXR, TMINR, W_growR
+      REAL, DIMENSION(0:MaxStag) :: TMEANR, 
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 20
@@ -215,19 +216,20 @@
       IF (IDETO_SAVE .EQ. 'Y' .AND. STTOT > 0 .AND.
      &      CONTROL % ErrCode == 0) THEN
         WRITE(NOUTDO,500)
- 500    FORMAT(//,'*ENVIRONMENTAL AND STRESS FACTORS',//,
-     &' |-----Development Phase------',
-     &'|-----------------Environment-----------------',
-     &'|----------------Stress-----------------|',/,
-     &30X,'|-----------Average-----------|---Cumulative--|',
-     &'         (0=Min, 1=Max Stress)         |',/,
-     &25X,'Time  Temp  Temp Solar Photop                Evapo ',
-     &'|----Water---|--Nitrogen--|--Phosphorus-|',/,
-     &25X,'Span   Max   Min   Rad  [day]    CO2   Rain  Trans  Photo',
-     &9X,'Photo         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr    ppm     mm     mm  synth',
-     &' Growth  synth Growth  synth Growth',/,117('-'))
-
+ 500    FORMAT(//,'*ENVIRONMENTAL AND STRESS FACTORS',//,1X, 
+     &'|-----Development Phase------|'36('-'),'Environment',37('-'),
+     &'| ',18('-'),'Stress',18('-'),'|',
+     &/,30X,'|',15('-'),'Average',14('-'),'|-----Cumulative-----',
+     &'|--------Count of days--------|',18X,'(0=Min, 1=Max Stress) |',
+     &/,25X,'Time  Temp  Temp  Temp Solar Photop',16X,'Evapo    Pot',
+     &' TMIN TMIN TMAX TMAX TMAX RAIN| ----Water---|--Nitrogen--|--',
+     &'Phosphorus-|',
+     &/,25X,'Span   Max   Min  Mean   Rad  [day]    CO2   Rain  Trans ',
+     &'    ET   <    <    >    >    >    >   Photo         Photo      ',
+     &'   Photo',
+     &/,25X,'days    øC    øC    øC MJ/m2     hr    ppm     mm     mm ',
+     &'    mm  0øC  2øC 30øC 32øC 34øC  0mm  synth Growth  synth ',
+     &'Growth  synth Growth',/,161('-'))
       ENDIF
 
       IF (RNMODE .EQ. 'I' .AND. NYRS .LE. 1) THEN
