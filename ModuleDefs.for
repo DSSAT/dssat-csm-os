@@ -565,6 +565,7 @@ C-GH    Set to DSSAT46
      &                  , GET_ISWITCH 
      &                  , GET_Output 
      &                  , GET_SOILPROP
+!     &                  , GET_Weather
      &                  , GET_Real 
      &                  , GET_Real_Array_NL
      &                  , GET_Integer
@@ -576,6 +577,7 @@ C-GH    Set to DSSAT46
      &                  , PUT_ISWITCH 
      &                  , PUT_Output 
      &                  , PUT_SOILPROP
+!     &                  , PUT_Weather
      &                  , PUT_Real 
      &                  , PUT_Real_Array_NL
      &                  , PUT_Integer
@@ -655,6 +657,24 @@ C-GH    Set to DSSAT46
       SAVE_data % SOILPROP = SOIL_ARG
       RETURN
       END SUBROUTINE PUT_SOILPROP
+
+!!----------------------------------------------------------------------
+!      SUBROUTINE GET_WEATHER(WEATHER_ARG)
+!!     Retrieves WEATHER variable as needed
+!      IMPLICIT NONE
+!      TYPE (WeathType) WEATHER_ARG
+!      WEATHER_ARG = SAVE_data % WEATHER
+!      RETURN
+!      END SUBROUTINE GET_WEATHER
+!
+!!----------------------------------------------------------------------
+!      SUBROUTINE PUT_WEATHER(WEATHER_ARG)
+!!     Stores WEATHER variable 
+!      IMPLICIT NONE
+!      TYPE (WeathType) WEATHER_ARG
+!      SAVE_data % WEATHER = WEATHER_ARG
+!      RETURN
+!      END SUBROUTINE PUT_WEATHER
 
 !----------------------------------------------------------------------
       Subroutine GET_Real(ModuleName, VarName, Value)

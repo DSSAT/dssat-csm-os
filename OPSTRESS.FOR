@@ -41,12 +41,11 @@
       CHARACTER*23 STAG(0:MaxStag)
 
       INTEGER DYNAMIC, I, NOUTDO, NYRS, STTOT, NDCH
-      INTEGER, DIMENSION(0:MaxStag) :: NNR
 
       REAL TMAX, TMIN, RAIN, DAYL, SRAD, CO2
       REAL N_phot, N_grow, W_phot, W_grow
       REAL P_grow, P_phot
-      REAL ET_L, EP_L, TOTIR
+      REAL ET_L, EP_L, EO_L, TOTIR
       REAL DMP_Rain, GrP_Rain, DMP_ET, GrP_ET, DMP_EP, GrP_EP 
       REAL DEPIR, DMP_Irr, GrP_Irr
       REAL DMP_NApp, GrP_NApp, DMP_NUpt, GrP_NUpt
@@ -56,7 +55,10 @@
       REAL, DIMENSION(0:MaxStag) :: N_photR, CETR, CEPR, DAYLR, N_growR
       REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR, CO2R
       REAL, DIMENSION(0:MaxStag) :: W_photR, TMAXR, TMINR, W_growR
-      REAL, DIMENSION(0:MaxStag) :: TMEANR, 
+      REAL, DIMENSION(0:MaxStag) :: TMEANR, CEOR
+      INTEGER, DIMENSION(0:MaxStag) :: NNR, Ndays_RAIN
+      INTEGER, DIMENSION(0:MaxStag) :: Ndays_LT0, Ndays_LT2, Ndays_GT30
+      INTEGER, DIMENSION(0:MaxStag) :: Ndays_GT32, Ndays_GT34
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 20
@@ -105,11 +107,12 @@
 !     Zero averages in arrays
       TMAXR = 0.0
       TMINR = 0.0
+      TMEANR= 0.0
       RAINR = 0.0
       DAYLR = 0.0
       RADR  = 0.0
       CO2R  = 0.0
-      CETR  = 0.0; CEPR = 0.0
+      CETR  = 0.0; CEPR = 0.0; CEOR = 0.0
       W_growR = 0.0
       W_photR = 0.0
       N_growR = 0.0
@@ -118,9 +121,17 @@
       P_photR = 0.0
 
       NNR   = 0
+      Ndays_RAIN = 0
+      Ndays_LT0  = 0
+      Ndays_LT2  = 0
+      Ndays_GT30 = 0
+      Ndays_GT32 = 0
+      Ndays_GT34 = 0
 
       ET_L   = 0.0
       EP_L   = 0.0
+      EO_L   = 0.0
+
       W_grow = 1.0 
       W_phot = 1.0  
       N_grow = 1.0 
@@ -174,6 +185,7 @@
 !-----------------------------------------------------------------------
       CALL GET('SPAM','ET',ET_L)
       CALL GET('SPAM','EP',EP_L)
+      CALL GET('SPAM','EO',EO_L)
 
       IF (PRESENT(PlantStres)) THEN
         W_grow = PlantStres % W_grow  !was TURFAC
@@ -188,23 +200,40 @@
         DO I = 0, PlantStres % NSTAGES
           IF (PlantStres % ACTIVE(I)) THEN
             NNR(I) = NNR(I) + 1
+
             TMAXR(I) = TMAXR(I) + TMAX
             TMINR(I) = TMINR(I) + TMIN
+            TMEANR(I)= TMEANR(I)+ (TMAX + TMIN) / 2.0
             RAINR(I) = RAINR(I) + RAIN
 !           CumIrr(I)= CumIrr(I)+ DEPIR
             DAYLR(I) = DAYLR(I) + DAYL
             RADR (I) = RADR (I) + SRAD 
             CO2R (I) = CO2R (I) + CO2 
+
             CETR(I)  = CETR(I)  + ET_L
             CEPR(I)  = CEPR(I)  + EP_L
+            CEOR(I)  = CEOR(I)  + EO_L
+
             W_growR(I) = W_growR(I) + W_grow 
             W_photR(I) = W_photR(I) + W_phot  
             N_growR(I) = N_growR(I) + N_grow 
             N_photR(I) = N_photR(I) + N_phot
             P_growR(I) = P_growR(I) + P_grow
             P_photR(I) = P_photR(I) + P_phot
+
+            IF (RAIN > 0.0) Ndays_RAIN(I) = Ndays_RAIN(I) + 1
+            IF (TMIN < 0.0) Ndays_LT0(I)  = Ndays_LT0(I)  + 1
+            IF (TMIN < 2.0) Ndays_LT2(I)  = Ndays_LT2(I)  + 1
+            IF (TMAX > 30.) Ndays_GT30(I) = Ndays_GT30(I) + 1
+            IF (TMAX > 32.) Ndays_GT32(I) = Ndays_GT32(I) + 1
+            IF (TMAX > 34.) Ndays_GT34(I) = Ndays_GT34(I) + 1
+
           ENDIF
         ENDDO
+
+            !temp chp
+            write(3000,'(i7,6i5,6f6.1)') control.yrdoy, nnr, tmaxr
+
       ENDIF
 
 !***********************************************************************
@@ -217,19 +246,20 @@
      &      CONTROL % ErrCode == 0) THEN
         WRITE(NOUTDO,500)
  500    FORMAT(//,'*ENVIRONMENTAL AND STRESS FACTORS',//,1X, 
-     &'|-----Development Phase------|'36('-'),'Environment',37('-'),
-     &'| ',18('-'),'Stress',18('-'),'|',
+     &'|-----Development Phase------|'38('-'),'Environment',38('-'),
+     &'|',17('-'),'Stress',17('-'),'|',
      &/,30X,'|',15('-'),'Average',14('-'),'|-----Cumulative-----',
-     &'|--------Count of days--------|',18X,'(0=Min, 1=Max Stress) |',
+     &'|--------Count of days--------|',10X,'(0=Min, 1=Max Stress)',9X,
+     &'|',
      &/,25X,'Time  Temp  Temp  Temp Solar Photop',16X,'Evapo    Pot',
-     &' TMIN TMIN TMAX TMAX TMAX RAIN| ----Water---|--Nitrogen--|--',
-     &'Phosphorus-|',
+     &' TMIN TMIN TMAX TMAX TMAX RAIN|----Water----|---Nitrogen--|',
+     &'-Phosphorus-|',
      &/,25X,'Span   Max   Min  Mean   Rad  [day]    CO2   Rain  Trans ',
      &'    ET   <    <    >    >    >    >   Photo         Photo      ',
      &'   Photo',
      &/,25X,'days    øC    øC    øC MJ/m2     hr    ppm     mm     mm ',
      &'    mm  0øC  2øC 30øC 32øC 34øC  0mm  synth Growth  synth ',
-     &'Growth  synth Growth',/,161('-'))
+     &'Growth  synth Growth',/,160('-'))
       ENDIF
 
       IF (RNMODE .EQ. 'I' .AND. NYRS .LE. 1) THEN
@@ -240,10 +270,12 @@
         IF (NNR(I) > 0) THEN
           TMAXR(I) = TMAXR(I)/ NNR(I)
           TMINR(I) = TMINR(I)/ NNR(I)
+          TMEANR(I)= TMEANR(I)/NNR(I)
           DAYLR(I) = DAYLR(I)/ NNR(I)
           !RADTR(I) = RADR(I)
           RADR (I) = RADR(I) / NNR(I)
           CO2R (I) = CO2R(I) / NNR(I)
+
           W_growR(I) = 1. - (W_growR(I) / NNR(I))
           W_photR(I) = 1. - (W_photR(I) / NNR(I))
           N_growR(I) = 1. - (N_growR(I) / NNR(I))
@@ -258,15 +290,23 @@
      &      CONTROL % ErrCode == 0) THEN
           IF (RAINR(I) < 1000.) THEN
             WRITE(NOUTDO,600) STAG(I), NNR(I), TMAXR(I), TMINR(I), 
-     &        RADR(I), DAYLR(I), CO2R(I), RAINR(I), CETR(I), W_photR(I),
+     &        TMEANR(I),
+     &        RADR(I), DAYLR(I), CO2R(I), RAINR(I), CETR(I), CEOR(I), 
+     &        Ndays_LT0(I), Ndays_LT2(I), Ndays_GT30(I), Ndays_GT32(I),
+     &        Ndays_GT34(I), Ndays_RAIN(I), W_photR(I),
      &        W_growR(I), N_photR(I), N_growR(I), P_photR(I), P_growR(I)
-  600       FORMAT(1X,A23,I5,3F6.1,F7.2,3F7.1,6F7.3)
+! 600       FORMAT(1X,A23,I5,3F6.1,F7.2,3F7.1,6F7.3)
+  600       FORMAT(1X,A23,I5,4F6.1,F7.2,4F7.1,6I5,6F7.3)
           ELSE
             WRITE(NOUTDO,610) STAG(I), NNR(I), TMAXR(I), TMINR(I), 
+     &        TMEANR(I),
      &        RADR(I), DAYLR(I), CO2R(I), NINT(RAINR(I)), NINT(CETR(I)),
-     &        W_photR(I), W_growR(I), N_photR(I), N_growR(I), 
-     &        P_photR(I), P_growR(I)
-  610       FORMAT(1X,A23,I5,3F6.1,F7.2,F7.1,2I7,6F7.3)
+     &        NINT(CEOR(I)), 
+     &        Ndays_LT0(I), Ndays_LT2(I), Ndays_GT30(I), Ndays_GT32(I),
+     &        Ndays_GT34(I), Ndays_RAIN(I), W_photR(I),
+     &        W_growR(I), N_photR(I), N_growR(I), P_photR(I), P_growR(I)
+! 610       FORMAT(1X,A23,I5,3F6.1,F7.2,F7.1,2I7,6F7.3)
+  610       FORMAT(1X,A23,I5,4F6.1,F7.2,F7.1,3I7,6F7.3)
           ENDIF
         ENDIF
 
@@ -287,18 +327,25 @@
 !     Print seasonal environment & stress summary from planting to harvest
       IF (IDETO_SAVE .EQ. 'Y' .AND. STTOT > 0 .AND.
      &      CONTROL % ErrCode == 0) THEN
-        IF (RAINR(0) < 1000.) THEN
-          WRITE(NOUTDO,700) STAG(0), NNR(0), TMAXR(0), TMINR(0), 
-     &      RADR(0), DAYLR(0), CO2R(0), RAINR(0), CETR(0), W_photR(0), 
-     &      W_growR(0), N_photR(0), N_growR(0), P_photR(0), P_growR(0)
-  700     FORMAT(/,1X,A23,I5,3F6.1,F7.2,3F7.1,6F7.3)
+        I = 0
+!        WRITE(NOUTDO,'(/)')
+        IF (RAINR(I) < 1000.) THEN
+          WRITE(NOUTDO,600) STAG(I), NNR(I), TMAXR(I), TMINR(I), 
+     &      TMEANR(I),
+     &      RADR(I), DAYLR(I), CO2R(I), RAINR(I), CETR(I), CEOR(I), 
+     &      Ndays_LT0(I), Ndays_LT2(I), Ndays_GT30(I), Ndays_GT32(I),
+     &      Ndays_GT34(I), Ndays_RAIN(I), W_photR(I),
+     &      W_growR(I), N_photR(I), N_growR(I), P_photR(I), P_growR(I)
         ELSE
-          WRITE(NOUTDO,710) STAG(0), NNR(0), TMAXR(0), TMINR(0), 
-     &      RADR(0), DAYLR(0), CO2R(0), NINT(RAINR(0)), NINT(CETR(0)),
-     &      W_photR(0), W_growR(0), N_photR(0), N_growR(0), 
-     &      P_photR(0), P_growR(0)
-  710     FORMAT(/,1X,A23,I5,3F6.1,F7.2,F7.1,2I7,6F7.3)
+          WRITE(NOUTDO,610) STAG(I), NNR(I), TMAXR(I), TMINR(I), 
+     &      TMEANR(I),
+     &      RADR(I), DAYLR(I), CO2R(I), NINT(RAINR(I)), NINT(CETR(I)),
+     &      NINT(CEOR(I)), 
+     &      Ndays_LT0(I), Ndays_LT2(I), Ndays_GT30(I), Ndays_GT32(I),
+     &      Ndays_GT34(I), Ndays_RAIN(I), W_photR(I),
+     &      W_growR(I), N_photR(I), N_growR(I), P_photR(I), P_growR(I)
         ENDIF
+        WRITE(NOUTDO,"(160('-'))")
       ENDIF
 
 !     Resource productivity calculations
@@ -386,8 +433,6 @@
       ENDIF
 
  1200 FORMAT(
-     &'-------------------------------------------------------------',
-     &'--------------------------------------------------------',
      &//,'*Resource Productivity',
      & /,' Growing season length:', I4,' days ',
      &//,' Precipitation during growing season',T42,F7.1,' mm[rain]',
