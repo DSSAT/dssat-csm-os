@@ -1100,28 +1100,7 @@ C--------------------------------------------------------------------
         KEP = KCAN/(1-0.07)*(1-0.25)
 
 
-        CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
-     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
-     &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
-     &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
-     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
-     &      FILECC,
-     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
-     &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
-     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
-     &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
-     &      STMWTO, WTLF, FSLFP)
+     
 
       !---------------------------------------------------------------
       !   Subroutine IPPARM reads FILEP, the PEST progress file.
@@ -1175,7 +1154,30 @@ C--------------------------------------------------------------------
      &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
      &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)                                 
+     &      SeedFrac, VegFrac)         
+          
+             CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
+     &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
+     &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
+     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      FILECC,
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
+     &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
+     &      STMWTO, WTLF, FSLFP)
 
          !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
