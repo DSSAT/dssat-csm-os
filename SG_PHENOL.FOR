@@ -17,6 +17,7 @@ C  01/15/2008 GH  Include GDDE for P9 calculation
 C  01/16/2008 GH  Rename DJTI to P2 and move to cultivar file
 C  01/16/2008 GH  Add cultivar coefficient PANTH
 C  06/01/2007 GH  Add P-model (unfinished)
+C  01/06/2014 MA  Change to couple the P model     
 C-----------------------------------------------------------------------
 C  INPUT  : YRDOY
 C
@@ -226,7 +227,7 @@ C------------------------------------------------------------------------
       REAL PBASE, PSAT
 !     Added for P model
       REAL SeedFrac, VegFrac
-      REAL SUMDTT_2
+      REAL SUMDTT_2, SUMDTT_3
 
       INTEGER DYNAMIC
 !----------------------------------------------------------------------
@@ -236,6 +237,7 @@ C------------------------------------------------------------------------
       SeedFrac = 0.0
       VegFrac  = 0.0
       SUMDTT_2 = 0.0
+      SUMDTT_3 = 0.0
 
 !----------------------------------------------------------------------
 !         DYNAMIC = RATE OR INTEGRATE
@@ -507,13 +509,18 @@ C     based on physiological time, but rather on daylight hours, we
 C     will make the assumption that the physical duration of that phase 
 C     is 10 days at optimum temperature.
 
-          VegFrac = SUMDTT / (P1 + 10. * (DOPT - TBASE) + P3 + P4)
+!  VegFrac = SUMDTT / (P1 + 10. * (DOPT - TBASE) + P3 + P4)
+! MA 06-07jan2014, change to 20 days ( 10 is too few)
+! VegFrac is now defined from emergence to beginning of grain filling
+! VegFrac includes P1, P2 adapted according to P2R with should includes  PANTH( with P3)
+         VegFrac = SUMDTT /(P1 +P2R + PANTH +P4) 
 
         IF (SUMDTT .LT. P1) RETURN
         STGDOY(ISTAGE) = YRDOY
 
 C -------------------------------------------------------------------
 C         ISTAGE = 2: Determine date of panicle initiation
+C-MA from end of juvenile to tassel inititiation (P2 adapted to PP)
 C--------------------------------------------------------------------
        ELSEIF (ISTAGE .EQ. 2) THEN
           XSTAGE = 2.0 + SIND
@@ -524,8 +531,9 @@ C--------------------------------------------------------------------
              ENDIF
           IF (ICSDUR .EQ. 1) THEN
              PDTT = SUMDTT - P1
-             ENDIF
-
+          ENDIF
+          
+          
 !        Add option for using PBASE, PSAT.  If these parameters 
 !           are present (non-zero) then use alternate method.
          IF (PBASE < 1.E-2 .OR. PSAT < 1.E-2) THEN
@@ -565,33 +573,46 @@ C-GH       SIND = SIND + RATEIN * PDTT
            SIND = RATEIN * SUMDTT
          ENDIF
 
-!--------------------------------------------------------------------
-          IF (SUMDTT .GT. (P1 + 10. * (DOPT - TBASE))) THEN
-             VegFrac = SUMDTT / (SUMDTT + P3 + P4)
-          ELSE
-             VegFrac = SUMDTT / (P1 + 10. * (DOPT - TBASE) + P3 + P4)
-          ENDIF
+!------------------------------------------------------------------------
+         
+C-MA         IF (SUMDTT .GT. (P1 + 10. * (DOPT - TBASE))) THEN
+C-MA              VegFrac = SUMDTT / (SUMDTT + P3 + P4)
+C-MA           ELSE
+C-MA              VegFrac = SUMDTT / (P1 + 10. * (DOPT - TBASE) + P3 + P4)
+C-MA          ENDIF
 
+         ! MA 06jan2014 !
+          VegFrac = SUMDTT /(P1 + P2R+ PANTH +P4)
+          
 C-GH     IF (SIND .LT. 1.0) RETURN
+         IF (CUMP2 .LT. RATEIN) RETURN
+         
          IF (CUMP2 .LT. RATEIN) THEN
            RETURN
-         ELSE
-           STGDOY(ISTAGE) = YRDOY
-           SUMDTT_2 = SUMDTT  
+        ELSE
+              STGDOY(ISTAGE) = YRDOY
+              SUMDTT_2 = SUMDTT  ! SUMDTT_2 = p1 + adapted P2 without PANTH --MA
+              VegFrac= max (VegFrac,SUMDTT_2/(SUMDTT_2+PANTH+P4))
+        ENDIF
 
-           VegFrac = SUMDTT_2 / (SUMDTT_2 + P3 + P4)
-         ENDIF
+     
+
+
 
 C--------------------------------------------------------------------
 C         ISTAGE = 3: Determine end of flag leaf expansion
 C                     [formerly end of leaf growth]
+C-MA from tassel initiation to end of leaf growth (PANTH-P3)
 C--------------------------------------------------------------------
-       ELSEIF (ISTAGE .EQ. 3) THEN
+        
+          ELSEIF (ISTAGE .EQ. 3) THEN
           IDUR1 = IDUR1 + 1
 C-GH      XSTAGE = 3.0 + 2.0*SUMDTT/P3
           XSTAGE = 3.0 + 2.0*SUMDTT/(PANTH - P3)
-          VegFrac = (SUMDTT + SUMDTT_2) / (SUMDTT_2 + P3 + P4)
-          SeedFrac = SUMDTT / (P3 + P4 + P5)
+C-MA      VegFrac = (SUMDTT + SUMDTT_2) / (SUMDTT_2 + P3 + P4)
+          VegFrac = max (VegFrac,(SUMDTT_2+ SUMDTT)/
+     &              (SUMDTT_2 + PANTH+P4))
+C-MA          SeedFrac = SUMDTT / (P3 + P4 + P5)
  
 C-GH      IF (SUMDTT .LT. P3) THEN
           IF (SUMDTT .LT. (PANTH - P3)) THEN
@@ -599,11 +620,15 @@ C-GH      IF (SUMDTT .LT. P3) THEN
           ELSE
             STGDOY(ISTAGE) = YRDOY
             MAXLAI = LAI
+            SUMDTT_3 = SUMDTT_2 + SUMDTT ! SUMDDT_3 = P1 +P2 adapted + (PANTH -P3)
+            VegFrac = max (VegFrac,SUMDTT_3 /
+     &                       (SUMDTT_3 + P3+P4)) 
           ENDIF
 
 C--------------------------------------------------------------------
 C         ISTAGE = 4: Determine beginning grain filling
 C                     [formerly end of panicle growth]
+C-MA from end leaf growth to beginning of grain filling, including P3+P4
 C--------------------------------------------------------------------
        ELSEIF (ISTAGE .EQ. 4) THEN
 C--------------------------------------------------------------------
@@ -633,13 +658,18 @@ C-GH      PFLOWR = 2.5*PHINT+30.0
 
           CUMP4 = CUMP4 + DTT
 
-          VegFrac = (SUMDTT + SUMDTT_2 + P3) / (SUMDTT_2 + P3 + P4)
-          SeedFrac = (SUMDTT + P3) / (P3 + P4 + P5)
+!      VegFrac = MAX(VegFrac,(SUMDTT + SUMDTT_2) /
+!     & (SUMDTT_2 + (PANTH)+P4))
+       VegFrac = max(VegFrac,(SUMDTT + SUMDTT_3)/(SUMDTT_3+ PFLOWR+P4))
+C-MA           SeedFrac = (SUMDTT + P3) / (P3 + P4 + P5)
+     
+
           IF (SUMDTT .LT. (PFLOWR + P4)) THEN
             RETURN
           ELSE
             STGDOY(ISTAGE) = YRDOY
             VegFrac = 1.0
+            
 
             IF (GPP .LE. 0.0) THEN
               GPP   = 1.0
@@ -651,7 +681,8 @@ C--------------------------------------------------------------------
        ELSEIF (ISTAGE .EQ. 5) THEN
 	       CUMP4 = CUMP4 + DTT
              XSTAGE = 6.5 + 2.5*SUMDTT/P5
-             SeedFrac = (SUMDTT + P3 + P4) / (P3 + P4 + P5)
+C-MA             SeedFrac = (SUMDTT + P3 + P4) / (P3 + P4 + P5)
+             SeedFrac = SUMDTT / (P5)
 
              IF (SUMDTT .LT. P5) RETURN
              SeedFrac = 1.0
