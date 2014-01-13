@@ -61,13 +61,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 26
+        INTEGER :: Build = 27
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-abiotic  '
+      CHARACTER(len=10) :: VBranch = '-develop  '
 !     Development branch for expanding the outputs of abiotic stresses
 
 !     Version history:  
+!       4.6.0.27 chp 01/12/2014 Added abiotic stresses to overview.out
 !       4.6.0.26 chp 12/22/2013 Fixed issue with tillage routine for crop rotations
 !       4.6.0.25 chp 12/03/2013 
 !       4.6.0.24 chp 08/30/2013 Add in Tony's code from email 6/11/2013
