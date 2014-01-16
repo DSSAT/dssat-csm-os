@@ -58,7 +58,7 @@ C-----------------------------------------------------------------------
       INTEGER     DYNAMIC     
 
       REAL        AGEFAC, ASMDOT, BIOMAS, CARBO, CNSD1, CNSD2
-	    REAL        CO2X(10), CO2Y(10), CO2, CSD2, CUMDTT, CUMPH
+	REAL        CO2X(10), CO2Y(10), CO2, CSD2, CUMDTT, CUMPH
       REAL        CUMP4, CURV, DM, DTT         
       
       REAL        EOP
