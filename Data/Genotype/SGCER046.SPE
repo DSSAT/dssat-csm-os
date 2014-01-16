@@ -29,8 +29,8 @@
 *STRESS RESPONSE
   FSLFW   0.050     !Fraction of leaf area senesced under 100% water stress, 1/day
   FSLFN   0.050     !Fraction of leaf area senesced under 100% nitrogen stress, 1/day
-  FSLFP   0.000     !Fraction of leaf area senesced under 100% phosphorus stress, 1/day
-! FSLFP   0.050     !Fraction of leaf area senesced under 100% phosphorus stress, 1/day
+!  FSLFP   0.000     !Fraction of leaf area senesced under 100% phosphorus stress, 1/day
+ FSLFP   0.050     !Fraction of leaf area senesced under 100% phosphorus stress, 1/day
 
 *SEED GROWTH PARAMETERS
   DSGT    21.0      !Maximum days from sowing to germination before seed dies.
@@ -48,15 +48,17 @@
   RTPC    0.25      !Partitioning to root growth as a fraction of available carbohydrates
 
 ! From Maize. Need to update (GH 6/1/2007)
-*PHOSPHORUS CONTENT
-  0.0070  0.0040  0.0030  Optimum Shoot Conc (emergence, eff. grain fill, phys. mat)
+*PHOSPHORUS CONTENT (g[P]/g [shoot])
+!   0.0070  0.0040  0.0030  Optimum Shoot Conc (emergence, eff. grain fill, phys. mat)
+  0.0060  0.0020  0.0010  Optimum Shoot Conc (emergence, eff. grain fill, phys. mat) !MA ( data of Pconc in shoot at mat = 0.89mg/g Leiser et al.2013)
    -99.0   -99.0   -99.0  Optimum Leaf Conc  (emergence, eff. grain fill, phys. mat)
    -99.0   -99.0   -99.0  Optimum Stem Conc  (emergence, eff. grain fill, phys. mat)
   .00041  .00041  .00041  Optimum Root Conc  (emergence, eff. grain fill, phys. mat)
   0.0050  0.0050  0.0005  Optimum Shell Conc (emergence, eff. grain fill, phys. mat)
   0.0035  0.0035  0.0035  Optimum Seed Conc  (emergence, eff. grain fill, phys. mat)
 
-  0.0040  0.0030  0.0020  Minimum Shoot Conc (emergence, eff. grain fill, phys. mat)
+!  0.0040  0.0030  0.0020  Minimum Shoot Conc (emergence, eff. grain fill, phys. mat)
+  0.0040  0.0015  0.0005  Minimum Shoot Conc (emergence, eff. grain fill, phys. mat)! MA changed according to maize file
    -99.0   -99.0   -99.0  Minimum Leaf Conc  (emergence, eff. grain fill, phys. mat)
    -99.0   -99.0   -99.0  Minimum Stem Conc  (emergence, eff. grain fill, phys. mat)
   .00020  .00020  .00020  Minimum Root Conc  (emergence, eff. grain fill, phys. mat)
@@ -68,7 +70,9 @@
 
     0.80    1.00  SRATPHOTO, SRATPART
     0.10          FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
-  0.0020          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m)
+!   0.0020          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m)
+    0.0028          ROOTRAD - radius of cylinder around roots from which soil P can be extracted (m) !MA
+
 
 
 
