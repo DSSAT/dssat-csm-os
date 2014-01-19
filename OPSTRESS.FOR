@@ -324,7 +324,7 @@
       IF (IDETO_SAVE .EQ. 'Y' .AND. STTOT > 0 .AND.
      &      CONTROL % ErrCode == 0) THEN
         I = 0
-!        WRITE(NOUTDO,'(/)')
+        WRITE(NOUTDO,'(/)')
         IF (RAINR(I) < 1000.) THEN
           WRITE(NOUTDO,600) STAG(I), NNR(I), TMAXR(I), TMINR(I), 
      &      TMEANR(I),
