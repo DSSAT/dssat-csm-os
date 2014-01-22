@@ -152,7 +152,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6     ECONO           
       INTEGER         ERR             
       CHARACTER*6     ERRKEY          
-      PARAMETER       (ERRKEY='MZPHEN')          
+      PARAMETER       (ERRKEY='WHAPS')          
 !*!      PARAMETER       (ERRKEY='WHPHEN')
       INTEGER         ERRNUM
       CHARACTER*12    FILEC     
