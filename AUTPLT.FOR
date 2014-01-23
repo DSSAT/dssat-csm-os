@@ -203,8 +203,11 @@ C-----------------------------------------------------------------------
       IF (PWDINL .LT. 1000) PWDINL = YEAR * 1000 + PWDINL
 C-----------------------------------------------------------------------
 C     Too early.
-C-----------------------------------------------------------------------
       IF (YRDOY .LT. PWDINF) RETURN
+
+!     Too late
+      IF (YRDOY .GT. PWDINL) RETURN
+
 C-----------------------------------------------------------------------
 C     Within planting window.
 C-----------------------------------------------------------------------
@@ -270,8 +273,12 @@ C-----------------------------------------------------------------------
           IF ((AVGSW .GE. SWPLTL .AND. AVGSW .LE. SWPLTH) .OR. 
      &        (ISWWAT .EQ. 'N')) THEN
             SOILWOK = .TRUE.
+
+!           Soil temperature and soil water are within acceptable ranges
+!           Plant today
             YRPLT = YRDOY
             CALL YR_DOY(YRPLT,YR,IPLT)
+
           ELSE
             SOILWOK = .FALSE.
           ENDIF

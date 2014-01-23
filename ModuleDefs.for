@@ -61,12 +61,16 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 26
+        INTEGER :: Build = 28
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
+!     Development branch for expanding the outputs of abiotic stresses
 
 !     Version history:  
+!       4.6.0.29 chp 01/23/2014 Fixed bug in auto planting when IHARI = "R"
+!       4.6.0.28 chp 01/16/2014 Suppress screen output for VBOSE=zero.
+!       4.6.0.27 chp 01/12/2014 Added abiotic stresses to overview.out
 !       4.6.0.26 chp 12/22/2013 Fixed issue with tillage routine for crop rotations
 !       4.6.0.25 chp 12/03/2013 
 !       4.6.0.24 chp 08/30/2013 Add in Tony's code from email 6/11/2013
@@ -564,6 +568,7 @@ C-GH    Set to DSSAT46
      &                  , GET_ISWITCH 
      &                  , GET_Output 
      &                  , GET_SOILPROP
+!     &                  , GET_Weather
      &                  , GET_Real 
      &                  , GET_Real_Array_NL
      &                  , GET_Integer
@@ -575,6 +580,7 @@ C-GH    Set to DSSAT46
      &                  , PUT_ISWITCH 
      &                  , PUT_Output 
      &                  , PUT_SOILPROP
+!     &                  , PUT_Weather
      &                  , PUT_Real 
      &                  , PUT_Real_Array_NL
      &                  , PUT_Integer
@@ -654,6 +660,24 @@ C-GH    Set to DSSAT46
       SAVE_data % SOILPROP = SOIL_ARG
       RETURN
       END SUBROUTINE PUT_SOILPROP
+
+!!----------------------------------------------------------------------
+!      SUBROUTINE GET_WEATHER(WEATHER_ARG)
+!!     Retrieves WEATHER variable as needed
+!      IMPLICIT NONE
+!      TYPE (WeathType) WEATHER_ARG
+!      WEATHER_ARG = SAVE_data % WEATHER
+!      RETURN
+!      END SUBROUTINE GET_WEATHER
+!
+!!----------------------------------------------------------------------
+!      SUBROUTINE PUT_WEATHER(WEATHER_ARG)
+!!     Stores WEATHER variable 
+!      IMPLICIT NONE
+!      TYPE (WeathType) WEATHER_ARG
+!      SAVE_data % WEATHER = WEATHER_ARG
+!      RETURN
+!      END SUBROUTINE PUT_WEATHER
 
 !----------------------------------------------------------------------
       Subroutine GET_Real(ModuleName, VarName, Value)

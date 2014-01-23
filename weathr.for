@@ -325,7 +325,7 @@ C     Adjust wind speed from reference height to 2m height.
 C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
 
-      CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
+!      CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
 
 !***********************************************************************
 !***********************************************************************
@@ -405,6 +405,8 @@ C-----------------------------------------------------------------------
       WEATHER % TAIRHR = TAIRHR
       WEATHER % TGRO   = TGRO  
       WEATHER % WINDHR = WINDHR
+
+      CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
 
       RETURN
       END SUBROUTINE WEATHR
