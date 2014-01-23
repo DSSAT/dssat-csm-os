@@ -68,6 +68,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Development branch for expanding the outputs of abiotic stresses
 
 !     Version history:  
+!       4.6.0.29 chp 01/23/2014 Fixed bug in auto planting when IHARI = "R"
 !       4.6.0.28 chp 01/16/2014 Suppress screen output for VBOSE=zero.
 !       4.6.0.27 chp 01/12/2014 Added abiotic stresses to overview.out
 !       4.6.0.26 chp 12/22/2013 Fixed issue with tillage routine for crop rotations
