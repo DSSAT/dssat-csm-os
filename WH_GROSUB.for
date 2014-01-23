@@ -1195,6 +1195,7 @@
           YIELD  = 0.0
           YIELDB = 0.0
           rlv_nw = 0. ! add by JZW
+          plantwt = 0.0
           
           DO L=1,NL
               dlayr_nw(L) = DLAYR(L) * 10.0
@@ -2880,6 +2881,7 @@ cjh quick fix for maturity stage
           PODWT  = plantwt(lfsheath_part) * PLTPOP !sheath weight, g/m2
           STMWTO = plantwt(stem_part) * PLTPOP    !stem weight, g/m2
           SDWT   = plantwt(grain_part) * PLTPOP    !grain weight, g/m2
+          YIELD = SDWT * 10  ! added to pass yield to Overview & Summary.out
           tpsm = tiln * PLTPOP
           SHELPC = tpsm               ! Tiller number (no/m2)
           TOPWT  = WTLF+PODWT+STMWTO+SDWT  
