@@ -49,6 +49,7 @@ C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
 C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KD Added SALUS model
+C  02/03/2014 MF/PM SNOW variable deleted in CSCAS    
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -341,7 +342,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Cassava CSCAS
       CASE('CSCAS')
         CALL CSCAS_Interface (CONTROL, ISWITCH,           !Input
-     &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
+     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,            !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
      &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output

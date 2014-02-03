@@ -700,11 +700,11 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
       CASE ('CSCAS')
          WRITE (HEADER(I),'(A,A)')
      &     "  PPS1 B01ND B12ND B23ND B34ND B45ND B56ND",
-     &     "  S#FX SR#WT  SRFR  HMPC PHINT"
+     &     "  SR#WT  SRFR  HMPC PHINT"
          I=I+1
           WRITE (HEADER(I),'(F6.2,6F6.1,5F6.2)') 
      &     PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
-     &     SNFX, SRNWT, SRFR, HMPC, PHINT
+     &     SRNWT, SRFR, HMPC, PHINT
          I=I+1
          WRITE (HEADER(I),'(A,A)') 
      &     "  LA1S  LAXS LAXND LAXN2  LAFS LAFND  SLAS",

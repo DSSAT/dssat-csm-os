@@ -188,7 +188,7 @@ C-GH  Add cassava model
       CASE ('CSCAS')
           READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
      &      PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
-     &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
+     &      SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR, PLAINTXT
 
 !     Ceres-wheat: wheat, barley **

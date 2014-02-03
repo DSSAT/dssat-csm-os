@@ -289,11 +289,11 @@ C-----------------------------------------------------------------------
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
           WRITE (LUNIO,166,IOSTAT=ERRNUM) 
      &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
-     &      PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND, SNFX,
+     &      PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
      &      SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR, TRIM(PLAINTXT)
   166     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &      F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2,A)
+     &      F6.2,6F6.1,2F6.2,10F6.0,2F6.2,A)
 
       CASE ('SCCAN')
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
