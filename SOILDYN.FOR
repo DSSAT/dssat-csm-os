@@ -148,7 +148,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: BD_calc, BD_calc_init  !, BD_mineral
 
       REAL CN_BASE
-      REAL, DIMENSION(NL) :: DS_BASE, SC_BASE    !, RG_BASE
+      REAL, DIMENSION(NL) :: BD_BASE, DL_BASE, DS_BASE, SAT_BASE,SC_BASE    !, RG_BASE
 
 !     Labels for soil layer depth info
       CHARACTER*8 LayerText(11)
@@ -964,7 +964,7 @@ C  tillage and rainfall kinetic energy
       NTIL = TILLVALS % NTIL
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
-     &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
+     &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
      &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
 
 !     Skip initialization for sequenced runs:
@@ -1115,8 +1115,10 @@ C  tillage and rainfall kinetic energy
             BD_SOM(L) = BD_calc(L) / BD_calc_init(L) * BD_init(L)
 
 !           Limit BD to realistic values
-            BD_SOM(L) = MIN(BD_SOM(L), 1.8)
-            BD_SOM(L) = MAX(BD_SOM(L), 0.25)
+!           BD_SOM(L) = MIN(BD_SOM(L), 1.8)
+!           BD_SOM(L) = MAX(BD_SOM(L), 0.25)
+            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) !Upper limit for BD_SOM
+            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) !Lower limit for BD_SOM
 
             dBD_SOM = BD_SOM(L) - BD_INIT(L)
 
@@ -1161,18 +1163,25 @@ C  tillage and rainfall kinetic energy
 !     Tillage effects applied to SOM modified values
       IF (INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0 .AND.
      &    YRDOY .EQ. TILLVALS % TILDATE) THEN
-        DS_BASE   = DS_SOM
+        BD_BASE   = BD_SOM
         CN_BASE   = CN_INIT
-!       RG_BASE = RGIF_INIT
-        SC_BASE = SWCN_INIT
+        DS_BASE   = DS_SOM
+!       RG_BASE   = RGIF_INIT
+        SAT_BASE  = SAT_INIT
+        SC_BASE   = SWCN_INIT
+        DL_BASE   = DLAYR_INIT
+
+        CRAIN = 0.0
+        LCRAIN = 0.0
 
 !       TillEvent computes the effects of today's tillage event
 !         on soil properties -- effects are applied in integr section.
         CALL TillEvent(CONTROL, 
-     &    BD, CN, DLAYR, DS, NLAYR,                       !Input
-     &    SAT, SWCN, SC_BASE, TILLVALS,                   !Input
+     &    BD, BD_BASE, CN, CN_BASE, DLAYR, DL_BASE,       !Input
+     &    DS, DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,      !Input
+     &    NLAYR, TILLVALS,                                !Input
      &    BD_TILLED, CN_TILLED, DL_TILLED,                !Output
-     &    DS_TILLED, SAT_TILLED, SC_TILLED)               !Output
+     &    DS_TILLED, SAT_TILLED, SC_TILLED)               !OutpuT
 
       ENDIF
 
@@ -1200,8 +1209,9 @@ C  tillage and rainfall kinetic energy
       ENDDO
 
 C     Calculate fraction of soil covered by canopy and residue.
-      CANCOV = 1.0 - EXP(-0.75 * XHLAI)
-      SOILCOV = CANCOV + MULCHCOVER * (1.0 - CANCOV)
+      !CANCOV = 1.0 - EXP(-0.75 * XHLAI)
+      !SOILCOV = CANCOV + MULCHCOVER * (1.0 - CANCOV)
+      SOILCOV = MULCHCOVER 
 
       IF ((INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0) .OR. TILLED) THEN
 
@@ -1389,7 +1399,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       IF (ISWWAT == 'N') RETURN
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
-     &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
+     &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
      &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
 
 !***********************************************************************
@@ -1753,7 +1763,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !=======================================================================
 !     SUBROUTINE OPSOILDYN -- output dynamic soil properties
       SUBROUTINE OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
-     &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
+     &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
      &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
 
       USE ModuleDefs
@@ -1768,7 +1778,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       LOGICAL FEXIST, PrintDyn
       LOGICAL Print_today, TILLED
       REAL CN, CRAIN, SOILCOV, SUMKE, TOTAW
-      REAL, DIMENSION(NL) :: BD, DLAYR, DUL, LL, SAT, SWCN
+      REAL, DIMENSION(NL) :: BD, BD_SOM, DLAYR, DUL, LL, SAT, SWCN
       REAL, DIMENSION(0:NL) :: KECHGE
 
 !***********************************************************************
@@ -1792,13 +1802,14 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
           WRITE(DLUN,'("*SOIL DYNAMICS OUTPUT FILE")')
         ENDIF
 
-!       IF (INDEX('FQ',CONTROL%RNMODE) > 0 .AND. CONTROL%RUN /= 1)RETURN
+       IF (INDEX('FQ',CONTROL%RNMODE) > 0 .AND. CONTROL%RUN /= 1)RETURN
         CALL HEADER(SEASINIT, DLUN, CONTROL % RUN)
         WRITE(DLUN,"(/,
      &     '@YEAR DOY   DAS   CRAIN  SOLCOV   SUMKE    ROCN   TOTAW',
      &  '  KECHG1  KECHG2  KECHG3  KECHG4',
      &  '  DLAYR1  DLAYR2  DLAYR3  DLAYR4',
      &  '     BD1     BD2     BD3     BD4',
+     &  '    BDS1    BDS2    BDS3    BDS4',
      &  '   SWCN1   SWCN2   SWCN3   SWCN4',
      &  '    SAT1    SAT2    SAT3    SAT4',
      &  '    DUL1    DUL2    DUL3    DUL4',
@@ -1815,16 +1826,17 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !-----------------------------------------------------------------------
       IF (PrintDyn .AND.                        !Print on AND
      &   (MOD(CONTROL%DAS,CONTROL%FROP) .EQ. 0  !(Every FROP days
-     &    .OR. TILLED                           !OR Tilled recently
+!    &    .OR. TILLED                           !OR Tilled recently
      &    .OR. Print_today)) THEN    !OR back to normal after tillage)
         CALL YR_DOY(CONTROL % YRDOY, YEAR, DOY) 
         WRITE(DLUN,'(1X,I4,1X,I3.3,1X,I5,
      &    F8.1,2F8.3,F8.1,F8.2,
-     &    4F8.3,4F8.2,4F8.3,4F8.3,4F8.2,8F8.5)') 
+     &    4F8.3,4F8.2,8F8.3,4F8.3,4F8.2,8F8.5)') 
      &    YEAR, DOY, CONTROL % DAS, CRAIN, SOILCOV, SUMKE, CN, TOTAW, 
      &    KECHGE(1),KECHGE(2),KECHGE(3),KECHGE(4),
      &    DLAYR (1), DLAYR(2), DLAYR(3), DLAYR(4),
      &    BD    (1),    BD(2),    BD(3),    BD(4),
+     &    BD_SOM(1),BD_SOM(2),BD_SOM(3),BD_SOM(4),
      &    SWCN  (1),  SWCN(2),  SWCN(3),  SWCN(4),
      &    SAT   (1),   SAT(2),   SAT(3),   SAT(4),
      &    DUL   (1),   DUL(2),   DUL(3),   DUL(4),

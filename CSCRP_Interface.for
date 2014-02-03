@@ -180,7 +180,7 @@ C=======================================================================
       CLOUDS = WEATHER % CLOUDS
       CO2    = WEATHER % CO2
       DAYL   = WEATHER % DAYL 
-      TWILEN= WEATHER % TWILEN
+      TWILEN = WEATHER % TWILEN
       RAIN   = WEATHER % RAIN
       SRAD   = WEATHER % SRAD
       TAIRHR = WEATHER % TAIRHR

@@ -1,6 +1,5 @@
-$CULTIVARS:BACER046
+$CULTIVARS:BACER046.280513   Last edit:060613 
 
-! LAST EDIT: 12/13/20111
 
 ! Coefficients used in the Cropsim-Ceres model differ from those used
 ! in DSSAT Version 3.5 AND 4.0. They can be calculated (approximately) from 
@@ -8,7 +7,7 @@ $CULTIVARS:BACER046
 
 ! P1V   = P1V(v3.5)*10 
 ! P1D   = P1D(V3.5)*20
-! P5    = P5(V3.5)*40 + 300
+! P5    = P5(V3.5)*20 + 430
 ! G1    = G1(V3.5)*5 + 5
 ! G2    = (G2(V3.5)*0.35+0.65) * P5/20
 ! G3    = G3(V3.5)*0.7 
@@ -19,17 +18,18 @@ $CULTIVARS:BACER046
 ! outputs with measured values. 
 
 *CULTIVARS:BACER046
-@VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT   
+@VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
 !                                        1     2     3     4     5     6     7
+!                                     Vday %/10h  oC.d   #/g    mg     g  oC.d
 999991 MINIMA               . 999991     0     0   100    10    10   0.5    30
 999992 MAXIMA               . 999992    60   200   999    50    80   8.0   150
-                                                                                
-DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60 
+                                                                            
+DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
 
-IB0101 A.Abiad (2)        1,2 SY0001    10    62   240    15    40   3.0    89 
-IB0102 Beecher(6)         1,2 SY0002    10    70   260    10    41   4.0    89 
-IB0030 Maris Badger CSM   1,9 US0001    10    90   760    20    49   2.5    89 
-                       
+IB0101 A.Abiad (2)          . SY0001    10    30   220    16    40   2.7    89 
+IB0102 Beecher (6)          . SY0002    10    30   220    13    40   2.7    92 
+IB0030 Maris Badger         . US0001     0    40   750    20    52   1.5    64 
+                                                                                                                                                                                                             
 ! COEFF       DEFINITION
 ! ========    ==========
 ! VAR#        Identification code or number for the specific cultivar.

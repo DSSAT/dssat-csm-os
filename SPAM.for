@@ -47,7 +47,7 @@ C=======================================================================
       SAVE
 
       CHARACTER*1  IDETW, ISWWAT
-      CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV   !  , METMP
+      CHARACTER*1  MEEVP, MEINF, MEPHO, MESEV, METMP
       CHARACTER*2  CROP
       CHARACTER*6, PARAMETER :: ERRKEY = "SPAM  "
 !      CHARACTER*78 MSG(2)
@@ -108,7 +108,7 @@ C=======================================================================
       MEEVP  = ISWITCH % MEEVP
       MEINF  = ISWITCH % MEINF
       MEPHO  = ISWITCH % MEPHO
-!     METMP  = ISWITCH % METMP
+      METMP  = ISWITCH % METMP
       MESEV  = ISWITCH % MESEV
 
       FLOOD  = FLOODWAT % FLOOD
@@ -153,9 +153,16 @@ C=======================================================================
       TRWU = 0.0
 
 !     ---------------------------------------------------------
-      CALL STEMP(CONTROL, ISWITCH,
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
+      END SELECT
 
 !     ---------------------------------------------------------
       IF (MEEVP .NE. 'Z') THEN
@@ -228,9 +235,17 @@ C=======================================================================
       ELSEIF (DYNAMIC .EQ. RATE) THEN
 !-----------------------------------------------------------------------
       SWDELTX = 0.0
-      CALL STEMP(CONTROL, ISWITCH,
+!     ---------------------------------------------------------
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
+      END SELECT
 
 !-----------------------------------------------------------------------
 !     POTENTIAL ROOT WATER UPTAKE
@@ -475,9 +490,18 @@ C-----------------------------------------------------------------------
 !     Flood water evaporation can be modified by Paddy_Mgmt routine.
       EF = FLOODWAT % EF
 
-      CALL STEMP(CONTROL, ISWITCH,
+!     ---------------------------------------------------------
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
+      END SELECT
+
 
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
@@ -504,9 +528,17 @@ C-----------------------------------------------------------------------
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
 
-      CALL STEMP(CONTROL, ISWITCH,
+!     ---------------------------------------------------------
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
+      END SELECT
 
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
