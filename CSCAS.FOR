@@ -1,6 +1,6 @@
 !-----------------------------------------------------------------------
-!  CROPSIM CASSAVA GROWTH AND DEVELOPMENT MODULE V4.6   
-!  Last edit 05/05/2013 LAH   
+!  CROPSIM CASSAVA GROWTH AND DEVELOPMENT MODULE V2014-1  
+!  Last edit 01/01/2014 LAH   
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
@@ -11,7 +11,7 @@
      & DRAIN, RUNOFF, IRRAMT,                              !Water
      & DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,           !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
-     & SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                 !H2o,N states
+     & SW, NO3LEFT, NH4LEFT, FERNIT,                       !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                             !N components
      & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components
      & YEARPLTCSM, HARVFRAC,                               !Pl.date
@@ -21,7 +21,7 @@
      & UNO3, UNH4, UH2O,                                   !Uptake
      & SENCALG, SENNALG, SENLALG,                          !Senescence
      & RESCALG, RESNALG, RESLGALG,                         !Residues
-     & STGYEARDOY, BSTAGE,                                 !Stage dates
+     & STGYEARDOY, BRSTAGE,                                !Stage dates
      & DYNAMIC)                                            !Control
 
       ! For incorporation in CSM should:
@@ -33,6 +33,17 @@
 
       ! And to run well in CSM should:
       !    Read ICIN (with -99 in profile) and ICSW variables
+      
+      ! Changes 8->151213:
+      !    1. Individual leaf area expansion routine. More individual
+      !       leaf sizes output to LEAVES.OUT (No stress, H2o,N,Temp.
+      !       stress, H2o,N,Temp+assimilate limitation, H2o,N,Temp+
+      !       assimilate+N concentration maintenance)  
+
+      !    2. Leaf accelerated senescence function (for when loser
+      !       canopy in deep shade). Now accelerates ageing in 
+      !       active leaf phase, does not 'chop-off' leaf area.
+      !       Amount of acceleration specified in SPE file.     
       
       ! Changes 140812 to make cassava work ok:
       !    1. Definition of DUTOMSTG changed. Before included PD(mstg),
@@ -97,10 +108,18 @@
       REAL          AMTNITPREV    ! Cumulative N,previous treatmnt kg/ha
       REAL          ANDEM         ! Crop N demand                  kg/ha
       REAL          ANFER(200)    ! N amount in fertilizer appln   kg/ha
+      REAL          AREAPOSSIBLE  ! Leaf area growth at SLA limit  cm2 
+      REAL          AREAPOSSIBLEN ! Leaf area growth at N limit    cm2 
       INTEGER       ARGLEN        ! Argument component length      #
       REAL          AVGSW         ! Average soil water in SWPLTD   %
       REAL          BASELAYER     ! Depth at base of layer         cm
       REAL          BD(20)        ! Bulk density (moist)           g/cm3
+      REAL          BRFX(PSX)     ! Branch # per fork at each fork #
+      REAL          BRNUMSH       ! Branch number/shoot at harvest #
+      REAL          BRNUMSHM      ! Branch #/shoot,harvest,measurd #
+      REAL          BRNUMST       ! Branch number/shoot (>forking) #
+      REAL          BRNUMSTPREV   ! Branch number/shoot,previous   #
+      REAL          BRSTAGE       ! Branching stage                #
       REAL          CAID          ! Canopy area index              #
       REAL          CANHT         ! Canopy height                  cm
       REAL          CANHTG        ! Canopy height growth           cm
@@ -182,7 +201,7 @@
       INTEGER       DAP           ! Days after planting            d
       INTEGER       DAPCALC       ! DAP output from funcion        #
       INTEGER       DAS           ! Days after start of simulation d
-      INTEGER       DATE          ! Date (Year+Doy)                #
+      INTEGER       DATE          ! Date (Yr+Doy)                  #
       INTEGER       DATECOL       ! Date column number             #
       REAL          DAYL          ! Daylength,6deg below horizon   h
       REAL          DAYLCAV       ! Daylength (6deg) av for cycle  h
@@ -205,7 +224,9 @@
       REAL          DFNEXT        ! Daylength factor,next tier     #
       REAL          DFOUT         ! Daylength factor for output    #
       REAL          DFPE          ! Development factor,pre-emerge  #
-      REAL          DGLF(LNUMX)   ! Days during which leaf growing #
+      REAL          DALF(0:LNUMX) ! Days during which leaf active  d
+      REAL          DGLF(0:LNUMX) ! Days during which leaf growing #
+      REAL          DSLF(0:LNUMX) ! Days during which leaf senesng #
       INTEGER       DIDAT(DINX)   ! Disease initiation date YrDoy  d
       INTEGER       DIDOY(DINX)   ! Disease infestation doy        d
       REAL          DIFFACR(DINX) ! Dis favourability requirement  #
@@ -227,8 +248,6 @@
       REAL          DTRY          ! Effective depth of soil layer  cm
       REAL          DU            ! Developmental units            PVC.d
       REAL          DUL(20)       ! Drained upper limit for soil   #
-      REAL          DULF          ! Development time,leaves        C.d
-      REAL          DULFNEXT      ! Development time,leaves,next   oCd
       REAL          DUNEED        ! Developmental units needed tir PVC.d
       REAL          DUPHASE       ! Development units,current tier PVoCd
       REAL          DUPNEXT       ! Development units,next tier    PVoCd
@@ -452,7 +471,8 @@
       REAL          LA1S          ! Area of leaf 1,standard        cm2
       REAL          LAFND         ! Node # (one axis)->final area  #
       REAL          LAFS          ! Leaf area/all nodes,final      cm2
-      REAL          LAGE(0:LNUMX) ! Leaf age at leaf position      C.d
+      REAL          LAGL(1,LNUMX) ! Leaf area growth,shoot,lf pos  cm2/l
+      REAL          LAGETT(0:LNUMX) ! Leaf age at leaf position    C.d
       REAL          LAGEG(0:LNUMX)! Leaf age increment             C.d
       REAL          LAGEP(0:LNUMX)! Leaf age (phyllochrons),lf pos #
       REAL          LAI           ! Leaf area index                #
@@ -478,7 +498,12 @@
       REAL          LAPP(LNUMX)   ! Leaf area diseased,leaf posn   cm2/p
       REAL          LAPS(LNUMX)   ! Leaf area senesced,leaf posn   cm2/p
       REAL          LAPSTMP       ! Leaf area senesced,temporary   cm2/p
-      REAL          LATL(1,LNUMX) ! Leaf area,shoot,leaf pos       cm2/l
+      REAL          LATL(1,LNUMX) ! Leaf area,shoot,lf#,potential  cm2/l
+      REAL          LATL2(1,LNUMX)! Leaf area,shoot,lf#,+h2o,n,tem cm2/l
+      REAL          LATL3(1,LNUMX)! Leaf area,shoot,lf#,+assim.    cm2/l
+      REAL          LATL4(1,LNUMX)! Leaf area,shoot,lf#,+assim.+N  cm2/l
+      REAL          LATLPREV(1,LNUMX)! Leaf area,shoot,leaf,prev.  cm2/l
+      REAL          LATLPOT(1,LNUMX)! Leaf area,shoot,leaf,pot     cm2/l
       REAL          LAWCF         ! Leaf area/wt change,fr.st      fr/lf
       REAL          LAWFF         ! Leaf area/wt flexibility,fr.st fr
       REAL          LAWL(2)       ! Area to wt ratio,n=youngest lf cm2/g
@@ -490,9 +515,11 @@
       REAL          LAXNO         ! Leaf # (one axis),maximum area #
       REAL          LAXN2         ! Leaf # (one axis),end max.area #
       REAL          LAXS          ! Area of biggest leaf,main stem cm2
+      INTEGER       LBIRTHDAP(LCNUMX)! DAP on which leaf initiated #
       INTEGER       LCNUM         ! Leaf cohort number (inc.grow)  #
       REAL          LCOA(LCNUMX)  ! Leaf cohort area               cm2
       REAL          LCOAS(LCNUMX) ! Leaf cohort area senesced      cm2
+      INTEGER       LDEATHDAP(LCNUMX)! DAP on which leaf 100% dead #
       REAL          LEAFN         ! Leaf N                         g/p
       REAL          LEAFNEXCESS   ! Leaf N > critical              g/p
       INTEGER       LENDIS        ! Length,ISWDIS flag             #
@@ -502,7 +529,6 @@
       INTEGER       LENLINESTAR   ! Length of character string     #
       INTEGER       LENRNAME      ! Length of run description      #
       INTEGER       LENTNAME      ! Length,treatment description   #
-      REAL          LFADJ         ! Leaf adjustment,N triggered    #
       REAL          LFGSDU        ! Leaf growth start,d.units      #
       REAL          LFWT          ! Leaf weight                    g/p
       REAL          LFWTM         ! Leaf weight,maturity           g/p
@@ -510,12 +536,13 @@
       REAL          LGPHASEDU(2)  ! Leaf growth tier,start,end     Du
       INTEGER       LINENUM       ! Line number in RMSE values     #
       REAL          LL(20)        ! Lower limit,soil h2o           #
-      REAL          LLIFA         ! Leaf life duration,active,phyl #    
+      REAL          LLIFA         ! Leaf life duration,active,read #    
       REAL          LLIFATT       ! Leaf life duration,active      C.d
-      REAL          LLIFEG(0:LNUMX) ! Leaf expansion growth,phyll  #    
-      REAL          LLIFG         ! Leaf growth duration,phyll     #   
+      REAL          LLIFG         ! Leaf growth duration,as read   #   
       REAL          LLIFGTT       ! Leaf growth durtion            C.d
-      REAL          LLIFS         ! Leaf senescence duration       phyl
+      REAL          LLIFS         ! Leaf senescence dur,as read    d   
+      REAL          LLIFX         ! Leaf ageing acceleration,max   Tu  
+      REAL          LLIFXUNUSED   ! Leaf ageing accel.unused       Tu  
       REAL          LLIFSTT       ! Leaf senescence duration,Ttime C.d
       REAL          LLIGP         ! Leaf lignin percentage         #
       REAL          LLNAD         ! Leaf lamina nitrogen           kg/ha
@@ -551,10 +578,12 @@
       REAL          LNUMPREV      ! Leaf number,Haun stage         #
       REAL          LNUMSERR      ! Leaf #,error                   %
       INTEGER       LNUMSG        ! Leaf number produced on axis   #
+      INTEGER       LNUMSOLDESTA  ! Leaf number,oldest acive,axis  #
       REAL          LNUMSM        ! Leaf #/shoot,Haun,maturity     #
       REAL          LNUMSMM       ! Leaf #,mature,measured         #/s
       REAL          LNUMSTG(20)   ! Leaf number,specific stage     #
       REAL          LNUMT         ! Leaf number from t file        #
+      REAL          LNUMTMP       ! Leaf #,temporary val for calc  #
       REAL          LNUMTOSTG(0:PSX) ! Leaf numbers at fork stages #
       REAL          LNUMSIMTOSTG(0:PSX) ! Leaf numbers,fork,simul  #
       REAL          LNUSE(0:3)    ! Leaf N use,overall and parts   g   
@@ -596,6 +625,7 @@
       REAL          NFGPC         ! N factor,growth,cumulative     #
       REAL          NFGU          ! N factor,gr,upper limit        #
       REAL          NFLF(LNUMX)   ! N factor for leaf,average      #
+      REAL          NFLF2(0:LNUMX)! N factor for leaf area adj     #
       REAL          NFLFP(LNUMX)  ! N factor phs leaf,average      #
       REAL          NFP           ! N factor,photosynthesis 0-1    #
       REAL          NFPCAV        ! N factor,phs,average,cycle     #
@@ -690,11 +720,10 @@
       REAL          PHSV          ! Phs,fr reduction with VPD       /KPa
       REAL          PHTV          ! Phs,threshold VPD for reduction KPa
       REAL          PLA           ! Plant leaf area                cm2
-      REAL          PLAG(2)       ! Plant leaf area growth,shoot1  cm2/t
-      REAL          PLAGLF(LNUMX) ! Plant leaf area growth,by leaf cm2/t
-      REAL          PLAGT(2)      ! Plant leaf area growth,total   cm2/p
-      REAL          PLAGTP(2)     ! Plant lf area growth,potential cm2/p
-      REAL          PLAGTTEMP     ! Plant leaf area gr,total,temp. cm2/p
+      REAL          PLAGS2        ! Plant lf area g,all shts,H2oNT cm2/p
+      REAL          PLAGSB2       ! Plant lf area g,sh+br,H2oNT    cm2/p
+      REAL          PLAGSB3       ! Plant lf area g,sh+br,H2oNTA   cm2/p
+      REAL          PLAGSB4       ! Plant lf area g,sh+br,H2oNTAN2 cm2/p
       REAL          PLAS          ! Leaf area senesced,normal      cm2/p
       REAL          PLASI         ! Leaf area senesced,injury      cm2/p
       REAL          PLASL         ! Leaf area senesced,low light   cm2/p
@@ -823,9 +852,8 @@
       REAL          RSGLFADJ      ! Reserves from leaf adj to N    g/p
       REAL          RSSRWTGLFADJ  ! Reserves+storage from lf N adj g/p
       REAL          RSSRWTGSTADJ  ! Reserves+storage from st N adj g/p
-      REAL          BSTAGE        ! Branching stage                #
-      REAL          BSTAGEPREV    ! Branching stage,previous       #
-      REAL          BSTAGETMP     ! Branching stage                #
+      REAL          BRSTAGEPREV   ! Branching stage,previous       #
+      REAL          BRSTAGETMP    ! Branching stage                #
       REAL          RSUSE         ! Reserves utilisation fraction  #
       REAL          RSWAD         ! Reserves weight                kg/ha
       REAL          RSWAM         ! Reserves at maturity           kg/ha
@@ -940,8 +968,10 @@
       INTEGER       SHDAT         ! Shoot prodn.startdate YEARDOY  #
       REAL          SHGR(22)      ! Shoot size relative to 1       #
       REAL          SHLA(25)      ! Shoot leaf area produced       cm2
-      REAL          SHLAG(25)     ! Shoot leaf area growth         cm2
-      REAL          SHLAGP(25)    ! Shoot potential leaf area gr   cm2
+      REAL          SHLAG2(25)    ! Shoot lf area gr,1 axis,H2oNt  cm2
+      REAL          SHLAGB2(25)   ! Shoot lf area gr,+br,H2oNt     cm2
+      REAL          SHLAGB3(25)   ! Shoot lf area gr,+br,H2oNtA    cm2
+      REAL          SHLAGB4(25)   ! Shoot lf area gr,+br,H2oNtAN2  cm2
       REAL          SHLAS(25)     ! Shoot leaf area senesced       cm2
       REAL          SHNUM         ! Shoot (incl.main stem) number  #/p
       REAL          SHNUMAD       ! Shoot (incl.main stem) number  #/m2
@@ -971,10 +1001,6 @@
       REAL          SNO3(20)      ! Soil NO3 N                     kg/ha
       REAL          SNO3PROFILE   ! Soil NO3 N in profile          kg/ha
       REAL          SNO3ROOTZONE  ! Soil NO3 N in root zone        kg/ha
-      REAL          SNOFX         ! Shoot number per fork          #
-      REAL          SNOT          ! Shoot number/shoot (>forking)  #
-      REAL          SNOTPREV      ! Shoot number/shoot,previous    #
-      REAL          SNOW          ! Snow                           cm
       REAL          SNPCMN(0:1)   ! Stem N conc,minimum            %
       REAL          SNPCS(0:1)    ! Stem N conc,standard,stage     %
       REAL          SNPH          ! Stem N harvested               g/p
@@ -1083,8 +1109,10 @@
       REAL          TFDNEXT       ! Temperature factor,development #
       REAL          TFG           ! Temperature factor,growth 0-1  #
       REAL          TFGEM         ! Temperature factor,germ,emrg   #
+      REAL          TFLFLIFE      ! Temperature factor,leaf life   #
       REAL          TFLAW         ! Temperature factor,lf area/wt  #
-      REAL          TFLF(LNUMX)   ! Temp factor for leaf,average   #
+      REAL          TFGLF(LNUMX)  ! Temp factor,gr for leaf,av     #
+      REAL          TFDLF(LNUMX)  ! Temp factor,dev for leaf,av    #
       REAL          TFP           ! Temperature factor,phs 0-1     #
       REAL          TFV           ! Temperature factor,vernalizatn #
       REAL          TFVAL         ! T-file value                   #
@@ -1147,10 +1175,8 @@
       REAL          TOMINSOMC     ! Cumulative mineralization,SOM  kg/ha
       REAL          TPAR          ! Transmission,PAR,fraction      #
       REAL          TRATIO        ! Function,relative tr rate      #
-      REAL          TRDEV(4,9)    ! Temp response,development,phse #
       REAL          TRDV1(4)      ! Temp response,development 1    #
       REAL          TRDV2(4)      ! Temp response,development 2    #
-      REAL          TRDVX(4)      ! Temp response,development,X    #
       REAL          TRGEM(4)      ! Temp response,germ.emergence   #
       REAL          TRLDF         ! Intermediate factor,new roots  #
       REAL          TRLFG(4)      ! Temp response,leaf growth      #
@@ -1162,6 +1188,8 @@
       REAL          TSRAD         ! Transmission,SRAD,fraction     #
       REAL          TT            ! Daily thermal time             C.d
       REAL          TTGEM         ! Daily thermal time,germ,emrg.  C.d
+      REAL          TTLFLIFE      ! Daily thermal time,leaf life   C.d
+      REAL          TTNEED        ! Thermal time to start new leaf #
       REAL          TT20          ! Thermal time mean over 20 days C
       REAL          TT20S         ! Thermal time sum over 20 days  C
       REAL          TTCUM         ! Cumulative thermal time        C.d
@@ -1191,6 +1219,7 @@
       REAL          VARSUM(30)    ! Temporary variables sum        #
       REAL          VARVAL        ! Temporary variable             #
       REAL          VCNC          ! Vegetative critical N conc     #
+      INTEGER       VERSION       ! Version #                      #
       REAL          VMNC          ! Vegetative minimum N conc      #
       REAL          VNAD          ! Vegetative canopy nitrogen     kg/ha
       REAL          VNAM          ! Vegetative N,mature            kg/ha
@@ -1249,13 +1278,15 @@
       CHARACTER (LEN=6)   CAIC          ! Canopy area index
       CHARACTER (LEN=6)   CANHTC        ! Canopy height
       CHARACTER (LEN=120) CFGDFILE      ! Configuration directory+file
+      CHARACTER (LEN=1)   CFLAFLF       ! Control flag,assim.on lf area
       CHARACTER (LEN=1)   CFLFAIL       ! Control flag for failure
-      CHARACTER (LEN=1)   CFLFLN        ! Control flag,final leaf # Y/N
+      CHARACTER (LEN=1)   CFLLFLIFE     ! Control flag,leaf life D,P,C
       CHARACTER (LEN=1)   CFLHAR        ! Control flag for final harvest
       CHARACTER (LEN=1)   CFLHARMSG     ! Control flag,harvest message
       CHARACTER (LEN=1)   CFLPDADJ      ! Control flag,tire adjustment 
       CHARACTER (LEN=1)   CFLPRES       ! Control flag for headers,PRES
       CHARACTER (LEN=1)   CFLSDRSMSG    ! Control flag,seed reserves msg
+      CHARACTER (LEN=1)   CFLTFG        ! Control flag,temp.on lf area
       CHARACTER (LEN=10)  CNCHAR        ! Crop component (multicrop)
       CHARACTER (LEN=2)   CNCHAR2       ! Crop component (multicrop)
       CHARACTER (LEN=2)   CROP          ! Crop identifier (ie. CS)
@@ -1278,6 +1309,7 @@
       CHARACTER (LEN=10)  EXCODEPREV    ! Previous experiment code/name
       CHARACTER (LEN=80)  FAPPLINE(30)  ! Fertilizer application details
       CHARACTER (LEN=120) FILEA         ! Name of A-file
+      CHARACTER (LEN=120) FILEX         ! Name of X-file
       CHARACTER (LEN=120) FILEIO        ! Name of input file,after check
       CHARACTER (LEN=120) FILEIOIN      ! Name of input file
       CHARACTER (LEN=107) FILEADIR      ! Name of A-file directory      
@@ -1297,6 +1329,7 @@
       CHARACTER (LEN=120) FNAMEPREM     ! File name,responses,measured
       CHARACTER (LEN=120) FNAMEPRES     ! File name,responses,simulated
       CHARACTER (LEN=120) FNAMEPSUM     ! File name,plant summary
+      CHARACTER (LEN=35)  GENFLCHK      ! Genotype file name for check
       CHARACTER (LEN=1)   GROUP         ! Flag for type of group
       CHARACTER (LEN=6)   HIAMCHAR      ! Harvest indx,at harvest
       CHARACTER (LEN=6)   HIAMMCHAR     ! Harvest indx,har,measured
@@ -1320,7 +1353,6 @@
       CHARACTER (LEN=1)   IPLTI         ! Code for planting date method
       CHARACTER (LEN=1)   ISWDIS        ! Control switch,disease
       CHARACTER (LEN=1)   ISWNIT        ! Soil nitrogen balance switch
-      CHARACTER (LEN=1)   ISWNITTMP     ! Soil nitrogen balance switch
       CHARACTER (LEN=1)   ISWNITEARLY   ! Control flag,N stress early
       CHARACTER (LEN=1)   ISWWAT        ! Soil water balance switch Y/N
       CHARACTER (LEN=1)   ISWWATEARLY   ! Control flag,H20 stress early
@@ -1331,7 +1363,10 @@
       CHARACTER (LEN=6)   LAPC          ! Area of cohort of leaves
       CHARACTER (LEN=6)   LAPOTXC       ! Leaf area,potential
       CHARACTER (LEN=6)   LAPSC         ! Senesced area,cohort of leaves
-      CHARACTER (LEN=6)   LATLC         ! Leaf area,actual
+      CHARACTER (LEN=6)   LATLC         ! Leaf area,no stress
+      CHARACTER (LEN=6)   LATL2C        ! Leaf area,h2o,N,temp stress
+      CHARACTER (LEN=6)   LATL3C        ! Leaf area,assimlate shortage
+      CHARACTER (LEN=6)   LATL4C        ! Leaf area,assimlate shortage
       CHARACTER (LEN=354) LINEERA       ! Temporary line,error-a file
       CHARACTER (LEN=80)  LINESTAR      ! Group header line (with star)
       CHARACTER (LEN=80)  LINESTAR2     ! Group header line (with star)
@@ -1363,7 +1398,7 @@
       CHARACTER (LEN=5)   PSABVO(PSX)   ! Principal stage abv,output
       CHARACTER (LEN=13)  PSNAME(PSX)   ! Principal stage names
       CHARACTER (LEN=1)   PSTYP(PSX)    ! Principal stage type
-      CHARACTER (LEN=6)   BSTAGEC       ! Branching stage
+      CHARACTER (LEN=6)   BRSTAGEC      ! Branching stage
       CHARACTER (LEN=1)   RNMODE        ! Run mode (eg.I=interactive)
       CHARACTER (LEN=25)  RUNNAME       ! Run title
       CHARACTER (LEN=8)   RUNRUNI       ! Run+internal run number
@@ -1434,8 +1469,8 @@
         IF (RUNCRP.LE.0) THEN          ! First time through
 
           MODNAME(1:8) = 'CSCAS046'
-          
-          ISWNITTMP = 'N'
+          VERSION = 010114
+          GENFLCHK(1:15) = 'CSCAS046.010114'
 
 !-----------------------------------------------------------------------
 !         Set parameters (Most should be placed in input files!)
@@ -1632,17 +1667,17 @@
           IF (.NOT.FOPEN) THEN
             IF (RUN.EQ.1) THEN
               OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-              WRITE(FNUMWRK,*) 'CSCAS  Cropsim Crop Module '
+              WRITE(FNUMWRK,*) 'CSCAS  Cropsim Cassava Module '
             ELSE
               OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',
      &              ACTION = 'READWRITE')
               WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,*) 'CSCAS  Cropsim Crop Module '
+              WRITE(fnumwrk,*) 'CSCAS  Cropsim Cassava Module '
               IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
                 CLOSE (FNUMWRK)
                 OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
                 WRITE(fnumwrk,*) ' '
-                WRITE(fnumwrk,*) 'CSCAS  Cropsim Crop Module '
+                WRITE(fnumwrk,*) 'CSCAS  Cropsim Cassava Module '
               ENDIF  
             ENDIF
           ELSE          
@@ -1652,7 +1687,7 @@
               OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
      &              ACTION = 'READWRITE')
               WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,*) 'CSCAS  Cropsim Crop Module '
+              WRITE(fnumwrk,*) 'CSCAS  Cropsim Cassava Module '
               CALL Getlun('READS.OUT',fnumrea)
               ! Close and re-open Reads file
               CLOSE (FNUMREA, STATUS = 'DELETE')
@@ -1663,7 +1698,7 @@
      &        ' File closed and re-opened to avoid generating huge file'
             ELSE  
               WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,*) 'CSCAS  Cropsim Crop Module '
+              WRITE(fnumwrk,*) 'CSCAS  Cropsim Cassava Module '
             ENDIF
           ENDIF  
 
@@ -1778,6 +1813,7 @@
         aflf = 0.0
         amtnit = 0.0
         andem = 0.0
+        brnumst = 1.0
         caid = 0.0
         canht = 0.0
         canhtg = 0.0
@@ -1791,10 +1827,10 @@
         carbor = 0.0
         carbot = 0.0
         cdays  = 0
-        cflfail = 'n'
-        cflfln = 'n'
-        cflharmsg = 'n'
-        cflsdrsmsg = 'n'
+        cflfail = 'N'
+        cfllflife = '-'
+        cflharmsg = 'N'
+        cflsdrsmsg = 'N'
         crrswt = 0.0
         crwad = 0.0
         crwt = 0.0
@@ -1829,12 +1865,12 @@
         dewdur = -99.0
         df = 1.0
         dfout = 1.0
+        dalf = 0
         dglf = 0
+        dslf = 0
         drainc = 0.0
         dstage = 0.0
         du = 0.0
-        dulf = 0.0
-        dulfnext = 0.0
         duneed = 0.0
         dynamicprev = 99999
         edap = -99
@@ -1926,8 +1962,9 @@
         hyeardoy = -99
         idetgnum = 0
         irramtc = 0.0
-        lage = 0.0
+        lagett = 0.0
         lagep = 0.0
+        lagl = 0.0
         lai = 0.0
         laiprev = 0.0
         lail = 0.0
@@ -1941,6 +1978,9 @@
         lapp = 0.0
         laps = 0.0
         latl = 0.0
+        latl2 = 0.0
+        latl3 = 0.0
+        latl4 = 0.0
         lcnum = 0
         lcoa = 0.0
         lcoas = 0.0
@@ -1980,8 +2020,9 @@
         nfgcc = 0.0
         nfgpav = 1.0
         nfgpc = 0.0
-        nflf = 0.0
-        nflfp = 0.0
+        nflf = 1.0
+        nflf2 = 0.0
+        nflfp = 1.0
         nfp = 1.0
         nfpcav = 1.0
         nfpcc = 0.0
@@ -2010,7 +2051,10 @@
         pdays  = 0
         photqr = 0.0
         pla = 0.0
-        plagt = 0.0
+        plags2 = 0.0
+        plagsb2 = 0.0
+        plagsb3 = 0.0
+        plagsb4 = 0.0
         plas = 0.0
         plasi = 0.0
         plasl = 0.0
@@ -2061,8 +2105,8 @@
         rsnphc = 0.0
         rsnad = 0.0
         rsnused = 0.0
-        bstage = 0.0
-        bstageprev = 0.0
+        brstage = 0.0
+        brstageprev = 0.0
         rswad = 0.0
         rswam = -99.0
         rswamm = -99.0
@@ -2134,6 +2178,7 @@
         senroota = 0.0
         shdat = 0
         shla = 0.0
+        shlag2 = 0.0
         shlas = 0.0
         shnum = 0.0
         shnumad = 0.0
@@ -2143,7 +2188,6 @@
         sla = -99.0
         snad = 0.0
         sncr = 0.0
-        snow = 0.0
         sno3profile = 0.0
         sno3profile = 0.0
         sno3rootzone = 0.0
@@ -2189,7 +2233,8 @@
         tdifsum = 0.0
         tfd = 0.0
         tfg = 1.0
-        tflf = 0.0
+        tfglf = 0.0
+        tfdlf = 0.0
         tfp = 1.0
         tlchc = 0.0
         tmaxcav  = -99.0
@@ -2233,6 +2278,7 @@
         ttgem = 0.0
         ttcum = 0.0
         ttd = 0.0
+        ttnext = 0.0
         twad = 0.0
         uh2o = 0.0
         unh4 = 0.0
@@ -2417,7 +2463,22 @@
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'SPDIR',pathsp)
           ! A-file location
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'ADIR',fileadir)
+
+          ! Additional controls that not handled by CSM
+          ! To get name and location of x-file to -> special controls.
+          CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'AFILE',filea)
+          FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+          CALL LTRIM2 (FILEX,filenew)
+          FILELEN = TVILENT(FILENEW)
+          FILENEW(FILELEN:FILELEN)= 'X'
+          FILEX = FILENEW
+          ! Experimental controls
+          CALL XREADC(FILEX,TN,RN,SN,ON,CN,'LLIFE',cfllflife)
         ENDIF
+        ! Controls that only impemented by re-compiling
+        ! (Only useful when examining how the model is working)
+        cflaflf = 'Y'  ! Assimilate effect on leaf size
+        cfltfg = 'Y'   ! Temperature effect on leaf size
 
 !-----------------------------------------------------------------------
 !       Correct case and dates
@@ -2489,6 +2550,17 @@
             IF (HFIRST.GT.0) HFIRST = HFIRST + TVI1*1000
             IF (HLAST.GT.0)  HLAST  = HLAST + (TVI1+1)*1000
           ENDIF
+        ENDIF
+
+!-----------------------------------------------------------------------
+!       Set control flags if not already done
+!-----------------------------------------------------------------------
+
+        IF (CFLLFLIFE.EQ.'T'.OR.CFLLFLIFE.EQ.'P'
+     &                      .OR.CFLLFLIFE.EQ.'D') THEN
+          CFLLFLIFE = CFLLFLIFE
+        ELSE  
+          CFLLFLIFE = 'T'  ! Default to thermal time 
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -2666,7 +2738,6 @@
         srprs = -99
         lseni = -99
         dusri = -99
-        snofx = -99
         parue = -99
         paru2 = -99
         la1s = -99
@@ -2705,6 +2776,7 @@
         rsfrs = -99
 
         IF (FILEIOT(1:2).EQ.'DS') THEN
+          IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS1',dayls(1))
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS2',dayls(2))
@@ -2762,10 +2834,10 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RTNH4',rtnh4)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NO3MN',no3mn)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NH4MN',nh4mn)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'S#FX',snofx)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'HMPC',hmpc)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LPEFR',lpefr)
         ELSE
+          IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
           CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
           CALL CUREADR (CUDIRFLE,VARNO,'PPS1',dayls(1))
           CALL CUREADR (CUDIRFLE,VARNO,'PPS2',dayls(2))
@@ -2824,7 +2896,6 @@
           CALL CUREADR (CUDIRFLE,VARNO,'RTNH4',rtnh4)
           CALL CUREADR (CUDIRFLE,VARNO,'NO3MN',no3mn)
           CALL CUREADR (CUDIRFLE,VARNO,'NH4MN',nh4mn)
-          CALL CUREADR (CUDIRFLE,VARNO,'S#FX',snofx)
           CALL CUREADR (CUDIRFLE,VARNO,'HMPC',hmpc)
         ENDIF     ! End Cultivar reads
 
@@ -2832,9 +2903,8 @@
 !       Read ecotype information
 !-----------------------------------------------------------------------
 
+        CALL FVCHECK(ECDIRFLE,GENFLCHK)
         CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',canhts)
-c        IF (DAYLS(2).LT.0.0) 
-c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         CALL ECREADR (ECDIRFLE,ECONO,'SRN%S',srnpcs)
         IF (SRNPCS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
         IF (SRPRS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRPRS',srprs)
@@ -2848,6 +2918,12 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl)
         CALL ECREADR (ECDIRFLE,ECONO,'SLACF',lawcf)
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
+        CALL ECREADR (ECDIRFLE,ECONO,'BR1FX',brfx(1))
+        CALL ECREADR (ECDIRFLE,ECONO,'BR2FX',brfx(2))
+        CALL ECREADR (ECDIRFLE,ECONO,'BR3FX',brfx(3))
+        CALL ECREADR (ECDIRFLE,ECONO,'BR4FX',brfx(4))
+        CALL ECREADR (ECDIRFLE,ECONO,'BR5FX',brfx(5))
+        CALL ECREADR (ECDIRFLE,ECONO,'BR6FX',brfx(6))
         ! Following may have been (temporarily) in the CUL file
         ! Radiation use efficiency
         IF (PARUE.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
@@ -2873,6 +2949,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
 !       Read species information
 !-----------------------------------------------------------------------
 
+        CALL FVCHECK(SPDIRFLE,GENFLCHK)
         CALL SPREADR (SPDIRFLE,'CRFR' ,crfr)
         CALL SPREADR (SPDIRFLE,'CO2CC',co2compc)
         CALL SPREADR (SPDIRFLE,'CO2EX',co2ex)
@@ -2881,8 +2958,9 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         CALL SPREADR (SPDIRFLE,'SLATR',lawtr)
         CALL SPREADR (SPDIRFLE,'SLATS',lawts)
         CALL SPREADR (SPDIRFLE,'SLAWR',lawwr)
-        CALL SPREADR (SPDIRFLE,'LLIFG',LLIFG)
+        CALL SPREADR (SPDIRFLE,'LLIFG',llifg)
         CALL SPREADR (SPDIRFLE,'LLIFS',llifs)
+        CALL SPREADR (SPDIRFLE,'LLIFX',llifx)
         CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
         CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
         CALL SPREADR (SPDIRFLE,'LWLOS',lwlos)
@@ -2986,32 +3064,20 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         CALL SPREADRA (SPDIRFLE,'CO2RF','10',co2rf)
         CALL SPREADRA (SPDIRFLE,'CO2F','10',co2f)
 
-        DO I = 1,9
-          TL10 = TL10FROMI(I) 
-          TVTRDV = 'TRDV'//TL10(1:1)
-          CALL SPREADRA (SPDIRFLE,TVTRDV,'4',trdvx)
-          IF (I.EQ.1) TRDV1 = TRDVX
-          ! Temperature responses for each tier put into 2D array
-          DO L = 1,4
-            IF (trdvx(1).GT.-98.0) THEN
-              TRDEV(L,I) = TRDVX(L)
-            ELSE
-              IF (I.GT.1) THEN
-                TRDEV(L,I) = TRDEV(L,I-1)
-              ELSE
-                OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
-                WRITE(fnumerr,*) ' '
-                WRITE(fnumerr,*) ' No temp response data for tier 1 '
-                WRITE(fnumerr,*) ' Please check'
-                WRITE(*,*) ' No temperature response data for tier 1 '
-                WRITE(*,*) ' Program will have to stop'
-                CLOSE (fnumerr)
-                STOP ' '
-              ENDIF
-            ENDIF
-           IF (I.EQ.2) TRDV2(L) = TRDEV(L,2)
-          ENDDO
-        ENDDO
+        ! Temperature responses
+        CALL SPREADRA (SPDIRFLE,'TRDV1','4',trdv1)
+        IF (trdv1(1).LT.-98.0) THEN
+          OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
+          WRITE(fnumerr,*) ' '
+          WRITE(fnumerr,*) ' No temp response data for development'
+          WRITE(fnumerr,*) ' Please check'
+          WRITE(*,*) ' No temperature response data for development'
+          WRITE(*,*) ' Program will have to stop'
+          CLOSE (fnumerr)
+          STOP ' '
+        ENDIF        
+        CALL SPREADRA (SPDIRFLE,'TRDV2','4',trdv2)
+        IF (trdv2(1).LT.-98.0) TRDV2 = TRDV1
 
         CALL SPREADRA (SPDIRFLE,'TRGEM','4',trgem)
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
@@ -3076,12 +3142,12 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         MSTG = 0 
         IF (PDL(1).GT.0.0) THEN
           ! If tier durations input as node units,calculte DU for tiers
-          DO L = 1,8
-            IF (PDL(L).GT.0.0) THEN
-              MSTG = L+1
-              HSTG = MSTG+1  
-            ENDIF 
-          ENDDO
+           DO L = 1,8
+             IF (PDL(L).GT.0.0) THEN
+               MSTG = L+1
+               HSTG = MSTG+1  
+             ENDIF 
+           ENDDO
           ! Check for missing tier durations and if so use previous
           IF (MSTG.GT.2) THEN
             DO L = 2,MSTG
@@ -3097,26 +3163,27 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           ENDDO  
           ! Now calculate tier durations in DU terms
           TVR2 = 0.0
-          LNUM = 0.0
+          LNUMTMP = 0.0
           DSTAGE = 0.0
           DO L = 1,1000
-            TVR2 = TVR2 + 20.0
+            TVR2 = TVR2 + STDAY
             PHINT = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))
-            LNUM = LNUM + 20.0/PHINT
+            LNUMTMP = LNUMTMP + STDAY/PHINT
             DSTAGE = AMIN1(1.0,LNUM/TVR1)
-            IF(LNUM.GE.PDL(1).AND.
+            IF(LNUMTMP.GE.PDL(1).AND.
      &           PSTART(2).LE.0.0) PSTART(2) = TVR2
-            IF(LNUM.GE.PDL(1)+PDL(2).AND.
+            IF(LNUMTMP.GE.PDL(1)+PDL(2).AND.
      &           PSTART(3).LE.0.0) PSTART(3) = TVR2
-            IF(LNUM.GE.PDL(1)+PDL(2)+PDL(3).AND.
+            IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3).AND.
      &           PSTART(4).LE.0.0) PSTART(4) = TVR2
-            IF(LNUM.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4).AND.
+            IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4).AND.
      &           PSTART(5).LE.0.0) PSTART(5) = TVR2
-            IF(LNUM.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5).AND.
+            IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5).AND.
      &           PSTART(6).LE.0.0) PSTART(6) = TVR2
-            IF(LNUM.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6).AND.
+            IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6).AND.
      &           PSTART(7).LE.0.0) PSTART(7) = TVR2
-            IF(LNUM.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6)+PDL(7).
+            IF(LNUMTMP.GE.
+     &           PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6)+PDL(7).
      &           AND.PSTART(8).LE.0.0) PSTART(8) = TVR2
           ENDDO 
           DO L = 1,MSTG-1
@@ -3125,7 +3192,6 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           PDL(MSTG) = 200.0
           PD(MSTG) = PDL(MSTG)*PHINTS
           DSTAGE = 0.0
-          LNUM = 0.0
           PHINT = PHINTS
         ELSE 
           ! If tier durations input as developmental units
@@ -3281,7 +3347,12 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         IF (PPEXP.LT.0.0) PPEXP = 2.0
         IF (RLFWU.LT.0.0) RLFWU = 0.5  
         IF (RTUFR.LT.0.0) RTUFR = 0.05
-        IF (SNOFX.LE.0.0) SNOFX = 3.0
+        IF (BRFX(1).LE.0.0) BRFX(1) = 3.0
+        IF (BRFX(2).LE.0.0) BRFX(2) = 3.0
+        IF (BRFX(3).LE.0.0) BRFX(3) = 3.0
+        IF (BRFX(4).LE.0.0) BRFX(4) = 3.0
+        IF (BRFX(5).LE.0.0) BRFX(5) = 3.0
+        IF (BRFX(6).LE.0.0) BRFX(6) = 3.0
         IF (CANHTS.LE.0.0) CANHTS = 200.0
         IF (SHGR(20).LT.0.0) THEN 
           DO L = 3,22
@@ -3319,9 +3390,24 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)
         
         PHINT = PHINTS
-        LLIFGTT = LLIFG * PHINT 
-        LLIFATT = LLIFA * PHINT 
-        LLIFSTT = LLIFS * PHINT 
+        
+        ! Leaf life
+        IF (CFLLFLIFE.EQ.'P')THEN
+          ! Read-in as phyllochrons 
+          LLIFGTT = LLIFG * PHINT 
+          LLIFATT = LLIFA * PHINT 
+          LLIFSTT = LLIFS * PHINT 
+        ELSEIF (CFLLFLIFE.EQ.'T')THEN
+          ! Read-in as thermal time 
+          LLIFGTT = LLIFG 
+          LLIFATT = LLIFA 
+          LLIFSTT = LLIFS
+        ELSEIF (CFLLFLIFE.EQ.'D')THEN
+          ! Read-in as days. Thermal time for each day set to PHINT
+          LLIFGTT = LLIFG * PHINT 
+          LLIFATT = LLIFA * PHINT 
+          LLIFSTT = LLIFS * PHINT 
+        ENDIF  
 
         ! Extinction coeff for SRAD
         KEP = (KCAN/(1.0-TPAR)) * (1.0-TSRAD)
@@ -3580,6 +3666,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         WRITE(fnumwrk,*)' '
         WRITE(fnumwrk,*)' MODEL      ',MODEL
         WRITE(fnumwrk,*)' MODULE     ',MODNAME
+        WRITE(fnumwrk,'(A13,I6)')'  VERSION    ',VERSION
         WRITE(fnumwrk,*)' PRODUCT    ',HPROD
         WRITE(fnumwrk,*)' RNMODE     ',RNMODE
         IF (RUN.LT.10) THEN
@@ -3598,6 +3685,8 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
          WRITE(fnumwrk,'(A26,A1)') '   PHOTOSYNTHESIS         ',MEPHO
          WRITE(fnumwrk,'(A26,A1,1X,A1)') '   WATER AND N SWITCHES   '
      &     ,ISWWAT,ISWNIT
+         WRITE(fnumwrk,'(A26,A1)') '   LEAF LIFE SWITCH       '
+     &     ,CFLLFLIFE     
          WRITE(fnumwrk,'(A26,A3)')  '   N UPTAKE               ',MERNU
          WRITE(fnumwrk,'(A26,I1)') ' '
          WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
@@ -3661,7 +3750,12 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           WRITE(fnumwrk,*)'  Paru2  ',Paru2
           WRITE(fnumwrk,*)' Shoots  '
           WRITE(fnumwrk,*)'  Sgro   ',shgr(1),shgr(2)
-          WRITE(fnumwrk,*)'  S#fx   ',snofx
+          WRITE(fnumwrk,*)'  Brfx(1)',brfx(1)
+          WRITE(fnumwrk,*)'  Brfx(2)',brfx(2)
+          WRITE(fnumwrk,*)'  Brfx(3)',brfx(3)
+          WRITE(fnumwrk,*)'  Brfx(4)',brfx(4)
+          WRITE(fnumwrk,*)'  Brfx(5)',brfx(5)
+          WRITE(fnumwrk,*)'  Brfx(6)',brfx(6)
           WRITE(fnumwrk,*)'  Canhts ',canhts
           WRITE(fnumwrk,*)' Leaves     '
           WRITE(fnumwrk,*)'  La1s   ',La1s
@@ -3675,7 +3769,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           WRITE(fnumwrk,*)'  Slawr        ',Lawwr
           WRITE(fnumwrk,*)'  Lpefr        ',Lpefr
           WRITE(fnumwrk,*)'  Phints,Phntf ',Phints,Phintfac            
-          WRITE(fnumwrk,*)'  Llifg,a,s ',Llifg,Llifa,Llifs  
+          WRITE(fnumwrk,*)'  Llifg,a,s,x  ',Llifg,Llifa,Llifs,Llifx  
           WRITE(fnumwrk,*)'  Lwlos  ',Lwlos                
           WRITE(fnumwrk,*)'  Laixx,Parix  ',Laixx,Parix       
           WRITE(fnumwrk,*)' Stems      '
@@ -3787,26 +3881,46 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
      &     ' WARNING  Soil fertility factor was less than 1.0: ',slpf
         ENDIF  
 
+        WRITE(FNUMWRK,*)' '
+        WRITE(FNUMWRK,'(A22)')' OUTPUTS              '
+
         ! Control switch for OUTPUT file names
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'FNAME',fname)
-        WRITE(FNUMWRK,*)' ' 
-        WRITE(FNUMWRK,*)'File name switch ',fname 
+        IF (FNAME.EQ.'Y') THEN
+          WRITE(FNUMWRK,*)'File names switched from standard. '
+        ELSE  
+          WRITE(FNUMWRK,*)'Standard file names. '
+        ENDIF   
         
         ! Output choices
         ! 1=Reserves in laminae,stem,crown,SLA;stem includes petioles
         ! 2=No reserves;stem includes petioles
         ! 3=No reserves;stem does not include petioles
-        OUTCHOICE = 2
+        OUTCHOICE = 3
         IF (OUTCHOICE.EQ.2) THEN
           WRITE(MESSAGE(1),'(A34,A37)')
      &      'NO reserve CH2O included in the wt',
      &      ' of leaves,stems,and crown.          ' 
           CALL WARNING(1,'CSCAS',MESSAGE)
-        ENDIF  
-        WRITE(FNUMWRK,'(A35,A38,A9)')
+          WRITE(FNUMWRK,'(A35,A38)')
      &      ' NO reserve CH2O included in the wt',
-     &      ' of leaves,stems,and crown. Stem incl.',
-     &      'petioles.'                     
+     &      ' of leaves,stems,and crown.           '
+          WRITE(FNUMWRK,'(A35)')
+     &      ' Stem weight includes the petioles.'
+        ELSEIF (OUTCHOICE.EQ.3) THEN
+          WRITE(MESSAGE(1),'(A34,A37)')
+     &      'NO reserve CH2O included in the wt',
+     &      ' of leaves,stems,and crown.          ' 
+          CALL WARNING(1,'CSCAS',MESSAGE)
+        WRITE(FNUMWRK,'(A35,A38)')
+     &      ' NO reserve CH2O included in the wt',
+     &      ' of leaves,stems,and crown.           '
+          WRITE(FNUMWRK,'(A44)')
+     &      ' Stem weight does NOT includes the petioles.'
+        ENDIF  
+
+        WRITE(FNUMWRK,*)' '
+        WRITE(FNUMWRK,'(A22)')' DURING RUN STATUS:   '
 
 !***********************************************************************
       ELSEIF (DYNAMIC.EQ.RATE) THEN
@@ -3844,11 +3958,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
 
         YEARDOY = YEAR*1000 + DOY
         TMEAN = (TMAX+TMIN)/2.0
-        IF (SNOW.LE.0) THEN
-          TMEANSURF = TMEAN
-        ELSE
-          TMEANSURF = 0.0
-        ENDIF
+        TMEANSURF = TMEAN
         CO2AIR = 1.0E12*CO2*1.0E-6*44.0 /       ! CO2 in g/m3
      &   (8.314*1.0E7*((TMAX+TMIN)*0.5+273.0))
 
@@ -3941,10 +4051,10 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           ! Shoot # set equal to plants per hill
           IF (PLPH.GT.0.0) THEN
             SHNUM = PLPH
-            SHNUML(1) = SHNUM
           ELSE
             SHNUM = 1.0
           ENDIF
+          SHNUML(1) = SHNUM
         ENDIF
 
 !=======================================================================
@@ -4050,14 +4160,20 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
 !-----------------------------------------------------------------------
 
           Tfd = TFAC4(trdv1,tmean,TT)
-          IF (bstage+1.LT.10)
+          IF (brstage+1.LT.10)
      &     Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
           IF (trgem(3).GT.0.0) THEN
             Tfgem = TFAC4(trgem,tmean,TTGEM)
           ELSE
             Ttgem = tt
           ENDIF    
-
+          IF (Cfllflife.EQ.'D') THEN
+            ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
+            Ttlflife = Phints   
+          ELSE  
+            Tflflife = TFAC4(trdv1,tmean,TTlflife)
+          ENDIF  
+  
 !-----------------------------------------------------------------------
 !         Calculate soil water 'status' (Used as a sw 'potential')
 !-----------------------------------------------------------------------
@@ -4110,12 +4226,13 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             ELSEIF (GEUCUM.LE.PEGD+PECM*SDEPTHU.AND.
      &       GEUCUM+TTGEM*WFGE.GT.PEGD+PECM*SDEPTHU) THEN
               EMRGFR = 1.0 - (PEGD+PECM*SDEPTHU-GEUCUM)/(TTGEM*WFGE)
-            ELSEIF (GEUCUM.GT.PEGD+PECM*SDEPTHU) THEN
               IF (EMFLAG.NE.'Y') THEN
                 WRITE(FNUMWRK,*)' ' 
                 WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
                 EMFLAG = 'Y'
               ENDIF
+              LNUMSG = 1     ! LAH NEW
+            ELSEIF (GEUCUM.GT.PEGD+PECM*SDEPTHU) THEN
               EMRGFR = 1.0
             ENDIF
      
@@ -4126,23 +4243,23 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             DF = 1.0
             DFNEXT = 1.0
             ! To ensure correct sensitivity on emergence day
-            IF (BSTAGE.LE.0.0) THEN
-              BSTAGETMP = 1.0
+            IF (BRSTAGE.LE.0.0) THEN
+              BRSTAGETMP = 1.0
             ELSE
-              BSTAGETMP = BSTAGE
+              BRSTAGETMP = BRSTAGE
             ENDIF
             IF (PPSEN.EQ.'SL') THEN      ! Short day response,linear 
-              DF = 1.0 - DAYLS(INT(BSTAGETMP))/1000.*(PPTHR-DAYL)
-              IF (BSTAGETMP.LT.FLOAT(MSTG)) THEN
-               DFNEXT = 1.-DAYLS(INT(BSTAGETMP+1))/1000.*(PPTHR-DAYL)
+              DF = 1.0 - DAYLS(INT(BRSTAGETMP))/1000.*(PPTHR-DAYL)
+              IF (BRSTAGETMP.LT.FLOAT(MSTG)) THEN
+               DFNEXT = 1.-DAYLS(INT(BRSTAGETMP+1))/1000.*(PPTHR-DAYL)
               ELSE
                DFNEXT = DF
               ENDIF 
             ELSEIF (PPSEN.EQ.'LQ') THEN  ! Long day response,quadratic
               DF = AMAX1(0.0,AMIN1(1.0,1.0-
-     &        (DAYLS(INT(BSTAGETMP))/10000.*(PPTHR-DAYL)**PPEXP)))
-              IF (BSTAGETMP.LT.10) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-
-     &        (DAYLS(INT(BSTAGETMP+1))/10000.*(PPTHR-DAYL)**PPEXP)))
+     &        (DAYLS(INT(BRSTAGETMP))/10000.*(PPTHR-DAYL)**PPEXP)))
+              IF (BRSTAGETMP.LT.10) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-
+     &        (DAYLS(INT(BRSTAGETMP+1))/10000.*(PPTHR-DAYL)**PPEXP)))
               Tfdf = AMAX1(0.0,1.0-AMAX1(0.0,(TMEAN-10.0)/10.0))
               Tfdf = 1.0  ! LAH No temperature effect on DF ! 
               DF = DF + (1.0-DF)*(1.0-TFDF)
@@ -4164,8 +4281,8 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             DUPHASE = 0.0
             DUPNEXT = 0.0
             ! To avoid exceeding the array sizes
-            IF (BSTAGETMP.LT.10) THEN
-              DUNEED = PSTART(INT(BSTAGETMP+1))-CUMDU
+            IF (BRSTAGETMP.LT.10) THEN
+              DUNEED = PSTART(INT(BRSTAGETMP+1))-CUMDU
               IF (DUNEED.GE.TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN
                 DUPHASE = TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)
                 TIMENEED = 1.0
@@ -4180,7 +4297,6 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             ENDIF
             
             DU = DUPHASE+DUPNEXT
-            DULF = TT*EMRGFR
             
 !-----------------------------------------------------------------------
 !           Set seed reserve use for root growth and update av.reserves
@@ -4240,12 +4356,6 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             lnph = leafn * hafr
             snph = stemn * hafr
             rsnph = rsn * hafr
-
-!-----------------------------------------------------------------------
-!           Set aspects that determined on emergence day
-!-----------------------------------------------------------------------
-
-            IF (DAE.LT.0) LNUMSG = 1
 
 !-----------------------------------------------------------------------
 !           Check for or calculate PAR interception at start of day
@@ -4352,6 +4462,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             ! IF (TMEAN20.LT.0.0) TFP = 0.0
             Tfp = TFAC4(trphs,tmean,TTOUT)
             Tfg = TFAC4(trlfg,tmean,TTOUT)
+            IF (CFLTFG.EQ.'N') TFG = 1.0
 
             ! Vapour pressure
             VPDFP = 1.0
@@ -4387,21 +4498,17 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
 !           Calculate leaf number at end of day;adjust PHINT if needed
 !-----------------------------------------------------------------------
                                                
-            DULFNEXT = 0.0
             LAGEG = 0.0
             LNUMG = 0.0
             ! Reduce PHINT with development stage (LAH Sept 2012)
             PHINT = 1.0/((1.0/PHINTS)*(1.0-PHINTFAC*DSTAGE))
-            LNUMEND = LNUM + DULF/PHINT
-            ! TAKE OUT PHINT???? lah
-            LLIFGTT = LLIFG * PHINT 
-            LLIFATT = LLIFA * PHINT 
-            LLIFSTT = LLIFS * PHINT 
+            LNUMEND = LNUM + (TT*EMRGFR)/PHINT
             
             ! Restrict to maximum
             LNUMEND = AMIN1(FLOAT(LNUMX),LNUMEND)
             IF(FLN.GT.0.0) LNUMEND = AMIN1(FLN,LNUMEND)
-            LNUMG = LNUMEND - LNUM
+            !LNUMG = LNUMEND - LNUM
+            LNUMG = (TT*EMRGFR)/PHINT
 
 !-----------------------------------------------------------------------
 !           Calculate senescence of leaves,stems,etc..
@@ -4422,23 +4529,24 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             PLASL = 0.0
             PLASS = 0.0
 
-            ! Leaf senescence - phyllochron driven
+            ! Leaf senescence - phyllochron or real time driven
             LAPSTMP = 0.0
-              DO L = 1,LNUMSG
-                IF (LAGE(L)+TT*EMRGFR.LE.LLIFATT+LLIFGTT) EXIT
-                IF (LAP(L)-LAPS(L).GT.0.0) THEN
-                  LAPSTMP = AMIN1((LAP(L)-LAPS(L)),LAP(L)/LLIFSTT
-     &             *AMIN1((LAGE(L)+DULF*EMRGFR-(LLIFATT+LLIFGTT)),
-     &             DULF*EMRGFR))
-                  LAPS(L) = LAPS(L) + LAPSTMP
-                  PLASP = PLASP + LAPSTMP
-                ENDIF
-              ENDDO
+            DO L = 1,LNUMSG
+              IF (LAGETT(L)+TTLFLIFE*EMRGFR.LE.LLIFATT+LLIFGTT) EXIT
+              IF (LAP(L)-LAPS(L).GT.0.0) THEN
+                LAPSTMP = AMIN1((LAP(L)-LAPS(L)),LAP(L)/LLIFSTT
+     &          *AMIN1((LAGETT(L)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT))
+     &          ,(TTLFLIFE*EMRGFR)))
+                LAPS(L) = LAPS(L) + LAPSTMP
+                PLASP = PLASP + LAPSTMP
+              ENDIF
+            ENDDO
 
             ! Leaf senescence - injury        ! LAH  To add later?
             !PLASI = PLA*(LSENI/100.0)*DU/STDAY  ! May need injury loss
 
             ! Leaf senescence - water or N stress
+            ! LAH Need to accelerated senescence rather than lose leaf
             PLASW = 0.0
             PLASN = 0.0
             IF (ISWWAT.NE.'N') THEN
@@ -4462,6 +4570,8 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             PLASL = 0.0
             IF (LAI.GT.LAIXX) THEN
              PLASL = (LAI-LAIXX) / (PLTPOP*0.0001)
+             ! LAH Eliminated! Replaced by accelerated senescence
+             PLASL = 0.0
             ENDIF
             
             ! Leaf senescence - overall
@@ -4623,11 +4733,13 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             ENDIF
 
             ! Position effect on standard SLA
-            LAWL(1) = AMAX1(LAWS*LAWFF,LAWS-(LAWS*LAWCF)*(LNUMSG-1))
-            LAWL(2) = AMAX1(LAWS*LAWFF,LAWS-(LAWS*LAWCF)*LNUMSG)
-            ! Temperature and water stress effects on SLA at position
-            LAWL(1) = AMAX1(LAWL(1)*LAWMNFR,LAWL(1)*TFLAW*WFLAW)
-            LAWL(2) = AMAX1(LAWL(1)*LAWMNFR,LAWL(2)*TFLAW*WFLAW)
+            IF (LNUMSG.GT.0) THEN
+              LAWL(1) = AMAX1(LAWS*LAWFF,LAWS+(LAWS*LAWCF)*(LNUMSG-1))
+              ! Temperature and water stress effects on SLA at position
+              LAWL(1) = AMAX1(LAWL(1)*LAWMNFR,LAWL(1)*TFLAW*WFLAW)
+            ELSE  
+              LAWL(1) = LAWS
+            ENDIF 
 
 !-----------------------------------------------------------------------
 !           Leaf growth
@@ -4644,18 +4756,29 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             GROLSSEN = 0.0
             GROLSRTN = 0.0
             GROLSSD = 0.0
-            PLAG = 0.0
-            PLAGLF = 0.0
-            PLAGT = 0.0
-            PLAGTP = 0.0
-            PLAGTTEMP = 0.0
-            SHLAG = 0.0
-            SHLAGP = 0.0
+            PLAGS2 = 0.0
+            SHLAG2 = 0.0
+            SHLAGB2 = 0.0
             LAGEG = 0.0
             
-            SNOT = AMAX1(1.0,SNOFX**(INT(bstage)-1))
+            ! BRANCH NUMBER            
+            ! Old method (1 fork number throughout)
+            !BRNUMST = AMAX1(1.0,BRNUMFX**(INT(brstage)-1))
+            ! New method (fork number specified for each forking point)
+            ! First calculate new BRSTAGE as temporary variable
+            ! (LAH Check whether can move brstage calc up here! 
+            ! (If do this, brstage in brfx below must be reduced by 1))
+            TVR1 = FLOAT(int(brstage))
+     &           + (LNUM-LNUMTOSTG(int(brstage)))/PDL(int(brstage))
+            IF (INT(TVR1).GT.INT(BRSTAGEPREV)) THEN
+              IF (BRSTAGE.EQ.0) THEN
+                BRNUMST = 1 
+              ELSEIF (BRSTAGE.GT.0) THEN
+                BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))
+              ENDIF
+            ENDIF
 
-            ! Leaf area increase (no assim) - main shoot (shoot 1)
+            ! Potential leaf size for next growing leaf - main shoot 
             LNUMNEED = FLOAT(INT(LNUM+1)) - LNUM
             IF (ABS(LNUMNEED).LE.1.0E-6) LNUMNEED = 0.0
             IF (LNUMSG+1.LE.INT(LAXNO)) THEN
@@ -4668,75 +4791,89 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               LAPOTX(LNUMSG+1) = AMAX1(LAFS, LAXS - 
      &         ((LNUMSG+1)-LAXN2)*((LAXS-LAFS)/(LAFND-LAXN2)))
             ENDIF
+            
             ! LAH Sept 2012 Eliminate fork # effect on leaf size 
             ! Adjust for fork#/shoot
-            !IF (SNOT.GE.1)LAPOTX(LNUMSG+1)=LAPOTX(LNUMSG+1)/SNOT
+            !IF (BRNUMST.GE.1)LAPOTX(LNUMSG+1)=LAPOTX(LNUMSG+1)/BRNUMST
             ! Keep track of 'forking';reduce potential>forking
-            !IF (LNUMSG.GT.1.AND.SNOT.GT.SNOTPREV) THEN
+            !IF (LNUMSG.GT.1.AND.BRNUMPT.GT.BRNUMSTPREV) THEN
             !  LAPOTX(LNUMSG+1) = LAPOTX(LNUMSG+1)/LAFF
             !  LNUMFORK = LNUMSG
-            !ENDIF
+            !ENDIF 
             
-            DO L = MAX(1,LNUMSG-INT(LLIFG)),LNUMSG
-              LLIFEG(L) = AMIN1(AMAX1(0.0,LLIFG-LAGEP(L)),LNUMG)
+            ! Potential leaf expansion (area growth),all growing leaves
+            SHLAG2(1) = 0.0
+            DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1
               ! Basic leaf growth calculated on thermal time base. 
               ! Basic response (cm2/d) same as for development. 
-              PLAGLF(L) = LAPOTX(L)*LLIFEG(L)/LLIFG
-     &                  * AMIN1(WFG,NFG)*TFG
-              IF (LNUMG*EMRGFR.GT.0.0) THEN
-                DGLF(L) = DGLF(L)+LLIFEG(L)/LNUMG*EMRGFR
+              TTNEED = AMAX1(0.0,LLIFG-LAGETT(L))
+              LATLPREV(1,L) = LATL(1,L)
+              LATLPOT(1,L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)
+              IF (LATLPOT(1,L).LT.0.0) LATLPOT(1,L) = 0.0
+              IF (LATLPOT(1,L).GT.LAPOTX(L)) LATLPOT(1,L) = LAPOTX(L)
+              LATL(1,l) = LATL(1,L) + (LATLPOT(1,L)-LATLPREV(1,L))
+              LATL2(1,l) = LATL2(1,L) + (LATLPOT(1,L)-LATLPREV(1,L))
+     &                                * AMIN1(WFG,NFG)*TFG
+              SHLAG2(1) = SHLAG2(1) + (LATLPOT(1,L)-LATLPREV(1,L))
+     &                            * AMIN1(WFG,NFG)*TFG
+              ! Stress factors for individual leaves
+              WFLF(L) = AMIN1(1.0,
+     &               WFLF(L)+WFG*(LATLPOT(1,L)-LATLPREV(1,L))/LAPOTX(L))
+              NFLF(L) = AMIN1(1.0,
+     &               NFLF(L)+NFG*(LATLPOT(1,L)-LATLPREV(1,L))/LAPOTX(L))
+              NFLFP(L) = AMIN1(1.0,
+     &              NFLFP(L)+NFP*(LATLPOT(1,L)-LATLPREV(1,L))/LAPOTX(L))
+              TFGLF(L) = AMIN1(1.0,
+     &              TFGLF(L)+TFG*(LATLPOT(1,L)-LATLPREV(1,L))/LAPOTX(L))
+              TFDLF(L) = AMIN1(1.0,
+     &              TFDLF(L)+TFD*(LATLPOT(1,L)-LATLPREV(1,L))/LAPOTX(L))
+              ! New LEAF
+              IF (L.EQ.LNUMSG.AND.LNUMG.GT.LNUMNEED) THEN
+                LAGL(1,L+1) = LAPOTX(L+1) 
+     &                      * (TTLFLIFE*EMRGFR)
+     &                      * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG) 
+                LATL(1,L+1) = LATL(1,L+1) + LAGL(1,L+1)
+                LATL2(1,L+1) = LATL2(1,L+1) + LAGL(1,L+1)
+     &                       * AMIN1(WFG,NFG)*TFG
+                SHLAG2(1) = SHLAG2(1) + LAGL(1,L+1)
+     &                              * AMIN1(WFG,NFG)*TFG
+                LBIRTHDAP(L+1) = DAP  
+                ! Stress factors for individual leaves
+                WFLF(L+1) = AMIN1(1.0,
+     &                WFLF(L+1)+WFG*LATL(1,L+1)/LAPOTX(L+1))
+                NFLF(L+1) = AMIN1(1.0,
+     &                NFLF(L+1)+NFG*LATL(1,L+1)/LAPOTX(L+1))
+                NFLFP(L+1) = AMIN1(1.0,
+     &                NFLFP(L+1)+NFP*LATL(1,L+1)/LAPOTX(L+1))
+                TFGLF(L+1) = AMIN1(1.0,
+     &                TFGLF(L+1)+TFG*LATL(1,L+1)/LAPOTX(L+1))
+                TFDLF(L+1) = AMIN1(1.0,
+     &                TFDLF(L+1)+TFD*LATL(1,L+1)/LAPOTX(L+1))
               ENDIF
-              WFLF(L) = WFLF(L)+WFG*LLIFEG(L)/LLIFG
-              NFLF(L) = NFLF(L)+NFG*LLIFEG(L)/LLIFG
-              NFLFP(L) = NFLFP(L)+NFP*LLIFEG(L)/LLIFG
-              TFLF(L) = TFLF(L)+TFG*LLIFEG(L)/LLIFG
-              PLAG(1) = PLAG(1) + LAPOTX(L)
-     &                * AMIN1(LLIFEG(L),LNUMNEED)/LLIFG
-     &                * AMIN1(WFG,NFG)*TFG
-              PLAG(2) = AMAX1(0.0,PLAG(2)+(PLAGLF(L)-PLAG(1)))
+
             ENDDO
-
-            ! New leaf
-            IF (LNUMSG.LT.LNUMX) THEN
-              L = LNUMSG + 1
-              LLIFEG(L) = AMAX1(0.0,(LNUMG-LNUMNEED))
-              PLAGLF(L)=LAPOTX(L)*LLIFEG(L)/LLIFG
-     &               * AMIN1(WFG,NFG)*TFG
-              IF (LNUMG.GT.0.0) DGLF(L) = DGLF(L)+LLIFEG(L)/LNUMG
-              WFLF(L) = WFLF(L)+WFG*LLIFEG(L)/LLIFG
-              !NFLF(L) = NFLF(L)+NFG*LLIFEG(L)/LLIFG  ! Now lfadj
-              NFLFP(L) = NFLFP(L)+NFP*LLIFEG(L)/LLIFG
-              TFLF(L) = TFLF(L)+TFG*LLIFEG(L)/LLIFG
-              PLAG(2) = PLAG(2) + PLAGLF(L)
-            ENDIF
-
-            ! Potential leaf area increase - all shoots
-            SHLAGP(1) = PLAG(1)+PLAG(2)
-            PLAGTP(1) = PLAG(1)
-            PLAGTP(2) = PLAG(2)
+ 
+            ! Leaf area increase - all shoots
+            PLAGS2 = SHLAG2(1)
             DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
               IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-                PLAGTP(1) = PLAGTP(1)+PLAG(1)*SHGR(L)           
-     &                  * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
-                PLAGTP(2) = PLAGTP(2)+PLAG(2)*SHGR(L)          
-     &                  * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
-                SHLAGP(L) = (PLAG(1)+PLAG(2))*SHGR(L)             
-     &                  * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
+                PLAGS2 = PLAGS2+SHLAG2(1)*SHGR(L)           
+     &                 * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
+                SHLAG2(L) = SHLAG2(1)*SHGR(L)             
+     &                    * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
               ENDIF
             ENDDO
 
-            ! Potential leaf area increase - all fork branches
-            PLAGTP(1) = PLAGTP(1)*SNOT
-            PLAGTP(2) = PLAGTP(2)*SNOT
-            SHLAGP(1) = SHLAGP(1)*SNOT
+            ! Leaf area increase - all fork branches
+            PLAGSB2 = PLAGS2*BRNUMST
+            SHLAGB2(1) = SHLAG2(1)*BRNUMST
             DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main= 1
-              SHLAGP(L) =  SHLAGP(L)*SNOT
+              SHLAGB2(L) =  SHLAG2(L)*BRNUMST
             ENDDO
             
             ! Potential leaf weight increase.
-            IF (LAWL(1).GT.0.0 .AND. LAWL(2).GT.0.0)
-     &       GROLFP = ( PLAGTP(1)/LAWL(1) + PLAGTP(2)/LAWL(2))
-     &              / (1.0-LPEFR)
+            IF (LAWL(1).GT.0.0)
+     &       GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)    
 
             ! Potential leaf+stem weight increase.
             IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
@@ -4808,9 +4945,36 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               ELSE  
                 GROLF = 0.0
               ENDIF
+              
+              ! Check if enough assimilates to maintain SLA within limits
+              AREAPOSSIBLE = GROLF*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))
+                
+              ! If not enough assim.set assimilate factor
+              IF (PLAGSB2.GT.AREAPOSSIBLE.AND.PLAGSB2.GT.0.0)THEN
+                AFLF(0) = AREAPOSSIBLE/PLAGSB2
+              ELSE  
+                AFLF(0) = 1.0
+              ENDIF
+              IF (CFLAFLF.EQ.'N') AFLF(0) = 1.0
+              
+              ! Area and assimilate factors for each leaf
+              DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1 
+                IF (LNUMSG.LT.LNUMX) THEN
+                  LATL3(1,L)= LATL2(1,L) * AFLF(0)            
+                  AFLF(L) = AMIN1(1.0,AFLF(L)
+     &                    + AMAX1(0.0,AFLF(0))
+     &                    * (LATLPOT(1,L)-LATLPREV(1,L))/LAPOTX(L))
+                  IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0
+                ENDIF  
+              ENDDO
+            
+              PLAGSB3 = PLAGSB2 * AFLF(0)
+              SHLAGB3(1) = SHLAGB2(1) * AFLF(0)
+              SHLAGB3(2) = SHLAGB2(2) * AFLF(0)
+              SHLAGB3(3) = SHLAGB2(3) * AFLF(0)
 
             ENDIF
-                          
+            
 !-----------------------------------------------------------------------
 !           Stem and crown growth                                     
 !-----------------------------------------------------------------------
@@ -4855,7 +5019,6 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             ! (For when not simulating N)
             GROLFADJ = GROLF
             RSSRWTGLFADJ = 0.0
-            LFADJ = 1.0
             GROSTADJ = GROST
             GROCRADJ = GROCR
             RTWTGADJ = RTWTG
@@ -5092,28 +5255,79 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               NPOOLS = AMAX1 (0.0,
      &         ((STWT+CRWT)*(SANC-SNCM)*NUSEFAC))
               
-              ! Reduce lf wt growth if not enough N  
-              IF (ABS(NULEFT).LE.1.0E-5) THEN
+              ! Reduce leaf growth if not enough N  
+              IF (ABS(NULEFT).LE.1.0E-5) THEN   ! When not enough N
                 IF (NLLG.GT.0.0.AND.LNCX.GT.0.0) THEN 
-                  IF ((LNUSE(1)+LNUSE(2))/GROLF.LT.(LNCX*NLLG)) THEN 
+                  IF (LNUSE(0)/GROLF.LT.(LNCX*NLLG)) THEN 
                     GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)
                   ELSE  
                     GROLFADJ = GROLF
                   ENDIF  
                 ENDIF
                 RSSRWTGLFADJ = GROLF - GROLFADJ
-                LFADJ = GROLFADJ/GROLF
-                ! Calculate N factor for new leaf
-                IF (LNUMSG.LT.LNUMX) THEN
-                  L = LNUMSG + 1
-                  NFLF(L) = NFLF(L)+LFADJ*LLIFEG(L)/LLIFG
+                
+                AREAPOSSIBLEN = 
+     &            GROLFADJ*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))
+                
+                ! If not enough N set N factor
+                IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.
+     &              PLAGSB3.GT.0.0)THEN
+                  NFLF2(0) = AREAPOSSIBLEN/PLAGSB3
+                ELSE  
+                  NFLF2(0) = 1.0
                 ENDIF
-              ELSE  
+              
+                ! Area and assimilate factors for each leaf
+                DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1 
+                  IF (LNUMSG.LT.LNUMX) THEN
+                    LATL4(1,L)= LATL3(1,L) * NFLF2(0)            
+                    NFLF2(L) = AMIN1(1.0,NFLF2(L)
+     &                       + AMAX1(0.0,NFLF2(0))
+     &                       * (LATLPOT(1,L)-LATLPREV(1,L))/LAPOTX(L))
+                  ENDIF  
+                ENDDO
+            
+                PLAGSB4 = PLAGSB3 * NFLF2(0)
+                SHLAGB4(1) = SHLAGB3(1) * NFLF2(0)
+                SHLAGB4(2) = SHLAGB3(2) * NFLF2(0)
+                SHLAGB4(3) = SHLAGB3(3) * NFLF2(0)
+
+              ELSE   ! When adequate N
+                
                 GROLFADJ = GROLF
                 RSSRWTGLFADJ = 0.0
-                LFADJ = 1.0
-              ENDIF
+                PLAGSB4 = PLAGSB3
+                SHLAGB4(1) = SHLAGB3(1)
+                SHLAGB4(2) = SHLAGB3(2)
+                SHLAGB4(3) = SHLAGB3(3)
+                NFLF2(0) = 1.0
+                DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1 
+                  IF (LNUMSG.LT.LNUMX) THEN
+                    LATL4(1,L)= LATL3(1,L) * NFLF2(0)            
+                    NFLF2(L) = AMIN1(1.0,NFLF2(L)
+     &                       + AMAX1(0.0,NFLF2(0))
+     &                       * (LATLPOT(1,L)-LATLPREV(1,L))/LAPOTX(L))
+                  ENDIF  
+                ENDDO
+               
+              ENDIF  ! Ene of N adjustments 
 
+            ELSE  ! ISWNIT = N  
+
+                GROLFADJ = GROLF
+                RSSRWTGLFADJ = 0.0
+                PLAGSB4 = PLAGSB3
+                SHLAGB4(1) = SHLAGB3(1)
+                SHLAGB4(2) = SHLAGB3(2)
+                SHLAGB4(3) = SHLAGB3(3)
+                NFLF2(0) = 1.0
+                DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1 
+                  IF (LNUMSG.LT.LNUMX) THEN
+                    LATL4(1,L)= LATL3(1,L)             
+                    NFLF2(L) = 1.0
+                  ENDIF  
+                ENDDO
+                
             ENDIF    ! End of N uptake and growth adjustmenets
 
 !-----------------------------------------------------------------------
@@ -5155,39 +5369,6 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
 
             CANHTG = 0.0
             CANHTG = SERX*DU
-
-!-----------------------------------------------------------------------
-!           Leaf area growth
-!-----------------------------------------------------------------------
-                  
-            ! Check if enough assim.for required leaf area
-            GROLFNEEDED = 
-     &       (PLAGTP(1)/(LAWL(1)*(1.0+LAWFF))
-     &       +PLAGTP(2)/(LAWL(2)*(1.0+LAWFF)))
-     &            / (1.0-LPEFR)
-            ! If not enough assim.,set assimilate factor 
-            IF (GROLFADJ.LT.GROLFNEEDED.AND.GROLFNEEDED.GT.0.0) THEN
-              AFLF(0) = GROLFADJ/GROLFNEEDED
-            ELSE  
-              AFLF(0) = 1.0
-            ENDIF
-
-            ! Assimilate factor average for each leaf
-            DO L = MAX(1,LNUMSG-(INT(LLIFG)+1)),LNUMSG+1
-              IF (LNUMSG.LT.LNUMX) THEN
-                AFLF(L) = AFLF(L)+AFLF(0)*(LLIFEG(L)/LLIFG)
-                PLAGLF(L) = PLAGLF(L) * AFLF(0)
-              ENDIF  
-            ENDDO
-              
-            ! Actual leaf cohort expansion
-            PLAGT(1) = PLAGTP(1)*AFLF(0)
-            PLAGT(2) = PLAGTP(2)*AFLF(0)
-            ! Actual leaf area growth - each shoot
-            DO L = 1,INT(SHNUM+1)
-              SHLAG(L) = SHLAGP(L)*
-     &           (PLAGT(1)+PLAGT(2))/(PLAGTP(1)+PLAGTP(2))
-            ENDDO
 
 !-----------------------------------------------------------------------
 !           Root depth and length growth, and distribution
@@ -5353,15 +5534,97 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             DAP = DAP + 1
             IF (EYEARDOY.GT.0) DAE = DAE + 1
           ENDIF
-          DO L = 1,LNUMSG
-            IF (EMRGFR.GT.0.0) LAGE(L) = LAGE(L) + DULF*EMRGFR
-            LAGEP(L) = LAGEP(L) + LNUMG
+          TVI1 = LNUMSOLDESTA
+          LNUMSOLDESTA = -99
+          LLIFXUNUSED = 0.0
+          ! Leaves that present at beginning of day
+          DO L = 1,LNUMSG  
+            LAGETT(L) = LAGETT(L) + TTLFLIFE*EMRGFR
+            ! Accelerated senescence at base of dense leaf canopy
+            IF (LAI.GT.LAIXX) THEN
+              IF (L.EQ.TVI1) THEN
+                ! Increase age if deep shading at base of canopy
+                ! (Maximum accelerated ageing set in SPE file)
+                ! Accelerated ageing of lowermost active leaf
+                IF (LAGETT(L).LT.LLIFGTT+LLIFATT) THEN
+                  LAGETT(L) = AMIN1(LAGETT(L)+LLIFX,LLIFGTT+LLIFATT)
+                  LLIFXUNUSED = (LAGETT(L)+LLIFX)-(LLIFGTT+LLIFATT)
+                ELSE
+                  LLIFXUNUSED = LLIFX
+                ENDIF  
+              ENDIF
+!             ! If not all acceleration used up
+              IF (L.EQ.TVI1+1) THEN
+                IF (LLIFXUNUSED.GT.0.0) THEN
+                  IF (LAGETT(L).LT.LLIFGTT+LLIFATT) LAGETT(L) = 
+     &             AMIN1(LAGETT(L)+LLIFXUNUSED,LLIFGTT+LLIFATT)
+                ENDIF  
+              ENDIF
+            ENDIF
+            LAGEP(L) = LAGEP(L) + (TTLFLIFE*EMRGFR)/PHINT
+            ! Days growing
+            IF (LAGETT(L).LE.LLIFGTT) THEN
+              DGLF(L) = DGLF(L) + EMRGFR
+             ELSE  
+               IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT) THEN
+                TVR1 = 
+     &          (LLIFGTT-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                 DGLF(L) = DGLF(L) + TVR1
+               ENDIF  
+            ENDIF
+            ! Days active
+            IF (LAGETT(L).GT.LLIFGTT.AND.
+     &          LAGETT(L).LT.LLIFGTT+LLIFATT) THEN
+              IF (LNUMSOLDESTA.LT.0) THEN
+                LNUMSOLDESTA = L
+              ENDIF  
+              IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT) THEN
+                TVR1 = 
+     &           (LLIFGTT-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                DALF(L) = DALF(L) + (1.0-TVR1)
+              ELSE
+                IF (LAGETT(L).LE.LLIFGTT+LLIFATT) THEN
+                  DALF(L) = DALF(L) + 1.0
+                ELSE  
+                  IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT) THEN
+                    TVR1 = 
+     &              ((LLIFGTT+LLIFATT)-(LAGETT(L)-TTLFLIFE*EMRGFR))
+     &              /(TTLFLIFE*EMRGFR)
+                    DALF(L) = DALF(L) + TVR1
+                  ENDIF
+                ENDIF
+              ENDIF
+            ENDIF   
+            ! Days senescing
+            IF (LAGETT(L).GT.LLIFGTT+LLIFATT) THEN
+              IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT) THEN
+                TVR1 = ((LLIFGTT+LLIFATT)-(LAGETT(L)-TTLFLIFE*EMRGFR))
+     &                 /(TTLFLIFE*EMRGFR)
+                DSLF(L) = DSLF(L) + (1.0-TVR1)
+              ELSE
+                IF (LAGETT(L).LE.LLIFGTT+LLIFATT+LLIFSTT) THEN
+                  DSLF(L) = DSLF(L) + 1.0
+                ELSE  
+                  IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.
+     &             LLIFGTT+LLIFATT+LLIFSTT) THEN
+                    TVR1 = 
+     &              ((LLIFGTT+LLIFATT+LLIFSTT)
+     &              -(LAGETT(L)-TTLFLIFE*EMRGFR))
+     &              /(TTLFLIFE*EMRGFR)
+                    DSLF(L) = DSLF(L) + TVR1
+                    LDEATHDAP(L) = DAP  
+                  ENDIF
+                ENDIF
+              ENDIF
+            ENDIF   
           ENDDO
+          ! Leaves that emerged during day
           IF (LNUMG.GT.0.0) THEN
             IF (LNUMSG.LT.LNUMX) THEN
-              LAGE(LNUMSG+1) = LAGE(LNUMSG+1)+
-     &         DULF*EMRGFR*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG
+              LAGETT(LNUMSG+1) = LAGETT(LNUMSG+1)+
+     &         (TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG
               LAGEP(LNUMSG+1)=LAGEP(LNUMSG+1)+AMAX1(0.0,LNUMG-LNUMNEED)
+              DGLF(LNUMSG+1) = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG
             ENDIF  
           ENDIF
 
@@ -5491,40 +5754,24 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
 !         Update produced leaf area
 !-----------------------------------------------------------------------
 
-          IF (DULF.GT.0.0) THEN
-            DO L = 1,LNUMSG+1
-              IF (LNUMSG.LT.LNUMX) THEN
-                IF (PLAGTP(1)+PLAGTP(2).GT.0.0)
-     &           LATL(1,L) = LATL(1,L)+PLAGLF(L)*
-     &           ((PLAGT(1)+PLAGT(2))/(PLAGTP(1)+PLAGTP(2)))
-              ENDIF
-            ENDDO
-            PLA = PLA + PLAGT(1) + PLAGT(2)
+          IF (TT*EMRGFR.GT.0.0) THEN
+            PLA = PLA + PLAGSB4
             PLAX = AMAX1(PLAX,PLA)
-            LAP(LNUMSG) = LAP(LNUMSG) + PLAGT(1)
-            IF (LNUMSG.LT.LNUMX)
-     &       LAP(LNUMSG+1) = LAP(LNUMSG+1) + PLAGT(2)
-
+            LAP(LNUMSG) = LAP(LNUMSG) + PLAGSB4
+     
             DO L = 1,INT(SHNUM+1)
               IF (SHNUM.GE.1.0.OR.SHNUM-FLOAT(L-1).GT.0.0) THEN
-                SHLA(L) = SHLA(L) + SHLAG(L)
+                SHLA(L) = SHLA(L) + SHLAGB4(L)
               ENDIF
             ENDDO
 
             IF (LCNUM.LT.LCNUMX) THEN
-              IF (PLAGT(1).GT.0.0) THEN
+              IF (PLAGSB4.GT.0.0) THEN
                 LCNUM = LCNUM+1
-                LCOA(LCNUM) = PLAGT(1)
-              ENDIF
-              IF (LCNUM.LT.LCNUMX.AND.PLAGT(2).GT.0.0001) THEN
-                LCNUM = LCNUM+1
-                LCOA(LCNUM) = PLAGT(2)
-              ELSE
-                IF (LCNUM.GT.0)              
-     &           LCOA(LCNUM) = LCOA(LCNUM) + PLAGT(2)
+                LCOA(LCNUM) = PLAGSB4
               ENDIF
             ELSE
-              LCOA(LCNUM) = LCOA(LCNUM) + PLAGT(1) + PLAGT(2)
+              LCOA(LCNUM) = LCOA(LCNUM) + PLAGSB4
             ENDIF
 
           ENDIF
@@ -5720,66 +5967,66 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             IF (MEDEV.EQ.'DEVU') THEN
               DO L = HSTG,1,-1
                 IF (CUMDU.GE.PSTART(L).AND.PD(L).GT.0.0) THEN
-                  BSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L)
-                  ! Bstage cannot go above harvest stage 
-                  BSTAGE = AMIN1(FLOAT(HSTG),BSTAGE)
+                  BRSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L)
+                  ! Brstage cannot go above harvest stage 
+                  BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
                   LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
                   EXIT
                 ENDIF
               ENDDO
-            ELSE  
+            ELSEIF (MEDEV.EQ.'LNUM') THEN 
               ! Alternative method based on leaf numbers 
               DO L = HSTG,0,-1
                 IF (LNUM.GE.LNUMTOSTG(L)) THEN
                   IF (PDL(L).GT.0)
-     &            BSTAGE = FLOAT(L) + (LNUM-LNUMTOSTG(L))/PDL(L)
+     &            BRSTAGE = FLOAT(L) + (LNUM-LNUMTOSTG(L))/PDL(L)
                   LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
-                  ! Bstage cannot go above harvest stage 
-                  BSTAGE = AMIN1(FLOAT(HSTG),BSTAGE)
+                  ! Brstage cannot go above harvest stage 
+                  BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
                   EXIT
                 ENDIF  
               ENDDO
             ENDIF  
           ENDIF
 
-          ! STAGES:Leaf numbers
+          ! STAGES:leaf numbers 
           LNUM = AMAX1(0.0,(AMIN1(FLOAT(LNUMX-1),(LNUM+LNUMG))))
-          LNUMSG = INT(LNUM)+1
+          LNUMSG = INT(LNUM)+1  ! Youngest growing leaf
 
 !-----------------------------------------------------------------------
 !         Record stage dates and states
 !-----------------------------------------------------------------------
 
-          IF (INT(BSTAGE).GT.10.OR.
-     &      INT(BSTAGE).LT.0.AND.GESTAGE.GT.0.5) THEN
+          IF (INT(BRSTAGE).GT.10.OR.
+     &      INT(BRSTAGE).LT.0.AND.GESTAGE.GT.0.5) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '
             WRITE(fnumerr,*)
-     &       'Bstage out of range allowed for branching        '
-            WRITE(fnumerr,*) 'Bstage was: ',bstage
+     &       'Brstage out of range allowed for branching        '
+            WRITE(fnumerr,*) 'Brstage was: ',brstage
             WRITE(fnumerr,*) 'Please contact model developer'
             WRITE(*,*)
-     &       ' Bstage out of range allowed       '
-            WRITE(*,*) ' Bstage was: ',bstage
+     &       ' Brstage out of range allowed       '
+            WRITE(*,*) ' Brstage was: ',brstage
             WRITE(*,*) ' Program will have to stop'
             PAUSE
             CLOSE (fnumerr)
             STOP ' '
           ENDIF
           ! NB. Status at start of branch tier
-          IF (INT(BSTAGE).GT.INT(BSTAGEPREV).AND.
-     &     STGYEARDOY(INT(BSTAGE)).GE.9999999) THEN
-              STGYEARDOY(INT(BSTAGE)) = YEARDOY
-              LAISTG(INT(BSTAGE)) = LAIPREV 
-              LNUMSTG(INT(BSTAGE)) = LNUMPREV
+          IF (INT(BRSTAGE).GT.INT(BRSTAGEPREV).AND.
+     &     STGYEARDOY(INT(BRSTAGE)).GE.9999999) THEN
+              STGYEARDOY(INT(BRSTAGE)) = YEARDOY
+              LAISTG(INT(BRSTAGE)) = LAIPREV 
+              LNUMSTG(INT(BRSTAGE)) = LNUMPREV
               ! CWAD and CNAD not include the seed
-              CWADSTG(INT(BSTAGE)) = CWADPREV
-              CNADSTG(INT(BSTAGE)) = CNADPREV
+              CWADSTG(INT(BRSTAGE)) = CWADPREV
+              CNADSTG(INT(BRSTAGE)) = CNADPREV
           ENDIF
 
           ! Primary stages.   Calculated using Pstart
-          IF (BSTAGEPREV.LT.0) BSTAGEPREV = 0.0
-          L = INT(BSTAGEPREV) + 1
+          IF (BRSTAGEPREV.LT.0) BRSTAGEPREV = 0.0
+          L = INT(BRSTAGEPREV) + 1
           IF (PSDAT(L).LE.0.0.AND.CUMDU.GE.PSTART(L)) THEN
             PSDAT(L) = YEARDOY
             IF (DU.GT.0.0) PSDAPFR(L)=(PSTART(L)-(CUMDU-DU))/DU
@@ -5822,7 +6069,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           IF (NFG.LT.0.99999) NSDAYS = NSDAYS + 1
 
           IF (GESTAGE.GT.0.1) THEN
-            IF (INT(BSTAGE).NE.INT(BSTAGEPREV)) THEN
+            IF (INT(BRSTAGE).NE.INT(BRSTAGEPREV)) THEN
               TMAXPC = 0.0
               TMINPC = 0.0
               TMEANPC = 0.0
@@ -5847,9 +6094,9 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             DAYLCC = DAYLCC + DAYL
             RAINCC = RAINCC + RAIN
             
-            RAINPC(INT(BSTAGE)) = RAINPC(INT(BSTAGE)) + RAIN
-            ETPC(INT(BSTAGE))   = ETPC(INT(BSTAGE)) + ET 
-            EPPC(INT(BSTAGE))   = EPPC(INT(BSTAGE)) + EP 
+            RAINPC(INT(BRSTAGE)) = RAINPC(INT(BRSTAGE)) + RAIN
+            ETPC(INT(BRSTAGE))   = ETPC(INT(BRSTAGE)) + ET 
+            EPPC(INT(BRSTAGE))   = EPPC(INT(BRSTAGE)) + EP 
             
             CO2PC = CO2PC + CO2
             NFPPC = NFPPC + NFP
@@ -5864,22 +6111,22 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             ETCC   = ETCC + ET
             EPCC   = EPCC + EP 
             
-            PDAYS(INT(BSTAGE)) = PDAYS(INT(BSTAGE)) + 1
+            PDAYS(INT(BRSTAGE)) = PDAYS(INT(BRSTAGE)) + 1
             CDAYS = CDAYS + 1
-            IF (PDAYS(INT(BSTAGE)).GT.0) THEN
-              TMAXPAV(INT(BSTAGE)) = TMAXPC / PDAYS(INT(BSTAGE))
-              TMINPAV(INT(BSTAGE)) = TMINPC / PDAYS(INT(BSTAGE))
-              TMEANAV(INT(BSTAGE)) = TMEANPC / PDAYS(INT(BSTAGE))
-              SRADPAV(INT(BSTAGE)) = SRADPC / PDAYS(INT(BSTAGE))
-              DAYLPAV(INT(BSTAGE)) = DAYLPC / PDAYS(INT(BSTAGE))
-              DAYLST(INT(BSTAGE)) = DAYL
-              CO2PAV(INT(BSTAGE)) = CO2PC / PDAYS(INT(BSTAGE))
-              RAINPAV(INT(BSTAGE)) = 
-     &         RAINPC(INT(BSTAGE)) / PDAYS(INT(BSTAGE))
-              NFPPAV(INT(BSTAGE)) = NFPPC / PDAYS(INT(BSTAGE))
-              NFGPAV(INT(BSTAGE)) = NFGPC / PDAYS(INT(BSTAGE))
-              WFPPAV(INT(BSTAGE)) = WFPPC / PDAYS(INT(BSTAGE))
-              WFGPAV(INT(BSTAGE)) = WFGPC / PDAYS(INT(BSTAGE))
+            IF (PDAYS(INT(BRSTAGE)).GT.0) THEN
+              TMAXPAV(INT(BRSTAGE)) = TMAXPC / PDAYS(INT(BRSTAGE))
+              TMINPAV(INT(BRSTAGE)) = TMINPC / PDAYS(INT(BRSTAGE))
+              TMEANAV(INT(BRSTAGE)) = TMEANPC / PDAYS(INT(BRSTAGE))
+              SRADPAV(INT(BRSTAGE)) = SRADPC / PDAYS(INT(BRSTAGE))
+              DAYLPAV(INT(BRSTAGE)) = DAYLPC / PDAYS(INT(BRSTAGE))
+              DAYLST(INT(BRSTAGE)) = DAYL
+              CO2PAV(INT(BRSTAGE)) = CO2PC / PDAYS(INT(BRSTAGE))
+              RAINPAV(INT(BRSTAGE)) = 
+     &         RAINPC(INT(BRSTAGE)) / PDAYS(INT(BRSTAGE))
+              NFPPAV(INT(BRSTAGE)) = NFPPC / PDAYS(INT(BRSTAGE))
+              NFGPAV(INT(BRSTAGE)) = NFGPC / PDAYS(INT(BRSTAGE))
+              WFPPAV(INT(BRSTAGE)) = WFPPC / PDAYS(INT(BRSTAGE))
+              WFGPAV(INT(BRSTAGE)) = WFGPC / PDAYS(INT(BRSTAGE))
               ENDIF
             IF (CDAYS.GT.0) THEN              
               TMAXCAV = TMAXCC / CDAYS
@@ -5994,7 +6241,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           CFLHAR = 'N'
           IF (IHARI.EQ.'R'.AND.YEARDOYHARF.EQ.YEARDOY .OR.
      &     IHARI.EQ.'D'.AND.YEARDOYHARF.EQ.DAP .OR.
-     &     IHARI.EQ.'G'.AND.YEARDOYHARF.LE.BSTAGE .OR.
+     &     IHARI.EQ.'G'.AND.YEARDOYHARF.LE.BRSTAGE .OR.
      &     IHARI.EQ.'A'.AND.YEARDOYHARF.EQ.YEARDOY .OR.
      &     IHARI.EQ.'M'.AND.CUMDU.GE.PSTART(MSTG)) THEN
             CFLHAR = 'Y'
@@ -6013,23 +6260,29 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           IF (CFLFAIL.EQ.'Y' .OR. CFLHAR.EQ.'Y') THEN
           
             IF (CFLFAIL.EQ.'Y'
-     &            .AND. BSTAGE <= 12 .AND. BSTAGE > 0 ) THEN       
+     &            .AND. BRSTAGE <= 12 .AND. BRSTAGE > 0 ) THEN       
               STGYEARDOY(12) = YEARDOY
-              TMAXPAV(12) = TMAXPAV(INT(BSTAGE))
-              TMINPAV(12) = TMINPAV(INT(BSTAGE))
-              SRADPAV(12) = SRADPAV(INT(BSTAGE))
-              DAYLPAV(12) = DAYLPAV(INT(BSTAGE))
-              RAINPAV(12) = RAINPAV(INT(BSTAGE))
-              CO2PAV(12) = CO2PAV(INT(BSTAGE))
-              NFPPAV(12) = NFPPAV(INT(BSTAGE))
-              WFPPAV(12) = WFPPAV(INT(BSTAGE))
-              WFGPAV(12) = WFGPAV(INT(BSTAGE))
-              NFGPAV(12) = NFGPAV(INT(BSTAGE))
+              TMAXPAV(12) = TMAXPAV(INT(BRSTAGE))
+              TMINPAV(12) = TMINPAV(INT(BRSTAGE))
+              SRADPAV(12) = SRADPAV(INT(BRSTAGE))
+              DAYLPAV(12) = DAYLPAV(INT(BRSTAGE))
+              RAINPAV(12) = RAINPAV(INT(BRSTAGE))
+              CO2PAV(12) = CO2PAV(INT(BRSTAGE))
+              NFPPAV(12) = NFPPAV(INT(BRSTAGE))
+              WFPPAV(12) = WFPPAV(INT(BRSTAGE))
+              WFGPAV(12) = WFGPAV(INT(BRSTAGE))
+              NFGPAV(12) = NFGPAV(INT(BRSTAGE))
             ENDIF
             STGYEARDOY(10) = YEARDOY  ! Harvest
             STGYEARDOY(11) = YEARDOY  ! Crop End
-            IF (HSTG.GT.0) PSDAPFR(HSTG) = FLOAT(DAP)
-            IF (MSTG.GT.0.AND.PSDAPFR(MSTG).LE.0.0)PSDAPFR(MSTG) = -99.0
+c           IF (HSTG.GT.0) THEN
+c             PSDAPFR(HSTG) = FLOAT(DAP)
+c             PSDAP(HSTG) = DAP
+c           ENDIF  
+c           IF (MSTG.GT.0.AND.PSDAPFR(MSTG).LE.0.0) THEN
+c             PSDAPFR(MSTG) = FLOAT(DAP)
+c             PSDAP(MSTG) = DAP
+c           ENDIF  
             HADOY = DOY
             HAYEAR = YEAR
             CWADSTG(INT(10)) = CWAD
@@ -6386,6 +6639,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             HNUMAM = FLOAT(SRNOPD)*PLTPOP
             HNUMGM = FLOAT(SRNOPD)
             HNUMPM = FLOAT(SRNOPD)
+            BRNUMSH = BRNUMST
             IF (SRWT.GT.0.0) HNPCM = SROOTN/SRWT*100.0
 
           ENDIF
@@ -6465,7 +6719,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         CALL Csopline(hindc,hind)
         CALL Csopline(hwudc,hwud)
         CALL Csopline(sdwadc,sdwad)
-        CALL Csopline(bstagec,bstage)
+        CALL Csopline(brstagec,brstage)
         
         ! Calculate Pari to equate to updated LAI
         PARIOUT = (1.0 - EXP((-KCAN)*LAI))
@@ -6497,8 +6751,8 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             WRITE(fnumwrk,'(A34,F7.1)')
      &       ' Windspeed m/s                    ',windsp     
             WRITE(fnumwrk,'(A34,2F7.3,2F7.1)')
-     &       ' Bstage,Lnum. Beginning,end of day',
-     &       bstageprev,bstage,lnumprev,lnum
+     &       ' Brstage,Lnum. Beginning,end of day',
+     &       brstageprev,brstage,lnumprev,lnum
             IF (PLA-SENLA-LAPHC.LT.9999.9) THEN
               WRITE(fnumwrk,'(A34,F7.1,F7.1)')
      &        ' Laminae area end day /m2,/plant  ',lai,pla-senla-laphc
@@ -6689,7 +6943,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
      P               '      ')
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPG,501)
-     A      YEAR,DOY,DAS,DAP,TMEAN,BSTAGEC,LNUM,
+     A      YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,LNUM,
      B      PARIOUT,PARIUE,AMIN1(999.9,CARBOBEG*PLTPOP*10.0),
      &      LAIC,SAID,CAIC,
      C      NINT(TWAD),NINT(SDWAD),NINT(RWAD),NINT(CWAD),
@@ -6697,7 +6951,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
      E      NINT(CRWADOUT),NINT(RSWAD),
      &      SENTOPLITTERAC,SENROOTC,
      F      RSCD*100.0,NINT(HNUMAD),HWUDC,
-     G      NINT(SHNUMAD),SLAOUT,RTDEP/100.0,PTF,H2OA,
+     G      NINT(BRNUMST),SLAOUT,RTDEP/100.0,PTF,H2OA,
      H      AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),
      I      1.0-WFP,1.0-WFG,
      J      1.0-NFP,1.0-NFG,AMIN1(2.0,NUPRATIO),
@@ -6756,7 +7010,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
      &               '  SNXD LN%RD SN%RD RN%RD            ')
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPGF,507)
-     A      YEAR,DOY,DAS,DAP,TMEAN,TCDIF,BSTAGEC,
+     A      YEAR,DOY,DAS,DAP,TMEAN,TCDIF,BRSTAGEC,
      B      DU,1.0-DFOUT,
      C      1.0-TFP,1.0-WFP,1.0-NFP,1.0-CO2FP,1.0-RSFP,
      D      1.0-TFG,1.0-WFG,1.0-NFG,
@@ -6801,7 +7055,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             CALL Csopline(canhtc,canht)
             L = MAX(1,LNUMSG-INT(LLIFG))
             WRITE (NOUTPG2,502)
-     A       YEAR,DOY,DAS,DAP,TMEAN,BSTAGEC,BSTAGE,
+     A       YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,BRSTAGE,
      B       LAIPRODC,SENLA*PLTPOP*0.0001,LAIC,CANHTC,SDWAD,
      &       SENTOPLITTERAC,SENROOTC,
      &       NINT(HNUMAD),HWUDC,
@@ -6836,12 +7090,12 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
      F           ' RSNAD SNN0D SNN1D',
      B           '  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D',
      C           ' LN%RD SN%RD RN%RD  VCN%  VMN% NUPRD',
-     D           ' NDEMD LFADJ')
+     D           ' NDEMD NFLF2')
               ENDIF  ! Plantn header writes
               CALL Csopline(senn0c,sennal(0))
               CALL Csopline(sennsc,sennas)
               WRITE (NOUTPN,503)
-     A         YEAR,DOY,DAS,DAP,TMEAN,BSTAGEC,NUPAC,
+     A         YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,NUPAC,
      B         TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD,HNAD,HINDC,
      H         RSNAD,SENN0C,SENNSC,
      C         RANC*100.0,LANC*100.0,SANCOUT*100.0,
@@ -6849,7 +7103,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
      E         LNCR,SNCR,RNCR,
      &         VCNC*100.0,VMNC*100.0,
      F         AMIN1(2.,NUPRATIO),ANDEM,
-     g         1.0-LFADJ
+     g         1.0-NFLF2(0)
   503          FORMAT(
      1         I5,I4,2I6,F6.1,A6,F6.1,
      2         F6.1,2F6.2,4F6.1,A6,
@@ -7014,6 +7268,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               CALL AREADR (FILEA,TN,RN,SN,ON,CN,'L#SM',lnumsmm)
               IF (lnumsmm.le.0.0)
      &         CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LNOSM',lnumsmm)
+              CALL AREADR (FILEA,TN,RN,SN,ON,CN,'BR#SH',brnumshm)
           
               CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CNAM',cnamm)
               CALL AREADR (FILEA,TN,RN,SN,ON,CN,'VNAM',vnamm)
@@ -7045,9 +7300,9 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
                  IF (YEARM.GT.0.0) PSDATM = CSYDOY(YEARM,PSDATM(L))
                ENDIF
                IF (psdatm(l).gt.0) then
-                psdapm(l) = Dapcalc(psdatm(l),plyear,plday)
+                 psdapm(l) = Dapcalc(psdatm(l),plyear,plday)
                ELSE
-                psdapm(l) = -99
+                 psdapm(l) = -99
                ENDIF 
               ENDDO
             ENDIF ! File-A exists
@@ -7241,7 +7496,9 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
                 ! Use T-data if A-data missing (whem output=all)
                 IF (FEXISTT) THEN
                   WRITE(Fnumwrk,*)' '
-                  WRITE(Fnumwrk,'(A27)') ' EXAMINING TIME-COURSE DATA'
+                  WRITE(Fnumwrk,'(A45)')
+     &              ' FINISHED SIMULATION. PREPARING FINAL OUTPUTS'
+                  WRITE(Fnumwrk,*)' '
                   IF (HWAMM.LE.0.0) THEN
                     IF (HWADT.GT.0.0) THEN
                       HWAMM = HWADT
@@ -8063,7 +8320,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               WRITE (FNUMPSUM,99,ADVANCE='NO')
    99         FORMAT ('@  RUN EXCODE    TRNO RN',
      X         ' TNAME....................',
-     A        ' REP  RUNI S O C    CR PYEAR  PDOY')
+     A        ' REP  RUNI S O C    CR PYEAR  PDAT')
               DO L = 1,KEYSTX
                 IF (KEYPS(L).GT.0) THEN
                   WRITE (FNUMPSUM,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
@@ -8133,66 +8390,79 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             OPEN(UNIT=FNUMLVS,FILE=FNAMELEAVES,POSITION='APPEND')
             WRITE (FNUMLVS,'(/,A79,/)') OUTHED
             WRITE (FNUMLVS,'(A14,F6.1)') '! LEAF NUMBER ',LNUM
-            WRITE (FNUMLVS,'(/,A42,A30)')
-     &       '@ LNUM AREAP AREA1 AREAT AREAS  S#PL  S#AL',
-     &       '  WFLF  NFLF  AFLF  TFLF DAYSG'
+            WRITE (FNUMLVS,'(/,A48,A36,A30)')
+     &       '@ LNUM AREAP AREA1 AREA2 AREA3 AREA4 AREAT AREAS',
+     &       '  WFLF  NFLF NFLF2  AFLF TFGLF TFDLF',
+     &       ' LLIFG LLIFA LLIFS LLIFE   DAP'
             DO I = 1, INT(LNUM+0.99)
               CALL Csopline(lapotxc,lapotx(i))
-              CALL Csopline(latlc,latl(1,i))
+              CALL Csopline(latlc,AMAX1(0.0,latl(1,i)))
+              CALL Csopline(latl2c,AMAX1(0.0,latl2(1,i)))
+              CALL Csopline(latl3c,AMAX1(0.0,latl3(1,i)))
+              CALL Csopline(latl4c,AMAX1(0.0,latl4(1,i)))
               CALL Csopline(lapc,lap(i))
               CALL Csopline(lapsc,laps(i))
-              ! Adjust for growth period
-              WFLF(I) = WFLF(I)/AMIN1(1.0,(LAGEP(I)/LLIFG))
-              !WFLFAW(I) = WFLFAW(I)/AMIN1(1.0,(LAGEP(I)/LLIFG))
-              NFLF(I) = NFLF(I)/AMIN1(1.0,(LAGEP(I)/LLIFG))
-              NFLFP(I) = NFLFP(I)/AMIN1(1.0,(LAGEP(I)/LLIFG))
-              TFLF(I) = TFLF(I)/AMIN1(1.0,(LAGEP(I)/LLIFG))
-              !TFLFAW(I) = TFLFAW(I)/AMIN1(1.0,(LAGEP(I)/LLIFG))
-              AFLF(I) = AFLF(I)/AMIN1(1.0,(LAGEP(I)/LLIFG))
-              WRITE (fnumlvs,'(I6,4A6,F6.1,I6,4F6.2,F6.2)')
+              ! Adjust for growth period of non fullly expanded leaves
+              WFLF(I) = AMIN1(1.0,WFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+              NFLF(I) = AMIN1(1.0,NFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+              NFLFP(I) =AMIN1(1.0,NFLFP(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+              TFGLF(I) =AMIN1(1.0,TFGLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+              AFLF(I) = AMIN1(1.0,AFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+              IF (CFLAFLF.EQ.'N') AFLF(I) = 1.0
+              IF (LDEATHDAP(I).EQ.0) LDEATHDAP = -99
+              WRITE (fnumlvs,'(I6,7A6,6F6.2,4F6.1,I6)')
      &          I,LAPOTXC,
-     &          LATLC,LAPC,LAPSC,
-     &          SHNUML(I),NINT(SHNUML(I)*PLTPOP),1.0-WFLF(I),
-     &          1.0-NFLF(I),1.0-AFLF(I),1.0-TFLF(I),DGLF(I)
+     &          LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,
+     &          1.0-WFLF(I),
+     &          1.0-NFLF(I),1.0-NFLF2(I),
+     &          1.0-AMAX1(0.0,AMIN1(1.0,AFLF(I))),
+     &          1.0-TFGLF(I),1.0-TFDLF(I),
+     &          DGLF(I),DALF(I),DSLF(I),DGLF(I)+DALF(I)+DSLF(I),
+     &          LDEATHDAP(I)
             ENDDO
             IF (RUN.EQ.1) THEN
               WRITE(fnumlvs,*)' '
-              WRITE(fnumlvs,'(A51)')
-     &         '! NB. Cassava data are summed over all fork branches'
+              WRITE(fnumlvs,'(A43)')
+     &         '! NB. Data are summed over all fork branches'
               WRITE(fnumlvs,*)' '
               WRITE(fnumlvs,'(A36)')
      &          '! LNUM = Number of leaf on one axis '
               WRITE(fnumlvs,'(A52)')
      &          '! AREAP = Potential area of leaf on main axis (cm2) '
-              WRITE(fnumlvs,'(A41,A16)')
+              WRITE(fnumlvs,'(A41,A26)')
      &          '! AREA1 = Area of youngest mature leaf on', 
-     &          ' main axis (cm2)'
+     &          ' main axis,no stress (cm2)'
               WRITE(fnumlvs,'(A42,A16)')
      &          '! AREAT = Area of cohort of leaves at leaf',
      &          ' position (cm2) '
               WRITE(fnumlvs,'(A43,A35)')
      &          '! AREAS = Senesced area of cohort of leaves',
      &          ' at harvest at leaf position (cm2) '
-              WRITE(fnumlvs,'(A45)')
-     &          '! S#PL = Shoot number/plant at leaf position '
-              WRITE(fnumlvs,'(A48)')
-     &          '! S#AL = Shoot number/area(m2) at leaf position '
               WRITE(fnumlvs,'(A38,A17)')
      &          '! WFLF  = Water stress factor for leaf',
      &          ' (0-1,1=0 stress)'
               WRITE(fnumlvs,'(A51)')
      &          '! NFLF  = N stress factor for leaf (0-1,1=0 stress)'
+              WRITE(fnumlvs,'(A51)')
+     &         '! NFLF  = N factor for area adjustment (0-1,1=0 stress)'
               WRITE(fnumlvs,'(A44,A17)')
      &          '! NFLFP = N stress factor for photosynthesis',
      &          ' (0-1,1=0 stress)'
               WRITE(fnumlvs,'(A36,A24)')
      &          '! AFLF  = Assimilate factor for leaf',
      &          ' (0-1,1=0 no limitation)'
-              WRITE(fnumlvs,'(A37,A24)')
-     &          '! TFLF  = Temperature factor for leaf',
+              WRITE(fnumlvs,'(A48,A24)')
+     &          '! TFGLF = Temperature factor for leaf expansion ',
+     &          ' (0-1,1=0 no limitation)'
+              WRITE(fnumlvs,'(A49,A24)')
+     &          '! TFDLF = Temperature factor for leaf development',
      &          ' (0-1,1=0 no limitation)'
               WRITE(fnumlvs,'(A37)')
-     &          '! DAYSG = Number of days of growth   '
+     &          '! DGLF = Number of days growing      '
+              WRITE(fnumlvs,'(A37)')
+     &          '! DALF = Number of days fully active '
+              WRITE(fnumlvs,'(A37)')
+     &          '! DSLF = Number of days senescing    '
             ENDIF
             CLOSE (FNUMLVS)
             ! End of Leaves.out
@@ -8423,11 +8693,12 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             !  WRITE (fnumwrk,'(I7,2F8.3)') L,LCOA(L),LCOAS(L)
             !ENDDO
             WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A18,A10,I3)')
-     &       ' SHOOT SIZES FOR  ',excode,tn
-            WRITE (fnumwrk,'(A31)') '   SHOOT  BIRTH   AREAP   AREAS'
+            WRITE (fnumwrk,'(A24,A10,I3)')
+     &       ' SHOOT SIZES (cm2) FOR  ',excode,tn
+            WRITE (fnumwrk,'(A32)') 
+     &       '   SHOOT  BIRTH   AREAP   AREAS '
             DO I = 1,INT(SHNUM)
-              WRITE (fnumwrk,'(I7,3I8)')
+              WRITE (fnumwrk,'(I7,I8,2I8)')
      &          I,SHDAT,NINT(SHLA(I)),NINT(SHLAS(I))
             ENDDO
             IF (ISWNIT.NE.'N') THEN
@@ -8467,7 +8738,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               WRITE (FNUMPHES,'(/,A14,A10)')
      &         '*PHENOLOGY(S):',EXCODE
               WRITE (FNUMPHES,'(A16,A24)',ADVANCE='NO') 
-     &         '@ EXCODE    TRNO',' PYEAR  PDOY  GDAP  EDAP'
+     &         '@ EXCODE    TRNO',' PYEAR  PDAT  GDAP  EDAP'
               DO L = 1,KEYSTX
                 IF (KEYPS(L).GT.0)THEN
                   WRITE (FNUMPHES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
@@ -8500,7 +8771,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
                 WRITE (FNUMPHEM,'(/,A14,A10)')
      &            '*PHENOLOGY(M):',EXCODE
                 WRITE (FNUMPHEM,'(A16,A24)',ADVANCE='NO') 
-     &            '@EXCODE     TRNO',' PYEAR  PDOY  GDAP  EDAP'
+     &            '@EXCODE     TRNO',' PYEAR  PDAT  GDAP  EDAP'
                 DO L = 1,KEYSTX
                   IF (KEYPS(L).GT.0) THEN
                     WRITE (FNUMPHEM,'(A6)',ADVANCE='NO')PSABVO(KEYPS(L))
@@ -8519,7 +8790,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               CLOSE (FNUMPHEM)
             ENDIF  
             ! End Phenology (Measured)
-
+           
             ! Plant responses (Simulated)'
             ! Set temporary planting date for overlapping year end
             IF (RUNCRP.EQ.1) PLDAYTMP = -99
@@ -8533,36 +8804,21 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               PLDAYTMP = PLDAY
             ENDIF
             PLDAYTMP = PLDAY
-            IF (EXCODE.NE.EXCODEPREV) AMTNITPREV = 0.0
-            OPEN (UNIT = FNUMPRES,FILE = FNAMEPRES)
-            DO WHILE (.true.)
-              READ(FNUMPRES,'(A180)',end=9950)TLINETMP
-            ENDDO
- 9950       CONTINUE    
-            CLOSE(FNUMPRES)
-            READ(TLINETMP,'(7X,A10)') EXCODEPREV
-            READ(TLINETMP,'(74X,I6)',IOSTAT=ERRNUM) AMTNITPREV
-            IF (ERRNUM /= 0) AMTNITPREV = 0.0
-            ! LAH Here should write new header if new response group
-            IF (CFLPRES.NE.'Y'.OR.TNAME(1:1).EQ.'*') THEN
-              CFLPRES = 'Y'
-              OPEN(UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
+            IF (EXCODE.NE.EXCODEPREV.OR.TNAME(1:1).EQ.'*') THEN
+              OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
               WRITE (FNUMPRES,*) ' '
+              WRITE (TLINETMP,9951) EXCODE,MODNAME
+ 9951         FORMAT ('*RESPONSES(S):',A10,'  ',A8)
               IF (TNAME(1:1).EQ.'*') THEN
-                WRITE (FNUMPRES,9951) EXCODE,TNAME(2:25)
- 9951           FORMAT ('*RESPONSES(S):',A10,'  ',A24)
-              ELSEIF (AMTNIT.LT.AMTNITPREV.OR.
-     &                PLYEARDOY.LT.PLYEARDOYPREV)THEN
-                WRITE (FNUMPRES,9951) EXCODE,TNAME(1:24)
+                WRITE (FNUMPRES,'(A180)') TLINETMP
               ELSE
-                WRITE (FNUMPRES,995) EXCODE,ENAME(1:55)
-  995           FORMAT ('*RESPONSES(S):',A10,'  ',A55)
+                WRITE (FNUMPRES,'(A180)') TLINETMP
               ENDIF
               WRITE (FNUMPRES,97,ADVANCE='NO')
    97         FORMAT ('@  RUN',
      A        ' EXCODE   ',
      B        ' TRNO RN    CR',
-     D        '  PDOY  EDAP')
+     D        '  PDAT  EDAP')
               DO L = 1,KEYSTX
                 IF (KEYPS(L).GT.0) THEN
                   WRITE (FNUMPRES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
@@ -8570,13 +8826,13 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               ENDDO
               WRITE (FNUMPRES,297)
   297         FORMAT (
-     F        '  NICM',
-     G        '  HWAM  HWUM',
-     H        '  H#AM  H#GM  LAIX  L#SM',
-     I        '  CWAM  VWAM  HIAM  RWAM',
-     J        '  HN%M  TNAM',
-     K        '  CNAM  HNAM',
-     L        '  HINM PLPOP',
+     G        '  HWAH  HWUH',
+     H        '  H#AH  H#GH  LAIX  L#SH BR#AH',
+     I        '  CWAH  VWAH  HIAH  RWAH',
+     J        '  HN%H  TNAH',
+     K        '  CNAH  HNAH',
+     L        '  HINH PLPOP',
+     F        '  NICH',
      M        ' SRADA TMAXA TMINA  PRCP')
             ELSE
               OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
@@ -8584,36 +8840,42 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
             WRITE (FNUMPRES,7401,ADVANCE='NO') RUN,EXCODE,TN,RN,CROP,
      A       PLDAYTMP,EDAPFR
             DO L = 1,KEYSTX
-              IF (KEYPS(L).GT.0) WRITE (FNUMPRES,'(I6)',ADVANCE='NO')
-     &        PSDAP(KEYPS(L))
+              IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN
+                ! If harvested at a specific date
+                tvi1 = Dapcalc(yeardoyharf,plyear,plday)
+                WRITE (FNUMPRES,'(I6)',ADVANCE='NO') tvi1
+              ELSE
+                IF (KEYPS(L).GT.0) WRITE(FNUMPRES,'(I6)',ADVANCE='NO')
+     &           PSDAP(KEYPS(L))
+              ENDIF
             ENDDO
             WRITE (fnumpres,409)
-     C       NINT(amtnit),
      D       NINT(hwam),hwumchar,
      E       NINT(hnumam),NINT(hnumgm),
-     F       laixchar,lnumsm,
+     F       laixchar,lnumsm,brnumsh,
      G       NINT(cwam),NINT(vwam),
      H       hiamchar,
      I       NINT(rwam),
      J       hnpcmchar,
      K       NINT(AMAX1(-99.0,cnam+rnam)),NINT(cnam),NINT(hnam),
      L       hinmchar,pltpop,
+     C       NINT(amtnit),
      M       sradcav,tmaxcav,tmincav,
      N       NINT(raincc)            
  7401       FORMAT (I6,1X,A10,I4,I3,4X,A2,     !Run,excode,tn,rn,crop
      A       I6,                               !Pldaytmp
      B       F6.1)                             !Edapfr
   409       FORMAT (
-     C       I6,                               !Amtnit
-     D       I6,A6,                            !hwam,hwum
+     D       I6,A6,                            !gwam,hwum
      E       I6,I6,                            !g#am,g#gm
-     F       A6,F6.1,                          !laix,lnumsm
+     F       A6,F6.1,F6.1                      !laix,lnumsm,shnumpm
      G       I6,I6,                            !Cwam,vwam
      H       A6,                               !hiam
      I       I6,                               !N(rwam)
      J       A6,                               !hnpcm
      K       I6,I6,I6,                         !N(cnam+rnam),(cn),(gn)
-     L       A6,F6.1,                          !hinm,pltpop
+     L       A6,F6.1,                          !hinm,pltpop,shnumpm
+     C       I6,                               !Amtnit
      M       3F6.1,                            !RAD,TX,TN
      N       I6)                               !RN   
             CLOSE(FNUMPRES)
@@ -8627,19 +8889,15 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               OPEN (UNIT = FNUMTMP,FILE = FNAMEPREM,STATUS='UNKNOWN')
               CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
             ELSE
-               IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN                
+              IF (EXCODE.NE.EXCODEPREV.OR.TNAME(1:1).EQ.'*') THEN
                 OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
                 WRITE (FNUMPREM,*) ' '
+                WRITE (TLINETMP,99511) EXCODE,MODNAME
+99511           FORMAT ('*RESPONSES(M):',A10,'  ',A8)
                 IF (TNAME(1:1).EQ.'*') THEN
-                  WRITE (FNUMPREM,8951) EXCODE,TNAME(2:25)
- 8951             FORMAT ('*RESPONSES(M):',A10,'  ',A24)
-                ELSEIF (AMTNIT.LT.AMTNITPREV.OR.
-     &                  PLYEARDOY.LT.PLYEARDOYPREV)THEN
-                  WRITE (FNUMPREM,9952) EXCODE,TNAME(1:24)
- 9952             FORMAT ('*RESPONSES(M):',A10,'  ',A24)
+                  WRITE (FNUMPREM,'(A180)') TLINETMP
                 ELSE
-                  WRITE (FNUMPREM,895) EXCODE,ENAME(1:55)
-  895             FORMAT ('*RESPONSES(M):',A10,'  ',A55)
+                  WRITE (FNUMPREM,'(A180)') TLINETMP
                 ENDIF
                 WRITE (FNUMPREM,97,ADVANCE='NO')
                 DO L = 1,KEYSTX
@@ -8649,13 +8907,13 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
                 ENDDO
                 WRITE (FNUMPREM,298)
   298         FORMAT (
-     F        '  NICM',
-     G        '  HWAM  HWUM',
-     H        '  H#AM  H#GM  LAIX  L#SM',
-     I        '  CWAM  VWAM  HIAM  RWAM',
-     J        '  HN%M  TNAM',
-     K        '  CNAM  HNAM',
-     L        '  HINM PLPOP',
+     G        '  HWAH  HWUH',
+     H        '  H#AH  H#GH  LAIX  L#SH BR#AH',
+     I        '  CWAH  VWAH  HIAH  RWAH',
+     J        '  HN%H  TNAH',
+     K        '  CNAH  HNAH',
+     L        '  HINH PLPOP',
+     F        '  NICH',
      M        ' SRADA TMAXA TMINA  PRCP')
               ELSE
                 OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
@@ -8663,23 +8921,31 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
               WRITE (FNUMPREM,7401,ADVANCE='NO') RUN,EXCODE,TN,RN,CROP,
      A         PLDAYTMP,FLOAT(MAX(-99,edapm))
               DO L = 1,KEYSTX
-                IF (KEYPS(L).GT.0) WRITE (FNUMPREM,'(I6)',ADVANCE='NO')
-     &           PSDAPM(KEYPS(L))
+                IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN
+                  ! If harvested at a specific date
+                  tvi1 = Dapcalc(yeardoyharf,plyear,plday)
+                  WRITE (FNUMPREM,'(I6)',ADVANCE='NO') tvi1
+                ELSE
+                  IF (KEYPS(L).GT.0) WRITE(FNUMPREM,'(I6)',ADVANCE='NO')
+     &             PSDAPM(KEYPS(L))
+                ENDIF
               ENDDO
+              !WRITE (FNUMPREM,'(I6)',ADVANCE='NO') PSDAPM(HSTG)
               WRITE (FNUMPREM,409)
-     F         NINT(amtnit),NINT(hwamm),hwummchar,
+     F         NINT(hwamm),hwummchar,
      G         NINT(hnumamm),NINT(hnumgmm),
-     H         laixmchar,lnumsmm, 
+     H         laixmchar,lnumsmm,brnumshm, 
      I         NINT(cwamm),NINT(vwamm),hiammchar,
      J         NINT(rwamm),
      K         hnpcmmchar,NINT(tnamm),NINT(cnamm),NINT(hnamm),
      L         hinmmchar,pltpopp,
+     F         NINT(amtnit),
      M         sradcav,tmaxcav,tmincav,
      N         NINT(raincc)            
               CLOSE(FNUMPREM)
             ENDIF  
             ! End Responses (Measured)
-            
+              
           ELSE  ! IDETL = 'D'
 
             OPEN (UNIT=FNUMPHES,FILE=FNAMEPHENOLS,STATUS = 'UNKNOWN')
@@ -9289,7 +9555,7 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           LABEL(27) = 'YPNAM' ; VALUE(27) = GrP_NApp
           LABEL(28) = 'YPNUM' ; VALUE(28) = GrP_NUpt
            
-          LABEL(29) = 'EDAP ' ; VALUE(29) = FLOAT(EDAP)     
+          LABEL(29) = 'EDAT ' ; VALUE(29) = FLOAT(EYEARDOY)     
           
           LABEL(30) = 'NDCH ' ; VALUE(30) = FLOAT(CDAYS) 
           LABEL(31) = 'TMINA' ; VALUE(31) = TMINCAV       
@@ -9316,8 +9582,6 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
           UNO3 = 0.0
           UNH4 = 0.0
           
-          RUNCRP = RUNCRP + 1
-          
           WRITE (fnumwrk,*) ' '
           WRITE (fnumwrk,'(A50)')
      &     ' END OF RUN. WILL BEGIN NEW CYCLE IF CALLED FOR.  '
@@ -9330,7 +9594,6 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
 !       Store variables for possible use next day/step
 !-----------------------------------------------------------------------
 
-        AMTNITPREV = AMTNIT
         CNADPREV = CNAD
         IF (CN.LE.1) CROPPREV = CROP
         IF (RNMODE.NE.'G') CUDIRFLPREV = CUDIRFLE
@@ -9340,12 +9603,12 @@ c     &   CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
         ECONOPREV = ECONO
         EMRGFRPREV = EMRGFR
         GESTAGEPREV = GESTAGE
-        BSTAGEPREV = BSTAGE
+        BRSTAGEPREV = BRSTAGE
         LAIPREV = LAI
         LNUMPREV = LNUM
         PARIPREV = PARI
         PLYEARDOYPREV = PLYEARDOY
-        SNOTPREV = SNOT
+        BRNUMSTPREV = BRNUMST
         SPDIRFLPREV = SPDIRFLE
         SRADPREV = SRAD
         SWFRPREV = SWFR

@@ -1,5 +1,8 @@
-!  Utility routines/functions
-!  Last edit 01/04/13 LAH
+!=======================================================================
+!  CROPSIM UTILITIES    
+!  Routines/functions used by Cropaim modules
+!  Last edit 06/06/13 LAH
+!=======================================================================
 
       ! Subroutines: Calendar, Csopline, Csdaylen, Csincmth, Csyr_doy
       !              Emod, Emod2
@@ -393,18 +396,22 @@
 
       CHARACTER (LEN=*)    DIRFILE, VCODE
       CHARACTER (LEN=80)   TLINE
+      CHARACTER (LEN=30)   TLINE2
       CHARACTER (LEN=1)    COLON
       CHARACTER (LEN=78)   MESSAGE(10)
-      INTEGER              L,FNUMERR,FNUMTMP,TVILENT,ERRNUM
+      INTEGER              L,FNUMERR,FNUMTMP,FNUMWRK,TVILENT,ERRNUM
       LOGICAL              FFLAG,FOPEN
 
 !      INTRINSIC EOF   !portability
 
       SAVE
-      
-      RETURN
 
       CALL Getlun ('FVCHECK',fnumtmp)
+      IF (fnumwrk.LE.0) THEN
+        CALL Getlun('WORK.OUT',fnumwrk)
+        INQUIRE (FILE = 'WORK.OUT',EXIST = FFLAG)
+        IF (.NOT.(FFLAG)) OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+      ENDIF
 
       INQUIRE (FILE = dirfile,EXIST = fflag)
       IF (.NOT.fflag) THEN
@@ -424,7 +431,6 @@
       ELSE
         COLON = 'N'
         OPEN (UNIT = FNUMTMP,FILE = DIRFILE)
-!       IF (EOF(FNUMTMP)) THEN
         READ(FNUMTMP,'(A80)',IOSTAT=ERRNUM) TLINE    !portability      
         IF (ERRNUM < 0) THEN       !EOF - file is empty
           CALL Getlun('ERROR.OUT',fnumerr)
@@ -439,7 +445,6 @@
           CLOSE (fnumerr)
           STOP ' '
         ENDIF
-!       READ(FNUMTMP,'(A80)')TLINE  !already read, above
         IF (TVILENT(TLINE).LT.10) THEN
           CALL Getlun('ERROR.OUT',fnumerr)
           OPEN(UNIT=fnumerr,FILE='ERROR.OUT')
@@ -459,13 +464,33 @@
         ENDDO
         CLOSE (FNUMTMP)
       
-        IF (TLINE(L:L+7) .NE. VCODE(1:8)) THEN
+        IF (TLINE(L:L+14) .NE. VCODE(1:15)) THEN
           MESSAGE(1) = 'Input file not correct version!'
-          WRITE(MESSAGE(2),'(A10,A60)')'File was: ',dirfile(1:60)
-          WRITE(MESSAGE(3),'(A14,A8)')'File version: ',tline(L:L+7)
-          WRITE(MESSAGE(4),'(A16,A9)')'Needed version: ',vcode(1:8)
-          MESSAGE(5) = 'Please check as this may be a real problem'
+          WRITE(MESSAGE(2),'(A6,A60)')  'File: ',dirfile(1:60)
+          WRITE(MESSAGE(3),'(A9,A15)')  'Version: ',tline(L:L+14)
+          WRITE(MESSAGE(4),'(A16,A15)') 'Needed version: ',vcode(1:15)
+          MESSAGE(5) = 'Program had to stop'
           CALL WARNING(5,'CSUTS',MESSAGE)
+          WRITE(FNUMWRK,*) ' '
+          WRITE(FNUMWRK,'(A32)')' Input file not correct version!'
+          WRITE(FNUMWRK,'(A8,A60)')  '  File: ',dirfile(1:60)
+          WRITE(FNUMWRK,'(A11,A15)') '  Version: ',tline(L:L+14)
+          WRITE(FNUMWRK,'(A18,A15)') '  Needed version: ',vcode(1:15)
+          WRITE(FNUMWRK,'(A21)')     '  Program had to stop'
+          WRITE(*,*) ' Input file not correct version!'
+          WRITE(*,*) '  File: ',dirfile(1:60)
+          WRITE(*,*) '  Version: ',tline(L:L+14)
+          WRITE(*,*) '  Needed version: ',vcode(1:15)
+          WRITE(*,*) '  Program will have to stop'
+          STOP ' '
+        ELSE  
+          WRITE(FNUMWRK,*) ' '
+          WRITE(FNUMWRK,'(A18)')    '  File version OK.'
+          WRITE(FNUMWRK,'(A14,A60)')'   File:      ',dirfile(1:60)
+          TLINE2 = TLINE(L+16:L+46) 
+          CALL LTRIM(TLINE2)
+          WRITE(FNUMWRK,'(A14,A15,A2,A20)')
+     &     '   Version:   ',vcode(1:15),'  ',TLINE2(1:20)
         ENDIF
       ENDIF
 
@@ -1602,6 +1627,37 @@
       RETURN
 
       END
+!-----------------------------------------------------------------------
+
+      FUNCTION TfacBeta(tcard,temp,TUNIT)
+
+      ! Calculate temp factor and thermal units from cardinal temps
+      ! using a Beta function
+
+      IMPLICIT NONE
+
+      REAL      tfac4,tcard(4),temp,tunit,topt,tfacbeta
+      INTEGER   fnumwrk
+      LOGICAL   fopen
+
+      INTRINSIC AMAX1,AMIN1
+
+      SAVE
+      
+      CALL Getlun ('WORK.OUT',fnumwrk)
+      INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+      IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+      
+      TOPT = TCARD(2)+((TCARD(3)-TCARD(2))/2.0)
+      
+      TFACBETA = ((TCARD(4)-TEMP)/(TCARD(4)-TOPT))*
+     & ((TEMP/TOPT)**(TOPT/(TCARD(4)-TOPT)))
+
+      tfacbeta = AMAX1(0.0,AMIN1(1.0,tfacbeta))
+      tunit = tfacbeta * (topt-tcard(1))
+
+      RETURN
+      END
 
 !-----------------------------------------------------------------------
 
@@ -1680,7 +1736,6 @@
 
 !-----------------------------------------------------------------------
 
-cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
       FUNCTION Tfac424(tcard,tmax,tmin,TUNIT)
 
       ! Calculate temp factor and thermal units from cardinal temps and
@@ -2260,7 +2315,7 @@ cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
         OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
       ENDIF  
       WRITE (fnumwrk,*) ' Problem in Tvrfromccde (real<-character)!'
-      WRITE (fnumwrk,*) ' Trying to convert: ',newchar
+      WRITE (fnumwrk,*) ' Trying to convert: ',newchar, ' code: ', code !MF
 
       RETURN
 
@@ -3020,7 +3075,7 @@ cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
         WRITE(fnumerr,*)'   Y1 ',Y1,' Y2 ',Y2
         WRITE(fnumerr,*)'   X  ',X,' X1 ',X1,' X2 ',X2
         WRITE(fnumerr,*)' Check WORK.OUT for more information'
-        WRITE (*,*) ' Division by zero in Function CS-YVAL!'
+        WRITE(fnumerr,*)' Program had to stop.'  ! MF 09JA14
         WRITE (*,*) ' Program will have to stop'
         WRITE (*,*) ' Check ERROR.OUT and WORK.OUT for details'
         CLOSE (fnumerr)

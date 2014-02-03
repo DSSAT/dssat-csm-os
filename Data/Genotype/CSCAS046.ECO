@@ -1,6 +1,5 @@
-$ECOTYPES:CSCAS046
+$ECOTYPES:CSCAS046.010114   Last edit:010114 
 
-! LAST EDIT: 27/04/13
 
 ! Coefficients presented here have no direct equivalents in the
 ! previous Dssat cassava model, which did not have a set of
@@ -20,21 +19,22 @@ $ECOTYPES:CSCAS046
 ! in the incoming solar and sky components.
 
 *ECOTYPE:CSCRP046
-@ECO#  ECONAME.......... PARUE HTSTD DUSRI SRN%S
-!                            1     2     3     4
-!                         g/MJ    cm  oC.d     %
-999991 MINIMA             2.00   100   300   .25
-999992 MAXIMA             3.20   400  2000  1.00
+@ECO#  ECONAME.......... PARUE HTSTD DUSRI SRN%S BR1FX BR2FX BR3FX BR4FX BR5FX BR6FX
+!                            1     2     3     4     5     6     7     8     9    10
+!                         g/MJ    cm  oC.d     %    F#    F#    F#    F#    F#    F#
+999991 MINIMA             2.00   100   300   .25     1     1     1     1     1     1
+999992 MAXIMA             3.20   400  2000  1.00     4     4     4     4     4     4
+                                                                                    
+DFAULT DEFAULT            2.80   200   600   .65     3     3     3     3     3     3
                                                 
-DFAULT DEFAULT            2.80   200   600   .65
-                                                
-990001 STANDARD1          2.30   200   600   .65
-990002 STANDARD2          2.30   200   600   .65
-990003 STANDARD3          2.30   200   600   .65
-990004 STANDARD4          2.30   200  1400   .65
+990001 STANDARD1          2.10   200   600   .65     3     3     3     3     3     3
+990002 STANDARD2          2.30   200   600   .65     3     3     3     3     3     3
+990003 STANDARD3          2.30   200   600   .65     3     3     3     3     3     3
+990004 STANDARD4          2.30   200  1400   .65     3     3     3     3     3     3
 
 ! COEFF   DEFINITION
 ! =====   ==========
+! BRxFX   Branch number per fork at fork x,maximum  (#)
 ! ECO#    Ecotype code (text)
 ! ECONAME Ecotype name (text)
 ! PARUE   PAR conversion factor,standard (g dry matter/MJ)

@@ -1,11 +1,8 @@
 !=======================================================================
-!  Leaf disease
-!  CROPSIM DISEASES Developed from the original diseases module for
-!  incorporation into the Dssat version of the original Cropsim
-!-----------------------------------------------------------------------
-!  Revision history
-!  1. Initial development (Mauricio Fernandez +   L.A.H.          96
-!  2. Modified from original (Mauricio +          L.A.H     20-01-04
+!  CROPSIM DISEASE (LEAF) ROUTINES    
+!  Developed from the original diseases module for
+!  incorporation into the Dssat version of Cropsim
+!  Last edit 06/06/13 LAH
 !=======================================================================
 
       SUBROUTINE Disease(Spdirfle,run,runi,step, ! Run+crop info

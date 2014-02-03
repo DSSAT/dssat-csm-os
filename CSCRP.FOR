@@ -1,15 +1,15 @@
 !-----------------------------------------------------------------------
-!  CROPSIM CEREAL GROWTH AND DEVELOPMENT MODULE V4.5   
-!  Last edit 11/04/13 LAH
+!  CROPSIM CEREAL GROWTH AND DEVELOPMENT MODULE    
+!  Last edit 06/06/13 LAH
 !-----------------------------------------------------------------------
 
-      SUBROUTINE CSCROP (FILEIOIN, RUN, TN, RN, RNMODE,    !Command line
+      SUBROUTINE CSCRP (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
      & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols
      & IDETS, IDETO, IDETG, IDETL, FROP,                   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather
      & DRAIN, RUNOFF, IRRAMT,                              !Water
-     & DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,           !Weather
+     & DAYLT, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,          !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
      & SNOW, SW, NO3LEFT, NH4LEFT, FERNIT,                 !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                     !NEW    !N components
@@ -23,6 +23,20 @@
      & RESCALG, RESNALG, RESLGALG,                         !Residues
      & STGYEARDOY, GSTAGE,                                 !Stage dates
      & DYNAMIC)                                            !Control
+     
+      ! Changes as work on comparison and calibrations
+      !   Species file: RS%X 80->70; PTFMN 75->70 PTFMX 98->95 
+      !                 RSUSE 0.1->0.3;pf1l 5->2 pf1f 0.8->0.5 
+      
+      ! Changes made after sending model to Jeff for Agmip work.
+      !  1. Variables passed to main module for outputting in Summary.out 
+      !  2. Version check for genotype files re-introduced
+      !  3. Phenology temperature responses made to work for differrent 
+      !     phases (was not working so responses for phase 1 for all)
+      !  4. Initialized tfdnext. Not initialized so sequence of runs 
+      !     used previous tfdnext for 1st phase, hence ADAT differred
+      !     for sequence of runs.
+      !  5. Starting at time of 1st irrig or at emergence introduced  
      
       ! NB. TN, et.are not provided when running under CSM (DS4 files). They
       !     are read in XREADC in the CSREA module. 
@@ -101,7 +115,6 @@
       REAL          ALBEDO        ! Canopy+soil albedo             fr
       REAL          ALBEDOS       ! soil albedo                    fr
       REAL          AMTNIT        ! Cumulative amount of N applied kg/ha
-      REAL          AMTNITPREV    ! Cumulative N,previous treatmnt kg/ha
       REAL          ANDEM         ! Crop N demand                  kg/ha
       REAL          ANFER(200)    ! N amount in fertilizer appln   kg/ha
       INTEGER       ARGLEN        ! Argument component length      #
@@ -211,7 +224,7 @@
       INTEGER       DAS           ! Days after start of simulation d
       INTEGER       DATE          ! Date (Year+Doy)                #
       INTEGER       DATECOL       ! Date column number             #
-      REAL          DAYL          ! Daylength,6deg below horizon   h
+      REAL          DAYLT         ! Daylength,6deg below horizon   h
       REAL          DAYLCAV       ! Daylength (6deg) av for cycle  h
       REAL          DAYLCC        ! Daylength,cycle sum            h.d 
       REAL          DAYLPAV(0:12) ! Daylength (6deg) av for phase  h
@@ -330,8 +343,8 @@
       INTEGER       EVHEADNM      ! Number of headings in ev file  #
       INTEGER       EVHEADNMMAX   ! Maximum no headings in ev file #
       REAL          EWAD          ! Ear weight                     kg/ha
-      INTEGER       EXAMINE       ! Flag for examination of parts  #
       INTEGER       EYEARDOY      ! Emergence Year+DOY             #
+      INTEGER       EYEARDOYM     ! Emergence measured Year+DOY    #
       REAL          FAC(20)       ! Factor ((mg/Mg)/(kg/ha))       #
       INTEGER       FAPPNUM       ! Fertilization application number
       INTEGER       FDAY(200)     ! Dates of fertilizer appn (YrDoy)
@@ -526,7 +539,6 @@
       REAL          HNUMPMM       ! Product #,mature,measured      #/p
       REAL          HPC(HANUMX)   ! Harvest percentage             %
       REAL          HPCF          ! Harvest percentage,final       %
-      REAL          HPRODN        ! Harvest product N              g/p
       REAL          HSTAGE        ! Hardening stage  0-1           #
       INTEGER       HSTG          ! Harvest maturity stage         #
       REAL          HWAD          ! Product weight                 kg/ha
@@ -551,6 +563,7 @@
       INTEGER       HYRDOY(HANUMX)! Dates of harvest operations    #
       INTEGER       I             ! Loop counter                   #
       REAL          ICWT          ! Initial water table depth      cm
+      INTEGER       IDATE1        ! First irrigation Yrdoy         #
       INTEGER       IDETGNUM      ! Number of times into IDETG     #
       INTEGER       IESTG         ! Inflorescence emergence stage  #
       REAL          IRRAMT        ! Irrigation amount for today    mm
@@ -591,7 +604,6 @@
       REAL          LAIXT         ! Leaf area index,max,t-file     m2/m2
       REAL          LAIXX         ! Leaf area index,max posible    #
       REAL          LANC          ! Leaf actual N concentration    #
-      REAL          LANCRS        ! Leaf N concentration,+reserves #
       REAL          LAP(0:LNUMX)  ! Leaf area at leaf position     cm2/p
       REAL          LAPD          ! Leaf area (green) per plant    cm2
       REAL          LAPH          ! Leaf area (green) harvested    cm2/d
@@ -717,7 +729,6 @@
       INTEGER       MDOY          ! Maturity day of year           d
       REAL          MJPERE        ! Energy per Einstein (300-170)  MJ/E
       INTEGER       MSTG          ! Maturity stage(eg.black layer) #
-      REAL          NCNU          ! NO3,NH4 conc factor,N uptake   ppm
       REAL          NCRG          ! N factor,root growth           ppm
       REAL          NFG           ! N factor,growth 0-1            #
       REAL          NFGCAV        ! N factor,growth,average,cycle  #
@@ -801,6 +812,7 @@
       REAL          PARURFR       ! PAR utilize factor,reprod fr   #
       INTEGER       PATHL         ! Path length                    #
       REAL          PD(0:PSX)     ! Phase durations                deg.d
+      REAL          PDMOD(0:PSX)  ! Phase durations modified       deg.d
       REAL          PD2ADJ        ! Phase 2+3 adjusted             deg.d
       REAL          PDADJ         ! Phase duration adjustment      deg.d
       INTEGER       PDATE         ! Planting Yrdoy from X-file     #
@@ -808,7 +820,6 @@
       REAL          PDFS          ! Phase duration,final senescenc deg.d
       REAL          PDL(0:10)     ! Phase durations,phint units    #    
       REAL          PDMTOHAR      ! Phase duration,mature->harvest deg.d
-      REAL          PDSRI         ! Storage root initiation phase  oC.d
       REAL          PEMRG         ! Phase duration,emergence       Cd/cm
       REAL          PEGD          ! Phase duration,germ+dormancy   deg.d
       REAL          PFGCAV        ! P factor,growh,cycle,av 0-1    # 
@@ -820,6 +831,7 @@
       INTEGER       PGROCOL(20)   ! Plantgro column = t-file data  #
       REAL          PGVAL         ! Plantgro file value            #
       REAL          PHINT         ! Phylochron interval            deg.d
+      REAL          PHINTSTORE    ! Phylochron interval,stored     deg.d
       REAL          PHINTF(PHSX)  ! Phylochron interval,factor lf# #
       REAL          PHINTL(PHSX)  ! Phylochron interval,change lf# #
       REAL          PHINTOUT      ! Phylochron interval,adjusted   deg.d
@@ -884,6 +896,7 @@
       REAL          PTFMN         ! Partition fraction,minimum     #
       REAL          PTFMX         ! Partition fraction,maximum     #
       REAL          PTTN          ! Minimum soil temperature,plt   C
+      REAL          PTFXS         ! Growth stage for PTFMX         #
       REAL          PTX           ! Maximum soil temperature,plt   C
       INTEGER       PWDINF        ! First YrDoy of planting window #
       INTEGER       PWDINL        ! Last YrDoy of planting window  #
@@ -921,7 +934,6 @@
       REAL          RLF           ! Leaf stomatal res,330.0 ppmCO2 s/m
       REAL          RLFC          ! Leaf stomatal resistance       s/m
       REAL          RLFN          ! Root length factor,N           #
-      REAL          RLFNU         ! Root length factor,N uptake   cm/dm3
       REAL          RLFWU         ! Root length factor,water uptk  /cm2
       REAL          RLIGPC        ! Root lignin concentration      %
       REAL          RLV(20)       ! Root length volume by layer    cm-2
@@ -1126,9 +1138,6 @@
       REAL          SNO3(20)      ! Soil NO3 N                     kg/ha
       REAL          SNO3PROFILE   ! Soil NO3 N in profile          kg/ha
       REAL          SNO3ROOTZONE  ! Soil NO3 N in root zone        kg/ha
-      REAL          SNOFX         ! Shoot number per fork          #
-      REAL          SNOT          ! Shoot number/tiller (>forking) #
-      REAL          SNOTPREV      ! Shoot number/tiller,previous   #
       REAL          SNOW          ! Snow                           cm
       REAL          SNPCMN(0:1)   ! Stem N conc,minimum            %
       REAL          SNPCS(0:1)    ! Stem N conc,standard,stage     %
@@ -1236,6 +1245,7 @@
       REAL          TDIFNUM       ! Temperature difference,# data  #
       REAL          TDIFSUM       ! Temperature difference,sum     C
       REAL          TFAC4         ! Temperature factor function    #
+      REAL          TFACBETA      ! Temperature factor function    #
       INTEGER       TFCOLNUM      ! T-file column number           #
       REAL          TFD           ! Temperature factor,development #
       INTEGER       TFDAP         ! T-file days after planting     #
@@ -1243,6 +1253,7 @@
       REAL          TFDF          ! Temperature factor,dayl sens   #
       REAL          TFDNEXT       ! Temperature factor,development #
       REAL          TFG           ! Temperature factor,growth 0-1  #
+      REAL          TFLA          ! Temperature factor,leaf ap 0-1 #
       REAL          TFGEM         ! Temperature factor,germ,emrg   #
       REAL          TFGF          ! Temperature factor,gr fill 0-1 #
       REAL          TFGN          ! Temperature factor,grain N 0-1 #
@@ -1304,6 +1315,7 @@
       REAL          TMEAN20P      ! Temperature mean,20 d>planting C
       REAL          TMEAN20S      ! Temperature sum over 20 days   C
       REAL          TMEANAV(0:12) ! Temperature,mean,phase av      C
+      REAL          TMEANCAV      ! Temperature,mean,cycle av      C
       REAL          TMEANCC        ! Temperature,mean,cycle sum    C.d  
       REAL          TMEAND(20)    ! Temperature mean,specific day  C
       REAL          TMEANE        ! Temp mean,germination-emerge   C
@@ -1316,7 +1328,7 @@
       REAL          TMEANSURF     ! Temperature mean,soil surface  C
       REAL          TMIN          ! Temperature minimum            C
       REAL          TMINCAV       ! Temperature,minimum,cycle av   C
-      REAL          TMINCC         ! Temperature,min,cycle sum     C.d  
+      REAL          TMINCC        ! Temperature,min,cycle sum     C.d  
       REAL          TMINM         ! Temperature minimum,monthly av C
       REAL          TMINN         ! Temperature min during season  C
       REAL          TMINPAV(0:12) ! Temperature,minimum,phase av   C
@@ -1361,14 +1373,19 @@
       REAL          TPAR          ! Transmission,PAR,fraction      #
       REAL          TRATIO        ! Function,relative tr rate      #
       REAL          TRCOH(4)      ! Temp response,cold hardening   #
-      REAL          TRDEV(4,9)    ! Temp response,development,phse #
       REAL          TRDV1(4)      ! Temp response,development 1    #
       REAL          TRDV2(4)      ! Temp response,development 2    #
-      REAL          TRDVX(4)      ! Temp response,development,X    #
+      REAL          TRDV3(4)      ! Temp response,development 3    #
+      REAL          TRDV4(4)      ! Temp response,development 4    #
+      REAL          TRDV5(4)      ! Temp response,development 5    #
+      REAL          TRDV6(4)      ! Temp response,development 6    #
+      REAL          TRDV7(4)      ! Temp response,development 7    #
+      REAL          TRDV8(4)      ! Temp response,development 8    #
       REAL          TRGEM(4)      ! Temp response,germ.emergence   #
       REAL          TRGFC(4)      ! Temp response,grain fill,C     #
       REAL          TRGFN(4)      ! Temp response,grain fill,N     #
       REAL          TRLDF         ! Intermediate factor,new roots  #
+      REAL          TRLA(4)       ! Temp response,leaf appearance  #
       REAL          TRLFG(4)      ! Temp response,leaf growth      #
       REAL          TRLV          ! Total root length density      /cm2
       REAL          TRPHS(4)      ! Temp response,photosynthesis   #
@@ -1380,6 +1397,7 @@
       INTEGER       TSSTG         ! Terminal spikelet stage        #
       REAL          TT            ! Daily thermal time             C.d
       REAL          TTGEM         ! Daily thermal time,germ,emrg.  C.d
+      REAL          TTLA          ! Daily thermal time,lf.appearnc C.d
       REAL          TT20          ! Thermal time mean over 20 days C
       REAL          TT20S         ! Thermal time sum over 20 days  C
       REAL          TTCUM         ! Cumulative thermal time        C.d
@@ -1414,6 +1432,7 @@
       REAL          VEEND         ! Vernalization effect end Rstge #
       REAL          VEENDDU       ! Vernalization effect end DU    #
       REAL          VEFF          ! Vernalization effect,max.reduc fr
+      INTEGER       VERSION       ! Version #                      #    
       REAL          VF            ! Vernalization factor 0-1       #
       REAL          VFNEXT        ! Vernalization factor,next ph   #
       REAL          VLOSS         ! Vernalization stage for 0 loss #
@@ -1451,8 +1470,6 @@
       REAL          WFLF(LNUMX)   ! H2O factor for leaf,average    #
       REAL          WFLFP(LNUMX)  ! H2O factor,phs leaf,average    #
       REAL          WFNU          ! Water factor,N uptake          #
-      REAL          WFNUL         ! Water factor,N uptake,lower    #
-      REAL          WFNUU         ! Water factor,N uptake,upper    #
       REAL          WFP           ! Water factor,photosynthsis 0-1 #
       REAL          WFPCAV        ! Water factor,phs,av 0-1,cycle  #
       REAL          WFPCC         ! H20 factor,phs,cycle sum       # 
@@ -1495,7 +1512,9 @@
       CHARACTER (LEN=1)   CFLFLN        ! Control flag,final leaf # Y/N
       CHARACTER (LEN=1)   CFLHAR        ! Control flag for final harvest
       CHARACTER (LEN=1)   CFLHARMSG     ! Control flag,harvest message
-      CHARACTER (LEN=1)   CFLPDADJ      ! Control flag,phase adjustment 
+      CHARACTER (LEN=1)   CFLPHASEADJ   ! Control flag,phase adjustment 
+      CHARACTER (LEN=1)   CFLPHINTADJ   ! Control flag,phint adjustment 
+      CHARACTER (LEN=1)   CFLPDATE      ! Control flag,planting date I,P
       CHARACTER (LEN=1)   CFLPRES       ! Control flag for headers,PRES
       CHARACTER (LEN=1)   CFLSDRSMSG    ! Control flag,seed reserves msg
       CHARACTER (LEN=10)  CNCHAR        ! Crop component (multicrop)
@@ -1507,6 +1526,7 @@
       CHARACTER (LEN=12)  CUFILE        ! Cultivar file
       CHARACTER (LEN=10)  DAPCHAR       ! DAP in character form
       CHARACTER (LEN=6)   DAPWRITE      ! DAP character string -> output
+      CHARACTER (LEN=8)   DATEWRITE     ! YEARDOY character string -> op
       CHARACTER (LEN=93)  ECDIRFLE      ! Ecotype directory+file
       CHARACTER (LEN=93)  ECDIRFLPREV   ! Ecotype directory+file,prev
       CHARACTER (LEN=12)  ECFILE        ! Ecotype filename
@@ -1515,10 +1535,12 @@
       CHARACTER (LEN=60)  ENAME         ! Experiment description
       CHARACTER (LEN=1)   ESTABLISHED   ! Flag,crop establishment Y/N
       CHARACTER (LEN=14)  EVHEADER      ! Evaluater.out header
+      CHARACTER (LEN=1)   EXAMINE(20)   ! Flag for examination of parts
       CHARACTER (LEN=10)  EXCODE        ! Experiment code/name
       CHARACTER (LEN=10)  EXCODEPREV    ! Previous experiment code/name
       CHARACTER (LEN=80)  FAPPLINE(30)  ! Fertilizer application details
       CHARACTER (LEN=120) FILEA         ! Name of A-file
+      CHARACTER (LEN=120) FILEX         ! Name of X-file
       CHARACTER (LEN=120) FILEIO        ! Name of input file,after check
       CHARACTER (LEN=120) FILEIOIN      ! Name of input file
       CHARACTER (LEN=107) FILEADIR      ! Name of A-file directory     
@@ -1538,6 +1560,7 @@
       CHARACTER (LEN=120) FNAMEPREM     ! File name,responses,measured
       CHARACTER (LEN=120) FNAMEPRES     ! File name,responses,simulated
       CHARACTER (LEN=120) FNAMEPSUM     ! File name,plant summary
+      CHARACTER (LEN=35)  GENFLCHK      ! Genotype file name for check
       CHARACTER (LEN=1)   GROUP         ! Flag for type of group
       CHARACTER (LEN=6)   GSTAGEC       ! Growth stage
       CHARACTER (LEN=6)   HIAMCHAR      ! Harvest indx,at maturity
@@ -1580,7 +1603,6 @@
       CHARACTER (LEN=1)   MEEXP         ! Switch,experimental method = E
       CHARACTER (LEN=1)   MEEVP         ! Switch,potential evapot method
       CHARACTER (LEN=1)   MEPHS         ! Switch,photosynthesis method
-      CHARACTER (LEN=3)   MERNU         ! Switch,root N uptake methd
       CHARACTER (LEN=1)   MESOM         ! Switch,OM decay method       
       CHARACTER (LEN=78)  MESSAGE(10)   ! Messages for Warning.out
       CHARACTER (LEN=1)   MENU          ! Switch,root N uptake methd
@@ -1683,7 +1705,12 @@
 
        IF (RUNCRP.LE.0) THEN          ! First time through
 
-          MODNAME(1:8) = 'CSCRP045'
+          MODNAME(1:8) = 'CSCRP046'
+          VERSION = 280513         
+          GENFLCHK(3:15) = 'CRP046.280513'
+          ! Control flags
+          CFLPDATE = 'P'      ! P=at plantinf;I=at first irrigation;
+                              ! E=relative to emergence
 
 !-----------------------------------------------------------------------
 !         Set parameters (Most should be placed in input files!)
@@ -1697,9 +1724,6 @@
           STDAY = 20.0      ! TT in standard day
           STEPNUM = 1       ! Step number per day set to 1
           
-          ! Model methods that not in control file
-          MERNU = 'CSM'     ! Root N uptake 
-
 !-----------------------------------------------------------------------
 !         Read command line arguments for model name and path (Cropsim)
 !-----------------------------------------------------------------------
@@ -1849,7 +1873,7 @@
           ! RESPONSE FILES
           FNAMEPRES(1:12)   = 'Plantres.'//out
           FNAMEPREM(1:12) = 'Plantrem.'//out
-          CALL GETLUN (FNAMEPRES,  fnumpres)
+          CALL GETLUN (FNAMEPRES,fnumpres)
           CALL GETLUN (FNAMEPREM,fnumprem)
 
           ! LEAVES FILES
@@ -1877,46 +1901,6 @@
 !-----------------------------------------------------------------------
 !         Open and write main headers to output files
 !-----------------------------------------------------------------------
-
-          ! WARNING AND WORK FILES
-          INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
-          IF (.NOT.FOPEN) THEN
-            IF (RUN.EQ.1) THEN
-              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-              WRITE(FNUMWRK,*) 'CSCRP  Cropsim Crop Module '
-            ELSE
-              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',
-     &              ACTION = 'READWRITE')
-              WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
-              IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
-                CLOSE (FNUMWRK)
-                OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-                WRITE(fnumwrk,*) ' '
-                WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
-              ENDIF  
-            ENDIF
-          ELSE          
-            IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
-              ! Close and re-open Work file
-              CLOSE (FNUMWRK, STATUS = 'DELETE')
-              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
-     &              ACTION = 'READWRITE')
-              WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
-              CALL Getlun('READS.OUT',fnumrea)
-              ! Close and re-open Reads file
-              CLOSE (FNUMREA, STATUS = 'DELETE')
-              OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
-     &              ACTION = 'READWRITE')
-              WRITE(fnumrea,*)' '
-              WRITE(fnumrea,*)
-     &        ' File closed and re-opened to avoid generating huge file'
-            ELSE  
-              WRITE(fnumwrk,*) ' '
-              WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
-            ENDIF
-          ENDIF  
 
           IF (RUN.EQ.1) THEN
             ! IDETG FILES
@@ -2004,6 +1988,50 @@
           ENDIF
 
         ENDIF ! End of first time through stuff
+
+!-----------------------------------------------------------------------
+!       Open or close and re-open work and reads files  
+!-----------------------------------------------------------------------
+
+        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+        IF (.NOT.FOPEN) THEN
+          IF (RUN.EQ.1) THEN
+            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+            WRITE(FNUMWRK,*) 'CSCRP  Cropsim Cereal Crop Module '
+          ELSE
+            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',
+     &            ACTION = 'READWRITE')
+            WRITE(fnumwrk,*) ' '
+            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
+            IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
+              CLOSE (FNUMWRK)
+              OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
+              WRITE(fnumwrk,*) ' '
+              WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
+            ENDIF  
+          ENDIF
+        ELSE          
+          IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
+            ! IDETL is headed VBOSE
+            ! Close and re-open Work file
+            CLOSE (FNUMWRK, STATUS = 'DELETE')
+            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW',
+     &            ACTION = 'READWRITE')
+            WRITE(fnumwrk,*) ' '
+            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
+            CALL Getlun('READS.OUT',fnumrea)
+            ! Close and re-open Reads file
+            CLOSE (FNUMREA, STATUS = 'DELETE')
+            OPEN (UNIT = FNUMREA,FILE = 'READS.OUT', STATUS = 'NEW',
+     &            ACTION = 'READWRITE')
+            WRITE(fnumrea,*)' '
+            WRITE(fnumrea,*)
+     &      ' File closed and re-opened to avoid generating huge file'
+          ELSE  
+            WRITE(fnumwrk,*) ' '
+            WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
+          ENDIF
+        ENDIF  
           
 !-----------------------------------------------------------------------
 !       Record/set starting information
@@ -2241,6 +2269,7 @@
         hwummchar = ' -99.0'
         hyrdoy = -99
         hyeardoy = -99
+        idate1 = -99
         idetgnum = 0
         irramtc = 0.0
         lafswitch = -99.0
@@ -2530,6 +2559,7 @@
         tdifsum = 0.0
         tfd = 0.0
         tfg = 1.0
+        tfla = 1.0
         tflf = 0.0
         tfp = 1.0
         tilbirthl = 0.0
@@ -2587,6 +2617,8 @@
         tratio = 0.0
         trwup = 0.0
         tt = 0.0
+        ttla = 0.0
+        ttnext = 0.0
         tt20 = -99.0
         ttgem = 0.0
         ttcum = 0.0
@@ -2662,6 +2694,7 @@
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'HLAST',hlast)
         ELSE
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PDATE',pdate)
+          CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'IDATE',idate1)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'EDATE',edatmx)
         ENDIF
 
@@ -2806,6 +2839,23 @@
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'SPDIR',pathsp)
           ! A-file location
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'ADIR',fileadir)
+          ! Additional controls that not handled by CSM
+          ! To get name and location of x-file to -> special controls.
+          CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'AFILE',filea)
+          FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+          CALL LTRIM2 (FILEX,filenew)
+          FILELEN = TVILENT(FILENEW)
+          FILENEW(FILELEN:FILELEN)= 'X'
+          FILEX = FILENEW
+          ! Experimental controls
+          CALL XREADC(FILEX,TN,RN,SN,ON,CN,'PHASE',cflphaseadj)
+          IF (CFLPHASEADJ.NE.'N'.AND.CFLPHASEADJ.NE.'Y') THEN
+           CFLPHASEADJ = 'N'  ! Default to no adjustment 
+          ENDIF   
+          CALL XREADC(FILEX,TN,RN,SN,ON,CN,'PHINT',cflphintadj)
+          IF (CFLPHINTADJ.NE.'N'.AND.CFLPHINTADJ.NE.'Y') THEN
+           CFLPHINTADJ = 'N'   ! Default to no adjustment
+          ENDIF   
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -2813,6 +2863,7 @@
 !-----------------------------------------------------------------------
 
         CALL CSUCASE (CROP)
+        GENFLCHK = CROP//GENFLCHK(3:15)
         CALL CSUCASE (EXCODE)
 
         HLAST = CSYEARDOY(hlast)
@@ -2856,6 +2907,15 @@
         IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
           PLYEAR = YEAR
           PLYEARTMP = YEAR
+        ENDIF
+
+        IF (IDATE1.GT.0.AND.CFLPDATE.EQ.'I') THEN
+          WRITE(FNUMWRK,*)' '
+          WRITE(FNUMWRK,*)
+     &     ' Planting date set at time of first irrigation'
+          WRITE(FNUMWRK,*)'  Planting date    : ',pdate
+          WRITE(FNUMWRK,*)'  Irrigation 1 date: ',idate1
+          PDATE = IDATE1
         ENDIF
 
         ! Check final harvest date for seasonal runs        
@@ -3066,10 +3126,8 @@
         ssphs = -99
         ssphe = -99
         lseni = -99
-        pdsri = -99
         phintl = -99
         phintf = -99
-        snofx = -99
         gnosf = -99
         gwtat = -99
         gwtaa = -99
@@ -3095,30 +3153,26 @@
         ! Species coefficients re-set
         pd = -99
         lsphe = -99 
-        pdsri = -99 
-        pdsri = -99 
         tdphe = -99 
         tdphs = -99 
         tilpe = -99 
         llifa = -99 
         phintl = -99 
         phintf = -99 
-        wfnuu = -99 
-        wfnul = -99 
         tdfac = -99 
         rdgs = -99 
         laxs = -99 
-        rlfnu = -99 
         rlwr = -99 
         nfgl = -99 
         nfgu = -99 
         nfpu = -99 
         nfpl = -99 
-        ncnu = -99 
         kcan = -99 
         lafr = -99 
         lafv = -99 
-        lawcf = -99 
+        lawcf = -99
+        pgerm = -99
+        pemrg = -99 
         ppfpe = -99 
         ppexp = -99 
         tdsf = -99 
@@ -3127,8 +3181,10 @@
         gnosf = -99 
         nh4mn = -99
         no3mn = -99
-
+        
         IF (FILEIOT(1:2).EQ.'DS') THEN
+          IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
+
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'VREQ',vreq)
           IF (VREQ.LT.0.0)
@@ -3176,10 +3232,6 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'STFR',swfrs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXS',laxs)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SLAS',laws)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUU',wfnuu)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'WFNUL',wfnul)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NCNU',ncnu)
-          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RLFNU',rlfnu)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPU',nfpu)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPL',nfpl)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFGU',nfgu)
@@ -3207,7 +3259,10 @@
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LSPHE',lsphe)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NO3MN',no3mn)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NH4MN',nh4mn)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PGERM',pgerm)
+          CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PEMRG',pemrg)
         ELSE
+          IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
           CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
           CALL CUREADR (CUDIRFLE,VARNO,'VREQ',vreq)
           IF (VREQ.LT.0.0)CALL CUREADR (CUDIRFLE,VARNO,'VREQX',vreq)
@@ -3252,10 +3307,6 @@
           CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs)
           CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
           CALL CUREADR (CUDIRFLE,VARNO,'SLAS',laws)
-          CALL CUREADR (CUDIRFLE,VARNO,'WFNUU',wfnuu)
-          CALL CUREADR (CUDIRFLE,VARNO,'WFNUL',wfnul)
-          CALL CUREADR (CUDIRFLE,VARNO,'NCNU',ncnu)
-          CALL CUREADR (CUDIRFLE,VARNO,'RLFNU',rlfnu)
           CALL CUREADR (CUDIRFLE,VARNO,'NFPU',nfpu)
           CALL CUREADR (CUDIRFLE,VARNO,'NFPL',nfpl)
           CALL CUREADR (CUDIRFLE,VARNO,'NFGU',nfgu)
@@ -3283,12 +3334,15 @@
           CALL CUREADR (CUDIRFLE,VARNO,'RTNH4',rtnh4)
           CALL CUREADR (CUDIRFLE,VARNO,'NO3MN',no3mn)
           CALL CUREADR (CUDIRFLE,VARNO,'NH4MN',nh4mn)
+          CALL CUREADR (CUDIRFLE,VARNO,'PGERM',pgerm)
+          CALL CUREADR (CUDIRFLE,VARNO,'PEMRG',pemrg)
         ENDIF     ! End Cultivar reads
 
 !-----------------------------------------------------------------------
 !       Read ecotype information
 !-----------------------------------------------------------------------
 
+        IF (RNMODE.NE.'T') CALL FVCHECK(ECDIRFLE,GENFLCHK)
         CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',htstd)
         CALL ECREADR (ECDIRFLE,ECONO,'AWNS',awns)
         CALL ECREADR (ECDIRFLE,ECONO,'RS%A',rspca)
@@ -3307,7 +3361,6 @@
         CALL ECREADR (ECDIRFLE,ECONO,'SSPHS',ssphs)
         CALL ECREADR (ECDIRFLE,ECONO,'SSPHE',ssphe)
         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
-        CALL ECREADR (ECDIRFLE,ECONO,'PSRI',pdsri)
         IF (PHINTL(1).LE.0) 
      &   CALL ECREADR(ECDIRFLE,ECONO,'PHL1',phintl(1))
         IF (PHINTL(2).LE.0) 
@@ -3316,9 +3369,6 @@
      &   CALL ECREADR(ECDIRFLE,ECONO,'PHF2',phintf(2))
         IF (PHINTF(3).LE.0)
      &   CALL ECREADR(ECDIRFLE,ECONO,'PHF3',phintf(3))
-        CALL ECREADR (ECDIRFLE,ECONO,'S#FX',snofx)
-        IF (SNOFX.LE.0.0)
-     &   CALL ECREADR (ECDIRFLE,ECONO,'SNOFX',snofx)
         ! LAH Following set up to allow for change in stem fraction
         ! Currently not used ... just one stem fraction (STFR)
         CALL ECREADR (ECDIRFLE,ECONO,'SWFRX',swfrx)
@@ -3332,11 +3382,6 @@
         IF (GNOSF.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'G#SF',gnosf)
         IF (GWTAT.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SHWTA',gwtat)
         IF (GWTAA.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'GWWF',gwtaa)
-        ! Nitrogen uptake
-        IF (WFNUU.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'WFNUU',wfnuu)
-        IF (WFNUL.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'WFNUL',wfnul)
-        IF (NCNU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NCNU',ncnu)
-        IF (RLFNU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RLFNU',rlfnu)
         ! Radiation use efficiency
         IF (PARUE.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
         IF (PARU2.LT.-89.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',paru2)
@@ -3366,6 +3411,7 @@
 !       Read species information
 !-----------------------------------------------------------------------
 
+        IF (RNMODE.NE.'T') CALL FVCHECK(SPDIRFLE,GENFLCHK)
         CALL SPREADR (SPDIRFLE,'CHFR' ,chfr)
         CALL SPREADR (SPDIRFLE,'CO2CC',co2compc)
         CALL SPREADR (SPDIRFLE,'CO2EX',co2ex)
@@ -3393,26 +3439,26 @@
         CALL SPREADR (SPDIRFLE,'NFTL ',nftl)
         CALL SPREADR (SPDIRFLE,'NFTU ',nftu)
         CALL SPREADR (SPDIRFLE,'LSHAR',lshawr)
-        CALL SPREADR (SPDIRFLE,'LSHAW',lshawv)
+        CALL SPREADR (SPDIRFLE,'LSHAV',lshawv)
         CALL SPREADR (SPDIRFLE,'LSHFR',lshfr)
         CALL SPREADR (SPDIRFLE,'NCRG',ncrg)
         CALL SPREADR (SPDIRFLE,'NTUPF',ntupf)
         CALL SPREADR (SPDIRFLE,'PARIX',parix)
         CALL SPREADR (SPDIRFLE,'LAIXX',laixx)
         CALL SPREADR (SPDIRFLE,'PARFC',parfc)
-        CALL SPREADR (SPDIRFLE,'PEMRG',pemrg)
-        CALL SPREADR (SPDIRFLE,'PGERM',pgerm)
+        IF (PEMRG.LE.0.0) CALL SPREADR (SPDIRFLE,'PEMRG',pemrg)
+        IF (PGERM.LE.0.0) CALL SPREADR (SPDIRFLE,'PGERM',pgerm)
         CALL SPREADR (SPDIRFLE,'PDMH' ,pdmtohar)
         CALL SPREADR (SPDIRFLE,'PHSV' ,phsv)
         CALL SPREADR (SPDIRFLE,'PHTV' ,phtv)
         CALL SPREADR (SPDIRFLE,'PPTHR',ppthr)
+        CALL SPREADR (SPDIRFLE,'PTFXS',ptfxs)
         CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)
         CALL SPREADR (SPDIRFLE,'PTFMN',ptfmn)
         CALL SPREADR (SPDIRFLE,'PTFMX',ptfmx)
         CALL SPREADR (SPDIRFLE,'RATM' ,ratm)
         CALL SPREADR (SPDIRFLE,'RCROP',rcrop)
         CALL SPREADR (SPDIRFLE,'RDGAF',rdgaf)
-        CALL SPREADR (SPDIRFLE,'RWULF',rlfwu)
         CALL SPREADR (SPDIRFLE,'RLIG%',rligpc)
         !CALL SPREADR (SPDIRFLE,'RNUMX',rnumx) ! Taken out of spp file
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
@@ -3469,8 +3515,6 @@
         ! Following may be temporarily in ECO or CUL file
         IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
         IF (lsphe.LE.0.0) CALL SPREADR (SPDIRFLE,'LSPHE',lsphe)
-        IF (PDSRI.LE.0.0) CALL SPREADR (SPDIRFLE,'PSRI',pdsri)
-        IF (PDSRI.LE.0.0) CALL SPREADR (SPDIRFLE,'PDSRI',pdsri)
         IF (tdphe.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHE',tdphe)
         IF (tdphs.LE.0.0) CALL SPREADR (SPDIRFLE,'TDPHS',tdphs)
         IF (tilpe.LE.0.0) CALL SPREADR (SPDIRFLE,'TILPE',tilpe)
@@ -3482,18 +3526,14 @@
         IF (PHINTF(2).LE.0) CALL SPREADR (SPDIRFLE,'PHF2',phintf(2))
         IF (PHINTF(3).LE.0) CALL SPREADR (SPDIRFLE,'PHF3',phintf(3))
 
-        IF (WFNUU.LE.0.0) CALL SPREADR (SPDIRFLE,'WFNUU',wfnuu)
-        IF (WFNUL.LE.0.0) CALL SPREADR (SPDIRFLE,'WFNUL',wfnul)
         IF (TDFAC.LE.0.0) CALL SPREADR (SPDIRFLE,'TDFAC',tdfac)
         IF (RDGS.LE.0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
         IF (LAXS.LE.0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
-        IF (RLFNU.LE.0.0) CALL SPREADR (SPDIRFLE,'RLFNU',rlfnu)
         IF (RLWR.LE.0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
         IF (NFGL.LT.0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
         IF (NFGU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
         IF (NFPU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
         IF (NFPL.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
-        IF (NCNU.LE.0.0) CALL SPREADR (SPDIRFLE,'NCNU',ncnu)
         IF (KCAN.LE.0.0) CALL SPREADR (SPDIRFLE,'KCAN',kcan)
         IF (LAFR.LE.-90.0) CALL SPREADR (SPDIRFLE,'LAFR',lafr)
         IF (LAFV.LE.0.0) CALL SPREADR (SPDIRFLE,'LAFV',lafv)
@@ -3528,37 +3568,43 @@
 
         CALL SPREADRA (SPDIRFLE,'CO2RF','10',co2rf)
         CALL SPREADRA (SPDIRFLE,'CO2F','10',co2f)
-
-        DO I = 1,9
-          TL10 = TL10FROMI(I) 
-          TVTRDV = 'TRDV'//TL10(1:1)
-          CALL SPREADRA (SPDIRFLE,TVTRDV,'4',trdvx)
-          IF (I.EQ.1) TRDV1 = TRDVX
-          ! Temperature responses for each phase put into 2D array
-          DO L = 1,4
-            IF (trdvx(1).GT.-98.0) THEN
-              TRDEV(L,I) = TRDVX(L)
-            ELSE
-              IF (I.GT.1) THEN
-                TRDEV(L,I) = TRDEV(L,I-1)
-              ELSE
-                OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
-                WRITE(fnumerr,*) ' '
-                WRITE(fnumerr,*) ' No temp response data for phase 1'
-                WRITE(fnumerr,*) ' Please check'
-                WRITE(*,*) ' No temperature response data for phase 1'
-                WRITE(*,*) ' Program will have to stop'
-                CLOSE (fnumerr)
-                STOP ' '
-              ENDIF
-            ENDIF
-           IF (I.EQ.2) TRDV2(L) = TRDEV(L,2)
-          ENDDO
-        ENDDO
+        
+        ! Temperature responses
+        !RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
+        !    0     1     0     0     0     0     0    -5    -5     0     0  
+        !  1.0    26    26    26    30    10     5     0     0    16    16  
+        !  1.0    50    50    50    50    20    25     7     5    35    35
+        !    0    60    60    60    60    35    35    15    10    45    45
+        CALL SPREADRA (SPDIRFLE,'TRDV1','4',trdv1)
+        IF (trdv1(1).LT.-98.0) THEN
+          OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
+          WRITE(fnumerr,*) ' '
+          WRITE(fnumerr,*) ' No temp response data for phase 1'
+          WRITE(fnumerr,*) ' Please check'
+          WRITE(*,*) ' No temperature response data for phase 1'
+          WRITE(*,*) ' Program will have to stop'
+          CLOSE (fnumerr)
+          STOP ' '
+        ENDIF        
+        CALL SPREADRA (SPDIRFLE,'TRDV2','4',trdv2)
+        IF (trdv2(1).LT.-98.0) TRDV2 = TRDV1
+        CALL SPREADRA (SPDIRFLE,'TRDV3','4',trdv3)
+        IF (trdv3(1).LT.-98.0) TRDV3 = TRDV2
+        CALL SPREADRA (SPDIRFLE,'TRDV4','4',trdv4)
+        IF (trdv4(1).LT.-98.0) TRDV4 = TRDV3
+        CALL SPREADRA (SPDIRFLE,'TRDV5','4',trdv5)
+        IF (trdv5(1).LT.-98.0) TRDV5 = TRDV4
+        CALL SPREADRA (SPDIRFLE,'TRDV6','4',trdv6)
+        IF (trdv6(1).LT.-98.0) TRDV6 = TRDV5
+        CALL SPREADRA (SPDIRFLE,'TRDV7','4',trdv7)
+        IF (trdv7(1).LT.-98.0) TRDV7 = TRDV6
+        CALL SPREADRA (SPDIRFLE,'TRDV8','4',trdv8)
+        IF (trdv8(1).LT.-98.0) TRDV8 = TRDV7
 
         CALL SPREADRA (SPDIRFLE,'TRGEM','4',trgem)
         CALL SPREADRA (SPDIRFLE,'TRGFW','4',trgfc)
         CALL SPREADRA (SPDIRFLE,'TRGFN','4',trgfn)
+        CALL SPREADRA (SPDIRFLE,'TRLA ','4',trla)
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
         CALL SPREADRA (SPDIRFLE,'TRHAR','4',trcoh)
         CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
@@ -3577,13 +3623,19 @@
         ! The following are to allow examination of the functioning of 
         ! different parts of the module, and comparison with CSCER     
         
-        !EXAMINE = 1   ! Basic leaf,root growth. No tillering,development
-        EXAMINE = 100 ! Normal run. No 'Examine' replacements           
+        ! Commented acronyms are those used in the genotype files
        
-        IF (EXAMINE.EQ.1) THEN                                       
+        ! Set which sections to be examined
+        EXAMINE(1)  = 'N'    ! Basic leaf and root growth
+        EXAMINE(2)  = 'N'    ! Leaf senescencs
+        EXAMINE(3)  = 'N'    ! Tillering
+        EXAMINE(4)  = 'N'    ! Reproductive development
+        EXAMINE(20) = 'N'    ! Everything from all genotype files
+        
+        IF (EXAMINE(1).EQ.'Y') THEN                                     
+
           WRITE(fnumwrk,*)' '
-          WRITE(fnumwrk,*)' RUNNING EXAMINE. CODE = 1'
-          WRITE(fnumwrk,*)' '
+          WRITE(fnumwrk,*)' RUNNING EXAMINE '
 
               ! CSCRP
               PGERM = 10.0      
@@ -3595,9 +3647,9 @@
               KCAN = 0.85       
               PTFMN = 0.75                                              
               PTFMX = 0.98      
-              PTFA = 0.10                                              
+              PTFA = 0.00                                              
               PTFMX = 0.75 ! From 0.98
-          
+              PTFXS = 6.0 
           
           
           
@@ -3607,6 +3659,7 @@
           
 
               PPFPE = 1.0   
+              PPS(1)= 97.0
               VREQ = 10000.0
               VBASE = 0.0                                               
               VEFF = 1.0    
@@ -3643,18 +3696,107 @@
           
           LSHFR = 0.33      
           
-          LSHAWV =50.0!LSHAW
+          LSHAWV =50.0    ! LSHAV
           LSHAWR = 50.0   ! LSHAR                                      
           RSPCX = 80.0
           RSPCA = 15.0      
 
           RRESP = 0.40 ! From 0.8
           RSEN = 0.1
+          RLWR = 0.90 
+
+          SDDUR = 5.0
+
+          RTNO3 = .006!RTNUP
+          RTNH4 = .006
+          NO3CF = 1.0 !NUPNF
+          NUPWF = 1.0       
+          NH4MN = 0.5  
+          NO3MN = 0.5  
+          NTUPF = 0.05 
+          LNPCS(0) = 6.5                             
+          LNPCS(1) = 6.5                             
+          SNPCS(0) = 1.5                              
+          SNPCS(1) = 1.5                            
+          RNPCS(0) = 2.0                             
+          RNPCS(1) = 2.0                             
+          LNPCMN(0) = 0.8                            
+          LNPCMN(1) = 0.8                            
+          SNPCMN(0) = 0.5                            
+          SNPCMN(1) = 0.5                            
+          RNPCMN(0) = 1.5                            
+          RNPCMN(1) = 1.5                            
           
-        ENDIF    ! EXAMINE = 1
+        ENDIF    ! EXAMINE(1)  Basic growth
         
+        IF (EXAMINE(2).EQ.'Y') THEN                                    
+          ! Leaf senescence 
+          LLIFA = 4.0     
+          LLIFG = 1.0
+          LLIFS = 3.0
+          LWLOS = 0.5        
+          ! LNPCMN  Determines N loss
+       ENDIF  ! EXAMINE = 2  Senescence
         
-        IF (EXAMINE.EQ.2) THEN  ! Everything from all genotype files    
+        IF (EXAMINE(3).EQ.'Y') THEN                                    
+          ! Tillering        
+          TI1LF = 3.5 ! 4.45  
+          TIFAC = 1.0   
+          TDPHS = 3.0   
+          TDPHE = 7.0   
+          TDFAC = 5.0   
+          TGR(2) = 0.80
+          TGR(20) = 0.10                                                
+          TILIP = 6.0                                                  
+          TINOX = 20 ! TIL#X                                         
+          TDSF = 1.0                                                   
+        ENDIF    ! EXAMINE(3)  Tillering
+
+        IF (EXAMINE(4).EQ.'Y') THEN                                    
+          ! Reproductive development
+          ! CSCRP           CSCER
+          VREQ = 8.0            !  P1V =    8.0           
+          PPS(1) = 97.0         !  P1D =     97.0         
+          PD(8) = 500.0         !  PD(5) =   500          
+          PD(1) = 200.0 !380    !  PD(1) = 200            
+          PD(2) = 50.0  ! 70    !  PD(2) = 200            
+          PD(3) = 150.0 !200    !  PD(3) = 200            
+          PD(4) = 200.0 !200    !  PD(4) = 200            
+                        !       !  PD2FR(1) = 0.25        
+                        !       !  PD4FR(1) = 0.25        
+                        !       !  PD4FR(2) = 0.10        
+          PD(5) = 50.0  ! 60                                            
+          PD(6) = 20.0  ! 25                                            
+          PD(7) = 130.0 !150
+          
+          ! PHASE DURATIONS FROM CERES RUN                                      
+          !  CERES INPUTS     =  200.0 200.0 200.0 200.0 500.0
+          !  CERES from PHINT =  400.0 285.0 190.0 200.0 500.0
+          !  ZADOKS FROM CERES INPUTS AND PHINT  
+          !   P1   ->TS  2 200.0  400.0
+          !   P2   ->Jt  3  50.0   71.2
+          !   P3  TS->LL 4 150.0  213.8
+          !   P4  LL->SE 5 200.0  190.0
+          !   P5 ESG->AN 6  50.0   50.0
+          !   P6  AN->EA 7  20.0   20.0
+          !   P7  EA->EL 8 130.0  130.0
+          !   P8  EL->PM 9 500.0  500.0
+
+          ! PSNO PSNAME                        ! PSNO PSTYP PSABV PSNAME                                          
+          !   1  T.Spikelet                    !   1      S GDAT  Germinate                                       
+          !   2  EndVegetative                 !   2      K TSAT  T.Spikelet                                      
+          !   3  EndEarGrowth                  !   3      S PSDAT Pseudo_Stem                                     
+          !   4  BeginGrainFill                !   4      S LLDAT End_Leaf                                        
+          !   5  EndGrainFill                  !   5      S IEDAT Head_Emerge                                     
+          !   6  Harvest                       !   6      K ADAT  Anthesis                                        
+          !   7  Sowing                        !   7      S AEDAT EndAnthesis                                    
+          !   8  Germinate                     !   8      S GFDAT MilkToDough                                     
+          !   9  Emergance                     !   9      M MDAT  HardDough                                       
+          
+        ENDIF   ! Reproductive development
+        
+        IF (EXAMINE(20).EQ.'Y') THEN  
+          ! Everything from all genotype files    
           WRITE(fnumwrk,*)' '
           WRITE(fnumwrk,*)' RUNNING EXAMINE. CODE = 2'
           WRITE(fnumwrk,*)' '
@@ -3699,6 +3841,7 @@
           LAWS = 400
           LSENI = 1.5
           LSPHS = 8.0
+          LSPHE = 9.3
           TI1LF = 4.45
           TIFAC = 1.0
           TDPHS = 3.0
@@ -3762,7 +3905,7 @@
           LAWCF = 0.02
           LAWFF = 0.20
           LSHFR = 0.33
-          LSHAWV = 50.0      ! LSHAW
+          LSHAWV = 50.0      ! LSHAV
           LSHAWR = 80.0      ! LSHAR 
           PHINTL(1) = 2.0    ! PHL
           PHINTF(1) = 0.8    ! PHF
@@ -3815,6 +3958,7 @@
           PTFMN = 0.75
           PTFMX = 0.98
           PTFA = 0.10
+          PTFXS = 6.0
           ! Cold hardiness
           TKUH = -6.0
           TKDTI = 2.0
@@ -3823,12 +3967,6 @@
           HDUR = 10.0
           HLOST = 10.0
           HLOSF = 0.2
-          ! Temperature responses
-          !RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
-          !    0     1     0     0     0     0     0    -5    -5     0     0  
-          !  1.0    26    26    26    30    10     5     0     0    16    16  
-          !  1.0    50    50    50    50    20    25     7     5    35    35
-          !    0    60    60    60    60    35    35    15    10    45    45
 
           ! Water shortage effects
           WFPU = 1.0
@@ -3865,7 +4003,7 @@
            NFSF = 0.1
            NCRG = 30
 
-        ENDIF   ! EXAMINE = 2
+        ENDIF   ! EXAMINE(20)
 
 !-----------------------------------------------------------------------
 !       Determine 'key' principal and secondary stages,and adjust names
@@ -3873,7 +4011,7 @@
 
         ! LAH Must introduce type for changing phase duration eg after
         !     terminal spiklet until leaves fully expanded (maize?)
-        !     Previously used CFLPDADJ = 'Y','N'
+        !     Currently using CFLPHASEADJ = 'Y','N'
 
         KEYPSNUM = 0
         KEYSSNUM = 0
@@ -3976,18 +4114,8 @@
           IF (SSABV(L).EQ.'CHPHE') CHPHASE(2) = SSTG(L)
         ENDDO
         
-        ! Set stage defaults if necessary
-        IF (LAFST.LE.0.0) LAFST = MIN(PSX,MSTG+1)
-        
-        ! For CSM N uptake routine 
-        IF (rtno3.le.0.0) RTNO3 = 0.006  ! NO3 uptake/root lgth (mgN/cm)
-        IF (rtnh4.le.0.0) RTNH4 = RTNO3  ! NH4 uptake/root lgth (mgN/cm)
-        IF (nupwf.lt.0.0) NUPWF = 1.0    ! H2O conc factor for N uptake 
-        IF (no3cf.lt.0.0) NO3CF = 1.0    ! NO3 uptake conc factor (exp)
-        IF (nh4cf.lt.0.0) NH4CF = NO3CF  ! NH4 uptake factor (exponent) 
-
 !-----------------------------------------------------------------------
-!       Calculate PHASE DURATIONS FROM phint if missing
+!       Calculate PHASE DURATIONS FROM phints if missing
 !-----------------------------------------------------------------------
                   
         ! BASED ON ORIGINAL CERES -- FOR INITIAL CALIBRATION
@@ -4159,8 +4287,8 @@
         ENDIF
         
         ! Adjust germination phase for seed dormancy
-        IF (PLMAGE.LT.0.0.AND.PLMAGE.GT.-90.0) THEN
-          PEGD = PGERM - (PLMAGE*STDAY) ! Dormancy has negative age
+        IF (PLMAGE.LT.5.0.AND.PLMAGE.GT.-90.0) THEN
+          PEGD = AMAX1(0.0,PGERM - (PLMAGE*STDAY)) ! Dormancy -ve age
         ELSE
           PEGD = PGERM
         ENDIF
@@ -4168,41 +4296,6 @@
 !-----------------------------------------------------------------------
 !       Check and/or adjust coefficients and set defaults if not present
 !-----------------------------------------------------------------------
-
-        DO L = 0,1
-        LNCXS(L) = LNPCS(L)/100.0 
-        SNCXS(L) = SNPCS(L)/100.0 
-        RNCXS(L) = RNPCS(L)/100.0 
-        LNCMN(L) = LNPCMN(L)/100.0
-        SNCMN(L) = SNPCMN(L)/100.0
-        RNCMN(L) = RNPCMN(L)/100.0
-        ENDDO
-                
-        IF (LA1S.LE.0.0) THEN
-          LA1S = 5.0
-          WRITE(MESSAGE(1),'(A47)')
-     &    'Initial leaf size (LA1S) missing. Set to 5 cm2.'
-          CALL WARNING(1,'CSCRP',MESSAGE)
-        ENDIF
-        IF (PPFPE.LT.0.0) THEN  
-          PPFPE = 1.0
-          WRITE(MESSAGE(1),'(A51)')
-     &    'Pre-emergence development factor missing. Set to 1.'
-          CALL WARNING(1,'CSCRP',MESSAGE)
-        ENDIF
-        IF (G3.LE.0.0) THEN  
-          G3 = 1.0
-          WRITE(MESSAGE(1),'(A41)')
-     &    'Standard shoot weight missing. Set to 1.0'
-          CALL WARNING(1,'CSCRP',MESSAGE)
-        ENDIF
-        ! Stem fraction constant throughout lifecycle
-        IF (SWFRS.GT.0.0) THEN
-          SWFRX = SWFRS
-          SWFRXL = 9999
-          SWFRN = SWFRS
-          SWFRNL = 0
-        ENDIF 
 
         ! Phases
         IF (LGPHASE(1).LT.0.0) LGPHASEDU(1) = 0.0
@@ -4212,7 +4305,84 @@
         IF (GGPHASE(1).LE.0.0) GGPHASEDU(1) = 99999
         IF (CHPHASE(1).LE.0.0) CHPHASEDU(1) = 99999
         IF (CHPHASE(2).LE.0.0) CHPHASEDU(2) = 99999
-       
+        ! Photoperiodism
+        IF (PPEXP.LT.0.0) PPEXP = 2.0
+        IF (PPFPE.LT.0.0) THEN  
+          PPFPE = 1.0
+          WRITE(MESSAGE(1),'(A51)')
+     &    'Pre-emergence development factor missing. Set to 1.'
+          CALL WARNING(1,'CSCRP',MESSAGE)
+        ENDIF
+        ! Vernalization
+        IF (VEEND.LE.0.0) VEEND = 0.0
+        IF (VEFF.LT.0.0) VEFF = 0.0
+        IF (VEFF.GT.1.0) VEFF = 1.0
+        IF (VLOSS.LT.0.0) VLOSS = 0.2
+        IF (VLOSF.LT.0.0) VLOSF = 0.2
+        IF (VLOST.LT.0.0) VLOST = 30.0
+        IF (VREQ.LE.0.0) VREQ = 0.0
+        IF (VBASE.LT.0.0) VBASE = 0.0
+        IF (VPEND.LE.0.0) VPEND = 0.0
+        ! Photosynthesis
+        IF (PARUE.LE.0.0) PARUE = 2.3
+        IF (SLPF.LE.0.0 .OR. SLPF.GT.1.0) SLPF = 1.0
+        IF (SLPF.LT.1.0) THEN
+          WRITE (fnumwrk,*) ' '
+          WRITE (fnumwrk,*)
+     &     ' WARNING  Soil fertility factor was less than 1.0: ',slpf
+        ENDIF  
+        ! Partitioning
+        IF (PTFMN.LE.0.0) PTFMN = 0.75
+        IF (PTFMX.LE.0.0) PTFMX = 0.09
+        IF (PTFA.LT.0.0) PTFA = 0.10
+        IF (PTFXS.LE.0.0) PTFXS = 6.0
+        ! Leaves
+        IF (LA1S.LE.0.0) THEN
+          LA1S = 5.0
+          WRITE(MESSAGE(1),'(A47)')
+     &    'Initial leaf size (LA1S) missing. Set to 5 cm2.'
+          CALL WARNING(1,'CSCRP',MESSAGE)
+        ENDIF
+        IF (LAFV.LT.0.0) LAFV = 0.1
+        IF (LAFR.LT.-90.0) LAFR = 0.1
+        IF (LAXS.LT.0.0) LAXS = 200.0
+        IF (LAFST.LE.0.0) LAFST = MIN(PSX,MSTG+1)
+        IF (LWLOS.LT.0.0) LWLOS = 0.3
+        IF (LRETS.GE.10.OR.LRETS.LE.0.0) LRETSDU = 99999
+        IF (LSPHE.LE.0.0) LSPHEDU = 99999
+        IF (LSENI.LT.0.0) LSENI = 0.5
+        IF (PARIX.LE.0.0) PARIX = 0.995
+        IF (LSPHS.GE.10.OR.LSPHS.LE.0.0) LSPHSDU = 99999
+        ! Tillers
+        IF (G3.LE.0.0) THEN  
+          G3 = 1.0
+          WRITE(MESSAGE(1),'(A41)')
+     &    'Standard shoot weight missing. Set to 1.0'
+          CALL WARNING(1,'CSCRP',MESSAGE)
+        ENDIF
+        IF (TDFAC.LT.0.0) TDFAC = 0.0
+        IF (TDSF.LT.0.0) TDSF = 1.0
+        IF (TI1LF.LT.0.0) TI1LF = 1000
+        IF (TIFAC.LT.0.0) TIFAC = 1.0
+        IF (TDPHE.LT.0.0) TDPHEDU = 99999
+        IF (TDPHS.LT.0.0) TDPHSDU = 99999
+        IF (TILIP.LT.0.0) TILIP = 0.0
+        IF (TILPE.LT.0.0) TILPEDU = 99999
+        IF (TINOX.LE.0.0) TINOX = 30
+        IF (TGR(20).LT.0.0) THEN 
+          DO L = 3,22
+            TGR(L) = 1.0 ! Tiller (shoot) sizes relative to main shoot
+          ENDDO
+        ENDIF
+        ! Stems
+        IF (SSPHSDU.LT.0.0) SSPHSDU = 99999
+        IF (SSPHEDU.LT.0.0) SSPHEDU = 99999
+        IF (SWFRS.GT.0.0) THEN
+          SWFRX = SWFRS  ! (Constant stem fr)
+          SWFRXL = 9999
+          SWFRN = SWFRS
+          SWFRNL = 0
+        ENDIF 
         ! Grain                
         IF (GWTS.LE.0.0) THEN  
           GWTS = 30.0
@@ -4232,34 +4402,42 @@
         IF (GNPCS.LE.0.0) GNPCS = 2.0
         IF (GNPCMX.LE.0.0) GNPCMX = 5.0
         IF (GNPCMN.LT.0.0) GNPCMN = 0.0
-
-        ! Nitrogen uptake                  
-        IF (WFNUL.LT.0.0) WFNUL = 0.0
-        IF (WFNUU.LE.0.0) WFNUU = 1.0
-        IF (WFNUL.GE.WFNUU) WFNUL = AMAX1(0.0,WFNUU-0.5)
-        IF (NCNU.LT.0.0) NCNU = 20.0  
-        IF (RLFNU.LT.0.0) RLFNU = 2.0
-
-        ! Radiation use efficiency
-        IF (PARUE.LE.0.0) PARUE = 2.3
-        
-        ! Leaf area
-        IF (LA1S.LT.0.0) LA1S = 5.0
-        IF (LAFV.LT.0.0) LAFV = 0.1
-        IF (LAFR.LT.-90.0) LAFR = 0.1
-        IF (LAXS.LT.0.0) LAXS = 200.0
-        
-        ! Roots
-        IF (RDGS.LT.0.0) RDGS = 3.0
-                
-        ! Tillers
-        IF (G3.LT.0.0) G3 = 0.0
-        IF (TDFAC.LT.0.0) TDFAC = 0.0
-        IF (TDSF.LT.0.0) TDSF = 0.0
-        IF (HLOSF.LT.0.0) HLOSF = 0.2
-        IF (HLOST.LT.0.0) HLOST = 20.0
         IF (GWLAGFR.LE.0.0) GWLAGFR = 0.05
         IF (GWLINFR.LE.0.0) GWLINFR = 0.95
+        IF (TRGFC(2).LE.0.0) THEN        ! Grain temperature responses
+          DO L = 1,4
+             TRGFC(L) = TRPHS(L)
+             TRGFN(L) = TRPHS(L)
+          ENDDO
+        ENDIF
+        ! Roots
+        IF (RDGS.LT.0.0) RDGS = 3.0
+        IF (RSEN.LT.0.0) RSEN = 0.1
+        IF (RTUFR.LT.0.0) RTUFR = 0.05   ! (Useable to reestablish tops)
+        ! Reserves
+        IF (RSPCA.LT.0.0) RSPCA = 15.0
+        IF (RSPCX.LT.0.0) RSPCX = 80.0
+        IF (RSUSE.LT.0.0) RSUSE = 0.10
+        ! Water uptake
+        IF (RLFWU.LT.0.0) RLFWU = 0.5    ! (Only alternate method)
+        ! N uptake  
+        IF (rtno3.le.0.0) RTNO3 = 0.006  ! NO3 uptake/root lgth (mgN/cm)
+        IF (rtnh4.le.0.0) RTNH4 = RTNO3  ! NH4 uptake/root lgth (mgN/cm)
+        IF (nupwf.lt.0.0) NUPWF = 1.0    ! H2O conc factor for N uptake 
+        IF (no3cf.lt.0.0) NO3CF = 1.0    ! NO3 uptake conc factor (exp)
+        IF (nh4cf.lt.0.0) NH4CF = NO3CF  ! NH4 uptake factor (exponent) 
+        IF (no3mn.lt.0.0) no3mn = 0.5
+        IF (nh4mn.lt.0.0) nh4mn = 0.5
+        IF (NTUPF.LT.0.0) NTUPF = 0.2
+        DO L = 0,1
+        LNCXS(L) = LNPCS(L)/100.0 
+        SNCXS(L) = SNPCS(L)/100.0 
+        RNCXS(L) = RNPCS(L)/100.0 
+        LNCMN(L) = LNPCMN(L)/100.0
+        SNCMN(L) = SNPCMN(L)/100.0
+        RNCMN(L) = RNPCMN(L)/100.0
+        ENDDO
+        ! Stress factors
         IF (WFPL.LT.0.0) WFPL = 0.0
         IF (WFPU.LT.0.0) WFPU = 1.0
         IF (WFGL.LT.0.0) WFGL = 0.0
@@ -4272,66 +4450,12 @@
         IF (NFGU.LT.0.0) NFGU = 1.0
         IF (NFSU.LT.0.0) NFSU = 0.2
         IF (NFSF.LT.0.0) NFSF = 0.1
-        IF (LWLOS.LT.0.0) LWLOS = 0.3
-        IF (LRETS.GE.10.OR.LRETS.LE.0.0) LRETSDU = 99999
-        IF (LSPHE.LE.0.0) LSPHEDU = 99999
-        IF (LSENI.LT.0.0) LSENI = 0.0
-        IF (PARIX.LE.0.0) PARIX = 0.995
-        IF (LSPHS.GE.10.OR.LSPHS.LE.0.0) LSPHSDU = 99999
-        IF (NTUPF.LT.0.0) NTUPF = 0.2
-        IF (PPEXP.LT.0.0) PPEXP = 2.0
-        IF (RLFWU.LT.0.0) RLFWU = 0.5  
-        IF (RTUFR.LT.0.0) RTUFR = 0.05
-        IF (SNOFX.LE.0.0) SNOFX = 1.0
-        IF (SSPHSDU.LT.0.0) SSPHSDU = 99999
-        IF (SSPHEDU.LT.0.0) SSPHEDU = 99999
-        IF (TGR(20).LT.0.0) THEN 
-          DO L = 3,22
-            TGR(L) = 1.0 ! Tiller (shoot) sizes relative to main shoot
-          ENDDO
-        ENDIF
-        IF (TI1LF.LT.0.0) TI1LF = 1000
-        IF (TIFAC.LT.0.0) TIFAC = 1.0
-        IF (TDPHE.LT.0.0) TDPHEDU = 99999
-        IF (TDPHS.LT.0.0) TDPHSDU = 99999
-        IF (TILIP.LT.0.0) TILIP = 0.0
-        IF (TILPE.LT.0.0) TILPEDU = 99999
-        IF (TINOX.LE.0.0) TINOX = 30
+        ! Cold hardiness
+        IF (HLOSF.LT.0.0) HLOSF = 0.2
+        IF (HLOST.LT.0.0) HLOST = 20.0
         IF (TKDLF.LT.-90.0) TKDLF = 2.0
         IF (TKSPAN.LT.0.0) TKSPAN = 6.0
         IF (TKDTI.LT.0.0) TKDTI = 2.0
-        IF (VEEND.LE.0.0) VEEND = 0.0
-        IF (VEFF.LT.0.0) VEFF = 0.0
-        IF (VEFF.GT.1.0) VEFF = 1.0
-        IF (VLOSS.LT.0.0) VLOSS = 0.2
-        IF (VLOSF.LT.0.0) VLOSF = 0.2
-        IF (VLOST.LT.0.0) VLOST = 30.0
-        IF (VREQ.LE.0.0) VREQ = 0.0
-        IF (VBASE.LT.0.0) VBASE = 0.0
-        IF (VPEND.LE.0.0) VPEND = 0.0
-        IF (WFTL.LT.0.0) WFTL = 0.0
-        IF (WFTU.LT.0.0) WFTU = 0.0
-        IF (TRGFC(2).LE.0.0) THEN      ! Grain temperature responses
-          DO L = 1,4
-             TRGFC(L) = TRPHS(L)
-             TRGFN(L) = TRPHS(L)
-          ENDDO
-        ENDIF
-        IF (RSPCA.LT.0.0) RSPCA = 15.0
-        IF (RSPCX.LT.0.0) RSPCX = 80.0
-        IF (RSEN.LT.0.0) RSEN = 0.1
-
-        IF (SLPF.LE.0.0 .OR. SLPF.GT.1.0) SLPF = 1.0
-        IF (SLPF.LT.1.0) THEN
-          WRITE (fnumwrk,*) ' '
-          WRITE (fnumwrk,*)
-     &     ' WARNING  Soil fertility factor was less than 1.0: ',slpf
-        ENDIF  
-
-        ! Soil inorganic N aspects
-        IF (no3mn.lt.0.0) no3mn = 0.5
-        IF (nh4mn.lt.0.0) nh4mn = 0.5
-        
 
 !-----------------------------------------------------------------------
 !       Calculate derived coefficients and set equivalences
@@ -4353,6 +4477,7 @@
         ELSE
           phint = phints
         ENDIF
+        phintstore = phint
         LLIFGTT = LLIFG * PHINT 
         LLIFATT = LLIFA * PHINT 
         LLIFSTT = LLIFS * PHINT 
@@ -4394,15 +4519,7 @@
         RNCM = RNCMN(0)
 
         ! Height growth
-          IF (CROP.EQ.'WH'.OR.CROP.EQ.'BA') THEN
-            SERX = HTSTD/(PD(1)+PD(2)+PD(3)+PD(4)+PD(5)+PD(6))
-          ELSE
-            IF (SGPHASE(2)-SGPHASE(1).GT.0.0) THEN
-              SERX = HTSTD/(SGPHASEDU(2)-SGPHASEDU(1))
-            ELSE
-              SERX = 0.0
-            ENDIF  
-          ENDIF  
+        SERX = HTSTD/(PD(1)+PD(2)+PD(3)+PD(4)+PD(5)+PD(6))
 
 !-----------------------------------------------------------------------
 !       Set coefficients that dependent on input switch
@@ -4580,7 +4697,7 @@
         INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
         IF (.NOT.FOPEN) THEN
           OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-          WRITE(fnumwrk,*) 'CSCRP  Cropsim Crop Module '
+          WRITE(fnumwrk,*) 'CSCRP  Cropsim Cereal Crop Module '
         ENDIF
                     
         WRITE(fnumwrk,*)' '
@@ -4593,6 +4710,7 @@
         WRITE(fnumwrk,*)' '
         WRITE(fnumwrk,*)' MODEL      ',MODEL
         WRITE(fnumwrk,*)' MODULE     ',MODNAME
+        WRITE(fnumwrk,'(A13,I6)')'  VERSION    ',VERSION
         WRITE(fnumwrk,*)' PRODUCT    ',HPROD
         WRITE(fnumwrk,*)' RNMODE     ',RNMODE
         IF (RUN.LT.10) THEN
@@ -4609,9 +4727,10 @@
         IF (MEEXP.EQ.'E')
      &   WRITE(fnumwrk,'(A26,A1)')'   EXPERIMENTAL ALGORITHM ',MEEXP
          WRITE(fnumwrk,'(A26,A1)') '   PHOTOSYNTHESIS         ',MEPHS
-         WRITE(fnumwrk,'(A26,A1,1X,A1)') '   WATER AND N SWITCHES   '
+         WRITE(fnumwrk,'(A26,A1,1X,A1)') '   WATER & N SWITCHES     '
      &     ,ISWWAT,ISWNIT
-         WRITE(fnumwrk,'(A26,A3)')  '   N UPTAKE               ',MERNU
+         WRITE(fnumwrk,'(A26,A1,1X,A1)') '   PHASE & PHINT SWITCHES '
+     &     ,CFLPHASEADJ,CFLPHINTADJ
          WRITE(fnumwrk,'(A26,I1)') ' '
          WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
          WRITE(fnumwrk,'(A26,A6,2X,A16)')
@@ -4627,6 +4746,7 @@
         ENDIF
         WRITE (fnumwrk,'(A15,2F7.1)')'  PLTPOP,ROWSPC',PLTPOPP,ROWSPC
         WRITE (fnumwrk,'(A15,2F7.1)')'  SDEPTH,SDRATE',SDEPTH,SDRATE
+        WRITE (fnumwrk,'(A15,F7.4,F7.2)')'  SDWT,SDNPCI  ',SDWT,SDNPCI
         IF (sdepthu.LT.sdepth)
      &   WRITE (fnumwrk,'(A15,F7.1)')'  SHOOT DEPTH  ',SDEPTHU      
         WRITE (fnumwrk,'(A15,2F7.1,A6)')'  SEEDRS,SEEDN ',
@@ -4652,6 +4772,10 @@
         IF (IDETG.NE.'N') THEN
           WRITE(fnumwrk,*)' '
           WRITE(fnumwrk,*)' MAJOR COEFFICIENTS AFTER CHECKING'
+          WRITE(fnumwrk,*)' Germination and Emergence '
+          WRITE(fnumwrk,*)'  Pgerm  ',Pgerm 
+          WRITE(fnumwrk,*)'  Pemrg  ',Pemrg 
+          WRITE(fnumwrk,*)'  Trgem  ',Trgem 
           WRITE(fnumwrk,*)' Development '
           WRITE(fnumwrk,*)'  Vreq   ',Vreq 
           WRITE(fnumwrk,*)'  Vbase  ',Vbase
@@ -4681,6 +4805,7 @@
           WRITE(fnumwrk,*)'  Shwts  ',G3
           WRITE(fnumwrk,*)' CH2O reserves '
           WRITE(fnumwrk,*)'  Rspcs,Rspcx ',rspca,rspcx 
+          WRITE(fnumwrk,*)'  Rsuse       ',rsuse 
           ! Stsndard = concentration at anthesis
           WRITE(fnumwrk,*)' Grain stages '
           WRITE(fnumwrk,*)'  S1     ',GGphase(1),Ggphasedu(1)
@@ -4711,7 +4836,7 @@
           WRITE(fnumwrk,*)'  Slas   ',Laws
           WRITE(fnumwrk,*)'  Slacf,Slaff  ',Lawcf,Lawff
           WRITE(fnumwrk,*)'  Laxs   ',Laxs
-          WRITE(fnumwrk,*)'  Phints ',Phints                
+          WRITE(fnumwrk,*)'  Phints ',Phints               
           WRITE(fnumwrk,*)'  Phl1,Phf1 ',Phintl(1),Phintf(1)
           WRITE(fnumwrk,*)'  Phl2,Phf2 ',Phintl(2),Phintf(2)
           WRITE(fnumwrk,*)'  Phl3,Phf3 ',Phintl(3),Phintf(3)
@@ -4724,14 +4849,12 @@
           WRITE(fnumwrk,*)'  Ssphs,Ssphedu',Ssphs,Ssphsdu
           WRITE(fnumwrk,*)'  Ssphe,Ssphedu',Ssphe,Ssphedu
           WRITE(fnumwrk,*)'  Saws,Serx    ',Saws,Serx            
+          WRITE(fnumwrk,*)' Partitioning     '
+          WRITE(fnumwrk,*)'  Ptfmx,Ptfmn  ',Ptfmx,Ptfmn
+          WRITE(fnumwrk,*)'  Ptfxs,Ptfa   ',Ptfxs,Ptfa
           WRITE(fnumwrk,*)' Roots  '
           WRITE(fnumwrk,*)'  Rdgs   ',Rdgs
           WRITE(fnumwrk,*)'  Rresp  ',Rresp
-          WRITE(fnumwrk,*)' Nitrogen uptake'
-          WRITE(fnumwrk,*)'  Wfnul  ',Wfnul
-          WRITE(fnumwrk,*)'  Wfnuu  ',Wfnuu
-          WRITE(fnumwrk,*)'  Ncnu   ',Ncnu
-          WRITE(fnumwrk,*)'  Rlfnu  ',Rlfnu
           WRITE(fnumwrk,*)' Nitrogen uptake concentration factors'
           WRITE(fnumwrk,*)'  Rtno3,Rtnh4 ',rtno3,rtnh4 
           WRITE(fnumwrk,*)'  No3cf,Nupwf ',no3cf,nupwf
@@ -4763,6 +4886,10 @@
      &     TRGEM(1),TRGEM(2),TRGEM(3),TRGEM(4)
           WRITE(FNUMWRK,'(A9,4F5.1)')'   TRDV1 ',     
      &     TRDV1(1),TRDV1(2),TRDV1(3),TRDV1(4)
+          WRITE(FNUMWRK,'(A9,4F5.1)')'   TRDV8 ',     
+     &     TRDV8(1),TRDV8(2),TRDV8(3),TRDV8(4)
+          WRITE(FNUMWRK,'(A9,4F5.1)')'   TRLA ',     
+     &     TRLA(1),TRLA(2),TRLA(3),TRLA(4)
           WRITE(FNUMWRK,'(A9,4F5.1)')'   TRLFG ',     
      &     TRLFG(1),TRLFG(2),TRLFG(3),TRLFG(4)
           WRITE(FNUMWRK,'(A9,4F5.1)')'   TRPHS ',     
@@ -4840,14 +4967,57 @@
      &     ' WARNING  Soil fertility factor was less than 1.0: ',slpf
         ENDIF  
 
-        WRITE(MESSAGE(1),'(A36,A37)')
-     &    'Note:Reserve CH2O included in the wt',
-     &    ' of leaves,stems,and (cereals) chaff.' 
-        CALL WARNING(1,'CSCRP',MESSAGE)
+        WRITE(FNUMWRK,*)' '
+        WRITE(FNUMWRK,'(A22)')' OUTPUTS              '
+
+        ! Control switch for OUTPUT file names
+        CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'FNAME',fname)
+        IF (FNAME.EQ.'Y') THEN
+          WRITE(FNUMWRK,*)'File names switched from standard. '
+        ELSE  
+          WRITE(FNUMWRK,*)'Standard file names. '
+        ENDIF   
+        
+        ! Output choices
+        ! 1=Reserves in laminae,stem,crown,SLA;stem includes sheaths
+        ! 2=No reserves;stem includes sheaths
+        ! 3=No reserves;stem does not include sheaths 
+        OUTCHOICE = 1
+        IF (OUTCHOICE.EQ.2) THEN
+          WRITE(MESSAGE(1),'(A34,A37)')
+     &      'NO reserve CH2O included in the wt',
+     &      ' of leaves,stems,and crown.          ' 
+          CALL WARNING(1,'CSCAS',MESSAGE)
+          WRITE(FNUMWRK,'(A35,A38)')
+     &      ' NO reserve CH2O included in the wt',
+     &      ' of leaves,stems,and crown.           '
+          WRITE(FNUMWRK,'(A35)')
+     &      ' Stem weight includes the sheaths..'
+        ELSEIF (OUTCHOICE.EQ.3) THEN
+          WRITE(MESSAGE(1),'(A34,A37)')
+     &      'NO reserve CH2O included in the wt',
+     &      ' of leaves,stems,and crown.          ' 
+          CALL WARNING(1,'CSCAS',MESSAGE)
+        WRITE(FNUMWRK,'(A35,A38)')
+     &      ' NO reserve CH2O included in the wt',
+     &      ' of leaves,stems,and crown.           '
+          WRITE(FNUMWRK,'(A44)')
+     &      ' Stem weight does NOT includes the sheaths. '
+        ENDIF  
+
+        WRITE(FNUMWRK,*)' '
+        WRITE(FNUMWRK,'(A22)')' DURING RUN STATUS:   '
 
 !***********************************************************************
       ELSEIF (DYNAMIC.EQ.RATE) THEN
 !***********************************************************************
+
+         IF (YEARDOY.GE.PLYEARDOY) THEN
+           DAP = DAP + 1
+           IF (EYEARDOY.GT.0) DAE = DAE + 1
+         ELSE
+           DAP = 0
+         ENDIF
 
 !-----------------------------------------------------------------------
 !       Set 'establishment' switches
@@ -4963,7 +5133,6 @@
         ENDIF
 
         IF (YEARDOY.EQ.PLYEARDOY) THEN
-          DAP = 0
           ! Initial soil N and H2O
           ISOILN = 0.0
           ISOILH2O = 0.0
@@ -5099,15 +5268,42 @@
 !         Calculate thermal time
 !-----------------------------------------------------------------------
 
-          !Tfd = TFAC4P(trdev,tmean,rstage,TT)
           Tfd = TFAC4(trdv1,tmean,TT)
-          IF (rstage+1.LT.10)
-     &     Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
-!     &      Tfdnext = TFAC4P(trdev,tmean,rstage+1.0,TTNEXT)
+          Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
+          IF (rstage.GE.2.0.AND.rstage.LT.3.0)THEN
+            Tfd = TFAC4(trdv2,tmean,TT)
+            Tfdnext = TFAC4(trdv3,tmean,TTNEXT)
+          ELSEIF (rstage.GE.3.0.AND.rstage.LT.4.0)THEN
+            Tfd = TFAC4(trdv3,tmean,TT)
+            Tfdnext = TFAC4(trdv4,tmean,TTNEXT)
+          ELSEIF (rstage.GE.4.0.AND.rstage.LT.5.0)THEN
+            Tfd = TFAC4(trdv4,tmean,TT)
+            Tfdnext = TFAC4(trdv5,tmean,TTNEXT)
+          ELSEIF (rstage.GE.5.0.AND.rstage.LT.6.0)THEN
+            Tfd = TFAC4(trdv5,tmean,TT)
+            Tfdnext = TFAC4(trdv6,tmean,TTNEXT)
+          ELSEIF (rstage.GE.6.0.AND.rstage.LT.7.0)THEN
+            Tfd = TFAC4(trdv6,tmean,TT)
+            Tfdnext = TFAC4(trdv7,tmean,TTNEXT)
+          ELSEIF (rstage.GE.7.0.AND.rstage.LT.8.0)THEN
+            Tfd = TFAC4(trdv7,tmean,TT)
+            Tfdnext = TFAC4(trdv8,tmean,TTNEXT)
+          ELSEIF (rstage.GE.8.0)THEN
+            Tfd = TFAC4(trdv8,tmean,TT)
+          ENDIF
+
+          !Tfd = TFACBETA(trdv1,tmean,TT)
+          
           IF (trgem(3).GT.0.0) THEN
             Tfgem = TFAC4(trgem,tmean,TTGEM)
           ELSE
             Ttgem = tt
+          ENDIF    
+
+          IF (trla(3).GT.0.0) THEN
+            Tfla = TFAC4(trla,tmean,TTLA)
+          ELSE
+            Ttla = tt
           ENDIF    
 
           ! Angus approach
@@ -5193,6 +5389,7 @@
             IF (CUMVD.LT.VREQ*VLOSS .AND. TMEAN.GE.VLOST) THEN
               ! In Ceres was 0.5*(TMAX-30.0)
               VDLOS = VLOSF * CUMVD  ! From AFRC
+              WRITE(FNUMWRK,*)' Warning. De-vernalization! ' 
             ENDIF
 
             ! Cold hardening
@@ -5216,27 +5413,27 @@
               RSTAGETMP = RSTAGE
             ENDIF
             IF (PPSEN.EQ.'SL') THEN      ! Short day response,linear 
-              DF = 1.0 - PPS(INT(RSTAGETMP))/1000.*(PPTHR-DAYL)
+              DF = 1.0 - PPS(INT(RSTAGETMP))/1000.*(PPTHR-DAYLT)
               IF (RSTAGETMP.LT.FLOAT(MSTG)) THEN
-               DFNEXT = 1.-PPS(INT(RSTAGETMP+1))/1000.*(PPTHR-DAYL)
+               DFNEXT = 1.-PPS(INT(RSTAGETMP+1))/1000.*(PPTHR-DAYLT)
               ELSE
                DFNEXT = DF
               ENDIF 
             ELSEIF (PPSEN.EQ.'LQ') THEN  ! Long day response,quadratic
               DF = AMAX1(0.0,AMIN1(1.0,1.0-
-     &        (PPS(INT(RSTAGETMP))/10000.*(PPTHR-DAYL)**PPEXP)))
+     &        (PPS(INT(RSTAGETMP))/10000.*(PPTHR-DAYLT)**PPEXP)))
               IF (RSTAGETMP.LT.10) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-
-     &        (PPS(INT(RSTAGETMP+1))/10000.*(PPTHR-DAYL)**PPEXP)))
+     &        (PPS(INT(RSTAGETMP+1))/10000.*(PPTHR-DAYLT)**PPEXP)))
               ! Angus approach
               !IF (rstage.lt.2.0) then
-              !  DF = AMAX1(0.0,1.0-EXP(-0.0927*(DAYL-4.77))) 
+              !  DF = AMAX1(0.0,1.0-EXP(-0.0927*(DAYLT-4.77))) 
               !else
-              !  DF = AMAX1(0.0,1.0-EXP(-0.283*(DAYL-9.27))) 
+              !  DF = AMAX1(0.0,1.0-EXP(-0.283*(DAYLT-9.27))) 
               !endif  
               !IF (rstage.lt.1.0) then
-              !  DFNEXT = AMAX1(0.0,1.0-EXP(-0.0927*(DAYL-4.77))) 
+              !  DFNEXT = AMAX1(0.0,1.0-EXP(-0.0927*(DAYLT-4.77))) 
               !else
-              !  DFNEXT = AMAX1(0.0,1.0-EXP(-0.283*(DAYL-9.27))) 
+              !  DFNEXT = AMAX1(0.0,1.0-EXP(-0.283*(DAYLT-9.27))) 
               !endif  
               ! End Angus
               Tfdf = AMAX1(0.0,1.0-AMAX1(0.0,(TMEAN-10.0)/10.0))
@@ -5300,7 +5497,7 @@
                 ! Crop has a terminal spikelet stage
                 IF (CUMDU+DU.LT.PSTART(TSSTG)) THEN
                   ! Not reached TS yet
-                  DULF = TT*EMRGFR*LFENDFR  ! Thermal time
+                  DULF = TTLA*EMRGFR*LFENDFR  ! Thermal time
                 ELSE
                   IF (CUMDU.LT.PSTART(TSSTG)) THEN
                     ! Reach TS this day
@@ -5339,39 +5536,42 @@
                     ! ELSE
                     !  FLN = FLOAT(INT(FLN))+0.999
                     ! ENDIF
-                    CFLPDADJ = 'N'
-                    IF (CFLPDADJ.EQ.'Y') THEN
-                      IF (PHINTL(2).GT.0..AND.FLN+1..LE.PHINTL(2)) THEN
-                        PD2ADJ = (FLN-LNUMTS) * PHINTS*PHINTF(2)  
-                      ELSEIF (PHINTL(2).GT.0. .AND.
-     &                 FLN+1..GT.PHINTL(2)) THEN
-                        IF (LNUM.GE.PHINTL(2)) THEN
-                          PD2ADJ = (FLN-LNUMTS) * PHINTS*PHINTF(3)  
-                        ELSE
-                          PD2ADJ = ((FLN-PHINTL(2)))*PHINTS*PHINTF(2)  
-     &                          + (PHINTL(2)-LNUMTS)*PHINTS*PHINTF(3) 
-                        ENDIF   
-                      ELSE  
-                        PD2ADJ = ((FLN-LNUMTS)) * PHINT
-                      ENDIF
-                      TVR2 = AMAX1(0.0,PD2ADJ-(PD(2)+PD(3)))
+                    IF (PHINTL(2).GT.0..AND.FLN+1..LE.PHINTL(2)) THEN
+                      PD2ADJ = (FLN-LNUMTS) * PHINTS*PHINTF(2)  
+                    ELSEIF (PHINTL(2).GT.0. .AND.
+     &               FLN+1..GT.PHINTL(2)) THEN
+                      IF (LNUM.GE.PHINTL(2)) THEN
+                        PD2ADJ = (FLN-LNUMTS) * PHINTS*PHINTF(3)  
+                      ELSE
+                        PD2ADJ = ((FLN-PHINTL(2)))*PHINTS*PHINTF(2)  
+     &                        + (PHINTL(2)-LNUMTS)*PHINTS*PHINTF(3) 
+                      ENDIF   
+                    ELSE  
+                      PD2ADJ = ((FLN-LNUMTS)) * PHINT
+                    ENDIF
+                    TVR2 = AMAX1(0.0,PD2ADJ-(PD(2)+PD(3)))
+                    IF (CFLPHASEADJ.EQ.'Y') THEN
                       PD(3) = PD(3)+TVR2
                       PD(4) = PD(4)-TVR2
-                      WRITE(fnumwrk,*)' '  
-                      WRITE(fnumwrk,'(A22,I7)')
-     &                 ' TERMINAL SPIKELET ON ',YEARDOY
-                      WRITE(fnumwrk,'(A32,F5.1)')
-     &                 '  T.SPK LEAF NUMBER             ',LNUMTS
-                      WRITE(fnumwrk,'(A32,F5.1,2X,F5.1)')
-     &                 '  FINAL LEAF NUMBER CUL,AITKEN  ',FLN,FLNAITKEN 
-                      WRITE(fnumwrk,'(A32,I5,I7)')
-     &                 '  P2+3 DURATIONS C FILE,ADJUSTED',
-     &                 INT(PD(2)+PD(3)),INT(PD2ADJ)
-                      WRITE(fnumwrk,'(A32,F5.1,F7.1)')
-     &                 'PD(3) NEW,OLD                 ',PD(3),PD(3)-TVR2
-                      WRITE(fnumwrk,'(A32,F5.1,F7.1)')
-     &                 'PD(4) NEW,OLD                 ',PD(4),PD(4)+TVR2
+                      WRITE(fnumwrk,'(A47)')
+     &                ' Phase durations adjusted using Aitken formula!'
+                    ELSE
+                      WRITE(fnumwrk,'(A32)')
+     &                 ' Phase durations NOT adjusted!  '              
+                    ENDIF  
+                    WRITE(fnumwrk,'(A32,F5.1)')
+     &                '  T.SPK LEAF NUMBER             ',LNUMTS
+                    WRITE(fnumwrk,'(A32,F5.1,2X,F5.1)')
+     &               '  FINAL LEAF NUMBER CUL,AITKEN  ',FLN,FLNAITKEN 
+                    WRITE(fnumwrk,'(A32,I5,I7)')
+     &               '  P2+3 DURATIONS C FILE,ADJUSTED',
+     &               INT(PD(2)+PD(3)),INT(PD2ADJ)
+                    WRITE(fnumwrk,'(A32,F5.1,F7.1)')
+     &               'PD(3) NEW,OLD                 ',PD(3),PD(3)-TVR2
+                    WRITE(fnumwrk,'(A32,F5.1,F7.1)')
+     &               'PD(4) NEW,OLD                 ',PD(4),PD(4)+TVR2
 
+                    IF (CFLPHASEADJ.EQ.'Y') THEN
                       ! Re-calculate thresholds
                       LAFSTDU = 0.
                       VEENDDU = 0.
@@ -5468,7 +5668,7 @@
      &                   STVSTGDU = PSTART(L) + (STVSTG
      &                            - FLOAT(INT(STVSTG)))*PD(L)
                       ENDDO
-                    ENDIF  ! End CFLPDADJ
+                    ENDIF  ! End of recalculating thresholds       !   
                   ELSE  
                     ! After TS 
                     DULF = DU*EMRGFR*LFENDFR  ! Development units
@@ -5485,6 +5685,7 @@
 !-----------------------------------------------------------------------
 
             IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN
+              ! SDDUR control on what available for roots
               SEEDRSAVR =
      &         AMIN1(SEEDRS,SEEDRSI/SDDUR*(TT/STDAY)*GERMFR)
             ELSE
@@ -5561,7 +5762,10 @@
 
               IF (DAE.LT.0) THEN
                 IF (CROP.EQ.'BA') THEN
-                  !PHINTS = 77.5 - 232.6*(DAYL-DAYLPREV)
+                  WRITE(FNUMWRK,*) 'emergence day ',yeardoy,plyeardoy
+                  WRITE(FNUMWRK,*)
+     &             ' PHINTS as read-in ',phints
+                  PHINTS = PHINTS - 232.6*(DAYLT-DAYLPREV)
                 ENDIF
                 LNUMSG = 1
               ENDIF
@@ -5688,6 +5892,7 @@
               ! IF (TMEAN20.LT.0.0) TFP = 0.0
               Tfp = TFAC4(trphs,tmean,TTOUT)
               Tfg = TFAC4(trlfg,tmean,TTOUT)
+              Tfla = TFAC4(trla,tmean,TTLA)
               Tfgf = TFAC4(trgfc,tmean,TTOUT)
               Tfgn = TFAC4(trgfn,tmean,TTOUT)
 
@@ -5737,15 +5942,35 @@
                   WRITE(FNUMWRK,*)' '
                   WRITE(FNUMWRK,'(A20,I3,A4,I3,A11,F4.1)')
      &             ' PHINT changed from ',INT(PHINT),
-     &             ' to ',INT(phints*phintf(phintstg+1)),
+     &             ' to ',INT(PHINTS*PHINTF(PHINTSTG+1)),
      &             '. Leaf # = ',lnum
-                  PHINT = PHINTS * PHINTF(phintstg+1)
-                  Phintstg = Phintstg + 1
+                  PHINT = PHINTS * PHINTF(PHINTSTG+1)
+                  PHINTSTORE = PHINT
+                  PHINTSTG = PHINTSTG + 1
                   ! Leaf growth,active,senescence phases adjusted
                   LLIFGTT = LLIFG * PHINT 
                   LLIFATT = LLIFA * PHINT 
                   LLIFSTT = LLIFS * PHINT 
                 ENDIF
+                IF (CFLPHINTADJ.EQ.'Y') THEN
+                  ! Adjust phint for rate of change of daylength.Kirby
+                  !tvr1 = 1.0/(0.00949+0.000988*((DAYLT-DAYLPREV)*60.0))
+                  TVR2 = 
+     &             1.0/((1.0/PHINTSTORE)+.000988*((DAYLT-DAYLPREV)*60.))
+                  WRITE(FNUMWRK,*)
+     &              'PHINT adjusted. Normal,f(Delta daylngth)',
+     &              PHINTSTORE,TVR2
+                    PHINT = PHINTSTORE 
+     &               - PHINTSTORE*0.1*((DAYLT-DAYLPREV)*60.0)
+            WRITE(FNUMWRK,*)' 1 PHINT ',PHINT    
+                ELSE
+                  PHINT = PHINTSTORE 
+            WRITE(FNUMWRK,*)' 2 PHINT ',PHINT    
+                ENDIF
+!                IF (LNUM.GT.PHINTL(1)) PHINT = 1.0/
+!!     &           ((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*LNUM/25.0)))
+!     &           ((1.0/PHINTS)*(1.0-AMIN1(.8,0.8*LNUM/25.0)))
+!            WRITE(FNUMWRK,*)' 3 PHINT ',PHINT    
               ENDIF
               
               ! Restrict to maximum
@@ -5946,9 +6171,9 @@
                 TILWTR = 1.0
                 TILWT = 0.0
                 TNUMD = 0.0
-                ! OriginallY no tdsf
+                ! Originally no tdsf
                   TILSW = G3 * (CUMDU+DU/2.0)/PSTART(MSTG)
-     &                     * (1.0+((1.0-AMIN1(WFT,NFT))*tdsf))
+     &                     * (1.0+((1.0-AMIN1(WFT,NFT))*TDSF))
                 ! LAH JAN 2009 ADDED STRESSES TO INCREASE 
                 !                        TARGET SIZE->MORE DEATH
                 IF (TNUM.GT.0.0)
@@ -6038,14 +6263,13 @@
                   !IF (SENSTFR.GT.0.0) SENSTG = STWT*SENSTFR
                 ENDIF
               ENDIF  
+              
               IF (ISWNIT.NE.'N') THEN
                 ! NB. N loss has a big effect if low N
                 IF (PLASC.GT.0.0) THEN   ! When leaf kill
                   SENNLFG = AMIN1(LEAFN,SENLFG*LANC) ! Loss functional N
                   SENNRS = AMIN1(RSN,RSN*PLASC/(PLA-SENLA)) ! Loss rs N
                 ELSE   ! When normal senescence .. N>minimum to reserves
-                  ! Assumes that all reserve N in leaves
-                  IF (LFWT.GT.0.0) LANCRS = (LEAFN+RSN) / LFWT
                     SENNLFG = AMAX1(0.0,AMIN1(LEAFN,
      &                             (SENLFG+SENLFGRS)*LNCM))
                     SENNLFGRS = AMAX1(0.0,AMIN1(LEAFN-SENNLFG,
@@ -6161,7 +6385,9 @@
 
               IF (PSTART(MSTG).GT.0) THEN
                 PTF = AMIN1(PTFMX,
-     &           PTFMN+((PTFMX-PTFMN)*((CUMDU+DU/2.0))/PSTART(MSTG)))
+!    &           PTFMN+((PTFMX-PTFMN)*((CUMDU+DU/2.0))/PSTART(MSTG)))
+     &           PTFMN+((PTFMX-PTFMN)*
+     &                 ((CUMDU+DU/2.0))/PSTART(INT(PTFXS))))
               ELSE
                 PTF = (PTFMX+PTFMN)/2.0
               ENDIF
@@ -6354,8 +6580,6 @@
               TLAGP = 0.0
               LAGEG = 0.0
               
-              SNOT = AMAX1(1.0,SNOFX**(INT(rstage)-1))
-
               ! If just ended leaf growth phase
               IF (CUMDU.GT.LGPHASEDU(2).AND.FLDAP.LE.0) THEN
                 FLDAP = DAP-1
@@ -6469,7 +6693,7 @@
                 
                   IF (GROLS.LT.GROLSP) THEN
                     ! Leaf weight increase from seed reserves
-                    ! LAH May need to restrict seed use.To use by roots?
+                    ! LAH Takes all that needed. No restriction!
                     CARBOLSD = AMIN1((GROLSP-GROLS),SEEDRSAV)
                     SEEDRSAV = SEEDRSAV - CARBOLSD
                     GROLS = GROLS + CARBOLSD
@@ -6576,7 +6800,8 @@
                  ! RSPCA is the % of assim going to reserves
                  ! May need to have this change as stem growth proceeds
               ENDIF
-              ! Chaff (In balance with stem growth)
+              ! Chaff (In balance with stem growth). 
+              ! NB. Chaff is not just part of stem
               GROCH = GROST * GROCHFR
               GROST = GROST * (1.0-GROCHFR)
               ! Visible stem
@@ -6663,6 +6888,9 @@
      &            +(STWT+GROST+CHWT+GROCH)
      &            +(RSWT+GRORS-SENRS-RTWTGRS))
               ENDIF
+              
+              IF (RSTAGE.GE.8.2) RTWTGRS = 0.0
+              ! No overflow if fillint grain
 
               GRORSPRM = 0.0
               GRORSPM = 0.0
@@ -6681,20 +6909,20 @@
 !-----------------------------------------------------------------------
 
               TNUMG = 0.0
-              IF (LNUMEND.GT.TI1LF.AND.(LNUMEND-LNUM).GT.0.0) THEN
-                IF (LNUMEND.LT.ti1lf+3) THEN    ! Fibonacci factors
+              IF (LNUM.GT.TI1LF.AND.LNUM.GT.0.0) THEN
+                IF (LNUM.LT.ti1lf+3) THEN    ! Fibonacci factors
                  tnumiff=1.0
-                ELSEIF(LNUMEND.GE.ti1lf+3 .AND. LNUMEND.LT.ti1lf+4) THEN
+                ELSEIF(LNUM.GE.ti1lf+3 .AND. LNUM.LT.ti1lf+4) THEN
                  tnumiff=1.5
-                ELSEIF(LNUMEND.GE.ti1lf+4 .AND. LNUMEND.LT.ti1lf+5) THEN
+                ELSEIF(LNUM.GE.ti1lf+4 .AND. LNUM.LT.ti1lf+5) THEN
                  tnumiff = 1.5     ! tnumiff=3.0
-                ELSEIF(LNUMEND.GE.ti1lf+5 .AND. LNUMEND.LT.ti1lf+6) THEN
+                ELSEIF(LNUM.GE.ti1lf+5 .AND. LNUM.LT.ti1lf+6) THEN
                   tnumiff = 1.5     ! tnumiff=4.0
-                ELSEIF(LNUMEND.GE.ti1lf+6 .AND. LNUMEND.LT.ti1lf+7) THEN
+                ELSEIF(LNUM.GE.ti1lf+6 .AND. LNUM.LT.ti1lf+7) THEN
                  tnumiff = 1.5     ! tnumiff=6.0
                 ENDIF
                 IF ((CUMDU+DU).LT.TILPEDU) THEN
-                  TNUMG = DULF/PHINT * TNUMIFF * (AMIN1(WFT,NFT))! cscer
+                  TNUMG = DULF/PHINT * TNUMIFF * (AMIN1(WFT,NFT))
                 ELSE
                   TNUMG = 0.0
                 ENDIF  
@@ -6707,15 +6935,8 @@
 !-----------------------------------------------------------------------
 
               CANHTG = 0.0
-              IF (CROP.EQ.'WH'.OR.CROP.EQ.'BA') THEN
-                IF (RSTAGE.LT.7.0) CANHTG = SERX*DU
-              ELSE  
-               IF (CUMDU.GT.SGPHASEDU(1).AND.CUMDU.LT.SGPHASEDU(2)) THEN
-                CANHTG = SERX*DU
-               ELSEIF (CUMDU.LE.SGPHASEDU(1).AND.GESTAGE.GE.1.0) THEN
-                IF (TT.GT.0.0) CANHTG = 0.5
-               ENDIF
-              ENDIF 
+              IF (RSTAGE.LT.7.0) CANHTG = SERX*DU
+              !  IF (TT.GT.0.0) CANHTG = 0.5
 
 !=======================================================================
             ENDIF ! End of above-ground growth (after emerged) section
@@ -6880,7 +7101,7 @@
               IF (GNOPD.GT.0.0 .AND. CUMDU.LT.PSTART(MSTG)) GRAINNDEM =
      &         AMIN1(GROGRPA*(GNPCMX/100.0),TFGN*GROGRP*(GNPCS/100.))
 
-              ! Leaf,stem,root,and storage-root N demand
+              ! Leaf,stem,root N demand
               LNDEM = GROLF*LNCX +
      &            (LFWT-SENLFG-SENLFGRS)*AMAX1(0.0,NTUPF*(LNCX-LANC)) -
      &            GROLFRTN
@@ -6907,121 +7128,45 @@
               ANDEM = PLTPOP*10.0*
      &          (GRAINNDEM+LNDEM+SNDEM+RNDEM-SEEDNUSE-RSNUSED)
 
-              ! Uptake
-              
-              IF (MERNU.EQ.'CSM') THEN
-                ! Original from CSM with some 'modification'.  
-                ! RNUMX = RTNO3,RTNH4 = N uptake/root length (mgN/cm,.006)
-                ! RNO3U,RNH4U  = Nitrogen uptake (kg N/ha)
-                ! RNUMX = 0.006    
-                WFNU = 1.0
-                NUPAP = 0.0
-                RNO3U = 0.0
-                RNH4U = 0.0
-                TVR1 = -0.08  ! Could be - AMAX1(0.01,(0.20-NCNU*0.004))
-                DO L=1,NLAYR
-                  IF (RLV(L) .GT. 0.0) THEN
-                    NLAYRROOT = L
-                    ! N concentration effects
-                    FNH4 = 1.0-EXP(TVR1*NH4CF * NH4LEFT(L))
-                    FNO3 = 1.0-EXP(TVR1*NO3CF * NO3LEFT(L))
-                    IF (NO3LEFT(L) .LE. NO3MN) FNO3 = 0.0  
-                    IF (FNO3 .GT. 1.0)  FNO3 = 1.0
-                    IF (NH4LEFT(L) .LE. NH4MN) FNH4 = 0.0  
-                    IF (FNH4 .GT. 1.0)  FNH4 = 1.0
-                    ! Water effects
-                    IF (SW(L) .LE. DUL(L)) THEN
-                      WFNU = (SW(L) - LL(L)) / (DUL(L) - LL(L)) 
-                    ELSE
-                      WFNU = 1.0-(SW(L)-DUL(L))/(SAT(L)-DUL(L))
-                      WFNU = 1.0 ! Wet soil effect not implemented
-                    ENDIF
-                    IF (WFNU.LT.0.0) WFNU = 0.0
-                    ! LAH Note that WFNU squared
-                    TVR2 = AMAX1(0.0,1.0 - NUPWF*(1.0-(WFNU*WFNU)))
-                    RFAC = RLV(L) * TVR2 * DLAYR(L) * 100.0
-                    RNO3U(L) = RFAC * FNO3 * RTNO3
-                    RNH4U(L) = RFAC * FNH4 * RTNH4
-                    RNO3U(L) = MAX(0.0,RNO3U(L))
-                    RNH4U(L) = MAX(0.0,RNH4U(L))
-                    NUPAP = NUPAP + RNO3U(L) + RNH4U(L) !kg[N]/ha
-                    NUPAPCSM1 = NUPAP
-                  ENDIF
-                ENDDO
-                ! Below as in CSCER
-                ! Calculate potential N uptake in soil layers with roots
-                RNO3U = 0.0
-                RNH4U = 0.0
-                NUPAP = 0.0
-                NUPAPCSM = 0.0
-                DO L=1,NLAYR
-                 IF (RLV(L) .GT. 1.E-6) THEN
-                  FNH4 = 1.0 - EXP(-0.08 * NH4LEFT(L))
-                  FNO3 = 1.0 - EXP(-0.08 * NO3LEFT(L))
+              ! Original from CSM with some 'modification'.  
+              ! RNUMX = RTNO3,RTNH4 = N uptake/root length (mgN/cm,.006)
+              ! RNO3U,RNH4U  = Nitrogen uptake (kg N/ha)
+              ! RNUMX = 0.006    
+              WFNU = 1.0
+              NUPAP = 0.0
+              RNO3U = 0.0
+              RNH4U = 0.0
+              DO L=1,NLAYR
+                IF (RLV(L) .GT. 0.0) THEN
+                  NLAYRROOT = L
+                  ! N concentration effects
+                  FNH4 = 1.0-EXP(-0.08*NH4CF * NH4LEFT(L))
+                  FNO3 = 1.0-EXP(-0.08*NO3CF * NO3LEFT(L))
+                  ! The following limits are not those in NUPTAK,CERES
+                  ! Here set to 0 when NO3,NH4 < minimum,
+                  ! In NUPTAK when FNO3,FNH4 < 0.04
                   IF (NO3LEFT(L) .LE. NO3MN) FNO3 = 0.0  
-                  !IF (FNO3 .LT. 0.04) FNO3 = 0.0  
                   IF (FNO3 .GT. 1.0)  FNO3 = 1.0
                   IF (NH4LEFT(L) .LE. NH4MN) FNH4 = 0.0  
-                  !IF (FNH4 .LT. 0.04) FNH4 = 0.0  
                   IF (FNH4 .GT. 1.0)  FNH4 = 1.0
-                  SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
-                  IF (SMDFR .LT. 0.0) THEN
-                    SMDFR = 0.0
+                  ! Water effects
+                  IF (SW(L) .LE. DUL(L)) THEN
+                    WFNU = (SW(L) - LL(L)) / (DUL(L) - LL(L)) 
+                  ELSE
+                    WFNU = 1.0-(SW(L)-DUL(L))/(SAT(L)-DUL(L))
+                    WFNU = 1.0 ! Wet soil effect not implemented
                   ENDIF
-                  IF (SW(L) .GT. DUL(L)) THEN
-                    SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
-                    ! Wet soil effect not implemented
-                    SMDFR = 1.0
-                  ENDIF
-                  RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
-                  !  RLV = Rootlength density (cm/cm3)
-                  !  SMDFR = relative drought factor
-                  !  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)  
-                  !  RNO3U + RNH4  = Nitrogen uptake (kg N/ha)
+                  IF (WFNU.LT.0.0) WFNU = 0.0
+                  ! LAH Note that WFNU squared
+                  TVR2 = AMAX1(0.0,1.0 - NUPWF*(1.0-(WFNU*WFNU)))
+                  RFAC = RLV(L) * TVR2 * DLAYR(L) * 100.0
                   RNO3U(L) = RFAC * FNO3 * RTNO3
                   RNH4U(L) = RFAC * FNH4 * RTNH4
                   RNO3U(L) = MAX(0.0,RNO3U(L))
                   RNH4U(L) = MAX(0.0,RNH4U(L))
-                  !TRNU = TRNU + RNO3U(L) + RNH4U(L) !kg[N]/ha
                   NUPAP = NUPAP + RNO3U(L) + RNH4U(L) !kg[N]/ha
-                  NUPAPCSM = NUPAP
-                 ENDIF
-                ENDDO
-                ! To choose which one!
-                nupap = nupapcsm1
-              ENDIF
-              
-              IF (MERNU.EQ.'CRP') THEN
-                WFNU = 0.0
-                NUPAP = 0.0
-                RNO3U = 0.0
-                RNH4U = 0.0
-                ! Potential N supply in soil layers with roots (NUPAP)
-                DO L = 1, NLAYR
-                  IF (RLV(L).GT.0.0) THEN
-                    NLAYRROOT = L
-                    IF (SW(L).LE.DUL(L)) THEN
-                      IF (WFNUU-WFNUL.GT.0.0) WFNU = 
-     &                AMIN1(1.0,AMAX1(0.0,(SWP(L)-WFNUL)/(WFNUU-WFNUL)))
-                    ELSE
-                      ! LAH Wet soil effect. Not implemented because 
-                      ! problem when irrigated at planting/emergence
-                      WFNU = AMAX1
-     &                 (0.,AMIN1(1.,(SW(L)-DUL(L))/(SAT(L)-DUL(L))))
-                      WFNU = 1.0
-                    ENDIF
-                    NH4FN = AMIN1(1.0,AMAX1(0.0,NH4LEFT(L)/NCNU))
-                    NO3FN = AMIN1(1.0,AMAX1(0.0,NO3LEFT(L)/NCNU))
-                    RLFN =  AMAX1(0.,AMIN1(1.,RLV(l)/(RLFNU/1000.0)))
-                    ! The 1000 is because read as cm/dm3,not cm/cm3
-                    ! Original also had SHF as a limitant
-                    RNO3U(L) = NO3LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NO3FN)
-                    RNH4U(L) = NH4LEFT(L)/FAC(L)*AMIN1(RLFN,WFNU,NH4FN)
-                    NUPAP = NUPAP + RNO3U(L) + RNH4U(L)
-                    NUPAPCRP = NUPAP
-                  ENDIF
-                END DO
-              ENDIF
+                ENDIF
+              ENDDO
 
               ! Ratio (NUPRATIO) to indicate N supply for output
               IF (ANDEM.GT.0) THEN
@@ -7080,7 +7225,7 @@
               ENDIF
               SEEDNUSE = SEEDNUSE + SEEDNUSE2
 
-              ! Distribute N to grain,leaves,stem,root,and storage root
+              ! Distribute N to grain,leaves,stem,root
               LNUSE = 0.0
               SNUSE = 0.0
               RNUSE = 0.0
@@ -7097,11 +7242,10 @@
               ! 4.For new stem at minimum     
               SNUSE(1) = AMIN1(NULEFT,GROST*SNCM)
               NULEFT = NULEFT - SNUSE(1)
-              ! ? Storage root at minimum - will ultimately need
               ! 5.For leaf growth and topping-up (N to leaves first)
               LNUSE(2) = AMIN1(NULEFT,LNDEM-LNUSE(1))  
               NULEFT = NULEFT - LNUSE(2)
-              ! 6.For distribution between root,stem,storage root
+              ! 6.For distribution between root,stem
               IF (NULEFT.GT.0.0.AND.
      &         SNDEM-SNUSE(1)+RNDEM-RNUSE(1).GT.0.0) THEN
                 IF (NULEFT.GE.
@@ -7245,10 +7389,6 @@
 !         Update ages
 !-----------------------------------------------------------------------
 
-          IF (YEARDOY.GT.PLYEARDOY) THEN
-            DAP = DAP + 1
-            IF (EYEARDOY.GT.0) DAE = DAE + 1
-          ENDIF
           DO L = 1,LNUMSG
             IF (EMRGFR.GT.0.0) LAGE(L) = LAGE(L) + DULF*EMRGFR
             LAGEP(L) = LAGEP(L) + LNUMG
@@ -7327,7 +7467,7 @@
             SWPHC = SWPHC +  SWPH
             STVWT = STVWT + STVWTG
             GRWT = GRWT + GROGR - GWPH
-            gwphc = gwphc + gwph
+            GWPHC = GWPHC + GWPH
             CHWT = CHWT + GROCH 
             SENTOPLITTER = SENTOPLITTER + SENTOPLITTERG
             SENTOPRETAINED = 
@@ -7381,7 +7521,7 @@
 !         Calculate reserve concentration
 !-----------------------------------------------------------------------
 
-          IF (LFWT+STWT.GT.0.0) RSCD = RSWT/(LFWT+STWT+RSWT)
+          IF (LFWT+STWT+CHWT.GT.0.0) RSCD = RSWT/(LFWT+STWT+CHWT+RSWT)
           IF (RSCD.LT.0.0.AND.RSCD.GT.-1.0E-7) RSCD = 0.0
           RSCX = AMAX1(RSCX,RSCD)
 
@@ -7635,7 +7775,7 @@
           ! Harvest index for N
           HIND = 0.0
           IF ((LEAFN+STEMN+GRAINN+RSN+DEADN).GT.0.0)
-     &     HIND = HPRODN/(LEAFN+STEMN+HPRODN+RSN+DEADN)
+     &     HIND = GRAINN/(LEAFN+STEMN+GRAINN+RSN+DEADN)
 
 !-----------------------------------------------------------------------
 !         Update stages
@@ -7968,6 +8108,21 @@
             EDAYFR = 1.0 - EMRGFR
             EDAPFR = FLOAT(DAP) + EDAYFR
             DAE = 0
+            
+            WRITE(FNUMWRK,*)' '
+            WRITE(FNUMWRK,*)'EMERGENCE '
+            IF (SEEDRSAV.GT.0.0) THEN
+            WRITE(FNUMWRK,*)'  Rtwtl(1)/seedrsi  ',rtwtl(1)/seedrsi
+            WRITE(FNUMWRK,*)'  Rtwtl(2)/seedrsi  ',rtwtl(2)/seedrsi
+            WRITE(FNUMWRK,*)'  Rtwtl(3)/seedrsi  ',rtwtl(3)/seedrsi
+            ENDIF
+            IF (SEEDNI.GT.0.0) THEN
+            WRITE(FNUMWRK,*)'  Rootn/seedni      ',rootn/seedni
+            ENDIF
+            WRITE(FNUMWRK,*)'  Rtdep            ',rtdep
+            WRITE(FNUMWRK,*)'  Rstage,Cumdu     ',rstage,cumdu
+            WRITE(FNUMWRK,*)' '
+
           ENDIF
 
           IF (TILDAT.LE.0.AND.TNUM.GT.1.0) THEN
@@ -8035,13 +8190,13 @@
             TMINPC = TMINPC + TMIN
             TMEANPC = TMEANPC + TMEAN
             SRADPC = SRADPC + SRAD
-            DAYLPC = DAYLPC + DAYL
+            DAYLPC = DAYLPC + DAYLT
             TMAXCC = TMAXCC + TMAX
             TMINCC = TMINCC + TMIN
             TMEANCC = TMEANCC + TMEAN
             SRADCC = SRADCC + SRAD
             CO2CC = CO2CC + CO2
-            DAYLCC = DAYLCC + DAYL
+            DAYLCC = DAYLCC + DAYLT
             RAINCC = RAINCC + RAIN
             
             RAINPC(INT(RSTAGE)) = RAINPC(INT(RSTAGE)) + RAIN
@@ -8069,7 +8224,7 @@
               TMEANAV(INT(RSTAGE)) = TMEANPC / PDAYS(INT(RSTAGE))
               SRADPAV(INT(RSTAGE)) = SRADPC / PDAYS(INT(RSTAGE))
               DAYLPAV(INT(RSTAGE)) = DAYLPC / PDAYS(INT(RSTAGE))
-              DAYLST(INT(RSTAGE)) = DAYL
+              DAYLST(INT(RSTAGE)) = DAYLT
               CO2PAV(INT(RSTAGE)) = CO2PC / PDAYS(INT(RSTAGE))
               RAINPAV(INT(RSTAGE)) = 
      &         RAINPC(INT(RSTAGE)) / PDAYS(INT(RSTAGE))
@@ -8081,6 +8236,7 @@
             IF (CDAYS.GT.0) THEN              
               TMAXCAV = TMAXCC / CDAYS
               TMINCAV = TMINCC / CDAYS 
+              TMEANCAV = TMEANCC / CDAYS
               SRADCAV = SRADCC / CDAYS
               DAYLCAV = DAYLCC / CDAYS
               CO2CAV = CO2CC / CDAYS
@@ -8279,7 +8435,6 @@
           ENDIF    
 
           IF(IHARI.EQ.'R'.AND.CFLHAR.EQ.'N')THEN
-!            IF (CUMDU.GT.PSTART(HSTG) .AND. CFLHARMSG .NE. 'Y') THEN
             IF (CUMDU.GT.PSTART(MSTG) .AND. CFLHARMSG .NE. 'Y') THEN
               WRITE(Message(1),'(A54,I7)')
      &        'Maturity reached but waiting for reported harvest on: ',
@@ -8399,7 +8554,7 @@
           SDNAD = SEEDN*PLTPOP*10.0
           ! LAH  SNAD = (STEMN+LEAFN*LSHFR)*PLTPOP*10.0
           SNAD = STEMN*PLTPOP*10.0
-          TNAD = (ROOTN+LEAFN+STEMN+RSN+HPRODN+SEEDN+DEADN)*PLTPOP*10.0
+          TNAD = (LEAFN+STEMN+GRAINN+RSN+DEADN+SEEDN+ROOTN)*PLTPOP*10.0
           VNAD = (LEAFN+STEMN+RSN+DEADN)*PLTPOP*10.0
           
           ! LAH Note that no reserves included in sancout
@@ -8719,7 +8874,38 @@
             HNUMPM = GNOPM
             HNPCM = GNPCM
 
+          ENDIF
 
+!-----------------------------------------------------------------------
+!       Set planting date if flag indicates relative to emergence date
+!-----------------------------------------------------------------------
+          
+          IF (EDATMX.GT.0.AND.CFLPDATE.EQ.'E') THEN
+            IF (GEUCUM.LT.PEGD) GEUCUM = 0.0 
+            IF (EDATMX.EQ.YEARDOY) THEN
+              WRITE(fnumwrk,*)' '
+              WRITE(fnumwrk,*)
+     &       'Planting date set relative to measured emergence date on '
+     &       ,yeardoy
+              GEUCUM = PEGD
+              GERMFR = 1.0
+              EMRGFR = 1.0
+              Rtwtl(1) = seedrsi * 0.030
+              Rtwtl(2) = seedrsi * 0.025
+              Rtwtl(3) = seedrsi * 0.000
+              Rootn = seedni* 0.04
+              Rtdep = 7.5
+              Cumdu = 20.0
+              DAP = 10  ! Arbitrary
+              GDAP = 4
+              STGYEARDOY(1) = YEARDOY - 6
+              DAE = 0
+              EYEARDOY = YEARDOY
+              EDAP = DAP
+              EDAYFR = 0.0
+              EDAPFR = FLOAT(DAP) + EDAYFR
+              LNUMSG = 1
+            ENDIF
           ENDIF
 
 !=======================================================================
@@ -8766,10 +8952,10 @@
         DAS = MAX(0,CSTIMDIF(YEARSIM,YEARDOY))
 
         SLAOUT = -99.0
-        OUTCHOICE = 3
+        !OUTCHOICE = 3  ! Set earlier when writing to work.out
         ! Note possibilities. To change must recompile.
         IF (OUTCHOICE.EQ.1) THEN
-          ! 1. Include reserves
+          ! 1. Include reserves, stem wt includes sheath
           LLWADOUT = LLWAD+LLRSWAD
           STWADOUT = STWAD+STRSWAD + LSHWAD+LSHRSWAD
           CHWADOUT = CHWAD+CHRSWAD
@@ -8999,8 +9185,9 @@
   108           FORMAT (' PLANTING         ',A3,I3,I8,2X,I4,
      &           ' plants/m2 in ',I3,' cm rows',/)
               ENDIF
+              YEARDOY = YEAR*1000 + DOY
               WRITE (NOUTPG,2201)
- 2201         FORMAT ('@YEAR DOY   DAS   DAP TMEAN TKILL',
+ 2201         FORMAT ('@YEARDOY    DAS   DAP TMEAN TKILL',
      A               '  GSTD  L#SD',
      B               ' PARID PARUD  AWAD',
      C               '  LAID  SAID  CAID',
@@ -9018,7 +9205,8 @@
      P               '      ')
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPG,501)
-     A      YEAR,DOY,DAS,DAP,TMEAN,TKILL,GSTAGEC,LNUM,
+!     A      YEAR,DOY,DAS,DAP,TMEAN,TKILL,GSTAGEC,LNUM,
+     A      YEARDOY,DAS,DAP,TMEAN,TKILL,GSTAGEC,LNUM,
      B      PARIOUT,PARIUE,AMIN1(999.9,CARBOBEG*PLTPOP*10.0),
      &      LAIC,SAID,CAIC,
      C      NINT(TWAD),NINT(SDWAD),NINT(RWAD),NINT(CWAD),
@@ -9032,7 +9220,8 @@
      J      1.0-NFT,1.0-NFP,1.0-NFG,AMIN1(2.0,NUPRATIO),
      K      1.0-TFP,1.0-TFG,1.0-VF,1.0-DFOUT
   501       FORMAT(
-     A      I5,I4,2I6,F6.1,F6.1,A6,F6.1,
+!     A      I5,I4,2I6,F6.1,F6.1,A6,F6.1,
+     A      I9,2I6,F6.1,F6.1,A6,F6.1,
      B      F6.3,F6.2,F6.1,
      &      A6,F6.3,A6,
      C      4I6,
@@ -9518,7 +9707,7 @@
                       HNUMECOL = Tvicolnm(linet,'H#ED')
                       GSTDCOL = Tvicolnm(linet,'GSTD')
                       LENLINE = TVILENT(LINET)
-                      LINET(LENLINE+1:LENLINE+12) = '   DAP   DAS'
+                      LINET(LENLINE+1:LENLINE+20)='   DAP   DAS YEARDOY'
                       LINET(1:1) = '@'
                       TIERNUM = TIERNUM + 1
                       IF (TIERNUM.LT.10) THEN
@@ -9541,6 +9730,12 @@
                         IF (DATECOL.GT.0.OR.DOYCOL.GT.0) THEN
                           IF (DATECOL.GT.0) THEN
                             CALL Getstri (LINET,DATECOL,DATE)
+                            ! July 2013 ... to get full yeardoy
+                            IF (DATE.GT.40001) THEN   ! After 1940
+                              DATE = 1900000 + DATE 
+                            ELSE  
+                              DATE = 2000000 + DATE 
+                            ENDIF
                           ELSEIF (DATECOL.LE.0) THEN
                             CALL Getstri (LINET,DOYCOL,DOY)
                             CALL Getstri (LINET,YEARCOL,YEAR)
@@ -9570,6 +9765,12 @@
                           ENDIF
                           LENLINE = TVILENT(LINET)
                           LINET(LENLINE+1:LENLINE+6) = DAPWRITE(1:6)
+                          DAPCHAR = TL10FROMI(DATE)
+                          IF (TVILENT(DAPCHAR).EQ.7) THEN
+                            DATEWRITE = ' '//DAPCHAR(1:7)
+                          ENDIF
+                          LENLINE = TVILENT(LINET)
+                          LINET(LENLINE+1:LENLINE+8) = DATEWRITE(1:8)
                         ENDIF
                         CALL Getstri (LINET,RPCOL,VALUEI)
                         IF (IDETG.NE.'N') THEN 
@@ -9630,7 +9831,9 @@
                 ! Use T-data if A-data missing (whem output=all)
                 IF (FEXISTT) THEN
                   WRITE(Fnumwrk,*)' '
-                  WRITE(Fnumwrk,'(A27)') ' EXAMINING TIME-COURSE DATA'
+                  WRITE(Fnumwrk,'(A45)')
+     &              ' FINISHED SIMULATION. PREPARING FINAL OUTPUTS'
+                  WRITE(Fnumwrk,*)' '
                   IF (HWAMM.LE.0.0) THEN
                     IF (HWADT.GT.0.0) THEN
                       HWAMM = HWADT
@@ -9997,7 +10200,6 @@
      &                      PSABVO(KEYPS(L)),'M'
                   ENDIF 
                 ENDDO
-!9941           FORMAT (A5,A1,A5,A1)
                 WRITE (FNUMEVAL,9942)
  9942           FORMAT (
      &          ' HWAMS HWAMM HWUMS HWUMM',
@@ -10036,7 +10238,6 @@
                 WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') PSDAPM(KEYPS(L))
               ENDIF
             ENDDO
-!8405       FORMAT (2I6)
             WRITE (FNUMEVAL,8406)
      F       NINT(hwam),NINT(hwamm),
      G       hwumchar,hwummchar,
@@ -11143,30 +11344,15 @@
               PLDAYTMP = PLDAY
             ENDIF
             PLDAYTMP = PLDAY
-            IF (EXCODE.NE.EXCODEPREV) AMTNITPREV = 0.0
-            OPEN (UNIT = FNUMPRES,FILE = FNAMEPRES)
-            DO WHILE (.true.)
-              READ(FNUMPRES,'(A180)',END=9950)TLINETMP
-            ENDDO
- 9950       CONTINUE    
-            CLOSE(FNUMPRES)
-            ! READ(TLINETMP,'(7X,A10)') EXCODEPREV   ! LAH JAN 2013 OUT
-            READ(TLINETMP,'(74X,I6)',IOSTAT=ERRNUM) AMTNITPREV
-            IF (ERRNUM /= 0) AMTNITPREV = 0.0
-            ! LAH Here should write new header if new response group
-            IF (CFLPRES.NE.'Y'.OR.TNAME(1:1).EQ.'*') THEN
-              CFLPRES = 'Y'
-              OPEN(UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
+            IF (EXCODE.NE.EXCODEPREV.OR.TNAME(1:1).EQ.'*') THEN
+              OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
               WRITE (FNUMPRES,*) ' '
+              WRITE (TLINETMP,9951) EXCODE,MODNAME
+ 9951         FORMAT ('*RESPONSES(S):',A10,'  ',A8)
               IF (TNAME(1:1).EQ.'*') THEN
-                WRITE (FNUMPRES,9951) EXCODE,TNAME(2:25)
- 9951           FORMAT ('*RESPONSES(S):',A10,'  ',A24)
-              ELSEIF (AMTNIT.LT.AMTNITPREV.OR.
-     &                PLYEARDOY.LT.PLYEARDOYPREV)THEN
-                WRITE (FNUMPRES,9951) EXCODE,TNAME(1:24)
+                WRITE (FNUMPRES,'(A180)') TLINETMP
               ELSE
-                WRITE (FNUMPRES,995) EXCODE,ENAME(1:55)
-  995           FORMAT ('*RESPONSES(S):',A10,'  ',A55)
+                WRITE (FNUMPRES,'(A180)') TLINETMP
               ENDIF
               WRITE (FNUMPRES,97,ADVANCE='NO')
    97         FORMAT ('@  RUN',
@@ -11180,14 +11366,14 @@
               ENDDO
               WRITE (FNUMPRES,297)
   297         FORMAT (
-     F        '  NICM',
      G        '  HWAM  HWUM',
-     H        '  H#AM  H#GM  LAIX  L#SM',
+     H        '  H#AM  H#GM  LAIX  L#SM  T#AM',
      I        '  CWAM  VWAM  HIAM  RWAM',
      J        '  HN%M  TNAM',
      K        '  CNAM  HNAM',
      L        '  HINM PLPOP',
-     M        ' SRADA TMAXA TMINA  PRCP')
+     F        '  NICM',
+     M        ' SRADA TMEAN TMAXA TMINA  PRCP')
             ELSE
               OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
             ENDIF  ! End Responses simulated header writes
@@ -11198,33 +11384,33 @@
      &        PSDAP(KEYPS(L))
             ENDDO
             WRITE (fnumpres,409)
-     C       NINT(amtnit),
      D       NINT(hwam),hwumchar,
      E       NINT(hnumam),NINT(hnumgm),
-     F       laixchar,lnumsm,
+     F       laixchar,lnumsm,NINT(tnumam),
      G       NINT(cwam),NINT(vwam),
      H       hiamchar,
      I       NINT(rwam),
      J       hnpcmchar,
      K       NINT(AMAX1(-99.0,cnam+rnam)),NINT(cnam),NINT(gnam),
      L       hinmchar,pltpop,
-     M       sradcav,tmaxcav,tmincav,
+     C       NINT(amtnit),
+     M       sradcav,tmeancav,tmaxcav,tmincav,
      N       NINT(raincc)            
  7401       FORMAT (I6,1X,A10,I4,I3,4X,A2,     !Run,excode,tn,rn,crop
      A       I6,                               !Pldaytmp
      B       F6.1)                             !Edapfr
   409       FORMAT (
-     C       I6,                               !Amtnit
      D       I6,A6,                            !gwam,hwum
      E       I6,I6,                            !g#am,g#gm
-     F       A6,F6.1,                          !laix,lnumsm
+     F       A6,F6.1,I6,                       !laix,lnumsm,tnumam
      G       I6,I6,                            !Cwam,vwam
      H       A6,                               !hiam
      I       I6,                               !N(rwam)
      J       A6,                               !hnpcm
      K       I6,I6,I6,                         !N(cnam+rnam),(cn),(gn)
      L       A6,F6.1,                          !hinm,pltpop,tnumpm
-     M       3F6.1,                            !RAD,TX,TN
+     C       I6,                               !Amtnit
+     M       4F6.1,                            !RAD,TX,TN
      N       I6)                               !RN   
             CLOSE(FNUMPRES)
             ! End Responses simulated writes
@@ -11237,19 +11423,15 @@
               OPEN (UNIT = FNUMTMP,FILE = FNAMEPREM,STATUS='UNKNOWN')
               CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
             ELSE
-               IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN                
+              IF (EXCODE.NE.EXCODEPREV.OR.TNAME(1:1).EQ.'*') THEN
                 OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
                 WRITE (FNUMPREM,*) ' '
+                WRITE (TLINETMP,99511) EXCODE,MODNAME
+99511           FORMAT ('*RESPONSES(M):',A10,'  ',A8)
                 IF (TNAME(1:1).EQ.'*') THEN
-                  WRITE (FNUMPREM,8951) EXCODE,TNAME(2:25)
- 8951             FORMAT ('*RESPONSES(M):',A10,'  ',A24)
-                ELSEIF (AMTNIT.LT.AMTNITPREV.OR.
-     &                  PLYEARDOY.LT.PLYEARDOYPREV)THEN
-                  WRITE (FNUMPREM,9952) EXCODE,TNAME(1:24)
- 9952             FORMAT ('*RESPONSES(M):',A10,'  ',A24)
+                  WRITE (FNUMPREM,'(A180)') TLINETMP
                 ELSE
-                  WRITE (FNUMPREM,895) EXCODE,ENAME(1:55)
-  895             FORMAT ('*RESPONSES(M):',A10,'  ',A55)
+                  WRITE (FNUMPREM,'(A180)') TLINETMP
                 ENDIF
                 WRITE (FNUMPREM,97,ADVANCE='NO')
                 DO L = 1,KEYSTX
@@ -11259,14 +11441,14 @@
                 ENDDO
                 WRITE (FNUMPREM,298)
   298         FORMAT (
-     F        '  NICM',
      G        '  HWAM  HWUM',
-     H        '  H#AM  H#GM  LAIX  L#SM',
+     H        '  H#AM  H#GM  LAIX  L#SM  T#AM',
      I        '  CWAM  VWAM  HIAM  RWAM',
      J        '  HN%M  TNAM',
      K        '  CNAM  HNAM',
      L        '  HINM PLPOP',
-     M        ' SRADA TMAXA TMINA  PRCP')
+     F        '  NICM',
+     M        ' SRADA TMEAN TMAXA TMINA  PRCP')
               ELSE
                 OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
               ENDIF ! End Responses measured header writes
@@ -11277,19 +11459,20 @@
      &           PSDAPM(KEYPS(L))
               ENDDO
               WRITE (FNUMPREM,409)
-     F         NINT(amtnit),NINT(hwamm),hwummchar,
+     F         NINT(hwamm),hwummchar,
      G         NINT(hnumamm),NINT(hnumgmm),
-     H         laixmchar,lnumsmm, 
+     H         laixmchar,lnumsmm,NINT(tnumamm), 
      I         NINT(cwamm),NINT(vwamm),hiammchar,
      J         NINT(rwamm),
      K         hnpcmmchar,NINT(tnamm),NINT(cnamm),NINT(hnamm),
      L         hinmmchar,pltpopp,
-     M         sradcav,tmaxcav,tmincav,
+     F         NINT(amtnit),
+     M         sradcav,tmeancav,tmaxcav,tmincav,
      N         NINT(raincc)            
               CLOSE(FNUMPREM)
             ENDIF  
             ! End Responses (Measured)
-            
+              
           ELSE  ! IDETL = 'D'
 
             OPEN (UNIT=FNUMPHES,FILE=FNAMEPHENOLS,STATUS = 'UNKNOWN')
@@ -11831,7 +12014,7 @@
           
           IF (IDETO.EQ.'E'.OR.IDETO.EQ.'N') THEN
               ! Resource productivity calculations 
-              ! (Nnot done earlier because no Overview called for)
+              ! (Not done earlier because no Overview called for)
               DMP_Rain = -99.
               GrP_Rain = -99.
               DMP_ET = -99.
@@ -11923,7 +12106,7 @@
           LABEL(27) = 'YPNAM' ; VALUE(27) = GrP_NApp
           LABEL(28) = 'YPNUM' ; VALUE(28) = GrP_NUpt
            
-          LABEL(29) = 'EDAP ' ; VALUE(29) = FLOAT(EDAP)     
+          LABEL(29) = 'EDAT ' ; VALUE(29) = FLOAT(EYEARDOY)     
           
           LABEL(30) = 'NDCH ' ; VALUE(30) = FLOAT(CDAYS) 
           LABEL(31) = 'TMINA' ; VALUE(31) = TMINCAV       
@@ -11952,7 +12135,7 @@
           UNO3 = 0.0
           UNH4 = 0.0
           
-          RUNCRP = RUNCRP + 1
+          !RUNCRP = RUNCRP + 1
           
           WRITE (fnumwrk,*) ' '
           WRITE (fnumwrk,'(A50)')
@@ -11966,12 +12149,11 @@
 !       Store variables for possible use next day/step
 !-----------------------------------------------------------------------
 
-        AMTNITPREV = AMTNIT
         CNADPREV = CNAD
         IF (CN.LE.1) CROPPREV = CROP
         IF (RNMODE.NE.'G') CUDIRFLPREV = CUDIRFLE
         CWADPREV = CWAD
-        DAYLPREV = DAYL
+        DAYLPREV = DAYLT
         ECDIRFLPREV = ECDIRFLE
         ECONOPREV = ECONO
         EMRGFRPREV = EMRGFR
@@ -11980,7 +12162,6 @@
         LNUMPREV = LNUM
         PARIPREV = PARI
         PLYEARDOYPREV = PLYEARDOY
-        SNOTPREV = SNOT
         SPDIRFLPREV = SPDIRFLE
         SRADPREV = SRAD
         SWFRPREV = SWFR

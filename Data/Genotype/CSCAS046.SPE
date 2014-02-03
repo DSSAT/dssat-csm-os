@@ -1,6 +1,5 @@
-$SPECIES:CSCAS046
+$SPECIES:CSCAS046.010114   Last edit:010114 
 
-! LAST EDIT: 01/05/13
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
@@ -41,9 +40,9 @@ $SPECIES:CSCAS046
     3      K B2DAT 2ndBranch
     4      K B3DAT 3rdBranch
     5      K B4DAT 4thBranch
-    5      K B5DAT 5thBranch
-    5      K B6DAT 6thBranch
-    6      M MDAT  Harvest  
+    6      K B5DAT 5thBranch
+    7      K B6DAT 6thBranch
+    8      M HDAT  Harvest  
 ! Phase durations
 @PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
 ! oC.d  oC.d                                                              
@@ -63,15 +62,15 @@ $SPECIES:CSCAS046
 @LLIG% LPEAW ! Lignin%
 !    %  cm/g
   10.0    45 
-@LLIFG LLIFS  ! Growing and senescence durations 
-! Phyl  Phyl
-   1.0   3.0 
+@LLIFG LLIFS LLIFX  ! Growing,senescence durations;max.acceleration in shade 
+!   Tu    Tu    Tu
+ 100.0  60.0  20.0
 @LLOSA LWLOS  ! Loss when accelerated,normal senescence   
 !   fr    fr
    1.0  0.50  
 @SLACF SLAFF SLAMN  ! Specific leaf area change,flexibility,minimum  
 !fr/nd    fr    fr
-   0.0  0.20   0.3
+-0.001  0.05   0.3
 @SLATS SLATR SLAWR  ! Specific leaf area temperature and h2o effect parameters
 !  oC     fr    fr
   25.0 0.000  0.00  ! Set to zero so not working
@@ -86,7 +85,7 @@ $SPECIES:CSCAS046
 @ KCAN  ! Canopy extinction coefficient PAR
 !    #
   0.75 
-@PARIX  ! PAR interception maximum    
+@PARIX  ! PAR interception beyond which accelerated ageing    
 !   fr
   0.95
 ! Shoots 
@@ -108,7 +107,7 @@ $SPECIES:CSCAS046
 ! Seed
 @ SDWT SDDUR SDRS% ! Weight, duration, reserves (% whole seed)
 !    g     d     %
-    50    20    60
+    50    20    90
 ! Photosynthesis
 @ PHTV  PHSV  ! VPD sensitivity aspects
 ! kPa fr/kPa
@@ -201,8 +200,9 @@ CH2O distribution/mobilization
 ! GDAT    Germination date  (YrDoy)
 ! HPROD   Harvest product (code;SR=storage root)
 ! KCAN    PAR extinction coefficient (#)
-! LLIFG   Leaf growth (expansion) period (phyl)
-! LLIFS   Leaf senescence period (phyl)
+! LLIFG   Leaf growth (expansion) period (Thermal units)  
+! LLIFS   Leaf senescence period (Thermal units)  
+! LLIFX   Leaf ageing acceleration (max) if deep shade (Thermal units)  
 ! LLIG%   Leaf lignin (%)
 ! LLOSA   Leaf dry matter loss,accelerated senescence (fr)
 ! LLOSN   Leaf dry matter loss,normal senescence (fr;1.0=0 to reserves)
@@ -221,7 +221,7 @@ CH2O distribution/mobilization
 ! NH4MN   NH4 minimum concentration for uptake (mg/MG)
 ! NO3MN   NO3 minimum concentration for uptake (mg/MG)
 ! NTUPF   N top-up fraction (/d)
-! PARIX   Maximum PAR interception (fr)
+! PARIX   PAR interception beyond which accelerated ageing (fr)
 ! PEMRG   Emergence phase duration (Thermal units per cm depth)
 ! PGERM   Germination phase duration (Hydrothermal units)
 ! PHNTF   Phint change with node number factor (#)
