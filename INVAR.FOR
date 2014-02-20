@@ -9,9 +9,9 @@ C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes
 C  03/10/2005 GH  Change limits for P2R to handle photoperiod 
 C                 sensitivity
-!  12/14/2005 CHP Added sorghum cultivar coefficients, PBASE and PSAT
-!  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
-C  08/09/2012 GH  Updated for cassava
+C  12/14/2005 CHP Added sorghum cultivar coefficients, PBASE and PSAT
+C  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
+C
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,VARTY,VRNAME,CLDVAR,THVAR,PATHGE,PM06,PM09
 C
@@ -216,7 +216,7 @@ C-----------------------------------------------------------------------
 C=======================================================================
 C  INVRCE, Subroutine
 C
-C  Interactively edit genetic parameters - Cereal crops
+C  Interactively edit genetic parameters - Other models
 c
 C-----------------------------------------------------------------------
 C  Revision history
@@ -227,6 +227,7 @@ C  05/28/1993 PWW Header revision and minor changes
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
 !  09/16/2007 JIL Added new inputs for IXIM
 !  06/30/2010 FSR Added PLF2 variable for CASUPRO
+C  08/09/2012 GH  Updated for cassava
 C
 C-----------------------------------------------------------------------
 C  INPUT  : None
@@ -654,7 +655,7 @@ C         Branch to menu choice
 !       CSCAS cassava
         CASE ('CSCAS')
           WRITE(*,5940)  
-     &     PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND, SNFX,
+     &     PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
      &     SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &     LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR
 5940      FORMAT (12X,'0. End of changes ',//,
@@ -665,21 +666,20 @@ C         Branch to menu choice
      5  12X,' 5. B34ND ( 10.0 -  100.0).......................[',F7.2,/,
      6  12X,' 6. B45ND ( 10.0 -  200.0).......................[',F7.2,/,
      7  12X,' 7. B56ND ( 10.0 -  200.0).......................[',F7.2,/,
-     5  12X,' 8. S#FX  ( 1.50 -   4.50).......................[',F7.3,/,
-     6  12X,' 9. SR#WT ( 0.20 -   0.35).......................[',F7.3,/,
-     6  12X,'10. SRFR  ( 0.25 -   0.35).......................[',F7.3,/,
-     6  12X,'11. HMPC  ( 40.0 -   80.0).......................[',F7.3,/,
-     6  12X,'12. PHINT ( 15.0 -   30.0).......................[',F7.3,/,
-     6  12X,'13. LA1SL (200.0 -  400.0).......................[',F7.2,/,
-     6  12X,'14. LAXS  ( 1000 -   2000).......................[',F7.1,/,
-     6  12X,'15. LAXND ( 80.0 -  200.0).......................[',F7.2,/,
-     6  12X,'16. LAXN2 ( 80.0 -  200.0).......................[',F7.2,/,
-     7  12X,'17. LAFS  ( 20.0 -   50.0).......................[',F7.3,/,
-     7  12X,'18. LAFND (100.0 -  350.0).......................[',F7.2,/,
-     7  12X,'19. SLASS (100.0 -  400.0).......................[',F7.2,/,
-     7  12X,'20. LLIFA (  8.0 -   15.0).......................[',F7.3,/,
-     7  12X,'21. LPEFR (0.250 -  0.400).......................[',F7.3,/,
-     7  12X,'22. STFR  (0.250 -  0.450).......................[',F7.3,/)
+     6  12X,' 8. SR#WT ( 0.20 -   0.35).......................[',F7.3,/,
+     6  12X,' 9. SRFR  ( 0.25 -   0.35).......................[',F7.3,/,
+     6  12X,'10. HMPC  ( 40.0 -   80.0).......................[',F7.3,/,
+     6  12X,'11. PHINT ( 15.0 -   30.0).......................[',F7.3,/,
+     6  12X,'12. LA1S  (200.0 -  400.0).......................[',F7.2,/,
+     6  12X,'13. LAXS  ( 1000 -   2000).......................[',F7.1,/,
+     6  12X,'14. LAXND ( 80.0 -  200.0).......................[',F7.2,/,
+     6  12X,'15. LAXN2 ( 80.0 -  200.0).......................[',F7.2,/,
+     7  12X,'16. LAFS  ( 20.0 -   50.0).......................[',F7.3,/,
+     7  12X,'17. LAFND (100.0 -  350.0).......................[',F7.2,/,
+     7  12X,'18. SLAS  (100.0 -  400.0).......................[',F7.2,/,
+     7  12X,'19. LLIFA (  8.0 -   15.0).......................[',F7.3,/,
+     7  12X,'20. LPEFR (0.250 -  0.400).......................[',F7.3,/,
+     7  12X,'21. STFR  (0.250 -  0.450).......................[',F7.3,/)
 
           WRITE (*,5100)
 C
@@ -698,21 +698,20 @@ C         Branch to menu choice
           CASE( 5);  CALL GETREAL (B34ND ,'B34ND ', 10.0, 100.0)
           CASE( 6);  CALL GETREAL (B45ND ,'B45ND ', 10.0, 200.0)
           CASE( 7);  CALL GETREAL (B56ND ,'B56ND ', 10.0, 200.0)
-          CASE( 8);  CALL GETREAL (SNFX  ,'S#FX  ',1.500, 04.50)
-          CASE( 9);  CALL GETREAL (SRNWT ,'SR#WT ',0.200, 0.350)
-          CASE(10);  CALL GETREAL (SRFR  ,'SRFR  ',0.250, 0.350)
-          CASE(11);  CALL GETREAL (HMPC  ,'HMPC  ', 40.0,  80.0)
-          CASE(12);  CALL GETREAL (PHINT ,'PHINT', 15.0,  30.0)
-          CASE(13);  CALL GETREAL (LA1S  ,'LA1S ',200.0, 400.0)
-          CASE(14);  CALL GETREAL (LAXS  ,'LAXS',1000.,2000.0)
-          CASE(15);  CALL GETREAL (LAXND ,'LAXND ', 80.0, 200.0)
-          CASE(16);  CALL GETREAL (LAXN2 ,'LAXN2', 80.0, 200.0)
-          CASE(17);  CALL GETREAL (LAFS  ,'LAFS', 20.0,  50.0)
-          CASE(18);  CALL GETREAL (LAFND ,'LAFND ',100.0, 350.0)
-          CASE(19);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
-          CASE(20);  CALL GETREAL (LLIFA ,'LLIFA ',  8.0,  15.0)
-          CASE(21);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
-          CASE(22);  CALL GETREAL (STFR  ,'STFR ',0.250, 0.450)
+          CASE( 8);  CALL GETREAL (SRNWT ,'SR#WT ',0.200, 0.350)
+          CASE( 9);  CALL GETREAL (SRFR  ,'SRFR  ',0.250, 0.350)
+          CASE(10);  CALL GETREAL (HMPC  ,'HMPC  ', 40.0,  80.0)
+          CASE(11);  CALL GETREAL (PHINT ,'PHINT', 15.0,  30.0)
+          CASE(12);  CALL GETREAL (LA1S  ,'LA1S ',200.0, 400.0)
+          CASE(13);  CALL GETREAL (LAXS  ,'LAXS',1000.,2000.0)
+          CASE(14);  CALL GETREAL (LAXND ,'LAXND ', 80.0, 200.0)
+          CASE(15);  CALL GETREAL (LAXN2 ,'LAXN2', 80.0, 200.0)
+          CASE(16);  CALL GETREAL (LAFS  ,'LAFS', 20.0,  50.0)
+          CASE(17);  CALL GETREAL (LAFND ,'LAFND ',100.0, 350.0)
+          CASE(18);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
+          CASE(19);  CALL GETREAL (LLIFA ,'LLIFA ',  8.0,  15.0)
+          CASE(20);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
+          CASE(21);  CALL GETREAL (STFR  ,'STFR ',0.250, 0.450)
         END SELECT
 
 
