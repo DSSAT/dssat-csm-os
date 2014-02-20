@@ -1,12 +1,12 @@
 C=======================================================================
-C  COPYRIGHT 1998-2013 DSSAT Foundation
+C  COPYRIGHT 1998-2014 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
-C  CROPGRO, Subroutine, G. Hoogenboom, J.W. Jones, K.J. Boote
+C  CROPGRO, Subroutine, G. Hoogenboom, J.W. Jones, K.J. Boote, C. Porter
 C-----------------------------------------------------------------------
 C  CROPGRO template plant growth subroutine.
 C  Computes plant development and growth.
