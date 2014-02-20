@@ -7,9 +7,10 @@ C  04/16/2002 LAH/CHP Written.
 C  08/09/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  08/09/2012 GH  Updated for cassava
+C  02/03/2014 MF/PM SNOW variable deleted 
 C=======================================================================
       SUBROUTINE CSCAS_Interface (CONTROL, ISWITCH,       !Input
-     &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
+     &    EOP, ES, NH4, NO3,SOILPROP, SRFTEMP,            !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
      &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output
@@ -33,7 +34,7 @@ C=======================================================================
       INTEGER STGYEARDOY(20), STGDOY(20), YRPLT
 
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
-      REAL SNOW, KCAN, KEP, DEPMAX, DAYLT, DEWDUR
+      REAL KCAN, KEP, DEPMAX, DAYLT, DEWDUR
       REAL NSTRES, XLAI, NFP, MSALB, ALBEDO
       REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP, TWILEN
       REAL CANHT, EO, WINDSP, PARIP, PARIPA
@@ -118,11 +119,11 @@ C=======================================================================
         WRITE(MESSAGE(1),100) 
         WRITE(MESSAGE(2),110)  
         WRITE(MESSAGE(3),120) 
-        CALL WARNING(3, "WHCER ", MESSAGE)
+        CALL WARNING(3, "CSCAS ", MESSAGE)
       ENDIF
 
   100 FORMAT('You have selected the Century soil nutrient model. ')
-  110 FORMAT('The CSCER (wheat/barley) routines have not been ')
+  110 FORMAT('The CSCAS (cassava) routines have not been ')
   120 FORMAT('calibrated for use with this model.' )
 
       IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
