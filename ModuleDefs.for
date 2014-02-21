@@ -61,13 +61,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 28
+        INTEGER :: Build = 30
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     Development branch for expanding the outputs of abiotic stresses
 
 !     Version history:  
+!       4.6.0.30 chp 02/21/2014 CSCER, CSCRP, CSCAS updates
 !       4.6.0.29 chp 01/23/2014 Fixed bug in auto planting when IHARI = "R"
 !       4.6.0.28 chp 01/16/2014 Suppress screen output for VBOSE=zero.
 !       4.6.0.27 chp 01/12/2014 Added abiotic stresses to overview.out
