@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2013 DSSAT Foundation
+C  COPYRIGHT 1998-2014 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Washington State University
@@ -343,7 +343,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Cassava CSCAS
       CASE('CSCAS')
         CALL CSCAS_Interface (CONTROL, ISWITCH,           !Input
-     &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
+     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
      &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output

@@ -8,7 +8,7 @@
 *               Berge HFM, van Laar, HH. ORYZA2000. IRRI, Los Banos. *
 **********************************************************************
 
-* 1. Phenological development parameters
+* ###1. Phenological development parameters
 TBD    = 8.      ! Base temperature for development (oC)
 TBLV   = 8.      ! Base temperature for juvenile leaf area growth (oC)
 TMD    = 42.     ! Maximum temperature for development (oC)
@@ -83,7 +83,8 @@ KNFTB = 0.0, 0.4,
 * temperature (oC; X value):
 EFFTB  =   0.,0.54,
           10.,0.54,
-          40.,0.36
+          40.,0.36,
+          60.,0.24
 
 * Table of effect of temperature on AMAX (-; Y-value) as a function of 
 * temperature (oC; X value):
@@ -91,7 +92,8 @@ REDFTT = -10., 0.,
           10., 0.,
           20., 1.,
           37., 1.,
-          43., 0.
+          43., 0.,
+          60., 0.
 
 * Table of N fraction in leaves on leaf area basis (g N m-2 leaf; Y-value) 
 * as a function of development stage (-; X value):
@@ -200,7 +202,7 @@ RMINT  = 5.0    !minimum temperature for root growth
 ROPTT  = 25.0   !optimum temperature of root growth
 RTBS   = 2.0    !minimim temperature for root to survive
 RCNL   = 0.012   !lowest root nitrogen content (residue root N content, kg N kg-1 ROOT DM)
-MAXD   = 50.0  !MAXIMUM ROOTING DEPTH (CM)
+MAXD   = 40.0  !MAXIMUM ROOTING DEPTH (CM)
 SODT   = 0.9    !THE TOLERANCE INDEX OF OXGENY DEFICIENCY
 
 * 9. Drought stress parameters
@@ -211,6 +213,7 @@ ULDL =  630.95    ! Upper limit death of leaves (kPa)
 LLDL = 1584.89    ! Lower limit death of leaves (kPa)
 ULLE =    1.45    ! Upper limit leaf expansion (kPa) 
 LLLE = 1404.      ! Lower limit leaf expansion (kPa)
+
 * Switch to use ULTR and LLTR as given above or function built in ORYZA 
 * for the reduction in relative transpiration:
 *SWIRTR = 1, Use ULRT AND LLRT for transpiration; SWIRTR = 2, Use SWIRTRF for 

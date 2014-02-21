@@ -470,13 +470,16 @@
           WRITE(MESSAGE(3),'(A9,A15)')  'Version: ',tline(L:L+14)
           WRITE(MESSAGE(4),'(A16,A15)') 'Needed version: ',vcode(1:15)
           MESSAGE(5) = 'Program had to stop'
-          CALL WARNING(5,'CSUTS',MESSAGE)
-          WRITE(FNUMWRK,*) ' '
-          WRITE(FNUMWRK,'(A32)')' Input file not correct version!'
-          WRITE(FNUMWRK,'(A8,A60)')  '  File: ',dirfile(1:60)
-          WRITE(FNUMWRK,'(A11,A15)') '  Version: ',tline(L:L+14)
-          WRITE(FNUMWRK,'(A18,A15)') '  Needed version: ',vcode(1:15)
-          WRITE(FNUMWRK,'(A21)')     '  Program had to stop'
+C-GH      CALL WARNING(5,'CSUTS',MESSAGE)
+          CALL Getlun ('ERROR.OUT',fnumerr)
+          OPEN (UNIT = fnumerr,FILE = 'ERROR.OUT')
+          
+          WRITE(FNUMerr,*) ' '
+          WRITE(FNUMerr,'(A32)')' Input file not correct version!'
+          WRITE(FNUMerr,'(A8,A60)')  '  File: ',dirfile(1:60)
+          WRITE(FNUMerr,'(A11,A15)') '  Version: ',tline(L:L+14)
+          WRITE(FNUMerr,'(A18,A15)') '  Needed version: ',vcode(1:15)
+          WRITE(FNUMerr,'(A21)')     '  Program had to stop'
           WRITE(*,*) ' Input file not correct version!'
           WRITE(*,*) '  File: ',dirfile(1:60)
           WRITE(*,*) '  Version: ',tline(L:L+14)
@@ -1627,6 +1630,37 @@
       RETURN
 
       END
+!-----------------------------------------------------------------------
+
+      FUNCTION TfacBeta(tcard,temp,TUNIT)
+
+      ! Calculate temp factor and thermal units from cardinal temps
+      ! using a Beta function
+
+      IMPLICIT NONE
+
+      REAL      tfac4,tcard(4),temp,tunit,topt,tfacbeta
+      INTEGER   fnumwrk
+      LOGICAL   fopen
+
+      INTRINSIC AMAX1,AMIN1
+
+      SAVE
+      
+      CALL Getlun ('WORK.OUT',fnumwrk)
+      INQUIRE (FILE = 'WORK.OUT',OPENED = fopen)
+      IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
+      
+      TOPT = TCARD(2)+((TCARD(3)-TCARD(2))/2.0)
+      
+      TFACBETA = ((TCARD(4)-TEMP)/(TCARD(4)-TOPT))*
+     & ((TEMP/TOPT)**(TOPT/(TCARD(4)-TOPT)))
+
+      tfacbeta = AMAX1(0.0,AMIN1(1.0,tfacbeta))
+      tunit = tfacbeta * (topt-tcard(1))
+
+      RETURN
+      END
 
 !-----------------------------------------------------------------------
 
@@ -1705,7 +1739,6 @@
 
 !-----------------------------------------------------------------------
 
-cccc  FUNCTION Tfac424(tcard,tairhr,TUNIT)
       FUNCTION Tfac424(tcard,tmax,tmin,TUNIT)
 
       ! Calculate temp factor and thermal units from cardinal temps and

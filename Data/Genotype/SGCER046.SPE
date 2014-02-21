@@ -22,10 +22,6 @@
 !Function based on stomatal resistance method of Allen et al.  CO2 effect on ET and T are good and
 !did not need to be changed.
 
-
-
-
-
 *STRESS RESPONSE
   FSLFW   0.050     !Fraction of leaf area senesced under 100% water stress, 1/day
   FSLFN   0.050     !Fraction of leaf area senesced under 100% nitrogen stress, 1/day
