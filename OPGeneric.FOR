@@ -17,6 +17,7 @@
 ! FormatTxt = Character string for format, e.g., "(2F8.3)"
 ! HeaderTxt = Character string for headers, e.g., "    TRWU   SWFAC"
 ! NVars     = Integer number of variables to be output, e.g. 2
+! Width     = Number of characters in header text
 ! Var1 thru Var10 = Values to be output daily.  Can supply zero values for 
 !               dummy variables, e.g., TRWU, SWFAC, 0., 0., 0., 0., 0., etc.
 ! All variables are real

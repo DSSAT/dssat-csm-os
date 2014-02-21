@@ -81,7 +81,7 @@
 900   FORMAT('The carbon/nutrient ratio (C/N or C/P) of the residue') 
 901   FORMAT('or senesced biomass that was added to the soil')
 902   FORMAT('is outside the common range to which the CESTR')
-903   FORMAT('parameter in the file SOMFX045.SDA applies. You have a') 
+903   FORMAT('parameter in the file SOMFX046.SDA applies. You have a') 
 904   FORMAT('residue with an extremely low nutrient concentration.')  
 905   FORMAT('Please check your data and/or adapt the CESTR value.')  
 

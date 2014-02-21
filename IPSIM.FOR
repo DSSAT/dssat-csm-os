@@ -54,7 +54,7 @@ C=======================================================================
       CHARACTER*2   CROP
       CHARACTER*5   NEND,NCODE,IOFF,IAME
       CHARACTER*6   ERRKEY,FINDCH
-      CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL
+      CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL, Try_MODELARG
       CHARACTER*12  FILEX
       CHARACTER*16  CROPD
       CHARACTER*25  TITSIM
@@ -97,9 +97,9 @@ C=======================================================================
          ISWTIL  = 'Y'
 
          IF (INDEX('FNQS',RNMODE) > 0) THEN
-           ICO2 = 'D' !Default CO2 from CO2045.WDA file
+           ICO2 = 'D' !Default CO2 from CO2???.WDA file
          ELSE
-           ICO2 = 'M' !Measured CO2 from CO2045.WDA file
+           ICO2 = 'M' !Measured CO2 from CO2???.WDA file
          ENDIF
 
          MEWTH   = 'M'
@@ -111,9 +111,10 @@ C=======================================================================
          MEHYD   = 'R'
          NSWITCH =  1
          MESOM   = 'G'
-!        METMP   = 'E'
          MESOL   = '2'    !was '1'
          MESEV   = 'S'    !new Sulieman-Ritchie (2006)
+         METMP   = 'D'    !DSSAT original soil temperature
+!        METMP   = 'E' => EPIC soil temp routine.
          IPLTI   = 'R'
          IIRRI   = 'R'
          IFERI   = 'R'
@@ -219,7 +220,7 @@ C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,61,IOSTAT=ERRNUM) LN,MEWTH,MESIC,
      &        MELI,MEEVP,MEINF,MEPHO,MEHYD,NSWITCH, 
-     &        MESOM, MESEV, MESOL   !, METMP
+     &        MESOM, MESEV, MESOL, METMP
          !IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
          MEWTH = UPCASE(MEWTH)
          MESIC = UPCASE(MESIC)
@@ -230,7 +231,7 @@ C
          MESOM = UPCASE(MESOM)
          MEHYD = UPCASE(MEHYD)
          MESEV = UPCASE(MESEV)
-!        METMP = UPCASE(METMP)
+         METMP = UPCASE(METMP)
 
          IF (INDEX('PG',MESOM) .EQ. 0) THEN
             MESOM = 'G'
@@ -262,8 +263,8 @@ C
             MESOL = '2'
          ENDIF
 
-!        Default soil temperature method is original w/ bugfix
-!        IF (INDEX('EPSO',METMP) < 1) METMP = 'E'
+!        Default soil temperature method is DSSAT
+         IF (INDEX('ED',METMP) < 1) METMP = 'D'
 
          SELECT CASE(MESEV)
          CASE('R','r'); MESEV = 'R'
@@ -437,7 +438,7 @@ C    Select Model Name and Path -- order of priority:
 !         over all other values if valid. (Done in Default_SimControls)
 !     CRMODEL is read from FILEX.  Use this if no control file.  
 !     MODELARG is from command line argument list. Third priority. 
-!     Last, use value from DSSATPRO.v45.
+!     Last, use value from DSSATPRO.v??.
 C-----------------------------------------------------------------------
 !     First check model name from FILEX
       TRY_MODEL = CRMODEL
@@ -445,9 +446,15 @@ C-----------------------------------------------------------------------
 
 !     If FILEX model name was not acceptable, then try the 
 !       model name read from command line.  If this is not OK, 
-!       MODEL contains value from DSSATPRO.V45
+!       MODEL contains value from DSSATPRO file
       IF (TRY_MODEL /= MODEL) THEN
-        CALL MODEL_NAME (CROP, DSSATP, MODELARG, MODEL)
+!       Fallow must be associated with CRGRO model (for now)
+        IF (CROP == 'FA') THEN
+          Try_MODELARG(1:5) = "CRGRO"
+        ELSE
+          Try_MODELARG = MODELARG
+        ENDIF
+        CALL MODEL_NAME (CROP, DSSATP, Try_MODELARG, MODEL)
       ENDIF
 
       IF (MEPHO .EQ. 'L' .AND. MODEL(1:5) .NE. 'CRGRO') THEN
@@ -497,7 +504,7 @@ C-----------------------------------------------------------------------
         MEHYD   = ISWITCH % MEHYD 
         MESEV   = ISWITCH % MESEV 
         MESOL   = ISWITCH % MESOL 
-!       METMP   = ISWITCH % METMP 
+        METMP   = ISWITCH % METMP 
         IPLTI   = ISWITCH % IPLTI 
         IIRRI   = ISWITCH % IIRRI 
         IFERI   = ISWITCH % IFERI 
@@ -526,6 +533,35 @@ C-----------------------------------------------------------------------
 
       CALL PUT(CONTROL)  
       CALL PUT(ISWITCH)
+
+!     --------------------------------------------------------------------
+!     Check for N model compatible with crop model
+      IF (ISWNIT /= 'N') THEN
+        SELECT CASE(MODEL(1:5))
+        CASE ('SALUS', 'SCCAN', 'SCCSP')
+!           N model has NOT been linked for these models
+!           Print a warning message.
+            CALL GET_CROPD(CROP, CROPD)
+            CROPD = ADJUSTL(CROPD)
+
+            WRITE(MSG(1),
+     &         '("Nitrogen dynamics model has not been developed for "
+     &         ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
+!            MSG(2)="Model will run if soils and species P data" //
+!     &         " are supplied."
+!            MSG(3)="User must verify validity of crop response."
+            MSG(2)="Please contact the CSM development team if " // 
+     &         "you wish to "
+            WRITE(MSG(3),'("contribute to development of a N model for "
+     &          ,A5,1X,A,".")') MODEL(1:5), TRIM(CROPD)
+            MSG(4) = "N simulation will be switched off."
+            CALL WARNING(4,ERRKEY,MSG)
+            ISWNIT = 'N'
+            ISWPHO = 'N'
+            ISWPOT = 'N'
+!           CALL ERROR('IPSIM', 6, "", 0)
+        END SELECT
+      ENDIF
 
 !     --------------------------------------------------------------------
 !     Check for phosphorus model compatible with crop model
@@ -675,7 +711,7 @@ C-----------------------------------------------------------------------
         ISWITCH % MEHYD  = MEHYD   !hydrology
         ISWITCH % MESEV  = MESEV   !soil evaporation
         ISWITCH % MESOL  = MESOL   !soil layer distribution
-!       ISWITCH % METMP  = METMP
+        ISWITCH % METMP  = METMP
         ISWITCH % IDETO  = IDETO   !overview file
         ISWITCH % IDETS  = IDETS   !summary file
         ISWITCH % IDETG  = IDETG   !growth output files
@@ -726,7 +762,8 @@ C-----------------------------------------------------------------------
 !=======================================================================
 !  Default_SimControls, Subroutine
 !
-!  Reads default simulation controls 
+!  Reads default simulation controls file. These values override the 
+!     values in the FileX simulation controls.
 !-----------------------------------------------------------------------
 !  Revision history
 !  06/29/2007 CHP Written
@@ -749,7 +786,7 @@ C-----------------------------------------------------------------------
       CHARACTER*1 ISWWAT,ISWNIT,ISWSYM,ISWPHO,ISWPOT,ISWDIS,MEWTH,MESIC
       CHARACTER*1 ICO2
       CHARACTER*1 MELI,MEEVP,MEINF,MEPHO,IPLTI,IIRRI,IFERI,IRESI,IHARI
-      CHARACTER*1 ISWCHE,ISWTIL,MEHYD,MESOM, MESOL, MESEV   !, METMP
+      CHARACTER*1 ISWCHE,ISWTIL,MEHYD,MESOM, MESOL, MESEV, METMP
       CHARACTER*1 IDETO,IDETS,IDETG,IDETC,IDETW,IDETN,IDETP,IDETD,IOX
       CHARACTER*1 IDETH,IDETL, IDETR
       CHARACTER*6 ERRKEY,FINDCH, SECTION
@@ -772,7 +809,6 @@ C-----------------------------------------------------------------------
       DATA FIRST /.TRUE./
 
       PARAMETER (ERRKEY = 'SIMCTR')
-!      PARAMETER (DSSATS = 'DSCSM045.CTR')
 
 !-----------------------------------------------------------------------
       IF (FIRST) THEN
@@ -783,7 +819,7 @@ C-----------------------------------------------------------------------
 
         I = INDEX(FILECTL,SLASH)
         IF (I < 1) THEN
-!         No path provided -- look first in DSSAT45 directory
+!         No path provided -- look first in DSSAT46 directory
           CALL GETARG (0,INPUTX)      !Name of model executable
           IPX = LEN_TRIM(INPUTX)
 
@@ -793,8 +829,8 @@ C-----------------------------------------------------------------------
 !     1) Go to pull down menu Project -> Settings -> Fortran (Tab) ->
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
-D     INPUTX = 'C:\DSSAT45\DSCSM045.EXE'
-D     IPX = 22
+D     INPUTX = 'C:\DSSAT46\DSCSM046.EXE'
+D     IPX = 23
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
           IF (IPX > 12) THEN
@@ -894,7 +930,7 @@ D     IPX = 22
         MEHYD   = ' '
         NSWITCH = -99
         MESOM   = ' '
-!       METMP   = ' '
+        METMP   = ' '
         MESOL   = ' '
         MESEV   = ' '
         IPLTI   = ' '
@@ -1079,8 +1115,8 @@ D     IPX = 22
             READ (CHARTEST,'(79X,A1)',IOSTAT=ERRNUM) MESOL
             CALL CHECK_A('MESOL', MESOL, ERRNUM, MSG, NMSG)
 
-!           READ (CHARTEST,'(85X,A1)',IOSTAT=ERRNUM) METMP
-!           CALL CHECK_A('METMP', METMP, ERRNUM, MSG, NMSG)
+            READ (CHARTEST,'(85X,A1)',IOSTAT=ERRNUM) METMP
+            CALL CHECK_A('METMP', METMP, ERRNUM, MSG, NMSG)
 
             MEWTH = UPCASE(MEWTH)
             MESIC = UPCASE(MESIC)
@@ -1090,11 +1126,14 @@ D     IPX = 22
             MEPHO = UPCASE(MEPHO)
             MESOM = UPCASE(MESOM)
             MEHYD = UPCASE(MEHYD)
+            MESEV = UPCASE(MESEV)
+            METMP = UPCASE(METMP)
 
-            IF (INDEX('PG',MESOM) == 0) MESOM = ' '
+            IF (INDEX('PG' ,MESOM) == 0) MESOM = ' '
             IF (INDEX('123',MESOL) == 0) MESOL = ' '
-            IF (INDEX('RS',MESEV) == 0) MESEV = ' '
-            IF (INDEX('Z',MEEVP) > 0) MEPHO = 'L'
+            IF (INDEX('RS' ,MESEV) == 0) MESEV = ' '
+            IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
+            IF (INDEX('ED' ,METMP) == 0) METMP = 'D'
 
 !         Fourth line of simulation controls
           CASE('@N MAN')
@@ -1250,7 +1289,7 @@ C    Select Model Name and Path -- order of priority:
 !         over all other values if valid. (Done in Default_SimControls)
 !     CRMODEL is read from FILEX.  Use this if no control file.  
 !     MODELARG is from command line argument list. Third priority. 
-!     Last, use value from DSSATPRO.v45.
+!     Last, use value from DSSATPRO file
 C-----------------------------------------------------------------------
 !     First check model from simulation control file 
       TRY_MODEL = CTRMODEL
@@ -1264,7 +1303,7 @@ C-----------------------------------------------------------------------
 
 !       If FILEX model name was not acceptable, then try the 
 !       model name read from command line.  If this is not OK, 
-!       MODEL contains value from DSSATPRO.V45
+!       MODEL contains value from DSSATPRO file
         IF (TRY_MODEL /= MODEL) THEN
           TRY_MODEL = MODELARG
           CALL MODEL_NAME (CONTROL%CROP, DSSATP, TRY_MODEL, MODEL)
@@ -1330,7 +1369,7 @@ C-----------------------------------------------------------------------
       IF (MEHYD  /= ' ' .AND. MEHYD  /= '.') ISWITCH % MEHYD  = MEHYD
       IF (MESEV  /= ' ' .AND. MESEV  /= '.') ISWITCH % MESEV  = MESEV
       IF (MESOL  /= ' ' .AND. MESOL  /= '.') ISWITCH % MESOL  = MESOL
-!     IF (METMP  /= ' ' .AND. METMP  /= '.') ISWITCH % METMP  = METMP
+      IF (METMP  /= ' ' .AND. METMP  /= '.') ISWITCH % METMP  = METMP
       IF (IPLTI  /= ' ' .AND. IPLTI  /= '.') ISWITCH % IPLTI  = IPLTI
       IF (IIRRI  /= ' ' .AND. IIRRI  /= '.') ISWITCH % IIRRI  = IIRRI
       IF (IFERI  /= ' ' .AND. IFERI  /= '.') ISWITCH % IFERI  = IFERI
@@ -1443,7 +1482,7 @@ C-----------------------------------------------------------------------
       CASE('MEHYD');  MSG_TEXT="Hydrology method              "
       CASE('MESEV');  MSG_TEXT="Soil evaporation method       "
       CASE('MESOL');  MSG_TEXT="Soil input and partitioning   "
-!     CASE('METMP');  MSG_TEXT="Soil temperature method       "
+      CASE('METMP');  MSG_TEXT="Soil temperature method       "
       CASE('IPLTI');  MSG_TEXT="Planting method switch        "
       CASE('IIRRI');  MSG_TEXT="Irrigation method switch      "
       CASE('IFERI');  MSG_TEXT="Fertilizer switch             "

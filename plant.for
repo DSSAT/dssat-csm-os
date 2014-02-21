@@ -1,10 +1,8 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2013 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
+C                      International Fertilizer Development Center
+C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
@@ -49,24 +47,28 @@ C  10/08/2004 CHP Removed some unused variables.
 !  09/10/2007 CHP, JIL added sweet corn
 C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
+C  08/09/2012 GH  Added CSCAS model
+!  04/16/2013 CHP/KD Added SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
      &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
-     &    NH4, NO3, SKi_Avail, SPi_AVAIL, SNOW,           !Input
-     &    SOILPROP, SRFTEMP, ST, SW, TRWU, TRWUP,         !Input
-     &    WEATHER, YREND, YRPLT,                          !Input
+     &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
+     &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
+     &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:
 !         'CRGRO' - CROPGRO 
 !         'CSCER' - CERES Wheat, Barley
-!         'CSCRP' - CropSim Cassava, Wheat
+!         'CSCRP' - CropSim Wheat, Barley
+!         'CSCAS' - CropSim/GumCAS Cassava
 !         'MLCER' - CERES-Millet 
 !         'MZCER' - CERES-Maize
 !         'PTSUB' - SUBSTOR-Potato
@@ -77,6 +79,10 @@ C-----------------------------------------------------------------------
 !         'SWCER' - CERES-Sweet corn
 !         'MZIXM' - IXIM Maize
 !         'TNARO' - Aroids - Tanier, Taro
+!         'ORYZA' - IRRI Rice model
+!         'SALUS' - SALUS generic crop model
+!         'WHAPS' - APSIM N-wheat
+
 C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -107,8 +113,8 @@ C-----------------------------------------------------------------------
       REAL TRWUP, TWILEN, XLAI, XHLAI
 
       REAL, DIMENSION(2)  :: HARVFRAC
-      REAL, DIMENSION(NL) :: NH4, NO3, RLV
-      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4
+      REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM, RWU
+      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
       LOGICAL FixCanht    !, CRGRO
 c-----------------------------------------------------------------------
@@ -129,6 +135,11 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 
 !     K model
       REAL, DIMENSION(NL) :: KUptake, SKi_Avail
+
+!     ORYZA Rice model
+      REAL, DIMENSION(0:NL) :: SomLitC
+      REAL, DIMENSION(0:NL,NELEM) :: SomLitE
+      LOGICAL, PARAMETER :: OR_OUTPUT = .FALSE.
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -251,6 +262,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       SENESCE % ResE   = 0.0
       UNH4     = 0.0
       UNO3     = 0.0
+      UH2O     = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -313,9 +325,24 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         ENDIF
 
 !     -------------------------------------------------
-!     Cassava and Wheat CSCRP
+!     Wheat and Barley CSCRP
       CASE('CSCRP')
         CALL CSCRP_Interface (CONTROL, ISWITCH,           !Input
+     &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
+     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
+     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output
+     &    UNH4, UNO3, XLAI)                               !Output
+        IF (DYNAMIC .EQ. SEASINIT) THEN
+          KTRANS = KEP
+          KSEVAP = KEP
+        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
+!     -------------------------------------------------
+!     Cassava CSCAS
+      CASE('CSCAS')
+        CALL CSCAS_Interface (CONTROL, ISWITCH,           !Input
      &    EOP, ES, NH4, NO3, SNOW, SOILPROP, SRFTEMP,     !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
@@ -330,15 +357,16 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         ENDIF
 
 !     -------------------------------------------------
-!     APSIM N-wheat NWAPS
-      CASE('NWAPS')
-        CALL Nwheat_Interface (CONTROL, ISWITCH,           !Input
+!     APSIM N-wheat WHAPS
+      CASE('WHAPS')
+        CALL WH_APSIM (CONTROL, ISWITCH,              !Input
      &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
-     &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
-     &     STGDOY, FracRts, UNH4, UNO3, XLAI, XHLAI)      !Output
+     &     NSTRES, PORMIN, PUptake, RLV,                  !Output
+     &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O)               !Output
 
         IF (DYNAMIC < RATE) THEN
 !          KTRANS = KCAN + 0.15        !Or use KEP here??
@@ -408,9 +436,34 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
      &    RLV, SENESCE, STGDOY, FracRts, UNH4, UNO3)      !Output
 
+        IF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
+!     ORYZA2000 Rice 
+      CASE('RIORZ')
+        CALL ORYZA_Interface (CONTROL, ISWITCH,                  !Input
+     &   EOP, FLOODWAT, HARVFRAC, NH4, NO3, SOILPROP,            !Input
+     &   SomLitC, SomLitE,                                       !Input
+     &   ST, SW, TRWUP, UPPM, WEATHER, YRPLT, YREND, OR_OUTPUT,  !Input
+     &   CANHT, HARVRES, KTRANS, KSEVAP, MDATE, NSTRES, PORMIN,  !Output
+     &   RLV, RWUMX, SENESCE, STGDOY, UNH4, UNO3, UH2O, XLAI)    !Output
 
         IF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
+!	Generic Salus crop model
+!	KD 09/14/2009
+	CASE('SALUS') 
+	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,     !Input
+     &        YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,	!Input
+     &        KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	!Output   
+
+	  IF (DYNAMIC .EQ. INTEGR) THEN
+          XLAI = XHLAI
         ENDIF
 
 !     -------------------------------------------------

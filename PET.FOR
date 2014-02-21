@@ -38,14 +38,15 @@ C=======================================================================
       TYPE (ControlType) CONTROL
       CHARACTER*1 MEEVP
       REAL CANHT, CLOUDS, EO, EORATIO, ET_ALB, SRAD, TAVG, TDEW
-      REAL TMAX, TMIN, WINDHT, WINDSP, XHLAI
+      REAL TMAX, TMIN, VAPR, WINDHT, WINDSP, XHLAI
       
       CLOUDS = WEATHER % CLOUDS
       SRAD   = WEATHER % SRAD  
       TAVG   = WEATHER % TAVG  
       TDEW   = WEATHER % TDEW  
       TMAX   = WEATHER % TMAX  
-      TMIN   = WEATHER % TMIN  
+      TMIN   = WEATHER % TMIN 
+      VAPR   = WEATHER % VAPR 
       WINDHT = WEATHER % WINDHT
       WINDSP = WEATHER % WINDSP
 
@@ -56,7 +57,7 @@ C=======================================================================
           CASE ('F')
             CALL PETPEN(
      &        CLOUDS, EORATIO, ET_ALB, SRAD, TAVG, TDEW,  !Input
-     &        TMAX, TMIN, WINDSP, WINDHT, XHLAI,          !Input
+     &        TMAX, TMIN, VAPR, WINDSP, WINDHT, XHLAI,    !Input
      &        EO)                                         !Output
 
 !         ------------------------
@@ -124,13 +125,14 @@ C  02/06/2003 KJB/CHP Added EORATIO as input from plant routines.
 !  07/24/2006 CHP Use MSALB instead of SALB (includes mulch and soil 
 !                 water effects on albedo)
 !  09/19/2006 SSJ Fixed error in REFHT calc as noted below.
+!  08/25/2011 CHP Use measured vapor pressure (VAPR), if available
 !-----------------------------------------------------------------------
 !  Called from:   PET
 !  Calls:         None
 C=======================================================================
       SUBROUTINE PETPEN(
      &    CLOUDS, EORATIO, MSALB, SRAD, TAVG, TDEW,       !Input
-     &    TMAX, TMIN, WINDSP, WINDHT, XHLAI,              !Input
+     &    TMAX, TMIN, VAPR, WINDSP, WINDHT, XHLAI,        !Input
      &    EO)                                             !Output
 !-----------------------------------------------------------------------
       IMPLICIT NONE
@@ -146,7 +148,7 @@ C=======================================================================
 !     LOCAL VARIABLES:
       REAL ALBEDO, EAIR, ESAT, G, LHVAP, PSYCON, RADB,
      &  RNET, RNETMG, S, TK4,
-     &  VHCAIR, VPD, DAIR, RT, ET0, KC, WINDHT
+     &  VHCAIR, VPD, DAIR, RT, ET0, KC, WINDHT, VAPR
       REAL SHAIR, PATM, SBZCON
       REAL k, d, REFHT, Zom, Zoh, ra, rl, rs    !added for PenMon
 !      REAL alt_RADB, Tprev
@@ -168,9 +170,17 @@ C     Compute air properties.
       LHVAP = (2501.0-2.373*TAVG) * 1000.0                ! J/kg
 C     PSYCON = SHAIR * PATM / (0.622*LHVAP)               ! Pa/K
       PSYCON = SHAIR * PATM / (0.622*LHVAP) * 1000000     ! Pa/K
+
+!     Previous code:
       ESAT = (VPSAT(TMAX)+VPSAT(TMIN)) / 2.0              ! Pa
       EAIR = VPSAT(TDEW)                                  ! Pa
-      VPD = ESAT - EAIR                                   ! Pa
+
+!     If actual vapor pressure is available, use it.
+      IF (VAPR > 1.E-6) THEN
+        EAIR = VAPR * 1000.
+      ENDIF
+
+      VPD = MAX(0.0, ESAT - EAIR)                         ! Pa
       S = (VPSLOP(TMAX)+VPSLOP(TMIN)) / 2.0               ! Pa/K
       RT = 8.314 * (TAVG + 273.0)                         ! N.m/mol
       DAIR = 0.028966*(PATM-0.387*EAIR)/RT                ! kg/m3
@@ -1064,7 +1074,9 @@ c
 
 !       Old computation:
         IF (XLAI .LE. 1.0) THEN   !<-------!
-          EOS = EO*(1.0 - 0.43*XLAI)       !
+!         EOS = EO*(1.0 - 0.43*XLAI)       !
+!         get rid of discontinuity:
+          EOS = EO*(1.0 - 0.39*XLAI)       !
         ELSE                               !-> old code
           EOS = EO/1.1*EXP(-0.4*XLAI)      !
         ENDIF    !<------------------------! 
@@ -1116,15 +1128,13 @@ C=======================================================================
       REAL EO, EF, EF85, XLAI
 
 !-----------------------------------------------------------------------
-      EF = EO*(1.0-0.45*XLAI)
+!     EF = EO*(1.0-0.45*XLAI)
+      EF = EO*(1.0-0.53*XLAI)  !prevents discontinuity
       IF (XLAI .GT. 0.85) THEN
-        EF85 = EO * 0.62  !EF at XLAI=0.85, prevents discontinuity
-        EF = AMIN1(EF85, EO/1.1*EXP(-0.60*XLAI))
+!       EF85 = EO * 0.62  !EF at XLAI=0.85, prevents discontinuity
+!       EF = AMIN1(EF85, EO/1.1*EXP(-0.60*XLAI))
+        EF = EO/1.1*EXP(-0.60*XLAI)
       ENDIF
-
-      !SUMES1 = ??
-      !SUMES2 = ??
-      !T = ??
 
 !-----------------------------------------------------------------------
       RETURN

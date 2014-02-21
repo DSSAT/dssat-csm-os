@@ -133,7 +133,7 @@ C-----------------------------------------------------------------------
       DO J = 1, NBUND
         IF (YRDOY .EQ. BUNDDAT(J)) THEN
           PERMW  = 0.0
-          ABUND  = BUND(J)
+          ABUND  = BUND(J)      !mm
           IF (ABUND .GT. 0.0) THEN
             BUNDED = .TRUE.
           ELSE
@@ -236,7 +236,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
 
       FLOODWAT % BUNDED  = BUNDED
-      FLOODWAT % ABUND   = ABUND
+      FLOODWAT % ABUND   = ABUND    !mm
       FLOODWAT % PUDPERC = PUDPERC
       FLOODWAT % PERC    = PERC
       

@@ -30,6 +30,12 @@ C  01/16/2007 GH  Modified sorghum cultivar coefficients
 !  12/09/2008 CHP Remove METMP
 C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
+C  05/19/2011 GH  Updated for sorghum
+C  08/09/2012 GH  Updated cassava model
+!  09/01/2011 CHP Added van Genuchten parameters for ORYZA
+C  11/14/2012 GH  Add READWRITE for temp file
+!  04/16/2013 CHP/KD Added SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO
@@ -85,7 +91,8 @@ C=======================================================================
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      OPEN (LUNIO, FILE = FILEIO,STATUS = 'UNKNOWN',IOSTAT=ERRNUM)
+      OPEN (LUNIO, FILE = FILEIO,STATUS = 'UNKNOWN',IOSTAT=ERRNUM,
+     &      ACTION = 'READWRITE')
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,0)
 C-----------------------------------------------------------------------
 C     Write temp. required variables on top of file
@@ -181,7 +188,7 @@ C
 C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,915,IOSTAT=ERRNUM) MEWTH,MESIC,MELI,MEEVP,
-     & MEINF,MEPHO,MEHYD,NSWITCH,MESOM, MESEV, MESOL
+     & MEINF,MEPHO,MEHYD,NSWITCH,MESOM, MESEV, MESOL, METMP
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
 C-----------------------------------------------------------------------
 C
@@ -486,6 +493,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
+!       1st tier soils
         DO I = 1, NLAYR
           LINIO = LINIO + 1
 !          IF (TOTN(I) .LT. -9.0) THEN
@@ -540,6 +548,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
+!       2nd tier soils
         LINIO = LINIO + 1
         WRITE (LUNIO,40)'                    '
         DO I = 1, NLAYR
@@ -559,6 +568,19 @@ C-----------------------------------------------------------------------
           IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
         END DO
         LINIO = LINIO + 1
+C-------------------------------------------------------------------------
+
+C-----------------------------------------------------------------------
+!       3rd tier soils - chp added 9/01/2011 for van Genuchten parameters
+        LINIO = LINIO + 1
+        WRITE (LUNIO,40)'                    '
+        DO I = 1, NLAYR
+          LINIO = LINIO + 1
+          WRITE (LUNIO,992,IOSTAT=ERRNUM) 
+     &      DS(I), alphaVG(I), mVG(I), nVG(I), WCR(I)
+  992     FORMAT (1X,F5.0,4F6.2)
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+        END DO
       ENDIF   !End of non-sequence soils write
 C-------------------------------------------------------------------------
 
@@ -569,6 +591,11 @@ C-----------------------------------------------------------------------
 
 !     ------------------------------------------------------------------
         SELECT CASE (MODEL(1:5))
+
+!       Generic SALUS crops
+        CASE('SALUS')
+          WRITE(LUNIO,'(A6,1X,A16,A)',IOSTAT=ERRNUM) VARNO,VRNAME,
+     &        trim(PLAINTXT)
 
 !       CROPGRO crops
         CASE('CRGRO')
@@ -583,10 +610,19 @@ C-----------------------------------------------------------------------
      &           THRESH, SDPRO, SDLIP
 
 !       Ceres wheat, barley
-!       CropSim - wheat, cassava
-        CASE('WHCER', 'BACER', 'CSCRP')
+!       CropSim - wheat, barley, cassava
+        CASE('WHCER', 'BACER', 'CSCRP','CSCAS')
 !       Do nothing - these models read the INH file written by OPTEMPXY2K
 
+!       APSIM Wheat (NWheat)
+        CASE('WHAPS')
+                WRITE (LUNIO,1850,IOSTAT=ERRNUM)  
+     &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
+     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
+     &            P2AF,P3AF,P4AF,P5AF,P6AF,
+     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
 !       Ceres Maize, sweetcorn
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
@@ -598,7 +634,8 @@ C-----------------------------------------------------------------------
 !       Ceres sorghum
         CASE('SGCER')
                WRITE (LUNIO,1900,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
+     &               P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
+C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
 C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !              Write optional cultivar parameters if present
                IF (PBASE > 1E-2 .AND. PSAT > 1E-2) THEN
@@ -613,12 +650,18 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !       Ceres rice
         CASE ('RICER')
             WRITE (LUNIO,1985,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &             P1,P2R,P5,P2O,G1,G2,G3,G4
+     &             P1,P2R,P5,P2O,G1,G2,G3,G4,PHINT
+
+!       ORYZA rice
+        CASE ('RIORZ')
+            WRITE (LUNIO,'(A6,1X,A16,1X,A)',IOSTAT=ERRNUM) VARNO,VRNAME,
+     &          TRIM(PLAINTXT)
 
 !       Substor potato
         CASE ('PTSUB')
                WRITE (LUNIO,1400,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &               G2,G3,G4,PD,P2,TC
+     &               G2,G3,PD,P2,TC
+!     &               G2,G3,G4,PD,P2,TC
 
 !       CaneGro sugarcane
         CASE ('SCCAN')
@@ -741,7 +784,8 @@ C     &        1X,F5.2,19(1X,F5.1))
      &        F6.0,2F6.2,F6.2,7F6.1, 2F6.2, 1X, F5.4,7F6.1,F6.2,2F6.0,
      &        F6.1,F6.2,F6.2,F6.2,3F6.2,2F6.2)
 
- 1400 FORMAT (A6,1X,A16,1X,A6,1X,F6.0,F6.1,F6.2,3(F6.1))
+ 1400 FORMAT (A6,1X,A16,1X,A6,1X,F6.0,4(F6.1))
+! 1400 FORMAT (A6,1X,A16,1X,A6,1X,F6.0,F6.1,F6.2,3(F6.1))
  1500 FORMAT (A6,1X,A16,1X,A6,F6.2,F6.3,5F6.2,F6.3,2F6.1,F6.2,
      &        F6.3,3F6.2,F6.1,2F6.3)
  1550 FORMAT (A6,1X,A16,1X,A6,A)
@@ -750,6 +794,13 @@ C     &        1X,F5.2,19(1X,F5.1))
      &        F6.3,F6.2,6(F6.0))
  1700 FORMAT (A6,1X,A16,1X,A6,1X,5(F6.1),F6.2, F6.1)
  1800 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2))
+ 1850 FORMAT (A6,1X,A16,1X,A6,1X,
+ !             1     2     3     4     5     6     7     8     9     0
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1, F6.1,
+     &       F6.2, F6.2, F6.3, F6.0, F6.2, F6.2, F6.1, F6.2, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.2, F6.2, F6.3, F6.2, F6.3, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
+     &       F6.3, F6.0, F6.0)
  1801 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2),2(F6.1),I4)
  1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,4(F6.1))
 C-GH 1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,2(F6.1))
@@ -760,7 +811,7 @@ c1960 FORMAT (A6,1X,A16,1X,A6,1X,F6.2,F8.4,F7.2,F8.2,F7.3,F4.0)
      &        1X,F5.0)
  1970 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.1,F6.0,F6.1,F6.2,F6.1)
  1975 FORMAT (A6,1X,A16,1X,A6,4(F6.0),2(F6.2),3(F6.1))
- 1985 FORMAT (A6,1X,A16,1X,A6,5(F6.1),F6.4,2(F6.2))
+ 1985 FORMAT (A6,1X,A16,1X,A6,5(F6.1),F6.4,2(F6.2),F6.1)
  1995 FORMAT (A6,1X,A16,1X,A6,F6.1,3(F6.3),F6.2,F6.1)
  2000 FORMAT ('*MODEL INPUT FILE   ',9X,A1,5(1X,I5))
  2040 FORMAT ('MODEL          ',A8,5X,A80)

@@ -1,0 +1,12 @@
+*TANIER CULTIVAR COEFFICIENTS: TRARO046 MODEL
+!
+! EXPNO       Number of experiments used to estimate cultivar parameters
+!
+!VAR#  HEADER LABELS            ECO#    P1    P3    P4    P5    G2    G3    G4 PHINT PCINT PCGRD
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1    P3    P4    P5    G2    G3    G4 PHINT PCINT PCGRD
+!                                        1     2     3     4     5     5     6     7     8     9
+IB0005 KELLY                .    -99  1500  1200   400   600  1.00  1.50  1.00 150.0 150.0  0.00
+IB0006 BLANCA               .    -99  1540  1500   900  1850  1.00  1.00  1.00 150.0 122.0  1.75
+IB0007 MORANDA              .    -99  1440  3000  1000  1000  1.00  1.00  1.00 150.0 120.0  2.03
+
+

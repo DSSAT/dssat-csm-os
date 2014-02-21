@@ -120,7 +120,7 @@ C=======================================================================
       WINDSP= WEATHER % WINDSP
 
 C-----------------------------------------------------------------------
-      CALL CSCER040 (FILEIOCS, RUN, TN, RN, RNMODE,        !Command line
+      CALL CSCER (FILEIOCS, RUN, TN, RN, RNMODE,           !Command line
      & ISWWAT, ISWNIT, IDETS, IDETO, IDETG, IDETL, FROP,   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, CO2, RAIN, TOTIR,                 !Weather
@@ -137,8 +137,6 @@ C-----------------------------------------------------------------------
      & STGDOY,                                             !Stage dates
      & DYNAMIC)                                            !Control 
 
-!      KCAN   = KPAR
-!      KEP    = KSRAD
       XLAI   = LAI
       NSTRES = NFP
 

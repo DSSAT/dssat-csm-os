@@ -29,7 +29,10 @@ c      [I] Climate & meteorology variables
 c      [I] Cane crop variables
      - CaneCrop,
 c      [O] Max root water movement per cm of root
-     - RWUMX)
+     - RWUMX,
+c      [I] Change in heat units, base 16 degrees
+     & HU16 
+     & )
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Use modules from DSSAT:
           USE ModuleDefs
@@ -54,6 +57,9 @@ c     :::::::::::
       TYPE(CaneCropType) CaneCrop
       TYPE(RatoonCarryOverType) RatCarryOver
       REAL               RWUMX
+
+c     Daily change in heat units base 16 degrees
+      REAL, INTENT(IN) :: HU16
 
 c     Local variables (not part of any common blocks)
 c     :::::::::::::::::::::::::::::::::::::::::::::::
@@ -431,7 +437,9 @@ C           ENDIF
 
            RLDF(L)=AMIN1(SWDF,RNFAC,AERFAC)*WR(L)*dlayr(L)
            IF (CUMDEP.LT.RTDEP) GO TO 2900
-           RTDEP=RTDEP+DTT*0.22*AMIN1((SWDF1*2.0),SWDF)
+!           RTDEP=RTDEP+DTT*0.22*AMIN1((SWDF1*2.0),SWDF)
+!          MJ: MvdL noticed that 'DTT'is cumulative. UseHU16 instead:
+           RTDEP=RTDEP+HU16*0.22*AMIN1((SWDF1*2.0),SWDF)
 c          :::::::::::::::::::::::::::::::::::::::::::
 c           WRITE(SCLUN, '(A, F10.5)') 'SWDF1 is ', SWDF1
 c          :::::::::::::::::::::::::::::::::::::::::::

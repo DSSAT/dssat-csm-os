@@ -1,0 +1,47 @@
+*MILLET SPECIES COEFFICIENTS: GECER046 MODEL
+
+*TEMPERATURE EFFECTS
+!       TBASE TOP1  TOP2  TMAX
+  PRFTC 10.0  20.0  40.0  50.0     !Effect of temperature on photosynthesis
+  RGFIL  7.0  22.0  48.0  50.0     !Effect of temperature on relative grain filling rate
+
+*PHOTOSYNTHESIS PARAMETERS 
+  PARSR   0.50      !Conversion of solar radiation to PAR 
+! CO2X     0   220   330   440   550   660   770   880   990  9999  orig
+! CO2Y  0.00  0.81  1.00  1.03  1.06  1.10  1.13  1.16  1.18  1.25  orig
+  CO2X     0   220   280   330   400   490   570   750   990  9999
+  CO2Y  0.00  0.85  0.95  1.00  1.02  1.04  1.05  1.06  1.07  1.08
+
+!Note:  Photosynthesis response to CO2 for C-4 maize, sorghum, millet is reduced from prior.
+!Above 2 lines re-done by K. J. Boote, based on USDA-ARS SAP4.3, 2008, see Tables 2.6 and 2.7
+!and cited references, summarizing a 4% grain yield/biomass increase for doubling of CO2.
+!Maize model now gives 4.59 & 4.24% grain yield increase from 330-660 or 350-700, respectively, and
+!1.17% from 380 to 440 (SAP4.3 cites 1%).  Biomass increase is 3.23 & 2.93%, respectively & 0.88%.
+!Sensitivity for 5 irrigated/non-stressed maize experiments (UFGA, FLSC, IBWA, SIAZ, and IUAF).
+!The ET is reduced 12.74 & 13.50% from 330 to 660, and T reduced 17.08 & 18.12% from 350 to 700ppm.
+!Function based on stomatal resistance method of Allen et al.  CO2 effect on ET and T are good and
+!did not need to be changed.
+  
+  
+*STRESS RESPONSE
+  FSLFW   0.050     !Fraction of leaf area senesced under 100% water stress, 1/day
+  FSLFN   0.050     !Fraction of leaf area senesced under 100% nitrogen stress, 1/day
+  
+*SEED GROWTH PARAMETERS     
+  DSGT    21.0      !Maximum days from sowing to germination before seed dies.
+  DGET   150.0      !Growing degree days between germination and emergence after which the seed dies due to drought
+  SWCG    0.02      !Minimimum available soil water required for seed germination, cm3/cm3 
+  
+*ROOT PARAMETERS
+  PORM    0.05      !Minimum volume required for supplying oxygen to roots for optimum growth (1-1.0)
+  RWMX    0.03      !Maximum water uptake per unit root lenght, cm3 water/cm root
+  RLWR    0.98      !Root length to weight ratio, cm/g
+  RWUEP1  1.50      !Factor to modify water stress for cell expansion
+
+
+
+  
+
+
+
+

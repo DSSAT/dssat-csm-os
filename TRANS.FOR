@@ -20,12 +20,14 @@ C  09/01/1999 GH  Incorporated into CROPGRO
 C  01/13/2000 NBP Added DYNAMIC contruct to input KCAN and calc. FDINT
 C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  06/19/2003 JWJ/CHP Replaced KEP with KTRANS
+!  10/31/2011 CHP Use EVAP instead of ES (can include flood and mulch evap)
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !  Calls:     None
 C=======================================================================
       SUBROUTINE TRANS(DYNAMIC, 
-     &    CO2, CROP, EO, ES, KTRANS, TAVG, WINDSP, XHLAI, !Input
+     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+     &    WINDSP, XHLAI,                                  !Input
      &    EOP)                                            !Output
 
 !-----------------------------------------------------------------------
@@ -36,8 +38,8 @@ C=======================================================================
 
       INTEGER DYNAMIC
 
-      REAL CO2, EO, ES, FDINT, KTRANS, TAVG, WINDSP, XHLAI
-      REAL EOP, TRAT
+      REAL CO2, EO, EVAP, FDINT, KTRANS, TAVG, WINDSP, XHLAI
+      REAL EOP, TRAT, EOP_reduc, EOP_max
 
 !     FUNCTION SUBROUTINES:
       REAL TRATIO
@@ -70,14 +72,22 @@ C       01/15/03 - Work of Sau et al, shows that a K of 0.5 was better in
 C       all cases, for PT form as well as the Dynamic form for predicting
 C       soil water balance and predicting measured ET.
 
-       FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
-       EOP = EO * FDINT * TRAT   
+        FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
+        EOP = EO * FDINT
+        EOP_reduc = EOP * (1. - TRAT)  
+        EOP = EOP * TRAT
 
 C       01/15/03 KJB  I think the change to "Same" K for EOS and EOP
 C       may cause next function to be less driving, but below still
-C       will depend on whether actual soil evapo (ES) meets EOS
+C       will depend on whether actual soil evapo (EVAP) meets EOS
 
-        IF ((EOP + ES) .GT. (EO * TRAT)) EOP = EO * TRAT - ES
+!       IF ((EOP + EVAP) .GT. (EO * TRAT)) EOP = EO * TRAT - EVAP
+
+!       Need to limit EOP to no more than EO (reduced by TRAT effect on EOP) 
+!         minus actual evaporation from soil, mulch and flood
+        EOP_max = EO - EOP_reduc - EVAP
+        EOP = MIN(EOP, EOP_max)
+
         EOP = MAX(EOP,0.0)
 
 !***********************************************************************
@@ -87,7 +97,7 @@ C       will depend on whether actual soil evapo (ES) meets EOS
       ENDIF
 !-----------------------------------------------------------------------
       RETURN
-      END !SUBROUTINE TRANS
+      END SUBROUTINE TRANS
 
 !-----------------------------------------------------------------------
 !     TRANS VARIABLE DEFINITIONS:
@@ -95,7 +105,7 @@ C       will depend on whether actual soil evapo (ES) meets EOS
 ! CO2     Atmospheric carbon dioxide concentration (ppm)
 ! EO      Potential evapotranspiration rate (mm/d)
 ! EOP     Potential plant transpiration  (mm/d)
-! ES      Actual soil evaporation rate (mm/d)
+! EVAP    Actual soil + mulch + flood evaporation rate (mm/d)
 ! FDINT   Fraction of direct solar radiation captured by canopy
 ! KCAN    Canopy light extinction coefficient for daily PAR, for
 !           equidistant plant spacing, modified when in-row and between row
@@ -120,6 +130,10 @@ C  ??/??/?? JWJ Written as subroutine ETRATIO.
 C  12/05/93 NBP Changed to TRATIO function.  Changed VPDF to VPSLOP.
 C  10/18/95 GH  Modified for multiple species.
 !  10/17/97 CHP Modified for modular format.
+!  08/23/2011 CHP/JWJ revised canopy and boundary layer resistances to
+!               be consistent with FAO-56 assumptions. 
+!               Remove call to BLRRES subroutine.
+!  08/31/2011 CHP Added C4 crops to list.
 !-----------------------------------------------------------------------
 !  Called by: TRANS
 !  Calls:     BLRRES
@@ -131,8 +145,8 @@ C=======================================================================
       CHARACTER*2 CROP
       REAL CO2, TAVG, WINDSP, XHLAI
       REAL TRATIO
-      REAL CHIGHT, DELTA, GAMMA, LAIMAX, LHV, RA, RB, RATIO, RC1, RC2,
-     &  RL, RLC, RLF, RLFC, RS1, RS2, UAVG, XDEN, XNUM
+      REAL CHIGHT, DELTA, GAMMA, LAIMAX, LHV, RA, RB, !RATIO, RC1, RC2,
+     &  RL, RLC, RLF, RLFC, UAVG, XDEN, XNUM    !, RS1, RS2
 
 !-----------------------------------------------------------------------
 !     FUNCTION SUBROUTINES:
@@ -169,10 +183,9 @@ C     (Allen, 1986), Plant responses to rising CO2.
 C     CO2    = CO2    Conc of the increased ATM case
 C     CO2    = 330    Ambient CO2
 C-----------------------------------------------------------------------
-      IF (INDEX('MZMLSGSC',CROP) .GT. 0) THEN  
-!     FSR added SC - no effect found in plant or soil output files
+      IF (INDEX('MZ,ML,SG,SC,SW,BM,BH,BR,NP,SI',CROP) .GT. 0) THEN  
 C     C-4 Crops
-C        EQ 7 from Allen (1986) for corn.
+C       EQ 7 from Allen (1986) for corn.
         RLF  = (1.0/(0.0328 - 5.49E-5*330.0 + 2.96E-8 * 330.0**2)) + RB
         RLFC = (1.0/(0.0328 - 5.49E-5* CO2  + 2.96E-8 * CO2  **2)) + RB
       ELSE
@@ -181,20 +194,31 @@ C     C-3 Crops
         RLFC = 9.72 + 0.0757 *  CO2  + 10.0
       ENDIF
 
-C     Compute canopy resistances, RL and RLC.
+!++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!     CHP / JWJ 8/23/2011
 
-      RL = RLF / XHLAI
-      RLC = RLFC / XHLAI
+!C     Compute canopy resistances, RL and RLC.
+!      RL = RLF / XHLAI
+!      RLC = RLFC / XHLAI
 
-C     Compute boundary layer resistance (Jagtap and Jones, 1990).
+!C     Compute boundary layer resistance (Jagtap and Jones, 1990).
+!      CALL BLRRES(
+!     &    CHIGHT, UAVG,                   !Input
+!     &    RS1, RS2, RC1, RC2)             !Output
+!
+!      RATIO = XHLAI/LAIMAX
+!      IF (RATIO .GT. 1.0) RATIO = 1.0
+!      RA = RC1 + (RC2 - RC1) * RATIO
 
-      CALL BLRRES(
-     &    CHIGHT, UAVG,                   !Input
-     &    RS1, RS2, RC1, RC2)             !Output
+!     Use FAO-56 assumption LAI = 2.88 reference for canopy resistances
+      RL = RLF / (0.5 * 2.88)   
+      RLC = RLFC / (0.5 * 2.88)
 
-      RATIO = XHLAI/LAIMAX
-      IF (RATIO .GT. 1.0) RATIO = 1.0
-      RA = RC1 + (RC2 - RC1) * RATIO
+!     Replace boundary layer resistance function with this eqn
+      RA = 208. / UAVG  !FAO-56
+
+!     End changes CHP / JWJ 8/23/2011
+!++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 C     Compute delta and gamma.
 
@@ -206,7 +230,7 @@ C     Compute delta and gamma.
       XDEN = DELTA + GAMMA*(1.0+RLC/RA)
       TRATIO = XNUM / XDEN
 
-      END ! FUNCTION TRATIO
+      END FUNCTION TRATIO
 
 !-----------------------------------------------------------------------
 !     TRATIO VARIABLE DEFINITIONS:
@@ -242,66 +266,66 @@ C     Compute delta and gamma.
 !     END FUNCTION TRATIO
 !-----------------------------------------------------------------------
 
-C=======================================================================
-C  BLRRES, Subroutine, J.W. Jones
-C  Computes boundary layer resistance (Jagtap and Jones, 1990).
-C-----------------------------------------------------------------------
-C  REVISION HISTORY
-C  ??/??/?? JWJ Written
-!  10/17/97 CHP Modified for modular format.
-!-----------------------------------------------------------------------
-!  Called by: TRATIO
-!  Calls:     None
-C=======================================================================
-      SUBROUTINE BLRRES(
-     &    CHIGHT, UAVG,                   !Input
-     &    RS1, RS2, RC1, RC2)             !Output
-
-      IMPLICIT NONE
-!-----------------------------------------------------------------------
-      REAL CHIGHT, UAVG
-      REAL RC1, RC2, RS1, RS2
-      REAL D, E1, E2, E3, E4, E5, E6, EN, X, Z0, Z1
-
-!-----------------------------------------------------------------------
-      EN = 3.0
-      Z1 = 0.01
-      X = 2.0
-      D = 0.7 * CHIGHT**0.979
-      Z0 = 0.13 * CHIGHT**0.997
-
-      E1 = EXP(EN*(1. - (D + Z0) / CHIGHT))
-      E2 = EXP(EN)
-      E3 = CHIGHT/(EN*(CHIGHT-D))
-      E4 = ALOG((X - D)/Z0)
-      E5 = 0.4 * 0.4 * UAVG
-      E6 = ALOG((X - D) / (CHIGHT - D))
-
-      RS2 = E4 * E3 * (E2 - E1) / E5
-      RC2 = E4 * (E6 + E3 * (E1 - 1.)) / E5
-      RS1 = ALOG(X/Z1) * ALOG((D + Z0)/Z1) / E5
-      RC1 = (ALOG(X/Z1)**2) / E5
-      RC1 = RC1 - RS1
-
-      RETURN
-      END !SUBROUTINE BLRRES
-
-!-----------------------------------------------------------------------
-!     BLRRES VARIABLE DEFINITIONS:
-!-----------------------------------------------------------------------
-! CHIGHT   Reference height for crop (m)
-! D
-! E1, E2, E3, E4, E5, E6
-! EN
-! RC1, RC2
-! RS1, RS2
-! UAVG     Average wind speed (m/s)
-! X
-! Z0
-! Z1
-!-----------------------------------------------------------------------
-!     END SUBROUTINE BLRRES
-!-----------------------------------------------------------------------
+!C=======================================================================
+!C  BLRRES, Subroutine, J.W. Jones
+!C  Computes boundary layer resistance (Jagtap and Jones, 1990).
+!C-----------------------------------------------------------------------
+!C  REVISION HISTORY
+!C  ??/??/?? JWJ Written
+!!  10/17/97 CHP Modified for modular format.
+!!-----------------------------------------------------------------------
+!!  Called by: TRATIO
+!!  Calls:     None
+!C=======================================================================
+!      SUBROUTINE BLRRES(
+!     &    CHIGHT, UAVG,                   !Input
+!     &    RS1, RS2, RC1, RC2)             !Output
+!
+!      IMPLICIT NONE
+!!-----------------------------------------------------------------------
+!      REAL CHIGHT, UAVG
+!      REAL RC1, RC2, RS1, RS2
+!      REAL D, E1, E2, E3, E4, E5, E6, EN, X, Z0, Z1
+!
+!!-----------------------------------------------------------------------
+!      EN = 3.0
+!      Z1 = 0.01
+!      X = 2.0
+!      D = 0.7 * CHIGHT**0.979
+!      Z0 = 0.13 * CHIGHT**0.997
+!
+!      E1 = EXP(EN*(1. - (D + Z0) / CHIGHT))
+!      E2 = EXP(EN)
+!      E3 = CHIGHT/(EN*(CHIGHT-D))
+!      E4 = ALOG((X - D)/Z0)
+!      E5 = 0.4 * 0.4 * UAVG
+!      E6 = ALOG((X - D) / (CHIGHT - D))
+!
+!      RS2 = E4 * E3 * (E2 - E1) / E5
+!      RC2 = E4 * (E6 + E3 * (E1 - 1.)) / E5
+!      RS1 = ALOG(X/Z1) * ALOG((D + Z0)/Z1) / E5
+!      RC1 = (ALOG(X/Z1)**2) / E5
+!      RC1 = RC1 - RS1
+!
+!      RETURN
+!      END SUBROUTINE BLRRES
+!
+!!-----------------------------------------------------------------------
+!!     BLRRES VARIABLE DEFINITIONS:
+!!-----------------------------------------------------------------------
+!! CHIGHT   Reference height for crop (m)
+!! D
+!! E1, E2, E3, E4, E5, E6
+!! EN
+!! RC1, RC2
+!! RS1, RS2
+!! UAVG     Average wind speed (m/s)
+!! X
+!! Z0
+!! Z1
+!!-----------------------------------------------------------------------
+!!     END SUBROUTINE BLRRES
+!!-----------------------------------------------------------------------
 !***********************************************************************
 !     END OF TRANSPIRATION MODULE
 !***********************************************************************

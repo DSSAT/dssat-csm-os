@@ -1,0 +1,127 @@
+*EXP.DETAILS: UFGA8212MZ NIT X IRR, GAINESVILLE 2N*3I
+! FILEX MODIFIED FOR USE IN ESTIMATING PARAMETERS WITH SALUS
+! THEREFORE, THIS FILES RUNS SALUS
+! USING ONLY HIGH NITROGEN TREATMENTS; THIS ONE RUNS TRT 2 FROM ORIGINAL UFGA8201.MZX
+*GENERAL
+@PEOPLE
+ BENNET,J.M. ZUR,B. HAMMOND,L.C. JONES,J.W.
+@ADDRESS
+ UNIVERSITY OF FLORIDA, GAINESVILLE, FL, USA
+@SITE
+ IRR.PARK,UF.CAMPUS 29.63;-82.37;40.;FLA
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 RAINFED HIGH NITROGEN      1  1  0  1  1  1  2  0  0  0  0  0  1
+ 2 1 0 0 IRRIGATED HIGH NITROGEN    1  1  0  1  1  2  2  0  0  0  0  0  1
+ 3 1 0 0 VEG STRESS HIGH NITROGEN   1  1  0  1  1  3  2  0  0  0  0  0  1
+
+! Use Irrigated treatment, without RLWR; use veg stress trt for validation
+! Management Fertilizer level of 2 was set to 0.
+! Simulation Controls Nitrogen and Symbiosis were turned off.
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 MZ MZ0001 Salus Maize
+
+!! 1 MZ IB0035 McCurdy 84aa
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UFGA0002 UFGA       -99     0 DR000     0     0 00000 -99    180  IBMZ910014 Field section
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1           29.63          -82.37        40                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    MZ 82056   100     0     1     1   -99  1000    .8     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .086    .5    .1
+ 1    15  .086    .5    .1
+ 1    30  .086    .5    .1
+ 1    60  .086    .5    .1
+ 1    90  .076    .6    .1
+ 1   120  .076    .5    .1
+ 1   150   .13    .5    .1
+ 1   180  .258    .5    .1
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 82057   -99   7.2   7.2     S     R    61     0     7   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 82063 IR001    13
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 2 82063 IR001    13
+ 2 82077 IR001    10
+ 2 82094 IR001    10
+ 2 82107 IR001    13
+ 2 82111 IR001    18
+ 2 82122 IR001    25
+ 2 82126 IR001    25
+ 2 82129 IR001    13
+ 2 82132 IR001    15
+ 2 82134 IR001    19
+ 2 82137 IR001    20
+ 2 82141 IR001    20
+ 2 82148 IR001    15
+ 2 82158 IR001    19
+ 2 82161 IR001     4
+ 2 82162 IR001    25
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 3     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 3 82063 IR001    13
+ 3 82077 IR001    10
+ 3 82094 IR001    10
+ 3 82107 IR001    13
+ 3 82111 IR001    18
+ 3 82133 IR001    30
+ 3 82134 IR001     4
+ 3 82137 IR001    20
+ 3 82141 IR001    20
+ 3 82148 IR001    15
+ 3 82158 IR001    19
+ 3 82161 IR001     4
+ 3 82162 IR001    25
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 82097 FE001 AP001    10    27     0     0     0     0   -99 -99
+ 1 82102 FE001 AP001    10    35     0     0     0     0   -99 -99
+ 1 82137 FE001 AP001    10    54     0     0     0     0   -99 -99
+ 2 82074 FE001 AP001    10    56     0     0     0     0   -99 -99
+ 2 82089 FE001 AP001    10    52     0     0     0     0   -99 -99
+ 2 82102 FE001 AP001    10    75     0     0     0     0   -99 -99
+ 2 82118 FE001 AP001    10    37     0     0     0     0   -99 -99
+ 2 82127 FE001 AP001    10    55     0     0     0     0   -99 -99
+ 2 82137 FE001 AP001    10   126     0     0     0     0   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 82056  2150 N X IRRIGATION, GAINESVI  SALUS046
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     N     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     R     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          82050 82064    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 83057   100     0

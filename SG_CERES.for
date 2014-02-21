@@ -1,8 +1,7 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 
+C  COPYRIGHT 1998-2011 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida                   
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
+C                      International Fertilizer Development Center
 C                      USDA-ARS-ALARC, Phoenix, AZ
 C                      Washington State University
 C  ALL RIGHTS RESERVED
@@ -27,6 +26,8 @@ C  04/21/2007 GH  Externalized stem partitioning STPC=0.1
 C  04/21/2007 GH  Externalized root partitioning RTPC=0.25
 C  01/15/2008 GH  Include GDDE for P9 calculation
 C  12/12/2010 GH  Moved STPC and RTPC to Ecotype file
+C  05/19/2011 GH  Reorganized cultivar coefficients
+C  08/26/2011 GH  Add new tillering coefficient in Ecotype file
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -45,18 +46,6 @@ C----------------------------------------------------------------------
 
       IMPLICIT NONE
       SAVE
-!----------------------------------------------------------------------
-!      Programming Notes  W.D.B
-!
-!      Note 1: Currently the weather data modification from file X is 
-!      not being passed in. Is this a problem, or is the modified Tmax, 
-!      Tmin, etc being passed in?
-!
-!      Note 2: Currently, the ecotype file is hard coded. This needs to 
-!              be changed to read ecotype file name from DSSAT45.INP
-!              as soon as the CSM writes this name in the .inp file.
-!
-!----------------------------------------------------------------------
 
       REAL            AGEFAC   
       REAL            APTNUP       
@@ -84,7 +73,7 @@ C----------------------------------------------------------------------
       REAL            DEPMAX     
       REAL            DGET
 C-GH  REAL            DJTI
-	  REAL            P2, PANTH, PFLOWR
+      REAL            P2, PANTH, PFLOWR
       REAL            DLAYR(NL) 
       REAL            DM         
       INTEGER         DOY 
@@ -272,7 +261,7 @@ C------------------------------------------------------------------------
       REAL P3
       REAL P4
       REAL P9
-	  REAL CUMP4
+      REAL CUMP4
       REAL PANWT
       REAL PGRNWT
       REAL SI2(6)
@@ -315,8 +304,7 @@ C------------------------------------------------------------------------
       REAL TGROLF
       REAL TGROPAN
       REAL TGROSTM
-      REAL TILN
-      REAL TILSW
+      REAL TILN, TILFAC
       REAL TLFWT
       REAL TMNC
       REAL TPANWT
@@ -459,13 +447,13 @@ C----------------------------------------------------------------------
      &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
      &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LAT, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
      &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
-     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, 
+     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
@@ -576,7 +564,8 @@ C--------------------------------------------------------------------
               CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
               READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
-     &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
+     &               P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
+C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
  1800         FORMAT (A6,1X,A16,1X,A6,1X,11F6.0)    
 
 C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
@@ -773,15 +762,15 @@ C         ***********************************************************
           IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
      &          C255(1:1) .NE. '*') THEN
              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
-     &            ROPT,GDDE,RUE,KCAN,STPC,RTPC
+     &            ROPT,GDDE,RUE,KCAN,STPC,RTPC,TILFAC
 C-GH &            ROPT,GDDE,RUE,KCAN     
 C-gh &            ROPT,DJTI,GDDE,RUE,KCAN
 
 c             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
 c     &            ROPT,DJTI,GDDE,RUE,KCAN,P3,P4
 
- 3100         FORMAT (A6,1X,A16,1X,8(1X,F5.0))
-C-GH3100         FORMAT (A6,1X,A16,1X,7(1X,F5.0))
+ 3100         FORMAT (A6,1X,A16,1X,9(1X,F5.0))
+C-GH3100         FORMAT (A6,1X,A16,1X,8(1X,F5.0))
 c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
           ELSEIF (ISECT .EQ. 0) THEN
@@ -796,13 +785,13 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
      &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
      &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LAT, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
      &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
-     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, 
+     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
@@ -935,7 +924,7 @@ C         Variables passed through PHENOL to phasei but not used in phenol
      &    PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
      &    RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
      &    STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
-     &    TGROPAN, TGROSTM, TILN, TILSW, TLFWT, TLNO, TMNC,
+     &    TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
      &    TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
      &    XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
      &    DAYL, TWILEN, CANWAA, CANNAA,CUMP4)
@@ -953,13 +942,13 @@ C         Variables passed through PHENOL to phasei but not used in phenol
      &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
      &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LAT, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
      &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
-     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, 
+     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
@@ -1368,25 +1357,25 @@ C----------------------------------------------------------------------
 ! SUMP        !Cumulative plant growth during ISTAGE 4, g/plant 
 ! SW(20)      !Volumetric soil water content of soil layer, cm3 water/cm3 soil   
 ! SWFAC       !Soil water stress effect on growth (0-1), 1 is no stress, 0 is full stress
-! SWIDOT     Daily seed mass damage (g/m2/day)
+! SWIDOT      !Daily seed mass damage (g/m2/day)
 ! TANC        !Nitrogen content in above ground biomass, decimal   
-! TBASE       !Base temperature below which no development occurs, C    
+! TBASE       !Base temperature below which no development occurs, C 
+! TILFAC      !Tillering factor (0 is no tillering; 1 is tillering)   
 ! TLNO        !Total number of leaves that the plant produces
 ! TMIN        !Minimum temperature today, C    
 ! TMAX        !Maximum temperature today, C 
 ! TOPT        !Optimum temperature for development (from species file), C
-! TOPWT            !Total above ground biomass, g/m2
-! TOTNUP           !Total shoot N uptake at maturity, kg N/ha
+! TOPWT       !Total above ground biomass, g/m2
+! TOTNUP      !Total shoot N uptake at maturity, kg N/ha
 ! TRNU        !Total potential root nitrogen uptake, kg N/ha 
-! TRWUP            !Total root water uptake, cm/day
+! TRWUP       !Total root water uptake, cm/day
 ! TURFAC      !Soil water stress effecting cell expansion
-! UNH4(20)         !Plant uptake of ammonium from layer (kg N/ha/day)
-! UNO3(20)         !Plant uptake of nitrate from a layer (kg N/ha/day)
-! VSTAGE           !Vegetative growth stage (number of leaves)
+! UNH4(20)    !Plant uptake of ammonium from layer (kg N/ha/day)
+! UNO3(20)    !Plant uptake of nitrate from a layer (kg N/ha/day)
+! VSTAGE      !Vegetative growth stage (number of leaves)
 ! VMNC        !Plant vegetative minimum nitrogen concentration, g N/g plant 
 ! WLFDOT     Leaf weight losses due to freezing (g[leaf]/m2-d)
 ! WLIDOT     Daily pest or freeze damage to leaf mass (g/m2/day)
-! WMODB*1 !Switch to indicate if weather has been modified in file X (Warning****** not passed in***)
 ! WRIDOT     Daily pest damage to root mass (g/m2/day)
 ! WSHIDT     Weight of shell tissue consumed by pests today (g[shell]/m2-d)
 ! WSIDOT     Daily pest damage to stem mass (g/m2/day)
@@ -1406,7 +1395,6 @@ C----------------------------------------------------------------------
 ! XHLAI       !Healthy leaf area, cm2/cm2  
 ! XGNP        !Nitrogen content of grain, %
 ! XLAI             !Leaf area index, m2/m2
-! XLAT        !Latutude  
 ! XN          !Number of oldest expanding leaf    
 ! XNTI        !Number of leaves at tassel initiation
 ! XSTAGE      !Non-integer growth stage indicator    

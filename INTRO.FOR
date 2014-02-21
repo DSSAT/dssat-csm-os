@@ -57,10 +57,10 @@ C=======================================================================
      & 'ิออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ'/
 
       DATA BOX_DAT/
-     & 'ณ                                  10 October 2010       ณ'/
+     & 'ณ                                      1 July 2013       ณ'/
 
       DATA ZCG/
-     & '                         ICASA                          ',
+     & '                    DSSAT FOUNDATION                    ',
      & '                                                        ',
      & '    G.Hoogenboom, J.W.Jones, C.H.Porter, K.J.Boote,     ',
      & '          L.A.Hunt, J.W. White, J.I.Lizaso,             ',
@@ -97,7 +97,7 @@ C=======================================================================
 
       RETURN
 
-  100 FORMAT (10X,A1,13X,'DSSAT Version 4.5.0 Generic Input',10X,A1)
+  100 FORMAT (10X,A1,13X,'DSSAT Version 4.6.0 Generic Input',10X,A1)
   150 FORMAT (10X,A1,4X,
      &        'Please press < ENTER > key (ฤฤู) to continue',7X,A1)
   252 FORMAT (10X,A1,"  DSSAT Cropping System Model (CSM) Version ", 

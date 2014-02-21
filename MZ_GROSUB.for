@@ -30,6 +30,7 @@
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
 !  10/31/2007 CHP Added simple K model.
+!  01/03/2013 CHP Initialization for RLV prevents carryover 
 !----------------------------------------------------------------------
 !
 !  Called : MAIZE
@@ -720,6 +721,7 @@
           PPLTD  = 0.0  
           PTF    = 0.0
           RANC   = 0.0
+          RLV = 0.0     !CHP 1/3/2013
           RMNC   = 0.0
           RNLAB  = 0.0
           ROOTN  = 0.0
@@ -734,7 +736,6 @@
           SENESCE % ResWt  = 0.0
           SENESCE % ResLig = 0.0
           SENESCE % ResE   = 0.0
-
           SHELPC = 0.0
           SLA    = 0.0
           SKERWT = 0.0
@@ -779,6 +780,8 @@
               TSS(L) = 0.0
           ENDDO
           TURFAC = 1.0
+          UNO3   = 0.0      !CHP 1/3/2013
+          UNH4   = 0.0      !CHP 1/3/2013
           VANC   = 0.0
           VMNC   = 0.0 
           VSTAGE = 0.0
@@ -2200,7 +2203,7 @@
 ! RCNP        !Root critical nitrogen concentration, g N/g root dry weight
 ! RGFIL       !Array containing base, optimum and maximum temperature to compute RGFILL function
 ! RGFILL      !Rate of grain fill - mg/day
-! RLV(L)      !Root length density for soil layer L, cm root/cm2 soil
+! RLV(L)      !Root length density for soil layer L, cm root/cm3 soil
 ! RLWR        !Root length weight ratio
 ! RMNC        !Root minimum nitrogen concentration (g N/g root dry weight)
 ! RNLAB

@@ -843,13 +843,16 @@ C     Generate TMAX, TMIN, and SRAD.
       ENDIF
 
 !     TMAX and TMIN need to be at least 0.1C different
-      IF (TMAX - TMIN < 0.05) THEN
+!     RR: the threshold is too small...; 
+!     two numbers could be c as much as 0.1 apart and round to the same value (tenths place) 
+!     also, there is no need to change both, just bump one of them up enough
+!     IF (TMAX - TMIN < 0.05) THEN
+      IF (TMAX - TMIN .LE. 0.1) THEN
         TMAX = TMAX + 0.1
-        TMIN = TMIN - 0.1
+!       TMIN = TMIN - 0.1
       ENDIF
 
 C     Update values to be remembered.
-
       WETPRV = WET
       DO 70 K = 1,3
         XPRV(K) = X(K)

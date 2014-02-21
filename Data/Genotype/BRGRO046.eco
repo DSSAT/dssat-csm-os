@@ -1,0 +1,51 @@
+*BRACHIARIA DECUMBENS ECOTYPE COEFFICIENTS: CRGRO046 MODEL
+!
+! COEFF   DEFINITIONS
+! =====   ===========
+! ECO#    Code for the ecotype to which a cultivar belongs (see *.cul
+!         file)
+! ECONAME Name of the ecotype, which is referenced from *.CUL file
+! MG      Maturity group number for this ecotype, such as maturity
+!         group in soybean
+! TM      Indicator of temperature adaptation
+! THVAR   Minimum rate of reproductive development under short days
+!         and optimal temperature
+! PL-EM   Time between planting and emergence (V0) (thermal days)
+! EM-V1   Time required from emergence to first true leaf (V1), thermal
+!         days
+! V1-JU   Time required from first true leaf to end of juvenile phase,
+!         thermal days
+! JU-R0   Time required for floral induction, equal to the minimum
+!         number of days for floral induction under optimal temperature and
+!         daylengths, photothermal days
+! PM06    Proportion of time between first flower and first pod for
+!         first peg (peanut only)
+! PM09    Proportion of time between first seed and physiological
+!         maturity that the last seed can be formed
+! LNGSH   Time required for growth of individual shells (photothermal
+!         days)
+! R7-R8   Time between physiological (R7) and harvest maturity (R8) (days)
+! FL-VS   Time from first flower to last leaf on main stem (photothermal
+!         days)
+! TRIFOL  Rate of appearance of leaves on the mainstem (leaves per
+!         thermal day)
+! RWIDTH  Relative width of this ecotype in comparison to the standard
+!         width per node (YVSWH) defined in the species file (*.SPE)
+! RHGHT   Relative height of this ecotype in comparison to the
+!         standard height per node (YVSHT) defined in the species file
+!         (*.SPE)
+! SIZELF  The size of a normal upper node leaf (nodes 8 - 10) of
+!         variety I, used to adjust leaf area expansion during
+!         sink-limited phase of vegetative growth, i.e., prior to
+!         VSSINK nodes on the main stem (cm2/leaf)
+! R1PPO   Increase in daylength sensitivity after R1 (CSDVAR and CLDVAR
+!         both decrease with the same amount) (h)
+! OPTBI   Minimum daily temperature above which there is no effect on
+!         slowing normal development toward flowering (oC)
+! SLOBI   Slope of relationship reducing progress toward flowering if
+!         TMIN for the day is less than OPTBI
+!
+@ECO#  ECONAME.......... MG TM PP-SS PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNHSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI
+!                                  1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16
+BR0001 DEFAULT BRACHI    00 01  1.00   3.0   6.0 9999. 9999.   0.0  0.75  10.0 9999. 9999.  0.10   1.0   1.0  .000   0.0  .000
+DFAULT DEFAULT ECOTYPE   00 01  1.00   0.0   0.0 9999. 9999.   0.0  0.75  10.0 9999. 9999.  0.10   1.0   1.0  .000   0.0  .000

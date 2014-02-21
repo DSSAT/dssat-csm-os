@@ -42,7 +42,7 @@ C=======================================================================
      & RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
      & SIND, SLAN, STMWT, STOVN, STOVWT, SUMRTR, SWMAX, 
      & SWMIN, TANC, TCARBO, TCNP, TDUR, TGROLF, TGROPAN,
-     & TGROSTM, TILN, TILSW, TLFWT, TLNO, TMNC, TPANWT,
+     & TGROSTM, TILN, TLFWT, TLNO, TMNC, TPANWT,
      & TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
      & VMNC, XNTI,P2O, P2R, TWILEN)
 
@@ -135,7 +135,6 @@ C-------------------------------------------------------
       REAL TGROPAN
       REAL TGROSTM
       REAL TILN
-      REAL TILSW
       REAL TLFWT
       REAL TLNO
       REAL TMNC
@@ -331,7 +330,6 @@ C-GH      P4    = 4.0*PHINT + 38.0
           TCARBO  = 0.0
           TDUR    = 0.0
           SUMRTR  = 0.0
-          TILSW   = 0.5
           CUMPH  = SUMDTT/PHINT
           STOVWT = 0.016
           PLAY   = 0.130 + 0.003*G1

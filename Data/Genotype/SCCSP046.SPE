@@ -1,0 +1,137 @@
+!*SUGARCANE SPECIES COEFFICIENTS - SCCSP046 MODEL
+
+*#PHOTOSYNTHESIS PARAMETERS (note: ETPHOT variables not currently used in CASUPRO)
+  KCAN        0.50     Light extinction coefficient (KCAN_ECO in the .ECO input file will be used if a value is present there)
+  PARMAX      50.0     PAR at which photosynthesis is 63% of the maximum value (PHTMAX) (moles[quanta]/m2-d)
+  CCMP        80.0     Canopy CO2 compensation point (CO2 at which daily PG is 0.0)
+  CCMAX       2.09     Max daily canopy photosynthesis relative to photosynthesis at CO2 concentration 330 vpm
+  CCEFF       0.0105   Relative efficiency of CO2 assimilation used in equation to adjust canopy photosynthesis with CO2 concentrations 
+  FNPGN(4)    1.90  5.50  20.0  20.0    Critical leaf N concentration for function to reduce photosynthesis due to low leaf N levels (4 values for function CURV) 
+  TYPPGN      QDR      Type of function for the leaf N effects on PG
+  FNPGT(4)    9.00  27.0  32.0  45.0    Critical values of temperature for the functions to reduce canopy PG under non-optimal temperatures (in function CURV)
+  TYPPGT      LIN      Character variable specifying the type of function to use for the relationship between temperature and PG (for use in function subroutine CURV) 
+  XLMAXT(6)   0.0   8.0   40.0  44.0  48.0  55.0    (ETPHOT) Temperatures for lookup of maximum leaf photosynthesis at saturating carbon dioxide
+  YLMAXT(6)   0.0   0.0   1.0   0.8   0.0   0.0     (ETPHOT) Leaf photosynthesis proportion as a function of temperature at saturating carbon dioxide
+  FNPGL(4)    0.00  19.00 50.0  60.0    For use with ETPHOT subroutine
+  TYPPGL      QDR      (ETPHOT)  Type of curve for effect of minimum temperature on maximum leaf photosynthesis 
+  PGEFF       0.0541         
+  SCV         0.20     (ETPHOT) SCVP-Scattering coefficient for photosynthetic radiation; SCVR-Scattering coefficient for any radiation; SCVIR-Scattering coefficient for infrared radiation;       
+  KDIF        0.80     (ETPHOT) KDIFBL-Diffuse radiation extinction coefficient of black leaves; 
+  LFANGB      2.0      (ETPHOT) Parameter used in calculation of LFANGD-Proportion of leaves in three leaf angle classes (0-30, 30-60, 60-90 deg)
+  SLWREF      0.0035   (ETPHOT) Specific leaf weight for measurement of LXREF  (g/m2)   
+  SLWSLO      0.0004   (ETPHOT) Slope of specific leaf weight as a function of leaf area index  (g/m2)
+  NSLOPE      0.3000   (ETPHOT) Slope of leaf nitrogen concentration as a function of leaf area index   (%/m2/m2)
+  LNREF       4.90     Value of leaf N above which canopy PG is maximum (for standard cultivar)      
+  PGREF       1.00     Reference value for leaf level photosynthesis used in canopy light response curve (µmol[CO2] / m2-s) [not currently used in CASUPRO]   
+  XPGSLW(10)    0.0 0.001 0.002 0.003 .0035 0.004 0.005 0.006 0.008 0.020    Array of Specific Leaf Weight (SLW) values for table look-up function, used with YPGSLW (g[leaf] / m2[leaf])   
+  YPGSLW(10)  0.162 0.679 0.867 0.966 1.000 1.027 1.069 1.100 1.141 1.167    Array of PG values corresponding to SLW values in array XPGSLW (g[CH2O] / m2 / d)
+
+*#RESPIRATION PARAMETERS
+  GRLF        1.200     
+  GRRT        1.300     
+  GRST        1.300     
+  GRSU        1.240     
+  RCH20       1.242     
+  RLIP        3.106     
+  RLIG        2.174     
+  ROA         0.929     
+  RMIN         0.05      
+  PCH2O        1.13      
+
+*#PLANT COMPOSITION VALUES 
+  PCARLF       0.405     
+  PCARRT       0.711     
+  PCARST       0.649     
+  PCARSU       1.000     
+  PLIGLF       0.070     
+  PLIGRT       0.070     
+  PLIGST       0.070     
+  PLIGSU       0.000     
+  PLIPLF       0.025     
+  PLIPRT       0.020     
+  PLIPST       0.020     
+  PLIPSU       0.000     
+  PMINLF       0.094     
+  PMINRT       0.057     
+  PMINST       0.046     
+  PMINSU       0.000     
+  POALF        0.050     
+  POART        0.050     
+  POAST        0.050     
+  POASU        0.000     
+  PROLFI       0.356     
+  PRORTI       0.092     
+  PROSTI       0.165     
+  PROSUI       0.250   
+
+*#LEAF & STALK GROWTH PARAMETERS
+  FINREF       170.0   Specific Leaf area (SLA) of leaves of standard crop cultivar when plants emerge (cm2[leaf] / g[leaf]) (currently not used in CASUPRO)
+  SLAREF       105.0   Specific leaf area (SLA) for new leaves during peak vegetative growth for the standard cultivar. (cm2/g) (currently not used in CASUPRO)
+  SIZREF       600.0   (currently not used in CASUPRO)
+  SLAMAX       110.0   The maximum specific leaf area (SLA) for new leaves when grown under low (nearly zero) radiation but optimum water and temperature for the standard cultivar. (cm2/ g) (Robertson et al 1998 pg 825; also Clenents 1980 table 3-5) (currently not used in CASUPRO)
+  SLAMIN        80.0   The minimum specific leaf area (SLA) for new leaves when grown under infinitely high radiation, optimum water and temperature for the standard cultivar. (cm2 / g) (Robertson et al 1998 pg 825; also Clenents 1980 table 3-5) (currently not used in CASUPRO)
+  SLAPAR      -0.048   Coefficient in exponential equation to reduce SLA as PAR increases (leaf curvature) 
+  TURSLA        1.50    (currently not used in CASUPRO)
+  XSLATM(5)    -50.0  00.0  12.0  22.0  60.0     TEMP VALUES    (currently not used in CASUPRO)
+  YSLATM(5)     0.25  0.25  0.25  1.00  1.00     EFFECT ON SLA   (currently not used in CASUPRO)
+ 
+*#ROOT PARAMETERS
+  RTDEPI       25.0    Depth of roots on day of plant emergence. (cm)
+  RFAC1        5000    Root length per unit  root weight. (cm/g)
+  RTSEN       0.010    Fraction of existing root length which can be senesced per physiological day. (fraction / ptd)
+  RLDSM        0.04    Minimum root length density in a given layer, below which drought-induced senescence is not allowed
+  RTSDF       0.005    Maximum fraction of root length senesced in a given layer per physiological day when water content in a given layer falls below 25% of extractable soil water.
+  RWUEP1       1.25    Threshold for reducing leaf expansion compared w/ ratio of TRWU/EP1 (total potenial daily root water uptake/ actual transpiration)
+  RWUMX        0.07    Maximum water uptake per unit root length, constrained by soil water (cm3[water] / cm [root])  (was 0.07)
+  XRTFAC(4)     0.0   4.0  10.0  40.0   # of primary stalk leaf nodes at which rate of increase in root depth per physiological day is YRTFAC(I).
+  YRTFAC(4)     4.0  4.50   4.0  4.00   Rate of increase in root depth per degree day at # of primary stalk leaf nodes XRTFAC (cm / (physiol. day)
+  RTNO3       0.006   
+  RTNH4       0.006   
+  PORMIN       0.02     Minimum pore space required for supplying oxygen to roots for optimal growth and function (cm3/cm3)
+  RTEXF        0.05     Fraction root death per day under oxygen depleted soil
+  XFRRT(4)      0.0   2.0  14.0  50.0   
+  YFRRT(4)     0.80  0.40  0.20  0.15    Ratio of root growth rate to above-ground growth rate on day i for stalk j, based on XFRRT, stalk j node number
+  XSTKRT(6)      1.    2.    3.    9.   13.   40.    Stalk rank order number where primary stalk is 1.  
+  YSTKRT(6)     3.0   1.2   1.0   0.8   0.5   0.5    Multiplier to weigh contribution of stalk to root development. For plant cane only. 
+  RTWTMIN      90.0     Minimum root mass per layer; used to limit senescence (g/m2)
+
+*#STAGE SENSITIVITY TO WATER NITROGEN AND PHOSPHORUS (note: not currently used in CASUPRO)
+!STAGE  H2O   N     P
+  1     0.00  0.00  0.00      PLANT(STG 1) TO SPROUTING(STG 2) PHASE
+  2     0.00  0.00  0.00      SPROUTING(STG 2) TO EMERG(STG 3) PHASE
+  3     0.00  0.00  0.00      EMERG(STG 2) TO BEGINING STALK GROWTH(STG 4) PHASE
+  4     0.00  0.00  0.00      BEGINING STALK GROWTH(STG 4) TO FLOWERING(STG 5) PHASE
+  5     0.00  0.00  0.00      FLOWERING (NOT CURRENTLY USED) 
+
+*PHOSPHORUS CONTENT
+!  Emerg  Growth PhysMat  (stalk emergence, stalk growth, stalk physiological maturity)
+  0.0030  0.0026  0.0022  Optimum Shoot Concentration  ! from Luo 2004 pg 81
+  0.0030  0.0026  0.0022  Optimum Leaf  Concentration
+  0.0030  0.0026  0.0022  Optimum Stalk Concentration
+  .00015  .00013  .00011  Optimum Root  Concentration
+   -99.0   -99.0   -99.0  Optimum Shell Concentration ! Not used in CASUPRO but must be left in for standard read.
+   -99.0   -99.0   -99.0  Optimum Seed  Concentration ! Not used in CASUPRO
+
+  0.0019  0.0019  0.0019  Minimum Shoot Concentration
+  0.0019  0.0019  0.0019  Minimum Leaf  Concentration !(from Muchovej 
+  0.0019  0.0019  0.0019  Minimum Stalk Concentration
+  .00009  .00009  .00009  Minimum Root  Concentration
+   -99.0   -99.0   -99.0  Minimum Shell Concentration ! Not used in CASUPRO but must be left in for standard read.
+   -99.0   -99.0   -99.0  Minimum Seed  Concentration ! Not used in CASUPRO
+
+    25.0    15.0     9.3  Maximum Veg N:P ratio !(from MZCER050.SPE)
+     4.2     2.7     2.1  Minimum Veg N:P ratio !(from MZCER050.SPE)
+
+    0.80    1.00  SRATPHOTO, SRATPART  ! were 0.80 and 1.00
+    0.0           FracPMobil - max fraction of P which can be mobilized from leaf & stem / day
+    0.80          FracPUptake - Maximum fraction of available P which can be taken up / day
+
+*#EVAPOTRANSPIRATION
+  KEP         0.60     Energy extinction coefficient for partitioning EO [potential evapotranspiration rate (mm/d)]to EP [actual plant transpiration rate](--)
+  EORATIO     1.05     Ratio of increase in EO with increase in LAI (up to LAI=6.0) for use with FAO-56 Penman reference EO. (--)
+
+*#CANOPY HEIGHT AND WIDTH AS MODIFIED BY TEMPERATURE AND PAR (from CropGro; the main canopy H & W section was moved to the ECO input file)
+ -50.0  00.0  20.0  28.0  40.0                       XHWTEM(1-5),TEMPERATURES
+  0.40  1.00  1.00  1.10  1.20                       YHWTEM(1-5),RELATIVE EXPAN           
+  0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES
+  4.00  3.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN

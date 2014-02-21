@@ -1,0 +1,93 @@
+! Canegro Sugarcane Plant Module SPECIES file
+! This file contains coefficients that are used for ALL cultivars of sugarcane.
+! DO NOT change these values, unless you are REALLY sure you are right!
+! Lines starting with an exclamation mark or a '*' are effectively ignored.
+! Blank lines are ignored
+
+! All values consist of a text variable name, followed by an equals sign ('=').
+! All text before the equals sign (on one line), with leading and trailing spaces 
+! removed, will be considered the variable name.  All text, minus the spaces, 
+! following the equals sign will be considered the variable's values.  Variables
+! are not ordered, and need not be arranged according to the headings.
+
+! ** ALWAYS enter REAL values e.g. 0., 1.2, 67., NOT integers **
+
+! The headings give an indication of where parameters are used in the code.
+
+! Name         | Value | Category            | Description                                                                                       | Reference
+!--------------+-------+---------------------+---------------------------------------------------------------------------------------------------+----------------------------------------
+! Tbasephotos  |   7   | Photosynthesis      | Base temperature for photosynthesis                                                               | Singels et al., 2005
+! Critsw       |  0.2  | Photosynthesis      | Water stress threshold for prolonged impact from severe water stress on photosynthesis            | 
+! HuRecover    |  150  | Photosynthesis      | Thermal time required for photosynthesis to recover fully after a severe water stress event       | 
+! RespQ10      | 1.68  | Photosynthesis      | Fractional increase in respiration rate per 10 C rise in temperature (Q10 coefficient)            | Inman-Bamber, 1991
+! PCB          |  0.6  | Biomass partitionin | Partitioning coefficient: extinction coefficient of fraction of dry mass increments allocated to  | Parameter 'B' in Singels & Bezuidenhout
+! RespGcf      | 0.242 | Photosynthesis      | Fraction of gross photosynthesis lost to growth respiration                                       | Inman-Bamber, 1991
+! Max_rootpf   | 0.95  | Biomass partitionin | Maximum partition fraction of daily mass increments to roots                                      | 
+! FTCON        | 0.32  | Sucrose accumulatio | Temperature response shape parameter                                                              | Singels & Bezuidenhout, 2002
+! SURCON       | 0.99  | Sucrose accumulatio | Sucrose partitioning parameter                                                                    | 
+! RTcmpg       |  500  | Root growth         | Root length per mass of roots (cm/g)                                                              | 
+! Wrk          | -0.01 | Root growth         | Root length density extinction coefficient by depth                                               | 
+! RLVmin       | 0.02  | Root growth         | Minimum root length density in soil layers (cm/cm3)                                               | 
+! SenesF       |   5   | Canopy              | Number of leaves senesced per 100 stress days                                                     | 
+! Reset        |   5   | Canopy              | Rainfall required to reset stress day counter (mm)                                                | 
+! Percoeff     | 0.16  | Canopy              | Fraction of plant elongation attributable to stalk elongation                                     | Inman-Bamber, 1991
+! CHTCoeff     | 0.864 | Canopy - height     | Coefficient determining canopy height as a function of stalk height and number of leaves (cm/cm)  | 
+! Hillpar1     | 2.453 | Canesim canopy      | Empirical function shape parameter                                                                | Singels & Donaldson (2000)
+! Eoratio      | 1.15  | Water balance       | Ratio of potential ET from fully canopied unstressed sugarcane canopy to grass reference ET (Kc f | Allen et al. (1998)
+! RWUEP1       |   1   | Water balance       | Soil water supply/potential evaporation ratio threshold below which evaporation and photosynthesi | Jones & Kiniry (1986)
+! RWUEP2       |   2   | Water balance       | Soil water supply/potential evaporation ratio threshold below which expansive growth is limited   | Jones & Kiniry (1986)
+! RWUMX        | 0.07  | Water uptake        | Maximum root water uptake per unit length of root (cm3 water/cm RLV)                              | Jones & Kiniry (1986), van Antwerpen (1
+! LG_RATING    |   8   | Lodging             | Lodging score when crop is fully lodged.                                                          | Singels 2007 (Pers comm..)
+! LG_CRIT_WIND |  200  | Lodging             | Wind run (km/d) threshold for lodging                                                             |
+!-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*PHOTOSYNTHESIS & BIOMASS PARTITIONING
+        TBasePhotos = 7.
+          CRITSW    = 0.2
+          HuRecover = 150.
+          RespQ10   = 1.68
+          PCB       = 0.6
+          RESPGCF   = 0.242
+          MAX_ROOTPF =   0.95
+          FTCON     = 0.32
+          SURCON    = 0.99
+*ROOTS
+          RTCMPG     = 500.
+          WRK        =  -0.01
+          RLVMIN     = 0.02
+*CANOPY
+          SENESF    = 5.
+          RESET     = 5.
+          PERCoeff  = 0.16
+          CHTCoeff  = 0.864  
+          HillPar1  = 2.453
+*WATER BALANCE
+          EORATIO   = 1.15
+          RWUEP1    = 1.
+          RWUEP2    = 2.
+          RWUMX     = 0.07
+*LODGING
+        LG_RATING   = 8.
+    LG_CRIT_WIND    = 200.
+
+
+CO2X_1 = 0
+CO2X_2 = 220
+CO2X_3 = 280
+CO2X_4 = 330
+CO2X_5 = 400
+CO2X_6 = 490
+CO2X_7 = 570
+CO2X_8 = 750
+CO2X_9 = 990
+CO2X_10 = 9999
+CO2Y_1 = 0
+CO2Y_2 = 0.85
+CO2Y_3 = 0.95
+CO2Y_4 = 1
+CO2Y_5 = 1.02
+CO2Y_6 = 1.04
+CO2Y_7 = 1.05
+CO2Y_8 = 1.06
+CO2Y_9 = 1.07
+CO2Y_10 = 1.08

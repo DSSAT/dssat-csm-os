@@ -85,12 +85,15 @@ C-----------------------------------------------------------------------
 !           Previous denominator - could explode for large RLV - problem with RLV?
 !     &      (SWCON3-ALOG(RLV(L)))  
 !           RWU in cm3[water]/cm[root]-d
+
 C-----------------------------------------------------------------------
 C           PORMIN = MINIMUM PORE SPACE  REQUIRED FOR SUPPLYING OXYGEN
 C                TO ROOTS FOR OPTIMAL GROWTH AND FUNCTION
 C     TSS(L) = number of days soil layer L has been saturated
 C-----------------------------------------------------------------------
-          IF ((SAT(L)-SW(L)) .GE. PORMIN) THEN
+!         CHP 6/27/2011 Add check for SW ~= SAT and PORMIN = 0.0 (Flooded rice)
+!         IF ((SAT(L)-SW(L)) .GE. PORMIN) THEN
+          IF ((SAT(L)-SW(L)) .GE. PORMIN .OR. PORMIN < 1.E-6) THEN
              TSS(L) = 0.
           ELSE
              TSS(L) = TSS(L) + 1.

@@ -1,5 +1,5 @@
 *Phenological/Growth Stage Codes
-! DSSAT Version 4.5; 09/30/2010
+! DSSAT v4.6; 07/01/2013
 !
 ! The fields in the file are as follows:
 !  CDE   The code used in the DSSAT3 crop models
@@ -27,12 +27,12 @@ GS001       End of juvenile phase                                               
 GS002       50% of plants completed floral initiation                            .
 GS008       50% of plants germinated                                             .
 
-*Growth and Development Codes - Cabbage (CROPGRO Version 4.5)                   
+*Growth and Development Codes - Cabbage (CROPGRO Version 4.5)
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS001 VE    50% plants w some part visible at soil surface                       .
 GS002 V1    50% plants w 1 developed node on the main axis                       .
-      V2    50% plants w 2 developed nodes on the main axis                      . 
+      V2    50% plants w 2 developed nodes on the main axis                      .
       V3    50% plants w 3 developed nodes on the main axis                      .
       Vn    50% plants w n developed nodes on the main axis                      .
 GS003       50% plants completed juvenile phase                                  .
@@ -42,9 +42,9 @@ GS013       Time of last leaf area expansion                                    
 GS014       Start Simulation                                                     .
 GS015       Sowing Date                                                          .
 GS016       Time of harvest                                                      .
-                                                                                 
-*Growth and Development Codes - Chickpea (CROPGRO Version 4.5)                   
-! Fehr et al.,1971                                                               
+
+*Growth and Development Codes - Chickpea (CROPGRO Version 4.5)
+! Fehr et al.,1971
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS001 VE    50% plants w some part visible at soil surface                       .
@@ -67,15 +67,15 @@ GS014       Start Simulation                                                    
 GS015       Sowing Date                                                          .
 GS016       Time of harvest                                                      .
 
-*Growth and Development Codes - Cotton (CROPGRO Version 4.5)                   
+*Growth and Development Codes - Cotton (CROPGRO Version 4.5)
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS001 VE    50% plants w some part visible at soil surface                       .
 GS002 V1    50% plants w 1 developed node on the main axis                       .
-      V2    50% plants w 2 developed nodes on the main axis                      . 
+      V2    50% plants w 2 developed nodes on the main axis                      .
       V3    50% plants w 3 developed nodes on the main axis                      .
       Vn    50% plants w n developed nodes on the main axis                      .
-GS005 R1    50% plants beginning flower                                          . 
+GS005 R1    50% plants beginning flower                                          .
       R2    50% plants beggining boll                                            .
 GS006 R3    50% plants boll > 6 mm or 1/4 inch                                   .
 GS007 R4    100% plants boll > 6 mm or 1/4 inch                                  .
@@ -91,57 +91,9 @@ GS013       Time of last leaf area expansion                                    
 GS014       Start Simulation                                                     .
 GS015       Sowing Date                                                          .
 GS016       Time of harvest                                                      .
-                                                                               
-*Growth and Development Codes - Cowpea (CROPGRO Version 4.5)                     
-! Fehr et al.,1971                                                               
-@CDE  NAME  DESCRIPTION......................................................... SYNONYMS
-GS000       None                                                                 .
-GS001 VE    50% plants w some part visible at soil surface                       .
-GS002 V1    50% plants w completely unrolled leaf at unifoliated node            .
-      V2    50% plants w completely unrolled leaf at 1st node>unifoliate         .
-      V3    50% plants w 3 nodes on main stem above unifoliated node             .
-      Vn    50% plants w n nodes on main stem above the unifoliated node         .
-GS005 R1    50% plants w one flower at any node                                  .
-      R2    50% plants w flower at node immediately below last unrolled leaf     .
-GS006 R3    50% plants w 0.5cm pod at one of the 4 upper nodes with unrolled lf  .
-GS007 R4    50% plants w 2.0cm pod at one of the 4 upper nodes with unrolled lf  .
-GS008 R5    50% plants w beans beginning to develope                             .
-GS009 R6    50% plants w pod w full-size green beans at 1 of 4 upper ur lf nodes .
-GS010 R7    50% plants w pods yellowing                                          .
-GS003       50% plants completed juvenile phase                                  .
-GS004       50% plants completed floral induction                                .
-GS012       50% plants w last mainstem node                                      .
-GS013       Time of last leaf area expansion                                     .
-GS014       Start Simulation                                                     .
-GS015       Sowing Date                                                          .
-GS016       Time of harvest                                                      .
-                                                                                 
-*Growth and Development Codes - Dry Bean (CROPGRO Version 4.5)                   
-! Fehr et al.,1971                                                               
-@CDE  NAME  DESCRIPTION......................................................... SYNONYMS
-GS000       None                                                                 .
-GS001 VE    50% plants w some part visible at soil surface                       .
-GS002 V1    50% plants w completely unrolled leaf at unifoliated node            .
-      V2    50% plants w completely unrolled leaf at 1st node>unifoliate         .
-      V3    50% plants w 3 nodes on main stem above unifoliated node             .
-      Vn    50% plants w n nodes on main stem above the unifoliated node         .
-GS005 R1    50% plants w one flower at any node                                  .
-      R2    50% plants w flower at node immediately below last unrolled leaf     .
-GS006 R3    50% plants w 0.5cm pod at one of the 4 upper nodes with unrolled lf  .
-GS007 R4    50% plants w 2.0cm pod at one of the 4 upper nodes with unrolled lf  .
-GS008 R5    50% plants w beans beginning to develope                             .
-GS009 R6    50% plants w pod w full-size green beans at 1 of 4 upper ur lf nodes .
-GS010 R7    50% plants w pods yellowing                                          .
-GS003       50% plants completed juvenile phase                                  .
-GS004       50% plants completed floral induction                                .
-GS012       50% plants w last mainstem node                                      .
-GS013       Time of last leaf area expansion                                     .
-GS014       Start Simulation                                                     .
-GS015       Sowing Date                                                          .
-GS016       Time of harvest                                                      .
-                                                                                 
-*Growth and Development Codes - Faba Bean (CROPGRO Version 4.5)                  
-! Fehr et al.,1971                                                             
+
+*Growth and Development Codes - Cowpea (CROPGRO Version 4.5)
+! Fehr et al.,1971
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS001 VE    50% plants w some part visible at soil surface                       .
@@ -164,13 +116,8 @@ GS014       Start Simulation                                                    
 GS015       Sowing Date                                                          .
 GS016       Time of harvest                                                      .
 
-*Growth and Development Codes - Fallow (CROPGRO Version 4.5)                  
-! Fehr et al.,1971                                                             
-@CDE  NAME  DESCRIPTION......................................................... SYNONYMS
-GS000       Last day of fallow run                                               .                                           
-                                                                                
-*Growth and Development Codes - Green Bean (CROPGRO Version 4.5)                   
-! Fehr et al.,1971                                                               
+*Growth and Development Codes - Dry Bean (CROPGRO Version 4.5)
+! Fehr et al.,1971
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS001 VE    50% plants w some part visible at soil surface                       .
@@ -191,10 +138,10 @@ GS012       50% plants w last mainstem node                                     
 GS013       Time of last leaf area expansion                                     .
 GS014       Start Simulation                                                     .
 GS015       Sowing Date                                                          .
-GS016       Time of harvest                                                      .                                                                                
-                                                                                
-*Growth and Development Codes - Soybean (CROPGRO Version 4.5)                   
-! Fehr et al.,1971                                                              
+GS016       Time of harvest                                                      .
+
+*Growth and Development Codes - Faba Bean (CROPGRO Version 4.5)
+! Fehr et al.,1971
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS001 VE    50% plants w some part visible at soil surface                       .
@@ -215,10 +162,63 @@ GS012       50% plants w last mainstem node                                     
 GS013       Time of last leaf area expansion                                     .
 GS014       Start Simulation                                                     .
 GS015       Sowing Date                                                          .
-GS016       Time of harvest                                                      
-                                                                                
-*Growth and Development Codes - Peanut (CROPGRO Version 4.5)                     
-! Boote,1982                                                                     
+GS016       Time of harvest                                                      .
+
+*Growth and Development Codes - Fallow (CROPGRO Version 4.5)
+! Fehr et al.,1971
+@CDE  NAME  DESCRIPTION......................................................... SYNONYMS
+GS000       Last day of fallow run                                               .
+
+*Growth and Development Codes - Green Bean (CROPGRO Version 4.5)
+! Fehr et al.,1971
+@CDE  NAME  DESCRIPTION......................................................... SYNONYMS
+GS000       None                                                                 .
+GS001 VE    50% plants w some part visible at soil surface                       .
+GS002 V1    50% plants w completely unrolled leaf at unifoliated node            .
+      V2    50% plants w completely unrolled leaf at 1st node>unifoliate         .
+      V3    50% plants w 3 nodes on main stem above unifoliated node             .
+      Vn    50% plants w n nodes on main stem above the unifoliated node         .
+GS005 R1    50% plants w one flower at any node                                  .
+      R2    50% plants w flower at node immediately below last unrolled leaf     .
+GS006 R3    50% plants w 0.5cm pod at one of the 4 upper nodes with unrolled lf  .
+GS007 R4    50% plants w 2.0cm pod at one of the 4 upper nodes with unrolled lf  .
+GS008 R5    50% plants w beans beginning to develope                             .
+GS009 R6    50% plants w pod w full-size green beans at 1 of 4 upper ur lf nodes .
+GS010 R7    50% plants w pods yellowing                                          .
+GS003       50% plants completed juvenile phase                                  .
+GS004       50% plants completed floral induction                                .
+GS012       50% plants w last mainstem node                                      .
+GS013       Time of last leaf area expansion                                     .
+GS014       Start Simulation                                                     .
+GS015       Sowing Date                                                          .
+GS016       Time of harvest                                                      .
+
+*Growth and Development Codes - Soybean (CROPGRO Version 4.5)
+! Fehr et al.,1971
+@CDE  NAME  DESCRIPTION......................................................... SYNONYMS
+GS000       None                                                                 .
+GS001 VE    50% plants w some part visible at soil surface                       .
+GS002 V1    50% plants w completely unrolled leaf at unifoliated node            .
+      V2    50% plants w completely unrolled leaf at 1st node>unifoliate         .
+      V3    50% plants w 3 nodes on main stem above unifoliated node             .
+      Vn    50% plants w n nodes on main stem above the unifoliated node         .
+GS005 R1    50% plants w one flower at any node                                  .
+      R2    50% plants w flower at node immediately below last unrolled leaf     .
+GS006 R3    50% plants w 0.5cm pod at one of the 4 upper nodes with unrolled lf  .
+GS007 R4    50% plants w 2.0cm pod at one of the 4 upper nodes with unrolled lf  .
+GS008 R5    50% plants w beans beginning to develope                             .
+GS009 R6    50% plants w pod w full-size green beans at 1 of 4 upper ur lf nodes .
+GS010 R7    50% plants w pods yellowing                                          .
+GS003       50% plants completed juvenile phase                                  .
+GS004       50% plants completed floral induction                                .
+GS012       50% plants w last mainstem node                                      .
+GS013       Time of last leaf area expansion                                     .
+GS014       Start Simulation                                                     .
+GS015       Sowing Date                                                          .
+GS016       Time of harvest
+
+*Growth and Development Codes - Peanut (CROPGRO Version 4.5)
+! Boote,1982
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS001 VE    50% of plants with some part visible at soil surface                 .
@@ -243,8 +243,8 @@ GS014       Start Simulation                                                    
 GS015       Sowing Date                                                          .
 GS016       Time of harvest                                                      .
 
-*Growth and Development Codes - Sugarcane (CANEGRO Version 4.5)                  
-! Fehr et al.,1971                                                             
+*Growth and Development Codes - Sugarcane (CANEGRO Version 4.5)
+! Fehr et al.,1971
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 
@@ -269,8 +269,8 @@ GS001       End of juvenile phase                                               
 GS002       50% of plants completed floral initiation                            .
 GS008       50% of plants germinated                                             .
 
-                                                                                 
-*Growth and Development Codes - Tanier(AROID Version 4.5)                        
+
+*Growth and Development Codes - Tanier(AROID Version 4.5)
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
       V0    50% of plants have 1 visible leaf tip                                .
@@ -281,14 +281,14 @@ GS009 V1    50% of plants have 1 fully opened leaf                              
       Vn    50% of plants have n fully opened leaves                             .
       S     50% of plants have suckers above ground                              .
 GS000 V7    50% of plants have only 2 or 3 active leaves remaining on plant      .
-GS001       End Juvenile                                                         .   
+GS001       End Juvenile                                                         .
 GS002       End Maximum Growth                                                   .
 GS003       End Maximum Growth                                                   .
 GS004       End Maximum Growth                                                   .
 GS005       Harvestable Corm                                                     .
 GS006       End Corm Growth                                                      .
 GS007       Planting                                                             .
-GS008       Root Formation                                                       . 
+GS008       Root Formation                                                       .
 GS010       Pregemerminated Planting                                             .
 GS011       End Cormel                                                           .
 GS015       Start Simulation                                                     .
@@ -306,14 +306,14 @@ GS009 V1    50% of plants have 1 fully opened leaf                              
       Vn    50% of plants have n fully opened leaves                             .
       S     50% of plants have suckers above ground                              .
 GS000 V7    50% of plants have only 2 or 3 active leaves remaining on plant      .
-GS001       End Juvenile                                                         .   
+GS001       End Juvenile                                                         .
 GS002       End Maximum Growth                                                   .
 GS003       End Maximum Growth                                                   .
 GS004       End Maximum Growth                                                   .
 GS005       Harvestable Corm                                                     .
 GS006       End Corm Growth                                                      .
 GS007       Planting                                                             .
-GS008       Root Formation                                                       . 
+GS008       Root Formation                                                       .
 GS010       Pregemerminated Planting                                             .
 GS011       End Cormel                                                           .
 GS015       Start Simulation                                                     .
@@ -338,8 +338,8 @@ GS009 R7    50% of plants at harvest maturity                                   
 GS014       Start Simulation                                                     .
 GS010       Sowing Date                                                          .
 GS016       Time of harvest                                                      .
-                                                                                 
-*Growth and Development Codes - Potato (SUBSTOR Version 4.5)                     
+
+*Growth and Development Codes - Potato (SUBSTOR Version 4.5)
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS007 VE    50% of plants with some part visible at soil surface                 .
@@ -351,9 +351,9 @@ GS001 T1    Tuber initiation                                                    
       T3    T1 + 40 days                                                         .
 GS002 T4    Harvest maturity.  Green canopy cover 20% of the maximum achieved    .
 GS005       Sowing Date                                                          .
-GS006       Germination                                                          .    
+GS006       Germination                                                          .
 GS014       Start Simulation                                                     .
-GS020       Time of harvest                                                      . 
+GS020       Time of harvest                                                      .
 
 *Growth and Development Codes - Cereal Crops - Zadoks,1974
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
@@ -374,8 +374,8 @@ GS020       Time of harvest                                                     
       85       Physiological maturity (soft dough)                               .
       90-99    Ripening                                                          .
       93       Harvest maturity                                                  .
-                                                                                 
-*Growth and Development Codes - Barley (CERES Version 4.5)                       
+
+*Growth and Development Codes - Barley (CERES Version 4.5)
 @CDE  NAME  DESCRIPTION......................................................... SYNONYMS
 GS000       None                                                                 .
 GS001       Maximum Primordial                                                   .
@@ -468,11 +468,11 @@ GS013       Time of last leaf area expansion                                    
 GS014       Start Simulation                                                     .
 GS015       Sowing Date                                                          .
 GS016       Time of harvest                                                      .
-                                                                                 
-*Growth and Development Stage References                                         
-Boote, K.J.  1982.  Growth stages of peanut (Arachis hypogaea L.).               
-         Peanut Sci. 9:35-40.                                                    
-Fehr, W.R., C.E. Caviness, D.T. Burmood and J.S. Pennington.  1971.  Stage of   
+
+*Growth and Development Stage References
+Boote, K.J.  1982.  Growth stages of peanut (Arachis hypogaea L.).
+         Peanut Sci. 9:35-40.
+Fehr, W.R., C.E. Caviness, D.T. Burmood and J.S. Pennington.  1971.  Stage of
          development descriptions for soybeans, Glycine max  (L.) Merrill.
          Crop Sci. 11:929-931.
 Groot, J.J.R., M.K. Kropff, F.J.H. Vossen, C.J.T. Spitters and R. Rabbinge.1986.

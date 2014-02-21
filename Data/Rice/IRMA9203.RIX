@@ -1,0 +1,144 @@
+*EXP.DETAILS: IRMA9203RI IRMA9201RI IRRI, 1992 WET SEASON IR72 N TRIALS
+
+*GENERAL
+@PEOPLE
+Kropff/Cassman/Libbon/Torres                    *
+@ADDRESS
+IRRI, MCPO 3127, 1271 Makati City, Philippines  *
+@SITE
+IRRI farm, Field K3, 14.22N, 121.25E, 23m       *
+!July 2011
+!Tao Li, IRRI and Cheryl Porter, UF
+!Used for testing linkage of CSM v4.5 and ORYZA2000 models
+!* File name        : IR72WSN1.T92                                    *
+!* Crop             : Oryza sativa cv. IR72                           *
+!* Year/Season      : 1992, wet season, with and without late N       *
+!* Fertilizer       : Daynr 194  217  239  263                        *
+!*                  0N +LN   -    -    -    30   (N1)                 *
+!*                  80N+LN   80   -    -    30   (N2)                 *
+!*                  80N+LN   40   40   -    30   (N3)                 *
+!*                  80N+LN   27   27   27   30   (N4)                 *
+!*                  0N -LN   -    -    -    -    (N5)                 *
+!*                  80N-LN   80   -    -    -    (N6)                 *
+!*                  80N-LN   40   40   -    -    (N7)                 *
+!*                  80N-LN   27   27   27   -    (N8)                 *
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 0N + 30N late              1  1  0  1  1  1  1  0  0  0  0  0  1
+ 2 1 0 0 (1)80N + 30N late          1  1  0  1  1  1  2  0  0  0  0  0  1
+ 3 1 0 0 (2)40N + 30N late          1  1  0  1  1  1  3  0  0  0  0  0  1
+ 4 1 0 0 (3)27N + 30N late          1  1  0  1  1  1  4  0  0  0  0  0  1
+ 5 1 0 0 0N + 0N late               1  1  0  1  1  1  5  0  0  0  0  0  1
+ 6 1 0 0 (1)80N + 0N late           1  1  0  1  1  1  6  0  0  0  0  0  1
+ 7 1 0 0 (2)40N + 0N late           1  1  0  1  1  1  7  0  0  0  0  0  1
+ 8 1 0 0 (3)27N + 0N late           1  1  0  1  1  1  8  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 RI IB0118 IR 72
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 IRPL0001 IRLB       -99     0 DR000     0     0 00000 -99     50  IRRI920001 UNKNOWN
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    RI 92183   300   -99     1     1   -99     0     0     0   100    15 UNKNOWN
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5   .52    48   9.6
+ 1    10   .52    48   9.6
+ 1    15   .52    32   6.4
+ 1    20   .55    64  12.8
+ 1    25   .55  12.8   2.6
+ 1    30   .55   3.8    .8
+ 1    40   .61    .2     0
+ 1    60   .61     0     0
+ 1    80   .64     0     0
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 92195   -99   999   125     T     H    20     0     5     0    12    25     5     0                        UNKNOWN
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   -99   -99   -99   -99   -99   -99     1 UNKNOWN
+@I IDATE  IROP IRVAL
+ 1 92183 IR009    20      !bund height (mm)
+ 1 92183 IR010            !puddled
+!1 92183 IR008   0.5      !percolation rate (mm/d)
+!1 92183 IR006    20      !initial flood depth (mm)
+ 1 92183 IR011     5      !constant flood depth (mm)
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 92194 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 1 92207 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 1 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 1 92263 FE005 AP018     1    30   -99   -99   -99   -99   -99 -99
+
+ 2 92194 FE005 AP018     1    80   -99   -99   -99   -99   -99 -99
+ 2 92207 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 2 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 2 92263 FE005 AP018     1    30   -99   -99   -99   -99   -99 -99
+
+ 3 92194 FE005 AP018     1    40   -99   -99   -99   -99   -99 -99
+ 3 92207 FE005 AP018     1    40   -99   -99   -99   -99   -99 -99
+ 3 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 3 92263 FE005 AP018     1    30   -99   -99   -99   -99   -99 -99
+
+ 4 92194 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
+ 4 92207 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
+ 4 92239 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
+ 4 92263 FE005 AP018     1    30   -99   -99   -99   -99   -99 -99
+
+ 5 92194 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 5 92207 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 5 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 5 92263 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+
+ 6 92194 FE005 AP018     1    80   -99   -99   -99   -99   -99 -99
+ 6 92207 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 6 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 6 92263 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+
+ 7 92194 FE005 AP018     1    40   -99   -99   -99   -99   -99 -99
+ 7 92207 FE005 AP018     1    40   -99   -99   -99   -99   -99 -99
+ 7 92239 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+ 7 92263 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+
+ 8 92194 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
+ 8 92207 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
+ 8 92239 FE005 AP018     1    27   -99   -99   -99   -99   -99 -99
+ 8 92263 FE005 AP018     1     0   -99   -99   -99   -99   -99 -99
+
+*ENVIRONMENT MODIFICATIONS
+@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME
+ 1 92183 A   0 A   0 A   0 A   0 M0.00 R 330 A   0 A   0
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 92183  2150 ORYZA W & N simulated     RIORZ
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     F     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     F     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          92001 92365    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 IB001 IR011    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 86035   100     0
+
