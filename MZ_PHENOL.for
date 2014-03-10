@@ -1,7 +1,7 @@
 !======================================================================
-!  PHENOL, Subroutine
+!  MZ_PHENOL, Subroutine
 !
-!  Determines Phenological Stage and Growing Degree Days
+!  Determines Phenological Stage and Growing Degree Days for Maize
 !----------------------------------------------------------------------
 !  Revision history
 !

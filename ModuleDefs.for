@@ -65,7 +65,6 @@ C             CHP Added TRTNUM to CONTROL variable.
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
-!     Development branch for expanding the outputs of abiotic stresses
 
 !     Version history:  
 !       4.6.0.30 chp 02/21/2014 CSCER, CSCRP, CSCAS updates
@@ -402,6 +401,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
         STDPATH = 'C:\DSSAT46\' 
+D       STDPATH = 'D:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
