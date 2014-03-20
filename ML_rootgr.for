@@ -126,7 +126,10 @@ C
          RLDF(L) = AMIN1(SWDF,RNFAC)*SHF(L)*DLAYR (L)
       END DO
 
+!     CHP 3/19/2014
+!     Also changed L to L1 in the following section
       L1 = L
+      L1 = MAX(1,L)
 C
 C     The following changes were made to simplify the code and make the model
 C     more generic. It also takes into account some newer data provided by
@@ -139,8 +142,8 @@ C
 c** wdb 10/22/03  
           RTEXF = 0.1
           SWEXF = 1.0
-          IF (SAT(L)-SW(L) .LT. PORMIN) THEN
-            SWEXF = (SAT(L) - SW(L)) / PORMIN
+          IF (SAT(L1)-SW(L1) .LT. PORMIN) THEN
+            SWEXF = (SAT(L1) - SW(L1)) / PORMIN
             SWEXF = MIN(SWEXF, 1.0)
           ENDIF
 
@@ -148,9 +151,9 @@ c** wdb 10/22/03
 
 c** wdb 10/22/03
       IF (CUMDTT .LT. 275.0) THEN                ! JTR 6/17/94
-         RTDEP = RTDEP + DTT*0.1*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
+         RTDEP = RTDEP + DTT*0.1*SQRT(SHF(L1)*AMIN1(SWFAC*2.0,SWDF))
        ELSE
-         RTDEP = RTDEP + DTT*0.2*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
+         RTDEP = RTDEP + DTT*0.2*SQRT(SHF(L1)*AMIN1(SWFAC*2.0,SWDF))
       ENDIF
 
       RTDEP    = AMIN1 (RTDEP,DEPMAX)                            
@@ -160,6 +163,7 @@ c** wdb 10/22/03
       DO  L = 1, L1
          TRLDF = TRLDF + RLDF(L)
       END DO
+
       IF (TRLDF .GE. RLNEW*0.00001 .AND. TRLDF .GT. 0.0) THEN
          RNLF = RLNEW/TRLDF
          DO L = 1, L1
