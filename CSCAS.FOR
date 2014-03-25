@@ -1,6 +1,6 @@
 !-----------------------------------------------------------------------
 !  CROPSIM CASSAVA GROWTH AND DEVELOPMENT MODULE V2014-1  
-!  Last edit 02/18/2014 GH
+!  Last edit 20/02/2014 LAH (After GH edits 180214)
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
@@ -453,7 +453,6 @@
       INTEGER       HYEARL        ! Last year for harvest          #
       INTEGER       HYRDOY(HANUMX)! Dates of harvest operations    #
       INTEGER       I             ! Loop counter                   #
-C-GH  REAL          ICWT          ! Initial water table depth      cm
       REAL          ICWD          ! Initial water table depth      cm
       INTEGER       IDETGNUM      ! Number of times into IDETG     #
       REAL          IRRAMT        ! Irrigation amount for today    mm
@@ -1768,7 +1767,7 @@ C-GH  REAL          ICWT          ! Initial water table depth      cm
              WRITE (FNUMPREM,'(A26)') '$PLANT_RESPONSES(MEASURED)'
              CLOSE(FNUMPREM)
 
-            ! ERROR FILES
+             ! ERROR FILES
              INQUIRE (FILE = FNAMEERA,EXIST = FFLAG)
              OPEN (UNIT = FNUMERA,FILE = FNAMEERA,STATUS = 'UNKNOWN')
              WRITE (FNUMERA,'(A27)') '$ERRORS   As % of measured '
@@ -2412,8 +2411,7 @@ C-GH  REAL          ICWT          ! Initial water table depth      cm
         CALL XREADRA(FILEIO,TN,RN,SN,ON,CN,'FAMN','200',anfer)
 
         ! Water table depth
-C-GH    CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'ICWT',icwt)
-        CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'ICWD',ICWD)
+        CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'ICWD',icwd)
 
         ! Disease information
         LENDIS = TVILENT(ISWDIS)
@@ -3492,7 +3490,6 @@ C-GH    CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'ICWT',icwt)
         ENDIF
 
         ! Water table depth
-C-GH    WTDEP = ICWT
         WTDEP = ICWD
 
         ! Initial shoot and root placement
