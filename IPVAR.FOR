@@ -179,9 +179,15 @@ C-GH Remove cassava
 !DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0   0.1   0.5     0     0     0
 
           READ (C360,810,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, PHINT, 
-     &      P1, P2, P3, P4, P5, P6, P7, 
-     &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
+     &      P1, P2, P3, P4, P5, P6, P7, P8, VREQ, VBASE, VEFF,
+     &      PPS1, PPS2, PHINT, LA1S, LAFV, LAFR, SHWTS, GNOWT, GWTS,
+     &      PLAINTXT                
+     
+C-GH Tony update February, 2014
+!     &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, PHINT, 
+!     &      P1, P2, P3, P4, P5, P6, P7, 
+!     &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
+
 
 C-GH  Add cassava model
 !     CASSAVA: cassava **
@@ -191,7 +197,7 @@ C-GH  Add cassava model
 C-GH &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR, PLAINTXT
-
+        
 !     Ceres-wheat: wheat, barley **
       CASE ('CSCER')
 !       READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
