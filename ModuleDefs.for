@@ -40,8 +40,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
-!     CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
+!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
+      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
 
 !=======================================================================
 !     Compiler directives used to set library for system calls
@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 30
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-forage  '
 !     Development branch for expanding the outputs of abiotic stresses
 
 !     Version history:  
@@ -149,7 +149,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CHARACTER(LEN=1)  SLASH  
       CHARACTER(LEN=3)  ModelVerTxt
       CHARACTER(LEN=12) DSSATPRO 
-      CHARACTER(LEN=11) STDPATH 
+      CHARACTER(LEN=30) STDPATH 
       CHARACTER(LEN=6)  LIBRARY    !library required for system calls
 
       CHARACTER*3 MonthTxt(12)
@@ -407,7 +407,7 @@ C-GH    Set to DSSAT46
 !       Linux, Unix
         SLASH = '/' 
         DSSATPRO = 'DSSATPRO.L46'
-        STDPATH = '../DSSAT46/'
+        STDPATH = '/home/phillip/DSSAT46/'
       END SELECT
 
       END SUBROUTINE SETOP
