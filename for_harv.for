@@ -1,0 +1,154 @@
+      SUBROUTINE FORAGEHARVEST(CONTROL,YRDOY,WTLF,STMWT,
+     &                        WLDOTN,CRUSLF,NRUSLF,WSDOTN,CRUSST,NRUSST,
+     &                        CADLF,NADLF,CADST,NADST,
+     &                        SLDOT,WLIDOT,WLFDOT,SSDOT,WSIDOT,WSFDOT,
+     &                        FHLEAF,FHSTEM,FHVSTG)
+
+      USE MODULEDEFS
+
+      IMPLICIT NONE
+      SAVE
+
+      INTEGER MOWLUN,ISECT
+      INTEGER TRNO,TRTNO
+      INTEGER DATE,YRDOY
+      INTEGER SEASON
+      INTEGER LUNIO
+      INTEGER LNUM,FOUND
+
+      REAL WTLF,STMWT
+      REAL WLDOTN,CRUSLF,NRUSLF
+      REAL WSDOTN,CRUSST,NRUSST
+      REAL CADLF,LFCADDM,NADLF,LFNADDM
+      REAL CADST,STCADDM,NADST,STNADDM
+      REAL SLDOT,WLIDOT,WLFDOT
+      REAL SSDOT,WSIDOT,WSFDOT
+      REAL MOW,RSPLF,MVS
+      REAL FHLEAF,FHSTEM,FHVSTG
+
+      CHARACTER*6  SECTION,ERRKEY
+      CHARACTER*12 MOWFILE
+      CHARACTER*30 FILEIO
+      CHARACTER*80 MOW80
+      
+      TYPE(CONTROLTYPE) CONTROL
+
+      LUNIO  = CONTROL % LUNIO
+      FILEIO = CONTROL % FILEIO
+
+      OPEN (FILE=FILEIO,UNIT=LUNIO)
+
+      ERRKEY = 'FRHARV'
+      SECTION = '*TREAT'
+      CALL FIND(LUNIO, SECTION, LNUM, FOUND)
+      IF (FOUND .EQ. 0) THEN
+        CALL ERROR(ERRKEY, 1, FILEIO, LNUM)
+      ELSE
+        READ(LUNIO, '(I3)') TRTNO
+      ENDIF
+      OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD')
+
+      REWIND(LUNIO)
+
+      READ(LUNIO,'(///,15X,A12)') MOWFILE
+      MOWFILE(10:12)='MOW'
+
+      CLOSE (LUNIO)
+
+      MOWLUN=999
+      OPEN (UNIT=MOWLUN,FILE=MOWFILE,STATUS='OLD')
+      REWIND(MOWLUN)
+      DATE=0
+      ISECT=1
+      TRNO=0
+
+      FHLEAF=0
+      FHSTEM=0
+      FHVSTG=0
+
+
+      DO WHILE (DATE.NE.YRDOY.OR.TRNO.NE.TRTNO)
+        READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
+
+        IF (MOW80(1:1).NE."@"
+     &     .AND.MOW80(1:1).NE."!"
+     &     .AND.MOW80(1:20).NE."                    "
+     &     .AND.ISECT.EQ.0)THEN
+
+          READ (MOW80,'(2I6,3F6.0)',IOSTAT=ISECT)TRNO,DATE,MOW,RSPLF,MVS
+
+          CALL Y2K_DOY(DATE)
+
+          IF (DATE.EQ.YRDOY.AND.TRNO.EQ.TRTNO)THEN
+           IF (MOW.GE.0) THEN
+              FHLEAF=WTLF-(MOW/10)*RSPLF/100+WLDOTN-CRUSLF-NRUSLF/0.16
+              FHLEAF=MAX(FHLEAF,0.0)
+            IF (FHLEAF.GT.0)THEN
+             IF (WLIDOT+WLFDOT+SLDOT.GT.FHLEAF)THEN
+               IF(WLIDOT+WLFDOT+SLDOT.GT.0)THEN
+                WLIDOT=(WLIDOT+WLFDOT+SLDOT-FHLEAF)*
+     &                    WLIDOT/(WLIDOT+WLFDOT+SLDOT)
+                WLFDOT=(WLIDOT+WLFDOT+SLDOT-FHLEAF)*
+     &                    WLFDOT/(WLIDOT+WLFDOT+SLDOT)
+                SLDOT=(SLDOT+WLFDOT+SLDOT-FHLEAF)*
+     &                   SLDOT/(WLIDOT+WLFDOT+SLDOT)
+!             LFCADDM = CADLF * (MIN(1.0,(WLIDOT+WLFDOT)/(WTLF - SLDOT)))
+!             LFNADDM = NADLF * (MIN(1.0,(WLIDOT+WLFDOT)/(WTLF - SLDOT)))
+!              FHLEAF = FHLEAF - LFCADDM - LFNADDM/0.16
+               ENDIF
+             ELSE
+              WLIDOT=0
+              WLFDOT=0
+              SLDOT=0
+             ENDIF
+            ENDIF
+
+            FHSTEM=STMWT-(MOW/10)*(1.0-RSPLF/100)+WSDOTN
+     &             -CRUSST-NRUSST/0.16
+            FHSTEM=MAX(FHSTEM,0.0)
+            IF (FHSTEM.GT.0)THEN
+             IF (WSIDOT+WSFDOT+SSDOT.GT.FHSTEM)THEN
+               IF (WSIDOT+WSFDOT+SSDOT.GT.0)THEN
+                 WSIDOT=(WSIDOT+WSFDOT+SSDOT-FHSTEM)*
+     &                    WSIDOT/(WSIDOT+WSFDOT+SSDOT)
+                 WSFDOT=(WSIDOT+WSFDOT+SSDOT-FHSTEM)*
+     &                    WSFDOT/(WSIDOT+WSFDOT+SSDOT)
+                 SSDOT=(WSIDOT+WSFDOT+SSDOT-FHSTEM)*
+     &                   SSDOT/(WSIDOT+WSFDOT+SSDOT)
+!            STCADDM = CADST * (MIN(1.0,(WSIDOT+WSFDOT)/(STMWT - SSDOT)))
+!            STNADDM = NADST * (MIN(1.0,(WSIDOT+WSFDOT)/(STMWT - SSDOT)))
+!            FHSTEM = FHSTEM - STCADDM - STNADDM/0.16
+               ENDIF
+             ELSE
+              WSIDOT=0
+              WSFDOT=0
+              SSDOT=0
+             ENDIF
+            ENDIF
+
+              FHVSTG=MVS
+              FHVSTG=MAX(FHVSTG,0.0)
+            ENDIF
+
+            CLOSE(MOWLUN)
+!            INQUIRE(FHOUT,EXIST=EXISTS)
+!            IF (EXISTS) THEN
+!              OPEN(FILE=FHOUT,UNIT=FHLUN,POSITION=APPEND)
+!            ELSE
+!              OPEN(FILE=FHOUT,UNIT=FHLUN,STATUS=NEW)
+!            WRITE(FHLUN,'(3I6)')
+!     &           '  FHLF  FHST FHTOT'
+!            ENDIF
+!            WRITE(FHLUN,'(3I6)')
+!     &           INT(FHLEAF*10),INT(FHSTEM*10),INT(FHTOT*10)
+            RETURN
+          ENDIF
+        ENDIF
+
+        IF (ISECT.NE.0) THEN
+         CLOSE(MOWLUN)
+         RETURN
+        ENDIF
+      ENDDO
+      
+      END !SUBROUTINE FORAGEHARVEST
