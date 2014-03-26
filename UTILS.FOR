@@ -829,7 +829,7 @@ C=======================================================================
 !cDEC$ IF (COMPILER == 0) 
 !        USE DFPORT
 !cDEC$ ELSE
-        USE IFPORT
+C        USE IFPORT
 !cDEC$ ENDIF
       IMPLICIT NONE
 
@@ -913,7 +913,7 @@ C=======================================================================
 !!!!cDEC$ IF (COMPILER == 0) 
 !        USE DFPORT
 !!!!cDEC$ ELSE
-        USE IFPORT
+C        USE IFPORT
 !!!!cDEC$ ENDIF
       IMPLICIT NONE
 

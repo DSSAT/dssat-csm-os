@@ -872,7 +872,7 @@
       ! For coarse-textured soil, field capacity is at 10kPa, log(33.) should be replaced by log(10.)
       
       !calculations for non-coarse soils
-      IF (coarse == .FALSE.) THEN
+      IF (.not.coarse) THEN
           Bparam = (log(1500.) - log(33.)) / (log(DUL) - log(LL))
           Aparam = exp( log(33.) + ( Bparam * log(DUL) ) )
           !     Write(444,*) "N",",", TEXTURE ,",",SAT ,",",LL,",",DUL,",",wcr,
@@ -1004,7 +1004,7 @@
 	END SELECT  
       wcr = wcr_wcpwp * wcpwp
       ! temp = ln(h_pwp/h_fc) based on Eq. 2-9 in thesis of LESLIE C. GOWDISH 
-      if (COARSE == .TRUE.) then
+      if (COARSE) then
         temp = 5.0106 ! ln(1500/10)
       else
         temp = 3.8166 ! ln(1500/33)
