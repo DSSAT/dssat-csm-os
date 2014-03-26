@@ -281,7 +281,7 @@ else
 endif
 
 currentime = time()
-showtime = ctime(currentime)        
+showtime = ctime(currentime:currentime)
 
 write(555, '("Results of SALUS-Simple Plant Growth Model Simulation")')
 write(555, '(/a)') showtime
