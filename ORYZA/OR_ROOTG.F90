@@ -548,7 +548,7 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 			   tmpV2 =0.0; TMPV3 =0.0
 			   IF(SDEP(I).GE.MAXDEP) Then
 			   		TMPV3 = MAXDEP
-			   		DO J=INT(MAXDEP)+1, SDEP(I)
+			   		DO J=INT(MAXDEP)+1, INT(SDEP(I))
 			   			TMPF2(J) = 0.0
 			   		ENDDO
 			   Else
