@@ -281,7 +281,7 @@ C-----------------------------------------------------------------------
      &      LA1S, LAFV, LAFR, SHWTS, GNOWT, GWTS
      
   164     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &      10F6.1, F6.2, 3F6.1, F6.1, 2F6.2, F6.3, 2F6.1, A)               
+     &      10F6.1, F6.2, 3F6.1, F6.1, 3F6.2, 2F6.1, A)               
         ENDIF
       CASE ('CSCAS')
 !       CSCAS Cassava

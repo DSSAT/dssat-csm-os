@@ -1,6 +1,6 @@
 !-----------------------------------------------------------------------
 !  CROPSIM CASSAVA GROWTH AND DEVELOPMENT MODULE V2014-1  
-!  Last edit 20/02/2014 LAH (After GH edits 180214)
+!  Last edit 26/03/2014 GH (After LAH 260214;notes from PM,MF 260414)
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
@@ -302,9 +302,9 @@
       INTEGER       EVHEADNM      ! Number of headings in ev file  #
       INTEGER       EVHEADNMMAX   ! Maximum no headings in ev file #
       INTEGER       EYEARDOY      ! Emergence Year+DOY             #
-      REAL          FAC(20)       ! Factor ((mg/Mg)/(kg/ha))       #
+      REAL          FAC(20)       ! Factor ((g/Mg)/(kg/ha))        #
       INTEGER       FAPPNUM       ! Fertilization application number
-      INTEGER       FDAY(200)     ! Dates of fertilizer appn (YrDoy)
+      INTEGER       FDAY(200)     ! Dates of fertilizer appn       YrDoy
       REAL          FERNIT        ! Fertilizer N applied           kg/ha
       REAL          FERNITPREV    ! Fertilizer N applied to ystday kg/ha
       INTEGER       FILELEN       ! Length of file name            #
@@ -638,16 +638,16 @@
       REAL          NFSU          ! N factor,senescence,upper lim  #
       REAL          NH4CF         ! NH4 uptake concentration fac   #   
       REAL          NH4FN         ! NH4 conc factor,NH4 uptake 0-1 #
-      REAL          NH4LEFT(20)   ! NH4 concentration in soil      mg/Mg
-      REAL          NH4MN         ! NH4 conc minimum for uptake    mg/Mg
+      REAL          NH4LEFT(20)   ! NH4 concentration in soil      g/Mg
+      REAL          NH4MN         ! NH4 conc minimum for uptake    g/Mg
       REAL          NLABPC        ! N labile fraction,standard     %
       INTEGER       NLAYR         ! Number of layers in soil       #
       INTEGER       NLAYRROOT     ! Number of layers with roots    #
       REAL          NLLG          ! N limit,leaf growth            #
       REAL          NO3CF         ! NO3 uptake concentration fac   #    
       REAL          NO3FN         ! NO3 conc factor,NO3 uptake 0-1 #
-      REAL          NO3LEFT(20)   ! NO3 concentration in soil      mg/Mg
-      REAL          NO3MN         ! NO3 conc minimum for uptake    mg/Mg
+      REAL          NO3LEFT(20)   ! NO3 concentration in soil      g/Mg
+      REAL          NO3MN         ! NO3 conc minimum for uptake    g/Mg
       INTEGER       NOUTPG        ! Number for growth output file  #
       INTEGER       NOUTPG2       ! Number for growth output file2 #
       INTEGER       NOUTPGF       ! Number for growth factors file #
@@ -1355,6 +1355,7 @@
       CHARACTER (LEN=1)   ISWNIT        ! Soil nitrogen balance switch
       CHARACTER (LEN=1)   ISWNITEARLY   ! Control flag,N stress early
       CHARACTER (LEN=1)   ISWWAT        ! Soil water balance switch Y/N
+      CHARACTER (LEN=1)   ISWWATCROP    ! Control flag,H20 stress,crop 
       CHARACTER (LEN=1)   ISWWATEARLY   ! Control flag,H20 stress early
       CHARACTER (LEN=6)   LAIC          ! Leaf area index
       CHARACTER (LEN=6)   LAIPRODC      ! Leaf area index produced
@@ -1471,6 +1472,8 @@
           MODNAME(1:8) = 'CSCAS046'
           VERSION = 010114
           GENFLCHK(1:15) = 'CSCAS046.010114'
+          ! Control flags/switches
+          ISWWATCROP = 'Y'    ! E=no water stress effect on crop growth
 
 !-----------------------------------------------------------------------
 !         Set parameters (Most should be placed in input files!)
@@ -3161,14 +3164,14 @@
           DO L = 1,MSTG-1
             TVR1 = TVR1 + AMAX1(0.0,PDL(L))
           ENDDO  
-          ! Now calculate tier durations in DU terms
+          ! Now calculate tier durations in Thermal Units
           TVR2 = 0.0
           LNUMTMP = 0.0
           DSTAGE = 0.0
           DO L = 1,1000
             TVR2 = TVR2 + STDAY
-            PHINT = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))
-            LNUMTMP = LNUMTMP + STDAY/PHINT
+            TVR3 = 1.0/((1.0/PHINTS)*(1.-AMIN1(.8,PHINTFAC*DSTAGE)))
+            LNUMTMP = LNUMTMP + STDAY/TVR3
             DSTAGE = AMIN1(1.0,LNUM/TVR1)
             IF(LNUMTMP.GE.PDL(1).AND.
      &           PSTART(2).LE.0.0) PSTART(2) = TVR2
@@ -3192,7 +3195,6 @@
           PDL(MSTG) = 200.0
           PD(MSTG) = PDL(MSTG)*PHINTS
           DSTAGE = 0.0
-          PHINT = PHINTS
         ELSE 
           ! If tier durations input as developmental units
           DO L = 1,8
@@ -3460,7 +3462,7 @@
 !       Set coefficients that dependent on input switch
 !-----------------------------------------------------------------------
 
-        IF (ISWWAT.EQ.'E') THEN
+        IF (ISWWATCROP.EQ.'E') THEN
           ! Plant water status effects on growth turned off
           WFGU = 0.0
           WFPU = 0.0
@@ -3517,14 +3519,14 @@
           WRITE(FNUMWRK,'(A31,A20)')
      &      ' Planting stick length <= 0.0  ',
      &      ' Changed to 25.0 cm '
+          SPRL = 25.0
         ENDIF
-        IF (SPRL.LT.0.0) SPRL = 0.0
         sdepthu = -99.0
         IF (PLME.EQ.'H') THEN
           sdepthu = sdepth
         ELSEIF (PLME.EQ.'I') THEN
           ! Assumes that inclined at 45o
-          sdepthu = AMAX1(0.0,sdepth - 0.5*sprl)
+          sdepthu = AMAX1(0.0,sdepth - 0.707*sprl)
         ELSEIF (PLME.EQ.'V') THEN
           sdepthu = AMAX1(0.0,sdepth - sprl)
         ENDIF
@@ -3887,9 +3889,9 @@
         ! Control switch for OUTPUT file names
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'FNAME',fname)
         IF (FNAME.EQ.'Y') THEN
-          WRITE(FNUMWRK,*)'File names switched from standard. '
+          WRITE(FNUMWRK,*)' File names switched from standard. '
         ELSE  
-          WRITE(FNUMWRK,*)'Standard file names. '
+          WRITE(FNUMWRK,*)' Using standard file names. '
         ENDIF   
         
         ! Output choices
@@ -3972,7 +3974,7 @@
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
         ENDIF
-
+          
         IF (PLYEARDOY.GT.9000000) THEN            ! If before planting
           IF(PLYEARDOYT.GT.0 .AND. PLYEARDOYT.LT.9000000)THEN
             ! Specified planting date
@@ -3981,52 +3983,54 @@
               PLYEAR = YEAR
             ENDIF
           ELSE
-            ! Automatic planting
-            ! Check window for automatic planting,PWDINF<PLYEART<PWDINL
-            IF (YEARDOY.GE.PWDINF.AND.YEARDOY.LE.PWDINL) THEN
-              ! Within planting window.
-              ! Determine if soil temperature and soil moisture ok
-              ! Obtain soil temperature, TSDEP, at 10 cm depth
-              I = 1
-              TSDEP = 0.0
-              XDEP = 0.0
-              DO WHILE (XDEP .LT. 10.0)
-                XDEP = XDEP + DLAYR(I)
-                TSDEP = ST(I)
-                I = I + 1
-              END DO
-              ! Compute average soil moisture as percent, AVGSW
-              I = 1
-              AVGSW = 0.0
-              CUMSW = 0.0
-              XDEP = 0.0
-              DO WHILE (XDEP .LT. SWPLTD)
-                XDEPL = XDEP
-                XDEP = XDEP + DLAYR(I)
-                IF (DLAYR(I) .LE. 0.) THEN
-                  !If soil depth is less than SWPLTD
-                  XDEP = SWPLTD
-                  CYCLE
+            IF (FILEIOT.NE.'DS4') THEN
+              ! Automatic planting
+              ! Check window for automatic planting,PWDINF<PLYEART<PWDINL
+              IF (YEARDOY.GE.PWDINF.AND.YEARDOY.LE.PWDINL) THEN
+                ! Within planting window.
+                ! Determine if soil temperature and soil moisture ok
+                ! Obtain soil temperature, TSDEP, at 10 cm depth
+                I = 1
+                TSDEP = 0.0
+                XDEP = 0.0
+                DO WHILE (XDEP .LT. 10.0)
+                  XDEP = XDEP + DLAYR(I)
+                  TSDEP = ST(I)
+                  I = I + 1
+                END DO
+                ! Compute average soil moisture as percent, AVGSW
+                I = 1
+                AVGSW = 0.0
+                CUMSW = 0.0
+                XDEP = 0.0
+                DO WHILE (XDEP .LT. SWPLTD)
+                  XDEPL = XDEP
+                  XDEP = XDEP + DLAYR(I)
+                  IF (DLAYR(I) .LE. 0.) THEN
+                    !If soil depth is less than SWPLTD
+                    XDEP = SWPLTD
+                    CYCLE
+                  ENDIF
+                  DTRY = MIN(DLAYR(I),SWPLTD - XDEPL)
+                  CUMSW = CUMSW + DTRY *
+     &             (MAX(SW(I) - LL(I),0.0)) / (DUL(I) - LL(I))
+                  I = I + 1
+                END DO
+                AVGSW = (CUMSW / SWPLTD) * 100.0
+                IF (TSDEP .GE. PTTN .AND. TSDEP .LE. PTX) THEN
+                  IF (AVGSW .GE. SWPLTL .AND. AVGSW .LE. SWPLTH) THEN
+                    PLYEARDOY = YEARDOY
+                    PLYEAR = YEAR
+                  ENDIF
+                 ENDIF
+              ELSE
+                IF (YEARDOY.GT.PWDINL) THEN
+                  CFLFAIL = 'Y'
+                  STGYEARDOY(12) = YEARDOY  ! Failure
+                  STGYEARDOY(11) = YEARDOY  ! End Crop
+                  Message(1) = 'Automatic planting failure '
+                  CALL WARNING(1,'CSCAS',MESSAGE)
                 ENDIF
-                DTRY = MIN(DLAYR(I),SWPLTD - XDEPL)
-                CUMSW = CUMSW + DTRY *
-     &           (MAX(SW(I) - LL(I),0.0)) / (DUL(I) - LL(I))
-                I = I + 1
-              END DO
-              AVGSW = (CUMSW / SWPLTD) * 100.0
-              IF (TSDEP .GE. PTTN .AND. TSDEP .LE. PTX) THEN
-                IF (AVGSW .GE. SWPLTL .AND. AVGSW .LE. SWPLTH) THEN
-                  PLYEARDOY = YEARDOY
-                  PLYEAR = YEAR
-                ENDIF
-              ENDIF
-            ELSE
-              IF (YEARDOY.GT.PWDINL) THEN
-                CFLFAIL = 'Y'
-                STGYEARDOY(12) = YEARDOY  ! Failure
-                STGYEARDOY(11) = YEARDOY  ! End Crop
-                Message(1) = 'Automatic planting failure '
-                CALL WARNING(1,'CSCAS',MESSAGE)
               ENDIF
             ENDIF
           ENDIF
@@ -4160,7 +4164,8 @@
 !-----------------------------------------------------------------------
 
           Tfd = TFAC4(trdv1,tmean,TT)
-          IF (brstage+1.LT.10)
+C-GH
+          IF (brstage+1.LT.10.0)
      &     Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
           IF (trgem(3).GT.0.0) THEN
             Tfgem = TFAC4(trgem,tmean,TTGEM)
@@ -4201,6 +4206,7 @@
      &         WFGE = AMAX1(0.0,AMIN1(1.0,(SWPSD/WFGEM)))
             ENDIF
           ENDIF
+          IF (ISWWATCROP.EQ.'E') WFGE = 1.0
 
 !=======================================================================
           IF (GEUCUM+TTGEM*WFGE.GE.PEGD) THEN  ! If germinated by endday
@@ -4281,7 +4287,8 @@
             DUPHASE = 0.0
             DUPNEXT = 0.0
             ! To avoid exceeding the array sizes
-            IF (BRSTAGETMP.LT.10) THEN
+C-GH
+            IF (BRSTAGETMP.LT.10.0) THEN
               DUNEED = PSTART(INT(BRSTAGETMP+1))-CUMDU
               IF (DUNEED.GE.TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN
                 DUPHASE = TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)
@@ -4768,12 +4775,20 @@
             ! First calculate new BRSTAGE as temporary variable
             ! (LAH Check whether can move brstage calc up here! 
             ! (If do this, brstage in brfx below must be reduced by 1))
-            TVR1 = FLOAT(int(brstage))
+C-GH
+            IF (brstage .GT. 0.0) THEN
+              TVR1 = FLOAT(int(brstage))
      &           + (LNUM-LNUMTOSTG(int(brstage)))/PDL(int(brstage))
+            ELSE
+              TVR1 = FLOAT(int(brstage))
+            ENDIF
+             
             IF (INT(TVR1).GT.INT(BRSTAGEPREV)) THEN
+C-GH brstage is real. You cannot compare a real with an integer
               IF (BRSTAGE.EQ.0) THEN
                 BRNUMST = 1 
-              ELSEIF (BRSTAGE.GT.0) THEN
+C-GH
+              ELSEIF (BRSTAGE.GT.0.0) THEN
                 BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))
               ENDIF
             ENDIF
@@ -5997,8 +6012,9 @@
 !         Record stage dates and states
 !-----------------------------------------------------------------------
 
-          IF (INT(BRSTAGE).GT.10.OR.
-     &      INT(BRSTAGE).LT.0.AND.GESTAGE.GT.0.5) THEN
+C-GH
+          IF (INT(BRSTAGE).GT.10.0 .OR.
+     &      INT(BRSTAGE).LT.0 .AND. GESTAGE.GT.0.5) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '
             WRITE(fnumerr,*)
