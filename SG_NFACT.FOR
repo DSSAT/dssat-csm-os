@@ -9,6 +9,7 @@ C  02/08/1993 PWW Header revision and minor changes
 C  03/29/2001 WDB Converted to modular form                      
 C  12/01/2001 WDB Further modular conversion  
 C  04/31/2007 GH  Added dynamic components
+C  03/27/2014 GH  Corrected cumulative N Stress factors
 
 C-----------------------------------------------------------------------
 C  INPUT  : None
@@ -30,7 +31,7 @@ C=======================================================================
      & AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
      & NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
 
-      USE ModuleDefs
+      USE ModuleDefs 
       IMPLICIT  NONE
       SAVE
 
@@ -101,8 +102,9 @@ C     ----------------------------------------------------------------
          NSTRES = AMIN1 (NSTRES,1.0)
          AGEFAC = AMIN1 (AGEFAC,1.0)
          NDEF3  = AMIN1 (NDEF3, 1.0)
-         CNSD1  = CNSD1 + 1.0 - NSTRES
-         CNSD2  = CNSD2 + 1.0 - AGEFAC
+C-GH Stress factors also accumulate in SG_Phenol         
+C-GH     CNSD1  = CNSD1 + 1.0 - NSTRES
+C-GH     CNSD2  = CNSD2 + 1.0 - AGEFAC
 
       ENDIF
 
