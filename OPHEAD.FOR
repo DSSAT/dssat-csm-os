@@ -502,6 +502,7 @@ C  03/11/2005 GH  Remove ANS, RNMODE and NYRS
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
 C  08/09/2012 GH  Updated for cassava
+!  03/25/2014 KAD Updated for AgMaize
 C-----------------------------------------------------------------------
 C  INPUT  : IDETO,NOUTDO,NYRS,LL,DUL,SAT,DLAYR,SWINIT,DS,NLAYR,ESW
 C           SHF,BD,PH,INO3,INH4,OC,TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4
@@ -738,6 +739,14 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
       CASE ('MZIXM')
              WRITE (HEADER(I),915) P1,P2,P5,AX; I=I+1
              WRITE (HEADER(I),916) G2,G3,PHINT,LX; I=I+1
+             
+!-----------------------------------------------------------------------
+!     AgMaize
+      CASE ('MZAGM')
+             READ(PLAINTXT, 2010) LFNUM, RLAMX, TAINT, PHOTP, LFTOP,
+     &                            LALFX, AMPLI, ASYMP
+             WRITE(HEADER(I), 2011) LFNUM,RLAMX,TAINT,PHOTP,LFTOP; I=I+1
+             WRITE(HEADER(I), 2012) LALFX, AMPLI, ASYMP; I=I+1         
 
 !-----------------------------------------------------------------------
 !     Sorghum
@@ -933,6 +942,11 @@ C-----------------------------------------------------------------------
      &         '  LAWS   :',F6.0,'  LFLI   :',F6.0)
 
  1010 FORMAT (1X,'PBASE  :',F6.2,'  PSAT   :',F6.2)
+ 
+ 2010 FORMAT(5(1X,F5.2),1X,F5.3, 1X,F5.0, 1X,F5.1)
+ 2011 FORMAT (' LFNUM : ',F5.2,'  RLAMX : ',F5.2, '  TAINT : ',F5.2,
+     &        '  PHOTP : ',F5.2, '  LFTOP : ',F5.2)
+ 2012 FORMAT (' LALFX : ',F5.3,'  AMPLI : ',F5.0, '  ASYMP : ',F5.1)
 
       END SUBROUTINE OPSOIL
 C=======================================================================

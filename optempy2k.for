@@ -34,7 +34,8 @@ C  05/19/2011 GH  Updated for sorghum
 C  08/09/2012 GH  Updated cassava model
 !  09/01/2011 CHP Added van Genuchten parameters for ORYZA
 C  11/14/2012 GH  Add READWRITE for temp file
-!  04/16/2013 CHP/KD Added SALUS model
+!  04/16/2013 CHP/KAD Added SALUS model
+!  03/25/2014 KAD Added AgMaize model
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO
@@ -617,6 +618,12 @@ C-----------------------------------------------------------------------
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
      &                    P1,P2,P5,G2,G3,PHINT
+     
+!       AgMaize KAD 03/25/2014
+        CASE('MZAGM')
+		  WRITE (LUNIO,'(A6,1X,A16,1X,A6,A)',IOSTAT=ERRNUM) VARNO, VRNAME, 
+     &                                    ECONO, trim(PLAINTXT)
+     
 !       Ixim maize
         CASE('MZIXM')
             WRITE (LUNIO,1801,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,

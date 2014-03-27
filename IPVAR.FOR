@@ -21,7 +21,8 @@ C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C  05/19/2011 GH  Updated for sorghum
 C  02/25/2012 JZW add the PHINT data reading from *.cul for RICER
 C  08/09/2012 GH  Updated for cassava
-!  04/16/2013 CHP/KD Added SALUS model
+!  04/16/2013 CHP/KAD Added SALUS model
+!  03/25/2014 KAD Added AgMaize model
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -147,7 +148,7 @@ C
 !     variety name and ecotype name
 
 !     Generic SALUS simple crop models
-!     09/21/2009 CHP/KD
+!     09/21/2009 CHP/KAD
       CASE ('SALUS')
         READ (C360,'(A6,1X,A16,13X,A)',IOSTAT=ERRNUM) VARTY, VRNAME, 
      &          PLAINTXT
@@ -204,6 +205,11 @@ C-GH &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
       CASE ('MZCER','SWCER')
         READ (C360,'(A6,1X,A16,7X,A6,6F6.0)',IOSTAT=ERRNUM) 
      &            VARTY,VRNAME,ECONO,P1,P2,P5,G2,G3,PHINT
+     
+!     AgMaize, KAD 03/25/2014
+      CASE ('MZAGM')
+        READ (C360,'(A6,1X,A16,7X,A6,A)',IOSTAT=ERRNUM) 
+     &               VARTY,VRNAME,ECONO, PLAINTXT 
 
 !     Ixim maize **
       CASE ('MZIXM')
