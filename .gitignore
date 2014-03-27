@@ -35,3 +35,8 @@ _ReSharper*/
 resource
 resource.h
 *.wjf
+*.sln
+*.vfproj
+*.u2d
+*.OUT
+*.LST
