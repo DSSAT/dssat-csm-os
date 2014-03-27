@@ -26,7 +26,7 @@ C========================================================================
      &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,      !Output
      &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,!Output
      &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,       !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,!Output      
+     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,!OutpuT
      &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,!Output      
      &    STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,       !Output
      &  TSNMOB, VNMOBR,                              !Output

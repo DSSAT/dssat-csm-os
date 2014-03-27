@@ -107,7 +107,7 @@ C-----------------------------------------------------------------------
       REAL XVGROW(6), YVGROW(6), YVREF(6)
       REAL XSLATM(10), YSLATM(10), XTRFAC(10), YTRFAC(10),
      &    XXFTEM(10), YXFTEM(10)
-      REAL XLEAF(25), YLEAF(25), YSTEM(25)
+      REAL XLEAF(8), YLEAF(8), YSTEM(8)
       REAL TGRO(TS)
       REAL SDDES(NCOHORTS), SDNO(NCOHORTS), SHELN(NCOHORTS) 
       REAL WTSD(NCOHORTS), WTSHE(NCOHORTS)
@@ -129,12 +129,12 @@ C Variables for adding storage organ and dormancy functions
      &    FRSTRF, FRSTRM, FRSTRMX, NMOBSR, NMOBSRN, NMOBSRX, 
      &    NVSTSR, PCNSR, PPMFAC, PPTFAC, PROSRF, PROSRI, 
      &    STRWT, TFRLF, TFRSTM, TFRSTR, TFRRT, WCRSR, WNRSR, 
-     &    XLAI, XSTR, YSTOR(25)
+     &    XLAI, XSTR, YSTOR(8)
 
       CHARACTER*3 TYPLMOB, TYPNMOB 
       REAL LRMOB(4), NRMOB(4)
       REAL PHZACC(20)
-      REAL XLFEST(25), YLFEST(25), YSREST(25), YSTEST(25)
+      REAL XLFEST(8), YLFEST(8), YSREST(8), YSTEST(8)
 
 !-----------------------------------------------------------------------
 C Variables for apportioning NDMVEG and NDMOLD
@@ -848,11 +848,11 @@ C=======================================================================
         REAL XVGROW(6), YVREF(6)
         REAL XSLATM(10), YSLATM(10), XTRFAC(10), YTRFAC(10),
      &    XXFTEM(10), YXFTEM(10)
-        REAL XLEAF(25), YLEAF(25), YSTEM(25)
+        REAL XLEAF(8), YLEAF(8), YSTEM(8)
 
       REAL  FRSTRF, FRSTRMX, NMOBSRN, NMOBSRX, PROSRF, PROSRI,                  
      &  SDAGPL, CLAIT
-      REAL YSTOR(25)                                                      
+      REAL YSTOR(8)                                                      
       REAL KCOLD
       REAL PROLFR, PROSTR, PRORTR, PROSRR
 
@@ -860,7 +860,7 @@ C=======================================================================
 
       REAL LRMOB(4)
       REAL NRMOB(4), VEGNPCT, VEGNPMX, VNMOBR, VNSTAT
-      REAL XLFEST(25), YLFEST(25), YSTEST(25), YSREST(25)
+      REAL XLFEST(8), YLFEST(8), YSTEST(8), YSREST(8)
 
 !-----------------------------------------------------------------------
       CALL GETLUN('FILEIO', LUNIO)

@@ -978,7 +978,7 @@ C        USE IFPORT
       Type (OutputType) FileData
       CHARACTER*16, DIMENSION(MaxFiles) :: FileName
       CHARACTER*78 MSG(2)
-      INTEGER ERR, I, LUN, LUNTMP, SYS  !, SYSTEM
+      INTEGER ERR, I, LUN, LUNTMP, SYS, SYSTEM
       LOGICAL FEXIST
 
 !     Read in list of possible output file names
@@ -1060,7 +1060,7 @@ C        USE IFPORT
       IMPLICIT NONE
 
       SAVE
-      INTEGER i, COUNT, LUNLST, LUNTMP, SYS !, SYSTEM
+      INTEGER i, COUNT, LUNLST, LUNTMP, SYS, SYSTEM
       INTEGER FNUM
 
       CHARACTER*8  FNAME

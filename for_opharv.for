@@ -62,7 +62,7 @@ C-----------------------------------------------------------------------
 
 !     Arrays which contain predicted and observed data for printing
 !       in OVERVIEW.OUT and EVALUATE.OUT files (FOR_OPVIEW subroutine)
-      CHARACTER*4 OLAB(40), OLAP(40)  !OLAP modified for dap
+      CHARACTER*6 OLAB(40), OLAP(40)  !OLAP modified for dap
       CHARACTER*6  X(40)
       CHARACTER*8 PREDICTED(40), OBSERVED(40)
       CHARACTER*35 DESCRIP(40)
@@ -95,9 +95,9 @@ C-----------------------------------------------------------------------
 !     Define headings for observed data file (FILEA)
       DATA OLAB / !Pred.          Obs.   Definition
         !------------   -----  -----------
-     & 'ADAT', ! 1 DNR1           DFLR   Anthesis date
-     & 'PD1T', ! 2 DNR3           DFPD   First Pod        
-     & 'PDFT', ! 3 DNR5           DFSD   First Seed       
+     & 'ADAT  ', ! 1 DNR1           DFLR   Anthesis date
+     & 'PD1T  ', ! 2 DNR3           DFPD   First Pod        
+     & 'PDFT  ', ! 3 DNR5           DFSD   First Seed       
      & 'MDAT', ! 4 DNR7           DMAT   Physiological Maturity
      & 'HWAM', ! 5 NINT(SDWT*10)  XGWT   Seed Yield (kg/ha;dry)
      & 'PWAM', ! 6 NINT(PODWT*10) XPDW   Pod Yield (kg/ha;dry) 

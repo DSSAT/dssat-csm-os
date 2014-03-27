@@ -424,7 +424,7 @@ C-----------------------------------------------------------------------
      &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,                  !Output
      &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,      !Output
      &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,                   !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB,SSDOT, SSMDOT,      !Output      
+     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,      !Output      
      &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output      
      &  STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,             !Output
      &  TSNMOB, VNMOBR,                                         !Output
@@ -666,22 +666,22 @@ C-----------------------------------------------------------------------
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
 
      &    PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR, 
-     &    PLIPSR, POASR, PMINSR, ALPHSR, CMOBSRX, CADSRF,NMOBSRX,CLAIT,      
+     &    PLIPSR, POASR, PMINSR, ALPHSR, CMOBSRX, CADSRF,NMOBSRX,CLAIT,
      &    YSTOR, FRSTRF, FRSTRMX, STRSRFL, STRLYR1, SENSR,
      &    FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
      &    FRLF, FRSTM, FRRT)
 
-!     Initialize Overview.out file.
-      CALL FOR_OPHARV(CONTROL, ISWITCH, 
-     &    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
-     &    MDATE, NSTRES, PCLSD, PCNSD, PODNO, PODWT,      !Input
-     &    SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
-     &    TOPWT, TURFAC, VSTAGE, WTNCAN, WTNFX, WTNSD,    !Input
-     &    WTNST, WTNUP, XLAI,                             !Input
-     &    YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
-     &    BWAH, SDWTAH)                                   !Output
+!!     Initialize Overview.out file.
+!      CALL FOR_OPHARV(CONTROL, ISWITCH, 
+!     &    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
+!     &    MDATE, NSTRES, PCLSD, PCNSD, PODNO, PODWT,      !Input
+!     &    SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
+!     &    TOPWT, TURFAC, VSTAGE, WTNCAN, WTNFX, WTNSD,    !Input
+!     &    WTNST, WTNUP, XLAI,                             !Input
+!     &    YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
+!     &    BWAH, SDWTAH)                                   !Output
 
 !     If this is not a sequenced run, don't use any previously calculated
 !       harvest residue.
@@ -898,7 +898,7 @@ C-----------------------------------------------------------------------
      &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,           !Output
      &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,      !Output
      &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,           !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB,SRSNMOB,SSDOT,SSMDOT,!Output      
+     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB,SRSNMOB,SSMDOT,!Output      
      &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output      
      &  STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,         !Output
      &  TSNMOB, VNMOBR,                                     !Output
@@ -1079,21 +1079,21 @@ C-----------------------------------------------------------------------
      &    WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR,
 
      &    PROSRF, PROSRG, PROSRI, PCARSR, PLIGSR, 
-     &    PLIPSR,POASR,PMINSR,ALPHSR,CMOBSRX,CADSRF, NMOBSRX, CLAIT,      
+     &    PLIPSR,POASR,PMINSR,ALPHSR,CMOBSRX,CADSRF, NMOBSRX, CLAIT,
      &    YSTOR, FRSTRF, FRSTRMX, STRSRFL, STRLYR1, SENSR,
      &    FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
      &    FRLF, FRSTM, FRRT)
 
-      CALL FOR_OPHARV (CONTROL, ISWITCH, 
-     &    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
-     &    MDATE, NSTRES, PCLSD, PCNSD, PODNO, PODWT,      !Input
-     &    SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
-     &    TOPWT, TURFAC, VSTAGE, WTNCAN, WTNFX, WTNSD,    !Input
-     &    WTNST, WTNUP, XLAI,                             !Input
-     &    YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
-     &    BWAH, SDWTAH)                                   !Output
+! CALL FOR_OPHARV (CONTROL, ISWITCH, 
+!&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
+!&    MDATE, NSTRES, PCLSD, PCNSD, PODNO, PODWT,      !Input
+!&    SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
+!&    TOPWT, TURFAC, VSTAGE, WTNCAN, WTNFX, WTNSD,    !Input
+!&    WTNST, WTNUP, XLAI,                             !Input
+!&    YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
+!&    BWAH, SDWTAH)                                   !Output
 
 ! Zero the value of HARVRES composite variable here 
 !!!NOTE: At this time, the variable has already been used to 
@@ -1431,7 +1431,7 @@ C-----------------------------------------------------------------------
      &  NMINEP, NMINERT, NMINESR, NMINEST, NMOBR,                  !Output
      &  NMOBSR, PORPT, RLSEN, RTCMINE, RTSCMOB, RTSNMOB,      !Output
      &  SHCMINE, SHNMINE, SLDOT, SLMDOT, SRCMINE,                   !Output
-     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB,SSDOT, SSMDOT,      !Output      
+     &  SRDOT, SRMDOT, SRNDOT, SRSCMOB, SRSNMOB, SSMDOT,      !Output      
      &  SSNDOT, SSDOT, SSRDOT, SSRMDOT, SSRNDOT, STCMINE,      !Output      
      &  STSCMOB, STSNMOB, STLTSEN, STSENWT, TSCMOB,             !Output
      &  TSNMOB, VNMOBR,                                         !Output
@@ -2105,15 +2105,13 @@ C-----------------------------------------------------------------------
      &  RCHDP,
      &  FRLF, FRSTM, FRRT)
 
-        ! Write to Overview.out and summary.out files.
-        CALL FOR_OPHARV (CONTROL, ISWITCH, 
-     &  CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
-     &  MDATE, NSTRES, PCLSD, PCNSD, PODNO, PODWT,      !Input
-     &  SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
-     &  TOPWT, TURFAC, VSTAGE, WTNCAN, WTNFX, WTNSD,    !Input
-     &  WTNST, WTNUP, XLAI,                             !Input
-     &  YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
-     &  BWAH, SDWTAH)                                   !Output
+!     !!   ! Write to Overview.out and summary.out files.
+!     !!   CALL FOR_OPHARV (CONTROL, ISWITCH, 
+!!!    !!&  SDRATE, SDWT, SDWTAM, SEEDNO, STGDOY, STMWT,    !Input
+!     !!&  TOPWT, TURFAC, VSTAGE, WTNCAN, WTNFX, WTNSD,    !Input
+!     !!&  WTNST, WTNUP, XLAI,                             !Input
+!     !!&  YRNR1, YRNR3, YRNR5, YRNR7, YRPLT,              !Input
+!     !!&  BWAH, SDWTAH)                                   !Output
       ENDIF
 
 !       Call PlantNBal only for seasonal output.
