@@ -147,6 +147,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    Kel = 3         !Potassium
 
       CHARACTER(LEN=1)  SLASH  
+      character(len=3)  exe_string
       CHARACTER(LEN=3)  ModelVerTxt
       CHARACTER(LEN=12) DSSATPRO 
       CHARACTER(LEN=30) STDPATH 
@@ -402,12 +403,14 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
         STDPATH = 'C:\DSSAT46\' 
+        exe_string = 'EXE'
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
         SLASH = '/' 
         DSSATPRO = 'DSSATPRO.L46'
         STDPATH = '/home/phillip/DSSAT46/'
+        exe_string = '.so'
       END SELECT
 
       END SUBROUTINE SETOP

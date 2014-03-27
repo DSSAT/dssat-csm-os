@@ -88,6 +88,11 @@ C-----------------------------------------------------------------------
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
       
+      CHARACTER(len=2) PGPATH
+      character(len=8) model
+      REAL CCNEFF, CICAD, CMXSF, CQESF
+      REAL AGEQESL, AGEQESLN, CO2QESL, CO2QESLN, QEFFSL, QEFFSLN
+
       REAL PSTRES1  !3/22/2011
 
 !      SAVE AZIR,BETN,CEC,DLAYR,DLAYR2,DULE,FNPGL,FNPGN,LFANGD,
@@ -107,6 +112,7 @@ C-----------------------------------------------------------------------
       DYNAMIC = CONTROL % DYNAMIC
       FILEIO  = CONTROL % FILEIO
       LUNIO   = CONTROL % LUNIO
+      model   = control % model
 
       BD     = SOILPROP % BD
       DLAYR  = SOILPROP % DLAYR
@@ -191,15 +197,17 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
 
         IF (MEPHO .EQ. 'L' .AND. CROP .NE. 'FA') THEN
           CALL PGINP(
-     &      FILEIO, LUNIO, SALB,                          !Input
+     &      model,FILEIO, LUNIO, SALB,                    !Input
      &      AZIR, BETN, FNPGL, FNPGN, LFANGD, LMXREF,     !Output
      &      LNREF, NSLOPE, PALBW, QEREF, ROWSPC,          !Output
      &      SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,         !Output
-     &      XLMAXT, YLMAXT, PHTHRS10)                     !Output
+     &      XLMAXT, YLMAXT, PHTHRS10,                     !Output
+     &      CCNEFF, CICAD, cmxsf,cqesf,pgpath)            !Output
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
         ENDIF
 
 !***********************************************************************
@@ -249,7 +257,8 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
         IF (MEPHO .EQ. 'L') THEN
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
         ENDIF
 
 C***********************************************************************
@@ -378,7 +387,9 @@ C  KJB and SPSUM hourly.
      &      XLMAXT, YLMAXT,                               !Input
      &      AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,  !Output
      &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
-     &      TSURF)                                        !Output
+     &      TSURF,                                        !Output
+     &      CCNEFF, CICAD, CMXSF, CQESF, PGPATH,          !Input
+     &      AGEQESL, CO2QESL, QEFFSL)                     !Output
 
 C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
@@ -430,6 +441,9 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               PNLSHN = PCNLSH
               SLWSLN = SLWSL * 1000.
               SLWSHN = SLWSH * 1000.
+              QEFFSLN = QEFFSL
+              CO2QESLN = CO2QESL
+              AGEQESLN = AGEQESL
             ENDIF
             IF (MEEVP .EQ. 'Z') THEN
               ETNOON = EHR + THR
@@ -536,7 +550,8 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
         ENDIF
 !***********************************************************************
 !***********************************************************************
@@ -547,7 +562,8 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
         IF (MEPHO .EQ. 'L') THEN
                 CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
         ENDIF
 
 !***********************************************************************
@@ -827,11 +843,12 @@ C  Calls:       ERROR,FIND
 C=======================================================================
 
       SUBROUTINE PGINP(
-     &  FILEIO, LUNIO, SALBW,                             !Input
+     &  model,FILEIO, LUNIO, SALBW,                       !Input
      &  AZIR, BETN, FNPGL, FNPGN, LFANGD, LMXREF,         !Output
      &  LNREF, NSLOPE, PALBW, QEREF, ROWSPC,              !Output
      &  SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,             !Output
-     &  XLMAXT, YLMAXT, PHTHRS10)                         !Output
+     &  XLMAXT, YLMAXT, PHTHRS10,                         !Output
+     &  ccneff, cicad, cmxsf, cqesf, pgpath)              !Output
 
       IMPLICIT NONE
       SAVE
@@ -848,6 +865,10 @@ C=======================================================================
       REAL AZIR,BETN,FNPGL(4),LFANGB,LFANGD(3),LMXREF,LNREF,NSLOPE,
      &  PALBW,PLTPOP,QEREF,ROWSPC,SALBW,SCVP,SLWREF,
      &  SLWSLO,FNPGN(4),XLMAXT(6),YLMAXT(6),PHTHRS10
+
+      character(len=2) pgpath
+      character(len=8) model
+      real ccneff, cicad, cmxsf, cqesf
 
 C     Read IBSNAT35.INP file.
 
@@ -924,6 +945,22 @@ C     Read species file.
       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)  !9th line
       READ(C80,'(4F6.0)',IOSTAT=ERRNUM) SLWREF,SLWSLO,NSLOPE,LNREF
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
+
+      if( model(1:5) == 'PRFRM' ) then
+         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+         CALL IGNORE(LUNCRP,LNUM,ISECT,C80) !12th line
+         READ(C80,'(4F6.0,2X,A)',IOSTAT=ERRNUM) CICAD,CCNEFF,
+     &        CMXSF,CQESF,PGPATH 
+         IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
+      else
+         pgpath='  '
+         cicad = -99
+         ccneff = -99
+         cmxsf = -99
+         cqesf = -99
+      end if
+
 
       CLOSE(LUNCRP)
 

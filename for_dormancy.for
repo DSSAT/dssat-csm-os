@@ -152,7 +152,7 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNECO, LNUM, ISECT, C255)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
         IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. '*')) THEN
-        READ (C255,'(A6,1X,A16,121X,4F6.0)',IOSTAT=ERR)
+        READ (C255,'(A6,1X,A16,103X,4F6.0)',IOSTAT=ERR)
      &    ECOTYP, ECONAM, RDRMT,RDRMG,RDRMM, RCHDP
 
 

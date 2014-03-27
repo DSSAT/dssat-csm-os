@@ -12,7 +12,8 @@ C  Calls:         None
 C=======================================================================
       SUBROUTINE OpETPhot(CONTROL, ISWITCH, 
      &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
-     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV) 
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV, 
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
 
 C-------------------------------------------------------------------
 C
@@ -32,6 +33,9 @@ C-------------------------------------------------------------------
       REAL PCINPD,PG, PGNOON, PCINPN
       REAL SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN
       REAL TGRO(24), TGROAV
+
+      real  AGEQESLN, CO2QESLN, QEFFSLN
+
 
       LOGICAL FEXIST
 

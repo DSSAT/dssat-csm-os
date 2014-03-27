@@ -597,7 +597,7 @@ C-----------------------------------------------------------------------
      &        trim(PLAINTXT)
 
 !       CROPGRO crops
-        CASE('CRGRO')
+        CASE('CRGRO','PRFRM')
 
 !        CASE ('BN','PN','SB','TM','PE','CH','PP','PR',
 !     &        'C3','C4','G0','G1','G2','G3','G4','G5','G6','G7','G8',

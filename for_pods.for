@@ -438,7 +438,7 @@ C     Modification of seed composition
 !-----------------------------------------------------------------------
 !     Detailed seed composition calculations
 !-----------------------------------------------------------------------
-        CALL PODCOMP(
+        CALL for_PODCOMP(
      &  AGRSD1, FILECC, FNINSD, GDMSD, NAVL, PGAVLR,  !Input
      &  POTCAR, POTLIP,                               !Input/Output
      &  AGRSD3, ANINSD, CUMSIG, RSD,                  !Output

@@ -128,7 +128,7 @@ C
 !     Cultivar parameter modification
       ELSE IF (MENU .EQ. 3) THEN
           SELECT CASE (MODEL(1:5))
-          CASE ('CRGRO')
+          CASE ('CRGRO','PRFRM')
             CALL INVRLE (FILEG,RNMODE,VARTY,VRNAME,PATHGE,ECONO)
           CASE('MLCER','MZCER','SWCER','MZIXM','SGCER',
      &         'PTSUB','RICER','TRARO','TNARO',

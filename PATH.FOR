@@ -67,8 +67,13 @@ C=======================================================================
       DO I = 1, 500
          READ (LUNPR,'(A80)',IOSTAT=ERRNUM) LINE
          IF (LINE(1:3) .EQ. PROCOD) THEN
-            PATHC  = LINE(5:6) // LINE(8:80)
-          
+!            PATHC  = LINE(5:6) // LINE(8:80)
+            call get_next_string(line,4,pathc)
+            if(index(line,trim(pathc))<7)then
+               call get_next_string(line,7,pathc)
+               pathc = trim(adjustl(line(5:6)))//trim(pathc)
+            end if
+            
 C-SUN       PATHC  = LINE(8:80)
             PATHL  = INDEX (PATHC,BLANK)
             IF (PATHC(PATHL-1:PATHL-1) /= SLASH) THEN
@@ -154,7 +159,7 @@ C=======================================================================
 
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
       IF (.NOT. FEXIST) THEN
-        DSSATP = STDPATH // TRIM(DSSATPRO)
+        DSSATP = trim(STDPATH) // TRIM(DSSATPRO)
       ENDIF
 
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
@@ -197,7 +202,7 @@ C=======================================================================
 
       CHARACTER*1   UPCASE
       CHARACTER*2   CROP
-      CHARACTER*3   PROCOD, EXE_STRING    !, MODELVER
+      CHARACTER*3   PROCOD!, EXE_STRING    !, MODELVER
       CHARACTER*6   ERRKEY
       CHARACTER*8   MODEL, CRMODEL
       CHARACTER*78  MSG(4)
@@ -212,7 +217,7 @@ C=======================================================================
 
       PARAMETER (LUNPR = 25)
       PARAMETER (ERRKEY = 'MODELN')
-      PARAMETER (EXE_STRING = 'EXE')
+!      PARAMETER (EXE_STRING = 'EXE')
 
       IF (LENSTRING(CRMODEL) > 0) THEN
         DO I = 1,8
@@ -264,7 +269,8 @@ C=======================================================================
          GO TO 100
       ELSE
          EXE_POS = INDEX(LINE,EXE_STRING)
-         MODEL = LINE((EXE_POS+4):(EXE_POS+11))
+!         MODEL = LINE((EXE_POS+4):(EXE_POS+11))
+         call get_next_string(line,exe_pos,model)
          DO I = 1,5
            MODEL(I:I)= UPCASE(MODEL(I:I))
          ENDDO
@@ -312,6 +318,7 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.      !ORYZA
      &    (INDEX(MODEL(3:5),'IXM') .EQ. 0) .AND.      !IXIM
      &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.      !CROPGRO
+     &    (INDEX(MODEL(3:5),'FRM') .EQ. 0) .AND.      !FORAGE
      &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.      !CROPSIM (Cereal)
      &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.      !CSCAS (Cassava)
      &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.      !CROPSIM (Cassava)
@@ -334,6 +341,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND.    !Cassava
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton
+     &    (INDEX(MODEL(1:5),'PRFRM') .EQ. 0) .AND.    !FORAGE 
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES
      &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND.    !Maize IXIM
      &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND.    !Millet

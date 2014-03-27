@@ -30,14 +30,13 @@ C  05/31/2005 SJR Added CH2OREF to senesce organs at minimum CH2O conc.
 C  09/28/2005 SJR Added SENMOB to senesce organs earlier in the day.
 C=======================================================================
 
-      SUBROUTINE FORAGE(CONTROL, ISWITCH, 
-     &    CO2, DAYL, EOP, YREND, HARVFRAC, NH4, NO3,      !Input
-     &    PAR, SOILPROP, ST, SW, TAVG, TDAY, TGRO,        !Input
-     &    TGROAV, TMIN, TRWUP, YRPLT,                     !Input
-     &    CANHT, EORATIO, HARVRES, KEP, MDATE,            !Output
-     &    NSTRES, PORMIN, RLV, RWUMX, SENESCE,            !Output
+      subroutine FORAGE(CONTROL, ISWITCH, 
+     &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
+     &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
+     &    NSTRES, PSTRES1,                                !Output
+     &    PORMIN, RLV, RWUMX, SENESCE,                    !Output
      &    STGDOY, UNH4, UNO3, XHLAI, XLAI)                !Output
-
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -228,6 +227,9 @@ C      Forage harvest damage/removal variables for forage model
 
       REAL CURV
 
+      real pstres1,ktrans,ksevap
+      type(weathertype) weather
+
 C------------------------------------------------------------
 C  PDA 5/6/2010 VARIABLES ADDED FOR FORAGE HARVEST SUBROUTINE
 C------------------------------------------------------------
@@ -277,6 +279,18 @@ C------------------------------------------------------------
       ISWSYM = ISWITCH % ISWSYM
       ISWWAT = ISWITCH % ISWWAT
       MEPHO  = ISWITCH % MEPHO
+
+      CO2    = WEATHER % CO2   
+      DAYL   = WEATHER % DAYL  
+      PAR    = WEATHER % PAR   
+      TAVG   = WEATHER % TAVG  
+      TDAY   = WEATHER % TDAY  
+      TGRO   = WEATHER % TGRO  
+      TGROAV = WEATHER % TGROAV
+      TMIN   = WEATHER % TMIN  
+
+! Disable P stress
+      pstres1 = 1
 
 !***********************************************************************
 !***********************************************************************
@@ -1920,11 +1934,11 @@ C-----------------------------------------------------------------------
 C--------------------------------------------
 C PDA 5/6/2010  ADDED CODE FOR FORAGE HARVEST 
 C--------------------------------------------
-      CALL FORAGEHARVEST(CONTROL,YRDOY,WTLF,STMWT,        !Input
-     &    WLDOTN,CRUSLF,NRUSLF,WSDOTN,CRUSST,NRUSST, !Input
-     &    CADLF,NADLF,CADST,NADST,                   !Input
-     &    SLDOT,WLIDOT,WLFDOT,SSDOT,WSIDOT,WSFDOT,   !Input
-     &    FHLEAF,FHSTEM,FHVSTG)                      !Output
+!      CALL FORAGEHARVEST(CONTROL,YRDOY,WTLF,STMWT,        !Input
+!     &    WLDOTN,CRUSLF,NRUSLF,WSDOTN,CRUSST,NRUSST, !Input
+!     &    CADLF,NADLF,CADST,NADST,                   !Input
+!     &    SLDOT,WLIDOT,WLFDOT,SSDOT,WSIDOT,WSFDOT,   !Input
+!     &    FHLEAF,FHSTEM,FHVSTG)                      !Output
 C--------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -1981,6 +1995,12 @@ C-----------------------------------------------------------------------
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
      &  VSTAGE)                                           !Input/Output
+
+      call FORAGEHARVEST(CONTROL,FILECC,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,           !Input
+     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
+     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,canht)     !Input/Output
 
 !-----------------------------------------------------------------------
 !     End of DAS > NVEG0 if construct
