@@ -23,11 +23,13 @@ C=======================================================================
      &  NSLOPE, PARSH, PARSUN, QEREF, RABS, RCUTIC,       !Input
      &  REFHT, RHUMHR, RNITP, RWUH, SHCAP, SLAAD,         !Input
      &  SLWREF, SLWSLO, STCOND, SWE, TAIRHR, TA,          !Input
-     &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,              !Input
+     &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,               !Input
      &  XLMAXT, YLMAXT,                                   !Input
      &  AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,      !Output
      &  PGHR, SLWSH, SLWSL, T0HR, TCAN, THR, TSHR,        !Output
-     &  TSURF)                                            !Output
+     &  TSURF,                                            !Output
+!     Added by BAK
+     &  CONDSH, CONDSL, RA, RB, RSURF, RNET)              !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -51,6 +53,10 @@ C=======================================================================
      &  SLWREF,SLWSH,SLWSL,SLWSLO,STCOND(NL),SWE,T0HR,TAIRHR,TA,TMIN,
      &  TCAN,TCPREV,THR,TPREV,TSHR(NL),TSUM,TSURF(3,1),USTAR,
      &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6)
+
+!     Added by BAK
+      REAL RB(3),RSURF(3),RNET(3,1)
+
       PARAMETER (ERRBND=0.01)
 
 C     Initialize.
@@ -631,7 +637,9 @@ C     Create vpd and resistance matrices.
      &  CANHT, CEC, CEN, CONDSH, CONDSL, FRACSH, FRSHV,   !Input
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
      &  TAIRHR, TCAN, WINDHR,                             !Input
-     &  RA, RL, RS, USTAR)                                !Output
+     &  RA, RL, RS, USTAR,                                !Output
+!     Added by BAK
+     &  RB,RSURF)                                         !Output
 
 C     Calculate NET total by subtracting net (back) longwave radiation.
 
