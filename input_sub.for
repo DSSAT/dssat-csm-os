@@ -139,7 +139,7 @@ C-----------------------------------------------------------------------
 C   Fortran Compaq Visual Fortran
 C-----------------------------------------------------------------------
       CALL GETARG (0,INPUTX)
-      call path_adj(inputx)
+!      call path_adj(inputx)
       IPX = LEN_TRIM(INPUTX)
 D     INPUTX = STDPATH // 'DSCSM046.EXE'
       CALL PATHD  (DSSATP,INPUTX,IPX)
