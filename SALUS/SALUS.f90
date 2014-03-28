@@ -281,18 +281,18 @@ else
 endif
 
 currentime = time()
-showtime = ctime(currentime)        
+showtime = ctime(currentime:currentime)
 
 write(555, '("Results of SALUS-Simple Plant Growth Model Simulation")')
 write(555, '(/a)') showtime
 write(555, 12)        
    12	  FORMAT(                                                          &
-     / '  YRDOY    DAP     DTT   CUMTT   RELTT     RUE    dLAI   dBIOM     &
-       XHLAI      ROOT   BIOMASS  WATFAC',                                 &
-     /,'  yrdoy    dap   deg-d   deg-d   (0-1)    g/MJ m2/m2/d  g/m2/d     &
-        m2/m2     kg/ha     kg/ha   (0-1)',                                &
-     /,'  -----   ----   -----   -----   -----    ---- -------  ------     &
-        -----     -----     -----   -----')
+     / '  YRDOY    DAP     DTT   CUMTT   RELTT     RUE    dLAI   dBIOM     '&
+//'       XHLAI      ROOT   BIOMASS  WATFAC',                                 &
+     /,'  yrdoy    dap   deg-d   deg-d   (0-1)    g/MJ m2/m2/d  g/m2/d     '&
+//'        m2/m2     kg/ha     kg/ha   (0-1)',                                &
+     /,'  -----   ----   -----   -----   -----    ---- -------  ------     '&
+//'        -----     -----     -----   -----')
    	
 ! Initialize Output PlantGrow.OUT
 call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac)

@@ -85,7 +85,7 @@ C-----------------------------------------------------------------------
       REAL PHTHRS10, PLTPOP
       REAL PORMIN, RWUMX
       REAL PALBW, SALBW, SRAD, DayRatio
-
+      REAL Enoon,Tnoon,WINDnn,TCANnn
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
       
       REAL PSTRES1  !3/22/2011
@@ -441,6 +441,11 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               DO I=1,3
                 TSRFN(I) = TSURF(I,1)
               ENDDO
+              Enoon=EHR
+              Tnoon=THR
+              WINDnn=WINDHR(H)
+              TCANnn=TCAN(H)
+
             ENDIF
           ENDIF
         ENDDO
@@ -536,7 +541,8 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &        Enoon,Tnoon,WINDnn,TCANnn)
         ENDIF
 !***********************************************************************
 !***********************************************************************
@@ -547,7 +553,8 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
         IF (MEPHO .EQ. 'L') THEN
                 CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &        Enoon,Tnoon,WINDnn,TCANnn)
         ENDIF
 
 !***********************************************************************
