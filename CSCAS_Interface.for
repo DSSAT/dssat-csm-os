@@ -119,11 +119,11 @@ C=======================================================================
         WRITE(MESSAGE(1),100) 
         WRITE(MESSAGE(2),110)  
         WRITE(MESSAGE(3),120) 
-        CALL WARNING(3, "WHCER ", MESSAGE)
+        CALL WARNING(3, "CSCAS ", MESSAGE)
       ENDIF
 
   100 FORMAT('You have selected the Century soil nutrient model. ')
-  110 FORMAT('The CSCER (wheat/barley) routines have not been ')
+  110 FORMAT('The CSCAS (cassava) routines have not been ')
   120 FORMAT('calibrated for use with this model.' )
 
       IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN

@@ -74,7 +74,7 @@ TH0009 RY9 (try)            . 990001     0  35.0  35.0  35.0  35.0  35.0  35.0  
 ! LLIFA       Leaf life,from full expansion to start senescence (phyllocrons)
 ! LPEFR       Leaf petiole fraction (fr of lamina+petiole)
 ! PHINT       Interval between leaf tip appearances for first leaves (oC.d)
-! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
+! PPSn        Photoperiod sensitivity for tier n. (% drop for 10h pp.change)
 ! SLAS        Specific leaf lamina area when crop growing without stress (cm2/g)
 ! SRFR        Fr.of assimilate designated for tops sent to storage root (#)
 ! SR#W        Storage root number per unit canopy weight at initiation (#/g)

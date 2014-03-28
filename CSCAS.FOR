@@ -453,7 +453,7 @@
       INTEGER       HYEARL        ! Last year for harvest          #
       INTEGER       HYRDOY(HANUMX)! Dates of harvest operations    #
       INTEGER       I             ! Loop counter                   #
-      REAL          ICWT          ! Initial water table depth      cm
+      REAL          icwd          ! Initial water table depth      cm
       INTEGER       IDETGNUM      ! Number of times into IDETG     #
       REAL          IRRAMT        ! Irrigation amount for today    mm
       REAL          IRRAMTC       ! Irrigation amount,cumulative   mm
@@ -1280,7 +1280,7 @@
       CHARACTER (LEN=120) CFGDFILE      ! Configuration directory+file
       CHARACTER (LEN=1)   CFLAFLF       ! Control flag,assim.on lf area
       CHARACTER (LEN=1)   CFLFAIL       ! Control flag for failure
-      CHARACTER (LEN=1)   CFLLFLIFE     ! Control flag,leaf life D,P,C
+      CHARACTER (LEN=1)   CFLLFLIFE     ! Control flag,leaf life D,P,T
       CHARACTER (LEN=1)   CFLHAR        ! Control flag for final harvest
       CHARACTER (LEN=1)   CFLHARMSG     ! Control flag,harvest message
       CHARACTER (LEN=1)   CFLPDADJ      ! Control flag,tire adjustment 
@@ -2411,7 +2411,7 @@
         CALL XREADRA(FILEIO,TN,RN,SN,ON,CN,'FAMN','200',anfer)
 
         ! Water table depth
-        CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'ICWT',icwt)
+        CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'ICWD',icwd)
 
         ! Disease information
         LENDIS = TVILENT(ISWDIS)
@@ -3490,7 +3490,7 @@
         ENDIF
 
         ! Water table depth
-        WTDEP = ICWT
+        WTDEP = ICWD
 
         ! Initial shoot and root placement
         IF (PLME.NE.'I') THEN
@@ -3499,7 +3499,7 @@
               WRITE(MESSAGE(1),'(A16,A1,A15,A24)')
      &          'PLANTING method ',PLME,' not an option ',
      &          ' Changed to V (Vertical)'
-              CALL WARNING(1,'CSCRP',MESSAGE)
+              CALL WARNING(1,'CSCAS',MESSAGE)
               WRITE(FNUMWRK,*)' '
               WRITE(FNUMWRK,'(A17,A1,A15,A24)')
      &          ' Planting method ',PLME,' not an option ',
@@ -3512,13 +3512,13 @@
           WRITE(MESSAGE(1),'(A30,A20)')
      &      'Planting stick length <= 00  ',
      &      ' Changed to 25.0 cm '
-          CALL WARNING(1,'CSCRP',MESSAGE)
+          CALL WARNING(1,'CSCAS',MESSAGE)
           WRITE(FNUMWRK,*)' '
           WRITE(FNUMWRK,'(A31,A20)')
      &      ' Planting stick length <= 0.0  ',
      &      ' Changed to 25.0 cm '
+          SPRL = 25.0 ! LPM 19FE14
         ENDIF
-        IF (SPRL.LT.0.0) SPRL = 0.0
         sdepthu = -99.0
         IF (PLME.EQ.'H') THEN
           sdepthu = sdepth
@@ -3622,7 +3622,7 @@
               WRITE(MESSAGE(1),'(A22,A1,A15,A19)')
      &          'Photosynthesis method ',MEPHO,' not an option ',
      &          ' Changed to R (RUE)'
-              CALL WARNING(1,'CSCRP',MESSAGE)
+              CALL WARNING(1,'CSCAS',MESSAGE)
               WRITE(FNUMWRK,*)' '
               WRITE(FNUMWRK,'(A23,A1,A15,A19)')
      &          'Photosynthesis method ',MEPHO,' not an option ',
@@ -3980,7 +3980,7 @@
               PLYEARDOY = YEARDOY
               PLYEAR = YEAR
             ENDIF
-          ELSE
+          ! ELSE !LPM 14FE14
             ! Automatic planting
             ! Check window for automatic planting,PWDINF<PLYEART<PWDINL
             IF (YEARDOY.GE.PWDINF.AND.YEARDOY.LE.PWDINL) THEN
@@ -4147,7 +4147,7 @@
      &      EO,tvr1,tvr2,tvr3,tvr4,TCAN,'C')
           ENDIF
           
-          ! Cumulative potential ET as used
+          ! Cumulative potential ET as used 
           IF (EO.GT.0.0) EOC = EOC + EO
           
           ! Cumulative canopy-air temperature difference
