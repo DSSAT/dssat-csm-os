@@ -1931,16 +1931,6 @@ C-----------------------------------------------------------------------
       AGRVG2 = AGRVG + (FRLF*PROLFI+FRRT*PRORTI+FRSTM*PROSTI+
      &    FRSTR*PROSRI)*RPROAV
 
-C--------------------------------------------
-C PDA 5/6/2010  ADDED CODE FOR FORAGE HARVEST 
-C--------------------------------------------
-!      CALL FORAGEHARVEST(CONTROL,YRDOY,WTLF,STMWT,        !Input
-!     &    WLDOTN,CRUSLF,NRUSLF,WSDOTN,CRUSST,NRUSST, !Input
-!     &    CADLF,NADLF,CADST,NADST,                   !Input
-!     &    SLDOT,WLIDOT,WLFDOT,SSDOT,WSIDOT,WSFDOT,   !Input
-!     &    FHLEAF,FHSTEM,FHVSTG)                      !Output
-C--------------------------------------------
-
 C-----------------------------------------------------------------------
 C     Call routine to integrate growth and damage
 C-----------------------------------------------------------------------
@@ -1996,8 +1986,8 @@ C-----------------------------------------------------------------------
      &  WRDOT, WSDOT,                                     !Output
      &  VSTAGE)                                           !Input/Output
 
-      call FORAGEHARVEST(CONTROL,FILECC,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,           !Input
+      call forage_harvest(CONTROL,FILECC,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,canht)     !Input/Output
