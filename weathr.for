@@ -216,6 +216,17 @@ C     Calculate daily solar parameters.
      &    DAYL, DEC, SRAD, XLAT,                          !Input
      &    CLOUDS, ISINB, S0N)                             !Output
 
+!     Windspeed adjustment and initialization moved ahead
+!     of Call to HMET on 27MAR14 by BAK
+
+C     Adjust wind speed from reference height to 2m height.
+      IF (WINDSP > 0.0) THEN
+!       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+        WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
+      ELSE
+        WINDSP = 86.4   ! Equivalent to average of 1.0 m/s
+      ENDIF
+
 C     Calculate hourly weather data.
       CALL HMET(
      &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
@@ -224,14 +235,6 @@ C     Calculate hourly weather data.
      &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
      &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
      &    TGROAV, TGRODY, WINDHR)                         !Output
-
-C     Adjust wind speed from reference height to 2m height.
-      IF (WINDSP > 0.0) THEN
-!       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
-        WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
-      ELSE
-        WINDSP = 86.4
-      ENDIF
 
 C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
@@ -305,14 +308,8 @@ C     Calculate daily solar parameters.
      &    DAYL, DEC, SRAD, XLAT,                          !Input
      &    CLOUDS, ISINB, S0N)                             !Output
 
-C     Calculate hourly weather data.
-      CALL HMET(
-     &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
-     &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
-     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
-     &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
-     &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
-     &    TGROAV, TGRODY, WINDHR)                         !Output
+!     Wind speed adjustments and initialization moved
+!     adhead of call to HMET on 27MAR14 by BAK
 
 C     Adjust wind speed from reference height to 2m height.
       IF (WINDSP > 0.0) THEN
@@ -321,6 +318,15 @@ C     Adjust wind speed from reference height to 2m height.
       ELSE
         WINDSP = 86.4
       ENDIF
+
+C     Calculate hourly weather data.
+      CALL HMET(
+     &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
+     &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
+     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
+     &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
+     &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
+     &    TGROAV, TGRODY, WINDHR)                         !Output
 
 C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
@@ -336,7 +342,7 @@ C-----------------------------------------------------------------------
       CALL OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, PAR, RAIN, SRAD,         !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
+     &    TMIN, TWILEN, WINDSP, WEATHER)      !Daily values
 
 !***********************************************************************
 !***********************************************************************
