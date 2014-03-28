@@ -150,8 +150,8 @@ C
 !     Generic SALUS simple crop models
 !     09/21/2009 CHP/KAD
       CASE ('SALUS')
-        READ (C360,'(A6,1X,A16,13X,A)',IOSTAT=ERRNUM) VARTY, VRNAME, 
-     &          PLAINTXT
+        READ (C360,'(6X,A6,1X,A16,7X,A)',IOSTAT=ERRNUM) VARTY, 
+     &         VRNAME, PLAINTXT
 !     CROPGRO crops **
       CASE ('CRGRO')  
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,CSDVAR,

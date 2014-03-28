@@ -383,7 +383,6 @@
 !     Added new variable FREEZED to differentiate between freezing and slowed development
 		IF (TMIN .LE. TFREEZE) THEN 
 		FREEZED = .TRUE.
-!		PRINT*,"SALUS crop model stopped due to frost"
 		RETURN
 		ENDIF
 
@@ -392,7 +391,6 @@
 			CumSlowDev = CumSlowDev + 1
 			IF (CumSlowDev .GE. CumSlowDevStop) THEN
 			KILLED = .TRUE.
-!			PRINT*,"SALUS crop model stopped due to frost"
 			RETURN
 			ENDIF
 		ELSE

@@ -80,8 +80,9 @@ EPlant_Kg = EPlant_Kg + dEUptake_Kg
 if(Plant_Kg > 0.0) EConcAct = EPlant_Kg / Plant_Kg
  
 ! Compute stress factor	   
-EStressFac = 1 - (((EConcAct - EConcMin) / (EConcOpt - EConcMin)) - 1)**4
-EStressFac = max(EStressFac, 0.0)   	
+EStressFac = 1.0
+!!EStressFac = 1 - (((EConcAct - EConcMin) / (EConcOpt - EConcMin)) - 1)**4
+!!EStressFac = max(EStressFac, 0.0)   	
  
 !------------------------------------------------------------------------------
 ! End of dynamic 'IF' construct

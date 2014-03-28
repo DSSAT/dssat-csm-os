@@ -594,8 +594,8 @@ C-----------------------------------------------------------------------
 
 !       Generic SALUS crops
         CASE('SALUS')
-          WRITE(LUNIO,'(A6,1X,A16,A)',IOSTAT=ERRNUM) VARNO,VRNAME,
-     &        trim(PLAINTXT)
+          WRITE(LUNIO,'(A6,1X,A16,7X,A)',IOSTAT=ERRNUM) VARNO, VRNAME,
+     &         trim(PLAINTXT)
 
 !       CROPGRO crops
         CASE('CRGRO')

@@ -5,13 +5,14 @@
 ! maturity is modeled using the concept of relative thermal time. Biomass
 ! computation uses  the radiation use efficiency approach.
 !==============================================================================
-! 06/24/2009  Translated from Visual Basic (Kofikuma Dzotsi)
-! 05/10/2010  Added new equation for root partitioning coefficient (KD)
-! 07/26/2010  Added environment extremes (KD)
+! 06/24/2009  Translated from Visual Basic (KAD)
+! 05/10/2010  Added new equation for root partitioning coefficient (KAD)
+! 07/26/2010  Added environment extremes (KAD)
 ! 07/27/2010  Implemented exponential functional for computing root depth factor
 ! ... see SAL_Subs
 ! 08/25/2011  Added TFREEZE and FREEZED to stop growth and dev at cold temperatures
 ! 11/16/2011  Added "dynamic" harvest index (reduced with slow biomass accumulation)
+! 03/27/2014  Removed SALUS.OUT; added more variables to PlantGro.OUT
 !==============================================================================
 
 subroutine SALUS(control, iswitch, weather, soilprop, st,            & !Input
@@ -22,17 +23,11 @@ use ModuleDefs
 implicit none
 save
 !------------------------------------------------------------------------------ 
-character(len=1) :: iswwat, iswnit, iswpho
-character(len=6) :: section, varno, errkey
-character(len=12) :: filec
-character(len=16) :: vrname
-character(len=24) :: ctime, showtime
-character(len=30) :: fileio
-character(len=80) :: pathcr
-integer :: currentime, time
+character(len=6), parameter :: errkey='SALUS'
+character :: iswwat*1, iswnit*1, iswpho*1, section*6, varno*6, filec*12, vrname*16, fileio*30, pathcr*80, message*78(10)
 logical :: fexist, freezed, killed, germinate, emerge
 integer :: err, layer, cumslowdev, cumslowdevstop, dae, dap, doy, doyp, dynamic, errnum, linc, lnum, lunio
-integer :: mature, mdate, nlayr, yrdoy, yrend, yrplt, found
+integer :: mature, mdate, nlayr, yrdoy, yrend, yrplt, found, timdif
 real :: biomass, bioatlaimax, biomassc, biomassinc, biomassroot, biomassrootc, cumtt, dbiomass, dbiomassroot
 real :: deltalai, emgint, emgslp, grainyield, grainyieldc, hrvindex, hrvindstr, kcan, laimax, laip1, laip2
 real :: plantpop, rellai, rellaip1, rellaip2, rellaimax, rellais, reltt, relttemerge, relttsn, relttsn2
@@ -41,19 +36,19 @@ real :: stresrue, streslai, tbasedev, teff, tfreeze, tmax, tmin, toptdev, ttaccu
 real :: ttemerge, ttgerminate, ttmature, xhlai, xlai, rellaiyest, dtt, wpseed
 
 ! Constants
-real, parameter :: coldfac = 1.00, heatfac = 1.00, relttp1 = 0.15, relttp2 = 0.50       
+real, parameter :: nfac=1.0, pfac=1.0, coldfac=1.00, heatfac=1.00, relttp1=0.15, relttp2=0.50       
             
 ! Root Growth and Water Uptake
 real :: droughtfac, eop, ep1, rlwr, trwup
 real, dimension(nl):: rwu, st, sw, dlayr, rootlayerfrac, rootmasslayer, rlv
       
 ! N Model
-real :: NConcAct, NConcMin, NConcOpt, NConcOpt_par(3), NDemand_Kg, NFAC, NPlant_Kg, NSupply_Tot, SWaterFac	  
+real :: NConcAct, NConcMin, NConcOpt, NConcOpt_par(3), NDemand_Kg, NPlant_Kg, NSupply_Tot, SWaterFac	  
 real, dimension(nl):: NH4, NO3, SNH4, SNO3, UNO3, UNH4
 real, dimension(nl):: NSupply_kg, NSupplyRed_Kg, NUptake
       
 ! P Model        
-real PConcAct, PConcMin, PConcOpt, PConcOpt_par(3), PDemand_Kg, PSupply_Tot, PFAC, PPlant_Kg
+real PConcAct, PConcMin, PConcOpt, PConcOpt_par(3), PDemand_Kg, PSupply_Tot, PPlant_Kg
 real, dimension(nl):: PSupplyRed_Kg, PUptake, SPi_AVAIL      
 	
 !------------------------------------------------------------------
@@ -150,6 +145,8 @@ xhlai = 0.0
 xlai = 0.0	
 rellaiyest=0.0    
 wpseed = 0.0  
+grainyield = 0.0
+grainyieldc = 0.0
 	            
 !Root growth and water uptake
 droughtfac = 1.0
@@ -166,7 +163,6 @@ NConcAct = 0.0
 NConcMin = 0.0
 NConcOpt = 0.0
 NDemand_Kg = 0.0 
-NFAC = 1.0
 NPlant_Kg = 0.0
 NSupply_Tot = 0.0
 SWaterFac = 1.0 
@@ -191,7 +187,6 @@ PConcMin = 0.0
 PConcOpt = 0.0
 PDemand_Kg = 0.0
 PSupply_Tot = 0.0
-PFAC = 1.0
 PPlant_Kg = 0.0
 	
 do layer = 1, 3
@@ -235,12 +230,12 @@ call find(lunio, section, linc, found) ; lnum = lnum + linc
 if(found == 0) then
    call error(section, 42, fileio, lnum)
 else
-   read(lunio, '(a6, 1x, a15, 1x, 20f10.3)', iostat=err) varno, vrname,                                  &
-        emgint, emgslp, ttgerminate, hrvindex, laimax, rellaip1, rellaip2, relttsn, snparlai, ttmature,  &
-        ruemax, snparrue, tbasedev, toptdev, rlwr, wpseed, relttsn2, streslai, stresrue, tfreeze  
+   read(lunio, '(a6,1x,a16,7x,f8.1,5(1x,f9.1),2(1x,f9.3),6(1x,f9.2),2(1x,f9.0),4(1x,f9.2))', iostat=err) varno, &
+        vrname,emgint,emgslp,ttgerminate,tbasedev,toptdev,tfreeze,rellaip1,rellaip2,laimax,relttsn,snparlai,  &
+        ruemax,snparrue,hrvindex,ttmature,rlwr,wpseed,relttsn2,streslai, stresrue
         lnum = lnum + 1 
    if(err /= 0) call error(errkey, err, fileio, lnum)
- 
+
 ! Need to add nutrient concentrations at different stages of growth to cultivar parameters, units in kg/kg
 ! Multiply by 100 to obtain percent or g/100g
 NConcOpt_par(1) = 0.0440
@@ -258,7 +253,13 @@ close(lunio)
 ttemerge = emgint + emgslp*sowdepth   
 
 call SALUS_Roots(dynamic, soilprop, dBiomassRoot, dtt, xhlai, laimax, rlwr, st, sw, plantpop, sowdepth,    &  !Input
-     RootDepth, RootLayerFrac, RootMassLayer,RLV)	                                                          !Output     
+     RootDepth, RootLayerFrac, RootMassLayer, rlv)	                                                          !Output     
+ 
+if(iswnit /= 'N' .OR. iswpho /= 'N') then 
+   write(message(1), '( "Simulation of nutrients is not fully implemented in SALUS-Simple yet." )') 
+   write(message(2), '( "Therefore, crop simulation will proceed assuming no nutrient limitation." )')
+   call warning(2, errkey, message)  
+end if
    
 if(iswnit /= 'N') then         
 call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
@@ -271,32 +272,11 @@ call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NCon
      reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
      NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
 end if
-
-! Open Salus.out to store output variables
-inquire (file='SALUS.OUT', exist=fexist)
-if(fexist) then
-  open(unit=555, file='SALUS.OUT', status='old', iostat=errnum, position='rewind')
-else
-  open(unit=555, file='SALUS.OUT', status='new', iostat=errnum)
-endif
-
-currentime = time()
-showtime = ctime(currentime)        
-
-write(555, '("Results of SALUS-Simple Plant Growth Model Simulation")')
-write(555, '(/a)') showtime
-write(555, 12)        
-   12	  FORMAT(                                                          &
-     / '  YRDOY    DAP     DTT   CUMTT   RELTT     RUE    dLAI   dBIOM     '&
-//'       XHLAI      ROOT   BIOMASS  WATFAC',                                 &
-     /,'  yrdoy    dap   deg-d   deg-d   (0-1)    g/MJ m2/m2/d  g/m2/d     '&
-//'        m2/m2     kg/ha     kg/ha   (0-1)',                                &
-     /,'  -----   ----   -----   -----   -----    ---- -------  ------     '&
-//'        -----     -----     -----   -----')
    	
 ! Initialize Output PlantGrow.OUT
-call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac)
-
+call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
+        cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
+        
 ! Initialize Output Summary.OUT
 call SALUS_Opharv(control, mdate, biomass, grainyield, xhlai)
 
@@ -305,11 +285,11 @@ call SALUS_Opharv(control, mdate, biomass, grainyield, xhlai)
 !==============================================================================
 else if(dynamic == rate) then
 !==============================================================================
-if(dae .gt. -1) then
-! repeat everyday, but after emergence
+if(dae > -1) then
+! Repeat everyday, but after emergence
   dae = dae + 1
 endif
-dap = yrdoy - yrplt
+dap = max(0, timdif(yrplt,yrdoy))
 rellaiyest = rellai
 
 !------------------------------------
@@ -317,7 +297,7 @@ rellaiyest = rellai
 !------------------------------------
 droughtfac  = 1.0
 !        TURFAC = 1.0
-if(iswwat /= 'n') then
+if(iswwat /= 'N') then
    if(eop > 0.0) then
       ep1 = eop * 0.1
 !              IF (TRWUP / EP1 .LT. RWUEP1) THEN
@@ -342,6 +322,12 @@ if(bioatlaimax == 0.0) then
       bioatlaimax = biomass
   end if
 end if
+
+!11/16/2011 - Modification to harvest index with low accumulation of biomass after LAIMAX as discussed with Bruno today on Rm 201
+!hrvindstr = hrvindex
+!if(biomass > 0.0) then
+!   hrvindstr = hrvindex * min(1.00, (biomass-bioatlaimax)/(0.55*biomass))
+!end if   
         
 !------------------------------------
 ! Check for germination and emergence       
@@ -351,8 +337,11 @@ if(dtt > 0.0) then
 	  if(.not. germinate) then
 		 call germination(ttaccumulator1, ttgerminate, ttmature, dtt, ttemerge, killed, germinate)	
          if(killed) then
+            write(message(1), '( "Crop model stopped at ",I4," days after planting (DAY: ",I7,")" )') dap, yrdoy
+            write(message(2), '( "due to too small value of thermal time to maturity." )')
+            call warning(2, errkey, message)   
             mdate = yrdoy
-            write(555, '(/, "Crop model stopped on day ", I7, " ..too small value of TT to maturity.")') mdate
+            !write(*, '(/, "Crop model stopped on day ", I7, " ..too small value of TT to maturity.")') mdate
             return
          end if   !Crop killed
               
@@ -368,11 +357,12 @@ if(dtt > 0.0) then
    else ! If crop has already emerged then
 	  call maturity(reltt, mature)
 	  if(mature == 1) then
-		 mdate = yrdoy
-		 !11/16/2011 - Modification to harvest index with low accumulation of biomass after LAIMAX as discussed with Bruno today on Rm 201
-		 hrvindstr = hrvindex * min(1.00, (biomass-bioatlaimax)/(0.55*biomass))
+		 mdate = yrdoy	
+		 hrvindstr = hrvindex	 
 		 grainyield = biomass * hrvindstr
 		 return
+	  else
+	     grainyield = 0.0	 
 	  end if
 
 ! Compute potential LAI S-Curve parameters
@@ -410,21 +400,25 @@ end if ! End if DTT is greater than 0.0
 ! Check for frost kill; kill crop if too slow accumulation of DTT or if TMIN < TFREEZE
 call environment(reltt, relttsn, tmin, cumslowdev, dtt, cumslowdevstop, tfreeze, killed, freezed)
 if(killed) then
+   hrvindstr = hrvindex
+   grainyield = biomass * hrvindstr
+   write(message(1), '( "Crop model stopped at ",I4," days after planting (DAY: ",I7,")" )') dap, yrdoy
+   write(message(2), '( "due to slow crop development." )')
+   call warning(2, errkey, message)   
    mdate = yrdoy
-   !11/16/2011 - Modification to harvest index with low accumulation of biomass after LAIMAX as discussed with Bruno today on Rm 201
-hrvindstr = hrvindex * min(1.00, (biomass-bioatlaimax)/(0.55*biomass))
-grainyield = biomass * hrvindstr
-write(*, '(/, "Model stopped on day ", I7, " due to slow development.")') mdate
-return
+   !write(*, '(/, "Model stopped on day ", I7, " due to slow development.")') mdate
+   return
 end if
 		
 ! Frost
 if(freezed) then
- !11/16/2011 - Modification to harvest index with low accumulation of biomass after LAIMAX as discussed with Bruno today on Rm 201
-hrvindstr = hrvindex * min(1.00, (biomass-bioatlaimax)/(0.55*biomass))
-grainyield = biomass * hrvindstr
-write(*, '(/, "Model stopped on day ", I7, " due to frost.")') mdate
-return
+   hrvindstr = hrvindex
+   grainyield = biomass * hrvindstr
+   write(message(1), '( "Freeze occurred at ",I4," days after planting (DAY: ",I7,")" )') dap, yrdoy
+   call warning(1, errkey, message)   
+   mdate = yrdoy
+   !write(*, '(/, "Model stopped on day ", I7, " due to frost.")') mdate
+   return
 end if          
   
 !==============================================================================
@@ -440,7 +434,7 @@ biomassroot = max(biomassroot+dbiomassroot, 0.0)
 call convertb(biomass, biomassroot, grainyield, biomassc, biomassrootc, grainyieldc)  
 
 ! Activate N routine if N limitation is simulated:
-if(iswnit /='N') then
+if(iswnit /= 'N') then
    ! N uptake calculations:
    do layer = 1, nlayr
      SNO3(layer) = NO3(layer) / SOILPROP % KG2PPM(layer)
@@ -460,7 +454,7 @@ if(iswnit /='N') then
 end if
         
 ! Activate P routine if P limitation is simulated
-if(iswpho.ne.'N') then
+if(iswpho /= 'N') then
    call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
         reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
         NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
@@ -471,11 +465,8 @@ end if
 !==============================================================================
 else if(dynamic == output) then
 !==============================================================================
-write(555, '(2i7, 1f8.2, 1f8.1, 5f8.3, 2f10.1, f8.3, 2f8.2, 5f8.3,1i7)') yrdoy, dap, dtt,  &
-     cumtt, reltt, rue, deltalai, dbiomass, xhlai, biomassrootc, biomassc, droughtfac,     &
-     laip1, laip2, rellai, rellaiyest, trwup, ep1, rlv(2), dae      
-
-call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac)
+call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
+        cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
 call SALUS_Opharv(control, mdate, biomass, grainyield, xhlai)     
 
 !==============================================================================
@@ -483,8 +474,8 @@ call SALUS_Opharv(control, mdate, biomass, grainyield, xhlai)
 !==============================================================================
 else if(dynamic == seasend) then
 !==============================================================================
-CLOSE(1)
-call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac)
+call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
+        cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
 call SALUS_Opharv(control, mdate, biomass, grainyield, xhlai)   
 
 !==============================================================================
