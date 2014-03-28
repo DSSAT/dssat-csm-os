@@ -31,6 +31,7 @@ IB0488 NEWTON             1,6 USWH01    45    75   500    26    25   2.0    95
 IB1015 MARIS FUNDIN       1,8 UKWH01    30    83   515    15    44   3.2   100
 
 AW0071 Yecora_Rojo      16,33 AZWH18    10  40.0   450    20    60  1.50    95
+CI0001 Yecora_Rojo        1,2 CI0001    02    40   570    27    45   4.0   100 
                                                                                                                                                                                                              
 ! COEFF       DEFINITION
 ! ========    ==========

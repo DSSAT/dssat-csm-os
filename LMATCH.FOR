@@ -297,6 +297,7 @@ C----------------------------------------------------------------------
           CYCLE
 
         ELSEIF ((CUMDEP .LT. 90. .AND. THICKNESS .LE. 15.0) .OR.
+! NOTE: Should this be 60 cm instead of 90? CHP 2/10/2014
      &          (CUMDEP .GE. 90. .AND. THICKNESS .LE. 30.0) .OR.
      &          (CUMDEP .GE.200. .AND. THICKNESS .LE. 90.0)) THEN
           !Single layer

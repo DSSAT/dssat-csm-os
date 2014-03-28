@@ -179,18 +179,25 @@ C-GH Remove cassava
 !DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0   0.1   0.5     0     0     0
 
           READ (C360,810,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, PHINT, 
-     &      P1, P2, P3, P4, P5, P6, P7, 
-     &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
+     &      P1, P2, P3, P4, P5, P6, P7, P8, VREQ, VBASE, VEFF,
+     &      PPS1, PPS2, PHINT, LA1S, LAFV, LAFR, SHWTS, GNOWT, GWTS,
+     &      PLAINTXT                
+     
+C-GH Tony update February, 2014
+!     &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, PHINT, 
+!     &      P1, P2, P3, P4, P5, P6, P7, 
+!     &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
+
 
 C-GH  Add cassava model
 !     CASSAVA: cassava **
       CASE ('CSCAS')
           READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
      &      PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
+C-GH &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR, PLAINTXT
-
+        
 !     Ceres-wheat: wheat, barley **
       CASE ('CSCER')
 !       READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
@@ -335,10 +342,10 @@ C-----------------------------------------------------------------------
 ! 800 FORMAT (A6,1X,A16,1X,A6,15(F6.0))
   800 FORMAT (A6,1X,A16,7X,A6,19F6.0)                     !11/8/07
 
-! 820 FORMAT (A6,1X,A16,1X,A6,1X,A)
-! 820 FORMAT (A6,1X,A16,7X,A6,18F6.0,A)                       !11/8/07
+
   810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010
-  820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/04/2014
+C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
+  820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
 
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07

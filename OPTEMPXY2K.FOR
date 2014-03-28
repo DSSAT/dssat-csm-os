@@ -275,17 +275,17 @@ C-----------------------------------------------------------------------
 
         IF (INDEX('WH,BA',CROP) > 0) THEN
           WRITE (LUNIO,164,IOSTAT=ERRNUM) 
-     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO, 
-     &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, 
-     &      PHINT, P1, P2, P3, P4, P5, P6, P7, 
-     &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
-
+     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
+     &      P1, P2, P3, P4, P5, P6, P7, P8,
+     &      VREQ, VBASE, VEFF, PPS1, PPS2, PHINT,
+     &      LA1S, LAFV, LAFR, SHWTS, GNOWT, GWTS
+     
   164     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &      F6.2, F6.1, F6.1, F6.2, F6.2, F6.2, 
-     &      8F6.1, F6.2, F6.3, F6.2, F6.2, F6.2, F6.1, A)               
+     &      10F6.1, F6.2, 3F6.1, F6.1, 3F6.2, 2F6.1, A)               
         ENDIF
       CASE ('CSCAS')
 !       CSCAS Cassava
+        write(*,*) 
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
           WRITE (LUNIO,166,IOSTAT=ERRNUM) 
      &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
@@ -293,8 +293,8 @@ C-----------------------------------------------------------------------
      &      SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR, TRIM(PLAINTXT)
   166     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &      F6.2,6F6.1,2F6.2,10F6.0,2F6.2,A)
-
+     &      F6.2,6F6.1,2F6.2,3F6.1,F6.0,7F6.1,F6.2,A)
+C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2,A)
       CASE ('SCCAN')
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
         WRITE(LUNIO,170,IOSTAT=ERRNUM)

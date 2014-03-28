@@ -309,6 +309,7 @@ C=======================================================================
       SAVE      
       
       REAL     BETA
+      REAL     EXPMIN
       REAL     EXPONENT
       REAL     FRACSH
       INTEGER  H
@@ -327,7 +328,7 @@ C=======================================================================
       REAL     TAUDIR
       REAL     XC
       
-      PARAMETER (PI = 3.14159, RAD = PI/180.0)
+      PARAMETER (PI = 3.14159, RAD = PI/180.0, EXPMIN=-40.0)
 
 C     Calculate black leaf extinction coefficients 
 C     for diffuse and direct radiation
@@ -358,7 +359,7 @@ C     Calculate KDIFBL once a day assuming Uniform OverCast sky (UOC)
 
 !           Underflows  chp 8/5/2009
             EXPONENT = -KDIR*HLAI*FROLL
-            IF (EXPONENT > -40.) THEN
+            IF (EXPONENT > EXPMIN) THEN
 	        TAUDIR = EXP(-KDIR*HLAI*FROLL)
             ELSE
               TAUDIR = 0.0
@@ -402,6 +403,7 @@ C  ??/??/?? KJB Written
 C  05/14/91 NBP Removed COMMON and reorganized.
 C  08/31/04 JIL Adapted to photosynthesis in maize
 C  09/12/2007 JIL Modified and adapted for IXIM model
+C  06/21/2013 JIL Fixing an error in the absorption of reflected light
 C-----------------------------------------------------------------------
 C  Called from: RADABS
 C  Calls:       
@@ -423,9 +425,11 @@ C=======================================================================
       REAL      ADDR      
       REAL      ADDRSL    
       REAL      ADIF      
+      REAL      ADIFCAN
       REAL      ADIFSH    
       REAL      ADIFSL    
       REAL      ADIR      
+      REAL      ADIRCAN
       REAL      ADIRSL    
       REAL      ALBEDO    
       REAL      AREF      
@@ -443,6 +447,7 @@ C=======================================================================
       REAL      DIFP      
       REAL      DIFPR     
       REAL      DIFR 
+      REAL      EXPMIN
       REAL      EXPONENT     
       REAL      FRACSH    
       REAL      FRDIF     
@@ -488,10 +493,13 @@ C=======================================================================
       REAL      UYLAISH   
       REAL      UYLAISL   
       REAL      YHLAI     
+      REAL      YHLAICAN
+      REAL      YLAICANSH
+      REAL      YLAICANSL
       REAL      YLAISH    
       REAL      YLAISL    
 
-      PARAMETER (PI=3.14159, RAD=PI/180.0)
+      PARAMETER (PI=3.14159, RAD=PI/180.0, EXPMIN=-40.0)
 
 C     Initialization.
       ADDF      = 0.0
@@ -500,9 +508,11 @@ C     Initialization.
       ADDR      = 0.0 
       ADDRSL    = 0.0 
       ADIF      = 0.0 
+      ADIFCAN   = 0.0
       ADIFSH    = 0.0 
       ADIFSL    = 0.0 
       ADIR      = 0.0 
+      ADIRCAN   = 0.0
       ADIRSL    = 0.0 
       AREF      = 0.0 
       AREFSH    = 0.0 
@@ -540,6 +550,9 @@ C     Initialization.
       UYLAISH   = 0.0 
       UYLAISL   = 0.0 
       YHLAI     = 0.0 
+      YHLAICAN  = 0.0
+      YLAICANSH = 0.0
+      YLAICANSL = 0.0
       YLAISH    = 0.0 
       YLAISL    = 0.0 
 
@@ -564,17 +577,66 @@ C     Split total radiation into direct and diffuse components.
       RADDIF = FRDIF * PARH
       RADDIR = PARH - RADDIF
 
-C     Direct radiation absorbed in shaded zone by considering the direct
-C     (ADDR) and diffuse/scattered (ADDF) components of the direct beam.
+C     Diffuse skylight is absorbed over an effective area equal to the
+C     canopy height plus width for an isolated row.  For interfering rows,
+C     Eqns. 2.130 and 2.128 from Goudriaan (1977) are used.  Concept
+C     extended for both between plants (P) and rows (R).
+
+      IF (CANWH .LT. BETN) THEN
+        PATHP = BETN - CANWH
+        DELWP = PATHP + CANHT - SQRT(PATHP**2+CANHT**2)
+        DIFP = MIN((CANWH+DELWP)/BETN,1.0)
+      ELSE
+        DIFP = 1.0
+      ENDIF
+      IF (CANWH .LT. ROWSPC) THEN
+        PATHR = ROWSPC - CANWH
+        DELWR = PATHR + CANHT - SQRT(PATHR**2+CANHT**2)
+        DIFR = MIN((CANWH+DELWR)/ROWSPC,1.0)
+      ELSE
+        DIFR = 1.0
+      ENDIF
+
+      DIFPR = MIN(MAX(DIFP*DIFR,1.0E-6),1.0)
+
+C     Computing whole canopy absorbed direct and diffuse light for later
+C     calculation of absorbed reflected light
+
+      YHLAICAN = SUM(GLA(1:LFN))*FROLL*PLTPOP*0.0001
+      EXPONENT = -KDIRBL*YHLAICAN/FRACSH
+      IF (EXPONENT > EXPMIN) THEN
+        YLAICANSL=(FRACSH/KDIRBL)*(1.0-EXP(-KDIRBL*YHLAICAN/FRACSH))
+      ELSE
+        YLAICANSL = FRACSH/KDIRBL
+      ENDIF
+      YLAICANSH = YHLAICAN - YLAICANSL
+
+      EXPONENT = -KDIRBL*SQV*YHLAICAN/FRACSH
+      IF (EXPONENT .GT. EXPMIN) THEN
+        ADIRCAN = FRACSH * (1.0-REFDR) * RADDIR *
+     &            (1.0-EXP(-KDIRBL*SQV*YHLAICAN/FRACSH))
+      ELSE
+        ADIRCAN = FRACSH * (1.0-REFDR) * RADDIR
+      ENDIF
+         
+      EXPONENT = -KDIFBL*SQV*YHLAICAN/DIFPR
+      IF (EXPONENT .GT. EXPMIN) THEN
+        ADIFCAN = DIFPR * (1.0-REFDF) * RADDIF *
+     &            (1.0-EXP(-KDIFBL*SQV*YHLAICAN/DIFPR))
+      ELSE
+        ADIFCAN = DIFPR * (1.0-REFDF) * RADDIF
+      ENDIF
 
 C ** JIL Beginning per-leaf loop
+C     Direct radiation absorbed in shaded zone by considering the direct
+C     (ADDR) and diffuse/scattered (ADDF) components of the direct beam.
 
 	DO L=LFN,1,-1
 	  IF(GLA(L) .GT. 0.0) THEN
 	   YHLAI = YHLAI+GLA(L)*FROLL*PLTPOP*0.0001
 
          EXPONENT = -KDIRBL*YHLAI/FRACSH
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            YLAISL=(FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*YHLAI/FRACSH))
          ELSE
            YLAISL = FRACSH/KDIRBL
@@ -583,7 +645,7 @@ C ** JIL Beginning per-leaf loop
          YLAISH = YHLAI - YLAISL
 
          EXPONENT = -KDIRBL*SQV*YHLAI/FRACSH
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            ADIR = FRACSH * (1.0-REFDR) * RADDIR *
      &          (1.0-EXP(-KDIRBL*SQV*YHLAI/FRACSH))
          ELSE
@@ -591,7 +653,7 @@ C ** JIL Beginning per-leaf loop
          ENDIF
 
          EXPONENT = -KDIRBL*YHLAI/FRACSH
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            ADDR = FRACSH * (1.0-SCVR) * RADDIR *
      &          (1.0-EXP(-KDIRBL*YHLAI/FRACSH))
          ELSE
@@ -600,7 +662,7 @@ C ** JIL Beginning per-leaf loop
 
          ADDF = ADIR - ADDR
          EXPONENT = -KDIRBL*SQV*YLAISL/FRACSH
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            ADIRSL = FRACSH * (1.0-REFDR) * RADDIR *
      &          (1.0-EXP(-KDIRBL*SQV*YLAISL/FRACSH))
          ELSE
@@ -608,7 +670,7 @@ C ** JIL Beginning per-leaf loop
          ENDIF
 
          EXPONENT = -KDIRBL*YLAISL/FRACSH
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            ADDRSL = FRACSH * (1.0-SCVR) * RADDIR *
      &          (1.0-EXP(-KDIRBL*YLAISL/FRACSH))
          ELSE
@@ -623,24 +685,24 @@ C     canopy height plus width for an isolated row.  For interfering rows,
 C     Eqns. 2.130 and 2.128 from Goudriaan (1977) are used.  Concept
 C     extended for both between plants (P) and rows (R).
 
-         IF (CANWH .LT. BETN) THEN
-           PATHP = BETN - CANWH
-           DELWP = PATHP + CANHT - SQRT(PATHP**2+CANHT**2)
-           DIFP = MIN((CANWH+DELWP)/BETN,1.0)
-         ELSE
-           DIFP = 1.0
-         ENDIF
-         IF (CANWH .LT. ROWSPC) THEN
-           PATHR = ROWSPC - CANWH
-           DELWR = PATHR + CANHT - SQRT(PATHR**2+CANHT**2)
-           DIFR = MIN((CANWH+DELWR)/ROWSPC,1.0)
-         ELSE
-           DIFR = 1.0
-         ENDIF
+!         IF (CANWH .LT. BETN) THEN
+!           PATHP = BETN - CANWH
+!           DELWP = PATHP + CANHT - SQRT(PATHP**2+CANHT**2)
+!           DIFP = MIN((CANWH+DELWP)/BETN,1.0)
+!         ELSE
+!           DIFP = 1.0
+!         ENDIF
+!         IF (CANWH .LT. ROWSPC) THEN
+!           PATHR = ROWSPC - CANWH
+!           DELWR = PATHR + CANHT - SQRT(PATHR**2+CANHT**2)
+!           DIFR = MIN((CANWH+DELWR)/ROWSPC,1.0)
+!         ELSE
+!           DIFR = 1.0
+!         ENDIF
 
-         DIFPR = MIN(MAX(DIFP*DIFR,1.0E-6),1.0)
+!         DIFPR = MIN(MAX(DIFP*DIFR,1.0E-6),1.0)
          EXPONENT = -KDIFBL*SQV*YHLAI/DIFPR
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            ADIF = DIFPR * (1.0-REFDF) * RADDIF *
      &     (1.0-EXP(-KDIFBL*SQV*YHLAI/DIFPR))
          ELSE
@@ -648,7 +710,7 @@ C     extended for both between plants (P) and rows (R).
          ENDIF
 
          EXPONENT = -KDIFBL*SQV*YLAISL/DIFPR
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            ADIFSL = DIFPR * (1.0-REFDF) * RADDIF *
      &     (1.0-EXP(-KDIFBL*SQV*YLAISL/DIFPR))
          ELSE
@@ -659,6 +721,7 @@ C     extended for both between plants (P) and rows (R).
 
 C     Light reflected from the soil assumed to be isotropic and diffuse.
 C     Absorption handled in the same manner as diffuse skylight.
+C     The flux is assumed to go bottom-up.
 
          REFDIR = FRACSH * REFDR * RADDIR
          REFDIF = DIFPR * REFDF * RADDIF
@@ -667,7 +730,7 @@ C     Absorption handled in the same manner as diffuse skylight.
          REFSOI = ALBEDO * INCSOI
 
          EXPONENT = -KDIFBL*SQV*YHLAI/DIFPR
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            AREF = DIFPR * (1.0-REFDF) * REFSOI *
      &     (1.0-EXP(-KDIFBL*SQV*YHLAI/DIFPR))
          ELSE
@@ -675,7 +738,7 @@ C     Absorption handled in the same manner as diffuse skylight.
          ENDIF
 
          EXPONENT = -KDIFBL*SQV*YLAISH/DIFPR
-         IF (EXPONENT > -40.) THEN
+         IF (EXPONENT > EXPMIN) THEN
            AREFSH = DIFPR * (1.0-REFDF) * REFSOI *
      &     (1.0-EXP(-KDIFBL*SQV*YLAISH/DIFPR))
          ELSE

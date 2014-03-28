@@ -95,7 +95,7 @@ subroutine MemDeallocate
   Deallocate(MemBin)
 end subroutine
 
-logical function MemAllocated
+logical function MemAllocated()
   MemAllocated = Allocated(MemBin)
 end function
 

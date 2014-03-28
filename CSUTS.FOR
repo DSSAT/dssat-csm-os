@@ -1,7 +1,7 @@
 !=======================================================================
 !  CROPSIM UTILITIES    
 !  Routines/functions used by Cropaim modules
-!  Last edit 06/06/13 LAH
+!  Last edit 20/02/14 LAH Minor changes to VCHECK following GH 180214
 !=======================================================================
 
       ! Subroutines: Calendar, Csopline, Csdaylen, Csincmth, Csyr_doy
@@ -398,8 +398,7 @@
       CHARACTER (LEN=80)   TLINE
       CHARACTER (LEN=30)   TLINE2
       CHARACTER (LEN=1)    COLON
-      CHARACTER (LEN=78)   MESSAGE(10)
-      INTEGER              L,FNUMERR,FNUMTMP,FNUMWRK,TVILENT,ERRNUM
+      INTEGER              L,FNUMERR,FNUMTMP,TVILENT,ERRNUM
       LOGICAL              FFLAG,FOPEN
 
 !      INTRINSIC EOF   !portability
@@ -407,11 +406,6 @@
       SAVE
 
       CALL Getlun ('FVCHECK',fnumtmp)
-      IF (fnumwrk.LE.0) THEN
-        CALL Getlun('WORK.OUT',fnumwrk)
-        INQUIRE (FILE = 'WORK.OUT',EXIST = FFLAG)
-        IF (.NOT.(FFLAG)) OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-      ENDIF
 
       INQUIRE (FILE = dirfile,EXIST = fflag)
       IF (.NOT.fflag) THEN
@@ -420,12 +414,10 @@
         WRITE (fnumerr,*) ' Could not find input file! '
         WRITE (fnumerr,*) ' File was: ',dirfile(1:60)
         WRITE (fnumerr,*) ' Version code sought was: ',vcode
-        WRITE (fnumerr,*) ' Check WORK.OUT for details'
         WRITE (*,*) ' Could not find input file! '
         WRITE (*,*) ' File was: ',dirfile(1:60)
         WRITE (*,*) ' Version code sought was: ',vcode
         WRITE (*,*) ' Program will have to stop'
-        WRITE (*,*) ' Check WORK.OUT for details'
         CLOSE (fnumerr)
         STOP ' '
       ELSE
@@ -437,11 +429,9 @@
           OPEN(UNIT=fnumerr,FILE='ERROR.OUT')
           WRITE (fnumerr,*) ' Input file empty! '
           WRITE (fnumerr,*) ' File was: ',dirfile(1:60)
-          WRITE (fnumerr,*) ' Check WORK.OUT for details'
           WRITE (*,*) ' Input file empty! '
           WRITE (*,*) ' File was: ',dirfile(1:60)
           WRITE (*,*) ' Program will have to stop'
-          WRITE (*,*) ' Check WORK.OUT for details'
           CLOSE (fnumerr)
           STOP ' '
         ENDIF
@@ -450,11 +440,9 @@
           OPEN(UNIT=fnumerr,FILE='ERROR.OUT')
           WRITE (fnumerr,*) ' Input file empty! '
           WRITE (fnumerr,*) ' File was: ',dirfile(1:60)
-          WRITE (fnumerr,*) ' Check WORK.OUT for details'
           WRITE (*,*) ' Input file empty! '
           WRITE (*,*) ' File was: ',dirfile(1:60)
           WRITE (*,*) ' Program will have to stop'
-          WRITE (*,*) ' Check WORK.OUT for details'
           CLOSE (fnumerr)
           STOP ' '
         ENDIF
@@ -465,32 +453,20 @@
         CLOSE (FNUMTMP)
       
         IF (TLINE(L:L+14) .NE. VCODE(1:15)) THEN
-          MESSAGE(1) = 'Input file not correct version!'
-          WRITE(MESSAGE(2),'(A6,A60)')  'File: ',dirfile(1:60)
-          WRITE(MESSAGE(3),'(A9,A15)')  'Version: ',tline(L:L+14)
-          WRITE(MESSAGE(4),'(A16,A15)') 'Needed version: ',vcode(1:15)
-          MESSAGE(5) = 'Program had to stop'
-          CALL WARNING(5,'CSUTS',MESSAGE)
-          WRITE(FNUMWRK,*) ' '
-          WRITE(FNUMWRK,'(A32)')' Input file not correct version!'
-          WRITE(FNUMWRK,'(A8,A60)')  '  File: ',dirfile(1:60)
-          WRITE(FNUMWRK,'(A11,A15)') '  Version: ',tline(L:L+14)
-          WRITE(FNUMWRK,'(A18,A15)') '  Needed version: ',vcode(1:15)
-          WRITE(FNUMWRK,'(A21)')     '  Program had to stop'
+          CALL Getlun ('ERROR.OUT',fnumerr)
+          OPEN (UNIT = fnumerr,FILE = 'ERROR.OUT')
+          WRITE(fnumerr,*) ' '
+          WRITE(fnumerr,'(A32)')' Input file not correct version!'
+          WRITE(fnumerr,'(A8,A60)')  '  File: ',dirfile(1:60)
+          WRITE(fnumerr,'(A11,A15)') '  Version: ',tline(L:L+14)
+          WRITE(fnumerr,'(A18,A15)') '  Needed version: ',vcode(1:15)
+          WRITE(fnumerr,'(A21)')     '  Program had to stop'
           WRITE(*,*) ' Input file not correct version!'
           WRITE(*,*) '  File: ',dirfile(1:60)
           WRITE(*,*) '  Version: ',tline(L:L+14)
           WRITE(*,*) '  Needed version: ',vcode(1:15)
           WRITE(*,*) '  Program will have to stop'
           STOP ' '
-        ELSE  
-          WRITE(FNUMWRK,*) ' '
-          WRITE(FNUMWRK,'(A18)')    '  File version OK.'
-          WRITE(FNUMWRK,'(A14,A60)')'   File:      ',dirfile(1:60)
-          TLINE2 = TLINE(L+16:L+46) 
-          CALL LTRIM(TLINE2)
-          WRITE(FNUMWRK,'(A14,A15,A2,A20)')
-     &     '   Version:   ',vcode(1:15),'  ',TLINE2(1:20)
         ENDIF
       ENDIF
 
