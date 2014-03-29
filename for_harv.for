@@ -115,7 +115,7 @@
 
       END IF
 
-      DO I=1,SIZE(MOW) !WHILE (DATE.NE.YRDOY.OR.TRNO.NE.TRTNO)
+      DO I=1,SIZE(MOW)
            IF (MOW(I).GE.0) THEN
              IF (DATE(I).EQ.YRDOY.AND.TRNO(I).EQ.TRTNO)THEN
               FHLEAF=0
@@ -198,8 +198,8 @@
      &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H FHAGE IVOMD'
             end if
                call yr_doy(yrdoy,year,doy)
-               write(fhoutfmt,'(a)') 
-     &      '(i4,x,a8,a3,2(i5),i5,i4,5(i6),f6.2,2(i6),4(f6.2),i6,f6.1)'
+               write(fhoutfmt,'(a)') '(i4,x,a8,a3,2(i5),i5,i4,'//
+     &              '5(i6),f6.2,2(i6),3(f6.2),f6.1,i6,f6.1)'
             WRITE(fhlun,fhoutfmt)
      &           run,mowfile(1:8),crop,trtno,i,year,doy,
      &           int(topwt*10),int(wtlf*10),int(stmwt),
