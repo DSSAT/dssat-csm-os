@@ -40,7 +40,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
+!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
 !     CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
 
 !=======================================================================
@@ -398,22 +398,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
-      SELECT CASE (OPSYS)
-      CASE ('WINDO','DOS  ')
-!       DOS, Windows
-        SLASH = '\' 
-        DSSATPRO = 'DSSATPRO.V46'
-!       Note: Use DSSAT45 directory for now. 
-C-GH    Set to DSSAT46
-        STDPATH = 'C:\DSSAT46\' 
-D       STDPATH = 'D:\DSSAT46\' 
-
-      CASE ('LINUX','UNIX ')
-!       Linux, Unix
-        SLASH = '/' 
-        DSSATPRO = 'DSSATPRO.L46'
-        STDPATH = '../DSSAT46/'
-      END SELECT
+      call opsys(slash,dssatpro,stdpath)
 
       END SUBROUTINE SETOP
 
