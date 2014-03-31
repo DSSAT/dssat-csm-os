@@ -24,7 +24,7 @@
 
 !     ------------------------------------------------------------------
 !     Send DYNAMIC to accomodate emergence calculations
-!       (DYNAMIC=EMERG) within the integration section of CROPGRO.
+!       (DYNAMIC=EMERG) within the integration section of CERES (MA 19dec2013)
 !     ------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
