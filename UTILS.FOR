@@ -1484,22 +1484,18 @@ C=======================================================================
 
         integer           :: p1,p2,p3
         
-        if(slash=='/')then
-           p1=index(path,'.')
-           p2=index(path,'..')
-           
-           if(p1>1)then
+           p1 = index(path,slash//'..'//slash)
+
+           do while(p1>1)
               p3=len_trim(path)
-              p1=index(path(1:p1),slash,back=.true.)
-              if(p2>0)then
-                 p2=p2+3
-                 p1=index(path(1:(p1-1)),slash,back=.true.)
+              if(p3<p1+4)then
+                 path = path(1:p1)
               else
-                 p2 = p1 + 2
+                 path = path(1:p1)//path((p1+4):p3)
               end if
-              path = path(1:p1)//path(p2:p3)
-           end if
-        end if
+              p1 = index(path,slash//'..'//slash)
+           end do
+
       end subroutine path_adj
 
 !=======================================================================
