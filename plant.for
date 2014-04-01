@@ -445,10 +445,9 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !	Generic Salus crop model
 !	KD 09/14/2009
 	CASE('SALUS') 
-	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,     !Input
-     &        YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,	!Input
-     &        KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	!Output   
-
+	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,         !Input
+     &  HARVFRAC, YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,  !Input
+     &  KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	            !Output
 	  IF (DYNAMIC .EQ. INTEGR) THEN
           XLAI = XHLAI
         ENDIF

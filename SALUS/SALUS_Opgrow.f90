@@ -47,9 +47,11 @@ if(idetg == 'N') return
 !-----------------------------------------------------------------------
 ! DYNAMIC = SEASINIT -  Seasonal initialization - run once per season
 !-----------------------------------------------------------------------
-if(dynamic == seasinit) then
+if(dynamic == runinit) then
    outg = 'PlantGro.OUT'
    call getlun('OUTG', noutdg)
+   
+else if(dynamic == seasinit) then   
    call get(soilprop)
    n_lyr = min(10, MAX(4,soilprop%nlayr))
          

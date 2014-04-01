@@ -278,7 +278,7 @@
 ! parameter file is not inflenced by water stress. In other words the effect of water stress
 ! on LAI, occurring beyond RelTTSn2 is not modeled.		    
 		   IF((RELTT .LE. RELTTSN2) .AND. (RELTTSN2 .GE. RELTTSN)) THEN	      
-          SNPARLAIS = STRESLAI*SNPARLAI + (SNPARLAI-STRESLAI*SNPARLAI)*
+           SNPARLAIS = STRESLAI*SNPARLAI + (SNPARLAI-STRESLAI*SNPARLAI)*
      &                 MIN(DROUGHTFAC,HEATFAC,COLDFAC,NFAC,PFAC)
 		   ELSE
 		      SNPARLAIS = SNPARLAI
@@ -286,7 +286,7 @@
 		    
 		   RELLAI = ((1.001 - RELTT)/(1.0 - RELTTSN))**SNPARLAIS		    
     		 ELSE
-		    PRINT*,"Rel.TT at start of senescence must be less than 1"
+		    !PRINT*,"Rel.TT at start of senescence must be less than 1"
 		 ENDIF
 		  
 ! version2-Kofikuma 12/16/2010 Modification to original version to account for stress

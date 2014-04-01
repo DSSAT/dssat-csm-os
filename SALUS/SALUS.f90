@@ -13,9 +13,10 @@
 ! 08/25/2011  Added TFREEZE and FREEZED to stop growth and dev at cold temperatures
 ! 11/16/2011  Added "dynamic" harvest index (reduced with slow biomass accumulation)
 ! 03/27/2014  Removed SALUS.OUT; added more variables to PlantGro.OUT
+! 04/15/2014  KAD Adapted MZ_OPHARV for SALUS
 !==============================================================================
 
-subroutine SALUS(control, iswitch, weather, soilprop, st,            & !Input
+subroutine SALUS(control, iswitch, weather, soilprop, st, harvfrac,  & !Input
                  yrplt, eop, sw, rwu, trwup, nh4, no3, spi_avail,    & !Input
                  kcan, mdate, rlv, xhlai, uno3, unh4, puptake)         !Output
 !------------------------------------------------------------------------------  
@@ -27,13 +28,13 @@ character(len=6), parameter :: errkey='SALUS'
 character :: iswwat*1, iswnit*1, iswpho*1, section*6, varno*6, filec*12, vrname*16, fileio*30, pathcr*80, message*78(10)
 logical :: fexist, freezed, killed, germinate, emerge
 integer :: err, layer, cumslowdev, cumslowdevstop, dae, dap, doy, doyp, dynamic, errnum, linc, lnum, lunio
-integer :: mature, mdate, nlayr, yrdoy, yrend, yrplt, found, timdif
+integer :: mature, mdate, nlayr, yrdoy, yrend, yrplt, found, timdif, gstage, gyrdoySim(20), yrsim
 real :: biomass, bioatlaimax, biomassc, biomassinc, biomassroot, biomassrootc, cumtt, dbiomass, dbiomassroot
 real :: deltalai, emgint, emgslp, grainyield, grainyieldc, hrvindex, hrvindstr, kcan, laimax, laip1, laip2
 real :: plantpop, rellai, rellaip1, rellaip2, rellaimax, rellais, reltt, relttemerge, relttsn, relttsn2
 real :: relrue, rootdepth, rootpartcoeff, rowspacing, rue, ruemax, snparlai, snparrue, sowdepth, srad
 real :: stresrue, streslai, tbasedev, teff, tfreeze, tmax, tmin, toptdev, ttaccumulator, ttaccumulator1
-real :: ttemerge, ttgerminate, ttmature, xhlai, xlai, rellaiyest, dtt, wpseed
+real :: ttemerge, ttgerminate, ttmature, xhlai, xlai, rellaiyest, dtt, wpseed, bwah, sdwtah, harvfrac(2)
 
 ! Constants
 real, parameter :: nfac=1.0, pfac=1.0, coldfac=1.00, heatfac=1.00, relttp1=0.15, relttp2=0.50       
@@ -69,13 +70,14 @@ nlayr   = soilprop % nlayr
 srad    = weather  % srad  
 tmax    = weather  % tmax  
 tmin    = weather  % tmin 
-yrdoy   = control  % yrdoy      
+yrdoy   = control  % yrdoy   
+yrsim   = control % yrsim   
  
 !==============================================================================
 ! INITIALIZATION AND INPUT DATA
 !==============================================================================
 ! IF(DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
-if(dynamic == seasinit) then
+if(dynamic==runinit .OR. dynamic==seasinit) then
 !==============================================================================       
         
 !-------------------------------------------------------------------------
@@ -147,6 +149,8 @@ rellaiyest=0.0
 wpseed = 0.0  
 grainyield = 0.0
 grainyieldc = 0.0
+gstage = 14
+gyrdoySim = 0
 	            
 !Root growth and water uptake
 droughtfac = 1.0
@@ -278,15 +282,26 @@ call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, y
         cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
         
 ! Initialize Output Summary.OUT
-call SALUS_Opharv(control, mdate, biomass, grainyield, xhlai)
+call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
+      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,  & !Input
+      bwah, sdwtah)                                                        !Output
 
 !==============================================================================
 ! RATE CALCULATIONS
 !==============================================================================
 else if(dynamic == rate) then
 !==============================================================================
-if(dae > -1) then
-! Repeat everyday, but after emergence
+!---Save preliminary stages
+if(yrdoy == yrsim) then
+   gstage = 14
+   gyrdoySim(gstage) = yrdoy 
+end if
+if(yrdoy == yrplt) then
+   gstage = 13
+   gyrdoySim(gstage) = yrdoy 
+end if
+
+if(dae > -1) then 
   dae = dae + 1
 endif
 dap = max(0, timdif(yrplt,yrdoy))
@@ -317,11 +332,11 @@ call dailyThermalTime(tmax, tmin, tbasedev, toptdev, ttmature, teff, reltt, dtt,
 !------------------------------------
 ! Added 11/16/2011 - Get Biomass right after LAIMAX (at flowering) for use in correcting harvest index     
 !------------------------------------  
-if(bioatlaimax == 0.0) then
-   if(reltt >= relttsn) then
-      bioatlaimax = biomass
-  end if
-end if
+!if(bioatlaimax == 0.0) then
+!   if(reltt >= relttsn) then
+!      bioatlaimax = biomass
+!  end if
+!end if
 
 !11/16/2011 - Modification to harvest index with low accumulation of biomass after LAIMAX as discussed with Bruno today on Rm 201
 !hrvindstr = hrvindex
@@ -335,7 +350,8 @@ end if
 if(dtt > 0.0) then
    if(.not. emerge) then
 	  if(.not. germinate) then
-		 call germination(ttaccumulator1, ttgerminate, ttmature, dtt, ttemerge, killed, germinate)	
+		 call germination(ttaccumulator1, ttgerminate, ttmature, dtt, ttemerge, killed, germinate)
+		 if(germinate) gstage = 1	
          if(killed) then
             write(message(1), '( "Crop model stopped at ",I4," days after planting (DAY: ",I7,")" )') dap, yrdoy
             write(message(2), '( "due to too small value of thermal time to maturity." )')
@@ -348,6 +364,7 @@ if(dtt > 0.0) then
 	  else !If crop has already germinated then
 		 call emergence(ttaccumulator, dtt, ttemerge, ttmature, emerge)	
 		 if(germinate .and. emerge) then
+		    gstage = 2
 		    dae = 0
 ! Initialize root weight, aboveground biomass weight, root depth, and root length density at emergence  
 			call initializeRoots(reltt, plantpop, sowdepth, dlayr, nlayr, rlwr, wpseed,    &   !Inputs
@@ -355,8 +372,10 @@ if(dtt > 0.0) then
 		 end if
 	  end if ! EndIf crop has germinated
    else ! If crop has already emerged then
+      if(reltt >= relttsn) gstage = 3
 	  call maturity(reltt, mature)
 	  if(mature == 1) then
+	     gstage = 4
 		 mdate = yrdoy	
 		 hrvindstr = hrvindex	 
 		 grainyield = biomass * hrvindstr
@@ -429,9 +448,22 @@ else if(dynamic == integr) then
 xhlai = max(xhlai, 0.0)
 biomass = max(biomass+dbiomass, 0.0)
 biomassroot = max(biomassroot+dbiomassroot, 0.0)
+
+!Dates of occurrence of growth stages
+if(gstage > 0) then
+    if(gyrdoySim(gstage)==0) then
+       gyrdoySim(gstage) = yrdoy
+    end if
+end if    
  
 ! Convert biomass from g/m-2 to kg ha-1	        
 call convertb(biomass, biomassroot, grainyield, biomassc, biomassrootc, grainyieldc)  
+
+if(bioatlaimax == 0.0) then
+   if(reltt >= relttsn) then
+      bioatlaimax = biomassc
+  end if
+end if
 
 ! Activate N routine if N limitation is simulated:
 if(iswnit /= 'N') then
@@ -467,8 +499,10 @@ else if(dynamic == output) then
 !==============================================================================
 call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
         cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
-call SALUS_Opharv(control, mdate, biomass, grainyield, xhlai)     
-
+        
+call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
+      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,  & !Input
+      bwah, sdwtah)                                                        !Output
 !==============================================================================
 ! SEASON END
 !==============================================================================
@@ -476,8 +510,10 @@ else if(dynamic == seasend) then
 !==============================================================================
 call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
         cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
-call SALUS_Opharv(control, mdate, biomass, grainyield, xhlai)   
-
+        
+call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
+      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,  & !Input
+      bwah, sdwtah)                                                        !Output
 !==============================================================================
 ! END OF DYNAMIC 'IF' CONSTRUCT
 !==============================================================================
@@ -491,9 +527,9 @@ end subroutine SALUS
 !------------------------------------------------------------------------------
 ! VARIABLE DEFINITION  
 !------------------------------------------------------------------------------
-!biomass			Total plant dry matter weight (g m-2)
-!biomassc		    Total plant dry matter weight converted to kg ha-1 (kg ha-1)
-!biomassinc		    Daily biomass increment (g m-2)
+!biomass			Aboveground plant dry matter weight (g m-2)
+!biomassc		    Aboveground plant dry matter weight converted to kg ha-1 (kg ha-1)
+!biomassinc		    Daily total biomass increment (g m-2)
 !biomassroot		Root dry matter weight (g m-2)
 !biomassrootc	    Root dry matter weight converted to kg ha-1 (kg ha-1)
 !coldfac		    Low temperature reduction factor (0-1)
@@ -503,8 +539,8 @@ end subroutine SALUS
 !cumslowdevstop	    Cumulative slow development days to stop crop model (days)	
 !dae				Days after emergence
 !dap				Days after planting
-!dbiomass		    Incremental total plant dry matter weight (g m-2 d-1)
-!dbiomassroot	    Incremental root dry matter weight (g m-2 d-1)
+!dbiomass		    Rate of aboveground dry matter growth (g m-2 d-1)
+!dbiomassroot	    Rate of root dry matter growth (g m-2 d-1)
 !dlai			    Daily increase in leaf area index (m2 m-2 d-1)
 !doy				Julian day
 !doyp		        Date of planting (Julian day)
@@ -516,11 +552,13 @@ end subroutine SALUS
 !emgslp		        Slope of emergence thermal time calculation
 !frbforrt	        Fraction of new root biomass for root growth
 !freezed            Logical- True if TMIN <= TFREEZE 
+!gyrdoySim          YrDoy corresponding to timing of phenological events
 !heatfac		    High temperature reduction factor (0-1)
 !iswitch            Composite variable containing switches which control flow of execution for model.  The structure of the variable 
 !                   (SwitchType) is defined in ModuleDefs.for. 
 !kcan               Canopy light extinction coefficient for daily PAR, for equidistant plant spacing
 !germinate		    Germination flag; True when crop has germinated
+!gstage             Timing of phenological events (1=germination, 2=emergence, 3=beginning of leaf senscence, 4=maturity)
 !killed			    True when crop is killed by adverse conditions
 !lai				Canopy leaf area index (m2 m-2)
 !laimax		        Maximum expected Leaf Area Index (m2 m-2)

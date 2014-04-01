@@ -22,8 +22,7 @@ real :: EPlant_Kg, EStressFac, Plant_Kg, RELTT, RelTTEmerge, EUptake_Kg, SWaterF
 !------------------------------------------------------------------------------
 ! INITIALIZATION AND INPUT DATA
 !------------------------------------------------------------------------------
-! IF(DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
-if(dynamic == seasinit) then
+if(dynamic==runinit .OR. dynamic==seasinit) then
 !------------------------------------------------------------------------------
 nlayr = soilprop % nlayr
 dlayr = soilprop % dlayr 
