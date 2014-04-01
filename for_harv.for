@@ -25,6 +25,7 @@
       REAL AREALF,XLAI,AREAH,XHLAI,VSTAGE
       REAL PROLFF,PROSTF,pliglf,pligst
       real canht,fhcrlf,fhcrst,fhtotn,fhtot,fhlfn,fhstn
+      real fhpcho,fhpctlf,fhpctn,fhplig
 
       character(len=2)  crop
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
@@ -116,8 +117,9 @@
       END IF
 
       DO I=1,SIZE(MOW)
-           IF (MOW(I).GE.0) THEN
-             IF (DATE(I).EQ.YRDOY.AND.TRNO(I).EQ.TRTNO)THEN
+           if(date(i)==yrdoy) then
+           IF (MOW(I).GE.0.and.trno(i)==trtno)then
+              if(mow(i)/10<topwt) THEN
               FHLEAF=0
               FHSTEM=0
               FHVSTG=0
@@ -143,6 +145,11 @@
               fhcrlf = fhleaf*rhol
               fhcrst = fhstem*rhos
 
+              fhpctn = fhtotn/fhtot*100
+              fhplig = (fhleaf*pliglf+fhstem*pligst)/fhtot*100
+              fhpcho = (fhcrlf+fhcrst)/fhtot*100
+              fhpctlf = fhleaf/fhtot*100
+      
               WTLF  = WTLF - FHLEAF
               STMWT = STMWT - FHSTEM
               TOPWT = TOPWT - FHLEAF - FHSTEM
@@ -173,7 +180,26 @@
   
               VSTAGE = FHVSTG     
 
-              CALL GETLUN('fharv', fhlun)
+          else
+
+              fhtot = 0
+
+              fhlfn = 0
+              fhstn = 0
+              fhtotn = 0
+
+              fhcrlf = 0
+              fhcrst = 0
+
+              fhpctn = 0
+              fhplig = 0
+              fhpcho = 0
+
+              fhpctlf = 0
+
+          ENDIF
+
+             CALL GETLUN('FORHARV', fhlun)
 
             INQUIRE(file=FHOUT,EXIST=EXISTS)
             IF (exists.and.(run/=1.or.i/=1)) THEN
@@ -205,16 +231,13 @@
      &           int(topwt*10),int(wtlf*10),int(stmwt),
      &           int(strwt*10),int(rtwt*10),xlai,
      &           int(fhtot*10),int(fhtotn*10),
-     &           fhtotn/fhtot*100,
-     &           (fhcrlf+fhcrst)/fhtot*100,
-     &           (fhleaf*pliglf+fhstem*pligst)/fhtot*100,
-     &           fhleaf/fhtot*100,
+     &           fhpctn,fhpcho,fhplig,fhpctlf,
      &           -99,-99.0
             close(fhlun)
             
               if(i==size(mow)) deallocate(mow,trno,date,rsplf,mvs,rsht)
             RETURN
-          ENDIF
+            end if
         ENDIF
       ENDDO
       
