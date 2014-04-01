@@ -76,7 +76,8 @@ C=======================================================================
         IF (YRDOY .GT. 0) THEN
 !         IF (YR .LE. 10) THEN
 !     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
-          IF (YR .LE. 15) THEN
+!     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
+          IF (YR .LE. 20) THEN
             YRDOY = (2000 + YR) * 1000 + DOY
           ELSE
             YRDOY = (1900 + YR) * 1000 + DOY
@@ -573,7 +574,7 @@ C=======================================================================
         DOY = YRDOY - YR * 1000
 
         IF (FIRST) THEN
-          IF (YR .LE. 10) THEN
+          IF (YR .LE. 20) THEN
             CENTURY = 2000
           ELSE
             CENTURY = 1900

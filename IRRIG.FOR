@@ -636,8 +636,10 @@ C             Apply fixed irrigation amount
 
             DEPIR = DEPIR + IRRAPL
             NAP = NAP + 1
-            JULAPL(NAP) = YRDOY
-            AMIR(NAP)   = IRRAPL
+!           chp 3/20/2014 these are not used and result in array bounds errors 
+!             in long simulations.
+            !JULAPL(NAP) = YRDOY
+            !AMIR(NAP)   = IRRAPL
           ENDIF
         ENDIF
 
@@ -692,8 +694,8 @@ C               Apply fixed irrigation amount
 
               DEPIR = DEPIR + IRRAPL
               NAP = NAP + 1
-              JULAPL(NAP+1) = YRDOY
-              AMIR(NAP+1)   = IRRAPL
+              !JULAPL(NAP+1) = YRDOY
+              !AMIR(NAP+1)   = IRRAPL
 
             ENDIF
           ENDIF

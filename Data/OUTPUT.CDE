@@ -1,5 +1,5 @@
 *CSM OUTPUT FILES
-! DSSAT v4.6; 07/01/2013
+! DSSAT v4.6; 07/01/2014
 !
 ! Output files currently created by DSSAT crop simulation models.
 !
@@ -68,6 +68,7 @@ FORAGE.OUT      FH Forage harvest output file                         FORHARV
 !Information files:
 ERROR.OUT          Error messages                                     ERRORO
 INFO.OUT           Information output file                            OUTINFO
+ORYZA_LOG.OUT      ORYZA log file
 SOMLIT1.OUT        Detailed Century SOM output                        SLDET
 TEMP.bat                                                              OUTBAT
 WARNING.OUT        Warning messages                                   OUTWARN

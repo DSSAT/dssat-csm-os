@@ -968,11 +968,6 @@ C                 rather than delete all *.OUT files.
 C=======================================================================
       SUBROUTINE OPCLEAR
       USE ModuleDefs
-!cDEC$ IF (COMPILER == 0) 
-!        USE DFPORT
-!cDEC$ ELSE
-C        USE IFPORT
-!cDEC$ ENDIF
       IMPLICIT NONE
 
       Type (OutputType) FileData
@@ -1052,11 +1047,6 @@ C=======================================================================
       SUBROUTINE OPNAMES(FNAME)
       USE ModuleDefs
       USE ModuleData
-!!!!cDEC$ IF (COMPILER == 0) 
-!        USE DFPORT
-!!!!cDEC$ ELSE
-C        USE IFPORT
-!!!!cDEC$ ENDIF
       IMPLICIT NONE
 
       SAVE

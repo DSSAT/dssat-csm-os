@@ -66,7 +66,6 @@ C=======================================================================
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
      &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
 
-
       USE ModuleDefs
       IMPLICIT NONE
       SAVE

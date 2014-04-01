@@ -61,13 +61,17 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 30
+        INTEGER :: Build = 35
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-forage  '
-!     Development branch for expanding the outputs of abiotic stresses
 
 !     Version history:  
+!       4.6.0.35 chp 03/28/2014 Taro initialization fixed - RO
+!       4.6.0.34 chp 03/28/2014 Minor changes Weather, CSCER, sorghum
+!       4.6.0.33 chp 03/26/2014 Y2K crossover at 2020
+!       4.6.0.32 chp 03/20/2014 Minor bug fixes, millet and auto-irrig
+!       4.6.0.31 chp 03/10/2014 Sorghum P linkage
 !       4.6.0.30 chp 02/21/2014 CSCER, CSCRP, CSCAS updates
 !       4.6.0.29 chp 01/23/2014 Fixed bug in auto planting when IHARI = "R"
 !       4.6.0.28 chp 01/16/2014 Suppress screen output for VBOSE=zero.

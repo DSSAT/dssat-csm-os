@@ -1,4 +1,4 @@
-$SPECIES:WHCRP046.051213   Last edit:051213 
+$SPECIES:WHCRP046.010314   Last edit:010314 
 
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
@@ -8,14 +8,11 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! gained,and should not be taken as 'fixed'.
 
 *SPECIES:WHCRP046
-! Harvest product and standard moisture content
-@HPROD  HMPC
-    GR    15
 ! Principal Stages (S=Standard,K=Key(those that may be outputed)
 @ PSNO PSTYP PSABV PSNAME
 ! Stg#  Type Abrev Name
     1      S GDAT  Germinate
-    2      S TSAT  T.Spikelet
+    2      K TSAT  T.Spikelet
     3      S PSDAT PseudoStem
     4      S LLDAT End_Leaf
     5      S IEDAT HeadEmerge
@@ -30,7 +27,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 @ SSNO SSTYP  SSTG SSABV SSNAME
 ! Stg#  Type PStg# Abrev Name
     1      S   1.5 LAFST Lafac_change          
-    2      S  1.55 DRAT  DoubleRidges
+    2      K  1.55 DRAT  DoubleRidges
     3      S 3.143 JDAT  Jointing
     4      S   3.3 SGPHS StemStart             
     5      S   4.0 RUESG RUE_change            
@@ -94,7 +91,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 !   fr
   0.65
 ! Grain  
-@GLIG% GWLAG GWLIN ! Lignin,wt.endlag,endlinear fill
+@GLIG% GWLAG GWLIN ! Lignin;wt.endlag,endlinear
 !    %    fr    fr
   10.0  0.10  0.80 
 ! Seed
@@ -128,14 +125,17 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 @ TKUH TKDTI TKDLF TKSPN  HDUR HLOST HLOSF ! Kill temps,span,time->harden,loss
 !   oC    oC    oC    oC     d    oC    fr
   -6.0   2.0   6.0   2.0  10.0  10.0   0.2
+! High temperature sensitivity  ! TMAX at which 'hays off'
+@ TKGF
+  45.0
 ! Temperature responses
 ! AFRC vernalization=-4,3,10,17; Reinink=-1,0,4,8,9
-@RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR TRGFW xRGFW TRGFN  
-!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
-     0     1     0     1     2     0     0     0    -5    -5     0     0     0 
-   1.0    20    20    25    30    20    10     5     0     0     8    16    16 
-   1.0    35    35    35    50    35    20    25     7     5    20    35    35
-     0    45    45    45    60    45    35    35    15    10    40    45    45
+@RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR TRGFW xRGFW TRGFN xRGFN  
+!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
+     0     1     0     1     2     0     0     0    -5    -5     0     0     0     0 
+   1.0    20    20    25    30    20    10     5     0     0     8    16     8    16 
+   1.0    35    35    35    50    35    20    25     7     5    20    35    20    35
+     0    45    45    45    60    45    35    35    15    10    40    45    40    45
 @RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR XRGFW TRGFN  
 !    0     1     0     1     0     1     0     0    -5    -5     0     0 
 !  1.0    26    20    30    30    20    10     5     0     0    10    16 
@@ -180,7 +180,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
 !    %     %     %     %     %     %
    6.0  0.75  2.50  0.65  2.00  1.50                               
-   1.0  0.55  1.00  0.45  1.70  1.25                               
+   3.0  0.55  2.00  0.45  1.70  1.25                               
 ! N distribution/mobilization
 @NLAB% ! %N that labile 
 !    %
@@ -239,7 +239,6 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! HDUR    Days for complete cold hardening (d)
 ! HLOSF   Fraction of hardiness days lost (fr/d)
 ! HLOST   Threshold temperature for hardiness loss (C)
-! HMPC    Grain moisture percentage,standard (#)
 ! LAIXX   LAI maximum (m2/m2)
 ! LASTG   Leaf area change stage (#)
 ! LAXS    Maximum area of leaves on main stem (cm2)                                                                                                     
@@ -323,6 +322,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! TILIP   Tiller initiation phase duration (Leaf # from birth to full size)
 ! TKDLF   Killing temperature difference,leaves cf plants (C)
 ! TKDTI   Killing temperature difference,tillers cf plant (C)
+! TKGF    Temperture (daily max) at which plant killed during grain fill )C)
 ! TKILL   Temperature at which disease killed (oC)
 ! TKSPN   Temperature span over which killing occurs (C)
 ! TKUH    Start kill temperature,unhardened (oC)
