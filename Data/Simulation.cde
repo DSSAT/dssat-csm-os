@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.6; 07/01/2014
+! DSSAT v4.6; 07/01/2013
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
@@ -166,6 +166,8 @@ MLCER    ML   CERES-Millet
 MZCER    MZ   CERES-Maize
 MZIXM    MZ   IXIM-Maize
 SALUS    MZ   SALUS-Maize
+SALUS    PN   SALUS-Peanut
+SALUS    CO   SALUS-Cotton
 PTSUB    PT   SUBSTOR-Potato
 RICER    RI   CERES-Rice
 RIORZ    RI   ORYZA-Rice
@@ -176,3 +178,4 @@ SWCER    SW   CERES-Sweetcorn
 TNARO    TN   AROIDS-Taro
 TRARO    TR   AROIDS-Tanier
 SALUS    xx   SALUS-generic crop model
+MZAGM    MZ   AgMaize

@@ -1,5 +1,5 @@
 *CSM OUTPUT FILES
-! DSSAT v4.6; 07/01/2014
+! DSSAT v4.6; 07/01/2013
 !
 ! Output files currently created by DSSAT crop simulation models.
 !
@@ -37,7 +37,9 @@ CSP_GrowCane.OUT   Casupro sugarcane output                           CSP_GRO
 CSP_PHEN.OUT       Casupro sugarcane output                           OUTPHNL
 PlantKg.OUT        Casupro sugarcane output                           OUTKG
 Generic.OUT        Generic (temporary) output file
-SALUS.OUT          Generic plant routine
+AG_PlantGro.OUT    AgMaize growth file
+AG_LaindGro.OUT    AgMaize LAI file
+AG_SoilTemp.OUT    AgMaize soil temperature file
 
 !Seasonal summary output files
 Environ.OUT     EN Environmental modifications output file            SOUTE
@@ -63,6 +65,7 @@ SoilWatBal.OUT     Seasonal soil water balance                        SWBAL
 Summary.OUT     SU Seasonal summary output file                       OUTSUM
 WeatherSum.OUT     Not currently operational                          SOUTWTH
 SoilWatBal2.OUT    Temporary
+AG_GroStage.OUT    AgMaize growth stages file
 
 !Information files:
 ERROR.OUT          Error messages                                     ERRORO
