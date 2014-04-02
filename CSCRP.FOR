@@ -1,6 +1,7 @@
 !-----------------------------------------------------------------------
 !  CROPSIM CEREAL GROWTH AND DEVELOPMENT MODULE    
 !  Last edit 01/03/14 LAH Version change. New CUL,ECO files.
+!  Last edit 03/27/14 GH Format correction for PLANTGRO.out
 !-----------------------------------------------------------------------
 
       SUBROUTINE CSCRP (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
@@ -9356,7 +9357,8 @@
               ENDIF
               YEARDOY = YEAR*1000 + DOY
               WRITE (NOUTPG,2201)
- 2201         FORMAT ('@YEARDOY    DAS   DAP TMEAN TKILL',
+C-GH2201         FORMAT ('@YEARDOY    DAS   DAP TMEAN TKILL',
+ 2201         FORMAT ('@YEAR DOY   DAS   DAP TMEAN TKILL',
      A               '  GSTD  L#SD',
      B               ' PARID PARUD  AWAD',
      C               '  LAID  SAID  CAID',
@@ -9375,7 +9377,8 @@
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPG,501)
 !     A      YEAR,DOY,DAS,DAP,TMEAN,TKILL,GSTAGEC,LNUM,
-     A      YEARDOY,DAS,DAP,TMEAN,TKILL,GSTAGEC,LNUM,
+C-GH  A      YEARDOY,DAS,DAP,TMEAN,TKILL,GSTAGEC,LNUM,
+     A      YEAR,DOY,DAS,DAP,TMEAN,TKILL,GSTAGEC,LNUM,
      B      PARIOUT,PARIUE,AMIN1(999.9,CARBOBEG*PLTPOP*10.0),
      &      LAIC,SAID,CAIC,
      C      NINT(TWAD),NINT(SDWAD),NINT(RWAD),NINT(CWAD),
@@ -9390,7 +9393,8 @@
      K      1.0-TFP,1.0-TFG,1.0-VF,1.0-DFOUT
   501       FORMAT(
 !     A      I5,I4,2I6,F6.1,F6.1,A6,F6.1,
-     A      I9,2I6,F6.1,F6.1,A6,F6.1,
+C-GH  A      I9,2I6,F6.1,F6.1,A6,F6.1,
+     A      I5,I4,2I6,F6.1,F6.1,A6,F6.1,
      B      F6.3,F6.2,F6.1,
      &      A6,F6.3,A6,
      C      4I6,
