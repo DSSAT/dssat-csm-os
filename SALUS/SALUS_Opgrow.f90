@@ -13,7 +13,7 @@
 !  08/20/2002 GH  Modified for Y2K
 !  07/08/2003 CHP Changed senescence output.
 !  05/31/2006 CHP Output DTT, growing degree days.
-!  09/24/2009 KAD Modified for Salus
+!  09/24/2009 KAD Modified for SALUS
 !----------------------------------------------------------------------
 !  Called by: SALUS
 !  Calls:     None

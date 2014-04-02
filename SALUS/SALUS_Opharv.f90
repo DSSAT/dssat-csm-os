@@ -3,7 +3,7 @@
 !  Generates data for use by OPSUM for SALUS
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
-!  04/15/2014 KAD Adapted MZ_OPHARV for SALUS	
+!  04/01/2014 KAD Adapted MZ_OPHARV for SALUS	
 !=======================================================================
 
 subroutine SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,   & !Input

@@ -5,15 +5,16 @@
 ! maturity is modeled using the concept of relative thermal time. Biomass
 ! computation uses  the radiation use efficiency approach.
 !==============================================================================
-! 06/24/2009  Translated from Visual Basic (KAD)
-! 05/10/2010  Added new equation for root partitioning coefficient (KAD)
-! 07/26/2010  Added environment extremes (KAD)
-! 07/27/2010  Implemented exponential functional for computing root depth factor
+! 06/24/2009 KAD/BB Translated from Visual Basic (BB = Bruno Basso)
+! 05/10/2010 KAD/BB Added new equation for root partitioning coefficient
+! 07/26/2010 KAD/BB Added environment extremes
+! 07/27/2010 KAD/BB Implemented exponential functional for computing root depth factor
 ! ... see SAL_Subs
-! 08/25/2011  Added TFREEZE and FREEZED to stop growth and dev at cold temperatures
-! 11/16/2011  Added "dynamic" harvest index (reduced with slow biomass accumulation)
-! 03/27/2014  Removed SALUS.OUT; added more variables to PlantGro.OUT
-! 04/15/2014  KAD Adapted MZ_OPHARV for SALUS
+! 08/25/2011 KAD    Added TFREEZE and FREEZED to stop growth and dev at cold temperatures
+! 11/16/2011 BB/KAD Added "dynamic" harvest index (reduced with slow biomass accumulation)
+! 03/27/2014 KAD    Removed SALUS.OUT; added more variables to PlantGro.OUT; temporarily disabled
+!                   dynamic harvest index
+! 04/02/2014 KAD    Adapted MZ_OPHARV for SALUS
 !==============================================================================
 
 subroutine SALUS(control, iswitch, weather, soilprop, st, harvfrac,  & !Input
@@ -33,7 +34,7 @@ real :: biomass, bioatlaimax, biomassc, biomassinc, biomassroot, biomassrootc, c
 real :: deltalai, emgint, emgslp, grainyield, grainyieldc, hrvindex, hrvindstr, kcan, laimax, laip1, laip2
 real :: plantpop, rellai, rellaip1, rellaip2, rellaimax, rellais, reltt, relttemerge, relttsn, relttsn2
 real :: relrue, rootdepth, rootpartcoeff, rowspacing, rue, ruemax, snparlai, snparrue, sowdepth, srad
-real :: stresrue, streslai, tbasedev, teff, tfreeze, tmax, tmin, toptdev, ttaccumulator, ttaccumulator1
+real :: stresrue, streslai, tbasedev, teff, tfreeze, tmax, tmin, toptdev, ttaccumulator
 real :: ttemerge, ttgerminate, ttmature, xhlai, xlai, rellaiyest, dtt, wpseed, bwah, sdwtah, harvfrac(2)
 
 ! Constants
@@ -51,7 +52,7 @@ real, dimension(nl):: NSupply_kg, NSupplyRed_Kg, NUptake
 ! P Model        
 real PConcAct, PConcMin, PConcOpt, PConcOpt_par(3), PDemand_Kg, PSupply_Tot, PPlant_Kg
 real, dimension(nl):: PSupplyRed_Kg, PUptake, SPi_AVAIL      
-	
+
 !------------------------------------------------------------------
 ! Constructed variable types based on definitions in ModuleDefs.for
 Type (ControlType) control
@@ -96,7 +97,7 @@ dae = -1
 dap = 0
 dbiomass = 0.0 
 dbiomassroot = 0.0
-deltalai = 0.0	
+deltalai = 0.0
 dtt = 0.0
 emerge = .false.
 emgint = 0.0
@@ -129,7 +130,7 @@ rootpartcoeff = 0.0
 rowspacing = 0.0
 rue = 0.0
 ruemax = 0.0 
-snparlai = 0.0	
+snparlai = 0.0
 snparrue = 0.0
 sowdepth = 0.0
 streslai = 0.0
@@ -137,21 +138,20 @@ stresrue = 0.0
 tbasedev = 0.0
 teff = 0.0
 tfreeze = 0.0
-toptdev = 0.0					    
+toptdev = 0.0
 ttaccumulator = 0.0
-ttaccumulator1 = 0.0		
 ttemerge = 0.0
 ttgerminate = 0.0
 ttmature = 0.0
 xhlai = 0.0
-xlai = 0.0	
+xlai = 0.0
 rellaiyest=0.0    
 wpseed = 0.0  
 grainyield = 0.0
 grainyieldc = 0.0
 gstage = 14
 gyrdoySim = 0
-	            
+            
 !Root growth and water uptake
 droughtfac = 1.0
 ep1 = 0.0
@@ -170,7 +170,7 @@ NDemand_Kg = 0.0
 NPlant_Kg = 0.0
 NSupply_Tot = 0.0
 SWaterFac = 1.0 
-	
+
 do layer = 1, 3
    NConcOpt_par(layer) = 0.0
 end do
@@ -192,7 +192,7 @@ PConcOpt = 0.0
 PDemand_Kg = 0.0
 PSupply_Tot = 0.0
 PPlant_Kg = 0.0
-	
+
 do layer = 1, 3
    PConcOpt_par(layer) = 0.0
 end do
@@ -200,7 +200,7 @@ end do
 do layer = 1, nlayr
    PSupplyRed_Kg(layer) = 0.0
    PUptake(layer) = 0.0
-end do		
+end do
  
 !-------------------------------------------------------------------------
 ! Read input file name (ie. DSSAT40.INP) and path
@@ -322,7 +322,7 @@ if(iswwat /= 'N') then
        droughtfac = trwup / ep1
     end if
    end if
-end if	
+end if
 
 !------------------------------------
 ! Calculate daily thermal time (DTT) for development       
@@ -346,12 +346,12 @@ call dailyThermalTime(tmax, tmin, tbasedev, toptdev, ttmature, teff, reltt, dtt,
         
 !------------------------------------
 ! Check for germination and emergence       
-!------------------------------------ 	
+!------------------------------------ 
 if(dtt > 0.0) then
    if(.not. emerge) then
-	  if(.not. germinate) then
-		 call germination(ttaccumulator1, ttgerminate, ttmature, dtt, ttemerge, killed, germinate)
-		 if(germinate) gstage = 1	
+      if(.not. germinate) then
+         call germination(ttgerminate, ttmature, dtt, ttemerge, ttaccumulator, killed, germinate)
+         if(germinate) gstage = 1
          if(killed) then
             write(message(1), '( "Crop model stopped at ",I4," days after planting (DAY: ",I7,")" )') dap, yrdoy
             write(message(2), '( "due to too small value of thermal time to maturity." )')
@@ -361,63 +361,63 @@ if(dtt > 0.0) then
             return
          end if   !Crop killed
               
-	  else !If crop has already germinated then
-		 call emergence(ttaccumulator, dtt, ttemerge, ttmature, emerge)	
-		 if(germinate .and. emerge) then
-		    gstage = 2
-		    dae = 0
-! Initialize root weight, aboveground biomass weight, root depth, and root length density at emergence  
-			call initializeRoots(reltt, plantpop, sowdepth, dlayr, nlayr, rlwr, wpseed,    &   !Inputs
+      else !If crop has already germinated then
+         call emergence(ttaccumulator, dtt, ttemerge, ttmature, emerge)
+         if(germinate .and. emerge) then
+            gstage = 2
+            dae = 0
+           !Initialize root weight, aboveground biomass weight, root depth, and root length density at emergence  
+           call initializeRoots(reltt, plantpop, sowdepth, dlayr, nlayr, rlwr, wpseed,    &   !Inputs
                  biomassroot, biomass, rootdepth, rlv)                                         !Outputs
-		 end if
-	  end if ! EndIf crop has germinated
+         end if
+      end if ! EndIf crop has germinated
    else ! If crop has already emerged then
       if(reltt >= relttsn) gstage = 3
-	  call maturity(reltt, mature)
-	  if(mature == 1) then
-	     gstage = 4
-		 mdate = yrdoy	
-		 hrvindstr = hrvindex	 
-		 grainyield = biomass * hrvindstr
-		 return
-	  else
-	     grainyield = 0.0	 
-	  end if
+      call maturity(reltt, mature)
+      if(mature == 1) then
+         gstage = 4
+         mdate = yrdoy
+         hrvindstr = hrvindex 
+         grainyield = biomass * hrvindstr
+         return
+      else
+         grainyield = 0.0
+      end if
 
-! Compute potential LAI S-Curve parameters
-	  call estimateLaiPar(relttp1, relttp2, rellaip1, rellaip2, laip1, laip2)
-		
-! Calculate Leaf Area Index based on ALMANAC's simple functions of relative LAI vs. relative development time:
-	  call leafAreaIndex(laimax, laip1, laip2, relttsn, snparlai, droughtfac, heatfac, coldfac, nfac, pfac,   &
-     	   reltt, xhlai, relttsn2, streslai, rellai, deltalai, rellais, rellaimax, rellaiyest)
+      !Compute potential LAI S-Curve parameters
+      call estimateLaiPar(relttp1, relttp2, rellaip1, rellaip2, laip1, laip2)
+
+      !Calculate Leaf Area Index based on ALMANAC's simple functions of relative LAI vs. relative development time:
+      call leafAreaIndex(laimax, laip1, laip2, relttsn, snparlai, droughtfac, heatfac, coldfac, nfac, pfac,   &
+              reltt, xhlai, relttsn2, streslai, rellai, deltalai, rellais, rellaimax, rellaiyest)
  
-! Calculate Radiation Use Efficiency based on ALMANAC's simple function of relative RUE vs. relative development time:	
-	  call radiationUseEfficiency(relttsn, ruemax, snparrue, reltt, droughtfac, heatfac, coldfac, nfac, pfac, stresrue, &
-           relrue, rue)	
-			 
-! Calculate daily biomass increment (C fixed) in g m-2 based on ALMANAC and CERES
-	  call biomassIncrement(plantpop, rowspacing, srad, droughtfac, heatfac, coldfac, nfac, pfac,   &
-     	   rue, xhlai, kcan, biomassinc)	                !Missing CO2 effect
-			 
-! Partition C fixed to various organs, for the moment only tops and roots:		 
-	  call partitioning(biomassinc, reltt, rootpartcoeff, dbiomass, dbiomassroot)      
+      !Calculate Radiation Use Efficiency based on ALMANAC's simple function of relative RUE vs. relative development time:
+      call radiationUseEfficiency(relttsn, ruemax, snparrue, reltt, droughtfac, heatfac, coldfac, nfac, pfac, stresrue, &
+               relrue, rue)
+      
+      !Calculate daily biomass increment (C fixed) in g m-2 based on ALMANAC and CERES
+      call biomassIncrement(plantpop, rowspacing, srad, droughtfac, heatfac, coldfac, nfac, pfac,   &
+        rue, xhlai, kcan, biomassinc)                !Missing CO2 effect
+
+      !Partition C fixed to various organs, for the moment only tops and roots:
+      call partitioning(biomassinc, reltt, rootpartcoeff, dbiomass, dbiomassroot)      
         
-! Calculate root growth, partitioning to soil layers and root lengh volume (RLV)        
+      !Calculate root growth, partitioning to soil layers and root lengh volume (RLV)        
       call SALUS_Roots(dynamic, soilprop, dbiomassroot, dtt, xhlai, laimax, rlwr, st, sw, plantpop, sowdepth,   & !Input
-            RootDepth, RootLayerFrac, RootMassLayer, rlv)	                                                      !Output		
-			  	  
-   end if ! End if crop has emerged	
-	 
+            RootDepth, RootLayerFrac, RootMassLayer, rlv)                                                      !Output
+
+   end if ! End if crop has emerged
+
    if(emerge) then
-	  relttemerge = 0.0
+      relttemerge = 0.0
    else
-	  relttemerge = relttemerge + dtt/ttmature
+      relttemerge = relttemerge + dtt/ttmature
    end if
-     		  
-end if ! End if DTT is greater than 0.0		
+      
+end if ! End if DTT is greater than 0.0
 
 ! Check for frost kill; kill crop if too slow accumulation of DTT or if TMIN < TFREEZE
-call environment(reltt, relttsn, tmin, cumslowdev, dtt, cumslowdevstop, tfreeze, killed, freezed)
+call environment(reltt, relttsn, tmin, cumslowdev, dtt, tfreeze, cumslowdevstop, killed, freezed)
 if(killed) then
    hrvindstr = hrvindex
    grainyield = biomass * hrvindstr
@@ -428,7 +428,7 @@ if(killed) then
    !write(*, '(/, "Model stopped on day ", I7, " due to slow development.")') mdate
    return
 end if
-		
+
 ! Frost
 if(freezed) then
    hrvindstr = hrvindex
@@ -456,7 +456,7 @@ if(gstage > 0) then
     end if
 end if    
  
-! Convert biomass from g/m-2 to kg ha-1	        
+! Convert biomass from g/m-2 to kg ha-1        
 call convertb(biomass, biomassroot, grainyield, biomassc, biomassrootc, grainyieldc)  
 
 if(bioatlaimax == 0.0) then
@@ -472,10 +472,10 @@ if(iswnit /= 'N') then
      SNO3(layer) = NO3(layer) / SOILPROP % KG2PPM(layer)
      SNH4(layer) = NH4(layer) / SOILPROP % KG2PPM(layer)
      NSupply_kg(layer) = SNO3(layer) + SNH4(layer)
-   end do	    
+   end do   
    
-   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
-        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
+   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg,    & !Input
+        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,                          & !Output
         NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
    
    !  NSupply_Tot = SUM(NSupply_kg)
@@ -487,8 +487,8 @@ end if
         
 ! Activate P routine if P limitation is simulated
 if(iswpho /= 'N') then
-   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
-        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
+   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg,    & !Input
+        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,                          & !Output
         NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
 end if        
 
@@ -497,26 +497,29 @@ end if
 !==============================================================================
 else if(dynamic == output) then
 !==============================================================================
-call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
+   call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
         cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
         
-call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
-      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,  & !Input
-      bwah, sdwtah)                                                        !Output
+   call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
+      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,     & !Input
+      bwah, sdwtah)                                                           !Output
+
 !==============================================================================
 ! SEASON END
 !==============================================================================
 else if(dynamic == seasend) then
 !==============================================================================
-call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
+   call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
         cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
         
-call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
-      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,  & !Input
-      bwah, sdwtah)                                                        !Output
+   call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
+      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,     & !Input
+      bwah, sdwtah)                                                           !Output
+
 !==============================================================================
 ! END OF DYNAMIC 'IF' CONSTRUCT
 !==============================================================================
+
 endif
 !==============================================================================
 return
@@ -527,70 +530,70 @@ end subroutine SALUS
 !------------------------------------------------------------------------------
 ! VARIABLE DEFINITION  
 !------------------------------------------------------------------------------
-!biomass			Aboveground plant dry matter weight (g m-2)
-!biomassc		    Aboveground plant dry matter weight converted to kg ha-1 (kg ha-1)
-!biomassinc		    Daily total biomass increment (g m-2)
-!biomassroot		Root dry matter weight (g m-2)
-!biomassrootc	    Root dry matter weight converted to kg ha-1 (kg ha-1)
-!coldfac		    Low temperature reduction factor (0-1)
+!biomass            Aboveground plant dry matter weight (g m-2)
+!biomassc           Aboveground plant dry matter weight converted to kg ha-1 (kg ha-1)
+!biomassinc         Daily total biomass increment (g m-2)
+!biomassroot        Root dry matter weight (g m-2)
+!biomassrootc       Root dry matter weight converted to kg ha-1 (kg ha-1)
+!coldfac            Low temperature reduction factor (0-1)
 !control            Composite variable containing variables related to control and/or timing of simulation.  The structure of the variable 
 !                   (ControlType) is defined in ModuleDefs.for. 
-!cumslowdev		    Cumulative slow development days (days) 
-!cumslowdevstop	    Cumulative slow development days to stop crop model (days)	
-!dae				Days after emergence
-!dap				Days after planting
-!dbiomass		    Rate of aboveground dry matter growth (g m-2 d-1)
-!dbiomassroot	    Rate of root dry matter growth (g m-2 d-1)
-!dlai			    Daily increase in leaf area index (m2 m-2 d-1)
-!doy				Julian day
-!doyp		        Date of planting (Julian day)
-!droughtfac	        Drought reduction factor (0-1)
-!dtt				Daily thermal time increment (degree-days)
-!dyn				Dynamic control variable
-!emerge			    Emergence flag; True when crop has emerged
-!emgint		        Intercept of emergence thermal time calculation
-!emgslp		        Slope of emergence thermal time calculation
-!frbforrt	        Fraction of new root biomass for root growth
+!cumslowdev         Cumulative slow development days (days) 
+!cumslowdevstop     Cumulative slow development days to stop crop model (days)	
+!dae                Days after emergence
+!dap                Days after planting
+!dbiomass           Rate of aboveground dry matter growth (g m-2 d-1)
+!dbiomassroot       Rate of root dry matter growth (g m-2 d-1)
+!dlai               Daily increase in leaf area index (m2 m-2 d-1)
+!doy                Julian day
+!doyp               Date of planting (Julian day)
+!droughtfac         Drought reduction factor (0-1)
+!dtt                Daily thermal time increment (degree-days)
+!dyn                Dynamic control variable
+!emerge             Emergence flag; True when crop has emerged
+!emgint             Intercept of emergence thermal time calculation
+!emgslp             Slope of emergence thermal time calculation
+!frbforrt           Fraction of new root biomass for root growth
 !freezed            Logical- True if TMIN <= TFREEZE 
 !gyrdoySim          YrDoy corresponding to timing of phenological events
-!heatfac		    High temperature reduction factor (0-1)
+!heatfac            High temperature reduction factor (0-1)
 !iswitch            Composite variable containing switches which control flow of execution for model.  The structure of the variable 
 !                   (SwitchType) is defined in ModuleDefs.for. 
 !kcan               Canopy light extinction coefficient for daily PAR, for equidistant plant spacing
-!germinate		    Germination flag; True when crop has germinated
+!germinate          Germination flag; True when crop has germinated
 !gstage             Timing of phenological events (1=germination, 2=emergence, 3=beginning of leaf senscence, 4=maturity)
-!killed			    True when crop is killed by adverse conditions
-!lai				Canopy leaf area index (m2 m-2)
-!laimax		        Maximum expected Leaf Area Index (m2 m-2)
-!plantpop	        Plant population (m-2)
-!mature			    Maturity flag (0/1); 1 when crop has matured
+!killed             True when crop is killed by adverse conditions
+!lai                Canopy leaf area index (m2 m-2)
+!laimax             Maximum expected Leaf Area Index (m2 m-2)
+!plantpop           Plant population (m-2)
+!mature             Maturity flag (0/1); 1 when crop has matured
 !mdate              Harvest maturity date (YYYYDDD)
-!nfac		        Nitrogen deficiency factor (0-1)
-!parfr		        Fraction of solar radiation useable by plants (PAR)
-!pfac		        Phosphorus deficiency factor (0-1)
-!rellai			    Relative LAI (0-1)
-!rellaip1	        Relative LAI at point 1 on the potential LAI S-curve (0-1)
-!rellaip2	        Relative LAI at point 2 on the potential LAI S-curve (0-1)
-!relrue			    Relative RUE (0-1)
-!reltt			    Relative thermal time during life of plant (0-1)
+!nfac               Nitrogen deficiency factor (0-1)
+!parfr              Fraction of solar radiation useable by plants (PAR)
+!pfac               Phosphorus deficiency factor (0-1)
+!rellai             Relative LAI (0-1)
+!rellaip1           Relative LAI at point 1 on the potential LAI S-curve (0-1)
+!rellaip2           Relative LAI at point 2 on the potential LAI S-curve (0-1)
+!relrue             Relative RUE (0-1)
+!reltt              Relative thermal time during life of plant (0-1)
 !relttp1            Relative thermal time at point 1 on the potential LAI S-curve (0-1)
 !relttp2            Relative thermal time at point 2 on the potential LAI S-curve (0-1)
-!relttsn		    Relative thermal time at beginning of senescence (0-1)
-!rootpartcoeff	    Fraction of assimilate that goes to roots (0-1)
-!rowspacing	        Row spacing (cm)
-!rue				Radiation Use Efficiency (g MJ-1)
-!ruemax		        Maximum expected Radiation Use Efficiency (g MJ-1)
-!snparlai	        Parameter for shape of potential LAI curve after beginning of senescence (0-1)
-!snparrue	        Parameter for shape of potential RUE curve after beginning of senescence (0-1)
-!sowdepth	        Sowing depth (cm)
-!srad		        Daily solar radiation (MJ m-2)
-!tbasedev	        Base temperature for development (degree C)
-!teff			    Daily effective temperature (degree C)
+!relttsn            Relative thermal time at beginning of senescence (0-1)
+!rootpartcoeff      Fraction of assimilate that goes to roots (0-1)
+!rowspacing         Row spacing (cm)
+!rue                Radiation Use Efficiency (g MJ-1)
+!ruemax             Maximum expected Radiation Use Efficiency (g MJ-1)
+!snparlai           Parameter for shape of potential LAI curve after beginning of senescence (0-1)
+!snparrue           Parameter for shape of potential RUE curve after beginning of senescence (0-1)
+!sowdepth           Sowing depth (cm)
+!srad               Daily solar radiation (MJ m-2)
+!tbasedev           Base temperature for development (degree C)
+!teff               Daily effective temperature (degree C)
 !tfreeze            Freezing temperature in the sense that if TMIN <= TFREEZE, growth stops (deg C)
-!tmax		        Daily maximum temperature (degree C)
-!tmin		        Daily minimum temperature (degree C)
-!toptdev		    Optimum temperature for development (degree C)
-!ttgerminate	    Thermal time planting to germination (degree-days)
-!ttemerge		    Thermal time germination to emergence (degree-days)	
-!ttmature	        Thermal time planting to maturity (degree-days)
+!tmax               Daily maximum temperature (degree C)
+!tmin               Daily minimum temperature (degree C)
+!toptdev            Optimum temperature for development (degree C)
+!ttgerminate        Thermal time planting to germination (degree-days)
+!ttemerge           Thermal time germination to emergence (degree-days)
+!ttmature           Thermal time planting to maturity (degree-days)
 !xhlai              Healthy leaf area index (m2[leaf] / m2[ground])
