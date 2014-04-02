@@ -152,7 +152,7 @@ C
 
 !=======================================================================
       ELSE IF (MENU .EQ. 4) THEN
-        IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS',MODEL(3:5)) .GT. 0)THEN 
+        IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS',MODEL(3:5)) .GT. 0)THEN
               CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &            ECONO,IVRGRP,MODEL)
           ENDIF
