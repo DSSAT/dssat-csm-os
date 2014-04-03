@@ -1,19 +1,12 @@
 !======================================================================
-!  SA_OPGROW, Subroutine, G. Hoogenboom, J.W. Jones
-!  Modified MZ_OPGROW by Kofikuma Dzotsi for Salus crop model
+!  SALUS_Opgrow
+!  Modified MZ_OPGROW by KAD for SALUS crop model
 !----------------------------------------------------------------------
 !  Generates output file for daily growth variables
-!     This routine is used for maize, sorghum and millet.
 !----------------------------------------------------------------------
 !  REVISION HISTORY
-!  01/01/1990     Written
-!  09/21/1998 CHP Split off from OPDAY.FOR file
-!  05/11/1999 GH  Incorporated in CROPGRO
-!  12/18/2001 WDB Revised for modular CERES
-!  08/20/2002 GH  Modified for Y2K
-!  07/08/2003 CHP Changed senescence output.
-!  05/31/2006 CHP Output DTT, growing degree days.
-!  09/24/2009 KAD Modified for SALUS
+!  09/24/2009 KAD Modified MZ_OPGROW for SALUS
+!  03/28/2014 KAD Removed SALUS.OUT and added more varibales to PlantGro.OUT
 !----------------------------------------------------------------------
 !  Called by: SALUS
 !  Calls:     None
@@ -25,13 +18,11 @@ Use ModuleData
 implicit none
 save
 !----------------------------------------------------------------------
+character*6, parameter :: errkey = 'SAL_OP'
 character :: idetg*1, outg*12
-character*6, parameter :: errkey = 'SALUS_OPG'
-integer :: i, dynamic, noutdg, errnum, run, l, yrplt, yrdoy, timdif, n_lyr
-integer :: dap, das, mdate, frop, year, doy
 logical :: fexist, first
-real :: xhlai, biomassrootc, biomassc, grainyieldc, hrvindstr, droughtfac, dtt, cumtt
-real :: reltt, rue, rellai, rlv(nl)
+integer :: i, dynamic, noutdg, errnum, run, l, yrplt, yrdoy, timdif, n_lyr, dap, das, mdate, frop, year, doy
+real :: xhlai, biomassrootc, biomassc, grainyieldc, hrvindstr, droughtfac, dtt, cumtt, reltt, rue, rellai, rlv(nl)
 
 Type(ControlType) control
 Type(SwitchType)  iswitch

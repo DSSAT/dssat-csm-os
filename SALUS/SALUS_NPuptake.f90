@@ -12,12 +12,12 @@ Use ModuleDefs
 implicit none
 save 
 
-Type(SoilType) soilprop
 integer :: layer, dae, dynamic, nlayr
 real, parameter :: MinConcFrac = 0.6, gpm2_to_kgpha = 10.0, EMinAnyPool = 5.0
-real, dimension(NL) :: dEUptakeLayer_Kg, ESupplyLayer_Kg, ESupplyLayerRed_Kg, SRedFac, RootLayerFrac, rwu, dlayr
+real, dimension(nl) :: dEUptakeLayer_Kg, ESupplyLayer_Kg, ESupplyLayerRed_Kg, SRedFac, RootLayerFrac, rwu, dlayr
 real :: Biomass, BiomassRoot, dEUptake_Kg, EConcAct, EConcOpt, EConcMin, EConcOpt_par(3), EDemand_Kg, ESupplyTot_Kg
 real :: EPlant_Kg, EStressFac, Plant_Kg, RELTT, RelTTEmerge, EUptake_Kg, SWaterFac, SAL_PValue 
+Type(SoilType) soilprop
 
 !------------------------------------------------------------------------------
 ! INITIALIZATION AND INPUT DATA

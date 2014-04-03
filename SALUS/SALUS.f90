@@ -9,7 +9,6 @@
 ! 05/10/2010 KAD/BB Added new equation for root partitioning coefficient
 ! 07/26/2010 KAD/BB Added environment extremes
 ! 07/27/2010 KAD/BB Implemented exponential functional for computing root depth factor
-! ... see SAL_Subs
 ! 08/25/2011 KAD    Added TFREEZE and FREEZED to stop growth and dev at cold temperatures
 ! 11/16/2011 BB/KAD Added "dynamic" harvest index (reduced with slow biomass accumulation)
 ! 03/27/2014 KAD    Removed SALUS.OUT; added more variables to PlantGro.OUT; temporarily disabled
@@ -26,7 +25,8 @@ implicit none
 save
 !------------------------------------------------------------------------------ 
 character(len=6), parameter :: errkey='SALUS'
-character :: iswwat*1, iswnit*1, iswpho*1, section*6, varno*6, filec*12, vrname*16, fileio*30, pathcr*80, message*78(10)
+character :: iswwat*1, iswnit*1, iswpho*1, section*6, varno*6, filec*12, vrname*16, fileio*30
+character :: pathcr*80, message*78(10)
 logical :: fexist, freezed, killed, germinate, emerge
 integer :: err, layer, cumslowdev, cumslowdevstop, dae, dap, doy, doyp, dynamic, errnum, linc, lnum, lunio
 integer :: mature, mdate, nlayr, yrdoy, yrend, yrplt, found, timdif, gstage, gyrdoySim(20), yrsim
@@ -77,7 +77,6 @@ yrsim   = control % yrsim
 !==============================================================================
 ! INITIALIZATION AND INPUT DATA
 !==============================================================================
-! IF(DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
 if(dynamic==runinit .OR. dynamic==seasinit) then
 !==============================================================================       
         
@@ -214,7 +213,7 @@ if(err /= 0) call error(errkey, err, fileio, lnum)
 
 !-------------------------------------------------------------------------
 ! Read Planting Details Section
-! SALUS needs three inputs from here: PLANTPOP,ROWSPACING,SOWDEPTH 
+! SALUS needs three inputs from here: PLANTPOP, ROWSPACING, SOWDEPTH 
 !-------------------------------------------------------------------------
 section = '*PLANT'
 call find(lunio, section, linc, found) ; lnum = lnum + linc
@@ -240,15 +239,15 @@ else
         lnum = lnum + 1 
    if(err /= 0) call error(errkey, err, fileio, lnum)
 
-! Need to add nutrient concentrations at different stages of growth to cultivar parameters, units in kg/kg
-! Multiply by 100 to obtain percent or g/100g
-NConcOpt_par(1) = 0.0440
-NConcOpt_par(2) = 0.0164
-NConcOpt_par(3) = 0.0128
+   !Need to add nutrient concentrations at different stages of growth to cultivar parameters, units in kg/kg
+   !Multiply by 100 to obtain percent or g/100g
+   NConcOpt_par(1) = 0.0440
+   NConcOpt_par(2) = 0.0164
+   NConcOpt_par(3) = 0.0128
 
-PConcOpt_par(1) = 0.0062
-PConcOpt_par(2) = 0.0023
-PConcOpt_par(3) = 0.0018
+   PConcOpt_par(1) = 0.0062
+   PConcOpt_par(2) = 0.0023
+   PConcOpt_par(3) = 0.0018
 
 end if
 close(lunio)
@@ -266,15 +265,15 @@ if(iswnit /= 'N' .OR. iswpho /= 'N') then
 end if
    
 if(iswnit /= 'N') then         
-call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
-     reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
-     NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
+   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
+        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
+        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                         !Output
 end if
    
 if(iswpho /= 'N') then
-call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
-     reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
-     NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
+   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
+        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
+        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                         !Output
 end if
    	
 ! Initialize Output PlantGrow.OUT
@@ -296,6 +295,7 @@ if(yrdoy == yrsim) then
    gstage = 14
    gyrdoySim(gstage) = yrdoy 
 end if
+
 if(yrdoy == yrplt) then
    gstage = 13
    gyrdoySim(gstage) = yrdoy 
@@ -303,24 +303,24 @@ end if
 
 if(dae > -1) then 
   dae = dae + 1
-endif
+end if
 dap = max(0, timdif(yrplt,yrdoy))
 rellaiyest = rellai
 
 !------------------------------------
 ! Compute Water Stress Factors       
 !------------------------------------
-droughtfac  = 1.0
-!        TURFAC = 1.0
+droughtfac = 1.0
+! turfac = 1.0
 if(iswwat /= 'N') then
    if(eop > 0.0) then
       ep1 = eop * 0.1
-!              IF (TRWUP / EP1 .LT. RWUEP1) THEN
-!                 TURFAC = (1./RWUEP1) * TRWUP / EP1
-!              ENDIF
-    if(ep1 >= trwup) then
-       droughtfac = trwup / ep1
-    end if
+      !if(trwup / ep1 < rwuep1) then
+      !   turfac = (1./rwuep1) * trwup / EP1
+      !end if
+      if(ep1 >= trwup) then
+         droughtfac = trwup / ep1
+      end if
    end if
 end if
 
@@ -363,15 +363,15 @@ if(dtt > 0.0) then
               
       else !If crop has already germinated then
          call emergence(ttaccumulator, dtt, ttemerge, ttmature, emerge)
-         if(germinate .and. emerge) then
+         if(germinate .AND. emerge) then
             gstage = 2
             dae = 0
            !Initialize root weight, aboveground biomass weight, root depth, and root length density at emergence  
            call initializeRoots(reltt, plantpop, sowdepth, dlayr, nlayr, rlwr, wpseed,    &   !Inputs
-                 biomassroot, biomass, rootdepth, rlv)                                         !Outputs
+                                biomassroot, biomass, rootdepth, rlv)                         !Outputs
          end if
-      end if ! EndIf crop has germinated
-   else ! If crop has already emerged then
+      end if !EndIf crop has germinated
+   else      !If crop has already emerged then
       if(reltt >= relttsn) gstage = 3
       call maturity(reltt, mature)
       if(mature == 1) then
@@ -406,7 +406,7 @@ if(dtt > 0.0) then
       call SALUS_Roots(dynamic, soilprop, dbiomassroot, dtt, xhlai, laimax, rlwr, st, sw, plantpop, sowdepth,   & !Input
             RootDepth, RootLayerFrac, RootMassLayer, rlv)                                                      !Output
 
-   end if ! End if crop has emerged
+   end if   !End if crop has emerged
 
    if(emerge) then
       relttemerge = 0.0
@@ -414,7 +414,7 @@ if(dtt > 0.0) then
       relttemerge = relttemerge + dtt/ttmature
    end if
       
-end if ! End if DTT is greater than 0.0
+end if   !End if dtt is greater than 0.0
 
 ! Check for frost kill; kill crop if too slow accumulation of DTT or if TMIN < TFREEZE
 call environment(reltt, relttsn, tmin, cumslowdev, dtt, tfreeze, cumslowdevstop, killed, freezed)
@@ -467,7 +467,7 @@ end if
 
 ! Activate N routine if N limitation is simulated:
 if(iswnit /= 'N') then
-   ! N uptake calculations:
+   !N uptake calculations:
    do layer = 1, nlayr
      SNO3(layer) = NO3(layer) / SOILPROP % KG2PPM(layer)
      SNH4(layer) = NH4(layer) / SOILPROP % KG2PPM(layer)
@@ -478,7 +478,7 @@ if(iswnit /= 'N') then
         reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,                          & !Output
         NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
    
-   !  NSupply_Tot = SUM(NSupply_kg)
+   !NSupply_Tot = SUM(NSupply_kg)
    do layer = 1, nlayr
       UNH4(layer) = Nuptake(layer) * SNH4(layer) / (SNO3(layer) + SNH4(layer))
       UNO3(layer) = Nuptake(layer) * SNO3(layer) / (SNO3(layer) + SNH4(layer))
@@ -501,8 +501,8 @@ else if(dynamic == output) then
         cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
         
    call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
-      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,     & !Input
-      bwah, sdwtah)                                                           !Output
+        gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,   & !Input
+        bwah, sdwtah)                                                         !Output
 
 !==============================================================================
 ! SEASON END
@@ -513,14 +513,14 @@ else if(dynamic == seasend) then
         cumtt, reltt, rue, rellai, hrvindstr, grainyieldc, rlv)
         
    call SALUS_Opharv(control, iswitch, yrplt, harvfrac, gstage, mdate,      & !Input
-      gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,     & !Input
-      bwah, sdwtah)                                                           !Output
+        gyrdoySim, biomassc, bioatlaimax, grainyieldc, xhlai, droughtfac,   & !Input
+        bwah, sdwtah)                                                         !Output
 
 !==============================================================================
 ! END OF DYNAMIC 'IF' CONSTRUCT
 !==============================================================================
 
-endif
+end if
 !==============================================================================
 return
 end subroutine SALUS
