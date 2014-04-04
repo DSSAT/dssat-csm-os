@@ -1,4 +1,4 @@
-  subroutine opsys(slash,dssatpro,stdpath)
+  subroutine op_sys(slash,dssatpro,stdpath)
 
     implicit none
 
@@ -10,4 +10,4 @@
     DSSATPRO = 'DSSATPRO.L46'
     STDPATH = '../DSSAT46/'
 
-  end subroutine opsys
+  end subroutine op_sys

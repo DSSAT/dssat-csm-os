@@ -400,7 +400,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
-      call opsys(slash,dssatpro,stdpath)
+      call op_sys(slash,dssatpro,stdpath)
 
       END SUBROUTINE SETOP
 
