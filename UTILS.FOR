@@ -1487,11 +1487,13 @@ C=======================================================================
            p1 = index(path,slash//'..'//slash)
 
            do while(p1>1)
+              p2 = p1 + 4
+              p1=index(path(1:(p1-1)),slash,back=.true.)
               p3=len_trim(path)
               if(p3<p1+4)then
                  path = path(1:p1)
               else
-                 path = path(1:p1)//path((p1+4):p3)
+                 path = path(1:p1)//path(p2:p3)
               end if
               p1 = index(path,slash//'..'//slash)
            end do
