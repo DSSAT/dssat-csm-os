@@ -10,4 +10,4 @@
     DSSATPRO = 'DSSATPRO.V46'
     STDPATH = 'C:\DSSAT46\' 
 
-  end subroutine setop
+  end subroutine opsys
