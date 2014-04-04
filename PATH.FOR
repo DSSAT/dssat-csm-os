@@ -268,9 +268,9 @@ C=======================================================================
       ELSEIF (LINE(1:3) .NE. PROCOD) THEN
          GO TO 100
       ELSE
-         EXE_POS = INDEX(LINE,EXE_STRING)
+!         EXE_POS = INDEX(LINE,EXE_STRING)
 !         MODEL = LINE((EXE_POS+4):(EXE_POS+11))
-         call get_next_string(line,exe_pos,model)
+         call get_next_string(line,8,model)
          DO I = 1,5
            MODEL(I:I)= UPCASE(MODEL(I:I))
          ENDDO
