@@ -45,15 +45,16 @@
       REAL TMAX, TMIN, RAIN, DAYL, SRAD, CO2
       REAL N_phot, N_grow, W_phot, W_grow
       REAL P_grow, P_phot
-      REAL ET_L, EP_L, EO_L, TOTIR
+      REAL ET_L, EP_L, ES_L, EO_L, TOTIR
       REAL DMP_Rain, GrP_Rain, DMP_ET, GrP_ET, DMP_EP, GrP_EP 
       REAL DEPIR, DMP_Irr, GrP_Irr
       REAL DMP_NApp, GrP_NApp, DMP_NUpt, GrP_NUpt
       REAL CumNit
-      REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP
+      REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
 
-      REAL, DIMENSION(0:MaxStag) :: N_photR, CETR, CEPR, DAYLR, N_growR
-      REAL, DIMENSION(0:MaxStag) :: P_growR, P_photR, RAINR, RADR, CO2R
+      REAL, DIMENSION(0:MaxStag) :: N_photR, CETR, CEPR, CESR, DAYLR
+      REAL, DIMENSION(0:MaxStag) :: N_growR, P_growR, P_photR
+      REAL, DIMENSION(0:MaxStag) :: RAINR, RADR, CO2R
       REAL, DIMENSION(0:MaxStag) :: W_photR, TMAXR, TMINR, W_growR
       REAL, DIMENSION(0:MaxStag) :: TMEANR, CEOR
       INTEGER, DIMENSION(0:MaxStag) :: NNR, Ndays_RAIN
@@ -61,7 +62,7 @@
       INTEGER, DIMENSION(0:MaxStag) :: Ndays_GT32, Ndays_GT34
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 20
+      INTEGER, PARAMETER :: SUMNUM = 22
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -112,7 +113,7 @@
       DAYLR = 0.0
       RADR  = 0.0
       CO2R  = 0.0
-      CETR  = 0.0; CEPR = 0.0; CEOR = 0.0
+      CETR  = 0.0; CEPR = 0.0; CESR = 0.0; CEOR = 0.0
       W_growR = 0.0
       W_photR = 0.0
       N_growR = 0.0
@@ -130,6 +131,7 @@
 
       ET_L   = 0.0
       EP_L   = 0.0
+      ES_L   = 0.0
       EO_L   = 0.0
 
       W_grow = 1.0 
@@ -159,6 +161,8 @@
       CO2A  = -99. 
       PRCP  = -99. 
       ETCP  = -99. 
+      ESCP  = -99.
+      EPCP  = -99.
 
 !***********************************************************************
 !***********************************************************************
@@ -185,6 +189,7 @@
 !-----------------------------------------------------------------------
       CALL GET('SPAM','ET',ET_L)
       CALL GET('SPAM','EP',EP_L)
+      CALL GET('SPAM','ES',ES_L)
       CALL GET('SPAM','EO',EO_L)
 
       IF (PRESENT(PlantStres)) THEN
@@ -212,6 +217,7 @@
 
             CETR(I)  = CETR(I)  + ET_L
             CEPR(I)  = CEPR(I)  + EP_L
+            CESR(I)  = CESR(I)  + ES_L
             CEOR(I)  = CEOR(I)  + EO_L
 
             W_growR(I) = W_growR(I) + W_grow 
@@ -379,6 +385,8 @@
             CO2A  = CO2R(0)
             PRCP  = RAINR(0)
             ETCP  = CETR(0)
+            ESCP  = CESR(0)
+            EPCP  = CEPR(0)
           ENDIF
           
           CALL GET(ISWITCH)
@@ -417,6 +425,8 @@
           RADR  = 0.0
           CO2R  = 0.0
           CETR  = 0.0
+          CESR  = 0.0
+          CEPR  = 0.0
           W_growR = 0.0
           W_photR = 0.0
           N_growR = 0.0
@@ -490,7 +500,9 @@
       LABEL(18) = 'CO2A' ; VALUE(18) = CO2A
       LABEL(19) = 'PRCP' ; VALUE(19) = PRCP
       LABEL(20) = 'ETCP' ; VALUE(20) = ETCP
-
+      LABEL(21) = 'ESCP' ; VALUE(21) = ESCP
+      LABEL(22) = 'EPCP' ; VALUE(22) = EPCP
+      
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
