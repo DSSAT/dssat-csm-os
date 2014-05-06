@@ -244,6 +244,9 @@
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
+!     Only process end of season data if sent from OPVIEW routine.
+      IF (.NOT. PRESENT(YIELD)) RETURN
+
       IF (IDETO_SAVE .EQ. 'Y' .AND. STTOT > 0 .AND.
      &      CONTROL % ErrCode == 0) THEN
         WRITE(NOUTDO,500)
