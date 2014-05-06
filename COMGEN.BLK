@@ -3,9 +3,6 @@
       REAL          PHINT,PD,TC,O1,GPROT,LT50H,AX,LX,PANTH
       INTEGER       LFN
 
-!     For AgMaize model
-      REAL LFNUM, RLAMX, TAINT, PHOTP, LFTOP, LALFX, AMPLI, ASYMP      
-
 !     For CSCAS-cassava
       REAL          PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND
       REAL          SNFX, SRNWT, SRFR, HMPC, LA1S, LAXS

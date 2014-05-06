@@ -49,7 +49,6 @@ C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
 C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KAD Added SALUS model
-!  03/25/2014 KAD Added AgMaize model
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -390,12 +389,6 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
           KSEVAP = KEP        
         ENDIF
-        
-!     AgMaize, KAD 03/25/2014
-      case('MZAGM')
-        call MZ_AG_AGMAIZE(control, iswitch, SoilProp, weather,  !Input
-     &    st, sw, yrplt, snow, no3, nh4, eop, trwup, harvfrac,   !Input
-     &    mdate, xhlai, rlv)                                     !Output
 
 !     -------------------------------------------------
 !     Potato 

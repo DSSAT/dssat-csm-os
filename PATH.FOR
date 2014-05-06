@@ -10,7 +10,6 @@ C  05/28/1993 PWW Header revision and minor changes
 C  09/17/2007 JIL Added codes for IXIM maize model
 C  08/09/2012 GH  Add codes for CSCAS cassava model
 !  04/16/2013 CHP/KAD Added codes for SALUS model
-!  03/25/2014 KAD Added AgMaize model
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -179,7 +178,6 @@ C  02/21/2006 GH  Written
 !  09/17/2007 JIL Added codes for IXIM maize model
 !  04/17/2013 CHP Added exception for crop-model matching for 
 !                   SALUS generic crop model
-!  03/25/2014 KAD Added AgMaize model
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -324,8 +322,7 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.      !OILCROP
-     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0) .AND.      !SALUS
-     &    (INDEX(MODEL(3:5),'AGM') .EQ. 0)            !AgMaize
+     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)            !SALUS
      &    ) THEN   
 !       Invalid model = error 4
         ValidModel = 4 
@@ -350,8 +347,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND.    !Sweet corn
      &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND.    !Tanier
      &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND.    !Taro
-     &    (INDEX(MODEL(1:5),'SALUS') .EQ. 0) .AND.    !Salus generic 
-     &    (INDEX(MODEL(1:5),'MZAGM') .EQ. 0)          !AgMaize
+     &    (INDEX(MODEL(1:5),'SALUS') .EQ. 0)          !Salus generic 
      &    ) THEN
 !       Invalid module name = error 5
         ValidModel = 5 
