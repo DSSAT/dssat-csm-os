@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.6; 07/01/2014
+! DSSAT v4.6; 07/01/2013
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -28,16 +28,6 @@
 ADAP   Anthesis day    Anthesis day (dap)                                       .
 ADAT   Anthesis date   Anthesis date (YrDoy)                                    Z60D ANTH FL1D ADAY ADOY
 AMDY   Anth to matur   Anthesis to maturity (days)                              .
-B1DAP  Branch 1 dap    Days after planting to the first branch                  B1DAP
-B2DAP  Branch 2 dap    Days after planting to the second branch                 B2DAP
-B3DAP  Branch 3 dap    Days after planting to the third branch                  B3DAP
-B4DAP  Branch 4 dap    Days after planting to the fourth branch                 B4DAP
-B5DAP  Branch 5 dap    Days after planting to the fifth branch                  B5DAP
-B1DAT  Branch 1 date   Date of first branching (YrDoy)                          B1DAT
-B2DAT  Branch 2 date   Date of second branching  (YrDoy)                        B2DAT
-B3DAT  Branch 3 date   Date of third branching (YrDoy)                          B3DAT
-B4DAT  Branch 4 date   Date of fourth branching (YrDoy)                         B4DAT
-B5DAT  Branch 5 date   Date of fifth branching (YrDoy)                          B5DAT
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl kg/ha Fresh cane yield (kg/ha)                                 .
@@ -170,6 +160,15 @@ YPNAM  Yd-N fert Prod  Yield-N fertilizer productivity (kg[yield]/kg[N fert]    
 YPNUM  Yd-N upt Prod   Yield-N uptake productivity (kg[yield]/kg[N uptake]      .
 YPPM   Yd-Rain Prod    Yield-rainfall productivity (kg[yield]/ha/mm[rain])      .
 YPTM   Yd-EP Prod      Yield-transpiration productivity (kg[yield]/ha/mm[EP])   .
+!AgMaize Summary Variables
+EDAP   EMERGENCE day   Emergence day (dap)                                      .
+LDAP   Silking day     Silking day (dap)                                        .
+LDAT   Silking date    Silking date (YrDoy)                                     .
+KDAP   Milk line day   Day of 50% milk line (dap)                               .
+KDAT   Milk line date  Date of 50% milk line (YrDoy)                            .
+GDAT   Gr. Fill. date  Date of onset of linear grain filling (YrDoy)            .
+LAIT   LAI top leaves  Leaf Area Index of top 7 leaves at silking (m2/m2)       .
+CWAS   Tops wt,silking Tops weight at silking (kg [dm]/ha)                      .
 
 *GROWTH
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -183,7 +182,6 @@ CDVD   Crop age vdays  Crop age (Vegetative days)                               
 CFAD   F cane yl kg/ha Fresh cane yield (kg [fm]/ha)                            .
 CHTD   Canopy height m Canopy height (m)                                        .
 CRAD   Crown weight    Crown weight (kg [dm]/ha)                                .
-CRWAD  Crown weight    Crown weight (kg [dm]/ha)                                .
 CWAD   Tops wt kg/ha   Tops weight (kg [dm]/ha)                                 .
 CWID   Canopy width m  Canopy width (m;for 1 row)                               .
 CWPD   Tops wt g/pl    Tops weight (g [dm]/pl)                                  .
@@ -227,7 +225,6 @@ LNUM   Leaf number     Leaf number (Haun stage)                                 
 LRSD   Leaf app rate   Leaf appearance rate (#/bday)                            .
 LWAD   Leaf wt kg/ha   Leaf weight (kg [dm]/ha)                                 .
 LWD_1  Leaf wt stk 1   Green leaf weight, primary stalk (g[dm]/stk)             .
-NFLF2  N factor leaf   N factor for leaf area (0-1)                             .
 NFTID  N factor till   N factor for tillering (0-1)                             .
 NSPAV  N stress (av)   Nitrogen stress (av) - photosynthesis (0-1, 0=none)      .
 NSTD   N stress factor Nitrogen stress factor (0-1)                             .
@@ -278,7 +275,6 @@ SWD_1  Stalk 1 g[dm]   Primary stalk dry weight - no sucrose (g [dm]/stalk)     
 SWF_1  Stalk 1 fresh g Primary stalk fresh weight - with sucrose (g /stalk)     .
 T#AD   Tiller no #/m2  Tiller number (no/m2)                                    .
 T#SD   Leaf tip no     Leaf tip number per stem                                 .
-TCDIF  Temp difference Temperature difference, canopy - air (°C)                .
 TDIF   Temp difference Temperature difference, canopy - air (°C)                .
 TDRW   Total biomass   Total crop biomass (kg [dm]/ha)                          .
 TKILL  Pl death tmp °C Temperature for plant death (°C)                         .
@@ -288,8 +284,6 @@ TRAD   Trash DM kg/ha  Trash weight (kg [dm]/ha)                                
 TT     Thermal time    Daily thermal (°C.d)                                     .
 UWAD   Tuber kg dm/ha  Tuber dry weight (kg [dm]/ha)                            .
 UYAD   Tuber Mg fm/ha  Tuber fresh weight (Mg [fm]/ha)                          .
-VCN%   Veg crit N conc Vegetative critical N conc (%)                           .
-VMN%   Veg min N conc  Vegetative minimum N conc (%)                            .
 VRNFD  Vernalize fac.  Vernalization factor (0-1)                               .
 VWAD   Veg wt kg/ha    Vegetative weight (stem+leaf)(kg/ha)                     .
 WAVRD  H2O av to dm    Water available to demand ratio (#)                      .
@@ -304,6 +298,57 @@ WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
 TFDD   Temp.factor,dev Temperature factor for development (0-1)                 .
 RSFPD  Reserves factor Reserves factor for photosynthesis (0-1)                 .
+!AgMaize-specific Growth Variables
+ANTHES Anthesis        Leaf stage at anthesis (TLU)
+DVS    Devpt stages    Developmental stages
+GDDCER Thermal time    Thermal time based on the CERES method
+GDDTEN Thermal time    Thermal time based on GDD[30,10] calculation
+GDDAPS Thermal time    Thermal time based on the method used by APSIM 
+GTI    Thermal index   General Thermal Index
+LA01   Leaf area  1    Area of leaf number  1 (cm2/leaf)
+LA02   Leaf area  2    Area of leaf number  2 (cm2/leaf)
+LA03   Leaf area  3    Area of leaf number  3 (cm2/leaf)
+LA04   Leaf area  4    Area of leaf number  4 (cm2/leaf)
+LA05   Leaf area  5    Area of leaf number  5 (cm2/leaf)  
+LA06   Leaf area  6    Area of leaf number  6 (cm2/leaf)
+LA07   Leaf area  7    Area of leaf number  7 (cm2/leaf)
+LA08   Leaf area  8    Area of leaf number  8 (cm2/leaf)
+LA09   Leaf area  9    Area of leaf number  9 (cm2/leaf)
+LA10   Leaf area 10    Area of leaf number 10 (cm2/leaf)   
+LA11   Leaf area 11    Area of leaf number 11 (cm2/leaf)
+LA12   Leaf area 12    Area of leaf number 12 (cm2/leaf)
+LA13   Leaf area 13    Area of leaf number 13 (cm2/leaf)
+LA14   Leaf area 14    Area of leaf number 14 (cm2/leaf)
+LA15   Leaf area 15    Area of leaf number 15 (cm2/leaf)  
+LA16   Leaf area 16    Area of leaf number 16 (cm2/leaf)
+LA17   Leaf area 17    Area of leaf number 17 (cm2/leaf)
+LA18   Leaf area 18    Area of leaf number 18 (cm2/leaf)
+LA19   Leaf area 19    Area of leaf number 19 (cm2/leaf)
+LA20   Leaf area 20    Area of leaf number 20 (cm2/leaf)
+LA21   Leaf area 21    Area of leaf number 21 (cm2/leaf)
+LA22   Leaf area 22    Area of leaf number 22 (cm2/leaf)
+LA23   Leaf area 23    Area of leaf number 23 (cm2/leaf)
+LA24   Leaf area 24    Area of leaf number 24 (cm2/leaf)
+LA25   Leaf area 25    Area of leaf number 25 (cm2/leaf) 
+LA26   Leaf area 26    Area of leaf number 26 (cm2/leaf)
+LA27   Leaf area 27    Area of leaf number 27 (cm2/leaf)
+LA28   Leaf area 28    Area of leaf number 28 (cm2/leaf)
+LA29   Leaf area 29    Area of leaf number 29 (cm2/leaf)
+LA30   Leaf area 30    Area of leaf number 30 (cm2/leaf)   
+LATF   Tempe Factor    Temperature factor affecting leaf expansion rate
+NLIG   Leaf ligules    Total number of leaf ligules per plant (#/plant)
+NTIP   Leaf tips       Total number of leaf tips per plant (#/plant)
+OLG    Grain filling   Onset of period of linear rate of grain filling (DVS) 
+PLA    Plt leaf area   Plant leaf area (m2/plant)
+RLA    Leaf app. rate  Rate of leaf appearance (leaf/day)
+SILK   Silking         Leaf stage at silking (TLU)
+TLU    Leaf unit       Thermal leaf unit 
+TNLEAF Total leaves    Total number of initiated leaves at maturity (#/plant)
+!SALUS-Simple-specific daily variables
+RELTT  Rel.Therm Time  Relative thermal time 
+RUE    Rad. Use Eff.   Radiation Use Efficiency (g/MJ)
+RELLAI Rel. LAI        Relative Leaf Area Index
+DTTC   Cum deg-days    Cumulative growing degree days (°C-d) 
 
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -459,6 +504,7 @@ TS6D   S-TMP layer 6   Soil temperature, soil layer 6 (°C)                      
 TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (°C)                      .
 TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (°C)                      .
 TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (°C)                      .
+
 
 *CARBON
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -873,8 +919,6 @@ SN5+D  SON L5+(kg/ha)  Organic N in soil layer 5 thru bottom of profile(kg/ha)  
 SNS20D SON top 20 cm   Organic N in top 20 cm of soil (kg/ha)                   .
 SNS40D SON 20-40 cm    Organic N in 20-40 cm of soil (kg/ha)                    .
 SNTD   SON (kg/ha)     Soil organic N (kg/ha)                                   .
-SNWLD  Sen OM to surf  Senesced OM added to surface (kg/ha)                     . 
-SNWSD  Sen OM to soil  Senesced OM added to soil (kg/ha)                        . 
 SOMCT  Soil SOMC kg/ha C in stable organic matter in soil profile (kg/ha)       .
 SOMNT  Soil SOMN kg/ha N in stable organic matter in soil profile (kg/ha)       .
 SOMPT  Soil SOMP kg/ha P in stable organic matter in soil profile (kg/ha)       .
