@@ -44,6 +44,9 @@
 ! DVS     R4  Development stage of the crop (-)                     O  *
 ! LLV     R4  Loss rate of leaves (kg ha-1 d-1)                     O  *
 ! DLDR    R4  Death rate of leaves caused by drought (kg ha-1 d-1)  O  *
+! LAIRD   R4  Deat rate of leaves casued by light shortage (kg ha-1 d-1)
+! SHADET  R4  The tolerance of crop to shading (1.0, full shading, 0, no tolerance* 
+! FORCEI  C   Force crop simulation to start with given values, THE FILE NAME      I  *        
 ! WLVG    R4  Dry weight of green leaves (kg ha-1)                  O  *
 ! WST     R4  Dry weight of stems (kg ha-1)                         O  *
 ! WSO     R4  Dry weight of storage organs (kg ha-1)                O  *
@@ -66,7 +69,7 @@
                         ESTAB,  TKLT,   ZRTMS,  CROPSTA, &
                         LRSTRS, LDSTRS, LESTRS, PCEW,  CPEW, TRC, &
                         DAE,    SLA, LAI,    LAIROL, ZRT,    DVS, &
-                        LLV,    DLDR, WLVG, WST, WSO, GSO, GGR, GST, GLV, &
+                        LLV,    DLDR, WLVG, WST, WSO, GSO, GGR, GST, GLV, GRT, &
                         PLTR, WCL, WL0, WRT, WRR14, NGR, HU)
 
 !===================================================================*
@@ -75,34 +78,36 @@
  	  USE Public_Module		!VARIABLES
 	  use RootGrowth
       use Module_OutDat
+	  
       IMPLICIT NONE
  
 !-----Formal parameters
-      INTEGER       ITASK , IUNITD, IUNITL, CROPSTA, IDOY, I  !, K
+      INTEGER       ITASK , IUNITD, IUNITL, CROPSTA, IDOY, I, K
       LOGICAL       OUTPUT, TERMNL
       CHARACTER (*) FILEI1, FILEIT, FILEI2
       CHARACTER (*) ESTAB
-      REAL          DOY , TIME, DELT  , LAT  , RDD, TRC, TempR, KDF2, DIF  !, RBH,RT,RBW,RSWP,RSWA
+      REAL          DOY , TIME, DELT  , LAT  , RDD, TRC, RBH,RT, DIF,RBW,RSWP,RSWA, TempR, KDF2
       REAL          TMMN, TMMX, TMAXC, TMINC, TKLT  , ZRTMS, LRSTRS, LDSTRS, LESTRS, NRT
-      REAL          PCEW, CPEW, DAE , LAIROL, ZRT  , DVS, NSLLV, RNSTRS, WCL(10), WL0
-
+      REAL          PCEW, CPEW, DAE , LAIROL, ZRT  , DVS, NSLLV, RNSTRS, WCL(10), WL0,DAYSFL
+      !DAYSFL is the days to flowering FOR PHENOLOGY STUDY
 !-----Local variables
       LOGICAL DLEAF, DROUT, INQOBS  , GRAINS
 
-      INTEGER IMX 
-      PARAMETER (IMX=40)
+      INTEGER IMX, IMXX 
+      PARAMETER (IMX=40, IMXX = 800)
       INTEGER ILDRLV, ILEFFT, ILFLVT, ILFSHT, ILFSOT, ILFSTT
-      INTEGER ILKDFT, ILKNFT, ILSLAT
-      INTEGER ILREDF, ILSSGA, ILTMCT, ILTMAXCT
+      INTEGER ILKDFT, ILKNFT, ILSLAT,ILNMIN,ILNMAX 
+      INTEGER ILREDF, ILSSGA, ILTMCT, ILTMAXCT,ILCO2A
       REAL    DRLVT(IMX) , EFFTB(IMX), SLATB(IMX) 
       REAL    FLVTB(IMX) , FSHTB(IMX), FSOTB(IMX) , FSTTB(IMX)
-      REAL    KDFTB(IMX) , KNFTB(IMX) 
-      REAL    REDFTT(IMX), SSGATB(IMX), TMCTB(IMX), TMINCTB(IMX), TMAXCTB(IMX)
-	  ! The addiational variables for climate change in temperature. TMINCTB: The Minimum temperature 
-	  ! change table, TMAXCTB: Maximum temperature change table. TaoLi, Nov. 2010
+      REAL    KDFTB(IMX) , KNFTB(IMX), NMINLT(IMX),NMAXLT(IMX),RFNLV
+      REAL    REDFTT(IMX), SSGATB(IMX)
+      REAL TMCTB(IMXX), TMINCTB(IMXX), TMAXCTB(IMXX)
+	  ! TaoLi, Nov. 2010
       REAL    ALAI  , AMAX, tkl(15)
       REAL    CBCHK , CKCIN , CKCFL
       REAL    CO2   , CO2EFF, CO2LV, CO2ST, CO2STR, CO2SO , CO2REF, CO2RT
+      REAL    CO2ADAY, CO2A(IMXX)  !PROVIDE DAILY CO2 CONCENTRATION AFTER EMERGENCY, CO2A CAN ONLY PROVIDE ONE YEAR DATA
       REAL    CRGCR , CRGLV , CRGRT, CRGSO, CRGST , CRGSTR, CTRANS 
       REAL    DAYL  , DAYLP , DLDR , DLDRT, DPAR  , DPARI , DTGA  , DTR
       REAL    DVEW  , DVR   , DVRI , DVRJ , DVRP  , DVRR  , DVSI 
@@ -118,7 +123,7 @@
       REAL    NH    , NPLDS , NPLH    , NPLSB , NSP   , NSPM2
       REAL    PARCM1, PARCUM, PARI1   , PLTR  , PPSE  , PWRR  , Q10
       REAL    RAPCDT, RDAE  , REDFT , RGCR    , RGRL  , RMCR  , RTNASS, RWLVG 
-      REAL    RWLVG1, RWSTR , RWSTR1
+      REAL    RWLVG1, RWSTR , RWSTR1, SUMROOTN
       REAL    SAI   , SCP   , SF1     , SF2   , SHCKD , SHCKL , SLA  
       REAL    SPFERT, SPGF  , SSGA 
       REAL    TAV   , TAVD  , TBD     , TBLV  , TCLSTR, TCOR  , TDRW
@@ -126,43 +131,56 @@
       REAL    TOD   , TS    , TSHCKD  , TSHCKL, TSLV  , TREF  
       REAL    WAG   , WAGT  , WGRMX   , WLV   , WLVG  , WLVGI , WLVGIT
       REAL    WLVD  , WRR   , WRR14   , WRT   , WRTI  , WST   , WSTI  
-      REAL    WSO   , WSOI  , WSTS    , WSTR   
+      REAL    WSTRI , WLVDI 
+      CHARACTER*128 FORCEI  !FORCE CROP START WITH GIVEN VALUES, THEN GIVEN INITAL FILE FULL NAME
+      REAL    WSO   , WSOI  , WSTS    , WSTR  , WSO_O !TAOLI 19May 2012 
       REAL    ZRTI  , ZRTM  , ZRTTR   , ZRTMCW, ZRTMCD, RGRLMX, RGRLMN
-      REAL    ASLA  , BSLA  , CSLA    , DSLA  , SLAMAX
-      REAL    COLDMIN,COLDEAD, FSWTD , SLASIM
-!-----Add five parameter here to deal with night temperature control,
-!-----VARIABLE DIFINATION SEE NIGHT.F90, TAOLI, JUNE 10, 509
+      REAL    ASLA  , BSLA  , CSLA    , DSLA  , SLAMAX, LAIRD, FCLIMAT
+      REAL    SHADET  !Index of crop tolerate shade, 0.5 is the default, 0 to 1 increasing tolerance
+      INTEGER   SWIRTR 
+      REAL    COLDMIN,COLDEAD, FSWTD,  LLRT, ULRT,SWIRTRF,COLDREP,ULLS
+!-----TAOLI, JUNE 10, 509
 	  REAL    SHOUR,  EHOUR,  TTEMP,    TCHANG,	SDAY,	EDAY
 	  REAL    xTAV,   xTMIN,   xTMAX,   xHU, xTAVD !OUTPUT, THE NET CHANGE
 	  INTEGER ISTEMC, CONTRM, sl
-	  logical RDINQR, TEMPC				
-!-----ISTEMC: WHETHER TEMPERATURE CONTROL, ALL THIS FIVE VARIABLE READ FROM EXPERIMENT
-!-----ADD THREE PARAMETERS FOR HIGH TEMPERATURE STERILITY, TAOLI, 6 AUG, 2010
+	  logical RDINQR, TEMPC, INITIALF				
+!-----TAOLI, 6 AUG, 2010
 	  REAL SFLOWER, IFLOWER, TFLOWER
-!---------SFLOWER=STARTING TIME OF FLOWERING IN A DAY, IFLOWER=INTERVAL OF FLOWERING IN A DAY
-!---------TFLOWER=THE CRITICAL TEMPERATURE AT WHICH THE STERILITY OCCUR
-!	  real TrootD  !root depth at optimal condition
+	  real TrootD  !root depth at optimal condition
 	  CHARACTER ROOTOBS*10, xx*2			!Use for root observation outputs
       CHARACTER (10) SWISLA
-!	  CHARACTER (2) TMPCH1, TMPCH2
+	  CHARACTER (2) TMPCH1, TMPCH2
 
-      REAL CHECKTB, TSTCHK, TWRT, LROOTC,LROOTN 
-!	  LOGICAL ISOPEN
+      REAL CHECKTB, TSTCHK, TWRT, LROOTC,LROOTN, XXX
+      !--- ONE VARIABLE IS ADDED FOR OUTPUT ROOT MASS IF THE OBSERVATION EXISTED, TAOLI 23 FEB2012
+      INTEGER ROOTCOB(15)
+	  LOGICAL ISOPEN
 		REAL TEMPV(15), Y1, Y2
-!     Used functions
+
       REAL    LINT2, INSW, NOTNUL, GETOBS, INTGRL, INTGR2
-      SAVE         !&#@TAOLI
+      SAVE         ! TAOLI
  
 !===================================================================*
 !     INITIALIZATION SECTION                                        *
 !===================================================================*
       IF (ITASK.EQ.1) THEN
 
-!     WRITE (*,*) 'SUCCESS'
+      WRITE (*,*) 'SUCCESS'
 
 !--------Open experimental data input file
          CALL RDINIT (IUNITD, IUNITL, FILEIT)
 !        Read initial states
+         IF(RDINQR('FORCEI')) THEN
+            CALL RDSCHA('FORCEI',FORCEI)
+            IF(LEN_TRIM(FORCEI).GT.2) THEN
+                INITIALF = .TRUE.
+            ELSE
+                INITIALF = .FALSE.
+            END IF
+         ELSE
+            INITIALF = .FALSE.
+         END IF
+         
          CALL RDSREA('LAPE  ',LAPE )
          CALL RDSREA('DVSI  ',DVSI )
          CALL RDSREA('WLVGI ',WLVGI)
@@ -171,7 +189,8 @@
          CALL RDSREA('WSTI  ',WSTI )
          CALL RDSREA('ZRTI  ',ZRTI )
          CALL RDSREA('ZRTTR ',ZRTTR)
-!--------Add read in parameter for temperature control, TAOLI, June 10, 509
+         
+!--------TAOLI, June 10, 509
 		 IF(RDINQR('ISTEMC')) THEN
 			CALL RDSINT('ISTEMC',ISTEMC )
 			IF(ISTEMC.GT.0) THEN		 
@@ -201,12 +220,18 @@
             CALL RDSREA('NPLDS ',NPLDS)
          END IF
          CALL RDSREA('TMPSB ',TMPSB)
+         ILTMCT = 0; ILTMAXCT = 0
 		 IF(RDINQR('TMCTB')) THEN
-			CALL RDAREA('TMCTB ',TMCTB,IMX,ILTMCT)
+			CALL RDAREA('TMCTB ',TMCTB,IMXX,ILTMCT)
 		 ELSEIF(RDINQR('TMAXCTB')) THEN
-			CALL RDAREA('TMINCTB ',TMINCTB,IMX,ILTMAXCT)
-			CALL RDAREA('TMAXCTB ',TMAXCTB,IMX,ILTMAXCT)
+			CALL RDAREA('TMINCTB ',TMINCTB,IMXX,ILTMAXCT)
+			CALL RDAREA('TMAXCTB ',TMAXCTB,IMXX,ILTMAXCT)
 		 ENDIF
+		 IF(RDINQR('CO2A')) THEN
+		    CALL RDAREA('CO2A',CO2A,IMXX,ILCO2A)
+		 ELSE
+		    ILCO2A = 0
+		 END IF
 !--------Close experimental data input file
          CLOSE (IUNITD)
 
@@ -225,6 +250,11 @@
          CALL RDSREA('DVRJ  ',DVRJ  )
          CALL RDSREA('DVRP  ',DVRP  )
          CALL RDSREA('DVRR  ',DVRR  )
+         IF(RDINQR('COLDREP')) THEN
+		    CALL RDSREA('COLDREP', COLDREP)			!special root length cm/g C
+		 ELSE
+		    COLDREP = 22.0
+		 END IF
          CALL RDSREA('FCLV  ',FCLV  )
          CALL RDSREA('FCRT  ',FCRT  )
          CALL RDSREA('FCSO  ',FCSO  )
@@ -256,16 +286,33 @@
          CALL RDSREA('TREF  ',TREF  )
          CALL RDSREA('WGRMX ',WGRMX )
          CALL RDSREA('ZRTMCW',ZRTMCW)
-         CALL RDSREA('ZRTMCD',ZRTMCD)
          CALL RDSREA('GZRT  ',GZRT  )
-!--------ADD BY TAOLI, JUNE 17, 509 FOR ROOT GROWTH
-		 CALL RDSREA('SROOTL', SROOTL)			!special root length cm/g C
-         CALL RDSREA('RMINT',  RMINT)				!minimum temperature for root growth
-         CALL RDSREA ('ROPTT', ROPTT)			!optimum temperature of root growth
-         CALL RDSREA ('RTBS',  RTBS)				!minimim temperature for root to survive
-         CALL RDSREA('RCNL',   RCNL)				!lowest root nitrogen content (residue root N content)
-		 CALL RDSREA('MAXD', MAXD)				!MAXIMUM ROOTING DEPTH (CM)
-		 CALL RDSREA('SODT  ', SODT)             !TOLERANCE OF OXYGEN DEFICIENCY
+!--------ADD BY TAOLI, JUNE 17
+         IF(RDINQR('SROOTL')) THEN
+		    CALL RDSREA('SROOTL', SROOTL)			
+		 ELSE
+		    SROOTL = 90.0
+		 END IF
+         CALL RDSREA('RMINT',  RMINT)			
+         CALL RDSREA ('ROPTT', ROPTT)			
+         CALL RDSREA ('RTBS',  RTBS)				
+         CALL RDSREA('RFNLV', RFNLV)
+         CALL RDAREA('NMAXLT',NMAXLT,IMX,ILNMAX)
+         IF(RDINQR('RCNL')) THEN
+            CALL RDSREA('RCNL',   RCNL)				
+         ELSE
+            RCNL = RFNLV            
+         END IF			
+		 IF(RDINQR('MAXD')) THEN
+		    CALL RDSREA('MAXD  ', MAXD)				
+		    ZRTMCD = MAXD/100.0
+		 ELSEIF(RDINQR('ZRTMCD')) THEN
+         CALL RDSREA('ZRTMCD',ZRTMCD)
+		    MAXD = ZRTMCD *100.0
+		 ELSE
+		    CALL FATALERR ('ROOTG','Missing the information for maximum rooting depth!') 
+		 END IF
+		 CALL RDSREA('SODT  ', SODT)             
 		IF(RDINQR('SFLOWER')) THEN
 			CALL RDSREA('SFLOWER',SFLOWER)
 		ELSE
@@ -281,18 +328,41 @@
 		ELSE
 			TFLOWER=34.0
 		ENDIF
+		!Following parameter for shading tolerance index
+		IF(RDINQR('SHADET')) THEN
+			CALL RDSREA('SHADET',SHADET)
+		ELSE
+			SHADET=0.5
+		ENDIF
+		SHADET = max(0.01,min(0.99,SHADET)) !limited SHADET between 0.01 and 0.99
+		!TAOLI, 31 oct 2012
+        CALL RDSREA ('ULLS', ULLS)
+		CALL RDSINT('SWIRTR',SWIRTR)
+		IF(SWIRTR.EQ.1) THEN
+             CALL RDSREA ('LLRT', LLRT)
+             CALL RDSREA ('ULRT', ULRT)
+             FSWTD =max(0.1,1.0+(LOG10(LLRT)-LOG10(10.0))/(LOG10(ULRT)-LOG10(LLRT)))
+		 ELSEIF(SWIRTR.EQ.2) THEN		
+			IF(RDINQR('SWIRTRF')) THEN
+				CALL RDSREA('SWIRTRF',SWIRTRF)  
+			ELSE
+				SWIRTRF=0.003297			
+			ENDIF
+			FSWTD = INT(2.537**(2.0/(1.0+EXP(SWIRTRF*30.0)))*100.0)/100.0
+		 ELSEIF(SWIRTR.EQ.3) THEN
 		IF(RDINQR('FSWTD')) THEN
-			CALL RDSREA('FSWTD', FSWTD)
+			    CALL RDSREA('FSWTD', FSWTD)  !default value is 0.41
 			IF(FSWTD.GT.0.0) THEN
 			    FSWTD = 1.0/FSWTD
 			ELSE
-			    FSWTD = 3.0
+			        FSWTD = 2.42
+			    END IF
+		     ELSE
+			    FSWTD = 2.42
 			ENDIF    
-		 ELSE
-			FSWTD = 3.0
 		 ENDIF
 		 IF(RDINQR('AMAXSLN0')) THEN
-		    CALL RDSREA('AMAXSLN0',AMaxSLN0)
+		    CALL RDSREA('AMAXSLN0',AMaXSLN0)
 		 ELSE
 		    AMAXSLN0 = 22.0
 		 END IF
@@ -341,12 +411,11 @@
 !--------Close crop data input file
          CLOSE (IUNITD)
 
-!--------Added by TAOLI, June 17, 509, read soil parameter for root growth
-	!-------READING SOIL TEXTURE, BULK DENSITY, LAYER THICKNESS FROM SIOL FILE
+!--------Added by TAOLI, June 17, 2009
 	    IF(PV%PROOT_NUTRIENT) THEN
 		     CALL RDINIT(IUNITD, IUNITL, FILEI2)
 		     CALL RDSINT('NL', PV%PNL)
-    		
+		     CALL RDAREA('TKL',TKL    ,10, SL)   		
 		     SL = PV%PNL
 		     IF(RDINQR('SANDX')) THEN
 			     CALL RDAREA('SANDX',PV%PSAND ,10, SL)		!soil sand content
@@ -355,70 +424,7 @@
 		     ELSE
 			     PV%PROOT_NUTRIENT = .FALSE.
 		     ENDIF
-		     IF(PV%PROOT_NUTRIENT) THEN
-			     CALL RDAREA('BD',PV%PBD    ,10, SL)		!soil bulk density
-			     IF(RDINQR('SOC')) THEN						!IT IS IN KG C/HA
-				     CALL RDAREA('SOC',PV%PSOC,	10,SL)
-				     do i=sl,1,-1
-					    pv%psoc(i)=pv%psoc(i-1)
-				     enddo
-					    pv%psoc(0)=0.0
-			     ELSeIF(RDINQR('SOM')) THEN
-				     TEMPV=0.0
-				     CALL RDAREA('SOM',TEMPV, 10, SL)
-				     do i = sl,1,-1
-					     PV%PSOC(i) = tempv(i) *0.58     
-				     enddo
-			     ELSE
-				     PV%PROOT_NUTRIENT = .FALSE.
-			     endif
-    				
-			     IF(RDINQR('SON')) THEN
-				    CALL RDAREA('SON',PV%PSON, 10, SL)	!IT IS IN KG N/HA
-				    do i=sl,1,-1
-					    pv%pson(i)=pv%pson(i-1)
-				     enddo
-					    pv%pson(0)=0.0
-			     ELSE
-			        CALL RDAREA('TKL',TKL ,10, SL)
-				    do i=1, sl
-					    if(sum(tkl(1:i)).le.25.0) then
-						    pv%pson(i) = pv%psoc(i) / 16.0	!if there is not avaliable data for SON, we suppose the C:N ratio is 16 at upper 25 cm
-					    else
-						    pv%pson(i) = pv%psoc(i)/11.0
-					    endif
-				    enddo
-			     endif
-    			
-			     IF(RDINQR('SNO3X')) THEN
-				    CALL RDAREA('SNO3X',PV%PNO3,	10, SL)
-				    do i=sl,1,-1
-					    pv%pno3(i)=pv%pno3(i-1)
-				    enddo
-				    pv%pno3(0)=0.0
-			     ELSE
-			 	    PV%PNO3(:) = MAX(0.0, pv%pson(:)/100.0)		!IT IS IN KG N/HA
-			     ENDIF
-			     IF(RDINQR('SNH4X')) THEN
-				    CALL RDAREA('SNH4X',PV%PNH4,	10, SL)			!IT IS IN KG N/HA
-				    do i=sl,1,-1
-					    pv%pnh4(i)=pv%pnh4(i-1)
-				     enddo
-					    pv%pnh4(0)=0.0
-			     ELSE
-				    PV%PNH4(:)= MAX(0.0, pv%pson(:)/50.0)
-			     ENDIF
-			     IF(RDINQR('SUREA')) THEN
-				    CALL RDAREA('SUREA',PV%PUREA,	10, SL)	
-				    do i=sl,1,-1
-					    pv%purea(i)=pv%purea(i-1)
-				     enddo
-					    pv%purea(0)=0.0
-			     ELSE
-				    PV%PUREA = 0.0
-			     ENDIF
-    			 				
-		     ENDIF
+		     CALL RDAREA('BD',PV%PBD    ,10, SL)
              IF(RDINQR('PLOWPAN')) THEN
 			          CALL RDSREA('PLOWPAN', PV%PPLOWDEPTH)			!THE DEPTH OF PLOWPAN, NEGATIVE VALUE INDICATES NO PLOWPAN
 		        ELSE
@@ -426,6 +432,18 @@
 		        ENDIF
 		    CLOSE (IUNITD)
 		 END IF
+		 !FOLLOWING SECTION IS ADDED FOR ROOT MASS OUTPUT, TAOLI 23FEB 2012
+		 CALL RDINIT (IUNITD, IUNITL, FILEIT)
+		    DO i=1, sl
+				Rootobs = ' '
+				write(xx,'(I2)') I
+				rootobs = trim('ROOTM') // trim(adjustl(xx))//"_OBS"
+				IF (RDINQR(trim(rootobs))) THEN 
+				    ROOTCOB(I) = 1
+				ENDIF
+			ENDDO
+		 CLOSE(IUNITD)
+		 !END THE SECTION
 		!---- INITIAL ROOT VARIABLES
 			RRCC=0.0;RRNC=0.0;RRDCL=0.0;RRDENSIT=0.0;RRDNL=0.0
 			MaxDep = ZRTMCD *100.0  !From m to cm
@@ -443,6 +461,7 @@
          WSTS   = 0.01
          WSTR   = 0.
          WSO    = 0.
+         WSO_O = 0.
          WRT    = 0.
          WST    = WSTS + WSTR
          WLV    = WLVG + WLVD
@@ -475,12 +494,52 @@
          DLDRT  = 0.
          DLDR   = 0.
          KEEP   = 0.
+         NSP    = 0.
+         GNSP   = 0.
          DLEAF    = .FALSE.
          DROUT    = .FALSE.
          GRAINS   = .FALSE.
-         SLASIM = 0.0
-!		Intital root state variables		!TAOLI, April 2, 509
+         FCLIMAT = MIN(1.0, MAX(0.0, 1.0-0.1*(ABS(LAT)-15.0)/15.0))
+         CO2ADAY = 0.0
+         DAYSFL = -1.0
+         SUMROOTN = 0.0
+!		TAOLI, JULY 23, 2013
+        IF(INITIALF) THEN
+            CALL RDINIT (IUNITD, IUNITL, FORCEI)
+            CALL RDSREA('WSTRI  ',WSTR )
+            CALL RDSREA('WSTSI  ',WSTS )
+            CALL RDSREA('WLVDI  ',WLVD )
+            CALL RDSINT('CROPSTAI',CROPSTA)
+            CALL RDSREA('LAPE  ',LAI )
+            CALL RDSREA('DVSI  ',DVS )
+            CALL RDSREA('WLVGI ',WLVG)
+            CALL RDSREA('WRTI  ',WRT )
+            CALL RDSREA('WSOI  ',WSO )
+            CALL RDSREA('WSTI  ',WST )
+            CALL RDSREA('WRRI  ',WRR )
+            CALL RDSREA('WRR14I',WRR14)
+            CALL RDSREA('NGRI  ',NGR )
+            CALL RDSREA('NSPI  ',NSP )
+            CALL RDSREA('ZRTI  ',ZRT )
+            CALL RDSREA('ZRTTR ',ZRTTR)
+            CALL RDAREA('ROOTCI',ROOTC, 10, SL)
+	        CALL RDAREA('ROOTNI',ROOTN, 10, SL)
+	        CALL RDSREA('DAEI',DAE) 
+            CALL RDSREA('PARCUMI',PARCUM)         
 
+             WSO_O = WSO
+             WST    = WSTS + WSTR
+             WLV    = WLVG + WLVD
+             WAG    = WLVG + WST  + WSO
+             WAGT   = WLV  + WST  + WSO
+             TDRW   = WLV  + WST  + WSO + WRT
+             PWRR   = NGR*WGRMX              
+            IF(WRR.GT.0.0) THEN
+                GRAINS = .TRUE.
+            ELSE
+                GRAINS   = .FALSE.
+            END IF      
+         END IF
 !===================================================================*
 !     RATE CALCULATION SECTION                                      *
 !===================================================================*
@@ -496,7 +555,7 @@
             WSO  = WSOI
             WRT  = WRTI
             ZRT  = ZRTI
-			IROOTD = ZRTI			!BY TAOLI, 22 JUNE, 509
+			IROOTD = ZRTI			!BY TAOLI, 22 JUNE, 2011
 			DAE = 0.0               !BY TAOLI, 5 APRIL 2011
 			ROOTN=0.0;ROOTC=0.0
             IF (ESTAB.EQ.'TRANSPLANT' ) LAI= LAPE * NPLSB
@@ -518,7 +577,8 @@
            ELSE
               DROUT = .FALSE.
            END IF
-
+           SUMROOTN = SUM(ROOTN) + SUM(RDNL)
+            IF (CROPSTA .EQ. 3) SUMROOTN =0.0
 !----------Computation of weather variables
            IF (CROPSTA .LE. 2) THEN
               TMPCOV = TMPSB
@@ -537,7 +597,7 @@
 			ENDIF
            TAV  = (TMIN+TMAX)/2.
            TAVD = (TMAX+TAV )/2.
-!----------Add this section for night time temperature control, TAOLI, June 10, 509
+!----------TAOLI, June 10, 2009
 !----------We supposed the TMAX would not change
 			 IF((TEMPC).AND.(DOY.GE.SDAY).AND.(DOY.LE.EDAY)) THEN
 				 CALL TSHIFT(TMAX,TMIN,DAYL, SHOUR, EHOUR, TTEMP, TCHANG, &
@@ -561,7 +621,7 @@
            RDAE = 1.
 		       HU=HU+XHU
            CALL SUBCD2 (COLDMIN,CROPSTA,TAV,TIME,NCOLD)
-           CALL OR_PHENOL(ESTAB,DVS,DVRJ,DVRI,DVRP,DVRR,HU,DAYL,MOPP,PPSE, &
+           CALL PHENOL(ESTAB,DVS,DVRJ,DVRI,DVRP,DVRR,HU,DAYL,MOPP,PPSE, &
                         TS,SHCKD,CROPSTA,DVR,TSHCKD)
 
 
@@ -576,8 +636,18 @@
            DVR = DVR*DVEW
 
 !----------CO2 concentration
-           CO2EFF = (1.-EXP(-0.00305*CO2   -0.222))  &
-                   /(1.-EXP(-0.00305*CO2REF-0.222))
+           IF(ILCO2A.GT.1) THEN
+               CO2ADAY = LINT2('CO2A',CO2A,ILCO2A,DAE)
+               IF(CO2ADAY.LE.0.0) THEN
+                  CO2ADAY = CO2
+               ENDIF
+           ELSE
+               CO2ADAY = CO2
+           END IF           
+           !CO2EFF = (1.-EXP(-0.00305*CO2ADAY   -0.222))  &
+           !        /(1.-EXP(-0.00305*CO2REF-0.222))      !Commented out by TAOLI 13 Nov 2013
+           CO2EFF = (1.-EXP(-0.00305*CO2ADAY   -1.022))  &
+                   /(1.-EXP(-0.00305*CO2REF-1.022))       !To reduce the effects of CO2, TAOLI 13Nov 2013
            EFF = LINT2('EFFTB',EFFTB,ILEFFT,TAVD)*CO2EFF
  
 !----------Leaf rolling under drought stress (only for photosynthesis)
@@ -594,7 +664,7 @@
            KNF   = LINT2('KNFTB' ,KNFTB,ILKNFT,DVS)
 
 !----------Daily gross canopy CO2 assimilation (DTGA)
-           CALL GPPARSET (CO2, KNF, NFLV, REDFT, AMaxSLN0, MinSLN)
+           CALL GPPARSET (CO2ADAY, KNF, NFLV, REDFT, AMaxSLN0, MinSLN)
 !----------The value 2 in next argument list: accuracy for Gauss integration over canopy. 
 !          If value=1 => 3-points Gauss over canopy (as in TOTASP); of value = 2 => 
 !          enhanced accuracy if required as detrmined within the subroutine TRY!
@@ -607,20 +677,15 @@
 
 !----------Unrolling of ALAI again 
            ALAI  = LAI+0.5*SAI
-!----------Calculate 1) the temperature difference between canopy to air 'DIF', 
-!                    2) Turblance resistance "RT',
-!                    3) The leaf boundary layer resistance 'RBH',  added by TAOLI, 25 Mar 2010
+!----------dded by TAOLI, 25 Mar 2010
 			 KDF2=KDF
 			 IF(TRC.GT.0.0) THEN
-!				CALL DIFLA (RAPCDT,DAYL,TRC*PCEW,ALAI,WST,WLVG,pv%PWind,KDF2,RBH,RT, RBW, DIF)
-				DIF = PV%PDT
+!				DIF = PV%PDT
 			 ELSE
 				DIF=0.0
 			 ENDIF
-			 !CALL DIFLA (DPAR*1.E6,DAYL,TRC*PCEW,LAI,WST,WLVG,pv%PWind,KDF2,RBH,RT, RBW, DIF)
-!----------Effect of drought stress on DTGA
-
 		   if(PV%PROOT_NUTRIENT) then
+			   TEMPR = PCEW
 		     DTGA  = DTGA*min(RNSTRS,pcew)     					
     	   Else
 		     DTGA  = DTGA*min(RNSTRS,pcew)   
@@ -636,29 +701,24 @@
            FLV = LINT2('FLVTB',FLVTB,ILFLVT,DVS)
            FST = LINT2('FSTTB',FSTTB,ILFSTT,DVS)
            FSO = LINT2('FSOTB',FSOTB,ILFSOT,DVS)
-		   if(PV%PROOT_NUTRIENT) then
-				CALL PARTITION_K(KDF2,LAI,7.0,1.0,PCEW,RNSTRS,FSWTD,1,FSH,FRT,FLV,FST,FSO)  !ADDED BY TAOLI, APRIL 29, 2010
+		   IF(PV%PROOT_NUTRIENT) then		        
+				CALL PARTITION_K(KDF2,LAI,MAX(0.0, -LOG(6.9*DAYLP*3600.0/(0.5*RDD))/KDF),FCLIMAT, &
+				                PCEW,RNSTRS,fswtd,1,FSH,FRT,FLV,FST,FSO)  !ADDED BY TAOLI, APRIL 29, 2010
 		   ELSE
-				IF (DVS.LT.1.) THEN					!COMMENT OUT BY TAOLI, APRIL 29,2010
+				IF (DVS.LT.1.) THEN					
 					FSH  = (FSH*CPEW)/NOTNUL((1.+(CPEW-1.)*FSH))
 				END IF
 				FRT = 1.-FSH
 		   ENDIF
-!           IF (DVS.LT.1.) THEN
-!              FSH = FSH * LESTRS
-!              FRT = 1.-FSH
-!           END IF
 
-
-!----------Check sink limitation based on yesterday's growth rates
-!          and adapt partitioning stem-storage organ accordingly
        IF (GRAINS) THEN
+
   			 IF(GGR.GE.(PWRR-WRR))THEN
 			  		FSO = MAX(0.,(PWRR-WRR)/NOTNUL((GCR*FSH)))
 					FST = 1.-FSO-FLV
 				 ENDIF
 		   END IF
-
+!           TAOLI, 22Feb 2012
 !----------Loss rates of green leaves and stem reserves
            LLV  = NSLLV*WLVG*LINT2('DRLVT',DRLVT,ILDRLV,DVS)
            LSTR = INSW(DVS-1.,0.,WSTR/TCLSTR)
@@ -702,37 +762,25 @@
            IF (DVS.GT.0.95) THEN
               GGR = GSO
            ELSE 
-              GGR = 0.
+              GGR = 0.;WRR = 0.0
            END IF
 		  
-        	 IF(PV%PROOT_NUTRIENT) THEN
-!----------Growth rate of root and root profiling		!TAOLI, APRIL 2, 2009
-	     	    NROOTC=GRT*DELT			!IN kg DM/ha/d
-				IF(ROOTNC.gt.0.0) then
-					IF(NRT.GT.0.0) THEN
-						NROOTN = NRT		!It is suitable for count nitrogen stress
-					ELSE
-						Y1 = sum(ROOTN(1:SL)); Y2=SUM(ROOTC(1:SL))
-						NROOTN = NROOTC*(Y1/Y2) !ROOTNC !IN kg N/ha/d, N allocation dtermined by N:C ratio inprevious day
-					END IF
-				ELSE
-					NROOTN=NROOTC* RCNL * 4.0 ! SUPPOSED THE N:C RATIO IS FOUR TIME OF RESIDUAL
-				ENDIF
-				LROOTC =0.0; LROOTN = 0.0
-         		CALL ROOTG(CROPSTA,DVS,DELT, LROOTC ,LROOTN, 1)
-			  ENDIF
+           !root growth section was removed to ITASK = 3, TAOLI, 17OCT 2013
 
 !----------Growth rate of number of spikelets and grains
  		   CALL SUBGRN(GCR,CROPSTA,LRSTRS,DVS,SF2,SF1,SPGF,TAV,TMAX, &
-						NSP,CTSTER,GNSP,GNGR,SPFERT,GRAINS)
-!!--------- Leaf area growth (after calculation on leaf growth and loss rates!)
+						NSP,CTSTER,COLDREP,GNSP,GNGR,SPFERT,GRAINS)
+!!		   CALL SUBGRN3(GCR,CROPSTA,LRSTRS, DVS,SF2,SF1,SPGF,TAV,TMAX, &
+!!						SFLOWER,IFLOWER,TFLOWER,NSP,GNSP,GNGR, &
+!!                        SPFERT,GRAINS)
+!--------- Leaf area growth (after calculation on leaf growth and loss rates!)
 !----------USE NIGHT.F90 TO CALCULATE XHU, THEN RECALCULATE HULV
 			 IF((TEMPC).AND.(DOY.GE.SDAY).AND.(DOY.LE.EDAY)) THEN
 				 CALL TSHIFT(TMAX,TMIN,DOY, SHOUR, EHOUR, TTEMP, TCHANG, &
 					ISTEMC, CONTRM, TBLV,30.,42.,HULV, xTAV, xTMIN, xTMAX, xHU, XTAVD)
 			 ELSE
 !----------Temperature sum for leaf development
-				 CALL SUBDD (TMAX,TMIN,TBLV,30.,42.,HULV)    !The SUBDD is replaced by TSHIFT, TAOLI, JUNE 10, 509 
+				 CALL SUBDD (TMAX,TMIN,TBLV,30.,42.,HULV)    !TAOLI, JUNE 10, 509 
 				 xTAV=0.0; xTMIN=0.0; xTMAX=0.0; xHU=0.0; XTAVD=0.0
 			 ENDIF
 		    HULV = HULV + XHU	
@@ -762,7 +810,7 @@
               WLVGIT = WLVG
               DLEAF  = .TRUE.
               KEEP   = LDSTRS
-		   ELSEIF(WLVG.LE.0.0) THEN		!!Added by TaoLi, Jan4, 2011, to aviod the negative leave biomass
+		   ELSEIF(WLVG.LE.0.0) THEN		!!Added by TaoLi, Jan4, 2011
 			  WLVGIT = WLVG				!!Added by TaoLi, Jan4, 2011
               DLEAF  = .FALSE.			!!Added by TaoLi, Jan4, 2011
               KEEP   = LDSTRS			!!Added by TaoLi, Jan4, 2011
@@ -770,7 +818,7 @@
            IF (DLEAF) THEN
               IF (LDSTRS.LE.KEEP) THEN
                  DLDR  = (WLVGIT/DELT)*(1.-LDSTRS)-DLDRT/DELT
-				 !In order to avoid negative value of WLVG, added following ONE sentence by TAOLI, 27 Aug, 2010
+				 !TAOLI, 27 Aug, 2010
 				 DLDR = MIN((WLVGIT+RWLVG*DELT)/DELT,DLDR)
                  KEEP  = LDSTRS
                  DLDRT = DLDR*DELT+DLDRT
@@ -792,32 +840,29 @@
            RTNASS = ((DTGA*30./44.-RMCR)*44./30.)-RGCR-(CTRANS*44./12.)
 		   	
 !----------Carbon balance check
+           
            CKCIN  = (WLVG+WLVD-WLVGI)*FCLV+(WSTS-WSTI)*FCST+WSTR*FCSTR &
-                          +(WRT-WRTI)*FCRT+WSO*FCSO
+                          +(WRT-WRTI)*FCRT+(WSO+WSO_O)*FCSO
            CKCFL  = TNASS*(12./44.)
+           
            CALL SUBCBC(CKCIN,CKCFL,TIME,CBCHK,TERMNL)
- 
-!----------Output section
+ !----------Output section
            IF (OUTPUT) THEN
             CALL OUTDAT(2,0,'DVS   ',DVS)
+ !           CALL OUTDAT(2,0,'DAE   ',DAE)
             CALL OUTDAT(2,0,'RDD   ',RDD)
             CALL OUTDAT(2,0,'TMIN   ',TMIN)
             CALL OUTDAT(2,0,'TMAX   ',TMAX)
+            CALL OUTDAT(2,0,'HU   ',HU)
 !NEW
-            CALL OUTDAT(2,0,'DTR   ',DTR)
-            CALL OUTDAT(2,0,'RAPCDT   ',RAPCDT)
-            CALL OUTDAT(2,0,'PARCUM   ',PARCUM)
-!            CALL OUTDAT(2,0,'PAR1M   ',PAR1M)
+!            CALL OUTDAT(2,0,'DTR   ',DTR)
+!            CALL OUTDAT(2,0,'RAPCDT   ',RAPCDT)
+!            CALL OUTDAT(2,0,'PARCUM   ',PARCUM)
+    !            CALL OUTDAT(2,0,'PAR1M   ',PAR1M)
 ! END NEW
             CALL OUTDAT(2,0,'NFLV  ',NFLV)
             CALL OUTDAT(2,0,'SLA   ',SLA)
-            if (WLVG .gt. 0.0) then
-                SLASIM = LAI/WLVG
-            else
-                SLASIM = 0.0
-            endif
-                  
-            CALL OUTDAT(2,0,'SLASIM',SLASIM)
+            CALL OUTDAT(2,0,'SLASIM',LAI/NOTNUL(WLVG))
             CALL OUTDAT(2,0,'LESTRS ',LESTRS)
             CALL OUTDAT(2,0,'LRSTRS ',LRSTRS)
  !@@ WRITE LDSTRS IN RES.DAT, TRI NOV 28, 2011
@@ -829,47 +874,19 @@
             CALL OUTDAT(2,0,'WST   ',WST)
             CALL OUTDAT(2,0,'WLVG  ',WLVG) 
             CALL OUTDAT(2,0,'WLVD  ',WLVD)
-            CALL OUTDAT(2,0,'WLV   ',WLV)
             CALL OUTDAT(2,0,'WSO   ',WSO)
             CALL OUTDAT (2,0,'WRR14 ',WRR14 )
             CALL OUTDAT(2,0,'ZRT',ZRT)
-            CALL OUTDAT(2,0,'wrt',wrt)
-            CALL OUTDAT(2,0,'wrr',wrr)
-            CALL OUTDAT(2,0,'rnstrs',rnstrs)
-            CALL OUTDAT(2,0,'ssga',ssga)
-            CALL OUTDAT(2,0,'dvr',dvr)
-            CALL OUTDAT(2,0,'hu',hu)
-            CALL OUTDAT(2,0,'trc',trc)
-            CALL OUTDAT(2,0,'gcr',gcr)
-            CALL OUTDAT(2,0,'gnsp',gnsp)
-            CALL OUTDAT(2,0,'spgf',spgf)
-            CALL OUTDAT(2,0,'sf1',sf1)
-            CALL OUTDAT(2,0,'sf2',sf2)
-            CALL OUTDAT(2,0,'spfert',spfert)
-            CALL OUTDAT(2,0,'fso',fso)
-            CALL OUTDAT(2,0,'gso',gso)
-            CALL OUTDAT(2,0,'nsp',nsp)
-            CALL OUTDAT(2,0,'gngr',gngr)
-            CALL OUTDAT(2,0,'ggr',ggr)
-            CALL OUTDAT(2,0,'ngr',ngr)
-            CALL OUTDAT(2,0,'wgrmx',wgrmx)
-            CALL OUTDAT(2,0,'TRC',trc)
-            CALL OUTARR(2,0,'rlv',rdensity, SL)
-
-            do i=1, sl
+            DO i=1, sl
 				Rootobs = ' '
 				write(xx,'(I2)') I
-				!IF (INQOBS (FILEIT,trim(rootobs))) THEN
 					rootobs = trim('ROOTM') // trim(adjustl(xx))
+				IF(ROOTCOB(I).GT.0) THEN
 					CALL OUTDAT (2, 0, trim(rootobs),ROOTC(I))
-					!ENDIF
-			!ENDDO
-			!DO I=1, SL
-				rootobs = ' '
-				rootobs = trim('ROOTL') // trim(adjustl(xx))
-				!IF (INQOBS (FILEIT,trim(rootobs))) THEN
-					CALL OUTDAT (2,0,trim(rootobs),RDENSITY(I))
-					!ENDIF
+				END IF
+				IF (INQOBS (FILEIT,trim(rootobs))) THEN !TAOLI, 20Feb2012
+					CALL OUTDAT (2, 0, trim(rootobs)//'_OBS',GETOBS(FILEIT,trim(rootobs)))
+				ENDIF
 			ENDDO
 
             IF (INQOBS (FILEIT,'NFLV')) THEN
@@ -893,9 +910,6 @@
             IF (INQOBS (FILEIT,'WLVD')) THEN
                     CALL OUTDAT (2, 0, 'WLVD_OBS',GETOBS(FILEIT,'WLVD'))
             ENDIF
-            IF (INQOBS (FILEIT,'WLV')) THEN
-                    CALL OUTDAT (2, 0, 'WLV_OBS',GETOBS(FILEIT,'WLV'))
-            ENDIF
             IF (INQOBS (FILEIT,'WST')) THEN
                     CALL OUTDAT (2, 0, 'WST_OBS',GETOBS(FILEIT,'WST'))
             ENDIF
@@ -905,20 +919,27 @@
             IF (INQOBS (FILEIT,'WAGT')) THEN
                     CALL OUTDAT (2, 0, 'WAGT_OBS',GETOBS(FILEIT,'WAGT'))
             END IF
-			  DO I=1, SL
-				 rootobs = ' '
-				 write(xx,'(I2)') I
-				 rootobs = trim('ROOTM') // trim(adjustl(xx))
-				 IF (INQOBS (FILEIT,trim(rootobs))) THEN				
-					CALL OUTDAT (2, 0, trim(rootobs)// '_OBS',GETOBS(FILEIT,trim(rootobs)))
+            IF (INQOBS (FILEIT,'ANLV')) THEN
+                    CALL OUTDAT (2, 0, 'ANLV_OBS',GETOBS(FILEIT,'ANLV'))
+            END IF
+            IF (INQOBS (FILEIT,'ANST')) THEN
+                    CALL OUTDAT (2, 0, 'ANST_OBS',GETOBS(FILEIT,'ANST'))
+            END IF
+            IF (INQOBS (FILEIT,'ANSO')) THEN
+                    CALL OUTDAT (2, 0, 'ANSO_OBS',GETOBS(FILEIT,'ANSO'))
+            END IF
+            IF (INQOBS (FILEIT,'ANCR')) THEN
+                    CALL OUTDAT (2, 0, 'ANCR_OBS',GETOBS(FILEIT,'ANCR'))
+            END IF
+            IF (INQOBS (FILEIT,'DVS')) THEN
+                    CALL OUTDAT (2, 0, 'DVS_OBS',GETOBS(FILEIT,'DVS'))
+            END IF
+            IF (INQOBS (FILEIT,'DAE')) THEN
+                    CALL OUTDAT (2, 0, 'DAE_OBS',GETOBS(FILEIT,'DAE'))
 				 END IF
-!				 rootobs = ' '
-				 rootobs = trim('ROOTL') // trim(adjustl(xx))
-				 IF (INQOBS (FILEIT,trim(rootobs))) THEN
-				
-					CALL OUTDAT (2, 0, trim(rootobs)// '_OBS',GETOBS(FILEIT,trim(rootobs)))
+            IF (INQOBS (FILEIT,'ZRT')) THEN
+                    CALL OUTDAT (2, 0, 'ZRT_OBS',GETOBS(FILEIT,'ZRT'))
 	             END IF
-			 ENDDO
            END IF
 
 !=======SET EXPORTED VARIABLES FOR SOIL BALANCE AT 0 BEFORE EMERGENCE
@@ -931,7 +952,7 @@
 
 !===========Checks on simulation run
 !-----------If biomass is negative: set at 0 and abort simulation
-            IF (WSO.LT.-5..OR.WLVG.LT.-5..OR.WST.LT.-5..OR.WRR.LT.-5) THEN
+            IF (WSO.LT.0..OR.WLVG.LT.0..OR.WST.LT.0..OR.WRT.LT.0.0) THEN  
                WRITE (*,*) 'Negative biomass=> simulation stopped'
                CALL OUTCOM('Negative biomass => simulation stopped')
 ! BAS: removed, Spet 2006  \Commented them back by TAOLI, May 7 2010
@@ -946,7 +967,7 @@
 !-----------If LAI is negative: set at 0 and abort simulation
             IF (LAI.LT.-0.01) THEN
                WRITE (*,*) 'Negative LAI=> simulation stopped'
-               CALL OUTCOM('Negative LAI => simulation stopped')
+               CALL OUTCOM('Negative LAI => simulad:\simulation\strasa\rainfedtion stopped')
 !               IF (LAI.LT.0.) LAI = 0.
                TERMNL = .TRUE.
             END IF
@@ -956,20 +977,35 @@
 !           Check if lower limit dead leaves is reached
                IF (LDSTRS.LE.0.) THEN
                   WRITE (*,*) 'Soil dryer than lower limit dead leaves'
-                  WRITE (*,*) 'LDSTRS = 0 => Simulation stopped'
-                  CALL OUTCOM('LDSTRS = 0 => simulation stopped')
- !                 TERMNL = .TRUE.   !COMMENTED OUT TO AVIOD THE STOP FOR MODEL ONLY STOP AT NEGATIVE OR ZERO BIOMASS, TAOLI, 30NOV,2011
+                  WRITE (*,*) 'LDSTRS = 0 => pay attention!'
+                  CALL OUTCOM('LDSTRS = 0 => pay attention!')
+               !   TERMNL = .TRUE.
+               !Commented out, to aviod the stop under super drought stress, TAOLI, 30NOV, 2011
                END IF
 !-----------End if only in main field
             END IF
+ 
 !===================================================================*
 !     INTEGRATION SECTION                                           *
 !===================================================================*
       ELSE IF (ITASK.EQ.3) THEN
+
 !=======SKIP WHOLE STATE UPDATE BEFORE EMERGENCE
          IF (CROPSTA .GE. 1) THEN
-
-!-----------Integrate rate variables
+!-----------Leaf area index and total area index (leaves + stems)
+            LAI    = INTGR2(LAI, GLAI, DELT, FILEIT, 'LAI')
+			LAI = MAX(LAI, 0.0001)				!by TaoLi, 8 March 2011	
+            IF(SHADET.LT.1.0) THEN
+                LAIRD = (1.0-SHADET)/0.5*1.6
+                LAIRD = LOG(LAIRD*DAYLP*3600.0/RDD/KDF)
+                LAIRD = MAX(0.0, LAI- MAX(0.0, -LAIRD))  
+            ELSE
+                LAIRD = 0.0
+            ENDIF
+            LAI = MAX(0.0,LAI-LAIRD/5.0)
+            LAIRD = (LAIRD/SLA/5.0)/DELT                          		
+            ALAI   = LAI+0.5*SAI
+   !-----------Integrate rate variables
             PARCUM = INTGRL(PARCUM,DPARI,DELT)
             PARCM1 = INTGRL(PARCM1,PARI1,DELT)
             TS     = INTGRL(TS    ,HU   ,DELT)
@@ -977,48 +1013,92 @@
             TMAXC  = INTGRL(TMAXC ,TMAX ,DELT)
             TMINC  = INTGRL(TMINC ,TMIN ,DELT)
             DVS    = INTGRL(DVS   ,DVR  ,DELT)
-            WLVG   = INTGRL(WLVG  ,RWLVG-DLDR,DELT)
-            WLVD   = INTGRL(WLVD  ,LLV+DLDR  ,DELT)
+            WLVG   = INTGRL(WLVG  ,RWLVG-DLDR-LAIRD,DELT)
+            WLVD   = INTGRL(WLVD  ,LLV+DLDR+LAIRD  ,DELT)
             WSTS   = INTGRL(WSTS  ,GST  ,DELT)
             WSTR   = INTGRL(WSTR  ,RWSTR,DELT)
-            WSO    = INTGRL(WSO   ,GSO  ,DELT)
-!-----------THE INTEGRATION FOR ROOT MAY NEED TO BE MOVED INTO ROOT GROWTH SUBROUTINE, TAOLI, APRIL 2, 509
-!            WRT    = INTGRL(WRT,GRT,DELT)  !COMMENT OUT BY TAOLI, 17 JUNE 2009
-!----------ADD BY TAOLI, JUNE 17 2009, ROOT GROWTH
-            WRT    = INTGRL(WRT,GRT,DELT)
+            WSO    = INTGRL(WSO+WSO_O   ,GSO  ,DELT)
+            
+            !TAOLI 19MAY 2012
+            IF((WSO.LT.0.0)) THEN !.AND.(WSO.GE.-2.0)) THEN   
+                 WSO_O = WSO; WSO = 0.0
+            ELSE
+                WSO_O = 0.0 
+            END IF      !TAOLI 19MAY 2012           
 
-			 IF(PV%PROOT_NUTRIENT) THEN
+!-----------TAOLI, JUNE 17 2009, ROOT GROWTH
+            WRT    = INTGRL(WRT,GRT,DELT)
+            IF(WRT.LE.0.0) THEN
+                TERMNL = .TRUE.
+                WRITE (*,*) 'SIMULATION STOPPED DUE TO NAGETIVE ROOT BIOMASS!'
+            ELSE
+             IF(PV%PROOT_NUTRIENT) THEN
+!----------TAOLI, APRIL 2, 2009               
+                !ROOTMAXN =RCNL/RFNLV*LINT2('NMAXLT',NMAXLT,ILNMAX,DVS)
+                ROOTMAXN = LINT2('NMAXLT',NMAXLT,ILNMAX,DVS)
+	     	    NROOTC=GRT*DELT			!IN kg DM/ha/d
+				!IF(ROOTNC.gt.0.0) then
+					IF((CROPSTA.GT.3).AND.(PV%NBALANCE)) THEN
+						NROOTN = NRT		
+					ELSE
+						Y1 = sum(ROOTN(1:SL)); Y2=SUM(ROOTC(1:SL))
+						IF((CROPSTA.NE.3).AND.(NROOTC.LT.0.0)) THEN
+						    NROOTN = NROOTC*ROOTMAXN !RCNL						
+						ELSE
+						    IF(Y2.NE.0.0) THEN
+						    Y2 = MAX(RCNL,Y1/Y2)
+						    ELSE
+						        Y2=ROOTMAXN
+						    END IF
+						    NROOTN = NROOTC*MIN(Y2, ROOTMAXN)
+						END IF						
+					END IF
+				!ELSE
+				!	NROOTN=NROOTC* RCNL * 4.0 
+				!ENDIF				
+				LROOTC =0.0; LROOTN = 0.0
+         		CALL ROOTG(CROPSTA,DVS,DELT, LROOTC ,LROOTN, 1) 
+         		! TAOLI, 30NOV, 2011, above section moved from ITASK = 2, TAOLI 17Oct 2013
+
 				 TWRT=0.0
 				 DO I=1, SL
-					 ROOTC(I) = INTGRL(ROOTC(I), RRCC(I), DELT)
-					 ROOTN(I) = INTGRL(ROOTN(I), RRNC(I), DELT) !UPTAKE NITROGEN HAS ALREADY INVLUDED INTO ROOTN(I) IN NCROP3 ROUTINE
+					 ROOTC(I) =INTGRL(ROOTC(I), RRCC(I), DELT)
+					 ROOTN(I) =INTGRL(ROOTN(I), RRNC(I), DELT) !UPTAKE NITROGEN HAS ALREADY INVLUDED INTO ROOTN(I) IN NCROP3 ROUTINE
 					 RDCL(I) = INTGRL(RDCL(I), RRDCL(I), DELT)
 					 TWRT = TWRT + ROOTC(I) + RDCL(I)
 					 RDNL(I) = INTGRL(RDNL(I), RRDNL(I), DELT)
 !					 RDENSITY(I)= INTGRL(RDENSITY(I), RRDENSIT(I), DELT)
 					 RDENSITY(I)= ROOTC(I)*RRDENSIT(I)   !Changed by TAOLI, 25 Feb 2010	
 					 RRDENSIT(I) = RRCC(I)*RRDENSIT(I)*Delt		!Changed by TAOLI, 25 Feb 2010		 
-!-----------FRESH SOIL ORGANIC CARBON AND NITROGEN STATE VARIABLES SHOULD ALSO BE UPDATE
-					!put root residue and root density into public module for soil nutrient
-				!the deid root c and n as fresh organic matter in soil nutrient
-					 pv%prestype(i) = 'RICE'; pv%presc(i,1)=pv%presc(i,1)+RRDCL(I)*delt
+					 pv%prestype(i) = 1; pv%presc(i,1)=pv%presc(i,1)+RRDCL(I)*delt
 					 pv%presn(i, 1) = pv%presn(i, 1)+RRDNL(I) * delt;	pv%prootden(i) = rdensity(i)
-				!pv%prootd = zrt
 				 ENDDO
 
 !--------CHECK IF THE WEIGHT OF ROOT FROM WHOLE AND LAYERS ARE THE SAME
 				 IF(ABS(TWRT-WRT)/MAX(0.00001, WRT).GT.0.05) THEN
-!			    WRITE(*,*) 'ROOT WEIGHT DIFFERENCE = ', (TWRT-WRT)
 					 CALL FATALERR ('ROOTG','THE TOTAL WEIGHT OF ROOTS IS NOT SAME BY CALCULATING AS WHOLE AND LAYERS!')
 				 ENDIF
+				 !IF(CROPSTA.GT.3) THEN
+				    TWRT=SUM(ROOTN)+SUM(RDNL)
+			     IF(SUM(ROOTN).LE.0.0) THEN
+			        ROOTN = 0.0
+			     ELSE
+				     IF(ABS(NROOTN-(SUM(ROOTN)+SUM(RDNL)-SUMROOTN))/MAX(0.0000001,TWRT).GT.0.01) THEN
+				         CALL FATALERR ('ROOTG','THE TOTAL NITROGEN OF ROOTS IS NOT SAME BY CALCULATING AS WHOLE AND LAYERS!')
+				     END IF
+				END IF
+				 NROOTC=0.0; NROOTN=0.0
+				!END IF
 			 ENDIF
+			 ENDIF
+			
 !---------END SECTION, TAOLI, 17 JUNE 2009
 
-!-----------AVOIDING NEGATIVE WRR, @@TRI, NOV 16 2011
             IF (WRR.LT.0.) THEN
                 WRR = 0.
             ENDIF
 !-----------END OF SECTION AVOIDING NEGATIVE GRAIN GROWTH RATE
+
             WRR    = INTGRL(WRR,GGR,DELT)
             NGR    = INTGRL(NGR,GNGR,DELT)
             NSP    = INTGRL(NSP,GNSP,DELT)
@@ -1037,13 +1117,8 @@
             NSPM2  = NSP/10000.
 
 !-----------Weight rough rice with 14% moisture
+            IF(WRR.LE.0.0) WRR = 0.0        !TAOLI 2 JAN 2012
             WRR14  = (WRR/0.86)
-
-!-----------Leaf area index and total area index (leaves + stems)
-            LAI    = INTGR2(LAI, GLAI, DELT, FILEIT, 'LAI')
-			LAI = MAX(LAI, 0.0001)				!Avoid negative leaf area index, added by TaoLi, 8 March 2011
-            ALAI   = LAI+0.5*SAI
-	
 			 IF(PV%PROOT_NUTRIENT) THEN
 				 ZRT =  min(MaxDep/100.0,REFFECD)			!BY TAOLI, 17 JUNE, 509
 			 ELSE
@@ -1058,20 +1133,25 @@
 				 ZRT    = INTGRL(ZRT,GZRT,DELT)	
 				 ZRT    = MIN(ZRT,ZRTM)				!COMMENT OUT BY TAOLI, 1 JUNE 2009
 			 ENDIF
+			IF(DAYSFL.LT.1) THEN    !TAOLI, 28 JULY 2013
+			    IF(DVS.GE.1.0) THEN
+			        DAYSFL = DAE
+			    END IF
+			ENDIF
 !-----------Terminate simulation settings
             IF (DVS.GT.2.0) THEN
                TERMNL = .TRUE.
-               WRITE (IUNITL,*) 'Crop reached maturity'
+               WRITE (*,*) 'Crop reached maturity'
              END IF
 ! BB 2006: Crop growth stops below certain lower threshold T days
             IF (NCOLD.GT.COLDEAD) THEN
                TERMNL = .TRUE.
-               WRITE (IUNITL,*) 'Crop died because of low temperature'
+               WRITE (*,*) 'Crop died because of low temperature'
              END IF
 
 !========END OF SKIP WHOLE RATE CALCULATIONS BEFORE EMERGENCE
          END IF
-         pv%pDAE = DAE
+
 !===================================================================*
 !     TERMINAL SECTION                                              *
 !===================================================================*
@@ -1081,25 +1161,40 @@
          IF(INT(WRR14*100.0)/100.0.LT.1.0) WRR14 =0.0
          IF(INT(WAGT*100.0)/100.0.LT.1.0) WAGT =0.0
          IF(INT(WSO*100.0)/100.0.LT.1.0) WSO =0.0
-         
+         IF(LEN_TRIM(PV%OPSTRING).GT.1) THEN
+           IF(INDEX(PV%OPSTRING,'WRR14').GT.0) CALL OPSTOR ('WRR14', max(0.0,INT(WRR14*100.0)/100.0))
+           IF(INDEX(PV%OPSTRING,'WSO').GT.0) CALL OPSTOR ('WSO', max(0.0,INT(WSO*100.0)/100.0))
+           IF(INDEX(PV%OPSTRING,'WAGT').GT.0) CALL OPSTOR ('WAGT', max(0.0,INT(WAGT*100.0)/100.0))
+           IF(INDEX(PV%OPSTRING,'PARCUM').GT.0) CALL OPSTOR ('PARCUM', INT(PARCUM*100.0)/100.0)
+           IF(INDEX(PV%OPSTRING,'TS').GT.0) CALL OPSTOR ('TS', INT(TS*100.0)/100.0)
+           IF(INDEX(PV%OPSTRING,'TMAXC').GT.0) CALL OPSTOR ('TMAXC', INT(TMAXC*100.0)/100.0)
+           IF(INDEX(PV%OPSTRING,'TIMNC').GT.0) CALL OPSTOR ('TMINC', INT(TMINC*100.0)/100.0)
+           IF(INDEX(PV%OPSTRING,'TAVERC').GT.0) CALL OPSTOR ('TAVERC', INT((TMAXC+TMINC)/2.*100.0)/100.0)     
+           IF(INDEX(PV%OPSTRING,'SF1').GT.0) CALL OPSTOR ('SF1', INT(SF1*1000.0)/1000.0)
+           IF(INDEX(PV%OPSTRING,'SF2').GT.0) CALL OPSTOR ('SF2', INT(SF2*1000.0)/1000.0)
+           IF(INDEX(PV%OPSTRING,'SPFERT').GT.0) CALL OPSTOR ('SPFERT', INT(SPFERT*1000.0)/1000.0)           
+         ELSE 
          CALL OPSTOR ('WRR14', max(0.0,INT(WRR14*100.0)/100.0))
          CALL OPSTOR ('WSO', max(0.0,INT(WSO*100.0)/100.0))
-         CALL OPSTOR ('WLVG', max(0.0,INT(WLVG*100.0)/100.0))
-         CALL OPSTOR ('WLVD', max(0.0,INT(WLVD*100.0)/100.0))
-         CALL OPSTOR ('WRT', max(0.0,INT(WRT*100.0)/100.0))
          CALL OPSTOR ('WAGT', max(0.0,INT(WAGT*100.0)/100.0))
          CALL OPSTOR ('PARCUM', INT(PARCUM*100.0)/100.0)
          CALL OPSTOR ('TS', INT(TS*100.0)/100.0)
          CALL OPSTOR ('TMAXC', INT(TMAXC*100.0)/100.0)
          CALL OPSTOR ('TMINC', INT(TMINC*100.0)/100.0)
          CALL OPSTOR ('TAVERC', INT((TMAXC+TMINC)/2.*100.0)/100.0)
+           CALL OPSTOR ('SF1', INT(SF1*1000.0)/1000.0)
+           CALL OPSTOR ('SF2', INT(SF2*1000.0)/1000.0)
+           CALL OPSTOR ('SPFERT', INT(SPFERT*1000.0)/1000.0)  
+           !@@@CALL OPSTOR ('DAYSFL', DAYSFL)
          !		update the soil fresh organic matter, living root matter will be added into organic C and N pools
+         END IF
 			DO I=1, SL
-				pv%prestype(i) = 'RICE'; pv%presc(i,1)=pv%presc(i,1)+rootc(i)
+				pv%prestype(i) = 1; pv%presc(i,1)=pv%presc(i,1)+rootc(i)
 				pv%presn(i, 1) = pv%presn(i, 1)+rootn(i)
 				ROOTC(I) = 0.0; ROOTN(I) = 0.0
 			ENDDO
 	
+	5000 FORMAT(I3, 2(",",F12.8))
       END IF
       RETURN
       END
