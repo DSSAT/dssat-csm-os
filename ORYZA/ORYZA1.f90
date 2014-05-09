@@ -165,7 +165,7 @@
 !===================================================================*
       IF (ITASK.EQ.1) THEN
 
-      WRITE (*,*) 'SUCCESS'
+!     WRITE (*,*) 'SUCCESS'
 
 !--------Open experimental data input file
          CALL RDINIT (IUNITD, IUNITL, FILEIT)
@@ -621,7 +621,7 @@
            RDAE = 1.
 		       HU=HU+XHU
            CALL SUBCD2 (COLDMIN,CROPSTA,TAV,TIME,NCOLD)
-           CALL PHENOL(ESTAB,DVS,DVRJ,DVRI,DVRP,DVRR,HU,DAYL,MOPP,PPSE, &
+           CALL OR_PHENOL(ESTAB,DVS,DVRJ,DVRI,DVRP,DVRR,HU,DAYL,MOPP,PPSE, &
                         TS,SHCKD,CROPSTA,DVR,TSHCKD)
 
 
@@ -1141,7 +1141,7 @@
 !-----------Terminate simulation settings
             IF (DVS.GT.2.0) THEN
                TERMNL = .TRUE.
-               WRITE (*,*) 'Crop reached maturity'
+!              WRITE (*,*) 'Crop reached maturity'
              END IF
 ! BB 2006: Crop growth stops below certain lower threshold T days
             IF (NCOLD.GT.COLDEAD) THEN
