@@ -48,6 +48,7 @@ C  04/20/2004 US  Modified DLAG, removed IFDENIT
 !                  inorganic routines.
 !  02/25/2005 CHP changed HUMC to SSOMC to match Century variable name
 !  04/13/2005 CHP changed subroutine name to SoilNi.FOR (was SoilN_inorg)
+!  06/12/2014 CHP DayCent calcs for N2O emissions from Peter Grace
 C-----------------------------------------------------------------------
 C  Called : SOIL
 C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
@@ -57,10 +58,9 @@ C=======================================================================
       SUBROUTINE SoilNi (CONTROL, ISWITCH, 
      &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
      &    SOILPROP, SSOMC, ST, SW, TDFC, TDLNO, TILLVALS, !Input
-     &    UNH4, UNO3, UPFLOW, WEATHER, XHLAI,             !Input
+     &    UNH4, UNO3, UPFLOW, WEATHER, XHLAI, newCO2,     !Input
      &    FLOODN,                                         !I/O
-     &    NH4, NO3,                                       !Output
-     &    newCO2)                                         ! from DayCent  PG
+     &    NH4, NO3, UPPM)                                 !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -93,7 +93,7 @@ C=======================================================================
       REAL KG2PPM(NL), LITC(0:NL), LL(NL) 
       REAL NH4(NL), NO3(NL), PH(NL), SAT(NL), SNH4(NL)
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
-      REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL)
+      REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
       
 !!!!! daycent variables  PG
       
@@ -219,12 +219,12 @@ C=======================================================================
           UNO3(L)       = 0.0
         ENDDO
 
-        IF (INDEX('N',ISWNIT) > 0) RETURN
+!        IF (INDEX('N',ISWNIT) > 0) RETURN
 
 !         Set initial SOM and nitrogen conditions for each soil layer.
-          CALL SoilNi_init(CONTROL, 
+          CALL SoilNi_init(CONTROL, ISWNIT,
      &      SOILPROP, ST,                                   !Input
-     &      NH4, NO3, SNH4, SNO3, TFNITY, UREA)             !Output
+     &      NH4, NO3, SNH4, SNO3, TFNITY, UPPM, UREA)       !Output
 
           CALL NCHECK_inorg(CONTROL, 
      &      NLAYR, NH4, NO3, SNH4, SNO3, UREA)              !Input
