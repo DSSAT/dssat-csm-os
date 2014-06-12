@@ -104,8 +104,6 @@ C=====================================================================
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
       REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
       
-      REAL newCO2(nl)                      ! for DayCent in SOILNI added by PG
-
 !     Added for tile drainage:
       REAL TDFC
       INTEGER TDLNO

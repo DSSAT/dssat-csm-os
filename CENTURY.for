@@ -783,8 +783,11 @@
         ELSE
           ACCCO2(SOIL) = ACCCO2(SOIL) + CO2FMET(L) + CO2FSTR(L,LIG) +
      &        CO2FSTR(L,NONLIG) + CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
-      newCO2(l)=CO2FMET(L)+CO2FSTR(L,LIG)+CO2FSTR(L,NONLIG)+ CO2FS1(L) + !microbial respiration for N2O/N2 loss in DayCent   PG
-     &CO2FS2(L) + CO2FS3(L)
+
+!         microbial respiration for N2O/N2 loss in DayCent   PG
+          newCO2(L) = CO2FMET(L) + CO2FSTR(L,LIG) + CO2FSTR(L,NONLIG) + 
+     &        CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
+
         ENDIF   !End of IF block on L == SRFC.
       END DO   !End of DO loop on L.
 
