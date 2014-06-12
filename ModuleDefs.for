@@ -64,9 +64,10 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 36
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-QUT_N2O  '
 
 !     Version history:  
+!       4.6.0.36 chp 06/12/2014 DayCent N2O emissions calculations
 !       4.6.0.36 chp 05/07/2014 SALUS model updates, ESCP, EPCP added to Summary.OUT
 !       4.6.0.35 chp 03/28/2014 Taro initialization fixed - RO
 !       4.6.0.34 chp 03/28/2014 Minor changes Weather, CSCER, sorghum
@@ -132,6 +133,10 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    EvaluateNum = 40, !Number of evaluation variables
      &    MaxFiles = 100    !Maximum number of output files
 
+      REAL, PARAMETER :: 
+     &    PI = 3.141586, 
+     &    RAD=PI/180.0
+
       INTEGER, PARAMETER :: 
          !Dynamic variable values
      &    RUNINIT  = 1, 
@@ -188,7 +193,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) IHARI, IPLTI, IIRRI, ISIMI
         CHARACTER (len=1) ISWCHE, ISWDIS, ISWNIT
         CHARACTER (len=1) ISWPHO, ISWPOT, ISWSYM, ISWTIL, ISWWAT
-        CHARACTER (len=1) MEEVP, MEHYD, MEINF, MELI, MEPHO
+        CHARACTER (len=1) MEEVP, MEGHG, MEHYD, MEINF, MELI, MEPHO
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
         CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2
@@ -527,7 +532,7 @@ D       STDPATH = 'D:\DSSAT46\'
 
 !     Data transferred from Soil Inorganic Nitrogen routine
       Type NiType
-        REAL TNOXD, TLCHD
+        REAL TNOXD, TLCHD, TN2OD     ! added N2O PG
       End Type NiType
 
 !     Data transferred from Organic C routines
@@ -754,6 +759,7 @@ D       STDPATH = 'D:\DSSAT46\'
         SELECT CASE (VarName)
         Case ('TNOXD'); Value = SAVE_data % NITR % TNOXD
         Case ('TLCHD'); Value = SAVE_data % NITR % TLCHD
+        Case ('TN2OD'); Value = SAVE_data % NITR % TN2OD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -867,6 +873,7 @@ D       STDPATH = 'D:\DSSAT46\'
         SELECT CASE (VarName)
         Case ('TNOXD'); SAVE_data % NITR % TNOXD = Value
         Case ('TLCHD'); SAVE_data % NITR % TLCHD = Value
+        Case ('TN2OD'); SAVE_data % NITR % TN2OD = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
