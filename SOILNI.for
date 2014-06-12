@@ -79,7 +79,7 @@ C=======================================================================
       INTEGER NSOURCE, YEAR, YRDOY   
 
       REAL AD, AK, ALGFIX, CW
-      REAL NFAC, NITRIF(nl), NNOM   ! nitrif now (nl) PG
+      REAL NFAC, NITRIF(NL), NNOM   ! nitrif now (NL) PG
       REAL SNH4_AVAIL, SNO3_AVAIL, SUMFERT
       REAL SWEF, TFDENIT, TFUREA
       REAL TMINERN, TIMMOBN, TLCH, TLCHD
@@ -102,11 +102,12 @@ C=======================================================================
       REAL n2ofluxppm(nl), n2fluxppm(nl), denitrifppm(nl)
       REAL a_coeff, wfps_thres, fDno3, Rn2n2O, fRwfps
       REAL fRno3_CO2, k1, dD0_fc, fDCO2, fDwfps, X_inflect
-      REAL PI, m, fNo3fCo2
+      REAL m, fNo3fCo2
       REAL TN2OD, TN2O
       REAL newCO2(nl)
       REAL pn2onitrif, n2onitrif(nl)
       real A(4)
+      real RWC
 
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
@@ -151,7 +152,7 @@ C=======================================================================
       TYPE (TillType)    TILLVALS
       TYPE (WeatherType) WEATHER
       
-      PI = 3.1416
+!      PI = 3.1416
             
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -249,7 +250,7 @@ C=======================================================================
         LFD10 = CONTROL % YRSIM
 
       open (unit=9,file='output.dat', status='unknown')
-      write (9,*)' doy  l    sw     bd     poros    wfps   wfpsfc  wfpst
+      write (9,*)' doy  L    sw     bd     poros    wfps   wfpsfc  wfpst
      &h   CO2_cor newCO2  CO2ppm a_coef denit   n2oflux  nitrif    arntr
      &f   n2onit   totn2o'
 
@@ -539,12 +540,12 @@ C=======================================================================
           TLAG = 1.0
         ENDIF
         NFAC = AMAX1(0.0, AMIN1(1.0, TFACTOR * WF2 * PHFACT * TLAG))
-        NITRIF(l) = NFAC * NH4(L)
+        NITRIF(L) = NFAC * NH4(L)
 
         IF (NSWITCH .EQ. 5) THEN
           ARNTRF = 0.0
         ELSE
-          ARNTRF  = NITRIF(l) / KG2PPM(L) ! changed by PG from * kg2ppm
+          ARNTRF  = NITRIF(L) / KG2PPM(L) ! changed by PG from * kg2ppm
         ENDIF
 
         IF (NH4(L).LE. 0.01) THEN
@@ -563,283 +564,296 @@ C=======================================================================
         DLTSNH4(L) = DLTSNH4(L) - ARNTRF
         TNITRIFY   = TNITRIFY   + ARNTRF
       
-        POROS(L)  = 1.0 - BD(L) / 2.65
-        wfps(l) = sw(l)/poros(l)
-        wfps_fc(l) = dul(l)/poros(l)
+        !POROS(L)  = 1.0 - BD(L) / 2.65
+        !wfps(L) = sw(L)/poros(L)
+        !wfps_fc(L) = dul(L)/poros(L)
         
           pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
             
-          n2onitrif(l) = pN2Onitrif * arntrf    ! for N2O using a proportion of nitrification from original daycent PG      
-!-----------------------------------------------------------------------
-!       Denitrification section
-!-----------------------------------------------------------------------
-!       Denitrification only occurs if there is nitrate, SW > DUL and
-!       soil temperature > 5.
-!        IF (NO3(L) .GT. 0.01 .AND. SW(L) .GT. DUL(L) .AND.
-    !&       ST(L) .GE. 5.0) THEN
+          n2onitrif(L) = pN2Onitrif * arntrf    ! for N2O using a proportion of nitrification from original daycent PG
 
-!         Water extractable soil carbon: estimated according to
-!         Rolston et al. 1980, as cited in Godwin & Jones 1991 (ASA
-!         monograph #31). Calculate carbohydrate carbon as 40% of the
-!         carbohydrate pool.
-C-UPS     Corrected per e-mail 03/29/00
-!         CW = 24.5 + 0.0031 * (SSOMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L)
 
-!     ----------------------------------------------------------------
-!11/18/2003 UPS: THE NEW NTRANS SHOULD READ: 
-!         CW = 24.5 + {0.0031 * SSOMC(L) + 0.4 * FPOOL(L,1)} * KG2PPM(L) 
-!            = 24.5 + AVAILABLE CARBON FROM HUMIC FRACTION + FRESH C from  CARBOHYDRATE POOL 
 
-!NOTES: 1. ONLY THE HUMIC C IS MULTIPLIED BY 0.0031 
-!       2. SOILC IN GODWIN&JONES INCLUDED BOTH HUMIC C AND FRESH (LITTER POOL C) 
-!       3. WE ARE USING ONLY THE CARBOHYDRATE POOL (*0.4 TO C) = ALL AVAILABLE 
-!       4. FPOOL is still kg of Organic matter/ha (and not kg C/ha)?? 
-
-!     SO WE NEED TO FIX BOTH DSSAT4 AND GODWIN AND SINGH EQN TO THE ABOVE. 
-
-!          CW = 24.5 + (0.0031 * SSOMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L) 
-
-!     The above removed on 1/14/2004 as per email from AJG and UPS
-
-!     ----------------------------------------------------------------
-!     DENITRIFICATION - CORRECTIONS - 13 Jan 2004 (US)
-!         From NTRANS:
-!          CW = 24.5 + 0.0031 * (HUMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L)
-!     ----------------------------------------------------------------
-
-!        From Century:
-         !CHP changed 1/14/2004 per email from UPS / AJG
-!         CW = 24.5 + 0.0031 * (SSOMC(L) + 0.2 * LITC(L)) * KG2PPM(L)  ! use this for DSSAT if not DayCent PG
-!     ----------------------------------------------------------------
+!!-----------------------------------------------------------------------
+!!       Denitrification section
+!!-----------------------------------------------------------------------
+!!       Denitrification only occurs if there is nitrate, SW > DUL and
+!!       soil temperature > 5.
+!!        IF (NO3(L) .GT. 0.01 .AND. SW(L) .GT. DUL(L) .AND.
+!!    &       ST(L) .GE. 5.0) THEN
 !
-!     The DENITRIF or DNRATE calculations are identical in NTRANS 
-!             (DSSAT4) and Godwin and Singh:
+!!         Water extractable soil carbon: estimated according to
+!!         Rolston et al. 1980, as cited in Godwin & Jones 1991 (ASA
+!!         monograph #31). Calculate carbohydrate carbon as 40% of the
+!!         carbohydrate pool.
+!C-UPS     Corrected per e-mail 03/29/00
+!!         CW = 24.5 + 0.0031 * (SSOMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L)
 !
-!     DENITRIF = {6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT * DLAG }/ KG2PPM(L)
-!     -- AS in NTRANS (DSSAT4)
+!!     ----------------------------------------------------------------
+!!11/18/2003 UPS: THE NEW NTRANS SHOULD READ: 
+!!         CW = 24.5 + {0.0031 * SSOMC(L) + 0.4 * FPOOL(L,1)} * KG2PPM(L) 
+!!            = 24.5 + AVAILABLE CARBON FROM HUMIC FRACTION + FRESH C from  CARBOHYDRATE POOL 
 !
-!         = {in concentration unit}/KG2PPM
-!         = kg N (denitrified)
-!         = {in conc unit }/(10/BD*DLAYR)
+!!NOTES: 1. ONLY THE HUMIC C IS MULTIPLIED BY 0.0031 
+!!       2. SOILC IN GODWIN&JONES INCLUDED BOTH HUMIC C AND FRESH (LITTER POOL C) 
+!!       3. WE ARE USING ONLY THE CARBOHYDRATE POOL (*0.4 TO C) = ALL AVAILABLE 
+!!       4. FPOOL is still kg of Organic matter/ha (and not kg C/ha)?? 
 !
-!     DENITRIF = 6.0*1.E-05 * CW * NO3(L) * WFDENIT * TFDENIT * DLAG*BD(L)*DLAYR(L)
-!     -- AS in GODWIN & SINGH
+!!     SO WE NEED TO FIX BOTH DSSAT4 AND GODWIN AND SINGH EQN TO THE ABOVE. 
 !
-!     NOTE: CW is in concentration unit!!  Extractable C concentration.
+!!          CW = 24.5 + (0.0031 * SSOMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L) 
 !
-!     CW = (SOILC*KG2PPM(L))*0.0031 + 24.5
+!!     The above removed on 1/14/2004 as per email from AJG and UPS
 !
-!       where SOILC = SSOMC(L) + 0.4 * FOM(L) in kg/ha - Origianl definition
-!        Later corrected to:
-!        SOILC = SSOMC(L) + 0.4 * FPOOL(L,1)  -- because only carbohydrate 
-!             pool from the FOM is assumed to provide labile/extractable C.
-! 
-!     CW   = ({SSOMC(L) + 0.4 * FPOOL(L,1)} * KG2PPM(L))*0.0031 + 24.5
+!!     ----------------------------------------------------------------
+!!     DENITRIFICATION - CORRECTIONS - 13 Jan 2004 (US)
+!!         From NTRANS:
+!!          CW = 24.5 + 0.0031 * (HUMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L)
+!!     ----------------------------------------------------------------
 !
-!     The equations in Godwin and Jones as well as Godwin and Singh are incorrect!!
-
-!     ----------------------------------------------------------------
-!         Temperature factor for denitrification.
-          TFDENIT = 0.1 * EXP (0.046 * ST(L))
-          TFDENIT = AMAX1 (AMIN1 (TFDENIT, 1.), 0.)
-
-!         Water factor for denitrification: only if SW > DUL.  original DSSAT
-!          WFDENIT = 1. - (SAT(L) - SW(L)) / (SAT(L) - DUL(L))
-          RWC = SW(L)/SAT(L)                                  ! following code is Rolston pdf document
-          if (RWC .GE. 0.8 .AND. RWC. LE .0.9) then
-              WFDENIT = RWC * 2 - 1.6
-          elseif (RWC .GT. 0.9 .AND. RWC .LE. 1.0) then
-              WFDENIT = RWC * 8 -7
-          else
-              WFDENIT = 0.0
-          endif    
-              
-          WFDENIT = AMAX1 (AMIN1 (WFDENIT, 1.), 0.)
-        
-!PG          IF (WFDENIT .GT. 0.0) THEN
-!PG            DLAG(L) = DLAG(L) + 1
-!PG          ELSE
-!PG            DLAG(L) = 0
-!PG          ENDIF
-
-!PG          IF (DLAG(L) .LT. 5) THEN
-!PG            WFDENIT = 0.0
-!PG          ENDIF
-          
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
-!     Daycent denitrification routines PG 17/5/13      
-        
-      
-C      call diffusivity(dD0_fc, dul, bd, wfps_fc)
-C      diffusivity is a piece of Daycent code which has not been invoked in DSSAT
-C      the variable dDO_fc is manually calculated for the moment
-      
-C      dD0_fc = 0.10    ! 0.10 for KT, fixed value since diffusivity routine is not working
-C      dD0_fc = 0.16    ! 0.16 for KY, fixed value since diffusivity routine is not working
-C      dD0_fc = 0.11    ! 0.11 for Canada (use KT), fixed value since diffusivity routine is not working
-      dD0_fc = 0.21    ! 0.21 for India, fixed value since diffusivity routine is not working
-C      dD0_fc = 0.09    ! 0.09 for France (use KT), fixed value since diffusivity routine is not working
-      
-      CO2ppm(l) = newCO2(l)*kg2ppm(l)  !CO2ppm is labile C which is derivation of CO2 produced on any day
-      
-!     Water Filled Pore Space (WFPS) WFPS_threshold
-      If (dD0_fc .GE. 0.15) then 
-         WFPS_thres = 0.80
-      else
-         WFPS_thres = (dD0_fc*250 + 43)/100
-      endif
-        
-      if(wfps(l) .LE. WFPS_thres) then
-         co2_correct(l) = co2PPM(l)
-      else
-         if(dD0_fc .GE. 0.15) then
-            a_coeff = 0.004
-         else 
-            a_coeff = -0.1*dD0_fc + 0.019
-         endif    
-         co2_correct(l)=co2PPM(l)*(1.0+a_coeff*(wfps(l)-WFPS_thres))   !the amount labile C is adjusted taking into account diffusion
-      endif  
-  
-!     Compute the Nitrate effect on Denitrification
-!     Changed NO3 effect on denitrification based on paper  "General model for N2O and N2 gas emissions from soils due to denitrification"
-!     Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
-        
-      A(1) = 9.23
-      A(2) = 1.556
-      A(3) = 76.91
-      A(4) = 0.00222
-
-      fDno3 = (A(2) + (A(3)/PI) * atan(PI*A(4)*(no3(l)-A(1))))  !daycent NO3 factor
-
-!     Compute the Carbon Dioxide effect on Denitrification fDco2, ppm N
-!     Changed CO2 effect on denitrification based on paper "General model for N2O and N2 gas emissions from  soils due to denitrification"
-!     Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
-
-      fDco2 = 0.1 * co2_correct(l)**1.27    !daycent labile C factor
-
-      fNO3fCO2 = min (fDco2, fDno3)
-
-!     Compute wfps effect on denitrification, (fDwfps, 0-1)
-!     Changed wfps effect on denitrification based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
-!     Del Grosso et. al, GBC     12/00,  -mdh 5/16/00
-
-      M = min(0.113, dD0_fc) * (-1.25) + 0.145
-       
-!     The x_inflection calculation should take into account the corrected CO2 concentration, cak - 07/31/02 
-
-      x_inflect = (9.0 - M * co2_correct(l))    ! daycent  X_inflection/adjustment for WFPS response
-      
-      fDwfps=0.45+(atan(0.6* 3.1415*(10.0*wfps(l)- x_inflect)))/PI   ! daycent WFPS factor
-         
-      fDwfps = max(0.0, fDwfps)
-
-      denitrifppm(l) = fDwfps * fNO3fCO2   !daycent
-C      denitrifppm(l) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT ! from DSSAT DENIT version, moved here from below PG
-        
-!     Nitrate effect on the ratio of N2 to N2O.  
-!     Maximum N2/N2O ratio soil respiration function 
-!     Changed the NO3 and CO2 effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
-!     Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
-!     fRno3_co2 estimates the ratio as a function of electron donor to substrate -mdh 5/17/00
-
-      k1 = max(1.5, 38.4 - 350 * dD0_fc)
-
-      fRno3_co2 = max(0.16 * k1, k1 * exp(-0.8 * no3(l)/co2_correct(l))) 
-
-C WFPS effect on the N2/N2O Ratio */
-C Changed wfps effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
-C Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
-
-      fRwfps = max(0.1, 0.015 * wfps(l)*100 - 0.32)
-      
-C Compute the N2:N2O Ratio
-
-      Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
-      
-C Calculate N2O       
-
-      n2ofluxppm(l) = denitrifppm(l) / (Rn2n2o + 1.0)
-            
-C Convert total dentrification, N2O and N2 to kg/ha/d from ppm
-      denitrif(l) = denitrifppm(l)/kg2ppm(l)
-      n2oflux(l) = n2ofluxppm(l)/kg2ppm(l)
-      n2flux(l) = denitrif(l) - n2oflux(l)
-      
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-!         Denitrification rate
-C-UPS     Corrected per e-mail 03/29/00
-!         DLAG REMOVED REVISED-US 4/20/2004
-!PG moved the following equation up higher when using the DSSAT version of denit        
-!          DENITRIF(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT / KG2PPM(L)       
-          DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
-      
-!         The minimum amount of NO3 that stays behind in the soil and 
-!         cannot denitrify is XMIN.
-!         XMIN    = 0.25 / KG2PPM(L)
-          XMIN    = 0.       !AJG
-
-!         Check that no more NO3 denitrifies than there is, taking
-!         into account what has already been removed by other
-!         processes (thus use only negative DLTSNO3 values). This is a
-!         protection against negative values at the integration step.
-          SNO3_AVAIL = SNO3(L) + AMIN1 (DLTSNO3(L), 0.) - XMIN
-
-!         Take the minimum of the calculated denitrification and the
-!         amount of NO3 available for denitrification. 
-          DENITRIF(L)  = AMIN1 (DENITRIF(L), SNO3_AVAIL)
-
-C         If flooded, lose all nitrate --------REVISED-US
-!          IF (FLOOD .GT. 0.0) THEN
-!            !DNFRATE = SNO3(L) - 0.5/KG2PPM(L)        !XMIN?, SNO3_AVAIL?
-!            DNFRATE = SNO3_AVAIL - 0.5/KG2PPM(L)        !XMIN?, SNO3_AVAIL?
-!          ELSE
-!            DNFRATE = 0.0
+!!        From Century:
+!         !CHP changed 1/14/2004 per email from UPS / AJG
+!!         CW = 24.5 + 0.0031 * (SSOMC(L) + 0.2 * LITC(L)) * KG2PPM(L)  ! use this for DSSAT if not DayCent PG
+!!     ----------------------------------------------------------------
+!!
+!!     The DENITRIF or DNRATE calculations are identical in NTRANS 
+!!             (DSSAT4) and Godwin and Singh:
+!!
+!!     DENITRIF = {6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT * DLAG }/ KG2PPM(L)
+!!     -- AS in NTRANS (DSSAT4)
+!!
+!!         = {in concentration unit}/KG2PPM
+!!         = kg N (denitrified)
+!!         = {in conc unit }/(10/BD*DLAYR)
+!!
+!!     DENITRIF = 6.0*1.E-05 * CW * NO3(L) * WFDENIT * TFDENIT * DLAG*BD(L)*DLAYR(L)
+!!     -- AS in GODWIN & SINGH
+!!
+!!     NOTE: CW is in concentration unit!!  Extractable C concentration.
+!!
+!!     CW = (SOILC*KG2PPM(L))*0.0031 + 24.5
+!!
+!!       where SOILC = SSOMC(L) + 0.4 * FOM(L) in kg/ha - Origianl definition
+!!        Later corrected to:
+!!        SOILC = SSOMC(L) + 0.4 * FPOOL(L,1)  -- because only carbohydrate 
+!!             pool from the FOM is assumed to provide labile/extractable C.
+!! 
+!!     CW   = ({SSOMC(L) + 0.4 * FPOOL(L,1)} * KG2PPM(L))*0.0031 + 24.5
+!!
+!!     The equations in Godwin and Jones as well as Godwin and Singh are incorrect!!
+!
+!!     ----------------------------------------------------------------
+!!         Temperature factor for denitrification.
+!          TFDENIT = 0.1 * EXP (0.046 * ST(L))
+!          TFDENIT = AMAX1 (AMIN1 (TFDENIT, 1.), 0.)
+!
+!!         Water factor for denitrification: only if SW > DUL.  original DSSAT
+!!          WFDENIT = 1. - (SAT(L) - SW(L)) / (SAT(L) - DUL(L))
+!          RWC = SW(L)/SAT(L)                                  ! following code is Rolston pdf document
+!          if (RWC .GE. 0.8 .AND. RWC. LE .0.9) then
+!              WFDENIT = RWC * 2 - 1.6
+!          elseif (RWC .GT. 0.9 .AND. RWC .LE. 1.0) then
+!              WFDENIT = RWC * 8 -7
+!          else
+!              WFDENIT = 0.0
+!          endif    
+!              
+!          WFDENIT = AMAX1 (AMIN1 (WFDENIT, 1.), 0.)
+!        
+!!PG          IF (WFDENIT .GT. 0.0) THEN
+!!PG            DLAG(L) = DLAG(L) + 1
+!!PG          ELSE
+!!PG            DLAG(L) = 0
+!!PG          ENDIF
+!
+!!PG          IF (DLAG(L) .LT. 5) THEN
+!!PG            WFDENIT = 0.0
+!!PG          ENDIF
+!          
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
+!!     Daycent denitrification routines PG 17/5/13      
+!        
+!      
+!C      call diffusivity(dD0_fc, dul, bd, wfps_fc)
+!C      diffusivity is a piece of Daycent code which has not been invoked in DSSAT
+!C      the variable dDO_fc is manually calculated for the moment
+!      
+!C      dD0_fc = 0.10    ! 0.10 for KT, fixed value since diffusivity routine is not working
+!C      dD0_fc = 0.16    ! 0.16 for KY, fixed value since diffusivity routine is not working
+!C      dD0_fc = 0.11    ! 0.11 for Canada (use KT), fixed value since diffusivity routine is not working
+!      dD0_fc = 0.21    ! 0.21 for India, fixed value since diffusivity routine is not working
+!C      dD0_fc = 0.09    ! 0.09 for France (use KT), fixed value since diffusivity routine is not working
+!      
+!      CO2ppm(L) = newCO2(L)*kg2ppm(L)  !CO2ppm is labile C which is derivation of CO2 produced on any day
+!      
+!!     Water Filled Pore Space (WFPS) WFPS_threshold
+!      If (dD0_fc .GE. 0.15) then 
+!         WFPS_thres = 0.80
+!      else
+!         WFPS_thres = (dD0_fc*250 + 43)/100
+!      endif
+!        
+!      if(wfps(L) .LE. WFPS_thres) then
+!         co2_correct(L) = co2PPM(L)
+!      else
+!         if(dD0_fc .GE. 0.15) then
+!            a_coeff = 0.004
+!         else 
+!            a_coeff = -0.1*dD0_fc + 0.019
+!         endif    
+!         co2_correct(L)=co2PPM(L)*(1.0+a_coeff*(wfps(L)-WFPS_thres))   !the amount labile C is adjusted taking into account diffusion
+!      endif  
+!  
+!!     Compute the Nitrate effect on Denitrification
+!!     Changed NO3 effect on denitrification based on paper  "General model for N2O and N2 gas emissions from soils due to denitrification"
+!!     Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
+!        
+!      A(1) = 9.23
+!      A(2) = 1.556
+!      A(3) = 76.91
+!      A(4) = 0.00222
+!
+!      fDno3 = (A(2) + (A(3)/PI) * atan(PI*A(4)*(no3(L)-A(1))))  !daycent NO3 factor
+!
+!!     Compute the Carbon Dioxide effect on Denitrification fDco2, ppm N
+!!     Changed CO2 effect on denitrification based on paper "General model for N2O and N2 gas emissions from  soils due to denitrification"
+!!     Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
+!
+!      fDco2 = 0.1 * co2_correct(L)**1.27    !daycent labile C factor
+!
+!      fNO3fCO2 = min (fDco2, fDno3)
+!
+!!     Compute wfps effect on denitrification, (fDwfps, 0-1)
+!!     Changed wfps effect on denitrification based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
+!!     Del Grosso et. al, GBC     12/00,  -mdh 5/16/00
+!
+!      M = min(0.113, dD0_fc) * (-1.25) + 0.145
+!       
+!!     The x_inflection calculation should take into account the corrected CO2 concentration, cak - 07/31/02 
+!
+!      x_inflect = (9.0 - M * co2_correct(L))    ! daycent  X_inflection/adjustment for WFPS response
+!      
+!      fDwfps=0.45+(atan(0.6* 3.1415*(10.0*wfps(L)- x_inflect)))/PI   ! daycent WFPS factor
+!         
+!      fDwfps = max(0.0, fDwfps)
+!
+!      denitrifppm(L) = fDwfps * fNO3fCO2   !daycent
+!C      denitrifppm(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT ! from DSSAT DENIT version, moved here from below PG
+!        
+!!     Nitrate effect on the ratio of N2 to N2O.  
+!!     Maximum N2/N2O ratio soil respiration function 
+!!     Changed the NO3 and CO2 effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
+!!     Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
+!!     fRno3_co2 estimates the ratio as a function of electron donor to substrate -mdh 5/17/00
+!
+!      k1 = max(1.5, 38.4 - 350 * dD0_fc)
+!
+!      fRno3_co2 = max(0.16 * k1, k1 * exp(-0.8 * no3(L)/co2_correct(L))) 
+!
+!C WFPS effect on the N2/N2O Ratio */
+!C Changed wfps effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
+!C Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
+!
+!      fRwfps = max(0.1, 0.015 * wfps(L)*100 - 0.32)
+!      
+!C Compute the N2:N2O Ratio
+!
+!      Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
+!      
+!C Calculate N2O       
+!
+!      n2ofluxppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
+!            
+!C Convert total dentrification, N2O and N2 to kg/ha/d from ppm
+!      denitrif(L) = denitrifppm(L)/kg2ppm(L)
+!      n2oflux(L) = n2ofluxppm(L)/kg2ppm(L)
+!      n2flux(L) = denitrif(L) - n2oflux(L)
+!      
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
+!!         Denitrification rate
+!C-UPS     Corrected per e-mail 03/29/00
+!!         DLAG REMOVED REVISED-US 4/20/2004
+!!PG moved the following equation up higher when using the DSSAT version of denit        
+!!          DENITRIF(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT / KG2PPM(L)       
+!          DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
+!      
+!!         The minimum amount of NO3 that stays behind in the soil and 
+!!         cannot denitrify is XMIN.
+!!         XMIN    = 0.25 / KG2PPM(L)
+!          XMIN    = 0.       !AJG
+!
+!!         Check that no more NO3 denitrifies than there is, taking
+!!         into account what has already been removed by other
+!!         processes (thus use only negative DLTSNO3 values). This is a
+!!         protection against negative values at the integration step.
+!          SNO3_AVAIL = SNO3(L) + AMIN1 (DLTSNO3(L), 0.) - XMIN
+!
+!!         Take the minimum of the calculated denitrification and the
+!!         amount of NO3 available for denitrification. 
+!          DENITRIF(L)  = AMIN1 (DENITRIF(L), SNO3_AVAIL)
+!
+!C         If flooded, lose all nitrate --------REVISED-US
+!!          IF (FLOOD .GT. 0.0) THEN
+!!            !DNFRATE = SNO3(L) - 0.5/KG2PPM(L)        !XMIN?, SNO3_AVAIL?
+!!            DNFRATE = SNO3_AVAIL - 0.5/KG2PPM(L)        !XMIN?, SNO3_AVAIL?
+!!          ELSE
+!!            DNFRATE = 0.0
+!!          ENDIF
+!
+!!         chp/us 4/21/2006
+!          IF (FLOOD .GT. 0.0 .AND. WFDENIT > 0.0) THEN
+!!            DENITRIF(L) = SNO3_AVAIL
+!!           chp 9/6/2011 remove 50% NO3/d = 97% removed in 5 days
+!!           previously removed 100% NO3/d
+!            DENITRIF(L) = SNO3_AVAIL * 0.5
 !          ENDIF
-
-!         chp/us 4/21/2006
-          IF (FLOOD .GT. 0.0 .AND. WFDENIT > 0.0) THEN
-!            DENITRIF(L) = SNO3_AVAIL
-!           chp 9/6/2011 remove 50% NO3/d = 97% removed in 5 days
-!           previously removed 100% NO3/d
-            DENITRIF(L) = SNO3_AVAIL * 0.5
-          ENDIF
-
-!chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
-          DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
-          IF (NSWITCH .EQ. 6) THEN
-            DENITRIF(L) = 0.0
-          ENDIF
-
-!         Reduce soil NO3 by the amount denitrified and add this to
-!         the NOx pool
-          DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
-          TNOX       = TNOX       + DENITRIF(L)
-          TNOXD      = TNOXD      + DENITRIF(L)
-          TN2O = TN2O + N2OFLUX(L)           ! PG added
-          TN2OD = TN2OD + N2OFLUX(L)         ! PG added
-C        ELSE
-!         IF SW, ST OR NO3 FALL BELOW CRITICAL IN ANY LAYER RESET LAG EFFECT.
-          DLAG(L) = 0      !REVISED-US
-C        ENDIF   !End of IF block on denitrification.
-C The following code was included by PG to accumulate the gas loss from N2O and N2, which is restricted to 0-20 cm
-C it also includes some diagnostics
-      if (l .eq. 3) then
-      open (unit=9, file='output.dat', status='unknown')
-      
-      write (9, 200) doy, l, sw(l), bd(l), poros(l), wfps(l),
-     &wfps_fc(l), wfps_thres, CO2_correct(l), newCO2(l),CO2ppm(l),
-     &a_coeff,(denitrif(1)+denitrif(2)+denitrif(3))*1000,
-     &(n2oflux(1)+n2oflux(2)+n2oflux(3))*1000,
-     &(nitrif(1)+nitrif(2)+nitrif(3))*1000,arntrf*1000,
-     &(n2onitrif(1)+n2onitrif(2)+n2onitrif(3))*1000,
-     &(n2oflux(1)+n2oflux(2)+n2oflux(3)+n2onitrif(1)+n2onitrif(2)+n2onit
-     &rif(3))*1000, wfdenit, fdwfps, fdno3, x_inflect, rn2n2o
-     
-  200 format (1x,i3,1x,i3,12(f8.3),9(f9.3))
-  
-      endif
+!
+!!chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
+!          DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
+!          IF (NSWITCH .EQ. 6) THEN
+!            DENITRIF(L) = 0.0
+!          ENDIF
+!
+!!         Reduce soil NO3 by the amount denitrified and add this to
+!!         the NOx pool
+!          DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
+!          TNOX       = TNOX       + DENITRIF(L)
+!          TNOXD      = TNOXD      + DENITRIF(L)
+!          TN2O = TN2O + N2OFLUX(L)           ! PG added
+!          TN2OD = TN2OD + N2OFLUX(L)         ! PG added
+!C        ELSE
+!!         IF SW, ST OR NO3 FALL BELOW CRITICAL IN ANY LAYER RESET LAG EFFECT.
+!          DLAG(L) = 0      !REVISED-US
+!C        ENDIF   !End of IF block on denitrification.
+!
+!C         The following code was included by PG to accumulate the gas loss from N2O and N2, which is restricted to 0-20 cm
+!C         it also includes some diagnostics
+!          if (L .eq. 3) then
+!          open (unit=9, file='output.dat', status='unknown')
+!      
+!          write (9, 200) doy, L, sw(L), bd(L), poros(L), wfps(L),
+!     &wfps_fc(L), wfps_thres, CO2_correct(L), newCO2(L),CO2ppm(L),
+!     &a_coeff,(denitrif(1)+denitrif(2)+denitrif(3))*1000,
+!     &(n2oflux(1)+n2oflux(2)+n2oflux(3))*1000,
+!     &(nitrif(1)+nitrif(2)+nitrif(3))*1000,arntrf*1000,
+!     &(n2onitrif(1)+n2onitrif(2)+n2onitrif(3))*1000,
+!     &(n2oflux(1)+n2oflux(2)+n2oflux(3)+n2onitrif(1)+n2onitrif(2)+n2onit
+!     &rif(3))*1000, wfdenit, fdwfps, fdno3, x_inflect, rn2n2o
+!     
+!  200 format (1x,i3,1x,i3,12(f8.3),9(f9.3))
+!  
+!      endif
 
       END DO   !End of soil layer loop.
+
+      SELECT CASE(MEGHG)
+      CASE(1,2)
+        CALL Denit_DayCent (DYNAMIC, ISWNIT, NSWITCH, 
+     &    BD, DUL, KG2PPM, newCO2, NO3, SAT, SW     !Input
+     &    DENITRIF, DLTSNO3)                        !Output
+      CASE DEFAULT
+        CALL Denit_Ceres ()
+      END SELECT
 
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.
