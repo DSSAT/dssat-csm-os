@@ -62,7 +62,7 @@ C=======================================================================
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DEC, ISINB, PAR, 
-     &  PI, RAD, RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
+     &  RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
      &  TA, TAMP, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDSP, XELEV, XLAT, XLONG
 
@@ -71,7 +71,7 @@ C=======================================================================
 
 !      PARAMETER (CO2BAS = 330.0)
       PARAMETER (ERRKEY = 'WEATHR')
-      PARAMETER (PI=3.14159, RAD=2.0*PI/365.0)
+!      PARAMETER (RAD=2.0*PI/365.0)
 
       INTERFACE 
         SUBROUTINE OPSTRESS(CONTROL, IDETO,   
