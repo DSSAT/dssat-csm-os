@@ -13,8 +13,8 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE Denit_Ceres (DYNAMIC, ISWNIT,  
-     &    DUL, FLOOD, KG2PPM, LITC, NO3, SAT, SSOMC,  !Input
-     &    SNO3, ST, SW,                               !Input
+     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
      &    DENITRIF, TNOX, TN2O)                       !Output
 

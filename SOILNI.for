@@ -257,8 +257,8 @@ C=======================================================================
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
-     &    DUL, FLOOD, KG2PPM, LITC, NO3, SAT, SSOMC,  !Input
-     &    SNO3, ST, SW,                               !Input
+     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
      &    DENITRIF, TNOX, TN2O)                       !Output
         END SELECT
@@ -601,8 +601,8 @@ C=======================================================================
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
-     &    DUL, FLOOD, KG2PPM, LITC, NO3, SAT, SSOMC,  !Input
-     &    SNO3, ST, SW,                               !Input
+     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
      &    DENITRIF, TNOX, TN2O)                       !Output
         END SELECT
@@ -716,6 +716,7 @@ C=======================================================================
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, TLCH,  
      &    TNH4, TNO3, TNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3,  
