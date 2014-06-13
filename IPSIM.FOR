@@ -273,7 +273,7 @@ C
          IF (INDEX('ED',METMP) < 1) METMP = 'D'
 
 !        Default greenhouse gas method is DSSAT
-         IF (INDEX('012',METMP) < 1) MEGHG = '0'
+         IF (INDEX('012',MEGHG) < 1) MEGHG = '0'
 
          SELECT CASE(MESEV)
          CASE('R','r'); MESEV = 'R'
@@ -673,7 +673,7 @@ C-----------------------------------------------------------------------
 
   55  FORMAT (I3,11X,2(1X,I5),5X,A1,1X,I5,1X,I5,1X,A25,1X,A8)
   60  FORMAT (I3,11X,9(5X,A1))
-  61  FORMAT (I3,11X,7(5X,A1),5X,I1,5(5X,A1))
+  61  FORMAT (I3,11X,7(5X,A1),5X,I1,6(5X,A1))
   65  FORMAT (I3,11X,3(5X,A1),4X,I2,9(5X,A1))
   66  FORMAT (I3,11X,2(1X,I5),5(1X,F5.0))
   67  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
