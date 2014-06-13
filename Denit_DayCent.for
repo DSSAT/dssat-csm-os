@@ -12,9 +12,9 @@ C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
 C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
-      SUBROUTINE Denit_DayCent (DYNAMIC, ISWNIT, NSWITCH, 
-     &    BD, DUL, KG2PPM, newCO2, NO3, SAT, SW     !Input
-     &    DENITRIF, DLTSNO3)                        !Output
+      SUBROUTINE Denit_DayCent (DYNAMIC, ISWNIT, 
+     &    BD, DUL, KG2PPM, newCO2, NO3, SAT, SW,      !Input
+     &    DENITRIF, DLTSNO3, n2oflux, WFPS)           !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -54,10 +54,6 @@ C=======================================================================
       real A(4)
       real RWC
 
-      INTEGER NSWITCH
-
-      
-            
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -245,9 +241,6 @@ C         If flooded, lose all nitrate --------REVISED-US
 
 !chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
           DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
-          IF (NSWITCH .EQ. 6) THEN
-            DENITRIF(L) = 0.0
-          ENDIF
 
 !         Reduce soil NO3 by the amount denitrified and add this to
 !         the NOx pool
@@ -280,7 +273,6 @@ C it also includes some diagnostics
 
       END DO   !End of soil layer loop.
 
-      CALL PUT('NITR','TNOXD',ARNTRF) 
       CALL PUT('NITR','TN2OD',TN2OD)
 
 !***********************************************************************

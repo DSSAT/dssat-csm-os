@@ -1,7 +1,7 @@
 C=======================================================================
-C  Denit_DayCent, Subroutine
+C  Denit_Ceres, Subroutine
 C
-C  Determines denitrification based on DayCent model
+C  Determines denitrification based on Ceres model
 
 C-----------------------------------------------------------------------
 C  Revision history
@@ -12,9 +12,11 @@ C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
 C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
-      SUBROUTINE Denit_DayCent (DYNAMIC, ISWNIT, NSWITCH, 
-     &    BD, DUL, KG2PPM, NO3, SAT, ST, SW     !Input
-     &    DENITRIF, DLTSNO3)                        !Output
+      SUBROUTINE Denit_Ceres (DYNAMIC, ISWNIT,  
+     &    DUL, FLOOD, KG2PPM, LITC, NO3, SAT, SSOMC,  !Input
+     &    SNO3, ST, SW,                               !Input
+     &    DLTSNO3,                                    !I/O
+     &    DENITRIF, TNOX, TN2O)                       !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -24,23 +26,15 @@ C=======================================================================
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT
 
-!      LOGICAL IUON
+      INTEGER DYNAMIC, L, NLAYR
 
-      INTEGER DOY, DYNAMIC, L
-      INTEGER NLAYR
-      !INTEGER NSOURCE, YEAR, YRDOY   
-
-      REAL ARNTRF, DLAG, FLOOD, TNOX, TNOXD, XMIN
+      REAL CW, FLOOD, TN2O, TN2OD, TNOX, TNOXD, XMIN
       REAL TFDENIT, WFDENIT
-      REAL DENITRIF(NL), NITRIF(NL), SNO3_AVAIL
+      REAL DENITRIF(NL), ST(NL), SNO3_AVAIL
+      REAL, DIMENSION(0:NL) :: LITC, SSOMC
 
-      REAL DLTSNO3(NL)   
-      REAL BD(NL), DUL(NL)
-      REAL KG2PPM(NL) 
-      REAL NO3(NL), SAT(NL)
-      REAL SNO3(NL), SW(NL)
-      
-      INTEGER NSWITCH
+      REAL DLAG(NL), DLTSNO3(NL), DUL(NL), KG2PPM(NL) 
+      REAL NO3(NL), SAT(NL), SNO3(NL), SW(NL)
 
 !***********************************************************************
 !***********************************************************************
@@ -67,9 +61,8 @@ C=======================================================================
       TNOXD = 0.0
       TN2OD = 0.0     ! PG
 
-!-----------------------------------------------------------------------
-!       Denitrification section
-!-----------------------------------------------------------------------
+      DO L = 1, NLAYR
+
 !       Denitrification only occurs if there is nitrate, SW > DUL and
 !       soil temperature > 5.
         IF (NO3(L) .GT. 0.01 .AND. SW(L) .GT. DUL(L) .AND.
@@ -194,9 +187,6 @@ C         If flooded, lose all nitrate --------REVISED-US
 
 !chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
           DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
-          IF (NSWITCH .EQ. 6) THEN
-            DENITRIF(L) = 0.0
-          ENDIF
 
 !         Reduce soil NO3 by the amount denitrified and add this to
 !         the NOx pool
@@ -209,12 +199,7 @@ C         If flooded, lose all nitrate --------REVISED-US
           DLAG(L) = 0      !REVISED-US
         ENDIF   !End of IF block on denitrification.
 
-      END DO   !End of soil layer loop.
-
-      END DO   !End of soil layer loop.
-
-      CALL PUT('NITR','TNOXD',ARNTRF) 
-      CALL PUT('NITR','TN2OD',TN2OD)
+      ENDDO  !Soil layer loop
 
 !***********************************************************************
 !***********************************************************************
@@ -225,10 +210,10 @@ C         If flooded, lose all nitrate --------REVISED-US
 C-----------------------------------------------------------------------
   
       RETURN
-      END SUBROUTINE Denit_DayCent
+      END SUBROUTINE Denit_Ceres
 
 !=======================================================================
-! Denit_DayCent Variables 
+! Denit_Ceres Variables 
 !-----------------------------------------------------------------------
 
 !***********************************************************************

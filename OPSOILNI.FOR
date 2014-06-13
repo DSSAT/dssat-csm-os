@@ -13,25 +13,18 @@ C  08/20/2002 GH  Modified for Y2K
 !     Note:  in Century, AMTFER is an array for soil elements, in
 !                 NTRANS, AMTFER is a scalar and represents only N.
 !  01/18/2005 CHP changed AMTFER to array of 3 for consistency
-C-----------------------------------------------------------------------
-C  Called from:   SoilNi (formerly NTRANS)
-C  Calls:         None
-C=======================================================================
+!-----------------------------------------------------------------------
+!  Called from:   SoilNi (formerly NTRANS)
+!  Calls:         None
+!=======================================================================
 
       SUBROUTINE OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
      &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TOTAML,
      &    TN2O, nitrif, denitrif, n2oflux, wfps) ! added by PG
-C-------------------------------------------------------------------
-C
-C  Soil Nitrogen Aspects OUTPUT File
-C  Soil Carbon Aspects OUTPUT File
-C
-!-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+!-------------------------------------------------------------------
+      USE ModuleDefs
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -51,7 +44,6 @@ C
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 4
-!      INTEGER, PARAMETER :: N=1, P=2
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       CHARACTER*50 FRMT
       REAL, DIMENSION(SUMNUM) :: VALUE
@@ -181,10 +173,6 @@ C-----------------------------------------------------------------------
      &       0.0, (nitrif(i),i=1,n_lyr), (denitrif(i),i=1,n_lyr), ! added by PG
      &       (n2oflux(i), i=1, n_lyr), (wfps(i), i=1,n_lyr)       ! added by PG
         ENDIF
-      nitrif(l) = 0.0
-      denitrif(l) = 0.0
-      n2oflux(l) = 0.0
-      wfps(l) = 0.0
       ENDIF
 
 !***********************************************************************
