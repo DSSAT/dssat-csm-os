@@ -108,17 +108,17 @@ C=======================================================================
       DO L = 1, NLAYR
         wfps(L) = sw(L) / poros(L)
 
-!       following code is Rolston pdf document
-        RWC = SW(L)/SAT(L)                                  
-        if (RWC .GE. 0.8 .AND. RWC. LE .0.9) then
-            WFDENIT = RWC * 2. - 1.6
-        elseif (RWC .GT. 0.9 .AND. RWC .LE. 1.0) then
-            WFDENIT = RWC * 8. -7.
-        else
-            WFDENIT = 0.0
-        endif    
-            
-        WFDENIT = AMAX1 (AMIN1 (WFDENIT, 1.), 0.)
+!!       following code is Rolston pdf document
+!        RWC = SW(L)/SAT(L)                                  
+!        if (RWC .GE. 0.8 .AND. RWC. LE .0.9) then
+!            WFDENIT = RWC * 2. - 1.6
+!        elseif (RWC .GT. 0.9 .AND. RWC .LE. 1.0) then
+!            WFDENIT = RWC * 8. -7.
+!        else
+!            WFDENIT = 0.0
+!        endif    
+!            
+!        WFDENIT = AMAX1 (AMIN1 (WFDENIT, 1.), 0.)
         
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
 !     Daycent denitrification routines PG 17/5/13      
