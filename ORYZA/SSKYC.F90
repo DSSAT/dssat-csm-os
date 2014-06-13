@@ -44,7 +44,7 @@
 
 !     Hour on day that solar height is at maximum
       PARAMETER (SOLHM=12.)
-      SAVE
+      SAVE         ! TAOLI
 
       IF (RDD.LE.0.) CALL FATALERR &
          ('SSKYC','total shortwave irradiation <= zero')

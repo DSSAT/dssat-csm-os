@@ -62,7 +62,7 @@
       REAL GPC,ANGOT,RAPC
       INTEGER I1
 
-      SAVE
+      SAVE         ! TAOLI
 
       DATA GSX /0.112702, 0.500000, 0.887298/
       DATA GSW /0.277778, 0.444444, 0.277778/

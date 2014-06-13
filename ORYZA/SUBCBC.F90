@@ -22,7 +22,7 @@
 !-----Formal parameters
       REAL    CKCIN,CKCFL,TIME,CBCHK
       LOGICAL TERMNL
-      SAVE
+      SAVE         ! TAOLI
  
       CBCHK = 2.0*(CKCIN-CKCFL)/(CKCIN+CKCFL+1.E-10)
  
@@ -31,7 +31,7 @@
 !10       FORMAT (/,'* * *Error in Carbon Balance, please check* * *',/,
 !     &           ' CBCHK=',F8.3,', CKCIN=',F8.2,', CKCFL=',F8.2,
 !     &           ' at TIME=',F6.1)
-         WRITE (*,'(A,/,A,F8.3,2(A,F8.2),F6.1)') &
+         WRITE (*,'(A,/,A,F8.3,2(A,F8.2),A,F6.1)') &
            '* * * Error in Carbon Balance, please check * * *', &
            ' CBCHK=',CBCHK,', CKCIN=',CKCIN,', CKCFL=',CKCFL,' at TIME=',TIME
          TERMNL = .TRUE.

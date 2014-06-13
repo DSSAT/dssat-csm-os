@@ -64,7 +64,7 @@ MODULE RootGrowth
 		 REAL ROOTC(10),RDCL(10),RDNL(10),ROOTN(10),RDENSITY(10)
 		 REAL NROOTC, NROOTN
 		 REAL IROOTD, ROPTT, RMINT, RTBS, MAXDEP, SODT
-		 REAL REFFECD, REFCD_O, ROOTNC
+             REAL REFFECD, REFCD_O, ROOTNC,ROOTMAXN
 !	end type rootGlobal
 
 !	type RootParameter
@@ -80,7 +80,7 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 
 	 USE public_module	!VARIABLES
 	 USE rootgrowth
-     implicit none
+     IMPLICIT NONE
 	 REAL LROOTC, LROOTN   !LROOTC & LROOTN will have input from BioRice but not ORYZA, The senescence of root C & N in kg/ha
 	!ROOT GROWTH 
      REAL basicR(15), LWF(15)
@@ -93,14 +93,14 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 !SOIL VARIABLES CONCERN WITH ROOT GROWTH       
       REAL SOILTX(0:10), THETAW(15), THETAF(15), THETAS(15), THETAA(15) !, LAYT(15)
 	! Soil stength, areation, temperature factor of soil layers
-	 REAL  CWP, totalSN, ASF1, ASF2,  tmpValue, TIME, DELT
-	 INTEGER i, j, L, MDL,CROPSTA
+       REAL  CWP, totalSN, ASF1, ASF2,  tmpValue, DELT !, TIME
+       INTEGER i, j, L, MDL,CROPSTA, J1, J2
     PARAMETER (L=10)
 !	 real TrootD  !root depth under optimal conditions
 	 REAL TPFmx, TWFmx, TTFmx, LWFmx !THE MINIMUM OF THE FACTOR IS SET TO 0 
 	 REAL KB1, KB2,TOTALRC, TOTALRN, TotalDRC, TotalDRN, MaxNo
 	 REAL SOILN(L),WCL(L),WL0, DVS, TotalLittleFall, LiveRootC
-	 REAL TMPV2, TEMPV2, tmpV3, TMPV1,TMPV4,TMPN1,TMPN2,TMPN3
+       REAL TMPV2, TEMPV2, tmpV3, TMPV1,TMPV4,TMPN1,TMPN2,TMPN3,TMPN4
 	 real, allocatable::tmpF2(:)
 	 REAL BDx, BDo, SBD  !Variables DO bulk density at no rooting, max rootin and soil BD.
 	 REAL WFP		 !soil water factor, surface water level
@@ -108,9 +108,10 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 	 REAL MAXDDVS1	!THE ROOT DEEPTH AT DVS=1.0
 	 LOGICAL SWITCHR  !DETERMIN WHETHER ROOT HAS REACH IT MAXIMUM DEPTH
 !	----FOR CALCULATING TOTAL SENESCENCE ROOT C&N
-	REAL NSR, CSRTN, CSRT, RDRC(15), RDRN(15)
+      REAL NSR, CSRTN, CSRT, RDRC(15), RDRN(15), CXX, NXX
 	!Structural root N, N determined root C, Structural root C, Root died C rate, Root died N rate
     SAVE
+
 !+	get daily data from public module
 	 sl = pv%pnl;  WL0 = PV%PWL0
 	 do i = 1, sl
@@ -142,11 +143,10 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 !Borg, H., and D.W. Grimes. 1986. Depth development of roots with time: an empirical description.
 !Trans.ASAE. 29:194-197.
 
-!---DIRECT SEED - CHP added 1/26/2012
+!---DIRECT SEED
     IF(CROPSTA.EQ.1) THEN
       OLDNO = 0
     ENDIF
-
 !----FOR TRANSPLANT DAY, ROOT REDISTRIBUTING AGAIN
 	 IF(CROPSTA.EQ.3) THEN
 		 DO I=1, SL
@@ -176,7 +176,7 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 					GOTO 2000
 				 ENDIF
 			 ELSE
-				 IF((IROOTD.GT.SUM(LAYT(1:(I-1)))).AND.(IROOTD.LE.SUM(LAYT(1:I)))) THEN
+                         IF((IROOTD*100.0.GT.SUM(LAYT(1:(I-1)))).AND.(IROOTD*100.0.LE.SUM(LAYT(1:I)))) THEN
 					ROOTC(I) = NROOTC; ROOTN(I) = NROOTN
 					rdcl(i)=totaldrc; rdnl(i)=totaldrn
 					GOTO 2000
@@ -186,13 +186,17 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 	 ENDIF
 
 !	** calculate the total root senescence C and N based on the assumption of new root would die immediately
-	TOTALDRC =0.0; TOTALDRN = 0.0
+      TOTALDRC =0.0; TOTALDRN = 0.0; LROOTC = 0.0; LROOTN = 0.0
+      TOTALDRC = SUM(ROOTC(1:SL)); TOTALDRN = SUM(ROOTN(1:SL))
+      IF(TOTALDRC.GT.0) THEN
 	DO I = 1, SL
-		TOTALDRC = TOTALDRC + ROOTC(I); TOTALDRN = TOTALDRN + ROOTN(I)	
+                ROOTN(I) = ROOTC(I)* TOTALDRN/TOTALDRC  !ASSUMMED THE c:n IS THE SAME FOR ALL ROOTS IN DIFFERENT LAYERS.     
 	END DO
+      END IF
 	IF(PLANTMOD.EQ.1) then      !PLANTMOD =1 FOR ORYZA1, PLANTMOD = 2 FOR BIORICE
 		if((TOTALDRC.GT.0.0).and.(TOTALDRN.GT.0.0)) THEN
-			CSRT = TOTALDRC *0.85; NSR = TOTALDRN*0.85   !assummed the structure C and N is 85% of total value
+                  CSRT = MAX(0.0,(TOTALDRC+NROOTC) *0.85)
+                  NSR = MAX(0.0,(TOTALDRN+NROOTN)*0.85)   !assummed the structure C and N is 85% of total value
 			CSRTN = NSR/(2.0*RCNL)		!assumed that the optimal nitrogen content is double of minimal one.
 			LROOTC = MAX(MIN(CSRT-0.00001, CSRT -MIN(CSRT, CSRTN)),0.0)
 			LROOTN = LROOTC * RCNL
@@ -201,6 +205,10 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 		ENDIF			
 	END IF
 	
+      IF((TOTALDRN/TOTALDRC).GT.ROOTMAXN) THEN
+      !  LROOTN =  LROOTN + MAX(0.0,(TOTALDRN-TOTALDRC*ROOTMAXN)) 
+      END IF
+      
 	IF(SL.LE.1) THEN	!-------SIMPLE EXPONENTIAL FUNCTION IS USED TO CALCULATE THE ROOT DISTRIBUTION AND ROOTING DEPTH WITHIN LAYER
 		MAXDEP=LAYT(1)	!ROOT IS LIMITED WITHIN ONE LAYER, MaxDep in cm
 		 IF(PLOWL1.GT.0.0) THEN 
@@ -237,9 +245,9 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 			SWITCHR =.TRUE.
 		ENDIF
 		if(dvs.GT.1.0) then
-			MAXDEP=MAXDDVS1*MAX(0.0, SIN(1.57+1.57/1.5*(DVS-1.0)))*100.0
+                  MAXDEP= MAXDDVS1*100.0 !*MAX(0.0, SIN(1.57+1.57/1.5*(DVS-1.0)))*100.0  !The maximum depth does not change anymore, TAOLI 10 Jan 2012   !!
 		ELSE
-		    maxDep =  maxd *MAX(0.0, SIN(1.57*DVS))  !maxd in cm
+		    maxDep =  maxd *MAX(0.0, SIN(1.57*DVS)) !(0.5-0.5*sin(3.03*dvs/(2.0-dvs)+1.147)) !maxd in cm
 		endif
 		 IF(REFFECD.GT.0.0) THEN		
 			 maxDep = MIN(MAXD,maxdep) !REFFECD*100.0)				!REFFECD in m, changed into cm
@@ -400,9 +408,17 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 		 ASF1 = 0.0; ASF2 = 0.0; j = 1
 
 !-----THE EXPONENTIAL COEFFICIENTS KB1 FOR INCREASE AND KB2 FOR DECREASE
+         IF(WL0.GT.0.0) THEN   !IF FLOODED, DISTRIBUTION ONLY FOLLOW SINGLE EXPONENTION. TAOLI, 21FEB 2012
+            KB1 = -LOG(0.05)/MAXDEP; TMPV3 =0.0; TMPV4 =0.0
+         ELSE
 		 KB1 = -Log(0.05) / MAXNO; TMPV3 =0.0; TMPV4 =0.0
 		 kB2 = -Log(0.05) / (MAXDEP - MAXNO)
+             END IF
 		 DO i = 1, Int(maxDep + 0.5)
+              IF(WL0.GT.0.0) THEN   !IF FLOODED, DISTRIBUTION ONLY FOLLOW SINGLE EXPONENTION. TAOLI, 21FEB 2012
+                  tmpValue =Exp(-Kb1 * I)
+                  TMPVALUE = TMPVALUE *(NEFF(J) + SSL(J) + SAL(J) + STL(J)+LWF(J))
+              ELSE  !IF NON FLOODED, DISTRIBUTION DOUBLE EXPONENTION. TAOLI, 21FEB 2012
 			 IF(I.LE.MAXNO) THEN
 				 tmpValue =Exp(-Kb1 * (MAXNO - I))
 			 ELSEIF(I.GT.MAXNO) THEN
@@ -410,8 +426,8 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 			 ELSE
 				 TMPVALUE=0.0
 			 ENDIF 
-
 			   TMPVALUE = TMPVALUE *(NEFF(J) + SSL(J) + SAL(J) + STL(J)+LWF(J))
+                END IF                     
 			   ASF2 =ASF2+TMPVALUE
 			   IF(TMPVALUE.GT.0.0)	TMPV3 = TMPV3 + 1.0/MAX(0.00001,TMPVALUE)
 			 If((i.GT.INT(SDEP(j - 1))).And.(i.LT.INT(SDEP(j)))) Then
@@ -431,7 +447,7 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
     !ENDIF   !For the new root carbon positive
   ENDIF !FOR THE SINGLE OR MULTPILE LAYER ROOTING
 !	Supposed that the root senecence only happen in the layer where have root older than one day
-	TMPV4 = 0.0
+      TMPV4 = 0.0;TMPV2 =ASF2;
 	DO I=1,SL
 		IF(ROOTC(I).GT.0.0) THEN
 			TMPV4 =TMPV4 + RDRC(I)
@@ -439,116 +455,79 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 			TMPV4=TMPV4;RDRC(I) = 0.0; RDRN(i) = 0.0
 		END IF
 	ENDDO
+!     ''''Readjust the C and N allocation if the new root C and N if negative
+      IF(NROOTC.LT.0.0) THEN
+        ASF2 = 0.0
+        DO I=1, SL
+            IF(ROOTC(I).GT.0.0) THEN
+                ASF2 =ASF2+RRCC(I)
+            ELSE
+                RRCC(I) = 0.0
+            END IF
+        END DO
+      END IF
 	
 !	'''Calculating the new DM distribution in soil layers
-  TMPV2 =0.0	
+		TMPV3 = 0.0;TMPN3 = 0.0      
   DO i = 1, SL		 
 		 If(ASF2.GT.0.0) Then
 				RRCC(i) = NRootC * RRCC(i) / ASF2    !IN kg DM/ha
-				RRNC(i) = NRootN * RRNC(i) / ASF2    !IN kg N/ha
-				IF(TMPV4.GT.0.0) THEN
-					RRDCL(I)=RDRC(I)*LROOTC/TMPV4	
-					RRDNL(I)=RDRN(I)*LROOTN/TMPV4
-				ELSE
-					RRDCL(I)=0.0	
-					RRDNL(I)=0.0
-				ENDIF
-				 If((ROOTC(I).GT.0.0).And.(RRCC(i).GT.0.0)) Then
-					basicR(i) = RRCC(i) /ROOTC(I)
-				 ElseIf((RRCC(i).EQ.0.0).And.(ROOTC(I).GT.0.0)) Then
-					basicR(i) = 0.001
-				 Else
-					basicR(i) = 1.0
-				 EndIf
-				 IF((ROOTC(I)+RRCC(I)).LT.0.0) THEN
-					TMPV2=TMPV2+MIN(0.0, ROOTC(I)+RRCC(I))
-				 ENDIF				 
+            !    RRNC(i) = NRootN * RRNC(i) / TMPV2    !IN kg N/ha
+                TMPV3 = TMPV3+MAX(0.0,ROOTC(I)+RRCC(I))
+            !    TMPN3=TMPN3+MAX(0.0,ROOTN(I)+RRNC(I))                         
 		 EndIF
 	 ENDDO
-	 !REDISTRIBUTING THE UNENOUGH DETECTION FROM UP LAYERS
-	 IF(TMPV2.LT.0.0) THEN
+		IF((TMPV3.GT.0.0).AND.(LROOTC.GT.0.0)) THEN
+			DO I=1, SL
+				RRDCL(I) = LROOTC*MAX(0.0,ROOTC(I)+RRCC(I))/TMPV3
+			END DO
+		ELSE
+			RRDCL = 0.0
+		END IF
+	
+       !REDISTRIBUTING THE UNENOUGH DETECTION OR SENSCENCE FROM UP LAYERS
+       !MODIFIED THE REDISTRIBUTION SECTION, TAOLI, 25Jan 2012
 		TMPV3=0.0;TMPN3=0.0
-		DO I=SL, 1, -1
+		  !FROM DEEPEST TO FIRST LAYER
+		DO I=SL, 2, -1
 			IF((ROOTC(I)+RRCC(I)-RRDCL(I)).LT.0.0) THEN
-				TMPV3=ROOTC(I)+RRCC(I)
-				DO J=I-1,1,-1
-					TMPV2 = ROOTC(J)+RRCC(J)-RRDCL(J);TMPV1=0.0
-					IF(TMPV2.GT.0.0) THEN
-						TMPV1 = TMPV3+TMPV2
-						IF(TMPV1.GE.0.0) THEN
-							RRCC(J)=RRCC(J)+TMPV3
-							TMPV3=0.0
-							EXIT
-						ELSE
-							RRCC(J)=RRCC(J)-TMPV2
-							TMPV3=TMPV3+TMPV2
-						ENDIF
-					ELSE
-						TMPV3=TMPV3
+				TMPV3=RRDCL(I)-(ROOTC(I)+RRCC(I))   
+					  !in this situation, the RRCC would be negative, because RRDCL can not be larger than ROOTC
+					  !correcte TMPV3=ROOTC(I)+RRCC(I) to TMPV3=ROOTC(I)+RRCC(I)-RRDCL(I), 
+					  !the unenogh detection will be put into up layer 
+				IF(RRDCL(I).GE.0.0) THEN
+					RRCC(I-1) = RRCC(I-1)- TMPV3
+					RRCC(I) = RRCC(I) + TMPV3                
+				ELSEIF(RRCC(I).GE.0.0) THEN            
+					RRDCL(I-1) = RRDCL(I-1) - TMPV3
+					RRDCL(I)= RRDCL(I) + TMPV3                
+				END IF
+				CXX = ROOTC(I)+RRCC(I)-RRDCL(I)         
+				J1=I;J2=I     
 					ENDIF
 				ENDDO
-			ENDIF
-			IF((ROOTN(I)+RRNC(I)-RRDNL(I)).LT.0.0) THEN
-				TMPN3=TMPN3+ROOTN(I)+RRNC(I)
-				DO J=I-1,1,-1
-					TMPN2 = ROOTN(J)+RRNC(J)-RRDNL(J);TMPN1=0.0
-					IF(TMPN2.GT.0.0) THEN
-						TMPN1 = TMPN3+TMPN2
-						IF(TMPN1.GE.0.0) THEN
-							RRNC(J)=RRNC(J)+TMPN3
-							TMPN3=0.0
-							EXIT
-						ELSE
-							RRNC(J)=RRNC(J)-TMPN2
-							TMPN3=TMPN3+TMPN2
-						ENDIF
-					ELSE
-						TMPN3=TMPN3
-					ENDIF
-				ENDDO
-			ENDIF
 				
-			RRCC(i) =max(0.0, RootC(i) + RRCC(i)-RRDCL(I))
-			RRNC(i) = max(0.0,RootN(i) + RRNC(i)-RRDNL(I))
-		ENDDO
-	 ELSE
-		DO I=1, SL
-			RRCC(i) =max(0.0, RootC(i) + RRCC(i)-RRDCL(I))
-			RRNC(i) = max(0.0,RootN(i) + RRNC(i)-RRDNL(I))
-		ENDDO
+      !FROM FIRST TO DEEPEST LAYER
+      DO I = 1, sl !(MAX(J1,J2)-1)
+          IF((ROOTC(I)+RRCC(I)-RRDCL(I)).LT.0.0) THEN
+                  TMPV3=ROOTC(I)+RRCC(I)-RRDCL(I)   
+                  RRCC(I) = RRDCL(I) -ROOTC(I)
+                  RRCC(I+1) = RRCC(I+1) + TMPV3
 	 ENDIF 
+             CXX = ROOTC(I)+RRCC(I)-RRDCL(I)            
+      END DO  
 							                                                  
 !	!Calculating senescence of root ???NEED IMPROVEMENT.
 	SDEP(0) = 0.0; TotalLittleFall = 0.0; LiveRootC = 0.0
 	tmpv2=0.0;tmpv3=0.0;tmpf2(int(sdep(sl))+1)=0.0
 	RMINDIED = 0.016
 	 DO i = sl, 1, -1
-	    If((ROOTC(i).GT.0.0).OR.(RRCC(I).GT.0.0)) Then
-		    !!If(DVS.GE.0.4) Then
-			!!     RRDCL(i) = 0.015 * Exp(-basicR(i)) * &
-			!!		RRCC(i) * (1.0 + Max(0.0,1.0 - LWF(i)))* 1.0/SAL(I)
-			     !  RRCC(i) * (1.0 + Max((1.0 - LWF(i)), &
-     			 ! (1.0 - SAL(i))))**(4.0*OSMATIC/1.5)								!The basic root death rate??
-     			 !xxx1=(1.0 + Max(0.0, 1.0 - LWF(i)))**8.0
-     			 !xxx2 = (1.0+ max(0.0,1.0-SAL(i)))**(1.0-SODT)
-				 !xxx3=RMINDIED**2/basicR(i)
-			     !RRDCL(i) =MIN(0.75,max(RMINDIED, min(1.0, xxx3)) &
-			     !    * max(xxx1,xxx2))*RRCC(i)   !2.0*OSMATIC/1.5								!The basic root death rate??
-			!!     If((DVS.GE.2.0).And.(RRCC(i).GE.0.0)) Then
-			!!	      RRDCL(i) = RRDCL(i) + RRCC(i) * &
-			!!		     ((DVS - 1.8) / (DVS - 1.6))**3
-			!!     EndIf
-			!!     RRDCL(i) =max(0.0, Min(RRDCL(i), RRCC(i)))
-		    !! Else
-			!!     RRDCL(i) = 0.0
-
-		    !! EndIf
-!---------The root depth parameters
+			If((ROOTC(i)+ RRCC(I)-RRDCL(I)).GT.0.0) Then
 		!	'''---for tmpF2 and tmpF3
 			   tmpV2 =0.0; TMPV3 =0.0
 			   IF(SDEP(I).GE.MAXDEP) Then
 			   		TMPV3 = MAXDEP
-			   		DO J=INT(MAXDEP)+1, INT(SDEP(I))
+			   		DO J=INT(MAXDEP)+1, SDEP(I)
 			   			TMPF2(J) = 0.0
 			   		ENDDO
 			   Else
@@ -561,32 +540,38 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 			   do j=  int(TMPV3), int(SDEP(i-1))+1, -1
 				    tmpf2(j) = tmpF2(j)/tmpV2 *MAX(0.0, (RRCC(I)-RRDCL(i)))
 			   enddo
-!---------DETERMINE THE ROOT C AND N CHANGE RATE, AND ROOT DEATH RATE
-		     RRCC(i)=(RRCC(I)-RootC(i))/DELT	!-RRDCL(i)
-		     RRNC(I)=(RRNC(I)-ROOTN(I))/DELT	!-RRDCL(I)*RCNL	!RCNL IS IN kg N kg-1 ROOT DM
-		     RRDCL(I)=RRDCL(I)/DELT	
-		     RRDNL(I)=RRDNL(I)/DELT
 		   Else
-		     RRDCL(i) = 0.0; RRDNL(I)=0.0; RRCC(i) = 0.0; RRNC(I)=0.0
 		     do j=  int(SDEP(i)), int(SDEP(i-1))+1, -1
 				   tmpf2(j) = 0.0
 		     enddo
 	   EndIf
-!---------TRootDeathC(i) WILL BE UPDATE BY INTEGRATION ROUTINE
-
-!	    ''Calculating root density in cm/cm3, RRCC IN KG DM/HA, SROOTL in m/g DM, LAYT in cm
-!	    RRDENSIT(i) = RRCC(I)  * SROOTL / LAYT(I)/1000.0
-!			In oder to aviod negative value of root length, above function is cancelled out, replaced with CALCULATION
-!     by the mass in ORYZA1.for
+              !---------DETERMINE THE ROOT C AND N CHANGE RATE, AND ROOT DEATH RATE
+			IF((RRCC(I)+ROOTC(I)-RRDCL(I)).LT.0.0) RRDCL(I) = RRCC(I)+ROOTC(I)			
+			RRCC(i)=(RRCC(I)-RRDCL(i))/DELT      !-RRDCL(i)
+			RRDCL(I)=RRDCL(I)/DELT      
+			RRDNL(I)=RRDCL(I)/DELT*RCNL          !nitrogen littel fall 
 	    RRDENSIT(i) = SROOTL / LAYT(I)/1000.0 !*(1.0+((sdep(i-1)+layt(i)*0.5)/(0.8*maxd))**1.0)
 		!----THE SROOTL WOULD VARY WITH SOIL WATER CONDITION AND GROWTH STAGE, REFERENCES???
 		!----Tahere Azhiri-Sigari et al. 2000, Plant Prod. Sci., 3(2), 180-188.
 		!----Also assumed that the root become thin in deeper soil layer
-
 	 ENDDO
-	!----DETERMINE THE EFFECTIVE ROOT LAYER FOR WATER AND NITROGEN UPTAKE
-	!-------rescale tmpF2 and tmpF3
+      !----DETERMINE THE EFFECTIVE ROOT LAYER nitrogen change
+		TMPN3 = SUM(ROOTN)   !total nitrogen in root in previous day
+		TMPN4=SUM(RRDCL)*RCNL*DELT  !total root littel fall in this day
+		TMPN3 = TMPN3 + NROOTN - TMPN4 !Total nitrogen in this day after little fall     
+		TMPV3 = SUM(ROOTC)+SUM(RRCC)*DELT   !Total root carbon in this dat after littel fall
+		IF(TMPV3.GT.0.0) THEN
+			DO I=1, SL
+				RRNC(I) =  (ROOTC(I)+RRCC(I)*DELT)*TMPN3/TMPV3   !THE TOTAL N IN THIS LAYER ACCORDING TO C:N IN THIS DAY
+				RRNC(I) = (RRNC(I)-ROOTN(I))/DELT   !THE CHANGE RATE OF ROOT N IN THIS DAY
+			END DO
+		ELSE   !ALL ROOT CARBON TO BE ZERO, THEN NITROGEN ALSO TO BE ZERO
+			DO I=1, SL
+				RRNC(I)=-ROOTN(I)
+			END DO
+		END IF
 
+		!Determine the rooting depth
 	 TMPVALUE=0.0
 	 DO I=1, int(SDEP(SL))
 		 if(tmpv2.gt.0.0) then
@@ -607,7 +592,8 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 
 		TMPV2=0.0;tmpV3 =0.0
 	 IF(TMPVALUE.GT.0.0) THEN
-	 		TMPV2 = 0.95*TMPVALUE
+                   !TMPV2 = 0.95*TMPVALUE
+                   TMPV2 = 1.0*TMPVALUE
 		 DO I=1, int(SDEP(SL))
 		 	 !95% OF TOTAL ROOT MASS IS THE LAYER OF EFFECTIVE ROOTING LAYER
 !			 tmpV3 = tmpf2(i)*srootl/100.0    !in cm/m3 within 1 cm layer
@@ -639,7 +625,7 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 		 TMPV3 = TMPV3 + RRCC(I)*DELT + ROOTC(I)
 	 ENDDO
 	 IF(TMPV3.GT.0.0) THEN
-		 ROOTNC = TMPV2/TMPV3	!kg N kg-1 ROOT DM
+             ROOTNC = max(0.0,TMPV2/TMPV3)      !kg N kg-1 ROOT DM
 	 ELSE
 		 ROOTNC = 0.008
 	 ENDIF
@@ -650,5 +636,5 @@ SUBROUTINE ROOTG(CROPSTA,DVS, DELT, LROOTC, LROOTN, PLANTMOD)
 
 	 enddo
 	deallocate (tmpf2)
-2000	NROOTC=0.0; NROOTN=0.0; LROOTC =0.0; LROOTN = 0.0		
+2000      LROOTC =0.0; LROOTN = 0.0            
 	END SUBROUTINE

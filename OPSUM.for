@@ -488,8 +488,8 @@ C-------------------------------------------------------------------
      &'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..............')
 
           WRITE (NOUTDS,400)
-  400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL    ',
-     &    'TNAM                      FNAM     WSTA.... SOIL_ID...  ',
+  400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL... ',
+     &    'TNAM..................... FNAM.... WSTA.... SOIL_ID...  ',
      &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
      &    '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
      &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
