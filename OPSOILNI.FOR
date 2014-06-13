@@ -150,7 +150,7 @@ C-----------------------------------------------------------------------
           WRITE (NOUTDN,115, advance='no')
   115     FORMAT('NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM')
           IF (N_LYR < 10) THEN
-            WRITE (NOUTDN,125, ADVANCE='NO')
+            WRITE (NOUTDN,125)
      &        ('NRF',L,'D',L=1,N_LYR), 
      &        ('DEN',L,'D',L=1,N_LYR),
      &        ('N2O',L,'D',L=1,N_LYR), !PG
