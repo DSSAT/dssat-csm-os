@@ -13,7 +13,8 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE Denit_DayCent (DYNAMIC, ISWNIT, 
-     &    BD, DUL, KG2PPM, newCO2, NO3, SAT, SW,      !Input
+     &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
+     &    SAT, SW,                                    !Input
      &    DENITRIF, DLTSNO3, n2oflux, WFPS)           !Output
 
 !-----------------------------------------------------------------------
@@ -65,9 +66,25 @@ C=======================================================================
         TNOX   = 0.0    !denitrification
         TN2O   = 0.0    ! N2O added        PG
 
-        POROS(L)  = 1.0 - BD(L) / 2.65
-        wfps(L) = sw(L) / poros(L)
-        wfps_fc(L) = dul(L) / poros(L)
+        DO L = 1, NLAYR
+          POROS(L)  = 1.0 - BD(L) / 2.65
+          wfps_fc(L) = dul(L) / poros(L)
+          wfps(L) = sw(L) / poros(L)
+        ENDDO
+
+!     Temporary function for diffusivity - set to constant for now
+!     dD0_fc will need to be an array when this function is fully implemented
+!     dD0_fc = f(dul, bd, wfps_fc)
+      call DayCent_diffusivity(dD0_fc)     
+
+!     Compute the Nitrate effect on Denitrification
+!     Changed NO3 effect on denitrification based on paper  "General model for N2O and N2 gas emissions from soils due to denitrification"
+!     Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
+      A(1) = 9.23
+      A(2) = 1.556
+      A(3) = 76.91
+      A(4) = 0.00222
+
 
       open (unit=9,file='output.dat', status='unknown')
       write (9,*)' doy  L    sw     bd     poros    wfps   wfpsfc  wfpst
@@ -89,12 +106,14 @@ C=======================================================================
       TN2OD = 0.0     ! PG
 
       DO L = 1, NLAYR
+        wfps(L) = sw(L) / poros(L)
+
 !       following code is Rolston pdf document
         RWC = SW(L)/SAT(L)                                  
         if (RWC .GE. 0.8 .AND. RWC. LE .0.9) then
-            WFDENIT = RWC * 2 - 1.6
+            WFDENIT = RWC * 2. - 1.6
         elseif (RWC .GT. 0.9 .AND. RWC .LE. 1.0) then
-            WFDENIT = RWC * 8 -7
+            WFDENIT = RWC * 8. -7.
         else
             WFDENIT = 0.0
         endif    
@@ -103,17 +122,7 @@ C=======================================================================
         
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
 !     Daycent denitrification routines PG 17/5/13      
-        
-      
-C      call diffusivity(dD0_fc, dul, bd, wfps_fc)
-C      diffusivity is a piece of Daycent code which has not been invoked in DSSAT
-C      the variable dDO_fc is manually calculated for the moment
-      
-C      dD0_fc = 0.10    ! 0.10 for KT, fixed value since diffusivity routine is not working
-C      dD0_fc = 0.16    ! 0.16 for KY, fixed value since diffusivity routine is not working
-C      dD0_fc = 0.11    ! 0.11 for Canada (use KT), fixed value since diffusivity routine is not working
-       dD0_fc = 0.21    ! 0.21 for India, fixed value since diffusivity routine is not working
-C      dD0_fc = 0.09    ! 0.09 for France (use KT), fixed value since diffusivity routine is not working
+
       
       CO2ppm(L) = newCO2(L)*kg2ppm(L)  !CO2ppm is labile C which is derivation of CO2 produced on any day
       
@@ -135,20 +144,11 @@ C      dD0_fc = 0.09    ! 0.09 for France (use KT), fixed value since diffusivit
          co2_correct(L)=co2PPM(L)*(1.0+a_coeff*(wfps(L)-WFPS_thres))   !the amount labile C is adjusted taking into account diffusion
       endif  
   
-!     Compute the Nitrate effect on Denitrification
-!     Changed NO3 effect on denitrification based on paper  "General model for N2O and N2 gas emissions from soils due to denitrification"
-!     Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
-        
-      A(1) = 9.23
-      A(2) = 1.556
-      A(3) = 76.91
-      A(4) = 0.00222
-
-      fDno3 = (A(2) + (A(3)/PI) * atan(PI*A(4)*(no3(L)-A(1))))  !daycent NO3 factor
 
 !     Compute the Carbon Dioxide effect on Denitrification fDco2, ppm N
 !     Changed CO2 effect on denitrification based on paper "General model for N2O and N2 gas emissions from  soils due to denitrification"
 !     Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
+      fDno3 = (A(2) + (A(3)/PI) * atan(PI*A(4)*(no3(L)-A(1))))  !daycent NO3 factor
 
       fDco2 = 0.1 * co2_correct(L)**1.27    !daycent labile C factor
 
@@ -285,6 +285,37 @@ C-----------------------------------------------------------------------
   
       RETURN
       END SUBROUTINE Denit_DayCent
+
+!=======================================================================
+
+
+!=======================================================================
+!  DayCent_diffusivity, Subroutine
+!
+!  diffusivity is a piece of Daycent code which has not been invoked in DSSAT
+!
+!-----------------------------------------------------------------------
+!  Revision history
+!  06/12/2014 PG / CHP Written
+!-----------------------------------------------------------------------
+!  Called : SOIL
+!  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
+!           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
+!=======================================================================
+      subroutine DayCent_diffusivity(dD0_fc)      
+!      the variable dDO_fc is manually calculated for the moment
+
+      real dD0_fc
+      
+!      dD0_fc = 0.10    ! 0.10 for KT, fixed value since diffusivity routine is not working
+!      dD0_fc = 0.16    ! 0.16 for KY, fixed value since diffusivity routine is not working
+!      dD0_fc = 0.11    ! 0.11 for Canada (use KT), fixed value since diffusivity routine is not working
+       dD0_fc = 0.21    ! 0.21 for India, fixed value since diffusivity routine is not working
+!      dD0_fc = 0.09    ! 0.09 for France (use KT), fixed value since diffusivity routine is not working
+
+      end subroutine DayCent_diffusivity
+!=======================================================================
+
 
 !=======================================================================
 ! Denit_DayCent Variables 

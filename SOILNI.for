@@ -248,6 +248,21 @@ C=======================================================================
 
         LFD10 = CONTROL % YRSIM
 
+        SELECT CASE(MEGHG)
+        CASE("1","2")
+          CALL Denit_DayCent (DYNAMIC, ISWNIT, 
+     &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
+     &    SAT, SW,                                    !Input
+     &    DENITRIF, DLTSNO3, n2oflux, WFPS)           !Output
+
+        CASE DEFAULT
+          CALL Denit_Ceres (DYNAMIC, ISWNIT, 
+     &    DUL, FLOOD, KG2PPM, LITC, NO3, SAT, SSOMC,  !Input
+     &    SNO3, ST, SW,                               !Input
+     &    DLTSNO3,                                    !I/O
+     &    DENITRIF, TNOX, TN2O)                       !Output
+        END SELECT
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE CALCULATIONS 
@@ -580,8 +595,9 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1","2")
           CALL Denit_DayCent (DYNAMIC, ISWNIT, 
-     &      BD, DUL, KG2PPM, newCO2, NO3, SAT, SW,    !Input
-     &      DENITRIF, DLTSNO3, n2oflux, WFPS)         !Output
+     &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
+     &    SAT, SW,                                    !Input
+     &    DENITRIF, DLTSNO3, n2oflux, WFPS)           !Output
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
