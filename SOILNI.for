@@ -250,10 +250,12 @@ C=======================================================================
 
         SELECT CASE(MEGHG)
         CASE("1","2")
-          CALL Denit_DayCent (DYNAMIC, ISWNIT, 
+          CALL Denit_DayCent (CONTROL, ISWNIT, 
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
-     &    SAT, SW,                                    !Input
-     &    DENITRIF, DLTSNO3, n2oflux, WFPS)           !Output
+     &    SNO3, SW,                                   !Input
+     &    DENITRIF, DLTSNO3, n2oflux, WFPS,           !Output
+!         Temp input for Output.dat file:
+     &    NITRIF, ARNTRF, n2onitrif)
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
@@ -594,10 +596,12 @@ C=======================================================================
 
         SELECT CASE(MEGHG)
         CASE("1","2")
-          CALL Denit_DayCent (DYNAMIC, ISWNIT, 
+          CALL Denit_DayCent (CONTROL, ISWNIT, 
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
-     &    SAT, SW,                                    !Input
-     &    DENITRIF, DLTSNO3, n2oflux, WFPS)           !Output
+     &    SNO3, SW,                                   !Input
+     &    DENITRIF, DLTSNO3, n2oflux, WFPS,           !Output
+!         Temp input for Output.dat file:
+     &    NITRIF, ARNTRF, n2onitrif)
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 

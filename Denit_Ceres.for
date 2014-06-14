@@ -35,6 +35,7 @@ C=======================================================================
 
       REAL DLAG(NL), DLTSNO3(NL), DUL(NL), KG2PPM(NL) 
       REAL NO3(NL), SAT(NL), SNO3(NL), SW(NL)
+      REAL N2O(NL), N2(NL), TN, TN2, TN2D
 
 !***********************************************************************
 !***********************************************************************
@@ -46,6 +47,9 @@ C=======================================================================
 !       Seasonal cumulative vaules
         TNOX   = 0.0    !denitrification
         TN2O   = 0.0    ! N2O added        PG
+        TN     = 0.0
+        TN2    = 0.0
+        TN2D   = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -188,11 +192,26 @@ C         If flooded, lose all nitrate --------REVISED-US
 !chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
           DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Calculation of N2O based on ratio (N2O/total denit) determined from original DayCent dataset of DelGrosso (PG)
+! assuming denitrif = N2O + N2O
+
+        N2O(L) = NO3(L)/(NO3(L)+30.)*DENITRIF(L)   ! PG
+        N2(L) = DENITRIF(L) - N2O(L)             ! PG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
+
 !         Reduce soil NO3 by the amount denitrified and add this to
 !         the NOx pool
           DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
           TNOX       = TNOX       + DENITRIF(L)
           TNOXD      = TNOXD      + DENITRIF(L)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          TN2O = TN2O + N2O(L)               ! PG
+          TN2OD = TN2OD + N2O(L)         ! PG
+          TN2 = TN2 +N2(L)                          ! PG
+          TN2D = TN2D + N2(L)                   ! PG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         ELSE
 !         IF SW, ST OR NO3 FALL BELOW CRITICAL IN ANY LAYER RESET LAG EFFECT.

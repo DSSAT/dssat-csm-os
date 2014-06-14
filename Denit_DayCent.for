@@ -12,10 +12,12 @@ C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
 C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
-      SUBROUTINE Denit_DayCent (DYNAMIC, ISWNIT, 
+      SUBROUTINE Denit_DayCent (CONTROL, ISWNIT, 
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
-     &    SAT, SW,                                    !Input
-     &    DENITRIF, DLTSNO3, n2oflux, WFPS)           !Output
+     &    SNO3, SW,                                   !Input
+     &    DENITRIF, DLTSNO3, n2oflux, WFPS,           !Output
+!         Temp input for Output.dat file:
+     &    NITRIF, ARNTRF, n2onitrif)
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -27,19 +29,15 @@ C=======================================================================
 
 !      LOGICAL IUON
 
-      INTEGER DOY, DYNAMIC, L
+      INTEGER DOY, DYNAMIC, L, YEAR, YRDOY
       INTEGER NLAYR
-      !INTEGER NSOURCE, YEAR, YRDOY   
 
-      REAL ARNTRF, FLOOD, TNOX, TNOXD, XMIN
-      REAL WFDENIT
-      REAL DENITRIF(NL), NITRIF(NL), SNO3_AVAIL
+      REAL FLOOD, TNOX, TNOXD, WFDENIT, XMIN
+      REAL DENITRIF(NL), SNO3_AVAIL
 
       REAL DLTSNO3(NL)   
-      REAL BD(NL), DUL(NL)
-      REAL KG2PPM(NL) 
-      REAL NO3(NL), SAT(NL)
-      REAL SNO3(NL), SW(NL)
+      REAL BD(NL), DUL(NL), KG2PPM(NL) 
+      REAL NO3(NL), SNO3(NL), SW(NL)
       
 !!!!! daycent variables  PG
       
@@ -51,9 +49,16 @@ C=======================================================================
       REAL m, fNo3fCo2
       REAL TN2OD, TN2O
       REAL newCO2(nl)
-      REAL n2onitrif(nl)  !pn2onitrif, 
       real A(4)
-      real RWC
+!     real RWC
+
+!     Temp variables for Output.dat file:
+      REAL NITRIF(NL), ARNTRF, n2onitrif(NL)
+
+      TYPE (ControlType) CONTROL
+      DYNAMIC = CONTROL % DYNAMIC
+      YRDOY   = CONTROL % YRDOY
+      CALL YR_DOY(YRDOY, YEAR, DOY)
 
 !***********************************************************************
 !***********************************************************************
@@ -85,11 +90,10 @@ C=======================================================================
       A(3) = 76.91
       A(4) = 0.00222
 
-
       open (unit=9,file='output.dat', status='unknown')
-      write (9,*)' doy  L    sw     bd     poros    wfps   wfpsfc  wfpst
-     &h   CO2_cor newCO2  CO2ppm a_coef denit   n2oflux  nitrif    arntr
-     &f   n2onit   totn2o'
+      write (9,'(A)')' doy  L    sw     bd     poros    wfps   wfpsfc  w
+     &fpsth   CO2_cor newCO2  CO2ppm a_coef denit   n2oflux  nitrif    a
+     &rntrf   n2onit   totn2o'
 
 !***********************************************************************
 !***********************************************************************
@@ -200,7 +204,7 @@ C Convert total dentrification, N2O and N2 to kg/ha/d from ppm
       n2oflux(L) = n2ofluxppm(L)/kg2ppm(L)
       n2flux(L) = denitrif(L) - n2oflux(L)
       
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 !         Denitrification rate
 C-UPS     Corrected per e-mail 03/29/00
 !         DLAG REMOVED REVISED-US 4/20/2004
@@ -308,9 +312,9 @@ C-----------------------------------------------------------------------
       real dD0_fc
       
 !      dD0_fc = 0.10    ! 0.10 for KT, fixed value since diffusivity routine is not working
-!      dD0_fc = 0.16    ! 0.16 for KY, fixed value since diffusivity routine is not working
+       dD0_fc = 0.16    ! 0.16 for KY, fixed value since diffusivity routine is not working
 !      dD0_fc = 0.11    ! 0.11 for Canada (use KT), fixed value since diffusivity routine is not working
-       dD0_fc = 0.21    ! 0.21 for India, fixed value since diffusivity routine is not working
+!      dD0_fc = 0.21    ! 0.21 for India, fixed value since diffusivity routine is not working
 !      dD0_fc = 0.09    ! 0.09 for France (use KT), fixed value since diffusivity routine is not working
 
       end subroutine DayCent_diffusivity
