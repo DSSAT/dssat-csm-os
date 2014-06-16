@@ -63,7 +63,7 @@ C=======================================================================
      &    NH4, NO3, UPPM)                                 !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs 
+      USE N2O_mod 
       USE ModuleData
       USE FloodModule
       USE ModSoilMix
@@ -118,6 +118,7 @@ C=======================================================================
       REAL BD1
       REAL TOTAML, TOTFLOODN
 
+      TYPE (N2O_type)    N2O_DATA
 !          Cumul      Daily     Layer
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
       REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
@@ -259,15 +260,19 @@ C=======================================================================
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
      &    SNO3, SW,                                   !Input
      &    DLTSNO3,                                    !I/O
-     &    N2O_DATA)                                   !Output
+     &    CNOX, TNOXD, N2O_data,                      !Output
+!         Temp input for Output.dat file:
+     &    NITRIF, TNITRIFY, n2onitrif)                !Temp
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
      &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
-     &    N2O_DATA)                                   !Output
+     &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
+
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 
 !***********************************************************************
 !***********************************************************************
@@ -603,7 +608,7 @@ C=======================================================================
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
      &    SNO3, SW,                                   !Input
      &    DLTSNO3,                                    !I/O
-     &    DENITRIF, n2oflux, WFPS,                    !Output
+     &    CNOX, TNOXD, N2O_data,                      !Output
 !         Temp input for Output.dat file:
      &    NITRIF, TNITRIFY, n2onitrif)                !Temp
 
@@ -612,7 +617,7 @@ C=======================================================================
      &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
-     &    DENITRIF, CNOX, TN2O)                       !Output
+     &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
       ENDIF
 
@@ -720,6 +725,10 @@ C=======================================================================
       CNITRIFY = CNITRIFY + TNITRIFY
       CNUPTAKE = WTNUP * 10.
 
+      N2O_data % CNITRIFY = CNITRIFY
+      N2O_data % TNITRIFY = TNITRIFY
+      N2O_data % NITRIF   = NITRIF
+
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
@@ -758,6 +767,8 @@ C     Write daily output
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
      &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 
 C***********************************************************************
 C***********************************************************************

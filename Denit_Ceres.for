@@ -16,7 +16,7 @@ C=======================================================================
      &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data,                      !Output
+     &    CNOX, TNOXD, N2O_data)                      !Output
 
 !-----------------------------------------------------------------------
       USE N2O_mod 
@@ -36,6 +36,7 @@ C=======================================================================
       REAL DLAG(NL), DLTSNO3(NL), DUL(NL), KG2PPM(NL) 
       REAL NO3(NL), SAT(NL), SNO3(NL), SW(NL)
 
+      TYPE (N2O_type)    N2O_DATA
 !          Cumul      Daily     Layer
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
       REAL CN2,       TN2D,     n2flux(nl)    !N2
@@ -224,9 +225,17 @@ C         If flooded, lose all nitrate --------REVISED-US
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
       ENDIF
+!-----------------------------------------------------------------------
+      N2O_data % CN2      = CN2
+      N2O_data % CN2O     = CN2O
+      N2O_data % CNOX     = CNOX
+      N2O_data % TN2D     = TN2D
+      N2O_data % TN2OD    = TN2OD
+      N2O_data % TNOXD    = TNOXD
+      N2O_data % DENITRIF = DENITRIF
+      N2O_data % N2OFLUX  = N2OFLUX
+      N2O_data % N2FLUX   = N2FLUX
 
-C-----------------------------------------------------------------------
-  
       RETURN
       END SUBROUTINE Denit_Ceres
 

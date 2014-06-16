@@ -28,8 +28,6 @@ C=======================================================================
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWNIT
 
-!      LOGICAL IUON
-
       INTEGER DOY, DYNAMIC, L, YEAR, YRDOY
       INTEGER NLAYR
 
@@ -51,6 +49,7 @@ C=======================================================================
       real A(4)
 !     real RWC
 
+      TYPE (N2O_type) N2O_DATA
 !          Cumul      Daily     Layer
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
       REAL CN2,       TN2D,     n2flux(nl)    !N2
@@ -279,9 +278,17 @@ C it also includes some diagnostics
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
       ENDIF
+!-----------------------------------------------------------------------
+      N2O_data % CN2      = CN2
+      N2O_data % CN2O     = CN2O
+      N2O_data % CNOX     = CNOX
+      N2O_data % TN2D     = TN2D
+      N2O_data % TN2OD    = TN2OD
+      N2O_data % TNOXD    = TNOXD
+      N2O_data % DENITRIF = DENITRIF
+      N2O_data % N2OFLUX  = N2OFLUX
+      N2O_data % N2FLUX   = N2FLUX
 
-C-----------------------------------------------------------------------
-  
       RETURN
       END SUBROUTINE Denit_DayCent
 

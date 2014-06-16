@@ -9,7 +9,8 @@ C  06/15/2014 CHP Written
 
 !     Data construct for control variables
       TYPE N2O_type
-        REAL TN2, TN2D, TN2O, TN2OD, TNOX, TNOXD, TNITRIFY
+        REAL CN2,  CN2O,  CNOX,  CNITRIFY
+        REAL TN2D, TN2OD, TNOXD, TNITRIFY
         REAL, DIMENSION(NL) :: DENITRIF, N2OFLUX, N2ONITIRF, N2FLUX, 
      &     NITRIF, WFPS 
       END TYPE N2O_type
@@ -37,11 +38,10 @@ C  06/15/2014 CHP Written
 
       CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
       CHARACTER*10, PARAMETER :: OUTSN2O = 'N2O.OUT'
-      CHARACTER*50 FRMT
+      CHARACTER*150 FRMT
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, I, INCDAT, L, REPNO
       INTEGER N_LYR, NOUTDN, RUN, YEAR, YRDOY, SPACES
-      INTEGER NAPFER(NELEM)
 
 !          Cumul      Daily     Layer         
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
@@ -50,31 +50,39 @@ C  06/15/2014 CHP Written
       REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
 
 !     Temp variables for Output.dat file:
-      REAL TNH4, TNH4NO3, TNO3
-      REAL NO3(NL), NH4(NL)
+!      REAL TNH4, TNH4NO3, TNO3
+!      REAL NO3(NL), NH4(NL)
 
-      REAL TNITRIFYD
-      REAL, DIMENSION(NL) :: N2ONITIRF, WFPS 
+!      REAL TNITRIFYD
+!      REAL, DIMENSION(NL) :: N2ONITIRF, WFPS 
 
       LOGICAL FEXIST
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
-      DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
-      FROP    = CONTROL % FROP
-      RNMODE  = CONTROL % RNMODE
-      REPNO   = CONTROL % REPNO
-      RUN     = CONTROL % RUN
-      YRDOY   = CONTROL % YRDOY
 
       IDETN  = ISWITCH % IDETN
       ISWWAT = ISWITCH % ISWWAT
       ISWNIT = ISWITCH % ISWNIT
 
-      IF (ISWWAT .EQ. 'N' .OR. ISWNIT .EQ. 'N') THEN
-        RETURN
-      ENDIF
+      IF (ISWWAT == 'N' .OR. ISWNIT == 'N') RETURN
+
+      DAS     = CONTROL % DAS
+      YRDOY   = CONTROL % YRDOY
+
+      CNOX     = N2O_data % CNOX      
+      TNOXD    = N2O_data % TNOXD     
+      DENITRIF = N2O_data % DENITRIF   
+      CN2      = N2O_data % CN2      
+      TN2D     = N2O_data % TN2D       
+      n2flux   = N2O_data % n2flux   
+      CN2O     = N2O_data % CN2O        
+      TN2OD    = N2O_data % TN2OD     
+      n2oflux  = N2O_data % n2oflux  
+      CNITRIFY = N2O_data % CNITRIFY     
+      TNITRIFY = N2O_data % TNITRIFY 
+      NITRIF   = N2O_data % NITRIF    
 
 !***********************************************************************
 !***********************************************************************
@@ -85,6 +93,12 @@ C-----------------------------------------------------------------------
 C     Variable heading for SoilN.OUT
 C-----------------------------------------------------------------------
       IF (IDETN .EQ. 'Y') THEN
+
+        FROP    = CONTROL % FROP
+        RNMODE  = CONTROL % RNMODE
+        REPNO   = CONTROL % REPNO
+        RUN     = CONTROL % RUN
+
         CALL GETLUN(OUTSN2O, NOUTDN)
         INQUIRE (FILE = OUTSN2O, EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -106,55 +120,61 @@ C-----------------------------------------------------------------------
           ENDIF
 
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
-          WRITE(NOUTDN,'(A1,T62,A)',ADVANCE='NO') 
-     &        "!","NO3 (ppm) by soil depth (cm):"
-          SPACES = N_LYR * 8 - 29
-          WRITE(FRMT,'(A,I2,A)')
-     &     '(',SPACES,'X,"NH4 (ppm) by soil depth (cm):")'
-          WRITE(NOUTDN,FRMT)
-          WRITE(NOUTDN,'("!",T57,20A8)')
-     &        (SoilProp%LayerText(L),L=1,N_LYR), 
-     &        (SoilProp%LayerText(L),L=1,N_LYR)
 
+          SPACES = 85
+          WRITE(FRMT,'(A,I2.2,A)')
+     &    '("!",T',SPACES,
+     &    '"Denitrification (g[N]/ha) by soil depth (cm):")'
+          WRITE(NOUTDN,FRMT, ADVANCE='NO') 
+
+          SPACES = SPACES + N_LYR * 8
+!          WRITE(FRMT,'(A,I3.3,A)')
+!     &    '(T',SPACES,',"Nitrification (g[N]/ha) by soil depth (cm):")'
+!         WRITE(NOUTDN,FRMT,ADVANCE='NO')
+          WRITE(NOUTDN,'(T165,A)',ADVANCE='NO') 
+     &       "Nitrification (g[N]/ha) by soil depth (cm):"
+
+          SPACES = SPACES + N_LYR * 8
+          WRITE(FRMT,'(A,I3.3,A)')
+     &    '(T',SPACES,',"N2O flux (g[N]/ha) by soil depth (cm):")'
+          WRITE(NOUTDN,FRMT,ADVANCE='NO')
+
+          SPACES = SPACES + N_LYR * 8
+          WRITE(FRMT,'(A,I3.3,A)')
+     &    '(T',SPACES,',"N2 flux (g[N]/ha) by soil depth (cm):")'
+          WRITE(NOUTDN,FRMT)
+
+          WRITE(NOUTDN,'("!",T80,40A8)')
+     &        (SoilProp%LayerText(L),L=1,N_LYR),
+     &        (SoilProp%LayerText(L),L=1,N_LYR),
+     &        (SoilProp%LayerText(L),L=1,N_LYR),
+     &        (SoilProp%LayerText(L),L=1,N_LYR) 
+
+          WRITE(NOUTDN,"(A)",ADVANCE='NO') 
+     & "@YEAR DOY   DAS    NDNC    NITC   N2OFC   N2FLC    NDND" //
+     & "   NITRD   N2OFD   N2FLD"
           IF (N_LYR < 10) THEN
-            WRITE (NOUTDN,105, ADVANCE='NO')
-     &        ('NI',L,'D',L=1,N_LYR), 
-     &        ('NH',L,'D',L=1,N_LYR) 
-  105       FORMAT(20("    ",A2,I1,A1))
+            WRITE (NOUTDN,105)
+     &        ('NDN',L,'D',L=1,N_LYR), 
+     &        ('NIT',L,'D',L=1,N_LYR),
+     &        ('N2O',L,'D',L=1,N_LYR), 
+     &        ('N2F',L,'D',L=1,N_LYR) 
+  105       FORMAT(40("    ",A2,I1,A1))
           ELSE
-            WRITE (NOUTDN,110, ADVANCE='NO')
-     &        ('NI',L,'D',L=1,9),'    NI10', 
-     &        ('NH',L,'D',L=1,9),'    NH10'
-  110       FORMAT(2(9("    ",A2,I1,A1),A8),"    ")
+            WRITE (NOUTDN,110)
+     &        ('NDN',L,'D',L=1,9),'   NDN10', 
+     &        ('NIT',L,'D',L=1,9),'   NIT10',
+     &        ('N2O',L,'D',L=1,9),'   N2O10', 
+     &        ('N2F',L,'D',L=1,9),'   N2F10'
+  110       FORMAT(4(9("    ",A2,I1,A1),A8),"   ")
           ENDIF
-! PG
-!          WRITE (NOUTDN,115)
-!  115     FORMAT('NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM')
-! new section included for daily outputs of nitrification and denitrification, N2O and wfps
-          WRITE (NOUTDN,115, advance='no')
-  115     FORMAT('NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM')
-          IF (N_LYR < 10) THEN
-            WRITE (NOUTDN,125)
-     &        ('NRF',L,'D',L=1,N_LYR), 
-     &        ('DEN',L,'D',L=1,N_LYR),
-     &        ('N2O',L,'D',L=1,N_LYR), !PG
-     &        ('WFP',L,'D',L=1,N_LYR)
-  125       FORMAT(40("    ",A2,I1,A1))
-          ELSE
-            WRITE (NOUTDN,135)
-     &        ('NRF',L,'D',L=1,9),'   NRF10', 
-     &        ('DEN',L,'D',L=1,9),'   DEN10',
-     &        ('N2O',L,'D',L=1,9),'   N2O10', !PG
-     &        ('WFP',L,'D',L=1,9),'   WFP10'
-  135       FORMAT(4(9("    ",A2,I1,A1),A8),"    ")
-          ENDIF
-! PG
+
           CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
-          WRITE (NOUTDN,310) YEAR, DOY, DAS, 0, 
-     &       0, 0.0, TNH4NO3, TNO3, TNH4, 
-     &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
-     &       0.0, (nitrif(i),i=1,n_lyr), (denitrif(i),i=1,n_lyr), ! added by PG
-     &       (n2oflux(i), i=1, n_lyr), (wfps(i), i=1,n_lyr)       ! added by PG
+          WRITE (NOUTDN,310) YEAR, DOY, DAS, 
+     &       CNOX, CNITRIFY, CN2O, CN2,
+     &       TNOXD, TNITRIFY, TN2OD, TN2D,
+     &       (DENITRIF(I),I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
+     &       (n2oflux(i), i=1, n_lyr), (N2FLUX(i), i=1,n_lyr)
         ENDIF
       ENDIF
 
@@ -169,12 +189,11 @@ C-----------------------------------------------------------------------
 
         IF (IDETN .EQ. 'Y') THEN
           WRITE (NOUTDN,310) YEAR, DOY, DAS, 
-     &       TNOXD,
-     &       (nitrif(i),i=1,n_lyr), (denitrif(i),i=1,n_lyr), ! added by PG
-     &       (n2oflux(i), i=1,n_lyr), (n2flux(i), i=1,n_lyr), 
-     &       (wfps(i),i=1,n_lyr)     ! added by PG
-  310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,F7.1,1X,F6.1,2F7.1,
-     &       20(F8.2), 47(F8.2))
+     &       CNOX, CNITRIFY, CN2O, CN2,
+     &       TNOXD, TNITRIFY, TN2OD, TN2D,
+     &       (DENITRIF(I),I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
+     &       (n2oflux(i), i=1, n_lyr), (N2FLUX(i), i=1,n_lyr)
+  310     FORMAT(1X,I4,1X,I3.3,I6,48F8.2)
         ENDIF
       ENDIF
 
@@ -185,7 +204,7 @@ C-----------------------------------------------------------------------
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
       !Close daily output files.
-      IF (IDETN .EQ. 'Y') CLOSE(NOUTDN)
+      CLOSE(NOUTDN)
 
 !***********************************************************************
 !***********************************************************************
