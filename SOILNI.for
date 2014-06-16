@@ -79,15 +79,14 @@ C=======================================================================
       INTEGER NSOURCE, YEAR, YRDOY   
 
       REAL AD, AK, ALGFIX 
-      REAL NFAC, NITRIF(NL), NNOM   ! nitrif now (NL) PG
+      REAL NFAC, NNOM   
       REAL SNH4_AVAIL, SNO3_AVAIL, SUMFERT
       REAL SWEF, TFUREA
-      REAL TMINERN, TIMMOBN, TLCH, TLCHD
-      REAL TNH4, TNH4NO3, TNO3, TNOX, UHYDR, TNOXD
+      REAL TNH4, TNH4NO3, TNO3, UHYDR
       REAL WFSOM, WFUREA, XL, XMIN
-      REAL WTNUP, TNITRIFY, TUREA
+      REAL TUREA
       
-      REAL ADCOEF(NL), BD(NL), DENITRIF(NL), DLAYR(NL) 
+      REAL ADCOEF(NL), BD(NL), DLAYR(NL) 
       REAL DLTSNH4(NL), DLTSNO3(NL), DLTUREA(NL), DRN(NL), DUL(NL)
       REAL UPFLOW(NL)
       REAL KG2PPM(NL), LITC(0:NL), LL(NL) 
@@ -119,10 +118,14 @@ C=======================================================================
       REAL BD1
       REAL TOTAML, TOTFLOODN
 
-      REAL CNITRIFY           !Cumulative Nitrification 
-      REAL CMINERN, CIMMOBN   !Cumul. mineralization, immobilization
-      REAL CNETMINRN          !Cumul. net mineralization
-      REAL CNUPTAKE
+!          Cumul      Daily     Layer
+      REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
+      REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
+      REAL CMINERN,   TMINERN                 !Mineralization
+      REAL CIMMOBN,   TIMMOBN                 !Immobilization
+      REAL CNETMINRN                          !Net mineralization
+      REAL CNUPTAKE,  WTNUP                   !N uptake
+      REAL CLeach,    TLeachD                 !N leaching
 
 !     Added for tile drainage:
       REAL TDFC
@@ -184,6 +187,8 @@ C=======================================================================
         TMINERN  = 0.0  !mineralization
         TIMMOBN  = 0.0  !immobilization
         TNITRIFY = 0.0  !nitrification
+        TNOXD    = 0.0  !denitrification
+        TLeachD  = 0.0  !leaching
 
         !*** temp debugging chp
         TNOM = 0.0
@@ -194,10 +199,10 @@ C=======================================================================
         CNETMINRN= 0.0  !net mineralization
         CNITRIFY = 0.0  !nitrification
         CNUPTAKE = 0.0  !cumulative N uptake
-        TNOX   = 0.0    !denitrification
-        TN2O    = 0.0   ! N2O added        PG
-        TLCH   = 0.0    !leaching
-        WTNUP  = 0.0    !N uptake
+        CNOX     = 0.0  !denitrification
+        TN2O     = 0.0  ! N2O added        PG
+        CLeach   = 0.0  !leaching
+        WTNUP    = 0.0  !N uptake
 
         nitrif = 0.0
         denitrif = 0.0
@@ -253,16 +258,15 @@ C=======================================================================
           CALL Denit_DayCent (CONTROL, ISWNIT, 
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
      &    SNO3, SW,                                   !Input
-     &    DENITRIF, DLTSNO3, n2oflux, WFPS,           !Output
-!         Temp input for Output.dat file:
-     &    NITRIF, ARNTRF, n2onitrif)
+     &    DLTSNO3,                                    !I/O
+     &    N2O_DATA)                                   !Output
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
      &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
-     &    DENITRIF, TNOX, TN2O)                       !Output
+     &    N2O_DATA)                                   !Output
         END SELECT
 
 !***********************************************************************
@@ -373,12 +377,13 @@ C=======================================================================
 !     ------------------------------------------------------------------
 !     Loop through soil layers for rate calculations
 !     ------------------------------------------------------------------
-      NNOM = 0.0
+      NNOM     = 0.0
       TMINERN  = 0.0
       TIMMOBN  = 0.0
       TNITRIFY = 0.0
-      TNOXD = 0.0
-      TN2OD = 0.0     ! PG
+      TN2OD    = 0.0  ! PG
+      TNOXD    = 0.0  !denitrification
+      TLeachD  = 0.0  !leaching
 
  
       DO L = 1, NLAYR
@@ -585,8 +590,6 @@ C=======================================================================
 
       END DO   !End of soil layer loop.
 
-      CALL PUT('NITR','TNOXD',ARNTRF) 
-
 !-----------------------------------------------------------------------
 !       Denitrification section
 !-----------------------------------------------------------------------
@@ -599,41 +602,42 @@ C=======================================================================
           CALL Denit_DayCent (CONTROL, ISWNIT, 
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
      &    SNO3, SW,                                   !Input
-     &    DENITRIF, DLTSNO3, n2oflux, WFPS,           !Output
+     &    DLTSNO3,                                    !I/O
+     &    DENITRIF, n2oflux, WFPS,                    !Output
 !         Temp input for Output.dat file:
-     &    NITRIF, ARNTRF, n2onitrif)
+     &    NITRIF, TNITRIFY, n2onitrif)                !Temp
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
      &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
-     &    DENITRIF, TNOX, TN2O)                       !Output
+     &    DENITRIF, CNOX, TN2O)                       !Output
         END SELECT
       ENDIF
 
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.
 !     ------------------------------------------------------------------
-      TLCHD = 0.0
+      TLeachD = 0.0
 
       IF (IUON) THEN
         NSOURCE = 1    !Urea.
         CALL NFLUX ( 
      &    ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,     !Input
      &    UREA, NSOURCE, SW, TDFC, TDLNO,                 !Input
-     &    DLTUREA, TLCH, TLCHD)                           !Output
+     &    DLTUREA, CLeach, TLeachD)                           !Output
       ENDIF
 
       NSOURCE = 2   !NO3.
       CALL NFLUX ( 
      &  ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &  SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
-     &  DLTSNO3, TLCH, TLCHD)                             !Output
+     &  DLTSNO3, CLeach, TLeachD)                             !Output
 
-      CALL PUT('NITR','TNOXD',ARNTRF) 
+      CALL PUT('NITR','TNOXD',TNOXD) 
       CALL PUT('NITR','TN2OD',TN2OD)
-      CALL PUT('NITR','TLCHD',TLCHD)
+      CALL PUT('NITR','TLCHD',TLeachD)
 
 !***********************************************************************
 !***********************************************************************
@@ -718,13 +722,13 @@ C=======================================================================
 
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
-     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, TLCH,  
-     &    TNH4, TNO3, TNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
+     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3,  
-     &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TN2O, TOTAML,
+     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TN2O, TOTAML,
      &    NITRIF, DENITRIF, n2oflux, WFPS) ! added by PG
       ENDIF
 
@@ -740,7 +744,7 @@ C     Write daily output
       CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TOTAML, TN2O,
+     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML, TN2O,
      &    NITRIF, DENITRIF, n2oflux, WFPS) ! n2oflux added by PG
 
       IF (NBUND > 0) THEN
@@ -752,8 +756,8 @@ C     Write daily output
       ENDIF
 
       CALL SoilNiBal (CONTROL, ISWITCH,
-     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, TLCH,  
-     &    TNH4, TNO3, TNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
+     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
 
 C***********************************************************************
 C***********************************************************************
@@ -889,7 +893,7 @@ C-----------------------------------------------------------------------
 ! TIMMOBILIZE   Cumulative N immoblized (kg [N] / ha)
 ! TKELVIN       Soil temperature (oK)
 ! TLAG          Temperature factor for nitrification (0-1) 
-! TLCH          Total N leached from soil (kg [N] / ha)
+! CLeach        Cumulative N leached from soil (kg [N] / ha)
 ! TMAX          Maximum daily temperature (°C)
 ! TMIN          Minimum daily temperature (°C)
 ! TMINERALIZE   Cumulative mineralization (kg [N] / ha)
@@ -898,7 +902,7 @@ C-----------------------------------------------------------------------
 !                 profile (kg [N] / ha)
 ! CNITRIFY      Cumulative nitrification (kg [N] / ha)
 ! TNO3          Total extractable nitrate N in soil profile (kg [N] / ha)
-! TNOX          Denitrification across the total soil profile  adding to 
+! CNOX          Cumulative denitrification across the total soil profile adding to 
 !                 the nitrous oxide (NOx) pool of the air (kg [N] / ha)
 ! TOTAML        Cumulative ammonia volatilization (kg [N] / ha)
 ! TOTFLOODN     Current N in flood water (kg [N] / ha)

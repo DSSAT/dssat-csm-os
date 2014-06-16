@@ -16,10 +16,10 @@ C=======================================================================
      &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
-     &    DENITRIF, TNOX, TN2O)                       !Output
+     &    CNOX, TNOXD, N2O_data,                      !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs 
+      USE N2O_mod 
       USE ModuleData
       IMPLICIT  NONE
       SAVE
@@ -28,14 +28,18 @@ C=======================================================================
 
       INTEGER DYNAMIC, L, NLAYR
 
-      REAL CW, FLOOD, TN2O, TN2OD, TNOX, TNOXD, XMIN
+      REAL CW, FLOOD, XMIN
       REAL TFDENIT, WFDENIT
-      REAL DENITRIF(NL), ST(NL), SNO3_AVAIL
+      REAL ST(NL), SNO3_AVAIL
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
 
       REAL DLAG(NL), DLTSNO3(NL), DUL(NL), KG2PPM(NL) 
       REAL NO3(NL), SAT(NL), SNO3(NL), SW(NL)
-      REAL N2O(NL), N2(NL), TN, TN2, TN2D
+
+!          Cumul      Daily     Layer
+      REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
+      REAL CN2,       TN2D,     n2flux(nl)    !N2
+      REAL CN2O,      TN2OD,    n2oflux(nl)   !N2O 
 
 !***********************************************************************
 !***********************************************************************
@@ -43,13 +47,10 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !     ------------------------------------------------------------------
-!       Today's values
-!       Seasonal cumulative vaules
-        TNOX   = 0.0    !denitrification
-        TN2O   = 0.0    ! N2O added        PG
-        TN     = 0.0
-        TN2    = 0.0
-        TN2D   = 0.0
+!     Seasonal cumulative vaules
+      CNOX   = 0.0    !denitrification
+      CN2O   = 0.0    ! N2O added        PG
+      CN2    = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -64,6 +65,7 @@ C=======================================================================
 !     ------------------------------------------------------------------
       TNOXD = 0.0
       TN2OD = 0.0     ! PG
+      TN2D  = 0.0
 
       DO L = 1, NLAYR
 
@@ -193,24 +195,21 @@ C         If flooded, lose all nitrate --------REVISED-US
           DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! Calculation of N2O based on ratio (N2O/total denit) determined from original DayCent dataset of DelGrosso (PG)
+! Calculation of N2OFLUX based on ratio (N2O/total denit) determined from original DayCent dataset of DelGrosso (PG)
 ! assuming denitrif = N2O + N2O
 
-        N2O(L) = NO3(L)/(NO3(L)+30.)*DENITRIF(L)   ! PG
-        N2(L) = DENITRIF(L) - N2O(L)             ! PG
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
+          N2OFLUX(L) = NO3(L)/(NO3(L)+30.)*DENITRIF(L)   ! PG
+          N2FLUX(L) = DENITRIF(L) - N2OFLUX(L)           ! PG
 
 !         Reduce soil NO3 by the amount denitrified and add this to
 !         the NOx pool
           DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
-          TNOX       = TNOX       + DENITRIF(L)
+          CNOX       = CNOX       + DENITRIF(L)
           TNOXD      = TNOXD      + DENITRIF(L)
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          TN2O = TN2O + N2O(L)               ! PG
-          TN2OD = TN2OD + N2O(L)         ! PG
-          TN2 = TN2 +N2(L)                          ! PG
-          TN2D = TN2D + N2(L)                   ! PG
+          CN2O  = CN2O  + N2OFLUX(L)         ! PG added
+          TN2OD = TN2OD + N2OFLUX(L)         ! PG added
+          CN2  = CN2  + N2FLUX(L)            ! PG
+          TN2D = TN2D + N2FLUX(L)            ! PG
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         ELSE
