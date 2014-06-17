@@ -148,7 +148,7 @@ C=====================================================================
         CALL SoilOrg (CONTROL, ISWITCH, 
      &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
-     &    IMM, LITC, MNR, MULCH, SomLit, SomLitC,         !Output
+     &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
      &    SomLitE, SSOMC)                                 !Output
       ENDIF
 
