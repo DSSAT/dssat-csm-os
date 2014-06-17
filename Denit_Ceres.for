@@ -37,7 +37,7 @@ C=======================================================================
       REAL NO3(NL), SAT(NL), SNO3(NL), SW(NL)
 
       TYPE (N2O_type)    N2O_DATA
-!          Cumul      Daily     Layer
+!          Cumul      Daily     Layer kg
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
       REAL CN2,       TN2D,     n2flux(nl)    !N2
       REAL CN2O,      TN2OD,    n2oflux(nl)   !N2O 
@@ -157,6 +157,7 @@ C-UPS     Corrected per e-mail 03/29/00
 !         Denitrification rate
 C-UPS     Corrected per e-mail 03/29/00
 !         DLAG REMOVED REVISED-US 4/20/2004
+!         DENITRIF in kg/ha
           DENITRIF(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * 
      &                 TFDENIT / KG2PPM(L)       
           DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)

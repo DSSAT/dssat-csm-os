@@ -41,7 +41,6 @@ C=======================================================================
       
       REAL wfps(nl), poros(nl)
       REAL wfps_fc(nl), co2_correct(nl), co2PPM(nl)
-      REAL n2ofluxppm(nl), denitrifppm(nl)    !, n2fluxppm(nl)
       REAL a_coeff, wfps_thres, fDno3, Rn2n2O, fRwfps
       REAL fRno3_CO2, k1, dD0_fc, fDCO2, fDwfps, X_inflect
       REAL m, fNo3fCo2
@@ -50,10 +49,10 @@ C=======================================================================
 !     real RWC
 
       TYPE (N2O_type) N2O_DATA
-!          Cumul      Daily     Layer
-      REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
-      REAL CN2,       TN2D,     n2flux(nl)    !N2
-      REAL CN2O,      TN2OD,    n2oflux(nl)   !N2O 
+!          Cumul Daily  Layer ppm        Layer kg
+      REAL CNOX, TNOXD, denitrifppm(NL), DENITRIF(NL)  !Denitrification
+      REAL CN2,  TN2D,                   n2flux(nl)    !N2
+      REAL CN2O, TN2OD, n2ofluxppm(NL),  n2oflux(nl)   !N2O 
 
 !     Temp variables for Output.dat file:
       REAL TNITRIFY, NITRIF(NL), n2onitrif(NL)
