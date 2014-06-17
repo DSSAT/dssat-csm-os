@@ -659,9 +659,9 @@ C         recruit (NREQ-N CONC) g of N
       CALL PUT('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
 
 
-      newCO2(1) = DLTHUMC(0) + DLTHUMC(1)
+      newCO2(1) = - DLTHUMC(0) - DLTHUMC(1)
       DO L = 2, NLAYR
-        newCO2(L) = DLTHUMC(L)
+        newCO2(L) = - DLTHUMC(L)
       ENDDO
 
 !***********************************************************************
