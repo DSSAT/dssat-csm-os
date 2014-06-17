@@ -25,7 +25,7 @@ C  REVISION       HISTORY
 C  06/15/2014 CHP Written
 !=======================================================================
 
-      SUBROUTINE OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+      SUBROUTINE OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
@@ -38,16 +38,18 @@ C  06/15/2014 CHP Written
 
       CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
       CHARACTER*10, PARAMETER :: OUTSN2O = 'N2O.OUT'
-      CHARACTER*150 FRMT
+      CHARACTER*300 FRMT, FRMT2
 
-      INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, I, INCDAT, L, REPNO
+      INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, I, L, REPNO
       INTEGER N_LYR, NOUTDN, RUN, YEAR, YRDOY, SPACES
 
 !          Cumul      Daily     Layer         
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
-      REAL CN2,       TN2D,     n2flux(nl)    !N2
-      REAL CN2O,      TN2OD,    n2oflux(nl)   !N2O 
+      REAL CN2,       TN2D,     n2flux(NL)    !N2
+      REAL CN2O,      TN2OD,    n2oflux(NL)   !N2O 
       REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
+
+      REAL FRAC, NDN20, NIT20, N2O20, N2F20, newCO2(NL), TOTCO2
 
 !     Temp variables for Output.dat file:
 !      REAL TNH4, TNH4NO3, TNO3
@@ -121,62 +123,59 @@ C-----------------------------------------------------------------------
 
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
-          SPACES = 85
-          WRITE(FRMT,'(A,I2.2,A)')
+          SPACES = 117
+          WRITE(FRMT,'(A,I3.3,A,A,I3.3,A,A,I3.3,A,A,I3.3,A)')
      &    '("!",T',SPACES,
-     &    '"Denitrification (g[N]/ha) by soil depth (cm):")'
-          WRITE(NOUTDN,FRMT, ADVANCE='NO') 
+     &    ',"Denitrification (g[N]/ha) by soil depth (cm):",',
+     &    'T',(SPACES+N_LYR*8),
+     &    ',"Nitrification (kg[N]/ha) by soil depth (cm):",',
+     &    'T',(SPACES+2*N_LYR*8),
+     &    ',"N2O flux (g[N]/ha) by soil depth (cm):",',
+     &    'T',(SPACES+3*N_LYR*8),
+     &    ',"N2 flux (g[N]/ha) by soil depth (cm):")'
 
-          SPACES = SPACES + N_LYR * 8
-!          WRITE(FRMT,'(A,I3.3,A)')
-!     &    '(T',SPACES,',"Nitrification (g[N]/ha) by soil depth (cm):")'
-!         WRITE(NOUTDN,FRMT,ADVANCE='NO')
-          WRITE(NOUTDN,'(T165,A)',ADVANCE='NO') 
-     &       "Nitrification (g[N]/ha) by soil depth (cm):"
+          WRITE(NOUTDN,TRIM(FRMT))
 
-          SPACES = SPACES + N_LYR * 8
-          WRITE(FRMT,'(A,I3.3,A)')
-     &    '(T',SPACES,',"N2O flux (g[N]/ha) by soil depth (cm):")'
-          WRITE(NOUTDN,FRMT,ADVANCE='NO')
-
-          SPACES = SPACES + N_LYR * 8
-          WRITE(FRMT,'(A,I3.3,A)')
-     &    '(T',SPACES,',"N2 flux (g[N]/ha) by soil depth (cm):")'
-          WRITE(NOUTDN,FRMT)
-
-          WRITE(NOUTDN,'("!",T80,40A8)')
+          WRITE(NOUTDN,'("!",17X,A,A,T112,40A8)')
+     &  "kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha",
+     &  "    g/ha   kg/ha    g/ha    g/ha",
      &        (SoilProp%LayerText(L),L=1,N_LYR),
      &        (SoilProp%LayerText(L),L=1,N_LYR),
      &        (SoilProp%LayerText(L),L=1,N_LYR),
      &        (SoilProp%LayerText(L),L=1,N_LYR) 
 
           WRITE(NOUTDN,"(A)",ADVANCE='NO') 
-     & "@YEAR DOY   DAS    NDNC    NITC   N2OFC   N2FLC    NDND" //
-     & "   NITRD   N2OFD   N2FLD"
+     & "@YEAR DOY   DAS    NDNC    NITC   N2OFC   N2FLC   NDN20" //
+     & "   NIT20   N2O20   N2F20    NDND   NITRD   N2OFD   N2FLD"
           IF (N_LYR < 10) THEN
             WRITE (NOUTDN,105)
      &        ('NDN',L,'D',L=1,N_LYR), 
      &        ('NIT',L,'D',L=1,N_LYR),
      &        ('N2O',L,'D',L=1,N_LYR), 
      &        ('N2F',L,'D',L=1,N_LYR) 
-  105       FORMAT(40("    ",A2,I1,A1))
+  105       FORMAT(40("   ",A,I1,A))
           ELSE
             WRITE (NOUTDN,110)
      &        ('NDN',L,'D',L=1,9),'   NDN10', 
      &        ('NIT',L,'D',L=1,9),'   NIT10',
      &        ('N2O',L,'D',L=1,9),'   N2O10', 
      &        ('N2F',L,'D',L=1,9),'   N2F10'
-  110       FORMAT(4(9("    ",A2,I1,A1),A8),"   ")
+  110       FORMAT(4(9("   ",A,I1,A),A8),"  newCO2")
           ENDIF
 
-          CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
-          WRITE (NOUTDN,310) YEAR, DOY, DAS, 
-     &       CNOX, CNITRIFY, CN2O, CN2,
-     &       TNOXD, TNITRIFY, TN2OD, TN2D,
-     &       (DENITRIF(I),I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
-     &       (n2oflux(i), i=1, n_lyr), (N2FLUX(i), i=1,n_lyr)
+!          CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
+!          WRITE (NOUTDN,TRIM(FRMT2)) YEAR, DOY, DAS, 
+!     &       CNOX, CNITRIFY, CN2O, CN2,
+!     &       TNOXD*1000., TNITRIFY, TN2OD*1000., TN2D*1000.,
+!     &       (DENITRIF(I)*1000.,I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
+!     &       (n2oflux(i)*1000., i=1, n_lyr), (N2FLUX(i)*1000.,i=1,n_lyr)
         ENDIF
       ENDIF
+
+      NDN20 = 0.0
+      NIT20 = 0.0
+      N2O20 = 0.0
+      N2F20 = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -187,13 +186,44 @@ C-----------------------------------------------------------------------
       IF (MOD(DAS, FROP) .EQ. 0) THEN
         CALL YR_DOY(YRDOY, YEAR, DOY) 
 
+      NDN20 = NDN20 + DENITRIF(1)
+      NIT20 = NIT20 + NITRIF(1)
+      N2O20 = N2O20 + n2oflux(1)
+      N2F20 = N2F20 + N2FLUX(1)
+
+      DO L = 2, SOILPROP % NLAYR
+        IF (SOILPROP % DS(L) <= 20.) THEN
+!         Entire layer is in top 20 cm
+          NDN20 = NDN20 + DENITRIF(L)
+          NIT20 = NIT20 + NITRIF(L)
+          N2O20 = N2O20 + N2OFLUX(L)
+          N2F20 = N2F20 + N2FLUX(L)
+
+        ELSEIF (SOILPROP % DS(L-1) < 20.) THEN
+!         A portion (FRAC) of layer is in top 20 cm
+          FRAC = (20. - SOILPROP % DS(L-1)) / SOILPROP % DLAYR(L)
+          NDN20 = NDN20 + FRAC * DENITRIF(L)
+          NIT20 = NIT20 + FRAC * NITRIF(L)
+          N2O20 = N2O20 + FRAC * N2OFLUX(L)
+          N2F20 = N2F20 + FRAC * N2FLUX(L)
+        ENDIF
+      ENDDO
+
+      TOTCO2 = SUM(newCO2)
+
+          WRITE(FRMT2,'(A,I2.2,A,I2.2,A,I2.2,A)') 
+     &   '(1X,I4,1X,I3.3,I6,2(F8.3,F8.1,2F8.3),F8.2,F8.3,F8.2,F8.3,',
+     &   N_LYR,   'F8.3,', 
+     &   N_LYR,   'F8.3,',
+     &   2*N_LYR, 'F8.3,F8.3)'
+
         IF (IDETN .EQ. 'Y') THEN
-          WRITE (NOUTDN,310) YEAR, DOY, DAS, 
-     &       CNOX, CNITRIFY, CN2O, CN2,
-     &       TNOXD, TNITRIFY, TN2OD, TN2D,
-     &       (DENITRIF(I),I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
-     &       (n2oflux(i), i=1, n_lyr), (N2FLUX(i), i=1,n_lyr)
-  310     FORMAT(1X,I4,1X,I3.3,I6,48F8.2)
+          WRITE (NOUTDN,TRIM(FRMT2)) YEAR, DOY, DAS, 
+     &       CNOX, CNITRIFY, CN2O, CN2, NDN20, NIT20, N2O20, N2F20,
+     &       TNOXD*1000., TNITRIFY, TN2OD*1000., TN2D*1000.,
+     &       (DENITRIF(I)*1000.,I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
+     &       (n2oflux(i)*1000., i=1, n_lyr), (N2FLUX(i)*1000.,i=1,n_lyr)
+     &       , TOTCO2
         ENDIF
       ENDIF
 
