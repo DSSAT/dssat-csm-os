@@ -113,20 +113,20 @@ C=======================================================================
       INTEGER DLAG(NL), INCYD, LFD10  !REVISED-US
       REAL ALI, FLOOD, ES, TMAX, TMIN, SRAD, XHLAI
       REAL TKELVIN, TFACTOR, WFPL, WF2
-      REAL PHFACT, T2, TLAG, ARNTRF   !, DNFRATE
+      REAL PHFACT, T2, TLAG   !, DNFRATE
       REAL CUMFNRO
       REAL BD1
       REAL TOTAML, TOTFLOODN
 
       TYPE (N2O_type)    N2O_DATA
-!          Cumul      Daily     Layer
-      REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
-      REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
-      REAL CMINERN,   TMINERN                 !Mineralization
-      REAL CIMMOBN,   TIMMOBN                 !Immobilization
-      REAL CNETMINRN                          !Net mineralization
-      REAL CNUPTAKE,  WTNUP                   !N uptake
-      REAL CLeach,    TLeachD                 !N leaching
+!          Cumul      Daily     Layer ppm      Layer kg
+      REAL CNOX,      TNOXD,                   DENITRIF(NL) !Denitrification
+      REAL CNITRIFY,  TNITRIFY, NITRIFppm(NL), NITRIF(NL)   !Nitrification 
+      REAL CMINERN,   TMINERN                               !Mineralization
+      REAL CIMMOBN,   TIMMOBN                               !Immobilization
+      REAL CNETMINRN                                        !Net mineralization
+      REAL CNUPTAKE,  WTNUP                                 !N uptake
+      REAL CLeach,    TLeachD                               !N leaching
 
 !     Added for tile drainage:
       REAL TDFC
@@ -262,7 +262,7 @@ C=======================================================================
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data,                      !Output
 !         Temp input for Output.dat file:
-     &    NITRIF, TNITRIFY, n2onitrif)                !Temp
+     &    NITRIFppm, TNITRIFY, n2onitrif)                !Temp
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
@@ -272,7 +272,7 @@ C=======================================================================
      &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 
 !***********************************************************************
 !***********************************************************************
@@ -389,6 +389,7 @@ C=======================================================================
       TN2OD    = 0.0  ! PG
       TNOXD    = 0.0  !denitrification
       TLeachD  = 0.0  !leaching
+      NITRIF   = 0.0
 
  
       DO L = 1, NLAYR
@@ -561,12 +562,13 @@ C=======================================================================
           TLAG = 1.0
         ENDIF
         NFAC = AMAX1(0.0, AMIN1(1.0, TFACTOR * WF2 * PHFACT * TLAG))
-        NITRIF(L) = NFAC * NH4(L)
+        NITRIFppm(L) = NFAC * NH4(L)
 
         IF (NSWITCH .EQ. 5) THEN
-          ARNTRF = 0.0
+          NITRIF(L) = 0.0
         ELSE
-          ARNTRF  = NITRIF(L) / KG2PPM(L) ! changed by PG from * kg2ppm
+!         NITRIFppm in ppm; NITRIF in kg/ha
+          NITRIF(L)  = NITRIFppm(L) / KG2PPM(L) ! changed by PG from * kg2ppm
         ENDIF
 
         IF (NH4(L).LE. 0.01) THEN
@@ -579,11 +581,11 @@ C=======================================================================
            
         XMIN = 0.0
         SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
-        ARNTRF = AMIN1(ARNTRF, SNH4_AVAIL)
+        NITRIF(L) = AMIN1(NITRIF(L), SNH4_AVAIL)
 
-        DLTSNO3(L) = DLTSNO3(L) + ARNTRF
-        DLTSNH4(L) = DLTSNH4(L) - ARNTRF
-        TNITRIFY   = TNITRIFY   + ARNTRF
+        DLTSNO3(L) = DLTSNO3(L) + NITRIF(L)
+        DLTSNH4(L) = DLTSNH4(L) - NITRIF(L)
+        TNITRIFY   = TNITRIFY   + NITRIF(L)
       
         !POROS(L)  = 1.0 - BD(L) / 2.65
         !wfps(L) = sw(L)/poros(L)
@@ -591,7 +593,7 @@ C=======================================================================
         
           pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
             
-          n2onitrif(L) = pN2Onitrif * arntrf    ! for N2O using a proportion of nitrification from original daycent PG
+          n2onitrif(L) = pN2Onitrif * NITRIF(L)    ! for N2O using a proportion of nitrification from original daycent PG
 
       END DO   !End of soil layer loop.
 
@@ -768,7 +770,7 @@ C     Write daily output
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
      &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 
 C***********************************************************************
 C***********************************************************************
@@ -797,7 +799,7 @@ C-----------------------------------------------------------------------
 !                 potential, calculated from the previous day’s value (d-1)
 ! ALGFIX        N in algae (kg [N] / ha)
 ! ALI            
-! ARNTRF        Daily nitrification rate (kg [N] / ha / d)
+! NITRIF(L)     Daily nitrification rate (kg [N] / ha / d)
 ! BD(L)         Bulk density, soil layer L (g [soil] / cm3 [soil])
 ! BD1           Bulk density of oxidized layer (g [soil] / cm3 [soil])
 ! CONTROL       Composite variable containing variables related to control 
@@ -864,7 +866,7 @@ C-----------------------------------------------------------------------
 !                 limit (cm3 [water] / cm3 [soil])
 ! NBUND         Number of bund height records 
 ! NH4(L)        Ammonium N in soil layer L (µg[N] / g[soil])
-! NITRIF        Nitrification rate (kg [N] / ha - d)
+! NITRIFppm        Nitrification rate (kg [N] / ha - d)
 ! NL            Maximum number of soil layers = 20 
 ! NLAYR         Actual number of soil layers 
 ! NNOM          Net mineral N release from all SOM sources (kg [N] / ha)
