@@ -67,6 +67,9 @@ C=======================================================================
       TNOXD = 0.0
       TN2OD = 0.0     ! PG
       TN2D  = 0.0
+      DENITRIF = 0.0
+      N2FLUX   = 0.0
+      N2OFLUX  = 0.0
 
       DO L = 1, NLAYR
 
@@ -175,7 +178,10 @@ C-UPS     Corrected per e-mail 03/29/00
 
 !         Take the minimum of the calculated denitrification and the
 !         amount of NO3 available for denitrification. 
-          DENITRIF(L)  = AMIN1 (DENITRIF(L), SNO3_AVAIL)
+!         DENITRIF(L)  = AMIN1 (DENITRIF(L), SNO3_AVAIL)
+          IF (DENITRIF(L) > SNO3_AVAIL) THEN
+            DENITRIF(L) = SNO3_AVAIL
+          ENDIF
 
 C         If flooded, lose all nitrate --------REVISED-US
 !          IF (FLOOD .GT. 0.0) THEN
