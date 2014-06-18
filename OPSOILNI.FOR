@@ -21,8 +21,7 @@ C  08/20/2002 GH  Modified for Y2K
       SUBROUTINE OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TOTAML,
-     &    TN2O, nitrif, denitrif, n2oflux, wfps) ! added by PG
+     &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TOTAML)
 !-------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
@@ -53,16 +52,10 @@ C  08/20/2002 GH  Modified for Y2K
       REAL CIMMOBN        !immobilization
       REAL CNITRIFY       !nitrification
       REAL TNOX           !Denitrification
-      REAL TN2O           !N2O added by PG
       REAL TLCH           !Leaching
       REAL TOTAML         !ammonia volatilization
       REAL CNETMINRN      !net mineralization (mineralized-immobilized)
       REAL CNUPTAKE       !N uptake
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-      real nitrif(nl)         ! added by PG
-      real denitrif(nl)       ! added by PG
-      real n2oflux (nl)       ! added by PG
-      real wfps (nl)          ! added by PG
 !-----------------------------------------------------------------------
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
@@ -143,35 +136,15 @@ C-----------------------------------------------------------------------
      &        ('NH',L,'D',L=1,9),'    NH10'
   110       FORMAT(2(9("    ",A2,I1,A1),A8),"    ")
           ENDIF
-! PG
-!          WRITE (NOUTDN,115)
-!  115     FORMAT('NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM')
-! new section included for daily outputs of nitrification and denitrification, N2O and wfps
-          WRITE (NOUTDN,115, advance='no')
+          WRITE (NOUTDN,115)
   115     FORMAT('NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM')
-          IF (N_LYR < 10) THEN
-            WRITE (NOUTDN,125)
-     &        ('NRF',L,'D',L=1,N_LYR), 
-     &        ('DEN',L,'D',L=1,N_LYR),
-     &        ('N2O',L,'D',L=1,N_LYR), !PG
-     &        ('WFP',L,'D',L=1,N_LYR)
-  125       FORMAT(40("    ",A2,I1,A1))
-          ELSE
-            WRITE (NOUTDN,135)
-     &        ('NRF',L,'D',L=1,9),'   NRF10', 
-     &        ('DEN',L,'D',L=1,9),'   DEN10',
-     &        ('N2O',L,'D',L=1,9),'   N2O10', !PG
-     &        ('WFP',L,'D',L=1,9),'   WFP10'
-  135       FORMAT(4(9("    ",A2,I1,A1),A8),"    ")
-          ENDIF
-! PG
+
           CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
           WRITE (NOUTDN,310) YEAR, DOY, DAS, 0, 
      &       0, 0.0, TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
      &       0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-     &       0.0, (nitrif(i),i=1,n_lyr), (denitrif(i),i=1,n_lyr), ! added by PG
-     &       (n2oflux(i), i=1, n_lyr), (wfps(i), i=1,n_lyr)       ! added by PG
+     &       0.0
         ENDIF
       ENDIF
 
@@ -190,11 +163,9 @@ C-----------------------------------------------------------------------
      &       NAPFER(N), TLCH, TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
      &       CMINERN, CNITRIFY, TNOX, CIMMOBN, TOTAML, CNETMINRN,
-     &       CNUPTAKE,
-     &       (nitrif(i),i=1,n_lyr), (denitrif(i),i=1,n_lyr), ! added by PG
-     &       (n2oflux(i), i=1,n_lyr), (wfps(i),i=1,n_lyr)     ! added by PG
+     &       CNUPTAKE
   310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,F7.1,1X,F6.1,2F7.1,
-     &       20(F8.2), 47(F8.2))
+     &       20(F8.2), 10F8.2)
         ENDIF
       ENDIF
 
