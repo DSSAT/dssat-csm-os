@@ -42,9 +42,9 @@ C=======================================================================
       REAL wfps(nl), poros(nl)
       REAL wfps_fc(nl), co2_correct(nl), co2PPM(nl)
       REAL a_coeff, wfps_thres, fDno3, Rn2n2O, fRwfps
-      REAL fRno3_CO2, k1, dD0_fc, fDCO2, fDwfps, X_inflect
+      REAL fRno3_CO2, k1, fDCO2, fDwfps, X_inflect
       REAL m, fNo3fCo2
-      REAL newCO2(nl)
+      REAL newCO2(nl), dD0_fc(nl)
       real A(4)
 !     real RWC
 
@@ -80,10 +80,8 @@ C=======================================================================
           wfps(L) = sw(L) / poros(L)
         ENDDO
 
-!     Temporary function for diffusivity - set to constant for now
-!     dD0_fc will need to be an array when this function is fully implemented
-!     dD0_fc = f(dul, bd, wfps_fc)
-      call DayCent_diffusivity(dD0_fc)     
+!     Function for diffusivity
+      call DayCent_diffusivity(dD0_fc, DUL, BD)
 
 !     Compute the Nitrate effect on Denitrification
 !     Changed NO3 effect on denitrification based on paper  "General model for N2O and N2 gas emissions from soils due to denitrification"
@@ -134,19 +132,19 @@ C=======================================================================
         CO2ppm(L) = newCO2(L)*kg2ppm(L)  !CO2ppm is labile C which is derivation of CO2 produced on any day
       
 !       Water Filled Pore Space (WFPS) WFPS_threshold
-        If (dD0_fc .GE. 0.15) then 
+        If (dD0_fc(L) .GE. 0.15) then 
           WFPS_thres = 0.80
         else
-          WFPS_thres = (dD0_fc*250. + 43.)/100.
+          WFPS_thres = (dD0_fc(L)*250. + 43.)/100.
         endif
         
         if(wfps(L) .LE. WFPS_thres) then
           co2_correct(L) = co2PPM(L)
         else
-          if(dD0_fc .GE. 0.15) then
+          if(dD0_fc(L) .GE. 0.15) then
             a_coeff = 0.004
           else 
-            a_coeff = -0.1*dD0_fc + 0.019
+            a_coeff = -0.1*dD0_fc(L) + 0.019
           endif    
           co2_correct(L)=co2PPM(L)*(1.0+a_coeff*(wfps(L)-WFPS_thres))   !the amount labile C is adjusted taking into account diffusion
         endif  
@@ -165,7 +163,7 @@ C=======================================================================
 !       Changed wfps effect on denitrification based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00
 
-        M = min(0.113, dD0_fc) * (-1.25) + 0.145
+        M = min(0.113, dD0_fc(L)) * (-1.25) + 0.145
        
 !       The x_inflection calculation should take into account the corrected CO2 concentration, cak - 07/31/02 
 
@@ -184,7 +182,7 @@ C       denitrifppm(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT ! from D
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
 !       fRno3_co2 estimates the ratio as a function of electron donor to substrate -mdh 5/17/00
 
-        k1 = max(1.5, 38.4 - 350. * dD0_fc)
+        k1 = max(1.5, 38.4 - 350. * dD0_fc(L))
 
         fRno3_co2 = max(0.16 * k1, 
      &    k1 * exp(-0.8 * no3(L)/co2_correct(L)))
@@ -297,7 +295,7 @@ C it also includes some diagnostics
 !=======================================================================
 !  DayCent_diffusivity, Subroutine
 !
-!  diffusivity is a piece of Daycent code which has not been invoked in DSSAT
+!     dD0_fc = f(dul, bd, wfps_fc)
 !
 !-----------------------------------------------------------------------
 !  Revision history
@@ -307,13 +305,38 @@ C it also includes some diagnostics
 !  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
 !           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 !=======================================================================
-      subroutine DayCent_diffusivity(dD0_fc)      
+      subroutine DayCent_diffusivity(dD0_fc, dul, bd)      
 !      the variable dDO_fc is manually calculated for the moment
 
-      real dD0_fc
+      use ModuleDefs
+      real, dimension(NL), intent(in) :: dul, bd
+      real, dimension(NL), intent(out):: dD0_fc
+      integer L
       
+! From Iurii Shcherbak 6 July 2014
+! Linear model
+! Dfc = 0.741804 - 0.287059 BD - 0.755057 FC
+! Adj R^2 = 0.999412
+!  
+! Quadratic
+! Dfc = 0.906277 - 0.461712 BD + 0.045703 BD^2 - 1.19827 FC +  0.225558 BD FC + 0.292491 FC^2
+! Adj R^2 = 0.999997
+
+      do L = 1, NL
+!       Linear
+!       dD0_fc(L) = 0.741804 - 0.287059 * BD(L) - 0.755057 * FC(L)
+
+!       Quadratic
+        dD0_fc(L) = 0.906277 - 0.461712 * BD(L) 
+     &                       + 0.045703 * BD(L) * BD(L) 
+     &                       - 1.19827  * DUL(L) 
+     &                       + 0.225558 * BD(L) * DUL(L) 
+     &                       + 0.292491 * DUL(L) * DUL(L)
+      enddo
+
+!     Temporary function for diffusivity - set to constant for now
 !      dD0_fc = 0.10    ! 0.10 for KT, fixed value since diffusivity routine is not working
-       dD0_fc = 0.16    ! 0.16 for KY, fixed value since diffusivity routine is not working
+!      dD0_fc = 0.16    ! 0.16 for KY, fixed value since diffusivity routine is not working
 !      dD0_fc = 0.11    ! 0.11 for Canada (use KT), fixed value since diffusivity routine is not working
 !      dD0_fc = 0.21    ! 0.21 for India, fixed value since diffusivity routine is not working
 !      dD0_fc = 0.09    ! 0.09 for France (use KT), fixed value since diffusivity routine is not working
