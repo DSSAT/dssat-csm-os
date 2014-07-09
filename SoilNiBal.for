@@ -9,8 +9,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !=======================================================================
 
       SUBROUTINE SoilNiBal (CONTROL, ISWITCH, 
-     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, TLCH,  
-     &    TNH4, TNO3, TNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeachD,  
+     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -29,14 +29,14 @@ C  03/04/2005 CHP wrote based on SoilNBal
       INTEGER YRSIM, RUN, LUNSNC, NBUND
       INTEGER YR, DOY, YRI, DOYI
 
-      REAL ALGFIX, ALGFIXI, AMTFER, TALLN, TALLNI, TLCH, TNH4, TNH4I,
-     &  TNO3, TNO3I,  TNOX, TUREA, TUREAI, WTNUP
+      REAL ALGFIX, ALGFIXI, AMTFER, TALLN, TALLNI, CLeachD, TNH4, TNH4I,
+     &  TNO3, TNO3I,  CNOX, TUREA, TUREAI, WTNUP
       REAL TOTAML, CUMFNRO, TOTFLOODN, TOTFLOODNI
       REAL STATEN, BALANCE
 
       REAL LCHTODAY, NOXTODAY, IMMOBTODAY, MINERTODAY
       REAL WTNUPTODAY, AMLTODAY, FNROTODAY, AMTFERTODAY
-      REAL TLCHY, TNOXY, WTNUPY, CIMMOBY, CMINERY
+      REAL CLeachY, TNOXY, WTNUPY, CIMMOBY, CMINERY
       REAL TOTAMLY, CUMFNROY, AMTFERY
       REAL TOTSTATE, TOTADD, TOTSUB, DAYBAL, TOTSTATY, CUMBAL
       REAL CIMMOBN, CMINERN
@@ -100,7 +100,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       IF (INDEX('AD',IDETL) > 0) THEN
 !       Cumulative values (yesterday)
 !       Save today's cumulative values for use tomorrow
-        TLCHY    = 0.0
+        CLeachY  = 0.0
         TNOXY    = 0.0
         WTNUPY   = 0.0
         TOTAMLY  = 0.0
@@ -145,8 +145,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
         MINERTODAY  = CMINERN - CMINERY
 
 !       Subtractions:
-        LCHTODAY   = TLCH - TLCHY
-        NOXTODAY   = TNOX - TNOXY
+        LCHTODAY   = CLeachD - CLeachY
+        NOXTODAY   = CNOX - TNOXY
         WTNUPTODAY = (WTNUP - WTNUPY) * 10.
         AMLTODAY   = TOTAML - TOTAMLY
         FNROTODAY  = CUMFNRO - CUMFNROY
@@ -176,8 +176,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
         !FLOODNY  = TOTFLOODN
         CIMMOBY  = CIMMOBN
         CMINERY  = CMINERN
-        TLCHY    = TLCH
-        TNOXY    = TNOX
+        CLeachY  = CLeachD
+        TNOXY    = CNOX
         TOTAMLY  = TOTAML
         WTNUPY   = WTNUP
 
@@ -214,7 +214,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !       from the N removed by the plant, because senesced material has
 !       been returned to the soil.
         TALLN = STATEN +                          !State end of day
-     &          TLCH + TNOX + WTNUP * 10. +       !Losses
+     &          CLeachD + TNOX + WTNUP * 10. +       !Losses
      &          TOTAML + CIMMOBN           !Losses
 
 !       Write output to NBAL.OUT.
@@ -227,7 +227,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
           TALLN = TALLN + TOTFLOODN + ALGFIX
         ENDIF
 
-        WRITE (LUNSNC,600) AMTFER, CMINERN, TLCH, TNOX, 
+        WRITE (LUNSNC,600) AMTFER, CMINERN, CLeachD, TNOX, 
      &        WTNUP * 10., TOTAML, CIMMOBN
 
         IF (NBUND .GT. 0) THEN
@@ -273,7 +273,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       CALL SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, 
-     &    TLCH=TLCH, TNH4=TNH4, TNO3=TNO3, 
+     &    CLeachD=CLeachD, TNH4=TNH4, TNO3=TNO3, 
      &    TNOX=TNOX, TOTAML=TOTAML, WTNUP=WTNUP*10.)
 
 !***********************************************************************

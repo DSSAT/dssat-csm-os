@@ -21,7 +21,7 @@ C  08/20/2002 GH  Modified for Y2K
       SUBROUTINE OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    CLeach, TNH4, TNH4NO3, TNO3, TNOX, TOTAML)
+     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
 !-------------------------------------------------------------------
       USE ModuleDefs
       IMPLICIT NONE
@@ -51,7 +51,7 @@ C  08/20/2002 GH  Modified for Y2K
       REAL CMINERN        !mineralization
       REAL CIMMOBN        !immobilization
       REAL CNITRIFY       !nitrification
-      REAL TNOX           !Denitrification
+      REAL CNOX           !Denitrification
       REAL CLeach           !Leaching
       REAL TOTAML         !ammonia volatilization
       REAL CNETMINRN      !net mineralization (mineralized-immobilized)
@@ -162,7 +162,7 @@ C-----------------------------------------------------------------------
 !     &       NAPFER, TLCH, TNH4NO3, NINT(THUMN), TNO3, TNH4, 
      &       NAPFER(N), CLeach, TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
-     &       CMINERN, CNITRIFY, TNOX, CIMMOBN, TOTAML, CNETMINRN,
+     &       CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, CNETMINRN,
      &       CNUPTAKE
   310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,F7.1,1X,F6.1,2F7.1,
      &       20(F8.2), 10F8.2)

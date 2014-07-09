@@ -9,7 +9,7 @@
 
       SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
-     &    CumSenN, HARVRESN, LITE, SOM1E, TLCH, TLITN, 
+     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, TLITN, 
      &    TNH4, TNO3, TNOX, TOTAML, TSOM1N, TSOM2N, TSOM3N, WTNUP)
 
 !***********************************************************************
@@ -23,7 +23,7 @@
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
       REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
-     &    CUMMINER, CUMRESN, CumSenN, HARVRESN, TLCH, TLITN, 
+     &    CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, TLITN, 
      &    TNH4, TNO3, TNOX, TOTAML, TSOM1N, TSOM2N, TSOM3N, WTNUP
       REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
 
@@ -86,7 +86,7 @@
         IF (PRESENT(Balance)) Bal(2) = Balance
       ENDIF
       IF (PRESENT(AMTFER)) Add(3) = AMTFER
-      IF (PRESENT(TLCH))   Sub(1) = TLCH
+      IF (PRESENT(CLeach)) Sub(1) = CLeach
       IF (PRESENT(TNOX))   Sub(2) = TNOX
       IF (PRESENT(WTNUP))  Sub(3) = WTNUP
       IF (PRESENT(WTNUP))  Sub(4) = TOTAML
@@ -147,12 +147,12 @@
       INTERFACE
         SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
-     &    CumSenN, HARVRESN, LITE, SOM1E, TLCH, TLITN, 
+     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, TLITN, 
      &    TNH4, TNO3, TNOX, TOTAML, TSOM1N, TSOM2N, TSOM3N, WTNUP)
           USE ModuleDefs
           TYPE (ControlType), INTENT(IN) :: CONTROL
           REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
-     &        CUMMINER, CUMRESN, CumSenN, HARVRESN, TLCH, TLITN, 
+     &        CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, TLITN, 
      &        TNH4, TNO3, TNOX, TOTAML, TSOM1N, TSOM2N, TSOM3N, WTNUP
           REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
         END SUBROUTINE
