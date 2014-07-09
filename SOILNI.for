@@ -738,9 +738,8 @@ C=======================================================================
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
-     &    FertData, NH4, NO3,  
-     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TN2O, TOTAML,
-     &    NITRIF, DENITRIF, n2oflux, WFPS) ! added by PG
+     &    FertData, NH4, NO3, 
+     &    CLeach, TNH4, TNH4NO3, TNO3, TNOX, TOTAML)
       ENDIF
 
 !***********************************************************************
@@ -755,8 +754,7 @@ C     Write daily output
       CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML, TN2O,
-     &    NITRIF, DENITRIF, n2oflux, WFPS) ! n2oflux added by PG
+     &    CLeach, TNH4, TNH4NO3, TNO3, TNOX, TOTAML)
 
       IF (NBUND > 0) THEN
         CALL FLOOD_CHEM(CONTROL, ISWITCH, 
