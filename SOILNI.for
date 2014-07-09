@@ -97,7 +97,7 @@ C=======================================================================
 !!!!! daycent variables  PG
       
       REAL wfps(nl), n2oflux(nl)
-      REAL TN2OD, TN2O
+      REAL TN2OD, CN2O
       REAL newCO2(nl)
       REAL pn2onitrif, n2onitrif(nl)
 
@@ -201,7 +201,7 @@ C=======================================================================
         CNITRIFY = 0.0  !nitrification
         CNUPTAKE = 0.0  !cumulative N uptake
         CNOX     = 0.0  !denitrification
-        TN2O     = 0.0  ! N2O added        PG
+        CN2O     = 0.0  ! N2O added        PG
         CLeach   = 0.0  !leaching
         WTNUP    = 0.0  !N uptake
 
@@ -644,7 +644,7 @@ C=======================================================================
 
       CALL PUT('NITR','TNOXD',TNOXD) 
       CALL PUT('NITR','TN2OD',TN2OD)
-      CALL PUT('NITR','TLCHD',TLeachD)
+      CALL PUT('NITR','TLeachD',TLeachD)
 
 !***********************************************************************
 !***********************************************************************
