@@ -156,11 +156,11 @@ C
 C-----------------------------------------------------------------------
       LABL = 'ME'
       WRITE(LUNIO,'("@N  METHODS     WTHER INCON LIGHT EVAPO INFIL",
-     & 1X,"PHOTO HYDRO NSWIT SOMDY MESEV MESOL METMP")')
+     & 1X,"PHOTO HYDRO NSWIT SOMDY MESEV MESOL METMP MEGHG")')
       WRITE (LUNIO,915,IOSTAT=ERRNUM) LNSIM,LABL,MEWTH,MESIC,
      &      MELI,MEEVP,MEINF,MEPHO,MEHYD,NSWITCH,MESOM, 
-     &      MESEV, MESOL, METMP
- 915  FORMAT(I3,1X,A2,9X,7(5X,A1),1X,I5,5(5X,A1),4(5X,A1))
+     &      MESEV, MESOL, METMP, MEGHG
+ 915  FORMAT(I3,1X,A2,9X,7(5X,A1),1X,I5,5(5X,A1),5(5X,A1))
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------

@@ -13,24 +13,17 @@ C  08/20/2002 GH  Modified for Y2K
 !     Note:  in Century, AMTFER is an array for soil elements, in
 !                 NTRANS, AMTFER is a scalar and represents only N.
 !  01/18/2005 CHP changed AMTFER to array of 3 for consistency
-C-----------------------------------------------------------------------
-C  Called from:   SoilNi (formerly NTRANS)
-C  Calls:         None
-C=======================================================================
+!-----------------------------------------------------------------------
+!  Called from:   SoilNi (formerly NTRANS)
+!  Calls:         None
+!=======================================================================
 
       SUBROUTINE OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TOTAML)
-C-------------------------------------------------------------------
-C
-C  Soil Nitrogen Aspects OUTPUT File
-C  Soil Carbon Aspects OUTPUT File
-C
-!-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
+!-------------------------------------------------------------------
+      USE ModuleDefs
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -50,7 +43,6 @@ C
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 4
-!      INTEGER, PARAMETER :: N=1, P=2
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       CHARACTER*50 FRMT
       REAL, DIMENSION(SUMNUM) :: VALUE
@@ -59,8 +51,8 @@ C
       REAL CMINERN        !mineralization
       REAL CIMMOBN        !immobilization
       REAL CNITRIFY       !nitrification
-      REAL TNOX           !Denitrification
-      REAL TLCH           !Leaching
+      REAL CNOX           !Denitrification
+      REAL CLeach           !Leaching
       REAL TOTAML         !ammonia volatilization
       REAL CNETMINRN      !net mineralization (mineralized-immobilized)
       REAL CNUPTAKE       !N uptake
@@ -147,7 +139,7 @@ C-----------------------------------------------------------------------
           WRITE (NOUTDN,115)
   115     FORMAT('NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM')
 
-          CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
+          CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
           WRITE (NOUTDN,310) YEAR, DOY, DAS, 0, 
      &       0, 0.0, TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
@@ -168,14 +160,13 @@ C-----------------------------------------------------------------------
         IF (IDETN .EQ. 'Y') THEN
           WRITE (NOUTDN,310) YEAR, DOY, DAS, NINT(AMTFER(N)), 
 !     &       NAPFER, TLCH, TNH4NO3, NINT(THUMN), TNO3, TNH4, 
-     &       NAPFER(N), TLCH, TNH4NO3, TNO3, TNH4, 
+     &       NAPFER(N), CLeach, TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
-     &       CMINERN, CNITRIFY, TNOX, CIMMOBN, TOTAML, CNETMINRN, 
+     &       CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, CNETMINRN,
      &       CNUPTAKE
   310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,F7.1,1X,F6.1,2F7.1,
      &       20(F8.2), 10F8.2)
         ENDIF
-
       ENDIF
 
 !***********************************************************************
@@ -193,7 +184,7 @@ C-----------------------------------------------------------------------
 !         saved aS real numbers for placement in real array.
           LABEL(1)  = 'NI#M'; VALUE(1)  = FLOAT(NAPFER(N))
           LABEL(2)  = 'NICM'; VALUE(2)  = AMTFER(N)
-          LABEL(3)  = 'NLCM'; VALUE(3)  = TLCH
+          LABEL(3)  = 'NLCM'; VALUE(3)  = CLeach
           LABEL(4)  = 'NIAM'; VALUE(4)  = TNH4NO3
 
           !Send labels and values to OPSUM

@@ -45,7 +45,8 @@
      &  NO3, OMADATA, SENESCE, SOILPROP, SPi_Labile,      !Input
      &  SRFTEMP, ST, SW, TILLVALS,                        !Input
      &  IMM, LITC, MNR, MULCH, SomLit, SomLitC,           !Output
-     &  SomLitE, SSOMC)                                   !Output
+     &  SomLitE, SSOMC,                                   !Output
+     &  newCO2)                                           !added newCO2 from DayCent  PG
 
 !     ------------------------------------------------------------------
       USE ModuleDefs
@@ -66,6 +67,8 @@
      &  NLAYR, RUN, YEAR, YRDOY
       INTEGER, DIMENSION(NAPPL*3) :: DEND, DISTURBEND
       INTEGER, PARAMETER :: NONLIG = 1, LIG = 2, SRFC = 0, SOIL = 1
+      
+      real newCO2(NL)      ! DayCent PG
 
       REAL CO2S2, CO2S3, CULMETQ, CULS1Q, CULS2Q,
      &  CULS3Q, CULSTRQ, DEPTH, DISTURBDEPTHMAX,
@@ -780,6 +783,11 @@
         ELSE
           ACCCO2(SOIL) = ACCCO2(SOIL) + CO2FMET(L) + CO2FSTR(L,LIG) +
      &        CO2FSTR(L,NONLIG) + CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
+
+!         microbial respiration for N2O/N2 loss in DayCent   PG
+          newCO2(L) = CO2FMET(L) + CO2FSTR(L,LIG) + CO2FSTR(L,NONLIG) + 
+     &        CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
+
         ENDIF   !End of IF block on L == SRFC.
       END DO   !End of DO loop on L.
 
