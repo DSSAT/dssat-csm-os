@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 37
+        INTEGER :: Build = 38
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.0.38 chp 07/17/2014 Fixed output switches
 !       4.6.0.37 chp 06/05/2014 ORYZA code updated to ORYZA3 (Tao Li)
 !       4.6.0.36 chp 05/07/2014 SALUS model updates, ESCP, EPCP added to Summary.OUT
 !       4.6.0.35 chp 03/28/2014 Taro initialization fixed - RO
