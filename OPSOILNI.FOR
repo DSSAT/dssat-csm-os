@@ -52,7 +52,7 @@ C  08/20/2002 GH  Modified for Y2K
       REAL CIMMOBN        !immobilization
       REAL CNITRIFY       !nitrification
       REAL CNOX           !Denitrification
-      REAL CLeach           !Leaching
+      REAL CLeach         !Leaching
       REAL TOTAML         !ammonia volatilization
       REAL CNETMINRN      !net mineralization (mineralized-immobilized)
       REAL CNUPTAKE       !N uptake
