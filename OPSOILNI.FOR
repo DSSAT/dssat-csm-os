@@ -13,10 +13,10 @@ C  08/20/2002 GH  Modified for Y2K
 !     Note:  in Century, AMTFER is an array for soil elements, in
 !                 NTRANS, AMTFER is a scalar and represents only N.
 !  01/18/2005 CHP changed AMTFER to array of 3 for consistency
-C-----------------------------------------------------------------------
-C  Called from:   SoilNi (formerly NTRANS)
-C  Calls:         None
-C=======================================================================
+!-----------------------------------------------------------------------
+!  Called from:   SoilNi (formerly NTRANS)
+!  Calls:         None
+!=======================================================================
 
       SUBROUTINE OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
