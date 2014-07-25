@@ -35,6 +35,7 @@ C  06/02/2005 GH  Fixed call to WTHMOD in Seasinit section
 !  10/24/2005 CHP Put weather variables in constructed variable. 
 C  02/13/2006 JIL Export AMTRH (R/R0) for leaf rolling calculation
 !  04/28/2008 CHP Added option to read CO2 from file 
+!  07/25/2014 CHP Added daily CO2 read from weather file (DCO2)
 C-----------------------------------------------------------------------
 C  Called by: Main
 c  Calls:     DAYLEN, ERROR, HMET, IPWTH, SOLAR, WGEN, WTHMDB, WTHMOD
@@ -61,7 +62,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
       REAL
-     &  CCO2, CLOUDS, CO2, DAYL, DEC, ISINB, PAR, 
+     &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, PAR, 
      &  PI, RAD, RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
      &  TA, TAMP, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDSP, XELEV, XLAT, XLONG
@@ -108,7 +109,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
       CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,  !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -130,7 +131,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
         IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
           CALL IPWTH(CONTROL,
-     &      CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,      !Output
+     &      CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,!Output
      &      RAIN, REFHT, RHUM, RSEED1, SRAD,              !Output
      &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
@@ -199,7 +200,7 @@ C     Calculate day length, sunrise and sunset.
      &    DAYL, DEC, SNDN, SNUP)                          !Output
 
 !     Subroutine to determine daily CO2
-      CALL CO2VAL(CONTROL, ISWITCH, CCO2, CO2)
+      CALL CO2VAL(CONTROL, ISWITCH, CCO2, DCO2, CO2)
 
 C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
@@ -258,7 +259,7 @@ C     Compute daily normal temperature.
 C     Read new weather record.
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,  !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -291,7 +292,7 @@ C        rice and maize routines.
       CALL TWILIGHT(DOY, XLAT, TWILEN) 
 
 !     Subroutine to determine daily CO2
-      CALL CO2VAL(CONTROL, ISWITCH, CCO2, CO2)
+      CALL CO2VAL(CONTROL, ISWITCH, CCO2, DCO2, CO2)
 
 C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
@@ -352,7 +353,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,  !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output

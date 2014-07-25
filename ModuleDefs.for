@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 38
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-DailyCO2 '
 
 !     Version history:  
 !       4.6.0.38 chp 07/17/2014 Fixed output switches
@@ -211,8 +211,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL REFHT, WINDHT, XLAT
 
 !       Daily weather data.
-        REAL CLOUDS, CO2, DAYL, PAR, RAIN, RHUM, SNDN, SNUP, SRAD, 
-     &    TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
+        REAL CLOUDS, CO2, DAYL, DCO2, PAR, RAIN, RHUM, SNDN, SNUP, 
+     &    SRAD, TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
      &    TMAX, TMIN, TWILEN, VAPR, WINDSP
 
 !       Hourly weather data
