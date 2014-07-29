@@ -135,6 +135,10 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    EvaluateNum = 40, !Number of evaluation variables
      &    MaxFiles = 100    !Maximum number of output files
 
+      REAL, PARAMETER :: 
+     &    PI = 3.141586, 
+     &    RAD=PI/180.0
+
       INTEGER, PARAMETER :: 
          !Dynamic variable values
      &    RUNINIT  = 1, 
