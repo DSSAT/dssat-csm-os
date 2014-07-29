@@ -68,6 +68,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Version history:  
 !       4.6.0.39 chp 07/25/2014 Allow daily input of CO2 in weather file (header CO2 or DCO2)
+!                               Move PI and RAD to global constants
 !       4.6.0.38 chp 07/17/2014 Fixed output switches
 !       4.6.0.37 chp 06/05/2014 ORYZA code updated to ORYZA3 (Tao Li)
 !       4.6.0.36 chp 05/07/2014 SALUS model updates, ESCP, EPCP added to Summary.OUT
