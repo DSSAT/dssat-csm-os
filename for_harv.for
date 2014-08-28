@@ -2,7 +2,7 @@
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,canht)     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht)     !Input/Output
 
       USE MODULEDEFS
 
@@ -26,6 +26,7 @@
       REAL PROLFF,PROSTF,pliglf,pligst
       real canht,fhcrlf,fhcrst,fhtotn,fhtot,fhlfn,fhstn
       real fhpcho,fhpctlf,fhpctn,fhplig
+      real vstagp
 
       character(len=2)  crop
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
@@ -179,6 +180,7 @@
               XHLAI  = XLAI
   
               VSTAGE = FHVSTG     
+              vstagp = vstage
 
           else
 
