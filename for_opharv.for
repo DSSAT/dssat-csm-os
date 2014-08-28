@@ -65,7 +65,7 @@ C-----------------------------------------------------------------------
       CHARACTER*6 OLAB(40), OLAP(40)  !OLAP modified for dap
       CHARACTER*6  X(40)
       CHARACTER*8 PREDICTED(40), OBSERVED(40)
-      CHARACTER*35 DESCRIP(40)
+      CHARACTER*50 DESCRIP(40)
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -250,7 +250,7 @@ C-----------------------------------------------------------------------
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(1)) 
         OLAP(1) = 'ADAP'
-        CALL GetDesc(1,'ADAP', DESCRIP(1))
+        CALL GetDesc(1,'  ADAP', DESCRIP(1))
 
         CALL READA_Dates(X(2), YRSIM, IFPD)
         IF (IFPD .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
@@ -260,7 +260,7 @@ C-----------------------------------------------------------------------
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(2)) 
         OLAP(2) = 'PD1P'
-        CALL GetDesc(1,'PD1P', DESCRIP(2))
+        CALL GetDesc(1,'  PD1P', DESCRIP(2))
 
         CALL READA_Dates(X(3), YRSIM, IFSD)
         IF (IFSD .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
@@ -270,7 +270,7 @@ C-----------------------------------------------------------------------
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(3))
         OLAP(3) = 'PDFP'
-        CALL GetDesc(1,'PDFP', DESCRIP(3))
+        CALL GetDesc(1,'  PDFP', DESCRIP(3))
 
         CALL READA_Dates(X(4), YRSIM, IMAT)
         IF (IMAT .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
@@ -280,7 +280,7 @@ C-----------------------------------------------------------------------
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(4)) 
         OLAP(4) = 'MDAP'
-        CALL GetDesc(1,'MDAP', DESCRIP(4))
+        CALL GetDesc(1,'  MDAP', DESCRIP(4))
 
         CALL READA_Dates(X(24), YRSIM, IHRV)
         IF (IHRV .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
@@ -290,7 +290,7 @@ C-----------------------------------------------------------------------
         ENDIF
         !CALL CHANGE_DESC(DESCRIP(24)) 
         OLAP(24) = 'R8AP'
-        CALL GetDesc(1,'R8AP', DESCRIP(24))
+        CALL GetDesc(1,'  R8AP', DESCRIP(24))
 
         DNR1 = TIMDIF(YRPLT,YRNR1)
         IF (DNR1 .LE. 0) THEN
