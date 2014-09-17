@@ -497,7 +497,8 @@
           UNO3(L) = SNO3X(L) - PV % PNO3(L)    !NO3 uptake (kg/ha)
           UH2O(L) = TRWL(L)                    !H2O uptake (mm/d)
         ENDDO 
-        NSTRES = NFP
+!       NSTRES = NFP
+        NSTRES = RNSTRS
 
       ELSEIF (ITASK == 3) THEN
         XLAI   = LAI
