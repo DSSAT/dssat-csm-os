@@ -906,7 +906,7 @@ C=============================================================================
        Real Delta, dodpg, Fac1, Gflux, LatHeatVap
        Real MaxIrradiance,MSALB
        Real MeanDewPt, MeanTemp
-       Real NetEmissivity,NetRad,PI
+       Real NetEmissivity,NetRad  !,PI
 !       Real Prev3dayMean,Radj, RadLon, SolarIrradiance, StefBoltz
        Real Radj, RadLon, SolarIrradiance, StefBoltz
        Real VPdew, VPD, VPsat, WindFunc
@@ -966,7 +966,7 @@ c
         Coeff_WindB = 0.0440
         !Albedo      = 0.23 This is being passed in
         StefBoltz   = 4.896e-09
-        PI          = 22.0 / 7.0
+!        PI          = 22.0 / 7.0
 
 !  CALCULATE LATENT HEAT OF VAPORIZATION, HTVAP (MJ/m2/mm)
 

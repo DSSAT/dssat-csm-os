@@ -92,7 +92,7 @@ C=======================================================================
       REAL        PG         
       REAL        PGDAY      
       REAL        PGHR       
-      REAL        PI         
+!      REAL        PI         
       REAL        PLAISH(50)
       REAL        PLAISL(50)
       REAL        PLIGEA     
@@ -122,7 +122,7 @@ C=======================================================================
       REAL        PPROSD     
       REAL        PPROST     
       REAL        R30C2      
-      REAL        RAD        
+!      REAL        RAD        
       REAL        RES30C     
       REAL        ROWSPC     
       REAL        RSPC       
@@ -142,7 +142,8 @@ C=======================================================================
       REAL        Z2STAGE    
 
 	PARAMETER (TINCR=24.0/TS)
-	PARAMETER (PI=3.14159, RAD=PI/180.0, PANG=64.0)
+!	PARAMETER (PI=3.14159, RAD=PI/180.0, PANG=64.0)
+	PARAMETER (PANG=64.0)
 	PARAMETER (CANS=4.5, SCVP=0.2)
 	PARAMETER (INSP=4.514, AS=288.615, CVX=-75.774)
 
