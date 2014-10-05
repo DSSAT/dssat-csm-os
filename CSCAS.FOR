@@ -3,7 +3,7 @@
 !  Last edit 01/01/2014 LAH   
 !-----------------------------------------------------------------------
 
-      SUBROUTINE CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
+      SUBROUTINE CSCAS_LAH (FILEIOIN, RUN, TN, RN, RNMODE,     !Command line
      & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols
      & IDETS, IDETO, IDETG, IDETL, FROP,                   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
