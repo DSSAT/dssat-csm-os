@@ -575,7 +575,7 @@
       REAL          LNPHC         ! Leaf N harvested,cumulative    g/p
       REAL          LNUM          ! Leaf number,Haun stage         #
       INTEGER       LNUMCOL       ! Leaf number column             #
-      REAL          LNUMEND       ! Leaf number,Haun stage,end day #
+      !REAL          LNUMEND       ! Leaf number,Haun stage,end day #
       REAL          LNUMG         ! Leaf number increase per day   #
       REAL          LNUMNEED      ! Leaf # stage to start new leaf #
       REAL          LNUMPREV      ! Leaf number,Haun stage         #
@@ -2006,7 +2006,7 @@
         lndem = 0.0
         lnphc = 0.0
         lnum = 0.0
-        lnumend = 0.0
+        !lnumend = 0.0
         lnumg = 0.0
         lnumprev = 0.0
         lnumsg = 0
@@ -4514,12 +4514,12 @@
             LNUMG = 0.0
             ! Reduce PHINT with development stage (LAH Sept 2012)
             PHINT = 1.0/((1.0/PHINTS)*(1.0-PHINTFAC*DSTAGE))
-            LNUMEND = LNUM + (TT*EMRGFR)/PHINT
-            
-            ! Restrict to maximum
-            LNUMEND = AMIN1(FLOAT(LNUMX),LNUMEND)
-            IF(FLN.GT.0.0) LNUMEND = AMIN1(FLN,LNUMEND)
-            !LNUMG = LNUMEND - LNUM
+            !LNUMEND = LNUM + (TT*EMRGFR)/PHINT !LPM 17MY14  FLN and LNUMEND are not used, deleted 
+            !
+            !! Restrict to maximum
+            !LNUMEND = AMIN1(FLOAT(LNUMX),LNUMEND)
+            !IF(FLN.GT.0.0) LNUMEND = AMIN1(FLN,LNUMEND)
+            !!LNUMG = LNUMEND - LNUM
             LNUMG = (TT*EMRGFR)/PHINT
 
 !-----------------------------------------------------------------------
@@ -5078,7 +5078,7 @@
                 SNO3PROFILE = SNO3PROFILE + SNO3(L)
                 SNH4PROFILE = SNH4PROFILE + SNH4(L)
                 IF (RLV(L).GT.0.0) THEN
-                 SNO3ROOTZONE = SNO3ROOT ZONE + SNO3(L)
+                 SNO3ROOTZONE = SNO3ROOTZONE + SNO3(L)
                  SNH4ROOTZONE = SNH4ROOTZONE + SNH4(L)
                 ENDIF
               END DO
