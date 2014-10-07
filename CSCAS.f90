@@ -13,274 +13,60 @@
      ISWWAT, ISWNIT, ISWDIS, MESOM,                       &!Contols
      IDETS, IDETO, IDETG, IDETL, FROP,                    &!Controls
      SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,              &!Run+loop
-     SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,           &!Weather
+     SRAD, RAIN, CO2,                                     &!Weather                  MF 15SE14 REMOVED <TMAX, TMIN, TAIRHR, TDEW,> (In Module_CSCAS_Vars_list) <
      DRAIN, RUNOFF, IRRAMT,                               &!Water
      DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,            &!Weather
-     NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,   &!Soil states
+!     PARHR, RADHR, RHUMHR, VPDHR,                         &!Hourly weather MF 14SE14
+     NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,   &!Soil states 
      SW, NO3LEFT, NH4LEFT, FERNIT,                        &!H2o,N states
      TLCHD, TNIMBSOM, TNOXD,                              &!N components
      TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3, &!N components
      YEARPLTCSM, HARVFRAC,                                &!Pl.date
-     PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,          &!Resources
+     PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDO,           &!Resources ! MF changed from ALBEDOS to ALBEDO to match the call in CSCAS_Interface
      CAID, KCAN, KEP,                                     &!States
      RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,          &!States
      UNO3, UNH4, UH2O,                                    &!Uptake
      SENCALG, SENNALG, SENLALG,                           &!Senescence
      RESCALG, RESNALG, RESLGALG,                          &!Residues
      STGYEARDOY, BRSTAGE,                                 &!Stage dates
-     DYNAMIC, WEATHER)                                     !Control ! MF 31AU14 WEATHER ADDED
-
-    USE CRSIMDEF
-    USE ModuleDefs                                         ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
-      
-    IMPLICIT NONE
+     DYNAMIC, WEATHER)                                     !Control
+     
+     
+     !USE CRSIMDEF                                            MF 15SE14 Declared in ModuleDefs
+     USE ModuleDefs                                         ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
+     USE ModuleData
+     USE Module_CSCAS_Vars_List
+     
+     IMPLICIT NONE
+     
+     TYPE (WeatherType) WEATHER                             ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
     
-    Type (WeatherType) WEATHER                             ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
+    INTEGER :: CN       , DOY         , DYNAMIC     , FROP        , NLAYR       , ON          , REP        , RN          
+    INTEGER :: RUN      , RUNI        , SN          , STEP        , STGYEARDOY(20)            , TN         , YEAR
+    INTEGER :: YEARPLTCSM 
+    INTEGER :: CSTIMDIF , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT              ! Integer function calls
 
-    INTEGER,PARAMETER::DINX =   3 ! Disease number,maximum
-    INTEGER,PARAMETER::PSX  =  20 ! Principal stages,maximum
-    INTEGER,PARAMETER::SSX  =  20 ! Secondary stages,maximum
-    INTEGER,PARAMETER::KEYSTX = 9 ! Maximum number of key stages
-    INTEGER,PARAMETER::DCNX =  10 ! Disease control #,maximum
-    INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts
-    INTEGER,PARAMETER::LNUMX= 500 ! Maximum number of leaves/axis
-    INTEGER,PARAMETER::HANUMX= 40 ! Maximum # harvest instructions
-!    INTEGER,PARAMETER::NL   =  20 ! Maximum number of soil layers
+    REAL    ALBEDO      , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CO2         , DAYL        
+    REAL    DEPMAX      , DEWDUR      , DLAYR(NL)   , DRAIN       , DUL(NL)     , EO          , EOP         , EP          
+    REAL    ES          , ET          , FERNIT      , HARVFRAC(2) , IRRAMT      , KCAN        , KEP         , LAIL(30)    
+    REAL    LAILA(30)   , LL(NL)      , NFP         , NH4LEFT(NL) , NO3LEFT(NL) , PARIP       , PARIPA      , RAIN        
+    REAL    RESCALG(0:NL)             , RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)     , RUNOFF      
+    REAL    RWUMX       , RWUPM       , SAT(NL)     , SENCALG(0:NL)             , SENLALG(0:NL)             
+    REAL    SENNALG(0:NL)             , SHF(NL)     , SLPF        , SRAD        , ST(0:NL)    , SW(NL)                     ! MF 15SE14 removed <, TAIRHR(TS)> (In Module_CSCas_Vars_List)  
+    REAL    TLCHD       , TNIMBSOM    , TNOXD       , TOMINFOM    , TOMINSOM                                               ! MF 15SE14 removed <, TDEW        , TMAX        , TMIN> (In Module_CSCas_Vars_List)        
+    REAL    TOMINSOM1   , TOMINSOM2   , TOMINSOM3   , TRWUP       , UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP      
+!    REAL    WEATHER 
+!    REAL    PARHR(24)   , RADHR(24)   , RHUMHR(24)  , VPDHR(24)                         !MF 14SE14 Hourly weather data
 
-!    INTEGER,PARAMETER::RUNINIT=1  ! Program initiation indicator
-!    INTEGER,PARAMETER::SEASINIT=2 ! Reinitialisation indicator
-!    INTEGER,PARAMETER::RATE = 3   ! Program rate calc.indicator
-!    INTEGER,PARAMETER::INTEGR=4   ! Program update indicator
-!    INTEGER,PARAMETER::OUTPUT=5   ! Program output indicator
-!    INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator
+    CHARACTER(LEN=1)  :: IDETG, IDETL, IDETO, IDETS, ISWDIS, ISWNIT, ISWWAT      
+    CHARACTER(LEN=1)  :: MESOM, RNMODE      
+    CHARACTER(LEN=120):: FILEIOIN    
+    CHARACTER(LEN=10)  TL10FROMI                                                         ! Character function call
 
-!    CHARACTER(LEN=1),PARAMETER::BLANK = ' '                              ! Defined in 
-!    CHARACTER(LEN=3),PARAMETER::DASH = ' - '
 
-    INTEGER ARGLEN   , CDAYS    , CN       , CNI      , COLNUM   , CSIDLAYR , CSTIMDIF , CSYDOY   
-    INTEGER CSYEARDOY, CTRNUMPD , CWADCOL  , DAE      , DAP      , DAPCALC  , DAS      , DATE     
-    INTEGER DATECOL  , DCDAT(DCNX)         , DCTAR(DCNX)         , DIDAT(DINX)         
-    INTEGER DIDOY(DINX)         , DOM      , DOY      , DOYCOL   , DYNAMIC  , DYNAMICPREV         
-    INTEGER EDAP     , EDAPM    , EDATM    , EDATMX   , EMDATERR , ERRNUM   , EVALOUT  , EVHEADNM 
-    INTEGER EVHEADNMMAX         , EYEARDOY , FAPPNUM  , FDAY(200), FILELEN  , FLDAP    , FNUMERA  
-    INTEGER FNUMERR  , FNUMERT  , FNUMEVAL , FNUMLVS  , FNUMMEAS , FNUMOV   , FNUMPHA  , FNUMPHEM 
-    INTEGER FNUMPHES , FNUMPREM , FNUMPRES , FNUMPSUM , FNUMREA  , FNUMT    , FNUMTMP  , FNUMWRK  
-    INTEGER FROP     , FROPADJ  , GDAP     , GDAPM    , GDATM    , GSTDCOL  , GYEARDOY , HADOY    
-    INTEGER HANUM    , HAYEAR   , HDAY     , HDOYF    , HDOYL    , HFIRST   , HIADCOL  , HLAST    
-    INTEGER HNUMACOL , HNUMBER  , HNUMECOL , HSTG     , HWADCOL  , HWTUCOL  , HYEAR    
-    INTEGER HYEARDOY(HANUMX)    , HYEARF   , HYEARL   , HYRDOY(HANUMX)      , I        , IDETGNUM 
-    INTEGER KEYPS(KEYSTX)       , KEYPSNUM , L        , L1       , L2       , LAIDCOL  
-    INTEGER LBIRTHDAP(LCNUMX)   , LCNUM    , LDEATHDAP(LCNUMX)   , LENDIS   , LENENAME , LENGROUP 
-    INTEGER LENLINE  , LENLINESTAR         , LENRNAME , LENTNAME , LINENUM  , LNUMCOL  , LNUMSG   
-    INTEGER LNUMSOLDESTA        , LRTIP    , LSEED    , MDAP     , MDAPM    , MDAT     , MDATERR  
-    INTEGER MDATM    , MDOY     , MSTG     , NLAYR    , NLAYRROOT, NOUTPG   , NOUTPG2  , NOUTPGF  
-    INTEGER NOUTPN   , NSDAYS   , ON       , ONI      , OUTCHOICE, OUTCOUNT , PATHL    , PDATE    
-    INTEGER PDAYS(0:12)         , PGDAP    , PGROCOL(20)         , PHINTSTG , PLDAY    , PLDAYTMP 
-    INTEGER PLTOHARYR, PLYEAR   , PLYEARDOY, PLYEARDOYPREV       , PLYEARDOYT          
-    INTEGER PLYEARREAD          , PLYEARTMP, PSDAP(PSX)          , PSDAPM(PSX)         
-    INTEGER PSDAT(PSX)          , PSDATM(PSX)         , PSIDAP   , PSIDAPM  , PSIDATERR, PSNUM    
-    INTEGER PWDINF   , PWDINL   , PWDOYF   , PWDOYL   , PWYEARF  , PWYEARL  , REP      , RN       
-    INTEGER RNI      , RPCOL    , RTSLXDATE, RUN      , RUNCRP   , RUNI     , SHDAP    , SHDAT    
-    INTEGER SN       , SNI      , SRNOPD   , STARNUM  , STARNUMM , STARNUMO , STARTPOS , STEP     
-    INTEGER STEPNUM  , STGEDAT  , STGYEARDOY(20)      , TDATANUM , TFCOLNUM , TFDAP    , TFDAPCOL 
-    INTEGER TIERNUM  , TLINENUM , TLPOS    , TN       , TNI      , TVI1     , TVI2     , TVI3     
-    INTEGER TVI4     , TVICOLNM , TVILENT  , VALUEI   , VARNUM(30)          , WSDAYS               ! VERSION REMOVED
-    INTEGER YEAR     , YEARCOL  , YEARDOY  , YEARDOYHARF         , YEARDOYPREV         , YEARM    
-    INTEGER YEARPLTCSM          , YEARSIM 
-    
-    REAL    AFLF(0:LNUMX)       , AH2OPROFILE         , AH2OROOTZONE        , ALBEDO   , ALBEDOS  
-    REAL    AMTNIT   , AMTNITPREV          , ANDEM    , ANFER(200)          , AREAPOSSIBLE        
-    REAL    AREAPOSSIBLEN       , AVGSW    , BASELAYER, BD(20)   , BRFX(PSX), BRNUMSH  , BRNUMSHM 
-    REAL    BRNUMST  , BRNUMSTPREV         , BRSTAGE  , BRSTAGEPREV         , BRSTAGETMP          
-    REAL    CAID     , CANHT    , CANHTG   , CANHTS   , CARBOADJ , CARBOBEG , CARBOBEGI
-    REAL    CARBOBEGIA          , CARBOBEGM, CARBOBEGR, CARBOC   , CARBOEND , CARBOR   , CARBOT   
-    REAL    CARBOTMP , CARBOTMPI, CARBOTMPM, CARBOTMPR, CHTPC(10), CLAPC(10), CLOUDS   , CNAD     
-    REAL    CNADPREV , CNADSTG(20)         , CNAM     , CNAMERR  , CNAMM    , CNCTMP   , CNPCHM   
-    REAL    CO2      , CO2AIR   , CO2CAV   , CO2CC    , CO2COMPC , CO2EX    , CO2F(10) , CO2FP    
-    REAL    CO2FPI   , CO2INT   , CO2INTPPM, CO2INTPPMP          , CO2MAX   , CO2PAV(0:12)        
-    REAL    CO2PC    , CO2RF(10), CRFR     , CRRSWAD  , CRRSWT   , CRWAD    , CRWADOUT , CRWT     
-    REAL    CRWTM    , CSVPSAT  , CSYVAL   , CUMDEP   , CUMDU    , CUMSW    , CWAD     , CWADPREV 
-    REAL    CWADSTG(20)         , CWADT    , CWAHC    , CWAHCM   , CWAM     , CWAMERR  , CWAMM    
-    REAL    CWAN(HANUMX)        , DALF(0:LNUMX)       , DAYL     , DAYLCAV  , DAYLCC   
-    REAL    DAYLPAV(0:12)       , DAYLPC   , DAYLPREV , DAYLS(0:10)         , DAYLST(0:12)        
-    REAL    DAYSUM   , DCDUR(DCNX)         , DCFAC(DCNX)         , DEPMAX   , DEWDUR   , DF       
-    REAL    DFNEXT   , DFOUT    , DFPE     , DGLF(0:LNUMX)       , DIFFACR(DINX)       
-    REAL    DIGFAC(DINX)        , DLAYR(20), DLAYRTMP(20)        , DMP_EP   , DMP_ET   , DMP_IRR  
-    REAL    DMP_NAPP , DMP_NUPT , DMP_RAIN , DRAIN    , DRAINC   , DSLF(0:LNUMX)       , DSTAGE   
-    REAL    DTRY     , DU       , DUL(20)  , DUNEED   , DUPHASE  , DUPNEXT  , DUSRI    , DUTOMSTG 
-    REAL    EARLYN   , EARLYW   , EDAPFR   , EDAYFR   , EMRGFR   , EMRGFRPREV          , EO       
-    REAL    EOC      , EOEBUD   , EOEBUDC  , EOEBUDCRP, EOEBUDCRPC          , EOEBUDCRPCO2        
-    REAL    EOEBUDCRPCO2C       , EOEBUDCRPCO2H2O     , EOEBUDCRPCO2H2OC    , EOMPCRP  , EOMPCRPC 
-    REAL    EOMPCRPCO2          , EOMPCRPCO2C         , EOMPCRPCO2H2O       , EOMPCRPCO2H2OC      
-    REAL    EOMPEN   , EOMPENC  , EOP      , EOPEN    , EOPENC   , EOPT     , EOPTC    , EP       
-    REAL    EPCC     , EPPC(0:12)          , EPSRATIO , ERRORVAL , ES       , ET       , ETCC     
-    REAL    ETPC(0:12)          , FAC(20)  , FERNIT   , FERNITPREV          , FLN      , FNH4     
-    REAL    FNO3     , FSOILH2O , FSOILN   , GDAPFR   , GDAYFR   , GEDAYSE  , GEDAYSG  , GERMFR   
-    REAL    GESTAGE  , GESTAGEPREV         , GEUCUM   , GROCR    , GROCRADJ , GROCRFR  , GROLF    
-    REAL    GROLFADJ , GROLFNEEDED         , GROLFP   , GROLS    , GROLSA   , GROLSP   , GROLSRS  
-    REAL    GROLSRT  , GROLSRTN , GROLSSD  , GROLSSEN , GRORS    , GRORSADJ , GROSR    , GROST    
-    REAL    GROSTADJ , GROSTCR  , GROSTCRP , GROSTCRPSTORE       , GRP_EP   , GRP_ET   , GRP_IRR  
-    REAL    GRP_NAPP , GRP_NUPT , GRP_RAIN , H2OA     , H2OCF    , H2OPROFILE          
-    REAL    H2OROOTZONE         , HAFR     , HAMT(HANUMX)        , HARVFRAC(2)         , HAWAD    
-    REAL    HBPC(HANUMX)        , HBPCF    , HDUR     , HIAD     , HIADT    , HIAM     , HIAMERR  
-    REAL    HIAMM    , HIAMMTMP , HIND     , HINM     , HINMM    , HMPC     , HNAD     , HNAM     
-    REAL    HNAMERR  , HNAMM    , HNC      , HNPCM    , HNPCMERR , HNPCMM   , HNUMAD   , HNUMAERR 
-    REAL    HNUMAM   , HNUMAMM  , HNUMAT   , HNUMET   , HNUMGERR , HNUMGM   , HNUMGMM  , HNUMPM   
-    REAL    HNUMPMM  , HPC(HANUMX)         , HPCF     , HPRODN   , HSTAGE   , HWAD     , HWADT    
-    REAL    HWAHERR  , HWAHM    , HWAM     , HWAMM    , HWUD     , HWUM     , HWUMERR  , HWUMM    
-    REAL    HWUMYLD  , HWUT     , HYAMM    , ICWD     , IRRAMT   , IRRAMTC  , ISOILH2O , ISOILN   
-    REAL    KCAN     , KCANI    , KEP      , KEPI     , LA1S     , LAFND    , LAFS     
-    REAL    LAGEG(0:LNUMX)      , LAGEP(0:LNUMX)      , LAGETT(0:LNUMX)     , LAGL(1,LNUMX)       
-    REAL    LAI      , LAIA     , LAIL(30) , LAILA(30), LAIPREV  , LAIPROD  , LAISTG(20)          
-    REAL    LAIX     , LAIXERR  , LAIXM    , LAIXT    , LAIXX    , LANC     , LANCRS   
-    REAL    LAP(0:LNUMX)        , LAPD     , LAPH     , LAPHC    , LAPOTX(LNUMX)       
-    REAL    LAPP(LNUMX)         , LAPS(LNUMX)         , LAPSTMP  , LATL(1,LNUMX)       
-    REAL    LATL2(1,LNUMX)      , LATL3(1,LNUMX)      , LATL4(1,LNUMX)      , LATLPOT(1,LNUMX)    
-    REAL    LATLPREV(1,LNUMX)   , LAWCF    , LAWFF    , LAWL(2)  , LAWMNFR  , LAWS     , LAWTR    
-    REAL    LAWTS    , LAWWR    , LAXN2    , LAXNO    , LAXS     , LCOA(LCNUMX)        
-    REAL    LCOAS(LCNUMX)       , LEAFN    , LEAFNEXCESS         , LFGSDU   , LFWT     , LFWTM    
-    REAL    LGPHASE(2)          , LGPHASEDU(2)        , LL(20)   , LLIFA    , LLIFATT  , LLIFG    
-    REAL    LLIFGTT  , LLIFS    , LLIFSTT  , LLIFX    , LLIFXUNUSED         , LLIGP    , LLNAD    
-    REAL    LLOSA    , LLRSWAD  , LLRSWT   , LLWAD    , LLWADOUT , LNCGL    , LNCGU    , LNCM     
-    REAL    LNCMN(0:1)          , LNCPL    , LNCPU    , LNCR     , LNCSEN   , LNCSENF  , LNCX     
-    REAL    LNCXS(0:1)          , LNDEM    , LNDEM2   , LNDEMG   , LNDEMTU  , LNPCMN(0:1)         
-    REAL    LNPCS(0:1)          , LNPH     , LNPHC    , LNUM     , LNUMEND  , LNUMG    , LNUMNEED 
-    REAL    LNUMPREV , LNUMSERR , LNUMSIMTOSTG(0:PSX) , LNUMSM   , LNUMSMM  , LNUMSTG(20)         
-    REAL    LNUMT    , LNUMTMP  , LNUMTOSTG(0:PSX)    , LNUSE(0:3)          , LPEAI    , LPEAW    
-    REAL    LPEFR    , LPERSWAD , LPERSWT  , LPEWAD   , LSENI    , LSNUM(HANUMX)       , LSTAGE   
-    REAL    LSWT(HANUMX)        , LWLOS    , LWPH     , LWPHC    , MDAPFR   , MDATT    , MDAYFR   
-    REAL    MJPERE   , NCRG     , NDEM2    , NDEMG    , NDEMMN   , NFG      , NFGCAV   , NFGCC    
-    REAL    NFGL     , NFGPAV(0:12)        , NFGPC    , NFGU     , NFLF(LNUMX)         
-    REAL    NFLF2(0:LNUMX)      , NFLFP(LNUMX)        , NFP      , NFPCAV   , NFPCC    , NFPL     
-    REAL    NFPPAV(0:12)        , NFPPC    , NFPU     , NFRG     , NFSU     , NH4CF    , NH4FN    
-    REAL    NH4LEFT(20)         , NH4MN    , NLABPC   , NLLG     , NO3CF    , NO3FN    
-    REAL    NO3LEFT(20)         , NO3MN    , NPOOLL   , NPOOLR   , NPOOLS   , NTUPF    , NUF      
-    REAL    NULEFT   , NUPAC    , NUPACM   , NUPAD    , NUPAP    , NUPAPCRP , NUPAPCSM , NUPAPCSM1
-    REAL    NUPC     , NUPD     , NUPRATIO , NUSEFAC  , PARFC    , PARI     , PARI1    , PARIOUT  
-    REAL    PARIP    , PARIPA   , PARIPREV , PARIUE   , PARIUED  , PARIX    , PARMJC   , PARMJFAC 
-    REAL    PARMJIADJ, PARMJIC  , PARU     , PARU2    , PARUE    , PARUEC   , PARURFR  , PD(0:PSX)
-    REAL    PD2ADJ   , PDADJ    , PDFS     , PDL(0:PSX)          , PECM     , PEGD     , PFGCAV   
-    REAL    PFGPAV(0:12)        , PFPCAV   , PFPPAV(0:12)        , PGERM    , PGVAL    , PHINT    
-    REAL    PHINTFAC , PHINTS   , PHOTQR   , PHSV     , PHTV     , PLA      , PLAGS2   , PLAGSB2  
-    REAL    PLAGSB3  , PLAGSB4  , PLAS     , PLASI    , PLASL    , PLASN    , PLASP    , PLASS    
-    REAL    PLASTMP  , PLASTMP2 , PLASW    , PLAX     , PLMAGE   , PLPH     , PLTPOP   , PLTPOPE  
-    REAL    PLTPOPP  , PPEXP    , PPTHR    , PSDAPFR(PSX)        , PSDAYFR(PSX)        
-    REAL    PSTART(0:PSX)       , PTF      , PTFA     , PTFMN    , PTFMX    , PTTN     , PTX      
-    REAL    RAIN     , RAINC    , RAINCC   , RAINPAV(0:12)       , RAINPC(0:12)        , RANC     
-    REAL    RATM     , RB       , RCROP    , RDGAF    , RDGS     , RESCAL(0:20)        
-    REAL    RESCALG(0:20)       , RESLGAL(0:20)       , RESLGALG(0:20)      , RESNAL(0:20)        
-    REAL    RESNALG(0:20)       , RESPC    , RESPRC   , RESPTC   , RESWAL(0:20)        
-    REAL    RESWALG(0:20)       , RFAC     , RLDF(20) , RLF      , RLFC     , RLFN     , RLFWU    
-    REAL    RLIGP    , RLV(20)  , RLWR     , RM       , RMSE(30) , RNAD     , RNAM     , RNAMM    
-    REAL    RNCM     , RNCMN(0:1)          , RNCR     , RNCX     , RNCXS(0:1)          , RNDEM    
-    REAL    RNDEMG   , RNDEMTU  , RNH4U(20), RNO3U(20), RNPCMN(0:1)         , RNPCS(0:1)          
-    REAL    RNUMX    , RNUSE(0:2)          , ROOTN    , ROOTNEXCESS         , ROOTNS   , ROWSPC   
-    REAL    RRESP    , RSCD     , RSCLX    , RSCM     , RSCMM    , RSCX     , RSEN     , RSFP     
-    REAL    RSFPL    , RSFPU    , RSFRS    , RSGLFADJ , RSN      , RSNAD    , RSNEED   , RSNPH    
-    REAL    RSNPHC   , RSNUSED  , RSPCO    , RSSRWTGLFADJ        , RSSRWTGSTADJ        , RSUSE    
-    REAL    RSWAD    , RSWAM    , RSWAMM   , RSWPH    , RSWPHC   , RSWT     , RSWTGLFADJ          
-    REAL    RSWTM    , RSWTPREV , RSWTTMP  , RSWTX    , RTDEP    , RTDEPG   , RTDEPTMP , RTNH4    
-    REAL    RTNO3    , RTNSL(20), RTRESP   , RTRESPADJ, RTUFR    , RTWT     , RTWTAL(20)          
-    REAL    RTWTG    , RTWTGADJ , RTWTGL(20)          , RTWTL(20), RTWTM    , RTWTSL(20)          
-    REAL    RTWTUL(20)          , RUNOFF   , RUNOFFC  , RWAD     , RWAM     , RWAMM    , RWUMX    
-    REAL    RWUMXI   , RWUPM    , SAID     , SANC     , SANCOUT  , SAT(20)  , SAWS     , SDCOAT   
-    REAL    SDDUR    , SDEPTH   , SDEPTHU  , SDNAD    , SDNAP    , SDNC     , SDNPCI   , SDRATE   
-    REAL    SDRSF    , SDSZ     , SDWAD    , SDWAM    , SEEDN    , SEEDNI   , SEEDNUSE , SEEDNUSE2
-    REAL    SEEDRS   , SEEDRSAV , SEEDRSAVR, SEEDRSI  , SEEDUSE  , SEEDUSER , SEEDUSET , SENCAGS  
-    REAL    SENCALG(0:20)       , SENCAS   , SENCL(0:20)         , SENCS    , SENFR    , SENLA    
-    REAL    SENLAGS  , SENLALG(0:20)       , SENLALITTER         , SENLAS   , SENLFG   , SENLFGRS 
-    REAL    SENLL(0:20)         , SENLS    , SENNAGS  , SENNAL(0:20)        , SENNALG(0:20)       
-    REAL    SENNAS   , SENNATC  , SENNATCM , SENNGS   , SENNL(0:20)         , SENNLFG  , SENNLFGRS
-    REAL    SENNS    , SENROOT  , SENROOTA , SENRTG   , SENSTFR  , SENTOPLITTER        
-    REAL    SENTOPLITTERA       , SENTOPLITTERG       , SENWACM  , SENWACMM , SENWAGS  
-    REAL    SENWAL(0:20)        , SENWALG(0:20)       , SENWL(0:20)         , SERX     , SHF(20)  
-    REAL    SHGR(22) , SHLA(25) , SHLAG2(25)          , SHLAGB2(25)         , SHLAGB3(25)         
-    REAL    SHLAGB4(25)         , SHLAS(25), SHNUM    , SHNUMAD  , SHNUML(LNUMX)       , SHRTD    
-    REAL    SHRTM    , SHRTMM   , SLA      , SLAOUT   , SLIGP    , SLPF     , SMDFR    , SNAD     
-    REAL    SNCM     , SNCMN(0:1)          , SNCR     , SNCX     , SNCXS(0:1)          , SNDEM    
-    REAL    SNDEMG   , SNDEMTU  , SNH4(20) , SNH4PROFILE         , SNH4ROOTZONE        , SNO3(20) 
-    REAL    SNO3PROFILE         , SNO3ROOTZONE        , SNPCMN(0:1)         , SNPCS(0:1)          
-    REAL    SNPH     , SNPHC    , SNUSE(0:2)          , SPRL     , SRAD     , SRAD20   , SRAD20S  
-    REAL    SRADC    , SRADCAV  , SRADCC   , SRADD(20), SRADPAV(0:12)       , SRADPC   , SRADPREV 
-    REAL    SRANC    , SRDAYFR  , SRFR     , SRNAD    , SRNAM    , SRNDEM   , SRNDEMG  , SRNDEMTU 
-    REAL    SRNOAD   , SRNOAM   , SRNOAMM  , SRNOGM   , SRNOGMM  , SRNOW    , SRNPCM   , SRNPCS   
-    REAL    SRNUSE(0:2)         , SROOTN   , SRPRS    , SRWAD    , SRWT     , SRWTGRS  , SRWUD    
-    REAL    SRWUM    , SRWUMM   , ST(0:NL) , STADJ    , STAI     , STAIG    , STAIS    , STAISS   
-    REAL    STDAY    , STEMN    , STEMNEXCESS         , STGEFR   , STRESS(20)          , STRESS20 
-    REAL    STRESS20N, STRESS20NS          , STRESS20S, STRESS20W, STRESS20WS          
-    REAL    STRESSN(20)         , STRESSW(20)         , STRSWAD  , STRSWT   , STWAD    , STWADOUT 
-    REAL    STWT     , STWTM    , SW(20)   , SWFR     , SWFRN    , SWFRNL   , SWFRPREV , SWFRS    
-    REAL    SWFRX    , SWFRXL   , SWP(0:20), SWPH     , SWPHC    , SWPLTD   , SWPLTH   , SWPLTL   
-    REAL    SWPRTIP  , SWPSD    , TAIRHR(24)          , TCAN     , TCDIF    , TDEW     , TDIFAV   
-    REAL    TDIFNUM  , TDIFSUM  , TFAC4    , TFD      , TFDF     , TFDLF(LNUMX)        , TFDNEXT  
-    REAL    TFG      , TFGEM    , TFGLF(LNUMX)        , TFLAW    , TFLFLIFE , TFP      , TFV      
-    REAL    TFVAL    , TIMENEED , TLCHC    , TLCHD    , TMAX     , TMAXCAV  , TMAXCC   , TMAXM    
-    REAL    TMAXPAV(0:12)       , TMAXPC   , TMAXSUM  , TMAXX    , TMEAN    , TMEAN20  , TMEAN20P 
-    REAL    TMEAN20S , TMEANAV(0:12)       , TMEANCC  , TMEAND(20)          , TMEANE   , TMEANEC  
-    REAL    TMEANG   , TMEANGC  , TMEANNUM , TMEANPC  , TMEANSUM , TMEANSURF, TMIN     , TMINCAV  
-    REAL    TMINCC   , TMINM    , TMINN    , TMINPAV(0:12)       , TMINPC   , TMINSUM  , TNAD     
-    REAL    TNAMM    , TNIMBSOM , TNOXC    , TNOXD    , TOFIXC   , TOMIN    , TOMINC   , TOMINFOM 
-    REAL    TOMINFOMC, TOMINSOM , TOMINSOM1, TOMINSOM1C          , TOMINSOM2, TOMINSOM2C          
-    REAL    TOMINSOM3, TOMINSOM3C          , TOMINSOMC, TPAR     , TRATIO   , TRDV1(4) , TRDV2(4) 
-    REAL    TRGEM(4) , TRLDF    , TRLFG(4) , TRLV     , TRPHS(4) , TRWU     , TRWUP    , TSDEP    
-    REAL    TSRAD    , TT       , TT20     , TT20S    , TTCUM    , TTD(20)  , TTGEM    , TTLFLIFE 
-    REAL    TTNEED   , TTNEXT   , TTOUT    , TVR1     , TVR2     , TVR3     , TVR4     , TVR5     
-    REAL    TVR6     , TWAD     , UH2O(NL) , UNH4(20) , UNO3(20) , VALUER   , VANC     
-    REAL    VARSUM(30)          , VARVAL   , VCNC     , VMNC     , VNAD     , VNAM     , VNAMM    
-    REAL    VNPCM    , VNPCMM   , VPD      , VPDFP    , VWAD     , VWAM     , VWAMERR  , VWAMM    
-    REAL    WAVR     , WFEU     , WFG      , WFGCAV   , WFGCC    , WFGE     , WFGEM    , WFGL     
-    REAL    WFGPAV(0:12)        , WFGPC    , WFGU     , WFLAW    , WFLF(LNUMX)         , WFNU     
-    REAL    WFP      , WFPCAV   , WFPCC    , WFPL     , WFPPAV(0:12)        , WFPPC    , WFPU     
-    REAL    WFRG     , WFRTG    , WFSU     , WINDSP   , WTDEP    , WUPR     , WUPRD(20), XDEP     
-    REAL    XDEPL    , XMIN     , YVALXY  
-    
-    CHARACTER (LEN=1)   CFLAFLF     , CFLFAIL     , CFLHAR      , CFLHARMSG   , CFLLFLIFE   , CFLPDADJ    , CFLPRES     
-    CHARACTER (LEN=1)   CFLSDRSMSG  , CFLTFG      , EMFLAG      , ESTABLISHED , FNAME       , GROUP       , HOP(HANUMX) 
-    CHARACTER (LEN=1)   IDETD       , IDETG       , IDETL       , IDETO       , IDETS       , IFERI       , IHARI       
-    CHARACTER (LEN=1)   IPLTI       , ISWDIS      , ISWNIT      , ISWNITEARLY , ISWWAT      , ISWWATCROP  , ISWWATEARLY 
-    CHARACTER (LEN=1)   MEEVP       , MEEXP       , MENU        , MEPHO       , MESOM       , MEWNU       , PLME        
-    CHARACTER (LEN=1)   PSTYP(PSX)  , RNMODE      , SEASENDOUT  , SSTYP(SSX)  , TIERNUMC    
-    CHARACTER (LEN=2)   CNCHAR2     , CROP        , CROPPREV    , HPROD       , PPSEN       
-    CHARACTER (LEN=3)   FILEIOT     , MERNU       , MONTH       , OUT         
-    CHARACTER (LEN=4)   MEDEV       
-    CHARACTER (LEN=5)   PSABV(PSX)  , PSABVO(PSX) , SSABV(SSX)  , SSABVO(SSX) , TVTRDV      
-    CHARACTER (LEN=6)   BRSTAGEC    , CAIC        , CANHTC      , DAPWRITE    , ECONO       , ECONOPREV   , HIAMCHAR    
-    CHARACTER (LEN=6)   HIAMMCHAR   , HINDC       , HINMCHAR    , HINMMCHAR   , HNPCMCHAR   , HNPCMMCHAR  , HWUDC       
-    CHARACTER (LEN=6)   HWUMCHAR    , HWUMMCHAR   , LAIC        , LAIPRODC    , LAIXCHAR    , LAIXMCHAR   , LAPC        
-    CHARACTER (LEN=6)   LAPOTXC     , LAPSC       , LATL2C      , LATL3C      , LATL4C      , LATLC       , SDWADC      
-    CHARACTER (LEN=6)   SENN0C      , SENNSC      , SENROOTC    , SENTOPLITTERAC            , TCHAR       , THEAD(20)          
-    CHARACTER (LEN=6)   VARNO       , VARNOPREV   , VNPCMCHAR   , VNPCMMCHAR  
-    CHARACTER (LEN=8)   MODEL       , MODNAME     , RUNRUNI     , VARCHAR     
-    CHARACTER (LEN=10)  CNCHAR      , DAPCHAR     , EXCODE      , EXCODEPREV  , TL10        , TL10FROMI   , TNCHAR      
-    CHARACTER (LEN=12)  CUFILE      , ECFILE      , OUTPG       , OUTPG2      , OUTPGF      , OUTPN       , SPFILE      
-    CHARACTER (LEN=13)  PSNAME(PSX) , SSNAME(SSX) 
-    CHARACTER (LEN=14)  EVHEADER    
-    CHARACTER (LEN=16)  VRNAME      
-    CHARACTER (LEN=25)  RUNNAME     , TNAME       
-    CHARACTER (LEN=35)  GENFLCHK    
-    CHARACTER (LEN=40)  TRUNNAME    
-    CHARACTER (LEN=60)  ENAME       
-    CHARACTER (LEN=64)  SPDIRFLE    , SPDIRFLPREV 
-    CHARACTER (LEN=78)  MESSAGE(10) 
-    CHARACTER (LEN=79)  OUTHED      
-    CHARACTER (LEN=80)  FAPPLINE(30), LINESTAR    , LINESTAR2   , PATHCR      , PATHEC      , PATHSP      
-    CHARACTER (LEN=93)  CUDIRFLE    , CUDIRFLPREV , ECDIRFLE    , ECDIRFLPREV 
-    CHARACTER (LEN=107) FILEADIR    
-    CHARACTER (LEN=120) CFGDFILE    , FILEA       , FILEIO      , FILEIOIN    , FILENEW     , FILET       , FILEX       
-    CHARACTER (LEN=120) FNAMEERA    , FNAMEERT    , FNAMEEVAL   , FNAMELEAVES , FNAMEMEAS   , FNAMEOV     , FNAMEPHASES 
-    CHARACTER (LEN=120) FNAMEPHENOLM, FNAMEPHENOLS, FNAMEPREM   , FNAMEPRES   , FNAMEPSUM   
-    CHARACTER (LEN=128) ARG         
-    CHARACTER (LEN=180) LINET       , TLINET      , TLINETMP    
-    CHARACTER (LEN=254) TLINEGRO    
-    CHARACTER (LEN=354) LINEERA     
 
-    LOGICAL FEXIST   , FEXISTA  , FEXISTT  , FFLAG    , FFLAGEC  , FOPEN         
+
       ! Arrays for passing variables to OPSUM subroutine, CSM model only
-    INTEGER,      PARAMETER :: SUMNUM = 37
-    CHARACTER*5,  DIMENSION(SUMNUM) :: LABEL
-    REAL,         DIMENSION(SUMNUM) :: VALUE
-    
-    
 
     INTRINSIC AMAX1,AMIN1,EXP,FLOAT,INDEX,INT,LEN,MAX,MIN,MOD,NINT,SQRT,ABS,TRIM
 
@@ -300,346 +86,145 @@
     IF (DYNAMIC.EQ.RUNINIT) THEN    ! Initialization
     !***********************************************************************************************************************
     !-----------------------------------------------------------------------------------------------------------------------
-    !     Run initialization procedure in SUBROUTINE CS_RUNINIT
-    !     SUBROUTINE CS_RUNIT takes all the code from CSCAS lines 1471 - 1813.
+    !     Run initialization procedure in SUBROUTINE CS_RunInit.
+    !     SUBROUTINE CS_RunInit takes all the code from CSCAS lines 1471 - 1813.
     !-----------------------------------------------------------------------------------------------------------------------
 
 
-    CALL CS_RUNINIT( &
-    CFGDFILE    , CFLAFLF     , CFLTFG      , CN          , CROPPREV    , CUDIRFLPREV , DOY         , ECDIRFLPREV , &
-    ECONOPREV   , EXCODE      , FILEIO      , FILEIOIN    , FILEIOT     , FNAME       , FNAMEERA    , FNAMEERT    , &
-    FNAMEEVAL   , FNAMELEAVES , FNAMEMEAS   , FNAMEOV     , FNAMEPHASES , FNAMEPHENOLM, FNAMEPHENOLS, FNAMEPREM   , &
-    FNAMEPRES   , FNAMEPSUM   , FNUMERA     , FNUMERR     , FNUMERT     , FNUMEVAL    , FNUMLVS     , FNUMMEAS    , &
-    FNUMOV      , FNUMPHA     , FNUMPHEM    , FNUMPHES    , FNUMPREM    , FNUMPRES    , FNUMPSUM    , FNUMT       , &
-    FNUMTMP     , FNUMWRK     , FROP        , FROPADJ     , GENFLCHK    , IDETD       , IDETL       , ISWNIT      , &
-    ISWWATCROP  , MEDEV       , MERNU       , MJPERE      , MODEL       , MODNAME     , NOUTPG      , NOUTPG2     , &
-    NOUTPGF     , NOUTPN      , ON          , OUTPG       , OUTPG2      , OUTPGF      , OUTPN       , PARMJFAC    , &
-    RN          , RNMODE      , RUN         , RUNCRP      , SEASENDOUT  , SN          , STDAY       , STEPNUM     , &
-    TN          , VARNOPREV   , YEAR        , YEARSIM &                                                                ! REMOVED VERSION
-    )
+    CALL CS_RunInit (&
+        CN          , DOY         , FILEIOIN    , FROP        , IDETL       , ISWNIT      , ON          , RN          , &
+        RNMODE      , RUN         , SN          , TN          , YEAR        & 
+        )
+
 
     !***********************************************************************************************************************
     ELSEIF (DYNAMIC.EQ.SEASINIT) THEN    ! Initialization
     !***********************************************************************************************************************
       
     !-----------------------------------------------------------------------------------------------------------------------
-    !     Initialize both state and rate variables in SUBROUTINE VARINIT.
-    !     SUBROUTINE VARINIT takes all the code from CSCAS lines 1819 - 2327.                   
+    !     Initialize both state and rate variables in SUBROUTINE CS_VarInit.
+    !     SUBROUTINE CS_VarInit takes all the code from CSCAS lines 1819 - 2327.                   
     !-----------------------------------------------------------------------------------------------------------------------
 
-    CALL VARINIT( &
-    AFLF        , AMTNIT      , ANDEM       , BRNUMST     , BRSTAGE     , BRSTAGEPREV , CAID        , CANHT       , &
-    CANHTG      , CARBOADJ    , CARBOBEG    , CARBOBEGI   , CARBOBEGM   , CARBOBEGR   , CARBOC      , CARBOEND    , &
-    CARBOR      , CARBOT      , CDAYS       , CFLFAIL     , CFLHARMSG   , CFLLFLIFE   , CFLSDRSMSG  , CNAD        , &
-    CNADPREV    , CNADSTG     , CNAM        , CNAMM       , CO2CC       , CO2FP       , CO2INTPPM   , CO2INTPPMP  , &
-    CO2MAX      , CO2PAV      , CO2PC       , CRRSWT      , CRWAD       , CRWT        , CUMDU       , CWAD        , &
-    CWADPREV    , CWADSTG     , CWAHC       , CWAHCM      , CWAM        , CWAMM       , DAE         , DALF        , &
-    DAP         , DAYLCC      , DAYLPAV     , DAYLPC      , DAYLST      , DAYSUM      , DEWDUR      , DF          , &
-    DFOUT       , DGLF        , DRAINC      , DSLF        , DSTAGE      , DU          , DUNEED      , DYNAMICPREV , &
-    EDAP        , EDAPFR      , EDAPM       , EDAYFR      , EMFLAG      , EMRGFR      , EMRGFRPREV  , EOC         , &
-    EOEBUD      , EOEBUDC     , EOEBUDCRP   , EOEBUDCRPC  , EOEBUDCRPCO2, EOEBUDCRPCO2C             , &
-    EOEBUDCRPCO2H2O           , EOEBUDCRPCO2H2OC          , EOMPCRP     , EOMPCRPC    , EOMPCRPCO2  , EOMPCRPCO2C , &
-    EOMPCRPCO2H2O             , EOMPCRPCO2H2OC            , EOMPEN      , EOMPENC     , EOPEN       , EOPENC      , &
-    EOPT        , EOPTC       , EPCC        , EPSRATIO    , ESTABLISHED , ETCC        , EYEARDOY    , FAPPLINE    , &
-    FAPPNUM     , FERNITPREV  , FLDAP       , FLN         , GDAP        , GDAPM       , GDAYFR      , GEDAYSE     , &
-    GEDAYSG     , GERMFR      , GESTAGE     , GESTAGEPREV , GEUCUM      , GROCR       , GROCRADJ    , GROLF       , &
-    GROLFADJ    , GRORS       , GROSR       , GROST       , GROSTADJ    , GROSTCR     , GYEARDOY    , H2OCF       , &
-    HAMT        , HANUMX      , HBPC        , HBPCF       , HIAD        , HIAM        , HIAMM       , HIND        , &
-    HINM        , HINMM       , HNAD        , HNAM        , HNAMM       , HNPCM       , HNPCMM      , HNUMAM      , &
-    HNUMAMM     , HNUMBER     , HNUMGM      , HNUMGMM     , HOP         , HPC         , HPCF        , HSTAGE      , &
-    HWAM        , HWAMM       , HWUM        , HWUMMCHAR   , HYEARDOY    , HYRDOY      , IDETGNUM    , IRRAMTC     , &
-    LAGEP       , LAGETT      , LAGL        , LAI         , LAIL        , LAILA       , LAIPREV     , LAISTG      , &
-    LAIX        , LAIXM       , LANC        , LAP         , LAPHC       , LAPP        , LAPS        , LATL        , &
-    LATL2       , LATL3       , LATL4       , LCNUM       , LCNUMX      , LCOA        , LCOAS       , LEAFN       , &
-    LFWT        , LFWTM       , LLNAD       , LLRSWAD     , LLRSWT      , LLWAD       , LNCR        , LNCX        , &
-    LNDEM       , LNPHC       , LNUM        , LNUMG       , LNUMPREV    , LNUMSG      , LNUMSM      , LNUMSMM     , &
-    LNUMSTG     , LNUMX       , LNUSE       , LPEAI       , LPERSWAD    , LPERSWT     , LPEWAD      , LSEED       , &
-    LSTAGE      , LWPHC       , MDAP        , MDAT        , MDAYFR      , MDOY        , NFG         , NFGCC       , &
-    NFGPAV      , NFGPC       , NFLF        , NFLF2       , NFLFP       , NFP         , NFPCAV      , NFPCC       , &
-    NFPPAV      , NFPPC       , NH4CF       , NH4MN       , NL          , NO3CF       , NO3MN       , NSDAYS      , &
-    NUF         , NUPAC       , NUPAD       , NUPAP       , NUPAPCRP    , NUPAPCSM    , NUPAPCSM1   , NUPC        , &
-    NUPD        , NUPRATIO    , PARI        , PARI1       , PARIP       , PARIPA      , PARIUE      , PARMJC      , &
-    PARMJIC     , PARU        , PDADJ       , PDAYS       , PHOTQR      , PLA         , PLAGS2      , PLAGSB2     , &
-    PLAGSB3     , PLAGSB4     , PLAS        , PLASI       , PLASL       , PLASP       , PLASS       , PLAX        , &
-    PLTPOP      , PLYEAR      , PLYEARDOY   , PSDAP       , PSDAPM      , PSDAT       , PSDAYFR     , PSX         , &
-    PTF         , RAINC       , RAINCC      , RAINPAV     , RAINPC      , RANC        , RESCAL      , RESCALG     , &
-    RESLGAL     , RESLGALG    , RESNAL      , RESNALG     , RESPC       , RESPRC      , RESPTC      , RESWAL      , &
-    RESWALG     , RLF         , RLFC        , RLV         , RNAD        , RNAM        , RNAMM       , RNCR        , &
-    RNDEM       , RNUSE       , ROOTN       , ROOTNS      , RSCD        , RSCM        , RSCX        , RSFP        , &
-    RSN         , RSNAD       , RSNPH       , RSNPHC      , RSNUSED     , RSWAD       , RSWAM       , RSWAMM      , &
-    RSWPHC      , RSWT        , RSWTM       , RSWTX       , RTDEP       , RTDEPG      , RTNH4       , RTNO3       , &
-    RTNSL       , RTRESP      , RTRESPADJ   , RTSLXDATE   , RTWT        , RTWTAL      , RTWTG       , RTWTGADJ    , &
-    RTWTGL      , RTWTL       , RTWTM       , RTWTSL      , RUNOFFC     , RWAD        , RWAM        , RWAMM       , &
-    SAID        , SANC        , SANCOUT     , SDNAD       , SDNC        , SDWAD       , SDWAM       , SEEDUSE     , &
-    SEEDUSER    , SEEDUSET    , SENCAGS     , SENCALG     , SENCAS      , SENCL       , SENCS       , SENLA       , &
-    SENLAGS     , SENLALG     , SENLALITTER , SENLAS      , SENLFG      , SENLFGRS    , SENLL       , SENLS       , &
-    SENNAGS     , SENNAL      , SENNALG     , SENNAS      , SENNATC     , SENNATCM    , SENNL       , SENNLFG     , &
-    SENNLFGRS   , SENNS       , SENROOT     , SENROOTA    , SENRTG      , SENTOPLITTER, SENTOPLITTERG             , &
-    SENWACM     , SENWACMM    , SENWAGS     , SENWAL      , SENWALG     , SENWL       , SHDAT       , SHLA        , &
-    SHLAG2      , SHLAS       , SHNUM       , SHNUMAD     , SHNUML      , SHRTD       , SHRTM       , SLA         , &
-    SNAD        , SNCR        , SNH4ROOTZONE, SNO3PROFILE , SNO3ROOTZONE, SNPH        , SNPHC       , SNUSE       , &
-    SRADC       , SRADCAV     , SRADCC      , SRADD       , SRADPAV     , SRADPC      , SRADPREV    , SRANC       , &
-    SRNAM       , SRNDEM      , SRNOAD      , SRNOAM      , SRNOGM      , SRNOPD      , SRNUSE      , SROOTN      , &
-    SRWT        , SRWTGRS     , SRWUD       , SRWUM       , STAI        , STAIG       , STAIS       , STEMN       , &
-    STGEDAT     , STGYEARDOY  , STRSWT      , STWAD       , STWT        , STWTM       , SWPHC       , TCAN        , &
-    TDIFAV      , TDIFNUM     , TDIFSUM     , TFD         , TFDLF       , TFG         , TFGLF       , TFP         , &
-    TLCHC       , TMAXCAV     , TMAXCC      , TMAXM       , TMAXPAV     , TMAXPC      , TMAXSUM     , TMAXX       , &
-    TMEAN       , TMEANAV     , TMEANCC     , TMEAND      , TMEANE      , TMEANEC     , TMEANG      , TMEANGC     , &
-    TMEANNUM    , TMEANPC     , TMEANSUM    , TMINCAV     , TMINCC      , TMINM       , TMINN       , TMINPAV     , &
-    TMINPC      , TMINSUM     , TNAD        , TNOXC       , TOFIXC      , TOMINC      , TOMINFOMC   , TOMINSOM1C  , &
-    TOMINSOM2C  , TOMINSOM3C  , TOMINSOMC   , TRATIO      , TRWUP       , TT          , TT20        , TTCUM       , &
-    TTD         , TTGEM       , TTNEXT      , TWAD        , UH2O        , UNH4        , UNO3        , VANC        , &
-    VCNC        , VMNC        , VNAD        , VNAM        , VNAMM       , VNPCM       , VNPCMM      , VPDFP       , &
-    VWAD        , VWAM        , VWAMM       , WFG         , WFGCC       , WFGPAV      , WFGPC       , WFLF        , &
-    WFP         , WFPCAV      , WFPCC       , WFPPAV      , WFPPC       , WSDAYS      , WUPR   &      
-    )
+    CALL CS_VarInit( &
+        BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
+        PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
+        STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3        &
+        )  
 
     !-----------------------------------------------------------------------------------------------------------------------
-    !     Read experiment information from Dssat input or X- file in SUBROUTINE READ_XFILE.
-    !     SUBROUTINE READ_XFILE takes all the code from CSCAS lines 2333 -2525
+    !     Read experiment information from Dssat input or X- file in SUBROUTINE CS_Read_Xfile.
+    !     SUBROUTINE CS_Read_Xfile takes all the code from CSCAS lines 2333 -2525
     !-----------------------------------------------------------------------------------------------------------------------
 
-    CALL READ_XFILE( &
-    ANFER       , CFLLFLIFE   , CN          , CROP        , CUFILE      , CWAN        , DCDAT       , DCDUR       , &
-    DCFAC       , DCNX        , DCTAR       , DIDAT       , DIFFACR     , DIGFAC      , DINX        , ECFILE      , &
-    EDATMX      , ENAME       , EXCODE      , FDAY        , FILEA       , FILEADIR    , FILEIO      , FILEIOT     , &
-    FILELEN     , FILENEW     , FILEX       , HANUMX      , HAMT        , HARVFRAC    , HBPC        , HBPCF       , &
-    HDOYF       , HDOYL       , HFIRST      , HLAST       , HNUMBER     , HOP         , HPC         , HPCF        , &
-    HYEARDOY    , HYEARF      , HYEARL      , HYRDOY      , ICWD        , IFERI       , IHARI       , IPLTI       , &
-    ISWDIS      , LENDIS      , LSNUM       , LSWT        , MEEVP       , MEEXP       , MEPHO       , MEWNU       , &
-    ON          , PATHCR      , PATHEC      , PATHSP      , PDATE       , PLDAY       , PLMAGE      , PLME        , &
-    PLPH        , PLTPOPE     , PLTPOPP     , PLYEARREAD  , PLYEARTMP   , PTTN        , PTX         , PWDINF      , &
-    PWDINL      , PWDOYF      , PWDOYL      , PWYEARF     , PWYEARL     , RN          , ROWSPC      , RUNNAME     , &
-    SDEPTH      , SDRATE      , SN          , SPFILE      , SPRL        , SWPLTD      , SWPLTH      , SWPLTL      , &
-    TN          , TNAME       , VARNO       , VRNAME      , YEARDOYHARF &
-    )
+    CALL  CS_Read_Xfile ( &
+          CN          , HARVFRAC    , ISWDIS      , ON          , RN          , SN          , TN          &
+          )
 
     !-----------------------------------------------------------------------------------------------------------------------
-    !     Set planting/harvesting dates (Will change if runs repeated) in SUBROUTINE PLANT_HARV_DAT.
-    !     SUBROUTINE PLANT_HARV_DAT takes all the code from CSCAS lines 2530 - 2570.   
+    !     Set planting/harvesting dates (Will change if runs repeated) in SUBROUTINE CS_Plant_Harv_Dat.
+    !     SUBROUTINE CS_Plant_Harv_Dat takes all the code from CSCAS lines 2530 - 2570.   
     !-----------------------------------------------------------------------------------------------------------------------
         
-    CALL PLANT_HARV_DAT( &
-    CFLLFLIFE   , DOY         , FILEIOT     , HDAY        , HFIRST      , HLAST       , HYEAR       , IPLTI       , &
-    PLDAY       , PLTOHARYR   , PLYEAR      , PLYEARDOYT  , PLYEARREAD  , PLYEARTMP   , PWDINF      , PWDINL      , &
-    TVI1        , YEAR        , YEARDOY     , YEARDOYHARF &
-    )
-
+    CALL  CS_Plant_Harv_Dat ( &
+        DOY         , YEAR         &
+        )
     !-----------------------------------------------------------------------------------------------------------------------
-    !     Create genotype file names in SUBROUTINE CULTECOSPP.
-    !     SUBROUTINE CULTECOSPP takes all the code from CSCAS lines 2576 - 2647.
+    !     Create genotype file names in SUBROUTINE CS_Cult_Eco_Spp.
+    !     SUBROUTINE CS_Cult_Eco_Spp takes all the code from CSCAS lines 2576 - 2647.
     !-----------------------------------------------------------------------------------------------------------------------
 
 
-    CALL CULTECOSPP( &
-    CFGDFILE    , CROP        , CUDIRFLE    , CUDIRFLPREV , CUFILE      , ECDIRFLE    , ECFILE      , &                ! BLANK REMOVED
-    FFLAG       , FFLAGEC     , FILEIOT     , FNUMERR     , FNUMTMP     , FNUMWRK     , MODNAME     , PATHCR      , &
-    PATHEC      , PATHL       , PATHSP      , RNMODE      , SPDIRFLE    , SPFILE      , VARNO       , VARNOPREV   &
-    )
+    CALL CS_Cult_Eco_Spp ( &
+        RNMODE       &
+        )
 
     !-----------------------------------------------------------------------------------------------------------------------
-    !     Read the data from the genotype files in SUBROUTINE READ_GENOTYPE.
-    !     SUBROUTINE READ_GENOTYPE takes all the code from CSCAS lines 2653 - 3099.
+    !     Read the data from the genotype files in SUBROUTINE CS_Read_Genotype.
+    !     SUBROUTINE CS_Read_Genotype takes all the code from CSCAS lines 2653 - 3099.
     !-----------------------------------------------------------------------------------------------------------------------
 
-    CALL READ_GENOTYPE( &
-    BRFX        , CANHTS      , CHTPC       , CLAPC       , CN          , CO2COMPC    , CO2EX       , CO2F        , &
-    CO2RF       , CRFR        , CUDIRFLE    , DAYLS       , DFPE        , DIFFACR     , DINX        , DUSRI       , &
-    ECDIRFLE    , ECONO       , FILEIO      , FILEIOT     , FNUMERR     , GENFLCHK    , H2OCF       , HDUR        , &
-    HMPC        , HPROD       , KCAN        , LA1S        , LAFND       , LAFS        , LAIXX       , LAWCF       , &
-    LAWFF       , LAWMNFR     , LAWS        , LAWTR       , LAWTS       , LAWWR       , LAXN2       , LAXNO       , &
-    LAXS        , LLIFA       , LLIFG       , LLIFS       , LLIFX       , LLIGP       , LLOSA       , LNPCMN      , &
-    LNPCS       , LPEAW       , LPEFR       , LSENI       , LWLOS       , NCRG        , NFGL        , NFGU        , &
-    NFPL        , NFPU        , NFSU        , NH4MN       , NLABPC      , NLLG        , NO3CF       , NO3MN       , &
-    NTUPF       , ON          , PARFC       , PARIX       , PARU2       , PARUE       , PD          , PDL         , &
-    PECM        , PGERM       , PHINTFAC    , PHINTS      , PHSV        , PHTV        , PPEXP       , PPSEN       , &
-    PPTHR       , PSABV       , PSNAME      , PSX         , PSTYP       , PTFA        , PTFMN       , PTFMX       , &
-    RATM        , RCROP       , RDGAF       , RDGS        , RLFWU       , RLIGP       , RLWR        , RN          , &
-    RNMODE      , RNPCMN      , RNPCS       , RRESP       , RSCLX       , RSEN        , RSFPL       , RSFPU       , &
-    RSFRS       , RSPCO       , RSUSE       , RTNH4       , RTNO3       , RTUFR       , RWUMX       , RWUPM       , &
-    SAWS        , SDDUR       , SDNPCI      , SDRSF       , SDSZ        , SHGR        , SLIGP       , SN          , &
-    SNPCMN      , SNPCS       , SPDIRFLE    , SRFR        , SRNOW       , SRNPCS      , SRPRS       , SWFRN       , &
-    SWFRNL      , SWFRS       , SWFRX       , SWFRXL      , TN          , TPAR        , TRDV1       , TRDV2       , &
-    TRGEM       , TRLFG       , TRPHS       , TSRAD       , VARNO       , WFEU        , WFGEM       , WFGL        , &
-    WFGU        , WFPL        , WFPU        , WFRTG       , WFSU        &
-    )
+    CALL CS_Read_Genotype ( &
+        CN          , KCAN        , ON          , RN          , RNMODE      , RWUMX       , RWUPM       , SN          , &
+        TN          &
+        )
 
     !-----------------------------------------------------------------------------------------------------------------------
     !     Set up the growth stages including branching, check coefficients, set defaults and calculate/set initial states 
-    !     in SUBROUTINE SETUP_STAGES.
-    !     SUBROUTINE SETUP_STAGES takes all the code from CSCAS lines 3105 - 3655.
+    !     in SUBROUTINE CS_Setup_Stages.
+    !     SUBROUTINE CS_Setup_Stages takes all the code from CSCAS lines 3105 - 3655.
     !-----------------------------------------------------------------------------------------------------------------------
 
-    CALL SETUP_STAGES( &
-    BRFX        , CANHTS      , CFLLFLIFE   , CN          , CTRNUMPD    , DAYLS       , DFPE        , DSTAGE      , &
-    DUTOMSTG    , EXCODE      , FNUMERR     , FNUMWRK     , H2OCF       , HMPC        , HSTG        , ICWD        , &
-    IHARI       , ISWNIT      , ISWWATCROP  , KCAN        , KEP         , KEYPS       , KEYPSNUM    , KEYSTX      , &
-    LA1S        , LAFND       , LAIXX       , LAPOTX      , LAXNO       , LAXS        , LENRNAME    , LENTNAME    , &
-    LLIFA       , LLIFATT     , LLIFG       , LLIFGTT     , LLIFS       , LLIFSTT     , LNCM        , LNCMN       , &
-    LNCX        , LNCXS       , LNUM        , LNUMTMP     , LNUMTOSTG   , LNUMX       , LNPCMN      , LNPCS       , &
-    LPEFR       , LSENI       , LWLOS       , MEEXP       , MEPHO       , MESSAGE     , MEWNU       , MODNAME     , &
-    MSTG        , NFGL        , NFGU        , NFPL        , NFPU        , NFSU        , NH4CF       , NH4MN       , &
-    NLLG        , NO3CF       , NO3MN       , NTUPF       , OUTHED      , PARIX       , PARUE       , PD          , &
-    PDL         , PEGD        , PGERM       , PHINT       , PHINTFAC    , PHINTS      , PLMAGE      , PLME        , &
-    PLPH        , PLTPOPP     , PPEXP       , PSABV       , PSABVO      , PSNUM       , PSTART      , PSTYP       , &
-    PSX         , RDGS        , RLFWU       , RN          , RNCM        , RNCMN       , RNCX        , RNCXS       , &
-    RNPCMN      , RNPCS       , RSEN        , RSFRS       , RTNH4       , RTNO3       , RTUFR       , RUN         , &
-    RUNI        , RUNNAME     , RUNRUNI     , SDCOAT      , SDEPTH      , SDEPTHU     , SDNAP       , SDNPCI      , &
-    SDRATE      , SDRSF       , SDSZ        , SEEDN       , SEEDNI      , SEEDRS      , SEEDRSAV    , SEEDRSI     , &
-    SERX        , SHGR        , SLPF        , SNCM        , SNCMN       , SNCX        , SNCXS       , SNPCMN      , &
-    SNPCS       , SPRL        , SRFR        , SRNPCS      , SRPRS       , STDAY       , SWFRN       , SWFRNL      , &
-    SWFRS       , SWFRX       , SWFRXL      , TN          , TNAME       , TPAR        , TRUNNAME    , TSRAD       , &
-    TVR1        , TVR2        , TVR3        , WFGL        , WFGU        , WFPL        , WFPU        , WFRTG       , &
-    WFSU        , WTDEP        &
-    )
+    CALL CS_Setup_Stages ( &
+        CN          , ISWNIT      , KCAN        , KEP         , RN          , RUN         , RUNI        , SLPF        , &
+        TN          &
+        )
 
     !-----------------------------------------------------------------------------------------------------------------------
     !     Set up the output descriptors, check controls and write information to the overview and work files in 
-    !     SUBROUTINE FINAL_INIT.
-    !     SUBROUTINE FINAL_INIT takes all the code from CSCAS lines 3547 - 3932. This is the end of setting up the run.
+    !     SUBROUTINE CS_Final_Init.
+    !     SUBROUTINE CS_Final_Init takes all the code from CSCAS lines 3547 - 3932. This is the end of setting up the run.
     !-----------------------------------------------------------------------------------------------------------------------
       
-    CALL FINAL_INIT( &
-    ALBEDO      , ALBEDOS     , AMTNIT      , BRFX        , CANHTS      , CFLLFLIFE   , CLOUDS      , CN          , &
-    CNI         , CRFR        , CUDIRFLE    , DAYLS       , DCDAT       , DCDUR       , DCFAC       , DCNX        , &
-    DCTAR       , DFPE        , DIDAT       , DIFFACR     , DIGFAC      , DUSRI       , ECDIRFLE    , EXCODE      , &
-    FILEIO      , FILEIOT     , FNAME       , FNUMWRK     , FOPEN       , H2OCF       , HBPCF       , HFIRST      , &
-    HLAST       , HMPC        , HNUMBER     , HPCF        , HPROD       , IDETG       , IHARI       , IPLTI       , &
-    ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , KCANI       , KEP         , KEPI        , LA1S        , &
-    LAFND       , LAFS        , LAIXX       , LAWCF       , LAWFF       , LAWMNFR     , LAWS        , LAWTR       , &
-    LAWTS       , LAWWR       , LAXN2       , LAXNO       , LAXS        , LENDIS      , LENRNAME    , LENTNAME    , &
-    LLIFA       , LLIFG       , LLIFS       , LLIFX       , LNPCMN      , LNPCS       , LNUMTOSTG   , LPEFR       , &
-    LWLOS       , MEEXP       , MEPHO       , MERNU       , MESSAGE     , MEWNU       , MODEL       , MODNAME     , &
-    MSTG        , NFGL        , NFGU        , NFPL        , NFPU        , NFSU        , NH4MN       , NLLG        , &
-    NO3CF       , NO3MN       , ON          , ONI         , OUTCHOICE   , OUTHED      , PARIX       , PARU2       , &
-    PARUE       , PD          , PDL         , PHINTFAC    , PHINTS      , PLMAGE      , PLTPOPP     , PLYEARDOYT  , &
-    PPEXP       , PPSEN       , PPTHR       , PSABV       , PSX         , PWDINF      , PWDINL      , RDGS        , &
-    RN          , RNI         , RNMODE      , RNPCMN      , RNPCS       , ROWSPC      , RRESP       , RSFRS       , &
-    RSPCO       , RTNH4       , RTNO3       , RUN         , RUNI        , RUNNAME     , RUNRUNI     , RWUMX       , &
-    RWUMXI      , SAWS        , SDEPTH      , SDEPTHU     , SDRATE      , SEEDNI      , SEEDRSI     , SERX        , &
-    SHGR        , SLPF        , SN          , SNI         , SNPCMN      , SNPCS       , SPDIRFLE    , SRFR        , &
-    SRNPCS      , TAIRHR      , TN          , TNAME       , TNI         , TRDV1       , TRGEM       , TRLFG       , &
-    TRPHS       , TRUNNAME    , TVR1        , VARNO       , VRNAME      , YEARDOYHARF &                                 ! REMOVED VERSION     , 
-    )
+    CALL CS_Final_Init ( &
+        ALBEDO      , CLOUDS      , CN          , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
+        KEP         , ON          , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , SLPF        , &
+        SN          , TN           &  
+        )
 
     !***********************************************************************************************************************
     ELSEIF (DYNAMIC.EQ.RATE) THEN
     !***********************************************************************************************************************
     !-----------------------------------------------------------------------------------------------------------------------
-    !     Set up the switches for establishment and determine whether today is a planting day in SUBROUTINE PRE_PLANT.
-    !     SUBROUTINE PRE_PLANT takes all the code from CSCAS lines 3951 - 4069.
+    !     Set up the switches for establishment and determine whether today is a planting day in SUBROUTINE CS_Pre_Plant.
+    !     SUBROUTINE CS_Pre_Plant takes all the code from CSCAS lines 3951 - 4069.
     !-----------------------------------------------------------------------------------------------------------------------
 
-    CALL PRE_PLANT( &
-    AVGSW       , BD          , CFLFAIL     , CO2         , CO2AIR      , CUMSW       , DAP         , DLAYR       , &
-    DOY         , DTRY        , DUL         , EARLYN      , EARLYW      , FILEIOT     , IPLTI       , ISOILH2O    , &
-    ISOILN      , ISWNITEARLY , ISWWATEARLY , LL          , LNUM        , LNUMX       , MESSAGE     , NH4LEFT     , &
-    NL          , NLAYR       , NO3LEFT     , PLPH        , PLTPOP      , PLTPOPE     , PLTPOPP     , PLYEAR      , &
-    PLYEARDOY   , PLYEARDOYT  , PTTN        , PTX         , PWDINF      , PWDINL      , RNMODE      , SHNUM       , &
-    SHNUML      , ST          , STGYEARDOY  , SW          , SWPLTD      , SWPLTH      , SWPLTL      , TMAX        , &
-    TMEAN       , TMEANSURF   , TMIN        , TSDEP       , XDEP        , XDEPL       , YEAR        , YEARDOY     , &
-    YEARPLTCSM   &
-    ) 
+    CALL CS_Pre_Plant ( &
+        BD          , CO2         , DLAYR       , DOY         , DUL         , LL          , NH4LEFT     , NLAYR       , &
+        NO3LEFT     , RNMODE      , ST          , STGYEARDOY  , SW          , YEAR        , WEATHER     , &                 ! MF 15SE14 removed <TMAX        , TMIN        , > (In Module_CSCas_Vars_List) 
+        YEARPLTCSM  &
+        )
 
         !===================================================================================================================
         IF (YEARDOY.GT.PLYEARDOY) THEN ! If planted (assumed in evening)
         !===================================================================================================================
     !-----------------------------------------------------------------------------------------------------------------------
     !     Calculate the water and thermal conditions for initiation of growth of the planting material (called GERMINATION) 
-    !     in SUBROUTINE GERMINATE. SUBROUTINE GERMINATE takes all the code from CSCAS lines 4075 - 4215.
+    !     in SUBROUTINE CS_Germinate. SUBROUTINE CS_Germinate takes all the code from CSCAS lines 4075 - 4215.
     !-----------------------------------------------------------------------------------------------------------------------
 
-    CALL CS_GERMINATE( &
-    ALBEDO      , BRSTAGE     , CFLLFLIFE   , CLOUDS      , CO2         , DLAYR       , DUL         , EO          , &
-    EOC         , EOEBUD      , EOEBUDC     , EOEBUDCRP   , EOEBUDCRPC  , EOEBUDCRPCO2C             , &
-    EOEBUDCRPCO2H2O           , EOEBUDCRPCO2H2OC          , EOMPCRP     , EOMPCRPC    , EOMPCRPCO2  , EOMPCRPCO2C , &
-    EOMPCRPCO2H2O             , EOMPCRPCO2H2OC            , EOMPEN      , EOMPENC     , EOP         , EOPEN       , &
-    EOPENC      , EOPT        , EOPTC       , EPSRATIO    , ES          , FILEIOT     , FNUMWRK     , GESTAGE     , &
-    ISWWAT      , ISWWATCROP  , KEP         , LAI         , LL          , LSEED       , MEWNU       , NL          , &
-    NLAYR       , PHINTS      , PLYEAR      , RATM        , RCROP       , RLF         , RLFC        , RLFWU       , &
-    RLV         , RTDEP       , RWUMX       , RWUPM       , SAT         , SDEPTH      , SRAD        , SW          , &
-    SWP         , SWPSD       , TCAN        , TDEW        , TDIFAV      , TDIFNUM     , TDIFSUM     , TFD         , &
-    TFDNEXT     , TFGEM       , TFLFLIFE    , TMAX        , TMEAN       , TMIN        , TRATIO      , TRDV1       , &
-    TRDV2       , TRGEM       , TRWU        , TRWUP       , TT          , TTGEM       , TTLFLIFE    , TTNEXT      , &
-    TVR1        , TVR2        , TVR3        , TVR4        , UH2O        , WFEU        , WFGE        , WFGEM       , &
-    WFP         , WINDSP      , WTDEP       , YEAR         &
-    )
-
+    CALL CS_Germinate ( &
+        ALBEDO      , BRSTAGE     , CLOUDS      , CO2         , DLAYR       , DUL         , EO          , EOP         , &
+        ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , RWUPM       , &
+        SAT         , SRAD        , SW          , TRWUP       , UH2O        , WEATHER     , &                               ! MF 15SE14 removed <, TDEW        , TMAX        , TMIN  > (In Module_CSCas_Vars_List)         
+        WINDSP      , YEAR        & 
+        )
               !=============================================================================================================
               IF (GEUCUM+TTGEM*WFGE.GE.PEGD) THEN  ! If germinated by endday
               !=============================================================================================================
     !-----------------------------------------------------------------------------------------------------------------------
     !     Calculate germination timing, daylength and development units, reserves and grazing (?), PAR interception, rate 
     !     factors, senescence, assimilation and its partitioning, growth of storage roots, leaves, stems and crowns, 
-    !     reserves and plant height, and soil water.in SUBROUTINE GROWTH. SUBROUTINE GROWTH takes all the code from CSCAS 
-    !     lines 4218 - 5516.
+    !     reserves and plant height, and soil water.in SUBROUTINE CS_Growth. SUBROUTINE CS_Growth takes all the code from 
+    !     CSCAS lines 4218 - 5516.
     !
     !     TO DO: Divide SUBROUTINE GROWTH into seveal subroutines to account For (at least) senescence, assimilation, and 
     !     partitioning.
     !-----------------------------------------------------------------------
 
-    CALL CS_GROWTH( &
-    HANUMX      , LCNUMX      , LNUMX       , PSX         , AFLF        , AH2OPROFILE , AH2OROOTZONE, ANDEM       , &
-    AREAPOSSIBLE, AREAPOSSIBLEN             , BD          , BRFX        , BRNUMST     , BRSTAGE     , BRSTAGEPREV , &
-    BRSTAGETMP  , CANHTG      , CARBOADJ    , CARBOBEG    , CARBOBEGI   , CARBOBEGIA  , CARBOBEGM   , CARBOBEGR   , &
-    CARBOEND    , CARBOR      , CARBOT      , CARBOTMP    , CARBOTMPI   , CARBOTMPM   , CARBOTMPR   , CFLAFLF     , &
-    CFLFAIL     , CFLTFG      , CO2         , CO2AIR      , CO2COMPC    , CO2EX       , CO2F        , CO2FP       , &
-    CO2FPI      , CO2INT      , CO2INTPPM   , CO2INTPPMP  , CO2RF       , CRFR        , CRWT        , CUMDEP      , &
-    CUMDU       , CWAD        , CWAN        , DAP         , DAYL        , DAYLS       , DF          , DFNEXT      , &
-    DFOUT       , DFPE        , DLAYR       , DSTAGE      , DU          , DUL         , DUNEED      , DUPHASE     , &
-    DUPNEXT     , DUSRI       , EMFLAG      , EMRGFR      , EMRGFRPREV  , EOP         , ESTABLISHED , FAC         , &
-    FNH4        , FNO3        , FNUMWRK     , GERMFR      , GESTAGE     , GEUCUM      , GROCR       , GROCRADJ    , &
-    GROCRFR     , GROLF       , GROLFADJ    , GROLFP      , GROLS       , GROLSA      , GROLSP      , GROLSRS     , &
-    GROLSRT     , GROLSRTN    , GROLSSD     , GROLSSEN    , GRORS       , GROSR       , GROST       , GROSTADJ    , &
-    GROSTCR     , GROSTCRP    , GROSTCRPSTORE             , H2OCF       , H2OPROFILE  , H2OROOTZONE , HAFR        , &
-    HAMT        , HANUM       , HAWAD       , HOP         , HYEARDOY    , ISWDIS      , ISWNIT      , ISWNITEARLY , &
-    ISWWAT      , ISWWATEARLY , KCAN        , LA1S        , LAFND       , LAFS        , LAGEG       , LAGETT      , &
-    LAGL        , LAI         , LAIXX       , LANC        , LANCRS      , LAP         , LAPD        , LAPH        , &
-    LAPOTX      , LAPS        , LAPSTMP     , LATL        , LATL2       , LATL3       , LATL4       , LATLPOT     , &
-    LATLPREV    , LAWCF       , LAWFF       , LAWL        , LAWMNFR     , LAWS        , LAWTR       , LAWTS       , &
-    LAWWR       , LAXN2       , LAXNO       , LAXS        , LBIRTHDAP   , LEAFN       , LENDIS      , LFWT        , &
-    LL          , LLIFATT     , LLIFG       , LLIFGTT     , LLIFSTT     , LLIGP       , LLOSA       , LNCGL       , &
-    LNCGU       , LNCM        , LNCPL       , LNCPU       , LNCSEN      , LNCX        , LNDEM       , LNDEMTU     , &
-    LNPH        , LNUM        , LNUMG       , LNUMNEED    , LNUMSG      , LNUMTOSTG   , LNUSE       , LPEFR       , &
-    LRTIP       , LWLOS       , LWPH        , MEPHO       , MESSAGE     , MJPERE      , MSTG        , NCRG        , &
-    NDEM2       , NDEMMN      , NFG         , NFGL        , NFGU        , NFLF        , NFLF2       , NFLFP       , &
-    NFP         , NFPL        , NFPU        , NFRG        , NFSU        , NH4CF       , NH4LEFT     , NH4MN       , &
-    NLABPC      , NLAYR       , NLAYRROOT   , NLLG        , NO3CF       , NO3LEFT     , NO3MN       , NPOOLL      , &
-    NPOOLR      , NPOOLS      , NTUPF       , NUF         , NULEFT      , NUPAD       , NUPAP       , NUPD        , &
-    NUPRATIO    , NUSEFAC     , PARFC       , PARI        , PARI1       , PARIP       , PARIPA      , PARIPREV    , &
-    PARMJFAC    , PARMJIADJ   , PARU        , PARUE       , PDL         , PECM        , PEGD        , PHINT       , &
-    PHINTFAC    , PHINTS      , PHOTQR      , PHSV        , PHTV        , PLA         , PLAGS2      , PLAGSB2     , &
-    PLAGSB3     , PLAGSB4     , PLAS        , PLASI       , PLASL       , PLASN       , PLASP       , PLASS       , &
-    PLASW       , PLTPOP      , PPEXP       , PPSEN       , PPTHR       , PSTART      , PTF         , PTFA        , &
-    PTFMN       , PTFMX       , RANC        , RATM        , RCROP       , RDGS        , RFAC        , RLDF        , &
-    RLF         , RLFC        , RLIGP       , RLV         , RM          , RNCM        , RNCX        , RNDEM       , &
-    RNDEMG      , RNDEMTU     , RNH4U       , RNO3U       , RNUSE       , RRESP       , RSCD        , RSEN        , &
-    RSFP        , RSFPL       , RSFPU       , RSFRS       , RSN         , RSNPH       , RSNUSED     , RSPCO       , &
-    RSSRWTGLFADJ, RSUSE       , RSWPH       , RSWT        , RTDEP       , RTDEPG      , RTDEPTMP    , RTNH4       , &
-    RTNO3       , RTNSL       , RTRESP      , RTRESPADJ   , RTUFR       , RTWT        , RTWTG       , RTWTGADJ    , &
-    RTWTGL      , RTWTL       , RTWTSL      , RTWTUL      , SANC        , SAT         , SDDUR       , SDEPTHU     , &
-    SDRATE      , SDRSF       , SEEDN       , SEEDNI      , SEEDNUSE    , SEEDNUSE2   , SEEDRS      , SEEDRSAV    , &
-    SEEDRSAVR   , SEEDRSI     , SENCAGS     , SENCALG     , SENFR       , SENLA       , SENLAGS     , SENLALG     , &
-    SENLFG      , SENLFGRS    , SENNAGS     , SENNALG     , SENNLFG     , SENNLFGRS   , SENRTG      , &
-    SENTOPLITTERG             , SENWAGS     , SENWALG     , SERX        , SHF         , SHGR        , SHLAG2      , &
-    SHLAGB2     , SHLAGB3     , SHLAGB4     , SHNUM       , SHRTD       , SLPF        , SNCM        , SNCX        , &
-    SNDEM       , SNDEMG      , SNDEMTU     , SNH4        , SNH4PROFILE , SNH4ROOTZONE, SNO3        , SNO3PROFILE , &
-    SNO3ROOTZONE, SNPH        , SNUSE       , SRAD        , SRADPREV    , SRANC       , SRDAYFR     , SRFR        , &
-    SRNDEM      , SRNDEMG     , SRNDEMTU    , SRNOPD      , SRNOW       , SRNPCS      , SRNUSE      , SRWT        , &
-    SRWTGRS     , STAIG       , STAIS       , STDAY       , STEMN       , STWT        , SW          , SWFR        , &
-    SWFRN       , SWFRNL      , SWFRX       , SWFRXL      , SWP         , SWPH        , SWPRTIP     , TDEW        , &
-    TFD         , TFDF        , TFDLF       , TFG         , TFGLF       , TFLAW       , TFP         , TIMENEED    , &
-    TMAX        , TMEAN       , TMIN        , TRLDF       , TRLFG       , TRLV        , TRPHS       , TRWUP       , &
-    TT          , TTGEM       , TTLFLIFE    , TTNEED      , TTNEXT      , TTOUT       , TVR1        , TVR2        , &
-    TVR3        , TVR5        , UNH4        , UNO3        , VPD         , VPDFP       , WFG         , WFGE        , &
-    WFGL        , WFGU        , WFLAW       , WFLF        , WFNU        , WFP         , WFPL        , WFPU        , &
-    WFRG        , WFRTG       , WFSU        , WUPR        , XMIN        , YEARDOY     , YEARDOYHARF , WEATHER       & ! MF 31AU14 WEATHER ADDED 
-    )
-            
+    CALL CS_Growth ( &
+        BD          , BRSTAGE     , CO2         , DAYL        , DLAYR       , DUL         , EOP         , ISWDIS      , &
+        ISWNIT      , ISWWAT      , KCAN        , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , &
+        PARIP       , PARIPA      , RLV         , SAT         , SENCALG     , SENLALG     , SENNALG     , SHF         , &
+        SLPF        , SRAD        , SW          , TRWUP       , UNH4        , UNO3        , WEATHER &                       ! MF 15SE14 Removed <TDEW        , TMAX        , TMIN        ,> (in Module_CSCAS_Vars_List)
+        )
+        
+    CONTINUE    
               !=============================================================================================================
               ENDIF  ! End of after germinated section
               !=============================================================================================================
-
+              
         !===================================================================================================================
         ENDIF  ! End of after planted (rate) section
         !===================================================================================================================
@@ -656,79 +241,21 @@
     !     Update the seasonal data with the data for the current day: dry weights, produced and senesced leaf area, plant 
     !     height, root and length, and nitrogen. Update stages, dates and times. Calculate branch interval, N
     !     concentrations and whether to harvest. Calculate yields of plant parts and summaries of weather, soil variables
-    !     and PAR utilization in SUBROUTINE INTEGRATE. SUBROUTINE INTEGRATE takes all the code from CSCAS lines 5534 - 6649.
+    !     and PAR utilization in SUBROUTINE CS_Integrate. 
+    !     SUBROUTINE CS_Integrate takes all the code from CSCAS lines 5534 - 6649.
     !
     !     TO DO: Divide SUBROUTINE INTEGRATE into several subroutines to account for (at least) growth stages, branch 
     !     intervals, plant yields, and soil and weather summaries.   
     !-----------------------------------------------------------------------------------------------------------------------
             
-    CALL INTEGRATE( &
-    LCNUMX      , LNUMX       , PSX         , ALBEDO      , ALBEDOS     , AMTNIT      , BASELAYER   , BD          , &
-    BRNUMSH     , BRNUMST     , BRSTAGE     , BRSTAGEPREV , CAID        , CANHT       , CANHTG      , CARBOADJ    , &
-    CARBOBEG    , CARBOC      , CDAYS       , CFLFAIL     , CFLHAR      , CFLHARMSG   , CFLSDRSMSG  , CNAD        , &
-    CNADPREV    , CNADSTG     , CNAM        , CO2         , CO2CAV      , CO2CC       , CO2MAX      , CO2PAV      , &
-    CO2PC       , CRRSWAD     , CRRSWT      , CRWAD       , CRWT        , CRWTM       , CUMDU       , CWAD        , &
-    CWADPREV    , CWADSTG     , CWAHC       , CWAM        , DAE         , DALF        , DAP         , DAYL        , &
-    DAYLCAV     , DAYLCC      , DAYLPAV     , DAYLPC      , DAYLST      , DAYSUM      , DEPMAX      , DGLF        , &
-    DLAYR       , DLAYRTMP    , DOM         , DOY         , DRAIN       , DRAINC      , DSLF        , DSTAGE      , &
-    DU          , EDAP        , EDAPFR      , EDAYFR      , EMRGFR      , EOP         , EP          , EPCC        , &
-    EPPC        , ET          , ETCC        , ETPC        , EYEARDOY    , FAPPLINE    , FAPPNUM     , FERNIT      , &
-    FERNITPREV  , FILEIOT     , FNUMERR     , FNUMWRK     , FSOILH2O    , FSOILN      , GDAP        , GDAPFR      , &
-    GDAYFR      , GEDAYSE     , GEDAYSG     , GERMFR      , GESTAGE     , GESTAGEPREV , GEUCUM      , GROCRADJ    , &
-    GROLFADJ    , GROLSRTN    , GROLSSD     , GRORS       , GROSR       , GROSTADJ    , GYEARDOY    , H2OA        , &
-    HADOY       , HAFR        , HAYEAR      , HBPCF       , HFIRST      , HIAD        , HIAM        , HIND        , &
-    HINM        , HNAD        , HNAM        , HNC         , HNPCM       , HNUMAD      , HNUMAM      , HNUMGM      , &
-    HNUMPM      , HPRODN      , HSTG        , HWAD        , HWAM        , HWUD        , HWUM        , IHARI       , &
-    IRRAMT      , IRRAMTC     , ISWNIT      , ISWWAT      , LAFND       , LAGEP       , LAGETT      , LAI         , &
-    LAIPREV     , LAISTG      , LAIX        , LAIXX       , LANC        , LAP         , LAPD        , LAPH        , &
-    LAPHC       , LAPS        , LDEATHDAP   , LCNUM       , LCOA        , LCOAS       , LEAFN       , LEAFNEXCESS , &
-    LFWT        , LFWTM       , LL          , LLIFATT     , LLIFGTT     , LLIFSTT     , LLIFX       , LLIFXUNUSED , &
-    LLIGP       , LLNAD       , LLRSWAD     , LLRSWT      , LLWAD       , LNCM        , LNCMN       , LNCR        , &
-    LNCX        , LNCXS       , LNPH        , LNPHC       , LNUM        , LNUMG       , LNUMNEED    , LNUMPREV    , &
-    LNUMSG      , LNUMSIMTOSTG, LNUMSM      , LNUMSOLDESTA, LNUMSTG     , LNUMTOSTG   , LNUSE       , LPEAI       , &
-    LPEAW       , LPEFR       , LPERSWAD    , LPERSWT     , LPEWAD      , LWPH        , LWPHC       , MDAP        , &
-    MDAPFR      , MDAT        , MDAYFR      , MDOY        , MEDEV       , MESSAGE     , MONTH       , MSTG        , &
-    NFG         , NFGCAV      , NFGCC       , NFGPAV      , NFGPC       , NFP         , NFPCAV      , NFPCC       , &
-    NFPPAV      , NFPPC       , NH4LEFT     , NLAYR       , NO3LEFT     , NSDAYS      , NUPAC       , NUPAD       , &
-    NUPC        , NUPD        , PARI        , PARIUE      , PARIUED     , PARMJC      , PARMJFAC    , PARMJIADJ   , &
-    PARMJIC     , PARUEC      , PD          , PDAYS       , PDL         , PECM        , PEGD        , PHINT       , &
-    PLA         , PLAGSB4     , PLAS        , PLASP       , PLASTMP     , PLASTMP2    , PLAX        , PLTPOP      , &
-    PLYEARDOY   , PSABV       , PSDAP       , PSDAPFR     , PSDAT       , PSTART      , RAIN        , RAINC       , &
-    RAINCC      , RAINPAV     , RAINPC      , RANC        , RESCAL      , RESCALG     , RESLGAL     , RESLGALG    , &
-    RESNAL      , RESNALG     , RESPC       , RESPRC      , RESPTC      , RESWAL      , RESWALG     , RLIGP       , &
-    RLV         , RLWR        , RNAD        , RNAM        , RNCM        , RNCMN       , RNCR        , RNCX        , &
-    RNCXS       , RNUSE       , ROOTN       , ROOTNEXCESS , ROOTNS      , RSCD        , RSCLX       , RSCM        , &
-    RSCX        , RSN         , RSNAD       , RSNPH       , RSNPHC      , RSNUSED     , RSWAD       , RSWAM       , &
-    RSWPH       , RSWPHC      , RSWT        , RSWTGLFADJ  , RSWTM       , RSWTX       , RTDEP       , RTDEPG      , &
-    RTNSL       , RTRESP      , RTRESPADJ   , RTSLXDATE   , RTWT        , RTWTAL      , RTWTG       , RTWTGADJ    , &
-    RTWTGL      , RTWTL       , RTWTM       , RTWTSL      , RTWTUL      , RUNOFF      , RUNOFFC     , RWAD        , &
-    RWAM        , SAID        , SANC        , SANCOUT     , SDCOAT      , SDEPTH      , SDEPTHU     , SDNAD       , &
-    SDNC        , SDWAD       , SDWAM       , SEEDN       , SEEDNUSE    , SEEDNUSE2   , SEEDRS      , SEEDRSAV    , &
-    SEEDRSAVR   , SEEDUSE     , SEEDUSER    , SEEDUSET    , SENCAS      , SENCL       , SENCS       , SENFR       , &
-    SENLA       , SENLALITTER , SENLAS      , SENLFG      , SENLFGRS    , SENLL       , SENLS       , SENNAL      , &
-    SENNAS      , SENNATC     , SENNGS      , SENNL       , SENNLFG     , SENNLFGRS   , SENNS       , SENROOT     , &
-    SENROOTA    , SENTOPLITTER, SENTOPLITTERA             , SENTOPLITTERG             , SENWACM     , SENWAL      , &
-    SENWALG     , SENWL       , SHDAP       , SHDAT       , SHLA        , SHLAGB4     , SHLAS       , SHNUM       , &
-    SHNUMAD     , SHRTD       , SHRTM       , SLA         , SLIGP       , SNAD        , SNCM        , SNCMN       , &
-    SNCR        , SNCX        , SNCXS       , SNPH        , SNPHC       , SNUSE       , SRAD        , SRAD20      , &
-    SRAD20S     , SRADC       , SRADCAV     , SRADCC      , SRADD       , SRADPAV     , SRADPC      , SRANC       , &
-    SRNAD       , SRNAM       , SRNOPD      , SRNUSE      , SROOTN      , SRWAD       , SRWT        , SRWTGRS     , &
-    SRWUD       , STAI        , STAIG       , STAIS       , STEMN       , STEMNEXCESS , STGYEARDOY  , STRESS      , &
-    STRESS20    , STRESS20N   , STRESS20NS  , STRESS20S   , STRESS20W   , STRESS20WS  , STRESSN     , STRESSW     , &
-    STRSWAD     , STRSWT      , STWAD       , STWT        , STWTM       , SW          , SWP         , SWPH        , &
-    SWPHC       , SWPLTH      , SWPLTL      , TIMENEED    , TLCHC       , TLCHD       , TMAX        , TMAXCAV     , &
-    TMAXCC      , TMAXM       , TMAXPAV     , TMAXPC      , TMAXSUM     , TMAXX       , TMEAN       , TMEAN20     , &
-    TMEAN20P    , TMEAN20S    , TMEANAV     , TMEANCC     , TMEAND      , TMEANE      , TMEANEC     , TMEANG      , &
-    TMEANGC     , TMEANNUM    , TMEANPC     , TMEANSUM    , TMIN        , TMINCAV     , TMINCC      , TMINM       , &
-    TMINN       , TMINPAV     , TMINPC      , TMINSUM     , TNAD        , TNIMBSOM    , TNOXC       , TNOXD       , &
-    TOFIXC      , TOMIN       , TOMINC      , TOMINFOM    , TOMINFOMC   , TOMINSOM    , TOMINSOM1   , TOMINSOM1C  , &
-    TOMINSOM2   , TOMINSOM2C  , TOMINSOM3   , TOMINSOM3C  , TOMINSOMC   , TT          , TT20        , TT20S       , &
-    TTCUM       , TTD         , TTGEM       , TTLFLIFE    , TVI1        , TVR1        , TWAD        , VANC        , &
-    VCNC        , VMNC        , VNAD        , VNAM        , VNPCM       , VWAD        , VWAM        , WAVR        , &
-    WFG         , WFGCAV      , WFGCC       , WFGE        , WFGPAV      , WFGPC       , WFP         , WFPCAV      , &
-    WFPCC       , WFPPAV      , WFPPC       , WSDAYS      , WUPR        , WUPRD       , YEAR        , YEARDOY     , &
-    YEARDOYHARF , WEATHER     &                                                                                     ! MF 31AU14 WEATHER ADDED
-    )
+    CALL CS_Integrate ( &
+        ALBEDO      , BD          , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX      , &
+        DLAYR       , DOY         , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , &
+        ISWNIT      , ISWWAT      , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , RAIN        , &
+        RESCALG     , RESLGALG    , RESNALG     , RLV         , RUNOFF      , SRAD        , STGYEARDOY  , SW          , &
+        TLCHD       , TNIMBSOM    , TNOXD       , TOMINFOM    , TOMINSOM    , TOMINSOM1   , &                             ! MF 15SE14 removed <TMAX        , TMIN        > (In Module_CSCas_Vars_List)
+        TOMINSOM2   , TOMINSOM3   , WEATHER     , YEAR        & 
+        )
         
         !===================================================================================================================
         ENDIF  ! End of after planted (integrate) section
@@ -739,9 +266,13 @@
     ELSEIF (DYNAMIC.EQ.OUTPUT .AND. STEP.EQ.STEPNUM.OR.DYNAMIC.EQ.SEASEND .AND. SEASENDOUT.NE.'Y') THEN
     !***********************************************************************************************************************
     !-----------------------------------------------------------------------------------------------------------------------
-    !    The output section of CSCAS has only been converted to free format input. It compiled with no errors, but there is
-    !    guarantee that the output is error free, although it gives identical results to CSCAS.FOR for CCPA7901.CSX.
-    !     TO DO: Divide the remaining code into several subroutines incorporating the various output options. 
+    !    MJF The output section of CSCAS has only been converted to free format input. It compiled with no errors, and it 
+    !    gives identical results to CSCAS.FOR for CCPA7901.CSX. but there is no guarantee that the output will be error free
+    !    under all circumstances. 
+    !     TO DO: Divide the remaining code into several subroutines covering model failure, time sequence outputs, outpute of 
+    !    N balance, outputs for harvest and evaluation,  output for OVERVIEW.OUT, summary output for the simulation run, for
+    !    leaf cohorts and branching levels, details for the WORK.OUT file, details for the ERROR.OUT file, outputs for the 
+    !    DSSAT shell, screen outputs for sensitivity mode, store  variables and interface with CSM and other program segments. 
     !-----------------------------------------------------------------------------------------------------------------------
 
         ! Simulated outputs only
@@ -1681,10 +1212,10 @@
                                     WRITE (FNUMEVAL,'(A5,A1)',ADVANCE='NO') PSABVO(KEYPS(L)),'M'
                                 ENDIF 
                             ENDDO
-                            WRITE (FNUMEVAL,9942)
-9942                        FORMAT (' HWAMS HWAMM HWUMS HWUMM',' H#AMS H#AMM H#GMS H#GMM',' LAIXS LAIXM L#SMS L#SMM', &
+                            WRITE (FNUMEVAL,'(6A)') &
+                                ' HWAMS HWAMM HWUMS HWUMM',' H#AMS H#AMM H#GMS H#GMM',' LAIXS LAIXM L#SMS L#SMM', &
                                 ' CWAMS CWAMM VWAMS VWAMM',' HIAMS HIAMM HN%MS HN%MM VN%MS VN%MM', &
-                                ' CNAMS CNAMM HNAMS HNAMM HINMS HINMM')
+                                ' CNAMS CNAMM HNAMS HNAMM HINMS HINMM'
                             CLOSE(FNUMEVAL)
                         ENDIF  
                     ENDIF  ! End Evaluate header writes
@@ -1882,7 +1413,7 @@
                                 PFGPAV = -99.0
                                 DO tvI1 = 1,mstg-2
                                     IF (pdays(tvi1).GT.0) THEN 
-                                        WRITE(fnumov,600) psname(tvi1),'-',psname(tvi1+1),pdays(tvI1),tmaxpav(tvI1), &          ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                                        WRITE(fnumov,600) psname(tvi1),' - ',psname(tvi1+1),pdays(tvI1),tmaxpav(tvI1), &          ! MF31AU14 REPLACED DASH  WITH A LITERAL
                                             tminpav(tvI1),sradpav(tvI1),daylpav(tvI1),rainpc(tvI1),etpc(tvI1),1.-wfppav(tvi1), &
                                             1.0-wfgpav(tvi1), 1.0-nfppav(tvi1), 1.0-nfgpav(tvi1), pfppav(tvi1), pfgpav(tvi1)
                                     ENDIF
@@ -1890,12 +1421,12 @@
 600                             FORMAT(1X,A10,A3,A10,I5,3F6.1,F7.2,2F7.1,4F7.3,2F7.2)
 610                             FORMAT(1X,A10,13X,I5,3F6.1,F7.2,2I7,6F7.3)
                                 IF(yeardoyharf.EQ.yeardoy)THEN
-                                    WRITE(fnumov,600) psname(mstg-1),'-','Harvest   ', pdays(mstg-1),tmaxpav(mstg-1), &         ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                                    WRITE(fnumov,600) psname(mstg-1),' - ','Harvest   ', pdays(mstg-1),tmaxpav(mstg-1), &         ! MF31AU14 REPLACED DASH  WITH A LITERAL
                                         tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
                                         1.-wfppav(mstg-1),1.0-wfgpav(mstg-1), 1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1), &
                                         pfppav(mstg-1),pfgpav(mstg-1)
                                 ELSE 
-                                    WRITE(fnumov,600) psname(mstg-1),'-',psname(mstg),pdays(mstg-1),tmaxpav(mstg-1), &           ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                                    WRITE(fnumov,600) psname(mstg-1),' - ',psname(mstg),pdays(mstg-1),tmaxpav(mstg-1), &           ! MF31AU14 REPLACED DASH  WITH A LITERAL
                                         tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
                                         tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
                                         1.-wfppav(mstg-1),1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1), &
@@ -1906,10 +1437,10 @@
                                     pfpcav = -99.0
                                     pfgcav = -99.0 
                                     IF (pdays(mstg).GT.0.) THEN 
-                                        WRITE(fnumov,600) psname(1),'-',psname(mstg), cdays, tmaxcav, tmincav, sradcav, &        ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                                        WRITE(fnumov,600) psname(1),' - ',psname(mstg), cdays, tmaxcav, tmincav, sradcav, &        ! MF31AU14 REPLACED DASH  WITH A LITERAL
                                             daylcav, raincc, etcc, 1.0-wfpcav, 1.0-wfgcav, 1.0-nfpcav, 1.0-nfgcav,pfpcav, pfgcav
                                     ELSE  
-                                        WRITE(fnumov,600) psname(1),'-','Harvest   ', cdays, tmaxcav, tmincav, sradcav, &        ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                                        WRITE(fnumov,600) psname(1),' - ','Harvest   ', cdays, tmaxcav, tmincav, sradcav, &        ! MF31AU14 REPLACED DASH  WITH A LITERAL
                                             daylcav, raincc, etcc, 1.0-wfpcav, 1.0-wfgcav, 1.0-nfpcav, 1.0-nfgcav,pfpcav, pfgcav
                                     ENDIF 
                                     ! Resource productivity calculations
@@ -1993,25 +1524,25 @@
                                     ENDIF
                                         IF (FAPPNUM.GT.0) THEN
                                             WRITE (fnumwrk,*) ' '
-                                            WRITE (fnumwrk,'(A18,A10,I3)')' N FERTILIZER FOR ',excode,tn
+                                            WRITE (fnumwrk,'(A,A10,I3)')' N FERTILIZER FOR ',excode,tn
                                             DO L = 1,FAPPNUM
                                                 WRITE (fnumwrk,'(A80)') FAPPLINE(L)
                                             ENDDO
                                         ENDIF
                                         WRITE(FNUMWRK,*) ' '
-                                        WRITE(FNUMWRK,'(A45)')' INORGANIC N (kg/ha) LEFT IN SOIL AT HARVEST '
-                                        WRITE(FNUMWRK,'(A28,2F6.1)')'  NO3 and NH4 N in PROFILE: ',SNO3PROFILE,SNH4PROFILE
-                                        WRITE(FNUMWRK,'(A28,2F6.1)')'  NO3 and NH4 N in ROOTZONE:',SNO3ROOTZONE,SNH4ROOTZONE
+                                        WRITE(FNUMWRK,'(A)')' INORGANIC N (kg/ha) LEFT IN SOIL AT HARVEST '
+                                        WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in PROFILE: ',SNO3PROFILE,SNH4PROFILE
+                                        WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in ROOTZONE:',SNO3ROOTZONE,SNH4ROOTZONE
                                 ENDIF   ! End Iswnit NE N
                                 WRITE(FNUMWRK,*) ' '
-                                WRITE(FNUMWRK,'(A34)')' H2O (mm) LEFT IN SOIL AT HARVEST '
-                                WRITE(FNUMWRK,'(A36,2F6.1)')'  H2O and AVAILABLE H2O in PROFILE: ',H2OPROFILE,AH2OPROFILE
-                                WRITE(FNUMWRK,'(A36,2F6.1)')'  H2O and AVAILABLE H2O in ROOTZONE:',H2OROOTZONE,AH2OROOTZONE
+                                WRITE(FNUMWRK,'(A)')' H2O (mm) LEFT IN SOIL AT HARVEST '
+                                WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in PROFILE: ',H2OPROFILE,AH2OPROFILE
+                                WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in ROOTZONE:',H2OROOTZONE,AH2OROOTZONE
                                 WRITE (fnumwrk,*) ' '
-                                WRITE (fnumwrk,'(A32,A10,I3)')' CRITICAL PERIOD CONDITIONS FOR ',excode,tn
-                                WRITE (fnumwrk,'(A38,F6.1)')'  Temperature mean,germination         ',TMEANG
-                                WRITE (fnumwrk,'(A38,F6.1)')'  Temperature mean,germ-emergence      ',TMEANE
-                                WRITE (fnumwrk,'(A38,F6.1)')'  Temperature mean,first 20 days       ',TMEAN20P
+                                WRITE (fnumwrk,'(A,A10,I3)')' CRITICAL PERIOD CONDITIONS FOR ',excode,tn
+                                WRITE (fnumwrk,'(A,F6.1)')'  Temperature mean,germination         ',TMEANG
+                                WRITE (fnumwrk,'(A,F6.1)')'  Temperature mean,germ-emergence      ',TMEANE
+                                WRITE (fnumwrk,'(A,F6.1)')'  Temperature mean,first 20 days       ',TMEAN20P
                         ELSE   ! For Overview
                             
                             OPEN (UNIT=FNUMOV, FILE=FNAMEOV, STATUS = 'UNKNOWN')
@@ -2039,10 +1570,9 @@
                     ! PLANT SUMMARY (SIMULATED)'
                     IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN
                         OPEN (UNIT=fnumpsum,FILE=FNAMEPSUM,POSITION='APPEND')
-                        WRITE (FNUMPSUM,9953)
-9953                    FORMAT (/,'*SUMMARY')
-                        WRITE (FNUMPSUM,99,ADVANCE='NO')
-99                      FORMAT ('@  RUN EXCODE    TRNO RN',' TNAME....................',' REP  RUNI S O C    CR PYEAR  PDAT')
+                        WRITE (FNUMPSUM,'(/,A)') '*SUMMARY'
+                        WRITE (FNUMPSUM,'(3A)',ADVANCE='NO') '@  RUN EXCODE    TRNO RN',' TNAME....................', &
+                            ' REP  RUNI S O C    CR PYEAR  PDAT'
                         DO L = 1,KEYSTX
                             IF (KEYPS(L).GT.0) THEN
                                 WRITE (FNUMPSUM,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
@@ -2051,9 +1581,9 @@
                                 !ENDIF
                             ENDIF
                         ENDDO
-                        WRITE (FNUMPSUM,299)
-299                     FORMAT ('   FLN FLDAP HYEAR  HDAY SDWAP',' CWAHC  CWAM PARUE  HWAM  HWAH  VWAM  HWUM  H#AM  H#UM', &
-                            ' SDNAP  CNAM  HNAM  RNAM  TNAM  NUCM  HN%M  VN%M',' D1INI D2INI D3INI ')
+                        WRITE (FNUMPSUM,'(4A)') &
+                            '   FLN FLDAP HYEAR  HDAY SDWAP',' CWAHC  CWAM PARUE  HWAM  HWAH  VWAM  HWUM  H#AM  H#UM', &
+                            ' SDNAP  CNAM  HNAM  RNAM  TNAM  NUCM  HN%M  VN%M',' D1INI D2INI D3INI '
                         CLOSE(fnumpsum)  
                     ENDIF  ! End of Plantsum.Out headers
                     OPEN (UNIT=fnumpsum,FILE=FNAMEPSUM,POSITION='APPEND')
@@ -2111,24 +1641,23 @@
                     ENDDO
                     IF (RUN.EQ.1) THEN
                         WRITE(fnumlvs,*)' '
-                        WRITE(fnumlvs,'(A43)')'! NB. Data are summed over all fork branches'
+                        WRITE(fnumlvs,'( A)')'! NB. Data are summed over all fork branches'
                         WRITE(fnumlvs,*)' '
-                        WRITE(fnumlvs,'(A36)')'! LNUM = Number of leaf on one axis '
-                        WRITE(fnumlvs,'(A52)')'! AREAP = Potential area of leaf on main axis (cm2) '
-                        WRITE(fnumlvs,'(A41,A26)')'! AREA1 = Area of youngest mature leaf on', ' main axis,no stress (cm2)'
-                        WRITE(fnumlvs,'(A42,A16)')'! AREAT = Area of cohort of leaves at leaf',' position (cm2) '
-                        WRITE(fnumlvs,'(A43,A35)')'! AREAS = Senesced area of cohort of leaves', &
-                            ' at harvest at leaf position (cm2) '
-                        WRITE(fnumlvs,'(A38,A17)')'! WFLF  = Water stress factor for leaf',' (0-1,1=0 stress)'
-                        WRITE(fnumlvs,'(A51)')'! NFLF  = N stress factor for leaf (0-1,1=0 stress)'
-                        WRITE(fnumlvs,'(A51)')'! NFLF  = N factor for area adjustment (0-1,1=0 stress)'
-                        WRITE(fnumlvs,'(A44,A17)')'! NFLFP = N stress factor for photosynthesis',' (0-1,1=0 stress)'
-                        WRITE(fnumlvs,'(A36,A24)')'! AFLF  = Assimilate factor for leaf',' (0-1,1=0 no limitation)'
-                        WRITE(fnumlvs,'(A48,A24)')'! TFGLF = Temperature factor for leaf expansion ',' (0-1,1=0 no limitation)'
-                        WRITE(fnumlvs,'(A49,A24)')'! TFDLF = Temperature factor for leaf development',' (0-1,1=0 no limitation)'
-                        WRITE(fnumlvs,'(A37)')'! DGLF = Number of days growing      '
-                        WRITE(fnumlvs,'(A37)')'! DALF = Number of days fully active '
-                        WRITE(fnumlvs,'(A37)')'! DSLF = Number of days senescing    '
+                        WRITE(fnumlvs,'( A)')'! LNUM = Number of leaf on one axis '
+                        WRITE(fnumlvs,'( A)')'! AREAP = Potential area of leaf on main axis (cm2) '
+                        WRITE(fnumlvs,'(2A)')'! AREA1 = Area of youngest mature leaf on', ' main axis,no stress (cm2)'
+                        WRITE(fnumlvs,'(2A)')'! AREAT = Area of cohort of leaves at leaf',' position (cm2) '
+                        WRITE(fnumlvs,'(2A)')'! AREAS = Senesced area of cohort of leaves', ' at harvest at leaf position (cm2) '
+                        WRITE(fnumlvs,'(2A)')'! WFLF  = Water stress factor for leaf',' (0-1,1=0 stress)'
+                        WRITE(fnumlvs,'( A)')'! NFLF  = N stress factor for leaf (0-1,1=0 stress)'
+                        WRITE(fnumlvs,'( A)')'! NFLF  = N factor for area adjustment (0-1,1=0 stress)'
+                        WRITE(fnumlvs,'(2A)')'! NFLFP = N stress factor for photosynthesis',' (0-1,1=0 stress)'
+                        WRITE(fnumlvs,'(2A)')'! AFLF  = Assimilate factor for leaf',' (0-1,1=0 no limitation)'
+                        WRITE(fnumlvs,'(2A)')'! TFGLF = Temperature factor for leaf expansion ',' (0-1,1=0 no limitation)'
+                        WRITE(fnumlvs,'(2A)')'! TFDLF = Temperature factor for leaf development',' (0-1,1=0 no limitation)'
+                        WRITE(fnumlvs,'( A)')'! DGLF = Number of days growing      '
+                        WRITE(fnumlvs,'( A)')'! DALF = Number of days fully active '
+                        WRITE(fnumlvs,'( A)')'! DSLF = Number of days senescing    '
                     ENDIF
                     CLOSE (FNUMLVS)
                     ! End of Leaves.out
@@ -2375,28 +1904,24 @@
                     IF (EXCODE.NE.EXCODEPREV.OR.TNAME(1:1).EQ.'*') THEN
                         OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
                         WRITE (FNUMPRES,*) ' '
-                        WRITE (TLINETMP,9951) EXCODE,MODNAME
-9951                    FORMAT ('*RESPONSES(S):',A10,'  ',A8)
+                        WRITE (TLINETMP,'(A,A10,A8)') '*RESPONSES(S):',EXCODE,MODNAME
                         IF (TNAME(1:1).EQ.'*') THEN
                             WRITE (FNUMPRES,'(A180)') TLINETMP
                         ELSE
                             WRITE (FNUMPRES,'(A180)') TLINETMP
                         ENDIF
-                        WRITE (FNUMPRES,97,ADVANCE='NO')
-97                      FORMAT ('@  RUN',' EXCODE   ',' TRNO RN    CR','  PDAT  EDAP')
+                        WRITE (FNUMPRES,'(4A)',ADVANCE='NO')'@  RUN',' EXCODE   ',' TRNO RN    CR','  PDAT  EDAP'
                         DO L = 1,KEYSTX
                             IF (KEYPS(L).GT.0) THEN
                                 WRITE (FNUMPRES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
                             ENDIF  
                         ENDDO
-                        WRITE (FNUMPRES,297)
-297                     FORMAT ('  HWAH  HWUH','  H#AH  H#GH  LAIX  L#SH BR#AH','  CWAH  VWAH  HIAH  RWAH','  HN%H  TNAH', &
-                            '  CNAH  HNAH','  HINH PLPOP','  NICH',' SRADA TMAXA TMINA  PRCP')
+                        WRITE (FNUMPRES,'(8A)') '  HWAH  HWUH','  H#AH  H#GH  LAIX  L#SH BR#AH','  CWAH  VWAH  HIAH  RWAH', &
+                            '  HN%H  TNAH','  CNAH  HNAH','  HINH PLPOP','  NICH',' SRADA TMAXA TMINA  PRCP'
                     ELSE
                         OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
                     ENDIF  ! End Responses simulated header writes
-                    WRITE (FNUMPRES,7401,ADVANCE='NO') RUN,EXCODE,TN,RN,CROP,PLDAYTMP,EDAPFR
-7401                FORMAT (I6,1X,A10,I4,I3,4X,A2, I6, F6.1)  !Run,excode,tn,rn,crop, Pldaytmp, Edapfr
+                    WRITE (FNUMPRES,'(I6,1X,A10,I4,I3,4X,A2, I6, F6.1)',ADVANCE='NO') RUN,EXCODE,TN,RN,CROP,PLDAYTMP,EDAPFR
                     DO L = 1,KEYSTX
                         IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN
                             ! If harvested at a specific date
@@ -2430,7 +1955,8 @@
                             ELSE
                                 WRITE (FNUMPREM,'(A180)') TLINETMP
                             ENDIF
-                            WRITE (FNUMPREM,97,ADVANCE='NO')
+                            WRITE (FNUMPREM,'(4A)',ADVANCE='NO')'@  RUN',' EXCODE   ',' TRNO RN    CR','  PDOY  EDAP'
+
                             DO L = 1,KEYSTX
                                 IF (KEYPS(L).GT.0) THEN
                                     WRITE (FNUMPREM,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
@@ -2442,7 +1968,8 @@
                         ELSE
                             OPEN (UNIT=FNUMPREM,FILE=FNAMEPREM,POSITION='APPEND')
                         ENDIF ! End Responses measured header writes
-                        WRITE (FNUMPREM,7401,ADVANCE='NO') RUN,EXCODE,TN,RN,CROP,PLDAYTMP,FLOAT(MAX(-99,edapm))
+                        WRITE (FNUMPREM,'(I6,1X,A10,I4,I3,4X,A2, I6, F6.1)',ADVANCE='NO') &
+                            RUN,EXCODE,TN,RN,CROP,PLDAYTMP,FLOAT(MAX(-99,edapm))
                         DO L = 1,KEYSTX
                             IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN
                                 ! If harvested at a specific date
@@ -3064,10 +2591,10 @@
     
     IF (DYNAMIC.EQ.INTEGR.AND.LNUMSG.GT.0) CALL Cscrplayers( &
         chtpc,clapc,                     &        ! Canopy characteristics
-    pltpop,lai,canht,                &        ! Canopy aspects
-    lnumsg,lap,lapp,laps,            &        ! Leaf cohort number,size
-    LAIL,LAILA,                      &        ! Leaf area indices,layers
-    LAIA)                                     ! Leaf area index,active
+        pltpop,lai,canht,                &        ! Canopy aspects
+        lnumsg,lap,lapp,laps,            &        ! Leaf cohort number,size
+        LAIL,LAILA,                      &        ! Leaf area indices,layers
+        LAIA)                                     ! Leaf area index,active
     
 9589 FORMAT (//,'*SIMULATED CROP AND SOIL STATUS AT MAIN DEVELOPMENT STAGES')
 9588 FORMAT (/,' ...... DATE ....... GROWTH STAGE    BIOMASS   LEAF       CROP N      STRESS')     
