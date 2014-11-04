@@ -79,7 +79,7 @@
       CALL UPPERC(NITROENV)               
       IF (ITASK.EQ.1) THEN
       !When water and nitrogen both are in potential, may not have soil file        
-        IF(INDEX(NITROENV, "POTENTIAL")) THEN   !MAKE VIRTUAL SOIL
+        IF(INDEX(NITROENV, "POTENTIAL")>0) THEN   !MAKE VIRTUAL SOIL
             TKL=1.0; WCST=0.0;WCLQT = 0.0
             WCFC=0.0;WCWP=0.0;WCAD = 0.0  
             NL=1; TKL(1)=1.0; TKLT=1.0; WL0 = 0.0

@@ -23,7 +23,8 @@ integer :: yrdoy, timdif, yrnr1, yrnr2
 
 ! Arrays which contain Simulated and Measured data for printing in OVERVIEW.OUT and EVALUATE.OUT files (OPVIEW subroutine)
 character(len=17), parameter :: errkey='SALUS_OPHARV'
-character :: ideto*1, idets*1, rnmode*1, iplti*1, crop*2, section*6, filea*12, fileio*30, pathex*80, stname*10(20)
+character :: ideto*1, idets*1, rnmode*1, iplti*1, crop*2, section*6, filea*12, fileio*30, pathex*80
+character*10, dimension(20) :: stname
 character, dimension(EvaluateNum) :: olab*6, olap*6, x*6, Simulated*8, Measured*8, descrip*50     !OLAP in dap
 
 ! Arrays which contain data for printing in SUMMARY.OUT file
