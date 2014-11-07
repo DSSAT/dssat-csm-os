@@ -13,22 +13,24 @@
         
         !     Global constants
     
-        INTEGER,PARAMETER::DINX =   3 ! Disease number,maximum
-        INTEGER,PARAMETER::PSX  =  20 ! Principal stages,maximum
-        INTEGER,PARAMETER::SSX  =  20 ! Secondary stages,maximum
-        INTEGER,PARAMETER::KEYSTX = 9 ! Maximum number of key stages
-        INTEGER,PARAMETER::DCNX =  10 ! Disease control #,maximum
-        INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts
-        INTEGER,PARAMETER::LNUMX= 500 ! Maximum number of leaves/axis
-        INTEGER,PARAMETER::HANUMX= 40 ! Maximum # harvest instructions
-        !INTEGER,PARAMETER::NL   =  20 ! Maximum number of soil layers
+        INTEGER,PARAMETER::DINX      =   3 ! Disease number,maximum
+        INTEGER,PARAMETER::PSX       =  20 ! Principal stages,maximum
+        INTEGER,PARAMETER::SSX       =  20 ! Secondary stages,maximum
+        INTEGER,PARAMETER::KEYSTX    =   9 ! Maximum number of key stages
+        INTEGER,PARAMETER::DCNX      =  10 ! Disease control #,maximum
+        INTEGER,PARAMETER::MaxBrLev  =  10 ! Maximum number of branch levels
+        INTEGER,PARAMETER::MaxLfLev  = 500 ! Maximum number of leaves in each branch level (allows for non-branching types)
+        INTEGER,PARAMETER::LCNUMX    = 500 ! Maximum number of leaf cohorts
+        INTEGER,PARAMETER::LNUMX     = 500 ! Maximum number of leaves/axis
+        INTEGER,PARAMETER::HANUMX    =  40 ! Maximum # harvest instructions
+        !INTEGER,PARAMETER::NL        =  20 ! Maximum number of soil layers    ! Defined in ModuleDefs
         !
-        !INTEGER,PARAMETER::RUNINIT=1  ! Program initiation indicator
-        !INTEGER,PARAMETER::SEASINIT=2 ! Reinitialisation indicator
-        !INTEGER,PARAMETER::RATE = 3   ! Program rate calc.indicator
-        !INTEGER,PARAMETER::INTEGR=4   ! Program update indicator
-        !INTEGER,PARAMETER::OUTPUT=5   ! Program output indicator
-        !INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator
+        !INTEGER,PARAMETER::RUNINIT=1  ! Program initiation indicator          ! Defined in ModuleDefs
+        !INTEGER,PARAMETER::SEASINIT=2 ! Reinitialisation indicator            ! Defined in ModuleDefs
+        !INTEGER,PARAMETER::RATE = 3   ! Program rate calc.indicator           ! Defined in ModuleDefs
+        !INTEGER,PARAMETER::INTEGR=4   ! Program update indicator              ! Defined in ModuleDefs
+        !INTEGER,PARAMETER::OUTPUT=5   ! Program output indicator              ! Defined in ModuleDefs
+        !INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator              ! Defined in ModuleDefs
         !
         CHARACTER(LEN=1),PARAMETER::BLANK = ' '
         CHARACTER(LEN=3),PARAMETER::DASH = ' - '
@@ -37,7 +39,8 @@
             !REAL,PARAMETER::SHAIR=1005.0 ! Specific heat of air,MJ/kg
             !REAL,PARAMETER::SBZCON=4.903E-9 !Stefan Boltzmann,MJ/K4/m2/d
         SAVE
-
+        
+        ! TYPE (WeatherType) WEATHER                                          ! If you USE ModuleDefs where WeatherType is declared, you cannot declare it here as well.
 
        !=======================================================================-========================
        !
@@ -45,7 +48,7 @@
        !Type    :: VarName(Dims)       ! Description and units
        !================================================================================================
 
-        REAL    :: AFLF(0:LNUMX)       ! CH2O factor for leaf,average   #
+        REAL    :: AFLF(0:LNUMX)       ! CH2O factor for leaf, average  #
         REAL    :: AH2OPROFILE         ! Available H2o,profile          mm
         REAL    :: AH2OROOTZONE        ! Available h2o in root zone     mm
         !REAL    :: ALBEDO              ! Canopy+soil albedo             fr          ARGUMENT 
@@ -61,6 +64,7 @@
         REAL    :: BASELAYER           ! Depth at base of layer         cm
         !REAL    :: BD(20)              ! Bulk density (moist)           g/cm3       ARGUMENT
         REAL    :: BRFX(PSX)           ! Branch # per fork at each fork #
+        REAL    :: BrLev               ! Branch (fork) level            # (0 - MaxBrLev)
         REAL    :: BRNUMSH             ! Branch number/shoot at harvest #
         REAL    :: BRNUMSHM            ! Branch #/shoot,harvest,measurd #
         REAL    :: BRNUMST             ! Branch number/shoot (>forking) #
@@ -147,6 +151,7 @@
         REAL    :: CWAN(HANUMX)        ! Canopy wt minimum after harvst kg/ha
         INTEGER :: DAE                 ! Days after emergence           d
         REAL    :: DALF(0:LNUMX)       ! Days during which leaf active  d
+        !REAL    :: DALF(0:MaxBrLev, MaxLfLev) ! Days during which leaf cohort active d
         INTEGER :: DAP                 ! Days after planting            d
         !INTEGER :: DAPCALC             ! DAP output from funcion        #           FUNCTION
         INTEGER :: DAS                 ! Days after start of simulation d
@@ -402,6 +407,7 @@
         INTEGER :: I                   ! Loop counter                   #
         REAL    :: ICWD                ! Initial water table depth      cm
         INTEGER :: IDETGNUM            ! Number of times into IDETG     #
+        INTEGER :: IOCHECK             ! File status on open            #
         !REAL    :: IRRAMT              ! Irrigation amount for today    mm          ARGUMENT
         REAL    :: IRRAMTC             ! Irrigation amount,cumulative   mm
         REAL    :: ISOILH2O            ! Initial soil water             cm   
@@ -421,7 +427,7 @@
         REAL    :: LAGEG(0:LNUMX)      ! Leaf age increment             C.d
         REAL    :: LAGEP(0:LNUMX)      ! Leaf age (phyllochrons),lf pos #
         REAL    :: LAGETT(0:LNUMX)     ! Leaf age at leaf position    C.d
-        REAL    :: LAGL(1,LNUMX)       ! Leaf area growth,shoot,lf pos  cm2/l
+        REAL    :: LAGL(LNUMX)       ! Leaf area growth,shoot,lf pos  cm2/l
         REAL    :: LAI                 ! Leaf area index                #
         REAL    :: LAIA                ! Leaf area index,active         #
         INTEGER :: LAIDCOL             ! Leaf area index column         #
@@ -445,12 +451,12 @@
         REAL    :: LAPP(LNUMX)         ! Leaf area diseased,leaf posn   cm2/p
         REAL    :: LAPS(LNUMX)         ! Leaf area senesced,leaf posn   cm2/p
         REAL    :: LAPSTMP             ! Leaf area senesced,temporary   cm2/p
-        REAL    :: LATL(1,LNUMX)       ! Leaf area,shoot,lf#,potential  cm2/l
-        REAL    :: LATL2(1,LNUMX)      ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l
-        REAL    :: LATL3(1,LNUMX)      ! Leaf area,shoot,lf#,+assim.    cm2/l
-        REAL    :: LATL4(1,LNUMX)      ! Leaf area,shoot,lf#,+assim.+N  cm2/l
-        REAL    :: LATLPOT(1,LNUMX)    ! Leaf area,shoot,leaf,pot     cm2/l
-        REAL    :: LATLPREV(1,LNUMX)   ! Leaf area,shoot,leaf,prev.  cm2/l
+        REAL    :: LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l
+        REAL    :: LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l
+        REAL    :: LATL3(LNUMX)        ! Leaf area,shoot,lf#,+assim.    cm2/l
+        REAL    :: LATL4(LNUMX)        ! Leaf area,shoot,lf#,+assim.+N  cm2/l
+        REAL    :: LATLPOT(LNUMX)      ! Leaf area,shoot,leaf,pot     cm2/l
+        REAL    :: LATLPREV(LNUMX)     ! Leaf area,shoot,leaf,prev.  cm2/l
         REAL    :: LAWCF               ! Leaf area/wt change,fr.st      fr/lf
         REAL    :: LAWFF               ! Leaf area/wt flexibility,fr.st fr
         REAL    :: LAWL(2)             ! Area to wt ratio,n=youngest lf cm2/g
@@ -466,7 +472,8 @@
         INTEGER :: LCNUM               ! Leaf cohort number (inc.grow)  #
         REAL    :: LCOA(LCNUMX)        ! Leaf cohort area               cm2
         REAL    :: LCOAS(LCNUMX)       ! Leaf cohort area senesced      cm2
-        INTEGER :: LDEATHDAP(LCNUMX)   ! DAP on which leaf 100% dead #
+        INTEGER :: LDEATHDAP(LCNUMX)   ! DAP on which leaf 100% dead    #
+        REAL    :: LfLev               ! Leaf level within branch       # (0 - MaxLfLev)
         REAL    :: LEAFN               ! Leaf N                         g/p
         REAL    :: LEAFNEXCESS         ! Leaf N > critical              g/p
         INTEGER :: LENDIS              ! Length,ISWDIS flag             #
@@ -1043,11 +1050,11 @@
         REAL    :: SWPLTL              ! Lower limit on soil water,plt  %
         REAL    :: SWPRTIP             ! Soil water potential,root tip  #
         REAL    :: SWPSD               ! Soil water potential at seed   #
-        REAL    :: TAIRHR(TS)          ! Hourly air temperature         C           ARGUMENT
+        !REAL    :: TAIRHR(TS)          ! Hourly air temperature         C           ARGUMENT
         REAL    :: TCAN                ! Canopy temperature             C
         REAL    :: TCDIF               ! Canopy temperature - air temp  C
         INTEGER :: TDATANUM            ! Number of data from t-file     #
-        REAL    :: TDEW                ! Dewpoint temperature           C           ARGUMENT
+        !REAL    :: TDEW                ! Dewpoint temperature           C           ARGUMENT
         REAL    :: TDIFAV              ! Temperature difference,can-air C
         REAL    :: TDIFNUM             ! Temperature difference,# data  #
         REAL    :: TDIFSUM             ! Temperature difference,sum     C
@@ -1073,7 +1080,7 @@
         !REAL    :: TLCHD               ! N leached this day             kg/ha       ARGUMENT
         INTEGER :: TLINENUM            ! Temporary var,# lines in tfile #
         INTEGER :: TLPOS               ! Position on temporary line     #
-        REAL    :: TMAX                ! Temperature maximum            C           ARGUMENT
+!        REAL    :: TMAX                ! Temperature maximum            C           ARGUMENT
         REAL    :: TMAXCAV             ! Temperature,maximum,cycle av   C
         REAL    :: TMAXCC              ! Temperature,max,cycle sum      C.d 
         REAL    :: TMAXM               ! Temperature maximum,monthly av C
@@ -1096,7 +1103,7 @@
         REAL    :: TMEANPC             ! Temperature,mean,tier sum      C
         REAL    :: TMEANSUM            ! Temperature means sum          #
         REAL    :: TMEANSURF           ! Temperature mean,soil surface  C
-        REAL    :: TMIN                ! Temperature minimum            C           ARGUMENT
+!        REAL    :: TMIN                ! Temperature minimum            C           ARGUMENT
         REAL    :: TMINCAV             ! Temperature,minimum,cycle av   C
         REAL    :: TMINCC              ! Temperature,min,cycle sum      C.d  
         REAL    :: TMINM               ! Temperature minimum,monthly av C
@@ -1171,7 +1178,7 @@
         REAL    :: VARVAL              ! Temporary variable             #
         REAL    :: VCNC                ! Vegetative critical N conc     #
         !INTEGER :: VERSION             ! Version #                      #           MF 15SE14 Defined in ModuleDefs
-        INTEGER :: VERSIONCSCAS        ! Vwrsion # (CSCAS)              #            MF 15SE14 Mad unique to CSCAS
+        INTEGER :: VERSIONCSCAS        ! Version # (CSCAS)              #            MF 15SE14 Made unique to CSCAS
         REAL    :: VMNC                ! Vegetative minimum N conc      #
         REAL    :: VNAD                ! Vegetative canopy nitrogen     kg/ha
         REAL    :: VNAM                ! Vegetative N,mature            kg/ha

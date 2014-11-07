@@ -1,0 +1,125 @@
+!***************************************************************************************************************************
+! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6730 - 6900 of the original CSCAS code. The names of the 
+! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
+! that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all comments are those of 
+! the original CSCAS.FOR code.
+!
+! Subroutine CS_Out_Work outputs Work details (A OUTPUTS ). 
+!***************************************************************************************************************************
+    
+    SUBROUTINE CS_Out_Work ( & 
+        BRSTAGE     , CN          , CO2         , DOY         , IDETL       , IRRAMT      , NFP         , RAIN        , &
+        WINDSP      , YEAR        &
+        )
+        
+        USE Module_CSCAS_Vars_List
+        USE Module_CS_Formats
+     
+        IMPLICIT NONE 
+     
+        INTEGER :: CN          , DOY         , YEAR       
+
+        REAL    :: BRSTAGE     , CO2         , EO          , IRRAMT      , NFP         , RAIN        , WINDSP      
+
+        CHARACTER(LEN=1)  :: IDETL       
+        
+        !---------------------------------------------------------------------------------------------------------------
+        !         IDETL = A (Outputs Work details)
+        !---------------------------------------------------------------------------------------------------------------     
+            
+        IF (IDETL.EQ.'A') THEN
+            WRITE(fnumwrk,*)' '
+            WRITE(fnumwrk,'(A25,I16,I7,I7)')' Year,day,DAP            ',YEAR,DOY,DAP
+            WRITE(fnumwrk,'(A34,2F7.3)')' Rainfall,Irrigation mm           ',rain,irramt
+            WRITE(fnumwrk,'(A34,2F7.3)')' Tmean,Tcan oC                    ',tmean,tcan
+            WRITE(fnumwrk,'(A34,2F7.3)')' Tcan-Tmean Today and average oC  ',tcan-tmean,tdifav
+            WRITE(fnumwrk,'(A34,F7.1)')' Windspeed m/s                    ',windsp     
+            WRITE(fnumwrk,'(A34,2F7.3,2F7.1)')' Brstage,Lnum. Beginning,end of day',brstageprev,brstage,lnumprev,lnum
+            IF (PLA-SENLA-LAPHC.LT.9999.9) THEN
+                WRITE(fnumwrk,'(A34,F7.1,F7.1)')' Laminae area end day /m2,/plant  ',lai,pla-senla-laphc
+            ELSE
+                WRITE(fnumwrk,'(A34,F7.1,I7)')' Laminae area end day /m2,/plant  ',lai,NINT(pla-senla-laphc)
+            ENDIF
+            WRITE(fnumwrk,'(A25,I1,A7,2F7.3)')' PARI,competition model,C',CN,' 1-crop',PARI,PARI1
+            IF (Rlf.GT.0.0) THEN
+                WRITE(fnumwrk,'(A34,2F7.1,2F7.1)')' Ratm,Rcrop,Rcrop*Rco2/R,*H2o     ',ratm,rcrop,rcrop*rlfc/rlf, &
+                    rcrop*rlfc/rlf*(1.0-(1.0-wfp))
+            ELSE
+                WRITE(fnumwrk,'(A34,2F7.1)')' Ratm,Rcrop                       ',ratm,rcrop                         
+            ENDIF
+            IF (FILEIOT.NE.'XFL') THEN
+                IF (IDETL.EQ.'D'.OR.IDETL.EQ.'A') THEN
+                    IF (meevp.EQ.'R')THEN
+                        WRITE(fnumwrk,'(A50)')' Model (CSM) pot.evap.method: Priestley-Taylor R  '
+                    ELSEIF (meevp.EQ.'P')THEN
+                        WRITE(fnumwrk,'(A51)')' Model (CSM) pot.evap.method: FAO Penman (FAO-24) P'
+                    ELSEIF (meevp.EQ.'F')THEN
+                        WRITE(fnumwrk,'(A50,A10)')' Model (CSM) pot.evap.method: FAO Penman-Monteith ', '(FAO-56) F'
+                    ELSEIF (meevp.EQ.'D')THEN 
+                        WRITE(fnumwrk,'(A53,A10)')' Model (CSM) pot.evap.method: Dynamic Penman-Monteith'
+                    ENDIF
+                    !MEEVP CSM Model routines
+                    !   F  PETPEN  FAO Penman-Monteith (FAO-56) potential evapotranspiration 
+                    !                with KC = 1.0
+                    !   R  PETPT   Calculates Priestly-Taylor potential evapotranspiration
+                    !                (default method)
+                    !   D  PETDYN  Dynamic Penman-Monteith, pot. evapotranspiration, with
+                    !                dynamic input of LAI, crop height effects on Ra and Rs
+                    !   P  PETPNO  FAO Penman (FAO-24) potential evapotranspiration 
+                    !   M  PETMEY  "Standard reference evaporation calculation for inland 
+                    !                south eastern Australia" By Wayne Meyer 1993
+                    WRITE(fnumwrk,'(A34,4F7.3,F8.3)')' EO  P-T,Pen,M-Pen,Ebud,Model     ',eopt,eopen,eompen,eoebud,eo
+                    WRITE(fnumwrk,'(A34,4F7.3,F8.3)')' EOCrp                            ',eopt,eopen,eompcrp,eoebudcrp,eo
+                    WRITE(fnumwrk,'(A34,4F7.3,F8.3)')' EOCrpCo2                         ',eopt,eopen,eompcrpco2, &
+                        eoebudcrpco2,eo
+                    WRITE(fnumwrk,'(A34,4F7.3,F8.3)')' EOCrpCo2H2o                         ',eopt,eopen,eompcrpco2h2o, &
+                        eoebudcrpco2h2o,eo
+                    IF (WFP.LT.1.0.AND.WFP.GT.0.0)WRITE(fnumwrk,'(A41,F4.2,A8,F4.1,A8,F4.1)') &
+                        ' NB.Water stress effect operative. WFP = ',wfp,' TCAN = ',tcan,' TAIR = ',tmean
+                    WRITE(fnumwrk,'(A34,4F7.1,F8.1)')' EOC P-T,Pen,M-P,Ebud,Model       ',eoptc,eopenc,eompenc,eoebudc,eoc
+                    WRITE(fnumwrk,'(A34,4F7.1,F8.1)')' EOCrpC                           ',eoptc,eopenc,eompcrpc,eoebudcrpc,eoc
+                    WRITE(fnumwrk,'(A34,4F7.1,F8.1)')' EOCrpCo2C                        ',eoptc,eopenc,eompcrpco2c, &
+                        eoebudcrpco2c,eoc
+                    WRITE(fnumwrk,'(A34,4F7.1,F8.1)')' EOCrpCo2h2oC                     ',eoptc,eopenc,eompcrpco2h2oc, &
+                        eoebudcrpco2h2oc,eoc
+                ENDIF
+            ENDIF
+            IF (EYEARDOY.LE.YEARDOY) THEN
+                WRITE(fnumwrk,'(A,2F7.3)')     ' Pot.pl./Pot.soil evap; /Pot.pl330',epsratio,tratio
+                WRITE(fnumwrk,'(A,F7.3)')      ' Quantum requirement              ',photqr
+                WRITE(fnumwrk,'(A,2F7.1)')     ' CO2,Estimated internal CO2 vpm   ',co2,co2intppm
+                WRITE(fnumwrk,'(A,F7.3,6F7.3)')' Phs facs Co2,Temp,H2o,N,Rsvs,Vpd ',co2fp,tfp,wfp,nfp,rsfp,vpdfp
+                WRITE(fnumwrk,'(A,3F7.3)')     ' Phs. Rue,Rue+Co2i,Resistances    ',carbobegr*pltpop,carbobegi*pltpop, &
+                    carbobegm*pltpop
+                WRITE(fnumwrk,'(A,3F7.2)')     ' CH2O Start,end,remobilized       ',carbobeg*pltpop*10.,carboend*pltpop*10.0, &
+                    senlfgrs*pltpop*10.0
+                IF(CUMDU.LE.DUSRI.AND.CUMDU+DU.GT.DUSRI.AND.SRDAYFR.GT.0.0)THEN
+                    WRITE(fnumwrk,'(A, I7)')   ' STORAGE ROOT INITIATION (no/pl)  ',srnopd
+                    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(lfwt+stwt+crwt+rswt)*pltpop*10.0
+                    WRITE(fnumwrk,'(A,F7.1)')  ' Storage root fraction            ',srfr
+                ENDIF
+                IF (SRWTGRS+SRWTGRS.GT.0.0) WRITE(FNUMWRK,'(A)')' Surplus assimilates sent to storage roots      '
+                IF (LRTIP.EQ.1) WRITE(fnumwrk,'(A)')' Root tip in layer 1 '
+                WRITE(FNUMWRK,'(A,2F7.2)')     ' N demand,shortage (kg/ha)        ',andem,AMAX1(0.0,andem-nupap)
+                ! Folowing detailed outputs can be printed if tvi1=1
+                tvi1 = 0
+                IF (tvi1.eq.1) THEN
+                    IF (ANDEM.LE.0.0) THEN
+                        WRITE(FNUMWRK,'(A)')' N demand at zero! Components of demand/use:' 
+                    ELSE
+                        WRITE(FNUMWRK,'(A)')' N demand above zero! Components of demand/use:' 
+                    ENDIF  
+                    WRITE(FNUMWRK,*)' Leaves            ',lndem*pltpop*10.0
+                    WRITE(FNUMWRK,*)' Stem              ',sndem*pltpop*10.0
+                    WRITE(FNUMWRK,*)' Roots             ',rndem*pltpop*10.0
+                    WRITE(FNUMWRK,*)' Storage root      ',srndem*pltpop*10.0
+                    WRITE(FNUMWRK,*)' Seed use          ',(seednuse+seednuse2)*pltpop*10.0
+                    WRITE(FNUMWRK,*)' Reserves use      ',rsnused*pltpop*10.0
+                    IF (ANDEM.GT.0.0.AND.NUPAP.LT.ANDEM) WRITE(fnumwrk,'(A)')'  N uptake insufficient to meet demand'
+                    IF (ANDEM.GT.10.0) WRITE(fnumwrk,'(A,F4.1,A,F4.1)')' N demand (',ANDEM, &
+                        ') very high! Uptake = ',nuf*andem
+                ENDIF 
+            ENDIF ! End EYEARDOY.LE.YEARDOY
+        ENDIF ! End detailed WORK writes  IDDETL = 'A'   
+
+    END SUBROUTINE CS_Out_Work

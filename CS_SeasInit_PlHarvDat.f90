@@ -1,18 +1,16 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization lines 2530 - 2570 of the original CSCAS code. the
-! names of the dummy arguments are the same as in the original CSCAS code and the call statement. the variables are described
-! in CSCAS.
+! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization lines 2530 - 2570 of the original CSCAS code. The 
+! names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The 
+! variables that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all comments are 
+! those of the original CSCAS.FOR code.
 !
-! This subroutine sete the planting and harvest dates.
-!
+!Subroutine CS_SeasInit_PlHarvDat sets the planting and harvest dates.
 !***************************************************************************************************************************
 
-
-    SUBROUTINE CS_Plant_harv_Dat ( &
+    SUBROUTINE CS_SeasInit_PlHarvDat ( &
         DOY         , YEAR         &
         )
       
-      !USE CRSIMDEF                                                                MF 15SE14 Declared in ModuleDefs
       USE Module_CSCAS_Vars_List
       
       IMPLICIT NONE
@@ -62,4 +60,4 @@
       ELSE  
           CFLLFLIFE = 'T'  ! Default to thermal time 
       ENDIF
-    END SUBROUTINE CS_Plant_harv_Dat 
+    END SUBROUTINE CS_SeasInit_PlHarvDat 

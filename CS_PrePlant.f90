@@ -1,31 +1,31 @@
 !**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 3938 - 4069 of the original CSCAS code.
-! The actual and dummy arguments are only for those variables that are dummy arguments for CSCAS. The type of all
-! other variables are declared in the MODULE Module_CSCAS_Vars. The type of only the dummy arguments are declared here.
-! The variables and their units are defined in CSCAS.
-!
-! SUBROUTINE CS_Final_Init sets up the switches for establishment and determines whether today is a planting day.
+! This is the code from the section (DYNAMIC.EQ.RATE) lines 3938 - 4069 of the original CSCAS code. The names of the 
+! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
+! that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all comments are those of 
+! the original CSCAS.FOR code.
+! 
+! Subroutine CS_PrePlant sets up the switches for establishment and determines whether today is a planting day.
 !**********************************************************************************************************************
     
-    
-    SUBROUTINE CS_Pre_Plant( &
+    SUBROUTINE CS_PrePlant( &  
         BD          , CO2         , DLAYR       , DOY         , DUL         , LL          , NH4LEFT     , NLAYR       , &
-        NO3LEFT     , RNMODE      , ST          , STGYEARDOY  , SW          , YEAR        , WEATHER     , &                               ! MF 15SE14 removed <TMAX        , TMIN        , > (In Module_CSCas_Vars_List) 
-        YEARPLTCSM   &
+        NO3LEFT     , RNMODE      , ST          , STGYEARDOY  , SW          , TMAX        , TMIN        , YEAR        , &
+        YEARPLTCSM  &                 ! WEATHER     ,      
         )
         
         USE ModuleDefs
-        !USE CRSIMDEF                                                                MF 15SE14 Declared in ModuleDefs
         USE Module_CSCAS_Vars_List
         
         IMPLICIT NONE
         
-        TYPE (WeatherType) WEATHER
+        !TYPE (WeatherType) WEATHER    , WEATHER
         
-        CHARACTER(LEN=1) RNMODE      
-        INTEGER DOY         , NLAYR       , STGYEARDOY(20)            , YEAR        , YEARPLTCSM  
-        REAL    BD(NL)      , CO2         , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , ST(0:NL)    
-        REAL    SW(NL)                                                                                                      ! MF 15SE14 removed <, TMAX        , TMIN        > (In Module_CSCas_Vars_List) 
+        CHARACTER(LEN=1) RNMODE
+        
+        INTEGER DOY         , NLAYR       , STGYEARDOY(20)            , YEAR        , YEARPLTCSM
+        
+        REAL    BD(NL)      , CO2         , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , ST(NL)    
+        REAL    SW(NL)      , TMAX        , TMIN        
         
         !-----------------------------------------------------------------------
         !       Set 'establishment' switches
@@ -156,4 +156,5 @@
             ENDIF
             SHNUML(1) = SHNUM
         ENDIF
-    END SUBROUTINE CS_Pre_Plant        
+        
+    END SUBROUTINE CS_PrePlant        

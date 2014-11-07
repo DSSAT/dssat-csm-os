@@ -1,28 +1,28 @@
 !**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 3547 - 3932 of the original CSCAS code.
+! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 3550 - 3941 of the original CSCAS code.
 ! The actual and dummy arguments are only for those variables that are dummy arguments for CSCAS. The type of all
 ! other variables are declared in the MODULE Module_CSCAS_Vars. The type of only the dummy arguments are declared here.
 ! The variables and their units are defined in CSCAS.
 !
-! SUBROUTINE CS_Final_Init sets up the output descriptors, checks controls and writes information to the overview and 
+! SUBROUTINE CS_SeasInit_Final sets up the output descriptors, checks controls and writes information to the overview and 
 ! work files
 !**********************************************************************************************************************
-    SUBROUTINE CS_Final_Init ( &
+    
+    SUBROUTINE CS_SeasInit_Final ( &
         ALBEDO      , CLOUDS      , CN          , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
         KEP         , ON          , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , SLPF        , &
-        SN          , TN           &                                                                                        ! MF 15SE14 removed <TAIRHR      , > (In Module_CSCas_Vars_List) 
+        SN          , TAIRHR      , TN           &                                                                                        
         )
         
-        !USE CRSIMDEF                                                                                                         MF 15SE14 Declared in ModuleDefs
         USE Module_CSCAS_Vars_List
+        USE Module_CS_Formats
         
         IMPLICIT NONE
         
         CHARACTER(LEN=1) IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , RNMODE        
         INTEGER CN          , ON          , RN          , RUN         , RUNI        , SN          , TN         
-        REAL    ALBEDO      , CLOUDS      , KCAN        , KEP         , RWUMX       , SLPF                                  ! MF 15SE14 Removed <, TAIRHR(24)  > (In Module_CSCAS_Vars_list)
-        
-        INTEGER TVILENT                                                                  ! Integer function call.
+        REAL    ALBEDO      , CLOUDS      , KCAN        , KEP         , RWUMX       , SLPF        , TAIRHR(24)           
+        INTEGER TVILENT                                                                       ! Integer function call.
         
         
 !-----------------------------------------------------------------------
@@ -73,25 +73,19 @@
         ! File header
         IF (CN.GT.1) THEN
             IF (TN.LT.10) THEN
-                WRITE (OUTHED,7104) RUNRUNI(1:5),EXCODE,TN,RN,CN,TRUNNAME
-7104            FORMAT ('*RUN ',A5,A10,' ',I1,',',I1,' C',I1,' ',A40,'  ')
+                WRITE (OUTHED, FMT7104) RUNRUNI(1:5),EXCODE,TN,RN,CN,TRUNNAME
             ELSEIF (TN.GE.10.AND.TN.LT.100) THEN
-                WRITE (OUTHED,7105) RUNRUNI,EXCODE,TN,RN,CN,TRUNNAME
-7105            FORMAT ('*RUN ',A5,A10,' ',I2,',',I1,' C',I1,' ',A40,' ')
+                WRITE (OUTHED, FMT7105) RUNRUNI,EXCODE,TN,RN,CN,TRUNNAME
             ELSEIF (TN.GE.10 .AND. TN.LT.100) THEN
-                WRITE (OUTHED,7106) RUNRUNI,EXCODE,TN,RN,CN,TRUNNAME
-7106            FORMAT ('*RUN ',A5,A10,' ',I3,',',I1,' C',I1,' ',A40)
+                WRITE (OUTHED, FMT7106) RUNRUNI,EXCODE,TN,RN,CN,TRUNNAME
             ENDIF
         ELSE
             IF (TN.LT.10) THEN
-                WRITE (OUTHED,7107) RUNRUNI(1:5),EXCODE,TN,TRUNNAME
-7107            FORMAT ('*RUN ',A5,': ',A10,' ',I1,' ',A40,'  ')
+                WRITE (OUTHED, FMT7107) RUNRUNI(1:5),EXCODE,TN,TRUNNAME
             ELSEIF (TN.GE.10.AND.TN.LT.100) THEN
-                WRITE (OUTHED,7108) RUNRUNI,EXCODE,TN,RN,TRUNNAME
-7108            FORMAT ('*RUN ',A5,': 'A10,' ',I2,',',I1,' ',A40,' ')
+                WRITE (OUTHED, FMT7108) RUNRUNI,EXCODE,TN,RN,TRUNNAME
             ELSEIF (TN.GE.10 .AND. TN.LT.100) THEN
-                WRITE (OUTHED,7109) RUNRUNI,EXCODE,TN,RN,TRUNNAME
-7109            FORMAT ('*RUN ',A5,': 'A10,' ',I3,',',I1,' ',A40)
+                WRITE (OUTHED, FMT7109) RUNRUNI,EXCODE,TN,RN,TRUNNAME
             ENDIF
         ENDIF
         
@@ -154,7 +148,7 @@
         WRITE(fnumwrk,*)' '
         WRITE(fnumwrk,*)' MODEL      ',MODEL
         WRITE(fnumwrk,*)' MODULE     ',MODNAME
-        WRITE(fnumwrk,'(A13,I6)')'  VERSION    ',VERSION
+        WRITE(fnumwrk,'(A13,I6)')'  VERSION    ',VERSIONCSCAS
         WRITE(fnumwrk,*)' PRODUCT    ',HPROD
         WRITE(fnumwrk,*)' RNMODE     ',RNMODE
         IF (RUN.LT.10) THEN
@@ -372,8 +366,4 @@
         WRITE(FNUMWRK,*)' '
         WRITE(FNUMWRK,'(A22)')' DURING RUN STATUS:   '
         
-        
-    END SUBROUTINE CS_Final_Init
-        
-        
-        
+    END SUBROUTINE CS_SeasInit_Final

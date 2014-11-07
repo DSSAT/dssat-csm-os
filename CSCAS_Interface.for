@@ -9,45 +9,49 @@ C                   as defined in ModuleDefs.for
 C  08/09/2012 GH  Updated for cassava
 C  02/03/2014 MF/PM SNOW variable deleted 
 C=======================================================================
-      SUBROUTINE CSCAS_Interface (CONTROL, ISWITCH,       !Input
-     &    EOP, ES, NH4, NO3,SOILPROP, SRFTEMP,            !Input
-     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
-     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
-     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output
-     &    UNH4, UNO3, XLAI)                               !Output
+      SUBROUTINE CSCAS_Interface (CONTROL, ISWITCH,      !Input   4
+     &    EOP, ES, NH4, NO3,SOILPROP, SRFTEMP,            !Input   6
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input   7
+     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output  6
+     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output  5
+     &    UNH4, UNO3, XLAI)                               !Output  3
 
       USE ModuleDefs
       USE ModuleData
+      USE Module_CSCAS_Vars_List
       IMPLICIT NONE
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
       CHARACTER*1   ISWDIS, ISWWAT, ISWNIT, MESOM, RNMODE
-      CHARACTER*2   CROP
-      CHARACTER*78  MESSAGE(10)
+      !CHARACTER*2   CROP                                               ! MF 15SE14 Conflict with CSCAS Module
+      !CHARACTER*78  MESSAGE(10)                                        ! MF 15SE14 Conflict with CSCAS Module
       CHARACTER (LEN=120) FILEIOIN      ! Name of input file
 
       INTEGER DYNAMIC, RUN, TN, RUNI, RN, ON
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY
-      INTEGER MDATE, L, NLAYR
+      INTEGER MDATE, NLAYR                                              ! L,  MF 15SE14 Conflict with CSCAS Module
       INTEGER MULTI, FROP, SN, YEAR, DOY
       INTEGER STGYEARDOY(20), STGDOY(20), YRPLT
+      INTEGER YEARPLTCSM                                                ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS                                        
 
-      REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
+      REAL BRSTAGE, RWUPM                                               ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS
+      REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, CO2 , TMAX, TMIN         
       REAL KCAN, KEP, DEPMAX, DAYLT, DEWDUR
       REAL NSTRES, XLAI, NFP, MSALB, ALBEDO
       REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP, TWILEN
       REAL CANHT, EO, WINDSP, PARIP, PARIPA
       REAL GSTAGE, CAID 
-      REAL TAIRHR(TS), TDEW, SLPF
-!     REAL LAIL, LAILA, TWILEN
+      REAL SLPF, TAIRHR(TS), TDEW                                      
+!      REAL PARHR(TS), RADHR(TS), RHUMHR(TS), VPDHR(TS)                 ! MF 14SE14 Hourly weather.
+!      REAL LAIL, LAILA, TWILEN
 
       REAL, DIMENSION(2)  :: HARVFRAC
 
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SAT, SHF, NO3LEFT, NH4LEFT
-      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
-      REAL, DIMENSION(0:NL) :: SENCALG, SENNALG, SENLALG
+      REAL, DIMENSION(NL) :: SW, UNO3, UNH4, UH2O, ST
+      REAL, DIMENSION(0:NL) :: SENCALG, SENNALG, SENLALG                ! MF 26OC14 ST changed from ST(NL) to run CSCAS from ORIGINAL_CSCAS 
       REAL, DIMENSION(0:NL) :: RESCALG, RESNALG, RESLGALG
       REAL, DIMENSION(0:NL) :: SOILTEMP
 
@@ -181,7 +185,7 @@ C=======================================================================
       CLOUDS = WEATHER % CLOUDS
       CO2    = WEATHER % CO2
       DAYL   = WEATHER % DAYL 
-      TWILEN= WEATHER % TWILEN
+      TWILEN = WEATHER % TWILEN
       RAIN   = WEATHER % RAIN
       SRAD   = WEATHER % SRAD
       TAIRHR = WEATHER % TAIRHR
@@ -191,26 +195,29 @@ C=======================================================================
       WINDSP = WEATHER % WINDSP
 
 C-----------------------------------------------------------------------
-      CALL CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,           !Command line
-     & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols
-     & IDETS, IDETO, IDETG, IDETL, FROP,                   !Controls
-     & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
-     & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather
-     & DRAIN, RUNOFF, IRRAMT,                              !Water
-     & TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,   !Weather
-     & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
-     & SW, NO3LEFT, NH4LEFT, FERNIT,                       !H2o,N states
-     & TLCHD, TNIMBSOM, TNOXD,                             !N components
-     & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components
-     & YRPLT, HARVFRAC,                                    !Pl.date
-     & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDO,          !Resources
-     & CAID, KCAN, KEP,                                    !States
-     & RLV, NFP, PORMIN, RWUMX, CANHT, LAIL, LAILA,        !States
-     & UNO3, UNH4, UH2O,                                   !Uptake
-     & SENCALG, SENNALG, SENLALG,                          !Senescence
-     & RESCALG, RESNALG, RESLGALG,                         !Residues
-     & STGYEARDOY, GSTAGE,                                 !Stage dates
-     & DYNAMIC)                                            !Control
+      CALL CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,           !Command line 5
+     & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols      4
+     & IDETS, IDETO, IDETG, IDETL, FROP,                   !Controls     5
+     & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop     8
+     & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather      7
+     & DRAIN, RUNOFF, IRRAMT,                              !Water        3
+     & DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,           !Weather      7
+     & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states  9
+     & SW, NO3LEFT, NH4LEFT, FERNIT,                       !H2o,N states 4
+     & TLCHD, TNIMBSOM, TNOXD,                             !N components 3
+     & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components 5
+     & YEARPLTCSM, HARVFRAC,                               !Pl.date      2
+     & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,         !Resources    7
+     & CAID, KCAN, KEP,                                    !States       3
+     & RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,         !States       7
+     & UNO3, UNH4, UH2O,                                   !Uptake       3
+     & SENCALG, SENNALG, SENLALG,                          !Senescence   3
+     & RESCALG, RESNALG, RESLGALG,                         !Residues     3
+     & STGYEARDOY, BRSTAGE,                                !Stage dates  2
+     & DYNAMIC, WEATHER)                                   !Control      2
+      
+    ! MF There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of
+    !    CSCAS_Interface of which there are only 31.
 
       XLAI   = CAID
       NSTRES = NFP

@@ -1,14 +1,14 @@
 !**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 3105 - 3655 of the original CSCAS code.
-! The actual and dummy arguments are only for those variables that are dummy arguments for CSCAS. The type of all
-! other variables are declared in the MODULE Module_CSCAS_Vars. The type of only the dummy arguments are declared here.
-! The variables and their units are defined in CSCAS.
+! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 3109 - 3549 of the original CSCAS code.
+! The names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared 
+! here. The variables that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all 
+! comments are those of the original CSCAS.FOR code.
 !
-! SUBROUTINE CS_Setup_Stages sets up the growth stages including branching, check coefficients, sets defaults and 
+! Subroutine CS_SeasInit_SetStage sets up the growth stages including branching, check coefficients, sets defaults and 
 ! calculates/sets initial states.
 !**********************************************************************************************************************
 
-    SUBROUTINE CS_Setup_Stages( &
+    SUBROUTINE CS_SeasInit_SetStage( &
         CN          , ISWNIT      , KCAN        , KEP         , RN          , RUN         , RUNI        , SLPF        , &
         TN           &
         )
@@ -18,11 +18,13 @@
         
         IMPLICIT NONE
         
-        CHARACTER(LEN=1) ISWNIT         
         INTEGER CN          , RN          , RUN         , RUNI        , TN          
-        REAL    KCAN        , KEP         , SLPF 
         INTEGER TVILENT                                                                  ! Integer function call.        
         
+        REAL    KCAN        , KEP         , SLPF        
+        
+        CHARACTER(LEN=1) ISWNIT         
+         
         !-----------------------------------------------------------------------
         !       Determine 'key' principal and secondary stages,and adjust names
         !-----------------------------------------------------------------------
@@ -30,17 +32,17 @@
         KEYPSNUM = 0
         PSNUM = 0
         DO L = 1,PSX
-            IF (TVILENT(PSTYP(L)).GT.0) THEN
-                IF (PSTYP(L).EQ.'K'.OR.PSTYP(L).EQ.'k'.OR.PSTYP(L).EQ.'M')THEN
-                    KEYPSNUM = KEYPSNUM + 1
-                    KEYPS(KEYPSNUM) = L
-                ENDIF
-                IF (PSABV(L).EQ.'HDAT') HSTG = L
-                IF (PSABV(L).EQ.'MDAT') MSTG = L
-                PSNUM = PSNUM + 1
-            ENDIF
-        ENDDO
-        ! IF MSTG not found, use maximum principal stage number
+            IF (TVILENT(PSTYP(L)).GT.0) THEN                                            ! TVILENT is a function in CSUTS.FOR the same as the intrinsic function LEN_TRIM
+                IF (PSTYP(L).EQ.'K'.OR.PSTYP(L).EQ.'k'.OR.PSTYP(L).EQ.'M')THEN          ! PSNO PSTYP PSABV PSNAME    (From .SPE file, S=Standard, K=Key)
+                    KEYPSNUM = KEYPSNUM + 1                                             !    1     S GDAT  Germinate
+                    KEYPS(KEYPSNUM) = L                                                 !    2     K B1DAT 1stBranch
+                ENDIF                                                                   !    3     K B2DAT 2ndBranch
+                IF (PSABV(L).EQ.'HDAT') HSTG = L                                        !    4     K B3DAT 3rdBranch
+                IF (PSABV(L).EQ.'MDAT') MSTG = L                                        !    5     K B4DAT 4thBranch
+                PSNUM = PSNUM + 1                                                       !    6     K B5DAT 5thBranch
+            ENDIF                                                                       !    7     K B6DAT 6thBranch
+        ENDDO                                                                           !    8     M HDAT  Harvest  
+        ! IF MSTG not found, use maximum principal stage number                         
         IF (MSTG.LE.0) THEN
             MSTG = KEYPSNUM
         ENDIF
@@ -304,7 +306,7 @@
         LAPOTX(1) = LA1S
         
         ! If max LAI not read-in,calculate from max interception
-        IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)
+        IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)                                                               ! EQN 008
         
         PHINT = PHINTS
         
@@ -327,7 +329,7 @@
         ENDIF  
         
         ! Extinction coeff for SRAD
-        KEP = (KCAN/(1.0-TPAR)) * (1.0-TSRAD)
+        KEP = (KCAN/(1.0-TPAR)) * (1.0-TSRAD)                                                                          ! EQN 009
         
         ! Photoperiod sensitivities
         DO L = 0,10
@@ -434,5 +436,6 @@
         ELSEIF (PLME.EQ.'V') THEN
             sdepthu = AMAX1(0.0,sdepth - sprl)
         ENDIF
-        IF (sdepthu.LT.0.0) sdepthu = sdepth      
-    END SUBROUTINE CS_Setup_Stages
+        IF (sdepthu.LT.0.0) sdepthu = sdepth
+        
+    END SUBROUTINE CS_SeasInit_SetStage
