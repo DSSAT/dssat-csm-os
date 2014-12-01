@@ -309,7 +309,7 @@ C     Calculate daily solar parameters.
      &    CLOUDS, ISINB, S0N)                             !Output
 
 !     Wind speed adjustments and initialization moved
-!     adhead of call to HMET on 27MAR14 by BAK
+!     ahead of call to HMET on 27MAR14 by BAK
 
 C     Adjust wind speed from reference height to 2m height.
       IF (WINDSP > 0.0) THEN
