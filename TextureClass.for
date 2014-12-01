@@ -13,6 +13,7 @@
 
       CHARACTER*12 TEXTURE
       LOGICAL COARSE
+      LOGICAL FINE
       REAL CLAY, SAND, SILT
 
 !-----------------------------------------------------------------------
@@ -25,15 +26,15 @@
 !     Sand             'Sand        ' Coarse  '   S' 
 !     Loamy Sand       'LoamySand   ' Coarse  '  LS'  
 !     Sandy Loam       'SandyLoam   ' Coarse  '  SL' 
-!     Loam             'Loam        '         '   L' 
-!     Silty Loam       'SiltyLoam   '         ' SIL' 
-!     Silt             'Silt        '         '  SI' 
-!     Sandy Clay Loam  'SandClayLoam'         ' SCL' 
-!     Clay Loam        'ClayLoam    '         '  CL' 
-!     Silty Clay Loam  'SiltClayLoam'         'SICL' 
-!     Sandy Clay       'SandyClay   '         '  SC' 
-!     Silty Clay       'SiltyClay   '         ' SIC' 
-!     Clay             'Clay        '         '   C' 
+!     Loam             'Loam        ' Medium  '   L' 
+!     Silty Loam       'SiltyLoam   ' Medium  ' SIL' 
+!     Silt             'Silt        ' Medium  '  SI' 
+!     Sandy Clay Loam  'SandClayLoam' Fine    ' SCL' 
+!     Clay Loam        'ClayLoam    ' Fine    '  CL' 
+!     Silty Clay Loam  'SiltClayLoam' Fine    'SICL' 
+!     Sandy Clay       'SandyClay   ' Fine    '  SC' 
+!     Silty Clay       'SiltyClay   ' Fine    ' SIC' 
+!     Clay             'Clay        ' Fine    '   C' 
 
 !-----------------------------------------------------------------------
 !     According to the Glossary of Soil Science Terms of the Soil 
@@ -41,6 +42,7 @@
 !     texture exhibited by sands, loamy sands and sandy loams, 
 !     except very fine sandy loam.
       COARSE = .FALSE.
+      FINE   = .FALSE.
 
 !     ******************** SAND ***********************
 !     SAND: 85% OR MORE SAND, SILT + (1.5 * CLAY) <= 15
@@ -92,29 +94,35 @@
 !    &  SAND .GE. 45. .AND. SAND .LT. 80.) THEN
      &  SAND .GE. 45.) THEN
         TEXTURE = 'SandClayLoam'
+        FINE = .TRUE.
 
 !     ********************** CLAY LOAM *****************
       ELSEIF (CLAY .GE. 27. .AND. CLAY .LT. 40. .AND.
      &    SAND .GE. 20. .AND. SAND .LT. 45.) THEN
         TEXTURE = 'ClayLoam    '
+        FINE = .TRUE.
 
 !     ******************* SILTY CLAY LOAM *************
       ELSEIF (CLAY .GE. 27. .AND. CLAY .LT. 40. .AND.
      &  SAND .GE. 0. .AND. SAND .LT. 20.) THEN
         TEXTURE = 'SiltClayLoam'
+        FINE = .TRUE.
 
 !     ********************** SANDY CLAY ***************
       ELSEIF (CLAY .GE. 35. .AND. SAND .GE. 45.) THEN
         TEXTURE = 'SandyClay   '
+        FINE = .TRUE.
 
 !     ********************** SILTY CLAY ***************
       ELSEIF (CLAY .GE. 40. .AND. SILT .GE. 40.) THEN
         TEXTURE = 'SiltyClay   '
+        FINE = .TRUE.
 
 !     ************************* CLAY ******************
       ELSEIF (CLAY .GE. 40. .AND. SAND .LT. 45. .AND.
      &  SILT .LT. 40.) THEN
         TEXTURE = 'Clay        '
+        FINE = .TRUE.
 
 !     ********* UNKNOWN SOIL TYPE (= ERROR) ***********
       ELSE

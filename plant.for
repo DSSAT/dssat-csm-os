@@ -48,7 +48,7 @@ C  10/08/2004 CHP Removed some unused variables.
 C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
 C  08/09/2012 GH  Added CSCAS model
-!  04/16/2013 CHP/KD Added SALUS model
+!  04/16/2013 CHP/KAD Added SALUS model
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -438,10 +438,9 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !	Generic Salus crop model
 !	KD 09/14/2009
 	CASE('SALUS') 
-	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,     !Input
-     &        YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,	!Input
-     &        KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	!Output   
-
+	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,         !Input
+     &  HARVFRAC, YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,  !Input
+     &  KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	            !Output
 	  IF (DYNAMIC .EQ. INTEGR) THEN
           XLAI = XHLAI
         ENDIF

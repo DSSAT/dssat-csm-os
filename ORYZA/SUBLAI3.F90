@@ -47,7 +47,7 @@
 
       REAL NOTNUL
 
-      SAVE
+      SAVE         ! TAOLI
 
       IF (CROPSTA .LE. 1) THEN
         X       = 1.
@@ -109,10 +109,10 @@
 !                 There is a transition from RGRL to SLA determined growth
 !                 when difference between simulated and imposed SLA is less than 1%
                   if(RWLVG.lt.0.0) then
-				 	TESTL =.true.   
-				  elseif((RWLVG.ge.0.0).and.(testl)) then
-					TESTL =.false.
-				  endif			!Added by TaoLi, 10 Aug, 2010
+                               TESTL =.true.   
+                          elseif((RWLVG.ge.0.0).and.(testl)) then
+                              TESTL =.false.
+                          endif                  !Added by TaoLi, 10 Aug, 2010
                   IF (.NOT. TESTL) THEN
                      TEST = ABS((LAI/NOTNUL(WLVG))-SLA)/SLA
                      IF (TEST .LT. TESTSET) TESTL = .TRUE.
@@ -144,11 +144,11 @@
          ELSE
 !           There is a transition from RGRL to SLA determined growth
 !           when difference between simulated and imposed SLA is less than 10%
-			if(RWLVG.lt.0.0) then
-				TESTL =.true.   
-			elseif((RWLVG.ge.0.0).and.(testl)) then
-				TESTL =.false.
-			endif			!Added by TaoLi, 10 Aug, 2010
+                  if(RWLVG.lt.0.0) then
+                        TESTL =.true.   
+                  elseif((RWLVG.ge.0.0).and.(testl)) then
+                        TESTL =.false.
+                  endif                  !Added by TaoLi, 10 Aug, 2010
             IF (.NOT. TESTL) THEN
                TEST = ABS((LAI/NOTNUL(WLVG))-SLA)/SLA
                IF (TEST .LT. TESTSET) TESTL = .TRUE.

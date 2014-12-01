@@ -270,6 +270,14 @@ C-----------------------------------------------------------------------
 !***********************************************************************
         IF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
+!         Need to calculate end of season PESW always (regardless of IDETL)
+          IF (ISWWAT .EQ. 'Y') THEN
+            CALL SUMSW(NLAYR, DLAYR, SW, TSW)
+            PESW = MAX(0.0, TSW - TLL) / 10.
+          ELSE
+            PESW = 0.0
+          ENDIF
+
           !IF (IDETS .EQ. 'Y' .OR. IDETS .EQ. 'A') THEN
 !           Store Summary.out labels and values in arrays to send to
 !           OPSUM routines for printing.  Integers are temporarily 

@@ -117,7 +117,7 @@ Gerrit@griffin.uga.edu [August 10, 2005].
 
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 1 GE              1     1     S 89100  2150 FACE EXPERIMENTS          SALUS046
+ 1 GE              1     1     S 89100  2150 FACE EXPERIMENTS          
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              Y     N     N     N     N     N     N     Y     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL

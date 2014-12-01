@@ -1,0 +1,15 @@
+*EXP. DATA (A): UFGA8210MZ Z N X IRRIGATION, GAINESVILLE                               
+
+! File last edited on day 03/28/2014 at 9:41 AM
+!
+! 
+! Grain yield (HWAM) expressed as dry weight
+@TRNO   HWAM  HWUM  H#AM  H#UM  LAIX  CWAM  BWAH  ADAT  MDAT  GN%M  CNAM  SNAM  GNAM
+     1 3130. 0.209 1494.  220.  2.84 7201. 4071.   132   185  1.80 104.8  47.8  57.0
+     2 11881 0.309 3847.  496.  4.09 22001 10120   132   185  1.60 267.7  74.8 192.9
+     3 9344. 0.279 3344.  474.  3.70 17146 7802.   132   185  1.60 211.6  60.2 151.4
+
+
+
+
+
