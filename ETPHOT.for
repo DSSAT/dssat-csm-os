@@ -456,7 +456,26 @@ C       The following 8 variales added by Bruce Kimball on 1Dec2014
             ENDIF
           ENDIF
 
-
+C       Remember midnight values
+          IF(H.EQ.24 .AND. MEEVP .EQ. "Z") THEN
+            ETNIT = EHR + THR
+            RADNIT = RADHR(H)
+            FRDNIT = FRDIF(H)
+            PCINIT = PCINTR
+            PCANIT = PCABSR
+            TEMNIT = TAIRHR(H)
+            ENIT = EHR
+            TNIT = THR
+            WINNIT = WINDHR(H)
+            TCNIT = TCAN(H)
+            DO I = 1,3
+                TSRNIT(I) = TSURF(I,1)
+            ENDDO
+            CSHNIT = CONDSH
+            CSLNRT = CONDSL
+            LSHNIT = LAISH
+            LSLNIT = LAISL
+          ENDIF
         ENDDO
 
 C       Assign daily values.
