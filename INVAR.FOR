@@ -677,7 +677,7 @@ C         Branch to menu choice
      7  12X,'16. LAFS  ( 20.0 -   50.0).......................[',F7.3,/,
      7  12X,'17. LAFND (100.0 -  350.0).......................[',F7.2,/,
      7  12X,'18. SLAS  (100.0 -  400.0).......................[',F7.2,/,
-     7  12X,'19. LLIFA (  8.0 -   15.0).......................[',F7.3,/,
+     7  12X,'19. LLIFA (300.0 - 1200.0).......................[',F7.1,/, !LPM redefine limit values
      7  12X,'20. LPEFR (0.250 -  0.400).......................[',F7.3,/,
      7  12X,'21. STFR  (0.250 -  0.450).......................[',F7.3,/)
 
@@ -709,7 +709,7 @@ C         Branch to menu choice
           CASE(16);  CALL GETREAL (LAFS  ,'LAFS', 20.0,  50.0)
           CASE(17);  CALL GETREAL (LAFND ,'LAFND ',100.0, 350.0)
           CASE(18);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
-          CASE(19);  CALL GETREAL (LLIFA ,'LLIFA ',  8.0,  15.0)
+          CASE(19);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) !LPM redefine limit values
           CASE(20);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
           CASE(21);  CALL GETREAL (STFR  ,'STFR ',0.250, 0.450)
         END SELECT
