@@ -109,7 +109,10 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        LAISHV, LAISL, LAISLV, LWIDTH, RABS,        !Input
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
-     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)     !Output
+     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
+     &        RB, RSURF, RNET)                            !Output
+C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
               TCAN = TSUM / ITER
@@ -144,7 +147,10 @@ C            CONDSH = CONDSH * (THR-RWUH)/THR
      &          LAISHV, LAISL, LAISLV, LWIDTH, RABS,      !Input
      &          RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,    !Input
      &          WINDHR,                                   !Input
-     &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)   !Output
+     &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,   !Output
+     &          RB, RSURF, RNET)                          !Output
+C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+
               TSUM = TSUM + TCAN
               IF (ITER .GT. 5) THEN
                 TCAN = TSUM / ITER
@@ -203,7 +209,10 @@ C     Night hours or bare soil.
      &        LAISHV, LAISL, LAISLV, LWIDTH, RABS,        !Input
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
-     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)     !Output
+     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
+     &        RB, RSURF, RNET)                            !Output
+C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
               TCAN = TSUM / ITER
@@ -586,7 +595,9 @@ C=======================================================================
      &  LAISHV, LAISL, LAISLV, LWIDTH, RABS,              !Input
      &  RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,            !Input
      &  WINDHR,                                           !Input
-     &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)           !Output
+     &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,           !Output
+     &  RB, RSURF, RNET)                                  !Output
+C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -638,8 +649,8 @@ C     Create vpd and resistance matrices.
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
      &  TAIRHR, TCAN, WINDHR,                             !Input
      &  RA, RL, RS, USTAR,                                !Output
-!     Added by BAK
-     &  RB,RSURF)                                         !Output
+     &  RB,RSURF)
+C          RB and RSURF Added by BAK on 1DEC2014
 
 C     Calculate NET total by subtracting net (back) longwave radiation.
 
@@ -688,7 +699,8 @@ C========================================================================
      &  CANHT, CEC, CEN, CONDSH, CONDSL, FRACSH, FRSHV,   !Input
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
      &  TAIRHR, TCAN, WINDHR,                             !Input
-     &  RA, RL, RS, USTAR)                                !Output
+     &  RA, RL, RS, USTAR, RB, RSURF)                     !Output
+C        added RB and RSURF to output on 1DEC2014 by Bruce Kimball
 
       IMPLICIT NONE
       SAVE
@@ -797,7 +809,10 @@ C     Initialization and calculation of zero plane displacement height and
 C     canopy surface roughness (Brutsaert, 1982).
 
       XLAI = LAISH + LAISL
-      WINDSP = MAX(WINDHR,1.0)
+      WINDSP = MAX(WINDHR,0.1)
+C     changed on 1Dec2014 by Bruce Kimball. 1.0 m/s is too high a
+C       wind speed to be the minimum.
+C     WINDSP = MAX(WINDHR,1.0)
       H = CANHT
       ZS0M = 0.03                                                  ! m
       Z0M = MAX(ZS0M,0.13*H)                                       ! m

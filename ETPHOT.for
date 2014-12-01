@@ -438,16 +438,25 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               PCINRN = PCINTR
               PCABRN = PCABSR
               TEMPN = TAIRHR(H)
+
               DO I=1,3
                 TSRFN(I) = TSURF(I,1)
               ENDDO
+
+C       The following 8 variales added by Bruce Kimball on 1Dec2014
               Enoon=EHR
               Tnoon=THR
               WINDnn=WINDHR(H)
               TCANnn=TCAN(H)
+              CSHnn = CONDSH
+              CSLnn = CONDSL
+              LSHnn = LAISH
+              LSLnn = LAISL
 
             ENDIF
           ENDIF
+
+
         ENDDO
 
 C       Assign daily values.
