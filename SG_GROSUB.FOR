@@ -446,7 +446,7 @@ C      through SWFAC. Do not need to also cause reduction through SATFAC
 C WDB 10/20/03      CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES,(1-SATFAC))*SLPF
 
       CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES, PStres1)*SLPF
-
+      
 C-GH  CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES)*SLPF
       !Reduce CARBO for assimilate pest damage
       CARBO = CARBO - ASMDOT
@@ -765,6 +765,7 @@ C--------------------------------------------------------------------
          ENDIF
 
          CARBO  = CARBO*(1.0-0.35*(SUMDTT/P5))
+                  
 C-GH     SLAN   = PLA*(0.07+GCS*(CUMDTT-P1-100.0-P3)/(P3 + P4 + P5))
 C-GH     SLAN   = PLA*(0.07+GCS*(CUMDTT-P1-100.0-(PANTH - P3))/
 C-GH &            (PFLOWR + P4 + P5))
@@ -791,11 +792,11 @@ C
          IF (ISWNIT .EQ. 'Y') THEN
             FSTR = 1.0 - CNSD2/ICSDUR
          ENDIF
-
+         
          GROPAN = RGFILL*PGC*PAF*(1.0+(TILN-1.)*TSIZE)*AMIN1(FSTR,WSTR)
          GRORT  = 0.0
          GROSTM = CARBO - GROPAN
-
+         
          IF ((STMWT+GROSTM) .GE. SWMIN) THEN
             IF (GROSTM .GT. 0.0) THEN
                GRORT = GROSTM*0.5
@@ -873,6 +874,7 @@ C           Adjusted from wheat model to sorghum grain size
          GROSTM = AMAX1 (GROSTM,0.0)
          PANWT  = PANWT + GROPAN
       ENDIF
+      
 C--------------------------------------------------------------------
 C                          ISTAGE = 6
 C--------------------------------------------------------------------
