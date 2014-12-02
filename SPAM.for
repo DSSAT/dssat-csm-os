@@ -36,7 +36,11 @@ C=======================================================================
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW,                   !Output
+     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -61,6 +65,12 @@ C=======================================================================
       REAL EOS, EOP, WINF, MSALB, ET_ALB
       REAL XLAT, TAV, TAMP, SRFTEMP
       REAL EORATIO, KSEVAP, KTRANS
+
+      REAL Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit
+C         previous three output lines added by Bruce Kimball on 2DEC14
+
 
       REAL DLAYR(NL), DUL(NL), LL(NL), RLV(NL), RWU(NL),  
      &    SAT(NL), ST(NL), SW(NL), SW_AVAIL(NL), !SWAD(NL), 
@@ -133,7 +143,11 @@ C=======================================================================
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                 !Input
-     &    EOP, EP, ES, RWU, TRWUP)                        !Output
+     &    EOP, EP, ES, RWU, TRWUP,                        !Output
+     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
       ENDIF
 
 !***********************************************************************
@@ -201,8 +215,12 @@ C=======================================================================
         IF (MEPHO .EQ. 'L' .OR. MEEVP .EQ. 'Z') THEN
           CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
-     &    EOP, EP, ES, RWU, TRWUP)                        !Output
+     &    WEATHER, XLAI,                                  !Input
+     &    EOP, EP, ES, RWU, TRWUP,                        !Output
+     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
         ENDIF
       ENDIF
 
@@ -410,8 +428,12 @@ C       and total potential water uptake rate.
           !   (MEPHO = 'L' and MEEVP = 'Z').
           CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
-     &    EOP, EP, ES, RWU, TRWUP)                        !Output
+     &    WEATHER, XLAI,                                  !Input
+     &    EOP, EP, ES, RWU, TRWUP,                        !Output
+     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -511,8 +533,12 @@ C-----------------------------------------------------------------------
       IF (CROP .NE. 'FA' .AND. MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
-     &    EOP, EP, ES, RWU, TRWUP)                        !Output
+     &    WEATHER, XLAI,                                  !Input
+     &    EOP, EP, ES, RWU, TRWUP,                        !Output
+     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
       ENDIF
 
 !      CALL OPSTRESS(CONTROL, ET=ET, EP=EP)
@@ -543,8 +569,12 @@ C-----------------------------------------------------------------------
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
-     &    EOP, EP, ES, RWU, TRWUP)                        !Output
+     &    WEATHER, XLAI,                                  !Input
+     &    EOP, EP, ES, RWU, TRWUP,                        !Output
+     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
       ENDIF
 
 !     Transfer data to storage routine

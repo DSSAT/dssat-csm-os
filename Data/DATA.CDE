@@ -338,6 +338,7 @@ NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 OXRN   Oxnitr kgN/ha/d Ox Layer Nitrif Rt (kg [N]/ha/d)                         .
 R#AC   Res Applic #    Number of organic matter applications                    .
+RADN   Solar@noon W/m2 Solar radiation at noon (W/m2)                           .
 RCNF   Roots Crit N Fc Roots critical [N] factor (ratio)                        .
 RN%CD  RootN% critical Root tissue critical N conc. (%)                         .
 RN%D   Root N %        Root N concentration (%)                                 .
@@ -377,6 +378,8 @@ DTWT   Water table cm  Water table depth (cm)                                   
 EFAA   Flood evap mm/d Avg flood evaporation (mm/d)                             .
 EMAA   Mulch EVAP mm/d Average mulch evaporation (mm/d)                         .
 EMAC   Mulch EVAP mm   Cumulative mulch evaporation (mm)                        .
+Enit   Evap@midnt mm/h Soil evaporation rate at midnight (mm/h)                 .
+Enoon  Evap@noon mm/h  Soil evaporation rate at noon (mm/h)                     .
 EOAA   Pot ET mm/d     Avg pot.evapotranspiration (mm/d)                        .
 EOAC   Pot ET mm       Cumulative potential evapotranspiration (mm)             .
 EOAD   Pot ET mm/d     Potential evapotranspiration (mm/d)                      .
@@ -402,6 +405,8 @@ ESAD   Soil EVAP mm/d  Soil evaporation (mm/d)                                  
 ETAA   Evapotrans mm/d Avg evapotranspiration (mm/d)                            .
 ETAC   Evapotrans mm   Cumulative evapotranspiration (mm)                       .
 ETAD   Evapotrans mm/d Evapotranspiration (mm/d)                                .
+ETnit  ET@midnite mm/h Evapotranspiration rate at midnight (mm/h)               .
+ETNOON ET@noon mm/h    Evapotranspiration rate at noon (mm/h)                   .
 H2OA   H2O in root zn  Water available in root zone (mm)                        .
 IR#C   Irrigation #    Irrigation applications (no)                             .
 IRRC   Irrigation mm   Cumulative irrigation  (mm)                              .

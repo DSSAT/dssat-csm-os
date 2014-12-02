@@ -47,10 +47,9 @@ C========================================================================
      &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP,                        !Output
      &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
-     &    LSHnn, LSLnn, ETnit, RADnit, FRDnit, PCInit,    !Output
-     &    PCAnit, TEMnit, Enit, Tnit, WINnit, TCnit,      !Output
-     &    TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)         !Output
-C         previous four output lines added by Bruce Kimball on 2DEC14
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -92,10 +91,9 @@ C-----------------------------------------------------------------------
       REAL PALBW, SALBW, SRAD, DayRatio
 
       REAL Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, RADnit, FRDnit, PCInit,
-     &    PCAnit, TEMnit, Enit, Tnit, WINnit, TCnit,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit, TCnit,
      &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit)
-C         previous four output lines added by Bruce Kimball on 2DEC14
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
       REAL Enoon,Tnoon,WINDnn,TCANnn
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
