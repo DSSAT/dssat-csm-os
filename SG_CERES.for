@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2011 DSSAT Foundation
+C  COPYRIGHT 1998-2014 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida                   
 C                      International Fertilizer Development Center
 C                      USDA-ARS-ALARC, Phoenix, AZ

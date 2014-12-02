@@ -139,6 +139,7 @@ C-----------------------------------------------------------------------
 C   Fortran Compaq Visual Fortran
 C-----------------------------------------------------------------------
       CALL GETARG (0,INPUTX)
+      call path_adj(inputx)
       IPX = LEN_TRIM(INPUTX)
 D     INPUTX = STDPATH // 'DSCSM046.EXE'
       CALL PATHD  (DSSATP,INPUTX,IPX)
@@ -147,7 +148,7 @@ D     INPUTX = STDPATH // 'DSCSM046.EXE'
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      INPUT = INPUTX((IPX-11):IPX)
+      INPUT = INPUTX((index(inputx,slash,back=.true.)+1):IPX)
 
 C-----------------------------------------------------------------------
 C    Initialize and delete previous copy of FILEIO

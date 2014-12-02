@@ -40,7 +40,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
+!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
 !     CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
 
 !=======================================================================
@@ -61,12 +61,15 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 32
+        INTEGER :: Build = 35
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.0.35 chp 03/28/2014 Taro initialization fixed - RO
+!       4.6.0.34 chp 03/28/2014 Minor changes Weather, CSCER, sorghum
+!       4.6.0.33 chp 03/26/2014 Y2K crossover at 2020
 !       4.6.0.32 chp 03/20/2014 Minor bug fixes, millet and auto-irrig
 !       4.6.0.31 chp 03/10/2014 Sorghum P linkage
 !       4.6.0.30 chp 02/21/2014 CSCER, CSCRP, CSCAS updates
@@ -150,7 +153,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CHARACTER(LEN=1)  SLASH  
       CHARACTER(LEN=3)  ModelVerTxt
       CHARACTER(LEN=12) DSSATPRO 
-      CHARACTER(LEN=11) STDPATH 
+      CHARACTER(LEN=30) STDPATH 
       CHARACTER(LEN=6)  LIBRARY    !library required for system calls
 
       CHARACTER*3 MonthTxt(12)
@@ -167,6 +170,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) FILEX
         CHARACTER (len=30) FILEIO
         CHARACTER (len=102)DSSATP
+        character (len=60)  :: ename = ' '
         CHARACTER (len=120) :: SimControl = 
      &  "                                                            "//
      &  "                                                            "
@@ -395,22 +399,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
-      SELECT CASE (OPSYS)
-      CASE ('WINDO','DOS  ')
-!       DOS, Windows
-        SLASH = '\' 
-        DSSATPRO = 'DSSATPRO.V46'
-!       Note: Use DSSAT45 directory for now. 
-C-GH    Set to DSSAT46
-        STDPATH = 'C:\DSSAT46\' 
-D       STDPATH = 'D:\DSSAT46\' 
-
-      CASE ('LINUX','UNIX ')
-!       Linux, Unix
-        SLASH = '/' 
-        DSSATPRO = 'DSSATPRO.L46'
-        STDPATH = '../DSSAT46/'
-      END SELECT
+      call op_sys(slash,dssatpro,stdpath)
 
       END SUBROUTINE SETOP
 

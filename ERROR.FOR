@@ -33,7 +33,6 @@ C=======================================================================
 
       INTEGER       ANUM,ERRNUM,LNUM, LUN, I , ELUN
       INTEGER       IMSG
-      INTEGER       IPX
 
       LOGICAL       FEXIST, FOUND  !, EOF
 
@@ -60,18 +59,15 @@ C=======================================================================
       WRITE(ELUN,'(A,", Trt",I5)') CONTROL%FILEX, CONTROL%TRTNUM
 
       CALL GETARG(0,PATHX)
-      IPX = LEN_TRIM(PATHX)
-      IF (PATHX(IPX-3:IPX-3) .EQ. '.') THEN
-          ERRORX = PATHX(1:(IPX-12)) // 'MODEL.ERR   '
-        ELSE
-          ERRORX = PATHX(1:(IPX-8)) // 'MODEL.ERR   '
-      ENDIF
+      call path_adj(pathx)
+      call get_dir(pathx,errorx)
+      errorx = trim(errorx)//'MODEL.ERR'
 
 !     If ERRORX file is not in executable directory, try std. location
       INQUIRE (FILE = ERRORX, EXIST = FEXIST)
       IF (.NOT. FEXIST) THEN
         SAVE_ERRORX = ERRORX
-        ERRORX = STDPATH // 'MODEL.ERR'
+        ERRORX = trim(STDPATH) // 'MODEL.ERR'
       ENDIF
 
       INQUIRE (FILE = ERRORX,EXIST = FEXIST)
