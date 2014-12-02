@@ -55,7 +55,7 @@ C=======================================================================
      &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6)
 
 !     Added by BAK
-      REAL RB(3),RSURF(3),RNET(3,1)
+      REAL CONDSH, CONDSL, RB(3),RSURF(3),RNET(3,1)
 
       PARAMETER (ERRBND=0.01)
 
@@ -615,6 +615,10 @@ C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
      &  VPD(3,1),VPSAT,WINDHR,CLOUDS,DAIR,DAIRD,DVAPOR,Q,SH,SHEAT(3,1),
      &  SHAIRD,TK,MWATER,RGAS,MAIR,LAISHV,LAISLV,RADBK(3),
      &  USTAR,XLAI,ZERO
+
+      REAL RB(3), RSURF(3)
+C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+
       PARAMETER (RGAS=8.314,MWATER=0.01802,MAIR=0.02897,PATM=101300.0,
      &  SHAIRD=1005.0, ZERO=1.0E-6)
 

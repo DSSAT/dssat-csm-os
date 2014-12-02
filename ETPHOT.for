@@ -44,8 +44,13 @@ C========================================================================
 
       SUBROUTINE ETPHOT (CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                 !Input
-     &    EOP, EP, ES, RWU, TRWUP)                        !Output
+     &    WEATHER, XLAI,                                  !Input
+     &    EOP, EP, ES, RWU, TRWUP,                        !Output
+     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    LSHnn, LSLnn, ETnit, RADnit, FRDnit, PCInit,    !Output
+     &    PCAnit, TEMnit, Enit, Tnit, WINnit, TCnit,      !Output
+     &    TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)         !Output
+C         previous four output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -85,6 +90,13 @@ C-----------------------------------------------------------------------
       REAL PHTHRS10, PLTPOP
       REAL PORMIN, RWUMX
       REAL PALBW, SALBW, SRAD, DayRatio
+
+      REAL Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, RADnit, FRDnit, PCInit,
+     &    PCAnit, TEMnit, Enit, Tnit, WINnit, TCnit,
+     &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit)
+C         previous four output lines added by Bruce Kimball on 2DEC14
+
       REAL Enoon,Tnoon,WINDnn,TCANnn
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
       
@@ -374,11 +386,14 @@ C  KJB and SPSUM hourly.
      &      NSLOPE, PARSH, PARSUN, QEREF, RABS, RCUTIC,   !Input
      &      REFHT, RHUMHR(H), RNITP, RWUH, SHCAP, SLAAD,  !Input
      &      SLWREF, SLWSLO, STCOND, SWE, TAIRHR(H), TA,   !Input
-     &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XLAI,       !Input
+     &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XLAI,        !Input
      &      XLMAXT, YLMAXT,                               !Input
      &      AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,  !Output
      &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
-     &      TSURF)                                        !Output
+     &      TSURF,                                        !Output
+     &      CONDSH, CONDSL, RA, RB, RSURF, Rnet)          !Output
+C       CONDSH, CONDSL, RA, RB, RSURF, RNET output added by
+C           Bruce Kimball on 2DEC14
 
 C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
@@ -446,7 +461,7 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
 C       The following 8 variales added by Bruce Kimball on 1Dec2014
               Enoon=EHR
               Tnoon=THR
-              WINDnn=WINDHR(H)
+              WINDNn=WINDHR(H)
               TCANnn=TCAN(H)
               CSHnn = CONDSH
               CSLnn = CONDSL
@@ -458,23 +473,23 @@ C       The following 8 variales added by Bruce Kimball on 1Dec2014
 
 C       Remember midnight values
           IF(H.EQ.24 .AND. MEEVP .EQ. "Z") THEN
-            ETNIT = EHR + THR
-            RADNIT = RADHR(H)
-            FRDNIT = FRDIF(H)
-            PCINIT = PCINTR
-            PCANIT = PCABSR
-            TEMNIT = TAIRHR(H)
-            ENIT = EHR
-            TNIT = THR
-            WINNIT = WINDHR(H)
-            TCNIT = TCAN(H)
+            ETnit = EHR + THR
+            RADnit = RADHR(H)
+            FRDnit = FRDIF(H)
+            PCInit = PCINTR
+            PCAnit = PCABSR
+            TEMnit = TAIRHR(H)
+            Enit = EHR
+            Tnit = THR
+            WINnit = WINDHR(H)
+            TCnit = TCAN(H)
             DO I = 1,3
-                TSRNIT(I) = TSURF(I,1)
+                TSRnit(I) = TSURF(I,1)
             ENDDO
-            CSHNIT = CONDSH
-            CSLNRT = CONDSL
-            LSHNIT = LAISH
-            LSLNIT = LAISL
+            CSHnit = CONDSH
+            CSLnit = CONDSL
+            LSHnit = LAISH
+            LSLnit = LAISL
           ENDIF
         ENDDO
 
