@@ -61,19 +61,12 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-<<<<<<< HEAD
-        INTEGER :: Build = 28
-=======
         INTEGER :: Build = 40
->>>>>>> upstream/develop
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-cassava  '
-!     Development branch for expanding the outputs of abiotic stresses
+      CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
-<<<<<<< HEAD
-=======
 !       4.6.0.40 chp 09/19/2014 Minor changes
 !       4.6.0.39 chp 07/25/2014 Allow daily input of CO2 in weather file (header CO2 or DCO2)
 !                               Move PI and RAD to global constants
@@ -86,7 +79,6 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       4.6.0.32 chp 03/20/2014 Minor bug fixes, millet and auto-irrig
 !       4.6.0.31 chp 03/10/2014 Sorghum P linkage
 !       4.6.0.30 chp 02/21/2014 CSCER, CSCRP, CSCAS updates
->>>>>>> upstream/develop
 !       4.6.0.29 chp 01/23/2014 Fixed bug in auto planting when IHARI = "R"
 !       4.6.0.28 chp 01/16/2014 Suppress screen output for VBOSE=zero.
 !       4.6.0.27 chp 01/12/2014 Added abiotic stresses to overview.out
@@ -424,6 +416,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
         STDPATH = 'C:\DSSAT46\' 
+D       STDPATH = 'D:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
