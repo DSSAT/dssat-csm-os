@@ -9,7 +9,7 @@ C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes
 C  09/17/2007 JIL Added codes for IXIM maize model
 C  08/09/2012 GH  Add codes for CSCAS cassava model
-!  04/16/2013 CHP/KD Added codes for SALUS model
+!  04/16/2013 CHP/KAD Added codes for SALUS model
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -322,7 +322,8 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.      !OILCROP
-     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)) THEN      !SALUS
+     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)            !SALUS
+     &    ) THEN   
 !       Invalid model = error 4
         ValidModel = 4 
         RETURN

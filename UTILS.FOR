@@ -826,17 +826,12 @@ C                 rather than delete all *.OUT files.
 C=======================================================================
       SUBROUTINE OPCLEAR
       USE ModuleDefs
-!cDEC$ IF (COMPILER == 0) 
-!        USE DFPORT
-!cDEC$ ELSE
-        USE IFPORT
-!cDEC$ ENDIF
       IMPLICIT NONE
 
       Type (OutputType) FileData
       CHARACTER*16, DIMENSION(MaxFiles) :: FileName
       CHARACTER*78 MSG(2)
-      INTEGER ERR, I, LUN, LUNTMP, SYS  !, SYSTEM
+      INTEGER ERR, I, LUN, LUNTMP, SYS, SYSTEM
       LOGICAL FEXIST
 
 !     Read in list of possible output file names
@@ -910,15 +905,10 @@ C=======================================================================
       SUBROUTINE OPNAMES(FNAME)
       USE ModuleDefs
       USE ModuleData
-!!!!cDEC$ IF (COMPILER == 0) 
-!        USE DFPORT
-!!!!cDEC$ ELSE
-        USE IFPORT
-!!!!cDEC$ ENDIF
       IMPLICIT NONE
 
       SAVE
-      INTEGER i, COUNT, LUNLST, LUNTMP, SYS !, SYSTEM
+      INTEGER i, COUNT, LUNLST, LUNTMP, SYS, SYSTEM
       INTEGER FNUM
 
       CHARACTER*8  FNAME

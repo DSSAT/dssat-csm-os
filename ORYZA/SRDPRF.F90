@@ -40,7 +40,7 @@
 
 !     Local parameters
       REAL TMPR1,RFLH,RFLS,ECPBL,ECPTD,RAPDFL,RAPTDL,RAPDDL,CLUSTF
-      SAVE
+      SAVE         ! TAOLI
 
 !     Reflection of horizontal and spherical leaf angle distribution
       TMPR1 = SQRT (1. - CSLV)

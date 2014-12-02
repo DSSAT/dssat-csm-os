@@ -559,12 +559,20 @@ C-----------------------------------------------------------------------
 
 !     --------------------------------------------------------------------
 !     Check for phosphorus model compatible with crop model
-      IF (ISWPHO /= 'N') THEN
+!      IF (ISWPHO /= 'N') THEN
 !       Check for validity of P model for this crop
+!        SELECT CASE(MODEL(1:5))
+        !CASE('CRGRO','MZCER','RICER')
+        !  SELECT CASE(CONTROL % CROP)
+        !  CASE('SB','FA','MZ','RI','PN') 
+!           Phosphorus model has been enabled and tested for these crops, do nothing
+         
+! MA (19dec2013) to test P coupling to SG ceres 
+       IF (ISWPHO /= 'N') THEN
         SELECT CASE(MODEL(1:5))
-        CASE('CRGRO','MZCER','RICER')
+        CASE('CRGRO','MZCER','RICER','SGCER')
           SELECT CASE(CONTROL % CROP)
-          CASE('SB','FA','MZ','RI','PN') 
+          CASE('SB','FA','MZ','RI','PN','SG') 
 !           Phosphorus model has been enabled and tested for these crops, do nothing
 
           CASE DEFAULT

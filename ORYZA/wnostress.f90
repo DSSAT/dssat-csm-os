@@ -23,7 +23,7 @@
 !----------------------------------------------------------------------!
       SUBROUTINE WNOSTRESS (NL, TRW, TRWL, ZRT, TKL, LRSTRS, LDSTRS, LESTRS, PCEW, CPEW)
 
-	  USE public_module
+      USE public_module
       IMPLICIT NONE
 !-----Formal parameters
       INTEGER NL
@@ -31,28 +31,28 @@
       REAL    TRWL(NL),theTRW, ZRLT, ZZL,TKL(NL),ZRT
 !-----Local variables
       INTEGER I
-      SAVE
+      SAVE         !&#@TAOLI
 
-	  theTRW = TRW   !TAOLI 17 AUG, 2010
+        theTRW = TRW   !TAOLI 17 AUG, 2010
       TRW    = 0.
       LRSTRS = 1.
       LDSTRS = 1.
       LESTRS = 1.
       CPEW   = 1.
       PCEW   = 1.
-	  ZZL=0.
-	  IF(ZRT.EQ.0.0) THEN
-		TRWL=0.0;TRWL(1)=THETRW
-	  ELSE
-		DO I=1,NL			
+        ZZL=0.
+        IF(ZRT.EQ.0.0) THEN
+            TRWL=0.0;TRWL(1)=THETRW
+        ELSE
+            DO I=1,NL                  
 !        TRWL(I) = 0.
-		!EQUAVLENT SPLIT TRC INTO ROOT ZONE, TAOLI, 17 AUG 2010
-			ZRLT=MAX(0.0,MIN(ZRT-ZZL,TKL(I)))
-			TRWL(I)=THETRW/ZRT*ZRLT
-			PV%PTRWL(I)=TRWL(I)
-			ZZL=ZZL+ZRLT 		 
-		END DO
-	  ENDIF
+            !EQUAVLENT SPLIT TRC INTO ROOT ZONE, TAOLI, 17 AUG 2010
+                  ZRLT=MAX(0.0,MIN(ZRT-ZZL,TKL(I)))
+                  TRWL(I)=THETRW/ZRT*ZRLT
+                  PV%PTRWL(I)=TRWL(I)
+                  ZZL=ZZL+ZRLT  
+            END DO
+        ENDIF
       RETURN
       END
 
@@ -74,61 +74,35 @@
       PARAMETER   (MNL=10)
       REAL         TKL(MNL),WCAD(MNL),WCWP(MNL),WCFC(MNL),WCST(MNL),WCLQT(MNL)
       LOGICAL RDINQR
-      INTEGER I               
+      INTEGER I
+      
+      CALL UPPERC(NITROENV)               
       IF (ITASK.EQ.1) THEN
-      !When water and nitrogen both are in potential, may not have soil file
-        CALL UPPERC(NITROENV)
+      !When water and nitrogen both are in potential, may not have soil file        
         IF(INDEX(NITROENV, "POTENTIAL")) THEN   !MAKE VIRTUAL SOIL
+            TKL=1.0; WCST=0.0;WCLQT = 0.0
+            WCFC=0.0;WCWP=0.0;WCAD = 0.0  
             NL=1; TKL(1)=1.0; TKLT=1.0; WL0 = 0.0
             WCST(1)=0.50;WCLQT(1) = WCST(1)
             WCFC(1)=0.35;WCWP(1)=0.18;WCAD(1)=0.01        
-        ELSE                                                !USE EXISTED SOIL FILE
-            !----- Read input from soil data file
-            CALL RDINIT(IUNITD,IUNITL,FILEI2)
-            CALL RDSINT('NL',NL)
-            IF (NL.GT.10) CALL FATALERR ('PADDY','too many soil layers NL')
-            CALL RDFREA('TKL'  ,TKL ,MNL,NL)
-            IF(RDINQR("WCST")) THEN
-                CALL RDFREA('WCST',WCST,MNL,NL)
-                IF(RDINQR("WCFC")) THEN
-                    CALL RDFREA('WCFC',WCFC,MNL,NL)
-                ELSE
-                    DO I=1, NL
-                        WCFC(I) = WCST(I)-0.15
-                    END DO
-                END IF
-                IF(RDINQR("WCWP")) THEN
-                    CALL RDFREA('WCWP',WCWP,MNL,NL)
-                ELSE
-                    DO I=1, NL
-                        WCWP(I)= MAX(0.02,WCFC(I)-0.18)
-                    END DO
-                END IF
-                IF(RDINQR("WCAD")) THEN
-                    CALL RDFREA('WCAD',WCAD,mnl,NL)
-                ELSE
-                    DO I=1, NL
-                        WCAD(I)=0.01
-                    END DO
-                END IF
-             ELSE
-                DO I = 1, NL
-                    WCST(I)= 0.50; WCFC(I)=0.35; WCWP(I)=0.18;WCAD(I)=0.01
-                END DO
-             END IF
-             CLOSE(IUNITD)
+        ELSE                                        !USE EXISTED SOIL FILE            
              TKLT = SUM(TKL(1:NL)); WL0 =0.0            
         END IF
+    Else     !modified to force potential condition, TAOLI, 7 Sept 2012
         !SAVE THE VALUES INTO PUBLIC VARIABLES
         PV%PNL = NL
         DO I=1, NL
             PV%PDLAYER(I) = TKL(I)*1000.0    !CONVERT INTO mm
-            pv%pwcst(i) = wcst(i);				pv%pwcfc(i) = wcfc(i)
-		    pv%pwcwp(i) = wcwp(i);				pv%pwcad(i) = wcad(i);	
-		    WCLQT(I) =WCST(I)
-		    IF(PV%PBD(I).LE.0.0) THEN
-			 pv%pbd(i)= 2.65*(1-PV%PWCST(I))
-		    ENDIF 
+            pv%pwcst(i) = wcst(i);                        pv%pwcfc(i) = wcfc(i)
+                pv%pwcwp(i) = wcwp(i);                        pv%pwcad(i) = wcad(i);
+                IF(INDEX(NITROENV,'POTENTIAL').GT.0) THEN  
+                    WCLQT(I) =0.9*WCST(I)+0.1*WCFC(I)
+                ELSE
+                    WCLQT(I) =WCST(I)
+                END IF                
+                IF(PV%PBD(I).LE.0.0) THEN
+                   pv%pbd(i)= 2.65*(1-PV%PWCST(I))
+                ENDIF 
         END DO
       END IF
       RETURN               

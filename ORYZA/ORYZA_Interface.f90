@@ -64,11 +64,11 @@
       INTEGER       IUNITD2, IUNITD3, IUNITDA
       LOGICAL       OR_OUTPUT, TERMNL
       CHARACTER (128) FILEI1, FILEIT, FILEI2
-      CHARACTER (32) ESTAB
+      CHARACTER (11) ESTAB
       REAL    YEAR, DOY , TIME, DELT  , LAT  , RDD, TRC, NFLV, NSLLV
       REAL    TMMN, TMMX, TKLT  , ZRTMS, LRSTRS, LDSTRS, LESTRS, NRT
       REAL    PCEW, CPEW, DAE , LAIROL, ZRT  , DVS, RNSTRS, WCL(10), WL0, DLDR
-      REAL    LAI, LLV  , SLA , WLVG  , WST  , WSO, GSO, GGR, GST, GLV, PLTR 
+      REAL    LAI, LLV  , SLA , WLVG  , WST  , WSO, GSO, GGR, GST, GRT, GLV, PLTR 
       REAL    TRW, TRWL(10), TKL(10), WRT, WRR14
       REAL    HU, WAGT, WLVD, WRR, NGR, PLOWPAN, TNSOIL, NACR
       REAL    ANSO, ANLV, ANST, ANLD, ANRT
@@ -478,7 +478,7 @@
                         ESTAB,  TKLT,   ZRTMS,  CROPSTA, &
                         LRSTRS, LDSTRS, LESTRS, PCEW,  CPEW, TRC, &
                         DAE,    SLA, LAI,    LAIROL, ZRT,    DVS, &
-                        LLV,    DLDR, WLVG, WST, WSO, GSO, GGR, GST, GLV, &
+                        LLV,    DLDR, WLVG, WST, WSO, GSO, GGR, GST, GLV, GRT, &
                         PLTR, WCL, WL0, WRT, WRR14, NGR, HU)
 
         IF(INDEX(ISWNIT, "N").GT.0) THEN           !POTENTIAL NITROGEN CONDITION
@@ -486,7 +486,7 @@
                            CROPSTA, DVS, WLVG, LAI, SLA, NFLV, NSLLV, RNSTRS)
         ELSE
             CALL NCROP3 (ITASK, IUNITD, IUNITL, FILEI1, FILEI2, FILEIT, DELT, TIME, OR_OUTPUT, &
-                        TERMNL, DVS, LLV, DLDR, WLVG, WST, WSO, GSO, GST, GLV, &
+                        TERMNL, DVS, LLV, DLDR, WLVG, WST, WSO, GSO, GST, GLV, GRT, &
                         PLTR, LAI, SLA, CROPSTA, TNSOIL, NACR, ANSO, ANLV, ANST, ANLD, &
                        ANRT, NFLV, NSLLV,NRT, RNSTRS)
         END IF
@@ -497,7 +497,8 @@
           UNO3(L) = SNO3X(L) - PV % PNO3(L)    !NO3 uptake (kg/ha)
           UH2O(L) = TRWL(L)                    !H2O uptake (mm/d)
         ENDDO 
-        NSTRES = NFP
+!       NSTRES = NFP
+        NSTRES = RNSTRS
 
       ELSEIF (ITASK == 3) THEN
         XLAI   = LAI

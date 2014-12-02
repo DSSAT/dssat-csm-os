@@ -36,9 +36,7 @@
 ! PHINT       Phylochron interval; the interval in thermal time (degree days)
 !             between successive leaf tip appearances.
 ! AX          Leaf surface area (cm2/leaf) of largest leaf.
-! LX          Leaf longevity (degree days) of the most longevous leaf.
-!             Leaf longevity is thermal time (degree-days) elapsed between
-!             50% expansion and 50% senescence of each leaf.
+! ALL         Leaf longevity (degree days) of the most longevous leaf.
 !
 ! PIO         Pioneer
 ! AS          Asgrow (Monsanto)
