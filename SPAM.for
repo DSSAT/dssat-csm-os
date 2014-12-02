@@ -37,7 +37,7 @@ C=======================================================================
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
      &    SWDELTX, TRWU, TRWUP, UPFLOW,                   !Output
-     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,     !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
      &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
@@ -66,7 +66,7 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
       REAL XLAT, TAV, TAMP, SRFTEMP
       REAL EORATIO, KSEVAP, KTRANS
 
-      REAL Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,
+      REAL Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit
 C         previous three output lines added by Bruce Kimball on 2DEC14
@@ -144,7 +144,7 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP,                        !Output
-     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,     !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
      &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
@@ -217,7 +217,7 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP,                        !Output
-     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,     !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
      &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
@@ -430,7 +430,7 @@ C       and total potential water uptake rate.
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP,                        !Output
-     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,     !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
      &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
@@ -535,7 +535,7 @@ C-----------------------------------------------------------------------
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP,                        !Output
-     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,     !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
      &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
@@ -571,7 +571,7 @@ C-----------------------------------------------------------------------
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP,                        !Output
-     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,     !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
      &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14

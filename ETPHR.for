@@ -55,7 +55,7 @@ C=======================================================================
      &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6)
 
 !     Added by BAK
-      REAL CONDSH, CONDSL, RB(3),RSURF(3),RNET(3,1)
+      REAL RB(3),RSURF(3),RNET(3,1)
 
       PARAMETER (ERRBND=0.01)
 

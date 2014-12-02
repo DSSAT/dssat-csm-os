@@ -46,7 +46,7 @@ C========================================================================
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP,                        !Output
-     &    Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,     !Output
+     &    Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,        !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
      &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
@@ -90,12 +90,12 @@ C-----------------------------------------------------------------------
       REAL PORMIN, RWUMX
       REAL PALBW, SALBW, SRAD, DayRatio
 
-      REAL Enoon, Tnoon, WINDN TCANnoon, CSHnn, CSLnn,
+      REAL CONDSH, CONDSL, RA, RB, RSURF, Rnet
+      REAL Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit, TCnit,
-     &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit)
-C         previous three output lines added by Bruce Kimball on 2DEC14
+     &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit
+C         previous four output lines added by Bruce Kimball on 2DEC14
 
-      REAL Enoon,Tnoon,WINDnn,TCANnn
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
       
       REAL PSTRES1  !3/22/2011
@@ -209,7 +209,11 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &        Enoon,Tnoon,WINDn,TCANn, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)
+C         previous three output lines added by Bruce Kimball on 2DEC14
         ENDIF
 
 !***********************************************************************
@@ -259,7 +263,11 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
         IF (MEPHO .EQ. 'L') THEN
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &        Enoon,Tnoon,WINDn,TCANn, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)
+C         previous three output lines added by Bruce Kimball on 2DEC14
         ENDIF
 
 C***********************************************************************
@@ -397,6 +405,7 @@ C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
 C         and mm/d).
 
+
           IF (MEPHO .EQ. 'L') THEN
             PGDAY = PGDAY + TINCR*PGHR*44.0*0.0036
           ENDIF
@@ -459,8 +468,8 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
 C       The following 8 variales added by Bruce Kimball on 1Dec2014
               Enoon=EHR
               Tnoon=THR
-              WINDNn=WINDHR(H)
-              TCANnn=TCAN(H)
+              WINDN =WINDHR(H)
+              TCANn=TCAN(H)
               CSHnn = CONDSH
               CSLnn = CONDSL
               LSHnn = LAISH
@@ -472,10 +481,6 @@ C       The following 8 variales added by Bruce Kimball on 1Dec2014
 C       Remember midnight values
           IF(H.EQ.24 .AND. MEEVP .EQ. "Z") THEN
             ETnit = EHR + THR
-            RADnit = RADHR(H)
-            FRDnit = FRDIF(H)
-            PCInit = PCINTR
-            PCAnit = PCABSR
             TEMnit = TAIRHR(H)
             Enit = EHR
             Tnit = THR
@@ -583,8 +588,12 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,WINDnn,TCANnn)
-        ENDIF
+     &        Enoon,Tnoon,WINDn,TCANn, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)
+C         previous three output lines added by Bruce Kimball on 2DEC14
+         ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     SEASEND
@@ -595,7 +604,10 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
                 CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,WINDnn,TCANnn)
+     &        Enoon,Tnoon,WINDn,TCANn, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)
+C         previous three output lines added by Bruce Kimball on 2DEC14
         ENDIF
 
 !***********************************************************************

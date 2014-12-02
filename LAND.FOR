@@ -127,6 +127,12 @@ C-----------------------------------------------------------------------
 C     Soil - Plant - Atmosphere Module Variables
 C-----------------------------------------------------------------------
       REAL EO, EOP, ES, SRFTEMP, TRWUP
+
+      REAL Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit
+C         previous three output lines added by Bruce Kimball on 2DEC14
+
       REAL SWDELTU(NL), SWDELTX(NL) !, RWU(NL)
 !     Needed for CaneGro_SA
       REAL EOS, EP, TRWU
@@ -233,7 +239,11 @@ C-----------------------------------------------------------------------
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW,                   !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,        !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
 C     Read initial plant module data
@@ -290,7 +300,11 @@ C-----------------------------------------------------------------------
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW,                   !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,        !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
 C     Seasonal initialization for soil processes
@@ -371,7 +385,11 @@ C-----------------------------------------------------------------------
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW,                   !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,        !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
 C     Call PLANT Subroutine to calculate crop growth and
@@ -417,7 +435,11 @@ C-----------------------------------------------------------------------
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW,                   !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,        !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
 C     Call Plant module to integrate daily plant processes and update
@@ -470,7 +492,11 @@ C***********************************************************************
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW,                   !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,        !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
 C     Call plant module for daily printout.
@@ -519,7 +545,11 @@ C     Print seasonal summaries and close files.
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+     &    SWDELTX, TRWU, TRWUP, UPFLOW,                   !Output
+     &    Enoon, Tnoon, WINDN TCANn, CSHnn, CSLnn,        !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
       CALL PLANT(CONTROL, ISWITCH, 
      &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
