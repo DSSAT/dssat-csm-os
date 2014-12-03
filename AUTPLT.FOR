@@ -92,7 +92,7 @@ C-----------------------------------------------------------------------
 
       IF (CROP .EQ. 'FA') THEN
          YRPLT = YRSIM
-      ELSEIF (IPLTI .EQ. 'A') THEN
+      ELSEIF (INDEX('AF',IPLTI) /= 0) THEN
          YRPLT = -9999999
       ENDIF
 
@@ -134,7 +134,7 @@ C-----------------------------------------------------------------------
 
         IF (CROP .EQ. 'FA') THEN
           YRPLT = YRSIM
-        ELSEIF (IPLTI .EQ. 'A') THEN
+        ELSEIF (INDEX('AF', IPLTI) /= 0) THEN
           YRPLT = -9999999
         ENDIF
 
@@ -288,6 +288,16 @@ C-----------------------------------------------------------------------
       ENDIF
 
 C-----------------------------------------------------------------------
+C Forced planting mode. If conditions are not met, force planting on
+C the last day of the window
+C-----------------------------------------------------------------------
+      IF (IPLTI .EQ. 'F') THEN
+        IF (YRDOY .EQ. PWDINL) THEN
+          YRPLT = YRDOY
+        ENDIF
+      ENDIF
+
+C-----------------------------------------------------------------------
 C     Too late.
 C-----------------------------------------------------------------------
       IF (YRDOY .GE. PWDINL .AND. YRPLT .NE. YRDOY) THEN
@@ -345,7 +355,6 @@ C     END OF DYNAMIC IF CONSTRUCT
 C***********************************************************************
       ENDIF
 C***********************************************************************
-
       RETURN
       END !SUBROUTINE AUTPLT
 
