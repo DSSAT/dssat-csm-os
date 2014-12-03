@@ -45,10 +45,10 @@ C========================================================================
       SUBROUTINE ETPHOT (CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                  !Input
-     &    EOP, EP, ES, RWU, TRWUP,                        !Output
-     &    Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,        !Output
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
-     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+     &    EOP, EP, ES, RWU, TRWUP)                        !Output
+C     &    Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,        !Output
+C     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+C     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
@@ -90,14 +90,13 @@ C-----------------------------------------------------------------------
       REAL PORMIN, RWUMX
       REAL PALBW, SALBW, SRAD, DayRatio
 
-      REAL CONDSH, CONDSL, RA, RB, RSURF, Rnet
+      REAL CONDSH, CONDSL, RA, RB(3), RSURF(3), Rnet(3,1)
       REAL Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit, TCnit,
      &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit
 C         previous four output lines added by Bruce Kimball on 2DEC14
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
-      
       REAL PSTRES1  !3/22/2011
 
 !      SAVE AZIR,BETN,CEC,DLAYR,DLAYR2,DULE,FNPGL,FNPGN,LFANGD,
@@ -210,9 +209,9 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,WINDn,TCANn, CSHnn, CSLnn,
+     &        Enoon,Tnoon, ETNOON, WINDn,TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
 C         previous three output lines added by Bruce Kimball on 2DEC14
         ENDIF
 
@@ -264,9 +263,9 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,WINDn,TCANn, CSHnn, CSLnn,
+     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
 C         previous three output lines added by Bruce Kimball on 2DEC14
         ENDIF
 
@@ -466,10 +465,10 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               ENDDO
 
 C       The following 8 variales added by Bruce Kimball on 1Dec2014
-              Enoon=EHR
-              Tnoon=THR
-              WINDN =WINDHR(H)
-              TCANn=TCAN(H)
+              Enoon = EHR
+              Tnoon = THR
+              WINDN = WINDHR(H)
+              TCANn = TCAN(H)
               CSHnn = CONDSH
               CSLnn = CONDSL
               LSHnn = LAISH
@@ -588,9 +587,9 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,WINDn,TCANn, CSHnn, CSLnn,
+     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
 C         previous three output lines added by Bruce Kimball on 2DEC14
          ENDIF
 
@@ -604,9 +603,9 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
                 CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,WINDn,TCANn, CSHnn, CSLnn,
+     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
 C         previous three output lines added by Bruce Kimball on 2DEC14
         ENDIF
 

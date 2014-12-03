@@ -110,7 +110,7 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
      &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
-     &        RB, RSURF, RNET)                            !Output
+     &        RB(3), RSURF, RNET)                            !Output
 C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
 
             TSUM = TSUM + TCAN
