@@ -61,12 +61,32 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 21
+        INTEGER :: Build = 40
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-release  '
+      CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.0.40 chp 09/19/2014 Minor changes
+!       4.6.0.39 chp 07/25/2014 Allow daily input of CO2 in weather file (header CO2 or DCO2)
+!                               Move PI and RAD to global constants
+!       4.6.0.38 chp 07/17/2014 Fixed output switches
+!       4.6.0.37 chp 06/05/2014 ORYZA code updated to ORYZA3 (Tao Li)
+!       4.6.0.36 chp 05/07/2014 SALUS model updates, ESCP, EPCP added to Summary.OUT
+!       4.6.0.35 chp 03/28/2014 Taro initialization fixed - RO
+!       4.6.0.34 chp 03/28/2014 Minor changes Weather, CSCER, sorghum
+!       4.6.0.33 chp 03/26/2014 Y2K crossover at 2020
+!       4.6.0.32 chp 03/20/2014 Minor bug fixes, millet and auto-irrig
+!       4.6.0.31 chp 03/10/2014 Sorghum P linkage
+!       4.6.0.30 chp 02/21/2014 CSCER, CSCRP, CSCAS updates
+!       4.6.0.29 chp 01/23/2014 Fixed bug in auto planting when IHARI = "R"
+!       4.6.0.28 chp 01/16/2014 Suppress screen output for VBOSE=zero.
+!       4.6.0.27 chp 01/12/2014 Added abiotic stresses to overview.out
+!       4.6.0.26 chp 12/22/2013 Fixed issue with tillage routine for crop rotations
+!       4.6.0.25 chp 12/03/2013 
+!       4.6.0.24 chp 08/30/2013 Add in Tony's code from email 6/11/2013
+!       4.6.0.23 chp 08/26/2013 EPIC Soil Temp added as option (METMP = "E")
+!       4.6.0.22 chp 08/18/2013 Bugfix - nitrification units conversion
 !       4.6.0.21 chp 05/25/2013 Fixed problem with crop-model compatibility check.
 !       4.6.0.20 gh  04/27/2013 Cassava module added.
 !       4.6.0.19 chp 04/19/2013 Salus generic crop model added.
@@ -116,6 +136,10 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
      &    EvaluateNum = 40, !Number of evaluation variables
      &    MaxFiles = 100    !Maximum number of output files
+
+      REAL, PARAMETER :: 
+     &    PI = 3.141586, 
+     &    RAD=PI/180.0
 
       INTEGER, PARAMETER :: 
          !Dynamic variable values
@@ -175,6 +199,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) ISWPHO, ISWPOT, ISWSYM, ISWTIL, ISWWAT
         CHARACTER (len=1) MEEVP, MEHYD, MEINF, MELI, MEPHO
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
+        CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2
         INTEGER NSWI
       END TYPE SwitchType
@@ -193,8 +218,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL REFHT, WINDHT, XLAT
 
 !       Daily weather data.
-        REAL CLOUDS, CO2, DAYL, PAR, RAIN, RHUM, SNDN, SNUP, SRAD, 
-     &    TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
+        REAL CLOUDS, CO2, DAYL, DCO2, PAR, RAIN, RHUM, SNDN, SNUP, 
+     &    SRAD, TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
      &    TMAX, TMIN, TWILEN, VAPR, WINDSP
 
 !       Hourly weather data
@@ -391,6 +416,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
         STDPATH = 'C:\DSSAT46\' 
+D       STDPATH = 'D:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
@@ -494,6 +520,7 @@ C-GH    Set to DSSAT46
       TYPE PlantType
         REAL CANHT, CANWH, DXR57, EXCESS,
      &    PLTPOP, RNITP, SLAAD, XPOD
+        REAL BIOMAS
         INTEGER NR5
       END TYPE PlantType
 
@@ -504,7 +531,7 @@ C-GH    Set to DSSAT46
 
 !     Data transferred from Soil water routine
       Type WatType
-        REAL DRAIN, RUNOFF
+        REAL DRAIN, RUNOFF, SNOW
       End Type WatType
 
 !     Data transferred from Soil Inorganic Nitrogen routine
@@ -516,6 +543,7 @@ C-GH    Set to DSSAT46
       Type OrgCType
         REAL TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2
         REAL TOMINSOM3, TNIMBSOM
+        REAL MULCHMASS
       End Type OrgCType
 
 !     Data from weather
@@ -556,6 +584,7 @@ C-GH    Set to DSSAT46
      &                  , GET_ISWITCH 
      &                  , GET_Output 
      &                  , GET_SOILPROP
+!     &                  , GET_Weather
      &                  , GET_Real 
      &                  , GET_Real_Array_NL
      &                  , GET_Integer
@@ -567,6 +596,7 @@ C-GH    Set to DSSAT46
      &                  , PUT_ISWITCH 
      &                  , PUT_Output 
      &                  , PUT_SOILPROP
+!     &                  , PUT_Weather
      &                  , PUT_Real 
      &                  , PUT_Real_Array_NL
      &                  , PUT_Integer
@@ -647,6 +677,24 @@ C-GH    Set to DSSAT46
       RETURN
       END SUBROUTINE PUT_SOILPROP
 
+!!----------------------------------------------------------------------
+!      SUBROUTINE GET_WEATHER(WEATHER_ARG)
+!!     Retrieves WEATHER variable as needed
+!      IMPLICIT NONE
+!      TYPE (WeathType) WEATHER_ARG
+!      WEATHER_ARG = SAVE_data % WEATHER
+!      RETURN
+!      END SUBROUTINE GET_WEATHER
+!
+!!----------------------------------------------------------------------
+!      SUBROUTINE PUT_WEATHER(WEATHER_ARG)
+!!     Stores WEATHER variable 
+!      IMPLICIT NONE
+!      TYPE (WeathType) WEATHER_ARG
+!      SAVE_data % WEATHER = WEATHER_ARG
+!      RETURN
+!      END SUBROUTINE PUT_WEATHER
+
 !----------------------------------------------------------------------
       Subroutine GET_Real(ModuleName, VarName, Value)
 !     Retrieves real variable from SAVE_data.  Variable must be
@@ -682,6 +730,7 @@ C-GH    Set to DSSAT46
 
       Case ('PLANT')
         SELECT CASE (VarName)
+        Case ('BIOMAS'); Value = SAVE_data % PLANT % BIOMAS
         Case ('CANHT') ; Value = SAVE_data % PLANT % CANHT
         Case ('CANWH') ; Value = SAVE_data % PLANT % CANWH
         Case ('DXR57') ; Value = SAVE_data % PLANT % DXR57
@@ -719,6 +768,7 @@ C-GH    Set to DSSAT46
 
       Case ('ORGC')
         SELECT CASE (VarName)
+        Case ('MULCHMASS');Value = SAVE_data % ORGC % MULCHMASS
         Case ('TOMINFOM'); Value = SAVE_data % ORGC % TOMINFOM
         Case ('TOMINSOM'); Value = SAVE_data % ORGC % TOMINSOM
         Case ('TOMINSOM1');Value = SAVE_data % ORGC % TOMINSOM1
@@ -792,6 +842,7 @@ C-GH    Set to DSSAT46
 
       Case ('PLANT')
         SELECT CASE (VarName)
+        Case ('BIOMAS'); SAVE_data % PLANT % BIOMAS = Value
         Case ('CANHT');  SAVE_data % PLANT % CANHT  = Value
         Case ('CANWH');  SAVE_data % PLANT % CANWH  = Value
         Case ('DXR57');  SAVE_data % PLANT % DXR57  = Value
@@ -817,6 +868,7 @@ C-GH    Set to DSSAT46
         SELECT CASE (VarName)
         Case ('DRAIN'); SAVE_data % WATER % DRAIN  = Value
         Case ('RUNOFF');SAVE_data % WATER % RUNOFF = Value
+        Case ('SNOW');  SAVE_data % WATER % SNOW   = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -829,6 +881,7 @@ C-GH    Set to DSSAT46
 
       Case ('ORGC')
         SELECT CASE (VarName)
+        Case ('MULCHMASS');SAVE_data % ORGC % MULCHMASS = Value
         Case ('TOMINFOM'); SAVE_data % ORGC % TOMINFOM  = Value
         Case ('TOMINSOM'); SAVE_data % ORGC % TOMINSOM  = Value
         Case ('TOMINSOM1');SAVE_data % ORGC % TOMINSOM1 = Value

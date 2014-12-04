@@ -12,8 +12,11 @@ C  Calls:         None
 C=======================================================================
       SUBROUTINE OpETPhot(CONTROL, ISWITCH, 
      &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
-     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV) 
-
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
+     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,        !Output
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+C         previous three output lines added by Bruce Kimball on 2DEC14
 C-------------------------------------------------------------------
 C
 C  ETPHOT OUTPUT File
@@ -32,6 +35,10 @@ C-------------------------------------------------------------------
       REAL PCINPD,PG, PGNOON, PCINPN
       REAL SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN
       REAL TGRO(24), TGROAV
+      REAL Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+     &    TCnit, TSRnit(3), TSRFN(3), CSHnit, CSLnit, LSHnit, LSLnit
+C         previous three output lines added by Bruce Kimball on 2DEC14
 
       LOGICAL FEXIST
 
@@ -80,7 +87,11 @@ C-------------------------------------------------------------------
         WRITE (NOUTDC,120)
   120   FORMAT('@YEAR DOY   DAS',
      &   '    LI%D   PHAD   PHAN    LI%N   SLLN   SLHN',
-     &   '   N%LN   N%HN   LMLN   LMHN   TGNN   TGAV')
+     &   '   N%LN   N%HN   LMLN   LMHN   TGNN   TGAV',
+     &   '   ENN    TNN    ETn    WDNN   TCNN    CSHn         CSLn    ',
+     &   ' LSHn   LSLn   ETnt   TEMt   Enit   Tnit   WINn   TCnt',
+     &   '   TSR1t  TSR2t TSR3t   TSR1n  TSR2n TSR3n',
+     &   '      CSHt        CSLt     LSHt   LSLt')
 
 !***********************************************************************
 !***********************************************************************
@@ -98,9 +109,15 @@ C-----------------------------------------------------------------------
 
           WRITE (NOUTDC,300) YEAR, DOY, DAS, 
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(12), TGROAV
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(12), TGROAV,
+     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
+     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit
+C         previous three output lines added by Bruce Kimball on 2DEC14
+
  300      FORMAT(1X,I4,1X,I3.3,1X,I5,
-     &        F8.2,2(1X,F6.2),F8.2,6(1X,F6.2),2(1X,F6.1))
+     &      F8.2,2(1X,F6.2),F8.2,6(1X,F6.2),2(1X,F6.1),
+     &      5(1x,F6.2),2(1x,E11.4),14(1x,F6.3),2(1x,E11.4),2(1x,F6.3))
         ENDIF
 
         IF (DYNAMIC .EQ. SEASEND) THEN
