@@ -17,6 +17,7 @@ Thumbs.db
 *.tlb
 *.tlh
 *.bak
+*.bat
 *.cache
 *.ilk
 *.log
@@ -24,6 +25,7 @@ Thumbs.db
 [Dd]ebug*/
 *.lib
 *.sbr
+*.pl
 obj/
 [Rr]elease*/
 _ReSharper*/
@@ -33,3 +35,8 @@ _ReSharper*/
 resource
 resource.h
 *.wjf
+*.sln
+*.vfproj
+*.u2d
+*.OUT
+*.LST

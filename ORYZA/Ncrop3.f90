@@ -46,7 +46,7 @@
 !                                                                      !
 !----------------------------------------------------------------------*
       SUBROUTINE NCROP3 (ITASK, IUNITD, IUNITL, FILEI1, FILEI2, FILEIT, DELT, TIME, OUTPUT, &
-                       TERMNL, DVS, LLV, DLDR, WLVG, WST, WSO, GSO, GST, GLV, &
+                       TERMNL, DVS, LLV, DLDR, WLVG, WST, WSO, GSO, GST, GLV, GRT, &
                        PLTR, LAI, SLA, CROPSTA, TNSOIL, NACR, ANSO, ANLV, ANST, ANLD, &
                        ANRT, NFLV, NSLLV,NRT, RNSTRS)
 
@@ -82,24 +82,27 @@
       REAL NALV, NAST, NASO, NALVS, NASTS, NASOS, NACRS, NTRTS
       REAL NDEMSX, NDEMC, NDEMS, NDEML, NDEMSN
       REAL ATN, NSO, NTSO, NTLV, NTST, NTRT, NLV, NSTAN, NST, NLVAN
-      REAL NMINSO, GSO, GST, GLV, NFLVI, FNLVI, NFLVP
+      REAL NMINSO, GSO, GST, GLV, GRT, NFLVI, FNLVI, NFLVP
       REAL NMAXLT(IMX), NMINLT(IMX), NMINSOT(IMX), NSLLVT(IMX), NFLVTB(IMX)
       REAL NOTNUL, NCHCK, NBCHK, NSTRES, SLA
-	  REAL RFNRT, RATIORL	!RESIDUAL N FRACTION OF ROOT, THE RATIO BETWEEN FRNRT AND RFNLV, TAOLI 27 JULY 2009
-	  REAL NMAXR, NMINR, FNRT		!MAXIMUM AND MINIMUM NITROGEN CONTENTS IN ROOT, FRACTION OF N IN ROOT ON WEIGHT BASIS, TAOLI 27 JULY 2009
-	  REAL NDEMRX, WROOTC, WROOTN, NART	!MAXIMUM DEMAND OF ROOT, TOTAL ROOT BIOMASS, TOTAL ROOT N WEIGHT, ACTUAL UPTAKE
-	  REAL SMINNH4, SMINNO3, NSHKRT !MINIMUM SOIL NH4-N AND NO3-N CONTENT mg N kg-1 SOIL, TRANSPLANTING LOSS OF N
-	  REAL NARTS, NRT, ANRT	!ROOT N UPTAKE FROM SOIL, NET NITROGEN FLOW TO ROOT
-	  REAL RSNH4(10), RSNO3(10) !SOIL NH4-N AND NO3-N CHANGE RATE
-	  real snh4x(15), sno3x(15), layt(15), bd(15), SDEP1, SDEP2
-	  REAL tswc(15), SPNH4(15),SPNO3(15)  !Local variables for counting the nitrogen supply
+	  REAL RFNRT, RATIORL	!TAOLI 27 JULY 2009
+	  REAL NMAXR, NMINR, FNRT		!TAOLI 27 JULY 2009
+	  REAL NDEMRX, WROOTC, WROOTN, NART	!TAOLI 27 JULY 2009
+	  REAL SMINNH4, SMINNO3, NSHKRT !TAOLI 27 JULY 2009N
+	  REAL NARTS, NRT, ANRT	!TAOLI 27 JULY 2009
+	  REAL RSNH4(10), RSNO3(10) !TAOLI 27 JULY 2009
+	  real snh4x(15), sno3x(15), layt(15), bd(15), SDEP1, SDEP2, UpNCoeff  !TAOLI 27 JULY 2009
+	  REAL tswc(15), SPNH4(15),SPNO3(15)  !TAOLI 27 JULY 2009
+	  REAL NDSENS  !TAOLI,19MAR 2014, Nitrogen deficient sensitity to 
+	               !primary production, 0.5= fair as default, 
+	               !>0.5 tolerance, <0.5 sensitive
 !	** Variables for using BioRice
-	  REAL NUPTA, NUPTN	!The uptake amount of NH4-N and NO3-N in kg N/m2/d
+	  REAL NUPTA, NUPTN	
 	  
 !     Functions
-      REAL LINT2, INTGRL, LIMIT, INTGR2, TMPV1, TMPV2, TMPV3, TMPV4  !, TMPV5, TMPV6
+      REAL LINT2, INTGRL, LIMIT, INTGR2, TMPV1, TMPV2, TMPV3, TMPV4, TMPV5, TMPV6,tmpv7
 
-      SAVE         !&#@TAOLI
+      SAVE         !TAOLI
 
 !-----Initialization
       IF (ITASK.EQ.1) THEN
@@ -108,7 +111,7 @@
         ANLV   = 0.
         ANSO   = 0.
         ANST   = 0.
-		ANRT   = 0.0
+		ANRT   = 0.
         ANLD   = 0.
         ANCR   = 0.
         ANLVA  = 0.
@@ -163,8 +166,16 @@
 		IF(RDINQR('RCNL')) THEN
 			CALL RDSREA('RCNL  ', RFNRT)			!TAOLI 27 JULY 2009
 		ELSE
-			PV%PROOT_NUTRIENT = .FALSE.
+			RFNRT = RFNLV
+			
 		ENDIF
+		IF(RDINQR('NDSENS')) THEN
+			CALL RDSREA('NDSENS', NDSENS)			!TAOLI 18MAR 2014
+		ELSE
+			NDSENS = 0.5			
+		ENDIF
+		NDSENS = (NDSENS-0.5)*10.0
+		NDSENS = 1.0-(1.0-2.73**(-NDSENS))/(1.0+2.73**(-NDSENS))
         CALL RDSREA('RFNST', RFNST)
         CALL RDSREA('TCNTRF', TCNTRF)
         CALL RDSREA('FNTRT', FNTRT)
@@ -204,10 +215,10 @@
         NMINSO  = LINT2('NMINSOT',NMINSOT,ILNMNS,ANCRF)
         NMAXL   = LINT2('NMAXLT',NMAXLT,ILNMAX,DVS)
         NMINL   = LINT2('NMINLT',NMINLT,ILNMIN,DVS)
-		RATIORL= RFNRT / RFNLV
-		NMAXR = NMAXL * RATIORL			!MAXIMUM N IN ROOT ON WEIGHT BASIS, TAOLI 27 JULY 2009
+		RATIORL= 1.0  !RFNRT / RFNLV
+		NMAXR = NMAXL* RATIORL      	!MAXIMUM N IN ROOT ON WEIGHT BASIS, TAOLI 27 JULY 2009
 		NMINR = NMINL * RATIORL			!MINIMUM N IN ROOT ON WEIGHT BASIS, TAOLI 27 JULY 2009
-
+!RCNL/RFNLV*LINT2('NMAXLT',NMAXLT,ILNMAX,DVS)
 !====== Only calculations after in the main field
         IF (CROPSTA .GE. 4) THEN
 
@@ -216,7 +227,11 @@
 
 !========== Calculate (potential) N demand of crop organs
 !           Maximum N demand of leaves
-            NDEML  = (NMAXL*(WLVG+GLV*DELT)-ANLV)/DELT 
+!            NDEML  = (NMAXL*(WLVG+GLV*DELT)-ANLV)/DELT            
+            NDEML  = (NMAXL*(WLVG+GLV*DELT)-ANLV- &
+                (LLV+DLDR)*max(0.0,ANLV/NOTNUL(WLVG)-RFNLV))/DELT  
+                !Added by TAOLI 3Feb 2014, the second line is calculate 
+                !the possible translocation from death leaves to living ones
             IF (NDEML .LT. 0.) NDEML = 0.
 !           Maximum N demand of stems
             NDEMS  = (NMAXL*0.5*(WST+GST*DELT)-ANST)/DELT
@@ -227,17 +242,11 @@
 !           Minimum nitrogen demand of storage organs 
             NDEMSN = NMINSO*GSO
             IF (NDEMSN .LT. 0.) NDEMSN = 0.
-!-----------THIS SECTION TO CALCULATE MAXIMUM ROOT N DEMAND, TAOLI 27 JULY 2009
-			WROOTC =0.0; WROOTN = 0.0
-			DO I = 1, sl
-				IF(REFFECD.LE. SUM(LAYT(1:I))) THEN
-					WROOTC = WROOTC + ROOTC(I) 
-					WROOTN=WROOTN+ROOTN(I)
-					!ANRT = ANRT + ROOTN(I)
-				ENDIF
-			ENDDO
-			NDEMRX =MAX(0.0, (NMAXR * WROOTC - WROOTN)/DELT)
-			!NDEMRX =MAX(0.0, (NMAXR * WROOTC - ANRT)/DELT)
+!-----------TAOLI 27 JULY 2009
+			WROOTC = SUM(ROOTC(1:SL)) 
+	        WROOTN=SUM(ROOTN(1:SL))			
+			NDEMRX =MAX(0.0, (NMAXR * (WROOTC + GRT)- WROOTN)/DELT)
+			
 !-----------------------------------------------------------END THIS SECTION, 27 JULY 2009
 						
 
@@ -255,8 +264,9 @@
               ATNST = MAX(0., ANST-WST*RFNST)
 !             Maximum translocation amount from roots as fraction of that of shoot
               ATNRT = (ATNLV+ATNST)*FNTRT
-!------------IT WILL BE LIMITED BY THE APABILITY OF ROOT N, TAOLI, 27 JULY 2009
-			  ATNRT = MIN(ATNRT, (WROOTN + ANRT - WROOTC * RCNL))	
+!------------TAOLI, 27 JULY 2009
+			  !ATNRT = MIN(ATNRT, (WROOTN + ANRT - WROOTC * NMINR))
+			  ATNRT = MIN(ATNRT, (WROOTN  - WROOTC * NMINR))	
 
               ATN   = ATNLV+ATNST+ATNRT
 !             Daily translocation is total pool divided by time constant
@@ -273,33 +283,44 @@
             NDEMC  = (NDEML+NTLV)+(NDEMS+NTST)+(NDEMSX-NTSO) + (NDEMRX + NTRT)
 
 !========== Calculate nitrogen uptake 
-!------------THE ACTUAL SUPPLY CAPACITY OF SOIL IN ROOT ZOON, TAOLI 27 JLUY 2009
-!+				here, the effects of avaliable water content on N uptake should be added in
+!------------TAOLI 27 JLUY 2009
+             
+            IF(WLVG.GT.0.0) THEN ! TAOLI 8 Sept 2012                
+                UPNCOEFF = MAX(0.01,(ANLV/WLVG-0.9*nmaxl)/(NMAXL-NMINL))
+            ELSE
+                UPNCOEFF = 1.0
+            END IF 
+            
+            UPNCOEFF = 1.0/UPNCOEFF
 			!---Get sum of uptook water
 			tmpv4 =sum(pv%PTrwl(1:SL))     
 			TNSOIL = 0.0;TMPV3=0.0;SDEP1=0.0;SDEP2=0.0
 		    DO I=1,SL
 			    tmpv1 =0.0;tmpv2=0.0;tmpv3=0.0;SDEP2=SDEP2+LAYT(I)
+			    tmpv5 = pv%pwcst(i)*layt(i)*1000.0  !TAOLI, 24June 2012
+				tmpv6 = max(0.0, (tswc(i)-pv%pwcwp(i))*layt(i)*1000.0) 
 			    IF(REFFECD.GT.SDEP2) THEN
-				    tmpv1 =MAX(0.0, SNH4X(I)-SMINNH4*BD(I)*LAYT(I)*10.0 )   !SMINNH4 AND SMINNO3 ARE MG N /KG SOIL, SNH4X IN KG/HA, LAYT IN M
-				    tmpv2 =MAX(0.0,SNO3X(I)-SMINNO3*BD(I)*LAYT(I)*10.0)
-				    tmpv3 = tswc(i)*layt(i)*1000.0		!The total soil water amount in mm
+				    tmpv1 =MAX(0.0, SNH4X(I)-SMINNH4*BD(I)*LAYT(I)*10.0/upncoeff )   
+				    tmpv2 =MAX(0.0,SNO3X(I)-SMINNO3*BD(I)*LAYT(I)*10.0/upncoeff)
+				    tmpv3 = tswc(i)*layt(i)*1000.0					    
 				    IF((TMPV3.GT.0.0).AND.(TMPV4.GT.0.0)) THEN
-					    SPNH4(I) = MIN(SNH4X(I) /tmpv3* pv%PTrwl(i),TMPV1)	!so far, it only calculate the mass flow uptake,It is also needed to calculate
-					    SPNO3(I)= MIN(SNO3X(I)/tmpv3* pv%PTrwl(i), tmpv2)	!the difussion flow. It supposed diffusion is VERY small amount, can be ignored
+					    SPNH4(I) = MIN(upncoeff*SNH4X(I) /tmpv3* (pv%PTrwl(i)+tmpv6/tmpv5/NDSENS),TMPV1)	
+					    SPNO3(I)= MIN(upncoeff*SNO3X(I)/tmpv3* (pv%PTrwl(i)+tmpv6/tmpv5/NDSENS), tmpv2)	
+					    !0.5/NDSENS, DONET TO NITROGEN DEFICIENCY TOLERANCE, TOLERANCE WILL INCREASE THE DIFFUSION UPTAKE, OTHER INVERSE
 				    ELSE
 					    SPNH4(I) = 0.0
-					    SPNO3(I)=0.0
+					    SPNO3(I)= 0.0
 				    ENDIF
 				    TNSOIL =TNSOIL + SPNH4(I)
 				    TNSOIL =TNSOIL + SPNO3(I)
 			    ELSEIF((REFFECD.GT.SDEP1).AND.(REFFECD.LE.SDEP2)) THEN
-				    tmpv1 =MAX(0.0, SNH4X(I)-SMINNH4*BD(I)*LAYT(I)*10.0)   
-				    tmpv2 =MAX(0.0,SNO3X(I)-SMINNO3*BD(I)*LAYT(I)*10.0)   
+				    tmpv1 =MAX(0.0, SNH4X(I)-SMINNH4*BD(I)*LAYT(I)*10.0/upncoeff)   
+				    tmpv2 =MAX(0.0,SNO3X(I)-SMINNO3*BD(I)*LAYT(I)*10.0/upncoeff)   
 				    tmpv3 = tswc(i)*1000.0*layt(i)
+				    tmpv7 = (REFFECD-SDEP1)/LAYT(I)
 				    IF((TMPV3.GT.0.0).AND.(TMPV4.GT.0.0)) THEN
-					    SPNH4(I) = MIN(SNH4X(I) /tmpv3* pv%PTrwl(i),TMPV1)*(REFFECD-SDEP1)/LAYT(I)
-					    SPNO3(I)= MIN(SNO3X(I)/tmpv3* pv%PTrwl(i), tmpv2)*(REFFECD-SDEP1)/LAYT(I)
+					    SPNH4(I) = MIN(upncoeff*SNH4X(I) /tmpv3*(tmpv6/tmpv5*tmpv7/NDSENS+ pv%PTrwl(i)),TMPV1*tmpv7)
+					    SPNO3(I)= MIN(upncoeff*SNO3X(I)/tmpv3*(tmpv6/tmpv5*tmpv7/NDSENS + pv%PTrwl(i)), tmpv2*tmpv7)
 				    ELSE
 					    SPNH4(I) = 0.0
 					    SPNO3(I)=0.0
@@ -312,8 +333,9 @@
 			    ENDIF
 			    SDEP1=SDEP2	
 		    ENDDO
+		    
 			!--------------END THIS SECTION, TAOLI 27 JULY 2009
-!           Available N uptake is mimimum of soil supply and maximum crop uptake
+
             IF (CROPSTA .LT. 4) THEN
 				NUPP=MAX(0.0,NDEMC)		!SUPPOSED THAT THERE IS NO NITROGEN STRESS IN SEED BED 
 										!WHICH CORRESPOND TO NO WATER STRESS IN SEED BED 
@@ -339,7 +361,7 @@
 					    snh4x(i) = snh4x(i) + rsnh4(i)
 					    sno3x(i) = sno3x(i) + rsno3(i)
 				    ENDDO
-			    ELSE	!THE TOTAL UPTAKE WILL COMPELTELY SATISFIED, TOTAL UPTAKE IS LESS THAN SUPPLY CAPACITY
+			    ELSE	
 				    TMPV1 = NACR * DELT
 				    IF(TNSOIL.GT.0.0) THEN
 					    TMPV1 =TMPV1/TNSOIL
@@ -355,6 +377,7 @@
 				    tmpv2 = abs(sum(rsnh4) + sum(rsno3))
 			    ENDIF
 			END IF		
+			
 			tmpv1=NACR		!END THIS SECTION, TAOLI 27 JULY 2009
 !========== Calculate net N flows to plant organs (daily rates)
 !           Transplanting shock: remove N
@@ -366,14 +389,13 @@
 !NEW BB, aug 2003: with senescence and dying of leaves, the total leaf N
 !           can go down. Yellow leaves initially have higher N content than RFNLV
             NLDLV  = MAX (NLDLV, ANLV-NMAXL*(WLVG+GLV-LLV-DLDR))
-
+!           
 !---------- Net flow to stems, leaves, AND ROOT
             NLV = NALV-NTLV-NLDLV-NSHKLV
             NST = NAST-NTST-NSHKST
 			NRT = NART - NTRT - NSHKRT
 !---------- Net N flow to storage organ
             NSO = NTSO+NASO
-
 !---------- Net flow to stems and leaves before flowering 
             IF (DVS.LT. 1.) THEN
                NSTAN =NST
@@ -388,22 +410,24 @@
 
 !        Output writing
          IF (OUTPUT) THEN
-           CALL OUTDAT(2,0,'nacr',nacr)
          !  CALL OUTDAT (2, 0, 'NDEML', NDEML)
          !  CALL OUTDAT (2, 0, 'NDEMC', NDEMC)
-           CALL OUTDAT (2, 0, 'NSLLV', NSLLV)
-           CALL OUTDAT (2, 0, 'RNSTRS', RNSTRS)
-           CALL OUTDAT (2, 0, 'NUPP', NUPP)
+            CALL OUTDAT (2, 0, 'NSLLV', NSLLV)
+            CALL OUTDAT (2, 0, 'RNSTRS', RNSTRS)
+            CALL OUTDAT (2, 0, 'NUPP', NUPP)
            CALL OUTDAT (2, 0, 'ANCR', ANCR)
-           CALL OUTDAT (2, 0, 'ANLV', ANLV)
-           CALL OUTDAT (2, 0, 'ANLD', ANLD)
-           CALL OUTDAT (2, 0, 'ANST', ANST)
+            CALL OUTDAT (2, 0, 'ANLV', ANLV)
+          CALL OUTDAT (2, 0, 'ANLD', ANLD)
+          CALL OUTDAT (2, 0, 'ANST', ANST)
            CALL OUTDAT (2, 0, 'ANSO', ANSO)
+           CALL OUTDAT (2, 0, 'ANRT', ANRT)
            CALL OUTDAT (2, 0, 'NMAXL', NMAXL)
-         !  CALL OUTDAT (2, 0, 'NMINL', NMINL)
+           CALL OUTDAT (2, 0, 'NMINL', NMINL)
            CALL OUTDAT (2, 0, 'FNLV', FNLV)
-           CALL OUTDAT (2, 0, 'SNH4', SNH4X(1))
-           CALL OUTDAT (2, 0, 'SNO3', SNO3X(1))
+           CALL OUTDAT (2, 0, 'ROOTN', SUM(ROOTN))
+           CALL OUTDAT (2, 0, 'ROOTC', SUM(ROOTC))           
+           CALL OUTDAT (2, 0, 'SNH4', SUM(SNH4X(1:sl))) !changed for output whole profile nitrogen, TAOLI, 5Dec 2011
+           CALL OUTDAT (2, 0, 'SNO3', sum(SNO3X(1:sl))) !changed for output whole profile nitrogen, TAOLI, 5Dec 2011
          END IF
 !+		UPDATE SOIL MINERAL NITROGEN CONTENTS into public module values
 		 DO I=1, SL
@@ -428,8 +452,6 @@
 		 IF(WROOTC.GT.0.0) THEN
 			DO I =1 , SL
 				WROOTN=WROOTN+ROOTN(I)
-				ROOTN(I) = ROOTN(I) + TMPV1 *ROOTC(I)/WROOTC !SPILT THE NET UPTAKE FOR ROOT INTO LAYER ROOT
-				
 			ENDDO
 		 ELSE
 			ROOTN=0.0
@@ -453,8 +475,7 @@
          NTRTS = INTGRL(NTRTS, NTRT, DELT)
 		 		
 !------- Nitrogen balance check
-         NCHCK = ANCR - (NACRS)  !+NTRTS)   !BECAUSE NART ALREADY INCLUDE THE ROOT TRANSLOCATION
-!         CALL SUBNBC (ANCR,(NACRS+NTRTS),TIME,NBCHK,TERMNL)
+         NCHCK = ANCR - (NACRS)  
 		 CALL SUBNBC3 (ANCR,NACRS,TIME,NBCHK,TERMNL)
 !======= Calculate N contents and N stress factors (only if in main field)
          IF (CROPSTA .LT. 4) THEN
@@ -485,24 +506,27 @@
 !          day, NFLV1 is used;l between first and last observation day, interpolated
 !          observed values are used; after last observation day, NFLV1 is used again
 !          Forcing is determined by the variable NFLV_FRC in the experiment data file.
-            NFLV1 = FNLV/(10.*SLA)		!NFLV1 in g N/m2 leaf
+            NFLV1 = MIN(NMAXL/(10.*SLA),FNLV/(10.*SLA))		!NFLV1 in g N/m2 leaf
             NFLV   = INTGR2(0., NFLV1, DELT, FILEIT, 'NFLV')
-
             END IF
 
 !---------- Set N stress factor for leaf death
             ANCRPT =WLVG*NMAXL+WST*NMAXL*0.5+WSO*NMAXSO
-            IF (ANCR .EQ. 0.) THEN
+            IF (ANCR .LE. 0.) THEN      !TAOLI, 8 MARCH 2012
               NSTRES = 2.
             ELSE
               NSTRES = ANCRPT/ANCR
             END IF
             IF (NSTRES .LT. 1.) NSTRES = 1.
             IF (NSTRES .GT. 2.) NSTRES = 2.
+            IF(ISNaN(NSTRES)) then
+                NSTRES = 2. 
+            END IF           
             NSLLV = LINT2('NSLLVT', NSLLVT, INSLLV, NSTRES)
 
 !---------- Set N stress factor for RGRL
-            RNSTRS = (FNLV-0.9*NMAXL)/(NMAXL-0.9*NMAXL)
+            RNSTRS = MIN(1.0,MAX(0.0,(FNLV-0.9*NMAXL)/(NMAXL-0.9*NMAXL)))
+            RNSTRS = (RNSTRS)**NDSENS  !TAOLI, 18MAR 2014
             IF (RNSTRS .GT. 1.) RNSTRS = 1.
             IF (RNSTRS .LT. 0.1) RNSTRS = 0.1		!LIMITED RNSTRS TO BE LARGER THAN 0.1 FOR RESIDUE EFFECTS
             
@@ -518,11 +542,15 @@
 
 !-----Terminal output statements
       ELSE IF (ITASK.EQ.4) THEN
-
+        IF(LEN_TRIM(PV%OPSTRING).GT.1) THEN 
+            IF(INDEX(PV%OPSTRING,'ANCR').GT.0) CALL OPSTOR ('ANCR', INT(100.0*ANCR)/100.0)
+!         CALL OPSTOR ('NACRS', NACRS)
+!         CALL OPSTOR ('NTRTS', NTRTS) 
+        ELSE
          CALL OPSTOR ('ANCR', INT(100.0*ANCR)/100.0)
 !         CALL OPSTOR ('NACRS', NACRS)
 !         CALL OPSTOR ('NTRTS', NTRTS)
-
+        END IF
 !     END ITASKS
       END IF
 
@@ -554,13 +582,12 @@
 !-----Formal parameters
       REAL    CHKIN,CKCFL,TIME,NBCHK
       LOGICAL TERMNL
-      SAVE         !&#@TAOLI
+      SAVE         ! TAOLI
  
       NBCHK = 2.0*(CHKIN-CKCFL)/(CHKIN+CKCFL+1.E-10)
  
       IF (ABS(NBCHK).GT.0.001) THEN
-         WRITE (*,'(A,/,A,F8.3,2(A,F8.2),F6.1)') &
-
+         WRITE (*,'(A,/,A,F8.3,2(A,F8.2),A, F6.1)') &
            '* * * Error in Nitrogen Balance, please check * * *', &
            ' NBCHK=',NBCHK,', CHKIN=',CHKIN,', CKCFL=',CKCFL,' at TIME=',TIME
          TERMNL = .TRUE.
