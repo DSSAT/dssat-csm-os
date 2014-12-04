@@ -241,7 +241,7 @@
       REAL        PGRORT      
 	REAL        PGROST
       REAL        PHINT       
-	REAL        PI
+!	REAL        PI
       REAL        PLA    
       REAL        PLAE     
       REAL        PLAG        
@@ -387,7 +387,7 @@ C      REAL        PRLF
 	REAL        YX(50)
 	REAL        Z2STAGE
 
-      PARAMETER (PI=3.14159)
+!      PARAMETER (PI=3.14159)
 !     Added to send messages to WARNING.OUT
       CHARACTER*78 MESSAGE(10)
 

@@ -41,7 +41,7 @@
 
 !     Local parameters
       REAL AOB, PI, DEGTRAD, DOY, DEC, ZZCOS, ZZSIN, ZZA
-      SAVE
+      SAVE         ! TAOLI
 
 !     PI and conversion factor from degrees to radians
       PARAMETER (PI=3.1415927, DEGTRAD=0.017453292)

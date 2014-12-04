@@ -19,7 +19,8 @@
 ! TAV     R4  Average daily temperature (oC)                        I  *
 ! TMAX    R4  Daily maximum temperature (oC)                        I  *
 ! NSP     R4  Number of spikelets (no)                              I  *
-! CTSTER  R4  The critical temperature for 50% sterility (oC)		I  *
+! CTSTER  R4  The critical temperature for 50% sterility (oC)       I  *
+! COLDREP R4  The critical temperature for cold causing sterility (oC) *
 ! GNSP    R4  Rate of increase in spikelet number (no ha-1 d-1)     O  *
 ! GNGR    R4  Rate of increase in grain number (no ha-1 d-1)        O  *
 ! SPFERT  R4  Spikelet fertility (-)                                O  *
@@ -28,13 +29,13 @@
 !  FILE usage : none                                                   *
 !----------------------------------------------------------------------*
      SUBROUTINE SUBGRN(GCR,CROPSTA,LRSTRS, &
-                        DVS,SF2,SF1,SPGF,TAV,TMAX,NSP,CTSTER,GNSP,GNGR, &
+                        DVS,SF2,SF1,SPGF,TAV,TMAX,NSP,CTSTER,COLDREP,GNSP,GNGR, &
                         SPFERT,GRAINS)
 
       IMPLICIT NONE
 !-----Formal parameters
       REAL    GCR, DVS, SF2, SF1, SPGF, TAV, TMAX, NSP, GNSP, GNGR
-      REAL    SPFERT, LRSTRS, CTSTER		
+      REAL    SPFERT, LRSTRS, CTSTER, COLDREP            
       INTEGER CROPSTA
       LOGICAL GRAINS
 !-----Local parameters
@@ -54,13 +55,14 @@
 
 !-----Temperature increase due to leaf rolling (BAS): 1.6 degree
 !     per unit leaf rolling (Turner et al., 1986; p 269)
+      LRSTRS = max(0.0, LRSTRS)   !TAOLI, 22Feb 2012
       TINCR = 5.*(1.-LRSTRS)*1.6
 
 !-----Spikelet formation between PI and Flowering
       DVSPI = 0.65
       DVSF  = 1.
       IF ((DVS.GE.DVSPI).AND.(DVS.LE.DVSF)) THEN
-         GNSP = GCR*SPGF
+         GNSP = max(0.0, GCR)*SPGF      !TAOLI, 22Feb 2012
       ELSE
          GNSP = 0.
       END IF
@@ -68,11 +70,11 @@
 !-----Grain formation from spikelets (GNGR)
 !-----Calculate GNGR reduction factors
       IF ((DVS.GE.0.75).AND.(DVS.LE.1.2)) THEN
-         CTT    = MAX(0.,22.-(TAV-TINCR))
+         CTT    = MAX(0.,COLDREP -(TAV-TINCR))
          COLDTT = COLDTT+CTT
       END IF
       IF ((DVS.GE.0.96).AND.(DVS.LE.1.2)) THEN
-         TFERT  = TFERT +(TMAX+TINCR)		
+         TFERT  = TFERT +(TMAX+TINCR)            
          NTFERT = NTFERT+1.
       END IF
 
@@ -89,6 +91,5 @@
       ELSE
          GNGR   = 0.
       END IF
-
       RETURN
       END

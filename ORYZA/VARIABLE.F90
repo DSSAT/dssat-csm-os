@@ -14,7 +14,7 @@
 !SWCX                  --                  arry, R4      Soil water contents in layers
 !SNH4X                  kg N/ha            array, R4      soil NH4-N contents in layers      
 !SNO3X                  kg N/ha            array, R4      Soil NO3-N content in layers
-!SOILTX                  oC                  array, R4      Soil temperature in layers
+!STX                  oC                  array, R4      Soil temperature in layers
 !SANDX                  %                  array, R4      Soil sand contents in layers
 !CLAYX                  %                  array, R4      Clay content in layers
 !BDX                  Mg/m3            array, R4      Soil bulk density in layers
@@ -174,14 +174,14 @@
 !4. Output Parameters
 !-------------------------------------------------------------------------------------------------------------------
 	
-		 REAL STATE(120)			!This variable is used to store state variables which need write into output file
+!		 REAL STATE(120)			!This variable is used to store state variables which need write into output file
 	
 !--------------------------------------------------------------------------------------------------------------------
 !5. CONTROL AND MODEL RUNNING PARAMETERS
 !--------------------------------------------------------------------------------------------------------------------
 	
 		 INTEGER CRUN,  STARTRUN
-		 LOGICAL PROOT_NUTRIENT, KILLSOIL
+		 LOGICAL PROOT_NUTRIENT, KILLSOIL, NBALANCE
 		 character*10 pond_active
 	!	public control parameters
 		 integer PYear			!count current year at the end of last run
@@ -191,8 +191,7 @@
 	!	public soil chemical properties
 		 real Pno3(0:15)		!soil NO3 content (kg/ha)
 		 real Pnh4(0:15)		!soil NH4 content (kg/ha)
-		 REAL PNO3UPT           !TOTAL NO3 UPTAKE KG N/HA/D
-		 REAL PNH4UPT           !TOTAL NH4 UPTAKE KG N/HA/D
+		 real PmineralizedN(0:15) !daily mineralized nitrogen in each soil layer (kh N/ha), negative is immobilized
 		 real Purea(0:15)		!soil urea content (kg/ha)
 		 real    pond_no3        ! mineral N as nitrate in pond (kg/ha)
 		 real    pond_nh4        ! mineral N as ammonium in pond (kg/ha)
@@ -227,7 +226,7 @@
 		 real Plai			!daily green leaf area index
 		 integer PResNum			!number of residue, maximum for 10
 		 character(16) PResName(15)	!Residue name
-		 character PResType(15)*32	!Residue type associate with each residue
+		 Integer PResType(15)	!Residue type associate with each residue
 		 real PResC(0:15,15)	!daily plant little fall carbon (kg C/ha), '0' use for above ground, 1 to 15 used for root
 		 						!second deminsion is corresponding residues
 		 real PResN(0:15,15)	!daily plant little fall nitrogen (kg N/ha), '0' use for above ground, 1 to 15 used for root
@@ -256,9 +255,10 @@
 		 real Ptrans			!Actual transpiration from plant (mm/day)
 		 REAL PDt			!The temperature differences between canopy and air (oC)
 		 REAL PRdn			!The daily net radiation (MJ/day)
-
+		 REAL PLAALA        !The adjustment on phenology base, maximu, optimal sue to elevation, latitude
+		 LOGICAL ISPHENAD   !The PHENOLOGY ADJUSTMENT only be used for large spatial scale modeling
+		 CHARACTER*256 OPSTRING    !USE IT TO HOLD THE OUTPUT VARIABLE IN OP.DAT         
 	 end type public_variables
-	 
 	 !following TYPE will be used in the rotation in a given soil
 	 type temporary_soil_information
 	!	public soil chemical properties
@@ -291,7 +291,7 @@
 		 real Xswc(0:15)		!soil water content (cm3/cm3)
 		 integer XResNum			!number of residue, maximum for 10
 		 character(16) XResName(15)	!Residue name
-		 character(32) XResType(15)	!Residue type associate with each residue
+		 Integer XResType(15)	!Residue type associate with each residue
 		 real XResC(0:15,15)	!daily plant little fall carbon (kg C/ha), '0' use for above ground, 1 to 15 used for root
 		 						!second deminsion is corresponding residues
 		 real XResN(0:15,15)	!daily plant little fall nitrogen (kg N/ha), '0' use for above ground, 1 to 15 used for root
@@ -315,35 +315,28 @@ module GWT
    INTEGER    ILZMAX, IZWTB
    PARAMETER (ILZMAX=400)
    REAL       ZWA, ZWB, MAXGW, MINGW, ZWTBI,ZWTB(ILZMAX)
-   SAVE
 end module GWT
 
 module HYDCON
    REAL KST(10), WCAD(10), WCSTRP(10)
-   SAVE
 end module HYDCON
 
 module NUCHT
    REAL  VGA(10), VGL(10), VGN(10), VGR(10)
-   SAVE
 end module NUCHT
 	  
 module power
    REAL PN(10)
-   SAVE
 end module power
 
 MODULE SPAW
 	REAL SPAWA(10), SPAWB(10)
-	SAVE
 END MODULE SPAW
 
 module swit
   INTEGER SWITKH
-  SAVE
 end module swit
 
 MODULE CROP_N
    REAL xFNLV, xNFLV
-   SAVE
 END MODULE CROP_N

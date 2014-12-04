@@ -12,18 +12,17 @@ Use ModuleDefs
 implicit none
 save 
 
-Type(SoilType) soilprop
 integer :: layer, dae, dynamic, nlayr
 real, parameter :: MinConcFrac = 0.6, gpm2_to_kgpha = 10.0, EMinAnyPool = 5.0
-real, dimension(NL) :: dEUptakeLayer_Kg, ESupplyLayer_Kg, ESupplyLayerRed_Kg, SRedFac, RootLayerFrac, rwu, dlayr
+real, dimension(nl) :: dEUptakeLayer_Kg, ESupplyLayer_Kg, ESupplyLayerRed_Kg, SRedFac, RootLayerFrac, rwu, dlayr
 real :: Biomass, BiomassRoot, dEUptake_Kg, EConcAct, EConcOpt, EConcMin, EConcOpt_par(3), EDemand_Kg, ESupplyTot_Kg
 real :: EPlant_Kg, EStressFac, Plant_Kg, RELTT, RelTTEmerge, EUptake_Kg, SWaterFac, SAL_PValue 
+Type(SoilType) soilprop
 
 !------------------------------------------------------------------------------
 ! INITIALIZATION AND INPUT DATA
 !------------------------------------------------------------------------------
-! IF(DYNAMIC.EQ.RUNINIT .OR. DYNAMIC.EQ.SEASINIT) THEN
-if(dynamic == seasinit) then
+if(dynamic==runinit .OR. dynamic==seasinit) then
 !------------------------------------------------------------------------------
 nlayr = soilprop % nlayr
 dlayr = soilprop % dlayr 
@@ -80,8 +79,9 @@ EPlant_Kg = EPlant_Kg + dEUptake_Kg
 if(Plant_Kg > 0.0) EConcAct = EPlant_Kg / Plant_Kg
  
 ! Compute stress factor	   
-EStressFac = 1 - (((EConcAct - EConcMin) / (EConcOpt - EConcMin)) - 1)**4
-EStressFac = max(EStressFac, 0.0)   	
+EStressFac = 1.0
+!!EStressFac = 1 - (((EConcAct - EConcMin) / (EConcOpt - EConcMin)) - 1)**4
+!!EStressFac = max(EStressFac, 0.0)   	
  
 !------------------------------------------------------------------------------
 ! End of dynamic 'IF' construct

@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2011 DSSAT Foundation
+C  COPYRIGHT 1998-2014 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida                   
 C                      International Fertilizer Development Center
 C                      USDA-ARS-ALARC, Phoenix, AZ
@@ -28,6 +28,7 @@ C  01/15/2008 GH  Include GDDE for P9 calculation
 C  12/12/2010 GH  Moved STPC and RTPC to Ecotype file
 C  05/19/2011 GH  Reorganized cultivar coefficients
 C  08/26/2011 GH  Add new tillering coefficient in Ecotype file
+C  05/31/2007 GH Added P-model (unfinished)
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -36,11 +37,12 @@ C  Calls  : SG_GROSUB, SG_PHENOL, SG_ROOTS
 C----------------------------------------------------------------------
 
       SUBROUTINE SG_CERES (CONTROL, ISWITCH, 
-     &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,            !Input
-     &     SNOW, SOILPROP, SRAD, SW, TMAX, TMIN,          !Input
-     &     TRWUP, TWILEN, YREND, YRPLT,                   !Input
-     $     CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,    !Output
-     &     RWUMX, SENESCE, STGDOY, UNO3, UNH4, XLAI,KCAN,KEP) !Output
+     &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,                  !Input
+     &     SNOW, SOILPROP, SPi_AVAIL, SRAD, SW, TMAX, TMIN,     !Input
+     &     TRWUP, TWILEN, YREND, YRPLT,                         !Input
+     &     CANHT, HARVRES, MDATE, NSTRES, PORMIN, PUptake,      !Output
+     &     RLV, RWUMX, SENESCE, STGDOY, UNO3, UNH4,             !Ouput
+     &     XLAI, KCAN, KEP, FracRts)                            !Output
 
       USE ModuleDefs
 
@@ -336,6 +338,7 @@ C-----------------------------------------------------------------------
       CHARACTER*92    FILECC
       REAL            FSLFN
       REAL            FSLFW
+      REAL            FSLFP
       INTEGER         ISECT
       INTEGER         LUNCRP
       REAL            PARSR
@@ -351,8 +354,11 @@ C-----------------------------------------------------------------------
       REAL PBASE, PSAT
 
 !     P, K variables
+      CHARACTER*1 ISWPHO
+      REAL PUptake(NL), SPi_AVAIL(NL), FracRts(NL)       
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
-      REAL PSTRES1, PSTRES2, KSTRES
+      REAL SeedFrac, VegFrac, PSTRES1, PSTRES2
+      REAL KSTRES
 
       REAL STPC,RTPC
 !     ------------------------------------------------------------------
@@ -363,7 +369,7 @@ C-----------------------------------------------------------------------
       TYPE (SwitchType)  ISWITCH
       Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
-
+      
 C      PARAMETER       (ERRKEY='MAIZE') 
 
 !     Transfer values from constructed data types into local variables.
@@ -388,6 +394,7 @@ C      PARAMETER       (ERRKEY='MAIZE')
 
       ISWWAT = ISWITCH % ISWWAT
       ISWNIT = ISWITCH % ISWNIT
+      ISWPHO = ISWITCH % ISWPHO
       ISWDIS = ISWITCH % ISWDIS
       IPLTI  = ISWITCH % IPLTI
       IDETO  = ISWITCH % IDETO
@@ -442,90 +449,16 @@ C----------------------------------------------------------------------
 
           CALL GETLUN('OUTO', NOUTDO)
           CALL GETLUN('FILEIO', LUNIO)
-
-          CALL SG_GROSUB (DYNAMIC,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
-     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
-     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
-     &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
-     &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
-     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4)
-
-         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
-         !  maize, sorghum and millet.
-          CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
-     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
-     &    WTSO, XLAI, YRPLT)
-
-          CALL MZ_OPNIT(CONTROL, ISWITCH,     !Yes, MZ is correct!
-     &    YRPLT, MDATE, NLAYR, SENESCE,
-     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
-     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
-       
-
-          CALL SG_OPHARV(CONTROL, 
-     &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, GNUP,   !Input
-     &    GPP, GPSM, HARVFRAC, IDETO, IDETS, IPLTI,       !Input
-     &    ISDATE, ISTAGE, MAXLAI, MDATE, NSTRES, PODWT,   !Input
-     &    SDWT, SEEDNO, SENESCE, SKERWT, STGDOY, STOVER,  !Input
-     &    SWFAC, TOPWT, TURFAC, WTNCAN, WTNUP, XGNP,      !Input
-     &    XLAI, XN, YIELD, YRPLT,                         !Input
-     &    BWAH, SDWTAH)                                   !Output
-
-          !IF (ISWDIS.EQ.'Y') THEN
-             CALL PEST(CONTROL, ISWITCH, 
-     &       AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
-     &       PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
-     &       SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
-     &       RLV, SDNO, SHELN, SWIDOT,                       !I/O
-     &       VSTAGE, WSHIDT, WTSD, WTSHE,                    !I/O
-     &       ASMDOT, DISLA, NPLTD, PPLTD,                    !Output
-     &       SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT)             !Output
-          !ENDIF
-
-C--------------------------------------------------------------------
-C                     DYNAMIC = SEASINIT
-C--------------------------------------------------------------------
-
-      ELSEIF(DYNAMIC.EQ.SEASINIT) THEN
-         SWFAC  = 1.0
-         TURFAC = 1.0
-         NSTRES = 1.0
-         SATFAC = 0.0
-         WTNUP  = 0.0
-         WTNCAN = 0.0
-         EARWT  = 0.0
-
-!        CHP 5/18/2011
-         MDATE      = -99      
-
-!        Temporary -- until P is integrated with this crop module
-         PConc_Shut = 0.0
-         PConc_Root = 0.0
-         PConc_Shel = 0.0
-         PConc_Seed = 0.0
-         PSTRES1 = 1.0
-         PSTRES2 = 1.0
-         KSTRES  = 1.0
-
+          
+          
+! MA/KD (19dec2013) change to read input files before we do anything
+          
       !--------------------------------------------------------------
       !                   READ INPUT FILES
       !--------------------------------------------------------------
 
           !----------------------------------------------------------
-          !     Read input file name (ie. DSSAT45.INP) and path
+          !     Read input file name (ie. DSSAT46.INP) and path
           !----------------------------------------------------------
           CALL GETLUN('FILEIO', LUNIO)
           OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)  
@@ -661,6 +594,13 @@ C         ***********************************************************
              CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
              READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFN
              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+             IF (ISWPHO .NE. 'N') THEN
+               CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+               READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFP
+               IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+             ENDIF
+ 
           ENDIF
           REWIND(LUNCRP)
 
@@ -778,10 +718,37 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
           ENDIF
         ENDDO
         CLOSE (LUNECO)
-        KEP = KCAN/(1-0.07)*(1-0.25)
+        
+        
 
+          !------------------------------------------------------------
+          !        Call Phenology routine
+          !------------------------------------------------------------
+          CALL SG_PHENOL (DYNAMIC,
+     &      APTNUP,BIOMAS,BIOMS2,CSD1, CSD2,
+     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, 
+     &      EMAT, G1, G2, GDDE, GNUP, GPP, GPSM, GRAINN, GRNWT, ICSDUR,
+     &      IDETO, IDUR1, IPRINT, ISDATE, ISTAGE, ISWNIT, ISWWAT,
+     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
+     &      P1, P2O, P2R, P3, P4, P5, P9, PANTH, PANWT, PGRNWT, PHINT,
+     &      PBASE, PSAT, PFLOWR, 
+     &      PLTPOP, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
+     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
+     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
+     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
+     &      AGEFAC, BIOMS1, CUMDTT, CUMPH, GROLF,
+     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM, 
+     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF, 
+     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
+     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
+     &      STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
+     &      TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
+     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
+     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
+     &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
+     &      SeedFrac, VegFrac)                                 
 
-         CALL SG_GROSUB (DYNAMIC,
+          CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
      &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
      &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
@@ -796,7 +763,344 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
      &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4)
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      FILECC,
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
+     &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
+     &      STMWTO, WTLF, FSLFP)
+
+         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+         !  maize, sorghum and millet.
+          CALL MZ_OPGROW(CONTROL, ISWITCH,  
+     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
+     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+     &    WTSO, XLAI, YRPLT)
+
+          CALL MZ_OPNIT(CONTROL, ISWITCH,     !Yes, MZ is correct!
+     &    YRPLT, MDATE, NLAYR, SENESCE,
+     &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
+     &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
+       
+
+          CALL SG_OPHARV(CONTROL, 
+     &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, GNUP,   !Input
+     &    GPP, GPSM, HARVFRAC, IDETO, IDETS, IPLTI,       !Input
+     &    ISDATE, ISTAGE, MAXLAI, MDATE, NSTRES, PODWT,   !Input
+     &    SDWT, SEEDNO, SENESCE, SKERWT, STGDOY, STOVER,  !Input
+     &    SWFAC, TOPWT, TURFAC, WTNCAN, WTNUP, XGNP,      !Input
+     &    XLAI, XN, YIELD, YRPLT,                         !Input
+     &    BWAH, SDWTAH)                                   !Output
+
+          !IF (ISWDIS.EQ.'Y') THEN
+             CALL PEST(CONTROL, ISWITCH, 
+     &       AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
+     &       PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
+     &       SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
+     &       RLV, SDNO, SHELN, SWIDOT,                       !I/O
+     &       VSTAGE, WSHIDT, WTSD, WTSHE,                    !I/O
+     &       ASMDOT, DISLA, NPLTD, PPLTD,                    !Output
+     &       SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT)             !Output
+          !ENDIF
+
+C--------------------------------------------------------------------
+C                     DYNAMIC = SEASINIT
+C--------------------------------------------------------------------
+
+      ELSEIF(DYNAMIC.EQ.SEASINIT) THEN
+         SWFAC  = 1.0
+         TURFAC = 1.0
+         NSTRES = 1.0
+         SATFAC = 0.0
+         WTNUP  = 0.0
+         WTNCAN = 0.0
+         EARWT  = 0.0
+
+!        CHP 5/18/2011
+         MDATE      = -99      
+
+!        Temporary -- until P is integrated with this crop module
+         PConc_Shut = 0.0
+         PConc_Root = 0.0
+         PConc_Shel = 0.0
+         PConc_Seed = 0.0
+         PSTRES1 = 1.0
+         PSTRES2 = 1.0
+         KSTRES  = 1.0
+
+!      !--------------------------------------------------------------
+!      !                   READ INPUT FILES
+!      !--------------------------------------------------------------
+!
+!          !----------------------------------------------------------
+!          !     Read input file name (ie. DSSAT46.INP) and path
+!          !----------------------------------------------------------
+!          CALL GETLUN('FILEIO', LUNIO)
+!          OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)  
+!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
+!
+!          READ(LUNIO,50,IOSTAT=ERR) FILES, PATHSR; LNUM = 7
+!   50     FORMAT(//////,15X,A12,1X,A80)
+!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+!
+!          READ(LUNIO,51,IOSTAT=ERR) FILEE, PATHER; LNUM = LNUM + 1
+!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+!          READ(LUNIO,51,IOSTAT=ERR) FILEC, PATHCR; LNUM = LNUM + 1
+!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+!   51     FORMAT(15X,A12,1X,A80)
+!
+!          !----------------------------------------------------------
+!          !   Read Planting Details Section
+!          !----------------------------------------------------------
+!          SECTION = '*PLANT'
+!          CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+!          IF (FOUND .EQ. 0) THEN
+!              CALL ERROR(SECTION, 42, FILEIO, LNUM)
+!          ELSE
+!              READ(LUNIO,60,IOSTAT=ERR) PLTPOP,ROWSPC,SDEPTH
+! 60           FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
+!              LNUM = LNUM + 1
+!              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+!          ENDIF
+!
+!          !----------------------------------------------------------
+!          !          Read crop cultivar coefficients
+!          !----------------------------------------------------------
+!          SECTION = '*CULTI'
+!          CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+!          IF (FOUND .EQ. 0) THEN
+!              CALL ERROR(SECTION, 42, FILEIO, LNUM)
+!          ELSE
+!              READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
+!     &               P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
+!C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
+! 1800         FORMAT (A6,1X,A16,1X,A6,1X,11F6.0)    
+!
+!C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
+!C-GH 1800         FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)    
+!
+!c             READ (LUNIO,'(F6.2)',IOSTAT=ERR) PHINT
+!c             LNUM = LNUM + 1
+!c             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+!
+!!             Read optional sorghum cultivar coefficients if present
+!              READ (LUNIO, '(2F6.2)', IOSTAT=ERR) PBASE, PSAT
+!              IF (ERR /= 0 .OR. PBASE <= 0. .OR. PSAT <= 0.) THEN
+!                PBASE = -99.0
+!                PSAT  = -99.0
+!              ENDIF
+!
+!          ENDIF
+!
+!          CLOSE(LUNIO)
+!
+!C         ***********************************************************
+!C         ***********************************************************
+!C 
+!C                             READ SPECIES FILE
+!C
+!C         ***********************************************************
+!C         ***********************************************************
+!
+!          FILECC =  TRIM(PATHSR) // FILES
+!          CALL GETLUN('FILEC', LUNCRP)
+!          OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
+!          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,0)
+!
+!          !----------------------------------------------------------
+!          !       Find and Read TEMPERATURE Section
+!          !----------------------------------------------------------
+!          SECTION = '*TEMPE'
+!          CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+!          IF (FOUND .EQ. 0) THEN
+!             CALL ERROR(SECTION, 42, FILECC, LNUM)
+!          ELSE
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR)
+!     &            PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4)
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) RGFIL(1),
+!     &            RGFIL(2),RGFIL(3),RGFIL(4)
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!          ENDIF
+!          REWIND(LUNCRP)
+!
+!          !----------------------------------------------------------
+!          !         Find and Read PHOTOSYNTHESIS section
+!          !----------------------------------------------------------
+!          SECTION = '*PHOTO'
+!          CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+!          IF (FOUND .EQ. 0) THEN
+!              CALL ERROR(SECTION, 42, FILECC, LNUM)
+!          ELSE
+!              CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!              READ(C80,'(8X,F6.3)',IOSTAT=ERR) PARSR
+!              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!              CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!              READ(C80,'(7X,10(1X,F5.0))',IOSTAT=ERR) CO2X(1),CO2X(2),
+!     &             CO2X(3), CO2X(4),CO2X(5), CO2X(6),CO2X(7),CO2X(8),
+!     &             CO2X(9),CO2X(10)
+!              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!              CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!              READ(C80,'(7X,10(1X,F5.2))',IOSTAT=ERR) CO2Y(1),CO2Y(2),
+!     &             CO2Y(3), CO2Y(4),CO2Y(5), CO2Y(6),CO2Y(7),CO2Y(8),
+!     &             CO2Y(9),CO2Y(10)
+!              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!           ENDIF
+!           REWIND(LUNCRP)
+!
+!           !---------------------------------------------------------
+!           !        Find and Read Stress Response
+!           !---------------------------------------------------------
+!           SECTION = '*STRES'
+!           CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+!           IF (FOUND .EQ. 0) THEN
+!              CALL ERROR(SECTION, 42, FILECC, LNUM)
+!           ELSE
+!              CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!              READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFW
+!              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFN
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!             IF (ISWPHO .NE. 'N') THEN
+!               CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!               READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFP
+!               IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!             ENDIF
+! 
+!          ENDIF
+!          REWIND(LUNCRP)
+!
+!          !----------------------------------------------------------
+!          !        Find and Read Seed Growth Parameters
+!          !----------------------------------------------------------
+!          SECTION = '*SEED '
+!          CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+!          IF (FOUND .EQ. 0) THEN
+!             CALL ERROR(SECTION, 42, FILECC, LNUM)
+!          ELSE
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(8X,F6.3)',IOSTAT=ERR) DSGT
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(8X,F6.3)',IOSTAT=ERR) DGET
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(8X,F6.3)',IOSTAT=ERR) SWCG
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!          ENDIF    
+!          REWIND(LUNCRP)
+!
+!          !----------------------------------------------------------
+!          !        Find and Read Root parameters
+!          !----------------------------------------------------------
+!          SECTION = '*ROOT '
+!          CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+!          IF (FOUND .EQ. 0) THEN
+!             CALL ERROR(SECTION, 42, FILECC, LNUM)
+!          ELSE
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(9X,F6.3)',IOSTAT=ERR) PORMIN
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(9X,F6.3)',IOSTAT=ERR) RWUMX
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(9X,F6.3)',IOSTAT=ERR) RLWR
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!
+!             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!             READ(C80,'(9X,F6.3)',IOSTAT=ERR) RWUEP1
+!             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!          ENDIF
+!
+!C-GH      !----------------------------------------------------------
+!C         !        Find and Read Partitioning parameters
+!C         !----------------------------------------------------------
+!C         SECTION = '*PARTI'
+!C         CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+!C         IF (FOUND .EQ. 0) THEN
+!C            CALL ERROR(SECTION, 42, FILECC, LNUM)
+!C         ELSE
+!C            CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!C            READ(C80,'(9X,F6.3)',IOSTAT=ERR) STPC
+!C            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!C
+!C        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!C            READ(C80,'(9X,F6.3)',IOSTAT=ERR) RTPC
+!C            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!C-GH      ENDIF
+!      
+!          CLOSE (LUNCRP)
+!
+!C         ***********************************************************
+!C         ***********************************************************
+!C 
+!C                             READ ECOTYPE FILE
+!C
+!C         ***********************************************************
+!C         ***********************************************************
+!
+!
+!      !--------------------------------------------------------------
+!      !        Open Ecotype File FILEE
+!      !--------------------------------------------------------------
+!        LNUM = 0
+!        PATHL  = INDEX(PATHER,BLANK)
+!        IF (PATHL .LE. 1) THEN
+!          FILEGC = FILEE
+!        ELSE
+!          FILEGC = PATHER(1:(PATHL-1)) // FILEE
+!        ENDIF
+!
+!        CALL GETLUN('FILEE', LUNECO)
+!        OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+!        IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+!        ECOTYP = '      '
+!        LNUM = 0
+!
+!        DO WHILE (ECOTYP .NE. ECONO)
+!  
+!          CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+!          IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+!     &          C255(1:1) .NE. '*') THEN
+!             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+!     &            ROPT,GDDE,RUE,KCAN,STPC,RTPC,TILFAC
+!C-GH &            ROPT,GDDE,RUE,KCAN     
+!C-gh &            ROPT,DJTI,GDDE,RUE,KCAN
+!
+!c             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+!c     &            ROPT,DJTI,GDDE,RUE,KCAN,P3,P4
+!
+! 3100         FORMAT (A6,1X,A16,1X,9(1X,F5.0))
+!C-GH3100         FORMAT (A6,1X,A16,1X,8(1X,F5.0))
+!c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
+!            IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+!          ELSEIF (ISECT .EQ. 0) THEN
+!            CALL ERROR(ERRKEY,7,FILEE,LNUM)
+!          ENDIF
+!        ENDDO
+!        CLOSE (LUNECO)
+
+        KEP = KCAN/(1-0.07)*(1-0.25)
+
+
+     
 
       !---------------------------------------------------------------
       !   Subroutine IPPARM reads FILEP, the PEST progress file.
@@ -823,13 +1127,57 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
 
           STGDOY(14) = YRSIM
 
-
-
-
       !--------------------------------------------------------------
       !             Initialize Variables
       !--------------------------------------------------------------
           CTYPE = 1 
+
+          CALL SG_PHENOL (DYNAMIC,
+     &      APTNUP,BIOMAS,BIOMS2,CSD1, CSD2,
+     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, 
+     &      EMAT, G1, G2, GDDE, GNUP, GPP, GPSM, GRAINN, GRNWT, ICSDUR,
+     &      IDETO, IDUR1, IPRINT, ISDATE, ISTAGE, ISWNIT, ISWWAT,
+     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
+     &      P1, P2O, P2R, P3, P4, P5, P9, PANTH, PANWT, PGRNWT, PHINT,
+     &      PBASE, PSAT, PFLOWR, 
+     &      PLTPOP, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
+     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
+     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
+     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
+     &      AGEFAC, BIOMS1, CUMDTT, CUMPH, GROLF,
+     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM, 
+     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF, 
+     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
+     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
+     &      STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
+     &      TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
+     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
+     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
+     &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
+     &      SeedFrac, VegFrac)         
+          
+             CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
+     &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
+     &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
+     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      FILECC,
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
+     &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
+     &      STMWTO, WTLF, FSLFP)
 
          !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
@@ -905,29 +1253,29 @@ C----------------------------------------------------------------------
 
           IF(YRDOY.EQ.YRPLT) ISTAGE = 7
 
-          CALL SG_PHENOL (APTNUP,BIOMAS,BIOMS2,
-     &    CSD1, CSD2,
-     &    CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, 
-     &    EMAT, G1, G2, GDDE, GNUP, GPP, GPSM, GRAINN, GRNWT, ICSDUR,
-     &    IDETO, IDUR1, IPRINT, ISDATE, ISTAGE, ISWNIT, ISWWAT,
-     &    LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
-     &    P1, P2O, P2R, P3, P4, P5, P9, PANTH, PANWT, PGRNWT, PHINT,
-     &    PBASE, PSAT, PFLOWR, 
-     &    PLTPOP, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
-     &    SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
-     &    SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
-     &    TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
-C         Variables passed through PHENOL to phasei but not used in phenol
-     &    AGEFAC, BIOMS1, CUMDTT, CUMPH, GROLF,
-     &    GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM, 
-     &    MLFWT, MPANWT, MSTMWT, NSTRES, PAF, 
-     &    PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
-     &    RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
-     &    STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
-     &    TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
-     &    TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
-     &    XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
-     &    DAYL, TWILEN, CANWAA, CANNAA,CUMP4)
+          CALL SG_PHENOL (DYNAMIC,
+     &      APTNUP,BIOMAS,BIOMS2,CSD1, CSD2,
+     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, 
+     &      EMAT, G1, G2, GDDE, GNUP, GPP, GPSM, GRAINN, GRNWT, ICSDUR,
+     &      IDETO, IDUR1, IPRINT, ISDATE, ISTAGE, ISWNIT, ISWWAT,
+     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
+     &      P1, P2O, P2R, P3, P4, P5, P9, PANTH, PANWT, PGRNWT, PHINT,
+     &      PBASE, PSAT, PFLOWR, 
+     &      PLTPOP, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
+     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
+     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
+     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
+     &      AGEFAC, BIOMS1, CUMDTT, CUMPH, GROLF,
+     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM, 
+     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF, 
+     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
+     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
+     &      STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
+     &      TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
+     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
+     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
+     &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
+     &      SeedFrac, VegFrac)                                 
 
           ENDIF
         ENDIF
@@ -937,8 +1285,7 @@ C         Variables passed through PHENOL to phasei but not used in phenol
           !------------------------------------------------------------
           IF (ISTAGE .LT. 6) THEN 
  
-
-          CALL SG_GROSUB (DYNAMIC,
+           CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
      &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
      &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
@@ -953,7 +1300,13 @@ C         Variables passed through PHENOL to phasei but not used in phenol
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
      &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4)
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      FILECC,
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
+     &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
+     &      STMWTO, WTLF, FSLFP)
 
           ENDIF
 
@@ -966,10 +1319,9 @@ C         Variables passed through PHENOL to phasei but not used in phenol
 
           DEPMAX = DS(NLAYR)
           CALL SG_ROOTGR (
-     &    CUMDEP, CUMDTT, DEPMAX, DLAYR, DTT,
-     &    ESW, GRORT, ISWNIT, LL, NH4, NLAYR, NO3, 
-C     &    PLTPOP, RLV, RLWR, RTDEP, SHF, SW, SWFAC)
-     & PLTPOP, PORMIN,RLV, RLWR, RTDEP, SAT,SHF, SW, SWFAC)
+     &      CUMDEP, CUMDTT, DEPMAX, DLAYR, DTT,
+     &      ESW, GRORT, ISWNIT, LL, NH4, NLAYR, NO3, 
+     &      PLTPOP, PORMIN,RLV, RLWR, RTDEP, SAT,SHF, SW, SWFAC)
 
           ENDIF
 
@@ -1101,6 +1453,30 @@ c         WTNRT = ROOTN * PLTPOP
          ELSE
             PCNRT = 0.0
          ENDIF
+         IF (YRDOY .GE. YRPLT) THEN
+           CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
+     &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
+     &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
+     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      FILECC,
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
+     &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
+     &      STMWTO, WTLF, FSLFP)
+	   ENDIF 
 
          !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
@@ -1143,6 +1519,31 @@ C
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
+
+
+           CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
+     &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
+     &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
+     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      FILECC,
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
+     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
+     &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
+     &      STMWTO, WTLF, FSLFP)
+
         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
         !  maize, sorghum and millet.
         CALL MZ_OPGROW(CONTROL, ISWITCH,  
@@ -1231,7 +1632,7 @@ C----------------------------------------------------------------------
 ! ERRNUM      !Error number to print to screen in case of error
 ! ESW(20)     !Extractable soil water, cm3 water/cm3 soil  
 ! FILEC       !Path and name of species file (ie. *.spe)
-! FILEIO      !Name if input file (ie. DSSAT45.INP)               
+! FILEIO      !Name if input file (ie. DSSAT46.INP)               
 ! FOUND        !Flag used to warn user if information in an input file does not exist 
 ! G2          !Maximum kernel number (kernels/plant)
 ! G3          !Potential kernel growth rate, mg/kernel/day 
@@ -1300,7 +1701,7 @@ C----------------------------------------------------------------------
 ! PHINT       !Phylochron interval. Number of GDD for new leaf emergence, degrees C 
 ! PHTIM      Not used in CERES except to pass 0 into pest.for
 ! PLA         !Plant leaf area, cm2/plant 
-! PLAG        !Leaf area growth, cm2/plant  
+! PLAG        !Leaf area growth rate, cm2/plant/day (MA 20dec2013: unit correction)  
 ! PLTPOP      !Plant Population, Pl/m  
 ! PODNO       !Ear number, #/m2
 ! PODWT       !Pod (ear) weight, g/m2

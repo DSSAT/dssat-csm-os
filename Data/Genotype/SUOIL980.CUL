@@ -1,0 +1,38 @@
+*SUNFLOWER GENOTYPE COEFFICIENTS - SUOIL980 MODEL
+!
+! Development Aspects                          Range of Values
+!
+! Juvenile phase coefficient           P1             250-450
+! Photoperiodism coefficient           P2             0.5-12
+! Grain filling duration coefficient   P5             550-750
+!
+! Yield aspects
+!
+! Grain number coefficient             G2            1500-3000
+! Kernel growth rate                   G3             1.2-2.4
+! Kernel oil content                   O1              55-85
+!
+! P1: Duration of juvenile phase (in degree C.days with a
+!     base temperature of 4 C)
+! P2: Amount (in days/hour) that development is slowed when crop is grown in
+!     photoperiod shorter than the optimum (which is considered to be 15 hours)
+! P5: Duration of the first anthesis-physiological maturity stage (in degree
+!     days above a base of 4C)
+! G2: Maximum possible number of grains per head (measured in plants grown
+!     under optimum conditions and low plant population density)
+! G3: Potential kernel growth rate during the linear kernel filling phase
+!     (in mg day-1, measured in plants grown under optimum conditions and
+!     low plant population density).
+! O1: Maximum kernel oil content (%)
+@VAR#  VRNAME..........   ECO#    P1    P2    P5    G2    G3    O1
+!                                  1     2     3     4     5     6
+IB0003 894              IB0001 274.0  9.33 600.0 2800.  1.70    65
+IB0005 SUNGRO-380       IB0001 295.0 12.32 600.0 2800.  1.70    65
+IB0008 SH-3000          IB0001 250.0  2.45 600.0 2800.  1.70    65
+IB0009 E-353            IB0001 245.0  3.74 700.0 1500.  2.90    85
+IB0011 FLORASOL         IB0001 360.0  1.60 600.0 2800.  1.70    65
+IB0013 SUNGRO-385       IB0001 325.0 12.32 700.0 2800.  1.90    65
+IB0014 SW-101           IB0001 210.0  3.74 800.0 1000.  2.50    65
+IB0015 S-530            IB0001 335.0 12.32 700.0 3700.  1.90    65
+IB0016 G-100            IB0001 309.0  2.99 732.0 2800.  1.81    65
+IB0017 CONTIFLOR-3      IB0001 325.5  0.14 712.0 2900.  1.67    65
