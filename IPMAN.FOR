@@ -100,8 +100,9 @@ C
 C
 C        Read different IRR amounts for the selected IRR level
 C
+ 70      CONTINUE 
          PERM = 0
- 70      CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
+         CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
          IF (ISECT .EQ. 1) THEN
             READ (CHARTEST,60,IOSTAT=ERRNUM) LN
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)

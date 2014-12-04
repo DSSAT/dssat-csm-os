@@ -935,7 +935,7 @@ C         Read in weather file header.
 !       Print confirmation that header was found to INFO.OUT
         SELECT CASE (TRIM(HEADER(I)))
           CASE('SRAD','TMAX','TMIN','RAIN','DEWP','TDEW','WIND',
-     &        'PAR','RHUM','VAPR')
+     &        'PAR','RHUM','VAPR','VPRS')
             IM = IM + 1
             WRITE(MSG(IM),'(2X,A15,"Col ",I3," - ",I3)') 
      &          HEADER(I), COL(I,1), COL(I,2)

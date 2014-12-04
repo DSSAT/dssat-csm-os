@@ -355,6 +355,7 @@ C
 !          Puddling for rice added
 
              IF (AMT(I) < -1.E-6) THEN
+!            IF (AMT(I) < 1) THEN
                AMT(I) = -1
                NMSG = NMSG + 1
                MSG(NMSG) = 
@@ -365,7 +366,7 @@ C
              PUDDLED = .TRUE.
 !            Depth of puddling input in cm, convert to m
              PLOWPAN = AMT(I) / 100.   
-             IF (PLOWPAN < 1.) THEN
+             IF (PLOWPAN < 0.01) THEN
                PLOWPAN = -1.   
              ENDIF
 
@@ -725,7 +726,7 @@ C-----------------------------------------------------------------------
 
 !     Transfer data to ModuleData
       CALL PUT('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm)
-      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigAtion (mm)
+      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm)
       CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
       CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
 

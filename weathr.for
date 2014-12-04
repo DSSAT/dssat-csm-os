@@ -227,7 +227,8 @@ C     Calculate hourly weather data.
 
 C     Adjust wind speed from reference height to 2m height.
       IF (WINDSP > 0.0) THEN
-        WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+!       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+        WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
       ELSE
         WINDSP = 86.4
       ENDIF
@@ -315,7 +316,8 @@ C     Calculate hourly weather data.
 
 C     Adjust wind speed from reference height to 2m height.
       IF (WINDSP > 0.0) THEN
-        WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+!       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+        WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
       ELSE
         WINDSP = 86.4
       ENDIF
@@ -323,7 +325,7 @@ C     Adjust wind speed from reference height to 2m height.
 C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
 
-      CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
+!      CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
 
 !***********************************************************************
 !***********************************************************************
@@ -403,6 +405,8 @@ C-----------------------------------------------------------------------
       WEATHER % TAIRHR = TAIRHR
       WEATHER % TGRO   = TGRO  
       WEATHER % WINDHR = WINDHR
+
+      CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
 
       RETURN
       END SUBROUTINE WEATHR

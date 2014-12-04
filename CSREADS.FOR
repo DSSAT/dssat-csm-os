@@ -1,5 +1,8 @@
-!  Generic read routines
-!  File contains utilities for generic reading of standard files
+!=======================================================================
+!  CROPSIM GENERIC READ ROUTINES    
+!  Utilities for generic reading of standard files
+!  Last edit 06/06/13 LAH
+!=======================================================================
 
 !  NOTE: Need to get array sizes with: ASIZE=UBOUND(ARRAYOUT,1)
 

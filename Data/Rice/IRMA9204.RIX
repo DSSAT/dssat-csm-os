@@ -69,7 +69,7 @@ IRRI
 
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 1 GE              1     1     S 92004  2150 ORYZA W & N simulated     RIORZ046
+ 1 GE              1     1     S 92004  2150 ORYZA W & N simulated     RIORZ
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              Y     Y     N     N     N     N     N     N     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL

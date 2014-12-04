@@ -19,9 +19,9 @@
 ! VAR-NAME    Name of cultivar
 ! EXPNO       Number of experiments used to estimate cultivar parameters
 ! ECO#        Ecotype code or this cultivar, points to the Ecotype in the
-!             ECO file (currently not used).
+!             ECO file.
 ! P1          Thermal time from seedling emergence to the end of the juvenile
-!             phase (expressed in degree days above a base temperature of 8øC)
+!             phase (expressed in degree days above a base temperature of 8 deg.C)
 !             during which the plant is not responsive to changes in
 !             photoperiod.
 ! P2          Extent to which development (expressed as days) is delayed for
@@ -29,14 +29,16 @@
 !             at which development proceeds at a maximum rate (which is
 !             considered to be 12.5 hours).
 ! P5          Thermal time from silking to physiological maturity (expressed
-!             in degree days above a base temperature of 8øC).
-! G2          Maximum possible number of kernels per plant.
+!             in degree days above a base temperature of 8 deg.C).
+! G2          Maximum possible number of kernels on topmost ear.
 ! G3          Kernel filling rate during the linear grain filling stage and
 !             under optimum conditions (mg/day).
 ! PHINT       Phylochron interval; the interval in thermal time (degree days)
 !             between successive leaf tip appearances.
 ! AX          Leaf surface area (cm2/leaf) of largest leaf.
-! ALL         Leaf longevity (degree days) of the most longevous leaf.
+! LX          Leaf longevity (degree days) of the most longevous leaf.
+!             Leaf longevity is thermal time (degree-days) elapsed between
+!             50% expansion and 50% senescence of each leaf.
 !
 ! PIO         Pioneer
 ! AS          Asgrow (Monsanto)
