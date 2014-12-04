@@ -60,7 +60,7 @@ C-----------------------------------------------------------------------
 
       CHARACTER FILEIO*30,ISWWAT*1,MEEVP*1,MEPHO*1,METEMP*1,
      &  TYPPGN*3,TYPPGL*3, CROP*2
-      INTEGER DAS,DYNAMIC,H,I,NELAYR,NHOUR,
+      INTEGER DAS,DYNAMIC,H,I,NELAYR,NHOUR, DOY, YRDOY, YEAR,
      &  NLAYR,NR5, LUNIO
       LOGICAL DAYTIM
       REAL AGEFAC,AWEV1,AZIR,AZZON(TS),BETA(TS),BETN,
@@ -77,11 +77,11 @@ C-----------------------------------------------------------------------
      &  RADHR(TS),RADN,RCUTIC,REFHT,RHUMHR(TS),RLV(NL),RNITP,ROWSPC,
      &  RWU(NL),RWUH,SALB,SCVIR,SCVP,SHCAP(NL),SLAAD,SLWREF,
      &  SLWSH,SLWSHN,
-     &  SLWSL,SLWSLN,SLWSLO,SNDN,SNUP,ST(NL),ST2(NL),STCOND(NL),
+     &  SLWSL,SLWSLN,SLWSLO,SNDN,SNUP,ST(NL),STn(NL),ST2(NL),STCOND(NL),
      &  SW(NL),SW2(NL),SWFAC,SWE,SWEF,T0HR,TAIRHR(TS),TA,
      &  TCAN(TS),TCANAV,TCANDY,TDAY,TEMPN,THR,TINCR,TRWUP,
-     &  TSHR(NL),TSRF(3),TSRFN(3),TSURF(3,1),HOLDWH,WINDHR(TS),
-     &  XLAI, 
+     &  TSHR(NL), TSRF(3),TSRFN(3),TSURF(3,1),HOLDWH,WINDHR(TS),
+     &  XLAI, TSHRn(NL),
      &  XLMAXT(6),XSW(NL,3),YLMAXT(6),YSCOND(NL,3),YSHCAP(NL,3),TMIN
       REAL SAT(NL),TGRO(TS),TGROAV,TGRODY
       REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR
@@ -93,7 +93,7 @@ C-----------------------------------------------------------------------
       REAL CONDSH, CONDSL, RA, RB(3), RSURF(3), Rnet(3,1)
       REAL Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit, TCnit,
-     &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit
+     &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit, SRFTEMP
 C         previous four output lines added by Bruce Kimball on 2DEC14
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
@@ -166,7 +166,8 @@ C         previous four output lines added by Bruce Kimball on 2DEC14
       Call GET('PLANT', 'RNITP',  RNITP) 
       Call GET('PLANT', 'SLAAD',  SLAAD) 
       Call GET('PLANT', 'XPOD',   XPOD)  
-
+      
+      CALL YR_DOY(YRDOY, YEAR, DOY) !LPM 04DEC12 for OPSTEMP
 C========================================================================
 C MEPHO  MEEVP
 C -----  -----
@@ -225,6 +226,7 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
           DO I=1,NLAYR
 !           TSHR(I) = TAV
             TSHR(I) = TA
+           ST(I) = TSHR(I) 
           ENDDO
           DO I = 1, TS
             TGRO(I) = TA
@@ -239,6 +241,9 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
                TSRF(I) = TA
                TSRFN(I) = TA
             ENDDO
+          SRFTEMP = TSRFN(3)    !LPM 04DEC14 to include the surface temperature as output
+          CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)  !LPM
+          
           CALL ROOTWU(SEASINIT,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
      &      RWU,  TRWUP)                           !Output
@@ -463,7 +468,14 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               DO I=1,3
                 TSRFN(I) = TSURF(I,1)
               ENDDO
-
+              SRFTEMP = TSRFN(3)           !LPM 04DEC14 to include the surface temperature as output
+              DO I=1,NLAYR
+                  TSHRn(I) = TSHR(I)
+              ENDDO
+              CALL SOIL05(
+     &          TSHRn,0,NLAYR,                                  !Input
+     &          STn)                                           !Output
+              ST = STn           !LPM 04DEC14 to include the temperature as output (OPSTEMP)
 C       The following 8 variales added by Bruce Kimball on 1Dec2014
               Enoon = EHR
               Tnoon = THR
@@ -475,6 +487,8 @@ C       The following 8 variales added by Bruce Kimball on 1Dec2014
               LSLnn = LAISL
 
             ENDIF
+            !     Print soil temperature data in STEMP.OUT
+            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
           ENDIF
 
 C       Remember midnight values
@@ -607,7 +621,9 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
 C         previous three output lines added by Bruce Kimball on 2DEC14
-        ENDIF
+      ENDIF
+      
+      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
 
 !***********************************************************************
 !***********************************************************************

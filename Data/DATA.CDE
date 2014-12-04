@@ -507,7 +507,7 @@ SPDD   SOIL ORG P      Stable soil org. P @ user depth (kg/ha)                  
 TFOM   RESIDUE kg/ha   Plant residue remaining (kg [dm]/ha)                     .
 TFON   RESIDUE N kg/ha Plant residue N remaining (kg/ha)                        .
 TGAV   AVG CAN TMP °C  Daily average canopy temp (°C)                           .
-TGNN   NOON CAN TMP °C Noon canopy temperature (°C)                             .
+TGRN   NOON GROWH TMP  Noon Growth temperature (°C)                             .
 TWAD   TOTAL WT kg/ha  Tops+roots+storage wt (kg [dm]/ha)                       .
 
 *PESTS
