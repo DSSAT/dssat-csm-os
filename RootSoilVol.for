@@ -1,4 +1,3 @@
-!=======================================================================
 !  RootSoilVol, Subroutine, C.H.Porter
 !-----------------------------------------------------------------------
 !  Determines volume of soil in direct contact with roots for use by
