@@ -159,7 +159,8 @@ C-----------------------------------------------------------------------
             ENDIF
             CONTROL % YRDIF   = YRDIF
           ENDIF
-          IF (IPLTI .EQ. 'R' .OR.(IPLTI .EQ.'A' .AND. YRPLT.GT.0)) THEN
+          IF (IPLTI .EQ. 'R' .OR.
+     &       (INDEX('AF',IPLTI) > 0 .AND. YRPLT > 0)) THEN
             IF (PWDINF .LT. YRSIM) THEN
               CALL YR_DOY(PWDINF,YRO,IDATE)
               PWDINF = (YRO +  YRDIF) * 1000 + IDATE
@@ -168,7 +169,7 @@ C-----------------------------------------------------------------------
               CALL YR_DOY(PWDINL,YRO,IDATE)
               PWDINL = (YRO +  YRDIF) * 1000 + IDATE
             ENDIF
-          ELSE IF (IPLTI .EQ. 'A' .AND. YRPLT .LT. 0) THEN  
+          ELSE IF (INDEX('AF',IPLTI) > 0 .AND. YRPLT < 0) THEN  
              CALL YR_DOY(YRSIM, YR, ISIM)
              CALL YR_DOY(PWDINL,YRO,IDATE)
              YRDIF = YR - YRO
