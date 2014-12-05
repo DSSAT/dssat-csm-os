@@ -93,7 +93,8 @@ C-----------------------------------------------------------------------
       REAL CONDSH, CONDSL, RA, RB(3), RSURF(3), Rnet(3,1)
       REAL Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit, TCnit,
-     &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit, SRFTEMP
+     &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit, SRFTEMP,
+     &    G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1)
 C         previous four output lines added by Bruce Kimball on 2DEC14
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
@@ -212,8 +213,9 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
      &        Enoon,Tnoon, ETNOON, WINDn,TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
-C         previous three output lines added by Bruce Kimball on 2DEC14
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
+     &    G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)
+C         previous four output lines added by Bruce Kimball on 2DEC14
         ENDIF
 
 !***********************************************************************
@@ -270,8 +272,9 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
      &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
-C         previous three output lines added by Bruce Kimball on 2DEC14
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
+     &    G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)
+C         previous four output lines added by Bruce Kimball on 2DEC14
         ENDIF
 
 C***********************************************************************
@@ -401,7 +404,8 @@ C  KJB and SPSUM hourly.
      &      AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,  !Output
      &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
      &      TSURF,                                        !Output
-     &      CONDSH, CONDSL, RA, RB, RSURF, Rnet)          !Output
+     &      CONDSH, CONDSL, RA, RB, RSURF, Rnet,          !Output
+     &      G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)    !Output
 C       CONDSH, CONDSL, RA, RB, RSURF, RNET output added by
 C           Bruce Kimball on 2DEC14
 
@@ -603,8 +607,9 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
      &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
-C         previous three output lines added by Bruce Kimball on 2DEC14
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
+     &    G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)
+C         previous four output lines added by Bruce Kimball on 2DEC14
          ENDIF
 
 !***********************************************************************
@@ -619,8 +624,9 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
      &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)
-C         previous three output lines added by Bruce Kimball on 2DEC14
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
+     &    G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)
+C         previous four output lines added by Bruce Kimball on 2DEC14
       ENDIF
       
       CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)

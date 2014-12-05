@@ -28,8 +28,9 @@ C=======================================================================
      &  AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,      !Output
      &  PGHR, SLWSH, SLWSL, T0HR, TCAN, THR, TSHR,        !Output
      &  TSURF,                                            !Output
-!     Added by BAK
-     &  CONDSH, CONDSL, RA, RB, RSURF, RNET)              !Output
+!     Added by BAK DEC2014
+     &  CONDSH, CONDSL, RA, RB, RSURF, RNET,              !Output
+     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)        !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -55,7 +56,8 @@ C=======================================================================
      &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6)
 
 !     Added by BAK
-      REAL RB(3),RSURF(3),RNET(3,1)
+      REAL RB(3),RSURF(3),RNET(3,1),
+     &  G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1)
 
       PARAMETER (ERRBND=0.01)
 
@@ -110,8 +112,10 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
      &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
-     &        RB(3), RSURF, RNET)                            !Output
-C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+     &        RB(3), RSURF, RNET,                         !Output
+     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)  !Output
+C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
+C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
 
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
@@ -148,8 +152,10 @@ C            CONDSH = CONDSH * (THR-RWUH)/THR
      &          RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,    !Input
      &          WINDHR,                                   !Input
      &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,   !Output
-     &          RB, RSURF, RNET)                          !Output
-C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+     &          RB, RSURF, RNET,                          !Output
+     &          G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)!Output
+C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
+C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
 
               TSUM = TSUM + TCAN
               IF (ITER .GT. 5) THEN
@@ -210,7 +216,9 @@ C     Night hours or bare soil.
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
      &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
-     &        RB, RSURF, RNET)                            !Output
+     &        RB, RSURF, RNET,                            !Output
+     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)  !Output
+C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
 
             TSUM = TSUM + TCAN
@@ -596,8 +604,10 @@ C=======================================================================
      &  RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,            !Input
      &  WINDHR,                                           !Input
      &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,           !Output
-     &  RB, RSURF, RNET)                                  !Output
-C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+     &  RB, RSURF, RNET,                                  !Output
+     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)        !Output
+C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
+C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -616,8 +626,8 @@ C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
      &  SHAIRD,TK,MWATER,RGAS,MAIR,LAISHV,LAISLV,RADBK(3),
      &  USTAR,XLAI,ZERO
 
-      REAL RB(3), RSURF(3)
-C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+      REAL RB(3), RSURF(3),RSSH,RSSL,RSSS
+C         RB, RSURF RSSH RSSL RSSS added DEC2014 by Bruce Kimball
 
       PARAMETER (RGAS=8.314,MWATER=0.01802,MAIR=0.02897,PATM=101300.0,
      &  SHAIRD=1005.0, ZERO=1.0E-6)

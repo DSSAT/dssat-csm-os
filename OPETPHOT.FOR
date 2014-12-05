@@ -15,7 +15,8 @@ C=======================================================================
      &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
      &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,        !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
+     &    G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
 C-------------------------------------------------------------------
 C
@@ -37,8 +38,9 @@ C-------------------------------------------------------------------
       REAL TGRO(24), TGROAV
       REAL Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit(3), TSRFN(3), CSHnit, CSLnit, LSHnit, LSLnit
-C         previous three output lines added by Bruce Kimball on 2DEC14
+     &    TCnit, TSRnit(3), TSRFN(3), CSHnit, CSLnit, LSHnit, LSLnit,
+     &    G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1)
+C         previous four output lines added by Bruce Kimball on 2DEC14
 
       LOGICAL FEXIST
 
@@ -87,11 +89,13 @@ C         previous three output lines added by Bruce Kimball on 2DEC14
         WRITE (NOUTDC,120)
   120   FORMAT('@YEAR DOY   DAS',
      &   '    LI%D   PHAD   PHAN    LI%N   SLLN   SLHN',
-     &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV',
+     &   '   N%LN   N%HN   LMLN   LMHN   TGNN   TGAV',
      &   '   ENN    TNN    ETn    WDNN   TCNN    CSHn         CSLn    ',
      &   ' LSHn   LSLn   ETnt   TEMt   Enit   Tnit   WINn   TCnt',
      &   '   TSR1t  TSR2t TSR3t   TSR1n  TSR2n TSR3n',
-     &   '      CSHt        CSLt     LSHt   LSLt')
+     &   '      CSHt        CSLt     LSHt   LSLt  ', 
+     &   '   G       LH       LHEAT1   LHEAT2   LHEAT3    RSSH',
+     &   '     RSSL     RSSS      SH     SHEAT1   SHEAT2   SHEAT3')
 
 !***********************************************************************
 !***********************************************************************
@@ -112,12 +116,14 @@ C-----------------------------------------------------------------------
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(12), TGROAV,
      &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit
+     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
+     &    G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT     
 C         previous three output lines added by Bruce Kimball on 2DEC14
 
- 300      FORMAT(1X,I4,1X,I3.3,1X,I5,
+ 300     FORMAT(1X,I4,1X,I3.3,1X,I5,
      &      F8.2,2(1X,F6.2),F8.2,6(1X,F6.2),2(1X,F6.1),
-     &      5(1x,F6.2),2(1x,E11.4),14(1x,F6.3),2(1x,E11.4),2(1x,F6.3))
+     &      5(1x,F6.2),2(1x,E11.4),14(1x,F6.3),2(1x,E11.4),2(1x,F6.3),
+     &      12(1x,F8.3))
         ENDIF
 
         IF (DYNAMIC .EQ. SEASEND) THEN
