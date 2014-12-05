@@ -740,8 +740,18 @@ C
          GRORT  = CARBO - GROSTM
          GROLF  = 0.0
 
-         IF (GRORT .LT. 0.08*CARBO) THEN
-            GRORT = CARBO*0.08
+c-MA         IF (GRORT .LT. 0.08*CARBO) THEN
+c-MA        GRORT =CARBO *0.08
+c-MA         GROSTM = CARBO*0.92
+c-MA         ENDIF
+   
+c MA 4dec2014 
+c change to fix the root biomass partitioning during stage 4 
+c verification done in the standard dssat shell x file + the x file for sorghum in west Africa
+c generally this change improved the simulation in term of grain yield and above ground biomass
+   
+          IF (GRORT .GT. 0.08*CARBO) THEN
+            GRORT =CARBO *0.08
             GROSTM = CARBO*0.92
          ENDIF
 
