@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 40
+        INTEGER :: Build = 41
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.0.41 chp 11/04/2014 KThorp changes for portability
 !       4.6.0.40 chp 09/19/2014 Minor changes
 !       4.6.0.39 chp 07/25/2014 Allow daily input of CO2 in weather file (header CO2 or DCO2)
 !                               Move PI and RAD to global constants

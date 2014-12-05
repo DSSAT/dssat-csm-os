@@ -26,7 +26,8 @@ save
 !------------------------------------------------------------------------------ 
 character(len=6), parameter :: errkey='SALUS'
 character :: iswwat*1, iswnit*1, iswpho*1, section*6, varno*6, filec*12, vrname*16, fileio*30
-character :: pathcr*80, message*78(10)
+character :: pathcr*80
+character*78, dimension(10) :: message
 logical :: fexist, freezed, killed, germinate, emerge
 integer :: err, layer, cumslowdev, cumslowdevstop, dae, dap, doy, doyp, dynamic, errnum, linc, lnum, lunio
 integer :: mature, mdate, nlayr, yrdoy, yrend, yrplt, found, timdif, gstage, gyrdoySim(20), yrsim

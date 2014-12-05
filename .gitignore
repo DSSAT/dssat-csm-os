@@ -1,7 +1,7 @@
 #ignore thumbnails created by windows
 Thumbs.db
 *.onetoc?
-*.gitignore
+.gitignore
 #Ignore files build by Visual Studio
 *.obj
 *.[eE][xX][eE]
@@ -42,3 +42,4 @@ resource.h
 *.LST
 *.o
 *.mod
+*.ico
