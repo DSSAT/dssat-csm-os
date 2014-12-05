@@ -774,7 +774,7 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
          !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
           CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    CANHT, CANWH, DTT, HI,HIP, KSTRES, MDATE, NLAYR,NSTRES,
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
@@ -1182,7 +1182,7 @@ C--------------------------------------------------------------------
          !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
           CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    CANHT, CANWH, DTT, HI, HIP,KSTRES, MDATE, NLAYR,NSTRES,
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
@@ -1481,7 +1481,7 @@ c         WTNRT = ROOTN * PLTPOP
          !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
          CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE,NLAYR,NSTRES, 
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
@@ -1547,7 +1547,7 @@ C----------------------------------------------------------------------
         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
         !  maize, sorghum and millet.
         CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
+     &    CANHT, CANWH, DTT, HI,HIP, KSTRES,MDATE, NLAYR,NSTRES, 
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
