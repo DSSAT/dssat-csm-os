@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 42
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-FAutoPl  '
 
 !     Version history:  
 !       4.6.0.42 chp 12/05/2014 Dates and headers, JDATE.CDE fix, more portability fixes, minor changes

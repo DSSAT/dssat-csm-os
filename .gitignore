@@ -4,7 +4,7 @@ Thumbs.db
 .gitignore
 #Ignore files build by Visual Studio
 *.obj
-*.exe
+*.[eE][xX][eE]
 *.pdb
 *.user
 *.aps
@@ -40,4 +40,6 @@ resource.h
 *.u2d
 *.OUT
 *.LST
+*.o
+*.mod
 *.ico

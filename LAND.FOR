@@ -222,8 +222,9 @@ C-----------------------------------------------------------------------
      &    MDATE, OMADATA, TILLVALS, YRPLT)                !Output
 
 C-----------------------------------------------------------------------
-      IF (YRPLT < YRSIM .AND. CROP /= 'FA' .AND. IPLTI /= 'A') THEN
-        CALL ERROR(ERRKEY,2,' ',0)
+      IF (YRPLT < YRSIM .AND. CROP /= 'FA' .AND.
+     &    INDEX('AF', IPLTI) == 0) THEN
+          CALL ERROR(ERRKEY,2,' ',0)
       ENDIF
 
 C-----------------------------------------------------------------------
