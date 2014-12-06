@@ -13,6 +13,7 @@ C  06/11/2002 GH  Modified for Y2K
 C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 C  08/20/2002 GH  Added YRDIF as a constructred variable
 !  06/10/2005 CHP Fixed initialization for automatic planting
+!  12/05/2014 DK  Forced planting for automatic planting ("F" option)
 C-----------------------------------------------------------------------
 C  INPUT : JUL,DLAYR,LL,DUL,SW,ST,PWDINF,PWDINL,SWPLTL,
 C          SWPLTH,SWPLTD,PTX,PTTN,YRPLT
