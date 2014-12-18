@@ -4206,8 +4206,9 @@
             PLAS = AMIN1(PLASTMP,
      &       PLASF(ISTAGE)*GPLA(ISTAGE-1)*DU/PD(ISTAGE))
           ELSEIF (ISTAGE.EQ.3.OR.ISTAGE.EQ.4.OR.ISTAGE.EQ.5) THEN
-            ! Determine if N shortage senescence triggered
-            IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
+             ! Determine if N shortage senescence triggered
+C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
+            IF (ISWNIT.NE.'N'.AND.XSTAGE.GT.5.0.AND.LCNF.LT.NFSF) THEN              
               XSTAGEFS = XSTAGE
               GPLASENF = AMAX1(0.0,PLA-SENLA)
             ENDIF

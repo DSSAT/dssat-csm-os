@@ -8,11 +8,11 @@ C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C
-C     CROPPING SYSTEM MODEL Version 4.6
+C     CROPPING SYSTEM MODEL Version 4.6.1
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     February 2014  CSM Version 4.6
+C     December 2014  CSM Version 4.6.1
 C
 C     Gerrit Hoogenboom, J.W. Jones, Cheryl Porter, K.J. Boote, 
 C
