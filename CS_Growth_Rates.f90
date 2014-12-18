@@ -179,7 +179,7 @@
 !-----------------------------------------------------------------------
 
             PARI = 0.0
-            PARI1 = (1.0 - EXP((-KCAN)*LAI))
+            PARI1 = (1.0 - EXP((-KCAN)*LAI))                                                                           !EQN 260
             IF (PARIP.GT.0.0) THEN
               ! From competition model
               IF (ISWDIS(LENDIS:LENDIS).NE.'N') THEN
@@ -188,7 +188,7 @@
                 PARI = PARIP/100.0
               ENDIF
             ELSE
-              PARI = PARI1
+              PARI = PARI1                                                                                             !EQN 260
               ! LAH For row crops may need to change 
               ! In original Ceres maize, kcan is calculated as:
               ! 1.5 - 0.768*((rowspc*0.01)**2*pltpop)**0.1
@@ -200,13 +200,13 @@
 !-----------------------------------------------------------------------
 
             ! End of day interception = today's starting interception
-            IF (MEPHO.EQ.'M') CARBOEND = CARBOTMPM * PARI/PLTPOP
-            IF (MEPHO.EQ.'I') CARBOEND = CARBOTMPI * PARI/PLTPOP
-            IF (MEPHO.EQ.'R') CARBOEND = CARBOTMPR * PARI/PLTPOP
+            IF (MEPHO.EQ.'M') CARBOEND = CARBOTMPM * PARI/PLTPOP                                                       !EQN 277
+            IF (MEPHO.EQ.'I') CARBOEND = CARBOTMPI * PARI/PLTPOP                                                       !EQN 277
+            IF (MEPHO.EQ.'R') CARBOEND = CARBOTMPR * PARI/PLTPOP                                                       !EQN 277
 
-            CARBOADJ = (CARBOEND-CARBOBEG)/2.0*EMRGFRPREV
+            CARBOADJ = (CARBOEND-CARBOBEG)/2.0*EMRGFRPREV                                                              !EQN 278
             ! But note, no adjustment if leaf kill
-            PARMJIADJ = PARMJFAC*SRADPREV*(PARI-PARIPREV)/2.0*EMRGFR
+            PARMJIADJ = PARMJFAC*SRADPREV*(PARI-PARIPREV)/2.0*EMRGFR                                                   !EQN 279
 
 !-----------------------------------------------------------------------
 !           Calculate process rate factors
@@ -218,11 +218,11 @@
             WFP = 1.0
             IF (ISWWAT.NE.'N') THEN
               IF (EOP.GT.0.0) THEN
-                WUPR = TRWUP/(EOP*0.1)
+                WUPR = TRWUP/(EOP*0.1)                                                                                 !EQN 146
                 IF (WFGU-WFGL.GT.0.0) &
-                 WFG = AMAX1(0.0,AMIN1(1.0,(WUPR-WFGL)/(WFGU-WFGL)))
+                 WFG = AMAX1(0.0,AMIN1(1.0,(WUPR-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
                 IF (WFPU-WFPL.GT.0.0) &
-                 WFP = AMAX1(0.0,AMIN1(1.0,(WUPR-WFPL)/(WFPU-WFPL)))
+                 WFP = AMAX1(0.0,AMIN1(1.0,(WUPR-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
               ENDIF
               IF (ISWWATEARLY.EQ.'N') THEN
                 WFG = 1.0
@@ -235,17 +235,17 @@
             IF (ISWNIT.NE.'N') THEN
               IF (LFWT.GT.1.0E-5) THEN
                 !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))
-                LNCGL = LNCM + NFGL * (LNCX-LNCM)
-                LNCGU = LNCM + NFGU * (LNCX-LNCM)
+                LNCGL = LNCM + NFGL * (LNCX-LNCM)                                                                      !EQN 164
+                LNCGU = LNCM + NFGU * (LNCX-LNCM)                                                                      !EQN 165
                 IF (LNCGU - LNCGL > 1.E-6) THEN
-                 NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))
+                 NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))                                                 !EQN 163
                 ELSE
                  NFG = 1.0 
                 ENDIF
                 LNCPL = LNCM + NFPL * (LNCX-LNCM)
                 LNCPU = LNCM + NFPU * (LNCX-LNCM)
-                IF (LNCPU - LNCPL > 1.E-6) THEN
-                 NFP =AMIN1(1.0,AMAX1(0.0,(LANC-LNCPL)/(LNCPU-LNCPL)))
+                IF (LNCPU - LNCPL > 1.E-6) THEN                                                                        !EQN 167
+                 NFP =AMIN1(1.0,AMAX1(0.0,(LANC-LNCPL)/(LNCPU-LNCPL)))                                                 !EQN 166
                 ELSE
                  NFP = 1.0 
                 ENDIF
@@ -266,7 +266,7 @@
 
             ! Reserves
             IF (RSFPU.GT.0.0.AND.RSFPU.GT.0.0) THEN
-              RSFP = 1.-AMIN1(1.,AMAX1(0.,(RSCD-RSFPL)/(RSFPU-RSFPL)))
+              RSFP = 1.-AMIN1(1.,AMAX1(0.,(RSCD-RSFPL)/(RSFPU-RSFPL)))                                                 !EQN 260
             ELSE
               RSFP = 1.0
             ENDIF
@@ -277,17 +277,17 @@
             ! May want to introduce:
             ! IF (TMEAN20.LT.0.0) TFG = 0.0
             ! IF (TMEAN20.LT.0.0) TFP = 0.0
-            Tfp = TFAC4(trphs,tmean,TTOUT)
-            Tfg = TFAC4(trlfg,tmean,TTOUT)
+            Tfp = TFAC4(trphs,tmean,TTOUT)                                                                             !EQN 056
+            Tfg = TFAC4(trlfg,tmean,TTOUT)                                                                             !EQN 058
             IF (CFLTFG.EQ.'N') TFG = 1.0
 
             ! Vapour pressure
             VPDFP = 1.0
             IF (PHTV.GT.0.0) THEN
               IF (TDEW.LE.-98.0) TDEW = TMIN
-              VPD = CSVPSAT(tmax) - CSVPSAT(TDEW)    ! Pa 
+              VPD = CSVPSAT(tmax) - CSVPSAT(TDEW)    ! Pa                                                              !EQN 262
               IF (VPD/1000.0.GT.PHTV) &
-               VPDFP = AMAX1(0.0,1.0+PHSV*(VPD/1000.0-PHTV))
+               VPDFP = AMAX1(0.0,1.0+PHSV*(VPD/1000.0-PHTV))                                                           !EQN 263
             ENDIF
 
             ! CO2 factor using look-up table
@@ -318,14 +318,14 @@
             LAGEG = 0.0
             LNUMG = 0.0
             ! Reduce PHINT with development stage (LAH Sept 2012)
-            PHINT = 1.0/((1.0/PHINTS)*(1.0-PHINTFAC*DSTAGE))
+            PHINT = 1.0/((1.0/PHINTS)*(1.0-PHINTFAC*DSTAGE))                                                           !EQN 003
             !LNUMEND = LNUM + (TT*EMRGFR)/PHINT !LPM 17MY14  FLN and LNUMEND are not used, deleted 
             !
             !! Restrict to maximum
             !LNUMEND = AMIN1(FLOAT(LNUMX),LNUMEND)
             !IF(FLN.GT.0.0) LNUMEND = AMIN1(FLN,LNUMEND)
             !!LNUMG = LNUMEND - LNUM
-            LNUMG = (TT*EMRGFR)/PHINT
+            LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
         
     END SUBROUTINE CS_Growth_Rates
     

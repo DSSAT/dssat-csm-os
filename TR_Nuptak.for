@@ -300,7 +300,9 @@ C-----------------------------------------------------------------------
       DROOTN = 0.0
       IF (NDEM .GT. 0) THEN
          DSTOVN = TNDEM/NDEM*TRNU-     PTF *TRNLOS/(PLANTS*10.0)
+	   IF (DSTOVN. LT. 0.0) DSTOVN =0.0   !TO PREVENT NEGATIVE VALUE US/RO MAR 26 2014
          DROOTN = RNDEM/NDEM*TRNU-(1.0-PTF)*TRNLOS/(PLANTS*10.0)
+	   IF (DROOTN. LT. 0.0) DROOTN =0.0   !TO PREVENT NEGATIVE VALUE US/RO MAR 26 2014
       ENDIF
 
       STOVN = STOVN + DSTOVN

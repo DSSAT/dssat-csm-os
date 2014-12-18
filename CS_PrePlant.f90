@@ -58,9 +58,9 @@
         !-----------------------------------------------------------------------
         
         YEARDOY = YEAR*1000 + DOY
-        TMEAN = (TMAX+TMIN)/2.0
+        TMEAN = (TMAX+TMIN)/2.0                                                                                        !EQN 057
         TMEANSURF = TMEAN
-        CO2AIR = 1.0E12*CO2*1.0E-6*44.0 / (8.314*1.0E7*((TMAX+TMIN)*0.5+273.0))  ! CO2 in g/m3
+        CO2AIR = 1.0E12*CO2*1.0E-6*44.0 / (8.314*1.0E7*((TMAX+TMIN)*0.5+273.0))  ! CO2 in g/m3                         !EQN 266
         
         !-----------------------------------------------------------------------
         !       Determine if today is planting day
@@ -110,10 +110,10 @@
                                 CYCLE
                             ENDIF
                             DTRY = MIN(DLAYR(I),SWPLTD - XDEPL)
-                            CUMSW = CUMSW + DTRY *(MAX(SW(I) - LL(I),0.0)) / (DUL(I) - LL(I))
+                            CUMSW = CUMSW + DTRY *(MAX(SW(I) - LL(I),0.0)) / (DUL(I) - LL(I))                          !EQN 032
                             I = I + 1
                         END DO
-                        AVGSW = (CUMSW / SWPLTD) * 100.0
+                        AVGSW = (CUMSW / SWPLTD) * 100.0                                                               !EQN 033
                         IF (TSDEP .GE. PTTN .AND. TSDEP .LE. PTX) THEN
                             IF (AVGSW .GE. SWPLTL .AND. AVGSW .LE. SWPLTH) THEN
                                 PLYEARDOY = YEARDOY
@@ -139,8 +139,8 @@
             ISOILN = 0.0
             ISOILH2O = 0.0
             DO I = 1, NLAYR
-                ISOILN = ISOILN + NO3LEFT(I)/(10.0/(BD(I)*(DLAYR(I))))+ NH4LEFT(I)/(10.0/(BD(I)*(DLAYR(I))))
-                ISOILH2O = ISOILH2O + SW(I)*DLAYR(I)
+                ISOILN = ISOILN + NO3LEFT(I)/(10.0/(BD(I)*(DLAYR(I))))+ NH4LEFT(I)/(10.0/(BD(I)*(DLAYR(I))))           !EQN 030
+                ISOILH2O = ISOILH2O + SW(I)*DLAYR(I)                                                                   !EQN 031
             ENDDO
             ! Plant population as established; if no data,as planted
             IF (PLTPOPE.GT.0) THEN

@@ -435,10 +435,10 @@ C       AZZON & BETA from WEATHER constructed data type
 	INTEGER H 
 
       REAL A,B,C1,C2,C3,C4,AZIMD,AZIR,AZZON(TS),BETA(TS),BETN,CANHT,
-     &  CANWH,ETA,FRACSH,GAMMA,PI,RAD,RBETA,ROWSPC,
+     &  CANWH,ETA,FRACSH,GAMMA,RBETA,ROWSPC,
      &  SHADE,SHLEN,SHPERP,STOUCH,TINCR,ZERO
 
-      PARAMETER (PI=3.14159, RAD=PI/180.0, ZERO=1.0E-6)
+      PARAMETER (ZERO=1.0E-6)
       PARAMETER (TINCR=24.0/TS)
 
 !     Transfer values from constructed data types into local variables.

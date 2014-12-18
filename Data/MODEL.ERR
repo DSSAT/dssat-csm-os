@@ -139,6 +139,9 @@ Batch file not found.  Please check file name or create file.
 CSM      29
 File not found.  Please check file name or create file.
 
+CSM      30
+Output.CDE not found. Program will stop.
+
 CSM      33
 End of file encountered.
 

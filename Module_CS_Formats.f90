@@ -25,7 +25,7 @@
         CHARACTER(LEN=256) :: FMT290 = '(6X, "Germination  (dap)          ",6X,I7,  4X,I7,  /,6X,' // & 
             '"Emergence    (dap)          ", 6X,I7,  4X,I7    )'
         CHARACTER(LEN=128) :: FMT291 = '(6X,A13, "(dap)          "         ,6X,I7  ,4X,I7    )'
-        CHARACTER(LEN=128) :: FMT298 = '("  HWAH  HWUH","  H#AH  H#GH  LAIX  L#SH BR#AH","  CWAH  VWAH  HIAH  RWAH",' // &
+        CHARACTER(LEN=256) :: FMT298 = '("  HWAH  HWUH","  H#AH  H#GH  LAIX  L#SH BR#AH","  CWAH  VWAH  HIAH  RWAH",' // &
             '"  HN%H  TNAH", "  CNAH  HNAH","  HINH PLPOP","  NICH"," SRADA TMAXA TMINA  PRCP")'
         CHARACTER(LEN=256) :: FMT300 = '(/,10X,A," YIELD : ",I8," kg/ha    [Dry weight] ",/)'
         CHARACTER(LEN=512) :: FMT305 = '(6X, "AboveGround (kg dm/ha)      ",6X,I7,  4X,I7,  /,6X,' //&

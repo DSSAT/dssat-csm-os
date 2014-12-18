@@ -65,7 +65,7 @@
             IF (LAI .LE. 0.0) THEN
                 ALBEDO = ALBEDOS
             ELSE
-                ALBEDO = 0.23-(0.23-ALBEDOS)*EXP(-0.75*LAI)
+                ALBEDO = 0.23-(0.23-ALBEDOS)*EXP(-0.75*LAI)                                                            !EQN 073
             ENDIF
         ELSE
             ALBEDO = ALBEDOS  

@@ -28,21 +28,21 @@
         !           Reserves growth
         !-----------------------------------------------------------------------
 
-        GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ-GROSR
+        GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ-GROSR                                       !EQN 309
         IF(GRORS.LT.0.0.AND.GRORS.GT.-1.0E-07) GRORS = 0.0
 
         ! Reserves to STORAGE ROOT if conc too great (overflow!)
         SRWTGRS = 0.0
         ! Determine potential new concentration
-        IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ.GT.0.0) TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &
+        IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ.GT.0.0) TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &  !EQN 310
         (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))
         IF(TVR1.LT.0.0.AND.TVR1.GT.-1.0E-07) TVR1 = 0.0
         IF (TVR1.GT.RSPCO/100.0) THEN   ! If potential>standard 
-            TVR2 = RSWT+GRORS             ! What rswt could be
-            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-SENLFG-SENLFGRS+STWT+CRWT+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be 
-            SRWTGRS = (TVR2 - TVR3) 
+            TVR2 = RSWT+GRORS             ! What rswt could be                                                         !EQN 311
+            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-SENLFG-SENLFGRS+STWT+CRWT+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
+            SRWTGRS = (TVR2 - TVR3)                                                                                    !EQN 313
             ! Determine FINAL new concentration
-            IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ.GT.0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &
+            IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ.GT.0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &             !EQN 314
                 (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
         ENDIF
 
@@ -51,7 +51,7 @@
         !-----------------------------------------------------------------------
 
         CANHTG = 0.0
-        CANHTG = SERX*DU
+        CANHTG = SERX*DU                                                                                               !EQN 316
 
         !-----------------------------------------------------------------------
         !           Root depth and length growth, and distribution
@@ -68,12 +68,12 @@
             IF (ISWWAT.NE.'N') THEN
                 LRTIP = CSIDLAYR (NLAYR, DLAYR, RTDEP) ! Root tip layer
                 IF (LRTIP.GT.1) THEN
-                    SWPRTIP = SWP(LRTIP)
+                    SWPRTIP = SWP(LRTIP)                                                                               !EQN 392a
                 ELSE
-                    SWPRTIP = AMIN1(SWP(2),(SWP(2)-((DLAYR(1)-RTDEP)/DLAYR(1))*(SWP(2)-SWP(1))))
+                    SWPRTIP = AMIN1(SWP(2),(SWP(2)-((DLAYR(1)-RTDEP)/DLAYR(1))*(SWP(2)-SWP(1))))                       !EQN 392b
                 ENDIF
                 WFRG = 1.0
-                IF (WFRTG.GT.0.0)WFRG = AMAX1(0.0,AMIN1(1.0,(SWPRTIP/WFRTG)))
+                IF (WFRTG.GT.0.0)WFRG = AMAX1(0.0,AMIN1(1.0,(SWPRTIP/WFRTG)))                                          !EQN 393
             ELSE
                 WFRG = 1.0
             ENDIF
@@ -82,24 +82,24 @@
             RTDEPG = 0.0
             IF (ISWWAT.NE.'N') THEN
                 ! LAH Note reduced effect of SHF, AND no acceleration
-                RTDEPG = TT*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG
+                RTDEPG = TT*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
             ELSE
-                RTDEPG = TT*RDGS/STDAY*GERMFR
+                RTDEPG = TT*RDGS/STDAY*GERMFR                                                                          !EQN 391b
             ENDIF
             L = 0
             CUMDEP = 0.0
-            RTDEPTMP = RTDEP+RTDEPG
+            RTDEPTMP = RTDEP+RTDEPG                                                                                    !EQN 402
             DO WHILE ((CUMDEP.LE.RTDEPTMP) .AND. (L.LT.NLAYR))
                 L = L + 1
-                CUMDEP = CUMDEP + DLAYR(L)
+                CUMDEP = CUMDEP + DLAYR(L)                                                                             !EQN 401
                 ! LAH Limit on WFRG. 0 WFRG (when 1 layer) -> 0 TRLDF.
                 IF (ISWWAT.NE.'N'.AND.WFRTG.GT.0.0) THEN
-                    WFRG = AMIN1(1.0,AMAX1(0.1,SWP(L)/WFRTG))
+                    WFRG = AMIN1(1.0,AMAX1(0.1,SWP(L)/WFRTG))                                                          !EQN 394
                 ELSE
                     WFRG = 1.0
                 ENDIF
                 IF (ISWNIT.NE.'N'.AND.NCRG.GT.0.0) THEN
-                    NFRG = AMIN1(1.0,AMAX1(0.1,(NO3LEFT(L)+NH4LEFT(L))/NCRG))
+                    NFRG = AMIN1(1.0,AMAX1(0.1,(NO3LEFT(L)+NH4LEFT(L))/NCRG))                                          !EQN 168
                 ELSE
                     NFRG = 1.0
                 ENDIF 
@@ -107,19 +107,19 @@
                 ! lots H20,no N,or inverse, and therefore need roots
                 ! But with KSAS8101,AMAX1 lowered yield. Return to AMIN1
                 !RLDF(L) = AMAX1(WFRG,NFRG)*SHF(L)*DLAYR(L)
-                RLDF(L) = AMIN1(WFRG,NFRG)*SHF(L)*DLAYR(L)
+                RLDF(L) = AMIN1(WFRG,NFRG)*SHF(L)*DLAYR(L)                                                             !EQN 403
             END DO
             IF (L.GT.0.AND.CUMDEP.GT.RTDEPTMP) RLDF(L) = RLDF(L)*(1.0-((CUMDEP-RTDEPTMP)/DLAYR(L)))
             NLAYRROOT = L
             ! Root senescence
             SENRTG = 0.0
             DO L = 1, NLAYRROOT
-                RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TT/STDAY 
+                RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TT/STDAY                                                             !EQN 395
                 ! LAH Temperature effect above is not from soil temp
-                IF (RTWT.GT.0.0) RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT
-                SENRTG = SENRTG + RTWTSL(L)
+                IF (RTWT.GT.0.0) RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
+                SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
                 IF (ISWNIT.NE.'N') THEN
-                    RTNSL(L) = RTWTSL(L)*RANC
+                    RTNSL(L) = RTWTSL(L)*RANC                                                                          !EQN 398
                 ELSE
                     RTNSL(L) = 0.0
                 ENDIF  
@@ -132,7 +132,7 @@
             END DO
             IF (TRLDF.GT.0.0) THEN
                 DO  L = 1, NLAYRROOT
-                    RTWTGL(L) = (RLDF(L)/TRLDF)*(RTWTGADJ)
+                    RTWTGL(L) = (RLDF(L)/TRLDF)*(RTWTGADJ)                                                             !EQN 400
                 END DO
             ENDIF
         ENDIF
@@ -146,8 +146,8 @@
         AH2OROOTZONE = 0.0
         H2OROOTZONE = 0.0
         DO L = 1, NLAYR
-            AH2OPROFILE = AH2OPROFILE+((SW(L)-LL(L))*DLAYR(L))*10.
-            H2OPROFILE = H2OPROFILE + SW(L)*DLAYR(L)*10.0
+            AH2OPROFILE = AH2OPROFILE+((SW(L)-LL(L))*DLAYR(L))*10.                                                     !EQN 404              
+            H2OPROFILE = H2OPROFILE + SW(L)*DLAYR(L)*10.0                                                              !EQN 405
             IF (RLV(L).GT.0.0) THEN
                 AH2OROOTZONE=AH2OROOTZONE+((SW(L)-LL(L))*DLAYR(L))*10.
                 H2OROOTZONE = H2OROOTZONE+SW(L)*DLAYR(L)*10.
@@ -168,16 +168,16 @@
         SENCAGS = 0.0
         SENLAGS = 0.0
         SENNAGS = 0.0
-        SENWALG(0) = SENTOPLITTERG * PLTPOP*10.0
-        SENCALG(0) = SENWALG(0) * 0.4 
-        SENLALG(0) = (SENLFG*LLIGP/100) * PLTPOP*10.0
-        SENNALG(0) = SENNLFG * SENFR * PLTPOP*10.0
+        SENWALG(0) = SENTOPLITTERG * PLTPOP*10.0                                                                       !EQN 406
+        SENCALG(0) = SENWALG(0) * 0.4                                                                                  !EQN 407
+        SENLALG(0) = (SENLFG*LLIGP/100) * PLTPOP*10.0                                                                  !EQN 408
+        SENNALG(0) = SENNLFG * SENFR * PLTPOP*10.0                                                                     !EQN 409
         ! Root senescence
         DO L = 1, NLAYR
-            SENWALG(L) = RTWTSL(L) * PLTPOP*10.0
-            SENNALG(L) = RTNSL(L) * PLTPOP*10.0
-            SENCALG(L) = SENWALG(L) * 0.4
-            SENLALG(L) = SENWALG(L) * RLIGP/100.0
+            SENWALG(L) = RTWTSL(L) * PLTPOP*10.0                                                                       !EQN 410
+            SENNALG(L) = RTNSL(L) * PLTPOP*10.0                                                                        !EQN 411
+            SENCALG(L) = SENWALG(L) * 0.4                                                                              !EQN 412
+            SENLALG(L) = SENWALG(L) * RLIGP/100.0                                                                      !EQN 413
             SENWAGS = SENWAGS + SENWALG(L)
             SENCAGS = SENCAGS + SENCALG(L)
             SENLAGS = SENLAGS + SENLALG(L)

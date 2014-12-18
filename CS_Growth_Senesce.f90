@@ -39,12 +39,12 @@
         ! Leaf senescence - phyllochron or real time driven
         LAPSTMP = 0.0
         DO L = 1,LNUMSG
-            IF (LAGETT(L)+TTLFLIFE*EMRGFR.LE.LLIFATT+LLIFGTT) EXIT
+            IF (LAGETT(L)+TTLFLIFE*EMRGFR.LE.LLIFATT+LLIFGTT) EXIT                                                     !EQN 371
             IF (LAP(L)-LAPS(L).GT.0.0) THEN
-                LAPSTMP = AMIN1((LAP(L)-LAPS(L)),LAP(L)/LLIFSTT*AMIN1((LAGETT(L)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &
+                LAPSTMP = AMIN1((LAP(L)-LAPS(L)),LAP(L)/LLIFSTT*AMIN1((LAGETT(L)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
                     (TTLFLIFE*EMRGFR)))
                 LAPS(L) = LAPS(L) + LAPSTMP
-                PLASP = PLASP + LAPSTMP
+                PLASP = PLASP + LAPSTMP                                                                                !EQN 370
             ENDIF
         ENDDO
 
@@ -56,10 +56,10 @@
         PLASW = 0.0
         PLASN = 0.0
         IF (ISWWAT.NE.'N') THEN
-            IF (PLA-SENLA.GT.0.0.AND.WUPR.LT.WFSU) PLASW = AMAX1(0.0,AMIN1((PLA-SENLA)-PLAS,(PLA-SENLA)*LLOSA))
+            IF (PLA-SENLA.GT.0.0.AND.WUPR.LT.WFSU) PLASW = AMAX1(0.0,AMIN1((PLA-SENLA)-PLAS,(PLA-SENLA)*LLOSA))        !EQN 373
         ENDIF
         IF (ISWNIT.NE.'N') THEN
-            LNCSEN = LNCM + NFSU * (LNCX-LNCM)
+            LNCSEN = LNCM + NFSU * (LNCX-LNCM)                                                                         !EQN 374
             IF (PLA-SENLA.GT.0.0.AND.LANC.LT.LNCSEN) PLASN = AMAX1(0.0,AMIN1((PLA-SENLA)-PLAS,(PLA-SENLA)*LLOSA))
         ENDIF
         ! LAH TMP
@@ -77,7 +77,7 @@
         ENDIF
             
         ! Leaf senescence - overall
-        PLAS =  PLASP + PLASI + PLASS + PLASL
+        PLAS =  PLASP + PLASI + PLASS + PLASL                                                                          !EQN 369
         ! Overall check to restrict senescence to what available
         PLAS = AMAX1(0.0,AMIN1(PLAS,PLA-SENLA))
 
@@ -91,16 +91,16 @@
         SENNLFGRS = 0.0
         IF (PLA-SENLA.GT.0.0) THEN
         ! LAH New algorithms 03/04/13
-        SENLFG = AMIN1(LFWT*LWLOS,(AMAX1(0.0,(LFWT*(PLAS/(PLA-SENLA))*LWLOS))))
-        SENLFGRS = AMIN1(LFWT*(1.0-LWLOS),(AMAX1(0.0,(LFWT*(PLAS/(PLA-SENLA))*(1.0-LWLOS)))))
+        SENLFG = AMIN1(LFWT*LWLOS,(AMAX1(0.0,(LFWT*(PLAS/(PLA-SENLA))*LWLOS))))                                        !EQN 375
+        SENLFGRS = AMIN1(LFWT*(1.0-LWLOS),(AMAX1(0.0,(LFWT*(PLAS/(PLA-SENLA))*(1.0-LWLOS)))))                          !EQN 376
         ENDIF
   
         IF (ISWNIT.NE.'N') THEN
             ! NB. N loss has a big effect if low N
             ! Assumes that all reserve N in leaves
-            IF (LFWT.GT.0.0) LANCRS = (LEAFN+RSN) / LFWT
-            SENNLFG = AMIN1(LEAFN,(SENLFG+SENLFGRS)*LNCM)
-            SENNLFGRS = AMIN1(LEAFN-SENNLFG,(SENLFG+SENLFGRS)*(LANC-LNCM))
+            IF (LFWT.GT.0.0) LANCRS = (LEAFN+RSN) / LFWT                                                               !EQN 377
+            SENNLFG = AMIN1(LEAFN,(SENLFG+SENLFGRS)*LNCM)                                                              !EQN 378
+            SENNLFGRS = AMIN1(LEAFN-SENNLFG,(SENLFG+SENLFGRS)*(LANC-LNCM))                                             !EQN 379
         ELSE
             SENNLFG = 0.0
             SENNLFGRS = 0.0
@@ -112,6 +112,6 @@
 
         SENFR = 1.0
         SENTOPLITTERG = 0.0
-        SENTOPLITTERG = SENLFG*SENFR
+        SENTOPLITTERG = SENLFG*SENFR                                                                                   !EQN 380
         
     END SUBROUTINE CS_Growth_Senesce

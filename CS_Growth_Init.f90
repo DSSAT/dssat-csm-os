@@ -28,18 +28,18 @@
 
         ! Germination
         IF (GEUCUM.LT.PEGD.AND.GEUCUM+TTGEM*WFGE.LT.PEGD) THEN
-            GERMFR = 0.0
+            GERMFR = 0.0                                                                                               !EQN 046a
         ELSEIF (GEUCUM.LE.PEGD.AND.GEUCUM+TTGEM*WFGE.GE.PEGD) THEN
-            GERMFR = 1.0 - (PEGD-GEUCUM)/(TTGEM*WFGE)
+            GERMFR = 1.0 - (PEGD-GEUCUM)/(TTGEM*WFGE)                                                                  !EQN 046b
         ELSEIF (GEUCUM.GT.PEGD) THEN
-            GERMFR = 1.0
+            GERMFR = 1.0                                                                                               !EQN 046c
         ENDIF
 
         ! Emergence
         IF (GEUCUM.LT.PEGD+PECM*SDEPTHU.AND.GEUCUM+TTGEM*WFGE.LE.PEGD+PECM*SDEPTHU) THEN
-            EMRGFR = 0.0
+            EMRGFR = 0.0                                                                                               !EQN 047a
         ELSEIF (GEUCUM.LE.PEGD+PECM*SDEPTHU.AND.GEUCUM+TTGEM*WFGE.GT.PEGD+PECM*SDEPTHU) THEN
-            EMRGFR = 1.0 - (PEGD+PECM*SDEPTHU-GEUCUM)/(TTGEM*WFGE)
+            EMRGFR = 1.0 - (PEGD+PECM*SDEPTHU-GEUCUM)/(TTGEM*WFGE)                                                     !EQN 047b
         IF (EMFLAG.NE.'Y') THEN
             WRITE(FNUMWRK,*)' ' 
             WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
@@ -47,7 +47,7 @@
         ENDIF
         LNUMSG = 1     ! LAH NEW
         ELSEIF (GEUCUM.GT.PEGD+PECM*SDEPTHU) THEN
-            EMRGFR = 1.0
+            EMRGFR = 1.0                                                                                               !EQN 047c
         ENDIF
      
         !-----------------------------------------------------------------------
@@ -63,18 +63,18 @@
             BRSTAGETMP = BRSTAGE
         ENDIF
         IF (PPSEN.EQ.'SL') THEN      ! Short day response,linear 
-            DF = 1.0 - DAYLS(INT(BRSTAGETMP))/1000.*(PPTHR-DAYL)
+            DF = 1.0 - DAYLS(INT(BRSTAGETMP))/1000.*(PPTHR-DAYL)                                                       !EQN 050
             IF (BRSTAGETMP.LT.FLOAT(MSTG)) THEN
                 DFNEXT = 1.-DAYLS(INT(BRSTAGETMP+1))/1000.*(PPTHR-DAYL)
             ELSE
                 DFNEXT = DF
             ENDIF 
         ELSEIF (PPSEN.EQ.'LQ') THEN  ! Long day response,quadratic
-            DF = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP))/10000.*(PPTHR-DAYL)**PPEXP)))
+            DF = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP))/10000.*(PPTHR-DAYL)**PPEXP)))                         !EQN 048
             IF (BRSTAGETMP.LT.10.0) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP+1.0))/10000.*(PPTHR-DAYL)**PPEXP)))
             Tfdf = AMAX1(0.0,1.0-AMAX1(0.0,(TMEAN-10.0)/10.0))
             Tfdf = 1.0  ! LAH No temperature effect on DF ! 
-            DF = DF + (1.0-DF)*(1.0-TFDF)
+            DF = DF + (1.0-DF)*(1.0-TFDF)                                                                              !EQN 049
             DFNEXT = DFNEXT + (1.0-DFNEXT)*(1.0-TFDF)
         ENDIF
 
@@ -94,32 +94,32 @@
         DUPNEXT = 0.0
         ! To avoid exceeding the array sizes
         IF (BRSTAGETMP.LT.10.0) THEN
-            DUNEED = PSTART(INT(BRSTAGETMP+1.0))-CUMDU
+            DUNEED = PSTART(INT(BRSTAGETMP+1.0))-CUMDU                                                                 !EQN 051
             IF (DUNEED.GE.TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN
-                DUPHASE = TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)
+                DUPHASE = TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)                                                          !EQN 052a
                 TIMENEED = 1.0
                 DUPNEXT = 0.0
             ELSE  
-                DUPHASE = DUNEED
-                TIMENEED = DUNEED/(TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))
-                DUPNEXT = TTNEXT*(1.0-TIMENEED)*DFNEXT
+                DUPHASE = DUNEED                                                                                       !EQN 052b
+                TIMENEED = DUNEED/(TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))                                                !EQN 054
+                DUPNEXT = TTNEXT*(1.0-TIMENEED)*DFNEXT                                                                 !EQN 053
             ENDIF
         ELSE
         ENDIF
             
-        DU = DUPHASE+DUPNEXT
+        DU = DUPHASE+DUPNEXT                                                                                           !EQN 055
             
         !-----------------------------------------------------------------------
         !           Set seed reserve use for root growth and update av.reserves
         !-----------------------------------------------------------------------
 
         IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN
-            SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TT/STDAY)*GERMFR)
+            SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TT/STDAY)*GERMFR)                                                  !EQN 286
         ELSE
             SEEDRSAVR = 0.0
         ENDIF
         ! Seed reserves available
-        SEEDRSAV = SEEDRSAV-SEEDRSAVR
+        SEEDRSAV = SEEDRSAV-SEEDRSAVR                                                                                  !EQN 287
 
         !-----------------------------------------------------------------------
         !           Determine if today has a harvest instruction
@@ -141,9 +141,9 @@
 
         IF (HANUM.GT.0) THEN
             IF (HOP(HANUM).EQ.'G'.AND.CWAD.GT.0.0.AND.CWAD.GT.CWAN(HANUM)) THEN
-                HAWAD = AMIN1((CWAD-CWAN(HANUM)),HAMT(HANUM))
+                HAWAD = AMIN1((CWAD-CWAN(HANUM)),HAMT(HANUM))                                                          !EQN 414
                 HAWAD = AMAX1(0.0,HAWAD)
-                HAFR = AMAX1(0.0,HAWAD/CWAD)
+                HAFR = AMAX1(0.0,HAWAD/CWAD)                                                                           !EQN 415
             ELSE   
                 HAWAD = 0.0
                 HAFR = 0.0
@@ -153,12 +153,12 @@
         IF (HAFR.GT.0.0) WRITE(fnumwrk,'(A23,3F6.1)')' HARVEST  FR,CWAN,CWAD ',HAFR,CWAN(HANUM),CWAD
 
         ! For grazing 
-        lwph = lfwt * hafr
-        laph = lapd * hafr
-        swph = stwt * hafr
-        rswph = rswt * hafr
-        lnph = leafn * hafr
-        snph = stemn * hafr
-        rsnph = rsn * hafr
+        lwph = lfwt * hafr                                                                                             !EQN 416
+        laph = lapd * hafr                                                                                             !EQN 417
+        swph = stwt * hafr                                                                                             !EQN 418
+        rswph = rswt * hafr                                                                                            !EQN 419
+        lnph = leafn * hafr                                                                                            !EQN 420
+        snph = stemn * hafr                                                                                            !EQN 421
+        rsnph = rsn * hafr                                                                                             !EQN 422
         
     END SUBROUTINE CS_Growth_Init

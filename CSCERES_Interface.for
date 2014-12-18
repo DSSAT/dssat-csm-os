@@ -6,7 +6,6 @@ C  REVISION       HISTORY
 C  04/16/2002 LAH/CHP Written.
 C  03-12-2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
-C  09/05/2013 LAH/PM Changed the name of subroutine CSCER040 to CSCER
 C=======================================================================
       SUBROUTINE CSCERES_Interface (CONTROL, ISWITCH,      !Input
      &     EOP, YREND, NH4, NO3, SNOW, SOILPROP,           !Input
@@ -121,7 +120,7 @@ C=======================================================================
       WINDSP= WEATHER % WINDSP
 
 C-----------------------------------------------------------------------
-      CALL CSCER (FILEIOCS, RUN, TN, RN, RNMODE,        !Command line
+      CALL CSCER (FILEIOCS, RUN, TN, RN, RNMODE,           !Command line
      & ISWWAT, ISWNIT, IDETS, IDETO, IDETG, IDETL, FROP,   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
      & SRAD, TMAX, TMIN, CO2, RAIN, TOTIR,                 !Weather
@@ -138,8 +137,6 @@ C-----------------------------------------------------------------------
      & STGDOY,                                             !Stage dates
      & DYNAMIC)                                            !Control 
 
-!      KCAN   = KPAR
-!      KEP    = KSRAD
       XLAI   = LAI
       NSTRES = NFP
 

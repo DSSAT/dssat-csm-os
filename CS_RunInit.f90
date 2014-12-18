@@ -43,7 +43,7 @@
             PARMJFAC = 0.5         ! PAR in SRAD (fr)
             
             ! Standard parameters
-            STDAY = 20.0      ! TT in standard day
+            STDAY = 20.0      ! TT in standard day LPM before 20 but 17=30-13
             STEPNUM = 1       ! Step number per day set to 1
           
             ! Methods that not in control file

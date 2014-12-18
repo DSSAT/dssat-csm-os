@@ -94,7 +94,7 @@
             ! Calculate leaf # to MSTG
             TVR1 = 0.0
             DO L = 1,MSTG-1
-                TVR1 = TVR1 + AMAX1(0.0,PDL(L))
+                TVR1 = TVR1 + AMAX1(0.0,PDL(L))                                                                        !EQN 001
             ENDDO  
             ! Now calculate tier durations in Thermal Units
             TVR2 = 0.0
@@ -102,10 +102,10 @@
             DSTAGE = 0.0
             DO L = 1,1000
                 TVR2 = TVR2 + STDAY
-                TVR3 = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))
+                TVR3 = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))                                              !EQN 003
                 ! TVR3 is a temporary name for PHINT within the loop 
                 LNUMTMP = LNUMTMP + STDAY/TVR3
-                DSTAGE = AMIN1(1.0,LNUM/TVR1)
+                DSTAGE = AMIN1(1.0,LNUM/TVR1)                                                                          !EQN 002
                 IF(LNUMTMP.GE.PDL(1).AND.PSTART(2).LE.0.0) PSTART(2) = TVR2
                 IF(LNUMTMP.GE.PDL(1)+PDL(2).AND.PSTART(3).LE.0.0) PSTART(3) = TVR2
                 IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3).AND.PSTART(4).LE.0.0) PSTART(4) = TVR2
@@ -161,7 +161,7 @@
         DO L = 1, MSTG-1
             IF (PD(L).GT.0.0) THEN
                 DUTOMSTG = DUTOMSTG + PD(L)
-                LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)
+                LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)                                                                 !EQN 006
             ENDIF  
         ENDDO
         DO L = MSTG,PSX-1
@@ -181,7 +181,7 @@
         
         ! Adjust germination duration for seed dormancy
         IF (PLMAGE.LT.0.0.AND.PLMAGE.GT.-90.0) THEN
-            PEGD = PGERM - (PLMAGE*STDAY) ! Dormancy has negative age
+            PEGD = PGERM - (PLMAGE*STDAY) ! Dormancy has negative age                                                  !EQN 045b
         ELSE
             PEGD = PGERM
         ENDIF
@@ -313,23 +313,23 @@
         ! Leaf life
         IF (CFLLFLIFE.EQ.'P')THEN
             ! Read-in as phyllochrons 
-            LLIFGTT = LLIFG * PHINT 
-            LLIFATT = LLIFA * PHINT 
-            LLIFSTT = LLIFS * PHINT 
+            LLIFGTT = LLIFG * PHINT                                                                                    !EQN 349
+            LLIFATT = LLIFA * PHINT                                                                                    !EQN 350 
+            LLIFSTT = LLIFS * PHINT                                                                                    !EQN 351 
         ELSEIF (CFLLFLIFE.EQ.'T')THEN
             ! Read-in as thermal time 
-            LLIFGTT = LLIFG 
-            LLIFATT = LLIFA 
-            LLIFSTT = LLIFS
+            LLIFGTT = LLIFG                                                                                            !EQN 352
+            LLIFATT = LLIFA                                                                                            !EQN 353 
+            LLIFSTT = LLIFS                                                                                            !EQN 354
         ELSEIF (CFLLFLIFE.EQ.'D')THEN
             ! Read-in as days. Thermal time for each day set to PHINT
-            LLIFGTT = LLIFG * PHINT 
-            LLIFATT = LLIFA * PHINT 
-            LLIFSTT = LLIFS * PHINT 
+            LLIFGTT = LLIFG * PHINT                                                                                    !EQN 355 
+            LLIFATT = LLIFA * PHINT                                                                                    !EQN 356 
+            LLIFSTT = LLIFS * PHINT                                                                                    !EQN 357 
         ENDIF  
         
         ! Extinction coeff for SRAD
-        KEP = (KCAN/(1.0-TPAR)) * (1.0-TSRAD)                                                                          ! EQN 009
+        KEP = (KCAN/(1.0-TPAR)) * (1.0-TSRAD)                                                      ! EQN 009
         
         ! Photoperiod sensitivities
         DO L = 0,10
@@ -345,7 +345,7 @@
         IF (SHGR(20).GE.0.0) THEN
             DO L = 3,22
                 IF (L.LT.20) THEN
-                    SHGR(L) = SHGR(2)-((SHGR(2)-SHGR(20))/18)*(L-2)
+                    SHGR(L) = SHGR(2)-((SHGR(2)-SHGR(20))/18)*(L-2)                                                    !EQN 010
                 ELSEIF (L.GT.20) THEN
                     SHGR(L) = SHGR(20)
                 ENDIF  
@@ -363,14 +363,14 @@
         ! Storage root N  NB.Conversion protein->N factor = 6.25
         IF (SRNPCS.LE.0.0) THEN
             IF(SRPRS.GT.0.0) THEN
-                SRNPCS = SRPRS / 6.25
+                SRNPCS = SRPRS / 6.25                                                                                  !EQN 023
             ELSE
                 SRNPCS = 0.65
             ENDIF
         ENDIF       
         
         ! Height growth
-        SERX = CANHTS/PSTART(MSTG)
+        SERX = CANHTS/PSTART(MSTG)                                                                                     !EQN 315
         
         !-----------------------------------------------------------------------
         !       Set coefficients that dependent on input switch
@@ -388,15 +388,15 @@
         !       Calculate/set initial states
         !-----------------------------------------------------------------------
         
-        IF (SDRATE.LE.0.0) SDRATE = SDSZ*PLTPOPP*10.0
+        IF (SDRATE.LE.0.0) SDRATE = SDSZ*PLTPOPP*10.0                                                                  !EQN 024
         ! Reserves = SDRSF% of seed 
-        SEEDRSI = (SDRATE/(PLTPOPP*10.0))*SDRSF/100.0
+        SEEDRSI = (SDRATE/(PLTPOPP*10.0))*SDRSF/100.0                                                                  !EQN 284
         SEEDRS = SEEDRSI
         SEEDRSAV = SEEDRS
-        SDCOAT = (SDRATE/(PLTPOPP*10.0))*(1.0-SDRSF/100.0)
+        SDCOAT = (SDRATE/(PLTPOPP*10.0))*(1.0-SDRSF/100.0)                                                             !EQN 025
         ! Seed N calculated from total seed
-        SDNAP = (SDNPCI/100.0)*SDRATE
-        SEEDNI = (SDNPCI/100.0)*(SDRATE/(PLTPOPP*10.0))
+        SDNAP = (SDNPCI/100.0)*SDRATE                                                                                  !EQN 026
+        SEEDNI = (SDNPCI/100.0)*(SDRATE/(PLTPOPP*10.0))                                                                !EQN 027
         IF (ISWNIT.NE.'N') THEN
             SEEDN = SEEDNI
         ELSE
@@ -432,9 +432,9 @@
             sdepthu = sdepth
         ELSEIF (PLME.EQ.'I') THEN
             ! Assumes that inclined at 45o
-            sdepthu = AMAX1(0.0,sdepth - 0.707*sprl)
+            sdepthu = AMAX1(0.0,sdepth - 0.707*sprl)                                                                   !EQN 028
         ELSEIF (PLME.EQ.'V') THEN
-            sdepthu = AMAX1(0.0,sdepth - sprl)
+            sdepthu = AMAX1(0.0,sdepth - sprl)                                                                         !EQN 029
         ENDIF
         IF (sdepthu.LT.0.0) sdepthu = sdepth
         

@@ -1,7 +1,7 @@
 *WEATHER DATA : Gainesville,Florida,USA
 
 @ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT
-  UFGA   29.630  -82.370    10  20.9   7.5  2.00  3.00
+  UFGA   29.630  -82.370    10  20.9  13.0  2.00  3.00
 @DATE  SRAD  TMAX  TMIN  RAIN               PAR 
 85001   9.6  27.8  15.6   0.0              19.6 
 85002   7.6  27.8  16.1   0.0              15.5 

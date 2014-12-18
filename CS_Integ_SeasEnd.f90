@@ -38,7 +38,7 @@
                 
         ! Here,reserves are included in leaf,stem,and crown weights
         ! And weights are in kg/ha
-        CWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP*10.0
+        CWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP*10.0                                                                       !EQN 318
         SRWAD = SRWT*PLTPOP*10.0
         LLWAD = LFWT*(1.0-LPEFR)*10.0*PLTPOP
         LPEWAD = LFWT*LPEFR*10.0*PLTPOP
@@ -65,7 +65,7 @@
                 
         TWAD = (SEEDRS+SDCOAT+RTWT+LFWT+STWT+CRWT+SRWT+RSWT)* PLTPOP*10.0
                 
-        VWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP * 10.0
+        VWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP * 10.0                                                                     !EQN 019
                 
         SHNUMAD = SHNUM*PLTPOP
                 
@@ -82,7 +82,7 @@
         SDNAD = SEEDN*PLTPOP*10.0
         SNAD = STEMN*PLTPOP*10.0
         TNAD = (ROOTN+LEAFN+STEMN+RSN+HPRODN+SEEDN)*PLTPOP*10.0
-        VNAD = (LEAFN+STEMN+RSN)*PLTPOP*10.0
+        VNAD = (LEAFN+STEMN+RSN)*PLTPOP*10.0                                                                           !EQN 018
                 
         ! LAH Note that no reserves included in sancout
         ! SANCOUT = SNAD/(STWAD+STRSWAD + LPEWAD+LPERSWAD)  ! With rs

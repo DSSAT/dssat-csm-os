@@ -1463,7 +1463,7 @@
 
       SAVE
 
-      CSVPSAT = 610.78 * EXP(17.269*T/(T+237.30))
+      CSVPSAT = 610.78 * EXP(17.269*T/(T+237.30))                                                                      !EQN 060
 
       END
 
@@ -1637,7 +1637,7 @@
 
 !-----------------------------------------------------------------------
 
-      FUNCTION Tfac4(tcard,temp,TUNIT)
+      FUNCTION Tfac4(tcard,temp,TUNIT)                                                                                 !EQN 034
 
       ! Calculate temp factor and thermal units from cardinal temps
 
@@ -1746,7 +1746,7 @@
       ENDDO
 
       tfac424 = AMAX1(0.0,AMIN1(1.0,tfac4sum))
-      tunit = tfac424 * (tcard(2)-tcard(1))
+      tunit = tfac424 * (tcard(2)-tcard(1))                                                                            !EQN 035
 
       RETURN
       END

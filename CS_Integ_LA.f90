@@ -25,7 +25,7 @@
         !         Calculate reserve concentration
         !-----------------------------------------------------------------------
         
-        IF (LFWT+STWT+CRWT.GT.0.0) RSCD = RSWT/(LFWT+STWT+CRWT+RSWT)
+        IF (LFWT+STWT+CRWT.GT.0.0) RSCD = RSWT/(LFWT+STWT+CRWT+RSWT)                                                   !EQN 451
         IF (RSCD.LT.0.0.AND.RSCD.GT.-1.0E-7) RSCD = 0.0
         RSCX = AMAX1(RSCX,RSCD)
         
@@ -36,7 +36,7 @@
         ! First for leaf senescence
         DO L = 1,INT(SHNUM+1)
             IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-                IF (PLA-SENLA.GT.0.0) SHLAS(L) = SHLAS(L) + PLAS*(SHLA(L)-SHLAS(L))/(PLA-SENLA)
+                IF (PLA-SENLA.GT.0.0) SHLAS(L) = SHLAS(L) + PLAS*(SHLA(L)-SHLAS(L))/(PLA-SENLA)                        !EQN 452
             ENDIF
         ENDDO
         
@@ -45,9 +45,9 @@
         !-----------------------------------------------------------------------
         
         IF (TT*EMRGFR.GT.0.0) THEN
-            PLA = PLA + PLAGSB4
+            PLA = PLA + PLAGSB4                                                                                        !EQN 453
             PLAX = AMAX1(PLAX,PLA)
-            LAP(LNUMSG) = LAP(LNUMSG) + PLAGSB4
+            LAP(LNUMSG) = LAP(LNUMSG) + PLAGSB4                                                                        !EQN 454
             
             DO L = 1,INT(SHNUM+1)
                 IF (SHNUM.GE.1.0.OR.SHNUM-FLOAT(L-1).GT.0.0) THEN
@@ -58,10 +58,10 @@
             IF (LCNUM.LT.LCNUMX) THEN
                 IF (PLAGSB4.GT.0.0) THEN
                     LCNUM = LCNUM+1
-                    LCOA(LCNUM) = PLAGSB4
+                    LCOA(LCNUM) = PLAGSB4                                                                              !EQN 455a
                 ENDIF
             ELSE
-                LCOA(LCNUM) = LCOA(LCNUM) + PLAGSB4
+                LCOA(LCNUM) = LCOA(LCNUM) + PLAGSB4                                                                    !EQN 455b
             ENDIF
             
         ENDIF
@@ -70,19 +70,19 @@
         !         Update senesced and harvested leaf area
         !-----------------------------------------------------------------------
         
-        SENLA = SENLA + PLAS
-        SENLALITTER = SENLALITTER + PLAS * SENFR
-        LAPHC = LAPHC + LAPH  ! Grazed leaf area
+        SENLA = SENLA + PLAS                                                                                           !EQN 456
+        SENLALITTER = SENLALITTER + PLAS * SENFR                                                                       !EQN 457
+        LAPHC = LAPHC + LAPH  ! Grazed leaf area                                                                       !EQN 458
         ! Distribute senesced leaf over leaf positions and cohorts
         PLASTMP = PLAS - PLASP
         IF (LNUMSG.GT.0 .AND. PLASTMP.GT.0) THEN
             DO L = 1, LNUMSG
                 IF (LAP(L)-LAPS(L).GT.PLASTMP) THEN
-                    LAPS(L) = LAPS(L) + PLASTMP
+                    LAPS(L) = LAPS(L) + PLASTMP                                                                        !EQN 459a
                     PLASTMP = 0.0
                 ELSE
                     PLASTMP = PLASTMP - (LAP(L)-LAPS(L))
-                    LAPS(L) = LAP(L)
+                    LAPS(L) = LAP(L)                                                                                   !EQN 459b
                 ENDIF
                 IF (PLASTMP.LE.0.0) EXIT
             ENDDO
@@ -90,11 +90,11 @@
             PLASTMP2 = AMAX1(0.0,PLAS)
             DO L = 1, LCNUM
                 IF (LCOA(L)-LCOAS(L).GT.PLASTMP2) THEN
-                    LCOAS(L) = LCOAS(L) + PLASTMP2
+                    LCOAS(L) = LCOAS(L) + PLASTMP2                                                                     !EQN 460a
                     PLASTMP2 = 0.0
                 ELSE
                     PLASTMP2 = PLASTMP2 - (LCOA(L)-LCOAS(L))
-                    LCOAS(L) = LCOA(L)
+                    LCOAS(L) = LCOA(L)                                                                                 !EQN 460b
                 ENDIF
                 IF (PLASTMP2.LE.0.0) EXIT
             ENDDO
@@ -103,12 +103,12 @@
         ! Leaf positions
         IF (LNUMSG.GT.0 .AND. LAPH.GT.0) THEN
             DO L = 1, LNUMSG
-                IF (LAP(L)-LAPS(L).GT.0.0) LAPS(L) = LAPS(L) + (LAP(L)-LAPS(L)) * HAFR
+                IF (LAP(L)-LAPS(L).GT.0.0) LAPS(L) = LAPS(L) + (LAP(L)-LAPS(L)) * HAFR                                 !EQN 461
             ENDDO
             ! Cohorts
             DO L = 1, LCNUM
                 IF (LCOA(L)-LCOAS(L).GT.0.0) THEN
-                    LCOAS(L) = LCOAS(L) + (LCOA(L)-LCOAS(L)) * HAFR
+                    LCOAS(L) = LCOAS(L) + (LCOA(L)-LCOAS(L)) * HAFR                                                    !EQN 462
                 ENDIF
             ENDDO
         ENDIF
@@ -116,8 +116,8 @@
         !-----------------------------------------------------------------------
         !         Update (green) leaf area                            
         !-----------------------------------------------------------------------            
-        LAPD = AMAX1(0.0,(PLA-SENLA-LAPHC))
-        LAI = AMAX1(0.0,(PLA-SENLA-LAPHC)*PLTPOP*0.0001)
+        LAPD = AMAX1(0.0,(PLA-SENLA-LAPHC))                                                                            !EQN 463
+        LAI = AMAX1(0.0,(PLA-SENLA-LAPHC)*PLTPOP*0.0001)                                                               !EQN 346
         LAIX = AMAX1(LAIX,LAI)
         
         !-----------------------------------------------------------------------
@@ -125,17 +125,17 @@
         !-----------------------------------------------------------------------
         
         SLA = -99.0
-        IF (LFWT.GT.1.0E-6) SLA=(PLA-SENLA-LAPHC) / (LFWT*(1.0-LPEFR))
+        IF (LFWT.GT.1.0E-6) SLA=(PLA-SENLA-LAPHC) / (LFWT*(1.0-LPEFR))                                                 !EQN 465
         
         !-----------------------------------------------------------------------
         !         Update leaf petiole and stem area
         !-----------------------------------------------------------------------
         
-        LPEAI = (LFWT*LPEFR*LPEAW)*PLTPOP*0.0001
-        STAI = STAI + STAIG - STAIS
+        LPEAI = (LFWT*LPEFR*LPEAW)*PLTPOP*0.0001                                                                       !EQN 466
+        STAI = STAI + STAIG - STAIS                                                                                    !EQN 467
         
-        SAID = STAI+LPEAI
-        CAID = LAI + SAID
+        SAID = STAI+LPEAI                                                                                              !EQN 468
+        CAID = LAI + SAID                                                                                              !EQN 469
         
         !-----------------------------------------------------------------------
         !         Update height
@@ -148,9 +148,9 @@
         !-----------------------------------------------------------------------
         
         IF (SDEPTH.GT.0.0 .AND.RTDEP.LE.0.0) RTDEP = SDEPTH
-        RTDEP = AMIN1 (RTDEP+RTDEPG,DEPMAX)
+        RTDEP = AMIN1 (RTDEP+RTDEPG,DEPMAX)                                                                            !EQN 390
         DO L = 1, NLAYR
-            RLV(L)=RTWTL(L)*RLWR*PLTPOP/DLAYR(L)   ! cm/cm3
+            RLV(L)=RTWTL(L)*RLWR*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
             IF (L.EQ.NLAYR.AND.RLV(L).GT.0.0)THEN
                 IF (RTSLXDATE.LE.0.0) RTSLXDATE = YEARDOY
             ENDIF

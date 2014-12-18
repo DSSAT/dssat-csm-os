@@ -46,7 +46,7 @@
 
           ! Co2 effect on stomatal resistances. General for C3 crops 
           RLF  = 9.72 + 0.0757 * 330.0 + 10.0
-          RLFC = 9.72 + 0.0757 *  CO2  + 10.0
+          RLFC = 9.72 + 0.0757 *  CO2  + 10.0                                                                          !EQN 139
                                                          
           IF (FILEIOT.EQ.'DS4'.AND.IDETG.NE.'N'.OR.FILEIOT.NE.'DS4') THEN                  
 
@@ -78,9 +78,9 @@
 
             ! Transpiration ratio (Pot.pl.evap/Pot.soil evap)
             EPSRATIO = 1.0
-            IF (EOMPEN.GT.0.0) EPSRATIO = EOMPCRPCO2 / EOMPEN
+            IF (EOMPEN.GT.0.0) EPSRATIO = EOMPCRPCO2 / EOMPEN                                                          !EQN 140
             TRATIO = 1.0
-            IF (EOMPCRP.GT.0.0) TRATIO = EOMPCRPCO2 / EOMPCRP
+            IF (EOMPCRP.GT.0.0) TRATIO = EOMPCRPCO2 / EOMPCRP                                                          !EQN 141
             ENDIF
             
             IF (fileiot(1:2).NE.'DS') THEN
@@ -95,7 +95,7 @@
             ! NB. Using previous days WFP. 
             ! If use this for other than comparison, must check  LAH
             IF (RLF.GT.0.0.AND.WFP.LE.1.0.AND.WFP.GT.0.0) THEN
-             CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*RLFC/RLF*(1.0+(1.0-WFP)), &
+             CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*RLFC/RLF*(1.0+(1.0-WFP)), &            !EQN 142
                  EO,EOPEN,EOMPCRPCO2H2O,EOPT,EOEBUDCRPCO2H2O,TCAN,'M')
             ELSE
               WRITE(FNUMWRK,*)' WFP OUT OF RANGE! = ',WFP
@@ -121,7 +121,7 @@
 !         Calculate thermal time
 !-----------------------------------------------------------------------
 
-          Tfd = TFAC4(trdv1,tmean,TT)
+          Tfd = TFAC4(trdv1,tmean,TT)                                                                                  !EQN 036
           IF (brstage+1.0.LT.10.0) &
            Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
           IF (trgem(3).GT.0.0) THEN
@@ -141,7 +141,7 @@
 !-----------------------------------------------------------------------
 
           DO L = 1,NLAYR
-            SWP(L) = &
+            SWP(L) = &                                                                                                 !EQN 044b
              AMIN1(1.0,AMAX1(.0,((SW(L)-LL(L))/(DUL(L)-LL(L)))))
           ENDDO
           
@@ -156,11 +156,11 @@
               IF (LSEED.GT.1) THEN
                 SWPSD = SWP(LSEED)
               ELSE
-               SWP(0) = AMIN1(1.,AMAX1(.0,(SWP(1)-0.5*(SWP(2)-SWP(1)))))
-               SWPSD = SWP(0) + (SDEPTH/DLAYR(1))*(SWP(2)-SWP(0))
+               SWP(0) = AMIN1(1.,AMAX1(.0,(SWP(1)-0.5*(SWP(2)-SWP(1)))))                                               !EQN 044b
+               SWPSD = SWP(0) + (SDEPTH/DLAYR(1))*(SWP(2)-SWP(0))                                                      !EQN 043
               ENDIF
               IF (WFGEM.GT.0.0) &
-               WFGE = AMAX1(0.0,AMIN1(1.0,(SWPSD/WFGEM)))
+               WFGE = AMAX1(0.0,AMIN1(1.0,(SWPSD/WFGEM)))                                                              !EQN 042
             ENDIF
           ENDIF
           IF (ISWWATCROP.EQ.'N') WFGE = 1.0

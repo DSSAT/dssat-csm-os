@@ -44,32 +44,32 @@
             ! Conventional method using PAR utilization efficiency (P)
             CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP &
              * WFP * NFP * RSFP * VPDFP * SLPF)
-            CARBOBEGR = CARBOTMPR * PARI / PLTPOP
+            CARBOBEGR = CARBOTMPR * PARI / PLTPOP                                                                      !EQN 259
 
             ! Modified conventional using internal CO2 (I)
-            CARBOTMP = AMAX1(0.,PARMJFAC*SRAD*PARU*TFP*NFP*RSFP)
+            CARBOTMP = AMAX1(0.,PARMJFAC*SRAD*PARU*TFP*NFP*RSFP)                                                       !EQN 264
             ! Calculate for no water stress for WFPI determination
             CARBOTMPI = CARBOTMP
             CO2INTPPMP = CO2
             DO L = 1,20
-              CO2INT = CO2AIR - CARBOTMPI *  &
+              CO2INT = CO2AIR - CARBOTMPI *  &                                                                         !EQN 265
               (RATM+RCROP*RLFC/RLF*WFP*(1.0*(1.0-WFP)))*1.157407E-05
-              CO2INTPPM = AMAX1(CO2COMPC+20.0,CO2INT * &
+              CO2INTPPM = AMAX1(CO2COMPC+20.0,CO2INT * &                                                               !EQN 269
               (8.314*1.0E7*((TMAX+TMIN)*.5+273.))/(1.0E12*1.0E-6*44.))
-              CO2FPI = PARFC* &
+              CO2FPI = PARFC* &                                                                                        !EQN 268
                ((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2COMPC)))
-              CARBOTMPI = CARBOTMP * CO2FPI
+              CARBOTMPI = CARBOTMP * CO2FPI                                                                            !EQN 267
               IF (ABS(CO2INTPPM-CO2INTPPMP).LT.1.0) EXIT
               CO2INTPPMP = CO2INTPPM
             ENDDO
             CARBOBEGIA = 0.0
-            IF (CARBOTMPI.GT.0) CARBOBEGIA =(CARBOTMP*CO2FP)/CARBOTMPI
+            IF (CARBOTMPI.GT.0) CARBOBEGIA =(CARBOTMP*CO2FP)/CARBOTMPI                                                 !EQN 270
             CARBOTMPI = CARBOTMP
             CO2INTPPMP = CO2
             DO L = 1,20
               CO2INT = CO2AIR - CARBOTMPI * (RATM+RCROP*RLFC/RLF*WFP* &
               (1.*(1.-WFP)))*1.157407E-05
-              CO2INTPPM = AMAX1(CO2COMPC,CO2INT * &
+              CO2INTPPM = AMAX1(CO2COMPC,CO2INT * &                                                                    !EQN 271
               (8.314*1.0E7*((TMAX+TMIN)*0.5+273.))/ &
               (1.0E12*1.0E-6*44.0))
               CO2FPI = PARFC* &
@@ -79,19 +79,19 @@
               IF (ABS(CO2INTPPM-CO2COMPC).LT.1.0) EXIT
               CO2INTPPMP = CO2INTPPM
             ENDDO
-            CARBOBEGI = CARBOTMPI * SLPF * PARI / PLTPOP * CARBOBEGIA
+            CARBOBEGI = CARBOTMPI * SLPF * PARI / PLTPOP * CARBOBEGIA                                                  !EQN 272
 
             ! Alternate method using resistances as per Monteith (M)
             ! Calculate photosynthetic efficiency
             ! Use 10 Mj.m2.d PAR to establish quantum requirement
-            PHOTQR = (CO2AIR/(10.0*PARU)- &
+            PHOTQR = (CO2AIR/(10.0*PARU)- &                                                                            !EQN 273
              ((RATM+RCROP*RLFC/RLF*WFP*(1.*(1.-WFP)))*1.157407E-05))* &
              (10.0*30.0)/(CO2AIR*MJPERE) ! 30 = MW Ch2o
-            RM = CO2AIR/(((SRAD*PARMJFAC/MJPERE)/PHOTQR)*30.0)
-            CARBOTMPM = AMAX1(0., &
+            RM = CO2AIR/(((SRAD*PARMJFAC/MJPERE)/PHOTQR)*30.0)                                                         !EQN 274
+            CARBOTMPM = AMAX1(0., &                                                                                    !EQN 275
              (CO2AIR/((RATM+RCROP*RLFC/RLF*WFP*(1.*(1.-WFP)))* &
              1.157407E-05+RM))*TFP*NFP*RSFP)
-            CARBOBEGM = CARBOTMPM * SLPF * PARI / PLTPOP
+            CARBOBEGM = CARBOTMPM * SLPF * PARI / PLTPOP                                                               !EQN 276
 
             ! Select method depending on choice in CONTROL FILE
             IF (MEPHO.EQ.'R') CARBOBEG = CARBOBEGR

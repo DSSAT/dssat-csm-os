@@ -28,14 +28,14 @@
         
         ! STAGES:Germination and emergence (Gestages)
         ! NB 0.5 factor used to equate to Zadoks)
-        GEUCUM = GEUCUM + TTGEM*WFGE
+        GEUCUM = GEUCUM + TTGEM*WFGE                                                                                   !EQN 038
         IF (GEUCUM.LT.PEGD) THEN
-            GESTAGE = AMIN1(1.0,GEUCUM/PEGD*0.5)
+            GESTAGE = AMIN1(1.0,GEUCUM/PEGD*0.5)                                                                       !EQN 039a
         ELSE
             IF (PECM*SDEPTHU > 1.E-6) THEN 
-                GESTAGE = AMIN1(1.0,0.5+0.5*(GEUCUM-PEGD)/(PECM*SDEPTHU))
+                GESTAGE = AMIN1(1.0,0.5+0.5*(GEUCUM-PEGD)/(PECM*SDEPTHU))                                              !EQN 039b
             ELSE
-                GESTAGE = 1.0
+                GESTAGE = 1.0                                                                                          !EQN 039c
             ENDIF    
         ENDIF
         
@@ -43,14 +43,14 @@
         IF (GESTAGEPREV.LT.0.5) THEN
             TMEANGC = TMEANGC + TMEAN
             GEDAYSG = GEDAYSG + 1
-            TMEANG = TMEANGC/GEDAYSG
+            TMEANG = TMEANGC/GEDAYSG                                                                                   !EQN 040
         ENDIF  
         
         ! Germination to emergence conditions  
         IF (GESTAGE.LT.0.5) THEN
             RETURN !GOTO 6666                                                             ! MF 27AU14 This is not a very nice construction! See note in Integrate_Subroutines.docx. Change to RETuRN
         ELSEIF (GESTAGEPREV.LT.1.0) THEN                                                  
-            TMEANEC = TMEANEC + TMEAN
+            TMEANEC = TMEANEC + TMEAN                                                                                  !EQN 041
             GEDAYSE = GEDAYSE + 1
             TMEANE = TMEANEC/GEDAYSE
         ENDIF
@@ -62,8 +62,8 @@
             IF (PSTART(MSTG).GT.0.0) DSTAGE = CUMDU/PSTART(MSTG)
         ELSE
             ! Alternative method.Calculate dstage from leaf number
-            IF (LNUMTOSTG(MSTG).GT.0.0) DSTAGE = LNUM/LNUMTOSTG(MSTG)
-            IF (LAFND.GT.0.0) DSTAGE = LNUM/LAFND
+            IF (LNUMTOSTG(MSTG).GT.0.0) DSTAGE = LNUM/LNUMTOSTG(MSTG)                                                  !EQN 037b
+            IF (LAFND.GT.0.0) DSTAGE = LNUM/LAFND                                                                      !EQN 037a
         ENDIF 
         
         ! STAGES:Branching
@@ -82,7 +82,7 @@
                 ! Alternative method based on leaf numbers 
                 DO L = HSTG,0,-1
                     IF (LNUM.GE.LNUMTOSTG(L)) THEN
-                        IF (PDL(L).GT.0) BRSTAGE = FLOAT(L) + (LNUM-LNUMTOSTG(L))/PDL(L)                               ! EQN 007
+                        IF (PDL(L).GT.0) BRSTAGE = FLOAT(L) + (LNUM-LNUMTOSTG(L))/PDL(L)           ! EQN 007
                         LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
                         ! Brstage cannot go above harvest stage 
                         BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
@@ -93,7 +93,7 @@
         ENDIF
         
         ! STAGES:leaf numbers 
-        LNUM = AMAX1(0.0,(AMIN1(FLOAT(LNUMX-1),(LNUM+LNUMG))))
+        LNUM = AMAX1(0.0,(AMIN1(FLOAT(LNUMX-1),(LNUM+LNUMG))))                                                         !EQN 348
         LNUMSG = INT(LNUM)+1  ! Youngest growing leaf
         
         !-----------------------------------------------------------------------
