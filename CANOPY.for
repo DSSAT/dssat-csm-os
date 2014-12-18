@@ -274,7 +274,7 @@ C       width.
 ! RWIDTH    Relative width of this ecotype in comparison to the standard 
 !             width per node (YVSWH) defined in the species file (*.SPE) (m)
 ! SECTION   Section name in input file 
-! TGRO(I)   Hourly canopy temperature (°C)
+! TGRO(I)   Hourly canopy temperature (Â°C)
 ! TURFAC    Water stress factor for expansion (0 - 1) 
 ! VSTAGE    Number of nodes on main stem of plant (nodes)
 ! WPAR      Effect of PAR on canopy width 
@@ -282,7 +282,7 @@ C       width.
 !             growth rate, particularly to allow etiliolation at low PAR 
 !             values (mol/day)
 ! XHWTEM    Temperatures in a table look-up function for modifying height 
-!             and width growth rates (°C)
+!             and width growth rates (Â°C)
 ! XLAI      Leaf area (one side) per unit of ground area
 !            (m2[leaf] / m2[ground])
 ! XVSHT     Node number on main stem for use in computing height and width 
