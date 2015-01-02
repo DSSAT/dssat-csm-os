@@ -70,6 +70,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       4.6.0.42 chp 12/05/2014 DSSAT sprint -1st batch of changes
 !                               Dates and headers, JDATE.CDE fix, portability fixes, 
 !                               "F" forced auto-planting date option, minor changes
+!       4.6.0.42 chp 12/05/2014 Dates and headers, JDATE.CDE fix, more portability fixes, minor changes
 !       4.6.0.41 chp 11/04/2014 KThorp changes for portability
 !       4.6.0.40 chp 09/19/2014 Minor changes
 !       4.6.0.39 chp 07/25/2014 Allow daily input of CO2 in weather file (header CO2 or DCO2)
