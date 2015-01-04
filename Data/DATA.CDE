@@ -322,7 +322,7 @@ LN%RD  LeafN% relative Leaf tissue relative (to critical) N conc. (%)           
 LNAD   Leaf N kg/ha    Leaf N (kg/ha)                                           .
 N2FLC  Cum N2 flux k/h Cumulative N2 flux, soil profile (kg[N]/ha)              .
 N2F20  N2 flux 0-20cm  Cumulative N2 flux, 0-20cm (kg[N]/ha/d)                  .
-N2FLD  Day N2 flux k/h Daily N2 flux, soil profile (g[N]/ha/d)                  .
+N2FLD  Day N2 flux g/h Daily N2 flux, soil profile (g[N]/ha/d)                  .
 N2F10  N2 flux lyr 10  Daily N2 flux, soil layer 10 (g[N]/ha)                   .
 N2F1D  N2 flux layer 1 Daily N2 flux, soil layer 1 (g[N]/ha)                    .
 N2F2D  N2 flux layer 2 Daily N2 flux, soil layer 2 (g[N]/ha)                    .
@@ -350,7 +350,7 @@ N2O9D  N2O flux lyr 9  Daily N2O flux, soil layer 9 (g[N]/ha)                   
 NAPC   N Applied kg/ha Inorganic N applied (kg/ha)                              .
 NDNC   Cum denit kg/ha Cumulative denitrification, soil profile (kg[N]/ha)      .
 NDN20  Denit 0-20cm    Cumulative denitrification, 0-20 cm (kg[N]/ha)            .
-NDND   Day denit kg/ha Daily denitrification, soil profile (g[N]/ha/d)          .
+NDND   Day denit g/ha  Daily denitrification, soil profile (g[N]/ha/d)          .
 NDN10  Denit layer 10  Daily denitrification, soil layer 10 (g[N]/ha)           .
 NDN1D  Denit layer 1   Daily denitrification, soil layer 1 (g[N]/ha)            .
 NDN2D  Denit layer 2   Daily denitrification, soil layer 2 (g[N]/ha)            .
