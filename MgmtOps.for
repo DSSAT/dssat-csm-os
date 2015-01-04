@@ -205,7 +205,8 @@ C-----------------------------------------------------------------------
         DAP = MAX0 (0, TIMDIF (YRPLT, YRDOY))
       ENDIF
 
-      IF (DAP .EQ. 0 .AND. IPLTI .EQ. 'A' .AND. CROP .NE. 'FA') THEN
+      IF (DAP .EQ. 0 .AND. INDEX('AF', IPLTI) /= 0 .AND. CROP .NE. 'FA')
+     & THEN
         CALL AUTPLT (CONTROL, ISWWAT,
      &    DLAYR, DUL, FLOOD, IDETO, IPLTI, LL, ST, SW,    !Input
      &    MDATE, YRPLT)                                   !Output
