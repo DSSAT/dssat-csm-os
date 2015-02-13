@@ -84,7 +84,7 @@ C-----------------------------------------------------------------------
       REAL SKERWT, SRAD, STMWT, STOVER, STOVN, STOVWT
       REAL STRCOLD, STRESSW, STRHEAT, SUMDTT, SWFAC
       REAL TAGE, TANC, TBASE, TGROGRN, TILNO
-      REAL TMAX, TMIN, TOTNUP, TRWUP, TSGRWT, TURFAC
+      REAL TMAX, TMIN, TOTNUP, TRWUP, TSGRWT, TURFAC, CumNUptake
       REAL TWILEN, WSTRES, XGNP, XSTAGE, XST_TP
 
       REAL BWAH, SDWT, SDWTAH, TOPWT, WTNSD
@@ -230,13 +230,13 @@ C-----------------------------------------------------------------------
      &    RWUMX, SEEDNI, SEEDRV, SENESCE,                 !Output
      &    SKERWT, STMWT, STMWTO,                          !Output
      &    STOVER, STOVN, TANC, TGROGRN, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, WTLF, XGNP)                         !Output
+     &    CumNUptake, UNH4, UNO3, WTLF, XGNP)             !Output
 
       CALL RI_OPGROW (CONTROL, ISWITCH, SOILPROP,
      &    BIOMAS, GPP, GPSM, GRAINN, GRNWT, ISTAGE, LAI,  
      &    LEAFNO, LFWT, MDATE, NLAYR, NSTRES, PANWT, PLANTS,
      &    PLTPOP, RLV, ROOTN, RTDEP, RTWT, SENESCE,       
-     &    STMWT, STOVN, SWFAC, TILNO, TURFAC, YRPLT,      
+     &    STMWT, STOVN, SWFAC, TILNO, CumNUptake, TURFAC, YRPLT,      
      &    CANHT, KSTRES, DTT)                                  
 
       CALL RI_OPHARV (CONTROL, ISWITCH, 
@@ -357,7 +357,7 @@ C--------------------------------------------------------------
      &    RWUMX, SEEDNI, SEEDRV, SENESCE,                 !Output
      &    SKERWT, STMWT, STMWTO,                          !Output
      &    STOVER, STOVN, TANC, TGROGRN, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, WTLF, XGNP)                         !Output
+     &    CumNUptake, UNH4, UNO3, WTLF, XGNP)             !Output
 
 
       FLOODN % NDAT   = NDAT
@@ -389,13 +389,13 @@ C-----------------------------------------------------------------------
      &    RWUMX, SEEDNI, SEEDRV, SENESCE,                 !Output
      &    SKERWT, STMWT, STMWTO,                          !Output
      &    STOVER, STOVN, TANC, TGROGRN, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, WTLF, XGNP)                         !Output
+     &    CumNUptake, UNH4, UNO3, WTLF, XGNP)             !Output
  
       CALL RI_OPGROW (CONTROL, ISWITCH, SOILPROP,
      &    BIOMAS, GPP, GPSM, GRAINN, GRNWT, ISTAGE, LAI,  
      &    LEAFNO, LFWT, MDATE, NLAYR, NSTRES, PANWT, PLANTS,
      &    PLTPOP, RLV, ROOTN, RTDEP, RTWT, SENESCE,       
-     &    STMWT, STOVN, SWFAC, TILNO, TURFAC, YRPLT,      
+     &    STMWT, STOVN, SWFAC, TILNO, CumNUptake, TURFAC, YRPLT,      
      &    CANHT, KSTRES, DTT)                                  
 
       CALL RI_OPHARV (CONTROL, ISWITCH, 

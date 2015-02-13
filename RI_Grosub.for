@@ -40,7 +40,7 @@ C=======================================================================
      &    RWUMX, SEEDNI, SEEDRV, SENESCE,                 !Output
      &    SKERWT, STMWT, STMWTO,                          !Output
      &    STOVER, STOVN, TANC, TGROGRN, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, WTLF, XGNP)                         !Output
+     &    CumNUptake, UNH4, UNO3, WTLF, XGNP)             !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -94,7 +94,7 @@ C=======================================================================
       REAL TGROGRN, TGROLF, TGROSTM, TGRNWT, TPANIWT, TPLA
       REAL TILNO, TILRAT, TLFWT, TMAX, TMIN, TMNC, TMPFIL, TOTNUP
       REAL TPLAG, TPLANTS, TRLOS, TRNLOS, TSGRWT, TSHOCK, TSTMWT
-      REAL UNFILL, VANC, VMNC, WSTRES, WTLF, PCNVEG
+      REAL UNFILL, VANC, VMNC, WSTRES, WTLF, PCNVEG, CumNUptake
       REAL XANC, XGNP, XN, XSTAGE, XST_TP
 
       REAL, DIMENSION(6) :: SI3
@@ -274,7 +274,7 @@ C=======================================================================
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT)     !Output
+     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT, CumNUptake)     !Output
 
       CALL RI_KUPTAK(
      &       ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,        !Input
@@ -1182,7 +1182,7 @@ C
      &      FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &      RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &      FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &      RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT)     !Output
+     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT, CumNUptake)     !Output
          ENDIF
 	   ! Switches for P and K
          CALL MZ_KUPTAK(
