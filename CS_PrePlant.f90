@@ -1,31 +1,31 @@
 !**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 3938 - 4069 of the original CSCAS code.
-! The actual and dummy arguments are only for those variables that are dummy arguments for CSCAS. The type of all
-! other variables are declared in the MODULE Module_CSCAS_Vars. The type of only the dummy arguments are declared here.
-! The variables and their units are defined in CSCAS.
-!
-! SUBROUTINE CS_Final_Init sets up the switches for establishment and determines whether today is a planting day.
+! This is the code from the section (DYNAMIC.EQ.RATE) lines 3938 - 4069 of the original CSCAS code. The names of the 
+! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
+! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
+! the original CSCAS.FOR code.
+! 
+! Subroutine CS_PrePlant sets up the switches for establishment and determines whether today is a planting day.
 !**********************************************************************************************************************
     
-    
-    SUBROUTINE CS_Pre_Plant( &
+    SUBROUTINE CS_PrePlant( &  
         BD          , CO2         , DLAYR       , DOY         , DUL         , LL          , NH4LEFT     , NLAYR       , &
-        NO3LEFT     , RNMODE      , ST          , STGYEARDOY  , SW          , YEAR        , WEATHER     , &                               ! MF 15SE14 removed <TMAX        , TMIN        , > (In Module_CSCas_Vars_List) 
-        YEARPLTCSM   &
+        NO3LEFT     , RNMODE      , ST          , STGYEARDOY  , SW          , TMAX        , TMIN        , YEAR        , &
+        YEARPLTCSM  &                 ! WEATHER     ,      
         )
         
         USE ModuleDefs
-        !USE CRSIMDEF                                                                MF 15SE14 Declared in ModuleDefs
-        USE Module_CSCAS_Vars_List
+        USE CS_First_Trans_m
         
         IMPLICIT NONE
         
-        TYPE (WeatherType) WEATHER
+        !TYPE (WeatherType) WEATHER    , WEATHER
         
-        CHARACTER(LEN=1) RNMODE      
-        INTEGER DOY         , NLAYR       , STGYEARDOY(20)            , YEAR        , YEARPLTCSM  
-        REAL    BD(NL)      , CO2         , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , ST(0:NL)    
-        REAL    SW(NL)                                                                                                      ! MF 15SE14 removed <, TMAX        , TMIN        > (In Module_CSCas_Vars_List) 
+        CHARACTER(LEN=1) RNMODE
+        
+        INTEGER DOY         , NLAYR       , STGYEARDOY(20)            , YEAR        , YEARPLTCSM
+        
+        REAL    BD(NL)      , CO2         , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , ST(NL)    
+        REAL    SW(NL)      , TMAX        , TMIN        
         
         !-----------------------------------------------------------------------
         !       Set 'establishment' switches
@@ -58,9 +58,9 @@
         !-----------------------------------------------------------------------
         
         YEARDOY = YEAR*1000 + DOY
-        TMEAN = (TMAX+TMIN)/2.0
+        TMEAN = (TMAX+TMIN)/2.0                                                                                        !EQN 057
         TMEANSURF = TMEAN
-        CO2AIR = 1.0E12*CO2*1.0E-6*44.0 / (8.314*1.0E7*((TMAX+TMIN)*0.5+273.0))  ! CO2 in g/m3
+        CO2AIR = 1.0E12*CO2*1.0E-6*44.0 / (8.314*1.0E7*((TMAX+TMIN)*0.5+273.0))  ! CO2 in g/m3                         !EQN 266
         
         !-----------------------------------------------------------------------
         !       Determine if today is planting day
@@ -110,10 +110,10 @@
                                 CYCLE
                             ENDIF
                             DTRY = MIN(DLAYR(I),SWPLTD - XDEPL)
-                            CUMSW = CUMSW + DTRY *(MAX(SW(I) - LL(I),0.0)) / (DUL(I) - LL(I))
+                            CUMSW = CUMSW + DTRY *(MAX(SW(I) - LL(I),0.0)) / (DUL(I) - LL(I))                          !EQN 032
                             I = I + 1
                         END DO
-                        AVGSW = (CUMSW / SWPLTD) * 100.0
+                        AVGSW = (CUMSW / SWPLTD) * 100.0                                                               !EQN 033
                         IF (TSDEP .GE. PTTN .AND. TSDEP .LE. PTX) THEN
                             IF (AVGSW .GE. SWPLTL .AND. AVGSW .LE. SWPLTH) THEN
                                 PLYEARDOY = YEARDOY
@@ -139,8 +139,8 @@
             ISOILN = 0.0
             ISOILH2O = 0.0
             DO I = 1, NLAYR
-                ISOILN = ISOILN + NO3LEFT(I)/(10.0/(BD(I)*(DLAYR(I))))+ NH4LEFT(I)/(10.0/(BD(I)*(DLAYR(I))))
-                ISOILH2O = ISOILH2O + SW(I)*DLAYR(I)
+                ISOILN = ISOILN + NO3LEFT(I)/(10.0/(BD(I)*(DLAYR(I))))+ NH4LEFT(I)/(10.0/(BD(I)*(DLAYR(I))))           !EQN 030
+                ISOILH2O = ISOILH2O + SW(I)*DLAYR(I)                                                                   !EQN 031
             ENDDO
             ! Plant population as established; if no data,as planted
             IF (PLTPOPE.GT.0) THEN
@@ -156,4 +156,5 @@
             ENDIF
             SHNUML(1) = SHNUM
         ENDIF
-    END SUBROUTINE CS_Pre_Plant        
+        
+    END SUBROUTINE CS_PrePlant        

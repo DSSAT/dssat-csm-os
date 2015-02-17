@@ -1,21 +1,20 @@
 !**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 1819 - 2327 of the original CSCAS code.
-! The actual and dummy arguments are only for those variables that are dummy arguments for CSCAS. The type of all
-! other variables are declared in the MODULE Module_CSCAS_Vars. The type of only the dummy arguments are declared here.
-! The variables and their units are defined in CSCAS.
+! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 1827 - 2336 of the original CSCAS code.
+! The names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared 
+! here. The variables that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all 
+! comments are those of the original CSCAS.FOR code.
 !
-! SUBROUTINE CS_VarInit initializes state and rate variables.
-!
+! Subroutine CS_SeasInit_VarInit initializes state and rate variables.
 !**********************************************************************************************************************
     
-    SUBROUTINE CS_VarInit( &
+    SUBROUTINE CS_SeasInit_VarInit( &
         BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
         PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
         STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3         &
         )  
         
         USE ModuleDefs
-        USE Module_CSCAS_Vars_List
+        USE CS_First_Trans_m
 
         IMPLICIT     NONE
         
@@ -537,4 +536,4 @@
         no3mn = -99.0
         nh4mn = -99.0
 
-       END SUBROUTINE CS_VarInit
+       END SUBROUTINE CS_SeasInit_VarInit

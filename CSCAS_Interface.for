@@ -7,23 +7,27 @@ C  04/16/2002 LAH/CHP Written.
 C  08/09/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  08/09/2012 GH  Updated for cassava
-C  02/03/2014 MF/PM SNOW variable deleted 
+C  02/03/2014 MF/PM SNOW variable deleted.
+C  20/01/2015 MF Added module CS_Albedo_Check_m to allow checks in WORK.OUT.
+C  20/01/2015 MF Updated some variables to be consistent with CSCAS.
 C=======================================================================
       SUBROUTINE CSCAS_Interface (CONTROL, ISWITCH,       !Input
      &    EOP, ES, NH4, NO3,SOILPROP, SRFTEMP,            !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
-     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output
+     &    RWUPM, RLV, RWUMX, SENESCE, STGDOY,             !Output       ! MF 20JA15 REPLACED PORMIN with RWUMP
      &    UNH4, UNO3, XLAI)                               !Output
 
       USE ModuleDefs
       USE ModuleData
+      USE CS_Albedo_Check_m                                             ! MF 18JA15 For WORK.OUT
+
       IMPLICIT NONE
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
       CHARACTER*1   ISWDIS, ISWWAT, ISWNIT, MESOM, RNMODE
-      CHARACTER*2   CROP
+      CHARACTER*2   CROP                                             
       CHARACTER*78  MESSAGE(10)
       CHARACTER (LEN=120) FILEIOIN      ! Name of input file
 
@@ -32,15 +36,16 @@ C=======================================================================
       INTEGER MDATE, L, NLAYR
       INTEGER MULTI, FROP, SN, YEAR, DOY
       INTEGER STGYEARDOY(20), STGDOY(20), YRPLT
+      INTEGER YEARPLTCSM                                                ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS                                        
 
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
       REAL KCAN, KEP, DEPMAX, DAYLT, DEWDUR
-      REAL NSTRES, XLAI, NFP, MSALB, ALBEDO
-      REAL DAYL, PORMIN, RAIN, RWUMX, SRFTEMP, TWILEN
-      REAL CANHT, EO, WINDSP, PARIP, PARIPA
-      REAL GSTAGE, CAID 
+      REAL NSTRES, XLAI, NFP, MSALB, ALBEDOS                            ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS 
+      REAL DAYL, RWUPM, RAIN, RWUMX, SRFTEMP, TWILEN                    ! MF 26OC14 REPLACED PORMIN WITH RWUMP
+      REAL CANHT, EO, WINDSP, PARIP, PARIPA   
+      REAL BRSTAGE, CAID                                                ! MF 26OC14 REPLACED GSTAGE WITH BRSTAGE
       REAL TAIRHR(TS), TDEW, SLPF
-!     REAL LAIL, LAILA, TWILEN
+!      REAL LAIL, LAILA, TWILEN
 
       REAL, DIMENSION(2)  :: HARVFRAC
 
@@ -106,7 +111,8 @@ C=======================================================================
       NO3LEFT = NO3
       PARIP  = -99.   !Not used w/ DSSAT
       PARIPA = -99.   !Not used w/ DSSAT
-      ALBEDO = MSALB
+      ALBEDOS = MSALB                                                   ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS
+      ALBEDOS_Interface = MSALB                                         ! MF 18JA15 For WORK.OUT
 
       DEPMAX = DS(NLAYR)
 
@@ -119,11 +125,11 @@ C=======================================================================
         WRITE(MESSAGE(1),100) 
         WRITE(MESSAGE(2),110)  
         WRITE(MESSAGE(3),120) 
-        CALL WARNING(3, "WHCER ", MESSAGE)
+        CALL WARNING(3, "CSCAS ", MESSAGE)
       ENDIF
 
   100 FORMAT('You have selected the Century soil nutrient model. ')
-  110 FORMAT('The CSCER (wheat/barley) routines have not been ')
+  110 FORMAT('The CSCAS (cassava) routines have not been ')
   120 FORMAT('calibrated for use with this model.' )
 
       IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
@@ -181,7 +187,7 @@ C=======================================================================
       CLOUDS = WEATHER % CLOUDS
       CO2    = WEATHER % CO2
       DAYL   = WEATHER % DAYL 
-      TWILEN= WEATHER % TWILEN
+      TWILEN = WEATHER % TWILEN
       RAIN   = WEATHER % RAIN
       SRAD   = WEATHER % SRAD
       TAIRHR = WEATHER % TAIRHR
@@ -192,25 +198,28 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
       CALL CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,           !Command line
-     & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols
+     & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols      
      & IDETS, IDETO, IDETG, IDETL, FROP,                   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
-     & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather
-     & DRAIN, RUNOFF, IRRAMT,                              !Water
-     & TWILEN, WINDSP, DEWDUR, CLOUDS, SoilTemp, EO, ES,   !Weather
-     & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
+     & SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,          !Weather 
+     & DRAIN, RUNOFF, IRRAMT,                              !Water   
+     & DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,           !Weather 
+     & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states 
      & SW, NO3LEFT, NH4LEFT, FERNIT,                       !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                             !N components
      & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components
-     & YRPLT, HARVFRAC,                                    !Pl.date
-     & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDO,          !Resources
-     & CAID, KCAN, KEP,                                    !States
-     & RLV, NFP, PORMIN, RWUMX, CANHT, LAIL, LAILA,        !States
-     & UNO3, UNH4, UH2O,                                   !Uptake
-     & SENCALG, SENNALG, SENLALG,                          !Senescence
-     & RESCALG, RESNALG, RESLGALG,                         !Residues
-     & STGYEARDOY, GSTAGE,                                 !Stage dates
-     & DYNAMIC)                                            !Control
+     & YEARPLTCSM, HARVFRAC,                               !Pl.date     
+     & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,         !Resources       ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS
+     & CAID, KCAN, KEP,                                    !States       
+     & RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,         !States          ! MF 26OC14 REPLACED PORMIN WITH RWUPM
+     & UNO3, UNH4, UH2O,                                   !Uptake       
+     & SENCALG, SENNALG, SENLALG,                          !Senescence   
+     & RESCALG, RESNALG, RESLGALG,                         !Residues     
+     & STGYEARDOY, BRSTAGE,                                !Stage dates  
+     & DYNAMIC) !, WEATHER)                                !Control         ! MF 10JA15 WEATHER IS NEEDED FOR HOURLY EVALUATIONS
+      
+    ! MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of
+    !    CSCAS_Interface of which there are only 31. The others can be passed in a Module (20JA15 still to do).
 
       XLAI   = CAID
       NSTRES = NFP

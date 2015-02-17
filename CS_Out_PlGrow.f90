@@ -1,0 +1,162 @@
+!***************************************************************************************************************************
+! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6901 - 7148 of the original CSCAS code. The names of the 
+! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
+! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
+! the original CSCAS.FOR code.
+!
+! SUBROUTINE CS_Out_PlGrow covers outputs of plant growth factors (Plantgro, gr2, grf, N) (IDETG .NE. N). 
+!***************************************************************************************************************************
+    
+    SUBROUTINE CS_Out_PlGrow ( & 
+        BRSTAGE     , CANHT       , DOY         ,  EOP         , IDETG       , IDETL       , ISWNIT      , &
+        NFP         , RLV         , RUN         , TN          , YEAR        &
+        )
+        
+        USE ModuleDefs
+        USE CS_First_Trans_m
+        USE CS_Formats_m
+     
+        IMPLICIT NONE 
+     
+        INTEGER :: DOY         , RUN         , TN          , YEAR
+
+        REAL    :: BRSTAGE     , CANHT       , EOP         , NFP         , RLV(NL)           
+
+        CHARACTER(LEN=1)  :: IDETG       , IDETL       , ISWNIT       
+        
+        !---------------------------------------------------------------------------------------------------------------
+        !         Plant growth factors: Plantgro, gr2, grf, N (Outputs for IDETG NE N )
+        !---------------------------------------------------------------------------------------------------------------     
+            
+        IF ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A') THEN
+                
+            ! PlantGro
+            IF (YEARDOY.EQ.PLYEARDOY) THEN
+                OPEN (UNIT = NOUTPG, FILE = OUTPG,POSITION = 'APPEND')
+                IF (FILEIOT(1:2).EQ.'DS') THEN
+                    CALL HEADER(2, NOUTPG, RUN)
+                ELSE
+                    WRITE (NOUTPG,'(/,A79,/)') OUTHED
+                    WRITE (NOUTPG,'(A,A8)') ' MODEL            ', MODEL
+                    WRITE (NOUTPG,'(A,A8)') ' MODULE           ',MODNAME
+                    WRITE (NOUTPG,'(A,A8,A1,A2,A2,A47)')' EXPERIMENT       ',EXCODE(1:8),' ',EXCODE(9:10),'  ',ENAME(1:47)
+                    WRITE (NOUTPG,'(A,I3,A,A25)') ' TREATMENT', TN,'     ',TNAME
+                    WRITE (NOUTPG,'(A,A2,A6,A,A16)') ' GENOTYPE         ',CROP,VARNO,'  ',VRNAME
+                    CALL Calendar (year,doy,dom,month)
+                    WRITE(NOUTPG,'(A,A3,I3,I8,2X,I4,A,I3,A,/)')' PLANTING         ', month, dom, plyeardoy,  &
+                        NINT(pltpopp), ' plants/m2 in ', NINT(rowspc), ' cm rows'
+                ENDIF
+                WRITE (NOUTPG, FMT2201)
+            ENDIF  ! End Plantgro header writes
+            WRITE (NOUTPG, FMT501)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,LNUM,PARIOUT,PARIUE,AMIN1(999.9,CARBOBEG*PLTPOP*10.0), &
+                LAIC,SAID,CAIC,NINT(TWAD),NINT(SDWAD),NINT(RWAD),NINT(CWAD),NINT(LLWADOUT),NINT(STWADOUT),NINT(HWAD), &
+                HIAD, NINT(CRWADOUT),NINT(RSWAD),SENTOPLITTERAC,SENROOTC,RSCD*100.0,NINT(HNUMAD),HWUDC,NINT(BRNUMST), &
+                SLAOUT, RTDEP/100.0,PTF,H2OA,AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),1.0-WFP,1.0-WFG,1.0-NFP,1.0-NFG, &
+                AMIN1(2.0,NUPRATIO),1.0-TFP,1.0-TFG,1.0-DFOUT
+            ! End Plantgro writes
+                     
+            ! PlantGroReductionFactors
+            IF (YEARDOY.GT.PLYEARDOY) THEN
+                TCDIF = TCAN - TMEAN
+            ELSE  
+                TCDIF = -99
+            ENDIF
+            IF (YEARDOY.EQ.PLYEARDOY) THEN
+                OPEN (UNIT = NOUTPGF, FILE = OUTPGF,POSITION = 'APPEND')
+                IF (FILEIOT(1:2).EQ.'DS') THEN
+                    CALL HEADER(2, NOUTPGF, RUN)
+                ELSE
+                    WRITE (NOUTPGF,'(/,A79,/)') OUTHED
+                    WRITE (NOUTPGF,'(A,A8)') ' MODEL            ', MODEL
+                    WRITE (NOUTPGF,'(A,A8)') ' MODULE           ',MODNAME
+                    WRITE (NOUTPGF,'(A,A8,A1,A2,A2,A47)')' EXPERIMENT       ',EXCODE(1:8),' ',EXCODE(9:10),'  ', &
+                        ENAME(1:47)
+                    WRITE (NOUTPGF,'(A,I3,A,A25)') ' TREATMENT', TN,'     ',TNAME
+                    WRITE (NOUTPGF,'(A,A2,A6,A,A16)') ' GENOTYPE         ',CROP,VARNO,'  ',VRNAME
+                    CALL Calendar (year,doy,dom,month)
+                    WRITE(NOUTPGF,'(A,A3,I3,I8,2X,I4,A,I3,A,/)')' PLANTING         ', month, dom, plyeardoy,  &
+                        NINT(pltpopp), ' plants/m2 in ', NINT(rowspc), ' cm rows'
+                ENDIF
+                WRITE (NOUTPGF, FMT2215)
+                WRITE (NOUTPGF, FMT2205)
+            ENDIF  ! End Plantgro header writes
+            WRITE (NOUTPGF, FMT507)YEAR,DOY,DAS,DAP,TMEAN,TCDIF,BRSTAGEC,DU,1.0-DFOUT,1.0-TFP,1.0-WFP,1.0-NFP, &
+                1.0-CO2FP,1.0-RSFP,1.0-TFG,1.0-WFG,1.0-NFG,AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),H2OA,EOP, &
+                SNO3PROFILE+SNH4PROFILE,LNCR,SNCR,RNCR
+            ! End Plantgro reduction factor writes
+                         
+            ! PlantGr2
+            IF (YEARDOY.EQ.PLYEARDOY) THEN
+                OPEN (UNIT = NOUTPG2, FILE = OUTPG2, STATUS='UNKNOWN',POSITION = 'APPEND')
+                IF (FILEIOT(1:2).EQ.'DS') THEN
+                    CALL HEADER(2, NOUTPG2, RUN)
+                ELSE
+                    WRITE (NOUTPG2,'(/,A79,/)') OUTHED
+                    WRITE (NOUTPG2,'(A,A8)') ' MODEL            ', MODEL
+                    WRITE (NOUTPG2,'(A,A8)') ' MODULE           ',MODNAME
+                    WRITE (NOUTPG2,'(A,A8,A1,A2,A2,A47)')' EXPERIMENT       ',EXCODE(1:8),' ',EXCODE(9:10),'  ', &
+                        ENAME(1:47)
+                    WRITE (NOUTPG2,'(A,I3,A,A25)') ' TREATMENT', TN,'     ',TNAME
+                    WRITE (NOUTPG2,'(A,A2,A6,A,A16)') ' GENOTYPE         ',CROP,VARNO,'  ',VRNAME
+                    WRITE(NOUTPG2,'(A,A3,I3,I8,2X,I4,A,I3,A,/)')' PLANTING         ', month, dom, plyeardoy,  &
+                        NINT(pltpopp), ' plants/m2 in ', NINT(rowspc), ' cm rows'
+                ENDIF 
+                WRITE (NOUTPG2, FMT2251)
+            ENDIF   ! Plantgr2 header writes
+            LAIPROD = PLA*PLTPOP*0.0001
+            CALL Csopline(laiprodc,laiprod)
+            CALL Csopline(canhtc,canht)
+            L = MAX(1,LNUMSG-INT(LLIFG))
+            WRITE (NOUTPG2, FMT502)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,BRSTAGE,LAIPRODC,SENLA*PLTPOP*0.0001,LAIC, &
+                CANHTC,SDWAD,SENTOPLITTERAC,SENROOTC,NINT(HNUMAD),HWUDC,SHRTD,PTF,RTDEP/100.0,(RLV(I),I=1,10)
+                ! End PlantGr2 writes
+                             
+                ! PlantN
+            IF (ISWNIT.NE.'N') THEN
+                IF (YEARDOY.EQ.PLYEARDOY) THEN
+                    OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS='UNKNOWN',POSITION = 'APPEND')
+                    IF (FILEIOT(1:2).EQ.'DS') THEN
+                        CALL HEADER(2, NOUTPN, RUN)
+                    ELSE
+                        WRITE (NOUTPN,'(/,A79,/)') OUTHED
+                        WRITE (NOUTPN,'(A,A8)') ' MODEL            ', MODEL
+                        WRITE (NOUTPN,'(A,A8)') ' MODULE           ',MODNAME
+                        WRITE (NOUTPN,'(A,A8,A1,A2,A2,A47)')' EXPERIMENT       ',EXCODE(1:8),' ',EXCODE(9:10), &
+                            '  ', ENAME(1:47)
+                        WRITE (NOUTPN,'(A,I3,A,A25)') ' TREATMENT', TN,'     ',TNAME
+                        WRITE (NOUTPN,'(A,A2,A6,A,A16)') ' GENOTYPE         ',CROP,VARNO,'  ',VRNAME
+                        WRITE (NOUTPN,'(A,A3,I3,I8,2X,I4,A,I3,A,/)')' PLANTING         ', month, dom,  &
+                            plyeardoy, NINT(pltpopp), ' plants/m2 in ', NINT(rowspc), ' cm rows'
+                    ENDIF 
+                    WRITE (NOUTPN, FMT2252)
+                ENDIF  ! Plantn header writes
+                CALL Csopline(senn0c,sennal(0))
+                CALL Csopline(sennsc,sennas)
+                WRITE (NOUTPN, FMT503)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,NUPAC,TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD,HNAD, &
+                    HINDC,RSNAD,SENN0C,SENNSC,RANC*100.0,LANC*100.0,SANCOUT*100.0,AMIN1(9.9,HNC*100.0), &
+                    SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCR,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &
+                    ANDEM,1.0-NFLF2(0)
+                                     
+            ENDIF  ! ISWNIT  Plantn writes
+                             
+        ELSE ! (IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A'
+                
+            IF (IDETGNUM.LE.0) THEN
+                OPEN (UNIT=FNUMTMP, FILE=OUTPG, STATUS = 'UNKNOWN', IOSTAT = IOCHECK)
+                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+                OPEN (UNIT=FNUMTMP, FILE=OUTPG2, STATUS = 'UNKNOWN')
+                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+                OPEN (UNIT=FNUMTMP, FILE=OUTPGF, STATUS = 'UNKNOWN')
+                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+                OPEN (UNIT=FNUMTMP, FILE=OUTPN, STATUS = 'UNKNOWN')
+                CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
+                IDETGNUM = IDETGNUM + 1 
+            ENDIF  
+                
+        ENDIF ! End ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A' 
+    
+    END SUBROUTINE CS_Out_PlGrow
+            
+            
+
+

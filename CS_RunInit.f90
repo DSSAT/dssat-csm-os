@@ -1,30 +1,31 @@
-!**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 1470 - 1814 of the original CSCAS code.
-! The actual and dummy arguments are only for those variables that are dummy arguments for CSCAS. The type of all
-! other variables are declared in the MODULE Module_CSCAS_Vars. The type of only the dummy arguments and the functions
-! are declared here. The variables and their units are defined in CSCAS.
+!***************************************************************************************************************************
+! This is the code from the section (DYNAMIC.EQ.RUNINIT) lines 1479 - 1822 of the original CSCAS code. The names of the 
+! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
+! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
+! the original CSCAS.FOR code.
 !
-! SUBROUTINE CS_RUNINIT is essentially housekeeping.
-!
-!**********************************************************************************************************************
+! Subroutine CS_RUNINIT sets parameters, gets command line arguments, creates file names and their logical unit 
+! numbers, writes the headers for the main ooutput files.
+!***************************************************************************************************************************
       
     SUBROUTINE CS_RunInit (&
         CN          , DOY         , FILEIOIN    , FROP        , IDETL       , ISWNIT      , ON          , RN          , &
         RNMODE      , RUN         , SN          , TN          , YEAR        & 
         )
       
-        !USE CRSIMDEF                                                                MF 15SE14 Declared in ModuleDefs
-        USE Module_CSCAS_Vars_List
+        USE ModuleDefs
+        USE CS_First_Trans_m
       
         IMPLICIT NONE
       
         INTEGER CN          , DOY         , FROP        , ON          , RN          , RUN         , SN          , TN          
         INTEGER YEAR
-        INTEGER TVILENT                                                              ! Integer function call
+        !INTEGER VERSIONCSCAS
+        INTEGER TVILENT                                                                       ! Integer function call
 
         CHARACTER(LEN=1)   IDETL       , ISWNIT      , ISWWAT      , RNMODE      
         CHARACTER(LEN=120) FILEIOIN    
-        CHARACTER(LEN=10)  TL10FROMI                                                 ! Character function call
+        CHARACTER(LEN=10)  TL10FROMI                                                          ! Character function call
         
         !-----------------------------------------------------------------------
         !         The body of CS_RunInit
@@ -32,7 +33,7 @@
             
         IF (RUNCRP.LE.0) THEN
             MODNAME(1:8) = 'CSCAS046'
-            VERSIONCSCAS = 010114                                                    ! MF 15SE14 Changed from VERSION, conflict with ModuleDefs 
+            VERSIONCSCAS = 010114                                                             ! MF 15SE14 Changed from VERSION, conflict with ModuleDefs 
             GENFLCHK(1:15) = 'CSCAS046.010114'
             
             !-----------------------------------------------------------------------
@@ -363,5 +364,6 @@
         !-----------------------------------------------------------------------
         
         RUNCRP = RUNCRP + 1
+        
     END SUBROUTINE CS_RunInit
     

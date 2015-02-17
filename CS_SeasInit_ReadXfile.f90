@@ -1,31 +1,24 @@
-!***********************************************************************
-! THIS IS THE CODE FROM THE SECTION (DYNAMIC.EQ.RUNINIT) ! Initialization
-! LINES 2333 - 2525 OF THE ORIGINAL CSCAS CODE. THE NAMES OF THE 
-! DUMMY ARGUMENTS ARE THE SAME AS IN THE ORIGINAL CSCAS CODE AND THE CALL 
-! STATEMENT. THE VARIABLES ARE DESCRIBED IN CSCAS.
+!***************************************************************************************************************************
+! This is the code feom the section (DYNAMIC.EQ.RUNINIT) ! Initialization lines 2333 - 2525 of the original CSCAS code. 
+! The names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared 
+! here. The variables that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all 
+! comments are those of the original CSCAS.FOR code.
 !
-! THIS SUBROUTINE READS THE XFILE.
-!
-!***********************************************************************
+! Subroutine CS_SeasInit_ReadXfile reads the Xfile (why are you surprised?)
+!***************************************************************************************************************************
 
-!-----------------------------------------------------------------------
-!       Read experiment information from Dssat input or X- file
-!-----------------------------------------------------------------------
-
-      SUBROUTINE CS_Read_Xfile ( &
+      SUBROUTINE CS_SeasInit_ReadXfile ( &
           CN          , HARVFRAC    , ISWDIS      , ON          , RN          , SN          , TN          &
           )
 
-      !USE CRSIMDEF                                                                  MF 15SE14 Declared in ModuleDefs        
-      USE Module_CSCAS_Vars_List
+      USE CS_First_Trans_m
 
       IMPLICIT NONE
 
-      !INTEGER DCNX        , HANUMX      , TVILENT                                   ! Array bounds, set as parameters in CSCAS  MF 15SE14 Redundant, declared in Module_CSCAS_Vars_List and INTEGER FUNCTION
       CHARACTER(LEN=1) ISWDIS      
       
       INTEGER CN          , ON          , RN          , SN          , TN  
-      INTEGER CSYEARDOY   , TVILENT                                                  ! Integer function calls.        
+      INTEGER CSYEARDOY   , TVILENT                                                           ! Integer function calls.        
       
       REAL    HARVFRAC(2) 
 
@@ -227,4 +220,5 @@
           hpcf = 100.0
           hbpcf = 0.0
         ENDIF
-        END SUBROUTINE
+    
+    END SUBROUTINE CS_SeasInit_ReadXfile

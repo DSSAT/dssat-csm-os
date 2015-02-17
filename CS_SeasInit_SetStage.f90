@@ -1,28 +1,31 @@
 !**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 3105 - 3655 of the original CSCAS code.
-! The actual and dummy arguments are only for those variables that are dummy arguments for CSCAS. The type of all
-! other variables are declared in the MODULE Module_CSCAS_Vars. The type of only the dummy arguments are declared here.
-! The variables and their units are defined in CSCAS.
+! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 3109 - 3549 of the original CSCAS code.
+! The names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared 
+! here. The variables that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all 
+! comments are those of the original CSCAS.FOR code.
 !
-! SUBROUTINE CS_Setup_Stages sets up the growth stages including branching, check coefficients, sets defaults and 
+! Subroutine CS_SeasInit_SetStage sets up the growth stages including branching, check coefficients, sets defaults and 
 ! calculates/sets initial states.
 !**********************************************************************************************************************
 
-    SUBROUTINE CS_Setup_Stages( &
+    SUBROUTINE CS_SeasInit_SetStage( &
         CN          , ISWNIT      , KCAN        , KEP         , RN          , RUN         , RUNI        , SLPF        , &
         TN           &
         )
 
         USE CRSIMDEF
-        USE Module_CSCAS_Vars_List
+        USE CS_First_Trans_m
+
         
         IMPLICIT NONE
         
-        CHARACTER(LEN=1) ISWNIT         
         INTEGER CN          , RN          , RUN         , RUNI        , TN          
-        REAL    KCAN        , KEP         , SLPF 
-        INTEGER TVILENT                                                                  ! Integer function call.        
+        INTEGER TVILENT                                                                       ! Integer function call.        
         
+        REAL    KCAN        , KEP         , SLPF        
+        
+        CHARACTER(LEN=1) ISWNIT         
+         
         !-----------------------------------------------------------------------
         !       Determine 'key' principal and secondary stages,and adjust names
         !-----------------------------------------------------------------------
@@ -30,17 +33,17 @@
         KEYPSNUM = 0
         PSNUM = 0
         DO L = 1,PSX
-            IF (TVILENT(PSTYP(L)).GT.0) THEN
-                IF (PSTYP(L).EQ.'K'.OR.PSTYP(L).EQ.'k'.OR.PSTYP(L).EQ.'M')THEN
-                    KEYPSNUM = KEYPSNUM + 1
-                    KEYPS(KEYPSNUM) = L
-                ENDIF
-                IF (PSABV(L).EQ.'HDAT') HSTG = L
-                IF (PSABV(L).EQ.'MDAT') MSTG = L
-                PSNUM = PSNUM + 1
-            ENDIF
-        ENDDO
-        ! IF MSTG not found, use maximum principal stage number
+            IF (TVILENT(PSTYP(L)).GT.0) THEN                                            ! TVILENT is a function in CSUTS.FOR the same as the intrinsic function LEN_TRIM
+                IF (PSTYP(L).EQ.'K'.OR.PSTYP(L).EQ.'k'.OR.PSTYP(L).EQ.'M')THEN          ! PSNO PSTYP PSABV PSNAME    (From .SPE file, S=Standard, K=Key)
+                    KEYPSNUM = KEYPSNUM + 1                                             !    1     S GDAT  Germinate
+                    KEYPS(KEYPSNUM) = L                                                 !    2     K B1DAT 1stBranch
+                ENDIF                                                                   !    3     K B2DAT 2ndBranch
+                IF (PSABV(L).EQ.'HDAT') HSTG = L                                        !    4     K B3DAT 3rdBranch
+                IF (PSABV(L).EQ.'MDAT') MSTG = L                                        !    5     K B4DAT 4thBranch
+                PSNUM = PSNUM + 1                                                       !    6     K B5DAT 5thBranch
+            ENDIF                                                                       !    7     K B6DAT 6thBranch
+        ENDDO                                                                           !    8     M HDAT  Harvest  
+        ! IF MSTG not found, use maximum principal stage number                         
         IF (MSTG.LE.0) THEN
             MSTG = KEYPSNUM
         ENDIF
@@ -92,7 +95,7 @@
             ! Calculate leaf # to MSTG
             TVR1 = 0.0
             DO L = 1,MSTG-1
-                TVR1 = TVR1 + AMAX1(0.0,PDL(L))
+                TVR1 = TVR1 + AMAX1(0.0,PDL(L))                                                                        !EQN 001
             ENDDO  
             ! Now calculate tier durations in Thermal Units
             TVR2 = 0.0
@@ -100,10 +103,10 @@
             DSTAGE = 0.0
             DO L = 1,1000
                 TVR2 = TVR2 + STDAY
-                TVR3 = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))
+                TVR3 = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))                                              !EQN 003
                 ! TVR3 is a temporary name for PHINT within the loop 
                 LNUMTMP = LNUMTMP + STDAY/TVR3
-                DSTAGE = AMIN1(1.0,LNUM/TVR1)
+                DSTAGE = AMIN1(1.0,LNUM/TVR1)                                                                          !EQN 002
                 IF(LNUMTMP.GE.PDL(1).AND.PSTART(2).LE.0.0) PSTART(2) = TVR2
                 IF(LNUMTMP.GE.PDL(1)+PDL(2).AND.PSTART(3).LE.0.0) PSTART(3) = TVR2
                 IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3).AND.PSTART(4).LE.0.0) PSTART(4) = TVR2
@@ -159,7 +162,7 @@
         DO L = 1, MSTG-1
             IF (PD(L).GT.0.0) THEN
                 DUTOMSTG = DUTOMSTG + PD(L)
-                LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)
+                LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)                                                                 !EQN 006
             ENDIF  
         ENDDO
         DO L = MSTG,PSX-1
@@ -179,7 +182,7 @@
         
         ! Adjust germination duration for seed dormancy
         IF (PLMAGE.LT.0.0.AND.PLMAGE.GT.-90.0) THEN
-            PEGD = PGERM - (PLMAGE*STDAY) ! Dormancy has negative age
+            PEGD = PGERM - (PLMAGE*STDAY) ! Dormancy has negative age                                                  !EQN 045b
         ELSE
             PEGD = PGERM
         ENDIF
@@ -304,30 +307,30 @@
         LAPOTX(1) = LA1S
         
         ! If max LAI not read-in,calculate from max interception
-        IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)
+        IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)                                                               ! EQN 008
         
         PHINT = PHINTS
         
         ! Leaf life
         IF (CFLLFLIFE.EQ.'P')THEN
             ! Read-in as phyllochrons 
-            LLIFGTT = LLIFG * PHINT 
-            LLIFATT = LLIFA * PHINT 
-            LLIFSTT = LLIFS * PHINT 
+            LLIFGTT = LLIFG * PHINT                                                                                    !EQN 349
+            LLIFATT = LLIFA * PHINT                                                                                    !EQN 350 
+            LLIFSTT = LLIFS * PHINT                                                                                    !EQN 351 
         ELSEIF (CFLLFLIFE.EQ.'T')THEN
             ! Read-in as thermal time 
-            LLIFGTT = LLIFG 
-            LLIFATT = LLIFA 
-            LLIFSTT = LLIFS
+            LLIFGTT = LLIFG                                                                                            !EQN 352
+            LLIFATT = LLIFA                                                                                            !EQN 353 
+            LLIFSTT = LLIFS                                                                                            !EQN 354
         ELSEIF (CFLLFLIFE.EQ.'D')THEN
             ! Read-in as days. Thermal time for each day set to PHINT
-            LLIFGTT = LLIFG * PHINT 
-            LLIFATT = LLIFA * PHINT 
-            LLIFSTT = LLIFS * PHINT 
+            LLIFGTT = LLIFG * PHINT                                                                                    !EQN 355 
+            LLIFATT = LLIFA * PHINT                                                                                    !EQN 356 
+            LLIFSTT = LLIFS * PHINT                                                                                    !EQN 357 
         ENDIF  
         
         ! Extinction coeff for SRAD
-        KEP = (KCAN/(1.0-TPAR)) * (1.0-TSRAD)
+        KEP = (KCAN/(1.0-TPAR)) * (1.0-TSRAD)                                                                          ! EQN 009
         
         ! Photoperiod sensitivities
         DO L = 0,10
@@ -343,7 +346,7 @@
         IF (SHGR(20).GE.0.0) THEN
             DO L = 3,22
                 IF (L.LT.20) THEN
-                    SHGR(L) = SHGR(2)-((SHGR(2)-SHGR(20))/18)*(L-2)
+                    SHGR(L) = SHGR(2)-((SHGR(2)-SHGR(20))/18)*(L-2)                                                    !EQN 010
                 ELSEIF (L.GT.20) THEN
                     SHGR(L) = SHGR(20)
                 ENDIF  
@@ -361,14 +364,14 @@
         ! Storage root N  NB.Conversion protein->N factor = 6.25
         IF (SRNPCS.LE.0.0) THEN
             IF(SRPRS.GT.0.0) THEN
-                SRNPCS = SRPRS / 6.25
+                SRNPCS = SRPRS / 6.25                                                                                  !EQN 023
             ELSE
                 SRNPCS = 0.65
             ENDIF
         ENDIF       
         
         ! Height growth
-        SERX = CANHTS/PSTART(MSTG)
+        SERX = CANHTS/PSTART(MSTG)                                                                                     !EQN 315
         
         !-----------------------------------------------------------------------
         !       Set coefficients that dependent on input switch
@@ -386,15 +389,15 @@
         !       Calculate/set initial states
         !-----------------------------------------------------------------------
         
-        IF (SDRATE.LE.0.0) SDRATE = SDSZ*PLTPOPP*10.0
+        IF (SDRATE.LE.0.0) SDRATE = SDSZ*PLTPOPP*10.0                                                                  !EQN 024
         ! Reserves = SDRSF% of seed 
-        SEEDRSI = (SDRATE/(PLTPOPP*10.0))*SDRSF/100.0
+        SEEDRSI = (SDRATE/(PLTPOPP*10.0))*SDRSF/100.0                                                                  !EQN 284
         SEEDRS = SEEDRSI
         SEEDRSAV = SEEDRS
-        SDCOAT = (SDRATE/(PLTPOPP*10.0))*(1.0-SDRSF/100.0)
+        SDCOAT = (SDRATE/(PLTPOPP*10.0))*(1.0-SDRSF/100.0)                                                             !EQN 025
         ! Seed N calculated from total seed
-        SDNAP = (SDNPCI/100.0)*SDRATE
-        SEEDNI = (SDNPCI/100.0)*(SDRATE/(PLTPOPP*10.0))
+        SDNAP = (SDNPCI/100.0)*SDRATE                                                                                  !EQN 026
+        SEEDNI = (SDNPCI/100.0)*(SDRATE/(PLTPOPP*10.0))                                                                !EQN 027
         IF (ISWNIT.NE.'N') THEN
             SEEDN = SEEDNI
         ELSE
@@ -430,9 +433,10 @@
             sdepthu = sdepth
         ELSEIF (PLME.EQ.'I') THEN
             ! Assumes that inclined at 45o
-            sdepthu = AMAX1(0.0,sdepth - 0.707*sprl)
+            sdepthu = AMAX1(0.0,sdepth - 0.707*sprl)                                                                   !EQN 028
         ELSEIF (PLME.EQ.'V') THEN
-            sdepthu = AMAX1(0.0,sdepth - sprl)
+            sdepthu = AMAX1(0.0,sdepth - sprl)                                                                         !EQN 029
         ENDIF
-        IF (sdepthu.LT.0.0) sdepthu = sdepth      
-    END SUBROUTINE CS_Setup_Stages
+        IF (sdepthu.LT.0.0) sdepthu = sdepth
+        
+    END SUBROUTINE CS_SeasInit_SetStage
