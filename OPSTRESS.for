@@ -311,7 +311,7 @@
      &        Ndays_GT34(I), Ndays_RAIN(I), W_photR(I),
      &        W_growR(I), N_photR(I), N_growR(I), P_photR(I), P_growR(I)
 ! 610       FORMAT(1X,A23,I5,3F6.1,F7.2,F7.1,2I7,6F7.3)
-  610       FORMAT(1X,A23,I5,4F6.1,F7.2,F7.1,3I7,6F7.3)
+  610       FORMAT(1X,A23,I5,4F6.1,F7.2,F7.1,3I7,6I5,6F7.3)
           ENDIF
         ENDIF
 
