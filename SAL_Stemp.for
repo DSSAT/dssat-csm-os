@@ -33,10 +33,9 @@ C-----------------------------------------------------------------------
       INTEGER DoyNH   !, COLDLAG
  
       !REAL A(0:20),B(0:20),D(0:20),E(0:20)
-      REAL DELT,F,Pi
+      REAL DELT,F
       REAL THETA1, THETA2,THETA3,THETA4,SWL1REL,WATERFactor,TSOIL2cm
       REAL FRMIN, ATHETA, FQRZ, ACV, ALBD, FT, ZDAMP  !, FWTEMP
-      PARAMETER (PI = 3.14159)
             
       !Real Cvav,Fqrz,Frmin,Ft,Thetav
 	! ABD = BdAv, ACV=CVAV ATHETA = THETAV

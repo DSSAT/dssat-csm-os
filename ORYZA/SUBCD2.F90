@@ -23,7 +23,7 @@
 !-----Formal parameters
       REAL    COLDMIN, TAV, TIME, NCOLD
       INTEGER CROPSTA
-      SAVE
+      SAVE         ! TAOLI
 
       IF (CROPSTA .EQ. 3) NCOLD = 0.
       IF (TAV.LT.COLDMIN) THEN

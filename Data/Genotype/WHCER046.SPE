@@ -25,7 +25,7 @@ $SPECIES:WHCER046.280513   Last edit:060613
 ! Leaves
 @LLIG%  LAXS LSHFR LSHAW  PHL1  PHF1 SLAMN SLACF
 !    %   cm2    fr cm2/g   Lf#   Fac    fr fr/lf 
-  10.0   900  0.33  70.0   2.0   0.8   0.5  0.02
+  10.0   900  0.33  70.0   2.0   0.5   0.5  0.02
 @LLIFE LWLOS LRPHS                  
 ! oC.d    fr GrStg
    4.0  0.50   3.0                                  
@@ -49,9 +49,10 @@ $SPECIES:WHCER046.280513   Last edit:060613
 @TGR02   
 !   fr
   0.80
-@ RS%X ! Max concentration
-!    %
-  80.0
+! Reserves  
+@ RS%X RSUSE ! Max concentration,fraction utilizeable/day
+!    %    fr
+  80.0   0.1
 ! Stems   
 @SLIG%  SAWS SGPHE SSPHS SSEN%
 !    % cm2/g GrStg GrStg     %
@@ -225,6 +226,7 @@ $SPECIES:WHCER046.280513   Last edit:060613
 ! RRESP   Root respiration fraction (fr)
 ! RS%X    Reserves % above which CH2O overflows to roots (%)
 ! RSEN    Root senescence (%/standard day)
+! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
 ! RTNO3   NO3 uptake/root length  (mg N/cm.day)
 ! RTNH4   NH4 uptake/root length  (mg N/cm.day)
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
@@ -243,7 +245,7 @@ $SPECIES:WHCER046.280513   Last edit:060613
 ! SSPHS   Stem senesence phase start stage (GrowthStage)
 ! STFR    Stem fraction,leaf+stem (fr)
 ! TGR02   Growth rate of tiller 2 (pot.leaf area relative to main shoot)
-! TKLF    Temp.at which leaves start to be killeded (oC)
+! TKLF    Temp.at which leaves start to be killed (oC)
 ! TKUH    Temp.at which 50% kill,unhardened seedling (oC)
 ! TPAR    Transmission of photosynthetically active radiation (fr)
 ! TRDV1   Temperature response,development 1 (oC)

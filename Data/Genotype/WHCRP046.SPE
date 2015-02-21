@@ -1,4 +1,4 @@
-$SPECIES:WHCRP046.280513   Last edit:060613 
+$SPECIES:WHCRP046.010314   Last edit:010314 
 
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
@@ -8,9 +8,6 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! gained,and should not be taken as 'fixed'.
 
 *SPECIES:WHCRP046
-! Harvest product and standard moisture content
-@HPROD  HMPC
-    GR    15
 ! Principal Stages (S=Standard,K=Key(those that may be outputed)
 @ PSNO PSTYP PSABV PSNAME
 ! Stg#  Type Abrev Name
@@ -30,7 +27,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 @ SSNO SSTYP  SSTG SSABV SSNAME
 ! Stg#  Type PStg# Abrev Name
     1      S   1.5 LAFST Lafac_change          
-    2      K   1.6 DRAT  DoubleRidges
+    2      K  1.55 DRAT  DoubleRidges
     3      S 3.143 JDAT  Jointing
     4      S   3.3 SGPHS StemStart             
     5      S   4.0 RUESG RUE_change            
@@ -47,7 +44,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! Phase durations
 @PGERM PEMRG    P0    P9 
 !  HTu Tu/cm  oC.d  oC.d
-    10     8     0   200
+    10    11     0   200
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN PPEXP VPEND VEEND VLOSS VLOST VLOSF ! Photoperiod,vern
 !  Fac     h  Type   Exp GrStg GrStg V.Stg    oC    fr
@@ -62,7 +59,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! Leaves
 @LLIG%  LAXS SLACF SLAFF LSHFR LSHAV LSHAR  PHL1  PHF1
 !    %   cm2 fr/lf    fr    fr cm2/g cm2/g   Lf#   Fac
-  10.0   100  0.02  0.20  0.33    50    80   2.0   0.8 
+  10.0   100  0.02  0.20  0.33    70    65   2.0   0.2 
 @LLIFA LLIFG LLIFS LWLOS
 ! oC.d  oC.d  oC.d    fr    
    4.0   1.0   3.0  0.50
@@ -84,7 +81,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! Reserves
 @ RS%X RS%LX RSUSE ! Max concentrations,fraction utilizeable/day
 !    %     %    fr
-    80    80   0.1
+    70    20   0.3
 ! Stems          
 @SLIG%  SAWS ! Lignin,area/weight
 !    % cm2/g
@@ -94,7 +91,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 !   fr
   0.65
 ! Grain  
-@GLIG% GWLAG GWLIN ! Lignin,wt.endlag,endlinear fill
+@GLIG% GWLAG GWLIN ! Lignin;wt.endlag,endlinear
 !    %    fr    fr
   10.0  0.10  0.80 
 ! Seed
@@ -123,19 +120,27 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! CH2O distribution/mobilization
 @PTFMN PTFMX  PTFXS  PTFA ! Partition to tops (max,min,max.adjustment)
 !   fr    fr  GrStg   Fac
-  0.75  0.98      6  0.10
+  0.70  0.95      6  0.10
 ! Cold hardiness
 @ TKUH TKDTI TKDLF TKSPN  HDUR HLOST HLOSF ! Kill temps,span,time->harden,loss
 !   oC    oC    oC    oC     d    oC    fr
   -6.0   2.0   6.0   2.0  10.0  10.0   0.2
+! High temperature sensitivity  ! TMAX at which 'hays off'
+@ TKGF
+  45.0
 ! Temperature responses
 ! AFRC vernalization=-4,3,10,17; Reinink=-1,0,4,8,9
-@RRATE TRGEM TRDV1 TRDV4 TRDV8 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
-!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
-     0     1     0     0     5     0     0    -5    -5     0     0  
-   1.0    26    26    26    30    10     5     0     0    16    16  
-   1.0    50    50    50    50    20    25     7     5    35    35
-     0    60    60    60    60    35    35    15    10    45    45
+@RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR TRGFW xRGFW TRGFN xRGFN  
+!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
+     0     1     0     1     2     0     0     0    -5    -5     0     0     0     0 
+   1.0    20    20    25    30    20    10     5     0     0     8    16     8    16 
+   1.0    35    35    35    50    35    20    25     7     5    20    35    20    35
+     0    45    45    45    60    45    35    35    15    10    40    45    40    45
+@RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR XRGFW TRGFN  
+!    0     1     0     1     0     1     0     0    -5    -5     0     0 
+!  1.0    26    20    30    30    20    10     5     0     0    10    16 
+!  1.0    50    35    50    50    35    20    25     7     5    25    35
+!    0    60    45    60    60    45    35    35    15    10    35    45
 
 ! WATER loss,uptake,etc.
 ! Evapotranspiration (Resistances only used in stand-alone Cropsim,not CSM)
@@ -159,27 +164,27 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 @WFGEU WFRGU  ! Germination/emergence,root growth
 !   fr    fr
   0.50  0.25
+
 ! NITROGEN uptake,distribution,etc.
-! For standard CSM uptake routine
 @NH4MN NO3MN
 !mg/Mg mg/Mg
    0.5   0.5 
 ! N demand 
 @NTUPF  ! Fraction of deficit that can be filled per day
 ! fr/d
-  0.05
+  0.50
 ! Nitrogen concentrations
-@GN%MX GN%MN  SDN% ! Grain,seed             
-!    %     %     %
-   4.5   0.5   1.9
+@GN%MX  SDN% ! Grain,seed             
+!    %     %
+   4.5   1.9
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
 !    %     %     %     %     %     %
    6.0  0.75  2.50  0.65  2.00  1.50                               
-   1.0  0.55  0.40  0.40  1.70  1.25                               
+   3.0  0.55  2.00  0.45  1.70  1.25                               
 ! N distribution/mobilization
 @NLAB% ! %N that labile 
 !    %
-    20
+    10
 ! N shortage effects (Fraction of span from lowest to upper N concentration)
 @ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF ! Phs,gr,tillering,senesnce
 !  Rel   Rel   Rel   Rel   Rel   Rel   Rel   Rel
@@ -228,14 +233,12 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! GLIG%   Grain lignin (%)
 ! GLPHS   Grain linear growth ending stage (GrowthStage)
 ! GLPHS   Grain linear growth starting stage (GrowthStage)
-! GN%MN   Minimum grain nitrogen (%)
 ! GN%MX   Maximum grain nitrogen (For when assimilate supply limited) (%)
 ! GWLAG   Grain weight fraction,end lag period (fr standard)
 ! GWLIN   Grain weight fraction,end linear fill ag period (fr standard)
 ! HDUR    Days for complete cold hardening (d)
 ! HLOSF   Fraction of hardiness days lost (fr/d)
 ! HLOST   Threshold temperature for hardiness loss (C)
-! HMPC    Grain moisture percentage,standard (#)
 ! LAIXX   LAI maximum (m2/m2)
 ! LASTG   Leaf area change stage (#)
 ! LAXS    Maximum area of leaves on main stem (cm2)                                                                                                     
@@ -272,7 +275,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! PEMRG   Emergence phase duration (Thermal units per cm depth)
 ! PGERM   Phase duration,germination (Hydrothermal units)
 ! PHFn    Factor by which PHINTS is multiplied -> PHINT for phase (#)
-! PHLn    Leaf # produced during phyllochron phase (#) 
+! PHLn    Leaf # at end of phyllochron phase (ie,at which PHINT changes) (#) 
 ! PPEXP   Photoperiod response curve exponent (#)
 ! PPFPE   Photoperiod factor,pre emergence (#,0-1,0=No development)
 ! PPSEN   Photoperiod sensitivity (L=Long day response,Q=Quadratic)
@@ -295,7 +298,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! RSEN    Root senescence (%/standard day)
 ! RSFPL   Reserves concentration,lower bound for photosynthesis effect (fr)
 ! RSFPU   Reserves concentration,upper bound for photosynthesis effect (fr)
-! RSUSE   Reserves utilisation fraction,vegetative phases (#)
+! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
 ! RTUFR   Max fraction root wt useable for new leaves (fr)
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
 ! RWUPM   Root water upake,minimum pore size for maximum uptake (fr SAT-DUL)
@@ -319,6 +322,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! TILIP   Tiller initiation phase duration (Leaf # from birth to full size)
 ! TKDLF   Killing temperature difference,leaves cf plants (C)
 ! TKDTI   Killing temperature difference,tillers cf plant (C)
+! TKGF    Temperture (daily max) at which plant killed during grain fill )C)
 ! TKILL   Temperature at which disease killed (oC)
 ! TKSPN   Temperature span over which killing occurs (C)
 ! TKUH    Start kill temperature,unhardened (oC)
@@ -330,6 +334,7 @@ $SPECIES:WHCRP046.280513   Last edit:060613
 ! TRGFN   Temperature response,grain filling,nitrogen (oC)
 ! TRGFW   Temperature response,grain filling,dry weight(oC)
 ! TRHAR   Temperature response,hardening for winter survival (oC)
+! TRLA    Temperature response,leaf appearance (oC)
 ! TRLFG   Temperature response,leaf growth (oC)
 ! TRPHS   Temperature response,photosynthesis (oC)
 ! TRVRN   Temperature response,vernalization (oC)

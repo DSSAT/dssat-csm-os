@@ -1,7 +1,11 @@
 !***************************************************************************************************************************
 ! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 7158 - 8311 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
+<<<<<<< HEAD
 ! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
+=======
+! that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all comments are those of 
+>>>>>>> cassava-modifications
 ! the original CSCAS.FOR code.
 !
 ! Subroutine CS_Out_Eval outputs evaluate and overview data and necessary input data for checking.
@@ -14,8 +18,14 @@
         )
         
         USE ModuleDefs                                                                        ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
+<<<<<<< HEAD
         USE CS_First_Trans_m
         USE CS_Formats_m
+=======
+        USE ModuleData
+        USE Module_CSCAS_Vars_List
+        USE Module_CS_Formats
+>>>>>>> cassava-modifications
      
         IMPLICIT NONE 
      
@@ -28,8 +38,11 @@
         CHARACTER(LEN=1)  :: IDETG       , IDETL       , IDETO       , ISWNIT      , ISWWAT      , MESOM       
         CHARACTER(LEN=10) :: TL10FROMI                                                        ! Character function call
         
+<<<<<<< HEAD
         !INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator                             ! MF In ModuleDefs 
         
+=======
+>>>>>>> cassava-modifications
         !-----------------------------------------------------------------------------------------------------------
         !         Eval (IDETO) OUTPUTS AND NECESSARY DATA INPUTS (Evaluate & Overview)
         !-----------------------------------------------------------------------------------------------------------

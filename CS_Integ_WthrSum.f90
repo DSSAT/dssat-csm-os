@@ -1,7 +1,11 @@
 !***************************************************************************************************************************
 ! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6419 - 6541 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
+<<<<<<< HEAD
 ! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
+=======
+! that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all comments are those of 
+>>>>>>> cassava-modifications
 ! the original CSCAS.FOR code.
 !
 ! Subroutine CS_Integ_WthrSum calculates summaries of weather and soil variables and par utilization. 
@@ -13,12 +17,21 @@
         TOMINSOM3   , YEAR        & 
         )
         
+<<<<<<< HEAD
         USE CS_First_Trans_m
         
         IMPLICIT NONE
         
         INTEGER DOY         , YEAR 
         
+=======
+        USE ModuleDefs
+        USE Module_CSCAS_Vars_List
+        
+        IMPLICIT NONE
+        
+        INTEGER DOY         , YEAR        
+>>>>>>> cassava-modifications
         REAL    CO2         , DRAIN       , IRRAMT      , RAIN        , RUNOFF      , SRAD        , TLCHD       , TMAX          
         REAL    TMIN        , TNIMBSOM    , TNOXD       , TOMINFOM    , TOMINSOM    , TOMINSOM1   , TOMINSOM2   , TOMINSOM3 
     

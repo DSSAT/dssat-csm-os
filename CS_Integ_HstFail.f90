@@ -1,8 +1,12 @@
 !***************************************************************************************************************************
 ! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6205 - 6304 of the original CSCAS code. The names of the 
+<<<<<<< HEAD
 ! dummy arguments are the same as in the original CSCAS code and the call statement. The variables 
 ! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
+=======
+! dummy arguments are the same as in the original CSCAS code and the call statement. The variables are described in CSCAS.
+>>>>>>> cassava-modifications
 !
 ! Subroutine CS_Integ_HstFail determines whether to harvest or fail. 
 !***************************************************************************************************************************
@@ -12,7 +16,11 @@
         )
         
         USE ModuleDefs
+<<<<<<< HEAD
         USE CS_First_Trans_m
+=======
+        USE Module_CSCAS_Vars_List
+>>>>>>> cassava-modifications
         
         IMPLICIT NONE
         

@@ -1,4 +1,5 @@
 !*******************************************************************************************************************************
+<<<<<<< HEAD
 !      CROPSIM CASSAVA GROWTH AND DEVELOPMENT MODULE V2014-1 by LA Hunt, modified for CROPSIM from the GUMCAS model 
 !      of Matthews and Hunt, Field Crops Research, 36 (1994) 69-84.
 !  
@@ -25,6 +26,27 @@
 !     The original CSCAS.FOR is in E:\DSSAT_Revision\DSSAT_EX_LPM_11DE14\dssat-csm-develop.zip. IF YOU NEED TO WORK
 !     ON ANY OF THE CODE, PLEASE EXTRACT THE CODE YOU NEED, BUT PLEASE DO NOT MODIFY THE ARCHIVE.
 !
+=======
+!  CROPSIM CASSAVA GROWTH AND DEVELOPMENT MODULE V2014-1  
+!  Last edit 040414 LAH 
+!  (After problems implementing fixes of GH 180214, 260314; LPM, MJF 260214)
+!
+!  The code that follows was modified by MJF August-October, 2014. The code was extracted from CSCAS.FOR version V2014-1  
+!  Last edit 26/03/2014 GH (After LAH 260214;notes from PM,MF 260414) into subroutines in free (.f90) format. 
+!  All variables apart from those that are arguments are declared in the module Module_CSCAS_Vars_List.f90, which is
+!  USEd in the subsequent subroutines. Most numbered FORMAT statements were converted to character variables of the form 
+!  FRMnnn, where nnn is the number of the original FORMAT statement and put in a module Module_CS_Formats.f90 which is USEd
+!  as necessary. The structure follows the original CSCAS.
+!    
+!  29OC14:  This is a new version of the original CSCAS.FOR (see below) converted into .f90 format.  CSCAS.f90 gave the same
+!     output as the original CSCAS.FOR and then the new subroutines were added one by one to verify that the output did not
+!      change. The output of this final version was the same in all 26 .OUT files apart from the time stamp of each run.
+!
+!  Location of original CSCAS.FOR: E:\DSSAT_Revision\ORIGINAL_CSCAS\CSCAS.FOR created 9/10/2014/11:34 AM date modified 
+!            10/27/2014 11:25 AM.
+!            THIS FILE IS OUR REFERENCE, SO PLEASE DO NOT OPEN IT; DOING SO WILL COMPROMISE ITS INTEGRITY. IF YOU WISH TO WORK
+!            WITH THE FILE, PLEASE MAKE A COPY AND WORK ON THAT.
+>>>>>>> cassava-modifications
 !*******************************************************************************************************************************
 
       SUBROUTINE  CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,                                       & !Command line
@@ -37,18 +59,29 @@
        SW, NO3LEFT, NH4LEFT, FERNIT,                                                          & !H2O,N states
        TLCHD, TNIMBSOM, TNOXD, TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,           & !N components
        YEARPLTCSM, HARVFRAC,                                                                  & !Pl.date         ! YRPLT = YEARPLTCSM
+<<<<<<< HEAD
        PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,                                            & !Resources       ! REPLACED ALBEDO WITH ALBEDOS
+=======
+       PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDO,                                             & !Resources
+>>>>>>> cassava-modifications
        CAID, KCAN, KEP, RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,                           & !States          ! PORMIN = RWUMP
        UNO3, UNH4, UH2O,                                                                      & !Uptake
        SENCALG, SENNALG, SENLALG,                                                             & !Senescence
        RESCALG, RESNALG, RESLGALG,                                                            & !Residues
        STGYEARDOY, BRSTAGE,                                                                   & !Stage dates     !GSTAGE = BRSTAGE
+<<<<<<< HEAD
        DYNAMIC) !, WEATHER)                                                                        !Control
 
     USE ModuleDefs
     USE CS_First_Trans_m
     USE CS_Albedo_Check_m                                                                     ! MF 18JA15 For WORK.OUT
 
+=======
+       DYNAMIC, WEATHER)                                                                        !Control
+
+    USE ModuleDefs
+    USE Module_CSCAS_Vars_List
+>>>>>>> cassava-modifications
       
     IMPLICIT NONE
       
@@ -59,7 +92,11 @@
     INTEGER :: YEARPLTCSM 
     INTEGER :: CSTIMDIF , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT     , CSIDLAYR    , CSYEARDOY              ! Integer function calls
 
+<<<<<<< HEAD
     REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CO2         , DAYL     ! REPLACED ALBEDO WITH ALBEDOS  
+=======
+    REAL    ALBEDO      , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CO2         , DAYL        
+>>>>>>> cassava-modifications
     REAL    DEPMAX      , DEWDUR      , DLAYR(NL)   , DRAIN       , DUL(NL)     , EO          , EOP         , EP          
     REAL    ES          , ET          , FERNIT      , HARVFRAC(2) , IRRAMT      , KCAN        , KEP         , LAIL(30)    
     REAL    LAILA(30)   , LL(NL)      , NFP         , NH4LEFT(NL) , NO3LEFT(NL) , PARIP       , PARIPA      , RAIN        
@@ -131,13 +168,20 @@
       !   12. Protection of N supply for leaf growth added. (Problem with N on growth because lack of N->reduced growth->
       !       reduced uptake!
       
+<<<<<<< HEAD
         ALBEDOS_In = ALBEDOS                                                                                           ! MF 19JA15  For WORK.OUT
     
+=======
+>>>>>>> cassava-modifications
 !*******************************************************************************************************************************
     IF (DYNAMIC.EQ.RUNINIT) THEN    ! Initialization                           ! MF Equivalent to line 1476 in CSCAS.FOR
 !*******************************************************************************************************************************
         !-----------------------------------------------------------------------------------------------------------------------
+<<<<<<< HEAD
         !     Run initialization procedure in SUBROUTINE CS_RunInit..
+=======
+        !     Run initialization procedure in SUBROUTINE CS_RunInit.
+>>>>>>> cassava-modifications
         !     SUBROUTINE CS_RunInit takes all the code from CSCAS.f90 (29OC14) lines 1490 - 1827.
         !-----------------------------------------------------------------------------------------------------------------------
 
@@ -145,6 +189,7 @@
             CN          , DOY         , FILEIOIN    , FROP        , IDETL       , ISWNIT      , ON          , RN          , &
             RNMODE      , RUN         , SN          , TN          , YEAR        & 
             )
+<<<<<<< HEAD
             
         WRITE (fnumwrk,'(2A, 2F9.5)') 'ALBEDOS (soil albedo) and ALBEDO (canopy ',  &  ! MF 19JA15  For WORK.OUT
             'albedo) AFTER CS_RunInit in CSCAS) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
@@ -205,6 +250,96 @@
 
             CALL CS_Integrate ( &
                 ALBEDOS     , BD          , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX      , &
+=======
+
+
+!*******************************************************************************************************************************
+    ELSEIF (DYNAMIC.EQ.SEASINIT) THEN    ! Initialization                      ! MF Equivalent to line 1824 in CSCAS.FOR
+!*******************************************************************************************************************************
+        
+        !-----------------------------------------------------------------------------------------------------------------------
+        !     Run seasonal initialization procedures in SUBROUTINE CS_SeasInit: call six subroutines to initialize state and   
+        !     rate variables, read the Xfile, set the planting and harvest dates, create the file names for the genotype files 
+        !     and read the genetic coefficients, set up the growth stages including branching, check coefficients, set defaults 
+        !     and calculate/set initial states, set up the output  descriptors, check controls and write information to the 
+        !     overview and work files.
+        !           
+        !-----------------------------------------------------------------------------------------------------------------------
+          
+        CALL CS_SeasInit ( &
+            ALBEDO      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CN          , DEWDUR      , DOY         , &
+            HARVFRAC    , IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , KEP         , LAIL        , &
+            LAILA       , NFP         , ON          , PARIP       , PARIPA      , RESCALG     , RESLGALG    , RESNALG     , &
+            RLV         , RN          , RNMODE      , RUN         , RUNI        , RWUMX       , RWUPM       , SENCALG     , &
+            UH2O        , UNH4        , UNO3        , YEAR        , SENLALG     , SENNALG     , SLPF        , SN          , &
+            STGYEARDOY  , TAIRHR      , TN          , TRWUP       &
+            )
+
+!*******************************************************************************************************************************
+    ELSEIF (DYNAMIC.EQ.RATE) THEN                                              ! MF Equivalent to line 3943 in CSCAS.FOR
+!*******************************************************************************************************************************
+
+        !-----------------------------------------------------------------------------------------------------------------------
+        !     Set up the switches for establishment and determine whether today is a planting day.
+        !-----------------------------------------------------------------------------------------------------------------------
+        
+        CALL CS_PrePlant( &  
+            BD          , CO2         , DLAYR       , DOY         , DUL         , LL          , NH4LEFT     , NLAYR       , &
+            NO3LEFT     , RNMODE      , ST          , STGYEARDOY  , SW          , TMAX        , TMIN        , YEAR        , &
+            YEARPLTCSM  &                 ! WEATHER     ,      
+            )
+
+        !=======================================================================================================================
+        IF (YEARDOY.GT.PLYEARDOY) THEN ! If planted (assumed in evening)       ! MF Equivalent to line 4080 in CSCAS.FOR
+        !=======================================================================================================================
+ 
+        !-----------------------------------------------------------------------------------------------------------------------
+        !     Run the daily rate procedures in Subroutine CS_Growth: call eight subroutines to calculate photosynthesis, 
+        !     germination timing, daylength and development units, reserves and grazing (?), PAR interception, rate factors, 
+        !     senescence, assimilation and its partitioning, growth of storage roots, leaves, stems and crowns, reserves 
+        !     and plant height, and soil water.
+        !-----------------------------------------------------------------------------------------------------------------------
+           
+            CALL CS_Growth ( &  
+                ALBEDO      , BD          , BRSTAGE     ,  CLOUDS     , CO2         , DAYL        , DLAYR       , DOY         , &
+                DUL         , EO          , EOP         , ES          , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
+                KEP         , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , &
+                RLV         , RNMODE      , RWUMX       , RWUPM       , SAT         , SENCALG     , SENLALG     , SENNALG     , &
+                SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
+                TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , WEATHER     , WINDSP        &
+                )
+            !( &  
+            !    ALBEDO      , BD          , BRSTAGE     ,  CLOUDS     , CO2         , DAYL        , DLAYR       , DOY         , &
+            !    DUL         , EO          , EOP         , ES          , ISWDIS      ,  ISWNIT     , ISWWAT      , KCAN        , &
+            !    KEP         , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , &
+            !    RLV         , RNMODE      , RWUMX       , RWUPM       , SAT         , SENCALG     , SENLALG     , SENNALG     , &
+            !    SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TMAX        , &
+            !    TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , WEATHER     &
+            !    )
+
+        !=======================================================================================================================
+        ENDIF  ! End of after planted (rate) section
+        !=======================================================================================================================
+
+!*******************************************************************************************************************************
+    ELSEIF (DYNAMIC.EQ.INTEGR) THEN                                            ! MF Equivalent to line 5535 in CSCAS.FOR
+!*******************************************************************************************************************************
+
+        !=======================================================================================================================
+        IF (YEARDOY.GE.PLYEARDOY) THEN
+        !=======================================================================================================================
+
+        !-----------------------------------------------------------------------------------------------------------------------
+        !      Update the seasonal data with the data for the current day in Subroutine CS_Integrate: call nine subroutines to 
+        !      update dry weights, produced and senesced leaf area, plant height, root and length, and nitrogen; update stages, 
+        !      dates and times; calculate branch interval, N concentrations and whether to harvest; calculate yields of plant 
+        !      parts and summaries of weather and soil variables and par utilization; and finally season-end soil conditions,
+        !      and other general variables. 
+        !-----------------------------------------------------------------------------------------------------------------------
+            
+            CALL CS_Integrate ( &
+                ALBEDO      , BD          , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX      , &
+>>>>>>> cassava-modifications
                 DLAYR       , DOY         , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , &
                 ISWNIT      , ISWWAT      , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , RAIN        , &
                 RESCALG     , RESLGALG    , RESNALG     , RLV         , RUNOFF      , SRAD        , STGYEARDOY  , SW          , &
@@ -212,6 +347,13 @@
                 TOMINSOM2   , TOMINSOM3   , YEAR        & 
                 )
 
+<<<<<<< HEAD
+=======
+        !=======================================================================================================================
+        ENDIF  ! End of after planted (integrate) section
+        !=======================================================================================================================
+
+>>>>>>> cassava-modifications
 !*******************************************************************************************************************************
     ELSEIF (DYNAMIC .EQ. OUTPUT .AND. STEP .EQ. STEPNUM .OR. DYNAMIC .EQ. SEASEND .AND. SEASENDOUT .NE. 'Y') THEN
                                                                                ! MF Equivalent to line 6665 in CSCAS.FOR
@@ -225,11 +367,19 @@
         !-----------------------------------------------------------------------------------------------------------------------
   
         CALL CS_Output ( & 
+<<<<<<< HEAD
             BRSTAGE     , CAID        , CANHT       , CN          , CO2         , DOY         , DYNAMIC     , EO          , &
             EOP         , IDETG       , IDETL       , IDETO       , IDETS       , IRRAMT      , ISWNIT      , ISWWAT      , &
             KCAN        , MESOM       , NFP         , NLAYR       , ON          , RAIN        , REP         , RLV         , &
             RN          , RNMODE      , RUN         , RUNI        , SN          , SRAD        , STGYEARDOY  , TN          , &
             TNIMBSOM    , TOMINSOM1   , UNH4        , UNO3        , WINDSP      , YEAR        &
+=======
+            BRSTAGE     , CAID        , CANHT       , CN          , CO2         , DOY         , DYNAMIC     , EOP         , &
+            IDETG       , IDETL       , IDETO       , IDETS       , IRRAMT      , ISWNIT      , ISWWAT      , KCAN        , &
+            MESOM       , NFP         , NLAYR       , ON          , RAIN        , REP         , RLV         , RN          , &
+            RNMODE      , RUN         , RUNI        , SN          , SRAD        , STGYEARDOY  , TN          , TNIMBSOM    , &
+            TOMINSOM1   , UNH4        , UNO3        , WINDSP      , YEAR        &
+>>>>>>> cassava-modifications
             )
 
 !*******************************************************************************************************************************

@@ -24,7 +24,7 @@
 !-----Local parameters
       REAL    TD, TM, TT, X1, X2
       INTEGER I
-      SAVE
+      SAVE         ! TAOLI
  
       TM = (TMAX+TMIN)/2.
       TT = 0.
@@ -34,10 +34,9 @@
          TD = TM+0.5*ABS(TMAX-TMIN)*COS(0.2618*FLOAT(I-14))
 		 
          IF ((TD.GT.TBD).AND.(TD.LT.TMD)) THEN
-!			X2=(TMD-TD)/(TMD-TOD)*((TD-TBD)/(TOD-TBD))**X1 !TAOLI, APRIL 1,2009
+
             IF (TD.GT.TOD) TD = TOD-(TD-TOD)*(TOD-TBD)/(TMD-TOD) !TAOLI, APRIL 1,2009, COMMENT OUT
             TT = TT+(TD-TBD)/24.
-!			 TT=TT+(TD-TBD)*X2/24		!TAOLI, APRIL 1,2009
          END IF
  
       END DO

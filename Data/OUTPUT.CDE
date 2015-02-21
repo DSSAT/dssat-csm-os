@@ -67,6 +67,7 @@ SoilWatBal2.OUT    Temporary
 !Information files:
 ERROR.OUT          Error messages                                     ERRORO
 INFO.OUT           Information output file                            OUTINFO
+ORYZA_LOG.OUT      ORYZA log file
 SOMLIT1.OUT        Detailed Century SOM output                        SLDET
 TEMP.bat                                                              OUTBAT
 WARNING.OUT        Warning messages                                   OUTWARN

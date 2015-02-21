@@ -1,7 +1,11 @@
 !***************************************************************************************************************************
 ! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 5534 - 6649 of the original CSCAS code.  The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
+<<<<<<< HEAD
 ! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
+=======
+! that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all comments are those of 
+>>>>>>> cassava-modifications
 ! the original CSCAS.FOR code.
     
 ! Subroutine CS_Integrate calls nine subroutines that update the seasonal data with the data for the current day: dry 
@@ -11,7 +15,11 @@
 !***************************************************************************************************************************
     
     SUBROUTINE CS_Integrate ( &
+<<<<<<< HEAD
         ALBEDOS     , BD          , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX      , &
+=======
+        ALBEDO      , BD          , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX      , &
+>>>>>>> cassava-modifications
         DLAYR       , DOY         , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , &
         ISWNIT      , ISWWAT      , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , RAIN        , &
         RESCALG     , RESLGALG    , RESNALG     , RLV         , RUNOFF      , SRAD        , STGYEARDOY  , SW          , &
@@ -20,13 +28,21 @@
         )
         
         USE ModuleDefs
+<<<<<<< HEAD
         USE CS_First_Trans_m
+=======
+        USE Module_CSCAS_Vars_List
+>>>>>>> cassava-modifications
         
         IMPLICIT NONE
         
         INTEGER DOY         , NLAYR       , STGYEARDOY(20)            , YEAR
         
+<<<<<<< HEAD
         REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX
+=======
+        REAL    ALBEDO      , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX
+>>>>>>> cassava-modifications
         REAL    DLAYR(NL)   , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , LL(NL)      
         REAL    NFP         , NH4LEFT(NL) , NO3LEFT(NL) , RAIN        , RESCALG(0:NL)             , RESLGALG(0:NL)            
         REAL    RESNALG(0:NL)             , RLV(NL)     , RUNOFF      , SRAD        , SW(NL)      , TLCHD       , TMAX      
@@ -100,7 +116,11 @@
         !         Calculate ASW and yields of plant parts at the end of the crop
         !-----------------------------------------------------------------------
         CALL CS_Integ_EndCrop ( &
+<<<<<<< HEAD
             ALBEDOS     , DLAYR       , EOP         , FERNIT      , ISWWAT      , LL          , NLAYR       , STGYEARDOY  , &
+=======
+            ALBEDO      , DLAYR       , EOP         , FERNIT      , ISWWAT      , LL          , NLAYR       , STGYEARDOY  , &
+>>>>>>> cassava-modifications
             SW          & 
             )
             
