@@ -1,13 +1,7 @@
 !***************************************************************************************************************************
-<<<<<<< HEAD
 ! This is the code from the section (DYNAMIC.EQ.RATE) lines 4707 - 5046 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
-=======
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 4694 - 5033 of the original CSCAS code. The names of the 
-! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
-! that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all comments are those of 
->>>>>>> cassava-modifications
 ! the original CSCAS.FOR code.
 !
 ! Subroutine CS_Growth_Part calculates assimilation partitioning, growth of storage roots, leaves, stems and crowns.
@@ -18,19 +12,10 @@
         )
     
         USE ModuleDefs
-<<<<<<< HEAD
         USE CS_First_Trans_m
     
         IMPLICIT NONE
         
-=======
-        USE Module_CSCAS_Vars_List
-    
-        IMPLICIT NONE
-        
-        !TYPE (WeatherType) WEATHER    ! Defined in ModuleDefs
-    
->>>>>>> cassava-modifications
         CHARACTER(LEN=1) ISWNIT      
         REAL    BRSTAGE     , NFP         
 
@@ -40,37 +25,21 @@
         !           Partitioning of C to above ground and roots (minimum) 
         !-----------------------------------------------------------------------
 
-<<<<<<< HEAD
         PTF = PTFMN+(PTFMX-PTFMN)*DSTAGE                                                                               !EQN 280   
         ! Partition adjustment for stress effects
         PTF = AMIN1(PTFMX,PTF-PTFA*(1.0-AMIN1(WFG,NFG)))                                                               !EQN 281
         CARBOR = AMAX1(0.0,(CARBOBEG+CARBOADJ))*(1.0-PTF)                                                              !EQN 282
         CARBOT = AMAX1(0.0,(CARBOBEG+CARBOADJ)) - CARBOR                                                               !EQN 283
-=======
-        PTF = PTFMN+(PTFMX-PTFMN)*DSTAGE     
-        ! Partition adjustment for stress effects
-        PTF = AMIN1(PTFMX,PTF-PTFA*(1.0-AMIN1(WFG,NFG)))
-        CARBOR = AMAX1(0.0,(CARBOBEG+CARBOADJ))*(1.0-PTF)
-        CARBOT = AMAX1(0.0,(CARBOBEG+CARBOADJ)) - CARBOR
->>>>>>> cassava-modifications
 
         ! Stem fraction or ratio to leaf whilst leaf still growing
         ! (If a constant STFR is entered,swfrx is set=stfr earlier)
         ! Increases linearly between specified limits
-<<<<<<< HEAD
         SWFR = CSYVAL (LNUM,SWFRNL,SWFRN,SWFRXL,SWFRX)                                                                 !EQN 296
-=======
-        SWFR = CSYVAL (LNUM,SWFRNL,SWFRN,SWFRXL,SWFRX)
->>>>>>> cassava-modifications
 
         ! Crown fraction 
         GROCRFR = 0.0
         ! Increases linearly from start to end of growth cycle
-<<<<<<< HEAD
         GROCRFR = CRFR * DSTAGE                                                                                        !EQN 386
-=======
-        GROCRFR = CRFR * DSTAGE
->>>>>>> cassava-modifications
 
         !-----------------------------------------------------------------------
         !           Storage root basic growth and number determination
@@ -78,7 +47,6 @@
 
         GROSR = 0.0
         IF(CUMDU+DU.LT.DUSRI)THEN
-<<<<<<< HEAD
             SRDAYFR = 0.0                                                                                              !EQN 290a
         ELSEIF(CUMDU.LT.DUSRI.AND.CUMDU+DU.GE.DUSRI)THEN
             SRDAYFR = (DUSRI-CUMDU)/DU                                                                                 !EQN 290b
@@ -89,18 +57,6 @@
             
         IF(CUMDU.GE.DUSRI.AND.SRNOPD.LE.0.0) THEN
             SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291
-=======
-            SRDAYFR = 0.0
-        ELSEIF(CUMDU.LT.DUSRI.AND.CUMDU+DU.GE.DUSRI)THEN
-            SRDAYFR = (DUSRI-CUMDU)/DU
-        ELSEIF(CUMDU.GT.DUSRI)THEN
-            SRDAYFR = 1.0
-        ENDIF
-        GROSR = SRFR*CARBOT*SRDAYFR
-            
-        IF(CUMDU.GE.DUSRI.AND.SRNOPD.LE.0.0) THEN
-            SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))
->>>>>>> cassava-modifications
         ENDIF
                      
         !-----------------------------------------------------------------------
@@ -108,35 +64,21 @@
         !-----------------------------------------------------------------------
 
         IF (LAWTR.GT.0.0.AND.LAWTS.GT.0.0.AND.LAWTS.GT.TMEAN) THEN
-<<<<<<< HEAD
             TFLAW = 1.0+LAWTR*(TMEAN-LAWTS)                                                                            !EQN 305
-=======
-            TFLAW = 1.0+LAWTR*(TMEAN-LAWTS)
->>>>>>> cassava-modifications
         ELSE
             TFLAW = 1.0
         ENDIF
         IF (LAWWR.GT.0.0.AND.WFG.LT.1.0) THEN
-<<<<<<< HEAD
             WFLAW = 1.0+LAWWR*(WFG-1.0)                                                                                !EQN 306
-=======
-            WFLAW = 1.0+LAWWR*(WFG-1.0)
->>>>>>> cassava-modifications
         ELSE
             WFLAW = 1.0
         ENDIF
 
         ! Position effect on standard SLA
         IF (LNUMSG.GT.0) THEN
-<<<<<<< HEAD
             LAWL(1) = AMAX1(LAWS*LAWFF,LAWS+(LAWS*LAWCF)*(LNUMSG-1))                                                  !EQN 307
             ! Temperature and water stress effects on SLA at position
             LAWL(1) = AMAX1(LAWL(1)*LAWMNFR,LAWL(1)*TFLAW*WFLAW)                                                      !EQN 308
-=======
-            LAWL(1) = AMAX1(LAWS*LAWFF,LAWS+(LAWS*LAWCF)*(LNUMSG-1))
-            ! Temperature and water stress effects on SLA at position
-            LAWL(1) = AMAX1(LAWL(1)*LAWMNFR,LAWL(1)*TFLAW*WFLAW)
->>>>>>> cassava-modifications
         ELSE  
             LAWL(1) = LAWS
         ENDIF 
@@ -184,7 +126,6 @@
         ENDIF
 
         ! Potential leaf size for next growing leaf - main shoot 
-<<<<<<< HEAD
         LNUMNEED = FLOAT(INT(LNUM+1)) - LNUM                                                                           !EQN 332
         IF (ABS(LNUMNEED).LE.1.0E-6) LNUMNEED = 0.0
         IF (LNUMSG+1.LE.INT(LAXNO)) THEN
@@ -193,16 +134,6 @@
             LAPOTX(LNUMSG+1) = LAXS                                                                                    !EQN 319b
         ELSE
             LAPOTX(LNUMSG+1) = AMAX1(LAFS, LAXS - ((LNUMSG+1)-LAXN2)*((LAXS-LAFS)/(LAFND-LAXN2)))                      !EQN 319c
-=======
-        LNUMNEED = FLOAT(INT(LNUM+1)) - LNUM
-        IF (ABS(LNUMNEED).LE.1.0E-6) LNUMNEED = 0.0
-        IF (LNUMSG+1.LE.INT(LAXNO)) THEN
-            LAPOTX(LNUMSG+1) = AMIN1(LAXS, LA1S + LNUMSG*((LAXS-LA1S)/(LAXNO-1)))
-        ELSEIF (LNUMSG+1.GT.INT(LAXNO).AND.LNUMSG+1.LE.INT(LAXN2)) THEN
-            LAPOTX(LNUMSG+1) = LAXS
-        ELSE
-            LAPOTX(LNUMSG+1) = AMAX1(LAFS, LAXS - ((LNUMSG+1)-LAXN2)*((LAXS-LAFS)/(LAFND-LAXN2)))
->>>>>>> cassava-modifications
         ENDIF
             
         ! LAH Sept 2012 Eliminate fork # effect on leaf size 
@@ -216,7 +147,6 @@
             
         ! Leaf area increase:growing leaves on 1 axis,main shoot
         SHLAG2(1) = 0.0
-<<<<<<< HEAD
         DO L = MAX(1,LNUMSG-(INT((LLIFG/PHINTS)+1))),LNUMSG+1                                       ! MF Why + 1? See LPM p. 63.    !EQN 320
             ! Basic leaf growth calculated on thermal time base. 
             ! Basic response (cm2/d) same as for development. 
@@ -249,40 +179,6 @@
                 NFLFP(L+1) = AMIN1(1.0,NFLFP(L+1)+NFP*LATL(L+1)/LAPOTX(L+1))                                           !EQN 338
                 TFGLF(L+1) = AMIN1(1.0,TFGLF(L+1)+TFG*LATL(L+1)/LAPOTX(L+1))                                           !EQN 339
                 TFDLF(L+1) = AMIN1(1.0,TFDLF(L+1)+TFD*LATL(L+1)/LAPOTX(L+1))                                           !EQN 340
-=======
-        DO L = MAX(1,LNUMSG-(INT((LLIFG/PHINTS)+1))),LNUMSG+1                                       ! MF Why + 1? See LPM p. 63.
-            ! Basic leaf growth calculated on thermal time base. 
-            ! Basic response (cm2/d) same as for development. 
-            TTNEED = AMAX1(0.0,LLIFG-LAGETT(L))
-            LATLPREV(L) = LATL(L)
-            LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)
-            IF (LATLPOT(L).LT.0.0) LATLPOT(L) = 0.0
-            IF (LATLPOT(L).GT.LAPOTX(L)) LATLPOT(L) = LAPOTX(L)
-            LATL(l) = LATL(L) + (LATLPOT(L)-LATLPREV(L))
-            LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG
-            SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG
-            ! The 2 at the end of the names indicates that 2 groups 
-            ! of stresses have been taken into account
-            ! Stress factors for individual leaves
-            WFLF(L) = AMIN1(1.0,WFLF(L)+WFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))
-            NFLF(L) = AMIN1(1.0,NFLF(L)+NFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))
-            NFLFP(L) = AMIN1(1.0,NFLFP(L)+NFP*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))
-            TFGLF(L) = AMIN1(1.0,TFGLF(L)+TFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))
-            TFDLF(L) = AMIN1(1.0,TFDLF(L)+TFD*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))
-            ! New LEAF
-            IF (L.EQ.LNUMSG.AND.LNUMG.GT.LNUMNEED) THEN                                             ! This is where new leaf is initiated
-                LAGL(L+1) = LAPOTX(L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l
-                LATL(L+1) = LATL(L+1) + LAGL(L+1)                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   
-                LATL2(L+1) = LATL2(L+1) + LAGL(L+1) * AMIN1(WFG,NFG)*TFG                            ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l
-                SHLAG2(1) = SHLAG2(1) + LAGL(L+1) * AMIN1(WFG,NFG)*TFG                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2
-                LBIRTHDAP(L+1) = DAP                                                                ! LBIRTHDAP(LCNUMX)   ! DAP on which leaf initiated #  
-                ! Stress factors for individual leaves                       
-                WFLF(L+1) = AMIN1(1.0,WFLF(L+1)+WFG*LATL(L+1)/LAPOTX(L+1))
-                NFLF(L+1) = AMIN1(1.0,NFLF(L+1)+NFG*LATL(L+1)/LAPOTX(L+1))
-                NFLFP(L+1) = AMIN1(1.0,NFLFP(L+1)+NFP*LATL(L+1)/LAPOTX(L+1))
-                TFGLF(L+1) = AMIN1(1.0,TFGLF(L+1)+TFG*LATL(L+1)/LAPOTX(L+1))
-                TFDLF(L+1) = AMIN1(1.0,TFDLF(L+1)+TFD*LATL(L+1)/LAPOTX(L+1))
->>>>>>> cassava-modifications
             ENDIF
         ENDDO
  
@@ -290,30 +186,19 @@
         PLAGS2 = SHLAG2(1) ! To initialize before adding over shoots
         DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
             IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-<<<<<<< HEAD
                 PLAGS2 = PLAGS2+SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                         !EQN 341
                 SHLAG2(L) = SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                             !EQN 342
-=======
-                PLAGS2 = PLAGS2+SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
-                SHLAG2(L) = SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
->>>>>>> cassava-modifications
             ENDIF
         ENDDO
 
         ! Leaf area increase:growing leaves on all axes,all shoots
-<<<<<<< HEAD
         PLAGSB2 = PLAGS2*BRNUMST                                                                                       !EQN 343
         SHLAGB2(1) = SHLAG2(1)*BRNUMST                                                                                 !EQN 344
-=======
-        PLAGSB2 = PLAGS2*BRNUMST
-        SHLAGB2(1) = SHLAG2(1)*BRNUMST
->>>>>>> cassava-modifications
         DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main= 1
             SHLAGB2(L) =  SHLAG2(L)*BRNUMST
         ENDDO
             
         ! Potential leaf weight increase.
-<<<<<<< HEAD
         IF (LAWL(1).GT.0.0) GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
 
         ! Potential leaf+stem weight increase.
@@ -321,24 +206,11 @@
             GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))                                                                  !EQN 295a
         ELSE
             GROLSP = GROLFP                                                                                            !EQN 295b
-=======
-        IF (LAWL(1).GT.0.0) GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)    
-
-        ! Potential leaf+stem weight increase.
-        IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
-            GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))
-        ELSE
-            GROLSP = GROLFP
->>>>>>> cassava-modifications
         ENDIF
 
         IF (GROLSP.GT.0.0) THEN
             ! Leaf+stem weight increase from assimilates
-<<<<<<< HEAD
             GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROSR))                                                              !EQN 298
-=======
-            GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROSR))
->>>>>>> cassava-modifications
 
             ! Leaf+stem weight increase from senescence 
             IF (GROLSA.LT.GROLSP) THEN
@@ -349,13 +221,8 @@
             IF (GROLSA+GROLSSEN.LT.GROLSP) THEN
                 ! Leaf+stem weight increase from seed reserves
                 ! LAH May need to restrict seed use.To use by roots?
-<<<<<<< HEAD
                 GROLSSD = AMIN1((GROLSP-GROLSA-GROLSSEN),SEEDRSAV)                                                     !EQN 300
                 SEEDRSAV = SEEDRSAV - GROLSSD                                                                          !EQN 288
-=======
-                GROLSSD = AMIN1((GROLSP-GROLSA-GROLSSEN),SEEDRSAV)
-                SEEDRSAV = SEEDRSAV - GROLSSD
->>>>>>> cassava-modifications
                 IF ( LAI.LE.0.0.AND.GROLSSD.LE.0.0.AND.SEEDRSAV.LE.0.0.AND.ESTABLISHED.NE.'Y') THEN
                     CFLFAIL = 'Y'
                     WRITE (Message(1),'(A41)') 'No seed reserves to initiate leaf growth '
@@ -366,25 +233,15 @@
             ENDIF
             ! Leaf+stem weight increase from plant reserves
             IF (GROLSA+GROLSSD+GROLSSEN.LT.GROLSP) THEN
-<<<<<<< HEAD
                 GROLSRS =  AMIN1(RSWT*RSUSE,GROLSP-GROLSA-GROLSSD-GROLSSEN)                                            !EQN 301
-=======
-                GROLSRS =  AMIN1(RSWT*RSUSE,GROLSP-GROLSA-GROLSSD-GROLSSEN)
->>>>>>> cassava-modifications
             ENDIF
             ! Leaf+stem weight increase from roots (after drought)
             GROLSRT = 0.0
             GROLSRTN = 0.0
             IF ((GROLSA+GROLSSD+GROLSRS+GROLSSEN).LT.GROLSP.AND.SHRTD.LT.1.0.AND.RTUFR.GT.0.0.AND.ESTABLISHED.EQ.'Y') THEN
-<<<<<<< HEAD
                 GROLSRT = AMIN1(RTWT*RTUFR,(GROLSP-GROLSA-GROLSSD-GROLSSEN-GROLSRS))                                   !EQN 302
                 IF (ISWNIT.NE.'N') THEN
                     GROLSRTN = GROLSRT * RANC                                                                          !EQN 244
-=======
-                GROLSRT = AMIN1(RTWT*RTUFR,(GROLSP-GROLSA-GROLSSD-GROLSSEN-GROLSRS))
-                IF (ISWNIT.NE.'N') THEN
-                    GROLSRTN = GROLSRT * RANC
->>>>>>> cassava-modifications
                 ELSE
                     GROLSRTN = 0.0
                 ENDIF
@@ -393,34 +250,19 @@
                 CALL WARNING(1,'CSCAS',MESSAGE)
             ENDIF
             ! Leaf+stem weight increase from all sources
-<<<<<<< HEAD
             GROLS = GROLSA + GROLSSEN + GROLSSD + GROLSRS+GROLSRT                                                      !EQN 303
             ! Leaf weight increase from all sources
             IF ((GROLSP).GT.0.0) THEN
                 GROLF = GROLS * GROLFP/GROLSP                                                                          !EQN 304
-=======
-            GROLS = GROLSA + GROLSSEN + GROLSSD + GROLSRS+GROLSRT
-            ! Leaf weight increase from all sources
-            IF ((GROLSP).GT.0.0) THEN
-                GROLF = GROLS * GROLFP/GROLSP
->>>>>>> cassava-modifications
             ELSE  
                 GROLF = 0.0
             ENDIF
             ! Check if enough assimilates to maintain SLA within limits
-<<<<<<< HEAD
             AREAPOSSIBLE = GROLF*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                                     !EQN 148
     
             ! If not enough assim.set assimilate factor
             IF (PLAGSB2.GT.AREAPOSSIBLE.AND.PLAGSB2.GT.0.0)THEN
                 AFLF(0) = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149
-=======
-            AREAPOSSIBLE = GROLF*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))
-    
-            ! If not enough assim.set assimilate factor
-            IF (PLAGSB2.GT.AREAPOSSIBLE.AND.PLAGSB2.GT.0.0)THEN
-                AFLF(0) = AREAPOSSIBLE/PLAGSB2
->>>>>>> cassava-modifications
             ELSE  
                 AFLF(0) = 1.0
             ENDIF
@@ -428,7 +270,6 @@
             ! Area and assimilate factors for each leaf
             DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1 
                 IF (LNUMSG.LT.LNUMX) THEN
-<<<<<<< HEAD
                     LATL3(L)= LATL2(L) * AFLF(0)                                                                       !EQN 150
                     AFLF(L) = AMIN1(1.0,AFLF(L) + AMAX1(0.0,AFLF(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))             !EQN 151
                     IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0
@@ -438,17 +279,6 @@
             SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
             SHLAGB3(2) = SHLAGB2(2) * AFLF(0)                                                                          !EQN 240
             SHLAGB3(3) = SHLAGB2(3) * AFLF(0)                                                                          !EQN 240
-=======
-                    LATL3(L)= LATL2(L) * AFLF(0)
-                    AFLF(L) = AMIN1(1.0,AFLF(L) + AMAX1(0.0,AFLF(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))
-                    IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0
-                ENDIF  
-            ENDDO
-            PLAGSB3 = PLAGSB2 * AFLF(0)
-            SHLAGB3(1) = SHLAGB2(1) * AFLF(0)
-            SHLAGB3(2) = SHLAGB2(2) * AFLF(0)
-            SHLAGB3(3) = SHLAGB2(3) * AFLF(0)
->>>>>>> cassava-modifications
     
         ENDIF
             
@@ -464,7 +294,6 @@
         STAIS = 0.0
         ! Potential stem weight increase.
         IF (SWFR.LT.1.0) THEN
-<<<<<<< HEAD
             GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
             GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
         ELSE  
@@ -473,38 +302,18 @@
         ENDIF
             
         IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLFP+GROSTCRP) * (1.0-RSFRS)                         !EQN 383
-=======
-            GROSTCRP = GROLFP * SWFR/(1.0-SWFR)
-            GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)
-        ELSE  
-            GROSTCRP = GROSTCRPSTORE
-            ! LAH May need to change GROSTCRP as progress
-        ENDIF
-            
-        IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLFP+GROSTCRP) * (1.0-RSFRS)
->>>>>>> cassava-modifications
         ! LAH RSFRS is the fraction of stem growth to reserves
         ! May need to have this change as stem growth proceeds
      
         ! Crown (Planting stick) .. in balance with stem
-<<<<<<< HEAD
         GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
         GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
-=======
-        GROCR = GROSTCR * GROCRFR
-        GROST = GROSTCR * (1.0-GROCRFR)
->>>>>>> cassava-modifications
                           
         !-----------------------------------------------------------------------
         !           Root growth                                     
         !-----------------------------------------------------------------------
 
-<<<<<<< HEAD
         RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
         RTRESP = RTWTG*RRESP/(1.0-RRESP)                                                                               !EQN 388
-=======
-        RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP) 
-        RTRESP = RTWTG*RRESP/(1.0-RRESP)
->>>>>>> cassava-modifications
         
     END SUBROUTINE CS_Growth_Part
