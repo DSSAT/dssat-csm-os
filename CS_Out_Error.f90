@@ -1,11 +1,7 @@
 !***************************************************************************************************************************
 ! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 8965 - 9278 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
-<<<<<<< HEAD
 ! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
-=======
-! that are not arguments are declared in Module_CSCAS_Vars_List. Unless identified as by MF, all comments are those of 
->>>>>>> cassava-modifications
 ! the original CSCAS.FOR code.
 !
 ! SUBROUTINE CS_Out_Error outputs Errora, Errort, Errors (IDETL = A). 
@@ -15,13 +11,8 @@
         IDETL       , RN          , RUN         , TN          &
         )
         
-<<<<<<< HEAD
         USE CS_First_Trans_m
         USE CS_Formats_m
-=======
-        USE Module_CSCAS_Vars_List
-        USE Module_CS_Formats
->>>>>>> cassava-modifications
      
         IMPLICIT NONE 
      
