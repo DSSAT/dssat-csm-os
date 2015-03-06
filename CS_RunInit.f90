@@ -51,7 +51,7 @@
             ! Methods that not in control file
             ! (Impementation needs a re-compile)
             MERNU = 'CSM'     ! Root N uptake 
-            MEDEV = 'LNUM'    ! Control of development (Lnum or devu)
+            MEDEV = 'DEVU'    ! Control of development (Lnum or devu) LPM 04MAR15 change from LNUM to DEVU 
             
             ! Control flags that not in control file 
             ! (Impementation needs a  re-compile)

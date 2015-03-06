@@ -105,7 +105,7 @@
             STRESS20W = STRESS20WS/20.0
         ELSE
             SRAD20 = 0.0
-            TT20 = 0.0
+            TT20 = TT20S/(TMEANNUM-1)   !LPM 28FEB15 to have a value different than 0  
             TMEAN20 = 0.0
             STRESS20 = 0.0
             STRESS20N = 0.0

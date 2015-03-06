@@ -153,18 +153,17 @@ C=======================================================================
       TRWU = 0.0
 
 !     ---------------------------------------------------------
-      IF (meevp .NE.'Z') THEN   !LPM 02dec14 to use the values from ETPHOT
-          SELECT CASE (METMP)
-          CASE ('E')    !EPIC soil temperature routine
-            CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  !DSSAT soilt temperature
-            CALL STEMP(CONTROL, ISWITCH,
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
-          END SELECT
-      ENDIF
+      END SELECT
+
 !     ---------------------------------------------------------
       IF (MEEVP .NE. 'Z') THEN
         CALL ROOTWU(SEASINIT,
@@ -237,18 +236,17 @@ C=======================================================================
 !-----------------------------------------------------------------------
       SWDELTX = 0.0
 !     ---------------------------------------------------------
-      IF (meevp .NE.'Z') THEN  !LPM 02dec14 to use the values from ETPHOT
-          SELECT CASE (METMP)
-          CASE ('E')    !EPIC soil temperature routine
-            CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  !DSSAT soilt temperature
-            CALL STEMP(CONTROL, ISWITCH,
-     &        SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &        SRFTEMP, ST)                                    !Output
-          END SELECT
-      ENDIF
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
+     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+      END SELECT
+
 !-----------------------------------------------------------------------
 !     POTENTIAL ROOT WATER UPTAKE
 !-----------------------------------------------------------------------
@@ -493,18 +491,17 @@ C-----------------------------------------------------------------------
       EF = FLOODWAT % EF
 
 !     ---------------------------------------------------------
-      IF (meevp .NE.'Z') THEN  !LPM 02dec14 to use the values from ETPHOT
-          SELECT CASE (METMP)
-          CASE ('E')    !EPIC soil temperature routine
-            CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  !DSSAT soilt temperature
-            CALL STEMP(CONTROL, ISWITCH,
-     &        SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &        SRFTEMP, ST)                                    !Output
-          END SELECT
-      ENDIF
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
+     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+      END SELECT
+
 
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
@@ -532,19 +529,17 @@ C-----------------------------------------------------------------------
      &    ES_LYR, SOILPROP)
 
 !     ---------------------------------------------------------
-      IF (meevp .NE.'Z') THEN  !LPM 02dec14 to use the values from ETPHOT
-          SELECT CASE (METMP)
-          CASE ('E')    !EPIC soil temperature routine
-            CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  !DSSAT soilt temperature
-            CALL STEMP(CONTROL, ISWITCH,
-     &        SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &        SRFTEMP, ST)                                    !Output
-          END SELECT
-      ENDIF
-      
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  !DSSAT soilt temperature
+        CALL STEMP(CONTROL, ISWITCH,
+     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+      END SELECT
+
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input

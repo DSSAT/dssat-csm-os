@@ -16,7 +16,7 @@
 
         USE ModuleDefs
         USE CS_First_Trans_m
-
+        USE CS_Cultivar_Coeffs_m
         
         IMPLICIT NONE
         
@@ -24,7 +24,8 @@
         
         REAL    KCAN        , RWUMX       , RWUPM       
         
-        CHARACTER(LEN=1) RNMODE 
+        CHARACTER(LEN=1) RNMODE
+        !Tb_cul_leaf_size = 12.0     ! LPM 28feb15 it would be a cultivar coefficient (for testing)
 
         !-----------------------------------------------------------------------------------------------------------------------
         !       Create genotype file names
@@ -271,7 +272,7 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B34ND',pdl(4))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B45ND',pdl(5))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B56ND',pdl(6))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B67ND',pdl(7))
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B67ND',pdl(7)) !LPM 04MAR15 the .CUL file just has until B56ND, -99 could have an effect on the estimation of LAPOTX according with LNUM 
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B78ND',pdl(8))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B89ND',pdl(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LLIFA',llifa)
@@ -528,6 +529,8 @@
 
         ! Temperature responses
         CALL SPREADRA (SPDIRFLE,'TRDV1','4',trdv1)
+        TRDV3 = TRDV1               ! LPM 28feb15 new variable to change base temperature for leaf size
+        TRDV3(1) = Tb_cul_leaf_size ! LPM 28feb15 new variable to change base temperature for leaf size
         IF (trdv1(1).LT.-98.0) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '

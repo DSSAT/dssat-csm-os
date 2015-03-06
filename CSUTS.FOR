@@ -1463,7 +1463,7 @@
 
       SAVE
 
-      CSVPSAT = 610.78 * EXP(17.269*T/(T+237.30))                                                                      !EQN 060
+      CSVPSAT = 610.78 * EXP(17.269*T/(T+237.30))
 
       END
 
@@ -1637,7 +1637,7 @@
 
 !-----------------------------------------------------------------------
 
-      FUNCTION Tfac4(tcard,temp,TUNIT)                                                                                 !EQN 034
+      FUNCTION Tfac4(tcard,temp,TUNIT)
 
       ! Calculate temp factor and thermal units from cardinal temps
 
@@ -1746,7 +1746,7 @@
       ENDDO
 
       tfac424 = AMAX1(0.0,AMIN1(1.0,tfac4sum))
-      tunit = tfac424 * (tcard(2)-tcard(1))                                                                            !EQN 035
+      tunit = tfac424 * (tcard(2)-tcard(1))
 
       RETURN
       END
@@ -2291,7 +2291,7 @@
         OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
       ENDIF  
       WRITE (fnumwrk,*) ' Problem in Tvrfromccde (real<-character)!'
-      WRITE (fnumwrk,*) ' Trying to convert: ',newchar, ' code: ', code !MF
+      WRITE (fnumwrk,*) ' Trying to convert: ',newchar
 
       RETURN
 
@@ -3051,7 +3051,7 @@
         WRITE(fnumerr,*)'   Y1 ',Y1,' Y2 ',Y2
         WRITE(fnumerr,*)'   X  ',X,' X1 ',X1,' X2 ',X2
         WRITE(fnumerr,*)' Check WORK.OUT for more information'
-        WRITE(fnumerr,*)' Program had to stop.'  ! MF 09JA14
+        WRITE (*,*) ' Division by zero in Function CS-YVAL!'
         WRITE (*,*) ' Program will have to stop'
         WRITE (*,*) ' Check ERROR.OUT and WORK.OUT for details'
         CLOSE (fnumerr)

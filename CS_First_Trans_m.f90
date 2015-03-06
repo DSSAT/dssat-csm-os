@@ -25,6 +25,7 @@ Module CS_First_Trans_m
     REAL    :: AREAPOSSIBLEN       ! Leaf area growth at N limit    cm2        ! (From Growth)    
     INTEGER :: ARGLEN              ! Argument component length      #          ! (From RunInit)   
     REAL    :: AVGSW               ! Average soil water in SWPLTD   %          ! (From Growth)    
+    REAL    :: b_slope_lsize       ! Slope to define  max leaf size #          ! LPM 28feb15 
     REAL    :: BASELAYER           ! Depth at base of layer         cm         ! (From Integrate) 
     REAL    :: BRFX(PSX)           ! Branch # per fork at each fork #          ! (From SeasInit)  
     REAL    :: BRNUMSH             ! Branch number/shoot at harvest #          ! (From Integrate) 
@@ -101,6 +102,7 @@ Module CS_First_Trans_m
     REAL    :: CWAN(HANUMX)        ! Canopy wt minimum after harvst kg/ha      ! (From SeasInit)  
     INTEGER :: DAE                 ! Days after emergence           d          ! (From SeasInit)  
     REAL    :: DALF(0:LNUMX)       ! Days during which leaf active  d          ! (From SeasInit)  
+    INTEGER :: DALSMAX             ! DAE with the max leaf size     d          ! LPM 28FEB15 
     INTEGER :: DAP                 ! Days after planting            d          ! (From SeasInit)  
     INTEGER :: DAS                 ! Days after start of simulation d          ! (From Output)    
     INTEGER :: DATE                ! Date (Yr+Doy)                  #          ! (From Output)    
@@ -510,6 +512,8 @@ Module CS_First_Trans_m
     REAL    :: NLLG                ! N limit,leaf growth            #          ! (From SeasInit)  
     REAL    :: NO3CF               ! NO3 uptake concentration fac   #          ! (From SeasInit)  
     REAL    :: NO3MN               ! NO3 conc minimum for uptake    g/Mg       ! (From SeasInit)  
+    REAL    :: NODEWTGB(0:PSX)     ! Node wt growth by br.level     g/d/node   ! LPM 02MAR15 
+    REAL    :: NODEWTG             ! Nodes wt growth                g/d/p      ! LPM 02MAR15 
     INTEGER :: NOUTPG              ! Number for growth output file  #          ! (From RunInit)   
     INTEGER :: NOUTPG2             ! Number for growth output file2 #          ! (From RunInit)   
     INTEGER :: NOUTPGF             ! Number for growth factors file #          ! (From RunInit)   
@@ -915,6 +919,7 @@ Module CS_First_Trans_m
     REAL    :: TDIFSUM             ! Temperature difference,sum     C          ! (From SeasInit)  
     INTEGER :: TFCOLNUM            ! T-file column number           #          ! (From Output)    
     REAL    :: TFD                 ! Temperature factor,development #          ! (From SeasInit)  
+    REAL    :: TFDL                ! Temperature factor,leaf develop#          ! LPM 28FEB15 
     INTEGER :: TFDAP               ! T-file days after planting     #          ! (From Output)    
     INTEGER :: TFDAPCOL            ! T-file DAP column #            #          ! (From Output)    
     REAL    :: TFDF                ! Temperature factor,dayl sens   #          ! (From Growth)    
@@ -977,6 +982,7 @@ Module CS_First_Trans_m
     REAL    :: TRATIO              ! Function,relative tr rate      #          ! (From SeasInit)  
     REAL    :: TRDV1(4)            ! Temp response,development 1    #          ! (From SeasInit)  
     REAL    :: TRDV2(4)            ! Temp response,development 2    #          ! (From SeasInit)  
+    REAL    :: TRDV3(4)            ! Temp response,leaf size        #          ! LPM 28feb15 new variable to change base temperature for leaf size
     REAL    :: TRGEM(4)            ! Temp response,germ.emergence   #          ! (From SeasInit)  
     REAL    :: TRLDF               ! Intermediate factor,new roots  #          ! (From Growth)    
     REAL    :: TRLFG(4)            ! Temp response,leaf growth      #          ! (From SeasInit)  
@@ -992,6 +998,7 @@ Module CS_First_Trans_m
     REAL    :: TTD(20)             ! Thermal time,specific day      C          ! (From SeasInit)  
     REAL    :: TTGEM               ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
     REAL    :: TTLFLIFE            ! Daily thermal time,leaf life   C.d        ! (From Growth)    
+    REAL    :: TTLFSIZE            ! Daily thermal time,leaf size   C.d        ! LPM 28feb15 new variable to change thermal time for leaf size
     REAL    :: TTNEED              ! Thermal time to start new leaf #          ! (From Growth)    
     REAL    :: TTNEXT              ! Thermal time,next tier         oCd        ! (From SeasInit)  
     REAL    :: TTOUT               ! Thermal units output from func C.d        ! (From Growth)    

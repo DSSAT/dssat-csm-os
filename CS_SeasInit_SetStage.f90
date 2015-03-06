@@ -76,7 +76,10 @@
         
         ! Find number of tiers
         MSTG = 0 
-        IF (PDL(1).GT.0.0) THEN
+        !IF (PDL(1).GT.0.0) THEN !LPM 04MAR15 remove to add IF (MEDEV.EQ.'LNUM')THEN
+        DUTOMSTG = 0.0
+        LNUMTOSTG = 0.0        
+        IF (MEDEV.EQ.'LNUM')THEN !LPM 04MAR15 MEDEV defines if branching durations input is as node unit (LNUM)
             ! If tier durations input as node units,calculte DU for tiers
             DO L = 1,8
                 IF (PDL(L).GT.0.0) THEN
@@ -121,6 +124,13 @@
             PDL(MSTG) = 200.0
             PD(MSTG) = PDL(MSTG)*PHINTS
             DSTAGE = 0.0
+            
+            DO L = 1, MSTG-1  !LPM 04MAR15 it should be part of the conditional 
+            IF (PD(L).GT.0.0) THEN
+                DUTOMSTG = DUTOMSTG + PD(L)
+                LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)                                                                 !EQN 006
+            ENDIF  
+            ENDDO
         ELSE 
             ! If tier durations input as developmental units
             DO L = 1,8
@@ -130,45 +140,66 @@
                 ENDIF 
             ENDDO
             ! Check for missing tier durations and if so use previous
+            
+            DO L = 1,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
+                IF (L.LE.2)THEN
+                    PD(L) = PDL(L)
+                ELSE
+                    PD(L) = PDL(2)
+                ENDIF
+            ENDDO
+            
             IF (MSTG.GT.2) THEN
                 Ctrnumpd = 0
-                DO L = 2,MSTG-1
-                    IF (PD(L).LT.0.0) THEN
+                !DO L = 2,MSTG-1  !LPM 04MAR15 It is not necessary the -1 because there is not a MSTG with a different value 
+                DO L = 2,MSTG
+                    !IF (PD(L).LT.0.0) THEN !LPM 04MAR15 We use the same input data PDL instead of create a new coefficient (PD) 
+                    IF (PDL(L).LT.0.0) THEN  
                         PDL(L) = PDL(L-1)
-                        PD(L) = PD(L-1)
+                        !PD(L) = PD(L-1) !LPM 04MAR15 We use the same input data PDL instead of create a new coefficient (PD)
+                        PD(L) = PDL(L-1)
                         CTRNUMPD = CTRNUMPD + 1
                     ENDIF
                 ENDDO
             ENDIF  
             IF (CTRNUMPD.GT.0) THEN          
-                WRITE(MESSAGE(1),'(A11,I2,A23)') 'Duration of',CTRNUMPD,' tiers less than zero. '
+                WRITE(MESSAGE(1),'(A11,I2,A23)') 'Duration of',CTRNUMPD,' branches less than zero. ' !LPM 04MAR15 tiers to branches
                 MESSAGE(2)='Used value(s) for preceding tier. '
                 CALL WARNING(2,'CSCAS',MESSAGE)
             ENDIF
-            PDL(MSTG) = 200.0
-            PD(MSTG) = PDL(MSTG)*PHINTS
+            !PDL(MSTG) = 200.0
+            !PD(MSTG) = PDL(MSTG)  !LPM 04MAR15 PD as PDL (directly from the cultivar file as thermal time) 
+        
+            ! Calculate thresholds 
+            !LPM 04MAR15 It should be part of the conditional (MEDEV== DEVU) to define the values of PSTART, 
+            !if (MEDEV== LNUM) PSTART has been already defined (line 110-116)
+            DO L = 0,MSTG
+                PSTART(L) = 0.0
+            ENDDO
+            DO L = 1,MSTG
+                PSTART(L) = PSTART(L-1) + AMAX1(0.0,PD(L-1))
+            ENDDO
+            
+            DO L = 1, MSTG-1
+                IF (PD(L).GT.0.0) THEN
+                    DUTOMSTG = DUTOMSTG + PD(L)
+                    !LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)  !LPM 04MAR15 it is estimated through the simulation                !EQN 006
+                ENDIF  
+            ENDDO
         ENDIF  
         
-        ! Calculate thresholds
-        DO L = 0,MSTG
-            PSTART(L) = 0.0
-        ENDDO
-        DO L = 1,MSTG
-            PSTART(L) = PSTART(L-1) + AMAX1(0.0,PD(L-1))
-        ENDDO
         
-        DUTOMSTG = 0.0
-        LNUMTOSTG = 0.0
-        DO L = 1, MSTG-1
-            IF (PD(L).GT.0.0) THEN
-                DUTOMSTG = DUTOMSTG + PD(L)
-                LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)                                                                 !EQN 006
-            ENDIF  
-        ENDDO
-        DO L = MSTG,PSX-1
-            LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)
-        ENDDO
-        
+        !LPM 02MAR15 nodes growth by branch level to estimate the stem growth
+        !The value of 0.0014 is used to define the mean node growth rate for the 1st and 2nd branch level
+        !This value could change with a cultivar value 
+        DO L= 0, MSTG
+            IF(L.LT.2) THEN
+                NODEWTGB(L) = 0.0014*4.58007*EXP(-7.5813E-1*2)                         
+            ELSE
+                NODEWTGB(L) = 0.0014*4.58007*EXP(-7.5813E-1*L)
+            ENDIF
+        END DO                                                                        !LPM 02MAR15               
+         
         IF (PHINTS.LE.0.0) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '

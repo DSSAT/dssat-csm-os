@@ -16,6 +16,7 @@
         )
     
         USE CS_First_Trans_m
+        USE CS_Cultivar_Coeffs_m
     
         IMPLICIT NONE
         
@@ -165,7 +166,8 @@
 !-----------------------------------------------------------------------
 !           Calculate leaf number at end of day;adjust PHINT if needed
 !-----------------------------------------------------------------------
-                                               
+            LNUM_slope = 1.0                    !LPM 21/02/2015 It would be part of the cultivar file, just for testing proposals is here
+            
             LAGEG = 0.0
             LNUMG = 0.0
             ! Reduce PHINT with development stage (LAH Sept 2012)
@@ -176,7 +178,7 @@
             !LNUMEND = AMIN1(FLOAT(LNUMX),LNUMEND)
             !IF(FLN.GT.0.0) LNUMEND = AMIN1(FLN,LNUMEND)
             !!LNUMG = LNUMEND - LNUM
-            LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
-        
+            !LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
+            LNUMG = ((1.048488E6*LNUM_slope)/((((3.5986E3))+TTCUM)**2))*TT                                              !LPM 21/02/2015
     END SUBROUTINE CS_Growth_Rates
     

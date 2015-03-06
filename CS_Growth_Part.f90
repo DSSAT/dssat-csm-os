@@ -19,7 +19,7 @@
         CHARACTER(LEN=1) ISWNIT      
         REAL    BRSTAGE     , NFP         
 
-        REAL    CSYVAL                                                                       ! Real function call
+        REAL    CSYVAL      , TFAC4                                                                       ! Real function call
 
         !-----------------------------------------------------------------------
         !           Partitioning of C to above ground and roots (minimum) 
@@ -128,15 +128,28 @@
         ! Potential leaf size for next growing leaf - main shoot 
         LNUMNEED = FLOAT(INT(LNUM+1)) - LNUM                                                                           !EQN 332
         IF (ABS(LNUMNEED).LE.1.0E-6) LNUMNEED = 0.0
-        IF (LNUMSG+1.LE.INT(LAXNO)) THEN
-            LAPOTX(LNUMSG+1) = AMIN1(LAXS, LA1S + LNUMSG*((LAXS-LA1S)/(LAXNO-1)))                                      !EQN 319a
-        ELSEIF (LNUMSG+1.GT.INT(LAXNO).AND.LNUMSG+1.LE.INT(LAXN2)) THEN
-            LAPOTX(LNUMSG+1) = LAXS                                                                                    !EQN 319b
+        !LPM 25/02/2015 the next lines are commented out to change the strategy to estimate the potential leaf area
+        
+        !IF (LNUMSG+1.LE.INT(LAXNO)) THEN
+        !    LAPOTX(LNUMSG+1) = AMIN1(LAXS, LA1S + LNUMSG*((LAXS-LA1S)/(LAXNO-1)))                                      !EQN 319a
+        !ELSEIF (LNUMSG+1.GT.INT(LAXNO).AND.LNUMSG+1.LE.INT(LAXN2)) THEN
+        !    LAPOTX(LNUMSG+1) = LAXS                                                                                    !EQN 319b
+        !ELSE
+        !    LAPOTX(LNUMSG+1) = AMAX1(LAFS, LAXS - ((LNUMSG+1)-LAXN2)*((LAXS-LAFS)/(LAFND-LAXN2)))                      !EQN 319c
+        !ENDIF
+         
+        !LPM 28/02/2015 b_slope_lsize=Slope to define the maximum leaf size according to the mean temperature (it should be from the last 10 days)
+        
+        b_slope_lsize = MAX(0.0,0.0375-(0.0071*((TRDV1(3)-TRDV1(2))-TT20)))       ! LPM 28FEB15
+        TFDL = TFAC4(trdv3,tmean,TTLFSIZE)                                      ! LPM 28FEB15
+        
+        IF (TTCUM.LT.1000) THEN
+            LAPOTX(LNUMSG+1) =  LAXS*((b_slope_lsize*TTLFSIZE/100)+0.22)        ! LPM 28FEB15
         ELSE
-            LAPOTX(LNUMSG+1) = AMAX1(LAFS, LAXS - ((LNUMSG+1)-LAXN2)*((LAXS-LAFS)/(LAFND-LAXN2)))                      !EQN 319c
+            IF (TTCUM-TT.LT.1000) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
+            LAPOTX(LNUMSG+1) = LAXS*((b_slope_lsize*10)+0.22)/((1.101861E-2+(1.154582E-4*(DAE-DALSMAX)))*100)
         ENDIF
-            
-        ! LAH Sept 2012 Eliminate fork # effect on leaf size 
+            ! LAH Sept 2012 Eliminate fork # effect on leaf size 
         ! Adjust for fork#/shoot
         !IF (BRNUMST.GE.1)LAPOTX(LNUMSG+1)=LAPOTX(LNUMSG+1)/BRNUMST
         ! Keep track of 'forking';reduce potential>forking
@@ -201,6 +214,21 @@
         ! Potential leaf weight increase.
         IF (LAWL(1).GT.0.0) GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
 
+        !LPM 02MAR15 Stem weight increase by cohort: 1 axis,main shoot
+        !DO L = 1,LNUMSG+1  
+        !    DO I = 0, INT(BRSTAGE)
+        !    IF (L.LE.LNUMTOSTG(I-1) THEN
+        !        BRNUMST = 1                                                                         
+        !    ELSEIF (BRSTAGE.GT.0.0) THEN
+        !        BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                
+        !    ENDIF        
+        
+        
+        
+        
+        
+        
+        
         ! Potential leaf+stem weight increase.
         IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
             GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))                                                                  !EQN 295a
