@@ -9,7 +9,7 @@ C-----------------------------------------------------------------------
 C  Called from:   STEMP
 C  Calls:         None
 C=======================================================================
-      SUBROUTINE OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+      SUBROUTINE OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -22,7 +22,7 @@ C=======================================================================
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, L, N_LYR
       INTEGER NOUTDT, RUN, YEAR, YRDOY, REPNO
-      REAL ST(NL), SRFTEMP
+      REAL ST(NL), SRFTEMP, TAV, TAMP
 
       LOGICAL FEXIST, DOPRINT
 
@@ -85,6 +85,7 @@ C-----------------------------------------------------------------------
         CALL GET(SOILPROP)
         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
+        WRITE (NOUTDT, '("! TAV  =",F8.1,/,"! TAMP =",F8.1)') TAV, TAMP
         WRITE (NOUTDT, 
      &    '("!",T17,"Temperature (oC) by soil depth (cm):",
      &    /,"!",T17,"Surface",10A8)') (SoilProp%LayerText(L), L=1,N_LYR)

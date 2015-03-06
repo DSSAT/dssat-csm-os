@@ -1,8 +1,7 @@
 C=======================================================================
-C  COPYRIGHT 1998-2011 DSSAT Foundation
+C  COPYRIGHT 1998-2014 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
-C                      University of Guelph, Guelph, Ontario
 C                      Washington State University 
 C  ALL RIGHTS RESERVED
 C=======================================================================
@@ -20,60 +19,7 @@ C  12/12/2001 GH  Rename to Land
 !  03/03/2006 CHP Added tillage (A.Andales & WDBatchelor).
 !  03/21/2006 CHP Added mulch effects
 !  10/31/2007 CHP Added simple K model.
-C=======================================================================
-C-----------------------------------------------------------------------
-C    CROP should be modified when model versions change
-C     or when a crop specific model is created.
-C
-C     CROP   = CR Generic CRopgro model     Version 3.90 (2002)
-C     CROP   = BN for CROPGRO - DRY BEAN    Version 3.9  (2002)
-C     CROP   = PN for CROPGRO - PEANUT      Version 3.9  (2002)
-C     CROP   = SB for CROPGRO - SOYBEAN     Version 3.9  (2002)
-C     CROP   = FA for CROPGRO - FALLOW      Version 3.9  (2002)
-C     CROP   = TM for CROPGRO - TOMATO      Version 3.9  (2002)
-C     CROP   = PR for CROPGRO - PEPPER      Version 3.9  (2002)
-C     CROP   = PE for CROPGRO - PEA         Version 3.9  (2002)
-C     CROP   = CH for CROPGRO - CHICKPEA    Version 3.9  (2002)
-C     CROP   = PP for CROPGRO - PIGEONPEA   Version 3.9  (2002)
-C     CROP   = C3 for CROPGRO - C4 CROPS    Version 3.9  (2002)
-C     CROP   = C4 for CROPGRO - C3 CROPS    Version 3.9  (2002)
-C     CROP   = G0 for CROPGRO - GRASS-0     Version 3.9  (2002)
-C     CROP   = G1 for CROPGRO - GRASS-1     Version 3.9  (2002)
-C     CROP   = G2 for CROPGRO - GRASS-2     Version 3.9  (2002)
-C     CROP   = G3 for CROPGRO - GRASS-3     Version 3.9  (2002)
-C     CROP   = G4 for CROPGRO - GRASS-4     Version 3.9  (2002)
-C     CROP   = G5 for CROPGRO - GRASS-5     Version 3.9  (2002)
-C     CROP   = G6 for CROPGRO - GRASS-6     Version 3.9  (2002)
-C     CROP   = G7 for CROPGRO - GRASS-7     Version 3.9  (2002)
-C     CROP   = G8 for CROPGRO - GRASS-8     Version 3.9  (2002)
-C     CROP   = BR for CROPGRO - Brachiaria
-C                               decumbens   Version 3.9  (2002)
-C     CROP   = VB for CROPGRO - VELVETBEAN  Version 3.9  (2002)
-C     CROP   = FB for CROPGRO - FABA BEAN   Version 3.9  (2002)
-C     CROP   = NP for CROPGRO - Napier grassVersion 3.9  (2002)
-C     CROP   = GB for CROPGRO - Green Bean  Version 3.9  (2002)
-C     CROP   = PE for CROPGRO - Pea         Version 3.9  (2002)
-C
-C-GH  Need to add other DSSAT-CSM crops
 
-C     CROP   = BA for CSCERES - BARLEY      Version 3.9  (2002)
-C     CROP   = CB for CROPGRO - CABBAGE     Version 3.9  (2002)
-C     CROP   = CS for CSSIM   - CASSAVA     Version 3.9  (2002)
-C     CROP   = CO for CROPGRO - COTTON      Version 3.9  (2002)
-C     CROP   = CP for CROPGRO - COWPEA      Version 3.9  (2002)
-C     CROP   = CT for CROPGRO - CITRUS      Version 3.9  (2002)
-C     CROP   = MZ for GECER   - MAIZE       Version 3.9  (2002)
-C     CROP   = ML for GECER   - MILLET      Version 3.9  (2002)
-C     CROP   = PI for PIAL    - PINEAPPLE   Version 3.9  (2002)
-C     CROP   = PT for SUBSTOR - POTATO      Version 3.9  (2002)
-C     CROP   = RI for RICER   - RICE        Version 3.9  (2002)
-C     CROP   = SC for SCCAN   - SUGARCANE   Version 3.9  (2002)
-C     CROP   = SG for GECER   - SORGHUM     Version 3.9  (2002)
-C     CROP   = SU for SUOIL   - SUNFLOWER   Version 3.9  (2002)
-C     CROP   = TM for CROPGRO - TOMATO      Version 3.9  (2002)
-C     CROP   = TN for ARGRO   - TANIER      Version 3.9  (2002)
-C     CROP   = TR for ARGRO   - TARO        Version 3.9  (2002)
-C     CROP   = WH for CSCERES - WHEAT       Version 3.9  (2002)
 C=======================================================================
       SUBROUTINE LAND(CONTROL, ISWITCH, 
      &                YRPLT, MDATE, YREND)
@@ -276,8 +222,9 @@ C-----------------------------------------------------------------------
      &    MDATE, OMADATA, TILLVALS, YRPLT)                !Output
 
 C-----------------------------------------------------------------------
-      IF (YRPLT < YRSIM .AND. CROP /= 'FA' .AND. IPLTI /= 'A') THEN
-        CALL ERROR(ERRKEY,2,' ',0)
+      IF (YRPLT < YRSIM .AND. CROP /= 'FA' .AND.
+     &    INDEX('AF', IPLTI) == 0) THEN
+          CALL ERROR(ERRKEY,2,' ',0)
       ENDIF
 
 C-----------------------------------------------------------------------

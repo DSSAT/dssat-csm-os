@@ -13,6 +13,7 @@ C  06/11/2002 GH  Modified for Y2K
 C  08/01/2002 CHP Merged RUNINIT and SEASINIT into INIT section
 C  08/20/2002 GH  Added YRDIF as a constructred variable
 !  06/10/2005 CHP Fixed initialization for automatic planting
+!  12/05/2014 DK  Forced planting for automatic planting ("F" option)
 C-----------------------------------------------------------------------
 C  INPUT : JUL,DLAYR,LL,DUL,SW,ST,PWDINF,PWDINL,SWPLTL,
 C          SWPLTH,SWPLTD,PTX,PTTN,YRPLT
@@ -92,7 +93,7 @@ C-----------------------------------------------------------------------
 
       IF (CROP .EQ. 'FA') THEN
          YRPLT = YRSIM
-      ELSEIF (IPLTI .EQ. 'A') THEN
+      ELSEIF (INDEX('AF',IPLTI) /= 0) THEN
          YRPLT = -9999999
       ENDIF
 
@@ -134,7 +135,7 @@ C-----------------------------------------------------------------------
 
         IF (CROP .EQ. 'FA') THEN
           YRPLT = YRSIM
-        ELSEIF (IPLTI .EQ. 'A') THEN
+        ELSEIF (INDEX('AF', IPLTI) /= 0) THEN
           YRPLT = -9999999
         ENDIF
 
@@ -159,7 +160,8 @@ C-----------------------------------------------------------------------
             ENDIF
             CONTROL % YRDIF   = YRDIF
           ENDIF
-          IF (IPLTI .EQ. 'R' .OR.(IPLTI .EQ.'A' .AND. YRPLT.GT.0)) THEN
+          IF (IPLTI .EQ. 'R' .OR.
+     &       (INDEX('AF',IPLTI) > 0 .AND. YRPLT > 0)) THEN
             IF (PWDINF .LT. YRSIM) THEN
               CALL YR_DOY(PWDINF,YRO,IDATE)
               PWDINF = (YRO +  YRDIF) * 1000 + IDATE
@@ -168,7 +170,7 @@ C-----------------------------------------------------------------------
               CALL YR_DOY(PWDINL,YRO,IDATE)
               PWDINL = (YRO +  YRDIF) * 1000 + IDATE
             ENDIF
-          ELSE IF (IPLTI .EQ. 'A' .AND. YRPLT .LT. 0) THEN  
+          ELSE IF (INDEX('AF',IPLTI) > 0 .AND. YRPLT < 0) THEN  
              CALL YR_DOY(YRSIM, YR, ISIM)
              CALL YR_DOY(PWDINL,YRO,IDATE)
              YRDIF = YR - YRO
@@ -288,6 +290,16 @@ C-----------------------------------------------------------------------
       ENDIF
 
 C-----------------------------------------------------------------------
+C Forced planting mode. If conditions are not met, force planting on
+C the last day of the window
+C-----------------------------------------------------------------------
+      IF (IPLTI .EQ. 'F') THEN
+        IF (YRDOY .EQ. PWDINL) THEN
+          YRPLT = YRDOY
+        ENDIF
+      ENDIF
+
+C-----------------------------------------------------------------------
 C     Too late.
 C-----------------------------------------------------------------------
       IF (YRDOY .GE. PWDINL .AND. YRPLT .NE. YRDOY) THEN
@@ -345,7 +357,6 @@ C     END OF DYNAMIC IF CONSTRUCT
 C***********************************************************************
       ENDIF
 C***********************************************************************
-
       RETURN
       END !SUBROUTINE AUTPLT
 

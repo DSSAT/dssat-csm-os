@@ -4206,8 +4206,9 @@
             PLAS = AMIN1(PLASTMP,
      &       PLASF(ISTAGE)*GPLA(ISTAGE-1)*DU/PD(ISTAGE))
           ELSEIF (ISTAGE.EQ.3.OR.ISTAGE.EQ.4.OR.ISTAGE.EQ.5) THEN
-            ! Determine if N shortage senescence triggered
-            IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
+             ! Determine if N shortage senescence triggered
+C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
+            IF (ISWNIT.NE.'N'.AND.XSTAGE.GT.5.0.AND.LCNF.LT.NFSF) THEN              
               XSTAGEFS = XSTAGE
               GPLASENF = AMAX1(0.0,PLA-SENLA)
             ENDIF
@@ -6064,7 +6065,10 @@
               OUTPG2 = 'PlantGr2.OUT'
               OUTPGF = 'PlantGrf.OUT'
               OUTPN = 'PlantN.OUT  '
-              IF (FNAME.EQ.'Y') THEN
+! CHP 18Dec2014 Don't change the filename for DSSAT. This change 
+! is needed for sequence simulations.
+! CHP         IF (FNAME.EQ.'Y') THEN
+              IF (FILEIOT(1:2).NE.'DS' .AND. FNAME.EQ.'Y') THEN
                 OUTPG = EXCODE(1:8)//'.OPG'
                 OUTPG2 = EXCODE(1:8)//'.OG2'
                 OUTPGF = EXCODE(1:8)//'.OGF'
