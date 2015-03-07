@@ -113,8 +113,10 @@
             WRITE (fnumwrk,'(A15,F7.1)')'   Emergence   ',edapfr
             DO L = 2,PSNUM
                 CALL CSUCASE (PSNAME(L))
-                IF (PSNAME(L)(1:3).EQ.'HAR'.AND.PSDAPFR(l).LE.0.0) psdapfr(l) = psdapfr(mstg)
-                IF (PSNAME(L)(1:3).EQ.'END'.AND.PSDAPFR(l).LE.0.0) psdapfr(l) = psdapfr(mstg)
+                !IF (PSNAME(L)(1:3).EQ.'HAR'.AND.PSDAPFR(l).LE.0.0) psdapfr(l) = psdapfr(mstg) !LPM  07MAR15 MSTG TO PSX
+                !IF (PSNAME(L)(1:3).EQ.'END'.AND.PSDAPFR(l).LE.0.0) psdapfr(l) = psdapfr(mstg)
+                IF (PSNAME(L)(1:3).EQ.'HAR'.AND.PSDAPFR(l).LE.0.0) psdapfr(l) = psdapfr(PSX)
+                IF (PSNAME(L)(1:3).EQ.'END'.AND.PSDAPFR(l).LE.0.0) psdapfr(l) = psdapfr(PSX)
                 IF (PSNAME(L)(1:3).NE.'FAI') THEN
                     IF (psdapfr(l).GT.0) WRITE (FNUMWRK,'(A3,A13,F6.1,9X,F6.1)')'   ',psname(l),psdapfr(l),lnumsimtostg(l)
                 ELSE
@@ -125,7 +127,8 @@
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A28,A10,I3)')' STRESS FACTOR AVERAGES FOR ',excode,tn
             WRITE (fnumwrk,'(A55)')'  TIER   H2O(PS)   H2O(GR)   N(PS)     N(GR)   TIER_END'
-            DO L=1,MSTG-2 
+            !DO L=1,MSTG-2                  !LPM  07MAR15 MSTG TO PSX
+            DO L=1,PSX-2 
                 WRITE (fnumwrk,'(I6,F8.2,3F10.2,2X,A13)')l,1.0-wfppav(l),1.0-wfgpav(l),1.0-nfppav(l),1.0-nfgpav(l), &
                     psname(MIN(L+1,PSX))
             ENDDO
@@ -133,8 +136,10 @@
                 WRITE (fnumwrk,'(I6,F8.2,3F10.2,2X,A13)')l,1.0-wfppav(l),1.0-wfgpav(l),1.0-nfppav(l),1.0-nfgpav(l), &
                     'HARVEST      '
             ELSE 
-                WRITE (fnumwrk,'(I6,F8.2,3F10.2,2X,A13)')l,1.0-wfppav(mstg-1),1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1), &
-                    1.0-nfgpav(mstg-1),psname(mstg)
+                !WRITE (fnumwrk,'(I6,F8.2,3F10.2,2X,A13)')l,1.0-wfppav(mstg-1),1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1), &    !LPM  07MAR15 MSTG TO PSX
+                !    1.0-nfgpav(mstg-1),psname(mstg)
+                WRITE (fnumwrk,'(I6,F8.2,3F10.2,2X,A13)')l,1.0-wfppav(psx-1),1.0-wfgpav(psx-1),1.0-nfppav(psx-1), &
+                    1.0-nfgpav(psx-1),psname(psx)
             ENDIF
             WRITE (fnumwrk,'(A42)')'  NB 0.0 = minimum ; 1.0 = maximum stress.'
             ! LAH  Must change from daily leaf cohorts to bigger unit
@@ -254,7 +259,8 @@
             ENDIF  ! End Responses simulated header writes
             WRITE (FNUMPRES,'(I6,1X,A10,I4,I3,4X,A2, I6, F6.1)',ADVANCE='NO') RUN,EXCODE,TN,RN,CROP,PLDAYTMP,EDAPFR
             DO L = 1,KEYSTX
-                IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN
+                !IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN          !LPM  07MAR15 MSTG TO PSX
+                IF (L.EQ.PSX.AND.HNUMBER.EQ.1) THEN
                     ! If harvested at a specific date
                     tvi1 = Dapcalc(yeardoyharf,plyear,plday)
                     WRITE (FNUMPRES,'(I6)',ADVANCE='NO') tvi1
@@ -298,7 +304,8 @@
                 WRITE (FNUMPREM,'(I6,1X,A10,I4,I3,4X,A2, I6, F6.1)',ADVANCE='NO') &
                     RUN,EXCODE,TN,RN,CROP,PLDAYTMP,FLOAT(MAX(-99,edapm))
                 DO L = 1,KEYSTX
-                    IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN
+                    !IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN          !LPM  07MAR15 MSTG TO PSX
+                    IF (L.EQ.PSX.AND.HNUMBER.EQ.1) THEN
                         ! If harvested at a specific date
                         tvi1 = Dapcalc(yeardoyharf,plyear,plday)
                         WRITE (FNUMPREM,'(I6)',ADVANCE='NO') tvi1

@@ -28,19 +28,22 @@
         IF (IDETL.EQ.'A') THEN     ! Write some error outputs
                     
             ! Find intermediate stage dates
-            DO L = MSTG-1,1,-1
+            !DO L = MSTG-1,1,-1 !LPM 06MAR15 MSTG TO PSX this section could be not necessary
+            DO L = PSX-1,1,-1
                 IF (psdapm(l).GT.0.0) THEN
                     psidapm = psdapm(l)
                     EXIT
                 ENDIF
             ENDDO
-            IF (L.EQ.0) L = INT((FLOAT(MSTG)/2.0)+1)
+            !IF (L.EQ.0) L = INT((FLOAT(MSTG)/2.0)+1) !LPM 06MAR15 MSTG TO PSX
+            IF (L.EQ.0) L = INT((FLOAT(PSX)/2.0)+1)
             IF (L.GT.0) THEN
                 PSIDAP = PSDAP(L)
             ELSE
                 WRITE (fnumwrk,*)' '
                 WRITE (fnumwrk,*)' Problem in finding intermediate stage '
-                WRITE (fnumwrk,*)'  Mature stage       = ',mstg          
+                !WRITE (fnumwrk,*)'  Mature stage       = ',mstg   !LPM 06MAR15 MSTG TO PSX        
+                WRITE (fnumwrk,*)'  Mature stage       = ',PSX
                 WRITE (fnumwrk,*)'  Intermediate stage = ',l             
                 WRITE (fnumwrk,*)' '
             ENDIF

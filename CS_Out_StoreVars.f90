@@ -86,8 +86,10 @@
         ENDIF
                 
         LABEL(1) = 'ADAT'; VALUE(1) = -99.0
-        IF (stgyeardoy(mstg).LT.9999999) THEN
-            LABEL(2) = 'MDAT'; VALUE(2) = FLOAT(stgyeardoy(mstg))
+        !IF (stgyeardoy(mstg).LT.9999999) THEN                     !LPM  07MAR15 MSTG TO PSX
+        !    LABEL(2) = 'MDAT'; VALUE(2) = FLOAT(stgyeardoy(mstg))
+        IF (stgyeardoy(PSX).LT.9999999) THEN
+            LABEL(2) = 'MDAT'; VALUE(2) = FLOAT(stgyeardoy(PSX))
         ELSE
             LABEL(2) = 'MDAT'; VALUE(2) = -99.0
         ENDIF

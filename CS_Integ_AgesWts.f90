@@ -129,8 +129,10 @@
             RSWPHC = RSWPHC +  RSWPH                                                                                   !EQN 430
             ! Reserves distribution 
             ! Max concentration in leaves increases through life cycle.
-            IF (PSTART(MSTG).GT.0.0) LLRSWT = AMIN1(RSWT,LFWT*(1.0-LPEFR)*(RSCLX/100.0)*DSTAGE)                        !EQN 431
-            IF (PSTART(MSTG).GT.0.0) LPERSWT = AMIN1(RSWT-LLRSWT,LFWT*LPEFR*(RSCLX/100.0)*DSTAGE)                      !EQN 432
+            !IF (PSTART(MSTG).GT.0.0) LLRSWT = AMIN1(RSWT,LFWT*(1.0-LPEFR)*(RSCLX/100.0)*DSTAGE)                        !EQN 431 !LPM 04MAR15 MSTG TO PSX
+            !IF (PSTART(MSTG).GT.0.0) LPERSWT = AMIN1(RSWT-LLRSWT,LFWT*LPEFR*(RSCLX/100.0)*DSTAGE)                      !EQN 432 !LPM 04MAR15 MSTG TO PSX
+            IF (PSTART(PSX).GT.0.0) LLRSWT = AMIN1(RSWT,LFWT*(1.0-LPEFR)*(RSCLX/100.0)*DSTAGE)                        !EQN 431
+            IF (PSTART(PSX).GT.0.0) LPERSWT = AMIN1(RSWT-LLRSWT,LFWT*LPEFR*(RSCLX/100.0)*DSTAGE)                      !EQN 432
             IF (STWT+CRWT.GT.0.0) THEN
                 STRSWT = (RSWT-LLRSWT-LPERSWT)*STWT/(STWT+CRWT)                                                        !EQN 433a
                 CRRSWT = (RSWT-LLRSWT-LPERSWT)*CRWT/(STWT+CRWT)                                                        !EQN 434a

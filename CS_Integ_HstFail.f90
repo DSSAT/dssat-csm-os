@@ -20,7 +20,8 @@
         REAL    BRSTAGE     , SW(NL)        
         
     ! Harvesting conditions
-        IF (IHARI.EQ.'A' .AND. CUMDU.GE.PSTART(MSTG)) THEN
+        !IF (IHARI.EQ.'A' .AND. CUMDU.GE.PSTART(MSTG)) THEN !LPM 04MAR15 MSTG TO PSX
+        IF (IHARI.EQ.'A' .AND. CUMDU.GE.PSTART(PSX)) THEN
             ! Here need to check out if possible to harvest.
             IF (YEARDOY.GE.HFIRST) THEN
                 IF (SW(1).GE.SWPLTL.AND.SW(1).LE.SWPLTH) YEARDOYHARF=YEARDOY
@@ -43,9 +44,11 @@
             WRITE (Message(2),'(A21)')'Harvesting triggered.'
             CALL WARNING(2,'CSCAS',MESSAGE)
         ENDIF
-        IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(MSTG-1)) THEN
+        !IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(MSTG-1)) THEN !LPM 04MAR15 MSTG TO PSX
+        IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(PSX-1)) THEN
             ! NB. Not work if MSTG=2
-            IF (TT20.LE.-98.0.AND.PSTART(MSTG-1).GT.0.0) THEN
+            !IF (TT20.LE.-98.0.AND.PSTART(MSTG-1).GT.0.0) THEN !LPM 04MAR15 MSTG TO PSX
+            IF (TT20.LE.-98.0.AND.PSTART(PSX-1).GT.0.0) THEN
                 CFLFAIL = 'Y'
                 WRITE (Message(1),'(A28)') '20day thermal time mean = 0 '
                 CALL WARNING(1,'CSCAS',MESSAGE)
@@ -55,12 +58,14 @@
         CFLHAR = 'N'
         IF (IHARI.EQ.'R'.AND.YEARDOYHARF.EQ.YEARDOY .OR. IHARI.EQ.'D'.AND.YEARDOYHARF.EQ.DAP .OR. IHARI.EQ.'G'.AND. &
             YEARDOYHARF.LE.BRSTAGE .OR. IHARI.EQ.'A'.AND.YEARDOYHARF.EQ.YEARDOY .OR. IHARI.EQ.'M'.AND.CUMDU.GE. &
-            PSTART(MSTG)) THEN
+            !PSTART(MSTG)) THEN !LPM 04MAR15 MSTG TO PSX
+            PSTART(PSX)) THEN  
             CFLHAR = 'Y'
         ENDIF
         IF(IHARI.EQ.'R'.AND.CFLHAR.EQ.'N')THEN
-            IF (CUMDU.GT.PSTART(MSTG) .AND. CFLHARMSG .NE. 'Y') THEN
-                WRITE(Message(1),'(A54,I7)') 'Maturity reached but waiting for reported harvest on: ', YEARDOYHARF 
+            !IF (CUMDU.GT.PSTART(MSTG) .AND. CFLHARMSG .NE. 'Y') THEN !LPM 04MAR15 MSTG TO PSX
+            IF (CUMDU.GT.PSTART(PSX) .AND. CFLHARMSG .NE. 'Y') THEN
+                WRITE(Message(1),'(A54,I7)') 'Maturity reached but waiting for reported harvest on: ', YEARDOYHARF !LPM 04MAR15 Maybe this section it is not necessary for cassava
                 CALL WARNING(1,'CSCAS',MESSAGE)
                 CFLHARMSG = 'Y'
             ENDIF

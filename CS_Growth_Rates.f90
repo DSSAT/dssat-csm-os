@@ -179,6 +179,6 @@
             !IF(FLN.GT.0.0) LNUMEND = AMIN1(FLN,LNUMEND)
             !!LNUMG = LNUMEND - LNUM
             !LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
-            LNUMG = ((1.048488E6*LNUM_slope)/((((3.5986E3))+TTCUM)**2))*TT                                              !LPM 21/02/2015
+            LNUMG = ((1.048488E6*LNUM_slope)/((((3.5986E3))+TTCUM)**2))*TT                                              !LPM 21/02/2015 leaf number curve
     END SUBROUTINE CS_Growth_Rates
     

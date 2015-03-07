@@ -314,7 +314,8 @@
                                                     CALL Getstrr (LINET,HNUMECOL,VALUER)
                                                     IF (VALUER.GT.0.0) HNUMET = VALUER
                                                     CALL Getstrr (LINET,GSTDCOL,VALUER)
-                                                    IF (VALUER.GT.FLOAT(MSTG*10).AND.MDATT.LE.0)MDATT = DATE
+                                                    !IF (VALUER.GT.FLOAT(MSTG*10).AND.MDATT.LE.0)MDATT = DATE !LPM 06MAR15 MSTG TO PSX
+                                                    IF (VALUER.GT.FLOAT(PSX*10).AND.MDATT.LE.0)MDATT = DATE
                                                     ! To indicate that t data present
                                                     tdatanum = 1
                                                 ENDIF ! End picking variables from t for a     
@@ -429,6 +430,7 @@
                     
                 ! Emergence and maturity dates 
                 IF (edatm.LE.0) edatm = edatmx ! If no Afile data,use Xfile
+                !IF (mdatm.LE.0) mdatm = psdatm(mstg) !LPM 06MAR15 MSTG TO PSX
                 IF (mdatm.LE.0) mdatm = psdatm(mstg)
                     
                 ! Product wt at harvesst
@@ -736,7 +738,8 @@
                         IF (CWAD.GT.0.0)CNCTMP = CNAD/CWAD*100
                         WRITE (FNUMOV,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,F6.1,I6,F6.2,F6.2,F6.2)')YEARDOY,DOM, &
                             MONTH,Dapcalc(yeardoy,(plyeardoy/1000),plday),l,'Harvest      ',NINT(CWAD),LAIC,LNUM, &
-                            NINT(CNAD),CNCTMP,1.0-WFPPAV(MSTG-1),1.0-NFPPAV(MSTG-1)
+                            NINT(CNAD),CNCTMP,1.0-WFPPAV(PSX-1),1.0-NFPPAV(PSX-1)
+                            !NINT(CNAD),CNCTMP,1.0-WFPPAV(MSTG-1),1.0-NFPPAV(MSTG-1) !LPM 06MAR15 MSTG TO PSX
                     ENDIF 
                     IF (RUN.EQ.1 .AND. RUNI.EQ.1) THEN
                         WRITE(fnumov,*)' '
@@ -772,31 +775,49 @@
                     WRITE(fnumov, FMT500)
                     PFPPAV = -99.0
                     PFGPAV = -99.0
-                    DO tvI1 = 1,mstg-2
+                    !DO tvI1 = 1,mstg-2  !LPM 06MAR15 MSTG TO PSX
+                    DO tvI1 = 1,PSX-2
                         IF (pdays(tvi1).GT.0) THEN 
                             WRITE(fnumov, FMT600) psname(tvi1),' - ',psname(tvi1+1),pdays(tvI1),tmaxpav(tvI1), &          ! MF31AU14 REPLACED DASH  WITH A LITERAL
                             tminpav(tvI1),sradpav(tvI1),daylpav(tvI1),rainpc(tvI1),etpc(tvI1),1.-wfppav(tvi1), &
                                 1.0-wfgpav(tvi1), 1.0-nfppav(tvi1), 1.0-nfgpav(tvi1), pfppav(tvi1), pfgpav(tvi1)
                         ENDIF
                     ENDDO
+                    !IF(yeardoyharf.EQ.yeardoy)THEN                                                                        !LPM  07MAR15 MSTG TO PSX
+                    !    WRITE(fnumov, FMT600) psname(mstg-1),' - ','Harvest   ', pdays(mstg-1),tmaxpav(mstg-1), &         ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                    !    tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
+                    !        1.-wfppav(mstg-1),1.0-wfgpav(mstg-1), 1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1), &
+                    !        pfppav(mstg-1),pfgpav(mstg-1)
+                    !ELSE 
+                    !    WRITE(fnumov, FMT600) psname(mstg-1),' - ',psname(mstg),pdays(mstg-1),tmaxpav(mstg-1), &           ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                    !    tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
+                    !        tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
+                    !        1.-wfppav(mstg-1),1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1), &
+                    !        pfppav(mstg-1),pfgpav(mstg-1)
+                    !ENDIF
+                    
                     IF(yeardoyharf.EQ.yeardoy)THEN
-                        WRITE(fnumov, FMT600) psname(mstg-1),' - ','Harvest   ', pdays(mstg-1),tmaxpav(mstg-1), &         ! MF31AU14 REPLACED DASH  WITH A LITERAL
-                        tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
-                            1.-wfppav(mstg-1),1.0-wfgpav(mstg-1), 1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1), &
-                            pfppav(mstg-1),pfgpav(mstg-1)
+                        WRITE(fnumov, FMT600) psname(psx-1),' - ','Harvest   ', pdays(psx-1),tmaxpav(psx-1), &         ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                        tminpav(psx-1),sradpav(psx-1),daylpav(psx-1),rainpc(psx-1),etpc(psx-1), &
+                            1.-wfppav(psx-1),1.0-wfgpav(psx-1), 1.0-nfppav(psx-1),1.0-nfgpav(psx-1), &
+                            pfppav(psx-1),pfgpav(psx-1)
                     ELSE 
-                        WRITE(fnumov, FMT600) psname(mstg-1),' - ',psname(mstg),pdays(mstg-1),tmaxpav(mstg-1), &           ! MF31AU14 REPLACED DASH  WITH A LITERAL
-                        tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
-                            tminpav(mstg-1),sradpav(mstg-1),daylpav(mstg-1),rainpc(mstg-1),etpc(mstg-1), &
-                            1.-wfppav(mstg-1),1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1), &
-                            pfppav(mstg-1),pfgpav(mstg-1)
+                        WRITE(fnumov, FMT600) psname(psx-1),' - ',psname(psx),pdays(psx-1),tmaxpav(psx-1), &           ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                        tminpav(psx-1),sradpav(psx-1),daylpav(psx-1),rainpc(psx-1),etpc(psx-1), &
+                            tminpav(psx-1),sradpav(psx-1),daylpav(psx-1),rainpc(psx-1),etpc(psx-1), &
+                            1.-wfppav(psx-1),1.0-wfgpav(psx-1),1.0-nfppav(psx-1),1.0-nfgpav(psx-1), &
+                            pfppav(psx-1),pfgpav(psx-1)
                     ENDIF
-                    IF (pdays(mstg).GT.0.OR.yeardoyharf.EQ.yeardoy) THEN 
+                    !IF (pdays(mstg).GT.0.OR.yeardoyharf.EQ.yeardoy) THEN                                                 !LPM  07MAR15 MSTG TO PSX
+                    IF (pdays(psx).GT.0.OR.yeardoyharf.EQ.yeardoy) THEN 
                         WRITE(fnumov,*) ' '
                         pfpcav = -99.0
                         pfgcav = -99.0 
-                        IF (pdays(mstg).GT.0.) THEN 
-                            WRITE(fnumov, FMT600) psname(1),' - ',psname(mstg), cdays, tmaxcav, tmincav, sradcav, &        ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                        !IF (pdays(mstg).GT.0.) THEN                                                                        !LPM  07MAR15 MSTG TO PSX
+                        !    WRITE(fnumov, FMT600) psname(1),' - ',psname(mstg), cdays, tmaxcav, tmincav, sradcav, &        ! MF31AU14 REPLACED DASH  WITH A LITERAL
+                        
+                        IF (pdays(psx).GT.0.) THEN 
+                            WRITE(fnumov, FMT600) psname(1),' - ',psname(psx), cdays, tmaxcav, tmincav, sradcav, &        ! MF31AU14 REPLACED DASH  WITH A LITERAL
                             daylcav, raincc, etcc, 1.0-wfpcav, 1.0-wfgcav, 1.0-nfpcav, 1.0-nfgcav,pfpcav, pfgcav
                         ELSE  
                             WRITE(fnumov, FMT600) psname(1),' - ','Harvest   ', cdays, tmaxcav, tmincav, sradcav, &        ! MF31AU14 REPLACED DASH  WITH A LITERAL

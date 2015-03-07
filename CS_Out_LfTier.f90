@@ -79,20 +79,30 @@
             WRITE (FNUMPHA,'(/,A79,/)') OUTHED
             WRITE (fnumpha,'(A42,A24,A12)')'@ TIER SRADA  TMXA  TMNA  PREA  TWLA  CO2A','  WFPA  WFGA  NFPA  NFGA', &
                 '  TIER_END  '
-            DO L=1,MSTG-2
+            !DO L=1,MSTG-2       !LPM  07MAR15 MSTG TO PSX
+            DO L=1,PSX-2
                 IF (STGYEARDOY(L).LT.9999999.AND.L.NE.0.AND.L.NE.10.AND.L.NE.11) &
                     WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')L,sradpav(L),tmaxpav(L),tminpav(L),rainpav(L), &
                     daylpav(L),NINT(co2pav(L)),1.0-wfppav(L),1.0-wfgpav(L),1.0-nfppav(L),1.0-nfgpav(L), &
                     psname(MIN(L+1,PSX))
             ENDDO
+            !IF(yeardoyharf.EQ.yeardoy)THEN             !LPM  07MAR15 MSTG TO PSX
+            !    WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')mstg-1,sradpav(mstg-1),tmaxpav(mstg-1), &
+            !        tminpav(mstg-1),rainpav(mstg-1),daylpav(mstg-1),NINT(co2pav(mstg-1)),1.0-wfppav(mstg-1), &
+            !        1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1),'Harvest      '
+            !ELSE 
+            !    WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')mstg-1,sradpav(mstg-1),tmaxpav(mstg-1), &
+            !        tminpav(mstg-1),rainpav(mstg-1),daylpav(mstg-1),NINT(co2pav(mstg-1)),1.0-wfppav(mstg-1), &
+            !        1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1),psname(mstg)
+            !ENDIF
             IF(yeardoyharf.EQ.yeardoy)THEN
-                WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')mstg-1,sradpav(mstg-1),tmaxpav(mstg-1), &
-                    tminpav(mstg-1),rainpav(mstg-1),daylpav(mstg-1),NINT(co2pav(mstg-1)),1.0-wfppav(mstg-1), &
-                    1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1),'Harvest      '
+                WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')psx-1,sradpav(psx-1),tmaxpav(psx-1), &
+                    tminpav(psx-1),rainpav(psx-1),daylpav(psx-1),NINT(co2pav(psx-1)),1.0-wfppav(psx-1), &
+                    1.0-wfgpav(psx-1),1.0-nfppav(psx-1),1.0-nfgpav(psx-1),'Harvest      '
             ELSE 
-                WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')mstg-1,sradpav(mstg-1),tmaxpav(mstg-1), &
-                    tminpav(mstg-1),rainpav(mstg-1),daylpav(mstg-1),NINT(co2pav(mstg-1)),1.0-wfppav(mstg-1), &
-                    1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1),psname(mstg)
+                WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')psx-1,sradpav(psx-1),tmaxpav(psx-1), &
+                    tminpav(psx-1),rainpav(psx-1),daylpav(psx-1),NINT(co2pav(psx-1)),1.0-wfppav(psx-1), &
+                    1.0-wfgpav(psx-1),1.0-nfppav(psx-1),1.0-nfgpav(psx-1),psname(psx)
             ENDIF
             CLOSE (FNUMPHA)
                     

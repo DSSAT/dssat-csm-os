@@ -61,7 +61,8 @@
         ENDIF
         IF (PPSEN.EQ.'SL') THEN      ! Short day response,linear 
             DF = 1.0 - DAYLS(INT(BRSTAGETMP))/1000.*(PPTHR-DAYL)                                                       !EQN 050
-            IF (BRSTAGETMP.LT.FLOAT(MSTG)) THEN
+            !IF (BRSTAGETMP.LT.FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
+            IF (BRSTAGETMP.LT.FLOAT(PSX)) THEN
                 DFNEXT = 1.-DAYLS(INT(BRSTAGETMP+1))/1000.*(PPTHR-DAYL)
             ELSE
                 DFNEXT = DF

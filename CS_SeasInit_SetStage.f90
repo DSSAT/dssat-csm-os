@@ -39,7 +39,7 @@
                     KEYPS(KEYPSNUM) = L                                                 !    2     K B1DAT 1stBranch
                 ENDIF                                                                   !    3     K B2DAT 2ndBranch
                 IF (PSABV(L).EQ.'HDAT') HSTG = L                                        !    4     K B3DAT 3rdBranch
-                IF (PSABV(L).EQ.'MDAT') MSTG = L                                        !    5     K B4DAT 4thBranch
+                !IF (PSABV(L).EQ.'MDAT') MSTG = L                                       !    5     K B4DAT 4thBranch !LPM 07MAR15 There is not a MSTG for cassava
                 PSNUM = PSNUM + 1                                                       !    6     K B5DAT 5thBranch
             ENDIF                                                                       !    7     K B6DAT 6thBranch
         ENDDO                                                                           !    8     M HDAT  Harvest  
@@ -49,8 +49,9 @@
         ENDIF
         ! IF HSTG not found, use maximum principal stage number + 1
         IF (HSTG.LE.0) THEN
-            HSTG = MSTG+1  
-            PSTART(HSTG) = 5000   ! Set to very long cycle
+            HSTG = MSTG+1
+            !HSTG = MSTG+1                  !LPM 07MAR15 MSTG to PSX
+            !PSTART(HSTG) = 5000   ! Set to very long cycle !LPM 06MAR15 to avoid low values of PSTART with DEVU
         ENDIF
         ! Check and adjust stage abbreviations (DAT -> DAP)
         DO L = 1,PSNUM
@@ -81,14 +82,14 @@
         LNUMTOSTG = 0.0        
         IF (MEDEV.EQ.'LNUM')THEN !LPM 04MAR15 MEDEV defines if branching durations input is as node unit (LNUM)
             ! If tier durations input as node units,calculte DU for tiers
-            DO L = 1,8
+            DO L = 1,8 !LPM 07MAR15 here 8 is left (instead of PSX) to avoid problems with the estimation of DSTAGE
                 IF (PDL(L).GT.0.0) THEN
                     MSTG = L+1
                     HSTG = MSTG+1  
                 ENDIF 
             ENDDO
             ! Check for missing tier durations and if so use previous
-            IF (MSTG.GT.2) THEN
+            IF (MSTG.GT.2) THEN   !LPM 07MAR15 here MSTG is not changed to PSX to avoid problems with the estimation of DSTAGE
                 DO L = 2,MSTG
                     IF (PDL(L).LT.0.0) THEN
                         PDL(L) = PDL(L-1)
@@ -125,7 +126,7 @@
             PD(MSTG) = PDL(MSTG)*PHINTS
             DSTAGE = 0.0
             
-            DO L = 1, MSTG-1  !LPM 04MAR15 it should be part of the conditional 
+            DO L = 1, MSTG-1  !LPM 06MAR15 move because it should be part of the conditional 
             IF (PD(L).GT.0.0) THEN
                 DUTOMSTG = DUTOMSTG + PD(L)
                 LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)                                                                 !EQN 006
@@ -133,7 +134,8 @@
             ENDDO
         ELSE 
             ! If tier durations input as developmental units
-            DO L = 1,8
+            !DO L = 1,8  !LPM 06MAR15 to avoid a fix value of branch levelS (8)
+            DO L = 1,PSX
                 IF (PDL(L).GT.0.0) THEN
                     MSTG = L+1
                     HSTG = MSTG+1  
@@ -149,10 +151,11 @@
                 ENDIF
             ENDDO
             
-            IF (MSTG.GT.2) THEN
+            !IF (MSTG.GT.2) THEN !LPM 07MAR15 MSTG to PSX
+            IF (PSX.GT.2) THEN
                 Ctrnumpd = 0
                 !DO L = 2,MSTG-1  !LPM 04MAR15 It is not necessary the -1 because there is not a MSTG with a different value 
-                DO L = 2,MSTG
+                DO L = 2,PSX
                     !IF (PD(L).LT.0.0) THEN !LPM 04MAR15 We use the same input data PDL instead of create a new coefficient (PD) 
                     IF (PDL(L).LT.0.0) THEN  
                         PDL(L) = PDL(L-1)
@@ -162,25 +165,28 @@
                     ENDIF
                 ENDDO
             ENDIF  
-            IF (CTRNUMPD.GT.0) THEN          
-                WRITE(MESSAGE(1),'(A11,I2,A23)') 'Duration of',CTRNUMPD,' branches less than zero. ' !LPM 04MAR15 tiers to branches
-                MESSAGE(2)='Used value(s) for preceding tier. '
-                CALL WARNING(2,'CSCAS',MESSAGE)
-            ENDIF
+            !IF (CTRNUMPD.GT.0) THEN   !LPM 07mar15 It would not be necessary. B12ND would be used from the second branch     
+            !    WRITE(MESSAGE(1),'(A11,I2,A24)') 'Duration of',CTRNUMPD,' branches less than zero. ' !LPM 04MAR15 tiers to branches
+            !    MESSAGE(2)='Used value(s) for preceding branch. '
+            !    CALL WARNING(2,'CSCAS',MESSAGE)
+            !ENDIF
             !PDL(MSTG) = 200.0
             !PD(MSTG) = PDL(MSTG)  !LPM 04MAR15 PD as PDL (directly from the cultivar file as thermal time) 
         
             ! Calculate thresholds 
             !LPM 04MAR15 It should be part of the conditional (MEDEV== DEVU) to define the values of PSTART, 
             !if (MEDEV== LNUM) PSTART has been already defined (line 110-116)
-            DO L = 0,MSTG
+            !DO L = 0,MSTG  !LPM 07MAR15 MSTG to PSX
+            DO L = 0,PSX
                 PSTART(L) = 0.0
             ENDDO
-            DO L = 1,MSTG
+            !DO L = 0,MSTG  !LPM 07MAR15 MSTG to PSX
+            DO L = 1,PSX
                 PSTART(L) = PSTART(L-1) + AMAX1(0.0,PD(L-1))
             ENDDO
             
-            DO L = 1, MSTG-1
+            !DO L = 1, MSTG-1  !LPM 07MAR15 MSTG to PSX
+            DO L = 1, PSX-1
                 IF (PD(L).GT.0.0) THEN
                     DUTOMSTG = DUTOMSTG + PD(L)
                     !LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)  !LPM 04MAR15 it is estimated through the simulation                !EQN 006
@@ -192,7 +198,8 @@
         !LPM 02MAR15 nodes growth by branch level to estimate the stem growth
         !The value of 0.0014 is used to define the mean node growth rate for the 1st and 2nd branch level
         !This value could change with a cultivar value 
-        DO L= 0, MSTG
+        !DO L= 0, MSTG !LPM 07MAR15 MSTG to PSX
+        DO L= 0, PSX
             IF(L.LT.2) THEN
                 NODEWTGB(L) = 0.0014*4.58007*EXP(-7.5813E-1*2)                         
             ELSE
@@ -402,7 +409,8 @@
         ENDIF       
         
         ! Height growth
-        SERX = CANHTS/PSTART(MSTG)                                                                                     !EQN 315
+        !SERX = CANHTS/PSTART(MSTG) change to br. level 6 to avoid that it takes long time to increase CANHT            !EQN 315
+        SERX = CANHTS/PSTART(6)
         
         !-----------------------------------------------------------------------
         !       Set coefficients that dependent on input switch

@@ -6,7 +6,7 @@ Module CS_First_Trans_m
     !INTEGER,PARAMETER::LNUMX= 500     ! Maximum number of leaves/axis
     !INTEGER,PARAMETER::NL   =  20 ! Maximum number of soil layers               ! (In ModuleDefs) 
     INTEGER,PARAMETER::DINX =   3 ! Disease number,maximum
-    INTEGER,PARAMETER::PSX  =  20 ! Principal stages,maximum
+    INTEGER,PARAMETER::PSX  =  12 ! Principal stages,maximum !LPM 07MAR15 change to a maximum value of branching levels of 12 
     INTEGER,PARAMETER::SSX  =  20 ! Secondary stages,maximum
     INTEGER,PARAMETER::KEYSTX = 9 ! Maximum number of key stages
     INTEGER,PARAMETER::DCNX =  10 ! Disease control #,maximum

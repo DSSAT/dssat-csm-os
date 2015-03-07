@@ -205,8 +205,9 @@
             WRITE(fnumwrk,*)'  Ppthr  ',Ppthr   
             WRITE(fnumwrk,*)'  Pps1   ',Dayls(1)
             WRITE(fnumwrk,*)'  Pps2   ',Dayls(2)
-            WRITE(fnumwrk,*)'  Mstg   ',Mstg    
-            DO L = 1,MSTG
+            !WRITE(fnumwrk,*)'  Mstg   ',Mstg    !LPM 07MAR15 There is not a maturity stage for cassava
+            !DO L = 1,MSTG                      !LPM 07MAR15 MSTG to PSX
+            DO L = 1,PSX
                 WRITE(fnumwrk,'(A15,I2,2F8.1)')'  B#->,Deg.d-> ',l,Pdl(L),PD(l)
             ENDDO  
             WRITE(fnumwrk,*)' Crown stages '
@@ -271,6 +272,7 @@
             WRITE(FNUMWRK,*)' '
             WRITE(FNUMWRK,'(A17)')' BRANCH NODE NOS.'
             WRITE(FNUMWRK,'(A23)')'   BRANCH NODE #    ABV'
+            !DO L = 1,MSTG                       !LPM 07MAR15 MSTG to PSX
             DO L = 1,MSTG
                 WRITE(FNUMWRK,'(I6,I10,2X,A5)')L,NINT(LNUMTOSTG(L)),PSABV(L)
             ENDDO

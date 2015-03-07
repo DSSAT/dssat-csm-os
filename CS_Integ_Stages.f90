@@ -56,12 +56,15 @@
         
         ! STAGES:Overall development
         CUMDU = CUMDU + DU
-        IF (MEDEV.EQ.'DEVU'.AND.PSTART(MSTG).GT.0.0) THEN                                 ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
+        !IF (MEDEV.EQ.'DEVU'.AND.PSTART(MSTG).GT.0.0) THEN   !LPM 04MAR15 MSTG TO PSX
+        IF (MEDEV.EQ.'DEVU'.AND.PSTART(PSX).GT.0.0) THEN                                 ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
             ! Calculate dstage from developmental unit accumulation
-            IF (PSTART(MSTG).GT.0.0) DSTAGE = CUMDU/PSTART(MSTG)
+            !IF (PSTART(MSTG).GT.0.0) DSTAGE = CUMDU/PSTART(MSTG) !LPM 04MAR15 MSTG TO PSX
+            IF (PSTART(PSX).GT.0.0) DSTAGE = CUMDU/PSTART(PSX)
         ELSE
             ! Alternative method.Calculate dstage from leaf number
-            IF (LNUMTOSTG(MSTG).GT.0.0) DSTAGE = LNUM/LNUMTOSTG(MSTG)                                                  !EQN 037b
+            !IF (LNUMTOSTG(MSTG).GT.0.0) DSTAGE = LNUM/LNUMTOSTG(MSTG)                                                  !EQN 037b !LPM 04MAR15 MSTG TO PSX
+            IF (LNUMTOSTG(PSX).GT.0.0) DSTAGE = LNUM/LNUMTOSTG(PSX)                                                  !EQN 037b
             IF (LAFND.GT.0.0) DSTAGE = LNUM/LAFND                                                                      !EQN 037a
         ENDIF 
         
@@ -131,6 +134,7 @@
             IF (DU.GT.0.0) PSDAPFR(L)=(PSTART(L)-(CUMDU-DU))/DU
             PSDAPFR(L) = FLOAT(DAP) + PSDAPFR(L)
             PSDAP(L) = DAP
+            !IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN  !LPM 06MAR15 MSTG TO PSX
             IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN
                 MDAT = YEARDOY
                 MDOY = DOY
