@@ -665,6 +665,20 @@ C     Create vpd and resistance matrices.
      &  RA, RL, RS, USTAR,                                !Output
      &  RB,RSURF)
 C          RB and RSURF Added by BAK on 1DEC2014
+        RSSL = RB(1)
+        RSSH = RB(2)
+        RSSS = RB(3)
+        IF(RSSL .GT. 20000.) THEN
+            RSSL = 20000.
+            ENDIF
+        IF(RSSH .GT. 20000.) THEN
+            RSSH = 20000.
+            ENDIF
+        IF(RSSS .GT. 20000.) THEN
+            RSSS = 20000.
+            ENDIF
+C       Obtain the resistances of sunlit, shaded leaves and
+C         soil surface. Added by BAK on 18MAR15
 
 C     Calculate NET total by subtracting net (back) longwave radiation.
 

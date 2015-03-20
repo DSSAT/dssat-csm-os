@@ -98,8 +98,9 @@ C-----------------------------------------------------------------------
      &     GN, LHN, LHEATN(3), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3),
      &     GMT, LHT, LHEATT(3), RSSHT, RSSLT, RSSST, SHT, SHEATT(3),
      &     RNETN(3),RNETT(3)
-
 C         previous SIX output lines added by Bruce Kimball on 2DEC14
+      Real TGROnn,TGROnit,TAnn,TAnit
+C           previous line added by Bruce Kimball on 9MAR15
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
       REAL PSTRES1  !3/22/2011
@@ -219,8 +220,10 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT)
+     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
 C         previous five output lines added by Bruce Kimball DEC14
+     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY)
+C           previous line added by Bruce Kimall on 9MAR15
         ENDIF
 
 !***********************************************************************
@@ -279,8 +282,10 @@ C         previous five output lines added by Bruce Kimball DEC14
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT)
+     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
 C         previous five output lines added by Bruce Kimball DEC14
+     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY)
+C           previous line added by Bruce Kimall on 9MAR15
             ENDIF
 
 C***********************************************************************
@@ -497,6 +502,7 @@ C       The following 8 variales added by Bruce Kimball on 1Dec2014
               LSLnn = LAISL
               GN = G
               LHN = LH
+              SHN = SH
               RSSHN = RSSH
               RSSLN = RSSL
               RSSSN = RSSS
@@ -528,6 +534,7 @@ C       Remember midnight values
             LSLnit = LAISL
             GMT = G
               LHT = LH
+              SHT = SH
               RSSHT = RSSH
               RSSLT = RSSL
               RSSST = RSSS
@@ -566,6 +573,14 @@ C       Assign daily values.
           DO  I=1,TS
             TGRO(I) = TCAN(I)
           ENDDO
+
+C           Save noon and midnight growth and air temperatures
+C           add by Bruce Kimball on 9MAR15
+          TGROnn = TGRO(TS/2)
+          TGROnit = TGRO(TS)
+          TAnn = TAIRHR(TS/2)
+          TAnit = TAIRHR(TS)
+
           CALL SOIL05(
      &      ST2,0,NLAYR,                                  !Input
      &      ST)                                           !Output
@@ -635,9 +650,10 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT)
+     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
 C         previous five output lines added by Bruce Kimball DEC14
-
+     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY)
+C           previous line added by Bruce Kimall on 9MAR15
          ENDIF
 
 !***********************************************************************
@@ -654,9 +670,10 @@ C         previous five output lines added by Bruce Kimball DEC14
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT)
+     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
 C         previous five output lines added by Bruce Kimball DEC14
-
+     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY)
+C           previous line added by Bruce Kimall on 9MAR15
       ENDIF
       
       CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
@@ -677,9 +694,19 @@ C         previous five output lines added by Bruce Kimball DEC14
       CALL PUT('SPAM', 'AGEFAC', AGEFAC)
       CALL PUT('SPAM', 'PG'    , PG)
 
-      WEATHER % TGROAV = TGROAV   !I/O
-      WEATHER % TGRO   = TGRO     !I/O
-      WEATHER % TGRODY = TGRODY
+C       If the method to compute ET is energy balance, then
+C       grow the plants at canopy temperature. Else grow them
+C       at air temperature (TGRO initialized to TA in HMET.)
+C       IF added by Bruce Kimball on 9MAR15
+      IF(MEEVP .EQ. 'Z') THEN
+        WEATHER % TGROAV = TCANAV
+        WEATHER % TGRO   = TCAN
+        WEATHER % TGRODY = TCANDY
+        ELSE
+        WEATHER % TGROAV = TGROAV   !I/O
+        WEATHER % TGRO   = TGRO     !I/O
+        WEATHER % TGRODY = TGRODY
+        ENDIF
 
       RETURN
       END SUBROUTINE ETPHOT
