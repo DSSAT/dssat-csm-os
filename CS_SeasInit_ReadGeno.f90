@@ -529,8 +529,6 @@
 
         ! Temperature responses
         CALL SPREADRA (SPDIRFLE,'TRDV1','4',trdv1)
-        TRDV3 = TRDV1               ! LPM 28feb15 new variable to change base temperature for leaf size
-        TRDV3(1) = Tb_cul_leaf_size ! LPM 28feb15 new variable to change base temperature for leaf size
         IF (trdv1(1).LT.-98.0) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '
@@ -547,6 +545,9 @@
         
         CALL SPREADRA (SPDIRFLE,'TRGEM','4',trgem)
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
+        
+        TRDV3 = TRLFG               ! LPM 21MAR15 new variable to change base temperature for leaf size
+        TRDV3(1) = Tb_cul_leaf_size ! LPM 21MAR15 new variable to change base temperature for leaf size
         CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
         IF (diffacr(1).LT.0.0) CALL SPREADRA (SPDIRFLE,'DIFFR','3',diffacr)
         CALL SPREADCA (SPDIRFLE,'PSNAME','20',psname)

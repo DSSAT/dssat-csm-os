@@ -130,7 +130,7 @@
             ! IF (TMEAN20.LT.0.0) TFG = 0.0
             ! IF (TMEAN20.LT.0.0) TFP = 0.0
             Tfp = TFAC4(trphs,tmean,TTOUT)                                                                             !EQN 056
-            Tfg = TFAC4(trlfg,tmean,TTOUT)                                                                             !EQN 058
+            Tfg = TFAC4(trlfg,tmean,TTB)                                                                               !EQN 058 LPM 21MAR15 TTB will be used to determine DU and branches
             IF (CFLTFG.EQ.'N') TFG = 1.0
 
             ! Vapour pressure

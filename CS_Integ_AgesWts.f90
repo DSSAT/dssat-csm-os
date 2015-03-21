@@ -52,14 +52,18 @@
             ENDIF
             LAGEP(L) = LAGEP(L) + (TTLFLIFE*EMRGFR)/PHINT                                                              !EQN 362
             ! Days growing
-            IF (LAGETT(L).LE.LLIFGTT) THEN
-                DGLF(L) = DGLF(L) + EMRGFR                                                                             !EQN 363a
-            ELSE  
-                IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT) THEN
-                    TVR1 = (LLIFGTT-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                    DGLF(L) = DGLF(L) + TVR1                                                                           !EQN 363b
-                ENDIF  
+            !IF (LAGETT(L).LE.LLIFGTT) THEN
+            !    DGLF(L) = DGLF(L) + EMRGFR                                                                             !EQN 363a LPM 21MAR15 We will assume a fix growing duration
+            !ELSE  
+            !    IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT) THEN
+            !        TVR1 = (LLIFGTT-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+            !        DGLF(L) = DGLF(L) + TVR1                                                                           !EQN 363b
+            !    ENDIF  
+            !ENDIF
+            IF (DGLF(L).LT.10) THEN                                                                                     !LPM 21MAR15 DGLF will have a maximum value of 10 days
+                DGLF(L) = DGLF(L) + EMRGFR
             ENDIF
+            
             ! Days active
             IF (LAGETT(L).GT.LLIFGTT.AND.LAGETT(L).LT.LLIFGTT+LLIFATT) THEN
                 IF (LNUMSOLDESTA.LT.0) THEN

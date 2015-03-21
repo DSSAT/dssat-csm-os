@@ -93,14 +93,14 @@
         ! To avoid exceeding the array sizes
         IF (BRSTAGETMP.LT.10.0) THEN
             DUNEED = PSTART(INT(BRSTAGETMP+1.0))-CUMDU                                                                 !EQN 051
-            IF (DUNEED.GE.TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN
-                DUPHASE = TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)                                                          !EQN 052a
+            IF (DUNEED.GE.TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN                                                    !LPM 21MAR15 use TTB instead of TT (TO1=24)
+                DUPHASE = TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)                                                          !EQN 052a !LPM 21MAR15 use TTB instead of TT (TO1=24)
                 TIMENEED = 1.0
                 DUPNEXT = 0.0
             ELSE  
                 DUPHASE = DUNEED                                                                                       !EQN 052b
-                TIMENEED = DUNEED/(TT*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))                                                !EQN 054
-                DUPNEXT = TTNEXT*(1.0-TIMENEED)*DFNEXT                                                                 !EQN 053
+                TIMENEED = DUNEED/(TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))                                                !EQN 054 !LPM 21MAR15 use TTB instead of TT (TO1=24)
+                DUPNEXT = TTNEXT*(1.0-TIMENEED)*DFNEXT                                                                 !EQN 053 
             ENDIF
         ELSE
         ENDIF

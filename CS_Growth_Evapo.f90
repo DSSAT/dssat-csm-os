@@ -126,6 +126,7 @@
 !-----------------------------------------------------------------------
 
           Tfd = TFAC4(trdv1,tmean,TT)
+          TFDL = TFAC4(trdv3,tmean,TTL)                                      ! LPM 18MAR15
           IF (brstage+1.0.LT.10.0) &
            Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
           IF (trgem(3).GT.0.0) THEN

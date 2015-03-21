@@ -56,6 +56,35 @@
         
         ! STAGES:Overall development
         CUMDU = CUMDU + DU
+
+        ! BRANCH NUMBER     !LPM 07MAR15 This section was moved from CS_Growth_Part (has to be before of the estimation of brstage)       
+        ! Old method (1 fork number throughout)
+        ! BRNUMST = AMAX1(1.0,BRNUMFX**(INT(brstage)-1))
+        ! New method (fork number specified for each forking point)
+        ! First calculate new BRSTAGE as temporary variable
+        ! (LAH Check whether can move brstage calc up here! 
+        ! (If do this, brstage in brfx below must be reduced by 1))
+        IF (MEDEV.EQ.'LNUM') THEN 
+            IF (PDL(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
+                TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE))           ! EQN 004
+            ELSE
+                TVR1 = FLOAT(INT(BRSTAGE))
+            ENDIF
+        ELSE
+            IF (PD(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
+                TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE))              ! EQN 004
+            ELSE
+                TVR1 = FLOAT(INT(BRSTAGE))
+            ENDIF        
+        ENDIF    
+        IF (INT(TVR1).GT.INT(BRSTAGEPREV)) THEN
+            IF (BRSTAGE.EQ.0.0) THEN
+                BRNUMST = 1                                                                         ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
+            ELSEIF (BRSTAGE.GT.0.0) THEN
+                BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
+            ENDIF
+        ENDIF 
+        
         !IF (MEDEV.EQ.'DEVU'.AND.PSTART(MSTG).GT.0.0) THEN   !LPM 04MAR15 MSTG TO PSX
         IF (MEDEV.EQ.'DEVU'.AND.PSTART(PSX).GT.0.0) THEN                                 ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
             ! Calculate dstage from developmental unit accumulation

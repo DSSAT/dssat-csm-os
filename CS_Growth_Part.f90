@@ -105,33 +105,33 @@
         SHLAGB3 = 0.0
         SHLAGB4 = 0.0
             
-        ! BRANCH NUMBER            
-        ! Old method (1 fork number throughout)
-        ! BRNUMST = AMAX1(1.0,BRNUMFX**(INT(brstage)-1))
-        ! New method (fork number specified for each forking point)
-        ! First calculate new BRSTAGE as temporary variable
-        ! (LAH Check whether can move brstage calc up here! 
-        ! (If do this, brstage in brfx below must be reduced by 1))
-        IF (MEDEV.EQ.'LNUM') THEN 
-            IF (PDL(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
-                TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE))           ! EQN 004
-            ELSE
-                TVR1 = FLOAT(INT(BRSTAGE))
-            ENDIF
-        ELSE
-            IF (PD(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
-                TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE))              ! EQN 004
-            ELSE
-                TVR1 = FLOAT(INT(BRSTAGE))
-            ENDIF        
-        ENDIF    
-        IF (INT(TVR1).GT.INT(BRSTAGEPREV)) THEN
-            IF (BRSTAGE.EQ.0.0) THEN
-                BRNUMST = 1                                                                         ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
-            ELSEIF (BRSTAGE.GT.0.0) THEN
-                BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
-            ENDIF
-        ENDIF 
+        !! BRANCH NUMBER            
+        !! Old method (1 fork number throughout)
+        !! BRNUMST = AMAX1(1.0,BRNUMFX**(INT(brstage)-1))
+        !! New method (fork number specified for each forking point)
+        !! First calculate new BRSTAGE as temporary variable
+        !! (LAH Check whether can move brstage calc up here! 
+        !! (If do this, brstage in brfx below must be reduced by 1))
+        !IF (MEDEV.EQ.'LNUM') THEN 
+        !    IF (PDL(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
+        !        TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE))           ! EQN 004
+        !    ELSE
+        !        TVR1 = FLOAT(INT(BRSTAGE))
+        !    ENDIF
+        !ELSE
+        !    IF (PD(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
+        !        TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE))              ! EQN 004
+        !    ELSE
+        !        TVR1 = FLOAT(INT(BRSTAGE))
+        !    ENDIF        
+        !ENDIF    
+        !IF (INT(TVR1).GT.INT(BRSTAGEPREV)) THEN
+        !    IF (BRSTAGE.EQ.0.0) THEN
+        !        BRNUMST = 1                                                                         ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
+        !    ELSEIF (BRSTAGE.GT.0.0) THEN
+        !        BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
+        !    ENDIF
+        !ENDIF 
         
         
 
@@ -149,15 +149,14 @@
         !ENDIF
          
         !LPM 28/02/2015 b_slope_lsize=Slope to define the maximum leaf size according to the mean temperature (it should be from the last 10 days)
+        !b_slope_lsize = MAX(0.0,0.0375-(0.0071*((TRDV1(3)-TRDV1(2))-TT20)))       ! LPM 28FEB15
         
-        b_slope_lsize = MAX(0.0,0.0375-(0.0071*((TRDV1(3)-TRDV1(2))-TT20)))       ! LPM 28FEB15
-        TFDL = TFAC4(trdv3,tmean,TTLFSIZE)                                      ! LPM 28FEB15
-        
+                
         IF (TTCUM.LT.1000) THEN
-            LAPOTX(LNUMSG+1) =  LAXS*((b_slope_lsize*TTLFSIZE/100)+0.22)        ! LPM 28FEB15
+            LAPOTX(LNUMSG+1) =  LAXS*((0.09*TTCUM/100)+0.10)                  ! LPM 07MAR15
         ELSE
             IF (TTCUM-TT.LT.1000) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
-            LAPOTX(LNUMSG+1) = LAXS*((b_slope_lsize*10)+0.22)/((1.101861E-2+(1.154582E-4*(DAE-DALSMAX)))*100)
+            LAPOTX(LNUMSG+1) = LAXS*((0.09*10)+0.10)/((0.01+(1.154582E-4*(DAE-DALSMAX)))*100)
         ENDIF
             ! LAH Sept 2012 Eliminate fork # effect on leaf size 
         ! Adjust for fork#/shoot
@@ -175,12 +174,16 @@
             ! Basic response (cm2/d) same as for development. 
             TTNEED = AMAX1(0.0,LLIFG-LAGETT(L))                                                                        !EQN 321
             LATLPREV(L) = LATL(L)
-            LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322
+            !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 21MAR15 a fix growing duration in days (10) is defined
+            LATLPOT(L)=LAPOTX(L)*((DGLF(L)+EMRGFR)/10)
             IF (LATLPOT(L).LT.0.0) LATLPOT(L) = 0.0
             IF (LATLPOT(L).GT.LAPOTX(L)) LATLPOT(L) = LAPOTX(L)
             LATL(l) = LATL(L) + (LATLPOT(L)-LATLPREV(L))                                                               !EQN 323
-            LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324
-            SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
+            !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by TFDL to be able to change the Tb
+            !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
+            LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFDL                                         !EQN 324
+            SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFDL                                       !EQN 325
+            
             ! The 2 at the end of the names indicates that 2 groups 
             ! of stresses have been taken into account
             ! Stress factors for individual leaves

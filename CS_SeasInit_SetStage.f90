@@ -196,16 +196,10 @@
         
         
         !LPM 02MAR15 nodes growth by branch level to estimate the stem growth
-        !The value of 0.0014 is used to define the mean node growth rate for the 1st and 2nd branch level
-        !This value could change with a cultivar value 
         !DO L= 0, MSTG !LPM 07MAR15 MSTG to PSX
         DO L= 0, PSX
-            IF(L.LT.2) THEN
-                NODEWTGB(L) = 0.0014*4.58007*EXP(-7.5813E-1*2)                         
-            ELSE
-                NODEWTGB(L) = 0.0014*4.58007*EXP(-7.5813E-1*L)
-            ENDIF
-        END DO                                                                        !LPM 02MAR15               
+            NODEWTGB(L) = 1/(1+(((L+1)/3.10036)**5.89925))                      
+        END DO                                                                        !LPM 21MAR15               
          
         IF (PHINTS.LE.0.0) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
@@ -342,7 +336,8 @@
         !-----------------------------------------------------------------------
         
         ! Initial leaf growth aspects
-        LAPOTX(1) = LA1S
+        !LAPOTX(1) = LA1S !LPM 07MAR15 LA1S will not be used and it is assumed as 0.1*LAXS
+        LAPOTX(1) = LAXS*0.1
         
         ! If max LAI not read-in,calculate from max interception
         IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)                                                               ! EQN 008

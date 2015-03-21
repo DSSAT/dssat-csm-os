@@ -919,7 +919,7 @@ Module CS_First_Trans_m
     REAL    :: TDIFSUM             ! Temperature difference,sum     C          ! (From SeasInit)  
     INTEGER :: TFCOLNUM            ! T-file column number           #          ! (From Output)    
     REAL    :: TFD                 ! Temperature factor,development #          ! (From SeasInit)  
-    REAL    :: TFDL                ! Temperature factor,leaf develop#          ! LPM 28FEB15 
+    REAL    :: TFDL                ! Temp. factor,lf & branch devel #          ! LPM 28FEB15 
     INTEGER :: TFDAP               ! T-file days after planting     #          ! (From Output)    
     INTEGER :: TFDAPCOL            ! T-file DAP column #            #          ! (From Output)    
     REAL    :: TFDF                ! Temperature factor,dayl sens   #          ! (From Growth)    
@@ -985,7 +985,7 @@ Module CS_First_Trans_m
     REAL    :: TRDV3(4)            ! Temp response,leaf size        #          ! LPM 28feb15 new variable to change base temperature for leaf size
     REAL    :: TRGEM(4)            ! Temp response,germ.emergence   #          ! (From SeasInit)  
     REAL    :: TRLDF               ! Intermediate factor,new roots  #          ! (From Growth)    
-    REAL    :: TRLFG(4)            ! Temp response,leaf growth      #          ! (From SeasInit)  
+    REAL    :: TRLFG(4)            ! Temp response,lf growth, br dev#          ! (From SeasInit) 18MAR15 
     REAL    :: TRLV                ! Total root length density      /cm2       ! (From Growth)    
     REAL    :: TRPHS(4)            ! Temp response,photosynthesis   #          ! (From SeasInit)  
     REAL    :: TRWU                ! Total water uptake             mm         ! (From Growth)    
@@ -994,11 +994,12 @@ Module CS_First_Trans_m
     REAL    :: TT                  ! Daily thermal time             C.d        ! (From SeasInit)  
     REAL    :: TT20                ! Thermal time mean over 20 days C          ! (From SeasInit)  
     REAL    :: TT20S               ! Thermal time sum over 20 days  C          ! (From Integrate) 
+    REAL    :: TTB                 ! Daily thermal time, branching  C.d        ! LPM 21MAR15 to Change DU based on TTB
     REAL    :: TTCUM               ! Cumulative thermal time        C.d        ! (From SeasInit)  
     REAL    :: TTD(20)             ! Thermal time,specific day      C          ! (From SeasInit)  
     REAL    :: TTGEM               ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
     REAL    :: TTLFLIFE            ! Daily thermal time,leaf life   C.d        ! (From Growth)    
-    REAL    :: TTLFSIZE            ! Daily thermal time,leaf size   C.d        ! LPM 28feb15 new variable to change thermal time for leaf size
+    REAL    :: TTL                 ! Daily thermal time,leaf size   C.d        ! LPM 28feb15 new variable to change thermal time for leaf size
     REAL    :: TTNEED              ! Thermal time to start new leaf #          ! (From Growth)    
     REAL    :: TTNEXT              ! Thermal time,next tier         oCd        ! (From SeasInit)  
     REAL    :: TTOUT               ! Thermal units output from func C.d        ! (From Growth)    
