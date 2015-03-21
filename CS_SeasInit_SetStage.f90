@@ -182,7 +182,7 @@
             ENDDO
             !DO L = 0,MSTG  !LPM 07MAR15 MSTG to PSX
             DO L = 1,PSX
-                PSTART(L) = PSTART(L-1) + AMAX1(0.0,PD(L-1))
+                PSTART(L) = PSTART(L-1) + AMAX1(0.0,PD(L))
             ENDDO
             
             !DO L = 1, MSTG-1  !LPM 07MAR15 MSTG to PSX
