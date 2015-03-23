@@ -327,7 +327,6 @@ C=======================================================================
 !    &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.      !ALOHA
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
-     &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.      !APSIM N-wheat
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0)) THEN      !OILCROP
 !       Invalid model = error 4
         ValidModel = 4 
@@ -337,7 +336,6 @@ C=======================================================================
 !     Check for valid crop modules
       IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND.    !Wheat and Barley
      &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Cassava and wheat
-     &    (INDEX(MODEL(1:5),'NWAPS') .EQ. 0) .AND.    !APSIM N-wheat 
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES

@@ -330,23 +330,6 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         ENDIF
 
 !     -------------------------------------------------
-!     APSIM N-wheat NWAPS
-      CASE('NWAPS')
-        CALL Nwheat_Interface (CONTROL, ISWITCH,           !Input
-     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
-     &     SPi_AVAIL, SNOW,                               !Input
-     &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
-     &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
-     &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
-     &     STGDOY, FracRts, UNH4, UNO3, XLAI, XHLAI)      !Output
-
-        IF (DYNAMIC < RATE) THEN
-!          KTRANS = KCAN + 0.15        !Or use KEP here??
-          KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
-          KSEVAP = KEP        
-        ENDIF
-
-!     -------------------------------------------------
 !     Millet 
       CASE('MLCER')
         CALL ML_CERES (CONTROL, ISWITCH, 
