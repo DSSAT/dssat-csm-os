@@ -283,7 +283,7 @@
                 !        NFLF2(L) = AMIN1(1.0,NFLF2(L) + AMAX1(0.0,NFLF2(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))               !EQN 237
                 !     ENDIF
                 !ENDDO    
-                DO BR = 1, BRSTAGE                                                                                        !LPM 21MAR15
+                DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                     ! If not enough N set N factor
                     IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN
                         NFLF2(BR,0) = AREAPOSSIBLEN/PLAGSB3                                                                   !EQN 236
@@ -296,10 +296,10 @@
                             NFLF2(BR,L) = AMIN1(1.0,NFLF2(BR,L) + AMAX1(0.0,NFLF2(BR,0)) * (LATLPOT(BR,L)-LATLPREV(BR,L))/LAPOTX(BR,L))      !EQN 237
                         ENDIF
                     ENDDO
-                    PLAGSB4 = PLAGSB3 * NFLF2(1,0)                                                                           !EQN 238
-                    SHLAGB4(1) = SHLAGB3(1) * NFLF2(1,0)                                                                      !EQN 239
-                    SHLAGB4(2) = SHLAGB3(2) * NFLF2(1,0)
-                    SHLAGB4(3) = SHLAGB3(3) * NFLF2(1,0)
+                    PLAGSB4 = PLAGSB3 * NFLF2(0,0)                                                                           !EQN 238
+                    SHLAGB4(0,1) = SHLAGB3(1) * NFLF2(0,0)                                                                      !EQN 239
+                    SHLAGB4(0,2) = SHLAGB3(2) * NFLF2(0,0)
+                    SHLAGB4(0,3) = SHLAGB3(3) * NFLF2(0,0)
                 ENDDO
         
                 !PLAGSB4 = PLAGSB3 * NFLF2(0)                                                                           !EQN 238

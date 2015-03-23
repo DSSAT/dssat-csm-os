@@ -271,7 +271,7 @@
         pdays  = 0
         photqr = 0.0
         pla = 0.0
-        plags2 = 0.0
+        !plags2 = 0.0     !LPM 23MAR15 non necessary PLAGSB2 considers all the branches and shoots
         plagsb2 = 0.0
         plagsb3 = 0.0
         plagsb4 = 0.0
@@ -399,6 +399,7 @@
         shdat = 0
         shla = 0.0
         shlag2 = 0.0
+        shlag2b = 0.0 !LPM 23MAR15 add new variable
         shlas = 0.0
         shnum = 0.0
         shnumad = 0.0

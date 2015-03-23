@@ -10,7 +10,8 @@ Module CS_First_Trans_m
     INTEGER,PARAMETER::SSX  =  20 ! Secondary stages,maximum
     INTEGER,PARAMETER::KEYSTX = 9 ! Maximum number of key stages
     INTEGER,PARAMETER::DCNX =  10 ! Disease control #,maximum
-    INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts
+    !INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts
+    INTEGER,PARAMETER::LCNUMX=100 ! Maximum number of leaf cohorts LPM 23MAR15 Change for a more logical value
     INTEGER,PARAMETER::LNUMX= 500 ! Maximum number of leaves/axis
     INTEGER,PARAMETER::HANUMX= 40 ! Maximum # harvest instructions
 
@@ -31,7 +32,7 @@ Module CS_First_Trans_m
     REAL    :: BRFX(PSX)           ! Branch # per fork at each fork #          ! (From SeasInit)  
     REAL    :: BRNUMSH             ! Branch number/shoot at harvest #          ! (From Integrate) 
     REAL    :: BRNUMSHM            ! Branch #/shoot,harvest,measurd #          ! (From Output)    
-    REAL    :: BRNUMST             ! Branch number/shoot (>forking) #          ! (From RunInit)   
+    REAL    :: BRNUMST(PSX)        ! Branch number/shoot (>forking) #          ! (From RunInit) !LPM 23MAR15 to have the apex number by branch level   
     REAL    :: BRNUMSTPREV         ! Branch number/shoot,previous   #          ! (From Output)    
     REAL    :: BRSTAGEPREV         ! Branching stage,previous       #          ! (From SeasInit)  
     REAL    :: BRSTAGETMP          ! Branching stage                #          ! (From Growth)    
@@ -373,16 +374,16 @@ Module CS_First_Trans_m
     REAL    :: LAPD                ! Leaf area (green) per plant    cm2        ! (From Growth)    
     REAL    :: LAPH                ! Leaf area (green) harvested    cm2/d      ! (From Growth)    
     REAL    :: LAPHC               ! Leaf area (green) harvested,cu cm2/p      ! (From SeasInit)  
-    REAL    :: LAPOTX(PSX,LNUMX)   ! Leaf area potentials,maxima    cm2/l      ! (From SeasInit)  
+    REAL    :: LAPOTX(PSX,LCNUMX)  ! Leaf area potentials,maxima    cm2/l      ! (From SeasInit)  
     REAL    :: LAPP(LNUMX)         ! Leaf area diseased,leaf posn   cm2/p      ! (From SeasInit)  
     REAL    :: LAPS(LNUMX)         ! Leaf area senesced,leaf posn   cm2/p      ! (From SeasInit)  
     REAL    :: LAPSTMP             ! Leaf area senesced,temporary   cm2/p      ! (From Growth)    
     REAL    :: LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l      ! (From SeasInit)  
-    REAL    :: LATL2(PSX,LNUMX)    ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l      ! (From SeasInit)  
-    REAL    :: LATL3(PSX,LNUMX)    ! Leaf area,shoot,lf#,+assim.    cm2/l      ! (From SeasInit)  
-    REAL    :: LATL4(PSX,LNUMX)    ! Leaf area,shoot,lf#,+assim.+N  cm2/l      ! (From SeasInit)  
-    REAL    :: LATLPOT(PSX,LNUMX)  ! Leaf area,shoot,leaf,pot       cm2/l      ! (From Growth)    
-    REAL    :: LATLPREV(PSX,LNUMX) ! Leaf area,shoot,leaf,prev.     cm2/l      ! (From Growth)    
+    REAL    :: LATL2(PSX,LCNUMX)   ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l      ! (From SeasInit)  
+    REAL    :: LATL3(PSX,LCNUMX)   ! Leaf area,shoot,lf#,+assim.    cm2/l      ! (From SeasInit)  
+    REAL    :: LATL4(PSX,LCNUMX)   ! Leaf area,shoot,lf#,+assim.+N  cm2/l      ! (From SeasInit)  
+    REAL    :: LATLPOT(PSX,LCNUMX) ! Leaf area,shoot,leaf,pot       cm2/l      ! (From Growth)    
+    REAL    :: LATLPREV(PSX,LCNUMX)! Leaf area,shoot,leaf,prev.     cm2/l      ! (From Growth)    
     REAL    :: LAWCF               ! Leaf area/wt change,fr.st      fr/lf      ! (From SeasInit)  
     REAL    :: LAWFF               ! Leaf area/wt flexibility,fr.st fr         ! (From SeasInit)  
     REAL    :: LAWL(2)             ! Area to wt ratio,n=youngest lf cm2/g      ! (From Growth)    
@@ -581,8 +582,8 @@ Module CS_First_Trans_m
     REAL    :: PHSV                ! Phs,fr reduction with VPD       /KPa      ! (From SeasInit)  
     REAL    :: PHTV                ! Phs,threshold VPD for reduction KPa       ! (From SeasInit)  
     REAL    :: PLA                 ! Plant leaf area                cm2        ! (From SeasInit)  
-    REAL    :: PLAGS2              ! Plant lf area g,all shts,H2oNT cm2/p      ! (From SeasInit)  
-    REAL    :: PLAGSB2             ! Plant lf area g,sh+br,H2oNT    cm2/p      ! (From SeasInit)  
+    !REAL    :: PLAGS2              ! Plant lf area g,sh+br,H2oNT cm2/p         ! (From SeasInit) !LPM 23MAR15 non necessary PLAGSB2 considers all the branches and shoots  
+    REAL    :: PLAGSB2             ! Plant lf area g,sh+br,H2oNT    cm2/p      ! (From SeasInit)!LPM 23MAR15  
     REAL    :: PLAGSB3             ! Plant lf area g,sh+br,H2oNTA   cm2/p      ! (From SeasInit)  
     REAL    :: PLAGSB4             ! Plant lf area g,sh+br,H2oNTAN2 cm2/p      ! (From SeasInit)  
     REAL    :: PLAS                ! Leaf area senesced,normal      cm2/p      ! (From SeasInit)  
@@ -802,7 +803,8 @@ Module CS_First_Trans_m
     INTEGER :: SHDAT               ! Shoot prodn.startdate YEARDOY  #          ! (From SeasInit)  
     REAL    :: SHGR(22)            ! Shoot size relative to 1       #          ! (From SeasInit)  
     REAL    :: SHLA(25)            ! Shoot leaf area produced       cm2        ! (From SeasInit)  
-    REAL    :: SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2        ! (From SeasInit)  
+    REAL    :: SHLAG2(25)          ! Shoot lf area gr,all axis,H2oN cm2        ! (From SeasInit)  
+    REAL    :: SHLAG2B(PSX)        ! Shoot lf area gr by br,H2oNt   cm2        ! (From SeasInit)
     REAL    :: SHLAGB2(25)         ! Shoot lf area gr,+br,H2oNt     cm2        ! (From Growth)    
     REAL    :: SHLAGB3(25)         ! Shoot lf area gr,+br,H2oNtA    cm2        ! (From Growth)    
     REAL    :: SHLAGB4(25)         ! Shoot lf area gr,+br,H2oNtAN2  cm2        ! (From Growth)    

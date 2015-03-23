@@ -51,7 +51,8 @@
             
             DO L = 1,INT(SHNUM+1)
                 IF (SHNUM.GE.1.0.OR.SHNUM-FLOAT(L-1).GT.0.0) THEN
-                    SHLA(L) = SHLA(L) + SHLAGB4(L)
+                    !SHLA(L) = SHLA(L) + SHLAGB4(L)                                                                    !LPM21MAR15 
+                    SHLA(L) = SHLA(L) + SHLAGB4(0,L)
                 ENDIF
             ENDDO
             

@@ -33,12 +33,30 @@
             WRITE (FNUMLVS,'(/,A48,A36,A30)')'@ LNUM AREAP AREA1 AREA2 AREA3 AREA4 AREAT AREAS', &
                 '  WFLF  NFLF NFLF2  AFLF TFGLF TFDLF',' LLIFG LLIFA LLIFS LLIFE   DAP'
             !DO I = 1, INT(LNUM+0.99)   !LPM 21MAR15 Change to consider the cohorts
+                !CALL Csopline(lapotxc,lapotx(i))
+                !CALL Csopline(latlc,AMAX1(0.0,LATL(i)))
+                !CALL Csopline(latl2c,AMAX1(0.0,LATL2(i)))
+                !CALL Csopline(latl3c,AMAX1(0.0,LATL3(i)))
+                !CALL Csopline(latl4c,AMAX1(0.0,LATL4(i)))
+                !CALL Csopline(lapc,lap(i))
+                !CALL Csopline(lapsc,laps(i))
+                !! Adjust for growth period of non fullly expanded leaves
+                !WFLF(I) = AMIN1(1.0,WFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+                !NFLF(I) = AMIN1(1.0,NFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+                !NFLFP(I) =AMIN1(1.0,NFLFP(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+                !TFGLF(I) =AMIN1(1.0,TFGLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+                !AFLF(I) = AMIN1(1.0,AFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+                !IF (LDEATHDAP(I).EQ.0) LDEATHDAP = -99
+                !WRITE (fnumlvs,'(I6,7A6,6F6.2,4F6.1,I6)')I,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(I), &
+                !    1.0-NFLF(I),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(I))),1.0-TFGLF(I),1.0-TFDLF(I),DGLF(I), &
+                !    DALF(I),DSLF(I),DGLF(I)+DALF(I)+DSLF(I),LDEATHDAP(I)
+             !ENDDO   
             DO BR = 1, BRSTAGE
                 DO LF = 1, LNUMSIMSTG(BR)  
                     CALL Csopline(lapotxc,lapotx(i))
                     CALL Csopline(latlc,AMAX1(0.0,LATL(i)))
                     CALL Csopline(latl2c,AMAX1(0.0,LATL2(i)))
-                    CALL Csopline(latl3c,AMAX1(0.0,LATL3(i)))
+                    CALL Csopline(latl3c,AMAX1(0.0,LATL3(BR,LF)))
                     CALL Csopline(latl4c,AMAX1(0.0,LATL4(i)))
                     CALL Csopline(lapc,lap(i))
                     CALL Csopline(lapsc,laps(i))

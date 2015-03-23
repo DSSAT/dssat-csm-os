@@ -99,8 +99,9 @@
         GROLSRTN = 0.0
         GROLSSD = 0.0
         LAGEG = 0.0
-        PLAGS2 = 0.0
+        !PLAGS2 = 0.0  !LPM 23MAR15 non necessary PLAGSB2 considers all the branches and shoots
         SHLAG2 = 0.0
+        SHLAG2B = 0.0  !LPM 23MAR15 add new variable
         SHLAGB2 = 0.0
         SHLAGB3 = 0.0
         SHLAGB4 = 0.0
@@ -168,61 +169,107 @@
         !ENDIF 
             
         ! Leaf area increase:growing leaves on 1 axis,main shoot
-        SHLAG2(1) = 0.0
-        DO L = MAX(1,LNUMSG-(INT((LLIFG/PHINTS)+1))),LNUMSG+1                                       ! MF Why + 1? See LPM p. 63.    !EQN 320
-            ! Basic leaf growth calculated on thermal time base. 
-            ! Basic response (cm2/d) same as for development. 
-            TTNEED = AMAX1(0.0,LLIFG-LAGETT(L))                                                                        !EQN 321
-            LATLPREV(L) = LATL(L)
-            !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 21MAR15 a fix growing duration in days (10) is defined
-            LATLPOT(L)=LAPOTX(L)*((DGLF(L)+EMRGFR)/10)
-            IF (LATLPOT(L).LT.0.0) LATLPOT(L) = 0.0
-            IF (LATLPOT(L).GT.LAPOTX(L)) LATLPOT(L) = LAPOTX(L)
-            LATL(l) = LATL(L) + (LATLPOT(L)-LATLPREV(L))                                                               !EQN 323
-            !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by TFDL to be able to change the Tb
-            !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
-            LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFDL                                         !EQN 324
-            SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFDL                                       !EQN 325
-            
-            ! The 2 at the end of the names indicates that 2 groups 
-            ! of stresses have been taken into account
-            ! Stress factors for individual leaves
-            WFLF(L) = AMIN1(1.0,WFLF(L)+WFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                        !EQN 326
-            NFLF(L) = AMIN1(1.0,NFLF(L)+NFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                        !EQN 327
-            NFLFP(L) = AMIN1(1.0,NFLFP(L)+NFP*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                      !EQN 328
-            TFGLF(L) = AMIN1(1.0,TFGLF(L)+TFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                      !EQN 329
-            TFDLF(L) = AMIN1(1.0,TFDLF(L)+TFD*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                      !EQN 330
-            ! New LEAF
-            IF (L.EQ.LNUMSG.AND.LNUMG.GT.LNUMNEED) THEN                                             ! This is where new leaf is initiated
-                LAGL(L+1) = LAPOTX(L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331       
-                LATL(L+1) = LATL(L+1) + LAGL(L+1)                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   !EQN 333   
-                LATL2(L+1) = LATL2(L+1) + LAGL(L+1) * AMIN1(WFG,NFG)*TFG                            ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
-                SHLAG2(1) = SHLAG2(1) + LAGL(L+1) * AMIN1(WFG,NFG)*TFG                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
-                LBIRTHDAP(L+1) = DAP                                                                ! LBIRTHDAP(LCNUMX)   ! DAP on which leaf initiated #  
-                ! Stress factors for individual leaves                       
-                WFLF(L+1) = AMIN1(1.0,WFLF(L+1)+WFG*LATL(L+1)/LAPOTX(L+1))                                             !EQN 336
-                NFLF(L+1) = AMIN1(1.0,NFLF(L+1)+NFG*LATL(L+1)/LAPOTX(L+1))                                             !EQN 337
-                NFLFP(L+1) = AMIN1(1.0,NFLFP(L+1)+NFP*LATL(L+1)/LAPOTX(L+1))                                           !EQN 338
-                TFGLF(L+1) = AMIN1(1.0,TFGLF(L+1)+TFG*LATL(L+1)/LAPOTX(L+1))                                           !EQN 339
-                TFDLF(L+1) = AMIN1(1.0,TFDLF(L+1)+TFD*LATL(L+1)/LAPOTX(L+1))                                           !EQN 340
-            ENDIF
+        !SHLAG2(1) = 0.0                                                                             !LPM 23MAR15 Move to the do loop
+        !DO L = MAX(1,LNUMSG-(INT((LLIFG/PHINTS)+1))),LNUMSG+1                                       ! MF Why + 1? See LPM p. 63.    !EQN 320
+        !    ! Basic leaf growth calculated on thermal time base. 
+        !    ! Basic response (cm2/d) same as for development. 
+        !    TTNEED = AMAX1(0.0,LLIFG-LAGETT(L))                                                                        !EQN 321
+        !    LATLPREV(L) = LATL(L)
+        !    !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 21MAR15 a fix growing duration in days (10) is defined
+        !    LATLPOT(L)=LAPOTX(L)*((DGLF(L)+EMRGFR)/10)
+        !    IF (LATLPOT(L).LT.0.0) LATLPOT(L) = 0.0
+        !    IF (LATLPOT(L).GT.LAPOTX(L)) LATLPOT(L) = LAPOTX(L)
+        !    LATL(l) = LATL(L) + (LATLPOT(L)-LATLPREV(L))                                                               !EQN 323
+        !    !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by TFDL to be able to change the Tb
+        !    !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
+        !    LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFDL                                         !EQN 324
+        !    SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFDL                                       !EQN 325
+        !! The 2 at the end of the names indicates that 2 groups 
+        !! of stresses have been taken into account
+        !! Stress factors for individual leaves
+        !        WFLF(L) = AMIN1(1.0,WFLF(L)+WFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                        !EQN 326
+        !        NFLF(L) = AMIN1(1.0,NFLF(L)+NFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                        !EQN 327
+        !        NFLFP(L) = AMIN1(1.0,NFLFP(L)+NFP*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                      !EQN 328
+        !        TFGLF(L) = AMIN1(1.0,TFGLF(L)+TFG*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                      !EQN 329
+        !        TFDLF(L) = AMIN1(1.0,TFDLF(L)+TFD*(LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                                      !EQN 330
+        !        ! New LEAF
+        !        IF (L.EQ.LNUMSG.AND.LNUMG.GT.LNUMNEED) THEN                                             ! This is where new leaf is initiated
+        !            LAGL(L+1) = LAPOTX(L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331       
+        !            LATL(L+1) = LATL(L+1) + LAGL(L+1)                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   !EQN 333   
+        !            LATL2(L+1) = LATL2(L+1) + LAGL(L+1) * AMIN1(WFG,NFG)*TFG                            ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
+        !            SHLAG2(1) = SHLAG2(1) + LAGL(L+1) * AMIN1(WFG,NFG)*TFG                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
+        !            LBIRTHDAP(L+1) = DAP                                                                ! LBIRTHDAP(LCNUMX)   ! DAP on which leaf initiated #  
+        !            ! Stress factors for individual leaves                       
+        !            WFLF(L+1) = AMIN1(1.0,WFLF(L+1)+WFG*LATL(L+1)/LAPOTX(L+1))                                             !EQN 336
+        !            NFLF(L+1) = AMIN1(1.0,NFLF(L+1)+NFG*LATL(L+1)/LAPOTX(L+1))                                             !EQN 337
+        !            NFLFP(L+1) = AMIN1(1.0,NFLFP(L+1)+NFP*LATL(L+1)/LAPOTX(L+1))                                           !EQN 338
+        !            TFGLF(L+1) = AMIN1(1.0,TFGLF(L+1)+TFG*LATL(L+1)/LAPOTX(L+1))                                           !EQN 339
+        !            TFDLF(L+1) = AMIN1(1.0,TFDLF(L+1)+TFD*LATL(L+1)/LAPOTX(L+1))                                           !EQN 340
+        !        ENDIF
+        
+                                                                                                              
+        DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
+           SHLAG2B(BR) = 0.0  
+            DO LF = 1, LNUMSIMSTG(BR)+1
+               IF (DGLF(BR,LF).LE.10.0) THEN
+            ! Basic leaf growth calculated on chronological time base. 
+            ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
+                    LATLPREV(BR,LF) = LATL(BR,LF)
+                    !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 21MAR15 a fix growing duration in days (10) is defined
+                    LATLPOT(BR,LF)=LAPOTX(BR,LF)*((DGLF(BR,LF)+EMRGFR)/10)
+                    IF (LATLPOT(BR,LF).LT.0.0) LATLPOT(BR,LF) = 0.0
+                    IF (LATLPOT(BR,LF).GT.LAPOTX(BR,LF)) LATLPOT(BR,LF) = LAPOTX(BR,LF)
+                    LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                               !EQN 323
+                    !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by TFDL to be able to change the Tb
+                    !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
+                    LATL2(BR,LF) = LATL2(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))* AMIN1(WFG,NFG)*TFDL                                         !EQN 324
+                    SHLAG2B(BR) = SHLAG2B(BR) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))* AMIN1(WFG,NFG)*TFDL                                       !EQN 325
+               
+               
+                ! The 2 at the end of the names indicates that 2 groups 
+                ! of stresses have been taken into account
+                ! Stress factors for individual leaves
+                        WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)+WFG*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                        !EQN 326
+                        NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)+NFG*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                        !EQN 327
+                        NFLFP(BR,LF) = AMIN1(1.0,NFLFP(BR,LF)+NFP*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                      !EQN 328
+                        TFGLF(BR,LF) = AMIN1(1.0,TFGLF(BR,LF)+TFG*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                      !EQN 329
+                        TFDLF(BR,LF) = AMIN1(1.0,TFDLF(BR,LF)+TFD*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                      !EQN 330
+                        ! New LEAF
+                        IF (LF.EQ.LNUMSIMSTG(BR).AND.LNUMG.GT.LNUMNEED.AND.BR.EQ.BRSTAGE) THEN                                             ! This is where new leaf is initiated
+                            !LAGL(BR,L+1) = LAPOTX(BR,L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331  !LPM 23MAR15 To define the proportion of growth in days      
+                            LAGL(BR,L+1) = LAPOTX(BR,L+1) * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)
+                            LATL(BR,L+1) = LATL((BR,L+1) + LAGL((BR,L+1)                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   !EQN 333   
+                            LATL2((BR,L+1) = LATL2(BR,L+1) + LAGL(BR,L+1) * AMIN1(WFG,NFG)*TFG                            ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
+                            SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,L+1) * AMIN1(WFG,NFG)*TFG                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
+                            LBIRTHDAP(BR,L+1) = DAP                                                                ! LBIRTHDAP(LCNUMX)   ! DAP on which leaf initiated #  
+                            ! Stress factors for individual leaves                       
+                            WFLF(BR,L+1) = AMIN1(1.0,WFLF(BR,L+1)+WFG*LATL(BR,L+1)/LAPOTX(BR,L+1))                                             !EQN 336
+                            NFLF(BR,L+1) = AMIN1(1.0,NFLF(BR,L+1)+NFG*LATL(BR,L+1)/LAPOTX(BR,L+1))                                             !EQN 337
+                            NFLFP(BR,L+1) = AMIN1(1.0,NFLFP(BR,L+1)+NFP*LATL(BR,L+1)/LAPOTX(BR,L+1))                                           !EQN 338
+                            TFGLF(BR,L+1) = AMIN1(1.0,TFGLF(BR,L+1)+TFG*LATL(BR,L+1)/LAPOTX(BR,L+1))                                           !EQN 339
+                            TFDLF(BR,L+1) = AMIN1(1.0,TFDLF(BR,L+1)+TFD*LATL(BR,L+1)/LAPOTX(BR,L+1))                                           !EQN 340
+                        ENDIF
+               ENDIF
+            ENDDO
+            SHLAG2(1) = SHLAG2(1)+(SHLAG2B(BR)*BRNUMST(BR))                                                                                            !LPM 23MAR15 To have the leaf area fro one shoot considering all the branches (axis)
         ENDDO
  
         ! Leaf area increase:growing leaves on 1 axis,all shoots
-        PLAGS2 = SHLAG2(1) ! To initialize before adding over shoots
+        PLAGSB2 = SHLAG2(1) ! To initialize before adding over shoots                                                  
         DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
             IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-                PLAGS2 = PLAGS2+SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                         !EQN 341
+                PLAGSB2 = PLAGSB2+SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                         !EQN 341
                 SHLAG2(L) = SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                             !EQN 342
             ENDIF
         ENDDO
+        
 
-        ! Leaf area increase:growing leaves on all axes,all shoots
-        PLAGSB2 = PLAGS2*BRNUMST                                                                                       !EQN 343
-        SHLAGB2(1) = SHLAG2(1)*BRNUMST                                                                                 !EQN 344
-        DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main= 1
-            SHLAGB2(L) =  SHLAG2(L)*BRNUMST
-        ENDDO
+        !! Leaf area increase:growing leaves on all axes,all shoots                                                     !LPM 23MAR15  It is not necessary, previously defined in the loop
+        !PLAGSB2 = PLAGS2*BRNUMST                                                                                       !EQN 343
+        !SHLAGB2(1) = SHLAG2(1)*BRNUMST                                                                                 !EQN 344
+        !DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main= 1
+        !    SHLAGB2(L) =  SHLAG2(L)*BRNUMST
+        !ENDDO
             
         ! Potential leaf weight increase.
         IF (LAWL(1).GT.0.0) GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
@@ -303,19 +350,33 @@
     
             ! If not enough assim.set assimilate factor
             IF (PLAGSB2.GT.AREAPOSSIBLE.AND.PLAGSB2.GT.0.0)THEN
-                AFLF(0) = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149
+                AFLF(0,0) = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149
             ELSE  
-                AFLF(0) = 1.0
+                AFLF(0,0) = 1.0
             ENDIF
-            IF (CFLAFLF.EQ.'N') AFLF(0) = 1.0
+            !IF (CFLAFLF.EQ.'N') AFLF(0) = 1.0                                                                        !LPM 23MAR15 To avoid the next do loop
+            IF (CFLAFLF.EQ.'N')  THEN
+                AFLF = 1.0 
+            ELSE
             ! Area and assimilate factors for each leaf
-            DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1 
-                IF (LNUMSG.LT.LNUMX) THEN
-                    LATL3(L)= LATL2(L) * AFLF(0)                                                                       !EQN 150
-                    AFLF(L) = AMIN1(1.0,AFLF(L) + AMAX1(0.0,AFLF(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))             !EQN 151
-                    IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0
-                ENDIF  
-            ENDDO
+                DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
+                    DO LF = 1, LNUMSIMSTG(BR)
+                    !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                  !LPM 23MAR15 To consider the new leaf growing duration of 10 
+                        !IF (LNUMSG.LT.LNUMX) THEN
+                        !    LATL3(L)= LATL2(L) * AFLF(0,0)                                                                                   !EQN 150
+                        !    AFLF(L) = AMIN1(1.0,AFLF(L) + AMAX1(0.0,AFLF(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                           !EQN 151
+                        !    IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0                                                   
+                        !ENDIF     
+                        IF (DGLF(BR,LF).LE.10.0) THEN
+                            IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
+                                LATL3(BR,LF)= LATL2(BR,LF) * AFLF(0,0)                                                                                   !EQN 150
+                                AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF) + AMAX1(0.0,AFLF(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))             !EQN 151
+                                !IF (CFLAFLF.EQ.'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
+                            ENDIF  
+                        ENDIF
+                    ENDDO
+                ENDDO
+            ENDIF
             PLAGSB3 = PLAGSB2 * AFLF(0)                                                                                !EQN 345
             SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
             SHLAGB3(2) = SHLAGB2(2) * AFLF(0)                                                                          !EQN 240
