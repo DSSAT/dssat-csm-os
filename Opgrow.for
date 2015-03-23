@@ -352,7 +352,7 @@ C-----------------------------------------------------------------------
      &        YEAR, DOY, DAS, DAP, VSTAGE, RSTAGE, XLAI,
      &        NINT(WTLF*10.), NINT(STMWT*10.), NINT(SDWT*10.),
      &        NINT(RTWT*10.), VWAD, NINT(TOPWT*10.), NINT(SEEDNO), 
-     &        SDSIZE, HI, NINT(PODWT*10.), NINT(PODNO), SWF_AV, TUR_AV,
+     &        SDSIZE, HI, NINT(PODWT*10.), NINT(PODNO), SWF_AV, TUR_AV, !     '   P#AD   WSPD   WSGD   NSTD')
      &        NST_AV
   310     FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &        1X,F6.1,1X,I6,1X,F6.3,   7(1X,I6),

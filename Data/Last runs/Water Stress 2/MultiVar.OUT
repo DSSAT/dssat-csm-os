@@ -1,0 +1,11 @@
+*INTERMEDIATE VARIABLE OUTPUT FILE
+
+*DSSAT Cropping System Model Ver. 4.5.1.014 -Release      JAN 29, 2013; 15:02:32
+                                                                                
+*RUN   1        : Irrigated + Nitrogen      WHAPS045 UFMX8902    3              
+ MODEL          : WHAPS045 - Wheat                                              
+ EXPERIMENT     : UFMX8902 WH  Mexi (NWheat migration to DSSAT)                 
+ DATA PATH      : C:\DSSAT45\WHEAT\                                             
+ TREATMENT  3   : Irrigated + Nitrogen      WHAPS045                            
+  
+  YRDOY dieleaf      cumph_nw(1)      cumph_nw(2)      cumph_nw(3)      cumph_nw(4)            dtiln             frlf           fstage        gro_wt(1)        gro_wt(2)        gro_wt(3)        gro_wt(4)          leafsen      nwheat_vfac    nwheat_topsfr            optfr            pl_la       plantwt(2)       plantwt(3)          plsc(1)          plsc(2)          plsc(3)          plsc(4)          plsc(5)             prft             rtsw           sen_la          sfactor             slan             slft             slfw     sumstgdtt(1)     sumstgdtt(2)     sumstgdtt(3)     sumstgdtt(4)     sumstgdtt(5)              tc1              tc2             tiln      trans_wt(1)      trans_wt(2)      trans_wt(3)      trans_wt(4)      trans_wt(5)      trans_wt(6)              vd1              vd2               vd         xstag_nw

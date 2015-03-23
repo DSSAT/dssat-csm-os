@@ -587,6 +587,16 @@ C-----------------------------------------------------------------------
         CASE('WHCER', 'BACER', 'CSCRP')
 !       Do nothing - these models read the INH file written by OPTEMPXY2K
 
+!       APSIM Wheat (NWheat)
+        CASE('WHAPS')
+		  WRITE (LUNIO,1800,IOSTAT=ERRNUM)  
+     &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
+     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
+     &            P2AF,P3AF,P4AF,P5AF,P6AF,
+     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+
 !       Ceres Maize, sweetcorn
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
@@ -749,7 +759,17 @@ C     &        1X,F5.2,19(1X,F5.1))
  1600 FORMAT (A6,1X,A16,1X,A6,2(F6.1),F6.2,2(F6.1),F6.2,F6.0,
      &        F6.3,F6.2,6(F6.0))
  1700 FORMAT (A6,1X,A16,1X,A6,1X,5(F6.1),F6.2, F6.1)
- 1800 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2))
+! 1800 FORMAT (A6,1X,A16,1X,A6,1X,2(F6.3),4(F6.1),3(F6.2),2(F6.1),
+!     &       2(F6.2),F6.3,F6.0,5(F6.2),2(F6.1),F6.0,F6.1,7(F6.2),
+!     &       F6.3,F6.2,F6.3,5(F6.2),3(F6.3),2(F6.2),F6.1,F6.2,
+!     &       F6.3,2(F6.0),3(F6.3),2(F6.1))
+ 1800 FORMAT (A6,1X,A16,1X,A6,1X,
+ !             1     2     3     4     5     6     7     8     9     0
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1, F6.1,
+     &       F6.2, F6.2, F6.3, F6.0, F6.2, F6.2, F6.1, F6.2, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.2, F6.2, F6.3, F6.2, F6.3, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
+     &       F6.3, F6.0, F6.0)
  1801 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2),2(F6.1),I4)
  1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,4(F6.1))
 C-GH 1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,2(F6.1))

@@ -1,0 +1,21 @@
+*Output file list
+
+@FILENAME          DESCRIPTION
+ET.OUT             Daily soil-plant-atmosphere output file           
+PlantGro.OUT       Daily plant growth output file                    
+PlantN.OUT         Daily plant nitrogen output file                  
+SoilDyn.OUT        Daily soil dynamics output file (temp)            
+SoilNi.OUT         Daily inorganic soil N output file                
+SoilTemp.OUT       Daily soil temperature output file                
+SoilWat.OUT        Daily soil water output file                      
+SOMLITN.OUT        Daily soil organic matter nitrogen output file    
+Weather.OUT        Daily weather output file                         
+Mulch.OUT          Daily surface mulch output file                   
+OVERVIEW.OUT       Seasonal overview output file                     
+SolNBalSum.OUT     Soil N balance summary                            
+SoilNiBal.OUT      Seasonal inorganic soil N balance                 
+SoilNoBal.OUT      Seasonal organic soil N balance                   
+SoilWatBal.OUT     Seasonal soil water balance                       
+Summary.OUT        Seasonal summary output file                      
+INFO.OUT           Information output file                           
+SOMLIT1.OUT        Detailed Century SOM output                       

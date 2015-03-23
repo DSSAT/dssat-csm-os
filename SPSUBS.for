@@ -11,7 +11,7 @@ C-----------------------------------------------------------------------
 C  Called from:   SPAM
 C  Calls:         None
 C=======================================================================
-      SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+      SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -32,7 +32,7 @@ C=======================================================================
       INTEGER NAVWB, RUN, YEAR, YRDOY, L
       INTEGER REPNO, N_LYR
 
-      REAL EF, EM, EO, EP, ES, ET, EOS, EOP
+      REAL EF, EM, EO, EP, ES, ET, EOS, EOP, TRWU !JZW add TRWU
       REAL CEF, CEM, CEO, CEP, CES, CET
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
       REAL AVTMX, AVTMN, AVSRAD
@@ -122,11 +122,15 @@ C-----------------------------------------------------------------------
 !     &      '   SALB  SWALB  MSALB CMSALB',    
 
             IF (N_LYR < 10) THEN
-              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR)
-  121         FORMAT(9("    ",A2,I1,A1))
+              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
+  121         FORMAT(9("    ",A2,I1,A1), A8)
+ !             WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR)
+  !121         FORMAT(9("    ",A2,I1,A1))
             ELSE
-              WRITE (LUN,122) ("ES",L,"D",L=1,9), "    ES10"
-  122         FORMAT(9("    ",A2,I1,A1),A8)
+              WRITE (LUN,122) ("ES",L,"D",L=1,9, "        ES10D   TRWU")
+              !  WRITE (LUN,122) ("ES",L,"D",L=1,9), "    ES10"
+  122         FORMAT(9("    ",A2,I1,A1),A25)
+  !122         FORMAT(9("    ",A2,I1,A1),A8)
             ENDIF
           ELSE
             WRITE (LUN,120)
@@ -217,7 +221,7 @@ C-----------------------------------------------------------------------
 !     &    ,4F7.2 ,10(F7.3))
           IF (ISWITCH % MESEV == 'S') THEN
             IF (SOILPROP % NLAYR < 11) THEN
-              WRITE(LUN,'(10F8.3)') ES_LYR(1:N_LYR)
+              WRITE(LUN,'(10F8.3), F8.3') ES_LYR(1:N_LYR) , TRWU
             ELSE
               ES10 = 0.0
               DO L = 10, SOILPROP % NLAYR
@@ -330,68 +334,79 @@ C  01/01/89 JR  Written
 C  12/05/93 NBP Made into subroutine
 C  07/11/96 GH  Set TRWU and RWU to 0 if EP = 0
 !  10/13/97 CHP Modified for modular format.
+!  07/20/2011 chp added option for root uptake from plant routines 
 !-----------------------------------------------------------------------
 !  Called by: SPAM
 !  Calls:     None
 C=======================================================================
+!This file is copied from ORYZA project
       SUBROUTINE XTRACT(
-     &    NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP,          !Input
+     &    NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP, UH2O,    !Input
      &    EP, RWU,                                        !Input/Output
      &    SWDELTX, TRWU)                                  !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
-!     NL defined in ModuleDefs.for
+      USE ModuleDefs
 
       IMPLICIT NONE
       SAVE
       INTEGER NLAYR
       INTEGER L
 
-      REAL EP, TRWU, TRWUP
+      REAL EP, TRWU, TRWUP, Tot_plant_RWU
       REAL WUF
       REAL DLAYR(NL), LL(NL), SW(NL)
       REAL RWU(NL)
       REAL  SWDELTX(NL),    !Change in SW due to root extraction
      &      SWTEMP(NL),     !New SW value based only on root extraction
-     &      SW_AVAIL(NL)    !Water available for root extraction
-
+     &      SW_AVAIL(NL),   !Water available for root extraction
+     &      UH2O(NL)        !Root water uptake from plant routine (optional)
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
         SWDELTX(L) = 0.0
         SWTEMP(L) = SW(L)
         SW_AVAIL(L) = MAX(0.0,SW_AVAIL(L) - LL(L))
       ENDDO
-      TRWU = TRWUP
 
-      IF (EP .GT. 0.0) THEN
-        IF ((0.1 * EP) .LE. TRWUP) THEN
-          WUF = 0.1 * EP / TRWUP
-        ELSE
-          WUF = 1.0
-        ENDIF
-
+!     Check to see if actual transpiration already done by plant routine
+      Tot_plant_RWU = SUM(UH2O)
+      IF (Tot_plant_RWU > 1.E-6) THEN
+!       Use root water uptake from plant routines
         TRWU = 0.0
         DO L = 1, NLAYR
-          IF (SWTEMP(L) .GT. LL(L)) THEN
-            RWU(L) = RWU(L) * WUF
-            IF (RWU(L) / DLAYR(L) .GT. SW_AVAIL(L)) THEN
-              RWU(L) = SW_AVAIL(L) * DLAYR(L)
-            ENDIF
-            SWTEMP(L) = SWTEMP(L) - RWU(L) / DLAYR(L)
+          RWU(L) = UH2O(L) / 10.
+          SWTEMP(L) = SWTEMP(L) - RWU(L) / DLAYR(L)
           TRWU = TRWU + RWU(L)
+        ENDDO
+
+      ELSE
+!       Calculate root water uptake here
+        IF (EP .GT. 0.0) THEN
+          IF ((0.1 * EP) .LE. TRWUP) THEN
+            WUF = 0.1 * EP / TRWUP
+          ELSE
+            WUF = 1.0
           ENDIF
-        END DO
-
-        EP = TRWU * 10.
-
-      ELSE        !No root extraction of soil water
-        TRWU = 0.0
-        RWU  = 0.0
+      
+          TRWU = 0.0
+          DO L = 1, NLAYR
+            IF (SWTEMP(L) .GT. LL(L)) THEN
+              RWU(L) = RWU(L) * WUF
+              IF (RWU(L) / DLAYR(L) .GT. SW_AVAIL(L)) THEN
+                RWU(L) = SW_AVAIL(L) * DLAYR(L)
+              ENDIF
+              SWTEMP(L) = SWTEMP(L) - RWU(L) / DLAYR(L)
+              TRWU = TRWU + RWU(L)
+            ENDIF
+          END DO
+      
+        ELSE        !No root extraction of soil water
+          TRWU = 0.0
+          RWU  = 0.0
+        ENDIF
       ENDIF
 
+      EP = TRWU * 10.
       DO L = 1, NLAYR
         SWDELTX(L) = SWTEMP(L) - SW(L)
       ENDDO

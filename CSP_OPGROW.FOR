@@ -23,21 +23,21 @@ C-----------------------------------------------------------------------
 C  Called by: CASUPRO
 C  Calls:     None
 !=======================================================================
-      SUBROUTINE CSP_OPGROW(CONTROL, ISWITCH,						!Input
-     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,				!Input 
-     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,					!Input
-     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input 
-     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa, 				!Input
-     &  LSWTHalost, LFWTlost, LITOTAL,							!Input                            !Input
-     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input 
+      SUBROUTINE CSP_OPGROW(CONTROL, ISWITCH,					  !Input
+     &  BRDMD, CADLF, CADST, CANHT, CANWH, CMINEA,			      !Input 
+     &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,	                  !Input
+     &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input
+     &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa,                 !Input
+     &  LSWTHalost, LFWTlost, LITOTAL,	                          !Input
+     &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input
      &  PCLSD,PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,            !Input
-     &  PGT, RHOL, RHOS, RLV, RTDEP,								!Input
-     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input 
+     &  PGT, RHOL, RHOS, RLV, RTDEP,                              !Input
+     &  RTWTHa, SATFAC, SENESCE, SLAREF, Smax, StalkPopul,        !Input
      &  PHTMAX, STKFWTHa, STKFWT, STKWT, STKWTHa,                 !Input
      &  STKWTHalost, SumTTD, SumTTG, SWFAC, SUWT, SUWTHa,         !Input
-     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input 
-     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,	!Input
-     &  BADMD)                                                    !Output
+     &  TGRO, TGROAV, TOTWT, TURFAC, WTNCAN, WTNLF, WTNST,        !Input
+     &  WTNSD, WTNUP, WTNFX, XLAI, XLAIlost, YRPLT, PhenoStage,   !Input
+     &  BADMD)                                                   !Output
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil

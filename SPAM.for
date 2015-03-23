@@ -34,8 +34,8 @@ C=======================================================================
 
       SUBROUTINE SPAM(CONTROL, ISWITCH,
      &    CANHT, EORATIO, KSEVAP, KTRANS, MULCH,          !Input
-     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP,          !Input
-     &    SW, SWDELTS, WEATHER, WINF, XHLAI, XLAI,        !Input
+     &    PSTRES1, PORMIN, RLV, RWUMX, SOILPROP, SW,               !Input
+     &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, SRFTEMP, ST, SWDELTX,     !Output
      &    TRWU, TRWUP, UPFLOW)                            !Output
@@ -58,7 +58,7 @@ C=======================================================================
 
       REAL CANHT, CO2, SRAD, TAVG, 
      &    TMAX, TMIN, WINDSP, XHLAI, XLAI
-      REAL CEF, CEM, CEO, CEP, CES, CET, EF, EM, EO, EP, ES, ET,
+      REAL CEF, CEM, CEO, CEP, CES, CET, EF, EM, EO, EP, ES, ET, EVAP, 
      &    TRWU, TRWUP, U
       REAL EOS, EOP, WINF, MSALB, ET_ALB
       REAL XLAT, TAV, TAMP, SRFTEMP
@@ -69,11 +69,16 @@ C=======================================================================
      &    SWDELTS(NL), SWDELTU(NL), SWDELTX(NL), UPFLOW(NL)
       REAL ES_LYR(NL)
 
+!     ORYZA model
+!     Root water uptake computed by some plant routines (optional)
+      REAL UH2O(NL)
+      REAL ETRD, ETAE, TRAT, TRATIO
+
 !     Species-dependant variables imported from PLANT module:
       REAL PORMIN, RWUMX
 
 !     Flood management variables:
-      REAL FLOOD
+      REAL FLOOD, EOS_SOIL
       
 !     P Stress on photosynthesis
       REAL PSTRES1
@@ -142,8 +147,8 @@ C=======================================================================
       EF   = 0.0; CEF = 0.0
       EM   = 0.0; CEM = 0.0
       EO   = 0.0; CEO  = 0.0
-      EP   = 0.0; CEP  = 0.0
-      ES   = 0.0; CES  = 0.0
+      EP   = 0.0; EOP = 0.0; CEP  = 0.0
+      ES   = 0.0; EOS = 0.0; CES  = 0.0
       ET   = 0.0; CET  = 0.0
       ES_LYR = 0.0
       SWDELTX = 0.0
@@ -179,7 +184,8 @@ C=======================================================================
 
 !       Initialize plant transpiration variables
         CALL TRANS(DYNAMIC, 
-     &    CO2, CROP, EO, ES, KTRANS, TAVG, WINDSP, XHLAI, !Input
+     &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
+     &    WINDSP, XHLAI,                                  !Input
      &    EOP)                                            !Output
       ENDIF
 
@@ -197,7 +203,7 @@ C=======================================================================
 
 !     Call OPSPAM to open and write headers to output file
       IF (IDETW .EQ. 'Y') THEN
-        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,  ! JZW add TRWU
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -277,22 +283,40 @@ C       and total potential water uptake rate.
 !             experiment).  No difference to other crop models.
           CALL PSE(EO, KSEVAP, XLAI, EOS)
 
+!-----------------------------------------------------------------------
+!         ACTUAL SOIL, MULCH AND FLOOD EVAPORATION
+!-----------------------------------------------------------------------
 !         Initialize soil, mulch and flood evaporation
-          ES = 0.; EM = 0.; EF = 0.
+          ES = 0.; EM = 0.; EF = 0.; EVAP = 0.0
+          UPFLOW = 0.0; ES_LYR = 0.0
 
-!-----------------------------------------------------------------------
-!         ACTUAL SOIL OR FLOOD EVAPORATION
-!-----------------------------------------------------------------------
+!         First meet evaporative demand from floodwater
           IF (FLOOD .GT. 1.E-4) THEN
-            CALL FLOOD_EVAP(XLAI, EO, EF)
-
-          ELSE
-!           Mulch evaporation unless switched off. This modifies EOS
-!           IF (INDEX('RSN',MEINF) .LE. 0) THEN
-            IF (INDEX('RSM',MEINF) > 0) THEN   
-              CALL MULCH_EVAP(DYNAMIC, MULCH, EOS, EM)
+            CALL FLOOD_EVAP(XLAI, EO, EF)   
+            IF (EF > FLOOD) THEN
+!             Floodwater not enough to supply EOS demand
+              EOS_SOIL = MIN(EF - FLOOD, EOS)
+              EF = FLOOD
+            ELSE
+              EOS_SOIL = 0.0
             ENDIF
+          ELSE
+            EOS_SOIL = EOS
+          ENDIF
 
+!         Next meet evaporative demand from mulch
+          IF (EOS_SOIL > 1.E-6 .AND. INDEX('RSM',MEINF) > 0) THEN
+            CALL MULCH_EVAP(DYNAMIC, MULCH, EOS_SOIL, EM)
+            IF (EOS_SOIL > EM) THEN
+!             Some evaporative demand leftover for soil
+              EOS_SOIL = EOS_SOIL - EM
+            ELSE
+              EOS_SOIL = 0.0
+            ENDIF
+          ENDIF
+
+!         Soil evaporation after flood and mulch evaporation
+          IF (EOS_SOIL > 1.E-6) THEN
             SELECT CASE(MESEV)
 !           ------------------------
             CASE ('R')  !Ritchie soil evaporation routine
@@ -301,7 +325,7 @@ C       and total potential water uptake rate.
                 SW_AVAIL(L) = MAX(0.0, SW(L) + SWDELTS(L) + SWDELTU(L))
               ENDDO
               CALL SOILEV(RATE,
-     &          DLAYR, DUL, EOS, LL, SW,                  !Input
+     &          DLAYR, DUL, EOS_SOIL, LL, SW,             !Input
      &          SW_AVAIL(1), U, WINF,                     !Input
      &          ES)                                       !Output
 
@@ -310,31 +334,47 @@ C       and total potential water uptake rate.
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
 !             Calculate the availability of soil water for use in SOILEV.
               CALL ESR_SoilEvap(
-     &          EOS, SOILPROP, SW, SWDELTS,               !Input
+     &          EOS_SOIL, SOILPROP, SW, SWDELTS,          !Input
      &          ES, ES_LYR, SWDELTU, UPFLOW)              !Output
             END SELECT
 !           ------------------------
           ENDIF
 
+!         Total evaporation from soil, mulch, flood
+          EVAP = ES + EM + EF
+
 !-----------------------------------------------------------------------
-!         ACTUAL TRANSPIRATION
+!         Potential transpiration - model dependent
 !-----------------------------------------------------------------------
-          IF (XHLAI .GT. 0.0) THEN
-            IF (FLOOD .GT. 0.0) THEN
-              !Use flood evaporation rate
-              CALL TRANS (RATE, 
-     &          CO2, CROP, EO, EF, KTRANS, TAVG, WINDSP, XHLAI, !Input
-     &          EOP)                                            !Output
-            ELSE
-              !Use soil evaporation rate
+          IF (XHLAI > 1.E-6) THEN
+            SELECT CASE (CONTROL % MODEL(1:5))
+            CASE ('RIORZ')    !ORYZA2000 Rice
+!             07/22/2011 CHP/TL replace TRANS with this (from ET2.F90 in ORYZA2000) 
+!             Estimate radiation-driven and wind- and humidity-driven part
+              ETRD = EO * 0.75  !s/b 1st term in FAO energy balance eqn
+              ETAE = EO - ETRD
+              EOP = ETRD*(1. - EXP(-KTRANS*XHLAI)) +ETAE*MIN(2.0, XHLAI)
+              EOP = MAX(0.0, EOP)
+              EOP = MIN(EO, EOP)
+
+              TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
+              EOP = EOP * TRAT
+
+            CASE DEFAULT
+!             For all models except ORYZA
               CALL TRANS(RATE, 
-     &          CO2, CROP, EO, ES, KTRANS, TAVG, WINDSP, XHLAI, !Input
-     &          EOP)                                            !Output
-            ENDIF
+     &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
+     &        WINDSP, XHLAI,                              !Input
+     &        EOP)                                        !Output
+            END SELECT
+            
           ELSE
             EOP = 0.0
           ENDIF
 
+!-----------------------------------------------------------------------
+!         ACTUAL TRANSPIRATION
+!-----------------------------------------------------------------------
           IF (XHLAI .GT. 1.E-4 .AND. EOP .GT. 1.E-4) THEN
             !These calcs replace the old SWFACS subroutine
             !Stress factors now calculated as needed in PLANT routines.
@@ -376,11 +416,12 @@ C       and total potential water uptake rate.
             ENDDO
           END SELECT
 
-C         Calculate actual soil water uptake and transpiration rates
+!         Calculate actual soil water uptake and transpiration rates
           CALL XTRACT(
-     &      NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP,        !Input
+     &      NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP, UH2O,  !Input
      &      EP, RWU,                                      !Input/Output
      &      SWDELTX, TRWU)                                !Output
+        
         ENDIF   !ISWWAT = 'Y'
       ENDIF
 
@@ -403,7 +444,7 @@ C         Calculate actual soil water uptake and transpiration rates
 !-----------------------------------------------------------------------
       IF (ISWWAT .EQ. 'Y') THEN
 !       Perform daily summation of water balance variables.
-        ET  = ES  + EM + EP + EF
+        ET  = EVAP + EP
         CEF = CEF + EF
         CEM = CEM + EM
         CEO = CEO + EO
@@ -413,7 +454,7 @@ C         Calculate actual soil water uptake and transpiration rates
       ENDIF
 
       IF (IDETW .EQ. 'Y') THEN
-        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU, !JZW add trwu
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -441,7 +482,7 @@ C-----------------------------------------------------------------------
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
 
-      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU, !JZW add TRWU
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -461,7 +502,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
-      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU, ! JZW add TRWU
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)

@@ -60,7 +60,7 @@ C=======================================================================
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI, UH2O)       !Output
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:
@@ -69,14 +69,15 @@ C-----------------------------------------------------------------------
 !         'CSCRP' - CropSim Cassava, Wheat
 !         'MLCER' - CERES-Millet 
 !         'MZCER' - CERES-Maize
+!         'MZIXM' - IXIM Maize
 !         'PTSUB' - SUBSTOR-Potato
 !         'RICER' - CERES-Rice
 !         'SCCAN' - CANEGRO Sugarcane
 !         'SCCSP' - CASUPRO Sugarcane
 !         'SGCER' - CERES-Sorghum
 !         'SWCER' - CERES-Sweet corn
-!         'MZIXM' - IXIM Maize
 !         'TNARO' - Aroids - Tanier, Taro
+!         'WHAPS' - APSIM N-wheat
 C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -105,10 +106,9 @@ C-----------------------------------------------------------------------
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW
       REAL TMAX, TMIN, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
-
       REAL, DIMENSION(2)  :: HARVFRAC
       REAL, DIMENSION(NL) :: NH4, NO3, RLV
-      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4
+      REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
       LOGICAL FixCanht    !, CRGRO
 c-----------------------------------------------------------------------
@@ -126,7 +126,11 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     P model
       REAL, DIMENSION(NL) :: PUptake, SPi_AVAIL, FracRts
       REAL PSTRES1
-
+      
+c-----------------------------------------------------------------------
+C         Variable needed to run WHAPS wheat.  FSR 09-25-2012
+!**!      INTEGER NL
+!-----------------------------------------------------------------------
 !     K model
       REAL, DIMENSION(NL) :: KUptake, SKi_Avail
 
@@ -251,6 +255,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       SENESCE % ResE   = 0.0
       UNH4     = 0.0
       UNO3     = 0.0
+      UH2O     = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -327,6 +332,24 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           KSEVAP = KEP
         ELSEIF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
+!     APSIM N-wheat WHAPS
+      CASE('WHAPS')
+        CALL WH_APSIM (CONTROL, ISWITCH,              !Input
+     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     SPi_AVAIL, SNOW,                               !Input
+     &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
+     &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
+     &     NSTRES, PORMIN, PUptake, RLV,                  !Output
+     &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O)               !Output
+
+        IF (DYNAMIC < RATE) THEN
+!          KTRANS = KCAN + 0.15        !Or use KEP here??
+          KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
+          KSEVAP = KEP        
         ENDIF
 
 !     -------------------------------------------------

@@ -1,0 +1,90 @@
+*INFO DETAIL FILE
+
+******************************************************************************
+
+*DSSAT Cropping System Model Ver. 4.5.1.014 -Release      JAN 29, 2013; 15:02:32
+                                                                                
+*RUN   1        : Irrigated + Nitrogen      WHAPS045 UFMX8902    3              
+ MODEL          : WHAPS045 - Wheat                                              
+ EXPERIMENT     : UFMX8902 WH  Mexi (NWheat migration to DSSAT)                 
+ DATA PATH      : C:\DSSAT45\WHEAT\                                             
+ TREATMENT  3   : Irrigated + Nitrogen      WHAPS045                            
+  
+
+ CSM     YEAR DOY = 1989 345
+ RNMODE = B                                                                    
+ PATHEX = C:\DSSAT45\WHEAT\                                                    
+ FILEX  = UFMX8902.WHX                                                         
+ FILEB  = DSSBatch.v45                                                         
+ FILEIO = DSSAT45.INP                                                          
+ MODEL  = WHAPS045                                                             
+ TRTNUM =     3                                                                
+
+ SOILDYN  YEAR DOY = 1989 345
+ The soil file has missing or invalid data.                                    
+ Default values have been used for these variables:                            
+   CEC, ADCOEF                                                                 
+ These defaults may or may not be important to your results.                   
+
+ SOILDYN  YEAR DOY = 1989 345
+ Soil ID: UFMX000002                                                           
+ GENERIC                                                                       
+ GENERIC                                                                       
+   SALB SWCON    CN  DMOD  SLPF SMPX                                           
+   0.11  0.50  60.0  1.00  1.00 IB001                                          
+ Soil layer distribution method: 2                                             
+      DS DLAYR    LL   DUL   SAT  Root    BD    OC  CLAY  SILT  SAND           
+ LYR  cm    cm  frac  frac  frac  Grow g/cm3     %     %     %     %    pH     
+   1   5     5 0.081 0.211 0.364 0.869  1.33  1.17   3.0   2.0  95.0   7.7     
+   2  15    10 0.081 0.211 0.364 0.869  1.33  1.17   3.0   2.0  95.0   6.2     
+   3  25    10 0.095 0.211 0.381 0.657  1.62  0.68   3.0   2.0  95.0   6.2     
+   4  40    15 0.035 0.211 0.316 0.507  1.66  0.15   3.0   2.0  95.0   6.3     
+   5  55    15 0.034 0.211 0.312 0.333  1.68  0.12   3.0   2.0  95.0   6.3     
+   6  70    15 0.034 0.211 0.312 0.333  1.68  0.12   3.0   2.0  95.0   6.0     
+   7  90    20 0.034 0.211 0.312 0.333  1.68  0.12   3.0   2.0  95.0   6.0     
+   8 120    30 0.034 0.211 0.312 0.333  1.68  0.12   3.0   2.0  95.0   6.0     
+   9 150    30 0.034 0.211 0.312 0.333  1.68  0.12   3.0   2.0  95.0   6.0     
+
+ SOILDYN  YEAR DOY = 1989 345
+ Additional soil properties                                                    
+                Convert                                                        
+    Cation Adsrp  ppm /  KSAT  SLCF                                            
+   L  Exch  Coef  kg/ha  cm/h     %                                            
+   1  15.5   0.0   1.50   0.6   0.0                                            
+   2  15.5   0.0   0.75   0.6   0.0                                            
+   3  15.5   0.0   0.62   0.6   0.0                                            
+   4  15.5   0.0   0.40   0.6   0.0                                            
+   5  15.5   0.0   0.40   0.6   0.0                                            
+   6  15.5   0.0   0.40   0.6   0.0                                            
+   7  15.5   0.0   0.30   0.6   0.0                                            
+   8  15.5   0.0   0.20   0.6   0.0                                            
+   9  15.5   0.0   0.20   0.6   0.0                                            
+
+ IPWTH   YEAR DOY = 1989 345
+ C:\DSSAT45\Weather\UFMX8901.WTH                                               
+ Found daily weather data headers for:                                         
+   SRAD           Col   7 -  11                                                
+   TMAX           Col  13 -  17                                                
+   TMIN           Col  19 -  23                                                
+   RAIN           Col  25 -  29                                                
+
+ CO2VAL  YEAR DOY = 1989 345
+  640 CO2 data points read from file.                                          
+ C:\DSSAT45\StandardData\CO2045.WDA                                            
+
+ SOMINI  YEAR DOY = 1989 345
+ Initial SOM fractions (fraction of total soil organic matter):                
+                      SAND   TOC  FOMC  SOMC  SOM1  SOM2  SOM3                 
+  Lyr Dep Texture       %     %     %     %   frac  frac  frac Method          
+   1   5 Sand         95.0 1.170 0.008 1.162 0.044 0.832 0.124 Regression eqn  
+   2  15 Sand         95.0 1.170 0.007 1.163 0.044 0.832 0.124 Regression eqn  
+   3  25 Sand         95.0 0.680 0.005 0.675 0.039 0.747 0.213 Regression eqn  
+   4  40 Sand         95.0 0.150 0.004 0.146 0.001 0.019 0.980 Regression eqn  
+   5  55 Sand         95.0 0.120 0.003 0.117 0.001 0.019 0.980 Regression eqn  
+   6  70 Sand         95.0 0.120 0.002 0.118 0.001 0.019 0.980 Regression eqn  
+   7  90 Sand         95.0 0.120 0.002 0.118 0.001 0.019 0.980 Regression eqn  
+   8 120 Sand         95.0 0.120 0.001 0.119 0.001 0.019 0.980 Regression eqn  
+   9 150 Sand         95.0 0.120 0.001 0.119 0.001 0.019 0.980 Regression eqn  
+
+ ENDRUN  YEAR DOY = 1990 106
+ Normal end of run        1                                                    

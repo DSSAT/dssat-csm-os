@@ -69,9 +69,9 @@ C=======================================================================
 !       Failed experiment -- too many problems with zero SWCN and 
 !         historic soil profiles
 !       IF (SWCN(L) .GE. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0)
-        IF (SWCN(L) .GT. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0)
-     &    DRN(L) = SWCN(L) * 24.0
-
+        IF (SWCN(L) .GT. 0.0 .AND. DRN(L) .GT. SWCN(L)*24.0) then
+         DRN(L) = SWCN(L) * 24.0
+        endif
 !        IF (DRN(L) .GT. 0.0) IDRSW = 1
       ENDDO
 
