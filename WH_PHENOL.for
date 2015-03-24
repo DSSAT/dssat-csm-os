@@ -583,7 +583,8 @@ cbak  ears that is not included in lai calculation.
               sumstgdtt(I) = 0.0  ! NWheat array
  !*!          stgdur(I) = 0.0     ! NWheat array
           ENDDO
-          STGDOY(14) = YRSIM
+          ! STGDOY(14) = YRSIM JZW changed 
+            STGDOY(7) = YRSIM           
           YREMRG = -99  !CHP 5/19/2011
 
       CUMDTT = 0.0
@@ -792,11 +793,11 @@ cbak  ears that is not included in lai calculation.
 ! note that OLD Pannicle initiation has no direct NEW counterpart, and that NEW has "fallow".
 !----------------------------------------------------------------------
       !---------------------------------------------------------
-      !     ISTAGE = 7 - No crop-to-Sowing date
+      !     ISTAGE = 7 - No crop-to-Sowing date, start calling WH_PHENOL on Planting date
       !---------------------------------------------------------
              IF (ISTAGE .EQ. 7) THEN
 !*!          IF (istage .EQ. fallow) THEN
-              STGDOY(istage) = YRDOY
+              !STGDOY(istage) = YRDOY ! JZW This is wrong, call here on planting day
               NDAS           = 0.0   !NDAS - number of days after sowing
                ! from nwheats_phase: JZW add in Aug, 2014
               sumstgdtt(istage) = sumstgdtt(istage) + dtt
@@ -808,7 +809,8 @@ cbak  ears that is not included in lai calculation.
      &         stage_gpla, stagno, stgdur, xstag_nw, zstage)      !OUTPT
 !-----------------------------------------------------------------------
               ISTAGE = 8
-!*!           istage = germ
+              STGDOY(istage) = YRDOY ! JZW add this in Feb, 2015, istage=8 is sowing day, not germ day !
+!*!           istage = germ 
               SUMDTT = 0.0
               IF (ISWWAT .EQ. 'N') RETURN
               
@@ -823,12 +825,13 @@ cbak  ears that is not included in lai calculation.
   100         CONTINUE                                ! Sun Fix
               L0 = L               !L0 is layer that seed is in.
 
-              RETURN
+             Endif ! RETURN ! JZW changed return to endif on Feb 17, 2015
       !-----------------------------------------------------------------
       ! ISTAGE = 8 - Sowing to Germination
       ! Once water stress is introduces, include nwheats_germn below?
       !-----------------------------------------------------------------
-      ELSEIF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination
+         !ELSEIF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination ! JZW change elseif to if on Feb 17, 2015
+         IF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination    
               !*! compare to nwheats_germn() code
               !*! This DSSAT code promotes seed to germination 1 DAP,  
               !*! IF seed-layer soil water is above LL
@@ -836,9 +839,14 @@ cbak  ears that is not included in lai calculation.
       !!*! and helped align DTT with the original nwheat output.  FSR
       !       !---------------------------------------------------------
       ! JZW move these lines from after CALL StageFlags to here in Sep, 2014 
-              if(YRDOY > STGDOY(7)+1) then
-                ISTAGE =    9 !*! germ (germination to emergence)
-                !JZW add the following for the case of istage=9
+              !if(YRDOY > STGDOY(7)+1) then !JZW istage 7 is starting on simulation day
+              !if(YRDOY > STGDOY(8)) then !JZW replace this code by codes bellow to determing the Germ stage
+              !  ISTAGE =    9 !*! germ (germination to emergence)
+            call nwheats_germn (sdepth, stgdur, SW,            !Input
+     &          DLAYR*10, LL,                                    !Input
+     &          ISTAGE)   !Input ISTAGE=8, & calculate output
+              If (ISTAGE .eq. 9) then
+                   !JZW add the following for the case of istage=9
                 CALL WH_COLD (CONTROL, ISWITCH, FILEIO, IDETO,    !Input
      &           istage, leafno, PLTPOP,  VREQ, tbase,            !Input
      &           tempcr, tiln, VSEN, weather,                     !Input
@@ -912,11 +920,7 @@ cbak  ears that is not included in lai calculation.
       ! introduced to align DC Code with APSIM Nwheat  FSR             !
               if(sumstgdtt(istage) .ge. pgdd(istage)) then             !
                 lstage = istage                                        !
-                if(istage .eq. 9) then                                 !
-                       istage = 1                                      !
-                   else                                                !
-                       istage = istage +1                              !
-                   endif    
+                istage = 1                                      !
               ! We should add nwheats_ppfac calculation here ???
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
      &                            *  min(nwheats_vfac, nwheats_ppfac)  !
@@ -969,7 +973,7 @@ cbak  ears that is not included in lai calculation.
               ISTAGE = 1
               SUMDTT = SUMDTT - P9
               TLNO   = 30.0
-              YREMRG = STGDOY(9) !Passed back into water balance
+              YREMRG = YRDOY !STGDOY(9) !Passed back into water balance, JZW changed
               RETURN
 
       !-----------------------------------------------------------------
@@ -977,7 +981,6 @@ cbak  ears that is not included in lai calculation.
       !-----------------------------------------------------------------
          ELSEIF (ISTAGE .EQ. 1) THEN
 !----------------------------------------------------------------- 
-             continue 
 !*! Begin NWheat function nwheats_ppfac: calculate day-length factor
 !*!    if (istage .eq. emergence) then  ! not needed: specified above
 !*!        hrlt = day_length (day_of_year, lat, -6.0)
@@ -1017,12 +1020,8 @@ cbak  ears that is not included in lai calculation.
       !-----------------------------------------------------------------
       ! introduced to align DC Code with APSIM Nwheat  FSR             !
               if(sumstgdtt(istage) .ge. pgdd(istage)) then             !
-                lstage = istage                                        !
-                if(istage .eq. 9) then     ! JZW istage will not equal to 9 !!                            !
-                       istage = 1                                      !
-                   else                                                !
-                       istage = istage +1                              !
-                endif                                                  !
+                lstage = istage                                        !                              !
+                istage = istage +1                              !
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
                 sumstgdtt(lstage) = pgdd(lstage)
                 cumph_nw(istage) = cumph_nw(lstage)
@@ -1066,11 +1065,7 @@ cbak  ears that is not included in lai calculation.
       ! introduced to align DC Code with APSIM Nwheat  FSR             !
               if(sumstgdtt(istage) .ge. pgdd(istage)) then             !
                 lstage = istage                                        !
-                if(istage .eq. 9) then !JZW istage will not be 9                                !
-                       istage = 1                                      !
-                   else                                                !
-                       istage = istage +1                              !
-                   endif  
+                istage = istage +1                              !
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
                 sumstgdtt(lstage) = pgdd(lstage)
                 ! JZW try to add above statement as Apsim. Is it necessary to set previous stage?
@@ -1141,11 +1136,7 @@ cbak  ears that is not included in lai calculation.
       ! introduced to align DC Code with APSIM Nwheat  FSR             !
               if(sumstgdtt(istage) .ge. pgdd(istage)) then             !
                 lstage = istage                                        !
-                if(istage .eq. 9) then                                 !
-                       istage = 1                                      !
-                   else                                                !
-                       istage = istage +1                              !
-                endif                                                  !
+                istage = istage +1                                     !
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
                 sumstgdtt(lstage) = pgdd(lstage)
                 ! JZW try to add above statement as Apsim. Is it necessary set previous stage?
@@ -1189,11 +1180,7 @@ cbak  ears that is not included in lai calculation.
       ! introduced to align DC Code with APSIM Nwheat  FSR             !
               if(sumstgdtt(istage) .ge. pgdd(istage)) then             !
                 lstage = istage                                        !
-                if(istage .eq. 9) then                                 !
-                       istage = 1                                      !
-                   else                                                !
-                       istage = istage +1                              !
-                endif                                                  !
+                istage = istage +1                              !
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
                 sumstgdtt(lstage) = pgdd(lstage)
                 cumph_nw(istage) = cumph_nw(lstage)
@@ -1237,11 +1224,7 @@ cbak  ears that is not included in lai calculation.
       ! introduced to align DC Code with APSIM Nwheat  FSR             !
               if(sumstgdtt(istage) .ge. pgdd(istage)) then             !
                 lstage = istage                                        !
-                if(istage .eq. 9) then                                 !
-                       istage = 1                                      !
-                   else                                                !
-                       istage = istage +1                              !
-                endif                                                  !
+                istage = istage +1                                     !
                 sumstgdtt(istage) = (sumstgdtt(lstage) - pgdd(lstage)) !
                 sumstgdtt(lstage) = pgdd(lstage)
                 cumph_nw(istage) = cumph_nw(lstage)

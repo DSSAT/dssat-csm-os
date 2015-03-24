@@ -93,7 +93,7 @@
 
 !-----------------------------------------------------------------------
       ACOUNT = 22  !Number of FILEA headings.
-!     Headings in FILEA for Measured data
+!     Headings in FILEA for Measured data. The following measured data will show up in overview.out
       DATA OLAB /
      &    'ADAT  ',     !1  DFLR 
      &    'PD1T  ',     !2  IFPD 
@@ -410,7 +410,7 @@
           DNR0 = -99
           YREMRG = -99
         ENDIF
-
+      ! The following data will be used for overview.out
       WRITE(Simulated(1),'(I8)') DNR1;  WRITE(Measured(1),'(I8)') DFLR    !ADAT
       WRITE(Simulated(2),'(I8)') -99 ;  WRITE(Measured(2),'(I8)') -99     !PD1T
       WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT

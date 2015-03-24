@@ -1732,7 +1732,7 @@
                    TURFAC = (1./RWUEP1) * TRWUP / EP1
                 ENDIF
                 IF (EP1 .GE. TRWUP) THEN
-                  SWFAC = TRWUP / EP1
+                  SWFAC = TRWUP / EP1     
                 ENDIF
              ENDIF
              
@@ -2072,7 +2072,7 @@ cjh temp fix to avoid any further development during maturity stage
 !     &    nrlayr, pl_la, PLTPOP, sen_la,                          !Input
 !      ! sen_la is unknown in line 1646 ; pl_la is calculated in line 2494 also
 !     &    potntl)                                                        !Output
-!       Call nwheats_watup_new (CONTROL, SOILPROP, swdep, uptake_water,
+!       Call nwheats_watup_new (CONTROL,     SOILPROP, swdep, uptake_water,
 !     &    cwdemand, istage, nrlayr, potntl, uptake_source,     !Input
 !    !&    rlv_nw, above_gnd_pcarb, carbh, nwheats_topsfr, PLTPOP, pcarbo, temp_c, TMAX, TMIN,  
 !    ! need above by call nwheats_cwdmd 
@@ -2957,7 +2957,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
      :   + pl_nit(grain_part) 
       ! WTNCAN      Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha
       WTNCAN = plntp * PLTPOP 
-      pl_nit_leaf = pl_nit(leaf_part) * PLTPOP
+      pl_nit_leaf = pl_nit(leaf_part) * PLTPOP !pl_nit_leaf is  WTNLF
       !   g               g            plant
       !---------  = ----------------- *----
       !   m2              plant         m2
@@ -3224,15 +3224,28 @@ cjh quick fix for maturity stage
 !-----------------------------------------------------------------------
       ELSEIF(DYNAMIC .EQ. SEASEND) THEN
 !*!   IF (DYNAMIC .EQ. SEASEND) THEN
-
-         IF (IDETR .EQ. 'Z') THEN
+          !IF (IHARI .NE. 'M') then, seasend is not maturiy day 
+        ! !calculate Total grain N uptake, kg N/ha, i.e. at maturity
+        !  GNUP = pl_nit(grain_part) * PLTPOP * 10
+        !!  kg       g        kg       plants   10000m2
+        !!  --- = ---------*---------*--------*---------
+        !!  ha     plant     1000g        m2        ha
+        !  XGNP = PCNGRN
+          IF (IDETR .EQ. 'Z') THEN
          !Close daily output files.
          CLOSE (NOUTXL)
          ENDIF
 
       ENDIF !(DYNAMIC)
-
-
+      if (YRDOY .EQ. MDATE) then    
+        !calculate Total grain N uptake, kg N/ha, i.e. at maturity
+          GNUP = pl_nit(grain_part) * PLTPOP * 10
+        !  kg       g        kg       plants   10000m2
+        !  --- = ---------*---------*--------*---------
+        !  ha     plant     1000g        m2        ha
+          XGNP = PCNGRN
+      endif
+          
           IF (istage .LT. 7) THEN
               RSTAGE = istage           !R-stage
           ELSE
@@ -3254,16 +3267,31 @@ cjh quick fix for maturity stage
           SHELPC = tpsm               ! Tiller number (no/m2)
           TOPWT  = WTLF+PODWT+STMWTO+SDWT  
           if (plantwt(grain_part)  .gt. 0.) then
-             PCNGRN = pl_nit(grain_part)/plantwt(grain_part)
+             PCNGRN = pl_nit(grain_part)* 100./plantwt(grain_part)
           else 
              PCNGRN = 0.
           Endif
           if (plantwt(stem_part) .gt. 0. ) then
              PCNVEG = (pl_nit(stem_part)+pl_nit(leaf_part)+
      %             pl_nit(lfsheath_part))/(plantwt(lfsheath_part)+
-     %             plantwt(stem_part)/plantwt(leaf_part))
+     %             plantwt(stem_part)+plantwt(leaf_part))*100.
           else
              PCNVEG = 0.
+          endif
+          if (plantwt(leaf_part) .GT. 0.) then
+            PCNL = pl_nit(leaf_part)*100./plantwt(leaf_part)
+          else
+            PCNL = 0.
+          endif
+          if (plantwt(stem_part) .GT. 0.) then
+            PCNST = pl_nit(stem_part)*100./plantwt(stem_part)
+          else
+            PCNST = 0.
+          endif
+          if (plantwt(root_part) .GT. 0.) then
+            PCNRT = pl_nit(root_part)*100./plantwt(root_part)
+          else
+            PCNRT = 0.
           endif
           IF (TOPWT .GT. 0. .AND. SDWT .GE. 0.) THEN
               HI = SDWT/TOPWT

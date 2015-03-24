@@ -55,7 +55,8 @@
 
 
 *     ===========================================================
-      subroutine nwheats_germn (sdepth, stgdur, swdep, SOILPROP, !Input
+      subroutine nwheats_germn (sdepth, stgdur, swdep,          !Input
+     &   dlayr_nw, lldep,                                       !Input
      &   stagno)	                                              !Output
 *     ===========================================================
       USE ModuleDefs
@@ -118,10 +119,10 @@
       ! JZW add the following
       integer stgdur(20)
       real  sdepth, dlayr_nw(NL), lldep(NL), swdep(NL)
-      TYPE (SoilType)    SOILPROP
-      dlayr_nw  = SOILPROP % DLAYR  * 10.0  
-      lldep     = SOILPROP % LL     
-          
+      !TYPE (SoilType)    SOILPROP
+      !dlayr_nw  = SOILPROP % DLAYR  * 10.0  
+      !lldep     = SOILPROP % LL     
+         
 *- Implementation Section ----------------------------------
  
  
