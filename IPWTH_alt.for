@@ -15,6 +15,7 @@ C  01/14/2005 CHP Modified checks for TAMP, TAV
 C  02/08/2005 CHP Added check for weather file name when first day of
 C                   a sequence occurs on Jan 1.
 !  08/02/2006 CHP Read and store weather data in arrays
+!  08/25/2011 CHP Read vapor pressure (VAPR or VPRS) 
 C-----------------------------------------------------------------------
 C  Called by: WEATHR
 C  Calls:     None
@@ -23,7 +24,7 @@ C=======================================================================
       SUBROUTINE IPWTH(CONTROL,
      &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
-     &    TAMP, TAV, TDEW, TMAX, TMIN, WINDHT,            !Output
+     &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    DYNAMIC)
 
@@ -55,7 +56,7 @@ C=======================================================================
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
-     &  WINDSP,XLAT,XLONG,CCO2,RHUM
+     &  WINDSP,XLAT,XLONG,CCO2,RHUM, VAPR
 
       LOGICAL FEXIST, LongFile
 
@@ -67,7 +68,7 @@ C=======================================================================
 !     Arrays of weather data stored.
       INTEGER, DIMENSION(MaxRecords) :: YRDOY_A, LineNumber
       REAL, DIMENSION(MaxRecords) :: SRAD_A, TMAX_A, TMIN_A, 
-     &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A
+     &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A, VAPR_A
       INTEGER CurrentWeatherYear, DOYW
       INTEGER I, J, LastRec, LastWeatherDay, NRecords
       INTEGER FirstWeatherDay, YEARW, RecNum
@@ -146,6 +147,10 @@ C     The components are copied into local variables for use here.
 
       WYEAR = (ICHAR(FILEW(5:5)) - 48)*10 + (ICHAR(FILEW(6:6)) - 48)
       NYEAR = (ICHAR(FILEW(7:7)) - 48)*10 + (ICHAR(FILEW(8:8)) - 48)
+      IF (LastWeatherDay > FirstWeatherDay) THEN
+        NYEAR = INT(LastWeatherDay)/1000 - INT(FirstWeatherDay)/1000 + 1
+        NYEAR = MAX(1, NYEAR)
+      ENDIF
 
       IF (NYEAR == 1 .AND. MULTI > 1) THEN
         PATHL  = INDEX(PATHWT,BLANK)
@@ -378,7 +383,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, PAR_A,          !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
-     &    TMIN_A, WINDSP_A, YRDOY_A, YREND)               !Output
+     &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
       ENDIF
 
@@ -412,10 +417,11 @@ C       Substitute default values if REFHT or WINDHT are missing.
       WINDSP= WINDSP_A(I)
       PAR   = PAR_A(I)
       RHUM  = RHUM_A(I)
+      VAPR  = VAPR_A(I)
 
 !     Error checking
       CALL DailyWeatherCheck(CONTROL,
-     &    "WTHINIT", FILEWW, RAIN, RecNum, RHUM,             !Input
+     &    "WTHINIT", FILEWW, RAIN, RecNum, RHUM,          !Input
      &    SRAD, TDEW, TMAX, TMIN, WINDSP, YRDOY,          !Input
      &    YREND)                                          !Output
 
@@ -429,6 +435,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
         WINDSP= WINDSP_A(I+1)
         PAR   = PAR_A(I+1)
         RHUM  = RHUM_A(I+1)
+        VAPR  = VAPR_A(I+1)
         YREND = -99
       
 !       Error checking
@@ -518,7 +525,7 @@ C         Read in weather file header.
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, PAR_A,          !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
-     &    TMIN_A, WINDSP_A, YRDOY_A, YREND)               !Output
+     &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
       ENDIF
 
@@ -568,6 +575,7 @@ C         Read in weather file header.
         WINDSP = WINDSP_A(I)
         PAR    = PAR_A(I)   
         RHUM   = RHUM_A(I) 
+        VAPR   = VAPR_A(I)
 
         LastRec = I
         EXIT
@@ -673,7 +681,7 @@ C         Read in weather file header.
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, PAR_A,          !Output
      &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
-     &    TMIN_A, WINDSP_A, YRDOY_A, YREND)               !Output
+     &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -693,14 +701,14 @@ C         Read in weather file header.
       INTEGER YRDOY, YRDOYW, YRDOYWY, YRDOY_start, YREND, YRSIM
       INTEGER YRDOYW_SAVE
 
-      REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM
+      REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR
 
       LOGICAL LongFile
 
 !     Arrays of weather data -- up to one year stored.
       INTEGER, DIMENSION(MaxRecords) :: YRDOY_A, LineNumber
       REAL, DIMENSION(MaxRecords) :: SRAD_A, TMAX_A, TMIN_A, 
-     &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A
+     &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A, VAPR_A
       INTEGER LastRec, LastWeatherDay, NRecords
       INTEGER FirstWeatherDay
 
@@ -734,6 +742,7 @@ C         Read in weather file header.
       WINDSP_A = 0.0
       PAR_A    = 0.0
       RHUM_A   = 0.0
+      VAPR_A   = 0.0
 
       CENTURY = INT(YRSIM / 100000.)
 
@@ -752,6 +761,7 @@ C         Read in weather file header.
           WINDSP= -99. 
           PAR   = -99. 
           RHUM  = -99. 
+          VAPR  = -99.
 
 !         Use free format reads
 !          READ (LINE,RECFMT,IOSTAT=ERR) YRDOYW,SRAD,TMAX,TMIN,
@@ -776,37 +786,43 @@ C         Read in weather file header.
               !  READ(LINE(C1:C2),*,IOSTAT=ERR) YRDOYW
               !  IF (ERR .NE. 0) EXIT
 
-              CASE('SRAD')
+              CASE('SRAD')  !Solar radiation MJ/m2/d
                 READ(LINE(C1:C2),*,IOSTAT=ERR) SRAD
                 IF (ERR .NE. 0) SRAD = -99.
 
-              CASE('TMAX')
+              CASE('TMAX')  !Max daily temperature (C)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) TMAX
                 IF (ERR .NE. 0) TMAX = -99.
 
-              CASE('TMIN')
+              CASE('TMIN')  !Min daily temperature (C)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) TMIN
                 IF (ERR .NE. 0) TMIN = -99.
 
-              CASE('RAIN')
+              CASE('RAIN')  !Daily precip (mm)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) RAIN
                 IF (ERR .NE. 0) RAIN = -99.
 
-              CASE('DEWP', 'TDEW')
+              CASE('DEWP', 'TDEW')  !Dewpoint temp (C)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) TDEW
                 IF (ERR .NE. 0) TDEW = -99.0
 
-              CASE('WIND')
+              CASE('WIND')  !Daily wind run (km/d)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) WINDSP
                 IF (ERR .NE. 0) WINDSP = -99.0
 
-              CASE('PAR')
+              CASE('PAR')   
+!               Photosynthetically active radiation (Einstein/m2/day)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) PAR
                 IF (ERR .NE. 0) PAR = -99.0
 
-              CASE('RHUM')
+              CASE('RHUM')  
+!               Relative humidity at TMIN (or max rel. hum) (%)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) RHUM
                 IF (ERR .NE. 0) RHUM = -99.0
+
+              CASE('VAPR','VPRS')   !Vapor pressure (kPa)
+                READ(LINE(C1:C2),*,IOSTAT=ERR) VAPR
+                IF (ERR .NE. 0) VAPR = -99.0
             END SELECT
           ENDDO
 
@@ -834,6 +850,7 @@ C         Read in weather file header.
           WINDSP_A(NRecords)= WINDSP
           PAR_A(NRecords)   = PAR
           RHUM_A(NRecords)  = RHUM
+          VAPR_A(NRecords)  = VAPR
           LineNumber(NRecords) = LINWTH
 
           IF (NRecords > 1) THEN
@@ -918,7 +935,7 @@ C         Read in weather file header.
 !       Print confirmation that header was found to INFO.OUT
         SELECT CASE (TRIM(HEADER(I)))
           CASE('SRAD','TMAX','TMIN','RAIN','DEWP','TDEW','WIND',
-     &        'PAR','RHUM')
+     &        'PAR','RHUM','VAPR','VPRS')
             IM = IM + 1
             WRITE(MSG(IM),'(2X,A15,"Col ",I3," - ",I3)') 
      &          HEADER(I), COL(I,1), COL(I,2)
@@ -1046,7 +1063,7 @@ c                   available.
           ENDIF
       ENDIF
 
-      IF (WINDSP <= 0.) WINDSP = 86.4
+!      IF (WINDSP <= 0.) WINDSP = 86.4
 !      IF (WINDSP <= -1.E-6) THEN
 !        WINDSP = 86.4
 !      ELSEIF (WINDSP < 1.0) THEN

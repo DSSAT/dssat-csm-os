@@ -1,14 +1,12 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2014 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
+C                      International Fertilizer Development Center
+C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
-C  CROPGRO, Subroutine, G. Hoogenboom, J.W. Jones, K.J. Boote
+C  CROPGRO, Subroutine, G. Hoogenboom, J.W. Jones, K.J. Boote, C. Porter
 C-----------------------------------------------------------------------
 C  CROPGRO template plant growth subroutine.
 C  Computes plant development and growth.

@@ -18,6 +18,11 @@ C  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
 C  01/16/2008 GH  Added P2 and PANTH coefficients for sorghum
 C  08/03/2009 FSR Added numerous variables for CASUPRO
 C  06/30/2010 FSR Added PLF2 variable for CASUPRO
+C  05/19/2011 GH  Updated for sorghum
+C  02/25/2012 JZW add the PHINT data reading from *.cul for RICER
+C  08/09/2012 GH  Updated for cassava
+!  04/16/2013 CHP/KD Added SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -142,6 +147,11 @@ C
 !     ** Formats now include space (6X) for quality parameter between 
 !     variety name and ecotype name
 
+!     Generic SALUS simple crop models
+!     09/21/2009 CHP/KD
+      CASE ('SALUS')
+        READ (C360,'(A6,1X,A16,13X,A)',IOSTAT=ERRNUM) VARTY, VRNAME, 
+     &          PLAINTXT
 !     CROPGRO crops **
       CASE ('CRGRO')  
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,CSDVAR,
@@ -160,29 +170,28 @@ C
 !        IF (SDPRO  .LE. 0) CALL ERROR (ERRKEY,51,FILEG,LINVAR)
 !        IF (SDLIP  .LE. 0) CALL ERROR (ERRKEY,52,FILEG,LINVAR)
 
-!     CropSim: cassava, wheat, barley
+C-GH Remove cassava
+!     CropSim: wheat, barley
       CASE ('CSCRP')
 !       For now, CropSim will just have a text string for cultivar info
-!        READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, PLAINTXT
-!CASSAVA
-!@VAR#  VAR-NAME........  EXP#   ECO#  PPS1   P1L   P2L   P4L   P5L SR#WT  SRFR  LA1S  LAXS LAXND  LAFS LAFND LAWS PHINT LLIFA  STFR
-!DFAULT DEFAULT              . DFAULT     0    10    20    30   200  0.25  0.30   300  1900   100    30   150  200    24    10  0.35
 
 !WHEAT & BARLEY
 !@VAR#  VAR-NAME........  EXP#   ECO#  VREQ  PPS1    P8 G#WTS  GWTS SHWTS PHINT    P1    P2    P3    P4    P5    P6    P7  LA1S  LAFV  LAFR VBASE  VEFF  PPS2
 !DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0   0.1   0.5     0     0     0
 
-        IF (INDEX('WH,BA',CROP) > 0) THEN
           READ (C360,810,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
      &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, PHINT, 
      &      P1, P2, P3, P4, P5, P6, P7, 
      &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
 
-        ELSEIF (INDEX('CS',CROP) > 0) THEN
+C-GH  Add cassava model
+!     CASSAVA: cassava **
+      CASE ('CSCAS')
           READ (C360,820,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
-     &      LAXNO, LAFS, LAFNO, LAWS, PHINT, LLIFA, STFR, PLAINTXT
-        ENDIF
+     &      PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
+C-GH &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
+     &      SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
+     &      LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR, PLAINTXT
 
 !     Ceres-wheat: wheat, barley **
       CASE ('CSCER')
@@ -202,7 +211,6 @@ C
      &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
-
 !     Ceres Maize: maize, sweet corn **
       CASE ('MZCER','SWCER')
         READ (C360,'(A6,1X,A16,7X,A6,6F6.0)',IOSTAT=ERRNUM) 
@@ -224,7 +232,8 @@ C ** Use default values if inputs not available
 !     Ceres Sorghum **
       CASE ('SGCER')
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
+     &            P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
+C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
 C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !           Read optional PBASE and PSAT parameters
 !           If these parameters are non-zero, then optional 
@@ -242,12 +251,20 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Substor Potato **
       CASE ('PTSUB')
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &            G2,G3,G4,PD,P2,TC
+     &            G2,G3,PD,P2,TC
+!     &            G2,G3,G4,PD,P2,TC
 
 !     Ceres Rice **
       CASE ('RICER')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &            P1,P2R,P5,P2O,G1,G2,G3,G4
+     &            P1,P2R,P5,P2O,G1,G2,G3,G4, PHINT
+
+!     ORYZA Rice **
+!     Read name of OYRZA crop file
+      CASE ('RIORZ')
+        READ (C360,'(A6,1X,A16,7X,A80)',IOSTAT=ERRNUM) VARTY,VRNAME,
+     &            PLAINTXT
+        ECONO = '      '
 
 !     CaneGro: South African Sugarcane model **
       CASE ('SCCAN')
@@ -328,12 +345,12 @@ C-----------------------------------------------------------------------
   510 FORMAT (6X,'ERROR! Variety Selection must be an INTEGER value',/)
 
 ! 800 FORMAT (A6,1X,A16,1X,A6,15(F6.0))
-  800 FORMAT (A6,1X,A16,7X,A6,18F6.0)                     !11/8/07
+  800 FORMAT (A6,1X,A16,7X,A6,19F6.0)                     !11/8/07
 
-! 820 FORMAT (A6,1X,A16,1X,A6,1X,A)
-! 820 FORMAT (A6,1X,A16,7X,A6,18F6.0,A)                       !11/8/07
+
   810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010
-  820 FORMAT (A6,1X,A16,7X,A6,16F6.0,A)         !CSCRP        03/16/2010
+C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
+  820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
   850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A)
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07

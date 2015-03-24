@@ -179,7 +179,7 @@ C=======================================================================
       CLOUDS = WEATHER % CLOUDS
       CO2    = WEATHER % CO2
       DAYL   = WEATHER % DAYL 
-      TWILEN= WEATHER % TWILEN
+      TWILEN = WEATHER % TWILEN
       RAIN   = WEATHER % RAIN
       SRAD   = WEATHER % SRAD
       TAIRHR = WEATHER % TAIRHR
@@ -189,7 +189,7 @@ C=======================================================================
       WINDSP = WEATHER % WINDSP
 
 C-----------------------------------------------------------------------
-      CALL CSCROP (FILEIOIN, RUN, TN, RN, RNMODE,          !Command line
+      CALL CSCRP (FILEIOIN, RUN, TN, RN, RNMODE,          !Command line
      & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols
      & IDETS, IDETO, IDETG, IDETL, FROP,                   !Controls
      & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop

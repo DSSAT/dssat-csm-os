@@ -15,6 +15,8 @@ C  10/02/2002 CHP/WM Added bedwidth correction when PLME = 'B'
 C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  08/12/2003 CHP Added Walter Bowen's changes to GROLF from 1/2000
+C  08/23/2011 GH/JIL Added CO2 response to tuber growth
+!  04/01/2012 CHP Added two RUE parameters to new ecotype file
 C=======================================================================
 
       SUBROUTINE PT_GROSUB (DYNAMIC,
@@ -48,7 +50,7 @@ C-----------------------------------------------------------------------
       INTEGER STGDOY(20)
 
       REAL AGEFAC, ARVCHO, BIOMAS, CANNAA, CANWAA
-      REAL BWRATIO
+      REAL BWRATIO, RUE1, RUE2
       REAL CARBO, CNSD1, CNSD2, CO2
       REAL CUMDTT, DEVEFF, DDEADLF, DEADLF, DEADLN, DTT, ETGT
       REAL G2, G3, GRAINN, GRF, GROLF, GROPLNT, GRORT
@@ -72,9 +74,6 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
      &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
 
-!     Redundant with SAVE stmt earlier
-!      SAVE RVCHO
-
 !      DATA  LALWR, SLAN /270.,0./
       DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
 
@@ -85,8 +84,8 @@ C-----------------------------------------------------------------------
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       CALL PT_IPGRO(
-     &    FILEIO,                                         !Input
-     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP, SDWTPL)   !Output
+     &    FILEIO,                                                 !Input
+     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP, SDWTPL, RUE1, RUE2)!Output
 
       IF (PLME .EQ. 'B') THEN
         !Bed width ratio = Bed width / Row Spacing
@@ -314,11 +313,11 @@ C           SLFT = 0.0
       !
       PT_PAR = SRAD*0.5               ! PAR = SRAD*.02092
       IF (ISTAGE .LT. 2) THEN
-!         PCARB = 3.5*PT_PAR/PLANTS*(1.0 - EXP(-0.55*XLAI))
-         PCARB = 3.5*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+         !PCARB = 3.5*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+         PCARB = RUE1*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
        ELSE
-!         PCARB = 4.0*PT_PAR/PLANTS*(1.0 - EXP(-0.55*XLAI))
-         PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+         !PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+         PCARB = RUE2*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
       END IF
 
       IF (PLME .EQ. 'B') THEN                 !WM
@@ -451,8 +450,10 @@ C           SLFT = 0.0
           !
           ! Calculation of potential growth .. Set priorities for carbon
           !
-!          PTUBGR  = G3*ETGT/PLANTS
-          PTUBGR  = G3*ETGT/PLTPOP    !CHP
+!          PTUBGR  = G3*ETGT/PLTPOP    !CHP
+           PTUBGR  = G3 * PCO2 * ETGT/PLTPOP          !JIL   (Modified)
+          
+          
           IF (PLME .EQ. 'B') THEN                     !WM
             PTUBGR  = PTUBGR / BWRATIO                !WM
           ENDIF                                       !WM
@@ -644,8 +645,8 @@ C  08/27/2001 CHP Written
 C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
       SUBROUTINE PT_IPGRO(
-     &    FILEIO,                                         !Input
-     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP, SDWTPL)   !Output
+     &    FILEIO,                                                 !Input
+     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP, SDWTPL, RUE1, RUE2)!Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -653,23 +654,25 @@ C=======================================================================
                          ! parameters, hourly weather data.
       IMPLICIT NONE
 
-      INTEGER LUNIO, LUNCRP
+      INTEGER LUNIO, LUNCRP, LUNECO
       CHARACTER*1 PLME
       CHARACTER*1, PARAMETER :: BLANK = ' '
       CHARACTER*6, PARAMETER :: ERRKEY = 'GROSUB'
 
       CHARACTER*2   CROP
-      CHARACTER*4   ACRO(4)
-      CHARACTER*6   SECTION
-      CHARACTER*12  FILEC
+      CHARACTER*4   ACRO(4)  
+      CHARACTER*6   SECTION, ECONO, ECOTYP
+      CHARACTER*12  FILEC, FILEE
+      CHARACTER*16  ECONAM
       CHARACTER*30  FILEIO
-      CHARACTER*80  PATHCR
-      CHARACTER*92  FILECC
+      CHARACTER*80  PATHCR, PATHEC
+      CHARACTER*92  FILECC, FILEGC
       CHARACTER*180 CHAR
+      CHARACTER*255 C255
 
-      INTEGER ERR, FOUND, I, J, LINC, LNUM, PATHL
+      INTEGER ERR, FOUND, I, J, LINC, LNUM, PATHL, ISECT
 
-      REAL G2, G3, PD, PLTPOP, SDWTPL
+      REAL G2, G3, PD, PLTPOP, SDWTPL, RUE1, RUE2
       REAL CO2X(10), CO2Y(10)
       
 !      LOGICAL EOF
@@ -683,6 +686,9 @@ C=======================================================================
 !     Read file and path name for species file
       READ(LUNIO,'(6(/),15X,A12,1X,A80)', IOSTAT=ERR) FILEC, PATHCR
       LNUM = 7
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+      READ (LUNIO,105,IOSTAT=ERR) FILEE, PATHEC; LNUM = LNUM + 1
+  105 FORMAT(15X,A12,1X,A80)
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
 C    Read Crop Code from Cultivars Section
@@ -713,8 +719,10 @@ C     Read crop genetic information
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
         IF (INDEX ('PT',CROP) .GT. 0) THEN
-!CHP          READ (LUNIO,'(31X,F6.0,F6.1,6X,F6.1)', IOSTAT=ERR) G2, G3, PD
-          READ (LUNIO,'(31X,F6.0,F6.0,6X,F6.0)', IOSTAT=ERR) G2, G3, PD
+!         READ (LUNIO,'(31X,F6.0,F6.0,6X,F6.0)', IOSTAT=ERR) G2, G3, PD
+!         READ (LUNIO,'(31X,F6.0,F6.0,F6.0)', IOSTAT=ERR) G2, G3, PD
+          READ (LUNIO,'(24X,A6,1X,3F6.0)',IOSTAT=ERR) 
+     &          ECONO, G2, G3, PD
           LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF
@@ -758,6 +766,48 @@ C     Read Crop Parameters from FILEC
       END DO
 
   200 CLOSE (LUNCRP)
+C-----------------------------------------------------------------------
+C     Read ECO Parameters from FILEE
+C-----------------------------------------------------------------------
+C     Open FILEE Ecotype coefficients (.ECO File)
+C-----------------------------------------------------------------------
+        LNUM = 0
+        PATHL  = INDEX(PATHEC,BLANK)
+        IF (PATHL .LE. 1) THEN
+          FILEGC = FILEE
+        ELSE
+          FILEGC = PATHEC(1:(PATHL-1)) // FILEE
+        ENDIF
+
+C-----------------------------------------------------------------------
+C    Read Ecotype Parameter File
+C-----------------------------------------------------------------------
+!RUE1 - Radiation use efficiency, ISTAGE=1, g plant dry matter/MJ PAR
+!RUE2 - Radiation use efficiency, ISTAGE>1, g plant dry matter/MJ PAR
+C-----------------------------------------------------------------------
+        CALL GETLUN('FILEE', LUNECO)
+        OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEE,0)
+        ECOTYP = '      '
+        LNUM = 0
+        DO WHILE (ECOTYP .NE. ECONO)
+          CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+          IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &          C255(1:1) .NE. '*') THEN  
+            READ(C255,3100,IOSTAT=ERR) ECOTYP, ECONAM
+3100        FORMAT (A6,1X,A16)
+            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEE,LNUM)
+            IF (ECOTYP .EQ. ECONO) THEN
+              READ(C255(26:37),'(F5.0, 1X, F5.0)',IOSTAT=ERR) RUE1, RUE2
+              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEE,LNUM)
+              EXIT
+            ENDIF
+          ELSEIF (ISECT .EQ. 0) THEN
+            CALL ERROR(ERRKEY,7,FILEE,LNUM)
+          ENDIF
+        ENDDO
+
+        CLOSE (LUNECO)
 
 C-----------------------------------------------------------------------
       RETURN

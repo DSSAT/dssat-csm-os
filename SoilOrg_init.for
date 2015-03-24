@@ -164,11 +164,11 @@ C=======================================================================
 !     chp 5/13/08 temporarily remove -- this happens for a majority of files!
 !            IF (ICREN > 1.E-6) THEN
 !!             Check C:N ratios, limit to within 20% of expected values 
-!!             from RESCH045.SDA
+!!             from RESCH???.SDA
 !              ICREN = MAX(ICREN, 0.8 * SCN)
 !              ICREN = MIN(ICREN, 1.2 * SCN)
 !            ELSE
-!!             If no value specified, use ratio from RESCH045.SDA
+!!             If no value specified, use ratio from RESCH???.SDA
 !              ICREN = 40. / SCN
 !            ENDIF
             IF (ABS(ICREN - ICREN_file) > 1.E-3 .AND. MULTI < 2) THEN
@@ -186,7 +186,7 @@ C=======================================================================
      &          "  - Value changed to    ",":",ICREN,"%"
               WRITE(MSG(7),'(A)')
      &          "To change allowable N content, modify SCN parameter "
-              WRITE(MSG(8),'(A)')"  in RESCH045.SDA file."
+              WRITE(MSG(8),'(A)')"  in RESCH046.SDA file."
               CALL WARNING(8, ERRKEY, MSG) 
             ENDIF
           ENDIF
@@ -197,11 +197,11 @@ C=======================================================================
 !     chp 5/13/08 temporarily remove -- this happens for a majority of files!
 !            IF (ICREP > 1.E-6) THEN
 !!             Check C:P ratios, limit to within 20% of expected values 
-!!             from RESCH045.SDA
+!!             from RESCH???.SDA
 !              ICREP = MAX(ICREP, 0.8 * SCP)
 !              ICREP = MIN(ICREP, 1.2 * SCP)
 !            ELSE
-!!             If no value specified, use ratio from RESCH045.SDA
+!!             If no value specified, use ratio from RESCH???.SDA
 !              ICREP = 40. / SCP
 !            ENDIF
             IF (ABS(ICREP - ICREP_file) > 1.E-3 .AND. MULTI < 2) THEN
@@ -219,7 +219,7 @@ C=======================================================================
      &          "  - Value changed to    ",":",ICREP,"%"
               WRITE(MSG(7),'(A)')
      &          "To change allowable P content, modify SCP parameter "
-              WRITE(MSG(8),'(A)')"  in RESCH045.SDA file."
+              WRITE(MSG(8),'(A)')"  in RESCH046.SDA file."
               CALL WARNING(8, ERRKEY, MSG) 
             ENDIF
           ENDIF

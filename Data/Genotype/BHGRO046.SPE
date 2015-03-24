@@ -1,0 +1,136 @@
+*BAHIA SPECIES COEFICIENTS: CRGRO046 Model
+                                                                                                                                                                                                        
+!*PHOTOSYNTHESIS PARAMETERS                                                                                                                                                                                                                                                                                                      
+ 127.0 120.0  0.55                         PARMAX,PHTMAX,KCAN                                                             
+   5.0  1.40 .0105                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN                                                                                                                        
+!   1.2   4.0  10.0  10.0   QDR             FNPGN(4),TYPPGN-LF N EFFECT ON PG (revised values)
+   0.4   1.5  10.0  10.0   QDR             FNPGN(4),TYPPGN-LF N EFFECT ON PG (origina values)
+  8.00  26.0  35.0  45.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG
+   0.0  11.0  42.0  45.0  57.0  60.0       XLMAXT (6 VALUES)
+   0.0   0.0   1.0   1.0   0.0   0.0       YLMAXT (6 VALUES)
+  10.0  18.0  57.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG
+ .0541  0.20  0.80   2.0                   PGEFF SCV KDIF, LFANGB 11/5/02                                                                                                                               
+ .0035 .0002 .2000  3.00 1.440             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF 
+                                                                                                                                                                                                         
+   0.0  .001  .002  .003 .0035  .004  .005  .006  .008  .010  XPGSLW(1-10)
+  .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10) 
+                                                                                                                                                                                                        
+!*RESPIRATION PARAMETERS                                                                                                                                                                                
+     3.5E-04 .0029                      RES30C,R30C2                                                                                                                                                    
+ 2.556 2.556  .360  2.830               RNO3C,RNH4C,RPRO,RFIXN                                                                                                                                          
+ 1.242 3.106 2.174  .929  0.05  1.13    RCH20,RLIP,RLIG,ROA,RMIN,PCH2O                                                                                                                                  
+                                                                                                                                                                                                        
+!*PLANT COMPOSITION VALUES                                                                                                                                                                              
+  .150  .090  .050  .110  .070  .033   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF 
+  .101  .040  .022  .039  .039  .038   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF                                                                                                                        
+  .115  .115  .300  .015  .019  .800   SDPROS,SDPROG,PRONOD,PROMIN,PROMAX,THETA                                                                                                                         
+  .672  .697  .702  .251  .750  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO                                                                                                                        
+  .025  .020  .020  .011  .050         PLIPLF,PLIPST,PLIPRT,PLIPSH,PLIPNO                                                                                                                               
+  .040  .060  .070  .100  .030  .070   PLIGLF,PLIGST,PLIGRT,PLIGSH,PLIGSD,PLIGNO                                                                                                                        
+  .050  .050  .050  .040  .040  .050   POALF,POAST,POART,POASH,POASD,POANO                                                                                                                              
+  .063  .063  .057  .100  .030  .050   PMINLF,PMINST,PMINRT,PMINSH,PMINSD,PMINNO                                                                                                                        
+                                                                                                                                                                                                        
+!*SEED  COMPOSITION VALUES                                                                                                                                                                              
+ 7.168 23.65 0.908 0.430               LIPTB,LIPOPT,SLOSUM*100,CARMIN                                                                                                                                   
+                                                                                                                                                                                                        
+!*CARBON AND NITROGEN MINING PARAMETERS                                                                                                                                                                 
+ 0.025  0.75  .280  .080  0.30  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR 
+    PD                                 XPODF                                                                                                                                                            
+  0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH                                                                                                                                         
+                                                                                                                                                                                                        
+!*NITROGEN FIXATION PARAMETERS                                                                                                                                                                          
+  .050  .160  0.01   0.0  0.04  0.05   SNACTM,NODRGM,DWNODI,TTFIX,NDTHMX,CNODCR                                                                                                                         
+  7.00  28.0  35.0  44.0   LIN         FNNGT(4),TYPNGT-TEMP EFF ON NOD GROWTH                                                                                                                           
+  5.00  23.0  35.0  44.0   LIN         FNFXT(4),TYPFXT-TEMP EFF ON N FIX                                                                                                                                
+  -.15  0.20  1.00  10.0   LIN         FNFXD(4),TYPFXD-REL SW-DRY EFF ON N FIX                                                                                                                          
+  -.02  .001  1.00  2.00   LIN         FNFXW(4),TYPFXW-REL SW-WET EFF ON N FIX                                                                                                                          
+  0.00  0.10  1.00  0.00   INL         FNFXA(4),TYPFXA-AGE EFF ON N FIX                                                                                                                                 
+                                                                                                                                                                                                        
+!*VEGETATIVE PARTITIONING PARAMETERS                                                                                                                                                                    
+   0.0   1.5   2.0   3.0   5.0   7.0  30.0  40.0  XLEAF VALUES                                                                                                                                          
+  0.60  0.60  0.60  0.40  0.25  0.20  0.20  0.20  YLEAF VALUES 
+  0.10  0.10  0.10  0.10  0.05  0.05  0.05  0.05  YSTEM VALUES                                                                                                                                          
+  0.55  0.00  0.10  0.90  1.00        WTFSD,PORPT,FRSTMF,FRLFF,ATOP 
+  0.90                               FRLFMX      
+                                                                                                                                                                                                        
+!*LEAF GROWTH PARAMETERS                                                                                                                                                                                
+  144. 285.    2.0  0.0   00.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC 
+  350.  200. -.048  1.20               SLAMAX,SLAMIN,SLAPAR,TURSLA 
+   0.0   5.0  10.0  15.0  20.0  25.0  XVGROW(1-6), VSTAGE VALUES                                                                                                                                        
+   0.0  10.0  20.0  30.0  40.0  50.0  YVREF(1-6), LEAF AREA VALUES,CM2                                                                                                                                  
+ -50.0  00.0  10.0  30.0  60.0        XSLATM(1-5),TEMP VALUES                                                                                                                                           
+  0.00  0.00  0.25  1.00  1.0         YSLATM(1-5),EFFECT ON SLA                                                                                                                                         
+                                                                                                                                                                                                        
+                                                                                                                                                                                                        
+!*LEAF SENESCENCE FACTORS                                                                                                                                                                               
+  0.80  0.00  0.05 -25.0 -25.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2                                                                                                                                
+  0.01  35.0                       ICMP,TCMP(Light comp, time constant-senes) 
+                                                                                                                                                                                                          
+! .......XSTAGE.........  .......XSENMX.........                                                                                                                                                        
+   0.0   5.0   9.0  50.0   3.0   5.0  10.0  50.0   
+! .......SENPOR.........  .......SENMAX.........                                                                                                                                                        
+   0.0   0.0  0.12  0.12   0.0   0.2   0.6   0.6                                                                                                                                                        
+                                                                                                                                                                                                        
+!*ROOT PARAMETERS                                                                                                                                                                                       
+  20.0 5000. 0.030   0.1  0.02  1.00  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX 
+   0.0  2.50   3.0  2.50   6.0  2.50  30.0  2.50   XRTFAC,YRTFAC                                                                                                                                        
+ 0.006 0.006  0.02  0.10                    RTNO3,RTNH4,PORMIN,RTEXF    
+!  50.0                                      RTWTMIN - minimum root mass for senescence (g/m2)
+!"RTWTMIN" text required in cols 45-51 for min. rt. mass procedure.  
+! Otherwise, RTWTMIN defaults to zero.
+                                                                                                           
+!*SEED AND SHELL GROWTH PARAMETERS                                                                                                                                                                      
+  0.60   0.3  0.00  100.               SETMAX,SRMAX,RFLWAB,XMPAGE                                                                                                                                       
+  15.0   0.0   0.0                     DSWBAR,XFRMAX,SHLAG                                                                                                                                              
+  14.0  21.5  26.5  40.0   QDR         FNPDT(1-4),TYPPDT-TEMP EFFECT ON POD SET                                                                                                                         
+   6.0  21.0  23.5  41.0   QDR         FNSDT(1-4),TYPSDT-TEMP EFFECT ON SD GRWTH                                                                                                                        
+  0.00 10.00 20.00 26.00 32.00 60.00   XXFTEM(1-6),TEMPERATURES                                                                                                                                         
+  1.00  1.00  1.00  1.00  1.00  1.00   YXFTEM(1-6),REL CHG IN PARTIT                                                                                                                                    
+  0.00  0.50  1.00  1.00               XSWFAC(1-4)                                                                                                                                                      
+  0.00  1.00  1.00  1.00               YSWFAC(1-4)                                                                                                                                                      
+  0.00  0.01  0.25  1.00  1.00         XSWBAR(1-5),REL WATER TOPSOIL                                                                                                                                    
+  1.00  1.00  1.00  1.00  1.00         YSWBAR(1-5),EFFECT ON SEED ADDITION                                                                                                                              
+  0.00  0.50  0.75  1.00               XTRFAC(1-4),TURFAC                                                                                                                                               
+  0.00  0.00  0.00  0.00               YTRFAC(1-4),ENHANCE REPROD. GROWTH                                                                                                                               
+                                                                                                                                                                                                        
+!*POD LOSS PARAMETERS                                                                                                                                                                                   
+     N   6.0 .3961 -.865  1.00  0.00      DETACH,DWC,PR1DET,PR2DET,XP1DET,XP2DET                                                                                                                        
+                                                                                                                                                                                                        
+!*PHENOLOGY PARAMETERS                                                                                                                                                                                  
+!  TB   TO1   TO2    TM                I                                                                                                                                                                
+   9.0  32.0  40.0  45.0               1 VEGETATIVE DEVELOPMENT                                                                                                                                         
+  10.0  28.0  32.0  45.0               2 EARLY REPRODUCTIVE DEVELOPMENT                                                                                                                                 
+  10.0  28.0  32.0  45.0               3 LATE REPRODUCTIVE DEVELOPMENT                                                                                                                                  
+                                                                                                                                                                                                        
+!FOLLOWING LINE: STAGE; REF STAGE; PHOTOPERIOD FUNCTION; TEMPERATURE FUNCT;                                                                                                                             
+!POINTER TO VEGD(1) OR REPDA(2) OR REPDB(3) TEMP SENS; SENS TO WATER;N; AND P                                                                                                                           
+  1  1  NON  LIN  1 -0.50  0.00  0.00  PLANT(STG 1) TO EMERG(STG 2) PHASE                                                                                                                               
+  2  2  NON  LIN  1 -0.50  0.00  0.00  EMERG(STG 2) TO V1(STG 3) PHASE                                                                                                                                  
+  3  2  NON  LIN  1 -0.50  0.00  0.00  EMERG(STG 2) TO END JV(STG 4) PHASE                                                                                                                              
+  4  4  INL  LIN  1 -0.40  0.00  0.00  END JV(STG 4) TO FL IND(STG 5) PHASE                                                                                                                             
+  5  5  INL  LIN  1 -0.40  0.00  0.00  FL IND(STG 5) TO 1ST FL(STG 6) PHASE                                                                                                                             
+  6  6  INL  LIN  1 -0.50  0.00  0.00  1ST FL(STG 6) TO 1ST PEG(STG 7) PHASE                                                                                                                            
+  7  6  INL  LIN  2 -0.50  0.00  0.00  1ST FL(STG 6) TO 1ST POD(STG 8) PHASE                                                                                                                            
+  8  6  INL  LIN  2 -0.50  0.00  0.00  1ST FL(STG 6) TO 1ST SD(STG 9) PHASE                                                                                                                             
+  9  9  INL  LIN  3  0.30  0.00  0.00  1ST SD(STG 9) TO LST SD(STG 10) PHASE                                                                                                                            
+ 10  9  INL  LIN  3  0.30  0.00  0.00  1ST SD(STG 9) TO PH MAT(STG 11) PHASE                                                                                                                            
+ 11 11  NON  NON  1  0.00  0.00  0.00  PH MAT(STG 11) TO H-MAT(STG 12) PHASE                                                                                                                            
+ 12  6  INL  LIN  2 -0.70  0.00  0.00  1ST FL(STG 6) TO LST VST(STG 13) PHASE                                                                                                                           
+ 13  6  INL  LIN  2 -0.70  0.00  0.00  1ST FL(STG 6) TO LST LF(STG 14) PHASE                                                                                                                            
+                                                                                                                                                                                                        
+!*CANOPY HEIGHT AND WIDTH GROWTH PARAMETERS                                                                                                                                                             
+                                                                                                                                                                                                        
+! VSTAGE, FOLLOWED BY INTERNODE LENGTH PER NODE, THEN CANOPY WIDTH PER NODE                                                                                                                             
+  0.00  1.00  4.00  6.00  8.00 10.00 14.00 16.00 20.00 40.00  XVSHT(1-10)                                                                                                                               
+ .0150 .0265 .0315 .0330 .0345 .0330 .0310 .0255 .0170 .0030  YVSHT(1-10)                                                                                                                               
+ .0150 .0255 .0310 .0320 .0330 .0315 .0295 .0230 .0125 .0005  YVSWH(1-10)                                                                                                                               
+                                                                                                                                                                                                        
+ -50.0  00.0  15.0  30.0  60.0                       XHWTEM(1-5),TEMPERATURES                                                                                                                           
+  0.55  0.55  0.55  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN                                                                                                                         
+  0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES                                                                                                                             
+  4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN                                                                                                                         
+                                                            
+!*EVAPOTRANSPIRATION                                        
+  0.70   1.0       KEP, EORATIO                             
+                            
+

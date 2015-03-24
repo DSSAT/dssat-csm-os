@@ -69,7 +69,7 @@ C-----------------------------------------------------------------------
       REAL CN, DMOD, KTRANS, SALB, SLDP, SLPF, SWCON, TEMP, TOTAW, U
       REAL, DIMENSION(NL) :: ADCOEF, BD, CEC, CLAY, DLAYR, DS, DUL
       REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, SAND, SAT, SILT
-      REAL, DIMENSION(NL) :: SW, SWCN, TOTN, TotOrgN, WR
+      REAL, DIMENSION(NL) :: SW, SWCN, TOTN, TotOrgN, WCR, WR
 !     REAL, DIMENSION(NL) :: RGIMPF
       LOGICAL, DIMENSION(NL) :: COARSE
 
@@ -80,6 +80,11 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: EXTP, TOTP, ORGP, CACO, CACO3
       REAL, DIMENSION(NL) :: EXTAL, EXTFE, EXTMN, TOTBAS, PTERMA
       REAL, DIMENSION(NL) :: PTERMB, EXK, EXMG, EXNA, EXTS, SLEC, EXCA
+
+!     vanGenuchten parameters
+      REAL, DIMENSION(NL) :: alphaVG, mVG, nVG  !, MSkPa
+!     Brook & Corey model parameters
+      Double Precision, DIMENSION(NL) :: hb, lambda
 
 !     From soil analysis section 
 !     Stable organic C, read from 2nd tier soil data in INP file.
@@ -140,15 +145,16 @@ C-----------------------------------------------------------------------
 
 !     Izaurralde method
       INTEGER, PARAMETER :: METHOD = 2
-      REAL, DIMENSION(NL) :: BD_mineral
+      REAL, DIMENSION(NL) :: BD_calc, BD_calc_init  !, BD_mineral
 
       REAL CN_BASE
-      REAL, DIMENSION(NL) :: DS_BASE, SC_BASE    !, RG_BASE
+      REAL, DIMENSION(NL) :: BD_BASE, DL_BASE, DS_BASE, SAT_BASE,SC_BASE    !, RG_BASE
 
 !     Labels for soil layer depth info
       CHARACTER*8 LayerText(11)
 
-      LOGICAL PRINT_TODAY
+      LOGICAL PRINT_TODAY, VG_ok
+      REAL WCR_TEMP
 
 !     ---------------------------------------------------------------
 !     Composite variables
@@ -314,6 +320,27 @@ C-----------------------------------------------------------------------
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
       ENDDO
 
+!     Third tier soils data (van Genuchten parameters):
+      DO L = 1, NLAYR
+!       Need to read the blank line between soil tiers
+        IF (L == 1) THEN
+!         If number of layers = NL, need to read the blank line between soil tiers
+          READ(LUNIO,'(/,F6.0,A200)',IOSTAT=ERRNUM,ERR=1000) DS(L), CHAR
+        ELSE
+          READ(LUNIO,'(F6.0,A200)',IOSTAT=ERRNUM,ERR=1000) DS(L), CHAR
+        ENDIF
+        IF (ERRNUM .NE. 0) EXIT
+        IF (L .GT. 1) THEN
+          IF (DS(L) .LT. DS(L-1)) EXIT
+        ENDIF
+        LNUM = LNUM + 1
+
+        READ (CHAR,'(20(F6.0))',IOSTAT=ERRNUM,ERR=1000) 
+     &      alphaVG(L), mVG(L), nVG(L), WCR(L)
+        LNUM = LNUM + 1
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
+      ENDDO
+
 !-----------------------------------------------------------------------
 !     Find and read Initial Conditions section -- get initial inorganic
 !       N for calculation of total organic N.
@@ -328,8 +355,9 @@ C-----------------------------------------------------------------------
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
 
       DO L = 1, NLAYR
-        READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000) NH4(L),NO3(L)
-100     FORMAT (14X, 2 (1X, F5.1))
+
+        READ(LUNIO, 100, IOSTAT=ERRNUM,ERR=1000)SW(L), NH4(L),NO3(L)
+100     FORMAT (8X, 3 (1X, F5.1))
         LNUM = LNUM + 1
         IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
       ENDDO
@@ -738,7 +766,85 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
         ELSE
           TotOrgN(L) = -99.
         ENDIF
+
+!       Remove this ksat estimation 
+!       It causes problems when SAT and DUL are close. (KJB/JWJ - India workshop 2011)
+!!       Calculate Ksat (SWCN) if not provided
+!        IF (SWCN(L) < -1.E-6) THEN
+!!         Eqn. 10 from 
+!!         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
+!!           drainage model for more accurate soil water dynamics estimation. 
+!!           Soil Science 169(11):745-757.
+!          SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
+!        ENDIF
       ENDDO
+
+!-----------------------------------------------------------------------
+!     Compute vanGenuchten parameters which describe water retention curve
+!     Calculate all VG parameters if any one is missing
+      VG_OK  = .TRUE.
+      DO L = 1, NLAYR
+        IF (alphaVG(L) < -1.E-6) VG_OK = .FALSE.
+        IF (mVG(L)     < -90.)   VG_OK = .FALSE.   !Negative values OK
+        IF (nVG(L)     < -1.E-6) VG_OK = .FALSE.
+      ENDDO
+
+      NMSG = 2
+      DO L = 1, NLayr
+!       Brooks & Corey parameters
+	  call calBrokCryPara(TEXTURE(L), SAT(L), LL(L),    !Input
+     &     DUL(L),                                        !Input
+     +     wcr_temp, Hb(L), lambda(L))                 !output
+
+        IF (WCR(L) < -1.E-6) THEN
+!         Replace individual missing residual water content values.
+          WCR(L) = wcr_temp
+        ENDIF
+
+!!       Calculate Ksat (SWCN) if not provided
+!        IF (SWCN(L) <= -1.E-6) THEN 
+!!         Ksat calculation based on paper "Soil Water Characteristic Estimates 
+!!         by Texture and Organic Matter for Hydrologic Solutions" by K. E. Saxton 
+!!         and W. J. Rawls, Aug. 2006.
+!!         Ksat in cm/h
+!!         SWCN(L) = 1930. * ((SAT(L) - DUL(L))**(3.-Lambda(L)))/10.0
+!
+!!         Eqn. 10 from 
+!!         Suleiman, A.A., J.T. Ritchie. 2004. Modifications to the DSSAT vertical 
+!!           drainage model for more accurate soil water dynamics estimation. 
+!!           Soil Science 169(11):745-757.
+!          SWCN(L) = 75. * ((SAT(L) - DUL(L)) / DUL(L))**2. / 24. !cm/h
+!
+!          NMSG = NMSG + 1
+!          WRITE(MSG(NMSG),'(I5,F8.3,3F6.3)') 
+!     &        L, SWCN(L), LL(L), DUL(L), SAT(L)
+!        ENDIF
+
+        IF (.NOT. VG_OK) THEN
+!         van Genuchten parameters fit from known soil properties based on RETC code
+          CALL RETC_VG(TEXTURE(L), SWCN(L), LL(L), DUL(L),  !Input
+     &      SAT(L), wcr(L), Hb(L), lambda(L),               !Input
+     &      alphaVG(L), mVG(L), nVG(L))                     !Output
+        ENDIF
+      ENDDO
+
+      IF (NMsg > 2) THEN
+        MSG(1)='Ksat value(s) calculated from known soil parameters'
+        MSG(2)='Layer    KSat    LL   DUL   SAT'
+        CALL INFO(NMSG, ERRKEY, MSG)
+      ENDIF
+
+!     Write RETC info to info.out
+      MSG(1) = "Soil RETC parameters: "
+      MSG(2) = 
+     &  " LYR DS  SWCN   WCR    Hb Lambd  Alpha     m     n Texture"
+      DO L = 1, NLAYR
+        WRITE(MSG(2+L),'(I3,I4,F6.2,F6.3,F6.1, F6.3, 1x, 3F6.3, 1x,A)')
+     &      L, NINT(DS(L)), SWCN(L), wcr(L), Hb(L), lambda(L),
+     &      alphaVG(L),mVG(L), nVG(L), TEXTURE(L) 
+      ENDDO
+      NMSG = NLAYR + 2
+      CALL INFO(NMSG, "RETC", MSG)
 
 !-----------------------------------------------------------------------
       CALL SoilLayerText(DS, NLAYR,                       !Input
@@ -799,10 +905,17 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % EXNA   = EXNA
       SOILPROP % EXK    = EXK 
 
+      SOILPROP % alphaVG= alphaVG
+      SOILPROP % mVG    = mVG
+      SOILPROP % nVG    = nVG
+      SOILPROP % WCR    = WCR   !residual water content
+
       SOILPROP % SOILLAYERTYPE = SOILLAYERTYPE
       SOILPROP % LayerText     = LayerText
       SOILPROP % SLDESC        = SLDESC
       SOILPROP % TAXON         = TAXON
+
+      SOILPROP % COARSE = COARSE
 
       CALL PUT(SOILPROP)
 
@@ -851,7 +964,7 @@ C  tillage and rainfall kinetic energy
       NTIL = TILLVALS % NTIL
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
-     &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
+     &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
      &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
 
 !     Skip initialization for sequenced runs:
@@ -919,12 +1032,19 @@ C  tillage and rainfall kinetic energy
 !         (See conversion explanation below)
           SOM_PCT(L) = SomLit(L) * 1.E-5 / (BD(L) * DLAYR(L)) *100.
 
-!         For Izaurralde method, calculate initial mineral BD
-          BD_Mineral(L) =(100.-SOM_PCT(L))/(100./BD(L)-SOM_PCT(L)/0.224)
+!         This can result in negative BD_mineral for very high organic
+!           matter content.  
+!!         For Izaurralde method, calculate initial mineral BD
+!          BD_Mineral(L) =(100.-SOM_PCT(L))/(100./BD(L)-SOM_PCT(L)/0.224)
+
+!         Instead, calculate a BD_calc. Use the 
+!           change to BD_calc to scale BD, which was input by user.
+          BD_calc(L) = 100./(SOM_PCT(L)/0.224 + (100.-SOM_PCT(L))/2.65)
         ENDDO
 
 !       Set initial array
         SOM_PCT_init = SOM_PCT
+        BD_calc_init = BD_calc
 
 !       Print initial values
         Print_today = .TRUE.
@@ -982,50 +1102,26 @@ C  tillage and rainfall kinetic energy
 !           New base layer thickness and depths
             DLAYR_SOM(L) = DLAYR_INIT(L) + dDLAYR_SOM
 
-!            SELECT CASE(METHOD)
-!            CASE (1)
-!!           --------------------------------------------------------------
-!!           METHOD #1
-!!           --------------------------------------------------------------
-!!           -------------------------------------------------------
-!!           Changes to bulk density
-!            dBD_SOM = BD_INIT(L) * (DLAYR_INIT(L) / DLAYR_SOM(L) - 1.) +
-!     &               dSOM * 1.E-5 / DLAYR_SOM(L)
-!
-!            BD_SOM(L) = BD_INIT(L) + dBD_SOM
-!
-!!           -------------------------------------------------------
-!!           METHOD #2
-!!           -------------------------------------------------------
-!            CASE (2)
-!!           Based on Izaurralde, 2006
-
+!           -------------------------------------------------------
 !           Change SOM from kg/ha to percent
             SOM_PCT(L) = SomLit(L) * 1.E-5/(BD_SOM(L)*DLAYR_SOM(L))*100.
 
-            BD_SOM(L) = 100.0 / 
-     &        (SOM_PCT(L) / 0.224 + (100. - SOM_PCT(L)) / BD_mineral(L))
+!            BD_SOM(L) = 100.0 / 
+!     &        (SOM_PCT(L) / 0.224 + (100. - SOM_PCT(L)) / BD_mineral(L))
+!
+            BD_calc(L) = 100.0 / 
+     &        (SOM_PCT(L) / 0.224 + (100. - SOM_PCT(L)) / 2.65)
+
+            BD_SOM(L) = BD_calc(L) / BD_calc_init(L) * BD_init(L)
+
+!           Limit BD to realistic values
+!           BD_SOM(L) = MIN(BD_SOM(L), 1.8)
+!           BD_SOM(L) = MAX(BD_SOM(L), 0.25)
+            BD_SOM(L) = MIN(BD_SOM(L), BD_INIT(L)*1.2, 1.80) !Upper limit for BD_SOM
+            BD_SOM(L) = MAX(BD_SOM(L), BD_INIT(L)*0.8, 0.95) !Lower limit for BD_SOM
 
             dBD_SOM = BD_SOM(L) - BD_INIT(L)
 
-!!           -------------------------------------------------------
-!!           METHOD #3
-!!           -------------------------------------------------------
-!            CASE (3)
-!!           Iterative Based on Izaurralde, 2006
-!
-!            DO I = 1, 5
-!!             Change SOM from kg/ha to percent
-!              SOM_PCT(L) = SomLit(L)*1.E-5/(BD_SOM(L)*DLAYR_SOM(L))*100.
-!
-!              BD_SOM(L) = 100.0 / 
-!     &          (SOM_PCT(L) / 0.224 + (100. - SOM_PCT(L))/BD_mineral(L))
-!
-!              dBD_SOM = BD_SOM(L) - BD_INIT(L)
-!            ENDDO
-!
-!            END SELECT
-!!           -------------------------------------------------------
 !           -------------------------------------------------------
 !           Update DS
             IF (L == 1) THEN
@@ -1067,18 +1163,25 @@ C  tillage and rainfall kinetic energy
 !     Tillage effects applied to SOM modified values
       IF (INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0 .AND.
      &    YRDOY .EQ. TILLVALS % TILDATE) THEN
-        DS_BASE   = DS_SOM
+        BD_BASE   = BD_SOM
         CN_BASE   = CN_INIT
-!       RG_BASE = RGIF_INIT
-        SC_BASE = SWCN_INIT
+        DS_BASE   = DS_SOM
+!       RG_BASE   = RGIF_INIT
+        SAT_BASE  = SAT_INIT
+        SC_BASE   = SWCN_INIT
+        DL_BASE   = DLAYR_INIT
+
+        CRAIN = 0.0
+        LCRAIN = 0.0
 
 !       TillEvent computes the effects of today's tillage event
 !         on soil properties -- effects are applied in integr section.
         CALL TillEvent(CONTROL, 
-     &    BD, CN, DLAYR, DS, NLAYR,                       !Input
-     &    SAT, SWCN, SC_BASE, TILLVALS,                   !Input
+     &    BD, BD_BASE, CN, CN_BASE, DLAYR, DL_BASE,       !Input
+     &    DS, DS_BASE, SAT, SAT_BASE, SWCN, SC_BASE,      !Input
+     &    NLAYR, TILLVALS,                                !Input
      &    BD_TILLED, CN_TILLED, DL_TILLED,                !Output
-     &    DS_TILLED, SAT_TILLED, SC_TILLED)               !Output
+     &    DS_TILLED, SAT_TILLED, SC_TILLED)               !OutpuT
 
       ENDIF
 
@@ -1106,10 +1209,11 @@ C  tillage and rainfall kinetic energy
       ENDDO
 
 C     Calculate fraction of soil covered by canopy and residue.
-      CANCOV = 1.0 - EXP(-0.75 * XHLAI)
-      SOILCOV = CANCOV + MULCHCOVER * (1.0 - CANCOV)
+      !CANCOV = 1.0 - EXP(-0.75 * XHLAI)
+      !SOILCOV = CANCOV + MULCHCOVER * (1.0 - CANCOV)
+      SOILCOV = MULCHCOVER 
 
-      IF (INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0) THEN
+      IF ((INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0) .OR. TILLED) THEN
 
         TILDATE = TILLVALS % TILDATE
         TIL_IRR = TILLVALS % TIL_IRR
@@ -1295,7 +1399,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       IF (ISWWAT == 'N') RETURN
 
       CALL OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
-     &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
+     &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
      &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
 
 !***********************************************************************
@@ -1490,6 +1594,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       REAL, DIMENSION(NL) :: CACO3, EXTP, ORGP, PTERMA, PTERMB
       REAL, DIMENSION(NL) :: TOTP, TOTBAS, EXCA, EXK, EXNA
       REAL, DIMENSION(NL) :: SASC   !stable organic C
+      REAL, DIMENSION(NL) :: WCR, alphaVG, mVG, nVG
 
       REAL CN, SWCON
       REAL, DIMENSION(NL) :: ADCOEF, TOTN, TotOrgN, WR
@@ -1540,6 +1645,11 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       TOTN    = SOILPROP % TOTN   
       TotOrgN = SOILPROP % TotOrgN   
       WR      = SOILPROP % WR      !SHF
+      WCR     = SOILPROP % WCR     !residual water content
+
+      alphaVG = SOILPROP % alphaVG
+      mVG     = SOILPROP % mVG    
+      nVG     = SOILPROP % nVG    
 
       TOTP    = SOILPROP % TOTP  
       ORGP    = SOILPROP % ORGP  
@@ -1653,7 +1763,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !=======================================================================
 !     SUBROUTINE OPSOILDYN -- output dynamic soil properties
       SUBROUTINE OPSOILDYN(CONTROL, DYNAMIC, ISWITCH, 
-     &  BD, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT, 
+     &  BD, BD_SOM, CN, CRAIN, DLAYR, DUL, KECHGE, LL, PRINT_TODAY, SAT,
      &  SOILCOV, SUMKE, SWCN, TILLED, TOTAW)
 
       USE ModuleDefs
@@ -1668,7 +1778,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       LOGICAL FEXIST, PrintDyn
       LOGICAL Print_today, TILLED
       REAL CN, CRAIN, SOILCOV, SUMKE, TOTAW
-      REAL, DIMENSION(NL) :: BD, DLAYR, DUL, LL, SAT, SWCN
+      REAL, DIMENSION(NL) :: BD, BD_SOM, DLAYR, DUL, LL, SAT, SWCN
       REAL, DIMENSION(0:NL) :: KECHGE
 
 !***********************************************************************
@@ -1692,12 +1802,14 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
           WRITE(DLUN,'("*SOIL DYNAMICS OUTPUT FILE")')
         ENDIF
 
+       IF (INDEX('FQ',CONTROL%RNMODE) > 0 .AND. CONTROL%RUN /= 1)RETURN
         CALL HEADER(SEASINIT, DLUN, CONTROL % RUN)
         WRITE(DLUN,"(/,
      &     '@YEAR DOY   DAS   CRAIN  SOLCOV   SUMKE    ROCN   TOTAW',
      &  '  KECHG1  KECHG2  KECHG3  KECHG4',
      &  '  DLAYR1  DLAYR2  DLAYR3  DLAYR4',
      &  '     BD1     BD2     BD3     BD4',
+     &  '    BDS1    BDS2    BDS3    BDS4',
      &  '   SWCN1   SWCN2   SWCN3   SWCN4',
      &  '    SAT1    SAT2    SAT3    SAT4',
      &  '    DUL1    DUL2    DUL3    DUL4',
@@ -1714,16 +1826,17 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !-----------------------------------------------------------------------
       IF (PrintDyn .AND.                        !Print on AND
      &   (MOD(CONTROL%DAS,CONTROL%FROP) .EQ. 0  !(Every FROP days
-     &    .OR. TILLED                           !OR Tilled recently
+!    &    .OR. TILLED                           !OR Tilled recently
      &    .OR. Print_today)) THEN    !OR back to normal after tillage)
         CALL YR_DOY(CONTROL % YRDOY, YEAR, DOY) 
         WRITE(DLUN,'(1X,I4,1X,I3.3,1X,I5,
      &    F8.1,2F8.3,F8.1,F8.2,
-     &    4F8.3,4F8.2,4F8.3,4F8.3,4F8.2,8F8.5)') 
+     &    4F8.3,4F8.2,8F8.3,4F8.3,4F8.2,8F8.5)') 
      &    YEAR, DOY, CONTROL % DAS, CRAIN, SOILCOV, SUMKE, CN, TOTAW, 
      &    KECHGE(1),KECHGE(2),KECHGE(3),KECHGE(4),
      &    DLAYR (1), DLAYR(2), DLAYR(3), DLAYR(4),
      &    BD    (1),    BD(2),    BD(3),    BD(4),
+     &    BD_SOM(1),BD_SOM(2),BD_SOM(3),BD_SOM(4),
      &    SWCN  (1),  SWCN(2),  SWCN(3),  SWCN(4),
      &    SAT   (1),   SAT(2),   SAT(3),   SAT(4),
      &    DUL   (1),   DUL(2),   DUL(3),   DUL(4),

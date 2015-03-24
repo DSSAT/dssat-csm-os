@@ -59,29 +59,53 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Global CSM Version Number
       TYPE VersionType
         INTEGER :: Major = 4
-        INTEGER :: Minor = 5
-        INTEGER :: Model = 1
-        INTEGER :: Build = 14
+        INTEGER :: Minor = 6
+        INTEGER :: Model = 0
+        INTEGER :: Build = 28
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-Release  '
+      CHARACTER(len=10) :: VBranch = '-nwheat   '
 
 !     Version history:  
-!       4.5.1.14 chp 05/18/2011 More changes to CSCER, CSCRP; MDATE initialization
-!       4.5.1.13 chp 05/05/2011 More changes to CSCER (see file CSCER040.FOR)
-!       4.5.1.12 chp 05/04/2011 Revised format for CSCER species, ecotype files
-!                               Other changes to CSCER (see file CSCER040.FOR)
-!       4.5.1.11 chp 04/29/2011 ETPHOT P stress, P for peanut enabled
-!       4.5.1.10 chp 03/23/2011 Environmental summary for wheat, WH species change
-!       4.5.1.9  chp 02/23/2011 Environmental summary in Summary.OUT
-!       4.5.1.8  chp 02/14/2011 SLPF enabled for Canegro
-!       4.5.1.7  chp 02/10/2011 CSCER, CSCRP changes to species and ecotype files, LAH
-!       4.5.1.6  chp 02/01/2011 Deep fertilizer placement allowed
-!       4.5.1.5  chp 01/05/2011 CASUPRO - minor changes F.Royce
-!       4.5.1.4  chp 12/14/2010 Minor changes sorghum model - GH, Thailand workshop
-!       4.5.1.3  chp 11/19/2010 Branch added
-!       4.5.1.2  chp 10/22/2010 ICRISAT workshop modifications - part II
-!       4.5.1.1  chp 10/19/2010 ICRISAT workshop modifications
+!       4.6.0.29 chp 01/23/2014 Fixed bug in auto planting when IHARI = "R"
+!       4.6.0.28 chp 01/16/2014 Suppress screen output for VBOSE=zero.
+!       4.6.0.27 chp 01/12/2014 Added abiotic stresses to overview.out
+!       4.6.0.26 chp 12/22/2013 Fixed issue with tillage routine for crop rotations
+!       4.6.0.25 chp 12/03/2013 
+!       4.6.0.24 chp 08/30/2013 Add in Tony's code from email 6/11/2013
+!       4.6.0.23 chp 08/26/2013 EPIC Soil Temp added as option (METMP = "E")
+!       4.6.0.22 chp 08/18/2013 Bugfix - nitrification units conversion
+!       4.6.0.21 chp 05/25/2013 Fixed problem with crop-model compatibility check.
+!       4.6.0.20 gh  04/27/2013 Cassava module added.
+!       4.6.0.19 chp 04/19/2013 Salus generic crop model added.
+!       4.6.0.18 chp 10/25/2012 Sugarcane CO2 response to photosynthesis.
+!       4.6.0.17 chp 07/01/2012 Minor changes to match v4.5.2.1 release version.
+!       4.6.0.16 chp 04/06/2012 Rollback CSCER and CSCRP. ORYZA minor changes.
+!       4.6.0.15 chp 04/05/2012 Format changes for rice cultivar input
+!                    potato & rice models OK, 
+!                    need to rollback CSCER & CSCRP next build
+!       4.6.0.14 chp 03/14/2012  
+!                US  rice temperature responses, PHINT moved from SPE to CUL
+!                GH  ecotype file for potato, RUE1 & RUE2
+!                LAH revise CSCRP and CSCER
+!       4.6.0.13 chp 03/13/2012 CHP / TL Add ORYZA rice model, synch w/ 4.5.1.27
+!       4.6.0.12 chp 01/03/2012 JIL fix potato read stmts 
+!       4.6.0.11 chp 12/15/2011 JIL remove P4 from potato 
+!       4.6.0.10 chp 12/09/2011 Remove ksat estimation
+!       4.6.0.9  chp 12/08/2011 All codes changed to 046
+!       4.6.0.8  chp 11/17/2011 GFF version - equivalent to v4.5.1.22
+!       4.6.0.7  chp 11/10/2011 Revert to old drainage routines.
+!                               Denitrification rate for flooded field = 50% NO3/d
+!                               Fixed discontinuity in potential soil evap routine
+!       4.6.0.6  chp 10/29/2011 Modified CO2 effects to transpiration (SPAM, TRANS)
+!       4.6.0.5  chp 09/22/2011 Drainage modifications JTR
+!                               Enabled Canola
+!                               CO2 response for potato
+!       4.6.0.4  chp 08/30/2011 Sorghum changes GH, CSCER, CSCRP changes, LAH.
+!       4.6.0.3  chp 08/30/2011 Added vapor pressure as optional weather input.
+!       4.6.0.2  gh  06/29/2011 Sorghum cul file re-order.
+!       4.6.0.1  chp 06/28/2011 v4.6
+!                               Changes to CSCER, CSCRP, incl. spe, eco, cul formats
 !       4.5.1.0  chp 10/10/2010 V4.5 Release version
 !       4.0.2.0  chp 08/11/2005 Release
 !       4.0.1.0  chp 01/28/2004 Release Version 
@@ -99,8 +123,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
      &    EvaluateNum = 40, !Number of evaluation variables
-     &    MaxFiles = 100,    !Maximum number of output files
-     &    mxpart =  6       !Maximum number of plant parts (FSR Nwheat)
+     &    MaxFiles = 100    !Maximum number of output files
 
       INTEGER, PARAMETER :: 
          !Dynamic variable values
@@ -121,28 +144,8 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    P = 2,          !Phosphorus
      &    Kel = 3         !Potassium
 
-      INTEGER, PARAMETER :: 
-         !WHAPS wheat model, NWheat crop development stages:
-     &   emergence  = 1, ! Emergence to End of Juvenile
-     &   endjuv     = 2, ! End of Juvenile to End of Vegetative growth
-     &   endveg     = 3, ! End of Vegetative Growth to End of Ear growth
-     &   endear     = 4, ! End of Ear Growth to Start of Grain Filling
-     &   grnfil     = 5, ! Start of Grain Filling to Maturity
-     &   mature     = 6, ! Maturity
-     &   fallow     = 7, ! No crop present to Sowing
-     &   sowing     = 8, ! Sowing to Germination
-     &   germ       = 9, ! Germination to Emergence
-     &   root_part  = 1, !
-     &   leaf_part  = 2, !
-     &   lfsheath_part = 3, ! Plant parts, written to avoid conflict 
-     &   stem_part  = 4, ! with same part name in other DSSAT models
-     &   grain_part = 5, !
-     &   seed_part  = 6, !
-     &   photo_nw  = 1,  ! For designating swdef water-stress array
-     &   cellxp = 2,     ! For designating swdef water-stress array
-     &   tiller_nw = 3   ! For designating swdef water-stress array
-
       CHARACTER(LEN=1)  SLASH  
+      CHARACTER(LEN=3)  ModelVerTxt
       CHARACTER(LEN=12) DSSATPRO 
       CHARACTER(LEN=11) STDPATH 
       CHARACTER(LEN=6)  LIBRARY    !library required for system calls
@@ -180,6 +183,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) ISWPHO, ISWPOT, ISWSYM, ISWTIL, ISWWAT
         CHARACTER (len=1) MEEVP, MEHYD, MEINF, MELI, MEPHO
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
+        CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2
         INTEGER NSWI
       END TYPE SwitchType
@@ -200,7 +204,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Daily weather data.
         REAL CLOUDS, CO2, DAYL, PAR, RAIN, RHUM, SNDN, SNUP, SRAD, 
      &    TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
-     &    TMAX, TMIN, TWILEN, WINDSP
+     &    TMAX, TMIN, TWILEN, VAPR, WINDSP, VPDF, VPD_TRANSP
 
 !       Hourly weather data
         REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR
@@ -217,11 +221,20 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) TEXTURE(NL)
         CHARACTER (len=17) SOILLAYERTYPE(NL)
         CHARACTER*50 SLDESC, TAXON
+        
+        LOGICAL COARSE(NL)
+        
         REAL ALES, DMOD, SLPF         !DMOD was SLNF
         REAL CMSALB, MSALB, SWALB, SALB      !Albedo 
         REAL, DIMENSION(NL) :: BD, CEC, CLAY, DLAYR, DS, DUL
         REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL
         REAL, DIMENSION(NL) :: SAND, SAT, SILT, STONES, SWCN
+        
+      !Residual water content
+        REAL, DIMENSION(NL) :: WCR
+
+      !vanGenuchten parameters
+        REAL, DIMENSION(NL) :: alphaVG, mVG, nVG
 
       !Second tier soils data:
         REAL, DIMENSION(NL) :: CACO3, EXTP, ORGP, PTERMA, PTERMB
@@ -377,18 +390,22 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Set variables for current operating system
       IMPLICIT NONE
 
+      WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
+
       SELECT CASE (OPSYS)
       CASE ('WINDO','DOS  ')
 !       DOS, Windows
         SLASH = '\' 
-        DSSATPRO = 'DSSATPRO.V45'
-        STDPATH = 'C:\DSSAT45\'
+        DSSATPRO = 'DSSATPRO.V46'
+!       Note: Use DSSAT45 directory for now. 
+C-GH    Set to DSSAT46
+        STDPATH = 'C:\DSSAT4N\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
         SLASH = '/' 
-        DSSATPRO = 'DSSATPRO.L45'
-        STDPATH = './DSSAT45/'
+        DSSATPRO = 'DSSATPRO.L46'
+        STDPATH = '../DSSAT46/'
       END SELECT
 
       END SUBROUTINE SETOP
@@ -410,7 +427,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         LOGICAL BUNDED        
         INTEGER NBUND         
         REAL ABUND            
-        REAL PUDPERC, PERC    
+        REAL PUDPERC, PERC
+        REAL PLOWPAN    !Depth of puddling (m) (ORYZA)
 
         !From Paddy_Mgmt
         INTEGER YRDRY, YRWET  
@@ -485,6 +503,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE PlantType
         REAL CANHT, CANWH, DXR57, EXCESS,
      &    PLTPOP, RNITP, SLAAD, XPOD
+        REAL BIOMAS
         INTEGER NR5
       END TYPE PlantType
 
@@ -495,7 +514,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data transferred from Soil water routine
       Type WatType
-        REAL DRAIN, RUNOFF
+        REAL DRAIN, RUNOFF, SNOW
       End Type WatType
 
 !     Data transferred from Soil Inorganic Nitrogen routine
@@ -507,6 +526,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       Type OrgCType
         REAL TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2
         REAL TOMINSOM3, TNIMBSOM
+        REAL MULCHMASS
       End Type OrgCType
 
 !     Data from weather
@@ -547,6 +567,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &                  , GET_ISWITCH 
      &                  , GET_Output 
      &                  , GET_SOILPROP
+!     &                  , GET_Weather
      &                  , GET_Real 
      &                  , GET_Real_Array_NL
      &                  , GET_Integer
@@ -558,6 +579,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &                  , PUT_ISWITCH 
      &                  , PUT_Output 
      &                  , PUT_SOILPROP
+!     &                  , PUT_Weather
      &                  , PUT_Real 
      &                  , PUT_Real_Array_NL
      &                  , PUT_Integer
@@ -638,6 +660,24 @@ C             CHP Added TRTNUM to CONTROL variable.
       RETURN
       END SUBROUTINE PUT_SOILPROP
 
+!!----------------------------------------------------------------------
+!      SUBROUTINE GET_WEATHER(WEATHER_ARG)
+!!     Retrieves WEATHER variable as needed
+!      IMPLICIT NONE
+!      TYPE (WeathType) WEATHER_ARG
+!      WEATHER_ARG = SAVE_data % WEATHER
+!      RETURN
+!      END SUBROUTINE GET_WEATHER
+!
+!!----------------------------------------------------------------------
+!      SUBROUTINE PUT_WEATHER(WEATHER_ARG)
+!!     Stores WEATHER variable 
+!      IMPLICIT NONE
+!      TYPE (WeathType) WEATHER_ARG
+!      SAVE_data % WEATHER = WEATHER_ARG
+!      RETURN
+!      END SUBROUTINE PUT_WEATHER
+
 !----------------------------------------------------------------------
       Subroutine GET_Real(ModuleName, VarName, Value)
 !     Retrieves real variable from SAVE_data.  Variable must be
@@ -673,6 +713,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('PLANT')
         SELECT CASE (VarName)
+        Case ('BIOMAS'); Value = SAVE_data % PLANT % BIOMAS
         Case ('CANHT') ; Value = SAVE_data % PLANT % CANHT
         Case ('CANWH') ; Value = SAVE_data % PLANT % CANWH
         Case ('DXR57') ; Value = SAVE_data % PLANT % DXR57
@@ -710,6 +751,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('ORGC')
         SELECT CASE (VarName)
+        Case ('MULCHMASS');Value = SAVE_data % ORGC % MULCHMASS
         Case ('TOMINFOM'); Value = SAVE_data % ORGC % TOMINFOM
         Case ('TOMINSOM'); Value = SAVE_data % ORGC % TOMINSOM
         Case ('TOMINSOM1');Value = SAVE_data % ORGC % TOMINSOM1
@@ -783,6 +825,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('PLANT')
         SELECT CASE (VarName)
+        Case ('BIOMAS'); SAVE_data % PLANT % BIOMAS = Value
         Case ('CANHT');  SAVE_data % PLANT % CANHT  = Value
         Case ('CANWH');  SAVE_data % PLANT % CANWH  = Value
         Case ('DXR57');  SAVE_data % PLANT % DXR57  = Value
@@ -808,6 +851,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         SELECT CASE (VarName)
         Case ('DRAIN'); SAVE_data % WATER % DRAIN  = Value
         Case ('RUNOFF');SAVE_data % WATER % RUNOFF = Value
+        Case ('SNOW');  SAVE_data % WATER % SNOW   = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -820,6 +864,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       Case ('ORGC')
         SELECT CASE (VarName)
+        Case ('MULCHMASS');SAVE_data % ORGC % MULCHMASS = Value
         Case ('TOMINFOM'); SAVE_data % ORGC % TOMINFOM  = Value
         Case ('TOMINSOM'); SAVE_data % ORGC % TOMINSOM  = Value
         Case ('TOMINSOM1');SAVE_data % ORGC % TOMINSOM1 = Value

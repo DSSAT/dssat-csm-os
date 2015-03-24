@@ -1,228 +1,3 @@
-C======================================================================
-C  WH_ROOTGR, Subroutine
-C
-C  Computes Daily Root Growth and Distribution
-C----------------------------------------------------------------------
-C  Revision history
-C
-C  1. Written
-C  2  Modified by                           E. Alocilja & B. Baer 9-88
-C  3  Modified by                           T. Jou                4-89
-C  4. Header revision and minor changes             P.W.W.      2-8-93
-C  5. Added switch block, etc.                      P.W.W.      2-8-93
-C  6. Simplified the RLNEW calculation and slowed
-C     the growth of roots in deeper soils.   J.T.R. & B.D.B.    6-20-94
-C  7. Converted to modular routine                  W.D.B.      4-01-01
-C  8. Further modular changes                       W.D.B      12-01-01
-C----------------------------------------------------------------------
-C  Called by : WH_APSIM
-C
-C  Calls  : None
-C----------------------------------------------------------------------
-
-      SUBROUTINE WH_ROOTGR (CONTROL,ISWNIT,                       !C
-     &        CUMDEP,CUMDTT,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,    !I
-     %        LL,DUL,NO3,NH4,NLAYR,PLTPOP,PORMIN,RLWR,SAT,SDEPTH, !I
-     %        SHF,STGDOY,SW,SWFAC,YRDOY,                          !I
-     %        RTDEP,RLV)            
-
-
-C----------------------------------------------------------------------
-      USE ModuleDefs
-      IMPLICIT  NONE
-      SAVE
-
-      INTEGER     DYNAMIC     
-
-      REAL        CUMDEP     
-      REAL        CUMDTT      
-      REAL        DEPMAX      
-      REAL        DLAYR(NL)   
-      REAL        DTT    
-      REAL        DUL(NL)          
-      REAL        ESW(NL)     
-      REAL        GRORT       
-      INTEGER     ISTAGE      
-      CHARACTER   ISWNIT*1    
-      INTEGER     L           
-      INTEGER     L1          
-      REAL        LL(NL)      
-      REAL        NH4(NL)     
-      INTEGER     NLAYR       
-      REAL        NO3(NL)     
-      REAL        PLTPOP 
-	REAL        PORMIN     
-      REAL        RLDF(NL)    
-                              
-      REAL        RLNEW      
-      REAL        RLV(NL)    
-      REAL        RLWR       
-      REAL        RNFAC      
-                             
-      REAL        RNLF       
-                             
-      REAL        RTDEP 
-	REAL        RTEXF     
-	REAL        RTSURV
-      REAL        SDEPTH     
-      REAL        SHF(NL)    
-      INTEGER     STGDOY(20) 
-      REAL        SW(NL)     
-	REAL        SAT(NL)
-      REAL        SWDF       
-      REAL        SWEXF                       
-      REAL        SWFAC      
-      REAL        TRLDF      
-      INTEGER     YRDOY       
-
-!     The variable "CONTROL" is of type "ControlType".
-      TYPE (ControlType) CONTROL
-      
-      DYNAMIC = CONTROL % DYNAMIC
-
-C----------------------------------------------------------------------
-C            DYNAMIC = RUNINIT OR SEASINIT
-C----------------------------------------------------------------------
-      IF(DYNAMIC.EQ.RUNINIT.OR.DYNAMIC.EQ.SEASINIT) THEN
- 
-          DO L = 1, NL
-              RLV(L) = 0.0
-              ESW(L) = DUL(L)-LL(L)
-              RLDF(L) = 0.0
-          END DO
-          RTDEP = 0.0
-          RNLF  = 0.0
-          RNFAC = 0.0
-          RLNEW = 0.0
-
-C----------------------------------------------------------------------
-C             DYNAMIC = INTEGR
-C----------------------------------------------------------------------
-
-      ELSEIF(DYNAMIC.EQ.INTEGR) THEN
-          IF(ISTAGE.EQ.7.OR.ISTAGE.EQ.8) RTDEP  = SDEPTH             
-          IF(ISTAGE.EQ.9) RTDEP  = RTDEP + 0.15*DTT
-          
-
-          IF(YRDOY.EQ.STGDOY(9)) THEN
-              CUMDEP = 0.0
-              DO L = 1, NLAYR
-                  CUMDEP = CUMDEP + DLAYR(L)
-                  RLV(L) = 0.20*PLTPOP/DLAYR (L)
-                  IF (CUMDEP .GT. RTDEP) GO TO 100            ! Was EXIT
-              END DO
-
-  100         CONTINUE                                       ! Sun Fix
-              RLV(L) = RLV(L)*(1.0-(CUMDEP-RTDEP)/DLAYR(L))
-              L1 = L + 1
-              IF (L1 .LT. NLAYR) THEN
-                  DO L = L1, NLAYR
-                      RLV(L) = 0.0
-                  END DO
-              ENDIF
-          ENDIF
-
-
-      !----------------------------------------------------------------
-      !                   Grow Roots
-      !----------------------------------------------------------------
-
-          IF (GRORT.LE.0.0001) GOTO 999
-
-!The small differences between root length/weight ratios used in earlier
-!models were insignificant considering the uncertainty of the value
-!and the uncertainty of loss of assimilate by exudation and respiration.
-!A compromise value of 0.98 was choosen for all crops.
-
-          RLNEW  = GRORT * RLWR * PLTPOP   ! A compromise value -- JTR
-          CUMDEP = 0.0
-          RNFAC  = 1.0 
-          L      = 0
-
-          DO WHILE ((CUMDEP .LT. RTDEP) .AND. (L .LT. NLAYR))
-              L = L + 1
-              CUMDEP = CUMDEP + DLAYR(L)
-              IF (SW(L)-LL(L) .LT. 0.25*ESW(L)) THEN
-                  SWDF = 4.0*(SW(L)-LL(L))/ESW(L)
-                  IF (SWDF .LT. 0.0) THEN
-                      SWDF = 0.0
-                  ENDIF
-              ELSE
-                  SWDF = 1.0
-              ENDIF
-
-      !Made all crops so that RNFAC is constrained between 0.01 and 1.0;
-      !on page 94 of Jones & Kiniry book the minimum is 0.01. - WTB
-
-              IF (ISWNIT .NE. 'N') THEN
-                  RNFAC = 1.0 - (1.17*EXP(-0.15*(NO3(L)+NH4(L))))
-                  RNFAC = AMAX1 (RNFAC,0.01)
-              ENDIF
-
-              RLDF(L) = AMIN1(SWDF,RNFAC)*SHF(L)*DLAYR (L)
-          END DO
-
-          L1 = L
-
-!The following changes were made to simplify the code and make the model
-!more generic. It also takes into account some newer data provided by
-!Julio Dardenelli of Argentina.  For the first time the ceres model
-!restricts the rate of downward movement of roots with the soil property
-!-- root weighting factor -- to account for greater difficulty in growing
-!downward in hard soil. Changes made by JTR 6/16/94.
-
-
-c** wdb 10/22/03  
-          RTEXF = 0.1
-          SWEXF = 1.0
-          IF (SAT(L)-SW(L) .LT. PORMIN) THEN
-            SWEXF = (SAT(L) - SW(L)) / PORMIN
-            SWEXF = MIN(SWEXF, 1.0)
-          ENDIF
-
-          RTSURV = MIN(1.0,(1.-RTEXF*(1.-SWEXF)))
-
-c** wdb 10/22/03
-          IF (CUMDTT .LT. 275.0) THEN             ! JTR 6/17/94
-              RTDEP = RTDEP + DTT*0.1*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
-!              RTDEP = RTDEP + DTT*0.1*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF,satfac))
-          ELSE
-              RTDEP = RTDEP + DTT*0.2*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
-          ENDIF
-
-          RTDEP    = AMIN1 (RTDEP,DEPMAX)                            
-          RLDF(L1) = RLDF(L1)*(1.0-(CUMDEP-RTDEP)/DLAYR(L1))
-          TRLDF    = 0.0
-
-          DO  L = 1, L1
-              TRLDF = TRLDF + RLDF(L)
-          END DO
-
-          IF (TRLDF .GE. RLNEW*0.00001) THEN
-              RNLF = RLNEW/TRLDF
-              DO L = 1, L1
-                  RLV(L) = RLV(L) + RLDF(L)*RNLF/DLAYR(L)-0.005*RLV(L)
-                  !Round off to nearest 1/1000th place
-	            RLV(L) = RLV(L) * RTSURV
-                  RLV(L) = REAL(INT(RLV(L)*1000.))/1000.  
-                  RLV(L) = AMAX1 (RLV(L),0.0)
-                  RLV(L) = AMIN1 (RLV(L),4.0)
-              END DO
-          ENDIF
-
-
-C----------------------------------------------------------------------
-C                     DYNAMIC = OUTPUT
-C----------------------------------------------------------------------
-      ELSEIF(DYNAMIC.EQ.OUTPUT) THEN
-
-      ! {no procedures to date}
-
-      ENDIF !Dynamic loop
-
-999   CONTINUE
-      RETURN
-      END SUBROUTINE WH_ROOTGR
 C=======================================================================
 C  nwheats_set_adf, Subroutine  
 C    Returns 
@@ -241,7 +16,8 @@ C=======================================================================
      &    nlayr_nw, adf, afs)                                    !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs    
+      USE ModuleDefs
+      USE WH_module    
       IMPLICIT NONE
       SAVE
   
@@ -409,6 +185,7 @@ C=======================================================================
      &  pl_nit, plantwt, rtdep_nw)                               !Output
 !     ------------------------------------------------------------------
       USE ModuleDefs    
+      USE WH_module
       IMPLICIT NONE
       SAVE
   
@@ -633,6 +410,7 @@ C=======================================================================
      &  root_array)                                              !Output
 !     ------------------------------------------------------------------
       USE ModuleDefs
+      USE WH_module
       IMPLICIT NONE
       SAVE
   
@@ -714,13 +492,14 @@ C  Called by: nwheats_crppr,
 C  Calls to : nwheats_level (function), nheats_swafc (function),
 C             nwheats_rtdp_swf (function)
 C=======================================================================
-      SUBROUTINE nwheats_rtdp (CONTROL,
+      SUBROUTINE nwheats_rtdp (CONTROL, SOILPROP, 
      &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,      !Input
      &  lldep, nrlayr, p3af, rtdep_nw,                            !Input
      &  RTDEP, RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep, wr,    !Input
      &  rtdnew)                                                   !Output
 !     ------------------------------------------------------------------
       USE ModuleDefs
+      USE WH_module
       IMPLICIT NONE
       SAVE
   
@@ -760,7 +539,7 @@ C=======================================================================
       REAL swdef(10)
       real sw_factor   
       real wr(NL) ! root weighting by soil layer
-      real nem (9)
+      real nem(NL) ! nem (9) changed by JZW 
 
 
 *+  Initial Data Values
@@ -776,9 +555,11 @@ C=======================================================================
       data rtrate (sowing) / 0.0 /
 
       TYPE (ControlType) CONTROL
-      nem (1) = 0.869; nem(2)= 0.869; nem(3)=0.657 ; nem(4)=0.507;   
-      nem(5) = 0.333; nem(6)= 0.333; nem(7)= 0.333; nem(8) = 0.333;
-      nem(9) = 0.333
+      TYPE (SoilType) SOILPROP
+      ! nem (1) = 0.869; nem(2)= 0.869; nem(3)=0.657 ; nem(4)=0.507;   
+      ! nem(5) = 0.333; nem(6)= 0.333; nem(7)= 0.333; nem(8) = 0.333;
+      ! nem(9) = 0.333
+      nem = SOILPROP % WR 
 C----------------------------------------------------------------------
 C            DYNAMIC = RUNINIT OR SEASINIT
 C----------------------------------------------------------------------
@@ -890,6 +671,7 @@ cnh senthold
 !*!      optfr = min(stress_factor, sw_factor, nem(nrlayr))
          !  replace nem by wr
          !optfr = min(stress_factor, sw_factor)
+         !write(*,*)nrlayr, stress_factor, sw_factor, nem(nrlayr)
         
          optfr = min(stress_factor, sw_factor, nem(nrlayr))  ! remove nem() until 
                                                 ! further notice - FSR
@@ -936,6 +718,7 @@ C=======================================================================
      &  rlvnew)                                                   !Output
 !     ------------------------------------------------------------------
       USE ModuleDefs
+      USE WH_module
       IMPLICIT NONE
       SAVE
   
@@ -1012,7 +795,10 @@ C=======================================================================
 !**!  do L=1, NL
 !**!     wr(L) = 1.0
 !**!  enddo      
-
+          if (rtdep_nw .eq. 0.) then
+            write(*,*) "there will be divide zero in nwheats_rtlv" 
+            stop
+           endif
  
       if (stgdur(emergence).eq.1 .and. istage.eq.emergence) then
  
@@ -1023,6 +809,7 @@ C=======================================================================
         !   mm        mm        g           plant/m2
         !--------  = ----- * -------- * --------------
         !   mm3        g       plant      1000000 mm2/m2
+         
          do L = 1,nrlayr
             rldf(L) = wr(L)
 !*!  :                   * divide (dlayr(layer), rtdep, 0.0)
@@ -1069,7 +856,7 @@ cnh senthold
             continue
             ! Dec 12 Fred was not negative, but Jin get negative
          endif
- 
+          
             rldf(L) = wr(L) *optfr
 !*!  :                   *divide (dlayr_nw(L), rtdep, 0.0)
      &                   * dlayr_nw(L) / rtdep_nw
@@ -1088,6 +875,10 @@ cnh senthold
 !*!   rtdepl = bound (rtdepl, 0.0, dlayr_nw(nrlayr))  ! in case rtdep is out
       rtdepl = MAX (rtdepl, 0.0)
       rtdepl = MIN (rtdepl, dlayr_nw(nrlayr)) 
+      if (dlayr_nw(nrlayr) .eq. 0.) then
+            write(*,*) " divide zero in nwheats_rtlv" 
+            stop
+         endif
 !*!   rldf(nrlayr) = rldf(nrlayr)*divide (rtdepl, dlayr_nw(nrlayr), 0.0) 
       rldf(nrlayr) = rldf(nrlayr) * rtdepl / dlayr_nw(nrlayr)
  
@@ -1115,6 +906,10 @@ cnh senthold
       cumdep_nw = 0.0
       do L = 1,nrlayr
          cumdep_nw = cumdep_nw + dlayr_nw(L)
+         if ( (trldf_nw .eq. 0.) .or. (dlayr_nw(L) .eq. 0.)) then
+            write(*,*) " divide zero in nwheats_rtlv" 
+            stop
+         endif
 !*!      rlnew_layr = divide (rldf(L), trldf, 0.0) *rlnew
          rlnew_layr = (rldf(L) / trldf_nw) * rlnew_nw
 !*!      rlvnew(L) = divide (rlnew_layr, dlayr_nw(L), 0.0)

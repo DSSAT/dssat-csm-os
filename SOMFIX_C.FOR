@@ -1,7 +1,7 @@
 !***********************************************************************
 !  SOMFIX_C, subroutine for CENTURY-based SOM/residue module of DSSAT.
 !
-!  Purpose: This subroutine reads the input data from the SOMFX045.SDA
+!  Purpose: This subroutine reads the input data from the SOMFX???.SDA
 !           file.
 !
 !  Revision history:
@@ -48,7 +48,7 @@
       CHARACTER*30 FILEIO
       CHARACTER*80 PATHSD
       CHARACTER*92 SOMPF
-      CHARACTER*12, PARAMETER :: SOMFILE = 'SOMFX045.SDA'
+      CHARACTER*12 SOMFILE 
 
       INTEGER ERRNUM, I, LNUM, LUN, LUNIO, PFLAG
 
@@ -81,6 +81,8 @@
       LUNIO   = CONTROL % LUNIO
 
 !     ------------------------------------------------------------------
+        SOMFILE = 'SOMFX' // ModelVerTxt // '.SDA'
+
         SOMPF = SOMFILE
         INQUIRE (FILE = SOMPF, EXIST = FEXIST)
         IF (.NOT. FEXIST) THEN
@@ -570,7 +572,7 @@
 !      CHARACTER*6  ROUTIN
       CHARACTER*6, PARAMETER :: ERRKEY = 'SOMFIX'
       CHARACTER*12 EXPECT, NAME
-      CHARACTER*13, PARAMETER :: SOMFILE = 'SOMFX045.SDA'
+      CHARACTER*13, PARAMETER :: SOMFILE = 'SOMFX046.SDA'
       CHARACTER*78  MSG(4)
       INTEGER ERRNUM, LNUM
       INTEGER LEN

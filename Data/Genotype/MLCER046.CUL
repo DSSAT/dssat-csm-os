@@ -1,0 +1,59 @@
+*MILLET CULTIVAR COEFFICIENTS: GECER046 MODEL
+!
+! COEFF       DEFINITIONS
+! =========   ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code for this cultivar, points to the Ecotype in the
+!             ECO file (currently not used).
+! P1          Thermal time from seedling emergence to the end of the juvenile
+!             phase (expressed in degree days above a base temperature of 10øC)
+!             during which the plant is not responsive to changes in
+!             photoperiod.
+! P2O         Critical photoperiod or the longest day length (in hours) at
+!             which development occurs at a maximum rate. At values greater
+!             than P2O, the rate of development is reduced.
+! P2R         Extent to which phasic development leading to panicle
+!             initiation (expressed in degree days) is delayed for each hour
+!             increase in photoperiod above P2O.
+! P5          Thermal time (degree days above a base temperature of 10øC)
+!             from beginning of grain filling (3-4 days after flowering)
+!             to physiological maturity.
+! G1          Scaler for relative leaf size.
+! G4          Scaler for partitioning of assimilates to the panicle (head).
+! PHINT       Phylochron interval; the interval in thermal time (degree days)
+!             between successive leaf tip appearances.
+!
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1   P20   P2R    P5    G1    G4 PHINT
+!                                        1     2     3     4     5     6     7
+! The sample 3 varieties were estimated to give increasing days to maturity
+! moving from north to south
+!
+990001 NORTH VARIETY        . IB0001 120.0 12.00 125.0 360.0  2.00  0.50 43.00
+990002 MIDDLE VARIETY       . IB0001 140.0 12.00 150.0 500.0  2.00  0.50 43.00
+990003 SOUTH VARIETY        . IB0001 180.0 12.00 150.0 600.0  2.00  0.50 43.00
+!
+IB0033 BJ104                . IB0001 120.0 13.40 145.0 340.0  1.50  1.00 43.00
+IB0034 CZH-859              . IB0001 170.0 12.10 138.0 420.0  2.13  0.50 43.00
+IB0035 CZP-87               . IB0001 136.0 12.40 130.0 370.0  2.10  0.50 43.00
+IB0036 CZMP-2               . IB0001 135.0 12.60 140.0 370.0  2.00  0.50 43.00
+IB0037 MBH-110              . IB0001 140.0 12.50 148.0 365.0  2.12  0.50 43.00
+IB0038 RCB-2                . IB0001 136.0 12.10 135.0 365.0  2.14  0.50 43.00
+IB0039 CZP-78               . IB0001 136.0 12.10 125.0 362.0  2.00  0.50 43.00
+IB0040 CZP-85               . IB0001 142.0 12.30 130.0 380.0  2.15  0.50 43.00
+IB0041 WCC-75               . IB0001 160.0 12.00 142.0 422.0  2.10  0.50 43.00
+IB0042 CZP-84               . IB0001 138.0 12.20 128.0 360.0  2.30  0.50 43.00
+IB0043 CZH-83-J1            . IB0001 136.0 12.60 130.0 300.0  2.30  0.50 43.00
+!IB0044 CIVT                 . IB0001 120.0 12.00 142.0 590.0  1.00  0.60 43.00 ! Orig
+IB0044 CIVT                 . IB0001 100.0 12.00 142.0 390.0  1.00  0.60 43.00
+IB0045 59022A X 89-083      . IB0001 100.0 12.00  18.0 200.0  0.0  19.00 43.00  !CTS
+IB0046 1011A X 086R         . IB0001 100.0 12.00  35.0 120.0  0.0  17.00 43.00  !CTS
+IB0047 1361M X 6Rm          . IB0001 100.0 12.00  55.0 105.0  0.0  11.00 43.00  !CTS
+IB0048 Heini Kirey          . IB0001 396.0 12.00 470.0 140.0  0.50 11.80 43.00  !CTS
+IB0049 Zatib                . IB0001 309.0 12.00 410.0 108.0  0.50 13.00 43.00  !CTS
+IB0050 3/4HK                . IB0001 270.0 12.00 390.0 108.0  0.50 18.00 43.00  !CTS
+IB0149 Sadore-Local         . IB0001 170.0 12.00 150.0 450.0  1.00  0.55 43.00  !JWJ
+IM0015 SaniobaB             . IB0001 413.0 12.80 999.9 640.0   3.0   6.5 65.00  ! Jawoo
+IM0016 SaniobaB             . IB0001 413.0 12.80 999.9 640.0   3.0   6.5 65.00  ! Jawoo 
+

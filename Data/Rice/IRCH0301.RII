@@ -1,0 +1,17 @@
+*EXP. DATA (I): IRCH0301RI China
+
+@I    LAII    GSTI    LWAI    WSTI    RWAI    PWAI    RDPI    CHTI   CWIDI
+ 1 0.00005     0.0     0.0     0.0     0.0     0.0  0.0001
+ 2 0.00005     0.0     0.0     0.0     0.0     0.0  0.0001
+ 3 0.00005     0.0     0.0     0.0     0.0     0.0  0.0001
+
+
+! LAII = Initial leaf area per plant (m2 plant-1) (LAPE)
+! GSTI = Initial development stage (DVSI)
+! LWAI = Initial leaf weight (kg/ha)(WLVGI)
+! SWAI = Initial stem weight (kg/ha) (WSTI)
+! RWAI = Initial root weight (kg/ha) (WRTI)
+! PWAI = Initial weight storage organs (kg/ha) (WSOI)
+! RDPI = Initial root depth (m) (ZRTI)
+! CHTI = Initial canopy height m
+! CWIDI= Initial canopy width m

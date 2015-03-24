@@ -7,7 +7,7 @@ C  03/20/98 CHP Written based on assimilative damage calculations in
 C               PLANT subroutine.
 C  01/13/98 GH  Incorporated into CROPGRO
 C-----------------------------------------------------------------------
-C  Called by: PEST 
+C  Called by: PEST
 C  Calls:     None
 C=======================================================================
       SUBROUTINE ASMDM(

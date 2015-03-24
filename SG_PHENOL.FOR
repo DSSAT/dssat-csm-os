@@ -56,7 +56,7 @@ C      Variables passed through PHENOL to phasei but not used in phenol
      & PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
      & RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
      & STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
-     & TGROPAN, TGROSTM, TILN, TILSW, TLFWT, TLNO, TMNC,
+     & TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
      & TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
      & XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
      & DAYL, TWILEN, CANWAA, CANNAA,CUMP4)
@@ -114,7 +114,6 @@ C------------------------------------------------------------------------
       REAL TGROPAN
       REAL TGROSTM
       REAL TILN
-      REAL TILSW
       REAL TLFWT
       REAL TLNO
       REAL TMNC
@@ -379,7 +378,7 @@ C--------------------------------------------------------------------
      &    RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
      &    SIND, SLAN, STMWT, STOVN, STOVWT, SUMRTR, SWMAX, 
      &    SWMIN, TANC, TCARBO, TCNP, TDUR, TGROLF, TGROPAN,
-     &    TGROSTM, TILN, TILSW, TLFWT, TLNO, TMNC, TPANWT,
+     &    TGROSTM, TILN, TLFWT, TLNO, TMNC, TPANWT,
      &    TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
      &    VMNC, XNTI,P2O, P2R, TWILEN)
 
@@ -422,7 +421,7 @@ C--------------------------------------------------------------------
      &    RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
      &    SIND, SLAN, STMWT, STOVN, STOVWT, SUMRTR, SWMAX, 
      &    SWMIN, TANC, TCARBO, TCNP, TDUR, TGROLF, TGROPAN,
-     &    TGROSTM, TILN, TILSW, TLFWT, TLNO, TMNC, TPANWT,
+     &    TGROSTM, TILN, TLFWT, TLNO, TMNC, TPANWT,
      &    TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
      &    VMNC, XNTI, P2O, P2R, TWILEN)
 
@@ -469,7 +468,7 @@ C--------------------------------------------------------------------
      &    RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
      &    SIND, SLAN, STMWT, STOVN, STOVWT, SUMRTR, SWMAX, 
      &    SWMIN, TANC, TCARBO, TCNP, TDUR, TGROLF, TGROPAN,
-     &    TGROSTM, TILN, TILSW, TLFWT, TLNO, TMNC, TPANWT,
+     &    TGROSTM, TILN, TLFWT, TLNO, TMNC, TPANWT,
      &    TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
      &    VMNC, XNTI, P2O, P2R, TWILEN)
           RETURN
@@ -677,7 +676,7 @@ C--------------------------------------------------------------------
      &    RLV, ROOTN, RTDEP, RTWT, RWU, SDEPTH, SEEDRV, SENLA, 
      &    SIND, SLAN, STMWT, STOVN, STOVWT, SUMRTR, SWMAX, 
      &    SWMIN, TANC, TCARBO, TCNP, TDUR, TGROLF, TGROPAN,
-     &    TGROSTM, TILN, TILSW, TLFWT, TLNO, TMNC, TPANWT,
+     &    TGROSTM, TILN, TLFWT, TLNO, TMNC, TPANWT,
      &    TPSM, TSIZE, TSTMWT, SUMDTT, VANC,  
      &    VMNC, XNTI, P2O, P2R, TWILEN)
 

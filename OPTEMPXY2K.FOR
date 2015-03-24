@@ -18,6 +18,8 @@ C  02/22/2006 GH  Fix format for depth of chemical applications
 !  02/05/2007 CHP Reverse location of MESEV and METMP in FILEX
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2008 CHP Remove METMP
+C  08/09/2012 GH  Updated for cassava
+C  11/14/2012 GH  Add READWRITE for temp file
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           NYRS,VARNO,VRNAME,CROP,PATHMO,FROP,NREP,FILEIO
@@ -82,7 +84,8 @@ C=======================================================================
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      OPEN (LUNIO, FILE = FILEIOH,STATUS = 'UNKNOWN',IOSTAT=ERRNUM)
+      OPEN (LUNIO, FILE = FILEIOH,STATUS = 'UNKNOWN',IOSTAT=ERRNUM,
+     &      ACTION = 'READWRITE')
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIOH,0)
 C-----------------------------------------------------------------------
 C
@@ -153,11 +156,11 @@ C
 C-----------------------------------------------------------------------
       LABL = 'ME'
       WRITE(LUNIO,'("@N  METHODS     WTHER INCON LIGHT EVAPO INFIL",
-     & 1X,"PHOTO HYDRO NSWIT SOMDY MESEV MESOL")')
+     & 1X,"PHOTO HYDRO NSWIT SOMDY MESEV MESOL METMP")')
       WRITE (LUNIO,915,IOSTAT=ERRNUM) LNSIM,LABL,MEWTH,MESIC,
      &      MELI,MEEVP,MEINF,MEPHO,MEHYD,NSWITCH,MESOM, 
-     &      MESEV, MESOL
- 915  FORMAT(I3,1X,A2,9X,7(5X,A1),1X,I5,5(5X,A1),3(5X,A1))
+     &      MESEV, MESOL, METMP
+ 915  FORMAT(I3,1X,A2,9X,7(5X,A1),1X,I5,5(5X,A1),4(5X,A1))
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -263,7 +266,7 @@ C-----------------------------------------------------------------------
      &          5(1X,F5.1),1X,F5.2,1X,F5.1,A)
 
       CASE ('CSCRP')
-!       CSCRP Cassava,Wheat,Barley,etc..
+!       CSCRP Wheat,Barley
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
 
 !       Put text string back in 2/11/09
@@ -280,16 +283,18 @@ C-----------------------------------------------------------------------
   164     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
      &      F6.2, F6.1, F6.1, F6.2, F6.2, F6.2, 
      &      8F6.1, F6.2, F6.3, F6.2, F6.2, F6.2, F6.1, A)               
-
-        ELSEIF (INDEX('CS',CROP) > 0) THEN
+        ENDIF
+      CASE ('CSCAS')
+!       CSCAS Cassava
+        WRITE(LUNIO,'(A)') TRIM(ATLINE)
           WRITE (LUNIO,166,IOSTAT=ERRNUM) 
      &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
-     &      PPS1, P1L, P2L, P4L, P5L, SRNOW, SRFR, LA1S, LAXS, 
-     &      LAXNO, LAFS, LAFNO, LAWS, PHINT, LLIFA, STFR, TRIM(PLAINTXT)
+     &      PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
+     &      SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
+     &      LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR, TRIM(PLAINTXT)
   166     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &      4F6.1,F6.0,2F6.2,8F6.0,F6.2,A)
-        ENDIF
-
+     &      F6.2,6F6.1,2F6.2,3F6.1,F6.0,7F6.1,F6.2,A)
+C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2,A)
       CASE ('SCCAN')
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
         WRITE(LUNIO,170,IOSTAT=ERRNUM)

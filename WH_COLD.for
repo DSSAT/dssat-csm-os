@@ -29,10 +29,11 @@ C=======================================================================
      &    istage, leafno, PLTPOP,  VREQ, tbase,                   !Input
      &    tempcr, tiln, VSEN, weather,                            !Input
      &    YRDOY, !YRPLT, TMAX, TMIN,                              !Input
-     &    pl_la, plsc,                                      !Input/Outpt
+     &    pl_la, plsc,  Tthrshld, frostf, crownT, SNOWky,         !Input/Outpt
      &    nwheats_vfac, sen_la, vd, vd1, vd2)                     !Outpt
 C-----------------------------------------------------------------------
       USE ModuleDefs
+      USE WH_module
       IMPLICIT NONE
       SAVE
 C----------------------------------------------------------------------
@@ -47,6 +48,7 @@ C  FSR added coefficients from WHAPS cultivar file
       REAL        frost_fr
       REAL        frost_temp
       PARAMETER   (frost_temp = -6.0) ! from NWheat. Is this ecotype?
+      Real        Tthrshld, frostf, crownT
       REAL        GRNO
       REAL        hi     ! Hardening Index ??  (deduced from context)
       REAL        hti    ! Total Hardening Index ??
@@ -59,9 +61,11 @@ C  FSR added coefficients from WHAPS cultivar file
       REAL        plsc(20) !Plant leaf area array by phylochron interval
       REAL        PPSEN
       REAL        VREQ
+      REAL RAIN, WATAVL
       REAL        RGFI
       REAL        sen_la  !Senesced leaf area for plant (NWheat)
-      REAL        snow      
+      REAL        snow 
+      integer     SNOWky
       REAL        tbase
       REAL        temkil
       REAL        tempcr
@@ -98,7 +102,7 @@ C  FSR added coefficients from WHAPS cultivar file
       ISWWAT  = ISWITCH % ISWWAT
       TMAX    = WEATHER % TMAX
       TMIN    = WEATHER % TMIN
-
+      RAIN    = WEATHER % RAIN
 C-----------------------------------------------------------------------
 C      Initialize local variables
 !----------------------------------------------------------------------
@@ -112,6 +116,9 @@ C      Initialize local variables
             vd1          = 0.
             vd2          = 0.
             vfac         = 0.
+         IF (DYNAMIC.EQ.SEASINIT)  CALL SNOWFALL (SEASINIT,
+     &    TMAX, RAIN,                                     !Input
+     &    SNOW, WATAVL)                                   !Output
        ELSE    !  DYNAMIC = anything except RUNINIT OR SEASINIT? FSR
 
 !*!      DAP   = MAX(0,TIMDIF(YRPLT,YRDOY))
@@ -124,7 +131,7 @@ C-----------------------------------------------------------------------
      & then
  
          ! The cumulative vernalization has not reached the required
-         ! level of vernalization
+         ! level of vernalization 
 
  
          if (TMIN .lt. 15. .and. TMAX .gt. 0.0) then
@@ -218,21 +225,38 @@ C-----------------------------------------------------------------------
       if (istage .ge. emergence .and. istage .le. mature) then
         if (TMIN .lt. frost_temp) then
  !            snow = 0.0
- 
 cbak this next function appears to have a bug in it !!!!!!
 cbak temporarily replaced ..... i know the code is a mess !!!!!!!!!!
 cbak   note hardening is inoperative
  
 !            frost_fr = (0.020 * hi - 0.10) *
 !     :         (tempmn * 0.85 + tempmx*.15 + 10.0 + 0.25 * snow)
- 
-          if (TMIN .le. -5.0)  then
+          ! if (TMIN .le. -5.0)  then
+          if (SNOWky .eq. 1) then ! turn on snow effect switch 
+            if (TMIN .le. Tthrshld)  then 
             ! 10 % of leaf area frosted for every degree less
-            frost_fr = (0.0-TMIN - 5) * 0.10
-          else
+            !frost_fr = (0.0-TMIN - 5) * 0.10  !JZW changed in Apr, 2014
+               CALL SNOWFALL (RATE,
+     &         TMAX, RAIN,                                 !Input
+     &         SNOW, WATAVL)                               !Output
+               frost_fr = (0.020 * hi - 0.10) *
+     &                 (TMIN * 0.85 + TMAX *.15 + 10.0 + 0.25 * snow)  
+               write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
+     &             ", frost_fr", frost_fr
+            else 
             ! No frost today
-            frost_fr = 0
-          endif
+               frost_fr = 0.
+            endif
+          else ! turn off snow effect switch frostf will not be used??
+               !frost_fr = (0.0-TMIN - 5) * frostf !JZW changed in May, 2014
+            if (TMIN .le. -5.0)  then
+               !  ! 10 % of leaf area frosted for every degree less
+               frost_fr = (0.0-TMIN - 5) * 0.10
+            else
+               !  ! No frost today
+              frost_fr = 0.
+            endif
+           endif
  
 !*!         frost_fr = bound (frost_fr, 0.0, 0.96)
             frost_fr = MAX(frost_fr, 0.0)
@@ -292,13 +316,15 @@ C-----------------------------------------------------------------------
             if (temkil .gt. tempcr) then
                if (tiln .ge. 1.) then
                   tiln = tiln * (0.9 - 0.02 * (tempcr - temkil)**2)
+                  !tiln = tiln * (0.9 - crownT * (tempcr - temkil)**2)
             write (*,*) ' Killing tillers due to frost'
                else
                endif
  
                if (tiln .lt. 1.) then
             write (*,*) 'Killing tillers due to frost'
-                  PLTPOP = PLTPOP * (0.95 - 0.02 * (tempcr - temkil)**2)
+                 ! PLTPOP = PLTPOP * (0.95 - 0.02 * (tempcr - temkil)**2)
+                  PLTPOP = PLTPOP*(0.95 - crownT * (tempcr - temkil)**2)
                   tiln = 1.
                else
                endif
@@ -341,7 +367,7 @@ C-----------------------------------------------------------------------
        endif
 C-----------------------------------------------------------------------
       ENDIF
-      RETURN
+      RETURN ! JZW strong: when vfacac=1.007694,nwheats_vfac=1, but when return nwheats_vfac=1.007694??  
       END SUBROUTINE WH_COLD
 
 !*!      return

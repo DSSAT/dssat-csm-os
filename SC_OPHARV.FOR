@@ -94,7 +94,7 @@ c     The Canegro output type
       IDETO = ISWITCH % IDETO
       IPLTI = ISWITCH % IPLTI
 
-      ACOUNT = 12  !Number of possible FILEA headers for this crop
+      ACOUNT = 13  !Number of possible FILEA headers for this crop
 
 !     Define headings for observed data file (FILEA)
       DATA OLAB / !  Definition
@@ -110,7 +110,9 @@ c     The Canegro output type
      & 'EDAP  ', !10   Emergence dap
      & 'CWAM  ', !11   Aboveground biomass at maturity (kg/ha)
      & 'SDAH  ', !12   Dead stem weight at harvest (kg/ha)
-     & 28*'      '/  !28 labels of 40 not used for sugarcane
+c       MJ, Feb 2012 for AgMIP sequences:
+     & 'CFAH  ', ! 13  Stalk fresh mass at harvest (t/ha NOT kg/ha!)
+     & 27*'      '/  !27 labels of 40 not used for sugarcane
 
 !     chp 4/7/2009 added stage names so that developmental phases
 !       will be printed to Overview.OUT
@@ -364,6 +366,9 @@ c     Green Leaf area index at harvest
         WRITE(Simulated(9),'(F8.2)') L_SH; WRITE(Measured(9),'(A8)')X(9)
         WRITE(Simulated(10),'(I8)')  DNR_EMRG
                                          WRITE(Measured(10),'(A8)')X(10)
+c       MJ, Feb 2012: add fresh stalk mass at harvest to output file
+        WRITE(Simulated(13),'(F8.1)')  Part%STKWM
+                                         WRITE(Measured(10),'(A8)')X(11)
       ENDIF  
 
 

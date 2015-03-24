@@ -1,10 +1,9 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2011 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
-C                      University of Guelph, Guelph, Ontario
+C                      International Fertilizer Development Center
+C                      Universidad Politechnica de Madrid
+C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
@@ -18,9 +17,10 @@ C  08/29/2001 CHP Written for modular pototo model to be incorporated
 C                   into CROPGRO.
 C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
-!  12/17/2004 CHP Modified HRESCeres call for harvest residue
-!  08/17/2005 CHP Renamed to PT_SUBSTOR to accomodate TN, TR SUBSTOR
-!                 routines.
+C  12/17/2004 CHP Modified HRESCeres call for harvest residue
+C  08/17/2005 CHP Renamed to PT_SUBSTOR to accomodate TN, TR SUBSTOR
+C                 routines.
+C  08/23/2011 GH Added response to CO2 for tuber growth
 C=======================================================================
 
       SUBROUTINE PT_SUBSTOR(CONTROL, ISWITCH,

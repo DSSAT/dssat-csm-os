@@ -115,8 +115,7 @@ C=====================================================================
      & '  MEVAP',                                           !Outflows
      & '   DRND   ROFD   FROD   ESAD   EPAD   EFAD   TDFD', !Outflows
      & '    WBAL   CUMWBAL',                                !Balance
-     & '        TOTS    TOTU    TOTX    TOTT    TOTL
-     &     Drain1,   Evap1,   RootUK1')    !Changes to SW
+     & '        TOTS    TOTU    TOTX    TOTT    TOTL')    !Changes to SW
 
         CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
         WRITE (LUNWBL,1300) YEAR, DOY, DAS, 
@@ -201,15 +200,15 @@ C=====================================================================
      &    ,DRAIN, RUNOFF, FRUNOFF, ES, EP, EF, TDFD*10. !Outflows
      &    ,WBALAN, CUMWBAL                             !Balance
      &    ,SWDELTSTOT*10., SWDELTUTOT*10.,SWDELTXTOT*10., SWDELTTTOT*10.
-     &,SWDELTLTOT*10.,SWDELTS(1)*1000.,SWDELTU(1)*1000.,SWDELTX(1)*1000.
+     &    ,SWDELTLTOT*10.
 !1300   FORMAT(1X,I4,1X,I3.3,1X,I5,3F8.2, 12F7.2, F8.2, F10.2,4X,5F8.3)
  1300   FORMAT(1X,I4,1X,I3.3,1X,I5
      &      ,3F8.2,F7.2
      &      ,3F7.2
      &      ,8F7.2
      &      ,F8.2,F10.2 !Balances
-     &      ,4X,5F8.2,   !SWDELT's
-     &      4X, 5F8.2)
+     &      ,4X,5F8.2   !SWDELT's
+     &      )
 
         !Save values for comparison tomorrow
         TSWY   = TSW

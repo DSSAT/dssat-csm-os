@@ -119,18 +119,13 @@ C-----------------------------------------------------------------------
      &      '   EOAA   EOPA   EOSA',
      &      '   ETAA   EPAA   ESAA   EFAA   EMAA',
      &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
-!     &      '   SALB  SWALB  MSALB CMSALB',    
 
             IF (N_LYR < 10) THEN
               WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
   121         FORMAT(9("    ",A2,I1,A1), A8)
- !             WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR)
-  !121         FORMAT(9("    ",A2,I1,A1))
             ELSE
-              WRITE (LUN,122) ("ES",L,"D",L=1,9, "        ES10D   TRWU")
-              !  WRITE (LUN,122) ("ES",L,"D",L=1,9), "    ES10"
+              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
   122         FORMAT(9("    ",A2,I1,A1),A25)
-  !122         FORMAT(9("    ",A2,I1,A1),A8)
             ENDIF
           ELSE
             WRITE (LUN,120)
@@ -173,7 +168,9 @@ C-----------------------------------------------------------------------
       AVTMX  = AVTMX  + TMAX
       AVTMN  = AVTMN  + TMIN
       AVSRAD = AVSRAD + SRAD
-
+      if (YRDOY .EQ. 2012055) then
+        continue
+      endif
 !***********************************************************************
 !***********************************************************************
 !     Daily Output
@@ -221,7 +218,7 @@ C-----------------------------------------------------------------------
 !     &    ,4F7.2 ,10(F7.3))
           IF (ISWITCH % MESEV == 'S') THEN
             IF (SOILPROP % NLAYR < 11) THEN
-              WRITE(LUN,'(10F8.3), F8.3') ES_LYR(1:N_LYR) , TRWU
+              WRITE(LUN,'(11F8.3)') ES_LYR(1:N_LYR) , TRWU
             ELSE
               ES10 = 0.0
               DO L = 10, SOILPROP % NLAYR
@@ -339,7 +336,6 @@ C  07/11/96 GH  Set TRWU and RWU to 0 if EP = 0
 !  Called by: SPAM
 !  Calls:     None
 C=======================================================================
-!This file is copied from ORYZA project
       SUBROUTINE XTRACT(
      &    NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP, UH2O,    !Input
      &    EP, RWU,                                        !Input/Output
@@ -373,7 +369,7 @@ C=======================================================================
       IF (Tot_plant_RWU > 1.E-6) THEN
 !       Use root water uptake from plant routines
         TRWU = 0.0
-        DO L = 1, NLAYR
+        DO L = 1, NLAYR 
           RWU(L) = UH2O(L) / 10.
           SWTEMP(L) = SWTEMP(L) - RWU(L) / DLAYR(L)
           TRWU = TRWU + RWU(L)

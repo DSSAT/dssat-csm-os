@@ -1,13 +1,16 @@
 C=======================================================================
 C  PATH, Subroutine
 C
-C  Program to read the PATH from DSSATPRO.V45
+C  Program to read the PATH from DSSATPRO file
 C-----------------------------------------------------------------------
 C  Revision history
 C
 C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes
 C  09/17/2007 JIL Added codes for IXIM maize model
+C  08/09/2012 GH  Add codes for CSCAS cassava model
+!  04/16/2013 CHP/KD Added codes for SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -18,21 +21,6 @@ C-----------------------------------------------------------------------
 C  Called : SECLI SEWTH IPEXP
 C
 C  Calls  : ERROR
-C-----------------------------------------------------------------------
-C                         DEFINITIONS
-C
-C  BLANK  :
-C  PROCOD :
-C  ERRKEY :
-C  FILEPR :
-C  LINE   :
-C  PATHC  :
-C  LUNPR  :
-C  ERRNUM :
-C  PATHL  :
-C  I,K    :
-C  PFLAG  :
-C  FEXIST :
 C=======================================================================
 
       SUBROUTINE PATH (PROCOD,DSSATP,PATHC,PFLAG,NAMEF)
@@ -99,9 +87,9 @@ C-SUN       PATHC  = LINE(8:80)
 C=======================================================================
 C  PATHD, Subroutine
 C
-C  Program to read the PATH of DSSATPRO.V45
+C  Program to read the PATH of DSSATPRO file
 C    Assume in current directory first.
-C    If not in current directory, DSSATPRO.V45 is stored with the EXEs
+C    If not in current directory, DSSATPRO file is stored with the EXEs
 C-----------------------------------------------------------------------
 C  Revision history
 C
@@ -138,8 +126,6 @@ C=======================================================================
 
       LOGICAL      FEXIST
 
-!     PARAMETER (DSSATF = 'DSSATPRO.V45')
-
 !     DSSATP(1:12) = DSSATF
       DSSATP(1:12) = DSSATPRO
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
@@ -154,7 +140,6 @@ C=======================================================================
 
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
       IF (.NOT. FEXIST) THEN
-   !     DSSATP = "C:\DSSAT45\" // DSSATF
         DSSATP = STDPATH // TRIM(DSSATPRO)
       ENDIF
 
@@ -169,7 +154,7 @@ C=======================================================================
 C=======================================================================
 C  MODEL_NAME, Subroutine
 C
-C  Program to read the Module name from DSSATPRO.V45
+C  Program to read the Module name from DSSATPRO file
 C-----------------------------------------------------------------------
 C  Revision history
 C
@@ -177,6 +162,8 @@ C  02/21/2006 GH  Written
 !  10/25/2006 CHP Added CRMODEL, the model name from FILEX which will   
 !                   override MODEL from DSSATPRO, if valid.
 !  09/17/2007 JIL Added codes for IXIM maize model
+!  04/17/2013 CHP Added exception for crop-model matching for 
+!                   SALUS generic crop model
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -191,6 +178,7 @@ C=======================================================================
 
       SUBROUTINE MODEL_NAME (CROP, DSSATP, CRMODEL, MODEL)
 
+      USE ModuleDefs
       IMPLICIT     NONE
 
       CHARACTER*1   UPCASE
@@ -221,15 +209,8 @@ C=======================================================================
         DO I = 6,8
           J = ICHAR(CRMODEL(I:I))
           IF (J < 48 .OR. J > 57) THEN
-!!           Fill in model version from executable name
-!            CALL GETARG(0,PATHX,IPX)
-!            IF (PATHX(IPX-3:IPX-3) .EQ. '.') THEN
-!              MODELVER = PATHX((IPX-6):(IPX-4))
-!            ELSE
-!              MODELVER = PATHX((IPX-2):IPX)
-!            ENDIF
-!            CRMODEL(6:8) = MODELVER
-             CRMODEL(6:8) = '045'
+!            Fill in model version from executable name
+             CRMODEL(6:8) = ModelVerTxt
             EXIT
           ENDIF
         ENDDO
@@ -281,9 +262,6 @@ C=======================================================================
       ERRNUM = ValidModel(CROP, MODEL)
       IF (ERRNUM /= 0) CALL ERROR (ERRKEY,ERRNUM,DSSATP,0)
 
-!     CHP 5/13/2008
-!     MODEL(6:8) = '045'
-
       RETURN
       END SUBROUTINE MODEL_NAME
 
@@ -317,9 +295,11 @@ C=======================================================================
 
 !    Check for valid crop modeling approaches
       IF ((INDEX(MODEL(3:5),'CER') .EQ. 0) .AND.      !CERES
+     &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.      !ORYZA
      &    (INDEX(MODEL(3:5),'IXM') .EQ. 0) .AND.      !IXIM
      &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.      !CROPGRO
      &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.      !CROPSIM (Cereal)
+     &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.      !CSCAS (Cassava)
      &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.      !CROPSIM (Cassava)
      &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.      !SUBSTOR
      &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.      !CANEGRO
@@ -328,7 +308,8 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
      &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.      !APSIM N-wheat
-     &    (INDEX(MODEL(3:5),'OIL') .EQ. 0)) THEN      !OILCROP
+     &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.      !OILCROP
+     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)) THEN      !SALUS
 !       Invalid model = error 4
         ValidModel = 4 
         RETURN
@@ -336,7 +317,8 @@ C=======================================================================
 
 !     Check for valid crop modules
       IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND.    !Wheat and Barley
-     &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Cassava and wheat
+     &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Wheat and barley
+     &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND.    !Cassava
      &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat 
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton
@@ -344,13 +326,15 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND.    !Maize IXIM
      &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND.    !Millet
      &    (INDEX(MODEL(1:5),'PTSUB') .EQ. 0) .AND.    !Potato
-     &    (INDEX(MODEL(1:5),'RICER') .EQ. 0) .AND.    !Rice
+     &    (INDEX(MODEL(1:5),'RICER') .EQ. 0) .AND.    !CERES-Rice
+     &    (INDEX(MODEL(1:5),'RIORZ') .EQ. 0) .AND.    !ORYZA-Rice
      &    (INDEX(MODEL(1:5),'SGCER') .EQ. 0) .AND.    !Sorghum
      &    (INDEX(MODEL(1:5),'SCCSP') .EQ. 0) .AND.    !Sugarcane CASUPRO
      &    (INDEX(MODEL(1:5),'SCCAN') .EQ. 0) .AND.    !Sugarcane CaneGro
      &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND.    !Sweet corn
      &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND.    !Tanier
-     &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0)          !Taro
+     &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND.    !Taro
+     &    (INDEX(MODEL(1:5),'SALUS') .EQ. 0)          !Salus generic 
      &    ) THEN
 !       Invalid module name = error 5
         ValidModel = 5 
@@ -364,10 +348,17 @@ C=======================================================================
         FIRST = .FALSE.
       ENDIF
 
+!     Generic SALUS model can be used for any crop, 
+!       identified in cultivar data
+      IF (MODEL(1:5) == 'SALUS') THEN
+        ValidModel = 0
+        RETURN
+      ENDIF
+
       ValidModel = 7  !Assume crop does NOT match model
       DO I = 1, MaxNum
         IF (CropName(I) == CROP .AND. ModelName(I) == MODEL(1:5)) THEN
-!         Model matches crop -- return with no error
+!         Model matches crop -- return with no e  rror
           ValidModel = 0
           RETURN
         ENDIF
@@ -439,75 +430,75 @@ C-----------------------------------------------------------------------
 C    MODEL and CROP should be modified when model versions change
 C     or when a crop specific model is created.
 C
-C     GRO  - generic cropGRO model Version 4.50 (2006)
-C     CROP = BN for CROPGRO - DRY BEAN    Version 4.5 (2006)
-C     CROP = PN for CROPGRO - PEANUT      Version 4.5 (2006)
-C     CROP = SB for CROPGRO - SOYBEAN     Version 4.5 (2006)
-C     CROP = FA for CROPGRO - FALLOW      Version 4.5 (2006)
-C     CROP = TM for CROPGRO - TOMATO      Version 4.5 (2006)
-C     CROP = PR for CROPGRO - PEPPER      Version 4.5 (2006)
-C     CROP = PE for CROPGRO - PEA         Version 4.5 (2006)
-C     CROP = CH for CROPGRO - CHICKPEA    Version 4.5 (2006)
-C     CROP = PP for CROPGRO - PIGEONPEA   Version 4.5 (2006)
-C     CROP = VB for CROPGRO - VELVETBEAN  Version 4.5 (2006)
-C     CROP = CP for CROPGRO - COWPEA      Version 4.5 (2006)
-C     CROP = CB for CROPGRO - CABBAGE     Version 4.5 (2006)
-C     CROP = C3 for CROPGRO - C4 CROPS    Version 4.5 (2006)
-C     CROP = C4 for CROPGRO - C3 CROPS    Version 4.5 (2006)
-C     CROP = G0 for CROPGRO - BAHIA       Version 4.5 (2006)
-C     CROP = G1 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G2 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G3 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G4 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G5 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G6 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G7 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = G8 for CROPGRO - GRASSES     Version 4.5 (2006)
-C     CROP = BR for CROPGRO - Brachiaria
-C                               decumbens Version 4.5 (2006)
-C     CROP = FB for CROPGRO - FABA BEAN   Version 4.5 (2006)
-C     CROP = CO for CROPGRO - COTTON      Version 4.5 (2006)
-C     CROP = NP for CROPGRO - Napier grassVersion 4.5 (2006)
-C     CROP = GB for CROPGRO - Green Bean  Version 4.5 (2006)
-C     CROP = PE for CROPGRO - Pea         Version 4.5 (2006)
+C     GRO  - generic cropGRO model Version 4.60 (2006)
+C     CROP = BN for CROPGRO - DRY BEAN    Version 4.6 (2011)
+C     CROP = PN for CROPGRO - PEANUT      Version 4.6 (2011)
+C     CROP = SB for CROPGRO - SOYBEAN     Version 4.6 (2011)
+C     CROP = FA for CROPGRO - FALLOW      Version 4.6 (2011)
+C     CROP = TM for CROPGRO - TOMATO      Version 4.6 (2011)
+C     CROP = PR for CROPGRO - PEPPER      Version 4.6 (2011)
+C     CROP = PE for CROPGRO - PEA         Version 4.6 (2011)
+C     CROP = CH for CROPGRO - CHICKPEA    Version 4.6 (2011)
+C     CROP = PP for CROPGRO - PIGEONPEA   Version 4.6 (2011)
+C     CROP = VB for CROPGRO - VELVETBEAN  Version 4.6 (2011)
+C     CROP = CP for CROPGRO - COWPEA      Version 4.6 (2011)
+C     CROP = CB for CROPGRO - CABBAGE     Version 4.6 (2011)
+C     CROP = C3 for CROPGRO - C4 CROPS    Version 4.6 (2011)
+C     CROP = C4 for CROPGRO - C3 CROPS    Version 4.6 (2011)
+C     CROP = G0 for CROPGRO - BAHIA       Version 4.6 (2011)
+C     CROP = G1 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G2 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G3 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G4 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G5 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G6 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G7 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = G8 for CROPGRO - GRASSES     Version 4.6 (2011)
+C     CROP = BR for CROPGRO - Brachiaria                
+C                               decumbens Version 4.6 (2011)
+C     CROP = FB for CROPGRO - FABA BEAN   Version 4.6 (2011)
+C     CROP = CO for CROPGRO - COTTON      Version 4.6 (2011)
+C     CROP = NP for CROPGRO - Napier grassVersion 4.6 (2011)
+C     CROP = GB for CROPGRO - Green Bean  Version 4.6 (2011)
+C     CROP = PE for CROPGRO - Pea         Version 4.6 (2011)
+                                                         
+                                                         
 
 
-
-
-C     CROP = CT for CROPGRO - CITRUS      Version 4.5 (2006)
+C     CROP = CT for CROPGRO - CITRUS      Version 4.6 (2011)
 C
-C     CER  - generic CEReal model Version 4.5 (2006)
+C     CER  - generic CEReal model Version 4.6 (2011)
 C
-C     CROP = MZ for CERES - Maize   Version 4.5 (2006)
-C     CROP = WH for CERES - Wheat   Version 4.5 (2006)
-C     CROP = BA for CERES - Barley  Version 4.5 (2006)
-C     CROP = ML for CERES - Millet  Version 4.5 (2006)
-C     CROP = SG for CERES - Sorghum Version 4.5 (2006)
-C     CROP = RI for CERES - Rice    Version 4.5 (2006)
+C     CROP = MZ for CERES - Maize   Version 4.6 (2011)
+C     CROP = WH for CERES - Wheat   Version 4.6 (2011)
+C     CROP = BA for CERES - Barley  Version 4.6 (2011)
+C     CROP = ML for CERES - Millet  Version 4.6 (2011)
+C     CROP = SG for CERES - Sorghum Version 4.6 (2011)
+C     CROP = RI for CERES - Rice    Version 4.6 (2011)
 C
-C     SIM  - generic cropSIM model Version 4.5 (2006)
-C     CROP = CS for CROPSIM Cassava Version 4.5 (2006)
+C     SIM  - generic cropSIM model  Version 4.6 (2011)
+C     CROP = CS for CROPSIM Cassava Version 4.6 (2011)
 C
-C     SUB  - generic SUBstor model Version 4.5 (2006)
-C     CROP = PT for SUBSTOR Potato Version 4.5 (2006)
+C     SUB  - generic SUBstor model Version 4.6 (2011)
+C     CROP = PT for SUBSTOR Potato Version 4.6 (2011)
 C
-C     CAN  - CANegro model Version 4.5 (2006)
-C     CROP = SC for Sugarcane Version 4.5 (2006)
+C     CAN  - CANegro model    Version 4.6 (2011)
+C     CROP = SC for Sugarcane Version 4.6 (2011)
 C
-C     OIL  - OILcrop model Version 4.5 (98.0)
-C     CROP = SU for Sunflower Version 4.5 (2006)
+C     OIL  - OILcrop model    Version 4.6 (2011)
+C     CROP = SU for Sunflower Version 4.6 (2011)
 C
-C     ALO  - ALOha model Version 4.5 (2006)
-C     CROP = PI for Pineapple Version 4.5 (2006)
+C     ALO  - ALOha model      Version 4.6 (2011)
+C     CROP = PI for Pineapple Version 4.6 (2011)
 C
-C     ARO  - AROid model Version 4.5 (2006)
-C     CROP = TR for Taro Version 4.5 (2006)
-C     CROP = TN for Tanier Version 4.5 (2006)
+C     ARO  - AROid model   Version 4.6 (2011)
+C     CROP = TR for Taro   Version 4.6 (2011)
+C     CROP = TN for Tanier Version 4.6 (2011)
 C
-C     COT  - COTton model Version 4.5 (2006)
-C     CROP = CO for Cotton Version 4.5 (2006)
+C     COT  - COTton model  Version 4.6 (2011)
+C     CROP = CO for Cotton Version 4.6 (2011)
 C
-C     CSP  - CaSuPro Cane and Sucrose Production ModelVersion 4.5 (2006)
-C     CROP = SC for CROPSIM Cassava Version 4.5 (2006)
+C     CSP  - CaSuPro Cane and Sucrose Production ModelVersion 4.6 (2011)
+C     CROP = SC for CROPSIM Cassava Version 4.6 (2011)
 C
 C-----------------------------------------------------------------------

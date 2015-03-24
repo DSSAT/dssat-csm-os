@@ -243,7 +243,7 @@
 !           done above, because this is relatively stable. Then give
 !           soil SOM1E a fraction of the remaining SSOME in accordance
 !           with its carbon share, and limit its C/E ratio to the
-!           maximum and minimum ratios specified in SOMFX045.SDA. The
+!           maximum and minimum ratios specified in SOMFX???.SDA. The
 !           rest of the E goes to SOM2E.
           
 !           Total SOM N available based on TotOrgN:
@@ -733,7 +733,7 @@
       REAL, DIMENSION(NL) :: SASC, SILT, SOM_TOT
 
       LOGICAL DONE
-      CHARACTER*12, PARAMETER :: SOMFILE = 'SOMFR045.SDA'
+      CHARACTER*12, PARAMETER :: SOMFILE = 'SOMFR046.SDA'
 
 !     ------------------------------------------------------------------
       DS      = SOILPROP % DS
@@ -817,7 +817,7 @@
 
         INQUIRE(FILE = SOMPF, EXIST = FEXIST)
         IF (FEXIST) THEN
-!         Open the SOMFR045.SDA file to read the fractions of SOM3C
+!         Open the SOMFR???.SDA file to read the fractions of SOM3C
           CALL GETLUN('FINPUT', LUN)
           LNUM = 0
           OPEN (UNIT = LUN, FILE = SOMPF, STATUS = 'OLD', IOSTAT=ERRNUM)
@@ -917,17 +917,22 @@
 !           Use field history and duration
             DO I = 1, NTEX
               IF (TEXTURE(L) == TEX(I)) THEN
-                IF (DS(L) < 20.) THEN
+                IF (DS(L) <= 20.) THEN
 !                 Entire layer < 20 cm
                   SOM3FRAC(L) = S3A(I)
                 ELSE
-                  IF (DS(L-1) < 20.) THEN
-!                   Layer divided 0-20 and 20-40 cm
-                    SOM3FRAC(L) = (S3A(I) * (20. - DS(L-1)) + 
-     &                      S3B(I) * (DS(L) - 20.)) / DLAYR(L)
+                  IF(L > 1) THEN
+                    IF (DS(L-1) < 20.) THEN
+!                     Layer divided 0-20 and 20-40 cm
+                      SOM3FRAC(L) = (S3A(I) * (20. - DS(L-1)) + 
+     &                        S3B(I) * (DS(L) - 20.)) / DLAYR(L)
+                    ELSE
+!                     Entire layer in 20-40 cm
+                      SOM3FRAC(L) = S3B(I)
+                    ENDIF
                   ELSE
-!                   Entire layer in 20-40 cm
-                    SOM3FRAC(L) = S3B(I)
+                      SOM3FRAC(L) = (S3A(I) * 20. + 
+     &                        S3B(I) * (DS(L) - 20.)) / DLAYR(L)
                   ENDIF
                 ENDIF   
                 EXIT  !Found values for this layer, go on to next layer

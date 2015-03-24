@@ -25,12 +25,11 @@
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                                   !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs 
+      USE WH_module
       IMPLICIT NONE
       SAVE
 
@@ -52,7 +51,7 @@
       INTEGER TRT_ROT
       INTEGER STGDOY(20)
       
-      REAL AGEFAC, APTNUP, BWAH, BWAM, CANNAA, CANWAA
+      REAL AGEFAC, APTNUP, BWAH, BWAM, CANNAA, CANWAA, PLTPOP
       REAL GNUP, GPP, GPSM, HI, StovSenes
       REAL MAXLAI, NSTRES, PBIOMS, PODWT, PSDWT
       REAL Pstres1, Pstres2   
@@ -469,7 +468,7 @@
 ! BWAH multiplied by 10.0 in OPSUM - divide by 10. here to preserve units.
       LABEL(7)  = 'BWAH'; VALUE(7)  = BWAH / 10. 
       LABEL(8)  = 'HWUM'; VALUE(8)  = PSDWT       !*1000.
-      LABEL(9)  = 'H#AM'; VALUE(9)  = SEEDNO
+      LABEL(9)  = 'H#AM'; VALUE(9)  = SEEDNO * PLTPOP
       LABEL(10) = 'H#UM'; VALUE(10) = GPP
       LABEL(11) = 'NFXM'; VALUE(11) = 0.0         !WTNFX*10.
       LABEL(12) = 'NUCM'; VALUE(12) = WTNUP*10.

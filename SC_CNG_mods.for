@@ -97,6 +97,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
               REAL CSD1
               REAL CSD2
               REAL CUMDEP
+              REAL CWSI
               REAL DRAIN
               REAL EO
 c             Added by MJ, 20070323
@@ -141,6 +142,7 @@ c     :::::::::::::::::::::
               REAL    CANHEIGHT
 c             Should the ratoon be carried over?
               LOGICAL CARRY_OVER
+              REAL CWSI
 c              REAL    DEDLFN(30)
               REAL    DEDLFN(MAX_TILLER_COHORTS)
               REAL    DEDSTK

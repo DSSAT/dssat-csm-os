@@ -1,0 +1,13 @@
+*RICE GENOTYPE COEFFICIENTS: RIORZ045 MODEL
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar.
+! VAR-NAME    Name of cultivar.
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ORYZA file name = name of ORYZA2000 crop file
+!
+@VAR#  VAR-NAME........ EXPNO ORYZA file name
+IB0118 IR 72                . IR72.CRP
+IB0300 Han Dao 297          . HD297.CRP
+IB6001 2You501              . 2You501.CRP

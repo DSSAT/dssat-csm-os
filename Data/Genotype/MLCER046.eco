@@ -1,0 +1,16 @@
+*MILLET ECOTYPE COEFFICIENTS: GECER046 MODEL
+
+!                                1     2     4     5     7     8     9    10    11    12    13    14    15    16    17    18    19
+@ECO#  ECONAME.........  TBASE TOPT  ROPT  DJTI  GDDE   RUE  KCAN
+IB0001 GENERIC            10.0 34.0  34.0  68.0   6.0   4.0  0.85
+DFAULT DEFAULT            10.0 34.0  34.0  68.0   6.0   4.0  0.85
+
+
+!TBASE - base temperature below which no development occurs, C
+!TOPT - temperature at which maximum development rate occurs during vegetative stages, C
+!ROPT - temperature at which maximum development rate occurs for reproductive stages, C
+!DJTI - Minimum days from end of juvenile stage to tassel initiation if the cultivar
+!	       is not photoperiod sensitive, days
+!GDDE - Growing degree days per cm seed depth required for emergence, GDD/cm
+!RUE - Radiation use efficiency, g plant dry matter/MJ PAR
+!KCAN - Canopy light extinction coefficient for daily PAR.

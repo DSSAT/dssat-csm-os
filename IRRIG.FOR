@@ -24,7 +24,9 @@ C  10/28/2004 CHP Fixed problem with multiple applications on same day.
 !  06/06/2006 CHP Export TIL_IRR, the irrigation amount which affects 
 !                 soil dynamics (excludes drip irrigation).
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
-
+!  04/18/2013 CHP Added error checking for irrigation amount. It is 
+!                   operation-specific, so checking was removed from 
+!                   input module.
 C-----------------------------------------------------------------------
 C  Called by: WATBAL
 C  Calls  : None
@@ -52,7 +54,7 @@ C=======================================================================
 
       INTEGER AIRRCOD, DAP, DYNAMIC, ERRNUM, FOUND, I, IDATE
       INTEGER LUNIO, LINC, LNUM
-      INTEGER MULTI, NAP, NAPW, JIRR, NLAYR, NTBL
+      INTEGER MULTI, NAP, NAPW, JIRR, NLAYR, NTBL, NMSG
       INTEGER YR, MDATE, RUN, YRDOY, YRPLT, YRSIM, TIMDIF
       INTEGER YRDIF
       INTEGER, DIMENSION(NAPPL) :: IDLAPL, IRRCOD
@@ -70,7 +72,7 @@ C=======================================================================
       INTEGER IBDAT(NAPPL), IIRRCV(NAPPL), IPDAT(NAPPL) !, IIRRP(100)
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
-      REAL RAIN, IRRAPL, TIL_IRR
+      REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -117,6 +119,7 @@ C-----------------------------------------------------------------------
       NPERC  = 0  !# percs
 
       IRRAMT = 0.0
+      NAP    = 0
       TOTIR  = 0.
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
@@ -248,6 +251,7 @@ C
       WTABL = 0.0
 
       PUDDLED = .FALSE.
+      PLOWPAN = 0.0
 
 !-----------------------------------------------------------------------
 !     Irrigation Codes: IRRCOD
@@ -263,14 +267,26 @@ C
 !        10:  Puddling (Puddled if IRRCOD = 10 record is present)
 !        11:  Maintain constant specified flood depth (mm)
 
+      NMSG = 1
+      MSG(1) = "Irrigation data issues:"
+
 !     Transfer irrigation dates to appropriate arrays.
       IF (JIRR .GT. 0) THEN
         DO I = 1,JIRR
+
           SELECT CASE (IRRCOD(I))
 
           !------------------------------
            CASE (1:6)    
-          !Regular irrigation (bunded or upland)
+!          Regular irrigation (bunded or upland)
+
+             IF (AMT(I) < -1.E-6) THEN
+               AMT(I) = 0.0
+               NMSG = NMSG + 1
+               MSG(NMSG)=
+     &           "Irrigation amount < zero. Zero irrigation applied."
+               CYCLE
+             ENDIF
 
              NCOND         = NCOND + 1        
              CONDAT(NCOND) = IDLAPL(I)
@@ -285,9 +301,16 @@ C
 
           !------------------------------
            CASE (7)
-             !
-             ! Water table
-             !
+!          Water table
+
+             IF (AMT(I) < -1.E-6) THEN
+               AMT(I) = 0.0
+               NMSG = NMSG + 1
+               MSG(NMSG)=
+     &    "Depth to water table < zero. No change to water table depth."
+               CYCLE
+             ENDIF
+
              NTBL = NTBL + 1
 !            JWTBRD stores original values
              JWTBRD(NTBL) = IDLAPL(I)  
@@ -298,7 +321,14 @@ C
 
           !------------------------------
            CASE (8)
-           ! Percolation
+!          Percolation
+
+             IF (AMT(I) < -1.E-6) THEN
+               AMT(I) = 2.0
+               NMSG = NMSG + 1
+               MSG(NMSG) = "Percolation rate < zero; set to 2 mm/d."
+               CYCLE
+             ENDIF
 
              NPERC         = NPERC + 1
              IPDAT(NPERC)  = IDLAPL(I)
@@ -306,25 +336,52 @@ C
 
           !------------------------------
            CASE (9)
-             !
-             ! Bunding
-             !
+!          Bunding
+
+             IF (AMT(I) < -1.E-6) THEN
+               AMT(I) = 0.0
+               NMSG = NMSG + 1
+               MSG(NMSG)=
+     &           "Bund height < zero. No change to bund height."
+               CYCLE
+             ENDIF
+
              NBUND         = NBUND + 1
              IBDAT(NBUND)  = IDLAPL(I)
              BUND(NBUND)   = AMT(I)
 
           !------------------------------
            CASE (10)
-             !
-             ! Puddling for rice added
-             !
+!          Puddling for rice added
+
+             IF (AMT(I) < -1.E-6) THEN
+!            IF (AMT(I) < 1) THEN
+               AMT(I) = -1
+               NMSG = NMSG + 1
+               MSG(NMSG) = 
+     &      "Plowpan depth < zero; No plowpan wil be used (ORYZA only)."
+               CYCLE
+             ENDIF
+
              PUDDLED = .TRUE.
+!            Depth of puddling input in cm, convert to m
+             PLOWPAN = AMT(I) / 100.   
+             IF (PLOWPAN < 0.01) THEN
+               PLOWPAN = -1.   
+             ENDIF
 
           !------------------------------
            CASE (11)
-             !
-             ! Maintain constant specified flood depth 
-             !   until next irrigation record 
+!          Maintain constant specified flood depth until next irrigation record
+
+             IF (AMT(I) < -1.E-6) THEN
+               AMT(I) = 2.0
+               NMSG = NMSG + 1
+               MSG(NMSG) = 
+     &    "Constant flood depth value < zero; No change to flood depth."
+               CYCLE
+             ENDIF
+
              NCOND         = NCOND + 1        
              CONDAT(NCOND) = IDLAPL(I)
              IIRRCV(NCOND) = IRRCOD(I)
@@ -332,23 +389,24 @@ C
 
          END SELECT
         ENDDO
+        IF (NMSG > 1) CALL WARNING(NMSG, ERRKEY, MSG)
       ENDIF
 
-!     Check for using flooded conditions with Century method of 
-!     soil organic matter.  
-      MESOM = ISWITCH % MESOM
-      IF (NBUND .GT. 0 .AND. MESOM .EQ. 'P') THEN
-!        MSG(1) = 'Flooded field not available with Century SOM model.'
+!!     Check for using flooded conditions with Century method of 
+!!     soil organic matter.  
+!      MESOM = ISWITCH % MESOM
+!      IF (NBUND .GT. 0 .AND. MESOM .EQ. 'P') THEN
+!!        MSG(1) = 'Flooded field not available with Century SOM model.'
+!!        MSG(2) = 'Change either management or SOM method in FILEX.'
+!!        MSG(3) = 'Program will stop.'
+!
+!        MSG(1) = 
+!     &'Century model was not intended to be used with flooded fields.'
 !        MSG(2) = 'Change either management or SOM method in FILEX.'
-!        MSG(3) = 'Program will stop.'
-
-        MSG(1) = 
-     &'Century model was not intended to be used with flooded fields.'
-        MSG(2) = 'Change either management or SOM method in FILEX.'
-        CALL WARNING(2, ERRKEY, MSG)
-!        WRITE(*,'(/,A78,/,A78,/,A78,/)') MSG(1), MSG(2), MSG(3)
-!        CALL ERROR(ERRKEY, 10, "", 0)
-      ENDIF
+!        CALL WARNING(2, ERRKEY, MSG)
+!!        WRITE(*,'(/,A78,/,A78,/,A78,/)') MSG(1), MSG(2), MSG(3)
+!!        CALL ERROR(ERRKEY, 10, "", 0)
+!      ENDIF
 
 !-----------------------------------------------------------------------
 !     Adjust irrigation dates for multi-year simulations
@@ -472,6 +530,9 @@ C-----------------------------------------------------------------------
       CALL PUT('MGMT','EFFIRR',EFFIRR)
       CALL PUT('MGMT','IRRAMT',IRRAMT)
       CALL PUT('MGMT','DEPIR', DEPIR)
+
+      FLOODWAT % PUDDLED = PUDDLED
+      FLOODWAT % PLOWPAN = PLOWPAN
 
 !***********************************************************************
 !***********************************************************************
@@ -665,7 +726,7 @@ C-----------------------------------------------------------------------
 
 !     Transfer data to ModuleData
       CALL PUT('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm)
-      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigAtion (mm)
+      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm)
       CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
       CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
 

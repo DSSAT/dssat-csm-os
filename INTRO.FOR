@@ -19,8 +19,8 @@ C  01/30/2001 GH  Modified introduction
 C  09/20/2000 GH  Change working version to CSM v3.9
 C  03/31/2004 GH  Changed to release version CSM v4.0
 C  08/31/2005 GH  Changed to release version CSM Version 4.0.2
-C  02/21/2006 GH  Change to working version CSM v4.6
-C  02/06/2007 CHP Change to working version CSM v4.5
+C  02/21/2006 GH  Change to working version CSM v4.5
+C  02/06/2007 CHP Change to working version CSM v4.6
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C
@@ -57,10 +57,10 @@ C=======================================================================
      & 'ิออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ'/
 
       DATA BOX_DAT/
-     & 'ณ                                  10 October 2010       ณ'/
+     & 'ณ                                     1 March 2014       ณ'/
 
       DATA ZCG/
-     & '                         ICASA                          ',
+     & '                    DSSAT FOUNDATION                    ',
      & '                                                        ',
      & '    G.Hoogenboom, J.W.Jones, C.H.Porter, K.J.Boote,     ',
      & '          L.A.Hunt, J.W. White, J.I.Lizaso,             ',
@@ -97,7 +97,7 @@ C=======================================================================
 
       RETURN
 
-  100 FORMAT (10X,A1,13X,'DSSAT Version 4.5.0 Generic Input',10X,A1)
+  100 FORMAT (10X,A1,13X,'DSSAT Version 4.6.0 Generic Input',10X,A1)
   150 FORMAT (10X,A1,4X,
      &        'Please press < ENTER > key (ฤฤู) to continue',7X,A1)
   252 FORMAT (10X,A1,"  DSSAT Cropping System Model (CSM) Version ", 

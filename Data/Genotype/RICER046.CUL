@@ -1,0 +1,102 @@
+*RICE GENOTYPE COEFFICIENTS: RICER046 MODEL
+!v4.6.0.14
+
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2R    P5   P2O    G1    G2    G3    G4 PHINT
+!                                        1     2     3     4     5     6     7     8     9
+990001 IRRI ORIGINALS       . IB0001 880.0  52.0 550.0  12.0  65.0 .0280  1.00  1.00  83.0
+990002 IRRI RECENT          . IB0001 450.0 149.0 350.0  11.7  68.0 .0230  1.00  1.00  83.0
+990003 JAPANESE             . IB0001 220.0  35.0 510.0  12.0  55.0 .0250  1.00  1.00  83.0
+990004 N.AMERICAN           . IB0001 318.0 189.0 550.0  12.8  65.0 .0280  1.00  1.00  83.0
+!
+IB0001 IR 8                 . IB0001 880.0  52.0 550.0  12.1  65.0 .0280  1.00  1.00  83.0
+IB0002 IR 20                . IB0001 500.0 166.0 500.0  11.2  65.0 .0280  1.00  1.00  83.0
+IB0003 IR 36                . IB0001 470.0 149.0 400.0  11.7  68.0 .0230  1.00  1.00  83.0
+IB0004 IR 43                . IB0001 720.0 120.0 580.0  10.5  65.0 .0280  1.00  1.00  83.0
+IB0005 LABELLE              . IB0001 318.0 189.0 550.0  12.8  65.0 .0280  1.00  1.00  83.0
+IB0006 MARS                 . IB0001 698.0 134.0 550.0  13.0  65.0 .0280  1.00  1.00  83.0
+IB0007 NOVA 66              . IB0001 389.0 155.0 550.0  11.0  65.0 .0280  1.00  1.00  83.0
+IB0008 PETA                 . IB0001 420.0 240.0 550.0  11.3  65.0 .0280  1.00  1.00  83.0
+IB0009 STARBONNETT          . IB0001 880.0 164.0 550.0  13.0  65.0 .0280  1.00  1.00  83.0
+IB0010 UPLRI5               . IB0001 620.0 160.0 380.0  11.5  50.0 .0220  0.60  1.00  83.0
+IB0011 UPLRI7               . IB0001 760.0 150.0 450.0  11.7  65.0 .0280  1.00  1.00  83.0
+IB0012 IR 58                . IB0001 460.0   5.0 420.0  13.5  65.0 .0250  1.00  1.00  83.0
+IB0013 SenTaNi (???)        . IB0001 320.0  50.0 550.0  10.0  70.0 .0300  1.00  1.00  83.0
+IB0014 IR 54                . IB0001 350.0 125.0 520.0  11.5  60.0 .0280  1.00  1.00  83.0
+IB0015 IR 64                . IB0001 500.0 160.0 450.0  12.0  60.0 .0250  1.00  1.00  83.0
+IB0016 IR 60(Est)           . IB0001 490.0 100.0 320.0  11.5  75.0 .0275  1.00  1.00  83.0
+IB0017 IR 66                . IB0001 500.0  50.0 490.0  12.5  62.0 .0265  1.00  1.00  83.0
+IB0018 IR 72x               . IB0001 400.0 100.0 580.0  12.0  76.0 .0230  1.00  1.00  83.0
+IB0019 RD 7 (cal.)          . IB0001 603.3 150.0 452.5  11.2  65.0 .0230  1.00  1.00  83.0
+IB0020 RD 23 (cal.)         . IB0001 365.0 140.0 370.0  11.2  58.0 .0240  1.00  1.00  83.0
+IB0021 CICA8                . IB0001 700.0 120.0 360.0  11.7  60.0 .0270  1.00  1.00  83.0
+IB0022 LOW TEMP.SEN         . IB0001 400.0 120.0 420.0  12.0  60.0 .0250  1.00  0.80  83.0
+IB0023 LOW TEMP.TOL         . IB0001 400.0 120.0 420.0  12.0  60.0 .0250  1.00  1.25  83.0
+IB0024 17 BR11,T.AMAN       . IB0001 740.0 180.0 400.0  10.5  55.0 .0250  1.00  0.90  83.0
+IB0025 18 BR22,T.AMAN       . IB0001 650.0 110.0 400.0  12.0  60.0 .0250  1.00  1.00  83.0
+IB0026 19 BR 3,T.AMAN       . IB0001 650.0 110.0 420.0  12.0  65.0 .0250  1.00  1.00  83.0
+IB0027 20 BR 3,BORO         . IB0001 650.0  90.0 400.0  13.0  65.0 .0250  1.00  1.00  83.0
+IB0029 CPIC8                . IB0001 380.0 150.0 300.0  12.8  38.0 .0210  1.00  1.00  83.0
+IB0030 LEMONT               . IB0001 500.0  50.0 300.0  12.8  60.0 .0207  1.00  1.00  83.0
+IB0031 RN12                 . IB0001 380.0  50.0 300.0  12.8  40.0 .0199  1.00  1.15  83.0
+IB0032 TW                   . IB0001 360.0  50.0 290.0  12.8  55.0 .0210  1.00  1.00  83.0
+IB0115 IR 64*               . IB0001 540.0 160.0 490.0  12.0  50.0 .0250  1.10  1.00  83.0
+IB0116 HEAT SENSITIVE       . IB0001 460.0   5.0 390.0  13.5  62.0 .0250  1.00  1.15  83.0
+IB0117 BR14                 . IB0001 560.0 200.0 500.0  11.5  45.0 .0260  1.00  1.00  83.0
+IB0118 IR 72                . IB0001 560.0  20.0 390.0  13.5  60.0 .0250  1.00  1.00  83.0
+IB0119 BR11                 . IB0001 825.0 300.0 390.0  11.5  52.0 .0240  1.00  1.00  83.0
+IB0120 PANT-4               . IB0001 830.0 160.0 300.0  11.4  45.0 .0300  1.00  0.80  83.0
+IB0121 JAYA                 . IB0001 830.0 100.0 200.0  11.4  40.0 .0300  1.00  0.80  83.0
+IB0122 BPRI10               . IB0001 740.0 200.0 225.0  13.5  40.0 .0230  1.00  1.00  83.0
+IB0151 ZHENG DAO 9380       . IB0001 400.0 120.0 420.0  13.0  60.0 .0270  1.00  1.15  83.0
+IB0200 CL-448               . IB0001 100.0 120.0 250.0  12.0  40.0 .0250  1.00  1.25  83.0
+IB0050 PR114                . IB0001 650.0 200.0 520.0  12.0  59.0 .0250  1.00  1.00  83.0
+
+!chp added revised cultivars from ATTACHAI JINTRAWET (Thailand) - gave new name
+!  starting with MC.
+!             A low G3 value put more biomass to tillers, thru TILRAT and
+!             TPANIWT variables, meaning that more STMWT is needed.
+MC0020 RD 23                . IB0001 310.3 140.0 370.0  11.2  53.0 .0230  0.30  1.00  83.0
+
+TR0001 KDML105              . IB0001 502.31233.0 386.5  12.7  45.7 .0270  1.00  0.95  83.0
+TR0002 NIEW SANPATONG       . IB0001 495.81283.4 364.2  12.7  40.7 .0277  0.70  0.85  83.0
+TR0003 SUPANBURI 60         . IB0001 540.0 154.7 497.0  11.9  77.7 .0280  1.00  1.03  83.0
+TR0004 CHAINAT 1            . IB0001 570.0 122.8 334.8  11.9  63.1 .0278  1.00  1.00  83.0
+TR0005 DOA 1                . IB0001 388.5  20.0 381.8  12.0  73.8 .0275  1.10  1.15  83.0
+
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar.
+! VAR-NAME    Name of cultivar.
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code for this cultivar points to the Ecotype in the ECO
+!             file (currently not used).
+! P1          Time period (expressed as growing degree days [GDD] in øC above
+!             a base temperature of 9øC) from seedling emergence during which
+!             the rice plant is not responsive to changes in photoperiod. This
+!             period is also referred to as the basic vegetative phase of the
+!             plant.
+! P2O         Critical photoperiod or the longest day length (in hours) at
+!             which the development occurs at a maximum rate. At values higher
+!             than P2O developmental rate is slowed, hence there is delay due
+!             to longer day lengths.
+! P2R         Extent to which phasic development leading to panicle initiation
+!             is delayed (expressed as GDD in øC) for each hour increase in
+!             photoperiod above P2O.
+! P5          Time period in GDD øC) from beginning of grain filling (3 to
+!             4 days after flowering) to physiological maturity with a base
+!             temperature of 9øC.
+! G1          Potential spikelet number coefficient as estimated from the
+!             number of spikelets per g of main culm dry weight (less lead
+!             blades and sheaths plus spikes) at anthesis. A typical value
+!             is 55.
+! G2          Single grain weight (g) under ideal growing conditions, i.e.
+!             nonlimiting light, water, nutrients, and absence of pests
+!             and diseases.
+! G3          Tillering coefficient (scaler value) relative to IR64 cultivar
+!             under ideal conditions. A higher tillering cultivar would have
+!             coefficient greater than 1.0.
+! G4          Temperature tolerance coefficient. Usually 1.0 for varieties
+!             grown in normal environments. G4 for japonica type rice growing
+!             in a warmer environment would be 1.0 or greater. Likewise, the
+!             G4 value for indica type rice in very cool environments or
+!             season would be less than 1.0.

@@ -16,6 +16,7 @@ C                   as defined in ModuleDefs.for
 C  03/30/2006 CHP Added composition of senesced matter for SOM modules
 C  04/21/2007 GH  Externalized stem partitioning STPC=0.1
 C  04/21/2007 GH  Externalized root partitioning RTPC=0.25
+C  08/26/2011	GH  Update early partitioning and decrease root distribution
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C
@@ -34,13 +35,13 @@ C-----------------------------------------------------------------------
      & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
      & CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
      & GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     & ISWNIT, ISWWAT, LAI, LAT, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      & NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
      & PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
      & PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      & STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
-     & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, 
+     & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      & XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      & PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
@@ -126,7 +127,7 @@ C-----------------------------------------------------------------------
       REAL        TEMF
       REAL        TEMPM       
       REAL        TDUR
-      REAL        TILN
+      REAL        TILN, TILFAC
       REAL        TMAX        
       REAL        TMFAC1(8)
       REAL        TMIN        
@@ -147,7 +148,7 @@ C      PEST DAMAGE
       REAL        PPLTD
       REAL        SWIDOT
       REAL        STPC,RTPC
-	REAL        PANTH
+     	REAL        PANTH
 
 C-----------------------------------------------------------------
 C   Local Variables
@@ -441,9 +442,12 @@ C-GH  &    (ISTAGE .EQ. 3  .AND. SUMDTT .GT. (PANTH-P3)-3.0*PHINT)) THEN
          SUMRTR = SUMRTR + SRAD * 23.9/DTT
          TDUR   = TDUR   + 1.0
          RTR    = SUMRTR / TDUR
-         IF (RTR .LT. 27) THEN
-            TILN = 1.0
-         ELSE
+C-GH         IF (RTR .LT. 27) THEN
+C-GH            TILN = 1.0
+C-GH         ELSE
+C        Correct previous statement. Always reset to 1
+C        Define tillering, but threshold unclear
+C-GH         IF (RTR .GT. 27.0) THEN
             TC1  = 1.0/25.0*(RTR-27.0)
             TC2  = 6.25E-5*(40.0-PLTPOP*TILN)**3
             TILN = TILN+TI*AMIN1(TC1,TC2)*TURFAC
@@ -451,10 +455,10 @@ C-GH  &    (ISTAGE .EQ. 3  .AND. SUMDTT .GT. (PANTH-P3)-3.0*PHINT)) THEN
                TILN = 40.0/PLTPOP
             ENDIF
             TILN = AMAX1 (TILN,1.0)
-         ENDIF
-         IF (LAT .GT. -16.0 .AND. LAT .LE. 0.0) THEN
-            TILN = 1.0
-         ENDIF
+C-GH         ENDIF
+          IF (TILFAC .LT. 0.5) THEN
+             TILN = 1.0
+          ENDIF
       END IF
 
 
@@ -519,15 +523,40 @@ C-GH   Defined STPC and moved to Species file
 
 C-GH     IF (GROLF+GROSTM .GT. CARBO*0.75) THEN
 C-GH        GRF    = CARBO*0.75/(GROLF+GROSTM)
-         IF (GROLF+GROSTM .GT. CARBO * (1.0 - RTPC)) THEN
-            GRF    = CARBO * (1.0 - RTPC)/(GROLF+GROSTM)
-            GROLF  = GROLF*GRF
-            GROSTM = GROSTM*GRF
+C-GH         IF (GROLF+GROSTM .GT. CARBO * (1.0 - RTPC)) THEN
+C-GH            GRF    = CARBO * (1.0 - RTPC)/(GROLF+GROSTM)
+C-GH            GROLF  = GROLF*GRF
+C-GH            GROSTM = GROSTM*GRF
+C-GH            PLAG   = GROLF/0.0053
+C-GH         END IF
+         
+         GRORT  = CARBO - GROLF - GROSTM
+         IF (GRORT .LT. CARBO * RTPC) THEN
+            GRORT  = CARBO  * RTPC
+            IF ((GROLF+GROSTM) .GT. 0.0) THEN
+              GRF    = CARBO  * (1.0 - RTPC)/(GROLF+GROSTM)
+              GROLF  = GROLF  * GRF
+              GROSTM = GROSTM * GRF
+            ELSE
+              GROLF  = (CARBO - GRORT)/(1.0 + STPC)
+              GROSTM = GROLF * STPC
+            ENDIF   
             PLAG   = GROLF/0.0053
-         END IF
+         ELSE IF (GRORT .GE. CARBO * RTPC) THEN
+            GRORT  = CARBO  * RTPC
+            IF ((GROLF+GROSTM) .GT. 0.0) THEN
+              GRF    = CARBO  * (1.0 - RTPC)/(GROLF+GROSTM)
+              GROLF  = GROLF  * GRF
+              GROSTM = GROSTM * GRF
+            ELSE
+              GROLF  = (CARBO - GRORT)/(1.0 + STPC)
+              GROSTM = GROLF * STPC
+            ENDIF   
+            PLAG   = GROLF/0.0053                       
+         ENDIF
 
          PLA    = PLA   + PLAG
-         GRORT  = CARBO - GROLF-GROSTM
+C-GH     GRORT  = CARBO - GROLF-GROSTM
          LFWT   = LFWT  + GROLF
          STMWT  = STMWT + GROSTM
       ENDIF
@@ -578,19 +607,36 @@ C-GH        GRORT  = CARBO  * 0.25
 C-GH        GRF    = CARBO  * 0.75/(GROLF+GROSTM)
          IF (GRORT .LT. CARBO * RTPC) THEN
             GRORT  = CARBO  * RTPC
-            GRF    = CARBO  * (1.0 - RTPC)/(GROLF+GROSTM)
-            GROLF  = GROLF  * GRF
-            GROSTM = GROSTM * GRF
+            IF ((GROLF+GROSTM) .GT. 0.0) THEN
+              GRF    = CARBO  * (1.0 - RTPC)/(GROLF+GROSTM)
+              GROLF  = GROLF  * GRF
+              GROSTM = GROSTM * GRF
+            ELSE
+              GROLF  = (CARBO - GRORT)/(1.0 + STPC)
+              GROSTM = GROLF * STPC
+            ENDIF 
             PLAG   = GROLF  / 0.0078
             SUMRTR = SUMRTR + GRF
             TCON   = SUMRTR / TDUR
-         ELSE
+         ELSE IF (GRORT .GE. CARBO * RTPC) THEN
+            GRORT  = CARBO  * RTPC
+            IF ((GROLF+GROSTM) .GT. 0.0) THEN
+              GRF    = CARBO  * (1.0 - RTPC)/(GROLF+GROSTM)
+              GROLF  = GROLF  * GRF
+              GROSTM = GROSTM * GRF
+            ELSE
+              GROLF  = (CARBO - GRORT)/(1.0 + STPC)
+              GROSTM = GROLF * STPC
+            ENDIF 
+            PLAG   = GROLF  / 0.0078
             SUMRTR = SUMRTR + 1.0
             TCON   = SUMRTR / TDUR
-         END IF
-
-         TILN  = TILN*(0.4+0.6*TCON)
-         TILN  = AMAX1 (TILN,1.0)
+         ENDIF
+         
+         IF (TILFAC .GT. 0.5) THEN
+           TILN  = TILN*(0.4+0.6*TCON)
+           TILN  = AMAX1 (TILN,1.0)
+         ENDIF
          LFWT   = LFWT  + GROLF 
          STMWT  = STMWT + GROSTM
          PLA   = PLA   + PLAG
@@ -619,7 +665,7 @@ C
 C-GH     GGG    = (CUMDTT-P1-100.0-P3)/(P4+P5)
 C-GH     GGG    = (CUMDTT-P1-100.0-(PANTH-P3))/(PFLOWR + P5)
          GGG    = CUMP4/(PFLOWR + P5)
-	   SLAN   = PLA*(0.07+GCS*GGG)
+	       SLAN   = PLA*(0.07+GCS*GGG)
          STMWT  = STMWT + GROSTM
       ENDIF
 C--------------------------------------------------------------------
@@ -644,7 +690,7 @@ C-GH &            (PFLOWR + P4 + P5))
 
          RGFILL = 1.0
          RGFILL = CURV('LIN',RGFIL(1),RGFIL(2),RGFIL(3),
-     $                     RGFIL(4),TEMPM)
+     &                     RGFIL(4),TEMPM)
          RGFILL = AMAX1 (RGFILL,0.0)
          RGFILL = MIN(RGFILL,1.0)
          PAF    = 1.0
