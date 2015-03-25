@@ -283,25 +283,28 @@
                 !        NFLF2(L) = AMIN1(1.0,NFLF2(L) + AMAX1(0.0,NFLF2(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))               !EQN 237
                 !     ENDIF
                 !ENDDO    
+                
+                ! If not enough N set N factor
+                IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN
+                        NFLF2(0,0) = AREAPOSSIBLEN/PLAGSB3                                                                   !EQN 236
+                ELSE  
+                        NFLF2(0,0) = 1.0
+                ENDIF 
+                
+               ! Area and assimilate factors for each leaf
                 DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                     ! If not enough N set N factor
-                    IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN
-                        NFLF2(BR,0) = AREAPOSSIBLEN/PLAGSB3                                                                   !EQN 236
-                    ELSE  
-                        NFLF2(BR,0) = 1.0
-                    ENDIF                    
-                    DO L = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
-                        IF (LNUMSG.LT.LNUMX) THEN
-                            LATL4(BR,L)= LATL3(BR,L) * NFLF2(BR,0)                                                                           !EQN 241            
-                            NFLF2(BR,L) = AMIN1(1.0,NFLF2(BR,L) + AMAX1(0.0,NFLF2(BR,0)) * (LATLPOT(BR,L)-LATLPREV(BR,L))/LAPOTX(BR,L))      !EQN 237
+                    DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
+                        IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
+                            LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)                                                                           !EQN 241            
+                            NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))      !EQN 237
                         ENDIF
                     ENDDO
-                    PLAGSB4 = PLAGSB3 * NFLF2(0,0)                                                                           !EQN 238
-                    SHLAGB4(0,1) = SHLAGB3(1) * NFLF2(0,0)                                                                      !EQN 239
-                    SHLAGB4(0,2) = SHLAGB3(2) * NFLF2(0,0)
-                    SHLAGB4(0,3) = SHLAGB3(3) * NFLF2(0,0)
                 ENDDO
-        
+                PLAGSB4 = PLAGSB3 * NFLF2(0,0)                                                                           !EQN 238
+                SHLAGB4(1) = SHLAGB3(1) * NFLF2(0,0)                                                                      !EQN 239
+                SHLAGB4(2) = SHLAGB3(2) * NFLF2(0,0)
+                SHLAGB4(3) = SHLAGB3(3) * NFLF2(0,0)
                 !PLAGSB4 = PLAGSB3 * NFLF2(0)                                                                           !EQN 238
                 !SHLAGB4(1) = SHLAGB3(1) * NFLF2(0)                                                                     !EQN 239
                 !SHLAGB4(2) = SHLAGB3(2) * NFLF2(0)
@@ -311,12 +314,12 @@
         
                 !NFLF2(0) = 1.0                                                                                           !LPM 21MAR15
                 !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                      !LPM 21MAR15 Change to include cohorts BR,L
-                DO BR = 1, BRSTAGE                                                                                        !LPM 21MAR15
-                    NFLF2(BR,0) = 1.0
-                    DO L = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
-                        IF (LNUMSG.LT.LNUMX) THEN
-                            LATL4(BR,L)= LATL3(BR,L) * NFLF2(BR,0)            
-                            NFLF2(BR,L) = AMIN1(1.0,NFLF2(BR,L) + AMAX1(0.0,NFLF2(0)) * (LATLPOT(BR,L)-LATLPREV(BR,L))/LAPOTX(BR,L))
+                NFLF2(0,0) = 1.0
+                DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+                    DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
+                        IF (LNUMSIMSTG(BR).LT.LCNUM) THEN
+                            LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)            
+                            NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))
                         ENDIF
                     ENDDO
                 ENDDO

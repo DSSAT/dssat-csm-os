@@ -135,7 +135,7 @@
                 WRITE (NOUTPN, FMT503)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,NUPAC,TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD,HNAD, &
                     HINDC,RSNAD,SENN0C,SENNSC,RANC*100.0,LANC*100.0,SANCOUT*100.0,AMIN1(9.9,HNC*100.0), &
                     SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCR,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &
-                    ANDEM,1.0-NFLF2(1,0)                                                                                !LPM 21MAR15 NFLF2(0) as NFLF2(1,0)
+                    ANDEM,1.0-NFLF2(0,0)                                                                                !LPM 21MAR15 NFLF2(0) as NFLF2(0,0)
                                      
             ENDIF  ! ISWNIT  Plantn writes
                              

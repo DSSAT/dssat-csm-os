@@ -123,7 +123,8 @@
                         IF (PDL(L).GT.0) BRSTAGE = FLOAT(L) + (LNUM-LNUMTOSTG(L))/PDL(L)                               ! EQN 007
                         LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
                         ! Brstage cannot go above harvest stage 
-                        LNUMSIMSTG(L) = LNUMSIMTOSTG(L+1)-LNUMSIMTOSTG(L)                !LPM 21MAR15 LNUMSIMSTG Introduces to save the number of leaves by cohort
+                        !LPM 21MAR15 LNUMSIMSTG Introduces to save the number of leaves by cohort, necessary to check if has to be +1 as LNUMSG 
+                        LNUMSIMSTG(L) = LNUMSIMTOSTG(L+1)-LNUMSIMTOSTG(L)                 
                         BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
                         EXIT
                     ENDIF  

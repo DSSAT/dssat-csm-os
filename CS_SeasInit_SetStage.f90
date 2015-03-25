@@ -337,7 +337,7 @@
         
         ! Initial leaf growth aspects
         !LAPOTX(1) = LA1S !LPM 07MAR15 LA1S will not be used and it is assumed as 0.1*LAXS
-        LAPOTX(1) = LAXS*0.1
+        LAPOTX(0,1) = LAXS*0.1
         
         ! If max LAI not read-in,calculate from max interception
         IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)                                                               ! EQN 008

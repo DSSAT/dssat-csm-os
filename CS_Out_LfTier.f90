@@ -48,28 +48,28 @@
                 !AFLF(I) = AMIN1(1.0,AFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
                 !IF (LDEATHDAP(I).EQ.0) LDEATHDAP = -99
                 !WRITE (fnumlvs,'(I6,7A6,6F6.2,4F6.1,I6)')I,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(I), &
-                !    1.0-NFLF(I),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(I))),1.0-TFGLF(I),1.0-TFDLF(I),DGLF(I), &
+                !    1.0-NFLF(I),1.0-NFLF2(I),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(I))),1.0-TFGLF(I),1.0-TFDLF(I),DGLF(I), &
                 !    DALF(I),DSLF(I),DGLF(I)+DALF(I)+DSLF(I),LDEATHDAP(I)
              !ENDDO   
             DO BR = 1, BRSTAGE
                 DO LF = 1, LNUMSIMSTG(BR)  
-                    CALL Csopline(lapotxc,lapotx(i))
-                    CALL Csopline(latlc,AMAX1(0.0,LATL(i)))
-                    CALL Csopline(latl2c,AMAX1(0.0,LATL2(i)))
+                    CALL Csopline(lapotxc,lapotx(BR,LF))
+                    CALL Csopline(latlc,AMAX1(0.0,LATL(BR,LF)))
+                    CALL Csopline(latl2c,AMAX1(0.0,LATL2(BR,LF)))
                     CALL Csopline(latl3c,AMAX1(0.0,LATL3(BR,LF)))
-                    CALL Csopline(latl4c,AMAX1(0.0,LATL4(i)))
+                    CALL Csopline(latl4c,AMAX1(0.0,LATL4(BR,LF)))
                     CALL Csopline(lapc,lap(i))
                     CALL Csopline(lapsc,laps(i))
-                    ! Adjust for growth period of non fullly expanded leaves
-                    WFLF(I) = AMIN1(1.0,WFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                    NFLF(I) = AMIN1(1.0,NFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                    NFLFP(I) =AMIN1(1.0,NFLFP(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                    TFGLF(I) =AMIN1(1.0,TFGLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                    AFLF(I) = AMIN1(1.0,AFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
+                    ! Adjust for growth period of non fully expanded leaves
+                    WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
+                    NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
+                    NFLFP(BR,LF) =AMIN1(1.0,NFLFP(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
+                    TFGLF(BR,LF) =AMIN1(1.0,TFGLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
+                    AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
                     IF (LDEATHDAP(I).EQ.0) LDEATHDAP = -99
-                    WRITE (fnumlvs,'(I6,7A6,6F6.2,4F6.1,I6)')I,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(I), &
-                        1.0-NFLF(I),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(I))),1.0-TFGLF(I),1.0-TFDLF(I),DGLF(I), &
-                        DALF(I),DSLF(I),DGLF(I)+DALF(I)+DSLF(I),LDEATHDAP(I)
+                    WRITE (fnumlvs,'(I6,7A6,6F6.2,4F6.1,I6)')I,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(BR,LF), &
+                        1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(I),DGLF(BR,LF), &
+                        DALF(I),DSLF(I),DGLF(BR,LF)+DALF(I)+DSLF(I),LDEATHDAP(I)
                 ENDDO
             ENDDO
                 

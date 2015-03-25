@@ -60,7 +60,7 @@
             !        DGLF(L) = DGLF(L) + TVR1                                                                           !EQN 363b
             !    ENDIF  
             !ENDIF
-            IF (DGLF(L).LT.10) THEN                                                                                     !LPM 21MAR15 DGLF will have a maximum value of 10 days
+            IF (DGLF(L).LT.LLIFGD) THEN                                                                                     !LPM 21MAR15 DGLF will have a maximum value of 10 days
                 DGLF(L) = DGLF(L) + EMRGFR
             ENDIF
             
