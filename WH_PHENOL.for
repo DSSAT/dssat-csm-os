@@ -583,8 +583,8 @@ cbak  ears that is not included in lai calculation.
               sumstgdtt(I) = 0.0  ! NWheat array
  !*!          stgdur(I) = 0.0     ! NWheat array
           ENDDO
-          ! STGDOY(14) = YRSIM JZW changed 
-            STGDOY(7) = YRSIM           
+          STGDOY(14) = YRSIM !JZW considered need to be changed 
+           ! STGDOY(7) = YRSIM           
           YREMRG = -99  !CHP 5/19/2011
 
       CUMDTT = 0.0
