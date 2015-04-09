@@ -20,7 +20,7 @@
         IMPLICIT NONE 
      
         INTEGER :: CN          , DOY         , DYNAMIC     , ON          , RN          , RUN         , RUNI        , SN          
-        INTEGER :: STGYEARDOY(20)            , TN          , YEAR         
+        INTEGER :: STGYEARDOY(0:20)            , TN          , YEAR         
         INTEGER :: CSTIMDIF    , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT            ! Integer function calls
 
         REAL    :: TNIMBSOM    , TOMINSOM1          
@@ -614,7 +614,8 @@
                     ENDIF
                     IF (EVHEADNM.LE.EVHEADNMMAX) THEN
                         WRITE (FNUMEVAL, FMT994,ADVANCE='NO')
-                        DO L = 1,KEYSTX
+                        !DO L = 1,KEYSTX
+                        DO L = 0,KEYSTX
                             IF (KEYPS(L).GT.0) THEN
                                 IF (PSABVO(KEYPS(L))(1:1).NE.' ') WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
                                 WRITE (FNUMEVAL,'(A5,A1)',ADVANCE='NO') PSABVO(KEYPS(L)),'S'
@@ -633,7 +634,8 @@
                 EVALOUT = EVALOUT + 1
                 OPEN (UNIT = FNUMEVAL,FILE = FNAMEEVAL,POSITION = 'APPEND')
                 WRITE (FNUMEVAL,'(I4,1X,A10,I6,I3,1X,A2,2I6)',ADVANCE='NO') RUN,EXCODE,TN,RN,CROP,edap,edapm
-                DO L = 1,KEYSTX
+                !DO L = 1,KEYSTX
+                DO L = 0,KEYSTX
                     IF (KEYPS(L).GT.0) THEN 
                         IF (PSABVO(KEYPS(L))(1:1).NE.' ') WRITE (FNUMEVAL,'(A1)',ADVANCE='NO') ' '
                         WRITE (FNUMEVAL,'(I6)',ADVANCE='NO') PSDAP(KEYPS(L))
@@ -716,7 +718,7 @@
                     ENDIF
                     WRITE(fnumov, FMT9588)
                     WRITE(fnumov, FMT9600)
-                    DO L = 1, PSNUM
+                    DO L = 0, PSNUM
                         CALL Csopline(laic,laistg(l))
                         IF (STGYEARDOY(L).LT.9999999.AND.L.NE.10.AND.L.NE.11) THEN
                             CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
@@ -754,7 +756,8 @@
                         WRITE(fnumov,*)' '
                         WRITE (FNUMOV, FMT206)
                         WRITE (FNUMOV, FMT290) MAX(-99,gdap),MAX(-99,gdapm),MAX(-99,edap),MAX(-99,edapm)
-                        DO L = 1,KEYSTX
+                        !DO L = 1,KEYSTX
+                        DO L = 0,KEYSTX
                             IF (KEYPS(L).GT.0) THEN
                                 IF (psdap(keyps(l)).LT.-1) EXIT
                                 WRITE (FNUMOV, FMT291)psname(KEYPS(L)),PSDap(KEYPS(L)),PSDapm(KEYPS(L))
@@ -776,7 +779,7 @@
                     PFPPAV = -99.0
                     PFGPAV = -99.0
                     !DO tvI1 = 1,mstg-2  !LPM 06MAR15 MSTG TO PSX
-                    DO tvI1 = 1,PSX-2
+                    DO tvI1 = 0,PSX-2
                         IF (pdays(tvi1).GT.0) THEN 
                             WRITE(fnumov, FMT600) psname(tvi1),' - ',psname(tvi1+1),pdays(tvI1),tmaxpav(tvI1), &          ! MF31AU14 REPLACED DASH  WITH A LITERAL
                             tminpav(tvI1),sradpav(tvI1),daylpav(tvI1),rainpc(tvI1),etpc(tvI1),1.-wfppav(tvi1), &

@@ -24,7 +24,7 @@
         IMPLICIT NONE 
      
         INTEGER :: CN          , DOY         , DYNAMIC     , NLAYR       , ON          , REP         , RN          
-        INTEGER :: RUN         , RUNI        , SN          , STGYEARDOY(20)            , TN          , YEAR
+        INTEGER :: RUN         , RUNI        , SN          , STGYEARDOY(0:20)            , TN          , YEAR
 
         REAL    :: BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , EO          , EOP         , IRRAMT
         REAL    :: KCAN        , NFP         , RAIN        , RLV(NL)     , SRAD        , TNIMBSOM    , TOMINSOM1   , UNH4(NL)        
@@ -67,7 +67,7 @@
         !       TIME SEQUENCE OUTPUTS (Work, Plantgro, gr2, grf)
         !-------------------------------------------------------------------------------------------------------------------
 
-        IF (  (MOD(DAS,FROPADJ).EQ.0.AND.YEARDOY.GE.PLYEARDOY).OR. (YEARDOY.EQ.PLYEARDOY).OR. (YEARDOY.EQ.STGYEARDOY(1)).OR. &
+        IF (  (MOD(DAS,FROPADJ).EQ.0.AND.YEARDOY.GE.PLYEARDOY).OR. (YEARDOY.EQ.PLYEARDOY).OR. (YEARDOY.EQ.STGYEARDOY(0)).OR. &
             (YEARDOY.EQ.STGYEARDOY(HSTG)).OR. (YEARDOY.EQ.STGYEARDOY(11))) THEN
             
             !---------------------------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@
             !         Output leaves and tiers data (IDETL = Y or D)
             !-----------------------------------------------------------------------------------------------------------
             CALL CS_Out_LfTier ( &  
-                IDETL       , RUN         , STGYEARDOY   &
+                IDETL       , RUN         , STGYEARDOY  ,  BRSTAGE &
                 )
                 
             !-----------------------------------------------------------------------------------------------------------

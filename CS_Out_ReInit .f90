@@ -19,7 +19,7 @@
      
         IMPLICIT NONE 
      
-        INTEGER :: CN          , DYNAMIC     , STGYEARDOY(20)
+        INTEGER :: CN          , DYNAMIC     , STGYEARDOY(0:20)
         
         REAL    :: BRSTAGE     , NFP         , SRAD        , UNH4(NL)     , UNO3(NL)    
         

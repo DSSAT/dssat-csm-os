@@ -18,7 +18,7 @@
         IMPLICIT NONE 
      
         INTEGER :: CN          , DOY         , ON          , REP         , RN          , RUN         , RUNI         
-        INTEGER :: SN          , STGYEARDOY(20)            , TN          , YEAR
+        INTEGER :: SN          , STGYEARDOY(0:20)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
 
         ! Screen writes
@@ -41,7 +41,7 @@
             WRITE(*,'(A20,A10,I3)')' STAGES SUMMARY FOR ',EXCODE,TN
             WRITE(*,*)' '
             !WRITE(*, FMT9600)
-            DO L = 1, PSNUM
+            DO L = 0, PSNUM
                 CALL Csopline(laic,laistg(l))
                 IF (STGYEARDOY(L).LT.9999999.AND.L.NE.10.AND.L.NE.11) THEN
                     CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
@@ -61,7 +61,8 @@
             WRITE(*,*)' '
             !WRITE (*, FMT206)                                                                       !Test format
             !WRITE (*, FMT290) MAX(-99,gdap),MAX(-99,gdapm),MAX(-99,edap),MAX(-99,edapm)             !Test format
-            DO L = 1,KEYSTX
+            !DO L = 1,KEYSTX
+            DO L = 0,KEYSTX
                 IF (KEYPS(L).GT.0) WRITE (*, FMT291)psname(KEYPS(L)),PSDap(KEYPS(L)),PSDapm(KEYPS(L))
             ENDDO
             WRITE (*, FMT305)NINT(cwam),NINT(cwamm),NINT(rwam+sdwam),NINT(rwamm),NINT(senwacm),NINT(senwacmm), &

@@ -9,14 +9,15 @@
 !***************************************************************************************************************************
     
     SUBROUTINE CS_Integ_AgesWts ( &
-        NLAYR       & 
+        NLAYR,      BRSTAGE       & 
         )
         
         USE CS_First_Trans_m
     
         IMPLICIT NONE
         
-        INTEGER NLAYR 
+        INTEGER NLAYR
+        REAL BRSTAGE
         
         !-----------------------------------------------------------------------
         !         Update ages
@@ -28,87 +29,164 @@
         TVI1 = LNUMSOLDESTA
         LNUMSOLDESTA = -99
         ! Leaves that present at beginning of day
-        DO L = 1,LNUMSG
-            LAGETT(L) = LAGETT(L) + TTLFLIFE*EMRGFR                                                                    !EQN 358
-            ! Accelerated senescence at base of dense leaf canopy
-            IF (LAI.GT.LAIXX) THEN
-                IF (L.EQ.TVI1) THEN
-                    ! Increase age if deep shading at base of canopy
-                    ! (Maximum accelerated ageing set in SPE file)
-                    ! Accelerated ageing of lowermost active leaf
-                    IF (LAGETT(L).LT.LLIFGTT+LLIFATT) THEN
-                        LAGETT(L) = AMIN1(LAGETT(L)+LLIFX,LLIFGTT+LLIFATT)                                             !EQN 359
-                        LLIFXUNUSED = (LAGETT(L)+LLIFX)-(LLIFGTT+LLIFATT)                                              !EQN 360a
-                    ELSE
-                        LLIFXUNUSED = LLIFX                                                                            !EQN 360b
+        !DO L = 1,LNUMSG
+        !    LAGETT(L) = LAGETT(L) + TTLFLIFE*EMRGFR                                                                    !EQN 358
+        !    ! Accelerated senescence at base of dense leaf canopy
+        !    IF (LAI.GT.LAIXX) THEN
+        !        IF (L.EQ.TVI1) THEN
+        !            ! Increase age if deep shading at base of canopy
+        !            ! (Maximum accelerated ageing set in SPE file)
+        !            ! Accelerated ageing of lowermost active leaf
+        !            IF (LAGETT(L).LT.LLIFGTT+LLIFATT) THEN
+        !                LAGETT(L) = AMIN1(LAGETT(L)+LLIFX,LLIFGTT+LLIFATT)                                             !EQN 359
+        !                LLIFXUNUSED = (LAGETT(L)+LLIFX)-(LLIFGTT+LLIFATT)                                              !EQN 360a
+        !            ELSE
+        !                LLIFXUNUSED = LLIFX                                                                            !EQN 360b
+        !            ENDIF
+        !        ENDIF
+        !        ! If not all acceleration used up
+        !        IF (L.EQ.TVI1+1) THEN
+        !            IF (LLIFXUNUSED.GT.0.0) THEN
+        !                IF (LAGETT(L).LT.LLIFGTT+LLIFATT) LAGETT(L) = AMIN1(LAGETT(L)+LLIFXUNUSED,LLIFGTT+LLIFATT)     !EQN 361
+        !            ENDIF
+        !        ENDIF
+        !    ENDIF
+        !    LAGEP(L) = LAGEP(L) + (TTLFLIFE*EMRGFR)/PHINT                                                              !EQN 362
+        !    ! Days growing
+        !    !IF (LAGETT(L).LE.LLIFGTT) THEN
+        !    !    DGLF(L) = DGLF(L) + EMRGFR                                                                             !EQN 363a LPM 21MAR15 We will assume a fix growing duration
+        !    !ELSE  
+        !    !    IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT) THEN
+        !    !        TVR1 = (LLIFGTT-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+        !    !        DGLF(L) = DGLF(L) + TVR1                                                                           !EQN 363b
+        !    !    ENDIF  
+        !    !ENDIF
+        !    IF (DGLF(L).LT.LLIFGD) THEN                                                                                     !LPM 21MAR15 DGLF will have a maximum value of 10 days
+        !        DGLF(L) = DGLF(L) + EMRGFR
+        !    ENDIF
+        !    
+        !    ! Days active
+        !    IF (LAGETT(L).GT.LLIFGTT.AND.LAGETT(L).LT.LLIFGTT+LLIFATT) THEN
+        !        IF (LNUMSOLDESTA.LT.0) THEN
+        !            LNUMSOLDESTA = L
+        !        ENDIF
+        !        IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT) THEN
+        !            TVR1 = (LLIFGTT-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+        !            DALF(L) = DALF(L) + (1.0-TVR1)                                                                     !EQN 364a
+        !        ELSE
+        !            IF (LAGETT(L).LE.LLIFGTT+LLIFATT) THEN
+        !                DALF(L) = DALF(L) + 1.0                                                                        !EQN 364b
+        !            ELSE
+        !                IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT) THEN
+        !                    TVR1 = ((LLIFGTT+LLIFATT)-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+        !                    DALF(L) = DALF(L) + TVR1                                                                   !EQN 364c
+        !                ENDIF
+        !            ENDIF
+        !        ENDIF
+        !    ENDIF
+        !    ! Days senescing
+        !    IF (LAGETT(L).GT.LLIFGTT+LLIFATT) THEN
+        !        IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT) THEN
+        !            TVR1 = ((LLIFGTT+LLIFATT)-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+        !            DSLF(L) = DSLF(L) + (1.0-TVR1)                                                                     !EQN 365a
+        !        ELSE
+        !            IF (LAGETT(L).LE.LLIFGTT+LLIFATT+LLIFSTT) THEN
+        !                DSLF(L) = DSLF(L) + 1.0                                                                        !EQN 365b
+        !            ELSE
+        !                IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT+LLIFSTT) THEN
+        !                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+        !                    DSLF(L) = DSLF(L) + TVR1                                                                   !EQN 365c
+        !                    LDEATHDAP(L) = DAP
+        !                ENDIF
+        !            ENDIF
+        !        ENDIF
+        !    ENDIF
+        !ENDDO
+        !IF (LNUMG.GT.0.0) THEN                                                                             
+        !    IF (LNUMSG.LT.LNUMX) THEN
+        !        LAGETT(LNUMSG+1) = LAGETT(LNUMSG+1)+(TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
+        !        LAGEP(LNUMSG+1)=LAGEP(LNUMSG+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367
+        !        DGLF(LNUMSG+1) = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                                                       !EQN 368
+        !    ENDIF
+        ! ENDIF
+        
+        DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+            DO LF = 1, LNUMSIMSTG(BR) 
+                IF (DGLF(BR,LF).GE.LLIFGD) THEN                                                                     !LPM 21MAR15 DGLF will have a maximum value of 10 days
+                    LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLIFE*EMRGFR                                                                    !EQN 358
+                    ! Accelerated senescence at base of dense leaf canopy
+                    IF (LAI.GT.LAIXX) THEN
+                        IF (L.EQ.TVI1) THEN
+                            ! Increase age if deep shading at base of canopy
+                            ! (Maximum accelerated ageing set in SPE file)
+                            ! Accelerated ageing of lowermost active leaf
+                            IF (LAGETT(BR,LF).LT.LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                                LLIFXUNUSED = (LAGETT(BR,LF)+LLIFX)-LLIFATT                                                    !EQN 360a LPM 28MAR15 LLIFXUNUSED should be before of the estimation of LAGETT 
+                                LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFX,LLIFATT)                                             !EQN 359
+                            ELSE
+                                LLIFXUNUSED = LLIFX                                                                            !EQN 360b
+                            ENDIF
+                        ENDIF
+                        ! If not all acceleration used up
+                        IF (LF.EQ.TVI1+1) THEN
+                            IF (LLIFXUNUSED.GT.0.0) THEN
+                                IF (LAGETT(BR,LF).LT.LLIFATT) LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFXUNUSED,LLIFATT)     !EQN 361
+                            ENDIF
+                        ENDIF
                     ENDIF
+                LAGEP(BR,LF) = LAGEP(BR,LF) + (TTLFLIFE*EMRGFR)/PHINT                                                              !EQN 362
+                ELSE 
+                DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
                 ENDIF
-                ! If not all acceleration used up
-                IF (L.EQ.TVI1+1) THEN
-                    IF (LLIFXUNUSED.GT.0.0) THEN
-                        IF (LAGETT(L).LT.LLIFGTT+LLIFATT) LAGETT(L) = AMIN1(LAGETT(L)+LLIFXUNUSED,LLIFGTT+LLIFATT)     !EQN 361
-                    ENDIF
-                ENDIF
-            ENDIF
-            LAGEP(L) = LAGEP(L) + (TTLFLIFE*EMRGFR)/PHINT                                                              !EQN 362
-            ! Days growing
-            !IF (LAGETT(L).LE.LLIFGTT) THEN
-            !    DGLF(L) = DGLF(L) + EMRGFR                                                                             !EQN 363a LPM 21MAR15 We will assume a fix growing duration
-            !ELSE  
-            !    IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT) THEN
-            !        TVR1 = (LLIFGTT-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-            !        DGLF(L) = DGLF(L) + TVR1                                                                           !EQN 363b
-            !    ENDIF  
-            !ENDIF
-            IF (DGLF(L).LT.LLIFGD) THEN                                                                                     !LPM 21MAR15 DGLF will have a maximum value of 10 days
-                DGLF(L) = DGLF(L) + EMRGFR
-            ENDIF
             
-            ! Days active
-            IF (LAGETT(L).GT.LLIFGTT.AND.LAGETT(L).LT.LLIFGTT+LLIFATT) THEN
-                IF (LNUMSOLDESTA.LT.0) THEN
-                    LNUMSOLDESTA = L
-                ENDIF
-                IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT) THEN
-                    TVR1 = (LLIFGTT-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                    DALF(L) = DALF(L) + (1.0-TVR1)                                                                     !EQN 364a
-                ELSE
-                    IF (LAGETT(L).LE.LLIFGTT+LLIFATT) THEN
-                        DALF(L) = DALF(L) + 1.0                                                                        !EQN 364b
+                ! Days active
+                IF (LAGETT(BR,LF).LT.LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                    IF (LNUMSOLDESTA.LT.0) THEN
+                        LNUMSOLDESTA = LF
+                    ENDIF
+                    IF (DGLF(BR,LF)-EMRGFR.LT.LLIFGD) THEN                                          !LPM 28MAR15 LLIFGT was deleted 
+                        TVR1 = (LLIFGD-(DGLF(BR,LF)-EMRGFR))/EMRGFR                                 !LPM 28MAR15 It could be useful just for the first leaf with a EMRGFR<1
+                        DALF(BR,LF) = DALF(BR,LF) + (1.0-TVR1)                                                                     !EQN 364a
                     ELSE
-                        IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT) THEN
-                            TVR1 = ((LLIFGTT+LLIFATT)-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                            DALF(L) = DALF(L) + TVR1                                                                   !EQN 364c
+                        IF (LAGETT(BR,LF).LE.LLIFATT) THEN
+                            DALF(BR,LF) = DALF(BR,LF) + 1.0                                                                        !EQN 364b
+                        ELSE
+                            IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
+                                TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                                DALF(BR,LF) = DALF(BR,LF) + TVR1                                                                   !EQN 364c
+                            ENDIF
                         ENDIF
                     ENDIF
                 ENDIF
-            ENDIF
-            ! Days senescing
-            IF (LAGETT(L).GT.LLIFGTT+LLIFATT) THEN
-                IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT) THEN
-                    TVR1 = ((LLIFGTT+LLIFATT)-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                    DSLF(L) = DSLF(L) + (1.0-TVR1)                                                                     !EQN 365a
-                ELSE
-                    IF (LAGETT(L).LE.LLIFGTT+LLIFATT+LLIFSTT) THEN
-                        DSLF(L) = DSLF(L) + 1.0                                                                        !EQN 365b
+                ! Days senescing
+                IF (LAGETT(BR,LF).GT.LLIFATT) THEN
+                    IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT) THEN
+                        TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                        DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                                     !EQN 365a
                     ELSE
-                        IF (LAGETT(L)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT+LLIFSTT) THEN
-                            TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(LAGETT(L)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                            DSLF(L) = DSLF(L) + TVR1                                                                   !EQN 365c
-                            LDEATHDAP(L) = DAP
+                        IF (LAGETT(BR,LF).LE.LLIFATT+LLIFSTT) THEN
+                            DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                                        !EQN 365b
+                        ELSE
+                            IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT+LLIFSTT) THEN
+                                TVR1 = ((LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                                DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                                   !EQN 365c
+                                LDEATHDAP(BR,LF) = DAP
+                            ENDIF
                         ENDIF
                     ENDIF
                 ENDIF
-            ENDIF
+            
+                IF (LNUMG.GT.0.0.AND.BR.EQ.BRSTAGE.AND.LF.EQ.LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
+                    IF (LNUMSG.LT.LNUMX) THEN
+                        LAGETT(BR,LF+1) = LAGETT(BR,LF+1)+(TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
+                        LAGEP(BR,LF+1)=LAGEP(BR,LF+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367
+                        DGLF(BR,LF+1) = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                                                       !EQN 368
+                    ENDIF
+                ENDIF 
+            ENDDO
         ENDDO
         ! Leaves that emerged during day
-        IF (LNUMG.GT.0.0) THEN
-            IF (LNUMSG.LT.LNUMX) THEN
-                LAGETT(LNUMSG+1) = LAGETT(LNUMSG+1)+(TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
-                LAGEP(LNUMSG+1)=LAGEP(LNUMSG+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367
-                DGLF(LNUMSG+1) = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                                                       !EQN 368
-            ENDIF
-        ENDIF
+
         
         !-----------------------------------------------------------------------
         !         Update dry weights

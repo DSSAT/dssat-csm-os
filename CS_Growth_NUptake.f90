@@ -9,7 +9,7 @@
 
     SUBROUTINE CS_Growth_NUptake ( &
         BD          , DLAYR       , DUL         , ISWNIT      , LL          , NH4LEFT     , NLAYR       , NO3LEFT     , &
-        RLV         , SAT         , SW          , UNH4        , UNO3          & 
+        RLV         , SAT         , SW          , UNH4        , UNO3        , BRSTAGE     & 
         )
     
         USE ModuleDefs
@@ -21,7 +21,7 @@
         CHARACTER(LEN=1) ISWNIT      
         INTEGER NLAYR       
         REAL    BD(NL)      , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SAT(NL)     
-        REAL    SW(NL)      , UNH4(NL)    , UNO3(NL)
+        REAL    SW(NL)      , UNH4(NL)    , UNO3(NL)    , BRSTAGE
     
         
         !-----------------------------------------------------------------------
@@ -317,7 +317,7 @@
                 NFLF2(0,0) = 1.0
                 DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                     DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
-                        IF (LNUMSIMSTG(BR).LT.LCNUM) THEN
+                        IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
                             LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)            
                             NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))
                         ENDIF

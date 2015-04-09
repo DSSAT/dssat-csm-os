@@ -24,7 +24,7 @@
         
         IMPLICIT NONE
         
-        INTEGER DOY         , NLAYR       , STGYEARDOY(20)            , YEAR
+        INTEGER DOY         , NLAYR       , STGYEARDOY(0:20)            , YEAR
         
         REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX
         REAL    DLAYR(NL)   , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , LL(NL)      
@@ -38,14 +38,14 @@
         !         Update ages
         !----------------------------------------------------------------------
         CALL CS_Integ_AgesWts ( &
-            NLAYR       & 
+            NLAYR,      BRSTAGE       & 
             )
             
         !-----------------------------------------------------------------------
         !         Calculate reserve concentrations, shoot and total leaf area.
         !-----------------------------------------------------------------------
         CALL  CS_Integ_LA ( &
-            CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV            & 
+            CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV         , BRSTAGE   & 
             ) 
             
         !-----------------------------------------------------------------------

@@ -7,14 +7,15 @@
 ! Subroutine CS_Growth_Senesce calculates senescence and remobilization.
 !***************************************************************************************************************************
     SUBROUTINE CS_Growth_Senesce ( &
-        ISWNIT      , ISWWAT      & 
+        ISWNIT      , ISWWAT,     BRSTAGE      & 
         )
     
         USE CS_First_Trans_m
     
         IMPLICIT NONE
         
-        CHARACTER(LEN=1) ISWNIT      , ISWWAT      
+        CHARACTER(LEN=1) ISWNIT      , ISWWAT
+        REAL BRSTAGE
     
         !-----------------------------------------------------------------------
         !           Calculate senescence of leaves,stems,etc..
@@ -37,16 +38,28 @@
 
         ! Leaf senescence - phyllochron or real time driven
         LAPSTMP = 0.0
-        DO L = 1,LNUMSG
-            IF (LAGETT(L)+TTLFLIFE*EMRGFR.LE.LLIFATT+LLIFGTT) EXIT                                                     !EQN 371
-            IF (LAP(L)-LAPS(L).GT.0.0) THEN
-                LAPSTMP = AMIN1((LAP(L)-LAPS(L)),LAP(L)/LLIFSTT*AMIN1((LAGETT(L)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
-                    (TTLFLIFE*EMRGFR)))
-                LAPS(L) = LAPS(L) + LAPSTMP
-                PLASP = PLASP + LAPSTMP                                                                                !EQN 370
-            ENDIF
-        ENDDO
+        !DO L = 1,LNUMSG
+        !    IF (LAGETT(L)+TTLFLIFE*EMRGFR.LE.LLIFATT+LLIFGTT) EXIT                                                     !EQN 371 !LPM 25MAR15 Modify to include cohorts
+        !    IF (LAP(L)-LAPS(L).GT.0.0) THEN
+        !        LAPSTMP = AMIN1((LAP(L)-LAPS(L)),LAP(L)/LLIFSTT*AMIN1((LAGETT(L)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
+        !            (TTLFLIFE*EMRGFR)))
+        !        LAPS(L) = LAPS(L) + LAPSTMP
+        !        PLASP = PLASP + LAPSTMP                                                                                !EQN 370
+        !    ENDIF
+        !ENDDO
 
+        DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+            DO LF = 1, LNUMSIMSTG(BR)         
+                IF (LAGETT(BR,LF)+TTLFLIFE*EMRGFR.LE.LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
+                IF (LAP(BR,LF)-LAPS(BR,LF).GT.0.0) THEN
+                    LAPSTMP = AMIN1((LAP(BR,LF)-LAPS(BR,LF)),(LAP(BR,LF)/LLIFSTT*AMIN1((LAGETT(BR,LF)+(TTLFLIFE*EMRGFR)-LLIFATT), &         !EQN 372
+                        (TTLFLIFE*EMRGFR))))
+                    LAPS(BR,LF) = LAPS(BR,LF) + LAPSTMP
+                    PLASP = PLASP + LAPSTMP                                                                                !EQN 370
+                ENDIF
+            ENDDO
+        ENDDO
+        
         ! Leaf senescence - injury        ! LAH  To add later?
         !PLASI = PLA*(LSENI/100.0)*DU/STDAY  ! May need injury loss
 

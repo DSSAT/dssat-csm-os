@@ -28,7 +28,7 @@
         
         !TYPE (WeatherType) WEATHER                                                                                          ! MF Defined in ModuleDefs
     
-        INTEGER DOY         , NLAYR       , STGYEARDOY(20)            , YEAR        , YEARPLTCSM
+        INTEGER DOY         , NLAYR       , STGYEARDOY(0:20)            , YEAR        , YEARPLTCSM               !LPM 28MAR15 STGYEARDOY changed 
         INTEGER CSIDLAYR                 
 
         REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CLOUDS      , CO2         , DAYL        , DLAYR(NL)   , DUL(NL)     
@@ -92,7 +92,7 @@
                 !           Calculate senescence of leaves,stems,etc..
                 !-----------------------------------------------------------------------
                 CALL CS_Growth_Senesce ( &
-                    ISWNIT      , ISWWAT      & 
+                    ISWNIT      , ISWWAT      , BRSTAGE      & 
                     )
                 
                 
@@ -118,7 +118,7 @@
                 !-----------------------------------------------------------------------
                 CALL CS_Growth_NUptake ( &
                     BD          , DLAYR       , DUL         , ISWNIT      , LL          , NH4LEFT     , NLAYR       , &
-                    NO3LEFT     , RLV         , SAT         , SW          , UNH4        , UNO3          & 
+                    NO3LEFT     , RLV         , SAT         , SW          , UNH4        , UNO3        , BRSTAGE     & 
                     )
                 
                 !-----------------------------------------------------------------------

@@ -29,7 +29,7 @@
                     
             ! Find intermediate stage dates
             !DO L = MSTG-1,1,-1 !LPM 06MAR15 MSTG TO PSX this section could be not necessary
-            DO L = PSX-1,1,-1
+            DO L = PSX-1,0,-1
                 IF (psdapm(l).GT.0.0) THEN
                     psidapm = psdapm(l)
                     EXIT

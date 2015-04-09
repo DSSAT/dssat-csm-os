@@ -17,7 +17,7 @@
      
         IMPLICIT NONE 
      
-        INTEGER :: CN          , DOY         , STGYEARDOY(20)            , TN          , YEAR
+        INTEGER :: CN          , DOY         , STGYEARDOY(0:20)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
 
         CHARACTER(LEN=1)  :: RNMODE      
@@ -29,7 +29,7 @@
         IF (FILEIOT(1:3).EQ.'DS4' .AND. CN.EQ.1.AND. RNMODE.EQ.'E') THEN         
             CALL CSCLEAR5
             WRITE(*,*) ' '
-            DO L = 1, PSNUM
+            DO L = 0, PSNUM
                 CALL Csopline(laic,laistg(l))
                 IF (STGYEARDOY(L).LT.9999999.AND.L.NE.10.AND.L.NE.11) THEN
                     CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
@@ -60,7 +60,8 @@
             !WRITE (*, FMT206)                                                                       !Test format
             WRITE(*,'(A36,A10,I3)') ' SIMULATED-MEASURED COMPARISONS FOR ',EXCODE,TN
             WRITE(*,*)' '
-            DO L = 1,KEYSTX
+            !DO L = 1,KEYSTX
+            DO L = 0,KEYSTX
                 IF (KEYPS(L).GT.0) WRITE (*, FMT291) psname(KEYPS(L)),psdap(KEYPS(L)),psdapm(KEYPS(L))
             ENDDO
             WRITE (*, FMT305)NINT(cwam),NINT(cwamm),MAX(-99,NINT(rwam+sdwam)),NINT(rwamm),NINT(senwacm),NINT(senwacmm), &

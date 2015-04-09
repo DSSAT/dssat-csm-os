@@ -17,7 +17,7 @@
         
         IMPLICIT NONE
         
-        INTEGER NLAYR       , STGYEARDOY(20)            
+        INTEGER NLAYR       , STGYEARDOY(0:20)            
         REAL    BD(NL)      , DLAYR(NL)   , NH4LEFT(NL) , NO3LEFT(NL) , RESCALG(0:NL)             , RESLGALG(0:NL)            
         REAL    RESNALG(0:NL)             , SW(NL)      
         

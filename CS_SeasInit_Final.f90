@@ -207,7 +207,7 @@
             WRITE(fnumwrk,*)'  Pps2   ',Dayls(2)
             !WRITE(fnumwrk,*)'  Mstg   ',Mstg    !LPM 07MAR15 There is not a maturity stage for cassava
             !DO L = 1,MSTG                      !LPM 07MAR15 MSTG to PSX
-            DO L = 1,PSX
+            DO L = 0,PSX
                 WRITE(fnumwrk,'(A15,I2,2F8.1)')'  B#->,Deg.d-> ',l,Pdl(L),PD(l)
             ENDDO  
             WRITE(fnumwrk,*)' Crown stages '

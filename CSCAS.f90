@@ -55,7 +55,7 @@
     TYPE (WeatherType) WEATHER                             
     
     INTEGER :: CN       , DOY         , DYNAMIC     , FROP        , NLAYR       , ON          , REP        , RN          
-    INTEGER :: RUN      , RUNI        , SN          , STEP        , STGYEARDOY(20)            , TN         , YEAR
+    INTEGER :: RUN      , RUNI        , SN          , STEP        , STGYEARDOY(0:20)            , TN         , YEAR
     INTEGER :: YEARPLTCSM 
     INTEGER :: CSTIMDIF , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT     , CSIDLAYR    , CSYEARDOY              ! Integer function calls
 

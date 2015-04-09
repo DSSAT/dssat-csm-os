@@ -9,7 +9,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE CS_Integ_LA ( &
-        CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV            & 
+        CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        , BRSTAGE    & 
         )
         
         USE ModuleDefs
@@ -19,7 +19,7 @@
         
         INTEGER NLAYR
         
-        REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)        
+        REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
        
         !-----------------------------------------------------------------------
         !         Calculate reserve concentration
@@ -47,7 +47,8 @@
         IF (TT*EMRGFR.GT.0.0) THEN
             PLA = PLA + PLAGSB4                                                                                        !EQN 453
             PLAX = AMAX1(PLAX,PLA)
-            LAP(LNUMSG) = LAP(LNUMSG) + PLAGSB4                                                                        !EQN 454
+            !LAP(LNUMSG) = LAP(LNUMSG) + PLAGSB4                                                                        !EQN 454
+            LAP(BRSTAGE,LNUMSIMSTG(BRSTAGE)) = LAP(BRSTAGE,LNUMSIMSTG(BRSTAGE)) + PLAGSB4 
             
             DO L = 1,INT(SHNUM+1)
                 IF (SHNUM.GE.1.0.OR.SHNUM-FLOAT(L-1).GT.0.0) THEN
@@ -55,14 +56,14 @@
                 ENDIF
             ENDDO
             
-            IF (LCNUM.LT.LCNUMX) THEN
-                IF (PLAGSB4.GT.0.0) THEN
-                    LCNUM = LCNUM+1
-                    LCOA(LCNUM) = PLAGSB4                                                                              !EQN 455a
-                ENDIF
-            ELSE
-                LCOA(LCNUM) = LCOA(LCNUM) + PLAGSB4                                                                    !EQN 455b
-            ENDIF
+            !IF (LCNUM.LT.LCNUMX) THEN    !LPM 28MAR15 This section is not necessary
+            !    IF (PLAGSB4.GT.0.0) THEN
+            !        LCNUM = LCNUM+1
+            !        LCOA(LCNUM) = PLAGSB4                                                                              !EQN 455a
+            !    ENDIF
+            !ELSE
+            !    LCOA(LCNUM) = LCOA(LCNUM) + PLAGSB4                                                                    !EQN 455b
+            !ENDIF
             
         ENDIF
         
@@ -76,41 +77,49 @@
         ! Distribute senesced leaf over leaf positions and cohorts
         PLASTMP = PLAS - PLASP
         IF (LNUMSG.GT.0 .AND. PLASTMP.GT.0) THEN
-            DO L = 1, LNUMSG
-                IF (LAP(L)-LAPS(L).GT.PLASTMP) THEN
-                    LAPS(L) = LAPS(L) + PLASTMP                                                                        !EQN 459a
-                    PLASTMP = 0.0
-                ELSE
-                    PLASTMP = PLASTMP - (LAP(L)-LAPS(L))
-                    LAPS(L) = LAP(L)                                                                                   !EQN 459b
-                ENDIF
-                IF (PLASTMP.LE.0.0) EXIT
+            !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
+            DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+                DO LF = 1, LNUMSIMSTG(BR) 
+                    IF (LAP(BR,LF)-LAPS(BR,LF).GT.PLASTMP) THEN
+                        LAPS(BR,LF) = LAPS(BR,LF) + PLASTMP                                                                        !EQN 459a
+                        PLASTMP = 0.0
+                    ELSE
+                        PLASTMP = PLASTMP - (LAP(BR,LF)-LAPS(BR,LF))
+                        LAPS(BR,LF) = LAP(BR,LF)                                                                                   !EQN 459b
+                    ENDIF
+                    IF (PLASTMP.LE.0.0) EXIT
+                ENDDO
             ENDDO
-            ! Cohorts
-            PLASTMP2 = AMAX1(0.0,PLAS)
-            DO L = 1, LCNUM
-                IF (LCOA(L)-LCOAS(L).GT.PLASTMP2) THEN
-                    LCOAS(L) = LCOAS(L) + PLASTMP2                                                                     !EQN 460a
-                    PLASTMP2 = 0.0
-                ELSE
-                    PLASTMP2 = PLASTMP2 - (LCOA(L)-LCOAS(L))
-                    LCOAS(L) = LCOA(L)                                                                                 !EQN 460b
-                ENDIF
-                IF (PLASTMP2.LE.0.0) EXIT
-            ENDDO
+            !! Cohorts  !LPM 28MAR15 This section is not necessary
+            !PLASTMP2 = AMAX1(0.0,PLAS)
+            !DO L = 1, LCNUM
+            !    IF (LCOA(L)-LCOAS(L).GT.PLASTMP2) THEN
+            !        LCOAS(L) = LCOAS(L) + PLASTMP2                                                                     !EQN 460a
+            !        PLASTMP2 = 0.0
+            !    ELSE
+            !        PLASTMP2 = PLASTMP2 - (LCOA(L)-LCOAS(L))
+            !        LCOAS(L) = LCOA(L)                                                                                 !EQN 460b
+            !    ENDIF
+            !    IF (PLASTMP2.LE.0.0) EXIT
+            !ENDDO
         ENDIF
         ! Distribute harvested leaf over leaf positions and cohorts
         ! Leaf positions
         IF (LNUMSG.GT.0 .AND. LAPH.GT.0) THEN
-            DO L = 1, LNUMSG
-                IF (LAP(L)-LAPS(L).GT.0.0) LAPS(L) = LAPS(L) + (LAP(L)-LAPS(L)) * HAFR                                 !EQN 461
+            !DO L = 1, LNUMSG
+            !    IF (LAP(L)-LAPS(L).GT.0.0) LAPS(L) = LAPS(L) + (LAP(L)-LAPS(L)) * HAFR                                 !EQN 461
+            !ENDDO
+            DO BR = 0, BRSTAGE                                                                                        !LPM 28MAR15 Change to include cohorts
+                DO LF = 1, LNUMSIMSTG(BR)
+                    IF (LAP(BR,LF)-LAPS(BR,LF).GT.0.0) LAPS(BR,LF) = LAPS(BR,LF) + (LAP(BR,LF)-LAPS(BR,LF)) * HAFR     !EQN 461
+                ENDDO
             ENDDO
             ! Cohorts
-            DO L = 1, LCNUM
-                IF (LCOA(L)-LCOAS(L).GT.0.0) THEN
-                    LCOAS(L) = LCOAS(L) + (LCOA(L)-LCOAS(L)) * HAFR                                                    !EQN 462
-                ENDIF
-            ENDDO
+            !DO L = 1, LCNUM
+            !    IF (LCOA(L)-LCOAS(L).GT.0.0) THEN
+            !        LCOAS(L) = LCOAS(L) + (LCOA(L)-LCOAS(L)) * HAFR                                                    !EQN 462
+            !    ENDIF
+            !ENDDO
         ENDIF
         
         !-----------------------------------------------------------------------

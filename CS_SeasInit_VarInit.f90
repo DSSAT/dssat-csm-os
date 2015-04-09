@@ -18,7 +18,7 @@
 
         IMPLICIT     NONE
         
-        INTEGER STGYEARDOY(20)            
+        INTEGER STGYEARDOY(0:20)            
         
         REAL    BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL(30)    , LAILA(30)   , NFP         , PARIP       
         REAL    PARIPA      , RESCALG(0:NL)             , RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)     
@@ -201,9 +201,9 @@
         latl2 = 0.0
         latl3 = 0.0
         latl4 = 0.0
-        lcnum = 0
-        lcoa = 0.0
-        lcoas = 0.0
+        !lcnum = 0 !LPM 28MAR15 Non necessary variables
+        !lcoa = 0.0 !LPM 28MAR15 These variables are not necessary
+        !lcoas = 0.0
         leafn = 0.0
         lfwt = 0.0
         lfwtm = 0.0

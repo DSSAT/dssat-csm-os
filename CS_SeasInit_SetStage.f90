@@ -32,17 +32,18 @@
 
         KEYPSNUM = 0
         PSNUM = 0
-        DO L = 1,PSX
+        !DO L = 1,PSX  !LPM 28MAR15 the first stage is 0 (before branching)
+        DO L = 0,PSX
             IF (TVILENT(PSTYP(L)).GT.0) THEN                                            ! TVILENT is a function in CSUTS.FOR the same as the intrinsic function LEN_TRIM
                 IF (PSTYP(L).EQ.'K'.OR.PSTYP(L).EQ.'k'.OR.PSTYP(L).EQ.'M')THEN          ! PSNO PSTYP PSABV PSNAME    (From .SPE file, S=Standard, K=Key)
-                    KEYPSNUM = KEYPSNUM + 1                                             !    1     S GDAT  Germinate
-                    KEYPS(KEYPSNUM) = L                                                 !    2     K B1DAT 1stBranch
-                ENDIF                                                                   !    3     K B2DAT 2ndBranch
-                IF (PSABV(L).EQ.'HDAT') HSTG = L                                        !    4     K B3DAT 3rdBranch
-                !IF (PSABV(L).EQ.'MDAT') MSTG = L                                       !    5     K B4DAT 4thBranch !LPM 07MAR15 There is not a MSTG for cassava
-                PSNUM = PSNUM + 1                                                       !    6     K B5DAT 5thBranch
-            ENDIF                                                                       !    7     K B6DAT 6thBranch
-        ENDDO                                                                           !    8     M HDAT  Harvest  
+                    KEYPSNUM = KEYPSNUM + 1                                             !    0     S GDAT  Germinate
+                    KEYPS(KEYPSNUM) = L                                                 !    1     K B1DAT 1stBranch
+                ENDIF                                                                   !    2     K B2DAT 2ndBranch
+                IF (PSABV(L).EQ.'HDAT') HSTG = L                                        !    3     K B3DAT 3rdBranch
+                !IF (PSABV(L).EQ.'MDAT') MSTG = L                                       !    4     K B4DAT 4thBranch !LPM 07MAR15 There is not a MSTG for cassava
+                PSNUM = PSNUM + 1                                                       !    5     K B5DAT 5thBranch
+            ENDIF                                                                       !    6     K B6DAT 6thBranch
+        ENDDO                                                                           !    7     M HDAT  Harvest  
         ! IF MSTG not found, use maximum principal stage number                         
         IF (MSTG.LE.0) THEN
             MSTG = KEYPSNUM
@@ -82,7 +83,7 @@
         LNUMTOSTG = 0.0        
         IF (MEDEV.EQ.'LNUM')THEN !LPM 04MAR15 MEDEV defines if branching durations input is as node unit (LNUM)
             ! If tier durations input as node units,calculte DU for tiers
-            DO L = 1,8 !LPM 07MAR15 here 8 is left (instead of PSX) to avoid problems with the estimation of DSTAGE
+            DO L = 0,8 !LPM 07MAR15 here 8 is left (instead of PSX) to avoid problems with the estimation of DSTAGE
                 IF (PDL(L).GT.0.0) THEN
                     MSTG = L+1
                     HSTG = MSTG+1  
@@ -135,7 +136,7 @@
         ELSE 
             ! If tier durations input as developmental units
             !DO L = 1,8  !LPM 06MAR15 to avoid a fix value of branch levelS (8)
-            DO L = 1,PSX
+            DO L = 0,PSX
                 IF (PDL(L).GT.0.0) THEN
                     MSTG = L+1
                     HSTG = MSTG+1  
@@ -143,7 +144,7 @@
             ENDDO
             ! Check for missing tier durations and if so use previous
             
-            DO L = 1,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
+            DO L = 0,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
                 IF (L.LE.2)THEN
                     PD(L) = PDL(L)
                 ELSE
@@ -155,7 +156,7 @@
             IF (PSX.GT.2) THEN
                 Ctrnumpd = 0
                 !DO L = 2,MSTG-1  !LPM 04MAR15 It is not necessary the -1 because there is not a MSTG with a different value 
-                DO L = 2,PSX
+                DO L = 1,PSX
                     !IF (PD(L).LT.0.0) THEN !LPM 04MAR15 We use the same input data PDL instead of create a new coefficient (PD) 
                     IF (PDL(L).LT.0.0) THEN  
                         PDL(L) = PDL(L-1)

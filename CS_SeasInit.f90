@@ -23,7 +23,7 @@
 
         IMPLICIT     NONE
         
-        INTEGER STGYEARDOY(20)            , CN          , DOY         , ON          , RN          , RUN         , RUNI        
+        INTEGER STGYEARDOY(0:20)            , CN          , DOY         , ON          , RN          , RUN         , RUNI        
         INTEGER SN          , TN          , YEAR
         
         REAL    ALBEDOS     , BRSTAGE     , CAID        , CANHT       , CLOUDS      , DEWDUR      , HARVFRAC(2) , KCAN        

@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE CS_Out_LfTier ( & 
-        IDETL       , RUN         , STGYEARDOY   &
+        IDETL       , RUN         , STGYEARDOY  , BRSTAGE    &
         )
         
         !USE ModuleDefs                                         ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
@@ -17,7 +17,8 @@
      
         IMPLICIT NONE 
      
-        INTEGER :: RUN         , STGYEARDOY(20)            
+        INTEGER :: RUN         , STGYEARDOY(0:20) 
+        REAL BRSTAGE
 
         CHARACTER(LEN=1)  :: IDETL       
     
@@ -51,25 +52,25 @@
                 !    1.0-NFLF(I),1.0-NFLF2(I),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(I))),1.0-TFGLF(I),1.0-TFDLF(I),DGLF(I), &
                 !    DALF(I),DSLF(I),DGLF(I)+DALF(I)+DSLF(I),LDEATHDAP(I)
              !ENDDO   
-            DO BR = 1, BRSTAGE
-                DO LF = 1, LNUMSIMSTG(BR)  
+            DO BR = 0, BRSTAGE
+                DO LF = 1, INT(LNUMSIMSTG(BR))  
                     CALL Csopline(lapotxc,lapotx(BR,LF))
                     CALL Csopline(latlc,AMAX1(0.0,LATL(BR,LF)))
                     CALL Csopline(latl2c,AMAX1(0.0,LATL2(BR,LF)))
                     CALL Csopline(latl3c,AMAX1(0.0,LATL3(BR,LF)))
                     CALL Csopline(latl4c,AMAX1(0.0,LATL4(BR,LF)))
-                    CALL Csopline(lapc,lap(i))
-                    CALL Csopline(lapsc,laps(i))
+                    CALL Csopline(lapc,lap(BR,LF))
+                    CALL Csopline(lapsc,laps(BR,LF))
                     ! Adjust for growth period of non fully expanded leaves
                     WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
                     NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
                     NFLFP(BR,LF) =AMIN1(1.0,NFLFP(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
                     TFGLF(BR,LF) =AMIN1(1.0,TFGLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
                     AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
-                    IF (LDEATHDAP(I).EQ.0) LDEATHDAP = -99
+                    IF (LDEATHDAP(BR,LF).EQ.0) LDEATHDAP = -99
                     WRITE (fnumlvs,'(I6,7A6,6F6.2,4F6.1,I6)')I,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(BR,LF), &
-                        1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(I),DGLF(BR,LF), &
-                        DALF(I),DSLF(I),DGLF(BR,LF)+DALF(I)+DSLF(I),LDEATHDAP(I)
+                        1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(BR,LF),DGLF(BR,LF), &
+                        DALF(BR,LF),DSLF(BR,LF),DGLF(BR,LF)+DALF(BR,LF)+DSLF(BR,LF),LDEATHDAP(BR,LF)
                 ENDDO
             ENDDO
                 
@@ -102,7 +103,7 @@
             WRITE (fnumpha,'(A42,A24,A12)')'@ TIER SRADA  TMXA  TMNA  PREA  TWLA  CO2A','  WFPA  WFGA  NFPA  NFGA', &
                 '  TIER_END  '
             !DO L=1,MSTG-2       !LPM  07MAR15 MSTG TO PSX
-            DO L=1,PSX-2
+            DO L=0,PSX-2
                 IF (STGYEARDOY(L).LT.9999999.AND.L.NE.0.AND.L.NE.10.AND.L.NE.11) &
                     WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')L,sradpav(L),tmaxpav(L),tminpav(L),rainpav(L), &
                     daylpav(L),NINT(co2pav(L)),1.0-wfppav(L),1.0-wfgpav(L),1.0-nfppav(L),1.0-nfgpav(L), &

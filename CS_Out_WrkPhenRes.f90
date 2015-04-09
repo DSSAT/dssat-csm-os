@@ -128,7 +128,7 @@
             WRITE (fnumwrk,'(A28,A10,I3)')' STRESS FACTOR AVERAGES FOR ',excode,tn
             WRITE (fnumwrk,'(A55)')'  TIER   H2O(PS)   H2O(GR)   N(PS)     N(GR)   TIER_END'
             !DO L=1,MSTG-2                  !LPM  07MAR15 MSTG TO PSX
-            DO L=1,PSX-2 
+            DO L=0,PSX-2 
                 WRITE (fnumwrk,'(I6,F8.2,3F10.2,2X,A13)')l,1.0-wfppav(l),1.0-wfgpav(l),1.0-nfppav(l),1.0-nfgpav(l), &
                     psname(MIN(L+1,PSX))
             ENDDO
@@ -181,7 +181,8 @@
             IF (CROP.NE.CROPPREV.OR.RUN.EQ.1.OR.(.NOT.(FFLAG))) THEN
                 WRITE (FNUMPHES,'(/,A14,A10)')'*PHENOLOGY(S):',EXCODE
                 WRITE (FNUMPHES,'(A16,A24)',ADVANCE='NO') '@ EXCODE    TRNO',' PYEAR  PDAT  GDAP  EDAP'
-                DO L = 1,KEYSTX
+                !DO L = 1,KEYSTX
+                DO L = 0,KEYSTX
                     IF (KEYPS(L).GT.0)THEN
                         WRITE (FNUMPHES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
                     ENDIF
@@ -190,7 +191,8 @@
             ELSE  ! End Phenology simulated header writes
                 WRITE (fnumphes,'(A10,I6,2I6,2F6.1)',ADVANCE='NO')EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
             ENDIF
-            DO L = 1,KEYSTX
+            !DO L = 1,KEYSTX
+            DO L = 0,KEYSTX
                 IF (KEYPS(L).GT.0) WRITE (FNUMPHES,'(I6)',ADVANCE='NO')PSDAP(KEYPS(L))
             ENDDO
             CLOSE (FNUMPHES)
@@ -208,7 +210,8 @@
                 IF (CROP.NE.CROPPREV.OR.RUN.EQ.1.OR.(.NOT.(FFLAG))) THEN
                     WRITE (FNUMPHEM,'(/,A14,A10)')'*PHENOLOGY(M):',EXCODE
                     WRITE (FNUMPHEM,'(A16,A24)',ADVANCE='NO')'@EXCODE     TRNO',' PYEAR  PDAT  GDAP  EDAP'
-                    DO L = 1,KEYSTX
+                    !DO L = 1,KEYSTX
+                    DO L = 0,KEYSTX
                         IF (KEYPS(L).GT.0) THEN
                             WRITE (FNUMPHEM,'(A6)',ADVANCE='NO')PSABVO(KEYPS(L))
                         ENDIF 
@@ -217,7 +220,8 @@
                 ELSE ! End Phenology measured header writes
                     WRITE (FNUMPHEM,'(A10,I6,2I6,2F6.1)',ADVANCE='NO')EXCODE,TN,PLYEAR,PLDAY,gdapfr,edapfr
                 ENDIF
-                DO L = 1,KEYSTX
+                !DO L = 1,KEYSTX
+                DO L = 0,KEYSTX
                     IF (KEYPS(L).GT.0) WRITE (FNUMPHEM,'(I6)',ADVANCE='NO')PSDAPM(KEYPS(L))
                 ENDDO
                 CLOSE (FNUMPHEM)
@@ -247,18 +251,22 @@
                     WRITE (FNUMPRES,'(A180)') TLINETMP
                 ENDIF
                 WRITE (FNUMPRES,'(4A)',ADVANCE='NO')'@  RUN',' EXCODE   ',' TRNO RN    CR','  PDAT  EDAP'
-                DO L = 1,KEYSTX
+                !DO L = 1,KEYSTX
+                DO L = 0,KEYSTX
                     IF (KEYPS(L).GT.0) THEN
                         WRITE (FNUMPRES,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
                     ENDIF  
                 ENDDO
-                WRITE (FNUMPRES,'(8A)') '  HWAH  HWUH','  H#AH  H#GH  LAIX  L#SH BR#AH','  CWAH  VWAH  HIAH  RWAH', &
-                    '  HN%H  TNAH','  CNAH  HNAH','  HINH PLPOP','  NICH',' SRADA TMAXA TMINA  PRCP'
+                WRITE (FNUMPRES,'(9A)') '  HWAH  HWUH','  H#AH  H#GH  LAIX  L#SH ', &
+                    'BR0AH BR1AH BR2AH BR3AH BR4AH BR5AH BR6AH BR7AH BR8AH BR9AH BR0AH BR1AH BR2AH ', &
+                    ' CWAH  VWAH  HIAH  RWAH', '  HN%H  TNAH','  CNAH  HNAH','  HINH PLPOP', &
+                    '  NICH',' SRADA TMAXA TMINA  PRCP'
             ELSE
                 OPEN (UNIT=FNUMPRES,FILE=FNAMEPRES,POSITION='APPEND')
             ENDIF  ! End Responses simulated header writes
             WRITE (FNUMPRES,'(I6,1X,A10,I4,I3,4X,A2, I6, F6.1)',ADVANCE='NO') RUN,EXCODE,TN,RN,CROP,PLDAYTMP,EDAPFR
-            DO L = 1,KEYSTX
+            !DO L = 1,KEYSTX
+            DO L = 0,KEYSTX
                 !IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN          !LPM  07MAR15 MSTG TO PSX
                 IF (L.EQ.PSX.AND.HNUMBER.EQ.1) THEN
                     ! If harvested at a specific date
@@ -292,7 +300,8 @@
                     ENDIF
                     WRITE (FNUMPREM,'(4A)',ADVANCE='NO')'@  RUN',' EXCODE   ',' TRNO RN    CR','  PDOY  EDAP'
 
-                    DO L = 1,KEYSTX
+                    !DO L = 1,KEYSTX
+                    DO L = 0,KEYSTX
                         IF (KEYPS(L).GT.0) THEN
                             WRITE (FNUMPREM,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
                         ENDIF 
@@ -303,7 +312,8 @@
                 ENDIF ! End Responses measured header writes
                 WRITE (FNUMPREM,'(I6,1X,A10,I4,I3,4X,A2, I6, F6.1)',ADVANCE='NO') &
                     RUN,EXCODE,TN,RN,CROP,PLDAYTMP,FLOAT(MAX(-99,edapm))
-                DO L = 1,KEYSTX
+                !DO L = 1,KEYSTX
+                DO L = 0,KEYSTX
                     !IF (L.EQ.MSTG.AND.HNUMBER.EQ.1) THEN          !LPM  07MAR15 MSTG TO PSX
                     IF (L.EQ.PSX.AND.HNUMBER.EQ.1) THEN
                         ! If harvested at a specific date
@@ -314,7 +324,7 @@
                     ENDIF
                 ENDDO
                 !WRITE (FNUMPREM,'(I6)',ADVANCE='NO') PSDAPM(HSTG)
-                WRITE (FNUMPREM, FMT409) NINT(hwamm),hwummchar,NINT(hnumamm),NINT(hnumgmm),laixmchar,lnumsmm,brnumshm, &
+                WRITE (FNUMPREM, FMT411) NINT(hwamm),hwummchar,NINT(hnumamm),NINT(hnumgmm),laixmchar,lnumsmm,brnumshm, &
                     NINT(cwamm),NINT(vwamm),hiammchar,NINT(rwamm),hnpcmmchar,NINT(tnamm),NINT(cnamm),NINT(hnamm), &
                     hinmmchar,pltpopp,NINT(amtnit),sradcav,tmaxcav,tmincav,NINT(raincc)
                 CLOSE(FNUMPREM)

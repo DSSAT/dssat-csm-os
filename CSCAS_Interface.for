@@ -35,7 +35,7 @@ C=======================================================================
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY
       INTEGER MDATE, L, NLAYR
       INTEGER MULTI, FROP, SN, YEAR, DOY
-      INTEGER STGYEARDOY(20), STGDOY(20), YRPLT
+      INTEGER STGYEARDOY(0:20), STGDOY(0:20), YRPLT
       INTEGER YEARPLTCSM                                                ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS                                        
 
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2
@@ -218,8 +218,8 @@ C-----------------------------------------------------------------------
      & STGYEARDOY, BRSTAGE,                                !Stage dates  
      & DYNAMIC) !, WEATHER)                                !Control         ! MF 10JA15 WEATHER IS NEEDED FOR HOURLY EVALUATIONS
       
-    ! MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of
-    !    CSCAS_Interface of which there are only 31. The others can be passed in a Module (20JA15 still to do).
+      ! MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of
+      !    CSCAS_Interface of which there are only 31. The others can be passed in a Module (20JA15 still to do).
 
       XLAI   = CAID
       NSTRES = NFP

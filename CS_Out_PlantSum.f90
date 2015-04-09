@@ -33,7 +33,8 @@
             WRITE (FNUMPSUM,'(/,A)') '*SUMMARY'
             WRITE (FNUMPSUM,'(3A)',ADVANCE='NO') '@  RUN EXCODE    TRNO RN',' TNAME....................', &
                 ' REP  RUNI S O C    CR PYEAR  PDAT'
-            DO L = 1,KEYSTX
+            !DO L = 1,KEYSTX
+            DO L = 0,KEYSTX
                 IF (KEYPS(L).GT.0) THEN
                     WRITE (FNUMPSUM,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
                     !IF (PSABVO(KEYPS(L)).EQ.'TSDAP') THEN
@@ -48,7 +49,8 @@
         ENDIF  ! End of Plantsum.Out headers
         OPEN (UNIT=fnumpsum,FILE=FNAMEPSUM,POSITION='APPEND')
         WRITE (fnumpsum, FMT400, ADVANCE='NO') run,excode,tn,rn,tname,rep,runi,sn,on,cn,crop,plyear,plday
-        DO L = 1,KEYSTX
+        !DO L = 1,KEYSTX
+        DO L = 0,KEYSTX
             IF (KEYPS(L).GT.0) THEN
                 WRITE (FNUMPSUM,'(I6)',ADVANCE='NO') PSDAP(KEYPS(L))
                 IF (PSABVO(KEYPS(L)).EQ.'TSDAP') THEN

@@ -22,7 +22,7 @@
         
         CHARACTER(LEN=1) RNMODE
         
-        INTEGER DOY         , NLAYR       , STGYEARDOY(20)            , YEAR        , YEARPLTCSM
+        INTEGER DOY         , NLAYR       , STGYEARDOY(0:20)            , YEAR        , YEARPLTCSM
         
         REAL    BD(NL)      , CO2         , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , ST(NL)    
         REAL    SW(NL)      , TMAX        , TMIN        

@@ -126,7 +126,6 @@
 !-----------------------------------------------------------------------
 
           Tfd = TFAC4(trdv1,tmean,TT)
-          TFDL = TFAC4(trdv3,tmean,TTL)                                      ! LPM 18MAR15
           IF (brstage+1.0.LT.10.0) &
            Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
           IF (trgem(3).GT.0.0) THEN
@@ -138,7 +137,8 @@
             ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
             Ttlflife = Phints   
           ELSE  
-            Tflflife = TFAC4(trdv1,tmean,TTlflife)
+            !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
+            Tflflife = TFAC4(trdv3,tmean,TTlflife)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
           ENDIF  
   
 !-----------------------------------------------------------------------
