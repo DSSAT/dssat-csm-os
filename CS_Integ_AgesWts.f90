@@ -17,7 +17,7 @@
         IMPLICIT NONE
         
         INTEGER NLAYR
-        REAL BRSTAGE
+        REAL BRSTAGE, TEMP
         
         !-----------------------------------------------------------------------
         !         Update ages
@@ -135,47 +135,42 @@
                         ENDIF
                     ENDIF
                 LAGEP(BR,LF) = LAGEP(BR,LF) + (TTLFLIFE*EMRGFR)/PHINT                                                              !EQN 362
+                
+                ! Days active
+                    IF (LAGETT(BR,LF).LE.LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                        IF (LNUMSOLDESTA.LT.0) THEN
+                            LNUMSOLDESTA = LF
+                        ENDIF
+                        DALF(BR,LF) = DALF(BR,LF) + 1.0                                                                        !EQN 364b
+                    ELSE
+                        IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
+                            TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                            DALF(BR,LF) = DALF(BR,LF) + TVR1                                                                   !EQN 364c
+                        ENDIF
+                    ENDIF
+
+                    ! Days senescing
+                    IF (LAGETT(BR,LF).GT.LLIFATT) THEN
+                        IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT) THEN
+                            TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                            DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                                     !EQN 365a
+                        ELSE
+                            IF (LAGETT(BR,LF).LE.LLIFATT+LLIFSTT) THEN
+                                DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                                        !EQN 365b
+                            ELSE
+                                IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT+LLIFSTT) THEN
+                                    TVR1 = ((LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                                    DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                                   !EQN 365c
+                                    LDEATHDAP(BR,LF) = DAP
+                                ENDIF
+                            ENDIF
+                        ENDIF
+                    ENDIF
+                
                 ELSE 
                 DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
                 ENDIF
-            
-                ! Days active
-                IF (LAGETT(BR,LF).LT.LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
-                    IF (LNUMSOLDESTA.LT.0) THEN
-                        LNUMSOLDESTA = LF
-                    ENDIF
-                    IF (DGLF(BR,LF)-EMRGFR.LT.LLIFGD) THEN                                          !LPM 28MAR15 LLIFGT was deleted 
-                        TVR1 = (LLIFGD-(DGLF(BR,LF)-EMRGFR))/EMRGFR                                 !LPM 28MAR15 It could be useful just for the first leaf with a EMRGFR<1
-                        DALF(BR,LF) = DALF(BR,LF) + (1.0-TVR1)                                                                     !EQN 364a
-                    ELSE
-                        IF (LAGETT(BR,LF).LE.LLIFATT) THEN
-                            DALF(BR,LF) = DALF(BR,LF) + 1.0                                                                        !EQN 364b
-                        ELSE
-                            IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
-                                TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                                DALF(BR,LF) = DALF(BR,LF) + TVR1                                                                   !EQN 364c
-                            ENDIF
-                        ENDIF
-                    ENDIF
-                ENDIF
-                ! Days senescing
-                IF (LAGETT(BR,LF).GT.LLIFATT) THEN
-                    IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT) THEN
-                        TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                        DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                                     !EQN 365a
-                    ELSE
-                        IF (LAGETT(BR,LF).LE.LLIFATT+LLIFSTT) THEN
-                            DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                                        !EQN 365b
-                        ELSE
-                            IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT+LLIFSTT) THEN
-                                TVR1 = ((LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                                DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                                   !EQN 365c
-                                LDEATHDAP(BR,LF) = DAP
-                            ENDIF
-                        ENDIF
-                    ENDIF
-                ENDIF
-            
+
                 IF (LNUMG.GT.0.0.AND.BR.EQ.BRSTAGE.AND.LF.EQ.LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
                     IF (LNUMSG.LT.LNUMX) THEN
                         LAGETT(BR,LF+1) = LAGETT(BR,LF+1)+(TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366

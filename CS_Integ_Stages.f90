@@ -65,14 +65,14 @@
         ! (LAH Check whether can move brstage calc up here! 
         ! (If do this, brstage in brfx below must be reduced by 1))
         IF (MEDEV.EQ.'LNUM') THEN 
-            IF (PDL(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
-                TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE))           ! EQN 004
+            IF (PDL(INT(BRSTAGE)).GE.0.0) THEN                                                          ! MSTG = KEYPSNUM
+                TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE)+1)           ! EQN 004
             ELSE
                 TVR1 = FLOAT(INT(BRSTAGE))
             ENDIF
         ELSE
-            IF (PD(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
-                TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE))              ! EQN 004
+            IF (PD(INT(BRSTAGE)).GE.0.0) THEN                                                          ! MSTG = KEYPSNUM
+                TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE)+1)              ! EQN 004
             ELSE
                 TVR1 = FLOAT(INT(BRSTAGE))
             ENDIF        
@@ -84,9 +84,9 @@
             !    BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             !ENDIF
             IF (BRSTAGE.EQ.0.0) THEN
-                BRNUMST(BRSTAGE) = 1                                                                                    ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
+                BRNUMST(TVR1) = 1                                                                                    ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
             ELSEIF (BRSTAGE.GT.0.0) THEN
-                BRNUMST(BRSTAGE) = BRNUMST(BRSTAGE-1)*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
+                BRNUMST(TVR1) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             ENDIF
         ENDIF 
         
@@ -107,8 +107,8 @@
             IF (MEDEV.EQ.'DEVU') THEN                                                     ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
                 !DO L = HSTG,1,-1                                                          !LPM 03MAR15 It should be as MEDEV = LNUM DO L = HSTG,0,-1
                 DO L = HSTG,0,-1  
-                    IF (CUMDU.GE.PSTART(L).AND.PD(L).GT.0.0) THEN
-                        BRSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L)
+                    IF (CUMDU.GE.PSTART(L).AND.PD(L+1).GT.0.0) THEN
+                        BRSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L+1)
                         ! Brstage cannot go above harvest stage 
                         BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
                         LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 

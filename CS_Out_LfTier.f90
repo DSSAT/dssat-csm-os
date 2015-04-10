@@ -31,7 +31,7 @@
             OPEN(UNIT=FNUMLVS,FILE=FNAMELEAVES,POSITION='APPEND')
             WRITE (FNUMLVS,'(/,A79,/)') OUTHED
             WRITE (FNUMLVS,'(A14,F6.1)') '! LEAF NUMBER ',LNUM
-            WRITE (FNUMLVS,'(/,A48,A36,A30)')'@ LNUM AREAP AREA1 AREA2 AREA3 AREA4 AREAT AREAS', &
+            WRITE (FNUMLVS,'(/,A54,A36,A30)')'@ BRNUM LNUM AREAP AREA1 AREA2 AREA3 AREA4 AREAT AREAS', &
                 '  WFLF  NFLF NFLF2  AFLF TFGLF TFDLF',' LLIFG LLIFA LLIFS LLIFE   DAP'
             !DO I = 1, INT(LNUM+0.99)   !LPM 21MAR15 Change to consider the cohorts
                 !CALL Csopline(lapotxc,lapotx(i))
@@ -68,7 +68,7 @@
                     TFGLF(BR,LF) =AMIN1(1.0,TFGLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
                     AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
                     IF (LDEATHDAP(BR,LF).EQ.0) LDEATHDAP = -99
-                    WRITE (fnumlvs,'(I6,7A6,6F6.2,4F6.1,I6)')I,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(BR,LF), &
+                    WRITE (fnumlvs,'(2I6,7A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(BR,LF), &
                         1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(BR,LF),DGLF(BR,LF), &
                         DALF(BR,LF),DSLF(BR,LF),DGLF(BR,LF)+DALF(BR,LF)+DSLF(BR,LF),LDEATHDAP(BR,LF)
                 ENDDO
