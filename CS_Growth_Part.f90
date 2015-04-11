@@ -13,6 +13,7 @@
     
         USE ModuleDefs
         USE CS_First_Trans_m
+        USE CS_Cultivar_Coeffs_m  !LPM 11APR15 test to include future coefficients
     
         IMPLICIT NONE
         
@@ -280,19 +281,37 @@
         !        BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                
         !    ENDIF        
         
+        !LPM 11APR15  Rate of node weight increase by branch level and cohort  
+        NODEWTG = 0.0
+        GROSTP = 0.0
+        DO BR = 0, BRSTAGE   
+            IF (BR.EQ.0) THEN
+                NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
+                    (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*nod_cul)
+            ELSE
+                NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((BRDAE(BR)/171.64793)**-2.2115103)/ &
+                    (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*nod_cul)
+            ENDIF
+            
+            DO LF =1, LNUMSIMSTG(BR) 
+                NODEWTG(BR,LF) = NODEWTGB(BR)
+                NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
+                GROSTP = GROSTP + NODEWT(BR,LF)
+            ENDDO
+        ENDDO
         
         
         
         
-        
-        
-        ! Potential leaf+stem weight increase.
-        IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
-            GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))                                                                  !EQN 295a
-        ELSE
-            GROLSP = GROLFP                                                                                            !EQN 295b
-        ENDIF
+        ! Potential leaf+stem weight increase. !LPM 11APR15 to test the node development and the potential stem growth 
+        !IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
+        !    GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))                                                                  !EQN 295a
+        !ELSE
+        !    GROLSP = GROLFP                                                                                            !EQN 295b
+        !ENDIF
 
+        GROLSP = GROLFP + GROSTP                                                                                    
+        
         IF (GROLSP.GT.0.0) THEN
             ! Leaf+stem weight increase from assimilates
             GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROSR))                                                              !EQN 298

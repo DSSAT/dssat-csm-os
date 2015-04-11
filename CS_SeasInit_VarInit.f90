@@ -248,6 +248,8 @@
         nfpcc = 0.0
         nfppav = 1.0
         nfppc = 0.0
+        NODEWTGB = 0.0      !LPM 11APR15 New variables of node growth
+        NODEWT = 0.0       !LPM 11APR15 New variables of node growth
         nsdays = 0
         nuf = 1.0
         nupac = 0.0

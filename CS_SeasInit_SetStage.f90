@@ -196,12 +196,7 @@
         ENDIF  
         
         
-        !LPM 02MAR15 nodes growth by branch level to estimate the stem growth
-        !DO L= 0, MSTG !LPM 07MAR15 MSTG to PSX
-        DO L= 0, PSX
-            NODEWTGB(L) = 1/(1+(((L+1)/3.10036)**5.89925))                      
-        END DO                                                                        !LPM 21MAR15               
-         
+      
         IF (PHINTS.LE.0.0) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '

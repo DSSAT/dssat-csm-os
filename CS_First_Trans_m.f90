@@ -31,6 +31,7 @@ Module CS_First_Trans_m
     REAL    :: b_slope_lsize           ! Slope to define  max leaf size #          ! LPM 28feb15 
     REAL    :: BASELAYER               ! Depth at base of layer         cm         ! (From Integrate) 
     INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
+    INTEGER :: BRDAE(PSX)              ! DAE when a new branch appears  d          ! LPM 11APR15 To save the date of branch appearance
     REAL    :: BRFX(0:PSX)             ! Branch # per fork at each fork #          ! (From SeasInit)  
     REAL    :: BRNUMSH(0:PSX)          ! Branch number/shoot at harvest #          ! (From Integrate) !LPM 28MAR15 to have the apex number by branch level 
     REAL    :: BRNUMSHM                ! Branch #/shoot,harvest,measurd #          ! (From Output)    
@@ -255,6 +256,7 @@ Module CS_First_Trans_m
     REAL    :: GROSTCR                 ! Stem+crown growth rate         g/p        ! (From SeasInit)  
     REAL    :: GROSTCRP                ! Stem+crown growth potential    g/p        ! (From Growth)    
     REAL    :: GROSTCRPSTORE           ! Stem+crown gr potentl,previous g/p        ! (From Growth)    
+    REAL    :: GROSTP                  ! Potential stem growth rate     g/p        ! LPM11APR15  
     REAL    :: GrP_EP                  ! Harvest product per unit EP    g/mm       ! (From Output)    
     REAL    :: GRP_ET                  ! Harvest product per unit water g/mm       ! (From Output)    
     REAL    :: GrP_Irr                 ! Harvest dm per unit irrigation g/mm       ! (From Output)    
@@ -518,8 +520,9 @@ Module CS_First_Trans_m
     REAL    :: NLLG                    ! N limit,leaf growth            #          ! (From SeasInit)  
     REAL    :: NO3CF                   ! NO3 uptake concentration fac   #          ! (From SeasInit)  
     REAL    :: NO3MN                   ! NO3 conc minimum for uptake    g/Mg       ! (From SeasInit)  
+    REAL    :: NODEWT(0:PSX,0:LCNUMX)  ! Node wt  by cohort             g/p        ! LPM 11APR15
+    REAL    :: NODEWTG(0:PSX,0:LCNUMX) ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 
     REAL    :: NODEWTGB(0:PSX)         ! Node wt growth by br.level     g/d/node   ! LPM 02MAR15 
-    REAL    :: NODEWTG                 ! Nodes wt growth                g/d/p      ! LPM 02MAR15 
     INTEGER :: NOUTPG                  ! Number for growth output file  #          ! (From RunInit)   
     INTEGER :: NOUTPG2                 ! Number for growth output file2 #          ! (From RunInit)   
     INTEGER :: NOUTPGF                 ! Number for growth factors file #          ! (From RunInit)   

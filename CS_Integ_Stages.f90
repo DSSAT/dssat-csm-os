@@ -83,6 +83,7 @@
             !ELSEIF (BRSTAGE.GT.0.0) THEN
             !    BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             !ENDIF
+            BRDAE(TVR1) = DAE
             IF (BRSTAGE.EQ.0.0) THEN
                 BRNUMST(TVR1) = 1                                                                                    ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
             ELSEIF (BRSTAGE.GT.0.0) THEN
