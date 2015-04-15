@@ -131,6 +131,15 @@ C-----------------------------------------------------------------------
 
       LOGICAL FEXIST
 
+!     Text values for some variables that get overflow with "-99" values
+      CHARACTER*9 PRINT_TXT !Max field width for variable format printing
+      CHARACTER*9 DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT
+      CHARACTER*9 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT
+      CHARACTER*9 DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT
+      CHARACTER*6 TMINA_TXT, TMAXA_TXT, SRADA_TXT, DAYLA_TXT
+      CHARACTER*7 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
+
+
 !     Evaluate.OUT variables:
       INTEGER ICOUNT   !Number of observations for this crop
       CHARACTER*6,  DIMENSION(EvaluateNum) :: OLAP    !Labels
@@ -543,6 +552,33 @@ C-------------------------------------------------------------------
         ENDIF
         WRITE (NOUTDS,FMT,ADVANCE='NO') HIAM
 
+!       Handle formatting for real numbers which may have value of "-99"
+        DMPPM_TXT = PRINT_TXT(DMPPM, "(F9.1)")
+        DMPEM_TXT = PRINT_TXT(DMPEM, "(F9.1)")
+        DMPTM_TXT = PRINT_TXT(DMPTM, "(F9.1)")
+        DMPIM_TXT = PRINT_TXT(DMPIM, "(F9.1)")
+
+        YPPM_TXT  = PRINT_TXT(YPPM,  "(F9.1)")
+        YPEM_TXT  = PRINT_TXT(YPEM,  "(F9.1)")
+        YPTM_TXT  = PRINT_TXT(YPTM,  "(F9.1)")
+        YPIM_TXT  = PRINT_TXT(YPIM,  "(F9.1)")
+
+        DPNAM_TXT = PRINT_TXT(DPNAM, "(F9.1)")
+        DPNUM_TXT = PRINT_TXT(DPNUM, "(F9.1)")
+        YPNAM_TXT = PRINT_TXT(YPNAM, "(F9.1)")
+        YPNUM_TXT = PRINT_TXT(YPNUM, "(F9.1)")
+
+        TMINA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
+        TMAXA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
+        SRADA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
+        DAYLA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
+
+        CO2A_TXT = PRINT_TXT(DAYLA, "(F7.1)")
+        PRCP_TXT = PRINT_TXT(DAYLA, "(F7.1)")
+        ETCP_TXT = PRINT_TXT(DAYLA, "(F7.1)")
+        ESCP_TXT = PRINT_TXT(DAYLA, "(F7.1)")
+        EPCP_TXT = PRINT_TXT(DAYLA, "(F7.1)")
+
         WRITE (NOUTDS,503) LAIX, 
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
      &    NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, CNAM, GNAM, 
@@ -550,9 +586,11 @@ C-------------------------------------------------------------------
      &    KINUMM, KICM, KUPC, SKAM,        !K data
      &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
 !         Water productivity
-     &    DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM,
-     &    DPNAM, DPNUM, YPNAM, YPNUM,
-     &    NDCH, TMAXA, TMINA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
+     &    DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT, 
+     &                 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT,
+     &    DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT,
+     &    NDCH, TMAXA_TXT, TMINA_TXT, SRADA_TXT, DAYLA_TXT, 
+     &                 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
 
   503   FORMAT(     
                                               
@@ -571,13 +609,16 @@ C-------------------------------------------------------------------
      &  4(1X,I6),2(1X,I7),       
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
-     &  4F9.1,4F9.2,
+!    &  4F9.1,4F9.2,
+     &  8A,
 
 !       DPNAM, DPNUM, YPNAM, YPNUM
-     &  4F9.1,
+!    &  4F9.1,
+     &  4A,
 
 !       NDCH, TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-     &  I6,3F6.1,F6.2,5F7.1)
+!    &  I6,3F6.1,F6.2,5F7.1)
+     &  I6,9A)
 
         CLOSE (NOUTDS)
       ENDIF
@@ -722,6 +763,35 @@ C-------------------------------------------------------------------
       END SUBROUTINE OPSUM
 C=======================================================================
 
+!=======================================================================
+!=======================================================================
+      Function PRINT_TXT(VALUE, FTXT)
+
+      CHARACTER(LEN=*) PRINT_TXT              !text string for real value
+      CHARACTER(LEN=*) FTXT                   !format for real value
+      CHARACTER(LEN=6) FTXT1                  !modified format for real value
+      CHARACTER(LEN=7) FTXT2                  !format for "-99"
+      REAL VALUE
+      INTEGER I, ERRNUM
+
+      READ (FTXT,'(2X,I1)',IOSTAT=ERRNUM) I   !width of field
+      IF (ERRNUM == 0 .AND. I > 0) THEN
+        FTXT1 = FTXT
+        WRITE(FTXT2,'("(",I1,"X,I3)")') I-3   
+      ELSE
+        FTXT1 = "(F6.1)"
+        FTXT2 = "(3X,I3)"
+      ENDIF
+
+      IF (VALUE > 1.E-6) THEN
+        WRITE(PRINT_TXT,FTXT1) VALUE
+      ELSE
+        WRITE(PRINT_TXT,FTXT2) -99
+      ENDIF
+
+      End Function PRINT_TXT
+!=======================================================================
+!=======================================================================
 
 !=======================================================================
 !  SUMVALS, Subroutine C. H. Porter
