@@ -1393,31 +1393,31 @@
           gtmaxfac= 1.0
           gtminfac= 1.0
           if (DYNAMIC.EQ.SEASINIT) THEN
-      write(92,*) "DCCD compare"
-      write(92,*)"YRDOY,istage,DCCD,dtt,vfac,ppfac,sumstgdtt,fstage" !,DAYL,TWILN"
-       write(93,*) "Plant Leaf Area calculation (PlantPopulation=",
-     :     PLTPOP, "plants/m2)" 
-       write(93,*) "sla_new is specific leaf area of new growth (mm2/g)"
-       write(93,*)"lai = (pl_la - sen_la) * PLTPOP / sm2smm"
-          write(93,*)"YRDOY,Istage,xstag_nw, pl_la,sen_la, sla_new/100,
-     :     lai, XLAI, zstage, cumph, lfwt, lfsen" 
-      write(94,*) "Daily Root Weight increase (PlantPopulation=",
-     :     PLTPOP, "plants/m2)" 
-          write(94,*) "YRDOY,Istage,gw_rt,carbh, pcarbo,ConversionEf,
-     :lfipar, pl_dmd_lf, pl_dmd_lfsh,swdef,nfact1,prft,optfr, lai,radfr"
+      !write(92,*) "DCCD compare"
+      !write(92,*)"YRDOY,istage,DCCD,dtt,vfac,ppfac,sumstgdtt,fstage" !,DAYL,TWILN"
+      ! write(93,*) "Plant Leaf Area calculation (PlantPopulation=",
+      ! :     PLTPOP, "plants/m2)" 
+       !write(93,*) "sla_new is specific leaf area of new growth (mm2/g)"
+       !write(93,*)"lai = (pl_la - sen_la) * PLTPOP / sm2smm"
+       !   write(93,*)"YRDOY,Istage,xstag_nw, pl_la,sen_la, sla_new/100,
+      ! :     lai, XLAI, zstage, cumph, lfwt, lfsen" 
+      !write(94,*) "Daily Root Weight increase (PlantPopulation=",
+      ! :     PLTPOP, "plants/m2)" 
+          !write(94,*) "YRDOY,Istage,gw_rt,carbh, pcarbo,ConversionEf,
+! :lfipar, pl_dmd_lf, pl_dmd_lfsh,swdef,nfact1,prft,optfr, lai,radfr"
                ! total daily growing weight should br smaleer than carbh 
-      write(95,*) "Mass Balance (PlantPopulation=",PLTPOP, "plants/m2)" 
-          write(95,*)              "YRDOY,rootwt,gw_rt,sen_rt,lfwt,gw_lf
-     :,stmwt,gw_stm,lfshwt,gw_lfsh,grainwt,gw_grn,carbh,topwt,lfsen"
-          Write(98,*)"TMAX effect on grain number"
-          Write(98,*) "     YRDOY, Tmax,   Tmax Effect,",
-     :      "   DTTcum, DTT day effect,  cumulative gtmaxfac"
-          Write(97,*)"TMIN effect on grain number"
-          Write(97,*) "     YRDOY, Tmin,   Tmin Effect,",
-     :      "   DTTcum, DTT day effect, cumulative gtminfac"   
-      endif
-      write(100,*)    "YRDOY,rtN,TrnRTN,uptkRt,lfN,TrnLfN,uptkLf,lfshN,
-     : TrnLfshN,uptkLhsh,stmN,TrnStmN,uptkStm,GrnN,trnGrn,uptakGrn"
+      !write(95,*) "Mass Balance (PlantPopulation=",PLTPOP, "plants/m2)" 
+      !    write(95,*)              "YRDOY,rootwt,gw_rt,sen_rt,lfwt,gw_lf
+      ! :,stmwt,gw_stm,lfshwt,gw_lfsh,grainwt,gw_grn,carbh,topwt,lfsen"
+          !Write(98,*)"TMAX effect on grain number"
+          !Write(98,*) "     YRDOY, Tmax,   Tmax Effect,",
+      ! :      "   DTTcum, DTT day effect,  cumulative gtmaxfac"
+          !Write(97,*)"TMIN effect on grain number"
+          !Write(97,*) "     YRDOY, Tmin,   Tmin Effect,",
+      !  :      "   DTTcum, DTT day effect, cumulative gtminfac"   
+          endif
+          !  ! write(100,*)    "YRDOY,rtN,TrnRTN,uptkRt,lfN,TrnLfN,uptkLf,lfshN,
+!    : TrnLfshN,uptkLhsh,stmN,TrnStmN,uptkStm,GrnN,trnGrn,uptakGrn"
 ! The following 2 subroutine calls were removed for WHAPS (Nwheat) 
 ! since no APSIM-nwheat code was transfered to WH_NUPTAK or WH_KUPTAK
           ! JZW recover the following two calls
@@ -1629,7 +1629,7 @@
 !*! stages except fallow (7).
  
       ! write(100,*) "YRDOY=", YRDOY
-      write(*,*) "YRDOY=", YRDOY
+      !write(*,*) "YRDOY=", YRDOY
           IF(YRDOY.EQ.STGDOY(3)) THEN
               SWMIN  = STMWT*0.85         
               SUMP   = 0.0
@@ -1718,8 +1718,8 @@
               NDEF3 = 1.0
               NFAC = 1.0
           ENDIF
-      write(96,'(A6,I7,8(",",A5,",",f6.4))') "YRDOY=",YRDOY,"tanc=",
-     %  TANC, ",tmnc=",  TMNC,",tcnp=",TCNP, ",nfac=", NFAC 
+!     write(96,'(A6,I7,8(",",A5,",",f6.4))') "YRDOY=",YRDOY,"tanc=",
+!     %  TANC, ",tmnc=",  TMNC,",tcnp=",TCNP, ",nfac=", NFAC 
           !-------------------------------------------------------------
           !      Compute Water Stress Factors       
           ! ------------------------------------------------------------
@@ -1821,8 +1821,8 @@ cnh Senthold
            ! grpp = gpp_stem_wt * GRNO
             GAD2 = gpp_stem_wt * GRNO
             grpp = gpp_stem_wt * GRNO* gtmaxfac * gtminfac
-            write(98,*) "gtmaxfac=",   gtmaxfac, "on day " , YRDOY
-            write(97,*) "gtminfac=",   gtminfac, "on day " , YRDOY
+            !write(98,*) "gtmaxfac=",   gtmaxfac, "on day " , YRDOY
+            !write(97,*) "gtminfac=",   gtminfac, "on day " , YRDOY
             gpp = grpp
          endif
  
@@ -2606,8 +2606,8 @@ cbak  consider using it to reflect on sla under stress (ie. lower sla, thicker l
             if ((anth_date .EQ. 0) .and. (Sumstgdtt(endear) .ge. 80)  
      :         ) then
                anth_date = YRDOY 
-               write (97, *)"Anth date is ", YRDOY, "Sumdtt=", 
-     :            Sumstgdtt(endear) 
+               !write (97, *)"Anth date is ", YRDOY, "Sumdtt=", 
+!     :            Sumstgdtt(endear) 
             endif   
                 gtmaxfac= gtmaxfac * (1+ ALIN (GTMAX, GRDUH, 4, TMAX)* 
    !  :          0.01 * min (1., max(0., ((Sumstgdtt(endear)-20)/60))) )
@@ -2618,12 +2618,12 @@ cbak  consider using it to reflect on sla under stress (ie. lower sla, thicker l
      :           0.01 * min (1., max(0.,
      :             ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)))))
                 
-                Write(98,*)YRDOY,Tmax,ALIN (GTMAX, GRDUH, 4, TMAX),
-     :            Sumstgdtt(endear),
-     :            ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)),  gtmaxfac  
-                Write(97,*)YRDOY,Tmin,ALIN (GTMIN, GRDUL, 4, TMIN),
-     :            Sumstgdtt(endear),            
-     :            ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)),  gtminfac   
+!                Write(98,*)YRDOY,Tmax,ALIN (GTMAX, GRDUH, 4, TMAX),
+!     :            Sumstgdtt(endear),
+!     :            ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)),  gtmaxfac  
+!                Write(97,*)YRDOY,Tmin,ALIN (GTMIN, GRDUL, 4, TMIN),
+!     :            Sumstgdtt(endear),            
+!     :            ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)),  gtminfac   
       !        else 
       !          ! II= MAX( 0, TIMDIF(anth_date, YRDOY))
       !           gtmaxfac= gtmaxfac * (1+ ALIN (GTMAX, GRDUH, 4, TMAX)* 
@@ -2921,8 +2921,8 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
         !cumpnup = 0.127kg/ha
        endif
       call add_real_array (pnup, pl_nit, mxpart)
-      write(100,"(I7,15(',',F7.5))")YRDOY, 
-     :   (pl_nit(i),pntrans(i), pnup(i), i=1,5)
+!      write(100,"(I7,15(',',F7.5))")YRDOY, 
+!     :   (pl_nit(i),pntrans(i), pnup(i), i=1,5)
 !----------------------------------------------------------------------
 !*! End N process from APSIM nwheats_crppr subroutines
 !======================================================================
@@ -3126,15 +3126,15 @@ cbak  adjust the green leaf ara of the leaf that is dying
          ! ES is actual soil evaporation
          !Tcnpy = (-12. * ( ES + ep_nw)/EO + 6.) +Tmax
          Tcnpy = vpdf*(TCSlope * ( ES + ep_nw)/EO + TCInt) +Tmax
-         write(96, *) YRDOY, "Tmax=", Tmax, "Tcnpy=", Tcnpy,
-     :       "VPD=", vpd_transp, "vpdf=",vpdf,vpd_transp
+!         write(96, *) YRDOY, "Tmax=", Tmax, "Tcnpy=", Tcnpy,
+!     :       "VPD=", vpd_transp, "vpdf=",vpdf,vpd_transp
       else 
          Tcnpy = vpdf * (TCSlope + TCInt) + Tmax  ! because EO is not availabe (there is no CALL PET in SPAM.for)
       endif                
          weather % TGROAV = Tcnpy !Average daily canopy temperature (°C)
          slft = ALIN (SENST, SENSF, 4, Tcnpy)
-         write(101,*) "YRDOY=", YRDOY, ", Tmax=", Tmax,
-     &     "Tcnpy=",Tcnpy,", slft=",slft
+!        write(101,*) "YRDOY=", YRDOY, ", Tmax=", Tmax,
+!    &     "Tcnpy=",Tcnpy,", slft=",slft
        Weather % VPD_TRANSP = vpd_transp
        Weather % VPDF = vpdf
 !      if (TMAX .gt. 34.) then ! note that this factor is not continuous
@@ -3308,18 +3308,18 @@ cjh quick fix for maturity stage
    !   !write (*,*)snup_no3, snup_nh4
       ! cumpnup=cumpnup/10.   !JZW tset,  have to remove !!!!!!!!!!!!!???????
       if ((YRDOY .LE. 1983225).and.(DYNAMIC.EQ.INTEGR)) THEN
-      write(93,'(I7,",",I1,14(",",f10.3))') YRDOY,Istage,xstag_nw,
-     : pl_la,sen_la, (sla_new/100), lai, XLAI,zstage, cumph_nw(istage),
-     : plantwt(leaf_part),leafsen
-      write(94,'(I7,",",I1,14(",",f7.4))')YRDOY,istage, 
-     :gro_wt(root_part),carbh, pcarbo, ce, lfipar, pl_dmd(leaf_part), 
-     :pl_dmd(lfsheath_part),swdef(photo_nw),nfact(1),prft,optfr,lai,
-     : radfr   
-      write(95,'(I7,13(",",f6.4),2(",",f7.3))')YRDOY,plantwt(root_part),
-     : gro_wt(root_part), rootsen, plantwt(leaf_part),gro_wt(leaf_part),
-     : plantwt(lfsheath_part),gro_wt(lfsheath_part),plantwt(stem_part),
-     :    gro_wt(stem_part),plantwt(grain_part),gro_wt(grain_part),
-     :   carbh,TOPWT/PLTPOP,leafsen
+      ! write(93,'(I7,",",I1,14(",",f10.3))') YRDOY,Istage,xstag_nw,
+!     : pl_la,sen_la, (sla_new/100), lai, XLAI,zstage, cumph_nw(istage),
+!     : plantwt(leaf_part),leafsen
+!      write(94,'(I7,",",I1,14(",",f7.4))')YRDOY,istage, 
+!     :gro_wt(root_part),carbh, pcarbo, ce, lfipar, pl_dmd(leaf_part), 
+!     :pl_dmd(lfsheath_part),swdef(photo_nw),nfact(1),prft,optfr,lai,
+!     : radfr   
+!      write(95,'(I7,13(",",f6.4),2(",",f7.3))')YRDOY,plantwt(root_part),
+!     : gro_wt(root_part), rootsen, plantwt(leaf_part),gro_wt(leaf_part),
+!     : plantwt(lfsheath_part),gro_wt(lfsheath_part),plantwt(stem_part),
+!     :    gro_wt(stem_part),plantwt(grain_part),gro_wt(grain_part),
+!     :   carbh,TOPWT/PLTPOP,leafsen
       ! write(95,*)      "YRDOY,rootwt,gw_rt,sen_rt,lfwt,gw_lf,lfsen
       !:,stmwt,gw_stm,lfshwt,gw_lfsh,grainwt,gw_grn,carbh,topwt"  
       ! Write(*,*) "rtwt",plantwt(root_part), "gwRt", gro_wt(root_part),

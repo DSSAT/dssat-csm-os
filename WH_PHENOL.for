@@ -583,8 +583,8 @@ cbak  ears that is not included in lai calculation.
               sumstgdtt(I) = 0.0  ! NWheat array
  !*!          stgdur(I) = 0.0     ! NWheat array
           ENDDO
-          STGDOY(14) = YRSIM !JZW considered need to be changed 
-           ! STGDOY(7) = YRSIM           
+          ! STGDOY(14) = YRSIM  JIN Changed 
+          STGDOY(7) = YRSIM           
           YREMRG = -99  !CHP 5/19/2011
 
       CUMDTT = 0.0
@@ -825,13 +825,13 @@ cbak  ears that is not included in lai calculation.
   100         CONTINUE                                ! Sun Fix
               L0 = L               !L0 is layer that seed is in.
 
-             Endif ! RETURN ! JZW changed return to endif on Feb 17, 2015
+             RETURN 
       !-----------------------------------------------------------------
       ! ISTAGE = 8 - Sowing to Germination
       ! Once water stress is introduces, include nwheats_germn below?
       !-----------------------------------------------------------------
-         !ELSEIF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination ! JZW change elseif to if on Feb 17, 2015
-         IF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination    
+         ELSEIF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination ! JZW change elseif to if on Feb 17, 2015
+        ! IF (ISTAGE .EQ. 8) THEN   !*! 8 = Sowing-to-Germination    
               !*! compare to nwheats_germn() code
               !*! This DSSAT code promotes seed to germination 1 DAP,  
               !*! IF seed-layer soil water is above LL
@@ -892,7 +892,7 @@ cbak  ears that is not included in lai calculation.
               !---------------------------------------------------------
               ! New Growth Stage Occurred Today. Initialize Some Variables
               !---------------------------------------------------------
-              STGDOY(ISTAGE) = YRDOY
+              if (ISTAGE .GE. 9) STGDOY(ISTAGE) = YRDOY ! Jin Changed, should not have two sowing days
 
       !!*! The following IF statement delayed germination 
       !!*! and helped align DTT with the original nwheat output.  FSR
@@ -1038,9 +1038,9 @@ cbak  ears that is not included in lai calculation.
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
       !-----------------------------------------------------------------
-           write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
-     :  nwheats_dc_code, 
-     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(1),fstage !,DAYL, TWILEN
+          ! write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
+!     :  nwheats_dc_code, 
+!     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(1),fstage !,DAYL, TWILEN
               IF (sumstgdtt(emergence) .LT. pgdd(emergence)) RETURN
 
               !---------------------------------------------------------
@@ -1084,9 +1084,9 @@ cbak  ears that is not included in lai calculation.
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
       !-----------------------------------------------------------------
-               write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
-     :  nwheats_dc_code, 
-     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(2),fstage !,DAYL, TWILEN
+               !write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
+!     :  nwheats_dc_code, 
+!     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(2),fstage !,DAYL, TWILEN
        
 !*!           PDTT = DTT_M
               IF (ISWWAT .EQ. 'N') THEN    
@@ -1149,9 +1149,9 @@ cbak  ears that is not included in lai calculation.
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
       !-----------------------------------------------------------------
-               write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
-     :  nwheats_dc_code,  
-     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(3),fstage !,DAYL, TWILEN                                       
+             !  write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
+!     :  nwheats_dc_code,  
+!     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(3),fstage !,DAYL, TWILEN                                       
               IF (sumstgdtt(endveg) .LT. pgdd(endveg)) RETURN
 
               !---------------------------------------------------------
@@ -1192,9 +1192,9 @@ cbak  ears that is not included in lai calculation.
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
       !-----------------------------------------------------------------
-                write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
-     :  nwheats_dc_code, 
-     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(4),fstage !,DAYL, TWILEN
+              !  write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
+!    :  nwheats_dc_code, 
+!     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(4),fstage !,DAYL, TWILEN
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
               SeedFrac = SUMDTT / P5
 

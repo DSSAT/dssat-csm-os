@@ -790,7 +790,7 @@ C----------------------------------------------------------------------
 
             WTNUP = cumpnup / 10.0
         ENDIF   
-      write (99,*)'DOY',YRDOY,',sen_la',sen_la,',pla',pl_la,',LAI', XLAI
+      !write (99,*)'DOY',YRDOY,',sen_la',sen_la,',pla',pl_la,',LAI', XLAI
       CALL WH_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR, 
      &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT, 

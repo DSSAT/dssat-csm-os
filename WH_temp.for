@@ -753,7 +753,7 @@ cjh  end of correction
       CALL nwheats_ndmd (xstag_nw,  gro_wt, plantwt,       !Input
      &     pl_nit, pcarbo, carbh, cnc,                     !Input 
      &     pndem)	                                       !Output
-       write(96,*) "pndem=", pndem
+       !write(96,*) "pndem=", pndem
 * ====================================================================
       n_demand = sum_real_array (pndem, mxpart)
  
