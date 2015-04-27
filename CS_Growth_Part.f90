@@ -281,6 +281,13 @@
         !        BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                
         !    ENDIF        
         
+        ! Potential leaf+stem weight increase. !LPM 11APR15 Comment out to test the node development and the potential stem growth 
+        !IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
+        !    GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))                                                                  !EQN 295a
+        !ELSE
+        !    GROLSP = GROLFP                                                                                            !EQN 295b
+        !ENDIF
+        
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         NODEWTG = 0.0
         GROSTP = 0.0
@@ -299,17 +306,6 @@
                 GROSTP = GROSTP + NODEWT(BR,LF)
             ENDDO
         ENDDO
-        
-        
-        
-        
-        ! Potential leaf+stem weight increase. !LPM 11APR15 to test the node development and the potential stem growth 
-        !IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
-        !    GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))                                                                  !EQN 295a
-        !ELSE
-        !    GROLSP = GROLFP                                                                                            !EQN 295b
-        !ENDIF
-
         GROLSP = GROLFP + GROSTP                                                                                    
         
         IF (GROLSP.GT.0.0) THEN
