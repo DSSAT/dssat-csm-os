@@ -410,15 +410,19 @@
         GROSTCR = 0.0
         STAIG = 0.0
         STAIS = 0.0
-        ! Potential stem weight increase.
-        IF (SWFR.LT.1.0) THEN
-            GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
-            GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
-        ELSE  
-            GROSTCRP = GROSTCRPSTORE                                                                                   !EQN 381b
-            ! LAH May need to change GROSTCRP as progress
-        ENDIF
-            
+        !! Potential stem weight increase.
+        !IF (SWFR.LT.1.0) THEN
+        !    GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
+        !    GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
+        !ELSE  
+        !    GROSTCRP = GROSTCRPSTORE                                                                                   !EQN 381b
+        !    ! LAH May need to change GROSTCRP as progress
+        !ENDIF
+        
+        ! Potential stem weight increase. !LPM 28APR15 Change according to the new equation for stem development (see above GROSTP)
+        GROSTCRP = GROSTP                                                                                          !EQN 381a
+    
+        
         IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLFP+GROSTCRP) * (1.0-RSFRS)                         !EQN 383
         ! LAH RSFRS is the fraction of stem growth to reserves
         ! May need to have this change as stem growth proceeds
