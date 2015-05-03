@@ -7638,8 +7638,9 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
               ENDIF
               
               IF (EVHEADNM.LT.7) THEN
-                IF (EXCODE.NE.EXCODEP.AND.EVALOUT.GT.1 .OR.
-     &              RUN.EQ.1.AND.RUNI.EQ.1) THEN
+!               IF (EXCODE.NE.EXCODEP.AND.EVALOUT.GT.1 .OR.
+!    &              RUN.EQ.1.AND.RUNI.EQ.1) THEN
+                IF (RUN.EQ.1.AND.RUNI.EQ.1) THEN
                  EVHEADNM = EVHEADNM + 1
                  OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,
      &            POSITION = 'APPEND')
