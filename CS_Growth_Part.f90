@@ -88,6 +88,7 @@
         !           Leaf growth
         !-----------------------------------------------------------------------
 
+        
         GROLF = 0.0
         GROLFADJ = 0.0
         GROLFP = 0.0
@@ -303,7 +304,7 @@
             DO LF =1, LNUMSIMSTG(BR) 
                 NODEWTG(BR,LF) = NODEWTGB(BR)
                 NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
-                GROSTP = GROSTP + NODEWT(BR,LF)
+                GROSTP = GROSTP + NODEWTG(BR,LF)
             ENDDO
         ENDDO
         GROLSP = GROLFP + GROSTP                                                                                    

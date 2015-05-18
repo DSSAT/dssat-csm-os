@@ -166,7 +166,7 @@
 !-----------------------------------------------------------------------
 !           Calculate leaf number at end of day;adjust PHINT if needed
 !-----------------------------------------------------------------------
-            LNUM_slope = 1.0                    !LPM 21/02/2015 It would be part of the cultivar file, just for testing proposals is here
+            
             
             !LAGEG = 0.0      !LPM28MAR15 This variable is not used
             LNUMG = 0.0
