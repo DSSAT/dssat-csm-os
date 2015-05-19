@@ -25,13 +25,17 @@
         !-----------------------------------------------------------------------
         !           Partitioning of C to above ground and roots (minimum) 
         !-----------------------------------------------------------------------
-
-        PTF = PTFMN+(PTFMX-PTFMN)*DSTAGE                                                                               !EQN 280   
+        
+        !LPM 18MAY2015 Delete PTF to consider a spill-over model
+        
+        !PTF = PTFMN+(PTFMX-PTFMN)*DSTAGE                                                                               !EQN 280   
         ! Partition adjustment for stress effects
-        PTF = AMIN1(PTFMX,PTF-PTFA*(1.0-AMIN1(WFG,NFG)))                                                               !EQN 281
-        CARBOR = AMAX1(0.0,(CARBOBEG+CARBOADJ))*(1.0-PTF)                                                              !EQN 282
-        CARBOT = AMAX1(0.0,(CARBOBEG+CARBOADJ)) - CARBOR                                                               !EQN 283
-
+        !PTF = AMIN1(PTFMX,PTF-PTFA*(1.0-AMIN1(WFG,NFG)))                                                               !EQN 281
+        !CARBOR = AMAX1(0.0,(CARBOBEG+CARBOADJ))*(1.0-PTF)                                                              !EQN 282
+        !CARBOT = AMAX1(0.0,(CARBOBEG+CARBOADJ)) - CARBOR                                                               !EQN 283
+        
+        CARBOT = AMAX1(0.0,(CARBOBEG+CARBOADJ))                                                                         !EQN 283
+        
         ! Stem fraction or ratio to leaf whilst leaf still growing
         ! (If a constant STFR is entered,swfrx is set=stfr earlier)
         ! Increases linearly between specified limits
@@ -436,7 +440,12 @@
         !           Root growth                                     
         !-----------------------------------------------------------------------
 
-        RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
-        RTRESP = RTWTG*RRESP/(1.0-RRESP)                                                                               !EQN 388
+        !LPM 18MAY2015 Modify RTWTG to include the concept of spill-over model
+        !RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
+        CARBOR = CARBOT-(GROST+GROCR+GROLF) 
+        IF (CARBOT.GT.0.0.AND.CARBOR.GT.0.0) THEN
+            RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
+            RTRESP = RTWTG*RRESP/(1.0-RRESP)                                                                               !EQN 388
+        ENDIF
         
     END SUBROUTINE CS_Growth_Part

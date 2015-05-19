@@ -54,8 +54,10 @@
             '25X,"Span   Max   Min   Rad  [day]   Rain  Trans  Photo",9X,"Pho","to         Photo",/,' // &
             '25X,"days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ","synth Growth  synth Growth",/,110("-"))'
         CHARACTER(LEN=256) :: FMT501 = '(I5,I4,2I6,F6.1,A6,F6.1,F6.3,F6.2,F6.1,A6,F6.3,A6,4I6,3I6,F6.3,2I6,2A6,F6.2,I6,A6,' // &
-            'I6,F6.1,2F6.2,F6.1,F6.1, F6.2,2F6.2,2F6.2,F6.1,2F6.2,F6.2)'
-        CHARACTER(LEN=128) :: FMT502 = '(I5,I4,2I6,F6.1,A6,F6.2,A6,F6.2,A6,A6,F6.1,2A6,I6,A6,2F6.2,F6.3,10F6.2)'
+            !'I6,F6.1,2F6.2,F6.1,F6.1, F6.2,2F6.2,2F6.2,F6.1,2F6.2,F6.2)'   !LPM 19MAY2015 to delete PTF as output
+            'I6,F6.1,1F6.2,F6.1,F6.1, F6.2,2F6.2,2F6.2,F6.1,2F6.2,F6.2)'
+        !CHARACTER(LEN=128) :: FMT502 = '(I5,I4,2I6,F6.1,A6,F6.2,A6,F6.2,A6,A6,F6.1,2A6,I6,A6,2F6.2,F6.3,10F6.2)' !LPM 19MAY2015 to delete PTF as output
+        CHARACTER(LEN=128) :: FMT502 = '(I5,I4,2I6,F6.1,A6,F6.2,A6,F6.2,A6,A6,F6.1,2A6,I6,A6,2F6.2,F6.3,9F6.2)'
         CHARACTER(LEN=512) :: FMT503 = '(I5,I4,2I6,F6.1,A6,F6.1,F6.1,2F6.2,4F6.1,A6,F6.2,2A6,3F6.3,3F6.3,3F6.3,F6.2,' //&
             'F6.2,F6.2,F6.1,F6.1)'
         CHARACTER(LEN=128) :: FMT507 = '(I5,I4,2I6,2F6.1,A6,F6.1,F6.2,5F6.2,3F6.2,2F6.2,F6.1,F6.2,F6.1,3F6.2)'

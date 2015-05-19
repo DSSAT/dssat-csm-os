@@ -35,14 +35,14 @@ $SPECIES:CSCAS046.010114   Last edit:010114
     SR
 ! Principal Stages (S=Standard,K=Key)
 @ PSNO PSTYP PSABV PSNAME
-    1      S GDAT  Germinate  
-    2      K B1DAT 1stBranch
-    3      K B2DAT 2ndBranch
-    4      K B3DAT 3rdBranch
-    5      K B4DAT 4thBranch
-    6      K B5DAT 5thBranch
-    7      K B6DAT 6thBranch
-    8      M HDAT  Harvest  
+    0      S GDAT  Germinate  
+    1      K B1DAT 1stBranch
+    2      K B2DAT 2ndBranch
+    3      K B3DAT 3rdBranch
+    4      K B4DAT 4thBranch
+    5      K B5DAT 5thBranch
+    6      K B6DAT 6thBranch
+    7      M HDAT  Harvest  
 ! Phase durations
 @PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
 ! oC.d  oC.d                                                              
@@ -129,12 +129,12 @@ CH2O distribution/mobilization
 !   fr    fr   0-1  
   0.77  0.80  0.10
 ! Temperature responses
-@RRATE TRGEM TRDV1 TRLFG TRPHS  ! Germination/emergence,development,leaf growth,phsis
+@RRATE TRGEM TRDV1 TRLFG TRPHS  ! Germination/emergence,development,leaf/branch growth,phsis
 !    #    oC    oC    oC    oC
-     0  13.0  13.0    12    10
-   1.0  30.0  30.0    24    25
-   1.0  30.0  30.0    45    40
-     0  42.5  42.5    55    50
+     0  13.0  13.0  13.0    10
+   1.0  30.0  30.0  24.0    25   !LPM 18MAR15 Change to 24
+   1.0  35.0  35.0  35.0    40   !LPM 18MAR15 Change to 35 
+     0  42.5  42.5  42.5    50
 
 ! WATER loss,uptake,etc.
 ! Evapotranspiration 

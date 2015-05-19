@@ -121,7 +121,7 @@
       !    2  Stages read-in from species file
       !    3. Temperature and water stress effects on specific leaf area
       !    4. Leaf appearance rate reduction with leaf number
-      !    5. PTF parameters derived from root/shoot function
+      !    5. PTF parameters derived from root/shoot function !LPM 19MAY2015 PTF is not considered in the model 
       !    6. Memory water stress factor calculated from WFG->leaf area
       !    7. Storage root initiation period introduced
       !    8. Storage root number initiation parameter introduced

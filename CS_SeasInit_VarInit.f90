@@ -290,7 +290,7 @@
         psdapm = -99
         psdat = -99
         psdayfr = 0.0
-        ptf = 0.0
+        !ptf = 0.0 !LPM 19MAY2015 PTF is not considered in the model 
         rainc = 0.0
         raincc = 0.0
         rainpav = -99.0

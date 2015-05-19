@@ -18,7 +18,7 @@ $ECOTYPES:CSCAS046.010114   Last edit:010114
 ! because of variation in the proportion of diffuse radiation
 ! in the incoming solar and sky components.
 
-*ECOTYPE:CSCRP046
+*ECOTYPE:CSCAS046
 @ECO#  ECONAME.......... PARUE HTSTD DUSRI SRN%S BR1FX BR2FX BR3FX BR4FX BR5FX BR6FX
 !                            1     2     3     4     5     6     7     8     9    10
 !                         g/MJ    cm  oC.d     %    F#    F#    F#    F#    F#    F#
@@ -28,7 +28,7 @@ $ECOTYPES:CSCAS046.010114   Last edit:010114
 DFAULT DEFAULT            2.80   200   600   .65     3     3     3     3     3     3
                                                 
 990001 STANDARD1          2.10   200   600   .65     3     3     3     3     3     3
-990002 STANDARD2          2.30   200   600   .65     3     3     3     3     3     3
+990002 STANDARD2          3.10   200   600   .65     3     3     3     3     3     3
 990003 STANDARD3          2.30   200   600   .65     3     3     3     3     3     3
 990004 STANDARD4          2.30   200  1400   .65     3     3     3     3     3     3
 
