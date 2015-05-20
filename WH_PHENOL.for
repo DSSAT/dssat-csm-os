@@ -958,7 +958,7 @@ cbak  ears that is not included in lai calculation.
                   CALL WARNING(1,'MZPHEN',MESSAGE)
 !*!                  CALL WARNING(1,'WHPHEN',MESSAGE)
 
-                  WRITE (     *,1399)
+                  !WRITE (     *,1399)
                   IF (IDETO .EQ. 'Y') THEN
                       WRITE (NOUTDO,1399)
                   ENDIF
