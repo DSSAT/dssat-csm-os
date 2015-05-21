@@ -83,13 +83,13 @@ Module CS_First_Trans_m
     REAL    :: CO2PC                   ! CO2 concentration,tier,cumul   ppm        ! (From SeasInit)  
     REAL    :: CO2RF(10)               ! CO2 reference concentration    vpm        ! (From SeasInit)  
     INTEGER :: COLNUM                  ! Column number                  #          ! (From Integrate) 
-    REAL    :: CRFR                    ! Crown growth rate,fr stem gr   #          ! (From SeasInit)  
-    REAL    :: CRRSWAD                 ! Crown reserves                 kg/ha      ! (From Integrate) 
-    REAL    :: CRRSWT                  ! Crown reserves                 g/p        ! (From SeasInit)  
-    REAL    :: CRWAD                   ! Crown weight                   kg/ha      ! (From SeasInit)  
-    REAL    :: CRWADOUT                ! Crown weight for output        kg/ha      ! (From Output)    
-    REAL    :: CRWT                    ! Crown weight                   g/p        ! (From SeasInit)  
-    REAL    :: CRWTM                   ! Crown weight at maturity       g/p        ! (From Integrate) 
+    REAL    :: CRFR                    ! Plant. stick growth rate,fr stem gr #     ! (From SeasInit)  
+    REAL    :: CRRSWAD                 ! Plant. stick reserves               kg/ha ! (From Integrate) 
+    REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit)  
+    REAL    :: CRWAD                   ! Plant. stick weight                 kg/ha ! (From SeasInit)  
+    REAL    :: CRWADOUT                ! Plant. stick weight for output      kg/ha ! (From Output)    
+    REAL    :: CRWT                    ! Plant. stick weight                 g/p   ! (From SeasInit)  
+    REAL    :: CRWTM                   ! Plant. stick weight at maturity     g/p   ! (From Integrate) 
     INTEGER :: CTRNUMPD                ! Control # missing tiers        #          ! (From SeasInit)  
     REAL    :: CUMDEP                  ! Cumulative depth               cm         ! (From Growth)    
     REAL    :: CUMDU                   ! Cumulative development units   #          ! (From SeasInit)  
@@ -235,9 +235,9 @@ Module CS_First_Trans_m
     REAL    :: GESTAGE                 ! Germination,emergence stage    #          ! (From SeasInit)  
     REAL    :: GESTAGEPREV             ! Germ,emerg stage,previous day  #          ! (From SeasInit)  
     REAL    :: GEUCUM                  ! Cumulative germ+emergence unit #          ! (From SeasInit)  
-    REAL    :: GROCR                   ! Crown growth rate              g/p        ! (From SeasInit)  
-    REAL    :: GROCRADJ                ! Crown growth rate N adjusted   g/p        ! (From SeasInit)  
-    REAL    :: GROCRFR                 ! Crown growth rate,fraction st  #          ! (From Growth)    
+    REAL    :: GROCR                   ! Plant. stick growth rate              g/p ! (From SeasInit)  
+    REAL    :: GROCRADJ                ! Plant. stick growth rate N adjusted   g/p ! (From SeasInit)  
+    REAL    :: GROCRFR                 ! Plant. stick growth rate,fraction st  #   ! (From Growth)    
     REAL    :: GROLF                   ! Leaf growth rate               g/p        ! (From SeasInit)  
     REAL    :: GROLFADJ                ! Leaf growth rate N adjusted    g/p        ! (From SeasInit)  
     REAL    :: GROLFP                  ! Leaf growth,potential          g/p        ! (From Growth)    
@@ -253,9 +253,9 @@ Module CS_First_Trans_m
     REAL    :: GROSR                   ! Storage root growth            g/p        ! (From SeasInit)  
     REAL    :: GROST                   ! Stem growth rate               g/p        ! (From SeasInit)  
     REAL    :: GROSTADJ                ! Stem growth rate N adjusted    g/p        ! (From SeasInit)  
-    REAL    :: GROSTCR                 ! Stem+crown growth rate         g/p        ! (From SeasInit)  
-    REAL    :: GROSTCRP                ! Stem+crown growth potential    g/p        ! (From Growth)    
-    REAL    :: GROSTCRPSTORE           ! Stem+crown gr potentl,previous g/p        ! (From Growth)    
+    REAL    :: GROSTCR                 ! Stem+Plant. stick growth rate         g/p ! (From SeasInit)  
+    REAL    :: GROSTCRP                ! Stem+Plant. stick growth potential    g/p ! (From Growth)    
+    REAL    :: GROSTCRPSTORE           ! Stem+Plant. stick gr potentl,previous g/p ! (From Growth)    
     REAL    :: GROSTP                  ! Potential stem growth rate     g/p        ! LPM11APR15  
     REAL    :: GrP_EP                  ! Harvest product per unit EP    g/mm       ! (From Output)    
     REAL    :: GRP_ET                  ! Harvest product per unit water g/mm       ! (From Output)    
@@ -358,7 +358,7 @@ Module CS_First_Trans_m
     REAL    :: LAFND                   ! Node # (one axis)->final area  #          ! (From SeasInit)  
     REAL    :: LAFS                    ! Leaf area/all nodes,final      cm2        ! (From SeasInit)  
     !REAL    :: LAGEG(0:LNUMX)          ! Leaf age increment             C.d        ! (From Growth)  !LPM 28MAR15 This variable is not used 
-    REAL    :: LAGEP(0:PSX,0:LCNUMX)   ! Leaf age (phyllochrons),lf pos #          ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions  
+    !REAL    :: LAGEP(0:PSX,0:LCNUMX)   ! Leaf age (phyllochrons),lf pos #          ! (From SeasInit) !!LPM21MAY2015 this variable is not used  
     REAL    :: LAGETT(0:PSX,0:LCNUMX)  ! Leaf age after growing         C.d        ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions    
     REAL    :: LAGL(0:PSX,0:LCNUMX)    ! Leaf area growth,shoot,lf pos  cm2/l      ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
     REAL    :: LAI                     ! Leaf area index                #          ! (From SeasInit)  
@@ -580,9 +580,9 @@ Module CS_First_Trans_m
     REAL    :: PGERM                   ! Germination duration           deg.d      ! (From SeasInit)  
     INTEGER :: PGROCOL(20)             ! Plantgro column = t-file data  #          ! (From Output)           
     REAL    :: PGVAL                   ! Plantgro file value            #          ! (From Output)    
-    REAL    :: PHINT                   ! Phylochron interval            deg.d      ! (From SeasInit)  
+    !REAL    :: PHINT                   ! Phylochron interval            deg.d      ! (From SeasInit)  !LPM 21MAY2015 PHINT is not used
     REAL    :: PHINTFAC                ! Phylochron interval factor     #          ! (From SeasInit)  
-    REAL    :: PHINTS                  ! Phylochron interval,standard   deg.d      ! (From SeasInit)  
+    !REAL    :: PHINTS                  ! Phylochron interval,standard   deg.d      ! (From SeasInit) !LPM 21MAY2015 PHINT is not used 
     REAL    :: PHOTQR                  ! Photon requirement,calculated  E/mol      ! (From SeasInit)  
     REAL    :: PHSV                    ! Phs,fr reduction with VPD       /KPa      ! (From SeasInit)  
     REAL    :: PHTV                    ! Phs,threshold VPD for reduction KPa       ! (From SeasInit)  

@@ -164,14 +164,14 @@
             !  LSST   0.3  Leaf senescence,sensitivity to temp (fr/d)
 
 !-----------------------------------------------------------------------
-!           Calculate leaf number at end of day;adjust PHINT if needed
+!           Calculate leaf number at end of day
 !-----------------------------------------------------------------------
             
             
             !LAGEG = 0.0      !LPM28MAR15 This variable is not used
             LNUMG = 0.0
             ! Reduce PHINT with development stage (LAH Sept 2012)
-            PHINT = 1.0/((1.0/PHINTS)*(1.0-PHINTFAC*DSTAGE))                                                           !EQN 003
+            !PHINT = 1.0/((1.0/PHINTS)*(1.0-PHINTFAC*DSTAGE))                                                          !EQN 003 !LPM 21MAY2015 PHINT is not used
             !LNUMEND = LNUM + (TT*EMRGFR)/PHINT !LPM 17MY14  FLN and LNUMEND are not used, deleted 
             !
             !! Restrict to maximum

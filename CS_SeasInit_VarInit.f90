@@ -183,7 +183,7 @@
         idetgnum = 0
         irramtc = 0.0
         lagett = 0.0
-        lagep = 0.0
+        !lagep = 0.0
         lagl = 0.0
         lai = 0.0
         laiprev = 0.0

@@ -6,7 +6,7 @@
 !
 ! Subroutine CS_Growth calls eight subroutines to calculate photosynthesis germination timing, daylength and development 
 ! units, reserves and grazing (?), PAR interception, rate factors, senescence, assimilation and its partitioning, growth of 
-! storage roots, leaves, stems and crowns, reserves and plant height, and soil water.
+! storage roots, leaves, stems and Plant. sticks, reserves and plant height, and soil water.
 !
 !***************************************************************************************************************************
 

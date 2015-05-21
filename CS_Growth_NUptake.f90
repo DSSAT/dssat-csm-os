@@ -203,7 +203,7 @@
             SNUSE(1) = ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
             SRNUSE(1) = (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211
     
-            ! Reduce stem,crown,root growth if N < supply minimum
+            ! Reduce stem,Plant. stick,root growth if N < supply minimum
             IF (NDEMMN.GT.NULEFT) THEN
                 GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
                 GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214

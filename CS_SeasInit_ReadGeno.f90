@@ -256,7 +256,7 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS9',dayls(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPEXP',ppexp) ! Trial
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPFPE',dfpe)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHINT',phints)
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHINT',phints) !LPM 21MAY2015 this variable is not used
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P1',pd(1))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P2',pd(2))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P3',pd(3))
@@ -335,7 +335,7 @@
             !CALL CUREADR (CUDIRFLE,VARNO,'B67ND',pdl(7))
             !CALL CUREADR (CUDIRFLE,VARNO,'B78ND',pdl(8))
             !CALL CUREADR (CUDIRFLE,VARNO,'B89ND',pdl(9))
-            CALL CUREADR (CUDIRFLE,VARNO,'PHINT',phints)
+            !CALL CUREADR (CUDIRFLE,VARNO,'PHINT',phints) !LPM 21MAY2015 this variable is not used
             CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
             CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs)
             CALL CUREADR (CUDIRFLE,VARNO,'SR#WT',srnow)

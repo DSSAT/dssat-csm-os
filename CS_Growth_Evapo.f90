@@ -133,13 +133,13 @@
           ELSE
             Ttgem = tt
           ENDIF    
-          IF (Cfllflife.EQ.'D') THEN
-            ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
-            Ttlflife = Phints   
-          ELSE  
-            !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
+          !IF (Cfllflife.EQ.'D') THEN 
+          !  ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
+          !  Ttlflife = Phints   
+          !ELSE  
+          !  !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
             Tflflife = TFAC4(trdv3,tmean,TTlflife)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
-          ENDIF  
+          !ENDIF  
   
 !-----------------------------------------------------------------------
 !         Calculate soil water 'status' (Used as a sw 'potential')

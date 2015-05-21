@@ -210,7 +210,7 @@
             DO L = 0,PSX
                 WRITE(fnumwrk,'(A15,I2,2F8.1)')'  B#->,Deg.d-> ',l,Pdl(L),PD(l)
             ENDDO  
-            WRITE(fnumwrk,*)' Crown stages '
+            WRITE(fnumwrk,*)' Plant. stick stages '
             WRITE(fnumwrk,*)'  Crfr   ',Crfr 
             WRITE(fnumwrk,*)' CH2O reserves '
             WRITE(fnumwrk,*)'  Rsfrs  ',rsfrs
@@ -238,7 +238,7 @@
             WRITE(fnumwrk,*)'  Slatr,Slats  ',Lawtr,Lawts
             WRITE(fnumwrk,*)'  Slawr        ',Lawwr
             WRITE(fnumwrk,*)'  Lpefr        ',Lpefr
-            WRITE(fnumwrk,*)'  Phints,Phntf ',Phints,Phintfac            
+            !WRITE(fnumwrk,*)'  Phints,Phntf ',Phints,Phintfac  !LPM 21MAY2015 PHINTS is not used           
             WRITE(fnumwrk,*)'  Llifg,a,s,x  ',Llifg,Llifa,Llifs,Llifx  
             WRITE(fnumwrk,*)'  Lwlos  ',Lwlos                
             WRITE(fnumwrk,*)'  Laixx,Parix  ',Laixx,Parix       
@@ -349,19 +349,19 @@
         ENDIF   
         
         ! Output choices
-        ! 1=Reserves in laminae,stem,crown,SLA;stem includes petioles
+        ! 1=Reserves in laminae,stem,Plant. stick,SLA;stem includes petioles
         ! 2=No reserves;stem includes petioles
         ! 3=No reserves;stem does not include petioles
         OUTCHOICE = 3
         IF (OUTCHOICE.EQ.2) THEN
-            WRITE(MESSAGE(1),'(A36,A37)')'  NO reserve CH2O included in the wt',' of leaves,stems,and crown.          ' 
+            WRITE(MESSAGE(1),'(A36,A37)')'  NO reserve CH2O included in the wt',' of leaves,stems,and Plant. stick.          ' 
             CALL WARNING(1,'CSCAS',MESSAGE)
-            WRITE(FNUMWRK,'(A36,A38)')'  NO reserve CH2O included in the wt',' of leaves,stems,and crown.           '
+            WRITE(FNUMWRK,'(A36,A38)')'  NO reserve CH2O included in the wt',' of leaves,stems,and Plant. stick.           '
             WRITE(FNUMWRK,'(A36)')'  Stem weight includes the petioles.'
         ELSEIF (OUTCHOICE.EQ.3) THEN
-            WRITE(MESSAGE(1),'(A36,A37)')'  NO reserve CH2O included in the wt',' of leaves,stems,and crown.          ' 
+            WRITE(MESSAGE(1),'(A36,A37)')'  NO reserve CH2O included in the wt',' of leaves,stems,and Plant. stick.          ' 
             CALL WARNING(1,'CSCAS',MESSAGE)
-            WRITE(FNUMWRK,'(A36,A38)')'  NO reserve CH2O included in the wt',' of leaves,stems,and crown.           '
+            WRITE(FNUMWRK,'(A36,A38)')'  NO reserve CH2O included in the wt',' of leaves,stems,and Plant. stick.           '
             WRITE(FNUMWRK,'(A45)')'  Stem weight does NOT includes the petioles.'
         ENDIF  
         

@@ -106,9 +106,10 @@
 
         CHARACTER(LEN=384) :: FMT2201 = '("@YEAR DOY   DAS   DAP TMEAN","  GSTD  L#SD"," PARID PARUD  AWAD",' // &
             '"  LAID  SAID  CAID","  TWAD SDWAD  RWAD  CWAD  LWAD  SWAD  HWAD  HIAD"," CRWAD RSWAD SNWLD SNWSD",' // &
-            '"  RS%D","  H#AD  HWUD", "  S#AD  SLAD  RDPD  PTFD","  SWXD WAVRD"," WUPRD  WFPD  WFGD","  NFPD  ",' // &
-            '"NFGD NUPRD  TFPD  TFGD", " DYLFD","      ","      ")'
-        CHARACTER(LEN=256) :: FMT2205 = '("@YEAR DOY   DAS   DAP TMEAN TCDIF  GSTD","    DU DYLFD","  TFPD  WFPD  NFPD ",' // &
+            !'"  RS%D","  H#AD  HWUD", "  S#AD  SLAD  RDPD  PTFD","  SWXD WAVRD"," WUPRD  WFPD  WFGD","  NFPD  ",' // & !LPM 20MAY2015 to delete PTFD
+            '"  RS%D","  H#AD  HWUD", "  S#AD  SLAD  RDPD","  SWXD WAVRD"," WUPRD  WFPD  WFGD","  NFPD  ",' // &
+            '"NFGD NUPRD  TFGD", " DYLFD","      ","      ")'
+        CHARACTER(LEN=256) :: FMT2205 = '("@YEAR DOY   DAS   DAP TMEAN TCDIF  GSTD","    DU DYLFD","  WFPD  NFPD ",' // &
             '"CO2FD RSFPD  TFGD  WFGD  NFGD"," WAVRD WUPRD  SWXD  EOPD","  SNXD LN%RD SN%RD RN%RD            ")'
         CHARACTER(LEN=256) :: FMT2215 = '("!........DATES.......  ...TEMP... STAGE "," ...PHENOLOGY.... ",' // & 
             '" ....PHOTOSYNTHESIS.... ", " .....GROWTH..... ","H2O STRESS DETERMINANTS"," .N STRESS DETERMINANTS.")'

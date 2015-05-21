@@ -4,7 +4,7 @@
 ! that are not arguments are declared in module CS_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
 !
-! Subroutine CS_Growth_Part calculates assimilation partitioning, growth of storage roots, leaves, stems and crowns.
+! Subroutine CS_Growth_Part calculates assimilation partitioning, growth of storage roots, leaves, stems and Plant. sticks.
 !***************************************************************************************************************************
     
     SUBROUTINE CS_Growth_Part ( &
@@ -41,10 +41,10 @@
         ! Increases linearly between specified limits
         SWFR = CSYVAL (LNUM,SWFRNL,SWFRN,SWFRXL,SWFRX)                                                                 !EQN 296
 
-        ! Crown fraction 
-        GROCRFR = 0.0
-        ! Increases linearly from start to end of growth cycle
-        GROCRFR = CRFR * DSTAGE                                                                                        !EQN 386
+        ! Plant. stick fraction                                  !LPM 20MAY2015 Deleted, instead it is used NODEWTGB(0)  
+        !GROCRFR = 0.0
+        !! Increases linearly from start to end of growth cycle
+        !GROCRFR = CRFR * DSTAGE                                                                                        !EQN 386
 
         !-----------------------------------------------------------------------
         !           Storage root basic growth and number determination
@@ -296,22 +296,26 @@
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         NODEWTG = 0.0
         GROSTP = 0.0
-        DO BR = 0, BRSTAGE   
-            IF (BR.EQ.0) THEN
-                NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
-                    (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*nod_cul)
-            ELSE
-                NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((BRDAE(BR)/171.64793)**-2.2115103)/ &
-                    (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*nod_cul)
-            ENDIF
+        IF (DAE.GT.0) THEN
+            DO BR = 0, BRSTAGE   
+                IF (BR.EQ.0) THEN
+                    NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
+                        (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*nod_cul)
+                ELSE
+                    NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((BRDAE(BR)/171.64793)**-2.2115103)/ &
+                        (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*nod_cul)
+                ENDIF
             
-            DO LF =1, LNUMSIMSTG(BR) 
-                NODEWTG(BR,LF) = NODEWTGB(BR)
-                NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
-                GROSTP = GROSTP + NODEWTG(BR,LF)
+                DO LF =1, LNUMSIMSTG(BR) 
+                    NODEWTG(BR,LF) = NODEWTGB(BR)
+                    NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
+                    GROSTP = GROSTP + NODEWTG(BR,LF)
+                ENDDO
             ENDDO
-        ENDDO
+        ENDIF
         GROLSP = GROLFP + GROSTP                                                                                    
+        
+     
         
         IF (GROLSP.GT.0.0) THEN
             ! Leaf+stem weight increase from assimilates
@@ -406,7 +410,7 @@
         ENDIF
             
         !-----------------------------------------------------------------------
-        !           Stem and crown growth                                     
+        !           Stem and Plant. stick growth                                     
         !-----------------------------------------------------------------------
 
         GROCR = 0.0
@@ -432,9 +436,16 @@
         ! LAH RSFRS is the fraction of stem growth to reserves
         ! May need to have this change as stem growth proceeds
      
-        ! Crown (Planting stick) .. in balance with stem
-        GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
-        GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
+        ! Planting stick .. in balance with stem
+        !GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
+        !GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
+        
+        !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
+        !in the planting stick (In the future it could be modified as an input in the X-file)
+        GROST = GROSTCR
+        GROCR = NODEWTGB(0)*SPRL/nod_length                   
+        
+        
                           
         !-----------------------------------------------------------------------
         !           Root growth                                     

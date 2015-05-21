@@ -36,7 +36,7 @@
         !         Calculate variables that are generally measured and presented
         !-----------------------------------------------------------------------
                 
-        ! Here,reserves are included in leaf,stem,and crown weights
+        ! Here,reserves are included in leaf,stem,and Plant. stick weights
         ! And weights are in kg/ha
         CWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP*10.0                                                                       !EQN 318
         SRWAD = SRWT*PLTPOP*10.0

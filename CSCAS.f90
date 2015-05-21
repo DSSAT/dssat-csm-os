@@ -180,7 +180,7 @@
         !     In Subroutine CS_Growth, set up the switches for establishment and determine whether today is a planting day. 
         !     If so, then run the daily rate procedures by calling eight subroutines to calculate germination timing,  
         !     daylength and development units, reserves and grazing (?), PAR interception, photosynthesis, rate factors,  
-        !     senescence, assimilation and its partitioning, growth of storage roots, leaves, stems and crowns, reserves  
+        !     senescence, assimilation and its partitioning, growth of storage roots, leaves, stems and Plant. sticks, reserves  
         !     and plant height, and soil water.         
         !-----------------------------------------------------------------------------------------------------------------------
            

@@ -81,76 +81,76 @@
         !IF (PDL(1).GT.0.0) THEN !LPM 04MAR15 remove to add IF (MEDEV.EQ.'LNUM')THEN
         DUTOMSTG = 0.0
         LNUMTOSTG = 0.0        
-        IF (MEDEV.EQ.'LNUM')THEN !LPM 04MAR15 MEDEV defines if branching durations input is as node unit (LNUM)
-            ! If tier durations input as node units,calculte DU for tiers
-            DO L = 0,8 !LPM 07MAR15 here 8 is left (instead of PSX) to avoid problems with the estimation of DSTAGE
-                IF (PDL(L).GT.0.0) THEN
-                    MSTG = L+1
-                    HSTG = MSTG+1  
-                ENDIF 
-            ENDDO
-            ! Check for missing tier durations and if so use previous
-            IF (MSTG.GT.2) THEN   !LPM 07MAR15 here MSTG is not changed to PSX to avoid problems with the estimation of DSTAGE
-                DO L = 2,MSTG
-                    IF (PDL(L).LT.0.0) THEN
-                        PDL(L) = PDL(L-1)
-                    ENDIF
-                ENDDO
-            ENDIF  
-            ! Calculate leaf # to MSTG
-            TVR1 = 0.0
-            DO L = 1,MSTG-1
-                TVR1 = TVR1 + AMAX1(0.0,PDL(L))                                                                        !EQN 001
-            ENDDO  
-            ! Now calculate tier durations in Thermal Units
-            TVR2 = 0.0
-            LNUMTMP = 0.0
-            DSTAGE = 0.0
-            DO L = 1,1000
-                TVR2 = TVR2 + STDAY
-                TVR3 = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))                                              !EQN 003
-                ! TVR3 is a temporary name for PHINT within the loop 
-                LNUMTMP = LNUMTMP + STDAY/TVR3
-                DSTAGE = AMIN1(1.0,LNUM/TVR1)                                                                          !EQN 002
-                IF(LNUMTMP.GE.PDL(1).AND.PSTART(2).LE.0.0) PSTART(2) = TVR2
-                IF(LNUMTMP.GE.PDL(1)+PDL(2).AND.PSTART(3).LE.0.0) PSTART(3) = TVR2
-                IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3).AND.PSTART(4).LE.0.0) PSTART(4) = TVR2
-                IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4).AND. PSTART(5).LE.0.0) PSTART(5) = TVR2
-                IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5).AND.PSTART(6).LE.0.0) PSTART(6) = TVR2
-                IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6).AND.PSTART(7).LE.0.0) PSTART(7) = TVR2
-                IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6)+PDL(7).AND.PSTART(8).LE.0.0) PSTART(8) = TVR2
-            ENDDO 
-            DO L = 1,MSTG-1
-                PD(L) = PSTART(L+1) - PSTART(L)
-            ENDDO
-            PDL(MSTG) = 200.0
-            PD(MSTG) = PDL(MSTG)*PHINTS
-            DSTAGE = 0.0
-            
-            DO L = 1, MSTG-1  !LPM 06MAR15 move because it should be part of the conditional 
-            IF (PD(L).GT.0.0) THEN
-                DUTOMSTG = DUTOMSTG + PD(L)
-                LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)                                                                 !EQN 006
-            ENDIF  
-            ENDDO
-        ELSE 
+        !IF (MEDEV.EQ.'LNUM')THEN !LPM 04MAR15 MEDEV defines if branching durations input is as node unit (LNUM) !LPM 21MAY2015 this method is not used
+        !    ! If tier durations input as node units,calculte DU for tiers
+        !    DO L = 0,8 !LPM 07MAR15 here 8 is left (instead of PSX) to avoid problems with the estimation of DSTAGE
+        !        IF (PDL(L).GT.0.0) THEN
+        !            MSTG = L+1
+        !            HSTG = MSTG+1  
+        !        ENDIF 
+        !    ENDDO
+        !    ! Check for missing tier durations and if so use previous
+        !    IF (MSTG.GT.2) THEN   !LPM 07MAR15 here MSTG is not changed to PSX to avoid problems with the estimation of DSTAGE
+        !        DO L = 2,MSTG
+        !            IF (PDL(L).LT.0.0) THEN
+        !                PDL(L) = PDL(L-1)
+        !            ENDIF
+        !        ENDDO
+        !    ENDIF  
+        !    ! Calculate leaf # to MSTG
+        !    TVR1 = 0.0
+        !    DO L = 1,MSTG-1
+        !        TVR1 = TVR1 + AMAX1(0.0,PDL(L))                                                                        !EQN 001
+        !    ENDDO  
+        !    ! Now calculate tier durations in Thermal Units
+        !    TVR2 = 0.0
+        !    LNUMTMP = 0.0
+        !    DSTAGE = 0.0
+        !    DO L = 1,1000
+        !        TVR2 = TVR2 + STDAY
+        !        TVR3 = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))                                              !EQN 003
+        !        ! TVR3 is a temporary name for PHINT within the loop 
+        !        LNUMTMP = LNUMTMP + STDAY/TVR3
+        !        DSTAGE = AMIN1(1.0,LNUM/TVR1)                                                                          !EQN 002
+        !        IF(LNUMTMP.GE.PDL(1).AND.PSTART(2).LE.0.0) PSTART(2) = TVR2
+        !        IF(LNUMTMP.GE.PDL(1)+PDL(2).AND.PSTART(3).LE.0.0) PSTART(3) = TVR2
+        !        IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3).AND.PSTART(4).LE.0.0) PSTART(4) = TVR2
+        !        IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4).AND. PSTART(5).LE.0.0) PSTART(5) = TVR2
+        !        IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5).AND.PSTART(6).LE.0.0) PSTART(6) = TVR2
+        !        IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6).AND.PSTART(7).LE.0.0) PSTART(7) = TVR2
+        !        IF(LNUMTMP.GE.PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6)+PDL(7).AND.PSTART(8).LE.0.0) PSTART(8) = TVR2
+        !    ENDDO 
+        !    DO L = 1,MSTG-1
+        !        PD(L) = PSTART(L+1) - PSTART(L)
+        !    ENDDO
+        !    PDL(MSTG) = 200.0
+        !    PD(MSTG) = PDL(MSTG)*PHINTS
+        !    DSTAGE = 0.0
+        !    
+        !    DO L = 1, MSTG-1  !LPM 06MAR15 move because it should be part of the conditional 
+        !    IF (PD(L).GT.0.0) THEN
+        !        DUTOMSTG = DUTOMSTG + PD(L)
+        !        LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)                                                                 !EQN 006
+        !    ENDIF  
+        !    ENDDO
+        !ELSE 
             ! If tier durations input as developmental units
             !DO L = 1,8  !LPM 06MAR15 to avoid a fix value of branch levelS (8)
-            DO L = 0,PSX
-                IF (PDL(L).GT.0.0) THEN
-                    MSTG = L+1
-                    HSTG = MSTG+1  
-                ENDIF 
-            ENDDO
-            ! Check for missing tier durations and if so use previous
+        DO L = 0,PSX
+            IF (PDL(L).GT.0.0) THEN
+                MSTG = L+1
+                HSTG = MSTG+1  
+            ENDIF 
+        ENDDO
+        ! Check for missing tier durations and if so use previous
             
-            DO L = 0,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
-                IF (L.LE.2)THEN
-                    PD(L) = PDL(L)
-                ELSE
-                    PD(L) = PDL(2)
-                ENDIF
-            ENDDO
+        DO L = 0,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
+            IF (L.LE.2)THEN
+                PD(L) = PDL(L)
+            ELSE
+                PD(L) = PDL(2)
+            ENDIF
+        ENDDO
             
             !IF (MSTG.GT.2) THEN !LPM 07MAR15 MSTG to PSX
             IF (PSX.GT.2) THEN
@@ -193,20 +193,20 @@
                     !LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)  !LPM 04MAR15 it is estimated through the simulation                !EQN 006
                 ENDIF  
             ENDDO
-        ENDIF  
+        !ENDIF  
         
         
       
-        IF (PHINTS.LE.0.0) THEN
-            OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
-            WRITE(fnumerr,*) ' '
-            WRITE(fnumerr,*) 'PHINT <= 0! Please correct genotype files.'
-            WRITE(*,*) ' PHINT <= 0! Please correct genotype files.'
-            WRITE(*,*) ' Program will have to stop'
-            PAUSE
-            CLOSE (fnumerr)
-            STOP ' '
-        ENDIF
+        !IF (PHINTS.LE.0.0) THEN   !LPM 21MAY2015 this variable is not used
+        !    OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
+        !    WRITE(fnumerr,*) ' '
+        !    WRITE(fnumerr,*) 'PHINT <= 0! Please correct genotype files.'
+        !    WRITE(*,*) ' PHINT <= 0! Please correct genotype files.'
+        !    WRITE(*,*) ' Program will have to stop'
+        !    PAUSE
+        !    CLOSE (fnumerr)
+        !    STOP ' '
+        !ENDIF
         
         ! Adjust germination duration for seed dormancy
         IF (PLMAGE.LT.0.0.AND.PLMAGE.GT.-90.0) THEN
@@ -338,24 +338,25 @@
         ! If max LAI not read-in,calculate from max interception
         IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)                                                               ! EQN 008
         
-        PHINT = PHINTS
+        !PHINT = PHINTS  !LPM 21MAY2015 this variable is not used
         
         ! Leaf life
-        IF (CFLLFLIFE.EQ.'P')THEN
-            ! Read-in as phyllochrons 
-            LLIFGTT = LLIFG * PHINT                                                                                    !EQN 349
-            LLIFATT = LLIFA * PHINT                                                                                    !EQN 350 
-            LLIFSTT = LLIFS * PHINT                                                                                    !EQN 351 
-        ELSEIF (CFLLFLIFE.EQ.'T')THEN
+        !IF (CFLLFLIFE.EQ.'P')THEN   !LPM 21MAY2015 this variable (PHINT) is not used
+        !    ! Read-in as phyllochrons 
+        !    LLIFGTT = LLIFG * PHINT                                                                                    !EQN 349
+        !    LLIFATT = LLIFA * PHINT                                                                                    !EQN 350 
+        !    LLIFSTT = LLIFS * PHINT                                                                                    !EQN 351 
+        !ELSEIF (CFLLFLIFE.EQ.'T')THEN
+        IF (CFLLFLIFE.EQ.'T')THEN
             ! Read-in as thermal time 
             LLIFGTT = LLIFG                                                                                            !EQN 352
             LLIFATT = LLIFA                                                                                            !EQN 353 
             LLIFSTT = LLIFS                                                                                            !EQN 354
-        ELSEIF (CFLLFLIFE.EQ.'D')THEN
-            ! Read-in as days. Thermal time for each day set to PHINT
-            LLIFGTT = LLIFG * PHINT                                                                                    !EQN 355 
-            LLIFATT = LLIFA * PHINT                                                                                    !EQN 356 
-            LLIFSTT = LLIFS * PHINT                                                                                    !EQN 357 
+        !ELSEIF (CFLLFLIFE.EQ.'D')THEN
+        !    ! Read-in as days. Thermal time for each day set to PHINT
+        !    LLIFGTT = LLIFG * PHINT                                                                                    !EQN 355 
+        !    LLIFATT = LLIFA * PHINT                                                                                    !EQN 356 
+        !    LLIFSTT = LLIFS * PHINT                                                                                    !EQN 357 
         ENDIF  
         
         ! Extinction coeff for SRAD
