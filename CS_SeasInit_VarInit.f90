@@ -51,7 +51,7 @@
         cfllflife = '-'
         cflharmsg = 'N'
         cflsdrsmsg = 'N'
-        crrswt = 0.0
+        !crrswt = 0.0
         crwad = 0.0
         crwt = 0.0
         cnad = 0.0
@@ -208,8 +208,8 @@
         lfwt = 0.0
         lfwtm = 0.0
         llnad = 0.0
-        llrswad = 0.0
-        llrswt = 0.0
+        !llrswad = 0.0
+        !llrswt = 0.0 !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
         llwad = 0.0
         lncr = 0.0
         lncx = 0.0
@@ -226,7 +226,7 @@
         lnuse = 0.0
         lseed = -99
         lpeai = 0.0
-        lperswad = 0.0
+        !lperswad = 0.0 !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
         lperswt = 0.0
         lpewad = 0.0
         lstage = 0.0
@@ -445,7 +445,7 @@
         stemn = 0.0
         stgedat = 0
         stgyeardoy = 9999999
-        strswt = 0.0
+        !strswt = 0.0
         stwad = 0.0
         stwt = 0.0
         stwtm = 0.0

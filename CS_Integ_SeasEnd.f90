@@ -48,10 +48,10 @@
         STWAD = STWT*10.0*PLTPOP
         CRWAD = CRWT*PLTPOP*10.0
         RSWAD = RSWT*PLTPOP*10.0
-        LLRSWAD = LLRSWT*PLTPOP*10.0
-        LPERSWAD = LPERSWT*PLTPOP*10.0
-        STRSWAD = STRSWT*PLTPOP*10.0
-        CRRSWAD = CRRSWT*PLTPOP*10.0
+        !LLRSWAD = LLRSWT*PLTPOP*10.0 !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
+        !LPERSWAD = LPERSWT*PLTPOP*10.0 
+        !STRSWAD = STRSWT*PLTPOP*10.0
+        !CRRSWAD = CRRSWT*PLTPOP*10.0
                 
         ! Need to CHECK these
         SENROOTA = SENROOT*10.0*PLTPOP

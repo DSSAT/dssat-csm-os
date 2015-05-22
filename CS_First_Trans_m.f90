@@ -84,8 +84,8 @@ Module CS_First_Trans_m
     REAL    :: CO2RF(10)               ! CO2 reference concentration    vpm        ! (From SeasInit)  
     INTEGER :: COLNUM                  ! Column number                  #          ! (From Integrate) 
     REAL    :: CRFR                    ! Plant. stick growth rate,fr stem gr #     ! (From SeasInit)  
-    REAL    :: CRRSWAD                 ! Plant. stick reserves               kg/ha ! (From Integrate) 
-    REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit)  
+    !REAL    :: CRRSWAD                 ! Plant. stick reserves               kg/ha ! (From Integrate) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
+    !REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed  
     REAL    :: CRWAD                   ! Plant. stick weight                 kg/ha ! (From SeasInit)  
     REAL    :: CRWADOUT                ! Plant. stick weight for output      kg/ha ! (From Output)    
     REAL    :: CRWT                    ! Plant. stick weight                 g/p   ! (From SeasInit)  
@@ -427,8 +427,8 @@ Module CS_First_Trans_m
     REAL    :: LLIGP                   ! Leaf lignin percentage         #          ! (From SeasInit)  
     REAL    :: LLNAD                   ! Leaf lamina nitrogen           kg/ha      ! (From SeasInit)  
     REAL    :: LLOSA                   ! Leaf area loss,accelerated sen fr         ! (From SeasInit)  
-    REAL    :: LLRSWAD                 ! Leaf lamina reserves weight    kg/ha      ! (From SeasInit)  
-    REAL    :: LLRSWT                  ! Leaf lamina reserves           g/p        ! (From SeasInit)  
+    !REAL    :: LLRSWAD                 ! Leaf lamina reserves weight    kg/ha      ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
+    !REAL    :: LLRSWT                  ! Leaf lamina reserves           g/p        ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
     REAL    :: LLWAD                   ! Leaf lamina weight             kg/ha      ! (From SeasInit)  
     REAL    :: LLWADOUT                ! Leaf lamina weight for output  kg/ha      ! (From Output)    
     REAL    :: LNCGL                   ! N concentration,growth,lower   fr         ! (From Growth)    
@@ -469,7 +469,7 @@ Module CS_First_Trans_m
     REAL    :: LPEAI                   ! Leaf petiole area index        m2/m2      ! (From SeasInit)  
     REAL    :: LPEAW                   ! Leaf petiole area/wt,veg.ph    cm2/g      ! (From SeasInit)  
     REAL    :: LPEFR                   ! Leaf petiole fraction of total #          ! (From SeasInit)  
-    REAL    :: LPERSWAD                ! Leaf petiole reserves weight   kg/ha      ! (From SeasInit)  
+    !REAL    :: LPERSWAD                ! Leaf petiole reserves weight   kg/ha      ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed  
     REAL    :: LPERSWT                 ! Leaf petiole reserves          g/p        ! (From SeasInit)  
     REAL    :: LPEWAD                  ! Leaf petiole weight            kg/ha      ! (From SeasInit)  
     INTEGER :: LRTIP                   ! Layer with root tip            #          ! (From Growth)    
@@ -900,8 +900,8 @@ Module CS_First_Trans_m
     REAL    :: STRESS20WS              ! 20d sum,h2o gr.factors         #          ! (From Integrate) 
     REAL    :: STRESSN(20)             ! 20d n gr.factors               #          ! (From Integrate) 
     REAL    :: STRESSW(20)             ! 20d h2o gr.factors             #          ! (From Integrate) 
-    REAL    :: STRSWAD                 ! Stem reserves                  kg/ha      ! (From Integrate) 
-    REAL    :: STRSWT                  ! Stem reserves                  g/p        ! (From SeasInit)  
+    !REAL    :: STRSWAD                 ! Stem reserves                  kg/ha      ! (From Integrate) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
+    !REAL    :: STRSWT                  ! Stem reserves                  g/p        ! (From SeasInit)  !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
     REAL    :: STWAD                   ! Stem structural weight         kg/ha      ! (From SeasInit)  
     REAL    :: STWADOUT                ! Stem weight for output         kg/ha      ! (From Output)    
     REAL    :: STWT                    ! Stem weight                    g/p        ! (From SeasInit)  
