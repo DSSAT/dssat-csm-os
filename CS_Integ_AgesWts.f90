@@ -111,9 +111,9 @@
         ! ENDIF
         
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
-            DO LF = 1, LNUMSIMSTG(BR) 
-                IF (DGLF(BR,LF).GE.LLIFGD) THEN                                                                     !LPM 21MAR15 DGLF will have a maximum value of 10 days
-                    LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLIFE*EMRGFR                                                                    !EQN 358
+            DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM 23MAY2015 Modified to avoid high values of LAGETT 
+                IF (DGLF(BR,LF).GE.LLIFGD.AND.LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT+LLIFSTT) THEN             !LPM 21MAR15 DGLF will have a maximum value of 10 days
+                    LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLIFE*EMRGFR                                              !EQN 358
                     ! Accelerated senescence at base of dense leaf canopy
                     IF (LAI.GT.LAIXX) THEN
                         IF (L.EQ.TVI1) THEN
@@ -168,7 +168,7 @@
                     ENDIF
                 
                 ELSE 
-                DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
+                    DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
                 ENDIF
 
                 IF (LNUMG.GT.0.0.AND.BR.EQ.BRSTAGE.AND.LF.EQ.LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop

@@ -67,7 +67,7 @@
         !         Calculate nitrogen concentrations, skip if germinating.
         !-----------------------------------------------------------------------
         IF (GESTAGE.GE.0.5) CALL CS_Integ_Nconc ( &
-            ISWNIT       & 
+            ISWNIT      , BRSTAGE           & 
             )   
             
         ! 6666        CONTINUE  ! Jump to here if germinating ! MF From CS_Integ_Stages (48)

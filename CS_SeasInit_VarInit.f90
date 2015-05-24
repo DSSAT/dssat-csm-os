@@ -54,6 +54,7 @@
         !crrswt = 0.0
         crwad = 0.0
         crwt = 0.0
+        crwtp = 0.0 !LPM 23MAY2015 Added to keep the potential planting stick weight
         cnad = 0.0
         cnadprev = 0.0
         cnadstg = 0.0
@@ -443,11 +444,13 @@
         staig = 0.0
         stais = 0.0
         stemn = 0.0
+        stemnn = 0.0!LPM 23MAY2015 Added to keep nitrogen content by node
         stgedat = 0
         stgyeardoy = 9999999
         !strswt = 0.0
         stwad = 0.0
         stwt = 0.0
+        stwtp = 0.0 !LPM 23MAY2015 Added to keep the potential stem weight
         stwtm = 0.0
         swphc = 0.0
         tcan = 0.0

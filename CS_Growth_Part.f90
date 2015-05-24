@@ -310,6 +310,7 @@
                     NODEWTG(BR,LF) = NODEWTGB(BR)
                     NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
                     GROSTP = GROSTP + NODEWTG(BR,LF)
+                    STWTP = STWTP + NODEWT(BR,LF)
                 ENDDO
             ENDDO
         ENDIF
@@ -444,7 +445,7 @@
         !in the planting stick (In the future it could be modified as an input in the X-file)
         GROST = GROSTCR
         GROCR = NODEWTGB(0)*SPRL/nod_length                   
-        
+        CRWTP = CRWTP + GROCR                 !LPM 23MAY2015 Added to keep the potential planting stick weight
         
                           
         !-----------------------------------------------------------------------

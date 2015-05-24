@@ -90,6 +90,7 @@ Module CS_First_Trans_m
     REAL    :: CRWADOUT                ! Plant. stick weight for output      kg/ha ! (From Output)    
     REAL    :: CRWT                    ! Plant. stick weight                 g/p   ! (From SeasInit)  
     REAL    :: CRWTM                   ! Plant. stick weight at maturity     g/p   ! (From Integrate) 
+    REAL    :: CRWTP                   ! Plant. stick weight potential       g/p   ! (From SeasInit)  !LPM 23MAY2015 Added to keep the potential planting stick weight
     INTEGER :: CTRNUMPD                ! Control # missing tiers        #          ! (From SeasInit)  
     REAL    :: CUMDEP                  ! Cumulative depth               cm         ! (From Growth)    
     REAL    :: CUMDU                   ! Cumulative development units   #          ! (From SeasInit)  
@@ -827,10 +828,11 @@ Module CS_First_Trans_m
     REAL    :: SNCM                    ! Stem N conc,minimum            fr         ! (From SeasInit)  
     REAL    :: SNCMN(0:1)              ! Stem N conc,minimum            fr         ! (From SeasInit)  
     REAL    :: SNCR                    ! Stem N relative to maximum     #          ! (From SeasInit)  
-    REAL    :: SNCX                    ! Stem N conc,maximum            fr         ! (From SeasInit)  
+    REAL    :: SNCX(0:PSX,0:LCNUMX)    ! Stem N conc,maximum            fr         ! (From SeasInit) !LPM 23MAY2015 Modified to include cohorts  
     REAL    :: SNCXS(0:1)              ! Stem N conc,maximum,stage      fr         ! (From SeasInit)  
     REAL    :: SNDEM                   ! Stem demand for N              g/p        ! (From Growth)    
     REAL    :: SNDEMG                  ! Stem demand for N,for growth   g/p        ! (From Growth)    
+    REAL    :: SNDEMN(0:PSX,0:LCNUMX)  ! Stem demand for N by node      g/p        !
     REAL    :: SNDEMTU                 ! Stem demand for N,for topup    g/p        ! (From Growth)    
     REAL    :: SNH4(20)                ! Soil NH4 N                     kg/ha      ! (From Growth)    
     REAL    :: SNH4PROFILE             ! Soil NH4 N in profile          kg/ha      ! (From Growth)    
@@ -844,6 +846,7 @@ Module CS_First_Trans_m
     REAL    :: SNPH                    ! Stem N harvested               g/p        ! (From SeasInit)  
     REAL    :: SNPHC                   ! Stem N harvested,cumulative    g/p        ! (From SeasInit)  
     REAL    :: SNUSE(0:2)              ! Shoot N use,overall and parts  g          ! (From SeasInit)  
+    REAL    :: SNUSEN(0:2,0:PSX,0:LCNUMX)!Shoot N use by canopy level   g          !LPM 23MAY2015 added to consider N concentration by node
     REAL    :: SPRL                    ! Sprout/cutting length          cm         ! (From SeasInit)  
     REAL    :: SRAD20                  ! Solar radiation av,20 days     MJ/m2      ! (From Integrate) 
     REAL    :: SRAD20S                 ! Solar radiation sum            MJ/m2      ! (From Integrate) 
@@ -888,7 +891,9 @@ Module CS_First_Trans_m
     INTEGER :: STARNUMO                ! Star line number,output file   #          ! (From Output)    
     REAL    :: STDAY                   ! Standard day                   C.d/d      ! (From RunInit)   
     REAL    :: STEMN                   ! Stem N                         g/p        ! (From SeasInit)  
+    REAL    :: STEMNN                  ! Stem N by cohort               g/n/p      ! (From SeasInit)  
     REAL    :: STEMNEXCESS             ! Stem N > critical              g/p        ! (From Integrate) 
+    REAL    :: STEMNEXCESSN            ! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node
     INTEGER :: STEPNUM                 ! Step number per day            #          ! (From RunInit)   
     INTEGER :: STGEDAT                 ! Stem growth end date (Yrdoy)   #          ! (From SeasInit)  
     REAL    :: STRESS(20)              ! Min h2o,n factors for growth   #          ! (From Integrate) 
@@ -906,6 +911,7 @@ Module CS_First_Trans_m
     REAL    :: STWADOUT                ! Stem weight for output         kg/ha      ! (From Output)    
     REAL    :: STWT                    ! Stem weight                    g/p        ! (From SeasInit)  
     REAL    :: STWTM                   ! Stem weight,maturity           g/p        ! (From SeasInit)  
+    REAL    :: STWTP                   ! Stem weight potential          g/p        !LPM 23MAY2015 Added to keep the potential stem weight
     REAL    :: SWFR                    ! Stem fraction,actual           #          ! (From Growth)    
     REAL    :: SWFRN                   ! Stem fraction minimum          #          ! (From SeasInit)  
     REAL    :: SWFRNL                  ! Leaf number for min stem fr    #          ! (From SeasInit)  

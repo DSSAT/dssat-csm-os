@@ -27,8 +27,21 @@
         LNPHC = LNPHC +  LNPH                                                                                       !EQN 423
         IF (LEAFN.LT.1.0E-10) LEAFN = 0.0
         STEMNEXCESS = 0.0
-        IF (SANC.GT.SNCX) STEMNEXCESS = (STWT+CRWT)*(SANC-SNCX)                                                     !EQN 246
-        STEMN = STEMN + SNUSE(0) - SNPH - STEMNEXCESS                                                               !EQN 247
+        STEMNEXCESSN = 0.0
+        !IF (SANC.GT.SNCX) STEMNEXCESS = (STWT+CRWT)*(SANC-SNCX)                                                     !EQN 246
+        !STEMN = STEMN + SNUSE(0) - SNPH - STEMNEXCESS                                                               !EQN 247
+        IF (SANC.GT.SNCX) THEN 
+            DO BR = 0, BRSTAGE                                                                                      !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
+                DO LF = 1, LNUMSIMSTG(BR)
+                    STEMNEXCESSN(BR,LF) = (NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*(SANC(BR,LF)-SNCX(BR,LF))
+                    STEMNEXCESS = STEMNEXCESS + STEMNEXCESSN(BR,LF)
+                    STEMNN(BR,LF) = STEMNN(BR,LF) + SNUSEN(0,BR,LF)-SNPHN(BR,LF)- STEMNEXCESSN(BR,LF)  
+                    STEMN = STEMN + STEMNN(BR,LF)
+                ENDDO
+            ENDDO
+        ENDIF    
+        
+        
         SNPHC = SNPHC +  SNPH                                                                                       !EQN 248
         IF (STEMN.LT.1.0E-10) STEMN = 0.0
         ROOTNS = 0.0
