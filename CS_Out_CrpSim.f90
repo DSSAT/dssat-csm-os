@@ -18,7 +18,7 @@
         IMPLICIT NONE 
      
         INTEGER :: CN          , DOY         , ON          , REP         , RN          , RUN         , RUNI         
-        INTEGER :: SN          , STGYEARDOY(0:20)            , TN          , YEAR
+        INTEGER :: SN          , STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
 
         ! Screen writes

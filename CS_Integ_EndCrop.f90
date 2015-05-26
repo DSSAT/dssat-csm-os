@@ -19,7 +19,7 @@
         
         CHARACTER(LEN=1) ISWWAT 
         
-        INTEGER NLAYR       , STGYEARDOY(0:20)
+        INTEGER NLAYR       , STGYEARDOY(0:19)
         
         REAL    ALBEDOS     , DLAYR(NL)   , EOP         , FERNIT      , LL(NL)      , SW(NL)        
     

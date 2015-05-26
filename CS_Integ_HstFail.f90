@@ -16,7 +16,7 @@
         
         IMPLICIT NONE
         
-        INTEGER DOY         , STGYEARDOY(0:20)            , YEAR        
+        INTEGER DOY         , STGYEARDOY(0:19)            , YEAR 
         REAL    BRSTAGE     , SW(NL)        
         
     ! Harvesting conditions

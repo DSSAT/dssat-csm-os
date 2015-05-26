@@ -24,7 +24,7 @@
         IMPLICIT NONE 
      
         INTEGER :: CN          , DOY         , DYNAMIC     , NLAYR       , ON          , REP         , RN          
-        INTEGER :: RUN         , RUNI        , SN          , STGYEARDOY(0:20)            , TN          , YEAR
+        INTEGER :: RUN         , RUNI        , SN          , STGYEARDOY(0:19)            , TN          , YEAR
 
         REAL    :: BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , EO          , EOP         , IRRAMT
         REAL    :: KCAN        , NFP         , RAIN        , RLV(NL)     , SRAD        , TNIMBSOM    , TOMINSOM1   , UNH4(NL)        

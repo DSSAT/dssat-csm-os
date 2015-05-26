@@ -18,7 +18,7 @@
 
         IMPLICIT     NONE
         
-        INTEGER STGYEARDOY(0:20)            
+        INTEGER STGYEARDOY(0:19)            
         
         REAL    BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL(30)    , LAILA(30)   , NFP         , PARIP       
         REAL    PARIPA      , RESCALG(0:NL)             , RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)     

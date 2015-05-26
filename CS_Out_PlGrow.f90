@@ -88,7 +88,8 @@
             ENDIF  ! End Plantgro header writes
             WRITE (NOUTPGF, FMT507)YEAR,DOY,DAS,DAP,TMEAN,TCDIF,BRSTAGEC,DU,1.0-DFOUT,1.0-TFP,1.0-WFP,1.0-NFP, &
                 1.0-CO2FP,1.0-RSFP,1.0-TFG,1.0-WFG,1.0-NFG,AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),H2OA,EOP, &
-                SNO3PROFILE+SNH4PROFILE,LNCR,SNCR,RNCR
+                !SNO3PROFILE+SNH4PROFILE,LNCR,SNCR,RNCR  !LPM 25MAY2015 SNCR to SNCRM
+                SNO3PROFILE+SNH4PROFILE,LNCR,SNCRM,RNCR
             ! End Plantgro reduction factor writes
                          
             ! PlantGr2
@@ -141,7 +142,8 @@
                 CALL Csopline(sennsc,sennas)
                 WRITE (NOUTPN, FMT503)YEAR,DOY,DAS,DAP,TMEAN,BRSTAGEC,NUPAC,TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD,HNAD, &
                     HINDC,RSNAD,SENN0C,SENNSC,RANC*100.0,LANC*100.0,SANCOUT*100.0,AMIN1(9.9,HNC*100.0), &
-                    SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCR,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &
+                    !SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCR,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &        !LPM 25MAY2015 SNCR to SNCRM
+                    SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCRM,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &
                     ANDEM,1.0-NFLF2(0,0)                                                                                !LPM 21MAR15 NFLF2(0) as NFLF2(0,0)
                                      
             ENDIF  ! ISWNIT  Plantn writes

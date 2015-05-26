@@ -17,7 +17,7 @@
      
         IMPLICIT NONE 
      
-        INTEGER :: RUN         , STGYEARDOY(0:20) 
+        INTEGER :: RUN         , STGYEARDOY(0:19) 
         REAL BRSTAGE
 
         CHARACTER(LEN=1)  :: IDETL       

@@ -17,7 +17,7 @@
      
         IMPLICIT NONE 
      
-        INTEGER :: STGYEARDOY(0:20)            
+        INTEGER :: STGYEARDOY(0:19)            
         
         CHARACTER(LEN=1)  :: IDETO       , ISWNIT       
         

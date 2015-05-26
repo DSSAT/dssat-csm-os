@@ -205,7 +205,13 @@
             NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD                                                                   !EQN 206
     
             ! For supplying minimum
-            NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207
+            DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
+                DO LF = 1, LNUMSIMSTG(BR)
+                    NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)
+                ENDDO
+            ENDDO
+            !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
+            NDEMMN = GROLF*LNCM+RTWTG*RNCM+SUM(NDEMSMN)+GROSR*(SRNPCS/100.0)*0.5 
             LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
             !SNUSE(1) = ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
@@ -213,8 +219,8 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP.GT.0.0) THEN
-                        SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF))*  &
-                                   AMIN1(1.0,NULEFT/NDEMMN)
+                        SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)* &
+                            AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
                     ENDIF
                 ENDDO
@@ -287,8 +293,14 @@
             NUSEFAC = NLABPC/100.0                                                                                     !EQN 229
             NPOOLR = AMAX1 (0.0,((RTWT-SENRTG)*(RANC-RNCM)*NUSEFAC))                                                   !EQN 230
             NPOOLL = AMAX1 (0.0,((LFWT-SENLFG-SENLFGRS)*(LANC-LNCM)*NUSEFAC))                                          !EQN 231
-            NPOOLS = AMAX1 (0.0,((STWT+CRWT)*(SANC-SNCM)*NUSEFAC))                                                     !EQN 232
-    
+            !NPOOLS = AMAX1 (0.0,((STWT+CRWT)*(SANC-SNCM)*NUSEFAC))                                                     !EQN 232
+            NPOOLS = 0
+            DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
+                DO LF = 1, LNUMSIMSTG(BR)          
+                    NPOOLSN(BR,LF) = AMAX1 (0.0,((NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*(SANC(BR,LF)-SNCM(BR,LF))*NUSEFAC))  
+                    NPOOLS =  NPOOLS + NPOOLSN(BR,LF)                                                                 !EQN 232
+                ENDDO
+            ENDDO
             ! Check N and reduce leaf growth if not enough N  
             IF (ABS(NULEFT).LE.1.0E-5) THEN   ! Inadequate N
                 IF (NLLG.GT.0.0.AND.LNCX.GT.0.0) THEN 

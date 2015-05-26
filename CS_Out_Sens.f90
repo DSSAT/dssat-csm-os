@@ -17,7 +17,7 @@
      
         IMPLICIT NONE 
      
-        INTEGER :: CN          , DOY         , STGYEARDOY(0:20)            , TN          , YEAR
+        INTEGER :: CN          , DOY         , STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
 
         CHARACTER(LEN=1)  :: RNMODE      

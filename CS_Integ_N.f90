@@ -8,14 +8,15 @@
 !***************************************************************************************************************************
     
     SUBROUTINE CS_Integ_N ( &
-        NLAYR       & 
+        NLAYR    , BRSTAGE   & 
         )
         
         USE CS_First_Trans_m
         
         IMPLICIT NONE
         
-        INTEGER NLAYR           
+        INTEGER NLAYR 
+        REAL BRSTAGE
         
         !-----------------------------------------------------------------------
         !         Update nitrogen amounts
@@ -30,17 +31,18 @@
         STEMNEXCESSN = 0.0
         !IF (SANC.GT.SNCX) STEMNEXCESS = (STWT+CRWT)*(SANC-SNCX)                                                     !EQN 246
         !STEMN = STEMN + SNUSE(0) - SNPH - STEMNEXCESS                                                               !EQN 247
-        IF (SANC.GT.SNCX) THEN 
-            DO BR = 0, BRSTAGE                                                                                      !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
-                DO LF = 1, LNUMSIMSTG(BR)
+        
+        DO BR = 0, BRSTAGE                                                                                                                                                          
+            DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   
+                IF (SANC(BR,LF).GT.SNCX(BR,LF)) THEN 
                     STEMNEXCESSN(BR,LF) = (NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*(SANC(BR,LF)-SNCX(BR,LF))
                     STEMNEXCESS = STEMNEXCESS + STEMNEXCESSN(BR,LF)
                     STEMNN(BR,LF) = STEMNN(BR,LF) + SNUSEN(0,BR,LF)-SNPHN(BR,LF)- STEMNEXCESSN(BR,LF)  
                     STEMN = STEMN + STEMNN(BR,LF)
-                ENDDO
+                ENDIF 
             ENDDO
-        ENDIF    
-        
+        ENDDO
+           
         
         SNPHC = SNPHC +  SNPH                                                                                       !EQN 248
         IF (STEMN.LT.1.0E-10) STEMN = 0.0

@@ -16,8 +16,7 @@
         
         IMPLICIT NONE
         
-        INTEGER DOY         , STGYEARDOY(0:20)            
-
+        INTEGER DOY         , STGYEARDOY(0:19) 
         REAL    BRSTAGE     , CO2         , DAYL        , EP          , ET          , NFP         , RAIN        , SRAD          
         REAL    TMAX        , TMIN        
        

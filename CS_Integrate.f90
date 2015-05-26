@@ -24,7 +24,7 @@
         
         IMPLICIT NONE
         
-        INTEGER DOY         , NLAYR       , STGYEARDOY(0:20)            , YEAR
+        INTEGER DOY         , NLAYR       , STGYEARDOY(0:19)            , YEAR
         
         REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CO2         , DAYL        , DEPMAX
         REAL    DLAYR(NL)   , DRAIN       , EOP         , EP          , ET          , FERNIT      , IRRAMT      , LL(NL)      
@@ -52,7 +52,7 @@
         !         Update nitrogen amounts
         !-----------------------------------------------------------------------
         CALL CS_Integ_N ( &
-            NLAYR       & 
+            NLAYR  , BRSTAGE     & 
             )
         
         !-----------------------------------------------------------------------

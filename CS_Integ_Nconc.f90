@@ -15,7 +15,8 @@
         
         IMPLICIT NONE
         
-        CHARACTER(LEN=1) ISWNIT              
+        CHARACTER(LEN=1) ISWNIT   
+        REAL  BRSTAGE 
         
         !-----------------------------------------------------------------------
         !         Calculate nitrogen concentrations
@@ -53,7 +54,7 @@
             VMNC = 0.0
             IF (RTWT.GT.1.0E-5) RANC = ROOTN / RTWT                                                                    !EQN 017
             IF (LFWT.GT.1.0E-5) LANC = LEAFN / LFWT                                                                    !EQN 243
-            IF (STWT+CRWT.GT.1.0E-5) SANC = STEMN / (STWT+CRWT)
+            !IF (STWT+CRWT.GT.1.0E-5) SANC = STEMN / (STWT+CRWT)                                                       !LPM25MAY2015 
             IF (STWT+CRWT.GT.1.0E-5) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
@@ -68,11 +69,30 @@
                 CALL WARNING(2,'CSCAS',MESSAGE)
                 LANC = AMAX1(0.0,LANC)
             ENDIF
-            IF (LFWT+STWT+CRWT.GT.0.0) VCNC = (LNCX*AMAX1(0.0,LFWT)+SNCX*AMAX1(0.0,STWT+CRWT))/ &                      !EQN 021
+            !IF (LFWT+STWT+CRWT.GT.0.0) VCNC = (LNCX*AMAX1(0.0,LFWT)+SNCX*AMAX1(0.0,STWT+CRWT))/ &                      !EQN 021
+            !    (AMAX1(0.0,LFWT)+AMAX1(0.0,STWT+CRWT))
+            !IF (LFWT+STWT+CRWT.GT.0.0) VMNC = (LNCM*AMAX1(0.0,LFWT)+SNCM*AMAX1(0.0,STWT+CRWT))/ &                      !EQN 022
+            !    (AMAX1(0.0,LFWT)+AMAX1(0.0,STWT+CRWT))
+            
+            SCNCT = 0.0
+            SCNMT = 0.0
+            IF (LFWT+STWT+CRWT.GT.0.0) THEN
+                DO BR = 0, BRSTAGE                                                                                        
+                    DO LF = 1, LNUMSIMSTG(BR)
+                        SCNC(BR,LF) = (NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*SNCX(BR,LF)
+                        SCNCT =  SCNCT + SCNC(BR,LF)
+                        SCNM(BR,LF) = (NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*SNCM(BR,LF)
+                        SCNMT =  SCNMT + SCNM(BR,LF)
+                    ENDDO
+                ENDDO
+                VCNC = (LNCX*AMAX1(0.0,LFWT)+SCNCT)/ &                      !EQN 021
                 (AMAX1(0.0,LFWT)+AMAX1(0.0,STWT+CRWT))
-            IF (LFWT+STWT+CRWT.GT.0.0) VMNC = (LNCM*AMAX1(0.0,LFWT)+SNCM*AMAX1(0.0,STWT+CRWT))/ &                      !EQN 022
+                VMNC = (LNCM*AMAX1(0.0,LFWT)+SCNMT)/ &                      !EQN 022
                 (AMAX1(0.0,LFWT)+AMAX1(0.0,STWT+CRWT))
-                
+            ENDIF  
+            
+            
+            
             SDNC = 0.0
             SRANC = 0.0
             IF (SEEDRS.GT.0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
@@ -81,7 +101,15 @@
             SNCR = 0.0
             RNCR = 0.0
             IF (LNCX.GT.0.0) LNCR = AMAX1(0.0,AMIN1(1.0,LANC/LNCX))
-            IF (SNCX.GT.0.0) SNCR = AMAX1(0.0,AMIN1(1.0,SANC/SNCX))
+            DO BR = 0, BRSTAGE                                                                              !LPM25MAY2015 To consider different N concentration by node according with node age                                                                       
+                DO LF = 1, LNUMSIMSTG(BR)  
+                    IF (SNCX(BR,LF).GT.0.0) SNCR(BR,LF) = AMAX1(0.0,AMIN1(1.0,SANC(BR,LF)/SNCX(BR,LF)))
+                ENDDO
+            ENDDO
+            !SNCRM = SUM(SNCR, MASK = SNCR.GE.0.0)/MAX(1,COUNT(SNCR))
+            SNCRM = 1.0
+            DUMMY1 = SUM(SNCR, MASK = SNCR.GE.0.0)
+            DUMMY2 = MAX(1,COUNT(SNCR.GE.0.0))
             IF (RNCX.GT.0.0) RNCR = AMAX1(0.0,AMIN1(1.0,RANC/RNCX))
         ELSE
             LNCR = 1.0

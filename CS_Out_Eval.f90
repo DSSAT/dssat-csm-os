@@ -19,8 +19,8 @@
      
         IMPLICIT NONE 
      
-        INTEGER :: CN          , DOY         , DYNAMIC     , ON          , RN          , RUN         , RUNI        , SN          
-        INTEGER :: STGYEARDOY(0:20)            , TN          , YEAR         
+        INTEGER :: CN          , DOY         , DYNAMIC     , ON          , RN          , RUN         , RUNI        , SN             
+        INTEGER :: STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: CSTIMDIF    , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT            ! Integer function calls
 
         REAL    :: TNIMBSOM    , TOMINSOM1          

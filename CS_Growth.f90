@@ -28,7 +28,7 @@
         
         !TYPE (WeatherType) WEATHER                                                                                          ! MF Defined in ModuleDefs
     
-        INTEGER DOY         , NLAYR       , STGYEARDOY(0:20)            , YEAR        , YEARPLTCSM               !LPM 28MAR15 STGYEARDOY changed 
+        INTEGER DOY         , NLAYR       , STGYEARDOY(0:19)            , YEAR        , YEARPLTCSM      !LPM 25MAY2015 STGYEARDOY changed according to STGDOY(20) in plant.for            
         INTEGER CSIDLAYR                 
 
         REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CLOUDS      , CO2         , DAYL        , DLAYR(NL)   , DUL(NL)     

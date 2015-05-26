@@ -15,7 +15,7 @@ C=======================================================================
      &    EOP, ES, NH4, NO3,SOILPROP, SRFTEMP,            !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
-     &    RWUPM, RLV, RWUMX, SENESCE, STGDOY,             !Output       ! MF 20JA15 REPLACED PORMIN with RWUMP
+     &    RWUPM, RLV, RWUMX, SENESCE, STGDOY,            !Output       ! MF 20JA15 REPLACED PORMIN with RWUMP
      &    UNH4, UNO3, XLAI)                               !Output
 
       USE ModuleDefs
@@ -35,7 +35,7 @@ C=======================================================================
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY
       INTEGER MDATE, L, NLAYR
       INTEGER MULTI, FROP, SN, YEAR, DOY
-      INTEGER STGYEARDOY(0:20), STGDOY(0:20), YRPLT
+      INTEGER STGYEARDOY(0:19), STGDOY(0:19), YRPLT
       INTEGER YEARPLTCSM                                                ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS                                        
 
       REAL CLOUDS, ES, WUPT, EOP, TRWUP, SRAD, TMAX, TMIN, CO2

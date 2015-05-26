@@ -148,6 +148,8 @@ Module CS_First_Trans_m
     REAL    :: DSTAGE                  ! Development stage,linear       #          ! (From SeasInit)  
     REAL    :: DTRY                    ! Effective depth of soil layer  cm         ! (From Growth)    
     REAL    :: DU                      ! Developmental units            PVC.d      ! (From SeasInit)  
+    REAL    :: DUMMY1                                                                                !LPM 25MAY2015 just testing 
+    REAL    :: DUMMY2                                                                                !LPM 25MAY2015 just testing 
     REAL    :: DUNEED                  ! Developmental units needed tir PVC.d      ! (From SeasInit)  
     REAL    :: DUPHASE                 ! Development units,current tier PVoCd      ! (From Growth)    
     REAL    :: DUPNEXT                 ! Development units,next tier    PVoCd      ! (From Growth)    
@@ -496,6 +498,7 @@ Module CS_First_Trans_m
     REAL    :: NCRG                    ! N factor,root growth           ppm        ! (From SeasInit)  
     REAL    :: NDEM2                   ! N demand for growth>minimum    g/p        ! (From Growth)    
     REAL    :: NDEMMN                  ! N demand for growth at minimum g/p        ! (From Growth)    
+    REAL    :: NDEMSMN(0:PSX,0:LCNUMX) ! N demand for growth/node min   g/p        !LPM 25MAY2015 addet to consider stem N by node cohort
     REAL    :: NFG                     ! N factor,growth 0-1            #          ! (From SeasInit)  
     REAL    :: NFGCAV                  ! N factor,growth,average,cycle  #          ! (From Integrate) 
     REAL    :: NFGCC                   ! N factor,growh,cycle sum       #          ! (From SeasInit)  
@@ -527,10 +530,11 @@ Module CS_First_Trans_m
     INTEGER :: NOUTPG                  ! Number for growth output file  #          ! (From RunInit)   
     INTEGER :: NOUTPG2                 ! Number for growth output file2 #          ! (From RunInit)   
     INTEGER :: NOUTPGF                 ! Number for growth factors file #          ! (From RunInit)   
-    INTEGER :: NOUTPN                  ! Number for growthN output file #          ! (From RunInit)   
+    INTEGER :: NOUTPN                  ! Number for growthN output file #          ! (From RunInit)   ! Stem N pool (ie.above minimum) g/p        !
     REAL    :: NPOOLL                  ! Leaf N pool (ie.above minimum) g/p        ! (From Growth)    
     REAL    :: NPOOLR                  ! Root N pool (ie.above minimum) g/p        ! (From Growth)    
     REAL    :: NPOOLS                  ! Stem N pool (ie.above minimum) g/p        ! (From Growth)    
+    REAL    :: NPOOLSN(0:PSX,0:LCNUMX) ! Stem N pool by node            g/p        ! LPM 25MAY2015 Added to consider different N concentration by node 
     INTEGER :: NSDAYS                  ! N stress days                  #          ! (From SeasInit)  
     REAL    :: NTUPF                   ! N top-up fraction              /d         ! (From SeasInit)  
     REAL    :: NUF                     ! Plant N supply/demand,max=1.0  #          ! (From SeasInit)  
@@ -742,9 +746,13 @@ Module CS_First_Trans_m
     REAL    :: RWAMM                   ! Root wt at maturity,measured   kg/ha      ! (From SeasInit)  
     REAL    :: RWUMXI                  ! Root water uptake,max,init.val cm2/d      ! (From SeasInit)  
     REAL    :: SAID                    ! Stem area index                m2/m2      ! (From SeasInit)  
-    REAL    :: SANC                    ! Stem N concentration           #          ! (From SeasInit)  
+    REAL    :: SANC(0:PSX,0:LCNUMX)    ! Stem N concentration           #          ! (From SeasInit) !LPM 25MAY2015 change the dimensions to include values by node
     REAL    :: SANCOUT                 ! Stem+LeafPetiole N conc        #          ! (From SeasInit)  
     REAL    :: SAWS                    ! Stem area to wt ratio,standard cm2/g      ! (From SeasInit)  
+    REAL    :: SCNC(0:PSX,0:LCNUMX)    ! Stem critical max N conc/node  #/n        !LPM 25MAY2015 Added to estimate the value by cohort
+    REAL    :: SCNCT                   ! Stem critical max N conc       #          !LPM 25MAY2015 Added to estimate the total value for the stems and then VCNC
+    REAL    :: SCNM(0:PSX,0:LCNUMX)    ! Stem critical min N conc/node   #/n       !LPM 25MAY2015 Added to estimate the value by cohort
+    REAL    :: SCNMT                   ! Stem critical min N conc       #          !LPM 25MAY2015 Added to estimate the total value for the stems and then VCNC
     REAL    :: SDCOAT                  ! Non useable material in seed   g          ! (From SeasInit)  
     REAL    :: SDDUR                   ! Seed reserves use duration     d          ! (From SeasInit)  
     REAL    :: SDEPTH                  ! Sowing depth                   cm         ! (From SeasInit)  
@@ -825,9 +833,10 @@ Module CS_First_Trans_m
     REAL    :: SLAOUT                  ! Specific leaf area for output  cm2/g      ! (From Output)    
     REAL    :: SLIGP                   ! Stem lignin concentration      %          ! (From SeasInit)  
     REAL    :: SNAD                    ! Stem N (stem+petiole+rs)       kg/ha      ! (From SeasInit)  
-    REAL    :: SNCM                    ! Stem N conc,minimum            fr         ! (From SeasInit)  
+    REAL    :: SNCM(0:PSX,0:LCNUMX)    ! Stem N conc,minimum            fr         ! (From SeasInit)  
     REAL    :: SNCMN(0:1)              ! Stem N conc,minimum            fr         ! (From SeasInit)  
-    REAL    :: SNCR                    ! Stem N relative to maximum     #          ! (From SeasInit)  
+    REAL    :: SNCR(0:PSX,0:LCNUMX)    ! Stem N relative to maximum     #          ! (From SeasInit) !LPM 25MAY2015 Modified to include cohorts   
+    REAL    :: SNCRM                   ! Stem N relative to maximum (mean)#        !LPM 25MAY2015
     REAL    :: SNCX(0:PSX,0:LCNUMX)    ! Stem N conc,maximum            fr         ! (From SeasInit) !LPM 23MAY2015 Modified to include cohorts  
     REAL    :: SNCXS(0:1)              ! Stem N conc,maximum,stage      fr         ! (From SeasInit)  
     REAL    :: SNDEM                   ! Stem demand for N              g/p        ! (From Growth)    
@@ -844,6 +853,7 @@ Module CS_First_Trans_m
     REAL    :: SNPCMN(0:1)             ! Stem N conc,minimum            %          ! (From SeasInit)  
     REAL    :: SNPCS(0:1)              ! Stem N conc,standard,stage     %          ! (From SeasInit)  
     REAL    :: SNPH                    ! Stem N harvested               g/p        ! (From SeasInit)  
+    REAL    :: SNPHN(0:PSX,0:LCNUMX)   ! Stem N harvested by node       g/n/p        !
     REAL    :: SNPHC                   ! Stem N harvested,cumulative    g/p        ! (From SeasInit)  
     REAL    :: SNUSE(0:2)              ! Shoot N use,overall and parts  g          ! (From SeasInit)  
     REAL    :: SNUSEN(0:2,0:PSX,0:LCNUMX)!Shoot N use by canopy level   g          !LPM 23MAY2015 added to consider N concentration by node
@@ -891,9 +901,9 @@ Module CS_First_Trans_m
     INTEGER :: STARNUMO                ! Star line number,output file   #          ! (From Output)    
     REAL    :: STDAY                   ! Standard day                   C.d/d      ! (From RunInit)   
     REAL    :: STEMN                   ! Stem N                         g/p        ! (From SeasInit)  
-    REAL    :: STEMNN                  ! Stem N by cohort               g/n/p      ! (From SeasInit)  
+    REAL    :: STEMNN(0:PSX,0:LCNUMX)  ! Stem N by cohort               g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  
     REAL    :: STEMNEXCESS             ! Stem N > critical              g/p        ! (From Integrate) 
-    REAL    :: STEMNEXCESSN            ! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node
+    REAL    :: STEMNEXCESSN(0:PSX,0:LCNUMX)! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node
     INTEGER :: STEPNUM                 ! Step number per day            #          ! (From RunInit)   
     INTEGER :: STGEDAT                 ! Stem growth end date (Yrdoy)   #          ! (From SeasInit)  
     REAL    :: STRESS(20)              ! Min h2o,n factors for growth   #          ! (From Integrate) 
