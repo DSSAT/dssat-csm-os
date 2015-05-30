@@ -37,6 +37,7 @@ Module CS_First_Trans_m
     REAL    :: BRNUMSHM                ! Branch #/shoot,harvest,measurd #          ! (From Output)    
     REAL    :: BRNUMST(0:PSX)          ! Branch number/shoot (>forking) #          ! (From RunInit) !LPM 23MAR15 to have the apex number by branch level   
     REAL    :: BRNUMSTPREV(0:PSX)      ! Branch number/shoot,previous   #          ! (From Output)  !LPM 23MAR15 to have the apex number by branch level      
+    INTEGER :: BROLDESTA               ! Br with Leaf  ,oldest active   #          ! (From Integrate)
     REAL    :: BRSTAGEPREV             ! Branching stage,previous       #          ! (From SeasInit)  
     REAL    :: BRSTAGETMP              ! Branching stage                #          ! (From Growth)    
     REAL    :: CANHTG                  ! Canopy height growth           cm         ! (From SeasInit)  
@@ -148,8 +149,6 @@ Module CS_First_Trans_m
     REAL    :: DSTAGE                  ! Development stage,linear       #          ! (From SeasInit)  
     REAL    :: DTRY                    ! Effective depth of soil layer  cm         ! (From Growth)    
     REAL    :: DU                      ! Developmental units            PVC.d      ! (From SeasInit)  
-    REAL    :: DUMMY1                                                                                !LPM 25MAY2015 just testing 
-    REAL    :: DUMMY2                                                                                !LPM 25MAY2015 just testing 
     REAL    :: DUNEED                  ! Developmental units needed tir PVC.d      ! (From SeasInit)  
     REAL    :: DUPHASE                 ! Development units,current tier PVoCd      ! (From Growth)    
     REAL    :: DUPNEXT                 ! Development units,next tier    PVoCd      ! (From Growth)    

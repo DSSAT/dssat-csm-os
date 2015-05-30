@@ -116,7 +116,7 @@
                     LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLIFE*EMRGFR                                              !EQN 358
                     ! Accelerated senescence at base of dense leaf canopy
                     IF (LAI.GT.LAIXX) THEN
-                        IF (L.EQ.TVI1) THEN
+                        IF (LF.EQ.TVI1.AND.BR.EQ.BROLDESTA) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf
@@ -140,6 +140,7 @@
                     IF (LAGETT(BR,LF).LE.LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
                         IF (LNUMSOLDESTA.LT.0) THEN
                             LNUMSOLDESTA = LF
+                            BROLDESTA = BR
                         ENDIF
                         DALF(BR,LF) = DALF(BR,LF) + 1.0                                                                        !EQN 364b
                     ELSE

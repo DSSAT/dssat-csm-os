@@ -26,7 +26,7 @@
         !           Partitioning of C to above ground and roots (minimum) 
         !-----------------------------------------------------------------------
         
-        !LPM 18MAY2015 Delete PTF to consider a spill-over model
+        !LPM 30MAY2015 Delete PTF to consider a spill-over model
         
         !PTF = PTFMN+(PTFMX-PTFMN)*DSTAGE                                                                               !EQN 280   
         ! Partition adjustment for stress effects
@@ -452,11 +452,13 @@
         !           Root growth                                     
         !-----------------------------------------------------------------------
 
-        !LPM 18MAY2015 Modify RTWTG to include the concept of spill-over model
+        !LPM 30MAY2015 Modify RTWTG according to Matthews & Hunt, 1994 (GUMCAS)
         !RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
-        CARBOR = CARBOT-(GROST+GROCR+GROLF) 
-        IF (CARBOT.GT.0.0.AND.CARBOR.GT.0.0) THEN
-            RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
+        
+        IF (CARBOT.GT.0.0) THEN
+            CARBOR = (GROST+GROLF)*(0.05+0.1*EXP(-0.005*Tfd))
+            CARBOT = CARBOT - CARBOR
+            RTWTG = ((GROST+GROLF)*(0.05+0.1*EXP(-0.0005*Tfd))+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
             RTRESP = RTWTG*RRESP/(1.0-RRESP)                                                                               !EQN 388
         ENDIF
         
