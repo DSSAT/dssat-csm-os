@@ -108,8 +108,6 @@
             ENDDO
             !SNCRM = SUM(SNCR, MASK = SNCR.GE.0.0)/MAX(1,COUNT(SNCR))
             SNCRM = 1.0
-            DUMMY1 = SUM(SNCR, MASK = SNCR.GE.0.0)
-            DUMMY2 = MAX(1,COUNT(SNCR.GE.0.0))
             IF (RNCX.GT.0.0) RNCR = AMAX1(0.0,AMIN1(1.0,RANC/RNCX))
         ELSE
             LNCR = 1.0
