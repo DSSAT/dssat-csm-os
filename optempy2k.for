@@ -610,7 +610,7 @@ C-----------------------------------------------------------------------
 
 !       Ceres wheat, barley
 !       CropSim - wheat, barley, cassava
-        CASE('WHCER', 'BACER', 'CSCRP','CSCAS')
+        CASE('WHCER', 'BACER', 'CSCRP','CSCAS','CSCGR')
 !       Do nothing - these models read the INH file written by OPTEMPXY2K
 
 !       Ceres Maize, sweetcorn

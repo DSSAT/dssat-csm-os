@@ -726,6 +726,37 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
             IF (J2 > LENGTH) EXIT
           ENDDO
         ENDIF
+!-----------------------------------------------------------------------
+!     Cassava CIAT      
+      CASE ('CSCGR')
+         WRITE (HEADER(I),'(A,A)')
+     &     "  PPS1 B01ND B12ND B23ND B34ND B45ND B56ND",
+     &     " SR#WT  SRFR  HMPC PHINT"
+         I=I+1
+          WRITE (HEADER(I),'(F6.2,6F6.1,4F6.2)') 
+     &     PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
+     &     SRNWT, SRFR, HMPC, PHINT
+         I=I+1
+         WRITE (HEADER(I),'(A,A)') 
+     &     "  LA1S  LAXS LAXND LAXN2  LAFS LAFND  SLAS",
+     &     " LLIFA LPEFR  STFR"
+        I=I+1
+         WRITE (HEADER(I),'(F6.1,F6.0,6F6.1,2F6.2)') 
+     &    LA1S, LAXS, LAXND, LAXN2, LAFS, LAFND, SLASS, LLIFA,
+     &    LPEFR, STFR
+       I=I+1
+!       Print optional extra stuff from ecotype file
+        LENGTH = LenString(PLAINTXT)
+        IF (LENGTH > 0) THEN
+          DO J=1,3
+            J1 = (J-1)*78+1
+            J2 = J1 + 77
+            WRITE( HEADER(I),'(A)') TRIM(ATLINE(J1+149:J2+149))
+            WRITE( HEADER(I+1),'(A)') TRIM(PLAINTXT(J1:J2))
+            I = I + 2
+            IF (J2 > LENGTH) EXIT
+          ENDDO
+        ENDIF
 
 !-----------------------------------------------------------------------
 !     CERES-Maize

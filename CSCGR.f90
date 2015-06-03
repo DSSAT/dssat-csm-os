@@ -27,7 +27,7 @@
 !
 !*******************************************************************************************************************************
 
-      SUBROUTINE  CSCAS (FILEIOIN, RUN, TN, RN, RNMODE,                                       & !Command line
+      SUBROUTINE  CSCGR (FILEIOIN, RUN, TN, RN, RNMODE,                                       & !Command line
        ISWWAT, ISWNIT, ISWDIS, MESOM, IDETS, IDETO, IDETG, IDETL, FROP,                       & !Controls
        SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                                                & !Run+loop
        SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,                                             & !Weather
@@ -147,7 +147,7 @@
             )
             
         WRITE (fnumwrk,'(2A, 2F9.5)') 'ALBEDOS (soil albedo) and ALBEDO (canopy ',  &  ! MF 19JA15  For WORK.OUT
-            'albedo) AFTER CS_RunInit in CSCAS) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
+            'albedo) AFTER CS_RunInit in CSCGR) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
             
 !*******************************************************************************************************************************
     ELSEIF (DYNAMIC.EQ.SEASINIT) THEN    ! Initialization                      ! MF Equivalent to line 1824 in CSCAS.FOR
@@ -253,4 +253,4 @@
 !*******************************************************************************************************************************
       ENDIF ! End of INITIATION-RATES-INTEGRATE-OUTPUT-SEASEND construct       ! MF Equivalent to line 9648 in CSCAS.FOR
 !*******************************************************************************************************************************
-      END  ! CSCAS
+      END  ! CSCGR

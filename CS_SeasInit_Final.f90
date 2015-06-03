@@ -109,7 +109,7 @@
                 IF (MEPHO.NE.'R') THEN
                     WRITE(MESSAGE(1),'(A22,A1,A15,A19)')'Photosynthesis method ',MEPHO,' not an option ',' Changed to R (RUE)'
                     
-                    CALL WARNING(1,'CSCAS',MESSAGE)
+                    CALL WARNING(1,'CSCGR',MESSAGE)
                     WRITE(FNUMWRK,*)' '
                     WRITE(FNUMWRK,'(A23,A1,A15,A19)')'Photosynthesis method ',MEPHO,' not an option ',' Changed to R (RUE)'
                     MEPHO = 'R'
@@ -123,7 +123,7 @@
             IF (hnumber.LE.0) THEN 
                 WRITE(MESSAGE(1),'(A37,A13,A1)')'No harvest date set although planting','flag set to: ',IHARI
                 MESSAGE(2)='Flag reset to M.'
-                CALL WARNING(2,'CSCAS',MESSAGE)
+                CALL WARNING(2,'CSCGR',MESSAGE)
                 IHARI = 'M'                      
             ENDIF
         ENDIF
@@ -136,7 +136,7 @@
         INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
         IF (.NOT.FOPEN) THEN
             OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-            WRITE(fnumwrk,*) 'CSCAS  Cassava Crop Module '
+            WRITE(fnumwrk,*) 'CSCGR  Cassava Crop Module '
         ENDIF
         
         WRITE(fnumwrk,*)' '
@@ -355,12 +355,12 @@
         OUTCHOICE = 3
         IF (OUTCHOICE.EQ.2) THEN
             WRITE(MESSAGE(1),'(A36,A37)')'  NO reserve CH2O included in the wt',' of leaves,stems,and Plant. stick.          ' 
-            CALL WARNING(1,'CSCAS',MESSAGE)
+            CALL WARNING(1,'CSCGR',MESSAGE)
             WRITE(FNUMWRK,'(A36,A38)')'  NO reserve CH2O included in the wt',' of leaves,stems,and Plant. stick.           '
             WRITE(FNUMWRK,'(A36)')'  Stem weight includes the petioles.'
         ELSEIF (OUTCHOICE.EQ.3) THEN
             WRITE(MESSAGE(1),'(A36,A37)')'  NO reserve CH2O included in the wt',' of leaves,stems,and Plant. stick.          ' 
-            CALL WARNING(1,'CSCAS',MESSAGE)
+            CALL WARNING(1,'CSCGR',MESSAGE)
             WRITE(FNUMWRK,'(A36,A38)')'  NO reserve CH2O included in the wt',' of leaves,stems,and Plant. stick.           '
             WRITE(FNUMWRK,'(A45)')'  Stem weight does NOT includes the petioles.'
         ENDIF  

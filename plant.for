@@ -49,6 +49,7 @@ C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
 C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KAD Added SALUS model
+!  06/03/2015 LPM Added CSCGR model (CIAT cassava)
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -68,6 +69,7 @@ C-----------------------------------------------------------------------
 !         'CSCER' - CERES Wheat, Barley
 !         'CSCRP' - CropSim Wheat, Barley
 !         'CSCAS' - CropSim/GumCAS Cassava
+!         'CSCGR' - CIAT Cassava model
 !         'MLCER' - CERES-Millet 
 !         'MZCER' - CERES-Maize
 !         'PTSUB' - SUBSTOR-Potato
@@ -341,6 +343,23 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Cassava CSCAS
       CASE('CSCAS')
         CALL CSCAS_Interface (CONTROL, ISWITCH,           !Input
+     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
+     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,        !Output
+     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,             !Output
+     &    UNH4, UNO3, XLAI)                               !Output
+
+        IF (DYNAMIC .EQ. SEASINIT) THEN
+          KTRANS = KEP
+          KSEVAP = KEP
+        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
+!     Cassava CSCGR (CIAT cassava model)
+      CASE('CSCGR')
+        CALL CSCGR_Interface (CONTROL, ISWITCH,           !Input
      &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,        !Output

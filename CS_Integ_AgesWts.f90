@@ -200,7 +200,7 @@
             LWPHC = LWPHC +  LWPH                                                                                      !EQN 428
             IF (LFWT.LT.-1.0E-8) THEN
                 WRITE(Message(1),'(A35,F4.1,A14)') 'Leaf weight less than 0! Weight of ',lfwt,' reset to zero'
-                CALL WARNING(1,'CSCAS',MESSAGE)
+                CALL WARNING(1,'CSCGR',MESSAGE)
                 LFWT = 0.0
             ENDIF
             RSWT = RSWT+GRORS-RSWPH-SRWTGRS+RSWTGLFADJ                                                                 !EQN 429
@@ -223,7 +223,7 @@
             IF (RSWT.LT.0.0) THEN
                 IF (ABS(RSWT).GT.1.0E-6) THEN
                     WRITE(Message(1),'(A30,A11,F12.9)') 'Reserves weight reset to zero.', 'Weight was ',rswt
-                    CALL WARNING(1,'CSCAS',MESSAGE)
+                    CALL WARNING(1,'CSCGR',MESSAGE)
                     RSWT = 0.0
                 ENDIF
             ENDIF
@@ -259,7 +259,7 @@
             WRITE(Message(1),'(A44,F3.1)') 'Seed reserves all used but leaf number only ',lnum
             WRITE(Message(2),'(A58)') 'For good establishment seed reserves should last to leaf 4'
             WRITE(Message(3),'(A55)') 'Maybe stick too small or specific leaf area set too low'
-            CALL WARNING(3,'CSCAS',MESSAGE)
+            CALL WARNING(3,'CSCGR',MESSAGE)
             CFLSDRSMSG = 'Y'
         ENDIF
         SEEDUSE = SEEDUSE + GROLSSD+SEEDRSAVR                                                                          !EQN 448

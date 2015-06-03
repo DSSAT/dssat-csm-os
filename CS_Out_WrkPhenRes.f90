@@ -29,7 +29,7 @@
             WRITE(Message(1),'(A35)')'IDETL flag called for detail files.'
             WRITE(Message(2),'(A31,A31)')'But IDETO flag set at N so that','measured data not read.        '
             WRITE(Message(3),'(A45)')'Therefore,could not write detailed summaries.'
-            CALL WARNING(3,'CSCAS',MESSAGE)
+            CALL WARNING(3,'CSCGR',MESSAGE)
         ENDIF
                 
         !-----------------------------------------------------------------------------------------------------------

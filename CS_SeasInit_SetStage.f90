@@ -231,17 +231,17 @@
         IF (LA1S.LE.0.0) THEN
             LA1S = 5.0
             WRITE(MESSAGE(1),'(A47)') 'Initial leaf size (LA1S) missing. Set to 5 cm2.'
-            CALL WARNING(1,'CSCAS',MESSAGE)
+            CALL WARNING(1,'CSCGR',MESSAGE)
         ENDIF
         IF (LAFND.GT.0.0.AND.LAFND.LE.LAXNO.OR.LAFND.LT.0) THEN
             LAFND = LAXNO + 10
             WRITE(MESSAGE(1),'(A59)') 'Leaf # for final size missing or < maximum! Set to max+10.'
-            CALL WARNING(1,'CSCAS',MESSAGE)
+            CALL WARNING(1,'CSCGR',MESSAGE)
         ENDIF
         IF (DFPE.LT.0.0) THEN  
             DFPE = 1.0
             WRITE(MESSAGE(1),'(A51)') 'Pre-emergence development factor missing. Set to 1.'
-            CALL WARNING(1,'CSCAS',MESSAGE)
+            CALL WARNING(1,'CSCGR',MESSAGE)
         ENDIF
         
         ! Stem fraction constant throughout lifecycle
@@ -369,7 +369,7 @@
         IF (Dayls(1).EQ.0.0.AND.dfpe.LT.1.0) THEN
             WRITE(MESSAGE(1),'(A36,A41)') 'Cultivar insensitive to photoperiod ', 'but pre-emergence photoperiod factor < 1.' 
             WRITE(MESSAGE(2),'(A40)') 'May be worthwhile to change PPFPE to 1.0'
-            CALL WARNING(2,'CSCAS',MESSAGE)
+            CALL WARNING(2,'CSCGR',MESSAGE)
         ENDIF
         
         ! Shoot growth rates relative to main shoot
@@ -445,7 +445,7 @@
             IF (PLME.NE.'H') THEN
                 IF (PLME.NE.'V') THEN
                     WRITE(MESSAGE(1),'(A16,A1,A15,A24)') 'PLANTING method ',PLME,' not an option ', ' Changed to V (Vertical)'
-                    CALL WARNING(1,'CSCAS',MESSAGE)
+                    CALL WARNING(1,'CSCGR',MESSAGE)
                     WRITE(FNUMWRK,*)' '
                     WRITE(FNUMWRK,'(A17,A1,A15,A24)') ' Planting method ',PLME,' not an option ', ' Changed to V (Vertical)'
                     PLME = 'V'
@@ -454,7 +454,7 @@
         ENDIF
         IF (SPRL.LE.0.0) THEN
             WRITE(MESSAGE(1),'(A30,A20)') 'Planting stick length <= 00  ', ' Changed to 25.0 cm '
-            CALL WARNING(1,'CSCAS',MESSAGE)
+            CALL WARNING(1,'CSCGR',MESSAGE)
             WRITE(FNUMWRK,*)' '
             WRITE(FNUMWRK,'(A31,A20)') ' Planting stick length <= 0.0  ', ' Changed to 25.0 cm '
             SPRL = 25.0
