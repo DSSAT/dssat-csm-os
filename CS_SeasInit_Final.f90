@@ -249,7 +249,7 @@
             WRITE(fnumwrk,*)'  Rresp  ',Rresp
             WRITE(fnumwrk,*)' Storage roots '
             WRITE(fnumwrk,*)'  Srfr   ',Srfr
-            WRITE(fnumwrk,*)'  Dusri  ',Dusri
+            !WRITE(fnumwrk,*)'  Dusri  ',Dusri  !LPM 05JUN2015 DUSRI is not used
             WRITE(fnumwrk,*)'  Hmpc   ',Hmpc
             WRITE(fnumwrk,*)' Nitrogen uptake concentration factors'
             WRITE(fnumwrk,*)'  Rtno3,Rtnh4 ',rtno3,rtnh4 

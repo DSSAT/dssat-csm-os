@@ -46,7 +46,11 @@
             IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ.GT.0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &             !EQN 314
                 (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
         ENDIF
-
+        
+        IF(SRWTGRS.GT.0.0.AND.SRNOPD.LE.0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT >0
+            SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291
+        ENDIF
+                
         !-----------------------------------------------------------------------
         !           Height growth
         !-----------------------------------------------------------------------

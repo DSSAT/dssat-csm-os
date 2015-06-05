@@ -50,19 +50,19 @@
         !           Number determination of storage root 
         !-----------------------------------------------------------------------
 
-        !GROSR = 0.0 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-        IF(CUMDU+DU.LT.DUSRI)THEN
-            SRDAYFR = 0.0                                                                                              !EQN 290a
-        ELSEIF(CUMDU.LT.DUSRI.AND.CUMDU+DU.GE.DUSRI)THEN
-            SRDAYFR = (DUSRI-CUMDU)/DU                                                                                 !EQN 290b
-        ELSEIF(CUMDU.GT.DUSRI)THEN
-            SRDAYFR = 1.0                                                                                              !EQN 290c
-        ENDIF
+        !GROSR = 0.0 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used  !LPM 05JUN2015 DUSRI is not used
+        !IF(CUMDU+DU.LT.DUSRI)THEN 
+        !    SRDAYFR = 0.0                                                                                              !EQN 290a
+        !ELSEIF(CUMDU.LT.DUSRI.AND.CUMDU+DU.GE.DUSRI)THEN
+        !    SRDAYFR = (DUSRI-CUMDU)/DU                                                                                 !EQN 290b
+        !ELSEIF(CUMDU.GT.DUSRI)THEN
+        !    SRDAYFR = 1.0                                                                                              !EQN 290c
+        !ENDIF
         !GROSR = SRFR*CARBOT*SRDAYFR                                                                                    !EQN 289
             
-        IF(CUMDU.GE.DUSRI.AND.SRNOPD.LE.0.0) THEN
-            SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291
-        ENDIF
+        !IF(CUMDU.GE.DUSRI.AND.SRNOPD.LE.0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT > 0 See CS_Growth_Distribute.f90
+        !    SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291
+        !ENDIF
                      
         !-----------------------------------------------------------------------
         !           Specific leaf area

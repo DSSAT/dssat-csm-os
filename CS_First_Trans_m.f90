@@ -152,7 +152,7 @@ Module CS_First_Trans_m
     REAL    :: DUNEED                  ! Developmental units needed tir PVC.d      ! (From SeasInit)  
     REAL    :: DUPHASE                 ! Development units,current tier PVoCd      ! (From Growth)    
     REAL    :: DUPNEXT                 ! Development units,next tier    PVoCd      ! (From Growth)    
-    REAL    :: DUSRI                   ! Degree days to st.root init.   oC.d       ! (From SeasInit)  
+    !REAL    :: DUSRI                   ! Degree days to st.root init.   oC.d       ! (From SeasInit)  !LPM 05JUN2015 DUSRI is not used
     REAL    :: DUTOMSTG                ! Developmental units,germ->mat  Du         ! (From SeasInit)  
     INTEGER :: DYNAMICPREV             ! Program control varbl,previous #          ! (From SeasInit)  
     REAL    :: EARLYN                  ! Leaf # for early N switch      #          ! (From Growth)    
@@ -867,7 +867,7 @@ Module CS_First_Trans_m
     REAL    :: SRADPC                  ! Solar radiation,tier sum       MJ/m2      ! (From SeasInit)  
     REAL    :: SRADPREV                ! Solar radiation,previous day   MJ/m2      ! (From SeasInit)  
     REAL    :: SRANC                   ! Storage root N concentration   g/p        ! (From SeasInit)  
-    REAL    :: SRDAYFR                 ! Storage root fraction of day   #          ! (From Growth)    
+    !REAL    :: SRDAYFR                 ! Storage root fraction of day   #          ! (From Growth) !LPM 05 JUN2015 SRDAYFR is not used    
     REAL    :: SRFR                    ! Storage root fraction,basic    #          ! (From SeasInit)  
     REAL    :: SRNAD                   ! Storage root N                 kg/ha      ! (From Integrate) 
     REAL    :: SRNAM                   ! Storage root N at maturity     kg/ha      ! (From SeasInit)  

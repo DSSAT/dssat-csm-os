@@ -203,7 +203,7 @@
         srprs = -99
         srprs = -99
         lseni = -99
-        dusri = -99
+        !dusri = -99 !LPM 05JUN2015 DUSRI is not used
         parue = -99
         paru2 = -99
         la1s = -99
@@ -219,7 +219,7 @@
 
         ! Species coefficients re-set
         pd = -99
-        dusri = -99 
+        !dusri = -99  !LPM 05JUN2015 DUSRI is not used
         llifa = -99 
         srfr = -99 
         rdgs = -99 
@@ -376,7 +376,7 @@
         IF (SRNPCS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
         IF (SRPRS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRPRS',srprs)
         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
-        CALL ECREADR (ECDIRFLE,ECONO,'DUSRI',dusri)
+        !CALL ECREADR (ECDIRFLE,ECONO,'DUSRI',dusri) !LPM 05JUN2015 DUSRI is not used
         ! LAH Following set up to allow for change in stem fraction
         ! Currently not used ... just one stem fraction (STFR)
         !CALL ECREADR (ECDIRFLE,ECONO,'SWFRX',swfrx) !LPM 05JUN2015 SWFRX is not used   
@@ -489,7 +489,7 @@
         !IF (SWFRX.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx) !LPM 05JUN2015 SWFRX is not used   
         ! Following may be temporarily in ECO or CUL file
         IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
-        IF (DUSRI.LT.0.0) CALL SPREADR (SPDIRFLE,'DUSRI',dusri)
+        !IF (DUSRI.LT.0.0) CALL SPREADR (SPDIRFLE,'DUSRI',dusri) !LPM 05JUN2015 DUSRI is not used
         IF (LLIFA.LE.0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
         IF (SRFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr)
         IF (RDGS.LE.0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)

@@ -93,11 +93,11 @@
                     carbobegm*pltpop
                 WRITE(fnumwrk,'(A,3F7.2)')     ' CH2O Start,end,remobilized       ',carbobeg*pltpop*10.,carboend*pltpop*10.0, &
                     senlfgrs*pltpop*10.0
-                IF(CUMDU.LE.DUSRI.AND.CUMDU+DU.GT.DUSRI.AND.SRDAYFR.GT.0.0)THEN
-                    WRITE(fnumwrk,'(A, I7)')   ' STORAGE ROOT INITIATION (no/pl)  ',srnopd
-                    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(lfwt+stwt+crwt+rswt)*pltpop*10.0
-                    WRITE(fnumwrk,'(A,F7.1)')  ' Storage root fraction            ',srfr
-                ENDIF
+                !IF(CUMDU.LE.DUSRI.AND.CUMDU+DU.GT.DUSRI.AND.SRDAYFR.GT.0.0)THEN !LPM 05JUN2015 DUSRI is not used
+                !    WRITE(fnumwrk,'(A, I7)')   ' STORAGE ROOT INITIATION (no/pl)  ',srnopd
+                !    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(lfwt+stwt+crwt+rswt)*pltpop*10.0
+                !    WRITE(fnumwrk,'(A,F7.1)')  ' Storage root fraction            ',srfr
+                !ENDIF
                 IF (SRWTGRS+SRWTGRS.GT.0.0) WRITE(FNUMWRK,'(A)')' Surplus assimilates sent to storage roots      '
                 IF (LRTIP.EQ.1) WRITE(fnumwrk,'(A)')' Root tip in layer 1 '
                 WRITE(FNUMWRK,'(A,2F7.2)')     ' N demand,shortage (kg/ha)        ',andem,AMAX1(0.0,andem-nupap)
