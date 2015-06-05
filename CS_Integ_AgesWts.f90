@@ -251,7 +251,8 @@
                 SENCS = SENCS + RTWTSL(L) * 0.4                                                                        !EQN 445
                 SENLS = SENLS + RTWTSL(L) * RLIGP/100.0                                                                !EQN 446
             END DO
-            SRWT = SRWT + GROSR + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447
+            !SRWT = SRWT + GROSR + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            SRWT = SRWT + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                              !EQN 447
         ENDIF
         
         SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD-SEEDRSAVR)                                                                   !EQN 285

@@ -233,11 +233,11 @@
             WRITE(MESSAGE(1),'(A47)') 'Initial leaf size (LA1S) missing. Set to 5 cm2.'
             CALL WARNING(1,'CSCGR',MESSAGE)
         ENDIF
-        IF (LAFND.GT.0.0.AND.LAFND.LE.LAXNO.OR.LAFND.LT.0) THEN
-            LAFND = LAXNO + 10
-            WRITE(MESSAGE(1),'(A59)') 'Leaf # for final size missing or < maximum! Set to max+10.'
-            CALL WARNING(1,'CSCGR',MESSAGE)
-        ENDIF
+        !IF (LAFND.GT.0.0.AND.LAFND.LE.LAXNO.OR.LAFND.LT.0) THEN
+        !    LAFND = LAXNO + 10
+        !    WRITE(MESSAGE(1),'(A59)') 'Leaf # for final size missing or < maximum! Set to max+10.'
+        !    CALL WARNING(1,'CSCGR',MESSAGE)
+        !ENDIF
         IF (DFPE.LT.0.0) THEN  
             DFPE = 1.0
             WRITE(MESSAGE(1),'(A51)') 'Pre-emergence development factor missing. Set to 1.'
@@ -245,12 +245,12 @@
         ENDIF
         
         ! Stem fraction constant throughout lifecycle
-        IF (SWFRS.GT.0.0) THEN
-            SWFRX = SWFRS
-            SWFRXL = 9999
-            SWFRN = SWFRS
-            SWFRNL = 0
-        ENDIF 
+        !IF (SWFRS.GT.0.0) THEN  !LPM 05JUN2015 SWFRS is not used
+        !    SWFRX = SWFRS
+        !    SWFRXL = 9999
+        !    SWFRN = SWFRS
+        !    SWFRNL = 0
+        !ENDIF 
         
         ! Storage root 
         IF (SRFR.LT.0.0) SRFR = 0.0

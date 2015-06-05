@@ -28,7 +28,8 @@
         !           Reserves growth
         !-----------------------------------------------------------------------
 
-        GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ-GROSR                                       !EQN 309
+        !GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ-GROSR                                       !EQN 309 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+        GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ
         IF(GRORS.LT.0.0.AND.GRORS.GT.-1.0E-07) GRORS = 0.0
 
         ! Reserves to STORAGE ROOT if conc too great (overflow!)

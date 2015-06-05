@@ -230,9 +230,9 @@
             WRITE(fnumwrk,*)' Leaves     '
             WRITE(fnumwrk,*)'  La1s   ',La1s
             WRITE(fnumwrk,*)'  Laxs   ',Laxs
-            WRITE(fnumwrk,*)'  Lafs   ',Lafs
-            WRITE(fnumwrk,*)'  Laxnd,2',Laxno,Laxn2
-            WRITE(fnumwrk,*)'  Lafnd  ',Lafnd
+            !WRITE(fnumwrk,*)'  Lafs   ',Lafs        !LPM 05JUN2015 LAFS is not used 
+            !WRITE(fnumwrk,*)'  Laxnd,2',Laxno,Laxn2 !LPM 05JUN2016 LAXNO LAXN2 are not used
+            !WRITE(fnumwrk,*)'  Lafnd  ',Lafnd
             WRITE(fnumwrk,*)'  Slas,Slasmn  ',Laws,lawmnfr
             WRITE(fnumwrk,*)'  Slacf,Slaff  ',Lawcf,Lawff
             WRITE(fnumwrk,*)'  Slatr,Slats  ',Lawtr,Lawts

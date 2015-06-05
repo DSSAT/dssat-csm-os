@@ -69,7 +69,7 @@
         BRNUMSTPREV = BRNUMST
         SPDIRFLPREV = SPDIRFLE
         SRADPREV = SRAD
-        SWFRPREV = SWFR
+        !SWFRPREV = SWFR !LPM 06JUN2015 SWFR is not used 
         VARNOPREV = VARNO
         YEARDOYPREV = YEARDOY
     

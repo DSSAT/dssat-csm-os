@@ -79,7 +79,8 @@
             LNDEM = GROLF*LNCX + (LFWT-SENLFG-SENLFGRS)*AMAX1(0.0,NTUPF*(LNCX-LANC)) - GROLSRTN                        !EQN 152
             !SNDEM = AMAX1(0.0,GROST+GROCR)*SNCX + (STWT+CRWT)*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
             RNDEM = RTWTG*RNCX + (RTWT-SENRTG-GROLSRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
-            SRNDEM = (GROSR+SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
+            !SRNDEM = (GROSR+SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP.GT.0.0) THEN
@@ -211,7 +212,8 @@
                 ENDDO
             ENDDO
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
-            NDEMMN = GROLF*LNCM+RTWTG*RNCM+SUM(NDEMSMN)+GROSR*(SRNPCS/100.0)*0.5 
+            !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            NDEMMN = GROLF*LNCM+RTWTG*RNCM+SUM(NDEMSMN) 
             LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
             !SNUSE(1) = ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
@@ -225,7 +227,7 @@
                     ENDIF
                 ENDDO
             ENDDO
-            SRNUSE(1) = (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211
+            !SRNUSE(1) = (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
     
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
             IF (NDEMMN.GT.NULEFT) THEN
@@ -240,8 +242,8 @@
                 RTRESPADJ = RTRESP   
             ENDIF
     
-            NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212
-    
+            !NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
+            NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)
             ! 5.For leaf growth to standard N (N to leaves first)
             LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX)-LNUSE(1))                                                             !EQN 217
             !Could use the NLLG parameter but may need to adjust 
@@ -251,7 +253,8 @@
             NULEFT = NULEFT - LNUSE(2)                                                                                 !EQN 218
     
             ! 6.For distribution of remaining N to st,rt,storage root
-            NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1)                                                     !EQN 219
+            !NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1)                                                     !EQN 219 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
+            NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM                                                                !EQN 219
             IF (NDEM2.GT.0.0)THEN
                 !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
@@ -263,7 +266,8 @@
                     ENDDO
                 ENDDO
                 RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
-                SRNUSE(2) = (SRNDEM-SRNUSE(1))*AMIN1(1.0,NULEFT/NDEM2)                                                 !EQN 222
+                !SRNUSE(2) = (SRNDEM-SRNUSE(1))*AMIN1(1.0,NULEFT/NDEM2)                                                 !EQN 222 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
+                SRNUSE(2) = (SRNDEM)*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
                 NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)                                                      !EQN 223
                 IF (NULEFT.GT.0.0) THEN
                     LNUSE(3) = NULEFT                                                                                  !EQN 224
@@ -287,8 +291,9 @@
                 ENDDO
             ENDDO
             RNUSE(0) = RNUSE(1) + RNUSE(2)                                                                             !EQN 227 
-            SRNUSE(0) = SRNUSE(1) + SRNUSE(2)                                                                          !EQN 228 
-    
+            !SRNUSE(0) = SRNUSE(1) + SRNUSE(2)                                                                          !EQN 228 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
+            SRNUSE(0) = SRNUSE(2)                                                                                      !EQN 228    
+            
             ! N Pools available for re-mobilization
             NUSEFAC = NLABPC/100.0                                                                                     !EQN 229
             NPOOLR = AMAX1 (0.0,((RTWT-SENRTG)*(RANC-RNCM)*NUSEFAC))                                                   !EQN 230

@@ -276,14 +276,14 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B78ND',pdl(8))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B89ND',pdl(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LLIFA',llifa)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'STFR',swfrs)
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'STFR',swfrs)!LPM 05JUN2016 STFR are not used
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SR#WT',srnow)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SRFR',srfr)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXS',laxs)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXN2',laxn2)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFS',lafs)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFND',lafnd)
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno) !LPM 05JUN2016 LAXNO LAXN2 are not used
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXN2',laxn2) 
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFS',lafs)   !LPM 05JUN2015 LAFS is not used 
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAFND',lafnd) !LPM 05JUN2015 LAFND is not used
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SLAS',laws)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPU',nfpu)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NFPL',nfpl)
@@ -337,14 +337,14 @@
             !CALL CUREADR (CUDIRFLE,VARNO,'B89ND',pdl(9))
             !CALL CUREADR (CUDIRFLE,VARNO,'PHINT',phints) !LPM 21MAY2015 this variable is not used
             CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
-            CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs)
+            !CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs) !LPM 05JUN2016 STFR are not used
             CALL CUREADR (CUDIRFLE,VARNO,'SR#WT',srnow)
             CALL CUREADR (CUDIRFLE,VARNO,'SRFR',srfr)
             CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAXND',laxno)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAXN2',laxn2)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAFS',lafs)
-            CALL CUREADR (CUDIRFLE,VARNO,'LAFND',lafnd)
+            !CALL CUREADR (CUDIRFLE,VARNO,'LAXND',laxno) !LPM 05JUN2016 LAXNO LAXN2 are not used
+            !CALL CUREADR (CUDIRFLE,VARNO,'LAXN2',laxn2)
+            !CALL CUREADR (CUDIRFLE,VARNO,'LAFS',lafs)  !LPM 05JUN2015 LAFS is not used 
+            !CALL CUREADR (CUDIRFLE,VARNO,'LAFND',lafnd) !LPM 05JUN2015 LAFND is not used
             CALL CUREADR (CUDIRFLE,VARNO,'SLAS',laws)
             CALL CUREADR (CUDIRFLE,VARNO,'NFPU',nfpu)
             CALL CUREADR (CUDIRFLE,VARNO,'NFPL',nfpl)
@@ -379,10 +379,10 @@
         CALL ECREADR (ECDIRFLE,ECONO,'DUSRI',dusri)
         ! LAH Following set up to allow for change in stem fraction
         ! Currently not used ... just one stem fraction (STFR)
-        CALL ECREADR (ECDIRFLE,ECONO,'SWFRX',swfrx)
-        CALL ECREADR (ECDIRFLE,ECONO,'SWFRN',swfrn)
-        CALL ECREADR (ECDIRFLE,ECONO,'SWFNL',swfrnl)
-        CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl)
+        !CALL ECREADR (ECDIRFLE,ECONO,'SWFRX',swfrx) !LPM 05JUN2015 SWFRX is not used   
+        !CALL ECREADR (ECDIRFLE,ECONO,'SWFRN',swfrn) !LPM 05JUN2015 SWFRN is not used 
+        !CALL ECREADR (ECDIRFLE,ECONO,'SWFNL',swfrnl) !LPM 05JUN2015 SWFRNL is not used 
+        !CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl) !LPM 05JUN2015 SWFRL is not used 
         CALL ECREADR (ECDIRFLE,ECONO,'SLACF',lawcf)
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
         CALL ECREADR (ECDIRFLE,ECONO,'BR1FX',brfx(1))
@@ -483,10 +483,10 @@
         CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
         ! LAH Following set up to allow for change in stem fraction
         ! Currently not used ... just one stem fraction (STFR)
-        IF (SWFRN.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRN',swfrn)
-        IF (SWFRNL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRNL',swfrnl)
-        IF (SWFRXL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFXL',swfrxl)
-        IF (SWFRX.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx)
+        !IF (SWFRN.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRN',swfrn) !LPM 05JUN2015 SWFRNL is not used
+        !IF (SWFRNL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRNL',swfrnl)!LPM 05JUN2015 SWFRNL is not used 
+        !IF (SWFRXL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFXL',swfrxl)!LPM 05JUN2015 SWFRXL is not used 
+        !IF (SWFRX.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx) !LPM 05JUN2015 SWFRX is not used   
         ! Following may be temporarily in ECO or CUL file
         IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
         IF (DUSRI.LT.0.0) CALL SPREADR (SPDIRFLE,'DUSRI',dusri)

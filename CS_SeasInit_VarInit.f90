@@ -90,7 +90,7 @@
         dglf = 0
         dslf = 0
         drainc = 0.0
-        dstage = 0.0
+        !dstage = 0.0 !LPM 05JUN2015 DSTAGE is not used
         du = 0.0
         duneed = 0.0
         dynamicprev = 99999
@@ -147,7 +147,7 @@
         grolf = 0.0
         grolfadj = 0.0
         grors = 0.0
-        grosr = 0.0
+        !grosr = 0.0 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
         grost = 0.0
         grostadj = 0.0
         grostcr = 0.0

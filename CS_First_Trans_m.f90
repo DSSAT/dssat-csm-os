@@ -146,7 +146,7 @@ Module CS_First_Trans_m
     INTEGER :: DOYCOL                  ! Day of year column number      #          ! (From Output)    
     REAL    :: DRAINC                  ! Drainage from profile,cumulat  mm         ! (From SeasInit)  
     REAL    :: DSLF(0:PSX,0:LCNUMX)    ! Days during which leaf senesng #          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
-    REAL    :: DSTAGE                  ! Development stage,linear       #          ! (From SeasInit)  
+    !REAL    :: DSTAGE                  ! Development stage,linear       #          ! (From SeasInit)  !LPM 05JUN2015 DSTAGE is not used
     REAL    :: DTRY                    ! Effective depth of soil layer  cm         ! (From Growth)    
     REAL    :: DU                      ! Developmental units            PVC.d      ! (From SeasInit)  
     REAL    :: DUNEED                  ! Developmental units needed tir PVC.d      ! (From SeasInit)  
@@ -252,7 +252,7 @@ Module CS_First_Trans_m
     REAL    :: GROLSSD                 ! Leaf+stem gr from seed         g/p        ! (From Growth)    
     REAL    :: GROLSSEN                ! Leaf+stem growth from senesnce g/p        ! (From Growth)    
     REAL    :: GRORS                   ! Reserves growth                g/p        ! (From SeasInit)  
-    REAL    :: GROSR                   ! Storage root growth            g/p        ! (From SeasInit)  
+    !REAL    :: GROSR                   ! Storage root growth            g/p        ! (From SeasInit)  !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
     REAL    :: GROST                   ! Stem growth rate               g/p        ! (From SeasInit)  
     REAL    :: GROSTADJ                ! Stem growth rate N adjusted    g/p        ! (From SeasInit)  
     REAL    :: GROSTCR                 ! Stem+Plant. stick growth rate         g/p ! (From SeasInit)  
@@ -357,8 +357,8 @@ Module CS_First_Trans_m
     INTEGER :: L1                      ! Loop counter                   #          ! (From SeasInit)  
     INTEGER :: L2                      ! Loop counter                   #          ! (From Output)    
     REAL    :: LA1S                    ! Area of leaf 1,standard        cm2        ! (From SeasInit)  
-    REAL    :: LAFND                   ! Node # (one axis)->final area  #          ! (From SeasInit)  
-    REAL    :: LAFS                    ! Leaf area/all nodes,final      cm2        ! (From SeasInit)  
+    !REAL    :: LAFND                   ! Node # (one axis)->final area  #          ! (From SeasInit) !LPM 05JUN2015 LAFND is not used
+    !REAL    :: LAFS                    ! Leaf area/all nodes,final      cm2        ! (From SeasInit) !LPM 05JUN2015 LAFS is not used 
     !REAL    :: LAGEG(0:LNUMX)          ! Leaf age increment             C.d        ! (From Growth)  !LPM 28MAR15 This variable is not used 
     !REAL    :: LAGEP(0:PSX,0:LCNUMX)   ! Leaf age (phyllochrons),lf pos #          ! (From SeasInit) !!LPM21MAY2015 this variable is not used  
     REAL    :: LAGETT(0:PSX,0:LCNUMX)  ! Leaf age after growing         C.d        ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions    
@@ -398,8 +398,8 @@ Module CS_First_Trans_m
     REAL    :: LAWTR                   ! Leaf area/weight,temp response fr/C       ! (From SeasInit)  
     REAL    :: LAWTS                   ! Leaf area/weight,temp standard C          ! (From SeasInit)  
     REAL    :: LAWWR                   ! Leaf area/weight,water respons fr         ! (From SeasInit)  
-    REAL    :: LAXN2                   ! Leaf # (one axis),end max.area #          ! (From SeasInit)  
-    REAL    :: LAXNO                   ! Leaf # (one axis),maximum area #          ! (From SeasInit)  
+    !REAL    :: LAXN2                   ! Leaf # (one axis),end max.area #          ! (From SeasInit)  
+    !REAL    :: LAXNO                   ! Leaf # (one axis),maximum area #          ! (From SeasInit) !LPM 05JUN2016 LAXNO LAXN2 are not used 
     REAL    :: LAXS                    ! Area of biggest leaf,main stem cm2        ! (From SeasInit)  
     INTEGER :: LBIRTHDAP(0:PSX,0:LCNUMX)! DAP on which leaf initiated    #          ! (From Growth)   !LPM 25MAR15 Adjusted to consider two dimensions  
     !INTEGER :: LCNUM                   ! Leaf cohort number (inc.grow)  #          ! (From SeasInit) !LPM 28MAR15 Non necessary variables  
@@ -921,19 +921,19 @@ Module CS_First_Trans_m
     REAL    :: STWT                    ! Stem weight                    g/p        ! (From SeasInit)  
     REAL    :: STWTM                   ! Stem weight,maturity           g/p        ! (From SeasInit)  
     REAL    :: STWTP                   ! Stem weight potential          g/p        !LPM 23MAY2015 Added to keep the potential stem weight
-    REAL    :: SWFR                    ! Stem fraction,actual           #          ! (From Growth)    
-    REAL    :: SWFRN                   ! Stem fraction minimum          #          ! (From SeasInit)  
-    REAL    :: SWFRNL                  ! Leaf number for min stem fr    #          ! (From SeasInit)  
-    REAL    :: SWFRS                   ! Stem fraction,standard         #          ! (From SeasInit)  
-    REAL    :: SWFRX                   ! Stem fraction maximum          #          ! (From SeasInit)  
-    REAL    :: SWFRXL                  ! Leaf number for max stem fr    #          ! (From SeasInit)  
+    !REAL    :: SWFR                    ! Stem fraction,actual           #          ! (From Growth)  !LPM 05JUN2015 SWFR is not used    
+    !REAL    :: SWFRN                   ! Stem fraction minimum          #          ! (From SeasInit)  !LPM 05JUN2015 SWFRN is not used 
+    !REAL    :: SWFRNL                  ! Leaf number for min stem fr    #          ! (From SeasInit) !LPM 05JUN2015 SWFRNL is not used  
+    !REAL    :: SWFRS                   ! Stem fraction,standard         #          ! (From SeasInit) !LPM 05JUN2015 SWFRS is not used 
+    !REAL    :: SWFRX                   ! Stem fraction maximum          #          ! (From SeasInit) !LPM 05JUN2015 SWFRX is not used   
+    !REAL    :: SWFRXL                  ! Leaf number for max stem fr    #          ! (From SeasInit)  !LPM 05JUN2015 SWFRXL is not used 
     REAL    :: SWP(0:20)               ! Soil water 'potential'         #          ! (From Growth)    
     REAL    :: SWPH                    ! Stem weight harvested          g/p        ! (From Growth)    
     REAL    :: SWPHC                   ! Stem wt harvested,cumulative   g/p        ! (From SeasInit)  
     REAL    :: SWPLTD                  ! Depth for average soil water   cm         ! (From SeasInit)  
     REAL    :: SWPLTH                  ! Upper limit on soil water,plt  %          ! (From SeasInit)  
     REAL    :: SWPLTL                  ! Lower limit on soil water,plt  %          ! (From SeasInit)  
-    REAL    :: SWFRPREV                ! Stem fraction,actual,previous  #          ! (From Output)  
+    !REAL    :: SWFRPREV                ! Stem fraction,actual,previous  #          ! (From Output) !LPM 06JUN2015 SWFR is not used  
     REAL    :: SWPRTIP                 ! Soil water potential,root tip  #          ! (From Growth)    
     REAL    :: SWPSD                   ! Soil water potential at seed   #          ! (From Growth)    
     REAL    :: TCAN                    ! Canopy temperature             C          ! (From SeasInit)  

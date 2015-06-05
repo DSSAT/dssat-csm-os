@@ -39,7 +39,7 @@
         ! Stem fraction or ratio to leaf whilst leaf still growing
         ! (If a constant STFR is entered,swfrx is set=stfr earlier)
         ! Increases linearly between specified limits
-        SWFR = CSYVAL (LNUM,SWFRNL,SWFRN,SWFRXL,SWFRX)                                                                 !EQN 296
+        !SWFR = CSYVAL (LNUM,SWFRNL,SWFRN,SWFRXL,SWFRX)                                                                !EQN 296 !LPM 05JUN2015 SWFR is not used 
 
         ! Plant. stick fraction                                  !LPM 20MAY2015 Deleted, instead it is used NODEWTGB(0)  
         !GROCRFR = 0.0
@@ -47,10 +47,10 @@
         !GROCRFR = CRFR * DSTAGE                                                                                        !EQN 386
 
         !-----------------------------------------------------------------------
-        !           Storage root basic growth and number determination
+        !           Number determination of storage root 
         !-----------------------------------------------------------------------
 
-        GROSR = 0.0
+        !GROSR = 0.0 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
         IF(CUMDU+DU.LT.DUSRI)THEN
             SRDAYFR = 0.0                                                                                              !EQN 290a
         ELSEIF(CUMDU.LT.DUSRI.AND.CUMDU+DU.GE.DUSRI)THEN
@@ -58,7 +58,7 @@
         ELSEIF(CUMDU.GT.DUSRI)THEN
             SRDAYFR = 1.0                                                                                              !EQN 290c
         ENDIF
-        GROSR = SRFR*CARBOT*SRDAYFR                                                                                    !EQN 289
+        !GROSR = SRFR*CARBOT*SRDAYFR                                                                                    !EQN 289
             
         IF(CUMDU.GE.DUSRI.AND.SRNOPD.LE.0.0) THEN
             SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291
@@ -320,8 +320,8 @@
         
         IF (GROLSP.GT.0.0) THEN
             ! Leaf+stem weight increase from assimilates
-            GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROSR))                                                              !EQN 298
-
+            !GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROSR))                                                              !EQN 298 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT))                                                                     !EQN 298
             ! Leaf+stem weight increase from senescence 
             IF (GROLSA.LT.GROLSP) THEN
 
