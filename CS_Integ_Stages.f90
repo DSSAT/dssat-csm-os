@@ -107,7 +107,7 @@
         IF (GESTAGE.GE.0.5) THEN
             IF (MEDEV.EQ.'DEVU') THEN                                                     ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
                 !DO L = HSTG,1,-1                                                          !LPM 03MAR15 It should be as MEDEV = LNUM DO L = HSTG,0,-1
-                DO L = HSTG,0,-1  
+                DO L = HSTG-1,0,-1  
                     IF (CUMDU.GE.PSTART(L).AND.PD(L+1).GT.0.0) THEN
                         BRSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L+1)
                         ! Brstage cannot go above harvest stage 
@@ -119,7 +119,7 @@
                 ENDDO
             ELSEIF (MEDEV.EQ.'LNUM') THEN 
                 ! Alternative method based on leaf numbers 
-                DO L = HSTG,0,-1
+                DO L = HSTG-1,0,-1
                     IF (LNUM.GE.LNUMTOSTG(L)) THEN
                         IF (PDL(L).GT.0) BRSTAGE = FLOAT(L) + (LNUM-LNUMTOSTG(L))/PDL(L)                               ! EQN 007
                         LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
@@ -173,7 +173,7 @@
             PSDAPFR(L) = FLOAT(DAP) + PSDAPFR(L)
             PSDAP(L) = DAP
             !IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN  !LPM 06MAR15 MSTG TO PSX
-            IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN
+            IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.PSX) THEN
                 MDAT = YEARDOY
                 MDOY = DOY
                 MDAP = DAP

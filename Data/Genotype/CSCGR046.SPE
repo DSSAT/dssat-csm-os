@@ -42,7 +42,11 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
     4      K B4DAT 4thBranch
     5      K B5DAT 5thBranch
     6      K B6DAT 6thBranch
-    7      M HDAT  Harvest  
+    7      K B7DAT 7thBranch
+    8      K B8DAT 8thBranch
+    9      K B9DAT 9thBranch
+    9      K B9DAT 9thBranch
+   10      K B0DAT 10thBranch
 ! Phase durations
 @PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
 ! oC.d  oC.d                                                              

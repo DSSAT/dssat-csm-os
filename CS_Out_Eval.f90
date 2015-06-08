@@ -431,7 +431,7 @@
                 ! Emergence and maturity dates 
                 IF (edatm.LE.0) edatm = edatmx ! If no Afile data,use Xfile
                 !IF (mdatm.LE.0) mdatm = psdatm(mstg) !LPM 06MAR15 MSTG TO PSX
-                IF (mdatm.LE.0) mdatm = psdatm(mstg)
+                IF (mdatm.LE.0) mdatm = psdatm(psx)
                     
                 ! Product wt at harvesst
                 IF (hwahm.GT.0.AND.hwamm.LE.0) hwamm = hwahm/(hpcf/100.0)

@@ -33,7 +33,7 @@
         KEYPSNUM = 0
         PSNUM = 0
         !DO L = 1,PSX  !LPM 28MAR15 the first stage is 0 (before branching)
-        DO L = 0,PSX
+        DO L = 0,PSX-1
             IF (TVILENT(PSTYP(L)).GT.0) THEN                                            ! TVILENT is a function in CSUTS.FOR the same as the intrinsic function LEN_TRIM
                 IF (PSTYP(L).EQ.'K'.OR.PSTYP(L).EQ.'k'.OR.PSTYP(L).EQ.'M')THEN          ! PSNO PSTYP PSABV PSNAME    (From .SPE file, S=Standard, K=Key)
                     KEYPSNUM = KEYPSNUM + 1                                             !    0     S GDAT  Germinate
@@ -45,12 +45,12 @@
             ENDIF                                                                       !    6     K B6DAT 6thBranch
         ENDDO                                                                           !    7     M HDAT  Harvest  
         ! IF MSTG not found, use maximum principal stage number                         
-        IF (MSTG.LE.0) THEN
-            MSTG = KEYPSNUM
-        ENDIF
+        !IF (MSTG.LE.0) THEN  !LPM 05JUN2015 MSTG is not used
+        !    MSTG = KEYPSNUM
+        !ENDIF
         ! IF HSTG not found, use maximum principal stage number + 1
         IF (HSTG.LE.0) THEN
-            HSTG = MSTG+1
+            HSTG = PSX
             !HSTG = MSTG+1                  !LPM 07MAR15 MSTG to PSX
             !PSTART(HSTG) = 5000   ! Set to very long cycle !LPM 06MAR15 to avoid low values of PSTART with DEVU
         ENDIF
@@ -77,7 +77,7 @@
         !-----------------------------------------------------------------------
         
         ! Find number of tiers
-        MSTG = 0 
+        !MSTG = 0 
         !IF (PDL(1).GT.0.0) THEN !LPM 04MAR15 remove to add IF (MEDEV.EQ.'LNUM')THEN
         DUTOMSTG = 0.0
         LNUMTOSTG = 0.0        
@@ -136,12 +136,12 @@
         !ELSE 
             ! If tier durations input as developmental units
             !DO L = 1,8  !LPM 06MAR15 to avoid a fix value of branch levelS (8)
-        DO L = 0,PSX
-            IF (PDL(L).GT.0.0) THEN
-                MSTG = L+1
-                HSTG = MSTG+1  
-            ENDIF 
-        ENDDO
+        !DO L = 0,PSX    !LPM 05JUN2015 MSTG  is not used
+        !    IF (PDL(L).GT.0.0) THEN
+        !        MSTG = L+1
+        !        HSTG = MSTG+1  
+        !    ENDIF 
+        !ENDDO
         ! Check for missing tier durations and if so use previous
             
         DO L = 0,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
@@ -253,7 +253,7 @@
         !ENDIF 
         
         ! Storage root 
-        IF (SRFR.LT.0.0) SRFR = 0.0
+        !IF (SRFR.LT.0.0) SRFR = 0.0 !LPM 08 JUN2015 SRFR is not used   
         IF (HMPC.LE.0.0) HMPC = 50.0
         
         ! Nitrogen uptake                  

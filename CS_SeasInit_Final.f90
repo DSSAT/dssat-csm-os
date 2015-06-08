@@ -248,7 +248,7 @@
             WRITE(fnumwrk,*)'  Rdgs   ',Rdgs
             WRITE(fnumwrk,*)'  Rresp  ',Rresp
             WRITE(fnumwrk,*)' Storage roots '
-            WRITE(fnumwrk,*)'  Srfr   ',Srfr
+            !WRITE(fnumwrk,*)'  Srfr   ',Srfr !LPM 08 JUN2015 SRFR is not used   
             !WRITE(fnumwrk,*)'  Dusri  ',Dusri  !LPM 05JUN2015 DUSRI is not used
             WRITE(fnumwrk,*)'  Hmpc   ',Hmpc
             WRITE(fnumwrk,*)' Nitrogen uptake concentration factors'
@@ -273,7 +273,7 @@
             WRITE(FNUMWRK,'(A17)')' BRANCH NODE NOS.'
             WRITE(FNUMWRK,'(A23)')'   BRANCH NODE #    ABV'
             !DO L = 1,MSTG                       !LPM 07MAR15 MSTG to PSX
-            DO L = 1,MSTG
+            DO L = 0,PSX
                 WRITE(FNUMWRK,'(I6,I10,2X,A5)')L,NINT(LNUMTOSTG(L)),PSABV(L)
             ENDDO
             

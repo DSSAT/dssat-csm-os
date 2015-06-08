@@ -221,7 +221,7 @@
         pd = -99
         !dusri = -99  !LPM 05JUN2015 DUSRI is not used
         llifa = -99 
-        srfr = -99 
+        !srfr = -99  !LPM 08 JUN2015 SRFR is not used   
         rdgs = -99 
         laxs = -99 
         rlwr = -99 
@@ -268,17 +268,17 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P9',pd(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B01ND',pdl(1))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B12ND',pdl(2))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B23ND',pdl(3))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B34ND',pdl(4))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B45ND',pdl(5))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B56ND',pdl(6))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B67ND',pdl(7)) !LPM 04MAR15 the .CUL file just has until B56ND, -99 could have an effect on the estimation of LAPOTX according with LNUM 
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B78ND',pdl(8))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B89ND',pdl(9))
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B23ND',pdl(3))!LPM 05JUN2016 B23ND to B89ND are not used
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B34ND',pdl(4))
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B45ND',pdl(5))
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B56ND',pdl(6))
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B67ND',pdl(7)) !LPM 04MAR15 the .CUL file just has until B56ND, -99 could have an effect on the estimation of LAPOTX according with LNUM 
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B78ND',pdl(8))
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B89ND',pdl(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LLIFA',llifa)
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'STFR',swfrs)!LPM 05JUN2016 STFR are not used
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SR#WT',srnow)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SRFR',srfr)
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXS',laxs)
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno) !LPM 05JUN2016 LAXNO LAXN2 are not used
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXN2',laxn2) 
@@ -339,7 +339,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
             !CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs) !LPM 05JUN2016 STFR are not used
             CALL CUREADR (CUDIRFLE,VARNO,'SR#WT',srnow)
-            CALL CUREADR (CUDIRFLE,VARNO,'SRFR',srfr)
+            !CALL CUREADR (CUDIRFLE,VARNO,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
             CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
             !CALL CUREADR (CUDIRFLE,VARNO,'LAXND',laxno) !LPM 05JUN2016 LAXNO LAXN2 are not used
             !CALL CUREADR (CUDIRFLE,VARNO,'LAXN2',laxn2)
@@ -491,7 +491,7 @@
         IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
         !IF (DUSRI.LT.0.0) CALL SPREADR (SPDIRFLE,'DUSRI',dusri) !LPM 05JUN2015 DUSRI is not used
         IF (LLIFA.LE.0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
-        IF (SRFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr)
+        !IF (SRFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
         IF (RDGS.LE.0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
         IF (LAXS.LE.0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
         IF (RLWR.LE.0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)

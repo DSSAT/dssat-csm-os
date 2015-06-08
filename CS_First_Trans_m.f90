@@ -6,9 +6,9 @@ Module CS_First_Trans_m
     
     !INTEGER,PARAMETER::NL   =  20 ! Maximum number of soil layers               ! (In ModuleDefs) 
     INTEGER,PARAMETER::DINX =   3 ! Disease number,maximum
-    INTEGER,PARAMETER::PSX  =  12 ! Principal stages,maximum !LPM 07MAR15 change to a maximum value of branching levels of 12 
+    INTEGER,PARAMETER::PSX  =  10 ! Principal stages,maximum !LPM 07MAR15 change to a maximum value of branching levels of 10 
     INTEGER,PARAMETER::SSX  =  20 ! Secondary stages,maximum
-    INTEGER,PARAMETER::KEYSTX = 9 ! Maximum number of key stages
+    INTEGER,PARAMETER::KEYSTX =10 ! Maximum number of key stages
     INTEGER,PARAMETER::DCNX =  10 ! Disease control #,maximum
     !INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts
     INTEGER,PARAMETER::LCNUMX=100 ! Maximum number of leaf cohorts LPM 23MAR15 Change for a more logical value lower than LNUMX
@@ -493,7 +493,7 @@ Module CS_First_Trans_m
     REAL    :: MDAYFR                  ! Maturity,fraction of day       #          ! (From SeasInit)  
     INTEGER :: MDOY                    ! Maturity day of year           d          ! (From SeasInit)  
     REAL    :: MJPERE                  ! Energy per Einstein (300-170)  MJ/E       ! (From RunInit)   
-    INTEGER :: MSTG                    ! Maturity stage(eg.black layer) #          ! (From SeasInit)  
+    !INTEGER :: MSTG                    ! Maturity stage(eg.black layer) #          ! (From SeasInit) !LPM 05JAN2015 MSTG is not used  
     REAL    :: NCRG                    ! N factor,root growth           ppm        ! (From SeasInit)  
     REAL    :: NDEM2                   ! N demand for growth>minimum    g/p        ! (From Growth)    
     REAL    :: NDEMMN                  ! N demand for growth at minimum g/p        ! (From Growth)    
@@ -868,7 +868,7 @@ Module CS_First_Trans_m
     REAL    :: SRADPREV                ! Solar radiation,previous day   MJ/m2      ! (From SeasInit)  
     REAL    :: SRANC                   ! Storage root N concentration   g/p        ! (From SeasInit)  
     !REAL    :: SRDAYFR                 ! Storage root fraction of day   #          ! (From Growth) !LPM 05 JUN2015 SRDAYFR is not used    
-    REAL    :: SRFR                    ! Storage root fraction,basic    #          ! (From SeasInit)  
+    !REAL    :: SRFR                    ! Storage root fraction,basic    #          ! (From SeasInit)!LPM 08 JUN2015 SRFR is not used     
     REAL    :: SRNAD                   ! Storage root N                 kg/ha      ! (From Integrate) 
     REAL    :: SRNAM                   ! Storage root N at maturity     kg/ha      ! (From SeasInit)  
     REAL    :: SRNDEM                  ! Storage root demand for N      g/p        ! (From SeasInit)  

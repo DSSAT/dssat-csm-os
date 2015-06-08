@@ -718,32 +718,21 @@ C         Branch to menu choice
 !       CSCGR cassava
         CASE ('CSCGR')
           WRITE(*,5941)  
-     &     PPS1, B01ND, B12ND, B23ND, B34ND, B45ND, B56ND,
-     &     SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
-     &     LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR
+     &     PPS1, B01ND, B12ND, SRNWT, HMPC, LA1S, 
+     &     LAXS, SLASS, LLIFA, LPEFR
+
 5941      FORMAT (12X,'0. End of changes ',//,
      1  12X,' 1. PPS1  ( 0.00 -   0.00).......................[',F7.3,/,
      2  12X,' 2. B01ND ( 10.0 -  100.0).......................[',F7.2,/,
      3  12X,' 3. B12ND ( 10.0 -  100.0).......................[',F7.2,/,
-     4  12X,' 4. B23ND ( 10.0 -  100.0).......................[',F7.2,/,
-     5  12X,' 5. B34ND ( 10.0 -  100.0).......................[',F7.2,/,
-     6  12X,' 6. B45ND ( 10.0 -  200.0).......................[',F7.2,/,
-     7  12X,' 7. B56ND ( 10.0 -  200.0).......................[',F7.2,/,
-     6  12X,' 8. SR#WT ( 0.20 -   0.35).......................[',F7.3,/,
-     6  12X,' 9. SRFR  ( 0.25 -   0.35).......................[',F7.3,/,
+     7  12X,' 8. SR#WT ( 0.20 -   0.35).......................[',F7.3,/,
      6  12X,'10. HMPC  ( 40.0 -   80.0).......................[',F7.3,/,
-     6  12X,'11. PHINT ( 15.0 -   30.0).......................[',F7.3,/,
      6  12X,'12. LA1S  (200.0 -  400.0).......................[',F7.2,/,
      6  12X,'13. LAXS  ( 1000 -   2000).......................[',F7.1,/,
-     6  12X,'14. LAXND ( 80.0 -  200.0).......................[',F7.2,/,
-     6  12X,'15. LAXN2 ( 80.0 -  200.0).......................[',F7.2,/,
-     7  12X,'16. LAFS  ( 20.0 -   50.0).......................[',F7.3,/,
-     7  12X,'17. LAFND (100.0 -  350.0).......................[',F7.2,/,
      7  12X,'18. SLAS  (100.0 -  400.0).......................[',F7.2,/,
-     7  12X,'19. LLIFA (300.0 - 1200.0).......................[',F7.1,/, !LPM redefine limit values
-     7  12X,'20. LPEFR (0.250 -  0.400).......................[',F7.3,/,
-     7  12X,'21. STFR  (0.250 -  0.450).......................[',F7.3,/)
-
+     7  12X,'19. LLIFA (300.0 - 1200.0).......................[',F7.1,/,  !LPM redefine limit values
+     7  12X,'20. LPEFR (0.250 -  0.400).......................[',F7.3,/)
+ 
           WRITE (*,5100)
 C
 C         Get menu choice
@@ -757,24 +746,13 @@ C         Branch to menu choice
           CASE( 1);  CALL GETREAL (PPS1  ,'PPS1 ', 0.00,  0.00)
           CASE( 2);  CALL GETREAL (B01ND ,'B01ND ', 10.0, 100.0)
           CASE( 3);  CALL GETREAL (B12ND ,'B12ND ', 10.0, 100.0)
-          CASE( 4);  CALL GETREAL (B23ND ,'B23ND ', 10.0, 100.0)
-          CASE( 5);  CALL GETREAL (B34ND ,'B34ND ', 10.0, 100.0)
-          CASE( 6);  CALL GETREAL (B45ND ,'B45ND ', 10.0, 200.0)
-          CASE( 7);  CALL GETREAL (B56ND ,'B56ND ', 10.0, 200.0)
-          CASE( 8);  CALL GETREAL (SRNWT ,'SR#WT ',0.200, 0.350)
-          CASE( 9);  CALL GETREAL (SRFR  ,'SRFR  ',0.250, 0.350)
-          CASE(10);  CALL GETREAL (HMPC  ,'HMPC  ', 40.0,  80.0)
-          CASE(11);  CALL GETREAL (PHINT ,'PHINT', 15.0,  30.0)
-          CASE(12);  CALL GETREAL (LA1S  ,'LA1S ',200.0, 400.0)
-          CASE(13);  CALL GETREAL (LAXS  ,'LAXS',1000.,2000.0)
-          CASE(14);  CALL GETREAL (LAXND ,'LAXND ', 80.0, 200.0)
-          CASE(15);  CALL GETREAL (LAXN2 ,'LAXN2', 80.0, 200.0)
-          CASE(16);  CALL GETREAL (LAFS  ,'LAFS', 20.0,  50.0)
-          CASE(17);  CALL GETREAL (LAFND ,'LAFND ',100.0, 350.0)
-          CASE(18);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
-          CASE(19);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) !LPM redefine limit values
-          CASE(20);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
-          CASE(21);  CALL GETREAL (STFR  ,'STFR ',0.250, 0.450)
+          CASE( 4);  CALL GETREAL (SRNWT ,'SR#WT ',0.200, 0.350)
+          CASE( 5);  CALL GETREAL (HMPC  ,'HMPC  ', 40.0,  80.0)
+          CASE( 6);  CALL GETREAL (LA1S  ,'LA1S ',200.0, 400.0)
+          CASE( 7);  CALL GETREAL (LAXS  ,'LAXS',1000.,2000.0)
+          CASE( 9);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
+          CASE(10);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) !LPM redefine limit values
+          CASE(11);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
         END SELECT
 
     
