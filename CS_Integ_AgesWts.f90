@@ -169,7 +169,7 @@
                     ENDIF
                 
                 ELSE 
-                    DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
+                    IF (DGLF(BR,LF).LT.LLIFGD) DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
                 ENDIF
 
                 IF (LNUMG.GT.0.0.AND.BR.EQ.BRSTAGE.AND.LF.EQ.LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
