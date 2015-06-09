@@ -21,37 +21,34 @@ $CULTIVARS:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 ! present merely to allow the experiments to be run. A user should spend time calibrating for                                                                    
 ! his/her own data. 
 
-!                                    PPSEN ------------ BRANCHING ------------ - STORAGE ROOTS - ---- LEAF PRODUCTION,SIZES,SP.AREA,LONGEVITY,PETIOLES -----  STEM  
-@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND SR#WT  HMPC  LA1S  LAXS  SLAS LLIFA LPEFR
-!                                        1     2     3     8    10    12    13    18    19    20
-!                                            Nd#   Nd#   #/g     %   cm2   cm2 cm2/g    Tu    fr         
-UC0002 MCol-22              . 990002     0 650.0 820.0  0.25    50    50   300   180   900  0.33
-UC0004 MMEX-59              . 990001     0 500.0 500.0  0.25    50    50   120   180   900  0.33
-UC0006 MCol-1684            . 990001     0 500.0 530.0  0.25    50    50   200   180   600  0.33
-UC0007 MVen-77              . 990001     0 700.0 750.0  0.25    50    50   400   180   800  0.33
-UC0008 MPtr-26              . 990003     0 700.0 750.0  0.25    50    50   400   180   800  0.33
-UC0009 MCol-638             . 990001     0 700.0 750.0  0.25    50    50   400   180   800  0.33
+!                                    PPSEN -BRANCHING -STORA.ROOTS- -------------- LEAVES ------------ -- STEM ---  
+@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND SR#WT  HMPC  LA1S  LAXS  SLAS LLIFA LPEFR LNSLP NODWT NODLT
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13
+!                                             Tu    Tu   #/g     %   cm2   cm2 cm2/g    Tu    fr     #     g    cm
+UC0002 MCol-22              . 990002     0 1100. 1000.  0.25    50    50   300   180   900  0.33  1.20  5.60   2.0
+UC0004 MMEX-59              . 990001     0 500.0 500.0  0.25    50    50   120   180   900  0.33  1.20  5.60   2.0
+UC0006 MCol-1684            . 990001     0 370.0 506.0  0.25    50    50   200   180   600  0.33  1.20  5.60   2.0
+UC0007 MVen-77              . 990001     0 1023. 980.0  0.25    50    50   400   180   800  0.33  1.20  5.60   2.0
+UC0008 MPtr-26              . 990003     0 1034. 980.0  0.25    50    50   400   180   800  0.33  1.20  5.60   2.0
+UC0009 MCol-638             . 990001     0 700.0 750.0  0.25    50    50   400   180   800  0.33  1.20  5.60   2.0
                                                                     
 
 ! COEFF       DEFINITION
 ! ========    ==========
-! BxyND       Duration from branch x to branch y (ie.tier x,node number)
-! ECO#        Ecotype code for this cultivar,points to entry in the ECO file
-! EXP#        Number of experiments used for calibration.
-! HMPC        Harvest product moisture content (%)
-! LA1S        Area/leaf (cm2) of the first leaves when growing without stress.
-! LAFND       Node # at which the end of cycle area/leaf reached (#)
-! LAFS        End of cycle area/leaf (cm2)
-! LAXND       Node # at which maximum potential area/leaf reached (#)
-! LAXN2       Node # at which potential area/leaf begins to decline (#)
-! LAXS        Area/leaf at maximum area/leaf (cm2)
-! LLIFA       Leaf life,from full expansion to start senescence (Thermal units)
-! LPEFR       Leaf petiole fraction (fr of lamina+petiole)
-! PHINT       Interval between leaf tip appearances for first leaves (oC.d)
-! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
-! SLAS        Specific leaf lamina area when crop growing without stress (cm2/g)
-! SRFR        Fr.of assimilate designated for tops sent to storage root (#)
-! SR#W        Storage root number per unit canopy weight at initiation (#/g)
-! STFR        Stem fraction of assimilate destined for canopy growth (#)
 ! VAR#        Identification code or number for the specific cultivar.
 ! VAR-NAME    Name of cultivar.
+! EXP#        Number of experiments used for calibration.
+! ECO#        Ecotype code for this cultivar,points to entry in the ECO file
+! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
+! BxyND       Duration from branch x to branch y (ie.tier x,node number)
+! SR#WT       Storage root number per unit canopy weight at initiation (#/g)
+! HMPC        Harvest product moisture content (%)
+! LA1S        Area/leaf (cm2) of the first leaves when growing without stress.
+! LAXS        Area/leaf at maximum area/leaf (cm2)
+! SLAS        Specific leaf lamina area when crop growing without stress (cm2/g)
+! LLIFA       Leaf life,from full expansion to start senescence (Thermal units)
+! LPEFR       Leaf petiole fraction (fr of lamina+petiole)
+! LNSLP       Slope for leaf production (0.8 low rate, 1.0 medium rate, 1.2 high rate)
+! NODWT       Node weight for the first stem of the shoot before branching at 3400 ˚Cd
+! NODLT       Mean internode length (cm) for for the first stem of the shoot before branching when is lignified 
+

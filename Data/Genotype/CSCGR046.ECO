@@ -19,28 +19,30 @@ $ECOTYPES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 ! in the incoming solar and sky components.
 
 *ECOTYPE:CSCAS046
-@ECO#  ECONAME.......... PARUE HTSTD SRN%S BR1FX BR2FX BR3FX BR4FX BR5FX BR6FX
-!                            1     2     4     5     6     7     8     9    10
-!                         g/MJ    cm     %    F#    F#    F#    F#    F#    F#
-999991 MINIMA             2.00   100   .25     1     1     1     1     1     1
-999992 MAXIMA             3.20   400  1.00     4     4     4     4     4     4
-                                                                              
-DFAULT DEFAULT            2.80   200   .65     3     3     3     3     3     3
-                                          
-990001 STANDARD1          2.10   200   .65     3     3     3     3     3     3
-990002 STANDARD2          2.80   200   .65     3     3     3     3     3     3
-990003 STANDARD3          2.30   200   .65     3     3     3     3     3     3
-990004 STANDARD4          2.30   200   .65     3     3     3     3     3     3
+@ECO#  ECONAME.......... PARUE HTSTD TBLSZ SRN%S BR1FX BR2FX BR3FX BR4FX BR5FX BR6FX
+!                            1     2     3     4     5     6     7     8     9    10
+!                         g/MJ    cm    ˚C     %    F#    F#    F#    F#    F#    F#
+999991 MINIMA             2.00   100  12.0   .25     1     1     1     1     1     1
+999992 MAXIMA             3.20   400  12.0  1.00     4     4     4     4     4     4
+                                                                                    
+DFAULT DEFAULT            2.80   200  12.0   .65     3     3     3     3     3     3
+                                                
+990001 STANDARD1          2.10   200  12.0   .65     3     3     3     3     3     3
+990002 STANDARD2          2.80   200  12.0   .65     3     3     3     3     3     3
+990003 STANDARD3          2.30   200  12.0   .65     3     3     3     3     3     3
+990004 STANDARD4          2.30   200  12.0   .65     3     3     3     3     3     3
 
 ! COEFF   DEFINITION
 ! =====   ==========
-! BRxFX   Branch number per fork at fork x,maximum  (#)
 ! ECO#    Ecotype code (text)
 ! ECONAME Ecotype name (text)
 ! PARUE   PAR conversion factor,standard (g dry matter/MJ)
+! HTSTD   Standard canopy height (cm)
+! TBLSZ   Base temperature for leaf development (˚C)
+! BRxFX   Branch number per fork at fork x,maximum  (#)
 ! DUSRI   Degree days at which storage root number determined (oC.d)
 ! SRN%S   Storage root standard N concentration (% dm)
-! HTSTD   Standard canopy height (cm)
+
 
 ! Variables that not used but for which coding is present in the program.
 ! SWFRX   Stem fraction,maximum (fr)
