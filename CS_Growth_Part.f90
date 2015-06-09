@@ -13,7 +13,6 @@
     
         USE ModuleDefs
         USE CS_First_Trans_m
-        USE CS_Cultivar_Coeffs_m  !LPM 11APR15 test to include future coefficients
     
         IMPLICIT NONE
         
@@ -300,10 +299,10 @@
             DO BR = 0, BRSTAGE   
                 IF (BR.EQ.0) THEN
                     NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
-                        (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*nod_cul)
+                        (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
                 ELSE
                     NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((BRDAE(BR)/171.64793)**-2.2115103)/ &
-                        (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*nod_cul)
+                        (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
                 ENDIF
             
                 DO LF =1, LNUMSIMSTG(BR) 
@@ -444,7 +443,7 @@
         !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
         !in the planting stick (In the future it could be modified as an input in the X-file)
         GROST = GROSTCR
-        GROCR = NODEWTGB(0)*SPRL/nod_length                   
+        GROCR = NODEWTGB(0)*SPRL/NODLT                   
         CRWTP = CRWTP + GROCR                 !LPM 23MAY2015 Added to keep the potential planting stick weight
         
                           

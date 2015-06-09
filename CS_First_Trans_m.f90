@@ -1,4 +1,4 @@
-Module CS_First_Trans_m
+﻿Module CS_First_Trans_m
     !CHARACTER(LEN=1),PARAMETER::SLASH = '\'                                     ! (From SeasInit) (In ModuleDefs) 
     CHARACTER(LEN=1),PARAMETER::BLANK = ' '                                     ! (From SeasInit)                
     CHARACTER(LEN=3),PARAMETER::DASH = ' - '                                    ! (From Output)
@@ -527,6 +527,8 @@ Module CS_First_Trans_m
     REAL    :: NODEWT(0:PSX,0:LCNUMX)  ! Node wt  by cohort             g/p        ! LPM 11APR15
     REAL    :: NODEWTG(0:PSX,0:LCNUMX) ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 
     REAL    :: NODEWTGB(0:PSX)         ! Node wt growth by br.level     g/d/node   ! LPM 02MAR15 
+    REAL    :: NODLT                   ! internode length Br=0 lignified cm        ! LPM 08JUN2015
+    REAL    :: NODWT                   ! Node wt Br=0  at 3400 ˚Cd      g/node     ! LPM 08JUN2015
     INTEGER :: NOUTPG                  ! Number for growth output file  #          ! (From RunInit)   
     INTEGER :: NOUTPG2                 ! Number for growth output file2 #          ! (From RunInit)   
     INTEGER :: NOUTPGF                 ! Number for growth factors file #          ! (From RunInit)   
@@ -937,6 +939,7 @@ Module CS_First_Trans_m
     !REAL    :: SWFRPREV                ! Stem fraction,actual,previous  #          ! (From Output) !LPM 06JUN2015 SWFR is not used  
     REAL    :: SWPRTIP                 ! Soil water potential,root tip  #          ! (From Growth)    
     REAL    :: SWPSD                   ! Soil water potential at seed   #          ! (From Growth)    
+    REAL    :: TBLSZ                   ! Base temp. for leaf develop  (˚C)         !LPM 09JUN2015
     REAL    :: TCAN                    ! Canopy temperature             C          ! (From SeasInit)  
     REAL    :: TCDIF                   ! Canopy temperature - air temp  C          ! (From Output)    
     INTEGER :: TDATANUM                ! Number of data from t-file     #          ! (From Output)    

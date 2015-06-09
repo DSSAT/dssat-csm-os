@@ -203,7 +203,7 @@ C-LPM  Add CIAT cassava model
       CASE ('CSCGR')
           READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
      &      PPS1, B01ND, B12ND, SRNWT, HMPC, LA1S, LAXS, 
-     &      SLASS, LLIFA, LPEFR, LNSLP, PLAINTXT 
+     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
 
           
 !     Ceres-wheat: wheat, barley **
@@ -354,7 +354,7 @@ C-----------------------------------------------------------------------
   810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010
 C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
-  821 FORMAT (A6,1X,A16,7X,A6,11F6.0,A)         !CSCGR        06/05/2015
+  821 FORMAT (A6,1X,A16,7X,A6,13F6.0,A)         !CSCGR        06/05/2015
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
 
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07

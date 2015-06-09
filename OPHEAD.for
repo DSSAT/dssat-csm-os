@@ -732,16 +732,16 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
          WRITE (HEADER(I),'(A,A)')
      &     "  PPS1 B01ND B12ND SR#WT  HMPC "
           I=I+1
-          WRITE (HEADER(I),'(F6.2,2F6.1,2F6.2)') 
+          WRITE (HEADER(I),'(F6.2,2F6.0,2F6.2)') 
      &     PPS1, B01ND, B12ND, SRNWT, HMPC
          I=I+1
          WRITE (HEADER(I),'(A,A)') 
      &     "  LA1S  LAXS  SLAS",
-     &     " LLIFA LPEFR LNSLP"
+     &     " LLIFA LPEFR LNSLP NODWT NODLT"
         I=I+1
-         WRITE (HEADER(I),'(F6.1,F6.0,2F6.1,2F6.2)') 
+         WRITE (HEADER(I),'(F6.1,F6.0,2F6.1,3F6.2, 1F6.1)') 
      &    LA1S, LAXS, SLASS, LLIFA,
-     &    LPEFR, LNSLP
+     &    LPEFR, LNSLP, NODWT, NODLT
        I=I+1
 !       Print optional extra stuff from ecotype file
         LENGTH = LenString(PLAINTXT)

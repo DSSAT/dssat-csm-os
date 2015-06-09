@@ -719,12 +719,12 @@ C         Branch to menu choice
         CASE ('CSCGR')
           WRITE(*,5941)  
      &     PPS1, B01ND, B12ND, SRNWT, HMPC, LA1S, 
-     &     LAXS, SLASS, LLIFA, LPEFR, LNSLP
+     &     LAXS, SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT
 
 5941  FORMAT (12X,'0. End of changes ',//,
      1  12X,' 1. PPS1  ( 0.00 -   0.00).......................[',F7.3,/,
-     2  12X,' 2. B01ND ( 10.0 -  100.0).......................[',F7.2,/,
-     3  12X,' 3. B12ND ( 10.0 -  100.0).......................[',F7.2,/,
+     2  12X,' 2. B01ND ( 10.0 -  100.0).......................[',F6.0,/,
+     3  12X,' 3. B12ND ( 10.0 -  100.0).......................[',F6.0,/,
      4  12X,' 4. SR#WT ( 0.20 -   0.35).......................[',F7.3,/,
      5  12X,' 5. HMPC  ( 40.0 -   80.0).......................[',F7.3,/,
      6  12X,' 6. LA1S  (200.0 -  400.0).......................[',F7.2,/,
@@ -732,7 +732,9 @@ C         Branch to menu choice
      8  12X,' 8. SLAS  (100.0 -  400.0).......................[',F7.2,/,
      9  12X,' 9. LLIFA (300.0 - 1200.0).......................[',F7.1,/,  !LPM redefine limit values
      1  12X,'10. LPEFR (0.250 -  0.400).......................[',F7.2,/,
-     2  12X,'11. LNSLP (0.60 -    1.60).......................[',F7.2,/)
+     2  12X,'11. LNSLP (0.60 -    1.60).......................[',F7.2,/,
+     3  12X,'12. NODWT (3.00 -    7.00).......................[',F7.2,/,
+     4  12X,'13. NODLT (1.00 -    4.00).......................[',F7.1,/)
  
           WRITE (*,5100)
 C
@@ -755,6 +757,8 @@ C         Branch to menu choice
           CASE( 9);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) !LPM redefine limit values
           CASE(10);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
           CASE(11);  CALL GETREAL (LNSLP ,'LNSLP ', 0.60, 1.60)
+          CASE(12);  CALL GETREAL (NODWT ,'NODWT ', 3.00, 7.00)
+          CASE(13);  CALL GETREAL (NODLT ,'NODLT ', 1.00, 4.00)
         END SELECT
 
     

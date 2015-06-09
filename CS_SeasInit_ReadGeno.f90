@@ -16,7 +16,6 @@
 
         USE ModuleDefs
         USE CS_First_Trans_m
-        USE CS_Cultivar_Coeffs_m
         
         IMPLICIT NONE
         
@@ -303,6 +302,10 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NH4MN',nh4mn)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'HMPC',hmpc)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LPEFR',lpefr)
+            !New (June 2015) leaf and node development
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LNSLP',lnslp)
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NODWT',nodwt)
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NODLT',nodlt)
         ELSE
             IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
             CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
@@ -364,6 +367,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'NO3MN',no3mn)
             CALL CUREADR (CUDIRFLE,VARNO,'NH4MN',nh4mn)
             CALL CUREADR (CUDIRFLE,VARNO,'HMPC',hmpc)
+
         ENDIF     ! End Cultivar reads
         
         !-----------------------------------------------------------------------------------------------------------------------
@@ -385,6 +389,7 @@
         !CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl) !LPM 05JUN2015 SWFRL is not used 
         CALL ECREADR (ECDIRFLE,ECONO,'SLACF',lawcf)
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
+        CALL ECREADR (ECDIRFLE,ECONO,'TBLSZ',tblsz)
         CALL ECREADR (ECDIRFLE,ECONO,'BR1FX',brfx(1))
         CALL ECREADR (ECDIRFLE,ECONO,'BR2FX',brfx(2))
         CALL ECREADR (ECDIRFLE,ECONO,'BR3FX',brfx(3))
@@ -547,7 +552,7 @@
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
         
         TRDV3 = TRLFG               ! LPM 21MAR15 new variable to change base temperature for leaf size
-        TRDV3(1) = Tb_cul_leaf_size ! LPM 21MAR15 new variable to change base temperature for leaf size
+        TRDV3(1) = TBLSZ            ! LPM 21MAR15 new variable to change base temperature for leaf size
         CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
         IF (diffacr(1).LT.0.0) CALL SPREADRA (SPDIRFLE,'DIFFR','3',diffacr)
         CALL SPREADCA (SPDIRFLE,'PSNAME','20',psname)
