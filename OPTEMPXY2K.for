@@ -304,9 +304,9 @@ C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2,A)
      &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
      &      PPS1, B01ND, B12ND, SRNWT, HMPC, 
      &      LA1S, LAXS, 
-     &      SLASS, LLIFA, LPEFR, TRIM(PLAINTXT)
+     &      SLASS, LLIFA, LPEFR, LNSLP, TRIM(PLAINTXT)
   167     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &      F6.2,2F6.1,1F6.2,2F6.1,F6.0,1F6.1,1F6.0,1F6.2,A)   !LPM modified to read LLIFA greater than 999
+     &      F6.2,2F6.1,1F6.2,2F6.1,F6.0,1F6.1,1F6.0,2F6.2,A)   !LPM modified to read LLIFA greater than 999
 C-LPM       F6.2,6F6.1,2F6.2,3F6.1,F6.0,7F6.1,F6.2,A) 
 C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,2F6.2,A)
       CASE ('SCCAN')

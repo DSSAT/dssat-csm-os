@@ -309,8 +309,8 @@
                 DO LF =1, LNUMSIMSTG(BR) 
                     NODEWTG(BR,LF) = NODEWTGB(BR)
                     NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
-                    GROSTP = GROSTP + NODEWTG(BR,LF)
-                    STWTP = STWTP + NODEWT(BR,LF)
+                    GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
+                    STWTP = STWTP + (NODEWT(BR,LF)*BRNUMST(BR))
                 ENDDO
             ENDDO
         ENDIF

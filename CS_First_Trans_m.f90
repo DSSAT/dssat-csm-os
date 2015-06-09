@@ -450,6 +450,7 @@ Module CS_First_Trans_m
     REAL    :: LNPCS(0:1)              ! Leaf N conc,standard,stage     %          ! (From SeasInit)  
     REAL    :: LNPH                    ! Leaf N harvested               g/p        ! (From Growth)    
     REAL    :: LNPHC                   ! Leaf N harvested,cumulative    g/p        ! (From SeasInit)  
+    REAL    :: LNSLP                   ! Slope for leaf production      #          ! LPM 08JUN2015 New cultivar coefficient 
     REAL    :: LNUM                    ! Leaf number,Haun stage         #          ! (From SeasInit)  
     INTEGER :: LNUMCOL                 ! Leaf number column             #          ! (From Output)    
     REAL    :: LNUMEND                 ! Leaf number,Haun stage,end day #          ! (From SeasInit)  
