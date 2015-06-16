@@ -158,11 +158,11 @@
         !b_slope_lsize = MAX(0.0,0.0375-(0.0071*((TRDV1(3)-TRDV1(2))-TT20)))       ! LPM 28FEB15
         
                 
-        IF (TTCUM.LT.1000) THEN
-            LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) =  LAXS*((0.09*TTCUM/100)+0.10)                  ! LPM 07MAR15 
+        IF (TTCUM.LT.900) THEN
+            LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) =  LAXS*((TTCUM*1E-3)+0.10)                  ! LPM 07MAR15 
         ELSE
-            IF (TTCUM-TT.LT.1000) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
-            LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS*((0.09*10)+0.10)/((0.01+(1.154582E-4*(DAE-DALSMAX)))*100)
+            IF (TTCUM-TT.LT.900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
+            LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(4.154582E-2*(DAE-DALSMAX))))
         ENDIF
             ! LAH Sept 2012 Eliminate fork # effect on leaf size 
         ! Adjust for fork#/shoot
