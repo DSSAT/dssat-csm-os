@@ -12,6 +12,7 @@ C=======================================================================
      &    LAI, LFWT, MDATE, NLAYR, NSTRES, PLTPOP,        !Input
      &    RLV, ROOTN, RTDEP, RTWT, SATFAC, SENESCE,       !Input
      &    PETWT, STOVN, STOVWT, SWFAC, CORMN,             !Input
+     &    MCORMWT, CORMLNO,                               !Input
      &    TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)             !Input
 
 !-----------------------------------------------------------------------
@@ -26,7 +27,6 @@ C=======================================================================
       CHARACTER*30 FILEIO
       CHARACTER*120 NITHEAD(4)
       CHARACTER*250 GROHEAD(4), TEXT
-      !CHARACTER*6, PARAMETER :: ERRKEY = 'OPGROW'
 
       INTEGER DAP, DAS, DOY, DYNAMIC, FROP
       INTEGER I, ISTAGE, L, NLAYR
@@ -34,20 +34,20 @@ C=======================================================================
       INTEGER YEAR, YRDOY, MDATE, YRPLT 
  
       REAL LAI, XLAI,PETWT,SDWT,WTLF,BIOMAS,RTWT,PODWT,SEEDNO
-      REAL SLA,PCNL,TURFAC,CANHT,CANWH,RLV(NL),HI,SHELPC    !,SHELLW
-      REAL PODNO,RTDEP,NSTRES,SWFAC,SATFAC,PLTPOP,GM2KG !,SDSIZE
-      REAL FRYLD,DEADLF, GRAINN, DTT, CORMWT
+      REAL SLA,PCNL,TURFAC,CANHT,CANWH,RLV(NL),HI,SHELPC
+      REAL PODNO,RTDEP,NSTRES,SWFAC,SATFAC,PLTPOP,GM2KG 
+      REAL FRYLD,DEADLF, GRAINN, DTT, CORMWT, MCORMWT, CORMLNO
 
-      REAL LFWT, PCNGRN, PCNRT  !, GPP
+      REAL LFWT, PCNGRN, PCNRT 
       REAL PCNST, PCNVEG, ROOTN
       REAL STOVN, STOVWT
       REAL CORMN, WTNCAN
-      REAL WTNLF, WTNSD, WTNSH, WTNST    !, WTNGRN, WTNRT
+      REAL WTNLF, WTNSD, WTNSH, WTNST 
       REAL WTNUP, WTNVEG
 
       REAL CUMSENSURF, CUMSENSOIL, CUMSENSURFN, CUMSENSOILN  
 
-      LOGICAL FEXIST    !, FIRST
+      LOGICAL FEXIST  
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -89,7 +89,7 @@ C-----------------------------------------------------------------------
      &-> Degree',
 
 !      DATA GROHEAD(3)/
-     &'!<-Date->   sim plant Stage Index Mg/Ha  Leaf  Stem Corm   Root  
+     &'!<-Date->   sim plant Stage Index Mg/Ha  Leaf Petiole Corm Root  
      &Crop  Tops DLeaf Index kg/ha   No.  Phot  Grow Exces           %  
      &   %  Area     m     m     m                                      
      &     Days',
@@ -213,7 +213,6 @@ C-----------------------------------------------------------------------
       ENDDO
 
 !     Compute reported growth variables
-!      RSTAGE = REAL (ISTAGE)
       SDWT   = CORMWT           !SDWT used by OPHARV, OPPHO and OPSEQ
       WTLF   = LFWT   * PLTPOP !WTLF used by OPNIT, OPPHO and OPOPS
 
@@ -223,7 +222,6 @@ C-----------------------------------------------------------------------
         SLA  = 0.0
       ENDIF
 
-!     SEEDNO = GPSM               !SEEDNO used by OPHARV
       PODWT  = 0.0
       PODNO = 0.0
 
@@ -239,8 +237,7 @@ C-----------------------------------------------------------------------
         PCNL = 0.0
       ENDIF
 
-!      WTNUP = WTNUP + TRNU * PLTPOP       !g[N]/m2 
-!   g[N]/m2 =   g[N]/plant * plant/m2
+
 C
 C     GM2KG converts gm/plant to kg/ha
 C
@@ -249,20 +246,16 @@ C
       IF (PODWT .GT. 0.1) THEN
         SHELPC = SDWT*100.0/PODWT
       ENDIF
-      !SHELLW = PODWT - SDWT
-      !SDSIZE = 0.0
-      !IF (SEEDNO .GT. 0.0) THEN
-      !  SDSIZE = SDWT*PLTPOP/SEEDNO*1000.0
-      !ENDIF
+
 
 !     Local variable HI used in OPHARV with different formula
       HI = 0.0
       IF (BIOMAS .GT. 0.0 .AND. SDWT .GE. 0.0) THEN
-        HI = SDWT*PLTPOP/BIOMAS
+        HI = CORMWT/BIOMAS          ! 12/5/14 BIOMAS AND CORMWT IN G/PLANT
       ENDIF
 !      YIELD  = CORMWT*10.*PLTPOP   
 !      FRYLD = (YIELD/1000.)/0.2    
-      FRYLD = (CORMWT*10.*PLTPOP/1000.)/0.2   ! Fresh yield
+      FRYLD = (CORMWT*GM2KG/1000.)* 3  ! 12/5/14 Fresh yield with 200% moisture
 
 !---------------------------------------------------------------------------
 !     Compute reported plant N variables
@@ -279,7 +272,6 @@ C
       ENDIF
 
       WTNSD = GRAINN * PLTPOP
-      !WTNRT = ROOTN * PLTPOP        ! Is this right?
       WTNSH = 0.0
       IF (LFWT*PLTPOP .GT. 0.0) THEN
         PCNL = WTNLF /( LFWT * PLTPOP) * 100.0
@@ -298,7 +290,6 @@ C
       ENDIF
 
       WTNVEG  = (WTNLF + WTNST)
-      !WTNGRN  = (WTNSH + WTNSD)
       IF ((WTLF+PETWT) .GT. 0.0) THEN
         PCNVEG = (WTNLF+WTNST)/(WTLF+(PETWT*PLTPOP))*100.0
       ELSE
@@ -323,10 +314,10 @@ C
 !       PlantGro.out file
         IF (IDETG .EQ. 'Y') THEN
           WRITE (NOUTDG,400)YEAR, DOY, DAS, DAP, ISTAGE, LAI, FRYLD,
-     &        NINT(WTLF*10.0), NINT(PETWT*GM2KG), NINT(CORMWT*GM2KG),
-     &        NINT(RTWT*GM2KG), NINT(BIOMAS*10.0),
+     &        NINT(LFWT*GM2KG), NINT(PETWT*GM2KG), NINT(CORMWT*GM2KG),
+     &        NINT(RTWT*GM2KG), NINT(BIOMAS*GM2KG),
      &        NINT(WTLF*10.0)+NINT(PETWT*GM2KG), NINT(DEADLF*GM2KG), HI,
-     &        NINT(PODWT*GM2KG), NINT(PODNO), 1.0-SWFAC, 1.0-TURFAC,
+     &        NINT(MCORMWT*GM2KG), NINT(CORMLNO), 1.0-SWFAC, 1.0-TURFAC,
      &        SATFAC, 1.0-NSTRES, PCNL, SHELPC, SLA, CANHT, CANWH, 
      &        (RTDEP/100), (RLV(I),I=1,5),DTT
  400      FORMAT (1X,I4,1X,I3.3,3(1X,I5),1X,F5.3,1X,F5.1,7(1X,I5),
@@ -337,14 +328,6 @@ C
 C-----------------------------------------------------------------------
 !       From OPNIT.OUT
         IF (ISWNIT .EQ. 'Y') THEN
-!          WRITE (NOUTPN,300) YEAR, DOY, DAS, DAP, (WTNCAN*10.0),
-!     &            (WTNSD*10.0), (WTNVEG*10.0), PCNGRN, PCNVEG,
-!!     &            (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0),
-!     &            WTNUP, (WTNLF*10.0), (WTNST*10.0), !WTNUP in kg/ha
-!     &            PCNL, PCNST, PCNRT
-!     &    ,CUMSENSURFN, CUMSENSOILN     
-! 300      FORMAT (1X,I4,1X,I3.3,2(1X,I5),3(1X,F5.1),2(1X,F5.2),1X,F6.1,
-!     &        2(1X,F5.1),3(1X,F5.2))
           WRITE (NOUTPN,300) YEAR, DOY, DAS, DAP, WTNUP, (WTNCAN*10.0),
      &            (WTNVEG*10.0), (WTNLF*10.0), (WTNST*10.0), 
      &            (WTNSD*10.0), PCNGRN, PCNVEG,
