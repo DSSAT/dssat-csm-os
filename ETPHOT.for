@@ -251,8 +251,8 @@ C           previous line added by Bruce Kimall on 9MAR15
                TSRF(I) = TA
                TSRFN(I) = TA
             ENDDO
-          SRFTEMP = TSRFN(3)    !LPM 04DEC14 to include the surface temperature as output
-          CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)  !LPM
+            SRFTEMP = TSRFN(3)    !LPM 04DEC14 to include the surface temperature as output
+            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)  !LPM
           
           CALL ROOTWU(SEASINIT,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
@@ -514,7 +514,8 @@ C       The following 8 variales added by Bruce Kimball on 1Dec2014
 
             ENDIF
             !     Print soil temperature data in STEMP.OUT
-            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+            !CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+            ! BAK 8Jun15 above line commented out because soil output seems to be called too much
           ENDIF
 
 C       Remember midnight values
@@ -676,7 +677,10 @@ C         previous five output lines added by Bruce Kimball DEC14
 C           previous line added by Bruce Kimall on 9MAR15
       ENDIF
       
-      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+        IF(MEEVP .EQ. "Z") THEN
+            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+            ENDIF
+!      BAK 8Jun15 Added the IF statement for call to OPSTEMP
 
 !***********************************************************************
 !***********************************************************************
