@@ -67,7 +67,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
-!       4.6.0.45 chp 06/17/2015 Summary.OUT - fixed problems with environmental summary outputs
+!       4.6.0.46 chp 06/17/2015 Summary.OUT - fixed problems with environmental summary outputs
+!       4.6.0.45 vsh 06/16/2015 added Tony's files; Added Taro files
 !       4.6.0.44 chp 01/12/2015 CSCER Evaluate.OUT remove headers
 !                               OPSUM improved handling of "-99" values
 !                               Rice - Ceres & ORYZA - output N uptake

@@ -1,5 +1,4 @@
-$SPECIES:WHCRP046.010314   Last edit:010314 
-
+$SPECIES:WHCRP046.010115   Last edit:231214 
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
 ! They have been developed from 'parameters' embedded in the code of
@@ -129,24 +128,20 @@ $SPECIES:WHCRP046.010314   Last edit:010314
 @ TKGF
   45.0
 ! Temperature responses
+! TRGEM as Parent & Tardieu,2012; Trdv1 same
 ! AFRC vernalization=-4,3,10,17; Reinink=-1,0,4,8,9
-@RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR TRGFW xRGFW TRGFN xRGFN  
-!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
-     0     1     0     1     2     0     0     0    -5    -5     0     0     0     0 
-   1.0    20    20    25    30    20    10     5     0     0     8    16     8    16 
-   1.0    35    35    35    50    35    20    25     7     5    20    35    20    35
-     0    45    45    45    60    45    35    35    15    10    40    45    40    45
-@RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR XRGFW TRGFN  
-!    0     1     0     1     0     1     0     0    -5    -5     0     0 
-!  1.0    26    20    30    30    20    10     5     0     0    10    16 
-!  1.0    50    35    50    50    35    20    25     7     5    25    35
-!    0    60    45    60    60    45    35    35    15    10    35    45
+@RRATE TRGEM TRDV1 TRDV2 TRDV7 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
+!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
+     0     1     0     1     4     0     0    -5    -5     0   -70 
+   1.0    25    25    30    35    10     5     0     0     8    30
+   1.0    30    30    35    40    20    25     7     5    20    45
+     0    40    40    45    50    35    35    15    10    40    50
 
 ! WATER loss,uptake,etc.
 ! Evapotranspiration (Resistances only used in stand-alone Cropsim,not CSM)
-@ RATM RCROP EORATIO ! Atmospheric,canopy resistances;FAO formula factor
-!  s/m   s/m     Rel
-   300   150     1.0
+@ RATM RCROP EORAT ! Atmospheric,canopy res.;FAO-PenM formula factor
+!  s/m   s/m   Rel
+   300   150   1.0
 ! Water uptake (RWULF only used in stand-alone Cropsim)
 @RWUPM RWUMX ! Min.pore size for max.uptake,Max uptake rate
 !   fr cm3/cm   
@@ -166,9 +161,9 @@ $SPECIES:WHCRP046.010314   Last edit:010314
   0.50  0.25
 
 ! NITROGEN uptake,distribution,etc.
-@NH4MN NO3MN
-!mg/Mg mg/Mg
-   0.5   0.5 
+@NH4MN NO3MN RTNUP
+!mg/Mg mg/Mg mg/cm
+   0.5   0.5 0.006
 ! N demand 
 @NTUPF  ! Fraction of deficit that can be filled per day
 ! fr/d
@@ -180,7 +175,7 @@ $SPECIES:WHCRP046.010314   Last edit:010314
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
 !    %     %     %     %     %     %
    6.0  0.75  2.50  0.65  2.00  1.50                               
-   3.0  0.55  2.00  0.45  1.70  1.25                               
+   2.5  0.55  0.50  0.45  1.70  1.25                               
 ! N distribution/mobilization
 @NLAB% ! %N that labile 
 !    %
@@ -227,7 +222,7 @@ $SPECIES:WHCRP046.010314   Last edit:010314
 ! DI_NAME Common name for disease (text)
 ! DLDUR   Latent period duration (Bd)
 ! DSDUR   Sporulating period duration (Bd)
-! EORATIO Increase in p.evap with LAI (<6);FAO-56 Penman ref (ratio) 
+! EORAT   Increase in p.evap with LAI (<6);FAO-56 Penman ref (ratio) 
 ! GGPHE   Grain growth ending stage (GrowthStage)
 ! GGPHS   Grain growth starting stage (GrowthStage)
 ! GLIG%   Grain lignin (%)
@@ -299,9 +294,11 @@ $SPECIES:WHCRP046.010314   Last edit:010314
 ! RSFPL   Reserves concentration,lower bound for photosynthesis effect (fr)
 ! RSFPU   Reserves concentration,upper bound for photosynthesis effect (fr)
 ! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
+! RTNUP   NO3 uptake/root length  (mg N/cm.day)
 ! RTUFR   Max fraction root wt useable for new leaves (fr)
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
 ! RWUPM   Root water upake,minimum pore size for maximum uptake (fr SAT-DUL)
+!         (Note: RWUPM = PORMIN in CSM modules)                                   
 ! SAWS    Stem area/weight ratio,standard (cm2/g)
 ! SDDUR   Seed duration if used only for roots (Standard day)
 ! SDN%    Seed N (%)
@@ -357,3 +354,4 @@ $SPECIES:WHCRP046.010314   Last edit:010314
 ! WFSF    Water factor,trigger for final senescence (fr)
 ! WFTL    Water factor,tillering,lower (fr)
 ! WFTU    Water factor,tillering,upper (fr)
+

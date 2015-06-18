@@ -92,11 +92,13 @@ C-----------------------------------------------------------------------
          TBIOMS  = 0.
          SEEDRV  = 0.0
          IF (ISWNIT .EQ. 'Y') THEN
-            CALL RI_NFACTO(DYNAMIC, FIELD, XST_TP, 
+c        Call for TR_NFACTO included Mar 26, 2014
+            CALL TR_NFACTO(DYNAMIC, FIELD, XST_TP, 
      &      AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TANC, TCNP, TMNC) 
             YPLANTN = ROOTN + STOVN
             STOVN   = TCNP  * BIOMAS*0.5   ! N DEF COMMON IN SEEDLINGS
             ROOTN   = RCNP  * RTWT
+	write(*,*) 'in transpl_g after call tr_nfacto nfac=',nfac
          ENDIF
          !
          ! Estimate RLV from root weight
