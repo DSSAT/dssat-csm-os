@@ -61,12 +61,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 44
+        INTEGER :: Build = 45
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.0.45 chp 06/17/2015 Summary.OUT - fixed problems with environmental summary outputs
 !       4.6.0.44 chp 01/12/2015 CSCER Evaluate.OUT remove headers
 !                               OPSUM improved handling of "-99" values
 !                               Rice - Ceres & ORYZA - output N uptake
