@@ -28,7 +28,7 @@ C=======================================================================
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW,                                          !Input
+     &    YRSOW,HARVFRAC,                                 !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -96,6 +96,7 @@ C=======================================================================
       REAL TPLAG, TPLANTS, TRLOS, TRNLOS, TSGRWT, TSHOCK, TSTMWT
       REAL UNFILL, VANC, VMNC, WSTRES, WTLF, PCNVEG, CumNUptake
       REAL XANC, XGNP, XN, XSTAGE, XST_TP
+      REAL HARVFRAC(2)
 
       REAL, DIMENSION(6) :: SI3
       REAL TMFAC1(8)
@@ -500,8 +501,6 @@ C
           TGROLF = 0.0
 
         CASE (6)
-          GSIZE = 1.0
-
           IF (TSGRWT .GE. 35.0) THEN
              GSIZE = 1.0 - 0.05*(TSGRWT-35.0)
            ELSEIF (TSGRWT .LE. 15.0) THEN
@@ -525,6 +524,10 @@ CCCCC-PW
           DYIELD = GRNWT*10.0*PLANTS
           SKERWT = G2*GSIZE
           STOVER = (BIOMAS*PLANTS*10.0)  - DYIELD
+
+          IF (HARVFRAC(2) .LE. 0.0) THEN
+              HARVFRAC(2) = 1.0
+          ENDIF
 
 !          IF (STOVER .EQ. 0.0) THEN
 !             GSRATIO = 0.0       !NOT USED
@@ -1086,6 +1089,13 @@ C
           ENDIF
       END SELECT
 
+      
+      DYIELD = GRNWT*10.0*PLANTS
+      SKERWT = G2*GSIZE
+      GPSM   = GRNWT / SKERWT*PLANTS
+      STOVER = (BIOMAS*PLANTS*10.0)  - DYIELD
+
+      
       CARBO  = AMAX1 (CARBO,0.0001)
       PDWI   = PCARB*(1.0-GRORT/CARBO)
       PGRORT = PCARB - PDWI
