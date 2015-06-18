@@ -177,3 +177,8 @@ TNARO    TN   AROIDS-Taro
 TRARO    TR   AROIDS-Tanier
 SALUS    xx   SALUS-generic crop model
 PRFRM    G0   Perennial Forage Model
+PRFRM    BM   Bermudagrass
+PRFRM    BH   Bahiagrass
+PRFRM    BR   Brachiaria
+PRFRM    PA   Panicum
+PRFRM    RG   Annual Ryegrass
