@@ -61,13 +61,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 48
+        INTEGER :: Build = 49
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
-!       4.6.0.48 GH  06/18/2015 Harvest fix CERES &minor data file updates
+!       4.6.0.49 GH  06/19/2015 CERES-Rice drought stress issue
+!       4.6.0.48 GH  06/18/2015 Harvest fix CERES & minor data file updates
 !       4.6.0.47 GH  06/18/2015 Added MaxPest to ModuleDefs
 !       4.6.0.46 chp 06/17/2015 Summary.OUT - fixed problems with environmental summary outputs
 !       4.6.0.45 vsh 06/16/2015 added Tony's files; Added Taro files
