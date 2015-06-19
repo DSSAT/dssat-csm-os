@@ -96,7 +96,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: DLAYR, DUL, DS, LL, NH4, NO3
       REAL, DIMENSION(NL) :: RLV, ST, SW, UNH4, UNO3
 
-      LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO
+      LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO, BUNDED
       INTEGER DAS
 
 !     P variables!    
@@ -131,7 +131,7 @@ C-----------------------------------------------------------------------
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
-
+      
       DLAYR  = SOILPROP % DLAYR  
       DS     = SOILPROP % DS     
       DUL    = SOILPROP % DUL 
@@ -142,7 +142,7 @@ C-----------------------------------------------------------------------
       ISWNIT = ISWITCH % ISWNIT
 
       FLOOD  = FLOODWAT % FLOOD
-
+      BUNDED = FLOODWAT % BUNDED
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
 !***********************************************************************
@@ -193,7 +193,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
-     &    YRPLT,                                          !Input
+     &    YRPLT,FLOODWAT,                                  !Input
      &    CUMDTT, EMAT, ISDATE, PLANTS, RTDEP, YRSOW,     !I/O
      &    CDTT_TP, DTT, FERTILE, FIELD, ISTAGE,           !Output
      &    ITRANS, LTRANS, MDATE, NDAT, NEW_PHASE, P1, P1T,!Output
@@ -320,7 +320,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
-     &    YRPLT,                                          !Input
+     &    YRPLT,FLOODWAT,                                  !Input
      &    CUMDTT, EMAT, ISDATE, PLANTS, RTDEP, YRSOW,     !I/O
      &    CDTT_TP, DTT, FERTILE, FIELD, ISTAGE,           !Output
      &    ITRANS, LTRANS, MDATE, NDAT, NEW_PHASE, P1, P1T,!Output
