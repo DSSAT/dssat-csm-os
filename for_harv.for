@@ -32,7 +32,7 @@
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
       character(len=10),parameter :: fhout='FORAGE.OUT'
       CHARACTER*12 MOWFILE
-      CHARACTER*30 FILECC
+      CHARACTER*80 FILECC
       character(len=60) ename
       CHARACTER*80 MOW80
       character(len=180) fhoutfmt
