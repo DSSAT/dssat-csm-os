@@ -1,10 +1,9 @@
 C=======================================================================
-C  COPYRIGHT 1998-2010 The University of Georgia, Griffin, Georgia
+C  COPYRIGHT 1998-2015 The University of Georgia, Griffin, Georgia
 C                      University of Florida, Gainesville, Florida
-C                      Iowa State University, Ames, Iowa
-C                      International Center for Soil Fertility and 
-C                       Agricultural Development, Muscle Shoals, Alabama
+C                      International Fertilzier Development Center
 C                      University of Guelph, Guelph, Ontario
+C                      Washington State University, Prosser, Washington
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
@@ -17,6 +16,7 @@ C  01/12/1999 GH  Incorporated into CROPGRO
 C  06/19/2001 GH  Added mowing option
 C  01/28/2002 GH  Expanded number of pests to 100 (from 40)
 C  05/09/2003 CHP Expanded number of pests to 200 (from 100)
+C  06/18/2015 GH  Moved MaxPest to ModuleDefs
 C-----------------------------------------------------------------------
 C  Called by: PLANT
 C  Calls:     ASMDM
@@ -46,8 +46,6 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
-      INTEGER, PARAMETER :: MAXPEST = 200
-
       CHARACTER*1   ISWDIS
       CHARACTER*5   PSTHD(6)
       CHARACTER*5   PID(MAXPEST)

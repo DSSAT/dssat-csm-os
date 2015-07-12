@@ -11,6 +11,7 @@ C  01/12/1999 GH  Incorporated into CROPGRO
 C  06/20/2001 GH  Added mowing option
 C  04/15/2002 GH  Modified number of pests to 100
 C  05/09/2003 CHP Modified number of pests to 200
+C  06/18/2015 GH  Moved MaxPest to ModuleDefs
 C-----------------------------------------------------------------------
 C  Called by: PEST
 C  Calls:
@@ -40,8 +41,6 @@ C=======================================================================
                          ! parameters, hourly weather data.
       IMPLICIT NONE
       SAVE
-
-      INTEGER, PARAMETER :: MAXPEST = 200
 
       CHARACTER*5 PCPID(MAXPEST,6)
 

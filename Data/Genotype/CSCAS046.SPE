@@ -1,4 +1,4 @@
-$SPECIES:CSCAS046.010114   Last edit:010114 
+$SPECIES:CSCAS046.010115   Last edit:010114 
 
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
@@ -308,3 +308,4 @@ CH2O distribution/mobilization
 @RWULF ! Length factor
    0.5 
 ! RWULF   Root length factor,water uptake (cm/cm3) 
+

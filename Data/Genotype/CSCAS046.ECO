@@ -1,4 +1,4 @@
-$ECOTYPES:CSCAS046.010114   Last edit:010114 
+$ECOTYPES:CSCAS046.010115   Last edit:010114 
 
 
 ! Coefficients presented here have no direct equivalents in the
@@ -47,3 +47,4 @@ DFAULT DEFAULT            2.80   200   600   .65     3     3     3     3     3  
 ! SWFRN   Stem fraction,minimum (fr)
 ! SFMNL   Leaf number below which stem fraction at minimum (#)
 ! SFMXL   Leaf number above which stem fraction at maximum (#)
+

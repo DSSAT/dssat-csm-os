@@ -11,13 +11,15 @@ C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  07/08/2003 CHP Added senescence output to conform to other plant routines.
 C  11/22/2004 CHP Changed output file names from *.out to *.OUT 
 C                   for case-sensitive OS's.
+!  02/13/2015 chp N-uptake from ri_Nuptak.for routine instead of calculated
+!                 here as tops N
 C=======================================================================
 
       SUBROUTINE RI_OPGROW (CONTROL, ISWITCH, SOILPROP,
      &    BIOMAS, GPP, GPSM, GRAINN, GRNWT, ISTAGE, LAI,  
      &    LEAFNO, LFWT, MDATE, NLAYR, NSTRES, PANWT, PLANTS,
      &    PLTPOP, RLV, ROOTN, RTDEP, RTWT, SENESCE,       
-     &    STMWT, STOVN, SWFAC, TILNO, TURFAC, YRPLT,      
+     &    STMWT, STOVN, SWFAC, TILNO, CumNUptake, TURFAC, YRPLT,      
      &    CANHT, KSTRES, DTT)                                  
 
 C-----------------------------------------------------------------------
@@ -42,7 +44,7 @@ C-----------------------------------------------------------------------
       REAL LAI, GPSM, PANWT, GPP, PCNGRN, PCNSH, PCNVEG
       REAL PLTPOP, PLANTS, STOVN, GRAINN, ROOTN
       REAL TURFAC, RTDEP, STMWT,  RLV(NL), SWFAC, NSTRES
-      REAL TILNO, SATFAC, SDSIZE, SHELPC
+      REAL TILNO, CumNUptake, SATFAC, SDSIZE, SHELPC
       REAL WTNGRN, WTNVEG
 
       REAL    WTLF,SDWT,XLAI,SEEDNO   !,PODWT
@@ -298,7 +300,7 @@ C-----------------------------------------------------------------------
           WTNSD = GRAINN * PLTPOP
           WTNRT = ROOTN * PLTPOP        ! Is this right?
           WTNSH = 0.0
-          WTNUP = (STOVN+GRAINN)*PLANTS
+          WTNUP = (STOVN+GRAINN)*PLANTS   !No longer used for output of Nuptake
           WTNFX = 0.0
           NFIXN = 0.0
 
@@ -333,7 +335,8 @@ C-----------------------------------------------------------------------
 
           WRITE (NOUTPN,310)YEAR, DOY, DAS, DAP,
      &    (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0), PCNGRN, PCNVEG,
-     &    (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0), PCNL,
+!    &    (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0), PCNL,
+     &    CumNUptake, (WTNLF*10.0), (WTNST*10.0), PCNL,
      &    PCNST, PCNSH, PCNRT, CUMSENSURFN, CUMSENSOILN
  
   310     FORMAT (1X,I4,1X,I3.3,2(1X,I5),

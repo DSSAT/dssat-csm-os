@@ -14,11 +14,15 @@ C=======================================================================
       SUBROUTINE LINDM(
      &    DAP, IDAP, PCN, YPL,                            !Input
      &    PL)                                             !Output
-C-----------------------------------------------------------------------
+
+!-----------------------------------------------------------------------
+      USE ModuleDefs     !Definitions of constructed variable types, 
+                         ! which contain control information, soil
+                         ! parameters, hourly weather data.
       IMPLICIT NONE
       SAVE
+!-----------------------------------------------------------------------
 
-      INTEGER, PARAMETER :: MAXPEST = 200
       INTEGER DAP, I, PCN
       INTEGER ROW(6)
       INTEGER IDAP(6,MAXPEST)
