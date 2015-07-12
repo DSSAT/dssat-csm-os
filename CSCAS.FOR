@@ -1471,7 +1471,7 @@
 
           MODNAME(1:8) = 'CSCAS046'
           VERSION = 010114
-          GENFLCHK(1:15) = 'CSCAS046.010114'
+          GENFLCHK(1:15) = 'CSCAS046.010115'
           ! Control flags/switches
           ISWWATCROP = 'Y'    ! E=no water stress effect on crop growth
 

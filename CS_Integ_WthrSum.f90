@@ -28,6 +28,7 @@
                 
         ! Cumulatives
         TTCUM = TTCUM + TT
+        IF (TTCUM.GT.900.0) TTCUMLS = TTCUMLS + TTlfsize   ! LPM 12JUL2015 added to consider a different optimum temperature for potential leaf size
         RAINC = RAINC + RAIN
         DRAINC = DRAINC + DRAIN
         RUNOFFC = RUNOFFC + RUNOFF

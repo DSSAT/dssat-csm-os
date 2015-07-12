@@ -162,7 +162,9 @@
             LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) =  LAXS*((TTCUM*1E-3)+0.10)                  ! LPM 07MAR15 
         ELSE
             IF (TTCUM-TT.LT.900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
-            LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(4.154582E-2*(DAE-DALSMAX))))
+            !LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(4.154582E-2*(DAE-DALSMAX))))
+            !LPM 12JUL2015 test with thermal time with optimum of 20 C
+            LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(5.665259E-3*(TTCUMLS))))
         ENDIF
             ! LAH Sept 2012 Eliminate fork # effect on leaf size 
         ! Adjust for fork#/shoot

@@ -957,7 +957,8 @@
     REAL    :: TFGEM                   ! Temperature factor,germ,emrg   #          ! (From Growth)    
     REAL    :: TFGLF(0:PSX,0:LCNUMX)   ! Temp factor,gr for leaf,av     #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
     REAL    :: TFLAW                   ! Temperature factor,lf area/wt  #          ! (From Growth)    
-    REAL    :: TFLFLIFE                ! Temperature factor,leaf life   #          ! (From Growth)    
+    REAL    :: TFLFLIFE                ! Temperature factor,leaf life   #          ! (From Growth)
+    REAL    :: TFLFSIZE                ! Temperature factor,leaf size   #          ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TFP                     ! Temperature factor,phs 0-1     #          ! (From SeasInit)  
     REAL    :: TFVAL                   ! T-file value                   #          ! (From Output)    
     INTEGER :: TIERNUM                 ! Tier of data in t-file         #          ! (From Output)    
@@ -1010,7 +1011,8 @@
     REAL    :: TRATIO                  ! Function,relative tr rate      #          ! (From SeasInit)  
     REAL    :: TRDV1(4)                ! Temp response,development 1    #          ! (From SeasInit)  
     REAL    :: TRDV2(4)                ! Temp response,development 2    #          ! (From SeasInit)  
-    REAL    :: TRDV3(4)                ! Temp response,leaf size        #          ! LPM 28feb15 new variable to change base temperature for leaf size
+    REAL    :: TRDV3(4)                ! Temp response,leaf size Tb cul #          ! LPM 28feb15 new variable to change base temperature for leaf size
+    REAL    :: TRDV4(4)                ! Temp response,leaf size Top spe#          ! LPM 12JUL2015 new variable to change optimum temperature for potential leaf size
     REAL    :: TRGEM(4)                ! Temp response,germ.emergence   #          ! (From SeasInit)  
     REAL    :: TRLDF                   ! Intermediate factor,new roots  #          ! (From Growth)    
     REAL    :: TRLFG(4)                ! Temp response,lf growth, br dev#          ! (From SeasInit) 18MAR15 
@@ -1024,9 +1026,11 @@
     REAL    :: TT20S                   ! Thermal time sum over 20 days  C          ! (From Integrate) 
     REAL    :: TTB                     ! Daily thermal time, branching  C.d        ! LPM 21MAR15 to Change DU based on TTB
     REAL    :: TTCUM                   ! Cumulative thermal time        C.d        ! (From SeasInit)  
+    REAL    :: TTCUMLS                 ! Cumulative thermal time lf sizeC.d        ! LPM 12JUL2015 new variable to change optimum temperature for potential leaf size
     REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit)  
     REAL    :: TTGEM                   ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
-    REAL    :: TTLFLIFE                ! Daily thermal time,leaf life   C.d        ! (From Growth)    
+    REAL    :: TTLFLIFE                ! Daily thermal time,leaf life   C.d        ! (From Growth) 
+    REAL    :: TTLFSIZE                ! Daily thermal time,leaf size   C.d        ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TTNEED                  ! Thermal time to start new leaf #          ! (From Growth)    
     REAL    :: TTNEXT                  ! Thermal time,next tier         oCd        ! (From SeasInit)  
     REAL    :: TTOUT                   ! Thermal units output from func C.d        ! (From Growth)    

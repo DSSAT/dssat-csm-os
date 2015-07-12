@@ -553,6 +553,8 @@
         
         TRDV3 = TRLFG               ! LPM 21MAR15 new variable to change base temperature for leaf size
         TRDV3(1) = TBLSZ            ! LPM 21MAR15 new variable to change base temperature for leaf size
+        TRDV4 = TRDV1               ! LPM 21MAR15 new variable to change optimum temperature for leaf size
+        TRDV4(2) = 20.0             ! LPM 21MAR15 new variable to change optimum temperature for leaf size
         CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
         IF (diffacr(1).LT.0.0) CALL SPREADRA (SPDIRFLE,'DIFFR','3',diffacr)
         CALL SPREADCA (SPDIRFLE,'PSNAME','20',psname)
