@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
+C  COPYRIGHT 1998-2015 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Washington State University
@@ -116,7 +116,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM, RWU
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
-      LOGICAL FixCanht    !, CRGRO
+      LOGICAL FixCanht, BUNDED    !, CRGRO
 c-----------------------------------------------------------------------
 C         Variables needed to run ceres maize.....W.D.B. 12-20-01
       CHARACTER*2 CROP 
@@ -160,7 +160,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       RUN     = CONTROL % RUN
 
       MEEVP  = ISWITCH % MEEVP
-
+      BUNDED = FLOODWAT % BUNDED
       CO2    = WEATHER % CO2   
       DAYL   = WEATHER % DAYL  
       PAR    = WEATHER % PAR  
