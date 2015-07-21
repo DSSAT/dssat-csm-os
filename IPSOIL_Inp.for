@@ -479,13 +479,13 @@ C-KRT*******************************************************************
             CALL ERROR (ERRKEY,12,FILES,LINSOL)
          ENDIF
 
-         IF (ISWITCH%ISWNIT .NE. 'N') THEN
-           IF (SLNF > 1.0 .OR. SLNF < 0.0) THEN
-             SLNF = 1.0
-             MSG(1) = "Invalid value for SLNF in soil file."
-             MSG(2) = "Value changed to 1.0."
-             CALL WARNING(2,ERRKEY,MSG)
-           ENDIF
+         IF (SLNF > 1.0 .OR. SLNF < 0.0) THEN
+            SLNF = 1.0
+            IF (ISWITCH%ISWNIT .NE. 'N') THEN
+               MSG(1) = "Invalid value for SLNF in soil file."
+               MSG(2) = "Value changed to 1.0."
+              CALL WARNING(2,ERRKEY,MSG)
+            ENDIF
          ENDIF
 
          IF (ISWITCH%ISWWAT .NE. 'N') THEN

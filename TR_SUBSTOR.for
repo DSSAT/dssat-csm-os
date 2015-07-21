@@ -155,6 +155,7 @@ C-----------------------------------------------------------------------
      &    LAI, LFWT, MDATE, NLAYR, NSTRES, PLTPOP,        !Input
      &    RLV, ROOTN, RTDEP, RTWT, SATFAC, SENESCE,       !Input
      &    PETWT, STOVN, STOVWT, SWFAC, CORMN      ,       !Input
+     &    MCORMWT, CORMLNO,                               !Input
      &    TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)             !Input
 
       CALL TR_OPHARV (CONTROL, ISWITCH, 
@@ -177,7 +178,6 @@ C     Call PLANT initialization routine to set variables to 0
 C-----------------------------------------------------------------------
       SWFAC  = 1.0
       TURFAC = 1.0
-      !PHEFAC = 1.0
 
 !     Temporary -- until P is integrated with this crop module
       PConc_Shut = 0.0
@@ -244,6 +244,7 @@ C-----------------------------------------------------------------------
      &    LAI, LFWT, MDATE, NLAYR, NSTRES, PLTPOP,        !Input
      &    RLV, ROOTN, RTDEP, RTWT, SATFAC, SENESCE,       !Input
      &    PETWT, STOVN, STOVWT, SWFAC, CORMN,       !Input
+     &    MCORMWT, CORMLNO,                               !Input
      &    TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)             !Input
 
       CALL TR_OPHARV (CONTROL, ISWITCH, 
@@ -372,6 +373,7 @@ C-----------------------------------------------------------------------
      &    LAI, LFWT, MDATE, NLAYR, NSTRES, PLTPOP,        !Input
      &    RLV, ROOTN, RTDEP, RTWT, SATFAC, SENESCE,       !Input
      &    PETWT, STOVN, STOVWT, SWFAC, CORMN,       !Input
+     &    MCORMWT, CORMLNO,                               !Input
      &    TURFAC, WTNCAN, WTNUP, XLAI, YRPLT)             !Input
 
       CALL TR_OPHARV (CONTROL, ISWITCH, 

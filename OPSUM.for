@@ -568,16 +568,16 @@ C-------------------------------------------------------------------
         YPNAM_TXT = PRINT_TXT(YPNAM, "(F9.1)")
         YPNUM_TXT = PRINT_TXT(YPNUM, "(F9.1)")
 
-        TMINA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
-        TMAXA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
-        SRADA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
+        TMINA_TXT = PRINT_TXT(TMINA, "(F6.1)")
+        TMAXA_TXT = PRINT_TXT(TMAXA, "(F6.1)")
+        SRADA_TXT = PRINT_TXT(SRADA, "(F6.1)")
         DAYLA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
 
-        CO2A_TXT = PRINT_TXT(DAYLA, "(F7.1)")
-        PRCP_TXT = PRINT_TXT(DAYLA, "(F7.1)")
-        ETCP_TXT = PRINT_TXT(DAYLA, "(F7.1)")
-        ESCP_TXT = PRINT_TXT(DAYLA, "(F7.1)")
-        EPCP_TXT = PRINT_TXT(DAYLA, "(F7.1)")
+        CO2A_TXT = PRINT_TXT(CO2A, "(F7.1)")
+        PRCP_TXT = PRINT_TXT(PRCP, "(F7.1)")
+        ETCP_TXT = PRINT_TXT(ETCP, "(F7.1)")
+        ESCP_TXT = PRINT_TXT(ESCP, "(F7.1)")
+        EPCP_TXT = PRINT_TXT(EPCP, "(F7.1)")
 
         WRITE (NOUTDS,503) LAIX, 
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 

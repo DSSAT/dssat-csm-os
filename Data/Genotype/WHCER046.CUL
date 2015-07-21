@@ -1,8 +1,7 @@
-$CULTIVARS:WHCER046.280513   Last edit:060613 
-
+$CULTIVARS:WHCER046.010115   Last edit:241214 
 
 ! Coefficients used in the Cropsim-Ceres model differ from those used
-! in DSSAT Version 3.5 AND 4.0. They can be calculated (approximately) from 
+! in DSSAT Versions 3.5 and 4.0. They can be calculated (approximately) from 
 ! V3.5 coefficients as follows:
 
 ! P1V   = P1V(v3.5)*10 
@@ -27,11 +26,8 @@ $CULTIVARS:WHCER046.280513   Last edit:060613
 DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
 
 IB1500 MANITOU           1,14 CAWH01     8   100   320    23    23   2.5    86 
-IB0488 NEWTON             1,6 USWH01    45    75   500    26    25   2.0    95  
+IB0488 NEWTON             1,6 USWH01    45    75   500    25    30   2.0    95  
 IB1015 MARIS FUNDIN       1,8 UKWH01    30    83   515    15    44   3.2   100
-
-AW0071 Yecora_Rojo      16,33 AZWH18    10  40.0   450    20    60  1.50    95
-CI0001 Yecora_Rojo        1,2 CI0001    02    40   570    27    45   4.0   100 
                                                                                                                                                                                                              
 ! COEFF       DEFINITION
 ! ========    ==========
@@ -46,3 +42,4 @@ CI0001 Yecora_Rojo        1,2 CI0001    02    40   570    27    45   4.0   100
 ! G2          Standard kernel size under optimum conditions (mg)
 ! G3          Standard,non-stressed mature tiller wt (incl grain) (g dwt)
 ! PHINT       Interval between successive leaf tip appearances (oC.d)
+

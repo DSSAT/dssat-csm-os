@@ -10,6 +10,7 @@ C  02/25/1998  CHP Modified for PEST Module
 C  01/12/1999  GH  Incorporated into CROPGRO
 C  04/15/2002  GH  Modified number of pests to 100
 C  05/09/2003  CHP Modified number of pests to 200
+C  06/18/2015  GH  Moved MaxPest to ModuleDefs
 C-----------------------------------------------------------------------
 C  Called by: PEST
 C  Calls:     None
@@ -17,9 +18,13 @@ C=======================================================================
       SUBROUTINE IPPARM(
      &    FILEP, PATHPE, ISWDIS,                          !Input
      &    PCPID, PCTID, PDCF1, PID)                       !Output
-C----------------------------------------------------------------------
+!-----------------------------------------------------------------------
+      USE ModuleDefs     !Definitions of constructed variable types, 
+                         ! which contain control information, soil
+                         ! parameters, hourly weather data.
       IMPLICIT NONE
-      INTEGER, PARAMETER :: MAXPEST = 200
+      SAVE
+!-----------------------------------------------------------------------
 
       CHARACTER*1   BLANK, ISWDIS
       CHARACTER*2   NEWLIN

@@ -119,7 +119,6 @@ C=======================================================================
       END DO
 
       P1T   = P1      
-!     TBASE set to 10.0 instead of 9.0, leftover from rice RMO
       TBASE = 10.0    
       TAGE  = SDAGE   
 
@@ -134,7 +133,6 @@ C=======================================================================
         CALL GETLUN('OUTO', NOUTDO)
       ENDIF
      
-!     Commenting out next 5 lines because they may be rice leftovers RMO
       IF (ITRANS .EQ. 3) THEN
         ISTAGE = 1
       ELSE
@@ -173,9 +171,6 @@ C=======================================================================
 
             !FROM PHASEI
             ISTAGE = 9            !EMERGENCE
-!           P9 = 10.0*SDEPTH + 20.0              
-!           P9 is already read-in from SPE =100, RI leftover RMO
-!           P9 is set to 100 but should come from SPE RMO
             P9 = 100.0           
             SUMDTT = SUMDTT - P8
             !END PHASEI STUFF
@@ -194,22 +189,12 @@ C=======================================================================
              LTRANS     = .TRUE. 
              TF_GRO     = .TRUE.
              NDAT       = 0
-!	     APTNUP = STOVN*10.0*PLANTS    !this section is in v35 PHENOL RMO
-!	     IF (STOVWT.NE.0.0) THEN
-!	     XANC = STOVN/STOVWT*100.0
-!	     ELSE
-!	     XANC = 0.0
-!	     ENDIF
-!	     IF (ITRANS . EQ. 3 .AND. SUMDTT .GT. P1) THEN
-!	     CALL TR_PHASEI(CNSD1, CNSD2, CSD1, CSD2, CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
-!	     ENDIF
              IF (SUMDTT .GT. P1) THEN
                CALL TR_PhaseI(CNSD1, CNSD2, CSD1, CSD2, 
      &           CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
                !FROM PHASEI
                ISTAGE = 2         !PAN INIT
-               !PI_TF  = .FALSE.
                !END PHASEI STUFF
 
              ENDIF
@@ -252,8 +237,7 @@ C=======================================================================
                !
              DTT = AMIN1 (DTT,TOPT-TBASE)
            ENDIF
-
-         !Now, compute DTT for when Tmax or Tmin out of range
+        !Now, compute DTT for when Tmax or Tmin out of range
          ELSEIF (TMIN .LT. TBASE .OR. TMAX .GT. TOPT) THEN
            DTT = 0.0
            DO I = 1, 24
@@ -409,13 +393,11 @@ C=======================================================================
 
           !FROM PHASEI
           ISTAGE = 2
-	    SUMDTT = 0.0   ! From PHASEI rmo
-          ! PI_TF  = .FALSE.   Not used
-
+	      SUMDTT = 0.0   
           !END OF PHASEI STUFF
 
 !-----------------------------------------------------------------------
-        CASE (2)   ! Removed istage=3 rmo      
+        CASE (2) 
           ! Determine end of maximum leaf growth
           NDAS = NDAS + 1
 		IF (LTRANS .AND. TF_GRO) THEN
@@ -436,7 +418,6 @@ C=======================================================================
              RETURN
           ENDIF
           STGDOY(ISTAGE) = YRDOY
-          !IMXDAT = DOY
 	    ISTAGE = 4
         CASE (4)      
           ! Declining/level vegetative growth phase in taro
@@ -675,7 +656,6 @@ C=======================================================================
       SELECT CASE(PLME)
       CASE ('S')    
         ITRANS = 1                        !FROM IRRVAL
-        !ITDATE = ISOW                     !FROM IPFLOD
         TF_GRO = .TRUE.                   !FROM IPFLOD
         FIELD  = .TRUE.                   !FROM IPFLOD
 

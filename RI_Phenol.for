@@ -16,7 +16,7 @@ C=======================================================================
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
-     &    YRPLT,                                          !Input
+     &    YRPLT,FLOODWAT,                                 !Input
      &    CUMDTT, EMAT, ISDATE, PLANTS, RTDEP, YRSOW,     !I/O
      &    CDTT_TP, DTT, FERTILE, FIELD, ISTAGE,           !Output
      &    ITRANS, LTRANS, MDATE, NDAT, NEW_PHASE, P1, P1T,!Output
@@ -27,7 +27,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
+      USE FloodModule    ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT  NONE 
       SAVE
@@ -56,7 +56,7 @@ C=======================================================================
       REAL SI1(6), SI2(6), SI3(6), SI4(6)
       REAL DLAYR(NL), LL(NL), SW(NL)
 
-      LOGICAL FIELD, LTRANS, PI_TF, PRESOW, TF_GRO, NEW_PHASE
+      LOGICAL FIELD, LTRANS, PI_TF, PRESOW, TF_GRO, NEW_PHASE, BUNDED
 
       REAL CUMHEAT
       REAL TWILEN,PDTT,RATEIN,STRCOLD,STRHEAT,TCANOPY,TD,THEAD
@@ -75,12 +75,14 @@ C=======================================================================
 
 !     The variable "SOILPROP" is of type "SoilType".
       TYPE (SoilType) SOILPROP
+      
+      TYPE (FloodWatType) FLOODWAT
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
-
+      BUNDED  = FLOODWAT  % BUNDED
       ISWWAT = ISWITCH % ISWWAT
       ISWNIT = ISWITCH % ISWNIT
       IDETO  = ISWITCH % IDETO
@@ -111,9 +113,8 @@ C=======================================================================
       STGDOY(14) = YRSIM    
       MDATE      = -99      
       NDAT       = 0        
-
+      BUNDED  = .FALSE.    !ASSUMES START AS UPLAND FIELD
       SEEDNI     = 0.0      
-
       CUMDTT   = 0.0        
       SUMDTT   = 0.0        
       DTT      = 0.0        
@@ -134,7 +135,6 @@ C=======================================================================
 
       LTRANS = .FALSE.
       PRESOW = .TRUE. 
-
       CALL RiceInit(
      &    PLME, TAGE, YRDOY, YRPLT, YRSIM, YRSOW,         !Input
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
@@ -273,10 +273,10 @@ C=======================================================================
          ELSE
            DTT = (TMAX+TMIN)/2.0 - TBASE
          ENDIF
-
-         ! DROUGHT STRESS
-         IF (PHEFAC .LT. 1.0) THEN
-                TMPDTT = DTT
+         ! DROUGHT STRESS APPLIES ONLY TO UPLAND RICW
+         ! BUNDED IS USED AS SURROGATE FOR UPLAND - ECOTYPE FILE
+         IF (PHEFAC .LT. 1.0 .AND. BUNDED) THEN
+             TMPDTT = DTT
             IF (ISTAGE .EQ. 2) THEN
                 DTT    = AMIN1 ((DTT * PHEFAC),TMPDTT)
             ELSEIF(ISTAGE .EQ. 3) THEN

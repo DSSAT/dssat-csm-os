@@ -41,11 +41,11 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "University of Florida"
+            VALUE "CompanyName", "DSSAT Foundation"
             VALUE "FileDescription", "CSM46"
             VALUE "FileVersion", "4.6.1.0"
             VALUE "InternalName", "CSM46"
-            VALUE "LegalCopyright", "Copyright © 2014"
+            VALUE "LegalCopyright", "Copyright © 2015"
             VALUE "OriginalFilename", "DSCSM046.exe"
             VALUE "ProductName", "University of Florida DSCSM46"
             VALUE "ProductVersion", "4.6.1.0"
