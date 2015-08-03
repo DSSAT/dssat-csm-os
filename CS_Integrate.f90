@@ -93,7 +93,7 @@
         CALL CS_Integ_WthrSum ( &
             CO2         , DOY         , DRAIN       , IRRAMT      , RAIN        , RUNOFF      , SRAD        , TLCHD       , &
             TMAX        , TMIN        , TNIMBSOM    , TNOXD       , TOMINFOM    , TOMINSOM    , TOMINSOM1   , TOMINSOM2   , &
-            TOMINSOM3   , YEAR        & 
+            TOMINSOM3   , YEAR        , ISWWAT      & 
             )
         
         !-----------------------------------------------------------------------

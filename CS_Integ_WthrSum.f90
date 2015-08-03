@@ -10,7 +10,7 @@
     SUBROUTINE CS_Integ_WthrSum ( &
         CO2         , DOY         , DRAIN       , IRRAMT      , RAIN        , RUNOFF      , SRAD        , TLCHD       , &
         TMAX        , TMIN        , TNIMBSOM    , TNOXD       , TOMINFOM    , TOMINSOM    , TOMINSOM1   , TOMINSOM2   , &
-        TOMINSOM3   , YEAR        & 
+        TOMINSOM3   , YEAR        , ISWWAT      & 
         )
         
         USE CS_First_Trans_m
@@ -22,12 +22,16 @@
         REAL    CO2         , DRAIN       , IRRAMT      , RAIN        , RUNOFF      , SRAD        , TLCHD       , TMAX          
         REAL    TMIN        , TNIMBSOM    , TNOXD       , TOMINFOM    , TOMINSOM    , TOMINSOM1   , TOMINSOM2   , TOMINSOM3 
     
+        CHARACTER(LEN=1) ISWWAT 
         !-----------------------------------------------------------------------
         !         Calculate weather and soil summary variables
         !-----------------------------------------------------------------------
                 
         ! Cumulatives
         TTCUM = TTCUM + TT
+        IF (ISWWAT.EQ.'Y') THEN
+            TTCUMWS = TTCUMWS + (TT*WFG) !LPM 31JUL2015 Added to have a new clock with water stress
+        ENDIF
         IF (TTCUM.GT.900.0) TTCUMLS = TTCUMLS + TTlfsize   ! LPM 12JUL2015 added to consider a different optimum temperature for potential leaf size
         RAINC = RAINC + RAIN
         DRAINC = DRAINC + DRAIN

@@ -503,6 +503,7 @@
         tt20 = -99.0
         ttgem = 0.0
         ttcum = 0.0
+        ttcumws = 0.0 !LPM 31JUL2015 Added to have a new clock with water stress
         ttcumls = 0.0 !LPM 12JUL2015 Added to have a new clock using a different optimum temperature for leaf size
         ttd = 0.0
         ttnext = 0.0

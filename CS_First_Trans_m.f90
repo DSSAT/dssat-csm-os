@@ -1027,6 +1027,7 @@
     REAL    :: TTB                     ! Daily thermal time, branching  C.d        ! LPM 21MAR15 to Change DU based on TTB
     REAL    :: TTCUM                   ! Cumulative thermal time        C.d        ! (From SeasInit)  
     REAL    :: TTCUMLS                 ! Cumulative thermal time lf sizeC.d        ! LPM 12JUL2015 new variable to change optimum temperature for potential leaf size
+    REAL    :: TTCUMWS                 ! Cumulative TT with water stressC.d        ! LPM 31JUL2015 new variable to create an additional clock under water stress
     REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit)  
     REAL    :: TTGEM                   ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
     REAL    :: TTLFLIFE                ! Daily thermal time,leaf life   C.d        ! (From Growth) 
