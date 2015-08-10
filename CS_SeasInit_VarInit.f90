@@ -217,6 +217,8 @@
         lndem = 0.0
         lnphc = 0.0
         lnum = 0.0
+        lnumsimstg = 0.0   !LPM 09AGO2015 To initialize the variable lnumsimstg
+        lnumsimtostg = 0.0 !LPM 09AGO2015 To initialize the variable lnumsimtostg
         !lnumend = 0.0
         lnumg = 0.0
         lnumprev = 0.0
