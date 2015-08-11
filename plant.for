@@ -360,7 +360,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     APSIM N-wheat WHAPS
       CASE('WHAPS')
         CALL WH_APSIM (CONTROL, ISWITCH,              !Input
-     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output

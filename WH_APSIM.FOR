@@ -4,7 +4,7 @@
 !                      The University of Georgia, Griffin, Georgia
 !                      International Fertilizer Development Center
 !                      University of Guelph
-!  ALL RIGHTS RESERVED
+!  ALL RIGHTS RESERVED 
 !=======================================================================
 !======================================================================
 !  Adapted from MZ_CERES for APSIM NWheat (WHAPS) adaptation
@@ -33,7 +33,7 @@
 
 
       SUBROUTINE WH_APSIM (CONTROL, ISWITCH,              !Input
-     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
      &     SPi_AVAIL, SNOW,                               !Input
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
@@ -78,7 +78,8 @@
       REAL            DTT      
       REAL            DUL(NL)    
       INTEGER         DYNAMIC    
-      REAL            EARS    
+      REAL            EARS 
+      REAL            EO, ES !JZW add in May, 2014
       REAL            EOP           
       CHARACTER*6     ERRKEY  
       REAL            ESW(NL)     
@@ -144,7 +145,7 @@
       CHARACTER*1     RNMODE   
       REAL            ROOTN          
       INTEGER         RSTAGE   
-      REAL            RTDEP
+      !REAL            RTDEP
       real            rtdep_nw      
       REAL            RTWT     
       REAL            RTWTO     
@@ -164,6 +165,7 @@
       REAL            SI3(6)   
       REAL            SKERWT    
       REAL            SLA
+      real slft     ! low temperature factor (0-1)
       REAL            SLPF      
       REAL            SNOW          
       REAL            SRAD     
@@ -224,6 +226,7 @@
       INTEGER         YRPLT 
       INTEGER         YRSIM    
 	REAL            Z2STAGE
+      REal GAD2 ! Grain# if there wwas no temperature effect
 
 !     Added by W.D.B. for pest damage at CIMMYT 4/14/2001
 
@@ -244,6 +247,8 @@
 
 !     Added for K model   
       REAL KUptake(NL), SKi_AVAIL(NL), KSTRES
+      
+      REAL cumph_nw(11) ! add by JZW
 
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -382,7 +387,7 @@ C----------------------------------------------------------------------
      &    CUMDTT, DTT, EARS, GPP, ISDATE, ISTAGE,                !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
-     &    KCAN, KEP, P3, TSEN, CDAY,                             !OUTPT 
+     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw,                   !OUTPT 
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
 
 C-----------------------------------------------------------------------
@@ -390,7 +395,7 @@ C-----------------------------------------------------------------------
           !-------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,   !Input
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
@@ -416,10 +421,10 @@ C-----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST,                        !Output
+     &      WTNSD,      WTNST,  cumph_nw,                     !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
      &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath)                     !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)        !Output
 
             WTNUP = cumpnup / 10.0
           !-------------------------------------------------------------
@@ -438,7 +443,7 @@ C-----------------------------------------------------------------------
      &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
      &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO, 
-     &  WTSO, XLAI, YRPLT)
+     &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
@@ -453,7 +458,7 @@ C-----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                                   !Output
 
           CALL PEST(CONTROL, ISWITCH, 
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
@@ -505,12 +510,12 @@ C-----------------------------------------------------------------------
      &    CUMDTT, DTT, EARS, GPP, ISDATE, ISTAGE,                !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
-     &    KCAN, KEP, P3, TSEN, CDAY,                             !OUTPT 
+     &    KCAN, KEP, P3, TSEN, CDAY,  cumph_nw,                  !OUTPT 
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
 C-----------------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
@@ -536,10 +541,10 @@ C-----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST,                        !Output
+     &             WTNSD,       WTNST, cumph_nw,              !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
      &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath)                     !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)        !Output
 
             WTNUP = cumpnup / 10.0
                          
@@ -555,7 +560,7 @@ C-----------------------------------------------------------------------
      &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
      &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO, 
-     &  WTSO, XLAI, YRPLT)
+     &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
@@ -571,7 +576,7 @@ C-----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                                   !Output
 
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
@@ -592,7 +597,7 @@ C----------------------------------------------------------------------
           !-------------------------------------------------------------
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
@@ -618,10 +623,10 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST,                        !Output
+     &             WTNSD,       WTNST, cumph_nw,              !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
      &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath)                     !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)        !Output
 
             WTNUP = cumpnup / 10.0
           Endif
@@ -673,7 +678,7 @@ C----------------------------------------------------------------------
      &    CUMDTT, DTT, EARS, GPP, ISDATE, ISTAGE,                !OUTPT
      &    MDATE, nwheats_kvalue, Pgdd, STGDOY,                   !OUTPT
      &    sumstgdtt, XNTI, TLNO, XSTAGE, YREMRG, RUE,            !OUTPT
-     &    KCAN, KEP, P3, TSEN, CDAY,                             !OUTPT 
+     &    KCAN, KEP, P3, TSEN, CDAY, cumph_nw,                   !OUTPT 
      &    SeedFrac, TEMPCR, VegFrac, VREQ, xstag_nw, zstage)     !OUTPT
 C-----------------------------------------------------------------------
           ENDIF
@@ -684,7 +689,7 @@ C-----------------------------------------------------------------------
         IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN   
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
@@ -710,10 +715,10 @@ C-----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST,                        !Output
+     &             WTNSD,       WTNST, cumph_nw,              !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
      &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath)                     !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)        !Output
 
             WTNUP = cumpnup / 10.0
 
@@ -752,7 +757,7 @@ C----------------------------------------------------------------------
         IF (YRDOY .GE. YRPLT) THEN
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
@@ -778,21 +783,21 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST,                        !Output
+     &             WTNSD,       WTNST,  cumph_nw,             !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
      &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath)                     !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2 )        !Output
 
             WTNUP = cumpnup / 10.0
         ENDIF   
-
+      !write (99,*)'DOY',YRDOY,',sen_la',sen_la,',pla',pl_la,',LAI', XLAI
       CALL WH_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR, 
      &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT, 
      &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
      &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO, 
-     &  WTSO, XLAI, YRPLT)
+     &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
@@ -807,7 +812,7 @@ C----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                                   !Output
 
       IF (ISWDIS.EQ.'Y') THEN
         CALL PEST(CONTROL, ISWITCH, 
@@ -829,7 +834,7 @@ C----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
 
           CALL  WH_GROSUB  (CONTROL, ISWITCH, WEATHER, XSTAGE,
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO, !Input
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
@@ -855,10 +860,10 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output
      &      TOPWT, TURFAC,     UNH4,                          !Output
      &          UNO3, VSTAGE, WTLF, WTNCAN,       WTNLF,      !Output
-     &             WTNSD,       WTNST,                        !Output
+     &             WTNSD,       WTNST,cumph_nw,               !Output
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
      &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath)                     !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)        !Output
 
             WTNUP = cumpnup / 10.0
 
@@ -868,7 +873,7 @@ C----------------------------------------------------------------------
      &  PSTRES1, PSTRES2, rlv_nw, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt,swdef(photo_nw),
      &  TOPWT, swdef(cellxp), VSTAGE, WTCO, WTLF, WTLO, 
-     &  WTSO, XLAI, YRPLT)
+     &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
           CALL WH_OPNIT(CONTROL, ISWITCH, 
      &    YRPLT, MDATE, NLAYR, SENESCE,
@@ -883,7 +888,7 @@ C----------------------------------------------------------------------
      &    SEEDNO, SENESCE, SKERWT, STGDOY, STOVER, SWFAC, !Input
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
-     &    BWAH, SDWTAH)                                   !Output
+     &    BWAH, SDWTAH, PLTPOP)                                   !Output
 
         CALL HRes_Ceres(CONTROL,
      &    CROP, DLAYR, GRNWT, HARVFRAC, NLAYR,            !Input
@@ -1002,7 +1007,7 @@ cal unit number for file
 ! PL(I)             Pest level for pest I today
 ! PHINT       !Phylochron interval. Number of GDD for new leaf emergence, degrees C 
 ! PHTIM      Not used in CERES except to pass 0 into pest.for
-! PLTPOP      !Plant Population, Pl/m  
+! PLTPOP      !Plant Population, Pl/m2  
 ! PODNO       !Ear number, #/m2
 ! PODWT       Leaf sheath dry weight, including C and N (g[leaf sheath]/m2[ground])
 ! PORMIN      !Minimum pore volume before soil water saturation effects growth (not used), cm3/cm3    
@@ -1026,7 +1031,7 @@ cal unit number for file
 ! SDNO(J)    Need to figure out how to use this array to pass in seed number???
 ! SDWT        !Seed (grain) weight, g/m2
 ! SECTION !Variable indicating which section to look for in an input file
-! SEEDNO           !Seed number, #/m2
+! SEEDNO           !Seed number, #/m2,  JWZ found that it is #/plant
 ! SHELPC           !Shelling percentage (grain weight/ear weight)
 ! SHELN(J)   Number of shells for cohort J (#/m2)
 ! SHF(20)     !Soil hospitality factor, unitless    
@@ -1038,7 +1043,7 @@ cal unit number for file
 ! SNOW             !Snow accumulation today, mm
 ! SRAD        !Total solar radiation today, MJ/m2  
 ! SSDOT      Not used in CERES except to pass 0 into pest.for
-! STOVER           !Stover weight (leaf+stem), kg/ha
+! STOVER           !Stover weight (leaf+stem+lfsheath), kg/ha
 ! STGDOY(20)   !Array storing the dates that different growth stages occurred
 ! STNAME(20)      !Array containing names of various growth stages
 ! STMWTO           !Stem weight, g/m2
@@ -1070,7 +1075,7 @@ cal unit number for file
 ! WTSD(J)    Seed mass  for cohort J (g/m2)
 ! WTSO        !Cumulative stem loss of stem tissue, g/m2 (not computed) 
 ! WTHADJ(2,8) !Used on mz_phenol but not passed into maize.for ???????  
-! WTNCAN      !Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha    
+! WTNCAN      !Weight of nitrogen in above ground biomass (stem, leaf, grain), WTNCAN*10 is in kg N/ha    
 ! WTNVEG      !Weight of nitrogen in vegetative tissue, kg N/ha    
 ! WTNLF       !Weight of nitrogen in leaf tissue, kg N/h    
 ! WTNSD       !Weight of nitrogen in seed, g[N] / m2[ground]

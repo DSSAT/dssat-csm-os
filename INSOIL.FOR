@@ -70,7 +70,8 @@ C=======================================================================
       TSOC   = 0.0
 
       IF (ISWWAT .NE. 'Y') THEN
-        SWINIT = 0.0
+       ! SWINIT = 0.0
+        SWINIT = DUL ! JZW changed due to nwheats_germn in NWheat request 
         INH4 = 0.0
         INO3 = 0.0
         RETURN

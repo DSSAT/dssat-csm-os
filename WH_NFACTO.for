@@ -10,6 +10,7 @@ C  03/29/2001 WDB Converted to modular form
 C  12/01/2001 WDB Further modular conversion  
 C  02/25/2005 CHP Check for NFAC < 0.                   
 C  06/27/2011 FSR created WH_NFACTO.FOR for APSIM NWheat adaptation
+C JZW question, the codes are from DSSAT and only used for WH_OPHARV?
 C----------------------------------------------------------------------
 C
 C  Called by: WH_GROSUB
@@ -219,6 +220,7 @@ cbak lower boundary for stover n % = 0.25%
          mnc(leaf_part) = mnc(stem_part)
          mnc(lfsheath_part) = mnc(stem_part)
       else
+       continue
       endif
  
       return
@@ -287,6 +289,10 @@ cbak lower boundary for stover n % = 0.25%
 !*!     :               mnc(lfsheath)*pl_wt(lfsheath),
 !*!     :               (pl_wt(leaf) + pl_wt(stem) + pl_wt(lfsheath)), 0.0)
 ! replaced above by JZW
+      if (plantwt(stem_part) .eq. 0.) then
+          write(*,*) "plant top wt is zero"
+          stop
+      endif
       tanc =(pl_nit(leaf_part)+pl_nit(stem_part)+pl_nit(lfsheath_part))/
      &      (plantwt(leaf_part) + plantwt(stem_part) + 
      &       plantwt(lfsheath_part))
@@ -303,20 +309,29 @@ cbak lower boundary for stover n % = 0.25%
  
       if (xstag_nw .gt. 1.1) then
          xnfac = (tanc - tmnc) / (tcnc - tmnc)
-         xnfac = max(xnfac, 0.02)
+         !xnfac = max(xnfac, 0.02)
+         !write(*,*) "tanc2=",tanc
+  
+         xnfac = max(xnfac, 0.0) !JZW changed on July 21, 2014 based on the request of Senthold
+        
       else
          xnfac = 1.0
-      endif
- 
+      endif      
       !*! nfac = bound (xnfac, 0.0, 1.0) !replaced by JZW
       nfac = max (xnfac, 0.0)
       nfac = min(nfac, 1.0)
+      if  (nfac .lt. 0.99999) then
+          write(*,*) tanc, tcnc, tmnc, xnfac
+        
+      endif
       if (istage.eq.germ) then
+          ! JZW:  IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN   call WH_GROSUB if DYNAMIC = INTEGRATE, thus never go here
         nfact(1) = 1.0
         nfact(2) = 1.0
         nfact(3) = 1.0
         nfact(4) = 1.0
-      else if ((istage.ge.emerg).and.(istage.lt.mature)) then
+       !else if ((istage.ge.emerg).and.(istage.lt.mature)) then
+      else if ((istage.ge.emergence).and.(istage.lt.mature)) then
  
          nfact(1) = 1.5 * nfac
         !*! nfact(1) = bound (nfact(1), 0.0, 1.0) replaced by JZW
@@ -329,7 +344,6 @@ cbak
          nfact(2) = nfac
          nfact(2) = max (nfact(2), 0.0)
          nfact(2) = min(nfact(2), 1.0)
- 
          nfact(3) = nfac * nfac
          nfact(3) = max (nfact(3), 0.0) 
          nfact(3) = min(nfact(3), 1.0)
@@ -337,8 +351,10 @@ cbak
          nfact(4) = xnfac**2
          nfact(4) = max (nfact(4), 0.0)
          nfact(4) = min(nfact(4), 1.0)
+  !      write(100,*) "nfact1=",nfact(1), ",nfact2=",nfact(2),",nfact3=",
+  !   &   nfact(3), ",nfact4=", nfact(4)
+   
       endif
- 
       return
       end
 

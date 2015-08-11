@@ -33,3 +33,10 @@ _ReSharper*/
 resource
 resource.h
 *.wjf
+*.OUT
+*.DOCX
+*.INH
+*.INP
+*.DSSBATCH.V*
+*.LST
+*.INI

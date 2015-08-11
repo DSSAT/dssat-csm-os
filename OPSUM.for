@@ -658,7 +658,8 @@ C-------------------------------------------------------------------
 !     IDETO = N - neither Overview nor Evaluate are printed
 !     IDETO = E - only Evaluate is printed.
       IF (INDEX('YE',IDETO) > 0 .AND. 
-     &        CROP .NE. 'WH' .AND. CROP .NE. 'BA' .AND.
+!     &        CROP .NE. 'WH' .AND. CROP .NE. 'BA' .AND.
+     &        CROP .NE. 'BA' .AND. !JZW changed
      &        CROP .NE. 'CS') THEN
 
         ICOUNT    = EvaluateData % ICOUNT

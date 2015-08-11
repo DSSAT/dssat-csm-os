@@ -40,6 +40,10 @@
  
       !*! nwheats_fac = divide (100.0, bd(layer)*dlayr(layer), 0.0)
       ! DSSAT: KG2PPM(1) = 1.0/(BD1*1.E-01*DLAYR(1))
+      if ( (bd(layer) .eq. 0.) .or. (dlayr_nw(layer) .eq. 0.) ) then
+          write(*,*) "bd*dlayr_nw is zero"
+          stop
+      endif
       nwheats_fac = 100.0 /( bd(layer)*dlayr_nw(layer))
       !   mg[N]      100             ha        m2      1000000mg   mm
       !  ------   =------------ * --------*---------- * ---------*-------
@@ -51,7 +55,8 @@
 
 
 *     ===========================================================
-      subroutine nwheats_germn (sdepth, stgdur, swdep, SOILPROP, !Input
+      subroutine nwheats_germn (sdepth, stgdur, swdep,          !Input
+     &   dlayr_nw, lldep,                                       !Input
      &   stagno)	                                              !Output
 *     ===========================================================
       USE ModuleDefs
@@ -114,10 +119,10 @@
       ! JZW add the following
       integer stgdur(20)
       real  sdepth, dlayr_nw(NL), lldep(NL), swdep(NL)
-      TYPE (SoilType)    SOILPROP
-      dlayr_nw  = SOILPROP % DLAYR  * 10.0  
-      lldep     = SOILPROP % LL     
-          
+      !TYPE (SoilType)    SOILPROP
+      !dlayr_nw  = SOILPROP % DLAYR  * 10.0  
+      !lldep     = SOILPROP % LL     
+         
 *- Implementation Section ----------------------------------
  
  
@@ -134,6 +139,11 @@
          slayer = nwheats_level (sdepth, dlayr_nw, NL)
  !*!        spesw0 = divide (swdep(slayer) - lldep(slayer)
  !*!    :                   , dlayr(slayer), 0.0)
+         if ((dlayr_nw(slayer) .eq. 0.) .or. 
+     :     (dlayr_nw(slayer +1) .eq. 0.) ) then
+            write(*,*) "dlayer is zero"
+            stop
+         endif
          spesw0 =  (swdep(slayer) - lldep(slayer))
      :                   / dlayr_nw(slayer)
  
@@ -251,6 +261,7 @@ cnh to allow watching of these variables
       end
 
 *     ==================================================================
+      ! find actual grain uptake by translocation
       subroutine nwheats_grnit (CONTROL, ISWITCH,                 !Input
      &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
@@ -336,7 +347,12 @@ cnh to allow watching of these variables
         !*! delta_grainC = growt(grain)  + transwt(grain)
          delta_grainC =gro_wt(grain_part)  + trans_wt(grain_part)
          !*! delta_N_fraction = divide (gndmd,delta_grainC,0.0)
-         delta_N_fraction = gndmd / delta_grainC
+         if (delta_grainC .gt. 0.) then
+           delta_N_fraction = gndmd / delta_grainC
+         else
+           delta_N_fraction = 0. !JZW add this case in Oct, 2014. On 1st day of emergence, goes here
+         endif
+         
 !         delta_N_fraction = u_bound (delta_N_fraction
 !     :                              ,p_max_grain_nc_ratio)
          delta_N_fraction = min(delta_N_fraction
@@ -347,6 +363,8 @@ cnh to allow watching of these variables
  
       !*! call nwheats_gnptl (navl) 
       ! FSR Created from NWheat subroutine "nwheats_gnptl"
+      !Calculates N available for transfer to grain (g/plant) from each
+      !       plant part. 
       Call GrN_Ptl (CONTROL, ISWITCH,
      &   mnc, nfact, nitmn, npot, optfr, part, pl_la, pl_nit,     !INPUT
      &   plantwt, sen_la,                                         !INPUT
@@ -363,7 +381,7 @@ cnh added for watch purposes
  
                    ! check if navil has inadequate supply of N
                    ! for grain N demand.
- 
+       !gnuptk is actual grain N uptake (g/plant) intermediate data
       !*! gnuptk = u_bound (gndmd, navil)
       gnuptk = min(gndmd, navil)
       if (gndmd .le. 0.0) then
@@ -379,7 +397,9 @@ cnh added for watch purposes
          pnout = 0.
          pnout(leaf_part) = navl(leaf_part)
          pnout(stem_part) = navl(stem_part)
-         pnout(lfsheath_part) = navl(lfsheath_part)
+         pnout(lfsheath_part) = navl(lfsheath_part) 
+         !JZW run EEST, 1938198, when reach here, pnout(sten_part) is not assigned, until finish endif
+         !navl(stem_part) was 5.3382293*10-5, pnout(stem_part) is 5.338304x10-5
  
 ! take the rest of the grain n uptake from the roots
          pnout(root_part)  =  gnuptk - tnavil
@@ -394,10 +414,8 @@ cnh added for watch purposes
          pnout(leaf_part) = gnuptk* navl(leaf_part)/tnavil
          pnout(lfsheath_part) = gnuptk* navl(lfsheath_part)/tnavil
          pnout(stem_part) = gnuptk* navl(stem_part)/tnavil
-      else
- 
+      else 
              ! we have no grain N uptake
- 
          !*! call fill_real_array (pnout, 0.0, mxpart)
          pnout = 0.
       endif
@@ -410,6 +428,16 @@ cnh added for watch purposes
       do 1000 part = 1, mxpart
 !         call bound_check_real_var (pnout(part), 0.0, !JZW need to solve soon
 !     :        navl(part), 'pnout(part)', 'Grnit') !'Grnit is error key
+          if (pnout(part) .lt. 0.) then
+            write(*,*) "pnout bound check <0 error"
+            stop
+          endif
+          if  (pnout(part). gt. navl(part) ) then
+              ! pnout is pntrans calculated by nwheats_grnit for finding actual grain uptake by translocation
+              ! navl (mxpart) is N available for transfer to grain
+              write(*,*) "pnout bound check >navl error"
+              pnout(part) = navl(part) !JZW add this case in Oct, 2014
+          endif
 1000  continue
  
       !*! call pop_routine (myname)
@@ -554,6 +582,10 @@ cnh added for watch purposes
       do 500 part = 1, mxpart
          !*! pgro(part) = pcarb* divide (growt(part), carbo, 0.0)
          !*! pgro(part) = pcarb* (growt(part)/ carbo)
+          if (carbh .eq. 0.) then
+              write(*,*) "carbh is zero"
+              stop
+          endif
          pgro(part) = pcarbo* (gro_wt(part)/ carbh)
          !*! pgro(part) = bound (pgro(part), 0.0, pcarb)
          pgro(part) = max (pgro(part), 0.0)
@@ -721,6 +753,7 @@ cjh  end of correction
       CALL nwheats_ndmd (xstag_nw,  gro_wt, plantwt,       !Input
      &     pl_nit, pcarbo, carbh, cnc,                     !Input 
      &     pndem)	                                       !Output
+       !write(96,*) "pndem=", pndem
 * ====================================================================
       n_demand = sum_real_array (pndem, mxpart)
  
@@ -750,15 +783,19 @@ cjh  end of correction
 !*!         scalef = divide (capped_n_demand
 !*!     :                   ,n_supply/ha2sm/gm2kg/plants
 !*!     :                   ,0.0)
-         scalef = capped_n_demand
+         if (n_supply .gt. 0.) then
+           scalef = capped_n_demand
      &                   /(n_supply/ha2sm/gm2kg/PLTPOP)
         !scalef = (capped_n_demand/n_supply)*ha2sm *  gm2kg  * PLTPOP
          !             g /plant             10000m2  0.001*kg   plant
          !      = (-------------------) *  -------* -------- *------
          !            kg/ha                  ha        g        m2
          !*! scalef = bound (scalef, 0.0, 1.0)
-         scalef = max(scalef, 0.0)
-         scalef = min(scalef, 1.0)
+           scalef = max(scalef, 0.0)
+           scalef = min(scalef, 1.0)
+         else 
+           scalef = 0. !JZW add this case in Oct, 2014
+         endif
          pnuptk_tot = 0.0
  
          do 1100 layer = 1,nrlayr
@@ -788,7 +825,12 @@ cjh  end of correction
       do 1300 part = 1, mxpart
  
          !*! fr_part = divide (pndem(part), n_demand, 0.0)
-         fr_part = pndem(part) / n_demand
+         ! To avoid devide zero, JZW add the if statement
+         if (n_demand .GE. 0.000001) then 
+            fr_part = pndem(part) / n_demand
+         else 
+            fr_part = 0.
+         endif
          ! pnuptk_tot is total plant N uptake (g/plant) Wrong ????
          !*! pnuptk (part) = pnuptk_tot*fr_part/ha2sm/gm2kg/plants
          pnup (part) = pnuptk_tot*fr_part/ha2sm/gm2kg/PLTPOP
@@ -965,10 +1007,11 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
 
 *     ===========================================================
       !*! subroutine nwheats_plnin (plantn)
+      !Initial PLant N
       subroutine nwheats_plnin (istage, stgdur, plantwt,   !input
  !   &    p_init_grain_nconc, p_root_n_min,                !input
      &    mnc,         INGNC,        MNRTN,                !input
-     &    pl_nit )                                        !output
+     &    pl_nit )                                      !input & output
 *     ===========================================================
       USE WH_module
       implicit none
@@ -992,12 +1035,12 @@ cnh         avail_nh4(layer) = rlength * fnh4 * smdfr**2 * potrate*gm2kg
 
 *+  Local Variables	*******OK********
       real avail_stem_n
-      real avail_root_n
+      real avail_root_n, avail_leaf_n, avail_lfsheath_n
       real INGNC  ! p_init_grain_nconc from APSIM
           ! .CUL parameter INGNC = initial grain N conc(g N/g biomass) 17.1% protein
       real MNRTN  ! p_root_n_min from APSIM, * 1000
           ! .CUL parameter MNRTN = min root n due to grain n initialisation (0=off)
-      real root_n_moved
+      real root_n_moved, lfsheath_n_moved, leaf_n_moved 
       ! JZW add the following variables
       Integer istage, stgdur(20)
       REAL pl_nit(mxpart) !plant part nitrogen (g/plant)  nwheat
@@ -1024,6 +1067,13 @@ cnh need to initialise plant n after these weights are initialised.
      &                  mnc(stem_part) * plantwt(stem_part)
          !*! avail_stem_n = l_bound (avail_stem_n, 0.0)
          avail_stem_n = max(avail_stem_n, 0.0)
+         avail_lfsheath_n = pl_nit(lfsheath_part) - 
+     :                  mnc(lfsheath_part) * plantwt(lfsheath_part)
+         avail_lfsheath_n = max(avail_lfsheath_n, 0.0)
+         avail_leaf_n = pl_nit(leaf_part) - 
+     &                  mnc(leaf_part) * plantwt(leaf_part)
+         avail_leaf_n = max(avail_leaf_n, 0.0)
+      
          if (MNRTN.gt.0.0) then
 !            avail_root_n = plantn(root) - p_root_n_min * pl_wt(root)
 !            avail_root_n = l_bound (avail_root_n, 0.0)
@@ -1039,16 +1089,28 @@ cnh need to initialise plant n after these weights are initialised.
 !*!      plantn(grain) = u_bound (plantn(grain)
 !*!     :                           ,avail_stem_n+avail_root_n)
          pl_nit(grain_part) = min(pl_nit(grain_part)
-     :                           , avail_stem_n+avail_root_n)
+     :  ,avail_leaf_n + avail_lfsheath_n+ avail_stem_n+avail_root_n)
+         ! first of all, try to take N from stem
 !*!      plantn(stem) = plantn(stem) - min(avail_stem_n, plantn(grain))    
          pl_nit(stem_part) = pl_nit(stem_part) - 
      &                  min(avail_stem_n, pl_nit(grain_part))
+         ! If there is no enough available N from stem, take N from lfsheath 
+         lfsheath_n_moved = max(0.0, pl_nit(grain_part) - avail_stem_n)
+         lfsheath_n_moved = min(lfsheath_n_moved, avail_lfsheath_n)
+         pl_nit(lfsheath_part) = pl_nit(lfsheath_part)- lfsheath_n_moved
+         ! If there is no enough available N from lfsheath, take N from leaf 
+         leaf_n_moved = max(0.0, pl_nit(grain_part) - avail_stem_n-
+     :                  avail_lfsheath_n)
+         leaf_n_moved = min(leaf_n_moved, avail_leaf_n)
+         pl_nit(leaf_part) = pl_nit(leaf_part)- leaf_n_moved
 !*!      root_n_moved = max(0.0, plantn(grain) - avail_stem_n)         
-         root_n_moved = max(0.0, pl_nit(grain_part) - avail_stem_n)
+         root_n_moved = max(0.0, pl_nit(grain_part) - avail_stem_n-
+     :                  avail_lfsheath_n-avail_leaf_n)
 !*!      plantn(root) = plantn(root) - root_n_moved
          pl_nit(root_part) = pl_nit(root_part) - root_n_moved
  
       else
+       continue ! means Pl_nit has no change
       endif
  
  

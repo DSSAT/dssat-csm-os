@@ -23,8 +23,9 @@ C  Calls:     None
 !**! &  PSTRES1, PSTRES2, RLV, RSTAGE, RTDEP,    RTWT, SATFAC, SDWT,
      &  PSTRES1, PSTRES2, RLV, RSTAGE, rtdep_nw, RTWT, SATFAC, SDWT, 
      &  SEEDNO, SENESCE, SHELPC, SLA, STMWTO, sumstgdtt, SWFAC, 
-     &  TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
-     &  WTSO, XLAI, YRPLT)
+     &  TOPWT, SWDEF2, VSTAGE, WTCO, WTLF, WTLO, 
+       ! &  TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,  !JZW TURFAC is DSSAT variable, SWDEF(2) is APSIM variable
+     &  WTSO, XLAI, YRPLT, SLFT, GAD2)
 
 !----------------------------------------------------------------------
       USE ModuleDefs 
@@ -43,14 +44,16 @@ C  Calls:     None
       INTEGER MDATE, YEAR, YRDOY, YRPLT, YRSIM, VWAD
 
       REAL VSTAGE, XLAI, STMWTO, SDWT, WTLF, TOPWT, RTWT, PODWT, SEEDNO
-      REAL SLA, PCNL, TURFAC, CANHT, CANWH, HI, SHELPC, SATFAC, KSTRES
+    ! REAL SLA, PCNL, TURFAC, CANHT, CANWH, HI, SHELPC, SATFAC, KSTRES  
+      REAL SLA, PCNL, SWDEF2, CANHT, CANWH, HI, SHELPC, SATFAC, KSTRES
       REAL SDSIZE, PODNO, PSTRES1, PSTRES2, RTDEP, NSTRES, SWFAC, HIP
       REAL rtdep_nw, nwheats_dc_code, PLTPOP, PODWTD, DTT
-      REAL WTLO, WTSO, WTCO
+      REAL WTLO, WTSO, WTCO, GAD2
       REAL nfact(10) ! Nstress sensitivity by plant organ (0-1)
       REAL RLV(NL)
       REAL CUMSENSURF, CUMSENSOIL     !cumul. senes. soil and surface
       REAL sumstgdtt(20)
+      real slft     ! low temperature factor (0-1)
 
 !     Average stresses since last printout
       REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, KST_AV
@@ -75,7 +78,6 @@ C  Calls:     None
       RNMODE  = CONTROL % RNMODE
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
-
 !-----------------------------------------------------------------------
 !                                 DYNAMIC = RUNINIT
 !-----------------------------------------------------------------------
@@ -117,8 +119,9 @@ C  Calls:     None
           WRITE (NOUTDG,201, ADVANCE='NO')
   201     FORMAT('@YEAR DOY   DAS   DAP',
      &   '    DCCD  GSTD   LAID   LWAD   SWAD   GWAD',
-     &   '   RWAD   VWAD   CWAD   G#AD   GWGD   HIAD   SHAD',
-     &   '   P#AD   WSPD   WSGD   NSTD   EWSD  PST1A  PST2A',
+     &   '   RWAD   VWAD   CWAD   G#AD   G#AD2  GWGD   HIAD   SHAD',
+     &   '   WSPD   WSGD   SLFT   NSTD   EWSD  PST1A  PST2A',
+!    &   '   P#AD   WSPD   WSGD   NSTD   EWSD  PST1A  PST2A',
      &   '   KSTD   LN%D   TPSM   HIPD   PWDD   PWTD',
      &   '     SLAD   CHTD   CWID   RDPD') 
 
@@ -162,20 +165,25 @@ C  Calls:     None
           ENDDO
 
           IF (SEEDNO .GT. 0.0) THEN
-              SDSIZE = SDWT/SEEDNO*1000.
+              !JZW changed
+              SDSIZE = SDWT / (SEEDNO*PLTPOP) *1000.
+              !SDSIZE = SDWT/SEEDNO*1000.
           ELSE
               SDSIZE = 0.0
           ENDIF
 
 !         Compute average stress factors since last printout
           SWF_AV = SWF_AV + (1.0 - SWFAC)
-          TUR_AV = TUR_AV + (1.0 - TURFAC)
+          TUR_AV =  1 - SWDEF2
+          !TUR_AV = TUR_AV + (1.0 - TURFAC) !JZW, TUR_AV is initialed as zero every day
+          !TUR_AV = 1.0 - TURFAC
 !*!       NST_AV = NST_AV + (1.0 - NSTRES)
         !Avg N stress:
 !**!      NST_AV = (1.0 - (Nfact(1)+Nfact(2)+Nfact(3)+Nfact(4))/4) 
 ! N stress index changed to enable comparison to APSIM nwheat output 
 ! n_stress = n_stress + (1 - nfact2)
-          NST_AV = (1.0 - Nfact(2))
+           NST_AV = (1.0 - Nfact(2))
+          !NST_AV = Nfact(2)    ! JZW changed 
           EXW_AV = EXW_AV + SATFAC
           PS1_AV = PS1_AV + (1.0 - PSTRES1)
           PS2_AV = PS2_AV + (1.0 - PSTRES2)
@@ -194,7 +202,7 @@ C  Calls:     None
 !           Compute average stress factors since last printout
             IF (COUNT > 0) THEN
               SWF_AV = SWF_AV / COUNT
-              TUR_AV = TUR_AV / COUNT
+              TUR_AV = TUR_AV / COUNT !TUR_AV is not summation of days
               NST_AV = NST_AV / COUNT
               EXW_AV = EXW_AV / COUNT
               PS1_AV = PS1_AV / COUNT
@@ -212,10 +220,14 @@ C  Calls:     None
      &        NINT(WTLF*10.),NINT(STMWTO*10.),NINT(SDWT*10.),
             !      RWAD              VWAD        CWAD      
      &        NINT(RTWT*10.*PLTPOP), VWAD, NINT(TOPWT*10.),
-            !        G#AD         GWGD  HIAD      SHAD        P#AD(int)
-     &        NINT(SEEDNO),NINT(SDSIZE), HI,NINT(PODWT*10.),NINT(PODNO),
-            !   WSPD    WSGD    NSTD    EWSD   PST1A   PST2A    KSTD
-     &        SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, KST_AV,
+            !        G#AD            G#AD2                  GWGD  HIAD           
+     &        NINT(SEEDNO*PLTPOP), NINT(GAD2*PLTPOP), NINT(SDSIZE), HI,
+            !  SHAD                
+     &     NINT(PODWT*10.),     
+            !   P#AD(int)     
+ !    &      NINT(PODNO), 
+            !  WSPD    WSGD   SLFT  NSTD   EWSD   PST1A   PST2A  KSTD
+     &        SWF_AV, TUR_AV, SLFT,NST_AV,EXW_AV, PS1_AV, PS2_AV,KST_AV,
             ! LN%D   TPSM HIPD         PWDD
      &        PCNL,SHELPC, HIP, NINT(PODWTD*10.),  
      &      !               PWTD      SLAD  CHTD  CWID    RDPD
@@ -223,12 +235,13 @@ C  Calls:     None
 
            !        @YEAR   DOY    DAS DAP    DCCD  GSTD    LAID  
  400        FORMAT (1X,I4,1X,I3.3,2(1X,I5),2X,F6.3,1X,I5,1X,F6.3, 
-           !  LWAD SWAD GWAD RWAD VWAD CWAD G#AD GWGD HIAD(real) SHAD, P#AD(int)
-     &        7(1X,I6),                         1X,I6,1X,F6.3, 2(1X,I6),
-           ! WSPD WSGD NSTD EWSD PST1A PST2A KSTD   LN%D TPSM HIPD
-     &        7(1X,F6.3),                           3(1X,F6.2), 
+           !LWAD SWAD GWAD RWAD VWAD CWAD G#AD G#AD2 GWGD HIAD(real) SHAD, 
+     &        8(1X,I6),                           1X,I6,1X,F6.3, 1X, I6,
+      !    &        7(1X,I6),                         1X,I6,1X,F6.3, 2(1X,I6),
+           ! WSPD WSGD SLFT NSTD EWSD PST1A PST2A KSTD  LN%D   TPSM   HIPD
+     &        8(1X,F6.2),                      1X,F6.2,1X,F6.1,1x,F6.2, 
            ! PWDD PWTD     SLAD  CHTD CWID    RDPD   
-     &         2(1X,I6),1X,F8.1,2(1X,F6.2),1X,F6.2)
+     &         2(1X,I6),1X,F8.1,2(1X,F6.2),1X,F6.4)
 
             WRITE(NOUTDG,402,ADVANCE='NO')(RLV(I),I=1,N_LYR)
  402          FORMAT (10F8.3)
@@ -261,7 +274,7 @@ C-------------------------------------------------------------------
         !Close daily output files.
         CLOSE (NOUTDG)
 
-      ENDIF
+        ENDIF
 
 !***********************************************************************
       RETURN
@@ -298,7 +311,7 @@ C-------------------------------------------------------------------
 ! SATFAC  Root length weighted soil water excess stress factor ( 0 = no 
 !           stress; 1 = saturated stress ) 
 ! SDSIZE  Average mass of seeds (mg / seed)
-! SEEDNO  Total number of seeds (#/m2)
+! SEEDNO  Total number of seeds (#/m2), JWZ found that it is #/plant
 ! SHELLW  Shell mass (g[shell] / m2)
 ! SHELPC  Percentage of pod mass that is seeds (g[seed]/g[pods] * 100%)
 ! SLA     Specific leaf area (cm2[leaf] / m2[ground])

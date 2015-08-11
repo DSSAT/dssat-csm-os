@@ -92,10 +92,11 @@ C  Calls:     None
         CALL HEADER(SEASINIT, NOUTDN, RUN)
         WRITE (NOUTDN,230)
   230   FORMAT('@YEAR DOY   DAS   DAP',
-     &        '   CNAD   GNAD   VNAD   GN%D   VN%D   NUPC',
-     &        '   LNAD   SNAD   LN%D   SN%D   RN%D   SNN0C   SNN1C',
+     &        '   CNAD   GNAD   GN%D   VN%D   NUPC',
+ !     &        '   CNAD   GNAD   VNAD   GN%D   VN%D   NUPC',    
+     &        '   LNAD   SNAD   LN%D   SN%D   RN%D   SNN0C   SNN1C', !LNAD (WTNLF)is leaf N, SNAED (WTNST) is stem N
      &        ' NFact1 NFact2 NFact3 NFact4  RootN lfshthN')
-
+!CNAD(WTNCAN)      !Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha    
         !cumul. senes. N soil and surface
         CUMSENSURFN = 0.0
         CUMSENSOILN = 0.0   
@@ -131,13 +132,18 @@ C  Calls:     None
 
 !           Print 
             WRITE (NOUTDN,300) YEAR, DOY, DAS, DAP,
-     &       (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0),
+            !   CNAD   GNAD   
+     &       (WTNCAN*10.0), (WTNSD*10.0), 
+   ! &       (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0), 
+            ! GN%D   VN%D   NUPC
      &        PCNGRN, PCNVEG, (WTNUP*10.0),
      &       (WTNLF*10.0), (WTNST*10.0), PCNL, PCNST, PCNRT,
      &        CUMSENSURFN, CUMSENSOILN,
-     &        nfact(1), nfact(2), nfact(3), nfact(4), pl_nit_root*10.,
+     &        (1-nfact(1)), (1-nfact(2)), (1-nfact(3)),
+     &        (1-nfact(4)), pl_nit_root*10.,
      &        pl_nit_lfsheath*10.
- 300        FORMAT (1X,I4,1X,I3.3,2(1X,I5),3(1X,F6.1),2(1X,F6.2),
+ 300        FORMAT (1X,I4,1X,I3.3,2(1X,I5),2(1X,F6.1),2(1X,F6.2),
+!300        FORMAT (1X,I4,1X,I3.3,2(1X,I5),3(1X,F6.1),2(1X,F6.2),
      &        4(1X,F6.1),2(1X,F6.2), 2F8.2, 6(1X, f6.2)) 
           ENDIF
         ENDIF

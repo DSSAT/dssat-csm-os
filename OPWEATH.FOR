@@ -36,7 +36,7 @@ C=======================================================================
       REAL
      &  CLOUDS, CO2, DAYL, PAR, RAIN, SRAD, 
      &  TAVG, TDAY, TDEW, TGROAV, TGRODY,
-     &  TMAX, TMIN, TWILEN, WINDSP
+     &  TMAX, TMIN, TWILEN, WINDSP, VPDF, vpd_transp
 
       LOGICAL FEXIST
       TYPE (WeatherType) WEATHER
@@ -95,7 +95,7 @@ C-----------------------------------------------------------------------
           WRITE (LUN,120)
   120     FORMAT('@YEAR DOY   DAS',
      &    '   PRED  DAYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND',
-     &    '   TAVD   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D')
+     &'   TAVD   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D   VPDF   VPD')
         ENDIF
 
 !***********************************************************************
@@ -108,20 +108,24 @@ C       Generate output for file Weather.OUT
         IF ((DYNAMIC .EQ. OUTPUT .AND. MOD(DAS,FROP) .EQ. 0) .OR.
      &      (DYNAMIC .EQ. SEASEND  .AND. MOD(DAS,FROP) .NE. 0) .OR. 
      &       DAS == 1) THEN 
-
+          VPDF = WEATHER % VPDF
+          vpd_transp = Weather % VPD_TRANSP
 !         These can be modified by ETPHOT during hourly energy balance
           TGROAV = WEATHER % TGROAV
           TGRODY = WEATHER % TGRODY
+
       
           CALL YR_DOY(YRDOY, YEAR, DOY)
           !Daily printout
           WRITE (LUN,300) YEAR, DOY, DAS, 
      &        RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, 
+             !TMXD  TMND  TAVD  TDYD   TDWD   TGAD   TGRD   
      &        TMAX, TMIN, TAVG, TDAY, TDEW, TGROAV, TGRODY,
-     &        WINDSP, CO2
+           !  WDSD   CO2D  VPDF  VPD
+     &        WINDSP, CO2, VPDF, vpd_transp
   300     FORMAT(1X,I4,1X,I3.3,1X,I5,
      &        5(1X,F6.1),1X,F6.2,
-     &        8(1X,F6.1),F7.1)
+     &        8(1X,F6.1),F7.1, 1x, F6.2, 1X, F6.2)
         ENDIF
 
         IF (DYNAMIC .EQ. SEASEND) THEN

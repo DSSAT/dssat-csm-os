@@ -18,7 +18,7 @@
 ! Need to output the ptnup and ctnup
 
       SUBROUTINE WH_GROSUB (CONTROL, ISWITCH, WEATHER, XSTAGE, 
-     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
+     &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EO, EOP, ES, FILEIO,   !Input
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR, nh4ppm, no3ppm,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
@@ -34,7 +34,7 @@
      &      CANWH, CARBO, carbh, dlayr_nw, GNUP, GPSM, GRNWT, !Output
      &      GRORT, HI, HIP, LEAFNO, NSTRES,                   !Output 
      &      nwheats_topsfr, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
+     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output !PODNO should be removed
      &      PConc_Shel, PConc_Shut, pl_la, plsc,              !Output
      &      PODWT, PORMIN, PSTRES1,                           !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
@@ -43,11 +43,11 @@
      &      SI3, SKERWT, SLA, STMWTO, STOVER,                 !Output
      &      STOVN, STOVWT, SUMP, SWFAC, tiln,                 !Output 
      &      TOPWT, TURFAC, snup_nh4,                          !Output
-     &      snup_no3, VSTAGE, WTLF, WTNCAN, pl_nit_leaf,      !Output
-     &      pl_nit_grain, pl_nit_stem,                        !Output
+     &      snup_no3, VSTAGE, WTLF, WTNCAN, pl_nit_leaf,      !Output  pl_nit_leaf is  WTNLF,
+     &      pl_nit_grain, pl_nit_stem, cumph_nw,                       !Output they are  WTNSD, WTNST, 
      &      cumpnup, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,    !Output
      &      KUptake, KSTRES, rwu_nw, swdef, nfact,            !Output
-     &      pl_nit_root, pl_nit_lfsheath)                     !Output
+     &      pl_nit_root, pl_nit_lfsheath, SLFT, GAD2)        !Output
 
       USE ModuleDefs
       USE WH_module
@@ -63,9 +63,12 @@
       INTEGER NOUTXL, ERRNUM, RUN  
       INTEGER nlayr_nw   ! Number of layers in specific soil profile  
       CHARACTER*1 IDETR
+      CHARACTER*1  MEEVP
+      CHARACTER*5  temp_Char
       CHARACTER*12 OUTXL
       character*6 uptake_source ! add by JZW
       character*6 g_uptake_source ! add by JZW
+      CHARACTER*78 MSG(2)
       real       temp_c 
       real       above_gnd_pcarb       ! potential increase in above ground biom
       real uptake_water(NL)
@@ -81,13 +84,14 @@
       real   rootfr(9)
       real   xs(6)  ! xstage input for interpolating Zadoks stage
       real   zs(6)  ! Zadoks growth stage number
-      real tec(10), rue_fac(10), XCO2(10), transp_eff_coeff
+      real  transp_eff_coeff, Tdepend  ! tec(10),rue_fac(10), XCO2(10), 
       
 !     FSR added coefficients from WHAPS CULTIVAR file
       REAL        ADLAI
       REAL        ADPHO
       REAL        ADTIL
       REAL        DTNP1
+      REAL        EO, ep_nw, ES!JZW add for Canopy T calculation
       REAL        EXNH4
       REAL        EXNO3
       REAL        FREAR
@@ -195,6 +199,8 @@
       REAL grolf ! carbohydrate demand to grow new leaf (g/plant)
       REAL grpp        ! temporary variable used by NWheats
       REAL gro_wt(mxpart)  ! FSR: root, leaf, lfsheath, stem, grain
+      REAL gtmaxfac, gtminfac
+      Real GAD2  ! Grain# if there wwas no temperature effect
       real lai     ! from function nwheats_slan
       REAL leafgr  ! leaf growth before emergence (g/plant)
       real leafsen !leaf senescence variable from nwheats_lfsen function
@@ -204,6 +210,7 @@
       real LL(NL)
       real lldep(NL)
       real mass_balance  ! total translocation (g/plant)
+      real temp ! temperary data 
       REAL max_topsfr ! Maximum tops fraction? 
       REAL mnc(mxpart)  ! Minimum N concentration, by plant part
       REAL navl(mxpart) !N in each plant part available to grain?
@@ -258,6 +265,8 @@
       real rtdep_nw ! overall root depth in profile (mm) (?)
       real rtdnew   ! Increase in root depth (mm)
       real rtsw     ! not defined in NWheat code
+      Integer TEFAC, RUEFAC !JZW add on Apr. 1, 2014
+      ! Integer CNPYT !JZW add on May. 13, 2014
       real rue_factor  ! parameter for CO2 effect on pcarbo calculation
       real rwu_nw (NL)! (nwheats_watup_new OUTPUT) root water 
                       !  uptake (mm)
@@ -307,7 +316,7 @@
       integer greenlfno ! from function nwheats_slan
       parameter (greenlfno = 4) !*! Included temporarily (FSR)
       integer  I
-      INTEGER II 
+      INTEGER II , TIMDIF
       integer nwheats_level ! Function from nwheats. Returns layer  
                             ! number of depth in profile dlayr_nw
       integer nwrlay        ! number of layers with root weighting
@@ -337,7 +346,7 @@
       REAL        CANWH     
       REAL        CARBO       
       REAL        CARBOT       
-      INTEGER     CDAY     
+      INTEGER     CDAY, anth_date    
       INTEGER     CMAT
       REAL        CNSD1       
       REAL        CNSD2        
@@ -446,8 +455,12 @@
       REAL        PCNVEG      
       REAL        PCNST
       REAL        PCO2        
-      REAL        PDWI        
+      REAL        PDWI 
+      ! Temperature effect of grain number
+      REAL        GTMAX(4), GTMIN(4), GRDUH(4),  GRDUL(4)
+      REAL        DTTPT(3), DTTF(3) !DTT factor of Temperature effect of the Grain #
       REAL        PRFTC(4)
+      REAL        SENST(4),  SENSF(4), ALIN, TCSlope, TCInt ! TRLFG(4)
       REAL        SLPF
       REAL        PGRORT      
       REAL        PLA    
@@ -465,7 +478,7 @@
       REAL        RANCE
       REAL        RCNP        
       REAL        RGFILL 
-      REAL        RGFIL(4)     
+      REAL        RGFIL(4) !not used    
       REAL        RLV(NL) !JZW should remove
       real        rlv_nw(NL)     
       REAL        RLWR
@@ -534,7 +547,7 @@
       REAL        TEMPM       
       REAL        TFAC       
       REAL        TLNO        
-      REAL        TMAX        
+      REAL        TMAX, Tcnpy, VPD(4), FVPD(4), vpdf, vpd_transp      
       REAL        TMNC        
       REAL        TNLAB
       REAL        TMIN        
@@ -645,7 +658,7 @@
           ISWPHO = ISWITCH % ISWPHO
           ISWWAT = ISWITCH % ISWWAT
           IDETO  = ISWITCH % IDETO
-
+          MEEVP  = ISWITCH % MEEVP
           !-------------------------------------------------------
           !     Read input file name (ie. DSSAT45.INP) and path
           !-------------------------------------------------------
@@ -718,6 +731,18 @@
 !         ************************************************************
 ! 
 !                 READ SPECIES FILE
+!     Variable in *.spe          Variable in Fortran code
+!      SENST                     SENST(1-4)
+!      SENSF                     SENSF(1-4)
+!      GTMAX                     GTMAX(1-4)
+!      GRDUH                     GRDUH(1-4)
+!      GTMIN                     GTMIN(1-4)
+!      GRDUL                     GRDUL(1-4)
+!      GTTPT                     GTTPT(1-3)
+!      VPD                       VPD(1-4)
+!      VPDF                      FVPD(1-4)
+!      TCSLP                     TCSlope
+!      TCINT                     TCInt
 !         ************************************************************
 !         ************************************************************
 
@@ -736,15 +761,181 @@
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(SECTION, 42, FILECC, LNUM)
       ELSE
+       ! Effect of temperature on photosynthesis
+       ! CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+       ! READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR)
+       ! &       PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4)
+       ! IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+        
+      ! Effect of temperature on relative grain filling rate
+      !   CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+      !   READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) RGFIL(1),
+      !&     RGFIL(2),RGFIL(3),RGFIL(4)
+      !   IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM) 
+        
+        ! Temperatures effect for senescense of leaf
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR)
-     &       PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4)
+        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) SENST(1), ! SENST in *.spe
+     &     SENST(2), SENST(3), SENST(4)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "SENST") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of SENST'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-
+                
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) RGFIL(1),
-     &     RGFIL(2),RGFIL(3),RGFIL(4)
+        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) SENSF(1), ! SENSF in  *.spe
+     &     SENSF(2), SENSF(3), SENSF(4)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "SENSF") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of SENSF'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+        
+        ! Temperature effect for grain number
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) GTMAX(1), ! GTMAX in *.spe
+     &     GTMAX(2), GTMAX(3), GTMAX(4)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "GTMAX") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of GTMAX'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+                
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) GRDUH(1), ! GRDUH in  *.spe
+     &     GRDUH(2), GRDUH(3), GRDUH(4)
+         READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "GRDUH") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of GRDUH'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)        
+        
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) GTMIN(1), ! GTMIN in *.spe
+     &     GTMIN(2), GTMIN(3), GTMIN(4)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "GTMIN") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of GTMIN'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+                
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) GRDUL(1), ! GRDUL in  *.spe
+     &     GRDUL(2), GRDUL(3), GRDUL(4)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "GRDUL") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of GRDUL'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)     
+        
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X, 1X, F5.0,2(1X,F5.0))',IOSTAT=ERR) DTTPT(1), ! DTTPT in *.spe
+     &     DTTPT(2), DTTPT(3)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "DTTPT") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of DTTPT'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+                
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X, 3(1X,F5.0))',IOSTAT=ERR) DTTF(1), ! DTTF in  *.spe
+     &     DTTF(2), DTTF(3)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:4) .ne. "DTTF") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of DTTF'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)  
+        
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) VPD(1), ! VPD in *.spe
+     &     VPD(2), VPD(3), VPD(4)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:3) .ne. "VPD") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of VPD'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+                
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X, 4(1X,F5.0))',IOSTAT=ERR) FVPD(1), ! VPDF in  *.spe
+     &     FVPD(2), FVPD(3), FVPD(4)
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:4) .ne. "VPDF") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of VPDF'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+        
+        ! Canopy temperature modification slop
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X, F5.0)',IOSTAT=ERR) TCSlope  !TCSLP in *.spe 
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "TCSLP") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of TCSLP'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+                
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(7X, 1X,F4.0)',IOSTAT=ERR) TCInt ! TCINT in *.spe
+        READ(C80,'(2X, A5)')temp_Char
+        if (temp_Char(1:5) .ne. "TCINT") then
+            ERR =1
+            WRITE(MSG(1),'(A,A,A)')'Read ',temp_Char,' instead of TCINT'
+            WRITE(MSG(2),'(A)') "Program will stop."
+            CALL WARNING(2,ERRKEY,MSG)
+        endif
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) Tthrshld
+!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) frostf
+!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) tbase
+!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+!        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) crownT
+!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+            !READ(C80,'(10X,I1)',IOSTAT=ERR) CNPYT
+            !IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)            
       ENDIF
       REWIND(LUNCRP)
       !---------------------------------------------------------------
@@ -774,7 +965,7 @@
       ENDIF
       REWIND(LUNCRP)
       !---------------------------------------------------------------
-      !         Find and Read APSIM CO2 section
+      !         Find and Read APSIM CO2 section ! this section will not be used. It is replaced by model equation 
       !---------------------------------------------------------------
       SECTION = '*APCO2'
       CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
@@ -782,21 +973,22 @@
         CALL ERROR(SECTION, 42, FILECC, LNUM)
       ELSE
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(9X,10(4x,F3.0))',IOSTAT=ERR) XCO2(1), XCO2(2),
-     &  XCO2(3), XCO2(4), XCO2(5), XCO2(6), XCO2(7), XCO2(8)
+        READ(C80,'(11X,I1)',IOSTAT=ERR)TEFAC !from section *APCO2 in *.spe
+!        READ(C80,'(9X,10(4x,F3.0))',IOSTAT=ERR) XCO2(1), XCO2(2),
+!     &  XCO2(3), XCO2(4), XCO2(5), XCO2(6), XCO2(7), XCO2(8)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(9X,10(1X,F6.5))',IOSTAT=ERR) tec(1), tec(2),
-     &   tec(3), tec(4), tec(5), tec(6), tec(7), tec(8)
+        READ(C80,'(11X,I1)',IOSTAT=ERR) RUEFAC !from section *APCO2 in *.spe
+!        READ(C80,'(9X,10(1X,F6.5))',IOSTAT=ERR) tec(1), tec(2),
+!     &   tec(3), tec(4), tec(5), tec(6), tec(7), tec(8)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-
-        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(9X,10(1X,F6.2))',IOSTAT=ERR) rue_fac(1),rue_fac(2),
-     &   rue_fac(3), rue_fac(4),rue_fac(5), rue_fac(6),rue_fac(7),
-     &   rue_fac(8)
+!       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+!        READ(C80,'(9X,10(1X,F6.2))',IOSTAT=ERR) rue_fac(1),rue_fac(2),
+!     &   rue_fac(3), rue_fac(4),rue_fac(5), rue_fac(6),rue_fac(7),
+!     &   rue_fac(8)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-
+!
       ENDIF
       REWIND(LUNCRP)
       !----------------------------------------------------------------
@@ -1180,9 +1372,9 @@
           WTLF   = 0.0
           WTNCAN = 0.0
           WTNLF  = 0.0
-          WTNSD  = 0.0
+          ! WTNSD  = 0.0 !which is pl_nit_grain
           WTNST  = 0.0
-          WTNUP  = 0.0
+          !WTNUP  = 0.0 ! Which is WTNUP = cumpnup / 10.0 , 
           WTNVEG = 0.0
           XANC   = 0.0
           XGNP   = 0.0
@@ -1210,14 +1402,43 @@
               NDEF3 = 1.0
               NFAC = 1.0
           ENDIF
+          gtmaxfac= 1.0
+          gtminfac= 1.0
+          if (DYNAMIC.EQ.SEASINIT) THEN
+      !write(92,*) "DCCD compare"
+      !write(92,*)"YRDOY,istage,DCCD,dtt,vfac,ppfac,sumstgdtt,fstage" !,DAYL,TWILN"
+      ! write(93,*) "Plant Leaf Area calculation (PlantPopulation=",
+      ! :     PLTPOP, "plants/m2)" 
+       !write(93,*) "sla_new is specific leaf area of new growth (mm2/g)"
+       !write(93,*)"lai = (pl_la - sen_la) * PLTPOP / sm2smm"
+       !   write(93,*)"YRDOY,Istage,xstag_nw, pl_la,sen_la, sla_new/100,
+      ! :     lai, XLAI, zstage, cumph, lfwt, lfsen" 
+      !write(94,*) "Daily Root Weight increase (PlantPopulation=",
+      ! :     PLTPOP, "plants/m2)" 
+          !write(94,*) "YRDOY,Istage,gw_rt,carbh, pcarbo,ConversionEf,
+! :lfipar, pl_dmd_lf, pl_dmd_lfsh,swdef,nfact1,prft,optfr, lai,radfr"
+               ! total daily growing weight should br smaleer than carbh 
+      !write(95,*) "Mass Balance (PlantPopulation=",PLTPOP, "plants/m2)" 
+      !    write(95,*)              "YRDOY,rootwt,gw_rt,sen_rt,lfwt,gw_lf
+      ! :,stmwt,gw_stm,lfshwt,gw_lfsh,grainwt,gw_grn,carbh,topwt,lfsen"
+          !Write(98,*)"TMAX effect on grain number"
+          !Write(98,*) "     YRDOY, Tmax,   Tmax Effect,",
+      ! :      "   DTTcum, DTT day effect,  cumulative gtmaxfac"
+          !Write(97,*)"TMIN effect on grain number"
+          !Write(97,*) "     YRDOY, Tmin,   Tmin Effect,",
+      !  :      "   DTTcum, DTT day effect, cumulative gtminfac"   
+          endif
+          !  ! write(100,*)    "YRDOY,rtN,TrnRTN,uptkRt,lfN,TrnLfN,uptkLf,lfshN,
+!    : TrnLfshN,uptkLhsh,stmN,TrnStmN,uptkStm,GrnN,trnGrn,uptakGrn"
 ! The following 2 subroutine calls were removed for WHAPS (Nwheat) 
 ! since no APSIM-nwheat code was transfered to WH_NUPTAK or WH_KUPTAK
-!**!      CALL WH_NUPTAK(
-!**! %      RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
-!**! %      RLV, no3ppm, nh4ppm, PDWI,TCNP,UNO3,UNH4,
-       !  %      RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
-!**! %      XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
-!**! %      SHF,PTF, SENESCE, KG2PPM, PLIGRT)
+          ! JZW recover the following two calls
+!      CALL WH_NUPTAK(
+!     %      RANC, ROOTN,RTWT,TANC,STOVN,STOVWT,TRNU,NLAYR,
+!     %      RLV, no3ppm, nh4ppm, PDWI,TCNP,UNO3,UNH4,
+!!**!     %      RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
+!     %      XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
+!     %      SHF,PTF, SENESCE, KG2PPM, PLIGRT)
 
 !**!       CALL WH_KUPTAK(
 !**!  &       ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,        !Input
@@ -1293,7 +1514,7 @@
      &   '         vd1              vd2               vd     ',
      &   '    xstag_nw') 
       ENDIF
-      CALL nwheats_rtdp(CONTROL,
+      CALL nwheats_rtdp(CONTROL, SOILPROP,
      &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,      !Input
      &  lldep, nrlayr, p3af, rtdep_nw,                            !Input
      &  RTDEP, RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep, wr,    !Input
@@ -1301,6 +1522,29 @@
       ! JZW add the following two lines
       rwu_nw = 0.
       sen_la = 0.
+      tiln = 0 !tpsm = 0  !Jin Add on Feb 25, 2014 
+      sla_new = 0  !Jin Add on Feb 25, 2014 
+      rtdep_nw = SDEPTH * 10.0 !Jin Add on Feb 25, 2014 
+      pl_nit = 0 ! IT  IS WTNSD, Jin Add on Feb 26, 2014 
+      pl_nit_grain = 0
+      pl_nit_stem = 0
+      pl_nit_root = 0
+      pl_nit_lfsheath = 0
+      pl_nit_leaf = 0
+      pntrans = 0 !Jin Add on Feb 26, 2014
+      cumpnup = 0
+      g_water_table = 0
+      !trans_wt = 0
+      !pl_dmd = 0
+      cumph_nw = 0
+      sumstgdtt = 0
+      rtsw = 0
+      aver_tsw = 0
+      tilsw = 0
+      IF(DYNAMIC.EQ. SEASINIT) THEN
+         anth_date = 0 
+         GAD2 = 0.
+      endif
 !-----------------------------------------------------------------------  
 !-----------------------------------------------------------------------
 !
@@ -1313,10 +1557,24 @@
 ! initialization at sowing never took place.
   
       ELSEIF(DYNAMIC.EQ.RATE) THEN
-      transp_eff_coeff  =  TABEX (tec, XCO2, WEATHER % CO2 ,8)
+      !transp_eff_coeff  =  TABEX (tec, XCO2, WEATHER % CO2 ,8)
+      if (TEFAC .eq. 1) then
+        transp_eff_coeff = 0.006 * ( 1+ (0.37/350)*(WEATHER % CO2 -350))
+      else
+        transp_eff_coeff = 0.006
+      endif
       ! transp_eff_coeff should be used in daily rate instaed of run ini, 
       ! because the CO2 is not availabe in the runini or seasini
-      rue_factor  = TABEX (rue_fac, XCO2, WEATHER % CO2 ,8) 
+      ! JZW replace rue_factor/transp_eff_coeff by model equation from David on Mar. 22, 2014
+      ! rue_factor  = TABEX (rue_fac, XCO2, WEATHER % CO2 ,8) 
+      !Tdepend is Temperature dependent CO2 compensation point
+      if (RUEFAC .eq. 1) then
+        Tdepend = (163 - (Tmax+Tmin)/2)/(5.0 - 0.1* (Tmax+Tmin)/2)
+        rue_factor = (WEATHER % CO2 - Tdepend) *(350 + 2* Tdepend)/
+     &           ((WEATHER % CO2 + 2*Tdepend)*(350 - Tdepend)) 
+      else 
+        rue_factor = 1
+      Endif
  
       if (stgdur(sowing) .eq. 1  ! FSR - Changed from .eq. 1 
      &    .and. istage .eq. sowing) then ! we have just planted the seed
@@ -1325,9 +1583,9 @@
 
       endif
 
-      CALL nwheats_rtdp(CONTROL,
+      CALL nwheats_rtdp(CONTROL, SOILPROP,
      &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,      !Input
-     &  lldep, nrlayr, p3af, rtdep_nw,                            !Input
+     &  lldep, nrlayr, p3af, rtdep_nw,                            !Input, rtdepnw is output also
      &  RTDEP, RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep, wr,    !Input
      &  rtdnew)                                                  !Output
         nlayr = count_of_real_vals (dlayr_nw, NL)
@@ -1343,6 +1601,12 @@
           ! -------------- get new root length volume
 !**!     nrlayr = nwheats_level(rtdep_nw)
          nrlayr = nwheats_level(rtdep_nw, dlayr_nw, NL)
+         
+        if (istage.eq.germ) then 
+        ! JZW move these setting from INTEGR section to here
+         nwheats_topsfr= 0
+         cwdemand= 0.0 
+        endif
  
 !-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
@@ -1375,7 +1639,9 @@
           ENDIF
 !*! IF statement above was modified after MZ_IX_MAIZE, to include all 
 !*! stages except fallow (7).
-
+ 
+      ! write(100,*) "YRDOY=", YRDOY
+      !write(*,*) "YRDOY=", YRDOY
           IF(YRDOY.EQ.STGDOY(3)) THEN
               SWMIN  = STMWT*0.85         
               SUMP   = 0.0
@@ -1396,7 +1662,7 @@
           IF(YRDOY.EQ.STGDOY(1)) THEN  !*! IF Emergence (1 in WHAPS)
               !Emergence
               STMWT   = STMWTE          
-              RTWT    = RTWTE
+              RTWT    = RTWTE !APSIM using seedrvNW0.012*0.5 
               plantwt(leaf_part) = LFWTE        
 !**!              LFWT    = LFWTE         
               STOVWT  = LFWT+STMWT     
@@ -1447,6 +1713,8 @@
 
           IF (xstag_nw .LT. 4.0) THEN
               TMNC =  (1.25-0.200*xstag_nw)/100.0 
+
+              !JZW if this is copied from   MZ_GROSUB.for(1027)?
           ENDIF
 
           !-------------------------------------------------------------
@@ -1462,7 +1730,8 @@
               NDEF3 = 1.0
               NFAC = 1.0
           ENDIF
-
+!     write(96,'(A6,I7,8(",",A5,",",f6.4))') "YRDOY=",YRDOY,"tanc=",
+!     %  TANC, ",tmnc=",  TMNC,",tcnp=",TCNP, ",nfac=", NFAC 
           !-------------------------------------------------------------
           !      Compute Water Stress Factors       
           ! ------------------------------------------------------------
@@ -1475,7 +1744,7 @@
                    TURFAC = (1./RWUEP1) * TRWUP / EP1
                 ENDIF
                 IF (EP1 .GE. TRWUP) THEN
-                  SWFAC = TRWUP / EP1
+                  SWFAC = TRWUP / EP1     
                 ENDIF
              ENDIF
              
@@ -1557,10 +1826,15 @@ C         Calculate soil water table depth
          if (g_obs_gpsm.ne.0) then
 !*!         grpp = g_obs_gpsm/plants ! I assume plants =/= 0
             grpp = g_obs_gpsm/PLTPOP ! NWheat plants = DSSAT PLTPOP
+            ! g_obs_gpsm  is Observed number of grains per plant
          else
 cnh Senthold
 !**!        grpp = pl_wt(stem) * grnmx
-            grpp = gpp_stem_wt * GRNO
+           ! grpp = gpp_stem_wt * GRNO
+            GAD2 = gpp_stem_wt * GRNO
+            grpp = gpp_stem_wt * GRNO* gtmaxfac * gtminfac
+            !write(98,*) "gtmaxfac=",   gtmaxfac, "on day " , YRDOY
+            !write(97,*) "gtminfac=",   gtminfac, "on day " , YRDOY
             gpp = grpp
          endif
  
@@ -1584,7 +1858,7 @@ cnh Senthold
      &    satdep, swdep, xstag_nw, p_fdsw, p_adf, p_afs, p_stage, !Input
      &    nlayr_nw, adf, afs)                                    !Output
        ! JZW: Add nlayr_nw declaration and here
-      CALL nwheats_rtdp(CONTROL,
+      CALL nwheats_rtdp(CONTROL, SOILPROP,
      &  ADPHO, dlayr_nw, dtt, duldep, g_water_table, istage,      !Input
      &  lldep, nrlayr, p3af, rtdep_nw,                            !Input
      &  RTDEP, RTDP1, RTDP2, SDEPTH, stgdur, swdef, swdep, wr,    !Input
@@ -1734,10 +2008,10 @@ c senthold
 !*! End WHAPS initializations of plant weights 
 !*!      (from APSIM NWheat subroutine nwheats_plwin and nwheats_crppr) 
 *======================================================================
-      !*! subroutine nwheats_plnin (plantn)
+      !*! subroutine nwheats_plnin (plantn) initial plant N
       CALL nwheats_plnin (istage, stgdur, plantwt,               !input
      &    mnc, INGNC, MNRTN,                                     !input
-     &    pl_nit )                                              !output
+     &    pl_nit )                                       !input & output
 *======================================================================
 !      call nwheats_add_sen_roots(CONTROL,
 !     &  rootsen, rtdep_nw,                               !Input
@@ -1759,6 +2033,10 @@ cjh temp fix to avoid any further development during maturity stage
       if (istage .ge. emergence .and. istage .le. endjuv) then
 !*!      frlf = divide (dtt, PhInt, 0.0)
          frlf = dtt / PhInt
+         if (PhInt .eq. 0.) then
+             write(*,*) "PhInt is zero"
+             stop !JZW add
+         endif
       else
          frlf = 0.0  ! frlf - New fraction of oldest expanding leaf
       endif
@@ -1806,7 +2084,7 @@ cjh temp fix to avoid any further development during maturity stage
 !     &    nrlayr, pl_la, PLTPOP, sen_la,                          !Input
 !      ! sen_la is unknown in line 1646 ; pl_la is calculated in line 2494 also
 !     &    potntl)                                                        !Output
-!       Call nwheats_watup_new (CONTROL, SOILPROP, swdep, uptake_water,
+!       Call nwheats_watup_new (CONTROL,     SOILPROP, swdep, uptake_water,
 !     &    cwdemand, istage, nrlayr, potntl, uptake_source,     !Input
 !    !&    rlv_nw, above_gnd_pcarb, carbh, nwheats_topsfr, PLTPOP, pcarbo, temp_c, TMAX, TMIN,  
 !    ! need above by call nwheats_cwdmd 
@@ -1814,11 +2092,12 @@ cjh temp fix to avoid any further development during maturity stage
 !    ! Need above by call nwheats_cwpot
 !     &    prwu, rwu_nw) !JZW: pesw_nw should be output. Actually, it is intermediate data, do not need to output 
        !!!!! If cwdemand and rwu_nw is from yesterday, we need to initialize when Dynamic is run initial
-       if (istage.eq.germ) then
+       ! moved the following to Rate section, by JZWU on Feb 25, 2014
+       !if (istage.eq.germ) then
          !rwu_nw = 0.0 move to season initial
-         cwdemand= 0.0 
+       !  cwdemand= 0.0 
          ! if uptake_source is from calc, then cwdemand is not needed in set_swdef_nw
-       endif
+       !endif
        uptake_source = 'calc'
 
 !======================================================================
@@ -1855,6 +2134,10 @@ cbak    testing:
 !*!     ce_tops = u_bound(ce_tops,2.0)
  
         ce_tops = 3.8 * (SRAD**0.63 / SRAD)
+        if (SRAD .eq. 0.) then
+            write(*,*) 'SRAD is zero'
+            stop
+        endif
         ce_tops = MIN(ce_tops,2.0)
  
 !*!   if (nwheats_min_rootfr() .gt. 0.0) then
@@ -1914,6 +2197,12 @@ cbak optimum of 18oc for photosynthesis
           ! day by discounting by temperature, water or N stress factors.
 cnh senthold
 cnh      optfr = min (swdef(photo), nfact(1)) * prft
+        
+      !       write(92,'(I7,13(",",f7.5))')YRDOY, pl_nit(leaf_part),
+      !:       pl_nit(stem_part),pl_nit(lfsheath_part),
+      !:       plantwt(leaf_part), plantwt(stem_part),
+      !:       plantwt(lfsheath_part)
+                
       optfr = min (swdef(photo_nw), nfact(1), ADPHO) * prft 
         !! threshold aeration deficit (AF2) affecting photosyn
       carbh = ptcarb*optfr
@@ -1938,14 +2227,15 @@ cnh      optfr = min (swdef(photo), nfact(1)) * prft
 !*! End WHAPS - actual & potential biomass (CH2O) production from   
 !*!       photosynthesis   (from APSIM NWheat subroutine nwheats_biomp)
 !====================================================================== 
-!      if (istage.eq.germ) then
-!         nwheats_topsfr=? initialize here
-!       endif
+! JZW change on Feb 25, 2014, the day of istage=germ, may go to rate section, but not in integr section 
+ !     if (istage.eq.germ) then
+ !        !nwheats_topsfr=? initialize here
+ !      endif
       call nwheats_cwdmd (CONTROL, uptake_source,
      &    carbh, nwheats_topsfr, PLTPOP,                   !Input
        ! nwheats_topsfr is available in line 2100 
-     &    pcarbo, TMAX, TMIN,                         !Input
-     &    cwdemand)  
+     &    pcarbo, TMAX, TMIN, transp_eff_coeff,            !Input
+     &    cwdemand, vpd_transp)  
        
        call nwheats_cwpot (CONTROL, SOILPROP, rlv_nw, swdep,
      &    cumph_nw, cwdemand, istage,                        !Input
@@ -2109,6 +2399,10 @@ cnh      plagms = 1400.*(cumph(istage)**.6)*ti*optfr
 !                     nwheats_sla ()    ! Nwheat function ends here
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !*!      grolf = divide (plag, sla_new, 0.0)
+         if (sla_new .eq. 0.) then
+             write(*,*) "sla_new is aero"
+             stop
+         endif
          grolf = plag / sla_new
  
       else if (istage .eq. endjuv) then
@@ -2140,6 +2434,10 @@ cnh      plagms = 1400.*(cumph(istage)**.6)*ti*optfr
  
 cbak : set leaf sheath demand to 0.8 of leaf blade demand
 !         grolfsh = divide (0.8*plag, sla_new, 0.0)
+         if (sla_new .eq. 0.) then
+             write(*,*) "sla_new is aero"
+             stop
+         endif
          grolfsh = 0.8*plag/sla_new
  
       else if (istage.eq.endjuv) then  ! This IF-THEN clause has no
@@ -2258,6 +2556,11 @@ cnh note that endjuv is only 3 phints long and so most c will still go into leaf
           gro_wt(root_part) = 
      &           carbh - pl_dmd(leaf_part) - pl_dmd(lfsheath_part)
           !jzw NEGATIVE VALUE HERE
+          if (gro_wt(root_part) .le. 0) then
+               continue
+          endif
+          ! JZW: the following if statement is non-sense 
+          ! gro_wt(root_part) = MAX(gro_wt(root_part), pl_dmd(root_part)) should replace if statement
           if (gro_wt(root_part) .gt. pl_dmd(root_part)) then
             part_shift = gro_wt(root_part) - pl_dmd(root_part)
             gro_wt(root_part) = pl_dmd(root_part)+ part_shift
@@ -2311,11 +2614,44 @@ cbak  consider using it to reflect on sla under stress (ie. lower sla, thicker l
      :         istage.eq.endear ) then
           gro_wt(root_part) = pl_dmd(root_part)
           gro_wt(stem_part) = pl_dmd(stem_part)
+          if  (istage .eq. endear )then
+            if ((anth_date .EQ. 0) .and. (Sumstgdtt(endear) .ge. 80)  
+     :         ) then
+               anth_date = YRDOY 
+               !write (97, *)"Anth date is ", YRDOY, "Sumdtt=", 
+!     :            Sumstgdtt(endear) 
+            endif   
+                gtmaxfac= gtmaxfac * (1+ ALIN (GTMAX, GRDUH, 4, TMAX)* 
+   !  :          0.01 * min (1., max(0., ((Sumstgdtt(endear)-20)/60))) )
+     :           0.01 * min (1., max(0.,
+     :             ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)))))
+                gtminfac= gtminfac * (1+ ALIN (GTMIN, GRDUL, 4, TMIN)* 
+    ! :           0.01 * min (1., max(0., ((Sumstgdtt(endear)-20)/60))))
+     :           0.01 * min (1., max(0.,
+     :             ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)))))
+                
+!                Write(98,*)YRDOY,Tmax,ALIN (GTMAX, GRDUH, 4, TMAX),
+!     :            Sumstgdtt(endear),
+!     :            ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)),  gtmaxfac  
+!                Write(97,*)YRDOY,Tmin,ALIN (GTMIN, GRDUL, 4, TMIN),
+!     :            Sumstgdtt(endear),            
+!     :            ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)),  gtminfac   
+      !        else 
+      !          ! II= MAX( 0, TIMDIF(anth_date, YRDOY))
+      !           gtmaxfac= gtmaxfac * (1+ ALIN (GTMAX, GRDUH, 4, TMAX)* 
+      !:           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) )
+      !           ! 0.01 is percentage 
+      !           gtminfac= gtminfac * (1+ ALIN (GTMIN, GRDUL, 4, TMIN)* 
+      !:           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) )
+      !           Write(98,*)YRDOY, Tmax,ALIN (GTMAX, GRDUH, 4, TMAX),
+      !:            ((Sumstgdtt(endear)-80)/40),  gtmaxfac  
+      !           Write(97,*)YRDOY, Tmin,ALIN (GTMIN, GRDUL, 4, TMIN),
+      !:            ((Sumstgdtt(endear)-80)/40),  gtminfac   
+             endif  
 cbak
           gro_wt(leaf_part) = 0.0
           gro_wt(lfsheath_part) = 0.0
- 
- 
+         
       else if (istage.eq.grnfil) then
  
          gro_wt(root_part) = pl_dmd(root_part)
@@ -2329,8 +2665,15 @@ cbak
  
              ! we have no change in carbohydrate allocation
  
-      endif
- 
+       endif
+       ! JZW add the following: Dr. Senthold siad that APSIM has restriction: 
+       ! root growing weight rate can not large than top growing rate
+       ! This may affect more for low Nitrogen case
+       temp = gro_wt(lfsheath_part)+gro_wt(leaf_part)+
+     :    gro_wt(stem_part) + gro_wt(grain_part)
+       if  (gro_wt(root_part) .gt.  temp) then
+          gro_wt(root_part) = temp
+       endif 
           ! now check that we have mass balance
  
       totprt = sum_real_array (gro_wt, mxpart)
@@ -2395,7 +2738,6 @@ cnh do we need to try and satisfy leaf sheath demand as well???????????
           ! now check that we have mass balance
  
       mass_balance = sum_real_array (trans_wt, mxpart)
- 
             ! the carbohydrate in the seed is available for uptake into the
             ! rest of the plant.
 
@@ -2478,8 +2820,13 @@ cnh         optfr = min (nfact(2), swdef(photo))
          endif
           
 !*!      rtsw = divide (aver_tsw, tilsw, 1.0)
-            rtsw = aver_tsw / tilsw   ! NWheat "divide" function
-                                      ! simplified
+           
+            if (tilsw .eq. 0.) then
+                rtsw = 1.0
+            else
+                rtsw = aver_tsw / tilsw   ! NWheat "divide" function
+                                          ! simplified
+            endif
 cnh senthold
 cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
          dtiln = dtt * DTNP1 * (rtsw - 1.)   ! DTNP1 substituted for 
@@ -2499,8 +2846,13 @@ cnh         optfr = min (nfact(2), swdef(photo))
          endif                       ! NWheat "divide" function
                                      ! is a guess (FSR)
 !*!      rtsw = divide (aver_tsw, tilsw, 1.0)
-            rtsw = aver_tsw / tilsw   ! NWheat "divide" function
-                                      ! simplified
+            
+            if (tilsw .eq. 0.) then
+               rtsw = 1.0
+            else
+               rtsw = aver_tsw / tilsw   ! NWheat "divide" function
+                                         ! simplified
+            endif
 cnh senthold
 cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
          dtiln = dtt * DTNP1 * (rtsw - 1.)    ! DTNP1 for DTILN_P1
@@ -2536,7 +2888,9 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 !----------------------------------------------------------------------
 
             ! find actual grain uptake by translocation
+      !JZW should not call grain before dtage grnfil ??
 *     ==================================================================
+      
       call nwheats_grnit (CONTROL, ISWITCH,                       !Input
      &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
@@ -2570,7 +2924,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
       else
          ! it is already taken out - dont do it again.
       endif
-  ! Calculate total root uptake
+      ! Calculate total root uptake
       cumpnup = cumpnup + sum_real_array (snup_no3, nrlayr)
      :                  + sum_real_array (snup_nh4, nrlayr)
        if (cumpnup . GT. 0.000000001) then
@@ -2579,6 +2933,8 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
         !cumpnup = 0.127kg/ha
        endif
       call add_real_array (pnup, pl_nit, mxpart)
+!      write(100,"(I7,15(',',F7.5))")YRDOY, 
+!     :   (pl_nit(i),pntrans(i), pnup(i), i=1,5)
 !----------------------------------------------------------------------
 !*! End N process from APSIM nwheats_crppr subroutines
 !======================================================================
@@ -2603,14 +2959,17 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
             ELSE
                rootsenfr = 0.0   
             ENDIF
-      rootnsen =  rootsenfr * pl_nit(root_part)
+      rootnsen =  rootsenfr * pl_nit(root_part) !pl_nit is array
 !**!  pl_wt(root_part) = pl_wt(root_part) - rootsen
       plantwt(root_part) = plantwt(root_part) - rootsen
+      !write(*,*) "rtwt", plantwt(root_part),"rtsen = ", rootsen
       pl_nit(root_part) = pl_nit(root_part) - rootnsen
       ! JZW add the following for output
       plntp = pl_nit(leaf_part)+pl_nit(lfsheath_part)+pl_nit(stem_part)
      :   + pl_nit(grain_part) 
-      pl_nit_leaf = pl_nit(leaf_part) * PLTPOP
+      ! WTNCAN      Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha
+      WTNCAN = plntp * PLTPOP 
+      pl_nit_leaf = pl_nit(leaf_part) * PLTPOP !pl_nit_leaf is  WTNLF
       !   g               g            plant
       !---------  = ----------------- *----
       !   m2              plant         m2
@@ -2627,6 +2986,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 
 ! JZW replace the following do loop by call add_real_array
       call add_real_array (gro_wt, plantwt, mxpart)
+      !write(*,*) "rtwt", plantwt(root_part),"gw_rt",gro_wt(root_part)
 !      do L=1, mxpart
 !!**!     pl_wt(L) = pl_wt(L) + gro_wt(L)
 !         plantwt(L) = plantwt(L) + gro_wt(L)
@@ -2649,12 +3009,15 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 !*!   if ((xstage.ge.p_gpp_start_stage)     ! FSR: Not sure why this 
 !*!  :           .and.                      !  apparently convoluted
 !*!  :  (xstage.lt.p_gpp_end_stage)) then   !  construction was used 
+! cultiva data GPPSS (e.g. 2.0)      gpp_start_stage - Grain per plant: 2=stem elong., 3=end leaf stage at which to start accumo. stem for gpp calc.
+! cultiva data GPPES (e.g. 5.0)      gpp_end_stage - Start grainfilling stage at which to end accumulation stem for Grain per plant calc
+! xstag_nw    !Non-integer growth stage indicator (NWheats)
       IF ((xstag_nw .ge. GPPSS)            ! GPPSS for p_gpp_start_stage
      &           .and.   
      &  (xstag_nw.lt.GPPES)) then          ! GPPES for gpp_end_stage
-   
+    !  write (*,*) zstage
 !*!      IF (istage .eq. grnfil) THEN  ! Not sure where this came from??
-
+! gpp_stem_wt : stem weight used in calc gpp (NWheats)
          gpp_stem_wt = gpp_stem_wt + gro_wt(stem_part) !*! was "growt"
 
       ELSE
@@ -2678,6 +3041,7 @@ cbak   add the relevant c and n pools to the soil organic matter cycling
       pl_la = pl_la + gro_wt(leaf_part)*sla_new
 
       lai = (pl_la - sen_la) * PLTPOP / sm2smm
+!       write(100,*) "pl_la", pl_la, ",  sen_la", sen_la, ",  lai", lai
       XHLAI  = LAI  ! XHLAI: Healthy leaf area index used to compute
                     ! transpiration in water balance routine
 
@@ -2766,15 +3130,31 @@ cbak  adjust the green leaf ara of the leaf that is dying
       slfn = 2.0 - nfact(4)/0.8
 !*!   slfn = bound (slfn, 1.0, 2.0)
       slfn = MAX (slfn, 1.0)
-      slfn = MIN (slfn, 2.0)
- 
-          ! high temperature factor
- 
-      if (TMAX .gt. 34.) then ! note that this factor is not continuous
-         slft = 4. - (1.-(TMAX - 34.)/2.)
-      else
-         slft = 1.0
-      endif
+      slfn = MIN (slfn, 2.0) 
+      vpdf = ALIN (VPD, FVPD, 4, vpd_transp) 
+      IF ((ISWWAT .EQ. 'Y') .and. (MEEVP .NE. 'Z')) THEN   !MEEVP is EVAPO in X file    
+          ! high temperature factor JZW changed on Mar. 24, 2014, add Tcnpy on May 14, 2014
+         ep_nw = sum_real_array (rwu_nw, nrlayr) ! Actual transpiration
+         ! ES is actual soil evaporation
+         !Tcnpy = (-12. * ( ES + ep_nw)/EO + 6.) +Tmax
+         Tcnpy = vpdf*(TCSlope * ( ES + ep_nw)/EO + TCInt) +Tmax
+!         write(96, *) YRDOY, "Tmax=", Tmax, "Tcnpy=", Tcnpy,
+!     :       "VPD=", vpd_transp, "vpdf=",vpdf,vpd_transp
+      else 
+         Tcnpy = vpdf * (TCSlope + TCInt) + Tmax  ! because EO is not availabe (there is no CALL PET in SPAM.for)
+      endif                
+         weather % TGROAV = Tcnpy !Average daily canopy temperature (°C)
+         slft = ALIN (SENST, SENSF, 4, Tcnpy)
+!        write(101,*) "YRDOY=", YRDOY, ", Tmax=", Tmax,
+!    &     "Tcnpy=",Tcnpy,", slft=",slft
+       Weather % VPD_TRANSP = vpd_transp
+       Weather % VPDF = vpdf
+!      if (TMAX .gt. 34.) then ! note that this factor is not continuous
+!      ! REAL FUNCTION INTERPOLATE (ARRVAR, DEPTH, DS)
+!         slft = 4. - (1.-(TMAX - 34.)/2.)
+!      else
+!         slft = 1.0
+!      endif
  
       sfactor = max (slfw, slfn, slft)
  
@@ -2856,15 +3236,28 @@ cjh quick fix for maturity stage
 !-----------------------------------------------------------------------
       ELSEIF(DYNAMIC .EQ. SEASEND) THEN
 !*!   IF (DYNAMIC .EQ. SEASEND) THEN
-
-         IF (IDETR .EQ. 'Z') THEN
+          !IF (IHARI .NE. 'M') then, seasend is not maturiy day 
+        ! !calculate Total grain N uptake, kg N/ha, i.e. at maturity
+        !  GNUP = pl_nit(grain_part) * PLTPOP * 10
+        !!  kg       g        kg       plants   10000m2
+        !!  --- = ---------*---------*--------*---------
+        !!  ha     plant     1000g        m2        ha
+        !  XGNP = PCNGRN
+          IF (IDETR .EQ. 'Z') THEN
          !Close daily output files.
          CLOSE (NOUTXL)
          ENDIF
 
       ENDIF !(DYNAMIC)
-
-
+      if (YRDOY .EQ. MDATE) then    
+        !calculate Total grain N uptake, kg N/ha, i.e. at maturity
+          GNUP = pl_nit(grain_part) * PLTPOP * 10
+        !  kg       g        kg       plants   10000m2
+        !  --- = ---------*---------*--------*---------
+        !  ha     plant     1000g        m2        ha
+          XGNP = PCNGRN
+      endif
+          
           IF (istage .LT. 7) THEN
               RSTAGE = istage           !R-stage
           ELSE
@@ -2885,7 +3278,33 @@ cjh quick fix for maturity stage
           tpsm = tiln * PLTPOP
           SHELPC = tpsm               ! Tiller number (no/m2)
           TOPWT  = WTLF+PODWT+STMWTO+SDWT  
-
+          if (plantwt(grain_part)  .gt. 0.) then
+             PCNGRN = pl_nit(grain_part)* 100./plantwt(grain_part)
+          else 
+             PCNGRN = 0.
+          Endif
+          if (plantwt(stem_part) .gt. 0. ) then
+             PCNVEG = (pl_nit(stem_part)+pl_nit(leaf_part)+
+     %             pl_nit(lfsheath_part))/(plantwt(lfsheath_part)+
+     %             plantwt(stem_part)+plantwt(leaf_part))*100.
+          else
+             PCNVEG = 0.
+          endif
+          if (plantwt(leaf_part) .GT. 0.) then
+            PCNL = pl_nit(leaf_part)*100./plantwt(leaf_part)
+          else
+            PCNL = 0.
+          endif
+          if (plantwt(stem_part) .GT. 0.) then
+            PCNST = pl_nit(stem_part)*100./plantwt(stem_part)
+          else
+            PCNST = 0.
+          endif
+          if (plantwt(root_part) .GT. 0.) then
+            PCNRT = pl_nit(root_part)*100./plantwt(root_part)
+          else
+            PCNRT = 0.
+          endif
           IF (TOPWT .GT. 0. .AND. SDWT .GE. 0.) THEN
               HI = SDWT/TOPWT
           ELSE
@@ -2898,8 +3317,26 @@ cjh quick fix for maturity stage
 
  2700 FORMAT (2X,'Crop mature on JD',I4,' due to slowed grain filling')
  2800 FORMAT (2X,'Crop failure growth program terminated ')
-   !   write (*,*)snup_no3, snup_nh4
+   !   !write (*,*)snup_no3, snup_nh4
       ! cumpnup=cumpnup/10.   !JZW tset,  have to remove !!!!!!!!!!!!!???????
+      if ((YRDOY .LE. 1983225).and.(DYNAMIC.EQ.INTEGR)) THEN
+      ! write(93,'(I7,",",I1,14(",",f10.3))') YRDOY,Istage,xstag_nw,
+!     : pl_la,sen_la, (sla_new/100), lai, XLAI,zstage, cumph_nw(istage),
+!     : plantwt(leaf_part),leafsen
+!      write(94,'(I7,",",I1,14(",",f7.4))')YRDOY,istage, 
+!     :gro_wt(root_part),carbh, pcarbo, ce, lfipar, pl_dmd(leaf_part), 
+!     :pl_dmd(lfsheath_part),swdef(photo_nw),nfact(1),prft,optfr,lai,
+!     : radfr   
+!      write(95,'(I7,13(",",f6.4),2(",",f7.3))')YRDOY,plantwt(root_part),
+!     : gro_wt(root_part), rootsen, plantwt(leaf_part),gro_wt(leaf_part),
+!     : plantwt(lfsheath_part),gro_wt(lfsheath_part),plantwt(stem_part),
+!     :    gro_wt(stem_part),plantwt(grain_part),gro_wt(grain_part),
+!     :   carbh,TOPWT/PLTPOP,leafsen
+      ! write(95,*)      "YRDOY,rootwt,gw_rt,sen_rt,lfwt,gw_lf,lfsen
+      !:,stmwt,gw_stm,lfshwt,gw_lfsh,grainwt,gw_grn,carbh,topwt"  
+      ! Write(*,*) "rtwt",plantwt(root_part), "gwRt", gro_wt(root_part),
+      !:   "rtsn = ", rootsen
+      endif
       return
       END SUBROUTINE WH_GROSUB
 
@@ -3035,12 +3472,13 @@ cjh quick fix for maturity stage
 ! PLAE        Plant leaf area at emergence, cm2/plant
 ! PLAG        Leaf area growth, cm2/plant
 ! plantwt()   Array of plant component weights, g/plant (root_part, leaf_part, stem_part, etc)
+! pl_nit_grain It is WTNSD
 ! PLAS        The rate of senescence of leaf area on one plant - sq. cm/day
 ! PLTPOP      Plant population, plants/m2
 ! PODWT       Leaf sheath dry weight, including C and N (g[leaf sheath]/m2[ground])
 ! PORMIN      Minimum pore space volume required for supplying oxygen to roots for optimum growth and function (0-100%)
 ! PPLTD       Percent of plants destroyed today, %/m2/d
-! PRFTC       Array containing base, optimum and maximum temperature for function reducing photosynthesis due to temperature.
+! PRFTC not used (for ceres?)       Array containing base, optimum and maximum temperature for function reducing photosynthesis due to temperature.
 ! PRFT        Photosynthetic reduction factor for low and high temperatures  (DSSAT and Nwheat)
 ! ptcarb      Potential dry matter (carbohydrate) production (g/plant)  (NWheat output)
 ! PTF         Ratio of above ground biomass to total biomass
@@ -3049,7 +3487,7 @@ cjh quick fix for maturity stage
 ! RATE        Program control variable to execute code to compute daily rate variables (value=3)
 ! RANCE       Root nitrogen concentration at emergence, g N/g root dry weight
 ! RCNP        Root critical nitrogen concentration, g N/g root dry weight
-! RGFIL       Array containing base, optimum and maximum temperature to compute RGFILL function
+! RGFIL  not used (for ceres?)      Array containing base, optimum and maximum temperature to compute RGFILL function
 ! RGFILL      Rate of grain fill - mg/day
 ! RLV(L)      Root length density for soil layer L, cm root/cm2 soil
 ! RLWR        Root length weight ratio
@@ -3105,9 +3543,9 @@ cjh quick fix for maturity stage
 !             values 1.0 - 3.0 (NWheat cultivar parameter)
 ! STMWT       Stem weight, g/plant
 ! STMWTE      Stem weight at emergence, g/plant
-! STOVER      Stover weight (leaf+stem), kg/ha
+! STOVER      Stover weight (leaf+stem+lfsheath), kg/ha
 ! STOVN       Nitrogen content in stover, g N/plant
-! STOVWT      Stover weight (Stem + leaf), g/plant
+! STOVWT      Stover weight (Stem + leaf ++lfsheath), g/plant
 ! SUMDTT      Sum of GDD for a given stage, C
 ! sumstgdtt(20) Sum of GDD for a given istage, deg days 
 !              (substituted for sumdtt from nwheats.for, since DSSAT uses SUMDTT already)
@@ -3153,9 +3591,9 @@ cjh quick fix for maturity stage
 
 ! WTNCAN      Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha
 ! WTNLF       Weight of nitrogen in leaf tissue, kg N/ha
-! WTNSD       Weight of nitrogen in seed, g[N] / m2[ground]
+! WTNSD       pl_nit_grain, whic is Weight of nitrogen in seed, g[N] / m2[ground]
 ! WTNST       Weight of nitrogen in stem tissue, kg N/ha
-! WTNUP       Total N uptake, g/m2
+! WTNUP       Total N uptake, g/m2, WTNUP = cumpnup / 10.0 , 
 ! WTNVEG      Weight of nitrogen in vegetative tissue, kg N/ha
 ! XANC        Nitrogen concentration in above ground biomass %
 ! XHLAI       Healthy leaf area index used to compute transpiration in water balance routine, m2/m2
