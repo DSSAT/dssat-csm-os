@@ -1,5 +1,4 @@
-$SPECIES:WHCRP046.051213   Last edit:051213 
-
+$SPECIES:WHCRP046.010115   Last edit:231214 
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
 ! They have been developed from 'parameters' embedded in the code of
@@ -8,14 +7,11 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! gained,and should not be taken as 'fixed'.
 
 *SPECIES:WHCRP046
-! Harvest product and standard moisture content
-@HPROD  HMPC
-    GR    15
 ! Principal Stages (S=Standard,K=Key(those that may be outputed)
 @ PSNO PSTYP PSABV PSNAME
 ! Stg#  Type Abrev Name
     1      S GDAT  Germinate
-    2      S TSAT  T.Spikelet
+    2      K TSAT  T.Spikelet
     3      S PSDAT PseudoStem
     4      S LLDAT End_Leaf
     5      S IEDAT HeadEmerge
@@ -30,7 +26,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 @ SSNO SSTYP  SSTG SSABV SSNAME
 ! Stg#  Type PStg# Abrev Name
     1      S   1.5 LAFST Lafac_change          
-    2      S  1.55 DRAT  DoubleRidges
+    2      K  1.55 DRAT  DoubleRidges
     3      S 3.143 JDAT  Jointing
     4      S   3.3 SGPHS StemStart             
     5      S   4.0 RUESG RUE_change            
@@ -94,7 +90,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 !   fr
   0.65
 ! Grain  
-@GLIG% GWLAG GWLIN ! Lignin,wt.endlag,endlinear fill
+@GLIG% GWLAG GWLIN ! Lignin;wt.endlag,endlinear
 !    %    fr    fr
   10.0  0.10  0.80 
 ! Seed
@@ -128,25 +124,24 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 @ TKUH TKDTI TKDLF TKSPN  HDUR HLOST HLOSF ! Kill temps,span,time->harden,loss
 !   oC    oC    oC    oC     d    oC    fr
   -6.0   2.0   6.0   2.0  10.0  10.0   0.2
+! High temperature sensitivity  ! TMAX at which 'hays off'
+@ TKGF
+  45.0
 ! Temperature responses
+! TRGEM as Parent & Tardieu,2012; Trdv1 same
 ! AFRC vernalization=-4,3,10,17; Reinink=-1,0,4,8,9
-@RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR TRGFW xRGFW TRGFN  
-!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
-     0     1     0     1     2     0     0     0    -5    -5     0     0     0 
-   1.0    20    20    25    30    20    10     5     0     0     8    16    16 
-   1.0    35    35    35    50    35    20    25     7     5    20    35    35
-     0    45    45    45    60    45    35    35    15    10    40    45    45
-@RRATE TRGEM TRDV1 TRDV4 TRDV8  TRLA TRLFG TRPHS TRVRN TRHAR XRGFW TRGFN  
-!    0     1     0     1     0     1     0     0    -5    -5     0     0 
-!  1.0    26    20    30    30    20    10     5     0     0    10    16 
-!  1.0    50    35    50    50    35    20    25     7     5    25    35
-!    0    60    45    60    60    45    35    35    15    10    35    45
+@RRATE TRGEM TRDV1 TRDV2 TRDV7 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN  
+!  Rel    oC    oC    oC    oC    oC    oC    oC    oC    oC    oC
+     0     1     0     1     4     0     0    -5    -5     0   -70 
+   1.0    25    25    30    35    10     5     0     0     8    30
+   1.0    30    30    35    40    20    25     7     5    20    45
+     0    40    40    45    50    35    35    15    10    40    50
 
 ! WATER loss,uptake,etc.
 ! Evapotranspiration (Resistances only used in stand-alone Cropsim,not CSM)
-@ RATM RCROP EORATIO ! Atmospheric,canopy resistances;FAO formula factor
-!  s/m   s/m     Rel
-   300   150     1.0
+@ RATM RCROP EORAT ! Atmospheric,canopy res.;FAO-PenM formula factor
+!  s/m   s/m   Rel
+   300   150   1.0
 ! Water uptake (RWULF only used in stand-alone Cropsim)
 @RWUPM RWUMX ! Min.pore size for max.uptake,Max uptake rate
 !   fr cm3/cm   
@@ -166,9 +161,9 @@ $SPECIES:WHCRP046.051213   Last edit:051213
   0.50  0.25
 
 ! NITROGEN uptake,distribution,etc.
-@NH4MN NO3MN
-!mg/Mg mg/Mg
-   0.5   0.5 
+@NH4MN NO3MN RTNUP
+!mg/Mg mg/Mg mg/cm
+   0.5   0.5 0.006
 ! N demand 
 @NTUPF  ! Fraction of deficit that can be filled per day
 ! fr/d
@@ -180,7 +175,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
 !    %     %     %     %     %     %
    6.0  0.75  2.50  0.65  2.00  1.50                               
-   1.0  0.55  1.00  0.45  1.70  1.25                               
+   2.5  0.55  0.50  0.45  1.70  1.25                               
 ! N distribution/mobilization
 @NLAB% ! %N that labile 
 !    %
@@ -227,7 +222,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! DI_NAME Common name for disease (text)
 ! DLDUR   Latent period duration (Bd)
 ! DSDUR   Sporulating period duration (Bd)
-! EORATIO Increase in p.evap with LAI (<6);FAO-56 Penman ref (ratio) 
+! EORAT   Increase in p.evap with LAI (<6);FAO-56 Penman ref (ratio) 
 ! GGPHE   Grain growth ending stage (GrowthStage)
 ! GGPHS   Grain growth starting stage (GrowthStage)
 ! GLIG%   Grain lignin (%)
@@ -239,7 +234,6 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! HDUR    Days for complete cold hardening (d)
 ! HLOSF   Fraction of hardiness days lost (fr/d)
 ! HLOST   Threshold temperature for hardiness loss (C)
-! HMPC    Grain moisture percentage,standard (#)
 ! LAIXX   LAI maximum (m2/m2)
 ! LASTG   Leaf area change stage (#)
 ! LAXS    Maximum area of leaves on main stem (cm2)                                                                                                     
@@ -300,9 +294,11 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! RSFPL   Reserves concentration,lower bound for photosynthesis effect (fr)
 ! RSFPU   Reserves concentration,upper bound for photosynthesis effect (fr)
 ! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
+! RTNUP   NO3 uptake/root length  (mg N/cm.day)
 ! RTUFR   Max fraction root wt useable for new leaves (fr)
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
 ! RWUPM   Root water upake,minimum pore size for maximum uptake (fr SAT-DUL)
+!         (Note: RWUPM = PORMIN in CSM modules)                                   
 ! SAWS    Stem area/weight ratio,standard (cm2/g)
 ! SDDUR   Seed duration if used only for roots (Standard day)
 ! SDN%    Seed N (%)
@@ -323,6 +319,7 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! TILIP   Tiller initiation phase duration (Leaf # from birth to full size)
 ! TKDLF   Killing temperature difference,leaves cf plants (C)
 ! TKDTI   Killing temperature difference,tillers cf plant (C)
+! TKGF    Temperture (daily max) at which plant killed during grain fill )C)
 ! TKILL   Temperature at which disease killed (oC)
 ! TKSPN   Temperature span over which killing occurs (C)
 ! TKUH    Start kill temperature,unhardened (oC)
@@ -357,3 +354,4 @@ $SPECIES:WHCRP046.051213   Last edit:051213
 ! WFSF    Water factor,trigger for final senescence (fr)
 ! WFTL    Water factor,tillering,lower (fr)
 ! WFTU    Water factor,tillering,upper (fr)
+

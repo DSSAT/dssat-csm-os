@@ -1,4 +1,4 @@
-$CULTIVARS:WHCRP046.051213   Last edit:051213 
+$CULTIVARS:WHCRP046.010115   Last edit:231214 
 
 
 ! Coefficients used in the Cropsim model differ from those used in
@@ -31,23 +31,18 @@ $CULTIVARS:WHCRP046.051213   Last edit:051213
 ! of wheat and other cereals.
 
 *CULTIVARS:WHCRP046
-!                                     --- BASIC COEFFICIENTS (AS IN CERES) ---  ------ PHENOLOGY (PHASE DURATIONS) -----  -- LEAF SIZES -- -- P.MODIFIERS --                 
-@VAR#  VAR-NAME........  EXP#   ECO#  VREQ  PPS1    P8 G#WTS  GWTS SHWTS PHINT    P1    P2    P3    P4    P5    P6    P7  LA1S  LAFV  LAFR VBASE  VEFF  PPS2 PGERM PEMRG
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20     1     1
-!                                     Vday %/10h  oC.d   #/g    mg     g  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d m2/m2 fr/lf fr/lf  Vday    fr %/10h  Sday  Sday      
-999991 MINIMA               . 999991     0     0   100    10    10   0.5    40   100    60   100    50    50    10    50   0.1  0.01  0.01     0     0     0     3     5
-999992 MAXIMA               . 999992    60   300   800    50    75   5.0   120   800   100   300   500   400   100   300  10.0  5.00  5.00    30   1.0   200    30    30
-                                                                                                                                                                            
-DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0  0.10  0.50     0     0     0     0     0
-                                                                                                                                                                        
-IB1500 MANITOU            1,2 CA0001     1    80   280    26    26   3.0    86   400    65   193   172    50    20   130   2.0  0.30  0.30     0   0.5     0    10    11
-IB0488 NEWTON             1,6 US0001    25    75   440    24    25   3.2    95   400    71   214   190    50    20   130   2.0  0.30  0.00     0   1.0     0    10    11
-IB1015 MARIS FUNDIN       1,8 UK0001    27    83   470    17    50   3.2   100   400    75   225   200    50    20   130   2.0  0.30  0.30     0  0.45     0    10    11
-
-IB0034 AVALON 0.5VEFF     1,6 UK0001    27    83   450    15    44   3.2   115   296    75   225   200   100    20   130   2.0  0.10  0.30     0   0.5     0    10    11
-AW0071 Yecora_Rojo 2      1,5 CI0001 .0187  90.0 517.1    23    50   3.0    90   200    55   140   270   145    25   160   3.0  0.10  0.50     0   0.3     0    10    11
-                                                                                                                                                                        
-CI0001 Yecora_Rojo        1,2 CI0001    02    40   570    27    45   4.0   100   400    65   190   180    50    25   160  10.0  0.30  0.40     0   0.3     0    02    02
+!                                     --------- PHENOLOGY (PHASE DURATIONS) -------- -------- P.MODIFIERS -------- -- LEAF PRODN.& SIZE -- SHOOT -- GRAIN --             
+@VAR#  VAR-NAME........  EXP#   ECO#    P1    P2    P3    P4    P5    P6    P7    P8  VREQ VBASE  VEFF  PPS1  PPS2 PHINT  LA1S  LAFV  LAFR SHWTS G#WTS  GWTS
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20
+!                                     oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  oC.d  Vday  Vday    fr %/10h %/10h  oC.d   cm2 fr/lf fr/lf     g   #/g    mg      
+999991 MINIMA               . 999991   100    60   100    50    50    10    50   100     0     0     0     0     0    40   0.1  0.01  0.01   0.5    10    10
+999992 MAXIMA               . 999992   800   100   300   500   400   100   300   800    60    30   1.0   300   200   120  10.0  5.00  5.00   5.0    50    75
+                                                                                                                                                                
+DFAULT DEFAULTS             . DFAULT   380    70   200   200    60    25   150   500     0     0     0     0     0    80   3.0  0.10  0.50   2.5    25    40
+                                                                                                                                                            
+IB1500 MANITOU            1,2 CA0001   400    65   193   172    50    20   130   220     1     0   0.5    80     0    86   2.0  0.25  0.30   3.0    28    23
+IB0488 NEWTON             1,6 US0001   400    71   214   190    50    20   130   370    25     0   1.0    75     0    95   2.0  0.25 -0.10   3.2    22    30
+IB1015 MARIS FUNDIN       1,8 UK0001   400    75   200   200    50    20   130   370    27     0  0.45    83     0   100   2.0  0.25  0.30   3.2    14    42
 
 ! COEFF       DEFINITION
 ! ========    ==========
@@ -58,9 +53,10 @@ CI0001 Yecora_Rojo        1,2 CI0001    02    40   570    27    45   4.0   100  
 ! LA1S        Area of standard first leaf (cm2)
 ! LAFV        Increase in potential area of leaves,vegetative phase (fr/leaf)
 ! LAFR        Increase in potential area of leaves,reproductive phase (fr/leaf)
-! Pn          Duration of phase (n) where n is phase number (PVoC.D)
-!             BUT P3 is a dummy to set the total duration of the life cycle.
-!             It's actual value is calculated internally using the Aitken formula
+! Pn          Duration of phase n where n is phase number (PVoC.D) BUT P3 and
+!             P4 are 'dummy' values inserted to set the total duration of the 
+!             P3+P4 phase. The actual balance between P3 and P4 is determined 
+!             internally depending on the leaf number at the end of phase 1. 
 ! PPSn *      Photoperiod sensitivity,phase(n). % drop in rate,10h pp.change.
 ! PHINT       Interval between successive leaf appearances. (oC.d)
 ! SHWTS       Standard,non-stressed shoot dry weight (incl.grain),maturity (g)
@@ -73,3 +69,4 @@ CI0001 Yecora_Rojo        1,2 CI0001    02    40   570    27    45   4.0   100  
 
 ! *  The programme has been written to read sensitivity for all phases so that
 !    additional columns for later phases could be added if desired.
+

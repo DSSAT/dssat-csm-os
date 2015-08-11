@@ -65,7 +65,7 @@
 !     4/8/2008 CHP / US Root radius is a species parameter
 !     REAL, PARAMETER :: ROOTRAD = 0.0028 !0.002 m = 2 mm
       REAL ROOTRAD
-      REAL, PARAMETER :: PI = 3.14159
+!      REAL, PARAMETER :: PI = 3.14159
 
 !***********************************************************************
 !***********************************************************************

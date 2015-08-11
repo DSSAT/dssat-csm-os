@@ -1,5 +1,4 @@
-$SPECIES:WHCER046.280513   Last edit:060613 
-
+$SPECIES:WHCER046.010115   Last edit:241214 
 
 ! Coefficients differ from those used in DSSAT  Versions 3.5 and 4.0x. 
 ! They have been developed from 'parameters' embedded in the code of 
@@ -35,7 +34,7 @@ $SPECIES:WHCER046.280513   Last edit:060613
   0.10
   0.10
   0.10
-  0.10
+  0.10   
   1.00
 @ CHT%  CLA%
 !    %     %
@@ -152,6 +151,10 @@ $SPECIES:WHCER046.280513   Last edit:060613
    2.7   0.5  1.73  0.60  0.40  1.29
    1.5   0.4  1.68  0.60  0.40  1.26
    1.0   0.4  1.68  0.55  0.40  1.26
+@ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
+!    %     %     %     %     %     %
+   6.0  0.75  2.50  0.65  2.00  1.50                               
+   2.5  0.55  0.50  0.45  1.70  1.25                               
 ! N mobilization
 @NLAB%
 !    %
@@ -266,3 +269,4 @@ $SPECIES:WHCER046.280513   Last edit:060613
 ! WFSU    Water stress factor,senescence,threshold (fr)
 ! WFTL    Water stress factor,tillering,lower (fr)
 ! WFTU    Water stress factor,tillering,upper (fr)
+
