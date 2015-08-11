@@ -375,6 +375,11 @@ C-----------------------------------------------------------------------
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,0)
       !----------------------------------------------------------------
       !       Find and Read TEMPERATURE Section
+      ! Variable in *.spe          Variable in Fortran code
+      ! TTHLD                     Tthrshld
+      ! FRSTF                     frostf
+      ! CRWNT                     crownt
+      ! SNOW                      SNOWky
       !----------------------------------------------------------------
           SECTION = '*TEMPE'
           CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
@@ -395,46 +400,45 @@ C-----------------------------------------------------------------------
             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
             ! Temperature threshold for frost
-            !READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) Tthrshld ! TTHLD in *.spe
-            !READ(C80,'(2X, A5)')temp_Chr
-            !if (temp_Chr(1:5) .ne. "TTHLD") then
-            !  ERR =1
-            !  WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,'instead of TTHLD'
-            !  WRITE(MSG(2),'(A)') "Program will stop."
-            !  CALL WARNING(2,ERRKEY,MSG)
-            !endif
-            !IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            !READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) frostf !FRSTF in *.spe
-            !READ(C80,'(2X, A5)')temp_Chr
-            !  if (temp_Chr(1:5) .ne. "FRSTF") then
-            !  ERR =1
-            !  WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,'instead of FRSTF'
-            !  WRITE(MSG(2),'(A)') "Program will stop."
-            !  CALL WARNING(2,ERRKEY,MSG)
-            !endif
-            !IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-            !
-            ! ! crown temperature
-            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            !READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) crownT !CRWNT in *.spe
-            !READ(C80,'(2X, A5)')temp_Chr
-            !  if (temp_Chr(1:5) .ne. "CRWNT") then
-            !  ERR =1
-            !  WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,'instead of CRWNT'
-            !  WRITE(MSG(2),'(A)') "Program will stop."
-            !  CALL WARNING(2,ERRKEY,MSG)
-            !endif
-            !IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            !READ(C80,'(10X,I1)',IOSTAT=ERR) SNOWky !SNOW in *.spe, switch for snow effect on frost
-            !READ(C80,'(2X, A5)')temp_Chr
-            !if (temp_Chr(1:4) .ne. "SNOW") then
-            !  ERR =1
-            !  WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,' instead of SNOW'
-            !  WRITE(MSG(2),'(A)') "Program will stop."
-            !  CALL WARNING(2,ERRKEY,MSG)
-            !endif
+            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) Tthrshld ! TTHLD in *.spe
+            READ(C80,'(2X, A5)')temp_Chr
+            if (temp_Chr(1:5) .ne. "TTHLD") then
+              ERR =1
+              WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,'instead of TTHLD'
+              WRITE(MSG(2),'(A)') "Program will stop."
+              CALL WARNING(2,ERRKEY,MSG)
+            endif
+            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+            CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) frostf !FRSTF in *.spe
+            READ(C80,'(2X, A5)')temp_Chr
+              if (temp_Chr(1:5) .ne. "FRSTF") then
+              ERR =1
+              WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,'instead of FRSTF'
+              WRITE(MSG(2),'(A)') "Program will stop."
+              CALL WARNING(2,ERRKEY,MSG)
+            endif
+            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)          
+           ! crown temperature
+            CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+            READ(C80,'(7X,4(1X,F5.0))',IOSTAT=ERR) crownT !CRWNT in *.spe
+            READ(C80,'(2X, A5)')temp_Chr
+              if (temp_Chr(1:5) .ne. "CRWNT") then
+              ERR =1
+              WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,'instead of CRWNT'
+              WRITE(MSG(2),'(A)') "Program will stop."
+              CALL WARNING(2,ERRKEY,MSG)
+            endif
+            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+            CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+            READ(C80,'(9X,I3)',IOSTAT=ERR) SNOWky !SNOW in *.spe, switch for snow effect on frost
+            READ(C80,'(2X, A5)')temp_Chr
+            if (temp_Chr(1:4) .ne. "SNOW") then
+              ERR =1
+              WRITE(MSG(1),'(A,A,A)')'Read ',temp_Chr,' instead of SNOW'
+              WRITE(MSG(2),'(A)') "Program will stop."
+              CALL WARNING(2,ERRKEY,MSG)
+            endif
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
           ENDIF
 !         ----------------------------------------------------------------

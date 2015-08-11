@@ -731,6 +731,18 @@
 !         ************************************************************
 ! 
 !                 READ SPECIES FILE
+!     Variable in *.spe          Variable in Fortran code
+!      SENST                     SENST(1-4)
+!      SENSF                     SENSF(1-4)
+!      GTMAX                     GTMAX(1-4)
+!      GRDUH                     GRDUH(1-4)
+!      GTMIN                     GTMIN(1-4)
+!      GRDUL                     GRDUL(1-4)
+!      GTTPT                     GTTPT(1-3)
+!      VPD                       VPD(1-4)
+!      VPDF                      FVPD(1-4)
+!      TCSLP                     TCSlope
+!      TCINT                     TCInt
 !         ************************************************************
 !         ************************************************************
 
@@ -859,7 +871,7 @@
         endif
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)  
         
-                CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
         READ(C80,'(7X, 1X, F5.0,3(1X,F5.0))',IOSTAT=ERR) VPD(1), ! VPD in *.spe
      &     VPD(2), VPD(3), VPD(4)
         READ(C80,'(2X, A5)')temp_Char

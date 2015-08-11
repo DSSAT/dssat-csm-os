@@ -47,7 +47,8 @@ C  FSR added coefficients from WHAPS cultivar file
       REAL        cumvd
       REAL        frost_fr
       REAL        frost_temp
-      PARAMETER   (frost_temp = -6.0) ! from NWheat. Is this ecotype?
+      PARAMETER   (frost_temp = -6.0) ! from NWheat. Is this ecotype? 
+      !Nwheat using Tthrshld to replace frost_temp
       Real        Tthrshld, frostf, crownT
       REAL        GRNO
       REAL        hi     ! Hardening Index ??  (deduced from context)
@@ -223,8 +224,9 @@ C-----------------------------------------------------------------------
 ! Senesce leaf area due to frost
 C-----------------------------------------------------------------------
       if (istage .ge. emergence .and. istage .le. mature) then
-        if (TMIN .lt. frost_temp) then
- !            snow = 0.0
+        !if (TMIN .lt. frost_temp) then !APSIM code
+        if (TMIN .le. Tthrshld)  then !JZW change July, 2015, replace frost_temp by Tthrshld in *.spe 
+ !            snow = 0.0 !APSIM code 
 cbak this next function appears to have a bug in it !!!!!!
 cbak temporarily replaced ..... i know the code is a mess !!!!!!!!!!
 cbak   note hardening is inoperative
@@ -233,35 +235,22 @@ cbak   note hardening is inoperative
 !     :         (tempmn * 0.85 + tempmx*.15 + 10.0 + 0.25 * snow)
           ! if (TMIN .le. -5.0)  then
           if (SNOWky .eq. 1) then ! turn on snow effect switch 
-            if (TMIN .le. Tthrshld)  then 
             ! 10 % of leaf area frosted for every degree less
             !frost_fr = (0.0-TMIN - 5) * 0.10  !JZW changed in Apr, 2014
-               CALL SNOWFALL (RATE,
+              CALL SNOWFALL (RATE,
      &         TMAX, RAIN,                                 !Input
      &         SNOW, WATAVL)                               !Output
                frost_fr = (0.020 * hi - 0.10) *
      &                 (TMIN * 0.85 + TMAX *.15 + 10.0 + 0.25 * snow)  
-               write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
-     &             ", frost_fr", frost_fr
-            else 
-            ! No frost today
-               frost_fr = 0.
-            endif
           else ! turn off snow effect switch frostf will not be used??
-               !frost_fr = (0.0-TMIN - 5) * frostf !JZW changed in May, 2014
-            if (TMIN .le. -5.0)  then
                !  ! 10 % of leaf area frosted for every degree less
-               frost_fr = (0.0-TMIN - 5) * 0.10
-            else
-               !  ! No frost today
-              frost_fr = 0.
-            endif
-           endif
+               !frost_fr = (0.0-TMIN - 5) * 0.10 !APSIM code
+               frost_fr = (0.0-TMIN - 5) * frostf !JZW changed in July, 2015
+          endif
  
 !*!         frost_fr = bound (frost_fr, 0.0, 0.96)
             frost_fr = MAX(frost_fr, 0.0)
             frost_fr = MIN(frost_fr, 0.96)
- 
             ! senesce leaf area due to frost - senescence cannot reduce
             ! green leaf area per tiller below 500 mm2.
  
@@ -277,25 +266,29 @@ cbak  add a lower boundary on leaf senesence due to frost
 !*!         sen_la = u_bound (sen_la, maxsen)
             sen_la = MIN(sen_la, maxsen)
  
-        if (maxsen .gt. 0.0) then
-           write (*,*) 'We have frost damage on leaf area today !!!!'
-           write (*,*) 'Min temp = ', TMIN
+          if (maxsen .gt. 0.0) then
+            write (*,*) 'We have frost damage on leaf area today !!!!'
+            write (*,*) 'Min temp = ', TMIN
             write (*,*) ' current sen_la =', sen_la
             write (*,*) ' current pla=', pl_la
-         else
+          else
           ! insufficient leaf area per tiller for frosting
-         endif
+          endif
  
             do 100 leafno = 1, cumph_nw(istage)+2
                plsc (leafno) = plsc (leafno) * (1.0 - frost_fr)
   100       continue
  
-         else
+        else
             ! not cold enough for frosting
- 
-         endif
+               frost_fr = 0.
+        endif
+          write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
+     &             ", frost_fr", frost_fr
       else
          ! There is nothing to frost in this growth stage
+          write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
+     &             ", frost_fr", frost_fr
       endif
  
 C-----------------------------------------------------------------------
@@ -303,7 +296,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 
       if (istage .ge. emergence .and. istage .le. mature) then
-         if (TMIN .le. frost_temp) then
+         !if (TMIN .le. frost_temp) then apsim code
+         if (TMIN .le. Tthrshld)  then !JZW replace frost_temp by Tthrshld in *.spe July 2015
             ! it is cold enough to frost tillers depending on cold
             ! hardiness of the plant
 !*!            call nwheats_crown_temp (tempcn, tempcx)
