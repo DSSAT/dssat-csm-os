@@ -16,8 +16,10 @@ C                   as defined in ModuleDefs.for
 C  03/30/2006 CHP Added composition of senesced matter for SOM modules
 C  04/21/2007 GH  Externalized stem partitioning STPC=0.1
 C  04/21/2007 GH  Externalized root partitioning RTPC=0.25
+C  05/31/2007 GH  Added P-model (unfinished)
 C  08/26/2011 GH  Update early partitioning and decrease root distribution
-C  05/31/2007 GH Added P-model (unfinished)
+C  08/10/2015 GH  Check for negative root growth ISTAGE = 4
+
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C
@@ -737,28 +739,37 @@ C         GROSTM coeff changed from 0.07 to 0.10
 C         TSIZE is relative size of tillers compared to main culm.
 C         TSIZE is a function of PLTPOP
 C
-         GRORT  = CARBO - GROSTM
+C-GH     GRORT  = CARBO - GROSTM
+C-GH Check for negative "new" root growth
+C-GH
+         IF (CARBO .GT. GROSTM) THEN
+             GRORT  = CARBO - GROSTM
+         ELSE
+             GRORT = 0.0
+             GROSTM = CARBO
+         ENDIF
+                  
          GROLF  = 0.0
 
-c-MA         IF (GRORT .LT. 0.08*CARBO) THEN
+c-MA     IF (GRORT .LT. 0.08*CARBO) THEN
 c-MA        GRORT =CARBO *0.08
-c-MA         GROSTM = CARBO*0.92
-c-MA         ENDIF
+c-MA        GROSTM = CARBO*0.92
+c-MA     ENDIF
    
 c MA 4dec2014 
 c change to fix the root biomass partitioning during stage 4 
 c verification done in the standard dssat shell x file + the x file for sorghum in west Africa
 c generally this change improved the simulation in term of grain yield and above ground biomass
    
-          IF (GRORT .GT. 0.08*CARBO) THEN
-            GRORT =CARBO *0.08
+         IF (GRORT .GT. 0.08*CARBO) THEN
+            GRORT = CARBO *0.08
             GROSTM = CARBO*0.92
          ENDIF
-
+         
 C-GH     GGG    = (CUMDTT-P1-100.0-P3)/(P4+P5)
 C-GH     GGG    = (CUMDTT-P1-100.0-(PANTH-P3))/(PFLOWR + P5)
          GGG    = CUMP4/(PFLOWR + P5)
-	       SLAN   = PLA*(0.07+GCS*GGG)
+	   SLAN   = PLA*(0.07+GCS*GGG)
          STMWT  = STMWT + GROSTM
       ENDIF
 C--------------------------------------------------------------------
