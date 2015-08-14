@@ -2,10 +2,11 @@
 
 *TEMPERATURE EFFECTS
 !         T1    T2    T3    T4
-  SENST -10.   32.   34.   50.     !Temperature thersholds which affect senescense for leaf; 
+  SENST -10.   34.  34.1   50.     !Temperatures which affect senescense for leaf
 !         F1    F2    F3    F4
-  SENSF   1.    1.    3.   11.    !Factor of leaf senescense rate 
+  SENSF   1.    1.    3.   11.     !Factor of temperature senescense for leaf 
 !         T1    T2    T3    T4 
+!Fcators of leaf scenecence were 1.,1.,3.1,11.1, but reduced by half on 10 Dec. 2012
   GTMAX -50.   30.   40.   60.     !Tmax thersholds used for effect of grain number; maximum temeprature values used for interpolation of effects
   GRDUH   0.    0.    0.    0.     !Tmax effect on grain number; to TURN-ON set values to 0. 0. -50. -50. and to TURN-OFF set all values to zero
   GTMIN -50.   -1.    2.   50.     !Tmin thresholds used for effect of grain number
@@ -16,12 +17,12 @@
   VPD     0.    1.    7.    8.     !vapor pressure deficit used in canopy temperature effect, VPD values of refernce for interpolation
   VPDF    0.   0.3    1.    1.     !vapor pressure deficit effect used in canopy temperature effect;these are values used to modify the effect of VPD on canop temeprature effect
 ! To turn-on VPDF, set values to 0., .3, 1., 1.,and to turn-off, set all values to 0.
-! when we set values of vpdf to 0, then caopy temeprature is euqal to the maimum air temerature and henec there will be no cooling effect
-! To see the effect of caopy temeprature with out vpdf effect, set the values of vpdf all to 1.
+! when we set values of vpdf to 0, then caopy temeprature is euqal to the maximum air temerature and henec there will be no cooling effect
+! To see the effect of canopy temeprature with out vpdf effect, set the values of vpdf all to 1.
   TCSLP -12.0                      !Canopy temperature modification slop; to turn-off just comment on this line and to turn-on remove the comment
 ! TCSLP  0.0                       !Turn off Canopy temperature modification slop; when TCSLP is turn-on comment this line and when TCSLP is turn-off, remove the comment from this line
   TCINT  6.0                       !Canopy temperature modification intercept; To turn-off, comment this line and to turn-on remove comment from this line
-! TCINT  0.0                       !Turn off Canopy temperature modification intercept; no comment on this line means the TCINT is turn-off and visa-vis
+! TCINT  0.0                       !Turn off Canopy temperature modification intercept; no comment on this line means the TCINT is turn-on and visa-vis
   TTHLD  -5.                       ! Temperature threshold for frost
   FRSTF  0.1                       ! Frost Factor's factor 
 ! TBASE   0.                       ! Base temperature below which no development occurs, C
@@ -94,7 +95,7 @@
   RWUEP1  1.50  
   istage emerge endjuv endveg endear grnfil mature fallow sowing   germ  ! Reference only: istage  
   stage#      1      2      3      4      5      6      7      8      9  ! names-to-numbers set in ModuleDefs
-  rootfr    0.3    0.2    0.15   0.10   0.08    0.0    0.0    0.0    0.0 ! Modify this line only   
+  rootfr   0.30   0.20   0.15   0.10   0.08    0.0    0.0    0.0    0.0  ! Modify this line only. rootfr are hard coding in Apsim  
   
 *AERATION DEFICIT PARAMETERS (NWHEAT roots)
   p_fdsw     0.0   0.5   1.0      ! fraction of drainable soil water in layer 
@@ -104,7 +105,7 @@
   
 *GROWTH STAGE (can these be combined?)
   istageno   1.0   2.0   3.0   4.0   4.4   5.0   6.0    ! From Nwheats real function nwheats_dc_code
-  dc_code   10.0  30.0  43.0  59.0  65.0  70.0  90.0    ! DC code
+  dc_code   10.0  30.0  43.0  59.0  65.0  70.0  90.0    ! DC code The data of istageno and dc_code are hard coding in Apsim
   xs         1.0   1.5   2.7   3.3   4.1   6.0          ! From Nwheats subroutine nwheats_set_zstag
   zs         1.0   2.0   4.0   5.0   6.0   9.0          ! Zadok's growth stage
 
