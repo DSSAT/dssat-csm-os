@@ -773,6 +773,8 @@ C=======================================================================
       parameter (sm2smm = 1000000) ! from NWheat.
       real sno3(NL), snh4(NL) ! add by JZW
 
+      character*78 msg(1) !warning and error messages
+
       TYPE (ControlType) CONTROL
       TYPE (SoilType) SOILPROP
 *- Implementation Section ----------------------------------
@@ -794,9 +796,12 @@ C=======================================================================
 !**!  do L=1, NL
 !**!     wr(L) = 1.0
 !**!  enddo      
+
           if (rtdep_nw .eq. 0.) then
-            write(*,*) "there will be divide zero in nwheats_rtlv" 
-            stop
+            write(msg(1),*) "there will be divide zero in nwheats_rtlv" 
+            call warning(1,"NWheat",msg)
+            call error("NWheat",99," ",0)
+!            stop
            endif
  
       if (stgdur(emergence).eq.1 .and. istage.eq.emergence) then
@@ -874,10 +879,13 @@ cnh senthold
 !*!   rtdepl = bound (rtdepl, 0.0, dlayr_nw(nrlayr))  ! in case rtdep is out
       rtdepl = MAX (rtdepl, 0.0)
       rtdepl = MIN (rtdepl, dlayr_nw(nrlayr)) 
-      if (dlayr_nw(nrlayr) .eq. 0.) then
-            write(*,*) " divide zero in nwheats_rtlv" 
-            stop
-         endif
+
+!     This should be handled in soil dynamics routine
+!      if (dlayr_nw(nrlayr) .eq. 0.) then
+!            write(*,*) " divide zero in nwheats_rtlv" 
+!            stop
+!         endif
+
 !*!   rldf(nrlayr) = rldf(nrlayr)*divide (rtdepl, dlayr_nw(nrlayr), 0.0) 
       rldf(nrlayr) = rldf(nrlayr) * rtdepl / dlayr_nw(nrlayr)
  
@@ -905,10 +913,13 @@ cnh senthold
       cumdep_nw = 0.0
       do L = 1,nrlayr
          cumdep_nw = cumdep_nw + dlayr_nw(L)
-         if ( (trldf_nw .eq. 0.) .or. (dlayr_nw(L) .eq. 0.)) then
-            write(*,*) " divide zero in nwheats_rtlv" 
-            stop
-         endif
+
+!       handle soil variables in soil dynamics routine. trldf_nw has already been checked.
+!         if ( (trldf_nw .eq. 0.) .or. (dlayr_nw(L) .eq. 0.)) then
+!            write(*,*) " divide zero in nwheats_rtlv" 
+!            stop
+!         endif
+
 !*!      rlnew_layr = divide (rldf(L), trldf, 0.0) *rlnew
          rlnew_layr = (rldf(L) / trldf_nw) * rlnew_nw
 !*!      rlvnew(L) = divide (rlnew_layr, dlayr_nw(L), 0.0)

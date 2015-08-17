@@ -86,7 +86,7 @@ C  FSR added coefficients from WHAPS cultivar file
       CHARACTER*30 FILEIO  
       CHARACTER*1  IDETO  
       CHARACTER*1  ISWWAT
-      CHARACTER*78 MESSAGE(10)
+      CHARACTER*78 MSG(10)
       INTEGER MDATE, NOUTDO, TIMDIF !, YRPLT
       REAL  WLFDOT, WTLF, SLDOT, NRUSLF
       !     ------------------------------------------------------------------
@@ -267,10 +267,11 @@ cbak  add a lower boundary on leaf senesence due to frost
             sen_la = MIN(sen_la, maxsen)
  
           if (maxsen .gt. 0.0) then
-            write (*,*) 'We have frost damage on leaf area today !!!!'
-            write (*,*) 'Min temp = ', TMIN
-            write (*,*) ' current sen_la =', sen_la
-            write (*,*) ' current pla=', pl_la
+            write (MSG(1),*) 'We have frost damage on leaf area today!'
+            write (MSG(2),*) 'Min temp = ', TMIN
+            write (MSG(3),*) ' current sen_la =', sen_la
+            write (MSG(4),*) ' current pla=', pl_la
+            CALL WARNING(4,"NWheat",MSG)
           else
           ! insufficient leaf area per tiller for frosting
           endif
@@ -283,12 +284,12 @@ cbak  add a lower boundary on leaf senesence due to frost
             ! not cold enough for frosting
                frost_fr = 0.
         endif
-          write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
-     &             ", frost_fr", frost_fr
+!          write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
+!     &             ", frost_fr", frost_fr
       else
          ! There is nothing to frost in this growth stage
-          write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
-     &             ", frost_fr", frost_fr
+!          write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
+!     &             ", frost_fr", frost_fr
       endif
  
 C-----------------------------------------------------------------------
@@ -311,12 +312,15 @@ C-----------------------------------------------------------------------
                if (tiln .ge. 1.) then
                   tiln = tiln * (0.9 - 0.02 * (tempcr - temkil)**2)
                   !tiln = tiln * (0.9 - crownT * (tempcr - temkil)**2)
-            write (*,*) ' Killing tillers due to frost'
+      
+                write (MSG(1),*) ' Killing tillers due to frost'
+                CALL WARNING(1,"NWheat",MSG)
                else
                endif
  
                if (tiln .lt. 1.) then
-            write (*,*) 'Killing tillers due to frost'
+                  write (MSG(1),*) 'Killing tillers due to frost'
+                  CALL WARNING(1,"NWheat",MSG)
                  ! PLTPOP = PLTPOP * (0.95 - 0.02 * (tempcr - temkil)**2)
                   PLTPOP = PLTPOP*(0.95 - crownT * (tempcr - temkil)**2)
                   tiln = 1.

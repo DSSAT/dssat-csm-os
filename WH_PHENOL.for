@@ -881,7 +881,7 @@ cbak  ears that is not included in lai calculation.
                           WRITE(MESSAGE(1),3500)
                           CALL WARNING(1,'MZPHEN',MESSAGE)
 
-                          WRITE (     *,3500)
+!                          WRITE (     *,3500)
                           IF (IDETO .EQ. 'Y') THEN
                               WRITE (NOUTDO,3500)
                           ENDIF

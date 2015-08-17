@@ -38,12 +38,13 @@
  
               ! calculate conversion factor from kg/ha to ppm (mg/kg)
  
-      !*! nwheats_fac = divide (100.0, bd(layer)*dlayr(layer), 0.0)
-      ! DSSAT: KG2PPM(1) = 1.0/(BD1*1.E-01*DLAYR(1))
-      if ( (bd(layer) .eq. 0.) .or. (dlayr_nw(layer) .eq. 0.) ) then
-          write(*,*) "bd*dlayr_nw is zero"
-          stop
-      endif
+!     This should be handled in the soil dynamics routine.
+      !!*! nwheats_fac = divide (100.0, bd(layer)*dlayr(layer), 0.0)
+      !! DSSAT: KG2PPM(1) = 1.0/(BD1*1.E-01*DLAYR(1))
+      !if ( (bd(layer) .eq. 0.) .or. (dlayr_nw(layer) .eq. 0.) ) then
+      !    write(*,*) "bd*dlayr_nw is zero"
+      !    stop
+      !endif
       nwheats_fac = 100.0 /( bd(layer)*dlayr_nw(layer))
       !   mg[N]      100             ha        m2      1000000mg   mm
       !  ------   =------------ * --------*---------- * ---------*-------
@@ -139,11 +140,14 @@
          slayer = nwheats_level (sdepth, dlayr_nw, NL)
  !*!        spesw0 = divide (swdep(slayer) - lldep(slayer)
  !*!    :                   , dlayr(slayer), 0.0)
-         if ((dlayr_nw(slayer) .eq. 0.) .or. 
-     :     (dlayr_nw(slayer +1) .eq. 0.) ) then
-            write(*,*) "dlayer is zero"
-            stop
-         endif
+
+!         This should be handled in the soil dynamics routine
+!         if ((dlayr_nw(slayer) .eq. 0.) .or. 
+!     :     (dlayr_nw(slayer +1) .eq. 0.) ) then
+!            write(*,*) "dlayer is zero"
+!            stop
+!         endif
+
          spesw0 =  (swdep(slayer) - lldep(slayer))
      :                   / dlayr_nw(slayer)
  
@@ -279,6 +283,7 @@ cnh to allow watching of these variables
 *+  Sub-Program Arguments      ******OK*******
       !*! real       pnout (*)             ! (OUTPUT) plant N taken out from plant parts ()
       real pnout (mxpart)
+      CHARACTER*78 MSG(1)
 
 *+  Purpose
 *              calculate the nitrogen uptake from the various plant parts
@@ -428,14 +433,21 @@ cnh added for watch purposes
       do 1000 part = 1, mxpart
 !         call bound_check_real_var (pnout(part), 0.0, !JZW need to solve soon
 !     :        navl(part), 'pnout(part)', 'Grnit') !'Grnit is error key
+
           if (pnout(part) .lt. 0.) then
-            write(*,*) "pnout bound check <0 error"
-            stop
+             msg(1) = "pnout bound check <0 error"
+             call warning(1, "NWheat", msg)
+             call error("NWheat",99," ",0)
+!            write(*,*) "pnout bound check <0 error"
+!            stop
           endif
+
           if  (pnout(part). gt. navl(part) ) then
               ! pnout is pntrans calculated by nwheats_grnit for finding actual grain uptake by translocation
               ! navl (mxpart) is N available for transfer to grain
-              write(*,*) "pnout bound check >navl error"
+              msg(1) = "pnout bound check >navl error"
+              call warning(1, "NWheat", msg)
+!             write(*,*) "pnout bound check >navl error"
               pnout(part) = navl(part) !JZW add this case in Oct, 2014
           endif
 1000  continue
@@ -546,6 +558,7 @@ cnh added for watch purposes
 *+  Constant Values
       character  myname*(*) ! name of subroutine
       parameter (myname = 'nwheats_ndmd')
+      character*78 msg(1)
 *
       real       tolnce     ! tolerance for calculation errors
       parameter (tolnce = 1.0e-5)
@@ -583,8 +596,11 @@ cnh added for watch purposes
          !*! pgro(part) = pcarb* divide (growt(part), carbo, 0.0)
          !*! pgro(part) = pcarb* (growt(part)/ carbo)
           if (carbh .eq. 0.) then
-              write(*,*) "carbh is zero"
-              stop
+              msg(1) = "carbh is zero"
+              call warning(1,"NWheat", msg)
+              call error("NWheat",99," ",0)
+!              write(*,*) "carbh is zero"
+!              stop
           endif
          pgro(part) = pcarbo* (gro_wt(part)/ carbh)
          !*! pgro(part) = bound (pgro(part), 0.0, pcarb)

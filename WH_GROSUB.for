@@ -2033,10 +2033,10 @@ cjh temp fix to avoid any further development during maturity stage
       if (istage .ge. emergence .and. istage .le. endjuv) then
 !*!      frlf = divide (dtt, PhInt, 0.0)
          frlf = dtt / PhInt
-         if (PhInt .eq. 0.) then
-             write(*,*) "PhInt is zero"
-             stop !JZW add
-         endif
+!         if (PhInt .eq. 0.) then
+!             write(*,*) "PhInt is zero"
+!             stop !JZW add
+!         endif
       else
          frlf = 0.0  ! frlf - New fraction of oldest expanding leaf
       endif
@@ -2134,10 +2134,10 @@ cbak    testing:
 !*!     ce_tops = u_bound(ce_tops,2.0)
  
         ce_tops = 3.8 * (SRAD**0.63 / SRAD)
-        if (SRAD .eq. 0.) then
-            write(*,*) 'SRAD is zero'
-            stop
-        endif
+!        if (SRAD .eq. 0.) then
+!            write(*,*) 'SRAD is zero'
+!            stop
+!        endif
         ce_tops = MIN(ce_tops,2.0)
  
 !*!   if (nwheats_min_rootfr() .gt. 0.0) then
@@ -2400,8 +2400,10 @@ cnh      plagms = 1400.*(cumph(istage)**.6)*ti*optfr
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !*!      grolf = divide (plag, sla_new, 0.0)
          if (sla_new .eq. 0.) then
-             write(*,*) "sla_new is aero"
-             stop
+             write(MSG(1),*) "sla_new is zero"
+             CALL WARNING(1,"NWheat",MSG)
+             CALL ERROR("NWheat",99," ",0)
+!             stop
          endif
          grolf = plag / sla_new
  
@@ -2435,8 +2437,10 @@ cnh      plagms = 1400.*(cumph(istage)**.6)*ti*optfr
 cbak : set leaf sheath demand to 0.8 of leaf blade demand
 !         grolfsh = divide (0.8*plag, sla_new, 0.0)
          if (sla_new .eq. 0.) then
-             write(*,*) "sla_new is aero"
-             stop
+             write(MSG(1),*) "sla_new is zero"
+             CALL WARNING(1,"NWheat",MSG)
+             CALL ERROR("NWheat",99," ",0)
+!             stop
          endif
          grolfsh = 0.8*plag/sla_new
  
@@ -3015,7 +3019,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
       IF ((xstag_nw .ge. GPPSS)            ! GPPSS for p_gpp_start_stage
      &           .and.   
      &  (xstag_nw.lt.GPPES)) then          ! GPPES for gpp_end_stage
-    !  write (*,*) zstage
+!    !  write (*,*) zstage
 !*!      IF (istage .eq. grnfil) THEN  ! Not sure where this came from??
 ! gpp_stem_wt : stem weight used in calc gpp (NWheats)
          gpp_stem_wt = gpp_stem_wt + gro_wt(stem_part) !*! was "growt"
