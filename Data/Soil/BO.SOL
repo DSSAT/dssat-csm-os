@@ -1,0 +1,23 @@
+*SOILS: Bouw, NL;
+! Waring: There is a variable [sl_source] with oversized content [USDA ARS, ALARC], only first 11 bits will be applied.
+!The ACE ID is N/A.
+!This soil data is used for the experiment of Bouw8201_1.
+!
+
+*Bouw820001  USDA ARS, A  SIC    200 NL, Bouwing soils
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Bouwing     Netherla           52     5.4 Silty clay loam
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     R   .13     9   .43    30     1   1.0    -9    -9    -9
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     5     A   .18   .39   .49   0.4    .5  1.35   2.8   -99   -99   -99   -99     6   -99   -99   -99
+    10     A   .18   .39   .49   0.4    .5  1.35   2.8   -99   -99   -99   -99     6   -99   -99   -99
+    20     A   .18   .39   .49   0.4    .5  1.35   2.8   -99   -99   -99   -99     6   -99   -99   -99
+    30     A   .18   .39   .49   0.4    .5  1.35   2.8   -99   -99   -99   -99     6   -99   -99   -99
+    40     A   .18   .37   .49   0.4    .5  1.35   1.4   -99   -99   -99   -99     6   -99   -99   -99
+    60     A    .2   .37   .49   0.4    .5  1.35   1.4   -99   -99   -99   -99     6   -99   -99   -99
+    80     A    .2   .37   .49   0.4    .5  1.35   1.2   -99   -99   -99   -99     6   -99   -99   -99
+   100     A    .2   .37   .49   0.4    .5  1.35   1.2   -99   -99   -99   -99     6   -99   -99   -99
+   130     A    .2   .37   .49   0.1    .5  1.35     1   -99   -99   -99   -99     6   -99   -99   -99
+   200     A    .2   .37   .49   0.1    .5  1.35     1   -99   -99   -99   -99     6   -99   -99   -99
+ 
