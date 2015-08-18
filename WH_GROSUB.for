@@ -1879,8 +1879,11 @@ cnh Senthold
           ! -------------- get new root length volume
 !**!     nrlayr = nwheats_level(rtdep_nw)
          nrlayr = nwheats_level(rtdep_nw, dlayr_nw, NL)
-      sno3 = no3ppm/KG2PPM 
-      snh4 = nh4ppm/KG2PPM
+      do L = 1, NLAYR
+        sno3(L) = no3ppm(L)/KG2PPM(L) 
+        snh4(L) = nh4ppm(L)/KG2PPM(L)
+      enddo
+
       call nwheats_rtlv (CONTROL, SOILPROP, sno3, snh4,
      &  dlayr_nw, istage, nrlayr, p2af, p3af, PLTPOP,             !Input
      &  nwheats_level, rtdep_nw, stgdur, wr,                      !Input

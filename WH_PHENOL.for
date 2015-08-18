@@ -1550,6 +1550,7 @@ cbak to crop maturity
 !*! END calculations from NWheats subroutine nwheats_set_zstag
 !----------------------------------------------------------------------
 !*! BEGIN calculations from NWheats real function nwheats_dc_code 
+      fstage = 0.0 !default for zero divide
       if (istage.eq.9 .and. pgdd(istage) .gt. 0.0 ) then ! 9=germination
 !*!      fstage = divide (sumdtt(istage), pgdd(istage), 0.0)
          fstage = sumstgdtt(istage) / pgdd(istage)
@@ -1565,7 +1566,9 @@ cbak to crop maturity
  
          ttime = sumstgdtt(istage)
          stime = pgdd(istage)
-         fstage = ttime / stime ! JZW this is repeated calculate fstage from above
+         if (pgdd(istage) > 0.001) then
+           fstage = ttime / stime ! JZW this is repeated calculate fstage from above
+         endif
 
 !*!      call bound_check_real_var (fstage, 0.0, 1.0, 'fstage')
  
