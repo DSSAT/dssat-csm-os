@@ -27,8 +27,7 @@ C----------------------------------------------------------------------
       USE MODULEDEFS
       IMPLICIT NONE
 C-----------------------------------------------------------------------
-      INTEGER, PARAMETER :: MAXPEST = 200
-
+      
       CHARACTER*6 ERRKEY
       PARAMETER (ERRKEY = 'IPPROG')
       CHARACTER*78 MSG(10)    !Up to 10 lines of text to be output

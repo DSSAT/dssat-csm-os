@@ -1,9 +1,29 @@
 !=======================================================================
-!  CROPSIM-CERES CEREAL GROWTH AND DEVELOPMENT MODULE    
-!  Developed from V4.0 (which was based on Cropsim and Ceres3.5) 
-!  Last edit 06/06/13 LAH
+!  CROPSIM-CERES CEREAL GROWTH AND DEVELOPMENT MODULE  Version 010115
+!
+!  Last edit 050415  Changes to the way Gencalc runs handled 
+!
+!  Developed from Ceres3.5 and Cropsim. 
+
+!  Ceres was modified to fit within the frameworks of Cropsim and CSM, 
+!  and to conform to a number of the concepts that were used in the 
+!  construction of Cropsim and CSM ... completion of all rate 
+!  calculations before state variable updating, no embedding of 
+!  variables in the code, modules to read their own inputs and to 
+!  generate their own outputs,etc.. In so doing, a number of  formulae 
+!  in the original Ceres with embedded coefficients were simplified and 
+!  the coefficients placed in external 'coefficient' files (cultivar,
+!  ecotype, or species), and some concepts (eg.how vernalization and 
+!  senescence are dealt with) and tools from Cropsim were used. This 
+!  modified model should thus not be considered as Ceres, but as a 
+!  derivative of Ceres best referred to as Cropsim-Ceres rather Ceres 
+!  per se.. 
+!
+!  The module is used within both the Cropsim and CSM models.
+! 
 !=======================================================================
 
+      ! For Cropsim
 !     SUBROUTINE CSCER (FILEIOIN, RUN, TN, RN,             !Command line
 !    & ISWWAT, ISWNIT, IDETO, IDETG, IDETL, FROP,          !Controls
 !    & SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,             !Run+loop
@@ -629,7 +649,7 @@
       REAL          LCNCS(0:9)    ! Leaf critical N conc,stage     #
       REAL          LCNCSEN       ! Critical N conc for senescence #
       REAL          LCNCT         ! Critical N conc for tillering  #
-      REAL          LCNF          ! Leaf critical N factor 0-1     #
+      REAL          LCNF          ! Leaf N as fr of critical 0-1   #
       INTEGER       LCNUM         ! Leaf cohort number (inc.grow)  #
       REAL          LEAFN         ! Leaf N                         g/p
       INTEGER       LENGROUP      ! Length of group name           #
@@ -701,7 +721,6 @@
       REAL          MDATT         ! Maturity date from t file      YrDoy
       INTEGER       MDAY          ! Maturity day of year           d
       INTEGER       MDAYM         ! Maturity day of year,measured  d
-      CHARACTER*1   MODE          ! Mode of model operation        code
       CHARACTER*8   MODEL         ! Name of model                  text
       CHARACTER*8   MODNAME       ! Name of module                 text
       CHARACTER*3   MONTH         ! Month                          text
@@ -862,7 +881,7 @@
       INTEGER       RATE          ! Program control variable (=3)  #
       REAL          RCNC          ! Root critical N concentration  #
       REAL          RCNCS(0:9)    ! Roots critical N conc,by stage #
-      REAL          RCNF          ! Roots critical N factor 0-1    #
+      REAL          RCNF          ! Roots N as fr of critical 0-1  #
       REAL          RCNP          ! Root critical N conc,original  #
       REAL          RDGS1         ! Root depth growth rate,initial cm/d
       REAL          RDGS2         ! Root depth growth rate,2nd     cm/d
@@ -954,7 +973,7 @@
       REAL          SAWS          ! Stem area to wt ratio,standard cm2/g
       REAL          SCNC          ! Stem critical N conc           #
       REAL          SCNCS(0:9)    ! Stem critical N conc,stage     #
-      REAL          SCNF          ! Stem critical N factor 0-1     #
+      REAL          SCNF          ! Stem N as fr of critical 0-1   #
       REAL          SDAFR         ! Seed reserves fraction avail   #
       REAL          SDCOAT        ! Non useable material in seed   g
       REAL          SDEPTH        ! Sowing depth                   cm
@@ -1181,6 +1200,7 @@
       INTEGER       TSDATM        ! Terminal spkelet date,measured #
       REAL          TSDEP         ! Average temp in top 10 cm soil C
       REAL          TT            ! Daily thermal time             C.d
+      REAL          TTMAX         ! Daily thermal time,maximum     C.d
       REAL          TTGEM         ! Daily thermal time,germ,emrg.  C.d
       REAL          TT20          ! Thermal time mean over 20 days C
       REAL          TT20S         ! Thermal time sum over 20 days  C
@@ -1424,7 +1444,8 @@
             WRITE(fnumwrk,*) ' '
             WRITE(fnumwrk,*) 'CSCER  Cropsim-Ceres Crop Module '
           ENDIF
-        ENDIF  
+        ENDIF
+          
         ! Set Reads file #
         IF (FNUMREA.LE.0.OR.FNUMREA.GT.1000) 
      &      CALL Getlun('READS.OUT',fnumrea)
@@ -1439,7 +1460,6 @@
           fileiot = 'DS4'
         ELSE
           fileiot = 'XFL'
-          RNMODE = ' '      ! For time being not used.
         ENDIF
         FILEIO = ' '
         FILEIO(1:TVI1) = FILEIOIN(1:TVI1)
@@ -1447,8 +1467,8 @@
         IF (DYNAMIC.EQ.RUNINIT) THEN
 
           MODNAME = 'CSCER046'
-          VERSION = 280513
-          GENFLCHK(3:15) = 'CER046.280513'
+          VERSION = 010115
+          GENFLCHK(3:15) = 'CER046.010115'
 
           ! Parameters
           STDAY = 20.0    ! TT in standard day
@@ -1791,24 +1811,9 @@
         ENDIF
 
         arg = ' '
-        arglen = 0
-        call getarg(5,arg)
-        arglen = len_trim(arg)
-
-        IF (arglen.GT.0 .AND. arglen.LT.100) THEN
-         mode = arg (1:arglen)
-         tvi1 = Tvilent (mode)
-         IF (tvi1.EQ.0) mode = ' '
-        ELSE
-         mode = 'I'
-        ENDIF
-
-        arg = ' '
         tvi2 = 0
         tvi3 = 0
         tvi4 = 0
-        ! CALL GETARG (0,ARG,ARGLEN)
-        ! Portability
         call getarg(0,arg)
         arglen = len_trim(arg)
 
@@ -1823,7 +1828,6 @@
           tvi3 = arglen+1
         ENDIF
         MODEL = ARG(TVI2+1:TVI3-1)
-        
         CALL UCASE(MODEL)
         
         ! Re-open Work.out and Reads.out if only require 1 run info..   
@@ -2074,7 +2078,7 @@
           rtno3 = -99
           rtnh4 = -99
  
-          IF (MODE.NE.'G') CALL FVCHECK(CUDIRFLE,GENFLCHK)
+          IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
 
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
           CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P1V',p1v)
@@ -2166,17 +2170,15 @@
             cufile = crop//modname(3:8)//'.CUL'
             INQUIRE (FILE = cufile,EXIST = fflag)
             IF (fflag) THEN
-              !IF (CROP.EQ.'WH') THEN
-              !  CALL Finddir (fnumtmp,cfgdfile,'WHD',cufile,cudirfle)
-              !ELSEIF (CROP.EQ.'BA') THEN
-              !  CALL Finddir (fnumtmp,cfgdfile,'BAD',cufile,cudirfle)
-              !ENDIF
-              ! Left as was LAH JUNE 2011
               cudirfle = cufile
             ELSE
               CALL Finddir (fnumtmp,cfgdfile,'CRD',cufile,cudirfle)
             ENDIF
-            IF (mode.EQ.'G') cufile = cufile(1:7)//'1.CUL'
+            !IF (RNMODE.EQ.'G'.OR.RNMODE.EQ.'T') THEN  LAH
+            !  CUFILE = 'GENCALC2.CUL'
+            !  CUDIRFLE = ' '
+            !  CUDIRFLE(1:12) = CUFILE
+            !ENDIF
 
             ecfile = crop//modname(3:8)//'.ECO'
             INQUIRE (FILE = ecfile,EXIST = fflag)
@@ -2197,15 +2199,15 @@
 
         ENDIF     ! End Genotype file names creation
 
-        IF (MODE.EQ.'G') THEN
-          cufile = cufile(1:7)//'1.CUL'
-          cudirfle = ' '
-          cudirfle(1:12) = cufile
+        IF (RNMODE.EQ.'G'.OR.RNMODE.EQ.'T') THEN
+          CUFILE = 'GENCALC2.CUL'
+          CUDIRFLE = ' '
+          CUDIRFLE(1:12) = CUFILE
         ENDIF
 
         IF (FILEIOT .NE. 'DS4') THEN
           !IF (CUDIRFLE.NE.CUDIRFLP .OR. VARNO.NE.VARNOP) THEN
-           IF (MODE.NE.'G') CALL FVCHECK(CUDIRFLE,GENFLCHK)
+           IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
             WRITE (fnumwrk,*) ' '
             CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
             CALL CUREADR (CUDIRFLE,VARNO,'P1V',p1v)
@@ -2261,7 +2263,7 @@
           !ENDIF
         ENDIF
 
-        CALL FVCHECK(ECDIRFLE,GENFLCHK)
+        IF (RNMODE.NE.'T') CALL FVCHECK(ECDIRFLE,GENFLCHK)
         IF (PD(1).LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'P1',PD(1))
         IF (PD2FR(1).LE.0)CALL ECREADR (ECDIRFLE,ECONO,'P2FR1',PD2FR(1))
         IF (PD(2).LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'P2',PD(2))
@@ -2468,6 +2470,7 @@
         WRITE(fnumwrk,*)' MODEL   ',MODEL
         WRITE(fnumwrk,*)' MODULE  ',MODNAME
         WRITE(fnumwrk,'(A10,I6)')'  VERSION ',VERSION
+        WRITE(fnumwrk,*)' RNMODE  ',RNMODE
 
         WRITE(fnumwrk,*)' '
         WRITE(fnumwrk,'(A13,A1)')'  N SWITCH   ',ISWNIT
@@ -3171,6 +3174,8 @@
           WRITE (*,*) 'Check WORK.OUT for details of run'
           STOP ' '
         ENDIF
+        ! Kernel growing at half rate during lag period
+        ! (=full rate for half period)
         G2 = G2KWT / (PD(5)+(PD(4)-PD4(1)-PD4(2))*0.50)
         
         WRITE (fnumwrk,*) '  Pd2(1)      :  ',pd2(1)
@@ -3193,8 +3198,6 @@
         DO L = 1,10
           PTH(L) = PTH(L-1) + AMAX1(0.0,PD(L))
         ENDDO
-
-        G2 = G2KWT / (PD(5)+(PD(4)-PD4(1)-PD4(2))*0.50)
 
         WRITE (fnumwrk,*) ' '
         WRITE (fnumwrk,*) 'DERIVED DATA'
@@ -3236,7 +3239,7 @@
         IF (SLPF.LT.1.0) THEN
           WRITE (fnumwrk,*) ' '
           WRITE (fnumwrk,*)
-     &     ' WARNING  Soil fertility factor was less than 1.0: ',slpf
+     &     'WARNING  Soil fertility factor was less than 1.0: ',slpf
         ENDIF  
 
         ! Write-out inputs if required
@@ -3447,7 +3450,7 @@
         VARNOP = VARNO
         CUDIRFLP = ' '
         CUDIRFLP = CUDIRFLE
-        IF (MODE.EQ.'G') CUDIRFLP = ' '
+        IF (RNMODE.EQ.'T') CUDIRFLP = ' '
         ECONOP = ' '
         ECONOP = ECONO
         ECDIRFLP = ' '
@@ -3693,11 +3696,19 @@
             ENDIF
           ENDIF
 
+!  For investigation of temperature responses
+!          WRITE(fnumwrk,*)' tmean   tfd   tfg  tfdg    tt'
+!          DO 9821 TVI1 = 0,40
+!           TMEAN = FLOAT(TVI1)
+!           TMEANS = TMEAN
+!         End of stuff to investigate temperature responses          
+           
           ! Thermal time
           IF (ISTAGE.GT.4 .AND. ADAT.GT.0 .AND. ISTAGE.LE.6) THEN
             Tfout = TFAC4(trdv2,tmean,TT)
           ELSE
             Tfout = TFAC4(trdv1,tmeans,TT)
+            TTmax = trdv1(2) - trdv1(1)
             IF (trgem(3).GT.0.0) THEN
               Tfgem = TFAC4(trgem,tmeans,TTGEM)
             ELSE
@@ -3762,7 +3773,12 @@
             Tfgf = TFAC4(trgfw,tmean,TTOUT)
             Tfgn = TFAC4(trgfn,tmean,TTOUT)
           ENDIF
-          
+!         To investigate temperature responses          
+!          write(fnumwrk,'(5f6.2)')tmean,tfout,tfg,tfout*tfg,tt 
+!9821      continue
+!          write(fnumwrk,*)'! ttmax = ',trdv1(2)-trdv1(1)
+!          stop
+!         End of stuff to investigate temperature responses          
           ! Radiation interception (if from competition model)
           IF (PARIP.GE.0.0) THEN
             PARI = PARIP/100.0
@@ -4019,23 +4035,29 @@
                 LAPOT(LNUMSG+1) = LAPOT(LNUMSG)*(1.0+LAFR)
               ENDIF
               IF (LAPOT(LNUMSG+1).GT.LAXS) LAPOT(LNUMSG+1) = LAXS
+              ! NB. In Ceres 3.5 LAPOT(n) was LAPOT(1)*(LNUMSD**0.5) 
             ENDIF    
           ENDIF
           
           ! Growth potentials
           IF (ISTAGE.LE.2) THEN
             LAW = AMAX1(LAWS*LAWFRMN,LAWS-(LAWS*LAWCF)*(LNUMSG-1))
-          
-            ! NB. Ceres 3.5 used: PLAG(1) = LA1S * (LNUMSD**0.5) * ....
-            !     LA1S = 7.5
-            !     EGFT = 1.2 - 0.0042*(TEMPM-17.0)**2
+            ! LAW=Leaf area/weight (specific leaf area).Chages with lf #
             IF (LNUMSG.GT.0) THEN
-              ! Temperature factor introduced. Not purely TT control
-              ! Assimilates generally control expansion if 0 reserve use
+              ! In Ceres overall temperature response for lf growth was:
+              ! EGFT = 1.2 - 0.0042*(TEMPM-17.0)**2 
+              ! Here, temperature response is a composite of temp response
+              ! of development (leaf # increase) and leaf expansion.
+              ! So, EGFT would equal TFD*TFG 
+              ! Assimilates may control expansion if no reserve available
               ! Current leaf expands completely at current phint
-              ! Leaves expand for 1 PHINT 
+              ! Leaves expand for 1 PHINT
+              ! For leaf area growth (PLAG) Ceres 3.5 used: 
+              !  PLAG(1) = LA1S * (LNUMSD**0.5) * ....
+              ! (with LA1S = 7.5 (= LAPOT(1),potential area of leaf 1)
               PLAG(1) = LAPOT(LNUMSG) * AMIN1(WFG,NFG) * TFG *
-     &         AMIN1(TT/PHINT,(FLOAT(LNUMSG)-LNUMSD))
+     &         AMIN1(TT/PHINT,(FLOAT(LNUMSG)-LNUMSD)) 
+              ! NB. Temp response of development (TT) taken into acount 
               ! If new leaf. Will expand at current or new phint
               IF ((TT/PHINT).GT.(FLOAT(LNUMSG)-LNUMSD)) THEN
                 ! If new leaf will be first leaf in 3rd phint phase
@@ -4201,14 +4223,13 @@
           
           PLAS = 0.0
           IF (ISTAGE.EQ.1) THEN
-            PLAS = PLASTMP
+            PLAS = PLASTMP          ! Dependent on leaf longevity
           ELSEIF (ISTAGE.EQ.2) THEN
-            PLAS = AMIN1(PLASTMP,
+            PLAS = AMIN1(PLASTMP,   ! Dependent on input coefficient 
      &       PLASF(ISTAGE)*GPLA(ISTAGE-1)*DU/PD(ISTAGE))
           ELSEIF (ISTAGE.EQ.3.OR.ISTAGE.EQ.4.OR.ISTAGE.EQ.5) THEN
-             ! Determine if N shortage senescence triggered
-C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
-            IF (ISWNIT.NE.'N'.AND.XSTAGE.GT.5.0.AND.LCNF.LT.NFSF) THEN              
+            ! Determine if N shortage triggers final senescence
+            IF (ISWNIT.NE.'N'.AND.XSTAGE.GT.5.0.AND.LCNF.LT.NFSF) THEN
               XSTAGEFS = XSTAGE
               GPLASENF = AMAX1(0.0,PLA-SENLA)
             ENDIF
@@ -4219,14 +4240,17 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
             ELSE
               IF (XSTAGE.GT.LSENS) THEN
                 IF (GPLASENS.LT.0.0) GPLASENS = AMAX1(0.0,PLA-SENLA)
-                ! NB. Leaf senescence ends at stage LSENE (6.3)
+                ! NB. Leaf senescence ends at stage LSENE (6.?)
                 PLAS = GPLASENS*(XSTAGE-XSTAGEP)/(LSENE-LSENS)
               ELSE
                 PLAS = PLASF(ISTAGE) * GPLA(ISTAGE-1)*DU/PD(ISTAGE)
               ENDIF
             ENDIF
-          ELSEIF (ISTAGE.EQ.6) THEN
-            PLAS = GPLA(ISTAGE-1)*TT/20.0*0.1
+          ELSEIF (ISTAGE.EQ.6) THEN 
+            ! Originally senesced over 10 standard days after stage 6
+            !PLAS = GPLA(ISTAGE-1)*TT/20.0*0.1
+            ! Following is to use LSPHE
+            PLAS = GPLASENS*(XSTAGE-XSTAGEP)/(LSENE-LSENS)
           ENDIF
           
           ! Increased senescence if reserves fall too low
@@ -4936,7 +4960,7 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
             CARBOC = CARBOC + CARBO
             RESPC = RESPC + RTRESP
             LFWT = LFWT + GROLF - SENLFG - SENLFGRS
-            IF (LFWT.LT.1.0E-06) THEN
+            IF (LFWT.LT.1.0E-12) THEN
               IF (LFWT.LT.0.0) 
      &          WRITE(fnumwrk,*)'Leaf weight less than 0! ',LFWT
               LFWT = 0.0
@@ -5990,12 +6014,15 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
             END DO
           ENDIF
 
-          ! Adjustment of kernel growth rate;set temperature response
+          ! Adjustment of kernel growth rate
+          ! Originally set temperature response here
           IF (ISTAGE.EQ.5.AND.ISTAGEP.EQ.4) THEN
             WRITE(fnumwrk,*)'Start of linear kernel growth    '
             WRITE(fnumwrk,*)' Original kernel growth rate (G2) ',g2
             G2 = (G2KWT-(GRWT/GRNUM)*1000.0) / (PD(5)*(6.0-XSTAGE))
             WRITE(fnumwrk,*)' Adjusted kernel growth rate (G2) ',g2
+            WRITE(fnumwrk,*)' (Adjustment because growing at lag rate',
+     &      ' for overlap into linear filling period)'
           ENDIF
 
           ! Stored variables (For use next day or step)
@@ -6065,10 +6092,7 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
               OUTPG2 = 'PlantGr2.OUT'
               OUTPGF = 'PlantGrf.OUT'
               OUTPN = 'PlantN.OUT  '
-! CHP 18Dec2014 Don't change the filename for DSSAT. This change 
-! is needed for sequence simulations.
-! CHP         IF (FNAME.EQ.'Y') THEN
-              IF (FILEIOT(1:2).NE.'DS' .AND. FNAME.EQ.'Y') THEN
+              IF (FNAME.EQ.'Y') THEN
                 OUTPG = EXCODE(1:8)//'.OPG'
                 OUTPG2 = EXCODE(1:8)//'.OG2'
                 OUTPGF = EXCODE(1:8)//'.OGF'
@@ -6221,7 +6245,7 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
      2        ' N STRESS DETERMINANTS       ')
               WRITE (NOUTPGF,2205)
  2205         FORMAT ('@YEAR DOY   DAS   DAP TMEAN  GSTD',
-     N        '    DU VRNFD DYLFD',
+     N        '    DU VRNFD DYLFD TFGEM  WFGE',
      1        '  TFPD  WFPD  NFPD CO2FD RSFPD', 
      M        '  TFGD  WFGD  NFGD  WFTD  NFTD',
      &        ' WAVRD WUPRD  SWXD  EOPD',
@@ -6294,7 +6318,8 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
      &        2F6.2,
      &        F6.1)')      
      &        YEAR,DOY,DAS,DAP,TMEAN,TKILL,
-     &        ZSTAGE,LNUMSD,
+     &        ZSTAGE,LNUMSD,   ! Zadoks staging
+!     &        XSTAGE,LNUMSD,    ! Ceres staging
      &        PARIOUT,PARUED,AMIN1(999.9,CARBOA),
      &        LAI,SAIDOUT,LAI+SAIDOUT,
      &        NINT(TWAD),
@@ -6337,14 +6362,14 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
               ! Plant Growth factors outputs
               WRITE (NOUTPGF,507)
      A        YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,
-     B        DU,1.0-VF,1.0-DF,
+     B        DU,1.0-VF,1.0-DF,1.0-TFGEM,1.0-WFGE,
      C        1.0-TFP,1.0-WFP,1.0-NFP,1.0-CO2FP,1.0-RSFP,
      D        1.0-TFG,1.0-WFG,1.0-NFG,1.0-WFT,1.0-NFT,
      H        AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),H2OA,EOP,
      I        SNH4PROFILE+SNO3PROFILE,LCNF,SCNF,RCNF
   507         FORMAT(
      a        I5,I4,2I6,F6.1,F6.1,
-     b        F6.1,2F6.2,
+     b        F6.1,4F6.2,
      c        5F6.2,
      d        5F6.2,
      e        2F6.2,2F6.1,F6.1,3F6.2)
@@ -6693,7 +6718,7 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
             
             ! SCREEN OUTPUTS (CROPSIM)
             
-            IF (FILEIOT(1:3).EQ.'XFL'.AND.CN.EQ.1.AND.MODE.NE.'G') THEN 
+            IF (FILEIOT(1:3).EQ.'XFL'.AND.CN.EQ.1.AND.RNMODE.NE.'T')THEN
             
               IF (OUTCOUNT.LE.0 .OR. OUTCOUNT.EQ.25) THEN
                 WRITE (*,499)
@@ -6938,8 +6963,14 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
             FILELEN = MAX(FILELEN-12, 0) 
             
             IF (TVILENT(FILEADIR).GT.3) THEN
-              FILEA = FILEADIR(1:TVILENT(FILEADIR))//
-     &         SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'A'
+              IF (FILEADIR(TVILENT(FILEADIR):
+     &            TVILENT(FILEADIR)).NE.SLASH)THEN
+                FILEA = FILEADIR(1:TVILENT(FILEADIR))//
+     &           SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'A'
+              ELSE
+                FILEA = FILEADIR(1:TVILENT(FILEADIR))//
+     &           EXCODE(1:8)//'.'//EXCODE(9:10)//'A'
+              ENDIF
             ELSE
               FILEA = FILENEW(1:FILELEN-12)//EXCODE(1:8)//'.'//
      &         EXCODE(9:10)//'A'
@@ -7145,11 +7176,20 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
               ENDIF
             
               STARNUMO = STARNUMO + 1  ! # datasets in sim output file
-            
-              CALL LTRIM2 (FILEIO,filenew)
-              FILELEN = TVILENT(FILENEW)
-              FILET = 
-     &        FILENEW(1:FILELEN-12)//EXCODE(1:8)//'.'//EXCODE(9:10)//'T'
+              
+              IF (TVILENT(FILEADIR).GT.3) THEN
+                IF (FILEADIR(TVILENT(FILEADIR):
+     &            TVILENT(FILEADIR)).NE.SLASH)THEN
+                  FILET = FILEADIR(1:TVILENT(FILEADIR))//
+     &           SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'T'
+                ELSE
+                  FILET = FILEADIR(1:TVILENT(FILEADIR))//
+     &           EXCODE(1:8)//'.'//EXCODE(9:10)//'T'
+                ENDIF
+              ELSE
+                FILET = FILENEW(1:FILELEN-12)//EXCODE(1:8)//'.'//
+     &          EXCODE(9:10)//'T'
+              ENDIF       
               FEXISTT  = .FALSE.
               INQUIRE (FILE = FILET,EXIST = FEXISTT)
             
@@ -7158,11 +7198,9 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
               VALUER = -99.0
             
               IF (.not.FEXISTT) THEN
-            
-                WRITE (fnumwrk,*) 'T-file not found!'
-            
+                WRITE (fnumwrk,*) 'T-file not found: ',filet(1:60)
               ELSE
-            
+                WRITE (fnumwrk,*) 'T-file found: ',filet(1:60)
                 TLINENUM = 0
                 OPEN (UNIT = FNUMT,FILE = FILET)
                 OPEN (UNIT = FNUMTMP,FILE = FNAMETMP,POSITION ='APPEND')
@@ -7493,7 +7531,7 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
             
 !-----------------------------------------------------------------------
             
-            ! SCREEN WRITES FOR DSSAT IN SENSITIVITY MODE
+            ! SCREEN WRITES FOR DSSAT IN SENSITIVITY RNMODE
             
             IF (FILEIOT(1:3).EQ.'DS4' .AND. CN.EQ.1
      &                                .AND. RNMODE.EQ.'E') THEN         
@@ -7615,7 +7653,7 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
             
             ENDIF
             
-            ! END OF SCREEN WRITES FOR DSSAT SENSITIVITY MODE
+            ! END OF SCREEN WRITES FOR DSSAT SENSITIVITY RNMODE
             
 !-----------------------------------------------------------------------
 
@@ -7738,7 +7776,7 @@ C-GH/LAH    IF (XSTAGE.GT.5.0. AND. LCNF.LT.NFSF) THEN
      x        I6,I6,
      x        I6,I6,
      x        A6,A6,
-     x        F6.2,F6.2,
+     x        F6.1,F6.1,
      x        A6,A6,
      x        I6,I6,
      x        I6,I6,
@@ -9372,4 +9410,5 @@ c     ENDDO
       RETURN
 
       END  ! CSLAYERS
+
 

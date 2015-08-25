@@ -9,6 +9,7 @@ C
 C                 Written
 C  08/07/1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
+C  03/27/2014 US,RO Initialization fixed
 C-----------------------------------------------------------------------
 C  Called : TRNSP GROSUB
 C  Calls  : None
@@ -38,8 +39,6 @@ C     Silva (personal comm)
      &          5.00,5.20,5.50,6.00,7.50,9.0/
       DATA NPER/3.6,3.4,3.2,3.15,3.10,3.00,3.00,
      &          3.00,3.00,2.90,2.70,2.60,2.50/
-      !DATA NPER/4.0,3.6,3.4,3.25,3.10,2.90,2.80,
-      !&          2.50,2.30,2.20,2.10,2.00,1.90/
                               
 
 !***********************************************************************
@@ -83,6 +82,7 @@ C     Silva (personal comm)
          TANC = TCNP
       ENDIF
       NFAC = 1.0 - (TCNP-TANC)/(TCNP-TMNC)
+c
 C
 C     Allow for adjustment in NFAC following transplanting
 C
@@ -101,8 +101,6 @@ C
       NSTRES = AMAX1 (NSTRES,0.001)
       AGEFAC = AMAX1 (AGEFAC,0.001)
       NDEF3  = AMAX1 (NDEF3 ,0.001)
-
-
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT

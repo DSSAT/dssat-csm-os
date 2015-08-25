@@ -2020,7 +2020,7 @@
        ENDIF
       ENDDO
       lenchar=Tvilent(newchar)
-      IF(lenchar.EQ.1)THEN
+      IF((lenchar.EQ.1).AND.(IACHAR(newchar).NE.26))THEN
        READ(newchar,'(i1)',ERR=9991)number
       ELSEIF(lenchar.EQ.2)THEN
        READ(newchar,'(i2)',ERR=9991)number
@@ -3061,3 +3061,4 @@
       ENDIF
 
       END
+
