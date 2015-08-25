@@ -272,7 +272,8 @@ C=======================================================================
      &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA, SW,
+     &BD) 
 
 !***********************************************************************
 !***********************************************************************
@@ -588,7 +589,7 @@ C=======================================================================
         TNITRIFY   = TNITRIFY   + NITRIF(L)
       
         !POROS(L)  = 1.0 - BD(L) / 2.65
-        !wfps(L) = sw(L)/poros(L)
+        !wfps(L) = min (1.0, sw(L)/poros(L))
         !wfps_fc(L) = dul(L)/poros(L)
         
           pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
@@ -768,7 +769,8 @@ C     Write daily output
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
      &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA, SW,
+     &BD) 
 
 C***********************************************************************
 C***********************************************************************

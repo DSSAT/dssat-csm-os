@@ -25,7 +25,8 @@ C  REVISION       HISTORY
 C  06/15/2014 CHP Written
 !=======================================================================
 
-      SUBROUTINE OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+      SUBROUTINE OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA, SW,
+     &BD) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
@@ -50,6 +51,9 @@ C  06/15/2014 CHP Written
       REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
 
       REAL FRAC, NDN20, NIT20, N2O20, N2F20, newCO2(NL), TOTCO2
+      real bd(nl),poros(nl),wfps(nl),sw(nl)         ! PG
+      real n2o_emitted, n2o_soil(nl), n2o_diffused  ! PG
+      real n2_emitted, n2_soil(nl), n2_diffused  ! PG
 
 !     Temp variables for Output.dat file:
 !      REAL TNH4, TNH4NO3, TNO3
@@ -160,7 +164,7 @@ C-----------------------------------------------------------------------
      &        ('NIT',L,'D',L=1,9),'   NIT10',
      &        ('N2O',L,'D',L=1,9),'   N2O10', 
      &        ('N2F',L,'D',L=1,9),'   N2F10'
-  110       FORMAT(4(9("   ",A,I1,A),A8),"  newCO2")
+  110       FORMAT(4(9("   ",A,I1,A),A8),"  newCO2    N2O     N2") !PG
           ENDIF
 
 !          CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
@@ -212,12 +216,57 @@ C-----------------------------------------------------------------------
       ENDDO
 
       TOTCO2 = SUM(newCO2)
+      
+! Simple representation of diffusion of N2O and N2 emissions 14 June 2015
+! Developed as N2O and duplicated as N2
+! Diffusion of N2O from layers based on WFPS PGrace 14 June 2015
+! N2O produced on any day in any layer and diffused upwards is directly proportional to WFPS (fraction)
+! N2O not diffused from layer (1-WFPS) is added to the next day's total N2Oflux for that layer
+! N2O emitted to the atmosphere on any day is from layer 1 only.
+! n2oflux is the mass of N2O (kg N/ha) produced in a layer on any day
+! n2o_diffused is mass diffused (kg N/ha) per layer
+! n2o_soil is mass remaining in soil (kg N/ha) AFTER diffusion
+! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
+
+! N2O section     
+      DO L = 1, N_LYR
+          if (n2oflux(l).lt. 0.0) then
+              n2oflux(l) = 0.0
+          endif
+          POROS(L)  = 1.0 - BD(L) / 2.65
+          wfps(L) = min (1.0, sw(L) / poros(L))
+          if (l.ge.2) then
+             n2o_diffused = (n2oflux(l) + n2o_soil(l)) * (1.0 - WFPS(l))
+             n2o_soil(l) = (n2oflux(l) + n2o_soil(l)) * WFPS(l)
+             n2o_soil(l-1) = n2o_soil(l-1) + n2o_diffused
+          endif
+      ENDDO
+      
+      n2o_emitted = n2oflux(1)+n2o_soil(1)
+      n2o_soil(1) = 0.0
+ 
+! N2 section - same basis as N2O
+      DO L = 1, N_LYR
+          if (n2flux(l).lt. 0.0) then
+              n2flux(l) = 0.0
+          endif
+          if (l.ge.2) then
+             n2_diffused = (n2flux(l) + n2_soil(l)) * (1.0 - WFPS(l))
+             n2_soil(l) = (n2flux(l) + n2_soil(l)) * WFPS(l)
+             n2_soil(l-1) = n2_soil(l-1) + n2_diffused
+          endif
+      ENDDO
+      
+      n2_emitted = n2flux(1)+n2_soil(1)
+      n2_soil(1) = 0.0
+      
+! End PG diffusion
 
           WRITE(FRMT2,'(A,I2.2,A,I2.2,A,I2.2,A)') 
      &   '(1X,I4,1X,I3.3,I6,2(F8.3,F8.1,2F8.3),F8.2,F8.3,F8.2,F8.3,',
      &   N_LYR,   'F8.3,', 
      &   N_LYR,   'F8.3,',
-     &   2*N_LYR, 'F8.3,F8.3)'
+     &   2*N_LYR, 'F8.3,F8.3,F8.3,F8.3)'
 
         IF (IDETN .EQ. 'Y') THEN
           WRITE (NOUTDN,TRIM(FRMT2)) YEAR, DOY, DAS, 
@@ -225,8 +274,8 @@ C-----------------------------------------------------------------------
      &       TNOXD*1000., TNITRIFY, TN2OD*1000., TN2D*1000.,
      &       (DENITRIF(I)*1000.,I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
      &       (n2oflux(i)*1000., i=1, n_lyr), (N2FLUX(i)*1000.,i=1,n_lyr)
-     &       , TOTCO2
-        ENDIF
+     &       , TOTCO2, n2o_emitted*1000, n2_emitted*1000    !PG
+      ENDIF
       ENDIF
 
 !***********************************************************************

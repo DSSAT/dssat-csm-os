@@ -77,7 +77,7 @@ C=======================================================================
         DO L = 1, NLAYR
           POROS(L)  = 1.0 - BD(L) / 2.65
           wfps_fc(L) = dul(L) / poros(L)
-          wfps(L) = sw(L) / poros(L)
+          wfps(L) = min (1.0, sw(L) / poros(L))
         ENDDO
 
 !     Function for diffusivity
@@ -112,8 +112,8 @@ C=======================================================================
       TN2D  = 0.0
 
       DO L = 1, NLAYR
-        wfps(L) = sw(L) / poros(L)
-
+        wfps(L) = min(1.0, sw(L) / poros(L))
+        
 !!       following code is Rolston pdf document
 !        RWC = SW(L)/SAT(L)                                  
 !        if (RWC .GE. 0.8 .AND. RWC. LE .0.9) then
