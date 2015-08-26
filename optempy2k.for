@@ -34,7 +34,7 @@ C  05/19/2011 GH  Updated for sorghum
 C  08/09/2012 GH  Updated cassava model
 !  09/01/2011 CHP Added van Genuchten parameters for ORYZA
 C  11/14/2012 GH  Add READWRITE for temp file
-!  04/16/2013 CHP/KD Added SALUS model
+!  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
@@ -594,8 +594,8 @@ C-----------------------------------------------------------------------
 
 !       Generic SALUS crops
         CASE('SALUS')
-          WRITE(LUNIO,'(A6,1X,A16,A)',IOSTAT=ERRNUM) VARNO,VRNAME,
-     &        trim(PLAINTXT)
+          WRITE(LUNIO,'(A6,1X,A16,7X,A)',IOSTAT=ERRNUM) VARNO, VRNAME,
+     &         trim(PLAINTXT)
 
 !       CROPGRO crops
         CASE('CRGRO')

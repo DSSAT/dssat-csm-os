@@ -9,8 +9,9 @@ C  01/01/1991 GH  Written
 C  05/28/1993 PWW Header revision and minor changes
 C  09/17/2007 JIL Added codes for IXIM maize model
 C  08/09/2012 GH  Add codes for CSCAS cassava model
-!  04/16/2013 CHP/KD Added codes for SALUS model
+C  04/16/2013 CHP/KAD Added codes for SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
+C  06/18/2015 GH  Add error code for configuration file issues      
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -57,6 +58,9 @@ C=======================================================================
           
 C-SUN       PATHC  = LINE(8:80)
             PATHL  = INDEX (PATHC,BLANK)
+            IF (PATHL .EQ. 1) THEN
+                 CALL ERROR (ERRKEY,3,DSSATP,I)
+            ENDIF
             IF (PATHC(PATHL-1:PATHL-1) /= SLASH) THEN
               WRITE (PATHC(PATHL:PATHL),'(A1)') SLASH
             ELSE
@@ -309,7 +313,8 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
      &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.      !APSIM N-wheat
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.      !OILCROP
-     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)) THEN      !SALUS
+     &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)            !SALUS
+     &    ) THEN   
 !       Invalid model = error 4
         ValidModel = 4 
         RETURN

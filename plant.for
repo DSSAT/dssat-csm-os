@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
+C  COPYRIGHT 1998-2015 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Washington State University
@@ -48,7 +48,7 @@ C  10/08/2004 CHP Removed some unused variables.
 C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
 C  08/09/2012 GH  Added CSCAS model
-!  04/16/2013 CHP/KD Added SALUS model
+!  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 C=======================================================================
 
@@ -116,7 +116,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM, RWU
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
-      LOGICAL FixCanht    !, CRGRO
+      LOGICAL FixCanht, BUNDED    !, CRGRO
 c-----------------------------------------------------------------------
 C         Variables needed to run ceres maize.....W.D.B. 12-20-01
       CHARACTER*2 CROP 
@@ -160,7 +160,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       RUN     = CONTROL % RUN
 
       MEEVP  = ISWITCH % MEEVP
-
+      BUNDED = FLOODWAT % BUNDED
       CO2    = WEATHER % CO2   
       DAYL   = WEATHER % DAYL  
       PAR    = WEATHER % PAR  
@@ -458,10 +458,9 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !	Generic Salus crop model
 !	KD 09/14/2009
 	CASE('SALUS') 
-	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,     !Input
-     &        YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,	!Input
-     &        KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	!Output   
-
+	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,         !Input
+     &  HARVFRAC, YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,  !Input
+     &  KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	            !Output
 	  IF (DYNAMIC .EQ. INTEGR) THEN
           XLAI = XHLAI
         ENDIF
@@ -516,12 +515,12 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Sorghum 
       CASE('SGCER')
         CALL SG_CERES (CONTROL, ISWITCH, 
-     &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,            !Input
-     &     SNOW, SOILPROP, SRAD, SW, TMAX, TMIN,          !Input
-     &     TRWUP, TWILEN, YREND, YRPLT,                   !Input
-     $     CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,    !Output
-     &     RWUMX, SENESCE, STGDOY, UNO3, UNH4, XLAI,      !Output
-     &     KCAN, KEP)                                     !Output
+     &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,                  !Input
+     &     SNOW, SOILPROP, SPi_AVAIL, SRAD, SW, TMAX, TMIN,     !Input
+     &     TRWUP, TWILEN, YREND, YRPLT,                         !Input
+     &     CANHT, HARVRES, MDATE, NSTRES, PORMIN, PUptake,      !Output
+     &     RLV, RWUMX, SENESCE, STGDOY, UNO3, UNH4,             !Ouput
+     &     XLAI, KCAN, KEP, FracRts)                            !Output
 
         IF (DYNAMIC .EQ. SEASINIT) THEN
 !          KTRANS = KCAN + 0.15        !Or use KEP here??

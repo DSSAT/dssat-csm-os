@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2011 DSSAT Foundation
+C  COPYRIGHT 1998-2015 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Washington State University
@@ -35,6 +35,7 @@ C  06/02/2005 GH  Fixed call to WTHMOD in Seasinit section
 !  10/24/2005 CHP Put weather variables in constructed variable. 
 C  02/13/2006 JIL Export AMTRH (R/R0) for leaf rolling calculation
 !  04/28/2008 CHP Added option to read CO2 from file 
+!  07/25/2014 CHP Added daily CO2 read from weather file (DCO2)
 C-----------------------------------------------------------------------
 C  Called by: Main
 c  Calls:     DAYLEN, ERROR, HMET, IPWTH, SOLAR, WGEN, WTHMDB, WTHMOD
@@ -61,8 +62,8 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
       REAL
-     &  CCO2, CLOUDS, CO2, DAYL, DEC, ISINB, PAR, 
-     &  PI, RAD, RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
+     &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, PAR, 
+     &  RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
      &  TA, TAMP, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDSP, XELEV, XLAT, XLONG
 
@@ -71,7 +72,7 @@ C=======================================================================
 
 !      PARAMETER (CO2BAS = 330.0)
       PARAMETER (ERRKEY = 'WEATHR')
-      PARAMETER (PI=3.14159, RAD=2.0*PI/365.0)
+!      PARAMETER (RAD=2.0*PI/365.0)
 
       INTERFACE 
         SUBROUTINE OPSTRESS(CONTROL, IDETO,   
@@ -108,7 +109,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
       CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,  !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -130,7 +131,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
         IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
           CALL IPWTH(CONTROL,
-     &      CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,      !Output
+     &      CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,!Output
      &      RAIN, REFHT, RHUM, RSEED1, SRAD,              !Output
      &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
@@ -199,7 +200,7 @@ C     Calculate day length, sunrise and sunset.
      &    DAYL, DEC, SNDN, SNUP)                          !Output
 
 !     Subroutine to determine daily CO2
-      CALL CO2VAL(CONTROL, ISWITCH, CCO2, CO2)
+      CALL CO2VAL(CONTROL, ISWITCH, CCO2, DCO2, CO2)
 
 C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
@@ -216,6 +217,17 @@ C     Calculate daily solar parameters.
      &    DAYL, DEC, SRAD, XLAT,                          !Input
      &    CLOUDS, ISINB, S0N)                             !Output
 
+!     Windspeed adjustment and initialization moved ahead
+!     of Call to HMET on 27MAR14 by BAK
+
+C     Adjust wind speed from reference height to 2m height.
+      IF (WINDSP > 0.0) THEN
+!       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
+        WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
+      ELSE
+        WINDSP = 86.4   ! Equivalent to average of 1.0 m/s
+      ENDIF
+
 C     Calculate hourly weather data.
       CALL HMET(
      &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
@@ -224,14 +236,6 @@ C     Calculate hourly weather data.
      &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
      &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
      &    TGROAV, TGRODY, WINDHR)                         !Output
-
-C     Adjust wind speed from reference height to 2m height.
-      IF (WINDSP > 0.0) THEN
-!       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
-        WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
-      ELSE
-        WINDSP = 86.4
-      ENDIF
 
 C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
@@ -255,7 +259,7 @@ C     Compute daily normal temperature.
 C     Read new weather record.
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,  !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -288,7 +292,7 @@ C        rice and maize routines.
       CALL TWILIGHT(DOY, XLAT, TWILEN) 
 
 !     Subroutine to determine daily CO2
-      CALL CO2VAL(CONTROL, ISWITCH, CCO2, CO2)
+      CALL CO2VAL(CONTROL, ISWITCH, CCO2, DCO2, CO2)
 
 C     Adjust daily weather data, if weather modification requested.
 C     Effective DEC calculated if DAYL is changed.
@@ -305,14 +309,8 @@ C     Calculate daily solar parameters.
      &    DAYL, DEC, SRAD, XLAT,                          !Input
      &    CLOUDS, ISINB, S0N)                             !Output
 
-C     Calculate hourly weather data.
-      CALL HMET(
-     &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
-     &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
-     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
-     &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
-     &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
-     &    TGROAV, TGRODY, WINDHR)                         !Output
+!     Wind speed adjustments and initialization moved
+!     adhead of call to HMET on 27MAR14 by BAK
 
 C     Adjust wind speed from reference height to 2m height.
       IF (WINDSP > 0.0) THEN
@@ -321,6 +319,15 @@ C     Adjust wind speed from reference height to 2m height.
       ELSE
         WINDSP = 86.4
       ENDIF
+
+C     Calculate hourly weather data.
+      CALL HMET(
+     &    CLOUDS, DAYL, DEC, ISINB, PAR, REFHT,           !Input
+     &    SNDN, SNUP, S0N, SRAD, TDEW, TMAX,              !Input
+     &    TMIN, WINDHT, WINDSP, XLAT,                     !Input
+     &    AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR,      !Output
+     &    RADHR, RHUMHR, TAIRHR, TAVG, TDAY, TGRO,        !Output
+     &    TGROAV, TGRODY, WINDHR)                         !Output
 
 C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
@@ -346,7 +353,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,        !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, PAR, PATHWT,  !Output
      &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output

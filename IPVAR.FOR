@@ -21,7 +21,7 @@ C  06/30/2010 FSR Added PLF2 variable for CASUPRO
 C  05/19/2011 GH  Updated for sorghum
 C  02/25/2012 JZW add the PHINT data reading from *.cul for RICER
 C  08/09/2012 GH  Updated for cassava
-!  04/16/2013 CHP/KD Added SALUS model
+!  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
@@ -148,10 +148,10 @@ C
 !     variety name and ecotype name
 
 !     Generic SALUS simple crop models
-!     09/21/2009 CHP/KD
+!     09/21/2009 CHP/KAD
       CASE ('SALUS')
-        READ (C360,'(A6,1X,A16,13X,A)',IOSTAT=ERRNUM) VARTY, VRNAME, 
-     &          PLAINTXT
+        READ (C360,'(6X,A6,1X,A16,7X,A)',IOSTAT=ERRNUM) VARTY, 
+     &         VRNAME, PLAINTXT
 !     CROPGRO crops **
       CASE ('CRGRO')  
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,CSDVAR,
@@ -180,9 +180,15 @@ C-GH Remove cassava
 !DFAULT DEFAULTS             . DFAULT     0     0   500    25    40   2.5    80   380    70   200   200    60    25   150   3.0   0.1   0.5     0     0     0
 
           READ (C360,810,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, PHINT, 
-     &      P1, P2, P3, P4, P5, P6, P7, 
-     &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
+     &      P1, P2, P3, P4, P5, P6, P7, P8, VREQ, VBASE, VEFF,
+     &      PPS1, PPS2, PHINT, LA1S, LAFV, LAFR, SHWTS, GNOWT, GWTS,
+     &      PLAINTXT                
+     
+C-GH Tony update February, 2014
+!     &      VREQ, PPS1, P8, GNOWT, GWTS, SHWTS, PHINT, 
+!     &      P1, P2, P3, P4, P5, P6, P7, 
+!     &      LA1S, LAFV, LAFR, VBASE, VEFF, PPS2, PLAINTXT
+
 
 C-GH  Add cassava model
 !     CASSAVA: cassava **

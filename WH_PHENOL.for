@@ -670,7 +670,7 @@ cbak  ears that is not included in lai calculation.
 !-----------------------------------------------------------------------     
 !         DYNAMIC = RATE OR INTEGRATE
 ! ---------------------------------------------------------------------
-      ELSE    !  DYNAMIC = anything except RUNINIT OR SEASINIT? FSR
+      ELSE    ! pass here only DYNAMIC = INTEGR
 !-----------------------------------------------------------------------
 !*!   Begin NWheats subroutine nwheats_crown_temp (tempcn, tempcx). 
 
@@ -881,7 +881,6 @@ cbak  ears that is not included in lai calculation.
                           WRITE(MESSAGE(1),3500)
                           CALL WARNING(1,'MZPHEN',MESSAGE)
 
-                          WRITE (     *,3500)
                           IF (IDETO .EQ. 'Y') THEN
                               WRITE (NOUTDO,3500)
                           ENDIF
@@ -959,10 +958,7 @@ cbak  ears that is not included in lai calculation.
                   GPP    = 1.0
 
                   WRITE(MESSAGE(1),1399)
-                  CALL WARNING(1,'MZPHEN',MESSAGE)
-!*!                  CALL WARNING(1,'WHPHEN',MESSAGE)
-
-                  !WRITE (     *,1399)
+                  CALL WARNING(1,'WHPHEN',MESSAGE)
                   IF (IDETO .EQ. 'Y') THEN
                       WRITE (NOUTDO,1399)
                   ENDIF
@@ -1017,8 +1013,6 @@ cbak  ears that is not included in lai calculation.
         endif
             sumstgdtt(istage) = sumstgdtt(istage) 
      &                        + dtt * min(nwheats_vfac, nwheats_ppfac)
-      
-       !write(*,*)nwheats_vfac, nwheats_ppfac
 !----------------------------------------------------------------- 
               NDAS = NDAS + 1   !NDAS - number of days after sowing
       !-----------------------------------------------------------------
@@ -1042,9 +1036,6 @@ cbak  ears that is not included in lai calculation.
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
       !-----------------------------------------------------------------
-          ! write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
-!     :  nwheats_dc_code, 
-!     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(1),fstage !,DAYL, TWILEN
               IF (sumstgdtt(emergence) .LT. pgdd(emergence)) RETURN
 
               !---------------------------------------------------------
@@ -1087,11 +1078,7 @@ cbak  ears that is not included in lai calculation.
      &    plsc, PLTPOP, sen_la, sumstgdtt, xs_nw, zs_nw,          !INPUT
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
-      !-----------------------------------------------------------------
-               !write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
-!     :  nwheats_dc_code, 
-!     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(2),fstage !,DAYL, TWILEN
-       
+      !-----------------------------------------------------------------       
 !*!           PDTT = DTT_M
               IF (ISWWAT .EQ. 'N') THEN    
                   DUMMY = DUMMY + 1       
@@ -1153,9 +1140,6 @@ cbak  ears that is not included in lai calculation.
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
       !-----------------------------------------------------------------
-             !  write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
-!     :  nwheats_dc_code,  
-!     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(3),fstage !,DAYL, TWILEN                                       
               IF (sumstgdtt(endveg) .LT. pgdd(endveg)) RETURN
 
               !---------------------------------------------------------
@@ -1196,9 +1180,6 @@ cbak  ears that is not included in lai calculation.
      &    lstage, nwheats_dc_code, nwheats_pstag,                 !OUTPT
      &    stage_gpla, stagno, stgdur, xstag_nw, zstage)           !OUTPT
       !-----------------------------------------------------------------
-              !  write(92,'(I7,",",I1,13(",",f7.3))') YRDOY, istage,
-!    :  nwheats_dc_code, 
-!     : dtt, nwheats_vfac,nwheats_ppfac,sumstgdtt(4),fstage !,DAYL, TWILEN
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
               SeedFrac = SUMDTT / P5
 
@@ -1550,6 +1531,7 @@ cbak to crop maturity
 !*! END calculations from NWheats subroutine nwheats_set_zstag
 !----------------------------------------------------------------------
 !*! BEGIN calculations from NWheats real function nwheats_dc_code 
+      fstage = 0.0 !default for zero divide
       if (istage.eq.9 .and. pgdd(istage) .gt. 0.0 ) then ! 9=germination
 !*!      fstage = divide (sumdtt(istage), pgdd(istage), 0.0)
          fstage = sumstgdtt(istage) / pgdd(istage)
@@ -1565,7 +1547,9 @@ cbak to crop maturity
  
          ttime = sumstgdtt(istage)
          stime = pgdd(istage)
-         fstage = ttime / stime ! JZW this is repeated calculate fstage from above
+         if (pgdd(istage) > 0.001) then
+           fstage = ttime / stime ! JZW this is repeated calculate fstage from above
+         endif
 
 !*!      call bound_check_real_var (fstage, 0.0, 1.0, 'fstage')
  

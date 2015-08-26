@@ -13,6 +13,7 @@ C  Called by  : WH_PHENOL  (in nwheats.for, by nwheats_crppr only)
 C  Calls      : None
 C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
+C The statements begining with !*! are refer to APSIM source codes 
 C Call order from nwheats_crppr:
 !*!   nwheats_vernalization 
 !*!   nwheats_cold_hardening
@@ -47,8 +48,7 @@ C  FSR added coefficients from WHAPS cultivar file
       REAL        cumvd
       REAL        frost_fr
       REAL        frost_temp
-      PARAMETER   (frost_temp = -6.0) ! from NWheat. Is this ecotype? 
-      !Nwheat using Tthrshld to replace frost_temp
+      PARAMETER   (frost_temp = -6.0)  !Nwheat using Tthrshld to replace frost_temp
       Real        Tthrshld, frostf, crownT
       REAL        GRNO
       REAL        hi     ! Hardening Index ??  (deduced from context)
@@ -86,9 +86,8 @@ C  FSR added coefficients from WHAPS cultivar file
       CHARACTER*30 FILEIO  
       CHARACTER*1  IDETO  
       CHARACTER*1  ISWWAT
-      CHARACTER*78 MESSAGE(10)
-      INTEGER MDATE, NOUTDO, TIMDIF !, YRPLT
-      REAL  WLFDOT, WTLF, SLDOT, NRUSLF
+      CHARACTER*78 MSG(10)
+      INTEGER MDATE, TIMDIF
       !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -121,7 +120,6 @@ C      Initialize local variables
      &    TMAX, RAIN,                                     !Input
      &    SNOW, WATAVL)                                   !Output
        ELSE    !  DYNAMIC = anything except RUNINIT OR SEASINIT? FSR
-
 !*!      DAP   = MAX(0,TIMDIF(YRPLT,YRDOY))
 C-----------------------------------------------------------------------
 C Vervalization calculations 
@@ -267,10 +265,11 @@ cbak  add a lower boundary on leaf senesence due to frost
             sen_la = MIN(sen_la, maxsen)
  
           if (maxsen .gt. 0.0) then
-            write (*,*) 'We have frost damage on leaf area today !!!!'
-            write (*,*) 'Min temp = ', TMIN
-            write (*,*) ' current sen_la =', sen_la
-            write (*,*) ' current pla=', pl_la
+            write (MSG(1),*) 'We have frost damage on leaf area today!'
+            write (MSG(2),*) 'Min temp = ', TMIN
+            write (MSG(3),*) ' current sen_la =', sen_la
+            write (MSG(4),*) ' current pla=', pl_la
+            CALL WARNING(4,"NWheat",MSG)
           else
           ! insufficient leaf area per tiller for frosting
           endif
@@ -283,12 +282,8 @@ cbak  add a lower boundary on leaf senesence due to frost
             ! not cold enough for frosting
                frost_fr = 0.
         endif
-          write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
-     &             ", frost_fr", frost_fr
       else
          ! There is nothing to frost in this growth stage
-          write(102,*) "YRDOY=", YRDOY, ", snow=",snow, 
-     &             ", frost_fr", frost_fr
       endif
  
 C-----------------------------------------------------------------------
@@ -311,12 +306,15 @@ C-----------------------------------------------------------------------
                if (tiln .ge. 1.) then
                   tiln = tiln * (0.9 - 0.02 * (tempcr - temkil)**2)
                   !tiln = tiln * (0.9 - crownT * (tempcr - temkil)**2)
-            write (*,*) ' Killing tillers due to frost'
+      
+                write (MSG(1),*) ' Killing tillers due to frost'
+                CALL WARNING(1,"NWheat",MSG)
                else
                endif
  
                if (tiln .lt. 1.) then
-            write (*,*) 'Killing tillers due to frost'
+                  write (MSG(1),*) 'Killing tillers due to frost'
+                  CALL WARNING(1,"NWheat",MSG)
                  ! PLTPOP = PLTPOP * (0.95 - 0.02 * (tempcr - temkil)**2)
                   PLTPOP = PLTPOP*(0.95 - crownT * (tempcr - temkil)**2)
                   tiln = 1.
@@ -364,47 +362,15 @@ C-----------------------------------------------------------------------
       RETURN ! JZW strong: when vfacac=1.007694,nwheats_vfac=1, but when return nwheats_vfac=1.007694??  
       END SUBROUTINE WH_COLD
 
-!*!      return
-!*!       end
-
-C-----------------------------------------------------------------------
-
-!*!      WLFDOT = WTLF - SLDOT - NRUSLF/0.16
-
-!*!      IF (TMIN .LT. FREEZ2) THEN
-!*!        IF (MDATE .LT. 0) THEN
-!*!          MDATE = YRDOY
-!*!        ENDIF
-!*!      ENDIF
-
-!*!     WRITE(MESSAGE(1),100) DAP
-!*!     WRITE(MESSAGE(2),110) YRDOY
-!*!     CALL WARNING(1, 'FREEZE', MESSAGE)
-!*! 100 FORMAT('Freeze occurred at ',I4,' days after planting.')
-!*! 110 FORMAT('  (DAY : ',I7,' )')
-!*!     WRITE (*,'(/,2X,A78,/,2X,A78)') MESSAGE(1), MESSAGE(2)
-!*!     IF (IDETO .EQ. 'Y')  THEN
-!*!       WRITE (NOUTDO,'(/,5X,A78,/,5X,A78)') MESSAGE(1), MESSAGE(2)
-!*!     ENDIF
-
-C-----------------------------------------------------------------------
-!*!      RETURN
-!*!      END SUBROUTINE FREEZE
-
 C-----------------------------------------------------------------------
 !     WH_COLD VARIABLES: 
 C-----------------------------------------------------------------------
 ! DAP    Number of days after planting (d)
-! FREEZ2 Temperature below which plant growth stops completely. (°C)
 ! IDETO  Switch for printing OVERVIEW.OUT file 
 ! MDATE  Harvest maturity (YYDDD)
-! NOUTDO Logical unit for OVERVIEW.OUT file 
-! NRUSLF N actually mobilized from leaves in a day (g[N]/m2-d)
-! SLDOT  Defoliation due to daily leaf senescence (g/m2/day)
 ! TMIN   Minimum daily temperature (°C)
 ! VSEN   CULTIVAR parameter: sensitivity to vernalisation  (scale 1-5; NWheat)
 ! WLFDOT Leaf weight losses due to freezing (g[leaf]/m2-d)
-! WTLF   Dry mass of leaf tissue including C and N (g[leaf] / m2[ground])
 ! YRDOY  Current day of simulation (YYDDD)
 ! YRPLT  Planting date (YYDDD)
 !-----------------------------------------------------------------------

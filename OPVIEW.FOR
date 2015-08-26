@@ -68,7 +68,7 @@ C=======================================================================
 
       DATA TITLE2 /
      &'   STRESS      STRESS ',
-     &'  H2O    N    P1    P2   RSTG',
+     &'  H2O  Nitr Phos1 Phos2  RSTG',
      &' ----  ----  ----  ----  ----'/
 !     AVDSTR AVNSTR AVP1STR AVP2STR RSTAGE
 

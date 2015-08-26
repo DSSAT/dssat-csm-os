@@ -10,6 +10,7 @@
 !
 !  Calls  : NFACTO NUPTAK
 !----------------------------------------------------------------------
+C The statements begining with !*! are refer to APSIM source codes
 ! JZW rlv_nw is output of WH_Grosub and ourput of WH_APSIM, input of nwheats_rtlv
 ! How to get SNO3(NL) initial? from soil property? I add XStage to the argument of WH_GROSUB
 ! cnc is critical N  concentration? you need to call nwheats_set_nconc (cnc, mnc)
@@ -916,26 +917,7 @@
             WRITE(MSG(2),'(A)') "Program will stop."
             CALL WARNING(2,ERRKEY,MSG)
         endif
-        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-!        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) Tthrshld
-!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-!        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) frostf
-!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-!        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) tbase
-!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-!        READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) crownT
-!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            !CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-            !READ(C80,'(10X,I1)',IOSTAT=ERR) CNPYT
-            !IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)            
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)          
       ENDIF
       REWIND(LUNCRP)
       !---------------------------------------------------------------
@@ -1404,32 +1386,6 @@
           ENDIF
           gtmaxfac= 1.0
           gtminfac= 1.0
-          if (DYNAMIC.EQ.SEASINIT) THEN
-      !write(92,*) "DCCD compare"
-      !write(92,*)"YRDOY,istage,DCCD,dtt,vfac,ppfac,sumstgdtt,fstage" !,DAYL,TWILN"
-      ! write(93,*) "Plant Leaf Area calculation (PlantPopulation=",
-      ! :     PLTPOP, "plants/m2)" 
-       !write(93,*) "sla_new is specific leaf area of new growth (mm2/g)"
-       !write(93,*)"lai = (pl_la - sen_la) * PLTPOP / sm2smm"
-       !   write(93,*)"YRDOY,Istage,xstag_nw, pl_la,sen_la, sla_new/100,
-      ! :     lai, XLAI, zstage, cumph, lfwt, lfsen" 
-      !write(94,*) "Daily Root Weight increase (PlantPopulation=",
-      ! :     PLTPOP, "plants/m2)" 
-          !write(94,*) "YRDOY,Istage,gw_rt,carbh, pcarbo,ConversionEf,
-! :lfipar, pl_dmd_lf, pl_dmd_lfsh,swdef,nfact1,prft,optfr, lai,radfr"
-               ! total daily growing weight should br smaleer than carbh 
-      !write(95,*) "Mass Balance (PlantPopulation=",PLTPOP, "plants/m2)" 
-      !    write(95,*)              "YRDOY,rootwt,gw_rt,sen_rt,lfwt,gw_lf
-      ! :,stmwt,gw_stm,lfshwt,gw_lfsh,grainwt,gw_grn,carbh,topwt,lfsen"
-          !Write(98,*)"TMAX effect on grain number"
-          !Write(98,*) "     YRDOY, Tmax,   Tmax Effect,",
-      ! :      "   DTTcum, DTT day effect,  cumulative gtmaxfac"
-          !Write(97,*)"TMIN effect on grain number"
-          !Write(97,*) "     YRDOY, Tmin,   Tmin Effect,",
-      !  :      "   DTTcum, DTT day effect, cumulative gtminfac"   
-          endif
-          !  ! write(100,*)    "YRDOY,rtN,TrnRTN,uptkRt,lfN,TrnLfN,uptkLf,lfshN,
-!    : TrnLfshN,uptkLhsh,stmN,TrnStmN,uptkStm,GrnN,trnGrn,uptakGrn"
 ! The following 2 subroutine calls were removed for WHAPS (Nwheat) 
 ! since no APSIM-nwheat code was transfered to WH_NUPTAK or WH_KUPTAK
           ! JZW recover the following two calls
@@ -1492,8 +1448,6 @@
           ! Generate variable heading for GROWTH.OUT
           !---------------------------------------------------------
           CALL HEADER(SEASINIT, NOUTXL, RUN)
-
-!*!          WRITE (NOUTXL,201, ADVANCE='NO')
           WRITE (NOUTXL,201)
   201     FORMAT('  YRDOY dieleaf     ',
      &   ' cumph_nw(1)      cumph_nw(2)      cumph_nw(3)     ',
@@ -1639,9 +1593,6 @@
           ENDIF
 !*! IF statement above was modified after MZ_IX_MAIZE, to include all 
 !*! stages except fallow (7).
- 
-      ! write(100,*) "YRDOY=", YRDOY
-      !write(*,*) "YRDOY=", YRDOY
           IF(YRDOY.EQ.STGDOY(3)) THEN
               SWMIN  = STMWT*0.85         
               SUMP   = 0.0
@@ -1730,8 +1681,6 @@
               NDEF3 = 1.0
               NFAC = 1.0
           ENDIF
-!     write(96,'(A6,I7,8(",",A5,",",f6.4))') "YRDOY=",YRDOY,"tanc=",
-!     %  TANC, ",tmnc=",  TMNC,",tcnp=",TCNP, ",nfac=", NFAC 
           !-------------------------------------------------------------
           !      Compute Water Stress Factors       
           ! ------------------------------------------------------------
@@ -1833,8 +1782,6 @@ cnh Senthold
            ! grpp = gpp_stem_wt * GRNO
             GAD2 = gpp_stem_wt * GRNO
             grpp = gpp_stem_wt * GRNO* gtmaxfac * gtminfac
-            !write(98,*) "gtmaxfac=",   gtmaxfac, "on day " , YRDOY
-            !write(97,*) "gtminfac=",   gtminfac, "on day " , YRDOY
             gpp = grpp
          endif
  
@@ -1879,8 +1826,11 @@ cnh Senthold
           ! -------------- get new root length volume
 !**!     nrlayr = nwheats_level(rtdep_nw)
          nrlayr = nwheats_level(rtdep_nw, dlayr_nw, NL)
-      sno3 = no3ppm/KG2PPM 
-      snh4 = nh4ppm/KG2PPM
+      do L = 1, NLAYR
+        sno3(L) = no3ppm(L)/KG2PPM(L) 
+        snh4(L) = nh4ppm(L)/KG2PPM(L)
+      enddo
+
       call nwheats_rtlv (CONTROL, SOILPROP, sno3, snh4,
      &  dlayr_nw, istage, nrlayr, p2af, p3af, PLTPOP,             !Input
      &  nwheats_level, rtdep_nw, stgdur, wr,                      !Input
@@ -2033,10 +1983,6 @@ cjh temp fix to avoid any further development during maturity stage
       if (istage .ge. emergence .and. istage .le. endjuv) then
 !*!      frlf = divide (dtt, PhInt, 0.0)
          frlf = dtt / PhInt
-         if (PhInt .eq. 0.) then
-             write(*,*) "PhInt is zero"
-             stop !JZW add
-         endif
       else
          frlf = 0.0  ! frlf - New fraction of oldest expanding leaf
       endif
@@ -2134,10 +2080,6 @@ cbak    testing:
 !*!     ce_tops = u_bound(ce_tops,2.0)
  
         ce_tops = 3.8 * (SRAD**0.63 / SRAD)
-        if (SRAD .eq. 0.) then
-            write(*,*) 'SRAD is zero'
-            stop
-        endif
         ce_tops = MIN(ce_tops,2.0)
  
 !*!   if (nwheats_min_rootfr() .gt. 0.0) then
@@ -2161,7 +2103,6 @@ cbak    testing:
       ELSE
         pcarbo = 0.0
       ENDIF
-!      write(*,*) 'in ptcarb, pcarbo =', pcarbo, 'roots + tops'
 !----------------------------------------------------------------------
 !*! End WHAPS potential dry matter production calculation 
 !*!       (from APSIM NWheat subroutine nwheats_ptcarb)
@@ -2197,12 +2138,6 @@ cbak optimum of 18oc for photosynthesis
           ! day by discounting by temperature, water or N stress factors.
 cnh senthold
 cnh      optfr = min (swdef(photo), nfact(1)) * prft
-        
-      !       write(92,'(I7,13(",",f7.5))')YRDOY, pl_nit(leaf_part),
-      !:       pl_nit(stem_part),pl_nit(lfsheath_part),
-      !:       plantwt(leaf_part), plantwt(stem_part),
-      !:       plantwt(lfsheath_part)
-                
       optfr = min (swdef(photo_nw), nfact(1), ADPHO) * prft 
         !! threshold aeration deficit (AF2) affecting photosyn
       carbh = ptcarb*optfr
@@ -2221,8 +2156,6 @@ cnh      optfr = min (swdef(photo), nfact(1)) * prft
       endif
  
       carbh = MAX(carbh, 0.0001) !*! was: carbh = l_bound(carbh, 0.0001)
- 
-!      write (*,*) 'in biomp, carbh = ', carbh
 !---------------------------------------------------------------------- 
 !*! End WHAPS - actual & potential biomass (CH2O) production from   
 !*!       photosynthesis   (from APSIM NWheat subroutine nwheats_biomp)
@@ -2251,7 +2184,6 @@ cnh      optfr = min (swdef(photo), nfact(1)) * prft
     ! Need above by call nwheats_cwpot
      &    prwu, rwu_nw)                                           !Output
        rwu_nw = prwu    ! prwu(mm) is from calculation, rwu_nw is from input
-      ! write(*,*) sum_real_array (prwu, nrlayr), ",", cwdemand
 !---------------------------------------------------------------------- 
 !*! Begin WHAPS calculation of plant biomass production and partition
 !*!             into various plant parts 
@@ -2400,8 +2332,9 @@ cnh      plagms = 1400.*(cumph(istage)**.6)*ti*optfr
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !*!      grolf = divide (plag, sla_new, 0.0)
          if (sla_new .eq. 0.) then
-             write(*,*) "sla_new is aero"
-             stop
+             write(MSG(1),*) "sla_new is zero"
+             CALL WARNING(1,"NWheat",MSG)
+             CALL ERROR("NWheat",99," ",0)
          endif
          grolf = plag / sla_new
  
@@ -2435,8 +2368,9 @@ cnh      plagms = 1400.*(cumph(istage)**.6)*ti*optfr
 cbak : set leaf sheath demand to 0.8 of leaf blade demand
 !         grolfsh = divide (0.8*plag, sla_new, 0.0)
          if (sla_new .eq. 0.) then
-             write(*,*) "sla_new is aero"
-             stop
+             write(MSG(1),*) "sla_new is zero"
+             CALL WARNING(1,"NWheat",MSG)
+             CALL ERROR("NWheat",99," ",0)
          endif
          grolfsh = 0.8*plag/sla_new
  
@@ -2544,10 +2478,7 @@ cnh note that endjuv is only 3 phints long and so most c will still go into leaf
       enddo          
           ! now translocate carbohydrate between plant components
           ! this is different for each stage
-      part_shift = 0.0
- 
-!      write (*,*) 'in partition, carb=', carb
- 
+      part_shift = 0.0 
       if (istage.eq.emergence) then
           ! roots get carbon left after leaf demand but root demand must
           ! be met. Excess carbon partitioned to roots is "respired".
@@ -2573,11 +2504,6 @@ cnh note that endjuv is only 3 phints long and so most c will still go into leaf
             gro_wt(leaf_part) = (carbh - gro_wt(root_part))/2.0
             gro_wt(lfsheath_part) = gro_wt(leaf_part)
           endif
- 
-!           write (*,*) 'partition subroutine', 'istage = emerg'
-!          write(*,*) 'part_shift=',part_shift,'swdef=',
-!     : swdef(cellxp), 'nfact2', nfact(2)
- 
          ! leaf and leaf sheath share equally any carbo left
  
        else if ( istage .eq. endjuv) then
@@ -2618,8 +2544,6 @@ cbak  consider using it to reflect on sla under stress (ie. lower sla, thicker l
             if ((anth_date .EQ. 0) .and. (Sumstgdtt(endear) .ge. 80)  
      :         ) then
                anth_date = YRDOY 
-               !write (97, *)"Anth date is ", YRDOY, "Sumdtt=", 
-!     :            Sumstgdtt(endear) 
             endif   
                 gtmaxfac= gtmaxfac * (1+ ALIN (GTMAX, GRDUH, 4, TMAX)* 
    !  :          0.01 * min (1., max(0., ((Sumstgdtt(endear)-20)/60))) )
@@ -2628,26 +2552,14 @@ cbak  consider using it to reflect on sla under stress (ie. lower sla, thicker l
                 gtminfac= gtminfac * (1+ ALIN (GTMIN, GRDUL, 4, TMIN)* 
     ! :           0.01 * min (1., max(0., ((Sumstgdtt(endear)-20)/60))))
      :           0.01 * min (1., max(0.,
-     :             ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)))))
-                
-!                Write(98,*)YRDOY,Tmax,ALIN (GTMAX, GRDUH, 4, TMAX),
-!     :            Sumstgdtt(endear),
-!     :            ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)),  gtmaxfac  
-!                Write(97,*)YRDOY,Tmin,ALIN (GTMIN, GRDUL, 4, TMIN),
-!     :            Sumstgdtt(endear),            
-!     :            ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)),  gtminfac   
-      !        else 
+     :             ALIN(DTTPT, DTTF, 3, Sumstgdtt(endear)))))  
       !          ! II= MAX( 0, TIMDIF(anth_date, YRDOY))
       !           gtmaxfac= gtmaxfac * (1+ ALIN (GTMAX, GRDUH, 4, TMAX)* 
       !:           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) )
       !           ! 0.01 is percentage 
       !           gtminfac= gtminfac * (1+ ALIN (GTMIN, GRDUL, 4, TMIN)* 
-      !:           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) )
-      !           Write(98,*)YRDOY, Tmax,ALIN (GTMAX, GRDUH, 4, TMAX),
-      !:            ((Sumstgdtt(endear)-80)/40),  gtmaxfac  
-      !           Write(97,*)YRDOY, Tmin,ALIN (GTMIN, GRDUL, 4, TMIN),
-      !:            ((Sumstgdtt(endear)-80)/40),  gtminfac   
-             endif  
+      !:           0.01 * min (1., max(0., ((Sumstgdtt(endear)-80)/40))) ) 
+          endif  
 cbak
           gro_wt(leaf_part) = 0.0
           gro_wt(lfsheath_part) = 0.0
@@ -2933,8 +2845,6 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
         !cumpnup = 0.127kg/ha
        endif
       call add_real_array (pnup, pl_nit, mxpart)
-!      write(100,"(I7,15(',',F7.5))")YRDOY, 
-!     :   (pl_nit(i),pntrans(i), pnup(i), i=1,5)
 !----------------------------------------------------------------------
 !*! End N process from APSIM nwheats_crppr subroutines
 !======================================================================
@@ -2962,7 +2872,6 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
       rootnsen =  rootsenfr * pl_nit(root_part) !pl_nit is array
 !**!  pl_wt(root_part) = pl_wt(root_part) - rootsen
       plantwt(root_part) = plantwt(root_part) - rootsen
-      !write(*,*) "rtwt", plantwt(root_part),"rtsen = ", rootsen
       pl_nit(root_part) = pl_nit(root_part) - rootnsen
       ! JZW add the following for output
       plntp = pl_nit(leaf_part)+pl_nit(lfsheath_part)+pl_nit(stem_part)
@@ -2986,7 +2895,6 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 
 ! JZW replace the following do loop by call add_real_array
       call add_real_array (gro_wt, plantwt, mxpart)
-      !write(*,*) "rtwt", plantwt(root_part),"gw_rt",gro_wt(root_part)
 !      do L=1, mxpart
 !!**!     pl_wt(L) = pl_wt(L) + gro_wt(L)
 !         plantwt(L) = plantwt(L) + gro_wt(L)
@@ -3015,7 +2923,6 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
       IF ((xstag_nw .ge. GPPSS)            ! GPPSS for p_gpp_start_stage
      &           .and.   
      &  (xstag_nw.lt.GPPES)) then          ! GPPES for gpp_end_stage
-    !  write (*,*) zstage
 !*!      IF (istage .eq. grnfil) THEN  ! Not sure where this came from??
 ! gpp_stem_wt : stem weight used in calc gpp (NWheats)
          gpp_stem_wt = gpp_stem_wt + gro_wt(stem_part) !*! was "growt"
@@ -3041,7 +2948,6 @@ cbak   add the relevant c and n pools to the soil organic matter cycling
       pl_la = pl_la + gro_wt(leaf_part)*sla_new
 
       lai = (pl_la - sen_la) * PLTPOP / sm2smm
-!       write(100,*) "pl_la", pl_la, ",  sen_la", sen_la, ",  lai", lai
       XHLAI  = LAI  ! XHLAI: Healthy leaf area index used to compute
                     ! transpiration in water balance routine
 
@@ -3138,15 +3044,11 @@ cbak  adjust the green leaf ara of the leaf that is dying
          ! ES is actual soil evaporation
          !Tcnpy = (-12. * ( ES + ep_nw)/EO + 6.) +Tmax
          Tcnpy = vpdf*(TCSlope * ( ES + ep_nw)/EO + TCInt) +Tmax
-!         write(96, *) YRDOY, "Tmax=", Tmax, "Tcnpy=", Tcnpy,
-!     :       "VPD=", vpd_transp, "vpdf=",vpdf,vpd_transp
       else 
          Tcnpy = vpdf * (TCSlope + TCInt) + Tmax  ! because EO is not availabe (there is no CALL PET in SPAM.for)
       endif                
          weather % TGROAV = Tcnpy !Average daily canopy temperature (°C)
          slft = ALIN (SENST, SENSF, 4, Tcnpy)
-!        write(101,*) "YRDOY=", YRDOY, ", Tmax=", Tmax,
-!    &     "Tcnpy=",Tcnpy,", slft=",slft
        Weather % VPD_TRANSP = vpd_transp
        Weather % VPDF = vpdf
 !      if (TMAX .gt. 34.) then ! note that this factor is not continuous
@@ -3155,7 +3057,6 @@ cbak  adjust the green leaf ara of the leaf that is dying
 !      else
 !         slft = 1.0
 !      endif
- 
       sfactor = max (slfw, slfn, slft)
  
 cbak increase slan to account for stresses
@@ -3207,29 +3108,7 @@ cjh quick fix for maturity stage
 !-----------------------------------------------------------------------
 !                         DYNAMIC = OUTPUT
 !-----------------------------------------------------------------------
-      ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
-      
-!*!            WRITE(NOUTXL,400,ADVANCE='NO')
-!            WRITE(NOUTXL,400)
-!     &        YRDOY, dyingleaf,
-!     &        cumph_nw(1), cumph_nw(2), cumph_nw(3), cumph_nw(4),
-!     &        dtiln, frlf, fstage, 
-!     &        gro_wt(1), gro_wt(2), gro_wt(3), gro_wt(4), 
-!     &        leafsen, nwheats_vfac, nwheats_topsfr, optfr, pl_la,  
-!     &        plantwt(2), plantwt(3),
-!     &        plsc(1), plsc(2), plsc(3), plsc(4), plsc(5), 
-!     &        prft, rtsw, sen_la, sfactor, slan, slft, slfw,
-!     &        sumstgdtt(1), sumstgdtt(2), sumstgdtt(3), sumstgdtt(4),
-!     &        sumstgdtt(5), tc1, tc2, tiln, trans_wt(1), trans_wt(2),
-!     &        trans_wt(3), trans_wt(4), trans_wt(5), trans_wt(6), 
-!     &        vd1, vd2, vd, xstag_nw
-!     
-! 400        FORMAT (I7, 5X, I3, 48(1X,F16.9))
-
- !*!400        FORMAT (1X,I4,1X,I3.3,2(1X,I5),2X,F6.3,1X,I5,1X,F6.3,
- !*!    &        7(1X,I6),1X,I6,1X,F6.3,2(1X,I6),7(1X,F6.3),3(1X,F6.2),
- !*!    &        2(1X,I6),1X,F8.1,2(1X,F6.2),1X,F6.2)
- 
+      ELSEIF (DYNAMIC .EQ. OUTPUT) THEN 
        WTNVEG = WTNVEG
 !-----------------------------------------------------------------------
 !                         DYNAMIC = SEASEND
@@ -3317,26 +3196,6 @@ cjh quick fix for maturity stage
 
  2700 FORMAT (2X,'Crop mature on JD',I4,' due to slowed grain filling')
  2800 FORMAT (2X,'Crop failure growth program terminated ')
-   !   !write (*,*)snup_no3, snup_nh4
-      ! cumpnup=cumpnup/10.   !JZW tset,  have to remove !!!!!!!!!!!!!???????
-      if ((YRDOY .LE. 1983225).and.(DYNAMIC.EQ.INTEGR)) THEN
-      ! write(93,'(I7,",",I1,14(",",f10.3))') YRDOY,Istage,xstag_nw,
-!     : pl_la,sen_la, (sla_new/100), lai, XLAI,zstage, cumph_nw(istage),
-!     : plantwt(leaf_part),leafsen
-!      write(94,'(I7,",",I1,14(",",f7.4))')YRDOY,istage, 
-!     :gro_wt(root_part),carbh, pcarbo, ce, lfipar, pl_dmd(leaf_part), 
-!     :pl_dmd(lfsheath_part),swdef(photo_nw),nfact(1),prft,optfr,lai,
-!     : radfr   
-!      write(95,'(I7,13(",",f6.4),2(",",f7.3))')YRDOY,plantwt(root_part),
-!     : gro_wt(root_part), rootsen, plantwt(leaf_part),gro_wt(leaf_part),
-!     : plantwt(lfsheath_part),gro_wt(lfsheath_part),plantwt(stem_part),
-!     :    gro_wt(stem_part),plantwt(grain_part),gro_wt(grain_part),
-!     :   carbh,TOPWT/PLTPOP,leafsen
-      ! write(95,*)      "YRDOY,rootwt,gw_rt,sen_rt,lfwt,gw_lf,lfsen
-      !:,stmwt,gw_stm,lfshwt,gw_lfsh,grainwt,gw_grn,carbh,topwt"  
-      ! Write(*,*) "rtwt",plantwt(root_part), "gwRt", gro_wt(root_part),
-      !:   "rtsn = ", rootsen
-      endif
       return
       END SUBROUTINE WH_GROSUB
 

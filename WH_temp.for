@@ -38,12 +38,10 @@
  
               ! calculate conversion factor from kg/ha to ppm (mg/kg)
  
-      !*! nwheats_fac = divide (100.0, bd(layer)*dlayr(layer), 0.0)
-      ! DSSAT: KG2PPM(1) = 1.0/(BD1*1.E-01*DLAYR(1))
-      if ( (bd(layer) .eq. 0.) .or. (dlayr_nw(layer) .eq. 0.) ) then
-          write(*,*) "bd*dlayr_nw is zero"
-          stop
-      endif
+!     This should be handled in the soil dynamics routine.
+      !!*! nwheats_fac = divide (100.0, bd(layer)*dlayr(layer), 0.0)
+      !! DSSAT: KG2PPM(1) = 1.0/(BD1*1.E-01*DLAYR(1))
+
       nwheats_fac = 100.0 /( bd(layer)*dlayr_nw(layer))
       !   mg[N]      100             ha        m2      1000000mg   mm
       !  ------   =------------ * --------*---------- * ---------*-------
@@ -139,11 +137,9 @@
          slayer = nwheats_level (sdepth, dlayr_nw, NL)
  !*!        spesw0 = divide (swdep(slayer) - lldep(slayer)
  !*!    :                   , dlayr(slayer), 0.0)
-         if ((dlayr_nw(slayer) .eq. 0.) .or. 
-     :     (dlayr_nw(slayer +1) .eq. 0.) ) then
-            write(*,*) "dlayer is zero"
-            stop
-         endif
+
+
+
          spesw0 =  (swdep(slayer) - lldep(slayer))
      :                   / dlayr_nw(slayer)
  
@@ -230,19 +226,19 @@ cbak
 !       check to see if the ratio of delta n /delta c is too high
 !       that is, c stops but n continues. set max limit of 0.10
  
-!       write (*,*) 'day=',day_of_year,'grain n fill =',gndmd
+!*!       write (*,*) 'day=',day_of_year,'grain n fill =',gndmd
  
 cnh         delta_grainC = growt(grain)  + transwt(grain)
  
-!       write (*,*) 'day=',day_of_year,'c increase=',delta_grainc
+!*!       write (*,*) 'day=',day_of_year,'c increase=',delta_grainc
  
 cnh         delta_N_fraction = divide (gndmd,delta_grainC,0.0)
 cnh         delta_N_fraction = u_bound (delta_N_fraction
 c     :                              ,p_max_grain_nc_ratio)
 cnh         gndmd = delta_N_fraction * delta_grainC
  
-!       write (*,*) 'day=',day_of_year,'ratio=',delta_n_fraction
-!       write (*,*) 'day=',day_of_year,'adj n fill =',gndmd
+!*!       write (*,*) 'day=',day_of_year,'ratio=',delta_n_fraction
+!*!       write (*,*) 'day=',day_of_year,'adj n fill =',gndmd
  
  
        else
@@ -279,6 +275,7 @@ cnh to allow watching of these variables
 *+  Sub-Program Arguments      ******OK*******
       !*! real       pnout (*)             ! (OUTPUT) plant N taken out from plant parts ()
       real pnout (mxpart)
+      CHARACTER*78 MSG(1)
 
 *+  Purpose
 *              calculate the nitrogen uptake from the various plant parts
@@ -420,22 +417,26 @@ cnh added for watch purposes
          pnout = 0.
       endif
              ! just check that we got the maths right.
-!      write(*,*) 'grain n uptake=',gnuptk,'day=', day_of_year
+!*!      write(*,*) 'grain n uptake=',gnuptk,'day=', day_of_year
 !      lai = (pl_la - sen_la)*plants /1000000
-!      write (*,*) 'lai =', lai
+!*!      write (*,*) 'lai =', lai
 !      grainnpc = divide (pl_nit(grain), pl_wt(grain), 0.0)*100.
-!      write (*,*) 'grain n % =', grainnpc
+!*!      write (*,*) 'grain n % =', grainnpc
       do 1000 part = 1, mxpart
 !         call bound_check_real_var (pnout(part), 0.0, !JZW need to solve soon
 !     :        navl(part), 'pnout(part)', 'Grnit') !'Grnit is error key
           if (pnout(part) .lt. 0.) then
-            write(*,*) "pnout bound check <0 error"
-            stop
+             msg(1) = "pnout bound check <0 error"
+             call warning(1, "NWheat", msg)
+             call error("NWheat",99," ",0)
+
           endif
           if  (pnout(part). gt. navl(part) ) then
               ! pnout is pntrans calculated by nwheats_grnit for finding actual grain uptake by translocation
               ! navl (mxpart) is N available for transfer to grain
-              write(*,*) "pnout bound check >navl error"
+              msg(1) = "pnout bound check >navl error"
+              call warning(1, "NWheat", msg)
+
               pnout(part) = navl(part) !JZW add this case in Oct, 2014
           endif
 1000  continue
@@ -546,6 +547,7 @@ cnh added for watch purposes
 *+  Constant Values
       character  myname*(*) ! name of subroutine
       parameter (myname = 'nwheats_ndmd')
+      character*78 msg(1)
 *
       real       tolnce     ! tolerance for calculation errors
       parameter (tolnce = 1.0e-5)
@@ -583,8 +585,10 @@ cnh added for watch purposes
          !*! pgro(part) = pcarb* divide (growt(part), carbo, 0.0)
          !*! pgro(part) = pcarb* (growt(part)/ carbo)
           if (carbh .eq. 0.) then
-              write(*,*) "carbh is zero"
-              stop
+              msg(1) = "carbh is zero"
+              call warning(1,"NWheat", msg)
+              call error("NWheat",99," ",0)
+
           endif
          pgro(part) = pcarbo* (gro_wt(part)/ carbh)
          !*! pgro(part) = bound (pgro(part), 0.0, pcarb)
@@ -753,7 +757,6 @@ cjh  end of correction
       CALL nwheats_ndmd (xstag_nw,  gro_wt, plantwt,       !Input
      &     pl_nit, pcarbo, carbh, cnc,                     !Input 
      &     pndem)	                                       !Output
-       !write(96,*) "pndem=", pndem
 * ====================================================================
       n_demand = sum_real_array (pndem, mxpart)
  
@@ -1144,9 +1147,6 @@ cnh need to initialise plant n after these weights are initialised.
             WRITE(MESSAGE(1), 110) VariableName, UpperBound
             CALL WARNING(1, ERRKEY, MESSAGE)
 
-            !Screen 
-            WRITE (*,120) MESSAGE(1)
-
             !Overview.out
             IF (IDETO .EQ. 'Y') THEN
               WRITE(NOUTDO,120) MESSAGE(1)
@@ -1161,9 +1161,6 @@ cnh need to initialise plant n after these weights are initialised.
             !Warning.out
             WRITE(MESSAGE(1), 115) VariableName, LowerBound
             CALL WARNING(1, ERRKEY, MESSAGE)
-
-            !Screen 
-            WRITE (*,120) MESSAGE(1)
 
             !Overview.out
             IF (IDETO .EQ. 'Y') THEN

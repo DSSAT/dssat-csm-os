@@ -61,12 +61,40 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 28
+        INTEGER :: Build = 50
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-nwheat   '
+      CHARACTER(len=10) :: VBranch = '-NWheat   '
+!     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.0.50 chp 08/14/2015 NWheat brougt up to latest version
+!       4.6.1.00 GH  07/01/2015 DSSAT Version 4.6.1 Release
+!       4.6.0.49 GH  06/19/2015 CERES-Rice drought stress issue
+!       4.6.0.48 GH  06/18/2015 Harvest fix CERES & minor data file updates
+!       4.6.0.47 GH  06/18/2015 Added MaxPest to ModuleDefs
+!       4.6.0.46 chp 06/17/2015 Summary.OUT - fixed problems with environmental summary outputs
+!       4.6.0.45 vsh 06/16/2015 added Tony's files; Added Taro files
+!       4.6.0.44 chp 01/12/2015 CSCER Evaluate.OUT remove headers
+!                               OPSUM improved handling of "-99" values
+!                               Rice - Ceres & ORYZA - output N uptake
+!       4.6.0.43 chp 01/12/2015 Portability - file exension consistency
+!       4.6.0.42 chp 12/05/2014 DSSAT sprint -1st batch of changes
+!                               Dates and headers, JDATE.CDE fix, portability fixes, 
+!                               "F" forced auto-planting date option, minor changes
+!       4.6.0.41 chp 11/04/2014 KThorp changes for portability
+!       4.6.0.40 chp 09/19/2014 Minor changes
+!       4.6.0.39 chp 07/25/2014 Allow daily input of CO2 in weather file (header CO2 or DCO2)
+!                               Move PI and RAD to global constants
+!       4.6.0.38 chp 07/17/2014 Fixed output switches
+!       4.6.0.37 chp 06/05/2014 ORYZA code updated to ORYZA3 (Tao Li)
+!       4.6.0.36 chp 05/07/2014 SALUS model updates, ESCP, EPCP added to Summary.OUT
+!       4.6.0.35 chp 03/28/2014 Taro initialization fixed - RO
+!       4.6.0.34 chp 03/28/2014 Minor changes Weather, CSCER, sorghum
+!       4.6.0.33 chp 03/26/2014 Y2K crossover at 2020
+!       4.6.0.32 chp 03/20/2014 Minor bug fixes, millet and auto-irrig
+!       4.6.0.31 chp 03/10/2014 Sorghum P linkage
+!       4.6.0.30 chp 02/21/2014 CSCER, CSCRP, CSCAS updates
 !       4.6.0.29 chp 01/23/2014 Fixed bug in auto planting when IHARI = "R"
 !       4.6.0.28 chp 01/16/2014 Suppress screen output for VBOSE=zero.
 !       4.6.0.27 chp 01/12/2014 Added abiotic stresses to overview.out
@@ -123,7 +151,12 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
      &    EvaluateNum = 40, !Number of evaluation variables
-     &    MaxFiles = 100    !Maximum number of output files
+     &    MaxFiles = 100,   !Maximum number of output files
+     &    MaxPest = 500    !Maximum number of pest operations
+
+      REAL, PARAMETER :: 
+     &    PI = 3.141586, 
+     &    RAD=PI/180.0
 
       INTEGER, PARAMETER :: 
          !Dynamic variable values
@@ -202,8 +235,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL REFHT, WINDHT, XLAT
 
 !       Daily weather data.
-        REAL CLOUDS, CO2, DAYL, PAR, RAIN, RHUM, SNDN, SNUP, SRAD, 
-     &    TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
+        REAL CLOUDS, CO2, DAYL, DCO2, PAR, RAIN, RHUM, SNDN, SNUP, 
+     &    SRAD, TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
      &    TMAX, TMIN, TWILEN, VAPR, WINDSP, VPDF, VPD_TRANSP
 
 !       Hourly weather data
@@ -399,7 +432,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         DSSATPRO = 'DSSATPRO.V46'
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
-        STDPATH = 'C:\DSSAT46\' !'C:\DSSAT4N\'
+        STDPATH = 'C:\DSSAT46\' 
+D       STDPATH = 'D:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix

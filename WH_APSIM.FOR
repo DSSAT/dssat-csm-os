@@ -30,6 +30,7 @@
 !----------------------------------------------------------------------
 !  Called by: Plant
 !----------------------------------------------------------------------
+C The statements begining with !*! are refer to APSIM source codes      
 
 
       SUBROUTINE WH_APSIM (CONTROL, ISWITCH,              !Input
@@ -38,12 +39,10 @@
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
      &     NSTRES, PORMIN, PUptake, rlv_nw,                  !Output
-   !   &     NSTRES, PORMIN, PUptake, RLV,                  !Output 
      &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
      &     UNH4, UNO3, XLAI, XHLAI, UH2O)                  !Output
-        !JZW not: KCAN/KEP  ic calculated in WH_PHENO
+        !JZW note: KCAN/KEP  ic calculated in WH_PHENO. RWUMX is not used 
         !PUptake/FracRts is not calculated for Nwheat, 
-        !PORMIN/RWUMX from reading , check unit?
       USE ModuleDefs
       USE WH_module
       IMPLICIT NONE
@@ -790,7 +789,6 @@ C----------------------------------------------------------------------
 
             WTNUP = cumpnup / 10.0
         ENDIF   
-      !write (99,*)'DOY',YRDOY,',sen_la',sen_la,',pla',pl_la,',LAI', XLAI
       CALL WH_OPGROW(CONTROL, ISWITCH, 
      &  CANHT, CANWH, DTT, HI, HIP, istage, KSTRES, MDATE, NLAYR, 
      &  nfact, nwheats_dc_code, PCNL, PLTPOP, PODNO, PODWT, 
