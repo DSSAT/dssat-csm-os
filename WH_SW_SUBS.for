@@ -135,9 +135,6 @@ C      excluding the deepest layer
 !-----------------------------------------------------------------------
 cbak   now estimate extractable soil water for the deepest layer which is only
 cbak   partly explored by roots
-!        if (dlayr_nw(nrlayr) .eq. 0.) then
-!            write(*,*) "dlayr_new is zero"
-!        endif
         pesw_nw(nrlayr) = (swdep(nrlayr) - lldep(nrlayr)) *
 !*!  :  divide (rtdepl, dlayr_nw(nrlayr), 0.0 )
      &  (rtdepl / dlayr_nw(nrlayr))
@@ -190,10 +187,11 @@ cbak now accumulate for the profile that contains roots
 !*!         swdef(photo) = divide (ep, sw_demand, 0.0) 
               !APSIM uses SW_demand, read from respond2get_real_var
 !*!         swdef(photo) = divide (ep_nw, cwdemand, 0.0)
-!            if (cwdemand .eq. 0.) then
-!                write(*,*) "cwdemand is zero"
-!            endif
-            swdef(photo_nw) = (ep_nw / cwdemand)
+            if (cwdemand .eq. 0.) then
+              swdef(photo_nw) = 1.0 !JZW set
+            else
+              swdef(photo_nw) = (ep_nw / cwdemand)
+            endif
 !*!         swdef(photo) = bound(swdef(photo), 0.0, 1.0)
             swdef(photo_nw) = MAX(swdef(photo_nw), 0.0)
             swdef(photo_nw) = MIN(swdef(photo_nw), 1.0)
@@ -238,10 +236,6 @@ cbak   this maybe part of a layer
  
          top_cumdep = sum_real_array ( dlayr_nw, nslayr)
          part_layer = dlayr_nw(nslayr) - (top_cumdep - till_sw_depth)
-!         if (dlayr_nw(nslayr) .eq. 0.) then
-!             write(*,*) "dlayr_nw is zero"
-!             stop
-!         endif
          pesw_nw(nslayr) = (swdep(nslayr) - lldep(nslayr)) *
 !*!  :                  divide (part_layer, dlayr_nw(nslayr), 0.0 )
      &                  (part_layer / dlayr_nw(nslayr))
@@ -898,10 +892,6 @@ C=======================================================================
          rtdep_in_layer = MIN (rtdep_in_layer, dlayr_nw(L))
 
 !*!      weighting_factor = divide (rtdep_in_layer,dlayr_nw(L),0.0)
-!          if (dlayr_nw(L) .eq. 0. ) then
-!              write(*,*) " dlayr_nw is zero"
-!              stop
-!          endif
          weighting_factor = rtdep_in_layer/dlayr_nw(L)
 !*!      fasw1 = divide (swdep(L)-lldep(L),duldep(L)-lldep(L),0.0)
 !*!      fasw2 = divide (swdep(L)-lldep(L),duldep(L)-lldep(L),0.0)
@@ -919,10 +909,6 @@ C=======================================================================
  
          elseif (L .eq. num_layers) then
 !*!      fasw = divide (swdep(L)-lldep(L),duldep(L)-lldep(L),0.0)
-!          if (duldep(L) .eq. lldep(L) ) then
-!              write(*,*) " dul is equal ll"
-!              stop
-!          endif
          fasw = (swdep(L)-lldep(L)) / (duldep(L)-lldep(L))
  
       else
@@ -932,12 +918,6 @@ C=======================================================================
       endif
  
 !*!   swaf = divide (fasw, frpesw, 0.0)
-      if (frpesw .eq. 0.) then
-          write(msg(1),*) "frpesw is zero"
-          call warning(1,"NWheat",msg)
-          call error("NWheat",99," ",0)
-!          stop
-      endif
       swaf = fasw / frpesw
 !*!   nwheats_rtdp_swf = bound (swaf, 0.0, 1.0)
       nwheats_rtdp_swf = MAX (swaf, 0.0)
@@ -1000,11 +980,11 @@ C=======================================================================
          ctpesw = frpesw * peswcp
  
 !*!      swaf   = divide (pesw, ctpesw, 0.0)
-!         if (ctpesw .eq. 0.) then
-!             write(*,*)"ctpesw is zero"
-!             stop
-!         endif
-         swaf   = pesw / ctpesw
+         if (ctpesw .eq. 0.) then
+           swaf = 1.0
+         else
+           swaf   = pesw / ctpesw
+         endif
 !*!      nwheats_swafc = bound (swaf, 0.0, 1.0)
          nwheats_swafc = MAX (swaf, 0.0)
          nwheats_swafc = MIN (nwheats_swafc, 1.0)

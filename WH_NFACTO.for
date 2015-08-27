@@ -294,7 +294,6 @@ cbak lower boundary for stover n % = 0.25%
           write(msg(1),*) "plant top wt is zero"
           call warning(1,"NWheat",msg)
           call error("NWheat",99," ",0)
-!          stop
       endif
       tanc =(pl_nit(leaf_part)+pl_nit(stem_part)+pl_nit(lfsheath_part))/
      &      (plantwt(leaf_part) + plantwt(stem_part) + 
@@ -313,7 +312,6 @@ cbak lower boundary for stover n % = 0.25%
       if (xstag_nw .gt. 1.1) then
          xnfac = (tanc - tmnc) / (tcnc - tmnc)
          !xnfac = max(xnfac, 0.02)
-         !write(*,*) "tanc2=",tanc
   
          xnfac = max(xnfac, 0.0) !JZW changed on July 21, 2014 based on the request of Senthold
         
@@ -323,9 +321,6 @@ cbak lower boundary for stover n % = 0.25%
       !*! nfac = bound (xnfac, 0.0, 1.0) !replaced by JZW
       nfac = max (xnfac, 0.0)
       nfac = min(nfac, 1.0)
-!      if  (nfac .lt. 0.99999) then
-!          write(*,*) tanc, tcnc, tmnc, xnfac
-!      endif
       if (istage.eq.germ) then
           ! JZW:  IF (ISTAGE .GT. 0 .AND. ISTAGE .LE. 6) THEN   call WH_GROSUB if DYNAMIC = INTEGRATE, thus never go here
         nfact(1) = 1.0
@@ -353,8 +348,6 @@ cbak
          nfact(4) = xnfac**2
          nfact(4) = max (nfact(4), 0.0)
          nfact(4) = min(nfact(4), 1.0)
-!  !      write(100,*) "nfact1=",nfact(1), ",nfact2=",nfact(2),",nfact3=",
-!  !   &   nfact(3), ",nfact4=", nfact(4)
    
       endif
       return

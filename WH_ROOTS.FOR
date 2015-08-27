@@ -669,9 +669,7 @@ cnh senthold
  
 !*!      optfr = min(stress_factor, sw_factor, nem(nrlayr))
          !  replace nem by wr
-         !optfr = min(stress_factor, sw_factor)
-         !write(*,*)nrlayr, stress_factor, sw_factor, nem(nrlayr)
-        
+         !optfr = min(stress_factor, sw_factor)        
          optfr = min(stress_factor, sw_factor, nem(nrlayr))  ! remove nem() until 
                                                 ! further notice - FSR
       endif
@@ -774,6 +772,8 @@ C=======================================================================
       real sno3(NL), snh4(NL) ! add by JZW
 
       character*78 msg(1) !warning and error messages
+      CHARACTER*8     ERRKEY
+      PARAMETER       (ERRKEY='WH_ROOTS') 
 
       TYPE (ControlType) CONTROL
       TYPE (SoilType) SOILPROP
@@ -801,7 +801,6 @@ C=======================================================================
             write(msg(1),*) "there will be divide zero in nwheats_rtlv" 
             call warning(1,"NWheat",msg)
             call error("NWheat",99," ",0)
-!            stop
            endif
  
       if (stgdur(emergence).eq.1 .and. istage.eq.emergence) then
@@ -879,13 +878,6 @@ cnh senthold
 !*!   rtdepl = bound (rtdepl, 0.0, dlayr_nw(nrlayr))  ! in case rtdep is out
       rtdepl = MAX (rtdepl, 0.0)
       rtdepl = MIN (rtdepl, dlayr_nw(nrlayr)) 
-
-!     This should be handled in soil dynamics routine
-!      if (dlayr_nw(nrlayr) .eq. 0.) then
-!            write(*,*) " divide zero in nwheats_rtlv" 
-!            stop
-!         endif
-
 !*!   rldf(nrlayr) = rldf(nrlayr)*divide (rtdepl, dlayr_nw(nrlayr), 0.0) 
       rldf(nrlayr) = rldf(nrlayr) * rtdepl / dlayr_nw(nrlayr)
  
@@ -913,15 +905,12 @@ cnh senthold
       cumdep_nw = 0.0
       do L = 1,nrlayr
          cumdep_nw = cumdep_nw + dlayr_nw(L)
-
-!       handle soil variables in soil dynamics routine. trldf_nw has already been checked.
-!         if ( (trldf_nw .eq. 0.) .or. (dlayr_nw(L) .eq. 0.)) then
-!            write(*,*) " divide zero in nwheats_rtlv" 
-!            stop
-!         endif
-
+         if ( (trldf_nw .eq. 0.) .or. (dlayr_nw(L) .eq. 0.)) then
+             rlnew_layr = 0. !JZW set
+         else
 !*!      rlnew_layr = divide (rldf(L), trldf, 0.0) *rlnew
-         rlnew_layr = (rldf(L) / trldf_nw) * rlnew_nw
+           rlnew_layr = (rldf(L) / trldf_nw) * rlnew_nw
+         endif
 !*!      rlvnew(L) = divide (rlnew_layr, dlayr_nw(L), 0.0)
          rlvnew(L) = rlnew_layr / dlayr_nw(L)
 cnh needs tidying up!!!
