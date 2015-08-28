@@ -64,11 +64,11 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 50
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-NWheat   '
+      CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
-!       4.6.0.50 chp 08/14/2015 NWheat brougt up to latest version
+!       4.6.0.50 chp 08/28/2015 NWheat added 
 !       4.6.1.00 GH  07/01/2015 DSSAT Version 4.6.1 Release
 !       4.6.0.49 GH  06/19/2015 CERES-Rice drought stress issue
 !       4.6.0.48 GH  06/18/2015 Harvest fix CERES & minor data file updates
