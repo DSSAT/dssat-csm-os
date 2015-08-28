@@ -34,7 +34,7 @@ $SPECIES:WHCER046.010115   Last edit:241214
   0.10
   0.10
   0.10
-  0.10   
+  0.10
   1.00
 @ CHT%  CLA%
 !    %     %
@@ -269,4 +269,3 @@ $SPECIES:WHCER046.010115   Last edit:241214
 ! WFSU    Water stress factor,senescence,threshold (fr)
 ! WFTL    Water stress factor,tillering,lower (fr)
 ! WFTU    Water stress factor,tillering,upper (fr)
-

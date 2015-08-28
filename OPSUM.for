@@ -703,54 +703,69 @@ C-------------------------------------------------------------------
 !     IDETO = Y - both Overview and Evaluate are printed
 !     IDETO = N - neither Overview nor Evaluate are printed
 !     IDETO = E - only Evaluate is printed.
-      IF (INDEX('YE',IDETO) > 0 .AND. 
-     &        CROP .NE. 'WH' .AND. CROP .NE. 'BA' .AND.
-     &        CROP .NE. 'CS') THEN
+!      IF (INDEX('YE',IDETO) > 0 .AND. 
+      IF (INDEX('YE',IDETO) > 0) THEN
+!     &        CROP .NE. 'WH' .AND. CROP .NE. 'BA' .AND.
+!     &        CROP .NE. 'BA' .AND. !JZW changed
+!     &        CROP .NE. 'CS') THEN
+!     CHP 18 Aug 2015 Exclude by model, not crop
+        SELECT CASE(MODEL)
+        CASE('CSCER', 'CSCRP', 'CSCAS')
+!         These models write out Evaluate.OUT using separate routines
+!         CSCER    BA   CROPSIM-CERES-Barley
+!         CSCER    WH   CROPSIM-CERES-Wheat
+!         CSCRP    BA   CSCRP-Barley
+!         CSCAS    CS   CSCAS-Cassava
+!         CSCRP    WH   CSCRP-Wheat
+          CONTINUE 
 
-        ICOUNT    = EvaluateData % ICOUNT
-        OLAP      = EvaluateData % OLAP
-        DESCRIP   = EvaluateData % DESCRIP
-        Simulated = EvaluateData % Simulated
-        Measured  = EvaluateData % Measured
+!       All other models, print out Evaluate.OUT
+        CASE DEFAULT
+          ICOUNT    = EvaluateData % ICOUNT
+          OLAP      = EvaluateData % OLAP
+          DESCRIP   = EvaluateData % DESCRIP
+          Simulated = EvaluateData % Simulated
+          Measured  = EvaluateData % Measured
 
-!       Check for simulation aborted (YRSIM == YRDOY)
-!       Print out "-99"s
-        IF (CONTROL % ERRCODE > 0) THEN
-          Simulated = "     -99"
-        ENDIF
+!         Check for simulation aborted (YRSIM == YRDOY)
+!         Print out "-99"s
+          IF (CONTROL % ERRCODE > 0) THEN
+            Simulated = "     -99"
+          ENDIF
 
-!       Open or create Evaluate.out file
-        INQUIRE (FILE = SEVAL, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'OLD',
-     &      IOSTAT = ERRNUM, POSITION = 'APPEND')
-        ELSE
-          OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'NEW',
-     &      IOSTAT = ERRNUM)
-          CALL DATE_AND_TIME (VALUES=DATE_TIME)
-          WRITE (SLUN,700) EXPER, CG, ENAME, Version, VBranch,
-!         WRITE (SLUN,700) MODEL, EXPER, CG, ENAME, Version,
+!         Open or create Evaluate.out file
+          INQUIRE (FILE = SEVAL, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'OLD',
+     &        IOSTAT = ERRNUM, POSITION = 'APPEND')
+          ELSE
+            OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'NEW',
+     &        IOSTAT = ERRNUM)
+            CALL DATE_AND_TIME (VALUES=DATE_TIME)
+            WRITE (SLUN,700) EXPER, CG, ENAME, Version, VBranch,
+!           WRITE (SLUN,700) MODEL, EXPER, CG, ENAME, Version,
      &        MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1), 
      &        DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
-  700     FORMAT ('*EVALUATION : ',A8,A2,1X,A60,1X,
-! 700     FORMAT ('*EVALUATION : ',A8,1X,A8,A2,1X,A60,1X,
+  700       FORMAT ('*EVALUATION : ',A8,A2,1X,A60,1X,
+! 700       FORMAT ('*EVALUATION : ',A8,1X,A8,A2,1X,A60,1X,
      &    'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',I3.3,
      &     1X,A10,4X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
-        ENDIF
+          ENDIF
 
-!       Write headers if new crop is being processed
-        IF (MODEL .NE. MODEL_LAST) THEN
-          WRITE(SLUN,
+!         Write headers if new crop is being processed
+          IF (MODEL .NE. MODEL_LAST) THEN
+            WRITE(SLUN,
      &       '(/,"@RUN EXCODE        TN RN CR",80(1X,A7))')   
      &       (ADJUSTR(OLAP(I))//"S",ADJUSTR(OLAP(I))//"M",I = 1, ICOUNT)
-          MODEL_LAST = MODEL
-        ENDIF
+            MODEL_LAST = MODEL
+          ENDIF
 
-!       Write evaluation data
-        WRITE(SLUN,750) RUN, EXPER, CG, TRTNUM, ROTNO, CROP, 
+!         Write evaluation data
+          WRITE(SLUN,750) RUN, EXPER, CG, TRTNUM, ROTNO, CROP, 
      &            (Simulated(I), Measured(I), I= 1,ICOUNT)
-  750   FORMAT(I4,1X,A8,A2,I6,I3,1X,A2,80A8)
-        CLOSE(SLUN)
+  750     FORMAT(I4,1X,A8,A2,I6,I3,1X,A2,80A8)
+          CLOSE(SLUN)
+        END SELECT
       ENDIF
 
 !***********************************************************************

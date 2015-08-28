@@ -202,6 +202,7 @@ C=======================================================================
 C  TWILIGHT, Subroutine - from daylength calculations used in Maize and 
 C     Rice routines.
 C  Computes twilight to twilight day length
+C  Civil twilight: the geometric centre of the sun is relative to the horizon, -6 degrees
 !-----------------------------------------------------------------------
 !  Called by: WEATHR
 !  Calls:     None

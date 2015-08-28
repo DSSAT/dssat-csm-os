@@ -35,11 +35,15 @@ _ReSharper*/
 resource
 resource.h
 *.wjf
+*.INH
+*.INP
+*.DSSBATCH.V*
+*.LST
+*.INI
 *.sln
 *.vfproj
 *.u2d
 *.OUT
-*.LST
 *.o
 *.mod
 *.ico
