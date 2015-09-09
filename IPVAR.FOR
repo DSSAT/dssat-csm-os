@@ -241,7 +241,7 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Ceres Millet **
       CASE ('MLCER')
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &            P1,P2O,P2R,P5,G1,G4,PHINT
+     &            P1,P2O,P2R,P5,G1,G4,PHINT,G0,G5
 
 !     Substor Potato **
       CASE ('PTSUB')
@@ -340,7 +340,7 @@ C-----------------------------------------------------------------------
   510 FORMAT (6X,'ERROR! Variety Selection must be an INTEGER value',/)
 
 ! 800 FORMAT (A6,1X,A16,1X,A6,15(F6.0))
-  800 FORMAT (A6,1X,A16,7X,A6,19F6.0)                     !11/8/07
+  800 FORMAT (A6,1X,A16,7X,A6,21F6.0)                     !11/8/07
 
 
   810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010
