@@ -51,6 +51,7 @@ C=======================================================================
       CHARACTER*8   MODEL
       CHARACTER*12  FILEG
       CHARACTER*16  VRNAME
+      CHARACTER*78  MSG(2)
       CHARACTER*80  PATHGE
       CHARACTER*92  FILEGG
       CHARACTER*1000 C360,ATLINE
@@ -242,6 +243,14 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
       CASE ('MLCER')
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
      &            P1,P2O,P2R,P5,G1,G4,PHINT,G0,G5
+        IF (G4 > 1.2) THEN
+          MSG(1)="G4 is fraction partitioning and should not exceed 1.2"
+          MSG(2)=
+     &  "G4 (from cultivar file) set equal to 1.2 for this simulation."
+          CALL WARNING(2, ERRKEY, MSG)
+          G4 = 1.2
+        ENDIF
+
 
 !     Substor Potato **
       CASE ('PTSUB')
