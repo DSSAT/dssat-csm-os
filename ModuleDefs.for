@@ -61,12 +61,29 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 0
-        INTEGER :: Build = 39
+        INTEGER :: Build = 50
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
+!     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.0.50 chp 08/28/2015 NWheat added 
+!       4.6.1.00 GH  07/01/2015 DSSAT Version 4.6.1 Release
+!       4.6.0.49 GH  06/19/2015 CERES-Rice drought stress issue
+!       4.6.0.48 GH  06/18/2015 Harvest fix CERES & minor data file updates
+!       4.6.0.47 GH  06/18/2015 Added MaxPest to ModuleDefs
+!       4.6.0.46 chp 06/17/2015 Summary.OUT - fixed problems with environmental summary outputs
+!       4.6.0.45 vsh 06/16/2015 added Tony's files; Added Taro files
+!       4.6.0.44 chp 01/12/2015 CSCER Evaluate.OUT remove headers
+!                               OPSUM improved handling of "-99" values
+!                               Rice - Ceres & ORYZA - output N uptake
+!       4.6.0.43 chp 01/12/2015 Portability - file exension consistency
+!       4.6.0.42 chp 12/05/2014 DSSAT sprint -1st batch of changes
+!                               Dates and headers, JDATE.CDE fix, portability fixes, 
+!                               "F" forced auto-planting date option, minor changes
+!       4.6.0.41 chp 11/04/2014 KThorp changes for portability
+!       4.6.0.40 chp 09/19/2014 Minor changes
 !       4.6.0.39 chp 07/25/2014 Allow daily input of CO2 in weather file (header CO2 or DCO2)
 !                               Move PI and RAD to global constants
 !       4.6.0.38 chp 07/17/2014 Fixed output switches
@@ -125,16 +142,17 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Global constants
       INTEGER, PARAMETER :: 
-     &    NL       = 20,  !Maximum number of soil layers 
-     &    TS       = 24,  !Number of hourly time steps per day
-     &    NAPPL    = 300, !Maximum number of applications or operations
-     &    NCOHORTS = 300, !Maximum number of cohorts
-     &    NELEM    = 3,   !Number of elements modeled (currently N & P)
+     &    NL       = 20,    !Maximum number of soil layers 
+     &    TS       = 24,    !Number of hourly time steps per day
+     &    NAPPL    = 300,   !Maximum number of applications or operations
+     &    NCOHORTS = 300,   !Maximum number of cohorts
+     &    NELEM    = 3,     !Number of elements modeled (currently N & P)
 !            Note: set NELEM to 3 for now so Century arrays will match
      &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
      &    EvaluateNum = 40, !Number of evaluation variables
-     &    MaxFiles = 100    !Maximum number of output files
+     &    MaxFiles = 100,   !Maximum number of output files
+     &    MaxPest = 500    !Maximum number of pest operations
 
       REAL, PARAMETER :: 
      &    PI = 3.141586, 
@@ -219,7 +237,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Daily weather data.
         REAL CLOUDS, CO2, DAYL, DCO2, PAR, RAIN, RHUM, SNDN, SNUP, 
      &    SRAD, TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
-     &    TMAX, TMIN, TWILEN, VAPR, WINDSP
+     &    TMAX, TMIN, TWILEN, VAPR, WINDSP, VPDF, VPD_TRANSP
 
 !       Hourly weather data
         REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR

@@ -1,4 +1,4 @@
-$CULTIVARS:WHCRP046.010314   Last edit:010314 
+$CULTIVARS:WHCRP046.010115   Last edit:231214 
 
 
 ! Coefficients used in the Cropsim model differ from those used in
@@ -40,10 +40,9 @@ $CULTIVARS:WHCRP046.010314   Last edit:010314
                                                                                                                                                                 
 DFAULT DEFAULTS             . DFAULT   380    70   200   200    60    25   150   500     0     0     0     0     0    80   3.0  0.10  0.50   2.5    25    40
                                                                                                                                                             
-IB1500 MANITOU            1,2 CA0001   400    65   193   172    50    20   130   280     1     0   0.5    80     0    86   2.0  0.30  0.30   3.0    16    23
-IB0488 NEWTON             1,6 US0001   400    71   214   190    50    20   130   440    25     0   1.0    75     0    95   2.0  0.30 -0.10   3.2    14    32
-IB1015 MARIS FUNDIN       1,8 UK0001   400    75   225   200    50    20   130   470    27     0  0.45    83     0   100   2.0  0.30  0.30   3.2    11    50
-                                                                                                                                                            
+IB1500 MANITOU            1,2 CA0001   400    65   193   172    50    20   130   220     1     0   0.5    80     0    86   2.0  0.25  0.30   3.0    28    23
+IB0488 NEWTON             1,6 US0001   400    71   214   190    50    20   130   370    25     0   1.0    75     0    95   2.0  0.25 -0.10   3.2    22    30
+IB1015 MARIS FUNDIN       1,8 UK0001   400    75   200   200    50    20   130   370    27     0  0.45    83     0   100   2.0  0.25  0.30   3.2    14    42
 IB0034 AVALON 0.5VEFF     1,6 UK0001   296    75   225   200   100    20   130   450    27     0   0.5    83     0   115   2.0  0.10  0.30   3.2    15    44
 AW0071 Yecora_Rojo 2      1,5 CI0001   200    55   140   270   145    25   160 517.1 .0187     0   0.3  90.0     0    90   3.0  0.10  0.50   3.0  12.5    55
                                                                                                                                                             
@@ -74,3 +73,4 @@ CI0001 Yecora_Rojo        1,2 CI0001   400    65   190   180    50    25   160  
 
 ! *  The programme has been written to read sensitivity for all phases so that
 !    additional columns for later phases could be added if desired.
+

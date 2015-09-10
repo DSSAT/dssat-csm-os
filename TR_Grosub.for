@@ -328,8 +328,8 @@ C
      &    TANC, TCNP, TLFWT, TMNC, TPLA, TRLOS, TREDUCE,  !Output
      &    MCORMWT)                                        !Output
 
-        !LAI = 0.01
-        IF (ISWNIT .EQ. 'Y') THEN
+     
+       IF (ISWNIT .EQ. 'Y') THEN
           APTNUP     = STOVN*10.0*PLANTS   
           XANC       = STOVN/STOVWT*100.0  
         ENDIF
@@ -369,7 +369,7 @@ C
           ENDIF
         
         CASE (2,3)
-          IF (LEAFNO .GT. LEAFT) THEN    
+            IF (LEAFNO .GT. LEAFT) THEN    
              LEAFT = LEAFNO
           ENDIF
 
@@ -389,8 +389,6 @@ C
 
           VANC    = TANC
           VMNC    = TMNC
-!          STRESSN = AMAX1 (SI4(3),SI4(4))    !not used
-          !STRESSW = AMAX1 (SI2(3),SI2(4))
 
         CASE (6)
 
@@ -401,12 +399,6 @@ C
           DYIELD  = CORMWT*10.0*PLANTS
           YIELD   = DYIELD/0.33
           STOVER  = (BIOMAS*PLANTS*10.)-DYIELD
- !         IF (STOVER .EQ. 0.0) THEN
- !            CTRATIO = 0.0
- !          ELSE
- !            CTRATIO = DYIELD/STOVER
- !         ENDIF
-
           CORMLNO = (TILNO + 1.0)*PLANTS
           IF (ISWNIT .EQ. 'Y') THEN
              IF (CORMWT .GT. 0.0) THEN
@@ -441,7 +433,6 @@ C     TARO
       IPERIOD  = IPERIOD + 1
       AVNSTRS = (AVNSTRS*(IPERIOD-1)+AGEFAC)/IPERIOD
       AVWSTRS = (AVWSTRS*(IPERIOD-1)+TURFAC)/IPERIOD
-!      IF (AGEFAC .EQ. 1.0) THEN    !CHP 10/11/2005
       IF (ABS(AGEFAC - 1.0) < 1.E-4) THEN
           NOWSTDAY = NOWSTDAY + 1
           IF (NOWSTDAY .GE. 15) THEN
@@ -450,7 +441,6 @@ C     TARO
        ELSE
           NOWSTDAY = 0
       ENDIF    
-!      IF (TURFAC .EQ. 1.0) THEN    !CHP 10/11/2005
       IF (ABS(TURFAC - 1.0) < 1.E-4) THEN
          NOWSTDAY = NOWSTDAY + 1
          IF (NOWSTDAY .GE. 15) THEN
@@ -501,7 +491,6 @@ C     TARO
          IF (TMAX .LT. TBASE) THEN
             TEMF = 0.0
          ENDIF
-!         IF (TEMF .NE. 0.0) THEN   !CHP 10/11/2005
          IF (ABS(TEMF) > 1.E-4) THEN
             TEMF = 0.0
             DO I = 1, 8
@@ -540,6 +529,7 @@ C     TARO
       TI     = DTT/(PHINT*PC)
       CUMPH  = CUMPH + DTT/(PHINT*PC)
       XN     = CUMPH
+      LEAFNO = NINT(CUMPH)
       XTN    = XTNMAX*EXP(-BF*CUMPH)
       A      = PLAMAX*G4
       BFG4   = BF*G4
@@ -583,7 +573,6 @@ C     TARO
           ! Growth stage 1
           !
           SLAMP   = SLA1 
-          !AMIN1(SLA1/AMIN1(TURFAC,AGEFAC,TEMF),SLA1*1.33)  !SLA1MAX
           CARBC   = CARBC1/G2 !*AMIN1(TEMF,SWFAC,NSTRES)
           CARBL   = CARBL1    !*AMIN1(TEMF,SWFAC,NSTRES)
           PETGR   = PETGR1*G2 !*AMIN1(SWFAC,NSTRES,TEMF)
@@ -643,15 +632,13 @@ C     TARO
 
         CASE (2,3,4)
           RMPLA   = 1.0
-          SLAMP   = SLA3 !AMIN1(SLA3/AMIN1(TURFAC,AGEFAC,TEMF),SLA3*1.4)
+          SLAMP   = SLA3 
           CARBR   = CARBR2 - (0.10*SUMDTT/(P3+P4))
-          CARBC   = CARBC3/G2  !* AMIN1(SWFAC,NSTRES,TEMF)
+          CARBC   = CARBC3/G2  
           PETGR   = PETGR2*G2
-     &             ! *AMIN1(SWFAC,NSTRES,TEMF,WSTRESI2,NSTRESI2)  
-          CLEAF   = CARBL3*CARBO !*AMIN1(SWFAC,TEMF,NSTRES)
-          GRF     = G3*SUFAC2 !*(2.0-AMIN1(TURFAC,AGEFAC,TEMF))
-          GRFMIN  = 0.05 + 0.80*(TPLA-TPLA*SENLA/PLA)/(PLA-SENLA)  
-!          WRITE(*,*)'GRF GRFMIN',GRF,GRFMIN        
+          CLEAF   = CARBL3*CARBO
+          GRF     = G3*SUFAC2 
+          GRFMIN  = 0.05 + 0.80*(TPLA-TPLA*SENLA/PLA)/(PLA-SENLA)      
           IF (GRF .LT. GRFMIN ) THEN
              GRF = GRFMIN
           ENDIF
@@ -739,20 +726,14 @@ C     TARO
           GROCOM  = MGROCOM + TGROCOM
          
         CASE (5)
-!          IF (PLANTS .EQ. 0.01) RETURN !CHP 10/11/2005
-!       CHP what is the intent of PLANTS == 0.01 -- How will this ever be?
           IF (ABS(PLANTS - 0.01) < 1.E-4) RETURN
           RMPLA = RSENCE*(1.0-RESPF*1.075*(SUMDTT+P3+P4)/(P3+P4+P5))
-          !RMAT    = 1.0 - RESPF*SUMDTT/P5
           RMPLA   = AMIN1(RMPLA,1.0)
           RMPLA   = AMAX1(RMPLA,0.0)
-          !SLAMP   = AMIN1(SLA4/AMIN1(TURFAC,AGEFAC,TEMF),SLA4*1.15)
           SLAMP   = SLA4 
-          CARBL   = CARBL4 !* AMIN1(SWFAC,NSTRES,TEMF) 
+          CARBL   = CARBL4 
           PETGR   = PETGR5*G2
-      !&             !*AMIN1(SWFAC,NSTRES,TEMF,WSTRESI2,NSTRESI2)  
-         !CARBO   = CARBO*RMAT
-          GRF     = G3*(SUFAC3- 1.0)!-AMIN1(TURFAC,AGEFAC,TEMF))! stress
+          GRF     = G3*(SUFAC3- 1.0) ! stress
           GRFMIN  = 0.05 + 0.80*(TPLA-TPLA*SENLA/PLA)/(PLA-SENLA)
           GRF     = AMAX1 (GRF,GRFMIN) 
           GRORT   = CARBO*CARBR4
@@ -776,13 +757,11 @@ C     TARO
              MPLAG   = 0.0
              MGROCOM = 0.0
           ENDIF
-          MGROPET = MGROLF * PETGR !AMAX1((RPET-RSENCE))
-!      WRITE(*,*)'5 PETGR MP ML ',PETGR,MGROPET/MGROLF
+          MGROPET = MGROLF * PETGR 
 
           IF (SUMDTT .LE. P5) THEN
              IF (RESERVE .GT. 0.0) THEN
                 MGROCOM = (RESERVE -MGROLF -MGROPET)
-      !&                    *AMIN1(SWFAC,TEMF,WSTRESI2)  ?NSTRES??
              ENDIF 
              IF (MGROCOM .GT. CMPART * CARBO)THEN
                 MGROCOM = CMPART * CARBO 
@@ -847,13 +826,11 @@ C     TARO
           ENDIF
           MPLA    = MPLA + MPLAG
           PLA     = MPLA + TPLA
-!          IF (GROCOM .NE. 0.0 .AND. ISWNIT .EQ. 'Y') THEN
           IF (GROCOM > 1.E-4 .AND. ISWNIT .EQ. 'Y') THEN
               RCNFIL = RNINT - RCTFAC*DTT+0.75*(TMAX-TMIN) + TGRAD*TEMPM
               RCNFIL = RCNFIL*0.001                   
               NSINK  = RCNFIL*GROCOM
               NSINK  = NSINK*AGEFAC
-!              IF (NSINK .EQ. 0.0) GO TO 1200
               IF (ABS(NSINK) < 1.E-4) GO TO 1200
               RMNC   = TMNC*RCONST                    
               IF (STOVWT .GT. 0.0) THEN
@@ -963,14 +940,12 @@ C     TARO
       ENDIF
       PLAS   = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFT,SLFN,SLFC))
       SENLA  = SENLA + AMAX1((SLAN-YSLAN),PLAS,0.0)
-      !SENLA  = AMAX1 (SENLA,SLAN)
       SENLA  = AMIN1 (SENLA,PLA)
       IF (SENLA .LE. 0.0) THEN 
          DEADPT = 0.0
          DEADLF = 0.0
       ENDIF    
       LAI    = (PLA-SENLA)*PLANTS*0.0001
-      !PLAC   = PLA   - SENLA
       DEADLF = SENLA * SLA5 
       IF (DEADLF .GT. 0.0 .AND. ISTAGE .GE. 2) THEN
          DEADPT = DEADLF*G2*AMIN1 (0.8,(CUMDTT-P1)/
@@ -1003,20 +978,6 @@ C     TARO
        ELSE
          PCORMN = 0.0
       ENDIF
-      !IF (MPLAG .LE. 0.0) THEN
-      !   SLWMAIN = 0.0
-      !ENDIF
-      !IF (MPLAG .GT. 0.0) THEN
-      !   SLWMAIN = MGROLF/MPLAG
-      !ENDIF
-      !SLWFIN = 0.0
-      !IF (PLA .GT. SENLA) THEN
-      !   IF (PLA .GT. 0.0) THEN
-      !      IF (LFWT .GT. 0.0) THEN
-      !         SLWFIN = LFWT/(PLA-SENLA)
-      !      ENDIF
-      !   ENDIF
-      !ENDIF
       
       LFWT   = AMAX1 (LFWT  - DEADLF,0.0)
       PETWT  = AMAX1 (PETWT - DEADPT,0.0)

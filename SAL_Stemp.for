@@ -228,7 +228,7 @@ C     *Theoretical DE solution (with temperature gradient):
       ENDIF
 
 !     Print soil temperature data in STEMP.OUT
-      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
 !***********************************************************************
 !***********************************************************************
@@ -362,7 +362,7 @@ c
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
-      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
 !***********************************************************************
 !***********************************************************************

@@ -43,7 +43,7 @@ C-----------------------------------------------------------------------
       IMPLICIT  NONE
       SAVE
 
-      CHARACTER*1  RNMODE, ISWWAT, IDETL
+      CHARACTER*1  RNMODE, ISWWAT !, IDETL
       CHARACTER*6  SECTION
       CHARACTER*6, PARAMETER :: ERRKEY = "STEMP "
       CHARACTER*30 FILEIO
@@ -65,9 +65,9 @@ C-----------------------------------------------------------------------
       TYPE (SwitchType) ISWITCH
 
 !     Check for output verbosity
-      IDETL  = ISWITCH % IDETL
+!     IDETL  = ISWITCH % IDETL
 !     IDETL = 'N', '0' (zero), suppress output
-      IF (INDEX('N0',IDETL) > 0) RETURN
+!     IF (INDEX('N0',IDETL) > 0) RETURN
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC  
@@ -187,7 +187,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Print soil temperature data in STEMP.OUT
-      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
 !***********************************************************************
 !***********************************************************************
@@ -230,7 +230,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
-      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
 !***********************************************************************
 !***********************************************************************
