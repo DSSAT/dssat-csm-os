@@ -361,6 +361,7 @@ C
                MSG(NMSG) = 
      &      "Plowpan depth < zero; No plowpan wil be used (ORYZA only)."
                CYCLE
+!       Remove CYCLE stmt
              ENDIF
 
              PUDDLED = .TRUE.
