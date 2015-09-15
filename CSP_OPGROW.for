@@ -28,7 +28,7 @@ C  Calls:     None
      &  CountStalk, DLAYR, EOS, GROWTH, GRWRES,					!Input
      &  Kill, LeafArea, LeafArealost,LeafNum, LFWTHa,             !Input 
      &  LFWT, LFWTHalost, LSWTlost, LSWT, LSWTHa, 				!Input
-     &  LSWTHalost, LFWTlost, LITOTAL,							!Input                            !Input
+     &  LSWTHalost, LFWTlost, LITOTAL,	                          !Input
      &  MAINR, MDATE, NFIXN, NLAYR, NSTRES, PSTRES1, PSTRES2,     !Input 
      &  PCLSD,PCCSD, PCNL, PCNRT, PCNSD, PCNSH, PCNST,            !Input
      &  PGT, RHOL, RHOS, RLV, RTDEP,								!Input

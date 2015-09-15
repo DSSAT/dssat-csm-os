@@ -193,7 +193,7 @@ C-----------------------------------------------------------------------
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
 
 C-----------------------------------------------------------------------
 C     Initialize summary.out information
@@ -263,7 +263,7 @@ C-----------------------------------------------------------------------
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
 C-----------------------------------------------------------------------
 C     Initialize summary output file - possible output from 
 C     various modules.
@@ -336,7 +336,7 @@ C-----------------------------------------------------------------------
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
       ENDIF
 
 C***********************************************************************
@@ -381,7 +381,7 @@ C-----------------------------------------------------------------------
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
       ENDIF
 
 C-----------------------------------------------------------------------
@@ -432,7 +432,7 @@ C-----------------------------------------------------------------------
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
         ENDIF
 
         CALL MGMTOPS(CONTROL, ISWITCH, 
@@ -477,7 +477,7 @@ C     Print seasonal summaries and close files.
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
 
 !     Call management operations module for seasonal printout.
       CALL MGMTOPS(CONTROL, ISWITCH, 

@@ -279,21 +279,20 @@ C-----------------------------------------------------------------------
             ENDIF
             CALL YR_DOY (YRDOY, YR, DOY)
             CALL NAILUJ (DOY, YR, RMM, IPX)
-
-            IF (INDEX('IE',RNMODE) .GT. 0 .AND. NYRS .LE. 1) THEN
-              WRITE(*,4600) IPX, RMM, DAP, STNAME(I), NINT(BIOMAS), 
-     &          XLAI, LFNUM, NINT(WTNCAN*10.), WTN, AVDSTR, AVNSTR
- 4600         FORMAT (1X,I2,1X,A3,1X,I4,1X,A10,I8,1X,F6.2,1X,F5.1,
+            IF (YRDOY >= YRPLT) THEN
+              IF (INDEX('IE',RNMODE) .GT. 0 .AND. NYRS .LE. 1) THEN
+                WRITE(*,4600) IPX, RMM, DAP, STNAME(I), NINT(BIOMAS), 
+     &            XLAI, LFNUM, NINT(WTNCAN*10.), WTN, AVDSTR, AVNSTR
+ 4600           FORMAT (1X,I2,1X,A3,1X,I4,1X,A10,I8,1X,F6.2,1X,F5.1,
      &                  1X,I4,1X,F4.1,1X,F5.2,1X,F5.2)
-            ENDIF
+              ENDIF
 
-            IF (IDETO .EQ. 'Y') THEN
-              WRITE(SimText,4605) IPX, RMM, DAP, STNAME(I),NINT(BIOMAS),
-     &          XLAI, LFNUM, NINT(WTNCAN*10.), WTN, AVDSTR, AVNSTR,
-     &          AVPSTR1, AVPSTR2, RSTAGE
- 4605         FORMAT (1X,I2,1X,A3,1X,I4,1X,A10,I8,1X,F6.2,1X,F5.1,
+              IF (IDETO .EQ. 'Y') THEN
+                WRITE(SimText,4605)IPX, RMM, DAP,STNAME(I),NINT(BIOMAS),
+     &            XLAI, LFNUM, NINT(WTNCAN*10.), WTN, AVDSTR, AVNSTR,
+     &            AVPSTR1, AVPSTR2, RSTAGE
+ 4605           FORMAT (1X,I2,1X,A3,1X,I4,1X,A10,I8,1X,F6.2,1X,F5.1,
      &                  1X,I4,1X,F4.1,1X,F5.2,1X,F5.2,2(1X,F5.2),I6)
-              IF (YRDOY >= YRPLT) THEN
                 WRITE(NOUTDO,'(A)') SimText
               ENDIF
             ENDIF
