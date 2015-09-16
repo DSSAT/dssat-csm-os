@@ -96,7 +96,7 @@ C=======================================================================
       
 !!!!! daycent variables  PG
       
-      REAL wfps(nl), n2oflux(nl)
+      REAL n2oflux(nl)
       REAL TN2OD, CN2O
       REAL newCO2(nl)
       REAL pn2onitrif, n2onitrif(nl)
@@ -208,7 +208,7 @@ C=======================================================================
         nitrif = 0.0
         denitrif = 0.0
         n2oflux = 0.0
-        wfps = 0.0
+        N2O_data % wfps = 0.0
 
         TFNITY = 0.0    !
         IUOF   = 0
@@ -223,6 +223,7 @@ C=======================================================================
           !  value on first day of multi-season runs.
           UNH4(L)       = 0.0
           UNO3(L)       = 0.0
+          N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
         ENDDO
 
 !        IF (INDEX('N',ISWNIT) > 0) RETURN
@@ -260,9 +261,9 @@ C=======================================================================
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
      &    SNO3, SW,                                   !Input
      &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data,                      !Output
+     &    CNOX, TNOXD, N2O_data)                      !Output
 !         Temp input for Output.dat file:
-     &    NITRIFppm, TNITRIFY, n2onitrif)                !Temp
+!     &    NITRIFppm, TNITRIFY, n2onitrif)                !Temp
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
@@ -593,8 +594,8 @@ C=======================================================================
         !wfps_fc(L) = dul(L)/poros(L)
         
           pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
-            
           n2onitrif(L) = pN2Onitrif * NITRIF(L)    ! for N2O using a proportion of nitrification from original daycent PG
+          N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
 
       END DO   !End of soil layer loop.
 
@@ -611,9 +612,9 @@ C=======================================================================
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
      &    SNO3, SW,                                   !Input
      &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data,                      !Output
+     &    CNOX, TNOXD, N2O_data)                      !Output
 !         Temp input for Output.dat file:
-     &    NITRIF, TNITRIFY, n2onitrif)                !Temp
+!     &    NITRIFppm, TNITRIFY, n2onitrif)                !Temp
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 

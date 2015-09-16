@@ -16,9 +16,9 @@ C=======================================================================
      &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
      &    SNO3, SW,                                   !Input
      &    DLTSNO3,                                    !I/O
-     &    CNOX, TNOXD, N2O_data,                      !Output
+     &    CNOX, TNOXD, N2O_data)                      !Output
 !         Temp input for Output.dat file:
-     &    NITRIF, TNITRIFY, n2onitrif)                !Temp
+!     &    NITRIF, TNITRIFY, n2onitrif)                !Temp
 
 !-----------------------------------------------------------------------
       USE N2O_mod 
@@ -39,8 +39,8 @@ C=======================================================================
       
 !!!!! daycent variables  PG
       
-      REAL wfps(nl), poros(nl)
-      REAL wfps_fc(nl), co2_correct(nl), co2PPM(nl)
+      REAL wfps(nl)
+      REAL co2_correct(nl), co2PPM(nl)        !wfps_fc(nl), poros(nl), 
       REAL a_coeff, wfps_thres, fDno3, Rn2n2O, fRwfps
       REAL fRno3_CO2, k1, fDCO2, fDwfps, X_inflect
       REAL m, fNo3fCo2
@@ -55,7 +55,7 @@ C=======================================================================
       REAL CN2O, TN2OD, n2ofluxppm(NL),  n2oflux(nl)   !N2O 
 
 !     Temp variables for Output.dat file:
-      REAL TNITRIFY, NITRIF(NL), n2onitrif(NL)
+!      REAL TNITRIFY, NITRIF(NL), n2onitrif(NL)
 
       TYPE (ControlType) CONTROL
       DYNAMIC = CONTROL % DYNAMIC
@@ -74,14 +74,16 @@ C=======================================================================
         CN2O   = 0.0    ! N2O added        PG
         CN2    = 0.0    ! N2
 
-        DO L = 1, NLAYR
-          POROS(L)  = 1.0 - BD(L) / 2.65
-          wfps_fc(L) = dul(L) / poros(L)
-          wfps(L) = min (1.0, sw(L) / poros(L))
-        ENDDO
+      wfps = n2o_data % wfps
+!      wfps_fc = n2o_data % wfps_fc
+!       DO L = 1, NLAYR
+!         POROS(L)  = 1.0 - BD(L) / 2.65
+!         wfps_fc(L) = dul(L) / poros(L)
+!         wfps(L) = min (1.0, sw(L) / poros(L))
+!       ENDDO
 
 !     Function for diffusivity
-      call DayCent_diffusivity(dD0_fc, DUL, BD)
+      call DayCent_diffusivity(dD0_fc, DUL, BD, nlayr)
 
 !     Compute the Nitrate effect on Denitrification
 !     Changed NO3 effect on denitrification based on paper  "General model for N2O and N2 gas emissions from soils due to denitrification"
@@ -91,10 +93,10 @@ C=======================================================================
       A(3) = 76.91
       A(4) = 0.00222
 
-      open (unit=9,file='output.dat', status='unknown')
-      write (9,'(A)')' doy  L    sw     bd     poros    wfps   wfpsfc  w
-     &fpsth   CO2_cor newCO2  CO2ppm a_coef denit   n2oflux  nitrif  Tni
-     &trify   n2onit   totn2o'
+!      open (unit=9,file='output.dat', status='unknown')
+!      write (9,'(A)')' doy  L    sw     bd     poros    wfps   wfpsfc  w
+!     &fpsth   CO2_cor newCO2  CO2ppm a_coef denit   n2oflux  nitrif  Tni
+!     &trify   n2onit   totn2o'
 
 !***********************************************************************
 !***********************************************************************
@@ -110,9 +112,10 @@ C=======================================================================
       TNOXD = 0.0
       TN2OD = 0.0     ! PG
       TN2D  = 0.0
+      wfps = n2o_data % wfps
 
       DO L = 1, NLAYR
-        wfps(L) = min(1.0, sw(L) / poros(L))
+!        wfps(L) = min(1.0, sw(L) / poros(L))
         
 !!       following code is Rolston pdf document
 !        RWC = SW(L)/SAT(L)                                  
@@ -250,23 +253,23 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         CN2  = CN2  + N2FLUX(L)            ! PG
         TN2D = TN2D + N2FLUX(L)            ! PG
 
-C The following code was included by PG to accumulate the gas loss from N2O and N2, which is restricted to 0-20 cm
-C it also includes some diagnostics
-        if (L .eq. 3) then
-          open (unit=9, file='output.dat', status='unknown')
-      
-          write (9, 200) doy, L, sw(L), bd(L), poros(L), wfps(L),
-     &wfps_fc(L), wfps_thres, CO2_correct(L), newCO2(L),CO2ppm(L),
-     &a_coeff,(denitrif(1)+denitrif(2)+denitrif(3))*1000,
-     &(n2oflux(1)+n2oflux(2)+n2oflux(3))*1000,
-     &nitrif(1),TNITRIFY,
-     &(n2onitrif(1)+n2onitrif(2)+n2onitrif(3))*1000,
-     &(n2oflux(1)+n2oflux(2)+n2oflux(3)+n2onitrif(1)+n2onitrif(2)+n2onit
-     &rif(3))*1000, wfdenit, fdwfps, fdno3, x_inflect, rn2n2o
-     
-  200 format (1x,i3,1x,i3,12(f8.3),9(f9.3))
-
-        endif
+!C The following code was included by PG to accumulate the gas loss from N2O and N2, which is restricted to 0-20 cm
+!C it also includes some diagnostics
+!        if (L .eq. 3) then
+!          open (unit=9, file='output.dat', status='unknown')
+!      
+!          write (9, 200) doy, L, sw(L), bd(L), poros(L), wfps(L),
+!     &wfps_fc(L), wfps_thres, CO2_correct(L), newCO2(L),CO2ppm(L),
+!     &a_coeff,(denitrif(1)+denitrif(2)+denitrif(3))*1000,
+!     &(n2oflux(1)+n2oflux(2)+n2oflux(3))*1000,
+!     &nitrif(1),TNITRIFY,
+!     &(n2onitrif(1)+n2onitrif(2)+n2onitrif(3))*1000,
+!     &(n2oflux(1)+n2oflux(2)+n2oflux(3)+n2onitrif(1)+n2onitrif(2)+n2onit
+!     &rif(3))*1000, wfdenit, fdwfps, fdno3, x_inflect, rn2n2o
+!     
+!  200 format (1x,i3,1x,i3,12(f8.3),9(f9.3))
+!        
+!        endif
 
       END DO   !End of soil layer loop.
 
@@ -305,13 +308,13 @@ C it also includes some diagnostics
 !  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
 !           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 !=======================================================================
-      subroutine DayCent_diffusivity(dD0_fc, dul, bd)      
+      subroutine DayCent_diffusivity(dD0_fc, dul, bd, nlayr)      
 !      the variable dDO_fc is manually calculated for the moment
 
       use ModuleDefs
       real, dimension(NL), intent(in) :: dul, bd
       real, dimension(NL), intent(out):: dD0_fc
-      integer L
+      integer L, nlayr
       
 ! From Iurii Shcherbak 6 July 2014
 ! Linear model
@@ -322,7 +325,7 @@ C it also includes some diagnostics
 ! Dfc = 0.906277 - 0.461712 BD + 0.045703 BD^2 - 1.19827 FC +  0.225558 BD FC + 0.292491 FC^2
 ! Adj R^2 = 0.999997
 
-      do L = 1, NL
+      do L = 1, Nlayr
 !       Linear
 !       dD0_fc(L) = 0.741804 - 0.287059 * BD(L) - 0.755057 * FC(L)
 

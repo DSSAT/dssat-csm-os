@@ -259,7 +259,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL ALES, DMOD, SLPF         !DMOD was SLNF
         REAL CMSALB, MSALB, SWALB, SALB      !Albedo 
         REAL, DIMENSION(NL) :: BD, CEC, CLAY, DLAYR, DS, DUL
-        REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL
+        REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL, POROS
         REAL, DIMENSION(NL) :: SAND, SAT, SILT, STONES, SWCN
         
       !Residual water content

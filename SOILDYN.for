@@ -68,7 +68,7 @@ C-----------------------------------------------------------------------
       INTEGER NLAYR
       REAL CN, DMOD, KTRANS, SALB, SLDP, SLPF, SWCON, TEMP, TOTAW, U
       REAL, DIMENSION(NL) :: ADCOEF, BD, CEC, CLAY, DLAYR, DS, DUL
-      REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, SAND, SAT, SILT
+      REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, POROS, SAND, SAT, SILT
       REAL, DIMENSION(NL) :: SW, SWCN, TOTN, TotOrgN, WCR, WR
 !     REAL, DIMENSION(NL) :: RGIMPF
       LOGICAL, DIMENSION(NL) :: COARSE
@@ -755,6 +755,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       DO L = 1, NLAYR
 !       Conversion from kg/ha to ppm (or mg/l).  Recalculate daily.
         KG2PPM(L) = 10.0 / (BD(L) * DLAYR(L))   
+        POROS(L)  = 1.0 - BD(L) / 2.65
 
         IF (TOTN(L) > 1.E-5) THEN
 !         Use inorganic N values to calculate organic N in kg/ha
@@ -877,6 +878,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % PHKCL  = PHKCL  
       SOILPROP % PTERMA = PTERMA  
       SOILPROP % PTERMB = PTERMB  
+      SOILPROP % POROS  = POROS
 !     SOILPROP % RGIMPF = RGIMPF  !Root growth impedance factor    
       SOILPROP % SALB   = SALB  
       SOILPROP % MSALB  = SALB
@@ -1000,6 +1002,7 @@ C  tillage and rainfall kinetic energy
       DO L = 1, NLAYR
 !       Conversion from kg/ha to ppm (or mg/l).  Recalculate daily.
         KG2PPM(L) = 10.0 / (BD(L) * DLAYR(L))   
+        POROS(L)  = 1.0 - BD(L) / 2.65
       ENDDO
 
       SOILPROP % BD    = BD
@@ -1010,6 +1013,7 @@ C  tillage and rainfall kinetic energy
       SOILPROP % LL    = LL    
       SOILPROP % KG2PPM= KG2PPM    
       SOILPROP % OC    = OC
+      SOILPROP % POROS = POROS
       SOILPROP % SAT   = SAT   
       SOILPROP % SWCN  = SWCN  
       SOILPROP % TOTN  = TOTN
@@ -1375,8 +1379,9 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
 !       Available water capacity (mm)
         TOTAW = TOTAW + (DUL(L) - LL(L)) * DLAYR(L) * 10.
+        POROS(L)  = 1.0 - BD(L) / 2.65
       ENDDO
- 
+
       SOILPROP % BD     = BD     
       SOILPROP % CN     = CN     
       SOILPROP % DLAYR  = DLAYR  !thickness of tilled soil layers 
@@ -1386,7 +1391,8 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SOILPROP % LL     = LL    
       SOILPROP % OC     = OC
       SOILPROP % SAT    = SAT    
-      SOILPROP % SWCN   = SWCN   
+      SOILPROP % SWCN   = SWCN 
+      SOILPROP % POROS  = POROS  
 
       CALL PUT(SOILPROP)
 

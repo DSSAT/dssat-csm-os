@@ -12,7 +12,7 @@ C  06/15/2014 CHP Written
         REAL CN2,  CN2O,  CNOX,  CNITRIFY
         REAL TN2D, TN2OD, TNOXD, TNITRIFY
         REAL, DIMENSION(NL) :: DENITRIF, N2OFLUX, N2ONITIRF, N2FLUX, 
-     &     NITRIF, WFPS 
+     &     NITRIF, WFPS
       END TYPE N2O_type
 
       CONTAINS
@@ -51,7 +51,7 @@ C  06/15/2014 CHP Written
       REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
 
       REAL FRAC, NDN20, NIT20, N2O20, N2F20, newCO2(NL), TOTCO2
-      real bd(nl),poros(nl),wfps(nl),sw(nl)         ! PG
+      real bd(nl),wfps(nl),sw(nl)         ! PG   !,poros(nl)
       real n2o_emitted, n2o_soil(nl), n2o_diffused  ! PG
       real n2_emitted, n2_soil(nl), n2_diffused  ! PG
 
@@ -88,7 +88,8 @@ C  06/15/2014 CHP Written
       n2oflux  = N2O_data % n2oflux  
       CNITRIFY = N2O_data % CNITRIFY     
       TNITRIFY = N2O_data % TNITRIFY 
-      NITRIF   = N2O_data % NITRIF    
+      NITRIF   = N2O_data % NITRIF  
+      WFPS     = N2O_data % WFPS  
 
 !***********************************************************************
 !***********************************************************************
@@ -233,8 +234,8 @@ C-----------------------------------------------------------------------
           if (n2oflux(l).lt. 0.0) then
               n2oflux(l) = 0.0
           endif
-          POROS(L)  = 1.0 - BD(L) / 2.65
-          wfps(L) = min (1.0, sw(L) / poros(L))
+!          POROS(L)  = 1.0 - BD(L) / 2.65
+!          wfps(L) = min (1.0, sw(L) / SOILPROP % poros(L))
           if (l.ge.2) then
              n2o_diffused = (n2oflux(l) + n2o_soil(l)) * (1.0 - WFPS(l))
              n2o_soil(l) = (n2oflux(l) + n2o_soil(l)) * WFPS(l)
