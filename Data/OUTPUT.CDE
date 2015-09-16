@@ -38,7 +38,7 @@ CSP_PHEN.OUT       Casupro sugarcane output                           OUTPHNL
 PlantKg.OUT        Casupro sugarcane output                           OUTKG
 Generic.OUT        Generic (temporary) output file
 SALUS.OUT          Generic plant routine
-N2O.OUT            Nitrous oxide emissions output file
+N2O.OUT         NO Nitrous oxide emissions output file
 
 !Seasonal summary output files
 Environ.OUT     EN Environmental modifications output file            SOUTE
