@@ -231,15 +231,15 @@ C-----------------------------------------------------------------------
 
 ! N2O section     
       DO L = 1, N_LYR
-          if (n2oflux(l).lt. 0.0) then
-              n2oflux(l) = 0.0
+          if (n2oflux(L).lt. 0.0) then
+              n2oflux(L) = 0.0
           endif
 !          POROS(L)  = 1.0 - BD(L) / 2.65
 !          wfps(L) = min (1.0, sw(L) / SOILPROP % poros(L))
-          if (l.ge.2) then
-             n2o_diffused = (n2oflux(l) + n2o_soil(l)) * (1.0 - WFPS(l))
-             n2o_soil(l) = (n2oflux(l) + n2o_soil(l)) * WFPS(l)
-             n2o_soil(l-1) = n2o_soil(l-1) + n2o_diffused
+          if (L.ge.2) then
+             n2o_diffused = (n2oflux(L) + n2o_soil(L)) * (1.0 - WFPS(L))
+             n2o_soil(L) = (n2oflux(L) + n2o_soil(L)) * WFPS(L)
+             n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
           endif
       ENDDO
       
@@ -248,13 +248,13 @@ C-----------------------------------------------------------------------
  
 ! N2 section - same basis as N2O
       DO L = 1, N_LYR
-          if (n2flux(l).lt. 0.0) then
-              n2flux(l) = 0.0
+          if (n2flux(L).lt. 0.0) then
+              n2flux(L) = 0.0
           endif
-          if (l.ge.2) then
-             n2_diffused = (n2flux(l) + n2_soil(l)) * (1.0 - WFPS(l))
-             n2_soil(l) = (n2flux(l) + n2_soil(l)) * WFPS(l)
-             n2_soil(l-1) = n2_soil(l-1) + n2_diffused
+          if (L.ge.2) then
+             n2_diffused = (n2flux(L) + n2_soil(L)) * (1.0 - WFPS(L))
+             n2_soil(L) = (n2flux(L) + n2_soil(L)) * WFPS(L)
+             n2_soil(L-1) = n2_soil(L-1) + n2_diffused
           endif
       ENDDO
       
