@@ -98,7 +98,7 @@ C=======================================================================
       
       REAL n2oflux(nl)
       REAL TN2OD, CN2O
-      REAL newCO2(nl)
+      REAL newCO2(0:nl)
       REAL pn2onitrif, n2onitrif(nl)
 
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
@@ -273,8 +273,9 @@ C=======================================================================
      &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA, SW,
-     &BD) 
+      CALL N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 
 !***********************************************************************
 !***********************************************************************
@@ -625,6 +626,8 @@ C=======================================================================
         END SELECT
       ENDIF
 
+      CALL N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.
 !     ------------------------------------------------------------------
@@ -770,8 +773,7 @@ C     Write daily output
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
      &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
 
-      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA, SW,
-     &BD) 
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 
 C***********************************************************************
 C***********************************************************************
