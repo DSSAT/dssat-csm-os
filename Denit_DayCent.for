@@ -44,7 +44,7 @@ C=======================================================================
       REAL a_coeff, wfps_thres, fDno3, Rn2n2O, fRwfps
       REAL fRno3_CO2, k1, fDCO2, fDwfps, X_inflect
       REAL m, fNo3fCo2
-      REAL newCO2(nl), dD0_fc(nl)
+      REAL newCO2(0:nl), dD0_fc(nl)
       real A(4)
 !     real RWC
 
@@ -132,7 +132,12 @@ C=======================================================================
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
 !       Daycent denitrification routines PG 17/5/13      
 
-        CO2ppm(L) = newCO2(L)*kg2ppm(L)  !CO2ppm is labile C which is derivation of CO2 produced on any day
+!       CO2ppm is labile C which is derivation of CO2 produced on any day
+        if (L == 1) then
+          CO2ppm(1) = (newCO2(0)+newCO2(1))*kg2ppm(L)  !first soil layer includes residue layer-chp
+        else
+          CO2ppm(L) = newCO2(L)*kg2ppm(L)
+        endif
       
 !       Water Filled Pore Space (WFPS) WFPS_threshold
         If (dD0_fc(L) .GE. 0.15) then 

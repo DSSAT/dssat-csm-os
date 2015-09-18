@@ -68,7 +68,7 @@
       INTEGER, DIMENSION(NAPPL*3) :: DEND, DISTURBEND
       INTEGER, PARAMETER :: NONLIG = 1, LIG = 2, SRFC = 0, SOIL = 1
       
-      real newCO2(NL)      ! DayCent PG
+      real newCO2(0:NL)      ! DayCent PG
 
       REAL CO2S2, CO2S3, CULMETQ, CULS1Q, CULS2Q,
      &  CULS3Q, CULSTRQ, DEPTH, DISTURBDEPTHMAX,
@@ -780,6 +780,11 @@
         IF (L == SRFC) THEN
           ACCCO2(SRFC) = ACCCO2(SRFC) + CO2FMET(SRFC) +
      &        CO2FSTR(SRFC,LIG) + CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
+
+!         microbial respiration for N2O/N2 loss in DayCent   PG/chp
+          newCO2(SRFC) = CO2FMET(SRFC) + CO2FSTR(SRFC,LIG) + 
+     &        CO2FSTR(SRFC,NONLIG) + CO2FS1(SRFC)
+
         ELSE
           ACCCO2(SOIL) = ACCCO2(SOIL) + CO2FMET(L) + CO2FSTR(L,LIG) +
      &        CO2FSTR(L,NONLIG) + CO2FS1(L) + CO2FS2(L) + CO2FS3(L)
