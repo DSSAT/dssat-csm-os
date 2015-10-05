@@ -335,6 +335,7 @@
         rswad = 0.0
         rswam = -99.0
         rswamm = -99.0
+        rswph = 0.0
         rswphc = 0.0
         rswt = 0.0
         rswtm = 0.0

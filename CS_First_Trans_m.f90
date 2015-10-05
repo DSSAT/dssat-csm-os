@@ -240,6 +240,7 @@
     REAL    :: GROCR                   ! Plant. stick growth rate              g/p ! (From SeasInit)  
     REAL    :: GROCRADJ                ! Plant. stick growth rate N adjusted   g/p ! (From SeasInit)  
     REAL    :: GROCRFR                 ! Plant. stick growth rate,fraction st  #   ! (From Growth)    
+    REAL    :: GROCRP                  ! Plant. stick growth rate potential    g/p ! (From SeasInit)
     REAL    :: GROLF                   ! Leaf growth rate               g/p        ! (From SeasInit)  
     REAL    :: GROLFADJ                ! Leaf growth rate N adjusted    g/p        ! (From SeasInit)  
     REAL    :: GROLFP                  ! Leaf growth,potential          g/p        ! (From Growth)    

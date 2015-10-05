@@ -297,6 +297,7 @@
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         NODEWTG = 0.0
         GROSTP = 0.0
+        GROCRP = 0.0
         IF (DAE.GT.0) THEN
             DO BR = 0, BRSTAGE   
                 IF (BR.EQ.0) THEN
@@ -315,9 +316,24 @@
                 ENDDO
             ENDDO
         ENDIF
-        GROLSP = GROLFP + GROSTP                                                                                    
+        GROCRP = NODEWTGB(0)*SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
+        CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
+        GROLSP = GROLFP + GROSTP + GROCRP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
-     
+        !-----------------------------------------------------------------------
+        !           Root growth                                     
+        !-----------------------------------------------------------------------
+
+        !LPM 30MAY2015 Modify RTWTG according to Matthews & Hunt, 1994 (GUMCAS)
+        !LPM 05OCT2015 Moved before of leaf, stem and planting stick growth 
+        !RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
+        
+        IF (CARBOT.GT.0.0) THEN
+            CARBOR = AMIN1(CARBOT,(GROST+GROLF)*(0.05+0.1*EXP(-0.005*Tfd)))  !LPM 02OCT2015 to avoid negative values of CARBOT
+            CARBOT = CARBOT - CARBOR
+            RTWTG = ((GROST+GROLF)*(0.05+0.1*EXP(-0.0005*Tfd))+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
+            RTRESP = RTWTG*RRESP/(1.0-RRESP)                                                                               !EQN 388
+        ENDIF
         
         IF (GROLSP.GT.0.0) THEN
             ! Leaf+stem weight increase from assimilates
@@ -434,7 +450,7 @@
         GROSTCRP = GROSTP                                                                                          !EQN 381a
     
         
-        IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLFP+GROSTCRP) * (1.0-RSFRS)                         !EQN 383
+        IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
         ! LAH RSFRS is the fraction of stem growth to reserves
         ! May need to have this change as stem growth proceeds
      
@@ -445,22 +461,10 @@
         !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
         !in the planting stick (In the future it could be modified as an input in the X-file)
         GROST = GROSTCR
-        GROCR = NODEWTGB(0)*SPRL/NODLT                   
-        CRWTP = CRWTP + GROCR                 !LPM 23MAY2015 Added to keep the potential planting stick weight
+        IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
+        !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
         
                           
-        !-----------------------------------------------------------------------
-        !           Root growth                                     
-        !-----------------------------------------------------------------------
 
-        !LPM 30MAY2015 Modify RTWTG according to Matthews & Hunt, 1994 (GUMCAS)
-        !RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
-        
-        IF (CARBOT.GT.0.0) THEN
-            CARBOR = (GROST+GROLF)*(0.05+0.1*EXP(-0.005*Tfd))
-            CARBOT = CARBOT - CARBOR
-            RTWTG = ((GROST+GROLF)*(0.05+0.1*EXP(-0.0005*Tfd))+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
-            RTRESP = RTWTG*RRESP/(1.0-RRESP)                                                                               !EQN 388
-        ENDIF
         
     END SUBROUTINE CS_Growth_Part
