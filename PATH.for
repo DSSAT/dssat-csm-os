@@ -10,6 +10,7 @@ C  05/28/1993 PWW Header revision and minor changes
 C  09/17/2007 JIL Added codes for IXIM maize model
 C  08/09/2012 GH  Add codes for CSCAS cassava model
 C  04/16/2013 CHP/KAD Added codes for SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C  06/03/2015 LPM Added codes for CSCGR CIAT cassava model 
 C  06/18/2015 GH  Add error code for configuration file issues      
 C-----------------------------------------------------------------------
@@ -22,21 +23,6 @@ C-----------------------------------------------------------------------
 C  Called : SECLI SEWTH IPEXP
 C
 C  Calls  : ERROR
-C-----------------------------------------------------------------------
-C                         DEFINITIONS
-C
-C  BLANK  :
-C  PROCOD :
-C  ERRKEY :
-C  FILEPR :
-C  LINE   :
-C  PATHC  :
-C  LUNPR  :
-C  ERRNUM :
-C  PATHL  :
-C  I,K    :
-C  PFLAG  :
-C  FEXIST :
 C=======================================================================
 
       SUBROUTINE PATH (PROCOD,DSSATP,PATHC,PFLAG,NAMEF)
@@ -319,7 +305,7 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.      !CROPGRO
      &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.      !CROPSIM (Cereal)
      &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.      !CSCAS (Cassava)
-     &    (INDEX(MODEL(3:5),'CGR') .EQ. 0) .AND.      !CSCGR (CIAT -Cassava)
+	 &    (INDEX(MODEL(3:5),'CGR') .EQ. 0) .AND.      !CSCGR (CIAT -Cassava)
      &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.      !CROPSIM (Cassava)
      &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.      !SUBSTOR
      &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.      !CANEGRO
@@ -327,6 +313,7 @@ C=======================================================================
 !    &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.      !ALOHA
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
+     &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.      !APSIM N-wheat
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.      !OILCROP
      &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)            !SALUS
      &    ) THEN   
@@ -339,7 +326,8 @@ C=======================================================================
       IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND.    !Wheat and Barley
      &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Wheat and barley
      &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND.    !Cassava
-     &    (INDEX(MODEL(1:5),'CSCGR') .EQ. 0) .AND.    !Cassava CIAT
+	 &    (INDEX(MODEL(1:5),'CSCGR') .EQ. 0) .AND.    !Cassava CIAT
+     &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat 
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES
