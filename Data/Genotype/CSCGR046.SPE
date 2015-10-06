@@ -50,7 +50,7 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 ! Phase durations
 @PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
 ! oC.d  oC.d                                                              
-    10  10.0
+   120 120.0
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN ! Photoperiod threshold,sensitivity type  
 !  0-1     h  Code                                  
@@ -131,7 +131,8 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 CH2O distribution/mobilization
 @PTFMN PTFMX  PTFA  ! Partition to tops (max,min,adjustment)
 !   fr    fr   0-1  
-  0.77  0.80  0.10
+  0.87  0.89  0.10
+!  0.77  0.80  0.10 !LPM05SEP2015 Modified to define partitioning fraction for feeder roots
 ! Temperature responses
 @RRATE TRGEM TRDV1 TRLFG TRPHS  ! Germination/emergence,development,leaf/branch growth,phsis
 !    #    oC    oC    oC    oC
@@ -153,7 +154,7 @@ CH2O distribution/mobilization
 ! 1. Based on ratio of potential uptake to potential loss (WFEU only for Cropsim)
 @ WFGU  WFGL  WFPU  WFPL  WFSU  WFEU  ! Growth,phs,senescence,evap
 !   fr    fr    fr    fr    fr    fr
-   1.5   0.0   1.0   0.0   0.6   1.5
+   1.0   0.0   1.0   0.0   0.6   1.5
 ! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
 @WFGEU WFRGU  ! Germination/emergence, root growth
 !   fr    fr
@@ -174,8 +175,8 @@ CH2O distribution/mobilization
    1.9
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN  ! Standard,minima N% leaves,stems,roots
 !    %     %     %     %     %     %
-   4.0   3.9   3.5   3.0   1.0   1.0 
-   4.0   3.9   1.3   1.0   1.0   1.0 
+   5.0   4.8   3.5   1.7   1.0   1.0 
+   2.5   2.3   1.3   0.8   1.0   1.0 
 ! N distribution/mobilization
 @NLAB% ! Labile nitrogen
 !    %
