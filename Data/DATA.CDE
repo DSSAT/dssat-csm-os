@@ -465,7 +465,6 @@ TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (°C)                      
 TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (°C)                      .
 TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (°C)                      .
 
-
 *CARBON
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 CGRD   CGR g/m2.d      Crop growth rate (g [top+store]/(m2.d))                  .

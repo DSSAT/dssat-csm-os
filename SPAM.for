@@ -20,6 +20,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !  08/25/2006 CHP Add SALUS soil evaporation routine, triggered by new
 !                 FILEX parameter MESEV
 !  12/09/2008 CHP Remove METMP
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  Called by: Main
 C  Calls:     XTRACT, OPSPAM    (File SPSUBS.FOR)
@@ -208,7 +209,7 @@ C=======================================================================
 
 !     Call OPSPAM to open and write headers to output file
       IF (IDETW .EQ. 'Y') THEN
-        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,  ! JZW add TRWU
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -466,7 +467,7 @@ C       and total potential water uptake rate.
       ENDIF
 
       IF (IDETW .EQ. 'Y') THEN
-        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU, !JZW add trwu
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -503,7 +504,7 @@ C-----------------------------------------------------------------------
       END SELECT
 
 
-      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU, !JZW add TRWU
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -523,7 +524,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
-      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU, ! JZW add TRWU
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
