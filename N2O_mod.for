@@ -9,11 +9,20 @@ C  06/15/2014 CHP Written
 
 !     Data construct for control variables
       TYPE N2O_type
-        REAL CN2,  CN2O,  CNOX,  CNITRIFY, CN2O_emitted, CN2_emitted !cumulative
-        REAL TN2D, TN2OD, TNOXD, TNITRIFY,  N2O_emitted,  N2_emitted !daily
-        REAL, DIMENSION(NL) :: DENITRIF, N2OFLUX, N2ONITIRF, N2FLUX, 
-     &     NITRIF, WFPS
+!            Daily        Cumulative
+        REAL TN2D,        CN2,            !N2
+     &       TNOXD,       CNOX,           !NOx
+     &       TNITRIFY,    CNITRIFY,       !Nitrified
+     &       TN2OnitrifD, CN2Onitrif,     !N2O from nitrification
+     &       TN2OdenitD,  CN2Odenit,      !N2O from denitrification
+     &       N2O_emitted, CN2O_emitted,   !emitted N2O
+     &       N2_emitted,  CN2_emitted     !emitted N2
+
+!       N2Oflux = N2Odenit + N2Onitrif
+        REAL, DIMENSION(NL) :: DENITRIF, n2odenit, N2Onitrif,  
+     &     N2OFLUX, N2FLUX, NITRIF, WFPS
       END TYPE N2O_type
+
 
       CONTAINS
 
@@ -42,16 +51,18 @@ C  09/18/2015 CHP Written, based on PG code.
       INTEGER DAS, DYNAMIC, L, NLAYR, YRDOY
 
 !          Cumul        Daily       Layer         
-      REAL CNOX,        TNOXD,      DENITRIF(NL)  !Denitrification
+!     REAL CNOX,        TNOXD,      DENITRIF(NL)  !Denitrification
+!     REAL CNITRIFY,    TNITRIFY,   NITRIF(NL)    !Nitrification 
       REAL CN2,         TN2D,       n2flux(NL)    !N2
-      REAL CN2O,        TN2OD,      n2oflux(NL)   !N2O 
-      REAL CNITRIFY,    TNITRIFY,   NITRIF(NL)    !Nitrification 
+      REAL CN2Odenit,   TN2OdenitD, n2odenit(NL)  !N2O from denitrification
+      REAL CN2Onitrif,  TN2OnitrifD,n2onitrif(NL) !N2O from nitrification
       REAL CN2_emitted, N2_emitted                !N2 emitted
       REAL CN2O_emitted,N2O_emitted               !N2O emitted
 
       real wfps(nl)         ! PG   
       real n2o_soil(nl), n2o_diffused  ! PG
       real n2_soil(nl), n2_diffused  ! PG
+      real N2Oflux(nl)
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -68,17 +79,24 @@ C  09/18/2015 CHP Written, based on PG code.
 
       NLAYR   = SOILPROP % NLAYR
 
-      CNOX     = N2O_data % CNOX      
-      TNOXD    = N2O_data % TNOXD     
-      DENITRIF = N2O_data % DENITRIF   
-      CN2      = N2O_data % CN2      
       TN2D     = N2O_data % TN2D       
-      n2flux   = N2O_data % n2flux   
-      CN2O     = N2O_data % CN2O        
-      TN2OD    = N2O_data % TN2OD     
-      n2oflux  = N2O_data % n2oflux  
-      CNITRIFY = N2O_data % CNITRIFY     
+      CN2      = N2O_data % CN2      
+      TN2OdenitD= N2O_data % TN2OdenitD     
+      CN2Odenit = N2O_data % CN2Odenit        
+!     TNOXD    = N2O_data % TNOXD     
+!     CNOX     = N2O_data % CNOX      
       TNITRIFY = N2O_data % TNITRIFY 
+!     CNITRIFY = N2O_data % CNITRIFY     
+      TN2OnitrifD= N2O_data % TN2OnitrifD
+      CN2Onitrif = N2O_data % CN2Onitrif
+      TN2OdenitD = N2O_data % TN2OdenitD
+      CN2Odenit  = N2O_data % CN2Odenit
+
+!     DENITRIF = N2O_data % DENITRIF   
+      n2odenit = N2O_data % n2odenit  
+      N2Onitrif= N2O_data % N2Onitrif  
+      N2OFLUX  = N2O_data % N2OFLUX
+      n2flux   = N2O_data % n2flux   
       NITRIF   = N2O_data % NITRIF  
       WFPS     = N2O_data % WFPS  
 
@@ -103,25 +121,26 @@ C-----------------------------------------------------------------------
 ! Developed as N2O and duplicated as N2
 ! Diffusion of N2O from layers based on WFPS PGrace 14 June 2015
 ! N2O produced on any day in any layer and diffused upwards is directly proportional to (1-WFPS) (fraction)
-! N2O not diffused from layer (WFPS) is added to the next day's total N2Oflux for that layer
+! N2O not diffused from layer (WFPS) is added to the next day's total n2odenit for that layer
 ! N2O emitted to the atmosphere on any day is from layer 1 only.
-! n2oflux is the mass of N2O (kg N/ha) produced in a layer on any day
+! n2odenit is the mass of N2O (kg N/ha) produced in a layer on any day due to denitrification
 ! n2o_diffused is mass diffused (kg N/ha) per layer
 ! n2o_soil is mass remaining in soil (kg N/ha) AFTER diffusion
 ! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
 
 ! N2O section     
       DO L = 1, NLAYR
-          if (n2oflux(L).lt. 0.0) then
-              n2oflux(L) = 0.0
+          n2oflux(l) = n2onitrif(l) + n2odenit(l)                
+          if (n2oflux(l).lt. 0.0) then
+              n2oflux(l) = 0.0
           endif
 
 !          POROS(L)  = 1.0 - BD(L) / 2.65
 !          wfps(L) = min (1.0, sw(L) / SOILPROP % poros(L))
           if (L.ge.2) then
-             n2o_diffused = (n2oflux(L) + n2o_soil(L)) * (1.0 - WFPS(L))
-             n2o_soil(L) = (n2oflux(L) + n2o_soil(L)) * WFPS(L)
-             n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
+            n2o_diffused = (n2oflux(L) + n2o_soil(L)) * (1.0 - WFPS(L))
+            n2o_soil(L) = (n2oflux(L) + n2o_soil(L)) * WFPS(L)
+            n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
           endif
       ENDDO
       
@@ -192,11 +211,16 @@ C  06/15/2014 CHP Written
 
 !          Cumul      Daily     Layer         
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
-      REAL CN2,       TN2D,     n2flux(NL)    !N2
-      REAL CN2O,      TN2OD,    n2oflux(NL)   !N2O 
       REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
-      REAL CN2_emitted, N2_emitted                !N2 emitted
-      REAL CN2O_emitted,N2O_emitted               !N2O emitted
+      REAL CN2,       TN2D,     n2flux(NL)    !N2
+!     REAL CN2O,      TN2OD,    n2oflux(NL)   !N2O total (nitrification + denitrification)
+!     Added N2Odenit for N2O from denitrification only and daily and cumulative variables
+      REAL CN2Odenit, TN2OdenitD, N2Odenit(NL)   !N2O from denitrification only 
+!     Daily total and cumulative totals for n2onitrif
+      REAL CN2Onitrif, TN2OnitrifD, N2Onitrif(NL) ! N2O from nitrification only    
+
+      REAL n2o_emitted, n2_emitted, CN2O_emitted, CN2_emitted  
+       
 
       REAL NDN20, NIT20, N2O20, N2F20, newCO2(0:NL), TOTCO2, CumTotCO2
       real wfps(nl)         ! PG   !bd(nl),sw(nl),poros(nl)
@@ -222,14 +246,23 @@ C  06/15/2014 CHP Written
       CN2      = N2O_data % CN2      
       TN2D     = N2O_data % TN2D       
       n2flux   = N2O_data % n2flux   
-      CN2O     = N2O_data % CN2O        
-      TN2OD    = N2O_data % TN2OD     
-      n2oflux  = N2O_data % n2oflux  
+
+!     added n2odenit and daily and cumulative variables      
+      Cn2odenit = N2O_data % Cn2odenit
+      Tn2odenitd = N2O_data % Tn2odenitd
+      n2odenit = N2O_data % n2odenit  
+      n2odenit  = N2O_data % n2odenit  
       CNITRIFY = N2O_data % CNITRIFY     
       TNITRIFY = N2O_data % TNITRIFY 
       NITRIF   = N2O_data % NITRIF  
       WFPS     = N2O_data % WFPS  
 
+!     add daily total and cumulative N2ONITRIF variables
+      CN2ONITRIF = N2O_data % CN2ONITRIF
+      TN2ONITRIFD = N2O_data % TN2ONITRIFD
+      N2ONITRIF  = N2O_data % N2ONITRIF
+
+!***********************************************************************
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -315,7 +348,7 @@ C-----------------------------------------------------------------------
 !     &       CNOX, CNITRIFY, CN2O, CN2,
 !     &       TNOXD*1000., TNITRIFY, TN2OD*1000., TN2D*1000.,
 !     &       (DENITRIF(I)*1000.,I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
-!     &       (n2oflux(i)*1000., i=1, n_lyr), (N2FLUX(i)*1000.,i=1,n_lyr)
+!     &       (n2odenit(i)*1000., i=1, n_lyr), (N2flux(i)*1000.,i=1,n_lyr)
         ENDIF
       ENDIF
 
@@ -361,6 +394,17 @@ C-----------------------------------------------------------------------
       TOTCO2 = SUM(newCO2)
       CumTotCO2 = CumTotCO2 + TOTCO2
 
+! Simple representation of diffusion of N2O and N2 emissions 14 June 2015
+! Developed as N2O and duplicated as N2
+! Diffusion of N2O from layers based on WFPS PGrace 14 June 2015
+! N2O produced on any day in any layer and diffused upwards is directly proportional to WFPS (fraction)
+! N2O not diffused from layer (1-WFPS) is added to the next day's total N2Oflux for that layer
+! N2O emitted to the atmosphere on any day is from layer 1 only.
+! n2oflux is the mass of N2O (kg N/ha) produced in a layer on any day
+! n2o_diffused is mass diffused (kg N/ha) per layer
+! n2o_soil is mass remaining in soil (kg N/ha) AFTER diffusion
+! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
+
       n2o_emitted  = N2O_data % n2o_emitted  
       n2_emitted   = N2O_data % n2_emitted   
       CN2O_emitted = N2O_data % CN2O_emitted 
@@ -377,12 +421,12 @@ C-----------------------------------------------------------------------
 
         IF (IDETN .EQ. 'Y') THEN
           WRITE (NOUTDN,TRIM(FRMT2)) YEAR, DOY, DAS, 
-     &       N2O_emitted*1000., N2_emitted*1000., 
-     &       CN2O_emitted, CN2_emitted, TOTCO2, NINT(CumTotCO2),
-     &       CNOX, CNITRIFY, CN2O, CN2, !NDN20, NIT20, N2O20, N2F20,
-     &       TNOXD*1000., TNITRIFY, TN2OD*1000., TN2D*1000.,
-     &       (DENITRIF(I)*1000.,I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
-     &       (n2oflux(i)*1000., i=1, n_lyr), (N2FLUX(i)*1000.,i=1,n_lyr)
+     &      N2O_emitted*1000., N2_emitted*1000., 
+     &      CN2O_emitted, CN2_emitted, TOTCO2, NINT(CumTotCO2),
+     &      CNOX, CNITRIFY, CN2Odenit, CN2, !NDN20, NIT20, N2O20, N2F20,
+     &      TNOXD*1000., TNITRIFY, TN2OdenitD*1000., TN2D*1000.,
+     &      (DENITRIF(I)*1000.,I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
+     &      (n2odenit(i)*1000., i=1, n_lyr), (N2FLUX(i)*1000.,i=1,n_lyr)
         ENDIF
 
 !***********************************************************************

@@ -552,7 +552,7 @@ D       STDPATH = 'D:\DSSAT46\'
 
 !     Data transferred from Soil Inorganic Nitrogen routine
       Type NiType
-        REAL TNOXD, TLeachD, TN2OD     ! added N2O PG
+        REAL TNOXD    !, TLeachD, TN2OD     ! added N2O PG
       End Type NiType
 
 !     Data transferred from Organic C routines
@@ -779,8 +779,8 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); Value = SAVE_data % NITR % TNOXD
-        Case ('TLeachD'); Value = SAVE_data % NITR % TLeachD
-        Case ('TN2OD'); Value = SAVE_data % NITR % TN2OD
+!       Case ('TLeachD'); Value = SAVE_data % NITR % TLeachD
+!       Case ('TN2OD'); Value = SAVE_data % NITR % TN2OD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -893,8 +893,8 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); SAVE_data % NITR % TNOXD = Value
-        Case ('TLeachD'); SAVE_data % NITR % TLeachD = Value
-        Case ('TN2OD'); SAVE_data % NITR % TN2OD = Value
+!       Case ('TLeachD'); SAVE_data % NITR % TLeachD = Value
+!       Case ('TN2OD'); SAVE_data % NITR % TN2OD = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

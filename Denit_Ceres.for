@@ -40,7 +40,7 @@ C=======================================================================
 !          Cumul      Daily     Layer kg
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
       REAL CN2,       TN2D,     n2flux(nl)    !N2
-      REAL CN2O,      TN2OD,    n2oflux(nl)   !N2O 
+      REAL CN2Odenit, TN2OdenitD, n2odenit(nl)   !N2O 
 
 !***********************************************************************
 !***********************************************************************
@@ -50,7 +50,7 @@ C=======================================================================
 !     ------------------------------------------------------------------
 !     Seasonal cumulative vaules
       CNOX   = 0.0    !denitrification
-      CN2O   = 0.0    ! N2O added        PG
+      CN2Odenit   = 0.0    ! N2O added        PG
       CN2    = 0.0
 
 !***********************************************************************
@@ -65,11 +65,11 @@ C=======================================================================
 !     Loop through soil layers for rate calculations
 !     ------------------------------------------------------------------
       TNOXD = 0.0
-      TN2OD = 0.0     ! PG
+      TN2OdenitD = 0.0     ! PG
       TN2D  = 0.0
       DENITRIF = 0.0
       N2FLUX   = 0.0
-      N2OFLUX  = 0.0
+      n2odenit  = 0.0
 
       DO L = 1, NLAYR
 
@@ -203,19 +203,19 @@ C         If flooded, lose all nitrate --------REVISED-US
           DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! Calculation of N2OFLUX based on ratio (N2O/total denit) determined from original DayCent dataset of DelGrosso (PG)
+! Calculation of n2odenit based on ratio (N2O/total denit) determined from original DayCent dataset of DelGrosso (PG)
 ! assuming denitrif = N2O + N2O
 
-          N2OFLUX(L) = NO3(L)/(NO3(L)+30.)*DENITRIF(L)   ! PG
-          N2FLUX(L) = DENITRIF(L) - N2OFLUX(L)           ! PG
+          n2odenit(L) = NO3(L)/(NO3(L)+30.)*DENITRIF(L)   ! PG
+          N2FLUX(L) = DENITRIF(L) - n2odenit(L)           ! PG
 
 !         Reduce soil NO3 by the amount denitrified and add this to
 !         the NOx pool
           DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
           CNOX       = CNOX       + DENITRIF(L)
           TNOXD      = TNOXD      + DENITRIF(L)
-          CN2O  = CN2O  + N2OFLUX(L)         ! PG added
-          TN2OD = TN2OD + N2OFLUX(L)         ! PG added
+          CN2Odenit  = CN2Odenit  + n2odenit(L)         ! PG added
+          TN2OdenitD = TN2OdenitD + n2odenit(L)         ! PG added
           CN2  = CN2  + N2FLUX(L)            ! PG
           TN2D = TN2D + N2FLUX(L)            ! PG
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -234,13 +234,13 @@ C         If flooded, lose all nitrate --------REVISED-US
       ENDIF
 !-----------------------------------------------------------------------
       N2O_data % CN2      = CN2
-      N2O_data % CN2O     = CN2O
+      N2O_data % CN2Odenit= CN2Odenit
       N2O_data % CNOX     = CNOX
       N2O_data % TN2D     = TN2D
-      N2O_data % TN2OD    = TN2OD
+      N2O_data % TN2OdenitD= TN2OdenitD
       N2O_data % TNOXD    = TNOXD
       N2O_data % DENITRIF = DENITRIF
-      N2O_data % N2OFLUX  = N2OFLUX
+      N2O_data % n2odenit  = n2odenit
       N2O_data % N2FLUX   = N2FLUX
 
       RETURN

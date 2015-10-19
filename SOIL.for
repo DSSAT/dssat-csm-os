@@ -98,7 +98,7 @@ C=====================================================================
 
       INTEGER DYNAMIC
 
-      REAL, DIMENSION(NL) :: newCO2 !DayCent
+      REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
       REAL, DIMENSION(NL) :: SPi_Labile
       REAL, DIMENSION(0:NL) :: LITC, SSOMC

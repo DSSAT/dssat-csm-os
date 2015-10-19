@@ -52,7 +52,9 @@ C=======================================================================
 !          Cumul Daily  Layer ppm        Layer kg
       REAL CNOX, TNOXD, denitrifppm(NL), DENITRIF(NL)  !Denitrification
       REAL CN2,  TN2D,                   n2flux(nl)    !N2
-      REAL CN2O, TN2OD, n2ofluxppm(NL),  n2oflux(nl)   !N2O 
+!     Renamed variables as denitrification only, also N2Ofluxppm and N2Oflux in this case should now be N2Odenitppm and N2Odenit      
+!     REAL CN2O, TN2OD, n2ofluxppm(NL),  n2oflux(nl)   !N2O
+      REAL CN2Odenit, TN2OdenitD, n2odenitppm(NL),  n2odenit(nl)   !N2O from denitrification only
 
 !     Temp variables for Output.dat file:
 !      REAL TNITRIFY, NITRIF(NL), n2onitrif(NL)
@@ -71,7 +73,9 @@ C=======================================================================
 !       Today's values
 !       Seasonal cumulative vaules
         CNOX   = 0.0    !denitrification
-        CN2O   = 0.0    ! N2O added        PG
+!       CN2O for denitrification only 
+!       CN2O   = 0.0    ! N2O added        PG
+        CN2Odenit   = 0.0    ! N2O added        PG
         CN2    = 0.0    ! N2
 
       wfps = n2o_data % wfps
@@ -93,11 +97,6 @@ C=======================================================================
       A(3) = 76.91
       A(4) = 0.00222
 
-!      open (unit=9,file='output.dat', status='unknown')
-!      write (9,'(A)')' doy  L    sw     bd     poros    wfps   wfpsfc  w
-!     &fpsth   CO2_cor newCO2  CO2ppm a_coef denit   n2oflux  nitrif  Tni
-!     &trify   n2onit   totn2o'
-
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE CALCULATIONS 
@@ -110,7 +109,8 @@ C=======================================================================
 !     Loop through soil layers for rate calculations
 !     ------------------------------------------------------------------
       TNOXD = 0.0
-      TN2OD = 0.0     ! PG
+!     TN2OD = 0.0     ! PG
+      TN2OdenitD = 0.0     ! PG
       TN2D  = 0.0
       wfps = n2o_data % wfps
 
@@ -206,13 +206,17 @@ C       Compute the N2:N2O Ratio
         Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
       
 C       Calculate N2O       
-
-        n2ofluxppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
+!       PG changed n2ofluxppm to n2odenitppm to differentiate n2o from denitrification
+!       n2ofluxppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
+        n2odenitppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
             
 C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         denitrif(L) = denitrifppm(L)/kg2ppm(L)
-        n2oflux(L) = n2ofluxppm(L)/kg2ppm(L)
-        n2flux(L) = denitrif(L) - n2oflux(L)
+!       PG changed n2oflux to n2odenit to differentiate n2o from denitrification       
+!       n2oflux(L) = n2ofluxppm(L)/kg2ppm(L)
+!       n2flux(L) = denitrif(L) - n2oflux(L)
+        n2odenit(L) = n2odenitppm(L)/kg2ppm(L)
+        n2flux(L) = denitrif(L) - n2odenit(L)
       
 !******************************************************************************
 !       CHP 6/15/2014 Note: if DENITRIF is modified below, need to go back 
@@ -252,29 +256,14 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
         CNOX       = CNOX       + DENITRIF(L)
         TNOXD      = TNOXD      + DENITRIF(L)
-        CN2O = CN2O + N2OFLUX(L)           ! PG added
-        TN2OD = TN2OD + N2OFLUX(L)         ! PG added
+!       need to differentiate N2O from denitrification        
+!       CN2O = CN2O + N2OFLUX(L)           ! PG added
+!       TN2OD = TN2OD + N2OFLUX(L)         ! PG added
+        CN2Odenit  = CN2Odenit  + n2odenit(L)           ! PG added
+        TN2OdenitD = TN2OdenitD + n2odenit(L)         ! PG added
 
         CN2  = CN2  + N2FLUX(L)            ! PG
         TN2D = TN2D + N2FLUX(L)            ! PG
-
-!C The following code was included by PG to accumulate the gas loss from N2O and N2, which is restricted to 0-20 cm
-!C it also includes some diagnostics
-!        if (L .eq. 3) then
-!          open (unit=9, file='output.dat', status='unknown')
-!      
-!          write (9, 200) doy, L, sw(L), bd(L), poros(L), wfps(L),
-!     &wfps_fc(L), wfps_thres, CO2_correct(L), newCO2(L),CO2ppm(L),
-!     &a_coeff,(denitrif(1)+denitrif(2)+denitrif(3))*1000,
-!     &(n2oflux(1)+n2oflux(2)+n2oflux(3))*1000,
-!     &nitrif(1),TNITRIFY,
-!     &(n2onitrif(1)+n2onitrif(2)+n2onitrif(3))*1000,
-!     &(n2oflux(1)+n2oflux(2)+n2oflux(3)+n2onitrif(1)+n2onitrif(2)+n2onit
-!     &rif(3))*1000, wfdenit, fdwfps, fdno3, x_inflect, rn2n2o
-!     
-!  200 format (1x,i3,1x,i3,12(f8.3),9(f9.3))
-!        
-!        endif
 
       END DO   !End of soil layer loop.
 
@@ -285,13 +274,16 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
       ENDIF
 !-----------------------------------------------------------------------
       N2O_data % CN2      = CN2
-      N2O_data % CN2O     = CN2O
+!     N2O_data % CN2O     = CN2O   
+      N2O_data % CN2Odenit= CN2Odenit
       N2O_data % CNOX     = CNOX
       N2O_data % TN2D     = TN2D
-      N2O_data % TN2OD    = TN2OD
+!     N2O_data % TN2OD    = TN2OD
+      N2O_data % TN2OdenitD=TN2OdenitD
       N2O_data % TNOXD    = TNOXD
       N2O_data % DENITRIF = DENITRIF
-      N2O_data % N2OFLUX  = N2OFLUX
+ !    N2O_data % N2OFLUX  = N2OFLUX
+      N2O_data % n2odenit = n2odenit
       N2O_data % N2FLUX   = N2FLUX
 
       RETURN

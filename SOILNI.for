@@ -95,9 +95,13 @@ C=======================================================================
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
       
 !!!!! daycent variables  PG
-      
-      REAL n2oflux(nl)
-      REAL TN2OD, CN2O
+! Cheryl, as n2oflux is total, and n2odenit is for denitrification    
+! chp - these don't seem to be used anywhere - comment out for now.  
+!      REAL n2oflux(nl)
+!      REAL TN2OD, CN2O
+!     REAL n2odenit(nl)
+!     REAL TN2Odenitd, CN2Odenit      
+
       REAL newCO2(0:nl)
       REAL pn2onitrif, n2onitrif(nl)
 
@@ -201,13 +205,15 @@ C=======================================================================
         CNITRIFY = 0.0  !nitrification
         CNUPTAKE = 0.0  !cumulative N uptake
         CNOX     = 0.0  !denitrification
-        CN2O     = 0.0  ! N2O added        PG
+!       CN2O     = 0.0  ! N2O added        PG
+!       CN2Odenit= 0.0  ! change CN2O to CN2Odenit 25Sep2015 PG, not actually used? chp
         CLeach   = 0.0  !leaching
         WTNUP    = 0.0  !N uptake
 
         nitrif = 0.0
         denitrif = 0.0
-        n2oflux = 0.0
+!       n2oflux = 0.0
+!       n2odenit = 0.0
         N2O_data % wfps = 0.0
 
         TFNITY = 0.0    !
@@ -389,7 +395,8 @@ C=======================================================================
       TMINERN  = 0.0
       TIMMOBN  = 0.0
       TNITRIFY = 0.0
-      TN2OD    = 0.0  ! PG
+!     TN2OD    = 0.0  ! PG
+!     TN2Odenitd = 0.0
       TNOXD    = 0.0  !denitrification
       TLeachD  = 0.0  !leaching
       NITRIF   = 0.0
@@ -648,8 +655,8 @@ C=======================================================================
      &  DLTSNO3, CLeach, TLeachD)                             !Output
 
       CALL PUT('NITR','TNOXD',TNOXD) 
-      CALL PUT('NITR','TN2OD',TN2OD)
-      CALL PUT('NITR','TLeachD',TLeachD)
+!     CALL PUT('NITR','TN2OD',TN2OD)
+!     CALL PUT('NITR','TLeachD',TLeachD)
 
 !***********************************************************************
 !***********************************************************************
