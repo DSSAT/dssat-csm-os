@@ -237,8 +237,7 @@ C  06/15/2014 CHP Written
 
 !     added n2odenit and daily and cumulative variables      
       Cn2odenit = N2O_data % Cn2odenit
-      Tn2odenitd = N2O_data % Tn2odenitd
-      n2odenit = N2O_data % n2odenit  
+      Tn2odenitd= N2O_data % Tn2odenitd
       n2odenit  = N2O_data % n2odenit  
       CNITRIFY = N2O_data % CNITRIFY     
       TNITRIFY = N2O_data % TNITRIFY 
@@ -247,7 +246,7 @@ C  06/15/2014 CHP Written
 
 !     add daily total and cumulative N2ONITRIF variables
       CN2ONITRIF = N2O_data % CN2ONITRIF
-      TN2ONITRIFD = N2O_data % TN2ONITRIFD
+      TN2ONITRIFD= N2O_data % TN2ONITRIFD
       N2ONITRIF  = N2O_data % N2ONITRIF
 
 !***********************************************************************
@@ -362,42 +361,8 @@ C-----------------------------------------------------------------------
 
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
-!      NDN20 = NDN20 + DENITRIF(1)
-!      NIT20 = NIT20 + NITRIF(1)
-!      N2O20 = N2O20 + n2oflux(1)
-!      N2F20 = N2F20 + N2FLUX(1)
-!
-!      DO L = 2, SOILPROP % NLAYR
-!        IF (SOILPROP % DS(L) <= 20.) THEN
-!!         Entire layer is in top 20 cm
-!          NDN20 = NDN20 + DENITRIF(L)
-!          NIT20 = NIT20 + NITRIF(L)
-!          N2O20 = N2O20 + N2OFLUX(L)
-!          N2F20 = N2F20 + N2FLUX(L)
-!
-!        ELSEIF (SOILPROP % DS(L-1) < 20.) THEN
-!!         A portion (FRAC) of layer is in top 20 cm
-!          FRAC = (20. - SOILPROP % DS(L-1)) / SOILPROP % DLAYR(L)
-!          NDN20 = NDN20 + FRAC * DENITRIF(L)
-!          NIT20 = NIT20 + FRAC * NITRIF(L)
-!          N2O20 = N2O20 + FRAC * N2OFLUX(L)
-!          N2F20 = N2F20 + FRAC * N2FLUX(L)
-!        ENDIF
-!      ENDDO
-
       TOTCO2 = SUM(newCO2)
       CumTotCO2 = CumTotCO2 + TOTCO2
-
-! Simple representation of diffusion of N2O and N2 emissions 14 June 2015
-! Developed as N2O and duplicated as N2
-! Diffusion of N2O from layers based on WFPS PGrace 14 June 2015
-! N2O produced on any day in any layer and diffused upwards is directly proportional to WFPS (fraction)
-! N2O not diffused from layer (1-WFPS) is added to the next day's total N2Oflux for that layer
-! N2O emitted to the atmosphere on any day is from layer 1 only.
-! n2oflux is the mass of N2O (kg N/ha) produced in a layer on any day
-! n2o_diffused is mass diffused (kg N/ha) per layer
-! n2o_soil is mass remaining in soil (kg N/ha) AFTER diffusion
-! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
 
       n2o_emitted  = N2O_data % n2o_emitted  
       n2_emitted   = N2O_data % n2_emitted   

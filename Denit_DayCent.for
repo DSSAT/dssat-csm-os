@@ -17,8 +17,6 @@ C=======================================================================
      &    SNO3, SW,                                   !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
-!         Temp input for Output.dat file:
-!     &    NITRIF, TNITRIFY, n2onitrif)                !Temp
 
 !-----------------------------------------------------------------------
       USE N2O_mod 
@@ -38,7 +36,6 @@ C=======================================================================
       REAL NO3(NL), SNO3(NL), SW(NL)
       
 !!!!! daycent variables  PG
-      
       REAL wfps(nl)
       REAL co2_correct(nl), co2PPM(nl)        !wfps_fc(nl), poros(nl), 
       REAL a_coeff, wfps_thres, fDno3, Rn2n2O, fRwfps
@@ -49,15 +46,10 @@ C=======================================================================
 !     real RWC
 
       TYPE (N2O_type) N2O_DATA
-!          Cumul Daily  Layer ppm        Layer kg
-      REAL CNOX, TNOXD, denitrifppm(NL), DENITRIF(NL)  !Denitrification
-      REAL CN2,  TN2D,                   n2flux(nl)    !N2
-!     Renamed variables as denitrification only, also N2Ofluxppm and N2Oflux in this case should now be N2Odenitppm and N2Odenit      
-!     REAL CN2O, TN2OD, n2ofluxppm(NL),  n2oflux(nl)   !N2O
-      REAL CN2Odenit, TN2OdenitD, n2odenitppm(NL),  n2odenit(nl)   !N2O from denitrification only
-
-!     Temp variables for Output.dat file:
-!      REAL TNITRIFY, NITRIF(NL), n2onitrif(NL)
+!          Cumul      Daily       Layer ppm        Layer kg
+      REAL CNOX,      TNOXD,      denitrifppm(NL), DENITRIF(NL)  !Denitrification
+      REAL CN2,       TN2D,                        n2flux(nl)    !N2
+      REAL CN2Odenit, TN2OdenitD, n2odenitppm(NL), n2odenit(nl)  !N2O from denitrification only
 
       TYPE (ControlType) CONTROL
       DYNAMIC = CONTROL % DYNAMIC
@@ -70,22 +62,15 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !     ------------------------------------------------------------------
-!       Today's values
-!       Seasonal cumulative vaules
-        CNOX   = 0.0    !denitrification
-!       CN2O for denitrification only 
-!       CN2O   = 0.0    ! N2O added        PG
-        CN2Odenit   = 0.0    ! N2O added        PG
-        CN2    = 0.0    ! N2
+!     Today's values
+!     Seasonal cumulative vaules
+      CNOX   = 0.0         !denitrification
+!     CN2O for denitrification only 
+      CN2Odenit   = 0.0    ! N2O added        PG
+      CN2    = 0.0         ! N2
 
       wfps = n2o_data % wfps
-!      wfps_fc = n2o_data % wfps_fc
-!       DO L = 1, NLAYR
-!         POROS(L)  = 1.0 - BD(L) / 2.65
-!         wfps_fc(L) = dul(L) / poros(L)
-!         wfps(L) = min (1.0, sw(L) / poros(L))
-!       ENDDO
-
+ 
 !     Function for diffusivity
       call DayCent_diffusivity(dD0_fc, DUL, BD, nlayr)
 
@@ -257,8 +242,6 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         CNOX       = CNOX       + DENITRIF(L)
         TNOXD      = TNOXD      + DENITRIF(L)
 !       need to differentiate N2O from denitrification        
-!       CN2O = CN2O + N2OFLUX(L)           ! PG added
-!       TN2OD = TN2OD + N2OFLUX(L)         ! PG added
         CN2Odenit  = CN2Odenit  + n2odenit(L)           ! PG added
         TN2OdenitD = TN2OdenitD + n2odenit(L)         ! PG added
 
@@ -274,11 +257,9 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
       ENDIF
 !-----------------------------------------------------------------------
       N2O_data % CN2      = CN2
-!     N2O_data % CN2O     = CN2O   
       N2O_data % CN2Odenit= CN2Odenit
       N2O_data % CNOX     = CNOX
       N2O_data % TN2D     = TN2D
-!     N2O_data % TN2OD    = TN2OD
       N2O_data % TN2OdenitD=TN2OdenitD
       N2O_data % TNOXD    = TNOXD
       N2O_data % DENITRIF = DENITRIF
