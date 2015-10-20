@@ -14,7 +14,7 @@ C  06/15/2014 CHP Written
         REAL TN2OdenitD,  CN2Odenit,   n2odenit(NL)  !N2O[N] from denitrification
         REAL TN2D,        CN2,         n2flux(NL)    !N2[N] from denitrification
 
-        REAL TNITRIFY,    CNITRIFY,    NITRIF(NL)    ![n] Nitrified 
+        REAL TNITRIFY,    CNITRIFY,    NITRIF(NL)    ![N] Nitrified 
         REAL TN2OnitrifD, CN2Onitrif,  n2onitrif(NL) !N2O[N] from nitrification
 
  	  REAL                           N2OFLUX(NL)   !N2Oflux = N2Odenit + N2Onitrif
