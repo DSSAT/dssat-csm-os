@@ -9,20 +9,20 @@ C  06/15/2014 CHP Written
 
 !     Data construct for control variables
       TYPE N2O_type
-!            Daily        Cumulative
-        REAL TN2D,        CN2,            !N2
-     &       TNOXD,       CNOX,           !NOx
-     &       TNITRIFY,    CNITRIFY,       !Nitrified
-     &       TN2OnitrifD, CN2Onitrif,     !N2O from nitrification
-     &       TN2OdenitD,  CN2Odenit,      !N2O from denitrification
-     &       N2O_emitted, CN2O_emitted,   !emitted N2O
-     &       N2_emitted,  CN2_emitted     !emitted N2
+!            Daily        Cumul        Layer         
+        REAL TNOXD,       CNOX,        DENITRIF(NL)  ![N] Denitrified
+        REAL TN2OdenitD,  CN2Odenit,   n2odenit(NL)  !N2O[N] from denitrification
+        REAL TN2D,        CN2,         n2flux(NL)    !N2[N] from denitrification
 
-!       N2Oflux = N2Odenit + N2Onitrif
-        REAL, DIMENSION(NL) :: DENITRIF, n2odenit, N2Onitrif,  
-     &     N2OFLUX, N2FLUX, NITRIF, WFPS
+        REAL TNITRIFY,    CNITRIFY,    NITRIF(NL)    ![n] Nitrified 
+        REAL TN2OnitrifD, CN2Onitrif,  n2onitrif(NL) !N2O[N] from nitrification
+
+ 	  REAL                           N2OFLUX(NL)   !N2Oflux = N2Odenit + N2Onitrif
+        REAL N2_emitted,  CN2_emitted                !N2[N] emitted
+        REAL N2O_emitted, CN2O_emitted               !N2O[N] emitted
+
+        REAL, DIMENSION(NL) :: WFPS 
       END TYPE N2O_type
-
 
       CONTAINS
 
@@ -50,19 +50,19 @@ C  09/18/2015 CHP Written, based on PG code.
 
       INTEGER DAS, DYNAMIC, L, NLAYR, YRDOY
 
-!          Cumul        Daily       Layer         
-!     REAL CNOX,        TNOXD,      DENITRIF(NL)  !Denitrification
-!     REAL CNITRIFY,    TNITRIFY,   NITRIF(NL)    !Nitrification 
-      REAL CN2,         TN2D,       n2flux(NL)    !N2
-      REAL CN2Odenit,   TN2OdenitD, n2odenit(NL)  !N2O from denitrification
-      REAL CN2Onitrif,  TN2OnitrifD,n2onitrif(NL) !N2O from nitrification
-      REAL CN2_emitted, N2_emitted                !N2 emitted
-      REAL CN2O_emitted,N2O_emitted               !N2O emitted
+      REAL N2flux(NL)                !N2
+      REAL N2Odenit(NL)              !N2O from denitrification
+      REAL N2Onitrif(NL)             !N2O from nitrification
+      real wfps(nl)                  ! PG   
 
-      real wfps(nl)         ! PG   
-      real n2o_soil(nl), n2o_diffused  ! PG
-      real n2_soil(nl), n2_diffused  ! PG
-      real N2Oflux(nl)
+!          Daily        Cumul        
+      REAL N2_emitted,  CN2_emitted  !N2 emitted
+      REAL N2O_emitted, CN2O_emitted !N2O emitted
+
+!LOCAL VARIABLES
+      real n2o_soil(nl), n2o_diffused ! PG
+      real n2_soil(nl),  n2_diffused  ! PG
+      real N2Oflux(nl)    
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -79,25 +79,9 @@ C  09/18/2015 CHP Written, based on PG code.
 
       NLAYR   = SOILPROP % NLAYR
 
-      TN2D     = N2O_data % TN2D       
-      CN2      = N2O_data % CN2      
-      TN2OdenitD= N2O_data % TN2OdenitD     
-      CN2Odenit = N2O_data % CN2Odenit        
-!     TNOXD    = N2O_data % TNOXD     
-!     CNOX     = N2O_data % CNOX      
-      TNITRIFY = N2O_data % TNITRIFY 
-!     CNITRIFY = N2O_data % CNITRIFY     
-      TN2OnitrifD= N2O_data % TN2OnitrifD
-      CN2Onitrif = N2O_data % CN2Onitrif
-      TN2OdenitD = N2O_data % TN2OdenitD
-      CN2Odenit  = N2O_data % CN2Odenit
-
-!     DENITRIF = N2O_data % DENITRIF   
-      n2odenit = N2O_data % n2odenit  
+      N2Odenit = N2O_data % N2Odenit  
       N2Onitrif= N2O_data % N2Onitrif  
-      N2OFLUX  = N2O_data % N2OFLUX
-      n2flux   = N2O_data % n2flux   
-      NITRIF   = N2O_data % NITRIF  
+      N2flux   = N2O_data % N2flux   
       WFPS     = N2O_data % WFPS  
 
 !***********************************************************************
@@ -130,9 +114,9 @@ C-----------------------------------------------------------------------
 
 ! N2O section     
       DO L = 1, NLAYR
-          n2oflux(l) = n2onitrif(l) + n2odenit(l)                
-          if (n2oflux(l).lt. 0.0) then
-              n2oflux(l) = 0.0
+          n2oflux(L) = n2onitrif(L) + n2odenit(L)                
+          if (n2oflux(L).lt. 0.0) then
+              n2oflux(L) = 0.0
           endif
 
 !          POROS(L)  = 1.0 - BD(L) / 2.65
@@ -159,7 +143,7 @@ C-----------------------------------------------------------------------
           endif
       ENDDO
       
-      n2_emitted = n2flux(1)+n2_soil(1)
+      n2_emitted = n2flux(1)+n2_soil(1)   !LAYER ONE
       n2_soil(1) = 0.0
       
       CN2O_emitted = CN2O_emitted + N2O_emitted
@@ -175,6 +159,8 @@ C-----------------------------------------------------------------------
       N2O_data % n2_emitted   = n2_emitted
       N2O_data % CN2O_emitted = CN2O_emitted
       N2O_data % CN2_emitted  = CN2_emitted
+      N2O_data % N2Oflux      = N2Oflux
+      N2O_data % N2flux       = N2flux
 
       RETURN
       END SUBROUTINE N2Oemit
@@ -204,7 +190,7 @@ C  06/15/2014 CHP Written
 
       CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
       CHARACTER*10, PARAMETER :: OUTSN2O = 'N2O.OUT'
-      CHARACTER*300 FRMT, FRMT2
+      CHARACTER*500 FRMT, FRMT2
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, I, L, REPNO
       INTEGER N_LYR, NOUTDN, RUN, YEAR, YRDOY, SPACES
@@ -212,8 +198,9 @@ C  06/15/2014 CHP Written
 !          Cumul      Daily     Layer         
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
       REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
-      REAL CN2,       TN2D,     n2flux(NL)    !N2
-!     REAL CN2O,      TN2OD,    n2oflux(NL)   !N2O total (nitrification + denitrification)
+      REAL TN2D,      CN2,      N2flux(NL)    !N2
+!     REAL CN2O,      TN2OD,    N2Oflux(NL)   !N2O total (nitrification + denitrification)
+      REAL                      N2Oflux(NL)   !N2O total (nitrification + denitrification)
 !     Added N2Odenit for N2O from denitrification only and daily and cumulative variables
       REAL CN2Odenit, TN2OdenitD, N2Odenit(NL)   !N2O from denitrification only 
 !     Daily total and cumulative totals for n2onitrif
@@ -244,7 +231,8 @@ C  06/15/2014 CHP Written
       TNOXD    = N2O_data % TNOXD     
       DENITRIF = N2O_data % DENITRIF   
       CN2      = N2O_data % CN2      
-      TN2D     = N2O_data % TN2D       
+      TN2D     = N2O_data % TN2D
+      N2Oflux  = N2O_data % N2Oflux       
       n2flux   = N2O_data % n2flux   
 
 !     added n2odenit and daily and cumulative variables      
@@ -302,22 +290,33 @@ C-----------------------------------------------------------------------
 
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
-          SPACES = 131
-          WRITE(FRMT,'(A,I3.3,A,A,I3.3,A,A,I3.3,A,A,I3.3,A)')
-     &    '("!",T',SPACES,
-     &    ',"Denitrification (g[N]/ha) by soil depth (cm):",',
-     &    'T',(SPACES+N_LYR*8),
-     &    ',"Nitrification (kg[N]/ha) by soil depth (cm):",',
-     &    'T',(SPACES+2*N_LYR*8),
-     &    ',"N2O flux (g[N]/ha) by soil depth (cm):",',
-     &    'T',(SPACES+3*N_LYR*8),
-     &    ',"N2 flux (g[N]/ha) by soil depth (cm):")'
+          WRITE(NOUTDN,'("!",14X,A,A,A)')
+     & "|---------------------- Cumulative --------------------------",
+     & "---|---------------------- Daily ----------------------------",
+     & "------|"
+
+          SPACES = 147
+          WRITE(FRMT,'(A,A,A,A,A,A,I3.3,A,A,I3.3,A,A,I3.3,A,A,I3.3,A)')
+
+     & '("!",14X,',
+     & '" N20emit  N2emit     CO2   Denit  Nitrif   ",',
+     & '"N2O-denit+nit      N2",',
+     & '" N20emit  N2emit     CO2   Denit  Nitrif   ",',
+     & '"N2O-denit+nit      N2",',
+     & 'T',SPACES,
+     & ',"Denitrification (g[N]/ha) by soil depth (cm):",',
+     & 'T',(SPACES+N_LYR*8),
+     & ',"Nitrification (kg[N]/ha) by soil depth (cm):",',
+     & 'T',(SPACES+2*N_LYR*8),
+     & ',"N2O flux (g[N]/ha) by soil depth (cm):",',
+     & 'T',(SPACES+3*N_LYR*8),
+     & ',"N2 flux (g[N]/ha) by soil depth (cm):")'
 
           WRITE(NOUTDN,TRIM(FRMT))
 
-          WRITE(NOUTDN,'("!",17X,A,A,T128,40A8)')
-     &  " g/ha    g/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha",
-     &  "    g/ha   kg/ha    g/ha    g/ha    g/ha    g/ha",
+          WRITE(NOUTDN,'("!",17X,A,A,T144,40A8)')
+     &"kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha   kg/ha  ",
+     &"  g/ha    g/ha    g/ha    g/ha    g/ha    g/ha    g/ha    g/ha",
      &        (SoilProp%LayerText(L),L=1,N_LYR),
      &        (SoilProp%LayerText(L),L=1,N_LYR),
      &        (SoilProp%LayerText(L),L=1,N_LYR),
@@ -325,8 +324,10 @@ C-----------------------------------------------------------------------
 
           WRITE(NOUTDN,"(A)",ADVANCE='NO') 
      & "@YEAR DOY   DAS" //
-     & "   N2OED    N2ED   N2OEC    N2EC   CO2TD   CO2TC    NDNC" //
-     & "    NITC   N2OFC   N2FLC    NDND   NITRD   N2OFD   N2FLD"
+     & "   N2OEC    N2EC   CO2TC    NDNC" // 
+     & "    NITC   N2ODC   N2ONC   N2FLC" // 
+     & "   N2OED    N2ED   CO2TD    NDND" // 
+     & "   NITRD   N2ODD   N2OND   N2FLD"
           IF (N_LYR < 10) THEN
             WRITE (NOUTDN,105)
      &        ('NDN',L,'D',L=1,N_LYR), 
@@ -340,15 +341,8 @@ C-----------------------------------------------------------------------
      &        ('NIT',L,'D',L=1,9),'   NIT10',
      &        ('N2O',L,'D',L=1,9),'   N2O10', 
      &        ('N2F',L,'D',L=1,9),'   N2F10'
-  110       FORMAT(4(9("   ",A,I1,A),A8),"  newCO2") !PG
+  110       FORMAT(4(9("   ",A,I1,A),A8))
           ENDIF
-
-!          CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
-!          WRITE (NOUTDN,TRIM(FRMT2)) YEAR, DOY, DAS, 
-!     &       CNOX, CNITRIFY, CN2O, CN2,
-!     &       TNOXD*1000., TNITRIFY, TN2OD*1000., TN2D*1000.,
-!     &       (DENITRIF(I)*1000.,I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
-!     &       (n2odenit(i)*1000., i=1, n_lyr), (N2flux(i)*1000.,i=1,n_lyr)
         ENDIF
       ENDIF
 
@@ -410,23 +404,21 @@ C-----------------------------------------------------------------------
       CN2O_emitted = N2O_data % CN2O_emitted 
       CN2_emitted  = N2O_data % CN2_emitted  
       
-       WRITE(FRMT2,'(A,A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
+       WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
      &   '(1X,I4,1X,I3.3,I6,',
-     &   '2F8.2,2F8.3,F8.2,I8,',
-     &   'F8.3,F8.1,2F8.3,',
-     &   'F8.2,F8.3,F8.2,F8.3,',
-     &   N_LYR,   'F8.3,', 
-     &   N_LYR,   'F8.3,',
-     &   2*N_LYR, 'F8.3,F8.3,F8.3,F8.3)'
+     &   '2F8.2,I8,F8.2,F8.1,3F8.3,',
+     &   '2F8.1,I8,F8.1,I8,3F8.2,',
+     &   4*N_LYR, 'F8.1)'
 
         IF (IDETN .EQ. 'Y') THEN
           WRITE (NOUTDN,TRIM(FRMT2)) YEAR, DOY, DAS, 
-     &      N2O_emitted*1000., N2_emitted*1000., 
-     &      CN2O_emitted, CN2_emitted, TOTCO2, NINT(CumTotCO2),
-     &      CNOX, CNITRIFY, CN2Odenit, CN2, !NDN20, NIT20, N2O20, N2F20,
-     &      TNOXD*1000., TNITRIFY, TN2OdenitD*1000., TN2D*1000.,
-     &      (DENITRIF(I)*1000.,I=1,N_LYR), (NITRIF(I),I=1,N_LYR),
-     &      (n2odenit(i)*1000., i=1, n_lyr), (N2FLUX(i)*1000.,i=1,n_lyr)
+     &      CN2O_emitted, CN2_emitted, NINT(CumTotCO2),
+     &      CNOX, CNITRIFY, CN2Odenit, CN2Onitrif, CN2, 
+     &      N2O_emitted*1000., N2_emitted*1000., NINT(TOTCO2*1000.), 
+     &      TNOXD*1000., NINT(TNITRIFY*1000.), TN2OdenitD*1000., 
+     &         TN2OnitrifD*1000., TN2D*1000.,
+     &      (DENITRIF(I)*1000., i=1,N_LYR), (NITRIF(I)*1000.,I=1,N_LYR),
+     &      (N2Oflux(i)*1000., i=1,n_lyr), (N2flux(i)*1000.,i=1,n_lyr)
         ENDIF
 
 !***********************************************************************

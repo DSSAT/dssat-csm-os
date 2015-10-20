@@ -94,17 +94,6 @@ C=======================================================================
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
       
-!!!!! daycent variables  PG
-! Cheryl, as n2oflux is total, and n2odenit is for denitrification    
-! chp - these don't seem to be used anywhere - comment out for now.  
-!      REAL n2oflux(nl)
-!      REAL TN2OD, CN2O
-!     REAL n2odenit(nl)
-!     REAL TN2Odenitd, CN2Odenit      
-
-      REAL newCO2(0:nl)
-      REAL pn2onitrif, n2onitrif(nl)
-
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
 !     Variables added for flooded conditions analysis:
@@ -123,7 +112,7 @@ C=======================================================================
       REAL TOTAML, TOTFLOODN
 
       TYPE (N2O_type)    N2O_DATA
-!          Cumul      Daily     Layer ppm      Layer kg
+!          Cumul,     Daily,    Layer ppm,     Layer kg
       REAL CNOX,      TNOXD,                   DENITRIF(NL) !Denitrification
       REAL CNITRIFY,  TNITRIFY, NITRIFppm(NL), NITRIF(NL)   !Nitrification 
       REAL CMINERN,   TMINERN                               !Mineralization
@@ -131,6 +120,11 @@ C=======================================================================
       REAL CNETMINRN                                        !Net mineralization
       REAL CNUPTAKE,  WTNUP                                 !N uptake
       REAL CLeach,    TLeachD                               !N leaching
+      REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
+
+!     Added for GHG model
+      REAL newCO2(0:nl)
+      REAL pn2onitrif
 
 !     Added for tile drainage:
       REAL TDFC
@@ -205,15 +199,12 @@ C=======================================================================
         CNITRIFY = 0.0  !nitrification
         CNUPTAKE = 0.0  !cumulative N uptake
         CNOX     = 0.0  !denitrification
-!       CN2O     = 0.0  ! N2O added        PG
-!       CN2Odenit= 0.0  ! change CN2O to CN2Odenit 25Sep2015 PG, not actually used? chp
         CLeach   = 0.0  !leaching
         WTNUP    = 0.0  !N uptake
+        CN2Onitrif=0.0  !N2O[N] from nitrification
 
         nitrif = 0.0
         denitrif = 0.0
-!       n2oflux = 0.0
-!       n2odenit = 0.0
         N2O_data % wfps = 0.0
 
         TFNITY = 0.0    !
@@ -268,8 +259,6 @@ C=======================================================================
      &    SNO3, SW,                                   !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
-!         Temp input for Output.dat file:
-!     &    NITRIFppm, TNITRIFY, n2onitrif)                !Temp
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
@@ -395,12 +384,11 @@ C=======================================================================
       TMINERN  = 0.0
       TIMMOBN  = 0.0
       TNITRIFY = 0.0
-!     TN2OD    = 0.0  ! PG
-!     TN2Odenitd = 0.0
       TNOXD    = 0.0  !denitrification
       TLeachD  = 0.0  !leaching
       NITRIF   = 0.0
-
+      TN2OnitrifD = 0.0  !N2O from nitrification
+      N2Onitrif = 0.0
  
       DO L = 1, NLAYR
 !       ----------------------------------------------------------------
@@ -597,13 +585,9 @@ C=======================================================================
         DLTSNH4(L) = DLTSNH4(L) - NITRIF(L)
         TNITRIFY   = TNITRIFY   + NITRIF(L)
       
-        !POROS(L)  = 1.0 - BD(L) / 2.65
-        !wfps(L) = min (1.0, sw(L)/poros(L))
-        !wfps_fc(L) = dul(L)/poros(L)
-        
-          pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
-          n2onitrif(L) = pN2Onitrif * NITRIF(L)    ! for N2O using a proportion of nitrification from original daycent PG
-          N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
+        pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
+        n2onitrif(L) = pN2Onitrif * NITRIF(L)    ! for N2O using a proportion of nitrification from original daycent PG
+        N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
 
       END DO   !End of soil layer loop.
 
@@ -621,8 +605,6 @@ C=======================================================================
      &    SNO3, SW,                                   !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
-!         Temp input for Output.dat file:
-!     &    NITRIFppm, TNITRIFY, n2onitrif)                !Temp
 
         CASE DEFAULT
           CALL Denit_Ceres (DYNAMIC, ISWNIT, 
@@ -655,8 +637,6 @@ C=======================================================================
      &  DLTSNO3, CLeach, TLeachD)                             !Output
 
       CALL PUT('NITR','TNOXD',TNOXD) 
-!     CALL PUT('NITR','TN2OD',TN2OD)
-!     CALL PUT('NITR','TLeachD',TLeachD)
 
 !***********************************************************************
 !***********************************************************************
@@ -716,10 +696,12 @@ C=======================================================================
       TNH4   = 0.0
       TNO3   = 0.0
       TUREA  = 0.0
+      TN2OnitrifD = 0.0
       DO L = 1, NLAYR
         TNH4  = TNH4  + SNH4(L)
         TNO3  = TNO3  + SNO3(L)
         TUREA = TUREA + UREA(L)
+        TN2OnitrifD = TN2OnitrifD + N2Onitrif(L)
         WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
         IF (L ==1) THEN
           TMINERN = MNR(0,N) + MNR(1,N)
@@ -737,11 +719,16 @@ C=======================================================================
       CIMMOBN  = CIMMOBN  + TIMMOBN 
       CNETMINRN= CMINERN  - CIMMOBN
       CNITRIFY = CNITRIFY + TNITRIFY
+      CN2Onitrif = CN2Onitrif + TN2OnitrifD
+
       CNUPTAKE = WTNUP * 10.
 
       N2O_data % CNITRIFY = CNITRIFY
       N2O_data % TNITRIFY = TNITRIFY
       N2O_data % NITRIF   = NITRIF
+      N2O_data % N2Onitrif  = N2Onitrif
+      N2O_data % TN2OnitrifD= TN2OnitrifD
+      N2O_data % CN2Onitrif = CN2Onitrif
 
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
