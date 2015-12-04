@@ -302,7 +302,7 @@ c                 DSSAT will select an unused one (hopefully) and return that.
 !c                 Set filename (comes from INP file, but this is the default):
 !                  FILENAME = STDPATH//'Genotype'//SLASH//'SCCAN045.CUL'
 !
-c                 Code copied from ETPHOT.FOR:
+c                 Code copied from ETPHOT.for:
 c                 ::::::::::::::::::::::::::::
 c                 Get the cultivar/eco filenames from the INP file:
 c                 :::::::::::::::::::::::::::::::::::::::
@@ -713,7 +713,7 @@ c         Erase from original string:
       END
 
 
-!CHP moved to READS.FOR as LOGICAL FUNCTION FIND_IN_FILE
+!CHP moved to READS.for as LOGICAL FUNCTION FIND_IN_FILE
 !      SUBROUTINE FIND_IN_FILE(NEEDLE, HAYSTACK)
 !          IMPLICIT NONE
 !c         File unit number of file in which to search
@@ -904,7 +904,7 @@ c                 Note: no specific file number is allocated to the species file
 c                 DSSAT will select an unused one (hopefully) and return that.
                   CALL GETLUN('SPEC', CFILE)
 
-c                 Code copied from ETPHOT.FOR:
+c                 Code copied from ETPHOT.for:
 c                 ::::::::::::::::::::::::::::
 c                 Get the species filename from the INP file:
 c                 :::::::::::::::::::::::::::::::::::::::

@@ -17,7 +17,7 @@
 !  10/12/2005 CHP/JIL Added optional temperature sensitivity parameter
 !                 to ecotype file (TSEN)
 !  07/13/2006 CHP Added P model
-!  06/21/2011 FSR created WH_PHENOL.FOR for APSIM NWheat (WHAPS) adaptation
+!  06/21/2011 FSR created WH_PHENOL.for for APSIM NWheat (WHAPS) adaptation
 !---------------------------------------------------------------------
 !  Called by : WH_APSIM 
 !  when DYNAMIC = RUNINIT, SEASINIT and INTEGRATE only

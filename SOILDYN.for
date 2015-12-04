@@ -2018,7 +2018,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !!  FILESX - Name of SOIL.AUX file
 !!  FILESS - Path plus FILESX string
 !!  LUNSL - File number used to open FILESX
-!!  PATHSL- path pointing to SOIL.AUX (passed in from CERES.FOR)
+!!  PATHSL- path pointing to SOIL.AUX (passed in from CERES.for)
 !!  PATHL - length of directory path of SOIL.AUX file
 !!  SLNO - 10 character string containing soil id name
 !!  LN - line number for soil depth when reading hard pan factor

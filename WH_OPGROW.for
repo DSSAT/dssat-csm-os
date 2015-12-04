@@ -6,13 +6,13 @@ C     This routine is used for maize, sorghum, millet and wheat (APSIM).
 C----------------------------------------------------------------------
 C  REVISION HISTORY
 C  01/01/1990     Written
-C  09/21/1998 CHP Split off from OPDAY.FOR file
+C  09/21/1998 CHP Split off from OPDAY.for file
 C  05/11/1999 GH  Incorporated in CROPGRO
 C  12/18/2001 WDB Revised for modular CERES
 C  08/20/2002 GH  Modified for Y2K
 C  07/08/2003 CHP Changed senescence output.
 C  05/31/2006 CHP Output DTT, growing degree days.
-C  06/27/2011 FSR created WH_OPGROW.FOR for APSIM NWheat (WHAPS) adaptation
+C  06/27/2011 FSR created WH_OPGROW.for for APSIM NWheat (WHAPS) adaptation
 C----------------------------------------------------------------------
 C  Called by: WH_APSIM
 C  Calls:     None

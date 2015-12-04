@@ -2,7 +2,7 @@
 C  SoilNiBal, Subroutine
 C 
 C  Purpose: Provides seasonal inorganic soil N balance.  
-C     Based on SoilNBal.FOR.
+C     Based on SoilNBal.for.
 C
 C  REVISION   HISTORY
 C  03/04/2005 CHP wrote based on SoilNBal

@@ -5,7 +5,7 @@ C  Generates output file for daily growth variables
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  01/01/1990 GH  Written
-C  09/21/1998 CHP Split off from OPDAY.FOR file
+C  09/21/1998 CHP Split off from OPDAY.for file
 C  05/11/1999 GH  Incorporated in CROPGRO
 C  06/19/2001 GH  Modified output format
 C  08/20/2002 GH  Modified for Y2K

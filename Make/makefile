@@ -1115,15 +1115,15 @@ $(ODw64)/%.o: $(SD)/%.for
 	@mkdir -p $(dir $@)
 	$(FCw64) $(INCLUDEw64) $(FCFLAGS) $< -o $@
 
-$(OD)/%.o: $(SD)/%.FOR
+$(OD)/%.o: $(SD)/%.for
 	@mkdir -p $(dir $@)
 	$(FC) $(INCLUDE) $(FCFLAGS) $< -o $@
 
-$(ODw32)/%.o: $(SD)/%.FOR
+$(ODw32)/%.o: $(SD)/%.for
 	@mkdir -p $(dir $@)
 	$(FCw32) $(INCLUDEw32) $(FCFLAGS) $< -o $@
 
-$(ODw64)/%.o: $(SD)/%.FOR
+$(ODw64)/%.o: $(SD)/%.for
 	@mkdir -p $(dir $@)
 	$(FCw64) $(INCLUDEw64) $(FCFLAGS) $< -o $@
 

@@ -1,5 +1,5 @@
 C=================================================================
-C  HMET.FOR contains:
+C  HMET.for contains:
 C     HMET  - Calculates hourly values of temperature, PAR, solar
 C             radiation, fraction diffuse radiation, and relative
 C             humidity.

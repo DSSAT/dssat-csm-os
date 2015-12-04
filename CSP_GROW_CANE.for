@@ -150,7 +150,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       CDEF     = 0.0
       CountStalk = 0
-      FRRT     = 0.0  ! Brought from CSP_DEMAND.FOR
+      FRRT     = 0.0  ! Brought from CSP_DEMAND.for
       LAIMX    = 0.0      
       TOPWT    = 0.0
       XHLAI    = 0.0
@@ -264,12 +264,12 @@ C=======================================================================
       IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
      &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
-! Open file to write results from CSP_Grow_Cane.FOR
+! Open file to write results from CSP_Grow_Cane.for
         CALL GETLUN('CSP_GRO',CGLUN)
         OPEN(UNIT = CGLUN, FILE = "CSP_GrowCane.OUT", STATUS ="UNKNOWN",
      &    ACTION = "WRITE", POSITION = "APPEND", IOSTAT = OpenStatus)
         WRITE(CGLUN,'("*GROWTH ASPECTS OUTPUT FILE", 
-     &       " - RESULTS FROM CSP_GROW_CANE.FOR")')
+     &       " - RESULTS FROM CSP_GROW_CANE.for")')
 
 !Write headers
         CALL HEADER(SEASINIT, CGLUN, RUN)
@@ -1248,7 +1248,7 @@ C-----------------------------------------------------------------------
 !
 C-----------------------------------------------------------------------
 !     Estimate fresh cane weight by stalk
-!       Using CaneGro (SC_CNGRO.FOR module) method for calculating 
+!       Using CaneGro (SC_CNGRO.for module) method for calculating 
 !       stalk wet mass:  "CNB&AS May2001 START taking a shot at cane 
 !       moisture content after Martines SASTA 2001"
 !     

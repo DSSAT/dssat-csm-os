@@ -6,11 +6,11 @@ C     This routine is used for maize, sorghum and millet.
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  01/01/1990     Written
-C  09/21/1998 CHP Split off from OPDAY.FOR file
+C  09/21/1998 CHP Split off from OPDAY.for file
 C  05/11/1999 GH  Incorporated in CROPGRO
 C  12/18/2001 WDB Revised for modular CERES
 C  08/20/2002 GH  Modified for Y2K
-C  06/27/2011 FSR created WH_OPNIT.FOR for APSIM NWheat adaptation
+C  06/27/2011 FSR created WH_OPNIT.for for APSIM NWheat adaptation
 C-----------------------------------------------------------------------
 C  Called by: WH_APSIM
 C  Calls:     None

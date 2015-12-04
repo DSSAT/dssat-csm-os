@@ -47,7 +47,7 @@ C  04/20/2004 US  Modified DLAG, removed IFDENIT
 !  01/14/2005 CHP/UPS Split NTRANS into separate organic and 
 !                  inorganic routines.
 !  02/25/2005 CHP changed HUMC to SSOMC to match Century variable name
-!  04/13/2005 CHP changed subroutine name to SoilNi.FOR (was SoilN_inorg)
+!  04/13/2005 CHP changed subroutine name to SoilNi.for (was SoilN_inorg)
 C-----------------------------------------------------------------------
 C  Called : SOIL
 C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,

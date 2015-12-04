@@ -8969,7 +8969,7 @@
 !  01/01/89 JWJ Modified for climate change using ETRATIO subroutine.
 !  12/05/93 NBP Made into subroutine and changed to TRATIO function.
 !  10/13/97 CHP Modified for modular format.
-!  11/25/97 CHP Put in file TRANS.FOR w/ TRATIO and BLRRES
+!  11/25/97 CHP Put in file TRANS.for w/ TRATIO and BLRRES
 !  09/01/99 GH  Incorporated into CROPGRO
 !  01/13/00 NBP Added DYNAMIC contruct to input KCAN
 !  04/09/01 LAH Modified for CROPGRO-SIM

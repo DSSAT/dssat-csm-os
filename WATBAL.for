@@ -39,12 +39,12 @@ C  06/12/2002 CHP/US  Added flooded field options
 !                 due to tillage
 C-----------------------------------------------------------------------
 C  Called by: SOIL module
-C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.FOR)
-C             UP_FLOW                                  (File WBSUBS.FOR)
-C             INFIL   (File INFIL.FOR)
-C             OPWBAL  (File OPWBAL.FOR)
-C             RNOFF   (File RNOFF.FOR)
-C             SATFLO  (File SATFLO.FOR)
+C  Calls:     SNOWFALL, IPWBAL, WBSUM, WTDEPT,        (File WBSUBS.for)
+C             UP_FLOW                                  (File WBSUBS.for)
+C             INFIL   (File INFIL.for)
+C             OPWBAL  (File OPWBAL.for)
+C             RNOFF   (File RNOFF.for)
+C             SATFLO  (File SATFLO.for)
 C=======================================================================
 
       SUBROUTINE WATBAL(CONTROL, ISWITCH, 

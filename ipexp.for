@@ -32,7 +32,7 @@ C  02/21/2006 GH  Moved logic for crop model selection to DSSATPRO.V45
 !  01/12/2007 CHP Rotation number used for sequence runs.
 !  02/05/2007 CHP Reverse location of MESEV and METMP in FILEX
 C  02/09/2007 GH  Allow for improved path selection for input files
-!  03/26/2007 CHP MESOL = 2 is default (see LYRSET2 in LMATCH.FOR)
+!  03/26/2007 CHP MESOL = 2 is default (see LYRSET2 in LMATCH.for)
 !  07/04/2007 CHP MESEV = 2 is default (Sulieman-Ritchie soil evap)
 !  07/05/2007 CHP Default simulation controls file added.
 !  09/18/2007 CHP Added codes for IXIM maize model 
