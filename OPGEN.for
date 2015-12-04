@@ -38,8 +38,8 @@ C=======================================================================
       USE ModuleDefs
       IMPLICIT NONE
 
-      INCLUDE 'COMSOI.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMSOI.blk'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER*  1 ANS, RNMODE
       CHARACTER*  2 CROP
