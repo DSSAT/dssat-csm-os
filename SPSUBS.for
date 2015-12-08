@@ -11,7 +11,7 @@ C-----------------------------------------------------------------------
 C  Called from:   SPAM
 C  Calls:         None
 C=======================================================================
-      SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+      SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -32,7 +32,7 @@ C=======================================================================
       INTEGER NAVWB, RUN, YEAR, YRDOY, L
       INTEGER REPNO, N_LYR
 
-      REAL EF, EM, EO, EP, ES, ET, EOS, EOP
+      REAL EF, EM, EO, EP, ES, ET, EOS, EOP, TRWU !JZW add TRWU
       REAL CEF, CEM, CEO, CEP, CES, CET
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
       REAL AVTMX, AVTMN, AVSRAD
@@ -119,14 +119,13 @@ C-----------------------------------------------------------------------
      &      '   EOAA   EOPA   EOSA',
      &      '   ETAA   EPAA   ESAA   EFAA   EMAA',
      &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
-!     &      '   SALB  SWALB  MSALB CMSALB',    
 
             IF (N_LYR < 10) THEN
-              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR)
-  121         FORMAT(9("    ",A2,I1,A1))
+              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
+  121         FORMAT(9("    ",A2,I1,A1), A8)
             ELSE
-              WRITE (LUN,122) ("ES",L,"D",L=1,9), "    ES10"
-  122         FORMAT(9("    ",A2,I1,A1),A8)
+              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+  122         FORMAT(9("    ",A2,I1,A1),A25)
             ENDIF
           ELSE
             WRITE (LUN,120)
@@ -217,7 +216,7 @@ C-----------------------------------------------------------------------
 !     &    ,4F7.2 ,10(F7.3))
           IF (ISWITCH % MESEV == 'S') THEN
             IF (SOILPROP % NLAYR < 11) THEN
-              WRITE(LUN,'(10F8.3)') ES_LYR(1:N_LYR)
+              WRITE(LUN,'(11F8.3)') ES_LYR(1:N_LYR) , TRWU
             ELSE
               ES10 = 0.0
               DO L = 10, SOILPROP % NLAYR

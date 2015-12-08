@@ -6,6 +6,8 @@
 *               at IRRI, Los Banos, Philippines.                     *                                                                                                                                                                                          
 * Information : Bouman BAM, Kropff MJ, Tuong TP, Wopereis, MCS, ten  *                                                                                                                                                                                          
 *               Berge HFM, van Laar, HH. ORYZA2000. IRRI, Los Banos. *                                                                                                                                                                                          
+*chp 4-22-2015 added COLDREP=21.; added NDSENS=0.5; 
+*    moved SHADET to section 2 based on newest file format from Tao Li
 **********************************************************************                                                                                                                                                                                          
                                                                                                                                                                                                                                                                 
 * 1. Phenological development parameters                                                                                                                                                                                                                        
@@ -24,14 +26,16 @@ SHCKD  = 0.4     ! Relation between seedling age and delay in phenological
 COLDMIN = 12.    ! Lower air temperature treshhold for growth (oC)                                                                                                                                                                                              
 COLDEAD = 3.     ! Consecutive number of days below COLDMIN that crop dies (-)                                                                                                                                                                                  
 CTSTER = 36.6    !Crticial temperature of spiklete sterility                                                                                                                                                                                                    
-SHADET   =     0.72                                                                 
+COLDREP = 21.    ! Critical temperature of cold caused spiklete sterility (oC)
                                                                                                                                                                                                                                                                 
 * 2. Leaf and stem growth parameters                                                                                                                                                                                                                            
 RGRLMX   =     0.0103     ! Maximum relative growth rate of leaf area (oCd-1)         
 RGRLMN   =     0.0036     ! Minimum relative growth rate of leaf area (oCd-1)         
 SHCKL  = 0.25    ! Relation between seedling age and delay in leaf area                                                                                                                                                                                         
 ! development (oCd oCd-1)                                                                                                                                                                                                                                       
-                                                                                                                                                                                                                                                                
+SHADET = 0.5     ! Crop shading temloerance, 0.5 to 1.0 telorence increase
+                 ! 0.0 to 0.5, sensitive to shading, will cause leaf death
+                 ! default is 0.5, i.e. not otlernace, not sensitive.
 * Switch to use SLA as table (give values below) or as fixed function                                                                                                                                                                                           
 *SWISLA = 'FUNCTION' ! Give function parameters  ASLA, BSLA, CSLA, DSLA, SLAMAX                                                                                                                                                                                 
 SWISLA = 'TABLE'   ! Give SLA as a function of DVS in the table SLATB                                                                                                                                                                                           
@@ -255,7 +259,9 @@ RFNST   = 0.0015  ! Residual N fraction of stems (kg N kg-1 stems)
 TCNTRF  = 10.     ! Time coefficient for N translocation to grains (d)                                                                                                                                                                                          
 NFLVI   = 0.5     ! Initial leaf N fraction (on area basis: g N m-2 leaf)                                                                                                                                                                                       
 FNLVI   = 0.025   ! Initial leaf N fraction (on weight basis: kg N kg-1 leaf)                                                                                                                                                                                   
-                                                                                                                                                                                                                                                                
+NDSENS   =     0.50     ! Nitrogen deficiency sensitivity, 0.5=fair as default,     
+! >0.5 tolerance, <0.5 sensitive, Value range 0.0 to 1.0                                                                                                                                                                                                        
+
 NMAXSO   =     0.017     ! Maximum N concentration in storage organs (kg N kg-1)     
 * Table of minimum N concentration in storage organs (kg N kg-1 DM; Y value)                                                                                                                                                                                    
 * as a function of the amount of N in the crop till flowering (kg N ha-1; X value):                                                                                                                                                                             
