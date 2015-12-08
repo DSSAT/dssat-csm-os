@@ -62,8 +62,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Minor = 6
         INTEGER :: Model = 1
         INTEGER :: Build = 3
-!        INTEGER :: Model = 0
-!        INTEGER :: Build = 41
         
       END TYPE VersionType
       TYPE (VersionType) Version

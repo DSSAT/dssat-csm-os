@@ -16,10 +16,9 @@ C                   as defined in ModuleDefs.for
 C  03/30/2006 CHP Added composition of senesced matter for SOM modules
 C  04/21/2007 GH  Externalized stem partitioning STPC=0.1
 C  04/21/2007 GH  Externalized root partitioning RTPC=0.25
-C  05/31/2007 GH  Added P-model (unfinished)
 C  08/26/2011 GH  Update early partitioning and decrease root distribution
-C  08/10/2015 GH  Check for negative root growth ISTAGE = 4
-
+C  05/31/2007 GH Added P-model (unfinished)
+C  12/08/2015 MA  Externalized SLA (in three phases), Temp effect on LAI (simpler look up table)
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C
@@ -40,14 +39,15 @@ C-----------------------------------------------------------------------
      & GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
      & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      & NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     & PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     & PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     & SLA1, SLA2, SLA3,
      & PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      & STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
      & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      & XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
-     & PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     & PRFTC,RGFIL,LAITC,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
      & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
      & KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
      & FILECC,
@@ -106,12 +106,15 @@ C-----------------------------------------------------------------------
       REAL        PLAO
       REAL        PLATO
       REAL        PLAY
+      REAL        SLA1, SLA2, SLA3
       REAL        PLTPOP      
       REAL        PRFTC(4)
       REAL        PTF         
       REAL        RANC        
       REAL        RCNP        
-      REAL        RGFIL(4)     
+      REAL        RGFIL(4)   
+      REAL        LAITC(4) 
+      REAL        RTEMF          
       REAL        ROOTN 
       REAL        ROWSPC
       REAL        RTWT
@@ -464,27 +467,38 @@ C-GH  CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES)*SLPF
          TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
       END DO
 
-
-      IF (TMIN .LT. 14.0 .OR. TMAX .GT. 32.0) THEN
-         IF (TMAX .LT. TBASE) THEN
-            TEMF = 0.0
-         ENDIF
-         IF (TEMF .NE. 0.0) THEN
-            TEMF = 0.0
-            DO I = 1, 8
+! changes Myriam MA 8dec2015
+      TEMF  = 0.0
+      DO I = 1, 8
                TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
-               IF (TTMP .GT. 14.0 .AND. TTMP .LE. 32.0) THEN
-                   TEMF = TEMF + 1.0/8.0
-               ENDIF
-               IF (TTMP .GE.  8.0 .AND. TTMP .LT. 14.0) THEN
-                   TEMF = TEMF + 0.021*(TTMP-8.0)
-               ENDIF
-               IF (TTMP .GT. 32.0 .AND. TTMP .LT. 42.0) THEN
-                   TEMF = TEMF + 0.0125*(42.0-TTMP)
-               ENDIF
-            END DO
-         ENDIF
-      ENDIF
+           RTEMF = CURV('LIN', LAITC(1), LAITC(2), LAITC(3), 
+     &     LAITC(4),TTMP)
+           RTEMF = AMAX1(RTEMF, 0.0)
+           RTEMF = AMIN1(RTEMF, 1.0)
+           TEMF= TEMF + RTEMF/8.
+      END DO
+           
+
+!      IF (TMIN .LT. 14.0 .OR. TMAX .GT. 32.0) THEN
+!         IF (TMAX .LT. TBASE) THEN
+!            TEMF = 0.0
+!         ENDIF
+!         IF (TEMF .NE. 0.0) THEN
+!            TEMF = 0.0
+!            DO I = 1, 8
+!               TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
+!               IF (TTMP .GT. 14.0 .AND. TTMP .LE. 32.0) THEN
+!                   TEMF = TEMF + 1.0/8.0
+!               ENDIF
+!               IF (TTMP .GE.  8.0 .AND. TTMP .LT. 14.0) THEN
+!                   TEMF = TEMF + 0.021*(TTMP-8.0)
+!               ENDIF
+!               IF (TTMP .GT. 32.0 .AND. TTMP .LT. 42.0) THEN
+!                   TEMF = TEMF + 0.0125*(42.0-TTMP)
+!               ENDIF
+!            END DO
+!         ENDIF
+!      ENDIF
 
 
       !--------------------------------------------------------------
@@ -564,7 +578,8 @@ C-GH     PLAG = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,AGEFAC)
             PLAG  = PLAG + PLAGT
          END IF
 
-         GROLF  = PLAG  * 0.0038
+C-MA         GROLF  = PLAG  * 0.0038
+         GROLF  = PLAG  * (1/SLA1)! MA  11dec2014: externalize this specific leaf weight as 1/SLA per growth stage ( in SPE file)
          GRORT  = CARBO - GROLF          
 
 C-GH      IF (GRORT .LE. 0.25*CARBO) THEN
@@ -576,7 +591,8 @@ C-GH         GRORT  = CARBO*0.25
                 SEEDRV = 0.0
 C-GH            GROLF  = CARBO*0.7500
                 GROLF  = CARBO * (1.0 - RTPC)
-                PLAG   = GROLF/0.0038
+C-MA                PLAG   = GROLF/0.0038
+               PLAG   = GROLF/(1/SLA1) !MA
              ENDIF
          ENDIF
 
@@ -601,7 +617,8 @@ C      Plant leaf area
 
          CARBO  = CARBO + SEEDRV
          SEEDRV = 0.0
-         GROLF  = PLAG*0.0053
+C-MA           GROLF  = PLAG*0.0053
+          GROLF  = PLAG  * (1/SLA2) ! MA CHANGE TO HAVE A SLA = 333.3cm2.g-1         
 C        GROSTM = GROLF*0.1
          GROSTM = GROLF * STPC
 C-GH   Defined STPC and moved to Species file
@@ -626,7 +643,8 @@ C-GH         END IF
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
             ENDIF   
-            PLAG   = GROLF/0.0053
+C-MA            PLAG   = GROLF/0.0053
+            PLAG   = GROLF/0.0053 !MA
          ELSE IF (GRORT .GE. CARBO * RTPC) THEN
             GRORT  = CARBO  * RTPC
             IF ((GROLF+GROSTM) .GT. 0.0) THEN
@@ -637,7 +655,8 @@ C-GH         END IF
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
             ENDIF   
-            PLAG   = GROLF/0.0053                       
+C-MA            PLAG   = GROLF/0.0053
+            PLAG   = GROLF/ (1/SLA2)!MA                                
          ENDIF
 
          PLA    = PLA   + PLAG
@@ -672,7 +691,8 @@ C            Allow PLAG to decline if tiller dies I.E. PLAGT < 0
 C
          ENDIF
 
-         GROLF = PLAG*0.0078
+C-MA         GROLF = PLAG*0.0078
+          GROLF = PLAG*(1/SLA3) !sla = 250cm2.g-1
          FLG   = 5.0*PHINT
 
 C-GH     IF (SUMDTT .LE. P3-FLG) THEN
@@ -700,7 +720,8 @@ C-GH        GRF    = CARBO  * 0.75/(GROLF+GROSTM)
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
             ENDIF 
-            PLAG   = GROLF  / 0.0078
+C-MA            PLAG   = GROLF  / 0.0078
+           PLAG   = GROLF  / (1/SLA3)
             SUMRTR = SUMRTR + GRF
             TCON   = SUMRTR / TDUR
          ELSE IF (GRORT .GE. CARBO * RTPC) THEN
@@ -739,39 +760,28 @@ C         GROSTM coeff changed from 0.07 to 0.10
 C         TSIZE is relative size of tillers compared to main culm.
 C         TSIZE is a function of PLTPOP
 C
-C-GH     GRORT  = CARBO - GROSTM
-C-GH Check for negative "new" root growth
-C-GH
-         IF (CARBO .GT. GROSTM) THEN
-             GRORT  = CARBO - GROSTM
-         ELSE
-             GRORT = 0.0
-             GROSTM = CARBO
-         ENDIF
-                  
+         GRORT  = CARBO - GROSTM
          GROLF  = 0.0
 
 c-MA         IF (GRORT .LT. 0.08*CARBO) THEN
 c-MA        GRORT =CARBO *0.08
 c-MA         GROSTM = CARBO*0.92
 c-MA         ENDIF
-
    
 c MA 4dec2014 
 c change to fix the root biomass partitioning during stage 4 
 c verification done in the standard dssat shell x file + the x file for sorghum in west Africa
 c generally this change improved the simulation in term of grain yield and above ground biomass
    
-
           IF (GRORT .GT. 0.08*CARBO) THEN
             GRORT =CARBO *0.08
             GROSTM = CARBO*0.92
          ENDIF
-         
+
 C-GH     GGG    = (CUMDTT-P1-100.0-P3)/(P4+P5)
 C-GH     GGG    = (CUMDTT-P1-100.0-(PANTH-P3))/(PFLOWR + P5)
          GGG    = CUMP4/(PFLOWR + P5)
-	   SLAN   = PLA*(0.07+GCS*GGG)
+	       SLAN   = PLA*(0.07+GCS*GGG)
          STMWT  = STMWT + GROSTM
       ENDIF
 C--------------------------------------------------------------------
@@ -1099,12 +1109,12 @@ C           the solar radiation - MJ/square metre
 C  TT     :
 C  PCARB  : Daily amount of carbon fixed - g
 C  PRFT   : Photosynthetic reduction factor for low and high temperatures
-C  TTMP   :
-C  PC     :
+C  TTMP   : c-MA  11dec2014 i think create to reduce leaf growth due to temp effect, but not yet implemented
+C  PC     : c-MA 11dec2014 factor used to reduce leaf growth under 5 fully expended leaves.
 C  TI     : Fraction of a phyllochron interval which occurred as a fraction
 C           of today's daily thermal time
-C  XTN    :
-C  A      : Zero to unity factor for relative nitrification rate (unitless)
+C  XTN    :  C-MA 11dec2014 Exponent factor from equation 2 p35 in ceres sorghum documentation, depend on PLAY( corresponding to K in eq.2, which dependent on G1,)
+C  A      : Zero to unity factor for relative nitrification rate (unitless) c-ma it's actually the A from eq.2 which represents max leaf area ar infinite time
 C  RTR    :
 C  TC1    :
 C  TC2    :

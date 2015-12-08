@@ -29,6 +29,7 @@ C  12/12/2010 GH  Moved STPC and RTPC to Ecotype file
 C  05/19/2011 GH  Reorganized cultivar coefficients
 C  08/26/2011 GH  Add new tillering coefficient in Ecotype file
 C  05/31/2007 GH Added P-model (unfinished)
+C  12/08/2015 MA  Externalized SLA (in three phases),Temp effect on LAI (simpler look up table)
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -186,7 +187,10 @@ C-GH  REAL            DJTI
       REAL            SI1(6)     
       REAL            SI3(6)   
       REAL            SKERWT    
-      REAL            SLA      
+      REAL            SLA
+      REAL            SLA1
+      REAL            SLA2
+      REAL            SLA3
       REAL            SNOW          
       REAL            SRAD     
       REAL            STOVER    
@@ -347,6 +351,7 @@ C-----------------------------------------------------------------------
       REAL            SLPF
       REAL            PRFTC(4)
       REAL            RGFIL(4)
+      REAL            LAITC(4)
       CHARACTER*6     VARNO
       CHARACTER*16    VRNAME
 
@@ -549,6 +554,12 @@ C         ***********************************************************
              READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) RGFIL(1),
      &            RGFIL(2),RGFIL(3),RGFIL(4)
              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+             
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR) LAITC(1),
+     &            LAITC(2),LAITC(3),LAITC(4)
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+             
           ENDIF
           REWIND(LUNCRP)
 
@@ -650,6 +661,28 @@ C         ***********************************************************
              READ(C80,'(9X,F6.3)',IOSTAT=ERR) RWUEP1
              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
           ENDIF
+          
+C-MA      !----------------------------------------------------------
+          !        Find and Read Leaf parameters
+          !----------------------------------------------------------
+          SECTION = '*LEAF '
+          CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+          IF (FOUND .EQ. 0) THEN
+             CALL ERROR(SECTION, 42, FILECC, LNUM)
+          ELSE
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA1
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA2
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA3
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)    
+          ENDIF
+
 
 C-GH      !----------------------------------------------------------
 C         !        Find and Read Partitioning parameters
@@ -754,14 +787,15 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2, SLA3,
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
-     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     &      PRFTC,RGFIL,LAITC,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
      &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
      &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
      &      FILECC,
@@ -1156,28 +1190,30 @@ C--------------------------------------------------------------------
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
      &      SeedFrac, VegFrac)         
           
-             CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
-     &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
-     &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
-     &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
-     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
-     &      FILECC,
-     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
-     &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
-     &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
-     &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
-     &      STMWTO, WTLF, FSLFP)
+   
+      CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
+     & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
+     & CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
+     & GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
+     & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
+     & NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
+     & PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     & SLA1, SLA2, SLA3,
+     & PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
+     & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
+     & STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
+     & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
+     & XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
+     & PRFTC,RGFIL,LAITC,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
+     & KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     & FILECC,
+     & DS, ISWPHO, SPi_AVAIL, PUptake,  
+     & RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
+     & PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
+     & PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
+     & STMWTO, WTLF, FSLFP)
 
          !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
@@ -1291,14 +1327,15 @@ C----------------------------------------------------------------------
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2, SLA3,           
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
-     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     &      PRFTC,RGFIL, LAITC,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
      &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
      &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
      &      FILECC,
@@ -1460,14 +1497,15 @@ c         WTNRT = ROOTN * PLTPOP
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2, SLA3,           
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
-     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     &      PRFTC,RGFIL,LAITC,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
      &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
      &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
      &      FILECC,
@@ -1481,7 +1519,7 @@ c         WTNRT = ROOTN * PLTPOP
          !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
          CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE,NLAYR,NSTRES, 
+     &    CANHT, CANWH, DTT,  HI, HIP, KSTRES, MDATE,NLAYR,NSTRES, 
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
      &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
@@ -1527,14 +1565,15 @@ C----------------------------------------------------------------------
      &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2, SLA3,           
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
-     &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
+     &      PRFTC,RGFIL,LAITC,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
      &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
      &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
      &      FILECC,
