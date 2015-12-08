@@ -139,6 +139,9 @@ Batch file not found.  Please check file name or create file.
 CSM      29
 File not found.  Please check file name or create file.
 
+CSM      30
+Output.CDE not found. Program will stop.
+
 CSM      33
 End of file encountered.
 
@@ -629,10 +632,13 @@ MODELN    7
 Crop code incompatible with model specified.
 
 PATH      1
-Code not found in profile file DSSATPRO.FLE.  Please correct file.
+Code not found in configuration file. Please correct file.
 
 PATH      2
-DSSATPRO file not found.
+Configuration file not found.
+
+PATH      3
+Path error in configuration file. Please correct file.
 
 PPLANT   10
 Review P parameters in species file.

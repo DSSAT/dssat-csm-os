@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
+C  COPYRIGHT 1998-2015 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Washington State University
@@ -48,7 +48,8 @@ C  10/08/2004 CHP Removed some unused variables.
 C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 !  10/31/2007 CHP Added simple K model.
 C  08/09/2012 GH  Added CSCAS model
-!  04/16/2013 CHP/KD Added SALUS model
+!  04/16/2013 CHP/KAD Added SALUS model
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -60,7 +61,7 @@ C=======================================================================
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
-     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+     &    STGDOY, FracRts, UH2O, UNH4, UNO3, XHLAI, XLAI) !Output
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:
@@ -80,6 +81,7 @@ C-----------------------------------------------------------------------
 !         'TNARO' - Aroids - Tanier, Taro
 !         'ORYZA' - IRRI Rice model
 !         'SALUS' - SALUS generic crop model
+!         'WHAPS' - APSIM N-wheat
 
 C-----------------------------------------------------------------------
 
@@ -114,7 +116,7 @@ C-----------------------------------------------------------------------
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM, RWU
       REAL, DIMENSION(NL) :: ST, SW, UNO3, UNH4, UH2O
 
-      LOGICAL FixCanht    !, CRGRO
+      LOGICAL FixCanht, BUNDED    !, CRGRO
 c-----------------------------------------------------------------------
 C         Variables needed to run ceres maize.....W.D.B. 12-20-01
       CHARACTER*2 CROP 
@@ -158,7 +160,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       RUN     = CONTROL % RUN
 
       MEEVP  = ISWITCH % MEEVP
-
+      BUNDED = FLOODWAT % BUNDED
       CO2    = WEATHER % CO2   
       DAYL   = WEATHER % DAYL  
       PAR    = WEATHER % PAR  
@@ -355,6 +357,24 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         ENDIF
 
 !     -------------------------------------------------
+!     APSIM N-wheat WHAPS
+      CASE('WHAPS')
+        CALL WH_APSIM (CONTROL, ISWITCH,              !Input
+     &     EO, EOP, ES, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     SPi_AVAIL, SNOW,                               !Input
+     &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
+     &     CANHT, HARVRES, KCAN, KEP, KUptake, MDATE,     !Output
+     &     NSTRES, PORMIN, PUptake, RLV,                  !Output
+     &     RWUMX, SENESCE, STGDOY, FracRts,               !Output
+     &     UNH4, UNO3, XLAI, XHLAI, UH2O)               !Output
+
+        IF (DYNAMIC < RATE) THEN
+!          KTRANS = KCAN + 0.15        !Or use KEP here??
+          KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
+          KSEVAP = KEP        
+        ENDIF
+
+!     -------------------------------------------------
 !     Millet 
       CASE('MLCER')
         CALL ML_CERES (CONTROL, ISWITCH, 
@@ -438,10 +458,9 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !	Generic Salus crop model
 !	KD 09/14/2009
 	CASE('SALUS') 
-	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,     !Input
-     &        YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,	!Input
-     &        KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	!Output   
-
+	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,         !Input
+     &  HARVFRAC, YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,  !Input
+     &  KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	            !Output
 	  IF (DYNAMIC .EQ. INTEGR) THEN
           XLAI = XHLAI
         ENDIF
@@ -565,7 +584,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! Variable listing for Alt_Plant - updated 08/18/2003
 ! --------------------------------------------------------------------------
 ! CANHT     Canopy height (m)
-! CO2       Atmospheric carbon dioxide concentration (µmol[CO2] / mol[air])
+! CO2       Atmospheric carbon dioxide concentration (ï¿½mol[CO2] / mol[air])
 ! CONTROL   Composite variable containing variables related to control 
 !             and/or timing of simulation.  The structure of the variable 
 !             (ControlType) is defined in ModuleDefs.for. 
@@ -604,9 +623,9 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! MESSAGE   Text array containing information to be written to WARNING.OUT 
 !             file. 
 ! MODEL     Name of CROPGRO executable file 
-! NH4(L)    Ammonium N in soil layer L (µg[N] / g[soil])
+! NH4(L)    Ammonium N in soil layer L (ï¿½g[N] / g[soil])
 ! NL        Maximum number of soil layers = 20 
-! NO3(L)    Nitrate in soil layer L (µg[N] / g[soil])
+! NO3(L)    Nitrate in soil layer L (ï¿½g[N] / g[soil])
 ! NSTRES    Nitrogen stress factor (1=no stress, 0=max stress) 
 ! NVALP0    Set to 100,000 in PHENOLOG, used for comparison of times of 
 !             plant stages (d)
@@ -629,12 +648,12 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !             density, drained upper limit, lower limit, pH, saturation 
 !             water content.  Structure defined in ModuleDefs. 
 ! SRAD      Solar radiation (MJ/m2-d)
-! ST(L)     Soil temperature in soil layer L (°C)
+! ST(L)     Soil temperature in soil layer L (ï¿½C)
 ! STGDOY(I) Day when plant stage I occurred (YYYYDDD)
 ! SW(L)     Volumetric soil water content in layer L
 !            (cm3 [water] / cm3 [soil])
-! TMAX      Maximum daily temperature (°C)
-! TMIN      Minimum daily temperature (°C)
+! TMAX      Maximum daily temperature (ï¿½C)
+! TMIN      Minimum daily temperature (ï¿½C)
 ! TRWUP     Potential daily root water uptake over soil profile (cm/d)
 ! TWILEN    Daylength from twilight to twilight (h)
 ! UNH4(L)   Rate of root uptake of NH4, computed in NUPTAK

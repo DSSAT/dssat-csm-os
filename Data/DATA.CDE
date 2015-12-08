@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.6; 07/01/2014
+! DSSAT v4.6; 07/01/2015
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -304,6 +304,11 @@ WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
 TFDD   Temp.factor,dev Temperature factor for development (0-1)                 .
 RSFPD  Reserves factor Reserves factor for photosynthesis (0-1)                 .
+!SALUS-Simple-specific daily variables
+RELTT  Rel.Therm Time  Relative thermal time 
+RUE    Rad. Use Eff.   Radiation Use Efficiency (g/MJ)
+RELLAI Rel. LAI        Relative Leaf Area Index
+DTTC   Cum deg-days    Cumulative growing degree days (°C-d) 
 
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
