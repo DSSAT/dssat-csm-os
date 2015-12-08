@@ -1,4 +1,4 @@
-\!=======================================================================
+!=======================================================================
 C  MODULE ModuleDefs
 C  11/01/2001 CHP Written
 C  06/15/2002 CHP Added flood-related data constructs 
@@ -40,7 +40,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
-!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
+      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
 !     CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
 
 !=======================================================================
@@ -399,7 +399,27 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
-      call op_sys(slash,dssatpro,stdpath)
+!     call op_sys(slash,dssatpro,stdpath) commented out on 30Oct15.
+!    Following code down to END SUBROUTNE statement came from
+!    Cheryl Porter on 30Oct15.
+      SELECT CASE (OPSYS)
+      CASE ('WINDO','DOS  ')
+!       DOS, Windows
+        SLASH = '\' 
+        DSSATPRO = 'DSSATPRO.V46'
+!       Note: Use DSSAT45 directory for now. 
+C-GH    Set to DSSAT46
+        STDPATH = 'C:\DSSAT46\' 
+D       STDPATH = 'D:\DSSAT46\' 
+
+      CASE ('LINUX','UNIX ')
+!       Linux, Unix
+        SLASH = '/' 
+        DSSATPRO = 'DSSATPRO.L46'
+        STDPATH = '../DSSAT46/'
+      END SELECT
+ 
+
 
       END SUBROUTINE SETOP
 
