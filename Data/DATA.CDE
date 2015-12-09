@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.6; 07/01/2014
+! DSSAT v4.6; 07/01/2015
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -464,7 +464,6 @@ TS6D   S-TMP layer 6   Soil temperature, soil layer 6 (°C)                      
 TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (°C)                      .
 TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (°C)                      .
 TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (°C)                      .
-
 
 *CARBON
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS

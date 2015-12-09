@@ -46,7 +46,7 @@
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
-     &      EARS, GPP, MDATE,                                 !I/O
+     &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -158,6 +158,7 @@
       REAL        CumLeafSenes    !today's cumul. leaf senescence
       REAL        CumLeafSenesY   !yesterday's cumul. leaf senescence
       REAL        CumLfNSenes     !cumul. N loss in senesced leaves
+      REAL HARVFRAC(2)
       INTEGER     LINC  
       REAL        LFWT        
       REAL        LFWTE
@@ -2031,7 +2032,7 @@
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
 
         STOVER  = BIOMAS*10.0-YIELD
-        YIELDB  = YIELD/62.8         
+        YIELDB  = YIELD/62.8  
             ! Yield in bu/ac at 0% moisture content
         XANC   = TANC*100.0
 
@@ -2044,7 +2045,11 @@
             GNUP = GRAINN*EARS*10.0
           ENDIF
         ENDIF
-
+        
+        IF (HARVFRAC(2) .LE. 0.0) THEN
+              HARVFRAC(2) = 1.0
+        ENDIF
+        
         CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
