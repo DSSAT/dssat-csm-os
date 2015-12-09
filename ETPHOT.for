@@ -83,7 +83,7 @@ C-----------------------------------------------------------------------
      &  TSHR(NL), TSRF(3),TSRFN(3),TSURF(3,1),HOLDWH,WINDHR(TS),
      &  XLAI, TSHRn(NL),
      &  XLMAXT(6),XSW(NL,3),YLMAXT(6),YSCOND(NL,3),YSHCAP(NL,3),TMIN
-      REAL SAT(NL),TGRO(TS),TGROAV,TGRODY
+      REAL SAT(NL),TGRO(TS),TGROAV,TGRODY,TAV,TAMP
       REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR
       PARAMETER (TINCR=24.0/TS)
       REAL PHTHRS10, PLTPOP
@@ -252,7 +252,7 @@ C           previous line added by Bruce Kimall on 9MAR15
                TSRFN(I) = TA
             ENDDO
             SRFTEMP = TSRFN(3)    !LPM 04DEC14 to include the surface temperature as output
-            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)  !LPM
+            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST,TAV,TAMP)  !LPM
           
           CALL ROOTWU(SEASINIT,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
@@ -678,7 +678,7 @@ C           previous line added by Bruce Kimall on 9MAR15
       ENDIF
       
         IF(MEEVP .EQ. "Z") THEN
-            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
             ENDIF
 !      BAK 8Jun15 Added the IF statement for call to OPSTEMP
 
