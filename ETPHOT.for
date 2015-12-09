@@ -99,8 +99,6 @@ C-----------------------------------------------------------------------
      &     GMT, LHT, LHEATT(3), RSSHT, RSSLT, RSSST, SHT, SHEATT(3),
      &     RNETN(3),RNETT(3)
 C         previous SIX output lines added by Bruce Kimball on 2DEC14
-      Real TGROnn,TGROnit,TAnn,TAnit
-C           previous line added by Bruce Kimball on 9MAR15
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
       REAL PSTRES1  !3/22/2011
