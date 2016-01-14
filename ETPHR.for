@@ -30,7 +30,9 @@ C=======================================================================
      &  TSURF,                                            !Output
 !     Added by BAK DEC2014
      &  CONDSH, CONDSL, RA, RB, RSURF, RNET,              !Output
-     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)        !Output
+     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
+!     Added by BAK on 10DEC15
+     &                RBSH, RBSL, RBSS)                   !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -57,7 +59,8 @@ C=======================================================================
 
 !     Added by BAK
       REAL RB(3),RSURF(3),RNET(3,1),
-     &  G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1)
+     &  G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1),
+     &  RBSH, RBSL, RBSS
 
       PARAMETER (ERRBND=0.01)
 
@@ -113,9 +116,11 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        WINDHR,                                     !Input
      &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
      &        RB(3), RSURF, RNET,                         !Output
-     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)  !Output
+     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
+     &        RBSL, RBSL, RBSS)                           !Output
+C          added by BAK on 10DEC2015           
 
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
@@ -153,9 +158,11 @@ C            CONDSH = CONDSH * (THR-RWUH)/THR
      &          WINDHR,                                   !Input
      &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,   !Output
      &          RB, RSURF, RNET,                          !Output
-     &          G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)!Output
+     &          G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,!Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
+     &   RBSH, RBSL, RBSS)                               !Output
+C       preveious line added by BAK on 10DEC2015
 
               TSUM = TSUM + TCAN
               IF (ITER .GT. 5) THEN
@@ -217,9 +224,11 @@ C     Night hours or bare soil.
      &        WINDHR,                                     !Input
      &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
      &        RB, RSURF, RNET,                            !Output
-     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)  !Output
+     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+     &        RBSL, RBSL, RBSS)                           !Output
+C             added by BAK on 10DEC2015
 
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
@@ -605,9 +614,11 @@ C=======================================================================
      &  WINDHR,                                           !Input
      &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,           !Output
      &  RB, RSURF, RNET,                                  !Output
-     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)        !Output
+     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
+     &    RBSH, RBSL, RBSS)                               !Output
+C       added by BAK on 10DEC15
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -626,8 +637,9 @@ C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
      &  SHAIRD,TK,MWATER,RGAS,MAIR,LAISHV,LAISLV,RADBK(3),
      &  USTAR,XLAI,ZERO
 
-      REAL RB(3), RSURF(3),RSSH,RSSL,RSSS
+      REAL RB(3), RSURF(3),RSSH,RSSL,RSSS,RBSH,RBSL,RBSS
 C         RB, RSURF RSSH RSSL RSSS added DEC2014 by Bruce Kimball
+C         RBSH,RBSL,RBSS added by BAK on 10DEC15
 
       PARAMETER (RGAS=8.314,MWATER=0.01802,MAIR=0.02897,PATM=101300.0,
      &  SHAIRD=1005.0, ZERO=1.0E-6)
@@ -665,17 +677,17 @@ C     Create vpd and resistance matrices.
      &  RA, RL, RS, USTAR,                                !Output
      &  RB,RSURF)
 C          RB and RSURF Added by BAK on 1DEC2014
-        RSSL = RB(1)
-        RSSH = RB(2)
-        RSSS = RB(3)
-        IF(RSSL .GT. 20000.) THEN
-            RSSL = 20000.
+        RBSL = RB(1)
+        RBSH = RB(2)
+        RBSS = RB(3)
+        IF(RBSL .GT. 20000.) THEN
+            RBSL = 20000.
             ENDIF
-        IF(RSSH .GT. 20000.) THEN
-            RSSH = 20000.
+        IF(RBSH .GT. 20000.) THEN
+            RBSH = 20000.
             ENDIF
-        IF(RSSS .GT. 20000.) THEN
-            RSSS = 20000.
+        IF(RBSS .GT. 20000.) THEN
+            RBSS = 20000.
             ENDIF
 C       Obtain the resistances of sunlit, shaded leaves and
 C         soil surface. Added by BAK on 18MAR15
@@ -780,10 +792,12 @@ C     reduced to constant 0.0117 using the average RNA from Jagtap (1976).
 C     If RNET is included again, may need a RNMIN too.
 
       IF (CEN .LE. CEC) THEN
-        RSSS = 100.0
+C        RSSS = 100.0 commented out by Bruce Kimball on 10DEC15
+          RSSS = 10000
       ELSE
 C       RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.37)-1.0)
-        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0)
+C        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0) commented out by Bruce Kimball on 10DEC15
+          RSSS = 10000
       ENDIF
       RSURF(3) = MIN(RSSS,RMAX)
 
