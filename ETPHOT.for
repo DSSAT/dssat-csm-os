@@ -97,8 +97,11 @@ C-----------------------------------------------------------------------
      &    G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1),
      &     GN, LHN, LHEATN(3), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3),
      &     GMT, LHT, LHEATT(3), RSSHT, RSSLT, RSSST, SHT, SHEATT(3),
-     &     RNETN(3),RNETT(3)
-C         previous SIX output lines added by Bruce Kimball on 2DEC14
+     &     RNETN(3),RNETT(3),
+     &     TAnn, TAnit, TGROnn, TGROnit, 
+C         previous 7 lines added by Bruce Kimball on 2DEC14
+     &     RBSH,RBSL,RBSS,RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
+C         added by BAK on 10DEC2015
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
       REAL PSTRES1  !3/22/2011
@@ -220,8 +223,10 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
      &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
 C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY)
+     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
+     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+C            added by BAK on 10DEC2015
         ENDIF
 
 !***********************************************************************
@@ -282,8 +287,10 @@ C           previous line added by Bruce Kimall on 9MAR15
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
      &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
 C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY)
+     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
+     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+C            added by BAK on 10DEC2015
             ENDIF
 
 C***********************************************************************
@@ -414,9 +421,11 @@ C  KJB and SPSUM hourly.
      &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
      &      TSURF,                                        !Output
      &      CONDSH, CONDSL, RA, RB, RSURF, Rnet,          !Output
-     &      G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT)    !Output
+     &      G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,    !Output
 C       CONDSH, CONDSL, RA, RB, RSURF, RNET output added by
 C           Bruce Kimball on 2DEC14
+     &     RBSH, RBSL, RBSS)                              !Output
+C            added by BAK on 10DEC2015
 
 C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
@@ -504,6 +513,10 @@ C       The following 8 variales added by Bruce Kimball on 1Dec2014
               RSSHN = RSSH
               RSSLN = RSSL
               RSSSN = RSSS
+C     Next 3 lines added by BAK on 10DEC2015
+              RBSHN = RBSH
+              RBSLN = RBSL
+              RBSSN = RBSS
               DO I=1,3
                 LHEATN(I)=LHEAT(I,1)
                 SHEATN(I)=SHEAT(I,1)
@@ -537,6 +550,10 @@ C       Remember midnight values
               RSSHT = RSSH
               RSSLT = RSSL
               RSSST = RSSS
+C next 3 lines added by BAK on 10DEC2015
+              RBSHT = RBSH
+              RBSLT = RBSL
+              RBSST = RBSS
               DO I=1,3
                 LHEATT(I)=LHEAT(I,1)
                 SHEATT(I)=SHEAT(I,1)
@@ -651,8 +668,10 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
      &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
 C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY)
+     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
+     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+C       preveious line added by BAK on 10DEC2015
          ENDIF
 
 !***********************************************************************
@@ -671,8 +690,10 @@ C           previous line added by Bruce Kimall on 9MAR15
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
      &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
 C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY)
+     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
+     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+C       preveious line added by BAK on 10DEC2015
       ENDIF
       
         IF(MEEVP .EQ. "Z") THEN
