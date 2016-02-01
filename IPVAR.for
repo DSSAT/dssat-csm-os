@@ -44,7 +44,7 @@ C=======================================================================
 
       IMPLICIT NONE
 
-      INCLUDE 'COMGEN.BLK'
+      INCLUDE 'COMGEN.blk'
 
       CHARACTER*1   LINE(80),RNMODE,BLANK,ANS
       CHARACTER*2   CROP

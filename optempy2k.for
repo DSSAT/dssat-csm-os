@@ -61,10 +61,10 @@ C=======================================================================
       USE ModuleDefs
       IMPLICIT NONE
 
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSOI.BLK'
-      INCLUDE 'COMSWI.BLK'
-      INCLUDE 'COMGEN.BLK'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSOI.blk'
+      INCLUDE 'COMSWI.blk'
+      INCLUDE 'COMGEN.blk'
 
       CHARACTER*1  RNMODE
       CHARACTER*2  CROP,PRCROP
