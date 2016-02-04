@@ -46,6 +46,7 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 
+      CHARACTER*12  TEST_OUTPUT_FILE
       CHARACTER*1  IHARI, IIRRI, IPLTI, ISWCHE, RNMODE
       CHARACTER*1  IDETO, ISWTIL, ISWWAT
       CHARACTER*2  CROP
@@ -62,6 +63,8 @@ C-----------------------------------------------------------------------
       REAL IRRAMT, NSTRES, TOTIR, TIL_IRR
       REAL HPC(3), HBPC(3), HARVFRAC(2)
       REAL, DIMENSION(NL) :: DLAYR, DUL, LL, ST, SW
+
+      LOGICAL FEXIST
 
 !     Variables added for flooded conditions
       INTEGER NBUND
@@ -177,9 +180,19 @@ C-----------------------------------------------------------------------
         NTIL = TILLVALS % NTIL
       ENDIF
 
-      CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
-     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+      !JOSE: ADDED FOLLOWING BLOCK FOR IN ALL CALLS TO SUBROUTRINE IRRIG
+      TEST_OUTPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
+      INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+      IF (FEXIST) THEN
+         CALL IRRIGHDR(CONTROL, ISWITCH,
+     &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &       FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+      ELSE
+         CALL IRRIG(CONTROL, ISWITCH,
+     &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &       FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+      ENDIF
+      !JOSE: BLOCK ENDS HERE
 
       NBUND = FLOODWAT % NBUND
 !     initialize flood management variables.
@@ -227,10 +240,23 @@ C-----------------------------------------------------------------------
 
       IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate irrigation depth for today
-        CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
-     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+
+        !JOSE: ADDED FOLLOWING BLOCK FOR IN ALL CALLS TO SUBROUTRINE IRRIG
+        TEST_OUTPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
+        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+        IF (FEXIST) THEN
+           CALL IRRIGHDR(CONTROL, ISWITCH,
+     &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &       FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
         TILLVALS % TIL_IRR = TIL_IRR
+        ELSE
+           CALL IRRIG(CONTROL, ISWITCH,
+     &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &       FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+           TILLVALS % TIL_IRR = TIL_IRR
+        ENDIF
+    !JOSE: BLOCK ENDS HERE
+
       ELSE
           IRRAMT = 0.0
       ENDIF
@@ -251,9 +277,21 @@ C     determine YREND
 C-----------------------------------------------------------------------
 !     Calculate cumulative irrigation
       IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
-        CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
-     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+
+        !JOSE: ADDED FOLLOWING BLOCK FOR IN ALL CALLS TO SUBROUTRINE IRRIG
+        TEST_OUTPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
+        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+        IF (FEXIST) THEN
+           CALL IRRIGHDR(CONTROL, ISWITCH,
+     &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &       FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+        ELSE
+           CALL IRRIG(CONTROL, ISWITCH,
+     &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &       FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+        ENDIF
+    !JOSE: BLOCK ENDS HERE
+
       ENDIF
 
       IF (NBUND .GT. 0) THEN
