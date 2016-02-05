@@ -270,14 +270,17 @@ C-----------------------------------------------------------------------
 !     Calculate cumulative irrigation
       IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 
+        CALL IRRIG(CONTROL, ISWITCH,
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+
         OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
      &        POSITION = 'APPEND')
         WRITE (6686,6688)  RUN, DAP," OpMgmt"," MgmtOps.for",
      &        "Calculated Cumulative irrigation for today"
 
-        CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
-     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+        WRITE (6686,*) "The cumulative irrigation today is", TOTIR
+
       ENDIF
 
       IF (NBUND .GT. 0) THEN
