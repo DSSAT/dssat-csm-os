@@ -90,9 +90,17 @@ C=======================================================================
       LL     = SOILPROP % LL     
       NLAYR  = SOILPROP % NLAYR  
 
-      IIRRI  = ISWITCH % IIRRI
-
       PUDDLED= FLOODWAT % PUDDLED
+
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &      POSITION = 'APPEND')
+      WRITE (6686, *)  "TOTIR", TOTIR
+
+      IF (TOTIR .GE. 10) THEN
+            IIRRI = "N"
+      ELSE
+            IIRRI  = ISWITCH % IIRRI
+      ENDIF
 
 C***********************************************************************
 C***********************************************************************
