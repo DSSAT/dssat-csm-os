@@ -177,6 +177,11 @@ C-----------------------------------------------------------------------
         NTIL = TILLVALS % NTIL
       ENDIF
 
+        OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &        POSITION = 'APPEND')
+        WRITE (6686,6688)  RUN, DAP," OpMgmt"," MgmtOps.for",
+     &        "DYNAMIC .EQ. INIT must be TRUE"
+
       CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
@@ -227,11 +232,24 @@ C-----------------------------------------------------------------------
 
       IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate irrigation depth for today
+
+        OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &        POSITION = 'APPEND')
+        WRITE (6686,6688)  RUN, DAP," OpMgmt"," MgmtOps.for",
+     &        "Calculated irrigation depth for today"
+6688    FORMAT (I10,I10,A10,A10,A50)
+
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
         TILLVALS % TIL_IRR = TIL_IRR
       ELSE
+
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &        POSITION = 'APPEND')
+        WRITE (6686,6688)  RUN, DAP," OpMgmt"," MgmtOps.for",
+     &        "Irrigation depth for today uses IRRAMT = 0.0"
+
           IRRAMT = 0.0
       ENDIF
 
@@ -251,6 +269,12 @@ C     determine YREND
 C-----------------------------------------------------------------------
 !     Calculate cumulative irrigation
       IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+
+        OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &        POSITION = 'APPEND')
+        WRITE (6686,6688)  RUN, DAP," OpMgmt"," MgmtOps.for",
+     &        "Calculated Cumulative irrigation for today"
+
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
@@ -258,6 +282,12 @@ C-----------------------------------------------------------------------
 
       IF (NBUND .GT. 0) THEN
 !       Determine flood depth today.
+
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &        POSITION = 'APPEND')
+       WRITE (6686,6688)  RUN, DAP," OpMgmt"," MgmtOps.for",
+     &        "Determined flood depth today"
+
         CALL PADDY_MGMT (CONTROL, ISWITCH,
      &    IRRAMT, RAIN,                            !Input
      &    FLOOD, FLOODWAT, FLOODN)                        !Output 
@@ -320,6 +350,12 @@ C     END OF DYNAMIC IF CONSTRUCT
 C***********************************************************************
       ENDIF
 C***********************************************************************
+
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &        POSITION = 'APPEND')
+      WRITE (6686, 6688)  RUN, DAP," MGMTOPS"," MgmtOps.for"
+
+      CLOSE (6686)
 
       RETURN
       END SUBROUTINE MGMTOPS
@@ -720,6 +756,12 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ENDIF
 !***********************************************************************
+
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS = 'OLD',
+     &      POSITION = 'APPEND')
+      WRITE (6686,6688)  RUN, DAP," OpMgmt"," MgmtOps.for"
+6688  FORMAT (I10,I10,A10,A10,A50)
+
       RETURN
       END SUBROUTINE OpMgmt
 !***********************************************************************

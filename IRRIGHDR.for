@@ -1,8 +1,6 @@
 C=======================================================================
-C  IRRIGHDR, Subroutine
-C  This is a modification of the IRRIG subroutine that determines when irrigation occurs.
-C  It requires an available water at planting input and does not allow total irrigation to surpass
-C  this threshold
+C  IRRIG, Subroutine
+C  Determines when irrigation occurs
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  09/01/1988 BB  Restructured from WATBAL
@@ -29,7 +27,6 @@ C  10/28/2004 CHP Fixed problem with multiple applications on same day.
 !  04/18/2013 CHP Added error checking for irrigation amount. It is
 !                   operation-specific, so checking was removed from
 !                   input module.
-!  02/04/2016 JRL IRRIGHDR subroutine was created
 C-----------------------------------------------------------------------
 C  Called by: WATBAL
 C  Calls  : None
@@ -76,12 +73,6 @@ C=======================================================================
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
-
-C     Variables to create test output file
-      CHARACTER*12  TEST_OUTPUT_FILE
-      LOGICAL FEXIST
-!      INTEGER ERRNUM
-C     End of variables to create test output file
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -749,27 +740,13 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       FLOODWAT % PUDDLED = PUDDLED
 
-C     Open or create an ouput testfile
-
-        TEST_OUTPUT_FILE="TestJose.OUT"
-
-        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'OLD',
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
      &      POSITION = 'APPEND')
-          WRITE (6686,*)    "Existing file was found using IRRIGHDR"
-
-        ELSE
-          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'NEW',
-     &      IOSTAT = ERRNUM)
-          WRITE (6686,*)    "This is a new file created using IRRIGHDR"
-        ENDIF
-
-        CLOSE (6686)
-C     End of test... delete later
+      WRITE (6686,6688)  RUN, DAP," IRRIGHDR"," IRRIGHDR.for",
+     &     "Subroutine IRRIGHDR was used"
+6688  FORMAT (I10,I10,A10,A10,A50)
 
       RETURN
-
       END SUBROUTINE IRRIGHDR
 C=======================================================================
 

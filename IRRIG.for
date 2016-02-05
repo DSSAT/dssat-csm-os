@@ -740,6 +740,12 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       FLOODWAT % PUDDLED = PUDDLED
       
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &      POSITION = 'APPEND')
+      WRITE (6686,6688)  RUN, DAP," IRRIG"," IRRIG.for",
+     &     "Subroutine IRRIG was used"
+6688  FORMAT (I10,I10,A10,A10,A50)
+
       RETURN
       END SUBROUTINE IRRIG
 C=======================================================================
