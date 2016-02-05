@@ -46,7 +46,13 @@ C-----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 
+C     Variables to create test output file
       CHARACTER*12  TEST_OUTPUT_FILE
+      CHARACTER*12  TEST_INPUT_FILE
+      LOGICAL FEXIST
+      INTEGER ERRNUM
+C     End of variables to create test output file
+
       CHARACTER*1  IHARI, IIRRI, IPLTI, ISWCHE, RNMODE
       CHARACTER*1  IDETO, ISWTIL, ISWWAT
       CHARACTER*2  CROP
@@ -63,8 +69,6 @@ C-----------------------------------------------------------------------
       REAL IRRAMT, NSTRES, TOTIR, TIL_IRR
       REAL HPC(3), HBPC(3), HARVFRAC(2)
       REAL, DIMENSION(NL) :: DLAYR, DUL, LL, ST, SW
-
-      LOGICAL FEXIST
 
 !     Variables added for flooded conditions
       INTEGER NBUND
@@ -181,8 +185,8 @@ C-----------------------------------------------------------------------
       ENDIF
 
       !JOSE: ADDED FOLLOWING BLOCK FOR IN ALL CALLS TO SUBROUTRINE IRRIG
-      TEST_OUTPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
-      INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+      TEST_INPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
+      INQUIRE (FILE = TEST_INPUT_FILE, EXIST = FEXIST)
       IF (FEXIST) THEN
          CALL IRRIGHDR(CONTROL, ISWITCH,
      &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
@@ -240,10 +244,9 @@ C-----------------------------------------------------------------------
 
       IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate irrigation depth for today
-
         !JOSE: ADDED FOLLOWING BLOCK FOR IN ALL CALLS TO SUBROUTRINE IRRIG
-        TEST_OUTPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
-        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+        TEST_INPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
+        INQUIRE (FILE = TEST_INPUT_FILE, EXIST = FEXIST)
         IF (FEXIST) THEN
            CALL IRRIGHDR(CONTROL, ISWITCH,
      &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
@@ -256,7 +259,6 @@ C-----------------------------------------------------------------------
            TILLVALS % TIL_IRR = TIL_IRR
         ENDIF
     !JOSE: BLOCK ENDS HERE
-
       ELSE
           IRRAMT = 0.0
       ENDIF
@@ -277,10 +279,9 @@ C     determine YREND
 C-----------------------------------------------------------------------
 !     Calculate cumulative irrigation
       IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
-
         !JOSE: ADDED FOLLOWING BLOCK FOR IN ALL CALLS TO SUBROUTRINE IRRIG
-        TEST_OUTPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
-        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+        TEST_INPUT_FILE = "GAGR0201.IRR"   ! Jose: To do, make this call an experiment specific file
+        INQUIRE (FILE = TEST_INPUT_FILE, EXIST = FEXIST)
         IF (FEXIST) THEN
            CALL IRRIGHDR(CONTROL, ISWITCH,
      &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
@@ -290,8 +291,7 @@ C-----------------------------------------------------------------------
      &       RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
      &       FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
         ENDIF
-    !JOSE: BLOCK ENDS HERE
-
+        !JOSE: BLOCK ENDS HERE
       ENDIF
 
       IF (NBUND .GT. 0) THEN
@@ -321,6 +321,26 @@ C-----------------------------------------------------------------------
      &    IRRAMT, RAIN,                                   !Input
      &    FLOOD, FLOODWAT, FLOODN)                        !Output 
       ENDIF
+
+
+!C     Open or create an ouput testfile
+!
+!        TEST_OUTPUT_FILE="TestJose.OUT"
+!
+!        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+!        IF (FEXIST) THEN
+!          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'OLD',
+!     &      POSITION = 'APPEND')
+!          WRITE (6686,*)    "Existing file was found"
+!
+!        ELSE
+!          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'NEW',
+!     &      IOSTAT = ERRNUM)
+!          WRITE (6686,*)    "This is a new file"
+!        ENDIF
+!
+!        CLOSE (6686)
+!C     End of test... delete later
 
 !***********************************************************************
 !***********************************************************************

@@ -138,6 +138,7 @@ C-----------------------------------------------------------------------
       CHARACTER*9 DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT
       CHARACTER*6 TMINA_TXT, TMAXA_TXT, SRADA_TXT, DAYLA_TXT
       CHARACTER*7 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
+      CHARACTER*12  TEST_OUTPUT_FILE
 
 
 !     Evaluate.OUT variables:
@@ -191,6 +192,25 @@ C-----------------------------------------------------------------------
 !      date_time(6)  The minutes of the hour (range 0 to 59) - local time  
 !      date_time(7)  The seconds of the minute (range 0 to 59) - local time  
 !      date_time(8)  The milliseconds of the second (range 0 to 999) - local time  
+
+!C     Open or create an ouput testfile
+!
+!        TEST_OUTPUT_FILE="TestJose.OUT"
+!
+!        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+!        IF (FEXIST) THEN
+!          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'OLD',
+!     &      POSITION = 'APPEND')
+!          WRITE (6686,*)    "Existing file was found"
+!
+!        ELSE
+!          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'NEW',
+!     &      IOSTAT = ERRNUM)
+!          WRITE (6686,*)    "This is a new file"
+!        ENDIF
+!
+!        CLOSE (6686)
+!C     End of test... delete later
       
       OPEN (UNIT=LUNIO, FILE = FILEIO, STATUS = 'OLD', 
      &  IOSTAT=ERRNUM)
