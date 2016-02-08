@@ -27,6 +27,7 @@ C  10/28/2004 CHP Fixed problem with multiple applications on same day.
 !  04/18/2013 CHP Added error checking for irrigation amount. It is 
 !                   operation-specific, so checking was removed from 
 !                   input module.
+!  02/08/2016 JOSE Added limited irrigation.
 C-----------------------------------------------------------------------
 C  Called by: WATBAL
 C  Calls  : None
@@ -73,6 +74,9 @@ C=======================================================================
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
+      
+	  REAL AVWAT    ! Water available for irrigation at planting (mm)
+	  REAL AVWATT    ! Water available for irrigation today (mm)
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -92,11 +96,15 @@ C=======================================================================
 
       PUDDLED= FLOODWAT % PUDDLED
 
+
+      AVWAT = 10.0
+      AVWATT = AVWAT - TOTIR
+
       OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
      &      POSITION = 'APPEND')
       WRITE (6686, *)  "TOTIR", TOTIR
 
-      IF (TOTIR .GE. 10) THEN
+      IF (TOTIR .GE. AVWAT) THEN
             IIRRI = "N"
       ELSE
             IIRRI  = ISWITCH % IIRRI
@@ -643,6 +651,7 @@ C             Apply fixed irrigation amount
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
+            IF (DEPIR .GT. AVWATT) DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
             NAP = NAP + 1
 !           chp 3/20/2014 these are not used and result in array bounds errors 
 !             in long simulations.
@@ -733,6 +742,11 @@ C-----------------------------------------------------------------------
         TOTIR  = TOTIR + DEPIR
         TOTEFFIRR = TOTEFFIRR + IRRAMT
       ENDIF
+
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
+     &      POSITION = 'APPEND')
+      WRITE (6686, *)  "TOTIR", TOTIR, "TOTEFFIRR", TOTEFFIRR
+
 
 !     Transfer data to ModuleData
       CALL PUT('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm)
