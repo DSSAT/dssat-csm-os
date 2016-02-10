@@ -110,6 +110,12 @@ C=======================================================================
             IIRRI  = ISWITCH % IIRRI
       ENDIF
 
+      IF (IIRRI .EQ. "L") THEN
+        ISWWAT = "Y"
+        ISWITCH % ISWWAT = "Y"
+      ENDIF
+
+
 C***********************************************************************
 C***********************************************************************
 C    Input and Initialization 
@@ -175,7 +181,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C      Read Automatic Management
 C-----------------------------------------------------------------------
-          IF (INDEX('AFPW', ISWITCH % IIRRI) > 0) THEN
+          IF (INDEX('AFPWL', ISWITCH % IIRRI) > 0) THEN
             SECTION = '!AUTOM'
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
@@ -622,7 +628,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
 C-----------------------------------------------------------------------
-      CASE ('A', 'F')
+      CASE ('A', 'F', 'L')
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
@@ -633,7 +639,7 @@ C-----------------------------------------------------------------------
           IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
 
-            IF (IIRRI .EQ. 'A') THEN
+            IF (IIRRI .EQ. 'A' .OR. IIRRI .EQ. 'L') THEN
 C             Determine supplemental irrigation amount.
 C             Compensate for expected water loss due to soil evaporation
 C             and transpiration today.

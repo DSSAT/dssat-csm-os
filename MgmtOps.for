@@ -230,7 +230,7 @@ C-----------------------------------------------------------------------
      &    TILLVALS, TILLNO)                               !Output
       ENDIF
 
-      IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+      IF (INDEX('AFRDPWL',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate irrigation depth for today
 
         OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
@@ -268,7 +268,7 @@ C     Call AUTHAR subroutine to check harvest switch and
 C     determine YREND
 C-----------------------------------------------------------------------
 !     Calculate cumulative irrigation
-      IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+      IF (INDEX('AFRDPWL',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
@@ -456,7 +456,7 @@ C-----------------------------------------------------------------------
 
       IF (IDETR == 'Y') THEN
 !       If irrigation apps, trigger printout  
-        IF ((INDEX('AFPWRD',IIRRI) .GT. 0) .OR.
+        IF ((INDEX('AFPWRDL',IIRRI) .GT. 0) .OR.
 
 !       If Fertilizer applications are activated
      &    (INDEX('AFRFD',IFERI) .GT. 0) .OR.
@@ -498,7 +498,7 @@ C-----------------------------------------------------------------------
 !        ENDIF 
 
 !       If irrigation apps, add headers  
-        IF (INDEX('AFPWRD',IIRRI) .GT. 0) THEN
+        IF (INDEX('AFPWRDL',IIRRI) .GT. 0) THEN
           WRITE(DLUN,'(A)',ADVANCE='NO') '  IR#C  IRRC'
         ENDIF 
 
@@ -595,7 +595,7 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
 !         If irrigation apps, print data  
-          IF (INDEX('AFPWRD',IIRRI) .GT. 0) THEN
+          IF (INDEX('AFPWRDL',IIRRI) .GT. 0) THEN
             WRITE(DLUN,"(2(1X,I5))",ADVANCE='NO') NAP, NINT(TOTIR)
           ENDIF     
 
