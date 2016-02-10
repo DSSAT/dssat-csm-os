@@ -88,6 +88,8 @@ C=======================================================================
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
 
+      IIRRI  = ISWITCH % IIRRI
+
       DLAYR  = SOILPROP % DLAYR  
       DS     = SOILPROP % DS
       DUL    = SOILPROP % DUL    
@@ -103,17 +105,6 @@ C=======================================================================
       OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='OLD',
      &      POSITION = 'APPEND')
       WRITE (6686, *)  "TOTIR", TOTIR
-
-      IF (TOTIR .GE. AVWAT) THEN
-            IIRRI = "N"
-      ELSE
-            IIRRI  = ISWITCH % IIRRI
-      ENDIF
-
-      IF (IIRRI .EQ. "L") THEN
-        ISWWAT = "Y"
-        ISWITCH % ISWWAT = "Y"
-      ENDIF
 
 
 C***********************************************************************
@@ -145,6 +136,9 @@ C-----------------------------------------------------------------------
       TOTIR  = 0.
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
+
+!     If in limited irrigation mode, check if there is water for irrigation
+      IF ((TOTIR .GE. AVWAT) .AND. (IIRRI .EQ. 'L')) IIRRI = "N"
 
       IF (ISWWAT .EQ. 'Y') THEN
       !Data is read if not sequenced or seasonal run or for first
@@ -626,7 +620,7 @@ C-----------------------------------------------------------------------
         ENDIF
 
 C-----------------------------------------------------------------------
-C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
+C** IIRRI = A - Automatic irrigation, L - Limited irrigation, or F - Fixed Amount Automatic Irrigation
 C-----------------------------------------------------------------------
       CASE ('A', 'F', 'L')
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
@@ -657,7 +651,10 @@ C             Apply fixed irrigation amount
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
-            IF (DEPIR .GT. AVWATT) DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
+            IF ((DEPIR .GT. AVWATT) .AND. (IIRRI .EQ. 'L')) THEN
+              DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
+            ENDIF
+
             NAP = NAP + 1
 !           chp 3/20/2014 these are not used and result in array bounds errors 
 !             in long simulations.
