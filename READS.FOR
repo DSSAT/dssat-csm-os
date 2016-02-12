@@ -389,7 +389,7 @@ C-----------------------------------------------------------------------
 !       File does not exist in data directory, check directory
 !         with executable.
         CALL GETARG(0,PATHX)
-        call path_adj(pathx)
+!        call path_adj(pathx)
         call get_dir(pathx,datax)
         datax = trim(datax)//filecde
 !        IPX = LEN_TRIM(PATHX)
@@ -676,7 +676,7 @@ C-----------------------------------------------------------------------
 !       File does not exist in data directory, check directory
 !         with executable.
         CALL GETARG(0,PATHX)
-        call path_adj(pathx)
+!        call path_adj(pathx)
         call get_dir(pathx,datax)
         datax = trim(datax)//filecde
 !        IPX = LEN_TRIM(PATHX)
@@ -952,7 +952,7 @@ C-----------------------------------------------------------------------
 !       File does not exist in data directory, check directory
 !         with executable.
         CALL GETARG(0,PATHX)
-        call path_adj(pathx)
+!        call path_adj(pathx)
         call get_dir(pathx,datax)
         datax = trim(datax)//filecde
 !        IPX = LEN_TRIM(PATHX)

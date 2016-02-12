@@ -107,7 +107,7 @@ C-----------------------------------------------------------------------
 C    Get argument from runtime module to determine path of the EXE files
 C-----------------------------------------------------------------------
       CALL GETARG(0,PATHX)   !,IPX
-      call path_adj(pathx)
+!      call path_adj(pathx)
       CALL GETARG(1,DUMMY)  !,IP
       IF ((INDEX('ABCDEFGILNQSTabcdefginlqst',DUMMY(1:1)).GT. 0) .AND. 
      &    (DUMMY(2:2) .EQ. BLANK))THEN
