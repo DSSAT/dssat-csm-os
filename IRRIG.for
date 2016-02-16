@@ -27,6 +27,7 @@ C  10/28/2004 CHP Fixed problem with multiple applications on same day.
 !  04/18/2013 CHP Added error checking for irrigation amount. It is 
 !                   operation-specific, so checking was removed from 
 !                   input module.
+!  02/08/2016 JOSE Added limited irrigation.
 C-----------------------------------------------------------------------
 C  Called by: WATBAL
 C  Calls  : None
@@ -73,6 +74,9 @@ C=======================================================================
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
+      
+	  REAL AVWAT    ! Water available for irrigation at planting (mm)
+	  REAL AVWATT    ! Water available for irrigation today (mm)
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -84,15 +88,20 @@ C=======================================================================
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
 
+      IIRRI  = ISWITCH % IIRRI
+
       DLAYR  = SOILPROP % DLAYR  
       DS     = SOILPROP % DS
       DUL    = SOILPROP % DUL    
       LL     = SOILPROP % LL     
       NLAYR  = SOILPROP % NLAYR  
 
-      IIRRI  = ISWITCH % IIRRI
-
       PUDDLED= FLOODWAT % PUDDLED
+
+
+      AVWAT = 10.0
+      AVWATT = AVWAT - TOTIR
+
 
 C***********************************************************************
 C***********************************************************************
@@ -123,6 +132,9 @@ C-----------------------------------------------------------------------
       TOTIR  = 0.
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
+
+!     If in limited irrigation mode, check if there is water for irrigation
+      IF ((TOTIR .GE. AVWAT) .AND. (IIRRI .EQ. 'L')) IIRRI = "N"
 
       IF (ISWWAT .EQ. 'Y') THEN
       !Data is read if not sequenced or seasonal run or for first
@@ -159,7 +171,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C      Read Automatic Management
 C-----------------------------------------------------------------------
-          IF (INDEX('AFPW', ISWITCH % IIRRI) > 0) THEN
+          IF (INDEX('AFPWL', ISWITCH % IIRRI) > 0) THEN
             SECTION = '!AUTOM'
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
@@ -604,9 +616,9 @@ C-----------------------------------------------------------------------
         ENDIF
 
 C-----------------------------------------------------------------------
-C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
+C** IIRRI = A - Automatic irrigation, L - Limited irrigation, or F - Fixed Amount Automatic Irrigation
 C-----------------------------------------------------------------------
-      CASE ('A', 'F')
+      CASE ('A', 'F', 'L')
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
@@ -617,7 +629,7 @@ C-----------------------------------------------------------------------
           IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
 
-            IF (IIRRI .EQ. 'A') THEN
+            IF (IIRRI .EQ. 'A' .OR. IIRRI .EQ. 'L') THEN
 C             Determine supplemental irrigation amount.
 C             Compensate for expected water loss due to soil evaporation
 C             and transpiration today.
@@ -635,6 +647,10 @@ C             Apply fixed irrigation amount
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
+            IF ((DEPIR .GT. AVWATT) .AND. (IIRRI .EQ. 'L')) THEN
+              DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
+            ENDIF
+
             NAP = NAP + 1
 !           chp 3/20/2014 these are not used and result in array bounds errors 
 !             in long simulations.
