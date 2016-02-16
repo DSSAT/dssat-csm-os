@@ -76,8 +76,6 @@ C-----------------------------------------------------------------------
       INTEGER       LUNBIO,LINBIO,ISECT,IFIND,LN
       INTEGER       NREPS, REPNO,END_POS, ROTNUM, TRTREP, NARG
 
-      INTEGER       STAT
-
       LOGICAL       FEXIST, DONE
 
       PARAMETER (ERRKEY = 'CSM   ')      
@@ -220,19 +218,6 @@ C-----------------------------------------------------------------------
       RUN   = 0
       REPNO = 1
       CONTROL % REPNO = REPNO
-
-C-----------------------------------------------------------------------
-C    Start Suubroutines test file
-C-----------------------------------------------------------------------
-
-      OPEN(UNIT=6686, IOSTAT=STAT, FILE="Test_Subroutines.txt",
-     &      STATUS='OLD')
-      IF (STAT == 0) CLOSE(6686, STATUS='DELETE')
-
-      OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS = 'NEW')
-      WRITE (6686,*)    "This file is used to test subroutines"
-      WRITE (6686, 6687) "TRT","DAP","SUBROUT", "FILE", "Comments"
-6687  FORMAT (5A10)
 
 C*********************************************************************** 
 C*********************************************************************** 
@@ -542,9 +527,6 @@ C-----------------------------------------------------------------------
       CALL OPNAMES(FNAME)
 
       CALL RUNLIST(CONTROL)
-
-C     Close test simulation file
-      CLOSE (6686)
 
       END PROGRAM CSM 
 
