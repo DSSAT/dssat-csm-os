@@ -447,7 +447,7 @@ C-----------------------------------------------------------------------
      &     PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,PTX,PTTN,DSOIL,THETAC,
      &     IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,NEND,RIP,NRESDL,
      &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
-     &     EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
+     &     EFFIRR, AVAWAT,CROP,FROP,MODEL,RNMODE,FILEX,
      &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
       
 C-----------------------------------------------------------------------

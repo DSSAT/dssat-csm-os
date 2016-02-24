@@ -40,7 +40,7 @@ C=======================================================================
      & ISIMI,PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
-     & RSEED1,LINEXP,AIRAMT,EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
+     & RSEED1,LINEXP,AIRAMT,EFFIRR,AVAWAT,CROP,FROP,MODEL,RNMODE,FILEX,
      & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
 
       USE ModuleDefs
@@ -68,7 +68,7 @@ C=======================================================================
       INTEGER YRPLT
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
-      REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR
+      REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVAWAT
 
       LOGICAL UseSimCtr, MulchWarn
 
@@ -134,6 +134,7 @@ C=======================================================================
          IDETH   = 'N'
          IDETR   = 'Y'
          EFFIRR  = 1.00
+         AVAWAT  = 10.0
          THETAC  = 75.0
          IEPT    = 100.0
          DSOIL   = 30.0
@@ -386,9 +387,13 @@ C
 C           Read SEVENTH line of simulation control
 C
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
-            READ (CHARTEST,67,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
-     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR
+            READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
+     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVAWAT
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
+
+            OPEN (1000000, FILE = "TEST_AVAWAT.OUT")
+            WRITE (1000000, *) AVAWAT
+            CLOSE (1000000)
 C
 C           Read EIGHTH line of simulation control
 C
@@ -674,6 +679,7 @@ C-----------------------------------------------------------------------
   66  FORMAT (I3,11X,2(1X,I5),5(1X,F5.0))
   67  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
   68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
+  69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0)
   70  FORMAT (3X,I2)
 
       END SUBROUTINE IPSIM
