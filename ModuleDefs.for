@@ -543,7 +543,7 @@ D       STDPATH = 'D:\DSSAT46\'
 
 !     Data transferred from management routine 
       Type MgmtType
-        REAL DEPIR, EFFIRR, AVAWAT, FERNIT, IRRAMT, TOTIR
+        REAL DEPIR, EFFIRR, AVWAT, FERNIT, IRRAMT, TOTIR
       End Type MgmtType
 
 !     Data transferred from Soil water routine
@@ -762,7 +762,7 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('MGMT')
         SELECT CASE (VarName)
         Case ('EFFIRR'); Value = SAVE_data % MGMT % EFFIRR
-        Case ('AVAWAT'); Value = SAVE_data % MGMT % AVAWAT
+        Case ('AVWAT'); Value = SAVE_data % MGMT % AVWAT
         Case ('TOTIR');  Value = SAVE_data % MGMT % TOTIR
         Case ('DEPIR');  Value = SAVE_data % MGMT % DEPIR
         Case ('IRRAMT'); Value = SAVE_data % MGMT % IRRAMT
@@ -875,7 +875,7 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('MGMT')
         SELECT CASE (VarName)
         Case ('EFFIRR'); SAVE_data % MGMT % EFFIRR = Value
-        Case ('AVAWAT'); SAVE_data % MGMT % AVAWAT = Value
+        Case ('AVWAT'); SAVE_data % MGMT % AVWAT = Value
         Case ('TOTIR');  SAVE_data % MGMT % TOTIR  = Value
         Case ('DEPIR');  SAVE_data % MGMT % DEPIR  = Value
         Case ('IRRAMT'); SAVE_data % MGMT % IRRAMT = Value

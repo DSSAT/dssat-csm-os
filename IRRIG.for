@@ -99,7 +99,7 @@ C=======================================================================
       PUDDLED= FLOODWAT % PUDDLED
 
 
-      AVWAT = 10.0
+      CALL Get('MGMT','AVWAT', AVWAT)
       AVWATT = AVWAT - TOTIR
 
 

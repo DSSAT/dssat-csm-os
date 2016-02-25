@@ -40,7 +40,7 @@ C=======================================================================
      & ISIMI,PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
-     & RSEED1,LINEXP,AIRAMT,EFFIRR,AVAWAT,CROP,FROP,MODEL,RNMODE,FILEX,
+     & RSEED1,LINEXP,AIRAMT,EFFIRR,AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
      & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
 
       USE ModuleDefs
@@ -68,7 +68,7 @@ C=======================================================================
       INTEGER YRPLT
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
-      REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVAWAT
+      REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
 
       LOGICAL UseSimCtr, MulchWarn
 
@@ -134,7 +134,7 @@ C=======================================================================
          IDETH   = 'N'
          IDETR   = 'Y'
          EFFIRR  = 1.00
-         AVAWAT  = 10.0
+         AVWAT  = 10.0
          THETAC  = 75.0
          IEPT    = 100.0
          DSOIL   = 30.0
@@ -388,12 +388,9 @@ C           Read SEVENTH line of simulation control
 C
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
-     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVAWAT
+     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 
-            OPEN (1000000, FILE = "TEST_AVAWAT.OUT")
-            WRITE (1000000, *) AVAWAT
-            CLOSE (1000000)
 C
 C           Read EIGHTH line of simulation control
 C

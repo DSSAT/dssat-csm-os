@@ -67,6 +67,7 @@ C=======================================================================
      &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
 
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
@@ -99,6 +100,7 @@ C=======================================================================
       INTEGER TRTNUM, ROTNUM
 
       REAL    FLAG,EXP,TRT,PLTFOR
+      REAL    AVWAT
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -447,9 +449,10 @@ C-----------------------------------------------------------------------
      &     PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,PTX,PTTN,DSOIL,THETAC,
      &     IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,NEND,RIP,NRESDL,
      &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
-     &     EFFIRR, AVAWAT,CROP,FROP,MODEL,RNMODE,FILEX,
+     &     EFFIRR, AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
      &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
       
+      CALL PUT('MGMT','AVWAT', AVWAT) ! Make AVWAT available to all subrourtines
 C-----------------------------------------------------------------------
 C        Select crop parameter input file
 C-----------------------------------------------------------------------
