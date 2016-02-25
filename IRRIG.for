@@ -616,9 +616,9 @@ C-----------------------------------------------------------------------
         ENDIF
 
 C-----------------------------------------------------------------------
-C** IIRRI = A - Automatic irrigation, L - Limited irrigation, or F - Fixed Amount Automatic Irrigation
+C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
 C-----------------------------------------------------------------------
-      CASE ('A', 'F', 'L')
+      CASE ('A', 'F')
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
@@ -629,7 +629,7 @@ C-----------------------------------------------------------------------
           IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
 
-            IF (IIRRI .EQ. 'A' .OR. IIRRI .EQ. 'L') THEN
+            IF (IIRRI .EQ. 'A') THEN
 C             Determine supplemental irrigation amount.
 C             Compensate for expected water loss due to soil evaporation
 C             and transpiration today.
@@ -647,6 +647,41 @@ C             Apply fixed irrigation amount
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
+            NAP = NAP + 1
+!           chp 3/20/2014 these are not used and result in array bounds errors
+!             in long simulations.
+            !JULAPL(NAP) = YRDOY
+            !AMIR(NAP)   = IRRAPL
+          ENDIF
+        ENDIF
+
+
+C-----------------------------------------------------------------------
+C** IIRRI = L - Limited irrigation
+C-----------------------------------------------------------------------
+      CASE ('L')
+        IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR.
+     &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
+
+          CALL SWDEFICIT(
+     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
+     &        ATHETA, SWDEF)                              !Output
+
+          IF (ATHETA .LE. THETAC*0.01) THEN
+!         A soil water deficit exists - automatic irrigation today.
+
+C           Determine supplemental irrigation amount.
+C           Compensate for expected water loss due to soil evaporation
+C           and transpiration today.
+C           Estimate that an average of 5 mm of water will be lost.
+            IRRAPL = SWDEF*10 + 5.0
+            IRRAPL = MAX(0.,IRRAPL)
+
+            SELECT CASE(AIRRCOD)
+              CASE(1:4,6); TIL_IRR = TIL_IRR + IRRAPL
+            END SELECT
+
+            DEPIR = DEPIR + IRRAPL
             IF ((DEPIR .GT. AVWATT) .AND. (IIRRI .EQ. 'L')) THEN
               DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
             ENDIF
@@ -658,6 +693,7 @@ C             Apply fixed irrigation amount
             !AMIR(NAP)   = IRRAPL
           ENDIF
         ENDIF
+
 
 C-----------------------------------------------------------------------
 C** IIRRI = P - As Reported through last reported day, then automatic
