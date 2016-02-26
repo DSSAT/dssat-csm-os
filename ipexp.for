@@ -454,11 +454,10 @@ C-----------------------------------------------------------------------
      &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
      &     FIST2, THETAC2)
 
-
       CALL PUT('MGMT','AVWAT', AVWAT) ! Make new variables available to all subrourtines
-!      CALL PUT('MGMT','FIST1', FIST1)
-!      CALL PUT('MGMT','FIST2', FIST2)
-!      CALL PUT('MGMT','THETAC2', THETAC2)
+      CALL PUT('MGMT','FIST1', FIST1)
+      CALL PUT('MGMT','FIST2', FIST2)
+      CALL PUT('MGMT','THETAC2', THETAC2)
 C-----------------------------------------------------------------------
 C        Select crop parameter input file
 C-----------------------------------------------------------------------

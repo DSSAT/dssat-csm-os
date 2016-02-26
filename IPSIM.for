@@ -41,7 +41,8 @@ C=======================================================================
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
      & RSEED1,LINEXP,AIRAMT,EFFIRR,AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
-     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
+     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
+     & FIST2, THETAC2)
 
       USE ModuleDefs
       USE ModuleData
@@ -396,9 +397,6 @@ C
      &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, FIST1, FIST2,
      &           THETAC2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
-      CALL PUT('MGMT','FIST1', FIST1)
-      CALL PUT('MGMT','FIST2', FIST2)
-      CALL PUT('MGMT','THETAC2', THETAC2)
 C
 C           Read EIGHTH line of simulation control
 C

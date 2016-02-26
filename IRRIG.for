@@ -101,7 +101,6 @@ C=======================================================================
 
       PUDDLED= FLOODWAT % PUDDLED
 
-
       CALL Get('MGMT','AVWAT', AVWAT)
       CALL Get('MGMT','FIST1', FIST1)
       CALL Get('MGMT','FIST2', FIST2)
