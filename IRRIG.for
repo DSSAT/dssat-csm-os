@@ -47,7 +47,7 @@ C=======================================================================
 !      CHARACTER*70 IrrText
       PARAMETER (ERRKEY = 'IRRIG')
 
-      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM
+      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM, DEFIR
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
@@ -88,6 +88,7 @@ C=======================================================================
       TYPE (SwitchType)   ISWITCH
       TYPE (SoilType)     SOILPROP
       TYPE (FloodWatType) FLOODWAT
+      Type (MgmtType)     MGMT
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -107,6 +108,14 @@ C=======================================================================
       CALL Get('MGMT','FIST1', FIST1)
       CALL Get('MGMT','FIST2', FIST2)
       CALL Get('MGMT','THETAC2', THETAC2)
+      CALL Get('MGMT','DEFIR', DEFIR)
+
+!      DEFIR   = MGMT % DEFIR
+
+      OPEN (UNIT = 6686, FILE = "TEST_DEF.OUT",
+     &      POSITION = 'APPEND')
+      WRITE (6686,*) DEFIR
+      CLOSE (6686)
 
 C***********************************************************************
 C***********************************************************************

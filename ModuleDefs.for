@@ -545,6 +545,7 @@ D       STDPATH = 'D:\DSSAT46\'
       Type MgmtType
         REAL DEPIR, EFFIRR, AVWAT, FERNIT, IRRAMT, TOTIR, THETAC2
         INTEGER FIST1, FIST2
+        CHARACTER*1 DEFIR
       End Type MgmtType
 
 !     Data transferred from Soil water routine
@@ -1092,6 +1093,12 @@ D       STDPATH = 'D:\DSSAT46\'
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('MGMT')
+        SELECT CASE (VarName)
+        Case ('DEFIR');  Value = SAVE_data % MGMT % DEFIR
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -1119,6 +1126,12 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('WEATHER')
         SELECT CASE (VarName)
         Case ('WSTA');  SAVE_data % WEATHER % WSTAT  = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('MGMT')
+        SELECT CASE (VarName)
+        Case ('DEFIR');  SAVE_data % MGMT % DEFIR  = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

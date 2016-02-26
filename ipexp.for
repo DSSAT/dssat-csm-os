@@ -454,15 +454,12 @@ C-----------------------------------------------------------------------
      &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
      &     FIST2, THETAC2, DEFIR)
 
-      OPEN (UNIT = 6686, FILE = "TEST_DEF.OUT",
-     &      POSITION = 'APPEND')
-      WRITE (6686,*) DEFIR
-      CLOSE (6686)
-
       CALL PUT('MGMT','AVWAT', AVWAT) ! Make new variables available to all subrourtines
       CALL PUT('MGMT','FIST1', FIST1)
       CALL PUT('MGMT','FIST2', FIST2)
       CALL PUT('MGMT','THETAC2', THETAC2)
+      CALL PUT('MGMT','DEFIR', DEFIR)
+
 C-----------------------------------------------------------------------
 C        Select crop parameter input file
 C-----------------------------------------------------------------------

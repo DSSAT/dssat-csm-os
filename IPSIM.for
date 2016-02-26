@@ -151,6 +151,7 @@ C=======================================================================
          NEND  = "-99  "
          FIST1 = -99
          FIST2 = -99
+         DEFIR = "N"
        ELSE
  40      CALL FIND (LUNEXP,FINDCH,LINEXP,IFIND)
          IF (IFIND .EQ. 0) CALL ERROR (ERRKEY,1,FILEX,LINEXP)
