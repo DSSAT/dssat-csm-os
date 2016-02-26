@@ -42,7 +42,7 @@ C=======================================================================
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
      & RSEED1,LINEXP,AIRAMT,EFFIRR,AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
      & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
-     & FIST2, THETAC2)
+     & FIST2, THETAC2, DEFIR)
 
       USE ModuleDefs
       USE ModuleData
@@ -51,7 +51,7 @@ C=======================================================================
 
       INCLUDE 'COMSWI.blk'
 
-      CHARACTER*1   UPCASE,ISIMI, RNMODE
+      CHARACTER*1   UPCASE,ISIMI, RNMODE, DEFIR
       CHARACTER*2   CROP
       CHARACTER*5   NEND,NCODE,IOFF,IAME
       CHARACTER*6   ERRKEY,FINDCH
@@ -292,13 +292,14 @@ C        Read FOURTH line of simulation control
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,IPLTI,IIRRI,
-     &        IFERI,IRESI,IHARI
+     &        IFERI,IRESI,IHARI, DEFIR
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          IPLTI = UPCASE(IPLTI)
          IIRRI = UPCASE(IIRRI)
          IFERI = UPCASE(IFERI)
          IRESI = UPCASE(IRESI)
          IHARI = UPCASE(IHARI)
+         DEFIR = UPCASE(DEFIR)
 
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
@@ -311,7 +312,6 @@ C
               CALL ERROR (ERRKEY,5,FILEX,LINEXP)
            ENDIF
          ENDIF
-
 C
 C        Read FIFTH line of simulation control
 C

@@ -81,6 +81,8 @@ C=======================================================================
 	  REAL AVWAT    ! Water available for irrigation at planting (mm)
 	  REAL AVWATT    ! Water available for irrigation today (mm)
 
+	  LOGICAL IDECV  ! Irrigation decision variable (A and L)
+
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
@@ -629,6 +631,8 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
+!          IDECV = IDECF()   ! TO BE DEFINED TO WORK WITH DEFICIT IRRIGATION
+!          IF(IDECV) THEN
           IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
 

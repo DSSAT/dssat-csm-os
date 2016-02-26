@@ -74,7 +74,7 @@ C=======================================================================
       INCLUDE 'COMIBS.blk'
       INCLUDE 'COMSWI.blk'
 
-      CHARACTER* 1 LINE(80),BLANK, RNMODE
+      CHARACTER* 1 LINE(80),BLANK, RNMODE, DEFIR
       CHARACTER* 1 WMODI,ANS
       CHARACTER* 2 CROP
       CHARACTER* 3 PROCOD,ALN(13),ALLN
@@ -452,7 +452,12 @@ C-----------------------------------------------------------------------
      &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
      &     EFFIRR, AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
      &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
-     &     FIST2, THETAC2)
+     &     FIST2, THETAC2, DEFIR)
+
+      OPEN (UNIT = 6686, FILE = "TEST_DEF.OUT",
+     &      POSITION = 'APPEND')
+      WRITE (6686,*) DEFIR
+      CLOSE (6686)
 
       CALL PUT('MGMT','AVWAT', AVWAT) ! Make new variables available to all subrourtines
       CALL PUT('MGMT','FIST1', FIST1)
