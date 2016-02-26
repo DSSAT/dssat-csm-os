@@ -33,7 +33,7 @@ C  Called by: WATBAL
 C  Calls  : None
 C=======================================================================
       SUBROUTINE IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
 
 !-----------------------------------------------------------------------
@@ -60,6 +60,7 @@ C=======================================================================
       INTEGER YRDIF
       INTEGER, DIMENSION(NAPPL) :: IDLAPL, IRRCOD
       INTEGER, DIMENSION(NAPPL) :: JULAPL, JULWTB, JWTBRD
+      INTEGER STGDOY(20)
 
       REAL AIRAMT, AIRAMX, ATHETA, DEPIR, DSOIL, DSOILX
       REAL EFFIRR, EFFIRX, IRRAMT
@@ -102,6 +103,9 @@ C=======================================================================
       CALL Get('MGMT','AVWAT', AVWAT)
       AVWATT = AVWAT - TOTIR
 
+      OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT")
+      WRITE (6686,*)  STGDOY(1), STGDOY(2), STGDOY(3), STGDOY(4)
+      CLOSE (6686)
 
 C***********************************************************************
 C***********************************************************************
@@ -657,9 +661,10 @@ C             Apply fixed irrigation amount
 
 
 C-----------------------------------------------------------------------
-C** IIRRI = L - Limited irrigation
+C** IIRRI = L - Limited irrigation (based on Automatic irrigation)
 C-----------------------------------------------------------------------
       CASE ('L')
+
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR.
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
