@@ -109,6 +109,11 @@ C=======================================================================
 
       AVWATT = AVWAT - TOTIR
 
+            OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
+     &            POSITION = 'APPEND')
+            WRITE (6686,*) FIST1, FIST2, THETAC2
+            CLOSE (6686)
+
 !      OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT")
 !      WRITE (6686,*)  STGDOY(1), STGDOY(2), STGDOY(3), STGDOY(4),
 !     & FIST1, FIST2, THETAC2

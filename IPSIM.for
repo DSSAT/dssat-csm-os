@@ -137,6 +137,7 @@ C=======================================================================
          IDETR   = 'Y'
          EFFIRR  = 1.00
          AVWAT  = 10.0
+         THETAC2 = 75.0
          THETAC  = 75.0
          IEPT    = 100.0
          DSOIL   = 30.0
@@ -147,6 +148,8 @@ C=======================================================================
          CRMODEL = '        '
          NCODE = "-99  "
          NEND  = "-99  "
+         FIST1 = -99
+         FIST2 = -99
        ELSE
  40      CALL FIND (LUNEXP,FINDCH,LINEXP,IFIND)
          IF (IFIND .EQ. 0) CALL ERROR (ERRKEY,1,FILEX,LINEXP)
@@ -393,6 +396,9 @@ C
      &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, FIST1, FIST2,
      &           THETAC2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
+      CALL PUT('MGMT','FIST1', FIST1)
+      CALL PUT('MGMT','FIST2', FIST2)
+      CALL PUT('MGMT','THETAC2', THETAC2)
 C
 C           Read EIGHTH line of simulation control
 C
