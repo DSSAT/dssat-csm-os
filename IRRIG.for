@@ -61,12 +61,14 @@ C=======================================================================
       INTEGER, DIMENSION(NAPPL) :: IDLAPL, IRRCOD
       INTEGER, DIMENSION(NAPPL) :: JULAPL, JULWTB, JWTBRD
       INTEGER STGDOY(20)
+      INTEGER FIST1, FIST2
 
       REAL AIRAMT, AIRAMX, ATHETA, DEPIR, DSOIL, DSOILX
       REAL EFFIRR, EFFIRX, IRRAMT
       REAL SWDEF, THETAC, THETCX, TOTAPW, TOTEFFIRR, TOTIR
       REAL DLAYR(NL), DS(NL), DUL(NL), LL(NL), SW(NL)
       REAL, DIMENSION(NAPPL) :: AMIR, AMT, WTABL
+      REAL THETAC2
 
 !  Added for flooded field management
       LOGICAL PUDDLED
@@ -101,11 +103,16 @@ C=======================================================================
 
 
       CALL Get('MGMT','AVWAT', AVWAT)
+      CALL Get('MGMT','FIST1', FIST1)
+      CALL Get('MGMT','FIST2', FIST2)
+      CALL Get('MGMT','THETAC2', THETAC2)
+
       AVWATT = AVWAT - TOTIR
 
-      OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT")
-      WRITE (6686,*)  STGDOY(1), STGDOY(2), STGDOY(3), STGDOY(4)
-      CLOSE (6686)
+!      OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT")
+!      WRITE (6686,*)  STGDOY(1), STGDOY(2), STGDOY(3), STGDOY(4),
+!     & FIST1, FIST2, THETAC2
+!      CLOSE (6686)
 
 C***********************************************************************
 C***********************************************************************

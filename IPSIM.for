@@ -66,9 +66,11 @@ C=======================================================================
       INTEGER PLDATE,PWDINF,PWDINL,HLATE,HDLAY,NRESDL
       INTEGER IFIND,LN,ERRNUM,FTYPEN,YRSIM,YEAR,RUN,RSEED1,RRSEED1
       INTEGER YRPLT
+      INTEGER FIST1, FIST2
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
+      REAL THETAC2
 
       LOGICAL UseSimCtr, MulchWarn
 
@@ -388,9 +390,9 @@ C           Read SEVENTH line of simulation control
 C
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
-     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT
+     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, FIST1, FIST2,
+     &           THETAC2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
-
 C
 C           Read EIGHTH line of simulation control
 C
@@ -676,10 +678,12 @@ C-----------------------------------------------------------------------
   66  FORMAT (I3,11X,2(1X,I5),5(1X,F5.0))
   67  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
   68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
-  69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0)
+  69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I5,
+     &        1X,I5,1x,F5.0)
   70  FORMAT (3X,I2)
 
       END SUBROUTINE IPSIM
+
 
 !=======================================================================
 !  FILL_ISWITCH, Subroutine

@@ -98,9 +98,10 @@ C=======================================================================
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
       INTEGER TRTNUM, ROTNUM
+      INTEGER FIST1, FIST2
 
       REAL    FLAG,EXP,TRT,PLTFOR
-      REAL    AVWAT
+      REAL    AVWAT, THETAC2
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -450,9 +451,20 @@ C-----------------------------------------------------------------------
      &     IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,NEND,RIP,NRESDL,
      &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
      &     EFFIRR, AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
-     &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
-      
-      CALL PUT('MGMT','AVWAT', AVWAT) ! Make AVWAT available to all subrourtines
+     &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
+     &     FIST2, THETAC2)
+
+
+
+      OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT")
+      WRITE (6686,*) FIST1, FIST2, THETAC2
+      CLOSE (6686)
+
+
+      CALL PUT('MGMT','AVWAT', AVWAT) ! Make new variables available to all subrourtines
+      CALL PUT('MGMT','FIST1', FIST1)
+      CALL PUT('MGMT','FIST2', FIST2)
+      CALL PUT('MGMT','THETAC2', THETAC2)
 C-----------------------------------------------------------------------
 C        Select crop parameter input file
 C-----------------------------------------------------------------------
