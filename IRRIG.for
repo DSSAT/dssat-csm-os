@@ -106,18 +106,6 @@ C=======================================================================
       CALL Get('MGMT','FIST2', FIST2)
       CALL Get('MGMT','THETAC2', THETAC2)
 
-      AVWATT = AVWAT - TOTIR
-
-            OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
-     &            POSITION = 'APPEND')
-            WRITE (6686,*) FIST1, FIST2, THETAC2
-            CLOSE (6686)
-
-!      OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT")
-!      WRITE (6686,*)  STGDOY(1), STGDOY(2), STGDOY(3), STGDOY(4),
-!     & FIST1, FIST2, THETAC2
-!      CLOSE (6686)
-
 C***********************************************************************
 C***********************************************************************
 C    Input and Initialization 
@@ -698,6 +686,7 @@ C           Estimate that an average of 5 mm of water will be lost.
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
+            AVWATT = AVWAT - TOTIR ! Calculate water available today
             IF ((DEPIR .GT. AVWATT) .AND. (IIRRI .EQ. 'L')) THEN
               DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
             ENDIF
