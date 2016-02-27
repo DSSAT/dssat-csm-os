@@ -81,8 +81,8 @@ C=======================================================================
 	  REAL AVWAT    ! Water available for irrigation at planting (mm)
 	  REAL AVWATT    ! Water available for irrigation today (mm)
 
-	  LOGICAL IDECV  ! Irrigation decision variable (A and L)
-
+	  LOGICAL IDECV  ! Output of function IDECF
+      LOGICAL IDECF  ! Function, determines if irrigation is needed (for A and L)
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
@@ -109,13 +109,6 @@ C=======================================================================
       CALL Get('MGMT','FIST2', FIST2)
       CALL Get('MGMT','THETAC2', THETAC2)
       CALL Get('MGMT','DEFIR', DEFIR)
-
-!      DEFIR   = MGMT % DEFIR
-
-      OPEN (UNIT = 6686, FILE = "TEST_DEF.OUT",
-     &      POSITION = 'APPEND')
-      WRITE (6686,*) DEFIR
-      CLOSE (6686)
 
 C***********************************************************************
 C***********************************************************************
@@ -640,9 +633,9 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-!          IDECV = IDECF()   ! TO BE DEFINED TO WORK WITH DEFICIT IRRIGATION
-!          IF(IDECV) THEN
-          IF (ATHETA .LE. THETAC*0.01) THEN
+          IDECV = IDECF(ATHETA, THETAC, STGDOY)   ! TO BE DEFINED TO WORK WITH DEFICIT IRRIGATION
+          IF(IDECV) THEN
+!          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
 
             IF (IIRRI .EQ. 'A') THEN
@@ -684,7 +677,9 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-          IF (ATHETA .LE. THETAC*0.01) THEN
+          IDECV = IDECF(ATHETA, THETAC, STGDOY)   ! ADDED TO WORK WITH DEFICIT IRRIGATION
+          IF(IDECV) THEN
+!          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
 
 C           Determine supplemental irrigation amount.
@@ -860,6 +855,46 @@ C-----------------------------------------------------------------------
 
 C=======================================================================
 
+C=======================================================================
+C  IDECF, Function
+C  Determines if water deficit exists to triger automatic or limited irrigation
+
+      FUNCTION IDECF(I,J,K) RESULT(R)
+
+         USE ModuleData
+
+         REAL, INTENT(IN) :: I, J  ! INPUT  I = ATHETA and J = THETAC
+         INTEGER K(20)             ! INPUT K = STGDOY
+         LOGICAL R                 ! OUTPUT
+         REAL AVWAT, THETAC2
+         INTEGER FIST1, FIST2
+         CHARACTER*1 DEFIR
+
+         CALL Get('MGMT','AVWAT', AVWAT)
+         CALL Get('MGMT','FIST1', FIST1)
+         CALL Get('MGMT','FIST2', FIST2)
+         CALL Get('MGMT','THETAC2', THETAC2)
+         CALL Get('MGMT','DEFIR', DEFIR)
+
+         SELECT CASE (DEFIR)
+            CASE ('N')  ! NO DEFICIT IRRIGATION
+                R = (I .LE. J*0.01)
+            CASE ('V')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
+
+!                OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
+!     &                POSITION = 'APPEND')
+!                WRITE (6686, 6687) K(1:20)
+!                CLOSE (6686)
+!6687            FORMAT (20(1X,I8))
+
+                R = (I .LE. J*0.01)
+         END SELECT
+
+      END FUNCTION IDECF
+
+
+C-----------------------------------------------------------------------
+C=======================================================================
 
 !***********************************************************************
 !***********************************************************************
