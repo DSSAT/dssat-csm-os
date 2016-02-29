@@ -110,6 +110,12 @@ C=======================================================================
       CALL Get('MGMT','THETAC2', THETAC2)
       CALL Get('MGMT','DEFIR', DEFIR)
 
+!      OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
+!     &POSITION = 'APPEND')
+!      WRITE (6686, 6687) STGDOY(1:6), MDATE
+!      CLOSE (6686)
+!6687  FORMAT (7(1X,I8))
+
 C***********************************************************************
 C***********************************************************************
 C    Input and Initialization 
@@ -633,7 +639,7 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-          IDECV = IDECF(ATHETA, THETAC, STGDOY)   ! TO BE DEFINED TO WORK WITH DEFICIT IRRIGATION
+          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)   ! TO BE DEFINED TO WORK WITH DEFICIT IRRIGATION
           IF(IDECV) THEN
 !          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
@@ -677,7 +683,7 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-          IDECV = IDECF(ATHETA, THETAC, STGDOY)   ! ADDED TO WORK WITH DEFICIT IRRIGATION
+          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)   ! ADDED TO WORK WITH DEFICIT IRRIGATION
           IF(IDECV) THEN
 !          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
@@ -859,15 +865,16 @@ C=======================================================================
 C  IDECF, Function
 C  Determines if water deficit exists to triger automatic or limited irrigation
 
-      FUNCTION IDECF(I,J,K) RESULT(R)
+      FUNCTION IDECF(ATHETA,THETAC,STGDOY,YRDOY, MDATE) RESULT(R)
 
          USE ModuleData
 
-         REAL, INTENT(IN) :: I, J  ! INPUT  I = ATHETA and J = THETAC
-         INTEGER K(20)             ! INPUT K = STGDOY
+         REAL, INTENT(IN) :: ATHETA, THETAC  ! INPUT  I = ATHETA and J = THETAC
+         INTEGER STGDOY(20)             ! INPUT K = STGDOY
          LOGICAL R                 ! OUTPUT
+         LOGICAL FULLIR, TEST(10)            !
          REAL AVWAT, THETAC2
-         INTEGER FIST1, FIST2
+         INTEGER FIST1, FIST2, YRDOY, MDATE
          CHARACTER*1 DEFIR
 
          CALL Get('MGMT','AVWAT', AVWAT)
@@ -878,19 +885,46 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
 
          SELECT CASE (DEFIR)
             CASE ('N')  ! NO DEFICIT IRRIGATION
-                R = (I .LE. J*0.01)
+                R = (ATHETA .LE. THETAC*0.01)
             CASE ('V')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
+                ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
 
-!                OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
-!     &                POSITION = 'APPEND')
-!                WRITE (6686, 6687) K(1:20)
-!                CLOSE (6686)
-!6687            FORMAT (20(1X,I8))
+       TEST(1) =  ( (YRDOY .GE. STGDOY(9)) .AND. (YRDOY.LT. STGDOY(1)) )
+       TEST(2) =  ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
+       TEST(3) =  ( (YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2)) )
+       TEST(4) =  ( (FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2) )
+       TEST(5) =  ( (YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3)) )
+       TEST(6) =  ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) )
+       TEST(7) =  ( (YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4)) )
+       TEST(8) =  ( (FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4) )
+       TEST(9) =  (YRDOY .GE. STGDOY(4) )
+       TEST(10) =  ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) )
 
-                R = (I .LE. J*0.01)
+       OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
+     & POSITION = 'APPEND')
+       WRITE (6686, 6687) STGDOY(1:6), MDATE, FIST1, FIST2, YRDOY,
+     &  TEST(1:10)
+
+       CLOSE (6686)
+6687   FORMAT (10(1X,I8), 10(1X, L1))
+         IF ( ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) ) .AND.
+     &      ( (YRDOY .GE. STGDOY(9)) .AND. (YRDOY.LT. STGDOY(1)) ) .OR.  ! IS STAGE 1 IS FULLY IRRIGATIED ?
+     &      ( (FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2) ) .AND.
+     &      ( (YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2)) ) .OR.  ! IS STAGE 2 IS FULLY IRRIGATIED ?
+     &      ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) ) .AND.
+     &      ( (YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3)) ) .OR.  ! IS STAGE 3 IS FULLY IRRIGATIED ?
+     &      ( (FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4) ) .AND.
+     &      ( (YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4)) ) .OR.  ! IS STAGE 4 IS FULLY IRRIGATIED ?
+     &      ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) ) .AND.
+     &      (YRDOY .GE. STGDOY(4) ) ) THEN                               ! IS STAGE 5 IS FULLY IRRIGATIED ?
+                   R = (ATHETA .LE. THETAC2*0.01)
+         ELSE
+            R = (ATHETA .LE. THETAC*0.01)                                   ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
+           ENDIF
          END SELECT
 
-      END FUNCTION IDECF
+      END FUNCTION IDECF                                                !This function as is will only work with CERES, with cropgro will work
+                                                                        ! but phases won't be right.
 
 
 C-----------------------------------------------------------------------
