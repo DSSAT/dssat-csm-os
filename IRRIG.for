@@ -68,7 +68,7 @@ C=======================================================================
       REAL SWDEF, THETAC, THETCX, TOTAPW, TOTEFFIRR, TOTIR
       REAL DLAYR(NL), DS(NL), DUL(NL), LL(NL), SW(NL)
       REAL, DIMENSION(NAPPL) :: AMIR, AMT, WTABL
-      REAL THETAC2
+      REAL THETAC2  ! 
 
 !  Added for flooded field management
       LOGICAL PUDDLED
@@ -867,64 +867,158 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
 
       FUNCTION IDECF(ATHETA,THETAC,STGDOY,YRDOY, MDATE) RESULT(R)
 
-         USE ModuleData
+       USE ModuleData
 
-         REAL, INTENT(IN) :: ATHETA, THETAC  ! INPUT  I = ATHETA and J = THETAC
-         INTEGER STGDOY(20)             ! INPUT K = STGDOY
-         LOGICAL R                 ! OUTPUT
-         LOGICAL FULLIR, TEST(10)            !
-         REAL AVWAT, THETAC2
-         INTEGER FIST1, FIST2, YRDOY, MDATE
-         CHARACTER*1 DEFIR
+       REAL, INTENT(IN) :: ATHETA, THETAC  ! INPUT  I = ATHETA and J = THETAC
+       INTEGER STGDOY(20)             ! INPUT K = STGDOY
+       LOGICAL R                 ! OUTPUT
+       LOGICAL FULLIR, TEST(10)            !
+       REAL AVWAT, THETAC2
+       INTEGER FIST1, FIST2, YRDOY, MDATE
+       CHARACTER*1 DEFIR
+!       CHARACTER*2 CROP
 
-         CALL Get('MGMT','AVWAT', AVWAT)
-         CALL Get('MGMT','FIST1', FIST1)
-         CALL Get('MGMT','FIST2', FIST2)
-         CALL Get('MGMT','THETAC2', THETAC2)
-         CALL Get('MGMT','DEFIR', DEFIR)
+       CHARACTER*6 ERRKEY
+!      CHARACTER*70 IrrText
+       PARAMETER (ERRKEY = 'IRRIG')
+       INTEGER ERRNUM, LNUM
+!       CHARACTER*12 FILEX
+       CHARACTER*8 MODEL
+       CHARACTER*8 MODEL_WO_V  ! MODEL WITHOUT VERSION
 
-         SELECT CASE (DEFIR)
-            CASE ('N')  ! NO DEFICIT IRRIGATION
-                R = (ATHETA .LE. THETAC*0.01)
-            CASE ('V')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
-                ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
+       CALL Get('MGMT','AVWAT', AVWAT)
+       CALL Get('MGMT','FIST1', FIST1)
+       CALL Get('MGMT','FIST2', FIST2)
+       CALL Get('MGMT','THETAC2', THETAC2)
+       CALL Get('MGMT','DEFIR', DEFIR)
+!       CALL Get('CONTROL','CROP', CROP)
+!       CROP = SAVE_data % Control % CROP
+       MODEL = SAVE_data % Control % MODEL
+!       FILEIO  = SAVE_data % CONTROL % FILEX
+!       LNUM = 0
+       MODEL_WO_V = MODEL(1:5)
 
-       TEST(1) =  ( (YRDOY .GE. STGDOY(9)) .AND. (YRDOY.LT. STGDOY(1)) )
-       TEST(2) =  ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
-       TEST(3) =  ( (YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2)) )
-       TEST(4) =  ( (FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2) )
-       TEST(5) =  ( (YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3)) )
-       TEST(6) =  ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) )
-       TEST(7) =  ( (YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4)) )
-       TEST(8) =  ( (FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4) )
-       TEST(9) =  (YRDOY .GE. STGDOY(4) )
-       TEST(10) =  ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) )
+       TEST(1) = ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(5)))
+       TEST(2) = ((YRDOY .GE. STGDOY(5)) .AND. (YRDOY.LT. STGDOY(6)))
+       TEST(3) = ((YRDOY .GE. STGDOY(6)) .AND. (YRDOY.LT. STGDOY(8)))
+       TEST(4) = ((YRDOY .GE. STGDOY(8)) .AND. (YRDOY.LT. STGDOY(11)))
+       TEST(6) = ( (FIST1 .EQ. 0) .OR. (FIST2 .EQ. 0) )
+       TEST(6) = ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
+       TEST(7) = ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) )
+       TEST(8) = ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) )
+
+
+!       TEST(2) =  ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
+!       TEST(3) =  ( (YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2)) )
+!       TEST(4) =  ( (FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2) )
+!       TEST(5) =  ( (YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3)) )
+!       TEST(6) =  ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) )
+!       TEST(7) =  ( (YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4)) )
+!       TEST(8) =  ( (FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4) )
+!       TEST(9) =  (YRDOY .GE. STGDOY(4) )
+!       TEST(10) =  ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) )
 
        OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
      & POSITION = 'APPEND')
-       WRITE (6686, 6687) STGDOY(1:6), MDATE, FIST1, FIST2, YRDOY,
-     &  TEST(1:10)
-
+!        WRITE (6686, *) CROP, " ", ERRKEY, MODEL, " ", MODEL_WO_V !FILEIO, LNUM
+!       WRITE (6686, 6687) STGDOY(1:6), MDATE, FIST1, FIST2, YRDOY,
+!     &  TEST(1:10), CROP
+!       WRITE (6686, 6687) 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
+       WRITE (6686, 6687) YRDOY, STGDOY(1:11), MODEL_WO_V, TEST(1:8),
+     & FIST1, FIST2
+!
        CLOSE (6686)
-6687   FORMAT (10(1X,I8), 10(1X, L1))
-         IF ( ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) ) .AND.
-     &      ( (YRDOY .GE. STGDOY(9)) .AND. (YRDOY.LT. STGDOY(1)) ) .OR.  ! IS STAGE 1 IS FULLY IRRIGATIED ?
-     &      ( (FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2) ) .AND.
-     &      ( (YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2)) ) .OR.  ! IS STAGE 2 IS FULLY IRRIGATIED ?
-     &      ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) ) .AND.
-     &      ( (YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3)) ) .OR.  ! IS STAGE 3 IS FULLY IRRIGATIED ?
-     &      ( (FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4) ) .AND.
-     &      ( (YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4)) ) .OR.  ! IS STAGE 4 IS FULLY IRRIGATIED ?
-     &      ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) ) .AND.
-     &      (YRDOY .GE. STGDOY(4) ) ) THEN                               ! IS STAGE 5 IS FULLY IRRIGATIED ?
-                   R = (ATHETA .LE. THETAC2*0.01)
-         ELSE
-            R = (ATHETA .LE. THETAC*0.01)                                   ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
-           ENDIF
-         END SELECT
+!6687   FORMAT (10(1X,I8), 10(1X, L1), 1X, A)
+6687   FORMAT (12(1X,I8), 1X, A, 8(1X, L1), 2(1X,I2))
+        SELECT CASE (DEFIR)
+         CASE ('N')  ! NO DEFICIT IRRIGATION
+             R = (ATHETA .LE. THETAC*0.01)
+         CASE ('V')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
+             ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
+          SELECT CASE (MODEL_WO_V)
+           CASE ('CSCER','MLCER', 'MZCER', 'RICER', 'SGCER', 'SWCER')
+            IF(
+     &         ((FIST1 .GE. 6) .OR. (FIST2 .GE. 6)) .OR.
+     &         ((FIST1 .LE. 0) .OR. (FIST2 .LE. 0))
+     &        ) THEN
+              WRITE (*, *) "======================================="
+              WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2"
+              WRITE (*, *) "======================================="
+              STOP
+            ELSE IF(
+     &         ((FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1)) .AND.
+     &         ((YRDOY .GE. STGDOY(9)) .AND. (YRDOY.LT. STGDOY(1))).OR. ! IS STAGE 1 IS FULLY IRRIGATIED ?
+     &         ((FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2)) .AND.
+     &         ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2))).OR. ! IS STAGE 2 IS FULLY IRRIGATIED ?
+     &         ((FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3)) .AND.
+     &         ((YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3))).OR. ! IS STAGE 3 IS FULLY IRRIGATIED ?
+     &         ((FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4)) .AND.
+     &         ((YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4))).OR. ! IS STAGE 4 IS FULLY IRRIGATIED ?
+     &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
+     &          (YRDOY .GE. STGDOY(4))
+     &       ) THEN                                                    ! IS STAGE 5 IS FULLY IRRIGATIED ?
+             R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
+            ELSE
+             R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
+            ENDIF
+           CASE ('CRGRO')
+            IF(
+     &         ((2  .EQ. FIST1) .OR. (2  .EQ. FIST2)) .OR.
+     &         ((4  .EQ. FIST1) .OR. (4  .EQ. FIST2)) .OR.
+     &         ((FIST1 .GE.  6) .OR. (FIST2 .GE.  6)) .OR.
+     &         ((FIST1 .LE. -1) .OR. (FIST2 .LE. -1))
+     &        ) THEN
+             WRITE (*, *) "======================================="
+             WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2"
+             WRITE (*, *) "======================================="
+             STOP
+            ELSE IF(
+     &         ((FIST1 .EQ. 0) .OR. (FIST2 .EQ. 0)) .AND.
+     &         ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(5))).OR. ! IS STAGE 0 IS FULLY IRRIGATIED ?
+     &         ((FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1)) .AND.
+     &         ((YRDOY .GE. STGDOY(5)) .AND. (YRDOY.LT. STGDOY(6))).OR. ! IS STAGE 1 IS FULLY IRRIGATIED ?
+     &         ((FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3)) .AND.
+     &         ((YRDOY .GE. STGDOY(6)) .AND. (YRDOY.LT. STGDOY(8))).OR. ! IS STAGE 3 IS FULLY IRRIGATIED ?
+     &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
+     &         ((YRDOY .GE. STGDOY(8)) .AND. (YRDOY.LT. STGDOY(11)))    ! IS STAGE 5 IS FULLY IRRIGATIED ?
+     &       ) THEN
+             R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
+            ELSE
+             R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
+            ENDIF
+           CASE DEFAULT                                                 ! ERROR MESSAGE IN SCREEN ONLY!
+            WRITE (*, *) "============================================",
+     &                   "============================"
+            WRITE (*, *) "ERROR: Deficit irrigation is supported only ",
+     &                       "in CERES and CROPGRO models."
+            WRITE (*, *) "============================================",
+     &                   "============================"
+            STOP
+          END SELECT
+        END SELECT
 
       END FUNCTION IDECF                                                !This function as is will only work with CERES, with cropgro will work
                                                                         ! but phases won't be right.
+
+!     The following models are currently supported:
+!         'CRGRO' - CROPGRO
+!         'CSCER' - CERES Wheat, Barley
+!         'CSCRP' - CropSim Wheat, Barley
+!         'CSCAS' - CropSim/GumCAS Cassava
+!         'MLCER' - CERES-Millet
+!         'MZCER' - CERES-Maize
+!         'PTSUB' - SUBSTOR-Potato
+!         'RICER' - CERES-Rice
+!         'SCCAN' - CANEGRO Sugarcane
+!         'SCCSP' - CASUPRO Sugarcane
+!         'SGCER' - CERES-Sorghum
+!         'SWCER' - CERES-Sweet corn
+!         'MZIXM' - IXIM Maize
+!         'TNARO' - Aroids - Tanier, Taro
+!         'ORYZA' - IRRI Rice model
+!         'SALUS' - SALUS generic crop model
+!         'WHAPS' - APSIM N-wheat
+
 
 
 C-----------------------------------------------------------------------
