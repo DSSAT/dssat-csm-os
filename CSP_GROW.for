@@ -1073,9 +1073,9 @@ C-----------------------------------------------------------------------
   110 FORMAT(' (DAY : ',I4,1X,I3,'; TURFAC : ',F5.2,'; AGEFAC : ',
      &            F5.2,'  )')
 
-        !Message to screen
-        WRITE (*,275) MESSAGE(1), MESSAGE(2)
-  275   FORMAT(/,10X,A78,/,10X,A78,/)
+!        !Message to screen
+!        WRITE (*,275) MESSAGE(1), MESSAGE(2)
+!  275   FORMAT(/,10X,A78,/,10X,A78,/)
 
         !Message to Overview.out
         IF (IDETO .EQ. 'Y') THEN
