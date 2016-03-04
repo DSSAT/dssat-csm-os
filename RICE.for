@@ -59,6 +59,8 @@ C-----------------------------------------------------------------------
       USE FloodModule    ! which contain control information, soil
                          ! parameters, hourly weather data and flooded
                          ! conditions.
+      USE ModuleData
+
       IMPLICIT NONE
       SAVE
 
@@ -298,6 +300,8 @@ C-----------------------------------------------------------------------
             SWFAC = TRWUP / EP1
           ENDIF
         ENDIF
+
+        CALL PUT('MGMT', 'SWFAC', SWFAC)
 
         !PHEFAC = 1.0
 

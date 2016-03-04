@@ -870,9 +870,10 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        USE ModuleData
 
        REAL, INTENT(IN) :: ATHETA, THETAC  ! INPUT  I = ATHETA and J = THETAC
-       INTEGER STGDOY(20)             ! INPUT K = STGDOY
+       REAL SWFAC
+       INTEGER STGDOY(20)             ! GROWTH STAGE ONSET OR END IN YRDOY
        LOGICAL R                 ! OUTPUT
-       LOGICAL FULLIR, TEST(10)            !
+!       LOGICAL FULLIR, TEST(10)            !
        REAL AVWAT, THETAC2
        INTEGER FIST1, FIST2, YRDOY, MDATE
        CHARACTER*1 DEFIR
@@ -891,6 +892,7 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        CALL Get('MGMT','FIST2', FIST2)
        CALL Get('MGMT','THETAC2', THETAC2)
        CALL Get('MGMT','DEFIR', DEFIR)
+       CALL Get('MGMT','SWFAC', SWFAC)
 !       CALL Get('CONTROL','CROP', CROP)
 !       CROP = SAVE_data % Control % CROP
        MODEL = SAVE_data % Control % MODEL
@@ -898,14 +900,14 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
 !       LNUM = 0
        MODEL_WO_V = MODEL(1:5)
 
-       TEST(1) = ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(5)))
-       TEST(2) = ((YRDOY .GE. STGDOY(5)) .AND. (YRDOY.LT. STGDOY(6)))
-       TEST(3) = ((YRDOY .GE. STGDOY(6)) .AND. (YRDOY.LT. STGDOY(8)))
-       TEST(4) = ((YRDOY .GE. STGDOY(8)) .AND. (YRDOY.LT. STGDOY(11)))
-       TEST(6) = ( (FIST1 .EQ. 0) .OR. (FIST2 .EQ. 0) )
-       TEST(6) = ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
-       TEST(7) = ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) )
-       TEST(8) = ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) )
+!       TEST(1) = ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(5)))
+!       TEST(2) = ((YRDOY .GE. STGDOY(5)) .AND. (YRDOY.LT. STGDOY(6)))
+!       TEST(3) = ((YRDOY .GE. STGDOY(6)) .AND. (YRDOY.LT. STGDOY(8)))
+!       TEST(4) = ((YRDOY .GE. STGDOY(8)) .AND. (YRDOY.LT. STGDOY(11)))
+!       TEST(6) = ( (FIST1 .EQ. 0) .OR. (FIST2 .EQ. 0) )
+!       TEST(6) = ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
+!       TEST(7) = ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) )
+!       TEST(8) = ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) )
 
 
 !       TEST(2) =  ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
@@ -924,12 +926,14 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
 !       WRITE (6686, 6687) STGDOY(1:6), MDATE, FIST1, FIST2, YRDOY,
 !     &  TEST(1:10), CROP
 !       WRITE (6686, 6687) 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
-       WRITE (6686, 6687) YRDOY, STGDOY(1:11), MODEL_WO_V, TEST(1:8),
-     & FIST1, FIST2
-!
+!       WRITE (6686, 6687) YRDOY, STGDOY(1:11), MODEL_WO_V, TEST(1:8),
+!     & FIST1, FIST2
+       WRITE (6686, 6687) SWFAC, MODEL_WO_V
+
        CLOSE (6686)
 !6687   FORMAT (10(1X,I8), 10(1X, L1), 1X, A)
-6687   FORMAT (12(1X,I8), 1X, A, 8(1X, L1), 2(1X,I2))
+!6687   FORMAT (12(1X,I8), 1X, A, 8(1X, L1), 2(1X,I2))
+6687   FORMAT (F5.3, 1X, A)
         SELECT CASE (DEFIR)
          CASE ('N')  ! NO DEFICIT IRRIGATION
              R = (ATHETA .LE. THETAC*0.01)

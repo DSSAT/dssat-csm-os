@@ -60,6 +60,7 @@
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
+      USE ModuleData
       IMPLICIT  NONE
       SAVE
 !----------------------------------------------------------------------
@@ -981,6 +982,8 @@
              ENDIF
           ENDIF
           TURFAC = REAL(INT(TURFAC*1000))/1000
+
+          CALL PUT('MGMT', 'SWFAC', SWFAC)
 
 
           !-------------------------------------------------------------

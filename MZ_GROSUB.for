@@ -61,6 +61,7 @@
      &      KUptake, KSTRES)                                  !Output
 
       USE ModuleDefs
+      USE ModuleData
       USE Interface_SenLig_Ceres
       IMPLICIT  NONE
       SAVE
@@ -1060,6 +1061,7 @@
           ENDIF
           TURFAC = REAL(INT(TURFAC*1000))/1000
 
+          CALL PUT('MGMT', 'SWFAC', SWFAC)
 
           !-------------------------------------------------------------
           !      Compute Water Saturation Factors       

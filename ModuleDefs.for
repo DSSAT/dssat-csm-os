@@ -543,7 +543,7 @@ D       STDPATH = 'D:\DSSAT46\'
 
 !     Data transferred from management routine 
       Type MgmtType
-        REAL DEPIR, EFFIRR, AVWAT, FERNIT, IRRAMT, TOTIR, THETAC2
+        REAL DEPIR, EFFIRR, AVWAT, FERNIT, IRRAMT, TOTIR, THETAC2, SWFAC
         INTEGER FIST1, FIST2
         CHARACTER*1 DEFIR
       End Type MgmtType
@@ -770,6 +770,7 @@ D       STDPATH = 'D:\DSSAT46\'
         Case ('IRRAMT'); Value = SAVE_data % MGMT % IRRAMT
         Case ('FERNIT'); Value = SAVE_data % MGMT % FERNIT
         Case ('THETAC2'); Value = SAVE_data % MGMT % THETAC2
+        Case ('SWFAC'); Value = SAVE_data % MGMT % SWFAC
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -884,6 +885,7 @@ D       STDPATH = 'D:\DSSAT46\'
         Case ('IRRAMT'); SAVE_data % MGMT % IRRAMT = Value
         Case ('FERNIT'); SAVE_data % MGMT % FERNIT = Value
         Case ('THETAC2');  SAVE_data % MGMT % THETAC2  = Value
+        Case ('SWFAC');  SAVE_data % MGMT % SWFAC  = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
