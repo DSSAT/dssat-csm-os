@@ -53,7 +53,15 @@
             VCNC = 0.0
             VMNC = 0.0
             IF (RTWT.GT.1.0E-5) RANC = ROOTN / RTWT                                                                    !EQN 017
-            IF (LFWT.GT.1.0E-5) LANC = LEAFN / LFWT                                                                    !EQN 243
+            IF (LFWT.GT.1.0E-5) LANC = LEAFN / LFWT       !EQN 243 
+            !IF (LFWT.GT.1.0E-5) THEN                   !LPM 25OCT2015 To include cohorts for leaf N (to check)
+            !    DO BR = 0, BRSTAGE                                                                                        
+            !        DO LF = 1, LNUMSIMSTG(BR)
+            !            LANC(BR,LF) = LEAFNN(BR,LF) / LFWTN(BR,LF)
+            !        ENDDO
+            !    ENDDO
+            !ENDIF
+            
             !IF (STWT+CRWT.GT.1.0E-5) SANC = STEMN / (STWT+CRWT)                                                       !LPM25MAY2015 
             IF (STWT+CRWT.GT.1.0E-5) THEN
                 DO BR = 0, BRSTAGE                                                                                        

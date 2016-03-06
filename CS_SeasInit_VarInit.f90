@@ -186,6 +186,9 @@
         lagett = 0.0
         !lagep = 0.0
         lagl = 0.0
+        lagl3 = 0.0 !LPM 15NOV15 added to save leaf area growing by cohort (considering assimilates restriction)
+        lagl3t = 0.0 !LPM 15NOV15 added to save leaf area growing by cohort (considering assimilates restriction)
+        laglt = 0.0 !LPM 15NOV15 added to save leaf area growing by cohort
         lai = 0.0
         laiprev = 0.0
         lail = 0.0
@@ -200,7 +203,9 @@
         laps = 0.0
         latl = 0.0
         latl2 = 0.0
-        latl3 = 0.0
+        latl2t = 0.0 !LPM 15NOV15 added to save leaf area by cohort
+        latl3 = 0.0 
+        latl3t = 0.0 !LPM 15NOV15 added to save leaf area by cohort (considering assimilates restriction)
         latl4 = 0.0
         !lcnum = 0 !LPM 28MAR15 Non necessary variables
         !lcoa = 0.0 !LPM 28MAR15 These variables are not necessary

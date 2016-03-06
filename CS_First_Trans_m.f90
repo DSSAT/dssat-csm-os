@@ -364,6 +364,9 @@
     !REAL    :: LAGEP(0:PSX,0:LCNUMX)   ! Leaf age (phyllochrons),lf pos #          ! (From SeasInit) !!LPM21MAY2015 this variable is not used  
     REAL    :: LAGETT(0:PSX,0:LCNUMX)  ! Leaf age after growing         C.d        ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions    
     REAL    :: LAGL(0:PSX,0:LCNUMX)    ! Leaf area growth,shoot,lf pos  cm2/l      ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
+    REAL    :: LAGL3(0:PSX,0:LCNUMX)   ! Leaf area growth,shoot,lf+assim cm2/l     ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
+    REAL    :: LAGL3T(0:PSX,0:LCNUMX)  ! Leaf area by cohort lf+assim   cm2/cohort ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
+    REAL    :: LAGLT(0:PSX,0:LCNUMX)   ! Leaf area growth by cohort     cm2/cohort ! (From SeasInit) !LPM 25OCT15 added to keep the leaf area by cohort
     REAL    :: LAI                     ! Leaf area index                #          ! (From SeasInit)  
     REAL    :: LAIA                    ! Leaf area index,active         #          ! (From Output)    
     INTEGER :: LAIDCOL                 ! Leaf area index column         #          ! (From Output)    
@@ -387,7 +390,9 @@
     REAL    :: LAPSTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Growth)    
     REAL    :: LATL(0:PSX,0:LCNUMX)    ! Leaf area,shoot,lf#,potential  cm2/l      ! (From SeasInit)  
     REAL    :: LATL2(0:PSX,0:LCNUMX)   ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l      ! (From SeasInit)  
+    REAL    :: LATL2T(0:PSX,0:LCNUMX)  ! Leaf area by cohort +h2o,n,tem cm2/cohort ! (From SeasInit)!LPM 15NOV15 Added to have the leaf area by cohort
     REAL    :: LATL3(0:PSX,0:LCNUMX)   ! Leaf area,shoot,lf#,+assim.    cm2/l      ! (From SeasInit)  
+    REAL    :: LATL3T(0:PSX,0:LCNUMX)  ! Leaf area by cohort lf#,+assim cm2/cohort ! (From SeasInit)!LPM 15NOV15 Added to have the leaf area by cohort +assim
     REAL    :: LATL4(0:PSX,0:LCNUMX)   ! Leaf area,shoot,lf#,+assim.+N  cm2/l      ! (From SeasInit)  
     REAL    :: LATLPOT(0:PSX,0:LCNUMX) ! Leaf area,shoot,leaf,pot       cm2/l      ! (From Growth)    
     REAL    :: LATLPREV(0:PSX,0:LCNUMX)! Leaf area,shoot,leaf,prev.     cm2/l      ! (From Growth)    

@@ -23,7 +23,7 @@
         !-----------------------------------------------------------------------
         NUPC = NUPC + NUPD                                                                                          !EQN 202
         LEAFNEXCESS = 0.0
-        IF (LANC.GT.LNCX) LEAFNEXCESS = (LFWT-SENLFG-SENLFGRS)*(LANC-LNCX)                                          !EQN 245
+        IF (LANC.GT.LNCX) LEAFNEXCESS = (LFWT-SENLFG-SENLFGRS)*(LANC-LNCX)                                          !EQN 245 !LPM 25OCT2015 to consider N by cohort LANC has to be by cohort
         LEAFN = LEAFN + GROLSRTN + LNUSE(0) - SENNLFG - SENNLFGRS - lnph - LEAFNEXCESS                              !EQN 242
         LNPHC = LNPHC +  LNPH                                                                                       !EQN 423
         IF (LEAFN.LT.1.0E-10) LEAFN = 0.0

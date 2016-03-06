@@ -226,8 +226,21 @@
                     LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                               !EQN 323
                     !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by Tflflife to be able to change the Tb
                     !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
-                    LATL2(BR,LF) = LATL2(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))* AMIN1(WFG,NFG)*Tflflife                                        !EQN 324
-                    SHLAG2B(BR) = SHLAG2B(BR) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))* AMIN1(WFG,NFG)*Tflflife                                       !EQN 325
+                    LAGL(BR,LF) = (LATLPOT(BR,LF)-LATLPREV(BR,LF))* AMIN1(WFG,NFG)*Tflflife 
+                    LATL2(BR,LF) = LATL2(BR,LF) + LAGL(BR,LF)                                                                   !EQN 324
+                    SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF)                                    !EQN 325
+                     
+                    !LPM 15NOV15 Variables LAGLT and LATL2T created to save the leaf are by cohort (all the plant (all branches and shoots))
+                    LAGLT(BR,LF) = LAGL(BR,LF)*BRNUMST(BR) ! To initialize before adding over shoots     
+                    LATL2T(BR,LF) = LATL2(BR,LF)*BRNUMST(BR)
+                    DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
+                        IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
+                            LAGLT(BR,LF) = LAGLT(BR,LF)+(LAGL(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
+                            LATL2T(BR,LF) = LATL2T(BR,LF)+(LATL2(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
+                        ENDIF
+                    ENDDO
+
+
                
                
                 ! The 2 at the end of the names indicates that 2 groups 
@@ -241,11 +254,21 @@
                     ! New LEAF
                     IF (LF.EQ.LNUMSIMSTG(BR).AND.LNUMG.GT.LNUMNEED.AND.BR.EQ.BRSTAGE) THEN                                             ! This is where new leaf is initiated
                         !LAGL(BR,L+1) = LAPOTX(BR,L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331  
-                        LAGL(BR,LF+1) = LAPOTX(BR,LF+1) * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)                                      !LPM 23MAR15 To define proportional growth by day      
+                        LAGL(BR,LF+1) = LAPOTX(BR,LF+1) * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG) * AMIN1(WFG,NFG)*Tflflife                                      !LPM 23MAR15 To define proportional growth by day      
                         LATL(BR,LF+1) = LATL(BR,LF+1) + LAGL(BR,LF+1)                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   !EQN 333   
-                        LATL2(BR,LF+1) = LATL2(BR,LF+1) + LAGL(BR,LF+1) * AMIN1(WFG,NFG)*TFG                            ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
-                        SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF+1) * AMIN1(WFG,NFG)*TFG                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
+                        LATL2(BR,LF+1) = LATL2(BR,LF+1) + LAGL(BR,LF+1)                              ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
+                        SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF+1)                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
                         LBIRTHDAP(BR,LF+1) = DAP                                                                ! LBIRTHDAP(LCNUMX)   ! DAP on which leaf initiated #  
+                        
+                        LAGLT(BR,LF+1) = LAGL(BR,LF+1)*BRNUMST(BR)
+                        LATL2T(BR,LF+1) = LATL2(BR,LF+1)*BRNUMST(BR)
+                        DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
+                            IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
+                                LAGLT(BR,LF+1) = LAGLT(BR,LF+1)+(LAGL(BR,LF+1)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
+                                LATL2T(BR,LF+1) = LATL2T(BR,LF+1)+(LATL2(BR,LF+1)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
+                            ENDIF
+                        ENDDO
+                        
                         ! Stress factors for individual leaves                       
                         WFLF(BR,LF+1) = AMIN1(1.0,WFLF(BR,LF+1)+WFG*LATL(BR,LF+1)/LAPOTX(BR,LF+1))                                             !EQN 336
                         NFLF(BR,LF+1) = AMIN1(1.0,NFLF(BR,LF+1)+NFG*LATL(BR,LF+1)/LAPOTX(BR,LF+1))                                             !EQN 337
@@ -408,8 +431,18 @@
                         !ENDIF     
                         IF (DGLF(BR,LF).LE.LLIFGD) THEN
                             IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
-                                LATL3(BR,LF)= LATL2(BR,LF) * AFLF(0,0)                                                                                   !EQN 150
-                                AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF) + AMAX1(0.0,AFLF(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))             !EQN 151
+                                !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
+                                LAGL3(BR,LF) = LAGL(BR,LF) * AFLF(0,0)  
+                                LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
+                                AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF) + AMAX1(0.0,AFLF(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))             !EQN 151   
+                                LAGL3T(BR,LF) = LAGL3(BR,LF)*BRNUMST(BR) 
+                                LATL3T(BR,LF) = LATL3(BR,LF)*BRNUMST(BR)
+                                DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
+                                    IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
+                                        LAGL3T(BR,LF) = LAGL3T(BR,LF)+(LAGL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
+                                        LATL3T(BR,LF) = LATL3T(BR,LF)+(LATL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
+                                    ENDIF
+                                ENDDO
                                 !IF (CFLAFLF.EQ.'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
                             ENDIF  
                         ENDIF
