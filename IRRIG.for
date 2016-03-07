@@ -995,9 +995,9 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
      &         ((FIST1 .GE.  6) .OR. (FIST2 .GE.  6)) .OR.
      &         ((FIST1 .LE. -1) .OR. (FIST2 .LE. -1))
      &        ) THEN
-             WRITE (*, *) "======================================="
-             WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2"
-             WRITE (*, *) "======================================="
+             WRITE (*, *) "========================================"
+             WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2."
+             WRITE (*, *) "========================================"
              STOP
             ELSE IF(
      &         ((FIST1 .EQ. 0) .OR. (FIST2 .EQ. 0)) .AND.
@@ -1014,11 +1014,11 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
              R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
             ENDIF
            CASE DEFAULT                                                 ! ERROR MESSAGE IN SCREEN ONLY!
-            WRITE (*, *) "============================================",
+            WRITE (*, *) "===========================================",
      &                   "============================"
-            WRITE (*, *) "ERROR: Deficit irrigation is supported only ",
-     &                       "in CERES and CROPGRO models."
-            WRITE (*, *) "============================================",
+            WRITE (*, *) "ERROR: Deficit irrigation is not supported ",
+     &                   "for the crop model selected."
+            WRITE (*, *) "===========================================",
      &                   "============================"
             STOP
           END SELECT
@@ -1035,21 +1035,12 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
 !     The following models are currently supported:
 !         'CRGRO' - CROPGRO
 !         'CSCER' - CERES Wheat, Barley
-!         'CSCRP' - CropSim Wheat, Barley
-!         'CSCAS' - CropSim/GumCAS Cassava
 !         'MLCER' - CERES-Millet
 !         'MZCER' - CERES-Maize
-!         'PTSUB' - SUBSTOR-Potato
 !         'RICER' - CERES-Rice
-!         'SCCAN' - CANEGRO Sugarcane
-!         'SCCSP' - CASUPRO Sugarcane
 !         'SGCER' - CERES-Sorghum
 !         'SWCER' - CERES-Sweet corn
-!         'MZIXM' - IXIM Maize
-!         'TNARO' - Aroids - Tanier, Taro
-!         'ORYZA' - IRRI Rice model
-!         'SALUS' - SALUS generic crop model
-!         'WHAPS' - APSIM N-wheat
+
 
 
 
