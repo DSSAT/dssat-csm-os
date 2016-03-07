@@ -42,7 +42,7 @@ C=======================================================================
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
      & RSEED1,LINEXP,AIRAMT,EFFIRR,AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
      & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
-     & FIST2, THETAC2, DEFIR)
+     & FIST2, THETAC2, DEFIR, SITH1,SITH2)
 
       USE ModuleDefs
       USE ModuleData
@@ -71,7 +71,7 @@ C=======================================================================
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
-      REAL THETAC2
+      REAL THETAC2, SITH1, SITH2
 
       LOGICAL UseSimCtr, MulchWarn
 
@@ -396,7 +396,7 @@ C
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
      &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, FIST1, FIST2,
-     &           THETAC2
+     &           THETAC2, SITH1,SITH2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 C
 C           Read EIGHTH line of simulation control
@@ -684,7 +684,7 @@ C-----------------------------------------------------------------------
   67  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
   68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
   69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I5,
-     &        1X,I5,1x,F5.0)
+     &        1X,I5,1x,F5.0, 2(1x, F5.3))
   70  FORMAT (3X,I2)
 
       END SUBROUTINE IPSIM

@@ -101,7 +101,7 @@ C=======================================================================
       INTEGER FIST1, FIST2
 
       REAL    FLAG,EXP,TRT,PLTFOR
-      REAL    AVWAT, THETAC2
+      REAL    AVWAT, THETAC2, SITH1,SITH2  ! Limited and deficit irrigation parameters
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -452,13 +452,15 @@ C-----------------------------------------------------------------------
      &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
      &     EFFIRR, AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
      &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
-     &     FIST2, THETAC2, DEFIR)
+     &     FIST2, THETAC2, DEFIR, SITH1,SITH2)
 
       CALL PUT('MGMT','AVWAT', AVWAT) ! Make new variables available to all subrourtines
       CALL PUT('MGMT','FIST1', FIST1)
       CALL PUT('MGMT','FIST2', FIST2)
       CALL PUT('MGMT','THETAC2', THETAC2)
       CALL PUT('MGMT','DEFIR', DEFIR)
+      CALL PUT('MGMT','SITH1', SITH1)
+      CALL PUT('MGMT','SITH2', SITH2)
 
 C-----------------------------------------------------------------------
 C        Select crop parameter input file

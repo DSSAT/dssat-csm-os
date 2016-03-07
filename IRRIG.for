@@ -873,17 +873,13 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        REAL SWFAC
        INTEGER STGDOY(20)             ! GROWTH STAGE ONSET OR END IN YRDOY
        LOGICAL R                 ! OUTPUT
-!       LOGICAL FULLIR, TEST(10)            !
-       REAL AVWAT, THETAC2
+       REAL AVWAT, THETAC2, SITH1, SITH2
        INTEGER FIST1, FIST2, YRDOY, MDATE
        CHARACTER*1 DEFIR
-!       CHARACTER*2 CROP
 
        CHARACTER*6 ERRKEY
-!      CHARACTER*70 IrrText
        PARAMETER (ERRKEY = 'IRRIG')
        INTEGER ERRNUM, LNUM
-!       CHARACTER*12 FILEX
        CHARACTER*8 MODEL
        CHARACTER*8 MODEL_WO_V  ! MODEL WITHOUT VERSION
 
@@ -893,8 +889,9 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        CALL Get('MGMT','THETAC2', THETAC2)
        CALL Get('MGMT','DEFIR', DEFIR)
        CALL Get('MGMT','SWFAC', SWFAC)
-!       CALL Get('CONTROL','CROP', CROP)
-!       CROP = SAVE_data % Control % CROP
+       CALL Get('MGMT','SITH1', SITH1)
+       CALL Get('MGMT','SITH2', SITH2)
+
        MODEL = SAVE_data % Control % MODEL
 !       FILEIO  = SAVE_data % CONTROL % FILEX
 !       LNUM = 0
@@ -922,23 +919,39 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
 
        OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
      & POSITION = 'APPEND')
+        WRITE (6686, *) DEFIR
+       CLOSE(6686)
+!       OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
+!     & POSITION = 'APPEND')
 !        WRITE (6686, *) CROP, " ", ERRKEY, MODEL, " ", MODEL_WO_V !FILEIO, LNUM
 !       WRITE (6686, 6687) STGDOY(1:6), MDATE, FIST1, FIST2, YRDOY,
 !     &  TEST(1:10), CROP
 !       WRITE (6686, 6687) 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
 !       WRITE (6686, 6687) YRDOY, STGDOY(1:11), MODEL_WO_V, TEST(1:8),
 !     & FIST1, FIST2
-       WRITE (6686, 6687) SWFAC, MODEL_WO_V
+!       WRITE (6686, 6687) SWFAC, MODEL_WO_V
 
-       CLOSE (6686)
+!      CLOSE (6686)
 !6687   FORMAT (10(1X,I8), 10(1X, L1), 1X, A)
 !6687   FORMAT (12(1X,I8), 1X, A, 8(1X, L1), 2(1X,I2))
-6687   FORMAT (F5.3, 1X, A)
+!6687   FORMAT (F5.3, 1X, A)
         SELECT CASE (DEFIR)
          CASE ('N')  ! NO DEFICIT IRRIGATION
              R = (ATHETA .LE. THETAC*0.01)
-         CASE ('V')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
+         CASE ('V', 'S')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
              ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
+          IF(
+     &       ((SITH1 .GT. 1.0) .OR. (SITH2 .GT. 1.0)) .OR.
+     &       ((SITH1 .LT. 0.0) .OR. (SITH2 .LT. 0.0))
+     &        ) THEN
+               WRITE (*, *) "=========================================",
+     &                      "======================================"
+               WRITE (*, *) "ERROR: Invalid input for SITH1 or SITH2, ",
+     &                      "please enter a number between 0 and 1."
+               WRITE (*, *) "=========================================",
+     &                      "======================================"
+               STOP
+          ENDIF
           SELECT CASE (MODEL_WO_V)
            CASE ('CSCER','MLCER', 'MZCER', 'RICER', 'SGCER', 'SWCER')
             IF(
@@ -961,9 +974,19 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
      &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
      &          (YRDOY .GE. STGDOY(4))
      &       ) THEN                                                    ! IS STAGE 5 IS FULLY IRRIGATIED ?
-             R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
+             SELECT CASE(DEFIR)
+              CASE('V')
+               R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
+              CASE('S')
+               R = (SWFAC .LE. SITH2)
+             END SELECT
             ELSE
-             R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
+             SELECT CASE(DEFIR)
+              CASE('V')
+               R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
+              CASE('S')
+               R = (SWFAC .LE. SITH1)
+             END SELECT
             ENDIF
            CASE ('CRGRO')
             IF(
@@ -999,6 +1022,11 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
      &                   "============================"
             STOP
           END SELECT
+        CASE DEFAULT
+         WRITE (*, *) "====================================="
+         WRITE (*, *) "ERROR: Invalid DEFIR input in X file."
+         WRITE (*, *) "====================================="
+         STOP
         END SELECT
 
       END FUNCTION IDECF                                                !This function as is will only work with CERES, with cropgro will work
