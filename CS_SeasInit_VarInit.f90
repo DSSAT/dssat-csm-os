@@ -77,6 +77,7 @@
         cwamm = -99.0
         dae = -99
         dap = -99
+        dawwp = 0.0 !LPM 06MAR2016 DAWWP added to save Development Age (with stress)
         daylcc = 0.0
         daylpav = -99.0
         daylpc = 0.0

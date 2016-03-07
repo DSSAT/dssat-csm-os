@@ -179,7 +179,7 @@
             !!LNUMG = LNUMEND - LNUM
             !LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
             IF (ISWWAT.EQ.'Y') THEN
-                LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+TTCUMWS)**2))*(TT*WFG)                                      !LPM 31JUL2015 to consider water stress
+                LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TT*WFG)                                      !LPM 31JUL2015 to consider water stress
             ELSE
                 LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TT                                              !LPM 21/02/2015 leaf number curve
             ENDIF

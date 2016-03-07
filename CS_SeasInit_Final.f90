@@ -177,10 +177,10 @@
             WRITE (fnumwrk,*) '  PFIRST,PLAST :',pwdinf,pwdinl
             WRITE (fnumwrk,*) '  HFIRST,HLAST :',hfirst,hlast
         ENDIF
-        WRITE (fnumwrk,'(A15,2F7.1)')'  PLTPOP,ROWSPC',PLTPOPP,ROWSPC
+        WRITE (fnumwrk,'(A15,2F7.1)')'  PLTPOP,ROWSPC',PPOP,ROWSPC !LPM 06MAR2016 To have just one name for PPOP
         WRITE (fnumwrk,'(A15,2F7.1)')'  SDEPTH,SDRATE',SDEPTH,SDRATE
         IF (sdepthu.LT.sdepth)WRITE (fnumwrk,'(A15,F7.1)')'  SHOOT DEPTH  ',SDEPTHU      
-        WRITE (fnumwrk,'(A15,2F7.1,A6)')'  SEEDRS,SEEDN ',SEEDRSI*PLTPOPP*10.0,SEEDNI*PLTPOPP*10.0,' kg/ha'
+        WRITE (fnumwrk,'(A15,2F7.1,A6)')'  SEEDRS,SEEDN ',SEEDRSI*PPOP*10.0,SEEDNI*PLTPOPP*10.0,' kg/ha' !LPM 06MAR2016 To have just one name for PPOP
         WRITE (fnumwrk,'(A15, F7.1)') '  PLMAGE       ',PLMAGE
         ! LAH NEED TO CHECK HARVEST OPTIONS FOR dap,growth stage.
         ! DISCUSS WITH CHP

@@ -420,15 +420,15 @@
         !       Calculate/set initial states
         !-----------------------------------------------------------------------
         
-        IF (SDRATE.LE.0.0) SDRATE = SDSZ*PLTPOPP*10.0                                                                  !EQN 024
+        IF (SDRATE.LE.0.0) SDRATE = SDSZ*PPOP*10.0                                                                  !EQN 024 !LPM 06MAR2016 To have just one name for PPOP
         ! Reserves = SDRSF% of seed 
-        SEEDRSI = (SDRATE/(PLTPOPP*10.0))*SDRSF/100.0                                                                  !EQN 284
+        SEEDRSI = (SDRATE/(PPOP*10.0))*SDRSF/100.0                                                                  !EQN 284 !LPM 06MAR2016 To have just one name for PPOP
         SEEDRS = SEEDRSI
         SEEDRSAV = SEEDRS
-        SDCOAT = (SDRATE/(PLTPOPP*10.0))*(1.0-SDRSF/100.0)                                                             !EQN 025
+        SDCOAT = (SDRATE/(PPOP*10.0))*(1.0-SDRSF/100.0)                                                             !EQN 025 !LPM 06MAR2016 To have just one name for PPOP
         ! Seed N calculated from total seed
         SDNAP = (SDNPCI/100.0)*SDRATE                                                                                  !EQN 026
-        SEEDNI = (SDNPCI/100.0)*(SDRATE/(PLTPOPP*10.0))                                                                !EQN 027
+        SEEDNI = (SDNPCI/100.0)*(SDRATE/(PPOP*10.0))                                                                !EQN 027
         IF (ISWNIT.NE.'N') THEN
             SEEDN = SEEDNI
         ELSE

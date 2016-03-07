@@ -44,7 +44,7 @@
                     WRITE (NOUTPG,'(A,A2,A6,A,A16)') ' GENOTYPE         ',CROP,VARNO,'  ',VRNAME
                     CALL Calendar (year,doy,dom,month)
                     WRITE(NOUTPG,'(A,A3,I3,I8,2X,I4,A,I3,A,/)')' PLANTING         ', month, dom, plyeardoy,  &
-                        NINT(pltpopp), ' plants/m2 in ', NINT(rowspc), ' cm rows'
+                        NINT(ppop), ' plants/m2 in ', NINT(rowspc), ' cm rows' !LPM 06MAR2016 To have just one name for PPOP
                 ENDIF
                 WRITE (NOUTPG, FMT2201)
             ENDIF  ! End Plantgro header writes
@@ -81,7 +81,7 @@
                     WRITE (NOUTPGF,'(A,A2,A6,A,A16)') ' GENOTYPE         ',CROP,VARNO,'  ',VRNAME
                     CALL Calendar (year,doy,dom,month)
                     WRITE(NOUTPGF,'(A,A3,I3,I8,2X,I4,A,I3,A,/)')' PLANTING         ', month, dom, plyeardoy,  &
-                        NINT(pltpopp), ' plants/m2 in ', NINT(rowspc), ' cm rows'
+                        NINT(ppop), ' plants/m2 in ', NINT(rowspc), ' cm rows' !LPM 06MAR2016 To have just one name for PPOP
                 ENDIF
                 WRITE (NOUTPGF, FMT2215)
                 WRITE (NOUTPGF, FMT2205)
@@ -106,7 +106,7 @@
                     WRITE (NOUTPG2,'(A,I3,A,A25)') ' TREATMENT', TN,'     ',TNAME
                     WRITE (NOUTPG2,'(A,A2,A6,A,A16)') ' GENOTYPE         ',CROP,VARNO,'  ',VRNAME
                     WRITE(NOUTPG2,'(A,A3,I3,I8,2X,I4,A,I3,A,/)')' PLANTING         ', month, dom, plyeardoy,  &
-                        NINT(pltpopp), ' plants/m2 in ', NINT(rowspc), ' cm rows'
+                        NINT(ppop), ' plants/m2 in ', NINT(rowspc), ' cm rows' !LPM 06MAR2016 To have just one name for PPOP
                 ENDIF 
                 WRITE (NOUTPG2, FMT2251)
             ENDIF   ! Plantgr2 header writes
@@ -134,7 +134,7 @@
                         WRITE (NOUTPN,'(A,I3,A,A25)') ' TREATMENT', TN,'     ',TNAME
                         WRITE (NOUTPN,'(A,A2,A6,A,A16)') ' GENOTYPE         ',CROP,VARNO,'  ',VRNAME
                         WRITE (NOUTPN,'(A,A3,I3,I8,2X,I4,A,I3,A,/)')' PLANTING         ', month, dom,  &
-                            plyeardoy, NINT(pltpopp), ' plants/m2 in ', NINT(rowspc), ' cm rows'
+                            plyeardoy, NINT(ppop), ' plants/m2 in ', NINT(rowspc), ' cm rows' !LPM 06MAR2016 To have just one name for PPOP
                     ENDIF 
                     WRITE (NOUTPN, FMT2252)
                 ENDIF  ! Plantn header writes

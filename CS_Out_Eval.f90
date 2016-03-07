@@ -495,8 +495,8 @@
                     
                 ! Product number at harvest 
                 IF (HNUMAMM.GT.0.0) THEN
-                    IF (PLTPOPP.GT.0) THEN 
-                        HNUMPMM = HNUMAMM/PLTPOPP
+                    IF (PPOP.GT.0) THEN !LPM 06MAR2016 To have just one name for PPOP
+                        HNUMPMM = HNUMAMM/PPOP
                     ELSE
                         HNUMPMM = -99.0
                     ENDIF  

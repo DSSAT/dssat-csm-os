@@ -114,6 +114,7 @@
     INTEGER :: DAS                     ! Days after start of simulation d          ! (From Output)    
     INTEGER :: DATE                    ! Date (Yr+Doy)                  #          ! (From Output)    
     INTEGER :: DATECOL                 ! Date column number             #          ! (From Output)    
+    REAL    :: DAWWP                   ! Development Age Whole Plant    C.d        ! (From SeasInit) !LPM 06MAR2016 DAWWP added to save Development Age (with stress)
     REAL    :: DAYLCAV                 ! Daylength (6deg) av for cycle  h          ! (From Integrate) 
     REAL    :: DAYLCC                  ! Daylength,cycle sum            h.d        ! (From SeasInit)  
     REAL    :: DAYLPAV(0:12)           ! Daylength (6deg) av for tier   h          ! (From SeasInit)  
@@ -629,6 +630,8 @@
     INTEGER :: PLYEARREAD              ! Planting year as read          #          ! (From SeasInit)  
     INTEGER :: PLYEARTMP               ! Year(Yr)+Doy,planting tem val  #          ! From CSCAS_29DE  
     REAL    :: PPEXP                   ! Photoperiod response exponent  #          ! (From SeasInit)  
+    REAL    :: PPOE                    ! Plant Population established   #/m2       ! (From SeasInit) !LPM 06MAR2016 To have just one name for PPOE
+    REAL    :: PPOP                    ! Plant Population planned       #/m2       ! (From SeasInit) !LPM 06MAR2016 To have just one name for PPOP
     REAL    :: PPTHR                   ! Photoperiod threshold          h          ! (From SeasInit)  
     INTEGER :: PSDAP  (0:PSX)          ! Stage DAP                      #          ! (From SeasInit)  !LPM 28MAR15 Starting from 0 PSX
     REAL    :: PSDAPFR(0:PSX)          ! Stage DAP+fr                   #          ! (From Integrate) !LPM 28MAR15 Starting from 0 PSX

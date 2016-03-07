@@ -326,7 +326,7 @@
                 !WRITE (FNUMPREM,'(I6)',ADVANCE='NO') PSDAPM(HSTG)
                 WRITE (FNUMPREM, FMT411) NINT(hwamm),hwummchar,NINT(hnumamm),NINT(hnumgmm),laixmchar,lnumsmm,brnumshm, &
                     NINT(cwamm),NINT(vwamm),hiammchar,NINT(rwamm),hnpcmmchar,NINT(tnamm),NINT(cnamm),NINT(hnamm), &
-                    hinmmchar,pltpopp,NINT(amtnit),sradcav,tmaxcav,tmincav,NINT(raincc)
+                    hinmmchar,ppop,NINT(amtnit),sradcav,tmaxcav,tmincav,NINT(raincc) !LPM 06MAR2016 To have just one name for PPOP
                 CLOSE(FNUMPREM)
             ENDIF  
             ! End Responses (Measured)

@@ -192,7 +192,7 @@
                 SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
                 TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
                 !WEATHER     , 
-                WINDSP      , YEAR        , &
+                WINDSP      , YEAR        , YEARPLTCSM  , &         !LPM 06MAR2016 Added to keep automatic planting
                 IDETG         )
 
         !!=======================================================================================================================

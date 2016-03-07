@@ -60,8 +60,9 @@
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'CR',crop)
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'INGENO',varno)
         CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'CNAME',vrname)
-        CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPOP',pltpopp)
-        CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPOE',pltpope)
+        !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPOP',pltpopp) !LPM 06MAR2016 To have just PPOP 
+        CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPOP',ppop)
+        CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPOE',ppoe) !LPM 06MAR2016 To have just one name for PPOP
         CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PLRS',rowspc)
         CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PLDP',sdepth)
         CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PLWT',sdrate)

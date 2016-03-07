@@ -195,7 +195,6 @@ C=======================================================================
       TMAX   = WEATHER % TMAX
       TMIN   = WEATHER % TMIN
       WINDSP = WEATHER % WINDSP
-
 C-----------------------------------------------------------------------
       CALL CSCGR (FILEIOIN, RUN, TN, RN, RNMODE,           !Command line
      & ISWWAT, ISWNIT, ISWDIS, MESOM,                      !Contols      
@@ -208,7 +207,7 @@ C-----------------------------------------------------------------------
      & SW, NO3LEFT, NH4LEFT, FERNIT,                       !H2o,N states
      & TLCHD, TNIMBSOM, TNOXD,                             !N components
      & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components
-     & YEARPLTCSM, HARVFRAC,                               !Pl.date     
+     & YRPLT, HARVFRAC,                                    !Pl.date         !LPM 06MAR2016 Use YRPLT instead of YEARPLTCSM 
      & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,         !Resources       ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS
      & CAID, KCAN, KEP,                                    !States       
      & RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,         !States          ! MF 26OC14 REPLACED PORMIN WITH RWUPM

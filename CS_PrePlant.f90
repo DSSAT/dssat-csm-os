@@ -144,9 +144,9 @@
             ENDDO
             ! Plant population as established; if no data,as planted
             IF (PLTPOPE.GT.0) THEN
-                PLTPOP = PLTPOPE
+                PLTPOP = PPOE !LPM 06MAR2016 To have just one name for PPOE
             ELSE
-                PLTPOP = PLTPOPP
+                PLTPOP = PPOP !LPM 06MAR2016 To have just one name for PPOP
             ENDIF  
             ! Shoot # set equal to plants per hill
             IF (PLPH.GT.0.0) THEN
