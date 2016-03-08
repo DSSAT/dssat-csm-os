@@ -33,7 +33,7 @@ C  Called by: WATBAL
 C  Calls  : None
 C=======================================================================
       SUBROUTINE IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT , STGDOY,       !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
 
 !-----------------------------------------------------------------------
@@ -47,7 +47,7 @@ C=======================================================================
 !      CHARACTER*70 IrrText
       PARAMETER (ERRKEY = 'IRRIG')
 
-      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM, DEFIR
+      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM !, DEFIR
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
@@ -61,14 +61,12 @@ C=======================================================================
       INTEGER, DIMENSION(NAPPL) :: IDLAPL, IRRCOD
       INTEGER, DIMENSION(NAPPL) :: JULAPL, JULWTB, JWTBRD
       INTEGER STGDOY(20)
-      INTEGER FIST1, FIST2
 
       REAL AIRAMT, AIRAMX, ATHETA, DEPIR, DSOIL, DSOILX
       REAL EFFIRR, EFFIRX, IRRAMT
       REAL SWDEF, THETAC, THETCX, TOTAPW, TOTEFFIRR, TOTIR
       REAL DLAYR(NL), DS(NL), DUL(NL), LL(NL), SW(NL)
       REAL, DIMENSION(NAPPL) :: AMIR, AMT, WTABL
-      REAL THETAC2  ! 
 
 !  Added for flooded field management
       LOGICAL PUDDLED
@@ -105,16 +103,6 @@ C=======================================================================
       PUDDLED= FLOODWAT % PUDDLED
 
       CALL Get('MGMT','AVWAT', AVWAT)
-      CALL Get('MGMT','FIST1', FIST1)
-      CALL Get('MGMT','FIST2', FIST2)
-      CALL Get('MGMT','THETAC2', THETAC2)
-      CALL Get('MGMT','DEFIR', DEFIR)
-
-!      OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
-!     &POSITION = 'APPEND')
-!      WRITE (6686, 6687) STGDOY(1:6), MDATE
-!      CLOSE (6686)
-!6687  FORMAT (7(1X,I8))
 
 C***********************************************************************
 C***********************************************************************
@@ -639,7 +627,7 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)   ! TO BE DEFINED TO WORK WITH DEFICIT IRRIGATION
+          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)   ! Decide whether or not to irrigate based on deficit irrigation criteria
           IF(IDECV) THEN
 !          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
@@ -706,10 +694,7 @@ C           Estimate that an average of 5 mm of water will be lost.
             ENDIF
 
             NAP = NAP + 1
-!           chp 3/20/2014 these are not used and result in array bounds errors 
-!             in long simulations.
-            !JULAPL(NAP) = YRDOY
-            !AMIR(NAP)   = IRRAPL
+
           ENDIF
         ENDIF
 
@@ -865,6 +850,15 @@ C=======================================================================
 C  IDECF, Function
 C  Determines if water deficit exists to triger automatic or limited irrigation
 
+!     The following models are currently supported in IDECF, for all others select N in DEFIR:
+!         'CRGRO' - CROPGRO
+!         'CSCER' - CERES Wheat, Barley
+!         'MLCER' - CERES-Millet
+!         'MZCER' - CERES-Maize
+!         'RICER' - CERES-Rice
+!         'SGCER' - CERES-Sorghum
+!         'SWCER' - CERES-Sweet corn
+
       FUNCTION IDECF(ATHETA,THETAC,STGDOY,YRDOY, MDATE) RESULT(R)
 
        USE ModuleData
@@ -893,48 +887,9 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        CALL Get('MGMT','SITH2', SITH2)
 
        MODEL = SAVE_data % Control % MODEL
-!       FILEIO  = SAVE_data % CONTROL % FILEX
-!       LNUM = 0
        MODEL_WO_V = MODEL(1:5)
 
-!       TEST(1) = ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(5)))
-!       TEST(2) = ((YRDOY .GE. STGDOY(5)) .AND. (YRDOY.LT. STGDOY(6)))
-!       TEST(3) = ((YRDOY .GE. STGDOY(6)) .AND. (YRDOY.LT. STGDOY(8)))
-!       TEST(4) = ((YRDOY .GE. STGDOY(8)) .AND. (YRDOY.LT. STGDOY(11)))
-!       TEST(6) = ( (FIST1 .EQ. 0) .OR. (FIST2 .EQ. 0) )
-!       TEST(6) = ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
-!       TEST(7) = ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) )
-!       TEST(8) = ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) )
 
-
-!       TEST(2) =  ( (FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1) )
-!       TEST(3) =  ( (YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2)) )
-!       TEST(4) =  ( (FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2) )
-!       TEST(5) =  ( (YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3)) )
-!       TEST(6) =  ( (FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3) )
-!       TEST(7) =  ( (YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4)) )
-!       TEST(8) =  ( (FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4) )
-!       TEST(9) =  (YRDOY .GE. STGDOY(4) )
-!       TEST(10) =  ( (FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5) )
-
-       OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
-     & POSITION = 'APPEND')
-        WRITE (6686, *) DEFIR
-       CLOSE(6686)
-!       OPEN (UNIT = 6686, FILE = "TEST_PHASE.OUT",
-!     & POSITION = 'APPEND')
-!        WRITE (6686, *) CROP, " ", ERRKEY, MODEL, " ", MODEL_WO_V !FILEIO, LNUM
-!       WRITE (6686, 6687) STGDOY(1:6), MDATE, FIST1, FIST2, YRDOY,
-!     &  TEST(1:10), CROP
-!       WRITE (6686, 6687) 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
-!       WRITE (6686, 6687) YRDOY, STGDOY(1:11), MODEL_WO_V, TEST(1:8),
-!     & FIST1, FIST2
-!       WRITE (6686, 6687) SWFAC, MODEL_WO_V
-
-!      CLOSE (6686)
-!6687   FORMAT (10(1X,I8), 10(1X, L1), 1X, A)
-!6687   FORMAT (12(1X,I8), 1X, A, 8(1X, L1), 2(1X,I2))
-!6687   FORMAT (F5.3, 1X, A)
         SELECT CASE (DEFIR)
          CASE ('N')  ! NO DEFICIT IRRIGATION
              R = (ATHETA .LE. THETAC*0.01)
@@ -1029,20 +984,7 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
          STOP
         END SELECT
 
-      END FUNCTION IDECF                                                !This function as is will only work with CERES, with cropgro will work
-                                                                        ! but phases won't be right.
-
-!     The following models are currently supported:
-!         'CRGRO' - CROPGRO
-!         'CSCER' - CERES Wheat, Barley
-!         'MLCER' - CERES-Millet
-!         'MZCER' - CERES-Maize
-!         'RICER' - CERES-Rice
-!         'SGCER' - CERES-Sorghum
-!         'SWCER' - CERES-Sweet corn
-
-
-
+      END FUNCTION IDECF
 
 C-----------------------------------------------------------------------
 C=======================================================================
