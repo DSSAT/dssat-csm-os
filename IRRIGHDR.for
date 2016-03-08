@@ -1,6 +1,8 @@
 C=======================================================================
-C  IRRIG, Subroutine
-C  Determines when irrigation occurs
+C  IRRIGHDR, Subroutine
+C  This is a modification of the IRRIG subroutine that determines when irrigation occurs.
+C  It requires an available water at planting input and does not allow total irrigation to surpass
+C  this threshold
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  09/01/1988 BB  Restructured from WATBAL
@@ -21,23 +23,23 @@ C  08/19/2002 GH  Modified for Y2K
 C  08/12/2003 CHP Added I/O error checking
 C  08/12/2003 CHP Fixed problem with automatic irrigation
 C  10/28/2004 CHP Fixed problem with multiple applications on same day.
-!  06/06/2006 CHP Export TIL_IRR, the irrigation amount which affects 
+!  06/06/2006 CHP Export TIL_IRR, the irrigation amount which affects
 !                 soil dynamics (excludes drip irrigation).
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
-!  04/18/2013 CHP Added error checking for irrigation amount. It is 
-!                   operation-specific, so checking was removed from 
+!  04/18/2013 CHP Added error checking for irrigation amount. It is
+!                   operation-specific, so checking was removed from
 !                   input module.
-!  02/08/2016 JOSE Added limited irrigation.
+!  02/04/2016 JRL IRRIGHDR subroutine was created
 C-----------------------------------------------------------------------
 C  Called by: WATBAL
 C  Calls  : None
 C=======================================================================
-      SUBROUTINE IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT , STGDOY,       !Input
+      SUBROUTINE IRRIGHDR(CONTROL, ISWITCH,
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs 
+      USE ModuleDefs
       USE ModuleData
       USE FloodModule
       IMPLICIT NONE
@@ -47,7 +49,7 @@ C=======================================================================
 !      CHARACTER*70 IrrText
       PARAMETER (ERRKEY = 'IRRIG')
 
-      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM !, DEFIR
+      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
@@ -60,7 +62,6 @@ C=======================================================================
       INTEGER YRDIF
       INTEGER, DIMENSION(NAPPL) :: IDLAPL, IRRCOD
       INTEGER, DIMENSION(NAPPL) :: JULAPL, JULWTB, JWTBRD
-      INTEGER STGDOY(20)
 
       REAL AIRAMT, AIRAMX, ATHETA, DEPIR, DSOIL, DSOILX
       REAL EFFIRR, EFFIRX, IRRAMT
@@ -75,38 +76,36 @@ C=======================================================================
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
-      
-	  REAL AVWAT    ! Water available for irrigation at planting (mm)
-	  REAL AVWATT    ! Water available for irrigation today (mm)
 
-	  LOGICAL IDECV  ! Output of function IDECF
-      LOGICAL IDECF  ! Function, determines if irrigation is needed (for A and L)
+C     Variables to create test output file
+      CHARACTER*12  TEST_OUTPUT_FILE
+      LOGICAL FEXIST
+!      INTEGER ERRNUM
+C     End of variables to create test output file
+
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
       TYPE (SoilType)     SOILPROP
       TYPE (FloodWatType) FLOODWAT
-      Type (MgmtType)     MGMT
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
 
-      IIRRI  = ISWITCH % IIRRI
-
-      DLAYR  = SOILPROP % DLAYR  
+      DLAYR  = SOILPROP % DLAYR
       DS     = SOILPROP % DS
-      DUL    = SOILPROP % DUL    
-      LL     = SOILPROP % LL     
-      NLAYR  = SOILPROP % NLAYR  
+      DUL    = SOILPROP % DUL
+      LL     = SOILPROP % LL
+      NLAYR  = SOILPROP % NLAYR
+
+      IIRRI  = ISWITCH % IIRRI
 
       PUDDLED= FLOODWAT % PUDDLED
 
-      CALL Get('MGMT','AVWAT', AVWAT)
-
 C***********************************************************************
 C***********************************************************************
-C    Input and Initialization 
+C    Input and Initialization
 C***********************************************************************
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
@@ -134,13 +133,10 @@ C-----------------------------------------------------------------------
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
 
-!     If in limited irrigation mode, check if there is water for irrigation
-      IF ((TOTIR .GE. AVWAT) .AND. (IIRRI .EQ. 'L')) IIRRI = "N"
-
       IF (ISWWAT .EQ. 'Y') THEN
       !Data is read if not sequenced or seasonal run or for first
       !  season of sequence or seasonal runs.
-!        IF ((INDEX('QF',RNMODE) .EQ. 0 .OR. RUN .EQ. 1) 
+!        IF ((INDEX('QF',RNMODE) .EQ. 0 .OR. RUN .EQ. 1)
 !     &        .AND. MULTI .LE. 1) THEN
 
           JIRR = 0.0
@@ -172,7 +168,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C      Read Automatic Management
 C-----------------------------------------------------------------------
-          IF (INDEX('AFPWL', ISWITCH % IIRRI) > 0) THEN
+          IF (INDEX('AFPW', ISWITCH % IIRRI) > 0) THEN
             SECTION = '!AUTOM'
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
@@ -209,12 +205,12 @@ C-----------------------------------------------------------------------
             READ(LUNIO,'(3X,I7,3X,A90)',ERR=50, END=50) IDLAPL(I),CHAR
             LNUM = LNUM + 1
 
-            READ(CHAR,'(I3,1X,F5.0,1X,I5)',IOSTAT=ERRNUM) 
-     &                 IRRCOD(I), AMT(I) 
+            READ(CHAR,'(I3,1X,F5.0,1X,I5)',IOSTAT=ERRNUM)
+     &                 IRRCOD(I), AMT(I)
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
             JIRR = JIRR + 1
           ENDDO
-  
+
    50     CONTINUE
           CLOSE (LUNIO)
 !        ENDIF
@@ -231,7 +227,7 @@ C-----------------------------------------------------------------------
 
 !     AMTMIN was not being used -- should it be used in place
 !             of AIRAMT?  CHP
-        !IF (AIRAMT .GT. 0.0) THEN   
+        !IF (AIRAMT .GT. 0.0) THEN
         !  AMTMIN = AIRAMT
         !ELSE
         !  AMTMIN = 5.0
@@ -290,7 +286,7 @@ C
           SELECT CASE (IRRCOD(I))
 
           !------------------------------
-           CASE (1:6)    
+           CASE (1:6)
 !          Regular irrigation (bunded or upland)
 
              IF (AMT(I) < -1.E-6) THEN
@@ -301,7 +297,7 @@ C
                CYCLE
              ENDIF
 
-             NCOND         = NCOND + 1        
+             NCOND         = NCOND + 1
              CONDAT(NCOND) = IDLAPL(I)
              IIRRCV(NCOND) = IRRCOD(I)
              COND(NCOND)   = AMT(I)
@@ -326,8 +322,8 @@ C
 
              NTBL = NTBL + 1
 !            JWTBRD stores original values
-             JWTBRD(NTBL) = IDLAPL(I)  
-!            JULWTB can be modified for sequenced or multi-year runs  
+             JWTBRD(NTBL) = IDLAPL(I)
+!            JULWTB can be modified for sequenced or multi-year runs
              JULWTB(NTBL) = IDLAPL(I)
              WTABL(NTBL)   = AMT(I)         !cm
 !            PWAT(NTBL)    = AMT(I)/10.0
@@ -371,16 +367,16 @@ C
 !            IF (AMT(I) < 1) THEN
                AMT(I) = -1
                NMSG = NMSG + 1
-               MSG(NMSG) = 
+               MSG(NMSG) =
      &      "Plowpan depth < zero; No plowpan wil be used (ORYZA only)."
 !            Remove CYCLE stmt (CHP 8/25/2014)
              ENDIF
 
              PUDDLED = .TRUE.
 !            Depth of puddling input in cm, convert to m
-             PLOWPAN = AMT(I) / 100.   
+             PLOWPAN = AMT(I) / 100.
              IF (PLOWPAN < 0.01) THEN
-               PLOWPAN = -1.   
+               PLOWPAN = -1.
              ENDIF
 
           !------------------------------
@@ -390,12 +386,12 @@ C
              IF (AMT(I) < -1.E-6) THEN
                AMT(I) = 2.0
                NMSG = NMSG + 1
-               MSG(NMSG) = 
+               MSG(NMSG) =
      &    "Constant flood depth value < zero; No change to flood depth."
                CYCLE
              ENDIF
 
-             NCOND         = NCOND + 1        
+             NCOND         = NCOND + 1
              CONDAT(NCOND) = IDLAPL(I)
              IIRRCV(NCOND) = IRRCOD(I)
              COND(NCOND)   = AMT(I)
@@ -405,15 +401,15 @@ C
         IF (NMSG > 1) CALL WARNING(NMSG, ERRKEY, MSG)
       ENDIF
 
-!!     Check for using flooded conditions with Century method of 
-!!     soil organic matter.  
+!!     Check for using flooded conditions with Century method of
+!!     soil organic matter.
 !      MESOM = ISWITCH % MESOM
 !      IF (NBUND .GT. 0 .AND. MESOM .EQ. 'P') THEN
 !!        MSG(1) = 'Flooded field not available with Century SOM model.'
 !!        MSG(2) = 'Change either management or SOM method in FILEX.'
 !!        MSG(3) = 'Program will stop.'
 !
-!        MSG(1) = 
+!        MSG(1) =
 !     &'Century model was not intended to be used with flooded fields.'
 !        MSG(2) = 'Change either management or SOM method in FILEX.'
 !        CALL WARNING(2, ERRKEY, MSG)
@@ -526,7 +522,7 @@ C-----------------------------------------------------------------------
       NAP = 0
 
 !      IF (NBUND .GT. 0) THEN
-        CALL FLOOD_IRRIG (SEASINIT, 
+        CALL FLOOD_IRRIG (SEASINIT,
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
      &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC, NTBL,!Input
      &    PUDDLED, PWAT, RAIN, SOILPROP, SW, YRDOY, YRPLT,!Input
@@ -534,7 +530,7 @@ C-----------------------------------------------------------------------
      &    DEPIR)                                          !Output
 !      ENDIF
 
-!     Store NBUND in composite variable. Used as a trigger for 
+!     Store NBUND in composite variable. Used as a trigger for
 !       potential flooding.
       FLOODWAT % NBUND   = NBUND
 
@@ -565,7 +561,7 @@ C-----------------------------------------------------------------------
 !     Check to see if flood irrigation is done today
 !-----------------------------------------------------------------------
       IF (NBUND .GT. 0) THEN
-        CALL FLOOD_IRRIG (RATE, 
+        CALL FLOOD_IRRIG (RATE,
      &    BUND, COND, CONDAT, IBDAT, IIRRCV, IIRRI,       !Input
      &    IPDAT, IPERC, JULWTB, NBUND, NCOND, NPERC, NTBL,!Input
      &    PUDDLED, PWAT, RAIN, SOILPROP, SW, YRDOY, YRPLT,!Input
@@ -620,16 +616,14 @@ C-----------------------------------------------------------------------
 C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
 C-----------------------------------------------------------------------
       CASE ('A', 'F')
-        IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
+        IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR.
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
           CALL SWDEFICIT(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)   ! Decide whether or not to irrigate based on deficit irrigation criteria
-          IF(IDECV) THEN
-!          IF (ATHETA .LE. THETAC*0.01) THEN
+          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
 
             IF (IIRRI .EQ. 'A') THEN
@@ -658,47 +652,6 @@ C             Apply fixed irrigation amount
           ENDIF
         ENDIF
 
-
-C-----------------------------------------------------------------------
-C** IIRRI = L - Limited irrigation (based on Automatic irrigation)
-C-----------------------------------------------------------------------
-      CASE ('L')
-
-        IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR.
-     &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
-
-          CALL SWDEFICIT(
-     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
-     &        ATHETA, SWDEF)                              !Output
-
-          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)   ! ADDED TO WORK WITH DEFICIT IRRIGATION
-          IF(IDECV) THEN
-!          IF (ATHETA .LE. THETAC*0.01) THEN
-!         A soil water deficit exists - automatic irrigation today.
-
-C           Determine supplemental irrigation amount.
-C           Compensate for expected water loss due to soil evaporation
-C           and transpiration today.
-C           Estimate that an average of 5 mm of water will be lost.
-            IRRAPL = SWDEF*10 + 5.0
-            IRRAPL = MAX(0.,IRRAPL)
-
-            SELECT CASE(AIRRCOD)
-              CASE(1:4,6); TIL_IRR = TIL_IRR + IRRAPL
-            END SELECT
-
-            DEPIR = DEPIR + IRRAPL
-            AVWATT = AVWAT - TOTIR ! Calculate water available today
-            IF ((DEPIR .GT. AVWATT) .AND. (IIRRI .EQ. 'L')) THEN
-              DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
-            ENDIF
-
-            NAP = NAP + 1
-
-          ENDIF
-        ENDIF
-
-
 C-----------------------------------------------------------------------
 C** IIRRI = P - As Reported through last reported day, then automatic
 C          to re-fill profile (as in option A)
@@ -725,7 +678,7 @@ C-----------------------------------------------------------------------
         IF (YRDOY .GT. JULAPL(NAPW))THEN
           !Past end of records - automatic irrigation.
 
-          IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
+          IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR.
      &        (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
             CALL SWDEFICIT(
@@ -769,7 +722,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
       CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
-      
+
 !***********************************************************************
 !***********************************************************************
 !     DAILY INTEGRATION CALCULATIONS
@@ -795,9 +748,29 @@ C-----------------------------------------------------------------------
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
       FLOODWAT % PUDDLED = PUDDLED
-      
+
+C     Open or create an ouput testfile
+
+        TEST_OUTPUT_FILE="TestJose.OUT"
+
+        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
+        IF (FEXIST) THEN
+          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'OLD',
+     &      POSITION = 'APPEND')
+          WRITE (6686,*)    "Existing file was found using IRRIGHDR"
+
+        ELSE
+          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'NEW',
+     &      IOSTAT = ERRNUM)
+          WRITE (6686,*)    "This is a new file created using IRRIGHDR"
+        ENDIF
+
+        CLOSE (6686)
+C     End of test... delete later
+
       RETURN
-      END SUBROUTINE IRRIG
+
+      END SUBROUTINE IRRIGHDR
 C=======================================================================
 
 C=======================================================================
@@ -805,201 +778,59 @@ C  SWDEFICIT, Subroutine
 C  Determines soil water deficit for automatic irrigation requirments
 C-----------------------------------------------------------------------
 
-      SUBROUTINE SWDEFICIT(
-     &    DSOIL, DLAYR, DUL, LL, NLAYR, SW,               !Input
-     &    ATHETA, SWDEF)                                  !Output
-
-      USE ModuleDefs
-      IMPLICIT NONE
-
-      INTENT(IN) DSOIL, DLAYR, DUL, LL, NLAYR, SW
-      INTENT(OUT) ATHETA, SWDEF
-
-      INTEGER L, NLAYR
-      REAL, DIMENSION(NL) :: DLAYR, DUL, LL, SW
-      REAL ATHETA, DEPMAX, DSOIL, SWDEF, TSWTOP, WET1, XDEP, XDEPL
-
-      WET1 = 0.0
-      DEPMAX = 0.0
-      TSWTOP = 0.0
-      DEPMAX = 0.0
-
-      DO L = 1,NLAYR
-        IF (DEPMAX .LT. DSOIL) THEN
-          XDEPL  = DEPMAX
-          DEPMAX = DEPMAX + DLAYR(L)
-          IF (DEPMAX .GT. DSOIL) THEN
-            XDEP = (DSOIL - XDEPL)
-          ELSE
-            XDEP = DLAYR(L)
-          ENDIF
-          WET1 = WET1   + (DUL(L) - LL(L)) * XDEP
-          TSWTOP = TSWTOP + (SW(L) - LL(L)) * XDEP
-        ENDIF
-      ENDDO
-
-      ATHETA = TSWTOP / WET1
-      SWDEF  = MAX(0.0,(WET1 - TSWTOP))
-
-      RETURN
-      END SUBROUTINE SWDEFICIT
-
-C=======================================================================
+!      SUBROUTINE SWDEFICIT(
+!     &    DSOIL, DLAYR, DUL, LL, NLAYR, SW,               !Input
+!     &    ATHETA, SWDEF)                                  !Output
+!
+!      USE ModuleDefs
+!      IMPLICIT NONE
+!
+!      INTENT(IN) DSOIL, DLAYR, DUL, LL, NLAYR, SW
+!      INTENT(OUT) ATHETA, SWDEF
+!
+!      INTEGER L, NLAYR
+!      REAL, DIMENSION(NL) :: DLAYR, DUL, LL, SW
+!      REAL ATHETA, DEPMAX, DSOIL, SWDEF, TSWTOP, WET1, XDEP, XDEPL
+!
+!      WET1 = 0.0
+!      DEPMAX = 0.0
+!      TSWTOP = 0.0
+!      DEPMAX = 0.0
+!
+!      DO L = 1,NLAYR
+!        IF (DEPMAX .LT. DSOIL) THEN
+!          XDEPL  = DEPMAX
+!          DEPMAX = DEPMAX + DLAYR(L)
+!          IF (DEPMAX .GT. DSOIL) THEN
+!            XDEP = (DSOIL - XDEPL)
+!          ELSE
+!            XDEP = DLAYR(L)
+!          ENDIF
+!          WET1 = WET1   + (DUL(L) - LL(L)) * XDEP
+!          TSWTOP = TSWTOP + (SW(L) - LL(L)) * XDEP
+!        ENDIF
+!      ENDDO
+!
+!      ATHETA = TSWTOP / WET1
+!      SWDEF  = MAX(0.0,(WET1 - TSWTOP))
+!
+!      RETURN
+!      END SUBROUTINE SWDEFICIT
 
 C=======================================================================
-C  IDECF, Function
-C  Determines if water deficit exists to triger automatic or limited irrigation
 
-!     The following models are currently supported in IDECF, for all others select N in DEFIR:
-!         'CRGRO' - CROPGRO
-!         'CSCER' - CERES Wheat, Barley
-!         'MLCER' - CERES-Millet
-!         'MZCER' - CERES-Maize
-!         'RICER' - CERES-Rice
-!         'SGCER' - CERES-Sorghum
-!         'SWCER' - CERES-Sweet corn
-
-      FUNCTION IDECF(ATHETA,THETAC,STGDOY,YRDOY, MDATE) RESULT(R)
-
-       USE ModuleData
-
-       REAL, INTENT(IN) :: ATHETA, THETAC  ! INPUT  I = ATHETA and J = THETAC
-       REAL SWFAC
-       INTEGER STGDOY(20)             ! GROWTH STAGE ONSET OR END IN YRDOY
-       LOGICAL R                 ! OUTPUT
-       REAL AVWAT, THETAC2, SITH1, SITH2
-       INTEGER FIST1, FIST2, YRDOY, MDATE
-       CHARACTER*1 DEFIR
-
-       CHARACTER*6 ERRKEY
-       PARAMETER (ERRKEY = 'IRRIG')
-       INTEGER ERRNUM, LNUM
-       CHARACTER*8 MODEL
-       CHARACTER*8 MODEL_WO_V  ! MODEL WITHOUT VERSION
-
-       CALL Get('MGMT','AVWAT', AVWAT)
-       CALL Get('MGMT','FIST1', FIST1)
-       CALL Get('MGMT','FIST2', FIST2)
-       CALL Get('MGMT','THETAC2', THETAC2)
-       CALL Get('MGMT','DEFIR', DEFIR)
-       CALL Get('MGMT','SWFAC', SWFAC)
-       CALL Get('MGMT','SITH1', SITH1)
-       CALL Get('MGMT','SITH2', SITH2)
-
-       MODEL = SAVE_data % Control % MODEL
-       MODEL_WO_V = MODEL(1:5)
-
-
-        SELECT CASE (DEFIR)
-         CASE ('N')  ! NO DEFICIT IRRIGATION
-             R = (ATHETA .LE. THETAC*0.01)
-         CASE ('V', 'S')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
-             ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
-          IF(
-     &       ((SITH1 .GT. 1.0) .OR. (SITH2 .GT. 1.0)) .OR.
-     &       ((SITH1 .LT. 0.0) .OR. (SITH2 .LT. 0.0))
-     &        ) THEN
-               WRITE (*, *) "=========================================",
-     &                      "======================================"
-               WRITE (*, *) "ERROR: Invalid input for SITH1 or SITH2, ",
-     &                      "please enter a number between 0 and 1."
-               WRITE (*, *) "=========================================",
-     &                      "======================================"
-               STOP
-          ENDIF
-          SELECT CASE (MODEL_WO_V)
-           CASE ('CSCER','MLCER', 'MZCER', 'RICER', 'SGCER', 'SWCER')
-            IF(
-     &         ((FIST1 .GE. 6) .OR. (FIST2 .GE. 6)) .OR.
-     &         ((FIST1 .LE. 0) .OR. (FIST2 .LE. 0))
-     &        ) THEN
-              WRITE (*, *) "======================================="
-              WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2"
-              WRITE (*, *) "======================================="
-              STOP
-            ELSE IF(
-     &         ((FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1)) .AND.
-     &         ((YRDOY .GE. STGDOY(9)) .AND. (YRDOY.LT. STGDOY(1))).OR. ! IS STAGE 1 IS FULLY IRRIGATIED ?
-     &         ((FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2)) .AND.
-     &         ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2))).OR. ! IS STAGE 2 IS FULLY IRRIGATIED ?
-     &         ((FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3)) .AND.
-     &         ((YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3))).OR. ! IS STAGE 3 IS FULLY IRRIGATIED ?
-     &         ((FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4)) .AND.
-     &         ((YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4))).OR. ! IS STAGE 4 IS FULLY IRRIGATIED ?
-     &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
-     &          (YRDOY .GE. STGDOY(4))
-     &       ) THEN                                                    ! IS STAGE 5 IS FULLY IRRIGATIED ?
-             SELECT CASE(DEFIR)
-              CASE('V')
-               R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
-              CASE('S')
-               R = (SWFAC .LE. SITH2)
-             END SELECT
-            ELSE
-             SELECT CASE(DEFIR)
-              CASE('V')
-               R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
-              CASE('S')
-               R = (SWFAC .LE. SITH1)
-             END SELECT
-            ENDIF
-           CASE ('CRGRO')
-            IF(
-     &         ((2  .EQ. FIST1) .OR. (2  .EQ. FIST2)) .OR.
-     &         ((4  .EQ. FIST1) .OR. (4  .EQ. FIST2)) .OR.
-     &         ((FIST1 .GE.  6) .OR. (FIST2 .GE.  6)) .OR.
-     &         ((FIST1 .LE. -1) .OR. (FIST2 .LE. -1))
-     &        ) THEN
-             WRITE (*, *) "========================================"
-             WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2."
-             WRITE (*, *) "========================================"
-             STOP
-            ELSE IF(
-     &         ((FIST1 .EQ. 0) .OR. (FIST2 .EQ. 0)) .AND.
-     &         ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(5))).OR. ! IS STAGE 0 IS FULLY IRRIGATIED ?
-     &         ((FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1)) .AND.
-     &         ((YRDOY .GE. STGDOY(5)) .AND. (YRDOY.LT. STGDOY(6))).OR. ! IS STAGE 1 IS FULLY IRRIGATIED ?
-     &         ((FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3)) .AND.
-     &         ((YRDOY .GE. STGDOY(6)) .AND. (YRDOY.LT. STGDOY(8))).OR. ! IS STAGE 3 IS FULLY IRRIGATIED ?
-     &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
-     &         ((YRDOY .GE. STGDOY(8)) .AND. (YRDOY.LT. STGDOY(11)))    ! IS STAGE 5 IS FULLY IRRIGATIED ?
-     &       ) THEN
-             R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
-            ELSE
-             R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
-            ENDIF
-           CASE DEFAULT                                                 ! ERROR MESSAGE IN SCREEN ONLY!
-            WRITE (*, *) "===========================================",
-     &                   "============================"
-            WRITE (*, *) "ERROR: Deficit irrigation is not supported ",
-     &                   "for the crop model selected."
-            WRITE (*, *) "===========================================",
-     &                   "============================"
-            STOP
-          END SELECT
-        CASE DEFAULT
-         WRITE (*, *) "====================================="
-         WRITE (*, *) "ERROR: Invalid DEFIR input in X file."
-         WRITE (*, *) "====================================="
-         STOP
-        END SELECT
-
-      END FUNCTION IDECF
-
-C-----------------------------------------------------------------------
-C=======================================================================
 
 !***********************************************************************
 !***********************************************************************
 !     IRRIG VARIABLE DEFINITIONS:
 !-----------------------------------------------------------------------
-! AIRAMT    Amount of irrigation applied, if fixed, for automatic 
+! AIRAMT    Amount of irrigation applied, if fixed, for automatic
 !             irrigation (mm)
 ! AIRAMX    Fixed irrigation amount (mm)
 ! AMIR(I)   Irrigation depth of the Ith application (mm)
-! AMT(I)    Irrigation amount, depth of water/water table, bund height, or 
+! AMT(I)    Irrigation amount, depth of water/water table, bund height, or
 !             percolation rate  (mm or mm/day)
-! ATHETA    Average available water in top irrigation management depth of 
+! ATHETA    Average available water in top irrigation management depth of
 !             soil (%)
 ! DAP       Number of days after planting (d)
 ! DEPIR     Irrigation depth for today (mm)
@@ -1007,38 +838,38 @@ C=======================================================================
 ! DSOIL     Irrigation management depth (cm)
 ! DSOILX    Management depth for automatic irrigation (cm)
 ! EFFIRR    Irrigation application efficiency (cm/cm)
-! EFFIRX     
-! ERRKEY    Subroutine name for error file 
-! ERRNUM    Error number for input 
-! FILEIO    Filename for input file (e.g., IBSNAT35.INP) 
-! FOUND     Indicator that good data was read from file by subroutine FIND 
-!             (0 - End-of-file encountered, 1 - NAME was found) 
+! EFFIRX
+! ERRKEY    Subroutine name for error file
+! ERRNUM    Error number for input
+! FILEIO    Filename for input file (e.g., IBSNAT35.INP)
+! FOUND     Indicator that good data was read from file by subroutine FIND
+!             (0 - End-of-file encountered, 1 - NAME was found)
 ! IDATE     Day of irrigation or fertilizer application (d)
-! IDLAPL(I) Irrigation or water table dates read from input file. 
-! IIRRI     Irrigation switch R=on reported dates, D=as reported, days 
-!             after planting, A=automatic, when rqd., F=automatic w/ fixed 
-!             amt, P=as reported thru last reported day then automatic, 
-!             W=as reported thru last reported day then fixed amount, N=not 
-!             irrigated 
+! IDLAPL(I) Irrigation or water table dates read from input file.
+! IIRRI     Irrigation switch R=on reported dates, D=as reported, days
+!             after planting, A=automatic, when rqd., F=automatic w/ fixed
+!             amt, P=as reported thru last reported day then automatic,
+!             W=as reported thru last reported day then fixed amount, N=not
+!             irrigated
 ! IRRAMT    Irrigation amount (mm)
-! IRRCOD(I) Irrigation operation code: 1=Furrow, 2=Alternating furrows, 
-!             3=flood, 4=Sprinkler, 5=Drip or trickle, 6=Flood depth, 
+! IRRCOD(I) Irrigation operation code: 1=Furrow, 2=Alternating furrows,
+!             3=flood, 4=Sprinkler, 5=Drip or trickle, 6=Flood depth,
 !             7=Water table depth, 8=Percolation rate, 9=Bund height
 !             (mm or mm/day)
 ! JULAPL    Julian date for scheduled irrigation application (DOY)
 ! JULWTB    Julian date for scheduled irrigation application (YYDDD)
-! JWTBRD    Recorded water table dates, saved for date modification on 
-!             seasonal or sequenced runs 
-! LNUM      Current line number of input file 
-! LUNIO     Logical unit number for FILEIO 
-! MULTI     Current simulation year (=1 for first or single simulation, 
-!             =NYRS for last seasonal simulation) 
-! NAP       Number of irrigation applications 
-! NAPW      Number of irrigation values read from input file 
-! JIRR      Number of irrigation records 
-! NL        Maximum number of soil layers = 20 
-! NTBL      Number of water table values read 
-! SECTION   Section name in input file 
+! JWTBRD    Recorded water table dates, saved for date modification on
+!             seasonal or sequenced runs
+! LNUM      Current line number of input file
+! LUNIO     Logical unit number for FILEIO
+! MULTI     Current simulation year (=1 for first or single simulation,
+!             =NYRS for last seasonal simulation)
+! NAP       Number of irrigation applications
+! NAPW      Number of irrigation values read from input file
+! JIRR      Number of irrigation records
+! NL        Maximum number of soil layers = 20
+! NTBL      Number of water table values read
+! SECTION   Section name in input file
 ! SWDEF     Soil water deficit (cm)
 ! THETAC    Threshold, % of maximum available water triggering irrigation
 !             (%)
@@ -1047,8 +878,8 @@ C=======================================================================
 ! TOTAPW    Cumulative irrigation applied (mm)
 ! TOTIR     Total seasonal irrigation (mm)
 ! WTABL     Water table record associated with JULWTB (cm)
-! YR        Year portion of date 
-! YRDIF     Function subroutine which calculates number of days between two 
+! YR        Year portion of date
+! YRDIF     Function subroutine which calculates number of days between two
 !             dates (da)
 ! YRDOY     Current day of simulation (YYDDD)
 ! MDATE     Harvest maturity date (YYDDD)

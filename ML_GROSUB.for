@@ -38,6 +38,7 @@ C-----------------------------------------------------------------------
      & VANC,VMNC,TLAG1, SENESCE, MPLA, TPLA, MPLAG, TPLAG)
 
       USE ModuleDefs
+      USE ModuleData
       USE Interface_SenLig_Ceres
       IMPLICIT NONE
       SAVE
@@ -306,6 +307,8 @@ C--------------------------------------------------------------------
       ENDIF
 
       TURFAC = REAL(INT(TURFAC*1000))/1000
+
+      CALL PUT('MGMT', 'SWFAC', SWFAC)
 
       !-------------------------------------------------------------
       !      Compute Water Saturation Factors       

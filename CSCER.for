@@ -48,7 +48,7 @@
      & SRAD, TMAX, TMIN, CO2, RAIN, TOTIR,                 !Weather
      & DAYLT, WINDSP, ST, EO,                              !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
-     & SNOW, SW, NO3LEFT, NH4LEFT,                         !H2o,N states
+     & SNOW, SW, NO3LEFT, NH4LEFT, WFP,                         !H2o,N states
      & YEARPLT, YEARPLTCSM, HARVFRAC,                      !Pl.date
      & EOP, EP, ET, TRWUP,                                 !Resources
      & LAI, KCAN, KEP,                                     !States
@@ -8005,7 +8005,20 @@
      
               ENDIF
             
-              WRITE(fnumtmp,5500)
+              WRITE(fnumtmp,5500)'*ENVIRONMENTAL AND STRESS FACTORS',
+     &' |-----Development Phase------|-------------Environment--------',
+     &'------|----------------Stress-----------------|',
+     &'|--------Average-------|---Cumulative--|         (0=Min, 1=',
+     &'Max Stress)         |',
+     &'Time  Temp  Temp Solar Photop         Evapo |----Water---|-',
+     &'-Nitrogen--|--Phosphorus-|',
+     &'Span   Max   Min   Rad  [day]   Rain  Trans  Photo','Pho',
+     &'to         Photo',
+     &'days    ï¿½C    ï¿½C MJ/m2     hr     mm     mm  synth Growth  '
+     &,'synth Growth  synth Growth','----------------------------------'
+     &,'--------------------------------------------------------------',
+     & '--------------'
+
             
               PFPAV = -99.0
               PFGAV = -99.0
@@ -8938,17 +8951,17 @@
      & /,'   Dry Matter Productivity',T42,F7.1,' kg[DM]/kg[N uptake]',
      & /,'   Yield Productivity',T42,F7.1,' kg[yield]/kg[N uptake]')
 
- 5500  FORMAT(/,'*ENVIRONMENTAL AND STRESS FACTORS',//,
-     &' |-----Development Phase------|-------------Environment--------',
-     &'------|----------------Stress-----------------|',/,
-     &30X,'|--------Average-------|---Cumulative--|         (0=Min, 1=',
-     &'Max Stress)         |',/,
-     &25X,'Time  Temp  Temp Solar Photop         Evapo |----Water---|-',
-     &'-Nitrogen--|--Phosphorus-|',/,
-     &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
-     &'to         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ',
-     &'synth Growth  synth Growth',/,110('-'))
+ 5500  FORMAT(/,A,//,
+     &A,
+     &A,/,
+     &30X,A,
+     &A,/,
+     &25X,A,
+     &A,/,
+     &25X,A,9X,A,
+     &A,/,
+     &25X,A
+     &,A,/,3A)
 
  9588       FORMAT(
      &      /,' ...... DATE ......  GROWTH STAGE BIOMASS   LEAF  

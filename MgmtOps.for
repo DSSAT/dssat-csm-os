@@ -178,7 +178,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
       CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
 
       NBUND = FLOODWAT % NBUND
@@ -228,7 +228,7 @@ C-----------------------------------------------------------------------
       IF (INDEX('AFRDPWL',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate irrigation depth for today
         CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
         TILLVALS % TIL_IRR = TIL_IRR
       ELSE
@@ -253,7 +253,7 @@ C-----------------------------------------------------------------------
       IF (INDEX('AFRDPWL',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 
         CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
       ENDIF
 
