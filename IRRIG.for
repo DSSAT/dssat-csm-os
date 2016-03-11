@@ -896,8 +896,9 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
          CASE ('V', 'S')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
              ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
           IF(
-     &       ((SITH1 .GT. 1.0) .OR. (SITH2 .GT. 1.0)) .OR.
-     &       ((SITH1 .LT. 0.0) .OR. (SITH2 .LT. 0.0))
+     &       ((SITH1 .GT. 1.0) .OR.  (SITH2 .GT. 1.0)) !.OR.
+!     &       ((SITH1 .LT. 0.0) .AND. (SITH1 .GT. -99)) .OR.
+!     &       ((SITH2 .LT. 0.0) .AND. (SITH2 .GT. -99))
      &        ) THEN
                WRITE (*, *) "=========================================",
      &                      "======================================"
@@ -910,9 +911,10 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
           SELECT CASE (MODEL_WO_V)
            CASE ('CSCER','MLCER', 'MZCER', 'RICER', 'SGCER', 'SWCER')
             IF(
-     &         ((FIST1 .GE. 6) .OR. (FIST2 .GE. 6)) .OR.
-     &         ((FIST1 .LE. 0) .OR. (FIST2 .LE. 0))
-     &        ) THEN
+     &         ((FIST1 .GE.   6) .OR. (FIST2 .GE.   6))! .OR.
+!     &         ((FIST1 .LE.   0) .OR. (FIST2 .LE.   0))
+!     &         ((FIST1 .NE. -99) .OR. (FIST2 .NE. -99))
+     &       ) THEN
               WRITE (*, *) "======================================="
               WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2"
               WRITE (*, *) "======================================="
@@ -947,8 +949,8 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
             IF(
      &         ((2  .EQ. FIST1) .OR. (2  .EQ. FIST2)) .OR.
      &         ((4  .EQ. FIST1) .OR. (4  .EQ. FIST2)) .OR.
-     &         ((FIST1 .GE.  6) .OR. (FIST2 .GE.  6)) .OR.
-     &         ((FIST1 .LE. -1) .OR. (FIST2 .LE. -1))
+     &         ((FIST1 .GE.  6) .OR. (FIST2 .GE.  6)) ! .OR.
+!     &         ((FIST1 .LE. -1) .OR. (FIST2 .LE. -1))
      &        ) THEN
              WRITE (*, *) "========================================"
              WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2."
