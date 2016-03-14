@@ -870,6 +870,7 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        REAL AVWAT, THETAC2, SITH1, SITH2
        INTEGER FIST1, FIST2, YRDOY, MDATE
        CHARACTER*1 DEFIR
+       LOGICAL TEST(20)
 
        CHARACTER*6 ERRKEY
        PARAMETER (ERRKEY = 'IRRIG')
@@ -888,7 +889,6 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
 
        MODEL = SAVE_data % Control % MODEL
        MODEL_WO_V = MODEL(1:5)
-
 
         SELECT CASE (DEFIR)
          CASE ('N')  ! NO DEFICIT IRRIGATION
@@ -931,14 +931,14 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
      &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
      &          (YRDOY .GE. STGDOY(4))
      &       ) THEN                                                    ! IS STAGE 5 IS FULLY IRRIGATIED ?
-             SELECT CASE(DEFIR)
+10005        SELECT CASE(DEFIR)
               CASE('V')
                R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
               CASE('S')
                R = (SWFAC .LE. SITH2)
              END SELECT
             ELSE
-             SELECT CASE(DEFIR)
+10006        SELECT CASE(DEFIR)
               CASE('V')
                R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
               CASE('S')
@@ -966,9 +966,9 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
      &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
      &         ((YRDOY .GE. STGDOY(8)) .AND. (YRDOY.LT. STGDOY(11)))    ! IS STAGE 5 IS FULLY IRRIGATIED ?
      &       ) THEN
-             R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
+             GO TO 10005                                                ! IRRIGATE WITH FULL IRRIGATION CRITERIA
             ELSE
-             R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
+             GO TO 10006                                                ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
             ENDIF
            CASE DEFAULT                                                 ! ERROR MESSAGE IN SCREEN ONLY!
             WRITE (*, *) "===========================================",
