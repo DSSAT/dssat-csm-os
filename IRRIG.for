@@ -891,7 +891,7 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        MODEL_WO_V = MODEL(1:5)
 
         SELECT CASE (DEFIR)
-         CASE ('N')  ! NO DEFICIT IRRIGATION
+         CASE ('N', '')  ! NO DEFICIT IRRIGATION
              R = (ATHETA .LE. THETAC*0.01)
          CASE ('V', 'S')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
              ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
