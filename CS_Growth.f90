@@ -66,7 +66,7 @@
                 SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
                 UH2O        , & 
                 !WEATHER     , 
-                WINDSP      , YEAR        & 
+                WINDSP      , YEAR        , ST          &         !LPM20MAR2016 To consider ST for germination
                 )
             
             !=============================================================================================================

@@ -14,7 +14,7 @@
         SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
         UH2O        , &
         !WEATHER     ,                                                                                                       ! MF WEATHER needed for VPD 
-        WINDSP      , YEAR        & 
+        WINDSP      , YEAR        , ST          &    !LPM20MAR2016 To consider ST for germination
         )
         
         USE ModuleDefs
@@ -30,7 +30,7 @@
         REAL    ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR(NL)   , DUL(NL)     , EO          , EOP         
         REAL    ES          , KEP         , LL(NL)      , RLV(NL)     , RWUMX       , RWUPM       , SAT(NL)     , SRAD        
         REAL    SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       , UH2O(NL)    , WINDSP      
-        REAL    CSVPSAT     , TFAC4                                                           ! Real function call.
+        REAL    CSVPSAT     , TFAC4       , ST(NL)       ! Real function call. !LPM20MAR2016 To consider ST for germination
         
         CHARACTER(LEN=1) IDETG       , ISWWAT      
         
@@ -121,27 +121,28 @@
           TDIFNUM = TDIFNUM + 1
           TDIFAV = TDIFSUM/TDIFNUM
 
-!-----------------------------------------------------------------------
-!         Calculate thermal time
-!-----------------------------------------------------------------------
-
-          Tfd = TFAC4(trdv1,tmean,TT)
-          IF (brstage+1.0.LT.10.0) &
-           Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
-          IF (trgem(3).GT.0.0) THEN
-            Tfgem = TFAC4(trgem,tmean,TTGEM)
-          ELSE
-            Ttgem = tt
-          ENDIF    
-          !IF (Cfllflife.EQ.'D') THEN 
-          !  ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
-          !  Ttlflife = Phints   
-          !ELSE  
-          !  !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
-            Tflflife = TFAC4(trdv3,tmean,TTlflife)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
-            Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
-          !ENDIF  
-  
+!!-----------------------------------------------------------------------
+!!         Calculate thermal time                       !LPM 21MAR2016 Moved after estimation of water factors to consider ST(LSEED)
+!!-----------------------------------------------------------------------
+!
+!          Tfd = TFAC4(trdv1,tmean,TT)
+!          IF (brstage+1.0.LT.10.0) &
+!           Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
+!          IF (trgem(3).GT.0.0) THEN
+!            Tfgem = TFAC4(trgem,ST(LSEED),TTGEM)
+!            !Tfgem = TFAC4(trgem,tmean,TTGEM)  !LPM 20MAR2016 To modify 
+!          ELSE
+!            Ttgem = tt
+!          ENDIF    
+!          !IF (Cfllflife.EQ.'D') THEN 
+!          !  ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
+!          !  Ttlflife = Phints   
+!          !ELSE  
+!          !  !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
+!            Tflflife = TFAC4(trdv3,tmean,TTlflife)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
+!            Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
+!          !ENDIF  
+!  
 !-----------------------------------------------------------------------
 !         Calculate soil water 'status' (Used as a sw 'potential')
 !-----------------------------------------------------------------------
@@ -155,10 +156,11 @@
 !         Calculate water factor for germination
 !-----------------------------------------------------------------------
 
+          IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH)
           WFGE = 1.0
           IF (ISWWAT.NE.'N') THEN
             IF (GESTAGE.LT.1.0) THEN
-              IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH)
+              !IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH) !LPM 21MAR2015 To estimate LSEED when ISWWAT.EQ.N
               IF (LSEED.GT.1) THEN
                 SWPSD = SWP(LSEED)
               ELSE
@@ -170,5 +172,27 @@
             ENDIF
           ENDIF
           IF (ISWWATCROP.EQ.'N') WFGE = 1.0
+          
+!-----------------------------------------------------------------------
+!         Calculate thermal time
+!-----------------------------------------------------------------------
+
+          Tfd = TFAC4(trdv1,tmean,TT)
+          IF (brstage+1.0.LT.10.0) &
+           Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
+          IF (trgem(3).GT.0.0) THEN
+            Tfgem = TFAC4(trgem,ST(LSEED),TTGEM)
+            !Tfgem = TFAC4(trgem,tmean,TTGEM)  !LPM 20MAR2016 To modify the TT for germination using ST 
+          ELSE
+            Ttgem = tt
+          ENDIF    
+          !IF (Cfllflife.EQ.'D') THEN 
+          !  ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
+          !  Ttlflife = Phints   
+          !ELSE  
+          !  !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
+            Tflflife = TFAC4(trdv3,tmean,TTlflife)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
+            Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
+          !ENDIF  
           
       END SUBROUTINE CS_Growth_Evapo
