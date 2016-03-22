@@ -86,7 +86,7 @@
     INTEGER :: COLNUM                  ! Column number                  #          ! (From Integrate) 
     REAL    :: CRFR                    ! Plant. stick growth rate,fr stem gr #     ! (From SeasInit)  
     !REAL    :: CRRSWAD                 ! Plant. stick reserves               kg/ha ! (From Integrate) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
-    !REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed  
+    !REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit) 
     REAL    :: CRWAD                   ! Plant. stick weight                 kg/ha ! (From SeasInit)  
     REAL    :: CRWADOUT                ! Plant. stick weight for output      kg/ha ! (From Output)    
     REAL    :: CRWT                    ! Plant. stick weight                 g/p   ! (From SeasInit)  
@@ -108,6 +108,7 @@
     REAL    :: CWAMM                   ! Canopy wt,maturity,measured    kg/ha      ! (From SeasInit)  
     REAL    :: CWAN(HANUMX)            ! Canopy wt minimum after harvst kg/ha      ! (From SeasInit)  
     INTEGER :: DAE                     ! Days after emergence           d          ! (From SeasInit)  
+    REAL    :: DAGERM                  ! Dev. age for germination       #          ! (From SeasInit)  !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
     REAL    :: DALF(0:PSX,0:LCNUMX)    ! Days during which leaf active  d          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
     INTEGER :: DALSMAX                 ! DAE with the max leaf size     d          ! LPM 28FEB15 
     INTEGER :: DAP                     ! Days after planting            d          ! (From SeasInit)  
@@ -585,7 +586,8 @@
     INTEGER :: PDAYS(0:12)             ! Tier durations                 PVoCd      ! (From SeasInit)  
     REAL    :: PDL(0:PSX)              ! Tier durations,phint units     #          ! (From SeasInit)  
     REAL    :: PECM                    ! Emergence duration             Cd/cm      ! (From SeasInit)  
-    REAL    :: PEGD                    ! Duration,germ+dormancy         deg.d      ! (From SeasInit)  
+    !REAL    :: PEGD                    ! Duration,germ                  deg.d      ! (From SeasInit) !LPM 21MAR2016 Deleted, instead use PGERM 
+    REAL    :: PEMRG                   ! Reserves use by TT for emerg   g/Cd       ! (From SeasInit)
     REAL    :: PFGCAV                  ! P factor,growh,cycle,av 0-1    #          ! (From Output)    
     REAL    :: PFGPAV(0:12)            ! P factor,growh,tier,av 0-1     #          ! (From Output)    
     REAL    :: PFPCAV                  ! P factor,phs,cycle,average 0-1 #          ! (From Output)    
@@ -773,10 +775,11 @@
     REAL    :: SDNC                    ! Seed N concentration           #          ! (From SeasInit)  
     REAL    :: SDNPCI                  ! Seed N concentration,initial   %          ! (From SeasInit)  
     REAL    :: SDRATE                  ! Seeding 'rate'                 kg/ha      ! (From SeasInit)  
-    REAL    :: SDRSF                   ! Seed reserves fraction of seed #          ! (From SeasInit)  
-    REAL    :: SDSZ                    ! Seed size                      g          ! (From SeasInit)  
+    REAL    :: SDRS                    ! Seed reserves fraction of seed #          ! (From SeasInit)  !LPM 22MAR2016 Keep value SDRS  
+    !REAL    :: SDSZ                    ! Seed size                      g          ! (From SeasInit) !LPM 22MAR2016 Keep value SDWT  
     REAL    :: SDWAD                   ! Seed weight                    kg/ha      ! (From SeasInit)  
     REAL    :: SDWAM                   ! Seed at maturity               kg/ha      ! (From SeasInit)  
+    REAL    :: SDWT                    ! Seed size by unit of length    g/cm       ! (From SeasInit) 
     REAL    :: SEEDN                   ! Seed N                         g/p        ! (From SeasInit)  
     REAL    :: SEEDNI                  ! Seed N,initial                 g/p        ! (From SeasInit)  
     REAL    :: SEEDNUSE                ! N use from seed                g          ! (From Growth)    
@@ -785,9 +788,13 @@
     REAL    :: SEEDRSAV                ! Seed reserves available        g/p        ! (From SeasInit)  
     REAL    :: SEEDRSAVR               ! Seed reserves available,roots  g/p        ! (From Growth)    
     REAL    :: SEEDRSI                 ! Seed reserves,initial          g/p        ! (From SeasInit)  
-    REAL    :: SEEDUSE                 ! Seed reserves use              g/p        ! (From SeasInit)  
+    REAL    :: SEEDUSE                 ! Seed reserves use              g/p        ! (From SeasInit) 
+    REAL    :: SEEDUSED                ! Seed reserves use by germ day  g/p/d      ! (From SeasInit) !LPM 22MAR2016 Added SEEDUSED to estimate the use of reserves in germination
     REAL    :: SEEDUSER                ! Seed reserves use,roots        g/p        ! (From SeasInit)  
+    REAL    :: SEEDUSES                ! Seed reserves use shoot dev    g/p        ! (From SeasInit) !LPM 22MAR2016 Added SEEDUSES to estimate the use of reserves for shoot development
     REAL    :: SEEDUSET                ! Seed reserves use,tops         g/p        ! (From SeasInit)  
+    REAL    :: SELONG                  ! Daily shoot elongation         cm         ! (From SeasInit)
+    REAL    :: SELONGT                 ! Total shoot elongation         cm         ! (From SeasInit)
     REAL    :: SENCAGS                 ! Senesced C added to soil       kg/ha      ! (From SeasInit)  
     REAL    :: SENCAS                  ! Senesced C added to soil       kg/ha      ! (From SeasInit)  
     REAL    :: SENCL(0:20)             ! Senesced C,by layer            g/p        ! (From SeasInit)  
@@ -824,6 +831,7 @@
     REAL    :: SENWALG(0:20)           ! Senesced om added by layer     kg/ha      ! (From SeasInit)  
     REAL    :: SENWL(0:20)             ! Senesced om (cumulative),layer g/p        ! (From SeasInit)  
     REAL    :: SERX                    ! Shoot elongation rate,max      cm/Du      ! (From SeasInit)  
+    REAL    :: SESR                    ! Shoot elongation rate+reserves cm2/g      ! (From SeasInit) !LPM 21MAR2016 Added SESR   
     INTEGER :: SHDAP                   ! Shoot prodn.start DAP          #          ! (From Integrate) 
     INTEGER :: SHDAT                   ! Shoot prodn.startdate YEARDOY  #          ! (From SeasInit)  
     REAL    :: SHGR(22)                ! Shoot size relative to 1       #          ! (From SeasInit)  

@@ -243,7 +243,7 @@
             WRITE(fnumwrk,*)'  Lwlos  ',Lwlos                
             WRITE(fnumwrk,*)'  Laixx,Parix  ',Laixx,Parix       
             WRITE(fnumwrk,*)' Stems      '
-            WRITE(fnumwrk,*)'  Saws,Serx          ',Saws,Serx            
+            WRITE(fnumwrk,*)'  Saws,Serx,sesr          ',Saws,Serx,sesr  !LPM 21MAR2016 Added SESR            
             WRITE(fnumwrk,*)' Roots  '
             WRITE(fnumwrk,*)'  Rdgs   ',Rdgs
             WRITE(fnumwrk,*)'  Rresp  ',Rresp

@@ -333,6 +333,7 @@
             
                 DO LF =1, LNUMSIMSTG(BR) 
                     NODEWTG(BR,LF) = NODEWTGB(BR)
+                    !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
                     NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
                     GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
                     STWTP = STWTP + (NODEWT(BR,LF)*BRNUMST(BR))
@@ -377,7 +378,7 @@
                     CFLFAIL = 'Y'
                     WRITE (Message(1),'(A41)') 'No seed reserves to initiate leaf growth '
                     WRITE (Message(2),'(A33,F8.3,F6.1)') '  Initial seed reserves,seedrate ',seedrsi,sdrate
-                    WRITE (Message(3),'(A33,F8.3,F6.1)') '  Reserves %,plant population    ',sdrsf,pltpop 
+                    WRITE (Message(3),'(A33,F8.3,F6.1)') '  Reserves %,plant population    ',sdrs,pltpop    !LPM 22MAR2016 Keep value SDRS  
                     CALL WARNING(3,'CSCGR',MESSAGE)
                 ENDIF
             ENDIF
@@ -493,7 +494,11 @@
         
         !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
         !in the planting stick (In the future it could be modified as an input in the X-file)
-        GROST = GROSTCR
+        IF (DAE.EQ.1.AND.SEEDUSES.GT.0.0) THEN !LPM 22MAR2016 To consider the increase of weight for the first node when the stake is underground
+            GROST = GROSTCR + SEEDUSES
+        ELSE
+            GROST = GROSTCR
+        ENDIF
         IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
         !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
         

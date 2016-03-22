@@ -23,30 +23,64 @@
         !           Determine when in day germination and emergence occurred
         !-----------------------------------------------------------------------
 
-        ! Germination
-        IF (GEUCUM.LT.PEGD.AND.GEUCUM+TTGEM*WFGE.LT.PEGD) THEN
+        ! Germination 
+        !LPM 21MAR2016 GEUCUM modified to DAGERM
+        IF (DAGERM.LT.PGERM.AND.DAGERM+TTGEM*WFGE.LT.PGERM) THEN
             GERMFR = 0.0                                                                                               !EQN 046a
-        ELSEIF (GEUCUM.LE.PEGD.AND.GEUCUM+TTGEM*WFGE.GE.PEGD) THEN
-            GERMFR = 1.0 - (PEGD-GEUCUM)/(TTGEM*WFGE)                                                                  !EQN 046b
-        ELSEIF (GEUCUM.GT.PEGD) THEN
+        ELSEIF (DAGERM.LE.PGERM.AND.DAGERM+TTGEM*WFGE.GE.PGERM) THEN
+            GERMFR = 1.0 - (PGERM-DAGERM)/(TTGEM*WFGE)                                                                  !EQN 046b
+        ELSEIF (DAGERM.GT.PGERM) THEN
             GERMFR = 1.0                                                                                               !EQN 046c
         ENDIF
 
         ! Emergence
-        IF (GEUCUM.LT.PEGD+PECM*SDEPTHU.AND.GEUCUM+TTGEM*WFGE.LE.PEGD+PECM*SDEPTHU) THEN
-            EMRGFR = 0.0                                                                                               !EQN 047a
-        ELSEIF (GEUCUM.LE.PEGD+PECM*SDEPTHU.AND.GEUCUM+TTGEM*WFGE.GT.PEGD+PECM*SDEPTHU) THEN
-            EMRGFR = 1.0 - (PEGD+PECM*SDEPTHU-GEUCUM)/(TTGEM*WFGE)                                                     !EQN 047b
-        IF (EMFLAG.NE.'Y') THEN
-            WRITE(FNUMWRK,*)' ' 
-            WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
-            EMFLAG = 'Y'
+        ! LPM 21MAR2016 To separate germination and emergence
+        
+        !IF (GEUCUM.LT.PEGD+PECM*SDEPTHU.AND.GEUCUM+TTGEM*WFGE.LE.PEGD+PECM*SDEPTHU) THEN
+        !    EMRGFR = 0.0                                                                                               !EQN 047a
+        !ELSEIF (GEUCUM.LE.PEGD+PECM*SDEPTHU.AND.GEUCUM+TTGEM*WFGE.GT.PEGD+PECM*SDEPTHU) THEN
+        !    EMRGFR = 1.0 - (PEGD+PECM*SDEPTHU-GEUCUM)/(TTGEM*WFGE)                                                     !EQN 047b
+        !IF (EMFLAG.NE.'Y') THEN
+        !    WRITE(FNUMWRK,*)' ' 
+        !    WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
+        !    EMFLAG = 'Y'
+        !ENDIF
+        !LNUMSG = 1     ! LAH NEW
+        !ELSEIF (GEUCUM.GT.PEGD+PECM*SDEPTHU) THEN
+        !    EMRGFR = 1.0                                                                                               !EQN 047c
+        !ENDIF
+        
+        ! LPM 21MAR2016 Added reserves in the planting stake
+        IF (SDEPTHU.GT.0.0) THEN
+            IF (SEEDRS.LT.0.0) SEEDRS = SDWT*(SDRS/100.0)*SPRL
+            SEEDUSED = AMIN1(SEEDRS, PEMRG*TTGEM)
+            SEEDUSES = SEEDUSES + SEEDUSED
+            SEEDUSE = SEEDUSES
+            SEEDRS = AMAX1(0.0,SEEDRS - SEEDUSED)
+            SEEDRSAV =  SEEDRS
+            SELONG = SESR * SEEDUSED
+            IF (SELONGT+SELONG.LT.SDEPTHU) THEN
+                EMRGFR = 0.0                                                                                               !EQN 047a
+            ELSE                                                                         
+                EMRGFR = 1.0
+                IF (EMFLAG.NE.'Y') THEN
+                    WRITE(FNUMWRK,*)' ' 
+                    WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
+                    EMFLAG = 'Y'
+                ENDIF
+                LNUMSG = 1     ! LAH NEW
+            ENDIF
+            SELONGT = AMIN1(SDEPTHU, SELONGT + SELONG)
+        ELSE
+            SEEDUSES = 0.0     
+            EMRGFR = 1.0
+            IF (EMFLAG.NE.'Y') THEN
+                WRITE(FNUMWRK,*)' ' 
+                WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
+                EMFLAG = 'Y'
+            ENDIF
+            LNUMSG = 1     ! LAH NEW
         ENDIF
-        LNUMSG = 1     ! LAH NEW
-        ELSEIF (GEUCUM.GT.PEGD+PECM*SDEPTHU) THEN
-            EMRGFR = 1.0                                                                                               !EQN 047c
-        ENDIF
-     
         !-----------------------------------------------------------------------
         !           Calculate daylength factors for development
         !-----------------------------------------------------------------------
@@ -110,9 +144,11 @@
         !-----------------------------------------------------------------------
         !           Set seed reserve use for root growth and update av.reserves
         !-----------------------------------------------------------------------
-
-        IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN
-            SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TT/STDAY)*GERMFR)                                                  !EQN 286
+        !IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
+        IF (GERMFR.GT.0.0.OR.GESTAGE.GE.1.0) THEN
+            !SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TT/STDAY)*GERMFR)                                                  !EQN 286 
+            !LPM 22MAR2016 use for roots the same amount of reserves than aboveground (SEEDUSED)
+            SEEDRSAVR = AMIN1(SEEDUSED,SEEDRS) 
         ELSE
             SEEDRSAVR = 0.0
         ENDIF

@@ -51,7 +51,7 @@
         cfllflife = '-'
         cflharmsg = 'N'
         cflsdrsmsg = 'N'
-        !crrswt = 0.0
+        !crrswt = -99.0 
         crwad = 0.0
         crwt = 0.0
         crwtp = 0.0 !LPM 23MAY2015 Added to keep the potential planting stick weight
@@ -76,6 +76,7 @@
         cwam = -99.0
         cwamm = -99.0
         dae = -99
+        dagerm = 0.0 !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
         dap = -99
         dawwp = 0.0 !LPM 06MAR2016 DAWWP added to save Development Age (with stress)
         daylcc = 0.0
@@ -371,9 +372,14 @@
         sdnc = 0.0
         sdwad = 0.0
         sdwam = -99.0
-        seeduse = 0.0
+        seedrs = -99.0 !LPM 22MAR2016 to define initially the reserves based on stick length (Cs_Growth_init.f90)
+        seeduse = 0.0 
+        seedused = 0.0 !LPM 22MAR2016 Added SEEDUSED 
         seeduser = 0.0
+        seeduses = 0.0 !LPM 22MAR2016 Added SEEDUSES 
         seeduset = 0.0
+        selong = 0.0 !LPM 22MAR2016 Added SELONG
+        selongt = 0.0 !LPM 22MAR2016 Added SELONGT
         sencags = 0.0
         sencalg = 0.0
         sencas = 0.0

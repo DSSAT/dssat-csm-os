@@ -209,11 +209,12 @@
         !ENDIF
         
         ! Adjust germination duration for seed dormancy
-        IF (PLMAGE.LT.0.0.AND.PLMAGE.GT.-90.0) THEN
-            PEGD = PGERM - (PLMAGE*STDAY) ! Dormancy has negative age                                                  !EQN 045b
-        ELSE
-            PEGD = PGERM
-        ENDIF
+        !LPM 21MAR
+        !IF (PLMAGE.LT.0.0.AND.PLMAGE.GT.-90.0) THEN
+        !    PEGD = PGERM - (PLMAGE*STDAY) ! Dormancy has negative age                                                  !EQN 045b
+        !ELSE
+        !    PEGD = PGERM
+        !ENDIF
         
         !-----------------------------------------------------------------------
         !       Check and/or adjust coefficients and set defaults if not present
@@ -420,12 +421,14 @@
         !       Calculate/set initial states
         !-----------------------------------------------------------------------
         
-        IF (SDRATE.LE.0.0) SDRATE = SDSZ*PPOP*10.0                                                                  !EQN 024 !LPM 06MAR2016 To have just one name for PPOP
-        ! Reserves = SDRSF% of seed 
-        SEEDRSI = (SDRATE/(PPOP*10.0))*SDRSF/100.0                                                                  !EQN 284 !LPM 06MAR2016 To have just one name for PPOP
-        SEEDRS = SEEDRSI
+        !LPM 22MAR2016 To use SEEDRS from emergence 
+        !IF (SDRATE.LE.0.0) SDRATE = SDSZ*PPOP*10.0                                                                  !EQN 024 !LPM 06MAR2016 To have just one name for PPOP
+        IF (SDRATE.LE.0.0) SDRATE = SDWT*SPRL*PPOP*10.0   
+        ! Reserves = SDRS% of seed                                                                                  !LPM 22MAR2016 Keep value SDRS  
+        SEEDRSI = (SDRATE/(PPOP*10.0))*SDRS/100.0                                                                  !EQN 284 !LPM 06MAR2016 To have just one name for PPOP
+        !SEEDRS = SEEDRSI
         SEEDRSAV = SEEDRS
-        SDCOAT = (SDRATE/(PPOP*10.0))*(1.0-SDRSF/100.0)                                                             !EQN 025 !LPM 06MAR2016 To have just one name for PPOP
+        SDCOAT = (SDRATE/(PPOP*10.0))*(1.0-SDRS/100.0)                                                             !EQN 025 !LPM 06MAR2016 To have just one name for PPOP
         ! Seed N calculated from total seed
         SDNAP = (SDNPCI/100.0)*SDRATE                                                                                  !EQN 026
         SEEDNI = (SDNPCI/100.0)*(SDRATE/(PPOP*10.0))                                                                !EQN 027
@@ -464,10 +467,13 @@
             sdepthu = sdepth
         ELSEIF (PLME.EQ.'I') THEN
             ! Assumes that inclined at 45o
-            sdepthu = AMAX1(0.0,sdepth - 0.707*sprl)                                                                   !EQN 028
+            !sdepthu = AMAX1(0.0,sdepth - 0.707*sprl)                                                                   !EQN 028 !LPM 22MAR2016 Modified to consider buds at 2.5 cm from the top end of the stake
+            sdepthu = sdepth - 0.707*(sprl-2.5)                                                                  !EQN 028
         ELSEIF (PLME.EQ.'V') THEN
-            sdepthu = AMAX1(0.0,sdepth - sprl)                                                                         !EQN 029
+            !sdepthu = AMAX1(0.0,sdepth - sprl)                                                                         !EQN 029 !LPM 22MAR2016 Modified to consider buds at 2.5 cm from the top end of the stake
+            sdepthu = sdepth - (sprl-2.5)                                                                        !EQN 029
         ENDIF
-        IF (sdepthu.LT.0.0) sdepthu = sdepth
+        !IF (sdepthu.LT.0.0) sdepthu = sdepth                                                                    !LPM 22MAR2016 Modified to assume that top of stake is in the soil surface (when it is above)
+        IF (sdepthu.LT.0.0) sdepthu = 0.0 
         
     END SUBROUTINE CS_SeasInit_SetStage

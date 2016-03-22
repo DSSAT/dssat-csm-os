@@ -159,16 +159,17 @@
           IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH)
           WFGE = 1.0
           IF (ISWWAT.NE.'N') THEN
-            IF (GESTAGE.LT.1.0) THEN
-              !IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH) !LPM 21MAR2015 To estimate LSEED when ISWWAT.EQ.N
-              IF (LSEED.GT.1) THEN
-                SWPSD = SWP(LSEED)
-              ELSE
-               SWP(0) = AMIN1(1.,AMAX1(.0,(SWP(1)-0.5*(SWP(2)-SWP(1)))))
-               SWPSD = SWP(0) + (SDEPTH/DLAYR(1))*(SWP(2)-SWP(0))
-              ENDIF
-              IF (WFGEM.GT.0.0) &
-               WFGE = AMAX1(0.0,AMIN1(1.0,(SWPSD/WFGEM)))
+              !IF (GESTAGE.LT.1.0) THEN  !LPM 21MAR2015 to estimate WFGE for germination and emergence
+              IF (EMRGFR.LT.1.0) THEN
+              !IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH) !LPM 21MAR2015 To estimate LSEED when ISWWAT.EQ.N (linking ST and germination)
+                  IF (LSEED.GT.1) THEN
+                    SWPSD = SWP(LSEED)
+                  ELSE
+                   SWP(0) = AMIN1(1.,AMAX1(.0,(SWP(1)-0.5*(SWP(2)-SWP(1)))))
+                   SWPSD = SWP(0) + (SDEPTH/DLAYR(1))*(SWP(2)-SWP(0))
+                  ENDIF
+                  IF (WFGEM.GT.0.0) &
+                   WFGE = AMAX1(0.0,AMIN1(1.0,(SWPSD/WFGEM)))
             ENDIF
           ENDIF
           IF (ISWWATCROP.EQ.'N') WFGE = 1.0

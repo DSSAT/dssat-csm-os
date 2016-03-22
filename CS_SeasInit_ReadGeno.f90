@@ -424,7 +424,7 @@
         CALL FVCHECK(SPDIRFLE,GENFLCHK)
         CALL SPREADR (SPDIRFLE,'CRFR' ,crfr)
         CALL SPREADR (SPDIRFLE,'CO2CC',co2compc) 
-        CALL SPREADR (SPDIRFLE,'CO2EX',co2ex)
+        CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
         CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)
         CALL SPREADR (SPDIRFLE,'SLAFF',lawff)
         CALL SPREADR (SPDIRFLE,'SLATR',lawtr)
@@ -443,7 +443,7 @@
         CALL SPREADR (SPDIRFLE,'PARIX',parix)
         CALL SPREADR (SPDIRFLE,'LAIXX',laixx)
         CALL SPREADR (SPDIRFLE,'PARFC',parfc)
-        CALL SPREADR (SPDIRFLE,'PEMRG',pecm)
+        CALL SPREADR (SPDIRFLE,'PEMRG',pemrg) !LPM 22MAR2016 To use the same name than in the SPE file (no PECM)  
         CALL SPREADR (SPDIRFLE,'PGERM',pgerm)
         CALL SPREADR (SPDIRFLE,'PHSV' ,phsv)
         CALL SPREADR (SPDIRFLE,'PHNTF',phintfac)
@@ -471,8 +471,9 @@
         CALL SPREADR (SPDIRFLE,'SAWS' ,saws)
         CALL SPREADR (SPDIRFLE,'SDDUR',sddur)
         CALL SPREADR (SPDIRFLE,'SDN%',sdnpci)
-        CALL SPREADR (SPDIRFLE,'SDRS%',sdrsf)
-        CALL SPREADR (SPDIRFLE,'SDWT' ,sdsz)
+        CALL SPREADR (SPDIRFLE,'SDRS%',sdrs)!LPM 22MAR2016 Keep value SDRS  
+        CALL SPREADR (SPDIRFLE,'SDWT' ,sdwt) !LPM 22MAR2016 Keep value SDWT 
+        CALL SPREADR (SPDIRFLE,'SESR' ,sesr) !LPM 21MAR2016 Added SESR   
         CALL SPREADR (SPDIRFLE,'SLIG%',sligp)
         CALL SPREADR (SPDIRFLE,'SGRO2',shgr(2))
         CALL SPREADR (SPDIRFLE,'TPAR' ,tpar)

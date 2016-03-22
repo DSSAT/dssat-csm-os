@@ -26,15 +26,18 @@
         
         ! STAGES:Germination and emergence (Gestages)
         ! NB 0.5 factor used to equate to Zadoks)
-        GEUCUM = GEUCUM + TTGEM*WFGE                                                                                   !EQN 038
-        IF (GEUCUM.LT.PEGD) THEN
-            GESTAGE = AMIN1(1.0,GEUCUM/PEGD*0.5)                                                                       !EQN 039a
+        GEUCUM = GEUCUM + TTGEM                                                                                   !EQN 038
+        DAGERM = DAGERM + TTGEM*WFGE                                                           !LPM 21MAR2016 DA for germination
+        !IF (GEUCUM.LT.PEGD) THEN
+            !GESTAGE = AMIN1(1.0,GEUCUM/PEGD*0.5)                                                       !EQN 039a !LPM 21MAR2016 To separate germination and emergence
+        IF (DAGERM.LT.PGERM) THEN
+            GESTAGE = AMIN1(1.0,DAGERM/PGERM)  
         ELSE
-            IF (PECM*SDEPTHU > 1.E-6) THEN 
-                GESTAGE = AMIN1(1.0,0.5+0.5*(GEUCUM-PEGD)/(PECM*SDEPTHU))                                              !EQN 039b
-            ELSE
-                GESTAGE = 1.0                                                                                          !EQN 039c
-            ENDIF    
+            !IF (PECM*SDEPTHU > 1.E-6) THEN                                    !LPM 21MAR2016 To separate germination and emergence
+            !    GESTAGE = AMIN1(1.0,0.5+0.5*(GEUCUM-PEGD)/(PECM*SDEPTHU))                                              !EQN 039b
+            !ELSE
+            GESTAGE = 1.0                                                                                          !EQN 039c
+            !ENDIF    
         ENDIF
         
         ! Germination conditions  
@@ -45,7 +48,8 @@
         ENDIF  
         
         ! Germination to emergence conditions  
-        IF (GESTAGE.LT.0.5) THEN
+        !IF (GESTAGE.LT.0.5) THEN                      !LPM 21MAR2016 To separate germination and emergence
+        IF (GESTAGE.LT.1.0) THEN
             RETURN !GOTO 6666                                                             ! MF 27AU14 This is not a very nice construction! See note in Integrate_Subroutines.docx. Change to RETuRN
         ELSEIF (GESTAGEPREV.LT.1.0) THEN                                                  
             TMEANEC = TMEANEC + TMEAN                                                                                  !EQN 041
@@ -105,7 +109,8 @@
         !ENDIF 
         
         ! STAGES:Branching
-        IF (GESTAGE.GE.0.5) THEN
+        !IF (GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
+        IF (GESTAGE.GE.1.0) THEN
             IF (MEDEV.EQ.'DEVU') THEN                                                     ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
                 !DO L = HSTG,1,-1                                                          !LPM 03MAR15 It should be as MEDEV = LNUM DO L = HSTG,0,-1
                 DO L = HSTG-1,0,-1  
@@ -142,7 +147,8 @@
         !         Record stage dates and states
         !-----------------------------------------------------------------------
         
-        IF (INT(BRSTAGE).GT.10 .OR. INT(BRSTAGE).LT.0.AND.GESTAGE.GT.0.5) THEN
+        !IF (INT(BRSTAGE).GT.10 .OR. INT(BRSTAGE).LT.0.AND.GESTAGE.GT.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
+        IF (INT(BRSTAGE).GT.10 .OR. INT(BRSTAGE).LT.0.AND.GESTAGE.GT.1.0) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '
             WRITE(fnumerr,*) 'Brstage out of range allowed for branching        '
@@ -210,7 +216,8 @@
         IF (WFG.LT.0.99999) WSDAYS = WSDAYS + 1
         IF (NFG.LT.0.99999) NSDAYS = NSDAYS + 1
         
-        IF (GESTAGE.GT.0.1) THEN
+        !IF (GESTAGE.GT.0.1) THEN !LPM 21MAR2016 Branching after emergence
+        IF (GESTAGE.GT.1.0) THEN
             IF (INT(BRSTAGE).NE.INT(BRSTAGEPREV)) THEN
                 TMAXPC = 0.0
                 TMINPC = 0.0

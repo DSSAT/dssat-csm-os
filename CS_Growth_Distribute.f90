@@ -67,7 +67,8 @@
         RTWTUL = 0.0
         RTNSL = 0.0
 
-        IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN
+        !IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
+        IF (GERMFR.GT.0.0.OR.GESTAGE.GE.1.0) THEN
     
             ! Establish water factor for root depth growth
             IF (ISWWAT.NE.'N') THEN

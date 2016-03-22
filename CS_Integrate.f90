@@ -66,7 +66,8 @@
         !-----------------------------------------------------------------------
         !         Calculate nitrogen concentrations, skip if germinating.
         !-----------------------------------------------------------------------
-        IF (GESTAGE.GE.0.5) CALL CS_Integ_Nconc ( &
+        !IF (GESTAGE.GE.0.5) CALL CS_Integ_Nconc ( &  !LPM 21MAR2016 To separate germination and emergence
+        IF (GESTAGE.GE.1.0) CALL CS_Integ_Nconc ( &
             ISWNIT      , BRSTAGE           & 
             )   
             
