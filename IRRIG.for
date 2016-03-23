@@ -935,14 +935,14 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
               CASE('V')
                R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
               CASE('S')
-               R = (SWFAC .LE. SITH2)
+               R = ((1 - SWFAC) .GE. SITH2)
              END SELECT
             ELSE
 10006        SELECT CASE(DEFIR)
               CASE('V')
                R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
               CASE('S')
-               R = (SWFAC .LE. SITH1)
+               R = ((1 - SWFAC) .GE. SITH1)
              END SELECT
             ENDIF
            CASE ('CRGRO')
