@@ -43,7 +43,11 @@
         LLWAD = LFWT*(1.0-LPEFR)*10.0*PLTPOP
         LPEWAD = LFWT*LPEFR*10.0*PLTPOP
         RWAD = RTWT*PLTPOP*10.0
+        IF (SEEDRS.LT.0.0) SEEDRS = SDWT*(SDRS/100.0)*SPRL   !LPM 23MAR2016  to initialize the value of SEEDRS
         SDWAD = (SEEDRS+SDCOAT)*10.0*PLTPOP
+        TWAD = (SEEDRS+SDCOAT+RTWT+LFWT+STWT+CRWT+SRWT+RSWT)* PLTPOP*10.0
+
+        
         ! Leaf petioles NOT included in stem here
         STWAD = STWT*10.0*PLTPOP
         CRWAD = CRWT*PLTPOP*10.0
@@ -63,7 +67,7 @@
             SENWAL(L) = SENWL(L)*PLTPOP*10.0
         ENDDO
                 
-        TWAD = (SEEDRS+SDCOAT+RTWT+LFWT+STWT+CRWT+SRWT+RSWT)* PLTPOP*10.0
+        
                 
         VWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP * 10.0                                                                     !EQN 019
                 
