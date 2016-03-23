@@ -49,8 +49,8 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
    10      K B0DAT 10thBranch
 ! Phase durations
 @PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
-! oC.d  oC.d                                                              
-   120 120.0
+! oC.d gCH2O/TT                                                              
+   120   0.1
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN ! Photoperiod threshold,sensitivity type  
 !  0-1     h  Code                                  
@@ -98,20 +98,20 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
   1.00     
 ! Reserves   
 @RSFRS RS%O RS%LX RSUSE  ! Standard concs (overall,leaves), fr utilizeable/day
-!   fr    %     %    fr
-  0.05  2.0     5   0.1
+!   fr    %     %    fr 
+  0.05  2.0     5   0.1 
 ! Stems
-@SLIG%  SAWS  SERX  ! Lignin%, area/weight, elongation rate
-!    % cm2/g  cm/d 
-  10.0  25.0   2.4
+@SLIG%  SAWS  SERX  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
+!    % cm2/g  cm/d  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
+  10.0  25.0   2.4   2.0
 ! Crown (Planting stick)
 @ CRFR ! Fraction of stem growth
 !   fr
   0.05
 ! Seed
-@ SDWT SDDUR SDRS% ! Weight, duration, reserves (% whole seed)
-!    g     d     %
-    50    20    90
+@ SDWT SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole seed)
+! g/cm     d     %
+   3.0    20    90
 ! Photosynthesis
 @ PHTV  PHSV  ! VPD sensitivity aspects
 ! kPa fr/kPa
@@ -227,7 +227,7 @@ CH2O distribution/mobilization
 ! NO3MN   NO3 minimum concentration for uptake (mg/MG)
 ! NTUPF   N top-up fraction (/d)
 ! PARIX   PAR interception beyond which accelerated ageing (fr)
-! PEMRG   Emergence phase duration (Thermal units per cm depth)
+! PEMRG   Rate of reserves use by unit of thermal time during emergence (gCH2O/TT)
 ! PGERM   Germination phase duration (Hydrothermal units)
 ! PHNTF   Phint change with node number factor (#)
 ! PHSV    Photosynthesis,sensitivity to VPD (fr/kPa)

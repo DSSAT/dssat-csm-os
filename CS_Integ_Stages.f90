@@ -41,7 +41,7 @@
         ENDIF
         
         ! Germination conditions  
-        IF (GESTAGEPREV.LT.0.5) THEN
+        IF (GESTAGEPREV.LT.1.0) THEN                               !LPM 23MAR2016 To separate germination and emergence
             TMEANGC = TMEANGC + TMEAN
             GEDAYSG = GEDAYSG + 1
             TMEANG = TMEANGC/GEDAYSG                                                                                   !EQN 040

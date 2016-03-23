@@ -254,19 +254,21 @@
             !SRWT = SRWT + GROSR + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
             SRWT = SRWT + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                              !EQN 447
         ENDIF
-        
-        SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD-SEEDRSAVR)                                                                   !EQN 285
-        IF (CFLSDRSMSG.NE.'Y'.AND.SEEDRS.LE.0.0.AND.LNUM.LT.4.0) THEN
-            WRITE(Message(1),'(A44,F3.1)') 'Seed reserves all used but leaf number only ',lnum
-            WRITE(Message(2),'(A58)') 'For good establishment seed reserves should last to leaf 4'
-            WRITE(Message(3),'(A55)') 'Maybe stick too small or specific leaf area set too low'
-            CALL WARNING(3,'CSCGR',MESSAGE)
-            CFLSDRSMSG = 'Y'
+        IF (DAGERM+TTGEM*WFGE.GE.PGERM) THEN !LPM 23MAR2016 To consider reserves of stake after germination
+            !SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD-SEEDRSAVR)                                                                   !EQN 285 !LPM 23MAR2016 SEEDRSAVR subtracted in CS_Growth_Init.f90
+            SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD)                                                                       !EQN 285
+            IF (CFLSDRSMSG.NE.'Y'.AND.SEEDRS.LE.0.0.AND.LNUM.LT.4.0) THEN
+                WRITE(Message(1),'(A44,F3.1)') 'Seed reserves all used but leaf number only ',lnum
+                WRITE(Message(2),'(A58)') 'For good establishment seed reserves should last to leaf 4'
+                WRITE(Message(3),'(A55)') 'Maybe stick too small or specific leaf area set too low'
+                CALL WARNING(3,'CSCGR',MESSAGE)
+                CFLSDRSMSG = 'Y'
+            ENDIF
+            SEEDUSE = SEEDUSE + GROLSSD+SEEDRSAVR                                                                          !EQN 448
+            SEEDUSER = SEEDUSER + SEEDRSAVR                                                                                !EQN 449
+            SEEDUSET = SEEDUSET + GROLSSD                                                                                  !EQN 450
+            SEEDRSAV = SEEDRS
         ENDIF
-        SEEDUSE = SEEDUSE + GROLSSD+SEEDRSAVR                                                                          !EQN 448
-        SEEDUSER = SEEDUSER + SEEDRSAVR                                                                                !EQN 449
-        SEEDUSET = SEEDUSET + GROLSSD                                                                                  !EQN 450
-        SEEDRSAV = SEEDRS
         IF (SRNOPD.GT.0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
         
         IF ((LFWT+STWT+CRWT+RSWT).GT.0.0) THEN

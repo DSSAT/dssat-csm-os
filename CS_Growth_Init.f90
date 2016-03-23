@@ -51,13 +51,11 @@
         !ENDIF
         
         ! LPM 21MAR2016 Added reserves in the planting stake
-        IF (SDEPTHU.GT.0.0) THEN
-            IF (SEEDRS.LT.0.0) SEEDRS = SDWT*(SDRS/100.0)*SPRL
-            SEEDUSED = AMIN1(SEEDRS, PEMRG*TTGEM)
+        IF (SDEPTHU.GT.0.0.AND.GERMFR.GT.0.0.AND.EMRGFR.LT.1.0) THEN
+            SEEDUSED = AMIN1(SEEDRS, PEMRG*TTGEM*WFGE)
             SEEDUSES = SEEDUSES + SEEDUSED
             SEEDUSE = SEEDUSES
             SEEDRS = AMAX1(0.0,SEEDRS - SEEDUSED)
-            SEEDRSAV =  SEEDRS
             SELONG = SESR * SEEDUSED
             IF (SELONGT+SELONG.LT.SDEPTHU) THEN
                 EMRGFR = 0.0                                                                                               !EQN 047a
@@ -153,8 +151,8 @@
             SEEDRSAVR = 0.0
         ENDIF
         ! Seed reserves available
-        SEEDRSAV = SEEDRSAV-SEEDRSAVR                                                                                  !EQN 287
-
+        SEEDRS = SEEDRS-SEEDRSAVR                                                                                  !EQN 287
+        SEEDRSAV =  SEEDRS
         !-----------------------------------------------------------------------
         !           Determine if today has a harvest instruction
         !-----------------------------------------------------------------------
