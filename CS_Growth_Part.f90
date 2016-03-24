@@ -502,11 +502,8 @@
         
         !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
         !in the planting stick (In the future it could be modified as an input in the X-file)
-        IF (DAE.EQ.1.AND.SEEDUSES.GT.0.0) THEN !LPM 22MAR2016 To consider the increase of weight for the first node when the stake is underground
-            GROST = GROSTCR + SEEDUSES
-        ELSE
-            GROST = GROSTCR
-        ENDIF
+        GROST = GROSTCR
+        
         IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
         !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
         
