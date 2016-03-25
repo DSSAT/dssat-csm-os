@@ -28,7 +28,18 @@
         !-----------------------------------------------------------------------
                 
         ! Cumulatives
-        TTCUM = TTCUM + TT
+        !LPM 24MAR2016 TTCUM estimated after germination, before is DAGERM and GEUCUM
+        IF (GERMFR.GT.0.0) THEN
+            IF (DAE.GT.0.0) THEN
+                TTCUM = TTCUM + TT
+            ELSE
+                TTCUM = TTCUM + TTGEM
+            ENDIF
+        ELSE
+            TTCUM = 0.0
+        ENDIF
+        
+        
         IF (ISWWAT.EQ.'Y') THEN
             DAWWP = DAWWP + (TT*WFG) !LPM 31JUL2015 Added to have a new clock with water stress
         ELSE
