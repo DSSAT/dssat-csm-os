@@ -156,9 +156,10 @@ CH2O distribution/mobilization
 !   fr    fr    fr    fr    fr    fr
    1.0   0.0   1.0   0.0   0.6   1.5
 ! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
-@WFGEU WFRGU  ! Germination/emergence, root growth
+@WFGEM WFRGU  ! Germination/emergence, root growth
 !   fr    fr
-  0.25  0.25
+!  0.25  0.25 !LPM 25MAR2016 WFGEM modified
+  0.50  0.25
 
 ! NITROGEN uptake,distribution,etc.
 ! For standard CSM uptake routine

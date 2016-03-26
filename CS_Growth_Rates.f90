@@ -67,20 +67,31 @@
             ! No water stress after emergence on day that emerges
             WFG = 1.0
             WFP = 1.0
-            IF (ISWWAT.NE.'N') THEN
-              IF (EOP.GT.0.0) THEN
-                WUPR = TRWUP/(EOP*0.1)                                                                                 !EQN 146
+            IF (ISWWAT.NE.'N') THEN !LPM 25MAR2016 Water stress modified by the readily available water SWP
+              !IF (EOP.GT.0.0) THEN
+              !  WUPR = TRWUP/(EOP*0.1)                                                                                 !EQN 146
+              !  IF (WFGU-WFGL.GT.0.0) &
+              !   WFG = AMAX1(0.0,AMIN1(1.0,(WUPR-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
+              !  
+              !  IF (WFPU-WFPL.GT.0.0) &
+              !   WFP = AMAX1(0.0,AMIN1(1.0,(WUPR-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
+              !ENDIF
+                SWPT = 0.0
+                DO L = 1, NLAYRROOT
+                    SWPT = SWPT + SWP(L)
+                ENDDO
+                SWPT = SWPT/NLAYRROOT
                 IF (WFGU-WFGL.GT.0.0) &
-                 WFG = AMAX1(0.0,AMIN1(1.0,(WUPR-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
+                    WFG = AMAX1(0.0,AMIN1(1.0,(SWPT-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
                 IF (WFPU-WFPL.GT.0.0) &
-                 WFP = AMAX1(0.0,AMIN1(1.0,(WUPR-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
-              ENDIF
-              IF (ISWWATEARLY.EQ.'N') THEN
-                WFG = 1.0
-                WFP = 1.0
-              ENDIF
+                    WFP = AMAX1(0.0,AMIN1(1.0,(SWPT-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
+                IF (ISWWATEARLY.EQ.'N') THEN
+                    WFG = 1.0
+                    WFP = 1.0
+                ENDIF
             ENDIF
 
+            
             ! Nitrogen
             ! WARNING No N stress after emergence on day that emerges
             IF (ISWNIT.NE.'N') THEN

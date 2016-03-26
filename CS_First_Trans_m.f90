@@ -947,7 +947,8 @@
     !REAL    :: SWFRS                   ! Stem fraction,standard         #          ! (From SeasInit) !LPM 05JUN2015 SWFRS is not used 
     !REAL    :: SWFRX                   ! Stem fraction maximum          #          ! (From SeasInit) !LPM 05JUN2015 SWFRX is not used   
     !REAL    :: SWFRXL                  ! Leaf number for max stem fr    #          ! (From SeasInit)  !LPM 05JUN2015 SWFRXL is not used 
-    REAL    :: SWP(0:20)               ! Soil water 'potential'         #          ! (From Growth)    
+    REAL    :: SWP(0:20)               ! Soil water 'potential'         #          ! (From Growth) 
+    REAL    :: SWPT                    ! Total soil water 'potential'   #          ! (From Growth)
     REAL    :: SWPH                    ! Stem weight harvested          g/p        ! (From Growth)    
     REAL    :: SWPHC                   ! Stem wt harvested,cumulative   g/p        ! (From SeasInit)  
     REAL    :: SWPLTD                  ! Depth for average soil water   cm         ! (From SeasInit)  

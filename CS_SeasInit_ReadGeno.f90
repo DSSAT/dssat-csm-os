@@ -479,7 +479,7 @@
         CALL SPREADR (SPDIRFLE,'TPAR' ,tpar)
         CALL SPREADR (SPDIRFLE,'TSRAD',tsrad)
         CALL SPREADR (SPDIRFLE,'WFEU' ,wfeu)
-        CALL SPREADR (SPDIRFLE,'WFGEU',wfgem)
+        CALL SPREADR (SPDIRFLE,'WFGEM',wfgem)!LPM 25MAR2016 To keep value in the code and SPE file
         CALL SPREADR (SPDIRFLE,'WFGU' ,wfgu)
         CALL SPREADR (SPDIRFLE,'WFGL' ,wfgl)
         CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
