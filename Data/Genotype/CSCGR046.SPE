@@ -154,7 +154,8 @@ CH2O distribution/mobilization
 ! 1. Based on ratio of potential uptake to potential loss (WFEU only for Cropsim)
 @ WFGU  WFGL  WFPU  WFPL  WFSU  WFEU  ! Growth,phs,senescence,evap
 !   fr    fr    fr    fr    fr    fr
-   1.0   0.0   1.0   0.0   0.6   1.5
+   0.5   0.0   0.5   0.0   0.6   1.5
+!   1.0   0.0   1.0   0.0   0.6   1.5 !LPM 25MAR2016 WFGU modified
 ! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
 @WFGEM WFRGU  ! Germination/emergence, root growth
 !   fr    fr

@@ -12,15 +12,15 @@
     
     SUBROUTINE CS_Growth_Rates ( &
         CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
-        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       & 
+        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         &                                !LPM 26MAR2016 RLV added
         )
-    
+        USE ModuleDefs
         USE CS_First_Trans_m
     
         IMPLICIT NONE
         
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
-        REAL    TMIN        , TRWUP       
+        REAL    TMIN        , TRWUP       , RLV(NL)
         REAL    CSVPSAT     , TFAC4       , YVALXY                              ! Real function calls
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      
@@ -77,17 +77,38 @@
               !   WFP = AMAX1(0.0,AMIN1(1.0,(WUPR-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
               !ENDIF
                 SWPT = 0.0
+                TRLV = 0.0
                 DO L = 1, NLAYRROOT
-                    SWPT = SWPT + SWP(L)
+                    SWPT = SWPT + (SWP(L)*DLAYRTMP(L)*RLV(L))
+                    TRLV = TRLV + (RLV(L)*DLAYRTMP(L))
                 ENDDO
-                SWPT = SWPT/NLAYRROOT
-                IF (WFGU-WFGL.GT.0.0) &
-                    WFG = AMAX1(0.0,AMIN1(1.0,(SWPT-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
-                IF (WFPU-WFPL.GT.0.0) &
-                    WFP = AMAX1(0.0,AMIN1(1.0,(SWPT-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
-                IF (ISWWATEARLY.EQ.'N') THEN
-                    WFG = 1.0
-                    WFP = 1.0
+                IF (EMRGFR.GE.1.0) THEN
+                    IF (TRLV.GT.0.0) THEN
+                        SWPT = SWPT/(TRLV)
+                    ELSE
+                        SWPT = 0.0
+                    ENDIF
+                    !Linear decrease according SWP
+                    IF (WFGU-WFGL.GT.0.0) &
+                        WFG = AMAX1(0.0,AMIN1(1.0,(SWPT-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
+                    IF (WFPU-WFPL.GT.0.0) &
+                        WFP = AMAX1(0.0,AMIN1(1.0,(SWPT-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
+                    
+                    !Fix factor of 0.5 when SWP<0.5
+                    !IF (SWPT.LE.0.5) THEN
+                    !    IF (WFGU-WFGL.GT.0.0) &
+                    !        WFG = 0.5                                                   !EQN 147
+                    !    IF (WFPU-WFPL.GT.0.0) &
+                    !        WFP = 0.5                                                 !EQN 145
+                    !ELSE
+                    !    WFG = 1.0
+                    !    WFP = 1.0 
+                    !ENDIF
+                    
+                    IF (ISWWATEARLY.EQ.'N') THEN
+                        WFG = 1.0
+                        WFP = 1.0
+                    ENDIF
                 ENDIF
             ENDIF
 

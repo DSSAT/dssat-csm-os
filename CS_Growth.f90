@@ -85,7 +85,7 @@
                 !--------------------------------------------------------------------------------
                 CALL CS_Growth_Rates ( &
                     CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , &
-                    PARIP       , PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       & 
+                    PARIP       , PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         & 
                     )
         
                 !-----------------------------------------------------------------------

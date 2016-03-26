@@ -156,7 +156,7 @@
         !         Update root depth and length
         !-----------------------------------------------------------------------
         
-        IF (SDEPTH.GT.0.0 .AND.RTDEP.LE.0.0) RTDEP = SDEPTH
+        IF (SDEPTH.GT.0.0 .AND.RTDEP.LE.0.0) RTDEP = AMAX1(0.0,SDEPTHU)   !LPM 26MAR2016 To consider root growth from the same depth of bud growth
         RTDEP = AMIN1 (RTDEP+RTDEPG,DEPMAX)                                                                            !EQN 390
         DO L = 1, NLAYR
             RLV(L)=RTWTL(L)*RLWR*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
