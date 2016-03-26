@@ -76,26 +76,26 @@
               !  IF (WFPU-WFPL.GT.0.0) &
               !   WFP = AMAX1(0.0,AMIN1(1.0,(WUPR-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
               !ENDIF
-                SWPT = 0.0
+                RAW = 0.0
                 TRLV = 0.0
                 DO L = 1, NLAYRROOT
-                    SWPT = SWPT + (SWP(L)*DLAYRTMP(L)*RLV(L))
+                    RAW = RAW + (SWP(L)*DLAYRTMP(L)*RLV(L))
                     TRLV = TRLV + (RLV(L)*DLAYRTMP(L))
                 ENDDO
                 IF (EMRGFR.GE.1.0) THEN
                     IF (TRLV.GT.0.0) THEN
-                        SWPT = SWPT/(TRLV)
+                        RAW = RAW/(TRLV)
                     ELSE
-                        SWPT = 0.0
+                        RAW = 0.0
                     ENDIF
                     !Linear decrease according SWP
                     IF (WFGU-WFGL.GT.0.0) &
-                        WFG = AMAX1(0.0,AMIN1(1.0,(SWPT-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
+                        WFG = AMAX1(0.0,AMIN1(1.0,(RAW-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
                     IF (WFPU-WFPL.GT.0.0) &
-                        WFP = AMAX1(0.0,AMIN1(1.0,(SWPT-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
+                        WFP = AMAX1(0.0,AMIN1(1.0,(RAW-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
                     
                     !Fix factor of 0.5 when SWP<0.5
-                    !IF (SWPT.LE.0.5) THEN
+                    !IF (RAW.LE.0.5) THEN
                     !    IF (WFGU-WFGL.GT.0.0) &
                     !        WFG = 0.5                                                   !EQN 147
                     !    IF (WFPU-WFPL.GT.0.0) &

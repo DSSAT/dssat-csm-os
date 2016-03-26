@@ -664,6 +664,7 @@
     REAL    :: RAINPC(0:12)            ! Precipitation tier sum         mm         ! (From SeasInit)  
     REAL    :: RANC                    ! Roots actual N concentration   #          ! (From SeasInit)  
     REAL    :: RATM                    ! Boundary layer,air,resistance  s/m        ! (From SeasInit)  
+    REAL    :: RAW                     ! Total soil water 'potential'   #          ! (From Growth)
     REAL    :: RCROP                   ! Stomatal res,crop basis        s/m        ! (From SeasInit)  
     REAL    :: RDGAF                   ! Root depth gr,acceleration fac #          ! (From SeasInit)  
     REAL    :: RDGS                    ! Root depth growth rate,standrd cm/d       ! (From SeasInit)  
@@ -948,7 +949,6 @@
     !REAL    :: SWFRX                   ! Stem fraction maximum          #          ! (From SeasInit) !LPM 05JUN2015 SWFRX is not used   
     !REAL    :: SWFRXL                  ! Leaf number for max stem fr    #          ! (From SeasInit)  !LPM 05JUN2015 SWFRXL is not used 
     REAL    :: SWP(0:20)               ! Soil water 'potential'         #          ! (From Growth) 
-    REAL    :: SWPT                    ! Total soil water 'potential'   #          ! (From Growth)
     REAL    :: SWPH                    ! Stem weight harvested          g/p        ! (From Growth)    
     REAL    :: SWPHC                   ! Stem wt harvested,cumulative   g/p        ! (From SeasInit)  
     REAL    :: SWPLTD                  ! Depth for average soil water   cm         ! (From SeasInit)  
