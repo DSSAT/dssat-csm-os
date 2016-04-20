@@ -551,6 +551,7 @@
         
         CALL SPREADRA (SPDIRFLE,'TRGEM','4',trgem)
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
+        CALL SPREADRA (SPDIRFLE,'TRBRG','4',trbrg) !LPM 19APR15 TRBRG added to represent new cardinal temperatures for branching
         
         TRDV3 = TRLFG               ! LPM 21MAR15 new variable to change base temperature for leaf size
         TRDV3(1) = TBLSZ            ! LPM 21MAR15 new variable to change base temperature for leaf size

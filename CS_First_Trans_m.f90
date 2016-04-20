@@ -965,6 +965,7 @@
     REAL    :: TDIFNUM                 ! Temperature difference,# data  #          ! (From SeasInit)  
     REAL    :: TDIFSUM                 ! Temperature difference,sum     C          ! (From SeasInit)  
     INTEGER :: TFCOLNUM                ! T-file column number           #          ! (From Output)    
+    REAL    :: TFB                     ! Temperature factor,branch 0-1  #          ! (From SeasInit) !LPM 19APR2016 Temperature factor for branching 
     REAL    :: TFD                     ! Temperature factor,development #          ! (From SeasInit)  
     INTEGER :: TFDAP                   ! T-file days after planting     #          ! (From Output)    
     INTEGER :: TFDAPCOL                ! T-file DAP column #            #          ! (From Output)    
@@ -1027,6 +1028,7 @@
     REAL    :: TOMINSOMC               ! Cumulative mineralization,SOM  kg/ha      ! (From SeasInit)  
     REAL    :: TPAR                    ! Transmission,PAR,fraction      #          ! (From SeasInit)  
     REAL    :: TRATIO                  ! Function,relative tr rate      #          ! (From SeasInit)  
+    REAL    :: TRBRG(4)                ! Temp response,development br   #          ! (From SeasInit) !LPM 19APR2016 new variable for the cardinal temperatures for branching
     REAL    :: TRDV1(4)                ! Temp response,development 1    #          ! (From SeasInit)  
     REAL    :: TRDV2(4)                ! Temp response,development 2    #          ! (From SeasInit)  
     REAL    :: TRDV3(4)                ! Temp response,leaf size Tb cul #          ! LPM 28feb15 new variable to change base temperature for leaf size
@@ -1048,6 +1050,7 @@
     REAL    :: TTCUMWS                 ! Cumulative TT with water stressC.d        ! LPM 31JUL2015 new variable to create an additional clock under water stress
     REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit)  
     REAL    :: TTGEM                   ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
+    REAL    :: TTL                     ! Daily thermal time, leaves     C.d        ! LPM 19APR2016 Added to separate the thermal clock for branching and leaf development
     REAL    :: TTLFLIFE                ! Daily thermal time,leaf life   C.d        ! (From Growth) 
     REAL    :: TTLFSIZE                ! Daily thermal time,leaf size   C.d        ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TTNEED                  ! Thermal time to start new leaf #          ! (From Growth)    

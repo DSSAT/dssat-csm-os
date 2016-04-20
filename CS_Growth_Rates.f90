@@ -161,9 +161,10 @@
             ! IF (TMEAN20.LT.0.0) TFG = 0.0
             ! IF (TMEAN20.LT.0.0) TFP = 0.0
             Tfp = TFAC4(trphs,tmean,TTOUT)                                                                             !EQN 056
-            Tfg = TFAC4(trlfg,tmean,TTB)                                                                               !EQN 058 LPM 21MAR15 TTB will be used to determine DU and branches
+            !Tfg = TFAC4(trlfg,tmean,TTB)                                                                               !EQN 058 LPM 21MAR15 TTB will be used to determine DU and branches
+            Tfg = TFAC4(trlfg,tmean,TTL)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             IF (CFLTFG.EQ.'N') TFG = 1.0
-
+            Tfb = TFAC4(trbrg,tmean,TTB)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             ! Vapour pressure
             VPDFP = 1.0
             IF (PHTV.GT.0.0) THEN
