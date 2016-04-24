@@ -284,6 +284,7 @@
             ENDIF
             WRITE(FNUMWRK,'(A9,4F5.1)')'   TRDV1 ', TRDV1(1),TRDV1(2),TRDV1(3),TRDV1(4)
             WRITE(FNUMWRK,'(A9,4F5.1)')'   TRLFG ', TRLFG(1),TRLFG(2),TRLFG(3),TRLFG(4)
+            WRITE(FNUMWRK,'(A9,4F5.1)')'   TRBRG ', TRBRG(1),TRBRG(2),TRBRG(3),TRBRG(4) !LPM 24APR2016 To add TRBRG in the outputs
             WRITE(FNUMWRK,'(A9,4F5.1)')'   TRPHS ', TRPHS(1),TRPHS(2),TRPHS(3),TRPHS(4)
             IF (ISWDIS(LENDIS:LENDIS).NE.'N') THEN
                 WRITE (fnumwrk,*) ' '

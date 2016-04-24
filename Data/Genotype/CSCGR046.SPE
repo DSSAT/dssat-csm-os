@@ -134,12 +134,12 @@ CH2O distribution/mobilization
   0.87  0.89  0.10
 !  0.77  0.80  0.10 !LPM05SEP2015 Modified to define partitioning fraction for feeder roots
 ! Temperature responses
-@RRATE TRGEM TRDV1 TRLFG TRPHS  ! Germination/emergence,development,leaf/branch growth,phsis
-!    #    oC    oC    oC    oC
-     0  13.0  13.0  13.0    10
-   1.0  30.0  30.0  24.0    25   !LPM 18MAR15 Change to 24
-   1.0  35.0  35.0  35.0    40   !LPM 18MAR15 Change to 35 
-     0  42.5  42.5  42.5    50
+@RRATE TRGEM TRDV1 TRLFG TRPHS TRBRG  ! Germination/emergence,development,leaf/branch growth,phsis
+!    #    oC    oC    oC    oC    oC
+     0  13.0  13.0  13.0    10  13.0
+   1.0  30.0  30.0  24.0    25  24.0 
+   1.0  35.0  35.0  35.0    40  24.0  
+     0  42.5  42.5  42.5    50  42.5
 
 ! WATER loss,uptake,etc.
 ! Evapotranspiration 
