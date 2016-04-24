@@ -59,7 +59,7 @@
         
         ! STAGES:Overall development
         CUMDU = CUMDU + DU
-
+        DABR = DABR + (DU*WFG)
         ! BRANCH NUMBER     !LPM 07MAR15 This section was moved from CS_Growth_Part (has to be before of the estimation of brstage)       
         ! Old method (1 fork number throughout)
         ! BRNUMST = AMAX1(1.0,BRNUMFX**(INT(brstage)-1))
@@ -114,8 +114,10 @@
             IF (MEDEV.EQ.'DEVU') THEN                                                     ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
                 !DO L = HSTG,1,-1                                                          !LPM 03MAR15 It should be as MEDEV = LNUM DO L = HSTG,0,-1
                 DO L = HSTG-1,0,-1  
-                    IF (CUMDU.GE.PSTART(L).AND.PD(L+1).GT.0.0) THEN
-                        BRSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L+1)
+                    !IF (CUMDU.GE.PSTART(L).AND.PD(L+1).GT.0.0) THEN !LPM24APR2016 Using DABR instead of CUMDU
+                    !    BRSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L+1)
+                    IF (DABR.GE.PSTART(L).AND.PD(L+1).GT.0.0) THEN
+                        BRSTAGE = FLOAT(L) + (DABR-PSTART(L))/PD(L+1)
                         ! Brstage cannot go above harvest stage 
                         BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
                         LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
@@ -174,9 +176,11 @@
         ! Primary stages.   Calculated using Pstart
         IF (BRSTAGEPREV.LT.0.0) BRSTAGEPREV = 0.0
         L = INT(BRSTAGEPREV) + 1
-        IF (PSDAT(L).LE.0.0.AND.CUMDU.GE.PSTART(L)) THEN
+        !IF (PSDAT(L).LE.0.0.AND.CUMDU.GE.PSTART(L)) THEN !LPM 24APR2016 Using DABR instead of CUMDU
+        IF (PSDAT(L).LE.0.0.AND.DABR.GE.PSTART(L)) THEN
             PSDAT(L) = YEARDOY
-            IF (DU.GT.0.0) PSDAPFR(L)=(PSTART(L)-(CUMDU-DU))/DU
+            !IF (DU.GT.0.0) PSDAPFR(L)=(PSTART(L)-(CUMDU-DU))/DU !LPM 24APR2016 Using DABR instead of CUMDU
+            IF (DU.GT.0.0) PSDAPFR(L)=(PSTART(L)-(DABR-DU))/DU
             PSDAPFR(L) = FLOAT(DAP) + PSDAPFR(L)
             PSDAP(L) = DAP
             !IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN  !LPM 06MAR15 MSTG TO PSX

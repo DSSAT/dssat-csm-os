@@ -106,7 +106,8 @@
     REAL    :: CWAM                    ! Canopy weight,maturity         kg/ha      ! (From SeasInit)  
     REAL    :: CWAMERR                 ! Canopy weight,maturity,error   %          ! (From Output)    
     REAL    :: CWAMM                   ! Canopy wt,maturity,measured    kg/ha      ! (From SeasInit)  
-    REAL    :: CWAN(HANUMX)            ! Canopy wt minimum after harvst kg/ha      ! (From SeasInit)  
+    REAL    :: CWAN(HANUMX)            ! Canopy wt minimum after harvst kg/ha      ! (From SeasInit)
+    REAL    :: DABR                    ! Cumulative dev. units stress   #          ! (From SeasInit) 
     INTEGER :: DAE                     ! Days after emergence           d          ! (From SeasInit)  
     REAL    :: DAGERM                  ! Dev. age for germination       #          ! (From SeasInit)  !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
     REAL    :: DALF(0:PSX,0:LCNUMX)    ! Days during which leaf active  d          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 

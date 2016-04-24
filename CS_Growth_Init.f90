@@ -124,7 +124,8 @@
         DUPNEXT = 0.0
         ! To avoid exceeding the array sizes
         IF (BRSTAGETMP.LT.10.0) THEN
-            DUNEED = PSTART(INT(BRSTAGETMP+1.0))-CUMDU                                                                 !EQN 051
+            !DUNEED = PSTART(INT(BRSTAGETMP+1.0))-CUMDU                                                                 !EQN 051
+            DUNEED = PSTART(INT(BRSTAGETMP+1.0))-DABR                                                                 !EQN 051!LPM 24APR2016 using the thermal clock with stress
             IF (DUNEED.GE.TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN                                                    !LPM 21MAR15 use TTB instead of TT (TO1=24=TO2)
                 DUPHASE = TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)                                                          !EQN 052a !LPM 21MAR15/19APR2016 use TTB instead of TT (TO1=24=TO2)
                 TIMENEED = 1.0

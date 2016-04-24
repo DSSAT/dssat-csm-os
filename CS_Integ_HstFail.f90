@@ -45,7 +45,8 @@
             CALL WARNING(2,'CSCGR',MESSAGE)
         ENDIF
         !IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(MSTG-1)) THEN !LPM 04MAR15 MSTG TO PSX
-        IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(PSX-1)) THEN
+        !IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(PSX-1)) THEN !LPM 24APR2016 using DABR including water stress
+        IF (IHARI.NE.'A'.AND.DABR.GE.PSTART(PSX-1)) THEN
             ! NB. Not work if MSTG=2
             !IF (TT20.LE.-98.0.AND.PSTART(MSTG-1).GT.0.0) THEN !LPM 04MAR15 MSTG TO PSX
             IF (TT20.LE.-98.0.AND.PSTART(PSX-1).GT.0.0) THEN
@@ -57,14 +58,17 @@
         ! Determine if to harvest
         CFLHAR = 'N'
         IF (IHARI.EQ.'R'.AND.YEARDOYHARF.EQ.YEARDOY .OR. IHARI.EQ.'D'.AND.YEARDOYHARF.EQ.DAP .OR. IHARI.EQ.'G'.AND. &
-            YEARDOYHARF.LE.BRSTAGE .OR. IHARI.EQ.'A'.AND.YEARDOYHARF.EQ.YEARDOY .OR. IHARI.EQ.'M'.AND.CUMDU.GE. &
+            YEARDOYHARF.LE.BRSTAGE .OR. IHARI.EQ.'A'.AND.YEARDOYHARF.EQ.YEARDOY .OR. IHARI.EQ.'M'.AND.DABR.GE. &   
+            PSTART(PSX)) THEN 
+            !YEARDOYHARF.LE.BRSTAGE .OR. IHARI.EQ.'A'.AND.YEARDOYHARF.EQ.YEARDOY .OR. IHARI.EQ.'M'.AND.CUMDU.GE. & !LPM 24APR2016 Using DABR instead of CUMDU
             !PSTART(MSTG)) THEN !LPM 04MAR15 MSTG TO PSX
-            PSTART(PSX)) THEN  
+             
             CFLHAR = 'Y'
         ENDIF
         IF(IHARI.EQ.'R'.AND.CFLHAR.EQ.'N')THEN
-            !IF (CUMDU.GT.PSTART(MSTG) .AND. CFLHARMSG .NE. 'Y') THEN !LPM 04MAR15 MSTG TO PSX
-            IF (CUMDU.GT.PSTART(PSX) .AND. CFLHARMSG .NE. 'Y') THEN
+            !IF (CUMDU.GT.PSTART(MSTG) .AND. CFLHARMSG .NE. 'Y') THEN !LPM 04MAR15 MSTG TO PSX !LPM 24APR2016
+            IF (DABR.GT.PSTART(PSX) .AND. CFLHARMSG .NE. 'Y') THEN
+           
                 WRITE(Message(1),'(A54,I7)') 'Maturity reached but waiting for reported harvest on: ', YEARDOYHARF !LPM 04MAR15 Maybe this section it is not necessary for cassava
                 CALL WARNING(1,'CSCGR',MESSAGE)
                 CFLHARMSG = 'Y'
