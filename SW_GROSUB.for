@@ -318,7 +318,8 @@
       REAL        VANC  
       CHARACTER*6     VARNO          
       CHARACTER*16    VRNAME  
-      REAL        VSTAGE      
+      REAL        VSTAGE
+      REAL        WDFAC
       REAL        WLIDOT
       REAL        WRIDOT
       REAL        WSIDOT 
@@ -983,7 +984,8 @@
           ENDIF
           TURFAC = REAL(INT(TURFAC*1000))/1000
 
-          CALL PUT('MGMT', 'SWFAC', SWFAC)
+          WDFAC = TRWUP / EP1
+          CALL PUT('MGMT', 'WDFAC', WDFAC)
 
 
           !-------------------------------------------------------------

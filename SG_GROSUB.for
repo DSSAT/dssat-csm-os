@@ -159,6 +159,7 @@ C      PEST DAMAGE
       REAL        SWIDOT
       REAL        STPC,RTPC
      	REAL        PANTH
+      REAL        WDFAC
 
 C-----------------------------------------------------------------
 C   Local Variables
@@ -378,7 +379,8 @@ C              Emergence
 
       TURFAC = REAL(INT(TURFAC*1000))/1000
 
-      CALL PUT('MGMT', 'SWFAC', SWFAC)
+      WDFAC = TRWUP / EP1
+      CALL PUT('MGMT', 'WDFAC', WDFAC)
 
       !-------------------------------------------------------------
       !      Compute Water Saturation Factors       

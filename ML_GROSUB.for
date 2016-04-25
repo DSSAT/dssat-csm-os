@@ -113,6 +113,7 @@ C----------------------------------------------------------------
       REAL STOVWT
       REAL SUMDTT
       REAL SWFAC
+      REAL WDFAC
       REAL TANC
       REAL TBASE
       REAL TCNP
@@ -308,7 +309,9 @@ C--------------------------------------------------------------------
 
       TURFAC = REAL(INT(TURFAC*1000))/1000
 
-      CALL PUT('MGMT', 'SWFAC', SWFAC)
+      WDFAC = TRWUP / EP1
+
+      CALL PUT('MGMT', 'WDFAC', WDFAC)
 
       !-------------------------------------------------------------
       !      Compute Water Saturation Factors       

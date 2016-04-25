@@ -864,7 +864,7 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        USE ModuleData
 
        REAL, INTENT(IN) :: ATHETA, THETAC  ! INPUT  I = ATHETA and J = THETAC
-       REAL SWFAC
+       REAL WDFAC
        INTEGER STGDOY(20)             ! GROWTH STAGE ONSET OR END IN YRDOY
        LOGICAL R                 ! OUTPUT
        REAL AVWAT, THETAC2, SITH1, SITH2
@@ -883,9 +883,16 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        CALL Get('MGMT','FIST2', FIST2)
        CALL Get('MGMT','THETAC2', THETAC2)
        CALL Get('MGMT','DEFIR', DEFIR)
-       CALL Get('MGMT','SWFAC', SWFAC)
+       CALL Get('MGMT','WDFAC', WDFAC)
        CALL Get('MGMT','SITH1', SITH1)
        CALL Get('MGMT','SITH2', SITH2)
+
+      OPEN (UNIT = 6686, FILE = "TEST_SWFAC.OUT",
+     &POSITION = 'APPEND')
+      WRITE (6686, *) WDFAC
+
+
+
 
        MODEL = SAVE_data % Control % MODEL
        MODEL_WO_V = MODEL(1:5)
@@ -895,19 +902,7 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
              R = (ATHETA .LE. THETAC*0.01)
          CASE ('V', 'S')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
              ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
-          IF(
-     &       ((SITH1 .GT. 1.0) .OR.  (SITH2 .GT. 1.0)) !.OR.
-!     &       ((SITH1 .LT. 0.0) .AND. (SITH1 .GT. -99)) .OR.
-!     &       ((SITH2 .LT. 0.0) .AND. (SITH2 .GT. -99))
-     &        ) THEN
-               WRITE (*, *) "=========================================",
-     &                      "======================================"
-               WRITE (*, *) "ERROR: Invalid input for SITH1 or SITH2, ",
-     &                      "please enter a number between 0 and 1."
-               WRITE (*, *) "=========================================",
-     &                      "======================================"
-               STOP
-          ENDIF
+
           SELECT CASE (MODEL_WO_V)
            CASE ('CSCER','MLCER', 'MZCER', 'RICER', 'SGCER', 'SWCER')
             IF(
@@ -935,14 +930,14 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
               CASE('V')
                R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
               CASE('S')
-               R = ((1 - SWFAC) .GE. SITH2)
+               R = (WDFAC .LE. SITH2)
              END SELECT
             ELSE
 10006        SELECT CASE(DEFIR)
               CASE('V')
                R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
               CASE('S')
-               R = ((1 - SWFAC) .GE. SITH1)
+               R = (WDFAC .LE. SITH1)
              END SELECT
             ENDIF
            CASE ('CRGRO')

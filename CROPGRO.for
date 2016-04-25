@@ -145,6 +145,7 @@ C=======================================================================
       REAL PNTIM(NCOHORTS)
 
       REAL FLWN(NCOHORTS)
+      REAL WDFAC
 
 !CHP - puncture variables, not functional
       REAL PUNCSD, PUNCTR
@@ -676,7 +677,9 @@ C-----------------------------------------------------------------------
         ENDIF
       ENDIF
 
-      CALL PUT('MGMT','SWFAC',SWFAC)
+!     For irrigation control
+      WDFAC = TRWUP / EP1
+      CALL PUT('MGMT','WDFAC',WDFAC)
 
 !-----------------------------------------------------------------------
 !     CALL vegetative and reproductive development subroutine
@@ -1749,6 +1752,7 @@ C-----------------------------------------------------------------------
 ! WCRRT     Mass of CH2O reserves in roots (g[root CH2O] / m2[ground])
 ! WCRSH     Mass of CH2O reserves in shells (g[shell CH2O] / m2[ground])
 ! WCRST     Mass of CH2O reserves in stems (g[stem CH2O] / m2[ground])
+! WDFAC     Water Deficit Factor (same as SWFAC but can be more than 1)
 ! WLDOTN    Dry weight growth rate of new leaf tissue including N but not C 
 !             reserves (g[leaf] / m2[ground]-d)
 ! WLFDOT    Leaf weight losses due to freezing (g[leaf]/m2-d)
