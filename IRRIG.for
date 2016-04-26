@@ -887,13 +887,6 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        CALL Get('MGMT','SITH1', SITH1)
        CALL Get('MGMT','SITH2', SITH2)
 
-      OPEN (UNIT = 6686, FILE = "TEST_SWFAC.OUT",
-     &POSITION = 'APPEND')
-      WRITE (6686, *) WDFAC
-
-
-
-
        MODEL = SAVE_data % Control % MODEL
        MODEL_WO_V = MODEL(1:5)
 

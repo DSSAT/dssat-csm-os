@@ -48,7 +48,7 @@
      & SRAD, TMAX, TMIN, CO2, RAIN, TOTIR,                 !Weather
      & DAYLT, WINDSP, ST, EO,                              !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
-     & SNOW, SW, NO3LEFT, NH4LEFT, WDFAC,                        !H2o,N states
+     & SNOW, SW, NO3LEFT, NH4LEFT, WUPR,                        !H2o,N states
      & YEARPLT, YEARPLTCSM, HARVFRAC,                      !Pl.date
      & EOP, EP, ET, TRWUP,                                 !Resources
      & LAI, KCAN, KEP,                                     !States
@@ -1388,7 +1388,6 @@
       PARAMETER     (INTEGR = 4)
       PARAMETER     (OUTPUT = 5)
       PARAMETER     (SEASEND = 6)
-      REAL          WDFAC
 
       ! Condition at end of phase
       DATA BASTGNAM/'Max Prim  ','End Veg   ','End Ear Gr',
@@ -6051,8 +6050,6 @@
               WAVR = 99.9
             ENDIF
           ENDIF
-
-          WDFAC = H2OA/EOP
  
           H2OPROFILE = 0.0
           H2OROOTZONE = 0.0
