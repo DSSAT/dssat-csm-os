@@ -870,13 +870,13 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        REAL AVWAT, THETAC2, SITH1, SITH2
        INTEGER FIST1, FIST2, YRDOY, MDATE
        CHARACTER*1 DEFIR
-       LOGICAL TEST(20)
 
        CHARACTER*6 ERRKEY
        PARAMETER (ERRKEY = 'IRRIG')
        INTEGER ERRNUM, LNUM
        CHARACTER*8 MODEL
        CHARACTER*8 MODEL_WO_V  ! MODEL WITHOUT VERSION
+       LOGICAL TEST_FILE  ! TEMP, needs to go!
 
        CALL Get('MGMT','AVWAT', AVWAT)
        CALL Get('MGMT','FIST1', FIST1)
@@ -923,14 +923,16 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
               CASE('V')
                R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
               CASE('S')
-               R = (WDFAC .LE. SITH2)
+               R = (WDFAC .LE. SITH2) .AND. (WDFAC .NE. 0) .AND.         ! If WDFAC is 0 or NaN we do not want to irrigate
+     &             (WDFAC .EQ. WDFAC)
              END SELECT
             ELSE
 10006        SELECT CASE(DEFIR)
               CASE('V')
                R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
               CASE('S')
-               R = (WDFAC .LE. SITH1)
+               R = (WDFAC .LE. SITH1) .AND. (WDFAC .NE. 0) .AND.         ! If WDFAC is 0 or NaN we do not want to irrigate
+     &             (WDFAC .EQ. WDFAC)                                    ! by comparing the variable to itself we make sure it is not NaN
              END SELECT
             ENDIF
            CASE ('CRGRO')
@@ -973,6 +975,18 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
          WRITE (*, *) "====================================="
          STOP
         END SELECT
+
+      INQUIRE(FILE = "Test_Subroutines.txt", EXIST = TEST_FILE)
+
+      IF (TEST_FILE) THEN
+                 OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt",
+     &                  STATUS='OLD', POSITION = 'APPEND')
+      ELSE
+         OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='NEW')
+      ENDIF
+
+      WRITE (6686, *) R, WDFAC, SITH1, SITH2
+
 
       END FUNCTION IDECF
 
