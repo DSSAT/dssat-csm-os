@@ -627,7 +627,7 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)   ! Decide whether or not to irrigate based on deficit irrigation criteria
+          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)           ! Decide whether or not to irrigate based on deficit irrigation criteria
           IF(IDECV) THEN
 !          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
@@ -671,7 +671,7 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)   ! ADDED TO WORK WITH DEFICIT IRRIGATION
+          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)           ! ADDED TO WORK WITH DEFICIT IRRIGATION
           IF(IDECV) THEN
 !          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
@@ -795,7 +795,7 @@ C-----------------------------------------------------------------------
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
       FLOODWAT % PUDDLED = PUDDLED
-      
+
       RETURN
       END SUBROUTINE IRRIG
 C=======================================================================
@@ -877,6 +877,7 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        CHARACTER*8 MODEL
        CHARACTER*8 MODEL_WO_V  ! MODEL WITHOUT VERSION
        LOGICAL TEST_FILE  ! TEMP, needs to go!
+       REAL IRRAMT
 
        CALL Get('MGMT','AVWAT', AVWAT)
        CALL Get('MGMT','FIST1', FIST1)
@@ -886,6 +887,7 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
        CALL Get('MGMT','WDFAC', WDFAC)
        CALL Get('MGMT','SITH1', SITH1)
        CALL Get('MGMT','SITH2', SITH2)
+       CALL Get('MGMT','IRRAMT', IRRAMT)
 
        MODEL = SAVE_data % Control % MODEL
        MODEL_WO_V = MODEL(1:5)
@@ -976,17 +978,9 @@ C  Determines if water deficit exists to triger automatic or limited irrigation
          STOP
         END SELECT
 
-      INQUIRE(FILE = "Test_Subroutines.txt", EXIST = TEST_FILE)
-
-      IF (TEST_FILE) THEN
-                 OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt",
-     &                  STATUS='OLD', POSITION = 'APPEND')
-      ELSE
-         OPEN (UNIT = 6686, FILE = "Test_Subroutines.txt", STATUS='NEW')
+      IF (IRRAMT .NE. 0) THEN
+        R = .FALSE.               ! DO NOT IRRIGATE TWO DAYS IN A ROW
       ENDIF
-
-      WRITE (6686, *) R, WDFAC, SITH1, SITH2
-
 
       END FUNCTION IDECF
 

@@ -749,25 +749,6 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       FLOODWAT % PUDDLED = PUDDLED
 
-C     Open or create an ouput testfile
-
-        TEST_OUTPUT_FILE="TestJose.OUT"
-
-        INQUIRE (FILE = TEST_OUTPUT_FILE, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'OLD',
-     &      POSITION = 'APPEND')
-          WRITE (6686,*)    "Existing file was found using IRRIGHDR"
-
-        ELSE
-          OPEN (UNIT = 6686, FILE = TEST_OUTPUT_FILE, STATUS = 'NEW',
-     &      IOSTAT = ERRNUM)
-          WRITE (6686,*)    "This is a new file created using IRRIGHDR"
-        ENDIF
-
-        CLOSE (6686)
-C     End of test... delete later
-
       RETURN
 
       END SUBROUTINE IRRIGHDR
