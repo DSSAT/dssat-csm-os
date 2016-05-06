@@ -62,11 +62,13 @@
                     CALL Csopline(lapc,lap(BR,LF))
                     CALL Csopline(lapsc,laps(BR,LF))
                     ! Adjust for growth period of non fully expanded leaves
-                    WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
-                    NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
-                    NFLFP(BR,LF) =AMIN1(1.0,NFLFP(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
-                    TFGLF(BR,LF) =AMIN1(1.0,TFGLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
-                    AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF)/AMIN1(1.0,(DGLF(BR,LF)/LLIFGD)))
+                    IF (LAGETT.LE.LLIFGTT) THEN !LPM 24APR2016 Estimate when the leaves are growing
+                        WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
+                        NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
+                        NFLFP(BR,LF) =AMIN1(1.0,NFLFP(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
+                        TFGLF(BR,LF) =AMIN1(1.0,TFGLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
+                        AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
+                    ENDIF
                     IF (LDEATHDAP(BR,LF).EQ.0) LDEATHDAP = -99
                     WRITE (fnumlvs,'(2I6,7A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(BR,LF), &
                         1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(BR,LF),DGLF(BR,LF), &

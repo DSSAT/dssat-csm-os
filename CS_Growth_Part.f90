@@ -165,7 +165,8 @@
                 IF (DAWWP-TT.LT.900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
                 !LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(4.154582E-2*(DAE-DALSMAX))))
                 !LPM 12JUL2015 test with thermal time with optimum of 20 C
-                LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(5.665259E-3*(TTCUMLS))))
+                !LPM 24APR2016 Use of DALS (considering water stress) instead of TTCUMLS
+                LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(5.665259E-3*(DALS))))
             ENDIF
                 ! LAH Sept 2012 Eliminate fork # effect on leaf size 
             ! Adjust for fork#/shoot
@@ -216,19 +217,21 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                SHLAG2B(BR) = 0.0  
                 DO LF = 1, LNUMSIMSTG(BR)+1
-                    IF (DGLF(BR,LF).LE.LLIFGD) THEN
+                    IF (LAGETT(BR,LF).LE.LLIFGTT) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
                         LATLPREV(BR,LF) = LATL(BR,LF)
-                        !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 21MAR15 a fix growing duration in days (10) is defined
-                        LATLPOT(BR,LF)=LAPOTX(BR,LF)*((DGLF(BR,LF)+EMRGFR)/LLIFGD)
-                        IF (LATLPOT(BR,LF).LT.0.0) LATLPOT(BR,LF) = 0.0
-                        IF (LATLPOT(BR,LF).GT.LAPOTX(BR,LF)) LATLPOT(BR,LF) = LAPOTX(BR,LF)
-                        LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                               !EQN 323
+                        !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 24APR2016 To estimate daily leaf area increase instead of total
+                        LAPOTX2(BR,LF) = LAPOTX(BR,LF)*TFLFLIFE
+                        LAGL(BR,LF)=LAPOTX2(BR,LF)*(TTLFLIFE/LLIFGTT)
+                        IF (LAGL(BR,LF).LT.0.0) LAGL(BR,LF) = 0.0
+                        IF (LAGL(BR,LF).GT.(LAPOTX2(BR,LF)-LATL3(BR,LF))) LAGL(BR,LF) = LAPOTX2(BR,LF)-LATL3(BR,LF)
+                        !LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                !EQN 323 !LPM 24APR2016 To estimate daily leaf area increase instead of total
+                        LATL(BR,LF) = LATL(BR,LF) + LAGL(BR,LF)                                                                  !EQN 323
                         !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by Tflflife to be able to change the Tb
                         !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
-                        LAGL(BR,LF) = (LATLPOT(BR,LF)-LATLPREV(BR,LF))* AMIN1(WFG,NFG)*Tflflife 
-                        LATL2(BR,LF) = LATL2(BR,LF) + LAGL(BR,LF)                                                                   !EQN 324
+                        !LAGL(BR,LF) = LATLPOT(BR,LF)* AMIN1(WFG,NFG)
+                        LATL2(BR,LF) = LATL2(BR,LF) + LAGL(BR,LF)                                  !EQN 324 !LPM 24APR2016 LATL2 with the same value than LATL 
                         SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF)                                    !EQN 325
                      
                         !LPM 15NOV15 Variables LAGLT and LATL2T created to save the leaf are by cohort (all the plant (all branches and shoots))
@@ -425,88 +428,87 @@
             ELSE  
                 AFLF(0,0) = 1.0
             ENDIF
-            !IF (CFLAFLF.EQ.'N') AFLF(0) = 1.0                                                                        !LPM 23MAR15 To avoid the next do loop
-            IF (CFLAFLF.EQ.'N')  THEN
-                AFLF = 1.0 
-            ELSE
-            ! Area and assimilate factors for each leaf
-                DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
-                    DO LF = 1, LNUMSIMSTG(BR)
-                    !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                  !LPM 23MAR15 To consider the new leaf growing duration of 10 
-                        !IF (LNUMSG.LT.LNUMX) THEN
-                        !    LATL3(L)= LATL2(L) * AFLF(0,0)                                                                                   !EQN 150
-                        !    AFLF(L) = AMIN1(1.0,AFLF(L) + AMAX1(0.0,AFLF(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                           !EQN 151
-                        !    IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0                                                   
-                        !ENDIF     
-                        IF (DGLF(BR,LF).LE.LLIFGD) THEN
-                            IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
-                                !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
-                                LAGL3(BR,LF) = LAGL(BR,LF) * AFLF(0,0)  
-                                LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
-                                AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF) + AMAX1(0.0,AFLF(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))             !EQN 151   
-                                LAGL3T(BR,LF) = LAGL3(BR,LF)*BRNUMST(BR) 
-                                LATL3T(BR,LF) = LATL3(BR,LF)*BRNUMST(BR)
-                                DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
-                                    IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-                                        LAGL3T(BR,LF) = LAGL3T(BR,LF)+(LAGL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
-                                        LATL3T(BR,LF) = LATL3T(BR,LF)+(LATL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
-                                    ENDIF
-                                ENDDO
-                                !IF (CFLAFLF.EQ.'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
-                            ENDIF  
-                        ENDIF
-                    ENDDO
-                ENDDO
-            ENDIF
-            !PLAGSB3 = PLAGSB2 * AFLF(0)                                                                                !EQN 345
-            !SHLAGB2 is not necessary, previously defined in the loop as SHLAG2
-            !SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
-            !SHLAGB3(2) = SHLAGB2(2) * AFLF(0)                                                                          !EQN 240
-            !SHLAGB3(3) = SHLAGB2(3) * AFLF(0)                                                                          !EQN 240
-            PLAGSB3 = PLAGSB2 * AFLF(0,0) 
-            SHLAGB3(1) = SHLAG2(1) * AFLF(0,0)                                                                         !EQN 240
-            SHLAGB3(2) = SHLAG2(2) * AFLF(0,0)                                                                         !EQN 240
-            SHLAGB3(3) = SHLAG2(3) * AFLF(0,0)                                                                         !EQN 240    
-        ENDIF
-            
-        !-----------------------------------------------------------------------
-        !           Stem and Plant. stick growth                                     
-        !-----------------------------------------------------------------------
+            IF (CFLAFLF.EQ.'N') AFLF(0) = 1.0                                                                        
 
-        GROCR = 0.0
-        GROSTCRP = 0.0
-        GROST = 0.0
-        GROSTCR = 0.0
-        STAIG = 0.0
-        STAIS = 0.0
-        !! Potential stem weight increase.
-        !IF (SWFR.LT.1.0) THEN
-        !    GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
-        !    GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
-        !ELSE  
-        !    GROSTCRP = GROSTCRPSTORE                                                                                   !EQN 381b
-        !    ! LAH May need to change GROSTCRP as progress
+        !    ! Area and assimilate factors for each leaf
+        !        DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
+        !            DO LF = 1, LNUMSIMSTG(BR)
+        !            !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                  !LPM 23MAR15 To consider the new leaf growing duration of 10 
+        !                !IF (LNUMSG.LT.LNUMX) THEN
+        !                !    LATL3(L)= LATL2(L) * AFLF(0,0)                                                                                   !EQN 150
+        !                !    AFLF(L) = AMIN1(1.0,AFLF(L) + AMAX1(0.0,AFLF(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                           !EQN 151
+        !                !    IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0                                                   
+        !                !ENDIF     
+        !                IF (LAGETT(BR,LF).LE.LLIFGTT) THEN
+        !                    IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
+        !                        !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
+        !                        LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG)  
+        !                        !LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
+        !                        LATL3(BR,LF)= LATL3(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
+        !                        AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF) + AMAX1(0.0,AFLF(0,0)) * (LAGL(BR,LF))/LAPOTX2(BR,LF))             !EQN 151   
+        !                        LAGL3T(BR,LF) = LAGL3(BR,LF)*BRNUMST(BR) 
+        !                        LATL3T(BR,LF) = LATL3(BR,LF)*BRNUMST(BR)
+        !                        DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
+        !                            IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
+        !                                LAGL3T(BR,LF) = LAGL3T(BR,LF)+(LAGL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
+        !                                LATL3T(BR,LF) = LATL3T(BR,LF)+(LATL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
+        !                            ENDIF
+        !                        ENDDO
+        !                        !IF (CFLAFLF.EQ.'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
+        !                    ENDIF  
+        !                ENDIF
+        !            ENDDO
+        !        ENDDO
+        !    ENDIF
+        !    !PLAGSB3 = PLAGSB2 * AFLF(0)                                                                                !EQN 345
+        !    !SHLAGB2 is not necessary, previously defined in the loop as SHLAG2
+        !    !SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
+        !    !SHLAGB3(2) = SHLAGB2(2) * AFLF(0)                                                                          !EQN 240
+        !    !SHLAGB3(3) = SHLAGB2(3) * AFLF(0)                                                                          !EQN 240
+        !    PLAGSB3 = PLAGSB2 * AFLF(0,0) 
+        !    SHLAGB3(1) = SHLAG2(1) * AFLF(0,0)                                                                         !EQN 240
+        !    SHLAGB3(2) = SHLAG2(2) * AFLF(0,0)                                                                         !EQN 240
+        !    SHLAGB3(3) = SHLAG2(3) * AFLF(0,0)                                                                         !EQN 240    
         !ENDIF
-        
-        ! Potential stem weight increase. !LPM 28APR15 Change according to the new equation for stem development (see above GROSTP)
-        GROSTCRP = GROSTP                                                                                          !EQN 381a
-    
-        
-        IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
-        ! LAH RSFRS is the fraction of stem growth to reserves
-        ! May need to have this change as stem growth proceeds
-     
-        ! Planting stick .. in balance with stem
-        !GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
-        !GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
-        
-        !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
-        !in the planting stick (In the future it could be modified as an input in the X-file)
-        GROST = GROSTCR
-        
-        IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
-        !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
-        
+        !    
+        !!-----------------------------------------------------------------------
+        !!           Stem and Plant. stick growth                                     
+        !!-----------------------------------------------------------------------
+        !
+        !GROCR = 0.0
+        !GROSTCRP = 0.0
+        !GROST = 0.0
+        !GROSTCR = 0.0
+        !STAIG = 0.0
+        !STAIS = 0.0
+        !!! Potential stem weight increase.
+        !!IF (SWFR.LT.1.0) THEN
+        !!    GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
+        !!    GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
+        !!ELSE  
+        !!    GROSTCRP = GROSTCRPSTORE                                                                                   !EQN 381b
+        !!    ! LAH May need to change GROSTCRP as progress
+        !!ENDIF
+        !
+        !! Potential stem weight increase. !LPM 28APR15 Change according to the new equation for stem development (see above GROSTP)
+        !GROSTCRP = GROSTP                                                                                          !EQN 381a
+        !
+        !
+        !IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
+        !! LAH RSFRS is the fraction of stem growth to reserves
+        !! May need to have this change as stem growth proceeds
+        !
+        !! Planting stick .. in balance with stem
+        !!GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
+        !!GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
+        !
+        !!LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
+        !!in the planting stick (In the future it could be modified as an input in the X-file)
+        !GROST = GROSTCR
+        !
+        !IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
+        !!CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
+        !
                           
 
         

@@ -45,7 +45,14 @@
         ELSE
             DAWWP = TTCUM
         ENDIF
-        IF (DAWWP.GT.900.0) TTCUMLS = TTCUMLS + TTlfsize   ! LPM 12JUL2015 added to consider a different optimum temperature for potential leaf size
+        IF (DAWWP.GT.900.0) THEN
+            TTCUMLS = TTCUMLS + TTlfsize   ! LPM 12JUL2015 added to consider a different optimum temperature for potential leaf size
+            IF (ISWWAT.EQ.'Y') THEN
+                DALS = DALS + (TTlfsize*WFG) !LPM 24APR2015 Added to have a new clock with water stress
+            ELSE
+                DALS = TTCUMLS
+            ENDIF
+        ENDIF
         RAINC = RAINC + RAIN
         DRAINC = DRAINC + DRAIN
         RUNOFFC = RUNOFFC + RUNOFF

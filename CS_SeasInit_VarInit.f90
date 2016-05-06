@@ -78,6 +78,7 @@
         dae = -99
         dabr = 0.0 !LPM 24APR2016 DABR added as developmental age for branching (with stress)
         dagerm = 0.0 !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
+        dals = 0.0 !LPM 24APR2016 DALS added as developmental age for leaf size (when DAWWP> 900)
         dap = -99
         dawwp = 0.0 !LPM 06MAR2016 DAWWP added to save Development Age (with stress)
         daylcc = 0.0

@@ -111,6 +111,7 @@
     INTEGER :: DAE                     ! Days after emergence           d          ! (From SeasInit)  
     REAL    :: DAGERM                  ! Dev. age for germination       #          ! (From SeasInit)  !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
     REAL    :: DALF(0:PSX,0:LCNUMX)    ! Days during which leaf active  d          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
+    REAL    :: DALS                    ! Development Age leaf size (2)  C.d        ! (From SeasInit) !LPM 24APR2016 DALS added to save Dev. age for potential leaf size (with stress)
     INTEGER :: DALSMAX                 ! DAE with the max leaf size     d          ! LPM 28FEB15 
     INTEGER :: DAP                     ! Days after planting            d          ! (From SeasInit)  
     INTEGER :: DAS                     ! Days after start of simulation d          ! (From Output)    
@@ -388,6 +389,7 @@
     REAL    :: LAPH                    ! Leaf area (green) harvested    cm2/d      ! (From Growth)    
     REAL    :: LAPHC                   ! Leaf area (green) harvested,cu cm2/p      ! (From SeasInit)  
     REAL    :: LAPOTX(0:PSX,0:LCNUMX)  ! Leaf area potentials,maxima    cm2/l      ! (From SeasInit)  
+    REAL    :: LAPOTX2(0:PSX,0:LCNUMX) ! Leaf area potentials,max/day   cm2/l      ! (From SeasInit) !LPM 24APR2016 To estimate a modified daily leaf area potential modified by temperature 
     REAL    :: LAPP(0:PSX,0:LCNUMX)    ! Leaf area diseased,leaf posn   cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions currently it is not used    
     REAL    :: LAPS(0:PSX,0:LCNUMX)    ! Leaf area senesced,leaf posn   cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions   
     REAL    :: LAPSTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Growth)    
