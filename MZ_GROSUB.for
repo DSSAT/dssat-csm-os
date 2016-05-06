@@ -1065,6 +1065,15 @@
           WDFAC = TRWUP / EP1
           CALL PUT('MGMT', 'WDFAC', WDFAC)
 
+      WDFAC = TRWUP / EP1
+
+      OPEN (UNIT = 6686, FILE = "Test_Subroutines.OUT",
+     &      POSITION = 'APPEND')
+      WRITE (6686, 6687)  "WDFAC" , WDFAC, "TRWUP", TRWUP, "EP1", EP1,
+     &                     "SWFAC", SWFAC, "TURFAC", TURFAC
+6687  FORMAT (5(A5, 1X, F10.2, 1X))
+!      WRITE (6686, *)  WDFAC
+
           !-------------------------------------------------------------
           !      Compute Water Saturation Factors       
           ! ------------------------------------------------------------
