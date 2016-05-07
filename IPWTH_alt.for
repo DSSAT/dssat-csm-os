@@ -1179,10 +1179,10 @@ c                   available.
       WRITE(MSG(NMSG-1),'(2X,A)') FILEWW(1:NCHAR)
 
       MSG(NMSG) = "Simulation will end."
-      CALL WARNING(NMSG,ERRKEY,MSG)
       YREND = CONTROL%YRDOY
       CONTROL % ErrCode = ErrCode
       CALL PUT(CONTROL)
+      CALL WARNING(NMSG,ERRKEY,MSG)
 
 !!     Stop the run for these errors:
 !      SELECT CASE(ErrCode)
