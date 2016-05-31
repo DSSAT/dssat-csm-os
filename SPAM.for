@@ -155,13 +155,14 @@ C=======================================================================
 
 !     ---------------------------------------------------------
       SELECT CASE (METMP)
-      CASE ('E')    !EPIC soil temperature routine
-        CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  !DSSAT soilt temperature
+      CASE ('D')  !DSSAT soil temperature
         CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+!     CASE ('E')    !EPIC soil temperature routine
+      CASE DEFAULT  !3/27/2016 - default soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &    SRFTEMP, ST)                                    !Output
       END SELECT
 
@@ -238,13 +239,14 @@ C=======================================================================
       SWDELTX = 0.0
 !     ---------------------------------------------------------
       SELECT CASE (METMP)
-      CASE ('E')    !EPIC soil temperature routine
-        CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  !DSSAT soilt temperature
+      CASE ('D')  !DSSAT soil temperature
         CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+!     CASE ('E')    !EPIC soil temperature routine
+      CASE DEFAULT  !3/27/2016 - default soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &    SRFTEMP, ST)                                    !Output
       END SELECT
 
@@ -493,13 +495,14 @@ C-----------------------------------------------------------------------
 
 !     ---------------------------------------------------------
       SELECT CASE (METMP)
-      CASE ('E')    !EPIC soil temperature routine
-        CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  !DSSAT soilt temperature
+      CASE ('D')  !DSSAT soil temperature
         CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+!     CASE ('E')    !EPIC soil temperature routine
+      CASE DEFAULT  !3/27/2016 - default soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &    SRFTEMP, ST)                                    !Output
       END SELECT
 
@@ -531,13 +534,14 @@ C-----------------------------------------------------------------------
 
 !     ---------------------------------------------------------
       SELECT CASE (METMP)
-      CASE ('E')    !EPIC soil temperature routine
-        CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  !DSSAT soilt temperature
+      CASE ('D')  !DSSAT soil temperature
         CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+!     CASE ('E')    !EPIC soil temperature routine
+      CASE DEFAULT  !3/27/2016 - default soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &    SRFTEMP, ST)                                    !Output
       END SELECT
 

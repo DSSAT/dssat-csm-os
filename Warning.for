@@ -26,7 +26,7 @@ C=======================================================================
       CHARACTER*30  FILEIO
       CHARACTER*78  MESSAGE(*)
 
-      INTEGER ICOUNT, DOY, I, LUN, OLDRUN, RUN, YEAR, YRDOY
+      INTEGER ICOUNT, DOY, I, LUN, OLDRUN, RUN, YEAR, YRDOY, ErrCode
       LOGICAL FIRST, FEXIST, FOPEN
 
       TYPE (ControlType) CONTROL
@@ -38,12 +38,13 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !     Suppress Warning.OUT if IDETL = '0' (zero)
       CALL GET(ISWITCH)
-      IF (ISWITCH % IDETL == '0') RETURN
+!     IF (ISWITCH % IDETL == '0') RETURN
 
       CALL GET(CONTROL)
       FILEIO = CONTROL % FILEIO
       RUN    = CONTROL % RUN
       YRDOY  = CONTROL % YRDOY
+      ErrCode = CONTROL % ErrCode
 
       IF (INDEX(ERRKEY,'ENDRUN') <= 0) THEN
 !       First time routine is called to print, open file.
@@ -52,7 +53,7 @@ C=======================================================================
 
 !         Check for IDETL = '0' (zero) --> suppress output
           CALL GET(ISWITCH)
-          IF (ISWITCH % IDETL == '0') RETURN
+          IF (ISWITCH % IDETL == '0' .AND. ErrCode <=0) RETURN
 
           CALL GETLUN(WarnOut, LUN)
           INQUIRE (FILE = WarnOut, EXIST = FEXIST)
