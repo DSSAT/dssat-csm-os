@@ -32,6 +32,7 @@ C  Computes N2, N2O daily and cumulative emissions
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  09/18/2015 CHP Written, based on PG code.
+!  05/30/2016 CHP remove diffusion model
 !=======================================================================
 
       SUBROUTINE N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
@@ -60,8 +61,8 @@ C  09/18/2015 CHP Written, based on PG code.
       REAL N2O_emitted, CN2O_emitted !N2O emitted
 
 !LOCAL VARIABLES
-      real n2o_soil(nl), n2o_diffused ! PG
-      real n2_soil(nl),  n2_diffused  ! PG
+!      real n2o_soil(nl), n2o_diffused ! PG
+!      real n2_soil(nl),  n2_diffused  ! PG
       real N2Oflux(nl)    
 
 !-----------------------------------------------------------------------
@@ -101,6 +102,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. RATE) THEN
 C-----------------------------------------------------------------------
+! 05/20/2016 - chp remove diffusion model
 ! Simple representation of diffusion of N2O and N2 emissions 14 June 2015
 ! Developed as N2O and duplicated as N2
 ! Diffusion of N2O from layers based on WFPS PGrace 14 June 2015
@@ -119,33 +121,36 @@ C-----------------------------------------------------------------------
               n2oflux(L) = 0.0
           endif
 
-!          POROS(L)  = 1.0 - BD(L) / 2.65
-!          wfps(L) = min (1.0, sw(L) / SOILPROP % poros(L))
-          if (L.ge.2) then
-            n2o_diffused = (n2oflux(L) + n2o_soil(L)) * (1.0 - WFPS(L))
-            n2o_soil(L) = (n2oflux(L) + n2o_soil(L)) * WFPS(L)
-            n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
-          endif
+! 05/20/2016 - chp remove diffusion model
+!!          POROS(L)  = 1.0 - BD(L) / 2.65
+!!          wfps(L) = min (1.0, sw(L) / SOILPROP % poros(L))
+!          if (L.ge.2) then
+!            n2o_diffused = (n2oflux(L) + n2o_soil(L)) * (1.0 - WFPS(L))
+!            n2o_soil(L) = (n2oflux(L) + n2o_soil(L)) * WFPS(L)
+!            n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
+!          endif
       ENDDO
       
-      n2o_emitted = n2oflux(1)+n2o_soil(1)
-      n2o_soil(1) = 0.0
+!      n2o_emitted = n2oflux(1)+n2o_soil(1)
+!      n2o_soil(1) = 0.0
+      n2o_emitted = n2oflux(1)
  
 ! N2 section - same basis as N2O
       DO L = 1, NLAYR
           if (n2flux(L).lt. 0.0) then
               n2flux(L) = 0.0
           endif
-          if (L.ge.2) then
-             n2_diffused = (n2flux(L) + n2_soil(L)) * (1.0 - WFPS(L))
-             n2_soil(L) = (n2flux(L) + n2_soil(L)) * WFPS(L)
-             n2_soil(L-1) = n2_soil(L-1) + n2_diffused
-          endif
+!          if (L.ge.2) then
+!             n2_diffused = (n2flux(L) + n2_soil(L)) * (1.0 - WFPS(L))
+!             n2_soil(L) = (n2flux(L) + n2_soil(L)) * WFPS(L)
+!             n2_soil(L-1) = n2_soil(L-1) + n2_diffused
+!          endif
       ENDDO
       
-      n2_emitted = n2flux(1)+n2_soil(1)   !LAYER ONE
-      n2_soil(1) = 0.0
-      
+!      n2_emitted = n2flux(1)+n2_soil(1)   !LAYER ONE
+!      n2_soil(1) = 0.0
+      n2_emitted = n2flux(1)   !LAYER ONE
+     
       CN2O_emitted = CN2O_emitted + N2O_emitted
       CN2_emitted  = CN2_emitted  + N2_emitted
 
