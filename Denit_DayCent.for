@@ -34,6 +34,7 @@ C=======================================================================
       REAL DLTSNO3(NL)   
       REAL BD(NL), DUL(NL), KG2PPM(NL) 
       REAL NO3(NL), SNO3(NL), SW(NL)
+      REAL NDAYS_WET(NL)
       
 !!!!! daycent variables  PG
       REAL wfps(nl)
@@ -81,6 +82,8 @@ C=======================================================================
       A(2) = 1.556
       A(3) = 76.91
       A(4) = 0.00222
+      
+      NDAYS_WET = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -141,8 +144,14 @@ C=======================================================================
           endif    
           co2_correct(L)=co2PPM(L)*(1.0+a_coeff*(wfps(L)-WFPS_thres))   !the amount labile C is adjusted taking into account diffusion
         endif  
+        
+!       Count the number of days that WFPS is above 0.80     
+        if (wfps(L) > 0.80) then
+            ndays_wet(L) = ndays_wet(L) + 1
+        else
+            ndays_wet(L) = 0.0
+        endif
   
-
 !       Compute the Carbon Dioxide effect on Denitrification fDco2, ppm N
 !       Changed CO2 effect on denitrification based on paper "General model for N2O and N2 gas emissions from  soils due to denitrification"
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
