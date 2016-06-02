@@ -34,17 +34,19 @@ C=======================================================================
       REAL DLTSNO3(NL)   
       REAL BD(NL), DUL(NL), KG2PPM(NL) 
       REAL NO3(NL), SNO3(NL), SW(NL)
-      REAL NDAYS_WET(NL)
+      INTEGER NDAYS_WET(NL)
       
 !!!!! daycent variables  PG
       REAL wfps(nl)
       REAL co2_correct(nl), co2PPM(nl)        !wfps_fc(nl), poros(nl), 
-      REAL a_coeff, wfps_thres, fDno3, Rn2n2O, fRwfps
+      REAL a_coeff, wfps_thres, fDno3, Rn2n2O(NL), fRwfps
       REAL fRno3_CO2, k1, fDCO2, fDwfps, X_inflect
       REAL m, fNo3fCo2
       REAL newCO2(0:nl), dD0_fc(nl)
       real A(4)
 !     real RWC
+      
+      Real ratio1(nl), ratio2(nl)
 
       TYPE (N2O_type) N2O_DATA
 !          Cumul      Daily       Layer ppm        Layer kg
@@ -145,13 +147,6 @@ C=======================================================================
           co2_correct(L)=co2PPM(L)*(1.0+a_coeff*(wfps(L)-WFPS_thres))   !the amount labile C is adjusted taking into account diffusion
         endif  
         
-!       Count the number of days that WFPS is above 0.80     
-        if (wfps(L) > 0.80) then
-            ndays_wet(L) = ndays_wet(L) + 1
-        else
-            ndays_wet(L) = 0.0
-        endif
-  
 !       Compute the Carbon Dioxide effect on Denitrification fDco2, ppm N
 !       Changed CO2 effect on denitrification based on paper "General model for N2O and N2 gas emissions from  soils due to denitrification"
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
@@ -196,13 +191,28 @@ C       Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
         fRwfps = max(0.1, 0.015 * wfps(L)*100 - 0.32)
       
 C       Compute the N2:N2O Ratio
-
-        Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
-      
+!       Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
+        ratio1(L) = max(0.1,fRno3_co2 * fRwfps)
+        Rn2n2o(L) = ratio1(L)
+        
+!       Count the number of days that water filled pore space is above 0.80     
+        if (wfps(L) >= 0.80) then
+            ndays_wet(L) = min(7, ndays_wet(L) + 1)
+        else
+            ndays_wet(L) = 0
+        endif
+        
+!       modify Rn2n2o based on number of wet days 
+        if (ndays_wet(L) > 0) then
+            ratio2(L) = -330. + 334 * wfps(L) + 18.4 * ndays_wet(L)
+            ratio2(L) = max(ratio2(L),0.0)
+            Rn2n2o(L) = ratio2(L)
+        endif
+        
 C       Calculate N2O       
 !       PG changed n2ofluxppm to n2odenitppm to differentiate n2o from denitrification
 !       n2ofluxppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
-        n2odenitppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
+        n2odenitppm(L) = denitrifppm(L) / (Rn2n2o(L) + 1.0)
             
 C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         denitrif(L) = denitrifppm(L)/kg2ppm(L)
@@ -258,6 +268,11 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         TN2D = TN2D + N2FLUX(L)            ! PG
 
       END DO   !End of soil layer loop.
+
+!     temp chp
+      write(3000,'(i7,10f8.3,10I5)') yrdoy, wfps(1:10), ndays_wet(1:10)
+      write(4000,'(i7,30(F8.3))') yrdoy, ratio1(1:10), ratio2(1:10), 
+     &  rn2n2o(1:10)
 
 !***********************************************************************
 !***********************************************************************
