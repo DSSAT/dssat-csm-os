@@ -116,8 +116,6 @@ C-----------------------------------------------------------------------
 ! n2o_soil is mass remaining in soil (kg N/ha) AFTER diffusion
 ! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
 
-
-
       DO L = NLAYR, 1, -1
           n2oflux(L) = n2onitrif(L) + n2odenit(L)                
           if (n2oflux(L).lt. 0.0) then
