@@ -391,7 +391,7 @@ C-----------------------------------------------------------------------
         CALL GETARG(0,PATHX)
         IPX = LEN_TRIM(PATHX)
         DATAX = PATHX(1:(IPX-12)) // FILECDE
-D       DATAX = STDPATH // FILECDE
+!debugD       DATAX = STDPATH // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF        
 
@@ -949,7 +949,7 @@ C-----------------------------------------------------------------------
         CALL GETARG(0,PATHX)
         IPX = LEN_TRIM(PATHX)
         DATAX = PATHX(1:(IPX-12)) // FILECDE
-D       DATAX = STDPATH // FILECDE
+!debugD       DATAX = STDPATH // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF        
 
