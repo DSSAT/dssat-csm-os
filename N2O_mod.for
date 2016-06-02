@@ -61,9 +61,11 @@ C  09/18/2015 CHP Written, based on PG code.
       REAL N2O_emitted, CN2O_emitted !N2O emitted
 
 !LOCAL VARIABLES
-!      real n2o_soil(nl), n2o_diffused ! PG
-!      real n2_soil(nl),  n2_diffused  ! PG
-      real N2Oflux(nl)    
+      real n2o_soil(nl), n2o_diffused ! PG
+      real n2_soil(nl),  n2_diffused  ! PG
+      real N2Oflux(nl)  
+      real RateDiffus
+      real, parameter :: DiffFactor = 0.5
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -114,44 +116,36 @@ C-----------------------------------------------------------------------
 ! n2o_soil is mass remaining in soil (kg N/ha) AFTER diffusion
 ! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
 
-! N2O section     
-      DO L = 1, NLAYR
+
+
+      DO L = NLAYR, 1, -1
           n2oflux(L) = n2onitrif(L) + n2odenit(L)                
           if (n2oflux(L).lt. 0.0) then
               n2oflux(L) = 0.0
           endif
 
-! 05/20/2016 - chp remove diffusion model
-!!          POROS(L)  = 1.0 - BD(L) / 2.65
-!!          wfps(L) = min (1.0, sw(L) / SOILPROP % poros(L))
-!          if (L.ge.2) then
-!            n2o_diffused = (n2oflux(L) + n2o_soil(L)) * (1.0 - WFPS(L))
-!            n2o_soil(L) = (n2oflux(L) + n2o_soil(L)) * WFPS(L)
-!            n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
-!          endif
-      ENDDO
-      
-!      n2o_emitted = n2oflux(1)+n2o_soil(1)
-!      n2o_soil(1) = 0.0
-      n2o_emitted = n2oflux(1)
- 
-! N2 section - same basis as N2O
-      DO L = 1, NLAYR
           if (n2flux(L).lt. 0.0) then
               n2flux(L) = 0.0
           endif
-!          if (L.ge.2) then
-!             n2_diffused = (n2flux(L) + n2_soil(L)) * (1.0 - WFPS(L))
-!             n2_soil(L) = (n2flux(L) + n2_soil(L)) * WFPS(L)
-!             n2_soil(L-1) = n2_soil(L-1) + n2_diffused
-!          endif
+          
+          if (L.ge.2) then
+            RateDiffus = (1.0 - WFPS(L)) * DiffFactor
+            n2o_diffused = (n2oflux(L) + n2o_soil(L)) * RateDiffus
+            n2o_soil(L) = (n2oflux(L) + n2o_soil(L)) *(1.0 - RateDiffus)
+            n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
+
+            n2_diffused = (n2flux(L) + n2_soil(L)) * RateDiffus
+            n2_soil(L) = (n2flux(L) + n2_soil(L)) * (1.0 - RateDiffus)
+            n2_soil(L-1) = n2_soil(L-1) + n2_diffused
+          endif
       ENDDO
       
-!      n2_emitted = n2flux(1)+n2_soil(1)   !LAYER ONE
-!      n2_soil(1) = 0.0
-      n2_emitted = n2flux(1)   !LAYER ONE
-     
+      n2o_emitted = n2oflux(1) + n2o_soil(1)  !LAYER ONE
+      n2o_soil(1) = 0.0
       CN2O_emitted = CN2O_emitted + N2O_emitted
+
+      n2_emitted = n2flux(1) + n2_soil(1)   !LAYER ONE
+      n2_soil(1) = 0.0
       CN2_emitted  = CN2_emitted  + N2_emitted
 
 !***********************************************************************
