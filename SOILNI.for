@@ -148,7 +148,10 @@ C=======================================================================
       TYPE (WeatherType) WEATHER
       
 !      PI = 3.1416
-            
+      
+!     proportion of N2O from nitrification PG calibrated this variable for DayCent
+      pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
+         
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
@@ -581,14 +584,13 @@ C=======================================================================
         SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
         NITRIF(L) = AMIN1(NITRIF(L), SNH4_AVAIL)
 
-        DLTSNO3(L) = DLTSNO3(L) + NITRIF(L)
-        DLTSNH4(L) = DLTSNH4(L) - NITRIF(L)
-        TNITRIFY   = TNITRIFY   + NITRIF(L)
-      
-        pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
         n2onitrif(L) = pN2Onitrif * NITRIF(L)    ! for N2O using a proportion of nitrification from original daycent PG
         N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
 
+        DLTSNO3(L) = DLTSNO3(L) + NITRIF(L) - n2onitrif(L)
+        DLTSNH4(L) = DLTSNH4(L) - NITRIF(L)
+        TNITRIFY   = TNITRIFY   + NITRIF(L)
+      
       END DO   !End of soil layer loop.
 
 !-----------------------------------------------------------------------
