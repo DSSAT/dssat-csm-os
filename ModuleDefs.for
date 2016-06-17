@@ -301,6 +301,9 @@ C             CHP Added TRTNUM to CONTROL variable.
 !        REAL, DIMENSION(NL) :: EXTAL, EXTFE, EXTMN, 
 !        REAL, DIMENSION(NL) :: EXMG, EXTS, SLEC
 
+!     Diffusion coefficient added June 16, 2016 chp, pg
+      REAL DiffFactor
+
       END TYPE SoilType
 
 !=======================================================================

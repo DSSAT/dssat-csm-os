@@ -177,6 +177,9 @@ C
       SMPX   = '-99  '
       SMKE   = '-99  '
       SGRP   = '-99  '
+      
+!     N2O emissions diffusion factor
+      DiffFactor = -99.
 
       SLAT   = -99.
       SLONG  = -99.
@@ -355,6 +358,7 @@ C-KRT*******************************************************************
                  CASE('SMPX'); READ(C255(C1:C2),*,IOSTAT=ERR) SMPX
                  CASE('SMKE'); READ(C255(C1:C2),*,IOSTAT=ERR) SMKE
                  CASE('SGRP'); READ(C255(C1:C2),*,IOSTAT=ERR) SGRP
+                 CASE('DIFAC');READ(C255(C1:C2),*,IOSTAT=ERR) DiffFactor
 
 !                 CASE('SOILLAT'); READ(C255(C1:C2),*,IOSTAT=ERR) SLAT
 !                 CASE('SOILLONG');READ(C255(C1:C2),*,IOSTAT=ERR) SLONG

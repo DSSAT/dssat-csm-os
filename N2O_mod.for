@@ -65,22 +65,15 @@ C  09/18/2015 CHP Written, based on PG code.
       real n2_soil(nl),  n2_diffused  ! PG
       real N2Oflux(nl)  
       real RateDiffus
-      real, parameter :: DiffFactor = 0.5
+!     real, parameter :: DiffFactor = 0.5
+      real DiffFactor
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
 
-      IDETN  = ISWITCH % IDETN
-      ISWWAT = ISWITCH % ISWWAT
-      ISWNIT = ISWITCH % ISWNIT
-
-      IF (ISWWAT == 'N' .OR. ISWNIT == 'N') RETURN
-
       DAS     = CONTROL % DAS
       YRDOY   = CONTROL % YRDOY
-
-      NLAYR   = SOILPROP % NLAYR
 
       N2Odenit = N2O_data % N2Odenit  
       N2Onitrif= N2O_data % N2Onitrif  
@@ -93,16 +86,27 @@ C  09/18/2015 CHP Written, based on PG code.
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 C-----------------------------------------------------------------------
+      IDETN  = ISWITCH % IDETN
+      ISWWAT = ISWITCH % ISWWAT
+      ISWNIT = ISWITCH % ISWNIT
+
       N2_emitted = 0.0
       N2O_emitted = 0.0
       CN2_emitted = 0.0
       CN2O_emitted = 0.0
+
+      NLAYR   = SOILPROP % NLAYR
+      DiffFactor = SOILPROP % DiffFactor
+      IF (DiffFactor <= 0.0) DiffFactor = 0.5
+      
 
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATES
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. RATE) THEN
+      IF (ISWWAT == 'N' .OR. ISWNIT == 'N') RETURN
+
 C-----------------------------------------------------------------------
 ! 05/20/2016 - chp remove diffusion model
 ! Simple representation of diffusion of N2O and N2 emissions 14 June 2015

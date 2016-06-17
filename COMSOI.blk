@@ -11,6 +11,7 @@
       REAL CACO(NL),EXTAL(NL),EXTFE(NL),EXTMN(NL),TOTBAS(NL)
       REAL PTERMA(NL),PTERMB(NL),EXK(NL),EXMG(NL)
       REAL EXNA(NL),EXTS(NL),SLEC(NL), EXCA(NL) !4/07/05 CHP added EXCA
+	  REAL DiffFactor
 
 !     09/01/2011 chp added van Genuchten parameters
       REAL alphaVG(NL), mVG(NL), nVG(NL), WCR(NL)
@@ -32,4 +33,4 @@
      &              DS,CEC,ADCOEF,STONES,CLAY,SILT,PHKCL,SLAT,SLONG,
      &              CACO,EXTAL,EXTFE,EXTMN,TOTBAS,TOTN,
      &              PTERMA,PTERMB,EXK,EXMG,EXNA,EXTS,SLEC, EXCA, SASC,
-     &              alphaVG, mVG, nVG, WCR
+     &              alphaVG, mVG, nVG, WCR, DiffFactor
