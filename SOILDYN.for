@@ -67,6 +67,7 @@ C-----------------------------------------------------------------------
       CHARACTER*50 SLDESC, TAXON
       INTEGER NLAYR
       REAL CN, DMOD, KTRANS, SALB, SLDP, SLPF, SWCON, TEMP, TOTAW, U
+      REAL DiffFactor
       REAL, DIMENSION(NL) :: ADCOEF, BD, CEC, CLAY, DLAYR, DS, DUL
       REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, POROS, SAND, SAT, SILT
       REAL, DIMENSION(NL) :: SW, SWCN, TOTN, TotOrgN, WCR, WR
@@ -242,6 +243,8 @@ C-----------------------------------------------------------------------
       EXCA   = -99.
       EXK    = -99.
       EXNA   = -99.
+      
+      DiffFactor = -99.
 
 !-----------------------------------------------------------------------
 !     Should not need to run this unless soil water is being simulated.
@@ -270,9 +273,18 @@ C-----------------------------------------------------------------------
       
 !-----------------------------------------------------------------------
       READ(LUNIO, 80, IOSTAT=ERRNUM,ERR=1000) 
-     &           SALB, U, SWCON, CN, DMOD, SLPF, SMPX
+     &           SALB, U, SWCON, CN, DMOD, SLPF, SMPX, DiffFactor
    80 FORMAT(7X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),
-     &       7X,A5,12X)
+     &       7X,A5,12X,F6.0)
+     
+! From OPTEMPY2K:
+!        WRITE (LUNIO,980,IOSTAT=ERRNUM) SCOM,SALB,U,SWCON,CN2,SLNF,SLPF,
+!     &         SMHB,SMPX,SMKE,SGRP, DiffFactor
+!       980 FORMAT (1X,A5,1X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),4(1X,A5),F6.2)
+! From DSSAT46.INP:
+!SCOM   SALB     U SWCON    CN  SLNF  SLPF SMHB  SMPX  SMKE  SGRP DIFFFACTOR
+!-99    0.18   2.0  0.65   60.  1.00  0.92 IB001 IB001 IB001 -99  0.82  
+     
       LNUM = LNUM + 1
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
 
@@ -918,6 +930,8 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % TAXON         = TAXON
 
       SOILPROP % COARSE = COARSE
+      
+      SOILPROP % DiffFactor = DiffFactor
 
       CALL PUT(SOILPROP)
 
