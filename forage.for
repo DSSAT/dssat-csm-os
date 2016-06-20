@@ -226,6 +226,7 @@ C      Forage harvest damage/removal variables for forage model
       REAL HPDAM
 
       REAL CURV
+      real vstagp
 
       real pstres1,ktrans,ksevap
       type(weathertype) weather
@@ -331,7 +332,7 @@ C------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,            !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,            !Output
      &    YRNR7)                                                                  !Output
 
 
@@ -737,7 +738,7 @@ C-----------------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
      &  YRNR7)                                        !Output
 
 !-----------------------------------------------------------------------
@@ -1134,7 +1135,7 @@ C-----------------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
      &  YRNR7)                                        !Output
       ENDIF
 
@@ -1198,7 +1199,7 @@ C-----------------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
      &    YRNR7)                                          !Output
 C-----------------------------------------------------------------------
 C     Compute adjustment factors for Dormancy processes
@@ -1931,16 +1932,6 @@ C-----------------------------------------------------------------------
       AGRVG2 = AGRVG + (FRLF*PROLFI+FRRT*PRORTI+FRSTM*PROSTI+
      &    FRSTR*PROSRI)*RPROAV
 
-C--------------------------------------------
-C PDA 5/6/2010  ADDED CODE FOR FORAGE HARVEST 
-C--------------------------------------------
-!      CALL FORAGEHARVEST(CONTROL,YRDOY,WTLF,STMWT,        !Input
-!     &    WLDOTN,CRUSLF,NRUSLF,WSDOTN,CRUSST,NRUSST, !Input
-!     &    CADLF,NADLF,CADST,NADST,                   !Input
-!     &    SLDOT,WLIDOT,WLFDOT,SSDOT,WSIDOT,WSFDOT,   !Input
-!     &    FHLEAF,FHSTEM,FHVSTG)                      !Output
-C--------------------------------------------
-
 C-----------------------------------------------------------------------
 C     Call routine to integrate growth and damage
 C-----------------------------------------------------------------------
@@ -1996,11 +1987,11 @@ C-----------------------------------------------------------------------
      &  WRDOT, WSDOT,                                     !Output
      &  VSTAGE)                                           !Input/Output
 
-      call FORAGEHARVEST(CONTROL,FILECC,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,           !Input
+      call forage_harvest(CONTROL,FILECC,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,canht)     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht)     !Input/Output
 
 !-----------------------------------------------------------------------
 !     End of DAS > NVEG0 if construct

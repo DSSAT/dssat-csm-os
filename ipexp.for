@@ -257,6 +257,7 @@ C-----------------------------------------------------------------------
         CALL ERROR (ERRKEY,29,FILEX_P,0)
       ENDIF
       READ(LUNEXP,1500) ENAME
+      control % ename = ename
  1500 FORMAT(25X,A60)
       IF (RNMODE .EQ. 'I') CALL CLEAR
       IF (EXPN .NE. EXPP) THEN

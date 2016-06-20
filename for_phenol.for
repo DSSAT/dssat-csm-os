@@ -22,7 +22,7 @@ C=======================================================================
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
+     &    VSTAGE,vstagp,YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
      &  YRNR7)                                            !Output
 
 !----------------------------------------------------------------------------
@@ -55,6 +55,7 @@ C=======================================================================
       REAL SDEPTH, SDAGE, SLOBI, THVAR, TRIFOL
       REAL DTRY, FTHR, SWFEM, TNTFAC, TNTFC2
       REAL TSDEP, XDEP, XDEPL, ZMODTE
+      real vstagp
 
       REAL TB(5), TO1(5), TO2(5), TM(5)
       REAL PHTHRS(20)
@@ -160,7 +161,7 @@ C       Number of days from flowering to harvest maturity
      &    DAS, DTX, EVMODC, MNEMV1, NDVST,                !Input
      &    NVEG0, NVEG1, PHZACC, PLME, TRIFOL,             !Input
      &    TURFAC, XPOD, YRDOY, YRPLT,                     !Input
-     &    RVSTGE, VSTAGE,                                 !Output
+     &    RVSTGE, VSTAGE,vstagp,                          !Output
      &    SEASINIT)                                       !Control
 
 C***********************************************************************
@@ -298,7 +299,7 @@ C-----------------------------------------------------------------------
      &    DAS, DTX, EVMODC, MNEMV1, NDVST,                !Input
      &    NVEG0, NVEG1, PHZACC, PLME, TRIFOL,             !Input
      &    TURFAC, XPOD, YRDOY, YRPLT,                     !Input
-     &    RVSTGE, VSTAGE,                                 !Output
+     &    RVSTGE, VSTAGE,vstagp,                                 !Output
      &    RATE)                                           !Control
 
 C**********************************************************************
@@ -345,7 +346,7 @@ C-----------------------------------------------------------------------
      &    DAS, DTX, EVMODC, MNEMV1, NDVST,                !Input
      &    NVEG0, NVEG1, PHZACC, PLME, TRIFOL,             !Input
      &    TURFAC, XPOD, YRDOY, YRPLT,                     !Input
-     &    RVSTGE, VSTAGE,                                 !Output
+     &    RVSTGE, VSTAGE,vstagp,                          !Output
      &    INTEGR)                                         !Control
 
 C***********************************************************************
@@ -377,7 +378,7 @@ C=======================================================================
      &    DAS, DTX, EVMODC, MNEMV1, NDVST,                !Input
      &    NVEG0, NVEG1, PHZACC, PLME, TRIFOL,             !Input
      &    TURFAC, XPOD, YRDOY, YRPLT,                     !Input
-     &    RVSTGE, VSTAGE,                                 !Output
+     &    RVSTGE, VSTAGE,vstagp,                          !input/Output
      &    DYNAMIC)                                        !Control
 
 !-----------------------------------------------------------------------

@@ -968,6 +968,11 @@ C                 rather than delete all *.OUT files.
 C=======================================================================
       SUBROUTINE OPCLEAR
       USE ModuleDefs
+!cDEC$ IF (COMPILER == 0) 
+!        USE DFPORT
+!cDEC$ ELSE
+C        USE IFPORT
+!cDEC$ ENDIF
       IMPLICIT NONE
 
       Type (OutputType) FileData
@@ -1047,6 +1052,11 @@ C=======================================================================
       SUBROUTINE OPNAMES(FNAME)
       USE ModuleDefs
       USE ModuleData
+!!!!cDEC$ IF (COMPILER == 0) 
+!        USE DFPORT
+!!!!cDEC$ ELSE
+C        USE IFPORT
+!!!!cDEC$ ENDIF
       IMPLICIT NONE
 
       SAVE
@@ -1491,6 +1501,35 @@ C=======================================================================
 !
 !      end subroutine path_adj
 !
+!  3/26/2014 PDA Written
+!=======================================================================
+
+      subroutine path_adj(path)
+
+        use moduledefs
+
+        implicit none
+
+        character(len=*),intent(inout) :: path
+
+        integer           :: p1,p2,p3
+        
+           p1 = index(path,slash//'..'//slash)
+
+           do while(p1>1)
+              p2 = p1 + 4
+              p1=index(path(1:(p1-1)),slash,back=.true.)
+              p3=len_trim(path)
+              if(p3<p1+4)then
+                 path = path(1:p1)
+              else
+                 path = path(1:p1)//path(p2:p3)
+              end if
+              p1 = index(path,slash//'..'//slash)
+           end do
+
+      end subroutine path_adj
+
 !=======================================================================
 !  skipspc, Subroutine
 !
