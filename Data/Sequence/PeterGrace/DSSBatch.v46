@@ -1,0 +1,46 @@
+$BATCH(SEQUENCE)
+!
+! Directory    : C:\DSSAT46\Sequence\PeterGrace
+! Command Line : C:\DSSAT46\DSCSM046.EXE Q DSSBatch.v46
+! Crop         : Sequence        
+! Experiment   : XXC50201.sqx
+! ExpNo        : 1
+! Debug        : C:\DSSAT46\DSCSM046.EXE " Q DSSBatch.v46"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+!Kingaroy
+! QUKY3111 - Conventional N trt, P1 (Parton, DayCent denit)
+C:\DSSAT46\Sequence\PeterGrace\QUKY3111.sqx                                                       1      1      1      1      0
+C:\DSSAT46\Sequence\PeterGrace\QUKY3111.sqx                                                       1      1      2      1      0
+C:\DSSAT46\Sequence\PeterGrace\QUKY3111.sqx                                                       1      1      3      1      0
+
+! QUKY3112 - Conventional N trt, P0 (Parton, Ceres denit)
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3112.sqx                                                       1      1      1      1      0
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3112.sqx                                                       1      1      2      1      0
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3112.sqx                                                       1      1      3      1      0
+
+! QUKY3113 - Conventional N trt, G1 (Godwin, DayCent denit)
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3113.sqx                                                       1      1      1      1      0
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3113.sqx                                                       1      1      2      1      0
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3113.sqx                                                       1      1      3      1      0
+
+! QUKY3114 - Conventional N trt, G0 (Godwin, Ceres denit)
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3114.sqx                                                       1      1      1      1      0
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3114.sqx                                                       1      1      2      1      0
+!C:\DSSAT46\Sequence\PeterGrace\QUKY3114.sqx                                                       1      1      3      1      0
+
+! XXC50201 - Brazil P1
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      1      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      2      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      3      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      4      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      5      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      6      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      7      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      8      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1      9      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1     10      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1     11      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1     12      1      0
+!C:\DSSAT46\Sequence\PeterGrace\XXC50201.sqx                                                       1      1     13      1      0
+

@@ -1,0 +1,70 @@
+$CULTIVARS:WHCER046.010115   Last edit:241214 
+
+! Coefficients used in the Cropsim-Ceres model differ from those used
+! in DSSAT Versions 3.5 and 4.0. They can be calculated (approximately) from 
+! V3.5 coefficients as follows:
+
+! P1V   = P1V(v3.5)*10 
+! P1D   = P1D(V3.5)*20
+! P5    = P5(V3.5)*20 + 430
+! G1    = G1(V3.5)*5 + 5
+! G2    = (G2(V3.5)*0.35+0.65) * P5/20
+! G3    = G3(V3.5)*0.7 
+! PHINT = PHINT(V3.5)
+
+! Converted coefficients,and those listed below,should always be
+! tested by using them with real experiments and comparing model 
+! outputs with measured values. 
+
+*CULTIVARS:WHCER046
+@VAR#  VAR-NAME........  EXP#   ECO#   P1V   P1D    P5    G1    G2    G3 PHINT
+!                                        1     2     3     4     5     6     7
+!                                     Vday %/10h  oC.d   #/g    mg     g  oC.d
+999991 MINIMA               . 999991     0     0   100    10    10   0.5    30
+999992 MAXIMA               . 999992    60   200   999    50    80   8.0   150
+                                                                            
+DFAULT DEFAULT              . DFAULT     5    75   450    30    35   1.0    60
+
+IB1500 MANITOU           1,14 CAWH01     8   100   320    23    23   2.5    86 
+IB0488 NEWTON             1,6 USWH01    45    75   500    25    30   2.0    95  
+IB1015 MARIS FUNDIN       1,8 UKWH01    30    83   515    15    44   3.2   100
+
+
+NV0001 Seri82               . DFAULT    20    94   664    22    39   1.0   120
+NV0002 Kauz                 . DFAULT    20    94   564    24    37   1.0   120
+NV0003 Attila               . DFAULT    20    94   564    22    40   1.0   120
+IB0025 BezostayaBA          . DFAULT    60   160   600    22    40   0.5   135
+IB0018 KanchanBA            . DFAULT    25    94   564    22    37   1.5   100 
+IB0014 AlondraBA            . DFAULT    20    94   564    22    40   1.0   120
+IB0017 HI617BA              . DFAULT    20    94   564    24    37   1.0   120
+IB0019 DebieraBA            . DFAULT    25    95   564    22    40   1.5   100
+IB0020 PBW323               . DFAULT    32    88   584    18    40   1.1   100
+
+IB0023 KatyaBA              . DFAULT    40    94   564    22    40   0.5   120
+IB0600 Bacanora             . DFAULT    20    94   564    24    37     1   120
+IB0100 Seri 82              . DFAULT    20    94   564    22    39     1   120
+
+990014 LANGKG             1,4 TWKG01    10    40   860    14    35   1.8   115
+990015 Hartog_KY          1,4 TWKG01    20    94   700    22    39   1.0   120
+990016 Hartog_HM          1,4 TWKG01    20    50   700    22    39   1.0   120
+990017 Hartog_TM          1,4 TWKG01    20    30   700    22    39   1.0   120
+
+!ADD September 20 for testing of P5 impact Brigadier with Netherland data 
+IB1800 Brigadier            . DFAULT    50   100   700    22    40   0.5   135           !! Baseline Cultivar which I will call as BriB
+
+
+                                                                                                                                                                                                             
+! COEFF       DEFINITION
+! ========    ==========
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+! EXP#        Number of experiments used to generate parameters
+! ECO#        Ecotype code for this cultivar,points to entry in ECO file
+! P1V         Days,optimum vernalizing temperature,required for vernalization
+! P1D         Photoperiod response (% reduction in rate/10 h drop in pp)
+! P5          Grain filling (excluding lag) phase duration (oC.d)
+! G1          Kernel number per unit canopy weight at anthesis (#/g)
+! G2          Standard kernel size under optimum conditions (mg)
+! G3          Standard,non-stressed mature tiller wt (incl grain) (g dwt)
+! PHINT       Interval between successive leaf tip appearances (oC.d)
+

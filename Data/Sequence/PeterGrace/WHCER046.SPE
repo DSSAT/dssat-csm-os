@@ -1,0 +1,272 @@
+$SPECIES:WHCER046.010115   Last edit:241214 
+
+! Coefficients differ from those used in DSSAT  Versions 3.5 and 4.0x. 
+! They have been developed from 'parameters' embedded in the code of 
+! the Ceres model,from the Cropsim model,and from the literature. 
+! They are likely to change as more experience is gained,and should 
+! not be taken as fixed. This is particularly relevant for the 
+! temperature response characteristics, and for some root growth 
+! and activity coefficients.  
+
+*SPECIES:WHCER046
+! Phase durations
+@PGERM PEMRG    P0    P6  ! Germination,emrgence/cm,juvenile,post-maturity
+!  HTu Tu/cm  oC.d  oC.d
+    10   8.0     0   200
+! Development rate responses to environment
+@PPFPE PPTHR PPEND  ! Photoperiod factor pre-emerge,threshold,end sensitivity
+!  Fac     h GrStg
+   1.0  20.0   2.0
+! Roots   
+@RLIG%  RLWR  RSEN RRESP RLDGR !Lignin%,length/wt,senescence,resp.
+!    %  cm/g   %/d    fr cm/cm   
+  10.0  0.98   .10  0.40   500
+! Leaves
+@LLIG%  LAXS LSHFR LSHAW  PHL1  PHF1 SLAMN SLACF
+!    %   cm2    fr cm2/g   Lf#   Fac    fr fr/lf 
+  10.0   900  0.33  70.0   2.0   0.5   0.5  0.02
+@LLIFE LWLOS LRPHS                  
+! oC.d    fr GrStg
+   4.0  0.50   3.0                                  
+@ LASF
+!   fr
+  0.00
+  0.10
+  0.10
+  0.10
+  0.10   
+  1.00
+@ CHT%  CLA%
+!    %     %
+     0     0
+    50    50
+   100   100
+@ TPAR TSRAD
+!   fr    fr
+  0.07  0.25
+! Tillers
+@TGR02   
+!   fr
+  0.80
+! Reserves  
+@ RS%X RSUSE ! Max concentration,fraction utilizeable/day
+!    %    fr
+  80.0   0.1
+! Stems   
+@SLIG%  SAWS SGPHE SSPHS SSEN%
+!    % cm2/g GrStg GrStg     %
+  10.0  25.0  4.45   5.8   .53
+! Chaff   
+@ CHFR CHSTG
+!   fr GrStg
+  0.65   3.8
+! Grain  
+@GLIG%
+!    %
+  10.0
+! Seed  
+@ SDWT SDAFR
+!    g    fr
+ .0284  0.50
+! Photosynthesis    
+@CO2RF  CO2F
+!  vpm   Rel
+     0  0.00
+   220  0.71
+   330  1.00
+   440  1.08
+   550  1.17
+   660  1.25
+   770  1.32
+   880  1.38
+   990  1.43
+  9999  1.50
+! CH2O distribution/mobilization  
+@PTFMX
+!   fr
+  0.98
+@ PTFS  PTFA  STFR
+!   fr   Fac    fr
+  0.65  0.10  0.00
+  0.70  0.10  0.15
+  0.75  0.10  0.51
+  0.80  0.10  1.00
+  0.98  0.35  1.00
+  0.98  0.35  1.00
+! Cold hardiness  
+@ TKUH  HDUR  TKLF
+!   oC     d    oC
+  -6.0  10.0 -10.0 
+! Temperature responses
+@TRGEM TRDV1 TRDV2 TRLFG TRPHS TRVRN TRHAR TRGFW TRGFN    
+!   oC    oC    oC    oC    oC    oC    oC    oC    oC
+     1     0     0     0     0    -5    -5     0     0    
+    26    26    30    10     5     0     0    16    16    
+    50    50    50    20    25     7     5    35    35    
+    60    60    60    35    35    15    10    45    45    
+
+! WATER loss,uptake,etc..   
+! Evapotranspiration
+@EORATIO
+!    Rel
+     1.0
+! Water uptake 
+@RWUPM RWUMX
+!   fr cm3/cm
+  0.02  0.03
+! Water shortage effects
+! 1. Based on ratio potential uptake/potential loss 
+@ WFPU WFPGF  WFGU  WFTU  WFTL  WFSU
+!  Rel   Rel   Rel   Rel   Rel   Rel    
+   1.0   1.0   1.3   1.0   0.5   0.6
+! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
+@WFGEU WFRGU
+!   fr    fr
+  0.50  0.25
+! Leaf area loss when senescence accelerated by water shortage
+@LLOSW ! Fr/d
+!   fr
+  0.02
+  
+! NITOGEN uptake,distribution,etc.  
+! N uptake  
+@NH4MN NO3MN RTNO3 RTNH4
+!mg/Mg mg/Mg mg/cm mg/cm
+   0.0   0.0 0.006 0.006
+! N demand 
+@ NTUPF  ! Fraction of deficit that can be filled per day
+!    fr
+   0.05
+! N concentrations
+@GN%MX  SDN% 
+!    %     %
+   3.2   1.9
+@ LN%S  SN%S  RN%S LN%MN SN%MN RN%MN
+!    %     %     %     %     %     %
+   8.0   2.5  2.04  0.80  0.65  1.53     
+   6.4   2.0  1.97  0.75  0.60  1.47
+   5.3   1.0  1.89  0.70  0.55  1.41
+   4.0   0.8  1.82  0.65  0.50  1.36
+   3.1   0.6  1.77  0.60  0.45  1.33
+   2.7   0.5  1.73  0.60  0.40  1.29
+   1.5   0.4  1.68  0.60  0.40  1.26
+   1.0   0.4  1.68  0.55  0.40  1.26
+@ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN ! Standard,minima N% for lves,stems,rts  
+!    %     %     %     %     %     %
+   6.0  0.75  2.50  0.65  2.00  1.50                               
+   2.5  0.55  0.50  0.45  1.70  1.25                               
+! N mobilization
+@NLAB%
+!    %
+    20
+! N shortage effects (Fraction of span from lowest to upper N conc.)
+@ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF ! Phs,tillering,senecence
+!  Rel   Rel   Rel   Rel   Rel   Rel   Rel   Rel
+  1.00  0.00   1.0   0.0   1.0   0.0   0.4   0.1  
+! N shortage effects (Based on soil NO3 and NH4 concentrations)
+@ NCRG
+!mg/Mg
+    30 
+! Leaf area loss when senescence accelerated by N shortage
+@LLOSN ! Fr/d
+!   fr
+  0.02
+
+! COEFF   DEFINITION
+! =====   ==========
+! CHFR    Fraction of assimilates to chaff (#)
+! CHSTG   Chaff growth start stage (GrowthStage)
+! CHT%    Canopy ht as % of maximum for lf area distribution (%)
+! CLA$    Canopy leaf area % associated with height % (%)
+! CO2F    CO2 factor,photosynthesis,relative (0-1)
+! CO2RF   CO2 reference (vpm)
+! GLIG%   Grain lignin (%)
+! GN%MX   Grain N,maximum (For when assimilate supply limited) (%)
+! HDUR    Days for complete cold hardening (d)
+! LASF    Leaf area senesced (fr,start phase)
+! LAXS    Maximum area of leaves on main stem (cm2)                                                                                                     
+! LLIFE   Life of leaves during vegetative phase (phyllochrons)
+! LLIG%   Leaf lignin (%)
+! LLOSN   Loss of leaf area from N stress(fr/d.unit N stress)
+! LLOSW   Loss of leaf area from water stress(fr/d.unit water stress)
+! LN%MN   Leaf minimum N (%)
+! LN%S    Leaf standard N (%)
+! LRPHS   Stage after which dead leaves retained (GrowthStage)
+! LSHAW   Leaf sheath area/weight ratio (cm2/g)
+! LSHFR   Leaf sheath fraction (fr of lamina+sheath)
+! LWLOS   Leaf dry matter loss,normal senescence (fr)
+! NCRG    N concentration factor,root growth (ppm for maximum growth)
+! NFGL    N stress factor,growth,lower (fr)
+! NFGU    N stress factor,growth,upper (fr)
+! NFPL    N stress factor,photosynthesis,lower (fr)
+! NFPU    N stress factor,photosynthesis,upper (fr)
+! NFSU    N stress factor,senescence,threshold (fr)
+! NFSF    N factor to trigger final senescence (#)
+! NFTL    N stress factor,tillering,lower (fr)
+! NFTU    N stress factor,tillering,upper (fr)
+! NH4MN   NH4 minimum concentration for uptake (mg/MG)
+! NLAB%   Labile N during grain filling (%)
+! NO3MN   NO3 minimum concentration for uptake (mg/MG)
+! NTUPF   N top-up fraction (/d)
+! NUMAX   N uptake rate,maximum (fr of available/day)
+! P0      Juvenile phase duration (oC.days)
+! P6      Phase duration 6 (post physio.maturity (oC.d)
+! PEMRG   Emergence phase duration (Thermal units per cm depth)
+! PGERM   Germination phase duration (Hydrothermal units)
+! PHFn    Factor by which PHINTS is multiplied -> PHINT for phase (#)
+! PHLn    Leaf # produced during phyllochron phase (#) 
+! PPEND   Photoperiod sensitivity end stage (#)
+! PPFPE   Photoperiod factor,pre emergence (#,0-1)
+! PPTHR   Photoperiod threshold (h above which no effect)
+! PTFA    Partition to tops,adjustment coeff.by phase (#)
+! PTFS    Partition to tops,standard,by stage (fr)
+! PTFMX   Partition fraction to tops,maximum (fr)
+! RLDGR   Root length/root depth growth ratio (cm/cm;greater->more early rt.)
+! RLIG%   Root lignin (%)
+! RLWR    Root length weight ratio (m/(0.01g)
+! RN%MN   Root minimum N (%)
+! RN%S    Root standard N (%)
+! RRESP   Root respiration fraction (fr)
+! RS%X    Reserves % above which CH2O overflows to roots (%)
+! RSEN    Root senescence (%/standard day)
+! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
+! RTNO3   NO3 uptake/root length  (mg N/cm.day)
+! RTNH4   NH4 uptake/root length  (mg N/cm.day)
+! RWUMX   Maximum water uptake rate (cm3/cm.d)
+! RWUPM   Water saturation factor,pore space limit (fr)
+! SAWS    Stem area/weight ratio,standard (cm2/g)
+! SDAFR   Seed reserves availability (fr/standard day)
+! SDN%    Seed N, standard (%)
+! SDWT    Seed dry weight (g/seed)
+! SGPHE   Stem growth phase end stage (GrowthStage)
+! SLACF   Specific leaf area change with leaf position (fr/leaf)
+! SLAMN   Specific leaf area,minimum,fr non stressed (#)
+! SLIG%   Stem lignin (%)
+! SN%MN   Stem minimum N (%)
+! SN%S    Stem standard N (%)
+! SSEN%   Stem senescence (%/standard day)
+! SSPHS   Stem senesence phase start stage (GrowthStage)
+! STFR    Stem fraction,leaf+stem (fr)
+! TGR02   Growth rate of tiller 2 (pot.leaf area relative to main shoot)
+! TKLF    Temp.at which leaves start to be killed (oC)
+! TKUH    Temp.at which 50% kill,unhardened seedling (oC)
+! TPAR    Transmission of photosynthetically active radiation (fr)
+! TRDV1   Temperature response,development 1 (oC)
+! TRDV2   Temperature response,development 2 (oC)
+! TRGEM   Temperature response,germination and pre-emergence growth (oC)
+! TRGFN   Temperature response,grain filling,N (oC)
+! TRGFW   Temperature response,grain filling,dry weight(oC)
+! TRHAR   Temperature response,hardening for winter survival (oC)
+! TRLFG   Temperature response,leaf growth (oC)
+! TRPHS   Temperature response,photosynthesis (oC)
+! TRVRN   Temperature response,vernalization (oC)
+! TSRAD   Transmission of solar radiation (fr)
+! WFGEU   Water factor,seed germination,upper (fr)
+! WFGU    Water stress factor,growth,upper (fr)
+! WFPGF   Water factor,phs,adjustment when grain filling (0,1=no,full sress)
+! WFPU    Water stress factor,photosynthesis,upper (fr)
+! WFRGU   Water factor,root growth,upper threshold (0-1)
+! WFSU    Water stress factor,senescence,threshold (fr)
+! WFTL    Water stress factor,tillering,lower (fr)
+! WFTU    Water stress factor,tillering,upper (fr)
+
