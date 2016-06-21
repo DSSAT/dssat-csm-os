@@ -270,9 +270,9 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
       END DO   !End of soil layer loop.
 
 !     temp chp
-      write(3000,'(i7,10f8.3,10I5)') yrdoy, wfps(1:10), ndays_wet(1:10)
-      write(4000,'(i7,30(F8.3))') yrdoy, ratio1(1:10), ratio2(1:10), 
-     &  rn2n2o(1:10)
+!      write(3000,'(i7,10f8.3,10I5)') yrdoy, wfps(1:10), ndays_wet(1:10)
+!      write(4000,'(i7,30(F8.3))') yrdoy, ratio1(1:10), ratio2(1:10), 
+!     &  rn2n2o(1:10)
 
 !***********************************************************************
 !***********************************************************************
