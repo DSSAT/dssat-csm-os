@@ -67,6 +67,7 @@ C=======================================================================
      &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
 
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
@@ -711,7 +712,7 @@ C-----------------------------------------------------------------------
             FILETMP = TRIM(PATHEX) // FILEW4
             INQUIRE (FILE=FILETMP, EXIST = FEXIST)
             IF (FEXIST) THEN
-              PATHWT = PATHEX
+              PATHWT = TRIM(PATHEX)
               FILEW = FILEW4
 !           Check 4-character filename in default DSSAT directory
             ELSE
@@ -725,8 +726,11 @@ C-----------------------------------------------------------------------
                 MSG(2) = "  Neither " // FILEW // " nor " // FILEW4
                 MSG(3) = 
      &            "  were found in weather or experiment directories."
-                CALL WARNING(3,ERRKEY,MSG)
-!                CALL ERROR(ERRKEY,29,FILEW,0)
+                MSG(4) = "Simulation will end."
+                CONTROL % ErrCode = 29
+                CALL PUT(CONTROL)
+                CALL WARNING(4,ERRKEY,MSG)
+!               CALL ERROR(ERRKEY,29,FILEW,0)
               ENDIF
             ENDIF
           ENDIF
