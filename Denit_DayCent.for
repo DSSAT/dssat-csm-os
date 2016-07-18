@@ -65,7 +65,6 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !     ------------------------------------------------------------------
-!     Today's values
 !     Seasonal cumulative vaules
       CNOX   = 0.0         !denitrification
 !     CN2O for denitrification only 
@@ -103,6 +102,9 @@ C=======================================================================
       TN2OdenitD = 0.0     ! PG
       TN2D  = 0.0
       wfps = n2o_data % wfps
+      DENITRIF = 0.0
+      N2FLUX   = 0.0
+      n2odenit  = 0.0
 
       DO L = 1, NLAYR
 !        wfps(L) = min(1.0, sw(L) / poros(L))
@@ -270,9 +272,9 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
       END DO   !End of soil layer loop.
 
 !     temp chp
-!      write(3000,'(i7,10f8.3,10I5)') yrdoy, wfps(1:10), ndays_wet(1:10)
-!      write(4000,'(i7,30(F8.3))') yrdoy, ratio1(1:10), ratio2(1:10), 
-!     &  rn2n2o(1:10)
+      write(3000,'(i7,10f8.3,10I5)') yrdoy, wfps(1:10), ndays_wet(1:10)
+      write(4000,'(i7,30(F8.3))') yrdoy, ratio1(1:10), ratio2(1:10), 
+     &  rn2n2o(1:10)
 
 !***********************************************************************
 !***********************************************************************
@@ -287,7 +289,6 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
       N2O_data % TN2OdenitD=TN2OdenitD
       N2O_data % TNOXD    = TNOXD
       N2O_data % DENITRIF = DENITRIF
- !    N2O_data % N2OFLUX  = N2OFLUX
       N2O_data % n2odenit = n2odenit
       N2O_data % N2FLUX   = N2FLUX
 
