@@ -37,7 +37,7 @@ C=======================================================================
       REAL NO3(NL), SAT(NL), SNO3(NL), SW(NL)
       REAL wfps(NL), Rn2n2O(NL)
 
-      Real ratio1(nl), ratio2(NL)
+      Real ratio1(nl), ratio2(NL), Rn2odenit
       INTEGER NDAYS_WET(NL), yrdoy
 
       TYPE (N2O_type)    N2O_DATA
@@ -223,8 +223,8 @@ C         Compute the N2:N2O Ratio
 ! Calculation of n2odenit based on ratio (N2O/total denit) determined from original DayCent dataset of DelGrosso (PG)
 ! assuming denitrif = N2O + N2O
 !         n2odenit(L) = NO3(L)/(NO3(L)+30.)*DENITRIF(L)   ! PG
-          ratio1(L) = NO3(L)/(NO3(L)+30.)
-          Rn2n2o(L) = ratio1(L)
+          Rn2odenit = NO3(L)/(NO3(L)+30.)
+          ratio1(L) = 1./Rn2odenit - 1.
          
 !         Count the number of days that water filled pore space is above 0.80     
           if (wfps(L) >= 0.80) then
