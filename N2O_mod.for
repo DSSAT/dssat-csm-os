@@ -215,6 +215,11 @@ C  06/15/2014 CHP Written
 
       LOGICAL FEXIST
 
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 1
+      CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
+
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -395,6 +400,14 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
       !Close daily output files.
       CLOSE(NOUTDN)
+
+!     Store Summary.out labels and values in arrays to send to
+!     OPSUM routines for printing.  Integers are temporarily 
+!     saved as real numbers for placement in real array.
+      LABEL(1)  = 'N2OEC'; VALUE(1)  = CN2O_emitted
+
+!     Send labels and values to OPSUM
+      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
 !***********************************************************************
 !***********************************************************************
