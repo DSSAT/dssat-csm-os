@@ -12,7 +12,7 @@ C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
 C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
-      SUBROUTINE Denit_Ceres (DYNAMIC, ISWNIT,  
+      SUBROUTINE Denit_Ceres (CONTROL, ISWNIT,  
      &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
      &    SSOMC, SNO3, ST, SW,                        !Input
      &    DLTSNO3,                                    !I/O
@@ -35,6 +35,10 @@ C=======================================================================
 
       REAL DLAG(NL), DLTSNO3(NL), DUL(NL), KG2PPM(NL) 
       REAL NO3(NL), SAT(NL), SNO3(NL), SW(NL)
+      REAL wfps(NL), Rn2n2O(NL)
+
+      Real ratio1(nl), ratio2(NL)
+      INTEGER NDAYS_WET(NL), yrdoy
 
       TYPE (N2O_type)    N2O_DATA
 !          Cumul      Daily     Layer kg
@@ -42,6 +46,12 @@ C=======================================================================
       REAL CN2,       TN2D,     n2flux(nl)    !N2
       REAL CN2Odenit, TN2OdenitD, n2odenit(nl)   !N2O 
 
+      TYPE (ControlType) CONTROL
+      DYNAMIC = CONTROL % DYNAMIC
+      YRDOY   = CONTROL % YRDOY
+
+      wfps = n2o_data % wfps
+      
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -52,6 +62,12 @@ C=======================================================================
       CNOX   = 0.0    !denitrification
       CN2Odenit   = 0.0    ! N2O added        PG
       CN2    = 0.0
+
+      NDAYS_WET = 0.0
+
+!   temp chp
+      write(4000,'(a,/,a)') "Ceres",
+     & "  yrdoy Lyr     wet    wfps  ratio1  ratio2  rn2n2o"
 
 !***********************************************************************
 !***********************************************************************
@@ -203,17 +219,38 @@ C         If flooded, lose all nitrate --------REVISED-US
           DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+C         Compute the N2:N2O Ratio
 ! Calculation of n2odenit based on ratio (N2O/total denit) determined from original DayCent dataset of DelGrosso (PG)
 ! assuming denitrif = N2O + N2O
+!         n2odenit(L) = NO3(L)/(NO3(L)+30.)*DENITRIF(L)   ! PG
+          ratio1(L) = NO3(L)/(NO3(L)+30.)
+          Rn2n2o(L) = ratio1(L)
+         
+!         Count the number of days that water filled pore space is above 0.80     
+          if (wfps(L) >= 0.80) then
+            ndays_wet(L) = min(7, ndays_wet(L) + 1)
+          else
+            ndays_wet(L) = 0
+          endif
+        
+!         modify Rn2n2o based on number of wet days 
+          if (ndays_wet(L) > 0) then
+            ratio2(L) = -330. + 334 * wfps(L) + 18.4 * ndays_wet(L)
+            ratio2(L) = max(ratio2(L),0.0)
+          else
+            ratio2(L) = 0.0
+          endif
 
-          n2odenit(L) = NO3(L)/(NO3(L)+30.)*DENITRIF(L)   ! PG
-          N2FLUX(L) = DENITRIF(L) - n2odenit(L)           ! PG
+          Rn2n2o(L) = max(ratio1(L), ratio2(L)) 
+          n2odenit(L) = denitrif(L) / (Rn2n2o(L) + 1.0)
+          N2FLUX(L) = DENITRIF(L) - n2odenit(L)   ! PG
 
 !         Reduce soil NO3 by the amount denitrified and add this to
 !         the NOx pool
           DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
           CNOX       = CNOX       + DENITRIF(L)
           TNOXD      = TNOXD      + DENITRIF(L)
+!         need to differentiate N2O from denitrification        
           CN2Odenit  = CN2Odenit  + n2odenit(L)         ! PG added
           TN2OdenitD = TN2OdenitD + n2odenit(L)         ! PG added
           CN2  = CN2  + N2FLUX(L)            ! PG
@@ -249,5 +286,9 @@ C         If flooded, lose all nitrate --------REVISED-US
 !=======================================================================
 ! Denit_Ceres Variables 
 !-----------------------------------------------------------------------
+      
+! DENITRIF(L)   Denitrification rate in soil layer L (kg [N] / ha / d)
+! NO3(L)        Nitrate in soil layer L (µg[N] / g[soil])
 
 !***********************************************************************
+
