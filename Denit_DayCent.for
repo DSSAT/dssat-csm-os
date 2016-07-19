@@ -34,7 +34,6 @@ C=======================================================================
       REAL DLTSNO3(NL)   
       REAL BD(NL), DUL(NL), KG2PPM(NL) 
       REAL NO3(NL), SNO3(NL), SW(NL)
-      INTEGER NDAYS_WET(NL)
       
 !!!!! daycent variables  PG
       REAL wfps(nl)
@@ -47,6 +46,7 @@ C=======================================================================
 !     real RWC
       
       Real ratio1(nl), ratio2(nl)
+      INTEGER NDAYS_WET(NL)
 
       TYPE (N2O_type) N2O_DATA
 !          Cumul      Daily       Layer ppm        Layer kg
@@ -85,6 +85,10 @@ C=======================================================================
       A(4) = 0.00222
       
       NDAYS_WET = 0.0
+
+!   temp chp
+      write(4000,'(a,/,a)') "DayCent",
+     & "  yrdoy Lyr     wet    wfps  ratio1  ratio2  rn2n2o"
 
 !***********************************************************************
 !***********************************************************************
@@ -175,61 +179,11 @@ C=======================================================================
         denitrifppm(L) = fDwfps * fNO3fCO2   !daycent
 C       denitrifppm(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT ! from DSSAT DENIT version, moved here from below PG
         
-!       Nitrate effect on the ratio of N2 to N2O.  
-!       Maximum N2/N2O ratio soil respiration function 
-!       Changed the NO3 and CO2 effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
-!       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
-!       fRno3_co2 estimates the ratio as a function of electron donor to substrate -mdh 5/17/00
-
-        k1 = max(1.5, 38.4 - 350. * dD0_fc(L))
-
-        fRno3_co2 = max(0.16 * k1, 
-     &    k1 * exp(-0.8 * no3(L)/co2_correct(L)))
-
-C       WFPS effect on the N2/N2O Ratio */
-C       Changed wfps effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
-C       Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
-
-        fRwfps = max(0.1, 0.015 * wfps(L)*100 - 0.32)
-      
-C       Compute the N2:N2O Ratio
-!       Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
-        ratio1(L) = max(0.1,fRno3_co2 * fRwfps)
-        Rn2n2o(L) = ratio1(L)
-        
-!       Count the number of days that water filled pore space is above 0.80     
-        if (wfps(L) >= 0.80) then
-            ndays_wet(L) = min(7, ndays_wet(L) + 1)
-        else
-            ndays_wet(L) = 0
-        endif
-        
-!       modify Rn2n2o based on number of wet days 
-        if (ndays_wet(L) > 0) then
-            ratio2(L) = -330. + 334 * wfps(L) + 18.4 * ndays_wet(L)
-            ratio2(L) = max(ratio2(L),0.0)
-            Rn2n2o(L) = ratio2(L)
-        endif
-        
-C       Calculate N2O       
-!       PG changed n2ofluxppm to n2odenitppm to differentiate n2o from denitrification
-!       n2ofluxppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
-        n2odenitppm(L) = denitrifppm(L) / (Rn2n2o(L) + 1.0)
-            
 C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         denitrif(L) = denitrifppm(L)/kg2ppm(L)
-!       PG changed n2oflux to n2odenit to differentiate n2o from denitrification       
-!       n2oflux(L) = n2ofluxppm(L)/kg2ppm(L)
-!       n2flux(L) = denitrif(L) - n2oflux(L)
-        n2odenit(L) = n2odenitppm(L)/kg2ppm(L)
-        n2flux(L) = denitrif(L) - n2odenit(L)
-      
-!******************************************************************************
-!       CHP 6/15/2014 Note: if DENITRIF is modified below, need to go back 
-!         and re-proportion fluxes.
-!******************************************************************************
 
-!       Denitrification rate
+! *** Moved this section up from below - needs to be done prior to partitioning to N2 and N2O
+!       Modify Denitrification rate based on available NO3 & flooding effects 
         DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
       
 !       The minimum amount of NO3 that stays behind in the soil and 
@@ -255,13 +209,61 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         ENDIF
 
 !       chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
-        DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
+        DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)     
+! *** End of Moved section
+        
+! *** Ratio of N2 to N2O        
+!       Nitrate effect on the ratio of N2 to N2O. Two approaches, use maximum of ratio1 and ratio2
+!       Maximum N2/N2O ratio soil respiration function 
+!       Changed the NO3 and CO2 effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
+!       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
+!       fRno3_co2 estimates the ratio as a function of electron donor to substrate -mdh 5/17/00
 
+        k1 = max(1.5, 38.4 - 350. * dD0_fc(L))
+
+        fRno3_co2 = max(0.16 * k1, 
+     &    k1 * exp(-0.8 * no3(L)/co2_correct(L)))
+
+C       WFPS effect on the N2/N2O Ratio */
+C       Changed wfps effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
+C       Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
+
+        fRwfps = max(0.1, 0.015 * wfps(L)*100 - 0.32)
+      
+C       Compute the N2:N2O Ratio
+!       Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
+        ratio1(L) = max(0.1,fRno3_co2 * fRwfps)
+        
+!       Count the number of days that water filled pore space is above 0.80     
+        if (wfps(L) >= 0.80) then
+            ndays_wet(L) = min(7, ndays_wet(L) + 1)
+        else
+            ndays_wet(L) = 0
+        endif
+        
+!       modify Rn2n2o based on number of wet days 
+        if (ndays_wet(L) > 0) then
+            ratio2(L) = -330. + 334 * wfps(L) + 18.4 * ndays_wet(L)
+            ratio2(L) = max(ratio2(L),0.0)
+        else
+            ratio2(L) = 0.0
+        endif
+        
+C       Calculate N2O       
+!       PG changed n2ofluxppm to n2odenitppm to differentiate n2o from denitrification
+!       n2ofluxppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
+        Rn2n2o(L) = max(ratio1(L), ratio2(L)) 
+        n2odenit(L) = denitrif(L) / (Rn2n2o(L) + 1.0)
+            
+!       PG changed n2oflux to n2odenit to differentiate n2o from denitrification       
+        n2flux(L) = denitrif(L) - n2odenit(L)
+      
 !       Reduce soil NO3 by the amount denitrified and add this to
 !       the NOx pool
         DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
         CNOX       = CNOX       + DENITRIF(L)
         TNOXD      = TNOXD      + DENITRIF(L)
+        
 !       need to differentiate N2O from denitrification        
         CN2Odenit  = CN2Odenit  + n2odenit(L)           ! PG added
         TN2OdenitD = TN2OdenitD + n2odenit(L)         ! PG added
@@ -271,10 +273,6 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
 
       END DO   !End of soil layer loop.
 
-!     temp chp
-      write(3000,'(i7,10f8.3,10I5)') yrdoy, wfps(1:10), ndays_wet(1:10)
-      write(4000,'(i7,30(F8.3))') yrdoy, ratio1(1:10), ratio2(1:10), 
-     &  rn2n2o(1:10)
 
 !***********************************************************************
 !***********************************************************************
