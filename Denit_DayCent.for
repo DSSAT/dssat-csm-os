@@ -88,7 +88,7 @@ C=======================================================================
 
 !   temp chp
       write(4000,'(a,/,a)') "DayCent",
-     & "  yrdoy Lyr     wet    wfps  ratio1  ratio2  rn2n2o"
+     &   "  yrdoy Lyr Wet    wfps  ratio1  ratio2"
 
 !***********************************************************************
 !***********************************************************************
@@ -245,6 +245,10 @@ C       Compute the N2:N2O Ratio
         if (ndays_wet(L) > 0) then
             ratio2(L) = -330. + 334 * wfps(L) + 18.4 * ndays_wet(L)
             ratio2(L) = max(ratio2(L),0.0)
+
+!           temp chp
+            write(4000,'(i7,2i4,3F8.3)')
+     &       yrdoy, L, ndays_wet(L), wfps(L), ratio1(L), ratio2(L)
         else
             ratio2(L) = 0.0
         endif
@@ -254,7 +258,7 @@ C       Calculate N2O
 !       n2ofluxppm(L) = denitrifppm(L) / (Rn2n2o + 1.0)
         Rn2n2o(L) = max(ratio1(L), ratio2(L)) 
         n2odenit(L) = denitrif(L) / (Rn2n2o(L) + 1.0)
-            
+
 !       PG changed n2oflux to n2odenit to differentiate n2o from denitrification       
         n2flux(L) = denitrif(L) - n2odenit(L)
       

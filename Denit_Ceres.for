@@ -67,7 +67,7 @@ C=======================================================================
 
 !   temp chp
       write(4000,'(a,/,a)') "Ceres",
-     & "  yrdoy Lyr     wet    wfps  ratio1  ratio2  rn2n2o"
+     &   "  yrdoy Lyr Wet    wfps  ratio1  ratio2"
 
 !***********************************************************************
 !***********************************************************************
@@ -237,6 +237,11 @@ C         Compute the N2:N2O Ratio
           if (ndays_wet(L) > 0) then
             ratio2(L) = -330. + 334 * wfps(L) + 18.4 * ndays_wet(L)
             ratio2(L) = max(ratio2(L),0.0)
+
+!           temp chp
+            write(4000,'(i7,2i4,3F8.3)')
+     &       yrdoy, L, ndays_wet(L), wfps(L), ratio1(L), ratio2(L)
+
           else
             ratio2(L) = 0.0
           endif
