@@ -61,13 +61,17 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 1
-        INTEGER :: Build = 4
+        INTEGER :: Build = 5
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.1.05 chp 07/21/2016 EPIC soil temperature is default method.
+!                               4-character Weather file in data directory recognized.
+!                               SNOW variable correctly passed.
+!                               Fatal error messaging improved.
 !       4.6.1.04 chp 03/03/2016 Removed some screen messages in GROW and CSP_GROW. Remove make file. 
 !       4.6.1.03 chp 08/28/2015 NWheat added 
 !       4.6.1.00 GH  07/01/2015 DSSAT Version 4.6.1 Release
