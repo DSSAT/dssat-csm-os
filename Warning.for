@@ -26,7 +26,7 @@ C=======================================================================
       CHARACTER*30  FILEIO
       CHARACTER*78  MESSAGE(*)
 
-      INTEGER ICOUNT, DOY, I, LUN, OLDRUN, RUN, YEAR, YRDOY
+      INTEGER ICOUNT, DOY, I, LUN, OLDRUN, RUN, YEAR, YRDOY, ErrCode
       LOGICAL FIRST, FEXIST, FOPEN
 
       TYPE (ControlType) CONTROL
@@ -38,12 +38,13 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !     Suppress Warning.OUT if IDETL = '0' (zero)
       CALL GET(ISWITCH)
-      IF (ISWITCH % IDETL == '0') RETURN
+!     IF (ISWITCH % IDETL == '0') RETURN
 
       CALL GET(CONTROL)
       FILEIO = CONTROL % FILEIO
       RUN    = CONTROL % RUN
       YRDOY  = CONTROL % YRDOY
+      ErrCode = CONTROL % ErrCode
 
       IF (INDEX(ERRKEY,'ENDRUN') <= 0) THEN
 !       First time routine is called to print, open file.
@@ -52,7 +53,7 @@ C=======================================================================
 
 !         Check for IDETL = '0' (zero) --> suppress output
           CALL GET(ISWITCH)
-          IF (ISWITCH % IDETL == '0') RETURN
+          IF (ISWITCH % IDETL == '0' .AND. ErrCode <=0) RETURN
 
           CALL GETLUN(WarnOut, LUN)
           INQUIRE (FILE = WarnOut, EXIST = FEXIST)
@@ -75,25 +76,26 @@ C=======================================================================
             OLDRUN = RUN
           ENDIF
         ENDIF
+      ENDIF
 
-        IF (ICOUNT > 0) THEN
-          !Print header if this is a new run.
-          IF (OLDRUN .NE. RUN .AND. RUN .NE. 0 .AND. FILEIO .NE. "")THEN
-            IF (Headers % RUN == RUN) THEN
-              CALL HEADER(SEASINIT,LUN,RUN)
-              OLDRUN = RUN
-            ENDIF
+      IF (ICOUNT > 0) THEN
+        !Print header if this is a new run.
+        IF (OLDRUN .NE. RUN .AND. RUN .NE. 0 .AND. FILEIO .NE. "")THEN
+          IF (Headers % RUN == RUN) THEN
+            CALL HEADER(SEASINIT,LUN,RUN)
+            OLDRUN = RUN
           ENDIF
-
-!         Print the warning.  Message is sent from calling routine as text.
-          CALL YR_DOY(YRDOY, YEAR, DOY)
-          WRITE(LUN,'(/,1X,A,"  YEAR DOY = ",I4,1X,I3)')ERRKEY,YEAR,DOY
-          DO I = 1, ICOUNT
-            WRITE(LUN,'(1X,A78)') MESSAGE(I)
-          ENDDO
         ENDIF
 
-      ELSE    !ERRKEY = 'ENDRUN' -> End of season
+!       Print the warning.  Message is sent from calling routine as text.
+        CALL YR_DOY(YRDOY, YEAR, DOY)
+        WRITE(LUN,'(/,1X,A,"  YEAR DOY = ",I4,1X,I3)')ERRKEY,YEAR,DOY
+        DO I = 1, ICOUNT
+          WRITE(LUN,'(1X,A78)') MESSAGE(I)
+        ENDDO
+      ENDIF
+
+      IF (INDEX(ERRKEY,'ENDRUN') > 0) THEN    !ERRKEY = 'ENDRUN' -> End of season
         FIRST = .TRUE.
         CLOSE(LUN)
       ENDIF
