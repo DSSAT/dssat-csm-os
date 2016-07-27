@@ -112,7 +112,7 @@ C=======================================================================
 
 !      CALL Get('MGMT','AVWAT', AVWAT)
 
-      ! Here goes the code To import array values
+      ! Here goes the code To import array values, for now some hardcoded test data
 
       IMDEP = (/ 1,2,3,4,5,-99,-99,-99,-99,-99 /)
       ITHRL = (/ (I, I = 1, 10) /)
@@ -121,20 +121,6 @@ C=======================================================================
       IMETH = (/ (I, I = 1, 10) /)
       IRAMT = (/ (I, I = 1, 10) /)
       IREFF = (/ (I, I = 1, 10) /)
-
-
-      open (unit = 1, file = "Test_hardcoded.txt")
-
-      WRITE (1, 6687) IMDEP
-      WRITE (1, 6687) ITHRL
-      WRITE (1, 6687) ITHRU
-      WRITE (1, 6688) IRON
-      WRITE (1, 6688) IMETH
-      WRITE (1, 6687) IRAMT
-      WRITE (1, 6687) IREFF
-6687  FORMAT (10(F5.2, 1X))
-6688  FORMAT (10(I5, 1X))
-      CLOSE (1)
 
 C***********************************************************************
 C***********************************************************************
