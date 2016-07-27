@@ -8,7 +8,7 @@ C  08/18/2005 CHP Written based on PT_OPGROW
 C=======================================================================
 
       SUBROUTINE TR_OPGROW (CONTROL, ISWITCH, SOILPROP,   !Input
-     &    BIOMAS, CORMWT, DEADLF, DTT, GRAINN, ISTAGE,    !Input
+     &    BIOMAS, CORMWT, DEADLF, DTT, ISTAGE,            !Input
      &    LAI, LFWT, MDATE, NLAYR, NSTRES, PLTPOP,        !Input
      &    RLV, ROOTN, RTDEP, RTWT, SATFAC, SENESCE,       !Input
      &    PETWT, STOVN, STOVWT, SWFAC, CORMN,             !Input
@@ -36,7 +36,7 @@ C=======================================================================
       REAL LAI, XLAI,PETWT,SDWT,WTLF,BIOMAS,RTWT,PODWT,SEEDNO
       REAL SLA,PCNL,TURFAC,CANHT,CANWH,RLV(NL),HI,SHELPC
       REAL PODNO,RTDEP,NSTRES,SWFAC,SATFAC,PLTPOP,GM2KG 
-      REAL FRYLD,DEADLF, GRAINN, DTT, CORMWT, MCORMWT, CORMLNO
+      REAL FRYLD,DEADLF, DTT, CORMWT, MCORMWT, CORMLNO
 
       REAL LFWT, PCNGRN, PCNRT 
       REAL PCNST, PCNVEG, ROOTN
