@@ -47,7 +47,7 @@ C=======================================================================
 !      CHARACTER*70 IrrText
       PARAMETER (ERRKEY = 'IRRIG')
 
-      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM !, DEFIR
+      CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
@@ -76,7 +76,15 @@ C=======================================================================
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
       
-	  REAL AVWAT    ! Water available for irrigation at planting (mm)
+      REAL AVWAT        ! KEEP OLD VARIABLE TEMPORARILY
+!	  REAL AVWAT(30)    ! Water available for irrigation at planting (mm)
+	  REAL IMDEP(10)
+	  REAL ITHRL(10)
+	  REAL ITHRU(10)
+	  INTEGER IRON(10)
+	  INTEGER IMETH(10)
+	  REAL IRAMT(10)
+	  REAL IREFF(10)
 	  REAL AVWATT    ! Water available for irrigation today (mm)
 
 	  LOGICAL IDECV  ! Output of function IDECF
@@ -102,7 +110,31 @@ C=======================================================================
 
       PUDDLED= FLOODWAT % PUDDLED
 
-      CALL Get('MGMT','AVWAT', AVWAT)
+!      CALL Get('MGMT','AVWAT', AVWAT)
+
+      ! Here goes the code To import array values
+
+      IMDEP = (/ 1,2,3,4,5,-99,-99,-99,-99,-99 /)
+      ITHRL = (/ (I, I = 1, 10) /)
+      ITHRU = (/ (I, I = 1, 10) /)
+      IRON  = (/ (I, I = 1, 10) /)
+      IMETH = (/ (I, I = 1, 10) /)
+      IRAMT = (/ (I, I = 1, 10) /)
+      IREFF = (/ (I, I = 1, 10) /)
+
+
+      open (unit = 1, file = "Test_hardcoded.txt")
+
+      WRITE (1, 6687) IMDEP
+      WRITE (1, 6687) ITHRL
+      WRITE (1, 6687) ITHRU
+      WRITE (1, 6688) IRON
+      WRITE (1, 6688) IMETH
+      WRITE (1, 6687) IRAMT
+      WRITE (1, 6687) IREFF
+6687  FORMAT (10(F5.2, 1X))
+6688  FORMAT (10(I5, 1X))
+      CLOSE (1)
 
 C***********************************************************************
 C***********************************************************************
@@ -172,7 +204,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C      Read Automatic Management
 C-----------------------------------------------------------------------
-          IF (INDEX('AFPWL', ISWITCH % IIRRI) > 0) THEN
+          IF (INDEX('AFPW', ISWITCH % IIRRI) > 0) THEN
             SECTION = '!AUTOM'
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
@@ -627,7 +659,7 @@ C-----------------------------------------------------------------------
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
      &        ATHETA, SWDEF)                              !Output
 
-          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)           ! Decide whether or not to irrigate based on deficit irrigation criteria
+          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)           ! ADDED TO WORK WITH DEFICIT IRRIGATION
           IF(IDECV) THEN
 !          IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
@@ -650,54 +682,18 @@ C             Apply fixed irrigation amount
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
+            AVWATT = AVWAT - TOTIR ! Calculate water available today
+            IF ((DEPIR .GT. AVWATT) .AND. (AVWAT /=	-99)) THEN  !(IIRRI .EQ. 'L')) THEN
+              DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
+            ENDIF
+
             NAP = NAP + 1
-!           chp 3/20/2014 these are not used and result in array bounds errors
+!           chp 3/20/2014 these are not used and result in array bounds errors 
 !             in long simulations.
             !JULAPL(NAP) = YRDOY
             !AMIR(NAP)   = IRRAPL
           ENDIF
         ENDIF
-
-
-C-----------------------------------------------------------------------
-C** IIRRI = L - Limited irrigation (based on Automatic irrigation)
-C-----------------------------------------------------------------------
-      CASE ('L')
-
-        IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR.
-     &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
-
-          CALL SWDEFICIT(
-     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
-     &        ATHETA, SWDEF)                              !Output
-
-          IDECV = IDECF(ATHETA, THETAC, STGDOY, YRDOY, MDATE)           ! ADDED TO WORK WITH DEFICIT IRRIGATION
-          IF(IDECV) THEN
-!          IF (ATHETA .LE. THETAC*0.01) THEN
-!         A soil water deficit exists - automatic irrigation today.
-
-C           Determine supplemental irrigation amount.
-C           Compensate for expected water loss due to soil evaporation
-C           and transpiration today.
-C           Estimate that an average of 5 mm of water will be lost.
-            IRRAPL = SWDEF*10 + 5.0
-            IRRAPL = MAX(0.,IRRAPL)
-
-            SELECT CASE(AIRRCOD)
-              CASE(1:4,6); TIL_IRR = TIL_IRR + IRRAPL
-            END SELECT
-
-            DEPIR = DEPIR + IRRAPL
-            AVWATT = AVWAT - TOTIR ! Calculate water available today
-            IF ((DEPIR .GT. AVWATT) .AND. (IIRRI .EQ. 'L')) THEN
-              DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
-            ENDIF
-
-            NAP = NAP + 1
-
-          ENDIF
-        ENDIF
-
 
 C-----------------------------------------------------------------------
 C** IIRRI = P - As Reported through last reported day, then automatic
@@ -833,14 +829,14 @@ C-----------------------------------------------------------------------
           ELSE
             XDEP = DLAYR(L)
           ENDIF
-          WET1 = WET1   + (DUL(L) - LL(L)) * XDEP
+          WET1 = WET1   + (DUL(L) - LL(L)) * XDEP       ! WET1 = PLANT AVAILABLE WATER (cm)
           TSWTOP = TSWTOP + (SW(L) - LL(L)) * XDEP
         ENDIF
       ENDDO
 
       ATHETA = TSWTOP / WET1
-      SWDEF  = MAX(0.0,(WET1 - TSWTOP))
-
+      SWDEF  = MAX(0.0,(WET1 - TSWTOP))                 ! WE WANT TO CALCULATE SWDEF WITH STH CALCULATED USING ITHRU INSTEAD OF WET1
+                                                        ! TO CONVERT THETAU TO mm THETAU * DSOIL * 10
       RETURN
       END SUBROUTINE SWDEFICIT
 
@@ -1038,7 +1034,7 @@ C=======================================================================
 ! NTBL      Number of water table values read 
 ! SECTION   Section name in input file 
 ! SWDEF     Soil water deficit (cm)
-! THETAC    Threshold, % of maximum available water triggering irrigation
+! THETAC    Threshold, % of available water triggering irrigation
 !             (%)
 ! THETCX    Threshold for automatic aplication, % of maximum avail water.
 !             (%)
