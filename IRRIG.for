@@ -86,6 +86,7 @@ C=======================================================================
 	  REAL IRAMT(10)
 	  REAL IREFF(10)
 	  REAL AVWATT    ! Water available for irrigation today (mm)
+	  REAL IRINLE   ! The number of irrigation inputs entered by the user
 
 	  LOGICAL IDECV  ! Output of function IDECF
       LOGICAL IDECF  ! Function, determines if irrigation is needed (for A and L)
@@ -129,6 +130,20 @@ C***********************************************************************
 C***********************************************************************
 C    Input and Initialization 
 C***********************************************************************
+
+
+      DO I = 1, 10
+        IF (IRON(I) .EQ. -99) THEN  !     Find position of the first -99 in the vector
+            IRINLE = I - 1           !     The position of the last number is one before the -99
+            EXIT
+        ENDIF
+      END DO
+
+      open (unit = 1, file = "Test_hardcoded.txt", ACCESS = 'APPEND')
+      WRITE(1,*) IRINLE
+      CLOSE (1)
+
+
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
       FILEIO  = CONTROL % FILEIO
