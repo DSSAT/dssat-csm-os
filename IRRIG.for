@@ -56,7 +56,7 @@ C=======================================================================
       INTEGER LUNIO, LINC, LNUM
       INTEGER MULTI, NAP, NAPW, JIRR, NLAYR, NTBL, NMSG
       INTEGER YR, MDATE, RUN, YRDOY, YRPLT, YRSIM, TIMDIF
-      INTEGER YRDIF
+      INTEGER YRDIF, NDAYS_DRY
       INTEGER, DIMENSION(NAPPL) :: IDLAPL, IRRCOD
       INTEGER, DIMENSION(NAPPL) :: JULAPL, JULWTB, JWTBRD
 
@@ -531,6 +531,8 @@ C-----------------------------------------------------------------------
       CALL PUT('MGMT','IRRAMT',IRRAMT)
       CALL PUT('MGMT','DEPIR', DEPIR)
 
+      NDAYS_DRY = 0
+
       FLOODWAT % PUDDLED = PUDDLED
       FLOODWAT % PLOWPAN = PLOWPAN
 
@@ -559,6 +561,14 @@ C-----------------------------------------------------------------------
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
         IF (DEPIR > 1.E-3) NAP = NAP + 1
+
+        IF (FLOODWAT % FLOOD <= 0.0) THEN
+          NDAYS_DRY = NDAYS_DRY + 1
+        ELSE
+          NDAYS_DRY = 0
+        ENDIF
+
+        IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
       ELSE
 
 !-----------------------------------------------------------------------
