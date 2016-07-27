@@ -235,7 +235,7 @@ C-----------------------------------------------------------------------
      &    LAI, LEAFNO, LFWT, MAXLAI, NSTRES, PBIOMS,      !Output
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, MDATE,                              !Output
+     &    UNH4, UNO3, MDATE, WTNUP,                      !Output
      &    CARBO,                                          !Output
      &    PETWT)                              !addition RMO
 
@@ -356,7 +356,7 @@ C--------------------------------------------------------------
      &    LAI, LEAFNO, LFWT, MAXLAI, NSTRES, PBIOMS,      !Output
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, MDATE,                              !Output
+     &    UNH4, UNO3, MDATE, WTNUP,                       !Output
      &    CARBO,                                          !Output
      &    PETWT)                              !addition RMO
 

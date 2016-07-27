@@ -164,7 +164,7 @@ C       Variable heading for GROWTH.OUT
 
         SEEDNO = 0.0
         !GPP   = 0.0
-        WTNUP = 0.0
+        !WTNUP = 0.0
         CANHT = 0.0
         CANWH = 0.0
 
@@ -259,19 +259,16 @@ C
 
 !---------------------------------------------------------------------------
 !     Compute reported plant N variables
-!      WTNCAN = (STOVN + GRAINN) * PLTPOP
-      IF (STOVWT .GT. 1.E-6) THEN
-        WTNLF = STOVN * (LFWT  / STOVWT) * PLTPOP
-      ELSE
-        WTNLF = 0.0
-      ENDIF
+      WTNCAN = (STOVN + CORMN) * PLTPOP
       IF (LFWT + PETWT > 1.E-6) THEN
-        WTNST = STOVN * (PETWT / (LFWT + PETWT)) * PLTPOP
+        WTNST = STOVN * (PETWT  / (LFWT + PETWT)) * PLTPOP
+        WTNLF = STOVN *  (LFWT /  (LFWT + PETWT)) * PLTPOP
       ELSE
         WTNST = 0.0
+        WTNLF = 0.0
       ENDIF
 
-      WTNSD = GRAINN * PLTPOP
+      WTNSD = CORMN * PLTPOP
       WTNSH = 0.0
       IF (LFWT*PLTPOP .GT. 0.0) THEN
         PCNL = WTNLF /( LFWT * PLTPOP) * 100.0
