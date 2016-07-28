@@ -564,11 +564,11 @@ C-----------------------------------------------------------------------
 
         IF (FLOODWAT % FLOOD <= 0.0) THEN
           NDAYS_DRY = NDAYS_DRY + 1
+          IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
         ELSE
           NDAYS_DRY = 0
         ENDIF
 
-        IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
       ELSE
 
 !-----------------------------------------------------------------------
