@@ -86,7 +86,8 @@ C=======================================================================
 	  REAL IRAMT(10)
 	  REAL IREFF(10)
 	  REAL AVWATT    ! Water available for irrigation today (mm)
-	  REAL IRINLE   ! The number of irrigation inputs entered by the user
+	  REAL IRINE   ! The number of irrigation inputs entered by the user
+	  REAL IRINC   ! Counter keeping track of irrigation input been used
 
 	  LOGICAL IDECV  ! Output of function IDECF
       LOGICAL IDECF  ! Function, determines if irrigation is needed (for A and L)
@@ -115,16 +116,14 @@ C=======================================================================
 
       ! Here goes the code To import array values, for now some hardcoded test data
 
-      AVWATI = (/ 321, -99, -99, -99, -99, -99, -99, -99, -99, -99 /)
+      AVWATI = (/ -99, -99, -99, -99, -99, -99, -99, -99, -99, -99 /)
       IMDEP =  (/  15,  30,  50,  50, -99, -99, -99, -99, -99, -99 /)
       ITHRL =  (/  10,  30,  50,   3, -99, -99, -99, -99, -99, -99 /)
       ITHRU =  (/ 100, 100, 100, 100, -99, -99, -99, -99, -99, -99 /)
-      IRON  =  (/   9,  1,    4,   5, -99, -99, -99, -99, -99, -99 /)
+      IRON  =  (/   9,   1,   4,   5, -99, -99, -99, -99, -99, -99 /)
       IMETH =  (/   1,   1,   1,   1, -99, -99, -99, -99, -99, -99 /)
-      IRAMT =  (/  10,  20,  30,   0, -99, -99, -99, -99, -99, -99 /)
+      IRAMT =  (/  10,  20,  30,  40, -99, -99, -99, -99, -99, -99 /)
       IREFF =  (/   1,   1,   1,   1, -99, -99, -99, -99, -99, -99 /)
-
-      AVWAT = AVWATI(1)
 
 C***********************************************************************
 C***********************************************************************
@@ -134,15 +133,27 @@ C***********************************************************************
 
       DO I = 1, 10
         IF (IRON(I) .EQ. -99) THEN  !     Find position of the first -99 in the vector
-            IRINLE = I - 1           !     The position of the last number is one before the -99
+            IRINE = I - 1           !     The position of the last number is one before the -99
             EXIT
         ENDIF
       END DO
 
-      open (unit = 1, file = "Test_hardcoded.txt", ACCESS = 'APPEND')
-      WRITE(1,*) IRINLE
-      CLOSE (1)
+      IF ((IRINC .EQ. -99) .OR. (IRINC .EQ. 0)) THEN
+        IRINC = 1                                                       ! Initialize IRINC (1)
+      END IF
 
+      IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
+        IRINC = IRINC + 1                                               ! If you reach the next GS specified, add 1 to IRINC
+      END IF
+
+      IF (IRINC .GT. IRINE) THEN
+        IRINC =   IRINE                                                 ! IRINC cannot exceed IRNE
+      END IF
+
+!      PROBLEM!!! NOT RE-STARTING FOR EACH SEASON
+!      maybe solved once IO properly set up
+
+      AVWAT = AVWATI(1)
 
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
@@ -656,6 +667,13 @@ C-----------------------------------------------------------------------
 C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
 C-----------------------------------------------------------------------
       CASE ('A', 'F')
+
+!     Set variables for growth stage driven simulation
+        DSOIL = IMDEP(IRINC)
+        THETAC = ITHRL(IRINC)
+        AIRAMT = IRAMT(IRINC)
+        EFFIRR = IREFF (IRINC)
+
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
@@ -794,6 +812,10 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       FLOODWAT % PUDDLED = PUDDLED
 
+      open (unit = 1, file = "Test_hardcoded.txt", ACCESS = 'APPEND')
+      WRITE(1,*) IRON(IRINC), IRINC, IRINE, IRRAMT
+      CLOSE (1)
+
       RETURN
       END SUBROUTINE IRRIG
 C=======================================================================
@@ -841,149 +863,6 @@ C-----------------------------------------------------------------------
                                                         ! TO CONVERT THETAU TO mm THETAU * DSOIL * 10
       RETURN
       END SUBROUTINE SWDEFICIT
-
-C=======================================================================
-
-C=======================================================================
-C  IDECF, Function
-C  Determines if water deficit exists to triger automatic or limited irrigation
-
-!     The following models are currently supported in IDECF, for all others select N in DEFIR:
-!         'CRGRO' - CROPGRO
-!         'CSCER' - CERES Wheat, Barley
-!         'MLCER' - CERES-Millet
-!         'MZCER' - CERES-Maize
-!         'RICER' - CERES-Rice
-!         'SGCER' - CERES-Sorghum
-!         'SWCER' - CERES-Sweet corn
-
-!      FUNCTION IDECF(ATHETA,THETAC,STGDOY,YRDOY, MDATE) RESULT(R)
-!
-!       USE ModuleData
-!
-!       REAL, INTENT(IN) :: ATHETA, THETAC  ! INPUT  I = ATHETA and J = THETAC
-!       REAL WDFAC
-!       INTEGER STGDOY(20)             ! GROWTH STAGE ONSET OR END IN YRDOY
-!       LOGICAL R                 ! OUTPUT
-!       REAL AVWAT, THETAC2, SITH1, SITH2
-!       INTEGER FIST1, FIST2, YRDOY, MDATE
-!       CHARACTER*1 DEFIR
-!
-!       CHARACTER*6 ERRKEY
-!       PARAMETER (ERRKEY = 'IRRIG')
-!       INTEGER ERRNUM, LNUM
-!       CHARACTER*8 MODEL
-!       CHARACTER*8 MODEL_WO_V  ! MODEL WITHOUT VERSION
-!       LOGICAL TEST_FILE  ! TEMP, needs to go!
-!       REAL IRRAMT
-!
-!       CALL Get('MGMT','AVWAT', AVWAT)
-!       CALL Get('MGMT','FIST1', FIST1)
-!       CALL Get('MGMT','FIST2', FIST2)
-!       CALL Get('MGMT','THETAC2', THETAC2)
-!       CALL Get('MGMT','DEFIR', DEFIR)
-!       CALL Get('MGMT','WDFAC', WDFAC)
-!       CALL Get('MGMT','SITH1', SITH1)
-!       CALL Get('MGMT','SITH2', SITH2)
-!       CALL Get('MGMT','IRRAMT', IRRAMT)
-!
-!       MODEL = SAVE_data % Control % MODEL
-!       MODEL_WO_V = MODEL(1:5)
-!
-!        SELECT CASE (DEFIR)
-!         CASE ('N', '')  ! NO DEFICIT IRRIGATION
-!             R = (ATHETA .LE. THETAC*0.01)
-!         CASE ('V', 'S')  ! DEFICIT IRRIGATION BASED ON SOIL VOLUMETRIC WATER CONTENT
-!             ! IS THIS ONE OF THE FULLY IRRIGATED STAGES?
-!
-!          SELECT CASE (MODEL_WO_V)
-!           CASE ('CSCER','MLCER', 'MZCER', 'RICER', 'SGCER', 'SWCER')
-!            IF(
-!     &         ((FIST1 .GE.   6) .OR. (FIST2 .GE.   6))! .OR.
-!!     &         ((FIST1 .LE.   0) .OR. (FIST2 .LE.   0))
-!!     &         ((FIST1 .NE. -99) .OR. (FIST2 .NE. -99))
-!     &       ) THEN
-!              WRITE (*, *) "======================================="
-!              WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2"
-!              WRITE (*, *) "======================================="
-!              STOP
-!            ELSE IF(
-!     &         ((FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1)) .AND.
-!     &         ((YRDOY .GE. STGDOY(9)) .AND. (YRDOY.LT. STGDOY(1))).OR. ! IS STAGE 1 IS FULLY IRRIGATIED ?
-!     &         ((FIST1 .EQ. 2) .OR. (FIST2 .EQ. 2)) .AND.
-!     &         ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(2))).OR. ! IS STAGE 2 IS FULLY IRRIGATIED ?
-!     &         ((FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3)) .AND.
-!     &         ((YRDOY .GE. STGDOY(2)) .AND. (YRDOY.LT. STGDOY(3))).OR. ! IS STAGE 3 IS FULLY IRRIGATIED ?
-!     &         ((FIST1 .EQ. 4) .OR. (FIST2 .EQ. 4)) .AND.
-!     &         ((YRDOY .GE. STGDOY(3)) .AND. (YRDOY.LT. STGDOY(4))).OR. ! IS STAGE 4 IS FULLY IRRIGATIED ?
-!     &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
-!     &          (YRDOY .GE. STGDOY(4))
-!     &       ) THEN                                                    ! IS STAGE 5 IS FULLY IRRIGATIED ?
-!10005        SELECT CASE(DEFIR)
-!              CASE('V')
-!               R = (ATHETA .LE. THETAC2*0.01)                              ! IRRIGATE WITH FULL IRRIGATION CRITERIA
-!              CASE('S')
-!               R = (WDFAC .LE. SITH2) .AND. (WDFAC .NE. 0) .AND.         ! If WDFAC is 0 or NaN we do not want to irrigate
-!     &             (WDFAC .EQ. WDFAC)
-!             END SELECT
-!            ELSE
-!10006        SELECT CASE(DEFIR)
-!              CASE('V')
-!               R = (ATHETA .LE. THETAC*0.01)                              ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
-!              CASE('S')
-!               R = (WDFAC .LE. SITH1) .AND. (WDFAC .NE. 0) .AND.         ! If WDFAC is 0 or NaN we do not want to irrigate
-!     &             (WDFAC .EQ. WDFAC)                                    ! by comparing the variable to itself we make sure it is not NaN
-!             END SELECT
-!            ENDIF
-!           CASE ('CRGRO')
-!            IF(
-!     &         ((2  .EQ. FIST1) .OR. (2  .EQ. FIST2)) .OR.
-!     &         ((4  .EQ. FIST1) .OR. (4  .EQ. FIST2)) .OR.
-!     &         ((FIST1 .GE.  6) .OR. (FIST2 .GE.  6)) ! .OR.
-!!     &         ((FIST1 .LE. -1) .OR. (FIST2 .LE. -1))
-!     &        ) THEN
-!             WRITE (*, *) "========================================"
-!             WRITE (*, *) "ERROR: Invalid input for FIST1 or FIST2."
-!             WRITE (*, *) "========================================"
-!             STOP
-!            ELSE IF(
-!     &         ((FIST1 .EQ. 0) .OR. (FIST2 .EQ. 0)) .AND.
-!     &         ((YRDOY .GE. STGDOY(1)) .AND. (YRDOY.LT. STGDOY(5))).OR. ! IS STAGE 0 IS FULLY IRRIGATIED ?
-!     &         ((FIST1 .EQ. 1) .OR. (FIST2 .EQ. 1)) .AND.
-!     &         ((YRDOY .GE. STGDOY(5)) .AND. (YRDOY.LT. STGDOY(6))).OR. ! IS STAGE 1 IS FULLY IRRIGATIED ?
-!     &         ((FIST1 .EQ. 3) .OR. (FIST2 .EQ. 3)) .AND.
-!     &         ((YRDOY .GE. STGDOY(6)) .AND. (YRDOY.LT. STGDOY(8))).OR. ! IS STAGE 3 IS FULLY IRRIGATIED ?
-!     &         ((FIST1 .EQ. 5) .OR. (FIST2 .EQ. 5)) .AND.
-!     &         ((YRDOY .GE. STGDOY(8)) .AND. (YRDOY.LT. STGDOY(11)))    ! IS STAGE 5 IS FULLY IRRIGATIED ?
-!     &       ) THEN
-!             GO TO 10005                                                ! IRRIGATE WITH FULL IRRIGATION CRITERIA
-!            ELSE
-!             GO TO 10006                                                ! IRRIGATE BASED ON DEFICIT IRRIGATION CRITERIA
-!            ENDIF
-!           CASE DEFAULT                                                 ! ERROR MESSAGE IN SCREEN ONLY!
-!            WRITE (*, *) "===========================================",
-!     &                   "============================"
-!            WRITE (*, *) "ERROR: Deficit irrigation is not supported ",
-!     &                   "for the crop model selected."
-!            WRITE (*, *) "===========================================",
-!     &                   "============================"
-!            STOP
-!          END SELECT
-!        CASE DEFAULT
-!         WRITE (*, *) "====================================="
-!         WRITE (*, *) "ERROR: Invalid DEFIR input in X file."
-!         WRITE (*, *) "====================================="
-!         STOP
-!        END SELECT
-!
-!      IF (IRRAMT .NE. 0) THEN
-!        R = .FALSE.               ! DO NOT IRRIGATE TWO DAYS IN A ROW
-!      ENDIF
-!
-!      END FUNCTION IDECF
-
-C-----------------------------------------------------------------------
-C=======================================================================
 
 !***********************************************************************
 !***********************************************************************
