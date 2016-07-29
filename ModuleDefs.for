@@ -68,7 +68,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
-!       4.6.1.07 chp 07/29/2016 Millet changes from KJB
+!       4.6.1.07 chp 07/29/2016 Millet changes from KJB, Puddled rice deactivates after 30 days dry
 !       4.6.1.06 chp 07/21/2016 DSSAT soil temperature is default method, per GH.
 !       4.6.1.05 chp 07/21/2016 EPIC soil temperature is default method.
 !                               4-character Weather file in data directory recognized.
