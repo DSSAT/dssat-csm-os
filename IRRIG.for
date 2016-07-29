@@ -88,6 +88,7 @@ C=======================================================================
 	  REAL AVWATT    ! Water available for irrigation today (mm)
 	  REAL IRINE   ! The number of irrigation inputs entered by the user
 	  REAL IRINC   ! Counter keeping track of irrigation input been used
+	  REAL THETAU   ! Threshold, % of available water stopping irrigation
 
 	  LOGICAL IDECV  ! Output of function IDECF
       LOGICAL IDECF  ! Function, determines if irrigation is needed (for A and L)
@@ -117,8 +118,8 @@ C=======================================================================
       ! Here goes the code To import array values, for now some hardcoded test data
 
       AVWATI = (/ -99, -99, -99, -99, -99, -99, -99, -99, -99, -99 /)
-      IMDEP =  (/  15,  30,  50,  50, -99, -99, -99, -99, -99, -99 /)
-      ITHRL =  (/  10,  30,  50,   3, -99, -99, -99, -99, -99, -99 /)
+      IMDEP =  (/  30,  30,  30,  30, -99, -99, -99, -99, -99, -99 /)
+      ITHRL =  (/  50,  50,  50,  50, -99, -99, -99, -99, -99, -99 /)
       ITHRU =  (/ 100, 100, 100, 100, -99, -99, -99, -99, -99, -99 /)
       IRON  =  (/   9,   1,   4,   5, -99, -99, -99, -99, -99, -99 /)
       IMETH =  (/   1,   1,   1,   1, -99, -99, -99, -99, -99, -99 /)
@@ -669,8 +670,9 @@ C-----------------------------------------------------------------------
       CASE ('A', 'F')
 
 !     Set variables for growth stage driven simulation
-        DSOIL = IMDEP(IRINC)
+        DSOIL  = IMDEP(IRINC)
         THETAC = ITHRL(IRINC)
+        THETAU = ITHRU(IRINC)
         AIRAMT = IRAMT(IRINC)
         EFFIRR = IREFF (IRINC)
 
@@ -679,7 +681,7 @@ C-----------------------------------------------------------------------
 
           CALL SWDEFICIT(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
-     &        ATHETA, SWDEF)                              !Output
+     &        ATHETA, SWDEF, THETAU)                              !Output
 
           IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
@@ -746,7 +748,7 @@ C-----------------------------------------------------------------------
 
             CALL SWDEFICIT(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
-     &        ATHETA, SWDEF)                              !Output
+     &        ATHETA, SWDEF, THETAU)                              !Output
 
             IF (ATHETA .LE. THETAC*0.01) THEN
 !           A soil water deficit exists - automatic irrigation today.
@@ -827,7 +829,7 @@ C-----------------------------------------------------------------------
 
       SUBROUTINE SWDEFICIT(
      &    DSOIL, DLAYR, DUL, LL, NLAYR, SW,               !Input
-     &    ATHETA, SWDEF)                                  !Output
+     &    ATHETA, SWDEF, THETAU)                          !Output
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -838,6 +840,7 @@ C-----------------------------------------------------------------------
       INTEGER L, NLAYR
       REAL, DIMENSION(NL) :: DLAYR, DUL, LL, SW
       REAL ATHETA, DEPMAX, DSOIL, SWDEF, TSWTOP, WET1, XDEP, XDEPL
+      REAL THETAU
 
       WET1 = 0.0
       DEPMAX = 0.0
@@ -859,8 +862,9 @@ C-----------------------------------------------------------------------
       ENDDO
 
       ATHETA = TSWTOP / WET1
-      SWDEF  = MAX(0.0,(WET1 - TSWTOP))                 ! WE WANT TO CALCULATE SWDEF WITH STH CALCULATED USING ITHRU INSTEAD OF WET1
-                                                        ! TO CONVERT THETAU TO mm THETAU * DSOIL * 10
+!      SWDEF  = MAX(0.0,(WET1 - (TSWTOP)))                 ! old, upper limit for automatic irrigation does not work
+      SWDEF  = MAX(0.0,((WET1*THETAU*0.01) - TSWTOP))
+
       RETURN
       END SUBROUTINE SWDEFICIT
 
