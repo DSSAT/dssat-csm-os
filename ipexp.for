@@ -67,6 +67,7 @@ C=======================================================================
      &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
 
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
@@ -80,7 +81,7 @@ C=======================================================================
       CHARACTER* 4 WSTA1
       CHARACTER* 6 VARNO,ERRKEY,FINDCH
       CHARACTER* 7 FILELS
-      CHARACTER* 8 FILES_a, FILES_b, MODEL, MODELARG
+      CHARACTER* 8 FILES_a, FILES_b, MODEL, MODELARG, FILEW4
       CHARACTER*10 SLNO
       CHARACTER*12 NAMEF, FILEX
       CHARACTER*25 TITLET
@@ -688,32 +689,52 @@ C-----------------------------------------------------------------------
          CALL ERROR (ERRKEY,22,FILEX,LINEXP)
       ENDIF
 
+!     Check weather filename in current directory
       INQUIRE (FILE = FILEW,EXIST = FEXIST)
-      IF (.NOT. FEXIST) THEN
+      IF (FEXIST) THEN
+        PATHWT = BLANK
+!     Check weather filename in data directory
+      ELSE
         FILETMP = TRIM(PATHEX)//FILEW
         INQUIRE (FILE = FILETMP,EXIST = FEXIST)
-        IF (.NOT. FEXIST) THEN
+        IF (FEXIST) THEN
+          PATHWT = TRIM(PATHEX)
+!       Check weather filename in default DSSAT directory
+        ELSE
           CALL PATH(PROCOD,DSSATP,PATHWT,1,NAMEF)
           FILETMP = TRIM(PATHWT) // FILEW
           INQUIRE (FILE=FILETMP, EXIST = FEXIST)
-          IF (.NOT. FEXIST) THEN
-            FILEW = FILEW(1:4) // ".WTH"
-            FILETMP = TRIM(PATHWT) // FILEW
+          IF (FEXIST) THEN
+            PATHWT = PATHWT
+!         Check 4-character file name in data directory
+          ELSE
+            FILEW4 = FILEW(1:4) // ".WTH"
+            FILETMP = TRIM(PATHEX) // FILEW4
             INQUIRE (FILE=FILETMP, EXIST = FEXIST)
-!            IF (.NOT. FEXIST .AND. INDEX('T',RNMODE) < 1) THEN
-!!             For RNMODE = 'T', let weather routine end run for missing weather file.
-!              MSG(1) = "Weather file not found. Program will end."
-!              MSG(2) = FILEW // 
-!     &          " not found in weather or experiment directories."
-!              CALL WARNING(2,ERRKEY,MSG)
-!              CALL ERROR(ERRKEY,29,FILEW,0)
-!            ENDIF
+            IF (FEXIST) THEN
+              PATHWT = TRIM(PATHEX)
+              FILEW = FILEW4
+!           Check 4-character filename in default DSSAT directory
+            ELSE
+              FILETMP = TRIM(PATHWT) // FILEW
+              INQUIRE (FILE=FILETMP, EXIST = FEXIST)
+              IF (FEXIST) THEN
+                PATHWT = PATHWT
+                FILEW = FILEW4
+              ELSE
+                MSG(1) = "Weather file not found."
+                MSG(2) = "  Neither " // FILEW // " nor " // FILEW4
+                MSG(3) = 
+     &            "  were found in weather or experiment directories."
+                MSG(4) = "Simulation will end."
+                CONTROL % ErrCode = 29
+                CALL PUT(CONTROL)
+                CALL WARNING(4,ERRKEY,MSG)
+!               CALL ERROR(ERRKEY,29,FILEW,0)
+              ENDIF
+            ENDIF
           ENDIF
-        ELSE
-          PATHWT = TRIM(PATHEX)
         ENDIF
-      ELSE
-        PATHWT = BLANK
       ENDIF
 
 C-----------------------------------------------------------------------

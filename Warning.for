@@ -76,25 +76,26 @@ C=======================================================================
             OLDRUN = RUN
           ENDIF
         ENDIF
+      ENDIF
 
-        IF (ICOUNT > 0) THEN
-          !Print header if this is a new run.
-          IF (OLDRUN .NE. RUN .AND. RUN .NE. 0 .AND. FILEIO .NE. "")THEN
-            IF (Headers % RUN == RUN) THEN
-              CALL HEADER(SEASINIT,LUN,RUN)
-              OLDRUN = RUN
-            ENDIF
+      IF (ICOUNT > 0) THEN
+        !Print header if this is a new run.
+        IF (OLDRUN .NE. RUN .AND. RUN .NE. 0 .AND. FILEIO .NE. "")THEN
+          IF (Headers % RUN == RUN) THEN
+            CALL HEADER(SEASINIT,LUN,RUN)
+            OLDRUN = RUN
           ENDIF
-
-!         Print the warning.  Message is sent from calling routine as text.
-          CALL YR_DOY(YRDOY, YEAR, DOY)
-          WRITE(LUN,'(/,1X,A,"  YEAR DOY = ",I4,1X,I3)')ERRKEY,YEAR,DOY
-          DO I = 1, ICOUNT
-            WRITE(LUN,'(1X,A78)') MESSAGE(I)
-          ENDDO
         ENDIF
 
-      ELSE    !ERRKEY = 'ENDRUN' -> End of season
+!       Print the warning.  Message is sent from calling routine as text.
+        CALL YR_DOY(YRDOY, YEAR, DOY)
+        WRITE(LUN,'(/,1X,A,"  YEAR DOY = ",I4,1X,I3)')ERRKEY,YEAR,DOY
+        DO I = 1, ICOUNT
+          WRITE(LUN,'(1X,A78)') MESSAGE(I)
+        ENDDO
+      ENDIF
+
+      IF (INDEX(ERRKEY,'ENDRUN') > 0) THEN    !ERRKEY = 'ENDRUN' -> End of season
         FIRST = .TRUE.
         CLOSE(LUN)
       ENDIF
