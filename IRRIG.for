@@ -124,7 +124,8 @@ C=======================================================================
       IRON  =  (/   9,   1,   4,   5, -99, -99, -99, -99, -99, -99 /)
       IMETH =  (/   1,   1,   1,   1, -99, -99, -99, -99, -99, -99 /)
       IRAMT =  (/  10,  20,  30,  40, -99, -99, -99, -99, -99, -99 /)
-      IREFF =  (/   1,   1,   1,   1, -99, -99, -99, -99, -99, -99 /)
+      IREFF =  (/ 0.5, 0.5, 0.5, 0.5, -99., -99., -99., -99., -99.,
+     &  -99. /)
 
 C***********************************************************************
 C***********************************************************************
@@ -225,7 +226,7 @@ C-----------------------------------------------------------------------
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
             READ(LUNIO,'(/,14X,2(1X,F5.0),16X,I2,2(1X,F5.0))',
-     &        IOSTAT=ERRNUM) DSOIL, THETAC, AIRRCOD, AIRAMT, EFFIRR
+     &        IOSTAT=ERRNUM) DSOIL, THETAC, AIRRCOD, AIRAMT!, EFFIRR
             LNUM = LNUM + 2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
           ENDIF
@@ -781,8 +782,8 @@ C-----------------------------------------------------------------------
 C    *********    IRRIGATE     **********
 C-----------------------------------------------------------------------
       IF (EFFIRR .GT. 0.0) THEN
-        IRRAMT = DEPIR*EFFIRR
-      ELSE
+        IRRAMT = DEPIR*EFFIRR                                           ! Works oddd... EFFIR 0.5 reduces irrigation amount
+      ELSE                                                              ! Maybe should be IRRAMT = DEPIR*(1+(1-EFFIRR)) or IRRAMT = DEPIR/EFFIRR?
         IRRAMT = DEPIR
       ENDIF
 
@@ -815,7 +816,7 @@ C-----------------------------------------------------------------------
       FLOODWAT % PUDDLED = PUDDLED
 
       open (unit = 1, file = "Test_hardcoded.txt", ACCESS = 'APPEND')
-      WRITE(1,*) IRON(IRINC), IRINC, IRINE, IRRAMT
+      WRITE(1,*) DEPIR, IRRAMT, EFFIRR
       CLOSE (1)
 
       RETURN
