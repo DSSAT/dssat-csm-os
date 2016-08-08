@@ -47,3 +47,12 @@ resource.h
 *.o
 *.mod
 *.ico
+.DS_Store
+Data/.DS_Store
+.metadata/
+.project
+.cproject
+Makefile
+cluster.patch
+Jlopez@*
+readme*
