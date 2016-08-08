@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+org.eclipse.debug.ui.PREF_LAUNCH_PERSPECTIVES=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<launchPerspectives/>\n
+org.eclispe.debug.ui.Debug_view.debug_toolbar_hidden_perspectives=org.eclipse.ptp.debug.ui.PTPDebugPerspective
+preferredTargets=org.eclipse.ptp.debug.parallel.breakpoint\:org.eclipse.ptp.debug.parallel.breakpoint|
