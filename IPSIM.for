@@ -40,17 +40,18 @@ C=======================================================================
      & ISIMI,PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
-     & RSEED1,LINEXP,AIRAMT,EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
-     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
+     & RSEED1,LINEXP,AIRAMT,EFFIRR,AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
+     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
+     & FIST2, THETAC2, DEFIR, SITH1,SITH2)
 
       USE ModuleDefs
       USE ModuleData
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMSWI.blk'
 
-      CHARACTER*1   UPCASE,ISIMI, RNMODE
+      CHARACTER*1   UPCASE,ISIMI, RNMODE, DEFIR
       CHARACTER*2   CROP
       CHARACTER*5   NEND,NCODE,IOFF,IAME
       CHARACTER*6   ERRKEY,FINDCH
@@ -66,9 +67,11 @@ C=======================================================================
       INTEGER PLDATE,PWDINF,PWDINL,HLATE,HDLAY,NRESDL
       INTEGER IFIND,LN,ERRNUM,FTYPEN,YRSIM,YEAR,RUN,RSEED1,RRSEED1
       INTEGER YRPLT
+      INTEGER FIST1, FIST2
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
-      REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR
+      REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
+      REAL THETAC2, SITH1, SITH2
 
       LOGICAL UseSimCtr, MulchWarn
 
@@ -134,6 +137,8 @@ C=======================================================================
          IDETH   = 'N'
          IDETR   = 'Y'
          EFFIRR  = 1.00
+         AVWAT  = 10.0
+         THETAC2 = 75.0
          THETAC  = 75.0
          IEPT    = 100.0
          DSOIL   = 30.0
@@ -144,6 +149,9 @@ C=======================================================================
          CRMODEL = '        '
          NCODE = "-99  "
          NEND  = "-99  "
+         FIST1 = -99
+         FIST2 = -99
+         DEFIR = "N"
        ELSE
  40      CALL FIND (LUNEXP,FINDCH,LINEXP,IFIND)
          IF (IFIND .EQ. 0) CALL ERROR (ERRKEY,1,FILEX,LINEXP)
@@ -287,13 +295,14 @@ C        Read FOURTH line of simulation control
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,IPLTI,IIRRI,
-     &        IFERI,IRESI,IHARI
+     &        IFERI,IRESI,IHARI, DEFIR
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          IPLTI = UPCASE(IPLTI)
          IIRRI = UPCASE(IIRRI)
          IFERI = UPCASE(IFERI)
          IRESI = UPCASE(IRESI)
          IHARI = UPCASE(IHARI)
+         DEFIR = UPCASE(DEFIR)
 
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
@@ -306,7 +315,6 @@ C
               CALL ERROR (ERRKEY,5,FILEX,LINEXP)
            ENDIF
          ENDIF
-
 C
 C        Read FIFTH line of simulation control
 C
@@ -388,8 +396,9 @@ C
 C           Read SEVENTH line of simulation control
 C
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
-            READ (CHARTEST,67,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
-     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR
+            READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
+     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, FIST1, FIST2,
+     &           THETAC2, SITH1,SITH2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 C
 C           Read EIGHTH line of simulation control
@@ -676,9 +685,12 @@ C-----------------------------------------------------------------------
   66  FORMAT (I3,11X,2(1X,I5),5(1X,F5.0))
   67  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
   68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
+  69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I5,
+     &        1X,I5,1x,F5.0, 2(1x, F5.3))
   70  FORMAT (3X,I2)
 
       END SUBROUTINE IPSIM
+
 
 !=======================================================================
 !  FILL_ISWITCH, Subroutine
@@ -696,8 +708,8 @@ C-----------------------------------------------------------------------
      &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
       USE ModuleDefs 
       USE ModuleData
-      INCLUDE 'COMSWI.BLK'
-      INCLUDE 'COMIBS.BLK'
+      INCLUDE 'COMSWI.blk'
+      INCLUDE 'COMIBS.blk'
 
       CHARACTER*1 RNMODE
       CHARACTER*8 MODEL

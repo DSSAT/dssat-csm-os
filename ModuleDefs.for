@@ -40,8 +40,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
-!     CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
+!     CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
+      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
 
 !=======================================================================
 !     Compiler directives used to set library for system calls
@@ -552,7 +552,10 @@ D       STDPATH = 'D:\DSSAT46\'
 
 !     Data transferred from management routine 
       Type MgmtType
-        REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR
+        REAL DEPIR, EFFIRR, AVWAT, FERNIT, IRRAMT, TOTIR, THETAC2, WDFAC
+        REAL SITH1, SITH2
+        INTEGER FIST1, FIST2
+        CHARACTER*1 DEFIR
       End Type MgmtType
 
 !     Data transferred from Soil water routine
@@ -771,10 +774,15 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('MGMT')
         SELECT CASE (VarName)
         Case ('EFFIRR'); Value = SAVE_data % MGMT % EFFIRR
+        Case ('AVWAT'); Value = SAVE_data % MGMT % AVWAT
         Case ('TOTIR');  Value = SAVE_data % MGMT % TOTIR
         Case ('DEPIR');  Value = SAVE_data % MGMT % DEPIR
         Case ('IRRAMT'); Value = SAVE_data % MGMT % IRRAMT
         Case ('FERNIT'); Value = SAVE_data % MGMT % FERNIT
+        Case ('THETAC2'); Value = SAVE_data % MGMT % THETAC2
+        Case ('WDFAC'); Value = SAVE_data % MGMT % WDFAC
+        Case ('SITH1'); Value = SAVE_data % MGMT % SITH1
+        Case ('SITH2'); Value = SAVE_data % MGMT % SITH2
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -884,10 +892,15 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('MGMT')
         SELECT CASE (VarName)
         Case ('EFFIRR'); SAVE_data % MGMT % EFFIRR = Value
+        Case ('AVWAT'); SAVE_data % MGMT % AVWAT = Value
         Case ('TOTIR');  SAVE_data % MGMT % TOTIR  = Value
         Case ('DEPIR');  SAVE_data % MGMT % DEPIR  = Value
         Case ('IRRAMT'); SAVE_data % MGMT % IRRAMT = Value
         Case ('FERNIT'); SAVE_data % MGMT % FERNIT = Value
+        Case ('THETAC2');  SAVE_data % MGMT % THETAC2  = Value
+        Case ('WDFAC');  SAVE_data % MGMT % WDFAC  = Value
+        Case ('SITH1');  SAVE_data % MGMT % SITH1  = Value
+        Case ('SITH2');  SAVE_data % MGMT % SITH2  = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1021,6 +1034,13 @@ D       STDPATH = 'D:\DSSAT46\'
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('MGMT')
+        SELECT CASE (VarName)
+        Case ('FIST1'); Value = SAVE_data % MGMT % FIST1
+        Case ('FIST2'); Value = SAVE_data % MGMT % FIST2
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -1049,6 +1069,13 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('PLANT')
         SELECT CASE (VarName)
         Case ('NR5');  SAVE_data % PLANT % NR5  = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('MGMT')
+        SELECT CASE (VarName)
+        Case ('FIST1'); SAVE_data % MGMT % FIST1 = Value
+        Case ('FIST2'); SAVE_data % MGMT % FIST2 = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1083,6 +1110,12 @@ D       STDPATH = 'D:\DSSAT46\'
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('MGMT')
+        SELECT CASE (VarName)
+        Case ('DEFIR');  Value = SAVE_data % MGMT % DEFIR
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -1110,6 +1143,12 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('WEATHER')
         SELECT CASE (VarName)
         Case ('WSTA');  SAVE_data % WEATHER % WSTAT  = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('MGMT')
+        SELECT CASE (VarName)
+        Case ('DEFIR');  SAVE_data % MGMT % DEFIR  = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

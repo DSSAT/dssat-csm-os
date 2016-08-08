@@ -34,6 +34,7 @@ C=======================================================================
       REAL NSTRES, XLAI, LAI, NFP, SLPF
       REAL DAYL, TWILEN, PORMIN, RAIN, RWUMX, SRFTEMP
       REAL CANHT, EO, TOTIR, WINDSP
+      REAL WUPR
 
       REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SAT, SHF
@@ -126,7 +127,7 @@ C-----------------------------------------------------------------------
      & SRAD, TMAX, TMIN, CO2, RAIN, TOTIR,                 !Weather
      & TWILEN, WINDSP, SOILTEMP, EO,                       !Weather
      & NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,  !Soil states
-     & SNOW, SW, NO3, NH4,                                 !H2o,N states
+     & SNOW, SW, NO3, NH4, WUPR,                                 !H2o,N states
      & YEARPLT, YRPLT, HARVFRAC,                           !Pl.date
      & EOP, EP, ET, TRWUP,                                 !Resources
      & LAI, KCAN, KEP,                                     !States
@@ -136,6 +137,8 @@ C-----------------------------------------------------------------------
      & CRESC, CRESN, CRESLIG,                              !Residue
      & STGDOY,                                             !Stage dates
      & DYNAMIC)                                            !Control 
+
+      CALL PUT('MGMT', 'WDFAC', WUPR)
 
       XLAI   = LAI
       NSTRES = NFP

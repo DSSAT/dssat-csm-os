@@ -143,9 +143,9 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMSWI.BLK'
-      INCLUDE 'COMSOI.BLK'
-      INCLUDE 'COMIBS.BLK'
+      INCLUDE 'COMSWI.blk'
+      INCLUDE 'COMSOI.blk'
+      INCLUDE 'COMIBS.blk'
 
       CHARACTER*1   RNMODE
       CHARACTER*3   RMP,RMS
@@ -343,7 +343,7 @@ c     MJ, Mar 2008: Soil information
                NNAPW = NAPW
             ENDIF
             WRITE (HEADER(I),660) NINT(TOTAPW),NNAPW; I=I+1
-          ELSE IF (IIRRI .EQ. 'A') THEN
+          ELSE IF (IIRRI .EQ. 'A' .OR. IIRRI .EQ. 'L') THEN
             WRITE (HEADER(I),670); I=I+1
             WRITE (HEADER(I),680) DSOIL/100.,THETAC; I=I+1
           ELSE IF (IIRRI .EQ. 'F') THEN
@@ -531,7 +531,7 @@ C=======================================================================
       USE HeaderMod
       IMPLICIT NONE
 
-      INCLUDE 'COMGEN.BLK'
+      INCLUDE 'COMGEN.blk'
 
       CHARACTER*1  ISWWAT, RNMODE
       CHARACTER*2  CROP
@@ -971,8 +971,8 @@ C========================================================================
       USE ModuleData
       USE HeaderMod
       IMPLICIT NONE
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSWI.blk'
       SAVE
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'HEADER'

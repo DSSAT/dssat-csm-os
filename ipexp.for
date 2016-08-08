@@ -71,10 +71,10 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSWI.blk'
 
-      CHARACTER* 1 LINE(80),BLANK, RNMODE
+      CHARACTER* 1 LINE(80),BLANK, RNMODE, DEFIR
       CHARACTER* 1 WMODI,ANS
       CHARACTER* 2 CROP
       CHARACTER* 3 PROCOD,ALN(13),ALLN
@@ -98,8 +98,10 @@ C=======================================================================
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
       INTEGER TRTNUM, ROTNUM
+      INTEGER FIST1, FIST2
 
       REAL    FLAG,EXP,TRT,PLTFOR
+      REAL    AVWAT, THETAC2, SITH1,SITH2  ! Limited and deficit irrigation parameters
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -448,9 +450,18 @@ C-----------------------------------------------------------------------
      &     PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,PTX,PTTN,DSOIL,THETAC,
      &     IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,NEND,RIP,NRESDL,
      &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
-     &     EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
-     &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
-      
+     &     EFFIRR, AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
+     &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
+     &     FIST2, THETAC2, DEFIR, SITH1,SITH2)
+
+      CALL PUT('MGMT','AVWAT', AVWAT) ! Make new variables available to all subrourtines
+      CALL PUT('MGMT','FIST1', FIST1)
+      CALL PUT('MGMT','FIST2', FIST2)
+      CALL PUT('MGMT','THETAC2', THETAC2)
+      CALL PUT('MGMT','DEFIR', DEFIR)
+      CALL PUT('MGMT','SITH1', SITH1)
+      CALL PUT('MGMT','SITH2', SITH2)
+
 C-----------------------------------------------------------------------
 C        Select crop parameter input file
 C-----------------------------------------------------------------------

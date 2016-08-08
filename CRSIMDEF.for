@@ -7,7 +7,7 @@
 
       SAVE
 
-      CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
-!     CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
+!     CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
+      CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
 
       END MODULE CRSIMDEF

@@ -40,9 +40,9 @@ C=======================================================================
       USE ModuleDefs
       IMPLICIT NONE
 
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSOI.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSOI.blk'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER*1  ANS,WMODI,SWSPRF, RNMODE
       CHARACTER*2  CROPC,CROP,PRCROP
@@ -120,7 +120,7 @@ C=======================================================================
 
       IF (ISWWAT .EQ. 'N') THEN
          IRMANT = 'NO WATER BALANCE SIMULATION   '
-       ELSEIF (IIRRI .EQ. 'A') THEN
+       ELSEIF (IIRRI .EQ. 'A' .OR. IIRRI .EQ. 'L') THEN
          IRMANT = 'AUTOMATIC IRRIGAT-REFILL PROF '
        ELSEIF (IIRRI .EQ. 'F') THEN
          IRMANT = 'AUTOMATIC IRRIGAT-FIXED AMOUNT'
