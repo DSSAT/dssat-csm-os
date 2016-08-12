@@ -815,10 +815,6 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       FLOODWAT % PUDDLED = PUDDLED
 
-      open (unit = 1, file = "Test_hardcoded.txt", ACCESS = 'APPEND')
-      WRITE(1,*) DEPIR, IRRAMT, EFFIRR
-      CLOSE (1)
-
       RETURN
       END SUBROUTINE IRRIG
 C=======================================================================
