@@ -396,31 +396,17 @@ C
 C
 C           Read SEVENTH line of simulation control
 C
-
-      OPEN(UNIT=6686, FILE="Test_Read.txt")
-      WRITE(6686, *) "Before ingnore line seven"
-      WRITE(6686, *) LUNEXP,LINEXP,ISECT,CHARTEST, ERRNUM
-      WRITE(6686, *) ERRNUM
-      WRITE(6686, *) "PREV_LINEXP",PREV_LINEXP,"LDIF", LDIFF
-
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
 10007       READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
      &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, FIST1, FIST2,
      &           THETAC2, SITH1,SITH2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 
-      WRITE(6686, *) "Before ignore line 8"
-      WRITE(6686, *) LUNEXP,LINEXP,ISECT,CHARTEST
-      WRITE(6686, *) ERRNUM
-      WRITE(6686, *) PREV_LINEXP, LDIFF
-
            PREV_LINEXP = LINEXP
            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)  ! Check where the next data point is
            LDIFF = LINEXP - PREV_LINEXP
            
-           WRITE(6686, *) "PREV_LINEXP",PREV_LINEXP,"LDIF", LDIFF
            IF (LDIFF .EQ. 1) THEN
-                 WRITE(6686, *) "FOUND ANOTHER IRRIGATION INPUT"
                  GO TO 10007                                ! If the next data point is in in the next line, read as part of seventh line
           END IF
            
@@ -436,11 +422,6 @@ C
 C
 C           Read NINTH line of simulation control
 C
-      WRITE(6686, *) "Before ignore line 9"
-      WRITE(6686, *) LUNEXP,LINEXP,ISECT,CHARTEST
-      WRITE(6686, *) ERRNUM
-      WRITE(6686, *) PREV_LINEXP, LDIFF
-
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,68,IOSTAT=ERRNUM) LN,RIP,NRESDL,DRESMG
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
@@ -455,15 +436,7 @@ C
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
      &           HPP,HRP
-
-      WRITE(6686, *) "After Read line 10"
-      WRITE(6686, *) LUNEXP,LINEXP,ISECT,CHARTEST
-      WRITE(6686, *) CHARTEST, ERRNUM
-      WRITE(6686, *) PREV_LINEXP, LDIFF
-      CLOSE(6686)
-
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-
             CALL Y2K_DOY (HLATE)
             IF (HPP   .LT. 0.0)  HPP   = 100.
             IF (HRP   .LT. 0.0)  HRP   = 0.0
