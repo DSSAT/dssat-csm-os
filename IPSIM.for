@@ -73,6 +73,16 @@ C=======================================================================
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
       REAL THETAC2, SITH1, SITH2
       REAL LDIFF, PREV_LINEXP
+      REAL V_AVWAT(25)    ! Create vectors to save growth stage based irrigation
+      REAL V_IMDEP(25)
+      REAL V_ITHRL(25)
+      REAL V_ITHRU(25)
+      INTEGER V_IRON(25)
+      CHARACTER*5 V_IRONC(25)
+      CHARACTER*5 V_IMETH(25)
+      REAL V_IRAMT(25)
+      REAL V_IREFF(25)
+      INTEGER GSINDEX, I, STAT
 
       LOGICAL UseSimCtr, MulchWarn
 
@@ -396,20 +406,53 @@ C
 C
 C           Read SEVENTH line of simulation control
 C
+           DO I=1,25
+                V_IMDEP (I) = -99       ! Assighn default values to variable
+                V_ITHRL (I) = -99
+                V_ITHRU (I) = -99
+                V_IRON (I) = -99
+!                V_IMETH (I) = -99
+                V_IRAMT (I) = -99
+                V_IREFF (I) = -99
+                V_AVWAT (I) = -99
+           END DO
+
+           GSINDEX = 1                                ! Start Growth Stage index
+
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
 10007       READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
-     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, FIST1, FIST2,
-     &           THETAC2, SITH1,SITH2
+     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 
            PREV_LINEXP = LINEXP
            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)  ! Check where the next data point is
            LDIFF = LINEXP - PREV_LINEXP
+
+
+           V_IMDEP(GSINDEX) = DSOIL                   ! Save growth stage specific variables in data vectors
+           V_ITHRL(GSINDEX) = THETAC
+           V_ITHRU(GSINDEX) = IEPT
+           READ(IOFF(4:5), *, IOSTAT = STAT) V_IRON (GSINDEX)
+           V_IRONC(GSINDEX) = IOFF
+           V_IMETH(GSINDEX) = IAME
+           V_IRAMT(GSINDEX) = AIRAMT
+           V_IREFF(GSINDEX) = EFFIRR
+           V_AVWAT(AVWAT)   = AVWAT
            
            IF (LDIFF .EQ. 1) THEN
+                 GSINDEX = GSINDEX + 1
                  GO TO 10007                                ! If the next data point is in in the next line, read as part of seventh line
-          END IF
+           END IF
            
+           DSOIL  = V_IMDEP(1)                         ! Save value of first line as default for compatibility with old files
+           THETAC = V_ITHRL(1)
+           IEPT   = V_ITHRU(1)
+           IOFF   = V_IRONC(1)
+           IAME   = V_IMETH(1)
+           AIRAMT = V_IRAMT(1)
+           EFFIRR = V_IREFF(1)
+           AVWAT  = V_AVWAT(1)
+
 C
 C           Read EIGHTH line of simulation control
 
@@ -428,10 +471,6 @@ C
 C
 C           Read TENTH line of simulation control
 C
-      WRITE(6686, *) "Before ignore line 10"
-      WRITE(6686, *) LUNEXP,LINEXP,ISECT,CHARTEST
-      WRITE(6686, *) ERRNUM
-      WRITE(6686, *) PREV_LINEXP, LDIFF
 
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
