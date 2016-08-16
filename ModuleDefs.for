@@ -553,6 +553,13 @@ D       STDPATH = 'D:\DSSAT46\'
         REAL SITH1, SITH2
         INTEGER FIST1, FIST2
         CHARACTER*1 DEFIR
+        REAL V_AVWAT(25)    ! Create vectors to save growth stage based irrigation
+        REAL V_IMDEP(25)
+        REAL V_ITHRL(25)
+        REAL V_ITHRU(25)
+        INTEGER V_IRON(25)
+        REAL V_IRAMT(25)
+        REAL V_IREFF(25)
       End Type MgmtType
 
 !     Data transferred from Soil water routine

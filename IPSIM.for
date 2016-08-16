@@ -437,7 +437,7 @@ C
            V_IMETH(GSINDEX) = IAME
            V_IRAMT(GSINDEX) = AIRAMT
            V_IREFF(GSINDEX) = EFFIRR
-           V_AVWAT(AVWAT)   = AVWAT
+           V_AVWAT(GSINDEX) = AVWAT
            
            IF (LDIFF .EQ. 1) THEN
                  GSINDEX = GSINDEX + 1
@@ -452,6 +452,14 @@ C
            AIRAMT = V_IRAMT(1)
            EFFIRR = V_IREFF(1)
            AVWAT  = V_AVWAT(1)
+
+           SAVE_data % MGMT % V_IMDEP = V_IMDEP
+           SAVE_data % MGMT % V_ITHRL = V_ITHRL
+           SAVE_data % MGMT % V_ITHRU = V_ITHRU
+           SAVE_data % MGMT % V_IRON  = V_IRON
+           SAVE_data % MGMT % V_IRAMT = V_IRAMT
+           SAVE_data % MGMT % V_IREFF = V_IREFF
+           SAVE_data % MGMT % V_AVWAT = V_AVWAT
 
 C
 C           Read EIGHTH line of simulation control

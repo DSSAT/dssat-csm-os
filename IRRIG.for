@@ -77,14 +77,13 @@ C=======================================================================
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
       
       REAL AVWAT        ! KEEP OLD VARIABLE TEMPORARILY
-	  REAL AVWATI(10)    ! Water available for irrigation at planting (mm)
-	  REAL IMDEP(10)
-	  REAL ITHRL(10)
-	  REAL ITHRU(10)
-	  INTEGER IRON(10)
-	  INTEGER IMETH(10)
-	  REAL IRAMT(10)
-	  REAL IREFF(10)
+	  REAL AVWATI(25)    ! Water available for irrigation at planting (mm)
+	  REAL IMDEP(25)
+	  REAL ITHRL(25)
+	  REAL ITHRU(25)
+	  INTEGER IRON(25)
+	  REAL IRAMT(25)
+	  REAL IREFF(25)
 	  REAL AVWATT    ! Water available for irrigation today (mm)
 	  REAL IRINE   ! The number of irrigation inputs entered by the user
 	  REAL IRINC   ! Counter keeping track of irrigation input been used
@@ -92,6 +91,7 @@ C=======================================================================
 
 	  LOGICAL IDECV  ! Output of function IDECF
       LOGICAL IDECF  ! Function, determines if irrigation is needed (for A and L)
+
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
@@ -117,15 +117,14 @@ C=======================================================================
 
       ! Here goes the code To import array values, for now some hardcoded test data
 
-      AVWATI = (/ -99, -99, -99, -99, -99, -99, -99, -99, -99, -99 /)
-      IMDEP =  (/  30,  30,  30,  30, -99, -99, -99, -99, -99, -99 /)
-      ITHRL =  (/  50,  50,  50,  50, -99, -99, -99, -99, -99, -99 /)
-      ITHRU =  (/ 100, 100, 100, 100, -99, -99, -99, -99, -99, -99 /)
-      IRON  =  (/   9,   1,   4,   5, -99, -99, -99, -99, -99, -99 /)
-      IMETH =  (/   1,   1,   1,   1, -99, -99, -99, -99, -99, -99 /)
-      IRAMT =  (/  10,  20,  30,  40, -99, -99, -99, -99, -99, -99 /)
-      IREFF =  (/ 0.5, 0.5, 0.5, 0.5, -99., -99., -99., -99., -99.,
-     &  -99. /)
+
+      IMDEP = SAVE_data % MGMT % V_IMDEP       ! Depth
+      ITHRL = SAVE_data % MGMT % V_ITHRL       ! Lower threshold triggering irrigation
+      ITHRU = SAVE_data % MGMT % V_ITHRU       ! Upper threshold triggering irrigation
+      IRON  = SAVE_data % MGMT % V_IRON        ! Growth Stage for parameters
+      IRAMT = SAVE_data % MGMT % V_IRAMT       ! Automatic irrigation with fixed amount
+      IREFF = SAVE_data % MGMT % V_IREFF       ! Irrigation Efficiency fraction
+      AVWATI =SAVE_data % MGMT % V_AVWAT       ! Water available for irrigation
 
 C***********************************************************************
 C***********************************************************************
