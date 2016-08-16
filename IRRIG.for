@@ -76,7 +76,7 @@ C=======================================================================
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
       
-      REAL AVWAT        ! KEEP OLD VARIABLE TEMPORARILY
+      REAL AVWAT        ! Available water for irrigation
 	  REAL AVWATI(25)    ! Water available for irrigation at planting (mm)
 	  REAL IMDEP(25)
 	  REAL ITHRL(25)
@@ -113,9 +113,7 @@ C=======================================================================
 
       PUDDLED= FLOODWAT % PUDDLED
 
-!      CALL Get('MGMT','AVWAT', AVWAT)
-
-      ! Here goes the code To import array values, for now some hardcoded test data
+      ! Import array values for growth stage based irrigation
 
 
       IMDEP = SAVE_data % MGMT % V_IMDEP       ! Depth
@@ -225,7 +223,7 @@ C-----------------------------------------------------------------------
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
             READ(LUNIO,'(/,14X,2(1X,F5.0),16X,I2,2(1X,F5.0))',
-     &        IOSTAT=ERRNUM) DSOIL, THETAC, AIRRCOD, AIRAMT!, EFFIRR
+     &        IOSTAT=ERRNUM) DSOIL, THETAC, AIRRCOD, AIRAMT, EFFIRR
             LNUM = LNUM + 2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
           ENDIF
