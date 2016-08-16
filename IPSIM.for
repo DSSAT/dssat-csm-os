@@ -41,8 +41,7 @@ C=======================================================================
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
      & RSEED1,LINEXP,AIRAMT,EFFIRR,AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
-     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT, FIST1,
-     & FIST2, THETAC2, DEFIR, SITH1,SITH2)
+     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
 
       USE ModuleDefs
       USE ModuleData
@@ -51,7 +50,7 @@ C=======================================================================
 
       INCLUDE 'COMSWI.blk'
 
-      CHARACTER*1   UPCASE,ISIMI, RNMODE, DEFIR
+      CHARACTER*1   UPCASE,ISIMI, RNMODE
       CHARACTER*2   CROP
       CHARACTER*5   NEND,NCODE,IOFF,IAME
       CHARACTER*6   ERRKEY,FINDCH
@@ -71,7 +70,6 @@ C=======================================================================
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
-      REAL THETAC2, SITH1, SITH2
       REAL LDIFF, PREV_LINEXP
       REAL V_AVWAT(25)    ! Create vectors to save growth stage based irrigation
       REAL V_IMDEP(25)
@@ -149,7 +147,6 @@ C=======================================================================
          IDETR   = 'Y'
          EFFIRR  = 1.00
          AVWAT  = 10.0
-         THETAC2 = 75.0
          THETAC  = 75.0
          IEPT    = 100.0
          DSOIL   = 30.0
@@ -160,9 +157,6 @@ C=======================================================================
          CRMODEL = '        '
          NCODE = "-99  "
          NEND  = "-99  "
-         FIST1 = -99
-         FIST2 = -99
-         DEFIR = "N"
        ELSE
  40      CALL FIND (LUNEXP,FINDCH,LINEXP,IFIND)
          IF (IFIND .EQ. 0) CALL ERROR (ERRKEY,1,FILEX,LINEXP)
@@ -306,14 +300,13 @@ C        Read FOURTH line of simulation control
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,IPLTI,IIRRI,
-     &        IFERI,IRESI,IHARI, DEFIR
+     &        IFERI,IRESI,IHARI
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          IPLTI = UPCASE(IPLTI)
          IIRRI = UPCASE(IIRRI)
          IFERI = UPCASE(IFERI)
          IRESI = UPCASE(IRESI)
          IHARI = UPCASE(IHARI)
-         DEFIR = UPCASE(DEFIR)
 
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
