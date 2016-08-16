@@ -53,7 +53,7 @@ C=======================================================================
       CHARACTER*90 CHAR
       CHARACTER*78 MSG(10)
 
-      INTEGER AIRRCOD, DAP, DYNAMIC, ERRNUM, FOUND, I, IDATE
+      INTEGER AIRRCOD, DAP, DYNAMIC, DAS, ERRNUM, FOUND, I, IDATE
       INTEGER LUNIO, LINC, LNUM
       INTEGER MULTI, NAP, NAPW, JIRR, NLAYR, NTBL, NMSG
       INTEGER YR, MDATE, RUN, YRDOY, YRPLT, YRSIM, TIMDIF
@@ -113,6 +113,8 @@ C=======================================================================
 
       PUDDLED= FLOODWAT % PUDDLED
 
+      DAS = CONTROL % DAS
+
       ! Import array values for growth stage based irrigation
 
 
@@ -137,8 +139,8 @@ C***********************************************************************
         ENDIF
       END DO
 
-      IF ((IRINC .EQ. -99) .OR. (IRINC .EQ. 0)) THEN
-        IRINC = 1                                                       ! Initialize IRINC (1)
+      IF ((IRINC .EQ. -99) .OR. (IRINC .EQ. 0) .OR. (DAS .EQ. 0)) THEN
+        IRINC = 1                                                       ! Initialize IRINC each season
       END IF
 
       IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
@@ -148,9 +150,6 @@ C***********************************************************************
       IF (IRINC .GT. IRINE) THEN
         IRINC =   IRINE                                                 ! IRINC cannot exceed IRNE
       END IF
-
-!      PROBLEM!!! NOT RE-STARTING FOR EACH SEASON
-!      maybe solved once IO properly set up
 
       AVWAT = AVWATI(1)
 
