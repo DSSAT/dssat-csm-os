@@ -690,8 +690,9 @@ C-----------------------------------------------------------------------
 C             Determine supplemental irrigation amount.
 C             Compensate for expected water loss due to soil evaporation
 C             and transpiration today.
-C             Estimate that an average of 5 mm of water will be lost.
-              IRRAPL = SWDEF*10 + 5.0
+C             At this point, lost is estimated based on the irrigation efficiency fraction entered by user
+C             Irrigation method and climatic conditions are ignored.
+              IRRAPL = (SWDEF*10)/EFFIRR
               IRRAPL = MAX(0.,IRRAPL)
 
             ELSE IF (IIRRI .EQ. 'F') THEN
