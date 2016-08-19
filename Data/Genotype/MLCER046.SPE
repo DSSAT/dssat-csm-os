@@ -1,9 +1,23 @@
 *MILLET SPECIES COEFFICIENTS: GECER046 MODEL
 
 *TEMPERATURE EFFECTS
-!       TBASE TOP1  TOP2  TMAX
-  PRFTC 10.0  20.0  40.0  50.0     !Effect of temperature on photosynthesis
-  RGFIL  7.0  22.0  48.0  50.0     !Effect of temperature on relative grain filling rate
+!       TBASE  TOP1  TOP2  TMAX CURV
+!  PRFTC  10.0  20.0  40.0  50.0  LIN     !Effect of temperature on photosynthesis!same as original
+!  PRFTC  12.0  25.0  48.0  50.0  LIN     !Effect of temperature on photosynthesis !Ken 6/7/2015
+!  PRFTC  10.0  20.0  48.0  50.0  LIN     !Effect of temperature on photosynthesis !same as original!PS of 5/26
+!  PRFTC  11.0  22.0  48.0  50.0  LIN     !Effect of temperature on photosynthesis !same as original!PS of 5/26
+  PRFTC  11.0  22.0  35.0  48.0  LIN     !Effect of temperature on photosynthesis !same as original!PS of 5/26
+!  RGFIL   7.0  22.0  48.0  50.0  LIN     !org-Effect of temperature on relative grain filling rate, COULD BE QDR
+!  RGFIL   7.0  22.0  28.0  60.0  LIN     !Effect of temperature on relative grain filling rate !PS of 5/26
+  RGFIL   7.0  22.0  27.0  60.0  LIN     !Effect of temperature on relative grain filling rate !PS of 5/26
+!  RGFIL   8.0  23.0  29.0  65.0  LIN     !Effect of temperature on relative grain filling rate,Ken 6/7/2015
+!  RGSET  -10.  12.0  48.0  50.0  LIN     !Effect of temperature on relative grain set--original
+  RGSET  -10.  12.0  33.0  39.0  LIN     !Effect of temperature on relative grain set--modified!PS of 5/26
+!  RGSET  -10.  12.0  34.0  39.0  LIN     !Effect of temperature on relative grain set--modified!Ken 6/7/2015
+!  RGLAI   8.0  14.0  36.0  46.0  LIN     !Effect of temperature on relative leaf area expansion
+!  RGLAI   8.0  14.0  32.0  42.0  LIN     !orig-Effect of temperature on relative leaf area expansion!PS of 5/26
+  RGLAI   8.0  23.0  32.0  42.0  LIN     !orig-Effect of temperature on relative leaf area expansion!PS of 5/26
+!  RGLAI   8.0  23.0  38.0  48.0  LIN     !Effect of temperature on relative leaf area expansion !Ken 6/7/2015
 
 *PHOTOSYNTHESIS PARAMETERS 
   PARSR   0.50      !Conversion of solar radiation to PAR 
