@@ -58,7 +58,6 @@ C-----------------------------------------------------------------------
      & STMWTO, WTLF, FSLFP)
 
       USE ModuleDefs
-      USE ModuleData
       USE Interface_SenLig_Ceres
  
       IMPLICIT  NONE
@@ -159,7 +158,6 @@ C      PEST DAMAGE
       REAL        SWIDOT
       REAL        STPC,RTPC
      	REAL        PANTH
-      REAL        WDFAC
 
 C-----------------------------------------------------------------
 C   Local Variables
@@ -378,9 +376,6 @@ C              Emergence
       ENDIF
 
       TURFAC = REAL(INT(TURFAC*1000))/1000
-
-      WDFAC = TRWUP / EP1
-      CALL PUT('MGMT', 'WDFAC', WDFAC)
 
       !-------------------------------------------------------------
       !      Compute Water Saturation Factors       

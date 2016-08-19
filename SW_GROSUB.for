@@ -60,7 +60,6 @@
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
-      USE ModuleData
       IMPLICIT  NONE
       SAVE
 !----------------------------------------------------------------------
@@ -318,8 +317,7 @@
       REAL        VANC  
       CHARACTER*6     VARNO          
       CHARACTER*16    VRNAME  
-      REAL        VSTAGE
-      REAL        WDFAC
+      REAL        VSTAGE      
       REAL        WLIDOT
       REAL        WRIDOT
       REAL        WSIDOT 
@@ -983,9 +981,6 @@
              ENDIF
           ENDIF
           TURFAC = REAL(INT(TURFAC*1000))/1000
-
-          WDFAC = TRWUP / EP1
-          CALL PUT('MGMT', 'WDFAC', WDFAC)
 
 
           !-------------------------------------------------------------
