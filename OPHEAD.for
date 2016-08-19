@@ -343,7 +343,7 @@ c     MJ, Mar 2008: Soil information
                NNAPW = NAPW
             ENDIF
             WRITE (HEADER(I),660) NINT(TOTAPW),NNAPW; I=I+1
-          ELSE IF (IIRRI .EQ. 'A' .OR. IIRRI .EQ. 'L') THEN
+          ELSE IF (IIRRI .EQ. 'A') THEN
             WRITE (HEADER(I),670); I=I+1
             WRITE (HEADER(I),680) DSOIL/100.,THETAC; I=I+1
           ELSE IF (IIRRI .EQ. 'F') THEN

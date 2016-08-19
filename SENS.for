@@ -120,7 +120,7 @@ C=======================================================================
 
       IF (ISWWAT .EQ. 'N') THEN
          IRMANT = 'NO WATER BALANCE SIMULATION   '
-       ELSEIF (IIRRI .EQ. 'A' .OR. IIRRI .EQ. 'L') THEN
+       ELSEIF (IIRRI .EQ. 'A') THEN
          IRMANT = 'AUTOMATIC IRRIGAT-REFILL PROF '
        ELSEIF (IIRRI .EQ. 'F') THEN
          IRMANT = 'AUTOMATIC IRRIGAT-FIXED AMOUNT'

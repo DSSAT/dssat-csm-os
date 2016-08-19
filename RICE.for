@@ -59,8 +59,6 @@ C-----------------------------------------------------------------------
       USE FloodModule    ! which contain control information, soil
                          ! parameters, hourly weather data and flooded
                          ! conditions.
-      USE ModuleData
-
       IMPLICIT NONE
       SAVE
 
@@ -85,7 +83,6 @@ C-----------------------------------------------------------------------
       REAL SDEPTH, SDTT_TP, SEEDRV
       REAL SKERWT, SRAD, STMWT, STOVER, STOVN, STOVWT
       REAL STRCOLD, STRESSW, STRHEAT, SUMDTT, SWFAC
-      REAL WDFAC
       REAL TAGE, TANC, TBASE, TGROGRN, TILNO
       REAL TMAX, TMIN, TOTNUP, TRWUP, TSGRWT, TURFAC, CumNUptake
       REAL TWILEN, WSTRES, XGNP, XSTAGE, XST_TP
@@ -301,9 +298,6 @@ C-----------------------------------------------------------------------
             SWFAC = TRWUP / EP1
           ENDIF
         ENDIF
-
-        WDFAC = TRWUP / EP1
-        CALL PUT('MGMT', 'WDFAC', WDFAC)
 
         !PHEFAC = 1.0
 
