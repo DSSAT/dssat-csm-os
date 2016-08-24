@@ -644,7 +644,9 @@ C-----------------------------------------------------------------------
         CALL GET('PLANT','iSTNAME', iSTNAME)
 
         IF (YRDOY == iSTGDOY) THEN
-          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, iSTNAME 
+          WRITE(DLUN2,102) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+     &         "Stg ",iSTAGE, " ", iSTNAME
+  102     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,I2.2,A,A,A)
         ENDIF
 
 !       Fertilizer application
