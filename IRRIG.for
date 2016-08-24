@@ -143,9 +143,11 @@ C***********************************************************************
         IRINC = 1                                                       ! Initialize IRINC each season
       END IF
 
-      IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
-        IRINC = IRINC + 1                                               ! If you reach the next GS specified, add 1 to IRINC
-      END IF
+      IF (IRINC < IRINE) THEN
+        IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
+          IRINC = IRINC + 1                                               ! If you reach the next GS specified, add 1 to IRINC
+        END IF
+      ENDIF
 
       IF (IRINC .GT. IRINE) THEN
         IRINC =   IRINE                                                 ! IRINC cannot exceed IRNE

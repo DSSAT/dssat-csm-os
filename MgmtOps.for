@@ -39,9 +39,7 @@ C=====================================================================
      &    MDATE, OMADATA, TILLVALS, YRPLT)                !Output
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
       USE FloodModule
       IMPLICIT NONE
       SAVE
@@ -225,7 +223,7 @@ C-----------------------------------------------------------------------
      &    TILLVALS, TILLNO)                               !Output
       ENDIF
 
-      IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+      IF (INDEX('AFRDPWGS',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate irrigation depth for today
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
@@ -250,7 +248,7 @@ C     Call AUTHAR subroutine to check harvest switch and
 C     determine YREND
 C-----------------------------------------------------------------------
 !     Calculate cumulative irrigation
-      IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+      IF (INDEX('AFRDPWGS',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
@@ -350,6 +348,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE ModuleData
       USE SumModule
       IMPLICIT NONE
       SAVE
@@ -359,6 +358,7 @@ C=======================================================================
       CHARACTER*2  CROP
       CHARACTER*3  RMON
       CHARACTER*6,  PARAMETER :: ERRKEY = 'OPMGMT'
+      CHARACTER*10  iSTNAME
       CHARACTER*11, PARAMETER :: OUTM = 'MgmtOps.OUT'
       CHARACTER*12, Date_Txt
       CHARACTER*13, PARAMETER :: OUTM2= 'MgmtEvent.OUT'
@@ -367,6 +367,8 @@ C=======================================================================
       INTEGER MDATE, NDAY, RUN, YEAR, YRDOY, YRPLT
       INTEGER L, NAP, TIMDIF, NAPFER(NELEM), NAPRes
       INTEGER TILLNO, TILDATE
+      INTEGER iSTAGE, iSTGDOY
+
 
       REAL BDAVG3, CUMDEP, IRRAMT, TILDEP
       REAL TotAmtN, TotAmtP, TotAmtK, TOTIR, TotResWt, SurfRes, RootRes
@@ -418,7 +420,7 @@ C-----------------------------------------------------------------------
 
       IF (IDETR == 'Y') THEN
 !       If irrigation apps, trigger printout  
-        IF ((INDEX('AFPWRD',IIRRI) .GT. 0) .OR.
+        IF ((INDEX('AFPWRDGS',IIRRI) .GT. 0) .OR.
 
 !       If Fertilizer applications are activated
      &    (INDEX('AFRFD',IFERI) .GT. 0) .OR.
@@ -460,7 +462,7 @@ C-----------------------------------------------------------------------
 !        ENDIF 
 
 !       If irrigation apps, add headers  
-        IF (INDEX('AFPWRD',IIRRI) .GT. 0) THEN
+        IF (INDEX('AFPWRDGS',IIRRI) .GT. 0) THEN
           WRITE(DLUN,'(A)',ADVANCE='NO') '  IR#C  IRRC'
         ENDIF 
 
@@ -518,13 +520,13 @@ C-----------------------------------------------------------------------
    50   FORMAT("@RUN Date........  DOY",
      &      "    DAS    DAP  CR  Operation       Quantities")
 
-!       Start Simulation
-        CALL YR_DOY(YRDOY, YEAR, DOY) 
-        CALL NAILUJ(DOY,YEAR,RMON,NDAY)
-        Write(Date_Txt,'(A3,I3,", ",I4)') RMON, NDAY, YEAR 
-        WRITE(DLUN2,55) RUN, Date_Txt, DOY, 1, 0, CROP, 
-     &          "Start Sim"
-   55   FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A)
+!!       Start Simulation
+!        CALL YR_DOY(YRDOY, YEAR, DOY) 
+!        CALL NAILUJ(DOY,YEAR,RMON,NDAY)
+!        Write(Date_Txt,'(A3,I3,", ",I4)') RMON, NDAY, YEAR 
+!        WRITE(DLUN2,55) RUN, Date_Txt, DOY, 1, 0, CROP, 
+!     &          "Start Sim"
+!   55   FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A)
       ENDIF
 
 !***********************************************************************
@@ -557,7 +559,7 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
 !         If irrigation apps, print data  
-          IF (INDEX('AFPWRD',IIRRI) .GT. 0) THEN
+          IF (INDEX('AFPWRDGS',IIRRI) .GT. 0) THEN
             WRITE(DLUN,"(2(1X,I5))",ADVANCE='NO') NAP, NINT(TOTIR)
           ENDIF     
 
@@ -623,11 +625,26 @@ C-----------------------------------------------------------------------
         CALL NAILUJ(DOY,YEAR,RMON,NDAY)
         Write(Date_Txt,'(A3,I3,", ",I4)') RMON, NDAY, YEAR 
 
-!       Planting
-        IF (YRDOY == YRPLT .AND. CROP .NE. 'FA') THEN
+!!       Planting
+!        IF (YRDOY == YRPLT .AND. CROP .NE. 'FA') THEN
+!          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+!     &          "Planting       "
+!        ENDIF
+
+!       Physiological Maturity
+        IF (MDATE == YRDOY) THEN
           WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
-     &          "Planting       "
+     &          "Phys. Maturity "
   100     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.0,A))
+        ENDIF
+
+!       Retrieve current Stage, STGDOY and STNAME
+        CALL GET('PLANT','iSTAGE', iSTAGE)
+        CALL GET('PLANT','iSTGDOY', iSTGDOY)
+        CALL GET('PLANT','iSTNAME', iSTNAME)
+
+        IF (YRDOY == iSTGDOY) THEN
+          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, iSTNAME 
         ENDIF
 
 !       Fertilizer application
@@ -677,11 +694,6 @@ C-----------------------------------------------------------------------
   110     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.1,A))
         ENDIF
 
-!       Physiological Maturity
-        IF (MDATE == YRDOY) THEN
-          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
-     &          "Phys. Maturity "
-        ENDIF
       ENDIF
 
 !***********************************************************************
@@ -692,7 +704,7 @@ C-----------------------------------------------------------------------
 !       Harvest
         IF (CROP .NE. 'FA') THEN
           WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
-     &            "Harvest        ", SumDat % HWAH, " kg/ha"
+     &            "Yield          ", SumDat % HWAH, " kg/ha"
           IF (INDEX('FQ',RNMODE) > 0 .AND. CROP /= 'FA') THEN
             SurfRes = HARVRES % ResWt(0)
             IF (SurfRes > 0) THEN

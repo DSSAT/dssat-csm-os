@@ -547,7 +547,8 @@ D       STDPATH = 'D:\DSSAT46\'
         REAL CANHT, CANWH, DXR57, EXCESS,
      &    PLTPOP, RNITP, SLAAD, XPOD
         REAL BIOMAS
-        INTEGER NR5
+        INTEGER NR5, iSTAGE, iSTGDOY
+        CHARACTER*10 iSTNAME
       END TYPE PlantType
 
 !     Data transferred from management routine 
@@ -1025,6 +1026,8 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('PLANT')
         SELECT CASE (VarName)
         Case ('NR5');  Value = SAVE_data % PLANT % NR5
+        Case ('iSTAGE');  Value = SAVE_data % PLANT % iSTAGE
+        Case ('iSTGDOY'); Value = SAVE_data % PLANT % iSTGDOY
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1056,6 +1059,8 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('PLANT')
         SELECT CASE (VarName)
         Case ('NR5');  SAVE_data % PLANT % NR5  = Value
+        Case ('iSTAGE');  SAVE_data % PLANT % iSTAGE  = Value
+        Case ('iSTGDOY'); SAVE_data % PLANT % iSTGDOY = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1090,6 +1095,12 @@ D       STDPATH = 'D:\DSSAT46\'
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('PLANT')
+        SELECT CASE (VarName)
+        Case ('iSTNAME');  Value = SAVE_data % PLANT % iSTNAME
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -1117,6 +1128,12 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('WEATHER')
         SELECT CASE (VarName)
         Case ('WSTA');  SAVE_data % WEATHER % WSTAT  = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('PLANT')
+        SELECT CASE (VarName)
+        Case ('iSTNAME');  SAVE_data % PLANT % iSTNAME = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
