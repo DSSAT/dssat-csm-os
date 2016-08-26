@@ -448,7 +448,7 @@ C-GH    Set to DSSAT46
 !       Linux, Unix
         SLASH = '/' 
         DSSATPRO = 'DSSATPRO.L46'
-        STDPATH = '/home/phillip/DSSAT46/'
+        STDPATH = '../DSSAT46/'
         exe_string = '.so'
       END SELECT
 
