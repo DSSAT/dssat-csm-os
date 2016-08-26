@@ -310,7 +310,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
 !-----------------------------------------------------------------------
-!     CROPGRO model
+!     Forage model
       CASE('PRFRM') 
       call FORAGE(CONTROL, ISWITCH, 
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
@@ -512,16 +512,16 @@ c     ::::::::::::::::::::::::
 c     Total LAI must exceed or be equal to healthy LAI:
           XLAI = MAX(XLAI, XHLAI)
 
-!!     -------------------------------------------------
-!!     Sugarcane - CASUPRO
-!      CASE('SCCSP')
-!        CALL CSP_CASUPRO(CONTROL, ISWITCH, 
-!     &    CO2, EOP, EOS, HARVFRAC, NH4, NO3, PAR,           !Input
-!     &    SOILPROP, SPi_AVAIL, SW, TAVG, TGRO,              !Input  
-!     &    TGROAV, TMIN, TRWUP, WEATHER, YREND, YRPLT,       !Input
-!     &    CANHT, EORATIO, HARVRES, KTRANS, LFmntDEF, MDATE, !Output 
-!     &    NSTRES, PUptake, PORMIN, RLV, RWUMX, SENESCE,     !Output
-!     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)         !Output
+!     -------------------------------------------------
+!     Sugarcane - CASUPRO
+      CASE('SCCSP')
+        CALL CSP_CASUPRO(CONTROL, ISWITCH, 
+     &    CO2, EOP, EOS, HARVFRAC, NH4, NO3, PAR,           !Input
+     &    SOILPROP, SPi_AVAIL, SW, TAVG, TGRO,              !Input  
+     &    TGROAV, TMIN, TRWUP, WEATHER, YREND, YRPLT,       !Input
+     &    CANHT, EORATIO, HARVRES, KTRANS, LFmntDEF, MDATE, !Output 
+     &    NSTRES, PUptake, PORMIN, RLV, RWUMX, SENESCE,     !Output
+     &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)         !Output
 
 !     -------------------------------------------------
 !     Sorghum 
