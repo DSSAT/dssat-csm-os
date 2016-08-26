@@ -45,7 +45,7 @@ C-----------------------------------------------------------------------
 
       REAL ABD, B, CUMDPT 
       REAL DP, FX, ICWD, PESW, SRFTEMP 
-      REAL TAV, TAVG, TBD, TMAX, TMIN, WW
+      REAL TAV, TAMP, TAVG, TBD, TMAX, TMIN, WW
       REAL TDL, TLL, TSW
       REAL TMA(5), X2_AVG
       REAL DEPIR, WFT, BCV, RAIN, BIOMAS, MULCHMASS
@@ -71,6 +71,8 @@ C-----------------------------------------------------------------------
       DUL    = SOILPROP % DUL     
       LL     = SOILPROP % LL     
       NLAYR  = SOILPROP % NLAYR  
+
+      TAMP = WEATHER % TAMP
 
 !-----------------------------------------------------------------------
       CALL YR_DOY(YRDOY, YEAR, DOY)
@@ -180,7 +182,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Print soil temperature data in STEMP.OUT
-      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
       MSG(1) = "Running EPIC soil temperature routine."
       MSG(2) = "Start simulation at least 30 days early to initialize"
@@ -256,7 +258,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
-      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+      CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 
 !***********************************************************************
 !***********************************************************************

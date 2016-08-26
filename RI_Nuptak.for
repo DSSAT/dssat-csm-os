@@ -45,7 +45,7 @@ C=======================================================================
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT)     !Output
+     &    RNLOSS, SENESCE, TRNLOS, UNH4, UNO3, PLIGRT, CumNUptake)     !Output
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -65,7 +65,7 @@ C=======================================================================
 
       REAL FLDH4, FLDH4C, FLDN3, FLDN3C, FLOOD, PDWI, PGRORT
       REAL RANC, RCNP, ROOTN, STOVN, STOVWT, TANC, TCNP, TRNU
-      REAL CUMFNU !Cumulative flood N uptake
+      REAL CUMFNU, CumNUptake !Cumulative flood N uptake, Cum N uptake total
       REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
       REAL, DIMENSION(NL) :: RLV, RNLOSS, SNH4, SNO3, ST, SW, UNO3, UNH4
 
@@ -104,6 +104,8 @@ C=======================================================================
       FRNH4U = 0.0
       FRNO3U = 0.0
       CUMFNU = 0.0
+
+      CumNUptake = 0.0              !kg[N]/ha
 
 !***********************************************************************
 !***********************************************************************
@@ -298,6 +300,7 @@ C-------------------------------------------------------------------------
 
          TRNU  = TRNU  + FRNO3U  + FRNH4U         !kg[N]/ha
       ENDIF
+      CumNUptake = CumNUptake + TRNU              !kg[N]/ha
       TRNU = TRNU/(PLANTS*10.0)                   !g[N]/plant
       CUMFNU = CUMFNU + (FRNH4U + FRNO3U) / (PLANTS * 10.0)
 
@@ -324,6 +327,7 @@ C-----------------------------------------------------------------------
       ROOTN = ROOTN + DROOTN
       TANC  = STOVN/STOVWT
       RANC  = ROOTN/RTWT
+
 
 !***********************************************************************
 !***********************************************************************

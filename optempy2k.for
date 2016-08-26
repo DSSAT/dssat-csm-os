@@ -23,18 +23,20 @@ C  06/07/2002 GH  Modifed for Y2K Output
 !                 METMP = soil temperature options
 !  02/05/2007 CHP Reverse location of MESEV and METMP in FILEX
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
-C  04/21/2007 GH  Modified sorghum cultivar coefficients
-C  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
-C  01/16/2007 GH  Modified sorghum cultivar coefficients
+!  04/21/2007 GH  Modified sorghum cultivar coefficients
+!  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
+!  01/16/2007 GH  Modified sorghum cultivar coefficients
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2008 CHP Remove METMP
-C  08/03/2009 FSR Added numerous variables for CASUPRO
-C  06/30/2010 FSR Added PLF2 variable for CASUPRO
-C  05/19/2011 GH  Updated for sorghum
-C  08/09/2012 GH  Updated cassava model
+!  08/03/2009 FSR Added numerous variables for CASUPRO
+!  06/30/2010 FSR Added PLF2 variable for CASUPRO
+!  05/19/2011 GH  Updated for sorghum
+!  08/09/2012 GH  Updated cassava model
 !  09/01/2011 CHP Added van Genuchten parameters for ORYZA
-C  11/14/2012 GH  Add READWRITE for temp file
-!  04/16/2013 CHP/KD Added SALUS model
+!  11/14/2012 GH  Add READWRITE for temp file
+!  04/16/2013 CHP/KAD Added SALUS model
+!  Apr-May 2015 KJB added G0 and G5 for pearl millet
+!  05/09/2013 CHP/FR/JZW Added N-wheat module
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           TOTN,NYRS,VARNO,VRNAME,CROP,MODEL,PATHMO,ECONO,FROP,RUN,FILEIO
@@ -593,8 +595,8 @@ C-----------------------------------------------------------------------
 
 !       Generic SALUS crops
         CASE('SALUS')
-          WRITE(LUNIO,'(A6,1X,A16,A)',IOSTAT=ERRNUM) VARNO,VRNAME,
-     &        trim(PLAINTXT)
+          WRITE(LUNIO,'(A6,1X,A16,7X,A)',IOSTAT=ERRNUM) VARNO, VRNAME,
+     &         trim(PLAINTXT)
 
 !       CROPGRO crops
         CASE('CRGRO','PRFRM')
@@ -613,10 +615,20 @@ C-----------------------------------------------------------------------
         CASE('WHCER', 'BACER', 'CSCRP','CSCAS')
 !       Do nothing - these models read the INH file written by OPTEMPXY2K
 
+!       APSIM Wheat (NWheat)
+        CASE('WHAPS')
+                WRITE (LUNIO,1850,IOSTAT=ERRNUM)  
+     &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
+     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
+     &            P2AF,P3AF,P4AF,P5AF,P6AF,
+     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
 !       Ceres Maize, sweetcorn
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &                    P1,P2,P5,G2,G3,PHINT
+     &                    P1,P2,P5,G2,G3,PHINT     
+     
 !       Ixim maize
         CASE('MZIXM')
             WRITE (LUNIO,1801,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
@@ -635,7 +647,7 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !       Ceres millet
         CASE('MLCER')
                WRITE (LUNIO,1950,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &               P1,P2O,P2R,P5,G1,G4,PHINT
+     &               P1,P2O,P2R,P5,G1,G4,PHINT,G0,G5
 
 !       Ceres rice
         CASE ('RICER')
@@ -784,11 +796,18 @@ C     &        1X,F5.2,19(1X,F5.1))
      &        F6.3,F6.2,6(F6.0))
  1700 FORMAT (A6,1X,A16,1X,A6,1X,5(F6.1),F6.2, F6.1)
  1800 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2))
+ 1850 FORMAT (A6,1X,A16,1X,A6,1X,
+ !             1     2     3     4     5     6     7     8     9     0
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1, F6.1,
+     &       F6.2, F6.2, F6.3, F6.0, F6.2, F6.2, F6.1, F6.2, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.2, F6.2, F6.3, F6.2, F6.3, F6.2, F6.2,
+     &       F6.2, F6.2, F6.2, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
+     &       F6.3, F6.0, F6.0)
  1801 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2),2(F6.1),I4)
  1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,4(F6.1))
 C-GH 1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,2(F6.1))
  1901 FORMAT (2F6.2)
- 1950 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,2(F6.1),3(F6.2))
+ 1950 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,2(F6.1),3(F6.2),2(F6.0))
 c1960 FORMAT (A6,1X,A16,1X,A6,1X,F6.2,F8.4,F7.2,F8.2,F7.3,F4.0)
  1960 FORMAT (A6,1X,A16,1X,A6,1X,F5.1,1X,F5.2,1X,F5.1,1X,F5.0,1X,F5.2,
      &        1X,F5.0)

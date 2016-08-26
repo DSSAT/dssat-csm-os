@@ -34,7 +34,7 @@
          WAGT, WLVD, WLVG, WRR, WRT, WSO, WST, ZRT 
       REAL, DIMENSION(10) :: RDCL
 
-      REAL NGR, HIAD, HWUD, SLAD, SEEDNO, LeafNPct
+      REAL NGR, HIAD, HWUD, SLAD, SEEDNO, LeafNPct, NUPC
       REAL CUMSENSURF, CUMSENSOIL 
       REAL NACR, ANRT, ANLV, ANSO, ANST, ANLD, VNAD, CNAD, SNN1C
       Real RNpctD, VNpctD, SNpctD, LNpctD
@@ -142,6 +142,7 @@
 
       CUMSENSURF  = 0.0
       CUMSENSOIL  = 0.0
+      NUPC = 0.0
 
 !      WTNUP = 0.0
 !      WTNST    = 0.0 
@@ -223,19 +224,21 @@
         VNAD = ANST + ANLV
         if ((WSO + WLVG) .GT. 0.0) VNpctD = 100.*VNAD / (WSO + WLVG)
         if (WST .GT. 0.0) SNpctD = 100. * ANST / WST
+
+        NUPC = NUPC + NACR
 !
         IF (ISWNIT .EQ. 'Y') THEN
 
           WRITE (NOUTPN,310)YEAR, DOY, DAS, DAP,             &
           ! CNAD  VNAD   VN%D   NUPC  LNAD  SNAD  
-            CNAD, VNAD, VNpctD, NACR, ANLV, ANST,   &
+            CNAD, VNAD, VNpctD, NUPC, ANLV, ANST,   &
           ! LN%D    SN%D          RN%D    SNN0C  SNN1C
             LNpctD, SNpctD,       RNpctD,  ANLD, SNN1C  
 !
 !!       ADDED RNAD (= NRT KG/HA)
 !
   310     FORMAT (1X,I4,1X,I3.3,2(1X,I5),  &
-             3(1X,F5.1),2(1X,F5.2),1X,F5.1,  &
+             4(1X,F5.1),1(1X,F5.2),1X,F5.1,  &
              2(1X,F5.1),1X,F5.2,2(1X,F6.2))
         ENDIF
 

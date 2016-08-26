@@ -21,6 +21,7 @@ C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  08/12/2003 CHP Added I/O error checking
 !  12/17/2004 CHP Modified HRESCeres call for harvest residue
+!  April-May 2015 - KJB major revisions
 C
 C----------------------------------------------------------------------
 C
@@ -106,7 +107,7 @@ C----------------------------------------------------------------------
       INTEGER         YREND 
       REAL            HARVFRAC(2)
       REAL            HI               
-      REAL            HIP            
+      REAL            HIP
       INTEGER         I          
       CHARACTER*1     IDETO 
       CHARACTER*1     IPLTI     
@@ -254,6 +255,7 @@ C------------------------------------------------------------------------
       REAL CSD1
       REAL EMAT
       REAL G1
+      REAL G0
       INTEGER IDUR1
       INTEGER IPRINT
       INTEGER ISM
@@ -276,6 +278,7 @@ C------------------------------------------------------------------------
 
       REAL BIOMS1
       REAL G4
+      REAL G5
       REAL GROLF
       REAL GROSTM
       REAL LWMIN
@@ -344,7 +347,8 @@ C-----------------------------------------------------------------------
       CHARACTER*80    PATHSR
       CHARACTER*80    PATHER
       REAL            SLPF
-      REAL            PRFTC(4)
+      REAL            PRFTC(4), GFLTC(4), SETTC(4), LAITC(4)
+      CHARACTER*3     PRFTYP, GFLTYP, SETTYP, LAITYP
       CHARACTER*6     VARNO
       CHARACTER*16    VRNAME
 
@@ -440,13 +444,15 @@ C----------------------------------------------------------------------
           CALL GETLUN('OUTO', NOUTDO)
           CALL GETLUN('FILEIO', LUNIO)
 
-         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+         !Output routines, ML_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
-          CALL MZ_OPGROW(CONTROL, ISWITCH,  
+          CALL ML_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,
+     &    MLAG1, TLAG1, MPLAG, TPLAG, MPLA, TPLA, PLA, MLFWT, TLFWT,
+     &    MSTMWT, TSTMWT, 
      &    WTSO, XLAI, YRPLT)
 
           CALL MZ_OPNIT(CONTROL, ISWITCH,     !Yes, MZ is correct!
@@ -503,7 +509,8 @@ C--------------------------------------------------------------------
 
          CALL ML_GROSUB (
      & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     & CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
+     & CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     & PRFTC, GFLTC, LAITC, PRFTYP,GFLTYP,LAITYP,
      & GPP, GRAINN, GROLF, GRORT, GROSTM, ISTAGE, 
      & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      & NFAC, NLAYR, NH4,NSTRES, NO3, P3, P4, P5, PAF, PANWT, 
@@ -514,8 +521,8 @@ C--------------------------------------------------------------------
      & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TILN, 
      & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      & XN,XSTAGE, EOP, TRWUP, RWUEP1,DYNAMIC,UNO3,UNH4,KG2PPM,
-     & PRFTC,PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
-     & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS,G1,
+     & PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
+     & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS,G1,G0,
      & VANC,VMNC,TLAG1, SENESCE, MPLA, TPLA, MPLAG, TPLAG)
 
       !---------------------------------------------------------------
@@ -590,9 +597,9 @@ c60            FORMAT(19X,F5.2,19X,F5.2,7X,F5.2)
           ELSE
               READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
 c Note, g2 in sorghum is G4 in Millet
-     %                   P1,P2O,P2R,P5,G1,G4,PHINT
+     %                   P1,P2O,P2R,P5,G1,G4,PHINT,G0,G5
 !CHP 1800          FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),3(F6.2))    
-1800          FORMAT (A6,1X,A16,1X,A6,1X,7F6.0)    
+1800          FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)    
               LNUM = LNUM + 1
               IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
@@ -622,9 +629,21 @@ C         ***********************************************************
              CALL ERROR(SECTION, 42, FILECC, LNUM)
           ELSE
              CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-             READ(C80,'(7X,4(1X,F5.2))',IOSTAT=ERR)
-     &            PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4)
-             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+             READ(C80,'(7X,4(1X,F5.2),2X,A3)',IOSTAT=ERR)
+     &            PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4),PRFTYP
+                  IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(7X,4(1X,F5.2),2X,A3)',IOSTAT=ERR)
+     &            GFLTC(1),GFLTC(2),GFLTC(3),GFLTC(4), GFLTYP
+                  IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)    
+              CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(7X,4(1X,F5.2),2X,A3)',IOSTAT=ERR)
+     &            SETTC(1),SETTC(2),SETTC(3),SETTC(4), SETTYP
+                  IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(7X,4(1X,F5.2),2X,A3)',IOSTAT=ERR)
+     &            LAITC(1),LAITC(2),LAITC(3),LAITC(4), LAITYP
+                  IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
           ENDIF
           REWIND(LUNCRP)
 
@@ -757,13 +776,15 @@ C         ***********************************************************
       !--------------------------------------------------------------
           CTYPE = 1 
 
-         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+         !Output routines, ML_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
-          CALL MZ_OPGROW(CONTROL, ISWITCH,  
+          CALL ML_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,
+     &    MLAG1, TLAG1, MPLAG, TPLAG, MPLA, TPLA, PLA, MLFWT, TLFWT,
+     &    MSTMWT, TSTMWT, 
      &    WTSO, XLAI, YRPLT)
 
           CALL MZ_OPNIT(CONTROL, ISWITCH,     !Yes, MZ is correct!
@@ -831,7 +852,7 @@ C----------------------------------------------------------------------
           IF(YRDOY.EQ.YRPLT) ISTAGE = 7
 
           CALL ML_PHENOL (APTNUP,BIOMAS,BIOMS2,
-     &    CSD1, CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT,  
+     &    CSD1, CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, SETTC, SETTYP,
      &    EMAT, GNUP, GPP, GPSM, GRAINN, GRNWT, IDETO,
      &    IDUR1, IPRINT, ISDATE, ISM, ISTAGE, ISWNIT, ISWWAT,
      &    LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
@@ -841,7 +862,7 @@ C----------------------------------------------------------------------
      &    SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
      &    TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
 C         Variables passed through PHENOL to phasei but not used in phenol
-     &    AGEFAC, BIOMS1, CUMDTT, CUMPH, G4, GROLF,
+     &    AGEFAC, BIOMS1, CUMDTT, CUMPH, G4, G5, GROLF,
      &    GRORT, GROSTM, LFWT, MGROLF, MGROPAN, MGROSTM, 
      &    MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NSTRES, PAF, 
      &    PGC, PLA, PLAN, PLAO, PLATO, PLAMX, PTF, RANC, 
@@ -862,7 +883,8 @@ C         Variables passed through PHENOL to phasei but not used in phenol
 
           CALL ML_GROSUB (
      &     AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &     CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
+     &     CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     &     PRFTC, GFLTC, LAITC, PRFTYP,GFLTYP,LAITYP,
      &     GPP, GRAINN, GROLF, GRORT, GROSTM, ISTAGE, 
      &     ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      &     NFAC, NLAYR, NH4,NSTRES, NO3, P3, P4, P5, PAF, PANWT, 
@@ -873,8 +895,8 @@ C         Variables passed through PHENOL to phasei but not used in phenol
      &     SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TILN, 
      &     TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &     XN,XSTAGE, EOP, TRWUP, RWUEP1,DYNAMIC,UNO3,UNH4,KG2PPM,
-     &     PRFTC,PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
-     &     ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS,G1,
+     &     PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
+     &     ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS,G1,G0,
      &     VANC,VMNC,TLAG1, SENESCE, MPLA, TPLA, MPLAG, TPLAG)
           ENDIF
 
@@ -1021,13 +1043,15 @@ C Original 10/1/03          SDWT = PANWT*PLTPOP     !g/m2
             PCNRT = 0.0
          ENDIF
 
-         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+         !Output routines, ML_OPGROW and MZ_OPNIT are used for 
          !  maize, sorghum and millet.
-         CALL MZ_OPGROW(CONTROL, ISWITCH,  
+         CALL ML_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,
+     &    MLAG1, TLAG1, MPLAG, TPLAG, MPLA, TPLA, PLA, MLFWT, TLFWT,
+     &    MSTMWT, TSTMWT, 
      &    WTSO, XLAI, YRPLT)
 
          CALL MZ_OPNIT(CONTROL, ISWITCH,      !Yes, MZ is correct!
@@ -1063,13 +1087,15 @@ C
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
-        !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+        !Output routines, ML_OPGROW and MZ_OPNIT are used for 
         !  maize, sorghum and millet.
-        CALL MZ_OPGROW(CONTROL, ISWITCH,  
+        CALL ML_OPGROW(CONTROL, ISWITCH,  
      &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
      &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
      &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,
+     &    MLAG1, TLAG1, MPLAG, TPLAG, MPLA, TPLA, PLA, MLFWT, TLFWT,
+     &    MSTMWT, TSTMWT, 
      &    WTSO, XLAI, YRPLT)
 
         CALL MZ_OPNIT(CONTROL, ISWITCH,       !Yes, MZ is correct!
