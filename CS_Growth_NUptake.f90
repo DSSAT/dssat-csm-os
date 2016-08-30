@@ -425,7 +425,7 @@
                         ENDIF
                     ENDDO
                 ENDDO
-            ENDIF
+            !ENDIF                                                                                                      !MF 21AU16 ErrorFix ENDIF without corresponding IF THEN or ELSE. Deleted.
             !PLAGSB3 = PLAGSB2 * AFLF(0)                                                                                !EQN 345
             !SHLAGB2 is not necessary, previously defined in the loop as SHLAG2
             !SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
@@ -435,7 +435,7 @@
             SHLAGB3(1) = SHLAG2(1) * AFLF(0,0)                                                                         !EQN 240
             SHLAGB3(2) = SHLAG2(2) * AFLF(0,0)                                                                         !EQN 240
             SHLAGB3(3) = SHLAG2(3) * AFLF(0,0)                                                                         !EQN 240    
-        ENDIF
+        !ENDIF                                                                                                         !MF 21AU16 ErrorFix ENDIF without corresponding IF THEN or ELSE. Deleted.
             
         !-----------------------------------------------------------------------
         !           Stem and Plant. stick growth                                     

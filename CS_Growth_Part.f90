@@ -428,7 +428,7 @@
             ELSE  
                 AFLF(0,0) = 1.0
             ENDIF
-            IF (CFLAFLF.EQ.'N') AFLF(0) = 1.0                                                                        
+            IF (CFLAFLF.EQ.'N') AFLF(0,0) = 1.0                                                                            !MF 21AU16 ErrorFix Added second subscript to AFLF.
 
         !    ! Area and assimilate factors for each leaf
         !        DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
@@ -459,7 +459,7 @@
         !                ENDIF
         !            ENDDO
         !        ENDDO
-        !    ENDIF
+        ENDIF                                                                                                            !MF 21AU16 ErrorFix. Added to terminate block
         !    !PLAGSB3 = PLAGSB2 * AFLF(0)                                                                                !EQN 345
         !    !SHLAGB2 is not necessary, previously defined in the loop as SHLAG2
         !    !SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
