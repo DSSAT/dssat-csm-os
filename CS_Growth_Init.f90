@@ -51,7 +51,8 @@
         !ENDIF
         
         ! LPM 21MAR2016 Added reserves in the planting stake
-        IF (SDEPTHU.GT.0.0.AND.GERMFR.GT.0.0.AND.EMRGFR.LT.1.0) THEN
+        !LPM 02SEP2016 Deleted SDEPTHU.GT.0.0 as conditional:Reserves could be used even if the bud is above ground
+        IF (GERMFR.GT.0.0.AND.EMRGFR.LT.1.0) THEN
             SEEDUSED = AMIN1(SEEDRS, PEMRG*TTGEM*WFGE)
             SEEDUSES = SEEDUSES + SEEDUSED
             SEEDUSE = SEEDUSES

@@ -53,11 +53,13 @@
         !    CARBOTMPR = CARBOTMPR + CARBOTMPRHR(L)
         !END DO
         !  
-        CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP* WFP * NFP * RSFP * VPDFP * SLPF)
+        !CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP* WFP * NFP * RSFP * VPDFP * SLPF) !LPM 02SEP2016 Deleted WFP and NFP 
+        CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP* RSFP * VPDFP * SLPF)
         CARBOBEGR = CARBOTMPR * PARI / PLTPOP																		   !EQN 259
         
         ! Modified conventional using internal CO2 (I)
-            CARBOTMP = AMAX1(0.,PARMJFAC*SRAD*PARU*TFP*NFP*RSFP)                                                       !EQN 264
+            !CARBOTMP = AMAX1(0.,PARMJFAC*SRAD*PARU*TFP*NFP*RSFP)                                                       !EQN 264 !LPM 02SEP2016 Deleted WFP and NFP 
+            CARBOTMP = AMAX1(0.,PARMJFAC*SRAD*PARU*TFP*RSFP)                                                       !EQN 264
         ! Calculate for no water stress for WFPI determination
         CARBOTMPI = CARBOTMP
         CO2INTPPMP = CO2
@@ -89,7 +91,8 @@
         ! Use 10 Mj.m2.d PAR to establish quantum requirement
         PHOTQR = (CO2AIR/(10.0*PARU)-((RATM+RCROP*RLFC/RLF*WFP*(1.*(1.-WFP)))*1.157407E-05))*(10.0*30.0)/(CO2AIR*MJPERE) ! 30 = MW Ch2o!EQN 273
         RM = CO2AIR/(((SRAD*PARMJFAC/MJPERE)/PHOTQR)*30.0)																 !EQN 274
-        CARBOTMPM = AMAX1(0.,(CO2AIR/((RATM+RCROP*RLFC/RLF*WFP*(1.*(1.-WFP)))*1.157407E-05+RM))*TFP*NFP*RSFP)			 !EQN 275
+        !CARBOTMPM = AMAX1(0.,(CO2AIR/((RATM+RCROP*RLFC/RLF*WFP*(1.*(1.-WFP)))*1.157407E-05+RM))*TFP*NFP*RSFP)			 !EQN 275 !LPM 02SEP2016 Deleted NFP
+        CARBOTMPM = AMAX1(0.,(CO2AIR/((RATM+RCROP*RLFC/RLF*WFP*(1.*(1.-WFP)))*1.157407E-05+RM))*TFP*RSFP)			 !EQN 275
         CARBOBEGM = CARBOTMPM * SLPF * PARI / PLTPOP																	 !EQN 276
         
         ! Select method depending on choice in CONTROL FILE
