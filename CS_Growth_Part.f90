@@ -258,7 +258,10 @@
                         ! New LEAF
                         IF (LF.EQ.LNUMSIMSTG(BR).AND.LNUMG.GT.LNUMNEED.AND.BR.EQ.BRSTAGE) THEN                                             ! This is where new leaf is initiated
                             !LAGL(BR,L+1) = LAPOTX(BR,L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331  
-                            LAGL(BR,LF+1) = LAPOTX(BR,LF+1) * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG) * AMIN1(WFG,NFG)*Tflflife                                      !LPM 23MAR15 To define proportional growth by day      
+                            !LAGL(BR,LF+1) = LAPOTX(BR,LF+1) * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG) * AMIN1(WFG,NFG)*Tflflife                                      !LPM 23MAR15 To define proportional growth by day      
+                            LAPOTX2(BR,LF+1) = LAPOTX(BR,LF+1)*TFLFLIFE
+                            LAGL(BR,LF+1)=LAPOTX2(BR,LF+1)*(TTLFLIFE/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
+                            IF (LAGL(BR,LF+1).LT.0.0) LAGL(BR,LF+1) = 0.0
                             LATL(BR,LF+1) = LATL(BR,LF+1) + LAGL(BR,LF+1)                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   !EQN 333   
                             LATL2(BR,LF+1) = LATL2(BR,LF+1) + LAGL(BR,LF+1)                              ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
                             SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF+1)                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
@@ -326,24 +329,26 @@
         NODEWTG = 0.0
         GROSTP = 0.0
         GROCRP = 0.0
-        
-        DO BR = 0, BRSTAGE   
-            IF (BR.EQ.0) THEN
-                NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
-                    (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
-            ELSE
-                NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((BRDAE(BR)/171.64793)**-2.2115103)/ &
-                    (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
-            ENDIF
+        !LPM 01SEP16 putting a conditional DAE.GT.0.0 to avoid illogical values of NODEWTGB
+        IF (DAE.GT.0.0) THEN
+            DO BR = 0, BRSTAGE   
+                IF (BR.EQ.0) THEN
+                    NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
+                        (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
+                ELSE
+                    NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((BRDAE(BR)/171.64793)**-2.2115103)/ &
+                        (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
+                ENDIF
             
-            DO LF =1, LNUMSIMSTG(BR) 
-                NODEWTG(BR,LF) = NODEWTGB(BR)
-                !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
-                NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
-                GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
-                STWTP = STWTP + (NODEWT(BR,LF)*BRNUMST(BR))
+                DO LF =1, LNUMSIMSTG(BR) 
+                    NODEWTG(BR,LF) = NODEWTGB(BR)
+                    !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
+                    NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
+                    GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
+                    STWTP = STWTP + (NODEWT(BR,LF)*BRNUMST(BR))
+                ENDDO
             ENDDO
-        ENDDO
+        ENDIF
         
         GROCRP = NODEWTGB(0)*SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
@@ -471,44 +476,44 @@
         !    SHLAGB3(3) = SHLAG2(3) * AFLF(0,0)                                                                         !EQN 240    
         !ENDIF
         !    
-        !!-----------------------------------------------------------------------
-        !!           Stem and Plant. stick growth                                     
-        !!-----------------------------------------------------------------------
-        !
-        !GROCR = 0.0
-        !GROSTCRP = 0.0
-        !GROST = 0.0
-        !GROSTCR = 0.0
-        !STAIG = 0.0
-        !STAIS = 0.0
-        !!! Potential stem weight increase.
-        !!IF (SWFR.LT.1.0) THEN
-        !!    GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
-        !!    GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
-        !!ELSE  
-        !!    GROSTCRP = GROSTCRPSTORE                                                                                   !EQN 381b
-        !!    ! LAH May need to change GROSTCRP as progress
-        !!ENDIF
-        !
-        !! Potential stem weight increase. !LPM 28APR15 Change according to the new equation for stem development (see above GROSTP)
-        !GROSTCRP = GROSTP                                                                                          !EQN 381a
-        !
-        !
-        !IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
-        !! LAH RSFRS is the fraction of stem growth to reserves
-        !! May need to have this change as stem growth proceeds
-        !
-        !! Planting stick .. in balance with stem
-        !!GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
-        !!GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
-        !
-        !!LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
-        !!in the planting stick (In the future it could be modified as an input in the X-file)
-        !GROST = GROSTCR
-        !
-        !IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
-        !!CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
-        !
+        !-----------------------------------------------------------------------
+        !           Stem and Plant. stick growth                                     
+        !-----------------------------------------------------------------------
+        
+        GROCR = 0.0
+        GROSTCRP = 0.0
+        GROST = 0.0
+        GROSTCR = 0.0
+        STAIG = 0.0
+        STAIS = 0.0
+        !! Potential stem weight increase.
+        !IF (SWFR.LT.1.0) THEN
+        !    GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
+        !    GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
+        !ELSE  
+        !    GROSTCRP = GROSTCRPSTORE                                                                                   !EQN 381b
+        !    ! LAH May need to change GROSTCRP as progress
+        !ENDIF
+        
+        ! Potential stem weight increase. !LPM 28APR15 Change according to the new equation for stem development (see above GROSTP)
+        GROSTCRP = GROSTP                                                                                          !EQN 381a
+        
+        
+        IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
+        ! LAH RSFRS is the fraction of stem growth to reserves
+        ! May need to have this change as stem growth proceeds
+        
+        ! Planting stick .. in balance with stem
+        !GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
+        !GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
+        
+        !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
+        !in the planting stick (In the future it could be modified as an input in the X-file)
+        GROST = GROSTCR
+        
+        IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
+        !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
+        
                           
 
         

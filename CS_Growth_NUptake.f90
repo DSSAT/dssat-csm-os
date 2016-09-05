@@ -94,8 +94,10 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP.GT.0.0) THEN
-                        SNDEMN(BR,LF) = AMAX1(0.0,((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF))*SNCX(BR,LF) + &
-                              (NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*AMAX1(0.0,NTUPF*(SNCX(BR,LF)-SANC(BR,LF)))  
+                        !SNDEMN(BR,LF) = AMAX1(0.0,((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF))*SNCX(BR,LF) + & !LPM 02SEP2016 N stem demand based on potential growth
+                        !      (NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*AMAX1(0.0,NTUPF*(SNCX(BR,LF)-SANC(BR,LF)))  
+                        SNDEMN(BR,LF) = AMAX1(0.0,NODEWTG(BR,LF))*SNCX(BR,LF) + &
+                        (NODEWT(BR,LF)*AMAX1(0.0,NTUPF*(SNCX(BR,LF)-SANC(BR,LF))))  
                         SNDEM = SNDEM + SNDEMN(BR,LF)
                     ENDIF
                 ENDDO
@@ -218,7 +220,8 @@
             ! For supplying minimum
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)
+                    !NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
+                    NDEMSMN(BR,LF) = NODEWTG(BR,LF)*SNCM(BR,LF)
                 ENDDO
             ENDDO
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
@@ -233,7 +236,8 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP.GT.0.0) THEN
-                        SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)* &
+                        !SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
+                        SNUSEN(1,BR,LF) = NODEWTG(BR,LF)*SNCM(BR,LF)* &
                             AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
                     ENDIF
@@ -243,13 +247,17 @@
     
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
             IF (NDEMMN.GT.NULEFT) THEN
-                GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
-                GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
+                !GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213 !LPM 02SEP2016 Use potential growth
+                !GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
+                GROSTADJ = GROSTP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
+                GROCRADJ = GROCRP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
                 RTRESPADJ = RTWTGADJ*RRESP/(1.0-RRESP)                                                                 !EQN 216   
             ELSE
-                GROSTADJ = GROST
-                GROCRADJ = GROCR
+                !GROSTADJ = GROST   !LPM 02SEP2016 Use potential growth
+                !GROCRADJ = GROCR
+                GROSTADJ = GROSTP
+                GROCRADJ = GROCRP
                 RTWTGADJ = RTWTG
                 RTRESPADJ = RTRESP   
             ENDIF
@@ -257,7 +265,8 @@
             !NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
             NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)
             ! 5.For leaf growth to standard N (N to leaves first)
-            LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX)-LNUSE(1))                                                             !EQN 217
+            !LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX)-LNUSE(1))                                                             !EQN 217 !LPM 02SEP2016 To use potential growth instead of CHO restricted growth
+            LNUSE(2) = AMIN1(NULEFT,(GROLFP*LNCX)-LNUSE(1))                                                             !EQN 217
             !Could use the NLLG parameter but may need to adjust 
             !the photosynthesis-leaf N response parameters, or
             !the standard PARUE  
@@ -321,14 +330,16 @@
             ! Check N and reduce leaf growth if not enough N  
             IF (ABS(NULEFT).LE.1.0E-5) THEN   ! Inadequate N
                 IF (NLLG.GT.0.0.AND.LNCX.GT.0.0) THEN 
-                    IF ((LNUSE(1)+LNUSE(2))/GROLF.LT.(LNCX*NLLG)) THEN 
+                    !IF ((LNUSE(1)+LNUSE(2))/GROLF.LT.(LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
+                    IF ((LNUSE(1)+LNUSE(2))/GROLFP.LT.(LNCX*NLLG)) THEN 
                         GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
                     ELSE  
-                        GROLFADJ = GROLF                                                                               !EQN 233b
+                        !GROLFADJ = GROLF                                                                               !EQN 233b !LPM 02SEP2016 Use GROLFP instead of GROLF
+                        GROLFADJ = GROLFP                                                                               !EQN 233b
                     ENDIF  
                 ENDIF
-                RSSRWTGLFADJ = GROLF - GROLFADJ                                                                        !EQN 234
-        
+                !RSSRWTGLFADJ = GROLF - GROLFADJ                                                                        !EQN 234 !LPM 02SEP2016 Keep GROLF but restrict to 0 if N growth is greater than CHO growth (GROLF)
+                RSSRWTGLFADJ = AMAX1(0.0,GROLF - GROLFADJ)                                                              !EQN 234 
                 AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                              !EQN 235
         
                 !! If not enough N set N factor
@@ -347,26 +358,27 @@
                 !ENDDO    
                 
                 ! If not enough N set N factor
-                IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN
-                        NFLF2(0,0) = AREAPOSSIBLEN/PLAGSB3                                                                   !EQN 236
+                !IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN !LPM 02SEP2016 Use of PLAGSB2 instead of PLAGSB3
+                IF (PLAGSB2.GT.AREAPOSSIBLEN.AND.PLAGSB2.GT.0.0)THEN
+                        NFLF2(0,0) = AREAPOSSIBLEN/PLAGSB2                                                                   !EQN 236
                 ELSE  
                         NFLF2(0,0) = 1.0
                 ENDIF 
                 
-               ! Area and assimilate factors for each leaf
-                DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
-                    ! If not enough N set N factor
-                    DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
-                        IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
-                            LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)                                                                           !EQN 241            
-                            NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))      !EQN 237
-                        ENDIF
-                    ENDDO
-                ENDDO
-                PLAGSB4 = PLAGSB3 * NFLF2(0,0)                                                                           !EQN 238
-                SHLAGB4(1) = SHLAGB3(1) * NFLF2(0,0)                                                                      !EQN 239
-                SHLAGB4(2) = SHLAGB3(2) * NFLF2(0,0)
-                SHLAGB4(3) = SHLAGB3(3) * NFLF2(0,0)
+               !! Area and assimilate factors for each leaf  LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))
+               ! DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+               !     ! If not enough N set N factor
+               !     DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
+               !         IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
+               !             LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)                                                                           !EQN 241            
+               !             NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))      !EQN 237
+               !         ENDIF
+               !     ENDDO
+               ! ENDDO
+               ! PLAGSB4 = PLAGSB3 * NFLF2(0,0)                                                                           !EQN 238
+               ! SHLAGB4(1) = SHLAGB3(1) * NFLF2(0,0)                                                                      !EQN 239
+               ! SHLAGB4(2) = SHLAGB3(2) * NFLF2(0,0)
+               ! SHLAGB4(3) = SHLAGB3(3) * NFLF2(0,0)
                 !PLAGSB4 = PLAGSB3 * NFLF2(0)                                                                           !EQN 238
                 !SHLAGB4(1) = SHLAGB3(1) * NFLF2(0)                                                                     !EQN 239
                 !SHLAGB4(2) = SHLAGB3(2) * NFLF2(0)
@@ -377,20 +389,20 @@
                 !NFLF2(0) = 1.0                                                                                           !LPM 21MAR15
                 !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                      !LPM 21MAR15 Change to include cohorts BR,L
                 NFLF2(0,0) = 1.0
-                DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
-                    DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
-                        IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
-                            LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)            
-                            NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))
-                        ENDIF
-                    ENDDO
-                ENDDO
+                !DO BR = 0, BRSTAGE              !LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))                                                                          !LPM 21MAR15
+                !    DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
+                !        IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
+                !            LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)            
+                !            NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))
+                !        ENDIF
+                !    ENDDO
+                !ENDDO
                 
             ENDIF
     
         ELSE     ! ISWNIT = N   
     
-            LATL4 = LATL3
+            !LATL4 = LATL3 !LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))
             NFLF2 = 1.0            
     
         ENDIF    ! End of N uptake and growth adjustmenets
@@ -398,20 +410,16 @@
     
     ! Area and assimilate factors for each leaf
                 DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
-                    DO LF = 1, LNUMSIMSTG(BR)
-                    !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                  !LPM 23MAR15 To consider the new leaf growing duration of 10 
-                        !IF (LNUMSG.LT.LNUMX) THEN
-                        !    LATL3(L)= LATL2(L) * AFLF(0,0)                                                                                   !EQN 150
-                        !    AFLF(L) = AMIN1(1.0,AFLF(L) + AMAX1(0.0,AFLF(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                           !EQN 151
-                        !    IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0                                                   
-                        !ENDIF     
+                    DO LF = 1, LNUMSIMSTG(BR)   
                         IF (LAGETT(BR,LF).LE.LLIFGTT) THEN
                             IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
                                 !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
-                                LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG)  
+                                !LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG) !LPM 02SEP2016  Use of NFLF2 instead of NFG
+                                LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0)) 
                                 !LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
                                 LATL3(BR,LF)= LATL3(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
                                 AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF) + AMAX1(0.0,AFLF(0,0)) * (LAGL(BR,LF))/LAPOTX2(BR,LF))             !EQN 151   
+                                NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LAGL(BR,LF))/LAPOTX2(BR,LF))  !EQN 237 !LPM 02SEP2016 To save NFLF2
                                 LAGL3T(BR,LF) = LAGL3(BR,LF)*BRNUMST(BR) 
                                 LATL3T(BR,LF) = LATL3(BR,LF)*BRNUMST(BR)
                                 DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
@@ -431,51 +439,16 @@
             !SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
             !SHLAGB3(2) = SHLAGB2(2) * AFLF(0)                                                                          !EQN 240
             !SHLAGB3(3) = SHLAGB2(3) * AFLF(0)                                                                          !EQN 240
-            PLAGSB3 = PLAGSB2 * AFLF(0,0) 
-            SHLAGB3(1) = SHLAG2(1) * AFLF(0,0)                                                                         !EQN 240
-            SHLAGB3(2) = SHLAG2(2) * AFLF(0,0)                                                                         !EQN 240
-            SHLAGB3(3) = SHLAG2(3) * AFLF(0,0)                                                                         !EQN 240    
-        !ENDIF                                                                                                         !MF 21AU16 ErrorFix ENDIF without corresponding IF THEN or ELSE. Deleted.
-            
-        !-----------------------------------------------------------------------
-        !           Stem and Plant. stick growth                                     
-        !-----------------------------------------------------------------------
+            !LPM 02SEP2016 PLAGSB3 is not longer used, selected the min value between AFLF, WFG, NFLF2  
+            PLAGSB4 = PLAGSB2 * AMIN1(AFLF(0,0),WFG,NFLF2(0,0)) 
+            SHLAGB4(1) = SHLAG2(1) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0))                                                                          !EQN 240
+            SHLAGB4(2) = SHLAG2(2) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0))                                                                          !EQN 240
+            SHLAGB4(3) = SHLAG2(3) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0))                                                                         !EQN 240    
 
-        GROCR = 0.0
-        GROSTCRP = 0.0
-        GROST = 0.0
-        GROSTCR = 0.0
-        STAIG = 0.0
-        STAIS = 0.0
-        !! Potential stem weight increase.
-        !IF (SWFR.LT.1.0) THEN
-        !    GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
-        !    GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
-        !ELSE  
-        !    GROSTCRP = GROSTCRPSTORE                                                                                   !EQN 381b
-        !    ! LAH May need to change GROSTCRP as progress
-        !ENDIF
-        
-        ! Potential stem weight increase. !LPM 28APR15 Change according to the new equation for stem development (see above GROSTP)
-        GROSTCRP = GROSTP                                                                                          !EQN 381a
-    
-        
-        IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
-        ! LAH RSFRS is the fraction of stem growth to reserves
-        ! May need to have this change as stem growth proceeds
-     
-        ! Planting stick .. in balance with stem
-        !GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
-        !GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
-        
-        !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
-        !in the planting stick (In the future it could be modified as an input in the X-file)
-        GROST = GROSTCR
-        
-        IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
-        !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
-        
-    
-    
-    
+            GROCRADJ = AMIN1(GROCR,GROCRADJ)
+            GROLFADJ = AMIN1(GROLF,GROLFADJ)
+            GROSTADJ = AMIN1(GROST,GROSTADJ)
+            RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)
+            RTRESPADJ = AMIN1(RTRESP,RTRESPADJ)    
+            RTWTGADJ = AMIN1(RTWTG,RTWTGADJ)
     END SUBROUTINE CS_Growth_NUptake
