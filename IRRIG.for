@@ -27,7 +27,6 @@ C  10/28/2004 CHP Fixed problem with multiple applications on same day.
 !  04/18/2013 CHP Added error checking for irrigation amount. It is 
 !                   operation-specific, so checking was removed from 
 !                   input module.
-!  02/08/2016 JOSE Added limited irrigation.
 C-----------------------------------------------------------------------
 C  Called by: WATBAL
 C  Calls  : None
@@ -48,6 +47,7 @@ C=======================================================================
       PARAMETER (ERRKEY = 'IRRIG')
 
       CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM
+      CHARACTER*5 IOFF   ! old IRON, for compatibility with old files
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
@@ -77,20 +77,19 @@ C=======================================================================
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
       
       REAL AVWAT        ! Available water for irrigation
-	  REAL AVWATI(25)    ! Water available for irrigation at planting (mm)
-	  REAL IMDEP(25)
-	  REAL ITHRL(25)
-	  REAL ITHRU(25)
-	  INTEGER IRON(25)
-	  REAL IRAMT(25)
-	  REAL IREFF(25)
+	  REAL AVWATI(20)    ! Water available for irrigation at planting (mm)
+	  REAL IMDEP(20)
+	  REAL ITHRL(20)
+	  REAL ITHRU(20)
+	  INTEGER IRON(20)
+	  REAL IRAMT(20)
+	  REAL IREFF(20)
+	  CHARACTER*5 V_IRONC(20)
+	  CHARACTER*5 IRONC(20)
 	  REAL AVWATT    ! Water available for irrigation today (mm)
-	  REAL IRINE   ! The number of irrigation inputs entered by the user
-	  REAL IRINC   ! Counter keeping track of irrigation input been used
+	  INTEGER IRINE   ! The number of irrigation inputs entered by the user
+	  INTEGER IRINC   ! Counter keeping track of irrigation input been used
 	  REAL THETAU   ! Threshold, % of available water stopping irrigation
-
-	  LOGICAL IDECV  ! Output of function IDECF
-      LOGICAL IDECF  ! Function, determines if irrigation is needed (for A and L)
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -103,13 +102,13 @@ C=======================================================================
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
 
-      IIRRI  = ISWITCH % IIRRI
-
       DLAYR  = SOILPROP % DLAYR  
       DS     = SOILPROP % DS
       DUL    = SOILPROP % DUL    
       LL     = SOILPROP % LL     
       NLAYR  = SOILPROP % NLAYR  
+
+      IIRRI  = ISWITCH % IIRRI
 
       PUDDLED= FLOODWAT % PUDDLED
 
@@ -121,18 +120,12 @@ C=======================================================================
       IMDEP = SAVE_data % MGMT % V_IMDEP       ! Depth
       ITHRL = SAVE_data % MGMT % V_ITHRL       ! Lower threshold triggering irrigation
       ITHRU = SAVE_data % MGMT % V_ITHRU       ! Upper threshold triggering irrigation
+      IRONC = SAVE_data % MGMT % V_IRONC       ! IRON in text (for compatibility)
       IRON  = SAVE_data % MGMT % V_IRON        ! Growth Stage for parameters
       IRAMT = SAVE_data % MGMT % V_IRAMT       ! Automatic irrigation with fixed amount
       IREFF = SAVE_data % MGMT % V_IREFF       ! Irrigation Efficiency fraction
       AVWATI =SAVE_data % MGMT % V_AVWAT       ! Water available for irrigation
-
-
-      DO I = 1, 10
-        IF (IRON(I) .EQ. -99) THEN  !     Find position of the first -99 in the vector
-            IRINE = I - 1           !     The position of the last number is one before the -99
-            EXIT
-        ENDIF
-      END DO
+      IRINE  =SAVE_data % MGMT % GSIRRIG
 
       IF ((IRINC .EQ. -99) .OR. (IRINC .EQ. 0) .OR. (DAS .EQ. 0)) THEN
         IRINC = 1                                                       ! Initialize IRINC each season
@@ -154,7 +147,6 @@ C***********************************************************************
 C***********************************************************************
 C    Input and Initialization 
 C***********************************************************************
-
       IF (DYNAMIC .EQ. INIT) THEN
 C-----------------------------------------------------------------------
       FILEIO  = CONTROL % FILEIO
@@ -223,8 +215,10 @@ C-----------------------------------------------------------------------
             SECTION = '!AUTOM'
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-            READ(LUNIO,'(/,14X,2(1X,F5.0),16X,I2,2(1X,F5.0))',
-     &        IOSTAT=ERRNUM) DSOIL, THETAC, AIRRCOD, AIRAMT, EFFIRR
+            READ(LUNIO,'(/,14X,3(1X,F5.0),1X,A5,4X,I2,2(1X,F5.0))',
+     &        IOSTAT=ERRNUM) DSOIL, THETAC, THETAU, IOFF, AIRRCOD,
+     &                       AIRAMT, EFFIRR
+
             LNUM = LNUM + 2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
           ENDIF
@@ -679,18 +673,20 @@ C-----------------------------------------------------------------------
       CASE ('A', 'F')
 
 !     Set variables for growth stage driven simulation
-        DSOIL  = IMDEP(IRINC)
-        THETAC = ITHRL(IRINC)
-        THETAU = ITHRU(IRINC)
-        AIRAMT = IRAMT(IRINC)
-        EFFIRR = IREFF (IRINC)
+!        IF ((IRINE .NE. 1) .AND. (IOFF .NE. "GS000" )) THEN
+           DSOIL  = IMDEP(IRINC)
+           THETAC = ITHRL(IRINC)
+           THETAU = ITHRU(IRINC)
+           AIRAMT = IRAMT(IRINC)
+           EFFIRR = IREFF (IRINC)
+!        END IF
 
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
           CALL SWDEFICIT(
-     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
-     &        ATHETA, SWDEF, THETAU)                              !Output
+     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
+     &        ATHETA, SWDEF)                              !Output
 
           IF (ATHETA .LE. THETAC*0.01) THEN
 !         A soil water deficit exists - automatic irrigation today.
@@ -699,9 +695,8 @@ C-----------------------------------------------------------------------
 C             Determine supplemental irrigation amount.
 C             Compensate for expected water loss due to soil evaporation
 C             and transpiration today.
-C             At this point, lost is estimated based on the irrigation efficiency fraction entered by user
-C             Irrigation method and climatic conditions are ignored.
-              IRRAPL = (SWDEF*10)/EFFIRR
+C             Estimate that an average of 5 mm of water will be lost.
+              IRRAPL = SWDEF*10 + 5.0
               IRRAPL = MAX(0.,IRRAPL)
 
             ELSE IF (IIRRI .EQ. 'F') THEN
@@ -757,8 +752,8 @@ C-----------------------------------------------------------------------
      &        (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
             CALL SWDEFICIT(
-     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
-     &        ATHETA, SWDEF, THETAU)                              !Output
+     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
+     &        ATHETA, SWDEF)                              !Output
 
             IF (ATHETA .LE. THETAC*0.01) THEN
 !           A soil water deficit exists - automatic irrigation today.
@@ -791,8 +786,8 @@ C-----------------------------------------------------------------------
 C    *********    IRRIGATE     **********
 C-----------------------------------------------------------------------
       IF (EFFIRR .GT. 0.0) THEN
-        IRRAMT = DEPIR*EFFIRR                                           ! Works oddd... EFFIR 0.5 reduces irrigation amount
-      ELSE                                                              ! Maybe should be IRRAMT = DEPIR*(1+(1-EFFIRR)) or IRRAMT = DEPIR/EFFIRR?
+        IRRAMT = DEPIR*EFFIRR
+      ELSE
         IRRAMT = DEPIR
       ENDIF
 
@@ -823,7 +818,7 @@ C-----------------------------------------------------------------------
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************
       FLOODWAT % PUDDLED = PUDDLED
-
+      
       RETURN
       END SUBROUTINE IRRIG
 C=======================================================================
@@ -834,8 +829,8 @@ C  Determines soil water deficit for automatic irrigation requirments
 C-----------------------------------------------------------------------
 
       SUBROUTINE SWDEFICIT(
-     &    DSOIL, DLAYR, DUL, LL, NLAYR, SW,               !Input
-     &    ATHETA, SWDEF, THETAU)                          !Output
+     &    DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,       !Input
+     &    ATHETA, SWDEF)                                  !Output
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -862,7 +857,7 @@ C-----------------------------------------------------------------------
           ELSE
             XDEP = DLAYR(L)
           ENDIF
-          WET1 = WET1   + (DUL(L) - LL(L)) * XDEP       ! WET1 = PLANT AVAILABLE WATER (cm)
+          WET1 = WET1   + (DUL(L) - LL(L)) * XDEP
           TSWTOP = TSWTOP + (SW(L) - LL(L)) * XDEP
         ENDIF
       ENDDO
@@ -873,6 +868,9 @@ C-----------------------------------------------------------------------
 
       RETURN
       END SUBROUTINE SWDEFICIT
+
+C=======================================================================
+
 
 !***********************************************************************
 !***********************************************************************
