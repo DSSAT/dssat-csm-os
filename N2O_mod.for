@@ -216,7 +216,7 @@ C  06/15/2014 CHP Written
       LOGICAL FEXIST
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 1
+      INTEGER, PARAMETER :: SUMNUM = 2
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -405,6 +405,7 @@ C-----------------------------------------------------------------------
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
       LABEL(1)  = 'N2OEC'; VALUE(1)  = CN2O_emitted
+      LABEL(2)  = 'CO2EC'; VALUE(2)  = NINT(CumTotCO2)
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
