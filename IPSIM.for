@@ -40,7 +40,7 @@ C=======================================================================
      & ISIMI,PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
-     & RSEED1,LINEXP,AIRAMT,EFFIRR,AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
+     & RSEED1,LINEXP,AIRAMT,EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
      & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
 
       USE ModuleDefs
@@ -52,7 +52,7 @@ C=======================================================================
 
       CHARACTER*1   UPCASE,ISIMI, RNMODE
       CHARACTER*2   CROP
-      CHARACTER*5   NEND,NCODE,IOFF,IAME
+      CHARACTER*5   NEND,NCODE,IOFF,IAME, TXAVWAT
       CHARACTER*6   ERRKEY,FINDCH
       CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL, Try_MODELARG
       CHARACTER*12  FILEX
@@ -71,16 +71,16 @@ C=======================================================================
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
       REAL LDIFF, PREV_LINEXP
-      REAL V_AVWAT(25)    ! Create vectors to save growth stage based irrigation
-      REAL V_IMDEP(25)
-      REAL V_ITHRL(25)
-      REAL V_ITHRU(25)
-      INTEGER V_IRON(25)
-      CHARACTER*5 V_IRONC(25)
-      CHARACTER*5 V_IMETH(25)
-      REAL V_IRAMT(25)
-      REAL V_IREFF(25)
-      INTEGER GSINDEX, I, STAT
+      REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
+      REAL V_IMDEP(20)
+      REAL V_ITHRL(20)
+      REAL V_ITHRU(20)
+      INTEGER V_IRON(20)
+      CHARACTER*5 V_IRONC(20)
+      CHARACTER*5 V_IMETH(20)
+      REAL V_IRAMT(20)
+      REAL V_IREFF(20)
+      INTEGER GSIRRIG, I, STAT, CHARLEN
 
       LOGICAL UseSimCtr, MulchWarn
 
@@ -399,43 +399,49 @@ C
 C
 C           Read SEVENTH line of simulation control
 C
-           DO I=1,25
+           DO I=1,20
                 V_IMDEP (I) = -99       ! Assighn default values to variable
                 V_ITHRL (I) = -99
                 V_ITHRU (I) = -99
-                V_IRON (I) = -99
+                V_IRON  (I) = -99
 !                V_IMETH (I) = -99
                 V_IRAMT (I) = -99
                 V_IREFF (I) = -99
                 V_AVWAT (I) = -99
            END DO
 
-           GSINDEX = 1                                ! Start Growth Stage index
+           GSIRRIG = 1                                ! Start Growth Stage index
 
-            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
-10007       READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
-     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT
-            IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
+           CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
 
-           PREV_LINEXP = LINEXP
-           CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)  ! Check where the next data point is
-           LDIFF = LINEXP - PREV_LINEXP
+           DO WHILE(ISECT .NE. 3)
+D
+               READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
+     &               IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT
 
+               READ(CHARTEST,71) TXAVWAT                                ! Read value of AVWAT in text to check if blank or missing
+               CHARLEN = LEN_TRIM(TXAVWAT)
 
-           V_IMDEP(GSINDEX) = DSOIL                   ! Save growth stage specific variables in data vectors
-           V_ITHRL(GSINDEX) = THETAC
-           V_ITHRU(GSINDEX) = IEPT
-           READ(IOFF(4:5), *, IOSTAT = STAT) V_IRON (GSINDEX)
-           V_IRONC(GSINDEX) = IOFF
-           V_IMETH(GSINDEX) = IAME
-           V_IRAMT(GSINDEX) = AIRAMT
-           V_IREFF(GSINDEX) = EFFIRR
-           V_AVWAT(GSINDEX) = AVWAT
-           
-           IF (LDIFF .EQ. 1) THEN
-                 GSINDEX = GSINDEX + 1
-                 GO TO 10007                                ! If the next data point is in in the next line, read as part of seventh line
-           END IF
+               IF (CHARLEN==0) AVWAT = -99                             ! If TXAVWAT blank or missing set AVWAT -99 (for compatinility with old files)
+
+               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
+
+              V_IMDEP(GSIRRIG) = DSOIL                   ! Save growth stage specific variables in data vectors
+              V_ITHRL(GSIRRIG) = THETAC
+              V_ITHRU(GSIRRIG) = IEPT
+              READ(IOFF(4:5), *, IOSTAT = STAT) V_IRON (GSIRRIG)
+              V_IRONC(GSIRRIG) = IOFF
+              V_IMETH(GSIRRIG) = IAME
+              V_IRAMT(GSIRRIG) = AIRAMT
+              V_IREFF(GSIRRIG) = EFFIRR
+              V_AVWAT(GSIRRIG) = AVWAT
+
+              CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)                ! Read next line until a second tier header is found
+
+              IF(ISECT .NE. 3) THEN
+                  GSIRRIG = GSIRRIG + 1                                 ! Increase the counter by 1
+              END IF
+           END DO
            
            DSOIL  = V_IMDEP(1)                         ! Save value of first line as default for compatibility with old files
            THETAC = V_ITHRL(1)
@@ -449,20 +455,23 @@ C
            SAVE_data % MGMT % V_IMDEP = V_IMDEP
            SAVE_data % MGMT % V_ITHRL = V_ITHRL
            SAVE_data % MGMT % V_ITHRU = V_ITHRU
+           SAVE_data % MGMT % V_IRONC = V_IRONC
            SAVE_data % MGMT % V_IRON  = V_IRON
            SAVE_data % MGMT % V_IRAMT = V_IRAMT
            SAVE_data % MGMT % V_IREFF = V_IREFF
            SAVE_data % MGMT % V_AVWAT = V_AVWAT
+           SAVE_data % MGMT % GSIRRIG = GSIRRIG
 
 C
 C           Read EIGHTH line of simulation control
 
 C
-!            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
+            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,67,IOSTAT=ERRNUM) LN,DSOILN,SOILNC,
      &           SOILNX,NCODE,NEND
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             READ (NCODE,70,IOSTAT=ERRNUM) FTYPEN
+
 C
 C           Read NINTH line of simulation control
 C
@@ -744,6 +753,7 @@ C-----------------------------------------------------------------------
   69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I5,
      &        1X,I5,1x,F5.0, 2(1x, F5.3))
   70  FORMAT (3X,I2)
+  71  FORMAT (57x,A5)
 
       END SUBROUTINE IPSIM
 

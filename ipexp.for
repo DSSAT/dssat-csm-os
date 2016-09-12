@@ -98,10 +98,8 @@ C=======================================================================
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
       INTEGER TRTNUM, ROTNUM
-      INTEGER FIST1, FIST2
 
       REAL    FLAG,EXP,TRT,PLTFOR
-      REAL    AVWAT						  ! Available Water for Irrigation (mm)
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -450,7 +448,7 @@ C-----------------------------------------------------------------------
      &     PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,PTX,PTTN,DSOIL,THETAC,
      &     IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,NEND,RIP,NRESDL,
      &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
-     &     EFFIRR, AVWAT,CROP,FROP,MODEL,RNMODE,FILEX,
+     &     EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
      &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
       
 C-----------------------------------------------------------------------

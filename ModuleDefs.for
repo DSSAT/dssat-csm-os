@@ -554,13 +554,15 @@ D       STDPATH = 'D:\DSSAT46\'
 !     Data transferred from management routine 
       Type MgmtType
         REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR
-        REAL V_AVWAT(25)    ! Create vectors to save growth stage based irrigation
-        REAL V_IMDEP(25)
-        REAL V_ITHRL(25)
-        REAL V_ITHRU(25)
-        INTEGER V_IRON(25)
-        REAL V_IRAMT(25)
-        REAL V_IREFF(25)
+        REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
+        REAL V_IMDEP(20)
+        REAL V_ITHRL(20)
+        REAL V_ITHRU(20)
+        INTEGER V_IRON(20)
+        REAL V_IRAMT(20)
+        REAL V_IREFF(20)
+        INTEGER GSIRRIG
+        CHARACTER*5 V_IRONC(20)
       End Type MgmtType
 
 !     Data transferred from Soil water routine
