@@ -362,10 +362,6 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASINIT) THEN
 C-----------------------------------------------------------------------
-      IF (IDETN == 'N') RETURN
-      IF (MOD(DAS, FROP) .NE. 0) RETURN
-
-      CALL YR_DOY(YRDOY, YEAR, DOY) 
 
       TOTCO2 = SUM(newCO2)
       CumTotCO2 = CumTotCO2 + TOTCO2
@@ -375,7 +371,12 @@ C-----------------------------------------------------------------------
       CN2O_emitted = N2O_data % CN2O_emitted 
       CN2_emitted  = N2O_data % CN2_emitted  
       
-       WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
+      IF (IDETN == 'N') RETURN
+      IF (MOD(DAS, FROP) .NE. 0) RETURN
+
+      CALL YR_DOY(YRDOY, YEAR, DOY) 
+
+      WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
      &   '(1X,I4,1X,I3.3,I6,',
      &   '2F8.2,I8,F8.2,F8.1,3F8.3,',
      &   '2F8.1,I8,F8.1,I8,3F8.2,',
