@@ -6,6 +6,10 @@ C  REVISION HISTORY
 C  02/01/2002 CHP Written based on OPHARV subroutine.
 C  04/16/2002 GH  Added control block 
 C  04/18/2002 GH  Modified DAP variable
+
+! 09/25/2016 - why does this have to be separate from OPVIEW, which is 
+!             generic for all other crops? I think this should be 
+!             folded into OPVIEW.for.
 C=======================================================================
 
       SUBROUTINE FOR_OPVIEW(CONTROL,  
