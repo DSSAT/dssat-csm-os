@@ -370,7 +370,7 @@ C=======================================================================
       INTEGER iSTAGE, iSTGDOY
 
 
-      REAL BDAVG3, CUMDEP, IRRAMT, TILDEP
+      REAL BDAVG3, CUMDEP, IRRAMT, TILDEP, DEPIR
       REAL TotAmtN, TotAmtP, TotAmtK, TOTIR, TotResWt, SurfRes, RootRes
       REAL, DIMENSION(NELEM) :: AMTFER, CumRESE
       REAL, DIMENSION(NL) :: BD, DLAYR
@@ -690,9 +690,10 @@ C-----------------------------------------------------------------------
 
 !       Irrigation
         IF (IRRAMT > 1.E-6) THEN
+          CALL Get('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm) (includes losses)
           WRITE(DLUN2,110) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
      &          "Irrigation     ",
-     &        Irramt, " mm"
+     &        DEPIR, " mm (including losses)"
   110     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.1,A))
         ENDIF
 
@@ -728,6 +729,8 @@ C-----------------------------------------------------------------------
         WRITE(DLUN2,'(" ")')
         CLOSE (DLUN)
       ENDIF
+
+      
 
 !***********************************************************************
 !***********************************************************************

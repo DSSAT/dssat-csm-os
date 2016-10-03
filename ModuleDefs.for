@@ -553,7 +553,7 @@ D       STDPATH = 'D:\DSSAT46\'
 
 !     Data transferred from management routine 
       Type MgmtType
-        REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR
+        REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR
         REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
         REAL V_IMDEP(20)
         REAL V_ITHRL(20)
@@ -782,6 +782,7 @@ D       STDPATH = 'D:\DSSAT46\'
         SELECT CASE (VarName)
         Case ('EFFIRR'); Value = SAVE_data % MGMT % EFFIRR
         Case ('TOTIR');  Value = SAVE_data % MGMT % TOTIR
+        Case ('TOTEFFIRR');Value=SAVE_data % MGMT % TOTEFFIRR
         Case ('DEPIR');  Value = SAVE_data % MGMT % DEPIR
         Case ('IRRAMT'); Value = SAVE_data % MGMT % IRRAMT
         Case ('FERNIT'); Value = SAVE_data % MGMT % FERNIT
@@ -895,6 +896,7 @@ D       STDPATH = 'D:\DSSAT46\'
         SELECT CASE (VarName)
         Case ('EFFIRR'); SAVE_data % MGMT % EFFIRR = Value
         Case ('TOTIR');  SAVE_data % MGMT % TOTIR  = Value
+        Case ('TOTEFFIRR');SAVE_data%MGMT % TOTEFFIRR=Value
         Case ('DEPIR');  SAVE_data % MGMT % DEPIR  = Value
         Case ('IRRAMT'); SAVE_data % MGMT % IRRAMT = Value
         Case ('FERNIT'); SAVE_data % MGMT % FERNIT = Value

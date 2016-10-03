@@ -806,11 +806,11 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     Transfer data to ModuleData
-      CALL PUT('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm)
-      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm)
-      CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
+      CALL PUT('MGMT','DEPIR', DEPIR)   !Total applied irrig amt today (mm) (includes losses)
       CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
-
+      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
+      CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) !Total effective irrigation (mm)
+      CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
 !***********************************************************************
       ENDIF
 !***********************************************************************
