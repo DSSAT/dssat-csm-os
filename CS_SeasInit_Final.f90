@@ -228,7 +228,7 @@
             WRITE(fnumwrk,*)'  Brfx(6)',brfx(6)
             WRITE(fnumwrk,*)'  Canhts ',canhts
             WRITE(fnumwrk,*)' Leaves     '
-            WRITE(fnumwrk,*)'  La1s   ',La1s
+            !WRITE(fnumwrk,*)'  La1s   ',La1s       !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15
             WRITE(fnumwrk,*)'  Laxs   ',Laxs
             !WRITE(fnumwrk,*)'  Lafs   ',Lafs        !LPM 05JUN2015 LAFS is not used 
             !WRITE(fnumwrk,*)'  Laxnd,2',Laxno,Laxn2 !LPM 05JUN2016 LAXNO LAXN2 are not used

@@ -229,11 +229,12 @@
             RNCMN(L) = RNPCMN(L)/100.0
         ENDDO
         
-        IF (LA1S.LE.0.0) THEN
-            LA1S = 5.0
-            WRITE(MESSAGE(1),'(A47)') 'Initial leaf size (LA1S) missing. Set to 5 cm2.'
-            CALL WARNING(1,'CSCGR',MESSAGE)
-        ENDIF
+        !IF (LA1S.LE.0.0) THEN                                                                  !DA 03OCT2016 Removing LA1S variable, use not significant for the model
+        !    LA1S = 5.0
+        !    WRITE(MESSAGE(1),'(A47)') 'Initial leaf size (LA1S) missing. Set to 5 cm2.'
+        !    CALL WARNING(1,'CSCGR',MESSAGE)
+        !ENDIF
+        
         !IF (LAFND.GT.0.0.AND.LAFND.LE.LAXNO.OR.LAFND.LT.0) THEN
         !    LAFND = LAXNO + 10
         !    WRITE(MESSAGE(1),'(A59)') 'Leaf # for final size missing or < maximum! Set to max+10.'
@@ -269,7 +270,7 @@
         
         ! Leaves
         IF (PHINTFAC.LE.0.0) PHINTFAC = 0.8
-        IF (LA1S.LT.0.0) LA1S = 5.0
+        !IF (LA1S.LT.0.0) LA1S = 5.0                             !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15     
         IF (LAXS.LT.0.0) LAXS = 200.0
         IF (LWLOS.LT.0.0) LWLOS = 0.3
         IF (LPEFR.LT.0.0) LPEFR = 0.33

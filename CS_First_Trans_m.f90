@@ -361,7 +361,7 @@
     INTEGER :: L                       ! Loop counter                   #          ! (From SeasInit)  
     INTEGER :: L1                      ! Loop counter                   #          ! (From SeasInit)  
     INTEGER :: L2                      ! Loop counter                   #          ! (From Output)    
-    REAL    :: LA1S                    ! Area of leaf 1,standard        cm2        ! (From SeasInit)  
+    !REAL    :: LA1S                    ! Area of leaf 1,standard        cm2        ! (From SeasInit) !DA 03OCT2016 Removing LA1S variable, use not significant for the model
     !REAL    :: LAFND                   ! Node # (one axis)->final area  #          ! (From SeasInit) !LPM 05JUN2015 LAFND is not used
     !REAL    :: LAFS                    ! Leaf area/all nodes,final      cm2        ! (From SeasInit) !LPM 05JUN2015 LAFS is not used 
     !REAL    :: LAGEG(0:LNUMX)          ! Leaf age increment             C.d        ! (From Growth)  !LPM 28MAR15 This variable is not used 
