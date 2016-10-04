@@ -525,7 +525,9 @@ CCCCC-PW
           SKERWT = G2*GSIZE
           STOVER = (BIOMAS*PLANTS*10.0)  - DYIELD
 
-          IF (HARVFRAC(2) .LE. 0.0) THEN
+!         Default is to remove all by-product, but need to allow zero removal
+!         IF (HARVFRAC(2) .LE. 0.0) THEN - changed chp 10/4/2016
+          IF (HARVFRAC(2) .LT. -0.001) THEN
               HARVFRAC(2) = 1.0
           ENDIF
 
