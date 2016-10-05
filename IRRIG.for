@@ -87,9 +87,12 @@ C=======================================================================
 	  CHARACTER*5 V_IRONC(20)
 	  CHARACTER*5 IRONC(20)
 	  REAL AVWATT    ! Water available for irrigation today (mm)
-	  INTEGER IRINE   ! The number of irrigation inputs entered by the user
+	  INTEGER NGSIrrigs   ! The number of irrigation inputs entered by the user
 	  INTEGER IRINC   ! Counter keeping track of irrigation input been used
 	  REAL THETAU   ! Threshold, % of available water stopping irrigation
+        INTEGER NWaterLimits !Number of water limit entrees
+        LOGICAL SeasonalWL ! T or F - only one water limitation for the entire season?
+        REAL WatUsed  !Water used to date in current growth stage
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -114,34 +117,6 @@ C=======================================================================
 
       DAS = CONTROL % DAS
 
-      ! Import array values for growth stage based irrigation
-
-
-      IMDEP = SAVE_data % MGMT % V_IMDEP       ! Depth
-      ITHRL = SAVE_data % MGMT % V_ITHRL       ! Lower threshold triggering irrigation
-      ITHRU = SAVE_data % MGMT % V_ITHRU       ! Upper threshold triggering irrigation
-      IRONC = SAVE_data % MGMT % V_IRONC       ! IRON in text (for compatibility)
-      IRON  = SAVE_data % MGMT % V_IRON        ! Growth Stage for parameters
-      IRAMT = SAVE_data % MGMT % V_IRAMT       ! Automatic irrigation with fixed amount
-      IREFF = SAVE_data % MGMT % V_IREFF       ! Irrigation Efficiency fraction
-      AVWATI =SAVE_data % MGMT % V_AVWAT       ! Water available for irrigation
-      IRINE  =SAVE_data % MGMT % GSIRRIG
-
-      IF ((IRINC .EQ. -99) .OR. (IRINC .EQ. 0) .OR. (DAS .EQ. 0)) THEN
-        IRINC = 1                                                       ! Initialize IRINC each season
-      END IF
-
-      IF (IRINC < IRINE) THEN
-        IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
-          IRINC = IRINC + 1                                               ! If you reach the next GS specified, add 1 to IRINC
-        END IF
-      ENDIF
-
-      IF (IRINC .GT. IRINE) THEN
-        IRINC =   IRINE                                                 ! IRINC cannot exceed IRNE
-      END IF
-
-      AVWAT = AVWATI(1)
 
 C***********************************************************************
 C***********************************************************************
@@ -168,13 +143,12 @@ C-----------------------------------------------------------------------
       NPERC  = 0  !# percs
 
       IRRAMT = 0.0
-      NAP    = 0
       TOTIR  = 0.
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
 
-!     If in limited irrigation mode, check if there is water for irrigation
-      IF ((TOTIR .GE. AVWAT) .AND. (AVWAT .NE. -99)) IIRRI = "N"
+!!     If in limited irrigation mode, check if there is water for irrigation
+!      IF ((TOTIR .GE. AVWAT) .AND. (AVWAT .NE. -99)) IIRRI = "N"
 
       IF (ISWWAT .EQ. 'Y') THEN
       !Data is read if not sequenced or seasonal run or for first
@@ -259,6 +233,50 @@ C-----------------------------------------------------------------------
    50     CONTINUE
           CLOSE (LUNIO)
 !        ENDIF
+
+!     Import array values for growth stage based irrigation directly from input module
+      IMDEP = SAVE_data % MGMT % V_IMDEP       ! Depth
+      ITHRL = SAVE_data % MGMT % V_ITHRL       ! Lower threshold triggering irrigation
+      ITHRU = SAVE_data % MGMT % V_ITHRU       ! Upper threshold triggering irrigation
+      IRONC = SAVE_data % MGMT % V_IRONC       ! IRON in text (for compatibility)
+      IRON  = SAVE_data % MGMT % V_IRON        ! Growth Stage for parameters
+      IRAMT = SAVE_data % MGMT % V_IRAMT       ! Automatic irrigation with fixed amount
+      IREFF = SAVE_data % MGMT % V_IREFF       ! Irrigation Efficiency fraction
+      AVWATI =SAVE_data % MGMT % V_AVWAT       ! Water available for irrigation
+      NGSIrrigs  =SAVE_data % MGMT % GSIRRIG
+
+!-----------------------------------------------------------------------
+      !IF ((IRINC .EQ. -99) .OR. (IRINC .EQ. 0) .OR. (DAS .EQ. 0)) THEN
+      !  IRINC = 1 ! Initialize IRINC each season
+      !END IF
+      IRINC = 1
+
+      !IF (IRINC < NGSIrrigs) THEN
+      !  IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
+      !    IRINC = IRINC + 1  ! If you reach the next GS specified, add 1 to IRINC
+      !  END IF
+      !ENDIF
+      !
+      !IF (IRINC .GT. NGSIrrigs) THEN
+      !  IRINC =   NGSIrrigs  ! IRINC cannot exceed IRNE
+      !END IF
+
+!     Handle growth stage dependent available water
+!      AVWAT = AVWATI(1)
+      NWaterLimits = 0
+      DO i = 1, NGSIrrigs
+        IF (ABS(AVWATI(i) - -99.) < 1.E-3) THEN
+          AVWATI(i) = 99999999.  !Set to something huge, no limitation
+        ELSE
+          NWaterLimits = NWaterLimits + 1
+        ENDIF
+      ENDDO
+
+      SeasonalWL = .FALSE.
+      IF (NWaterLimits == 1 .AND. ABS(AVWATI(1) - -99.) > 1.E-3) THEN
+        SeasonalWL = .TRUE. 
+        AVWAT = AVWATI(1)
+      ENDIF
 
 C-----------------------------------------------------------------------
 C     Set Irrigation Management
@@ -595,7 +613,7 @@ C-----------------------------------------------------------------------
 !     DAILY RATE CALCULATIONS
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
-C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
       DEPIR  = 0.
       IRRAMT = 0.
       IRRAPL = 0.0
@@ -672,14 +690,45 @@ C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
 C-----------------------------------------------------------------------
       CASE ('A', 'F')
 
+!-----------------------------------------------------------------------
+      !IF ((IRINC .EQ. -99) .OR. (IRINC .EQ. 0) .OR. (DAS .EQ. 0)) THEN
+      !  IRINC = 1 ! Initialize IRINC each season
+      !END IF
+
+!     Check for growth stage dependent irrigation
+      IF (IRINC < NGSIrrigs) THEN
+        IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
+          IRINC = IRINC + 1  ! If you reach the next GS specified, add 1 to IRINC
+          WatUsed = 0.0      ! reset accumulator for water used in this growth stage
+        END IF
+      ENDIF
+
+      IF (IRINC .GT. NGSIrrigs) THEN
+        IRINC = NGSIrrigs  ! IRINC cannot exceed NGSIrrigs
+      END IF
+
 !     Set variables for growth stage driven simulation
-!        IF ((IRINE .NE. 1) .AND. (IOFF .NE. "GS000" )) THEN
+!        IF ((NGSIrrigs .NE. 1) .AND. (IOFF .NE. "GS000" )) THEN
            DSOIL  = IMDEP(IRINC)
            THETAC = ITHRL(IRINC)
            THETAU = ITHRU(IRINC)
            AIRAMT = IRAMT(IRINC)
            EFFIRR = IREFF (IRINC)
 !        END IF
+
+!      Check for water availability today
+!      AVWAT = AVWATI(1)
+
+      IF (SeasonalWL) THEN
+        AVWATT = AVWAT - TOTIR ! Calculate water available today
+      ELSE
+        AVWATT = AVWATI(IRINC) - WatUsed
+      ENDIF
+
+      IF (AVWATT < 1.E-5 .AND. ABS(AVWAT - -99.) > 1.E-5) THEN
+          IRRAMT = 0.0
+          DEPIR  = 0.0
+        ELSE
 
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
@@ -709,7 +758,6 @@ C             Apply fixed irrigation amount
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
-            AVWATT = AVWAT - TOTIR ! Calculate water available today
             IF ((DEPIR .GT. AVWATT) .AND. (AVWAT .NE.	-99)) THEN  !(IIRRI .EQ. 'L')) THEN
               DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
             ENDIF
@@ -721,7 +769,7 @@ C             Apply fixed irrigation amount
             !AMIR(NAP)   = IRRAPL
           ENDIF
         ENDIF
-
+       ENDIF
 C-----------------------------------------------------------------------
 C** IIRRI = P - As Reported through last reported day, then automatic
 C          to re-fill profile (as in option A)
@@ -803,6 +851,7 @@ C-----------------------------------------------------------------------
         !NAP    = NAP + 1
         TOTIR  = TOTIR + DEPIR
         TOTEFFIRR = TOTEFFIRR + IRRAMT
+        WatUsed = WatUsed + DEPIR
       ENDIF
 
 !     Transfer data to ModuleData
