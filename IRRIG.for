@@ -94,6 +94,7 @@ C=======================================================================
       INTEGER NWaterLimits !Number of water limit entrees
       LOGICAL SeasonalWL  ! T or F - only one water limitation for the entire season?
       REAL WatUsed        ! Water used to date in current growth stage
+      REAL, PARAMETER :: VeryLargeNumber = 99999999.
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -246,14 +247,14 @@ C-----------------------------------------------------------------------
       NWaterLimits = 0
       DO i = 1, NGSIrrigs
         IF (ABS(AVWATI(i) - -99.) < 1.E-3) THEN
-          AVWATI(i) = 99999999.  !Set to something huge, no limitation
+          AVWATI(i) = VeryLargeNumber  !Set to something huge, no limitation
         ELSE
           NWaterLimits = NWaterLimits + 1
         ENDIF
       ENDDO
 
       SeasonalWL = .FALSE.
-      IF (NWaterLimits == 1 .AND. ABS(AVWATI(1) - -99.) > 1.E-3) THEN
+      IF (NWaterLimits == 1 .AND. AVWATI(1) < VeryLargeNumber-1) THEN
         SeasonalWL = .TRUE. 
         AVWAT = AVWATI(1)
       ENDIF
