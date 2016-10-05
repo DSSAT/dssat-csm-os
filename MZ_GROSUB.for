@@ -2046,9 +2046,7 @@
           ENDIF
         ENDIF
         
-        !Default is to remove all by-product, but need to allow zero removal
-        !IF (HARVFRAC(2) .LE. 0.0) THEN - changed chp 10/4/2016
-        IF (HARVFRAC(2) .LT. -0.001) THEN
+        IF (HARVFRAC(2) .LE. 0.0) THEN
               HARVFRAC(2) = 1.0
         ENDIF
         
