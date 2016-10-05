@@ -148,6 +148,7 @@ C-----------------------------------------------------------------------
       TOTIR  = 0.
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
+      WatUsed = 0.0
 
       IF (ISWWAT .EQ. 'Y') THEN
 
@@ -682,10 +683,10 @@ C-----------------------------------------------------------------------
         AVWATT = AVWATI(IRINC) - WatUsed
       ENDIF
 
-      IF (AVWATT < 1.E-5 .AND. ABS(AVWAT - -99.) > 1.E-5) THEN
-          IRRAMT = 0.0
-          DEPIR  = 0.0
-      ELSE
+!      IF (AVWATT < 1.E-5 .AND. ABS(AVWAT - -99.) > 1.E-5) THEN
+!          IRRAMT = 0.0
+!          DEPIR  = 0.0
+!      ELSE
 
 !       There is water available, check for demand
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
@@ -719,10 +720,10 @@ C             Apply fixed irrigation amount
             IF ((DEPIR .GT. AVWATT) .AND. (AVWAT .NE.	-99)) THEN  
               DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
             ENDIF
-
-            NAP = NAP + 1
+           
+              NAP = NAP + 1
           ENDIF
-        ENDIF
+!        ENDIF
        ENDIF
 C-----------------------------------------------------------------------
 C** IIRRI = P - As Reported through last reported day, then automatic
@@ -740,7 +741,7 @@ C-----------------------------------------------------------------------
               EXIT LOOP3
             ENDIF
           END DO LOOP3
-        ENDIF
+		ENDIF
 
 C-----------------------------------------------------------------------
 C       If Today's date is after the last record in the IRRIG section
@@ -806,6 +807,7 @@ C-----------------------------------------------------------------------
         TOTEFFIRR = TOTEFFIRR + IRRAMT
         WatUsed = WatUsed + DEPIR
       ENDIF
+
 
 !     Transfer data to ModuleData
       CALL PUT('MGMT','DEPIR', DEPIR)   !Total applied irrig amt today (mm) (includes losses)
