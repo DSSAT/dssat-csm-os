@@ -47,3 +47,4 @@ resource.h
 *.o
 *.mod
 *.ico
+Resources/RC*
