@@ -50,3 +50,4 @@ resource.h
 .DS_Store
 Data/.DS_Store
 Resources/RC*
+*makefile*
