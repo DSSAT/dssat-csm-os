@@ -205,7 +205,7 @@
         !dusri = -99 !LPM 05JUN2015 DUSRI is not used
         parue = -99
         paru2 = -99
-        la1s = -99
+        !la1s = -99                                                                         !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15
         laxs = -99
         laws = -99
         rdgs = -99
@@ -292,7 +292,7 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RLWR',rlwr)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARUE',parue)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PARU2',paru2)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',la1s)
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LA1S',la1s)                                            !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15
             ! New (Nov 2011) N uptake variables
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NUPNF',no3cf)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NUPWF',h2ocf)
@@ -357,7 +357,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'RLWR',rlwr)
             CALL CUREADR (CUDIRFLE,VARNO,'PARUE',parue)
             CALL CUREADR (CUDIRFLE,VARNO,'PARU2',paru2)
-            CALL CUREADR (CUDIRFLE,VARNO,'LA1S',la1s)
+            !CALL CUREADR (CUDIRFLE,VARNO,'LA1S',la1s)                                  !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15
             CALL CUREADR (CUDIRFLE,VARNO,'LPEFR',lpefr)
             ! New (Nov 2011) N uptake variables
             CALL CUREADR (CUDIRFLE,VARNO,'NUPNF',no3cf)
@@ -401,7 +401,7 @@
         IF (PARUE.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
         IF (PARU2.LT.-89.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',paru2)
         ! Leaf area
-        IF (LA1S.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)
+        !IF (LA1S.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)                             !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15 
         IF (LAXS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAXS',laxs)
         IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',laws)
         ! Roots
