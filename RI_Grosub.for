@@ -525,7 +525,7 @@ CCCCC-PW
           SKERWT = G2*GSIZE
           STOVER = (BIOMAS*PLANTS*10.0)  - DYIELD
 
-          IF (HARVFRAC(2) .LE. 0.0) THEN
+          IF (HARVFRAC(2) .LE. 0.0) THEN 
               HARVFRAC(2) = 1.0
           ENDIF
 
