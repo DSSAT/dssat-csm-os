@@ -93,7 +93,7 @@ C=======================================================================
 	REAL THETAU         ! Threshold, % of available water stopping irrigation
       INTEGER NWaterLimits !Number of water limit entrees
       LOGICAL SeasonalWL  ! T or F - only one water limitation for the entire season?
-      REAL WatUsed        ! Water used to date in current growth stage
+      REAL GSWatUsed      ! Water used to date in current growth stage
       REAL, PARAMETER :: VeryLargeNumber = 99999999.
 
 !-----------------------------------------------------------------------
@@ -148,6 +148,7 @@ C-----------------------------------------------------------------------
       TOTIR  = 0.
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
+      GSWatUsed = 0.0
 
       IF (ISWWAT .EQ. 'Y') THEN
 
@@ -660,7 +661,7 @@ C-----------------------------------------------------------------------
       IF (IRINC < NGSIrrigs) THEN
         IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
           IRINC = IRINC + 1  ! If you reach the next GS specified, add 1 to IRINC
-          WatUsed = 0.0      ! reset accumulator for water used in this growth stage
+          GSWatUsed = 0.0    ! reset accumulator for water used in this growth stage
         END IF
       ENDIF
 
@@ -677,12 +678,14 @@ C-----------------------------------------------------------------------
 
 !     Check for water availability today
       IF (SeasonalWL) THEN
-        AVWATT = AVWAT - TOTIR ! Calculate water available today
+!       Water available today = seasonal limitation minus seasonal use
+        AVWATT = AVWAT - TOTIR 
       ELSE
-        AVWATT = AVWATI(IRINC) - WatUsed
+!       Water available today = GS limitation minus GS use 
+        AVWATT = AVWATI(IRINC) - GSWatUsed
       ENDIF
 
-      IF (AVWATT < 1.E-5 .AND. ABS(AVWAT - -99.) > 1.E-5) THEN
+      IF (AVWATT < 1.E-5) THEN
           IRRAMT = 0.0
           DEPIR  = 0.0
       ELSE
@@ -711,16 +714,16 @@ C             Apply fixed irrigation amount
               IRRAPL = AIRAMT
             ENDIF
 
+            IF (IRRAPL .GT. AVWATT) THEN  
+              IRRAPL = AVWATT   ! IF irrigation greater than water available, limit irrigation
+            ENDIF
+           
             SELECT CASE(AIRRCOD)
               CASE(1:4,6); TIL_IRR = TIL_IRR + IRRAPL
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
-            IF ((DEPIR .GT. AVWATT) .AND. (AVWAT .NE.	-99)) THEN  
-              DEPIR = AVWATT   ! IF irrigation greater than water available, limit irrigation
-            ENDIF
-
-            NAP = NAP + 1
+            IF (DEPIR > 0.0001) NAP = NAP + 1
           ENDIF
         ENDIF
        ENDIF
@@ -740,7 +743,7 @@ C-----------------------------------------------------------------------
               EXIT LOOP3
             ENDIF
           END DO LOOP3
-        ENDIF
+		ENDIF
 
 C-----------------------------------------------------------------------
 C       If Today's date is after the last record in the IRRIG section
@@ -804,8 +807,9 @@ C-----------------------------------------------------------------------
       IF (DEPIR .GT. 0.0) THEN
         TOTIR  = TOTIR + DEPIR
         TOTEFFIRR = TOTEFFIRR + IRRAMT
-        WatUsed = WatUsed + DEPIR
+        GSWatUsed = GSWatUsed + DEPIR
       ENDIF
+
 
 !     Transfer data to ModuleData
       CALL PUT('MGMT','DEPIR', DEPIR)   !Total applied irrig amt today (mm) (includes losses)
