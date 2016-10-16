@@ -117,26 +117,4 @@
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  2 HA              0 83146   100     0
 
-! Notes on new features
-! ---------------------
-! Limited irrigation: In simulation control > Method select L for Limited irrigation (e.g. Sim control 3)
-! Water available: Needed when limited irrigation is specified. Add AVWAT in Automatic Management > Irrigation
-! (e.g. Sim Control 3). 
-! AVWAT = Available water for irrigation during the season in mm
-! Deficit Irrigation: Deficit irrigation works with automatic irrigation and limited irrigation. To control
-! deficit irrigation the following variables and parameters were added: DEFIR (Switch),  FIST1 (Full
-! irrigation stage 1), FIST2 (Full irrigation stage 2), and ITHR2 (Irrigation threshold for the full 
-! irrigation stages).
-! DEFIR = Deficit irrigation switch (Y or N)
-! FIST1 and FIST2 = Full irrigation stage (1 and 2) under deficit irrigation (integer from 1 to 20, must match
-! one of the stages for the crop simulated). Full irrigation will be irrigates using ITHR2 while all other
-! stages will rely on ITHRL.
-! Hint: The growth stages for CERES crops may be found in "Ritchie, J. T., 
-! et al. "Cereal growth, development and yield." Understanding options for agricultural production. Springer 
-! Netherlands, 1998. 79-98." in Table 2. The growth stages for some CROPGRO models can be found in "Hoogenboom,
-! G., J. W. Jones, and K. J. Boote. "Modeling growth, development, and yield of grain legumes using SOYGRO, 
-! PNUTGRO, and BEANGRO: a review." Transactions of the ASAE 35.6 (1992): 2043-2056." in Figure 4.
-! ITHR2 = Threshold, % of maximum available water triggering irrigation for fully irrigated stages uder 
-! deficit irrigation.
-
 
