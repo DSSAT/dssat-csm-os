@@ -61,13 +61,15 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 1
-        INTEGER :: Build = 7
+        INTEGER :: Build = 8
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.1.08 chp 10/18/2016 CSCER compatibility with sequence, NWheat species file update
+!                               Rice N uptake initialization, taro N uptake calculation 
 !       4.6.1.07 chp 07/29/2016 Millet changes from KJB, Puddled rice deactivates after 30 days dry
 !       4.6.1.06 chp 07/21/2016 DSSAT soil temperature is default method, per GH.
 !       4.6.1.05 chp 07/21/2016 EPIC soil temperature is default method.
