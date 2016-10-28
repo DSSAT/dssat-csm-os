@@ -228,6 +228,7 @@
                         IF (LAGL(BR,LF).GT.(LAPOTX2(BR,LF)-LATL3(BR,LF))) LAGL(BR,LF) = LAPOTX2(BR,LF)-LATL3(BR,LF)
                         !LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                !EQN 323 !LPM 24APR2016 To estimate daily leaf area increase instead of total
                         LATL(BR,LF) = LATL(BR,LF) + LAGL(BR,LF)                                                                  !EQN 323
+                        LATL(BR,LF) = AMIN1(LATL(BR,LF), LAPOTX(BR,LF))
                         !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by Tflflife to be able to change the Tb
                         !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
                         !LAGL(BR,LF) = LATLPOT(BR,LF)* AMIN1(WFG,NFG)
