@@ -115,7 +115,7 @@
                 IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
                     LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLIFE*EMRGFR                                              !EQN 358
                     ! Accelerated senescence at base of dense leaf canopy
-                    IF (LAI.GT.LAIXX) THEN
+                    IF (LAI.GT.LAIXX) THEN                                              !TODO
                         IF (LF.EQ.TVI1.AND.BR.EQ.BROLDESTA) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)

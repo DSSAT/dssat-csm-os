@@ -361,7 +361,7 @@
     INTEGER :: L                       ! Loop counter                   #          ! (From SeasInit)  
     INTEGER :: L1                      ! Loop counter                   #          ! (From SeasInit)  
     INTEGER :: L2                      ! Loop counter                   #          ! (From Output)    
-    !REAL    :: LA1S                    ! Area of leaf 1,standard        cm2        ! (From SeasInit) !DA 03OCT2016 Removing LA1S variable, use not significant for the model
+    REAL    :: LA1S                    ! Area of leaf 1,standard        cm2        ! (From SeasInit)  
     !REAL    :: LAFND                   ! Node # (one axis)->final area  #          ! (From SeasInit) !LPM 05JUN2015 LAFND is not used
     !REAL    :: LAFS                    ! Leaf area/all nodes,final      cm2        ! (From SeasInit) !LPM 05JUN2015 LAFS is not used 
     !REAL    :: LAGEG(0:LNUMX)          ! Leaf age increment             C.d        ! (From Growth)  !LPM 28MAR15 This variable is not used 
@@ -373,6 +373,7 @@
     REAL    :: LAGLT(0:PSX,0:LCNUMX)   ! Leaf area growth by cohort     cm2/cohort ! (From SeasInit) !LPM 25OCT15 added to keep the leaf area by cohort
     REAL    :: LAI                     ! Leaf area index                #          ! (From SeasInit)  
     REAL    :: LAIA                    ! Leaf area index,active         #          ! (From Output)    
+    REAL    :: LAIByCohort(0:PSX,0:LCNUMX)  ! Leaf area index by cohort      #     !                  !DA  28OCT2016 Added to save eaf area index from cohort data
     INTEGER :: LAIDCOL                 ! Leaf area index column         #          ! (From Output)    
     REAL    :: LAIPREV                 ! Leaf area index,previous day   #          ! (From SeasInit)  
     REAL    :: LAIPROD                 ! Leaf area index produced       #          ! (From Output)    
