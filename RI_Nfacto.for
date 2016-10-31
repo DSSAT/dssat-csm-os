@@ -36,6 +36,8 @@ C
 C     Data from Ishizuka, SINGH-(IBSNAT)
 C
 !  03/03/2007 US - Put these in species file.
+!  TODO 10/31/2016 chp - still not in species file!!
+!  N concentration (NPER) as function of crop stage (XST)
       DATA XST /0.80,0.82,0.85,0.90,1.00,1.50,2.00,2.50,3.00,4.00,
      &          5.00,5.20,5.50,6.00,7.50,9.0/
       !DATA NPER/4.30,4.00,3.80,3.40,3.00,2.90,2.70,2.30,2.00,1.75,
