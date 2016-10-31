@@ -437,7 +437,7 @@
     REAL    :: LLIFS                   ! Leaf senescence dur,as read    d          ! (From SeasInit)  
     REAL    :: LLIFSTT                 ! Leaf senescence duration,Ttime C.d        ! (From SeasInit)  
     REAL    :: LLIFX                   ! Leaf ageing acceleration,max   Tu         ! (From SeasInit)  
-    REAL    :: LLIFXUNUSED             ! Leaf ageing accel.unused       Tu         ! (From Integrate) 
+    REAL    :: LLIFXUnused             ! Leaf ageing accel.unused       Tu         ! (From Integrate) 
     REAL    :: LLIGP                   ! Leaf lignin percentage         #          ! (From SeasInit)  
     REAL    :: LLNAD                   ! Leaf lamina nitrogen           kg/ha      ! (From SeasInit)  
     REAL    :: LLOSA                   ! Leaf area loss,accelerated sen fr         ! (From SeasInit)  

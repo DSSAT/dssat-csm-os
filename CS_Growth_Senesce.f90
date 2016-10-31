@@ -82,6 +82,9 @@
               
         ! LPM As a NOTE for further code: if PLASW and PLASN want to be added to the code, should be calculated by cohort
         
+        !-----------------------------------------------------------------------
+        !        LAI by Cohort
+        !-----------------------------------------------------------------------
         LAIByCohort(BR,LF)=0.0
         DO Bcount=0,BRSTAGE
             BR= BRSTAGE - Bcount                                                        ! DA to run the loop to the higher branch to the lowest

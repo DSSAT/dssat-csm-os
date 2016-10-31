@@ -112,25 +112,25 @@
         
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM 23MAY2015 Modified to avoid high values of LAGETT 
-                IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
+                IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
                     LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLIFE*EMRGFR                                              !EQN 358
                     ! Accelerated senescence at base of dense leaf canopy
-                    IF (LAI.GT.LAIXX) THEN                                              !TODO
-                        IF (LF.EQ.TVI1.AND.BR.EQ.BROLDESTA) THEN
+                    IF (LAI > LAIXX) THEN                                              !TODO
+                        IF (LF == TVI1.AND.BR == BROLDESTA) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf
-                            IF (LAGETT(BR,LF).LT.LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
-                                LLIFXUNUSED = (LAGETT(BR,LF)+LLIFX)-LLIFATT                                                    !EQN 360a LPM 28MAR15 LLIFXUNUSED should be before of the estimation of LAGETT 
+                            IF (LAGETT(BR,LF) < LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                                LLIFXUnused = (LAGETT(BR,LF)+LLIFX)-LLIFATT                                                    !EQN 360a LPM 28MAR15 LLIFXUNUSED should be before of the estimation of LAGETT 
                                 LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFX,LLIFATT)                                             !EQN 359
                             ELSE
-                                LLIFXUNUSED = LLIFX                                                                            !EQN 360b
+                                LLIFXUnused = LLIFX                                                                            !EQN 360b
                             ENDIF
                         ENDIF
                         ! If not all acceleration used up
-                        IF (LF.EQ.TVI1+1) THEN
-                            IF (LLIFXUNUSED.GT.0.0) THEN
-                                IF (LAGETT(BR,LF).LT.LLIFATT) LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFXUNUSED,LLIFATT)     !EQN 361
+                        IF (LF == TVI1+1) THEN
+                            IF (LLIFXUnused > 0.0) THEN
+                                IF (LAGETT(BR,LF).LT.LLIFATT) LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFXUnused,LLIFATT)     !EQN 361
                             ENDIF
                         ENDIF
                     ENDIF
