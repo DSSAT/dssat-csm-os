@@ -233,6 +233,7 @@
                         !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
                         !LAGL(BR,LF) = LATLPOT(BR,LF)* AMIN1(WFG,NFG)
                         LATL2(BR,LF) = LATL2(BR,LF) + LAGL(BR,LF)                                  !EQN 324 !LPM 24APR2016 LATL2 with the same value than LATL 
+                        LATL2(BR,LF) = AMIN1(LATL2(BR,LF), LAPOTX(BR,LF))                                               !DA 28OCT2016 Limiting LATL2 to not get over the maximum potential
                         SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF)                                    !EQN 325
                      
                         !LPM 15NOV15 Variables LAGLT and LATL2T created to save the leaf are by cohort (all the plant (all branches and shoots))

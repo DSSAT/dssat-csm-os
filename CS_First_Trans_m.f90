@@ -30,6 +30,7 @@
     REAL    :: AVGSW                   ! Average soil water in SWPLTD   %          ! (From Growth)    
     REAL    :: b_slope_lsize           ! Slope to define  max leaf size #          ! LPM 28feb15 
     REAL    :: BASELAYER               ! Depth at base of layer         cm         ! (From Integrate) 
+    REAL    :: Bcount                  ! counters for iterations in branches (Bcount)
     INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
     INTEGER :: BRDAE(PSX)              ! DAE when a new branch appears  d          ! LPM 11APR15 To save the date of branch appearance
     REAL    :: BRFX(0:PSX)             ! Branch # per fork at each fork #          ! (From SeasInit)  
@@ -417,6 +418,7 @@
     !INTEGER :: LCNUM                   ! Leaf cohort number (inc.grow)  #          ! (From SeasInit) !LPM 28MAR15 Non necessary variables  
     !REAL    :: LCOA(LCNUMX)            ! Leaf cohort area               cm2        ! (From SeasInit) !LPM 25MAR15 Non necessary variables  
     !REAL    :: LCOAS(LCNUMX)           ! Leaf cohort area senesced      cm2        ! (From SeasInit)  
+    REAL    :: Lcount                   ! counters for iterations in leafs (Lcount)
     INTEGER :: LDEATHDAP(0:PSX,0:LCNUMX)! DAP on which leaf 100% dead    #          ! (From Integrate) 
     REAL    :: LEAFN                   ! Leaf N                         g/p        ! (From SeasInit)  
     REAL    :: LEAFNEXCESS             ! Leaf N > critical              g/p        ! (From Integrate) 
@@ -433,11 +435,11 @@
     REAL    :: LLIFA                   ! Leaf life duration,active,read #          ! (From SeasInit)  
     REAL    :: LLIFATT                 ! Leaf life duration,active      C.d        ! (From SeasInit)  
     REAL    :: LLIFG                   ! Leaf growth duration,as read   #          ! (From SeasInit)  
-    REAL    :: LLIFGTT                 ! Leaf growth durtion            C.d        ! (From SeasInit)  
+    REAL    :: LLIFGTT                 ! Leaf growth duration           C.d        ! (From SeasInit)  
     REAL    :: LLIFS                   ! Leaf senescence dur,as read    d          ! (From SeasInit)  
     REAL    :: LLIFSTT                 ! Leaf senescence duration,Ttime C.d        ! (From SeasInit)  
     REAL    :: LLIFX                   ! Leaf ageing acceleration,max   Tu         ! (From SeasInit)  
-    REAL    :: LLIFXUnused             ! Leaf ageing accel.unused       Tu         ! (From Integrate) 
+    !REAL    :: LLIFXUnused             ! Leaf ageing accel.unused       Tu         ! (From Integrate) 
     REAL    :: LLIGP                   ! Leaf lignin percentage         #          ! (From SeasInit)  
     REAL    :: LLNAD                   ! Leaf lamina nitrogen           kg/ha      ! (From SeasInit)  
     REAL    :: LLOSA                   ! Leaf area loss,accelerated sen fr         ! (From SeasInit)  

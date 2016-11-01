@@ -125,8 +125,21 @@
         !-----------------------------------------------------------------------
         !         Update (green) leaf area                            
         !-----------------------------------------------------------------------            
-        LAPD = AMAX1(0.0,(PLA-SENLA-LAPHC))                                                                            !EQN 463
-        LAI = AMAX1(0.0,(PLA-SENLA-LAPHC)*PLTPOP*0.0001)                                                               !EQN 346
+        !LAPD = AMAX1(0.0,(PLA-SENLA-LAPHC))                                                                            !EQN 463
+        !LAI = AMAX1(0.0,(PLA-SENLA-LAPHC)*PLTPOP*0.0001)                                                               !EQN 346
+    
+        ! DA LAI Calculation, this is not considering PLASI (injury) nor PLASS (stress) nor LAPHC (leaf harvest)
+        LAI=0.0
+        DO Bcount=0,BRSTAGE
+            BR= BRSTAGE - Bcount
+            DO Lcount=0,LNUMSIMSTG(BR)-1
+                LF=LNUMSIMSTG(BR)-Lcount
+                IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT ) THEN
+                    LAI=AMAX1(LAI, LAIByCohort(BR,LF))                  ! DA LAI is the biggest LAIByCohort
+                ENDIF
+            ENDDO
+        ENDDO
+        LAPD = LAI/(PLTPOP*0.0001)
         LAIX = AMAX1(LAIX,LAI)
         
         !-----------------------------------------------------------------------

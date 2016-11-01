@@ -16,7 +16,6 @@
         
         CHARACTER(LEN=1) ISWNIT      , ISWWAT
         REAL BRSTAGE
-        REAL Bcount, Lcount ! DA counters for iterations in branches (Bcount) and leafs (Lcount)
     
         !-----------------------------------------------------------------------
         !           Calculate senescence of leaves,stems,etc..
@@ -51,9 +50,9 @@
 
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)         
-                IF (LAGETT(BR,LF)+TTLFLIFE*EMRGFR.LE.LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
-                IF (LATL3T(BR,LF)-LAPS(BR,LF).GT.0.0) THEN
-                    LAPSTMP = AMIN1((LATL3T(BR,LF)-LAPS(BR,LF)),(LATL3T(BR,LF)/LLIFSTT*AMIN1((LAGETT(BR,LF)+(TTLFLIFE*EMRGFR)-LLIFATT), &         !EQN 372
+                IF (LAGETT(BR,LF)+TTLFLIFE*EMRGFR <= LLIFGTT+LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
+                IF (LATL3T(BR,LF)-LAPS(BR,LF) > 0.0) THEN
+                    LAPSTMP = AMIN1((LATL3T(BR,LF)-LAPS(BR,LF)),(LATL3T(BR,LF)/LLIFSTT*AMIN1((LAGETT(BR,LF)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
                         (TTLFLIFE*EMRGFR))))
                     LAPS(BR,LF) = LAPS(BR,LF) + LAPSTMP
                     PLASP = PLASP + LAPSTMP                                                                                !EQN 370
@@ -87,27 +86,27 @@
         !-----------------------------------------------------------------------
         LAIByCohort(BR,LF)=0.0
         DO Bcount=0,BRSTAGE
-            BR= BRSTAGE - Bcount                                                        ! DA to run the loop to the higher branch to the lowest
+            BR= BRSTAGE - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
             DO Lcount=0,LNUMSIMSTG(BR)-1
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
-
-                IF(LF == INT(LNUMSIMSTG(BR)) .AND. BR == INT(BRSTAGE)) THEN                             ! DA for the very first leaf of the top of the highest branch
-                    LAIByCohort(BR,LF) = (LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001                      ! DA calculate LAI of the leaf
-                ELSE                                                                                    ! DA for further leafs
-                    LAIByCohort(BR,LF) = LAIByCohort(BR,LF+1)+(LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001 ! DA the LAI calculation is accumulative
+                IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT ) THEN                      ! DA if leave is alive
+                    IF(LF == INT(LNUMSIMSTG(BR)) .AND. BR == INT(BRSTAGE)) THEN                             ! DA if the very first leaf of the top of the highest branch
+                        LAIByCohort(BR,LF) = (LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001                      ! DA calculate LAI of the leaf
+                    ELSE                                                                                    ! DA if further leaf
+                        LAIByCohort(BR,LF) = LAIByCohort(BR,LF+1)+(LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001 ! DA the LAI calculation is accumulative
+                    ENDIF
                 ENDIF
-                
             ENDDO
         ENDDO
         
         ! Leaf senescence - low light at base of canopy
         ! NB. Just senesces any leaf below critical light fr 
         PLASL = 0.0
-        IF (LAI.GT.LAIXX) THEN
-            PLASL = (LAI-LAIXX) / (PLTPOP*0.0001)
-            ! LAH Eliminated! Replaced by accelerated senescence
-            PLASL = 0.0
-        ENDIF
+        !IF (LAI.GT.LAIXX) THEN
+        !    PLASL = (LAI-LAIXX) / (PLTPOP*0.0001)
+        !    ! LAH Eliminated! Replaced by accelerated senescence
+        !    PLASL = 0.0
+        !ENDIF
             
         ! Leaf senescence - overall
         PLAS =  PLASP + PLASI + PLASS + PLASL                                                                          !EQN 369
