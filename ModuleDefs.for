@@ -48,7 +48,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       !DEC$ ELSE IF DEFINED (__APPLE__)
           CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
       !DEC$ ELSE
-          CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
+          CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
       !DEC$ END IF
 
 !=======================================================================
