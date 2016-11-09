@@ -3,6 +3,8 @@ Thumbs.db
 *.onetoc?
 .gitignore
 #Ignore files build by Visual Studio
+Makefile
+*/Makefile
 *.obj
 *.[eE][xX][eE]
 *.pdb
