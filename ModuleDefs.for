@@ -40,8 +40,16 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
-!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
+
+! The code below works with intel fortran compiler across OSs
+
+      !DEC$ IF DEFINED(__linux__)
+          CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
+      !DEC$ ELSE IF DEFINED (__APPLE__)
+          CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
+      !DEC$ ELSE
+          CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
+      !DEC$ END IF
 
 !=======================================================================
 !     Compiler directives used to set library for system calls
