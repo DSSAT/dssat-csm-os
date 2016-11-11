@@ -152,14 +152,14 @@
                     ! Days senescing
                     IF (LAGETT(BR,LF) > LLIFGTT+LLIFATT) THEN                                                                 ! DA  If leaf is senescing 
                         IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT) THEN                                             ! DA  If leaf started senescing today
-                            TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
+                            TVR1 = (LLIFGTT+LLIFATT-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
                             DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                            !EQN 365a
                         ELSE
                             IF (LAGETT(BR,LF) <= LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is alive
                                 DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                               !EQN 365b
                             ELSE
                                 IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN                             ! DA If leaf die today
-                                    TVR1 = ((LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
+                                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
                                     DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                          !EQN 365c
                                     LDEATHDAP(BR,LF) = DAP                                                                    ! DA establish decease date
                                 ENDIF
