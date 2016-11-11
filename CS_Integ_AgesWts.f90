@@ -168,11 +168,13 @@
                     ENDIF
                 
                 !ELSE 
-                    IF (LAGETT(BR,LF) < LLIFGTT) DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
+                    IF (LAGETT(BR,LF) < LLIFGTT) THEN
+                        DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
+                    ENDIF
                 ENDIF
 
-                IF (LNUMG.GT.0.0.AND.BR.EQ.BRSTAGE.AND.LF.EQ.LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
-                    IF (LNUMSG.LT.LNUMX) THEN
+                IF (LNUMG > 0.0 .AND. BR == BRSTAGE .AND. LF == LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
+                    IF (LNUMSG < LNUMX) THEN
                         LAGETT(BR,LF+1) = LAGETT(BR,LF+1)+(TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
                         !LAGEP(BR,LF+1)=LAGEP(BR,LF+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367 !LPM21MAY2015 this variable is not used
                         DGLF(BR,LF+1) = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                                                       !EQN 368
