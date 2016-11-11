@@ -69,7 +69,9 @@
                         TFGLF(BR,LF) =AMIN1(1.0,TFGLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
                         AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
                     ENDIF
-                    IF (LDEATHDAP(BR,LF).EQ.0) LDEATHDAP = -99
+                    IF (LDEATHDAP(BR,LF) == 0) THEN
+                        LDEATHDAP = -99
+                    ENDIF
                     WRITE (fnumlvs,'(2I6,7A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(BR,LF), &
                         1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(BR,LF),DGLF(BR,LF), &
                         DALF(BR,LF),DSLF(BR,LF),DGLF(BR,LF)+DALF(BR,LF)+DSLF(BR,LF),LDEATHDAP(BR,LF)
