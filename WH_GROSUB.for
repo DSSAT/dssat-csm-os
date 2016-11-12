@@ -2268,13 +2268,18 @@ cSenthold-1
  !*!       ENDDO
 CSenthold-2
          nflow = min(gndmd_est,tot_navl_est)
+
+! temp chp
+         if (nflow > 0) then
+           print *,"gndmd_est,tot_navl_est",gndmd_est,tot_navl_est
+         endif
+
          IF (pl_dmd(grain_part) .ne. 0.0) THEN
             grain_nc_ratio = nflow / pl_dmd(grain_part)
          ENDIF
          grain_nc_ratio = MAX(grain_nc_ratio,
 !*!  &  p_min_grain_nc_ratio)  ! assuming p_min_grain_nc_ratio = min_grain_nc_ratio 
      &                        MNNCR/100)   !*! MNNCR is a .CUL parameter
-     
          IF (grain_nc_ratio .ne. 0.0) THEN
 !*!         pl_dmd(grain_part) = nflow / grain_nc_ratio      ! no nflow yet
          ENDIF
