@@ -1,5 +1,5 @@
 FC = ifort
-FFLAGS =  -nowarn -traceback
+FFLAGS =  -nowarn -std95 -g -traceback
 INC = -I.. -I../ttutil
 OBJECTS = $(patsubst %.f90, %.o, $(wildcard *.f90)) $(patsubst %.for, %.o, $(wildcard *.for))
 all: VARIABLE.o OR_ROOTG.o $(OBJECTS)

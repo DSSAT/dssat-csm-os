@@ -7,7 +7,13 @@
 
       SAVE
 
-!     CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
-      CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
+      !DEC$ IF DEFINED(__linux__)
+          CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
+      !DEC$ ELSE IF DEFINED (__APPLE__)
+          CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
+      !DEC$ ELSE
+          CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
+      !DEC$ END IF
+
 
       END MODULE CRSIMDEF

@@ -35,7 +35,7 @@ C=======================================================================
 
       IMPLICIT     NONE
 
-      INCLUDE     'COMGEN.BLK'
+      INCLUDE     'COMGEN.blk'
 
       CHARACTER*1  LINE(80),ANS,RNMODE,BLANK,UPCASE
       CHARACTER*6  GNAME(18),VARTY,ECONO

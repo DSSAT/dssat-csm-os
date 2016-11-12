@@ -1,23 +1,23 @@
 FC = ifort
-FFLAGS =  -nowarn -traceback
+FFLAGS =  -nowarn -std95 -g -traceback
 INC = -I..
-OBJECTS = $(patsubst %.for, %.obj, $(wildcard *.for)) $(patsubst %.f90, %.obj, $(wildcard *.f90)) $(patsubst %.FOR, %.obj, $(wildcard *.FOR))
-all: outdat.obj ttutilprefs.obj $(OBJECTS)
+OBJECTS = $(patsubst %.for, %.o, $(wildcard *.for)) $(patsubst %.f90, %.o, $(wildcard *.f90)) $(patsubst %.FOR, %.o, $(wildcard *.FOR))
+all: outdat.o ttutilprefs.o $(OBJECTS)
 
-%.obj: %.for 
+%.o: %.for 
 	$(FC) -c $(FFLAGS) $(INC) $^
 
-%.obj: %.f90
+%.o: %.f90
 	$(FC) -c $(FFLAGS) $(INC) $^
 
-%.obj: %.FOR
+%.o: %.FOR
 	$(FC) -c $(FFLAGS) $(INC) $^
 
-outdat.obj: 
+outdat.o: 
 	$(FC) -c $(FFLAGS) $(INC) outdat.f90
 
-ttutilprefs.obj:
+ttutilprefs.o:
 	$(FC) -c $(FFLAGS) $(INC) ttutilprefs.f90
 
 clean:
-	del $(TARGET) $(OBJECTS) *.mod
+	rm $(TARGET) $(OBJECTS) *.mod

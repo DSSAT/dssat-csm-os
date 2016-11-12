@@ -1,43 +1,38 @@
 FC = ifort
-FFLAGS =  -nowarn -traceback
+FFLAGS =  -nowarn -g -std95 -traceback
 TARGET = DSCSM046.EXE
 
-OBJECTS = $(patsubst %.f90, %.obj, $(wildcard *.f90)) $(patsubst %.for, %.obj, $(wildcard *.for)) $(patsubst %.FOR, %.obj, $(wildcard *.FOR)) $(patsubst %.F90, %.obj, $(wildcard *.F90))
+OBJECTS = $(patsubst %.f90, %.o, $(wildcard *.f90)) $(patsubst %.for, %.o, $(wildcard *.for)) $(patsubst %.FOR, %.o, $(wildcard *.FOR)) $(patsubst %.F90, %.o, $(wildcard *.F90))
 
 all: modules dirs $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(FC) -o $@ SALUS/*.obj ttutil/*.obj ORYZA/*.obj OP_OBS/*.obj $^ $(FFLAGS)
-	
-#	cd SALUS& $(FC) -o $@ *.obj $^ $(FFLAGS)
-#	cd ttutil& $(FC) -o $@ *.obj $^ $(FFLAGS)
-#	cd ORYZA& $(FC) -o $@ *.obj $^ $(FFLAGS)
-#	cd OP_OBS& $(FC) -o $@ *.obj $^ $(FFLAGS)
+	$(FC) -o $@ SALUS/*.o ttutil/*.o ORYZA/*.o OP_OBS/*.o $^ $(FFLAGS)
 
-%.obj: %.f90 $(MODULES)
+%.o: %.f90 $(MODULES)
 	$(FC) -c $(FFLAGS) $^ -o $@
 
-%.obj: %.F90 $(MODULES)
+%.o: %.F90 $(MODULES)
 	$(FC) -c $(FFLAGS) $^ -o $@
 
-%.obj: %.for $(MODULES)
+%.o: %.for $(MODULES)
 	$(FC) -c $(FFLAGS) $^ -o $@
 
-%.obj: %.FOR $(MODULES)
+%.o: %.FOR $(MODULES)
 	$(FC) -c $(FFLAGS) $^ -o $@
 
 dirs:
-	cd SALUS& make
-	cd ttutil& make
-	cd ORYZA& make
-	cd OP_OBS& make
+	cd SALUS; make
+	cd ttutil; make
+	cd ORYZA; make
+	cd OP_OBS; make
 
 clean:
 	$(RM) $(TARGET) $(OBJECTS) *.mod
-	cd SALUS& make clean
-	cd ttutil& make clean
-	cd ORYZA& make clean
-	cd OP_OBS& make clean
+	cd SALUS; make clean
+	cd ttutil; make clean
+	cd ORYZA; make clean
+	cd OP_OBS; make clean
 
 modules:
 	ifort -fixed -c ModuleDefs.for

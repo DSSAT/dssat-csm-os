@@ -1,18 +1,18 @@
 FC = ifort
-FFLAGS =  -nowarn -traceback
+FFLAGS =  -nowarn -std95 -g -traceback
 INC = -I..
-OBJECTS = $(patsubst %.for, %.obj, $(wildcard *.for)) $(patsubst %.f90, %.obj, $(wildcard *.f90)) $(patsubst %.FOR, %.obj, $(wildcard *.FOR))
+OBJECTS = $(patsubst %.for, %.o, $(wildcard *.for)) $(patsubst %.f90, %.o, $(wildcard *.f90)) $(patsubst %.FOR, %.o, $(wildcard *.FOR))
 
 all: $(OBJECTS)
 
-%.obj: %.for
+%.o: %.for
 	$(FC) -c $(FFLAGS) $(INC) $^
 
-%.obj: %.f90
+%.o: %.f90
 	$(FC) -c $(FFLAGS) $(INC) $^
 
-%.obj: %.FOR
+%.o: %.FOR
 	$(FC) -c $(FFLAGS) $(INC) $^
 
 clean:
-	del $(TARGET) $(OBJECTS) 
+	rm $(TARGET) $(OBJECTS) 

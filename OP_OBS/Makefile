@@ -1,11 +1,11 @@
 FC = ifort
-FFLAGS =  -nowarn -traceback
+FFLAGS =  -nowarn -std95 -g -traceback
 INC = -I.. -I../ttutil
-OBJECTS = $(patsubst %.f90, %.obj, $(wildcard *.f90))
+OBJECTS = $(patsubst %.f90, %.o, $(wildcard *.f90))
 all: $(OBJECTS)
 
-%.obj: %.f90
+%.o: %.f90
 	$(FC) -c $(FFLAGS) $(INC) $^
 
 clean:
-	del $(TARGET) $(OBJECTS) 
+	rm $(TARGET) $(OBJECTS) 
