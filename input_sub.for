@@ -87,9 +87,9 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMSOI.BLK'
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMSOI.blk'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER*  1 WMODI, RNMODE
       CHARACTER*  2 CROP,PRCROP

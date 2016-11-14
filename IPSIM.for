@@ -48,7 +48,7 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER*1   UPCASE,ISIMI, RNMODE
       CHARACTER*2   CROP
@@ -696,8 +696,8 @@ C-----------------------------------------------------------------------
      &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
       USE ModuleDefs 
       USE ModuleData
-      INCLUDE 'COMSWI.BLK'
-      INCLUDE 'COMIBS.BLK'
+      INCLUDE 'COMSWI.blk'
+      INCLUDE 'COMIBS.blk'
 
       CHARACTER*1 RNMODE
       CHARACTER*8 MODEL

@@ -71,8 +71,8 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER* 1 LINE(80),BLANK, RNMODE
       CHARACTER* 1 WMODI,ANS
