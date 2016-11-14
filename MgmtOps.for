@@ -675,17 +675,18 @@ C-----------------------------------------------------------------------
 !       Organic matter application
         IF (YRDOY == OMAData % ResDat) THEN
           TotResWt = SUM(OMAData%ResWt)
-          WRITE(DLUN2,104) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+          WRITE(DLUN2,105) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
      &          "Organic matter ", 
-     &      TotResWt, " kg[DM]/ha"
+     &      NINT(TotResWt), " kg[DM]/ha"
+  105     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A,I7,A)
         ENDIF
 
 !       Tillage
         IF (YRDOY == TILLVALS % TILDATE) THEN
-          WRITE(DLUN2,105) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+          WRITE(DLUN2,106) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
      &          "Tillage        ",
      &        TILLVALS % TILDEP, " cm"
-  105     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A,F7.1,A,F7.1,A)
+  106     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A,F7.1,A,F7.1,A)
         ENDIF
 
 !       Irrigation
