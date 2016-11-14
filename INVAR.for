@@ -252,7 +252,7 @@ C=======================================================================
 
       IMPLICIT  NONE
 
-      INCLUDE  'COMGEN.BLK'
+      INCLUDE  'COMGEN.blk'
 
       INTEGER     IERR,IPARAM,NDEX
       CHARACTER*2 CROP
@@ -962,7 +962,7 @@ C=======================================================================
 
       IMPLICIT NONE
 
-      INCLUDE 'COMGEN.BLK'
+      INCLUDE 'COMGEN.blk'
 
       INTEGER  IERR,IPARAM,NDEX,L
 C

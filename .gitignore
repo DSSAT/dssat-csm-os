@@ -47,4 +47,7 @@ resource.h
 *.o
 *.mod
 *.ico
+.DS_Store
+Data/.DS_Store
 Resources/RC*
+*makefile*
