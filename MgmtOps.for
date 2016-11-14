@@ -223,7 +223,7 @@ C-----------------------------------------------------------------------
      &    TILLVALS, TILLNO)                               !Output
       ENDIF
 
-      IF (INDEX('AFRDPWGS',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+      IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate irrigation depth for today
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
@@ -248,8 +248,7 @@ C     Call AUTHAR subroutine to check harvest switch and
 C     determine YREND
 C-----------------------------------------------------------------------
 !     Calculate cumulative irrigation
-      IF (INDEX('AFRDPWGS',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
-
+      IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
@@ -420,7 +419,7 @@ C-----------------------------------------------------------------------
 
       IF (IDETR == 'Y') THEN
 !       If irrigation apps, trigger printout  
-        IF ((INDEX('AFPWRDGS',IIRRI) .GT. 0) .OR.
+        IF ((INDEX('AFPWRD',IIRRI) .GT. 0) .OR.
 
 !       If Fertilizer applications are activated
      &    (INDEX('AFRFD',IFERI) .GT. 0) .OR.
@@ -462,8 +461,8 @@ C-----------------------------------------------------------------------
 !        ENDIF 
 
 !       If irrigation apps, add headers  
-        IF (INDEX('AFPWRDGS',IIRRI) .GT. 0) THEN
-          WRITE(DLUN,'(A)',ADVANCE='NO') '  IR#C IRRAC'
+        IF (INDEX('AFPWRD',IIRRI) .GT. 0) THEN
+          WRITE(DLUN,'(A)',ADVANCE='NO') '  IR#C  IRRC'
         ENDIF 
 
 !       If Tillage apps, add headers  
@@ -559,7 +558,7 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
 !         If irrigation apps, print data  
-          IF (INDEX('AFPWRDGS',IIRRI) .GT. 0) THEN
+          IF (INDEX('AFPWRD',IIRRI) .GT. 0) THEN
             WRITE(DLUN,"(2(1X,I5))",ADVANCE='NO') NAP, NINT(TOTIR)
           ENDIF     
 
