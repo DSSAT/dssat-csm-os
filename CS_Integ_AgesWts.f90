@@ -155,7 +155,7 @@
                             TVR1 = (LLIFGTT+LLIFATT-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
                             DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                            ! EQN 365a
                         ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
-                            IF (LAGETT(BR,LF) <= LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is still alive
+                            IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is still alive
                                 DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                               ! EQN 365b
                             ELSE
                                 IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN                             ! DA Or, if leaf died today
