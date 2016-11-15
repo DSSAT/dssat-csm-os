@@ -150,17 +150,17 @@
                         ENDIF
                     ENDIF
                     ! Days senescing
-                    IF (LAGETT(BR,LF) > LLIFGTT+LLIFATT) THEN                                                                 ! DA  If leaf is senescing 
-                        IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT) THEN                                             ! DA  If leaf started senescing today
+                    IF (LAGETT(BR,LF) > LLIFGTT+LLIFATT) THEN                                                                 ! DA  If leaf is senescing
+                        IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT) THEN                                             ! DA  (and) If leaf started senescing today
                             TVR1 = (LLIFGTT+LLIFATT-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
-                            DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                            !EQN 365a
-                        ELSE
-                            IF (LAGETT(BR,LF) <= LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is alive
-                                DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                               !EQN 365b
+                            DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                            ! EQN 365a
+                        ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
+                            IF (LAGETT(BR,LF) <= LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is still alive
+                                DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                               ! EQN 365b
                             ELSE
-                                IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN                             ! DA If leaf die today
+                                IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN                             ! DA Or, if leaf died today
                                     TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
-                                    DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                          !EQN 365c
+                                    DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                          ! EQN 365c
                                     LDEATHDAP(BR,LF) = DAP                                                                    ! DA establish decease date
                                 ENDIF
                             ENDIF
