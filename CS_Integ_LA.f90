@@ -76,18 +76,18 @@
         LAPHC = LAPHC + LAPH  ! Grazed leaf area                                                                       !EQN 458
         ! Distribute senesced leaf over leaf positions and cohorts
         PLASTMP = PLAS - PLASP
-        IF (LNUMSG.GT.0 .AND. PLASTMP.GT.0) THEN
+        IF (LNUMSG > 0 .AND. PLASTMP > 0) THEN
             !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
             DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR) 
-                    IF (LAP(BR,LF)-LAPS(BR,LF).GT.PLASTMP) THEN
+                    IF (LAP(BR,LF)-LAPS(BR,LF) > PLASTMP) THEN
                         LAPS(BR,LF) = LAPS(BR,LF) + PLASTMP                                                                        !EQN 459a
                         PLASTMP = 0.0
                     ELSE
                         PLASTMP = PLASTMP - (LAP(BR,LF)-LAPS(BR,LF))
                         LAPS(BR,LF) = LAP(BR,LF)                                                                                   !EQN 459b
                     ENDIF
-                    IF (PLASTMP.LE.0.0) EXIT
+                    IF (PLASTMP <= 0.0) EXIT
                 ENDDO
             ENDDO
             !! Cohorts  !LPM 28MAR15 This section is not necessary
@@ -105,13 +105,15 @@
         ENDIF
         ! Distribute harvested leaf over leaf positions and cohorts
         ! Leaf positions
-        IF (LNUMSG.GT.0 .AND. LAPH.GT.0) THEN
+        IF (LNUMSG > 0 .AND. LAPH > 0) THEN
             !DO L = 1, LNUMSG
             !    IF (LAP(L)-LAPS(L).GT.0.0) LAPS(L) = LAPS(L) + (LAP(L)-LAPS(L)) * HAFR                                 !EQN 461
             !ENDDO
             DO BR = 0, BRSTAGE                                                                                        !LPM 28MAR15 Change to include cohorts
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (LAP(BR,LF)-LAPS(BR,LF).GT.0.0) LAPS(BR,LF) = LAPS(BR,LF) + (LAP(BR,LF)-LAPS(BR,LF)) * HAFR     !EQN 461
+                    IF (LAP(BR,LF)-LAPS(BR,LF) > 0.0) THEN
+                        LAPS(BR,LF) = LAPS(BR,LF) + (LAP(BR,LF)-LAPS(BR,LF)) * HAFR     !EQN 461
+                    ENDIF
                 ENDDO
             ENDDO
             ! Cohorts
