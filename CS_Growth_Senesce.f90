@@ -85,13 +85,13 @@
         !        LAI by Cohort
         !-----------------------------------------------------------------------
         LAIByCohort(BR,LF)=0.0                               ! DA re-initializing LAIByCohort
-        LAI=0.0                                              ! DA re-initializing LAIByCohort
+        LAI=0.0                                              ! DA re-initializing LAI
         DO Bcount=0,BRSTAGE
             BR= BRSTAGE - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
             DO Lcount=0,LNUMSIMSTG(BR)-1
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
                 IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT ) THEN                      ! DA if leave is alive
-                    IF(LF == INT(LNUMSIMSTG(BR)) .AND. BR == INT(BRSTAGE)) THEN                             ! DA if the very first leaf of the top of the highest branch
+                    IF(LF == INT(LNUMSIMSTG(BRSTAGE)) .AND. BR == INT(BRSTAGE)) THEN                        ! DA if the very first leaf of the top of the highest branch
                         LAIByCohort(BR,LF) = (LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001                      ! DA calculate LAI of the leaf
                     ELSE                                                                                    ! DA if further leaf
                         LAIByCohort(BR,LF) = LAI + (LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001                ! DA the LAI calculation is accumulative from the previous cohort LAI
