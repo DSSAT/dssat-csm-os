@@ -80,12 +80,12 @@
             !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
             DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR) 
-                    IF (LAP(BR,LF)-LAPS(BR,LF) > PLASTMP) THEN
+                    IF (LAP(BR,LF)-LAPS(BR,LF) > PLASTMP) THEN                                                                     ! DA If the leaf can senesce more
                         LAPS(BR,LF) = LAPS(BR,LF) + PLASTMP                                                                        !EQN 459a
                         PLASTMP = 0.0
                     ELSE
-                        PLASTMP = PLASTMP - (LAP(BR,LF)-LAPS(BR,LF))
-                        LAPS(BR,LF) = LAP(BR,LF)                                                                                   !EQN 459b
+                        PLASTMP = PLASTMP - (LAP(BR,LF)-LAPS(BR,LF))                                                               
+                        LAPS(BR,LF) = LAP(BR,LF)                                                                                   !EQN 459b    ! DA The leaf area is totally senesced
                     ENDIF
                     IF (PLASTMP <= 0.0) EXIT
                 ENDDO

@@ -224,8 +224,12 @@
                         !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 24APR2016 To estimate daily leaf area increase instead of total
                         LAPOTX2(BR,LF) = LAPOTX(BR,LF)*TFLFLIFE
                         LAGL(BR,LF)=LAPOTX2(BR,LF)*(TTLFLIFE/LLIFGTT)
-                        IF (LAGL(BR,LF).LT.0.0) LAGL(BR,LF) = 0.0
-                        IF (LAGL(BR,LF).GT.(LAPOTX2(BR,LF)-LATL3(BR,LF))) LAGL(BR,LF) = LAPOTX2(BR,LF)-LATL3(BR,LF)
+                        IF (LAGL(BR,LF) < 0.0) THEN
+                            LAGL(BR,LF) = 0.0
+                        ENDIF
+                        IF (LAGL(BR,LF) > (LAPOTX2(BR,LF)-LATL3(BR,LF))) THEN                                           !DA IF there is something left to grow
+                            LAGL(BR,LF) = LAPOTX2(BR,LF)-LATL3(BR,LF)
+                        ENDIF
                         !LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                !EQN 323 !LPM 24APR2016 To estimate daily leaf area increase instead of total
                         LATL(BR,LF) = LATL(BR,LF) + LAGL(BR,LF)                              !Leaf area = Leaf area + leaf growth    !EQN 323
                         LATL(BR,LF) = AMIN1(LATL(BR,LF), LAPOTX(BR,LF))                                                            ! DA 28OCT2016 Limiting LATL to not get over the maximum potential
