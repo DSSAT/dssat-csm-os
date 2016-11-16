@@ -607,7 +607,7 @@ CCCCC-PW
      &    TSHOCK)                                         !Output
 
       CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES,TSHOCK,PStres1,KSTRES)
-             *SLPF
+     &       * SLPF
 
       TEMF  = 1.0
       TEMPM = (TMAX + TMIN)*0.5
