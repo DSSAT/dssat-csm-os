@@ -311,7 +311,7 @@ C-----------------------------------------------------------------------
      & 'T',SPACES,
      & ',"Denitrification (g[N]/ha) by soil depth (cm):",',
      & 'T',(SPACES+N_LYR*8),
-     & ',"Nitrification (kg[N]/ha) by soil depth (cm):",',
+     & ',"Nitrification (g[N]/ha) by soil depth (cm):",',
      & 'T',(SPACES+2*N_LYR*8),
      & ',"N2O flux (g[N]/ha) by soil depth (cm):",',
      & 'T',(SPACES+3*N_LYR*8),
