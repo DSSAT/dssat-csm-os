@@ -162,7 +162,7 @@ C The statements begining with !*! are refer to APSIM source codes
       real Ctrans ! Carbohydrate avail for translocation
                   ! from seed reserves (g/plant)
       real cwdemand     ! crop water demand (mm) add by JZW
-      real gndmd                 ! (OUTPUT) grain N demand (g/plant) add by JZW
+!     real gndmd                 ! (OUTPUT) grain N demand (g/plant) add by JZW
       Real tempmx, tempmn !add by JZW
       REAL zstage, xtag_nw !add by JZW
       REAL SNO3(NL), SNH4(NL) !add by JZW
@@ -214,7 +214,7 @@ C The statements begining with !*! are refer to APSIM source codes
       real temp ! temperary data 
       REAL max_topsfr ! Maximum tops fraction? 
       REAL mnc(mxpart)  ! Minimum N concentration, by plant part
-      REAL navl(mxpart) !N in each plant part available to grain?
+!     REAL navl(mxpart) !N in each plant part available to grain?
       REAL navl_est(mxpart)  !*! est N available to grain
       REAL nfact(10) ! Nstress sensitivity by plant organ (0-1)
       real nfactor
@@ -2247,7 +2247,7 @@ cSenthold-1
 !---------------------------------------------------------------------- 
 
       CALL nwheats_gndmd (Istage, tempmx, tempmn, dtt, gpp, !Input
-     &   gndmd)                                             !Output
+     &   gndmd_est)                                             !Output
 
 !---------------------------------------------------------------------- 
 !*! End WHAPS calculation of grain nitrogen demand 
@@ -2258,7 +2258,7 @@ cSenthold-1
       call GrN_Ptl (CONTROL, ISWITCH,
      &   mnc, nfact, nitmn, npot, optfr, part, pl_la, pl_nit,     !INPUT
      &   plantwt, sen_la,                                         !INPUT
-     &   navl)                                                   !OUTPUT
+     &   navl_est)                                                !OUTPUT
                                          
       tot_navl_est  =  sum_real_array (navl_est, mxpart) 
  !*!  create DO loop:
@@ -2268,15 +2268,15 @@ cSenthold-1
  !*!       ENDDO
 CSenthold-2
          nflow = min(gndmd_est,tot_navl_est)
-         IF (pl_dmd(grain_part) .ne. 0.0) THEN
+
+         IF (pl_dmd(grain_part) .gt. 1.e-6) THEN
             grain_nc_ratio = nflow / pl_dmd(grain_part)
          ENDIF
          grain_nc_ratio = MAX(grain_nc_ratio,
 !*!  &  p_min_grain_nc_ratio)  ! assuming p_min_grain_nc_ratio = min_grain_nc_ratio 
      &                        MNNCR/100)   !*! MNNCR is a .CUL parameter
-     
-         IF (grain_nc_ratio .ne. 0.0) THEN
-!*!         pl_dmd(grain_part) = nflow / grain_nc_ratio      ! no nflow yet
+         IF (grain_nc_ratio .gt. 1.e-6) THEN
+           pl_dmd(grain_part) = nflow / grain_nc_ratio      ! no nflow yet
          ENDIF
 
       else
