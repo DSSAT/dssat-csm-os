@@ -6,7 +6,7 @@ $SIMULATION_CONTROLS
 !-----------------------------------------------------------------------------------------
 *CONTROLS_SWITCH
 @CTRNO DESCRIPTION  
-    00 No change 
+     2 Summary, evaluate files only (VBOSE='0' - zero)
 
 *CONTROLS
 !-----------------------------------------------------------------------------------------
@@ -86,6 +86,18 @@ $SIMULATION_CONTROLS
 23 ME              .     .     .     .     N     .     .     .     .     R     1
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
 23 OU              .     .     .     1     .     .     .     .     .     .     D     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+24 EPIC soil temperature method
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL METMP
+24 ME              .     .     .     .     .     .     .     .     .     .     .     E
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+25 DSSAT soil temperature method
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL METMP
+25 ME              .     .     .     .     .     .     .     .     .     .     .     D
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
@@ -191,6 +203,12 @@ $SIMULATION_CONTROLS
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
+62 CO2 read from weather file
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+62 OP              .     .     .     .     .     .     .     .     W
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
 90 CASUPRO, Sugarcane
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
 90 GE              .     .     .     .     .                           SCCSP 
@@ -232,8 +250,8 @@ $SIMULATION_CONTROLS
 98 GE              .     .     .     .     .                           . 
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
 98 OP              .     .     .     .     .     .     .     .     .
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
-98 ME              .     .     .     .     .     .     .     .     .     .     .
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL METMP MEGHG
+98 ME              .     .     .     .     .     .     .     .     .     .     .     .     1
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
 98 MA              .     .     .     .     .
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT

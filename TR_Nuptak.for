@@ -44,7 +44,7 @@ C=======================================================================
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, TRNLOS, UNH4, UNO3)                     !Output
+     &    RNLOSS, TRNLOS, UNH4, UNO3, WTNUP)             !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -64,7 +64,7 @@ C=======================================================================
       INTEGER DYNAMIC, L, L1, NLAYR
 
       REAL FLDH4, FLDH4C, FLDN3, FLDN3C, FLOOD, PDWI, PGRORT
-      REAL RANC, RCNP, ROOTN, STOVN, STOVWT, TANC, TCNP, TRNU
+      REAL RANC, RCNP, ROOTN, STOVN, STOVWT, TANC, TCNP, TRNU, WTNUP
       REAL CUMFNU !Cumulative flood N uptake
       REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
       REAL, DIMENSION(NL) :: RLV, RNLOSS, SNH4, SNO3, ST, SW, UNO3, UNH4
@@ -99,6 +99,7 @@ C=======================================================================
       FRNH4U = 0.0
       FRNO3U = 0.0
       CUMFNU = 0.0
+      WTNUP = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -278,6 +279,7 @@ C-------------------------------------------------------------------------
 
          TRNU  = TRNU  + FRNO3U  + FRNH4U         !kg[N]/ha
       ENDIF
+      WTNUP = WTNUP + TRNU
       TRNU = TRNU/(PLANTS*10.0)                   !g[N]/plant
       CUMFNU = CUMFNU + (FRNH4U + FRNO3U) / (PLANTS * 10.0)
 

@@ -1,5 +1,5 @@
 *CSM OUTPUT FILES
-! DSSAT v4.6; 07/01/2015
+! DSSAT v4.6; 11/17/2016
 !
 ! Output files currently created by DSSAT crop simulation models.
 !
@@ -39,6 +39,9 @@ PlantKg.OUT        Casupro sugarcane output                           OUTKG
 Generic.OUT        Generic (temporary) output file
 SALUS.OUT          Generic plant routine
 N2O.OUT         NO Soil N2O and N2 daily emissions output        
+Potential.OUT      Water potential - daily
+PlantGr2.OUT    G2 Wheat and barley specific output file
+PlantGrf.OUT    GF Wheat and barley specific output file
 
 !Seasonal summary output files
 Environ.OUT     EN Environmental modifications output file            SOUTE
