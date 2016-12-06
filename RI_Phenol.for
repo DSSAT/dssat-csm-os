@@ -9,7 +9,8 @@ C                 Written
 C  08-07-1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
-!  02/20/2012 CHP / US Modify temperature response
+!  02/20/2012 CHP/US Modify temperature response
+!  12/06/2016 CHP/US Add check for small LAI during grainfilling - triggers maturity
 C=======================================================================
 
       SUBROUTINE RI_PHENOL (CONTROL, ISWITCH, 
@@ -696,7 +697,7 @@ C=======================================================================
 		SeedFrac = AMIN1 (1.0, (SUMDTT + SUMDTT_4) / P5)
 	    VegFrac = 1.0
 
-!         Check for LAI < small number, trigger end of season
+!         Check for LAI > small number, continue season, otherwise maturity triggered
           IF (LAI > 1.E-4) THEN
             IF (SUMDTT .LT. 0.90*P5) THEN
                RETURN
