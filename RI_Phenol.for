@@ -16,7 +16,7 @@ C=======================================================================
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
-     &    YRPLT,FLOODWAT,                                 !Input
+     &    YRPLT,FLOODWAT, LAI,                            !Input
      &    CUMDTT, EMAT, ISDATE, PLANTS, RTDEP, YRSOW,     !I/O
      &    CDTT_TP, DTT, FERTILE, FIELD, ISTAGE,           !Output
      &    ITRANS, LTRANS, MDATE, NDAT, NEW_PHASE, P1, P1T,!Output
@@ -44,7 +44,7 @@ C=======================================================================
 
       REAL AGEFAC, ATEMP, BIOMAS, CDTT_TP, CNSD1, CNSD2, CSD1, CSD2
       REAL CUMDEP, CUMDTT, CUMTMP, DTT, FERTILE
-      REAL G4, NSTRES
+      REAL G4, NSTRES, LAI
       REAL P1, P1T, P3, P4, P5, P8, P9, P2O, P2R
       REAL PHEFAC, PHINT, PLANTS, RTDEP
       REAL SDAGE, SDEPTH, SDTT_TP, SEEDNI, SIND, SRAD
@@ -696,9 +696,13 @@ C=======================================================================
 		SeedFrac = AMIN1 (1.0, (SUMDTT + SUMDTT_4) / P5)
 	    VegFrac = 1.0
 
-          IF (SUMDTT .LT. 0.90*P5) THEN
-             RETURN
+!         Check for LAI < small number, trigger end of season
+          IF (LAI > 1.E-4) THEN
+            IF (SUMDTT .LT. 0.90*P5) THEN
+               RETURN
+            ENDIF
           ENDIF
+
 		SeedFrac = AMIN1 (1.0, (SUMDTT + SUMDTT_4) / P5)
           VegFrac = 1.0
           IF (ISM .LE. 0) THEN
