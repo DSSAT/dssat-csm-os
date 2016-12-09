@@ -1,51 +1,43 @@
-! MF 15NO14 SUBROUTINE CS_Growth_VPD calculates the hourly response of the stomata of cassava to VPD.
-! Once the stomata close in response to VPD they remain closed for the remainder of the day. 
-! The routine also calculates a mean VPD response factor for the day. 
-! The hourly and mean values of the VPD factor, VPDFPHR(24) and MNVPDFPHR, are available for use elsewhere through the module Module_CSCAS_Vars_List.
-
-! MF First (14SE14) put this code in the CSCAS subroutine CS_Growth_Photo, but had to extract it to CS_Growth_VPD so that it could be called from SPAM
-! because evapotranspiration is calculated in SPAM before CSCAS is called. The VPD response therefore is required before the crop submodel is called.
-! For use with the DSSAT package, SPAM must USE Module_CSCAS_Vars_List else there will be undeclared variables in compiling the code. 
-! MF 31DE14 No!! You should do this another way else you will have conflicts with variable declarations.
-
-!MF 21JA16 Added code for Priestley-Taylor using Priestley and Taylor’s original formulation, see Suleiman and Hoogenboom (2007).
-
-! Note that Priestley-Taylor as coded in CSCAS.FOR(6810), CSCRP.FOR(13007), and PET.FOR(565) is not the original Priestley-Taylor formulation from their 1972 paper. 
-! See Ritchie in Tsuji et al. (eds.) (1998) for details of how it was coded using a weighted mean daily temperature. See also JWJ's comment at PET.FOR(599).
-! This formulation was therefore not appropriate for hourly estimation. Coefficients for the equations are from Allen et al. (1998). 
-! They differ from Meyer's (1993) coded in PETMEY, which is because Meyer (1993) is for inland SE Australia although I can see no a priori reason why. 
-! I have not investigated the details further (I have asked Meyer for a copy of the document).
-!
-! References
-! Meyer, W.S. (1993). Standard reference evaporation calculation for inland, south-east Australia. CSIRO Division of Water Resources, Griffith. Technical Memorandum.
-! Priestley, C.H.B. and Taylor, R.J. (1972). On the assessment of surface heat flux and evaporation using large-scale parameters. Monthly Weather Review 100(2):81–92. 
-! Ritchie, J.T. (1998). Soil water balance and plant water stress. In: G.Y. Tsuji, G. Hoogenboom and P.K. Thornton (eds.) Understanding Options for Agricultural Production. Dordrecht: Kluwer. Pp.41–54.
-! Suleiman, A.A. and Hoogenboom, G. (2007). Comparison of Priestley-Taylor and FAO-56 Penman-Monteith for daily reference evapotranspiration estimation in Georgia. Journal of Irrigation and Drainage Engineering 133(2):175-182.
-
+!***************************************************************************************************************************
+! MF 15NO14 SUBROUTINE CS_Growth_VPD calculates the hourly response of the stomata of cassava to VPD. Once the stomata close 
+! in response to VPD they remain closed for the remainder of the day. The routine also calculates a mean VPD response factor 
+! for the day. The hourly and mean values of the VPD factor, VPDFPHR(24) and MNVPDFPHR, are available for use elsewhere 
+! through the module Module_CSCAS_Vars_List.
+! MF First (14SE14) put this code in the CSCAS subroutine CS_Growth_Photo, but had to extract it to CS_Growth_VPD so that 
+! it could be called from SPAM because evapotranspiration is calculated in SPAM before CSCAS is called.
+! For use with the DSSAT package, SPAM must USE Module_CSCAS_Vars_List else there will be undeclared variables in compiling
+! the code. 
+! MF 31DE14 No!!! You have to do this differently else you will have conflicts with variable declarations.
+! MF 21JA16 Added code for Priestley-Taylor using P-T original formulation, see Suleiman and Hoogenboom (2007).
+! Note that Priestley-Taylor as coded in CSCAS.FOR(6810), CSCRP.FOR(13007), PET.FOR(565) is not the original P-T formulation
+! from their 1972 paper. See Ritchie in Tsuji et al. (eds.) (1998) for details of how it was coded using a weighted mean
+! daily temperature. See also JWJ's comment at PET.FOR(599). This formulation was therefore not appropriate for hourly 
+! estimation. Coefficients for the equations are from Allen et al. (1998). They differ from Meyer's (1993) coded
+! in PETMEY, although I have not investigated why.
+!***************************************************************************************************************************
     SUBROUTINE CS_Growth_VPD ( &
         TAIRHR      , WEATHER     , CONTROL   , SOILPROP   , EOP        &
         )
     
         USE ModuleDefs
         USE CS_First_Trans_m
-        ! USE CS_VPD_m                                                                               ! To transfer hourly VPD factor to other routines (could be incorporated in ModuleDefs later).
+        USE CS_VPD_m                                                                               ! MF 06JA16 To transfer hourly VPD factor to other routines (could be incorporated in ModuleDefs later).
         
         IMPLICIT NONE
         SAVE
-        
-        REAL ET0DAY,MNVPDFPHR, VPDFPHR(TS),VPDMaxHr,VPDStartHr,ET0(TS)
 
         TYPE (ControlType) CONTROL    ! Defined in ModuleDefs
         TYPE (WeatherType) WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType)    SOILPROP   ! Defined in ModuleDefs
         
-        REAL    INTEGVPDFPHR                                                                       ! Added for VPD response of transpiration
-        REAL    TAIRHR(TS)  , PARHR(TS)   , RADHR(TS)   , RHUMHR(TS)  , VPDHR(TS)                  ! These are all declared in ModuleDefs, but need to be declared here locally.
+        REAL    INTEGVPDFPHR                                                                       ! MF 17SE14 Added for VPD response of transpiration
+        REAL    TAIRHR(TS)  , PARHR(TS)   , RADHR(TS)   , RHUMHR(TS)  , VPDHR(TS)                  ! MF 06JA16 These are all declared in ModuleDefs, but need to be declared here locally. Why?
         REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
         REAL    VPDFPPREV   , VPDMAXHRPREV
         REAL    CSVPSAT                                                                            ! REAL function
-        REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
-        REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
+        REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! MF 21JA16 Added for formulation of Priestley-Taylor
+        REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! MF 21JA16 Added for formulation of Priestley-Taylor
+  
         INTEGER INT                                                                                ! INTEGER function
         INTEGER DYNAMIC  
         !INTEGER L                                                                                  ! Loop counter
@@ -55,21 +47,24 @@
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
          
-!****************************************************************************************
-    IF (DYNAMIC.EQ.RATE) THEN                                              ! Only executed for actual growing conditions
-!****************************************************************************************
+!*******************************************************************************************************************************
+    IF (DYNAMIC.EQ.RATE) THEN                                              ! MF Only executed for actual growing conditions
+!*******************************************************************************************************************************
         TDEW   = WEATHER % TDEW
-        PARHR  = WEATHER % PARHR
-        TMAX   = WEATHER % TMAX
-        TMIN   = WEATHER % TMIN
-        RADHR  = WEATHER % RADHR
-        RHUMHR = WEATHER % RHUMHR
+        PARHR  = WEATHER % PARHR                                                                   ! MF 14SE14
+        TMAX   = WEATHER % TMAX                                                                    ! MF 14SE14
+        TMIN   = WEATHER % TMIN                                                                    ! MF 14SE14
+        RADHR  = WEATHER % RADHR                                                                   ! MF 14SE14
+        RHUMHR = WEATHER % RHUMHR                                                                  ! MF 14SE14
         TAIRHR = WEATHER % TAIRHR
         RADHR  = WEATHER % RADHR
-        SNUP   = WEATHER % SNUP
-        SNDN   = WEATHER % SNDN
-        SRAD   = WEATHER % SRAD
-        MSALB  = SOILPROP% MSALB
+        SNUP   = WEATHER % SNUP                                                                    ! MF 13NO14
+        SNDN   = WEATHER % SNDN                                                                    ! MF 13NO14
+        SRAD   = WEATHER % SRAD                                                                    ! MF 21JA16 
+        MSALB  = SOILPROP% MSALB                                                                   ! MF 21JA16 
+        
+    
+        ! MF 21JA16
         ! Reference ET calculated hourly using the Priestley-Taylor formulation based on the calculated hourly air temperature, TAIRHR
         AlphaPT = 1.26                                                               ! Priestley-Taylor advectivity constant, ?. 
                                                                                      ! Should be higher in semi-arid and arid environments.
@@ -95,8 +90,8 @@
                 (1.0 - ALBEDO) - 0.0)) / (DeltaVP + GammaPS)
             ET0DAY = ET0DAY + ET0(L)
         END DO
-        ! Calculate total ET the day based on weighted mean temperature.
-        ! For comparison only with hourly calculations.
+        ! MF 21JA16 Calculate total ET the day based on weighted mean temperature.
+        ! MF 21JA16 For comparison only with hourly calculations.
         DTEMP = 0.5 * TMAX + 0.5 * TMIN 
         DeltaVP = 4098 * (0.6108 * EXP(17.27 * DTEMP/(DTEMP + 237.3)))/((DTEMP + 237.3)**2.0)
         LambdaLH = 2.501 - 0.002361 * DTEMP
@@ -105,17 +100,17 @@
         
         ! Vapour pressure                                                            ! Code for VPD reponse moved from CS_Growth and modified for hourly response.
         
-        !Hourly loop for VPD stomatal response
+        !Hourly loop for VPD stomatal response                                       ! MF 16SE14
         
-        IF (TDEW.LE.-98.0) TDEW = TMIN
+        IF (TDEW.LE.-98.0) TDEW = TMIN                                               ! MF 14SE14
         DO L = 1, TS
-            VPDHR(L) = (CSVPSAT(TAIRHR(L)) - CSVPSAT(TDEW))/1000.0                   ! VPDHR = VPD, hourly (kPa) 
+            VPDHR(L) = (CSVPSAT(TAIRHR(L)) - CSVPSAT(TDEW))/1000.0                   ! MF 14SE14 VPDHR = VPD, hourly (kPa) 
         END DO 
         
         
-        ! If VPD > PHTV, reduce VPFPHR by the amount it exceeds PHVT (the threshold), scaled by PHSV (the slope).
-        VPDFPHR = 1.0                                                                ! VPDFPHR = VPD factor, hourly (#) 
-        VPDFPPREV = 1.0                                                              ! VPDFPREV = VPD factor, hourly, previous hour (#)
+        ! MF 14SE14 If VPD > PHTV, reduce VPFPHR by the amount it exceeds PHVT (the threshold), scaled by PHSV (the slope).
+        VPDFPHR = 1.0                                                                ! MF 13NO14 VPDFPHR = VPD factor, hourly (#) 
+        VPDFPPREV = 1.0                                                              ! MF 13NO14 VPDFPREV = VPD factor, hourly, previous hour (#)
         VPDStartHr = 0.0
         VPDMaxHr = 0.0
         DO L = 1, TS
@@ -135,8 +130,8 @@
             ENDIF
         END DO
         
-        ! Calculate mean VPD photosynthesis factor for the day 
-        ! For comparison only with hourly calculations.
+        ! MF 14SE14 Calculate mean VPD photosynthesis factor for the day 
+        ! MF 07JA16 For comparison only with hourly calculations.
         INTEGVPDFPHR = 0.0
         DO L = 1, TS
             ! Adjust VPDFPHR for the fraction of hour at sunrise and sunset
@@ -144,23 +139,23 @@
             IF (L == INT(SNDN)) VPDFPHR(L) = VPDFPHR(L) * (SNDN - REAL(L))
             INTEGVPDFPHR = INTEGVPDFPHR + VPDFPHR(L)
         END DO
-        IF (DAP >= 1) MNVPDFPHR = AMIN1(1.0, AMAX1(0.0, (INTEGVPDFPHR / (SNDN - SNUP))))      ! MNVPDFPHR is the integral of the hourly VPDFPHR divided by the hours from sunrise to sunset. Range 0-1.
+        IF (DAP >= 1) MNVPDFPHR = AMIN1(1.0, AMAX1(0.0, (INTEGVPDFPHR / (SNDN - SNUP))))      ! MF 13NO14 MNVPDFPHR is the integral of the hourly VPDFPHR divided by the hours from sunrise to sunset. Range 0-1.
         CONTINUE
         
-        ! Adjust PT estimate of hourly ET by the VPD factor. Note this is on the whole ET, not the transpiration component.
+        ! MF 24JA16 Adjust PT estimate of hourly ET by the VPD factor. Note this is on the whole ET, not the transpiration component.
         EOP = 0.0
         DO L = 1, TS
              ET0(L) = ET0(L) * VPDFPHR(L)
              EOP = EOP + ET0(L)
         END DO
-    END IF
        
-!****************************************************************************************    END IF                                              ! DYNAMIC SECTION
-!****************************************************************************************
+!*******************************************************************************************************************************
+    END IF                                              ! MF DYNAMIC SECTION
+!*******************************************************************************************************************************
     END SUBROUTINE CS_Growth_VPD
     
 !-----------------------------------------------------------------------
-!     VARIABLE DEFINITIONS: (updated 05NO16)
+!     VARIABLE DEFINITIONS: (updated 05JA16)
 !-----------------------------------------------------------------------
 ! ALBEDO        Reflectance of soil-crop surface, fraction
 ! CSVPSAT       Calculates saturated vapor pressure of air (Tetens, 1930). (Real FUNCTION in CSUTS.FOR)
@@ -181,8 +176,10 @@
 ! TMIN          Minimum temperature, °C                    (from WEATHER % TMIN   in ModuleDefs)
 ! VPDFPHR       VPD factor, hourly (#, 0-1)                (Defined in CS_VPD_m)
     
-! Constants for formulation of Priestley-Taylor calculation of reference evapotranspiration
+! MF 21JA16 Constants for formulation of Priestley-Taylor calculation of reference evapotranspiration
 ! AphaPT        Priestley-Taylor coefficient (1.26)
 ! DeltaVP       Slope of the saturation vapour pressure-temperature relationship (kPa/°C)
 ! GammaPS       Psychrometric constant(kPa/°C) 
 ! LambdaLH      Latent heat of vaporization of water (MJ/kg) 
+ 
+

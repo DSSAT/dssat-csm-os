@@ -43,7 +43,6 @@ C=======================================================================
       USE ModuleDefs 
       USE ModuleData
       USE FloodModule
-      
 
       IMPLICIT NONE
       SAVE
@@ -82,9 +81,6 @@ C=======================================================================
       
 !     P Stress on photosynthesis
       REAL PSTRES1
-      
-!     06DIC2016 DA TODO describe variable      
-      REAL TAIRHR(NL)
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -452,16 +448,7 @@ C       and total potential water uptake rate.
       CALL PUT('SPAM', 'EO',  EO)
       CALL PUT('SPAM', 'EP',  EP)
       CALL PUT('SPAM', 'ES',  ES)
-      
-!-----------------------------------------------------------------------
-!       VAPOR PRESSURE DEFICIT
-!-----------------------------------------------------------------------
-!      06DIC2016 DA TODO describe call
-      IF (CONTROL % MODEL(1:5) == 'CSCGR') THEN
-         CALL CS_Growth_VPD(TAIRHR, WEATHER, CONTROL, SOILPROP, EOP)
-      ENDIF
 
-              
 !***********************************************************************
 !***********************************************************************
 !     DAILY INTEGRATION
