@@ -112,68 +112,69 @@
         
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM 23MAY2015 Modified to avoid high values of LAGETT 
-                IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
-                    LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLIFE*EMRGFR                                              !EQN 358
+                IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
+                    LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLife*EMRGFR                                              !EQN 358
                     ! Accelerated senescence at base of dense leaf canopy
-                    IF (LAI.GT.LAIXX) THEN
-                        IF (LF.EQ.TVI1.AND.BR.EQ.BROLDESTA) THEN
+                    IF (LAIByCohort(BR,LF) > LAIXX) THEN
+                        !IF (LF==TVI1 .AND. BR==BROldestA) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf
-                            IF (LAGETT(BR,LF).LT.LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
-                                LLIFXUNUSED = (LAGETT(BR,LF)+LLIFX)-LLIFATT                                                    !EQN 360a LPM 28MAR15 LLIFXUNUSED should be before of the estimation of LAGETT 
-                                LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFX,LLIFATT)                                             !EQN 359
-                            ELSE
-                                LLIFXUNUSED = LLIFX                                                                            !EQN 360b
+                            IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                                ! LLIFXUnused = (LAGETT(BR,LF)+LLIFX)-LLIFATT                                                    !EQN 360a LPM 28MAR15 LLIFXUNUSED should be before of the estimation of LAGETT 
+                                LAGETT(BR,LF) = LLIFGTT+LLIFATT                                             !EQN 359
+                            !ELSE
+                            !    LLIFXUnused = LLIFX                                                                            !EQN 360b
                             ENDIF
-                        ENDIF
+                        !ENDIF
                         ! If not all acceleration used up
-                        IF (LF.EQ.TVI1+1) THEN
-                            IF (LLIFXUNUSED.GT.0.0) THEN
-                                IF (LAGETT(BR,LF).LT.LLIFATT) LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFXUNUSED,LLIFATT)     !EQN 361
-                            ENDIF
-                        ENDIF
+                        !IF (LF == TVI1+1) THEN
+                        !    IF (LLIFXUnused > 0.0) THEN
+                        !        IF (LAGETT(BR,LF).LT.LLIFATT) LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFXUnused,LLIFATT)     !EQN 361
+                        !    ENDIF
+                        !ENDIF
                     ENDIF
                 !LAGEP(BR,LF) = LAGEP(BR,LF) + (TTLFLIFE*EMRGFR)/PHINT                                                              !EQN 362 !LPM21MAY2015 this variable is not used
                 
                 ! Days active
-                    IF (LAGETT(BR,LF).LE.LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
-                        IF (LNUMSOLDESTA.LT.0) THEN
+                    IF (LAGETT(BR,LF) > LLIFGTT .AND. LAGETT(BR,LF) <= LLIFGTT+LLIFATT ) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                        IF (LNUMSOLDESTA < 0) THEN
                             LNUMSOLDESTA = LF
                             BROLDESTA = BR
                         ENDIF
                         DALF(BR,LF) = DALF(BR,LF) + 1.0                                                                        !EQN 364b
                     ELSE
-                        IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
+                        IF (LAGETT(BR,LF) > LLIFGTT .AND. LAGETT(BR,LF)-TTLFLIFE*EMRGFR < LLIFGTT+LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
                             TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
                             DALF(BR,LF) = DALF(BR,LF) + TVR1                                                                   !EQN 364c
                         ENDIF
                     ENDIF
-
                     ! Days senescing
-                    IF (LAGETT(BR,LF).GT.LLIFATT) THEN
-                        IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT) THEN
-                            TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                            DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                                     !EQN 365a
-                        ELSE
-                            IF (LAGETT(BR,LF).LE.LLIFATT+LLIFSTT) THEN
-                                DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                                        !EQN 365b
+                    IF (LAGETT(BR,LF) > LLIFGTT+LLIFATT) THEN                                                                 ! DA  If leaf is senescing
+                        IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT) THEN                                             ! DA  (and) If leaf started senescing today
+                            TVR1 = (LLIFGTT+LLIFATT-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
+                            DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                            ! EQN 365a
+                        ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
+                            IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is still alive
+                                DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                               ! EQN 365b
                             ELSE
-                                IF (LAGETT(BR,LF)-TTLFLIFE*EMRGFR.LT.LLIFATT+LLIFSTT) THEN
-                                    TVR1 = ((LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                                    DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                                   !EQN 365c
-                                    LDEATHDAP(BR,LF) = DAP
+                                IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN                             ! DA Or, if leaf died today
+                                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
+                                    DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                          ! EQN 365c
+                                    LDEATHDAP(BR,LF) = DAP                                                                    ! DA establish decease date
                                 ENDIF
                             ENDIF
                         ENDIF
                     ENDIF
                 
-                ELSE 
-                    IF (LAGETT(BR,LF).LT.LLIFGTT) DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
+                !ELSE 
+                    IF (LAGETT(BR,LF) < LLIFGTT) THEN
+                        DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
+                    ENDIF
                 ENDIF
 
-                IF (LNUMG.GT.0.0.AND.BR.EQ.BRSTAGE.AND.LF.EQ.LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
-                    IF (LNUMSG.LT.LNUMX) THEN
+                IF (LNUMG > 0.0 .AND. BR == BRSTAGE .AND. LF == LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
+                    IF (LNUMSG < LNUMX) THEN
                         LAGETT(BR,LF+1) = LAGETT(BR,LF+1)+(TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
                         !LAGEP(BR,LF+1)=LAGEP(BR,LF+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367 !LPM21MAY2015 this variable is not used
                         DGLF(BR,LF+1) = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                                                       !EQN 368

@@ -50,16 +50,16 @@
 
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)         
-                IF (LAGETT(BR,LF)+TTLFLIFE*EMRGFR.LE.LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
-                IF (LAP(BR,LF)-LAPS(BR,LF).GT.0.0) THEN
-                    LAPSTMP = AMIN1((LAP(BR,LF)-LAPS(BR,LF)),(LAP(BR,LF)/LLIFSTT*AMIN1((LAGETT(BR,LF)+(TTLFLIFE*EMRGFR)-LLIFATT), &         !EQN 372
+                IF (LAGETT(BR,LF)+TTLFLIFE*EMRGFR <= LLIFGTT+LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
+                IF (LATL3T(BR,LF)-LAPS(BR,LF) > 0.0) THEN
+                    LAPSTMP = AMIN1((LATL3T(BR,LF)-LAPS(BR,LF)),(LATL3T(BR,LF)/LLIFSTT*AMIN1((LAGETT(BR,LF)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
                         (TTLFLIFE*EMRGFR))))
                     LAPS(BR,LF) = LAPS(BR,LF) + LAPSTMP
                     PLASP = PLASP + LAPSTMP                                                                                !EQN 370
                 ENDIF
             ENDDO
         ENDDO
-        
+
         ! Leaf senescence - injury        ! LAH  To add later?
         !PLASI = PLA*(LSENI/100.0)*DU/STDAY  ! May need injury loss
 
@@ -79,14 +79,37 @@
         PLASN = 0.0
         PLASS = PLASW + PLASN    ! Loss because of stress
               
+        ! LPM As a NOTE for further code: if PLASW and PLASN want to be added to the code, should be calculated by cohort
+        
+        !-----------------------------------------------------------------------
+        !        LAI by Cohort
+        !-----------------------------------------------------------------------
+        LAIByCohort(BR,LF)=0.0                               ! DA re-initializing LAIByCohort
+        LAI=0.0                                              ! DA re-initializing LAI
+
+        DO Bcount=0,BRSTAGE
+            BR= BRSTAGE - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
+            DO Lcount=0,LNUMSIMSTG(BR)-1
+                LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
+                IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT ) THEN                      ! DA if leave is alive
+                    IF(BR == INT(BRSTAGE) .AND. LF == INT(LNUMSIMSTG(INT(BRSTAGE)))) THEN                   ! DA if the very first leaf of the top of the highest branch
+                        LAIByCohort(BR,LF) = (LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001                      ! DA calculate LAI of the leaf
+                    ELSE                                                                                    ! DA if further leaf
+                        LAIByCohort(BR,LF) = LAI + (LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001                ! DA the LAI calculation is accumulative from the previous cohort LAI
+                    ENDIF
+                    LAI=LAIByCohort(BR,LF)                                                                  ! DA updating LAI
+                ENDIF
+            ENDDO
+        ENDDO
+        
         ! Leaf senescence - low light at base of canopy
         ! NB. Just senesces any leaf below critical light fr 
         PLASL = 0.0
-        IF (LAI.GT.LAIXX) THEN
-            PLASL = (LAI-LAIXX) / (PLTPOP*0.0001)
-            ! LAH Eliminated! Replaced by accelerated senescence
-            PLASL = 0.0
-        ENDIF
+        !IF (LAI.GT.LAIXX) THEN
+        !    PLASL = (LAI-LAIXX) / (PLTPOP*0.0001)
+        !    ! LAH Eliminated! Replaced by accelerated senescence
+        !    PLASL = 0.0
+        !ENDIF
             
         ! Leaf senescence - overall
         PLAS =  PLASP + PLASI + PLASS + PLASL                                                                          !EQN 369

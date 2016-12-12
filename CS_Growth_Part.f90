@@ -224,15 +224,20 @@
                         !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 24APR2016 To estimate daily leaf area increase instead of total
                         LAPOTX2(BR,LF) = LAPOTX(BR,LF)*TFLFLIFE
                         LAGL(BR,LF)=LAPOTX2(BR,LF)*(TTLFLIFE/LLIFGTT)
-                        IF (LAGL(BR,LF).LT.0.0) LAGL(BR,LF) = 0.0
-                        IF (LAGL(BR,LF).GT.(LAPOTX2(BR,LF)-LATL3(BR,LF))) LAGL(BR,LF) = LAPOTX2(BR,LF)-LATL3(BR,LF)
+                        IF (LAGL(BR,LF) < 0.0) THEN
+                            LAGL(BR,LF) = 0.0
+                        ENDIF
+                        IF (LAGL(BR,LF) > (LAPOTX2(BR,LF)-LATL3(BR,LF))) THEN                                           !DA IF there is something left to grow
+                            LAGL(BR,LF) = LAPOTX2(BR,LF)-LATL3(BR,LF)
+                        ENDIF
                         !LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                !EQN 323 !LPM 24APR2016 To estimate daily leaf area increase instead of total
-                        LATL(BR,LF) = LATL(BR,LF) + LAGL(BR,LF)                                                                  !EQN 323
-                        LATL(BR,LF) = AMIN1(LATL(BR,LF), LAPOTX(BR,LF))
+                        LATL(BR,LF) = LATL(BR,LF) + LAGL(BR,LF)                              !Leaf area = Leaf area + leaf growth    !EQN 323
+                        LATL(BR,LF) = AMIN1(LATL(BR,LF), LAPOTX(BR,LF))                                                            ! DA 28OCT2016 Limiting LATL to not get over the maximum potential
                         !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by Tflflife to be able to change the Tb
                         !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
                         !LAGL(BR,LF) = LATLPOT(BR,LF)* AMIN1(WFG,NFG)
                         LATL2(BR,LF) = LATL2(BR,LF) + LAGL(BR,LF)                                  !EQN 324 !LPM 24APR2016 LATL2 with the same value than LATL 
+                        LATL2(BR,LF) = AMIN1(LATL2(BR,LF), LAPOTX(BR,LF))                                               !DA 28OCT2016 Limiting LATL2 to not get over the maximum potential
                         SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF)                                    !EQN 325
                      
                         !LPM 15NOV15 Variables LAGLT and LATL2T created to save the leaf are by cohort (all the plant (all branches and shoots))
@@ -245,8 +250,7 @@
                             ENDIF
                         ENDDO
 
-
-               
+              
                
                     ! The 2 at the end of the names indicates that 2 groups 
                     ! of stresses have been taken into account
