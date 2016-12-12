@@ -340,8 +340,8 @@
                 ENDIF
                 !RSSRWTGLFADJ = GROLF - GROLFADJ                                                                        !EQN 234 !LPM 02SEP2016 Keep GROLF but restrict to 0 if N growth is greater than CHO growth (GROLF)
                 RSSRWTGLFADJ = AMAX1(0.0,GROLF - GROLFADJ)                                                              !EQN 234 
-                AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                              !EQN 235
-        
+                !AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                              !EQN 235 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
+                 AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*LAWL(1)                                              !EQN 235 
                 !! If not enough N set N factor
                 !IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN
                 !    NFLF2(0) = AREAPOSSIBLEN/PLAGSB3                                                                   !EQN 236

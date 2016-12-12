@@ -229,11 +229,11 @@
         nfpu = -99 
         nfpl = -99 
         kcan = -99 
-        lawcf = -99 
-        lawmnfr = -99
+        !lawcf = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
+        !lawmnfr = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         lawtr = -99
         lawts = -99
-        lawmnfr = -99
+        !lawmnfr = -99 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         dfpe = -99 
         ppexp = -99 
         nh4mn = -99
@@ -387,7 +387,7 @@
         !CALL ECREADR (ECDIRFLE,ECONO,'SWFRN',swfrn) !LPM 05JUN2015 SWFRN is not used 
         !CALL ECREADR (ECDIRFLE,ECONO,'SWFNL',swfrnl) !LPM 05JUN2015 SWFRNL is not used 
         !CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl) !LPM 05JUN2015 SWFRL is not used 
-        CALL ECREADR (ECDIRFLE,ECONO,'SLACF',lawcf)
+        !CALL ECREADR (ECDIRFLE,ECONO,'SLACF',lawcf) LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
         CALL ECREADR (ECDIRFLE,ECONO,'TBLSZ',tblsz)
         CALL ECREADR (ECDIRFLE,ECONO,'BR1FX',brfx(1))
@@ -426,7 +426,7 @@
         CALL SPREADR (SPDIRFLE,'CO2CC',co2compc) 
         CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
         CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)
-        CALL SPREADR (SPDIRFLE,'SLAFF',lawff)
+        !CALL SPREADR (SPDIRFLE,'SLAFF',lawff) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         CALL SPREADR (SPDIRFLE,'SLATR',lawtr)
         CALL SPREADR (SPDIRFLE,'SLATS',lawts)
         CALL SPREADR (SPDIRFLE,'SLAWR',lawwr)
@@ -507,8 +507,8 @@
         IF (NFPU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
         IF (NFPL.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
         IF (KCAN.LE.0.0) CALL SPREADR (SPDIRFLE,'KCAN',kcan)
-        IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'SLACF',lawcf)
-        IF (LAWMNFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SLAMN',lawmnfr)
+        !IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'SLACF',lawcf) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
+        !IF (LAWMNFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SLAMN',lawmnfr) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         IF (DFPE.LT.0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
         IF (PPEXP.LT.0.0) CALL SPREADR (SPDIRFLE,'PPEXP',ppexp)
         ! N uptake 

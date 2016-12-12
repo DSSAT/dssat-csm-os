@@ -66,27 +66,29 @@
         !-----------------------------------------------------------------------
         !           Specific leaf area
         !-----------------------------------------------------------------------
-
-        IF (LAWTR.GT.0.0.AND.LAWTS.GT.0.0.AND.LAWTS.GT.TMEAN) THEN
-            TFLAW = 1.0+LAWTR*(TMEAN-LAWTS)                                                                            !EQN 305
-        ELSE
-            TFLAW = 1.0
-        ENDIF
-        IF (LAWWR.GT.0.0.AND.WFG.LT.1.0) THEN
-            WFLAW = 1.0+LAWWR*(WFG-1.0)                                                                                !EQN 306
-        ELSE
-            WFLAW = 1.0
-        ENDIF
-
-        ! Position effect on standard SLA
-        IF (LNUMSG.GT.0) THEN
-            LAWL(1) = AMAX1(LAWS*LAWFF,LAWS+(LAWS*LAWCF)*(LNUMSG-1))                                                  !EQN 307
-            ! Temperature and water stress effects on SLA at position
-            LAWL(1) = AMAX1(LAWL(1)*LAWMNFR,LAWL(1)*TFLAW*WFLAW)                                                      !EQN 308
-        ELSE  
-            LAWL(1) = LAWS
-        ENDIF 
-
+        !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
+        
+        !IF (LAWTR.GT.0.0.AND.LAWTS.GT.0.0.AND.LAWTS.GT.TMEAN) THEN
+        !    TFLAW = 1.0+LAWTR*(TMEAN-LAWTS)                                                                            !EQN 305
+        !ELSE
+        !    TFLAW = 1.0
+        !ENDIF
+        !IF (LAWWR.GT.0.0.AND.WFG.LT.1.0) THEN
+        !    WFLAW = 1.0+LAWWR*(WFG-1.0)                                                                                !EQN 306
+        !ELSE
+        !    WFLAW = 1.0
+        !ENDIF
+        !
+        !! Position effect on standard SLA
+        !IF (LNUMSG.GT.0) THEN
+        !    LAWL(1) = AMAX1(LAWS*LAWFF,LAWS+(LAWS*LAWCF)*(LNUMSG-1))                                                  !EQN 307
+        !    ! Temperature and water stress effects on SLA at position
+        !    LAWL(1) = AMAX1(LAWL(1)*LAWMNFR,LAWL(1)*TFLAW*WFLAW)                                                      !EQN 308
+        !ELSE  
+        !    LAWL(1) = LAWS
+        !ENDIF 
+        
+        LAWL(1) = LAWS
         !-----------------------------------------------------------------------
         !           Leaf growth
         !-----------------------------------------------------------------------
@@ -430,8 +432,8 @@
                 GROLF = 0.0
             ENDIF
             ! Check if enough assimilates to maintain SLA within limits
-            AREAPOSSIBLE = GROLF*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                                     !EQN 148
-    
+            !AREAPOSSIBLE = GROLF*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                                     !EQN 148 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
+            AREAPOSSIBLE = GROLF*(1.0-LPEFR)*LAWL(1)
             ! If not enough assim.set assimilate factor
             IF (PLAGSB2.GT.AREAPOSSIBLE.AND.PLAGSB2.GT.0.0)THEN
                 AFLF(0,0) = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149

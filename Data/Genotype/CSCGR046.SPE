@@ -72,9 +72,6 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 @LLOSA LWLOS  ! Loss when accelerated,normal senescence   
 !   fr    fr
    1.0  0.50  
-@SLACF SLAFF SLAMN  ! Specific leaf area change,flexibility,minimum  
-!fr/nd    fr    fr
--0.001  0.05   0.3
 @SLATS SLATR SLAWR  ! Specific leaf area temperature and h2o effect parameters
 !  oC     fr    fr
   25.0 0.000  0.00  ! Set to zero so not working
