@@ -61,15 +61,25 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 1
-        INTEGER :: Build = 4
+        INTEGER :: Build = 8
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.1.08 chp 10/18/2016 CSCER compatibility with sequence, NWheat species file update
+!                               Rice N uptake initialization, taro N uptake calculation 
+!       4.6.1.07 chp 07/29/2016 Millet changes from KJB, Puddled rice deactivates after 30 days dry
+!       4.6.1.06 chp 07/21/2016 DSSAT soil temperature is default method, per GH.
+!       4.6.1.05 chp 07/21/2016 EPIC soil temperature is default method.
+!                               4-character Weather file in data directory recognized.
+!                               SNOW variable correctly passed.
+!                               Fatal error messaging improved.
 !       4.6.1.04 chp 03/03/2016 Removed some screen messages in GROW and CSP_GROW. Remove make file. 
 !       4.6.1.03 chp 08/28/2015 NWheat added 
+!       4.6.1.02 chp 09/10/2015 Major changes to millet model (KJB) 
+!       4.6.1.01 chp 08/28/2015 NWheat added 
 !       4.6.1.00 GH  07/01/2015 DSSAT Version 4.6.1 Release
 !       4.6.0.49 GH  06/19/2015 CERES-Rice drought stress issue
 !       4.6.0.48 GH  06/18/2015 Harvest fix CERES & minor data file updates
@@ -774,6 +784,7 @@ D       STDPATH = 'D:\DSSAT46\'
         SELECT CASE (VarName)
         Case ('DRAIN'); Value = SAVE_data % WATER % DRAIN
         Case ('RUNOFF');Value = SAVE_data % WATER % RUNOFF
+        Case ('SNOW');  Value = SAVE_data % WATER % SNOW
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

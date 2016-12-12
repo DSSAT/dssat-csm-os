@@ -47,5 +47,4 @@ resource.h
 *.o
 *.mod
 *.ico
-*.lnk
-*.ini
+Resources/RC*

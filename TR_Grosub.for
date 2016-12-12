@@ -42,7 +42,7 @@ C=======================================================================
      &    LAI, LEAFNO, LFWT, MAXLAI, NSTRES, PBIOMS,      !Output
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, MDATE,                              !Output
+     &    UNH4, UNO3, MDATE, WTNUP,                         !Output
      &    CARBO,                                          !Output
      &    PETWT)                              !addition RMO
 
@@ -114,7 +114,7 @@ C=======================================================================
       REAL PAR, PBIOMS, PCARB, PDWI, PGRORT
       REAL PHINT, PLA, PLANTS, PLPH, PLTPOP, PORMIN, PRFT, PTF
       REAL RANC, RCNP, RESERVE, RLWR
-      REAL ROOTN, ROWSPC, RTDEP, RTR, RTWT, RWUEP1, RWUMX
+      REAL ROOTN, ROWSPC, RTDEP, RTR, RTWT, RWUEP1, RWUMX , WTNUP
       REAL SDEPTH, SDTT_TP
       REAL SDWTPL, SEEDNI, SEEDRV, SENLA
       REAL SLAN, SRAD, STOVER, STOVN !, SNLFWT, 
@@ -296,7 +296,7 @@ C
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, TRNLOS, UNH4, UNO3)                     !Output
+     &    RNLOSS, TRNLOS, UNH4, UNO3 , WTNUP)             !Output
 
       FIRST = .TRUE.
       CUMNLOS = 0.0
@@ -967,7 +967,7 @@ C     TARO
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, TRNLOS, UNH4, UNO3)                     !Output
+     &    RNLOSS, TRNLOS, UNH4, UNO3, WTNUP)              !Output
 
       ENDIF
       !SENLAMY = SENLAM

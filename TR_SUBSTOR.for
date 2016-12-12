@@ -106,7 +106,7 @@ C-----------------------------------------------------------------------
       REAL PODWT, GRNWT
 
 !     For output to PlantGro.OUT
-      REAL DEADLF, GRAINN, SATFAC, PETWT, STOVWT, TUBN, TUBWT, WTNCAN
+      REAL DEADLF, SATFAC, PETWT, STOVWT, TUBN, TUBWT, WTNCAN
       REAL WTNUP, XLAI
 
       LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO
@@ -151,7 +151,7 @@ C-----------------------------------------------------------------------
       IF (DYNAMIC .EQ. RUNINIT) THEN
 
       CALL TR_OPGROW (CONTROL, ISWITCH, SOILPROP, 
-     &    BIOMAS, CORMWT, DEADLF, DTT, GRAINN, ISTAGE,    !Input
+     &    BIOMAS, CORMWT, DEADLF, DTT, ISTAGE,            !Input
      &    LAI, LFWT, MDATE, NLAYR, NSTRES, PLTPOP,        !Input
      &    RLV, ROOTN, RTDEP, RTWT, SATFAC, SENESCE,       !Input
      &    PETWT, STOVN, STOVWT, SWFAC, CORMN      ,       !Input
@@ -235,12 +235,12 @@ C-----------------------------------------------------------------------
      &    LAI, LEAFNO, LFWT, MAXLAI, NSTRES, PBIOMS,      !Output
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, MDATE,                              !Output
+     &    UNH4, UNO3, MDATE, WTNUP,                      !Output
      &    CARBO,                                          !Output
      &    PETWT)                              !addition RMO
 
       CALL TR_OPGROW (CONTROL, ISWITCH, SOILPROP, 
-     &    BIOMAS, CORMWT, DEADLF, DTT, GRAINN, ISTAGE,    !Input
+     &    BIOMAS, CORMWT, DEADLF, DTT, ISTAGE,            !Input
      &    LAI, LFWT, MDATE, NLAYR, NSTRES, PLTPOP,        !Input
      &    RLV, ROOTN, RTDEP, RTWT, SATFAC, SENESCE,       !Input
      &    PETWT, STOVN, STOVWT, SWFAC, CORMN,       !Input
@@ -356,7 +356,7 @@ C--------------------------------------------------------------
      &    LAI, LEAFNO, LFWT, MAXLAI, NSTRES, PBIOMS,      !Output
      &    PCORMN, RLWR, ROOTN, RTWT, RWUEP1, RWUMX,       !Output
      &    STOVER, STOVN, TANC, TGROCOM, TILNO, TOTNUP,    !Output
-     &    UNH4, UNO3, MDATE,                              !Output
+     &    UNH4, UNO3, MDATE, WTNUP,                       !Output
      &    CARBO,                                          !Output
      &    PETWT)                              !addition RMO
 
@@ -369,7 +369,7 @@ C--------------------------------------------------------------
       ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
       CALL TR_OPGROW (CONTROL, ISWITCH, SOILPROP, 
-     &    BIOMAS, CORMWT, DEADLF, DTT, GRAINN, ISTAGE,    !Input
+     &    BIOMAS, CORMWT, DEADLF, DTT, ISTAGE,           !Input
      &    LAI, LFWT, MDATE, NLAYR, NSTRES, PLTPOP,        !Input
      &    RLV, ROOTN, RTDEP, RTWT, SATFAC, SENESCE,       !Input
      &    PETWT, STOVN, STOVWT, SWFAC, CORMN,       !Input

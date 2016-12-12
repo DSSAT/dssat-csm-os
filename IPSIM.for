@@ -114,7 +114,7 @@ C=======================================================================
          MESOL   = '2'    !was '1'
          MESEV   = 'S'    !new Sulieman-Ritchie (2006)
          METMP   = 'D'    !DSSAT original soil temperature
-!        METMP   = 'E' => EPIC soil temp routine.
+!        METMP   = 'E'    ! EPIC soil temp routine.
          IPLTI   = 'R'
          IIRRI   = 'R'
          IFERI   = 'R'
@@ -263,8 +263,10 @@ C
             MESOL = '2'
          ENDIF
 
-!        Default soil temperature method is DSSAT
+!        3/27/2016 chp Default soil temperature method is EPIC
+!        7/21/2016 chp Default soil temperature method is DSSAT, per GH
          IF (INDEX('ED',METMP) < 1) METMP = 'D'
+!        IF (INDEX('ED',METMP) < 1) METMP = 'E'
 
          SELECT CASE(MESEV)
          CASE('R','r'); MESEV = 'R'
@@ -719,7 +721,7 @@ C-----------------------------------------------------------------------
         ISWITCH % MEHYD  = MEHYD   !hydrology
         ISWITCH % MESEV  = MESEV   !soil evaporation
         ISWITCH % MESOL  = MESOL   !soil layer distribution
-        ISWITCH % METMP  = METMP
+        ISWITCH % METMP  = METMP   !soil temperature
         ISWITCH % IDETO  = IDETO   !overview file
         ISWITCH % IDETS  = IDETS   !summary file
         ISWITCH % IDETG  = IDETG   !growth output files
@@ -1141,7 +1143,8 @@ D     IPX = 23
             IF (INDEX('123',MESOL) == 0) MESOL = ' '
             IF (INDEX('RS' ,MESEV) == 0) MESEV = ' '
             IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
-            IF (INDEX('ED' ,METMP) == 0) METMP = 'D'
+!           IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
+            IF (INDEX('ED' ,METMP) == 0) METMP = 'D' !7/21/2016
 
 !         Fourth line of simulation controls
           CASE('@N MAN')

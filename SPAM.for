@@ -159,7 +159,9 @@ C=======================================================================
         CALL STEMP_EPIC(CONTROL, ISWITCH,  
      &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  !DSSAT soilt temperature
+      CASE DEFAULT  
+!     7/21/2016 - DSSAT method is default, per GH
+!     CASE ('D')  !DSSAT soil temperature
         CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
@@ -242,7 +244,9 @@ C=======================================================================
         CALL STEMP_EPIC(CONTROL, ISWITCH,  
      &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  !DSSAT soilt temperature
+      CASE DEFAULT  
+!     7/21/2016 - DSSAT method is default, per GH
+!     CASE ('D')  !DSSAT soil temperature
         CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
@@ -497,7 +501,9 @@ C-----------------------------------------------------------------------
         CALL STEMP_EPIC(CONTROL, ISWITCH,  
      &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  !DSSAT soilt temperature
+      CASE DEFAULT  
+!     7/21/2016 - DSSAT method is default, per GH
+!     CASE ('D')  !DSSAT soil temperature
         CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
@@ -535,7 +541,9 @@ C-----------------------------------------------------------------------
         CALL STEMP_EPIC(CONTROL, ISWITCH,  
      &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  !DSSAT soilt temperature
+      CASE DEFAULT  
+!     7/21/2016 - DSSAT method is default, per GH
+!     CASE ('D')  !DSSAT soil temperature
         CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
      &    SRFTEMP, ST)                                    !Output
