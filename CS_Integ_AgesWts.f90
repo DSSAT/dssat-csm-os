@@ -143,6 +143,10 @@
                             BROLDESTA = BR
                         ENDIF
                         DALF(BR,LF) = DALF(BR,LF) + 1.0                                                                        !EQN 364b
+                        !LPM 13DEC2016 To generate a restriction for leaf active duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
+                        IF (DALF(BR,LF)>(2.0*LLIFATT/(TRDV3(2)-TRDV3(1)))) THEN 
+                            LAGETT(BR,LF) = LLIFGTT+LLIFATT
+                        ENDIF
                     ELSE
                         IF (LAGETT(BR,LF) > LLIFGTT .AND. LAGETT(BR,LF)-TTLFLIFE*EMRGFR < LLIFGTT+LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
                             TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
@@ -165,11 +169,19 @@
                                 ENDIF
                             ENDIF
                         ENDIF
+                        !LPM 12DEC2016 To generate a restriction for leaf senescence duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
+                        IF (DSLF(BR,LF)>(2.0*LLIFSTT/(TRDV3(2)-TRDV3(1)))) THEN 
+                            LAGETT(BR,LF) = LLIFGTT+LLIFATT+LLIFSTT
+                        ENDIF
                     ENDIF
                 
                 !ELSE 
                     IF (LAGETT(BR,LF) < LLIFGTT) THEN
                         DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
+                        !LPM 13DEC2016 To generate a restriction for leaf growing duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
+                        IF (DGLF(BR,LF)>(2.0*LLIFGTT/(TRDV3(2)-TRDV3(1)))) THEN 
+                            LAGETT(BR,LF) = LLIFGTT
+                        ENDIF
                     ENDIF
                 ENDIF
 
