@@ -43,14 +43,14 @@
         LLWAD = LFWT*(1.0-LPEFR)*10.0*PLTPOP
         LPEWAD = LFWT*LPEFR*10.0*PLTPOP
         RWAD = RTWT*PLTPOP*10.0
-        IF (SEEDRS.LT.0.0) SEEDRS = SDWT*(SDRS/100.0)*SPRL   !LPM 23MAR2016  to initialize the value of SEEDRS
-        SDWAD = (SEEDRS+SDCOAT)*10.0*PLTPOP
+        IF (SEEDRS.LT.0.0) SEEDRS = SDSZ*(SDRS/100.0)*SPRL   !LPM 23MAR2016  to initialize the value of SEEDRS
+        SDWT = (SEEDRS+SDCOAT)*10.0*PLTPOP
         TWAD = (SEEDRS+SDCOAT+RTWT+LFWT+STWT+CRWT+SRWT+RSWT)* PLTPOP*10.0
 
         
         ! Leaf petioles NOT included in stem here
-        STWAD = STWT*10.0*PLTPOP
-        CRWAD = CRWT*PLTPOP*10.0
+        STWAD = STWT*PLTPOP*10.0
+        SDWAD = CRWT*PLTPOP*10.0
         RSWAD = RSWT*PLTPOP*10.0
         !LLRSWAD = LLRSWT*PLTPOP*10.0 !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
         !LPERSWAD = LPERSWT*PLTPOP*10.0 

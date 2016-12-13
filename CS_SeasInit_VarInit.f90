@@ -52,7 +52,7 @@
         cflharmsg = 'N'
         cflsdrsmsg = 'N'
         !crrswt = -99.0 
-        crwad = 0.0
+        sdwt = 0.0
         crwt = 0.0
         crwtp = 0.0 !LPM 23MAY2015 Added to keep the potential planting stick weight
         cnad = 0.0

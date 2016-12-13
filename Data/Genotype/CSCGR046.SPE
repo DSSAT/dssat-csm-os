@@ -109,7 +109,7 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 !   fr
   0.05
 ! Seed
-@ SDWT SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole seed)
+@ SDSZ SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole seed)
 ! g/cm     d     %
    3.0    20    90
 ! Photosynthesis
@@ -265,7 +265,7 @@ CH2O distribution/mobilization
 ! SDDUR   Seed duration if used only for roots (Standard day)
 ! SDN%    Seed N (%)
 ! SDRS%   Seed reserves (C) as fraction of seed (#)
-! SDWT    Seed size (g/seed)
+! SDSZ    Seed size (g/seed)
 ! SERX    Shoot elongation rate (cm/std.day)
 ! SGRO2   Size of 2nd shoot relative to 1st (fr)
 ! SLACF   Specific leaf area,change with leaf position,fr standard (#)

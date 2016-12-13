@@ -43,20 +43,20 @@
             !CRWADOUT = CRWAD+CRRSWAD
             LLWADOUT = LLWAD
             STWADOUT = STWAD+LPEWAD
-            CRWADOUT = CRWAD
+            SDWADOUT = SDWAD
             !IF (LFWT.GT.1.0E-6) SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR)+LLRSWT)  !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
             IF (LFWT.GT.1.0E-6) SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR)) 
         ELSEIF (OUTCHOICE.EQ.2) THEN
             ! 2. No reserves, stem wt includes petioles
             LLWADOUT = LLWAD
             STWADOUT = STWAD + LPEWAD
-            CRWADOUT = CRWAD
+            SDWADOUT = SDWAD
             IF (LFWT.GT.1.0E-6)SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR))
         ELSEIF (OUTCHOICE.EQ.3) THEN
             ! 3. No reserves, stem wt does not includes petioles
             LLWADOUT = LLWAD
             STWADOUT = STWAD
-            CRWADOUT = CRWAD
+            SDWADOUT = SDWAD
             IF (LFWT.GT.1.0E-6)SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR))
         ENDIF
         
@@ -68,7 +68,7 @@
         CALL Csopline(caic,caid)
         CALL Csopline(hindc,hind)
         CALL Csopline(hwudc,hwud)
-        CALL Csopline(sdwadc,sdwad)
+        CALL Csopline(sdwtc,sdwt)
         CALL Csopline(brstagec,brstage)
         
         ! Calculate Pari to equate to updated LAI

@@ -424,7 +424,7 @@
         
         !LPM 22MAR2016 To use SEEDRS from emergence 
         !IF (SDRATE.LE.0.0) SDRATE = SDSZ*PPOP*10.0                                                                  !EQN 024 !LPM 06MAR2016 To have just one name for PPOP
-        IF (SDRATE.LE.0.0) SDRATE = SDWT*SPRL*PPOP*10.0   
+        IF (SDRATE.LE.0.0) SDRATE = SDSZ*SPRL*PPOP*10.0   
         ! Reserves = SDRS% of seed                                                                                  !LPM 22MAR2016 Keep value SDRS  
         SEEDRSI = (SDRATE/(PPOP*10.0))*SDRS/100.0                                                                  !EQN 284 !LPM 06MAR2016 To have just one name for PPOP
         !SEEDRS = SEEDRSI

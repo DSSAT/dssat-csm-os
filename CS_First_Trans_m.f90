@@ -88,8 +88,8 @@
     REAL    :: CRFR                    ! Plant. stick growth rate,fr stem gr #     ! (From SeasInit)  
     !REAL    :: CRRSWAD                 ! Plant. stick reserves               kg/ha ! (From Integrate) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
     !REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit) 
-    REAL    :: CRWAD                   ! Plant. stick weight                 kg/ha ! (From SeasInit)  
-    REAL    :: CRWADOUT                ! Plant. stick weight for output      kg/ha ! (From Output)    
+    !REAL    :: CRWAD                   ! Crown weight                        kg/ha ! (From SeasInit)         ! DA not used in Cassava
+    !REAL    :: CRWADOUT                ! Crown weight for output             kg/ha ! (From Output)           ! DA not used in Cassava
     REAL    :: CRWT                    ! Plant. stick weight                 g/p   ! (From SeasInit)  
     REAL    :: CRWTM                   ! Plant. stick weight at maturity     g/p   ! (From Integrate) 
     REAL    :: CRWTP                   ! Plant. stick weight potential       g/p   ! (From SeasInit)  !LPM 23MAY2015 Added to keep the potential planting stick weight
@@ -783,8 +783,9 @@
     REAL    :: SDNPCI                  ! Seed N concentration,initial   %          ! (From SeasInit)  
     REAL    :: SDRATE                  ! Seeding 'rate'                 kg/ha      ! (From SeasInit)  
     REAL    :: SDRS                    ! Seed reserves fraction of seed #          ! (From SeasInit)  !LPM 22MAR2016 Keep value SDRS  
-    !REAL    :: SDSZ                    ! Seed size                      g          ! (From SeasInit) !LPM 22MAR2016 Keep value SDWT  
-    REAL    :: SDWAD                   ! Seed weight                    kg/ha      ! (From SeasInit)  
+    REAL    :: SDSZ                    ! Seed size                      g          ! (From SeasInit) !LPM 22MAR2016 Keep value SDWT  
+    REAL    :: SDWAD                   ! Seed/Stick weight              kg/ha      ! (From SeasInit)  
+    REAL    :: SDWADOUT                ! Seed/Stick weight for output   kg/ha      ! (From Output)    
     REAL    :: SDWAM                   ! Seed at maturity               kg/ha      ! (From SeasInit)  
     REAL    :: SDWT                    ! Seed size by unit of length    g/cm       ! (From SeasInit) 
     REAL    :: SEEDN                   ! Seed N                         g/p        ! (From SeasInit)  
@@ -1244,7 +1245,7 @@
     CHARACTER (LEN=1)   PSTYP(0:PSX)  ! Principal stage type                      ! (From SeasInit) !LPM 28MAR15 Starting from 0 PSX
     CHARACTER (LEN=25)  RUNNAME       ! Run title                                 ! (From SeasInit) 
     CHARACTER (LEN=8)   RUNRUNI       ! Run+internal run number                   ! (From SeasInit) 
-    CHARACTER (LEN=6)   SDWADC        ! Seed weight                               ! (From Output)  
+    CHARACTER (LEN=6)   SDWTC         ! Seed weight                               ! (From Output)  
     CHARACTER (LEN=1)   SEASENDOUT    ! Season end outputs flag                   ! (From RunInit)  
     CHARACTER (LEN=6)   SENN0C        ! Senesced N added to litter                ! (From Output)  
     CHARACTER (LEN=6)   SENNSC        ! Senesced N added to soil                  ! (From Output)  
