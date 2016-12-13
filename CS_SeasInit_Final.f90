@@ -233,8 +233,9 @@
             !WRITE(fnumwrk,*)'  Lafs   ',Lafs        !LPM 05JUN2015 LAFS is not used 
             !WRITE(fnumwrk,*)'  Laxnd,2',Laxno,Laxn2 !LPM 05JUN2016 LAXNO LAXN2 are not used
             !WRITE(fnumwrk,*)'  Lafnd  ',Lafnd
-            WRITE(fnumwrk,*)'  Slas,Slasmn  ',Laws,lawmnfr
-            WRITE(fnumwrk,*)'  Slacf,Slaff  ',Lawcf,Lawff
+            !WRITE(fnumwrk,*)'  Slas,Slasmn  ',Laws,lawmnfr !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
+            WRITE(fnumwrk,*)'  Slas  ',Laws
+            !WRITE(fnumwrk,*)'  Slacf,Slaff  ',Lawcf,Lawff LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
             WRITE(fnumwrk,*)'  Slatr,Slats  ',Lawtr,Lawts
             WRITE(fnumwrk,*)'  Slawr        ',Lawwr
             WRITE(fnumwrk,*)'  Lpefr        ',Lpefr

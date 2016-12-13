@@ -403,10 +403,10 @@
     REAL    :: LATL4(0:PSX,0:LCNUMX)   ! Leaf area,shoot,lf#,+assim.+N  cm2/l      ! (From SeasInit)  
     REAL    :: LATLPOT(0:PSX,0:LCNUMX) ! Leaf area,shoot,leaf,pot       cm2/l      ! (From Growth)    
     REAL    :: LATLPREV(0:PSX,0:LCNUMX)! Leaf area,shoot,leaf,prev.     cm2/l      ! (From Growth)    
-    REAL    :: LAWCF                   ! Leaf area/wt change,fr.st      fr/lf      ! (From SeasInit)  
-    REAL    :: LAWFF                   ! Leaf area/wt flexibility,fr.st fr         ! (From SeasInit)  
+    !REAL    :: LAWCF                   ! Leaf area/wt change,fr.st      fr/lf      ! (From SeasInit) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
+    !REAL    :: LAWFF                   ! Leaf area/wt flexibility,fr.st fr         ! (From SeasInit) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA  
     REAL    :: LAWL(2)                 ! Area to wt ratio,n=youngest lf cm2/g      ! (From Growth)    
-    REAL    :: LAWMNFR                 ! Leaf area/wt ratio,min.fr.std. #          ! (From SeasInit)  
+    !REAL    :: LAWMNFR                 ! Leaf area/wt ratio,min.fr.std. #          ! (From SeasInit) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA   
     REAL    :: LAWS                    ! Leaf area/wt ratio,standard    cm2/g      ! (From SeasInit)  
     REAL    :: LAWTR                   ! Leaf area/weight,temp response fr/C       ! (From SeasInit)  
     REAL    :: LAWTS                   ! Leaf area/weight,temp standard C          ! (From SeasInit)  
@@ -982,7 +982,7 @@
     REAL    :: TFG                     ! Temperature factor,growth 0-1  #          ! (From SeasInit)  
     REAL    :: TFGEM                   ! Temperature factor,germ,emrg   #          ! (From Growth)    
     REAL    :: TFGLF(0:PSX,0:LCNUMX)   ! Temp factor,gr for leaf,av     #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
-    REAL    :: TFLAW                   ! Temperature factor,lf area/wt  #          ! (From Growth)    
+    !REAL    :: TFLAW                   ! Temperature factor,lf area/wt  #          ! (From Growth)  !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA   
     REAL    :: TFLFLIFE                ! Temperature factor,leaf life   #          ! (From Growth)
     REAL    :: TFLFSIZE                ! Temperature factor,leaf size   #          ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TFP                     ! Temperature factor,phs 0-1     #          ! (From SeasInit)  
@@ -1103,7 +1103,7 @@
     REAL    :: WFGPAV(0:12)            ! Water factor,growth,average    #          ! (From SeasInit)  
     REAL    :: WFGPC                   ! Water factor,growth,cumulative #          ! (From SeasInit)  
     REAL    :: WFGU                    ! Water factor,growth,upper      #          ! (From SeasInit)  
-    REAL    :: WFLAW                   ! Water factor,leaf area/weight  #          ! (From Growth)    
+    !REAL    :: WFLAW                   ! Water factor,leaf area/weight  #          ! (From Growth)    !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
     REAL    :: WFLF(0:PSX,0:LCNUMX)    ! H2O factor for leaf,average    #          ! (From SeasInit) !LPM 23MAR15 Change to consider two dimensions
     REAL    :: WFNU                    ! Water factor,N uptake          #          ! (From Growth)    
     REAL    :: WFP                     ! Water factor,photosynthsis 0-1 #          ! (From SeasInit)  
