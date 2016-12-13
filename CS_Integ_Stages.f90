@@ -80,7 +80,8 @@
                 TVR1 = FLOAT(INT(BRSTAGE))
             ENDIF        
         ENDIF    
-        IF (INT(TVR1).GT.INT(BRSTAGEPREV)) THEN
+        
+        IF (INT(TVR1) > INT(BRSTAGEPREV)) THEN
             !IF (BRSTAGE.EQ.0.0) THEN
             !    BRNUMST = 1                                                                         ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)! to have the apex number by branch level
             !ELSEIF (BRSTAGE.GT.0.0) THEN
@@ -110,13 +111,13 @@
         
         ! STAGES:Branching
         !IF (GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
-        IF (GESTAGE.GE.1.0) THEN
-            IF (MEDEV.EQ.'DEVU') THEN                                                     ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
+        IF (GESTAGE >= 1.0) THEN
+            IF (MEDEV == 'DEVU') THEN                                                     ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
                 !DO L = HSTG,1,-1                                                          !LPM 03MAR15 It should be as MEDEV = LNUM DO L = HSTG,0,-1
                 DO L = HSTG-1,0,-1  
                     !IF (CUMDU.GE.PSTART(L).AND.PD(L+1).GT.0.0) THEN !LPM24APR2016 Using DABR instead of CUMDU
                     !    BRSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L+1)
-                    IF (DABR.GE.PSTART(L).AND.PD(L+1).GT.0.0) THEN
+                    IF (DABR >= PSTART(L) .AND. PD(L+1) > 0.0) THEN
                         BRSTAGE = FLOAT(L) + (DABR-PSTART(L))/PD(L+1)
                         ! Brstage cannot go above harvest stage 
                         BRSTAGE = AMIN1(FLOAT(HSTG),BRSTAGE)
@@ -125,11 +126,13 @@
                         EXIT
                     ENDIF
                 ENDDO
-            ELSEIF (MEDEV.EQ.'LNUM') THEN 
+            ELSEIF (MEDEV == 'LNUM') THEN 
                 ! Alternative method based on leaf numbers 
                 DO L = HSTG-1,0,-1
-                    IF (LNUM.GE.LNUMTOSTG(L)) THEN
-                        IF (PDL(L).GT.0) BRSTAGE = FLOAT(L) + (LNUM-LNUMTOSTG(L))/PDL(L)                               ! EQN 007
+                    IF (LNUM >= LNUMTOSTG(L)) THEN
+                        IF (PDL(L) > 0) THEN 
+                            BRSTAGE = FLOAT(L) + (LNUM-LNUMTOSTG(L))/PDL(L)                               ! EQN 007
+                        ENDIF
                         LNUMSIMTOSTG(L+1) = LNUM  ! To record simulated # 
                         ! Brstage cannot go above harvest stage 
                         !LPM 21MAR15 LNUMSIMSTG Introduces to save the number of leaves by cohort, necessary to check if has to be +1 as LNUMSG 
@@ -292,5 +295,30 @@
             ENDIF
         ENDIF
     
+        
+        ! -------------------------------------------------------------------------------------------------------
+        !                    Assigning groups to the nodes, each 20 nodes a different group
+        ! -------------------------------------------------------------------------------------------------------
+        ! DA 13DIC2016 Calculating the group in which the node belongs, knowing that a group is for each 20 nodes
+        Lcount = 1.0; ! this will be used as an index of all the nodes
+        Bcount = 1.0; ! this will be used to indicate the group number
+        DO BR = 0, BRSTAGE               ! for each branch   
+            DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
+                
+                IF(NDDAE(Bcount) == 0.0 .AND. NodeGroup(BR,LF) == 0.0) THEN
+                    NDDAE(Bcount) = DAE
+                ENDIF
+                
+                IF(MOD(NINT(Lcount),20))THEN    ! first, in each 20 nodes
+                    Bcount = Bcount+1           ! increment the number of the group
+                ENDIF
+                
+                NodeGroup(BR,LF) = Bcount       ! Assign the group number the node belongs to
+                
+                ENDDO
+        ENDDO
+        NodeGroupSize = Bcount
+        ! -------------------------------------------------------------------------------------------------------
+        
     END SUBROUTINE CS_Integ_Stages 
         

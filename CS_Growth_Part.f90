@@ -332,30 +332,33 @@
         !    GROLSP = GROLFP                                                                                            !EQN 295b
         !ENDIF
         
+        
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         NODEWTG = 0.0
         GROSTP = 0.0
         GROCRP = 0.0
-        !LPM 01SEP16 putting a conditional DAE.GT.0.0 to avoid illogical values of NODEWTGB
+        !LPM 01SEP16 putting a conditional DAE > 0.0 to avoid illogical values of NODEWTGB
         IF (DAE > 0.0) THEN
-            DO BR = 0, BRSTAGE   
-                IF (BR == 0) THEN
-                    NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
+            DO NG = 1, NodeGroupSize          ! DA 13DIC2016 for each group of nodes
+                IF (NG == 1) THEN
+                    NODEWTGB(NG) = ((1/(1+(((NG)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
                         (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
                 ELSE
-                    NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((BRDAE(BR)/171.64793)**-2.2115103)/ &
-                        (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
+                    NODEWTGB(NG) = ((1/(1+(((NG)/3.10036)**5.89925)))*(2.5514108*((NDDAE(NG)/171.64793)**-2.2115103)/ & 
+                        (NDDAE(NG)*((((NDDAE(NG)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
                 ENDIF
-            
-                DO LF =1, LNUMSIMSTG(BR) 
-                    NODEWTG(BR,LF) = NODEWTGB(BR)
-                    !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
-                    NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
-                    GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
-                    STWTP = STWTP + (NODEWT(BR,LF)*BRNUMST(BR))
-                ENDDO
             ENDDO
         ENDIF
+
+        DO BR = 0, BRSTAGE               ! for each branch   
+            DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
+                NODEWTG(BR,LF) = NODEWTGB(NodeGroup(BR,LF))
+                !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
+                NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
+                GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
+                STWTP = STWTP + (NODEWT(BR,LF)*BRNUMST(BR))
+            ENDDO
+        ENDDO
         
         GROCRP = NODEWTGB(0)*SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
