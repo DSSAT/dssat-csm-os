@@ -335,9 +335,9 @@
         GROSTP = 0.0
         GROCRP = 0.0
         !LPM 01SEP16 putting a conditional DAE.GT.0.0 to avoid illogical values of NODEWTGB
-        IF (DAE.GT.0.0) THEN
+        IF (DAE > 0.0) THEN
             DO BR = 0, BRSTAGE   
-                IF (BR.EQ.0) THEN
+                IF (BR == 0) THEN
                     NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
                         (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
                 ELSE
