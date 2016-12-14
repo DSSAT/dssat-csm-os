@@ -295,26 +295,26 @@
             ENDIF
         ENDIF
     
-        
         ! -------------------------------------------------------------------------------------------------------
         !                    Assigning groups to the nodes, each 20 nodes a different group
         ! -------------------------------------------------------------------------------------------------------
         ! DA 13DIC2016 Calculating the group in which the node belongs, knowing that a group is for each 20 nodes
-        Lcount = 1.0; ! this will be used as an index of all the nodes
-        Bcount = 1.0; ! this will be used to indicate the group number
+        Lcount = 1.0 ! this will be used as an index of all the nodes
+        Bcount = 1.0 ! this will be used to indicate the group number
+        NodeGroupSize = 0
         DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 
-                IF(NDDAE(Bcount) == 0.0 .AND. NodeGroup(BR,LF) == 0.0) THEN
-                    NDDAE(Bcount) = DAE
-                ENDIF
-                
-                IF(MOD(NINT(Lcount),20))THEN    ! first, in each 20 nodes
+                IF(MOD(NINT(Lcount),20) == 0)THEN    ! first, in each 20 nodes
                     Bcount = Bcount+1           ! increment the number of the group
                 ENDIF
                 
+                IF(NDDAE(Bcount) == 0.0 .AND. NodeGroup(BR,LF) == 0.0) THEN 
+                    NDDAE(Bcount) = DAE                                             ! calculate date of new group appereance
+                ENDIF
+
                 NodeGroup(BR,LF) = Bcount       ! Assign the group number the node belongs to
-                
+                Lcount = Lcount+1               ! incrementing overall count of leaves
                 ENDDO
         ENDDO
         NodeGroupSize = Bcount
