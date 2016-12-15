@@ -61,13 +61,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 1
-        INTEGER :: Build = 09
+        INTEGER :: Build = 10
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.1.10 chp 12/15/2016 Bugfixes tillage, rice, SALUS
 !       4.6.1.09 chp 11/18/2016 NWheat grain N bug fixed.
 !                               Rice photosynth now uses SLPF.
 !       4.6.1.08 chp 10/18/2016 CSCER compatibility with sequence, NWheat species file update
