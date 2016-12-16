@@ -340,13 +340,8 @@
         !LPM 01SEP16 putting a conditional DAE > 0.0 to avoid illogical values of NODEWTGB
         IF (DAE > 0.0) THEN
             DO NG = 1, NodeGroupSize          ! DA 13DIC2016 for each group of nodes
-                IF (NG == 1) THEN
-                    NODEWTGB(NG) = ((1/(1+(((NG)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
-                        (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
-                ELSE
-                    NODEWTGB(NG) = ((1/(1+(((NG)/3.10036)**5.89925)))*(2.5514108*((NDDAE(NG)/171.64793)**-2.2115103)/ & 
-                        (NDDAE(NG)*((((NDDAE(NG)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
-                ENDIF
+                    NODEWTGB(NG) = ((1/(1+(((NG)/3.10036)**5.89925)))*(2.5514108*(((DAE-NDDAE(NG)+1)/171.64793)**-2.2115103)/ & 
+                        ((DAE-NDDAE(NG)+1)*(((((DAE-NDDAE(NG)+1)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
             ENDDO
         ENDIF
 
