@@ -343,10 +343,10 @@
                     NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((DAE/171.64793)**-2.2115103)/ &
                         (DAE*((((DAE/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
                 ELSE
-                    NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*((BRDAE(BR)/171.64793)**-2.2115103)/ &
-                        (BRDAE(BR)*((((BRDAE(BR)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
+                    NODEWTGB(BR) = ((1/(1+(((BR+1)/3.10036)**5.89925)))*(2.5514108*(((DAE-BRDAE(BR)+1)/171.64793)**-2.2115103)/ &
+                        ((DAE-BRDAE(BR)+1)*(((((DAE-BRDAE(BR)+1)/171.64793)**-2.2115103)+1))**2))*TFD*NODWT)
                 ENDIF
-            
+           
                 DO LF =1, LNUMSIMSTG(BR) 
                     NODEWTG(BR,LF) = NODEWTGB(BR)
                     !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 

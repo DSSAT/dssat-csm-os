@@ -446,7 +446,11 @@
             SHLAGB4(3) = SHLAG2(3) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0))                                                                         !EQN 240    
 
             GROCRADJ = AMIN1(GROCR,GROCRADJ)
-            GROLFADJ = AMIN1(GROLF,GROLFADJ)
+            !GROLFADJ = AMIN1(GROLF,GROLFADJ)
+                        ! Potential leaf weight increase.
+            !LPM 16DEC2016 GROLFADJ is defined by the new estimation of leaf area which is considering water stress (WFG), carbohydrates available (AFLF) and nitrogen restrictions (NFLF2)
+            IF (LAWL(1).GT.0.0) GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+            
             GROSTADJ = AMIN1(GROST,GROSTADJ)
             RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)
             RTRESPADJ = AMIN1(RTRESP,RTRESPADJ)    

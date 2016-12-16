@@ -33,7 +33,6 @@
         ENDIF
         
         DAS = MAX(0,CSTIMDIF(YEARSIM,YEARDOY))
-        
         SLAOUT = -99.0
         ! Note possibilities. To change must recompile.
         IF (OUTCHOICE.EQ.1) THEN
@@ -59,7 +58,6 @@
             SDWADOUT = SDWAD
             IF (LFWT.GT.1.0E-6)SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR))
         ENDIF
-        
         IF (SLA.LE.0.0) SLAOUT = -99.0
         
         CALL Csopline(sentoplitterac,(sentoplittera))
