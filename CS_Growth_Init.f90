@@ -87,7 +87,7 @@
         DF = 1.0
         DFNEXT = 1.0
         ! To ensure correct sensitivity on emergence day
-        IF (BRSTAGE.LE.0.0) THEN
+        IF (BRSTAGE <= 0.0) THEN
             BRSTAGETMP = 1.0
         ELSE
             BRSTAGETMP = BRSTAGE
