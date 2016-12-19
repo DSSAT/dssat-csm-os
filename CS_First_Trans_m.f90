@@ -511,7 +511,7 @@
     REAL    :: MJPERE                  ! Energy per Einstein (300-170)  MJ/E       ! (From RunInit)   
     !INTEGER :: MSTG                    ! Maturity stage(eg.black layer) #          ! (From SeasInit) !LPM 05JAN2015 MSTG is not used  
     REAL    :: NCRG                    ! N factor,root growth           ppm        ! (From SeasInit)  
-    REAL    :: NDDAE(1:NGMAX)          ! DAE when a new group of nodes appears     ! DA 13DIC2016
+    REAL    :: NDDAE(0:PSX,0:LCNUMX)   ! DAE when a new node appears     ! DA 13DIC2016
     REAL    :: NDEM2                   ! N demand for growth>minimum    g/p        ! (From Growth)    
     REAL    :: NDEMMN                  ! N demand for growth at minimum g/p        ! (From Growth)    
     REAL    :: NDEMSMN(0:PSX,0:LCNUMX) ! N demand for growth/node min   g/p        !LPM 25MAY2015 addet to consider stem N by node cohort
@@ -541,11 +541,9 @@
     REAL    :: NLLG                    ! N limit,leaf growth            #          ! (From SeasInit)  
     REAL    :: NO3CF                   ! NO3 uptake concentration fac   #          ! (From SeasInit)  
     REAL    :: NO3MN                   ! NO3 conc minimum for uptake    g/Mg       ! (From SeasInit)  
-    REAL    :: NodeGroup(0:PSX,0:LCNUMX) ! Group in which the node belongs #       ! DA 13DIC2016
-    REAL    :: NodeGroupSize           ! Group in which the node belongs#          ! DA 13DIC2016
     REAL    :: NODEWT(0:PSX,0:LCNUMX)  ! Node wt  by cohort             g/p        ! LPM 11APR15
     REAL    :: NODEWTG(0:PSX,0:LCNUMX) ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 
-    REAL    :: NODEWTGB(0:NGMAX)      ! Node wt growth by br.level     g/d/node   ! LPM 02MAR15 
+    REAL    :: NODEWTGB(0:PSX,0:LCNUMX)! Leaf wt growth     g/d/leaf   ! DA 16DIC16 
     REAL    :: NODLT                   ! internode length Br=0 lignified cm        ! LPM 08JUN2015
     REAL    :: NODWT                   ! Node wt Br=0  at 3400 ˚Cd      g/node     ! LPM 08JUN2015
     INTEGER :: NOUTPG                  ! Number for growth output file  #          ! (From RunInit)   
