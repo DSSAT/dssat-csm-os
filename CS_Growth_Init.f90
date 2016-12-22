@@ -146,9 +146,9 @@
         !-----------------------------------------------------------------------
         !IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
         IF (GERMFR.GT.0.0.OR.GESTAGE.GE.1.0) THEN
-            !SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TT/STDAY)*GERMFR)                                                  !EQN 286 
+            SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TTGEM/STDAY)*GERMFR)                                                  !EQN 286 
             !LPM 22MAR2016 use for roots the same amount of reserves than aboveground (SEEDUSED)
-            SEEDRSAVR = AMIN1(SEEDUSED,SEEDRS) 
+            !SEEDRSAVR = AMIN1(SEEDUSED,SEEDRS) 
         ELSE
             SEEDRSAVR = 0.0
         ENDIF

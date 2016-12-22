@@ -352,7 +352,7 @@
                     !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
                     NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
                     GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
-                    STWTP = STWTP + (NODEWT(BR,LF)*BRNUMST(BR))
+                    STWTP = STWTP + (NODEWTG(BR,LF)*BRNUMST(BR))
                 ENDDO
             ENDDO
         ENDIF
@@ -367,12 +367,15 @@
 
         !LPM 30MAY2015 Modify RTWTG according to Matthews & Hunt, 1994 (GUMCAS)
         !LPM 05OCT2015 Moved before of leaf, stem and planting stick growth 
+        !LPM 19DEC2016 Modify RTWTG as a fix ratio of 10% of top growth (it needs to be compared with Matthews & Hunt, 1994 (GUMCAS))
         !RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
         
         IF (CARBOT.GT.0.0.OR.SEEDRSAVR.GT.0.0) THEN  !LPM 23MAR2016  To consider root growth from SEEDRSAVR
-            CARBOR = AMAX1(0.0,AMIN1(CARBOT,(GROST+GROLF)*(0.05+0.1*EXP(-0.005*Tfd))))  !LPM 02OCT2015 to avoid negative values of CARBOT
+            !CARBOR = AMAX1(0.0,AMIN1(CARBOT,(GROST+GROLF)*(0.05+0.1*EXP(-0.005*Tfd))))  !LPM 02OCT2015 to avoid negative values of CARBOT
+            CARBOR = AMAX1(0.0,AMIN1(CARBOT,(GROST+GROLF)*(0.1))) 
             CARBOT = AMAX1(0.0,CARBOT - CARBOR)
-            RTWTG = ((GROST+GROLF)*(0.05+0.1*EXP(-0.0005*Tfd))+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
+            !RTWTG = ((GROST+GROLF)*(0.05+0.1*EXP(-0.0005*Tfd))+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
+            RTWTG = (((GROST+GROLF)*(0.1))+SEEDRSAVR)*(1.0-RRESP)  
             RTRESP = RTWTG*RRESP/(1.0-RRESP)                                                                               !EQN 388
         ENDIF
         
