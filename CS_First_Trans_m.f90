@@ -257,7 +257,8 @@
     REAL    :: GROLSRT                 ! Leaf+stem gr from root dmatter g/p        ! (From Growth)    
     REAL    :: GROLSRTN                ! Leaf+stem N growth from root N g/p        ! (From Growth)    
     REAL    :: GROLSSD                 ! Leaf+stem gr from seed         g/p        ! (From Growth)    
-    REAL    :: GROLSSEN                ! Leaf+stem growth from senesnce g/p        ! (From Growth)    
+    REAL    :: GROLSSEN                ! Leaf+stem growth from senesnce g/p        ! (From Growth) 
+    REAL    :: GRORP                   ! Potential root growth          g/p        ! (From SeasInit) !LPM 22DEC2016 potential root growth
     REAL    :: GRORS                   ! Reserves growth                g/p        ! (From SeasInit)  
     !REAL    :: GROSR                   ! Storage root growth            g/p        ! (From SeasInit)  !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
     REAL    :: GROST                   ! Stem growth rate               g/p        ! (From SeasInit)  
@@ -797,7 +798,7 @@
     REAL    :: SEEDNUSE2               ! N use from seed,supplementary  g          ! (From Growth)    
     REAL    :: SEEDRS                  ! Seed reserves                  g/p        ! (From SeasInit)  
     REAL    :: SEEDRSAV                ! Seed reserves available        g/p        ! (From SeasInit)  
-    REAL    :: SEEDRSAVR               ! Seed reserves available,roots  g/p        ! (From Growth)    
+    !REAL    :: SEEDRSAVR               ! Seed reserves available,roots  g/p        ! (From Growth) !LPM 22DEC2016 Root growth based on top growth (deleted SEEDRSAVR)     
     REAL    :: SEEDRSI                 ! Seed reserves,initial          g/p        ! (From SeasInit)  
     REAL    :: SEEDUSE                 ! Seed reserves use              g/p        ! (From SeasInit) 
     REAL    :: SEEDUSED                ! Seed reserves use by germ day  g/p/d      ! (From SeasInit) !LPM 22MAR2016 Added SEEDUSED to estimate the use of reserves in germination

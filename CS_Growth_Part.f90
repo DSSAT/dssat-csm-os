@@ -358,25 +358,8 @@
         
         GROCRP = NODEWTGB(0,1)*SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
-        GROLSP = GROLFP + GROSTP + GROCRP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
-        
-        !-----------------------------------------------------------------------
-        !           Root growth                                     
-        !-----------------------------------------------------------------------
-
-        !LPM 30MAY2015 Modify RTWTG according to Matthews & Hunt, 1994 (GUMCAS)
-        !LPM 05OCT2015 Moved before of leaf, stem and planting stick growth 
-        !LPM 19DEC2016 Modify RTWTG as a fix ratio of 10% of top growth (it needs to be compared with Matthews & Hunt, 1994 (GUMCAS))
-        !RTWTG = (CARBOR+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
-        
-        IF (CARBOT.GT.0.0.OR.SEEDRSAVR.GT.0.0) THEN  !LPM 23MAR2016  To consider root growth from SEEDRSAVR
-            !CARBOR = AMAX1(0.0,AMIN1(CARBOT,(GROST+GROLF)*(0.05+0.1*EXP(-0.005*Tfd))))  !LPM 02OCT2015 to avoid negative values of CARBOT
-            CARBOR = AMAX1(0.0,AMIN1(CARBOT,(GROST+GROLF)*(0.1))) 
-            CARBOT = AMAX1(0.0,CARBOT - CARBOR)
-            !RTWTG = ((GROST+GROLF)*(0.05+0.1*EXP(-0.0005*Tfd))+SEEDRSAVR)*(1.0-RRESP)                                                                         !EQN 387
-            RTWTG = (((GROST+GROLF)*(0.1))+SEEDRSAVR)*(1.0-RRESP)  
-            RTRESP = RTWTG*RRESP/(1.0-RRESP)                                                                               !EQN 388
-        ENDIF
+        GRORP = (GROLFP + GROSTP)*0.10
+        GROLSP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
         IF (GROLSP.GT.0.0) THEN
             ! Leaf+stem weight increase from assimilates
@@ -520,10 +503,12 @@
         !in the planting stick (In the future it could be modified as an input in the X-file)
         GROST = GROSTCR
         
-        IF (GROLSP.GT.0.0) GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR            
-        !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)
+        IF (GROLSP.GT.0.0) THEN
+            GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR 
+            RTWTG = GROLS*(GRORP/GROLSP) !LPM 22DEC2016 Root development 
+        ENDIF
         
-                          
+        !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)                      
 
         
     END SUBROUTINE CS_Growth_Part

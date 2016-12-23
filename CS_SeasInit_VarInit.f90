@@ -247,6 +247,7 @@
         mdat = -99
         mdayfr = -99
         mdoy = -99
+        nddae = 0.0
         nfg = 1.0
         nfgcc = 0.0
         nfgcc = 0.0
