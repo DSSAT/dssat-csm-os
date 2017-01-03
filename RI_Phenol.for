@@ -65,6 +65,8 @@ C=======================================================================
       REAL SWSD,TOPT,TNSOIL,TDSOIL
       REAL TMSOIL,ACOEF,DAYL,TH,SUMHDTT
 
+      REAL LAIX   !LOCAL VARIABLE
+
 !     CHP/US added for P model
       REAL SeedFrac, VegFrac
        
@@ -122,6 +124,8 @@ C=======================================================================
       WSTRES = 1.0
       RATEIN = 0.0
 
+      LAIX = 0.0
+
       ! Initialze stress indices - FROM INPLNT
       DO I = 1, 6
          SI1(I) = 0.0
@@ -152,6 +156,11 @@ C=======================================================================
 
       NEW_PHASE = .FALSE.
 
+!! temp chp
+!      write(3000,'(A)') 
+!     & "   yrdoy  xstage icsdur     dtt     tn    tmpi  idur1     lai"
+
+
 !***********************************************************************
 !***********************************************************************
 !     Daily rate / integration calculations
@@ -169,6 +178,8 @@ C=======================================================================
 !     CHP/US 4/03/2008  P model
       SeedFrac = 0.0
       VegFrac  = 0.0
+
+      IF (LAI > LAIX) LAIX = LAI
 
 !-----------------------------------------------------------------------
 !     Transplant date
@@ -489,6 +500,13 @@ C=======================================================================
              RETURN
           ENDIF
           TMPI = CUMTMP/(ICSDUR)*G4
+
+!     CHP ADDED 1/3/2017 - TEMP?
+!         Check for LAI > small number, continue season, otherwise maturity triggered
+          IF (LAI < 0.1*LAIX .AND. ICSDUR > 200) THEN
+            ISTAGE = 6    !TRIGGER MATURITY
+            RETURN
+          ENDIF
           !
           ! Check if night temp (NT) was below 15 C during this stage
           !
@@ -503,6 +521,11 @@ C=======================================================================
                 IF (TN .GT. 15.0/G4) THEN
                    IDUR1 = IDUR1 + 1
                 ENDIF
+
+!! temp chp
+!      write(3000,3000) yrdoy, xstage, icsdur, dtt, tn, tmpi, idur1, lai
+! 3000 format(i8,f8.3,i7,f8.3,f7.2,f8.3,I7,f8.3)
+
                 RETURN
              ENDIF
              !
@@ -510,6 +533,7 @@ C=======================================================================
              ! after daylength requirement for PI_TF had been met
              ! then allow plant to reaach PI_TF
           ENDIF
+
           STGDOY(ISTAGE) = YRDOY
           CUMHEAT = 0.0
           STRCOLD = 1.0
