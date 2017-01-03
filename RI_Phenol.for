@@ -502,7 +502,7 @@ C=======================================================================
           TMPI = CUMTMP/(ICSDUR)*G4
 
 !     CHP ADDED 1/3/2017 - TEMP?
-!         Check for LAI > small number, continue season, otherwise maturity triggered
+!         Check for LAI < some fraction of max LAI after a long duration
           IF (LAI < 0.1*LAIX .AND. ICSDUR > 200) THEN
             ISTAGE = 6    !TRIGGER MATURITY
             RETURN
