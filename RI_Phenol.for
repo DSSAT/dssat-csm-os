@@ -9,14 +9,15 @@ C                 Written
 C  08-07-1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
-!  02/20/2012 CHP / US Modify temperature response
+!  02/20/2012 CHP/US Modify temperature response
+!  12/06/2016 CHP/US Add check for small LAI during grainfilling - triggers maturity
 C=======================================================================
 
       SUBROUTINE RI_PHENOL (CONTROL, ISWITCH, 
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
-     &    YRPLT,FLOODWAT,                                 !Input
+     &    YRPLT,FLOODWAT, LAI,                            !Input
      &    CUMDTT, EMAT, ISDATE, PLANTS, RTDEP, YRSOW,     !I/O
      &    CDTT_TP, DTT, FERTILE, FIELD, ISTAGE,           !Output
      &    ITRANS, LTRANS, MDATE, NDAT, NEW_PHASE, P1, P1T,!Output
@@ -44,7 +45,7 @@ C=======================================================================
 
       REAL AGEFAC, ATEMP, BIOMAS, CDTT_TP, CNSD1, CNSD2, CSD1, CSD2
       REAL CUMDEP, CUMDTT, CUMTMP, DTT, FERTILE
-      REAL G4, NSTRES
+      REAL G4, NSTRES, LAI
       REAL P1, P1T, P3, P4, P5, P8, P9, P2O, P2R
       REAL PHEFAC, PHINT, PLANTS, RTDEP
       REAL SDAGE, SDEPTH, SDTT_TP, SEEDNI, SIND, SRAD
@@ -696,9 +697,13 @@ C=======================================================================
 		SeedFrac = AMIN1 (1.0, (SUMDTT + SUMDTT_4) / P5)
 	    VegFrac = 1.0
 
-          IF (SUMDTT .LT. 0.90*P5) THEN
-             RETURN
+!         Check for LAI > small number, continue season, otherwise maturity triggered
+          IF (LAI > 1.E-4) THEN
+            IF (SUMDTT .LT. 0.90*P5) THEN
+               RETURN
+            ENDIF
           ENDIF
+
 		SeedFrac = AMIN1 (1.0, (SUMDTT + SUMDTT_4) / P5)
           VegFrac = 1.0
           IF (ISM .LE. 0) THEN

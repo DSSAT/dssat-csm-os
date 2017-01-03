@@ -97,7 +97,8 @@
   RWUEP1  1.50  
   istage emerge endjuv endveg endear grnfil mature fallow sowing   germ  ! Reference only: istage  
   stage#      1      2      3      4      5      6      7      8      9  ! names-to-numbers set in ModuleDefs
-  rootfr    0.3    0.2    0.15   0.10   0.08    0.0    0.0    0.0    0.0 ! Modify this line only   
+  rootfr    0.3    0.2   0.15   0.10   0.08    0.0    0.0    0.0    0.0  ! Modify this line only   
+! rootfr    0.3    0.2    0.15   0.10   0.08    0.0    0.0    0.0    0.0 ! <- numbers were not being read correctly 
   
 *AERATION DEFICIT PARAMETERS (NWHEAT roots)
   p_fdsw     0.0   0.5   1.0      ! fraction of drainable soil water in layer 
