@@ -279,6 +279,9 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL sla_new  ! specific leaf area of new growth (mm2/g)      
       real slan  ! leaf area senesced during normal development (mm^2 ?)
       real slfn     ! N effect on leaf senescence  (0-1)
+      real slfo3    ! Ozone leafe scenescence factor
+      real Ozone    ! Ozone concentration
+      real FO3      ! Ozone effect factor for photosynthesis
       real slft     ! low temperature factor (0-1)
       real slfw     ! drought stress factor (0-1)
       real stage_gpla ! from function nwheats_slan
@@ -2130,15 +2133,26 @@ cbak optimum of 18oc for photosynthesis
       else
          ! cold morning - too cold for plants to grow today
          prft = 0.0
-      endif
- 
+         endif
+  
+          !Effect of Ozone on photosynthesis added by BTK
+      if (Ozone .gt. 20. ) then
+          FO3=(-0.01 * Ozone ) + 1.2
+      else
+          FO3= 1.0
+          Endif
+
+       PRFO3 = min(1.0, min(1.0,(FO3*rue_factor)/swdef(photo_nw))) ! ozoen effect
+
+            
           ! --------------- actual -----------------
  
           ! now get the actual dry matter (carbohydrate) production on the
           ! day by discounting by temperature, water or N stress factors.
 cnh senthold
 cnh      optfr = min (swdef(photo), nfact(1)) * prft
-      optfr = min (swdef(photo_nw), nfact(1), ADPHO) * prft 
+      optfr = min (swdef(photo_nw), nfact(1), ADPHO, PRFO3) * prft 
+             
         !! threshold aeration deficit (AF2) affecting photosyn
       carbh = ptcarb*optfr
       carbh = MAX(carbh, 0.0)  !*! was: carbh = l_bound (carbh, 0.0)
@@ -3058,10 +3072,16 @@ cbak  adjust the green leaf ara of the leaf that is dying
 !         slft = 1.0
 !      endif
       sfactor = max (slfw, slfn, slft)
- 
+      Ozone= TMAX  !!! added by BTK temporary for ozone estimation
+      if (Ozone .gt. 20. ) then   !! ozon effect on leaf scenesence
+          slfo3= (0.1*Ozone)-1.
+      else
+          slfo3= 1.0
+          endif
+      
 cbak increase slan to account for stresses
  
-      leafsen = slan * sfactor
+      leafsen = slan * sfactor * slfo3
  
       ! More Housekeeping needed here.!!!!!!!!!!!
  
