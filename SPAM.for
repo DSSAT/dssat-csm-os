@@ -209,7 +209,7 @@ C=======================================================================
 
 !     Call OPSPAM to open and write headers to output file
       IF (IDETW .EQ. 'Y') THEN
-        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU, 
+        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)

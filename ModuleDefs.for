@@ -64,8 +64,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 3
       END TYPE VersionType
       TYPE (VersionType) Version
-
-      CHARACTER(len=10) :: VBranch = '-develop energy balance'
+      CHARACTER(len=10) :: VBranch = '-develop  '
+!     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
 !       4.6.1.03 chp 08/28/2015 NWheat added 
@@ -180,7 +180,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CHARACTER(LEN=1)  SLASH  
       CHARACTER(LEN=3)  ModelVerTxt
       CHARACTER(LEN=12) DSSATPRO 
-      CHARACTER(LEN=30) STDPATH 
+      CHARACTER(LEN=11) STDPATH 
       CHARACTER(LEN=6)  LIBRARY    !library required for system calls
 
       CHARACTER*3 MonthTxt(12)
@@ -197,7 +197,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) FILEX
         CHARACTER (len=30) FILEIO
         CHARACTER (len=102)DSSATP
-        character (len=60)  :: ename = ' '
         CHARACTER (len=120) :: SimControl = 
      &  "                                                            "//
      &  "                                                            "
@@ -426,9 +425,6 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
-!     call op_sys(slash,dssatpro,stdpath) commented out on 30Oct15.
-!    Following code down to END SUBROUTNE statement came from
-!    Cheryl Porter on 30Oct15.
       SELECT CASE (OPSYS)
       CASE ('WINDO','DOS  ')
 !       DOS, Windows
@@ -445,8 +441,6 @@ D       STDPATH = 'D:\DSSAT46\'
         DSSATPRO = 'DSSATPRO.L46'
         STDPATH = '../DSSAT46/'
       END SELECT
- 
-
 
       END SUBROUTINE SETOP
 
