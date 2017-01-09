@@ -460,7 +460,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       IF (DAS .GE. NVEG0 .AND. DAS .LE. NDVST) THEN
         IF (DAS .LT. NVEG1) THEN
-        VSTAGE  = PHZACC(2)/MNEMV1
+        VSTAGE  = PHZACC(2)/MNEMV1 
         ELSE
         IF (VSTAGE .LT. ABS(EVMODC) .AND. 
      &    ABS(EVMODC) .GT. 0.0001) THEN

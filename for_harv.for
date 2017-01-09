@@ -2,8 +2,9 @@
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht)     !Input/Output
-
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &                fhtot,fhpctlf)
+      
       USE MODULEDEFS
 
       IMPLICIT NONE
@@ -26,7 +27,7 @@
       REAL PROLFF,PROSTF,pliglf,pligst
       real canht,fhcrlf,fhcrst,fhtotn,fhtot,fhlfn,fhstn
       real fhpcho,fhpctlf,fhpctn,fhplig
-      real vstagp
+      real vstagp,MOWC,RSPLC,y,z
 
       character(len=2)  crop
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
@@ -98,7 +99,7 @@
           MOW (1) = -99
           RETURN
         END IF
-
+     
         I = 0
         ISECT = 0
         DO WHILE (ISECT.EQ.0)
@@ -134,8 +135,28 @@
               FHLEAF=MAX(FHLEAF,0.0)
               FHSTEM=MAX(FHSTEM,0.0)
               FHVSTG=MAX(MVS(I),0.0)
+                            
+!              canht=max(rsht(i)/100,0.0)
+              canht=max(rsht(i),0.0)     !enter rsht in cm
               
-              canht=max(rsht(i)/100,0.0)
+C----------------------------------------------------------      
+!MOWC - Automatic MOW - post harvest stubble mass and %leaf 
+!       in the stubble calculation (Diego): 
+C----------------------------------------------------------              
+!           MOWC = 209.69*rsht(i)+0.0
+           !y = (209.69*rsht(i))
+           !MOWC= (-11.084*28)+y
+            MOWC= (-11.084*28)+(209.69*rsht(i))  
+           if (rsht(i) .GE. 1.0) then
+!           RSPLC = -0.3373*rsht(i)+52.903
+           !z = (-0.3373*rsht(i))+52.903
+           !RSPLC= (-0.0418*28)+z
+            RSPLC= (-0.0418*28)+((-0.3373*rsht(i))+52.903)   
+           else
+           RSPLC=0.0
+           endif
+!        WRITE(5000,'(2F8.2)') MOWC,RSPLCCDED
+C---------------------------------------------------------              
 
               fhtot = fhleaf+fhstem
 
@@ -223,18 +244,19 @@
                WRITE(fhlun,'(a)')
      &           '@RUN FILEX    CR TRNO FHNO YEAR DOY'//
      &           ' RCWAH RLWAH RSWAH RSRWH RRTWH RLAIH'//
-     &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H FHAGE IVOMD'
+     &           ' FHWAH FHNAH FHN%H FHC%H FHLGH FHL%H FHAGE IVOMD'//
+     &           '   MOWC RSPLC'
             end if
                call yr_doy(yrdoy,year,doy)
                write(fhoutfmt,'(a)') '(i4,x,a8,a3,2(i5),i5,i4,'//
-     &              '5(i6),f6.2,2(i6),3(f6.2),f6.1,i6,f6.1)'
+     &            '5(i6),f6.2,2(i6),3(f6.2),f6.1,i6,f6.1,x,2f6.1)'
             WRITE(fhlun,fhoutfmt)
      &           run,mowfile(1:8),crop,trtno,i,year,doy,
      &           int(topwt*10),int(wtlf*10),int(stmwt),
      &           int(strwt*10),int(rtwt*10),xlai,
      &           int(fhtot*10),int(fhtotn*10),
      &           fhpctn,fhpcho,fhplig,fhpctlf,
-     &           -99,-99.0
+     &           -99,-99.0,MOWC,RSPLC
             close(fhlun)
             
               if(i==size(mow)) deallocate(mow,trno,date,rsplf,mvs,rsht)

@@ -235,6 +235,8 @@ C------------------------------------------------------------
 C  PDA 5/6/2010 VARIABLES ADDED FOR FORAGE HARVEST SUBROUTINE
 C------------------------------------------------------------
       REAL FHLEAF,FHSTEM,FHVSTG
+      REAL FHWAH,FHLPH !DIEGO ADDED 10/26/2016
+      REAL DWTCO, DWTLO, DWTSO !DIEGO ADDED 11/22/2016
       LOGICAL RUNYET
 
 !-----------------------------------------------------------------------
@@ -612,7 +614,7 @@ C-----------------------------------------------------------------------
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
 
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
       CALL FOR_OPMOB(CONTROL, ISWITCH, 
      &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC, 
@@ -672,7 +674,8 @@ C-----------------------------------------------------------------------
      &    FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
-     &    FRLF, FRSTM, FRRT)
+     &    FRLF, FRSTM, FRRT,
+     &    FHWAH,FHLPH, DWTCO, DWTLO, DWTSO)
 
 !!     Initialize Overview.out file.
 !      CALL FOR_OPHARV(CONTROL, ISWITCH, 
@@ -877,7 +880,7 @@ C     Initialize pest coupling point and damage variables, first day only
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
 
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
 C-----------------------------------------------------------------------
 C      09/23/05 SJR Added subroutine
@@ -1085,7 +1088,8 @@ C-----------------------------------------------------------------------
      &    FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
-     &    FRLF, FRSTM, FRRT)
+     &    FRLF, FRSTM, FRRT,
+     &    FHWAH,FHLPH,DWTCO, DWTLO, DWTSO)
 
 ! CALL FOR_OPHARV (CONTROL, ISWITCH, 
 !&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
@@ -1299,7 +1303,7 @@ C-----------------------------------------------------------------------
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
 
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
@@ -1985,13 +1989,16 @@ C-----------------------------------------------------------------------
      &  PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,               !Output
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
+      FHWAH= 0.0
+      FHLPH = 0.0
       call forage_harvest(CONTROL,FILECC,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht)     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &                FHWAH,FHLPH)
 
 !-----------------------------------------------------------------------
 !     End of DAS > NVEG0 if construct
@@ -2094,7 +2101,8 @@ C-----------------------------------------------------------------------
      &  FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
      &  FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &  RCHDP,
-     &  FRLF, FRSTM, FRRT)
+     &  FRLF, FRSTM, FRRT,
+     &  FHWAH,FHLPH,DWTCO, DWTLO, DWTSO)
 
 !     !!   ! Write to Overview.out and summary.out files.
 !     !!   CALL FOR_OPHARV (CONTROL, ISWITCH, 

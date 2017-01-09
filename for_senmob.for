@@ -274,7 +274,8 @@ C-----------------------------------------------------------------------
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-        READ(CHAR,'(3F6.0)',IOSTAT=ERR) ICMP, TCMP, LFSEN
+!        READ(CHAR,'(3F6.0)',IOSTAT=ERR) ICMP, TCMP, LFSEN
+        READ(CHAR,'(2F6.0,F6.3)',IOSTAT=ERR) ICMP, TCMP, LFSEN
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)

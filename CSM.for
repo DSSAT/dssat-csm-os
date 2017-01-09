@@ -91,6 +91,7 @@ C     The variable "ISWITCH" is of type "SwitchType".
       TYPE (SwitchType) ISWITCH
 
 !C-----------------------------------------------------------------------
+
       DONE = .FALSE.
       YRDOY_END = 9999999
 

@@ -122,7 +122,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       INTEGER, PARAMETER :: 
      &    NL       = 20,  !Maximum number of soil layers 
      &    TS       = 24,  !Number of hourly time steps per day
-     &    NAPPL    = 300, !Maximum number of applications or operations
+     &    NAPPL    = 9000, !Maximum number of applications or operations
      &    NCOHORTS = 300, !Maximum number of cohorts
      &    NELEM    = 3,   !Number of elements modeled (currently N & P)
 !            Note: set NELEM to 3 for now so Century arrays will match

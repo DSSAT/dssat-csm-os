@@ -80,7 +80,7 @@ C=======================================================================
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,            !Output
      &  WRDOT, WSDOT,                                                            !Output
 
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -96,10 +96,21 @@ C=======================================================================
       PARAMETER (ERRKEY = 'GROW  ')
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC, FILEGC
+      CHARACTER*80 MOW80
+      CHARACTER*12 MOWFILE
+      CHARACTER*6   SECTION
+      CHARACTER(len=6) trtchar
+      character(len=60) ename
 
       INTEGER DYNAMIC, NOUTDO, L, NLAYR
       INTEGER YRDOY, YRNR1, MDATE
       INTEGER YRPLT, RUN
+      INTEGER MOWLUN,ISECT,ERR, I
+      INTEGER,ALLOCATABLE,DIMENSION(:) :: TRNO,DATE
+      INTEGER LUNCRP,fhlun, LNUM, FOUND
+      INTEGER MOWCOUNT,j
+      INTEGER TRTNO
+      
 
       REAL WTNUP,WTNFX,WTNMOB,WTNCAN,TGROW
       REAL WRCSHD,DISLA,WSDMAN
@@ -112,7 +123,7 @@ C=======================================================================
 
       REAL NLOFF, NSOFF, NROFF, NSHOFF, NSDOFF, NNOFF
       REAL WTLO, WTSO, WTRO, WTSHO, WTSDO, WTNOO
-      REAL WTCO
+      REAL WTCO, DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO
       REAL NLALL, NSALL, NRALL, NSHALL, NSDALL
       REAL WTNLA, WTNSA, WTNRA, WTNSHA, WTNSDA, WTNNA
       REAL WTNLO, WTNSO, WTNRO, WTNSHO, WTNSDO, WTNNO
@@ -127,7 +138,7 @@ C=======================================================================
       REAL NLDOT, NSDOT, NRDOT, NSHDOT, NSDDOT
       REAL NRUSLF, NRUSST, NRUSRT, NRUSSH
       REAL CRUSLF, CRUSST, CRUSRT, CRUSSH
-      REAL ALPHL, ALPHS, ALPHR, ALPHSH
+      REAL ALPHL, ALPHS, ALPHR, ALPHSH, TNCFAC
       REAL RHOL, RHOS, RHOR, RHOSH
       REAL WCRLF, WCRST, WCRRT, WCRSH
       REAL NADLF, NADST, NADRT
@@ -158,6 +169,7 @@ C=======================================================================
       REAL XHLAI, SEEDNO, PLTPOP, ROWSPC, BETN
       REAL TURFAC
       REAL GROWTH, NODGR
+      REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
 
       REAL FRLF, FRSTM
       REAL SDNPL, SEEDNI, SDRATE
@@ -235,7 +247,17 @@ C-----------------------------------------------------------------------
       TYPE (SwitchType)  ISWITCH
       TYPE (SoilType)    SOILPROP
       TYPE (ResidueType) SENESCE
+      
+      YRDOY  = CONTROL % YRDOY
+      crop   = control % crop
+      trtno  = control % trtnum
+      run    = control % run
+      ename  = control % ename
+      mowfile = control % filex
+      mowfile(10:12) = 'MOW'
 
+!      ERRKEY = 'FRHARV'
+      
 !     Transfer values from constructed data types into local variables.
       !Don't get DYNAMIC from CONTROL variable because it will not
       ! have EMERG value (set only in CROPGRO).
@@ -259,7 +281,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       CALL FOR_IPGROW(
      &  FILEIO, FILECC, FILEGC, CROP,                           !Input
-     &  ALPHL, ALPHR, ALPHS, ALPHSH,                         !Output
+     &  ALPHL, ALPHR, ALPHS, ALPHSH, TNCFAC,                         !Output
      &  PCARLF, PCARST, PCARRT, PCARSH, PCARSD, PCARNO,         !Output
      &  PLIGLF, PLIGST, PLIGRT, PLIGSH, PLIGSD, PLIGNO,         !Output
      &  PLIPLF, PLIPST, PLIPRT, PLIPSH, PLIPNO, !Output
@@ -373,6 +395,12 @@ C-----------------------------------------------------------------------
       WSDDOT = 0.0
       WSHDOT = 0.0
       WTCO   = 0.0
+      DWTCO  = 0.0
+      DWTLO  = 0.0
+      DWTSO  = 0.0
+      PWTCO  = 0.0
+      PWTLO  = 0.0
+      PWTSO  = 0.0
       WTCSD  = 0.0
       WTLF   = 0.0
       WTLO   = 0.0
@@ -1216,8 +1244,8 @@ C-----------------------------------------------------------------------
       IF (RTWT .GT. 0.0) THEN
         WRCRDT = WRCRDT + CADRT - RTCADDM
       ENDIF
-
-
+      
+      
 !      WRCSHD = ALPHSH * WSHDOT - CRUSSH - RHOSH*(WTABRT+WTSHMT+WSHIDT)
       WRCSHD = ALPHSH * WSHDTN - CRUSSH - RHOSH*(WTABRT+WTSHMT+WSHIDT)
 
@@ -1247,6 +1275,96 @@ C-----------------------------------------------------------------------
       WTCO  = WTLO  + WTSO   + WTSHO  + WTSDO
       WTSRO  = WTSRO  + SSRDOT  + WSRIDOT + WSRFDOT
 
+C     DIEGO ADDED DAILY SENESCENCE 11/22/2016
+      IF (.NOT.ALLOCATED(MOW)) THEN
+
+        CALL GETLUN('FILEC', LUNCRP)
+        OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,0)
+        LNUM = 1
+        SECTION = '!*PLAN'
+        CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+        IF (FOUND .EQ. 0) THEN
+          CALL ERROR(ERRKEY, 1, FILECC, LNUM)
+        ELSE
+          CALL IGNORE(LUNCRP,LNUM,ISECT,MOW80)
+          READ(MOW80,'(12X,F6.0,12X,F6.0)',IOSTAT=ERR)
+     &                    PROLFF, PROSTF
+          do j=1,5; CALL IGNORE(LUNCRP,LNUM,ISECT,MOW80); end do
+          READ(MOW80,'(2f6.0)',IOSTAT=ERR)
+     &                    pliglf, pligst
+          CLOSE(LUNCRP)
+          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+        END IF
+
+        MOWLUN=999
+        OPEN (UNIT=MOWLUN,FILE=MOWFILE,STATUS='OLD')
+        REWIND(MOWLUN)
+        ISECT = 0
+        MOWCOUNT = 0
+        write(trtchar,'(i6)') trtno
+        DO WHILE (ISECT.EQ.0)
+          READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
+          IF (MOW80(1:1).NE."@"
+     &       .AND.MOW80(1:1).NE."!"
+     &       .AND.MOW80(1:20).NE."                    "
+     &       .and.mow80(1:6)==trtchar
+     &       .AND.ISECT.EQ.0)THEN
+             MOWCOUNT = MOWCOUNT + 1
+          END IF
+        END DO
+        REWIND(MOWLUN)
+
+        IF (MOWCOUNT.GT.0) THEN
+          ALLOCATE(TRNO(MOWCOUNT),DATE(MOWCOUNT),MOW(MOWCOUNT))
+!          ALLOCATE(RSPLF(MOWCOUNT),MVS(MOWCOUNT),rsht(mowcount))
+        ELSE
+          ALLOCATE(MOW(1))
+          MOW (1) = -99
+          RETURN
+        END IF
+     
+        I = 0
+        ISECT = 0
+        DO WHILE (ISECT.EQ.0)
+          READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
+          IF (MOW80(1:1).NE."@"
+     &       .AND.MOW80(1:1).NE."!"
+     &       .AND.MOW80(1:20).NE."                    "
+     &       .and.mow80(1:6)==trtchar
+     &       .AND.ISECT.EQ.0)THEN
+            I = I + 1
+            READ (MOW80,'(2I6,1F6.0)',IOSTAT=ISECT)
+     &                TRNO(I),DATE(I),MOW(I)
+            CALL Y2K_DOY(DATE(I))
+          END IF
+        END DO
+
+      END IF
+      close(LUNCRP)
+      DO I=1,SIZE(MOW)
+           if(date(i)==yrdoy.and.trno(i)==trtno) then
+      PWTCO = WTCO 
+      PWTLO = WTLO
+      PWTSO = WTSO
+      DWTCO = WTCO - PWTCO
+      DWTLO = WTLO - PWTLO
+      DWTSO = WTSO - PWTSO
+      else
+      DWTCO = WTCO - PWTCO
+      DWTLO = WTLO - PWTLO
+      DWTSO = WTSO - PWTSO
+      if(i==size(mow)) then
+          deallocate(mow,trno,date)
+!      return
+      endif
+      endif
+      end do
+!      WRITE(5000,'(3F10.2,I8)') DWTCO, DWTLO, DWTSO, yrdoy 
+      close(LUNCRP)
+!      WRITE(5000,'(I10)') date
+
+
 C-----------------------------------------------------------------------
 C     Compute CH20 fractions
 C-----------------------------------------------------------------------
@@ -1273,7 +1391,8 @@ C-----------------------------------------------------------------------
       ELSE
         RHOR = 0.0
       ENDIF
-
+!      WRITE(8000,'(F6.3)') RHOR
+      
       IF (SHELWT .GT. 0.0001) THEN
         RHOSH =  WCRSH/SHELWT
       ELSE
@@ -1749,7 +1868,7 @@ C    Calculate true nitrogen concentration in leaf tissue for
 C     photosynthesis reduction.
 C-----------------------------------------------------------------------
       IF ((WTLF - WCRLF) .GT. 0.0) THEN
-        RNITP = 100.*WTNLF/(WTLF-WCRLF)
+        RNITP = 100.*WTNLF/(WTLF-TNCFAC*WCRLF)
 !-----------------------------------------------------------------------
 !  PDA 5/26/2010  ADDED CODE TO ALLOW LEAF CH2O TO AFFECT PHOTOSYNTHESIS
 !      IF (WTLF .GT. 0.0.AND.(WTLF - WCRLF) .GT. 0.0) THEN
@@ -1950,7 +2069,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Calculate "Healthy" or Non-Diseased Leaf Area Index
 C-----------------------------------------------------------------------
-      AREAH  = AREALF - 2. * DISLA
+!      AREAH  = AREALF - 2. * DISLA
+      AREAH  = AREALF - DISLA !KJB correction beta factor covers this
       AREAH  = MAX(0.,AREAH)
       XHLAI  = AREAH / 10000.
 C-----------------------------------------------------------------------
@@ -2008,6 +2128,7 @@ C-----------------------------------------------------------------------
       SENESCE % ResWt  = SenWt
       SENESCE % ResLig = SenLig
       SENESCE % ResE   = SenE
+
 
 
 C***********************************************************************
@@ -2108,7 +2229,7 @@ C  Calls  : FIND, ERROR, IGNORE
 C=======================================================================
       SUBROUTINE FOR_IPGROW(
      &  FILEIO, FILECC, FILEGC, CROP,                           !Input
-     &  ALPHL, ALPHR, ALPHS, ALPHSH,                         !Output
+     &  ALPHL, ALPHR, ALPHS, ALPHSH, TNCFAC,                         !Output
      &  PCARLF, PCARST, PCARRT, PCARSH, PCARSD, PCARNO,         !Output
      &  PLIGLF, PLIGST, PLIGRT, PLIGSH, PLIGSD, PLIGNO,         !Output
      &  PLIPLF, PLIPST, PLIPRT, PLIPSH, PLIPNO, !Output
@@ -2140,7 +2261,7 @@ C=======================================================================
 
       REAL ROWSPC, RMIN, PLTPOP, WTFSD, WTPSD,
      &  SDPRO, SDLIP, SDWTPL,
-     &  ALPHL, ALPHS, ALPHR, ALPHSH,
+     &  ALPHL, ALPHS, ALPHR, ALPHSH, TNCFAC,
      &  PROLFF, PROSTF, PRORTF, PROSHF, PRONOD,
      &  PROLFI, PROSTI, PRORTI,
      &  PCARLF, PCARST, PCARRT, PCARSH, PCARSD, PCARNO,
@@ -2304,8 +2425,8 @@ C-----------------------------------------------------------------------
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
   
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(5F6.0)',IOSTAT=ERR) 
-     &    ALPHL, ALPHS, ALPHR, ALPHSH, ALPHSR
+        READ(C80,'(6F6.0)',IOSTAT=ERR) 
+     &    ALPHL, ALPHS, ALPHR, ALPHSH, ALPHSR, TNCFAC
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
@@ -2374,6 +2495,8 @@ C-----------------------------------------------------------------------
         CLOSE (LUNECO)
   
       ENDIF
+
+
 !-----------------------------------------------------------------------
       RETURN
       END  ! SUBROUTINE FOR_IPGROW
@@ -2721,6 +2844,8 @@ C=======================================================================
 !              (g [N] m-2 d-1)
 ! SWIDOT   Daily seed mass damage (g/m2/day)
 ! TGROW    Cumulative growth of plant tissue (g[tissue] / m2)
+! TNCFAC   Degree of TNC influence on RNITP, 0 TNC reduces photo and RNITP, 
+!          1 increases RNITP                      
 ! TOPWT    Total weight of above-ground portion of crop, including pods
 !            (g[tissue] / m2)
 ! TOTWT    Total weight of crop (g[tissue] / m2)
