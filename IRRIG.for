@@ -85,8 +85,10 @@ C=======================================================================
 	INTEGER IRON(20)
 	REAL IRAMT(20)
 	REAL IREFF(20)
+      INTEGER IFREQ(20)
 	CHARACTER*5 V_IRONC(20)
 	CHARACTER*5 IRONC(20)
+      INTEGER IRRFREQ
 	REAL AVWATT         ! Water available for irrigation today (mm)
 	INTEGER NGSIrrigs   ! The number of irrigation inputs entered by the user
 	INTEGER IRINC       ! Counter keeping track of irrigation input been used
@@ -239,6 +241,7 @@ C-----------------------------------------------------------------------
       IRAMT = SAVE_data % MGMT % V_IRAMT       ! Automatic irrigation with fixed amount
       IREFF = SAVE_data % MGMT % V_IREFF       ! Irrigation Efficiency fraction
       AVWATI =SAVE_data % MGMT % V_AVWAT       ! Water available for irrigation
+      IFREQ = SAVE_data % MGMT % V_IFREQ       ! Frequency limitation for irrigation
       NGSIrrigs  =SAVE_data % MGMT % GSIRRIG
 
 !-----------------------------------------------------------------------
@@ -674,7 +677,8 @@ C-----------------------------------------------------------------------
       THETAC = ITHRL(IRINC)
       THETAU = ITHRU(IRINC)
       AIRAMT = IRAMT(IRINC)
-      EFFIRR = IREFF (IRINC)
+      EFFIRR = IREFF(IRINC)
+      IrrFreq = IFREQ(IRINC)
 
 !     Check for water availability today
       IF (SeasonalWL) THEN
