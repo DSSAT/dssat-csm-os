@@ -68,7 +68,7 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
   10.0    45 
 @LLIFG LLIFS LLIFX  ! Growing,senescence durations;max.acceleration in shade 
 !   Tu    Tu    Tu
- 100.0  60.0 180.0
+ 100.0  70.0 180.0
 @LLOSA LWLOS  ! Loss when accelerated,normal senescence   
 !   fr    fr
    1.0  0.50  
@@ -108,11 +108,11 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 ! Seed
 @ SDSZ SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole seed)
 ! g/cm     d     %
-   3.0    20    90
+   3.0    20    20
 ! Photosynthesis
 @ PHTV  PHSV  ! VPD sensitivity aspects
 ! kPa fr/kPa
-   5.0 -0.35
+   0.8 -0.31
 @CO2RF  CO2F  ! CO2 response
 !  vpm     # 
      0  0.00
@@ -151,7 +151,7 @@ CH2O distribution/mobilization
 ! 1. Based on ratio of potential uptake to potential loss (WFEU only for Cropsim)
 @ WFGU  WFGL  WFPU  WFPL  WFSU  WFEU  ! Growth,phs,senescence,evap
 !   fr    fr    fr    fr    fr    fr
-   0.5   0.0   0.5   0.0   0.6   1.5
+   1.0   0.0   0.5   0.0   0.6   1.5
 !   1.0   0.0   1.0   0.0   0.6   1.5 !LPM 25MAR2016 WFGU modified
 ! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
 @WFGEM WFRGU  ! Germination/emergence, root growth

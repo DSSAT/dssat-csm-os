@@ -277,8 +277,10 @@
                 CALL WARNING(3,'CSCGR',MESSAGE)
                 CFLSDRSMSG = 'Y'
             ENDIF
-            SEEDUSE = SEEDUSE + GROLSSD+SEEDRSAVR                                                                          !EQN 448
-            SEEDUSER = SEEDUSER + SEEDRSAVR                                                                                !EQN 449
+            !SEEDUSE = SEEDUSE + GROLSSD+SEEDRSAVR  !LPM 22DEC2016 Root growth based on top growth (deleted SEEDRSAVR)                                                                         !EQN 448
+            SEEDUSE = SEEDUSE + GROLSSD
+            !SEEDUSER = SEEDUSER + SEEDRSAVR                                                                                !EQN 449
+            SEEDUSER = SEEDUSER
             SEEDUSET = SEEDUSET + GROLSSD                                                                                  !EQN 450
             SEEDRSAV = SEEDRS
         ENDIF

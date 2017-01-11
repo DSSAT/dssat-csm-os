@@ -140,20 +140,20 @@
         ENDIF
             
         DU = DUPHASE+DUPNEXT                                                                                           !EQN 055
-            
+        !LPM 22DEC2016 Root growth based on top growth (deleted SEEDRSAVR) 
         !-----------------------------------------------------------------------
         !           Set seed reserve use for root growth and update av.reserves
         !-----------------------------------------------------------------------
         !IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
-        IF (GERMFR.GT.0.0.OR.GESTAGE.GE.1.0) THEN
-            !SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TT/STDAY)*GERMFR)                                                  !EQN 286 
-            !LPM 22MAR2016 use for roots the same amount of reserves than aboveground (SEEDUSED)
-            SEEDRSAVR = AMIN1(SEEDUSED,SEEDRS) 
-        ELSE
-            SEEDRSAVR = 0.0
-        ENDIF
+        !IF (GERMFR.GT.0.0.OR.GESTAGE.GE.1.0) THEN
+        !    SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TTGEM/STDAY)*GERMFR)                                                  !EQN 286 
+        !    !LPM 22MAR2016 use for roots the same amount of reserves than aboveground (SEEDUSED)
+        !    !SEEDRSAVR = AMIN1(SEEDUSED,SEEDRS) 
+        !ELSE
+        !    SEEDRSAVR = 0.0
+        !ENDIF
         ! Seed reserves available
-        SEEDRS = SEEDRS-SEEDRSAVR                                                                                  !EQN 287
+        !SEEDRS = SEEDRS-SEEDRSAVR                                                                                  !EQN 287
         SEEDRSAV =  SEEDRS
         !-----------------------------------------------------------------------
         !           Determine if today has a harvest instruction

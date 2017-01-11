@@ -427,7 +427,7 @@
         IF (SDRATE.LE.0.0) SDRATE = SDSZ*SPRL*PPOP*10.0   
         ! Reserves = SDRS% of seed                                                                                  !LPM 22MAR2016 Keep value SDRS  
         SEEDRSI = (SDRATE/(PPOP*10.0))*SDRS/100.0                                                                  !EQN 284 !LPM 06MAR2016 To have just one name for PPOP
-        !SEEDRS = SEEDRSI
+        SEEDRS = SEEDRSI
         SEEDRSAV = SEEDRS
         SDCOAT = (SDRATE/(PPOP*10.0))*(1.0-SDRS/100.0)                                                             !EQN 025 !LPM 06MAR2016 To have just one name for PPOP
         ! Seed N calculated from total seed

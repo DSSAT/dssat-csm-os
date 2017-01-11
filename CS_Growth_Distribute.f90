@@ -9,7 +9,7 @@
     
      SUBROUTINE CS_Growth_Distribute ( &
         DLAYR       , ISWNIT      , ISWWAT      , LL          , NH4LEFT     , NLAYR       , NO3LEFT     , RLV         , &
-        SENCALG     , SENLALG     , SENNALG     , SHF         , SW          & 
+        SENCALG     , SENLALG     , SENNALG     , SHF         , SW           & 
         )
     
         USE ModuleDefs
@@ -20,7 +20,7 @@
         CHARACTER(LEN=1) ISWNIT      , ISWWAT      
         INTEGER NLAYR       
         REAL    DLAYR(NL)   , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SENCALG(0:NL)
-        REAL    SENLALG(0:NL)             , SENNALG(0:NL)             , SHF(NL)     , SW(NL)
+        REAL    SENLALG(0:NL)             , SENNALG(0:NL)             , SHF(NL)     , SW(NL)  
 
         INTEGER CSIDLAYR                                                                     ! Integer function call.
 
@@ -88,9 +88,12 @@
             RTDEPG = 0.0
             IF (ISWWAT.NE.'N') THEN
                 ! LAH Note reduced effect of SHF, AND no acceleration
-                RTDEPG = TT*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
+                !LPM 19DEC2016 Now using soil temperature ST with TTGEM instead of TT
+                !RTDEPG = TT*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
+                RTDEPG = TTGEM*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
             ELSE
-                RTDEPG = TT*RDGS/STDAY*GERMFR                                                                          !EQN 391b
+                !RTDEPG = TT*RDGS/STDAY*GERMFR                                                                          !EQN 391b
+                RTDEPG = TTGEM*RDGS/STDAY*GERMFR                                                                          !EQN 391b
             ENDIF
             L = 0
             CUMDEP = 0.0
@@ -120,8 +123,10 @@
             ! Root senescence
             SENRTG = 0.0
             DO L = 1, NLAYRROOT
-                RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TT/STDAY                                                             !EQN 395
+                !RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TT/STDAY                                                             !EQN 395
+                RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TTGEM/STDAY                                                             !EQN 395
                 ! LAH Temperature effect above is not from soil temp
+                !LPM 19DEC2016 The model is considering now the soil temp (TTGEM)
                 IF (RTWT.GT.0.0) RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
                 SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
                 IF (ISWNIT.NE.'N') THEN
