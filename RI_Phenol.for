@@ -156,9 +156,10 @@ C=======================================================================
 
       NEW_PHASE = .FALSE.
 
-!! temp chp
-!      write(3000,'(A)') 
-!     & "   yrdoy  xstage icsdur     dtt     tn    tmpi  idur1     lai"
+! temp chp
+      write(3000,'(A)') 
+     & "   yrdoy  xstage icsdur     dtt    sind     tn    tmpi" //
+     &  "  idur1     lai"
 
 
 !***********************************************************************
@@ -501,17 +502,16 @@ C=======================================================================
           ENDIF
           TMPI = CUMTMP/(ICSDUR)*G4
 
-!     CHP ADDED 1/3/2017 - TEMP?
-!         Check for LAI < some fraction of max LAI after a long duration
-          IF (LAI < 0.1*LAIX .AND. ICSDUR > 200) THEN
-            ISTAGE = 6    !TRIGGER MATURITY
-            RETURN
-          ENDIF
-          !
           ! Check if night temp (NT) was below 15 C during this stage
           !
           IF (.NOT. PI_TF) THEN
-             IF (TN .GT. 15.0/G4 .AND. IDUR1 .GE. 1) THEN
+             IF ((TN .GT. 15.0/G4 .AND. IDUR1 .GE. 1) 
+!             Additional criteria of SIND > 3 added 1/11/2017
+!               by CHP and RMO - needs to blessed by Upendra!!
+!           Slow rice progression with continuous addition of biomass
+!              under cool, but not freezing conditions. This causes 
+!              development to progress after a long vegetative phase.
+     &            .OR. SIND > 2.0) THEN
                 PI_TF    = .TRUE.
               ELSE
                 PI_TF    = .FALSE.
@@ -522,9 +522,9 @@ C=======================================================================
                    IDUR1 = IDUR1 + 1
                 ENDIF
 
-!! temp chp
-!      write(3000,3000) yrdoy, xstage, icsdur, dtt, tn, tmpi, idur1, lai
-! 3000 format(i8,f8.3,i7,f8.3,f7.2,f8.3,I7,f8.3)
+! temp chp
+      write(3000,3000) yrdoy, xstage, icsdur, dtt,sind,tn,tmpi,idur1,lai
+ 3000 format(i8,f8.3,i7,2f8.3,f7.2,f8.3,I7,f8.3)
 
                 RETURN
              ENDIF
