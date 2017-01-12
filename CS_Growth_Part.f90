@@ -360,6 +360,7 @@
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
         !GRORP = (GROLFP + GROSTP)*0.10
         GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
         GROLSP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
         IF (GROLSP.GT.0.0) THEN
