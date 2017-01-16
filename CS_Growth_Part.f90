@@ -342,7 +342,7 @@
           DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
-                NODEWTGB(BR,LF) = ((1/(1+((((Lcount/40)+1)/3.10036)**5.89925)))*(2.5514108*(((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)/ & 
+                NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/86.015564)**6.252552)))*(2.5514108*(((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)/ & 
                 ((DAE-NDDAE(BR,LF)+1)*(((((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)+1))**2))*TFG*NODWT)
            
                 NODEWTG(BR,LF) = NODEWTGB(BR,LF)
