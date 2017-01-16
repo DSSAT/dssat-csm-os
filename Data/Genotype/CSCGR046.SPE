@@ -83,9 +83,6 @@ $SPECIES:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 @ TPAR TSRAD  ! Individual leaf transmission PAR, solar radiation  
 !   fr    fr
   0.07  0.25
-@ KCAN  ! Canopy extinction coefficient PAR
-!    #
-  0.75 
 @PARIX  ! PAR interception beyond which accelerated ageing    
 !   fr
   0.95
@@ -131,7 +128,7 @@ CH2O distribution/mobilization
   0.87  0.89  0.10
 !  0.77  0.80  0.10 !LPM05SEP2015 Modified to define partitioning fraction for feeder roots
 ! Temperature responses
-@RRATE TRGEM TRDV1 TRLFG TRPHS TRBRG  ! Germination/emergence,development,leaf/branch growth,phsis
+@RRATE TRGEM TRDV1 TRLFG TRPHS TRBRG  ! Germination/emergence,development,leaf,phsis, branching
 !    #    oC    oC    oC    oC    oC
      0  13.0  13.0  13.0    10  13.0
    1.0  30.0  30.0  24.0    25  24.0 
@@ -203,7 +200,6 @@ CH2O distribution/mobilization
 ! CO2RF   CO2 reference (vpm)
 ! GDAT    Germination date  (YrDoy)
 ! HPROD   Harvest product (code;SR=storage root)
-! KCAN    PAR extinction coefficient (#)
 ! LLIFG   Leaf growth (expansion) period (Thermal units)  
 ! LLIFS   Leaf senescence period (Thermal units)  
 ! LLIFX   Leaf ageing acceleration (max) if deep shade (Thermal units)  
