@@ -20,6 +20,9 @@
         REAL    BRSTAGE     , NFP         
 
         REAL    CSYVAL      , TFAC4                                                                       ! Real function call
+        
+        REAL, PARAMETER :: NDLEV_B = 86.015564  ! this is 'b' from  1/(1+(NDLEV/b)**c) see issue #24
+        REAL, PARAMETER :: NDLEV_C = 6.252552   ! this is 'c' from  1/(1+(NDLEV/b)**c) see issue #24
 
         !-----------------------------------------------------------------------
         !           Partitioning of C to above ground and roots (minimum) 
@@ -342,7 +345,7 @@
           DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
-                NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/86.015564)**6.252552)))*(2.5514108*(((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)/ & 
+                NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(2.5514108*(((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)/ & 
                 ((DAE-NDDAE(BR,LF)+1)*(((((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)+1))**2))*TFG*NODWT)
            
                 NODEWTG(BR,LF) = NODEWTGB(BR,LF)
