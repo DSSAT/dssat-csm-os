@@ -411,8 +411,8 @@
     ! Area and assimilate factors for each leaf
                 DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                     DO LF = 1, LNUMSIMSTG(BR)   
-                        IF (LAGETT(BR,LF).LE.LLIFGTT) THEN
-                            IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
+                        IF (LAGETT(BR,LF) <= LLIFGTT .AND. LAPOTX2(BR,LF) > 0.0 ) THEN
+                            IF (LNUMSIMSTG(BR) < LCNUMX) THEN
                                 !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
                                 !LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG) !LPM 02SEP2016  Use of NFLF2 instead of NFG
                                 LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0)) 
