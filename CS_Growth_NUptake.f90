@@ -128,23 +128,23 @@
             RNH4U = 0.0
             TVR1 = -0.08  ! Could be AMAX1(0.01,(0.20-NconcU*0.004))
             DO L=1,NLAYR
-                IF (RLV(L) .GT. 0.0) THEN
+                IF (RLV(L) > 0.0) THEN
                     NLAYRROOT = L
                     ! N concentration effects
                     FNH4 = 1.0-EXP(TVR1*NH4CF * NH4LEFT(L))                                                            !EQN 159
                     FNO3 = 1.0-EXP(TVR1*NO3CF * NO3LEFT(L))                                                            !EQN 160
-                    IF (NO3LEFT(L) .LE. NO3MN) FNO3 = 0.0  
-                    IF (FNO3 .GT. 1.0)  FNO3 = 1.0
-                    IF (NH4LEFT(L) .LE. NH4MN) FNH4 = 0.0  
-                    IF (FNH4 .GT. 1.0)  FNH4 = 1.0
+                    IF (NO3LEFT(L) <= NO3MN) FNO3 = 0.0  
+                    IF (FNO3 > 1.0)  FNO3 = 1.0
+                    IF (NH4LEFT(L) <= NH4MN) FNH4 = 0.0  
+                    IF (FNH4 > 1.0)  FNH4 = 1.0
                     ! Water effects
-                    IF (SW(L) .LE. DUL(L)) THEN
+                    IF (SW(L) <= DUL(L)) THEN
                         WFNU = (SW(L) - LL(L)) / (DUL(L) - LL(L))                                                      !EQN 161 
                     ELSE
                         WFNU = 1.0-(SW(L)-DUL(L))/(SAT(L)-DUL(L))
                         WFNU = 1.0 ! Wet soil effect not implemented
                     ENDIF
-                    IF (WFNU.LT.0.0) WFNU = 0.0
+                    IF (WFNU < 0.0) WFNU = 0.0
                     ! LAH Note that WFNU squared
                     TVR2 = AMAX1(0.0,1.0 - H2OCF*(1.0-(WFNU*WFNU)))
                     RFAC = RLV(L) * TVR2 * DLAYR(L) * 100.0                                                            !EQN 162
