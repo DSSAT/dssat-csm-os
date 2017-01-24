@@ -48,7 +48,7 @@
         RTWTGADJ = RTWTG
         SHLAGB4 = SHLAGB2
 
-        IF (ISWNIT.NE.'N') THEN
+        IF (ISWNIT /= 'N') THEN
     
             ANDEM = 0.0
             RNDEM = 0.0
@@ -131,8 +131,8 @@
                 IF (RLV(L) > 0.0) THEN
                     NLAYRROOT = L
                     ! N concentration effects
-                    FNH4 = 1.0-EXP(TVR1*NH4CF * NH4LEFT(L))                                                            !EQN 159
-                    FNO3 = 1.0-EXP(TVR1*NO3CF * NO3LEFT(L))                                                            !EQN 160
+                    FNH4 = 1.0-EXP(TVR1*NH4CF * NH4Left(L))                                                            !EQN 159
+                    FNO3 = 1.0-EXP(TVR1*NO3CF * NO3Left(L))                                                            !EQN 160
                     IF (NO3LEFT(L) <= NO3MN) FNO3 = 0.0  
                     IF (FNO3 > 1.0)  FNO3 = 1.0
                     IF (NH4LEFT(L) <= NH4MN) FNH4 = 0.0  
