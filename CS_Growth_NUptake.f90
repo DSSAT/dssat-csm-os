@@ -48,7 +48,7 @@
         RTWTGADJ = RTWTG
         SHLAGB4 = SHLAGB2
 
-        IF (ISWNIT /= 'N') THEN
+        IF (SUM(NODEWTG) > 0 .AND. ISWNIT /= 'N') THEN    !If plant nodes has weight and nitrogen restrictions are activated
     
             ANDEM = 0.0
             RNDEM = 0.0
@@ -276,7 +276,7 @@
             ! 6.For distribution of remaining N to st,rt,storage root
             !NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1)                                                     !EQN 219 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
             NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM                                                                !EQN 219
-            IF (NDEM2.GT.0.0)THEN
+            IF (NDEM2 > 0.0)THEN
                 !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)

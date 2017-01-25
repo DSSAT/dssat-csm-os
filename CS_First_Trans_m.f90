@@ -420,7 +420,7 @@
     !INTEGER :: LCNUM                   ! Leaf cohort number (inc.grow)  #          ! (From SeasInit) !LPM 28MAR15 Non necessary variables  
     !REAL    :: LCOA(LCNUMX)            ! Leaf cohort area               cm2        ! (From SeasInit) !LPM 25MAR15 Non necessary variables  
     !REAL    :: LCOAS(LCNUMX)           ! Leaf cohort area senesced      cm2        ! (From SeasInit)  
-    REAL    :: Lcount                   ! counters for iterations in leafs (Lcount)
+    REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
     INTEGER :: LDEATHDAP(0:PSX,0:LCNUMX)! DAP on which leaf 100% dead    #          ! (From Integrate) 
     REAL    :: LEAFN                   ! Leaf N                         g/p        ! (From SeasInit)  
     REAL    :: LEAFNEXCESS             ! Leaf N > critical              g/p        ! (From Integrate) 
