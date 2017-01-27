@@ -260,12 +260,21 @@
                     ! The 2 at the end of the names indicates that 2 groups 
                     ! of stresses have been taken into account
                     ! Stress factors for individual leaves
-                        WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)+WFG*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                        !EQN 326
-                        NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)+NFG*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                        !EQN 327
-                        NFLFP(BR,LF) = AMIN1(1.0,NFLFP(BR,LF)+NFP*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                      !EQN 328
-                        TFGLF(BR,LF) = AMIN1(1.0,TFGLF(BR,LF)+TFG*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                      !EQN 329
-                        TFDLF(BR,LF) = AMIN1(1.0,TFDLF(BR,LF)+TFD*(LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))                                      !EQN 330
-                        ! New LEAF
+                        IF (LAPOTX2(BR,LF)>0.0) THEN
+                            WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)+WFG*LAGL(BR,LF)/LAPOTX2(BR,LF))                                        !EQN 326
+                            NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)+NFG*LAGL(BR,LF)/LAPOTX2(BR,LF))                                        !EQN 327
+                            NFLFP(BR,LF) = AMIN1(1.0,NFLFP(BR,LF)+NFP*LAGL(BR,LF)/LAPOTX2(BR,LF))                                      !EQN 328
+                            TFGLF(BR,LF) = AMIN1(1.0,TFGLF(BR,LF)+TFG*LAGL(BR,LF)/LAPOTX2(BR,LF))                                      !EQN 329
+                            TFDLF(BR,LF) = AMIN1(1.0,TFDLF(BR,LF)+TFD*LAGL(BR,LF)/LAPOTX2(BR,LF))                                      !EQN 330
+                        ELSE
+                            WFLF(BR,LF) =  1.0                                   !EQN 326
+                            NFLF(BR,LF) =  1.0                                   !EQN 327
+                            NFLFP(BR,LF) = 1.0                                   !EQN 328
+                            TFGLF(BR,LF) = 1.0                                   !EQN 329
+                            TFDLF(BR,LF) = 1.0                                   !EQN 330
+                        ENDIF
+                        
+                            ! New LEAF
                         IF (LF.EQ.LNUMSIMSTG(BR).AND.LNUMG.GT.LNUMNEED.AND.BR.EQ.BRSTAGE) THEN                                             ! This is where new leaf is initiated
                             !LAGL(BR,L+1) = LAPOTX(BR,L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331  
                             !LAGL(BR,LF+1) = LAPOTX(BR,LF+1) * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG) * AMIN1(WFG,NFG)*Tflflife                                      !LPM 23MAR15 To define proportional growth by day      
@@ -361,8 +370,8 @@
         
         GROCRP = NODEWTGB(0,1)*SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
-        !GRORP = (GROLFP + GROSTP)*0.10
-        GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        GRORP = (GROLFP + GROSTP)*PTFA
+        !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
         !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
         GROLSP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
