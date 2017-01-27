@@ -48,7 +48,7 @@
         RTWTGADJ = RTWTG
         SHLAGB4 = SHLAGB2
 
-        IF (ISWNIT.NE.'N') THEN
+        IF (SUM(NODEWTG) > 0 .AND. ISWNIT /= 'N') THEN    !If plant nodes has weight and nitrogen restrictions are activated
     
             ANDEM = 0.0
             RNDEM = 0.0
@@ -128,23 +128,23 @@
             RNH4U = 0.0
             TVR1 = -0.08  ! Could be AMAX1(0.01,(0.20-NconcU*0.004))
             DO L=1,NLAYR
-                IF (RLV(L) .GT. 0.0) THEN
+                IF (RLV(L) > 0.0) THEN
                     NLAYRROOT = L
                     ! N concentration effects
-                    FNH4 = 1.0-EXP(TVR1*NH4CF * NH4LEFT(L))                                                            !EQN 159
-                    FNO3 = 1.0-EXP(TVR1*NO3CF * NO3LEFT(L))                                                            !EQN 160
-                    IF (NO3LEFT(L) .LE. NO3MN) FNO3 = 0.0  
-                    IF (FNO3 .GT. 1.0)  FNO3 = 1.0
-                    IF (NH4LEFT(L) .LE. NH4MN) FNH4 = 0.0  
-                    IF (FNH4 .GT. 1.0)  FNH4 = 1.0
+                    FNH4 = 1.0-EXP(TVR1*NH4CF * NH4Left(L))                                                            !EQN 159
+                    FNO3 = 1.0-EXP(TVR1*NO3CF * NO3Left(L))                                                            !EQN 160
+                    IF (NO3LEFT(L) <= NO3MN) FNO3 = 0.0  
+                    IF (FNO3 > 1.0)  FNO3 = 1.0
+                    IF (NH4LEFT(L) <= NH4MN) FNH4 = 0.0  
+                    IF (FNH4 > 1.0)  FNH4 = 1.0
                     ! Water effects
-                    IF (SW(L) .LE. DUL(L)) THEN
+                    IF (SW(L) <= DUL(L)) THEN
                         WFNU = (SW(L) - LL(L)) / (DUL(L) - LL(L))                                                      !EQN 161 
                     ELSE
                         WFNU = 1.0-(SW(L)-DUL(L))/(SAT(L)-DUL(L))
                         WFNU = 1.0 ! Wet soil effect not implemented
                     ENDIF
-                    IF (WFNU.LT.0.0) WFNU = 0.0
+                    IF (WFNU < 0.0) WFNU = 0.0
                     ! LAH Note that WFNU squared
                     TVR2 = AMAX1(0.0,1.0 - H2OCF*(1.0-(WFNU*WFNU)))
                     RFAC = RLV(L) * TVR2 * DLAYR(L) * 100.0                                                            !EQN 162
@@ -276,7 +276,7 @@
             ! 6.For distribution of remaining N to st,rt,storage root
             !NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1)                                                     !EQN 219 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
             NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM                                                                !EQN 219
-            IF (NDEM2.GT.0.0)THEN
+            IF (NDEM2 > 0.0)THEN
                 !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
@@ -411,8 +411,8 @@
     ! Area and assimilate factors for each leaf
                 DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                     DO LF = 1, LNUMSIMSTG(BR)   
-                        IF (LAGETT(BR,LF).LE.LLIFGTT) THEN
-                            IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
+                        IF (LAGETT(BR,LF) <= LLIFGTT .AND. LAPOTX2(BR,LF) > 0.0 ) THEN
+                            IF (LNUMSIMSTG(BR) < LCNUMX) THEN
                                 !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
                                 !LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG) !LPM 02SEP2016  Use of NFLF2 instead of NFG
                                 LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0)) 

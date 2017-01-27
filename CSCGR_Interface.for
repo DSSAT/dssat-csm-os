@@ -107,8 +107,8 @@ C=======================================================================
 
       DAYLT = DAYL
       DEWDUR = 12.
-      NH4LEFT = NH4
-      NO3LEFT = NO3
+      NH4Left = NH4
+      NO3Left = NO3
       PARIP  = -99.   !Not used w/ DSSAT
       PARIPA = -99.   !Not used w/ DSSAT
       ALBEDOS = MSALB                                                   ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS

@@ -31,27 +31,8 @@
             OPEN(UNIT=FNUMLVS,FILE=FNAMELEAVES,POSITION='APPEND')
             WRITE (FNUMLVS,'(/,A79,/)') OUTHED
             WRITE (FNUMLVS,'(A14,F6.1)') '! LEAF NUMBER ',LNUM
-            WRITE (FNUMLVS,'(/,A54,A36,A30)')'@ BRNUM LNUM AREAP AREA1 AREA2 AREA3 AREA4 AREAT AREAS', &
+            WRITE (FNUMLVS,'(/,A42,A36,A30)')'@ BRNUM LNUM AREAP AREA1 AREA2 AREAT AREAS', &                 ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
                 '  WFLF  NFLF NFLF2  AFLF TFGLF TFDLF',' LLIFG LLIFA LLIFS LLIFE   DAP'
-            !DO I = 1, INT(LNUM+0.99)   !LPM 21MAR15 Change to consider the cohorts
-                !CALL Csopline(lapotxc,lapotx(i))
-                !CALL Csopline(latlc,AMAX1(0.0,LATL(i)))
-                !CALL Csopline(latl2c,AMAX1(0.0,LATL2(i)))
-                !CALL Csopline(latl3c,AMAX1(0.0,LATL3(i)))
-                !CALL Csopline(latl4c,AMAX1(0.0,LATL4(i)))
-                !CALL Csopline(lapc,lap(i))
-                !CALL Csopline(lapsc,laps(i))
-                !! Adjust for growth period of non fullly expanded leaves
-                !WFLF(I) = AMIN1(1.0,WFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                !NFLF(I) = AMIN1(1.0,NFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                !NFLFP(I) =AMIN1(1.0,NFLFP(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                !TFGLF(I) =AMIN1(1.0,TFGLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                !AFLF(I) = AMIN1(1.0,AFLF(I)/AMIN1(1.0,(LAGETT(I)/LLIFG)))
-                !IF (LDEATHDAP(I).EQ.0) LDEATHDAP = -99
-                !WRITE (fnumlvs,'(I6,7A6,6F6.2,4F6.1,I6)')I,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(I), &
-                !    1.0-NFLF(I),1.0-NFLF2(I),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(I))),1.0-TFGLF(I),1.0-TFDLF(I),DGLF(I), &
-                !    DALF(I),DSLF(I),DGLF(I)+DALF(I)+DSLF(I),LDEATHDAP(I)
-             !ENDDO   
             DO BR = 0, BRSTAGE
                 DO LF = 1, INT(LNUMSIMSTG(BR))  
                     CALL Csopline(lapotxc,lapotx(BR,LF))
@@ -72,8 +53,8 @@
                     IF (LDEATHDAP(BR,LF) == 0) THEN
                         LDEATHDAP = -99
                     ENDIF
-                    WRITE (fnumlvs,'(2I6,7A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL2C,LATL3C,LATL4C,LAPC,LAPSC,1.0-WFLF(BR,LF), &
-                        1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(BR,LF),DGLF(BR,LF), &
+                    WRITE (fnumlvs,'(2I6,5A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL3C,LAPC,LAPSC,1.0-WFLF(BR,LF), &                          ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
+                        1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(BR,LF),DGLF(BR,LF), &  
                         DALF(BR,LF),DSLF(BR,LF),DGLF(BR,LF)+DALF(BR,LF)+DSLF(BR,LF),LDEATHDAP(BR,LF)
                 ENDDO
             ENDDO
@@ -82,21 +63,24 @@
                 WRITE(fnumlvs,*)' '
                 WRITE(fnumlvs,'( A)')'! NB. Data are summed over all fork branches'
                 WRITE(fnumlvs,*)' '
-                WRITE(fnumlvs,'( A)')'! LNUM = Number of leaf on one axis '
-                WRITE(fnumlvs,'( A)')'! AREAP = Potential area of leaf on main axis (cm2) '
-                WRITE(fnumlvs,'(2A)')'! AREA1 = Area of youngest mature leaf on', ' main axis,no stress (cm2)'
+                WRITE(fnumlvs,'( A)')'! LNUM  = Number of leaf on one axis '
+                WRITE(fnumlvs,'( A)')'! AREAP = Potential area of leaf (cm2) '
+                WRITE(fnumlvs,'(2A)')'! AREA1 = Area of leaf ', 'without stress (cm2)'
+                WRITE(fnumlvs,'(2A)')'! AREA2 = Area of leaf ', 'with stress (cm2)'
                 WRITE(fnumlvs,'(2A)')'! AREAT = Area of cohort of leaves at leaf',' position (cm2) '
                 WRITE(fnumlvs,'(2A)')'! AREAS = Senesced area of cohort of leaves', ' at harvest at leaf position (cm2) '
                 WRITE(fnumlvs,'(2A)')'! WFLF  = Water stress factor for leaf',' (0-1,1=0 stress)'
                 WRITE(fnumlvs,'( A)')'! NFLF  = N stress factor for leaf (0-1,1=0 stress)'
-                WRITE(fnumlvs,'( A)')'! NFLF  = N factor for area adjustment (0-1,1=0 stress)'
-                WRITE(fnumlvs,'(2A)')'! NFLFP = N stress factor for photosynthesis',' (0-1,1=0 stress)'
+                WRITE(fnumlvs,'( A)')'! NFLF2 = N factor for area adjustment (0-1,1=0 stress)'
+                ! WRITE(fnumlvs,'(2A)')'! NFLFP = N stress factor for photosynthesis',' (0-1,1=0 stress)'
                 WRITE(fnumlvs,'(2A)')'! AFLF  = Assimilate factor for leaf',' (0-1,1=0 no limitation)'
                 WRITE(fnumlvs,'(2A)')'! TFGLF = Temperature factor for leaf expansion ',' (0-1,1=0 no limitation)'
                 WRITE(fnumlvs,'(2A)')'! TFDLF = Temperature factor for leaf development',' (0-1,1=0 no limitation)'
-                WRITE(fnumlvs,'( A)')'! DGLF = Number of days growing      '
-                WRITE(fnumlvs,'( A)')'! DALF = Number of days fully active '
-                WRITE(fnumlvs,'( A)')'! DSLF = Number of days senescing    '
+                WRITE(fnumlvs,'( A)')'! LLIFG = Number of days of leaf growing      '
+                WRITE(fnumlvs,'( A)')'! LLIFA = Number of days of leaf fully active '
+                WRITE(fnumlvs,'( A)')'! LLIFS = Number of days of leaf senescing    '
+                WRITE(fnumlvs,'( A)')'! LLIFE = Total number of days of leaf longevity    '
+                WRITE(fnumlvs,'( A)')'! DAP   = Leaf decease day after planting    '
             ENDIF
             CLOSE (FNUMLVS)
             ! End of Leaves.out
