@@ -658,8 +658,6 @@
     REAL    :: PSTART(0:PSX)           ! Principal thresholds           du         ! (From SeasInit)  
     !REAL    :: PTF                     ! Partition fraction to tops     #          ! (From SeasInit) !LPM 19MAY2015 PTF deleted   
     REAL    :: PTFA                    ! Partition fr adjustment coeff. #          ! (From SeasInit)  
-    REAL    :: PTFMN                   ! Partition fraction,minimum     #          ! (From SeasInit)  
-    REAL    :: PTFMX                   ! Partition fraction,maximum     #          ! (From SeasInit)  
     REAL    :: PTTN                    ! Minimum soil temperature,plt   C          ! (From SeasInit)  
     REAL    :: PTX                     ! Maximum soil temperature,plt   C          ! (From SeasInit)  
     INTEGER :: PWDINF                  ! First YrDoy of planting window #          ! (From SeasInit)  
