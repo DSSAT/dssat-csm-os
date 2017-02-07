@@ -354,8 +354,10 @@
           DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
-                NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(2.5514108*(((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)/ & 
-                ((DAE-NDDAE(BR,LF)+1)*(((((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)+1))**2))*TFG*NODWT)
+                !NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(2.5514108*(((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)/ & 
+                !((DAE-NDDAE(BR,LF)+1)*(((((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)+1))**2))*TFG*NODWT)
+				NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-NDDAE(BR,LF)+1)/163.082822)**-2.81690408)/ & 
+                (((((DAE-NDDAE(BR,LF)+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
            
                 NODEWTG(BR,LF) = NODEWTGB(BR,LF)
                     !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
