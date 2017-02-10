@@ -109,7 +109,7 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 ! Photosynthesis
 @ PHTV  PHSV  ! VPD sensitivity aspects
 ! kPa fr/kPa
-   0.8 -0.31
+   5.0 -0.31
 @CO2RF  CO2F  ! CO2 response
 !  vpm     # 
      0  0.00
