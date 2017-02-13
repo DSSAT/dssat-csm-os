@@ -156,10 +156,10 @@ C=======================================================================
 
       NEW_PHASE = .FALSE.
 
-! temp chp
-      write(3000,'(A)') 
-     & "   yrdoy  xstage icsdur     dtt    sind     tn    tmpi" //
-     &  "  idur1     lai"
+!! temp chp
+!      write(3000,'(A)') 
+!     & "   yrdoy  xstage icsdur     dtt    sind     tn    tmpi" //
+!     &  "  idur1     lai"
 
 
 !***********************************************************************
@@ -522,9 +522,9 @@ C=======================================================================
                    IDUR1 = IDUR1 + 1
                 ENDIF
 
-! temp chp
-      write(3000,3000) yrdoy, xstage, icsdur, dtt,sind,tn,tmpi,idur1,lai
- 3000 format(i8,f8.3,i7,2f8.3,f7.2,f8.3,I7,f8.3)
+!! temp chp
+!      write(3000,3000) yrdoy, xstage, icsdur, dtt,sind,tn,tmpi,idur1,lai
+! 3000 format(i8,f8.3,i7,2f8.3,f7.2,f8.3,I7,f8.3)
 
                 RETURN
              ENDIF
