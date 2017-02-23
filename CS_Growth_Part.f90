@@ -344,7 +344,7 @@
         !    GROLSP = GROLFP                                                                                            !EQN 295b
         !ENDIF
         
-        
+        !open (unit = 8, file = "C:\DSSAT46\Cassava\log_NODEWTGB.txt")   
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         NODEWTG = 0.0
         GROSTP = 0.0
@@ -354,16 +354,17 @@
           DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
-                !NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(2.5514108*(((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)/ & 
-                !((DAE-NDDAE(BR,LF)+1)*(((((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)+1))**2))*TFG*NODWT)
-				NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-NDDAE(BR,LF)+1)/163.082822)**-2.81690408)/ & 
-                (((((DAE-NDDAE(BR,LF)+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
-           
+				!LPM23FEB2017 New high initial rate
+                NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.007610082*(((DAE-NDDAE(BR,LF)+1)/235.16408564)**-2.045472)/ & 
+                (((((DAE-NDDAE(BR,LF)+1)/235.16408564)**-1.045472)+1)**2))*TFG*NODWT) 
+                !NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-NDDAE(BR,LF)+1)/163.082822)**-2.81690408)/ & 
+                !(((((DAE-NDDAE(BR,LF)+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
                 NODEWTG(BR,LF) = NODEWTGB(BR,LF)
                     !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
                     NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
                     GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
                 STWTP = STWTP + (NODEWTG(BR,LF)*BRNUMST(BR))
+                !write (8,*) DAP, BR, LF,TFG,NODEWT(BR,LF)   ! log to delete
                 ENDDO
             ENDDO
         ENDIF
