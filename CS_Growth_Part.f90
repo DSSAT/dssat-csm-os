@@ -355,10 +355,10 @@
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
 				!LPM23FEB2017 New high initial rate
-                NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.007610082*(((DAE-NDDAE(BR,LF)+1)/235.16408564)**-2.045472)/ & 
-                (((((DAE-NDDAE(BR,LF)+1)/235.16408564)**-1.045472)+1)**2))*TFG*NODWT) 
-                !NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-NDDAE(BR,LF)+1)/163.082822)**-2.81690408)/ & 
-                !(((((DAE-NDDAE(BR,LF)+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
+                !NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.007610082*(((DAE-NDDAE(BR,LF)+1)/235.16408564)**-2.045472)/ & 
+                !(((((DAE-NDDAE(BR,LF)+1)/235.16408564)**-1.045472)+1)**2))*TFG*NODWT) 
+                NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-NDDAE(BR,LF)+1)/163.082822)**-2.81690408)/ & 
+                (((((DAE-NDDAE(BR,LF)+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
                 NODEWTG(BR,LF) = NODEWTGB(BR,LF)
                     !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
                     NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
@@ -374,8 +374,7 @@
         GROCRP = NODEWTGB(0,1)*SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
         GRORP = (GROLFP + GROSTP)*PTFA
-        !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
-        !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*DAWWP)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
         GROLSP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
         IF (GROLSP.GT.0.0) THEN
