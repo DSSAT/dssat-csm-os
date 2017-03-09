@@ -31,18 +31,52 @@ Module Enviro_module !Module of environment
     end subroutine setHOD
     
     
-    integer function fetchTemperature(this)
+    real function fetchTemperature(this)
         implicit none
         class (Enviro_type), intent(in) :: this
         
-        fetchTemperature = this%HOD_ +5
+        fetchTemperature = 20
+        
+        SELECT CASE (HOD) ! DA dummy standard curve, this is an example for testing purpuses, TODO the correct is to retrive the temp from somewhere
+            CASE (8)
+                fetchTemperature = 21.0
+            CASE (9)
+                fetchTemperature = 23.0
+            CASE (10)
+                fetchTemperature = 24.0
+            CASE (11)
+                fetchTemperature = 26.0
+            CASE (12)
+                fetchTemperature = 27.0
+            CASE (13)
+                fetchTemperature = 28.0
+            CASE (14)
+                fetchTemperature = 28.2
+            CASE (15)
+                fetchTemperature = 26
+             CASE (16)
+                fetchTemperature = 25
+            CASE (17)
+                fetchTemperature = 24
+            CASE (18)
+                fetchTemperature = 23
+            CASE (19)
+                fetchTemperature = 22
+            CASE (20)
+                fetchTemperature = 21
+            CASE DEFAULT
+                fetchTemperature = 20
+        END SELECT
+        
+        
+        
     end function fetchTemperature
     
-    integer function fetchSVP(this)
+    real function fetchSVP(this)
         implicit none
         class (Enviro_type), intent(in) :: this
         
-        fetchSVP = 610.78 *exp( fetchTemperature(this) / ( fetchTemperature(this)  + 238.3 ) *17.2694 )              ! Saturation vapour pressure, ps, in pascals: ps = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
+        fetchSVP = 610.78 * exp( fetchTemperature(this) / ( fetchTemperature(this)  + 238.3 ) * 17.2694 )              !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
 
     end function fetchSVP
 
