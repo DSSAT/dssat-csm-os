@@ -37,7 +37,7 @@ Module Enviro_module !Module of environment
         
         fetchTemperature = 20
         
-        SELECT CASE (HOD) ! DA dummy standard curve, this is an example for testing purpuses, TODO the correct is to retrive the temp from somewhere
+        SELECT CASE (this%HOD_) ! DA dummy standard curve, this is an example for testing purpuses, TODO the correct is to retrive the temp from somewhere
             CASE (8)
                 fetchTemperature = 21.0
             CASE (9)
