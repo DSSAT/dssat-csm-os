@@ -7,7 +7,6 @@ Module Enviro_module !Module of environment
     
         procedure, pass (this) :: getHOD
         procedure, pass (this) :: setHOD 
-        procedure, pass (this) :: fetchTemperature
     
     END Type Enviro_type
     
@@ -32,12 +31,20 @@ Module Enviro_module !Module of environment
     end subroutine setHOD
     
     
-    subroutine fetchTemperature(this)
+    integer function fetchTemperature(this)
         implicit none
         class (Enviro_type), intent(in) :: this
         
         fetchTemperature = this%HOD_ +5
-    end subroutine fetchTemperature
+    end function fetchTemperature
+    
+    integer function fetchSVP(this)
+        implicit none
+        class (Enviro_type), intent(in) :: this
+        
+        fetchSVP = 610.78 *exp( fetchTemperature(this) / ( fetchTemperature(this)  + 238.3 ) *17.2694 )              ! Saturation vapour pressure, ps, in pascals: ps = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
+
+    end function fetchSVP
 
         
 END Module Enviro_module    
