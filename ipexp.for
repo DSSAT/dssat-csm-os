@@ -96,9 +96,9 @@ C=======================================================================
       INTEGER NYRS,FROP,EXPN,EXPP,TRTN,ERRNUM,IFIND,FTYPEN
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
-      INTEGER TRTNUM, ROTNUM
+      INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
-      REAL    FLAG,EXP,TRT,PLTFOR
+      REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -743,7 +743,7 @@ C-----------------------------------------------------------------------
 C     Call IPHAR
 C-----------------------------------------------------------------------
       CALL IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &     NHAR,IHARI,YRSIM,CROP,HBPC)
+     &     NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
 C-----------------------------------------------------------------------
 C     Call IPIRR

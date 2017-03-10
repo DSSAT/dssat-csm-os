@@ -3,7 +3,7 @@
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                fhtot,fhpctlf)
+     &                fhtot,fhpctlf,fhpctn,FREQ,CUHT,MOWC,RSPLC)
       
       USE MODULEDEFS
 
@@ -17,6 +17,7 @@
       INTEGER LNUM,FOUND
       INTEGER I,MOWCOUNT,j
       integer,dimension(8) :: date_time
+      INTEGER LUNEXP,ERRNUM,LINEXP,LNHAR
 
       REAL,ALLOCATABLE,DIMENSION(:) :: MOW,RSPLF,MVS,rsht
       REAL FHLEAF,FHSTEM,FHVSTG
@@ -27,7 +28,9 @@
       REAL PROLFF,PROSTF,pliglf,pligst
       real canht,fhcrlf,fhcrst,fhtotn,fhtot,fhlfn,fhstn
       real fhpcho,fhpctlf,fhpctn,fhplig
-      real vstagp,MOWC,RSPLC,y,z
+      real vstagp,MOWC,RSPLC,y,z,PELF,FMOW,RHMOW,CHMOW,FLFP,RHLFP,RSPLM
+      REAL FREQ,CUHT,YHT
+!      REAL,ALLOCATABLE,DIMENSION(:) :: canht
 
       character(len=2)  crop
       CHARACTER(len=6)  SECTION,ERRKEY,trtchar
@@ -37,7 +40,12 @@
       character(len=60) ename
       CHARACTER*80 MOW80
       character(len=180) fhoutfmt
-
+      CHARACTER*255 C255
+      CHARACTER*80 CHARTEST
+      CHARACTER*92 FILEX_P
+      CHARACTER*6  FINDCH
+      CHARACTER*12 FILEX
+      
       logical exists
       
       TYPE(CONTROLTYPE) CONTROL
@@ -49,8 +57,70 @@
       ename  = control % ename
       mowfile = control % filex
       mowfile(10:12) = 'MOW'
-
       ERRKEY = 'FRHARV'
+      
+!      YHT=canht
+!      do j=1,size(canht); YHT(size(canht))=canht; end do
+!      WRITE(5000,'(F6.3)') YHT
+C----------------------------------------------------------      
+!MOWC - Automatic MOW - post harvest stubble mass and %leaf 
+!       in the stubble calculation (Diego): 
+C----------------------------------------------------------
+! OPEN AND READ SPECIES FILE
+      CALL GETLUN('FILEC', LUNCRP)      
+      OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
+        SECTION = '!*CANO'
+      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+      do j=1,8; CALL IGNORE(LUNCRP,LNUM,ISECT,C255); end do
+        READ(C255,'(F6.1)') FMOW
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(F6.1)') RHMOW
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(F6.1)') CHMOW
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(F6.2)') FLFP
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(F6.2)') RHLFP
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(F6.1)') RSPLM
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        CLOSE (LUNCRP)
+!        WRITE(1050,'(F10.3)') NHGT
+C--------------------------------------------------
+!OPEN AND READ FILEX
+      !CALL IPHAR (LUNEXP) 
+      !OPEN (LUNEXP,FILE=FILEX_P, STATUS = 'OLD',IOSTAT=ERRNUM)
+      !    FINDCH='*HARVE'
+      !CALL FIND (LUNEXP,FINDCH,LINEXP)
+      !CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
+      !READ (CHARTEST,'(44X,2F5.0)') FREQ,CUHT
+      !CLOSE(LUNEXP)
+      !WRITE(5000,'(2F5.0)') FREQ,RSHT 
+      FREQ=42 !should be in the file X
+      CUHT=0.10 !should be in the file X
+C--------------------------------------------------      
+!           MOWC = 209.69*rsht(i)+0.0
+           !y = (209.69*rsht(i))
+           !MOWC= (-11.084*28)+y
+           !MOWC= (-11.084*28)+(209.69*rsht(i)*100) !original not dynamic
+           !MOWC= (FMOW*28)+(RHMOW*rsht(i)*100)+(CHMOW*canht*100)
+            MOWC= (FMOW*FREQ)+(RHMOW*CUHT*100)+(CHMOW*canht*100)
+           if (canht*100 .GE. 0.0) then
+!           RSPLC = -0.3373*rsht(i)+52.903
+           !z = (-0.3373*rsht(i))+52.903
+           !RSPLC= (-0.0418*28)+z
+           !RSPLC= (-0.0418*28)+((-0.3373*rsht(i))+52.903)!original not dynamic
+           !RSPLC=(FLFP*28)+((RHLFP*((canht-rsht(i))/canht*100))+RSPLM)
+            RSPLC=(FLFP*FREQ)+((RHLFP*((canht-CUHT)/canht*100))+RSPLM)
+           else
+           RSPLC=0.0
+           endif
+           if (RSPLC .ge. RSPLM) then
+           RSPLC=RSPLM    
+           endif
+           WRITE(5000,'(2F10.0)') MOWC,RSPLC
+C---------------------------------------------------------              
+            
 
       IF (.NOT.ALLOCATED(MOW)) THEN
 
@@ -135,28 +205,9 @@
               FHLEAF=MAX(FHLEAF,0.0)
               FHSTEM=MAX(FHSTEM,0.0)
               FHVSTG=MAX(MVS(I),0.0)
-                            
 !              canht=max(rsht(i)/100,0.0)
               canht=max(rsht(i),0.0)     !enter rsht in cm
-              
-C----------------------------------------------------------      
-!MOWC - Automatic MOW - post harvest stubble mass and %leaf 
-!       in the stubble calculation (Diego): 
-C----------------------------------------------------------              
-!           MOWC = 209.69*rsht(i)+0.0
-           !y = (209.69*rsht(i))
-           !MOWC= (-11.084*28)+y
-            MOWC= (-11.084*28)+(209.69*rsht(i))  
-           if (rsht(i) .GE. 1.0) then
-!           RSPLC = -0.3373*rsht(i)+52.903
-           !z = (-0.3373*rsht(i))+52.903
-           !RSPLC= (-0.0418*28)+z
-            RSPLC= (-0.0418*28)+((-0.3373*rsht(i))+52.903)   
-           else
-           RSPLC=0.0
-           endif
-!        WRITE(5000,'(2F8.2)') MOWC,RSPLCCDED
-C---------------------------------------------------------              
+
 
               fhtot = fhleaf+fhstem
 
@@ -219,6 +270,7 @@ C---------------------------------------------------------
               fhpcho = 0
 
               fhpctlf = 0
+              
 
           ENDIF
 
@@ -252,7 +304,7 @@ C---------------------------------------------------------
      &            '5(i6),f6.2,2(i6),3(f6.2),f6.1,i6,f6.1,x,2f6.1)'
             WRITE(fhlun,fhoutfmt)
      &           run,mowfile(1:8),crop,trtno,i,year,doy,
-     &           int(topwt*10),int(wtlf*10),int(stmwt),
+     &           int(topwt*10),int(wtlf*10),int(stmwt*10),
      &           int(strwt*10),int(rtwt*10),xlai,
      &           int(fhtot*10),int(fhtotn*10),
      &           fhpctn,fhpcho,fhplig,fhpctlf,

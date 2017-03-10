@@ -182,10 +182,10 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. EMERG) THEN
 !-----------------------------------------------------------------------
-        !CANHT  = TABEX(YVSHT,XVSHT,VSTAGE,10)       
-        !CANWH  = TABEX(YVSWH,XVSHT,VSTAGE,10) 
-        CANHT  = TABEX(YVSHT*100,XVSHT,VSTAGE,10) !from m to cm      
-        CANWH  = TABEX(YVSWH*100,XVSHT,VSTAGE,10) !from m to cm
+        CANHT  = TABEX(YVSHT,XVSHT,VSTAGE,10)       
+        CANWH  = TABEX(YVSWH,XVSHT,VSTAGE,10) 
+!        CANHT  = TABEX(YVSHT*100,XVSHT,VSTAGE,10) !from m to cm      
+!        CANWH  = TABEX(YVSWH*100,XVSHT,VSTAGE,10) !from m to cm
 
 !        CANHT = MOWHT
 !        IF (MOWHT .GT. 0.0) THEN CANHT = MOWHT
@@ -227,8 +227,8 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Calculate rate of increase in canopy height and update height, CANHT
 C-----------------------------------------------------------------------
-!      RCANHT= RVSTGE * TABEX(YVSHT,XVSHT,VSTAGE,10) * HWTEM *
-      RCANHT= RVSTGE * TABEX(YVSHT*100,XVSHT,VSTAGE,10) * HWTEM * !m to cm
+      RCANHT= RVSTGE * TABEX(YVSHT,XVSHT,VSTAGE,10) * HWTEM *
+!      RCANHT= RVSTGE * TABEX(YVSHT*100,XVSHT,VSTAGE,10) * HWTEM * !m to cm
      &  TURFAC * HPAR * RHGHT * CUMNHT
 !      WRITE(3000,'(F10.3)') CUMNHT
       CANHT = CANHT + RCANHT
@@ -244,8 +244,8 @@ C     Values of RHGHT and RWIDTH = 1.00 are for Florunner peanut variety
 C     1/22/03 KJB - Don't allow reduction in vstage to reduce canopy
 C       width.
 !-----------------------------------------------------------------------
-!      RCANWH= MAX(0.0,RVSTGE) * TABEX(YVSWH,XVSHT,VSTAGE,10) * HWTEM *
-      RCANWH= MAX(0.0,RVSTGE) * TABEX(YVSWH*100,XVSHT,VSTAGE,10) *HWTEM* !m to cm
+      RCANWH= MAX(0.0,RVSTGE) * TABEX(YVSWH,XVSHT,VSTAGE,10) * HWTEM *
+!      RCANWH= MAX(0.0,RVSTGE) * TABEX(YVSWH*100,XVSHT,VSTAGE,10) *HWTEM* !m to cm
      &  TURFAC * WPAR * RWIDTH * CUMNHT
       CANWH = CANWH + RCANWH
       

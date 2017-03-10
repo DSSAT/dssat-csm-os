@@ -1134,7 +1134,7 @@ C-----------------------------------------------------------------------
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-        READ(C80,'(5F6.0)',IOSTAT=ERR) SLAMAX,SLAMIN,SLAPAR,TURSLA
+        READ(C80,'(4F6.0)',IOSTAT=ERR) SLAMAX, SLAMIN, SLAPAR, TURSLA
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)

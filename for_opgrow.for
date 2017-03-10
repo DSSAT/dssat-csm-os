@@ -43,7 +43,7 @@ C  Calls:     None
      &  FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &  RCHDP,
      &  FRLF, FRSTM, FRRT,
-     &  FHWAH, FHLPH, DWTCO, DWTLO, DWTSO)
+     &  FHWAH, FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 
 !-----------------------------------------------------------------------
@@ -76,7 +76,7 @@ C  Calls:     None
       REAL RLV(NL)
       REAL TGRO(TS)
 
-      REAL FRLF, FRSTM, FRRT, FHWAH, FHLPH
+      REAL FRLF, FRSTM, FRRT, FHWAH, FHLPH, PELF
       
       REAL WTNCAN,WTNLF,WTNST,WTNSD,WTNUP,WTNFX
       REAL WTNVEG,PCNVEG,NFIXN
@@ -106,7 +106,7 @@ C  Calls:     None
      &  YSTOR(8), FRSTRF, FRSTRMX, STRSRFL, STRLYR1, SENSR,
      &  FNPTD(4), FNPMD(4), FNPGD(4), HARD1, HARD2, 
      &  FRZDC, FRZHRD(4), 
-     &  FRZDHD(4), RDRMG, RDRMM, RDRMT, RCHDP
+     &  FRZDHD(4), RDRMG, RDRMM, RDRMT, RCHDP,fhpctn,MOWC,RSPLC
 
 
       REAL, DIMENSION(NL) :: ST
@@ -200,7 +200,7 @@ C-------------------------------------------
      &    '  CWID  NWAD  RDPD  RL1D  RL2D  RL3D',
      &    '  RL4D  RL5D  RL6D  RL7D  RL8D  RL9D',
      &    '  RL10  CDAD  LDAD  SDAD  QDAD  HERB  FHL%  LF%D'
-     &    ' DWTCO DWTLO DWTSO')
+     &    ' DWTCO DWTLO DWTSO CHTCM CPROT  MOWC  RSPLC')
 !-----------------------------------------------------------------------
 !       Initialize daily plant nitrogen output file
         INQUIRE (FILE = OUTPN, EXIST = FEXIST)
@@ -362,11 +362,16 @@ C-----------------------------------------------------------------------
         SDSIZE = 0.0
         ENDIF
 
-        IF (WTLF .GT. 0. .AND. SDWT .GE. 0.) THEN
-        FRLF = 100.*WTLF/(WTLF+STMWT)
+!        IF (WTLF .GT. 0. .AND. SDWT .GE. 0.) THEN
+        IF (WTLF .GT. 0.) THEN
+        PELF = 100.*WTLF/(WTLF+STMWT)
         ELSE
-        FRLF = 0.
+        PELF = 0.0
         ENDIF
+        
+        IF (FHWAH .eq. 0.0) THEN
+        fhpctn = 0.0
+        endif
 
         IF (TOPWT .GT. 0. .AND. SDWT .GE. 0.) THEN
         HI = SDWT/TOPWT
@@ -390,12 +395,13 @@ C-----------------------------------------------------------------------
      &    (RTDEP/100.),(RLV(I),I=1,10),
      &    NINT(WTCO*10.),NINT(WTLO*10.),NINT(WTSO*10.), 
      &    NINT(WTSRO*10.),NINT(FHWAH*10.),FHLPH,
-     &    FRLF,NINT(DWTCO*10.),NINT(DWTLO*10.),NINT(DWTSO*10.)
+     &    PELF,NINT(DWTCO*10.),NINT(DWTLO*10.),NINT(DWTSO*10.),
+     &    NINT(CANHT*100.),fhpctn*6.25,MOWC,RSPLC
 310       FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &    1X,F5.1,1X,I5,1X,F5.2,3(1X,I5),2(1X,F5.2),4(1X,I5),
      &    1X,F6.1,1X,F5.3,2(1X,I5),4(1X,F5.3),3(1X,F5.2),
      &    2(1X,I5),1X,F5.1,2(1X,F5.2),1X,F5.1,11(1X,F5.2),
-     &    4(I6),1x,I5,2(1X,F5.1),3(I6))
+     &    4(I6),1x,I5,2(1X,F5.1),3(I6),I6,F6.2,F6.0,F6.2)
 
 C-----------------------------------------------------------------------
         WTNVEG  = (WTNLF + WTNST)
@@ -417,7 +423,7 @@ C-----------------------------------------------------------------------
         WRITE (NOUTPC,510) YEAR, DOY, DAS, DAP,
      &    NINT(TOTWT*10), PG, CMINEA, GROWTH,
      &    GRWRES, MAINR, (CADLF + CADST), CADSR, RHOL*100., 
-     &    RHOS*100., RHOSR*100.,RHOR*100., TGRO(12), TGROAV, PCNSD, 
+     &    RHOS*100., RHOSR*100., RHOR*100., TGRO(12), TGROAV, PCNSD, 
      &    PCLSD, PCCSD
 510     FORMAT(1X,I4,1X,I3.3,3(1X,I5),6(1X,F6.2),F6.2,4(1X,F5.1),
      &   2(1X,F5.1),3(1X,F5.2))

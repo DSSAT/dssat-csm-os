@@ -237,6 +237,9 @@ C------------------------------------------------------------
       REAL FHLEAF,FHSTEM,FHVSTG
       REAL FHWAH,FHLPH !DIEGO ADDED 10/26/2016
       REAL DWTCO, DWTLO, DWTSO !DIEGO ADDED 11/22/2016
+      REAL fhpctn !DIEGO ADDED 01/18/2017
+      REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
+      REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
       LOGICAL RUNYET
 
 !-----------------------------------------------------------------------
@@ -675,7 +678,7 @@ C-----------------------------------------------------------------------
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH,FHLPH, DWTCO, DWTLO, DWTSO)
+     &    FHWAH,FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
 
 !!     Initialize Overview.out file.
 !      CALL FOR_OPHARV(CONTROL, ISWITCH, 
@@ -1089,7 +1092,7 @@ C-----------------------------------------------------------------------
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH,FHLPH,DWTCO, DWTLO, DWTSO)
+     &    FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
 
 ! CALL FOR_OPHARV (CONTROL, ISWITCH, 
 !&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
@@ -1993,12 +1996,15 @@ C-----------------------------------------------------------------------
 
       FHWAH= 0.0
       FHLPH = 0.0
+!      fhpctn = 0.0
+      MOWC =0.0
+      RSPLC =0.0
       call forage_harvest(CONTROL,FILECC,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                FHWAH,FHLPH)
+     &                FHWAH,FHLPH,fhpctn,FREQ,CUHT,MOWC,RSPLC)
 
 !-----------------------------------------------------------------------
 !     End of DAS > NVEG0 if construct
@@ -2102,7 +2108,7 @@ C-----------------------------------------------------------------------
      &  FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &  RCHDP,
      &  FRLF, FRSTM, FRRT,
-     &  FHWAH,FHLPH,DWTCO, DWTLO, DWTSO)
+     &  FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 !     !!   ! Write to Overview.out and summary.out files.
 !     !!   CALL FOR_OPHARV (CONTROL, ISWITCH, 

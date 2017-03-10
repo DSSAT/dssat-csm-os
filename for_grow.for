@@ -1391,7 +1391,7 @@ C-----------------------------------------------------------------------
       ELSE
         RHOR = 0.0
       ENDIF
-!      WRITE(8000,'(F6.3)') RHOR
+!      WRITE(8000,'(2F6.3)') RHOR,WCRRT
       
       IF (SHELWT .GT. 0.0001) THEN
         RHOSH =  WCRSH/SHELWT
