@@ -344,7 +344,7 @@
         !    GROLSP = GROLFP                                                                                            !EQN 295b
         !ENDIF
         
-        open (unit = 8, file = "C:\DSSAT46\Cassava\log_NODEWTGB.txt")   
+        !open (unit = 8, file = "C:\DSSAT46\Cassava\log_NODEWTGB.txt")   
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         NODEWTG = 0.0
         GROSTP = 0.0
@@ -368,7 +368,7 @@
                     NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
                     GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
                 STWTP = STWTP + (NODEWTG(BR,LF)*BRNUMST(BR))
-                write (8,*) DAP, BR, LF,TFG,NODEWT(BR,LF)   ! log to delete
+                !write (8,*) DAP, BR, LF,TFG,NODEWT(BR,LF)   ! log to delete
                 ENDDO
             ENDDO
         ENDIF
