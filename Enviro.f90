@@ -72,13 +72,23 @@ Module Enviro_module !Module of environment
         
     end function fetchTemperature
     
+    ! obtain the Saturation Vapour Pressure (pascals)
     real function fetchSVP(this)
         implicit none
         class (Enviro_type), intent(in) :: this
         
-        fetchSVP = 610.78 * exp( fetchTemperature(this) / ( fetchTemperature(this)  + 238.3 ) * 17.2694 )              !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
+        fetchSVP = 610.78 * exp( fetchTemperature(this) / ( fetchTemperature(this)  + 238.3 ) * 17.2694 )        !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
 
     end function fetchSVP
+    
+    ! obtain the water holding capacity of the air (kg/m3)
+    real function fetchWHC(this)
+        implicit none
+        class (Enviro_type), intent(in) :: this
+        
+        fetchWHC = 0.002166 * fetchSVP(this) / ( fetchTemperature(this) + 273.16 )                                                                  !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+
+    end function fetchWHC
 
         
 END Module Enviro_module    
