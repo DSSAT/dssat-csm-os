@@ -97,9 +97,9 @@ C=======================================================================
       INTEGER NYRS,FROP,EXPN,EXPP,TRTN,ERRNUM,IFIND,FTYPEN
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
-      INTEGER TRTNUM, ROTNUM
+      INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
-      REAL    FLAG,EXP,TRT,PLTFOR
+      REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -258,6 +258,7 @@ C-----------------------------------------------------------------------
         CALL ERROR (ERRKEY,29,FILEX_P,0)
       ENDIF
       READ(LUNEXP,1500) ENAME
+      control % ename = ename
  1500 FORMAT(25X,A60)
       IF (RNMODE .EQ. 'I') CALL CLEAR
       IF (EXPN .NE. EXPP) THEN
@@ -763,7 +764,7 @@ C-----------------------------------------------------------------------
 C     Call IPHAR
 C-----------------------------------------------------------------------
       CALL IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &     NHAR,IHARI,YRSIM,CROP,HBPC)
+     &     NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
 C-----------------------------------------------------------------------
 C     Call IPIRR

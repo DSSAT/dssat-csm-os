@@ -17,8 +17,8 @@ C  Calls  : ERROR, FIND, IGNORE
 C========================================================================
 
       SUBROUTINE FOR_CANOPY(
-     &  ECONO, FILECC, FILEGC, PAR, ROWSPC,               !Input
-     &  RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,               !Input
+     &  ECONO, FILECC, FILEGC, PAR, ROWSPC,                !Input
+     &  RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,NSTRES,         !Input
      &  CANHT, CANWH,                                     !Output
      &  DYNAMIC)                                          !Control
 
@@ -35,10 +35,15 @@ C-----------------------------------------------------------------------
       CHARACTER*6   ECOTYP, ECONO
       CHARACTER*92  FILECC, FILEGC
       CHARACTER*255 C255
+      
+      CHARACTER*80  C80
+      CHARACTER*80 PATHCR,CHAR
+
 
       INTEGER I, II, LUNCRP, LUNECO, ERR, LNUM, ISECT
       INTEGER DYNAMIC
       INTEGER FOUND
+      
 
       REAL PAR, ROWSPC, RVSTGE, TURFAC, VSTAGE
       REAL CANHT, CANWH, XLAI
@@ -48,7 +53,17 @@ C-----------------------------------------------------------------------
       REAL XHWPAR(10), XHWTEM(10), YHWPAR(10), YHWTEM(10)
       REAL XVSHT(15), YVSHT(15), YVSWH(15)
       REAL TGRO(TS)
-
+      REAL CUMNHT
+      REAL HNHGT
+      REAL NSTRES
+      REAL NRATIO
+      REAL NHGT                           
+      REAL SLAMAX
+      REAL SLAMIN
+      REAL SLAPAR
+      REAL TURSLA
+      REAL NSLA
+       
 !***********************************************************************
 !***********************************************************************
 !     Run Initialization - Called once per simulation
@@ -83,6 +98,14 @@ C-----------------------------------------------------------------------
         READ(C255,'(12X,F6.0)') KCAN
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
       ENDIF
+C------------------------------------------------ added by Diego    
+       SECTION = '!*LEAF'
+      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(30X,F6.0)') NHGT
+!        WRITE(1050,'(F10.3)') NHGT
+ 
 !-----------------------------------------------------------------------
 C     ***** READ CANOPY HEIGHT & WIDTH PARAMETERS ******************
 C-----------------------------------------------------------------------
@@ -121,7 +144,6 @@ C-----------------------------------------------------------------------
       ENDIF
 
       CLOSE (LUNCRP)
-
 C-----------------------------------------------------------------------
 C    Read Ecotype Parameter File
 C-----------------------------------------------------------------------
@@ -151,7 +173,8 @@ C-----------------------------------------------------------------------
 
       CANHT = 0.0
       CANWH = 0.0
-
+      CUMNHT = 0.0
+      
 !***********************************************************************
 !***********************************************************************
 !     EMERGENCE CALCULATIONS - Performed once per season upon emergence
@@ -160,8 +183,12 @@ C-----------------------------------------------------------------------
       ELSEIF (DYNAMIC .EQ. EMERG) THEN
 !-----------------------------------------------------------------------
         CANHT  = TABEX(YVSHT,XVSHT,VSTAGE,10)       
-        CANWH  = TABEX(YVSWH,XVSHT,VSTAGE,10)       
+        CANWH  = TABEX(YVSWH,XVSHT,VSTAGE,10) 
+!        CANHT  = TABEX(YVSHT*100,XVSHT,VSTAGE,10) !from m to cm      
+!        CANWH  = TABEX(YVSWH*100,XVSHT,VSTAGE,10) !from m to cm
 
+!        CANHT = MOWHT
+!        IF (MOWHT .GT. 0.0) THEN CANHT = MOWHT
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE/INTEGRATION
@@ -190,12 +217,22 @@ C-----------------------------------------------------------------------
       PARNOD = PAR * EXP(-KCAN*(0.3*XLAI))
       HPAR = TABEX(YHWPAR,XHWPAR,PARNOD,8)
       WPAR = TABEX(YHWPAR,XHWPAR,PAR,8)
+      
+      if (NHGT .GT. 1.4) then                              !To limit NSLA to 1.4
+          NHGT=1.4 
+          endif
+      HNHGT = MAX(0.1, (1.0 - (1.0 - NSTRES)*NHGT))
+      CUMNHT = 0.75*CUMNHT + 0.25*HNHGT
+!      write(5000,'(F6.2)') NHGT
 C-----------------------------------------------------------------------
 C     Calculate rate of increase in canopy height and update height, CANHT
 C-----------------------------------------------------------------------
       RCANHT= RVSTGE * TABEX(YVSHT,XVSHT,VSTAGE,10) * HWTEM *
-     &  TURFAC * HPAR * RHGHT
+!      RCANHT= RVSTGE * TABEX(YVSHT*100,XVSHT,VSTAGE,10) * HWTEM * !m to cm
+     &  TURFAC * HPAR * RHGHT * CUMNHT
+!      WRITE(3000,'(F10.3)') CUMNHT
       CANHT = CANHT + RCANHT
+!      WRITE(4000,'(2F10.3)') CANHT,RCANHT
 
 !     Set minimum Canopy height based on lookup function
       CANHT = MAX(CANHT, TABEX(YVSHT,XVSHT, 0.0, 10))
@@ -208,9 +245,10 @@ C     1/22/03 KJB - Don't allow reduction in vstage to reduce canopy
 C       width.
 !-----------------------------------------------------------------------
       RCANWH= MAX(0.0,RVSTGE) * TABEX(YVSWH,XVSHT,VSTAGE,10) * HWTEM *
-     &  TURFAC * WPAR * RWIDTH
+!      RCANWH= MAX(0.0,RVSTGE) * TABEX(YVSWH*100,XVSHT,VSTAGE,10) *HWTEM* !m to cm
+     &  TURFAC * WPAR * RWIDTH * CUMNHT
       CANWH = CANWH + RCANWH
-
+      
 !     Set minimum Canopy width based on lookup function
       CANWH = MAX(CANWH, TABEX(YVSWH, XVSHT, 0.0, 10))  
       CANWH = MIN(CANWH,ROWSPC)

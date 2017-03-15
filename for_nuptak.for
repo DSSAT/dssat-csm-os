@@ -132,6 +132,7 @@ C   Determine crop N demand (kg N/ha), after subtracting mobilized N
 C-----------------------------------------------------------------------
       ANDEM = (NDMTOT - MAX (TSNMOB,NDMSDR)) * 10.0
       IF (ANDEM .GT. 0.0) THEN
+
 C-----------------------------------------------------------------------
 C   Calculate potential N uptake in soil layers with roots
 C-----------------------------------------------------------------------
@@ -144,16 +145,48 @@ C-----------------------------------------------------------------------
         IF (FNH4 .LT. 0.04) FNH4 = 0.0  
         IF (FNH4 .GT. 1.0)  FNH4 = 1.0
 
-        SMDFR = (SW(L) - LL(L)) / (DUL(L) - LL(L))
+        SMDFR = 2.0*((SW(L) - LL(L)) / (DUL(L) - LL(L)))
         IF (SMDFR .LT. 0.0) THEN
         SMDFR = 0.0
         ENDIF
 
         IF (SW(L) .GT. DUL(L)) THEN
-        SMDFR = 1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L))
+        SMDFR = 2.0*(1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L)))
         ENDIF
+        SMDFR    = AMAX1 (SMDFR,0.0)
+        SMDFR    = AMIN1 (SMDFR,1.0)
+
         RFAC = RLV(L) * SMDFR * SMDFR * DLAYR(L) * 100.0
-C-----------------------------------------------------------------------
+C-----------------------------------------------------------------------          
+!C-----------------------------------------------------------------------
+!C   Calculate potential N uptake in soil layers with roots
+!C-----------------------------------------------------------------------
+!        DO L=1,NLAYR
+!        IF (RLV(L) .GT. 0.0) THEN
+!        FNH4 = 1.0 - EXP(-0.08 * NH4(L))
+!        FNO3 = 1.0 - EXP(-0.08 * NO3(L))
+!        IF (FNO3 .LT. 0.04) FNO3 = 0.0  
+!        IF (FNO3 .GT. 1.0)  FNO3 = 1.0
+!        IF (FNH4 .LT. 0.04) FNH4 = 0.0  
+!        IF (FNH4 .GT. 1.0)  FNH4 = 1.0
+!        
+!        SMDFR = 2.0*((SW(L) - LL(L)) / (DUL(L) - LL(L)))
+!        IF (SMDFR .LT. 0.0) THEN
+!        SMDFR = 0.0
+!        ENDIF
+!        
+!        IF (SW(L) .GT. DUL(L)) THEN
+!        SMDFR = 2.0*(1.0 - (SW(L) - DUL(L)) / (SAT(L) - DUL(L)))
+!        ENDIF
+!        SMDFR    = AMAX1 (SMDFR,0.0)
+!        SMDFR    = AMIN1 (SMDFR,1.0)
+!        
+!        RFAC = RLV(L) * SMDFR * DLAYR(L) * 100.0
+!         ENDIF
+!      END DO
+!            
+!            
+!C-----------------------------------------------------------------------
 C  RLV = Rootlength density (cm/cm3);SMDFR = relative drought factor
 C  DLAYR = Layer depth (cm)
 C  RTNO3 + RTNH4 = Nitrogen uptake / root length (mg N/cm)

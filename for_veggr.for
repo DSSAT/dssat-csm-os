@@ -163,7 +163,7 @@ C-----------------------------------------------------------------------
       REAL CADVG, CHORECOVER, NLKSPENT, NLKNUSED
 
       REAL ANMINELF, ANMINERT, ANMINESR, ANMINEST, NRUSLF,
-     &  NRUSRT, NRUSSR, NRUSST
+     &  NRUSRT, NRUSSR, NRUSST, NSTFAC
 
       REAL AAA, BBB, CCC, DDD,ZZZ, XXX
 !***********************************************************************
@@ -247,6 +247,14 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
         READ(C80,'(3F6.0)',IOSTAT=ERR) CMOBSRN, CMOBSRX, 
      &    CADSRF
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(24X,F6.0)',IOSTAT=ERR) NSTFAC
+!        WRITE(3000,'(F10.2)') NSTFAC
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
       ENDIF
@@ -285,7 +293,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       CALL FOR_CANOPY(
      &  ECONO, FILECC, FILEGC, PAR, ROWSPC,               !Input
-     &  RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,               !Input
+     &  RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,NSTRES,        !Input
      &  CANHT, CANWH,                                     !Output
      &  RUNINIT)                                          !Control
 
@@ -344,7 +352,7 @@ C-----------------------------------------------------------------------
 
       CALL FOR_CANOPY(
      &  ECONO, FILECC, FILEGC, PAR, ROWSPC,               !Input
-     &  RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,               !Input
+     &  RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,NSTRES,        !Input
      &  CANHT, CANWH,                                     !Output
      &  EMERG)                                            !Control
 
@@ -363,10 +371,15 @@ C-----------------------------------------------------------------------
       SUPPN = NFIXN + TRNU + NMINEA
 !    chp added check for YRDOY = YREMRG, but on the next day, it still
 !     shows N stress because there is little supply.  Force a lag time?
+      NSTFAC = MIN(NSTFAC,1.0) 
+      NSTFAC = MAX(NSTFAC,0.1)
 !      IF (SUPPN .LT. 0.70 * NDMNEW .AND. NDMNEW .GT. 0.) THEN
-      IF (SUPPN .LT. 0.70 * NDMNEW .AND. NDMNEW .GT. 0. .AND. 
+      IF (SUPPN .LT. NSTFAC * NDMNEW .AND. NDMNEW .GT. 0. .AND. 
      &    YRDOY .NE. YREMRG) THEN
-        NSTRES = MIN(1.0,SUPPN/(NDMNEW * 0.70))
+!        NSTRES = MIN(1.0,SUPPN/(NDMNEW * 0.70))
+!        NSTRES = MIN(1.0,SUPPN/(NDMNEW * 0.70))
+         NSTRES = MIN(1.0,SUPPN/(NDMNEW * NSTFAC))
+
       ELSE
         NSTRES = 1.0
       ENDIF
@@ -377,7 +390,7 @@ C     to shift partitioning between leaf and stem toward leaf,
 C     especially after drought is released.
 C     Sort of 20-day rolling average
 C-----------------------------------------------------------------------
-      CUMTUR = 0.95*CUMTUR + 0.05*TURFAC
+      CUMTUR = 0.95*CUMTUR + 0.05*TURFAC 
 C-----------------------------------------------------------------------
 C     0.6 IS A SCALAR, COULD BE LESS, was once 0.8 and 0.7
 C     0.7 appears to be too much for peanut, but not for soybean.
@@ -987,11 +1000,13 @@ C     daylenght and radiation (PAR).
 C-----------------------------------------------------------------------
       CALL FOR_CANOPY(
      &  ECONO, FILECC, FILEGC, PAR, ROWSPC,             !Input
-     &  RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,             !Input
+     &  RVSTGE, TGRO, TURFAC, VSTAGE, XLAI,NSTRES,      !Input
      &  CANHT, CANWH,                                   !Output
      &  INTEGR)                                         !Control
 
 !***********************************************************************
+!     CALL FOR_DEMAND (
+!    &  NRATIO)                                          !input 
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
 !***********************************************************************

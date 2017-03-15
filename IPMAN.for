@@ -602,7 +602,7 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &                  NHAR,IHARI,YRSIM,CROP,HBPC)
+     &                  NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       IMPLICIT     NONE
 
@@ -617,7 +617,7 @@ C=======================================================================
       INTEGER      ERRNUM,J,IFIND,LN,YRSIM
       INTEGER      HYR, HDAY
 
-      REAL         HPC(3),HBPC(3)
+      REAL         HPC(3),HBPC(3),FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       PARAMETER   (ERRKEY='IPHAR ')
 
@@ -648,7 +648,8 @@ C
 C        Read several lines of harvest details
 C
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,HDATE(NHAR),HSTG(NHAR),
-     &                  HCOM(NHAR),HSIZ(NHAR),HPC(NHAR),HBPC(NHAR)
+     &                  HCOM(NHAR),HSIZ(NHAR),HPC(NHAR),HBPC(NHAR),
+     &                  FREQ, CUHT !New variables for forages (Diego-2/14/2017)
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          IF ((HDATE(NHAR) .LT.  0) .OR.
      &       (IHARI .EQ. 'R' .AND. MOD(HDATE(NHAR),1000) .GT. 366))
@@ -713,14 +714,14 @@ C
       IF (IHARI .EQ. 'D' .AND. HDATE(1) .EQ. 0) THEN
          CALL ERROR (ERRKEY,5,FILEX,LINEXP)
       ENDIF
-
+      WRITE(7000,'(2F5.0)') FREQ,CUHT
       RETURN
 
 C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
- 60   FORMAT (I3,I5,3(1X,A5),2(1X,F5.0))
+ 60   FORMAT (I3,I5,3(1X,A5),2(1X,F5.0),6X,F5.0,F5.0) !editted to read forage variables (Diego-2/14/2017)
 
       END SUBROUTINE IPHAR
 

@@ -180,3 +180,9 @@ TRARO    TR   AROIDS-Tanier
 TRGRO    CT   TREEGRO-Citrus
 SALUS    xx   SALUS-generic crop model
 WHAPS    WH   NWheat (formerly APSIM)
+PRFRM    G0   Perennial Forage Model
+PRFRM    BM   Bermudagrass
+PRFRM    BH   Bahiagrass
+PRFRM    BR   Brachiaria
+PRFRM    PA   Panicum
+PRFRM    RG   Annual Ryegrass

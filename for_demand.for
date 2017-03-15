@@ -57,10 +57,17 @@ C-----------------------------------------------------------------------
       CHARACTER*3 TYPSDT
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC, FILEGC
+      
+      CHARACTER*80  C80
+      CHARACTER*6   SECTION
+      CHARACTER*255 C255
+      CHARACTER*6   ERRKEY
 
       INTEGER DYNAMIC, TIMDIF
       INTEGER NPP, I, NAGE, DAS, YRSIM
       INTEGER YRDOY, NDLEAF, NR1, NR2, NR5, NR7, NVEG0
+      
+      INTEGER LUNCRP, LUNIO, LUNECO, ERR, LNUM, FOUND, ISECT
 
       REAL FRLFM, FRSTMM, YY, XX, TMPFAC
       REAL REDPUN,TMPFCS,PAGE,REDSHL,SDMAX,CDMSH,GDMSH,ADDSHL
@@ -86,7 +93,7 @@ C-----------------------------------------------------------------------
      &  GROMAX, GRRAT1, LAGSD, LNGPEG, LNGSH,
      &  NDMNEW, NDMOLD, NDMREP,
      &  NDMSD, NDMSDR, NDMSH, NDMTOT, NDMVEG,
-     &  NMINEP, NMOBMX, NMOBR, NRCVR, NSTRES,
+     &  NMINEP, NMOBMX, NMOBR, NRCVR, NSTRES,NRATIO,
      &  NVSMOB,
      &  PAR, PCNL, PCNRT, PCNST,
      &  PGAVL, PLIGSD, PLTPOP, PMINSD, POASD,
@@ -114,7 +121,11 @@ C-----------------------------------------------------------------------
       REAL PHTIM(365), PNTIM(365)
 
       REAL TURFSL
-
+      REAL NFSL                                       !Diego added
+      REAL NSLA                                       !Diego added
+      REAL CUMNSF                                     !Diego added
+      REAL NHGT                                       !Diego added
+      
 !CHP - puncture variables, not functional
       REAL PUNCSD, PUNCTR, RPRPUN     
 !-----------------------------------------------------------------------
@@ -163,7 +174,7 @@ C Variables for apportioning NDMVEG and NDMOLD
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XLFEST, XSLATM, XTRFAC, XVGROW,    !Output
      &  XXFTEM, YLEAF, YLFEST, YSLATM, YSTEM, YSTEST,       !Output
-     &  YTRFAC, YVREF, YXFTEM,                                          !Output
+     &  YTRFAC, YVREF, YXFTEM,                                     !Output
      &  FRSTRF, FRSTRMX, LRMOB, NMOBSRN,                              !Output
      &  NMOBSRX, NRMOB, PLME, PROLFR, PRORTR, PROSRF,            !Output
      &  PROSRI, PROSRR, PROSTR,                                          !Output
@@ -195,7 +206,8 @@ C Variables for apportioning NDMVEG and NDMOLD
 
       RPRPUN = 1.0 
       TMPFAC = 1.0
-        
+      CUMNSF = 1.0
+      
       FNINSR=0.0
 
 C-----------------------------------------------------------------------
@@ -617,13 +629,53 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
       PARSLA = (SLAMN+(SLAMX-SLAMN)*EXP(SLAPAR*PAR))/SLAMX
       TURFSL = MAX(0.1, (1.0 - (1.0 - TURFAC)*TURSLA))
+      
+      !Nitrogen effect added by Diego
+!-----------------------------------------------------------------------
+!    Find and Read Leaf Growth Section
+!-----------------------------------------------------------------------
+      !SECTION = '!*LEAF'
+      !CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+      !IF (FOUND .EQ. 0) THEN
+      !  CALL ERROR(ERRKEY, 1, FILECC, LNUM)
+      !ELSE
+      !  CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+      !  READ(C80,'(4F6.0)',IOSTAT=ERR) FINREF, SLAREF, SIZREF, VSSINK
+      !  IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+      !  
+      !  CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+      !  READ(C80,'(24X,F6.3)',IOSTAT=ERR) NSLA
+      !  IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+      !  ENDIF
+        !SECTION = '!*LEAF'
+        !CALL IGNORE(C80)
+        !CALL IGNORE(C80)
+        !READ(C80,'(24X,F6.3)') NSLA
+        !write(700,'(I7,F10.3)') YRDOY,NSLA
+C---------------------------------------------------------------- added by Diego      
+      CALL GETLUN('FILEC', LUNCRP)      
+      OPEN (LUNCRP,FILE = FILECC, STATUS = 'OLD',IOSTAT=ERR)
+        SECTION = '!*LEAF'
+      CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C255)
+        READ(C255,'(24X,F6.0)') NSLA
+!        WRITE(1000,'(I7,F10.3)') YRDOY,NSLA
+        CLOSE (LUNCRP)
+C-----------------------------------------------------------------
+      if (NSLA .GT. 1.2) then                              !To limit NSLA to 1.2
+          NSLA=1.2 
+          endif
+      NFSL   = MAX(0.1, (1.0 - (1.0 - NSTRES)*NSLA))       
+      CUMNSF = 0.75*CUMNSF + 0.25*NFSL  
 C-----------------------------------------------------------------------
 C     Compute overall effect of TMP, PAR, water stress on SLA (F), first
 C     for veg stages, then transition to rep stage from R1 to end leaf
 C     effect of PAR on SLA, COX PEANUT SCI. 5:27, 1978
 C-----------------------------------------------------------------------
-      FFVEG = FVEG * TPHFAC * PARSLA * TURFSL
-
+      !* NFSL !NFSL added by Diego
+      FFVEG = FVEG * TPHFAC * PARSLA * TURFSL * CUMNSF   
+!      WRITE(2500,'(F10.3)') CUMNSF
       F = FFVEG
       IF (XFRT*FRACDN .GE. 0.05) F = FFVEG * (1.0 - XFRT * FRACDN)
 C-----------------------------------------------------------------------
@@ -811,7 +863,7 @@ C=======================================================================
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XLFEST, XSLATM, XTRFAC, XVGROW,    !Output
      &  XXFTEM, YLEAF, YLFEST, YSLATM, YSTEM, YSTEST,       !Output
-     &  YTRFAC, YVREF, YXFTEM,                                          !Output
+     &  YTRFAC, YVREF, YXFTEM,                                      !Output
      &  FRSTRF, FRSTRMX, LRMOB, NMOBSRN,                              !Output
      &  NMOBSRX, NRMOB, PLME, PROLFR, PRORTR, PROSRF,            !Output
      &  PROSRI, PROSRR, PROSTR,                                          !Output
@@ -1080,7 +1132,7 @@ C-----------------------------------------------------------------------
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
         READ(C80,'(4F6.0)',IOSTAT=ERR) FINREF, SLAREF, SIZREF, VSSINK
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-
+        
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
         READ(C80,'(4F6.0)',IOSTAT=ERR) SLAMAX, SLAMIN, SLAPAR, TURSLA
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)

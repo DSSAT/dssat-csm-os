@@ -226,6 +226,7 @@ C      Forage harvest damage/removal variables for forage model
       REAL HPDAM
 
       REAL CURV
+      real vstagp
 
       real pstres1,ktrans,ksevap
       type(weathertype) weather
@@ -234,6 +235,11 @@ C------------------------------------------------------------
 C  PDA 5/6/2010 VARIABLES ADDED FOR FORAGE HARVEST SUBROUTINE
 C------------------------------------------------------------
       REAL FHLEAF,FHSTEM,FHVSTG
+      REAL FHWAH,FHLPH !DIEGO ADDED 10/26/2016
+      REAL DWTCO, DWTLO, DWTSO !DIEGO ADDED 11/22/2016
+      REAL fhpctn !DIEGO ADDED 01/18/2017
+      REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
+      REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
       LOGICAL RUNYET
 
 !-----------------------------------------------------------------------
@@ -331,7 +337,7 @@ C------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,            !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,            !Output
      &    YRNR7)                                                                  !Output
 
 
@@ -611,7 +617,7 @@ C-----------------------------------------------------------------------
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
 
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
       CALL FOR_OPMOB(CONTROL, ISWITCH, 
      &  YRPLT, MDATE, DAS, YRDOY, DTX, DXR57, PGAVL, NAVL, PG, PPMFAC, 
@@ -671,7 +677,8 @@ C-----------------------------------------------------------------------
      &    FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
-     &    FRLF, FRSTM, FRRT)
+     &    FRLF, FRSTM, FRRT,
+     &    FHWAH,FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
 
 !!     Initialize Overview.out file.
 !      CALL FOR_OPHARV(CONTROL, ISWITCH, 
@@ -737,7 +744,7 @@ C-----------------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
      &  YRNR7)                                        !Output
 
 !-----------------------------------------------------------------------
@@ -876,7 +883,7 @@ C     Initialize pest coupling point and damage variables, first day only
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
 
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
 C-----------------------------------------------------------------------
 C      09/23/05 SJR Added subroutine
@@ -1084,7 +1091,8 @@ C-----------------------------------------------------------------------
      &    FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
-     &    FRLF, FRSTM, FRRT)
+     &    FRLF, FRSTM, FRRT,
+     &    FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
 
 ! CALL FOR_OPHARV (CONTROL, ISWITCH, 
 !&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
@@ -1134,7 +1142,7 @@ C-----------------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
      &  YRNR7)                                        !Output
       ENDIF
 
@@ -1198,7 +1206,7 @@ C-----------------------------------------------------------------------
      &    DRPP, DTX, DXR57, FRACDN, MDATE, NDLEAF,        !Output
      &    NDSET, NR1, NR2, NR5, NR7, NVEG0, PHTHRS,       !Output
      &    PHZACC, RSTAGE, RVSTGE, STGDOY, TDUMX, TDUMX2,  !Output
-     &    VSTAGE, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
+     &    VSTAGE,vstagp, YREMRG, YRNR1, YRNR2, YRNR3, YRNR5,     !Output
      &    YRNR7)                                          !Output
 C-----------------------------------------------------------------------
 C     Compute adjustment factors for Dormancy processes
@@ -1298,7 +1306,7 @@ C-----------------------------------------------------------------------
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
 
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
 C-----------------------------------------------------------------------
 C     Call to root growth and rooting depth routine
@@ -1931,16 +1939,6 @@ C-----------------------------------------------------------------------
       AGRVG2 = AGRVG + (FRLF*PROLFI+FRRT*PRORTI+FRSTM*PROSTI+
      &    FRSTR*PROSRI)*RPROAV
 
-C--------------------------------------------
-C PDA 5/6/2010  ADDED CODE FOR FORAGE HARVEST 
-C--------------------------------------------
-!      CALL FORAGEHARVEST(CONTROL,YRDOY,WTLF,STMWT,        !Input
-!     &    WLDOTN,CRUSLF,NRUSLF,WSDOTN,CRUSST,NRUSST, !Input
-!     &    CADLF,NADLF,CADST,NADST,                   !Input
-!     &    SLDOT,WLIDOT,WLFDOT,SSDOT,WSIDOT,WSFDOT,   !Input
-!     &    FHLEAF,FHSTEM,FHVSTG)                      !Output
-C--------------------------------------------
-
 C-----------------------------------------------------------------------
 C     Call routine to integrate growth and damage
 C-----------------------------------------------------------------------
@@ -1994,13 +1992,19 @@ C-----------------------------------------------------------------------
      &  PCHOLFF, PCHORTF, PCHOSRF, PCHOSTF,               !Output
      &  RHOR, WLDOT, WRCLDT, WRCRDT, WRCSDT, WRCSHD,      !Output
      &  WRDOT, WSDOT,                                     !Output
-     &  VSTAGE)                                           !Input/Output
+     &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
-      call FORAGEHARVEST(CONTROL,FILECC,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,           !Input
+      FHWAH= 0.0
+      FHLPH = 0.0
+!      fhpctn = 0.0
+      MOWC =0.0
+      RSPLC =0.0
+      call forage_harvest(CONTROL,FILECC,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,canht)     !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+     &                FHWAH,FHLPH,fhpctn,FREQ,CUHT,MOWC,RSPLC)
 
 !-----------------------------------------------------------------------
 !     End of DAS > NVEG0 if construct
@@ -2103,7 +2107,8 @@ C-----------------------------------------------------------------------
      &  FNPTD, TYPPTD, FNPMD, TYPPMD, FNPGD, TYPPGD, HARD1, HARD2,
      &  FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &  RCHDP,
-     &  FRLF, FRSTM, FRRT)
+     &  FRLF, FRSTM, FRRT,
+     &  FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 !     !!   ! Write to Overview.out and summary.out files.
 !     !!   CALL FOR_OPHARV (CONTROL, ISWITCH, 

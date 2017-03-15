@@ -64,6 +64,7 @@ SoilWatBal.OUT     Seasonal soil water balance                        SWBAL
 Summary.OUT     SU Seasonal summary output file                       OUTSUM
 WeatherSum.OUT     Not currently operational                          SOUTWTH
 SoilWatBal2.OUT    Temporary
+FORAGE.OUT      FH Forage harvest output file                         FORHARV
 
 !Information files:
 ERROR.OUT          Error messages                                     ERRORO

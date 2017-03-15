@@ -40,8 +40,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
-!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
+!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
+!     CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
 
 !=======================================================================
 !     Compiler directives used to set library for system calls
@@ -150,11 +150,11 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Global constants
       INTEGER, PARAMETER :: 
-     &    NL       = 20,    !Maximum number of soil layers 
-     &    TS       = 24,    !Number of hourly time steps per day
-     &    NAPPL    = 300,   !Maximum number of applications or operations
-     &    NCOHORTS = 300,   !Maximum number of cohorts
-     &    NELEM    = 3,     !Number of elements modeled (currently N & P)
+     &    NL       = 20,  !Maximum number of soil layers 
+     &    TS       = 24,  !Number of hourly time steps per day
+     &    NAPPL    = 9000,!Maximum number of applications or operations
+     &    NCOHORTS = 300, !Maximum number of cohorts
+     &    NELEM    = 3,   !Number of elements modeled (currently N & P)
 !            Note: set NELEM to 3 for now so Century arrays will match
      &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
@@ -206,6 +206,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) FILEX
         CHARACTER (len=30) FILEIO
         CHARACTER (len=102)DSSATP
+        character (len=60)  :: ename = ' '
         CHARACTER (len=120) :: SimControl = 
      &  "                                                            "//
      &  "                                                            "
@@ -434,6 +435,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
+<<<<<<< HEAD
       SELECT CASE (OPSYS)
       CASE ('WINDO','DOS  ')
 !       DOS, Windows
@@ -451,6 +453,9 @@ C-GH    Set to DSSAT46
         STDPATH = '../DSSAT46/'
         exe_string = '.so'
       END SELECT
+=======
+      call op_sys(slash,dssatpro,stdpath)
+>>>>>>> 4c3af3b3edd81239d181c848d9303c3ceaf2db04
 
       END SUBROUTINE SETOP
 
