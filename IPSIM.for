@@ -113,8 +113,8 @@ C=======================================================================
          MESOM   = 'G'
          MESOL   = '2'    !was '1'
          MESEV   = 'S'    !new Sulieman-Ritchie (2006)
-!        METMP   = 'D'    !DSSAT original soil temperature
-         METMP   = 'E'    ! EPIC soil temp routine.
+         METMP   = 'D'    !DSSAT original soil temperature
+!        METMP   = 'E'    ! EPIC soil temp routine.
          MEGHG   = '0'
 !                   0  => DSSAT original denitrification routine, no methane
 !                   1  => DayCent N2O calculation, no methane
@@ -270,8 +270,9 @@ C
          ENDIF
 
 !        3/27/2016 chp Default soil temperature method is EPIC
-!        IF (INDEX('ED',METMP) < 1) METMP = 'D'
-         IF (INDEX('ED',METMP) < 1) METMP = 'E'
+!        7/21/2016 chp Default soil temperature method is DSSAT, per GH
+         IF (INDEX('ED',METMP) < 1) METMP = 'D'
+!        IF (INDEX('ED',METMP) < 1) METMP = 'E'
 
 !        Default greenhouse gas method is DSSAT
          IF (INDEX('012',MEGHG) < 1) MEGHG = '0'
@@ -1158,7 +1159,8 @@ C-----------------------------------------------------------------------
             IF (INDEX('123',MESOL) == 0) MESOL = ' '
             IF (INDEX('RS' ,MESEV) == 0) MESEV = ' '
             IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
-            IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
+!           IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
+            IF (INDEX('ED' ,METMP) == 0) METMP = 'D' !7/21/2016
             IF (INDEX('012',MEGHG) == 0) MEGHG = '0'
 
 !         Fourth line of simulation controls
