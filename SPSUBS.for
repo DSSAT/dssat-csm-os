@@ -20,7 +20,10 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       USE FloodModule
-
+!     VSH
+      USE CsvOutput 
+      USE Linklist
+      
       IMPLICIT NONE
       SAVE
 
@@ -66,7 +69,8 @@ C=======================================================================
       YRDOY   = CONTROL % YRDOY
 
       IDETW   = ISWITCH % IDETW
-
+      FMOPT   = ISWITCH % FMOPT   ! VSH 
+      
       CEF     = FLOODWAT % CEF
 
 !      SALB   = SOILPROP % SALB       
@@ -80,6 +84,7 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         OUTET = 'ET.OUT'
         CALL GETLUN('OUTET', LUN)
 
@@ -91,12 +96,13 @@ C=======================================================================
           OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'NEW')
           WRITE(LUN,'("*SOIL-PLANT-ATMOSPHERE MODULE OUTPUT FILE")')
         ENDIF
-
+        END IF   ! VSH
 C-----------------------------------------------------------------------
 C     Variable heading for ET.OUT
 C-----------------------------------------------------------------------
         IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           !For sequenced run, use replicate
           ! number instead of run number in header.
           IF (RNMODE .EQ. 'Q') THEN
@@ -104,12 +110,15 @@ C-----------------------------------------------------------------------
           ELSE
             CALL HEADER(SEASINIT, LUN, RUN)
           ENDIF
+          END IF   ! VSH
 
           IF (ISWITCH % MESEV == 'S') THEN
 !           Include soil evap by soil layer for Suleiman-Ritchie method
 
 !           Number of soil layers to print between 4 and 10.
             N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+            
+            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             WRITE(LUN,'("!",T146,
      &        "Soil evaporation (mm/d) by soil depth (cm):"
      &        ,/,"!",T141,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
@@ -127,8 +136,11 @@ C-----------------------------------------------------------------------
               WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
   122         FORMAT(9("    ",A2,I1,A1),A25)
             ENDIF
+            END IF   ! VSH
           ELSE
+            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             WRITE (LUN,120)
+            END IF   ! VSH
           ENDIF
         ENDIF
 
@@ -198,6 +210,7 @@ C-----------------------------------------------------------------------
 
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           !Daily printout
           FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),8(F7.3),"
           IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
@@ -214,20 +227,39 @@ C-----------------------------------------------------------------------
 !  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
 !     &      8(F7.3),6(F8.2))     
 !     &    ,4F7.2 ,10(F7.3))
+          END IF   ! VSH
+          
           IF (ISWITCH % MESEV == 'S') THEN
             IF (SOILPROP % NLAYR < 11) THEN
+              IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
               WRITE(LUN,'(11F8.3)') ES_LYR(1:N_LYR) , TRWU
+              END IF   ! VSH
             ELSE
               ES10 = 0.0
               DO L = 10, SOILPROP % NLAYR
                 ES10 = ES10 + ES_LYR(L)
               ENDDO
+              IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
               WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
+              END IF   ! VSH
             ENDIF    
           ELSE
+            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             WRITE(LUN,'(" ")')
+            END IF   ! VSH
           ENDIF
 
+!     VSH CSV output corresponding to ET.OUT
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
+     &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
+     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR,
+     &vCsvlineET, vpCsvlineET, vlngthET)
+     
+         CALL LinklstET(vCsvlineET)
+      END IF
+      
           NAVWB = 0
           EFAA  = 0.
           EMAA  = 0.

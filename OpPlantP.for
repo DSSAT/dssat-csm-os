@@ -22,6 +22,9 @@ C  Calls:     None
 !-----------------------------------------------------------------------
       USE ModuleDefs 
       USE ModuleData
+!     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -61,6 +64,8 @@ C  Calls:     None
 !     Get CONTROL and ISWITCH info
       CALL GET(CONTROL)
       CALL GET(ISWITCH)
+           
+      FMOPT = ISWITCH % FMOPT   ! VSH
 
 !     No output for fallow crop
       CROP    = CONTROL % CROP
@@ -87,6 +92,7 @@ C  Calls:     None
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
 !     Initialize daily growth output file
       OUTP  = 'PlantP.OUT'
       CALL GETLUN(OUTP, NOUTDP)
@@ -122,6 +128,7 @@ C  Calls:     None
      &  '   SHWAD    RWAD    SHAD    GWAD    PSTRAT   NTOPD',
 !       Total P demand
      &  '    PTDD')
+      END IF   ! VSH
 
       CumSenSurfP = 0.0
       CumSenSoilP = 0.0   
@@ -215,6 +222,7 @@ C-----------------------------------------------------------------------
           COUNT = 0
         ENDIF
       
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDP,100) YEAR, DOY, DAS, DAP, 
      &    PConc_Shut_opt*100., PConc_Root_opt*100., 
      &    PConc_Shel_opt*100., PConc_Seed_opt*100., 
@@ -232,6 +240,7 @@ C-GH     &    Min(1.0,PhFrac1), Min(1.0,PhFrac2),
   100   FORMAT(1X,I4,1X,I3.3,2(1X,I5),
      &       20(F8.3),F8.4,5F8.3,4I8  !
      &       , F10.3, 2F8.2)
+      END IF   ! VSH
 
 !       Set average stress factors since last printout back to zero
         PS1_AV = 0.0
@@ -239,6 +248,22 @@ C-GH     &    Min(1.0,PhFrac1), Min(1.0,PhFrac2),
       
       ENDIF
 
+!     VSH
+      IF (FMOPT == 'C') THEN   ! VSH 
+         CALL CsvOutPlantP(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &PConc_Shut_opt, PConc_Root_opt, PConc_Shel_opt, PConc_Seed_opt, 
+     &PConc_Shut_min, PConc_Root_min, PConc_Shel_min, PConc_Seed_min, 
+     &PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, PConc_Plant, 
+     &PShut_kg, PRoot_kg, PShel_kg, PSeed_kg, PPlant_kg, PS1_AV, PS2_AV,
+     &PUptakeProf, PUptake_Cum, CumSenSurfP, CumSenSoilP, PhFrac1, 
+     &PhFrac2, Shut_kg, Root_kg, Shel_kg, Seed_kg, PSTRESS_RATIO, N2P, 
+     &PTotDem,    
+     &vCsvlinePlantP, vpCsvlinePlantP, vlngthPlantP)
+     
+         CALL LinklstPlantP(vCsvlinePlantP)
+      END IF
+      
 !     -------------------------------------------------------------
 !     Daily P balance
       IF (INDEX('AD',IDETL) > 0) THEN

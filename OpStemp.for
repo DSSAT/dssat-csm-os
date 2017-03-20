@@ -14,6 +14,9 @@ C=======================================================================
 !-----------------------------------------------------------------------
       USE ModuleDefs 
       USE ModuleData
+!     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -42,6 +45,7 @@ C=======================================================================
       FROP    = CONTROL % FROP
       YRDOY   = CONTROL % YRDOY
 
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
@@ -53,6 +57,7 @@ C=======================================================================
       REPNO   = CONTROL % REPNO
       RUN     = CONTROL % RUN
 
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
       CALL GETLUN('OUTT',NOUTDT)
 !     Open the output files
       OUTT = 'SoilTemp.OUT'
@@ -68,12 +73,13 @@ C=======================================================================
  !      Write headers info to daily output file
         WRITE(NOUTDT,'("*SOIL TEMPERATURE OUTPUT FILE (DAILY)")')
       ENDIF
-
+      END IF   ! VSH
 C-----------------------------------------------------------------------
 C     Variable heading for SoilTemp.OUT
 C-----------------------------------------------------------------------
       IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         !For first run of a sequenced run, use replicate
         ! number instead of run number in header.
         IF (RNMODE .EQ. 'Q') THEN
@@ -81,10 +87,12 @@ C-----------------------------------------------------------------------
         ELSE
           CALL HEADER(SEASINIT, NOUTDT, RUN)
         ENDIF
-
+        END IF   ! VSH
+        
         CALL GET(SOILPROP)
         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDT, '("! TAV  =",F8.1,/,"! TAMP =",F8.1)') TAV, TAMP
         WRITE (NOUTDT, 
      &    '("!",T17,"Temperature (oC) by soil depth (cm):",
@@ -98,6 +106,7 @@ C-----------------------------------------------------------------------
           WRITE (NOUTDT,122) ("TS",L,"D",L=1,9), "    TS10"
   122     FORMAT('@YEAR DOY   DAS    TS0D',9("    ",A2,I1,A1),A8)
         ENDIF
+        END IF   ! VSH
       ENDIF
 
       ENDIF !DYNAMIC
@@ -123,16 +132,30 @@ C-----------------------------------------------------------------------
 
       IF (DOPRINT) THEN
         CALL YR_DOY(YRDOY, YEAR, DOY)
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
 C       Generate output for file SoilTemp.OUT
         WRITE (NOUTDT,300) YEAR, DOY, DAS, SRFTEMP, (ST(L),L=1,N_LYR)
   300   FORMAT(1X,I4,1X,I3.3,1X,I5,11F8.1)
+        END IF   ! VSH
+
+!     VSH CSV output corresponding to SoilTEMP.OUT
+      IF (FMOPT == 'C') THEN ! VSH
+         CALL CsvOutTemp_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, SRFTEMP,
+     &N_LYR, ST, vCsvlineTemp, vpCsvlineTemp, vlngthTemp)
+     
+         CALL LinklstTemp(vCsvlineTemp)
+      END IF
+      
       ENDIF
 
 !***********************************************************************
 !***********************************************************************
 !     SEASEND
 !***********************************************************************
-      IF (DYNAMIC .EQ. SEASEND) THEN
+!      IF (DYNAMIC .EQ. SEASEND) THEN
+      IF ((DYNAMIC == SEASEND) 
+     & .AND. (FMOPT == 'A'.OR.FMOPT == ' ')) THEN ! VSH
 !-----------------------------------------------------------------------
         CLOSE (NOUTDT)
 
