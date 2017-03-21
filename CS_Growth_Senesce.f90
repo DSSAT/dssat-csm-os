@@ -11,12 +11,9 @@
         )
     
         USE CS_First_Trans_m
-        USE Environment_module
-    
     
         IMPLICIT NONE
         
-        TYPE (Environment_type) VPD_environment
         CHARACTER(LEN=1) ISWNIT      , ISWWAT
         REAL BRSTAGE
     
@@ -34,16 +31,6 @@
         ! flush of new leaves. This is not yet built into the 
         ! model.
 
-         VPD_environment = Environment_type(9)
-    
-   
-        open (unit = 7, file = "C:\DSSAT46\Cassava\objects.txt")                                             ! log to delete
-        write (7,*) VPD_environment%getHOD()    ! log to delete
-        write (7,*) fetchTemperature(VPD_environment)    ! log to delete
-        ! write (7,*) VPD_environment%fetchSVP    ! log to delete
-        ! write (7,*) VPD_environment%fetchWHC    ! log to delete
-
-        
         PLASP = 0.0
         PLASI = 0.0
         PLASL = 0.0

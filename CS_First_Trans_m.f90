@@ -1,4 +1,8 @@
 ﻿Module CS_First_Trans_m
+    USE Environment_module ! DA 17MAR2017
+    USE Leaf_module        ! DA 17MAR2017
+    
+    
     !CHARACTER(LEN=1),PARAMETER::SLASH = '\'                                     ! (From SeasInit) (In ModuleDefs) 
     CHARACTER(LEN=1),PARAMETER::BLANK = ' '                                     ! (From SeasInit)                
     CHARACTER(LEN=3),PARAMETER::DASH = ' - '                                    ! (From Output)
@@ -18,6 +22,9 @@
     INTEGER,PARAMETER::HANUMX= 40 ! Maximum # harvest instructions
 
 
+    TYPE (Environment_type)                     :: VPD_environment
+    TYPE (Leaf_type),DIMENSION(0:PSX,0:LCNUMX)  :: leaves
+    
     REAL    :: AFLF(0:PSX,0:LCNUMX)    ! CH2O factor for leaf,average   #          ! (From SeasInit) !LPM 23MAR15 to have a value by canopy  and leaf level 
     REAL    :: AH2OPROFILE             ! Available H2o,profile          mm         ! (From Growth)    
     REAL    :: AH2OROOTZONE            ! Available h2o in root zone     mm         ! (From Growth)    
