@@ -83,6 +83,10 @@ C-----------------------------------------------------------------------
       USE SumModule     
       USE ModuleDefs
       USE ModuleData
+!     VSH
+      USE CsvOutput
+      USE Linklist
+      USE CsvGeneric
       IMPLICIT NONE
       SAVE
 
@@ -175,7 +179,7 @@ C-----------------------------------------------------------------------
       IDETS   = ISWITCH % IDETS
       IDETO   = ISWITCH % IDETO
       IDETL   = ISWITCH % IDETL
-
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 C***********************************************************************
 C***********************************************************************
 C     Run initialization - run once per simulation
@@ -445,6 +449,7 @@ C  Simulation Summary File
 C
 C-------------------------------------------------------------------
       IF (INDEX('ADY',IDETS) .GT. 0) THEN
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         INQUIRE (FILE = OUTS, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN (UNIT = NOUTDS, FILE = OUTS, STATUS = 'OLD',
@@ -513,11 +518,13 @@ C-------------------------------------------------------------------
      &    '  NDCH TMAXA TMINA SRADA DAYLA   CO2A   PRCP   ETCP',
      &    '   ESCP   EPCP')
         ENDIF
+        END IF   ! VSH
 
         IF (BWAH < -1) BWAH = -9.9
 
         MODEL = CONTROL % MODEL
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
      &    CROP, MODEL, TITLET, FLDNAM, WSTAT, SLNO,
@@ -621,6 +628,30 @@ C-------------------------------------------------------------------
      &  I6,9A)
 
         CLOSE (NOUTDS)
+        END IF   ! VSH
+        
+!       VSH summary.csv header
+        IF (FMOPT == 'C') THEN
+            INQUIRE(FILE='summary.csv', EXIST=FEXIST)
+            IF (.NOT. FEXIST) then
+               CALL CsvHeadSumOpsum
+            END IF 
+            
+            CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
+     &MODEL, TITLET, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, 
+     &MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, PWAM, 
+     &HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
+     &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
+     &NIAM, CNAM, GNAM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, 
+     &SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
+     &DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, DPNAM, 
+     &DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, DAYLA, CO2A, 
+     &PRCP, ETCP, ESCP, EPCP,   
+     &vCsvlineSumOpsum, vpCsvlineSumOpsum, vlngthSumOpsum) 
+            
+            CALL LinklstSumOpsum(vCsvlineSumOpsum) 
+        END IF
+                
       ENDIF
 C-------------------------------------------------------------------
 C     Console output for multi-season runs:
@@ -709,7 +740,8 @@ C-------------------------------------------------------------------
 !     &        CROP .NE. 'BA' .AND. !JZW changed
 !     &        CROP .NE. 'CS') THEN
 !     CHP 18 Aug 2015 Exclude by model, not crop
-        SELECT CASE(MODEL)
+!        SELECT CASE(MODEL)
+        SELECT CASE(MODEL(1:5))
         CASE('CSCER', 'CSCRP', 'CSCAS')
 !         These models write out Evaluate.OUT using separate routines
 !         CSCER    BA   CROPSIM-CERES-Barley
@@ -733,6 +765,7 @@ C-------------------------------------------------------------------
             Simulated = "     -99"
           ENDIF
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
 !         Open or create Evaluate.out file
           INQUIRE (FILE = SEVAL, EXIST = FEXIST)
           IF (FEXIST) THEN
@@ -765,6 +798,21 @@ C-------------------------------------------------------------------
      &            (Simulated(I), Measured(I), I= 1,ICOUNT)
   750     FORMAT(I4,1X,A8,A2,I6,I3,1X,A2,80A8)
           CLOSE(SLUN)
+          END IF   ! VSH
+         
+!        VSH  for evaluate.csv 
+         IF (FMOPT == 'C') THEN 
+            INQUIRE(FILE='evaluate.csv', EXIST=FEXIST)
+            IF (.NOT. FEXIST) then
+               CALL CsvHeadEvOpsum(ICOUNT,OLAP)
+            END IF      
+            CALL CsvOutEvOpsum(EXPER, RUN, CG, TRTNUM, ROTNO,  CROP, 
+     &Simulated, Measured, ICOUNT,   
+     &vCsvlineEvOpsum, vpCsvlineEvOpsum, vlngthEvOpsum) 
+            
+            CALL LinklstEvOpsum(vCsvlineEvOpsum)
+         END IF
+         
         END SELECT
       ENDIF
 

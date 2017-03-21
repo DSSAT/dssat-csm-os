@@ -171,6 +171,8 @@
       !    effect. Need to use switch in CSM somehow.
 
       USE CRSIMDEF
+      USE CSVOUTPUT  ! VSH
+      
       IMPLICIT NONE
       SAVE
       
@@ -6344,6 +6346,19 @@
      &        1.0-TFP,1.0-TFG,
      &        1.0-VF,1.0-DF 
 
+!     VSH CSV output corresponding to PlantGro.OUT
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOut(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,DOY,
+     &DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, CARBOA, 
+     &LAI, SAIDOUT, TWAD, SDWAD, RWAD, CWAD, LLWADOUT, STWADOUT, GWAD,
+     &HIAD, CHWADOUT, EWAD, RSWAD, DWAD, SENW0C, SENWSC, RSCD, GRNUMAD,
+     &HWUDC, TNUMAD, SLAOUT, RTDEP, PTF, H2OA, WAVR, WUPR, WFT, WFP,
+     &WFG, NFT, NFP, NFG, NUPR, TFP, TFG, VF, DF,
+     &vCsvlineCsCer, vpCsvlineCsCer, vlngthCsCer)
+     
+         CALL LinklstCsCer(vCsvlineCsCer)
+      END IF
+
               LAIPROD = PLA*PLTPOP*0.0001
               CALL Csopline(laic,lai)
               CALL Csopline(laiprodc,laiprod)
@@ -6360,7 +6375,18 @@
      A         I5,I4,2I6,F6.1,A6,F6.2,
      B         A6,F6.2,A6,A6,F6.1,2A6,I6,A6,
      D         2F6.2,F6.3,10F6.2)
-              
+             
+!     VSH CSV output corresponding to PlantGr2.OUT
+      IF (FMOPT == 'C') THEN
+         CALL CsvOutPlGr2(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,
+     &DOY, DAS, DAP, TMEAN, GSTAGEC, RSTAGE, LAIPRODC, SENLA, PLTPOP, 
+     &LAIC, CANHTC, SDWAD, SENW0C, SENWSC, GRNUMAD, hwudc, SHRTD, PTF,
+     &RTDEP, NL, RLV,
+     &vCsvlinePlGr2, vpCsvlinePlGr2, vlngthPlGr2)
+     
+         CALL LinklstPlGr2(vCsvlinePlGr2)
+      END IF 
+            
               ! Plant Growth factors outputs
               WRITE (NOUTPGF,507)
      A        YEAR,DOY,DAS,DAP,TMEAN,ZSTAGE,
@@ -6375,6 +6401,17 @@
      c        5F6.2,
      d        5F6.2,
      e        2F6.2,2F6.1,F6.1,3F6.2)
+ 
+ !    VSH CSV output corresponding to PlantGrf.OUT
+      IF (FMOPT == 'C') then
+       CALL CsvOutPlGrf(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,DOY,
+     &DAS, DAP, TMEAN, ZSTAGE, DU, VF, DF, TFGEM, WFGE, TFP, WFP, NFP, 
+     &CO2FP, RSFP, TFG, WFG, NFG, WFT, NFT, WAVR, WUPR, H2OA, EOP, 
+     &SNH4PROFILE, SNO3PROFILE, LCNF, SCNF, RCNF, 
+     &vCsvlinePlGrf, vpCsvlinePlGrf, vlngthPlGrf)
+     
+         CALL LinklstPlGrf(vCsvlinePlGrf)
+      END IF
  
               ! Plant N outputs
               IF (ISWNIT.EQ.'Y') THEN
@@ -6400,6 +6437,18 @@
      &           GRAINANC*100.0,SDNC*100.0, VANC*100.0,
      &           LCNF, SCNF, RCNF,
      &           VCNC*100.0, VMNC*100.0, AMIN1(2.0,NUPR),ANDEM
+
+!     VSH
+      IF (FMOPT == 'C') then  
+         CALL CsvOutPlNCsCer(EXCODE, RUNRUNI, TN, 
+     &RN, REP, YEAR, DOY, DAS, DAP, 
+     &TMEAN,ZSTAGE,NUAD,TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD, GNAD, 
+     &HIND,RSNAD,DNAD,SENN0C,SENNSC,RANC, LANC, SANC, GRAINANC, 
+     &SDNC, VANC,LCNF, SCNF, RCNF,VCNC, VMNC, NUPR,ANDEM,  
+     &vCsvlinePlNCsCer, vpCsvlinePlNCsCer, vlngthPlNCsCer)
+     
+         CALL LinklstPlNCsCer(vCsvlinePlNCsCer)
+      END IF 
 
               ENDIF  ! ISWNIT = Y
             ENDIF    ! IDETG.NE.'N'
@@ -7789,6 +7838,19 @@
               
               Close(FNUMTMP)       
 
+!     VSH CSV output corresponding to Evaluate.OUT
+      IF (FMOPT == 'C') then
+         CALL CsvOutEvalCsCer(EXCODE, RUNRUNI, TN, RN,  REP, 
+     &CR,Edap,Edapm,Drdap,Drdapm,Tsdap,Tsdapm,Adap,Adapm,Mdap,
+     &Mdapm, Gwam, Gwamm, Gwumc, Gwummc, Hnumam, Hnumamm, Hnumgm,
+     &Hnumgmm,Laix,Laixm, Lnumsm,Lnumsmm,Tnumam, Tnumamm, Cwam, 
+     &Cwamm, Vwam, Vwamm, Hiamc,Hiammc,Gnpcm,Gnpcmm,Vnpcmc,Vnpcmmc,
+     &Cnam, Cnamm, Gnam, Gnamm, Hinmc, Hinmmc,  
+     &vCsvlineEvalCsCer, vpCsvlineEvalCsCer, vlngthEvalCsCer) 
+     
+         CALL LinklstEvalCsCer(vCsvlineEvalCsCer)
+      END IF 
+      
             ELSE
             
                OPEN (UNIT=FNUMTMP,FILE='EVALUATE.OUT',STATUS='UNKNOWN')

@@ -45,6 +45,7 @@ C=======================================================================
 
       USE ModuleDefs
       USE ModuleData
+      USE CsvOutput
       IMPLICIT NONE
       SAVE
 
@@ -314,7 +315,8 @@ C
          IF (INDEX('FQ',RNMODE) < 1 .OR. RUN == 1) THEN
             READ (CHARTEST,65,IOSTAT=ERRNUM) LN,IOX,IDETO,
      &      IDETS,FROP,IDETG,IDETC,IDETW,IDETN,IDETP,IDETD,
-     &      IDETL,IDETH,IDETR
+     &      IDETL,IDETH,IDETR,
+     &      FMOPT   ! VSH
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             IOX   = UPCASE(IOX)
             IDETO = UPCASE(IDETO)
@@ -324,7 +326,8 @@ C
             IDETW = UPCASE(IDETW)
             IDETN = UPCASE(IDETN)
             IDETP = UPCASE(IDETP)
-            IDETD = UPCASE(IDETD)
+            IDETD = UPCASE(IDETD)    
+            FMOPT = UPCASE(FMOPT)   ! VSH
             IF (IDETL .EQ. ' ') THEN
                IDETL = 'N'
             ENDIF
@@ -523,14 +526,15 @@ C-----------------------------------------------------------------------
         IDETL   = ISWITCH % IDETL 
         IDETH   = ISWITCH % IDETH 
         IDETR   = ISWITCH % IDETR 
-        NSWITCH = ISWITCH % NSWI     
+        NSWITCH = ISWITCH % NSWI  
+        FMOPT   = ISWITCH % FMOPT   ! VSH   
       
         NYRS  = CONTROL % NYRS  
         YRSIM = CONTROL % YRSIM 
         MODEL = CONTROL % MODEL 
 !       MESIC = CONTROL % MESIC     
         FROP  = CONTROL % FROP
-
+        
       ENDIF
 
       CALL PUT(CONTROL)  
@@ -672,7 +676,8 @@ C-----------------------------------------------------------------------
   55  FORMAT (I3,11X,2(1X,I5),5X,A1,1X,I5,1X,I5,1X,A25,1X,A8)
   60  FORMAT (I3,11X,9(5X,A1))
   61  FORMAT (I3,11X,7(5X,A1),5X,I1,4(5X,A1))
-  65  FORMAT (I3,11X,3(5X,A1),4X,I2,9(5X,A1))
+  65  FORMAT (I3,11X,3(5X,A1),4X,I2,9(5X,A1),
+     &5X, A1)   ! VSH
   66  FORMAT (I3,11X,2(1X,I5),5(1X,F5.0))
   67  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
   68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
@@ -696,6 +701,7 @@ C-----------------------------------------------------------------------
      &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
       USE ModuleDefs 
       USE ModuleData
+      USE CsvOutput   ! VSH
       INCLUDE 'COMSWI.blk'
       INCLUDE 'COMIBS.blk'
 
@@ -740,6 +746,8 @@ C-----------------------------------------------------------------------
 !       chp moved 12/9/2009
         ISWITCH % MEEVP  = MEEVP     !potential ET method
         ISWITCH % FNAME  = IOX       !output file name
+!       VSH        
+        ISWITCH % FMOPT  = FMOPT
       ENDIF
  
 !     Use these values for all runs
@@ -799,6 +807,9 @@ C-----------------------------------------------------------------------
       CHARACTER*1 ISWCHE,ISWTIL,MEHYD,MESOM, MESOL, MESEV, METMP
       CHARACTER*1 IDETO,IDETS,IDETG,IDETC,IDETW,IDETN,IDETP,IDETD,IOX
       CHARACTER*1 IDETH,IDETL, IDETR
+      !      VSH
+      CHARACTER*1 FMOPT
+      
       CHARACTER*6 ERRKEY,FINDCH, SECTION
       CHARACTER*8 MODEL, CRMODEL, CTRMODEL, MODELARG, TRY_MODEL
       CHARACTER*12 FILEX  !, DSSATS

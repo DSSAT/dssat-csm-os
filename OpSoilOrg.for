@@ -29,6 +29,9 @@
       USE ModuleDefs     !Definitions of constructed variable types, 
                          !which contain control information, soil
                          !parameters, hourly weather data.
+       ! VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -72,6 +75,7 @@
 
       IDETC  = ISWITCH % IDETC
 !      ISWWAT = ISWITCH % ISWWAT
+      FMOPT  = ISWITCH % FMOPT   ! VSH
 
       CUMRES  = OMADATA % CumResWt
       CUMRESE = OMADATA % CumResE
@@ -88,7 +92,8 @@
 !-----------------------------------------------------------------------
 !     Variable heading for SoilOrg.OUT
 !-----------------------------------------------------------------------
-      IF (IDETC == 'Y') THEN
+!      IF (IDETC == 'Y') THEN
+      IF ((IDETC == 'Y').AND.(FMOPT == 'A'.OR.FMOPT == ' ')) THEN   ! VSH
         CALL GETLUN(OUTSC, NOUTDC)
         INQUIRE (FILE = OUTSC, EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -178,6 +183,7 @@
         SOND = SomLitE(0,N) + TSOME(N) + TLITE(N)
         SOPD = SomLitE(0,P) + TSOME(P) + TLITE(P)
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         IF (N_ELEMS > 1) THEN
           WRITE(NOUTDC,400) YEAR, DOY, DAS, 
      &      NINT(CumRes), NINT(SCDD), NINT(SOCD), NINT(SomLitC(0)),  
@@ -197,12 +203,34 @@
      &      CumResE(N), SNDD, SOND, SomLitE(0,N), 
      &        TSOME(N)+TLITE(N), TSOME(N), TLITE(N)
         ENDIF
+        END IF   ! VSH      
       ENDIF
 
   400 FORMAT(1X,I4,1X,I3.3,1X,I5,
      &    6I8, F8.1,
      &    2(F8.2, 2F8.1, F8.2, 2F8.1, F8.2))
 
+!     VSH
+      IF (FMOPT == 'C') THEN 
+         IF (N_ELEMS > 1) Then
+         CALL CsvOutSoilOrg1(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &CumRes, SCDD, SOCD, SomLitC, TSOMC, TLITC, CumResE, 
+     &SNDD, SOND, SomLitE, TSOME, TLITE, SPDD, SOPD,  
+     &vCsvlineSoilOrg, vpCsvlineSoilOrg, vlngthSoilOrg)
+     
+         CALL LinklstSoilOrg(vCsvlineSoilOrg)
+         ELSE
+         CALL CsvOutSoilOrg2(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &CumRes, SCDD, SOCD, SomLitC, TSOMC, TLITC, CumResE, 
+     &SNDD, SOND, SomLitE, TSOME, TLITE,   
+     &vCsvlineSoilOrg, vpCsvlineSoilOrg, vlngthSoilOrg)
+     
+         CALL LinklstSoilOrg(vCsvlineSoilOrg)
+         END IF
+      END IF
+      
 !***********************************************************************
 !***********************************************************************
 !     SEASEND
@@ -232,7 +260,9 @@
         CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
 !       Close daily output files.
-        IF (IDETC == 'Y') CLOSE(NOUTDC)
+!        IF (IDETC == 'Y') CLOSE(NOUTDC)
+        IF ((IDETC == 'Y')
+     &  .AND.(FMOPT == 'A'.OR.FMOPT == ' ')) CLOSE(NOUTDC)   ! VSH
 
 !***********************************************************************
 !***********************************************************************

@@ -232,6 +232,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
         CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2
+        CHARACTER (len=1) FMOPT   ! VSH
         INTEGER NSWI
       END TYPE SwitchType
 
