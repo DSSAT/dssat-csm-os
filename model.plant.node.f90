@@ -1,0 +1,100 @@
+Module Node_module !Module of environment
+    type Node_type
+        
+        REAL :: areaGrowth_ = 0                 ! Leaf area growth,shoot,lf pos  cm2/l  ! will replace LAGL
+        ! TODO DA 21MAR2017
+        ! [ ] rename variables to give more semantic
+        ! [ ] detect variables that can be functions instead
+        ! [ ] generate getters and setters
+        ! [ ] create the node and stem objects and move the respective variables 
+        REAL    :: AFLF                         ! CH2O factor for leaf,average   #          ! (From SeasInit) !LPM 23MAR15 to have a value by canopy  and leaf level 
+        REAL    :: DALF                         ! Days during which leaf active  d          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
+        REAL    :: DGLF                         ! Days during which leaf growing #          ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions    
+        REAL    :: DSLF                         ! Days during which leaf senesng #          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
+        REAL    :: LAGETT                       ! Leaf age after growing         C.d        ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions    
+        REAL    :: LAGL                         ! Leaf area growth,shoot,lf pos  cm2/l      ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
+        REAL    :: LAGL3                        ! Leaf area growth,shoot,lf+assim cm2/l     ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
+        REAL    :: LAGL3T                       ! Leaf area by cohort lf+assim   cm2/cohort ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
+        REAL    :: LAGLT                        ! Leaf area growth by cohort     cm2/cohort ! (From SeasInit) !LPM 25OCT15 added to keep the leaf area by cohort
+        REAL    :: LAIByCohort                  ! Leaf area index by cohort      #     !                  !DA  28OCT2016 Added to save eaf area index from cohort data
+        REAL    :: LAP                          ! Leaf area at leaf position     cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions     
+        REAL    :: LAPOTX                       ! Leaf area potentials,maxima    cm2/l      ! (From SeasInit)  
+        REAL    :: LAPOTX2                      ! Leaf area potentials,max/day   cm2/l      ! (From SeasInit) !LPM 24APR2016 To estimate a modified daily leaf area potential modified by temperature 
+        REAL    :: LAPP                         ! Leaf area diseased,leaf posn   cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions currently it is not used    
+        REAL    :: LAPS                         ! Leaf area senesced,leaf posn   cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions   
+        REAL    :: LATL                         ! Leaf area,shoot,lf#,potential  cm2/l      ! (From SeasInit)  
+        REAL    :: LATL2                        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l      ! (From SeasInit)  
+        REAL    :: LATL2T                       ! Leaf area by cohort +h2o,n,tem cm2/cohort ! (From SeasInit)!LPM 15NOV15 Added to have the leaf area by cohort
+        REAL    :: LATL3                        ! Leaf area,shoot,lf#,+assim.    cm2/l      ! (From SeasInit)  
+        REAL    :: LATL3T                       ! Leaf area by cohort lf#,+assim cm2/cohort ! (From SeasInit)!LPM 15NOV15 Added to have the leaf area by cohort +assim
+        REAL    :: LATL4                        ! Leaf area,shoot,lf#,+assim.+N  cm2/l      ! (From SeasInit)  
+        REAL    :: LATLPOT                      ! Leaf area,shoot,leaf,pot       cm2/l      ! (From Growth)    
+        REAL    :: LATLPREV                     ! Leaf area,shoot,leaf,prev.     cm2/l      ! (From Growth)    
+        INTEGER :: LBIRTHDAP                    ! DAP on which leaf initiated    #          ! (From Growth)   !LPM 25MAR15 Adjusted to consider two dimensions  
+        INTEGER :: LDEATHDAP                    ! DAP on which leaf 100% dead    #          ! (From Integrate) 
+        REAL    :: NDDAE                        ! DAE when a new node appears     ! DA 13DIC2016
+        REAL    :: NDEMSMN                      ! N demand for growth/node min   g/p        !LPM 25MAY2015 addet to consider stem N by node cohort
+        REAL    :: NFLF                         ! N factor for leaf,average      #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions  
+        REAL    :: NFLF2                        ! N factor for leaf area adj     #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions 
+        REAL    :: NFLFP                        ! N factor phs leaf,average      #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
+        REAL    :: NODEWT                       ! Node wt  by cohort             g/p        ! LPM 11APR15
+        REAL    :: NODEWTG                      ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 
+        REAL    :: NODEWTGB                     ! Leaf wt growth     g/d/leaf   ! DA 16DIC16 
+        REAL    :: NPOOLSN                      ! Stem N pool by node            g/p        ! LPM 25MAY2015 Added to consider different N concentration by node 
+        REAL    :: SANC                         ! Stem N concentration           #          ! (From SeasInit) !LPM 25MAY2015 change the dimensions to include values by node
+        REAL    :: SCNC                         ! Stem critical max N conc/node  #/n        !LPM 25MAY2015 Added to estimate the value by cohort
+        REAL    :: SCNM                         ! Stem critical min N conc/node   #/n       !LPM 25MAY2015 Added to estimate the value by cohort
+        REAL    :: SNCM                         ! Stem N conc,minimum            fr         ! (From SeasInit)  
+        REAL    :: SNCR                         ! Stem N relative to maximum     #          ! (From SeasInit) !LPM 25MAY2015 Modified to include cohorts   
+        REAL    :: SNCX                         ! Stem N conc,maximum            fr         ! (From SeasInit) !LPM 23MAY2015 Modified to include cohorts  
+        REAL    :: SNDEMN                       ! Stem demand for N by node      g/p        !
+        REAL    :: SNPHN                        ! Stem N harvested by node       g/n/p        !
+        REAL    :: STEMNN                       ! Stem N by cohort               g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  
+        REAL    :: STEMNEXCESSN                 ! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node
+        REAL    :: TFDLF                        ! Temp factor,dev for leaf,av    #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
+        REAL    :: TFGLF                        ! Temp factor,gr for leaf,av     #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
+        REAL    :: WFLF                         ! H2O factor for leaf,average    #          ! (From SeasInit) !LPM 23MAR15 Change to consider two dimensions
+            
+    contains
+    
+        procedure, pass (this) :: getAreaGrowth
+        procedure, pass (this) :: setAreaGrowth 
+    
+    end Type Node_type
+    
+    ! interface to reference the leaf constructor
+    interface Node_type
+        module procedure Node_type_constructor
+    end interface Node_type
+    
+    contains
+    
+    ! constructor for the leaf type
+    type (Node_type) function Node_type_constructor()
+        implicit none
+        !real, intent (in) :: AreaGrowth
+        Node_type_constructor%AreaGrowth_ = 0
+    end function Node_type_constructor
+    
+
+    ! get AreaGrowth
+    real function getAreaGrowth(this)
+        implicit none
+        class (Node_type), intent(in) :: this
+        
+        getAreaGrowth = this%AreaGrowth_
+    end function getAreaGrowth
+    
+    
+    ! set AreaGrowth    
+    subroutine setAreaGrowth(this, AreaGrowth)
+        implicit none
+        class (Node_type), intent(inout) :: this
+        real, intent (in) :: AreaGrowth
+        
+        this%AreaGrowth_ = AreaGrowth
+    end subroutine setAreaGrowth
+    
+    
+END Module Node_module    
+    

@@ -302,8 +302,8 @@
         DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 
-                IF(NDDAE(BR,LF) < 1.0) THEN 
-                    NDDAE(BR,LF) = DAE                                             ! calculate date leaf appereance
+                IF(plant(BR,LF)%NDDAE < 1.0) THEN 
+                    plant(BR,LF)%NDDAE = DAE                                             ! calculate date leaf appereance
                 ENDIF
             ENDDO
         ENDDO

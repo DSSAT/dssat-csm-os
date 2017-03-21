@@ -35,27 +35,27 @@
                 '  WFLF  NFLF NFLF2  AFLF TFGLF TFDLF',' LLIFG LLIFA LLIFS LLIFE   DAP'
             DO BR = 0, BRSTAGE
                 DO LF = 1, INT(LNUMSIMSTG(BR))  
-                    CALL Csopline(lapotxc,lapotx(BR,LF))
-                    CALL Csopline(latlc,AMAX1(0.0,LATL(BR,LF)))
-                    CALL Csopline(latl2c,AMAX1(0.0,LATL2(BR,LF)))
-                    CALL Csopline(latl3c,AMAX1(0.0,LATL3(BR,LF)))
-                    CALL Csopline(latl4c,AMAX1(0.0,LATL4(BR,LF)))
-                    CALL Csopline(lapc,lap(BR,LF))
-                    CALL Csopline(lapsc,laps(BR,LF))
+                    CALL Csopline(lapotxc,plant(BR,LF)%lapotx)
+                    CALL Csopline(latlc,AMAX1(0.0,plant(BR,LF)%LATL))
+                    CALL Csopline(latl2c,AMAX1(0.0,plant(BR,LF)%LATL2))
+                    CALL Csopline(latl3c,AMAX1(0.0,plant(BR,LF)%LATL3))
+                    CALL Csopline(latl4c,AMAX1(0.0,plant(BR,LF)%LATL4))
+                    CALL Csopline(lapc,plant(BR,LF)%lap)
+                    CALL Csopline(lapsc,plant(BR,LF)%laps)
                     ! Adjust for growth period of non fully expanded leaves
-                    IF (LAGETT(BR,LF).LE.LLIFGTT) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
-                        WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
-                        NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
-                        NFLFP(BR,LF) =AMIN1(1.0,NFLFP(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
-                        TFGLF(BR,LF) =AMIN1(1.0,TFGLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
-                        AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF)/AMIN1(1.0,(LAGETT(BR,LF)/LLIFGTT)))
+                    IF (plant(BR,LF)%LAGETT<=LLIFGTT) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
+                        plant(BR,LF)%WFLF = AMIN1(1.0,plant(BR,LF)%WFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
+                        plant(BR,LF)%NFLF = AMIN1(1.0,plant(BR,LF)%NFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
+                        plant(BR,LF)%NFLFP =AMIN1(1.0,plant(BR,LF)%NFLFP/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
+                        plant(BR,LF)%TFGLF =AMIN1(1.0,plant(BR,LF)%TFGLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
+                        plant(BR,LF)%AFLF = AMIN1(1.0,plant(BR,LF)%AFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
                     ENDIF
-                    IF (LDEATHDAP(BR,LF) == 0) THEN
+                    IF (plant(BR,LF)%LDEATHDAP == 0) THEN
                         LDEATHDAP = -99
                     ENDIF
-                    WRITE (fnumlvs,'(2I6,5A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL3C,LAPC,LAPSC,1.0-WFLF(BR,LF), &                          ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
-                        1.0-NFLF(BR,LF),1.0-NFLF2(BR,LF),1.0-AMAX1(0.0,AMIN1(1.0,AFLF(BR,LF))),1.0-TFGLF(BR,LF),1.0-TFDLF(BR,LF),DGLF(BR,LF), &  
-                        DALF(BR,LF),DSLF(BR,LF),DGLF(BR,LF)+DALF(BR,LF)+DSLF(BR,LF),LDEATHDAP(BR,LF)
+                    WRITE (fnumlvs,'(2I6,5A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL3C,LAPC,LAPSC,1.0-plant(BR,LF)%WFLF, &                          ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
+                        1.0-plant(BR,LF)%NFLF,1.0-plant(BR,LF)%NFLF2,1.0-AMAX1(0.0,AMIN1(1.0,plant(BR,LF)%AFLF)),1.0-plant(BR,LF)%TFGLF,1.0-plant(BR,LF)%TFDLF,plant(BR,LF)%DGLF, &  
+                        plant(BR,LF)%DALF,plant(BR,LF)%DSLF,plant(BR,LF)%DGLF+plant(BR,LF)%DALF+plant(BR,LF)%DSLF,plant(BR,LF)%LDEATHDAP
                 ENDDO
             ENDDO
                 

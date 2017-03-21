@@ -462,7 +462,6 @@
         staig = 0.0
         stais = 0.0
         stemn = 0.0
-        stemnn = 0.0!LPM 23MAY2015 Added to keep nitrogen content by node
         stgedat = 0
         stgyeardoy = 9999999
         !strswt = 0.0
@@ -477,8 +476,6 @@
         tdifsum = 0.0
         tfd = 0.0
         tfg = 1.0
-        tfglf = 0.0
-        tfdlf = 0.0
         tfp = 1.0
         tlchc = 0.0
         tmaxcav  = -99.0
@@ -545,7 +542,6 @@
         wfgcc = 0.0
         wfgpav = 1.0
         wfgpc = 0.0
-        wflf = 0.0
         wfp = 1.0
         wfpcav = 1.0
         wfppav = 1.0

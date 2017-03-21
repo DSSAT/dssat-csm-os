@@ -50,11 +50,11 @@
 
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)         
-                IF (LAGETT(BR,LF)+TTLFLIFE*EMRGFR <= LLIFGTT+LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
-                IF (LATL3T(BR,LF)-LAPS(BR,LF) > 0.0) THEN
-                    LAPSTMP = AMIN1((LATL3T(BR,LF)-LAPS(BR,LF)),(LATL3T(BR,LF)/LLIFSTT*AMIN1((LAGETT(BR,LF)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
+                IF (plant(BR,LF)%LAGETT+TTLFLIFE*EMRGFR <= LLIFGTT+LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
+                IF (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS > 0.0) THEN
+                    LAPSTMP = AMIN1((plant(BR,LF)%LATL3T - plant(BR,LF)%LAPS),(plant(BR,LF)%LATL3T/LLIFSTT*AMIN1((plant(BR,LF)%LAGETT+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
                         (TTLFLIFE*EMRGFR))))
-                    LAPS(BR,LF) = LAPS(BR,LF) + LAPSTMP
+                    plant(BR,LF)%LAPS = plant(BR,LF)%LAPS + LAPSTMP
                     PLASP = PLASP + LAPSTMP                                                                                !EQN 370
                 ENDIF
             ENDDO
@@ -84,7 +84,7 @@
         !-----------------------------------------------------------------------
         !        LAI by Cohort
         !-----------------------------------------------------------------------
-        LAIByCohort(BR,LF)=0.0                               ! DA re-initializing LAIByCohort
+        plant(BR,LF)%LAIByCohort=0.0                               ! DA re-initializing LAIByCohort
         LAI=0.0                                              ! DA re-initializing LAI
 
         DO Bcount=0,BRSTAGE
@@ -93,11 +93,11 @@
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
                 IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT ) THEN                      ! DA if leave is alive
                     IF(BR == INT(BRSTAGE) .AND. LF == INT(LNUMSIMSTG(INT(BRSTAGE)))) THEN                   ! DA if the very first leaf of the top of the highest branch
-                        LAIByCohort(BR,LF) = (LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001                      ! DA calculate LAI of the leaf
+                        plant(BR,LF)%LAIByCohort = (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS)*PLTPOP*0.0001                      ! DA calculate LAI of the leaf
                     ELSE                                                                                    ! DA if further leaf
-                        LAIByCohort(BR,LF) = LAI + (LATL3T(BR,LF)-LAPS(BR,LF))*PLTPOP*0.0001                ! DA the LAI calculation is accumulative from the previous cohort LAI
+                        plant(BR,LF)%LAIByCohort= LAI + (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS)*PLTPOP*0.0001                ! DA the LAI calculation is accumulative from the previous cohort LAI
                     ENDIF
-                    LAI=LAIByCohort(BR,LF)                                                                  ! DA updating LAI
+                    LAI = plant(BR,LF)%LAIByCohort                                                                  ! DA updating LAI
                 ENDIF
             ENDDO
         ENDDO

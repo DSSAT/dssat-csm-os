@@ -34,11 +34,11 @@
         
         DO BR = 0, BRSTAGE                                                                                                                                                          
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   
-                IF (SANC(BR,LF).GT.SNCX(BR,LF)) THEN 
-                    STEMNEXCESSN(BR,LF) = (NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*(SANC(BR,LF)-SNCX(BR,LF))
-                    STEMNEXCESS = STEMNEXCESS + STEMNEXCESSN(BR,LF)
-                    STEMNN(BR,LF) = STEMNN(BR,LF) + SNUSEN(0,BR,LF)-SNPHN(BR,LF)- STEMNEXCESSN(BR,LF)  
-                    STEMN = STEMN + STEMNN(BR,LF)
+                IF (plant(BR,LF)%SANC < plant(BR,LF)%SNCX) THEN 
+                    plant(BR,LF)%STEMNEXCESSN = (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*(plant(BR,LF)%SANC-plant(BR,LF)%SNCX)
+                    STEMNEXCESS = STEMNEXCESS + plant(BR,LF)%STEMNEXCESSN
+                    plant(BR,LF)%STEMNN = plant(BR,LF)%STEMNN + SNUSEN(0,BR,LF)-plant(BR,LF)%SNPHN- plant(BR,LF)%STEMNEXCESSN  
+                    STEMN = STEMN + plant(BR,LF)%STEMNN
                 ENDIF 
             ENDDO
         ENDDO

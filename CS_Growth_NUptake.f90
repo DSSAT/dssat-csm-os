@@ -93,12 +93,10 @@
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (GROSTP.GT.0.0) THEN
-                        !SNDEMN(BR,LF) = AMAX1(0.0,((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF))*SNCX(BR,LF) + & !LPM 02SEP2016 N stem demand based on potential growth
-                        !      (NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*AMAX1(0.0,NTUPF*(SNCX(BR,LF)-SANC(BR,LF)))  
-                        SNDEMN(BR,LF) = AMAX1(0.0,NODEWTG(BR,LF))*SNCX(BR,LF) + &
-                        (NODEWT(BR,LF)*AMAX1(0.0,NTUPF*(SNCX(BR,LF)-SANC(BR,LF))))  
-                        SNDEM = SNDEM + SNDEMN(BR,LF)
+                    IF (GROSTP>0.0) THEN
+                        plant(BR,LF)%SNDEMN = AMAX1(0.0,plant(BR,LF)%NODEWTG)*plant(BR,LF)%SNCX + &
+                        (plant(BR,LF)%NODEWT*AMAX1(0.0,NTUPF*(plant(BR,LF)%SNCX-plant(BR,LF)%SANC)))  
+                        SNDEM = SNDEM + plant(BR,LF)%SNDEMN
                     ENDIF
                 ENDDO
             ENDDO
@@ -221,7 +219,7 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     !NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
-                    NDEMSMN(BR,LF) = NODEWTG(BR,LF)*SNCM(BR,LF)
+                    plant(BR,LF)%NDEMSMN = plant(BR,LF)%NODEWTG * plant(BR,LF)%SNCM
                 ENDDO
             ENDDO
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
@@ -237,8 +235,7 @@
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP.GT.0.0) THEN
                         !SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
-                        SNUSEN(1,BR,LF) = NODEWTG(BR,LF)*SNCM(BR,LF)* &
-                            AMIN1(1.0,NULEFT/NDEMMN)
+                        SNUSEN(1,BR,LF) = plant(BR,LF)%NODEWTG * plant(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
                     ENDIF
                 ENDDO
@@ -281,7 +278,7 @@
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (GROSTP.GT.0.0) THEN
-                            SNUSEN(2,BR,LF) = (SNDEMN(BR,LF)-SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
+                            SNUSEN(2,BR,LF) = (plant(BR,LF)%SNDEMN - SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
                             SNUSE(2) = SNUSE(2)+ SNUSEN(2,BR,LF)
                         ENDIF
                     ENDDO
@@ -323,8 +320,8 @@
             NPOOLS = 0
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)          
-                    NPOOLSN(BR,LF) = AMAX1 (0.0,((NODEWT(BR,LF)*(STWT+CRWT)/(STWTP+CRWTP))*(SANC(BR,LF)-SNCM(BR,LF))*NUSEFAC))  
-                    NPOOLS =  NPOOLS + NPOOLSN(BR,LF)                                                                 !EQN 232
+                    plant(BR,LF)%NPOOLSN = AMAX1 (0.0,((plant(BR,LF)%NODEWT * (STWT+CRWT)/(STWTP+CRWTP))*( plant(BR,LF)%SANC - plant(BR,LF)%SNCM )*NUSEFAC))  
+                    NPOOLS =  NPOOLS + plant(BR,LF)%NPOOLSN                                                                 !EQN 232
                 ENDDO
             ENDDO
             ! Check N and reduce leaf growth if not enough N  
@@ -360,35 +357,17 @@
                 ! If not enough N set N factor
                 !IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN !LPM 02SEP2016 Use of PLAGSB2 instead of PLAGSB3
                 IF (PLAGSB2.GT.AREAPOSSIBLEN.AND.PLAGSB2.GT.0.0)THEN
-                        NFLF2(0,0) = AREAPOSSIBLEN/PLAGSB2                                                                   !EQN 236
+                        plant(0,0)NFLF2 = AREAPOSSIBLEN/PLAGSB2                                                                   !EQN 236
                 ELSE  
-                        NFLF2(0,0) = 1.0
+                        plant(0,0)NFLF2 = 1.0
                 ENDIF 
                 
-               !! Area and assimilate factors for each leaf  LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))
-               ! DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
-               !     ! If not enough N set N factor
-               !     DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
-               !         IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
-               !             LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)                                                                           !EQN 241            
-               !             NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))      !EQN 237
-               !         ENDIF
-               !     ENDDO
-               ! ENDDO
-               ! PLAGSB4 = PLAGSB3 * NFLF2(0,0)                                                                           !EQN 238
-               ! SHLAGB4(1) = SHLAGB3(1) * NFLF2(0,0)                                                                      !EQN 239
-               ! SHLAGB4(2) = SHLAGB3(2) * NFLF2(0,0)
-               ! SHLAGB4(3) = SHLAGB3(3) * NFLF2(0,0)
-                !PLAGSB4 = PLAGSB3 * NFLF2(0)                                                                           !EQN 238
-                !SHLAGB4(1) = SHLAGB3(1) * NFLF2(0)                                                                     !EQN 239
-                !SHLAGB4(2) = SHLAGB3(2) * NFLF2(0)
-                !SHLAGB4(3) = SHLAGB3(3) * NFLF2(0)
         
             ELSE   ! Adequate N 
         
                 !NFLF2(0) = 1.0                                                                                           !LPM 21MAR15
                 !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                      !LPM 21MAR15 Change to include cohorts BR,L
-                NFLF2(0,0) = 1.0
+                plant(0,0)NFLF2 = 1.0
                 !DO BR = 0, BRSTAGE              !LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))                                                                          !LPM 21MAR15
                 !    DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
                 !        IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
@@ -411,21 +390,21 @@
     ! Area and assimilate factors for each leaf
                 DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                     DO LF = 1, LNUMSIMSTG(BR)   
-                        IF (LAGETT(BR,LF) <= LLIFGTT .AND. LAPOTX2(BR,LF) > 0.0 ) THEN
+                        IF (plant(BR,LF)%LAGETT <= LLIFGTT .AND. plant(BR,LF)%LAPOTX2 > 0.0 ) THEN
                             IF (LNUMSIMSTG(BR) < LCNUMX) THEN
                                 !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
                                 !LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG) !LPM 02SEP2016  Use of NFLF2 instead of NFG
-                                LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0)) 
+                                plant(BR,LF)%LAGL3 = plant(BR,LF)%LAGL * AMIN1(AFLF(0,0),WFG,plant(0,0)%NFLF2) 
                                 !LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
-                                LATL3(BR,LF)= LATL3(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
-                                AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF) + AMAX1(0.0,AFLF(0,0)) * (LAGL(BR,LF))/LAPOTX2(BR,LF))             !EQN 151   
-                                NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LAGL(BR,LF))/LAPOTX2(BR,LF))  !EQN 237 !LPM 02SEP2016 To save NFLF2
-                                LAGL3T(BR,LF) = LAGL3(BR,LF)*BRNUMST(BR) 
-                                LATL3T(BR,LF) = LATL3(BR,LF)*BRNUMST(BR)
+                                plant(BR,LF)%LATL3= plant(BR,LF)%LATL3 + plant(BR,LF)%LAGL3                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
+                                plant(BR,LF)%AFLF = AMIN1(1.0,plant(BR,LF)%AFLF + AMAX1(0.0,plant(0,0)%AFLF) * (plant(BR,LF)%LAGL)/plant(BR,LF)%LAPOTX2)             !EQN 151   
+                                plant(BR,LF)%NFLF2 = AMIN1(1.0,plant(BR,LF)%NFLF2 + AMAX1(0.0,plant(0,0)%NFLF2) * (plant(BR,LF)%LAGL)/plant(BR,LF)%LAPOTX2)  !EQN 237 !LPM 02SEP2016 To save NFLF2
+                                plant(BR,LF)%LAGL3T = plant(BR,LF)%LAGL3*BRNUMST(BR) 
+                                plant(BR,LF)%LATL3T = plant(BR,LF)%LATL3*BRNUMST(BR)
                                 DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
                                     IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-                                        LAGL3T(BR,LF) = LAGL3T(BR,LF)+(LAGL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
-                                        LATL3T(BR,LF) = LATL3T(BR,LF)+(LATL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
+                                        plant(BR,LF)%LAGL3T = plant(BR,LF)%LAGL3T+(plant(BR,LF)%LAGL3*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
+                                        plant(BR,LF)%LATL3T = plant(BR,LF)%LATL3T+(plant(BR,LF)%LATL3*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
                                     ENDIF
                                 ENDDO
                                 !IF (CFLAFLF.EQ.'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  

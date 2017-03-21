@@ -1,6 +1,6 @@
 ﻿Module CS_First_Trans_m
     USE Environment_module ! DA 17MAR2017
-    USE Leaf_module        ! DA 17MAR2017
+    USE Node_module        ! DA 17MAR2017
     
     
     !CHARACTER(LEN=1),PARAMETER::SLASH = '\'                                     ! (From SeasInit) (In ModuleDefs) 
@@ -23,9 +23,8 @@
 
 
     TYPE (Environment_type)                     :: VPD_environment
-    TYPE (Leaf_type),DIMENSION(0:PSX,0:LCNUMX)  :: leaves
+    TYPE (Node_type),DIMENSION(0:PSX,0:LCNUMX)  :: plant
     
-    REAL    :: AFLF(0:PSX,0:LCNUMX)    ! CH2O factor for leaf,average   #          ! (From SeasInit) !LPM 23MAR15 to have a value by canopy  and leaf level 
     REAL    :: AH2OPROFILE             ! Available H2o,profile          mm         ! (From Growth)    
     REAL    :: AH2OROOTZONE            ! Available h2o in root zone     mm         ! (From Growth)    
     REAL    :: ALBEDO                  ! Canopy+soil albedo             fr         ! (From SeasInit)  
@@ -119,7 +118,6 @@
     REAL    :: DABR                    ! Cumulative dev. units stress   #          ! (From SeasInit) 
     INTEGER :: DAE                     ! Days after emergence           d          ! (From SeasInit)  
     REAL    :: DAGERM                  ! Dev. age for germination       #          ! (From SeasInit)  !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
-    REAL    :: DALF(0:PSX,0:LCNUMX)    ! Days during which leaf active  d          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
     REAL    :: DALS                    ! Development Age leaf size (2)  C.d        ! (From SeasInit) !LPM 24APR2016 DALS added to save Dev. age for potential leaf size (with stress)
     INTEGER :: DALSMAX                 ! DAE with the max leaf size     d          ! LPM 28FEB15 
     INTEGER :: DAP                     ! Days after planting            d          ! (From SeasInit)  
@@ -143,7 +141,6 @@
     REAL    :: DFNEXT                  ! Daylength factor,next tier     #          ! (From Growth)    
     REAL    :: DFOUT                   ! Daylength factor for output    #          ! (From SeasInit)  
     REAL    :: DFPE                    ! Development factor,pre-emerge  #          ! (From SeasInit)  
-    REAL    :: DGLF(0:PSX,0:LCNUMX)    ! Days during which leaf growing #          ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions    
     INTEGER :: DIDAT(DINX)             ! Disease initiation date YrDoy  d          ! (From SeasInit)  
     INTEGER :: DIDOY(DINX)             ! Disease infestation doy        d          ! (From Output)    
     REAL    :: DIFFACR(DINX)           ! Dis favourability requirement  #          ! (From SeasInit)  
@@ -158,7 +155,6 @@
     INTEGER :: DOM                     ! Day of month                   #          ! (From Integrate) 
     INTEGER :: DOYCOL                  ! Day of year column number      #          ! (From Output)    
     REAL    :: DRAINC                  ! Drainage from profile,cumulat  mm         ! (From SeasInit)  
-    REAL    :: DSLF(0:PSX,0:LCNUMX)    ! Days during which leaf senesng #          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
     !REAL    :: DSTAGE                  ! Development stage,linear       #          ! (From SeasInit)  !LPM 05JUN2015 DSTAGE is not used
     REAL    :: DTRY                    ! Effective depth of soil layer  cm         ! (From Growth)    
     REAL    :: DU                      ! Developmental units            PVC.d      ! (From SeasInit)  
@@ -372,18 +368,8 @@
     INTEGER :: L1                      ! Loop counter                   #          ! (From SeasInit)  
     INTEGER :: L2                      ! Loop counter                   #          ! (From Output)    
     REAL    :: LA1S                    ! Area of leaf 1,standard        cm2        ! (From SeasInit)  
-    !REAL    :: LAFND                   ! Node # (one axis)->final area  #          ! (From SeasInit) !LPM 05JUN2015 LAFND is not used
-    !REAL    :: LAFS                    ! Leaf area/all nodes,final      cm2        ! (From SeasInit) !LPM 05JUN2015 LAFS is not used 
-    !REAL    :: LAGEG(0:LNUMX)          ! Leaf age increment             C.d        ! (From Growth)  !LPM 28MAR15 This variable is not used 
-    !REAL    :: LAGEP(0:PSX,0:LCNUMX)   ! Leaf age (phyllochrons),lf pos #          ! (From SeasInit) !!LPM21MAY2015 this variable is not used  
-    REAL    :: LAGETT(0:PSX,0:LCNUMX)  ! Leaf age after growing         C.d        ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions    
-    REAL    :: LAGL(0:PSX,0:LCNUMX)    ! Leaf area growth,shoot,lf pos  cm2/l      ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
-    REAL    :: LAGL3(0:PSX,0:LCNUMX)   ! Leaf area growth,shoot,lf+assim cm2/l     ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
-    REAL    :: LAGL3T(0:PSX,0:LCNUMX)  ! Leaf area by cohort lf+assim   cm2/cohort ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
-    REAL    :: LAGLT(0:PSX,0:LCNUMX)   ! Leaf area growth by cohort     cm2/cohort ! (From SeasInit) !LPM 25OCT15 added to keep the leaf area by cohort
     REAL    :: LAI                     ! Leaf area index                #          ! (From SeasInit)  
     REAL    :: LAIA                    ! Leaf area index,active         #          ! (From Output)    
-    REAL    :: LAIByCohort(0:PSX,0:LCNUMX)  ! Leaf area index by cohort      #     !                  !DA  28OCT2016 Added to save eaf area index from cohort data
     INTEGER :: LAIDCOL                 ! Leaf area index column         #          ! (From Output)    
     REAL    :: LAIPREV                 ! Leaf area index,previous day   #          ! (From SeasInit)  
     REAL    :: LAIPROD                 ! Leaf area index produced       #          ! (From Output)    
@@ -395,23 +381,10 @@
     REAL    :: LAIXX                   ! Leaf area index,max posible    #          ! (From SeasInit)  
     REAL    :: LANC                    ! Leaf actual N concentration    #          ! (From SeasInit)  
     REAL    :: LANCRS                  ! Leaf N+rsN concentration       #          ! (From Growth)    
-    REAL    :: LAP(0:PSX,0:LCNUMX)     ! Leaf area at leaf position     cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions     
     REAL    :: LAPD                    ! Leaf area (green) per plant    cm2        ! (From Growth)    
     REAL    :: LAPH                    ! Leaf area (green) harvested    cm2/d      ! (From Growth)    
     REAL    :: LAPHC                   ! Leaf area (green) harvested,cu cm2/p      ! (From SeasInit)  
-    REAL    :: LAPOTX(0:PSX,0:LCNUMX)  ! Leaf area potentials,maxima    cm2/l      ! (From SeasInit)  
-    REAL    :: LAPOTX2(0:PSX,0:LCNUMX) ! Leaf area potentials,max/day   cm2/l      ! (From SeasInit) !LPM 24APR2016 To estimate a modified daily leaf area potential modified by temperature 
-    REAL    :: LAPP(0:PSX,0:LCNUMX)    ! Leaf area diseased,leaf posn   cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions currently it is not used    
-    REAL    :: LAPS(0:PSX,0:LCNUMX)    ! Leaf area senesced,leaf posn   cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions   
     REAL    :: LAPSTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Growth)    
-    REAL    :: LATL(0:PSX,0:LCNUMX)    ! Leaf area,shoot,lf#,potential  cm2/l      ! (From SeasInit)  
-    REAL    :: LATL2(0:PSX,0:LCNUMX)   ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l      ! (From SeasInit)  
-    REAL    :: LATL2T(0:PSX,0:LCNUMX)  ! Leaf area by cohort +h2o,n,tem cm2/cohort ! (From SeasInit)!LPM 15NOV15 Added to have the leaf area by cohort
-    REAL    :: LATL3(0:PSX,0:LCNUMX)   ! Leaf area,shoot,lf#,+assim.    cm2/l      ! (From SeasInit)  
-    REAL    :: LATL3T(0:PSX,0:LCNUMX)  ! Leaf area by cohort lf#,+assim cm2/cohort ! (From SeasInit)!LPM 15NOV15 Added to have the leaf area by cohort +assim
-    REAL    :: LATL4(0:PSX,0:LCNUMX)   ! Leaf area,shoot,lf#,+assim.+N  cm2/l      ! (From SeasInit)  
-    REAL    :: LATLPOT(0:PSX,0:LCNUMX) ! Leaf area,shoot,leaf,pot       cm2/l      ! (From Growth)    
-    REAL    :: LATLPREV(0:PSX,0:LCNUMX)! Leaf area,shoot,leaf,prev.     cm2/l      ! (From Growth)    
     !REAL    :: LAWCF                   ! Leaf area/wt change,fr.st      fr/lf      ! (From SeasInit) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
     !REAL    :: LAWFF                   ! Leaf area/wt flexibility,fr.st fr         ! (From SeasInit) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA  
     REAL    :: LAWL(2)                 ! Area to wt ratio,n=youngest lf cm2/g      ! (From Growth)    
@@ -423,12 +396,10 @@
     !REAL    :: LAXN2                   ! Leaf # (one axis),end max.area #          ! (From SeasInit)  
     !REAL    :: LAXNO                   ! Leaf # (one axis),maximum area #          ! (From SeasInit) !LPM 05JUN2016 LAXNO LAXN2 are not used 
     REAL    :: LAXS                    ! Area of biggest leaf,main stem cm2        ! (From SeasInit)  
-    INTEGER :: LBIRTHDAP(0:PSX,0:LCNUMX)! DAP on which leaf initiated    #          ! (From Growth)   !LPM 25MAR15 Adjusted to consider two dimensions  
     !INTEGER :: LCNUM                   ! Leaf cohort number (inc.grow)  #          ! (From SeasInit) !LPM 28MAR15 Non necessary variables  
     !REAL    :: LCOA(LCNUMX)            ! Leaf cohort area               cm2        ! (From SeasInit) !LPM 25MAR15 Non necessary variables  
     !REAL    :: LCOAS(LCNUMX)           ! Leaf cohort area senesced      cm2        ! (From SeasInit)  
     REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
-    INTEGER :: LDEATHDAP(0:PSX,0:LCNUMX)! DAP on which leaf 100% dead    #          ! (From Integrate) 
     REAL    :: LEAFN                   ! Leaf N                         g/p        ! (From SeasInit)  
     REAL    :: LEAFNEXCESS             ! Leaf N > critical              g/p        ! (From Integrate) 
     INTEGER :: LENDIS                  ! Length,ISWDIS flag             #          ! (From SeasInit)  
@@ -519,10 +490,8 @@
     REAL    :: MJPERE                  ! Energy per Einstein (300-170)  MJ/E       ! (From RunInit)   
     !INTEGER :: MSTG                    ! Maturity stage(eg.black layer) #          ! (From SeasInit) !LPM 05JAN2015 MSTG is not used  
     REAL    :: NCRG                    ! N factor,root growth           ppm        ! (From SeasInit)  
-    REAL    :: NDDAE(0:PSX,0:LCNUMX)   ! DAE when a new node appears     ! DA 13DIC2016
     REAL    :: NDEM2                   ! N demand for growth>minimum    g/p        ! (From Growth)    
     REAL    :: NDEMMN                  ! N demand for growth at minimum g/p        ! (From Growth)    
-    REAL    :: NDEMSMN(0:PSX,0:LCNUMX) ! N demand for growth/node min   g/p        !LPM 25MAY2015 addet to consider stem N by node cohort
     REAL    :: NFG                     ! N factor,growth 0-1            #          ! (From SeasInit)  
     REAL    :: NFGCAV                  ! N factor,growth,average,cycle  #          ! (From Integrate) 
     REAL    :: NFGCC                   ! N factor,growh,cycle sum       #          ! (From SeasInit)  
@@ -530,9 +499,6 @@
     REAL    :: NFGPAV(0:12)            ! N factor,growth,average,tier   #          ! (From SeasInit)  
     REAL    :: NFGPC                   ! N factor,growth,cumulative     #          ! (From SeasInit)  
     REAL    :: NFGU                    ! N factor,gr,upper limit        #          ! (From SeasInit)  
-    REAL    :: NFLF(0:PSX,0:LCNUMX)    ! N factor for leaf,average      #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions  
-    REAL    :: NFLF2(0:PSX,0:LCNUMX)   ! N factor for leaf area adj     #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions 
-    REAL    :: NFLFP(0:PSX,0:LCNUMX)   ! N factor phs leaf,average      #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
     REAL    :: NFPCAV                  ! N factor,phs,average,cycle     #          ! (From SeasInit)  
     REAL    :: NFPCC                   ! N factor,phs,cumulative,cycle  #          ! (From SeasInit)  
     REAL    :: NFPL                    ! N factor,phs,lower limit       #          ! (From SeasInit)  
@@ -549,9 +515,6 @@
     REAL    :: NLLG                    ! N limit,leaf growth            #          ! (From SeasInit)  
     REAL    :: NO3CF                   ! NO3 uptake concentration fac   #          ! (From SeasInit)  
     REAL    :: NO3MN                   ! NO3 conc minimum for uptake    g/Mg       ! (From SeasInit)  
-    REAL    :: NODEWT(0:PSX,0:LCNUMX)  ! Node wt  by cohort             g/p        ! LPM 11APR15
-    REAL    :: NODEWTG(0:PSX,0:LCNUMX) ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 
-    REAL    :: NODEWTGB(0:PSX,0:LCNUMX)! Leaf wt growth     g/d/leaf   ! DA 16DIC16 
     REAL    :: NODLT                   ! internode length Br=0 lignified cm        ! LPM 08JUN2015
     REAL    :: NODWT                   ! Node wt Br=0  at 3400 ˚Cd      g/node     ! LPM 08JUN2015
     INTEGER :: NOUTPG                  ! Number for growth output file  #          ! (From RunInit)   
@@ -561,7 +524,6 @@
     REAL    :: NPOOLL                  ! Leaf N pool (ie.above minimum) g/p        ! (From Growth)    
     REAL    :: NPOOLR                  ! Root N pool (ie.above minimum) g/p        ! (From Growth)    
     REAL    :: NPOOLS                  ! Stem N pool (ie.above minimum) g/p        ! (From Growth)    
-    REAL    :: NPOOLSN(0:PSX,0:LCNUMX) ! Stem N pool by node            g/p        ! LPM 25MAY2015 Added to consider different N concentration by node 
     INTEGER :: NSDAYS                  ! N stress days                  #          ! (From SeasInit)  
     REAL    :: NTUPF                   ! N top-up fraction              /d         ! (From SeasInit)  
     REAL    :: NUF                     ! Plant N supply/demand,max=1.0  #          ! (From SeasInit)  
@@ -775,12 +737,11 @@
     REAL    :: RWAMM                   ! Root wt at maturity,measured   kg/ha      ! (From SeasInit)  
     REAL    :: RWUMXI                  ! Root water uptake,max,init.val cm2/d      ! (From SeasInit)  
     REAL    :: SAID                    ! Stem area index                m2/m2      ! (From SeasInit)  
-    REAL    :: SANC(0:PSX,0:LCNUMX)    ! Stem N concentration           #          ! (From SeasInit) !LPM 25MAY2015 change the dimensions to include values by node
     REAL    :: SANCOUT                 ! Stem+LeafPetiole N conc        #          ! (From SeasInit)  
     REAL    :: SAWS                    ! Stem area to wt ratio,standard cm2/g      ! (From SeasInit)  
-    REAL    :: SCNC(0:PSX,0:LCNUMX)    ! Stem critical max N conc/node  #/n        !LPM 25MAY2015 Added to estimate the value by cohort
+
     REAL    :: SCNCT                   ! Stem critical max N conc       #          !LPM 25MAY2015 Added to estimate the total value for the stems and then VCNC
-    REAL    :: SCNM(0:PSX,0:LCNUMX)    ! Stem critical min N conc/node   #/n       !LPM 25MAY2015 Added to estimate the value by cohort
+
     REAL    :: SCNMT                   ! Stem critical min N conc       #          !LPM 25MAY2015 Added to estimate the total value for the stems and then VCNC
     REAL    :: SDCOAT                  ! Non useable material in seed   g          ! (From SeasInit)  
     REAL    :: SDDUR                   ! Seed reserves use duration     d          ! (From SeasInit)  
@@ -869,15 +830,11 @@
     REAL    :: SLAOUT                  ! Specific leaf area for output  cm2/g      ! (From Output)    
     REAL    :: SLIGP                   ! Stem lignin concentration      %          ! (From SeasInit)  
     REAL    :: SNAD                    ! Stem N (stem+petiole+rs)       kg/ha      ! (From SeasInit)  
-    REAL    :: SNCM(0:PSX,0:LCNUMX)    ! Stem N conc,minimum            fr         ! (From SeasInit)  
     REAL    :: SNCMN(0:1)              ! Stem N conc,minimum            fr         ! (From SeasInit)  
-    REAL    :: SNCR(0:PSX,0:LCNUMX)    ! Stem N relative to maximum     #          ! (From SeasInit) !LPM 25MAY2015 Modified to include cohorts   
     REAL    :: SNCRM                   ! Stem N relative to maximum (mean)#        !LPM 25MAY2015
-    REAL    :: SNCX(0:PSX,0:LCNUMX)    ! Stem N conc,maximum            fr         ! (From SeasInit) !LPM 23MAY2015 Modified to include cohorts  
     REAL    :: SNCXS(0:1)              ! Stem N conc,maximum,stage      fr         ! (From SeasInit)  
     REAL    :: SNDEM                   ! Stem demand for N              g/p        ! (From Growth)    
     REAL    :: SNDEMG                  ! Stem demand for N,for growth   g/p        ! (From Growth)    
-    REAL    :: SNDEMN(0:PSX,0:LCNUMX)  ! Stem demand for N by node      g/p        !
     REAL    :: SNDEMTU                 ! Stem demand for N,for topup    g/p        ! (From Growth)    
     REAL    :: SNH4(20)                ! Soil NH4 N                     kg/ha      ! (From Growth)    
     REAL    :: SNH4PROFILE             ! Soil NH4 N in profile          kg/ha      ! (From Growth)    
@@ -889,7 +846,6 @@
     REAL    :: SNPCMN(0:1)             ! Stem N conc,minimum            %          ! (From SeasInit)  
     REAL    :: SNPCS(0:1)              ! Stem N conc,standard,stage     %          ! (From SeasInit)  
     REAL    :: SNPH                    ! Stem N harvested               g/p        ! (From SeasInit)  
-    REAL    :: SNPHN(0:PSX,0:LCNUMX)   ! Stem N harvested by node       g/n/p        !
     REAL    :: SNPHC                   ! Stem N harvested,cumulative    g/p        ! (From SeasInit)  
     REAL    :: SNUSE(0:2)              ! Shoot N use,overall and parts  g          ! (From SeasInit)  
     REAL    :: SNUSEN(0:2,0:PSX,0:LCNUMX)!Shoot N use by canopy level   g          !LPM 23MAY2015 added to consider N concentration by node
@@ -937,9 +893,7 @@
     INTEGER :: STARNUMO                ! Star line number,output file   #          ! (From Output)    
     REAL    :: STDAY                   ! Standard day                   C.d/d      ! (From RunInit)   
     REAL    :: STEMN                   ! Stem N                         g/p        ! (From SeasInit)  
-    REAL    :: STEMNN(0:PSX,0:LCNUMX)  ! Stem N by cohort               g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  
     REAL    :: STEMNEXCESS             ! Stem N > critical              g/p        ! (From Integrate) 
-    REAL    :: STEMNEXCESSN(0:PSX,0:LCNUMX)! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node
     INTEGER :: STEPNUM                 ! Step number per day            #          ! (From RunInit)   
     INTEGER :: STGEDAT                 ! Stem growth end date (Yrdoy)   #          ! (From SeasInit)  
     REAL    :: STRESS(20)              ! Min h2o,n factors for growth   #          ! (From Integrate) 
@@ -986,11 +940,9 @@
     INTEGER :: TFDAP                   ! T-file days after planting     #          ! (From Output)    
     INTEGER :: TFDAPCOL                ! T-file DAP column #            #          ! (From Output)    
     REAL    :: TFDF                    ! Temperature factor,dayl sens   #          ! (From Growth)    
-    REAL    :: TFDLF(0:PSX,0:LCNUMX)   ! Temp factor,dev for leaf,av    #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
     REAL    :: TFDNEXT                 ! Temperature factor,development #          ! (From Growth)    
     REAL    :: TFG                     ! Temperature factor,growth 0-1  #          ! (From SeasInit)  
     REAL    :: TFGEM                   ! Temperature factor,germ,emrg   #          ! (From Growth)    
-    REAL    :: TFGLF(0:PSX,0:LCNUMX)   ! Temp factor,gr for leaf,av     #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
     !REAL    :: TFLAW                   ! Temperature factor,lf area/wt  #          ! (From Growth)  !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA   
     REAL    :: TFLFLIFE                ! Temperature factor,leaf life   #          ! (From Growth)
     REAL    :: TFLFSIZE                ! Temperature factor,leaf size   #          ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
@@ -1113,7 +1065,6 @@
     REAL    :: WFGPC                   ! Water factor,growth,cumulative #          ! (From SeasInit)  
     REAL    :: WFGU                    ! Water factor,growth,upper      #          ! (From SeasInit)  
     !REAL    :: WFLAW                   ! Water factor,leaf area/weight  #          ! (From Growth)    !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-    REAL    :: WFLF(0:PSX,0:LCNUMX)    ! H2O factor for leaf,average    #          ! (From SeasInit) !LPM 23MAR15 Change to consider two dimensions
     REAL    :: WFNU                    ! Water factor,N uptake          #          ! (From Growth)    
     REAL    :: WFP                     ! Water factor,photosynthsis 0-1 #          ! (From SeasInit)  
     REAL    :: WFPCAV                  ! Water factor,phs,av 0-1,cycle  #          ! (From SeasInit)  

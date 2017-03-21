@@ -165,55 +165,49 @@
         
                 
             IF (DAWWP.LT.900) THEN
-                LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) =  LAXS*((DAWWP*1E-3)+0.10)                  ! LPM 07MAR15 
+                plant(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX =  LAXS*((DAWWP*1E-3)+0.10)                  ! LPM 07MAR15 
             ELSE
                 IF (DAWWP-TT.LT.900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
                 !LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(4.154582E-2*(DAE-DALSMAX))))
                 !LPM 12JUL2015 test with thermal time with optimum of 20 C
                 !LPM 24APR2016 Use of DALS (considering water stress) instead of TTCUMLS
-                LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(5.665259E-3*(DALS))))
+                plant(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX = LAXS/((1+(5.665259E-3*(DALS))))
             ENDIF
         
                                                                                                               
             DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                SHLAG2B(BR) = 0.0  
                 DO LF = 1, LNUMSIMSTG(BR)+1
-                    IF (LAGETT(BR,LF).LE.LLIFGTT) THEN
+                    IF (plant(BR,LF)%LAGETT<=LLIFGTT) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
-                        LATLPREV(BR,LF) = LATL(BR,LF)
+                        plant(BR,LF)%LATLPREV = LATL(BR,LF)
                         !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 24APR2016 To estimate daily leaf area increase instead of total
-                        LAPOTX2(BR,LF) = LAPOTX(BR,LF)*TFLFLIFE
-                        LAGL(BR,LF)=LAPOTX2(BR,LF)*(TTLFLIFE/LLIFGTT)
-                        !call leaves(BR,LF)%setAreaGrowth(LAPOTX2(BR,LF)*(TTLFLIFE/LLIFGTT)) 
-                        leaves(BR,LF)%areaGrowth_ = LAPOTX2(BR,LF)*(TTLFLIFE/LLIFGTT)
-                        
-                        open (unit = 7, file = "C:\DSSAT46\Cassava\log.txt")                                             ! log to delete
-                        write (7,*)  BR ,LF, LAGL(BR,LF),  leaves(BR,LF)%getAreaGrowth()  ! log to delete
-                        
-                        IF (LAGL(BR,LF) < 0.0) THEN
-                            LAGL(BR,LF) = 0.0
+                        plant(BR,LF)%LAPOTX2 = plant(BR,LF)%LAPOTX*TFLFLIFE
+                        plant(BR,LF)%LAGL=plant(BR,LF)%LAPOTX2*(TTLFLIFE/LLIFGTT)
+                        IF (plant(BR,LF)%LAGL < 0.0) THEN
+                            plant(BR,LF)%LAGL = 0.0
                         ENDIF
-                        IF (LAGL(BR,LF) > (LAPOTX2(BR,LF)-LATL3(BR,LF))) THEN                                           !DA IF there is something left to grow
-                            LAGL(BR,LF) = LAPOTX2(BR,LF)-LATL3(BR,LF)
+                        IF (plant(BR,LF)%LAGL > (plant(BR,LF)%LAPOTX2-plant(BR,LF)%LATL3)) THEN                                           !DA IF there is something left to grow
+                            plant(BR,LF)%LAGL = plant(BR,LF)%LAPOTX2-plant(BR,LF)%LATL3
                         ENDIF
                         !LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                !EQN 323 !LPM 24APR2016 To estimate daily leaf area increase instead of total
-                        LATL(BR,LF) = LATL(BR,LF) + LAGL(BR,LF)                              !Leaf area = Leaf area + leaf growth    !EQN 323
-                        LATL(BR,LF) = AMIN1(LATL(BR,LF), LAPOTX(BR,LF))                                                            ! DA 28OCT2016 Limiting LATL to not get over the maximum potential
+                        plant(BR,LF)%LATL = plant(BR,LF)%LATL + plant(BR,LF)%LAGL                              !Leaf area = Leaf area + leaf growth    !EQN 323
+                        plant(BR,LF)%LATL = AMIN1(plant(BR,LF)%LATL, plant(BR,LF)%LAPOTX)                                                            ! DA 28OCT2016 Limiting LATL to not get over the maximum potential
                         !LATL2(l) = LATL2(L) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                         !EQN 324 LPM 21MAR15 TFG is changed by Tflflife to be able to change the Tb
                         !SHLAG2(1) = SHLAG2(1) + (LATLPOT(L)-LATLPREV(L))* AMIN1(WFG,NFG)*TFG                                       !EQN 325
                         !LAGL(BR,LF) = LATLPOT(BR,LF)* AMIN1(WFG,NFG)
-                        LATL2(BR,LF) = LATL2(BR,LF) + LAGL(BR,LF)                                  !EQN 324 !LPM 24APR2016 LATL2 with the same value than LATL 
-                        LATL2(BR,LF) = AMIN1(LATL2(BR,LF), LAPOTX(BR,LF))                                               !DA 28OCT2016 Limiting LATL2 to not get over the maximum potential
-                        SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF)                                    !EQN 325
+                        plant(BR,LF)%LATL2 = plant(BR,LF)%LATL2 + plant(BR,LF)%LAGL                                  !EQN 324 !LPM 24APR2016 LATL2 with the same value than LATL 
+                        plant(BR,LF)%LATL2 = AMIN1(plant(BR,LF)%LATL2, plant(BR,LF)%LAPOTX)                                               !DA 28OCT2016 Limiting LATL2 to not get over the maximum potential
+                        SHLAG2B(BR) = SHLAG2B(BR) + plant(BR,LF)%LAGL                                    !EQN 325
                      
                         !LPM 15NOV15 Variables LAGLT and LATL2T created to save the leaf are by cohort (all the plant (all branches and shoots))
-                        LAGLT(BR,LF) = LAGL(BR,LF)*BRNUMST(BR) ! To initialize before adding over shoots     
-                        LATL2T(BR,LF) = LATL2(BR,LF)*BRNUMST(BR)
+                        plant(BR,LF)%LAGLT = plant(BR,LF)%LAGL * BRNUMST(BR) ! To initialize before adding over shoots     
+                        plant(BR,LF)%LATL2T = plant(BR,LF)%LATL2 * BRNUMST(BR)
                         DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
                             IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-                                LAGLT(BR,LF) = LAGLT(BR,LF)+(LAGL(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
-                                LATL2T(BR,LF) = LATL2T(BR,LF)+(LATL2(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
+                                plant(BR,LF)%LAGLT = plant(BR,LF)%LAGLT+(plant(BR,LF)%LAGL*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
+                                plant(BR,LF)%LATL2T = plant(BR,LF)%LATL2T+(plant(BR,LF)%LATL2*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
                             ENDIF
                         ENDDO
 
@@ -222,47 +216,49 @@
                     ! The 2 at the end of the names indicates that 2 groups 
                     ! of stresses have been taken into account
                     ! Stress factors for individual leaves
-                        IF (LAPOTX2(BR,LF)>0.0) THEN
-                            WFLF(BR,LF) = AMIN1(1.0,WFLF(BR,LF)+WFG*LAGL(BR,LF)/LAPOTX2(BR,LF))                                        !EQN 326
-                            NFLF(BR,LF) = AMIN1(1.0,NFLF(BR,LF)+NFG*LAGL(BR,LF)/LAPOTX2(BR,LF))                                        !EQN 327
-                            NFLFP(BR,LF) = AMIN1(1.0,NFLFP(BR,LF)+NFP*LAGL(BR,LF)/LAPOTX2(BR,LF))                                      !EQN 328
-                            TFGLF(BR,LF) = AMIN1(1.0,TFGLF(BR,LF)+TFG*LAGL(BR,LF)/LAPOTX2(BR,LF))                                      !EQN 329
-                            TFDLF(BR,LF) = AMIN1(1.0,TFDLF(BR,LF)+TFD*LAGL(BR,LF)/LAPOTX2(BR,LF))                                      !EQN 330
+                        IF (plant(BR,LF)%LAPOTX2 > 0.0) THEN
+                            plant(BR,LF)%WFLF = AMIN1(1.0,plant(BR,LF)%WFLF+WFG*plant(BR,LF)%LAGL/plant(BR,LF)%LAPOTX2)                                        !EQN 326
+                            plant(BR,LF)%NFLF = AMIN1(1.0,plant(BR,LF)%NFLF+NFG*plant(BR,LF)%LAGL/plant(BR,LF)%LAPOTX2)                                        !EQN 327
+                            plant(BR,LF)%NFLFP = AMIN1(1.0,plant(BR,LF)%NFLFP+NFP*plant(BR,LF)%LAGL/plant(BR,LF)%LAPOTX2)                                      !EQN 328
+                            plant(BR,LF)%TFGLF = AMIN1(1.0,plant(BR,LF)%TFGLF+TFG*plant(BR,LF)%LAGL/plant(BR,LF)%LAPOTX2)                                      !EQN 329
+                            plant(BR,LF)%TFDLF = AMIN1(1.0,plant(BR,LF)%TFDLF+TFD*plant(BR,LF)%LAGL/plant(BR,LF)%LAPOTX2)                                      !EQN 330
                         ELSE
-                            WFLF(BR,LF) =  1.0                                   !EQN 326
-                            NFLF(BR,LF) =  1.0                                   !EQN 327
-                            NFLFP(BR,LF) = 1.0                                   !EQN 328
-                            TFGLF(BR,LF) = 1.0                                   !EQN 329
-                            TFDLF(BR,LF) = 1.0                                   !EQN 330
+                            plant(BR,LF)%WFLF =  1.0                                   !EQN 326
+                            plant(BR,LF)%NFLF =  1.0                                   !EQN 327
+                            plant(BR,LF)%NFLFP = 1.0                                   !EQN 328
+                            plant(BR,LF)%TFGLF = 1.0                                   !EQN 329
+                            plant(BR,LF)%TFDLF = 1.0                                   !EQN 330
                         ENDIF
                         
                             ! New LEAF
                         IF (LF.EQ.LNUMSIMSTG(BR).AND.LNUMG.GT.LNUMNEED.AND.BR.EQ.BRSTAGE) THEN                                             ! This is where new leaf is initiated
                             !LAGL(BR,L+1) = LAPOTX(BR,L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331  
-                            !LAGL(BR,LF+1) = LAPOTX(BR,LF+1) * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG) * AMIN1(WFG,NFG)*Tflflife                                      !LPM 23MAR15 To define proportional growth by day      
-                            LAPOTX2(BR,LF+1) = LAPOTX(BR,LF+1)*TFLFLIFE
-                            LAGL(BR,LF+1)=LAPOTX2(BR,LF+1)*(TTLFLIFE/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
-                            IF (LAGL(BR,LF+1).LT.0.0) LAGL(BR,LF+1) = 0.0
-                            LATL(BR,LF+1) = LATL(BR,LF+1) + LAGL(BR,LF+1)                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   !EQN 333   
-                            LATL2(BR,LF+1) = LATL2(BR,LF+1) + LAGL(BR,LF+1)                              ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
-                            SHLAG2B(BR) = SHLAG2B(BR) + LAGL(BR,LF+1)                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
-                            LBIRTHDAP(BR,LF+1) = DAP                                                                ! LBIRTHDAP(LCNUMX)   ! DAP on which leaf initiated #  
+                            !LAGL(BR,LF+1)% = LAPOTX(BR,LF+1)% * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG) * AMIN1(WFG,NFG)*Tflflife                                      !LPM 23MAR15 To define proportional growth by day      
+                            plant(BR,LF+1)%LAPOTX2 = plant(BR,LF+1)%LAPOTX * TFLFLIFE
+                            plant(BR,LF+1)%LAGL = plant(BR,LF+1)%LAPOTX2 * (TTLFLIFE/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
+                            IF (plant(BR,LF+1)%LAGL < 0.0) THEN 
+                                plant(BR,LF+1)%LAGL = 0.0
+                            ENDIF
+                            plant(BR,LF+1)%LATL = plant(BR,LF+1)%LATL + plant(BR,LF+1)%LAGL                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   !EQN 333   
+                            plant(BR,LF+1)%LATL2 = plant(BR,LF+1)%LATL2 + plant(BR,LF+1)%LAGL                              ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
+                            SHLAG2B(BR) = SHLAG2B(BR) + plant(BR,LF+1)%LAGL                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
+                            plant(BR,LF+1)%LBIRTHDAP = DAP                                                                ! LBIRTHDAP(LCNUMX)   ! DAP on which leaf initiated #  
                         
-                            LAGLT(BR,LF+1) = LAGL(BR,LF+1)*BRNUMST(BR)
-                            LATL2T(BR,LF+1) = LATL2(BR,LF+1)*BRNUMST(BR)
+                            plant(BR,LF+1)%LAGLT = plant(BR,LF+1)%LAGL*BRNUMST(BR)
+                            plant(BR,LF+1)%LATL2T = plant(BR,LF+1)%LATL2*BRNUMST(BR)
                             DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
                                 IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-                                    LAGLT(BR,LF+1) = LAGLT(BR,LF+1)+(LAGL(BR,LF+1)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
-                                    LATL2T(BR,LF+1) = LATL2T(BR,LF+1)+(LATL2(BR,LF+1)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
+                                    plant(BR,LF+1)%LAGLT = plant(BR,LF+1)%LAGLT+(plant(BR,LF+1)%LAGL*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
+                                    plant(BR,LF+1)%LATL2T = plant(BR,LF+1)%LATL2T+(plant(BR,LF+1)%LATL2*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
                                 ENDIF
                             ENDDO
                         
                             ! Stress factors for individual leaves                       
-                            WFLF(BR,LF+1) = AMIN1(1.0,WFLF(BR,LF+1)+WFG*LATL(BR,LF+1)/LAPOTX(BR,LF+1))                                             !EQN 336
-                            NFLF(BR,LF+1) = AMIN1(1.0,NFLF(BR,LF+1)+NFG*LATL(BR,LF+1)/LAPOTX(BR,LF+1))                                             !EQN 337
-                            NFLFP(BR,LF+1) = AMIN1(1.0,NFLFP(BR,LF+1)+NFP*LATL(BR,LF+1)/LAPOTX(BR,LF+1))                                           !EQN 338
-                            TFGLF(BR,LF+1) = AMIN1(1.0,TFGLF(BR,LF+1)+TFG*LATL(BR,LF+1)/LAPOTX(BR,LF+1))                                           !EQN 339
-                            TFDLF(BR,LF+1) = AMIN1(1.0,TFDLF(BR,LF+1)+TFD*LATL(BR,LF+1)/LAPOTX(BR,LF+1))                                           !EQN 340
+                            plant(BR,LF+1)%WFLF = AMIN1(1.0,plant(BR,LF+1)%WFLF+WFG * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                             !EQN 336
+                            plant(BR,LF+1)%NFLF = AMIN1(1.0,plant(BR,LF+1)%NFLF+NFG * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                             !EQN 337
+                            plant(BR,LF+1)%NFLFP = AMIN1(1.0,plant(BR,LF+1)%NFLFP+NFP * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                           !EQN 338
+                            plant(BR,LF+1)%TFGLF = AMIN1(1.0,plant(BR,LF+1)%TFGLF+TFG * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                           !EQN 339
+                            plant(BR,LF+1)%TFDLF = AMIN1(1.0,plant(BR,LF+1)%TFDLF+TFD * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                           !EQN 340
                         ENDIF
                     ENDIF
                 ENDDO
@@ -318,14 +314,14 @@
                 Lcount = Lcount+1
                 !NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(2.5514108*(((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)/ & 
                 !((DAE-NDDAE(BR,LF)+1)*(((((DAE-NDDAE(BR,LF)+1)/171.64793)**-2.2115103)+1))**2))*TFG*NODWT)
-				NODEWTGB(BR,LF) = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-NDDAE(BR,LF)+1)/163.082822)**-2.81690408)/ & 
-                (((((DAE-NDDAE(BR,LF)+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
+                plant(BR,LF)%NODEWTGB = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-plant(BR,LF)%NDDAE+1)/163.082822)**-2.81690408)/ & 
+                (((((DAE-plant(BR,LF)%NDDAE+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
            
-                NODEWTG(BR,LF) = NODEWTGB(BR,LF)
+                plant(BR,LF)%NODEWTG = plant(BR,LF)%NODEWTGB
                     !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
-                    NODEWT(BR,LF) = NODEWT(BR,LF) + NODEWTG(BR,LF)
-                    GROSTP = GROSTP + (NODEWTG(BR,LF)*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
-                STWTP = STWTP + (NODEWTG(BR,LF)*BRNUMST(BR))
+                    plant(BR,LF)%NODEWT = plant(BR,LF)%NODEWT + plant(BR,LF)%NODEWTG
+                    GROSTP = GROSTP + (plant(BR,LF)%NODEWTG*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
+                STWTP = STWTP + (plant(BR,LF)%NODEWTG*BRNUMST(BR))
                 ENDDO
             ENDDO
         ENDIF
@@ -398,12 +394,12 @@
             !AREAPOSSIBLE = GROLF*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                                     !EQN 148 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
             AREAPOSSIBLE = GROLF*(1.0-LPEFR)*LAWL(1)
             ! If not enough assim.set assimilate factor
-            IF (PLAGSB2.GT.AREAPOSSIBLE.AND.PLAGSB2.GT.0.0)THEN
-                AFLF(0,0) = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149
+            IF (PLAGSB2 > AREAPOSSIBLE.AND.PLAGSB2 > 0.0)THEN
+                plant(0,0)AFLF = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149
             ELSE  
-                AFLF(0,0) = 1.0
+                plant(0,0)AFLF = 1.0
             ENDIF
-            IF (CFLAFLF.EQ.'N') AFLF(0,0) = 1.0                                                                            !MF 21AU16 ErrorFix Added second subscript to AFLF.
+            IF (CFLAFLF.EQ.'N') plant(0,0)%AFLF = 1.0                                                                            !MF 21AU16 ErrorFix Added second subscript to AFLF.
 
         !    ! Area and assimilate factors for each leaf
         !        DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts

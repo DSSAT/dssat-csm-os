@@ -112,17 +112,17 @@
         
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM 23MAY2015 Modified to avoid high values of LAGETT 
-                IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
-                    LAGETT(BR,LF) = LAGETT(BR,LF) + TTLFLife*EMRGFR                                              !EQN 358
+                IF (plant(BR,LF)%LAGETT < LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
+                    plant(BR,LF)%LAGETT = plant(BR,LF)%LAGETT + TTLFLife*EMRGFR                                              !EQN 358
                     ! Accelerated senescence at base of dense leaf canopy
                     IF (LAIByCohort(BR,LF) > LAIXX) THEN
                         !IF (LF==TVI1 .AND. BR==BROldestA) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf
-                            IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                            IF (plant(BR,LF)%LAGETT < LLIFGTT+LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
                                 ! LLIFXUnused = (LAGETT(BR,LF)+LLIFX)-LLIFATT                                                    !EQN 360a LPM 28MAR15 LLIFXUNUSED should be before of the estimation of LAGETT 
-                                LAGETT(BR,LF) = LLIFGTT+LLIFATT                                             !EQN 359
+                                plant(BR,LF)%LAGETT = LLIFGTT+LLIFATT                                             !EQN 359
                             !ELSE
                             !    LLIFXUnused = LLIFX                                                                            !EQN 360b
                             ENDIF
@@ -137,59 +137,59 @@
                 !LAGEP(BR,LF) = LAGEP(BR,LF) + (TTLFLIFE*EMRGFR)/PHINT                                                              !EQN 362 !LPM21MAY2015 this variable is not used
                 
                 ! Days active
-                    IF (LAGETT(BR,LF) > LLIFGTT .AND. LAGETT(BR,LF) <= LLIFGTT+LLIFATT ) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                    IF (plant(BR,LF)%LAGETT > LLIFGTT .AND. plant(BR,LF)%LAGETT <= LLIFGTT+LLIFATT ) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
                         IF (LNUMSOLDESTA < 0) THEN
                             LNUMSOLDESTA = LF
                             BROLDESTA = BR
                         ENDIF
-                        DALF(BR,LF) = DALF(BR,LF) + 1.0                                                                        !EQN 364b
+                        plant(BR,LF)%DALF = plant(BR,LF)%DALF + 1.0                                                                        !EQN 364b
                         !LPM 13DEC2016 To generate a restriction for leaf active duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
-                        IF (DALF(BR,LF)>(2.0*LLIFATT/(TRDV3(2)-TRDV3(1)))) THEN 
-                            LAGETT(BR,LF) = LLIFGTT+LLIFATT
+                        IF (plant(BR,LF)%DALF>(2.0*LLIFATT/(TRDV3(2)-TRDV3(1)))) THEN 
+                            plant(BR,LF)%LAGETT = LLIFGTT+LLIFATT
                         ENDIF
                     ELSE
-                        IF (LAGETT(BR,LF) > LLIFGTT .AND. LAGETT(BR,LF)-TTLFLIFE*EMRGFR < LLIFGTT+LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
+                        IF (plant(BR,LF)%LAGETT > LLIFGTT .AND. plant(BR,LF)%LAGETT-TTLFLIFE*EMRGFR < LLIFGTT+LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
                             TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
-                            DALF(BR,LF) = DALF(BR,LF) + TVR1                                                                   !EQN 364c
+                            plant(BR,LF)%DALF = plant(BR,LF)%DALF + TVR1                                                                   !EQN 364c
                         ENDIF
                     ENDIF
                     ! Days senescing
-                    IF (LAGETT(BR,LF) > LLIFGTT+LLIFATT) THEN                                                                 ! DA  If leaf is senescing
-                        IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT) THEN                                             ! DA  (and) If leaf started senescing today
-                            TVR1 = (LLIFGTT+LLIFATT-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
-                            DSLF(BR,LF) = DSLF(BR,LF) + (1.0-TVR1)                                                            ! EQN 365a
+                    IF (plant(BR,LF)%LAGETT > LLIFGTT+LLIFATT) THEN                                                                 ! DA  If leaf is senescing
+                        IF (plant(BR,LF)%LAGETT-TTLFLife*EMRGFR < LLIFGTT+LLIFATT) THEN                                             ! DA  (and) If leaf started senescing today
+                            TVR1 = (LLIFGTT+LLIFATT-(plant(BR,LF)%LAGETT-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
+                            plant(BR,LF)%DSLF = plant(BR,LF)%DSLF + (1.0-TVR1)                                                            ! EQN 365a
                         ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
-                            IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is still alive
-                                DSLF(BR,LF) = DSLF(BR,LF) + 1.0                                                               ! EQN 365b
+                            IF (plant(BR,LF)%LAGETT < LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is still alive
+                                plant(BR,LF)%DSLF = plant(BR,LF)%DSLF + 1.0                                                               ! EQN 365b
                             ELSE
-                                IF (LAGETT(BR,LF)-TTLFLife*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN                             ! DA Or, if leaf died today
-                                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(LAGETT(BR,LF)-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
-                                    DSLF(BR,LF) = DSLF(BR,LF) + TVR1                                                          ! EQN 365c
-                                    LDEATHDAP(BR,LF) = DAP                                                                    ! DA establish decease date
+                                IF (plant(BR,LF)%LAGETT-TTLFLife*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN                             ! DA Or, if leaf died today
+                                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(plant(BR,LF)%LAGETT-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
+                                    plant(BR,LF)%DSLF = plant(BR,LF)%DSLF + TVR1                                                          ! EQN 365c
+                                    plant(BR,LF)%LDEATHDAP = DAP                                                                    ! DA establish decease date
                                 ENDIF
                             ENDIF
                         ENDIF
                         !LPM 12DEC2016 To generate a restriction for leaf senescence duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
-                        IF (DSLF(BR,LF)>(2.0*LLIFSTT/(TRDV3(2)-TRDV3(1)))) THEN 
-                            LAGETT(BR,LF) = LLIFGTT+LLIFATT+LLIFSTT
+                        IF (plant(BR,LF)%DSLF>(2.0*LLIFSTT/(TRDV3(2)-TRDV3(1)))) THEN 
+                            plant(BR,LF)%LAGETT = LLIFGTT+LLIFATT+LLIFSTT
                         ENDIF
                     ENDIF
                 
                 !ELSE 
-                    IF (LAGETT(BR,LF) < LLIFGTT) THEN
-                        DGLF(BR,LF) = DGLF(BR,LF) + EMRGFR
+                    IF (plant(BR,LF)%LAGETT < LLIFGTT) THEN
+                        plant(BR,LF)%DGLF = plant(BR,LF)%DGLF + EMRGFR
                         !LPM 13DEC2016 To generate a restriction for leaf growing duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
-                        IF (DGLF(BR,LF)>(2.0*LLIFGTT/(TRDV3(2)-TRDV3(1)))) THEN 
-                            LAGETT(BR,LF) = LLIFGTT
+                        IF (plant(BR,LF)%DGLF>(2.0*LLIFGTT/(TRDV3(2)-TRDV3(1)))) THEN 
+                            plant(BR,LF)%LAGETT = LLIFGTT
                         ENDIF
                     ENDIF
                 ENDIF
 
                 IF (LNUMG > 0.0 .AND. BR == BRSTAGE .AND. LF == LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
                     IF (LNUMSG < LNUMX) THEN
-                        LAGETT(BR,LF+1) = LAGETT(BR,LF+1)+(TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
+                        plant(BR,LF+1)%LAGETT = plant(BR,LF)%LAGETT + (TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
                         !LAGEP(BR,LF+1)=LAGEP(BR,LF+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367 !LPM21MAY2015 this variable is not used
-                        DGLF(BR,LF+1) = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                                                       !EQN 368
+                        plant(BR,LF)%DGLF = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                                                       !EQN 368
                     ENDIF
                 ENDIF 
             ENDDO
