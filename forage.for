@@ -678,7 +678,7 @@ C-----------------------------------------------------------------------
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH,FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
+     &    FHWAH,FHLPH, DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 !!     Initialize Overview.out file.
 !      CALL FOR_OPHARV(CONTROL, ISWITCH, 
@@ -1092,7 +1092,7 @@ C-----------------------------------------------------------------------
      &    FRZDC, FRZHRD, TYPHRD, FRZDHD, TYPDHD, RDRMG, RDRMM, RDRMT, 
      &    RCHDP,
      &    FRLF, FRSTM, FRRT,
-     &    FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR)
+     &    FHWAH,FHLPH,DWTCO, DWTLO, DWTSO,fhpctn,RHOR,MOWC,RSPLC)
 
 ! CALL FOR_OPHARV (CONTROL, ISWITCH, 
 !&    CANHT, CANNAA, CANWAA, CROP, LAIMX, HARVFRAC,   !Input
