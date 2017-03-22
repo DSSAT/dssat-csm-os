@@ -49,6 +49,16 @@ C=======================================================================
      5              '          ','          ','          ',
      6              '          ','          '/
 
+C     7 - Preplanting
+C     8 - Planting to root initiation
+C     9 - Root initiation to first new leaf emergence
+C     1 - First new leaf emergence to net zero root growth
+C     2 - Net zero stem growth to forcing
+C     3 - Forcing to sepals closed on youngest flowers
+C     4 - SCY to first open flower
+C     5 - Fruit growth
+C     6 - Physiological maturity
+
 !=================================================================
       SELECT CASE(DYNAMIC)
 !=================================================================

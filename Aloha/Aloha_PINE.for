@@ -8,8 +8,7 @@ C
 C
 C   Aloha-Pineapple model developed by Jingbo Zhang and Duane Bartholomew
 C   using some routines of ceres-maize model developed by Ritchie,Kiniry,
-C   Jones,Kneivel,Singh and others in July, 1988. Nitrogen
-C   routines adapted from ceres-maize developed by Godwin,Jones, et al
+C   Jones,Kneivel,Singh and others in July, 1988. 
 C   IBSNAT DSSAT I/O structures adapted from Soygro by C. Zickos
 C   and D. Godwin, ifdc.
 C
@@ -20,16 +19,10 @@ C      and fruit yield.
 C   2. Weather effects on growth and development.
 C   3. Initial plant size effect on growth.
 C   4. Plant size at the time of forcing on fruit size and fruit yield.
-C   5. Water balance but nitrogen balance have not been tested.
-C
-C   The new input/output structures and several new features such as
-C   automatic planting/harvesting and crop sequencing were done by
-C   Thornton, Singh, and Smallwood (IFDC); Baer (Michigan State);
-C   Hoogenboom (Georgia); and Jones, Bowen and Pickering (Florida).
+C   5. Water balance and nitrogen balance have not been tested.
 C
 !----------------------------------------------------------------------
 !  Revision history
-!
 !  (see history above)
 !  02/07/1993 PWW Header revision and minor changes   
 !  02/24/1993 BDB Changed call to WATBAL (Added AIRAMT)

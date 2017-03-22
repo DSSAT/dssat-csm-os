@@ -24,14 +24,19 @@ C
 C  None   :
 C=======================================================================
 
-      SUBROUTINE Aloha_NFACTO
+      SUBROUTINE Aloha_NFACTO (DYNAMIC, ISTAGE,
 
       IMPLICIT NONE
-
-      INCLUDE 'GEN2.BLK'
-      INCLUDE 'NTRC1.BLK'
-
       SAVE
+
+      INTEGER ISTAGE
+      REAL AGEFAC, CNSD1, CNSD2, NDEF3, NFAC, NSTRES
+      REAL RCNP, TANC, TCNP, TMNC, XSTAGE
+
+      SELECT CASE(DYNAMIC)
+      CASE (RUNINIT, SEASINIT)
+
+      
 
       TCNP = EXP (1.52-0.160*XSTAGE)/100.0
       TMNC = 0.0045
@@ -41,9 +46,11 @@ C=======================================================================
       RCNP   = 1.06/100.0
       NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)
       NFAC   = AMIN1 (NFAC,1.0)
+
       IF (ISTAGE .EQ. 3 .OR. ISTAGE .EQ. 4) THEN
           NFAC = 1.0 - 1.80*EXP(-3.5*NFAC)
       ENDIF
+
       NFAC   = AMAX1 (NFAC,0.001)
       NSTRES = 1.0
       AGEFAC = 1.0
