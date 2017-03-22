@@ -28,7 +28,7 @@
         LNPHC = LNPHC +  LNPH                                                                                       !EQN 423
         IF (LEAFN.LT.1.0E-10) LEAFN = 0.0
         STEMNEXCESS = 0.0
-        STEMNEXCESSN = 0.0
+        plant%STEMNEXCESSN = 0.0
         !IF (SANC.GT.SNCX) STEMNEXCESS = (STWT+CRWT)*(SANC-SNCX)                                                     !EQN 246
         !STEMN = STEMN + SNUSE(0) - SNPH - STEMNEXCESS                                                               !EQN 247
         

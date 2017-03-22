@@ -91,7 +91,7 @@
             BR= BRSTAGE - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
             DO Lcount=0,LNUMSIMSTG(BR)-1
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
-                IF (LAGETT(BR,LF) < LLIFGTT+LLIFATT+LLIFSTT ) THEN                      ! DA if leave is alive
+                IF (plant(BR,LF)%LAGETT < LLIFGTT+LLIFATT+LLIFSTT ) THEN                      ! DA if leave is alive
                     IF(BR == INT(BRSTAGE) .AND. LF == INT(LNUMSIMSTG(INT(BRSTAGE)))) THEN                   ! DA if the very first leaf of the top of the highest branch
                         plant(BR,LF)%LAIByCohort = (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS)*PLTPOP*0.0001                      ! DA calculate LAI of the leaf
                     ELSE                                                                                    ! DA if further leaf

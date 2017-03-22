@@ -122,7 +122,7 @@
                 LNCGU = LNCM + NFGU * (LNCX-LNCM)                                                                      !EQN 165
                 IF (LNCGU - LNCGL > 1.E-6) THEN
                  !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))                                                 !EQN 163 !LPM 02SEP2016 To keep NFG as NFLF2
-                 NFG =NFLF2(0,0)                                                 !EQN 163
+                 NFG = plant(0,0)%NFLF2                                                 !EQN 163
                 ELSE
                  NFG = 1.0 
                 ENDIF
@@ -130,7 +130,7 @@
                 LNCPU = LNCM + NFPU * (LNCX-LNCM)
                 IF (LNCPU - LNCPL > 1.E-6) THEN                                                                        !EQN 167
                  !NFP =AMIN1(1.0,AMAX1(0.0,(LANC-LNCPL)/(LNCPU-LNCPL)))                                                 !EQN 166 !LPM 02SEP2016 Use NFLF2 intead of original equation
-                 NFP =NFLF2(0,0) 
+                 NFP =plant(0,0)%NFLF2 
                 ELSE
                  NFP = 1.0 
                 ENDIF

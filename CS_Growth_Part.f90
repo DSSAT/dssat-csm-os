@@ -181,7 +181,7 @@
                     IF (plant(BR,LF)%LAGETT<=LLIFGTT) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
-                        plant(BR,LF)%LATLPREV = LATL(BR,LF)
+                        plant(BR,LF)%LATLPREV = plant(BR,LF)%LATL
                         !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 24APR2016 To estimate daily leaf area increase instead of total
                         plant(BR,LF)%LAPOTX2 = plant(BR,LF)%LAPOTX*TFLFLIFE
                         plant(BR,LF)%LAGL=plant(BR,LF)%LAPOTX2*(TTLFLIFE/LLIFGTT)
@@ -304,7 +304,7 @@
         
         
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
-        NODEWTG = 0.0
+        plant%NODEWTG = 0.0
         GROSTP = 0.0
         GROCRP = 0.0
         Lcount = 0
@@ -328,7 +328,7 @@
         
 
         
-        GROCRP = NODEWTGB(0,1)*SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
+        GROCRP = plant(0,1)%NODEWTGB * SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
         GRORP = (GROLFP + GROSTP)*PTFA
         !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
@@ -395,9 +395,9 @@
             AREAPOSSIBLE = GROLF*(1.0-LPEFR)*LAWL(1)
             ! If not enough assim.set assimilate factor
             IF (PLAGSB2 > AREAPOSSIBLE.AND.PLAGSB2 > 0.0)THEN
-                plant(0,0)AFLF = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149
+                plant(0,0)%AFLF = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149
             ELSE  
-                plant(0,0)AFLF = 1.0
+                plant(0,0)%AFLF = 1.0
             ENDIF
             IF (CFLAFLF.EQ.'N') plant(0,0)%AFLF = 1.0                                                                            !MF 21AU16 ErrorFix Added second subscript to AFLF.
 

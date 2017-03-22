@@ -51,7 +51,7 @@
                         plant(BR,LF)%AFLF = AMIN1(1.0,plant(BR,LF)%AFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
                     ENDIF
                     IF (plant(BR,LF)%LDEATHDAP == 0) THEN
-                        LDEATHDAP = -99
+                        plant%LDEATHDAP = -99
                     ENDIF
                     WRITE (fnumlvs,'(2I6,5A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL3C,LAPC,LAPSC,1.0-plant(BR,LF)%WFLF, &                          ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
                         1.0-plant(BR,LF)%NFLF,1.0-plant(BR,LF)%NFLF2,1.0-AMAX1(0.0,AMIN1(1.0,plant(BR,LF)%AFLF)),1.0-plant(BR,LF)%TFGLF,1.0-plant(BR,LF)%TFDLF,plant(BR,LF)%DGLF, &  

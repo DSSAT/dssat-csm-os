@@ -48,7 +48,7 @@
         RTWTGADJ = RTWTG
         SHLAGB4 = SHLAGB2
 
-        IF (SUM(NODEWTG) > 0 .AND. ISWNIT /= 'N') THEN    !If plant nodes has weight and nitrogen restrictions are activated
+        IF (SUM(plant%NODEWTG) > 0 .AND. ISWNIT /= 'N') THEN    !If plant nodes has weight and nitrogen restrictions are activated
     
             ANDEM = 0.0
             RNDEM = 0.0
@@ -226,7 +226,7 @@
             !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using GROLFP instead of GROLF
             !LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
-            NDEMMN = GROLFP*LNCM+RTWTG*RNCM+SUM(NDEMSMN) 
+            NDEMMN = GROLFP*LNCM+RTWTG*RNCM+SUM(plant%NDEMSMN) 
             LNUSE(1) = (GROLFP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
             !SNUSE(1) = ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
@@ -357,9 +357,9 @@
                 ! If not enough N set N factor
                 !IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN !LPM 02SEP2016 Use of PLAGSB2 instead of PLAGSB3
                 IF (PLAGSB2.GT.AREAPOSSIBLEN.AND.PLAGSB2.GT.0.0)THEN
-                        plant(0,0)NFLF2 = AREAPOSSIBLEN/PLAGSB2                                                                   !EQN 236
+                        plant(0,0)%NFLF2 = AREAPOSSIBLEN/PLAGSB2                                                                   !EQN 236
                 ELSE  
-                        plant(0,0)NFLF2 = 1.0
+                        plant(0,0)%NFLF2 = 1.0
                 ENDIF 
                 
         
@@ -367,7 +367,7 @@
         
                 !NFLF2(0) = 1.0                                                                                           !LPM 21MAR15
                 !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                      !LPM 21MAR15 Change to include cohorts BR,L
-                plant(0,0)NFLF2 = 1.0
+                plant(0,0)%NFLF2 = 1.0
                 !DO BR = 0, BRSTAGE              !LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))                                                                          !LPM 21MAR15
                 !    DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
                 !        IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
@@ -382,7 +382,7 @@
         ELSE     ! ISWNIT = N   
     
             !LATL4 = LATL3 !LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))
-            NFLF2 = 1.0            
+            plant(BR,LF)%NFLF2 = 1.0            
     
         ENDIF    ! End of N uptake and growth adjustmenets
     
@@ -394,7 +394,7 @@
                             IF (LNUMSIMSTG(BR) < LCNUMX) THEN
                                 !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
                                 !LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG) !LPM 02SEP2016  Use of NFLF2 instead of NFG
-                                plant(BR,LF)%LAGL3 = plant(BR,LF)%LAGL * AMIN1(AFLF(0,0),WFG,plant(0,0)%NFLF2) 
+                                plant(BR,LF)%LAGL3 = plant(BR,LF)%LAGL * AMIN1(plant(0,0)%AFLF,WFG,plant(0,0)%NFLF2) 
                                 !LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
                                 plant(BR,LF)%LATL3= plant(BR,LF)%LATL3 + plant(BR,LF)%LAGL3                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
                                 plant(BR,LF)%AFLF = AMIN1(1.0,plant(BR,LF)%AFLF + AMAX1(0.0,plant(0,0)%AFLF) * (plant(BR,LF)%LAGL)/plant(BR,LF)%LAPOTX2)             !EQN 151   
@@ -419,10 +419,10 @@
             !SHLAGB3(2) = SHLAGB2(2) * AFLF(0)                                                                          !EQN 240
             !SHLAGB3(3) = SHLAGB2(3) * AFLF(0)                                                                          !EQN 240
             !LPM 02SEP2016 PLAGSB3 is not longer used, selected the min value between AFLF, WFG, NFLF2  
-            PLAGSB4 = PLAGSB2 * AMIN1(AFLF(0,0),WFG,NFLF2(0,0)) 
-            SHLAGB4(1) = SHLAG2(1) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0))                                                                          !EQN 240
-            SHLAGB4(2) = SHLAG2(2) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0))                                                                          !EQN 240
-            SHLAGB4(3) = SHLAG2(3) * AMIN1(AFLF(0,0),WFG,NFLF2(0,0))                                                                         !EQN 240    
+            PLAGSB4 = PLAGSB2 * AMIN1(plant(0,0)%AFLF,WFG,plant(0,0)%NFLF2) 
+            SHLAGB4(1) = SHLAG2(1) * AMIN1(plant(0,0)%AFLF,WFG,plant(0,0)%NFLF2)                                                                          !EQN 240
+            SHLAGB4(2) = SHLAG2(2) * AMIN1(plant(0,0)%AFLF,WFG,plant(0,0)%NFLF2)                                                                          !EQN 240
+            SHLAGB4(3) = SHLAG2(3) * AMIN1(plant(0,0)%AFLF,WFG,plant(0,0)%NFLF2)                                                                         !EQN 240    
 
             GROCRADJ = AMIN1(GROCR,GROCRADJ)
             !GROLFADJ = AMIN1(GROLF,GROLFADJ)

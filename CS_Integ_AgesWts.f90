@@ -115,7 +115,7 @@
                 IF (plant(BR,LF)%LAGETT < LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
                     plant(BR,LF)%LAGETT = plant(BR,LF)%LAGETT + TTLFLife*EMRGFR                                              !EQN 358
                     ! Accelerated senescence at base of dense leaf canopy
-                    IF (LAIByCohort(BR,LF) > LAIXX) THEN
+                    IF (plant(BR,LF)%LAIByCohort > LAIXX) THEN
                         !IF (LF==TVI1 .AND. BR==BROldestA) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
@@ -149,7 +149,7 @@
                         ENDIF
                     ELSE
                         IF (plant(BR,LF)%LAGETT > LLIFGTT .AND. plant(BR,LF)%LAGETT-TTLFLIFE*EMRGFR < LLIFGTT+LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
-                            TVR1 = (LLIFATT-(LAGETT(BR,LF)-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                            TVR1 = (LLIFATT-(plant(BR,LF)%LAGETT-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
                             plant(BR,LF)%DALF = plant(BR,LF)%DALF + TVR1                                                                   !EQN 364c
                         ENDIF
                     ENDIF

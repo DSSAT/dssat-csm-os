@@ -48,7 +48,7 @@
             ! N concentrations
             RANC = 0.0
             LANC = 0.0
-            SANC = 0.0
+            plant%SANC = 0.0
             VANC = 0.0
             VCNC = 0.0
             VMNC = 0.0
@@ -106,13 +106,13 @@
             IF (SEEDRS.GT.0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
             IF (SRWT.GT.0) SRANC = SROOTN/SRWT
             LNCR = 0.0
-            SNCR = 0.0
+            plant%SNCR = 0.0
             RNCR = 0.0
             IF (LNCX.GT.0.0) LNCR = AMAX1(0.0,AMIN1(1.0,LANC/LNCX))
             DO BR = 0, BRSTAGE                                                                              !LPM25MAY2015 To consider different N concentration by node according with node age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)  
                     IF (plant(BR,LF)%SNCX > 0.0) THEN
-                        plant(BR,LF)SNCR = AMAX1(0.0,AMIN1(1.0,plant(BR,LF)%SANC/plant(BR,LF)%SNCX))
+                        plant(BR,LF)%SNCR = AMAX1(0.0,AMIN1(1.0,plant(BR,LF)%SANC/plant(BR,LF)%SNCX))
                     ENDIF
                 ENDDO
             ENDDO
@@ -121,7 +121,7 @@
             IF (RNCX > 0.0) RNCR = AMAX1(0.0,AMIN1(1.0,RANC/RNCX))
         ELSE
             LNCR = 1.0
-            SNCR = 1.0
+            plant%SNCR = 1.0
             RNCR = 1.0
         ENDIF
         

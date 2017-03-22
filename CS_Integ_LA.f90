@@ -112,7 +112,7 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM 28MAR15 Change to include cohorts
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (plant(BR,LF)%LAP-plant(BR,LF)%LAPS > 0.0) THEN
-                        plant(BR,LF)%LAPS(BR,LF) = plant(BR,LF)%LAPS + (plant(BR,LF)%LAP - plant(BR,LF)%LAPS) * HAFR     !EQN 461
+                        plant(BR,LF)%LAPS = plant(BR,LF)%LAPS + (plant(BR,LF)%LAP - plant(BR,LF)%LAPS) * HAFR     !EQN 461
                     ENDIF
                 ENDDO
             ENDDO
