@@ -401,35 +401,7 @@
             ENDIF
             IF (CFLAFLF.EQ.'N') plant(0,0)%AFLF = 1.0                                                                            !MF 21AU16 ErrorFix Added second subscript to AFLF.
 
-        !    ! Area and assimilate factors for each leaf
-        !        DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
-        !            DO LF = 1, LNUMSIMSTG(BR)
-        !            !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                  !LPM 23MAR15 To consider the new leaf growing duration of 10 
-        !                !IF (LNUMSG.LT.LNUMX) THEN
-        !                !    LATL3(L)= LATL2(L) * AFLF(0,0)                                                                                   !EQN 150
-        !                !    AFLF(L) = AMIN1(1.0,AFLF(L) + AMAX1(0.0,AFLF(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))                           !EQN 151
-        !                !    IF (CFLAFLF.EQ.'N') AFLF(L) = 1.0                                                   
-        !                !ENDIF     
-        !                IF (LAGETT(BR,LF).LE.LLIFGTT) THEN
-        !                    IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
-        !                        !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
-        !                        LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG)  
-        !                        !LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
-        !                        LATL3(BR,LF)= LATL3(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
-        !                        AFLF(BR,LF) = AMIN1(1.0,AFLF(BR,LF) + AMAX1(0.0,AFLF(0,0)) * (LAGL(BR,LF))/LAPOTX2(BR,LF))             !EQN 151   
-        !                        LAGL3T(BR,LF) = LAGL3(BR,LF)*BRNUMST(BR) 
-        !                        LATL3T(BR,LF) = LATL3(BR,LF)*BRNUMST(BR)
-        !                        DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
-        !                            IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-        !                                LAGL3T(BR,LF) = LAGL3T(BR,LF)+(LAGL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
-        !                                LATL3T(BR,LF) = LATL3T(BR,LF)+(LATL3(BR,LF)*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
-        !                            ENDIF
-        !                        ENDDO
-        !                        !IF (CFLAFLF.EQ.'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
-        !                    ENDIF  
-        !                ENDIF
-        !            ENDDO
-        !        ENDDO
+
         ENDIF                                                                                                            !MF 21AU16 ErrorFix. Added to terminate block
         !    !PLAGSB3 = PLAGSB2 * AFLF(0)                                                                                !EQN 345
         !    !SHLAGB2 is not necessary, previously defined in the loop as SHLAG2

@@ -45,7 +45,7 @@
            
         
         SNPHC = SNPHC +  SNPH                                                                                       !EQN 248
-        IF (STEMN.LT.1.0E-10) STEMN = 0.0
+        IF (STEMN < 1.0E-10) STEMN = 0.0
         ROOTNS = 0.0
         SENNGS = 0.0
         DO L = 1, NLAYR

@@ -1,7 +1,7 @@
 Module Node_module !Module of environment
     type Node_type
         
-        REAL :: areaGrowth_ = 0                 ! Leaf area growth,shoot,lf pos  cm2/l  ! will replace LAGL
+        !REAL :: areaGrowth_ = 0                 ! Leaf area growth,shoot,lf pos  cm2/l  ! will replace LAGL
         ! TODO DA 21MAR2017
         ! [ ] rename variables to give more semantic
         ! [ ] detect variables that can be functions instead
@@ -57,8 +57,8 @@ Module Node_module !Module of environment
             
     contains
     
-        procedure, pass (this) :: getAreaGrowth
-        procedure, pass (this) :: setAreaGrowth 
+        !procedure, pass (this) :: getAreaGrowth
+        !procedure, pass (this) :: setAreaGrowth 
     
     end Type Node_type
     
@@ -73,27 +73,59 @@ Module Node_module !Module of environment
     type (Node_type) function Node_type_constructor()
         implicit none
         !real, intent (in) :: AreaGrowth
-        Node_type_constructor%AreaGrowth_ = 0
+        !Node_type_constructor%AreaGrowth_ = 0
+        Node_type_constructor%aflf = 0.0
+        Node_type_constructor%dalf = 0.0
+        Node_type_constructor%dglf = 0.0
+        Node_type_constructor%dslf = 0.0
+        Node_type_constructor%lagett = 0.0
+        Node_type_constructor%lagl = 0.0
+        Node_type_constructor%lagl3 = 0.0
+        Node_type_constructor%lagl3t = 0.0
+        Node_type_constructor%laglt = 0.0
+        Node_type_constructor%lap = 0.0
+        Node_type_constructor%lapp = 0.0
+        Node_type_constructor%laps = 0.0
+        Node_type_constructor%latl = 0.0
+        Node_type_constructor%latl2 = 0.0
+        Node_type_constructor%latl2t = 0.0
+        Node_type_constructor%latl3 = 0.0
+        Node_type_constructor%latl3t = 0.0
+        Node_type_constructor%latl4 = 0.0
+        Node_type_constructor%nddae = 0.0
+        Node_type_constructor%nflf = 1.0
+        Node_type_constructor%nflf2 = 0.0
+        Node_type_constructor%nflfp = 1.0
+        Node_type_constructor%NODEWTGB = 0.0
+        Node_type_constructor%NODEWT = 0.0
+        Node_type_constructor%sanc = 0.0
+        Node_type_constructor%sncr = 0.0
+        Node_type_constructor%stemnn = 0.0
+        Node_type_constructor%tfdlf = 0.0
+        Node_type_constructor%tfglf = 0.0
+        Node_type_constructor%wflf = 0.0
+        
+        
     end function Node_type_constructor
     
 
-    ! get AreaGrowth
-    real function getAreaGrowth(this)
-        implicit none
-        class (Node_type), intent(in) :: this
-        
-        getAreaGrowth = this%AreaGrowth_
-    end function getAreaGrowth
-    
-    
-    ! set AreaGrowth    
-    subroutine setAreaGrowth(this, AreaGrowth)
-        implicit none
-        class (Node_type), intent(inout) :: this
-        real, intent (in) :: AreaGrowth
-        
-        this%AreaGrowth_ = AreaGrowth
-    end subroutine setAreaGrowth
+    !! get AreaGrowth
+    !real function getAreaGrowth(this)
+    !    implicit none
+    !    class (Node_type), intent(in) :: this
+    !    
+    !    getAreaGrowth = this%AreaGrowth_
+    !end function getAreaGrowth
+    !
+    !
+    !! set AreaGrowth    
+    !subroutine setAreaGrowth(this, AreaGrowth)
+    !    implicit none
+    !    class (Node_type), intent(inout) :: this
+    !    real, intent (in) :: AreaGrowth
+    !    
+    !    this%AreaGrowth_ = AreaGrowth
+    !end subroutine setAreaGrowth
     
     
 END Module Node_module    

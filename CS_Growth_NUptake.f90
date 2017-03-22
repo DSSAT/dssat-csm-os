@@ -339,24 +339,10 @@
                 RSSRWTGLFADJ = AMAX1(0.0,GROLF - GROLFADJ)                                                              !EQN 234 
                 !AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                              !EQN 235 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
                  AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*LAWL(1)                                              !EQN 235 
-                !! If not enough N set N factor
-                !IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN
-                !    NFLF2(0) = AREAPOSSIBLEN/PLAGSB3                                                                   !EQN 236
-                !ELSE  
-                !    NFLF2(0) = 1.0
-                !ENDIF
-        
-                ! Area and assimilate factors for each leaf
-                !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                      !LPM 21MAR15 Change to include cohorts BR,L
-                !     IF (LNUMSG.LT.LNUMX) THEN
-                !        LATL4(L)= LATL3(L) * NFLF2(0)                                                                           !EQN 241            
-                !        NFLF2(L) = AMIN1(1.0,NFLF2(L) + AMAX1(0.0,NFLF2(0)) * (LATLPOT(L)-LATLPREV(L))/LAPOTX(L))               !EQN 237
-                !     ENDIF
-                !ENDDO    
                 
                 ! If not enough N set N factor
                 !IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN !LPM 02SEP2016 Use of PLAGSB2 instead of PLAGSB3
-                IF (PLAGSB2.GT.AREAPOSSIBLEN.AND.PLAGSB2.GT.0.0)THEN
+                IF (PLAGSB2 > AREAPOSSIBLEN .AND. PLAGSB2 > 0.0)THEN
                         plant(0,0)%NFLF2 = AREAPOSSIBLEN/PLAGSB2                                                                   !EQN 236
                 ELSE  
                         plant(0,0)%NFLF2 = 1.0
@@ -386,7 +372,6 @@
     
         ENDIF    ! End of N uptake and growth adjustmenets
     
-    
     ! Area and assimilate factors for each leaf
                 DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                     DO LF = 1, LNUMSIMSTG(BR)   
@@ -402,7 +387,7 @@
                                 plant(BR,LF)%LAGL3T = plant(BR,LF)%LAGL3*BRNUMST(BR) 
                                 plant(BR,LF)%LATL3T = plant(BR,LF)%LATL3*BRNUMST(BR)
                                 DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
-                                    IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
+                                    IF (SHNUM-FLOAT(L-1) > 0.0) THEN
                                         plant(BR,LF)%LAGL3T = plant(BR,LF)%LAGL3T+(plant(BR,LF)%LAGL3*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
                                         plant(BR,LF)%LATL3T = plant(BR,LF)%LATL3T+(plant(BR,LF)%LATL3*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
                                     ENDIF

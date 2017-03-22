@@ -38,15 +38,6 @@
 
         ! Leaf senescence - phyllochron or real time driven
         LAPSTMP = 0.0
-        !DO L = 1,LNUMSG
-        !    IF (LAGETT(L)+TTLFLIFE*EMRGFR.LE.LLIFATT+LLIFGTT) EXIT                                                     !EQN 371 !LPM 25MAR15 Modify to include cohorts
-        !    IF (LAP(L)-LAPS(L).GT.0.0) THEN
-        !        LAPSTMP = AMIN1((LAP(L)-LAPS(L)),LAP(L)/LLIFSTT*AMIN1((LAGETT(L)+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
-        !            (TTLFLIFE*EMRGFR)))
-        !        LAPS(L) = LAPS(L) + LAPSTMP
-        !        PLASP = PLASP + LAPSTMP                                                                                !EQN 370
-        !    ENDIF
-        !ENDDO
 
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)         
@@ -86,7 +77,7 @@
         !-----------------------------------------------------------------------
         plant(BR,LF)%LAIByCohort=0.0                               ! DA re-initializing LAIByCohort
         LAI=0.0                                              ! DA re-initializing LAI
-
+        
         DO Bcount=0,BRSTAGE
             BR= BRSTAGE - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
             DO Lcount=0,LNUMSIMSTG(BR)-1
@@ -98,6 +89,7 @@
                         plant(BR,LF)%LAIByCohort= LAI + (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS)*PLTPOP*0.0001                ! DA the LAI calculation is accumulative from the previous cohort LAI
                     ENDIF
                     LAI = plant(BR,LF)%LAIByCohort                                                                  ! DA updating LAI
+                    
                 ENDIF
             ENDDO
         ENDDO
