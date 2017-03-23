@@ -657,7 +657,7 @@ cjh  end of correction
      &      g_uptake_source, gro_wt, MNNH4, MNNO3,                !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR,         rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw,                                       !Input
+     &      WFNU, xstag_nw, MXNUP,                                !Input
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
 
@@ -721,9 +721,10 @@ cjh  end of correction
       real pndem(mxpart)
       real sum_real_array
       REAL PLTPOP
-      real EXNH4, MNNH4, EXNO3, MNNO3, WFNU, PNUPR  
-      real p_max_n_uptake 
-      PARAMETER (p_max_n_uptake = .6)  !(g/m2) max N uptake per day 
+      real EXNH4, MNNH4, EXNO3, MNNO3, WFNU, PNUPR
+      real MXNUP
+      ! real p_max_n_uptake  , btk 03/02/2017
+      ! PARAMETER (p_max_n_uptake = .6)  !(g/m2) max N uptake per day ; commented out by btk, 03/02/2017
       character*5 G_UPTAKE_SOURCE
       Integer count_of_real_vals
       REAL  ha2sm
@@ -762,7 +763,9 @@ cjh  end of correction
             ! on any given day by bounding the demand. Note: we do
             ! not bound the "real" n demand, just the value here.
          !*! capped_n_demand = u_bound(n_demand,p_max_n_uptake/plants)
-         capped_n_demand = min(n_demand,p_max_n_uptake/PLTPOP)
+         ! capped_n_demand = min(n_demand,p_max_n_uptake/PLTPOP) !  btk 03/02/2017
+          capped_n_demand = min(n_demand,MXNUP/PLTPOP) ! changed by btk 03/02/2017
+         
          !                                  g/m2
          !          g   =                 ______
          !                               plant/m2
