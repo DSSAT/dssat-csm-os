@@ -368,6 +368,7 @@
         ELSE     ! ISWNIT = N   
     
             !LATL4 = LATL3 !LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))
+            plant(0,0)%NFLF2 = 1.0
             plant(BR,LF)%NFLF2 = 1.0            
     
         ENDIF    ! End of N uptake and growth adjustmenets
