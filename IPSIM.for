@@ -972,6 +972,8 @@ D     IPX = 23
         IDETL   = ' '
         IDETH   = ' '
         IDETR   = ' '
+        FMOPT   = ' '
+
 !        CRMODEL = '     '
 
 !       Read FIRST line of simulation control
@@ -1240,6 +1242,9 @@ D     IPX = 23
             READ (CHARTEST,'(91X,A1)',IOSTAT=ERRNUM) IDETR
             CALL CHECK_A('IDETR', IDETR, ERRNUM, MSG, NMSG)
 
+            READ (CHARTEST,'(97X,A1)',IOSTAT=ERRNUM) FMOPT
+            CALL CHECK_A('FMOPT', FMOPT, ERRNUM, MSG, NMSG)
+
             IOX   = UPCASE(IOX)
             IDETO = UPCASE(IDETO)
             IDETS = UPCASE(IDETS)
@@ -1252,6 +1257,7 @@ D     IPX = 23
             IDETL = UPCASE(IDETL)
             IDETH = UPCASE(IDETH)
             IDETR = UPCASE(IDETR)
+            FMOPT = UPCASE(FMOPT)
 
 !           Verbose output switch
             IF (IDETL == '0') THEN
@@ -1408,6 +1414,7 @@ C-----------------------------------------------------------------------
       IF (IDETL  /= ' ' .AND. IDETL  /= '.') ISWITCH % IDETL  = IDETL
       IF (IDETH  /= ' ' .AND. IDETH  /= '.') ISWITCH % IDETH  = IDETH
       IF (IDETR  /= ' ' .AND. IDETR  /= '.') ISWITCH % IDETR  = IDETR
+      IF (FMOPT  /= ' ' .AND. FMOPT  /= '.') ISWITCH % FMOPT  = FMOPT
 
       IF (NSWITCH /=-99) ISWITCH % NSWI   = NSWITCH
     
@@ -1521,6 +1528,7 @@ C-----------------------------------------------------------------------
       CASE('IDETL');  MSG_TEXT="Output detail switch          "
       CASE('IDETH');  MSG_TEXT="Chemial output file switch    "
       CASE('IDETR');  MSG_TEXT="Operations output file switch "
+      CASE('FMOPT');  MSG_TEXT="Format options switch (CSV)   "
       CASE('NSWITCH');MSG_TEXT="Nitrogen options switch       "
       CASE('NYRS')  ; MSG_TEXT="Number of years of simulation "
       CASE('YRSIM') ; MSG_TEXT="Start of simulation date      "
