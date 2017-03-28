@@ -85,39 +85,40 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-        OUTET = 'ET.OUT'
-        CALL GETLUN('OUTET', LUN)
+          OUTET = 'ET.OUT'
+          CALL GETLUN('OUTET', LUN)
 
-        INQUIRE (FILE = OUTET, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'OLD',
-     &      POSITION = 'APPEND')
-        ELSE
-          OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'NEW')
-          WRITE(LUN,'("*SOIL-PLANT-ATMOSPHERE MODULE OUTPUT FILE")')
-        ENDIF
+          INQUIRE (FILE = OUTET, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'OLD',
+     &        POSITION = 'APPEND')
+          ELSE
+            OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'NEW')
+            WRITE(LUN,'("*SOIL-PLANT-ATMOSPHERE MODULE OUTPUT FILE")')
+          ENDIF
         END IF   ! VSH
+
+!       Number of soil layers to print between 4 and 10.
+        N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+            
 C-----------------------------------------------------------------------
 C     Variable heading for ET.OUT
 C-----------------------------------------------------------------------
         IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-          !For sequenced run, use replicate
-          ! number instead of run number in header.
-          IF (RNMODE .EQ. 'Q') THEN
-            CALL HEADER(SEASINIT, LUN, REPNO)
-          ELSE
-            CALL HEADER(SEASINIT, LUN, RUN)
-          ENDIF
+            !For sequenced run, use replicate
+            ! number instead of run number in header.
+            IF (RNMODE .EQ. 'Q') THEN
+              CALL HEADER(SEASINIT, LUN, REPNO)
+            ELSE
+              CALL HEADER(SEASINIT, LUN, RUN)
+            ENDIF
           END IF   ! VSH
 
           IF (ISWITCH % MESEV == 'S') THEN
 !           Include soil evap by soil layer for Suleiman-Ritchie method
 
-!           Number of soil layers to print between 4 and 10.
-            N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
-            
             IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             WRITE(LUN,'("!",T146,
      &        "Soil evaporation (mm/d) by soil depth (cm):"
@@ -139,7 +140,7 @@ C-----------------------------------------------------------------------
             END IF   ! VSH
           ELSE
             IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-            WRITE (LUN,120)
+              WRITE (LUN,120)
             END IF   ! VSH
           ENDIF
         ENDIF
