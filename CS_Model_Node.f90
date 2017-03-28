@@ -1,7 +1,6 @@
 Module Node_module !Module of environment
     type Node_type
         
-        !REAL :: areaGrowth_ = 0                 ! Leaf area growth,shoot,lf pos  cm2/l  ! will replace LAGL
         ! TODO DA 21MAR2017
         ! [ ] rename variables to give more semantic
         ! [ ] detect variables that can be functions instead
@@ -57,8 +56,8 @@ Module Node_module !Module of environment
             
     contains
     
-        !procedure, pass (this) :: getAreaGrowth
-        !procedure, pass (this) :: setAreaGrowth 
+        !procedure, pass (this) :: isActive
+        !procedure, pass (this) :: isAlive
     
     end Type Node_type
     
@@ -73,7 +72,6 @@ Module Node_module !Module of environment
     type (Node_type) function Node_type_constructor()
         implicit none
         !real, intent (in) :: AreaGrowth
-        !Node_type_constructor%AreaGrowth_ = 0
         Node_type_constructor%aflf = 0.0
         Node_type_constructor%dalf = 0.0
         Node_type_constructor%dglf = 0.0
@@ -109,23 +107,22 @@ Module Node_module !Module of environment
     end function Node_type_constructor
     
 
-    !! get AreaGrowth
-    !real function getAreaGrowth(this)
+    !! true is leaf is active
+    !logical function isActive(this)
     !    implicit none
     !    class (Node_type), intent(in) :: this
     !    
-    !    getAreaGrowth = this%AreaGrowth_
-    !end function getAreaGrowth
+    !    isActive = this%LAGETT < LLIFGTT+LLIFATT
+    !end function isActive
     !
-    !
-    !! set AreaGrowth    
-    !subroutine setAreaGrowth(this, AreaGrowth)
+    !! true is leaf is alive
+    !logical function isAlive(this)
     !    implicit none
-    !    class (Node_type), intent(inout) :: this
-    !    real, intent (in) :: AreaGrowth
+    !    class (Node_type), intent(in) :: this
     !    
-    !    this%AreaGrowth_ = AreaGrowth
-    !end subroutine setAreaGrowth
+    !    isAlive = this%LAGETT < LLIFGTT+LLIFATT+LLIFSTT
+    !end function isAlive
+
     
     
 END Module Node_module    

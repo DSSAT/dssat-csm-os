@@ -48,6 +48,8 @@
         RTWTGADJ = RTWTG
         SHLAGB4 = SHLAGB2
 
+        plant(0,0)%NFLF2 = 1.0
+        
         IF (SUM(plant%NODEWTG) > 0 .AND. ISWNIT /= 'N') THEN    !If plant nodes has weight and nitrogen restrictions are activated
     
             ANDEM = 0.0
@@ -102,7 +104,7 @@
             ENDDO
             ! Seed use if no roots
             ! N use same % of initial as for CH20,if needed.
-            IF (RTWT.LE.0.0) THEN
+            IF (RTWT <= 0.0) THEN
                 SEEDNUSE = AMAX1(0.0, AMIN1(SEEDN,LNDEM+SNDEM+RNDEM,SEEDNI/SDDUR*(TT/STDAY)))                          !EQN 203a
             ELSE
                 ! Some use of seed (0.5 need) even if may not be needed
@@ -155,10 +157,10 @@
             ENDDO
     
             ! Ratio (NUPRATIO) to indicate N supply for output
-            IF (ANDEM.GT.0) THEN
+            IF (ANDEM > 0) THEN
                 NUPRATIO = NUPAP/ANDEM                                                                                 !EQN 192
             ELSE
-                IF (NUPAP.GT.0.0) THEN
+                IF (NUPAP > 0.0) THEN
                     NUPRATIO = 10.0
                 ELSE  
                     NUPRATIO = 0.0
@@ -166,7 +168,7 @@
             ENDIF
             ! Factor (NUF) to reduce N uptake to level of demand
             NUF = 1.0
-            IF (NUPAP.GT.0.0) THEN
+            IF (NUPAP > 0.0) THEN
                 NUF = AMIN1(1.0,ANDEM/NUPAP)                                                                           !EQN 193
             ENDIF 
     
@@ -201,7 +203,7 @@
     
             SEEDNUSE2 = 0.0
             ! Seed use after using reserves and uptake
-            IF (RTWT.GT.0.0.AND.ISWNIT.NE.'N') THEN
+            IF (RTWT > 0.0 .AND. ISWNIT /= 'N') THEN
                 SEEDNUSE2 = AMAX1(0.0,AMIN1(SEEDN-SEEDNUSE,LNDEM+SNDEM+RNDEM-RSNUSED-SEEDNUSE-NUPD,SEEDNI/SDDUR*(TT/STDAY)))  !EQN 205
             ELSE
                 SEEDNUSE2 = 0.0
@@ -233,7 +235,7 @@
             
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (GROSTP.GT.0.0) THEN
+                    IF (GROSTP > 0.0) THEN
                         !SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
                         SNUSEN(1,BR,LF) = plant(BR,LF)%NODEWTG * plant(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
@@ -243,7 +245,7 @@
             !SRNUSE(1) = (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
     
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
-            IF (NDEMMN.GT.NULEFT) THEN
+            IF (NDEMMN > NULEFT) THEN
                 !GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213 !LPM 02SEP2016 Use potential growth
                 !GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 GROSTADJ = GROSTP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
@@ -326,7 +328,7 @@
             ENDDO
             ! Check N and reduce leaf growth if not enough N  
             IF (ABS(NULEFT).LE.1.0E-5) THEN   ! Inadequate N
-                IF (NLLG.GT.0.0.AND.LNCX.GT.0.0) THEN 
+                IF (NLLG > 0.0 .AND. LNCX > 0.0) THEN 
                     !IF ((LNUSE(1)+LNUSE(2))/GROLF.LT.(LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
                     IF ((LNUSE(1)+LNUSE(2))/GROLFP.LT.(LNCX*NLLG)) THEN 
                         GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
@@ -344,7 +346,7 @@
                 !IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN !LPM 02SEP2016 Use of PLAGSB2 instead of PLAGSB3
                 IF (PLAGSB2 > AREAPOSSIBLEN .AND. PLAGSB2 > 0.0)THEN
                         plant(0,0)%NFLF2 = AREAPOSSIBLEN/PLAGSB2                                                                   !EQN 236
-                ELSE  
+                ELSE    
                         plant(0,0)%NFLF2 = 1.0
                 ENDIF 
                 
