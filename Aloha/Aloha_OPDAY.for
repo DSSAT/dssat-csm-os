@@ -92,26 +92,33 @@ C=======================================================================
      2 SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  RL4D  RL5D 
      3 RL6D  RL7D  RL8D  RL9D  RL10'/
 
-      DATA NITHEAD(1)/'!YR     Days      Nitrogen      Nitrogen    Inorg
-     1  Fix  Up-  leach  Soil  Soil  Leaf  Stem  Leaf  Stem  Shell Root 
-     2 Nfix  Total Soil  ³<------------- Nitrate for Soil Layer --------
-     3--------->³  ³<--------------- Ammonium for Soil Layer -----------
-     4--->³'/
-      DATA NITHEAD(2)/'! and   After Crop  Grain Veg. Grain  Veg.  N Fer
-     1t      take       Inorg   Org    N     N     N     N     N     N  
-     2 Rate   NO3   NH4    1     2     3     4     5     6     7     8  
-     3   9    10     1     2     3     4     5     6     7     8     9  
-     4  10'/
-      DATA NITHEAD(3)/'!  DOY  Plant ³<--- Kg/Ha -->³ ³<-- % -->³  ³<---
-     1--------- kg/ha ----------->³  ³<-kg/ha->³ ³<-------- % ------->³k
-     2g/ha/d ³<-kg/ha->³ ³<---------------------------------------------
-     3------- ug N/g soil ----------------------------------------------
-     4--->³'/
-      DATA NITHEAD(4)/'@DATE   CDAY  CNAD  GNAD  VNAD  GN%D  VN%D  NAPC 
-     1 NFXC  NUPC  NLCC  NIAD  NOAD  LNAD  SNAD  LN%D  SN%D  SHND  RN%D 
-     2 NFXD  NITD  NHTD  NI1D  NI2D  NI3D  NI4D  NI5D  NI6D  NI7D  NI8D 
-     3 NI9D  NI10  NH1D  NH2D  NH3D  NH4D  NH5D  NH6D  NH7D  NH8D  NH9D 
-     4 NH10'/
+!!      DATA NITHEAD(1)/'!YR     Days      Nitrogen      Nitrogen    Inorg
+!     1  Fix  Up-  leach  Soil  Soil  Leaf  Stem  Leaf  Stem  Shell Root 
+!     2 Nfix  Total Soil  ³<------------- Nitrate for Soil Layer --------
+!     3--------->³  ³<--------------- Ammonium for Soil Layer -----------
+!     4--->³'/
+!      DATA NITHEAD(2)/'! and   After Crop  Grain Veg. Grain  Veg.  N Fer
+!     1t      take       Inorg   Org    N     N     N     N     N     N  
+!     2 Rate   NO3   NH4    1     2     3     4     5     6     7     8  
+!     3   9    10     1     2     3     4     5     6     7     8     9  
+!     4  10'/
+!      DATA NITHEAD(3)/'!  DOY  Plant ³<--- Kg/Ha -->³ ³<-- % -->³  ³<---
+!     1--------- kg/ha ----------->³  ³<-kg/ha->³ ³<-------- % ------->³k
+!     2g/ha/d ³<-kg/ha->³ ³<---------------------------------------------
+!     3------- ug N/g soil ----------------------------------------------
+!     4--->³'/
+!      DATA NITHEAD(4)/'@DATE   CDAY  CNAD  GNAD  VNAD  GN%D  VN%D  NAPC 
+!     1 NFXC  NUPC  NLCC  NIAD  NOAD  LNAD  SNAD  LN%D  SN%D  SHND  RN%D 
+!     2 NFXD  NITD  NHTD  NI1D  NI2D  NI3D  NI4D  NI5D  NI6D  NI7D  NI8D 
+!     3 NI9D  NI10  NH1D  NH2D  NH3D  NH4D  NH5D  NH6D  NH7D  NH8D  NH9D 
+!     4 NH10'/
+
+      DATA NITHEAD(1)/'!            <---------- Plant N (kg/ha) --------
+     1----> <------- Plant N (%) ------->'/
+      DATA NITHEAD(2)/'!            Uptak  Crop Grain Shell   Veg  Leaf 
+     1 Stem Grain   Veg  Leaf  Stem  Root'/
+      DATA NITHEAD(3)/'@DATE    DAP  NUPC  CNAD  GNAD  SHND  VNAD  LNAD 
+     1 SNAD  GN%D  VN%D  LN%D  SN%D  RN%D'/
 
 C-----------------------------------------------------------------------
 C     Initialize counters, averages
@@ -172,12 +179,10 @@ C-----------------------------------------------------------------------
                WRITE (NOUTDN,2240) NITHEAD(1)
                WRITE (NOUTDN,2240) NITHEAD(2)
                WRITE (NOUTDN,2240) NITHEAD(3)
-               WRITE (NOUTDN,2240) NITHEAD(4)
              ELSE
                WRITE (NOUTDN,2190) NITHEAD(1)
                WRITE (NOUTDN,2190) NITHEAD(2)
                WRITE (NOUTDN,2190) NITHEAD(3)
-               WRITE (NOUTDN,2190) NITHEAD(4)
             ENDIF
          ENDIF
 

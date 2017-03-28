@@ -64,7 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 10
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-Aloha    '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
@@ -231,7 +231,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) MEEVP, MEHYD, MEINF, MELI, MEPHO
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
         CHARACTER (len=1) METMP !Temperature, EPIC
-        CHARACTER (len=1) IFERI, IRESI, ICO2
+        CHARACTER (len=1) IFERI, IRESI, ICO2, FMOPT
         INTEGER NSWI
       END TYPE SwitchType
 

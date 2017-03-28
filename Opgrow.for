@@ -30,6 +30,9 @@ C  Calls:     None
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+!     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -98,6 +101,8 @@ C  Calls:     None
 
       ISWPHO = ISWITCH % ISWPHO
       ISWPOT = ISWITCH % ISWPOT
+          
+      FMOPT  = ISWITCH % FMOPT    ! VSH
 
 !***********************************************************************
 !***********************************************************************
@@ -105,6 +110,7 @@ C  Calls:     None
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
         OUTG  = 'PlantGro.OUT'
         CALL GETLUN('OUTG',  NOUTDG)
 
@@ -113,6 +119,7 @@ C  Calls:     None
 
         OUTPC  = 'PlantC.OUT  '
         CALL GETLUN('OUTPC', NOUTPC)
+        END IF    ! VSH
 
 !***********************************************************************
 !***********************************************************************
@@ -120,7 +127,8 @@ C  Calls:     None
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-!       Initialize daily growth output file
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
+!       Initialize daily growth output file      
         INQUIRE (FILE = OUTG, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'OLD',
@@ -135,9 +143,11 @@ C  Calls:     None
 
         !Write headers
         CALL HEADER(SEASINIT, NOUTDG, RUN)
-
+        END IF    ! VSH
+        
         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
 !        IF (ISWPHO == 'Y') THEN
           WRITE (NOUTDG, 100) "Root Dens. (cm/cm3) by soil ",
      &      "depth (cm):",(SoilProp%LayerText(L), L=1,N_LYR)
@@ -222,7 +232,8 @@ C  Calls:     None
   250   FORMAT('@YEAR DOY   DAS   DAP   TWAD    PHAD',
      &      '    CMAD    CGRD    GRAD    MRAD    CHAD   CL%D   CS%D',
      &      '   TGNN   TGAV    GN%D    GL%D    GC%D')
-
+        END IF ! VSH
+        
         CUMSENSURF  = 0.0
         CUMSENSOIL  = 0.0
         CUMSENSURFN = 0.0
@@ -348,6 +359,7 @@ C-----------------------------------------------------------------------
 
           VWAD = NINT(WTLF*10. + STMWT*10.)
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE (NOUTDG,310, ADVANCE='NO')
      &        YEAR, DOY, DAS, DAP, VSTAGE, RSTAGE, XLAI,
      &        NINT(WTLF*10.), NINT(STMWT*10.), NINT(SDWT*10.),
@@ -377,7 +389,21 @@ C-----------------------------------------------------------------------
      &        NINT(CUMSENSURF), NINT(CUMSENSOIL)   !, SENSURFT, SENSOILT
 !     &        , EOP, TRWUP, WRDOTN
   316     FORMAT (I8,1X,I7, 2F8.3, 3F8.4)
-
+          END IF   ! VSH
+!-----------------------------------------------------------------------
+!     VSH CSV output corresponding to PlantGro.OUT
+      IF (FMOPT == 'C') THEN
+         CALL CsvOut(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,CONTROL%ROTNUM
+     &,CONTROL%REPNO, YEAR, DOY, DAS, DAP, VSTAGE, RSTAGE, XLAI, 
+     &WTLF, STMWT, SDWT, RTWT, VWAD, TOPWT, SEEDNO, SDSIZE, HI, PODWT,
+     &PODNO, SWF_AV, TUR_AV, NST_AV, PS1_AV, PS2_AV, KST_AV, EXW_AV,
+     &PCNLP, SHELPC, HIP, PODWTD, SLAP, CANHT, CANWH,
+     &DWNOD, RTDEP, N_LYR, RLV, CUMSENSURF, CUMSENSOIL,
+     &vCsvline, vpCsvline, vlngth)
+     
+         CALL Linklst(vCsvline)
+      END IF
+      
 !         Set average stress factors since last printout back to zero
           SWF_AV = 0.0
           TUR_AV = 0.0
@@ -423,6 +449,7 @@ C-----------------------------------------------------------------------
             PCNVEG = 0.
           ENDIF
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN       ! VSH
           WRITE (NOUTPN,410) YEAR, DOY, DAS, DAP, (WTNCAN*10), 
      &       (WTNSD*10), (WTNVEG*10), PCNSDP, PCNVEG, (WTNFX*10),
      &       (WTNUP*10), (WTNLF*10), (WTNST*10), PCNLP, PCNSTP,
@@ -430,8 +457,30 @@ C-----------------------------------------------------------------------
   410     FORMAT(1X,I4,1X,I3.3,2(1X,I5),3(1X,F7.1),2(1X,F7.2),1X,
      &       2(1X,F7.1),2(1X,F7.1),2(1X,F7.2),1X,F7.1,2(1X,F6.1),
      &       2(1X,F7.2))
-
+          END IF    ! VSH
+          
+          !     VSH
+      IF (FMOPT == 'C') THEN
+         CALL CsvOutPlNCrGro(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &WTNCAN, WTNSD, WTNVEG, PCNSDP, PCNVEG, WTNFX, WTNUP, 
+     &WTNLF, WTNST, PCNLP, PCNSTP, PCNSHP, PCNRTP, NFIXN, 
+     &CUMSENSURFN, CUMSENSOILN,
+     &vCsvlinePlNCrGro, vpCsvlinePlNCrGro, vlngthPlNCrGro)
+     
+         CALL LinklstPlNCrGro(vCsvlinePlNCrGro)
+      
+         CALL CsvOutPlCCrGro(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, 
+     &CADST, RHOLP, RHOSP, TGRO(12), TGROAV, PCNSDP, PCLSDP, 
+     &PCCSDP, TS, 
+     &vCsvlinePlCCrGro, vpCsvlinePlCCrGro, vlngthPlCCrGro)
+      
+         CALL LinklstPlCCrGro(vCsvlinePlCCrGro)    
+      END IF
 C-----------------------------------------------------------------------
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN ! VSH
           WRITE (NOUTPC,510) YEAR, DOY, DAS, DAP,
      &        NINT(TOTWT*10), PG, CMINEA, GROWTH,
      &        GRWRES, MAINR, (CADLF + CADST), RHOLP, RHOSP,
@@ -440,6 +489,7 @@ C-----------------------------------------------------------------------
      &        2(1X,F6.3),3(1X,F7.4))
 !  510     FORMAT(1X,I4,1X,I3.3,2(1X,I5),1X,I6,6(1X,F7.2),2(1X,F6.1),
 !     &        2(1X,F6.1),3(1X,F7.2))
+          END IF   ! VSH
         ENDIF       
 
 !***********************************************************************
@@ -448,10 +498,12 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         !Close daily output files.
         CLOSE (NOUTDG)
         CLOSE (NOUTPN)
         CLOSE (NOUTPC)
+        END IF   ! VSH
 
 !***********************************************************************
 !***********************************************************************
