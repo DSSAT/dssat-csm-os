@@ -74,7 +74,7 @@ Contains
    
        fn = 'plantgro.csv' 
        Call GETLUN (fn,nf)     
-       Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW',  &
+       Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE',  &
           Action='Write', IOSTAT = ErrNum)
         
        Write(nf,'(A)')Header
