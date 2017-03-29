@@ -71,7 +71,8 @@ C=======================================================================
       ENDIF
 
       PAR   = 0.5*SRAD
-      Y1    = EXP(-0.52*LAI)                        ! Beer's law
+!     Y1    = EXP(-0.52*LAI)                        ! Beer's law
+      Y1    = EXP(-LIFAC*LAI)                       ! Beer's law
       PCARB = CC*PAR/PLTPOP*(1.0-Y1)                ! on per plant basis
       !
       ! Calculate Photosynthetic Response to CO2
