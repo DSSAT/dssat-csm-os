@@ -30,55 +30,18 @@ C
 C=======================================================================
 
       Subroutine Aloha_Pineapple(DYNAMIC)
-      USE ModuleDefs
+      USE AlohaMod
 
       IMPLICIT NONE
       SAVE
 
-      !INCLUDE     'GEN1.BLK'
-      !INCLUDE     'GEN2.BLK'
-      !INCLUDE     'GEN3.BLK'
-      !INCLUDE     'GEN4.BLK'
-      !INCLUDE     'NTRC1.BLK'
-      !INCLUDE     'NTRC2.BLK'
-      !INCLUDE     'PREDOB.BLK'
-      !INCLUDE     'SWITCH.BLK'
-
-      !CHARACTER*1  DAYFAC(10),RADFAC(10),TXFAC (10),TMFAC(10),PRCFAC(10)
-      !CHARACTER*1  CO2FAC(10),DPTFAC(10),WNDFAC(10),WMODB,TYPEIO,UPCASE
-      !CHARACTER*2  PRCROP
-      !CHARACTER*5  REPARG,PLME,SLTX,TIMPL(10),CHMET(10),CHCOD(10)
-      !CHARACTER*5  CHMCOD(10)
-      !CHARACTER*6  ERRKEY,VARNO
-      !CHARACTER*8  FLDNAM,EXPER
-      !CHARACTER*10 CROPD,STNAME(20)
-      !CHARACTER*12 FILEIO
-      !CHARACTER*25 MODEL,TITLET
-      !CHARACTER*60 ENAME
-
-      !INTEGER   TRTNO,NAPNIT,NAPRES,YRDOY,NHAR
-      !INTEGER   HDATE(3),NEV,WMDATE(10),YRPLT,YRSIM
-      !INTEGER   YEAR,NREP,NYRS,PWDINF,PWDINL,HLATE,HDLAY,YRIC
-      !INTEGER   ERRNUM,FTYPEN,HSTG(3),ENDSIM,INCYD
-      !INTEGER   STGDOY(20),DAP,HAREND,MULTI,TIMDIF,DAS,RSEED1,RSEED(4)
-      !INTEGER   ROTOPT,ROTNO,CRPNO,NAP,LUNIO,ISENS
-      !INTEGER   EDATE,TDATE(10),CDATE(10),NTLAP,NCHEM,NPSTAP,NTIL
-
-      !REAL      TOTIR,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD,PTX,PTTN
-      !REAL      CO2ADJ(10),DAYADJ(10),DPTADJ(10),PRCADJ(10),RADADJ(10)
-      !REAL      TMADJ(10),TXADJ(10),WNDADJ(10)
-      !REAL      TSWINI,TSIN,TNOX,BWAH,SDWTAH
-      !REAL      CANWAA,CANNAA,DAYL,TRUNOF,TDRAIN,AMTNIT,SDWTPL
       REAL      PGFAC3,EFINOC,EFNFIX,STHETA(3),XLONG,
      +          SDSOIL(3),AIRAMT,XLAT,SNDN,SNUP,SDRATE,TOPWT,
      +          AINO3,AINH4,WTNSD,PBIOMS,WTNFX,WTNCAN,WTNUP,SDWTAM
       REAL      FDINT,HBPC(3),TDAY,RHUM,XELEV,WTHADJ(2,8)
-      !REAL      HDAY,CUMDPT,FX,WW,DP,TAV,TAMP,Z(20),B,ALBEDO,ATOT,TMA(5)
-      !REAL      CHAMT(10),TOTPST(10),H2OLOS(10),SEPLOS(10)
       REAL      SEEDNI,WTNLF,WTNST,WTNSH,WTNRT,WTNLO
       LOGICAL   FEXIST
 
-!      INTEGER   TS
       INTEGER*2 IP
 
       INTEGER   NAPNIT,I,NAP,NAPRES
@@ -144,21 +107,8 @@ C     Initialize
 C-----------------------------------------------------------------------
       CASE (RUNINIT, SEASINIT)
 !=======================================================================
-C     MODELV and CROP should be modified when model versions change
-C     or when a crop specific model is created.
-C
-C     CROP   = ALO for the Aloha model Version 3.50 (98.0)
-C     CROP   = PI for ALOHA Pineapple  Version 3.50 (98.0)
-C
-C-----------------------------------------------------------------------
 C     Call PLANT initialization routine to set variables to 0
 C-----------------------------------------------------------------------
-
-!      CALL INPLNT (TOTIR,NAPNIT,TRUNOF,TDRAIN,CANNAA,CANWAA,AMTNIT,NAP,
-!     &             TLCH,TNOX,CUMDTT,SUMDTT,DTT,SEEDNI,
-!     &             WTNLF,WTNST,WTNSH,WTNRT,WTNLO,BWAH,SDWTAH,
-!     &             TOPWT,SDWTAM,WTNUP,NAPRES)
-
       LN     = 0.0
       FLRWT  = 0.0
       FRTWT  = 0.0
