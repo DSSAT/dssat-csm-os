@@ -8,436 +8,176 @@
       USE ModuleDefs
 
 !     Data construct for control variables
-      TYPE AlohaGen_type
-        INTEGER        DOY,IPLT,ISIM,PMTYPE,NDOF,NFORCING
-        REAL           PLTPOP,SDEPTH,LAT,PHINT,ROWSPC
-        CHARACTER*2    CROP
+      TYPE AlohaCul_type
+        CHARACTER*12 CULfile
+        CHARACTER*80 CULpath
+        REAL P1, P2, P3, P4, P5, P6
+        REAL G2, G3, PHINT
+      END TYPE AlohaCul_type
 
-        REAL           P2,P3,P4,P5,G2,G3,CUMDTT,TBASE,SUMDTT,S1,C1,DTT,SIND,CUMPH,DF,HI
-        REAL           CC,TBASE1,CMF,FDMC,RLWR
-        REAL           CO2X(10),CO2Y(10)
-        INTEGER        ISTAGE,IDUR1,P1,P6
-      END TYPE AlohaGen_type
+      TYPE AlohaSpe_type
+        CHARACTER*12 SPEfile
+        CHARACTER*80 SPEpath
+        REAL CONV, TBAS, FDMC
+        REAL LIFAC
+        REAL RWEP, PORM, RWMX, RLWR
+        REAL CMFC
+        REAL, DIMENSION(10) :: CO2X, CO2Y
+      End Type AlohaSpe_type
 
-      TYPE AlohaGro_type
-        REAL    LFWT,LAI,LWMIN,GRNWT,XN
-        REAL    TMIN,TMAX,RAIN,SRAD,TMFAC1(8),TEMPM,WINDHT,WINDSP,  &
-              CLOUDS,TDEW,TAVG,CO2,REFHT,PAR,SNOW
-        REAL    GPSM,GPP,GRORT,PTF,BIOMAS,PLA,SENLA,RTWT,TLNO,CARBO,  &
-              SWMAX,SLAN,STMWT,PLAY,SWMIN,PLAG,GROSTM,SDWT,         &
-              GROLF,SLW,PLAMX,SUMP,WIDSL,SENLF
-        INTEGER LEAFNO,IDURP
-      END TYPE AlohaGro_type
+      TYPE AlohaSow_type
+        REAL PLTPOP, SDEPTH, LAT, ROWSPC
+      End Type AlohaSow_type
 
-      Type (AlohaGen_type) AlohaGen
-      Type (AlohaGro_type) AlohaGro
+      Type (AlohaCul_type) Cultivar
+      Type (AlohaSpe_type) Species
+      Type (AlohaSow_type) Planting
+
 
       CONTAINS
 
-
-
-
 !=======================================================================
-!  Aloha_OpGrow, Subroutine, C.H.Porter
-!  Generates daily output for Aloha-Pineapple model
+!  Aloha_IPCROP, Subroutine
+!  Read crop parameters from PIALO980.SPE
 !-----------------------------------------------------------------------
-!  REVISION       HISTORY
-!  03/28/2017 CHP Written
+!  Revision history
+!
+!  06/15/1994 PWW Original written
+!  03/29/2017 CGO Revised for v4.6
 !=======================================================================
+      SUBROUTINE Aloha_IPCROP ()
 
-
-      SUBROUTINE Aloha_OpGrow (CONTROL, ISWITCH, &
-        SWFAC, TURFAC, NSTRES, SATFAC, MDATE)
-
-      IMPLICIT  NONE
+      IMPLICIT    NONE
       SAVE
 
-      INTEGER DYNAMIC, ERRNUM, NOUTDG, NOUTPN, RUN, ISTAGE, TIMDIF
-      CHARACTER*1 IDETG, IDETL, IDETN, FMOPT, ISWNIT
-      LOGICAL FEXIST
-      REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV , PS2_AV, KST_AV
-      REAL SWFAC, TURFAC, NSTRES, SATFAC, PSTRES1, PSTRES2, KSTRES
-      REAL LFWT, PLTPOP, SDWT, GRNWT, XLAI, LAI, GPSM, CRWNWT, GPP, TRNU, LEAFNO, LN
-      REAL GM2KG, SHELPC, SHELLW, SDSIZE, HI, BIOMAS, VWAD, STMWT
-      REAL RTWT, RTDEP, RLV(NL)
-      REAL FRTWT, BASLFWT, SKWT
-      REAL STOVN, GRAINN, STOVWT, ROOTN, WTNVEG, WTNGRN, PCNVEG, PCNGRN
+! For now, hard wire all parameters until they are collected from the code.
+! Then write read routines (or use Willingthon Pavan's)
 
-      INTEGER I
-      INTEGER DAP,YRPLT,YRDOY
-      INTEGER RSTAGE,DAS
-      INTEGER COUNT, FROP, MDATE, YEAR, DOY
+! ----------------------------------------------------------------------
+! Cultivar parameters
+! ----------------------------------------------------------------------
+    Cultivar % P1 = 60.0     !ADP from first leaf to end of 0 stem growth
+    Cultivar % P2 = 500.     !Growing degree days from forcing to sepals closed on youngest flower
+    Cultivar % P3 = 500.     !GDD from SCY to early flowering
+    Cultivar % P4 = 2200.    !Cumulative growing degree days from EF to maturity
+    Cultivar % P5 = 400.     !GDD from fruit harvest to physiological maturity
+    Cultivar % P6 = 60.      !NDAP from root initiation to first leaf emerged
+    Cultivar % G2 = 200.     !Potential eye number
+    Cultivar % G3 = 14.      !Potential eye growth rate
+    Cultivar % PHINT = 95.   !Phylochron interval
 
-      REAL    WTNUP
-      REAL    SLA,PODWT,PODNO
-      REAL    WTLF,SEEDNO,WTNLF,WTNST,WTNSD,WTNSH,WTNRT, WTNCAN
-      REAL    PCNL,PCNST,PCNRT,PCNSH,VSTAGE,CANHT,CANWH
+! ----------------------------------------------------------------------
+! Species parameters
+! ----------------------------------------------------------------------
 
+!Growth
+    Species % CONV = 1.8     ! CONV    Rams dry matter/mj PAR
+    Species % TBAS = 16.     ! TBAS    Base temperature during leaf emergence
+    Species % FDMC = 0.12    ! FDMC    Fruit dry matter content (0 to 1.0)
+
+!Photosynthesis
+    Species % LIFAC = 0.52   ! LIFAC   Light interception coefficient
+
+!Roots
+    Species % RWEP = 1.50    ! RWEP    
+    Species % PORM = 0.02    ! PORM    Minimum pore space
+    Species % RWMX = 0.03    ! RWMX    Max root water uptake
+    Species % RLWR = 0.98    ! RLWR    Root length weight ratio
+
+!Management factor - WHAT IS THIS???
+    Species % CMFC = 1.0     ! CMFC    Management condition factor
+
+!CO2 effect
+    Species % CO2X(1) =   0. ; Species % CO2Y(1) = 0.00
+    Species % CO2X(2) = 220. ; Species % CO2Y(2) = 0.81
+    Species % CO2X(3) = 330. ; Species % CO2Y(3) = 1.00
+    Species % CO2X(4) = 440. ; Species % CO2Y(4) = 1.03
+    Species % CO2X(5) = 550. ; Species % CO2Y(5) = 1.06
+    Species % CO2X(6) = 660. ; Species % CO2Y(6) = 1.10
+    Species % CO2X(7) = 770. ; Species % CO2Y(7) = 1.13
+    Species % CO2X(8) = 880. ; Species % CO2Y(8) = 1.16
+    Species % CO2X(9) = 990. ; Species % CO2Y(9) = 1.18
+    Species %  CO2X(10)=9999.; Species % CO2Y(10)= 1.25
+
+      RETURN
+      END SUBROUTINE Aloha_IPCROP
+
+!=======================================================================
+!  Aloha_IpPlant, Subroutine
+!  Read crop parameters from PIALO980.SPE
+!-----------------------------------------------------------------------
+!  Revision history
+!
+!  06/15/1994 PWW Original written
+!  03/29/2017 CHP Revised for v4.6
+!=======================================================================
+      SUBROUTINE Aloha_IpPlant (CONTROL)
+
+      IMPLICIT NONE
+      SAVE
+
+      CHARACTER*6, PARAMETER :: ERRKEY = 'IPPLNT'
+      CHARACTER*6 SECTION
+      CHARACTER*12 FILEIO
+      INTEGER LUNIO, ERR, LNUM
       TYPE (ControlType) CONTROL
-      TYPE (SwitchType)  ISWITCH
 
-      DYNAMIC = CONTROL % DYNAMIC
-      RUN     = CONTROL % RUN
-      FROP    = CONTROL % FROP
+      FILEIO = CONTROL % FILEIO
+      
 
-      IDETG = ISWITCH % IDETG
-      IDETN = ISWITCH % IDETN
-      IDETL = ISWITCH % IDETL
-      FMOPT = ISWITCH % FMOPT
-      ISWNIT= ISWITCH % ISWNIT
+!     -----------------------------------------------------------------
+!     Read input file name (ie. DSSAT45.INP) and path
+      CALL GETLUN('FILEIO', LUNIO)
+      OPEN (LUNIO, FILE = CONTROL % FILEIO, STATUS = 'OLD', IOSTAT=ERR)  
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
+      REWIND (LUNIO)
+      READ(LUNIO,50,IOSTAT=ERR) Species % SPEfile, Species % SPEpath; LNUM = 7  !Species file, path
+   50 FORMAT(//////,15X,A12,1X,A80)
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
+!      READ(LUNIO,51,IOSTAT=ERR) FILEE, PATHER; LNUM = LNUM + 1  !Ecotype file name 
+!      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
-!***********************************************************************
-!***********************************************************************
-!     Run initialization - run once per simulation
-!***********************************************************************
-      IF (DYNAMIC .EQ. RUNINIT) THEN
-!-----------------------------------------------------------------------
-        CALL GETLUN('PlantGro.OUT', NOUTDG)
-        CALL GETLUN('PlantN.OUT'  , NOUTPN)
+      READ(LUNIO,51,IOSTAT=ERR) Cultivar % CULfile, Cultivar % CULpath; LNUM = LNUM + 2 
+      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)        !Cultivar file, path
+   51 FORMAT(/,15X,A12,1X,A80)
 
-!***********************************************************************
-!***********************************************************************
-!     Seasonal initialization - run once per season
-!***********************************************************************
-      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
-!-----------------------------------------------------------------------
-        IF (IDETG .EQ. 'Y') THEN
-!         Initialize daily growth output file
-          INQUIRE (FILE = 'PlantGro.OUT', EXIST = FEXIST)
-          IF (FEXIST) THEN
-            OPEN (UNIT = NOUTDG, FILE = 'PlantGro.OUT', STATUS = 'OLD', IOSTAT = ERRNUM, POSITION = 'APPEND')
-          ELSE
-            OPEN (UNIT = NOUTDG, FILE = 'PlantGro.OUT', STATUS = 'NEW', IOSTAT = ERRNUM)
-            WRITE(NOUTDG,'("*Daily plant growth output file")')
-          ENDIF
-          
-          !Write headers
-          CALL HEADER(SEASINIT, NOUTDG, RUN)
-
-          WRITE (NOUTDG,2192) '!YR    Days   Leaf  Grow                      Dry  ' // &
-                'Weight                           Pod      Phot. Grow       Leaf  ' // &
-                'Shell  Spec    Canopy          Root  ³                Root Length' // &
-                'Density                     ³'
-          WRITE (NOUTDG,2192) '! and  after  Num  Stage  LAI   Leaf  Stem Fruit' // &
-            ' Root Basal Crown  Suck   HI   Wgt.   No.    Water     Nit.   Nit ' // &
-            '  -ing  Leaf  Hght Brdth       Depth  ³                cm3/cm3  of' // &
-            ' soil                        ³'
-          WRITE (NOUTDG,2192) '!  DOY plant                    ³<---------------' // &
-             ' kg/Ha -------------->³       Kg/Ha        ³<Stress (0-1)>³    %  ' // &
-             '   %   Area    m     m           m   ³<---------------------------' // &
-             '--------------------------->³'
-          WRITE (NOUTDG,2192) '@DATE   CDAY  L#SD  GSTD  LAID  LWAD  SWAD  FWAD ' // &
-             ' RWAD  BWAD  CRAD  SUGD  HIAD  EWAD  E#AD  WSPD  WSGD  NSTD  LN%D ' // &
-             ' SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  RL4D  RL5D ' // &
-             ' RL6D  RL7D  RL8D  RL9D  RL10'
-  2192    FORMAT (A210)
-        ENDIF
-
-!-----------------------------------------------------------------------
-!       Initialize daily plant nitrogen output file
-        IF (IDETN .EQ. 'Y') THEN
-          INQUIRE (FILE = 'PlantN.OUT', EXIST = FEXIST)
-          IF (FEXIST) THEN
-            OPEN (UNIT = NOUTPN, FILE = 'PlantN.OUT', STATUS = 'OLD',IOSTAT = ERRNUM, POSITION = 'APPEND')
-          ELSE
-            OPEN (UNIT = NOUTPN, FILE = 'PlantN.OUT', STATUS = 'NEW',IOSTAT = ERRNUM)
-            WRITE(NOUTPN,'("*Daily plant N output file")')
-          ENDIF
-          
-          !Write headers
-          CALL HEADER(SEASINIT, NOUTPN, RUN)
-
-          WRITE (NOUTPN,2240) '!            <--------Plant N (kg/ha) ---------> <---------- Plant N (%) ---------->'
-          WRITE (NOUTPN,2240) '!            Uptak  Crop Grain   Veg  Leaf  Stem Grain   Veg  Leaf  Stem Shell  Root'
-          WRITE (NOUTPN,2240) '@DATE    DAP  NUPC  CNAD  GNAD  VNAD  LNAD  SNAD  GN%D  VN%D  LN%D  SN%D  SHND  RN%D'
-  2240    FORMAT (A252)
-        ENDIF
-!-----------------------------------------------------------------------
-        !CUMSENSURF  = 0.0
-        !CUMSENSOIL  = 0.0
-        !CUMSENSURFN = 0.0
-        !CUMSENSOILN = 0.0 
-        SWF_AV = 0.0
-        TUR_AV = 0.0
-        NST_AV = 0.0
-        EXW_AV = 0.0
-        PS1_AV = 0.0
-        PS2_AV = 0.0
-        KST_AV = 0.0
-        COUNT = 0
-
-        WTNUP   = 0.0
-        PSTRES1 = 1.0
-        PSTRES2 = 1.0
-        KSTRES  = 1.0
-
-!***********************************************************************
-!***********************************************************************
-!     DAILY OUTPUT
-!***********************************************************************
-      ELSE IF (DYNAMIC .EQ. OUTPUT) THEN
-!-----------------------------------------------------------------------
-        IF (YRDOY .LT. YRPLT .OR. YRPLT .LT. 0) RETURN
-
-!       Compute average stress factors since last printout
-        SWF_AV = SWF_AV + (1.0 - SWFAC)
-        TUR_AV = TUR_AV + (1.0 - TURFAC)
-        NST_AV = NST_AV + (1.0 - NSTRES)
-        EXW_AV = EXW_AV + SATFAC
-        PS1_AV = PS1_AV + (1.0 - PSTRES1)
-        PS2_AV = PS2_AV + (1.0 - PSTRES2)
-        KST_AV = KST_AV + (1.0 - KSTRES)
-        COUNT = COUNT + 1
-
-!!       Accumulate senesced matter for surface and soil.
-!        SENSURFT = SENESCE % ResWt(0)
-!        CUMSENSURF  = CUMSENSURF  + SENESCE % ResWt(0)
-!        CUMSENSURFN = CUMSENSURFN + SENESCE % ResE(0,1) 
-!      
-!        SENSOILT = 0.0
-!        DO L = 1, NLAYR
-!          SENSOILT    = SENSOILT    + SENESCE % ResWt(L)
-!          CUMSENSOIL  = CUMSENSOIL  + SENESCE % ResWt(L)
-!          CUMSENSOILN = CUMSENSOILN + SENESCE % ResE(L,1)
-!        ENDDO
-
-!-----------------------------------------------------------------------
-!       Do we print today?
-!-----------------------------------------------------------------------
-        IF ((MOD(DAS,FROP) .EQ. 0)    &    !Daily output every FROP days,
-          .OR. (YRDOY .EQ. YRPLT)     &    !on planting date, and
-          .OR. (YRDOY .EQ. MDATE)) THEN    !at harvest maturity 
-
-          DAP = MAX(0,TIMDIF(YRPLT,YRDOY))
-          IF (DAP > DAS) DAP = 0
-          CALL YR_DOY(YRDOY, YEAR, DOY) 
-
-!         Compute average stress factors since last printout
-          IF (COUNT > 0) THEN
-            SWF_AV = SWF_AV / COUNT
-            TUR_AV = TUR_AV / COUNT
-            NST_AV = NST_AV / COUNT
-            EXW_AV = EXW_AV / COUNT
-            PS1_AV = PS1_AV / COUNT
-            PS2_AV = PS2_AV / COUNT
-            KST_AV = KST_AV / COUNT
-            COUNT = 0
-          ENDIF
-
-!-----------------------------------------------------------------------
-!         PlantGro.OUT
-!-----------------------------------------------------------------------
-          IF (IDETG == 'Y') THEN
-            WTLF   = LFWT   * PLTPOP
-            SDWT   = GRNWT  * PLTPOP
-            XLAI   = LAI
-            IF (WTLF .GT. 0.0) THEN
-               SLA  = LAI * 10000 / WTLF
-             ELSE
-               SLA = 0.0
-            ENDIF
-            SEEDNO = GPSM
-            PODWT  = CRWNWT
-            IF (GPP .GT. 0.0) THEN
-               PODNO = SEEDNO/GPP
-             ELSE
-               PODNO = 0.0
-            ENDIF
-            
-            WTNUP = WTNUP + TRNU * PLTPOP
-            
-            LEAFNO = LN
-            VSTAGE = REAL (LEAFNO)
-            IF (LEAFNO .GT. 0.0) THEN
-               RSTAGE = REAL(ISTAGE)
-             ELSE
-               RSTAGE = 0.0
-            ENDIF
-            SDWT = GRNWT
-            
-!           GM2KG converts gm/plant to kg/ha
-            GM2KG  = PLTPOP * 10.0
-            SHELPC = 0.0
-            IF (PODWT .GT. 0.1) THEN
-               SHELPC = SDWT*100.0/PODWT
-            ENDIF
-            SHELLW = PODWT - SDWT
-            SDSIZE = 0.0
-            IF (SEEDNO .GT. 0.0) THEN
-               SDSIZE = SDWT*PLTPOP/SEEDNO*1000.0
-            ENDIF
-            HI     = 0.0
-            IF (BIOMAS .GT. 0.0 .AND. SDWT .GE. 0.0) THEN
-               HI = SDWT*PLTPOP/BIOMAS
-            ENDIF
-            
-            VWAD = NINT(WTLF*10. + STMWT*10.)
-
-            IF (FMOPT /= 'C') THEN   ! VSH
-              WRITE (NOUTDG,400) YRDOY,DAP,VSTAGE,RSTAGE,XLAI,      &
-                NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(FRTWT*GM2KG),           &
-                NINT(RTWT*GM2KG),NINT(BASLFWT*10.0),NINT(CRWNWT*GM2KG),        &
-                NINT(SKWT*GM2KG),HI,                                           &
-                NINT(PODWT*GM2KG),NINT(PODNO),(1.0-SWFAC),(1.0-TURFAC),        &
-                (1.0-NSTRES),PCNL,SHELPC,SLA,CANHT,CANWH,SATFAC,               &
-                (RTDEP/100),(RLV(I),I=1,10)
-!DATE   CDAY  L#SD  GSTD  LAID  LWAD  SWAD  FWAD  RWAD  BWAD  CRAD  SUGD  HIAD  EWAD  E#AD  WSPD  WSGD  NSTD  LN%D  SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  RL4D  RL5D  RL6D  RL7D  RL8D  RL9D  RL10
- 400          FORMAT (2(1X,I5),1X,F5.1,1X,I5,1X,F5.2,7(1X,I5),           &
-                1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,          &
-                2(1X,F5.2),1X,F5.3,11(1X,F5.2))
-
-!-------------------------------------------------------------------------
-!           VSH CSV output corresponding to PlantGro.OUT
-            ELSE   ! VSH
-              !CALL CsvOut(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,CONTROL%ROTNUM,  &
-              !  CONTROL%REPNO, YEAR, DOY, DAS, DAP, VSTAGE, RSTAGE, XLAI,               &
-              !  WTLF, STMWT, SDWT, RTWT, VWAD, TOPWT, SEEDNO, SDSIZE, HI, PODWT,        &
-              !  PODNO, SWF_AV, TUR_AV, NST_AV, PS1_AV, PS2_AV, KST_AV, EXW_AV,          &
-              !  PCNLP, SHELPC, HIP, PODWTD, SLAP, CANHT, CANWH,                         &
-              !  DWNOD, RTDEP, N_LYR, RLV, CUMSENSURF, CUMSENSOIL,                       &
-              !  vCsvline, vpCsvline, vlngth)
-              !
-              !CALL Linklst(vCsvline)
-            ENDIF
-          ENDIF     !Print PlantGro report
-
-!-----------------------------------------------------------------------
-!         PlantN.OUT
-!-----------------------------------------------------------------------
-          IF (IDETN .EQ. 'Y' .AND. ISWNIT .EQ. 'Y') THEN
-            WTNCAN = (STOVN + GRAINN) * PLTPOP
-            IF ((LFWT+STMWT) .GT. 0.0) THEN
-               WTNLF = STOVN * (LFWT  / STOVWT) * PLTPOP
-               WTNST = STOVN * (STMWT / (LFWT + STMWT)) * PLTPOP
-             ELSE
-               WTNLF = 0.0
-               WTNST = 0.0
-            ENDIF
-            WTNSD = GRAINN * PLTPOP
-            WTNRT = ROOTN * PLTPOP        ! Is this right?
-            WTNSH = 0.0
-
-            IF (LFWT .GT. 0.0) THEN
-               PCNL = WTNLF /( LFWT * PLTPOP) * 100.0
-             ELSE
-               PCNL = 0.0
-            ENDIF
-            IF (STMWT .GT. 0.0) THEN
-               PCNST = WTNST/(STMWT * PLTPOP) * 100.0
-             ELSE
-               PCNST = 0.0
-            ENDIF
-            IF (RTWT .GT. 0.0) THEN
-               PCNRT = ROOTN/RTWT * 100.0
-             ELSE
-               PCNRT = 0.0
-            ENDIF
-
-            WTNVEG  = (WTNLF + WTNST)
-            WTNGRN  = (WTNSH + WTNSD)
-            IF ((WTLF+STMWT) .GT. 0.0) THEN
-               PCNVEG = (WTNLF+WTNST)/(WTLF+(STMWT*PLTPOP))*100.0
-             ELSE
-               PCNVEG = 0.0
-            ENDIF
-            IF (SDWT .GT. 0.0) THEN
-               PCNGRN = WTNSD/SDWT*100
-             ELSE
-               PCNGRN = 0.0
-            ENDIF
-
-!-----------------------------------------------------------------------
-
-            IF (FMOPT /= 'C') THEN       ! VSH
-              WRITE (NOUTPN,300) YRDOY,DAP,(WTNUP*10.0),                   &
-                     (WTNCAN*10.0),(WTNSD*10.0),(WTNVEG*10.0),(WTNLF*10.0),(WTNST*10.0),      &
-                     PCNGRN,PCNVEG,PCNL,PCNST,PCNSH,PCNRT
-            !DATE    DAP  NUPC  CNAD  GNAD  VNAD  LNAD  SNAD  GN%D  VN%D  LN%D  SN%D  SHND  RN%D
-  300         FORMAT (2(1X,I5),1X,F5.1,1X,I5,1X,F5.2,7(1X,I5),1X,F5.3,     &
-                1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,            &
-                2(1X,F5.2),1X,F5.3,11(1X,F5.2))
- 
-
-!---------  --------------------------------------------------------------
-!           CSV output corresponding to PlantN.OUT
-            !     VSH
-            ELSE
-              !CALL CsvOutPlNCrGro(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM,     &
-              !  CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP,         &
-              !  WTNCAN, WTNSD, WTNVEG, PCNSDP, PCNVEG, WTNFX, WTNUP,        &
-              !  WTNLF, WTNST, PCNLP, PCNSTP, PCNSHP, PCNRTP, NFIXN,         &
-              !  CUMSENSURFN, CUMSENSOILN,                                   &
-              !  vCsvlinePlNCrGro, vpCsvlinePlNCrGro, vlngthPlNCrGro)
-              !
-              !CALL LinklstPlNCrGro(vCsvlinePlNCrGro)
-              !
-            ENDIF
-          ENDIF !Print plant N report
-        ENDIF   !Print today
-!-----------------------------------------------------------------------
-
-!       Set average stress factors since last printout back to zero
-        SWF_AV = 0.0
-        TUR_AV = 0.0
-        NST_AV = 0.0
-        EXW_AV = 0.0
-        PS1_AV = 0.0
-        PS2_AV = 0.0
-        KST_AV = 0.0
-
-
-!-----------------------------------------------------------------------
-
-      CALL OPVIEW ()
-
-      RETURN
-
-
-!***********************************************************************
-!***********************************************************************
-!     Seasonal Output 
-!***********************************************************************
-      ELSE IF (DYNAMIC .EQ. SEASEND) THEN
-!-----------------------------------------------------------------------
-        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-          !Close daily output files.
-          CLOSE (NOUTDG)
-          CLOSE (NOUTPN)
-        END IF   ! VSH
-
-!***********************************************************************
-!***********************************************************************
-!     END OF DYNAMIC IF CONSTRUCT
-!***********************************************************************
+!     -----------------------------------------------------------------
+!     Read Planting Details Section
+      SECTION = '*PLANT'
+      CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+      IF (FOUND .EQ. 0) THEN
+        CALL ERROR(SECTION, 42, FILEIO, LNUM)
+      ELSE
+          READ (LUNIO,70) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,PLDS,ROWSPC,AZIR,  &
+                  SDEPTH,SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP,NFORCING,           &
+                  PLANTSIZE,NDOF,PMTYPE
+   70     FORMAT (3X,I5,3X,I3,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,       &
+          5(1X,F5.0),I6,F6.1,2(I6))
       ENDIF
-!***********************************************************************
-!-----------------------------------------------------------------------
-!     FORMAT Strings
-!----------------------------------------------------------------------
- !200  FORMAT (2(1X,I5),3(1X,F5.1),2(1X,F5.2),1X,I5,4(1X,F5.1),1X,I5)
- !300  FORMAT (2(1X,I5),3(1X,F5.1),2(1X,F5.2),1X,I5,4(1X,F5.1),1X,I5,
- !    &        2(1X,F5.1),4(1X,F5.2),23(1X,F5.1))
- !
- !
- !
- !100  FORMAT (/,'*RUN ',I3,8X,': ',A25,/,
- !    &       1X,'MODEL',10X,':'1X,A8,' - ',A10,/,
- !    &       1X,'EXPERIMENT',5X,':',1X,A8,1X,A2,4X,A47,/,
- !    &       1X,'TREATMENT',1X,I2, 3X,':',1X,A25,/)
- !2190 FORMAT (A80)
- !2196 FORMAT (4(A5,I1))
- !2197 FORMAT (10(A5,I1))
- !2090 FORMAT (A240)
- !2340 FORMAT (A252)
 
+!     -----------------------------------------------------------------
+!!     Read crop cultivar coefficients
+!      SECTION = '*CULTI'
+!      CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+!      IF (FOUND .EQ. 0) THEN
+!          CALL ERROR(SECTION, 42, FILEIO, LNUM)
+!      ELSE
+!        READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,     &
+!                  P1,P2,P5,G2,G3,PHINT  
+!1800    FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)    
+!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+!      ENDIF
 
+      CLOSE(LUNIO)
 
-
-!***********************************************************************
       RETURN
-      END SUBROUTINE Aloha_OpGrow
-!======================================================================
+      END SUBROUTINE Aloha_IpPlant
+
+!=======================================================================
+
+!=======================================================================
+
       END MODULE Aloha_mod
 !======================================================================
 
