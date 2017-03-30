@@ -119,7 +119,7 @@
       CHARACTER*6, PARAMETER :: ERRKEY = 'IPPLNT'
       CHARACTER*6 SECTION
       CHARACTER*12 FILEIO
-      INTEGER LUNIO, ERR, LNUM
+      INTEGER LUNIO, ERR, LNUM, LINC, FOUND
       TYPE (ControlType) CONTROL
 
       FILEIO = CONTROL % FILEIO
@@ -149,13 +149,26 @@
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
-          READ (LUNIO,70) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,PLDS,ROWSPC,AZIR,  &
-                  SDEPTH,SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP,NFORCING,           &
-                  PLANTSIZE,NDOF,PMTYPE
-   70     FORMAT (3X,I5,3X,I3,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,       &
-          5(1X,F5.0),I6,F6.1,2(I6))
+        READ (LUNIO,70) PLTPOP, SDEPTH, SDWTPL, NFORCING, PLANTSIZE, NDOF, PMTYPE
+   70   FORMAT (24X,F6.0,24X,2F6.0,24X,I6,F6.0,2I6)! From maize model:
       ENDIF
 
+! New variables: NFORCING,PLANTSIZE,NDOF,PMTYPE
+
+     yrplt = 90191
+     plants = 6.2
+     pltpop = 6.2
+     plme = 'S'
+     plds = 'R'
+     rowspc = 53.
+     azir = 0.
+     sdepth = 5.0
+     sdwtpl = 2976.
+     sprlap = 0.0
+     nforcing = 2
+     plantsize = -99.
+     ndof = 243
+     pmtype = 0
 !     -----------------------------------------------------------------
 !!     Read crop cultivar coefficients
 !      SECTION = '*CULTI'
