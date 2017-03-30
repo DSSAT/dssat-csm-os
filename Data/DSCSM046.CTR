@@ -47,6 +47,12 @@ $SIMULATION_CONTROLS
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
+ 7 CSV outputs
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 7 OU              .     .     .     .     .     .     .     .     .     .     D     .     .     C
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
 11 Potential yield 
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
 11 OP              N     N     N     N     N     N     N     .     .
@@ -242,6 +248,12 @@ $SIMULATION_CONTROLS
 95 CSCER wheat, barley
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
 95 GE              .     .     .     .     . CSCRP046                  CSCER
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+96 N-Wheat
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+96 GE              .     .     .     .     . N-Wheat                   WHAPS
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
