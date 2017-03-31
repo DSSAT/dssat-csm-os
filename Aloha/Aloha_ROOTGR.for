@@ -54,6 +54,32 @@ C=======================================================================
       INTEGER   L,L1
 
       SAVE
+
+!     from phenology:
+      SELECT CASE (ISTAGE)
+        CASE (8)
+          RTDEP  = SDEPTH               ! Rooting depth = seeding depth (cm)
+        CASE (9)
+          RTWT   =  0.0
+
+      END SELECT
+
+      IF (ISWWAT .EQ. 'N') RETURN
+      CUMDEP = 0.0
+      DO L = 1, NLAYR
+         CUMDEP = CUMDEP + DLAYR(L)
+         RLV(L) = 0.20*PLTPOP/DLAYR (L)
+         IF (CUMDEP .GT. RTDEP) EXIT
+      END DO
+
+      RLV(L) = RLV(L)*(1.0-(CUMDEP-RTDEP)/DLAYR(L))
+      L1 = L + 1
+      IF (L1 .LT. NLAYR) THEN
+         DO L = L1, NLAYR
+            RLV(L) = 0.0
+         END DO
+      ENDIF
+
 C
 C     The small differences between root length/weight ratios used in earlier
 C     models were insignificant considering the uncertainty of the value

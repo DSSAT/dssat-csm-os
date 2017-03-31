@@ -33,11 +33,6 @@ C=======================================================================
       REAL AGEFAC, CNSD1, CNSD2, NDEF3, NFAC, NSTRES
       REAL RCNP, TANC, TCNP, TMNC, XSTAGE
 
-      SELECT CASE(DYNAMIC)
-      CASE (RUNINIT, SEASINIT)
-
-      
-
       TCNP = EXP (1.52-0.160*XSTAGE)/100.0
       TMNC = 0.0045
       IF (XSTAGE .LT. 4.0) THEN

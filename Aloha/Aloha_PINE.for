@@ -29,23 +29,30 @@ C
 !  03/22/2017 CHP Adpated for CSM v4.6
 C=======================================================================
 
-      Subroutine Aloha_Pineapple(DYNAMIC)
-      USE AlohaMod
+      Subroutine Aloha_Pineapple(CONTROL, ISWITCH, SOILPROP, WEATHER)
+      USE Aloha_mod
 
       IMPLICIT NONE
       SAVE
 
-      REAL      PGFAC3,EFINOC,EFNFIX,STHETA(3),XLONG,
-     +          SDSOIL(3),AIRAMT,XLAT,SNDN,SNUP,SDRATE,TOPWT,
-     +          AINO3,AINH4,WTNSD,PBIOMS,WTNFX,WTNCAN,WTNUP,SDWTAM
-      REAL      FDINT,HBPC(3),TDAY,RHUM,XELEV,WTHADJ(2,8)
+      REAL      TOPWT,WTNUP,SDWTAM
+      REAL      FDINT
       REAL      SEEDNI,WTNLF,WTNST,WTNSH,WTNRT,WTNLO
-      LOGICAL   FEXIST
 
-      INTEGER*2 IP
+      CHARACTER*1 ISWWAT, ISWNIT
+      INTEGER ICSDUR, EDATE, ISTAGE, YRDOY, YRPLT, I
+      INTEGER, DIMENSION(20) :: STGDOY
+      REAL    LN, FLRWT, FRTWT, CRWNWT, SKWT, GROSK, YIELD, SENLA, SLAN 
+      REAL    CARBO, GRNWT, RTWT, LFWT, STMWT, GPSM, GPP, PTF
+      REAL    BIOMAS, LEAFNO, LAI, XN, NSTRES, AGEFAC, NDEF3, NDEF4
+      REAL    ANFAC, NFAC, ATANC, TANC, RANC, VANC, VMNC, TMNC, RCNP
+      REAL    TCNP, STOVN, ROOTN, GRAINN, GNP, XGNP, APTNUP, GNUP
+      REAL    TOTNUP, WTINITIAL, SDWTPL, PLTPOP, GRORT
+      REAL, DIMENSION(6)  :: SI1, SI2, SI3, SI4
+      REAL, DIMENSION(8)  :: TMFAC1
+      REAL, DIMENSION(NL) :: RLV
 
-      INTEGER   NAPNIT,I,NAP,NAPRES
-      REAL      TOTIR,CANNAA,CANWAA,TRUNOF,TDRAIN,AMTNIT,TLCH,TNOX
+      REAL      CANNAA,CANWAA
       REAL      CUMDTT,SUMDTT,DTT
       REAL      SDWTAH,BWAH
 
@@ -85,13 +92,6 @@ C=======================================================================
       !SHF    = SOILPROP % WR
       !SLPF   = SOILPROP % SLPF   
       !
-      !ISWWAT = ISWITCH % ISWWAT
-      !ISWNIT = ISWITCH % ISWNIT
-      !ISWDIS = ISWITCH % ISWDIS
-      !IPLTI  = ISWITCH % IPLTI
-      !IDETO  = ISWITCH % IDETO
-      !IDETS  = ISWITCH % IDETS
-      !
       !AMTRH  = WEATHER % AMTRH
       !CO2    = WEATHER % CO2
       !DAYL   = WEATHER % DAYL
@@ -109,6 +109,11 @@ C-----------------------------------------------------------------------
 !=======================================================================
 C     Call PLANT initialization routine to set variables to 0
 C-----------------------------------------------------------------------
+      ISWWAT = ISWITCH % ISWWAT
+      ISWNIT = ISWITCH % ISWNIT
+
+      XLAT   = WEATHER % XLAT
+
       LN     = 0.0
       FLRWT  = 0.0
       FRTWT  = 0.0
@@ -137,11 +142,7 @@ C-----------------------------------------------------------------------
       GPP    = 0.0
       PTF    = 0.0
 
-      DO I = 1, 8
-         TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
-      END DO
-
-      DO I = 1, 20
+      DO I = 1, NL
          RLV(I) = 0.0
       END DO
 
@@ -164,8 +165,6 @@ C-----------------------------------------------------------------------
       TMNC   = 0.0
       RCNP   = 0.0
       TCNP   = 0.0
-      TLCH   = 0.0
-      TNOX   = 0.0
       SEEDNI = 0.0
       STOVN  = 0.0
       ROOTN  = 0.0
@@ -190,15 +189,17 @@ C-----------------------------------------------------------------------
          SI4(I) = 0.0
       END DO
 
+
+
 C-----------------------------------------------------------------------
 C     Call IPIBS .. Read in IBSNAT31.INP file
 C-----------------------------------------------------------------------
 
-      CALL Aloha_IPPlant () !formerly call to IPIBS
+      CALL Aloha_IPPlant (CONTROL) !formerly call to IPIBS
       
       WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
 
-      CALL Aloha_IPCROP (FILEC,PATHCR)
+      CALL Aloha_IPCROP ()
 
 C-----------------------------------------------------------------------
 C     Call PHENOLGY initialization routine
@@ -223,6 +224,21 @@ C-----------------------------------------------------------------------
 
          EDATE = STGDOY(9)
 
+
+!     Calculate daily SW stress factors.
+      SWDF1 = 1.0
+      SWDF2 = 1.0
+      IF (EP .GT. 0.0) THEN
+        EP1 = EP*0.1
+        IF (TRWU/EP1 .LT. RWUEP1) SWDF2 = (1./RWUEP1)*TRWU/EP1
+        IF (EP1 .GE. TRWU) THEN
+          SWDF1 = TRWU / EP1
+          EP = TRWU * 10.0
+        ENDIF
+      ENDIF
+      SWFAC = SWDF1
+      TURFAC = SWDF2
+
 C-----------------------------------------------------------------------
 C        Calculate light interception for transpiration.
 C        Note: this is discontinues function at LAI = 3.
@@ -245,7 +261,7 @@ C-----------------------------------------------------------------------
             !  WRESR growth and depth routine
             !
             IF (GRORT .GT. 0.0) THEN
-               CALL ROOTGR (ISWNIT,GRORT)
+   !            CALL ROOTGR (ISWNIT,GRORT)
             ENDIF
          ENDIF
 
@@ -254,9 +270,7 @@ C        Call GROSUB
 C----------------------------------------------------------------------
       
          IF (ISTAGE .LT. 6) THEN
-            IF (CROP .EQ. 'PI') THEN
-               CALL GROSUB  (NOUTDO,ISWNIT,IDETO)
-            ENDIF
+  !             CALL GROSUB  (NOUTDO,ISWNIT,IDETO)
          ENDIF
 
          IF (YRDOY .EQ. STGDOY(3)) THEN
@@ -269,7 +283,7 @@ C        Call PHENOL
 C-----------------------------------------------------------------------
 
          IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
-            CALL PHENOL (DYNAMIC, STGDOY,YRDOY,XLAT)
+  !         CALL PHENOL (DYNAMIC, STGDOY,YRDOY,XLAT)
          ENDIF
 
 !=======================================================================
@@ -278,10 +292,10 @@ C-----------------------------------------------------------------------
       CASE (OUTPUT)
 !=======================================================================
 
-         CALL OPDAY (MODEL,TRTNO,DAP,YRSIM,YRPLT,NREP,TITLET,EXPER,
-     &               ENAME,MULTI,CROPD,STGDOY,YRDOY,TOTIR,NYRS,DAS,
-     &               DAYL,TRUNOF,TDRAIN,AMTNIT,NAP,HAREND,NPSTAP,
-     &               STNAME,WTNLF,WTNST,WTNSD,WTNSH,WTNRT)
+!         CALL OPDAY (MODEL,TRTNO,DAP,YRSIM,YRPLT,NREP,TITLET,EXPER,
+!     &               ENAME,MULTI,CROPD,STGDOY,YRDOY,TOTIR,NYRS,DAS,
+!     &               DAYL,TRUNOF,TDRAIN,AMTNIT,NAP,HAREND,NPSTAP,
+!     &               STNAME,WTNLF,WTNST,WTNSD,WTNSH,WTNRT)
 
 
 
@@ -291,15 +305,15 @@ C-----------------------------------------------------------------------
       CASE (SEASEND)
 !=======================================================================
 
-      CALL OPHARV (TRTNO,YRDOY,YRSIM,YRPLT,CROP,CROPD,
-     &   WTNSD,NAP,TOTIR,CRAIN,CET,TRUNOF,PESW,TDRAIN,TSON,TSOC,TLCH,
-     &   NAPNIT,ISDATE,MDATE,YIELD,SKERWT,GPSM,GPP,MAXLAI,
-     &   PBIOMS,STOVER,XGNP,TOTNUP,APTNUP,GNUP,BIOMAS,
-     &   NYRS,FLDNAM,EXPER,WTNFX,WTNCAN,TSIN,WTNUP,NREP,AMTNIT,
-     &   SDWTAM,TITLET,STGDOY,ENAME,SDWT,
-     &   ROTNO,ROTOPT,CRPNO,SDRATE,TOPWT,AMTRES,HBPC,FBIOM,EYEWT,
-     &   PMDATE,FHDATE,WTINITIAL,BWAH,SDWTAH,
-     &   TSEDM,TRON,TOTPST,H2OLOS,SEPLOS,CHMCOD,ISENS)
+!      CALL OPHARV (TRTNO,YRDOY,YRSIM,YRPLT,CROP,CROPD,
+!     &   WTNSD,NAP,TOTIR,CRAIN,CET,TRUNOF,PESW,TDRAIN,TSON,TSOC,TLCH,
+!     &   NAPNIT,ISDATE,MDATE,YIELD,SKERWT,GPSM,GPP,MAXLAI,
+!     &   PBIOMS,STOVER,XGNP,TOTNUP,APTNUP,GNUP,BIOMAS,
+!     &   NYRS,FLDNAM,EXPER,WTNFX,WTNCAN,TSIN,WTNUP,NREP,AMTNIT,
+!     &   SDWTAM,TITLET,STGDOY,ENAME,SDWT,
+!     &   ROTNO,ROTOPT,CRPNO,SDRATE,TOPWT,AMTRES,HBPC,FBIOM,EYEWT,
+!     &   PMDATE,FHDATE,WTINITIAL,BWAH,SDWTAH,
+!     &   TSEDM,TRON,TOTPST,H2OLOS,SEPLOS,CHMCOD,ISENS)
 
 
 !=======================================================================

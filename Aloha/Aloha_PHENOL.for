@@ -12,19 +12,12 @@ C  4. Modified TT calculations to reduce line #'s P.W.W.      2-7-93
 C  5. Modified for MILLET model                   W.T.B.      MAY 94
 C=======================================================================
 
-      SUBROUTINE Aloha_PHENOL (DYNAMIC, STGDOY,YRDOY,XLAT)
+      SUBROUTINE Aloha_PHENOL (CONTROL, SW, STGDOY, WEATHER, SOILPROP)
 
+      USE Aloha_mod
       IMPLICIT    NONE
       SAVE
 
-      !INCLUDE    'GEN1.BLK'
-      !INCLUDE    'GEN2.BLK'
-      !INCLUDE    'GEN3.BLK'
-      !INCLUDE    'GEN4.BLK'
-      !INCLUDE    'NTRC1.BLK'
-      !INCLUDE    'PREDOB.BLK'
-      !INCLUDE    'SWITCH.BLK'
-      !
       INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0
       REAL        XANC,TTMP,SWSD,YIELDB,XLAT,PHOTOSYNEYE,PEYEWT
 
@@ -32,22 +25,19 @@ C=======================================================================
       REAL         XSTAGE,TANC,PLTPOP,STOVWT,SEEDN,SEEDNI
       REAL         ROOTN,STOVN,GRAINN
       CHARACTER    ISWNIT*1,CROP*2
-      CHARACTER*10 PISTGNAM(20),FASTGNAM(20),STNAME(20)
 
-      DATA PISTGNAM/'Zero Stem ','Forcing   ','SCY       ',
-     1              'Early Flwr','Fruit Harv','Maturity  ',
-     2              'Planting  ','Root Init.','Leaf Emerg',
-     3              '          ','          ','          ',
-     4              '          ','Start Sim ','End Sim   ',
-     5              '          ','          ','          ',
-     6              '          ','Harvest   '/
-      DATA FASTGNAM/'          ','          ','          ',
-     1              '          ','          ','          ',
-     2              '          ','          ','          ',
-     3              '          ','          ','          ',
-     4              '          ','Start Sim ','End Sim   ',
-     5              '          ','          ','          ',
-     6              '          ','          '/
+      INTEGER     ISTAGE
+      REAL        TBASE, LAI, PLA, BIOMAS, WTINITIAL, LFWT, BASLFWT
+      REAL        STMWT, APTNUP, DTT, TEMPM, SDEPTH, TBASE
+      REAL        TBASV, TOPTV, TTOPV, TBASR, TOPTR, TTOPR
+      REAL        TMFAC1(8)
+      REAL, DIMENSION(NL) :: SW, LL, DUL, SAT
+
+      TYPE (CONTROLTYPE) CONTROL
+      TYPE (SOILTYPE) SOILPROP
+      TYPE (WEATHERTYPE) WEATHER
+
+      DYNAMIC = CONTROL % DYNAMIC
 
 C     7 - Preplanting
 C     8 - Planting to root initiation
@@ -64,64 +54,73 @@ C     6 - Physiological maturity
 !=================================================================
       CASE (RUNINIT, SEASINIT)
 !-----------------------------------------------------------------
+
+      XLAT = WEATHER % XLAT
+
       ISTAGE = 7
       XSTAGE = 0.1
-
-      DO I = 1, 20
-         STNAME(I) = '          '
-         STGDOY(I) = 999999
-         !
-         ! Define names for growth stages
-         !
-         IF (CROP .EQ. 'PI') THEN
-            STNAME(I) = PISTGNAM (I)
-            SEEDN     = 0.000540
-          ELSEIF (CROP .EQ. 'FA') THEN
-            STNAME(I) = FASTGNAM (I)
-         ENDIF
-      END DO
 
       STGDOY(14) = YRSIM
       MDATE      = -99
       HAREND     = -99
 
-      TBASE      = 12.0
-      LAI        = PLTPOP*PLA*0.0001
-      BIOMAS     = WTINITIAL*PLTPOP
-      PLA        = WTINITIAL*0.6*63.0
-      LFWT       = WTINITIAL*0.53
-      BASLFWT    = LFWT*0.66
-      STMWT      = WTINITIAL*0.115
-      STOVWT     = WTINITIAL
+!     TBASE      = 12.0
+      TBASV = SPECIES % TBASV
+      TOPTV = SPECIES % TOPTV
+      TTOPV = SPECIES % TTOPV
+      TBASR = SPECIES % TBASR
+      TOPTR = SPECIES % TOPTR
+      TTOPR = SPECIES % TTOPR
 
-      IF (ISWNIT .NE. 'Y') THEN
-         TANC = 0.0
-      ENDIF
+      !LAI        = PLTPOP*PLA*0.0001
+      !BIOMAS     = WTINITIAL*PLTPOP
+      !PLA        = WTINITIAL*0.6*63.0
+      !LFWT       = WTINITIAL*0.53
+      !BASLFWT    = LFWT*0.66
+      !STMWT      = WTINITIAL*0.115
+      !STOVWT     = WTINITIAL
+
+      !IF (ISWNIT .NE. 'Y') THEN
+      !   TANC = 0.0
+      !ENDIF
       !
-      ! Calculate initial SEED N
-      !
-      SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
+      !! Calculate initial SEED N
+      !!
+      !SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
+
+      DO I = 1, 8
+         TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
+      END DO
+
+
+
 
 !=================================================================
       CASE (RATE)
 !-----------------------------------------------------------------
 
-      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
-      APTNUP = STOVN*10.0*PLTPOP
-      DTT    = TEMPM - TBASE
-      SDEPTH = 5.0
+!moved to grosub      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
+!moved to grosub      APTNUP = STOVN*10.0*PLTPOP
+!move to below        DTT    = TEMPM - TBASE
+!from FileX           SDEPTH = 5.0
+      SDEPTH = Planting % SDEPTH
+
+      IF (XLAT .LT. 21.0 .and. XLAT .GT. -21.0) THEN
+         TEMPM  = 0.6*TMIN+0.4*TMAX
+         TEMPFM = 0.6*TMIN+0.4*TEMPFMX
+       ELSE
+         TEMPM = (TMAX+TMIN)/2
+         TEMPFM = (TEMPFMX+TMIN)/2
+      ENDIF
 
       SELECT CASE (ISTAGE)
+!-----------------------------------------------------------------
+!       Vegetative Phase
         CASE (1,2,3,7,8,9)
+          DTT = TEMPM - TBASV
           IF (TMIN .GT. TBASE .AND. TMAX .LT. 35.0) THEN
-             IF (XLAT .LT. 21.0 .and. XLAT .GT. -21.0) THEN
-                TEMPM = 0.6*TMIN+0.4*TMAX
-              ELSE
-                TEMPM = (TMAX+TMIN)/2
-             ENDIF
-             DTT = TEMPM - TBASE
            ELSEIF (TMIN .LE. TBASE .OR. TMAX .GE. 35.0) THEN
-             IF (TMAX .LT. TBASE) THEN
+             IF (TMAX .LT. TBASV) THEN
                 DTT = 0.0
              ENDIF
              IF (DTT .NE. 0.0) THEN
@@ -129,43 +128,44 @@ C     6 - Physiological maturity
                 DO I = 1, 8
                    TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
                    IF (TTMP .GT. TBASE .AND. TTMP .LE. 35.0) THEN
-                      DTT = DTT + (TTMP-TBASE)/8.0
+                     DTT = DTT + (TTMP-TBASV)/8.0
                    ENDIF
                    IF (TTMP .GT. 35.0 .AND. TTMP .LT. 45.0) THEN
-                      DTT = DTT + (35.0-TBASE)*(1.0-(TTMP-35.0)/10.0)/8.
+                     DTT = DTT + (35.0-TBASE)*(1.0-(TTMP-35.0)/10.0)/8.
                    ENDIF
                 END DO
              ENDIF
           ENDIF
+!-----------------------------------------------------------------
+!       Reproductive Phase
         CASE (4,5,6)
+          !
+          ! Correcting fruit temperature and higher temperature effect
+          !
+          IF (TMAX .GT. 18.0 .AND. TMAX .LT. 33.0) THEN
+             TEMPFMX = 4.32*EXP(0.078*TMAX)
+           ELSEIF (TMAX .GE. TOPTR .AND. TMAX .LT. 50.0) THEN
+             TEMPFMX = TMAX*(1.715-(TMAX-33.0)/35.0)
+           ELSEIF (TMAX .GE. 50.0) THEN
+             TEMPFMX = 62.0
+           ELSE
+             TEMPFMX = TMAX
+          ENDIF
+          DTT = TEMPFM-TBASV
+
           IF (TMAX .LT. TBASE) THEN
              DTT = 0.0
           ENDIF
           IF (DTT .GT. 0.0) THEN
-             !
-             ! Correcting fruit temperature and higher temperature effect
-             !
-             IF (TMAX .GT. 18.0 .AND. TMAX .LT. 33.0) THEN
-                TEMPFMX = 4.32*EXP(0.078*TMAX)
-              ELSEIF (TMAX .GE. 33.0 .AND. TMAX .LT. 50.0) THEN
-                TEMPFMX = TMAX*(1.715-(TMAX-33.0)/35.0)
-              ELSEIF (TMAX .GE. 50.0) THEN
-                TEMPFMX = 62.0
-              ELSE
-                TEMPFMX = TMAX
-             ENDIF
+
              IF (TMIN .GT. TBASE .AND. TEMPFMX .LT. 42.0) THEN
-                IF (XLAT .LT. 21.0 .AND. XLAT .GT. -21.0) THEN
-                   TEMPFM = 0.6*TMIN+0.4*TEMPFMX
-                 ELSE
-                   TEMPFM = (TEMPFMX+TMIN)/2
-                ENDIF
-                DTT = TEMPFM-TBASE
                 GO TO 20
              ENDIF
+
              IF (TEMPFMX .LT. TBASE) THEN
                 DTT = 0.0
              ENDIF
+
              IF (DTT .GT. 0.0) THEN
                 DTT = 0.0
                 DO I = 1, 8
@@ -185,6 +185,7 @@ C     6 - Physiological maturity
 
    20 SUMDTT  = SUMDTT  + DTT
 
+!-----------------------------------------------------------------
 C     7 - Preplanting
 C     8 - Planting to root initiation
 C     9 - Root initiation to first new leaf emergence
@@ -196,26 +197,33 @@ C     5 - Fruit growth
 C     6 - Physiological maturity
 
       SELECT CASE (ISTAGE)
+!-----------------------------------------------------------------
         CASE (7)
           !
           ! Stage 7 >> Preplanting
           !
           STGDOY(ISTAGE) = YRDOY
           NDAS           = 0
-          CALL PHASEI (ISWWAT,ISWNIT)
-          IF (ISWWAT .EQ. 'N') RETURN
-          CUMDEP         = 0.0
+ !        CALL PHASEI (ISWWAT,ISWNIT)
+          ISTAGE = 8
+          SUMDTT = 0.0                  ! Cumulative growing degree days set to 0.0
 
+          IF (ISWWAT .EQ. 'N') RETURN
+          CUMDEP = 0.0
           DO L = 1, NLAYR
              CUMDEP = CUMDEP + DLAYR(L)
              IF (SDEPTH .LT. CUMDEP) EXIT
           END DO
           L0 = L
           RETURN
+
+!-----------------------------------------------------------------
         CASE (8)
           !
           ! Stage 8 >> Planting to root initiation
           !
+
+!         Check for soil too dry for rooting
           IF (ISWWAT .NE. 'N') THEN
              IF (SW(L0) .LE. LL(L0)) THEN
                  SWSD = (SW(L0)-LL(L0))*0.65 + (SW(L0+1)-LL(L0+1))*0.35
@@ -224,8 +232,9 @@ C     6 - Physiological maturity
              ENDIF
           ENDIF
 
-          IF (NDAS .GT. 140) THEN
-             ISTAGE = 6
+!         After 140 days, give up
+          IF (NDAS .GT. 140) THEN  !<-- genotype parameter?
+             ISTAGE = 6       !"maturity"
              PLTPOP = 0.0
              GPP    = 1.0
              FRTWT  = 0.0
@@ -237,8 +246,13 @@ C     6 - Physiological maturity
           ENDIF
 
           STGDOY(ISTAGE) = YRDOY
-          CALL PHASEI (ISWWAT,ISWNIT)
+  !        CALL PHASEI (ISWWAT,ISWNIT)
+          ISTAGE =  9
+          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0
+          TBASE  = 12.0                 ! Tbase of 12.0 is used
           RETURN
+
+!-----------------------------------------------------------------
         CASE (9)
           !
           ! Stage 9 >> Root initiation to first new leaf emergence
@@ -249,8 +263,15 @@ C     6 - Physiological maturity
              RETURN                     ! P6: NDAS from root initiation to first leaf emerged
           ENDIF
           STGDOY(ISTAGE) = YRDOY
-          CALL PHASEI (ISWWAT,ISWNIT)
+
+  !        CALL PHASEI (ISWWAT,ISWNIT)
+          ISTAGE  = 1
+          TBASE   = TBASE1              ! Tbase1 used for calibration
+          SUMDTT  = 0.0                 ! Cumulative growing degree days set to 0.0
+          CUMDTT  = 0.0                 ! CUMDTT is also cumulative growing degree days but it is set to 0.0 only at root initiation crown weight when planting
           RETURN
+
+!-----------------------------------------------------------------
         CASE (1)
           !
           ! Stage 1 >> First new leaf emergence to net zero root growth
@@ -261,8 +282,11 @@ C     6 - Physiological maturity
              RETURN                     ! P1: NDAS from leaf emerged to end stem growth
           ENDIF
           STGDOY(ISTAGE) = YRDOY
-          CALL PHASEI (ISWWAT,ISWNIT)
+  !        CALL PHASEI (ISWWAT,ISWNIT)
+          ISTAGE = 2
           RETURN
+
+!-----------------------------------------------------------------
         CASE (2)
           !
           ! Stage 2 >> Net zero stem growth to forcing
@@ -287,7 +311,14 @@ C     6 - Physiological maturity
 
           ISDATE = YRDOY                ! Record forcing date.
           FBIOM  = BIOMAS               ! Record biomass at forcing
+
+!         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
+          ISTAGE = 3
+          TBASE  = 10.00                ! Base temperature of 6.25 is used during forcing to sepals closed on youngest flowers
+          SUMDTT = 0.0                  ! Cumulative GDD set to 0.0
+
+!-----------------------------------------------------------------
         CASE (3)
           !
           ! Stage 3 >> Forcing to sepals closed on youngest flowers
@@ -295,6 +326,7 @@ C     6 - Physiological maturity
           IF (SUMDTT .LT. P2) THEN
              RETURN                       ! P2: GDD needed to complete this stage
           ENDIF
+
           MAXLAI      = LAI               ! MaxLAI = LAI at the end of the stage
 C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^2)
           PHOTOSYNEYE = SUMP*1000./IDURP  ! Average photosysnthesis rate of fruit eye
@@ -304,7 +336,14 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           GPP    = AMIN1 (GPP,G2)                ! G2 is genetic coefficient for potential eye number
           GPP    = AMAX1 (GPP,0.0)
           FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
+
+!         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
+          ISTAGE = 4
+          TBASE  = 10.0                 ! TBASE of 10.0 is used in this stage
+          SUMDTT =  0.0                 ! Cumulative growing degree days set to 0.0
+
+!-----------------------------------------------------------------
         CASE (4)
           !
           ! Stage 4 >> SCY to first open flower
@@ -314,6 +353,8 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
              RETURN                       ! P3: GDD needed to complete this stage
           ENDIF
           STGDOY(ISTAGE) = YRDOY
+
+!-----------------------------------------------------------------
         CASE (5)
           !
           ! Stage 5 >> Fruit growth
@@ -342,6 +383,8 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
              YIELDB = YIELD/0.8914         ! Fresh fruit yield (lb/acre)
              STGDOY (ISTAGE) = YRDOY
           ENDIF
+
+!-----------------------------------------------------------------
         CASE (6)
           !
           ! Stage 6 >> Physiological maturity
@@ -366,6 +409,7 @@ C               XPTN = XGNP*6.25
           MDATE  = YRDOY                  ! Set MDATE to stop model
           STGDOY(ISTAGE) = YRDOY
       END SELECT
+!-----------------------------------------------------------------
 
       IF (ISWWAT .NE. 'N') THEN
          SI1(ISTAGE) = CSD1  / ICSDUR
@@ -375,11 +419,10 @@ C               XPTN = XGNP*6.25
       ENDIF
 
       IF (ISTAGE .NE. 6) THEN
-         CALL PHASEI (ISWWAT,ISWNIT)
+  !       CALL PHASEI (ISWWAT,ISWNIT)
          RETURN
       ENDIF
 
-C     CALL PHASEI (ISWWAT,ISWNIT)
 !=================================================================
       END SELECT
 !=================================================================

@@ -545,6 +545,13 @@ c     Total LAI must exceed or be equal to healthy LAI:
           XHLAI = XLAI
         ENDIF
 
+!     -------------------------------------------------
+!     Pineapple - Aloha model 
+      CASE('PIALO')
+        CALL Aloha_Pineapple(CONTROL, ISWITCH, SOILPROP, WEATHER)
+
+
+!     -------------------------------------------------
       END SELECT
 
 !***********************************************************************
