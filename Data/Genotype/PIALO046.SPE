@@ -3,11 +3,22 @@ $SPECIES:PIALO046 PINEAPPLE
 *SPECIES:PIALO046
      
 !Growth
-@  CONV   TBAS   FDMC
-    1.8     16   0.12
+@  CONV   FDMC
+    1.8   0.12
 ! CONV    Rams dry matter/mj PAR
-! TBAS    Base temperature during leaf emergence
 ! FDMC    Fruit dry matter content (0 to 1.0)
+
+@ TBASV  TOPTV  TTOPV
+     16    35.    45.
+! TBASV   Base temperature during leaf emergence
+! TOPTV   Upper limit of optimum temperature - veg phase
+! TTOPV   Maximum temperature for development - veg phase
+
+@ TBASR  TOPTR  TTOPR
+     16    35.
+! TBASR   Base temperature during reproductive phase
+! TOPTR   Upper limit of optimum temperature - rep phase
+! TTOPR   Maximum temperature for development - rep phase
 
 !Photosynthesis
 @ LIFAC

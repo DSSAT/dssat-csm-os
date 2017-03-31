@@ -9,7 +9,9 @@
 
 !     Data construct for control variables
       TYPE AlohaCul_type
+        CHARACTER*6 VARNO,ECONO
         CHARACTER*12 CULfile
+        CHARACTER*16 VRNAME
         CHARACTER*80 CULpath
         REAL P1, P2, P3, P4, P5, P6
         REAL G2, G3, PHINT
@@ -18,7 +20,9 @@
       TYPE AlohaSpe_type
         CHARACTER*12 SPEfile
         CHARACTER*80 SPEpath
-        REAL CONV, TBAS, FDMC
+        REAL CONV, FDMC
+        REAL TBASV, TOPTV, TTOPV
+        REAL TBASR, TOPTR, TTOPR
         REAL LIFAC
         REAL RWEP, PORM, RWMX, RLWR
         REAL CMFC
@@ -26,12 +30,38 @@
       End Type AlohaSpe_type
 
       TYPE AlohaSow_type
-        REAL PLTPOP, SDEPTH, LAT, ROWSPC
+        REAL PLTPOP, SDEPTH, SDWTPL, PLANTSIZE
+        INTEGER NFORCING, NDOF, PMTYPE
       End Type AlohaSow_type
 
       Type (AlohaCul_type) Cultivar
       Type (AlohaSpe_type) Species
       Type (AlohaSow_type) Planting
+
+      CHARACTER*10 STNAME(20)
+
+      DATA STNAME/    &
+        'Zero Stem ', &   ! 1
+        'Forcing   ', &   ! 2
+        'SCY       ', &   ! 3
+        'Early Flwr', &   ! 4
+        'Fruit Harv', &   ! 5
+        'Maturity  ', &   ! 6
+        'Planting  ', &   ! 7
+        'Root Init.', &   ! 8
+        'Leaf Emerg', &   ! 9
+        '          ', &   !10
+        '          ', &   !11
+        '          ', &   !12
+        '          ', &   !13
+        'Start Sim ', &   !14
+        'End Sim   ', &   !15
+        '          ', &   !16
+        '          ', &   !17
+        '          ', &   !18
+        '          ', &   !19
+        'Harvest   '/     !20
+
 
 
       CONTAINS
@@ -54,26 +84,21 @@
 ! Then write read routines (or use Willingthon Pavan's)
 
 ! ----------------------------------------------------------------------
-! Cultivar parameters
-! ----------------------------------------------------------------------
-    Cultivar % P1 = 60.0     !ADP from first leaf to end of 0 stem growth
-    Cultivar % P2 = 500.     !Growing degree days from forcing to sepals closed on youngest flower
-    Cultivar % P3 = 500.     !GDD from SCY to early flowering
-    Cultivar % P4 = 2200.    !Cumulative growing degree days from EF to maturity
-    Cultivar % P5 = 400.     !GDD from fruit harvest to physiological maturity
-    Cultivar % P6 = 60.      !NDAP from root initiation to first leaf emerged
-    Cultivar % G2 = 200.     !Potential eye number
-    Cultivar % G3 = 14.      !Potential eye growth rate
-    Cultivar % PHINT = 95.   !Phylochron interval
-
-! ----------------------------------------------------------------------
 ! Species parameters
 ! ----------------------------------------------------------------------
 
 !Growth
-    Species % CONV = 1.8     ! CONV    Rams dry matter/mj PAR
-    Species % TBAS = 16.     ! TBAS    Base temperature during leaf emergence
-    Species % FDMC = 0.12    ! FDMC    Fruit dry matter content (0 to 1.0)
+    Species % CONV  = 1.8    ! CONV    Rams dry matter/mj PAR
+    Species % FDMC  = 0.12   ! FDMC    Fruit dry matter content (0 to 1.0)
+
+    Species % TBASV = 16.    ! TBASV   Base temperature during leaf emergence
+    Species % TOPTV = 35.    ! TOPTV   Upper limit of optimum temperature - veg phase
+    Species % TTOPV = 45.    ! TTOPV   Maximum temperature for development - veg phase
+
+    Species % TBASR = 18.    ! TBASV   Base temperature during reproductive phase
+    Species % TOPTR = 33.    ! TOPTV   Upper limit of optimum temperature - rep phase
+    Species % TTOPR = 45.    ! TTOPV   Maximum temperature for development - rep phase
+
 
 !Photosynthesis
     Species % LIFAC = 0.52   ! LIFAC   Light interception coefficient
@@ -149,46 +174,33 @@
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
-!        READ (LUNIO,70) PLTPOP, SDEPTH, SDWTPL, NFORCING, PLANTSIZE, NDOF, PMTYPE
-!   70   FORMAT (24X,F6.0,24X,2F6.0,24X,I6,F6.0,2I6)! From maize model:
+        READ (LUNIO,70) PLANTING % PLTPOP, PLANTING % SDEPTH, PLANTING % SDWTPL, PLANTING % NFORCING, & 
+                        PLANTING % PLANTSIZE, PLANTING % NDOF, PLANTING % PMTYPE
+   70   FORMAT (24X,F6.0,24X,2F6.0,24X,I6,F6.0,2I6)
       ENDIF
 
-   ! from optempy2k:
-   !      WRITE (LUNIO,70,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
-   !  &          PLDS,ROWSPC,AZIR,SDEPTH,SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP,
-   !  &          NFORC,PLTFOR,NDOF,PMTYPE
-   !70 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
-   !  &        2(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
+!PLANTING DETAILS   
+!        1         2         3         4         5         6         7         8         9        10        11        12
+!23456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+!  1989166     -99   2.6   2.6     S     R   53.    0.   5.0  595.  -99. -99.0 -99.0   0.0     2 551.2   459     0
+!    yrplt   iemrg      pltpop  plme  plds       azir sdepth      sdage  atemp  plph    nforcing        ndof  
+!                 plants                  rowspc           sdwtpl                   sprlap   plantsize       pmtype 
 
-! New variables: NFORCING,PLANTSIZE,NDOF,PMTYPE
-
-     !yrplt = 90191
-     !plants = 6.2
-     !pltpop = 6.2
-     !plme = 'S'
-     !plds = 'R'
-     !rowspc = 53.
-     !azir = 0.
-     !sdepth = 5.0
-     !sdwtpl = 2976.
-     !sprlap = 0.0
-     !nforcing = 2
-     !plantsize = -99.
-     !ndof = 243
-     !pmtype = 0
 !     -----------------------------------------------------------------
-!!     Read crop cultivar coefficients
-!      SECTION = '*CULTI'
-!      CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
-!      IF (FOUND .EQ. 0) THEN
-!          CALL ERROR(SECTION, 42, FILEIO, LNUM)
-!      ELSE
-!        READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,     &
-!                  P1,P2,P5,G2,G3,PHINT  
-!1800    FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)    
-!        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
-!      ENDIF
-
+ !     Read crop cultivar coefficients
+       SECTION = '*CULTI'
+       CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+       IF (FOUND .EQ. 0) THEN
+           CALL ERROR(SECTION, 42, FILEIO, LNUM)
+       ELSE
+         READ (LUNIO,1800,IOSTAT=ERR) & 
+            Cultivar % VARNO, Cultivar % VRNAME, Cultivar % ECONO,     &
+            Cultivar % P1, Cultivar % P2, Cultivar % P3, Cultivar % P4, Cultivar % P5, & 
+            Cultivar % P6, Cultivar % G2, Cultivar % G3, Cultivar % PHINT  
+ 1800    FORMAT (A6,1X,A16,1X,A6,1X,15F6.0)    
+!B0066 SC-F153          IB0001   60.0  629.  381. 2640.  400.  60.0  200.  14.0  40.0
+         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
+       ENDIF
       CLOSE(LUNIO)
 
       RETURN
