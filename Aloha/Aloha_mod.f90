@@ -149,26 +149,33 @@
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
-        READ (LUNIO,70) PLTPOP, SDEPTH, SDWTPL, NFORCING, PLANTSIZE, NDOF, PMTYPE
-   70   FORMAT (24X,F6.0,24X,2F6.0,24X,I6,F6.0,2I6)! From maize model:
+!        READ (LUNIO,70) PLTPOP, SDEPTH, SDWTPL, NFORCING, PLANTSIZE, NDOF, PMTYPE
+!   70   FORMAT (24X,F6.0,24X,2F6.0,24X,I6,F6.0,2I6)! From maize model:
       ENDIF
+
+   ! from optempy2k:
+   !      WRITE (LUNIO,70,IOSTAT=ERRNUM) YRPLT,IEMRG,PLANTS,PLTPOP,PLME,
+   !  &          PLDS,ROWSPC,AZIR,SDEPTH,SDWTPL,SDAGE,ATEMP,PLPH,SPRLAP,
+   !  &          NFORC,PLTFOR,NDOF,PMTYPE
+   !70 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
+   !  &        2(1X,F5.0),3(1X,F5.1),I6,F6.1,2I6)
 
 ! New variables: NFORCING,PLANTSIZE,NDOF,PMTYPE
 
-     yrplt = 90191
-     plants = 6.2
-     pltpop = 6.2
-     plme = 'S'
-     plds = 'R'
-     rowspc = 53.
-     azir = 0.
-     sdepth = 5.0
-     sdwtpl = 2976.
-     sprlap = 0.0
-     nforcing = 2
-     plantsize = -99.
-     ndof = 243
-     pmtype = 0
+     !yrplt = 90191
+     !plants = 6.2
+     !pltpop = 6.2
+     !plme = 'S'
+     !plds = 'R'
+     !rowspc = 53.
+     !azir = 0.
+     !sdepth = 5.0
+     !sdwtpl = 2976.
+     !sprlap = 0.0
+     !nforcing = 2
+     !plantsize = -99.
+     !ndof = 243
+     !pmtype = 0
 !     -----------------------------------------------------------------
 !!     Read crop cultivar coefficients
 !      SECTION = '*CULTI'
