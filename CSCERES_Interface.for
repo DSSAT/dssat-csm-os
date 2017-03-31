@@ -15,6 +15,7 @@ C=======================================================================
 
       USE ModuleDefs
       USE ModuleData
+      USE CsvOutput   ! VSH
       IMPLICIT NONE
       SAVE
 
@@ -66,6 +67,7 @@ C=======================================================================
       IDETL   = ISWITCH % IDETL
       IDETO   = ISWITCH % IDETO
       IDETS   = ISWITCH % IDETS
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 
       BD     = SOILPROP % BD     
       DLAYR  = SOILPROP % DLAYR  
