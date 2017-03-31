@@ -15,7 +15,7 @@ Module Node_module !Module of environment
         REAL    :: LAGL3                        ! Leaf area growth,shoot,lf+assim cm2/l     ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
         REAL    :: LAGL3T                       ! Leaf area by cohort lf+assim   cm2/cohort ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
         REAL    :: LAGLT                        ! Leaf area growth by cohort     cm2/cohort ! (From SeasInit) !LPM 25OCT15 added to keep the leaf area by cohort
-        REAL    :: LAIByCohort                  ! Leaf area index by cohort      #     !                  !DA  28OCT2016 Added to save eaf area index from cohort data
+        REAL    :: LAIByCohort                  ! Leaf area index by cohort      #          !                 !DA  28OCT2016 Added to save eaf area index from cohort data
         REAL    :: LAP                          ! Leaf area at leaf position     cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions     
         REAL    :: LAPOTX                       ! Leaf area potentials,maxima    cm2/l      ! (From SeasInit)  
         REAL    :: LAPOTX2                      ! Leaf area potentials,max/day   cm2/l      ! (From SeasInit) !LPM 24APR2016 To estimate a modified daily leaf area potential modified by temperature 
