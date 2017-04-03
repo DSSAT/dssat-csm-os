@@ -163,6 +163,17 @@ C=======================================================================
           VANC   = TANC                 ! Variable used in nitrogen balance
           VMNC   = TMNC                 ! .....
 
+        CASE (5)
+          FRTWT  = FLRWT*0.5            ! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
+          CRWNWT = FLRWT*0.2            ! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
+          SWMAX  = 0.0
+          SWMIN  = 0.0
+
+        CASE (7)
+          PLA    = WTINITIAL*0.6*63.0
+          LAI    = PLA*PLTPOP*0.0001
+          BIOMAS = WTINITIAL*PLTPOP
+
 
       END SELECT
 !-----------------------------------------------------------------

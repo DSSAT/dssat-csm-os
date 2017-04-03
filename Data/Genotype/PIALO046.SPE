@@ -15,7 +15,7 @@ $SPECIES:PIALO046 PINEAPPLE
 ! TTOPV   Maximum temperature for development - veg phase
 
 @ TBASR  TOPTR  TTOPR
-     16    35.
+     18    33.
 ! TBASR   Base temperature during reproductive phase
 ! TOPTR   Upper limit of optimum temperature - rep phase
 ! TTOPR   Maximum temperature for development - rep phase

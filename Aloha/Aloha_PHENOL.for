@@ -352,7 +352,12 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           IF (SUMDTT .LT. P3) THEN
              RETURN                       ! P3: GDD needed to complete this stage
           ENDIF
+
+!         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
+          ISTAGE = 5
+          TBASE  = 4.0                  ! Tbase of 4.0 is used in the stage
+          SUMDTT = 0.0                  ! Cumulative growing degree days set to 0.0
 
 !-----------------------------------------------------------------
         CASE (5)
@@ -384,6 +389,10 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
              STGDOY (ISTAGE) = YRDOY
           ENDIF
 
+!         Ready for next stage
+          ISTAGE = 6
+          TBASE  = 12.0
+
 !-----------------------------------------------------------------
         CASE (6)
           !
@@ -407,7 +416,11 @@ C               XPTN = XGNP*6.25
 
           PMDATE = YRDOY                  ! physiological maturity date
           MDATE  = YRDOY                  ! Set MDATE to stop model
+
+!         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
+          ISTAGE = 7
+
       END SELECT
 !-----------------------------------------------------------------
 
