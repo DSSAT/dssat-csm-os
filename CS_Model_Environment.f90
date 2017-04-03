@@ -86,7 +86,7 @@
      end subroutine setHour
     
     ! obtain the temperature accrding to the hour of the day
-    ! T(t) = Asin[w(t − a)] + C.
+    ! T(t) = Asin[w(t - a)] + C.
     ! Amplitude  is called the amplitude (the height of each peak above the baseline)	
     ! C is the vertical offset (height of the baseline) 
     ! P is the period or wavelength (the length of each cycle) 
