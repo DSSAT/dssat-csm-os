@@ -1,4 +1,4 @@
-﻿Module Environment_module !Module of environment
+﻿Module CS_Model_Environment !Module of environment
     type Environment_type
         
         real :: TMin_ = 0 !
@@ -132,5 +132,5 @@
     end function fetchWaterHoldingCapacity
 
         
-END Module Environment_module    
+END Module CS_Model_Environment    
     

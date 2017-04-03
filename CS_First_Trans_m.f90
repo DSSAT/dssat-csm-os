@@ -1,5 +1,6 @@
 ﻿Module CS_First_Trans_m
-    USE Node_module        ! DA 17MAR2017
+    USE CS_Model_Environment ! DA 17MAR2017
+    USE CS_Model_Node        ! DA 17MAR2017
     
     
     !CHARACTER(LEN=1),PARAMETER::SLASH = '\'                                     ! (From SeasInit) (In ModuleDefs) 
@@ -21,6 +22,7 @@
     INTEGER,PARAMETER::HANUMX= 40 ! Maximum # harvest instructions
 
 
+    TYPE (Environment_type)                     :: VPD_environment
     TYPE (Node_type),DIMENSION(0:PSX,0:LCNUMX)  :: plant
     
     REAL    :: AH2OPROFILE             ! Available H2o,profile          mm         ! (From Growth)    
