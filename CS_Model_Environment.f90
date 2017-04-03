@@ -86,31 +86,34 @@
      end subroutine setHour
     
     ! obtain the temperature accrding to the hour of the day
-    ! T(t) = Asin[w(t - a)] + C.
-    ! Amplitude  is called the amplitude (the height of each peak above the baseline)	
-    ! C is the vertical offset (height of the baseline) 
-    ! P is the period or wavelength (the length of each cycle) 
-    ! w is the angular frequency, given by w = 2PI/P 
-    ! a is the phase shift (the horizontal offset of the basepoint; where the curve crosses the baseline as it ascends)
+    ! T(Hour) = Amplitude*sin[w(t - a)] + C.
+    ! Amplitude is called the amplitude the height of each peak above the baseline
+    ! Hod is Hours Of Day, the period or wavelength (the length of each cycle) 
+    ! a  is the phase shift (the horizontal offset of the basepoint; where the curve crosses the baseline as it ascends)
+    ! C is average temperature,  the vertical offset (height of the baseline) 
+    ! w is the angular frequency, given by w = 2PI/hod 
     real function fetchTemperature(this)
         implicit none
         class (Environment_type), intent(in) :: this
-        REAL :: Amplitude, C, P, w, a, t, g, pi
+        REAL :: Amplitude, C, hod, w, a, g, pi, dawn
 
-        pi= 4 * atan (1.0_8)
-        a = 11
-        P = 24
-        w = (2*pi)/2
-        t = 8
-        Amplitude = ((this%TMax_ - this%TMin_)/2)
-        C = (this%TMin_ + this%TMax_)/2
-        t = 12
-        g = w*(t-a)
+        dawn=5
+        pi=  4 * atan (1.0_8)
+        a = 11                                              ! 11 hours to shift
+        hod = 24                                            ! 24 hours a day
+        w = (2*pi)/hod
+        Amplitude = ((this%TMax_ - this%TMin_)/2)           ! half distance between temperatures
+        C = (this%TMin_ + this%TMax_)/2                     ! mean temperature
+        g = w*(this%Hour_ - a)
         
-        fetchTemperature =  Amplitude*SIN(g)+C
+        if (this%Hour_ > dawn) then                            ! if it is later dawn time
+            fetchTemperature = Amplitude*SIN(g)+C           ! calculate temperature acording to the current time
+        else                                                ! else
+            g = w*(dawn - a)
+            fetchTemperature = Amplitude*SIN(g)+C           !calculate temperature like if it was dawn time
+        end if
         
-        
-        
+
     end function fetchTemperature
     
     ! obtain the Saturation Vapour Pressure (pascals)
