@@ -1,5 +1,4 @@
 ﻿Module CS_First_Trans_m
-    USE Environment_module ! DA 17MAR2017
     USE Node_module        ! DA 17MAR2017
     
     
@@ -22,7 +21,6 @@
     INTEGER,PARAMETER::HANUMX= 40 ! Maximum # harvest instructions
 
 
-    TYPE (Environment_type)                     :: VPD_environment
     TYPE (Node_type),DIMENSION(0:PSX,0:LCNUMX)  :: plant
     
     REAL    :: AH2OPROFILE             ! Available H2o,profile          mm         ! (From Growth)    
