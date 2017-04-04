@@ -119,6 +119,7 @@ C     6 - Physiological maturity
       SDEPTH   = Planting % SDEPTH
       NFORCING = Planting % NFORCING
       NDOF     = Planting % NDOF
+      PLTPOP   = Planting % PLTPOP
 
       P1 = Cultivar % P1
       P2 = Cultivar % P2
@@ -446,9 +447,9 @@ C               XPTN = XGNP*6.25
 
           PMDATE = YRDOY                  ! physiological maturity date
           MDATE  = YRDOY                  ! Set MDATE to stop model
+          STGDOY(ISTAGE) = YRDOY
 
 !         Ready for next stage
-          STGDOY(ISTAGE) = YRDOY
           ISTAGE = 7
 
       END SELECT
