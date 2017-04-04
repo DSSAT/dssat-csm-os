@@ -19,25 +19,43 @@ C=======================================================================
       SAVE
 
       INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0
-      REAL        XANC,TTMP,SWSD,YIELDB,XLAT,PHOTOSYNEYE,PEYEWT
+      REAL        TTMP,SWSD,YIELDB,XLAT,PHOTOSYNEYE,PEYEWT
 
       INTEGER      DYNAMIC, MDATE,YRSIM,HAREND
-      REAL         XSTAGE,TANC,PLTPOP,STOVWT,SEEDN,SEEDNI
-      REAL         ROOTN,STOVN,GRAINN
-      CHARACTER    ISWNIT*1,CROP*2
+      REAL         XSTAGE
+      REAL         GRAINN
 
-      INTEGER     ISTAGE
-      REAL        TBASE, LAI, PLA, BIOMAS, WTINITIAL, LFWT, BASLFWT
-      REAL        STMWT, APTNUP, DTT, TEMPM, SDEPTH, TBASE
-      REAL        TBASV, TOPTV, TTOPV, TBASR, TOPTR, TTOPR
+      CHARACTER*1 ISWWAT, IDETO, ISWNIT
+      INTEGER     ISTAGE, NLAYR, NOUTDO, ISDATE, IDURP, FHDATE, PMDATE
+      INTEGER     ICSDUR
+      REAL        TBASE, LAI, BIOMAS
+      REAL        STMWT, APTNUP, DTT, TEMPM
+!      REAL        TBASV, TOPTV, TTOPV, TBASR, TOPTR, TTOPR
       REAL        TMFAC1(8)
-      REAL, DIMENSION(NL) :: SW, LL, DUL, SAT
+      REAL        TMIN, TMAX, TEMPFMX, SUMDTT, CUMDEP, GPP
+      REAL        FRTWT, RTDEP, TEMPFM, TOTPLTWT, MAXLAI, SUMP
+      REAL        FRUITS, SWMAX, SWMIN,  YIELD, EYEWT, GPSM, STOVER
+      REAL        FDMC, HBIOM, XGNP, GNUP, TOTNUP
+      REAL        CSD1, CSD2, CNSD1, CNSD2
+      REAL        P1, P2, P3, P4, P5, P6, TBASE1
+      REAL        G2
+      REAL, DIMENSION(NL) :: SW, LL, DLAYR, CUMDTT, FBIOM
+      REAL, DIMENSION(20) :: SI1, SI2, SI3, SI4
+
+        REAL PLTPOP, SDEPTH, PLANTSIZE
+        INTEGER NFORCING, NDOF
+
 
       TYPE (CONTROLTYPE) CONTROL
       TYPE (SOILTYPE) SOILPROP
       TYPE (WEATHERTYPE) WEATHER
 
       DYNAMIC = CONTROL % DYNAMIC
+
+      TMIN = WEATHER % TMIN
+      TMAX = WEATHER % TMAX
+
+      LL   = SOILPROP % LL
 
 C     7 - Preplanting
 C     8 - Planting to root initiation
@@ -65,12 +83,12 @@ C     6 - Physiological maturity
       HAREND     = -99
 
 !     TBASE      = 12.0
-      TBASV = SPECIES % TBASV
-      TOPTV = SPECIES % TOPTV
-      TTOPV = SPECIES % TTOPV
-      TBASR = SPECIES % TBASR
-      TOPTR = SPECIES % TOPTR
-      TTOPR = SPECIES % TTOPR
+      !TBASV = SPECIES % TBASV
+      !TOPTV = SPECIES % TOPTV
+      !TTOPV = SPECIES % TTOPV
+      !TBASR = SPECIES % TBASR
+      !TOPTR = SPECIES % TOPTR
+      !TTOPR = SPECIES % TTOPR
 
       !LAI        = PLTPOP*PLA*0.0001
       !BIOMAS     = WTINITIAL*PLTPOP
@@ -138,9 +156,8 @@ C     6 - Physiological maturity
              DTT = 0.0
           ENDIF
           IF (DTT .GT. 0.0) THEN
-             !
-             ! Correcting fruit temperature and higher temperature effect
-             !
+             
+!            Correcting fruit temperature and higher temperature effect
              IF (TMAX .GT. 18.0 .AND. TMAX .LT. 33.0) THEN
                 TEMPFMX = 4.32*EXP(0.078*TMAX)
               ELSEIF (TMAX .GE. 33.0 .AND. TMAX .LT. 50.0) THEN
@@ -204,7 +221,7 @@ C     6 - Physiological maturity
           NDAS           = 0
  !        CALL PHASEI (ISWWAT,ISWNIT)
           ISTAGE = 8
-          SUMDTT = 0.0                  ! Cumulative growing degree days set to 0.0
+          SUMDTT = 0.0       ! Cumulative growing degree days set to 0.0
 
           IF (ISWWAT .EQ. 'N') RETURN
           CUMDEP = 0.0
