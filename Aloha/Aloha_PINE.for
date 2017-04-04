@@ -29,7 +29,9 @@ C
 !  03/22/2017 CHP Adpated for CSM v4.6
 C=======================================================================
 
-      Subroutine Aloha_Pineapple(CONTROL, ISWITCH, SOILPROP, WEATHER)
+      Subroutine Aloha_Pineapple(CONTROL, ISWITCH, 
+     &    SOILPROP, SW, WEATHER, YRPLT,   !Input
+     &    MDATE)      !Output
       USE Aloha_mod
 
       IMPLICIT NONE
@@ -40,7 +42,7 @@ C=======================================================================
       REAL      SEEDNI,WTNLF,WTNST,WTNSH,WTNRT,WTNLO
 
       CHARACTER*1 ISWWAT, ISWNIT
-      INTEGER ICSDUR, EDATE, ISTAGE, YRDOY, YRPLT, I
+      INTEGER ICSDUR, EDATE, ISTAGE, YRDOY, YRPLT, I, MDATE
       INTEGER, DIMENSION(20) :: STGDOY
       REAL    LN, FLRWT, FRTWT, CRWNWT, SKWT, GROSK, YIELD, SENLA, SLAN 
       REAL    CARBO, GRNWT, RTWT, LFWT, STMWT, GPSM, GPP, PTF
@@ -49,12 +51,12 @@ C=======================================================================
       REAL    TCNP, STOVN, ROOTN, GRAINN, GNP, XGNP, APTNUP, GNUP
       REAL    TOTNUP, WTINITIAL, SDWTPL, PLTPOP, GRORT
       REAL, DIMENSION(6)  :: SI1, SI2, SI3, SI4
-      REAL, DIMENSION(8)  :: TMFAC1
-      REAL, DIMENSION(NL) :: RLV
+      REAL, DIMENSION(NL) :: RLV, SW
 
       REAL      CANNAA,CANWAA
       REAL      CUMDTT,SUMDTT,DTT
-      REAL      SDWTAH,BWAH
+      REAL      SDWTAH,BWAH, XLAT
+      REAL      SWDF1, SWDF2, EP, EP1, TRWU, RWUEP1, SWFAC, TURFAC
 
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -79,7 +81,7 @@ C=======================================================================
 !      RUN     = CONTROL % RUN
 !      RNMODE  = CONTROL % RNMODE
 !      FILEIO  = CONTROL % FILEIO
-!      YRDOY   = CONTROL % YRDOY
+      YRDOY   = CONTROL % YRDOY
 !      YRSIM   = CONTROL % YRSIM
 
       !DLAYR  = SOILPROP % DLAYR  
@@ -109,10 +111,10 @@ C-----------------------------------------------------------------------
 !=======================================================================
 C     Call PLANT initialization routine to set variables to 0
 C-----------------------------------------------------------------------
+      XLAT   = WEATHER % XLAT
+
       ISWWAT = ISWITCH % ISWWAT
       ISWNIT = ISWITCH % ISWNIT
-
-      XLAT   = WEATHER % XLAT
 
       LN     = 0.0
       FLRWT  = 0.0
@@ -189,8 +191,6 @@ C-----------------------------------------------------------------------
          SI4(I) = 0.0
       END DO
 
-
-
 C-----------------------------------------------------------------------
 C     Call IPIBS .. Read in IBSNAT31.INP file
 C-----------------------------------------------------------------------
@@ -205,7 +205,9 @@ C-----------------------------------------------------------------------
 C     Call PHENOLGY initialization routine
 C-----------------------------------------------------------------------
 
-      CALL Aloha_PHENOL (DYNAMIC, STGDOY,YRDOY,XLAT)
+      CALL Aloha_PHENOL (CONTROL, ISWITCH,
+     &    SW, WEATHER, SOILPROP,          !Input
+     &    ISTAGE, MDATE, STGDOY)                 !Output
 
 
 !=======================================================================
@@ -283,7 +285,9 @@ C        Call PHENOL
 C-----------------------------------------------------------------------
 
          IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
-  !         CALL PHENOL (DYNAMIC, STGDOY,YRDOY,XLAT)
+           CALL Aloha_PHENOL (CONTROL, ISWITCH, 
+     &    SW, WEATHER, SOILPROP,          !Input
+     &    ISTAGE, MDATE, STGDOY)                 !Output
          ENDIF
 
 !=======================================================================
@@ -297,7 +301,7 @@ C-----------------------------------------------------------------------
 !     &               DAYL,TRUNOF,TDRAIN,AMTNIT,NAP,HAREND,NPSTAP,
 !     &               STNAME,WTNLF,WTNST,WTNSD,WTNSH,WTNRT)
 
-
+       WRITE(2000,*) YRDOY, ISTAGE
 
 !=======================================================================
 C     Call end of season output routine

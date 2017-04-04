@@ -548,7 +548,9 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     -------------------------------------------------
 !     Pineapple - Aloha model 
       CASE('PIALO')
-        CALL Aloha_Pineapple(CONTROL, ISWITCH, SOILPROP, WEATHER)
+        CALL Aloha_Pineapple(CONTROL, ISWITCH, 
+     &    SOILPROP, SW, WEATHER, YRPLT,   !Input
+     &    MDATE)      !Output
 
 
 !     -------------------------------------------------

@@ -12,7 +12,9 @@ C  4. Modified TT calculations to reduce line #'s P.W.W.      2-7-93
 C  5. Modified for MILLET model                   W.T.B.      MAY 94
 C=======================================================================
 
-      SUBROUTINE Aloha_PHENOL (CONTROL, SW, STGDOY, WEATHER, SOILPROP)
+      SUBROUTINE Aloha_PHENOL (CONTROL, ISWITCH,
+     &    SW, WEATHER, SOILPROP,          !Input
+     &    ISTAGE, MDATE, STGDOY)                 !Output
 
       USE Aloha_mod
       IMPLICIT    NONE
@@ -47,10 +49,12 @@ C=======================================================================
 
 
       TYPE (CONTROLTYPE) CONTROL
+      TYPE (SwitchType) ISWITCH
       TYPE (SOILTYPE) SOILPROP
       TYPE (WEATHERTYPE) WEATHER
 
       DYNAMIC = CONTROL % DYNAMIC
+      YRDOY   = CONTROL % YRDOY
 
       TMIN = WEATHER % TMIN
       TMAX = WEATHER % TMAX
@@ -74,6 +78,8 @@ C     6 - Physiological maturity
 !-----------------------------------------------------------------
 
       XLAT = WEATHER % XLAT
+      ISWWAT = ISWITCH % ISWWAT
+      ISWNIT = ISWITCH % ISWNIT
 
       ISTAGE = 7
       XSTAGE = 0.1
@@ -82,7 +88,7 @@ C     6 - Physiological maturity
       MDATE      = -99
       HAREND     = -99
 
-!     TBASE      = 12.0
+      TBASE      = 12.0
       !TBASV = SPECIES % TBASV
       !TOPTV = SPECIES % TOPTV
       !TTOPV = SPECIES % TTOPV
@@ -110,8 +116,18 @@ C     6 - Physiological maturity
          TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
       END DO
 
+      SDEPTH   = Planting % SDEPTH
+      NFORCING = Planting % NFORCING
+      NDOF     = Planting % NDOF
 
-
+      P1 = Cultivar % P1
+      P2 = Cultivar % P2
+      P3 = Cultivar % P3
+      P4 = Cultivar % P4
+      P5 = Cultivar % P5
+      P6 = Cultivar % P6
+      G2 = Cultivar % G2
+      TBASE1  = 12. !????
 
 !=================================================================
       CASE (RATE)
@@ -121,7 +137,6 @@ C     6 - Physiological maturity
 !moved to grosub      APTNUP = STOVN*10.0*PLTPOP
 !move to below        DTT    = TEMPM - TBASE
 !from FileX           SDEPTH = 5.0
-      SDEPTH = Planting % SDEPTH
 
       SELECT CASE (ISTAGE)
         CASE (1,2,3,7,8,9)
