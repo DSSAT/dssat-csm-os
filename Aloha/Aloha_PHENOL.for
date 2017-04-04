@@ -105,22 +105,17 @@ C     6 - Physiological maturity
 !from FileX           SDEPTH = 5.0
       SDEPTH = Planting % SDEPTH
 
-      IF (XLAT .LT. 21.0 .and. XLAT .GT. -21.0) THEN
-         TEMPM  = 0.6*TMIN+0.4*TMAX
-         TEMPFM = 0.6*TMIN+0.4*TEMPFMX
-       ELSE
-         TEMPM = (TMAX+TMIN)/2
-         TEMPFM = (TEMPFMX+TMIN)/2
-      ENDIF
-
       SELECT CASE (ISTAGE)
-!-----------------------------------------------------------------
-!       Vegetative Phase
         CASE (1,2,3,7,8,9)
-          DTT = TEMPM - TBASV
           IF (TMIN .GT. TBASE .AND. TMAX .LT. 35.0) THEN
+             IF (XLAT .LT. 21.0 .and. XLAT .GT. -21.0) THEN
+                TEMPM = 0.6*TMIN+0.4*TMAX
+              ELSE
+                TEMPM = (TMAX+TMIN)/2
+             ENDIF
+             DTT = TEMPM - TBASE
            ELSEIF (TMIN .LE. TBASE .OR. TMAX .GE. 35.0) THEN
-             IF (TMAX .LT. TBASV) THEN
+             IF (TMAX .LT. TBASE) THEN
                 DTT = 0.0
              ENDIF
              IF (DTT .NE. 0.0) THEN
@@ -128,10 +123,10 @@ C     6 - Physiological maturity
                 DO I = 1, 8
                    TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
                    IF (TTMP .GT. TBASE .AND. TTMP .LE. 35.0) THEN
-                     DTT = DTT + (TTMP-TBASV)/8.0
+                      DTT = DTT + (TTMP-TBASE)/8.0
                    ENDIF
                    IF (TTMP .GT. 35.0 .AND. TTMP .LT. 45.0) THEN
-                     DTT = DTT + (35.0-TBASE)*(1.0-(TTMP-35.0)/10.0)/8.
+                      DTT = DTT + (35.0-TBASE)*(1.0-(TTMP-35.0)/10.0)/8.
                    ENDIF
                 END DO
              ENDIF
@@ -139,26 +134,29 @@ C     6 - Physiological maturity
 !-----------------------------------------------------------------
 !       Reproductive Phase
         CASE (4,5,6)
-          !
-          ! Correcting fruit temperature and higher temperature effect
-          !
-          IF (TMAX .GT. 18.0 .AND. TMAX .LT. 33.0) THEN
-             TEMPFMX = 4.32*EXP(0.078*TMAX)
-           ELSEIF (TMAX .GE. TOPTR .AND. TMAX .LT. 50.0) THEN
-             TEMPFMX = TMAX*(1.715-(TMAX-33.0)/35.0)
-           ELSEIF (TMAX .GE. 50.0) THEN
-             TEMPFMX = 62.0
-           ELSE
-             TEMPFMX = TMAX
-          ENDIF
-          DTT = TEMPFM-TBASV
-
           IF (TMAX .LT. TBASE) THEN
              DTT = 0.0
           ENDIF
           IF (DTT .GT. 0.0) THEN
-
+             !
+             ! Correcting fruit temperature and higher temperature effect
+             !
+             IF (TMAX .GT. 18.0 .AND. TMAX .LT. 33.0) THEN
+                TEMPFMX = 4.32*EXP(0.078*TMAX)
+              ELSEIF (TMAX .GE. 33.0 .AND. TMAX .LT. 50.0) THEN
+                TEMPFMX = TMAX*(1.715-(TMAX-33.0)/35.0)
+              ELSEIF (TMAX .GE. 50.0) THEN
+                TEMPFMX = 62.0
+              ELSE
+                TEMPFMX = TMAX
+             ENDIF
              IF (TMIN .GT. TBASE .AND. TEMPFMX .LT. 42.0) THEN
+                IF (XLAT .LT. 21.0 .AND. XLAT .GT. -21.0) THEN
+                   TEMPFM = 0.6*TMIN+0.4*TEMPFMX
+                 ELSE
+                   TEMPFM = (TEMPFMX+TMIN)/2
+                ENDIF
+                DTT = TEMPFM-TBASE
                 GO TO 20
              ENDIF
 
