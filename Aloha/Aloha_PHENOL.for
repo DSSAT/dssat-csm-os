@@ -14,35 +14,39 @@ C=======================================================================
 
       SUBROUTINE Aloha_PHENOL (CONTROL, ISWITCH,
      &    SW, WEATHER, SOILPROP,          !Input
-     &    DTT, ISTAGE, MDATE, STGDOY, TBASE)                 !Output
+     &    DTT, ISTAGE, MDATE, STGDOY, TBASE, XSTAGE)                 !Output
 
       USE Aloha_mod
       IMPLICIT    NONE
       SAVE
 
       INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0
-      REAL        TTMP,SWSD,YIELDB,XLAT,PHOTOSYNEYE,PEYEWT
+      REAL        TTMP,SWSD,XLAT
+
+!     REAL        YIELDB,PHOTOSYNEYE,PEYEWT,LAI, BIOMAS, MAXLAI, SUMP
+!     INTEGER     IDURP, ICSDUR
+!     REAL        STMWT, APTNUP, RTDEP, 
+!     REAL        FRUITS, SWMAX, SWMIN, YIELD, EYEWT, GPSM, STOVER
+!     REAL        FDMC, HBIOM, XGNP, GNUP, TOTNUP
+!     REAL        CSD1, CSD2, CNSD1, CNSD2
+!     REAL, DIMENSION(NL) :: FBIOM
+!     REAL, DIMENSION(20) :: SI1, SI2, SI3, SI4
 
       INTEGER      DYNAMIC, MDATE,YRSIM,HAREND
       REAL         XSTAGE
-      REAL         GRAINN
+!TEMP      REAL         GRAINN
 
       CHARACTER*1 ISWWAT, IDETO, ISWNIT
-      INTEGER     ISTAGE, NLAYR, NOUTDO, ISDATE, IDURP, FHDATE, PMDATE
-      INTEGER     ICSDUR
-      REAL        TBASE, LAI, BIOMAS
-      REAL        STMWT, APTNUP, DTT, TEMPM
+      INTEGER     ISTAGE, NLAYR, NOUTDO, ISDATE, FHDATE, PMDATE
+      REAL        TBASE
+      REAL        DTT, TEMPM
 !      REAL        TBASV, TOPTV, TTOPV, TBASR, TOPTR, TTOPR
       REAL        TMFAC1(8)
       REAL        TMIN, TMAX, TEMPFMX, SUMDTT, CUMDEP, GPP
-      REAL        FRTWT, RTDEP, TEMPFM, TOTPLTWT, MAXLAI, SUMP
-      REAL        FRUITS, SWMAX, SWMIN,  YIELD, EYEWT, GPSM, STOVER
-      REAL        FDMC, HBIOM, XGNP, GNUP, TOTNUP
-      REAL        CSD1, CSD2, CNSD1, CNSD2
+      REAL        FRTWT, TEMPFM, TOTPLTWT
       REAL        P1, P2, P3, P4, P5, P6, TBASE1
       REAL        G2
-      REAL, DIMENSION(NL) :: SW, LL, DLAYR, CUMDTT, FBIOM
-      REAL, DIMENSION(20) :: SI1, SI2, SI3, SI4
+      REAL, DIMENSION(NL) :: SW, LL, DLAYR, CUMDTT
 
       REAL PLTPOP, SDEPTH, PLANTSIZE
       INTEGER NFORCING, NDOF
@@ -60,15 +64,15 @@ C=======================================================================
 
       LL   = SOILPROP % LL
 
-C     7 - Preplanting
-C     8 - Planting to root initiation
-C     9 - Root initiation to first new leaf emergence
-C     1 - First new leaf emergence to net zero root growth
-C     2 - Net zero stem growth to forcing
-C     3 - Forcing to sepals closed on youngest flowers
-C     4 - SCY to first open flower
-C     5 - Fruit growth
-C     6 - Physiological maturity
+!     7 - Preplanting
+!     8 - Planting to root initiation
+!     9 - Root initiation to first new leaf emergence
+!     1 - First new leaf emergence to net zero root growth
+!     2 - Net zero stem growth to forcing
+!     3 - Forcing to sepals closed on youngest flowers
+!     4 - SCY to first open flower
+!     5 - Fruit growth
+!     6 - Physiological maturity
 
 !=================================================================
       SELECT CASE(DYNAMIC)
@@ -95,21 +99,14 @@ C     6 - Physiological maturity
       !TOPTR = SPECIES % TOPTR
       !TTOPR = SPECIES % TTOPR
 
-      !LAI        = PLTPOP*PLA*0.0001
-      !BIOMAS     = WTINITIAL*PLTPOP
-      !PLA        = WTINITIAL*0.6*63.0
-      !LFWT       = WTINITIAL*0.53
-      !BASLFWT    = LFWT*0.66
-      !STMWT      = WTINITIAL*0.115
-      !STOVWT     = WTINITIAL
-
-      !IF (ISWNIT .NE. 'Y') THEN
-      !   TANC = 0.0
-      !ENDIF
-      !
-      !! Calculate initial SEED N
-      !!
-      !SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
+!TEMP
+!      IF (ISWNIT .NE. 'Y') THEN
+!         TANC = 0.0
+!      ENDIF
+!      
+!      ! Calculate initial SEED N
+!      !
+!      SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
 
       DO I = 1, 8
          TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
@@ -288,7 +285,7 @@ C     6 - Physiological maturity
           ! Stage 9 >> Root initiation to first new leaf emergence
           !
           NDAS   = NDAS + 1
-          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
+!MOVE TO GROSUB          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
           IF (NDAS .LT. P6) THEN
              RETURN                     ! P6: NDAS from root initiation to first leaf emerged
           ENDIF
@@ -329,7 +326,7 @@ C     6 - Physiological maturity
              IF (NDAS .LT. NDOF) THEN
                 RETURN
              ENDIF
-             PLANTSIZE = TOTPLTWT
+!moved to grosub             PLANTSIZE = TOTPLTWT
            ELSE
               !
               ! Forcing by Plant Size (200 to 350 grams usually)
@@ -340,7 +337,6 @@ C     6 - Physiological maturity
           ENDIF
 
           ISDATE = YRDOY                ! Record forcing date.
-          FBIOM  = BIOMAS               ! Record biomass at forcing
 
 !         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
@@ -356,16 +352,6 @@ C     6 - Physiological maturity
           IF (SUMDTT .LT. P2) THEN
              RETURN                       ! P2: GDD needed to complete this stage
           ENDIF
-
-          MAXLAI      = LAI               ! MaxLAI = LAI at the end of the stage
-C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^2)
-          PHOTOSYNEYE = SUMP*1000./IDURP  ! Average photosysnthesis rate of fruit eye
-
-          GPP    = G2*(PHOTOSYNEYE/12000+0.43)*
-     &             (0.7+0.3*PLANTSIZE/550.)
-          GPP    = AMIN1 (GPP,G2)                ! G2 is genetic coefficient for potential eye number
-          GPP    = AMAX1 (GPP,0.0)
-          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
 
 !         Ready for next stage
           STGDOY(ISTAGE) = YRDOY
@@ -395,29 +381,10 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           ! Stage 5 >> Fruit growth
           !
           XSTAGE = 4.5+5.5*SUMDTT/(P4*.8)
-          IF (SWMAX .LE. 0.0) THEN
-             IF (XSTAGE .GE. 10.0) THEN
-                SWMAX = STMWT
-                SWMIN = 0.65*SWMAX
-             ENDIF
-          ENDIF
           IF (SUMDTT .LT. (P4+(PLTPOP-8.0)*2.4*16.95)) THEN
              RETURN                        ! P4: GDD needed to complete this stage
           ENDIF
           FHDATE = YRDOY                   ! Fruit harvest date
-
-          YIELD = FRTWT*10.0*FRUITS        ! fruit dry weight yield (kg/ha)
-          IF (PLTPOP .GE. 0.0) THEN
-             IF (GPP .GT. 0.0) THEN
-                EYEWT = FRTWT/GPP
-             ENDIF
-             PEYEWT = EYEWT*1000.0         ! Eye weight (mg/eye)
-             GPSM   = GPP*FRUITS           ! Number of eyes per square meter
-             STOVER = BIOMAS*10.0-YIELD    ! Total plant weight except fruit
-             YIELD  = YIELD/FDMC           ! Fresh fruit yield (kg/ha)
-             YIELDB = YIELD/0.8914         ! Fresh fruit yield (lb/acre)
-             STGDOY (ISTAGE) = YRDOY
-          ENDIF
 
 !         Ready for next stage
           ISTAGE = 6
@@ -433,16 +400,7 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
              RETURN
           ENDIF
 
-          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
-
-          IF (ISWNIT .NE. 'N') THEN
-             IF (FRTWT .GT. 0.0) THEN
-                XGNP = (GRAINN/FRTWT)*100.0
-C               XPTN = XGNP*6.25
-                GNUP = GRAINN*FRUITS*10.0
-             ENDIF
-             TOTNUP = GNUP + APTNUP
-          ENDIF
+!MOVE TO GROSUB          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
 
           PMDATE = YRDOY                  ! physiological maturity date
           MDATE  = YRDOY                  ! Set MDATE to stop model
@@ -454,17 +412,10 @@ C               XPTN = XGNP*6.25
       END SELECT
 !-----------------------------------------------------------------
 
-      IF (ISWWAT .NE. 'N') THEN
-         SI1(ISTAGE) = CSD1  / ICSDUR
-         SI2(ISTAGE) = CSD2  / ICSDUR
-         SI3(ISTAGE) = CNSD1 / ICSDUR
-         SI4(ISTAGE) = CNSD2 / ICSDUR
-      ENDIF
-
-      IF (ISTAGE .NE. 6) THEN
-  !       CALL PHASEI (ISWWAT,ISWNIT)
-         RETURN
-      ENDIF
+  !    IF (ISTAGE .NE. 6) THEN
+  !!       CALL PHASEI (ISWWAT,ISWNIT)
+  !       RETURN
+  !    ENDIF
 
 !=================================================================
       END SELECT
