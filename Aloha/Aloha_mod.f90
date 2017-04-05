@@ -7,6 +7,8 @@
 !     Contains data definitions for Aloha Pineaple model
       USE ModuleDefs
 
+      CHARACTER*6, PARAMETER :: ERRKEY = 'ALOHA '
+
 !     Data construct for control variables
       TYPE AlohaCul_type
         CHARACTER*6 VARNO,ECONO

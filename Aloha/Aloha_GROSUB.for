@@ -49,53 +49,59 @@ C  TTMP   :
 C=======================================================================
 
       SUBROUTINE Aloha_GROSUB (CONTROL, 
-     &    DTT, ISTAGE, TBASE, WEATHER)
+     &    DTT, ISTAGE, SWFAC, TBASE, TURFAC, WEATHER,        !Input
+     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, LAI,    !Output
+     &    LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT, TRNU)    !Output
 
       USE Aloha_mod
       IMPLICIT  NONE
       SAVE
 
-      CHARACTER ISWNIT*1,IDETO*1
-      INTEGER   NOUTDO,ICOLD
-      REAL      PCARB,PRFT,PC,TI,GRF,RGFILL,GROGRN,SFAC,TFAC,RMNC,XNF,
-     &          TNLAB,RNLAB,RNOUT,SLFW,SLFN,SLFC,SLFT,PLAS
-      REAL      NSINK,NPOOL1,NPOOL2,NPOOL,NSDR
+      INTEGER   ICOLD
+      REAL      PCARB,PRFT,PC,TI,GRF,RGFILL,
+     &          SLFW,SLFN,SLFC,SLFT,PLAS
       REAL      TABEX,PCO2,Y1
 
-      INTEGER ISTAGE, ISTAGE_old, IDURP, PMTYPE, ICSDUR
+!TEMP REMOVE N VARIABLES
+!      CHARACTER ISWNIT*1
+!      REAL    GROGRN,SFAC,TFAC,RMNC,XNF,TNLAB,RNLAB
+!      REAL      NSINK,NPOOL1,NPOOL2,NPOOL,NSDR,RNOUT,
+!     INTEGER , ICSDUR
+!     REAL    SEEDNI, ROOTN, STOVN, GRAINN, SEEDN, XANC
+!     REAL    APTNUP, RANC, GNP, NFAC, RCNP, 
+!     REAL    TANC, VANC, VMNC, TMNC
+
+      CHARACTER*78 MSG(2)
+      INTEGER I, ISTAGE, ISTAGE_old, IDURP, YRDOY 
+      INTEGER STGDOY(20)
       INTEGER DYNAMIC
       REAL    PLA, LAI, BIOMAS, LFWT, BASLFWT, STMWT, STOVWT, WTINITIAL
-      REAL    SEEDNI, ROOTN, STOVN, GRAINN, SEEDN, XANC, TANC
-      REAL    APTNUP, PLAG, RTWT, FLRWT, GROSTM, SENLA, SLAN, GRORT
+      REAL    PLAG, RTWT, FLRWT, GROSTM, SENLA, SLAN, GRORT
       REAL    GROBSL, GROLF, CUMPH, LN, CUMDEP, SUMP, PLAMX, GROFLR
       REAL    GROCRWN, GROFRT, FRTWT, CRWNWT, SKWT, GROSK, PTF, EYEWT
-      REAL    VANC, VMNC, TMNC, SWMAX, SWMIN, NDEF3, NSTRES, AGEFAC
-      REAL    RANC, PAR, CC, TEMPM, TRF2, CARBO, SWFAC
-      REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP, GNP, NFAC
-      REAL    RCNP, PDWI, PGRORT, DM
+      REAL    SWMAX, SWMIN, NDEF3, NSTRES, AGEFAC
+      REAL    PAR, CC, TEMPM, TRF2, CARBO, SWFAC, TRNU
+      REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP
+      REAL    PDWI, PGRORT, DM, FBIOM, MAXLAI, PHOTOSYNEYE, FRUITS
+      REAL    YIELD, PEYEWT, GPSM, STOVER, FDMC, YIELDB, HBIOM, XSTAGE
 
       REAL    CO2, SRAD, TMIN, TMAX
-      REAL    PLTPOP, SDWTPL
-      REAL    G3, P4, PHINT, TBASE
+      REAL    PLTPOP, SDWTPL, PLANTSIZE
+      REAL    G2, G3, P4, PHINT, TBASE
+      INTEGER PMTYPE, NFORCING
 
       REAL, DIMENSION(10) :: CO2X, CO2Y
+      REAL, DIMENSION(NL) :: RLV
 
       TYPE (ControlType) CONTROL
  !     TYPE (SwitchType)  ISWITCH
       TYPE (WeatherType) WEATHER
 
       DYNAMIC = CONTROL % DYNAMIC
-      SRAD = WEATHER % SRAD
       CO2  = WEATHER % CO2
+      SRAD = WEATHER % SRAD
       TMIN = WEATHER % TMIN
       TMAX = WEATHER % TMAX
-
-      CO2X = SPECIES % CO2X
-      CO2Y = SPECIES % CO2Y
-      CC   = SPECIES % CONV
-
-      PHINT = CULTIVAR % PHINT
-      
 
 !=======================================================================
       SELECT CASE (DYNAMIC)
@@ -112,7 +118,73 @@ C=======================================================================
       SWFAC      = 1.0
       NSTRES     = 1.0
       TURFAC     = 1.0
-      TRNU       = 0.0
+      LN     = 0.0
+
+      FLRWT  = 0.0
+      FRTWT  = 0.0
+      CRWNWT = 0.0
+      SKWT   = 0.0
+      GROSK  = 0.0
+      YIELD  = 0.0
+      SENLA  = 0.0
+      SLAN   = 0.0
+      CARBO  = 0.0
+!      GRNWT  = 0.0
+      RTWT   = 0.0
+!      SDWTAH = 0.0
+!      SDWTAM = 0.0
+!      WTNUP  = 0.0
+!      TOPWT  = 0.0
+!      BWAH   = 0.0
+!      WTNLF  = 0.0
+!      WTNST  = 0.0
+!      WTNSH  = 0.0
+!      WTNRT  = 0.0
+!      WTNLO  = 0.0
+      GPSM   = 0.0
+      GPP    = 0.0
+      PTF    = 0.0
+
+      DO I = 1, NL
+         RLV(I) = 0.0
+      END DO
+
+      BIOMAS = 0.0
+!      LEAFNO = 0.0
+      LAI    = 0.0
+      XN     = 0.0
+!      ICSDUR = 0
+      SWFAC  = 1.0
+      TURFAC = 1.0
+      NSTRES = 1.0
+      AGEFAC = 1.0
+      NDEF3  = 1.0
+!      NDEF4  = 1.0
+!      ANFAC  = 0.0
+!      NFAC   = 1.0
+!      ATANC  = 0.0
+!      TANC   = 0.044
+!      RANC   = 0.0
+!      VANC   = 0.0
+!      VMNC   = 0.0
+!      TMNC   = 0.0
+!      RCNP   = 0.0
+!      TCNP   = 0.0
+!      SEEDNI = 0.0
+!      STOVN  = 0.0
+!      ROOTN  = 0.0
+!      GRAINN = 0.0
+!      GNP    = 0.0
+!      XGNP   = 0.0
+!      APTNUP = 0.0
+!      GNUP   = 0.0
+!      TOTNUP = 0.0
+!      CUMDTT = 0.0
+      SUMDTT = 0.0
+      DTT    = 0.0
+!      CANNAA = 0.05
+!      CANWAA = 0.0
+      TRNU = 0.0
 
 !=======================================================================
       CASE (SEASINIT)
@@ -120,21 +192,28 @@ C=======================================================================
       SDWTPL    = PLANTING % SDWTPL
       PLTPOP    = PLANTING % PLTPOP
       PMTYPE    = PLANTING % PMTYPE
+      NFORCING  = PLANTING % NFORCING
+      PLANTSIZE = PLANTING % PLANTSIZE
 
-      WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
+      CO2X = SPECIES % CO2X
+      CO2Y = SPECIES % CO2Y
+      CC   = SPECIES % CONV
+      CMF  = Species % CMFC
 
+      G2  = CULTIVAR % G2
+      G3  = CULTIVAR % G3
+      P4  = CULTIVAR % P4
+      PHINT = CULTIVAR % PHINT
 
-      PLA        = WTINITIAL*0.6*63.0
-      LAI        = PLTPOP*PLA*0.0001
-      BIOMAS     = WTINITIAL*PLTPOP
-      LFWT       = WTINITIAL*0.53
-      BASLFWT    = LFWT*0.66
-      STMWT      = WTINITIAL*0.115
-      STOVWT     = WTINITIAL
-
-      SWFAC      = 1.0
+      PLA        = 0.0
+      LAI        = 0.0
+      BIOMAS     = 0.0
+      LFWT       = 0.0
+      BASLFWT    = 0.0
+      STMWT      = 0.0
+      STOVWT     = 0.0
       NSTRES     = 1.0
-      TURFAC     = 1.0
+      LN     = 0.0
 
 !TEMP CHP
 !      ! Calculate initial SEED N
@@ -157,20 +236,30 @@ C=======================================================================
       !ENDIF
 
 !-----------------------------------------------------------------
+!     7 - Preplanting
+!     8 - Planting to root initiation
+!     9 - Root initiation to first new leaf emergence
+!     1 - First new leaf emergence to net zero root growth
+!     2 - Net zero stem growth to forcing
+!     3 - Forcing to sepals closed on youngest flowers
+!     4 - SCY to first open flower
+!     5 - Fruit growth
+!     6 - Physiological maturity
+!-----------------------------------------------------------------
       IF (ISTAGE /= ISTAGE_old) THEN
         ISTAGE_OLD = ISTAGE
 
-!       From PHENOL and PHASEI - New stage initialization
+!       New stage initialization
         SELECT CASE (ISTAGE)
         CASE (1)
           PLAG    = 0.0                 ! PLAG (cm^2) is daily green leaf area growth
-          LAI     = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
-          LFWT    = WTINITIAL*0.53      ! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
+  !        LAI     = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
+  !        LFWT    = WTINITIAL*0.53      ! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
           RTWT    = 0.20                ! RTWT (g/plant) is root weight
-          STMWT   = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
-          BASLFWT = LFWT*0.66           ! Basal white leaf weight is 66% of green leaf weight
+  !        STMWT   = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
+  !        BASLFWT = LFWT*0.66           ! Basal white leaf weight is 66% of green leaf weight
           FLRWT   = 0.0                 ! Inflorescence weight is set to 0.0
-          STOVWT  = WTINITIAL           ! STOVWT (g/plant) is stover weight
+  !        STOVWT  = WTINITIAL           ! STOVWT (g/plant) is stover weight
           FLRWT   = 0.0
           GROSTM  = 0.0                 ! GROSTM (g/plant/day) is daily stem growth
           SENLA   = 0.0                 ! SENLA (cm2/plant) is area of leaf senesces due to stress on a given day
@@ -186,6 +275,13 @@ C=======================================================================
           GROSTM = 0.0                   ! Daily stem growth (g/plant/day).
 
         CASE (3)
+          IF (NFORCING .GE. 2) THEN
+             ! Forcing by number of days after planting
+             PLANTSIZE = TOTPLTWT
+          ELSE    
+             PLANTSIZE = PLANTING % PLANTSIZE
+          ENDIF
+          FBIOM  = BIOMAS               ! Record biomass at forcing
           SUMP   = 0.0                  ! SUMP is the total weight of biomass cumulated in Istage 4.
           IDURP  = 0                    ! Duration of stage 3 (days)
           PLAMX  = PLA                  ! PLAMX (cm2/plant) is maximal green leaf area.  PLA is total green leaf area.
@@ -197,13 +293,23 @@ C=======================================================================
           CRWNWT = 0.0
 
         CASE (4)
+          MAXLAI      = LAI               ! MaxLAI = LAI at the end of the stage
+C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^2)
+          PHOTOSYNEYE = SUMP*1000./IDURP  ! Average photosysnthesis rate of fruit eye
+
+          GPP    = G2*(PHOTOSYNEYE/12000+0.43)*
+     &             (0.7+0.3*PLANTSIZE/550.)
+          GPP    = AMIN1 (GPP,G2)                ! G2 is genetic coefficient for potential eye number
+          GPP    = AMAX1 (GPP,0.0)
+          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
+
           FLRWT  =  0.1*STMWT           ! FLRWT stands for the weight ofwhole inflorescence STMWT is stem weight.  Both are in gram/plant.
           SKWT   =  0.0
           GROSK  =  0.0
           PTF    =  1.0                 ! PTF is plant top fraction in gram/plant.
           EYEWT  =  0.0                 ! EYEWT (G/eye) is weight of the eye
-          VANC   = TANC                 ! Variable used in nitrogen balance
-          VMNC   = TMNC                 ! .....
+!temp          VANC   = TANC                 ! Variable used in nitrogen balance
+!temp          VMNC   = TMNC                 ! .....
 
         CASE (5)
           FRTWT  = FLRWT*0.5            ! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
@@ -211,23 +317,54 @@ C=======================================================================
           SWMAX  = 0.0
           SWMIN  = 0.0
 
+        CASE (6)
+          YIELD = FRTWT*10.0*FRUITS        ! fruit dry weight yield (kg/ha)
+          IF (PLTPOP .GE. 0.0) THEN
+             IF (GPP .GT. 0.0) THEN
+                EYEWT = FRTWT/GPP
+             ENDIF
+             PEYEWT = EYEWT*1000.0         ! Eye weight (mg/eye)
+             GPSM   = GPP*FRUITS           ! Number of eyes per square meter
+             STOVER = BIOMAS*10.0-YIELD    ! Total plant weight except fruit
+             YIELD  = YIELD/FDMC           ! Fresh fruit yield (kg/ha)
+             YIELDB = YIELD/0.8914         ! Fresh fruit yield (lb/acre)
+             STGDOY (ISTAGE) = YRDOY
+          ENDIF
+          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
+
         CASE (8)
-          PLA    = WTINITIAL*0.6*63.0
-          LAI    = PLA*PLTPOP*0.0001
-          BIOMAS = WTINITIAL*PLTPOP
+          WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
+
+          PLA        = WTINITIAL*0.6*63.0
+          LAI        = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
+          BIOMAS     = WTINITIAL*PLTPOP
+          LFWT       = WTINITIAL*0.53      ! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
+          BASLFWT    = LFWT*0.66           ! Basal white leaf weight is 66% of green leaf weight
+          STMWT      = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
+          STOVWT     = WTINITIAL           ! STOVWT (g/plant) is stover weight
+
+          NSTRES     = 1.0
+
+!TEMP REMOVE N ROUTINES
+!          IF (ISWNIT .NE. 'N') THEN
+!             IF (FRTWT .GT. 0.0) THEN
+!                XGNP = (GRAINN/FRTWT)*100.0
+!C               XPTN = XGNP*6.25
+!                GNUP = GRAINN*FRUITS*10.0
+!             ENDIF
+!             TOTNUP = GNUP + APTNUP
+!          ENDIF
 
         CASE (9)
           NDEF3  =  1.0
           NSTRES =  1.0
           AGEFAC =  1.0
 
-        CASE (7)
-          PLA    = WTINITIAL*0.6*63.0
-          LAI    = PLA*PLTPOP*0.0001
-          BIOMAS = WTINITIAL*PLTPOP
-
         END SELECT
       ENDIF
+
+      IF (ISTAGE .GT. 5) RETURN
+
 !-----------------------------------------------------------------
 !TEMP CHP
 !      IF (ISWNIT .NE. 'N') THEN
@@ -576,6 +713,14 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         !
         ! Fruit growth
         !
+
+        IF (SWMAX .LE. 0.0) THEN
+           IF (XSTAGE .GE. 10.0) THEN
+              SWMAX = STMWT
+              SWMIN = 0.65*SWMAX
+           ENDIF
+        ENDIF
+
         IF (SUMDTT .GT. P4) THEN
            GROSK = CARBO*0.1
            STMWT = STMWT
@@ -739,6 +884,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         ! Physiological maturity
         !
         RETURN
+
+
       END SELECT
 !-----------------------------------------------------------------
 
@@ -782,17 +929,19 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
       LAI   = (PLA-SENLA)*PLTPOP*0.0001
 
       IF (LN .GT. 3 .AND .LAI .LE. 0.0 .AND. ISTAGE .LE. 3) THEN
-         WRITE (*,   2800)
-         IF (IDETO .EQ. 'Y') THEN
-            WRITE (NOUTDO,2800)
-         ENDIF
+         WRITE (MSG(1),   2800)
+         CALL WARNING(1, ERRKEY, MSG)
+!         IF (IDETO .EQ. 'Y') THEN
+!            WRITE (NOUTDO,2800)
+!         ENDIF
          ISTAGE = 4
        ELSE
          IF (ICOLD .GE. 7) THEN
-            WRITE (*,   2800)
-            IF (IDETO .EQ. 'Y') THEN
-               WRITE (NOUTDO,2800)
-            ENDIF
+            WRITE (MSG(1),   2800)
+            CALL WARNING(1, ERRKEY, MSG)
+!            IF (IDETO .EQ. 'Y') THEN
+!               WRITE (NOUTDO,2800)
+!            ENDIF
            ISTAGE = 5
          ENDIF
       ENDIF

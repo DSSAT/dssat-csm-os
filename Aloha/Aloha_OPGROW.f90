@@ -5,9 +5,10 @@
 !  REVISION       HISTORY
 !  03/28/2017 CHP Written
 !=======================================================================
-      SUBROUTINE Aloha_OpGrow (CONTROL, ISWITCH, &
-        BIOMAS, CRWNWT, GPP, GPSM, GRNWT, ISTAGE, LAI, LFWT, LN,   &
-        MDATE, NSTRES, PLTPOP, STMWT, SWFAC, TRNU, TURFAC, YRPLT)
+      SUBROUTINE Aloha_OpGrow (CONTROL, ISWITCH,           &
+        BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, &
+        LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  &
+        RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
       USE Aloha_mod
       IMPLICIT  NONE
@@ -21,12 +22,12 @@
       REAL LFWT, PLTPOP, SDWT, GRNWT, XLAI, LAI, GPSM, CRWNWT, GPP, TRNU, LEAFNO, LN
       REAL GM2KG, SHELPC, SHELLW, SDSIZE, HI, BIOMAS, VWAD, STMWT
       REAL RTWT, RTDEP, RLV(NL)
-      REAL FRTWT, BASLFWT, SKWT
+      REAL FRTWT, BASLFWT, SKWT !, RSTAGE
       REAL STOVN, GRAINN, STOVWT, ROOTN, WTNVEG, WTNGRN, PCNVEG, PCNGRN
 
       INTEGER I
       INTEGER DAP,YRPLT,YRDOY
-      INTEGER RSTAGE,DAS
+      INTEGER DAS
       INTEGER COUNT, FROP, MDATE, YEAR, DOY
 
       REAL    WTNUP
@@ -49,6 +50,7 @@
       FMOPT = ISWITCH % FMOPT
       ISWNIT= ISWITCH % ISWNIT
 
+      PLTPOP    = PLANTING % PLTPOP
 
 !***********************************************************************
 !***********************************************************************
@@ -59,7 +61,11 @@
         CALL GETLUN('PlantGro.OUT', NOUTDG)
         CALL GETLUN('PlantN.OUT'  , NOUTPN)
 
-    SATFAC = 1.0 !not used -need to remove from output
+!not used -need to remove from output
+    SATFAC = 1.0 
+    CANHT  = 0.0 
+    CANWH  = 0.0 
+    GRNWT  = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -80,44 +86,46 @@
           !Write headers
           CALL HEADER(SEASINIT, NOUTDG, RUN)
 
-          WRITE (NOUTDG,2192) '!YR    Days   Leaf  Grow                      Dry  ' // &
-                'Weight                           Pod      Phot. Grow       Leaf  ' // &
-                'Shell  Spec    Canopy          Root  ³                Root Length' // &
-                'Density                     ³'
-          WRITE (NOUTDG,2192) '! and  after  Num  Stage  LAI   Leaf  Stem Fruit' // &
-            ' Root Basal Crown  Suck   HI   Wgt.   No.    Water     Nit.   Nit ' // &
-            '  -ing  Leaf  Hght Brdth       Depth  ³                cm3/cm3  of' // &
-            ' soil                        ³'
-          WRITE (NOUTDG,2192) '!  DOY plant                    ³<---------------' // &
-             ' kg/Ha -------------->³       Kg/Ha        ³<Stress (0-1)>³    %  ' // &
-             '   %   Area    m     m           m   ³<---------------------------' // &
-             '--------------------------->³'
-          WRITE (NOUTDG,2192) '@DATE   CDAY  L#SD  GSTD  LAID  LWAD  SWAD  FWAD ' // &
-             ' RWAD  BWAD  CRAD  SUGD  HIAD  EWAD  E#AD  WSPD  WSGD  NSTD  LN%D ' // &
-             ' SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  RL4D  RL5D ' // &
-             ' RL6D  RL7D  RL8D  RL9D  RL10'
-  2192    FORMAT (A210)
+          WRITE (NOUTDG,'(A)') '!                       Leaf   Grow        <----' // &
+          '------------ Dry  Weight ----------------->   Harv <--- Pod ---> <--' // &
+          ' Stress (0-1) -->   Leaf  Shell   Spec  <- Canopy ->          Root  ' // &
+          '<--------------- Root Length Density ------------------------------>'
+
+          WRITE (NOUTDG,'(A)') '!                        Num  Stage    LAI   Lea' // &
+          'f   Stem  Fruit   Root  Basal  Crown   Suck  Index   Wgt.    No.    ' // &
+          '  Water      Nitr   Nitr   -ing   Leaf   Hght  Width         Depth  ' // &
+          '<---------------   cm3/cm3  of soil  ------------------------------>'
+
+          WRITE (NOUTDG,'(A210)') '!                                          <----' // &
+          '---------------- kg/Ha ------------------->         kg/ha          P' // &
+          'hot   Grow             %      %   Area      m      m             m  ' // &
+          '<------------------------------------------------------------------>'
+
+          WRITE (NOUTDG,'(A)') '@YEAR DOY   DAS   DAP   L#SD   GSTD   LAID   LWA' // &
+          'D   SWAD   FWAD   RWAD   BWAD   CRAD   SUGD   HIAD   EWAD   E#AD   W' // &
+          'SPD   WSGD   NSTD   LN%D   SH%D   SLAD   CHTD   CWID   EWSD   RDPD  ' // &
+          ' RL1D   RL2D   RL3D   RL4D   RL5D   RL6D   RL7D   RL8D   RL9D   RL10'
         ENDIF
 
 !-----------------------------------------------------------------------
-!       Initialize daily plant nitrogen output file
-        IF (IDETN .EQ. 'Y') THEN
-          INQUIRE (FILE = 'PlantN.OUT', EXIST = FEXIST)
-          IF (FEXIST) THEN
-            OPEN (UNIT = NOUTPN, FILE = 'PlantN.OUT', STATUS = 'OLD',IOSTAT = ERRNUM, POSITION = 'APPEND')
-          ELSE
-            OPEN (UNIT = NOUTPN, FILE = 'PlantN.OUT', STATUS = 'NEW',IOSTAT = ERRNUM)
-            WRITE(NOUTPN,'("*Daily plant N output file")')
-          ENDIF
-          
-          !Write headers
-          CALL HEADER(SEASINIT, NOUTPN, RUN)
-
-          WRITE (NOUTPN,2240) '!            <--------Plant N (kg/ha) ---------> <---------- Plant N (%) ---------->'
-          WRITE (NOUTPN,2240) '!            Uptak  Crop Grain   Veg  Leaf  Stem Grain   Veg  Leaf  Stem Shell  Root'
-          WRITE (NOUTPN,2240) '@DATE    DAP  NUPC  CNAD  GNAD  VNAD  LNAD  SNAD  GN%D  VN%D  LN%D  SN%D  SHND  RN%D'
-  2240    FORMAT (A252)
-        ENDIF
+!!       Initialize daily plant nitrogen output file
+!        IF (IDETN .EQ. 'Y') THEN
+!          INQUIRE (FILE = 'PlantN.OUT', EXIST = FEXIST)
+!          IF (FEXIST) THEN
+!            OPEN (UNIT = NOUTPN, FILE = 'PlantN.OUT', STATUS = 'OLD',IOSTAT = ERRNUM, POSITION = 'APPEND')
+!          ELSE
+!            OPEN (UNIT = NOUTPN, FILE = 'PlantN.OUT', STATUS = 'NEW',IOSTAT = ERRNUM)
+!            WRITE(NOUTPN,'("*Daily plant N output file")')
+!          ENDIF
+!          
+!          !Write headers
+!          CALL HEADER(SEASINIT, NOUTPN, RUN)
+!
+!          WRITE (NOUTPN,2240) '!            <--------Plant N (kg/ha) ---------> <---------- Plant N (%) ---------->'
+!          WRITE (NOUTPN,2240) '!            Uptak  Crop Grain   Veg  Leaf  Stem Grain   Veg  Leaf  Stem Shell  Root'
+!          WRITE (NOUTPN,2240) '@DATE    DAP  NUPC  CNAD  GNAD  VNAD  LNAD  SNAD  GN%D  VN%D  LN%D  SN%D  SHND  RN%D'
+!  2240    FORMAT (A252)
+!        ENDIF
 !-----------------------------------------------------------------------
         !CUMSENSURF  = 0.0
         !CUMSENSOIL  = 0.0
@@ -214,11 +222,11 @@
             
             LEAFNO = LN
             VSTAGE = REAL (LEAFNO)
-            IF (LEAFNO .GT. 0.0) THEN
-               RSTAGE = REAL(ISTAGE)
-             ELSE
-               RSTAGE = 0.0
-            ENDIF
+            !IF (LEAFNO .GT. 0.0) THEN
+            !   RSTAGE = REAL(ISTAGE)
+            ! ELSE
+            !   RSTAGE = 0.0
+            !ENDIF
             SDWT = GRNWT
             
 !           GM2KG converts gm/plant to kg/ha
@@ -239,24 +247,29 @@
             
             VWAD = NINT(WTLF*10. + STMWT*10.)
 
+!*** Note: PCNL is calculated below - need to move the N stuff up if some of the
+!   variables are printed here.
+
+!*** Note: SATFAC not used by pineapple model. Probably some other variables, too.
+!   Need to remove.
+
             IF (FMOPT /= 'C') THEN   ! VSH
-              WRITE (NOUTDG,400) YRDOY,DAP,VSTAGE,RSTAGE,XLAI,      &
+              WRITE (NOUTDG,400) YEAR, DOY, DAS, DAP,VSTAGE,ISTAGE,XLAI,      &
                 NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(FRTWT*GM2KG),           &
                 NINT(RTWT*GM2KG),NINT(BASLFWT*10.0),NINT(CRWNWT*GM2KG),        &
                 NINT(SKWT*GM2KG),HI,                                           &
                 NINT(PODWT*GM2KG),NINT(PODNO),(1.0-SWFAC),(1.0-TURFAC),        &
                 (1.0-NSTRES),PCNL,SHELPC,SLA,CANHT,CANWH,SATFAC,               &
                 (RTDEP/100),(RLV(I),I=1,10)
-!DATE   CDAY  L#SD  GSTD  LAID  LWAD  SWAD  FWAD  RWAD  BWAD  CRAD  SUGD  HIAD  EWAD  E#AD  WSPD  WSGD  NSTD  LN%D  SH%D  SLAD  CHTD  CWID  EWSD  RDPD  RL1D  RL2D  RL3D  RL4D  RL5D  RL6D  RL7D  RL8D  RL9D  RL10
- 400          FORMAT (2(1X,I5),1X,F5.1,1X,I5,1X,F5.2,7(1X,I5),           &
-                1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,          &
-                2(1X,F5.2),1X,F5.3,11(1X,F5.2))
+ 400          FORMAT (1X,I4,1X,I3.3,2I6,1X,F6.1,1X,I6,1X,F6.2,7(1X,I6),           &
+                1X,F6.3,2(1X,I6),3(1X,F6.3),2(1X,F6.2),1X,F6.1,          &
+                2(1X,F6.2),1X,F6.3,11(1X,F6.2))
 
 !-------------------------------------------------------------------------
 !           VSH CSV output corresponding to PlantGro.OUT
             ELSE   ! VSH
               !CALL CsvOut(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,CONTROL%ROTNUM,  &
-              !  CONTROL%REPNO, YEAR, DOY, DAS, DAP, VSTAGE, RSTAGE, XLAI,               &
+              !  CONTROL%REPNO, YEAR, DOY, DAS, DAP, VSTAGE, ISTAGE, XLAI,               &
               !  WTLF, STMWT, SDWT, RTWT, VWAD, TOPWT, SEEDNO, SDSIZE, HI, PODWT,        &
               !  PODNO, SWF_AV, TUR_AV, NST_AV, PS1_AV, PS2_AV, KST_AV, EXW_AV,          &
               !  PCNLP, SHELPC, HIP, PODWTD, SLAP, CANHT, CANWH,                         &
