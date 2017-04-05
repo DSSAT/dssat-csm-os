@@ -55,13 +55,19 @@ C=======================================================================
 
       SAVE
 
-!     from phenology:
+!     from phenology: - SOME OF THESE ONLY ONCE, SOME EVERY DAY - NEED TO SPLIT THIS
       SELECT CASE (ISTAGE)
+        CASE (1)
+!         once only
+          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
         CASE (8)
+!         once only
           RTDEP  = SDEPTH               ! Rooting depth = seeding depth (cm)
         CASE (9)
+!         once only
           RTWT   =  0.0
-
+!         every day (?)
+          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
       END SELECT
 
       IF (ISWWAT .EQ. 'N') RETURN
