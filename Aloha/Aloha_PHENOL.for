@@ -14,7 +14,7 @@ C=======================================================================
 
       SUBROUTINE Aloha_PHENOL (CONTROL, ISWITCH,
      &    SW, WEATHER, SOILPROP,          !Input
-     &    ISTAGE, MDATE, STGDOY)                 !Output
+     &    DTT, ISTAGE, MDATE, STGDOY, TBASE)                 !Output
 
       USE Aloha_mod
       IMPLICIT    NONE
@@ -44,9 +44,8 @@ C=======================================================================
       REAL, DIMENSION(NL) :: SW, LL, DLAYR, CUMDTT, FBIOM
       REAL, DIMENSION(20) :: SI1, SI2, SI3, SI4
 
-        REAL PLTPOP, SDEPTH, PLANTSIZE
-        INTEGER NFORCING, NDOF
-
+      REAL PLTPOP, SDEPTH, PLANTSIZE
+      INTEGER NFORCING, NDOF
 
       TYPE (CONTROLTYPE) CONTROL
       TYPE (SwitchType) ISWITCH

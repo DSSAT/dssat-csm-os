@@ -6,7 +6,8 @@
 !  03/28/2017 CHP Written
 !=======================================================================
       SUBROUTINE Aloha_OpGrow (CONTROL, ISWITCH, &
-        SWFAC, TURFAC, NSTRES, SATFAC, MDATE)
+        BIOMAS, CRWNWT, GPP, GPSM, GRNWT, ISTAGE, LAI, LFWT, LN,   &
+        MDATE, NSTRES, PLTPOP, STMWT, SWFAC, TRNU, TURFAC, YRPLT)
 
       USE Aloha_mod
       IMPLICIT  NONE
@@ -39,6 +40,8 @@
       DYNAMIC = CONTROL % DYNAMIC
       RUN     = CONTROL % RUN
       FROP    = CONTROL % FROP
+      YRDOY   = CONTROL % YRDOY
+      DAS     = CONTROL % DAS
 
       IDETG = ISWITCH % IDETG
       IDETN = ISWITCH % IDETN
@@ -55,6 +58,8 @@
 !-----------------------------------------------------------------------
         CALL GETLUN('PlantGro.OUT', NOUTDG)
         CALL GETLUN('PlantN.OUT'  , NOUTPN)
+
+    SATFAC = 1.0 !not used -need to remove from output
 
 !***********************************************************************
 !***********************************************************************
@@ -262,78 +267,79 @@
             ENDIF
           ENDIF     !Print PlantGro report
 
-!-----------------------------------------------------------------------
-!         PlantN.OUT
-!-----------------------------------------------------------------------
-          IF (IDETN .EQ. 'Y' .AND. ISWNIT .EQ. 'Y') THEN
-            WTNCAN = (STOVN + GRAINN) * PLTPOP
-            IF ((LFWT+STMWT) .GT. 0.0) THEN
-               WTNLF = STOVN * (LFWT  / STOVWT) * PLTPOP
-               WTNST = STOVN * (STMWT / (LFWT + STMWT)) * PLTPOP
-             ELSE
-               WTNLF = 0.0
-               WTNST = 0.0
-            ENDIF
-            WTNSD = GRAINN * PLTPOP
-            WTNRT = ROOTN * PLTPOP        ! Is this right?
-            WTNSH = 0.0
-
-            IF (LFWT .GT. 0.0) THEN
-               PCNL = WTNLF /( LFWT * PLTPOP) * 100.0
-             ELSE
-               PCNL = 0.0
-            ENDIF
-            IF (STMWT .GT. 0.0) THEN
-               PCNST = WTNST/(STMWT * PLTPOP) * 100.0
-             ELSE
-               PCNST = 0.0
-            ENDIF
-            IF (RTWT .GT. 0.0) THEN
-               PCNRT = ROOTN/RTWT * 100.0
-             ELSE
-               PCNRT = 0.0
-            ENDIF
-
-            WTNVEG  = (WTNLF + WTNST)
-            WTNGRN  = (WTNSH + WTNSD)
-            IF ((WTLF+STMWT) .GT. 0.0) THEN
-               PCNVEG = (WTNLF+WTNST)/(WTLF+(STMWT*PLTPOP))*100.0
-             ELSE
-               PCNVEG = 0.0
-            ENDIF
-            IF (SDWT .GT. 0.0) THEN
-               PCNGRN = WTNSD/SDWT*100
-             ELSE
-               PCNGRN = 0.0
-            ENDIF
-
-!-----------------------------------------------------------------------
-
-            IF (FMOPT /= 'C') THEN       ! VSH
-              WRITE (NOUTPN,300) YRDOY,DAP,(WTNUP*10.0),                   &
-                     (WTNCAN*10.0),(WTNSD*10.0),(WTNVEG*10.0),(WTNLF*10.0),(WTNST*10.0),      &
-                     PCNGRN,PCNVEG,PCNL,PCNST,PCNSH,PCNRT
-            !DATE    DAP  NUPC  CNAD  GNAD  VNAD  LNAD  SNAD  GN%D  VN%D  LN%D  SN%D  SHND  RN%D
-  300         FORMAT (2(1X,I5),1X,F5.1,1X,I5,1X,F5.2,7(1X,I5),1X,F5.3,     &
-                1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,            &
-                2(1X,F5.2),1X,F5.3,11(1X,F5.2))
- 
-
-!---------  --------------------------------------------------------------
-!           CSV output corresponding to PlantN.OUT
-            !     VSH
-            ELSE
-              !CALL CsvOutPlNCrGro(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM,     &
-              !  CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP,         &
-              !  WTNCAN, WTNSD, WTNVEG, PCNSDP, PCNVEG, WTNFX, WTNUP,        &
-              !  WTNLF, WTNST, PCNLP, PCNSTP, PCNSHP, PCNRTP, NFIXN,         &
-              !  CUMSENSURFN, CUMSENSOILN,                                   &
-              !  vCsvlinePlNCrGro, vpCsvlinePlNCrGro, vlngthPlNCrGro)
-              !
-              !CALL LinklstPlNCrGro(vCsvlinePlNCrGro)
-              !
-            ENDIF
-          ENDIF !Print plant N report
+!TEMP CHP 
+!!-----------------------------------------------------------------------
+!!         PlantN.OUT
+!!-----------------------------------------------------------------------
+!          IF (IDETN .EQ. 'Y' .AND. ISWNIT .EQ. 'Y') THEN
+!            WTNCAN = (STOVN + GRAINN) * PLTPOP
+!            IF ((LFWT+STMWT) .GT. 0.0) THEN
+!               WTNLF = STOVN * (LFWT  / STOVWT) * PLTPOP
+!               WTNST = STOVN * (STMWT / (LFWT + STMWT)) * PLTPOP
+!             ELSE
+!               WTNLF = 0.0
+!               WTNST = 0.0
+!            ENDIF
+!            WTNSD = GRAINN * PLTPOP
+!            WTNRT = ROOTN * PLTPOP        ! Is this right?
+!            WTNSH = 0.0
+!
+!            IF (LFWT .GT. 0.0) THEN
+!               PCNL = WTNLF /( LFWT * PLTPOP) * 100.0
+!             ELSE
+!               PCNL = 0.0
+!            ENDIF
+!            IF (STMWT .GT. 0.0) THEN
+!               PCNST = WTNST/(STMWT * PLTPOP) * 100.0
+!             ELSE
+!               PCNST = 0.0
+!            ENDIF
+!            IF (RTWT .GT. 0.0) THEN
+!               PCNRT = ROOTN/RTWT * 100.0
+!             ELSE
+!               PCNRT = 0.0
+!            ENDIF
+!
+!            WTNVEG  = (WTNLF + WTNST)
+!            WTNGRN  = (WTNSH + WTNSD)
+!            IF ((WTLF+STMWT) .GT. 0.0) THEN
+!               PCNVEG = (WTNLF+WTNST)/(WTLF+(STMWT*PLTPOP))*100.0
+!             ELSE
+!               PCNVEG = 0.0
+!            ENDIF
+!            IF (SDWT .GT. 0.0) THEN
+!               PCNGRN = WTNSD/SDWT*100
+!             ELSE
+!               PCNGRN = 0.0
+!            ENDIF
+!
+!!-----------------------------------------------------------------------
+!
+!            IF (FMOPT /= 'C') THEN       ! VSH
+!              WRITE (NOUTPN,300) YRDOY,DAP,(WTNUP*10.0),                   &
+!                     (WTNCAN*10.0),(WTNSD*10.0),(WTNVEG*10.0),(WTNLF*10.0),(WTNST*10.0),      &
+!                     PCNGRN,PCNVEG,PCNL,PCNST,PCNSH,PCNRT
+!            !DATE    DAP  NUPC  CNAD  GNAD  VNAD  LNAD  SNAD  GN%D  VN%D  LN%D  SN%D  SHND  RN%D
+!  300         FORMAT (2(1X,I5),1X,F5.1,1X,I5,1X,F5.2,7(1X,I5),1X,F5.3,     &
+!                1X,F5.3,2(1X,I5),3(1X,F5.3),2(1X,F5.2),1X,F5.1,            &
+!                2(1X,F5.2),1X,F5.3,11(1X,F5.2))
+! 
+!
+!!---------  --------------------------------------------------------------
+!!           CSV output corresponding to PlantN.OUT
+!            !     VSH
+!            ELSE
+!              !CALL CsvOutPlNCrGro(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM,     &
+!              !  CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP,         &
+!              !  WTNCAN, WTNSD, WTNVEG, PCNSDP, PCNVEG, WTNFX, WTNUP,        &
+!              !  WTNLF, WTNST, PCNLP, PCNSTP, PCNSHP, PCNRTP, NFIXN,         &
+!              !  CUMSENSURFN, CUMSENSOILN,                                   &
+!              !  vCsvlinePlNCrGro, vpCsvlinePlNCrGro, vlngthPlNCrGro)
+!              !
+!              !CALL LinklstPlNCrGro(vCsvlinePlNCrGro)
+!              !
+!            ENDIF
+!          ENDIF !Print plant N report
         ENDIF   !Print today
 !-----------------------------------------------------------------------
 
@@ -349,7 +355,7 @@
 
 !-----------------------------------------------------------------------
 
-      CALL OPVIEW ()
+!TEMP CHP      CALL OPVIEW ()
 
       RETURN
 

@@ -49,14 +49,17 @@ C=======================================================================
       REAL    BIOMAS, LEAFNO, LAI, XN, NSTRES, AGEFAC, NDEF3, NDEF4
       REAL    ANFAC, NFAC, ATANC, TANC, RANC, VANC, VMNC, TMNC, RCNP
       REAL    TCNP, STOVN, ROOTN, GRAINN, GNP, XGNP, APTNUP, GNUP
-      REAL    TOTNUP, WTINITIAL, SDWTPL, PLTPOP, GRORT
+      REAL    TOTNUP, GRORT
       REAL, DIMENSION(6)  :: SI1, SI2, SI3, SI4
       REAL, DIMENSION(NL) :: RLV, SW
 
       REAL      CANNAA,CANWAA
       REAL      CUMDTT,SUMDTT,DTT
       REAL      SDWTAH,BWAH, XLAT
-      REAL      SWDF1, SWDF2, EP, EP1, TRWU, RWUEP1, SWFAC, TURFAC
+      REAL      EP, EP1, TRWU, RWUEP1
+      REAL      SWFAC, TURFAC, TRNU
+
+      REAL      PLTPOP,   TBASE
 
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -153,6 +156,8 @@ C-----------------------------------------------------------------------
       LAI    = 0.0
       XN     = 0.0
       ICSDUR = 0
+      SWFAC  = 1.0
+      TURFAC = 1.0
       NSTRES = 1.0
       AGEFAC = 1.0
       NDEF3  = 1.0
@@ -179,7 +184,7 @@ C-----------------------------------------------------------------------
       CUMDTT = 0.0
       SUMDTT = 0.0
       DTT    = 0.0
-      CANNAA = 0.0
+      CANNAA = 0.05
       CANWAA = 0.0
       !
       ! Initialze stress indices
@@ -197,8 +202,6 @@ C-----------------------------------------------------------------------
 
       CALL Aloha_IPPlant (CONTROL) !formerly call to IPIBS
       
-      WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
-
       CALL Aloha_IPCROP ()
 
 C-----------------------------------------------------------------------
@@ -207,7 +210,16 @@ C-----------------------------------------------------------------------
 
       CALL Aloha_PHENOL (CONTROL, ISWITCH,
      &    SW, WEATHER, SOILPROP,          !Input
-     &    ISTAGE, MDATE, STGDOY)                 !Output
+     &    DTT, ISTAGE, MDATE, STGDOY, TBASE)                 !Output
+
+      CALL Aloha_GROSUB  (CONTROL, 
+     &        DTT, ISTAGE, TBASE, WEATHER)
+
+      CALL Aloha_OpGrow (CONTROL, ISWITCH,  
+     &    BIOMAS, CRWNWT, GPP, GPSM, GRNWT, ISTAGE, LAI, LFWT, 
+     &    LN, MDATE, NSTRES, PLTPOP, STMWT, 
+     &    SWFAC, TURFAC, YRPLT)
+
 
 
 !=======================================================================
@@ -226,21 +238,19 @@ C-----------------------------------------------------------------------
 
          EDATE = STGDOY(9)
 
-
-!     Calculate daily SW stress factors.
-      SWDF1 = 1.0
-      SWDF2 = 1.0
-      IF (EP .GT. 0.0) THEN
-        EP1 = EP*0.1
-        IF (TRWU/EP1 .LT. RWUEP1) SWDF2 = (1./RWUEP1)*TRWU/EP1
-        IF (EP1 .GE. TRWU) THEN
-          SWDF1 = TRWU / EP1
-          EP = TRWU * 10.0
-        ENDIF
-      ENDIF
-      SWFAC = SWDF1
-      TURFAC = SWDF2
-
+!temp chp
+!!     Calculate daily SW stress factors.
+      SWFAC = 1.0
+      TURFAC = 1.0
+!      IF (EP .GT. 0.0) THEN
+!        EP1 = EP*0.1
+!        IF (TRWU/EP1 .LT. RWUEP1) TURFAC = (1./RWUEP1)*TRWU/EP1
+!        IF (EP1 .GE. TRWU) THEN
+!          SWFAC = TRWU / EP1
+!          EP = TRWU * 10.0
+!        ENDIF
+!      ENDIF
+      
 C-----------------------------------------------------------------------
 C        Calculate light interception for transpiration.
 C        Note: this is discontinues function at LAI = 3.
@@ -272,7 +282,8 @@ C        Call GROSUB
 C----------------------------------------------------------------------
       
          IF (ISTAGE .LT. 6) THEN
-  !             CALL GROSUB  (NOUTDO,ISWNIT,IDETO)
+           CALL Aloha_GROSUB  (CONTROL, 
+     &        DTT, ISTAGE, TBASE, WEATHER)
          ENDIF
 
          IF (YRDOY .EQ. STGDOY(3)) THEN
@@ -287,7 +298,7 @@ C-----------------------------------------------------------------------
          IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
            CALL Aloha_PHENOL (CONTROL, ISWITCH, 
      &    SW, WEATHER, SOILPROP,          !Input
-     &    ISTAGE, MDATE, STGDOY)                 !Output
+     &    DTT, ISTAGE, MDATE, STGDOY, TBASE)                 !Output
          ENDIF
 
 !=======================================================================
@@ -295,19 +306,21 @@ C        Call daily output subroutine
 C-----------------------------------------------------------------------
       CASE (OUTPUT)
 !=======================================================================
-
-!         CALL OPDAY (MODEL,TRTNO,DAP,YRSIM,YRPLT,NREP,TITLET,EXPER,
-!     &               ENAME,MULTI,CROPD,STGDOY,YRDOY,TOTIR,NYRS,DAS,
-!     &               DAYL,TRUNOF,TDRAIN,AMTNIT,NAP,HAREND,NPSTAP,
-!     &               STNAME,WTNLF,WTNST,WTNSD,WTNSH,WTNRT)
-
-       WRITE(2000,*) YRDOY, ISTAGE
+      CALL Aloha_OpGrow (CONTROL, ISWITCH,  
+     &    BIOMAS, CRWNWT, GPP, GPSM, GRNWT, ISTAGE, LAI, LFWT, 
+     &    LN, MDATE, NSTRES, PLTPOP, STMWT, 
+     &    SWFAC, TURFAC, YRPLT)
 
 !=======================================================================
 C     Call end of season output routine
 C-----------------------------------------------------------------------
       CASE (SEASEND)
 !=======================================================================
+      CALL Aloha_OpGrow (CONTROL, ISWITCH,  
+     &    BIOMAS, CRWNWT, GPP, GPSM, GRNWT, ISTAGE, LAI, LFWT, 
+     &    LN, MDATE, NSTRES, PLTPOP, STMWT, 
+     &    SWFAC, TURFAC, YRPLT)
+
 
 !      CALL OPHARV (TRTNO,YRDOY,YRSIM,YRPLT,CROP,CROPD,
 !     &   WTNSD,NAP,TOTIR,CRAIN,CET,TRUNOF,PESW,TDRAIN,TSON,TSOC,TLCH,

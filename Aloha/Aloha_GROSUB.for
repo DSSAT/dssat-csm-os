@@ -48,15 +48,12 @@ C  TNLAB  :
 C  TTMP   :
 C=======================================================================
 
-      SUBROUTINE Aloha_GROSUB (NOUTDO,ISWNIT,IDETO)
+      SUBROUTINE Aloha_GROSUB (CONTROL, 
+     &    DTT, ISTAGE, TBASE, WEATHER)
 
+      USE Aloha_mod
       IMPLICIT  NONE
-
-      INCLUDE  'GEN1.BLK'
-      INCLUDE  'GEN2.BLK'
-      INCLUDE  'GEN3.BLK'
-      INCLUDE  'GEN4.BLK'
-      INCLUDE  'NTRC1.BLK'
+      SAVE
 
       CHARACTER ISWNIT*1,IDETO*1
       INTEGER   NOUTDO,ICOLD
@@ -64,7 +61,41 @@ C=======================================================================
      &          TNLAB,RNLAB,RNOUT,SLFW,SLFN,SLFC,SLFT,PLAS
       REAL      NSINK,NPOOL1,NPOOL2,NPOOL,NSDR
       REAL      TABEX,PCO2,Y1
-      SAVE
+
+      INTEGER ISTAGE, ISTAGE_old, IDURP, PMTYPE, ICSDUR
+      INTEGER DYNAMIC
+      REAL    PLA, LAI, BIOMAS, LFWT, BASLFWT, STMWT, STOVWT, WTINITIAL
+      REAL    SEEDNI, ROOTN, STOVN, GRAINN, SEEDN, XANC, TANC
+      REAL    APTNUP, PLAG, RTWT, FLRWT, GROSTM, SENLA, SLAN, GRORT
+      REAL    GROBSL, GROLF, CUMPH, LN, CUMDEP, SUMP, PLAMX, GROFLR
+      REAL    GROCRWN, GROFRT, FRTWT, CRWNWT, SKWT, GROSK, PTF, EYEWT
+      REAL    VANC, VMNC, TMNC, SWMAX, SWMIN, NDEF3, NSTRES, AGEFAC
+      REAL    RANC, PAR, CC, TEMPM, TRF2, CARBO, SWFAC
+      REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP, GNP, NFAC
+      REAL    RCNP, PDWI, PGRORT, DM
+
+      REAL    CO2, SRAD, TMIN, TMAX
+      REAL    PLTPOP, SDWTPL
+      REAL    G3, P4, PHINT, TBASE
+
+      REAL, DIMENSION(10) :: CO2X, CO2Y
+
+      TYPE (ControlType) CONTROL
+ !     TYPE (SwitchType)  ISWITCH
+      TYPE (WeatherType) WEATHER
+
+      DYNAMIC = CONTROL % DYNAMIC
+      SRAD = WEATHER % SRAD
+      CO2  = WEATHER % CO2
+      TMIN = WEATHER % TMIN
+      TMAX = WEATHER % TMAX
+
+      CO2X = SPECIES % CO2X
+      CO2Y = SPECIES % CO2Y
+      CC   = SPECIES % CONV
+
+      PHINT = CULTIVAR % PHINT
+      
 
 !=======================================================================
       SELECT CASE (DYNAMIC)
@@ -78,10 +109,21 @@ C=======================================================================
       BASLFWT    = 0.0
       STMWT      = 0.0
       STOVWT     = 0.0
+      SWFAC      = 1.0
+      NSTRES     = 1.0
+      TURFAC     = 1.0
+      TRNU       = 0.0
 
 !=======================================================================
       CASE (SEASINIT)
 !=======================================================================
+      SDWTPL    = PLANTING % SDWTPL
+      PLTPOP    = PLANTING % PLTPOP
+      PMTYPE    = PLANTING % PMTYPE
+
+      WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
+
+
       PLA        = WTINITIAL*0.6*63.0
       LAI        = PLTPOP*PLA*0.0001
       BIOMAS     = WTINITIAL*PLTPOP
@@ -90,36 +132,36 @@ C=======================================================================
       STMWT      = WTINITIAL*0.115
       STOVWT     = WTINITIAL
 
-      ! Calculate initial SEED N
-      !
-      SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
+      SWFAC      = 1.0
+      NSTRES     = 1.0
+      TURFAC     = 1.0
+
+!TEMP CHP
+!      ! Calculate initial SEED N
+!      !
+!      SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
+
+      ISTAGE_OLD = 0
 
 
 !=======================================================================
       CASE (RATE)
 !=======================================================================
-      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
-      APTNUP = STOVN*10.0*PLTPOP
+!TEMP CHP
+!      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
+!      APTNUP = STOVN*10.0*PLTPOP
 
-      IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
-         CALL NFACTO
-      ENDIF
+! chp temp
+      !IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
+      !   CALL NFACTO
+      !ENDIF
 
 !-----------------------------------------------------------------
-!     From PHENOL and PHASEI
-      SELECT CASE (ISTAGE)
-        CASE (8)
-          PLA    = WTINITIAL*0.6*63.0
-          LAI    = PLA*PLTPOP*0.0001
-          BIOMAS = WTINITIAL*PLTPOP
+      IF (ISTAGE /= ISTAGE_old) THEN
+        ISTAGE_OLD = ISTAGE
 
-        CASE (6)
-
-        CASE (9)
-          NDEF3  =  1.0
-          NSTRES =  1.0
-          AGEFAC =  1.0
-
+!       From PHENOL and PHASEI - New stage initialization
+        SELECT CASE (ISTAGE)
         CASE (1)
           PLAG    = 0.0                 ! PLAG (cm^2) is daily green leaf area growth
           LAI     = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
@@ -169,24 +211,34 @@ C=======================================================================
           SWMAX  = 0.0
           SWMIN  = 0.0
 
+        CASE (8)
+          PLA    = WTINITIAL*0.6*63.0
+          LAI    = PLA*PLTPOP*0.0001
+          BIOMAS = WTINITIAL*PLTPOP
+
+        CASE (9)
+          NDEF3  =  1.0
+          NSTRES =  1.0
+          AGEFAC =  1.0
+
         CASE (7)
           PLA    = WTINITIAL*0.6*63.0
           LAI    = PLA*PLTPOP*0.0001
           BIOMAS = WTINITIAL*PLTPOP
 
-
-      END SELECT
-!-----------------------------------------------------------------
-      IF (ISWNIT .NE. 'N') THEN
-         RANC  = 0.022
-         TANC  = 0.044
-         ROOTN = RANC*RTWT
-         STOVN = STOVWT*TANC
+        END SELECT
       ENDIF
+!-----------------------------------------------------------------
+!TEMP CHP
+!      IF (ISWNIT .NE. 'N') THEN
+!         RANC  = 0.022
+!         TANC  = 0.044
+!         ROOTN = RANC*RTWT
+!         STOVN = STOVWT*TANC
+!      ENDIF
 
       PAR   = 0.5*SRAD
-!     Y1    = EXP(-0.52*LAI)                        ! Beer's law
-      Y1    = EXP(-LIFAC*LAI)                       ! Beer's law
+      Y1    = EXP(-0.52*LAI)                        ! Beer's law
       PCARB = CC*PAR/PLTPOP*(1.0-Y1)                ! on per plant basis
       !
       ! Calculate Photosynthetic Response to CO2
@@ -629,47 +681,49 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
             CRWNWT  = CRWNWT + GROCRWN
         END SELECT
 
- 1900   IF (ISWNIT .EQ. 'Y') THEN
-           !
-           ! Grain N allowed to vary between .01 and .018.
-           ! High temp., low soil water, and high N increase grain N
-           !
-           SFAC  = 1.125 - 0.1250*TURFAC
-           TFAC  = 0.690 + 0.0125*TEMPM
-           GNP   = (0.004+0.013*NFAC)*AMAX1(SFAC,TFAC)
-           NSINK = GROGRN*GNP                !!!!!!!!!!!! GROGRN*GNP
-
-           IF (NSINK .GT. 0.0) THEN
-              RMNC   = 0.75*RCNP
-              RANC   = AMAX1  (RANC,RMNC)
-              VANC   = STOVN / STOVWT
-              VANC   = AMAX1  (VANC,VMNC)
-              NPOOL1 = STOVWT*(VANC-VMNC)
-              NPOOL2 = RTWT  *(RANC-RMNC)
-              XNF    = 0.15  + 0.25*NFAC
-              TNLAB  = XNF   * NPOOL1
-              RNLAB  = XNF   * NPOOL2
-              NPOOL  = TNLAB + RNLAB
-              IF (ICSDUR .EQ. 1) THEN
-                 GPP = AMIN1(GPP*NDEF3,(NPOOL/(0.062*.0095)))
-              ENDIF
-              NSDR = NPOOL/NSINK
-              IF (NSDR .LT. 1.0) THEN
-                 NSINK = NSINK*NSDR
-              ENDIF
-              IF (NSINK .GT. TNLAB) THEN
-                 STOVN = STOVN - TNLAB
-                 RNOUT = NSINK - TNLAB
-                 ROOTN = ROOTN - RNOUT
-                 RANC  = ROOTN / RTWT
-               ELSE
-                 STOVN = STOVN - NSINK
-                 VANC  = STOVN / STOVWT
-              ENDIF
-           ENDIF
-
-           GRAINN = GRAINN + NSINK
-        ENDIF
+!TEMP CHP
+ 1900    CONTINUE
+ !1900   IF (ISWNIT .EQ. 'Y') THEN
+ !          !
+ !          ! Grain N allowed to vary between .01 and .018.
+ !          ! High temp., low soil water, and high N increase grain N
+ !          !
+ !          SFAC  = 1.125 - 0.1250*TURFAC
+ !          TFAC  = 0.690 + 0.0125*TEMPM
+ !          GNP   = (0.004+0.013*NFAC)*AMAX1(SFAC,TFAC)
+ !          NSINK = GROGRN*GNP                !!!!!!!!!!!! GROGRN*GNP
+ !
+ !          IF (NSINK .GT. 0.0) THEN
+ !             RMNC   = 0.75*RCNP
+ !             RANC   = AMAX1  (RANC,RMNC)
+ !             VANC   = STOVN / STOVWT
+ !             VANC   = AMAX1  (VANC,VMNC)
+ !             NPOOL1 = STOVWT*(VANC-VMNC)
+ !             NPOOL2 = RTWT  *(RANC-RMNC)
+ !             XNF    = 0.15  + 0.25*NFAC
+ !             TNLAB  = XNF   * NPOOL1
+ !             RNLAB  = XNF   * NPOOL2
+ !             NPOOL  = TNLAB + RNLAB
+ !             IF (ICSDUR .EQ. 1) THEN
+ !                GPP = AMIN1(GPP*NDEF3,(NPOOL/(0.062*.0095)))
+ !             ENDIF
+ !             NSDR = NPOOL/NSINK
+ !             IF (NSDR .LT. 1.0) THEN
+ !                NSINK = NSINK*NSDR
+ !             ENDIF
+ !             IF (NSINK .GT. TNLAB) THEN
+ !                STOVN = STOVN - TNLAB
+ !                RNOUT = NSINK - TNLAB
+ !                ROOTN = ROOTN - RNOUT
+ !                RANC  = ROOTN / RTWT
+ !              ELSE
+ !                STOVN = STOVN - NSINK
+ !                VANC  = STOVN / STOVWT
+ !             ENDIF
+ !          ENDIF
+ !
+ !          GRAINN = GRAINN + NSINK
+ !       ENDIF
         !
         ! Update fruit weight
         !
@@ -758,9 +812,10 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
       PTF      = (LFWT+BASLFWT+STMWT+FLRWT+SKWT)/(RTWT+LFWT+
      &            BASLFWT+SKWT+STMWT+FLRWT)
       
-      IF (ISWNIT .NE. 'N') THEN
-         CALL NUPTAK
-      ENDIF
+!TEMP CHP
+!      IF (ISWNIT .NE. 'N') THEN
+!         CALL NUPTAK
+!      ENDIF
 
 !-----------------------------------------------------------------
       RETURN
