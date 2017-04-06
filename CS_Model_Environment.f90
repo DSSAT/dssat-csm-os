@@ -14,6 +14,8 @@
         procedure, pass (this) :: getHour
         procedure, pass (this) :: setHour
         procedure, pass (this) :: fetchTemperature
+        procedure, pass (this) :: fetchSVP
+        procedure, pass (this) :: fetchWaterHoldingCapacity
     
     end Type DailyEnvironment_type
     
@@ -93,19 +95,20 @@
     ! a  is the phase shift (the horizontal offset of the basepoint; where the curve crosses the baseline as it ascends)
     ! C is average temperature,  the vertical offset (height of the baseline) 
     ! w is the angular frequency, given by w = 2PI/hod 
-    real function fetchTemperature(this)
+    real function fetchTemperature(this, Hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
+        integer, intent (in) :: Hour
         REAL :: Amplitude, C, hod, w, a, g, pi, dawn
 
-        dawn=5
+        dawn=2
         pi=  4 * atan (1.0_8)
-        a = 12                                              ! 12 hours to shift
+        a = 10                                              ! 12 hours to shift
         hod = 24                                            ! 24 hours a day
         w = (2*pi)/hod
         Amplitude = ((this%TMax_ - this%TMin_)/2)           ! half distance between temperatures
         C = (this%TMin_ + this%TMax_)/2                     ! mean temperature
-        g = w*(this%Hour_ - a)
+        g = w*(Hour - a)
         
         !if (this%Hour_ > dawn) then                         ! if it is later dawn time
             !fetchTemperature = Amplitude*SIN(g)+C           ! calculate temperature acording to the current time
@@ -119,20 +122,22 @@
     end function fetchTemperature
     
     ! obtain the Saturation Vapour Pressure (pascals)
-    real function fetchSVP(this)
+    real function fetchSVP(this, Hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
+        integer, intent (in) :: Hour
         
-        fetchSVP = 610.78 * exp( fetchTemperature(this) / ( fetchTemperature(this)  + 238.3 ) * 17.2694 )        !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
+        fetchSVP = 610.78 * exp( fetchTemperature(this, Hour) / ( fetchTemperature(this, Hour)  + 238.3 ) * 17.2694 )        !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
 
     end function fetchSVP
     
     ! obtain the water holding capacity of the air (kg/m3)
-    real function fetchWaterHoldingCapacity(this)
+    real function fetchWaterHoldingCapacity(this, Hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
+        integer, intent (in) :: Hour
         
-        fetchWaterHoldingCapacity = 0.002166 * fetchSVP(this) / ( fetchTemperature(this) + 273.16 )                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        fetchWaterHoldingCapacity = 0.002166 * fetchSVP(this, Hour) / ( fetchTemperature(this, Hour) + 273.16 )                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
     end function fetchWaterHoldingCapacity
     
