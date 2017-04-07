@@ -26,7 +26,8 @@ C=======================================================================
       
 C-----------------------------------------------------------------------
       USE ModuleDefs      
-      USE FloodModule    
+      USE FloodModule      
+      USE CsvOutput   ! VSH 
 
       IMPLICIT NONE
       SAVE
@@ -541,6 +542,10 @@ C***********************************************************************
 !      DELTA_TIME = TIME1 - TIME_START
 !      WRITE(200,'(/," Total Time",F10.3)') RUN, DELTA_TIME
 
+!      VSH CSV outputs
+       IF (ISWITCH % FMOPT == 'C') THEN
+          CALL CsvOutputs(CONTROL % MODEL(1:5), CONTROL % N_ELEMS)
+        END IF 
 
 !***********************************************************************
 !***********************************************************************

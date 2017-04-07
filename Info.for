@@ -69,8 +69,16 @@ C=======================================================================
             CALL HEADER(SEASINIT, LUN, RUN)
             FIRST = .FALSE.
             OLDRUN = RUN
-          ENDIF
-        ENDIF
+          ENDIF 
+		ELSE
+!         VSH
+          CALL GETLUN('OUTINFO', LUN)
+          INQUIRE (FILE = InfoOut, OPENED = FOPEN)
+          IF (.NOT. FOPEN) THEN
+             OPEN (UNIT=LUN, FILE=InfoOut, STATUS='OLD',
+     &             POSITION='APPEND')
+          ENDIF               
+        ENDIF   ! for FIRST
 
         IF (ICOUNT > 0) THEN
           !Print header if this is a new run.
