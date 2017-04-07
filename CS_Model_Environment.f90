@@ -69,7 +69,7 @@
     end subroutine setTMax
     
     
-    ! obtain the temperature accrding to the hour of the day
+    ! obtain the temperature for any given hour of the day
     ! T(Hour) = Amplitude*sin[w(t - a)] + C.
     ! Amplitude is called the amplitude the height of each peak above the baseline
     ! Hod is Hours Of Day, the period or wavelength (the length of each cycle) 
@@ -94,23 +94,23 @@
 
     end function fetchTemperature
     
-    ! obtain the Saturation Vapour Pressure (pascals)
-    real function fetchSVP(this, Hour)
+    ! obtain the Saturation Vapour Pressure (pascals) for any given temperature
+    real function fetchSVP(this, temperature)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
-        integer, intent (in) :: Hour
+        real, intent (in) :: temperature
         
-        fetchSVP = 610.78 * exp( fetchTemperature(this, Hour) / ( fetchTemperature(this, Hour)  + 238.3 ) * 17.2694 )        !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
+        fetchSVP = 610.78 * exp( temperature/ ( temperature  + 238.3 ) * 17.2694 )        !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
 
     end function fetchSVP
     
-    ! obtain the water holding capacity of the air (kg/m3)
-    real function fetchWaterHoldingCapacity(this, Hour)
+    ! obtain the water holding capacity of the air (kg/m3) for any given temperature and SVP
+    real function fetchWaterHoldingCapacity(this, temperature, SVP)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
-        integer, intent (in) :: Hour
+        real, intent (in) :: temperature, SVP
         
-        fetchWaterHoldingCapacity = 0.002166 * fetchSVP(this, Hour) / ( fetchTemperature(this, Hour) + 273.16 )                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        fetchWaterHoldingCapacity = 0.002166 * SVP / ( temperature  + 273.16 )                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
     end function fetchWaterHoldingCapacity
     
