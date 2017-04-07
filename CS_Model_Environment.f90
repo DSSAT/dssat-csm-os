@@ -153,7 +153,7 @@
 
     end function getRH
     
-        ! obtain the relative humidity for any given hour
+    ! obtain the Vapor Preasure Deficit VPD for any given hour
     real function getVPD(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
