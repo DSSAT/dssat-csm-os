@@ -5,6 +5,7 @@
         real, private :: HOURS_OF_LIGHT = 8
         real, private :: tMin_ = 0 !
         real, private :: tMax_ = 0 ! 
+        real, private :: dewPoint_ = 0 !
         
     contains
     
@@ -12,9 +13,12 @@
         procedure, pass (this) :: setTMin
         procedure, pass (this) :: getTMax
         procedure, pass (this) :: setTMax
+        procedure, pass (this) :: getDewPoint
+        procedure, pass (this) :: setDewPoint
         procedure, pass (this) :: getTemperature
         procedure, pass (this) :: getSVP
-        procedure, pass (this) :: getWaterHoldingCapacity
+        procedure, pass (this) :: getWHCAIR
+        procedure, pass (this) :: getRH
     
     end Type DailyEnvironment_type
     
@@ -26,11 +30,12 @@
     contains
     
     ! constructor for the type
-    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax)
+    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint)
         implicit none
-        real, intent (in) :: tMin, tMax
+        real, intent (in) :: tMin, tMax, dewPoint
         DailyEnvironment_type_constructor%TMin_ = tMin
         DailyEnvironment_type_constructor%TMax_ = tMax
+        DailyEnvironment_type_constructor%dewPoint_ = dewPoint
     end function DailyEnvironment_type_constructor    
     
     !-------------------------------------------
@@ -71,6 +76,23 @@
         this%tMax_ = tMax
     end subroutine setTMax
     
+    ! get dewPoint
+    real function getDewPoint(this)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        
+        getDewPoint = this%dewPoint_
+    end function getDewPoint
+    
+    ! set dewPoint    
+    subroutine setDewPoint(this, dewPoint)
+        implicit none
+        class (DailyEnvironment_type), intent(inout) :: this
+        real, intent (in) :: dewPoint
+        
+        this%dewPoint_ = dewPoint
+    end subroutine setDewPoint
+    
     !-------------------------------------------
     ! OBJECT FUNCTIONS
     
@@ -110,15 +132,25 @@
 
     end function getSVP
     
-    ! obtain the water holding capacity of the air (kg/m3) for any given temperature and SVP
-    real function getWaterHoldingCapacity(this, hour)
+    ! obtain the water holding capacity of the air (kg/m3) for any given hour
+    real function getWHCAIR(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: Hour
         
-        getWaterHoldingCapacity = calculateWaterHoldingCapacity(getTemperature(this, Hour), getSVP(this, Hour))                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        getWHCAIR = calculateWHCAIR(getTemperature(this, Hour))                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
-    end function getWaterHoldingCapacity
+    end function getWHCAIR
+    
+    ! obtain the relative humidity for any given hour
+    real function getRH(this, hour)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        integer, intent (in) :: Hour
+        
+        getRH =  calculateRH(getTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+
+    end function getRH
    
     !-------------------------------------------
     ! STATIC FUNCTIONS
@@ -131,14 +163,23 @@
 
     end function calculateSVP
     
-        ! obtain the water holding capacity of the air (kg/m3) for any given temperature and SVP
-    real function calculateWaterHoldingCapacity(temperature, SVP)
+    ! obtain the water holding capacity of the air (kg/m3) for any given temperature
+    real function calculateWHCAIR(temperature)
         implicit none
-        real, intent (in) :: temperature, SVP
+        real, intent (in) :: temperature
         
-        calculateWaterHoldingCapacity = 0.002166 * SVP / ( temperature  + 273.16 )                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        calculateWHCAIR = 0.002166 * calculateSVP(temperature) / ( temperature  + 273.16 )                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
-    end function calculateWaterHoldingCapacity
+    end function calculateWHCAIR
+     
+    ! obtain the relative humidity 
+    real function calculateRH(temperature, dewPoint)
+        implicit none
+        real, intent (in) :: temperature, dewPoint
+        
+        calculateRH =  calculateWHCAIR(temperature)/calculateWHCAIR(dewPoint)                              !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+
+    end function calculateRH
     
 END Module CS_Model_Environment    
     
