@@ -19,6 +19,7 @@
         procedure, pass (this) :: getSVP
         procedure, pass (this) :: getWHCAIR
         procedure, pass (this) :: getRH
+        procedure, pass (this) :: getVPD
     
     end Type DailyEnvironment_type
     
@@ -151,6 +152,16 @@
         getRH =  calculateRH(getTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
     end function getRH
+    
+        ! obtain the relative humidity for any given hour
+    real function getVPD(this, hour)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        integer, intent (in) :: Hour
+        
+        getVPD =  calculateVPD(getTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+
+    end function getVPD
    
     !-------------------------------------------
     ! STATIC FUNCTIONS
@@ -168,6 +179,7 @@
         implicit none
         real, intent (in) :: temperature
         
+        ! WHCAIR = 0.002166 *SVP / ( t + 273.16 )   
         calculateWHCAIR = 0.002166 * calculateSVP(temperature) / ( temperature  + 273.16 )                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
     end function calculateWHCAIR
@@ -177,9 +189,20 @@
         implicit none
         real, intent (in) :: temperature, dewPoint
         
-        calculateRH =  calculateWHCAIR(temperature)/calculateWHCAIR(dewPoint)                              !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        !(RHt) = WHCAIRdp/WHCAIRt
+        calculateRH =  calculateWHCAIR(dewPoint)/calculateWHCAIR(temperature)                              !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
     end function calculateRH
+    
+    ! obtain the Vapor Preasure Deficit VPD
+    real function calculateVPD(temperature, dewPoint)
+        implicit none
+        real, intent (in) :: temperature, dewPoint
+        
+        ! VPD = (1 - (RH/100)) * SVP 
+        calculateVPD =  (1 - (calculateRH(temperature, dewPoint)/100)) * calculateSVP(temperature)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+
+    end function calculateVPD
     
 END Module CS_Model_Environment    
     
