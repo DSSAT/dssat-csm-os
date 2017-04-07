@@ -1,9 +1,10 @@
 ﻿Module CS_Model_Environment !Module of environment
     type DailyEnvironment_type
         
-        real :: TMin_ = 0 !
-        real :: TMax_ = 0 ! 
-        integer :: Hour_ = 0 ! 
+        real, private :: HOURS_OF_DAY = 24
+        real, private :: HOURS_OF_LIGHT = 8
+        real, private :: TMin_ = 0 !
+        real, private :: TMax_ = 0 ! 
         
     contains
     
@@ -11,8 +12,6 @@
         procedure, pass (this) :: setTMin
         procedure, pass (this) :: getTMax
         procedure, pass (this) :: setTMax
-        procedure, pass (this) :: getHour
-        procedure, pass (this) :: setHour
         procedure, pass (this) :: fetchTemperature
         procedure, pass (this) :: fetchSVP
         procedure, pass (this) :: fetchWaterHoldingCapacity
@@ -27,13 +26,11 @@
     contains
     
     ! constructor for the type
-    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(TMin, TMax, Hour)
+    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(TMin, TMax)
         implicit none
         real, intent (in) :: TMin, TMax
-        integer, intent (in) :: Hour
         DailyEnvironment_type_constructor%TMin_ = TMin
         DailyEnvironment_type_constructor%TMax_ = TMax
-        DailyEnvironment_type_constructor%Hour_ = Hour
     end function DailyEnvironment_type_constructor    
 
     ! get TMin
@@ -71,22 +68,6 @@
         this%TMax_ = TMax
     end subroutine setTMax
     
-    ! get Hour
-     integer function getHour(this)
-         implicit none
-         class (DailyEnvironment_type), intent(in) :: this
-         
-         getHour = this%Hour_
-     end function getHour
-          
-     ! set Hour    
-     subroutine setHour(this, Hour)
-         implicit none
-         class (DailyEnvironment_type), intent(inout) :: this
-         integer, intent (in) :: Hour
-         
-         this%Hour_ = Hour
-     end subroutine setHour
     
     ! obtain the temperature accrding to the hour of the day
     ! T(Hour) = Amplitude*sin[w(t - a)] + C.
@@ -95,27 +76,19 @@
     ! a  is the phase shift (the horizontal offset of the basepoint; where the curve crosses the baseline as it ascends)
     ! C is average temperature,  the vertical offset (height of the baseline) 
     ! w is the angular frequency, given by w = 2PI/hod 
-    real function fetchTemperature(this, Hour)
+    real function fetchTemperature(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
-        integer, intent (in) :: Hour
-        REAL :: Amplitude, C, hod, w, a, g, pi, dawn
+        integer, intent (in) :: hour
+        REAL :: Amplitude, C, w, g, pi, dawnTime
 
-        dawn=2
-        pi=  4 * atan (1.0_8)
-        a = 10                                              ! 12 hours to shift
-        hod = 24                                            ! 24 hours a day
-        w = (2*pi)/hod
+        dawnTime = 5                                            !dawn time
+        pi =  4 * atan (1.0_8)
+        w = (2*pi)/this%HOURS_OF_DAY
         Amplitude = ((this%TMax_ - this%TMin_)/2)           ! half distance between temperatures
         C = (this%TMin_ + this%TMax_)/2                     ! mean temperature
-        g = w*(Hour - a)
-        
-        !if (this%Hour_ > dawn) then                         ! if it is later dawn time
-            !fetchTemperature = Amplitude*SIN(g)+C           ! calculate temperature acording to the current time
-        !else                                                ! else
-            !g = w*(dawn - a)
-            !fetchTemperature = Amplitude*SIN(g)+C           !calculate temperature like if it was dawn time
-        !end if
+        g = w*(hour - this%HOURS_OF_LIGHT)
+
         
         fetchTemperature = Amplitude*SIN(g)+C           ! calculate temperature acording to the current time
 
