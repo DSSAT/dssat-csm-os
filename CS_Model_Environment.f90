@@ -191,13 +191,13 @@
 
     end function calculateRH
     
-    ! obtain the Vapor Preasure Deficit VPD (pascals)
+    ! obtain the Vapor Preasure Deficit VPD (KPa)
     real function calculateVPD(temperature, dewPoint)
         implicit none
         real, intent (in) :: temperature, dewPoint
         
         ! VPD = (1 - (RH/100)) * SVP 
-        calculateVPD =  (1 - (calculateRH(temperature, dewPoint)/100)) * calculateSVP(temperature)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        calculateVPD =  ((1 - (calculateRH(temperature, dewPoint)/100)) * calculateSVP(temperature))/1000                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
     end function calculateVPD
     
