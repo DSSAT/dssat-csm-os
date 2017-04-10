@@ -13,7 +13,7 @@
     Module CS_Model_VPDEffect !Module of environment
     type VPDEffect_type
         
-        real, private :: VPDTreshold =  0
+        real, private :: VPDTreshold_ =  0
         
     contains
     
@@ -23,19 +23,19 @@
     end Type VPDEffect_type
     
     ! interface to reference the constructor
-    interface Plant_type
-        module procedure Plant_type_constructor
-    end interface Plant_type
+    interface VPDEffect_type
+        module procedure VPDEffect_type_constructor
+    end interface VPDEffect_type
     
     contains
     
     ! constructor for the type
-    type (Plant_type) function Plant_type_constructor(VPDTreshold)
+    type (VPDEffect_type) function VPDEffect_type_constructor(VPDTreshold)
         implicit none
         real, intent (in) :: VPDTreshold
-        Plant_type_constructor%VPDTreshold_ = VPDTreshold
+        VPDEffect_type_constructor%VPDTreshold_ = VPDTreshold
         
-    end function Plant_type_constructor    
+    end function VPDEffect_type_constructor    
     
         
     !-------------------------------------------
@@ -61,15 +61,15 @@
     end function getVPDTreshold
     
     ! set TMin    
-    subroutine setTMin(this, VPDTreshold)
+    subroutine setVPDTreshold(this, VPDTreshold)
         implicit none
         class (VPDEffect_type), intent(inout) :: this
         real, intent (in) :: VPDTreshold
         
         this%VPDTreshold_ = VPDTreshold
-    end subroutine setTMin
+    end subroutine setVPDTreshold
  
     
     
-END Module CS_Model_Environment    
+END Module CS_Model_VPDEffect    
     
