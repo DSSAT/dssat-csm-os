@@ -476,7 +476,8 @@ Subroutine CsvOut_mzcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Integer, Intent(Out) :: lngth
   
    Character(Len=800) :: tmp
-   Character(Len=150) :: tmp1, tmp2
+   Character(Len=300) :: tmp1
+   Character(Len=150) :: tmp2
    Character(Len=20) :: fmt      
 !  End of vars
           
@@ -1119,7 +1120,7 @@ Subroutine CsvOutSoilOrg1(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,CumRes
    Character(:), Pointer, Intent(Out) :: pCsvline
    Integer, Intent(Out) :: lngth
    Integer :: size
-   Character(Len=320) :: tmp      
+   Character(Len=450) :: tmp      
 !  End of vars
   
 !  Recalculated vars
@@ -1299,7 +1300,7 @@ Subroutine CsvOutPlantP(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
    Integer, Intent(Out) :: lngth
-   Character(Len=600) :: tmp 
+   Character(Len=650) :: tmp 
    Integer :: size     
 !  End of vars
    
@@ -1327,7 +1328,7 @@ Subroutine CsvOutPlantP(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Shel_kg1 = NINT(Shel_kg)
    Seed_kg1 = NINT(Seed_kg)
    
-   Write(tmp,'(40(g,","),g)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   Write(tmp,'(41(g,","),g)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
       PConc_Shut_opt1, PConc_Root_opt1, PConc_Shel_opt1, PConc_Seed_opt1, &
       PConc_Shut_min1, PConc_Root_min1, PConc_Shel_min1, PConc_Seed_min1, &
       PConc_Shut1, PConc_Root1, PConc_Shel1, PConc_Seed1, PConc_Plant1, PShut_kg,&
@@ -1366,7 +1367,7 @@ Subroutine CsvOutSoilPi(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
    Integer, Intent(Out) :: lngth
-   Character(Len=400) :: tmp
+   Character(Len=500) :: tmp
    Integer :: size      
 !  End of vars
                 
