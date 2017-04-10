@@ -12,7 +12,7 @@
 !        hourlyRH
 !        hourlyVPD
 !        hourlyRadiation
-! Static functions
+! Static functions:
 !        calculateSVP
 !        calculateWHCAIR
 !        calculateRH
@@ -67,77 +67,6 @@
         DailyEnvironment_type_constructor%radiation_ = radiation
     end function DailyEnvironment_type_constructor    
     
-    !-------------------------------------------
-    ! GETTERS AND SETTERS
-    
-    ! get TMin
-    real function getTMin(this)
-        implicit none
-        class (DailyEnvironment_type), intent(in) :: this
-        
-        getTMin = this%tMin_
-    end function getTMin
-    
-    ! set TMin    
-    subroutine setTMin(this, tMin)
-        implicit none
-        class (DailyEnvironment_type), intent(inout) :: this
-        real, intent (in) :: tMin
-        
-        this%tMin_ = tMin
-    end subroutine setTMin
-    
-    ! get tMax
-    real function getTMax(this)
-        implicit none
-        class (DailyEnvironment_type), intent(in) :: this
-        
-        getTMax = this%tMax_
-    end function getTMax
-    
-    
-    ! set tMax    
-    subroutine setTMax(this, tMax)
-        implicit none
-        class (DailyEnvironment_type), intent(inout) :: this
-        real, intent (in) :: tMax
-        
-        this%tMax_ = tMax
-    end subroutine setTMax
-    
-    ! get dewPoint
-    real function getDewPoint(this)
-        implicit none
-        class (DailyEnvironment_type), intent(in) :: this
-        
-        getDewPoint = this%dewPoint_
-    end function getDewPoint
-    
-    ! set dewPoint    
-    subroutine setDewPoint(this, dewPoint)
-        implicit none
-        class (DailyEnvironment_type), intent(inout) :: this
-        real, intent (in) :: dewPoint
-        
-        this%dewPoint_ = dewPoint
-    end subroutine setDewPoint
-    
-    ! get radiation
-    real function getRadiation(this)
-        implicit none
-        class (DailyEnvironment_type), intent(in) :: this
-        
-        getRadiation = this%radiation_
-    end function getRadiation
-    
-    ! set radiation    
-    subroutine setRadiation(this, radiation)
-        implicit none
-        class (DailyEnvironment_type), intent(inout) :: this
-        real, intent (in) :: radiation
-        
-        this%radiation_ = radiation
-    end subroutine setRadiation
     
     !-------------------------------------------
     ! OBJECT FUNCTIONS
@@ -272,7 +201,77 @@
 
     end function calculateVPD
     
+    !-------------------------------------------
+    ! GETTERS AND SETTERS
+    !------------------------------------------
     
+    ! get TMin
+    real function getTMin(this)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        
+        getTMin = this%tMin_
+    end function getTMin
+    
+    ! set TMin    
+    subroutine setTMin(this, tMin)
+        implicit none
+        class (DailyEnvironment_type), intent(inout) :: this
+        real, intent (in) :: tMin
+        
+        this%tMin_ = tMin
+    end subroutine setTMin
+    
+    ! get tMax
+    real function getTMax(this)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        
+        getTMax = this%tMax_
+    end function getTMax
+    
+    ! set tMax    
+    subroutine setTMax(this, tMax)
+        implicit none
+        class (DailyEnvironment_type), intent(inout) :: this
+        real, intent (in) :: tMax
+        
+        this%tMax_ = tMax
+    end subroutine setTMax
+    
+    ! get dewPoint
+    real function getDewPoint(this)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        
+        getDewPoint = this%dewPoint_
+    end function getDewPoint
+    
+    ! set dewPoint    
+    subroutine setDewPoint(this, dewPoint)
+        implicit none
+        class (DailyEnvironment_type), intent(inout) :: this
+        real, intent (in) :: dewPoint
+        
+        this%dewPoint_ = dewPoint
+    end subroutine setDewPoint
+    
+    ! get radiation
+    real function getRadiation(this)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        
+        getRadiation = this%radiation_
+    end function getRadiation
+    
+    ! set radiation    
+    subroutine setRadiation(this, radiation)
+        implicit none
+        class (DailyEnvironment_type), intent(inout) :: this
+        real, intent (in) :: radiation
+        
+        this%radiation_ = radiation
+    end subroutine setRadiation
     
 END Module CS_Model_Environment    
     
