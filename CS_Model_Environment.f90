@@ -2,11 +2,11 @@
     type DailyEnvironment_type
         
         real, private :: HOURS_OF_DAY = 24
-        real, private :: HOURS_OF_LIGHT = 8
         real, private :: tMin_ = 0 !
         real, private :: tMax_ = 0 ! 
         real, private :: dewPoint_ = 0 !
         real, private :: radiation_ = 0 ! solar radiation
+        real, private :: PI =  4 * atan (1.0_8)
         
     contains
     
@@ -130,14 +130,13 @@
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
-        real :: Amplitude, C, w, g, pi, dawnTime
+        real :: Amplitude, C, w, g,  dawnTime
 
         dawnTime = 5                                            !dawn time
-        pi =  4 * atan (1.0_8)
-        w = (2*pi)/this%HOURS_OF_DAY
+        w = (2*this%PI)/this%HOURS_OF_DAY
         Amplitude = ((this%TMax_ - this%TMin_)/2)           ! half distance between temperatures
         C = (this%TMin_ + this%TMax_)/2                     ! mean temperature
-        g = w*(hour - this%HOURS_OF_LIGHT)
+        g = w*(hour - 8)
 
         
         hourlyTemperature = Amplitude*SIN(g)+C           ! calculate temperature acording to the current time
@@ -190,14 +189,14 @@
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
-        
+        real :: Amplitude, C, w, g, dawnTime, lightHours
                
+        lightHours = 12
         dawnTime = 5                                            !dawn time
-        pi =  4 * atan (1.0_8)
-        w = (2*pi)/24   
-        Amplitude = 3.6
+        w = (2*this%PI)/24   
+        Amplitude = this%radiation_/((cos(dawnTime)-cos(dawnTime+lightHours))*12)
         C = 0
-        g = w*(hour - 6)
+        g = w*(hour- dawnTime)
         
         hourlyRadiation = Amplitude*SIN(g)+C
         
