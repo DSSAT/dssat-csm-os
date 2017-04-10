@@ -1,4 +1,27 @@
-﻿Module CS_Model_Environment !Module of environment
+﻿!***************************************************************************************************************************
+! This module is intended to calculate environmental factors 
+! Atributes:
+!   - tMin minimmun temprature of the day
+!   - tMax maximun temprature of the day
+!   - dewPoint dew point temperature of the day
+!   - radiation registered during the day
+! Object functions:
+!        hourlyTemperature
+!        hourlySVP
+!        hourlyWHCAIR
+!        hourlyRH
+!        hourlyVPD
+!        hourlyRadiation
+! Static functions
+!        calculateSVP
+!        calculateWHCAIR
+!        calculateRH
+!        calculateVPD
+! Authors
+! @danipilze
+!*********
+
+    Module CS_Model_Environment !Module of environment
     type DailyEnvironment_type
         
         real, private :: HOURS_OF_DAY = 24
@@ -118,6 +141,8 @@
     
     !-------------------------------------------
     ! OBJECT FUNCTIONS
+    !-------------------------------------------
+    
     
     ! obtain the temperature for any given hour of the day
     ! T(Hour) = Amplitude*sin[w(t - a)] + C.
@@ -206,6 +231,8 @@
    
     !-------------------------------------------
     ! STATIC FUNCTIONS
+    !-------------------------------------------
+    
     ! obtain the Saturation Vapour Pressure (pascals) for any given temperature
     real function calculateSVP(temperature)
         implicit none
@@ -235,7 +262,7 @@
 
     end function calculateRH
     
-    ! obtain the Vapor Preasure Deficit VPD
+    ! obtain the Vapor Preasure Deficit VPD (pascals)
     real function calculateVPD(temperature, dewPoint)
         implicit none
         real, intent (in) :: temperature, dewPoint
