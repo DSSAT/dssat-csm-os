@@ -23,6 +23,7 @@
         procedure, pass (this) :: hourlyWHCAIR
         procedure, pass (this) :: hourlyRH
         procedure, pass (this) :: hourlyVPD
+        procedure, pass (this) :: hourlyRadiation
     
     end Type DailyEnvironment_type
     
@@ -129,7 +130,7 @@
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
-        REAL :: Amplitude, C, w, g, pi, dawnTime
+        real :: Amplitude, C, w, g, pi, dawnTime
 
         dawnTime = 5                                            !dawn time
         pi =  4 * atan (1.0_8)
@@ -148,7 +149,7 @@
     real function hourlySVP(this, Hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
-        integer, intent (in) :: Hour
+        integer, intent (in) :: hour
         
         hourlySVP = calculateSVP(hourlyTemperature(this, Hour))                   !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
 
@@ -158,7 +159,7 @@
     real function hourlyWHCAIR(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
-        integer, intent (in) :: Hour
+        integer, intent (in) :: hour
         
         hourlyWHCAIR = calculateWHCAIR(hourlyTemperature(this, Hour))                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
@@ -168,7 +169,7 @@
     real function hourlyRH(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
-        integer, intent (in) :: Hour
+        integer, intent (in) :: hour
         
         hourlyRH =  calculateRH(hourlyTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
@@ -178,11 +179,31 @@
     real function hourlyVPD(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
-        integer, intent (in) :: Hour
+        integer, intent (in) :: hour
         
         hourlyVPD =  calculateVPD(hourlyTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
     end function hourlyVPD
+    
+    ! obtain the radiation VPD for any given hour
+    real function hourlyRadiation(this, hour)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        integer, intent (in) :: hour
+        
+               
+        dawnTime = 5                                            !dawn time
+        pi =  4 * atan (1.0_8)
+        w = (2*pi)/24   
+        Amplitude = 3.6
+        C = 0
+        g = w*(hour - 6)
+        
+        hourlyRadiation = Amplitude*SIN(g)+C
+        
+        if(hourlyRadiation < 0.0 ) hourlyRadiation = 0
+
+    end function hourlyRadiation
    
     !-------------------------------------------
     ! STATIC FUNCTIONS
@@ -224,6 +245,8 @@
         calculateVPD =  (1 - (calculateRH(temperature, dewPoint)/100)) * calculateSVP(temperature)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
     end function calculateVPD
+    
+    
     
 END Module CS_Model_Environment    
     
