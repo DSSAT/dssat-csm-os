@@ -194,14 +194,14 @@
         lightHours = 12
         dawnTime = 5                                            !dawn time
         w = (2*this%PI)/24   
-        Amplitude = this%radiation_/((cos(dawnTime)-cos(dawnTime+lightHours))*12)
-        C = 0
-        g = w*(hour- dawnTime)
+        C = 0   
+        Amplitude = (this%radiation_* this%PI)/24
+        g = w*(hour - dawnTime)
         
-        hourlyRadiation = Amplitude*SIN(g)+C
+        hourlyRadiation = Amplitude*SIN(g)+C           ! hourly radiation
+        if(hourlyRadiation < 0.0 ) hourlyRadiation = 0 ! no radiation on non-light hours
         
-        if(hourlyRadiation < 0.0 ) hourlyRadiation = 0
-
+        
     end function hourlyRadiation
    
     !-------------------------------------------
