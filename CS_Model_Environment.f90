@@ -6,6 +6,7 @@
         real, private :: tMin_ = 0 !
         real, private :: tMax_ = 0 ! 
         real, private :: dewPoint_ = 0 !
+        real, private :: radiation_ = 0 ! solar radiation
         
     contains
     
@@ -15,11 +16,13 @@
         procedure, pass (this) :: setTMax
         procedure, pass (this) :: getDewPoint
         procedure, pass (this) :: setDewPoint
-        procedure, pass (this) :: getTemperature
-        procedure, pass (this) :: getSVP
-        procedure, pass (this) :: getWHCAIR
-        procedure, pass (this) :: getRH
-        procedure, pass (this) :: getVPD
+        procedure, pass (this) :: getRadiation
+        procedure, pass (this) :: setRadiation
+        procedure, pass (this) :: hourlyTemperature
+        procedure, pass (this) :: hourlySVP
+        procedure, pass (this) :: hourlyWHCAIR
+        procedure, pass (this) :: hourlyRH
+        procedure, pass (this) :: hourlyVPD
     
     end Type DailyEnvironment_type
     
@@ -31,12 +34,13 @@
     contains
     
     ! constructor for the type
-    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint)
+    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint, radiation)
         implicit none
-        real, intent (in) :: tMin, tMax, dewPoint
+        real, intent (in) :: tMin, tMax, dewPoint,radiation
         DailyEnvironment_type_constructor%TMin_ = tMin
         DailyEnvironment_type_constructor%TMax_ = tMax
         DailyEnvironment_type_constructor%dewPoint_ = dewPoint
+        DailyEnvironment_type_constructor%radiation_ = radiation
     end function DailyEnvironment_type_constructor    
     
     !-------------------------------------------
@@ -94,6 +98,23 @@
         this%dewPoint_ = dewPoint
     end subroutine setDewPoint
     
+    ! get radiation
+    real function getRadiation(this)
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        
+        getRadiation = this%radiation_
+    end function getRadiation
+    
+    ! set radiation    
+    subroutine setRadiation(this, radiation)
+        implicit none
+        class (DailyEnvironment_type), intent(inout) :: this
+        real, intent (in) :: radiation
+        
+        this%radiation_ = radiation
+    end subroutine setRadiation
+    
     !-------------------------------------------
     ! OBJECT FUNCTIONS
     
@@ -104,7 +125,7 @@
     ! a  is the phase shift (the horizontal offset of the basepoint; where the curve crosses the baseline as it ascends)
     ! C is average temperature,  the vertical offset (height of the baseline) 
     ! w is the angular frequency, given by w = 2PI/hod 
-    real function getTemperature(this, hour)
+    real function hourlyTemperature(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
@@ -118,50 +139,50 @@
         g = w*(hour - this%HOURS_OF_LIGHT)
 
         
-        getTemperature = Amplitude*SIN(g)+C           ! calculate temperature acording to the current time
+        hourlyTemperature = Amplitude*SIN(g)+C           ! calculate temperature acording to the current time
 
-    end function getTemperature
+    end function hourlyTemperature
     
     
     !obtain the Saturation Vapour Pressure (pascals) for any given hour
-    real function getSVP(this, Hour)
+    real function hourlySVP(this, Hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: Hour
         
-        getSVP = calculateSVP(getTemperature(this, Hour))                   !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
+        hourlySVP = calculateSVP(hourlyTemperature(this, Hour))                   !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
 
-    end function getSVP
+    end function hourlySVP
     
     ! obtain the water holding capacity of the air (kg/m3) for any given hour
-    real function getWHCAIR(this, hour)
+    real function hourlyWHCAIR(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: Hour
         
-        getWHCAIR = calculateWHCAIR(getTemperature(this, Hour))                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        hourlyWHCAIR = calculateWHCAIR(hourlyTemperature(this, Hour))                                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
-    end function getWHCAIR
+    end function hourlyWHCAIR
     
     ! obtain the relative humidity for any given hour
-    real function getRH(this, hour)
+    real function hourlyRH(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: Hour
         
-        getRH =  calculateRH(getTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        hourlyRH =  calculateRH(hourlyTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
-    end function getRH
+    end function hourlyRH
     
     ! obtain the Vapor Preasure Deficit VPD for any given hour
-    real function getVPD(this, hour)
+    real function hourlyVPD(this, hour)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: Hour
         
-        getVPD =  calculateVPD(getTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        hourlyVPD =  calculateVPD(hourlyTemperature(this, Hour), this%dewpoint_)                               !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
 
-    end function getVPD
+    end function hourlyVPD
    
     !-------------------------------------------
     ! STATIC FUNCTIONS
