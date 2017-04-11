@@ -169,6 +169,17 @@
         this%stomatalConductance_ = stomatalConductance
     end subroutine setStomatalConductance
     
+    ! calculates proportion of radiation
+    ! K is the extinction coefficient
+    ! LAI is leaf area index
+    real function calculateRadiationP(K, LAI)
+        implicit none
+        real, intent (in) :: K, LAI
+        real :: value = 0
+        
+        calculateRadiationP = 1 - exp(K*LAI)
+
+    end function calculateRadiationP
     
     
 END Module CS_Model_EnvironmentEffect    
