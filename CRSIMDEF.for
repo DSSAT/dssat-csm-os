@@ -7,12 +7,19 @@
 
       SAVE
 
-      !DEC$ IF DEFINED(__linux__)
-          CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
-      !DEC$ ELSE IF DEFINED (__APPLE__)
-          CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
-      !DEC$ ELSE
-          CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
-      !DEC$ END IF
+!=======================================================================
+! By Willingthon Pavan (2017-04-24):
+! Intel ifort understands the C-style preprocessor directives, so it might
+! be easiest to convert the files to that style. Then we would have a
+! single code base that would work with both compilers (Intel & gfortran).
+! * Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
+! * Microsoft Visual Studio IDE: set the Preprocess Source File option to Yes in 
+!   the Fortran Preprocessor Option Category.
+!=======================================================================
+
+#if defined __APPLE__ || defined __linux__ || defined linux || defined __unix__
+      CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
+#else
+      CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
 
       END MODULE CRSIMDEF

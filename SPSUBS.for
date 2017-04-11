@@ -140,9 +140,8 @@ C-----------------------------------------------------------------------
                FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A8)'
                WRITE (LUN,FRMT) ("ES",L,"D",L=1,N_LYR), 'TRWUD' 
             ELSE
-!              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
-              WRITE (LUN,122)("ES",L,"D",L=1,9), "  ES10D   TRWUD"  !VSH
-  122         FORMAT(9("    ",A2,I1,A1),A16)
+              WRITE (LUN,122)("ES",L,"D",L=1,9), "        ES10D    RWUD"
+  122         FORMAT(9("    ",A2,I1,A1),A25)
             ENDIF
             END IF   ! VSH
           ELSE
@@ -326,8 +325,13 @@ C-----------------------------------------------------------------------
 ! EMAA    Average mulch evaporation since last printout (mm/d)
 ! ETAA    Average evapotranspiration since last printout (mm/d)
 ! AVSRAD  Average solar radiation since last printout (MJ/m2-d)
+<<<<<<< HEAD
 ! AVTMN   Average min temperature since last printout (oC)
 ! AVTMX   Average max temperature since last printout (oC)
+=======
+! AVTMN   Average min temperature since last printout (�C)
+! AVTMX   Average max temperature since last printout (�C)
+>>>>>>> Cross-platform preparing
 ! AVWTD   Average water table depth since last printout (cm)
 ! CEP     Cumulative transpiration (mm)
 ! CES     Cumulative evaporation (mm)
@@ -344,14 +348,23 @@ C-----------------------------------------------------------------------
 ! NL      Maximum number of soil layers = 20 
 ! LUN     Unit number for spam output file 
 ! OUTW    Filename for soil water output file (set in IPIBS) 
+<<<<<<< HEAD
 ! ST(L)   Soil temperature in soil layer L (oC)
+=======
+! ST(L)   Soil temperature in soil layer L (�C)
+>>>>>>> Cross-platform preparing
 ! SW(L)   Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! TDRAIN  Cumulative daily drainage from profile (mm)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
+<<<<<<< HEAD
 ! TMAX    Maximum daily temperature (oC)
 ! TMIN    Minimum daily temperature (oC)
+=======
+! TMAX    Maximum daily temperature (�C)
+! TMIN    Minimum daily temperature (�C)
+>>>>>>> Cross-platform preparing
 ! TOTIR   Total seasonal irrigation (mm)
 ! TRUNOF  Cumulative runoff (mm)
 ! WTDEP   Water table depth  (cm)

@@ -94,7 +94,7 @@ OPEN(UNIT=LUN, FILE = OUTPUTFILE, STATUS='REPLACE',ACTION='WRITE')
     WRITE(LUN, 7000) "NPLSB", NPLSB, "      ! Number of plants in seed-bed (???)"    
     WRITE(LUN, 7000) "NPLDS", NPLDS, "      ! Number of plants/m2 direct-seeded"
  
-    WRITE(LUN, *) "  "
+    WRITE(LUN, *)   
     WRITE(LUN, '(A)') "*-- Initial data at emergence, for either direct-seeding or seed-bed"
     WRITE(LUN, '(A)') "*   Standard data used."
     WRITE(LUN, '(A,F8.5,A)') "LAPE   = ", LAPE, "      ! Initial leaf area per plant"
@@ -105,7 +105,7 @@ OPEN(UNIT=LUN, FILE = OUTPUTFILE, STATUS='REPLACE',ACTION='WRITE')
     WRITE(LUN, '(A,F8.3,A)') "WSOI   = ", WSOI, "      ! Initial weight storage organs"
     WRITE(LUN, '(A,F8.5,A)') "ZRTI   = ", ZRTI, "      ! Initial root depth (m)"
     
-    WRITE(LUN, *) "  "
+    WRITE(LUN, *)   
     WRITE(LUN, '(A)') "*-- Re-initialization at transplanting (standard data used)"
     WRITE(LUN, 7000) "ZRTTR", ZRTTR/100.0, "       ! Root depth at transplanting (m)"
     
