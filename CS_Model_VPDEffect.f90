@@ -13,16 +13,18 @@
     Module CS_Model_VPDEffect !Module of environment
     type VPDEffect_type
         
-        real, private :: VPDTreshold_ =  0                ! VPD Treshold to start reducing stomatal conductance (KPa)
-        real, private :: VPDSensitivity_ =  0             ! Plant sensitivity to VPD (fraction/Kpa) 
-        real, private :: stomatalConductance_ =  1         ! Currente stomatal conductance
+        real, private :: VPDThreshold_ =  0                ! VPD Threshold to start reducing stomatal conductance (KPa)
+        real, private :: VPDSensitivity_ =  0              ! Plant sensitivity to VPD (fraction/Kpa) 
+        real, private :: stomatalConductance_ =  1         ! Current stomatal conductance
         
     contains
     
-        procedure, pass (this) :: getVPDTreshold
-        procedure, pass (this) :: setVPDTreshold
+        procedure, pass (this) :: getVPDThreshold
+        procedure, pass (this) :: setVPDThreshold
         procedure, pass (this) :: getVPDSensitivity
         procedure, pass (this) :: setVPDSensitivity
+        procedure, pass (this) :: getStomatalConductance
+        procedure, pass (this) :: setStomatalConductance
     
     end Type VPDEffect_type
     
@@ -34,10 +36,10 @@
     contains
     
     ! constructor for the type
-    type (VPDEffect_type) function VPDEffect_type_constructor(VPDTreshold, VPDSensitivity)
+    type (VPDEffect_type) function VPDEffect_type_constructor(VPDThreshold, VPDSensitivity)
         implicit none
-        real, intent (in) :: VPDTreshold, VPDSensitivity
-        VPDEffect_type_constructor%VPDTreshold_ = VPDTreshold
+        real, intent (in) :: VPDThreshold, VPDSensitivity
+        VPDEffect_type_constructor%VPDThreshold_ = VPDThreshold
         VPDEffect_type_constructor%VPDSensitivity_ = VPDSensitivity
         VPDEffect_type_constructor%stomatalConductance_= 1
         
@@ -48,50 +50,64 @@
     ! OBJECT FUNCTIONS
     !-------------------------------------------
     
-    ! reset the stomatal conductante to the maximum fraction
-    real function resetStomatalConductance(this)
+    ! resets the stomatal conductante to the maximum fraction
+    subroutine resetStomatalConductance(this)
         implicit none
-        class (VPDEffect_type), intent(in) :: this
+        class (VPDEffect_type), intent(inout) :: this
         this%StomatalConductance_ = 1 
 
-    end function resetStomatalConductance
+    end subroutine resetStomatalConductance
     
-    ! calculates stomatal conductante to the maximum fraction
-    real function getStomatalConductance(this, VPD)
+    ! retrieves stomatal conductance
+    real function affectStomatalConductance(this, VPD)
         implicit none
-        class (VPDEffect_type), intent(in) :: this
+        class (VPDEffect_type), intent(inout) :: this
+        real, intent(in) :: VPD
+        real :: value
         
-        !TODO
-        this%stomatalConductance_ = 1 
-        
-        getStomatalConductance = this%stomatalConductance_
+        value = calculateStomatalConductance(VPD, this%VPDThreshold_, this%VPDSensitivity_)
+        call this%setStomatalConductance(value)
+        affectStomatalConductance = value
 
-    end function getStomatalConductance
+    end function affectStomatalConductance
    
     !-------------------------------------------
     ! STATIC FUNCTIONS
     !-------------------------------------------
+    
+    ! calculates stomatal conductante acording to the VPD
+    real function calculateStomatalConductance(VPD, VPDThreshold, VPDSensitivity)
+        implicit none
+        real, intent (in) :: VPD, VPDThreshold, VPDSensitivity
+        
+        if(VPD > VPDThreshold) then
+            calculateStomatalConductance = 1 - (VPDSensitivity * (VPD-VPDThreshold)) 
+        else
+            calculateStomatalConductance = 1 
+        end if 
+
+    end function calculateStomatalConductance
     
     
     !-------------------------------------------
     ! GETTERS AND SETTERS
     !------------------------------------------
     ! get VPDTreshold
-    real function getVPDTreshold(this)
+    real function getVPDThreshold(this)
         implicit none
         class (VPDEffect_type), intent(in) :: this
         
-        getVPDTreshold = this%VPDTreshold_
-    end function getVPDTreshold
+        getVPDThreshold = this%VPDThreshold_
+    end function getVPDThreshold
     
     ! set VPDTreshold    
-    subroutine setVPDTreshold(this, VPDTreshold)
+    subroutine setVPDThreshold(this, VPDThreshold)
         implicit none
         class (VPDEffect_type), intent(inout) :: this
-        real, intent (in) :: VPDTreshold
+        real, intent (in) :: VPDThreshold
         
-        this%VPDTreshold_ = VPDTreshold
-    end subroutine setVPDTreshold
+        this%VPDThreshold_ = VPDThreshold
+    end subroutine setVPDThreshold
     
     ! get VPDSensitivity
     real function getVPDSensitivity(this)
@@ -109,6 +125,23 @@
         
         this%VPDSensitivity_ = VPDSensitivity
     end subroutine setVPDSensitivity
+    
+    ! get stomatal conductance
+    real function getStomatalConductance(this)
+        implicit none
+        class (VPDEffect_type), intent(in) :: this
+        
+        getStomatalConductance = this%stomatalConductance_
+    end function getStomatalConductance
+    
+    ! set stomatal conductance    
+    subroutine setStomatalConductance(this, stomatalConductance)
+        implicit none
+        class (VPDEffect_type), intent(inout) :: this
+        real, intent (in) :: stomatalConductance
+        
+        this%stomatalConductance_ = stomatalConductance
+    end subroutine setStomatalConductance
     
     
 END Module CS_Model_VPDEffect    
