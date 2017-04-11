@@ -107,7 +107,7 @@
                     value = 0
                 end if
         else
-            value = 1 
+            value = limit 
         end if 
         
         calculateStomatalConductance = value
