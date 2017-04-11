@@ -25,6 +25,7 @@
         procedure, pass (this) :: setVPDSensitivity
         procedure, pass (this) :: getStomatalConductance
         procedure, pass (this) :: setStomatalConductance
+        procedure, pass (this) :: affectStomatalConductance
     
     end Type VPDEffect_type
     
@@ -79,12 +80,18 @@
     real function calculateStomatalConductance(VPD, VPDThreshold, VPDSensitivity)
         implicit none
         real, intent (in) :: VPD, VPDThreshold, VPDSensitivity
+        real :: value = 0
         
         if(VPD > VPDThreshold) then
-            calculateStomatalConductance = 1 - (VPDSensitivity * (VPD-VPDThreshold)) 
+             value = 1 + (VPDSensitivity * (VPD-VPDThreshold)) 
+                if(value < 0) then
+                    value = 0
+                end if
         else
-            calculateStomatalConductance = 1 
+            value = 1 
         end if 
+        
+        calculateStomatalConductance = value
 
     end function calculateStomatalConductance
     
