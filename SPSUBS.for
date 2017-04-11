@@ -124,7 +124,7 @@ C-----------------------------------------------------------------------
               WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
   121         FORMAT(9("    ",A2,I1,A1), A8)
             ELSE
-              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+              WRITE (LUN,122)("ES",L,"D",L=1,9), "        ES10D    RWUD"
   122         FORMAT(9("    ",A2,I1,A1),A25)
             ENDIF
           ELSE
@@ -284,8 +284,8 @@ C-----------------------------------------------------------------------
 ! EMAA    Average mulch evaporation since last printout (mm/d)
 ! ETAA    Average evapotranspiration since last printout (mm/d)
 ! AVSRAD  Average solar radiation since last printout (MJ/m2-d)
-! AVTMN   Average min temperature since last printout (ºC)
-! AVTMX   Average max temperature since last printout (ºC)
+! AVTMN   Average min temperature since last printout (ï¿½C)
+! AVTMX   Average max temperature since last printout (ï¿½C)
 ! AVWTD   Average water table depth since last printout (cm)
 ! CEP     Cumulative transpiration (mm)
 ! CES     Cumulative evaporation (mm)
@@ -302,14 +302,14 @@ C-----------------------------------------------------------------------
 ! NL      Maximum number of soil layers = 20 
 ! LUN     Unit number for spam output file 
 ! OUTW    Filename for soil water output file (set in IPIBS) 
-! ST(L)   Soil temperature in soil layer L (°C)
+! ST(L)   Soil temperature in soil layer L (ï¿½C)
 ! SW(L)   Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! TDRAIN  Cumulative daily drainage from profile (mm)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
-! TMAX    Maximum daily temperature (°C)
-! TMIN    Minimum daily temperature (°C)
+! TMAX    Maximum daily temperature (ï¿½C)
+! TMIN    Minimum daily temperature (ï¿½C)
 ! TOTIR   Total seasonal irrigation (mm)
 ! TRUNOF  Cumulative runoff (mm)
 ! WTDEP   Water table depth  (cm)

@@ -40,9 +40,11 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
+#ifdef _WIN32
       CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
-!     CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
-
+#else      
+      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
+#endif
 !=======================================================================
 !     Compiler directives used to set library for system calls
 !     Compiler pre-processor definitions can be set in:

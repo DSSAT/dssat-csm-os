@@ -7,7 +7,9 @@
 
       SAVE
 
+#ifdef _WIN32
       CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
-!     CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
-
+#else
+      CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
+#endif
       END MODULE CRSIMDEF
