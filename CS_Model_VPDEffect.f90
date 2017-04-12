@@ -88,8 +88,6 @@
         affectStomatalConductance_restricted = value
 
     end function affectStomatalConductance_restricted
-    
-    
    
     !-------------------------------------------
     ! STATIC FUNCTIONS
@@ -103,7 +101,11 @@
         real :: value = 0
         
         if(VPD > VPDThreshold) then
-             value = limit + (VPDSensitivity * (VPD-VPDThreshold)) 
+            ! y = mx + b
+            ! x = VPD-VPDThreshold
+            ! m = VPDSensitivity
+            ! b = limit
+             value =  (VPDSensitivity * (VPD-VPDThreshold)) + limit
                 if(value < 0) then
                     value = 0
                 end if
@@ -169,18 +171,6 @@
         
         this%stomatalConductance_ = stomatalConductance
     end subroutine setStomatalConductance
-    
-    ! calculates proportion of radiation
-    ! K is the extinction coefficient
-    ! LAI is leaf area index
-    real function calculateRadiationP(K, LAI)
-        implicit none
-        real, intent (in) :: K, LAI
-        real :: value = 0
-        
-        calculateRadiationP = 1 - exp(K*LAI)
-
-    end function calculateRadiationP
     
     
 END Module CS_Model_VPDEffect    
