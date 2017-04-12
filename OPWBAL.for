@@ -277,7 +277,8 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !     VSH CSV output corresponding to SoilWat.OUT
-      IF (FMOPT == 'C') THEN 
+      IF (FMOPT == 'C') THEN
+         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
          CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
      &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD, TDFC, RUNOFF,
