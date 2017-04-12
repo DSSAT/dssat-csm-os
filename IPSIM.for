@@ -972,6 +972,7 @@ D     IPX = 23
         IDETL   = ' '
         IDETH   = ' '
         IDETR   = ' '
+        FMOPT   = ' '  ! VSH
 !        CRMODEL = '     '
 
 !       Read FIRST line of simulation control
@@ -1239,6 +1240,10 @@ D     IPX = 23
 
             READ (CHARTEST,'(91X,A1)',IOSTAT=ERRNUM) IDETR
             CALL CHECK_A('IDETR', IDETR, ERRNUM, MSG, NMSG)
+           
+            ! VSH
+            READ (CHARTEST,'(97X,A1)',IOSTAT=ERRNUM) FMOPT
+            CALL CHECK_A('FMOPT', FMOPT, ERRNUM, MSG, NMSG)
 
             IOX   = UPCASE(IOX)
             IDETO = UPCASE(IDETO)
@@ -1252,6 +1257,7 @@ D     IPX = 23
             IDETL = UPCASE(IDETL)
             IDETH = UPCASE(IDETH)
             IDETR = UPCASE(IDETR)
+            FMOPT = UPCASE(FMOPT)  ! VSH
 
 !           Verbose output switch
             IF (IDETL == '0') THEN
@@ -1266,6 +1272,7 @@ D     IPX = 23
               IDETH = 'N' 
               IDETR = 'N' 
               IDETO = 'E'
+              FMOPT = 'N' ! VSH
 !             Seasonal and spatial runs do not get evaluate file when IDETL=0
               IF (INDEX('SN',CONTROL%RNMODE) > 0) IDETO = 'N'
             ELSEIF (IDETL == 'A') THEN
@@ -1280,6 +1287,8 @@ D     IPX = 23
               IDETD = 'Y' 
               IDETH = 'Y' 
               IDETR = 'Y' 
+              FMOPT = 'A'  ! VSH
+              
 !             Set IDETL back to "D" so no need for changes elsewhere
 !             IDETL = 'D' 
               FROP  = 1 
@@ -1408,6 +1417,8 @@ C-----------------------------------------------------------------------
       IF (IDETL  /= ' ' .AND. IDETL  /= '.') ISWITCH % IDETL  = IDETL
       IF (IDETH  /= ' ' .AND. IDETH  /= '.') ISWITCH % IDETH  = IDETH
       IF (IDETR  /= ' ' .AND. IDETR  /= '.') ISWITCH % IDETR  = IDETR
+      ! VSH
+      IF (FMOPT  /= ' ' .AND. FMOPT  /= '.') ISWITCH % FMOPT  = FMOPT
 
       IF (NSWITCH /=-99) ISWITCH % NSWI   = NSWITCH
     
