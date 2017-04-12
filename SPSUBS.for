@@ -251,6 +251,7 @@ C-----------------------------------------------------------------------
 
 !     VSH CSV output corresponding to ET.OUT
       IF (FMOPT == 'C') THEN 
+         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
          CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
      &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
