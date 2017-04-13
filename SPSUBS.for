@@ -317,8 +317,8 @@ C-----------------------------------------------------------------------
 ! EMAA    Average mulch evaporation since last printout (mm/d)
 ! ETAA    Average evapotranspiration since last printout (mm/d)
 ! AVSRAD  Average solar radiation since last printout (MJ/m2-d)
-! AVTMN   Average min temperature since last printout (°C)
-! AVTMX   Average max temperature since last printout (°C)
+! AVTMN   Average min temperature since last printout (oC)
+! AVTMX   Average max temperature since last printout (oC)
 ! AVWTD   Average water table depth since last printout (cm)
 ! CEP     Cumulative transpiration (mm)
 ! CES     Cumulative evaporation (mm)
@@ -335,14 +335,14 @@ C-----------------------------------------------------------------------
 ! NL      Maximum number of soil layers = 20 
 ! LUN     Unit number for spam output file 
 ! OUTW    Filename for soil water output file (set in IPIBS) 
-! ST(L)   Soil temperature in soil layer L (°C)
+! ST(L)   Soil temperature in soil layer L (oC)
 ! SW(L)   Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! TDRAIN  Cumulative daily drainage from profile (mm)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
-! TMAX    Maximum daily temperature (°C)
-! TMIN    Minimum daily temperature (°C)
+! TMAX    Maximum daily temperature (oC)
+! TMIN    Minimum daily temperature (oC)
 ! TOTIR   Total seasonal irrigation (mm)
 ! TRUNOF  Cumulative runoff (mm)
 ! WTDEP   Water table depth  (cm)
