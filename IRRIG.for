@@ -88,7 +88,7 @@ C=======================================================================
       INTEGER IFREQ(20)
 	CHARACTER*5 V_IRONC(20)
 	CHARACTER*5 IRONC(20)
-      INTEGER IRRFREQ
+      INTEGER IRRFREQ, DaysSinceIrrig
 	REAL AVWATT         ! Water available for irrigation today (mm)
 	INTEGER NGSIrrigs   ! The number of irrigation inputs entered by the user
 	INTEGER IRINC       ! Counter keeping track of irrigation input been used
@@ -151,6 +151,7 @@ C-----------------------------------------------------------------------
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
       GSWatUsed = 0.0
+      DaysSinceIrrig = 999
 
       IF (ISWWAT .EQ. 'Y') THEN
 
@@ -689,11 +690,10 @@ C-----------------------------------------------------------------------
         AVWATT = AVWATI(IRINC) - GSWatUsed
       ENDIF
 
-      IF (AVWATT < 1.E-5) THEN
+      IF (AVWATT < 1.E-5 .OR. DaysSinceIrrig < IrrFreq) THEN
           IRRAMT = 0.0
           DEPIR  = 0.0
       ELSE
-
 !       There is water available, check for demand
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
@@ -808,12 +808,15 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 C-----------------------------------------------------------------------
-      IF (DEPIR .GT. 0.0) THEN
+      IF (DEPIR .GT. 1.E-5) THEN
         TOTIR  = TOTIR + DEPIR
         TOTEFFIRR = TOTEFFIRR + IRRAMT
         GSWatUsed = GSWatUsed + DEPIR
+        DaysSinceIrrig = 1
+      ELSE
+!       Keep track of the number of days since last irrigation
+        DaysSinceIrrig = DaysSinceIrrig + 1
       ENDIF
-
 
 !     Transfer data to ModuleData
       CALL PUT('MGMT','DEPIR', DEPIR)   !Total applied irrig amt today (mm) (includes losses)

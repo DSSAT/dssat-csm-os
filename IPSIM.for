@@ -52,7 +52,7 @@ C=======================================================================
 
       CHARACTER*1   UPCASE,ISIMI, RNMODE
       CHARACTER*2   CROP
-      CHARACTER*5   NEND,NCODE,IOFF,IAME, TXAVWAT
+      CHARACTER*5   NEND,NCODE,IOFF,IAME, TEXT
       CHARACTER*6   ERRKEY,FINDCH
       CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL, Try_MODELARG
       CHARACTER*12  FILEX
@@ -415,16 +415,19 @@ C
            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
 
            DO WHILE(ISECT .NE. 3)
-D
+ 
                READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
      &               IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, IFREQ
-
-               READ(CHARTEST,71) TXAVWAT                                ! Read value of AVWAT in text to check if blank or missing
-               CHARLEN = LEN_TRIM(TXAVWAT)
-
-               IF (CHARLEN==0) AVWAT = -99                             ! If TXAVWAT blank or missing set AVWAT -99 (for compatinility with old files)
-
                IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
+
+               READ(CHARTEST,'(57x,A5)') TEXT     ! Read value of AVWAT in text to check if blank or missing
+               CHARLEN = LEN_TRIM(TEXT)
+               IF (CHARLEN==0) AVWAT = -99.       ! If TXAVWAT blank or missing set AVWAT -99 (for compatability with old files)
+
+               READ(CHARTEST,'(63x,A5)') TEXT     ! Read value of IFREQ in text to check if blank or missing
+               CHARLEN = LEN_TRIM(TEXT)
+               IF (CHARLEN==0) IFREQ = 0          ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
+
 
               V_IMDEP(GSIRRIG) = DSOIL                   ! Save growth stage specific variables in data vectors
               V_ITHRL(GSIRRIG) = THETAC
@@ -757,7 +760,6 @@ C-----------------------------------------------------------------------
 !    &        1X,I5,1x,F5.0, 2(1x, F5.3))
   69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I6)
   70  FORMAT (3X,I2)
-  71  FORMAT (57x,A5)
 
       END SUBROUTINE IPSIM
 
