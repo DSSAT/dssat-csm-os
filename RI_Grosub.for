@@ -115,6 +115,7 @@ C=======================================================================
       REAL  PODWT, SDWT, SWIDOT, STEM2EAR, WLIDOT, WRIDOT, WSIDOT
 !     Proportion of lignin in STOVER and Roots
       REAL PLIGLF, PLIGRT
+      REAL SLPF
 
       LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO, FIRST
 
@@ -142,6 +143,7 @@ C=======================================================================
 
       DLAYR = SOILPROP % DLAYR
       NLAYR = SOILPROP % NLAYR
+      SLPF  = SOILPROP % SLPF
 
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
@@ -605,7 +607,7 @@ CCCCC-PW
      &    TSHOCK)                                         !Output
 
       CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES,TSHOCK,PStres1,KSTRES)
-!             *SLPF
+     &       * SLPF
 
       TEMF  = 1.0
       TEMPM = (TMAX + TMIN)*0.5

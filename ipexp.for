@@ -67,7 +67,8 @@ C=======================================================================
      &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
 
       USE ModuleDefs
-      USE ModuleData
+      USE ModuleData    
+      Use CsvOutput   ! VSH
       IMPLICIT NONE
       SAVE
 
@@ -236,6 +237,8 @@ C
         READ(FILEX(1:8),'(A8)') EXPER
       ENDIF
 
+!     VSH
+      EXPNAME = EXPER
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------

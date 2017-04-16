@@ -69,13 +69,19 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 1
-        INTEGER :: Build = 8
+        INTEGER :: Build = 11
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-GSIrrig  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       
+!       4.6.1.11 chp 04/07/2017 CSV format output, fix stage 2 rice longevity issue
+!                               NWheat max N uptake from CUL file.
+!       4.6.1.10 chp 12/15/2016 Bugfixes tillage, rice, SALUS
+!       4.6.1.09 chp 11/18/2016 NWheat grain N bug fixed.
+!                               Rice photosynth now uses SLPF.
 !       4.6.1.08 chp 10/18/2016 CSCER compatibility with sequence, NWheat species file update
 !                               Rice N uptake initialization, taro N uptake calculation 
 !       4.6.1.07 chp 07/29/2016 Millet changes from KJB, Puddled field deactivates after 30 days dry
@@ -237,6 +243,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
         CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2
+        CHARACTER (len=1) FMOPT   ! VSH
         INTEGER NSWI
       END TYPE SwitchType
 
