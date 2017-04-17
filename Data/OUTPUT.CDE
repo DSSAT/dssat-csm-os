@@ -43,6 +43,24 @@ Potential.OUT      Water potential - daily
 PlantGr2.OUT    G2 Wheat and barley specific output file
 PlantGrf.OUT    GF Wheat and barley specific output file
 
+plantgro.csv       Daily plant growth output file in CSV format
+plantn.csv         Daily plant nitrogen output file in CSV format
+evaluate.csv       Evaluation output file (simulated vs. measured)
+plantc.csv         Daily plant carbon output file in CSV format
+plantgr2.csv       Daily plant growth output file in CSV format
+plantgrf.csv       Daily plant growth output file in CSV format
+soilwat.csv        Daily soil water output file in CSV format
+soiltemp.csv       Daily soil temperature output file in CSV format
+et.csv             Daily soil-plant-atmosphere output file in CSV
+soilni.csv         Daily inorganic soil N output file in CSV format
+weather.csv        Daily weather output file in CSV format
+summary.csv        Summary output file in CSV format
+soilorg.csv        Daily soil carbon output file in CSV format
+etphot.csv         Daily evapotranspiration output file in CSV
+mulch.csv          Daily surface mulch output file in CSV format
+plantp.csv         Daily plant phosphorus output in CSV format
+soilpi.csv         Daily inorganic soil phosphorus output file, CSV
+
 !Seasonal summary output files
 Environ.OUT     EN Environmental modifications output file            SOUTE
 Evaluate.OUT    EV Evaluation output file (simulated vs. measured)    SEVAL

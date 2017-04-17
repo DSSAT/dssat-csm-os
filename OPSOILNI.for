@@ -22,8 +22,11 @@ C  08/20/2002 GH  Modified for Y2K
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
      &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
-!-------------------------------------------------------------------
+!-----------------------------------------------------------------------
       USE ModuleDefs
+!     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -73,7 +76,8 @@ C  08/20/2002 GH  Modified for Y2K
 
       IDETN  = ISWITCH % IDETN
       ISWWAT = ISWITCH % ISWWAT
-      ISWNIT = ISWITCH % ISWNIT
+      ISWNIT = ISWITCH % ISWNIT    
+      FMOPT  = ISWITCH % FMOPT    ! VSH
 
       AMTFER = FertData % AMTFER
       NAPFER = FertData % NAPFER
@@ -91,6 +95,7 @@ C-----------------------------------------------------------------------
 C     Variable heading for SoilN.OUT
 C-----------------------------------------------------------------------
       IF (IDETN .EQ. 'Y') THEN
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         CALL GETLUN(OUTSN, NOUTDN)
         INQUIRE (FILE = OUTSN, EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -101,20 +106,30 @@ C-----------------------------------------------------------------------
      &      IOSTAT = ERRNUM)
           WRITE(NOUTDN,'("*Soil Inorganic Nitrogen daily output file")')
         ENDIF
-
+        END IF   ! VSH
+        
         IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
           !For first run of a sequenced run, use replicate
           ! number instead of run number in header.
+          
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           IF (RNMODE .EQ. 'Q') THEN
             CALL HEADER(SEASINIT, NOUTDN, REPNO)
           ELSE
             CALL HEADER(SEASINIT, NOUTDN, RUN)
           ENDIF
-
+          END IF   ! VSH
+          
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+          
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE(NOUTDN,'(A1,T62,A)',ADVANCE='NO') 
      &        "!","NO3 (ppm) by soil depth (cm):"
+          END IF   ! VSH
+          
           SPACES = N_LYR * 8 - 29
+          
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE(FRMT,'(A,I2,A)')
      &     '(',SPACES,'X,"NH4 (ppm) by soil depth (cm):")'
           WRITE(NOUTDN,FRMT)
@@ -124,7 +139,7 @@ C-----------------------------------------------------------------------
 
           WRITE (NOUTDN,100, ADVANCE='NO')
   100     FORMAT('@YEAR DOY   DAS',
-     &     '  NAPC  NI#M    NLCC   NIAD   NITD   NHTD')
+     &     '  NAPC  NI#M   NIAD   NITD   NHTD')
           IF (N_LYR < 10) THEN
             WRITE (NOUTDN,105, ADVANCE='NO')
      &        ('NI',L,'D',L=1,N_LYR), 
@@ -137,14 +152,19 @@ C-----------------------------------------------------------------------
   110       FORMAT(2(9("    ",A2,I1,A1),A8),"    ")
           ENDIF
           WRITE (NOUTDN,115)
-  115     FORMAT('NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM')
+  115     FORMAT(
+     &   'NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM    NLCC')
+          END IF   ! VSH
 
-          CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY)
+          CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
+          
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE (NOUTDN,310) YEAR, DOY, DAS, 0, 
-     &       0, 0.0, TNH4NO3, TNO3, TNH4, 
+     &       0, TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
      &       0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-     &       0.0
+     &       0.0, 0.0
+          END IF   ! VSH
         ENDIF
       ENDIF
 
@@ -158,14 +178,28 @@ C-----------------------------------------------------------------------
         CALL YR_DOY(YRDOY, YEAR, DOY) 
 
         IF (IDETN .EQ. 'Y') THEN
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE (NOUTDN,310) YEAR, DOY, DAS, NINT(AMTFER(N)), 
 !     &       NAPFER, TLCH, TNH4NO3, NINT(THUMN), TNO3, TNH4, 
-     &       NAPFER(N), CLeach, TNH4NO3, TNO3, TNH4, 
+     &       NAPFER(N), TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
      &       CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, CNETMINRN,
-     &       CNUPTAKE
-  310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,F7.1,1X,F6.1,2F7.1,
-     &       20(F8.2), 10F8.2)
+     &       CNUPTAKE, CLeach
+  310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,1X,F6.1,2F7.1,
+     &       20(F8.2), 10F8.2,F7.1)
+          END IF   ! VSH
+          
+!     VSH
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutSoilNi(EXPNAME, RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
+     &N, AMTFER, NAPFER, CLEACH ,TNH4NO3,TNO3,TNH4, N_LYR, NO3, NH4,
+     &CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, CNETMINRN, CNUPTAKE,
+     &vCsvlineSoilNi, vpCsvlineSoilNi, vlngthSoilNi)
+     
+         CALL LinklstSoilNi(vCsvlineSoilNi)
+      END IF
+      
         ENDIF
       ENDIF
 
@@ -192,8 +226,9 @@ C-----------------------------------------------------------------------
 !      ENDIF
 
       !Close daily output files.
-      IF (IDETN .EQ. 'Y') CLOSE(NOUTDN)
-
+!      IF (IDETN .EQ. 'Y') CLOSE(NOUTDN)
+      IF ((IDETN == 'Y') 
+     & .AND. (FMOPT == 'A'.OR.FMOPT == ' ')) CLOSE(NOUTDN)   ! VSH
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT

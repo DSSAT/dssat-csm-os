@@ -247,6 +247,11 @@ C-----------------------------------------------------------------------
         DO I = 1, 20
           IF (YRDOY .EQ. STGDOY(I) .AND. LenString(STNAME(I)) > 0) THEN
 
+            !Store current Stage, STGDOY and STNAME
+            CALL PUT('PLANT','iSTAGE', I)
+            CALL PUT('PLANT','iSTGDOY', STGDOY(I))
+            CALL PUT('PLANT','iSTNAME', STNAME(I))
+
             !Compute average stresses
             IF (DSTRES .GE. 1) THEN
               AVDSTR = 1.0 - STRESS / DSTRES

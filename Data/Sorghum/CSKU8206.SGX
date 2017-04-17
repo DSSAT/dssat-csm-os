@@ -1,0 +1,173 @@
+*EXP.DETAILS: Test GS based Irrigation, problems with TRTs 3 and 4  - CSKU8201SG KUNNUNURRA IRRIGATION EXP 1982
+
+*GENERAL
+@PEOPLE
+-99
+@ADDRESS
+-99
+@SITE
+-99
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+      0   -99   -99   -99   -99   -99   -99   -99   -99   -99
+@NOTES
+ -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 test1                      1  1  0  1  1  1  1  0  0  0  0  0  1
+ 2 1 0 0 test2                      1  1  0  1  1  1  1  0  0  0  0  0  2 
+ 3 1 0 0 test2                      1  1  0  1  1  1  1  0  0  0  0  0  3 
+ 4 1 0 0 test2                      1  1  0  1  1  1  1  0  0  0  0  0  4 
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 SG IB0040 RS610
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 CSKU0001 CSKU       -99     0 DR000     0     0 00000 -99    130  IBSG910011 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SG 82145  2000     0     1     1   -99  3000   1.6     0   100    10 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .231     4    10
+ 1    20  .228     1    10
+ 1    30  .231     1     5
+ 1    40  .228     1     2
+ 1    50  .241    .5     1
+ 1    70  .236    .5    .5
+ 1    90  .241    .5    .5
+ 1   110  .256    .5    .5
+ 1   130  .256    .5    .5
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 82146   -99    20    20     S     R    75     0     5   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 82156 IR001    50
+ 1 82166 IR001    50
+ 1 82177 IR001    50
+ 1 82189 IR001    50
+ 1 82200 IR001    50
+ 1 82211 IR001    50
+ 1 82221 IR001    50
+ 1 82230 IR001    50
+ 1 82239 IR001    50
+ 1 82248 IR001    50
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 82146 FE005 AP002     5     0   -99   -99   -99   -99   -99 -99
+ 2 82146 FE005 AP002     5    80   -99   -99   -99   -99   -99 -99
+ 3 82146 FE005 AP002     5   170   -99   -99   -99   -99   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 82145  2150 Kununurra Irrigation Exp
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     P     V     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS DEFIR
+ 1 MA              R     F     R     N     M     V
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          82139 82153    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF AVWAT
+ 1 IR             30    30   100 GS009 IR001    10     1   300
+ 1 IR             30    50   100 GS003 IR001    30   0.5   -99
+ 1 IR             30    80   100 GS004 IR001    50     1   -99
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 83146   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              1     1     S 82145  2150 Kununurra Irrigation Exp
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              M     M     E     R     S     C     R     1     P     V     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS DEFIR
+ 2 MA              R     F     R     N     M     V
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 2 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          82139 82153    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF AVWAT
+ 2 IR             30    30   100 GS009 IR001    10     1    50
+ 2 IR             30    50   100 GS003 IR001    30     1    50
+ 2 IR             30    80   100 GS004 IR001    50     1    50
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 83146   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 3 GE              1     1     S 82145  2150 Kununurra Irrigation Exp
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 3 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 3 ME              M     M     E     R     S     C     R     1     P     V     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS DEFIR
+ 3 MA              R     F     R     N     M     V
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 3 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 3 PL          82139 82153    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF AVWAT
+ 3 IR             30    30   100 GS009 IR001    10     1   -99
+ 3 IR             30    50   100 GS003 IR001    30     1    50
+ 3 IR             30    80   100 GS004 IR001    50     1    50
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 3 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 3 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 3 HA              0 83146   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 4 GE              1     1     S 82145  2150 Kununurra Irrigation Exp
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 4 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 4 ME              M     M     E     R     S     C     R     1     P     V     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS DEFIR
+ 4 MA              R     F     R     N     M     V
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 4 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     D     N     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 4 PL          82139 82153    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF AVWAT
+ 4 IR             30    30   100 GS009 IR001    10     1    50
+ 4 IR             30    30   100 GS002 IR001    10     1   -99
+ 4 IR             30    50   100 GS003 IR001    30     1    50
+ 4 IR             30    80   100 GS004 IR001    50     1    50
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 4 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 4 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 4 HA              0 83146   100     0
+
+
