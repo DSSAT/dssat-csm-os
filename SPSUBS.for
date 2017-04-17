@@ -134,7 +134,7 @@ C-----------------------------------------------------------------------
               WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
   121         FORMAT(9("    ",A2,I1,A1), A8)
             ELSE
-              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+              WRITE (LUN,122)("ES",L,"D",L=1,9), "        ES10D    RWUD"
   122         FORMAT(9("    ",A2,I1,A1),A25)
             ENDIF
             END IF   ! VSH
