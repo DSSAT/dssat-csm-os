@@ -44,6 +44,7 @@ C=======================================================================
       REAL newCO2(0:nl), dD0_fc(nl)
       real A(4)
 !     real RWC
+      real min_nitrate
       
       Real ratio1(nl), ratio2(nl)
       INTEGER NDAYS_WET(NL)
@@ -85,6 +86,7 @@ C=======================================================================
       A(4) = 0.00222
       
       NDAYS_WET = 0.0
+      min_nitrate = 0.1
 
 !!   temp chp
 !      write(4000,'(a,/,a)') "DayCent",
@@ -157,10 +159,14 @@ C=======================================================================
 !       Changed CO2 effect on denitrification based on paper "General model for N2O and N2 gas emissions from  soils due to denitrification"
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
         fDno3 = (A(2) + (A(3)/PI) * atan(PI*A(4)*(no3(L)-A(1))))  !daycent NO3 factor
+        fDno3 = max(0.0, fDno3)
 
-        fDco2 = 0.1 * co2_correct(L)**1.27    !daycent labile C factor
+!chp    fDco2 = 0.1 * co2_correct(L)**1.27    !daycent labile C factor
+!       daycent labile C factor
+        fDco2 = 0.1 * co2_correct(L)**1.3 -  min_nitrate
+        fDco2 = max(0.0, fDco2)
 
-        fNO3fCO2 = min (fDco2, fDno3)
+        fNO3fCO2 = min (fDco2, fDno3)  
 
 !       Compute wfps effect on denitrification, (fDwfps, 0-1)
 !       Changed wfps effect on denitrification based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
@@ -172,7 +178,7 @@ C=======================================================================
 
         x_inflect = (9.0 - M * co2_correct(L))    ! daycent  X_inflection/adjustment for WFPS response
       
-        fDwfps=0.45+(atan(0.6* 3.1415*(10.0*wfps(L)- x_inflect)))/PI   ! daycent WFPS factor
+        fDwfps=0.45+(atan(0.6* PI *(10.0*wfps(L)- x_inflect)))/ PI   ! daycent WFPS factor
          
         fDwfps = max(0.0, fDwfps)
 
@@ -221,8 +227,10 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
 
         k1 = max(1.5, 38.4 - 350. * dD0_fc(L))
 
+
         fRno3_co2 = max(0.16 * k1, 
-     &    k1 * exp(-0.8 * no3(L)/co2_correct(L)))
+!chp &    k1 * exp(-0.8 * no3(L)/co2_correct(L)))
+     &    k1 * exp(-0.8 * no3(L)/CO2ppm(L)))
 
 C       WFPS effect on the N2/N2O Ratio */
 C       Changed wfps effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
@@ -232,7 +240,7 @@ C       Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
       
 C       Compute the N2:N2O Ratio
 !       Rn2n2o = max(0.1,fRno3_co2 * fRwfps)
-        ratio1(L) = max(0.1,fRno3_co2 * fRwfps)
+        ratio1(L) = max(0.1, fRno3_co2 * fRwfps)
         
 !       Count the number of days that water filled pore space is above 0.80     
         if (wfps(L) >= 0.80) then
@@ -356,5 +364,6 @@ C       Calculate N2O
 !=======================================================================
 ! Denit_DayCent Variables 
 !-----------------------------------------------------------------------
-
+! min_nitrate     = minimum nitrate concentration required in a soil layer 
+!                   for trace gas calclution (ppm N)
 !***********************************************************************
