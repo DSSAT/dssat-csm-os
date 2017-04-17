@@ -22,14 +22,20 @@
 !*********
 
     Module CS_Model_Environment !Module of environment
+    
+    ! STATIC ATRIBUTES
+    real, private :: PI =  4 * atan (1.0_8)
+    real, private :: HOURS_OF_DAY = 24
+    
     type DailyEnvironment_type
         
-        real, private :: HOURS_OF_DAY = 24
+        ! OBJECT ATRIBUTES
+        
         real, private :: tMin_ = 0 !
         real, private :: tMax_ = 0 ! 
         real, private :: dewPoint_ = 0 !
         real, private :: radiation_ = 0 ! solar radiation
-        real, private :: PI =  4 * atan (1.0_8)
+        
         
     contains
     
@@ -58,6 +64,10 @@
     contains
     
     ! constructor for the type
+    ! tMin          mandatory
+    ! tMax          mandatory 
+    ! dewPoint      optional
+    ! radiation     optional
     type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint, radiation)
         implicit none
         real, intent (in) :: tMin, tMax, dewPoint,radiation
@@ -87,7 +97,7 @@
         real :: Amplitude, C, w, g,  dawnTime
 
         dawnTime = 5                                            !dawn time
-        w = (2*this%PI)/this%HOURS_OF_DAY
+        w = (2*PI)/HOURS_OF_DAY
         Amplitude = ((this%TMax_ - this%TMin_)/2)           ! half distance between temperatures
         C = (this%TMin_ + this%TMax_)/2                     ! mean temperature
         g = w*(hour - 8)
@@ -143,17 +153,12 @@
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
-        real :: Amplitude, C, w, g, dawnTime, lightHours
+        real :: dawnTime, lightHours
                
         lightHours = 12
         dawnTime = 5                                            !dawn time
-        w = (2*this%PI)/24   
-        C = 0   
-        Amplitude = (this%radiation_* this%PI)/24
-        g = w*(hour - dawnTime)
-        
-        hourlyRadiation = Amplitude*SIN(g)+C           ! hourly radiation
-        if(hourlyRadiation < 0.0 ) hourlyRadiation = 0 ! no radiation on non-light hours
+                
+        hourlyRadiation = calculatateHourlyRadiation(hour, dawnTime, this%radiation_ , lightHours) 
         
         
     end function hourlyRadiation
@@ -212,6 +217,33 @@
         calculateRadiationP = 1 - exp(- K*LAI)
 
     end function calculateRadiationP
+    
+    real function calculatateHourlyRadiation(hour, dawnTime, radiation, lightHours)
+        implicit none
+        integer, intent (in) :: hour
+        real :: Amplitude, C, w, g, value, dawnTime, radiation, lightHours
+               
+        w = (2*PI)/24   
+        C = 0   
+        Amplitude = (radiation * PI)/24
+        g = w*(hour - dawnTime)
+        
+        value = Amplitude*SIN(g)+C           ! hourly radiation
+        if(value < 0.0 ) value = 0 ! no radiation on non-light hours
+        
+        calculatateHourlyRadiation=value
+        
+    end function calculatateHourlyRadiation
+    
+    ! calculates the biomass produced
+    real function calculateBiomass(temperature, dewPoint, K, LAI )
+        implicit none
+        real, intent (in) :: temperature, dewPoint, K, LAI
+        real :: value = 0
+        
+        calculateBiomass = calculateRadiationP(K, LAI) 
+
+    end function calculateBiomass
     
     !-------------------------------------------
     ! GETTERS AND SETTERS
@@ -285,5 +317,5 @@
         this%radiation_ = radiation
     end subroutine setRadiation
     
-END Module CS_Model_Environment    
+END Module CS_Model_Environment
     
