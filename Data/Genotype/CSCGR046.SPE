@@ -14,8 +14,6 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 ! PTFMX = 0.90 From root/shoot function in original model
 ! (Root/shoot = 0.1+0.05*EXP(-0.0085*Lnum)
 ! KCAN  = 0.27 From embeded parameter in original model
-! PHSV = PHSV = -0.35
-! PHTV = PHTV = 2.0    Changed to 5 to eliminate effect temporarily
 
 ! Users should be extremely cautious in changing the stress response
 ! thresholds (WFPU,LNCPU,etc). It is possible that there are differences
@@ -109,7 +107,7 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 ! Photosynthesis
 @ PHTV  PHSV  ! VPD sensitivity aspects
 ! kPa fr/kPa
-   5.0 -0.31
+   0.8 -0.23
 @CO2RF  CO2F  ! CO2 response
 !  vpm     # 
      0  0.00
