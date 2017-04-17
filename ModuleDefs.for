@@ -69,14 +69,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 1
-        INTEGER :: Build = 11
+        INTEGER :: Build = 12
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-GSIrrig  '
+      CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
-!       
+!       4.6.1.12 chp 04/17/2017 Growth stage, supply-limited irrigation added
 !       4.6.1.11 chp 04/07/2017 CSV format output, fix stage 2 rice longevity issue
 !                               NWheat max N uptake from CUL file.
 !       4.6.1.10 chp 12/15/2016 Bugfixes tillage, rice, SALUS
