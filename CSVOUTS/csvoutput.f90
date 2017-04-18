@@ -1426,7 +1426,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofileEvOpsum
          End Select
 !        for SoilWat.csv
-         Call CsvFileHeaderSoilWat 
+         Call CsvFileHeaderSoilWat(nlayers) 
          Call ListtofileSW
 !        For SoilTemp.csv
          Call CsvFileHeaderSoilTemp 

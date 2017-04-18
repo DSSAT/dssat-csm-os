@@ -84,20 +84,33 @@ Contains
        Return
     End Subroutine CsvFileHeader
 !------------------------------------------------------------------------------      
-    Subroutine CsvFileHeaderSoilWat
+    Subroutine CsvFileHeaderSoilWat(nlayers)
        Character(12) :: fn
+       Character(Len=14) :: fmt
+       Character(Len=2) :: numtoch1, numtoch2 
+       Character(Len=220) :: tmp
        Character(:),Allocatable :: Header 
-       Integer :: nf, ErrNum, length
+       Integer :: nf, ErrNum, length, nlayers, i, nl
       
+       nl = MIN(10, MAX(4,nlayers))
+  
+       Write(numtoch1,'(I2)') nl - 1  
+       
+       fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+       fmt = Trim(Adjustl(fmt))
+   
+       Write (tmp,fmt) ("SW",i,"D,",i=1,nl - 1)
+       tmp = Trim(Adjustl(tmp)) 
+       Write(numtoch2,'(I2)') nl  
+       tmp = Trim(Adjustl(tmp)) // "SW" // Trim(Adjustl(numtoch2)) // "D"  
+       
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
-  //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,SW1D,SW2D,SW3D,SW4D,SW5D,SW6D,' &
-  //'SW7D,SW8D,SW9D,SW10')
+  //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,') + Len(Trim(Adjustl(tmp)))
 
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
-  //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,SW1D,SW2D,SW3D,SW4D,SW5D,SW6D,' &
-  //'SW7D,SW8D,SW9D,SW10' 
+  //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,' // Trim(Adjustl(tmp)) 
    
        fn = 'soilwat.csv'   
        Call GETLUN (fn,nf)   
