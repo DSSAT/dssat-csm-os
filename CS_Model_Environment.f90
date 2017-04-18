@@ -184,7 +184,8 @@
     real function hourlyTranspiration(this, hour, stomatalConductance)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
-        real, intent (in) :: hour, stomatalConductance
+        integer, intent (in) :: hour
+        real, intent (in) :: stomatalConductance
         
         hourlyTranspiration = calculateTranspiration(hourlyVPD(this, hour), stomatalConductance)
 
