@@ -38,7 +38,7 @@ CSP_PHEN.OUT       Casupro sugarcane output                           OUTPHNL
 PlantKg.OUT        Casupro sugarcane output                           OUTKG
 Generic.OUT        Generic (temporary) output file
 SALUS.OUT          Generic plant routine
-N2O.OUT         NO Nitrous oxide emissions output file
+N2O.OUT         NO Soil N2O and N2 daily emissions output        
 Potential.OUT      Water potential - daily
 PlantGr2.OUT    G2 Wheat and barley specific output file
 PlantGrf.OUT    GF Wheat and barley specific output file
