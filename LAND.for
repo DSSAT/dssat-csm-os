@@ -544,7 +544,8 @@ C***********************************************************************
 
 !      VSH CSV outputs
        IF (ISWITCH % FMOPT == 'C') THEN
-          CALL CsvOutputs(CONTROL % MODEL(1:5), CONTROL % N_ELEMS)
+          CALL CsvOutputs(CONTROL % MODEL(1:5), CONTROL % N_ELEMS,
+     & SOILPROP % NLAYR)
         END IF 
 
 !***********************************************************************
