@@ -124,19 +124,34 @@ Contains
        Return
     End Subroutine CsvFileHeaderSoilWat
 !------------------------------------------------------------------------------        
-    Subroutine CsvFileHeaderSoilTemp
+    Subroutine CsvFileHeaderSoilTemp(nlayers)
        Character(12) :: fn
+       Character(Len=14) :: fmt
+       Character(Len=2) :: numtoch1, numtoch2 
+       Character(Len=220) :: tmp
        Character(:),Allocatable :: Header 
-       Integer :: nf, ErrNum, length
-      
-  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,TS1D,TS2D,TS3D,' &
-  //'TS4D,TS5D,TS6D,TS7D,TS8D,TS9D,TS10')
+       Integer :: nf, ErrNum, length, nlayers, i, nl
+       
+       nl = MIN(10, MAX(4,nlayers))
+  
+       Write(numtoch1,'(I2)') nl - 1  
+       
+       fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+       fmt = Trim(Adjustl(fmt))
+   
+       Write (tmp,fmt) ("TS",i,"D,",i=1,nl - 1)
+       tmp = Trim(Adjustl(tmp)) 
+       Write(numtoch2,'(I2)') nl  
+       tmp = Trim(Adjustl(tmp)) // "TS" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,') + &
+          Len(Trim(Adjustl(tmp)))
   
        Allocate(character(LEN=length) :: Header)
 
-  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,TS1D,TS2D,TS3D,' &
-  //'TS4D,TS5D,TS6D,TS7D,TS8D,TS9D,TS10' 
-   
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,' // & 
+            Trim(Adjustl(tmp))
+           
        fn = 'soiltemp.csv'  
        Call GETLUN (fn,nf)    
        Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
