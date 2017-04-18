@@ -26,6 +26,8 @@
     ! STATIC ATRIBUTES
     real, private :: PI =  4 * atan (1.0_8)
     real, private :: HOURS_OF_DAY = 24
+    real, private :: LIGHT_HOURS = 12
+    real, private :: DAWN_TIME = 5                                            !dawn time
     
     type DailyEnvironment_type
         
@@ -53,6 +55,8 @@
         procedure, pass (this) :: hourlyRH
         procedure, pass (this) :: hourlyVPD
         procedure, pass (this) :: hourlyRadiation
+        procedure, pass (this) :: hourlyBiomass
+        
     
     end Type DailyEnvironment_type
     
@@ -66,8 +70,8 @@
     ! constructor for the type
     ! tMin          mandatory
     ! tMax          mandatory 
-    ! dewPoint      optional
-    ! radiation     optional
+    ! dewPoint
+    ! dayRadiation
     type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint, dayRadiation)
         implicit none
         real, intent (in) :: tMin, tMax, dewPoint,dayRadiation
@@ -94,9 +98,8 @@
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
-        real :: Amplitude, C, w, g,  dawnTime
+        real :: Amplitude, C, w, g
 
-        dawnTime = 5                                            !dawn time
         w = (2*PI)/HOURS_OF_DAY
         Amplitude = ((this%TMax_ - this%TMin_)/2)           ! half distance between temperatures
         C = (this%TMin_ + this%TMax_)/2                     ! mean temperature
@@ -153,15 +156,24 @@
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
-        real :: dawnTime, lightHours
-               
-        lightHours = 12
-        dawnTime = 5                                            !dawn time
+              
                 
-        hourlyRadiation = calculatateHourlyRadiation(hour, dawnTime, this%dayRadiation_ , lightHours) 
+        hourlyRadiation = calculatateHourlyRadiation(hour, DAWN_TIME, this%dayRadiation_ , LIGHT_HOURS) 
         
         
     end function hourlyRadiation
+    
+    ! obtain the biomass produced at a given hour
+    real function hourlyBiomass(this, hour, extinctionCoefficient,LAI, radiationUseEfficiency,stomatalConductance )
+        implicit none
+        class (DailyEnvironment_type), intent(in) :: this
+        integer, intent (in) :: hour
+        real, intent (in) :: extinctionCoefficient, LAI,radiationUseEfficiency,stomatalConductance
+               
+        hourlyBiomass = calculateBiomass(calculatateHourlyRadiation(hour, DAWN_TIME, this%dayRadiation_ , LIGHT_HOURS) , extinctionCoefficient , LAI, radiationUseEfficiency, stomatalConductance )
+        
+        
+    end function hourlyBiomass
    
     !-------------------------------------------
     ! STATIC FUNCTIONS
@@ -218,7 +230,7 @@
 
     end function calculatePortionOfRadiation
     
-    ! calculates the radiation at a given hour
+    ! obtain the radiation at a given hour
     real function calculatateHourlyRadiation(hour, dawnTime, dayRadiation, lightHours)
         implicit none
         integer, intent (in) :: hour
@@ -236,7 +248,7 @@
         
     end function calculatateHourlyRadiation
     
-    ! calculates the biomass produced accoording to the radiation at a given moment
+    ! obtain the biomass produced accoording to the radiation at a given moment
     real function calculateBiomass(radiation, extinctionCoefficient , LAI, radiationUseEfficiency, stomatalConductance )
         implicit none
         real, intent (in) :: radiation, extinctionCoefficient, LAI, radiationUseEfficiency, stomatalConductance
