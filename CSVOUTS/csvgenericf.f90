@@ -63,14 +63,14 @@ Contains
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
   //'PST1A,PST2A,KSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,'&
-  //'RL1D,RL2D,RL3D,RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,SNW0C,SNW1C')
+  //'RL1D,RL2D,RL3D,RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,RL10D,SNW0C,SNW1C')
 
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
   //'PST1A,PST2A,KSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,'&
-  //'RL1D,RL2D,RL3D,RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,SNW0C,SNW1C'
+  //'RL1D,RL2D,RL3D,RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,RL10D,SNW0C,SNW1C'
    
        fn = 'plantgro.csv' 
        Call GETLUN (fn,nf)     
@@ -91,13 +91,13 @@ Contains
       
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
   //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,SW1D,SW2D,SW3D,SW4D,SW5D,SW6D,' &
-  //'SW7D,SW8D,SW9D')
+  //'SW7D,SW8D,SW9D,SW10')
 
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
   //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,SW1D,SW2D,SW3D,SW4D,SW5D,SW6D,' &
-  //'SW7D,SW8D,SW9D' 
+  //'SW7D,SW8D,SW9D,SW10' 
    
        fn = 'soilwat.csv'   
        Call GETLUN (fn,nf)   
@@ -117,12 +117,12 @@ Contains
        Integer :: nf, ErrNum, length
       
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,TS1D,TS2D,TS3D,' &
-  //'TS4D,TS5D,TS6D,TS7D,TS8D,TS9D')
+  //'TS4D,TS5D,TS6D,TS7D,TS8D,TS9D,TS10')
   
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,TS1D,TS2D,TS3D,' &
-  //'TS4D,TS5D,TS6D,TS7D,TS8D,TS9D' 
+  //'TS4D,TS5D,TS6D,TS7D,TS8D,TS9D,TS10' 
    
        fn = 'soiltemp.csv'  
        Call GETLUN (fn,nf)    
@@ -167,21 +167,36 @@ Contains
        Return
     End Subroutine CsvFileHeaderCsCer
 !------------------------------------------------------------------------------            
-    Subroutine CsvFileHeaderET
-       Character(12) :: fn
+    Subroutine CsvFileHeaderET(nlayers)
+       Character(Len=10) :: fn 
+       Character(Len=14) :: fmt
+       Character(Len=2) :: numtoch1, numtoch2 
+       Character(Len=220) :: tmp
        Character(:),Allocatable :: Header 
-       Integer :: nf, ErrNum, length   
+       Integer :: nf, ErrNum, length, nlayers, i, nl  
+       
+       nl = MIN(10, MAX(4,nlayers))
+  
+       Write(numtoch1,'(I2)') nl - 1  
+       
+       fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+       fmt = Trim(Adjustl(fmt))
+   
+       Write (tmp,fmt) ("ES",i,"D,",i=1,nl - 1)
+       tmp = Trim(Adjustl(tmp)) 
+       Write(numtoch2,'(I2)') nl  
+       tmp = Trim(Adjustl(tmp)) // "ES" // Trim(Adjustl(numtoch2)) // "D"     
      
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
   //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
-  //'EMAC,ES1D,ES2D,ES3D,ES4D,ES5D,ES6D,ES7D,ES8D,ES9D')
+  //'EMAC,TRWU,') + Len(Trim(Adjustl(tmp)))
   
 
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
   //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
-  //'EMAC,ES1D,ES2D,ES3D,ES4D,ES5D,ES6D,ES7D,ES8D,ES9D' 
+  //'EMAC,TRWU,' // Trim(Adjustl(tmp)) 
    
        fn = 'et.csv'   
        Call GETLUN (fn,nf)   
@@ -283,14 +298,14 @@ Contains
       Integer :: nf, ErrNum, length   
      
   length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,' &
-  //'NI1D,NI2D,NI3D,NI4D,NI5D,NI6D,NI7D,NI8D,NI9D,NH1D,NH2D,NH3D,NH4D,NH5D,' &
-  //'NH6D,NH7D,NH8D,NH9D,NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM')
+  //'NI1D,NI2D,NI3D,NI4D,NI5D,NI6D,NI7D,NI8D,NI9D,NI10,NH1D,NH2D,NH3D,NH4D,NH5D,' &
+  //'NH6D,NH7D,NH8D,NH9D,NH10,NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM')
 
       Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,' &
-  //'NI1D,NI2D,NI3D,NI4D,NI5D,NI6D,NI7D,NI8D,NI9D,NH1D,NH2D,NH3D,NH4D,NH5D,' &
-  //'NH6D,NH7D,NH8D,NH9D,NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM' 
+  //'NI1D,NI2D,NI3D,NI4D,NI5D,NI6D,NI7D,NI8D,NI9D,NI10,NH1D,NH2D,NH3D,NH4D,NH5D,' &
+  //'NH6D,NH7D,NH8D,NH9D,NH10,NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM' 
    
       fn = 'soilni.csv'  
       Call GETLUN (fn,nf)    
