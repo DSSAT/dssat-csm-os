@@ -1395,7 +1395,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
          Select case (CropModel)
              Case('CRGRO')
 !case of crgro csv file header print
-                 Call CsvFileHeader
+                 Call CsvFileHeader(nlayers)
                  Call Listtofile
                  Call CsvHeadPlNCrGro 
                  Call ListtofilePlNCrGro
