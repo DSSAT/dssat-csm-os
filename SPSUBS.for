@@ -1,4 +1,4 @@
-C=======================================================================
+ï»¿C=======================================================================
 C  OPSPAM, Subroutine, C.H.Porter from Soil Water portions of OPDAY
 C  Generates output for daily soil water data
 C-----------------------------------------------------------------------
@@ -20,7 +20,10 @@ C=======================================================================
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       USE FloodModule
-
+!     VSH
+      USE CsvOutput 
+      USE Linklist
+      
       IMPLICIT NONE
       SAVE
 
@@ -66,7 +69,8 @@ C=======================================================================
       YRDOY   = CONTROL % YRDOY
 
       IDETW   = ISWITCH % IDETW
-
+      FMOPT   = ISWITCH % FMOPT   ! VSH 
+      
       CEF     = FLOODWAT % CEF
 
 !      SALB   = SOILPROP % SALB       
@@ -80,36 +84,42 @@ C=======================================================================
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-        OUTET = 'ET.OUT'
-        CALL GETLUN('OUTET', LUN)
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+          OUTET = 'ET.OUT'
+          CALL GETLUN('OUTET', LUN)
 
-        INQUIRE (FILE = OUTET, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'OLD',
-     &      POSITION = 'APPEND')
-        ELSE
-          OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'NEW')
-          WRITE(LUN,'("*SOIL-PLANT-ATMOSPHERE MODULE OUTPUT FILE")')
-        ENDIF
+          INQUIRE (FILE = OUTET, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'OLD',
+     &        POSITION = 'APPEND')
+          ELSE
+            OPEN (UNIT = LUN, FILE = OUTET, STATUS = 'NEW')
+            WRITE(LUN,'("*SOIL-PLANT-ATMOSPHERE MODULE OUTPUT FILE")')
+          ENDIF
+        END IF   ! VSH
 
+!       Number of soil layers to print between 4 and 10.
+        N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+            
 C-----------------------------------------------------------------------
 C     Variable heading for ET.OUT
 C-----------------------------------------------------------------------
         IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
 
-          !For sequenced run, use replicate
-          ! number instead of run number in header.
-          IF (RNMODE .EQ. 'Q') THEN
-            CALL HEADER(SEASINIT, LUN, REPNO)
-          ELSE
-            CALL HEADER(SEASINIT, LUN, RUN)
-          ENDIF
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+            !For sequenced run, use replicate
+            ! number instead of run number in header.
+            IF (RNMODE .EQ. 'Q') THEN
+              CALL HEADER(SEASINIT, LUN, REPNO)
+            ELSE
+              CALL HEADER(SEASINIT, LUN, RUN)
+            ENDIF
+          END IF   ! VSH
 
           IF (ISWITCH % MESEV == 'S') THEN
 !           Include soil evap by soil layer for Suleiman-Ritchie method
 
-!           Number of soil layers to print between 4 and 10.
-            N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             WRITE(LUN,'("!",T146,
      &        "Soil evaporation (mm/d) by soil depth (cm):"
      &        ,/,"!",T141,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
@@ -124,11 +134,14 @@ C-----------------------------------------------------------------------
               WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
   121         FORMAT(9("    ",A2,I1,A1), A8)
             ELSE
-              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+              WRITE (LUN,122)("ES",L,"D",L=1,9), "        ES10D    RWUD"
   122         FORMAT(9("    ",A2,I1,A1),A25)
             ENDIF
+            END IF   ! VSH
           ELSE
-            WRITE (LUN,120)
+            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+              WRITE (LUN,120)
+            END IF   ! VSH
           ENDIF
         ENDIF
 
@@ -198,6 +211,7 @@ C-----------------------------------------------------------------------
 
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           !Daily printout
           FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),8(F7.3),"
           IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
@@ -214,20 +228,40 @@ C-----------------------------------------------------------------------
 !  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
 !     &      8(F7.3),6(F8.2))     
 !     &    ,4F7.2 ,10(F7.3))
+          END IF   ! VSH
+          
           IF (ISWITCH % MESEV == 'S') THEN
             IF (SOILPROP % NLAYR < 11) THEN
+              IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
               WRITE(LUN,'(11F8.3)') ES_LYR(1:N_LYR) , TRWU
+              END IF   ! VSH
             ELSE
               ES10 = 0.0
               DO L = 10, SOILPROP % NLAYR
                 ES10 = ES10 + ES_LYR(L)
               ENDDO
+              IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
               WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
+              END IF   ! VSH
             ENDIF    
           ELSE
+            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             WRITE(LUN,'(" ")')
+            END IF   ! VSH
           ENDIF
 
+!     VSH CSV output corresponding to ET.OUT
+      IF (FMOPT == 'C') THEN 
+         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+         CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
+     &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
+     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR,
+     &vCsvlineET, vpCsvlineET, vlngthET)
+     
+         CALL LinklstET(vCsvlineET)
+      END IF
+      
           NAVWB = 0
           EFAA  = 0.
           EMAA  = 0.
@@ -284,8 +318,8 @@ C-----------------------------------------------------------------------
 ! EMAA    Average mulch evaporation since last printout (mm/d)
 ! ETAA    Average evapotranspiration since last printout (mm/d)
 ! AVSRAD  Average solar radiation since last printout (MJ/m2-d)
-! AVTMN   Average min temperature since last printout (ºC)
-! AVTMX   Average max temperature since last printout (ºC)
+! AVTMN   Average min temperature since last printout (oC)
+! AVTMX   Average max temperature since last printout (oC)
 ! AVWTD   Average water table depth since last printout (cm)
 ! CEP     Cumulative transpiration (mm)
 ! CES     Cumulative evaporation (mm)
@@ -297,19 +331,19 @@ C-----------------------------------------------------------------------
 ! ES      Actual soil evaporation rate (mm/d)
 ! ET      Actual evapotranspiration rate (mm/d)
 ! MODEL   Name of CROPGRO executable file 
-! NAP     Number of irrigation applications 
+! NAP     Number of irrigation applications  
 ! NAVWB   Number of days since last printout (d)
 ! NL      Maximum number of soil layers = 20 
 ! LUN     Unit number for spam output file 
 ! OUTW    Filename for soil water output file (set in IPIBS) 
-! ST(L)   Soil temperature in soil layer L (°C)
+! ST(L)   Soil temperature in soil layer L (oC)
 ! SW(L)   Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! TDRAIN  Cumulative daily drainage from profile (mm)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
-! TMAX    Maximum daily temperature (°C)
-! TMIN    Minimum daily temperature (°C)
+! TMAX    Maximum daily temperature (oC)
+! TMIN    Minimum daily temperature (oC)
 ! TOTIR   Total seasonal irrigation (mm)
 ! TRUNOF  Cumulative runoff (mm)
 ! WTDEP   Water table depth  (cm)

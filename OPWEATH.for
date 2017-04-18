@@ -22,6 +22,9 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+!     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 
@@ -63,12 +66,14 @@ C-----------------------------------------------------------------------
       RUN     = CONTROL % RUN    
       YRDOY   = CONTROL % YRDOY   
 
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 !***********************************************************************
 !***********************************************************************
 !     Seasonal initialization - run once per season
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         CALL GETLUN('OUTWTH', LUN)
         INQUIRE (FILE = OUTWTH, EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -79,8 +84,10 @@ C-----------------------------------------------------------------------
      &      IOSTAT = ERRNUM)
           WRITE(LUN,'("*WEATHER MODULE DAILY OUTPUT FILE")')
         ENDIF
-
+        END IF   ! VSH
+        
         IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           !For first run of a sequenced run, use replicate
           ! number instead of run number in header.
           IF (RNMODE .EQ. 'Q') THEN
@@ -96,6 +103,7 @@ C-----------------------------------------------------------------------
   120     FORMAT('@YEAR DOY   DAS',
      &    '   PRED  DAYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND',
      &'   TAVD   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D   VPDF   VPD')
+          END IF   ! VSH
         ENDIF
 
 !***********************************************************************
@@ -116,6 +124,7 @@ C       Generate output for file Weather.OUT
 
       
           CALL YR_DOY(YRDOY, YEAR, DOY)
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           !Daily printout
           WRITE (LUN,300) YEAR, DOY, DAS, 
      &        RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, 
@@ -126,9 +135,23 @@ C       Generate output for file Weather.OUT
   300     FORMAT(1X,I4,1X,I3.3,1X,I5,
      &        5(1X,F6.1),1X,F6.2,
      &        8(1X,F6.1),F7.1, 1x, F6.2, 1X, F6.2)
+          END IF   ! VSH
+          
+!     VSH
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutWth(EXPNAME, RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
+     &RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX,  
+     &TMIN, TAVG, TDAY, TDEW, TGROAV, TGRODY, WINDSP, CO2,   
+     &vCsvlineWth, vpCsvlineWth, vlngthWth)
+     
+         CALL LinklstWth(vCsvlineWth)
+      END IF
+      
         ENDIF
 
-        IF (DYNAMIC .EQ. SEASEND) THEN
+        IF ((DYNAMIC .EQ. SEASEND)
+     & .AND. (FMOPT == 'A'.OR. FMOPT == ' '))THEN
           !Close daily output files.
           CLOSE (LUN)
         ENDIF
