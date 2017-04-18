@@ -371,7 +371,7 @@ Subroutine CsvOutTemp_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
    Integer, Intent(Out) :: lngth
-   Character(Len=250) :: tmp 
+   Character(Len=270) :: tmp 
    Character(Len=200) :: tmp1 
    Character(Len=20) :: fmt    
    
@@ -397,7 +397,7 @@ end Subroutine CsvOutTemp_crgro
 ! Sub for et.csv output
 Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, EMAA, CEO, CET, &
-   CEP, CES, CEF, CEM, N_LYR, ES_LYR, Csvline, pCsvline, lngth) 
+   CEP, CES, CEF, CEM, N_LYR, ES_LYR, TRWU, Csvline, pCsvline, lngth) 
     
 !  Input vars
    Character(8),Intent(IN):: EXCODE    
@@ -406,7 +406,7 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
 !        INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
 !        INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
    REAL,Intent(IN) :: AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA 
-   REAL,Intent(IN) :: EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM
+   REAL,Intent(IN) :: EFAA, EMAA, CEO, CET, CEP, CES, CEF, CEM, TRWU
    INTEGER,Intent(IN) :: N_LYR
    REAL, Dimension(N_LYR), Intent(IN) :: ES_LYR 
   
@@ -421,9 +421,9 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    Character(Len=20) :: fmt     
 !  End of vars
               
-   Write(tmp,'(25(g,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+   Write(tmp,'(26(g,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
       AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA , EMAA, &
-      CEO, CET, CEP, CES, CEF, CEM
+      CEO, CET, CEP, CES, CEF, CEM, TRWU
    
    Write(fmt,'(I2)') N_LYR - 1  
    fmt = '('//Trim(Adjustl(fmt))//'(g,","),g)'
@@ -1386,10 +1386,10 @@ Subroutine CsvOutSoilPi(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    Return
 end Subroutine CsvOutSoilPi
 !---------------------------------------------------------------------------------
-Subroutine CsvOutputs(CropModel, numelem)
+Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
     Character(Len=5) :: CropModel
-    Integer :: numelem
+    Integer :: numelem, nlayers 
 
 ! CSV output corresponding to PlantGro.OUT
          Select case (CropModel)
@@ -1432,7 +1432,7 @@ Subroutine CsvOutputs(CropModel, numelem)
          Call CsvFileHeaderSoilTemp 
          Call ListtofileTemp
 !        For ET.OUT file  
-         Call CsvFileHeaderET
+         Call CsvFileHeaderET(nlayers)
          Call ListtofileET
 !        For SoilNi.csv        
          call CsvHeadSoilNi
