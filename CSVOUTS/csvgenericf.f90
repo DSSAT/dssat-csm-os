@@ -335,20 +335,41 @@ Contains
       Return
     End Subroutine CsvHeadPlNCsCer
 !------------------------------------------------------------------------------    
-    Subroutine CsvHeadSoilNi
+    Subroutine CsvHeadSoilNi(nlayers)
       Character(12) :: fn
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=100) :: tmp, tmp1
       Character(:),Allocatable :: Header 
-      Integer :: nf, ErrNum, length   
+      Integer :: nf, ErrNum, length, nlayers, i, nl
+      
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("NI",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "NI" // Trim(Adjustl(numtoch2)) // "D," 
+      
+      Write (tmp1,fmt) ("NH",i,"D,",i=1,nl - 1)
+      tmp1 = Trim(Adjustl(tmp1)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp1 = Trim(Adjustl(tmp1)) // "NH" // Trim(Adjustl(numtoch2)) // "D,"
+      
      
-  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,' &
-  //'NI1D,NI2D,NI3D,NI4D,NI5D,NI6D,NI7D,NI8D,NI9D,NI10,NH1D,NH2D,NH3D,NH4D,NH5D,' &
-  //'NH6D,NH7D,NH8D,NH9D,NH10,NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM')
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,') + &
+          Len(Trim(Adjustl(tmp)))  + Len(Trim(Adjustl(tmp1))) + &
+          Len('NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM')
 
       Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,' &
-  //'NI1D,NI2D,NI3D,NI4D,NI5D,NI6D,NI7D,NI8D,NI9D,NI10,NH1D,NH2D,NH3D,NH4D,NH5D,' &
-  //'NH6D,NH7D,NH8D,NH9D,NH10,NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM' 
+  // Trim(Adjustl(tmp)) // Trim(Adjustl(tmp1)) &
+  // 'NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM' 
    
       fn = 'soilni.csv'  
       Call GETLUN (fn,nf)    

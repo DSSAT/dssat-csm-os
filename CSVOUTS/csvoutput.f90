@@ -1435,7 +1435,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
          Call CsvFileHeaderET(nlayers)
          Call ListtofileET
 !        For SoilNi.csv        
-         call CsvHeadSoilNi
+         call CsvHeadSoilNi(nlayers)
          Call ListtoFileSoilNi
 !        for weather.csv         
          call CsvHeadWth
