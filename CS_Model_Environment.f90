@@ -4,7 +4,7 @@
 !   - tMin minimmun temprature of the day
 !   - tMax maximun temprature of the day
 !   - dewPoint dew point temperature of the day
-!   - radiation registered during the day
+!   - dayRadiation registered during the day
 ! Object functions:
 !        hourlyTemperature
 !        hourlySVP
@@ -34,7 +34,7 @@
         real, private :: tMin_ = 0 !
         real, private :: tMax_ = 0 ! 
         real, private :: dewPoint_ = 0 !
-        real, private :: radiation_ = 0 ! solar radiation
+        real, private :: dayRadiation_ = 0 ! solar radiation
         
         
     contains
@@ -45,8 +45,8 @@
         procedure, pass (this) :: setTMax
         procedure, pass (this) :: getDewPoint
         procedure, pass (this) :: setDewPoint
-        procedure, pass (this) :: getRadiation
-        procedure, pass (this) :: setRadiation
+        procedure, pass (this) :: getDayRadiation
+        procedure, pass (this) :: setDayRadiation
         procedure, pass (this) :: hourlyTemperature
         procedure, pass (this) :: hourlySVP
         procedure, pass (this) :: hourlyWHCAIR
@@ -68,13 +68,13 @@
     ! tMax          mandatory 
     ! dewPoint      optional
     ! radiation     optional
-    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint, radiation)
+    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint, dayRadiation)
         implicit none
-        real, intent (in) :: tMin, tMax, dewPoint,radiation
+        real, intent (in) :: tMin, tMax, dewPoint,dayRadiation
         DailyEnvironment_type_constructor%TMin_ = tMin
         DailyEnvironment_type_constructor%TMax_ = tMax
         DailyEnvironment_type_constructor%dewPoint_ = dewPoint
-        DailyEnvironment_type_constructor%radiation_ = radiation
+        DailyEnvironment_type_constructor%dayRadiation_ = dayRadiation
     end function DailyEnvironment_type_constructor    
     
     
@@ -158,7 +158,7 @@
         lightHours = 12
         dawnTime = 5                                            !dawn time
                 
-        hourlyRadiation = calculatateHourlyRadiation(hour, dawnTime, this%radiation_ , lightHours) 
+        hourlyRadiation = calculatateHourlyRadiation(hour, dawnTime, this%dayRadiation_ , lightHours) 
         
         
     end function hourlyRadiation
@@ -209,23 +209,24 @@
     ! calculates proportion of radiation
     ! K is the extinction coefficient
     ! LAI is leaf area index
-    real function calculateRadiationP(K, LAI)
+    real function calculatePortionOfRadiation(K, LAI)
         implicit none
         real, intent (in) :: K, LAI
         real :: value = 0
         
-        calculateRadiationP = 1 - exp(- K*LAI)
+        calculatePortionOfRadiation = 1 - exp(- K*LAI)
 
-    end function calculateRadiationP
+    end function calculatePortionOfRadiation
     
-    real function calculatateHourlyRadiation(hour, dawnTime, radiation, lightHours)
+    ! calculates the radiation at a given hour
+    real function calculatateHourlyRadiation(hour, dawnTime, dayRadiation, lightHours)
         implicit none
         integer, intent (in) :: hour
-        real :: Amplitude, C, w, g, value, dawnTime, radiation, lightHours
+        real :: Amplitude, C, w, g, value, dawnTime, dayRadiation, lightHours
                
         w = (2*PI)/24   
         C = 0   
-        Amplitude = (radiation * PI)/24
+        Amplitude = (dayRadiation * PI)/24
         g = w*(hour - dawnTime)
         
         value = Amplitude*SIN(g)+C           ! hourly radiation
@@ -235,13 +236,13 @@
         
     end function calculatateHourlyRadiation
     
-    ! calculates the biomass produced
-    real function calculateBiomass(temperature, dewPoint, K, LAI )
+    ! calculates the biomass produced accoording to the radiation at a given moment
+    real function calculateBiomass(radiation, extinctionCoefficient , LAI, radiationUseEfficiency, stomatalConductance )
         implicit none
-        real, intent (in) :: temperature, dewPoint, K, LAI
+        real, intent (in) :: radiation, extinctionCoefficient, LAI, radiationUseEfficiency, stomatalConductance
         real :: value = 0
         
-        calculateBiomass = calculateRadiationP(K, LAI) 
+        calculateBiomass = calculatePortionOfRadiation(extinctionCoefficient, LAI) * radiation * radiationUseEfficiency  * stomatalConductance
 
     end function calculateBiomass
     
@@ -300,22 +301,22 @@
         this%dewPoint_ = dewPoint
     end subroutine setDewPoint
     
-    ! get radiation
-    real function getRadiation(this)
+    ! get day radiation
+    real function getDayRadiation(this)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         
-        getRadiation = this%radiation_
-    end function getRadiation
+        getDayRadiation = this%dayRadiation_
+    end function getDayRadiation
     
-    ! set radiation    
-    subroutine setRadiation(this, radiation)
+    ! set day radiation    
+    subroutine setDayRadiation(this, dayRadiation)
         implicit none
         class (DailyEnvironment_type), intent(inout) :: this
-        real, intent (in) :: radiation
+        real, intent (in) :: dayRadiation
         
-        this%radiation_ = radiation
-    end subroutine setRadiation
+        this%dayRadiation_ = dayRadiation
+    end subroutine setDayRadiation
     
 END Module CS_Model_Environment
     
