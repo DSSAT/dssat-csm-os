@@ -13,11 +13,9 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE Denit_DayCent (CONTROL, ISWNIT, 
-     &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
-     &    SNO3, SW,                                   !Input
+     &    newCO2, NO3, SNO3, SOILPROP, SW,            !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
-
 !-----------------------------------------------------------------------
       USE N2O_mod 
       USE ModuleData
@@ -32,7 +30,7 @@ C=======================================================================
       REAL FLOOD, WFDENIT, XMIN
       REAL SNO3_AVAIL
       REAL DLTSNO3(NL)   
-      REAL BD(NL), DUL(NL), KG2PPM(NL) 
+      REAL BD(NL), DUL(NL), KG2PPM(NL)
       REAL NO3(NL), SNO3(NL), SW(NL)
       
 !!!!! daycent variables  PG
@@ -48,6 +46,7 @@ C=======================================================================
       
       Real ratio1(nl), ratio2(nl)
       INTEGER NDAYS_WET(NL)
+      TYPE (SOILTYPE) SOILPROP
 
       TYPE (N2O_type) N2O_DATA
 !          Cumul      Daily       Layer ppm        Layer kg
@@ -74,9 +73,6 @@ C=======================================================================
 
       wfps = n2o_data % wfps
  
-!     Function for diffusivity
-      call DayCent_diffusivity(dD0_fc, DUL, BD, nlayr)
-
 !     Compute the Nitrate effect on Denitrification
 !     Changed NO3 effect on denitrification based on paper  "General model for N2O and N2 gas emissions from soils due to denitrification"
 !     Del Grosso et. al, GBC   12/00,  -mdh 5/16/00
@@ -100,9 +96,16 @@ C=======================================================================
 !     ------------------------------------------------------------------
       IF (INDEX('N',ISWNIT) > 0) RETURN
 
+      BD = SOILPROP % BD
+      DUL = SOILPROP % DUL
+      KG2PPM = SOILPROP % KG2PPM
+      NLAYR = SOILPROP % NLAYR
+      
 !     ------------------------------------------------------------------
-!     Loop through soil layers for rate calculations
+!     Diffusivity rate calculation
+      call DayCent_diffusivity(dD0_fc, sw, soilprop)
 !     ------------------------------------------------------------------
+
       TNOXD = 0.0
 !     TN2OD = 0.0     ! PG
       TN2OdenitD = 0.0     ! PG
@@ -112,6 +115,9 @@ C=======================================================================
       N2FLUX   = 0.0
       n2odenit  = 0.0
 
+!     ------------------------------------------------------------------
+!     Loop through soil layers for rate calculations
+!     ------------------------------------------------------------------
       DO L = 1, NLAYR
 !        wfps(L) = min(1.0, sw(L) / poros(L))
         
@@ -227,10 +233,13 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
 
         k1 = max(1.5, 38.4 - 350. * dD0_fc(L))
 
-
-        fRno3_co2 = max(0.16 * k1, 
-!chp &    k1 * exp(-0.8 * no3(L)/co2_correct(L)))
-     &    k1 * exp(-0.8 * no3(L)/CO2ppm(L)))
+        if (CO2ppm(L) > 1.E-3) then
+          fRno3_co2 = max(0.16 * k1, 
+!chp &      k1 * exp(-0.8 * no3(L)/co2_correct(L)))
+     &      k1 * exp(-0.8 * no3(L)/CO2ppm(L)))
+        else
+          fRno3_co2 = 0.16 * k1
+        endif
 
 C       WFPS effect on the N2/N2O Ratio */
 C       Changed wfps effect on the N2/N2O ratio based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
@@ -254,9 +263,9 @@ C       Compute the N2:N2O Ratio
             ratio2(L) = -330. + 334 * wfps(L) + 18.4 * ndays_wet(L)
             ratio2(L) = max(ratio2(L),0.0)
 
-!!           temp chp
-!            write(4000,'(i7,2i4,3F8.3)')
-!     &       yrdoy, L, ndays_wet(L), wfps(L), ratio1(L), ratio2(L)
+!           temp chp
+            write(4000,'(i7,2i4,3F8.3)')
+     &       yrdoy, L, ndays_wet(L), wfps(L), ratio1(L), ratio2(L)
         else
             ratio2(L) = 0.0
         endif
@@ -321,14 +330,24 @@ C       Calculate N2O
 !  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
 !           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 !=======================================================================
-      subroutine DayCent_diffusivity(dD0_fc, dul, bd, nlayr)      
+      subroutine DayCent_diffusivity(dD0_fc, sw, soilprop)      
 !      the variable dDO_fc is manually calculated for the moment
 
       use ModuleDefs
-      real, dimension(NL), intent(in) :: dul, bd
       real, dimension(NL), intent(out):: dD0_fc
+      real, dimension(NL), intent(IN) :: SW
       integer L, nlayr
+      type (SoilType), intent(in) :: SOILPROP
       
+      real, dimension(NL) :: dul, bd, poros
+      real, dimension(NL) :: dD0_chp, ratio
+      real POROSer
+
+      BD    = SOILPROP % BD
+      DUL   = SOILPROP % DUL
+      POROS = SOILPROP % POROS
+      NLAYR = SOILPROP % NLAYR
+
 ! From Iurii Shcherbak 6 July 2014
 ! Linear model
 ! Dfc = 0.741804 - 0.287059 BD - 0.755057 FC
@@ -357,6 +376,47 @@ C       Calculate N2O
 !      dD0_fc = 0.21    ! 0.21 for India, fixed value since diffusivity routine is not working
 !      dD0_fc = 0.09    ! 0.09 for France (use KT), fixed value since diffusivity routine is not working
 
+!     Diffusivity from DayCent:
+!     chp 4/18/2017
+
+      do L = 1, Nlayr
+!       Inter-aggregate porosity
+        POROSer = POROS(L) - DUL(L)
+        pfc = SW(L) / DUL(L) * 100.   !water content as percent of DUL
+        if (pfc >= 100.) then
+          VFRAC = (SW(L) - DUL(L)) / POROSer
+          THETA_V = DUL(L) + MIN(VFRAC,1.0) * (POROS(L) - DUL(L))
+        else
+          VFRAC = 0.0
+          THETA_V = SW(L)
+        endif 
+
+        THETA_P = MAX(0.0, (THETA_V - DUL(L)))
+        THETA_A = MIN(DUL(L), THETA_V)
+
+        S_WAT = MIN(1.0, SW(L)/DUL(L))
+        SW_P = MIN(1.0, THETA_P/POROSer)
+
+        TP1 = (1.0 - S_WAT) ** 2.0
+        TP2 = (DUL(L) - THETA_A) / (1.0 - POROSer)
+        TP3 = TP2 ** (0.5*TP2 + 1.16)
+        TP4 = 1.0 - POROSer ** (0.5*POROSer + 1.16)
+        TP5 = POROSer - THETA_P
+        TP6 = MAX(0.0, TP5 ** (0.5*TP5 + 1.16))
+        TP7 = (1.0 - SW_P) ** 2.0
+        TP8 = MAX(0.0, (TP1 * TP3 * TP4 * (TP5-TP6)) / 
+     &   (1.E-6 + (TP1 * TP3 * TP4) + TP5 - TP6) * 1.E7)
+
+        dD0_chp(L) = MAX(0.0, (TP8/1.E7 + TP7 * TP6))
+
+!       compare with other method
+        ratio(L) = dD0_chp(L) / dD0_fc(L)
+      
+      enddo
+
+      dD0_fc = dD0_chp
+
+      return
       end subroutine DayCent_diffusivity
 !=======================================================================
 

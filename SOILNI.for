@@ -258,8 +258,7 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1","2")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
-     &    SNO3, SW,                                   !Input
+     &    newCO2, NO3, SNO3, SOILPROP, SW,            !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
 
@@ -603,8 +602,7 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1","2")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    BD, DUL, KG2PPM, newCO2, NLAYR, NO3,        !Input
-     &    SNO3, SW,                                   !Input
+     &    newCO2, NO3, SNO3, SOILPROP, SW,            !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
 
