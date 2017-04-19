@@ -78,14 +78,14 @@ Contains
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
   //'PST1A,PST2A,KSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,')&
-  + Len(Trim(Adjustl(tmp))) + Len('SNW0C,SNW1C')
+  + Len('SNW0C,SNW1C,') + Len(Trim(Adjustl(tmp)))
 
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
   //'PST1A,PST2A,KSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,'&
-  // Trim(Adjustl(tmp)) // 'SNW0C,SNW1C'
+  // 'SNW0C,SNW1C,' // Trim(Adjustl(tmp))
    
        fn = 'plantgro.csv' 
        Call GETLUN (fn,nf)     
@@ -254,22 +254,37 @@ Contains
     End Subroutine CsvFileHeaderET
     
 !------------------------------------------------------------------------------            
-    Subroutine CsvFileHeaderMZCER
+    Subroutine CsvFileHeaderMZCER(nlayers)
        Character(12) :: fn
+       Character(Len=14) :: fmt
+       Character(Len=2) :: numtoch1, numtoch2 
+       Character(Len=100) :: tmp
        Character(:),Allocatable :: Header 
-       Integer :: nf, ErrNum, length   
-     
+       Integer :: nf, ErrNum, length, nlayers, i, nl    
+       
+       nl = MIN(10, MAX(4,nlayers))
+  
+       Write(numtoch1,'(I2)') nl - 1  
+       
+       fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+       fmt = Trim(Adjustl(fmt))
+   
+       Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+       tmp = Trim(Adjustl(tmp)) 
+       Write(numtoch2,'(I2)') nl  
+       tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
   length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
-  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,RL1D,RL2D,RL3D,'&   
-  //'RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD')
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
 
        Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
   //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
-  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,RL1D,RL2D,RL3D,'&   
-  //'RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD' 
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,' // Trim(Adjustl(tmp)) 
    
        fn = 'plantgro.csv' 
        Call GETLUN (fn,nf)     
@@ -343,8 +358,9 @@ Contains
       Character(:),Allocatable :: Header 
       Integer :: nf, ErrNum, length, nlayers, i, nl
       
-      nl = MIN(10, MAX(4,nlayers))
-  
+!      nl = MIN(10, MAX(4,nlayers))
+      nl = 10   ! always for 10 layers
+      
       Write(numtoch1,'(I2)') nl - 1  
        
       fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
@@ -716,7 +732,7 @@ Contains
      
       Allocate(character(LEN=length) :: Header) 
 
-     Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP' &
+     Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
      //'PSHOD,PRTOD,PSLOD,PSDOD,PSHMD,PRTMD,PSLMD,PSDMD,SHPPD,RTPPD,SLPPD,' &
      //'SDPPD,PLPPD,SHPAD,RTPAD,SLPAD,SDPAD,PLPAD,PST1A,PST2A,PUPD,PUPC,' &
      //'SNP0C,SNP1C,PHFR1,PHFR2,SHWAD,RWAD,SHAD,GWAD,PSTRAT,NTOPD,PTDD'  
