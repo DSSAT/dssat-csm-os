@@ -121,33 +121,32 @@ C-----------------------------------------------------------------------
 ! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
 
       DO L = NLAYR, 1, -1
+!         Rate of diffusion depends on today's soil water and soil factor
           RateDiffus = (1.0 - WFPS(L)) * DiffFactor
 
-          n2oflux(L) = n2onitrif(L) + n2odenit(L)  
-          n2oflux(L) = max(0.0, n2oflux(L) 
+         
+!         Update soil state variables based on new N2 and N2O today (flux)
+          n2oflux(L) = max(0.0, n2onitrif(L) + n2odenit(L)) 
+          n2flux(L)  = max(0.0, n2flux(L))
           n2o_soil(L) = n2o_soil(L) + n2oflux(L)           
+          n2_soil(L)  = n2_soil(L)  + n2flux(L)
+
           n2o_diffused = n2o_soil(L) * RateDiffus
+          n2_diffused  = n2_soil(L)  * RateDiffus
           
-          n2flux(L)  = max(0.0, n2flux(L)
-
-
-          n2_diffused = (n2flux(L) + n2_soil(L)) * RateDiffus
-          n2_soil(L) = (n2flux(L) + n2_soil(L)) * (1.0 - RateDiffus)
-
           if (L == 1) then   !LAYER ONE
             n2o_emitted = n2o_diffused
             n2_emitted  = n2_diffused
-
           else
-            n2o_soil(L)   = n2oflux(L) + n2o_soil(L) - n2o_diffused
             n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
-
             n2_soil(L-1) = n2_soil(L-1) + n2_diffused
           endif
+
+          n2o_soil(L) = n2o_soil(L) - n2o_diffused
+          n2_soil(L)  = n2_soil(L)  - n2_diffused
       ENDDO
       
       CN2O_emitted = CN2O_emitted + N2O_emitted
-
       CN2_emitted  = CN2_emitted  + N2_emitted
 
 !***********************************************************************
