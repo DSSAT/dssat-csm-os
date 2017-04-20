@@ -123,11 +123,11 @@ C-----------------------------------------------------------------------
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
           
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-          WRITE(NOUTDN,'(A1,T62,A)',ADVANCE='NO') 
+          WRITE(NOUTDN,'(A1,T63,A)',ADVANCE='NO') 
      &        "!","NO3 (ppm) by soil depth (cm):"
           END IF   ! VSH
           
-          SPACES = N_LYR * 8 - 29
+          SPACES = N_LYR * 8 - 28
           
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE(FRMT,'(A,I2,A)')
@@ -139,7 +139,7 @@ C-----------------------------------------------------------------------
 
           WRITE (NOUTDN,100, ADVANCE='NO')
   100     FORMAT('@YEAR DOY   DAS',
-     &     '  NAPC  NI#M   NIAD   NITD   NHTD')
+     &     '  NAPC  NI#M    NIAD   NITD   NHTD')
           IF (N_LYR < 10) THEN
             WRITE (NOUTDN,105, ADVANCE='NO')
      &        ('NI',L,'D',L=1,N_LYR), 
