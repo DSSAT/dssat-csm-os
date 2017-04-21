@@ -1,7 +1,6 @@
 Module CsvOutput
 !
 !
-Use CsvGeneric
 Use Linklist
 
 Implicit None
@@ -9,6 +8,7 @@ Save
 
 Character(Len=8) :: expname
 Character(Len=1) :: fmopt
+Integer :: maxnlayers = 1
 
 Character(:), allocatable, Target :: vCsvline, vCsvlineSW, vCsvlineTemp
 Character (:), Pointer :: vpCsvline, vpCsvlineSW,vpCsvlineTemp
@@ -74,7 +74,7 @@ Character(:), allocatable, Target :: vCsvlineEvOpsum
 Character (:), Pointer :: vpCsvlineEvOpsum
 Integer :: vlngthEvOpsum
 !------------------------------------------------------------------------------
-! for summary.out from Opsum
+! for summary.out 
 Character(:), allocatable, Target :: vCsvlineSumOpsum
 Character (:), Pointer :: vpCsvlineSumOpsum
 Integer :: vlngthSumOpsum
@@ -1397,77 +1397,64 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
     Character(Len=5) :: CropModel
     Integer :: numelem, nlayers 
 
-! CSV output corresponding to PlantGro.OUT
+! CSV outputs corresponding to *.OUT
          Select case (CropModel)
              Case('CRGRO')
-!case of crgro csv file header print
-                 Call CsvFileHeader(nlayers)
-                 Call Listtofile
-                 Call CsvHeadPlNCrGro 
-                 Call ListtofilePlNCrGro
-!                 header is printed from OPSUM
-!                 Call CsvHeadEvOpsum(ICOUNT,OLAP)
-                 Call ListtofileEvOpsum
-                 CAll CsvHeadCrgroPlantC
-                 Call ListtofilePlCCrGro
+                 Call ListtofilePlantgrCrGro(nlayers) ! plantgro.csv
+                 Call ListtofilePlNCrGro              ! plantn.csv
+                 Call ListtofilePlCCrGro              ! plantc.csv
+!                header is printed from OPSUM
+!                Call CsvHeadEvOpsum(ICOUNT,OLAP)
+                 Call ListtofileEvOpsum                 
              Case('CSCER')
-!case of cscer
-                 Call CsvFileHeaderCsCer
-                 Call ListtofileCsCer
-                 Call CsvHeadPlNCsCer
-                 Call ListtofilePlNCsCer
-                 Call CsvHeadPlantGr2
-                 Call ListtofilePlGr2
-                 Call CsvHeadPlGrf
-                 Call ListtofilePlGrf
-                 Call CsvHeadEvalCsCer
-                 Call ListtofileEvalCsCer    
+                 Call ListtofilePlantGrCsCer          ! plantgro.csv
+                 Call ListtofilePlNCsCer              ! plantn.csv
+                 Call ListtofilePlGr2                 ! plantgr2.csv
+                 Call ListtofilePlGrf                 ! plantgrf.csv
+                 Call ListtofileEvalCsCer             ! evaluate.csv  
              Case('MZCER')
-                 Call CsvFileHeaderMZCER(nlayers)
-                 Call ListtofileMZCER
-                 call CsvHeadPlantN
-                 Call ListtofilePlNMzCer
-!                 header is printed from OPSUM
-!                 Call CsvHeadEvOpsum(ICOUNT,OLAP)
+                 Call ListtofileMZCER(nlayers)        ! plantgro.csv
+                 Call ListtofilePlNMzCer              ! plantn.csv
+!                header is printed from OPSUM
+!                Call CsvHeadEvOpsum(ICOUNT,OLAP)
                  Call ListtofileEvOpsum
          End Select
-!        for SoilWat.csv
-         Call CsvFileHeaderSoilWat(nlayers) 
-         Call ListtofileSW
-!        For SoilTemp.csv
-         Call CsvFileHeaderSoilTemp(nlayers) 
-         Call ListtofileTemp
-!        For ET.OUT file  
-         Call CsvFileHeaderET(nlayers)
-         Call ListtofileET
-!        For SoilNi.csv        
-         call CsvHeadSoilNi(nlayers)
-         Call ListtoFileSoilNi
-!        for weather.csv         
-         call CsvHeadWth
-         call ListtoFileWth
-!        for summary.csv
-         Call ListtofileSumOpsum
-!        For SoilOrg.csv 
-!        Call CsvHeadSoilOrg(CONTROL % N_ELEMS)
-         Call CsvHeadSoilOrg(numelem)
-         Call ListtofileSoilOrg
-!        For ETPhot.csv 
-         Call CsvHeadETPhot
-         Call ListtofileETPhot
-!        For Mulch.csv         
-         Call CsvHeadMulch
-         Call ListtofileMulch
-!        For PlantP.csv
-         Call CsvHeadPlantP
-         Call ListtofilePlantP
-!        For SoilPi.csv
-         Call CsvHeadSoilPi
-         Call ListtofileSoilPi
+
+         Call ListtofileSW(nlayers)         ! SoilWat.csv
+         Call ListtofileTemp(nlayers)       ! SoilTemp.csv
+         Call ListtofileET(nlayers)         ! et.csv
+         Call ListtoFileSoilNi(nlayers)     ! SoilNi.csv
+         call ListtoFileWth                 ! weather.csv
+         Call ListtofileSumOpsum            ! summary.csv
+         Call ListtofileSoilOrg(numelem)    ! SoilOrg.csv
+         Call ListtofileETPhot              ! ETPhot.csv
+         Call ListtofileMulch               ! Mulch.csv
+         Call ListtofilePlantP              ! PlantP.csv
+         Call ListtofileSoilPi              ! SoilPi.csv
          
          Return
 End Subroutine CsvOutputs
 !------------------------------------------------------------------------------
+! In varibale length string replace comma(,) to dash(-)
+   Function CommaDash(string)
+      Character(Len=25) :: CommaDash
+      Character(Len=25), Intent(IN) :: string 
+      Character(len=Len(string)) :: temp
+      Integer :: i
+
+      temp = string
+
+      Do i=1, Len(string)
+
+         If (temp(i:i)==',') temp(i:i) = '-'
+
+      End DO
+    
+      CommaDash = temp
+      Return         
+   End Function CommaDash
+!------------------------------------------------------------------------------
 
 End Module CsvOutput
+
 !------------------------------------------------------------------------------
