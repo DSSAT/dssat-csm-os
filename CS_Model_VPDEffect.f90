@@ -65,11 +65,8 @@
         implicit none
         class (VPDEffect_type), intent(inout) :: this
         real, intent(in) :: VPD
-        real :: value
         
-        value = calculateStomatalConductance(VPD, this%VPDThreshold_, this%VPDSensitivity_, 1.0)
-        call this%setStomatalConductance(value)
-        affectStomatalConductance = value
+        affectStomatalConductance = affectStomatalConductance_restricted(this, VPD, 1.0)        ! running with the maximum value (1.0)
 
     end function affectStomatalConductance
     
@@ -81,9 +78,7 @@
         real, intent(in) :: VPD, limit
         real :: value
         
-        !if (limit > 1.0) limit = 1.0                               ! validate limit is no bigger than 100%
-        
-        value = calculateStomatalConductance(VPD, this%VPDThreshold_, this%VPDSensitivity_, limit)
+        value = calculateStomatalConductance(this%stomatalConductance_, VPD, this%VPDThreshold_, this%VPDSensitivity_, AMIN1(1.0, limit))
         call this%setStomatalConductance(value)
         affectStomatalConductance_restricted = value
 
@@ -93,11 +88,11 @@
     ! STATIC FUNCTIONS
     !-------------------------------------------
     
-    ! calculates stomatal conductante acording to the VPD
+    ! calculates stomatal conductance acording to the VPD
     ! limit is 1.0 when there is no restrictions
-    real function calculateStomatalConductance(VPD, VPDThreshold, VPDSensitivity, limit)
+    real function calculateStomatalConductance(previousStomatalConductance, VPD, VPDThreshold, VPDSensitivity, limit)
         implicit none
-        real, intent (in) :: VPD, VPDThreshold, VPDSensitivity, limit
+        real, intent (in) :: previousStomatalConductance, VPD, VPDThreshold, VPDSensitivity, limit
         real :: value = 0
         
         if(VPD > VPDThreshold) then
@@ -112,6 +107,8 @@
         else
             value = limit 
         end if 
+        
+        value = AMIN1(value, previousStomatalConductance) ! never increase
         
         calculateStomatalConductance = value
 

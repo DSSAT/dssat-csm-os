@@ -5,7 +5,7 @@
 !   - tMax maximun temprature of the day
 !   - dewPoint dew point temperature of the day
 !   - dayRadiation registered during the day
-! Object functions:
+! Type functions:
 !        hourlyTemperature
 !        hourlySVP
 !        hourlyWHCAIR
@@ -27,13 +27,13 @@
 ! @danipilze
 !*********
 
-    Module CS_Model_Environment !Module of environment
+    Module CS_Model_Environment         !Module of environment
     
     ! STATIC ATRIBUTES
     real, private :: PI =  4 * atan (1.0_8)
     real, private :: HOURS_OF_DAY = 24
     real, private :: LIGHT_HOURS = 12
-    real, private :: DAWN_TIME = 5                                            !dawn time
+    real, private :: DAWN_TIME = 5                                              !dawn time
     
     type DailyEnvironment_type
         
@@ -42,19 +42,12 @@
         real, private :: tMin_ = 0
         real, private :: tMax_ = 0
         real, private :: dewPoint_ = 0
-        real, private :: dayRadiation_ = 0                                                      ! solar radiation
+        real, private :: dayRadiation_ = 0                                      ! solar radiation
         
         
     contains
     
-        procedure, pass (this) :: getTMin
-        procedure, pass (this) :: setTMin
-        procedure, pass (this) :: getTMax
-        procedure, pass (this) :: setTMax
-        procedure, pass (this) :: getDewPoint
-        procedure, pass (this) :: setDewPoint
-        procedure, pass (this) :: getDayRadiation
-        procedure, pass (this) :: setDayRadiation
+        ! type functions
         procedure, pass (this) :: hourlyTemperature
         procedure, pass (this) :: hourlySVP
         procedure, pass (this) :: hourlyWHCAIR
@@ -63,6 +56,16 @@
         procedure, pass (this) :: hourlyRadiation
         procedure, pass (this) :: hourlyBiomass
         procedure, pass (this) :: hourlyTranspiration
+        
+        ! getters and setters
+        procedure, pass (this) :: getTMin
+        procedure, pass (this) :: setTMin
+        procedure, pass (this) :: getTMax
+        procedure, pass (this) :: setTMax
+        procedure, pass (this) :: getDewPoint
+        procedure, pass (this) :: setDewPoint
+        procedure, pass (this) :: getDayRadiation
+        procedure, pass (this) :: setDayRadiation
         
     
     end Type DailyEnvironment_type
@@ -90,7 +93,7 @@
     
     
     !-------------------------------------------
-    ! OBJECT FUNCTIONS
+    ! TYPE FUNCTIONS
     !-------------------------------------------
     
     
@@ -200,7 +203,8 @@
         implicit none
         real, intent (in) :: temperature
         
-        calculateSVP = 610.78 * exp( temperature/ ( temperature  + 238.3 ) * 17.2694 )          !  DA Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 ) 
+        !Saturation vapour pressure in pascals: svp = 610.78 *exp( t / ( t + 238.3 ) *17.2694 )
+        calculateSVP = 610.78 * exp( temperature/ ( temperature  + 238.3 ) * 17.2694 )
 
     end function calculateSVP
     
@@ -210,21 +214,21 @@
         real, intent (in) :: temperature
         
         ! WHCAIR = 0.002166 *SVP / ( t + 273.16 )
-        calculateWHCAIR = 0.002166 * calculateSVP(temperature) / ( temperature  + 273.16 )      !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        calculateWHCAIR = 0.002166 * calculateSVP(temperature) / ( temperature  + 273.16 )  
 
     end function calculateWHCAIR
      
-    ! obtain the relative humidity                                                              
+    ! obtain the relative humidity                                                              ! % 
     real function calculateRH(temperature, dewPoint)
         implicit none
         real, intent (in) :: temperature, dewPoint
         
         !(RHt) = WHCAIRdp/WHCAIRt
-        calculateRH =  calculateWHCAIR(dewPoint)/calculateWHCAIR(temperature)                   !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        calculateRH =  calculateWHCAIR(dewPoint)/calculateWHCAIR(temperature)
 
     end function calculateRH
     
-    ! obtain the Vapor Preasure Deficit VPD (KPa)
+    ! obtain the Vapor Preasure Deficit VPD                                                     ! (KPa)
     real function calculateVPD(temperature, dewPoint)
         implicit none
         real, intent (in) :: temperature, dewPoint
@@ -257,8 +261,8 @@
         Amplitude = (dayRadiation * PI)/24
         g = w*(hour - dawnTime)
         
-        value = Amplitude*SIN(g)+C           ! hourly radiation
-        if(value < 0.0 ) value = 0 ! no radiation on non-light hours
+        value = Amplitude*SIN(g)+C           ! calculate hourly radiation
+        if(value < 0.0 ) value = 0           ! no radiation on non-light hours
         
         calculatateHourlyRadiation=value
         
@@ -278,7 +282,6 @@
     real function calculateTranspiration(VPD, stomatalConductance)
         implicit none
         real, intent (in) :: stomatalConductance, VPD
-        real :: value = 0
         
         calculateTranspiration = stomatalConductance * VPD
 
