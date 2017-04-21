@@ -69,6 +69,37 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                          "-ta=host"      # Portland Group
                 )
 
+# Enable special treatment for lines beginning with "d" or "D" in fixed form sources
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-fd-lines-as-comments"
+                )
+
+# Enable generation of run-time checks for array subscripts and against the declared
+# minimum and maximum values.
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-fbounds-check"
+                )
+
+# Entire line is meaningful and that continued character constants never have implicit
+# spaces appended to them to fill out the line
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-ffixed-line-length-none"
+                )
+
+# The entire line is meaningful
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-ffree-line-length-none"
+                )
+
+# Initialize local character variables to string of 32 bytes
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-finit-character=32"
+                )
+                
+# Enable preprocessing
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-cpp"
+                )
 ###################
 ### DEBUG FLAGS ###
 ###################
@@ -77,7 +108,7 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
 
 # Disable optimizations
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG}"
-                 Fortran REQUIRED "-O0 -fd-lines-as-comments -Wuninitialized -fbounds-check -finit-character=32 -ffixed-line-length-none -ffree-line-length-none -cpp" # All compilers not on Windows
+                 Fortran REQUIRED "-O0" # All compilers not on Windows
                                   "/Od" # Intel Windows
                 )
 
@@ -112,7 +143,7 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG}"
 
 # Optimizations
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_TESTING "${CMAKE_Fortran_FLAGS_TESTING}"
-                 Fortran REQUIRED "-O2 -fd-lines-as-comments -Wuninitialized -fbounds-check -finit-character=32 -ffixed-line-length-none -ffree-line-length-none -cpp" # All compilers not on Windows
+                 Fortran REQUIRED "-O2" # All compilers not on Windows
                                   "/O2" # Intel Windows
                 )
 
@@ -124,7 +155,7 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_TESTING "${CMAKE_Fortran_FLAGS_TESTING}"
 
 # Unroll loops
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
-                 Fortran "-funroll-loops -fd-lines-as-comments -Wuninitialized -fbounds-check -finit-character=32 -ffixed-line-length-none -ffree-line-length-none -cpp" # GNU
+                 Fortran "-funroll-loops" # GNU
                          "-unroll"        # Intel
                          "/unroll"        # Intel Windows
                          "-Munroll"       # Portland Group
