@@ -104,17 +104,13 @@
                 ENDIF        
             ENDIF        
         ENDIF        
-        IF (MEPHO.NE.'I') THEN
-            IF (MEPHO.NE.'M') THEN
-                IF (MEPHO.NE.'R') THEN
+        IF (MEPHO /= 'I'.AND. MEPHO /= 'M' .AND. MEPHO /='R') THEN ! if photosynthesis method doesn't exists
                     WRITE(MESSAGE(1),'(A22,A1,A15,A19)')'Photosynthesis method ',MEPHO,' not an option ',' Changed to R (RUE)'
                     
                     CALL WARNING(1,'CSCGR',MESSAGE)
                     WRITE(FNUMWRK,*)' '
                     WRITE(FNUMWRK,'(A23,A1,A15,A19)')'Photosynthesis method ',MEPHO,' not an option ',' Changed to R (RUE)'
                     MEPHO = 'R'
-                ENDIF
-            ENDIF
         ENDIF
         ! Other CSM codes are:
         !  C Canopy photosynthesis curve.

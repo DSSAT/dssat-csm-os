@@ -89,7 +89,7 @@
     !-------------------------------------------
     
     ! calculates stomatal conductance acording to the VPD
-    ! limit is 1.0 when there is no restrictions
+    ! limit is 1.0 when there is no restrictions                                                ! %
     real function calculateStomatalConductance(previousStomatalConductance, VPD, VPDThreshold, VPDSensitivity, limit)
         implicit none
         real, intent (in) :: previousStomatalConductance, VPD, VPDThreshold, VPDSensitivity, limit

@@ -241,7 +241,7 @@
     ! calculates proportion of radiation
     ! K is the extinction coefficient
     ! LAI is leaf area index
-    real function calculatePortionOfRadiation(K, LAI)
+    real function calculatePortionOfRadiation(K, LAI)                                           ! %
         implicit none
         real, intent (in) :: K, LAI
         real :: value = 0
@@ -251,7 +251,7 @@
     end function calculatePortionOfRadiation
     
     ! obtain the radiation at a given hour
-    real function calculatateHourlyRadiation(hour, dawnTime, dayRadiation, lightHours)
+    real function calculatateHourlyRadiation(hour, dawnTime, dayRadiation, lightHours)          !MJ/m2
         implicit none
         integer, intent (in) :: hour
         real :: Amplitude, C, w, g, value, dawnTime, dayRadiation, lightHours
