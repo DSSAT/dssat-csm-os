@@ -57,8 +57,9 @@ C=======================================================================
 
       SUBROUTINE SoilNi (CONTROL, ISWITCH, 
      &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    SOILPROP, SSOMC, ST, SW, TDFC, TDLNO, TILLVALS, !Input
-     &    UNH4, UNO3, UPFLOW, WEATHER, XHLAI, newCO2,     !Input
+     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
+     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
+     &    XHLAI,                                          !Input
      &    FLOODN,                                         !I/O
      &    NH4, NO3, UPPM)                                 !Output
 
@@ -104,7 +105,7 @@ C=======================================================================
       INTEGER NBUND, NSWITCH
       INTEGER FERTDAY
       INTEGER DLAG(NL), INCYD, LFD10  !REVISED-US
-      REAL ALI, FLOOD, ES, TMAX, TMIN, SRAD, XHLAI
+      REAL ALI, FLOOD, ES, TMAX, TMIN, SRAD, XHLAI, RAIN, SNOW, NOX_PULS
       REAL TKELVIN, TFACTOR, WFPL, WF2
       REAL PHFACT, T2, TLAG   !, DNFRATE
       REAL CUMFNRO
@@ -150,7 +151,9 @@ C=======================================================================
 !      PI = 3.1416
       
 !     proportion of N2O from nitrification PG calibrated this variable for DayCent
-      pn2Onitrif = .001  ! proportion of N2O from nitrification PG calibrated this variable for DayCent
+      pn2Onitrif = .001  
+!     chp - from DayCent - is this the equivalent value?
+!     double turnovfrac = 0.02;
          
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -178,6 +181,7 @@ C=======================================================================
       SRAD = WEATHER % SRAD
       TMAX = WEATHER % TMAX
       TMIN = WEATHER % TMIN
+      RAIN = WEATHER % RAIN
 
 !***********************************************************************
 !***********************************************************************

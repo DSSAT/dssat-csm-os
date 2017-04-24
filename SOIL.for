@@ -155,8 +155,9 @@ C=====================================================================
 !     Inorganic N (formerly NTRANS)
       CALL SoilNi (CONTROL, ISWITCH, 
      &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    SOILPROP, SSOMC, ST, SW, TDFC, TDLNO, TILLVALS, !Input
-     &    UNH4, UNO3, UPFLOW, WEATHER, XHLAI, newCO2,     !Input
+     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
+     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
+     &    XHLAI,                                          !Input
      &    FLOODN,                                         !I/O
      &    NH4, NO3, UPPM)                                 !Output
 
