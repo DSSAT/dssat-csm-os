@@ -235,14 +235,17 @@ C-----------------------------------------------------------------------
       CALL Get('SPAM','CES',CES)
       CALL Get('SPAM','EP', EP)
       CALL Get('SPAM','ES', ES)
-      CALL Get('MGMT','TOTIR', TOTIR)
-      CALL Get('MGMT','EFFIRR',EFFIRR)
 
-      IF (EFFIRR .GT. 0.0) THEN
-        TOTEFFIRR = EFFIRR * TOTIR
-      ELSE
-        TOTEFFIRR = TOTIR
-      ENDIF
+!      CALL Get('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm) (includes losses)
+!      CALL Get('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
+!      CALL Get('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
+      CALL Get('MGMT','TOTEFFIRR',TOTEFFIRR)  !Total effective irrigation
+
+!      IF (EFFIRR .GT. 0.0) THEN
+!        TOTEFFIRR = EFFIRR * TOTIR
+!      ELSE
+!        TOTEFFIRR = TOTIR
+!      ENDIF
 
       WRITE (LUNWBL,320)
   320 FORMAT(/,'!',5X,'WATER BALANCE PARAMETERS',

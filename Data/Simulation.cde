@@ -135,6 +135,11 @@ Y        Normal output                                                        IB
 D        Detailed output                                                      IB
 A        All outputs                                                          IB
 
+*Simulation/Outputs/Format
+@CDE     DESCRIPTION                                                          SO
+A        Text Format (ASCII)                                                  IB
+C        Comma Separated Values (CSV)                                         IB
+
 *Simulation/Crop Models
 @MODEL  CROP  Description
 CRGRO    BM   CROPGRO-Bermuda
@@ -179,3 +184,4 @@ TNARO    TN   AROIDS-Taro
 TRARO    TR   AROIDS-Tanier
 SALUS    xx   SALUS-generic crop model
 WHAPS    WH   NWheat (formerly APSIM)
+SIMPL    MZ   Simple

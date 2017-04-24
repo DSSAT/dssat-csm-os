@@ -89,7 +89,7 @@ HYAH   Field wt Mg/ha  Field weight at harvest (Mg [fm]/ha)                     
 IDAP   Panicle in day  Panicle Initiation day (dap)                             .
 IDAT   Panicle in date Panicle Initiation date (YrDoy)                          .
 IR#M   Irrig apps #    Irrigation applications (no)                             .
-IRCM   Irrig mm        Season irrigation (mm)                                   .
+IRCM   Irrig mm        Season applied irrigation (includes losses) (mm)         .
 KI#M   K application # Number of K applications (no)                            .
 KICM   K applied kg/ha Inorganic K applied (kg/ha)                              .
 KUPC   K uptake kg/ha  Seasonal cumulative K uptake (kg[K]/ha)                  .
@@ -480,7 +480,8 @@ ETAC   Evapotrans mm   Cumulative evapotranspiration (mm)                       
 ETAD   Evapotrans mm/d Evapotranspiration (mm/d)                                .
 H2OA   H2O in root zn  Water available in root zone (mm)                        .
 IR#C   Irrigation #    Irrigation applications (no)                             .
-IRRC   Irrigation mm   Cumulative irrigation  (mm)                              .
+IRRC   Irrig effect mm Cumulative effective irrigation (mm)                     .
+IRRAC  Irrig apply mm  Cumulative applied irrigation (includes losses) (mm)     .
 MCFD   Mulch coverage  Fraction of soil covered by mulch                        .
 MDEPD  Mulch thick cm  Thickness of mulch layer (cm)                            .
 MWAD   Mulch mass k/h  Mass of mulch layer (kg/ha)                              .
@@ -704,7 +705,8 @@ FLUR   FLD UREA kgN/ha Floodwater Urea N (kg N/Ha)                              
 FROD   FLOOD RO mm/d   Flood water runoff over bund (mm/d)                      .
 FUHY   UREA HYD kgN/ha Urea Hydrolysis Rate in Floodwater (kg [N]/(ha.day))     .
 INFD   INFILT mm/d     Infiltration rate (mm/d)                                 .
-IRRD   IRRIG mm/d      Irrigation (mm/d)                                        .
+IRRD   Eff Irrig mm/d  Daily effective irrigation (mm/d)                        .
+IRRAD  App Irrig mm/d  Daily applied irrigation (includes losses) (mm/d)        .
 TL#C   TILLAGE #       Number of tillage operations                             .
 TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .
 

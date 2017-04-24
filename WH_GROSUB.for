@@ -2826,7 +2826,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
      &      g_uptake_source, gro_wt, MNNH4, MNNO3,                !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR/1000000, rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw,                                       !Input
+     &      WFNU, xstag_nw, MXNUP,                                !Input, ! MXNUP added, 02/03/2017, btk
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
        ptnup = sum_real_array (pnup, mxpart)

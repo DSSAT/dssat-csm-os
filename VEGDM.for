@@ -181,6 +181,8 @@ C-----------------------------------------------------------------------
 C     Percent diseased leaf area; DISLA and TDLA are in units of cm2/m2
 !     This code came from GROW subroutine -- chp
 C-----------------------------------------------------------------------
+! WP - Look at units here. DISLA and SLA should both be cm2/m2. So why
+!      multiply by WTLF?
       IF (PDLA .GT. 0.0) THEN
          DISLA = WTLF * SLA * PDLA/100.0
       ENDIF

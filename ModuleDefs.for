@@ -40,11 +40,21 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
+
+!=======================================================================
+! By Willingthon Pavan (2017-04-24):
+! Intel ifort understands the C-style preprocessor directives, so it might
+! be easiest to convert the files to that style. Then we would have a
+! single code base that would work with both compilers (Intel & gfortran).
+! For more info: https://software.intel.com/en-us/node/694581
+!=======================================================================
+
 #ifdef _WIN32
       CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
 #else      
       CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
 #endif
+
 !=======================================================================
 !     Compiler directives used to set library for system calls
 !     Compiler pre-processor definitions can be set in:
@@ -63,19 +73,22 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 1
-        INTEGER :: Build = 10
+        INTEGER :: Build = 12
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.1.12 chp 04/17/2017 Growth stage, supply-limited irrigation added
+!       4.6.1.11 chp 04/07/2017 CSV format output, fix stage 2 rice longevity issue
+!                               NWheat max N uptake from CUL file.
 !       4.6.1.10 chp 12/15/2016 Bugfixes tillage, rice, SALUS
 !       4.6.1.09 chp 11/18/2016 NWheat grain N bug fixed.
 !                               Rice photosynth now uses SLPF.
 !       4.6.1.08 chp 10/18/2016 CSCER compatibility with sequence, NWheat species file update
 !                               Rice N uptake initialization, taro N uptake calculation 
-!       4.6.1.07 chp 07/29/2016 Millet changes from KJB, Puddled rice deactivates after 30 days dry
+!       4.6.1.07 chp 07/29/2016 Millet changes from KJB, Puddled field deactivates after 30 days dry
 !       4.6.1.06 chp 07/21/2016 DSSAT soil temperature is default method, per GH.
 !       4.6.1.05 chp 07/21/2016 EPIC soil temperature is default method.
 !                               4-character Weather file in data directory recognized.
@@ -234,6 +247,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
         CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2
+        CHARACTER (len=1) FMOPT   ! VSH
         INTEGER NSWI
       END TYPE SwitchType
 
@@ -554,12 +568,23 @@ D       STDPATH = 'D:\DSSAT46\'
         REAL CANHT, CANWH, DXR57, EXCESS,
      &    PLTPOP, RNITP, SLAAD, XPOD
         REAL BIOMAS
-        INTEGER NR5
+        INTEGER NR5, iSTAGE, iSTGDOY
+        CHARACTER*10 iSTNAME
       END TYPE PlantType
 
 !     Data transferred from management routine 
       Type MgmtType
-        REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR
+        REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR
+        REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
+        REAL V_IMDEP(20)
+        REAL V_ITHRL(20)
+        REAL V_ITHRU(20)
+        INTEGER V_IRON(20)
+        REAL V_IRAMT(20)
+        REAL V_IREFF(20)
+        REAL V_IFREQ(20)
+        INTEGER GSIRRIG
+        CHARACTER*5 V_IRONC(20)
       End Type MgmtType
 
 !     Data transferred from Soil water routine
@@ -779,6 +804,7 @@ D       STDPATH = 'D:\DSSAT46\'
         SELECT CASE (VarName)
         Case ('EFFIRR'); Value = SAVE_data % MGMT % EFFIRR
         Case ('TOTIR');  Value = SAVE_data % MGMT % TOTIR
+        Case ('TOTEFFIRR');Value=SAVE_data % MGMT % TOTEFFIRR
         Case ('DEPIR');  Value = SAVE_data % MGMT % DEPIR
         Case ('IRRAMT'); Value = SAVE_data % MGMT % IRRAMT
         Case ('FERNIT'); Value = SAVE_data % MGMT % FERNIT
@@ -892,6 +918,7 @@ D       STDPATH = 'D:\DSSAT46\'
         SELECT CASE (VarName)
         Case ('EFFIRR'); SAVE_data % MGMT % EFFIRR = Value
         Case ('TOTIR');  SAVE_data % MGMT % TOTIR  = Value
+        Case ('TOTEFFIRR');SAVE_data%MGMT % TOTEFFIRR=Value
         Case ('DEPIR');  SAVE_data % MGMT % DEPIR  = Value
         Case ('IRRAMT'); SAVE_data % MGMT % IRRAMT = Value
         Case ('FERNIT'); SAVE_data % MGMT % FERNIT = Value
@@ -1025,6 +1052,8 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('PLANT')
         SELECT CASE (VarName)
         Case ('NR5');  Value = SAVE_data % PLANT % NR5
+        Case ('iSTAGE');  Value = SAVE_data % PLANT % iSTAGE
+        Case ('iSTGDOY'); Value = SAVE_data % PLANT % iSTGDOY
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1056,6 +1085,8 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('PLANT')
         SELECT CASE (VarName)
         Case ('NR5');  SAVE_data % PLANT % NR5  = Value
+        Case ('iSTAGE');  SAVE_data % PLANT % iSTAGE  = Value
+        Case ('iSTGDOY'); SAVE_data % PLANT % iSTGDOY = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1090,6 +1121,12 @@ D       STDPATH = 'D:\DSSAT46\'
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
+      Case ('PLANT')
+        SELECT CASE (VarName)
+        Case ('iSTNAME');  Value = SAVE_data % PLANT % iSTNAME
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
       Case Default; ERR = .TRUE.
       END SELECT
 
@@ -1117,6 +1154,12 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('WEATHER')
         SELECT CASE (VarName)
         Case ('WSTA');  SAVE_data % WEATHER % WSTAT  = Value
+        Case DEFAULT; ERR = .TRUE.
+        END SELECT
+
+      Case ('PLANT')
+        SELECT CASE (VarName)
+        Case ('iSTNAME');  SAVE_data % PLANT % iSTNAME = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
