@@ -62,8 +62,6 @@
         cnamm = -99.0
         co2cc = 0.0
         co2fp = 1.0
-        co2intppm = 0.0
-        co2intppmp = 0.0
         co2max = -99.0
         co2pav = -99.0
         co2pc = 0.0

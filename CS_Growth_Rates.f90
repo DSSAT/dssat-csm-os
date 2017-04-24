@@ -12,16 +12,18 @@
     
     SUBROUTINE CS_Growth_Rates ( &
         CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
-        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         &                                !LPM 26MAR2016 RLV added
+        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF  &                                !LPM 26MAR2016 RLV added
         )
         USE ModuleDefs
         USE CS_First_Trans_m
+        USE CS_Model_Photosyntesis
     
         IMPLICIT NONE
         
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
-        REAL    TMIN        , TRWUP       , RLV(NL)
+        REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
         REAL    CSVPSAT     , TFAC4       , YVALXY                              ! Real function calls
+        REAL    availableC
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      
 
@@ -50,11 +52,17 @@
 !           Calculate adjustment to yesterday's C assimilation
 !-----------------------------------------------------------------------
 
-            ! End of day interception = today's starting interception
-            IF (MEPHO.EQ.'M') CARBOEND = CARBOTMPM * PARI/PLTPOP                                                       !EQN 277
-            IF (MEPHO.EQ.'I') CARBOEND = CARBOTMPI * PARI/PLTPOP                                                       !EQN 277
-            IF (MEPHO.EQ.'R') CARBOEND = CARBOTMPR * PARI/PLTPOP                                                       !EQN 277
-
+        ! End of day interception = today's starting interception
+        select case(MEPHO)
+            case ('R')
+                availableC = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP)
+            case ('I')
+                availableC = availableCarbohydrate_methodI(CO2, CO2AIR, CO2EX, CO2FP, CO2COMPC, PARMJFAC, PARFC, PARI, PARU, PLTPOP, RATM, RCROP, RLFC, RLF, RSFP, SLPF, SRAD, TMAX, TMIN, TFP, WFP)
+            case ('M')
+                availableC = availableCarbohydrate_methodM(CO2AIR,PARU, RATM, RCROP,RLFC, RLF, WFP, MJPERE, PARMJFAC, SRAD, TFP, RSFP, SLPF, PARI, PLTPOP)
+        end select
+        CARBOEND = availableC * PARI/PLTPOP                                                       !EQN 277
+            
             CARBOADJ = (CARBOEND-CARBOBEG)/2.0*EMRGFRPREV                                                              !EQN 278
             ! But note, no adjustment if leaf kill
             PARMJIADJ = PARMJFAC*SRADPREV*(PARI-PARIPREV)/2.0*EMRGFR                                                   !EQN 279

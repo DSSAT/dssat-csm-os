@@ -84,10 +84,10 @@
                         eoebudcrpco2h2oc,eoc
                 ENDIF
             ENDIF
-            IF (EYEARDOY.LE.YEARDOY) THEN
+            IF (EYEARDOY <= YEARDOY) THEN
                 WRITE(fnumwrk,'(A,2F7.3)')     ' Pot.pl./Pot.soil evap; /Pot.pl330',epsratio,tratio
                 WRITE(fnumwrk,'(A,F7.3)')      ' Quantum requirement              ',photqr
-                WRITE(fnumwrk,'(A,2F7.1)')     ' CO2,Estimated internal CO2 vpm   ',co2,co2intppm
+                WRITE(fnumwrk,'(A,2F7.1)')     ' CO2                              ',co2
                 WRITE(fnumwrk,'(A,F7.3,6F7.3)')' Phs facs Co2,Temp,H2o,N,Rsvs,Vpd ',co2fp,tfp,wfp,nfp,rsfp,vpdfp
                 WRITE(fnumwrk,'(A,3F7.3)')     ' Phs. Rue,Rue+Co2i,Resistances    ',carbobegr*pltpop,carbobegi*pltpop, &
                     carbobegm*pltpop
