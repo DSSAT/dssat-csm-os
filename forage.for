@@ -222,6 +222,9 @@ C      Storage organ parameters for forage model
       REAL PHZACC(20)
 
 
+!     CHP/KJB 4/24/2017
+      REAL Cumul_FHTOT, Cumul_FHTOTN, FHTOTN
+
 C      Forage harvest damage/removal variables for forage model
       REAL HPDAM
 
@@ -241,6 +244,11 @@ C------------------------------------------------------------
       REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
       REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
       LOGICAL RUNYET
+
+!     Arrays which contain data for printing in SUMMARY.OUT file
+      INTEGER, PARAMETER :: SUMNUM = 2
+      CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
+      REAL, DIMENSION(SUMNUM) :: VALUE
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -721,6 +729,10 @@ C-----------------------------------------------------------------------
 !     from SWFACS
       TURFAC = 1.0
       SWFAC  = 1.0
+
+!     CHP/KJB 4/24/2017
+      Cumul_FHTOT = 0.0
+      Cumul_FHTOTN = 0.0
 
 !-----------------------------------------------------------------------
       IF (CROP .NE. 'FA') THEN
@@ -1995,6 +2007,7 @@ C-----------------------------------------------------------------------
      &  VSTAGE, DWTCO, DWTLO, DWTSO)                                           !Input/Output
 
       FHWAH= 0.0
+      FHTOTN = 0.0
       FHLPH = 0.0
 !      fhpctn = 0.0
       MOWC =0.0
@@ -2004,8 +2017,14 @@ C-----------------------------------------------------------------------
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
      &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
      &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                FHWAH,FHLPH,fhpctn,FREQ,CUHT,MOWC,RSPLC)
+     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,MOWC,RSPLC)
 
+      Cumul_FHTOT  = Cumul_FHTOT  + FHWAH
+      Cumul_FHTOTN = Cumul_FHTOTN + FHTOTN
+      IF (FHWAH > 1.E-3) THEN
+        WRITE(3333,"('FHWAH,FHTOTN',2F10.2)") FHWAH, FHTOTN
+      ENDIF
+      CONTINUE
 !-----------------------------------------------------------------------
 !     End of DAS > NVEG0 if construct
 !-----------------------------------------------------------------------
@@ -2138,6 +2157,7 @@ C-----------------------------------------------------------------------
      &  WTNSR, WTNSRA, WTNSRO)                          !Input
 
         ENDIF
+
 !-----------------------------------------------------------------------
 !     Calculate harvest residue left in field
 !        CALL FOR_HRES_CGRO(CONTROL,
@@ -2158,6 +2178,17 @@ C-----------------------------------------------------------------------
         SENESCE % ResWt  = 0.0
         SENESCE % ResLig = 0.0
         SENESCE % ResE   = 0.0
+      ENDIF
+
+      IF (DYNAMIC == SEASEND) THEN
+!     Store Summary.out labels and values in arrays to send to
+!     OPSUM routines for printing.  Integers are temporarily 
+!     saved as real numbers for placement in real array.
+      LABEL(1) = 'HWAH'; VALUE(1) = Cumul_FHTOT*10.
+      LABEL(2) = 'CNAM'; VALUE(2) = Cumul_FHTOTN*10.
+
+      !Send labels and values to OPSUM
+      CALL SUMVALS (SUMNUM, LABEL, VALUE) 
       ENDIF
 
 !***********************************************************************

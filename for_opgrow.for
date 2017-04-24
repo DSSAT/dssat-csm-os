@@ -200,7 +200,8 @@ C-------------------------------------------
      &    '  CWID  NWAD  RDPD  RL1D  RL2D  RL3D',
      &    '  RL4D  RL5D  RL6D  RL7D  RL8D  RL9D',
      &    '  RL10  CDAD  LDAD  SDAD  QDAD  HERB  FHL%  LF%D'
-     &    ' DWTCO DWTLO DWTSO CHTCM CPROT  MOWC  RSPLC')
+!    &    ' DWTCO DWTLO DWTSO CHTCM CPROT  MOWC  RSPLC')
+     &    ' DWTCO DWTLO DWTSO CHTCM CPROT')
 !-----------------------------------------------------------------------
 !       Initialize daily plant nitrogen output file
         INQUIRE (FILE = OUTPN, EXIST = FEXIST)
@@ -396,7 +397,7 @@ C-----------------------------------------------------------------------
      &    NINT(WTCO*10.),NINT(WTLO*10.),NINT(WTSO*10.), 
      &    NINT(WTSRO*10.),NINT(FHWAH*10.),FHLPH,
      &    PELF,NINT(DWTCO*10.),NINT(DWTLO*10.),NINT(DWTSO*10.),
-     &    NINT(CANHT*100.),fhpctn*6.25,MOWC,RSPLC
+     &    NINT(CANHT*100.),fhpctn*6.25    !,MOWC,RSPLC
 310       FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &    1X,F5.1,1X,I5,1X,F5.2,3(1X,I5),2(1X,F5.2),4(1X,I5),
      &    1X,F6.1,1X,F5.3,2(1X,I5),4(1X,F5.3),3(1X,F5.2),
