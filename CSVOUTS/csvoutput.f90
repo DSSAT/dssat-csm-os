@@ -1,10 +1,12 @@
 !------------------------------------------------------------------------------
 ! By Willingthon Pavan (2017-04-25)
-! Using preprocessors aims to allow cross-platform compilation
+! Preprocessors can be used to allow cross-platform compilation
 ! Intel Fortran compiler allows the use of G [ w [ .d ] ] without specifies the 
 ! insertion of leading zeros to a width of m, and specifies the number of digits 
-! (d) to the right of the decimal point. Other languages do not.
+! (d) to the right of the decimal point. Other compilers do not.
 ! GFortran allow also but with G0 [ w [ .d ] ]
+! Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
+!------------------------------------------------------------------------------
 #ifdef __GFORTRAN__
 #define XXXX g0
 #else      
