@@ -16,7 +16,7 @@
         USE ModuleDefs
         USE ModuleData
         USE CS_First_Trans_m
-        USE CS_Model_Photosyntesis
+        USE YCA_Photosyntesis
         
         IMPLICIT  NONE
         

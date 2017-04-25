@@ -10,7 +10,7 @@
 ! @danipilze
 !*********
 
-    Module CS_Model_Photosyntesis !Module of environment
+    Module YCA_Photosyntesis !Module of environment
 
     contains
     !-------------------------------------------
@@ -98,5 +98,5 @@
     
 
     
-END Module CS_Model_Photosyntesis
+END Module YCA_Photosyntesis
     

@@ -1,4 +1,4 @@
-Module CS_Model_Node !Module of environment
+Module YCA_Node !Module of environment
     type Node_type
         
         ! TODO DA 21MAR2017
@@ -125,5 +125,5 @@ Module CS_Model_Node !Module of environment
 
     
     
-END Module CS_Model_Node  
+END Module YCA_Node  
     

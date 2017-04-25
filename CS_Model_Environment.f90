@@ -27,7 +27,7 @@
 ! @danipilze
 !*********
 
-    Module CS_Model_Environment         !Module of environment
+    Module YCA_Environment         !Module of environment
     
     ! STATIC ATRIBUTES
     real, private :: PI =  4 * atan (1.0_8)
@@ -359,5 +359,5 @@
         this%dayRadiation_ = dayRadiation
     end subroutine setDayRadiation
     
-END Module CS_Model_Environment
+END Module YCA_Environment
     
