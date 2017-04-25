@@ -10,7 +10,7 @@
 ! @danipilze
 !*********
 
-    Module CS_Model_VPDEffect !Module of environment
+    Module YCA_VPDEffect !Module of environment
     type VPDEffect_type
         
         real, private :: VPDThreshold_ =  0                ! VPD Threshold to start reducing stomatal conductance (KPa)
@@ -170,5 +170,5 @@
     end subroutine setStomatalConductance
     
     
-END Module CS_Model_VPDEffect    
+END Module YCA_VPDEffect    
     

@@ -19,8 +19,16 @@
         
         USE ModuleDefs
         USE CS_First_Trans_m
+        USE YCA_Environment
+        USE YCA_VPDEffect
         
+   
         IMPLICIT NONE
+        
+        TYPE (DailyEnvironment_type)                     :: env
+        TYPE (VPDEffect_type)                            :: vpde
+        REAL hourlyStomatalConductance
+        REAL dailyRelativeTranspiration, dailyPotentialTranspiration
         
         !TYPE (WeatherType) WEATHER                                                            ! MF Defined in ModuleDefs
 
@@ -95,10 +103,11 @@
                   SW, WTDEP, uh2o, trwup, trwu)
             ENDIF
             
+            
             ! Call 4 Using rcrop adjusted for CO2 & H2O effect     
             ! NB. Using previous days WFP. 
             ! If use this for other than comparison, must check  LAH
-            IF (RLF.GT.0.0.AND.WFP.LE.1.0.AND.WFP.GT.0.0) THEN
+            IF (RLF>0.0 .AND. WFP<=1.0 .AND. WFP>0.0) THEN
              CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*RLFC/RLF*(1.0+(1.0-WFP)), &
                  EO,EOPEN,EOMPCRPCO2H2O,EOPT,EOEBUDCRPCO2H2O,TCAN,'M')
             ELSE
@@ -114,7 +123,7 @@
           ENDIF
           
           ! Cumulative potential ET as used
-          IF (EO.GT.0.0) EOC = EOC + EO
+          IF (EO > 0.0) EOC = EOC + EO
           
           ! Cumulative canopy-air temperature difference
           TDIFSUM = TDIFSUM+(TCAN-TMEAN)
@@ -195,5 +204,19 @@
             Tflflife = TFAC4(trdv3,tmean,TTlflife)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
             Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
           !ENDIF  
+          
+        open (unit = 7, file = "C:\DSSAT46\Cassava\objects.txt")  ! to delete
+        env = DailyEnvironment_type(TMin, TMax,TDEW,SRAD)
+        vpde = VPDEffect_type(PHTV,PHSV)
+        
+        
+        dailyRelativeTranspiration = 0.0
+        dailyPotentialTranspiration = 0.0
+        DO I = 1, 24
+            hourlyStomatalConductance = vpde%affectStomatalConductance(env%hourlyVPD(I))
+            dailyrelativeTranspiration = dailyrelativeTranspiration + env%hourlyTranspiration(I, hourlyStomatalConductance) ! sumatory of relative transpiration according to conductance
+            dailyPotentialTranspiration = dailyPotentialTranspiration + env%hourlyTranspiration(I, 1.0)                     ! sumatory of potential transpiration at full coductance
+        END DO
+            write(7,'(1I5,12F10.2)') DAP,  dailyrelativeTranspiration, dailyPotentialTranspiration, EOP, EOP * dailyrelativeTranspiration / dailyPotentialTranspiration  ! to delete
           
       END SUBROUTINE CS_Growth_Evapo

@@ -22,7 +22,7 @@
         
         REAL    CO2         , NFP         , SLPF        , SRAD        , TAIRHR(24)  , TDEW        , TMAX        , TMIN        
         REAL    CSVPSAT                                                                            ! REAL function call
-        real availableC
+        real availableCH2O
           
         SAVE
 
@@ -37,15 +37,13 @@
         ! Select method depending on choice in CONTROL FILE
         select case(MEPHO)
             case ('R')
-                availableC = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP)
-                CARBOBEG =  availableC * PARI / PLTPOP                                                                                          !EQN 259
+                availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP)
             case ('I')
-                availableC = availableCarbohydrate_methodI(CO2, CO2AIR, CO2EX, CO2FP, CO2COMPC, PARMJFAC, PARFC, PARI, PARU, PLTPOP, RATM, RCROP, RLFC, RLF, RSFP, SLPF, SRAD, TMAX, TMIN, TFP, WFP)
-                CARBOBEG =  availableC  * SLPF * PARI / PLTPOP * CARBOBEGIA                                                                     !EQN 272
+                availableCH2O = availableCarbohydrate_methodI(CO2, CO2AIR, CO2EX, CO2FP, CO2COMPC, PARMJFAC, PARFC, PARI, PARU, PLTPOP, RATM, RCROP, RLFC, RLF, RSFP, SLPF, SRAD, TMAX, TMIN, TFP, WFP)
             case ('M')
-                availableC = availableCarbohydrate_methodM(CO2AIR,PARU, RATM, RCROP,RLFC, RLF, WFP, MJPERE, PARMJFAC, SRAD, TFP, RSFP, SLPF, PARI, PLTPOP)
-                CARBOBEG =  availableC * SLPF * PARI / PLTPOP                                                                            !EQN 276
-        end select
+                availableCH2O = availableCarbohydrate_methodM(CO2AIR,PARU, RATM, RCROP,RLFC, RLF, WFP, MJPERE, PARMJFAC, SRAD, TFP, RSFP, SLPF, PARI, PLTPOP)
+            end select
+        CARBOBEG = availableCH2O
         
     END SUBROUTINE CS_Growth_Photo
     
