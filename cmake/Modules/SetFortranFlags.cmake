@@ -100,8 +100,9 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
 # Ref: http://fortranwiki.org/fortran/show/Predefined+preprocessor+macros
 # Ref: https://software.intel.com/en-us/node/694581
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
-                 Fortran "-cpp"
-                         "-fpp" # Intel
+                 Fortran "-fpp" # Intel
+                 		 "-cpp"
+                         
                 )
 ###################
 ### DEBUG FLAGS ###
