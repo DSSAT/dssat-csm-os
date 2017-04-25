@@ -5,6 +5,8 @@
 ! insertion of leading zeros to a width of m, and specifies the number of digits
 ! (d) to the right of the decimal point. Other languages do not.
 ! GFortran allow also but with G0 [ w [ .d ] ]
+! Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
+!------------------------------------------------------------------------------
 #ifdef __GFORTRAN__
 #define XXXX g0
 #else
