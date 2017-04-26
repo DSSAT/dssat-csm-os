@@ -123,7 +123,6 @@ C-----------------------------------------------------------------------
       DO L = NLAYR, 1, -1
 !         Rate of diffusion depends on today's soil water and soil factor
           RateDiffus = (1.0 - WFPS(L)) * DiffFactor
-
          
 !         Update soil state variables based on new N2 and N2O today (flux)
           n2oflux(L) = max(0.0, n2onitrif(L) + n2odenit(L)) 

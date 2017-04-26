@@ -154,7 +154,8 @@ C=======================================================================
       pn2Onitrif = .001  
 !     chp - from DayCent - is this the equivalent value?
 !     double turnovfrac = 0.02;
-         
+! chp - tried pn2Onitrif = .02, but n2o emissions are way too high.
+       
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY

@@ -172,7 +172,7 @@ C=======================================================================
         fDco2 = 0.1 * co2_correct(L)**1.3 -  min_nitrate
         fDco2 = max(0.0, fDco2)
 
-        fNO3fCO2 = min (fDco2, fDno3)  
+        fNO3fCO2 = min (fDco2, fDno3)
 
 !       Compute wfps effect on denitrification, (fDwfps, 0-1)
 !       Changed wfps effect on denitrification based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
