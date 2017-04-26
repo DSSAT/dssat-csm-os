@@ -12,7 +12,9 @@
 ! Intel ifort understands the C-style preprocessor directives, so it might
 ! be easiest to convert the files to that style. Then we would have a
 ! single code base that would work with both compilers (Intel & gfortran).
-! For more info: https://software.intel.com/en-us/node/694581
+! * Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
+! * Microsoft Visual Studio IDE: set the Preprocess Source File option to Yes in 
+!   the Fortran Preprocessor Option Category.
 !=======================================================================
 
 #ifdef _WIN32
