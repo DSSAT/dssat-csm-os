@@ -14,6 +14,7 @@
         USE ModuleDefs
         USE CS_First_Trans_m
         USE CS_Formats_m
+        USE YCA_Environment
      
         IMPLICIT NONE 
      
@@ -70,7 +71,7 @@
         CALL Csopline(brstagec,brstage)
         
         ! Calculate Pari to equate to updated LAI
-        PARIOUT = (1.0 - EXP((-KCAN)*LAI))
+        PARIOUT =    calculatePortionOfRadiation(KCAN, LAI)
     END SUBROUTINE CS_Out_ModFail
         
         

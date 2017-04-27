@@ -241,12 +241,12 @@
     ! calculates proportion of radiation
     ! K is the extinction coefficient
     ! LAI is leaf area index
-    real function calculatePortionOfRadiation(K, LAI)                                           ! %
+    real function calculatePortionOfRadiation(K, LAI)                                           ! fraction
         implicit none
         real, intent (in) :: K, LAI
         real :: value = 0
         
-        calculatePortionOfRadiation = 1 - exp(-K*LAI)
+        calculatePortionOfRadiation = 1.0 - exp(-K*LAI)
 
     end function calculatePortionOfRadiation
     
@@ -268,7 +268,7 @@
         
     end function calculatateHourlyRadiation
     
-    ! obtain the biomass produced accoording to the radiation at a given moment
+    ! obtain the biomass produced accoording to the radiation at a given moment             ! MJ/m2 * # * # * g/MJ * fraction = g/m2
     real function calculateBiomass(radiation, extinctionCoefficient , LAI, radiationUseEfficiency, stomatalConductance)
         implicit none
         real, intent (in) :: radiation, extinctionCoefficient, LAI, radiationUseEfficiency, stomatalConductance
@@ -278,7 +278,7 @@
 
     end function calculateBiomass
     
-    ! obtain the transpiration
+    ! obtain the transpiration                                                              
     real function calculateTranspiration(VPD, stomatalConductance)
         implicit none
         real, intent (in) :: stomatalConductance, VPD
