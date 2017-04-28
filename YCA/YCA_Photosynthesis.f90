@@ -12,11 +12,46 @@
 
     Module YCA_Photosyntesis !Module of environment
 
+    type Photosyntesis_type
+        
+        character , private :: method_   ! photosytesis method 
+    
+        contains
+    
+        procedure, pass (this) :: getMethod
+        procedure, pass (this) :: setMethod
+        
+    end Type Photosyntesis_type
+        
+    
+    ! interface to reference the constructor
+    interface Photosyntesis_type
+        module procedure Photosyntesis_type_constructor
+    end interface Photosyntesis_type
+    
     contains
+    
+    ! constructor for the type
+    type (Photosyntesis_type) function Photosyntesis_type_constructor(method)
+        implicit none
+        character, intent (in) :: method
+        Photosyntesis_type_constructor%method_ = method
+        
+    end function Photosyntesis_type_constructor    
+    
+    
+    !-------------------------------------------
+    ! OBJECT FUNCTIONS
+    !-------------------------------------------
+    
+    
+    
+    
     !-------------------------------------------
     ! STATIC FUNCTIONS
     !-------------------------------------------
     
+
     ! Conventional method using PAR utilization efficiency (P)
     real function availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP)
         implicit none
@@ -99,7 +134,50 @@
 
     end function availableCarbohydrate_methodM
     
+    ! Alternate method J
+    real function availableCarbohydrate_methodJ(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
+        USE YCA_Environment
+        USE YCA_VPDEffect
+        implicit none
+        real, intent (in) :: TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE
+        type (DailyEnvironment_type)                     :: env
+        type (VPDEffect_type)                            :: vpde
+        real hourlyStomatalConductance
+        real dailyBiomass
+        integer I
 
+        env = DailyEnvironment_type(TMin, TMax, TDEW, SRAD)
+        vpde = VPDEffect_type(PHTV, PHSV)
+        dailyBiomass = 0.0
+        DO I = 1, 24
+            hourlyStomatalConductance = vpde%affectStomatalConductance(env%hourlyVPD(I))
+            dailyBiomass = dailyBiomass + env%hourlyBiomass(I, KCANI, LAI, PARUE,hourlyStomatalConductance )
+        END DO
+        
+        availableCarbohydrate_methodJ = dailyBiomass
+
+    end function availableCarbohydrate_methodJ
+    
+
+    !-------------------------------------------
+    ! GETTERS AND SETTERS
+    !------------------------------------------
+    ! get photosytesis method
+    character function getMethod(this)
+        implicit none
+        class (Photosyntesis_type), intent(in) :: this
+        
+        getMethod = this%method_
+    end function getMethod
+    
+    ! set photosytesis method    
+    subroutine setMethod(this, method)
+        implicit none
+        class (Photosyntesis_type), intent(inout) :: this
+        character, intent (in) :: method
+        
+        this%method_ = method
+    end subroutine setMethod
     
 END Module YCA_Photosyntesis
     

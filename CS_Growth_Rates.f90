@@ -17,8 +17,10 @@
         USE ModuleDefs
         USE CS_First_Trans_m
         USE YCA_Photosyntesis
-    
+        USE YCA_Environment
+
         IMPLICIT NONE
+        
         
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
         REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
@@ -32,7 +34,7 @@
 !-----------------------------------------------------------------------
 
             PARI = 0.0
-            PARI1 = (1.0 - EXP((-KCAN)*LAI))                                                                           !EQN 260
+            PARI1 = calculatePortionOfRadiation(KCAN, LAI)                                                                           !EQN 260
             IF (PARIP.GT.0.0) THEN
               ! From competition model
               IF (ISWDIS(LENDIS:LENDIS).NE.'N') THEN
