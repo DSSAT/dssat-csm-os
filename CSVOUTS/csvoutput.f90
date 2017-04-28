@@ -1,20 +1,3 @@
-!------------------------------------------------------------------------------
-! By Willingthon Pavan (2017-04-25)
-! Using preprocessors aims to allow cross-platform compilation
-! Intel Fortran compiler allows the use of G [ w [ .d ] ] without specifies the
-! insertion of leading zeros to a width of m, and specifies the number of digits
-! (d) to the right of the decimal point. Other languages do not.
-! GFortran allow also but with G0 [ w [ .d ] ]
-! * Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
-! * Microsoft Visual Studio IDE: set the Preprocess Source File option to Yes in 
-!   the Fortran Preprocessor Option Category.
-!------------------------------------------------------------------------------
-#ifdef __GFORTRAN__
-#define XXXX g0
-#else
-#define XXXX g
-#endif
-!------------------------------------------------------------------------------
 Module CsvOutput
 !
 !
@@ -206,9 +189,8 @@ Subroutine CsvOut_cscer(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
    cVF1 = 1.0 - VF
    cDF1 = 1.0 - DF
 
-
 !  Unformated outputs
-   Write(tmp,'(56(g,","),g)') RUN, EXCODE, TN, RN, SN, ON, REP, CN, YEAR, &
+   Write(tmp,'(56(g0,","),g0)') RUNRUNI, EXCODE, TN, RN, SN, ON, REP, CN, YEAR, &
       DOY, DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, cCARBOA1, LAI,&
       SAIDOUT, LAISAI, iTWAD, iSDWAD, iRWAD, iCWAD, iLLWADOUT, iSTWADOUT, iGWAD, &
       HIAD, iCHWADOUT, iEWAD, iRSWAD, iDWAD, SENW0C, SENWSC, cRSCD1, iGRNUMAD, &
@@ -277,20 +259,21 @@ Subroutine CsvOut_crgro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
    cCUMSENSOIL1 = NINT(CUMSENSOIL)
 
    ! Unformatted string output
-   Write(tmp,'(42(g,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,&
+   Write(tmp,'(40(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,&
       VSTAGE, RSTAGE, XLAI, cWTLF1, cSTMWT1, cSDWT1, cRTWT1, VWAD, cTOPWT1, &
       cSEEDNO1, SDSIZE, HI, cPODWT1, cPODNO1, SWF_AV, TUR_AV, NST_AV, PS1_AV, &
       PS2_AV, KST_AV, EXW_AV, PCNLP, SHELPC, HIP, cPODWTD1, cPodSum, SLAP, &
-      CANHT, CANWH, cDWNOD1, cRTDEP1, cCUMSENSURF1, cCUMSENSOIL1
+      CANHT, CANWH, cDWNOD1, cRTDEP1
 
-   Write(fmt,'(I2)') N_LYR - 1
-   fmt = '('//Trim(Adjustl(fmt))//'(g,","),g)'
+   Write(fmt,'(I2)') N_LYR
+   fmt = '('//Trim(Adjustl(fmt))//'(g0,","))'
    fmt = Trim(Adjustl(fmt))
 
    Write(tmp1,fmt) (RLV(i), i = 1, N_LYR)
 
+   Write(tmp2,'((g0,","),g0)') cCUMSENSURF1, cCUMSENSOIL1
 
-   tmp = Trim(Adjustl(tmp)) // Trim(Adjustl(tmp1))
+   tmp = Trim(Adjustl(tmp)) // Trim(Adjustl(tmp1)) // Trim(Adjustl(tmp2))
 
    lngth = Len(Trim(Adjustl(tmp)))
    size = lngth
@@ -343,12 +326,12 @@ Subroutine CsvOutSW_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, TSW, 
    cTOTIR1 = NINT(TOTIR)
    cAVWTD1 = NINT(AVWTD)
 
-   Write(tmp,'(20(XXXX,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp,'(20(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
    DAS, cTSW1, cPESW1, cTRUNOF1, cTDRAIN1, cCRAIN1, NAP, cTOTIR1, &
    cAVWTD1, MULCHWAT, TDFD, TDFC, RUNOFF
 
    Write(fmt,'(I2)') N_LYR - 1
-   fmt = '('//Trim(Adjustl(fmt))//'(XXXX,","),XXXX)'
+   fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
    fmt = Trim(Adjustl(fmt))
 
    Write(tmp1,fmt) (SW(i), i = 1, N_LYR)
@@ -388,15 +371,15 @@ Subroutine CsvOutTemp_crgro(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
    Integer, Intent(Out) :: lngth
-   Character(Len=270) :: tmp
+   Character(Len=250) :: tmp
    Character(Len=200) :: tmp1
    Character(Len=20) :: fmt
 
-   Write(tmp,'(9(XXXX,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp,'(9(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
       DAS, SRFTEMP
 
    Write(fmt,'(I2)') N_LYR - 1
-   fmt = '('//Trim(Adjustl(fmt))//'(XXXX,","),XXXX)'
+   fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
    fmt = Trim(Adjustl(fmt))
 
    Write(tmp1,fmt) (ST(i), i = 1, N_LYR)
@@ -438,12 +421,12 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    Character(Len=20) :: fmt
 !  End of vars
 
-   Write(tmp,'(26(g,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+   Write(tmp,'(25(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
       AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA , EMAA, &
-      CEO, CET, CEP, CES, CEF, CEM, TRWU
+      CEO, CET, CEP, CES, CEF, CEM
 
    Write(fmt,'(I2)') N_LYR - 1
-   fmt = '('//Trim(Adjustl(fmt))//'(XXXX,","),XXXX)'
+   fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
    fmt = Trim(Adjustl(fmt))
 
    Write(tmp1,fmt) (ES_LYR(i), i = 1, N_LYR)
@@ -515,19 +498,21 @@ Subroutine CsvOut_mzcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    cCUMSENSURF1 = NINT(CUMSENSURF)
    cCUMSENSOIL1 = NINT(CUMSENSOIL)
 
-   Write(tmp,'(45(g,","))')RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,&
+   Write(tmp,'(39(g0,","))')RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,&
       VSTAGE, RSTAGE, XLAI, cWTLF1, cSTMWT1, cSDWT1, cRTWT1, VWAD, cTOPWT1, &
       cSEEDNO1, SDSIZE, HI, cPODWT1, cPODNO1, SWF_AV, TUR_AV, NST_AV, EXW_AV, &
       PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIP, cPODWTD1, cPodSum, SLA, &
-      CANHT, CANWH, cRTDEP1, cWTCO1, cWTLO1, cWTSO1,cCUMSENSURF1,cCUMSENSOIL1,DTT
+      CANHT, CANWH, cRTDEP1
 
-   Write(fmt,'(I2)') N_LYR - 1
-   fmt = '('//trim(adjustl(fmt))//'(g,","),g)'
+   Write(fmt,'(I2)') N_LYR
+   fmt = '('//trim(adjustl(fmt))//'(g0,","))'
    fmt=trim(adjustl(fmt))
 
    Write(tmp1,fmt) (RLV(i), i = 1, N_LYR)
 
-   tmp = trim(tmp) // trim(adjustl(tmp1))
+   Write(tmp2,'(5(g0,","),g0)') cWTCO1, cWTLO1, cWTSO1,cCUMSENSURF1,cCUMSENSOIL1,DTT
+
+   tmp = trim(tmp) // trim(adjustl(tmp1)) // trim(adjustl(tmp2))
 
    lngth = Len(Trim(tmp))
    Allocate(Character(Len=Len(Trim(tmp)))::Csvline)
@@ -574,7 +559,7 @@ Subroutine CsvOutPlNCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    cNFIXN1  = NFIXN  * 10.0
 
 !  Unofmatted
-   Write(tmp,'(24(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+   Write(tmp,'(24(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
       DAP, cWTNCAN1, cWTNSD1, cWTNVEG1, PCNSDP, PCNVEG, cWTNFX1, cWTNUP1, cWTNLF1,&
       cWTNST1, PCNLP, PCNSTP, PCNSHP, PCNRTP, cNFIXN1, CUMSENSURFN, CUMSENSOILN
 
@@ -626,7 +611,7 @@ Subroutine CsvOutPlNCsCer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,&
    cVMNC1 = VMNC * 100.0
    cNUPR1 = AMIN1(2.0,NUPR)
 
-   Write(tmp,'(36(g,","),g)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
+   Write(tmp,'(36(g0,","),g0)') RUNRUNI, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    TMEAN, ZSTAGE, NUAD, TNAD, SDNAD, RNAD, CNAD, LLNAD, SNAD, GNAD, HIND, RSNAD, DNAD,&
    SENN0C, SENNSC, cRANC1, cLANC1, cSANC1, cGRAINANC1, cSDNC1, cVANC1, LCNF, SCNF, RCNF,&
    cVCNC1, cVMNC1, cNUPR1, ANDEM
@@ -678,27 +663,17 @@ Subroutine CsvOutSoilNi(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, N, &
    cAMTFER1 = NINT(AMTFER(N))
    cNAPFER1 = NAPFER(N)
 
-   Write(tmp1,'(14(XXXX,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp1,'(14(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
       DAS, cAMTFER1, cNAPFER1, TLCH, TNH4NO3, TNO3, TNH4
 
-   If (N_LYR >= 10) Then
-      fmt = '(10(g,","))'
-      Write(tmp2,fmt) (NO3(i), i = 1, 10)
-      Write(tmp3,fmt) (NH4(i), i = 1, 10)
-   Else
-      Write(fmt,'(I1)') N_LYR
-      fmt = '('//Trim(Adjustl(fmt))//'(g,","))'
-      fmt = Trim(Adjustl(fmt))
-      Write(tmp2,fmt) (NO3(i), i = 1, N_LYR)
-      Write(tmp3,fmt) (NH4(i), i = 1, N_LYR)
+   Write(fmt,'(I2)') N_LYR
+   fmt = '('//Trim(Adjustl(fmt))//'(g0,","))'
+   fmt = Trim(Adjustl(fmt))
 
-      Do i = 1, 10 - N_LYR
-         tmp2 = Trim(Adjustl(tmp2)) // '-99,'
-         tmp3 = Trim(Adjustl(tmp3)) // '-99,'
-      End Do
-   End If
+   Write(tmp2,fmt) (NO3(i), i = 1, N_LYR)
+   Write(tmp3,fmt) (NH4(i), i = 1, N_LYR)
 
-   Write(tmp4,'(6(g,","),g)') CMINERN, CNITRIFY, TNOX, CIMMOBN, TOTAML, &
+   Write(tmp4,'(6(g0,","),g0)') CMINERN, CNITRIFY, TNOX, CIMMOBN, TOTAML, &
       CNETMINRN, CNUPTAKE
 
    tmp = Trim(Adjustl(tmp1)) // Trim(Adjustl(tmp2)) // &
@@ -744,7 +719,7 @@ Subroutine CsvOutPlNMzCer(EXCODE, RUNRUNI, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    cWTNLF1  = WTNLF  * 10.0
    cWTNST1  = WTNST  * 10.0
 
-   Write(tmp,'(21(XXXX,","),XXXX)') RUNRUNI, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp,'(21(g0,","),g0)') RUNRUNI, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
       DAS, DAP, cWTNCAN1, cWTNSD1, cWTNVEG1, PCNGRN, PCNVEG, cWTNUP1, &
       cWTNLF1, cWTNST1, PCNL, PCNST, PCNRT, CUMSENSURFN, CUMSENSOILN
 
@@ -777,7 +752,7 @@ Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
    Character(Len=350) :: tmp
 !  End of vars
 
-   Write(tmp,'(22(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp,'(22(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
      DAS, RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG, TDAY, TDEW, &
      TGROAV, TGRODY, WINDSP, CO2
 
@@ -825,14 +800,13 @@ Subroutine CsvOutPlGr2(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    cGRNUMAD1 = NINT(GRNUMAD)
    cRTDEP1 = RTDEP/100.0
 
-   Write(tmp,'(27(g,","))') RUN, EXCODE(1:8), TN, RN, SN, ON, REP, &
+   Write(tmp,'(27(g0,","))') RUNRUNI(1:5), EXCODE(1:8), TN, RN, SN, ON, REP, &
       CN, YEAR, DOY, DAS, DAP, TMEAN, GSTAGEC, RSTAGE, LAIPRODC, cLAISD, LAIC, &
       CANHTC, SDWAD, SENW0C, SENWSC, cGRNUMAD1, HWUDC, SHRTD, PTF, cRTDEP1
 
-   nl = MIN(10, N_LYR)   ! limit output to 10 as in CSCER
 
-   Write(fmt,'(I2)') nl - 1
-   fmt = '('//Trim(Adjustl(fmt))//'(g,","),g)'
+   Write(fmt,'(I2)') N_LYR-1
+   fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
    fmt = Trim(Adjustl(fmt))
 
    Write(tmp1,fmt) (RLV(i), i = 1, nl)
@@ -894,7 +868,7 @@ Subroutine CsvOutPlGrf(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    cWUPR1 = AMIN1(15.0,WUPR)
    cPROFILE = SNH4PROFILE + SNO3PROFILE
 
-   Write(tmp,'(36(g,","),g)') RUN, EXCODE(1:8), TN, RN, SN, ON, REP,&
+   Write(tmp,'(36(g0,","),g0)') RUNRUNI(1:5), EXCODE(1:8), TN, RN, SN, ON, REP,&
       CN, YEAR, DOY, DAS, DAP, TMEAN, ZSTAGE, DU, cVF1, cDF1, cTFGEM1, cWFGE1, &
       cTFP1, cWFP1, cNFP1, cCO2FP1, cRSFP1, cTFG1, cWFG1, cNFG1, cWFT1, cNFT1, &
       cWAVR1, cWUPR1, H2OA, EOP, cPROFILE, LCNF, SCNF, RCNF
@@ -959,7 +933,7 @@ Subroutine CsvOutEvalCsCer(EXCODE, RUN, TN, ROTNUM,  REPNO, CR, Edap, Edapm, &
    cGnam1 = NINT(Gnam)
    cGnamm1 = NINT(Gnamm)
 
-   Write(tmp,'(45(g,","),g)') RUN, EXCODE, TN, ROTNUM, REPNO, CR, Edap, &
+   Write(tmp,'(45(g0,","),g0)') RUNRUNI, EXCODE, TN, ROTNUM, REPNO, CR, Edap, &
       Edapm, Drdap, Drdapm, Tsdap, Tsdapm, Adap, Adapm, Mdap, Mdapm, cGwam1, &
       cGwamm1, Gwumc, Gwummc, cHnumam1, cHnumamm1, Hnumgm, Hnumgmm, Laix, &
       Laixm, Lnumsm, Lnumsmm, cTnumam1, cTnumamm1, cCwam1, cCwamm1, cVwam1, &
@@ -1000,10 +974,10 @@ Subroutine CsvOutEvOpsum(EXCODE, RUNRUNI, CG, TN, ROTNUM, CR, Simulated, Measure
    Character(Len=100) :: tmp1
    Character (Len=20) :: fmt
 
-   Write(tmp1,'(6(XXXX,","))') RUNRUNI,  EXCODE, CG, TN, ROTNUM, CR
+   Write(tmp1,'(6(g0,","))') RUNRUNI,  EXCODE, CG, TN, ROTNUM, CR
 
    Write(fmt,'(I3)') 2*ICOUNT-1
-   fmt = '('//Trim(Adjustl(fmt))//'(XXXX,","),XXXX)'
+   fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
    fmt = Trim(Adjustl(fmt))
 
    Write(tmp,fmt) (Simulated(i), Measured(i), i = 1, ICOUNT)
@@ -1061,8 +1035,8 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
    cBWAH1 = NINT(BWAH * 10.0)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
 
-   Write(tmp,'(82(g,","),g)') RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
-   EXNAME, TITLET1, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
+   Write(tmp,'(81(g0,","),g0)') RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
+   TITLET1, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
    CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &
    IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, &
    NLCM, NIAM, CNAM, GNAM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM,&
@@ -1108,7 +1082,7 @@ Subroutine CsvOutPlCCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
    TOTWT1= NINT(TOTWT * 10.0)
    cCADLF1 = CADLF + CADST
 
-   Write(tmp,'(22(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+   Write(tmp,'(22(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
      DAP, TOTWT1, PG, CMINEA, GROWTH, GRWRES, MAINR, cCADLF1, RHOLP, RHOSP, &
      TGRO(12), TGROAV, PCNSDP, PCLSDP, PCCSDP
 
@@ -1165,7 +1139,7 @@ Subroutine CsvOutSoilOrg1(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,CumRes
    Var2 = TSOME(N) + TLITE(N)
    Var3 = TSOME(P) + TLITE(P)
 
-   Write(tmp,'(28(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+   Write(tmp,'(28(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
       CumRes1, SCDD1, SOCD1, SomLitC1, Var1, TSOMC1, TLITC, CumResE(N), SNDD, &
       SOND, SomLitE(0,N), Var2, TSOME(N), TLITE(N), CumResE(P), SPDD, SOPD,  &
       SomLitE(0,P), Var3, TSOME(P), TLITE(P)
@@ -1222,7 +1196,7 @@ Subroutine CsvOutSoilOrg2(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    TSOMC1 = NINT(TSOMC)
    Var2 = TSOME(N) + TLITE(N)
 
-   Write(tmp,'(21(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp,'(21(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
       DAS, CumRes1, SCDD1, SOCD1, SomLitC1, Var1, TSOMC1, TLITC, CumResE(N), &
       SNDD, SOND, SomLitE(0,N), Var2, TSOME(N), TLITE(N)
 
@@ -1256,7 +1230,7 @@ Subroutine CsvOutETPhot(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, PCINPD,
   Character(Len=350) :: tmp
   ! End of vars
 
-  Write(tmp,'(19(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+  Write(tmp,'(19(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
      PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN, &
      TGRO(12), TGROAV
 
@@ -1293,7 +1267,7 @@ Subroutine CsvOutMulch(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
 
    MULCHMASS1 = NINT(MULCHMASS)
 
-   Write(tmp,'(11(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp,'(11(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
    DAS, MULCHCOVER, MULCHTHICK, MULCHMASS1, MULCHWAT
 
    lngth = Len(Trim(Adjustl(tmp)))
@@ -1357,7 +1331,7 @@ Subroutine CsvOutPlantP(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Shel_kg1 = NINT(Shel_kg)
    Seed_kg1 = NINT(Seed_kg)
 
-   Write(tmp,'(41(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   Write(tmp,'(41(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
       PConc_Shut_opt1, PConc_Root_opt1, PConc_Shel_opt1, PConc_Seed_opt1, &
       PConc_Shut_min1, PConc_Root_min1, PConc_Shel_min1, PConc_Seed_min1, &
       PConc_Shut1, PConc_Root1, PConc_Shel1, PConc_Seed1, PConc_Plant1, PShut_kg,&
@@ -1400,7 +1374,7 @@ Subroutine CsvOutSoilPi(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    Integer :: size
 !  End of vars
 
-   Write(tmp,'(32(XXXX,","),XXXX)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp,'(32(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
       DAS, SPiTotProf, SPiAvlProf, SPiSolProf, SPiLabProf, SPiActProf, SPiStaProf, &
       CumFertP, CMinerP, CImmobP, CumUptakeP, SPi_AVAIL(1), SPi_AVAIL(2), &
       SPi_AVAIL(3), SPi_AVAIL(4), SPi_AVAIL(5), PUptake(1), PUptake(2), PUptake(3), &
