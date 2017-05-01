@@ -9,31 +9,29 @@ dealing with competition for light and water among the soil, plants, and atmosph
 It is also designed for incorporation into various application packages, ranging from 
 those that help researchers adapt and test the CSM to those that operate the DSSAT /CSM 
 to simulate production over time and space for different purposes 
-[The DSSAT cropping system model](http://abe.ufl.edu/jjones/ABE_5646/Xtra%20files/The%20DSSAT%20Cropping%20System%20Model.pdf).
+[[The DSSAT cropping system model](http://abe.ufl.edu/jjones/ABE_5646/Xtra%20files/The%20DSSAT%20Cropping%20System%20Model.pdf)].
 
 ## The directory structure ##
 
-.
-├── CMakeLists.txt
-├── distclean.cmake
-├── README.md
-├── ...
-├── cmake
-│   └── Modules
-│       ├── SetCompileFlag.cmake
-│       └── SetFortranFlags.cmake
-├── build
-│   ├── CMakeFiles
-│   │   └── ...
-│   ├── bin
-│   └── mod
-└── Data
-    ├── Documentation
-    ├── Cotton
-    ├── ... 
-    └── Wheat
-
-
+    .
+    ├── CMakeLists.txt
+    ├── distclean.cmake
+    ├── README.md
+    ├── ...
+    ├── cmake
+    │   └── Modules
+    │       ├── SetCompileFlag.cmake
+    │       └── SetFortranFlags.cmake
+    ├── build
+    │   ├── CMakeFiles
+    │   │   └── ...
+    │   ├── bin
+    │   └── mod
+    └── Data
+        ├── Documentation
+        ├── Cotton
+        ├── ... 
+        └── Wheat
          
 ### CMakeLists.txt ###
 
@@ -54,7 +52,7 @@ You shouldn't need to edit this file.
 
 This File.
 
-### ... ###
+### [...] ###
 
 Inside the main directory you will find all subdirectories and source files for your project. All .for, f90, etc.
 
