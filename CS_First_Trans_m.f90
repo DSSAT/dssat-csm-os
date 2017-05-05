@@ -1,4 +1,5 @@
-﻿Module CS_First_Trans_m
+
+	Module CS_First_Trans_m
     !CHARACTER(LEN=1),PARAMETER::SLASH = '\'                                     ! (From SeasInit) (In ModuleDefs) 
     CHARACTER(LEN=1),PARAMETER::BLANK = ' '                                     ! (From SeasInit)                
     CHARACTER(LEN=3),PARAMETER::DASH = ' - '                                    ! (From Output)
