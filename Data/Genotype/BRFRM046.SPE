@@ -53,14 +53,14 @@
  0.050  0.75  .280 0.080  1.00  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR     -   ML          
                                                                                                     
     PD                                 XPODF                                                        
-  0.04  0.08  0.08  0.08  0.20         ALPHL,ALPHS,ALPHR,ALPHSH, ALPHSR -     BP                    
+  0.04  0.08  0.08  0.08  0.20  1.00   ALPHL,ALPHS,ALPHR,ALPHSH, ALPHSR, TNCFAC -     BP                    
  0.020 0.072 0.439 0.010 0.068 0.356   CMOBSRN, CMOBSRX, CADSRF, NMOBSRN, NMOBSRX, CADPV "N" and "X"
   0.00  0.00  0.41  2.75   SIN         LRMOB(4), TYPLMOB LAI EFF ON MOBILIZATION - default          
   0.50  0.70 10.00 10.00   SIN         NRMOB(4), TYPNMOB N-STATUS EFF ON MOBILIZATION - default -   
   0.00  0.33  0.81  0.29   INL         CRREF(4), TYPCREF CH2O status effect on routine refilling of 
   0.68  2.58 50.00 60.00   LIN         LRREF(4), TYPLREF LAI effect on routine refilling of mobile C
   0.12  0.38 10.00 10.00   LIN         PRREF(4), TYPPREF Canopy PG effect on routine refilling of m 
-  1.00  1.00  1.00  1.00                           SENNLV, SENCLV, SENNSV, SENCSV                   
+  1.00  1.00  1.00  1.00  0.70                     SENNLV, SENCLV, SENNSV, SENCSV, NSTFAC                   
   1.00  1.00  1.00  1.00                           SENNRV, SENCRV, SENNSRV, SENCSRV                 
                                                                                                     
                                                                                                     
@@ -79,7 +79,7 @@
   0.55  0.27  0.05  0.20  1.00  0.00 WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD !SJR 10/17/05 PORPT incr. 
   0.60                               FRLFMX                                                         
   0.10  0.10  0.20  0.30  0.35  0.40  0.45  0.45  YSTOR VALUES   Partitoning to STOR for seedlings  
-  0.69  0.60                          FRSTRF, FRSTRMX storage equivalent of FRLFF and FRLFMX        
+  0.69  0.60  .1000                   FRSTRF, FRSTRMX, RTPPFAC storage equivalent of FRLFF and FRLFMX        
   4.00  1.00  1.00  1.00  4.00        PWLF, PWST, PWRT, PWSR MXWST - Weighting factors for partition
    0.0   2.0   3.0   5.0   7.0  10.0  30.0  40.0  XLFEST VALUES  Partitioning Parameters for establi
                                                                                                     
@@ -89,8 +89,8 @@
 
                                                                                                     
 !*LEAF GROWTH PARAMETERS                                                                            
-  150.  190.   2.0  0.0   00.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC -     BP                   
-  340.  139. -.048  1.20               SLAMAX,SLAMIN,SLAPAR,TURSLA    - DP                          
+  150.  190.   2.0  0.0   0.00        FINREF,SLAREF,SIZREF,VSSINK,EVMODC -     BP                   
+  340.  139. -.048  1.20  1.00  1.00  SLAMAX,SLAMIN,SLAPAR,TURSLA,NSLA,NHGT  - DP                          
    0.0   5.0  10.0  15.0  20.0  25.0  XVGROW(1-6), VSTAGE VALUES                                    
    0.0  10.0  20.0  30.0  40.0  50.0  YVREF(1-6), LEAF AREA VALUES,CM2                              
  -50.0  00.0  10.3  24.2  60.0        XSLATM(1-5),TEMP VALUES   - DP                                
@@ -111,7 +111,7 @@
 !  20.0 7500. 0.010   0.1  0.02  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX            
   20.0 7500. 0.008   0.1  0.02  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX   DP        
    0.0  2.50   3.0  2.50   6.0  2.50  30.0  2.50   XRTFAC,YRTFAC                                    
- 0.005 0.005  0.02  0.10                    RTNO3,RTNH4,PORMIN,RTEXF (Tomato uses 0.012 for RTNO3/RT
+ 0.075 0.075  0.02  0.10                    RTNO3,RTNH4,PORMIN,RTEXF (Tomato uses 0.012 for RTNO3/RT
                                                                                                     
 !*SEED AND SHELL GROWTH PARAMETERS                                                                  
   0.60   0.3  0.00  100.               SETMAX,SRMAX,RFLWAB,XMPAGE                                   
@@ -157,13 +157,21 @@
 ! VSTAGE, FOLLOWED BY INTERNODE LENGTH PER NODE, THEN CANOPY WIDTH PER NODE                         
   0.00  1.00  4.00  6.00  8.00 10.00 14.00 16.00 20.00 40.00  XVSHT(1-10)                           
                                                                                                     
- .0150 .0265 .0315 .0330 .0345 .0330 .0310 .0255 .0170 .0030  YVSHT(1-10)                           
+! .0150 .0265 .0315 .0330 .0345 .0330 .0310 .0255 .0170 .0030  YVSHT(1-10)                           
+ .0650 .0765 .0815 .0830 .0845 .0830 .0810 .0755 .0670 .0530  YVSHT(1-10)                           
  .0150 .0255 .0310 .0320 .0330 .0315 .0295 .0230 .0125 .0005  YVSWH(1-10)                           
                                                                                                     
  -50.0  00.0  15.0  30.0  60.0                       XHWTEM(1-5),TEMPERATURES                       
   0.55  0.55  0.55  1.00  1.00                       YHWTEM(1-5),RELATIVE EXPAN                     
   0.00  5.00  7.50 10.00 15.00 20.00 30.00 80.00     XHWPAR(1-8),PAR VALUES                         
   4.00  2.00  1.50  1.25  1.05  1.00  1.00  1.00     YHWPAR(1-8),RELATIVE EXPAN                     
+ -11.1    FMOW, EFFECT OF HARV. FREQUENCY ON MOW 
+ 159.6    RHMOW, EFFECT OF STUBBLE HEIGHT ON MOW 
+  50.0    CHMOW, EFFECT OF CANOPY HEIGHT ON MOW
+ -0.04    FLFP, EFFECT OF HARV. FREQ. ON RSPLF    
+ -0.34    RHLFP, EFFECT OF GRAZING EFFICIENCY ON RSPLF 
+  60.0    RSPLM, MAXIMUM ACHIEVABLE PERCENT LEAF OF STUBBLE                                
+ 
                                                                                                     
 !*EVAPOTRANSPIRATION                                                                                
   0.50   0.9       KEP, EORATIO                                                                     

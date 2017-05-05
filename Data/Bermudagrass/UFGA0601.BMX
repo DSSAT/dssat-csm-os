@@ -47,8 +47,8 @@ BEEF RESEARCH UNIT
  1   213   -99   -99   -99
 
 *PLANTING DETAILS
-@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                     PLNAME  IPLF  IPST  IPSR
- 1 06005   -99   999   999     T     R     2     0     2  5000    61    62     1     0                        -99   2.4  16.4  57.4
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                         PLNAME
+ 1 06005   -99   999   999     T     R     2     0     2  5000    61    62     1     0                            -99
 
 *IRRIGATION AND WATER MANAGEMENT
 @I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
