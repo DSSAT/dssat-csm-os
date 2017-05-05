@@ -125,8 +125,8 @@ C=======================================================================
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(ERRKEY, 1, FILEIO, LNUM)
       ELSE
-        READ(LUNIO,'(24X,A6,66X,4F6.0)')
-     &    ECONO, WTPSD, SFDUR, SDPDVR, PODUR
+        READ(LUNIO,'(24X,A6,66X,5F6.0)')
+     &    ECONO, WTPSD, SFDUR, SDPDVR, PODUR, THRESH
       ENDIF
 
       CLOSE (LUNIO)
@@ -211,7 +211,7 @@ C-----------------------------------------------------------------------
         IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
      &    (C255(1:1) .NE. '*')) THEN
         READ (C255,'(A6,66X,F6.0,30X,F6.0)',IOSTAT=ERR)
-     &    ECOTYP, LNGSH, THRESH
+     &    ECOTYP, LNGSH       !, THRESH
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
         IF (ECOTYP .EQ. ECONO) THEN
         EXIT
