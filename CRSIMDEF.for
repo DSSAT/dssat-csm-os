@@ -15,5 +15,4 @@
           CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
       !DEC$ END IF
 
-
       END MODULE CRSIMDEF
