@@ -207,8 +207,8 @@ C---------------------------------------------------------
               FHLEAF=MAX(FHLEAF,0.0)
               FHSTEM=MAX(FHSTEM,0.0)
               FHVSTG=MAX(MVS(I),0.0)
-!              canht=max(rsht(i)/100,0.0)
-              canht=max(rsht(i),0.0)     !enter rsht in cm
+              canht=max(rsht(i)/100,0.0)
+!             canht=max(rsht(i),0.0)     !enter rsht in cm
 
 
               fhtot = fhleaf+fhstem
