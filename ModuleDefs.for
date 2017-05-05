@@ -452,24 +452,24 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
-      call op_sys(slash,dssatpro,stdpath)
-!      SELECT CASE (OPSYS)
-!      CASE ('WINDO','DOS  ')
-!!       DOS, Windows
-!        SLASH = '\' 
-!        DSSATPRO = 'DSSATPRO.V46'
-!!       Note: Use DSSAT45 directory for now. 
-!C-GH    Set to DSSAT46
-!        STDPATH = 'C:\DSSAT46\' 
-!        exe_string = 'EXE'
-!
-!      CASE ('LINUX','UNIX ')
-!!       Linux, Unix
-!        SLASH = '/' 
-!        DSSATPRO = 'DSSATPRO.L46'
-!        STDPATH = '../DSSAT46/'
-!        exe_string = '.so'
-!      END SELECT
+!      call op_sys(slash,dssatpro,stdpath)
+      SELECT CASE (OPSYS)
+      CASE ('WINDO','DOS  ')
+!       DOS, Windows
+        SLASH = '\' 
+        DSSATPRO = 'DSSATPRO.V46'
+!       Note: Use DSSAT45 directory for now. 
+C-GH    Set to DSSAT46
+        STDPATH = 'C:\DSSAT46\' 
+        exe_string = 'EXE'
+
+      CASE ('LINUX','UNIX ')
+!       Linux, Unix
+        SLASH = '/' 
+        DSSATPRO = 'DSSATPRO.L46'
+        STDPATH = '../DSSAT46/'
+        exe_string = '.so'
+      END SELECT
 
       END SUBROUTINE SETOP
 
