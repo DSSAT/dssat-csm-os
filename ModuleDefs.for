@@ -74,7 +74,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
-!       4.6.1.13 chp 05/05/2017 Forage model added
+!       4.6.1.13 chp 05/05/2017 Forage model, cross-platform compatibility
 !       4.6.1.12 chp 04/17/2017 Growth stage, supply-limited irrigation added
 !       4.6.1.11 chp 04/07/2017 CSV format output, fix stage 2 rice longevity issue
 !                               NWheat max N uptake from CUL file.
