@@ -135,6 +135,11 @@ Y        Normal output                                                        IB
 D        Detailed output                                                      IB
 A        All outputs                                                          IB
 
+*Simulation/Outputs/Format
+@CDE     DESCRIPTION                                                          SO
+A        Text Format (ASCII)                                                  IB
+C        Comma Separated Values (CSV)                                         IB
+
 *Simulation/Crop Models
 @MODEL  CROP  Description
 CRGRO    BM   CROPGRO-Bermuda

@@ -315,6 +315,12 @@ TPLA   Tiller LAI      Tiller (sum) leaf area index
 PLA    Plant LAI       Plant LAI, same as XLAI 
 NOLN   # Leaf Nodes    Number of Leaf Nodes
 ATRS   Accum Temp Rep  Accumulated Temperature during Reproductive Stage        .
+HERB   Herbage kg/ha   Herbage mass harvested kg/ha                             .
+FHL%   % Leaf in herb  Percent leaf in the harvested herbage                    .
+LF%D   % Leaf of tops  Percent leaf of tops (LWAD*100/CWAD)                     .
+DWTCO  Dead canopy     Dead canopy weight (kg [dm]/ha)
+DWTLO  Dead leaf       Dead leaf weight (kg [dm]/ha)
+DWTSO  Dead stem       Dead stem weight (kg [dm]/ha)
 
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
