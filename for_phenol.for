@@ -386,6 +386,7 @@ C=======================================================================
         ! which contain control information, soil
         ! parameters, hourly weather data.
       IMPLICIT NONE
+      SAVE
 
       CHARACTER*1 PLME
       INTEGER DYNAMIC
