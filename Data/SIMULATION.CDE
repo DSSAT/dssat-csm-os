@@ -183,7 +183,7 @@ SWCER    SW   CERES-Sweetcorn
 TNARO    TN   AROIDS-Taro
 TRARO    TR   AROIDS-Tanier
 SALUS    xx   SALUS-generic crop model
-WHAPS    WH   NWheat (formerly APSIM)
+WHAPS    WH   NWHEAT
 PRFRM    G0   Perennial Forage Model
 PRFRM    BM   Bermudagrass
 PRFRM    BH   Bahiagrass
