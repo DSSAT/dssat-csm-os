@@ -1403,9 +1403,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofilePlantgrCrGro(nlayers) ! plantgro.csv
                  Call ListtofilePlNCrGro              ! plantn.csv
                  Call ListtofilePlCCrGro              ! plantc.csv
-!                header is printed from OPSUM
-!                Call CsvHeadEvOpsum(ICOUNT,OLAP)
-                 Call ListtofileEvOpsum                 
+                 Call ListtofileEvOpsum               ! evaluate.csv            
              Case('CSCER')
                  Call ListtofilePlantGrCsCer          ! plantgro.csv
                  Call ListtofilePlNCsCer              ! plantn.csv
@@ -1415,9 +1413,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
              Case('MZCER')
                  Call ListtofileMZCER(nlayers)        ! plantgro.csv
                  Call ListtofilePlNMzCer              ! plantn.csv
-!                header is printed from OPSUM
-!                Call CsvHeadEvOpsum(ICOUNT,OLAP)
-                 Call ListtofileEvOpsum
+                 Call ListtofileEvOpsum               ! evaluate.csv
          End Select
 
          Call ListtofileSW(nlayers)         ! SoilWat.csv

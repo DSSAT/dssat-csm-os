@@ -48,6 +48,8 @@ C=======================================================================
       INTEGER, PARAMETER :: SUMNUM = 3
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
+      
+      CHARACTER*20 FRMT  ! VSH
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -130,8 +132,12 @@ C-----------------------------------------------------------------------
      &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
 
             IF (N_LYR < 10) THEN
-              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
-  121         FORMAT(9("    ",A2,I1,A1), A8)
+!              VSH
+!              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
+!  121         FORMAT(9("    ",A2,I1,A1), A8)
+               WRITE(FRMT,'(I1)') N_LYR
+               FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A8)'
+               WRITE (LUN,FRMT) ("ES",L,"D",L=1,N_LYR), 'TRWU' 
             ELSE
 !              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
               WRITE (LUN,122)("ES",L,"D",L=1,9), "  ES10D    TRWU"  !VSH

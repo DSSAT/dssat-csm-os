@@ -517,8 +517,7 @@ C-----------------------------------------------------------------------
         CALL INFO(1,'ENDRUN',MSG)
       ENDIF
       
-!      VSH
-!      maxnlayers = 1
+!     VSH
       if (SOILPROP % NLAYR > maxnlayers ) then
          maxnlayers = SOILPROP % NLAYR
       end if 

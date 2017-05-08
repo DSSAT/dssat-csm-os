@@ -3,7 +3,10 @@ Module Linklist
 !
 Implicit None
 Save
-   
+ 
+Integer :: csvICOUNT
+Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
+
 ! Data dictionary: declare variable types & definitions 
 !------------------------------------------------------------------------------
 
@@ -1330,14 +1333,36 @@ Contains
    End Subroutine ListtofileEvalCsCer
 !------------------------------------------------------------------------------
    Subroutine ListtofileEvOpsum
-      Integer          :: nf       
+      Integer          :: nf, i, ErrNum, length       
       Character(Len=12):: fn         
+      Character(:),Allocatable :: Header 
+      Character(Len=700) :: tmp1 
+      
+      If(.Not. Associated(headEvOpsum)) Return
+      
+      length= Len('RUN,EXCODE,CG,TN,RN,CR')
+
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXCODE,CG,TN,RN,CR' 
+   
+      tmp1 = trim(adjustl(csvOLAP(1))) //'S'// ',' // trim(adjustl(csvOLAP(1))) //'M'
+      do i = 2, csvICOUNT
+         tmp1 = trim(tmp1) // ',' // trim(adjustl(csvOLAP(i))) // 'S' // ',' // &
+            trim(adjustl(csvOLAP(i))) // 'M'
+      end do            
+
+      tmp1 = Header // ',' // trim(adjustl(tmp1))
       
       fn = 'evaluate.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+         Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')tmp1
+      Deallocate(Header)
+      
       ptrEvOpsum => headEvOpsum
       Do
         If(.Not. Associated(ptrEvOpsum)) Exit                
@@ -1780,40 +1805,7 @@ Contains
     Close(nf)
     
  End Subroutine ListtofileSoilPi
-!------------------------------------------------------------------------------
-Subroutine CsvHeadEvOpsum(cICOUNT,cOLAP)
-      Integer :: i, cICOUNT
-      CHARACTER(Len=6),  DIMENSION(cICOUNT) :: cOLAP   
-      
-      Character(12) :: fn
-      Character(:),Allocatable :: Header 
-      Integer :: nf, ErrNum, length      
-      Character(Len=700) :: tmp1 
-      
-      length= Len('RUN,EXCODE,CG,TN,RN,CR')
 
-      Allocate(character(LEN=length) :: Header)
-
-      Header = 'RUN,EXCODE,CG,TN,RN,CR' 
-   
-      tmp1 = trim(adjustl(cOLAP(1))) //'S'// ',' // trim(adjustl(cOLAP(1))) //'M'
-      do i = 2, cICOUNT
-         tmp1 = trim(tmp1) // ',' // trim(adjustl(cOLAP(i))) // 'S' // ',' // &
-            trim(adjustl(cOLAP(i))) // 'M'
-      end do            
-
-      tmp1 = Header // ',' // trim(adjustl(tmp1))
-   
-      fn = 'evaluate.csv'  
-      Call GETLUN (fn,nf)    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
-         Action='Write', IOSTAT = ErrNum)
-        
-      Write(nf,'(A)')tmp1
-      Deallocate(Header)
-      Close(nf)   
-            
-      Return
-   End Subroutine CsvHeadEvOpsum
 !------------------------------------------------------------------------------ 
+
 End Module Linklist
