@@ -122,7 +122,7 @@ Contains
 
 !------------------------------------------------------------------------------    
 ! Sub for plantgro.csv output CSCER
-Subroutine CsvOut_cscer(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
+Subroutine CsvOut_cscer(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
    DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, CARBOA, LAI, &
    SAIDOUT, TWAD, SDWAD, RWAD, CWAD, LLWADOUT, STWADOUT, GWAD, HIAD, CHWADOUT,&
    EWAD, RSWAD, DWAD, SENW0C, SENWSC, RSCD, GRNUMAD, HWUDC, TNUMAD, SLAOUT, &
@@ -131,7 +131,8 @@ Subroutine CsvOut_cscer(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
          
    ! Input vars
    Character(10),Intent(in):: EXCODE     ! Experiment code/name           text
-   Character(8),Intent(in) :: RUNRUNI    ! Run+internal run number        text
+!   Character(8),Intent(in) :: RUNRUNI    ! Run+internal run number        text
+   Integer, Intent(IN) :: RUN           ! run number
    Integer,Intent(in) :: TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, DAP        
    Real,Intent(in) :: TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, CARBOA, &
       LAI, SAIDOUT, TWAD, SDWAD, RWAD, CWAD, LLWADOUT, STWADOUT, GWAD, HIAD, &       
@@ -190,7 +191,7 @@ Subroutine CsvOut_cscer(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
      
    
 !  Unformated outputs  
-   Write(tmp,'(56(g,","),g)') RUNRUNI(1:5), EXCODE, TN, RN, SN, ON, REP, CN, YEAR, &
+   Write(tmp,'(56(g,","),g)') RUN, EXCODE, TN, RN, SN, ON, REP, CN, YEAR, &
       DOY, DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, cCARBOA1, LAI,& 
       SAIDOUT, LAISAI, iTWAD, iSDWAD, iRWAD, iCWAD, iLLWADOUT, iSTWADOUT, iGWAD, &
       HIAD, iCHWADOUT, iEWAD, iRSWAD, iDWAD, SENW0C, SENWSC, cRSCD1, iGRNUMAD, & 
@@ -568,16 +569,16 @@ Subroutine CsvOutPlNCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    Return
 end Subroutine CsvOutPlNCrGro
 !------------------------------------------------------------------------------
-! Sub for plant.csv output
-Subroutine CsvOutPlNCsCer(EXCODE, RUNRUNI, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,&
+! Sub for plantn.csv output
+Subroutine CsvOutPlNCsCer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,&
    DAP, TMEAN, ZSTAGE, NUAD, TNAD, SDNAD, RNAD, CNAD, LLNAD, SNAD, GNAD, HIND,&
    RSNAD, DNAD, SENN0C, SENNSC, RANC, LANC, SANC, GRAINANC, SDNC, VANC, LCNF, &
    SCNF, RCNF, VCNC, VMNC, NUPR, ANDEM, Csvline, pCsvline, lngth) 
     
 !  Input vars
    CHARACTER(10),Intent(IN):: EXCODE    ! Experiment code/name           text
-   CHARACTER(8),Intent(in) :: RUNRUNI    ! Run+internal run number        text 
-!  Integer, Intent(IN) :: RUN           ! run number        
+!   CHARACTER(8),Intent(in) :: RUNRUNI    ! Run+internal run number        text 
+  Integer, Intent(IN) :: RUN           ! run number        
    INTEGER,Intent(IN)  :: TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP          ! 
 !    INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
 !    INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
@@ -608,7 +609,7 @@ Subroutine CsvOutPlNCsCer(EXCODE, RUNRUNI, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,&
    cVMNC1 = VMNC * 100.0
    cNUPR1 = AMIN1(2.0,NUPR)
              
-   Write(tmp,'(36(g,","),g)') RUNRUNI(1:5), EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
+   Write(tmp,'(36(g,","),g)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    TMEAN, ZSTAGE, NUAD, TNAD, SDNAD, RNAD, CNAD, LLNAD, SNAD, GNAD, HIND, RSNAD, DNAD,&
    SENN0C, SENNSC, cRANC1, cLANC1, cSANC1, cGRAINANC1, cSDNC1, cVANC1, LCNF, SCNF, RCNF,&
    cVCNC1, cVMNC1, cNUPR1, ANDEM
@@ -771,15 +772,16 @@ Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
    Return
 end Subroutine CsvOutWth
 !----------------------------------------------------------------------------------
-! Sub for csv output PlantGr2.OUT
-Subroutine CsvOutPlGr2(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
+! Sub for output PlantGr2.csv
+Subroutine CsvOutPlGr2(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    DAP, TMEAN, GSTAGEC, RSTAGE, LAIPRODC, SENLA, PLTPOP, LAIC, CANHTC, SDWAD, &
    SENW0C, SENWSC, GRNUMAD, HWUDC, SHRTD, PTF, RTDEP, N_LYR, RLV, &
    Csvline, pCsvline, lngth)
          
 !  Input vars
    CHARACTER(10),Intent(in):: EXCODE     ! Experiment code/name           
-   CHARACTER(8),Intent(in) :: RUNRUNI    ! Run+internal run number        
+!   CHARACTER(8),Intent(in) :: RUNRUNI    ! Run+internal run number 
+   Integer, Intent(IN) :: RUN           ! run number       
    INTEGER,Intent(in) :: TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, DAP  
    REAL,Intent(in) :: TMEAN, RSTAGE, SENLA, PLTPOP, SDWAD, GRNUMAD, SHRTD, PTF, RTDEP          
    CHARACTER(Len=6),Intent(in) :: GSTAGEC, LAIPRODC, LAIC, CANHTC, SENW0C, SENWSC, HWUDC  
@@ -806,7 +808,7 @@ Subroutine CsvOutPlGr2(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS,
    cGRNUMAD1 = NINT(GRNUMAD)
    cRTDEP1 = RTDEP/100.0
    
-   Write(tmp,'(27(g,","))') RUNRUNI(1:5), EXCODE(1:8), TN, RN, SN, ON, REP, &
+   Write(tmp,'(27(g,","))') RUN, EXCODE(1:8), TN, RN, SN, ON, REP, &
       CN, YEAR, DOY, DAS, DAP, TMEAN, GSTAGEC, RSTAGE, LAIPRODC, cLAISD, LAIC, &
       CANHTC, SDWAD, SENW0C, SENWSC, cGRNUMAD1, HWUDC, SHRTD, PTF, cRTDEP1
 
@@ -828,15 +830,16 @@ Subroutine CsvOutPlGr2(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS,
    Return
 end Subroutine CsvOutPlGr2
 !------------------------------------------------------------------------------------ 
-! Sub for csv output PlantGrf.OUT
-Subroutine CsvOutPlGrf(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
+! Sub for output PlantGrf.csv
+Subroutine CsvOutPlGrf(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    DAP, TMEAN, ZSTAGE, DU, VF, DF, TFGEM, WFGE, TFP, WFP, NFP, CO2FP, RSFP, TFG, &
    WFG, NFG, WFT, NFT, WAVR, WUPR, H2OA, EOP, SNH4PROFILE, SNO3PROFILE, LCNF, SCNF,&
    RCNF, Csvline, pCsvline, lngth)
     
 !  Input vars
    CHARACTER(10),Intent(in):: EXCODE     ! Experiment code/name           text
-   CHARACTER(8),Intent(in) :: RUNRUNI    ! Run+internal run number        text
+!   CHARACTER(8),Intent(in) :: RUNRUNI    ! Run+internal run number        text
+   Integer, Intent(IN) :: RUN           ! run number
    INTEGER,Intent(in) :: TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, DAP        
    REAL,Intent(in) :: TMEAN, ZSTAGE, DU, VF, DF, TFGEM, WFGE, TFP, WFP, NFP, CO2FP           
    REAL,Intent(in) :: RSFP, TFG, WFG, NFG, WFT, NFT, WAVR, WUPR, H2OA, EOP, SNH4PROFILE   
@@ -874,7 +877,7 @@ Subroutine CsvOutPlGrf(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS,
    cWUPR1 = AMIN1(15.0,WUPR)
    cPROFILE = SNH4PROFILE + SNO3PROFILE
    
-   Write(tmp,'(36(g,","),g)') RUNRUNI(1:5), EXCODE(1:8), TN, RN, SN, ON, REP,&
+   Write(tmp,'(36(g,","),g)') RUN, EXCODE(1:8), TN, RN, SN, ON, REP,&
       CN, YEAR, DOY, DAS, DAP, TMEAN, ZSTAGE, DU, cVF1, cDF1, cTFGEM1, cWFGE1, &
       cTFP1, cWFP1, cNFP1, cCO2FP1, cRSFP1, cTFG1, cWFG1, cNFG1, cWFT1, cNFT1, &
       cWAVR1, cWUPR1, H2OA, EOP, cPROFILE, LCNF, SCNF, RCNF
