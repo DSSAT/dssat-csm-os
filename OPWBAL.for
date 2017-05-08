@@ -186,6 +186,17 @@ C-----------------------------------------------------------------------
      &      10(F8.3))
         ENDIF
         END IF   ! VSH
+         
+      IF (FMOPT == 'C') THEN
+         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
+         CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
+     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD, TDFC, RUNOFF,
+     &N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
+     
+         CALL LinklstSW(vCsvlineSW)
+      END IF     
+     
       ENDIF
 !
 !!     Temporary header for runoff debugging info
@@ -271,9 +282,6 @@ C-----------------------------------------------------------------------
           ENDIF
           END IF   ! VSH 
 
-          NAVWB = 0
-          AVWTD = 0.        
-       
 !     VSH CSV output corresponding to SoilWat.OUT
       IF (FMOPT == 'C') THEN
          N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
@@ -284,6 +292,9 @@ C-----------------------------------------------------------------------
      
          CALL LinklstSW(vCsvlineSW)
       END IF         
+      
+          NAVWB = 0
+          AVWTD = 0.        
         
         ENDIF
      
