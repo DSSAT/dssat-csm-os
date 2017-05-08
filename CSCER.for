@@ -7840,7 +7840,7 @@
 
 !     VSH CSV output corresponding to Evaluate.OUT
       IF (FMOPT == 'C') then
-         CALL CsvOutEvalCsCer(EXCODE, RUNRUNI, TN, RN,  REP, 
+         CALL CsvOutEvalCsCer(EXCODE, RUN, TN, RN,  REP, 
      &CR,Edap,Edapm,Drdap,Drdapm,Tsdap,Tsdapm,Adap,Adapm,Mdap,
      &Mdapm, Gwam, Gwamm, Gwumc, Gwummc, Hnumam, Hnumamm, Hnumgm,
      &Hnumgmm,Laix,Laixm, Lnumsm,Lnumsmm,Tnumam, Tnumamm, Cwam, 
