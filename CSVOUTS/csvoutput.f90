@@ -121,7 +121,7 @@ End Interface CsvOut
 Contains
 
 !------------------------------------------------------------------------------    
-! Sub for csv output CSCER
+! Sub for plantgro.csv output CSCER
 Subroutine CsvOut_cscer(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
    DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, CARBOA, LAI, &
    SAIDOUT, TWAD, SDWAD, RWAD, CWAD, LLWADOUT, STWADOUT, GWAD, HIAD, CHWADOUT,&
@@ -187,9 +187,10 @@ Subroutine CsvOut_cscer(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
    cTFG1 = 1.0 - TFG
    cVF1 = 1.0 - VF
    cDF1 = 1.0 - DF 
- 
+     
+   
 !  Unformated outputs  
-   Write(tmp,'(56(g,","),g)') RUNRUNI, EXCODE, TN, RN, SN, ON, REP, CN, YEAR, &
+   Write(tmp,'(56(g,","),g)') RUNRUNI(1:5), EXCODE, TN, RN, SN, ON, REP, CN, YEAR, &
       DOY, DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, cCARBOA1, LAI,& 
       SAIDOUT, LAISAI, iTWAD, iSDWAD, iRWAD, iCWAD, iLLWADOUT, iSTWADOUT, iGWAD, &
       HIAD, iCHWADOUT, iEWAD, iRSWAD, iDWAD, SENW0C, SENWSC, cRSCD1, iGRNUMAD, & 
@@ -567,7 +568,7 @@ Subroutine CsvOutPlNCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    Return
 end Subroutine CsvOutPlNCrGro
 !------------------------------------------------------------------------------
-! Sub for csv output
+! Sub for plant.csv output
 Subroutine CsvOutPlNCsCer(EXCODE, RUNRUNI, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,&
    DAP, TMEAN, ZSTAGE, NUAD, TNAD, SDNAD, RNAD, CNAD, LLNAD, SNAD, GNAD, HIND,&
    RSNAD, DNAD, SENN0C, SENNSC, RANC, LANC, SANC, GRAINANC, SDNC, VANC, LCNF, &
@@ -607,7 +608,7 @@ Subroutine CsvOutPlNCsCer(EXCODE, RUNRUNI, TN, ROTNUM,  REPNO, YEAR, DOY, DAS,&
    cVMNC1 = VMNC * 100.0
    cNUPR1 = AMIN1(2.0,NUPR)
              
-   Write(tmp,'(36(g,","),g)') RUNRUNI, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
+   Write(tmp,'(36(g,","),g)') RUNRUNI(1:5), EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    TMEAN, ZSTAGE, NUAD, TNAD, SDNAD, RNAD, CNAD, LLNAD, SNAD, GNAD, HIND, RSNAD, DNAD,&
    SENN0C, SENNSC, cRANC1, cLANC1, cSANC1, cGRAINANC1, cSDNC1, cVANC1, LCNF, SCNF, RCNF,&
    cVCNC1, cVMNC1, cNUPR1, ANDEM
@@ -887,7 +888,7 @@ Subroutine CsvOutPlGrf(EXCODE, RUNRUNI, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS,
 end Subroutine CsvOutPlGrf
 !------------------------------------------------------------------------------------
 ! Sub for csv output for CSCER
-Subroutine CsvOutEvalCsCer(EXCODE, RUNRUNI, TN, ROTNUM,  REPNO, CR, Edap, Edapm, &
+Subroutine CsvOutEvalCsCer(EXCODE, RUN, TN, ROTNUM,  REPNO, CR, Edap, Edapm, &
    Drdap, Drdapm, Tsdap, Tsdapm, Adap, Adapm, Mdap, Mdapm, Gwam, Gwamm, Gwumc, &
    Gwummc, Hnumam, Hnumamm, Hnumgm, Hnumgmm, Laix, Laixm, Lnumsm, Lnumsmm, Tnumam, &
    Tnumamm, Cwam, Cwamm, Vwam, Vwamm, Hiamc, Hiammc, Gnpcm, Gnpcmm, Vnpcmc, Vnpcmmc,&
@@ -895,8 +896,10 @@ Subroutine CsvOutEvalCsCer(EXCODE, RUNRUNI, TN, ROTNUM,  REPNO, CR, Edap, Edapm,
     
 !  Input vars
    CHARACTER(10),Intent(IN):: EXCODE    ! Experiment code/name           text
-   CHARACTER(8),Intent(in) :: RUNRUNI    ! Run+internal run number        text 
-!  Integer, Intent(IN) :: RUN           ! run number        
+   
+!   CHARACTER(8),Intent(in) :: RUNRUNI    ! Run+internal run number        text 
+   Integer, Intent(IN) :: RUN           ! run number        
+   
    INTEGER,Intent(IN)  :: TN, ROTNUM, REPNO, Edap, Edapm, Drdap, Drdapm, Tsdap                             
 !  INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
 !  INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
@@ -936,7 +939,7 @@ Subroutine CsvOutEvalCsCer(EXCODE, RUNRUNI, TN, ROTNUM,  REPNO, CR, Edap, Edapm,
    cGnam1 = NINT(Gnam)
    cGnamm1 = NINT(Gnamm)
              
-   Write(tmp,'(45(g,","),g)') RUNRUNI, EXCODE, TN, ROTNUM, REPNO, CR, Edap, &
+   Write(tmp,'(45(g,","),g)') RUN, EXCODE, TN, ROTNUM, REPNO, CR, Edap, &
       Edapm, Drdap, Drdapm, Tsdap, Tsdapm, Adap, Adapm, Mdap, Mdapm, cGwam1, &
       cGwamm1, Gwumc, Gwummc, cHnumam1, cHnumamm1, Hnumgm, Hnumgmm, Laix, &
       Laixm, Lnumsm, Lnumsmm, cTnumam1, cTnumamm1, cCwam1, cCwamm1, cVwam1, &
