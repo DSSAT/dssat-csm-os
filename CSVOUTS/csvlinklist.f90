@@ -744,7 +744,7 @@ Contains
       fn = 'plantgro.csv'
       Call GETLUN (fn,nf)
   
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW',  &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE',  &
           Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -796,7 +796,7 @@ Contains
       fn = 'soilwat.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
           Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -847,7 +847,7 @@ Contains
       fn = 'soiltemp.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
           Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -889,7 +889,7 @@ Contains
       fn = 'plantgro.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
           Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -942,7 +942,7 @@ Contains
       fn = 'et.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
           Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -997,7 +997,7 @@ Contains
       fn = 'plantgro.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
           Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1033,7 +1033,7 @@ Contains
       fn = 'plantn.csv'
       Call GETLUN (fn,nf)
 
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
           IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1071,7 +1071,7 @@ Contains
       fn = 'plantn.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
         Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1130,7 +1130,7 @@ Contains
       fn = 'soilni.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
         Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1166,7 +1166,7 @@ Contains
       fn = 'plantn.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
         Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1202,7 +1202,7 @@ Contains
       fn = 'weather.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
          Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1239,7 +1239,7 @@ Contains
       fn = 'plantgr2.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW',  &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE',  &
          Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1276,7 +1276,7 @@ Contains
       fn = 'plantgrf.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
          Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1315,7 +1315,7 @@ Contains
       fn = 'evaluate.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
          Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1357,7 +1357,7 @@ Contains
       fn = 'evaluate.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
          Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')tmp1
@@ -1402,7 +1402,7 @@ Contains
       fn = 'summary.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
           Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1438,7 +1438,7 @@ Contains
       fn = 'plantc.csv'
       Call GETLUN (fn,nf)
   
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
          Action='Write', IOSTAT = ErrNum)
         
       Write(nf,'(A)')Header
@@ -1540,7 +1540,7 @@ Contains
       fn = 'soilorg.csv'
       Call GETLUN (fn,nf)
       
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', Action='Write', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
         IOSTAT = ErrNum)
      
       Write(nf,'(A)')Header
@@ -1600,7 +1600,7 @@ Contains
       fn = 'etphot.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', Action='Write', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
          IOSTAT = ErrNum)
       
       Write(nf,'(A)')Header
@@ -1659,7 +1659,7 @@ Contains
       fn = 'mulch.csv'
       Call GETLUN (fn,nf)
    
-      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', Action='Write', &
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
          IOSTAT = ErrNum)
      
       Write(nf,'(A)')Header
@@ -1723,7 +1723,7 @@ Contains
     fn = 'plantp.csv'
     Call GETLUN (fn,nf)
 
-    Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', Action='Write', &
+    Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
          IOSTAT = ErrNum)
      
     Write(nf,'(A)')Header
@@ -1788,7 +1788,7 @@ Contains
     fn = 'soilpi.csv'
     Call GETLUN (fn,nf)
 
-    Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'NEW', Action='Write', &
+    Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
          IOSTAT = ErrNum)
      
     Write(nf,'(A)')Header
