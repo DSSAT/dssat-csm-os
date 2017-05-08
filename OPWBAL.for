@@ -272,10 +272,8 @@ C-----------------------------------------------------------------------
           END IF   ! VSH 
 
           NAVWB = 0
-          AVWTD = 0.
-        ENDIF
-      ENDIF
-
+          AVWTD = 0.        
+       
 !     VSH CSV output corresponding to SoilWat.OUT
       IF (FMOPT == 'C') THEN
          N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
@@ -285,7 +283,12 @@ C-----------------------------------------------------------------------
      &N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
      
          CALL LinklstSW(vCsvlineSW)
-      END IF
+      END IF         
+        
+        ENDIF
+     
+      ENDIF
+
 !***********************************************************************
 !***********************************************************************
 !     SEASEND - Sesaonal Output
