@@ -727,7 +727,7 @@ Contains
       Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
       tmp = Trim(Adjustl(tmp)) 
       Write(numtoch2,'(I2)') nl  
-      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D," 
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
        
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
   //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
