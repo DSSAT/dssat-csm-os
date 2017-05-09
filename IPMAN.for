@@ -715,7 +715,7 @@ C
       IF (IHARI .EQ. 'D' .AND. HDATE(1) .EQ. 0) THEN
          CALL ERROR (ERRKEY,5,FILEX,LINEXP)
       ENDIF
-      WRITE(7000,'(2F5.0)') FREQ,CUHT
+!      WRITE(7000,'(2F5.0)') FREQ,CUHT
       RETURN
 
 C-----------------------------------------------------------------------
