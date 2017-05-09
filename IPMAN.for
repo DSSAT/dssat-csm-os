@@ -648,8 +648,9 @@ C
 C        Read several lines of harvest details
 C
          READ (CHARTEST,60,IOSTAT=ERRNUM) LN,HDATE(NHAR),HSTG(NHAR),
-     &                  HCOM(NHAR),HSIZ(NHAR),HPC(NHAR),HBPC(NHAR),
-     &                  FREQ, CUHT !New variables for forages (Diego-2/14/2017)
+     &                  HCOM(NHAR),HSIZ(NHAR),HPC(NHAR),HBPC(NHAR)    !,
+!CHP - Auto-harvest not yet implemented. Probably should go in Sim Controls, anyway.
+!     &                  FREQ, CUHT !New variables for forages (Diego-2/14/2017)
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          IF ((HDATE(NHAR) .LT.  0) .OR.
      &       (IHARI .EQ. 'R' .AND. MOD(HDATE(NHAR),1000) .GT. 366))

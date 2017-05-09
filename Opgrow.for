@@ -473,7 +473,7 @@ C-----------------------------------------------------------------------
          CALL CsvOutPlCCrGro(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
      &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
      &TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, 
-     &CADST, RHOLP, RHOSP, TGRO(12), TGROAV, PCNSDP, PCLSDP, 
+     &CADST, RHOLP, RHOSP, TGRO, TGROAV, PCNSDP, PCLSDP, 
      &PCCSDP, TS, 
      &vCsvlinePlCCrGro, vpCsvlinePlCCrGro, vlngthPlCCrGro)
       

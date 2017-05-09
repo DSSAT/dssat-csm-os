@@ -808,7 +808,8 @@ TFGD   TEMP FAC GROWTH Temperature factor for leaf growth (0-1)                 
 TFPD   TEMP FAC PHS    Temperature factor for photosynthesis (0-1)              .
 TNAD   TOPS N kg/ha    Tops (ie canopy) N (kg/ha)                               .
 TRRD   TRANSLOC RESP   Translocation respiration (g/(m2.d) or kg/(ha.d))        .
-TWUPD  Pot H2O uptake  Potential root water uptake (cm)                         .
+TRWUD  Act H2O uptake  Root water uptake (cm/d)                                 .
+TWUPD  Pot H2O uptake  Potential root water uptake (cm/d)                       .
 VNCD   Veg N conc. fr  Vegetative above-ground tissue N concentration (fr)      .
 VN%D   Veg N%          Vegetative above-ground tissue N concentration (%)       .
 VN%LD  Veg N% minimum  Vegetative above-ground tissue minimum N conc. (%)       .
