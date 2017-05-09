@@ -60,6 +60,13 @@ etphot.csv         Daily evapotranspiration output file in CSV
 mulch.csv          Daily surface mulch output file in CSV format
 plantp.csv         Daily plant phosphorus output in CSV format
 soilpi.csv         Daily inorganic soil phosphorus output file, CSV
+N2O.OUT         NO Soil N2O and N2 daily emissions output        
+Potential.OUT      Water potential - daily
+PlantGr2.OUT    G2 Wheat and barley specific output file
+PlantGrf.OUT    GF Wheat and barley specific output file
+Dormancy.OUT       Forage daylength signal for stolon daily output
+PlantMob.OUT       Forage plant mobilization and refill of storage
+Storage.OUT        Forage storage organ characteristics daily output
 
 !Seasonal summary output files
 Environ.OUT     EN Environmental modifications output file            SOUTE
@@ -85,6 +92,7 @@ SoilWatBal.OUT     Seasonal soil water balance                        SWBAL
 Summary.OUT     SU Seasonal summary output file                       OUTSUM
 WeatherSum.OUT     Not currently operational                          SOUTWTH
 SoilWatBal2.OUT    Temporary
+FORAGE.OUT      FH Forage harvest output file                         FORHARV
 
 !Information files:
 ERROR.OUT          Error messages                                     ERRORO
