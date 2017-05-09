@@ -11,6 +11,7 @@
           CN          , HARVFRAC    , ISWDIS      , ON          , RN          , SN          , TN          &
           )
 
+      USE ModuleDefs
       USE CS_First_Trans_m
 
       IMPLICIT NONE
@@ -185,17 +186,17 @@
           FILELEN = MAX(FILELEN-12, 0) 
             
             IF (TVILENT(FILEADIR).GT.3) THEN
-              IF (FILEADIR(TVILENT(FILEADIR):
-     &            TVILENT(FILEADIR)).NE.SLASH)THEN
-                FILEX = FILEADIR(1:TVILENT(FILEADIR))//
-     &           SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
+              IF (FILEADIR(TVILENT(FILEADIR): &
+                  TVILENT(FILEADIR)).NE.SLASH)THEN
+                FILEX = FILEADIR(1:TVILENT(FILEADIR))//  &
+                SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
               ELSE
-                FILEX = FILEADIR(1:TVILENT(FILEADIR))//
-     &           EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
+                FILEX = FILEADIR(1:TVILENT(FILEADIR))// &
+                EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
               ENDIF
             ELSE
-              FILEX = FILENEW(1:FILELEN-12)//EXCODE(1:8)//'.'//
-     &         EXCODE(9:10)//'X'
+              FILEX = FILENEW(1:FILELEN-12)//EXCODE(1:8)//'.'// &
+              EXCODE(9:10)//'X'
             ENDIF  
           ! Experimental controls
           CALL XREADC(FILEX,TN,RN,SN,ON,CN,'LLIFE',cfllflife)
