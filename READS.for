@@ -373,7 +373,7 @@ C-----------------------------------------------------------------------
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'DETAIL'
       INTEGER FOUND, FIND_IN_FILE, ERR, LNUM, LUN
-      INTEGER IPX
+!      INTEGER IPX
 
       LOGICAL FEXIST    !, EOF
 
@@ -389,15 +389,18 @@ C-----------------------------------------------------------------------
 !       File does not exist in data directory, check directory
 !         with executable.
         CALL GETARG(0,PATHX)
-        IPX = LEN_TRIM(PATHX)
-        DATAX = PATHX(1:(IPX-12)) // FILECDE
-!debugD       DATAX = STDPATH // FILECDE
+!        call path_adj(pathx)
+        call get_dir(pathx,datax)
+        datax = trim(datax)//filecde
+!        IPX = LEN_TRIM(PATHX)
+!        DATAX = PATHX(1:(IPX-12)) // FILECDE
+D       DATAX = STDPATH // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF        
 
       IF (.NOT. FEXIST) THEN
 !       Last, check for file in C:\DSSAT45 directory
-        DATAX = STDPATH // FILECDE
+        DATAX = trim(STDPATH) // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF
 
@@ -660,7 +663,6 @@ C-----------------------------------------------------------------------
       CHARACTER*120 PATHX
 
       INTEGER COUNT, ERR, I, LUN, LNUM
-      INTEGER IPX
 
       LOGICAL FEXIST    !, EOF
 
@@ -674,14 +676,17 @@ C-----------------------------------------------------------------------
 !       File does not exist in data directory, check directory
 !         with executable.
         CALL GETARG(0,PATHX)
-        IPX = LEN_TRIM(PATHX)
-        DATAX = PATHX(1:(IPX-12)) // FILECDE
+!        call path_adj(pathx)
+        call get_dir(pathx,datax)
+        datax = trim(datax)//filecde
+!        IPX = LEN_TRIM(PATHX)
+!        DATAX = PATHX(1:(IPX-12)) // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF        
 
       IF (.NOT. FEXIST) THEN
 !       Last, check for file in C:\DSSAT45 directory
-        DATAX = STDPATH // FILECDE
+        DATAX = trim(STDPATH) // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF
 
@@ -933,7 +938,7 @@ C-----------------------------------------------------------------------
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'SIMCDE'
       INTEGER FOUND, ERR, LNUM, LUN
-      INTEGER I, IPX, ISECT, FIND_IN_FILE
+      INTEGER I, ISECT, FIND_IN_FILE
 
       LOGICAL FEXIST    !, EOF
 
@@ -947,15 +952,18 @@ C-----------------------------------------------------------------------
 !       File does not exist in data directory, check directory
 !         with executable.
         CALL GETARG(0,PATHX)
-        IPX = LEN_TRIM(PATHX)
-        DATAX = PATHX(1:(IPX-12)) // FILECDE
-!debugD       DATAX = STDPATH // FILECDE
+!        call path_adj(pathx)
+        call get_dir(pathx,datax)
+        datax = trim(datax)//filecde
+!        IPX = LEN_TRIM(PATHX)
+!        DATAX = PATHX(1:(IPX-12)) // FILECDE
+D       DATAX = STDPATH // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF        
 
       IF (.NOT. FEXIST) THEN
 !       Last, check for file in C:\DSSAT45 directory
-        DATAX = STDPATH // FILECDE
+        DATAX = trim(STDPATH) // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF
 

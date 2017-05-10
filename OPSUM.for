@@ -92,7 +92,6 @@ C-----------------------------------------------------------------------
 !     VSH
       USE CsvOutput
       USE Linklist
-      USE CsvGeneric
       IMPLICIT NONE
       SAVE
 
@@ -657,10 +656,6 @@ C-------------------------------------------------------------------
         
 !       VSH summary.csv header
         IF (FMOPT == 'C') THEN
-            INQUIRE(FILE='summary.csv', EXIST=FEXIST)
-            IF (.NOT. FEXIST) then
-               CALL CsvHeadSumOpsum
-            END IF 
             
             CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
      &MODEL, TITLET, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, 
@@ -827,10 +822,8 @@ C-------------------------------------------------------------------
          
 !        VSH  for evaluate.csv 
          IF (FMOPT == 'C') THEN 
-            INQUIRE(FILE='evaluate.csv', EXIST=FEXIST)
-            IF (.NOT. FEXIST) then
-               CALL CsvHeadEvOpsum(ICOUNT,OLAP)
-            END IF      
+            csvICOUNT = ICOUNT
+            csvOLAP = OLAP
             CALL CsvOutEvOpsum(EXPER, RUN, CG, TRTNUM, ROTNO,  CROP, 
      &Simulated, Measured, ICOUNT,   
      &vCsvlineEvOpsum, vpCsvlineEvOpsum, vlngthEvOpsum) 

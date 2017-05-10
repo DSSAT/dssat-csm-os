@@ -6350,7 +6350,7 @@
 
 !     VSH CSV output corresponding to PlantGro.OUT
       IF (FMOPT == 'C') THEN 
-         CALL CsvOut(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,DOY,
+         CALL CsvOut(EXCODE, RUN,TN,RN,SN, ON, REP, CN, YEAR,DOY,
      &DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, CARBOA, 
      &LAI, SAIDOUT, TWAD, SDWAD, RWAD, CWAD, LLWADOUT, STWADOUT, GWAD,
      &HIAD, CHWADOUT, EWAD, RSWAD, DWAD, SENW0C, SENWSC, RSCD, GRNUMAD,
@@ -6380,7 +6380,7 @@
              
 !     VSH CSV output corresponding to PlantGr2.OUT
       IF (FMOPT == 'C') THEN
-         CALL CsvOutPlGr2(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,
+         CALL CsvOutPlGr2(EXCODE, RUN,TN,RN,SN, ON, REP, CN, YEAR,
      &DOY, DAS, DAP, TMEAN, GSTAGEC, RSTAGE, LAIPRODC, SENLA, PLTPOP, 
      &LAIC, CANHTC, SDWAD, SENW0C, SENWSC, GRNUMAD, hwudc, SHRTD, PTF,
      &RTDEP, NL, RLV,
@@ -6406,7 +6406,7 @@
  
  !    VSH CSV output corresponding to PlantGrf.OUT
       IF (FMOPT == 'C') then
-       CALL CsvOutPlGrf(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,DOY,
+       CALL CsvOutPlGrf(EXCODE, RUN,TN,RN,SN, ON, REP, CN, YEAR,DOY,
      &DAS, DAP, TMEAN, ZSTAGE, DU, VF, DF, TFGEM, WFGE, TFP, WFP, NFP, 
      &CO2FP, RSFP, TFG, WFG, NFG, WFT, NFT, WAVR, WUPR, H2OA, EOP, 
      &SNH4PROFILE, SNO3PROFILE, LCNF, SCNF, RCNF, 
@@ -6442,7 +6442,7 @@
 
 !     VSH
       IF (FMOPT == 'C') then  
-         CALL CsvOutPlNCsCer(EXCODE, RUNRUNI, TN, 
+         CALL CsvOutPlNCsCer(EXCODE, RUN, TN, 
      &RN, REP, YEAR, DOY, DAS, DAP, 
      &TMEAN,ZSTAGE,NUAD,TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD, GNAD, 
      &HIND,RSNAD,DNAD,SENN0C,SENNSC,RANC, LANC, SANC, GRAINANC, 
@@ -7842,7 +7842,7 @@
 
 !     VSH CSV output corresponding to Evaluate.OUT
       IF (FMOPT == 'C') then
-         CALL CsvOutEvalCsCer(EXCODE, RUNRUNI, TN, RN,  REP, 
+         CALL CsvOutEvalCsCer(EXCODE, RUN, TN, RN,  REP, 
      &CR,Edap,Edapm,Drdap,Drdapm,Tsdap,Tsdapm,Adap,Adapm,Mdap,
      &Mdapm, Gwam, Gwamm, Gwumc, Gwummc, Hnumam, Hnumamm, Hnumgm,
      &Hnumgmm,Laix,Laixm, Lnumsm,Lnumsmm,Tnumam, Tnumamm, Cwam, 

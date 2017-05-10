@@ -551,7 +551,8 @@ C-----------------------------------------------------------------------
         CALL MODEL_NAME (CROP, DSSATP, Try_MODELARG, MODEL)
       ENDIF
 
-      IF (MEPHO .EQ. 'L' .AND. MODEL(1:5) .NE. 'CRGRO') THEN
+      IF (MEPHO .EQ. 'L' .AND. MODEL(1:5) .NE. 'CRGRO' 
+     &  .and. model(1:5) .ne. 'PRFRM' ) THEN
         MEPHO = 'C'
         WRITE(MSG(1),80)
         WRITE (MSG(2),81) MODEL(1:5)

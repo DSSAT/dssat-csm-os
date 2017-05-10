@@ -606,7 +606,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
 !     CROPGRO
-      CASE ('CRGRO')
+      CASE ('CRGRO','PRFRM')
 !      IF (INDEX (MODEL, 'CRGRO') > 0) THEN
         IF (INDEX ('BN,PN,SB,PE,CH,PP,VB,CP,BR,FB,NP,GB,PE,LT',CROP) 
      &    > 0) THEN

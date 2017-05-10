@@ -12,7 +12,8 @@ C  Calls:         None
 C=======================================================================
       SUBROUTINE OpETPhot(CONTROL, ISWITCH, 
      &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
-     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV) 
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV, 
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
 
 C-------------------------------------------------------------------
 C
@@ -35,6 +36,9 @@ C-------------------------------------------------------------------
       REAL PCINPD,PG, PGNOON, PCINPN
       REAL SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN
       REAL TGRO(24), TGROAV
+
+      real  AGEQESLN, CO2QESLN, QEFFSLN
+
 
       LOGICAL FEXIST
 
@@ -110,9 +114,8 @@ C-----------------------------------------------------------------------
  300      FORMAT(1X,I4,1X,I3.3,1X,I5,
      &        F8.2,2(1X,F6.2),F8.2,6(1X,F6.2),2(1X,F6.1))
           END IF   ! VSH
-        ENDIF
-
-!     VSH     
+          
+        !     VSH     
       IF (FMOPT == 'C') THEN 
          CALL CsvOutETPhot(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
      &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
@@ -121,7 +124,9 @@ C-----------------------------------------------------------------------
      &vCsvlineETPhot, vpCsvlineETPhot, vlngthETPhot)
      
          CALL LinklstETPhot(vCsvlineETPhot)
-      END IF  
+      END IF         
+        
+        ENDIF
       
         IF ((DYNAMIC .EQ. SEASEND) 
      & .AND. ((FMOPT == 'A') .OR. (FMOPT == ' '))) THEN   ! VSH

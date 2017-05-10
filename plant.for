@@ -181,7 +181,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !       in the future, we need to make this check on a crop by crop basis.
 !     The plant routines do not use these codes, but the SPAM module
 !       does and it will bomb when species parameters are not found.
-      IF (INDEX(MODEL,'CRGRO') <= 0 .AND. ISWITCH % MEPHO .EQ. 'L') THEN
+      IF (INDEX(MODEL,'CRGRO') <= 0 .and. index(model,'PRFRM') <= 0 
+     &  .AND. ISWITCH % MEPHO .EQ. 'L') THEN
         ISWITCH % MEPHO = 'C'
 !       Put ISWITCH data where it can be retreived 
 !         by other modules as needed.
@@ -198,7 +199,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
   120 FORMAT('option, which is not available for crop ', A2, '.')
   130 FORMAT('Canopy photosynthesis option will be used.')
 
-      IF (INDEX(MODEL,'CRGRO') <= 0 .AND. ISWITCH % MEEVP .EQ. 'Z') THEN
+      IF (INDEX(MODEL,'CRGRO') <= 0 .and. index(model,'PRFRM') <= 0 
+     &  .AND. ISWITCH % MEEVP .EQ. 'Z') THEN
 !       Default to Priestly-Taylor potential evapotranspiration
         ISWITCH % MEEVP = 'R'
 !       Put ISWITCH data where it can be retreived 
@@ -307,6 +309,16 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    NSTRES, PSTRES1,                                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+!-----------------------------------------------------------------------
+!     Forage model
+      CASE('PRFRM') 
+      call FORAGE(CONTROL, ISWITCH, 
+     &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
+     &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
+     &    NSTRES, PSTRES1,                                !Output
+     &    PORMIN, RLV, RWUMX, SENESCE,                    !Output
+     &    STGDOY, UNH4, UNO3, XHLAI, XLAI)                !Output
 
 !     -------------------------------------------------
 !     Wheat and Barley CSCER
