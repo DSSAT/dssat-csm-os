@@ -185,7 +185,10 @@ SGCER    SG   CERES-Sorghum
 SWCER    SW   CERES-Sweetcorn
 TRARO    TR   AROIDS-Taro
 TNARO    TN   AROIDS-Tanier
-WHAPS    WH   NWheat (formerly APSIM)
+WHAPS    WH   NWheat
 PRFRM    BM   Bermudagrass
 PRFRM    BR   Brachiaria
 PRFRM    BH   Bahiagrass
+PRFRM    G0   Perennial Forage Model
+PRFRM    RG   Annual Ryegrass
+PRFRM    PA   Panicum
