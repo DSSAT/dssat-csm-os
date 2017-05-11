@@ -143,10 +143,8 @@ C        Comma Separated Values (CSV)                                         IB
 *Simulation/Crop Models
 @MODEL  CROP  Description
 BSCER    BS   CERES-Sugarbeet
-CRGRO    BM   CROPGRO-Bermuda
 CRGRO    BH   CROPGRO-Bahia
 CRGRO    BN   CROPGRO-Dry bean
-CRGRO    BR   CROPGRO-Brachiaria
 CRGRO    CB   CROPGRO-Cabbage
 CRGRO    CH   CROPGRO-Chickpea
 CRGRO    CN   CROPGRO-Canola
@@ -192,3 +190,4 @@ PRFRM    BH   Bahiagrass
 PRFRM    G0   Perennial Forage Model
 PRFRM    RG   Annual Ryegrass
 PRFRM    PA   Panicum
+PRFRM    AL   CROPGRO-Alfalfa
