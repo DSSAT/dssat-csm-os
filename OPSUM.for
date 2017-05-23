@@ -486,7 +486,7 @@ C-------------------------------------------------------------------
           WRITE(NOUTDS,310)
   310     FORMAT(/,
      &'!IDENTIFIERS......................... ',
-     &'EXPERIMENT AND TREATMENT.............. ', 
+     &'EXPERIMENT AND TREATMENT.......... ', 
      &'SITE INFORMATION............ ',
      &'DATES..........................................  ',
      &'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
@@ -503,7 +503,7 @@ C-------------------------------------------------------------------
 
           WRITE (NOUTDS,400)
   400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL... ',
-     &    'EXNAME...... TNAM..................... ',
+     &    'EXNAME.. TNAM..................... ',
      &    'FNAM.... WSTA.... SOIL_ID...  ',
      &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
      &    '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
@@ -528,7 +528,7 @@ C-------------------------------------------------------------------
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
-     &    CROP, MODEL, CONTROL%FILEX, TITLET, FLDNAM, WSTAT, SLNO,
+     &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO,
      &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
@@ -536,7 +536,7 @@ C-------------------------------------------------------------------
   500   FORMAT (I9,1X,I6,3(I3),               
 
 !       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, SLNO,
-     &  1X,A2,1X,A8,1X,A12,1X,A25,1X,A8,1X,A8,1X,A10,      
+     &  1X,A2,1X,A8,1X,A8,1X,A25,1X,A8,1X,A8,1X,A10,      
 
 !       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &  6(1X,I7),
@@ -635,9 +635,9 @@ C-------------------------------------------------------------------
         IF (FMOPT == 'C') THEN
             
             CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
-     &MODEL, TITLET, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, 
-     &MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, PWAM, 
-     &HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
+     &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO, YRSIM, 
+     &YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, 
+     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
      &NIAM, CNAM, GNAM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, 
      &SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 

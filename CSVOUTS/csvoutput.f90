@@ -1004,7 +1004,7 @@ end Subroutine CsvOutEvOpsum
 !------------------------------------------------------------------------------
 ! Sub for csv output for summary.out
 Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
-   TITLET, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
+   EXNAME, TITLET, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
    CWAM, HWAM, HWAH, BWAH, PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM,&
    PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, &
    NIAM, CNAM, GNAM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM, RECM, &
@@ -1015,7 +1015,7 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
 !  Input vars
    Integer, Intent(IN) :: RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, YRSIM, YRPLT  
    Character(Len=2), Intent(IN) :: CROP  
-   Character(Len=8), Intent(IN) :: MODEL, FLDNAM, WSTAT
+   Character(Len=8), Intent(IN) :: MODEL, FLDNAM, WSTAT, EXNAME
    Character(Len=25), Intent(IN) :: TITLET 
    Character(Len=10), Intent(IN) :: SLNO 
    Integer, Intent(IN) :: EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, PWAM
@@ -1044,8 +1044,8 @@ Subroutine CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
    cBWAH1 = NINT(BWAH * 10.0)
    TITLET1 = Trim(AdjustL(CommaDash(TITLET)))
            
-   Write(tmp,'(81(g,","),g)') RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
-   TITLET1, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
+   Write(tmp,'(82(g,","),g)') RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP, MODEL, &
+   EXNAME, TITLET1, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, &
    CWAM, HWAM, cHWAH1, cBWAH1, PWAM, HWUM, HNUMAM, HNUMUM, HIAM, LAIX, IRNUM, &
    IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, &
    NLCM, NIAM, CNAM, GNAM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, SKAM,&
