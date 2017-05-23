@@ -551,7 +551,7 @@ C-------------------------------------------------------------------
   500   FORMAT (I9,1X,I6,3(I3),               
 
 !       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, SLNO,
-     &  1X,A2,1X,A8,1X,A12,1X,A25,1X,A8,1X,A8,1X,A10,      
+     &  1X,A2,1X,A8,1X,A8,1X,A25,1X,A8,1X,A8,1X,A10,      
 
 !       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &  6(1X,I7),
