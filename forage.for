@@ -2020,9 +2020,9 @@ C-----------------------------------------------------------------------
 
       Cumul_FHTOT  = Cumul_FHTOT  + FHWAH
       Cumul_FHTOTN = Cumul_FHTOTN + FHTOTN
-      IF (FHWAH > 1.E-3) THEN
-        WRITE(3333,"('FHWAH,FHTOTN',2F10.2)") FHWAH, FHTOTN
-      ENDIF
+!      IF (FHWAH > 1.E-3) THEN
+!        WRITE(3333,"('FHWAH,FHTOTN',2F10.2)") FHWAH, FHTOTN
+!      ENDIF
       CONTINUE
 !-----------------------------------------------------------------------
 !     End of DAS > NVEG0 if construct

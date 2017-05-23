@@ -375,7 +375,7 @@ C-----------------------------------------------------------------------
         WRITE(MESSAGE(2),852)
         WRITE(MESSAGE(3),853)
         CALL WARNING(3,ERRKEY, MESSAGE)
-        WRITE (*,854) MESSAGE(1), MESSAGE(2), MESSAGE(3)
+!        WRITE (*,854) MESSAGE(1), MESSAGE(2), MESSAGE(3)
         STOP
  851          FORMAT(' You have reached the maximum number of',
      &    ' cohorts which can be produced.')

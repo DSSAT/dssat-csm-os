@@ -67,13 +67,14 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE VersionType
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
-        INTEGER :: Model = 1
-        INTEGER :: Build = 14
+        INTEGER :: Model = 5
+        INTEGER :: Build = 1
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.5.01 chp 05/10/2017 Workshop 2017 version. Remove SALUS. 
 !       4.6.1.14 chp 05/09/2017 CSV output updates, minor sunflower changes, 
 !                               remove auto forage variables
 !       4.6.1.13 chp 05/05/2017 Forage model, cross-platform compatibility

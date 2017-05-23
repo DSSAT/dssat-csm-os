@@ -2203,7 +2203,7 @@ C-----------------------------------------------------------------------
      &    F5.2,'  )')
 
         !Message to screen
-        WRITE (*,275) MESSAGE(1), MESSAGE(2)
+!        WRITE (*,275) MESSAGE(1), MESSAGE(2)
 275   FORMAT(/,10X,A78,/,10X,A78,/)
 
         !Message to Overview.out

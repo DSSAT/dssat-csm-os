@@ -50,6 +50,7 @@ C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
+!  05/10/2017 CHP removed SALUS model
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -65,7 +66,7 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:
-!         'CRGRO' - CROPGRO 
+!         'CRGRO' - CROPGRO
 !         'CSCER' - CERES Wheat, Barley
 !         'CSCRP' - CropSim Wheat, Barley
 !         'CSCAS' - CropSim/GumCAS Cassava
@@ -78,11 +79,11 @@ C-----------------------------------------------------------------------
 !         'SGCER' - CERES-Sorghum
 !         'SWCER' - CERES-Sweet corn
 !         'MZIXM' - IXIM Maize
-!         'TNARO' - Aroids - Tanier, Taro
-!         'ORYZA' - IRRI Rice model
-!         'SALUS' - SALUS generic crop model
+!         'TNARO' - Aroids - Tanier
+!         'TRARO' - Aroids - Taro
+!         'RIORZ' - IRRI ORYZA Rice model
 !         'WHAPS' - APSIM N-wheat
-
+!         'PRFRM' - Perennial forage model
 C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -466,16 +467,16 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           XHLAI = XLAI
         ENDIF
 
-!     -------------------------------------------------
-!	Generic Salus crop model
-!	KD 09/14/2009
-	CASE('SALUS') 
-	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,         !Input
-     &  HARVFRAC, YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,  !Input
-     &  KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	            !Output
-	  IF (DYNAMIC .EQ. INTEGR) THEN
-          XLAI = XHLAI
-        ENDIF
+!!     -------------------------------------------------
+!!	Generic Salus crop model
+!!	KD 09/14/2009
+!	CASE('SALUS') 
+!	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,         !Input
+!     &  HARVFRAC, YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,  !Input
+!     &  KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	            !Output
+!	  IF (DYNAMIC .EQ. INTEGR) THEN
+!          XLAI = XHLAI
+!        ENDIF
 
 !     -------------------------------------------------
 !     Sugarcane - CANEGRO
