@@ -148,7 +148,7 @@ D     INPUTX = STDPATH // 'DSCSM046.EXE'
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      INPUT = INPUTX((index(inputx,slash,back=.true.)+1):IPX)
+!      INPUT = INPUTX((index(inputx,slash,back=.true.)+1):IPX)
 
 C-----------------------------------------------------------------------
 C    Initialize and delete previous copy of FILEIO
