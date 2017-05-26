@@ -137,7 +137,7 @@
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
         
-        hourlyWHCAIR = calculateWHCAIR(hourlyTemperature(this, Hour))                           !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        hourlyWHCAIR = calculateWHCAIR(hourlyTemperature(this, Hour))
 
     end function hourlyWHCAIR
     
@@ -147,7 +147,7 @@
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
         
-        hourlyRH =  calculateRH(hourlyTemperature(this, Hour), this%dewpoint_)                  !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        hourlyRH =  calculateRH(hourlyTemperature(this, Hour), this%dewpoint_)
 
     end function hourlyRH
     
@@ -157,7 +157,7 @@
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
         
-        hourlyVPD =  calculateVPD(hourlyTemperature(this, Hour), this%dewpoint_)                !  DA water holding capacity of the air WHC = 0.002166 * SVP / ( t + 273.16 )   
+        hourlyVPD =  calculateVPD(hourlyTemperature(this, Hour), this%dewpoint_)
 
     end function hourlyVPD
     
