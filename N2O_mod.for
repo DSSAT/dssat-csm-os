@@ -373,6 +373,8 @@ C  06/15/2014 CHP Written
 C-----------------------------------------------------------------------
 C     Variable heading for N2O.OUT
 C-----------------------------------------------------------------------
+      CumTotCO2 = 0.0
+
       IF (IDETN .EQ. 'Y') THEN
 
         FROP    = CONTROL % FROP
@@ -380,7 +382,6 @@ C-----------------------------------------------------------------------
         REPNO   = CONTROL % REPNO
         RUN     = CONTROL % RUN
 
-        CumTotCO2 = 0.0
 
         CALL GETLUN(OUTSN2O, NOUTDN)
         INQUIRE (FILE = OUTSN2O, EXIST = FEXIST)
