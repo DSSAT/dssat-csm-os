@@ -182,7 +182,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    MaxPest = 500    !Maximum number of pest operations
 
       REAL, PARAMETER :: 
-     &    PI = 3.141586, 
+     &    PI = 3.14159265,
      &    RAD=PI/180.0
 
       INTEGER, PARAMETER :: 
