@@ -172,6 +172,23 @@ C-----------------------------------------------------------------------
      &       0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
      &       0.0
           END IF   ! VSH
+          
+          
+!     VSH
+      IF (FMOPT == 'C') THEN 
+         AMTFER = 0.0
+         NAPFER = 0
+         CALL CsvOutSoilNi(EXPNAME, RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
+     &N, AMTFER, NAPFER, 0.0,TNH4NO3,TNO3,TNH4, N_LYR, NO3, NH4,
+     &0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+     &vCsvlineSoilNi, vpCsvlineSoilNi, vlngthSoilNi)
+     
+         CALL LinklstSoilNi(vCsvlineSoilNi)
+      END IF
+          
+          
+          
         ENDIF
       ENDIF
 

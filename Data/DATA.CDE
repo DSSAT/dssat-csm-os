@@ -114,6 +114,7 @@ ONAM   Organic N kg/ha Organic soil N at maturity (kg/ha)                       
 ONTAM  Tot Org N kg/ha Total Organic N at maturity, soil and surface (kg/ha)    .
 OPAM   Organic P kg/ha Organic soil P at maturity (kg/ha)                       .
 OPTAM  Tot Org P kg/ha Total Organic P at maturity, soil and surface (kg/ha)    .
+OZONX  Max ozone ppb   Maximum daily surface ozone concentration (ppb)          .
 P#AM   Pod/Panicle#/m2 Pod or panicle number (no/m2)                            .
 PD1P   1st pod day yd  First pod day (dap)                                      .
 PD1T   1st pod date yd First pod date (YrDoy)                                   .
@@ -309,6 +310,17 @@ RELTT  Rel.Therm Time  Relative thermal time
 RUE    Rad. Use Eff.   Radiation Use Efficiency (g/MJ)
 RELLAI Rel. LAI        Relative Leaf Area Index
 DTTC   Cum deg-days    Cumulative growing degree days (°C-d) 
+MPLA   Main stem LAI   Main stem leaf area index
+TPLA   Tiller LAI      Tiller (sum) leaf area index
+PLA    Plant LAI       Plant LAI, same as XLAI 
+NOLN   # Leaf Nodes    Number of Leaf Nodes
+ATRS   Accum Temp Rep  Accumulated Temperature during Reproductive Stage        .
+HERB   Herbage kg/ha   Herbage mass harvested kg/ha                             .
+FHL%   % Leaf in herb  Percent leaf in the harvested herbage                    .
+LF%D   % Leaf of tops  Percent leaf of tops (LWAD*100/CWAD)                     .
+DWTCO  Dead canopy     Dead canopy weight (kg [dm]/ha)
+DWTLO  Dead leaf       Dead leaf weight (kg [dm]/ha)
+DWTSO  Dead stem       Dead stem weight (kg [dm]/ha)
 
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -462,7 +474,7 @@ EOSA   Pot soil evap   Average potential soil evaporation per day  (mm/day)     
 EPAA   Transpir mm/d   Avg plant transpiration (mm/d)                           .
 EPAC   Transpiration   Cumulative transpiration (mm)                            .
 EPAD   Transpir mm/d   Plant transpiration (mm/d)                               .
-ES10   Evap layer 10   Soil evaporation, layer 10 (mm/d)                        .
+ES10   Evap layer 10   Soil evaporation, layer 10(mm/d)                         .
 ES1D   Evap layer 1    Soil evaporation, layer 1 (mm/d)                         .
 ES2D   Evap layer 2    Soil evaporation, layer 2 (mm/d)                         .
 ES3D   Evap layer 3    Soil evaporation, layer 3 (mm/d)                         .
@@ -796,7 +808,8 @@ TFGD   TEMP FAC GROWTH Temperature factor for leaf growth (0-1)                 
 TFPD   TEMP FAC PHS    Temperature factor for photosynthesis (0-1)              .
 TNAD   TOPS N kg/ha    Tops (ie canopy) N (kg/ha)                               .
 TRRD   TRANSLOC RESP   Translocation respiration (g/(m2.d) or kg/(ha.d))        .
-TWUPD  Pot H2O uptake  Potential root water uptake (cm)                         .
+TRWUD  Act H2O uptake  Root water uptake (cm/d)                                 .
+TWUPD  Pot H2O uptake  Potential root water uptake (cm/d)                       .
 VNCD   Veg N conc. fr  Vegetative above-ground tissue N concentration (fr)      .
 VN%D   Veg N%          Vegetative above-ground tissue N concentration (%)       .
 VN%LD  Veg N% minimum  Vegetative above-ground tissue minimum N conc. (%)       .
@@ -1064,6 +1077,8 @@ AFPWM  FreshWt g/fruit Avg fresh fruit (pod, ear) weight at maturity (g/fruit)  
 FCULD  Fr wt cull      Fresh weight for cull fruit/pods (g/m2)                  .
 FPWAD  Tot Fr Wt kg/ha Total fresh fruit (pod, ear) weight (kg/ha)              .
 FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
+RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)
+RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)
 FSZ1D  Fr wt 1 g/m2    Fresh weight for size class 1 (g/m2)                     .
 FSZ2D  Fr wt 2 g/m2    Fresh weight for size class 2 (g/m2)                     .
 FSZ3D  Fr wt 3 g/m2    Fresh weight for size class 3 (g/m2)                     .

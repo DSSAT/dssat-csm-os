@@ -74,14 +74,17 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE VersionType
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
-        INTEGER :: Model = 1
-        INTEGER :: Build = 12
+        INTEGER :: Model = 5
+        INTEGER :: Build = 1
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
-!     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.5.01 chp 05/10/2017 Workshop 2017 version. Remove SALUS. 
+!       4.6.1.14 chp 05/09/2017 CSV output updates, minor sunflower changes, 
+!                               remove auto forage variables
+!       4.6.1.13 chp 05/05/2017 Forage model, cross-platform compatibility
 !       4.6.1.12 chp 04/17/2017 Growth stage, supply-limited irrigation added
 !       4.6.1.11 chp 04/07/2017 CSV format output, fix stage 2 rice longevity issue
 !                               NWheat max N uptake from CUL file.
@@ -173,16 +176,16 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Global constants
       INTEGER, PARAMETER :: 
-     &    NL       = 20,    !Maximum number of soil layers 
-     &    TS       = 24,    !Number of hourly time steps per day
-     &    NAPPL    = 300,   !Maximum number of applications or operations
-     &    NCOHORTS = 300,   !Maximum number of cohorts
-     &    NELEM    = 3,     !Number of elements modeled (currently N & P)
+     &    NL       = 20,  !Maximum number of soil layers 
+     &    TS       = 24,  !Number of hourly time steps per day
+     &    NAPPL    = 9000,!Maximum number of applications or operations
+     &    NCOHORTS = 300, !Maximum number of cohorts
+     &    NELEM    = 3,   !Number of elements modeled (currently N & P)
 !            Note: set NELEM to 3 for now so Century arrays will match
      &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
      &    EvaluateNum = 40, !Number of evaluation variables
-     &    MaxFiles = 100,   !Maximum number of output files
+     &    MaxFiles = 200,   !Maximum number of output files
      &    MaxPest = 500    !Maximum number of pest operations
 
       REAL, PARAMETER :: 
@@ -209,9 +212,10 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    Kel = 3         !Potassium
 
       CHARACTER(LEN=1)  SLASH  
+      character(len=3)  exe_string
       CHARACTER(LEN=3)  ModelVerTxt
       CHARACTER(LEN=12) DSSATPRO 
-      CHARACTER(LEN=11) STDPATH 
+      CHARACTER(LEN=30) STDPATH 
       CHARACTER(LEN=6)  LIBRARY    !library required for system calls
 
       CHARACTER*3 MonthTxt(12)
@@ -228,6 +232,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) FILEX
         CHARACTER (len=30) FILEIO
         CHARACTER (len=102)DSSATP
+        character (len=60)  :: ename = ' '
         CHARACTER (len=120) :: SimControl = 
      &  "                                                            "//
      &  "                                                            "
@@ -457,6 +462,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
+!      call op_sys(slash,dssatpro,stdpath)
       SELECT CASE (OPSYS)
       CASE ('WINDO','DOS  ')
 !       DOS, Windows
@@ -465,13 +471,14 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
         STDPATH = 'C:\DSSAT46\' 
-D       STDPATH = 'D:\DSSAT46\' 
+        exe_string = 'EXE'
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
         SLASH = '/' 
         DSSATPRO = 'DSSATPRO.L46'
         STDPATH = '../DSSAT46/'
+        exe_string = '.so'
       END SELECT
 
       END SUBROUTINE SETOP

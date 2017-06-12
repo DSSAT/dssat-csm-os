@@ -48,6 +48,8 @@ C=======================================================================
       INTEGER, PARAMETER :: SUMNUM = 3
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
+      
+      CHARACTER*20 FRMT  ! VSH
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -131,11 +133,16 @@ C-----------------------------------------------------------------------
      &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
 
             IF (N_LYR < 10) THEN
-              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
-  121         FORMAT(9("    ",A2,I1,A1), A8)
+!              VSH
+!              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
+!  121         FORMAT(9("    ",A2,I1,A1), A8)
+               WRITE(FRMT,'(I1)') N_LYR
+               FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A8)'
+               WRITE (LUN,FRMT) ("ES",L,"D",L=1,N_LYR), 'TRWUD' 
             ELSE
-              WRITE (LUN,122)("ES",L,"D",L=1,9), "        ES10D    RWUD"
-  122         FORMAT(9("    ",A2,I1,A1),A25)
+!              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+              WRITE (LUN,122)("ES",L,"D",L=1,9), "  ES10D   TRWUD"  !VSH
+  122         FORMAT(9("    ",A2,I1,A1),A16)
             ENDIF
             END IF   ! VSH
           ELSE
@@ -241,7 +248,8 @@ C-----------------------------------------------------------------------
                 ES10 = ES10 + ES_LYR(L)
               ENDDO
               IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-              WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
+!              WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
+               WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
               END IF   ! VSH
             ENDIF    
           ELSE
@@ -252,10 +260,11 @@ C-----------------------------------------------------------------------
 
 !     VSH CSV output corresponding to ET.OUT
       IF (FMOPT == 'C') THEN 
+         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
          CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
      &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
-     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR,
+     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR, TRWU,
      &vCsvlineET, vpCsvlineET, vlngthET)
      
          CALL LinklstET(vCsvlineET)
