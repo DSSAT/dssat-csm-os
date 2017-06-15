@@ -60,11 +60,17 @@ SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR}.exe)
 # Add the source files
 file(GLOB CSM_FILES
     "${CMAKE_SOURCE_DIR}/*.f??"
+    "${CMAKE_SOURCE_DIR}/*.F??"
     "${CMAKE_SOURCE_DIR}/ttutil/*.f??"
+    "${CMAKE_SOURCE_DIR}/ttutil/*.F??"
     "${CMAKE_SOURCE_DIR}/SALUS/*.f??"
+    "${CMAKE_SOURCE_DIR}/SALUS/*.F??"
     "${CMAKE_SOURCE_DIR}/OP_OBS/*.f??"
+    "${CMAKE_SOURCE_DIR}/OP_OBS/*.F??"
     "${CMAKE_SOURCE_DIR}/ORYZA/*.f??"
+    "${CMAKE_SOURCE_DIR}/ORYZA/*.F??"
     "${CMAKE_SOURCE_DIR}/CSVOUTS/*.f??"
+    "${CMAKE_SOURCE_DIR}/CSVOUTS/*.F??"
 )
 ADD_EXECUTABLE(${EXECUTABLE_NAME} ${CSM_FILES})
 
