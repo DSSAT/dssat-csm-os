@@ -766,7 +766,7 @@
                         ! For harvest at specified date
                     IF (YEARDOYHARF.EQ.YEARDOY) THEN
                         tvi1 = Dapcalc(yeardoy,(plyeardoy/1000),plday)
-                        WRITE (FNUMOV,'(6X, A, 6X, I7, 4X, I7)')'Harvest      (dap)          ', NINT(rwamm), tvi1
+                        WRITE (FNUMOV,'(6X, A, 6X, I7, 4X, I7)')'Harvest      (dap)          ', NINT(hwam), NINT(hwamm)
                     ENDIF
                     WRITE (FNUMOV, FMT305)NINT(cwam),NINT(cwamm),MAX(-99,NINT(rwam+sdwam)),NINT(rwamm),NINT(senwacm), &
                         NINT(senwacmm),NINT(hwam),NINT(hwamm),NINT(vwam),NINT(vwamm),hiam,hiamm,NINT(rswam),NINT(rswamm)
