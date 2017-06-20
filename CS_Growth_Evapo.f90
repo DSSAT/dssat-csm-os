@@ -205,7 +205,7 @@
             Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
           !ENDIF  
           
-        open (unit = 7, file = "C:\DSSAT46\Cassava\objects.txt")  ! to delete
+        
         env = DailyEnvironment_type(TMin, TMax,TDEW,SRAD)
         vpde = VPDEffect_type(PHTV,PHSV)
         
@@ -217,6 +217,6 @@
             dailyrelativeTranspiration = dailyrelativeTranspiration + env%hourlyTranspiration(I, hourlyStomatalConductance) ! sumatory of relative transpiration according to conductance
             dailyPotentialTranspiration = dailyPotentialTranspiration + env%hourlyTranspiration(I, 1.0)                     ! sumatory of potential transpiration at full coductance
         END DO
-            write(7,'(1I5,12F10.2)') DAP,  dailyrelativeTranspiration, dailyPotentialTranspiration, EOP, EOP * dailyrelativeTranspiration / dailyPotentialTranspiration  ! to delete
+            
           
       END SUBROUTINE CS_Growth_Evapo

@@ -256,7 +256,7 @@
         
         ! Storage root 
         !IF (SRFR.LT.0.0) SRFR = 0.0 !LPM 08 JUN2015 SRFR is not used   
-        IF (HMPC.LE.0.0) HMPC = 50.0
+        IF (HMPC.LE.0.0) HMPC = 50.0 !issue 49 20JUN2015 Hmpc is not used
         
         ! Nitrogen uptake                  
         IF (rtno3.le.0.0) RTNO3 = 0.006  ! NO3 uptake/root lgth (mgN/cm)
