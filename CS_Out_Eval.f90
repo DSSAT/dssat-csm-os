@@ -725,7 +725,6 @@
                             CALL Calendar(year,doy,dom,month)
                             CNCTMP = 0.0
                             IF (CNADSTG(L) > 0.0 .AND. CWADSTG(L) > 0.0) CNCTMP = CNADSTG(L)/CWADSTG(L)*100
-                            write(*,*) plday, plyeardoy, stgyeardoy(L)
                             WRITE (FNUMOV,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,F6.1,F6.1,F6.2,F6.2,F6.2)')STGYEARDOY(L), &
                                 DOM,MONTH,Dapcalc(stgyeardoy(L),(plyeardoy/1000),plday),l,psname(l),NINT(CWADSTG(L)), &
                                 LAIC,LNUMSTG(L),NINT(CNADSTG(L)),CNCTMP,1.0-WFPPAV(L-1),1.0-NFPPAV(L-1)
@@ -767,7 +766,7 @@
                         ! For harvest at specified date
                     IF (YEARDOYHARF.EQ.YEARDOY) THEN
                         tvi1 = Dapcalc(yeardoy,(plyeardoy/1000),plday)
-                        WRITE (FNUMOV,'(6X, A, 6X, I7, 4X, I7)')'Harvest      (dap)          ', tvi1, tvi1
+                        WRITE (FNUMOV,'(6X, A, 6X, I7, 4X, I7)')'Harvest      (dap)          ', NINT(rwamm), tvi1
                     ENDIF
                     WRITE (FNUMOV, FMT305)NINT(cwam),NINT(cwamm),MAX(-99,NINT(rwam+sdwam)),NINT(rwamm),NINT(senwacm), &
                         NINT(senwacmm),NINT(hwam),NINT(hwamm),NINT(vwam),NINT(vwamm),hiam,hiamm,NINT(rswam),NINT(rswamm)
