@@ -297,7 +297,7 @@
     REAL    :: HINM                    ! Harvest index,N,abground,mat   #          ! (From SeasInit)  
     REAL    :: HINMM                   ! Harvest N index,mature,meas    %          ! (From SeasInit)  
     INTEGER :: HLAST                   ! Last date for harvest          #          ! (From SeasInit)  
-    REAL    :: HMPC                    ! Harvest moisture percent,std.. #          ! (From SeasInit)  
+    ! REAL    :: HMPC                    ! Harvest moisture percent,std.. #          ! (From SeasInit)  ! issue 49
     REAL    :: HNAD                    ! Product N                      kg/ha      ! (From SeasInit)  
     REAL    :: HNAM                    ! Harvest N at maturity          kg/ha      ! (From SeasInit)  
     REAL    :: HNAMERR                 ! Harvest N,error                %          ! (From Output)    

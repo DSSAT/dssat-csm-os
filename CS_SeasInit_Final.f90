@@ -244,10 +244,10 @@
             WRITE(fnumwrk,*)' Roots  '
             WRITE(fnumwrk,*)'  Rdgs   ',Rdgs
             WRITE(fnumwrk,*)'  Rresp  ',Rresp
-            WRITE(fnumwrk,*)' Storage roots '
+            !WRITE(fnumwrk,*)' Storage roots ' ! issue 49
             !WRITE(fnumwrk,*)'  Srfr   ',Srfr !LPM 08 JUN2015 SRFR is not used   
             !WRITE(fnumwrk,*)'  Dusri  ',Dusri  !LPM 05JUN2015 DUSRI is not used
-            WRITE(fnumwrk,*)'  Hmpc   ',Hmpc
+            !WRITE(fnumwrk,*)'  Hmpc   ',Hmpc ! issue 49
             WRITE(fnumwrk,*)' Nitrogen uptake concentration factors'
             WRITE(fnumwrk,*)'  Rtno3,Rtnh4 ',rtno3,rtnh4 
             WRITE(fnumwrk,*)'  No3cf,H2ocf ',no3cf,h2ocf

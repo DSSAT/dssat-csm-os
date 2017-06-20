@@ -118,7 +118,7 @@
                         ENDIF  
                         IF (hyamm.GT.0.0.AND.HYAMM.LT.50.0) HYAMM = HYAMM*1000.0
                     ENDIF
-                    IF (HWAMM.LE.0.0.AND.HYAMM.GT.0..AND.HMPC.GT.0.0) HWAMM = HYAMM * (1.0-HMPC/100.0)
+                    !IF (HWAMM.LE.0.0.AND.HYAMM.GT.0..AND.HMPC.GT.0.0) HWAMM = HYAMM * (1.0-HMPC/100.0)
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'HWUM',hwumm)
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'LAIX',laixm)
                     CALL AREADR (FILEA,TN,RN,SN,ON,CN,'CWAM',cwamm)

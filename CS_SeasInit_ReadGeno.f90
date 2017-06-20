@@ -300,7 +300,7 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'RTNH4',rtnh4)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NO3MN',no3mn)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NH4MN',nh4mn)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'HMPC',hmpc)
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'HMPC',hmpc) ! issue 49
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LPEFR',lpefr)
             !New (June 2015) leaf and node development
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LNSLP',lnslp)
@@ -366,7 +366,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'RTNH4',rtnh4)
             CALL CUREADR (CUDIRFLE,VARNO,'NO3MN',no3mn)
             CALL CUREADR (CUDIRFLE,VARNO,'NH4MN',nh4mn)
-            CALL CUREADR (CUDIRFLE,VARNO,'HMPC',hmpc)
+            !CALL CUREADR (CUDIRFLE,VARNO,'HMPC',hmpc) ! issue 49
 
         ENDIF     ! End Cultivar reads
         
