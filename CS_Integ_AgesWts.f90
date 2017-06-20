@@ -203,7 +203,7 @@
             SEEDUSET = SEEDUSET + GROLSSD                                                                                  !EQN 450
             SEEDRSAV = SEEDRS
         ENDIF
-        IF (SRNOPD.GT.0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
+        ! IF (SRNOPD.GT.0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
         
         IF ((LFWT+STWT+CRWT+RSWT).GT.0.0) THEN
             HIAD = SRWT/(LFWT+STWT+CRWT+SRWT+RSWT)                                                                     !EQN 293

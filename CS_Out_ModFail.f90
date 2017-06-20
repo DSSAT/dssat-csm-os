@@ -66,7 +66,7 @@
         CALL Csopline(laic,lai)
         CALL Csopline(caic,caid)
         CALL Csopline(hindc,hind)
-        CALL Csopline(hwudc,hwud)
+        ! CALL Csopline(hwudc,hwud) !issue 50
         CALL Csopline(sdwtc,sdwt)
         CALL Csopline(brstagec,brstage)
         

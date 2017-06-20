@@ -93,8 +93,8 @@
         IF (STWAD.GT.1.0E-5) SANCOUT = SNAD/STWAD
                 
         HWAD = SRWAD
-        HWUD = SRWUD
-        HNUMAD = SRNOPD * PLTPOP
+        ! HWUD = SRWUD ! issue 50
+        ! HNUMAD = SRNOPD * PLTPOP ! issue 50
         HNAD = SRNAD
         HNC = SRANC
         SENNAS = SENNS*10.0*PLTPOP

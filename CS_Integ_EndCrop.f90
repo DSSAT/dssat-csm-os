@@ -119,10 +119,10 @@
             ! Set harvest product outputs
             HWAM = SRWT * PLTPOP * 10.0
             HNAM = SRNAM
-            IF (SRNOPD.GT.0.0) HWUM = SRWT/FLOAT(SRNOPD)
-            HNUMAM = FLOAT(SRNOPD)*PLTPOP
-            HNUMGM = FLOAT(SRNOPD)
-            HNUMPM = FLOAT(SRNOPD)
+            !IF (SRNOPD.GT.0.0) HWUM = SRWT/FLOAT(SRNOPD) !issue 50
+            !HNUMAM = FLOAT(SRNOPD)*PLTPOP !issue 50
+            !HNUMGM = FLOAT(SRNOPD)        !issue 50
+            !HNUMPM = FLOAT(SRNOPD)        !issue 50
             BRNUMSH = BRNUMST
             IF (SRWT.GT.0.0) HNPCM = SROOTN/SRWT*100.0
                     

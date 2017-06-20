@@ -47,9 +47,9 @@
                 (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
         ENDIF
         
-        IF(SRWTGRS.GT.0.0.AND.SRNOPD.LE.0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT >0
-            SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291
-        ENDIF
+        !IF(SRWTGRS.GT.0.0.AND.SRNOPD.LE.0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT >0   ! issue 50
+            !SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291 ! issue 50  SR#WT is not used
+        !ENDIF  ! issue 50
                 
         !-----------------------------------------------------------------------
         !           Height growth

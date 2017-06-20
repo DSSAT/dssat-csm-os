@@ -276,7 +276,7 @@
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B89ND',pdl(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LLIFA',llifa)
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'STFR',swfrs)!LPM 05JUN2016 STFR are not used
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SR#WT',srnow)
+            !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SR#WT',srnow) ! issue 50  SR#WT is not used
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXS',laxs)
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'LAXND',laxno) !LPM 05JUN2016 LAXNO LAXN2 are not used
@@ -341,7 +341,7 @@
             !CALL CUREADR (CUDIRFLE,VARNO,'PHINT',phints) !LPM 21MAY2015 this variable is not used
             CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
             !CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs) !LPM 05JUN2016 STFR are not used
-            CALL CUREADR (CUDIRFLE,VARNO,'SR#WT',srnow)
+            !CALL CUREADR (CUDIRFLE,VARNO,'SR#WT',srnow)  ! issue 50  SR#WT is not used
             !CALL CUREADR (CUDIRFLE,VARNO,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
             CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
             !CALL CUREADR (CUDIRFLE,VARNO,'LAXND',laxno) !LPM 05JUN2016 LAXNO LAXN2 are not used

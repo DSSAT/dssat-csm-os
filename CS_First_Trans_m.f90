@@ -307,7 +307,7 @@
     REAL    :: HNPCMERR                ! Harvest N%,error               %          ! (From Output)    
     REAL    :: HNPCMM                  ! Harvest N,mature,measured      %          ! (From SeasInit)  
     INTEGER :: HNUMACOL                ! Harvest number per area column #          ! (From Output)    
-    REAL    :: HNUMAD                  ! Harvest product#/unit area     #/m2       ! (From Integrate) 
+    ! REAL    :: HNUMAD                  ! Harvest product#/unit area     #/m2       ! (From Integrate) ! issue 50
     REAL    :: HNUMAERR                ! Harvest #,maturity,error       %          ! (From Output)    
     REAL    :: HNUMAM                  ! Harvest no/area,maturity       #/m2       ! (From SeasInit)  
     REAL    :: HNUMAMM                 ! Harvest no/area,mature,measure #/m2       ! (From SeasInit)  
@@ -333,7 +333,7 @@
     REAL    :: HWAM                    ! Harvest product wt.,maturity   kg/ha      ! (From SeasInit)  
     REAL    :: HWAMM                   ! Harvest product wt.,measured   kg/ha      ! (From SeasInit)  
     INTEGER :: HWTUCOL                 ! Harvest weight per unit column #          ! (From Output)    
-    REAL    :: HWUD                    ! Harvest wt/unit                g          ! (From Integrate) 
+    ! REAL    :: HWUD                    ! Harvest wt/unit                g          ! (From Integrate) ! issue 50
     REAL    :: HWUM                    ! Harvest product size,maturity  g          ! (From SeasInit)  
     REAL    :: HWUMERR                 ! Harvest wt per unit error      %          ! (From Output)    
     REAL    :: HWUMM                   ! Hprod wt/unit,mat,measured     g          ! (From Output)    
@@ -863,8 +863,8 @@
     REAL    :: SRNOAMM                 ! Storage root/group,mature,meas #          ! (From Output)    
     REAL    :: SRNOGM                  ! Storage root/group,maturity    #          ! (From SeasInit)  
     REAL    :: SRNOGMM                 ! Storage root/group,mature,meas #          ! (From Output)    
-    INTEGER :: SRNOPD                  ! Storage root number per plant  #          ! (From SeasInit)  
-    REAL    :: SRNOW                   ! Cultivar coeff,storage root #  #/g        ! (From SeasInit)  
+    ! INTEGER :: SRNOPD                  ! Storage root number per plant  #          ! (From SeasInit)  ! issue 50
+    ! REAL    :: SRNOW                   ! Cultivar coeff,storage root #  #/g        ! (From SeasInit)  ! issue 50  SR#WT is not used
     REAL    :: SRNPCS                  ! Storage root N%,standard       #          ! (From SeasInit)  
     REAL    :: SRNPCM                  ! Storage root N%,maturity       %          ! (From Output)    
     REAL    :: SRNUSE(0:2)             ! Storage root N use,total/parts g          ! (From SeasInit)  
@@ -873,7 +873,7 @@
     REAL    :: SRWAD                   ! Storage root weight            kg/ha      ! (From Integrate) 
     REAL    :: SRWT                    ! Root storage organ weight      g/p        ! (From SeasInit)  
     REAL    :: SRWTGRS                 ! Root storage,reserves>std.%    g/p        ! (From SeasInit)  
-    REAL    :: SRWUD                   ! Storage root size              g          ! (From SeasInit)  
+    ! REAL    :: SRWUD                   ! Storage root size              g          ! (From SeasInit)   ! issue 50
     REAL    :: SRWUM                   ! Storage root wt/unit,maturity  g          ! (From SeasInit)  
     REAL    :: SRWUMM                  ! Storage root wt/unit,mat,meas  g          ! (From SeasInit)  
     REAL    :: STAI                    ! Stem area index                m2/m2      ! (From SeasInit)  
@@ -1145,7 +1145,7 @@
     CHARACTER (LEN=6)   HNPCMMCHAR    ! Harvest product N%,mature,meas            ! (From Output)  
     CHARACTER (LEN=1)   HOP(HANUMX)   ! Harvest operation code                    ! (From SeasInit) 
     CHARACTER (LEN=2)   HPROD         ! Code,harvested part of plant              ! (From SeasInit) 
-    CHARACTER (LEN=6)   HWUDC         ! Harvest wt/unit                           ! (From Output)  
+    !CHARACTER (LEN=6)   HWUDC         ! Harvest wt/unit                           ! (From Output)  
     CHARACTER (LEN=6)   HWUMCHAR      ! Harvest wt/unit                           ! (From SeasInit) 
     CHARACTER (LEN=6)   HWUMMCHAR     ! Harvest wt/unit,mat,measured              ! (From SeasInit) 
     CHARACTER (LEN=1)   IDETD         ! Control flag,screen outputs               ! (From RunInit)  

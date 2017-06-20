@@ -448,12 +448,12 @@
         srnoad = 0.0
         srnoam = 0.0
         srnogm = 0.0
-        srnopd = 0.0
+        ! srnopd = 0.0 !issue 50
         srnuse = 0.0
         srootn = 0.0
         srwt = 0.0
         srwtgrs = 0.0
-        srwud = 0.0
+        ! srwud = 0.0  !issue 50
         srwum = 0.0
         srwum = 0.0
         stai = 0.0
