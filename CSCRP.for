@@ -2949,11 +2949,27 @@
           ! Additional controls that not handled by CSM
           ! To get name and location of x-file to -> special controls.
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'AFILE',filea)
-          FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+          !LPM 05MAY2017 modified to allow the use of default path
+          !FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
           CALL LTRIM2 (FILEX,filenew)
           FILELEN = TVILENT(FILENEW)
-          FILENEW(FILELEN:FILELEN)= 'X'
-          FILEX = FILENEW
+          !FILENEW(FILELEN:FILELEN)= 'X'
+          !FILEX = FILENEW
+          FILELEN = MAX(FILELEN-12, 0) 
+
+            IF (TVILENT(FILEADIR).GT.3) THEN
+              IF (FILEADIR(TVILENT(FILEADIR):
+     &            TVILENT(FILEADIR)).NE.SLASH)THEN
+                FILEX = FILEADIR(1:TVILENT(FILEADIR))//
+     &           SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
+              ELSE
+                FILEX = FILEADIR(1:TVILENT(FILEADIR))//
+     &           EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
+              ENDIF
+            ELSE
+              FILEX = FILENEW(1:FILELEN-12)//EXCODE(1:8)//'.'//
+     &         EXCODE(9:10)//'X'
+            ENDIF  
           ! Experimental controls
           CALL XREADC(FILEX,TN,RN,SN,ON,CN,'PHASE',cflphaseadj)
           IF (CFLPHASEADJ.NE.'N'.AND.CFLPHASEADJ.NE.'Y') THEN

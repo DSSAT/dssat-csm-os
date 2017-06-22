@@ -1,4 +1,4 @@
-﻿Module CS_First_Trans_m
+Module CS_First_Trans_m
     USE YCA_Node        ! DA 17MAR2017
     
     
