@@ -68,7 +68,9 @@ C=======================================================================
           SELECT CASE(CROP)
             CASE('BN','PN','SB','TM','PE','CH','PP','PR','C3','C4','BH',
      &              'BR','SC','VB','CP','CB','FB','CO','CT','NP','GB',
-     &              'WH','BA','MZ','SG','ML','LT','CS')
+c**WDB 12/2015     &              'WH','BA','MZ','SG','ML','LT','CS')
+C**WDB   Added sugarbeet crop code BS           
+     &              'WH','BA','MZ','SG','ML','LT','CS','BS')                  
            WRITE (*, 210) ECOTYP,ECONAM
           END SELECT
 !         ENDIF
@@ -130,9 +132,10 @@ C
           SELECT CASE (MODEL(1:5))
           CASE ('CRGRO','PRFRM')
             CALL INVRLE (FILEG,RNMODE,VARTY,VRNAME,PATHGE,ECONO)
+C**WDB 12/8/2015 added BSCER to case statement for sugarbeet model
           CASE('MLCER','MZCER','SWCER','MZIXM','SGCER',
      &         'PTSUB','RICER','TRARO','TNARO',
-     &         'SCCAN','SCCSP')
+     &         'SCCAN','SCCSP','BSCER')
             CALL INVRCE (CROP, MODEL)
           CASE ('CSCER','CSCAS')
 !           CALL INVRCS

@@ -51,6 +51,7 @@ C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 !  05/10/2017 CHP removed SALUS model
+!  12/01/2015 WDB added Sugarbeet
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -84,6 +85,7 @@ C-----------------------------------------------------------------------
 !         'RIORZ' - IRRI ORYZA Rice model
 !         'WHAPS' - APSIM N-wheat
 !         'PRFRM' - Perennial forage model
+!         'BSCER' - Sugarbeet
 C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -419,6 +421,22 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 
         IF (DYNAMIC < RATE) THEN
 !          KTRANS = KCAN + 0.15        !Or use KEP here??
+          KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
+          KSEVAP = KEP        
+        ENDIF
+
+!     -------------------------------------------------
+!     Sugarbeet
+      CASE('BSCER')
+        CALL BS_CERES (CONTROL, ISWITCH,              !Input
+     &     EOP, HARVFRAC, NH4, NO3, SKi_Avail,            !Input
+     &     SPi_AVAIL, SNOW,                               !Input
+     &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
+     &     CANHT, HARVRES, KCAN, KEP, MDATE,              !Output
+     &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
+     &     STGDOY, FracRts,UNH4,UNO3,XLAI, XHLAI)          !Output
+
+        IF (DYNAMIC < RATE) THEN
           KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
           KSEVAP = KEP        
         ENDIF

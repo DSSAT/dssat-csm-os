@@ -628,7 +628,11 @@ C-----------------------------------------------------------------------
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
      &                    P1,P2,P5,G2,G3,PHINT     
-     
+!WDB 7/2016 Added new coefficients for sugar beets
+        CASE('BSCER')
+		  WRITE (LUNIO,1802,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
+     &                    P1,P2,P5,G2,G3,PHYL1,PHYL2,FRSUG,DRCER  
+            
 !       Ixim maize
         CASE('MZIXM')
             WRITE (LUNIO,1801,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
@@ -804,6 +808,7 @@ C     &        1X,F5.2,19(1X,F5.1))
      &       F6.2, F6.2, F6.2, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
      &       F6.3, F6.0, F6.0)
  1801 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2),2(F6.1),I4)
+ 1802 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),5(F6.2))     
  1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,4(F6.1))
 C-GH 1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,2(F6.1))
  1901 FORMAT (2F6.2)

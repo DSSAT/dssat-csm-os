@@ -1,6 +1,10 @@
 
       REAL          P1,P1V,P1D,P2,P2O,P2R,P3,P4,P5,G1,G2,G3,G4,G5,G0
       REAL          PHINT,PD,TC,O1,GPROT,LT50H,AX,LX,PANTH
+      
+!WDB 7/2016 added additional cultivar coefficients for sugar beet
+      REAL          PHYL1,PHYL2,FRSUG,DRCER
+!WDB end change            
       INTEGER       LFN
 
 !     For CSCAS-cassava
@@ -60,6 +64,8 @@
      &        , P6, P7, P8
      &        , GRNOW, GRWTX, SHWMS
      &        , GNOWT, GWTS, SHWTS, LAFV, LAFR
+!WDB Add new sugarbeet coefficients
+     &        , PHYL1, PHYL2, FRSUG, DRCER
 
       COMMON /GEN02/PD,TC,GPROT,LT50H
       COMMON /GEN03/CSDVAR,PHTHRS,SDPDVR,SLAVAR,LFMAX,XFRUIT,WTPSD,
