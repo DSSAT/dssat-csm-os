@@ -1,26 +1,26 @@
-C=======================================================================
-C   Subroutine Aloha_Pineapple
-C
-C   ALOHA-PINEAPPLE MODEL (formerly PIALO980.EXE)
-C
-C   August 1997
-C
-C
-C   Aloha-Pineapple model developed by Jingbo Zhang and Duane Bartholomew
-C   using some routines of ceres-maize model developed by Ritchie,Kiniry,
-C   Jones,Kneivel,Singh and others in July, 1988. 
-C   IBSNAT DSSAT I/O structures adapted from Soygro by C. Zickos
-C   and D. Godwin, ifdc.
-C
-C   Version 3.5 has :
-C
-C   1. Population effects on leaf growth, fruit development,
-C      and fruit yield.
-C   2. Weather effects on growth and development.
-C   3. Initial plant size effect on growth.
-C   4. Plant size at the time of forcing on fruit size and fruit yield.
-C   5. Water balance and nitrogen balance have not been tested.
-C
+!=======================================================================
+!   Subroutine Aloha_Pineapple
+!
+!   ALOHA-PINEAPPLE MODEL (formerly PIALO980.EXE)
+!
+!   August 1997
+!
+!
+!   Aloha-Pineapple model developed by Jingbo Zhang and Duane Bartholomew
+!   using some routines of ceres-maize model developed by Ritchie,Kiniry,
+!   Jones,Kneivel,Singh and others in July, 1988. 
+!   IBSNAT DSSAT I/O structures adapted from Soygro by C. Zickos
+!   and D. Godwin, ifdc.
+!
+!   Version 3.5 has :
+!
+!   1. Population effects on leaf growth, fruit development,
+!      and fruit yield.
+!   2. Weather effects on growth and development.
+!   3. Initial plant size effect on growth.
+!   4. Plant size at the time of forcing on fruit size and fruit yield.
+!   5. Water balance and nitrogen balance have not been tested.
+!
 !----------------------------------------------------------------------
 !  Revision history
 !  (see history above)
@@ -30,10 +30,11 @@ C
 C=======================================================================
 
       Subroutine Aloha_Pineapple(CONTROL, ISWITCH, 
-     &    SOILPROP, SW, WEATHER, YRPLT,   !Input
-     &    MDATE)      !Output
-      USE Aloha_mod
+     &    HARVFRAC, NH4, NO3, SOILPROP, SW, WEATHER,      !Input
+     &    YRPLT,                                          !Input
+     &    MDATE)                                          !Output
 
+      USE Aloha_mod
       IMPLICIT NONE
       SAVE
 
@@ -42,9 +43,10 @@ C=======================================================================
 !      REAL      SEEDNI,WTNLF,WTNST,WTNSH,WTNRT,WTNLO
 
       CHARACTER*1 ISWWAT, ISWNIT
-      INTEGER EDATE, ISTAGE, YRDOY, YRPLT, I, MDATE
+      INTEGER EDATE, ISTAGE, YRDOY, YRPLT, I, MDATE, ISDATE, PMDATE
 !      INTEGER ICSDUR, 
       INTEGER, DIMENSION(20) :: STGDOY
+      REAL HARVFRAC(2)
       REAL    LN, CRWNWT, FRTWT  
 !      REAL    FLRWT, GROSK, YIELD, SENLA, SLAN
       REAL    LFWT, STMWT, GPSM, GPP
@@ -54,17 +56,16 @@ C=======================================================================
 !      REAL    TCNP, ROOTN, GRAINN, GNP, XGNP, APTNUP, GNUP, TOTNUP
       REAL    GRORT, XSTAGE
       REAL, DIMENSION(6)  :: SI1, SI2, SI3, SI4
-      REAL, DIMENSION(NL) :: SW
-      REAL, DIMENSION(NL) :: RLV
+      REAL, DIMENSION(NL) :: NH4, NO3, RLV, SW
 
       REAL      CANNAA,CANWAA
       REAL      DTT
-!      REAL    CUMDTT,SUMDTT,SDWTAH,BWAH, 
+      REAL    CUMDTT, SUMDTT      !,SDWTAH,BWAH, 
       REAL      XLAT
 !temp      REAL      EP, EP1, TRWU, RWUEP1
       REAL      SWFAC, TURFAC, TRNU
 
-      REAL      PLTPOP,   TBASE
+      REAL      PLTPOP,   TBASE, STOVER, WTINITIAL, YIELD
 
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -123,6 +124,7 @@ C-----------------------------------------------------------------------
       ISWWAT = ISWITCH % ISWWAT
       ISWNIT = ISWITCH % ISWNIT
 
+      CUMDTT = 0.0
 
       !
       ! Initialze stress indices
@@ -133,6 +135,8 @@ C-----------------------------------------------------------------------
          SI3(I) = 0.0
          SI4(I) = 0.0
       END DO
+
+      SWFAC = 1.0
 
 C-----------------------------------------------------------------------
 C     Call IPIBS .. Read in IBSNAT31.INP file
@@ -145,24 +149,34 @@ C-----------------------------------------------------------------------
       PLTPOP = PLANTING % PLTPOP
 
 C-----------------------------------------------------------------------
-C     Call PHENOLGY initialization routine
+C     Call PHENOLOGY initialization routine
 C-----------------------------------------------------------------------
 
-      CALL Aloha_GROSUB  (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, TBASE, TURFAC, WEATHER,        !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, LAI,    !Output
-     &    LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT, TRNU)    !Output
-
       CALL Aloha_PHENOL (CONTROL, ISWITCH,
-     &    SW, WEATHER, SOILPROP,          !Input
-     &    DTT, ISTAGE, MDATE, STGDOY, TBASE, XSTAGE)   !Output
+     &    SW, WEATHER, SOILPROP,                              !Input
+     &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
+     &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
+
+      CALL Aloha_GROSUB  (CONTROL, 
+     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
+     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
+     &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
+
+      CALL Aloha_ROOTGR (CONTROL,
+     &     CUMDTT, DTT, GRORT, ISTAGE, ISWITCH, NO3, NH4,     !Input
+     &     SOILPROP, SW, SWFAC,                               !Input
+     &     RLV, RTDEP, RTWT)                                  !Output
 
       CALL Aloha_OpGrow (CONTROL, ISWITCH,  
      &   BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, 
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
-
+      CALL Aloha_OPHARV(CONTROL, 
+     &   BIOMAS, GPSM, GPP, HARVFRAC, ISDATE, MDATE,      !Input
+     &   PMDATE, STGDOY, STOVER, WTINITIAL, YIELD,        !Input
+     &   YRDOY, YRPLT)                                    !Input
 
 !=======================================================================
 C     Beginning of daily simulation loop
@@ -178,7 +192,7 @@ C        MDATE = Maturity Date
 C        YRDOY = Year - Day of Year (Dynamic Variable)
 C-----------------------------------------------------------------------
 
-         EDATE = STGDOY(9)
+!         EDATE = STGDOY(9)
 
 !temp chp
 !!     Calculate daily SW stress factors.
@@ -217,17 +231,34 @@ C-----------------------------------------------------------------------
 C        FDINT = 1.0 - EXP(-(KCAN+0.1)*XHLAI)
 
 C-----------------------------------------------------------------------
-C        Generic WATer BALance routine implemented in CERES and CROPGRO
-C-----------------------------------------------------------------------
 
-         IF (ISWWAT .EQ. 'Y') THEN
+!         IF (ISWWAT .EQ. 'Y') THEN
             !
             !  WRESR growth and depth routine
             !
-            IF (GRORT .GT. 0.0) THEN
-   !            CALL ROOTGR (ISWNIT,GRORT)
-              RTDEP = 0.0  !TEMPORARY UNTIL THIS COMES FROM ROOTGR
-            ENDIF
+   !         IF (GRORT .GT. 0.0) THEN
+              CALL Aloha_ROOTGR (CONTROL,
+     &     CUMDTT, DTT, GRORT, ISTAGE, ISWITCH, NO3, NH4,     !Input
+     &     SOILPROP, SW, SWFAC,                               !Input
+     &     RLV, RTDEP, RTWT)                                  !Output
+   !         ENDIF
+!         ENDIF
+
+C-----------------------------------------------------------------------
+C        Call GROSUB
+C----------------------------------------------------------------------
+      
+!        IF (ISTAGE .LT. 6) THEN
+           CALL Aloha_GROSUB  (CONTROL, 
+     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
+     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
+     &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
+!        ENDIF
+
+         IF (YRDOY .EQ. STGDOY(3)) THEN
+            CANNAA = STOVN*PLTPOP
+            CANWAA = BIOMAS
          ENDIF
 
 C-----------------------------------------------------------------------
@@ -236,25 +267,14 @@ C-----------------------------------------------------------------------
 
         IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
            CALL Aloha_PHENOL (CONTROL, ISWITCH, 
-     &    SW, WEATHER, SOILPROP,          !Input
-     &    DTT, ISTAGE, MDATE, STGDOY, TBASE, XSTAGE)  !Output
+     &    SW, WEATHER, SOILPROP,                              !Input
+     &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
+     &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
         ENDIF
+         write(4444,'(i7,i5,2F10.4,F8.2)') 
+     &     yrdoy, istage, DTT, SUMDTT, TBASE
 
-C-----------------------------------------------------------------------
-C        Call GROSUB
-C----------------------------------------------------------------------
-      
-!        IF (ISTAGE .LT. 6) THEN
-           CALL Aloha_GROSUB  (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, TBASE, TURFAC, WEATHER,        !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, LAI,    !Output
-     &    LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT, TRNU)    !Output
-!        ENDIF
-
-         IF (YRDOY .EQ. STGDOY(3)) THEN
-            CANNAA = STOVN*PLTPOP
-            CANWAA = BIOMAS
-         ENDIF
+        CUMDTT = CUMDTT + DTT
 
 !=======================================================================
 C        Call daily output subroutine
@@ -267,6 +287,11 @@ C-----------------------------------------------------------------------
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
+      CALL Aloha_OPHARV(CONTROL, 
+     &   BIOMAS, GPSM, GPP, HARVFRAC, ISDATE, MDATE,      !Input
+     &   PMDATE, STGDOY, STOVER, WTINITIAL, YIELD,        !Input
+     &   YRDOY, YRPLT)                                    !Input
+
 !=======================================================================
 C     Call end of season output routine
 C-----------------------------------------------------------------------
@@ -277,17 +302,10 @@ C-----------------------------------------------------------------------
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
-
-!      CALL OPHARV (TRTNO,YRDOY,YRSIM,YRPLT,CROP,CROPD,
-!     &   WTNSD,NAP,TOTIR,CRAIN,CET,TRUNOF,PESW,TDRAIN,TSON,TSOC,TLCH,
-!     &   NAPNIT,ISDATE,MDATE,YIELD,SKERWT,GPSM,GPP,MAXLAI,
-!     &   PBIOMS,STOVER,XGNP,TOTNUP,APTNUP,GNUP,BIOMAS,
-!     &   NYRS,FLDNAM,EXPER,WTNFX,WTNCAN,TSIN,WTNUP,NREP,AMTNIT,
-!     &   SDWTAM,TITLET,STGDOY,ENAME,SDWT,
-!     &   ROTNO,ROTOPT,CRPNO,SDRATE,TOPWT,AMTRES,HBPC,FBIOM,EYEWT,
-!     &   PMDATE,FHDATE,WTINITIAL,BWAH,SDWTAH,
-!     &   TSEDM,TRON,TOTPST,H2OLOS,SEPLOS,CHMCOD,ISENS)
-
+      CALL Aloha_OPHARV(CONTROL, 
+     &   BIOMAS, GPSM, GPP, HARVFRAC, ISDATE, MDATE,      !Input
+     &   PMDATE, STGDOY, STOVER, WTINITIAL, YIELD,        !Input
+     &   YRDOY, YRPLT)                                    !Input
 
 !=======================================================================
       END SELECT

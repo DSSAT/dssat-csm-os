@@ -13,8 +13,9 @@ C  5. Modified for MILLET model                   W.T.B.      MAY 94
 C=======================================================================
 
       SUBROUTINE Aloha_PHENOL (CONTROL, ISWITCH,
-     &    SW, WEATHER, SOILPROP,          !Input
-     &    DTT, ISTAGE, MDATE, STGDOY, TBASE, XSTAGE)                 !Output
+     &    SW, WEATHER, SOILPROP,                              !Input
+     &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
+     &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
 
       USE Aloha_mod
       IMPLICIT    NONE
@@ -32,7 +33,7 @@ C=======================================================================
 !     REAL, DIMENSION(NL) :: FBIOM
 !     REAL, DIMENSION(20) :: SI1, SI2, SI3, SI4
 
-      INTEGER      DYNAMIC, MDATE,YRSIM,HAREND
+      INTEGER      DYNAMIC, EDATE, MDATE,YRSIM,HAREND
       REAL         XSTAGE
 !TEMP      REAL         GRAINN
 
@@ -124,7 +125,7 @@ C=======================================================================
       P5 = Cultivar % P5
       P6 = Cultivar % P6
       G2 = Cultivar % G2
-      TBASE1  = 12. !????
+      TBASE1  = 16. !????
 
 !=================================================================
       CASE (RATE)
@@ -290,6 +291,7 @@ C     6 - Physiological maturity
              RETURN                     ! P6: NDAS from root initiation to first leaf emerged
           ENDIF
           STGDOY(ISTAGE) = YRDOY
+          EDATE = YRDOY
 
   !        CALL PHASEI (ISWWAT,ISWNIT)
           ISTAGE  = 1
@@ -385,6 +387,7 @@ C     6 - Physiological maturity
              RETURN                        ! P4: GDD needed to complete this stage
           ENDIF
           FHDATE = YRDOY                   ! Fruit harvest date
+          STGDOY(ISTAGE) = YRDOY
 
 !         Ready for next stage
           ISTAGE = 6
@@ -407,7 +410,7 @@ C     6 - Physiological maturity
           STGDOY(ISTAGE) = YRDOY
 
 !         Ready for next stage
-          ISTAGE = 7
+!          ISTAGE = 7
 
       END SELECT
 !-----------------------------------------------------------------

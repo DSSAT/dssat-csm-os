@@ -1,79 +1,73 @@
-C=======================================================================
-C  Aloha_ROOTGR, Subroutine
-C
-C  Determines root growth
-C-----------------------------------------------------------------------
-C  Revision history
-C
-C  1. Written
-C  2  Modified by                           E. Alocilja & B. Baer 9-88
-C  3  Modified by                           T. Jou                4-89
-C  4. Header revision and minor changes             P.W.W.      2-8-93
-C  5. Added switch block, etc.                      P.W.W.      2-8-93
-C  6. Simplified the RLNEW calculation and slowed
-C     the growth of roots in deeper soils.   J.T.R. & B.D.B.   6-20-94
-C-----------------------------------------------------------------------
-C  INPUT  : None
-C
-C  LOCAL  : RLDF,RNFAC,RLNEW,SWDF,TRLDF,RNLF,L,L1
-C
-C  OUTPUT : None
-C-----------------------------------------------------------------------
-C  Called : WATBAL
-C
-C  Calls  : None
-C-----------------------------------------------------------------------
-C                         DEFINITIONS
-C
-C  L,L1   : Loop counter
-C  RLDF() : A root length density factor for soil layer L used to calculate
-C           new root growth distribution - unitless
-C  RLNEW  : New root length to be added to the total root system length -
-C           cm.  root per sq. cm. ground
-C  RNFAC  : Zero to unity factor describing mineral N availability effect on
-C           root growth in Layer L
-C  RNLF   : Intermediate factor used to calculate distribution of new root
-C           growth in the soil - unitless value between 0 and 1
-C  SWDF   : Soil water deficit factor for Layer L used to calculate root
-C           growth and water uptake - unitless value between 0 and 1
-C  TRLDF  : An intermediate calculation used to calculate distribution of
-C           new root growth in soil
-C=======================================================================
+!=======================================================================
+!  Aloha_ROOTGR, Subroutine
+!
+!  Determines root growth
+!-----------------------------------------------------------------------
+!  Revision history
+!
+!  Written
+!  09/1988 Modified by E. Alocilja & B. Baer 
+!  04/1989 Modified by T. Jou  
+!  02/08/1993 PWW Added switch block,  Header revision and minor changes
+!  06/20/1994 JTR, BDB Simplified the RLNEW calculation and slowed
+!                  the growth of roots in deeper soils.   
+!  06/25/2017 CHP Adpated for CSM v4.6
+!-----------------------------------------------------------------------
+!                         DEFINITIONS
+!
+!  L,L1   : Loop counter
+!  RLDF() : A root length density factor for soil layer L used to calculate
+!           new root growth distribution - unitless
+!  RLNEW  : New root length to be added to the total root system length -
+!           cm.  root per sq. cm. ground
+!  RNFAC  : Zero to unity factor describing mineral N availability effect on
+!           root growth in Layer L
+!  RNLF   : Intermediate factor used to calculate distribution of new root
+!           growth in the soil - unitless value between 0 and 1
+!  SWDF   : Soil water deficit factor for Layer L used to calculate root
+!           growth and water uptake - unitless value between 0 and 1
+!  TRLDF  : An intermediate calculation used to calculate distribution of
+!           new root growth in soil
+!=======================================================================
 
-      SUBROUTINE Aloha_ROOTGR (ISWNIT,GRORT)
+      SUBROUTINE Aloha_ROOTGR (CONTROL,
+     &     CUMDTT, DTT, GRORT, ISTAGE, ISWITCH, NO3, NH4,     !Input
+     &     SOILPROP, SW, SWFAC,                               !Input
+     &     RLV, RTDEP, RTWT)                                  !Output
 
+      USE Aloha_mod
       IMPLICIT  NONE
-
-      INCLUDE  'GEN1.BLK'
-      INCLUDE  'GEN2.BLK'
-      INCLUDE  'GEN3.BLK'
-      INCLUDE  'NTRC2.BLK'
-
-      CHARACTER ISWNIT*1
-      REAL      RLDF(20),RNFAC,RLNEW,SWDF,TRLDF,RNLF,GRORT
-      INTEGER   L,L1
-
       SAVE
 
-!     from phenology: - SOME OF THESE ONLY ONCE, SOME EVERY DAY - NEED TO SPLIT THIS
-      SELECT CASE (ISTAGE)
-        CASE (1)
-!         once only
-          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
-        CASE (8)
-!         once only
-          RTDEP  = SDEPTH               ! Rooting depth = seeding depth (cm)
-        CASE (9)
-!         once only
-          RTWT   =  0.0
-!         every day (?)
-          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
-      END SELECT
+      INTENT(IN) :: CONTROL, 
+     &     CUMDTT, DTT, GRORT, ISTAGE, ISWITCH, NO3, NH4,     !Input
+     &     SOILPROP, SW, SWFAC                                !Input
+      INTENT(OUT):: RLV, RTDEP, RTWT
 
-      IF (ISWWAT .EQ. 'N') RETURN
+      CHARACTER ISWNIT*1
+      REAL      RNFAC,RLNEW,SWDF,TRLDF,RNLF,GRORT, RTWT, RTDEP, CUMDEP
+      REAL  PLTPOP, DTT, CUMDTT, DEPFAC, SWFAC
+      REAL, DIMENSION(NL) :: RLDF, RLV, DLAYR, ESW, SW, NO3, NH4
+      INTEGER   L,L1, ISTAGE, DYNAMIC, NLAYR
+
+      TYPE (ControlType) CONTROL
+      TYPE (SoilType) SOILPROP
+      TYPE (SwitchType) ISWITCH
+
+      DLAYR = SOILPROP % DLAYR
+      DYNAMIC = CONTROL % DYNAMIC
+
+!=======================================================================
+      SELECT CASE (DYNAMIC)
+!=======================================================================
+      CASE (RUNINIT, SEASINIT)
+!=======================================================================
+      RTWT   =  0.0
+      RTDEP  = Planting % SDEPTH               ! Rooting depth = seeding depth (cm)
+
       CUMDEP = 0.0
       DO L = 1, NLAYR
-         CUMDEP = CUMDEP + DLAYR(L)
+         CUMDEP = CUMDEP + SOILPROP % DLAYR(L)
          RLV(L) = 0.20*PLTPOP/DLAYR (L)
          IF (CUMDEP .GT. RTDEP) EXIT
       END DO
@@ -86,39 +80,58 @@ C=======================================================================
          END DO
       ENDIF
 
+      PLTPOP = Planting % PLTPOP
+      NLAYR  = SOILPROP % NLAYR
+
+      DO L = 1, NLAYR
+        ESW(L) = SOILPROP % DUL(L) - SOILPROP % LL(L)
+      ENDDO
+
+!=======================================================================
+      CASE (RATE)
+!=======================================================================
+!     from phenology: - SOME OF THESE ONLY ONCE, SOME EVERY DAY - NEED TO SPLIT THIS
+      SELECT CASE (ISTAGE)
+        CASE (1,9)
+          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
+      END SELECT
+
+      IF (GRORT < 0.0001) RETURN
 C
 C     The small differences between root length/weight ratios used in earlier
 C     models were insignificant considering the uncertainty of the value
 C     and the uncertainty of loss of assimilate by exudation and respiration.
 C     A compromise value of 0.98 was choosen for all crops.
 C
-C     RLNEW  = GRORT * 0.98 * PLTPOP              ! A compromise value -- JTR
-      RLNEW  = GRORT * RLWR * PLTPOP              ! Read in from species value
+      RLNEW  = GRORT * Species % RLWR * PLTPOP              ! Read in from species value
+
       CUMDEP = 0.0
       RNFAC  = 1.0
-      L      = 0
+      SWDF = 1.0
 
+      L = 0
       DO WHILE ((CUMDEP .LT. RTDEP) .AND. (L .LT. NLAYR))
-         L = L + 1
-         CUMDEP = CUMDEP + DLAYR(L)
-         IF (SW(L)-LL(L) .LT. 0.25*ESW(L)) THEN
-            SWDF = 4.0*(SW(L)-LL(L))/ESW(L)
+        L = L + 1
+        CUMDEP = CUMDEP + DLAYR(L)
+        IF (ISWITCH % ISWWAT .NE. 'N') THEN
+          IF (SW(L) - SOILPROP % LL(L) .LT. 0.25*ESW(L)) THEN
+            SWDF = 4.0 * (SW(L) - SOILPROP % LL(L)) / ESW(L)
             IF (SWDF .LT. 0.0) THEN
-               SWDF = 0.0
+              SWDF = 0.0
             ENDIF
           ELSE
             SWDF = 1.0
-         ENDIF
+          ENDIF
 C
-C        Made all crops so that RNFAC is constrained between 0.01 and 1.0;
-C        on page 94 of Jones & Kiniry book the minimum is 0.01. - WTB
+C         Made all crops so that RNFAC is constrained between 0.01 and 1.0;
+C         on page 94 of Jones & Kiniry book the minimum is 0.01. - WTB
 C
-         IF (ISWNIT .NE. 'N') THEN
+          IF (ISWITCH % ISWNIT .NE. 'N') THEN
             RNFAC = 1.0 - (1.17*EXP(-0.15*(NO3(L)+NH4(L))))
             RNFAC = AMAX1 (RNFAC,0.01)
-         ENDIF
-
-         RLDF(L) = AMIN1(SWDF,RNFAC)*SHF(L)*DLAYR (L)
+          ENDIF
+        ENDIF
+        RLDF(L) = AMIN1(SWDF,RNFAC) * SOILPROP % WR(L) * DLAYR(L)
       END DO
 
       L1 = L
@@ -130,13 +143,14 @@ C     restricts the rate of downward movement of roots with the soil property
 C     -- root weighting factor -- to account for greater difficulty in growing
 C     downward in hard soil. Changes made by JTR 6/16/94.
 C
+      DEPFAC = SQRT(SOILPROP % WR(L) * AMIN1(SWFAC * 2.0, SWDF))
       IF (CUMDTT .LT. 275.0) THEN                                ! JTR 6/17/94
-         RTDEP = RTDEP + DTT*0.1*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
+         RTDEP = RTDEP + DTT * 0.1 * DEPFAC
        ELSE
-         RTDEP = RTDEP + DTT*0.2*SQRT(SHF(L)*AMIN1(SWFAC*2.0,SWDF))
+         RTDEP = RTDEP + DTT * 0.2 * DEPFAC
       ENDIF
 
-      RTDEP    = AMIN1 (RTDEP,DEPMAX)                            
+      RTDEP    = AMIN1 (RTDEP, SOILPROP % DS(NLAYR))                            
       RLDF(L1) = RLDF(L1)*(1.0-(CUMDEP-RTDEP)/DLAYR(L1))
       TRLDF    = 0.0
 
@@ -153,5 +167,10 @@ C
          END DO
       ENDIF
 
+!=======================================================================
+      END SELECT
+!=======================================================================
       RETURN
       END SUBROUTINE Aloha_ROOTGR
+!=======================================================================
+!=======================================================================

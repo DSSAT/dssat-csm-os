@@ -49,9 +49,10 @@ C  TTMP   :
 C=======================================================================
 
       SUBROUTINE Aloha_GROSUB (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, TBASE, TURFAC, WEATHER,        !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, LAI,    !Output
-     &    LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT, TRNU)    !Output
+     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
+     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
+     &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
 
       USE Aloha_mod
       IMPLICIT  NONE
@@ -71,6 +72,7 @@ C=======================================================================
 !     REAL    APTNUP, RANC, GNP, NFAC, RCNP, 
 !     REAL    TANC, VANC, VMNC, TMNC
 
+      CHARACTER*6, PARAMETER :: ERRKEY ='GROSUB'
       CHARACTER*78 MSG(2)
       INTEGER I, ISTAGE, ISTAGE_old, IDURP, YRDOY 
       INTEGER STGDOY(20)

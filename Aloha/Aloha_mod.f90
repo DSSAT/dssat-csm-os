@@ -7,8 +7,6 @@
 !     Contains data definitions for Aloha Pineaple model
       USE ModuleDefs
 
-      CHARACTER*6, PARAMETER :: ERRKEY = 'ALOHA '
-
 !     Data construct for control variables
       TYPE AlohaCul_type
         CHARACTER*6 VARNO,ECONO
@@ -124,7 +122,7 @@
     Species % CO2X(7) = 770. ; Species % CO2Y(7) = 1.13
     Species % CO2X(8) = 880. ; Species % CO2Y(8) = 1.16
     Species % CO2X(9) = 990. ; Species % CO2Y(9) = 1.18
-    Species %  CO2X(10)=9999.; Species % CO2Y(10)= 1.25
+    Species % CO2X(10)=9999. ; Species % CO2Y(10)= 1.25
 
       RETURN
       END SUBROUTINE Aloha_IPCROP

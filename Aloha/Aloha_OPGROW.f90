@@ -19,13 +19,13 @@
       LOGICAL FEXIST
       REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV , PS2_AV, KST_AV
       REAL SWFAC, TURFAC, NSTRES, SATFAC, PSTRES1, PSTRES2, KSTRES
-      REAL LFWT, PLTPOP, SDWT, GRNWT, XLAI, LAI, GPSM, CRWNWT, GPP, TRNU, LEAFNO, LN
+      REAL LFWT, PLTPOP, SDWT, GRNWT, XLAI, LAI, GPSM, CRWNWT, GPP, TRNU, LN
       REAL GM2KG, SHELPC, SHELLW, SDSIZE, HI, BIOMAS, VWAD, STMWT
       REAL RTWT, RTDEP, RLV(NL)
       REAL FRTWT, BASLFWT, SKWT !, RSTAGE
       REAL STOVN, GRAINN, STOVWT, ROOTN, WTNVEG, WTNGRN, PCNVEG, PCNGRN
 
-      INTEGER I
+      INTEGER I, LEAFNO
       INTEGER DAP,YRPLT,YRDOY
       INTEGER DAS
       INTEGER COUNT, FROP, MDATE, YEAR, DOY
@@ -62,7 +62,7 @@
         CALL GETLUN('PlantN.OUT'  , NOUTPN)
 
 !not used -need to remove from output
-    SATFAC = 1.0 
+    SATFAC = 0.0 
     CANHT  = 0.0 
     CANWH  = 0.0 
     GRNWT  = 0.0
@@ -227,7 +227,7 @@
             ! ELSE
             !   RSTAGE = 0.0
             !ENDIF
-            SDWT = GRNWT
+            SDWT = GRNWT    !CONTRADICTS PREVIOUS CALC
             
 !           GM2KG converts gm/plant to kg/ha
             GM2KG  = PLTPOP * 10.0
@@ -247,6 +247,17 @@
             
             VWAD = NINT(WTLF*10. + STMWT*10.)
 
+!!Not yet used but could be:
+!!      IF (CROP .EQ.'PI') THEN
+!         YIELDB = YIELD/0.8914         ! Fresh fruit yield (lb/acre)
+!!      ELSE
+!!         YIELDB = SDWT*10.0/ACREFC * 2.2046
+!!      ENDIF
+!      PEYEWT = EYEWT*1000.          ! Eye weight (mg/eye)
+
+
+
+
 !*** Note: PCNL is calculated below - need to move the N stuff up if some of the
 !   variables are printed here.
 
@@ -263,7 +274,7 @@
                 (RTDEP/100),(RLV(I),I=1,10)
  400          FORMAT (1X,I4,1X,I3.3,2I6,1X,F6.1,1X,I6,1X,F6.2,7(1X,I6),           &
                 1X,F6.3,2(1X,I6),3(1X,F6.3),2(1X,F6.2),1X,F6.1,          &
-                2(1X,F6.2),1X,F6.3,11(1X,F6.2))
+                2(1X,F5.2),1X,F5.3,F7.4,10(1X,F5.2))
 
 !-------------------------------------------------------------------------
 !           VSH CSV output corresponding to PlantGro.OUT
