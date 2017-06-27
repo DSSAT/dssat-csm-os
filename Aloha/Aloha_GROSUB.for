@@ -248,122 +248,6 @@ C=======================================================================
 !     5 - Fruit growth
 !     6 - Physiological maturity
 !-----------------------------------------------------------------
-      IF (ISTAGE /= ISTAGE_old) THEN
-        ISTAGE_OLD = ISTAGE
-
-!       New stage initialization
-        SELECT CASE (ISTAGE)
-        CASE (1)
-          PLAG    = 0.0                 ! PLAG (cm^2) is daily green leaf area growth
-  !        LAI     = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
-  !        LFWT    = WTINITIAL*0.53      ! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
-          RTWT    = 0.20                ! RTWT (g/plant) is root weight
-  !        STMWT   = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
-  !        BASLFWT = LFWT*0.66           ! Basal white leaf weight is 66% of green leaf weight
-          FLRWT   = 0.0                 ! Inflorescence weight is set to 0.0
-  !        STOVWT  = WTINITIAL           ! STOVWT (g/plant) is stover weight
-          FLRWT   = 0.0
-          GROSTM  = 0.0                 ! GROSTM (g/plant/day) is daily stem growth
-          SENLA   = 0.0                 ! SENLA (cm2/plant) is area of leaf senesces due to stress on a given day
-          SLAN    = 0.0                 ! SLAN (cm2/plant) is total normal leaf senescence since emergence.
-          GRORT   = 0.0                 ! GRORT (g/plant/day) is daily root growth
-          GROBSL  = 0.0                 ! GROBSL (g/plant/day) is daily basal leaf growth
-          GROLF   = 0.0                 ! GROLF (g/plant/day) is daily green leaf growth
-          CUMPH   = 0.514               ! CUMPH (leaves/plant) is number of leaves emerged
-          LN      = 1                   ! LN (leaves/plant) is leaf number
-          CUMDEP  = 0.0                 ! variable used in CERES-MAIZE
-
-        CASE (2)
-          GROSTM = 0.0                   ! Daily stem growth (g/plant/day).
-
-        CASE (3)
-          IF (NFORCING .GE. 2) THEN
-             ! Forcing by number of days after planting
-             PLANTSIZE = TOTPLTWT
-          ELSE    
-             PLANTSIZE = PLANTING % PLANTSIZE
-          ENDIF
-          FBIOM  = BIOMAS               ! Record biomass at forcing
-          SUMP   = 0.0                  ! SUMP is the total weight of biomass cumulated in Istage 4.
-          IDURP  = 0                    ! Duration of stage 3 (days)
-          PLAMX  = PLA                  ! PLAMX (cm2/plant) is maximal green leaf area.  PLA is total green leaf area.
-          GROFLR = 0.0
-          GROCRWN= 0.0
-          GROFRT = 0.0
-          FLRWT  = 0.0
-          FRTWT  = 0.0
-          CRWNWT = 0.0
-
-        CASE (4)
-          MAXLAI      = LAI               ! MaxLAI = LAI at the end of the stage
-C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^2)
-          PHOTOSYNEYE = SUMP*1000./IDURP  ! Average photosysnthesis rate of fruit eye
-
-          GPP    = G2*(PHOTOSYNEYE/12000+0.43)*
-     &             (0.7+0.3*PLANTSIZE/550.)
-          GPP    = AMIN1 (GPP,G2)                ! G2 is genetic coefficient for potential eye number
-          GPP    = AMAX1 (GPP,0.0)
-          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
-
-          FLRWT  =  0.1*STMWT           ! FLRWT stands for the weight ofwhole inflorescence STMWT is stem weight.  Both are in gram/plant.
-          SKWT   =  0.0
-          GROSK  =  0.0
-          PTF    =  1.0                 ! PTF is plant top fraction in gram/plant.
-          EYEWT  =  0.0                 ! EYEWT (G/eye) is weight of the eye
-!temp          VANC   = TANC                 ! Variable used in nitrogen balance
-!temp          VMNC   = TMNC                 ! .....
-
-        CASE (5)
-          FRTWT  = FLRWT*0.5            ! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
-          CRWNWT = FLRWT*0.2            ! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
-          SWMAX  = 0.0
-          SWMIN  = 0.0
-
-        CASE (6)
-          YIELD = FRTWT*10.0*FRUITS        ! fruit dry weight yield (kg/ha)
-          IF (PLTPOP .GE. 0.0) THEN
-             IF (GPP .GT. 0.0) THEN
-                EYEWT = FRTWT/GPP
-             ENDIF
-             PEYEWT = EYEWT*1000.0         ! Eye weight (mg/eye)
-             GPSM   = GPP*FRUITS           ! Number of eyes per square meter
-             STOVER = BIOMAS*10.0-YIELD    ! Total plant weight except fruit
-             YIELD  = YIELD/FDMC           ! Fresh fruit yield (kg/ha)
-             YIELDB = YIELD/0.8914         ! Fresh fruit yield (lb/acre)
-             STGDOY (ISTAGE) = YRDOY
-          ENDIF
-          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
-
-        CASE (8)
-          WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
-
-          PLA        = WTINITIAL*0.6*63.0
-          LAI        = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
-          BIOMAS     = WTINITIAL*PLTPOP
-          LFWT       = WTINITIAL*0.53      ! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
-          BASLFWT    = LFWT*0.66           ! Basal white leaf weight is 66% of green leaf weight
-          STMWT      = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
-          STOVWT     = WTINITIAL           ! STOVWT (g/plant) is stover weight
-
-          NSTRES     = 1.0
-
-!TEMP REMOVE N ROUTINES
-!          IF (ISWNIT .NE. 'N') THEN
-!             IF (FRTWT .GT. 0.0) THEN
-!                XGNP = (GRAINN/FRTWT)*100.0
-!C               XPTN = XGNP*6.25
-!                GNUP = GRAINN*FRUITS*10.0
-!             ENDIF
-!             TOTNUP = GNUP + APTNUP
-!          ENDIF
-
-        CASE (9)
-          NDEF3  =  1.0
-          NSTRES =  1.0
-          AGEFAC =  1.0
-
-        END SELECT
-      ENDIF
 
       IF (ISTAGE .GT. 5) RETURN
 
@@ -384,6 +268,8 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
       !
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
       PCARB = PCARB*PCO2
+
+      write(5551,'(i7,i5,3f10.4)') control.yrdoy, istage, pco2, par, y1
 
       TEMPM = 0.6*TMIN + 0.4*TMAX
       SELECT CASE (ISTAGE)
@@ -417,6 +303,8 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
          CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES)
       ENDIF
       DTT = AMAX1 (DTT,0.0)
+
+      write(666,'(i7,3f10.4)') control.yrdoy, pcarb, carbo, prft
 
 !-----------------------------------------------------------------
       IF (ISTAGE .LE. 3) THEN
@@ -976,6 +864,133 @@ C     Format Strings
 C-----------------------------------------------------------------------
 
  2800 FORMAT (2X,'Crop failure growth program terminated ')
+
+!=======================================================================
+C     Integration
+C-----------------------------------------------------------------------
+      CASE (INTEGR)
+!=======================================================================
+!     This code used to be in PhaseI subroutine. Put here to make timing match 
+!     with old code.
+      IF (ISTAGE /= ISTAGE_old) THEN
+        ISTAGE_OLD = ISTAGE
+
+!       New stage initialization
+        SELECT CASE (ISTAGE)
+        CASE (1)
+          PLAG    = 0.0                 ! PLAG (cm^2) is daily green leaf area growth
+  !        LAI     = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
+  !        LFWT    = WTINITIAL*0.53      ! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
+          RTWT    = 0.20                ! RTWT (g/plant) is root weight
+  !        STMWT   = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
+  !        BASLFWT = LFWT*0.66           ! Basal white leaf weight is 66% of green leaf weight
+          FLRWT   = 0.0                 ! Inflorescence weight is set to 0.0
+  !        STOVWT  = WTINITIAL           ! STOVWT (g/plant) is stover weight
+          FLRWT   = 0.0
+          GROSTM  = 0.0                 ! GROSTM (g/plant/day) is daily stem growth
+          SENLA   = 0.0                 ! SENLA (cm2/plant) is area of leaf senesces due to stress on a given day
+          SLAN    = 0.0                 ! SLAN (cm2/plant) is total normal leaf senescence since emergence.
+          GRORT   = 0.0                 ! GRORT (g/plant/day) is daily root growth
+          GROBSL  = 0.0                 ! GROBSL (g/plant/day) is daily basal leaf growth
+          GROLF   = 0.0                 ! GROLF (g/plant/day) is daily green leaf growth
+          CUMPH   = 0.514               ! CUMPH (leaves/plant) is number of leaves emerged
+          LN      = 1                   ! LN (leaves/plant) is leaf number
+          CUMDEP  = 0.0                 ! variable used in CERES-MAIZE
+
+        CASE (2)
+          GROSTM = 0.0                   ! Daily stem growth (g/plant/day).
+
+        CASE (3)
+          IF (NFORCING .GE. 2) THEN
+             ! Forcing by number of days after planting
+             PLANTSIZE = TOTPLTWT
+          ELSE    
+             PLANTSIZE = PLANTING % PLANTSIZE
+          ENDIF
+          FBIOM  = BIOMAS               ! Record biomass at forcing
+          SUMP   = 0.0                  ! SUMP is the total weight of biomass cumulated in Istage 4.
+          IDURP  = 0                    ! Duration of stage 3 (days)
+          PLAMX  = PLA                  ! PLAMX (cm2/plant) is maximal green leaf area.  PLA is total green leaf area.
+          GROFLR = 0.0
+          GROCRWN= 0.0
+          GROFRT = 0.0
+          FLRWT  = 0.0
+          FRTWT  = 0.0
+          CRWNWT = 0.0
+
+        CASE (4)
+          MAXLAI      = LAI               ! MaxLAI = LAI at the end of the stage
+C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^2)
+          PHOTOSYNEYE = SUMP*1000./IDURP  ! Average photosysnthesis rate of fruit eye
+
+          GPP    = G2*(PHOTOSYNEYE/12000+0.43)*
+     &             (0.7+0.3*PLANTSIZE/550.)
+          GPP    = AMIN1 (GPP,G2)                ! G2 is genetic coefficient for potential eye number
+          GPP    = AMAX1 (GPP,0.0)
+          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
+
+          FLRWT  =  0.1*STMWT           ! FLRWT stands for the weight ofwhole inflorescence STMWT is stem weight.  Both are in gram/plant.
+          SKWT   =  0.0
+          GROSK  =  0.0
+          PTF    =  1.0                 ! PTF is plant top fraction in gram/plant.
+          EYEWT  =  0.0                 ! EYEWT (G/eye) is weight of the eye
+!temp          VANC   = TANC                 ! Variable used in nitrogen balance
+!temp          VMNC   = TMNC                 ! .....
+
+        CASE (5)
+          FRTWT  = FLRWT*0.5            ! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
+          CRWNWT = FLRWT*0.2            ! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
+          SWMAX  = 0.0
+          SWMIN  = 0.0
+
+        CASE (6)
+          YIELD = FRTWT*10.0*FRUITS        ! fruit dry weight yield (kg/ha)
+          IF (PLTPOP .GE. 0.0) THEN
+             IF (GPP .GT. 0.0) THEN
+                EYEWT = FRTWT/GPP
+             ENDIF
+             PEYEWT = EYEWT*1000.0         ! Eye weight (mg/eye)
+             GPSM   = GPP*FRUITS           ! Number of eyes per square meter
+             STOVER = BIOMAS*10.0-YIELD    ! Total plant weight except fruit
+             YIELD  = YIELD/FDMC           ! Fresh fruit yield (kg/ha)
+             YIELDB = YIELD/0.8914         ! Fresh fruit yield (lb/acre)
+             STGDOY (ISTAGE) = YRDOY
+          ENDIF
+          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
+
+        CASE (8)
+          WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
+
+          PLA        = WTINITIAL*0.6*63.0
+          LAI        = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
+          BIOMAS     = WTINITIAL*PLTPOP
+          LFWT       = WTINITIAL*0.53      ! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
+          BASLFWT    = LFWT*0.66           ! Basal white leaf weight is 66% of green leaf weight
+          STMWT      = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
+          STOVWT     = WTINITIAL           ! STOVWT (g/plant) is stover weight
+
+          NSTRES     = 1.0
+
+!TEMP REMOVE N ROUTINES
+!          IF (ISWNIT .NE. 'N') THEN
+!             IF (FRTWT .GT. 0.0) THEN
+!                XGNP = (GRAINN/FRTWT)*100.0
+!C               XPTN = XGNP*6.25
+!                GNUP = GRAINN*FRUITS*10.0
+!             ENDIF
+!             TOTNUP = GNUP + APTNUP
+!          ENDIF
+
+        CASE (9)
+          NDEF3  =  1.0
+          NSTRES =  1.0
+          AGEFAC =  1.0
+
+        END SELECT
+      ENDIF
+
+
+
 !=======================================================================
       END SELECT
 !=======================================================================

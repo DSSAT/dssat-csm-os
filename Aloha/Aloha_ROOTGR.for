@@ -90,7 +90,7 @@
 !=======================================================================
       CASE (RATE)
 !=======================================================================
-!     from phenology: - SOME OF THESE ONLY ONCE, SOME EVERY DAY - NEED TO SPLIT THIS
+!     from phenology
       SELECT CASE (ISTAGE)
         CASE (1,9)
           RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
