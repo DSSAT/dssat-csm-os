@@ -347,6 +347,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'SGCER') .EQ. 0) .AND.    !Sorghum
      &    (INDEX(MODEL(1:5),'SCCSP') .EQ. 0) .AND.    !Sugarcane CASUPRO
      &    (INDEX(MODEL(1:5),'SCCAN') .EQ. 0) .AND.    !Sugarcane CaneGro
+     &    (INDEX(MODEL(1:5),'BSCER') .EQ. 0) .AND.    !Sugarbeet VSH
      &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND.    !Sweet corn
      &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND.    !Tanier
      &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND.    !Taro
