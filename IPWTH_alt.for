@@ -753,6 +753,7 @@ C         Read in weather file header.
       DCO2_A   = 0.0
 
       CENTURY = INT(YRSIM / 100000.)
+      CONTROL % CENTURY = CENTURY
 
       DO WHILE (.TRUE.)   !.NOT. EOF(LUNWTH)
 !       Read array of weather records for this calendar year 
@@ -846,6 +847,7 @@ C         Read in weather file header.
      &        YRDOYW_SAVE < 99366) THEN       ! & century set by program
               CENTURY = CENTURY - 1
             YRDOYW = YRDOYW - 100000
+            CONTROL % CENTURY = CENTURY
           ENDIF
 
           YRDOYWY = YRDOYW
