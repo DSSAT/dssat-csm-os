@@ -159,6 +159,7 @@ C-----------------------------------------------------------------------
 
       CALL Aloha_GROSUB  (CONTROL, 
      &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
+     &    XSTAGE,                                             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
      &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
@@ -251,6 +252,7 @@ C----------------------------------------------------------------------
 !        IF (ISTAGE .LT. 6) THEN
            CALL Aloha_GROSUB  (CONTROL, 
      &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
+     &    XSTAGE,                                             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
      &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
@@ -289,6 +291,7 @@ C----------------------------------------------------------------------
 !        IF (ISTAGE .LT. 6) THEN
            CALL Aloha_GROSUB  (CONTROL, 
      &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
+     &    XSTAGE,                                             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
      &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
