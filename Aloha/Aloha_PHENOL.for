@@ -63,7 +63,8 @@ C=======================================================================
       TMIN = WEATHER % TMIN
       TMAX = WEATHER % TMAX
 
-      LL   = SOILPROP % LL
+      LL    = SOILPROP % LL
+      NLAYR = SOILPROP % NLAYR
 
 !     7 - Preplanting
 !     8 - Planting to root initiation
@@ -91,6 +92,7 @@ C=======================================================================
       STGDOY(14) = YRSIM
       MDATE      = -99
       HAREND     = -99
+      EDATE      = 9999999
 
       TBASE      = 12.0
       !TBASV = SPECIES % TBASV

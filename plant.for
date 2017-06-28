@@ -107,7 +107,7 @@ C-----------------------------------------------------------------------
       INTEGER STGDOY(20)
 
       REAL CANHT, CO2, DAYL, EO, EOP, EORATIO, EOS, EP, ES
-      REAL KCAN, KEP, KSEVAP, KTRANS, NSTRES
+      REAL KCAN, KEP, KSEVAP, KTRANS, LAI, NSTRES
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW
       REAL TMAX, TMIN, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
@@ -549,11 +549,12 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     Pineapple - Aloha model 
       CASE('PIALO')
         CALL Aloha_Pineapple(CONTROL, ISWITCH, 
-     &    HARVFRAC, NH4, NO3, SOILPROP, SW, WEATHER,      !Input          
-     &    YRPLT,                                          !Input
-     &    MDATE)                                          !Output
+     &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SW, TRWUP,   !Input
+     &    WEATHER, YRPLT,                                 !Input
+     &    MDATE, RLV, STGDOY, LAI)                        !Output
 
-
+        XLAI  = LAI
+        XHLAI = LAI 
 !     -------------------------------------------------
       END SELECT
 

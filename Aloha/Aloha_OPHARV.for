@@ -189,20 +189,39 @@
       PlantStres % N_phot = NSTRES 
       PlantStres % P_grow = PSTRES2
       PlantStres % P_phot = PSTRES1
-      PlantStres % ACTIVE = .FALSE.
 
-      IF (ISTAGE > 0 .AND. ISTAGE < 6) THEN
+!                                                         
+!STG - DEFINITION                                         
+!  7 - Preplanting                                        
+!  8 - Planting to root initiation                        
+!  9 - Root initiation to first new leaf emergence
+!  1 - First new leaf emergence to net zero root growth
+!  2 - Net zero stem growth to forcing
+!  3 - Forcing to sepals closed on youngest flowers
+!  4 - SCY to first open flower
+!  5 - Fruit growth
+!  6 - Physiological maturity
+
+!     PlantStres % StageName     Aloha Stages active
+! 0  'Planting to Harvest    '    8,9,1,2,3,4,5,6
+! 1  'Emergence - Zero Stem  '    1
+! 2  'Zero Stem - Forcing    '    2
+! 3  'Forcing - SCY          '    3
+! 4  'SCY - Early Flwr       '    4
+! 5  'Early Flwr - Fruit Harv'    5,6
+
+      PlantStres % ACTIVE = .FALSE.
+      SELECT CASE(ISTAGE)
+      CASE(1,2,3,4,5)
         PlantStres % ACTIVE(ISTAGE) = .TRUE.
-      ENDIF
+      CASE(6)
+        PlantStres % ACTIVE(5) = .TRUE.
+      END SELECT
 
       YRDOY = CONTROL % YRDOY
       IF (YRDOY >= YRPLT) THEN
-!        IF (MDATE < 0 .OR.
-!     &     (MDATE > 0 .AND. YRDOY < MDATE)) THEN
-!          PlantStres % ACTIVE(0) = .TRUE.
-!        ENDIF
-        IF (STGDOY(20) < 0 .OR.
-     &     (STGDOY(20) > 0 .AND. YRDOY < STGDOY(20))) THEN
+        IF (MDATE < 0 .OR.
+     &     (MDATE > 0 .AND. YRDOY < MDATE)) THEN
           PlantStres % ACTIVE(0) = .TRUE.
         ELSE
           PlantStres % Active(0) = .FALSE.

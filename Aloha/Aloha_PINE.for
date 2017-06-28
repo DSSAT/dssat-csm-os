@@ -30,9 +30,9 @@
 C=======================================================================
 
       Subroutine Aloha_Pineapple(CONTROL, ISWITCH, 
-     &    HARVFRAC, NH4, NO3, SOILPROP, SW, WEATHER,      !Input
-     &    YRPLT,                                          !Input
-     &    MDATE)                                          !Output
+     &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SW, TRWUP,   !Input
+     &    WEATHER, YRPLT,                                 !Input
+     &    MDATE, RLV, STGDOY, LAI)                        !Output
 
       USE Aloha_mod
       IMPLICIT NONE
@@ -43,7 +43,7 @@ C=======================================================================
 !      REAL      SEEDNI,WTNLF,WTNST,WTNSH,WTNRT,WTNLO
 
       CHARACTER*1 ISWWAT, ISWNIT
-      INTEGER EDATE, ISTAGE, YRDOY, YRPLT, I, MDATE, ISDATE, PMDATE
+      INTEGER EDATE, ISTAGE, YRDOY, YRPLT, MDATE, ISDATE, PMDATE
 !      INTEGER ICSDUR, 
       INTEGER, DIMENSION(20) :: STGDOY
       REAL HARVFRAC(2)
@@ -55,14 +55,14 @@ C=======================================================================
 !      REAL    ANFAC, NFAC, ATANC, TANC, RANC, VANC, VMNC, TMNC, RCNP
 !      REAL    TCNP, ROOTN, GRAINN, GNP, XGNP, APTNUP, GNUP, TOTNUP
       REAL    GRORT, XSTAGE
-      REAL, DIMENSION(6)  :: SI1, SI2, SI3, SI4
+!     REAL, DIMENSION(6)  :: SI1, SI2, SI3, SI4
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SW
 
       REAL      CANNAA,CANWAA
       REAL      DTT
       REAL    CUMDTT, SUMDTT      !,SDWTAH,BWAH, 
       REAL      XLAT
-!temp      REAL      EP, EP1, TRWU, RWUEP1
+      REAL      EOP, EP1, TRWUP, RWUEP1
       REAL      SWFAC, TURFAC, TRNU
 
       REAL      PLTPOP,   TBASE, STOVER, WTINITIAL, YIELD
@@ -126,17 +126,18 @@ C-----------------------------------------------------------------------
 
       CUMDTT = 0.0
 
-      !
-      ! Initialze stress indices
-      !
-      DO I = 1, 6
-         SI1(I) = 0.0
-         SI2(I) = 0.0
-         SI3(I) = 0.0
-         SI4(I) = 0.0
-      END DO
+      !!
+      !! Initialze stress indices
+      !!
+      !DO I = 1, 6
+      !   SI1(I) = 0.0
+      !   SI2(I) = 0.0
+      !   SI3(I) = 0.0
+      !   SI4(I) = 0.0
+      !END DO
 
       SWFAC = 1.0
+      TURFAC = 1.0
 
 C-----------------------------------------------------------------------
 C     Call IPIBS .. Read in IBSNAT31.INP file
@@ -197,16 +198,20 @@ C-----------------------------------------------------------------------
 
 !temp chp
 !!     Calculate daily SW stress factors.
-      SWFAC = 1.0
-      TURFAC = 1.0
-!      IF (EP .GT. 0.0) THEN
-!        EP1 = EP*0.1
-!        IF (TRWU/EP1 .LT. RWUEP1) TURFAC = (1./RWUEP1)*TRWU/EP1
-!        IF (EP1 .GE. TRWU) THEN
-!          SWFAC = TRWU / EP1
-!          EP = TRWU * 10.0
-!        ENDIF
-!      ENDIF
+          SWFAC  = 1.0
+          TURFAC = 1.0
+          IF(ISWWAT.NE.'N' .and. YRDOY >= EDATE) THEN
+             IF (EOP .GT. 0.0) THEN
+                EP1 = EOP * 0.1
+                IF (TRWUP / EP1 .LT. RWUEP1) THEN
+                   TURFAC = (1./RWUEP1) * TRWUP / EP1
+                ENDIF
+                IF (EP1 .GE. TRWUP) THEN
+                  SWFAC = TRWUP / EP1
+                ENDIF
+             ENDIF
+          ENDIF
+
 !      CSD1   = CSD1 + 1.0 - SWFAC
 !      CSD2   = CSD2 + 1.0 - TURFAC
 !      ICSDUR = ICSDUR + 1
@@ -283,16 +288,18 @@ C     Integration
 C-----------------------------------------------------------------------
       CASE (INTEGR)
 !=======================================================================
+        CALL Aloha_ROOTGR (CONTROL,
+     &     CUMDTT, DTT, GRORT, ISTAGE, ISWITCH, NO3, NH4,     !Input
+     &     SOILPROP, SW, SWFAC,                               !Input
+     &     RLV, RTDEP, RTWT)                                  !Output
 
      
-!        IF (ISTAGE .LT. 6) THEN
-           CALL Aloha_GROSUB  (CONTROL, 
+        CALL Aloha_GROSUB  (CONTROL, 
      &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
      &    XSTAGE,                                             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
      &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
-!        ENDIF
 
 !=======================================================================
 C        Call daily output subroutine

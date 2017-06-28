@@ -49,6 +49,7 @@
       REAL  PLTPOP, DTT, CUMDTT, DEPFAC, SWFAC
       REAL, DIMENSION(NL) :: RLDF, RLV, DLAYR, ESW, SW, NO3, NH4
       INTEGER   L,L1, ISTAGE, DYNAMIC, NLAYR
+      LOGICAL FIRST
 
       TYPE (ControlType) CONTROL
       TYPE (SoilType) SOILPROP
@@ -65,21 +66,6 @@
       RTWT   =  0.0
       RTDEP  = Planting % SDEPTH               ! Rooting depth = seeding depth (cm)
 
-      CUMDEP = 0.0
-      DO L = 1, NLAYR
-         CUMDEP = CUMDEP + SOILPROP % DLAYR(L)
-         RLV(L) = 0.20*PLTPOP/DLAYR (L)
-         IF (CUMDEP .GT. RTDEP) EXIT
-      END DO
-
-      RLV(L) = RLV(L)*(1.0-(CUMDEP-RTDEP)/DLAYR(L))
-      L1 = L + 1
-      IF (L1 .LT. NLAYR) THEN
-         DO L = L1, NLAYR
-            RLV(L) = 0.0
-         END DO
-      ENDIF
-
       PLTPOP = Planting % PLTPOP
       NLAYR  = SOILPROP % NLAYR
 
@@ -87,6 +73,7 @@
         ESW(L) = SOILPROP % DUL(L) - SOILPROP % LL(L)
       ENDDO
 
+      FIRST = .TRUE.
 !=======================================================================
       CASE (RATE)
 !=======================================================================
@@ -167,6 +154,29 @@ C
          END DO
       ENDIF
 
+!=======================================================================
+!     Integration
+!-----------------------------------------------------------------------
+      CASE (INTEGR)
+!=======================================================================
+!     Initialize RLV at stage 1
+      IF (ISTAGE == 1 .AND. FIRST) THEN
+        FIRST = .FALSE.
+        CUMDEP = 0.0
+        DO L = 1, NLAYR
+           CUMDEP = CUMDEP + SOILPROP % DLAYR(L)
+           RLV(L) = 0.20*PLTPOP/DLAYR (L)
+           IF (CUMDEP .GT. RTDEP) EXIT
+        END DO
+
+        RLV(L) = RLV(L)*(1.0-(CUMDEP-RTDEP)/DLAYR(L))
+        L1 = L + 1
+        IF (L1 .LT. NLAYR) THEN
+           DO L = L1, NLAYR
+              RLV(L) = 0.0
+           END DO
+        ENDIF
+      ENDIF
 !=======================================================================
       END SELECT
 !=======================================================================
