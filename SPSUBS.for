@@ -131,8 +131,10 @@ C-----------------------------------------------------------------------
      &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
 
             IF (N_LYR < 10) THEN
-              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
-  121         FORMAT(9("    ",A2,I1,A1), A8)
+              WRITE(FMT,'(A1,I1,A)') "(",N_LYR,"(4X,A2,I1,A1))"
+              WRITE (LUN,FMT,ADVANCE='NO') ("ES",L,"D",L=1,N_LYR)
+!121         FORMAT(N_LYR("    ",A2,I1,A1))
+              WRITE(LUN,'(A8)') "    RWUD"
             ELSE
               WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
   122         FORMAT(9("    ",A2,I1,A1),A25)
@@ -241,7 +243,7 @@ C-----------------------------------------------------------------------
                 ES10 = ES10 + ES_LYR(L)
               ENDDO
               IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-              WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
+              WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10, TRWU
               END IF   ! VSH
             ENDIF    
           ELSE
