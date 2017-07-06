@@ -422,7 +422,6 @@
         !-----------------------------------------------------------------------------------------------------------------------
         
         CALL FVCHECK(SPDIRFLE,GENFLCHK)
-        CALL SPREADR (SPDIRFLE,'CRFR' ,crfr)
         CALL SPREADR (SPDIRFLE,'CO2CC',co2compc) 
         CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
         CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)

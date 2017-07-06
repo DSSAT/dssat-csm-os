@@ -90,10 +90,6 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 @SLIG%  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
 !    %  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
   10.0   2.0
-! Planting stick
-@ CRFR ! Fraction of stem growth
-!   fr
-  0.05
 ! Seed
 @ SDSZ SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole seed)
 ! g/cm     d     %
@@ -198,7 +194,6 @@ CH2O distribution/mobilization
 ! =====   ==========
 ! CHT%    Canopy ht % for lf area distribution (%)
 ! CLA%    Canopy leaf area % associated with height fraction (%)
-! CRFR    Crown growth rate as a fraction of stem growth (#)
 ! CO2CC   CO2 compensation concentration (vpm)
 ! CO2EX   Exponent for relationship between CO2 and photosynthesis (#)
 ! CO2F    CO2 factor,photosynthesis,relative (0-2)

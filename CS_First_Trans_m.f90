@@ -80,8 +80,7 @@ Module CS_First_Trans_m
     REAL    :: CO2PAV(0:12)            ! CO2 concentration in air       g/m3       ! (From SeasInit)  
     REAL    :: CO2PC                   ! CO2 concentration,tier,cumul   ppm        ! (From SeasInit)  
     REAL    :: CO2RF(10)               ! CO2 reference concentration    vpm        ! (From SeasInit)  
-    INTEGER :: COLNUM                  ! Column number                  #          ! (From Integrate) 
-    REAL    :: CRFR                    ! Plant. stick growth rate,fr stem gr #     ! (From SeasInit)  
+    INTEGER :: COLNUM                  ! Column number                  #          ! (From Integrate)   
     !REAL    :: CRRSWAD                 ! Plant. stick reserves               kg/ha ! (From Integrate) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
     !REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit) 
     !REAL    :: CRWAD                   ! Crown weight                        kg/ha ! (From SeasInit)         ! DA not used in Cassava

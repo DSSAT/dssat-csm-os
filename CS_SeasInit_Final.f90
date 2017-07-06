@@ -207,7 +207,6 @@
                 WRITE(fnumwrk,'(A15,I2,2F8.1)')'  B#->,Deg.d-> ',l,Pdl(L),PD(l)
             ENDDO  
             WRITE(fnumwrk,*)' Plant. stick stages '
-            WRITE(fnumwrk,*)'  Crfr   ',Crfr 
             WRITE(fnumwrk,*)' CH2O reserves '
             WRITE(fnumwrk,*)'  Rsfrs  ',rsfrs
             WRITE(fnumwrk,*)'  Rspco  ',rspco
