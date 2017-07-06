@@ -47,7 +47,6 @@ Module YCA_First_Trans_m
     REAL    :: BRSTAGEPREV             ! Branching stage,previous       #          ! (From SeasInit)  
     REAL    :: BRSTAGETMP              ! Branching stage                #          ! (From Growth)    
     REAL    :: CANHTG                  ! Canopy height growth           cm         ! (From SeasInit)  
-    REAL    :: CANHTS                  ! Canopy height standard         cm         ! (From SeasInit)  
     REAL    :: CARBOADJ                ! Ch2o adjustment for LAI change g/p        ! (From SeasInit)  
     REAL    :: CARBOBEG                ! Ch2o available,beginning day   g/p        ! (From SeasInit)  
     REAL    :: CARBOBEGI               ! Ch2o avail,internal co2 calc   g/p        ! (From SeasInit)  
@@ -789,8 +788,7 @@ Module YCA_First_Trans_m
     REAL    :: SENWAGS                 ! Senesced weight added to soil  kg/ha      ! (From SeasInit)  
     REAL    :: SENWAL(0:20)            ! Senesced om by layer           kg/ha      ! (From SeasInit)  
     REAL    :: SENWALG(0:20)           ! Senesced om added by layer     kg/ha      ! (From SeasInit)  
-    REAL    :: SENWL(0:20)             ! Senesced om (cumulative),layer g/p        ! (From SeasInit)  
-    REAL    :: SERX                    ! Shoot elongation rate,max      cm/Du      ! (From SeasInit)  
+    REAL    :: SENWL(0:20)             ! Senesced om (cumulative),layer g/p        ! (From SeasInit)    
     REAL    :: SESR                    ! Shoot elongation rate+reserves cm2/g      ! (From SeasInit) !LPM 21MAR2016 Added SESR   
     INTEGER :: SHDAP                   ! Shoot prodn.start DAP          #          ! (From Integrate) 
     INTEGER :: SHDAT                   ! Shoot prodn.startdate YEARDOY  #          ! (From SeasInit)  

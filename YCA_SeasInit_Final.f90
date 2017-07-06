@@ -221,7 +221,6 @@
             WRITE(fnumwrk,*)'  Brfx(4)',brfx(4)
             WRITE(fnumwrk,*)'  Brfx(5)',brfx(5)
             WRITE(fnumwrk,*)'  Brfx(6)',brfx(6)
-            WRITE(fnumwrk,*)'  Canhts ',canhts
             WRITE(fnumwrk,*)' Leaves     '
             !WRITE(fnumwrk,*)'  La1s   ',La1s       !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15
             WRITE(fnumwrk,*)'  Laxs   ',Laxs
@@ -238,7 +237,7 @@
             WRITE(fnumwrk,*)'  Lwlos  ',Lwlos                
             WRITE(fnumwrk,*)'  Laixx,Parix  ',Laixx,Parix       
             WRITE(fnumwrk,*)' Stems      '
-            WRITE(fnumwrk,*)'  Serx,sesr          ',Serx,sesr  !LPM 21MAR2016 Added SESR            
+            WRITE(fnumwrk,*)'  sesr          ',sesr  !LPM 21MAR2016 Added SESR            
             WRITE(fnumwrk,*)' Roots  '
             WRITE(fnumwrk,*)'  Rdgs   ',Rdgs
             WRITE(fnumwrk,*)'  Rresp  ',Rresp

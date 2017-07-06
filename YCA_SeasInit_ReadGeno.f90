@@ -196,7 +196,6 @@
         
         ! Ecotype coefficients re-set
         rspco = -99
-        canhts = -99
         dayls = -99
         srnpcs = -99
         srprs = -99
@@ -375,7 +374,6 @@
         !-----------------------------------------------------------------------------------------------------------------------
         
         IF (RNMODE.NE.'T') CALL FVCHECK(ECDIRFLE,GENFLCHK) !LPM 28FEB2017 Modified to avoid verification of ecotype file according to LAH 
-        CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',canhts)
         CALL ECREADR (ECDIRFLE,ECONO,'SRN%S',srnpcs)
         IF (SRNPCS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
         IF (SRPRS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRPRS',srprs)
