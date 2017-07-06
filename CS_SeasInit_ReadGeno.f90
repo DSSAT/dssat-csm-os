@@ -446,7 +446,6 @@
         CALL SPREADR (SPDIRFLE,'PEMRG',pemrg) !LPM 22MAR2016 To use the same name than in the SPE file (no PECM)  
         CALL SPREADR (SPDIRFLE,'PGERM',pgerm)
         CALL SPREADR (SPDIRFLE,'PHSV' ,phsv)
-        CALL SPREADR (SPDIRFLE,'PHNTF',phintfac)
         CALL SPREADR (SPDIRFLE,'PHTV' ,phtv)
         CALL SPREADR (SPDIRFLE,'PPTHR',ppthr)
         CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)

@@ -60,9 +60,6 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 !    %  cm/g     %    fr cm/d                                        
   10.0   0.5   2.0  0.15  2.6 
 ! Leaves
-@PHNTF  ! Phint change with growth stage factor
-!    #
-  0.80
 @LLIG% LPEAW ! Lignin%
 !    %  cm/g
   10.0    45 
@@ -232,7 +229,6 @@ CH2O distribution/mobilization
 ! PARIX   PAR interception beyond which accelerated ageing (fr)
 ! PEMRG   Rate of reserves use by unit of thermal time during emergence (gCH2O/TT)
 ! PGERM   Germination phase duration (Hydrothermal units)
-! PHNTF   Phint change with node number factor (#)
 ! PHSV    Photosynthesis,sensitivity to VPD (fr/kPa)
 ! PHTV    Photosynthesis,threshold VPD for reduction in rate (kPa)
 ! PPFPE   Photoperiod factor,pre emergence (#,0-1,0=No development)
