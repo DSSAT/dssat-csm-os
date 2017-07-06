@@ -22,15 +22,15 @@ $CULTIVARS:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 ! his/her own data. 
 
 !                                    PPSEN -BRANCHING -STORA.ROOTS- -------------- LEAVES ------------ -- STEM ---  
-@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND SR#WT  HMPC  LAXS  SLAS LLIFA LPEFR LNSLP NODWT NODLT
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    
-!                                             Tu    Tu   #/g     %   cm2 cm2/g    Tu    fr     #     g    cm
-UC0002 MCol-22              . 990002     0 726.0 726.0  0.25    50   600   180   700  0.33  1.00  8.00   2.0
-UC0004 MMEX-59              . 990001     0 500.0 500.0  0.25    50   600   180   650  0.33  1.20  5.60   2.0
-UC0006 MCol-1684            . 990003     0 370.0 500.0  0.25    50   550   180   600  0.33  1.00  5.60   2.0
-UC0007 MVen-77              . 990003     0 1023. 650.0  0.25    50   750   180   800  0.33  1.10  5.60   2.0
-UC0008 MPtr-26              . 990004     0 1034. 950.0  0.25    50   800   180   700  0.33  1.20  5.60   2.0
-UC0009 MCol-638             . 990001     0 781.0 750.0  0.25    50   600   180   700  0.33  0.80  5.60   2.0
+@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND  HMPC  LAXS  SLAS LLIFA LPEFR LNSLP NODWT NODLT
+!                                        1     2     3     4     5     6     7     8     9    10    11    
+!                                             Tu    Tu     %   cm2 cm2/g    Tu    fr     #     g    cm
+UC0002 MCol-22              . 990002     0 726.0 726.0    50   600   180   700  0.33  1.00  8.00   2.0
+UC0004 MMEX-59              . 990001     0 500.0 500.0    50   600   180   650  0.33  1.20  5.60   2.0
+UC0006 MCol-1684            . 990003     0 370.0 500.0    50   550   180   600  0.33  1.00  5.60   2.0
+UC0007 MVen-77              . 990003     0 1023. 650.0    50   750   180   800  0.33  1.10  5.60   2.0
+UC0008 MPtr-26              . 990004     0 1034. 950.0    50   800   180   700  0.33  1.20  5.60   2.0
+UC0009 MCol-638             . 990001     0 781.0 750.0    50   600   180   700  0.33  0.80  5.60   2.0
 
 
 ! COEFF       DEFINITION
@@ -41,7 +41,6 @@ UC0009 MCol-638             . 990001     0 781.0 750.0  0.25    50   600   180  
 ! ECO#        Ecotype code for this cultivar,points to entry in the ECO file
 ! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
 ! BxyND       Duration from branch x to branch y (ie.tier x,node number)
-! SR#WT       Storage root number per unit canopy weight at initiation (#/g)
 ! HMPC        Harvest product moisture content (%) (currently not used, for future development)
 ! LA1S        Area/leaf (cm2) of the first leaves when growing without stress.
 ! LAXS        Area/leaf at maximum area/leaf (cm2)
