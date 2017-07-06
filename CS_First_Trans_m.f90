@@ -723,11 +723,8 @@ Module CS_First_Trans_m
     REAL    :: RWAMM                   ! Root wt at maturity,measured   kg/ha      ! (From SeasInit)  
     REAL    :: RWUMXI                  ! Root water uptake,max,init.val cm2/d      ! (From SeasInit)  
     REAL    :: SAID                    ! Stem area index                m2/m2      ! (From SeasInit)  
-    REAL    :: SANCOUT                 ! Stem+LeafPetiole N conc        #          ! (From SeasInit)  
-    REAL    :: SAWS                    ! Stem area to wt ratio,standard cm2/g      ! (From SeasInit)  
-
+    REAL    :: SANCOUT                 ! Stem+LeafPetiole N conc        #          ! (From SeasInit)   
     REAL    :: SCNCT                   ! Stem critical max N conc       #          !LPM 25MAY2015 Added to estimate the total value for the stems and then VCNC
-
     REAL    :: SCNMT                   ! Stem critical min N conc       #          !LPM 25MAY2015 Added to estimate the total value for the stems and then VCNC
     REAL    :: SDCOAT                  ! Non useable material in seed   g          ! (From SeasInit)  
     REAL    :: SDDUR                   ! Seed reserves use duration     d          ! (From SeasInit)  

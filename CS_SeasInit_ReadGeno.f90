@@ -462,7 +462,6 @@
         CALL SPREADR (SPDIRFLE,'RTUFR',rtufr)
         CALL SPREADR (SPDIRFLE,'RWUMX',rwumx)
         CALL SPREADR (SPDIRFLE,'RWUPM',rwupm)
-        CALL SPREADR (SPDIRFLE,'SAWS' ,saws)
         CALL SPREADR (SPDIRFLE,'SDDUR',sddur)
         CALL SPREADR (SPDIRFLE,'SDN%',sdnpci)
         CALL SPREADR (SPDIRFLE,'SDRS%',sdrs)!LPM 22MAR2016 Keep value SDRS  

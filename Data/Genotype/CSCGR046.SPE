@@ -87,9 +87,9 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 !   fr    %    fr 
   0.05  2.0   0.1 
 ! Stems
-@SLIG%  SAWS  SERX  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
-!    % cm2/g  cm/d  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
-  10.0  25.0   2.4   2.0
+@SLIG%  SERX  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
+!    %  cm/d  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
+  10.0   2.4   2.0
 ! Planting stick
 @ CRFR ! Fraction of stem growth
 !   fr
@@ -252,7 +252,6 @@ CH2O distribution/mobilization
 ! RWULF   Root length factor,water uptake (cm/cm3) 
 ! RWUMX   Maximum water uptake rate (cm3/cm.d)
 ! RWUPM   Root water upake,minimum pore size for maximum uptake (fr SAT-DUL)
-! SAWS    Stem area/weight ratio,standard (cm2/g)
 ! SDDUR   Seed duration if used only for roots (Standard day)
 ! SDN%    Seed N (%)
 ! SDRS%   Seed reserves (C) as fraction of seed (#)
