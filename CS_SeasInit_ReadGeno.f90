@@ -453,7 +453,6 @@
         CALL SPREADR (SPDIRFLE,'RWULF',rlfwu)
         CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
-        CALL SPREADR (SPDIRFLE,'RS%LX',rsclx)
         CALL SPREADR (SPDIRFLE,'RS%O' ,rspco)
         CALL SPREADR (SPDIRFLE,'RSEN' ,rsen)
         IF (RSEN.LT.0.0) CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)

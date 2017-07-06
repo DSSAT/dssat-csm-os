@@ -83,9 +83,9 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 !   fr
   1.00     
 ! Reserves   
-@RSFRS RS%O RS%LX RSUSE  ! Standard concs (overall,leaves), fr utilizeable/day
-!   fr    %     %    fr 
-  0.05  2.0     5   0.1 
+@RSFRS RS%O RSUSE  ! Standard concs (overall), fr utilizeable/day
+!   fr    %    fr 
+  0.05  2.0   0.1 
 ! Stems
 @SLIG%  SAWS  SERX  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
 !    % cm2/g  cm/d  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
@@ -243,7 +243,6 @@ CH2O distribution/mobilization
 ! RN%S    Root N concentration,maximum,sstage (fr)
 ! RRATE   Relative process rate (#)
 ! RRESP   Root respiration fraction (fr)
-! RS%LX   Reserves concentration,leaves,maximum (fr)
 ! RS%O    Reserves concentration above which overflow to storage root (%)
 ! RSEN%   Root senescence rate (%/standard day)
 ! RSFRS   Fraction of stem assimilates left as reserves (fr)    
