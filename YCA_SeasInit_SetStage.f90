@@ -303,9 +303,8 @@
         IF (BRFX(2).LE.0.0) BRFX(2) = 3.0
         IF (BRFX(3).LE.0.0) BRFX(3) = 3.0
         IF (BRFX(4).LE.0.0) BRFX(4) = 3.0
-        IF (BRFX(5).LE.0.0) BRFX(5) = 3.0
-        IF (BRFX(6).LE.0.0) BRFX(6) = 3.0
-        IF (CANHTS.LE.0.0) CANHTS = 200.0
+        IF (BRFX(5).LE.0.0) BRFX(5) = BRFX(4) !LPM 06JUL2017 Use BRFX(4) for branch level higher than 4
+        IF (BRFX(6).LE.0.0) BRFX(6) = BRFX(4)
         IF (SHGR(20).LT.0.0) THEN 
             DO L = 3,22
                 SHGR(L) = 1.0 !  Shoot sizes relative to main shoot
@@ -335,7 +334,7 @@
         
         ! Initial leaf growth aspects
         !LAPOTX(1) = LA1S !LPM 07MAR15 LA1S will not be used and it is assumed as 0.1*LAXS
-        plant(0,1)%LAPOTX = LAXS*0.1
+        !plant(0,1)%LAPOTX = LAXS*0.1
         
         ! If max LAI not read-in,calculate from max interception
         IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)                                                               ! EQN 008
@@ -404,7 +403,7 @@
         
         ! Height growth
         !SERX = CANHTS/PSTART(MSTG) change to br. level 6 to avoid that it takes long time to increase CANHT            !EQN 315
-        SERX = CANHTS/PSTART(6)
+        !SERX = CANHTS/PSTART(6) LPM 06JUL2017 SERX will not be used
         
         !-----------------------------------------------------------------------
         !       Set coefficients that dependent on input switch

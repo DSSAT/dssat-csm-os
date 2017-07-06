@@ -9,7 +9,7 @@
     
      SUBROUTINE YCA_Growth_Distribute ( &
         DLAYR       , ISWNIT      , ISWWAT      , LL          , NH4LEFT     , NLAYR       , NO3LEFT     , RLV         , &
-        SENCALG     , SENLALG     , SENNALG     , SHF         , SW           & 
+        SENCALG     , SENLALG     , SENNALG     , SHF         , SW          , BRSTAGE     & 
         )
     
         USE ModuleDefs
@@ -19,7 +19,7 @@
         
         CHARACTER(LEN=1) ISWNIT      , ISWWAT      
         INTEGER NLAYR       
-        REAL    DLAYR(NL)   , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SENCALG(0:NL)
+        REAL    DLAYR(NL)   , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SENCALG(0:NL), BRSTAGE
         REAL    SENLALG(0:NL)             , SENNALG(0:NL)             , SHF(NL)     , SW(NL)  
 
         INTEGER CSIDLAYR                                                                     ! Integer function call.
@@ -55,9 +55,17 @@
         !           Height growth
         !-----------------------------------------------------------------------
 
-        CANHTG = 0.0
-        CANHTG = SERX*DU                                                                                               !EQN 316
-
+        IF(GROSTP >0.0) THEN
+            !LPM06JUL2017 It is assumed an branching angle of 60 from the horizontal (cos(60)=0.5) 
+            IF(BRSTAGE>=1.0) THEN
+                CANHTG = MAX(0.0,SESR*GROSTADJ*((plant(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP)*0.5)
+            ELSE
+                CANHTG = MAX(0.0,SESR*GROSTADJ*((plant(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP))
+            ENDIF
+        ELSE
+            CANHTG = 0.0
+        !CANHTG = SERX*DU !LPM 06JUL2017 CANHTG modified to avoid fixed maximum height HTSTD                                                                                                !EQN 316
+        ENDIF
         !-----------------------------------------------------------------------
         !           Root depth and length growth, and distribution
         !-----------------------------------------------------------------------

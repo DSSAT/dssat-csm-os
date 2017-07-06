@@ -192,7 +192,7 @@
             IF (CFLSDRSMSG.NE.'Y'.AND.SEEDRS.LE.0.0.AND.LNUM.LT.4.0) THEN
                 WRITE(Message(1),'(A44,F3.1)') 'Seed reserves all used but leaf number only ',lnum
                 WRITE(Message(2),'(A58)') 'For good establishment seed reserves should last to leaf 4'
-                WRITE(Message(3),'(A55)') 'Maybe stick too small or specific leaf area set too low'
+                WRITE(Message(3),'(A60)') 'Maybe stick too small verify PLWT and SPRL in the .CSX file'
                 CALL WARNING(3,'CSYCA',MESSAGE)
                 CFLSDRSMSG = 'Y'
             ENDIF

@@ -127,7 +127,7 @@
                 !-----------------------------------------------------------------------
                 CALL YCA_Growth_Distribute ( &
                     DLAYR       , ISWNIT      , ISWWAT      , LL          , NH4LEFT     , NLAYR       , NO3LEFT     , &
-                    RLV         , SENCALG     , SENLALG     , SENNALG     , SHF         , SW          & 
+                    RLV         , SENCALG     , SENLALG     , SENNALG     , SHF         , SW          , BRSTAGE       & 
                     )
                 
             !=============================================================================================================
