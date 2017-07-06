@@ -50,7 +50,7 @@ C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
-!  06/03/2015 LPM Added CSCGR model (CIAT cassava)
+!  06/03/2015 LPM Added CSYCA model (CIAT cassava)
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -70,7 +70,7 @@ C-----------------------------------------------------------------------
 !         'CSCER' - CERES Wheat, Barley
 !         'CSCRP' - CropSim Wheat, Barley
 !         'CSCAS' - CropSim/GumCAS Cassava
-!         'CSCGR' - CIAT Cassava model
+!         'CSYCA' - CIAT Cassava model
 !         'MLCER' - CERES-Millet 
 !         'MZCER' - CERES-Maize
 !         'PTSUB' - SUBSTOR-Potato
@@ -358,9 +358,9 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           XHLAI = XLAI
         ENDIF
 !     -------------------------------------------------
-!     Cassava CSCGR (CIAT cassava model)
+!     Cassava CSYCA (CIAT cassava model)
       CASE('CSCGR')
-        CALL CSCGR_Interface (CONTROL, ISWITCH,           !Input
+        CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
      &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
      &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,        !Output
