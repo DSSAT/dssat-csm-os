@@ -58,9 +58,7 @@ Module YCA_First_Trans_m
     REAL    :: CARBOEND                ! Ch2o available,end of day      g/p        ! (From SeasInit)  
     REAL    :: CARBOR                  ! Ch2o available,roots           g/p        ! (From SeasInit)  
     REAL    :: CARBOT                  ! Ch2o available,tops            g/p        ! (From SeasInit)  
-    INTEGER :: CDAYS                   ! Crop cycle duration            PVoCd      ! (From SeasInit)  
-    REAL    :: CHTPC(10)               ! Canopy ht % associated w LA%   %          ! (From SeasInit)  
-    REAL    :: CLAPC(10)               ! Canopy lf area % down to ht    %          ! (From SeasInit)  
+    INTEGER :: CDAYS                   ! Crop cycle duration            PVoCd      ! (From SeasInit)     
     REAL    :: CNAD                    ! Canopy nitrogen                kg/ha      ! (From RunInit)   
     REAL    :: CNADPREV                ! Canopy nitrogen,previous day   kg/ha      ! (From RunInit)   
     REAL    :: CNADSTG(20)             ! Canopy nitrogen,specific stage kg/ha      ! (From RunInit)   
@@ -82,8 +80,7 @@ Module YCA_First_Trans_m
     REAL    :: CO2PAV(0:12)            ! CO2 concentration in air       g/m3       ! (From SeasInit)  
     REAL    :: CO2PC                   ! CO2 concentration,tier,cumul   ppm        ! (From SeasInit)  
     REAL    :: CO2RF(10)               ! CO2 reference concentration    vpm        ! (From SeasInit)  
-    INTEGER :: COLNUM                  ! Column number                  #          ! (From Integrate) 
-    REAL    :: CRFR                    ! Plant. stick growth rate,fr stem gr #     ! (From SeasInit)  
+    INTEGER :: COLNUM                  ! Column number                  #          ! (From Integrate)   
     !REAL    :: CRRSWAD                 ! Plant. stick reserves               kg/ha ! (From Integrate) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
     !REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit) 
     !REAL    :: CRWAD                   ! Crown weight                        kg/ha ! (From SeasInit)         ! DA not used in Cassava
@@ -383,7 +380,6 @@ Module YCA_First_Trans_m
     REAL    :: LAWS                    ! Leaf area/wt ratio,standard    cm2/g      ! (From SeasInit)  
     REAL    :: LAWTR                   ! Leaf area/weight,temp response fr/C       ! (From SeasInit)  
     REAL    :: LAWTS                   ! Leaf area/weight,temp standard C          ! (From SeasInit)  
-    REAL    :: LAWWR                   ! Leaf area/weight,water respons fr         ! (From SeasInit)  
     !REAL    :: LAXN2                   ! Leaf # (one axis),end max.area #          ! (From SeasInit)  
     !REAL    :: LAXNO                   ! Leaf # (one axis),maximum area #          ! (From SeasInit) !LPM 05JUN2016 LAXNO LAXN2 are not used 
     REAL    :: LAXS                    ! Area of biggest leaf,main stem cm2        ! (From SeasInit)  
@@ -634,7 +630,6 @@ Module YCA_First_Trans_m
     REAL    :: RATM                    ! Boundary layer,air,resistance  s/m        ! (From SeasInit)  
     REAL    :: RAW                     ! Total soil water 'potential'   #          ! (From Growth)
     REAL    :: RCROP                   ! Stomatal res,crop basis        s/m        ! (From SeasInit)  
-    REAL    :: RDGAF                   ! Root depth gr,acceleration fac #          ! (From SeasInit)  
     REAL    :: RDGS                    ! Root depth growth rate,standrd cm/d       ! (From SeasInit)  
     REAL    :: RESCAL(0:20)            ! Residue C at maturity,by layer kg/ha      ! (From SeasInit)  
     REAL    :: RESLGAL(0:20)           ! Residue lignin,maturity,layer  kg/ha      ! (From SeasInit)  
@@ -675,8 +670,7 @@ Module YCA_First_Trans_m
     REAL    :: ROWSPC                  ! Row spacing                    cm         ! (From SeasInit)  
     INTEGER :: RPCOL                   ! Replicate column number        #          ! (From Output)    
     REAL    :: RRESP                   ! Root respiration fraction      #          ! (From SeasInit)  
-    REAL    :: RSCD                    ! Reserves concentration,end day fr         ! (From SeasInit)  
-    REAL    :: RSCLX                   ! Reserves conc,leaves,max.      #          ! (From SeasInit)  
+    REAL    :: RSCD                    ! Reserves concentration,end day fr         ! (From SeasInit)    
     REAL    :: RSCM                    ! Reserves concentration,mature  fr         ! (From SeasInit)  
     REAL    :: RSCMM                   ! Reserves conc,maturity,msured  #          ! (From Output)    
     REAL    :: RSCX                    ! Max.reserves conc.reached      fr         ! (From SeasInit)  
@@ -728,11 +722,8 @@ Module YCA_First_Trans_m
     REAL    :: RWAMM                   ! Root wt at maturity,measured   kg/ha      ! (From SeasInit)  
     REAL    :: RWUMXI                  ! Root water uptake,max,init.val cm2/d      ! (From SeasInit)  
     REAL    :: SAID                    ! Stem area index                m2/m2      ! (From SeasInit)  
-    REAL    :: SANCOUT                 ! Stem+LeafPetiole N conc        #          ! (From SeasInit)  
-    REAL    :: SAWS                    ! Stem area to wt ratio,standard cm2/g      ! (From SeasInit)  
-
+    REAL    :: SANCOUT                 ! Stem+LeafPetiole N conc        #          ! (From SeasInit)   
     REAL    :: SCNCT                   ! Stem critical max N conc       #          !LPM 25MAY2015 Added to estimate the total value for the stems and then VCNC
-
     REAL    :: SCNMT                   ! Stem critical min N conc       #          !LPM 25MAY2015 Added to estimate the total value for the stems and then VCNC
     REAL    :: SDCOAT                  ! Non useable material in seed   g          ! (From SeasInit)  
     REAL    :: SDDUR                   ! Seed reserves use duration     d          ! (From SeasInit)  

@@ -42,8 +42,8 @@
                 IF (PSABV(L).EQ.'HDAT') HSTG = L                                        !    3     K B3DAT 3rdBranch
                 !IF (PSABV(L).EQ.'MDAT') MSTG = L                                       !    4     K B4DAT 4thBranch !LPM 07MAR15 There is not a MSTG for cassava
                 PSNUM = PSNUM + 1                                                       !    5     K B5DAT 5thBranch
-            ENDIF                                                                       !    6     K B6DAT 6thBranch
-        ENDDO                                                                           !    7     M HDAT  Harvest  
+            ENDIF                                                                       !    6     K B6DAT 6thBranch until branch level 10
+        ENDDO                                                                           !   10     K B0DAT 10thBranch 
         ! IF MSTG not found, use maximum principal stage number                         
         !IF (MSTG.LE.0) THEN  !LPM 05JUN2015 MSTG is not used
         !    MSTG = KEYPSNUM

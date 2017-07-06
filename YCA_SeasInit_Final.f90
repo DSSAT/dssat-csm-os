@@ -207,7 +207,6 @@
                 WRITE(fnumwrk,'(A15,I2,2F8.1)')'  B#->,Deg.d-> ',l,Pdl(L),PD(l)
             ENDDO  
             WRITE(fnumwrk,*)' Plant. stick stages '
-            WRITE(fnumwrk,*)'  Crfr   ',Crfr 
             WRITE(fnumwrk,*)' CH2O reserves '
             WRITE(fnumwrk,*)'  Rsfrs  ',rsfrs
             WRITE(fnumwrk,*)'  Rspco  ',rspco
@@ -233,14 +232,13 @@
             WRITE(fnumwrk,*)'  Slas  ',Laws
             !WRITE(fnumwrk,*)'  Slacf,Slaff  ',Lawcf,Lawff LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
             WRITE(fnumwrk,*)'  Slatr,Slats  ',Lawtr,Lawts
-            WRITE(fnumwrk,*)'  Slawr        ',Lawwr
             WRITE(fnumwrk,*)'  Lpefr        ',Lpefr
             !WRITE(fnumwrk,*)'  Phints,Phntf ',Phints,Phintfac  !LPM 21MAY2015 PHINTS is not used           
             WRITE(fnumwrk,*)'  Llifg,a,s,x  ',Llifg,Llifa,Llifs,Llifx  
             WRITE(fnumwrk,*)'  Lwlos  ',Lwlos                
             WRITE(fnumwrk,*)'  Laixx,Parix  ',Laixx,Parix       
             WRITE(fnumwrk,*)' Stems      '
-            WRITE(fnumwrk,*)'  Saws,Serx,sesr          ',Saws,Serx,sesr  !LPM 21MAR2016 Added SESR            
+            WRITE(fnumwrk,*)'  Serx,sesr          ',Serx,sesr  !LPM 21MAR2016 Added SESR            
             WRITE(fnumwrk,*)' Roots  '
             WRITE(fnumwrk,*)'  Rdgs   ',Rdgs
             WRITE(fnumwrk,*)'  Rresp  ',Rresp
