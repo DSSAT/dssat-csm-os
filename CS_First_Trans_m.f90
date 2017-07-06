@@ -634,7 +634,6 @@ Module CS_First_Trans_m
     REAL    :: RATM                    ! Boundary layer,air,resistance  s/m        ! (From SeasInit)  
     REAL    :: RAW                     ! Total soil water 'potential'   #          ! (From Growth)
     REAL    :: RCROP                   ! Stomatal res,crop basis        s/m        ! (From SeasInit)  
-    REAL    :: RDGAF                   ! Root depth gr,acceleration fac #          ! (From SeasInit)  
     REAL    :: RDGS                    ! Root depth growth rate,standrd cm/d       ! (From SeasInit)  
     REAL    :: RESCAL(0:20)            ! Residue C at maturity,by layer kg/ha      ! (From SeasInit)  
     REAL    :: RESLGAL(0:20)           ! Residue lignin,maturity,layer  kg/ha      ! (From SeasInit)  

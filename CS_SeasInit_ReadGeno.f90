@@ -452,7 +452,6 @@
         CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)
         CALL SPREADR (SPDIRFLE,'RATM' ,ratm)
         CALL SPREADR (SPDIRFLE,'RCROP',rcrop)
-        CALL SPREADR (SPDIRFLE,'RDGAF',rdgaf)
         CALL SPREADR (SPDIRFLE,'RWULF',rlfwu)
         CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
