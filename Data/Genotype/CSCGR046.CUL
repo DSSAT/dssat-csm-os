@@ -42,7 +42,7 @@ UC0009 MCol-638             . 990001     0 781.0 750.0  0.25    50   600   180  
 ! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
 ! BxyND       Duration from branch x to branch y (ie.tier x,node number)
 ! SR#WT       Storage root number per unit canopy weight at initiation (#/g)
-! HMPC        Harvest product moisture content (%)
+! HMPC        Harvest product moisture content (%) (currently not used, for future development)
 ! LA1S        Area/leaf (cm2) of the first leaves when growing without stress.
 ! LAXS        Area/leaf at maximum area/leaf (cm2)
 ! SLAS        Specific leaf lamina area when crop growing without stress (cm2/g)
