@@ -74,7 +74,7 @@
             IF (LANC.LT.0.0) THEN 
                 WRITE(Message(1),'(A27,F4.1)') 'LANC below 0 with value of ',LANC
                 WRITE(Message(2),'(A27,2F5.1)') 'LEAFN,LFWT had values of   ',LEAFN,LFWT
-                CALL WARNING(2,'CSCGR',MESSAGE)
+                CALL WARNING(2,'CSYCA',MESSAGE)
                 LANC = AMAX1(0.0,LANC)
             ENDIF
             !IF (LFWT+STWT+CRWT.GT.0.0) VCNC = (LNCX*AMAX1(0.0,LFWT)+SNCX*AMAX1(0.0,STWT+CRWT))/ &                      !EQN 021

@@ -103,9 +103,9 @@ D        Days after planting                                                  IB
 
 *Simulation/Management/Residue
 @CDE     DESCRIPTION                                                          SO
-!A        Automatic when required                                             IB
+!A        Automatic when required                                              IB
 N        No applications                                                      IB
-!F        Fixed amount automatic                                              IB
+!F        Fixed amount automatic                                               IB
 R        On reported dates                                                    IB
 D        Days after planting                                                  IB
 
@@ -161,6 +161,7 @@ CSCER    BA   CROPSIM-CERES-Barley
 CSCER    WH   CROPSIM-CERES-Wheat
 CSCRP    BA   CSCRP-Barley
 CSCAS    CS   CSCAS-Cassava
+CSYCA    CS   CSYCA-Cassava
 CSCRP    WH   CSCRP-Wheat
 MLCER    ML   CERES-Millet
 MZCER    MZ   CERES-Maize
@@ -178,5 +179,3 @@ SWCER    SW   CERES-Sweetcorn
 TNARO    TN   AROIDS-Taro
 TRARO    TR   AROIDS-Tanier
 SALUS    xx   SALUS-generic crop model
-WHAPS    WH   NWheat (formerly APSIM)
-CSCGR    CS   CSCGR-Cassava CIAT

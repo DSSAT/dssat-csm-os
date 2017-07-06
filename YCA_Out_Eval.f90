@@ -104,7 +104,7 @@
                 IF (.not.FEXISTA) THEN
                     WRITE (Message(1),'(A23,A50)')'Could not find A-file: ',filea(1:50)
                     WRITE (Message(2),'(A23,A50)')'Experiment file:       ',fileio(1:50)
-                    CALL WARNING(2,'CSCGR',MESSAGE)
+                    CALL WARNING(2,'CSYCA',MESSAGE)
                     OPEN (UNIT=FNUMTMP, FILE=FILEA, STATUS = 'UNKNOWN')
                     CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
                 ELSE
@@ -176,7 +176,7 @@
                     INQUIRE (FILE = FILET,EXIST = FEXISTT)
                     IF (.not.FEXISTT) THEN
                         WRITE (Message(1),'(A23,A50)')'Could not find T-file: ',filet(1:50)
-                        CALL WARNING(1,'CSCGR',MESSAGE)
+                        CALL WARNING(1,'CSYCA',MESSAGE)
                     ELSE
                         TLINENUM = 0
                         OPEN (UNIT=FNUMT,FILE=FILET)
@@ -329,7 +329,7 @@
                         IF (TLINENUM.LT.4) THEN
                             tdatanum = 0
                             WRITE (Message(1),'(A23,A50)')'T-file was empty '
-                            CALL WARNING(1,'CSCGR',MESSAGE)
+                            CALL WARNING(1,'CSYCA',MESSAGE)
                         ENDIF
                         CLOSE(FNUMT)
                         CLOSE(FNUMMEAS)
@@ -368,44 +368,44 @@
                                             100.0*ABS(CWAMM-CWADT)/CWAMM
                                         WRITE(Message(2),'(A19,I6)')'Final canopy       ',NINT(CWAMM)
                                         WRITE(Message(3),'(A19,I6)')'Time-course canopy ',NINT(CWADT)
-                                        CALL WARNING(3,'CSCGR',MESSAGE)
+                                        CALL WARNING(3,'CSYCA',MESSAGE)
                                     ENDIF
                                 ENDIF
                             ENDIF
                             IF (LAIXM.LE.0.0.AND.LAIXT.GT.0.0) THEN
                                 LAIXM = LAIXT
                                 WRITE(Message(1),'(A31)')'Time-course data used for LAIXM'
-                                CALL WARNING(1,'CSCGR',MESSAGE)
+                                CALL WARNING(1,'CSYCA',MESSAGE)
                                 WRITE(Fnumwrk,'(A33)')'  Time-course data used for LAIXM'
                             ENDIF
                             IF (LNUMSMM.LE.0.0.AND.LNUMSMM.GT.0.0) THEN
                                 LNUMSMM = LNUMT
                                 WRITE(Message(1),'(A33)')'Time-course data used for LNUMSMM'
-                                CALL WARNING(1,'CSCGR',MESSAGE)
+                                CALL WARNING(1,'CSYCA',MESSAGE)
                                 WRITE(Fnumwrk,'(A35)')'  Time-course data used for LNUMSMM'
                             ENDIF
                             IF (HIAMM.LE.0.0.AND.HIADT.GT.0.0) THEN
                                 HIAMM = HIADT
                                 WRITE(Message(1),'(A31)')'Time-course data used for HIAMM'
-                                CALL WARNING(1,'CSCGR',MESSAGE)
+                                CALL WARNING(1,'CSYCA',MESSAGE)
                                 WRITE(Fnumwrk,'(A33)')'  Time-course data used for HIAMM'
                             ENDIF
                             IF (HWUMM.LE.0.0.AND.HWUT.GT.0.0) THEN
                                 HWUMM = HWUT
                                 WRITE(Message(1),'(A31)')'Time-course data used for HWUMM'
-                                CALL WARNING(1,'CSCGR',MESSAGE)
+                                CALL WARNING(1,'CSYCA',MESSAGE)
                                 WRITE(Fnumwrk,'(A33)')'  Time-course data used for HWUMM'
                             ENDIF
                             IF (HNUMAMM.LE.0.0.AND.HNUMAT.GT.0.0) THEN
                                 HNUMAMM = HNUMAT
                                 WRITE(Message(1),'(A31)')'Time-course data used for H#AT'
-                                CALL WARNING(1,'CSCGR',MESSAGE)
+                                CALL WARNING(1,'CSYCA',MESSAGE)
                                 WRITE(Fnumwrk,'(A33)')'  Time-course data used for H#AT'
                             ENDIF
                             IF (HNUMGMM.LE.0.0.AND.HNUMET.GT.0.0) THEN
                                 HNUMGMM = HNUMET
                                 WRITE(Message(1),'(A32)')'Time-course data used for H#GMM'
-                                CALL WARNING(1,'CSCGR',MESSAGE)
+                                CALL WARNING(1,'CSYCA',MESSAGE)
                                 WRITE(Fnumwrk,'(A34)')'  Time-course data used for H#GMM'
                             ENDIF
                         ENDIF
@@ -414,7 +414,7 @@
                                 IF (MDATT.GT.0) THEN
                                     PSDATM(L) = INT(MDATT)
                                     WRITE(Message(1),'(A31)')'Time-course data used for MDATM'
-                                    CALL WARNING(1,'CSCGR',MESSAGE)
+                                    CALL WARNING(1,'CSYCA',MESSAGE)
                                     WRITE(Fnumwrk,'(A33)')'  Time-course data used for MDATM'
                                 ENDIF  
                             ENDIF
@@ -548,7 +548,7 @@
                 IF (edapm.GT.200) THEN
                     WRITE (Message(1),'(A31,A31,A11)')'Measured emergence over 200DAP ', &
                         'Maybe reported before planting.','Check files'
-                    CALL WARNING(1,'CSCGR',MESSAGE)
+                    CALL WARNING(1,'CSYCA',MESSAGE)
                 ENDIF
                 gdapm = Dapcalc(gdatm,plyear,plday)
                     

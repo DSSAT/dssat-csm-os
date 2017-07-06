@@ -715,8 +715,8 @@ C         Branch to menu choice
           END SELECT
 
 !     --------------------------------------------------------------
-!       CSCGR cassava
-        CASE ('CSCGR')
+!       CSYCA cassava
+        CASE ('CSYCA')
             
 !DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15  
 !          WRITE(*,5941)  

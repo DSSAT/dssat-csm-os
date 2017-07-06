@@ -367,7 +367,7 @@
                     WRITE (Message(1),'(A41)') 'No seed reserves to initiate leaf growth '
                     WRITE (Message(2),'(A33,F8.3,F6.1)') '  Initial seed reserves,seedrate ',seedrsi,sdrate
                     WRITE (Message(3),'(A33,F8.3,F6.1)') '  Reserves %,plant population    ',sdrs,pltpop    !LPM 22MAR2016 Keep value SDRS  
-                    CALL WARNING(3,'CSCGR',MESSAGE)
+                    CALL WARNING(3,'CSYCA',MESSAGE)
                 ENDIF
             ENDIF
             ! Leaf+stem weight increase from plant reserves
@@ -386,7 +386,7 @@
                 ENDIF
                 WRITE(Message(1),'(A16,A12,F3.1,A8,F7.4,A7,F7.4,A9,F7.4)') &
                     'Roots -> leaves ',' Shoot/root ',shrtd,' Grolsp ',grolsp,' Grols ',grols,' Grolsrt ',grolsrt
-                CALL WARNING(1,'CSCGR',MESSAGE)
+                CALL WARNING(1,'CSYCA',MESSAGE)
             ENDIF
             ! Leaf+stem weight increase from all sources
             GROLS = GROLSA + GROLSSEN + GROLSSD + GROLSRS+GROLSRT                                                      !EQN 303
