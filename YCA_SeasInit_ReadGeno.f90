@@ -392,8 +392,6 @@
         CALL ECREADR (ECDIRFLE,ECONO,'BR2FX',brfx(2))
         CALL ECREADR (ECDIRFLE,ECONO,'BR3FX',brfx(3))
         CALL ECREADR (ECDIRFLE,ECONO,'BR4FX',brfx(4))
-        CALL ECREADR (ECDIRFLE,ECONO,'BR5FX',brfx(5))
-        CALL ECREADR (ECDIRFLE,ECONO,'BR6FX',brfx(6))
         ! Following may have been (temporarily) in the CUL file
         ! Radiation use efficiency
         IF (PARUE.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)

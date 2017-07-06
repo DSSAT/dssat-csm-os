@@ -303,8 +303,8 @@
         IF (BRFX(2).LE.0.0) BRFX(2) = 3.0
         IF (BRFX(3).LE.0.0) BRFX(3) = 3.0
         IF (BRFX(4).LE.0.0) BRFX(4) = 3.0
-        IF (BRFX(5).LE.0.0) BRFX(5) = 3.0
-        IF (BRFX(6).LE.0.0) BRFX(6) = 3.0
+        IF (BRFX(5).LE.0.0) BRFX(5) = BRFX(4) !LPM 06JUL2017 Use BRFX(4) for branch level higher than 4
+        IF (BRFX(6).LE.0.0) BRFX(6) = BRFX(4)
         IF (SHGR(20).LT.0.0) THEN 
             DO L = 3,22
                 SHGR(L) = 1.0 !  Shoot sizes relative to main shoot
