@@ -87,9 +87,9 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 !   fr    %    fr 
   0.05  2.0   0.1 
 ! Stems
-@SLIG%  SERX  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
-!    %  cm/d  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
-  10.0   2.4   2.0
+@SLIG%  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
+!    %  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
+  10.0   2.0
 ! Planting stick
 @ CRFR ! Fraction of stem growth
 !   fr
@@ -256,7 +256,6 @@ CH2O distribution/mobilization
 ! SDN%    Seed N (%)
 ! SDRS%   Seed reserves (C) as fraction of seed (#)
 ! SDSZ    Seed size (g/seed)
-! SERX    Shoot elongation rate (cm/std.day)
 ! SESR    Shoot elongation rate (cm2/gCH2O) 
 ! SGRO2   Size of 2nd shoot relative to 1st (fr)
 ! SLATR   Specific leaf area,temperature response (fr change per oC)
