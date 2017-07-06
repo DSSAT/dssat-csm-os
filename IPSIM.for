@@ -53,7 +53,7 @@ C=======================================================================
 
       CHARACTER*1   UPCASE,ISIMI, RNMODE
       CHARACTER*2   CROP
-      CHARACTER*5   NEND,NCODE,IOFF,IAME
+      CHARACTER*5   NEND,NCODE,IOFF,IAME, TEXT
       CHARACTER*6   ERRKEY,FINDCH
       CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL, Try_MODELARG
       CHARACTER*12  FILEX
@@ -67,9 +67,21 @@ C=======================================================================
       INTEGER PLDATE,PWDINF,PWDINL,HLATE,HDLAY,NRESDL
       INTEGER IFIND,LN,ERRNUM,FTYPEN,YRSIM,YEAR,RUN,RSEED1,RRSEED1
       INTEGER YRPLT
+      INTEGER FIST1, FIST2, IFREQ
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
-      REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR
+      REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
+      REAL LDIFF, PREV_LINEXP
+      REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
+      REAL V_IMDEP(20)
+      REAL V_ITHRL(20)
+      REAL V_ITHRU(20)
+      INTEGER V_IRON(20), V_IFREQ(20)
+      CHARACTER*5 V_IRONC(20)
+      CHARACTER*5 V_IMETH(20)
+      REAL V_IRAMT(20)
+      REAL V_IREFF(20)
+      INTEGER GSIRRIG, I, STAT, CHARLEN
 
       LOGICAL UseSimCtr, MulchWarn
 
@@ -135,6 +147,7 @@ C=======================================================================
          IDETH   = 'N'
          IDETR   = 'Y'
          EFFIRR  = 1.00
+         AVWAT  = -99.
          THETAC  = 75.0
          IEPT    = 100.0
          DSOIL   = 30.0
@@ -307,7 +320,6 @@ C
               CALL ERROR (ERRKEY,5,FILEX,LINEXP)
            ENDIF
          ENDIF
-
 C
 C        Read FIFTH line of simulation control
 C
@@ -390,18 +402,85 @@ C
 C
 C           Read SEVENTH line of simulation control
 C
-            CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
-            READ (CHARTEST,67,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
-     &           IEPT,IOFF,IAME,AIRAMT,EFFIRR
-            IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
+           DO I=1,20
+                V_IMDEP (I) = -99       ! Assighn default values to variable
+                V_ITHRL (I) = -99
+                V_ITHRU (I) = -99
+                V_IRON  (I) = -99
+!                V_IMETH (I) = -99
+                V_IRAMT (I) = -99
+                V_IREFF (I) = -99
+                V_AVWAT (I) = -99
+           END DO
+
+           GSIRRIG = 1                                ! Start Growth Stage index
+
+           CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
+
+           DO WHILE(ISECT .NE. 3)
+ 
+               READ (CHARTEST,69,IOSTAT=ERRNUM) LN,DSOIL,THETAC,
+     &               IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, IFREQ
+               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
+
+               READ(CHARTEST,'(57x,A5)') TEXT     ! Read value of AVWAT in text to check if blank or missing
+               CHARLEN = LEN_TRIM(TEXT)
+               IF (CHARLEN==0) AVWAT = -99.       ! If TXAVWAT blank or missing set AVWAT -99 (for compatability with old files)
+
+               READ(CHARTEST,'(63x,A5)') TEXT     ! Read value of IFREQ in text to check if blank or missing
+               CHARLEN = LEN_TRIM(TEXT)
+               IF (CHARLEN==0) IFREQ = 0          ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
+
+
+              V_IMDEP(GSIRRIG) = DSOIL                   ! Save growth stage specific variables in data vectors
+              V_ITHRL(GSIRRIG) = THETAC
+              V_ITHRU(GSIRRIG) = IEPT
+              READ(IOFF(4:5), *, IOSTAT = STAT) V_IRON (GSIRRIG)
+              V_IRONC(GSIRRIG) = IOFF
+              V_IMETH(GSIRRIG) = IAME
+              V_IRAMT(GSIRRIG) = AIRAMT
+              V_IREFF(GSIRRIG) = EFFIRR
+              V_IFREQ(GSIRRIG) = IFREQ
+              V_AVWAT(GSIRRIG) = AVWAT
+
+              CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)                ! Read next line until a second tier header is found
+
+              IF(ISECT .NE. 3) THEN
+                  GSIRRIG = GSIRRIG + 1                                 ! Increase the counter by 1
+              END IF
+           END DO
+           
+           DSOIL  = V_IMDEP(1)                         ! Save value of first line as default for compatibility with old files
+           THETAC = V_ITHRL(1)
+           IEPT   = V_ITHRU(1)
+           IOFF   = V_IRONC(1)
+           IAME   = V_IMETH(1)
+           AIRAMT = V_IRAMT(1)
+           EFFIRR = V_IREFF(1)
+           AVWAT  = V_AVWAT(1)
+           IFREQ  = V_IFREQ(1)
+
+           SAVE_data % MGMT % V_IMDEP = V_IMDEP
+           SAVE_data % MGMT % V_ITHRL = V_ITHRL
+           SAVE_data % MGMT % V_ITHRU = V_ITHRU
+           SAVE_data % MGMT % V_IRONC = V_IRONC
+           SAVE_data % MGMT % V_IRON  = V_IRON
+           SAVE_data % MGMT % V_IRAMT = V_IRAMT
+           SAVE_data % MGMT % V_IREFF = V_IREFF
+           SAVE_data % MGMT % V_AVWAT = V_AVWAT
+           SAVE_data % MGMT % V_IFREQ = V_IFREQ
+           SAVE_data % MGMT % GSIRRIG = GSIRRIG
+
 C
 C           Read EIGHTH line of simulation control
+
 C
             CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,67,IOSTAT=ERRNUM) LN,DSOILN,SOILNC,
      &           SOILNX,NCODE,NEND
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             READ (NCODE,70,IOSTAT=ERRNUM) FTYPEN
+
 C
 C           Read NINTH line of simulation control
 C
@@ -411,6 +490,7 @@ C
 C
 C           Read TENTH line of simulation control
 C
+
             CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
      &           HPP,HRP
@@ -462,7 +542,8 @@ C-----------------------------------------------------------------------
         CALL MODEL_NAME (CROP, DSSATP, Try_MODELARG, MODEL)
       ENDIF
 
-      IF (MEPHO .EQ. 'L' .AND. MODEL(1:5) .NE. 'CRGRO') THEN
+      IF (MEPHO .EQ. 'L' .AND. MODEL(1:5) .NE. 'CRGRO' 
+     &  .and. model(1:5) .ne. 'PRFRM' ) THEN
         MEPHO = 'C'
         WRITE(MSG(1),80)
         WRITE (MSG(2),81) MODEL(1:5)
@@ -681,9 +762,13 @@ C-----------------------------------------------------------------------
   66  FORMAT (I3,11X,2(1X,I5),5(1X,F5.0))
   67  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
   68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
+!69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I5,
+!    &        1X,I5,1x,F5.0, 2(1x, F5.3))
+  69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I6)
   70  FORMAT (3X,I2)
 
       END SUBROUTINE IPSIM
+
 
 !=======================================================================
 !  FILL_ISWITCH, Subroutine
@@ -1245,6 +1330,9 @@ D     IPX = 23
             READ (CHARTEST,'(97X,A1)',IOSTAT=ERRNUM) FMOPT
             CALL CHECK_A('FMOPT', FMOPT, ERRNUM, MSG, NMSG)
 
+            READ (CHARTEST,'(97X,A1)',IOSTAT=ERRNUM) FMOPT
+            CALL CHECK_A('FMOPT', FMOPT, ERRNUM, MSG, NMSG)
+
             IOX   = UPCASE(IOX)
             IDETO = UPCASE(IDETO)
             IDETS = UPCASE(IDETS)
@@ -1532,6 +1620,7 @@ C-----------------------------------------------------------------------
       CASE('IDETL');  MSG_TEXT="Output detail switch          "
       CASE('IDETH');  MSG_TEXT="Chemial output file switch    "
       CASE('IDETR');  MSG_TEXT="Operations output file switch "
+      CASE('FMOPT');  MSG_TEXT="Format options switch (CSV)   "
       CASE('NSWITCH');MSG_TEXT="Nitrogen options switch       "
       CASE('NYRS')  ; MSG_TEXT="Number of years of simulation "
       CASE('YRSIM') ; MSG_TEXT="Start of simulation date      "
