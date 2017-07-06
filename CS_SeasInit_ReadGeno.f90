@@ -524,8 +524,6 @@
         CALL SPREADRA (SPDIRFLE,'LN%MN','2',lnpcmn)
         CALL SPREADRA (SPDIRFLE,'RN%MN','2',rnpcmn)
         CALL SPREADRA (SPDIRFLE,'SN%MN','2',snpcmn)
-        CALL SPREADRA (SPDIRFLE,'CHT%','10',chtpc)
-        CALL SPREADRA (SPDIRFLE,'CLA%','10',clapc)
         CALL SPREADRA (SPDIRFLE,'CO2RF','10',co2rf)
         CALL SPREADRA (SPDIRFLE,'CO2F','10',co2f)
 

@@ -72,11 +72,6 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 @SLATS SLATR   ! Specific leaf area temperature effect parameters
 !  oC     fr 
   25.0 0.000   ! Set to zero so not working
-@ CHT%  CLA%   ! Canopy height%, leaf area %
-!    %     %
-     0     0
-    50    50
-   100   100
 @ TPAR TSRAD  ! Individual leaf transmission PAR, solar radiation  
 !   fr    fr
   0.07  0.25
