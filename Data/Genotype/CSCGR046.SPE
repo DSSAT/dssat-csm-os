@@ -124,10 +124,6 @@ CH2O distribution/mobilization
      0  42.5  42.5  42.5    50  42.5
 
 ! WATER loss,uptake,etc.
-! Evapotranspiration 
-@EORATIO  ! FAO formula factor
-!     fr 
-     1.0
 ! Water uptake  
 @RWUPM RWUMX ! Min pore size,max.uptake rate
 !   fr cm3/cm.d
