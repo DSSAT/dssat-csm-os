@@ -69,9 +69,9 @@ $SPECIES:CSCGR046.010114   Last edit:12JAN2016 LPM
 @LLOSA LWLOS  ! Loss when accelerated,normal senescence   
 !   fr    fr
    1.0  0.50  
-@SLATS SLATR SLAWR  ! Specific leaf area temperature and h2o effect parameters
-!  oC     fr    fr
-  25.0 0.000  0.00  ! Set to zero so not working
+@SLATS SLATR   ! Specific leaf area temperature effect parameters
+!  oC     fr 
+  25.0 0.000   ! Set to zero so not working
 @ CHT%  CLA%   ! Canopy height%, leaf area %
 !    %     %
      0     0
@@ -268,7 +268,6 @@ CH2O distribution/mobilization
 ! SGRO2   Size of 2nd shoot relative to 1st (fr)
 ! SLATR   Specific leaf area,temperature response (fr change per oC)
 ! SLATS   Specific leaf area,temperature standard (C)
-! SLAWR   Specific leaf area,water stress response (fr standard,full stress)
 ! SLIG%   Stem lignin (%)
 ! SN%MN   Stem N concentration,minimum (fr)
 ! SN%S    Stem N concentration,maximum,stage (fr)

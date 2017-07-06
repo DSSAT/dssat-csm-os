@@ -429,7 +429,6 @@
         !CALL SPREADR (SPDIRFLE,'SLAFF',lawff) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         CALL SPREADR (SPDIRFLE,'SLATR',lawtr)
         CALL SPREADR (SPDIRFLE,'SLATS',lawts)
-        CALL SPREADR (SPDIRFLE,'SLAWR',lawwr)
         CALL SPREADR (SPDIRFLE,'LLIFG',llifg)
         CALL SPREADR (SPDIRFLE,'LLIFS',llifs)
         CALL SPREADR (SPDIRFLE,'LLIFX',llifx)

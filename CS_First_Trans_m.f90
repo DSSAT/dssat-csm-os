@@ -383,7 +383,6 @@ Module CS_First_Trans_m
     REAL    :: LAWS                    ! Leaf area/wt ratio,standard    cm2/g      ! (From SeasInit)  
     REAL    :: LAWTR                   ! Leaf area/weight,temp response fr/C       ! (From SeasInit)  
     REAL    :: LAWTS                   ! Leaf area/weight,temp standard C          ! (From SeasInit)  
-    REAL    :: LAWWR                   ! Leaf area/weight,water respons fr         ! (From SeasInit)  
     !REAL    :: LAXN2                   ! Leaf # (one axis),end max.area #          ! (From SeasInit)  
     !REAL    :: LAXNO                   ! Leaf # (one axis),maximum area #          ! (From SeasInit) !LPM 05JUN2016 LAXNO LAXN2 are not used 
     REAL    :: LAXS                    ! Area of biggest leaf,main stem cm2        ! (From SeasInit)  
