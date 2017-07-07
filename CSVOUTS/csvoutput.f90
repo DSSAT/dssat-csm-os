@@ -652,9 +652,9 @@ Subroutine CsvOutSoilNi(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, N, &
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
    Integer, Intent(Out) :: lngth
-   Character(Len=600) :: tmp
-   Character(Len=250) :: tmp1
-   Character(Len=200) :: tmp2, tmp3, tmp4
+   Character(Len=700) :: tmp
+   Character(Len=300) :: tmp1
+   Character(Len=250) :: tmp2, tmp3, tmp4
    Character(Len=20) :: fmt
   
    Integer :: i, size      
@@ -1256,7 +1256,7 @@ Subroutine CsvOutETPhot(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, PCINPD,
     Return
 end Subroutine CsvOutETPhot
 !---------------------------------------------------------------------------------
-! Sub for csv output for Mulch.OUT
+! Sub for Mulch.csv
 Subroutine CsvOutMulch(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, &
    MULCHCOVER, MULCHTHICK, MULCHMASS, MULCHWAT, Csvline, pCsvline, lngth) 
   
