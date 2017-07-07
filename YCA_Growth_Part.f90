@@ -185,11 +185,17 @@
                         !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 24APR2016 To estimate daily leaf area increase instead of total
                         plant(BR,LF)%LAPOTX2 = plant(BR,LF)%LAPOTX*TFLFLIFE
                         plant(BR,LF)%LAGL=plant(BR,LF)%LAPOTX2*(TTLFLIFE/LLIFGTT)
-                        IF (plant(BR,LF)%LAGL < 0.0) THEN
-                            plant(BR,LF)%LAGL = 0.0
-                        ENDIF
+                        !IF (plant(BR,LF)%LAGL < 0.0) THEN !LPM 07JULY2017 Modified the order to avoid LAGL with negative values
+                        !    plant(BR,LF)%LAGL = 0.0
+                        !ENDIF
+                        !IF (plant(BR,LF)%LAGL > (plant(BR,LF)%LAPOTX2-plant(BR,LF)%LATL3)) THEN                                           !DA IF there is something left to grow
+                        !    plant(BR,LF)%LAGL = plant(BR,LF)%LAPOTX2-plant(BR,LF)%LATL3
+                        !ENDIF
                         IF (plant(BR,LF)%LAGL > (plant(BR,LF)%LAPOTX2-plant(BR,LF)%LATL3)) THEN                                           !DA IF there is something left to grow
                             plant(BR,LF)%LAGL = plant(BR,LF)%LAPOTX2-plant(BR,LF)%LATL3
+                        ENDIF
+                        IF (plant(BR,LF)%LAGL < 0.0) THEN
+                            plant(BR,LF)%LAGL = 0.0
                         ENDIF
                         !LATL(BR,LF) = LATL(BR,LF) + (LATLPOT(BR,LF)-LATLPREV(BR,LF))                                                !EQN 323 !LPM 24APR2016 To estimate daily leaf area increase instead of total
                         plant(BR,LF)%LATL = plant(BR,LF)%LATL + plant(BR,LF)%LAGL                              !Leaf area = Leaf area + leaf growth    !EQN 323
