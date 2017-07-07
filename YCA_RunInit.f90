@@ -32,9 +32,9 @@
         !-----------------------------------------------------------------------
             
         IF (RUNCRP.LE.0) THEN
-            MODNAME(1:8) = 'CSCGR046'
+            MODNAME(1:8) = 'CSYCA046'
             VERSIONCSCAS = 010114                                                             ! MF 15SE14 Changed from VERSION, conflict with ModuleDefs 
-            GENFLCHK(1:15) = 'CSCGR046.010114'
+            GENFLCHK(1:15) = 'CSYCA046.010114'
             
             !-----------------------------------------------------------------------
             !         Set parameters (Most should be placed in input files!)
@@ -239,16 +239,16 @@
             IF (.NOT.FOPEN) THEN
                 IF (RUN.EQ.1) THEN
                     OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
-                    WRITE(FNUMWRK,*) 'CSCGR  CIAT Cassava Module '
+                    WRITE(FNUMWRK,*) 'CSYCA  CIAT Cassava Module '
                 ELSE
                     OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',ACTION = 'READWRITE')
                     WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSCGR  CIAT Cassava Module '
+                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
                     IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
                         CLOSE (FNUMWRK)
                         OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
                         WRITE(fnumwrk,*) ' '
-                        WRITE(fnumwrk,*) 'CSCGR  CIAT Cassava Module '
+                        WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
                     ENDIF  
                 ENDIF
             ELSE          
@@ -257,7 +257,7 @@
                     CLOSE (FNUMWRK, STATUS = 'DELETE')
                     OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
                     WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSCGR  CIAT Cassava Module '
+                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
                     CALL Getlun('READS.OUT',fnumrea)
                     ! Close and re-open Reads file
                     CLOSE (FNUMREA, STATUS = 'DELETE')
@@ -266,7 +266,7 @@
                     WRITE(fnumrea,*)' File closed and re-opened to avoid generating huge file'
                 ELSE  
                     WRITE(fnumwrk,*) ' '
-                    WRITE(fnumwrk,*) 'CSCGR  CIAT Cassava Module '
+                    WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
                 ENDIF
             ENDIF  
             

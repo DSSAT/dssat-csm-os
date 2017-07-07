@@ -1,6 +1,6 @@
 C=======================================================================
 C  CSCAS_Interface, Subroutine
-C  DSSAT interface for CSCGR CIAT Cassava growth routine.
+C  DSSAT interface for CSYCA CIAT Cassava growth routine.
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  04/16/2002 LAH/CHP Written.
@@ -125,11 +125,11 @@ C=======================================================================
         WRITE(MESSAGE(1),100) 
         WRITE(MESSAGE(2),110)  
         WRITE(MESSAGE(3),120) 
-        CALL WARNING(3, "CSCGR ", MESSAGE)
+        CALL WARNING(3, "CSYCA ", MESSAGE)
       ENDIF
 
   100 FORMAT('You have selected the Century soil nutrient model. ')
-  110 FORMAT('The CSCGR (cassava) routines have not been ')
+  110 FORMAT('The CSYCA (cassava) routines have not been ')
   120 FORMAT('calibrated for use with this model.' )
 
       IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN

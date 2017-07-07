@@ -134,7 +134,7 @@ C
      &         'PTSUB','RICER','TRARO','TNARO',
      &         'SCCAN','SCCSP')
             CALL INVRCE (CROP, MODEL)
-          CASE ('CSCER','CSCAS','CSCGR')
+          CASE ('CSCER','CSCAS','CSYCA')
 !           CALL INVRCS
             CALL INVRCE (CROP, MODEL)
           END SELECT

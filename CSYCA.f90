@@ -147,7 +147,7 @@
             )
             
         WRITE (fnumwrk,'(2A, 2F9.5)') 'ALBEDOS (soil albedo) and ALBEDO (canopy ',  &  ! MF 19JA15  For WORK.OUT
-            'albedo) AFTER YCA_RunInit in CSCGR) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
+            'albedo) AFTER YCA_RunInit in CSYCA) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
             
 !*******************************************************************************************************************************
     ELSEIF (DYNAMIC.EQ.SEASINIT) THEN    ! Initialization                      ! MF Equivalent to line 1824 in CSCAS.FOR
@@ -253,4 +253,4 @@
 !*******************************************************************************************************************************
       ENDIF ! End of INITIATION-RATES-INTEGRATE-OUTPUT-SEASEND construct       ! MF Equivalent to line 9648 in CSCAS.FOR
 !*******************************************************************************************************************************
-      END  ! CSCGR
+      END  ! CSYCA

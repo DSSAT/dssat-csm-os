@@ -11,7 +11,7 @@ C  09/17/2007 JIL Added codes for IXIM maize model
 C  08/09/2012 GH  Add codes for CSCAS cassava model
 C  04/16/2013 CHP/KAD Added codes for SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
-C  06/03/2015 LPM Added codes for CSCGR CIAT cassava model 
+C  06/03/2015 LPM Added codes for CSYCA CIAT cassava model 
 C  06/18/2015 GH  Add error code for configuration file issues      
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
@@ -305,7 +305,7 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.      !CROPGRO
      &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.      !CROPSIM (Cereal)
      &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.      !CSCAS (Cassava)
-     &    (INDEX(MODEL(3:5),'CGR') .EQ. 0) .AND.      !CSCGR (CIAT -Cassava)
+     &    (INDEX(MODEL(3:5),'YCA') .EQ. 0) .AND.      !CSYCA (CIAT -Cassava)
      &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.      !CROPSIM (Cassava)
      &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.      !SUBSTOR
      &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.      !CANEGRO
@@ -326,7 +326,7 @@ C=======================================================================
       IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND.    !Wheat and Barley
      &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Wheat and barley
      &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND.    !Cassava
-     &    (INDEX(MODEL(1:5),'CSCGR') .EQ. 0) .AND.    !Cassava CIAT
+     &    (INDEX(MODEL(1:5),'CSYCA') .EQ. 0) .AND.    !Cassava CIAT
      &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat 
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton

@@ -359,7 +359,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         ENDIF
 !     -------------------------------------------------
 !     Cassava CSYCA (CIAT cassava model)
-      CASE('CSCGR')
+      CASE('CSYCA')
         CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
      &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
      &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input

@@ -243,7 +243,7 @@
         IF (DFPE.LT.0.0) THEN  
             DFPE = 1.0
             WRITE(MESSAGE(1),'(A51)') 'Pre-emergence development factor missing. Set to 1.'
-            CALL WARNING(1,'CSCGR',MESSAGE)
+            CALL WARNING(1,'CSYCA',MESSAGE)
         ENDIF
         
         ! Stem fraction constant throughout lifecycle
@@ -370,7 +370,7 @@
         IF (Dayls(1).EQ.0.0.AND.dfpe.LT.1.0) THEN
             WRITE(MESSAGE(1),'(A36,A41)') 'Cultivar insensitive to photoperiod ', 'but pre-emergence photoperiod factor < 1.' 
             WRITE(MESSAGE(2),'(A40)') 'May be worthwhile to change PPFPE to 1.0'
-            CALL WARNING(2,'CSCGR',MESSAGE)
+            CALL WARNING(2,'CSYCA',MESSAGE)
         ENDIF
         
         ! Shoot growth rates relative to main shoot
@@ -448,7 +448,7 @@
             IF (PLME.NE.'H') THEN
                 IF (PLME.NE.'V') THEN
                     WRITE(MESSAGE(1),'(A16,A1,A15,A24)') 'PLANTING method ',PLME,' not an option ', ' Changed to V (Vertical)'
-                    CALL WARNING(1,'CSCGR',MESSAGE)
+                    CALL WARNING(1,'CSYCA',MESSAGE)
                     WRITE(FNUMWRK,*)' '
                     WRITE(FNUMWRK,'(A17,A1,A15,A24)') ' Planting method ',PLME,' not an option ', ' Changed to V (Vertical)'
                     PLME = 'V'
@@ -457,7 +457,7 @@
         ENDIF
         IF (SPRL.LE.0.0) THEN
             WRITE(MESSAGE(1),'(A30,A20)') 'Planting stick length <= 00  ', ' Changed to 25.0 cm '
-            CALL WARNING(1,'CSCGR',MESSAGE)
+            CALL WARNING(1,'CSYCA',MESSAGE)
             WRITE(FNUMWRK,*)' '
             WRITE(FNUMWRK,'(A31,A20)') ' Planting stick length <= 0.0  ', ' Changed to 25.0 cm '
             SPRL = 25.0

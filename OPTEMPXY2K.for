@@ -296,8 +296,8 @@ C-----------------------------------------------------------------------
      &      F6.2,6F6.1,2F6.2,3F6.1,F6.0,5F6.1,1F6.0,2F6.2,A)   !LPM modified to read LLIFA greater than 999
 C-LPM       F6.2,6F6.1,2F6.2,3F6.1,F6.0,7F6.1,F6.2,A) 
 C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2,A)
-      CASE ('CSCGR')
-!       CSCGR CIAT-Cassava
+      CASE ('CSYCA')
+!       CSYCA CIAT-Cassava
         write(*,*) 
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
         

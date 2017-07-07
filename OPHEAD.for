@@ -728,7 +728,7 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
         ENDIF
 !-----------------------------------------------------------------------
 !     Cassava CIAT      
-      CASE ('CSCGR')
+      CASE ('CSYCA')
          WRITE (HEADER(I),'(A,A)')
      &     "  PPS1 B01ND B12ND SR#WT  HMPC "
           I=I+1

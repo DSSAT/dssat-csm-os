@@ -202,7 +202,7 @@ C-GH &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
 
 C-LPM  Add CIAT cassava model
 !     CASSAVA: cassava **
-      CASE ('CSCGR')
+      CASE ('CSYCA')
 
 !DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15          
 !         READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
@@ -381,8 +381,8 @@ C-----------------------------------------------------------------------
 C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
      
-!  821 FORMAT (A6,1X,A16,7X,A6,13F6.0,A)         !CSCGR        06/05/2015 !DA 04OCT2016 Changed since LA1S variable is removed, is not used according to LPM 07MAR15 
-  821 FORMAT (A6,1X,A16,7X,A6,12F6.0,A)         !CSCGR        06/05/2015 
+!  821 FORMAT (A6,1X,A16,7X,A6,13F6.0,A)         !CSYCA        06/05/2015 !DA 04OCT2016 Changed since LA1S variable is removed, is not used according to LPM 07MAR15 
+  821 FORMAT (A6,1X,A16,7X,A6,12F6.0,A)         !CSYCA        06/05/2015 
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
   850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A)

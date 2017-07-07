@@ -127,7 +127,7 @@
                         STGYEARDOY(12) = YEARDOY  ! Failure
                         STGYEARDOY(11) = YEARDOY  ! End Crop
                         Message(1) = 'Automatic planting failure '
-                        CALL WARNING(1,'CSCGR',MESSAGE)
+                        CALL WARNING(1,'CSYCA',MESSAGE)
                     ENDIF
                 ENDIF
             ENDIF

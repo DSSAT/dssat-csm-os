@@ -36,13 +36,13 @@
         IF (DAP.GE.90 .AND. GESTAGE.LT.1.0) THEN
             CFLFAIL = 'Y'
             WRITE (Message(1),'(A40)') 'No germination within 90 days of sowing '
-            CALL WARNING(1,'CSCGR',MESSAGE)
+            CALL WARNING(1,'CSYCA',MESSAGE)
         ENDIF
         IF (IHARI.NE.'A'.AND.MDAT.GE.0.AND.DAP-MDAP.GE.300) THEN
             CFLFAIL = 'Y'
             WRITE (Message(1),'(A32)')'300 days after maturity         '
             WRITE (Message(2),'(A21)')'Harvesting triggered.'
-            CALL WARNING(2,'CSCGR',MESSAGE)
+            CALL WARNING(2,'CSYCA',MESSAGE)
         ENDIF
         !IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(MSTG-1)) THEN !LPM 04MAR15 MSTG TO PSX
         !IF (IHARI.NE.'A'.AND.CUMDU.GE.PSTART(PSX-1)) THEN !LPM 24APR2016 using DABR including water stress
@@ -52,7 +52,7 @@
             IF (TT20.LE.-98.0.AND.PSTART(PSX-1).GT.0.0) THEN
                 CFLFAIL = 'Y'
                 WRITE (Message(1),'(A28)') '20day thermal time mean = 0 '
-                CALL WARNING(1,'CSCGR',MESSAGE)
+                CALL WARNING(1,'CSYCA',MESSAGE)
             ENDIF
         ENDIF
         ! Determine if to harvest
@@ -70,7 +70,7 @@
             IF (DABR.GT.PSTART(PSX) .AND. CFLHARMSG .NE. 'Y') THEN
            
                 WRITE(Message(1),'(A54,I7)') 'Maturity reached but waiting for reported harvest on: ', YEARDOYHARF !LPM 04MAR15 Maybe this section it is not necessary for cassava
-                CALL WARNING(1,'CSCGR',MESSAGE)
+                CALL WARNING(1,'CSYCA',MESSAGE)
                 CFLHARMSG = 'Y'
             ENDIF
         ENDIF
@@ -109,7 +109,7 @@
             IF (MDAYFR.LT.0.0) THEN
                 IF (CFLFAIL.EQ.'Y') THEN
                     WRITE(Message(1),'(A26)') 'Harvest/failure triggered '                 
-                    CALL WARNING(1,'CSCGR',MESSAGE)
+                    CALL WARNING(1,'CSYCA',MESSAGE)
                 ENDIF  
             ENDIF
         ENDIF
