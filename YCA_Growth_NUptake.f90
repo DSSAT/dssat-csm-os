@@ -397,6 +397,11 @@
                                 ENDDO
                                 !IF (CFLAFLF.EQ.'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
                             ENDIF  
+                         ELSE
+                            IF (plant(BR,LF)%LAPOTX2 <= 0.0 ) THEN
+                                plant(BR,LF)%AFLF = 1.0             !EQN 151   
+                                plant(BR,LF)%NFLF2 = 1.0
+                            ENDIF
                         ENDIF
                     ENDDO
                 ENDDO
