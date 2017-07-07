@@ -31,8 +31,8 @@
             OPEN(UNIT=FNUMLVS,FILE=FNAMELEAVES,POSITION='APPEND')
             WRITE (FNUMLVS,'(/,A79,/)') OUTHED
             WRITE (FNUMLVS,'(A14,F6.1)') '! LEAF NUMBER ',LNUM
-            WRITE (FNUMLVS,'(/,A42,A36,A30)')'@ BRNUM LNUM AREAP AREA1 AREA2 AREAT AREAS', &                 ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
-                '  WFLF  NFLF NFLF2  AFLF TFGLF TFDLF',' LLIFG LLIFA LLIFS LLIFE   DAP'
+            WRITE (FNUMLVS,'(/,A42,A30,A30)')'@ BRNUM LNUM AREAP AREA1 AREA2 AREAT AREAS', &                 ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
+                '  WFLF  NFLF  AFLF TFGLF TFDLF ',' LLIFG LLIFA LLIFS LLIFE   DAP'  !LPM 07JUL2017 Issue #41 eliminate NFLF2 (same than NFLF)
             DO BR = 0, BRSTAGE
                 DO LF = 1, INT(LNUMSIMSTG(BR))  
                     CALL Csopline(lapotxc,plant(BR,LF)%lapotx)
@@ -53,8 +53,8 @@
                     IF (plant(BR,LF)%LDEATHDAP == 0) THEN
                         plant%LDEATHDAP = -99
                     ENDIF
-                    WRITE (fnumlvs,'(2I6,5A6,6F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL3C,LAPC,LAPSC,1.0-plant(BR,LF)%WFLF, &                          ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
-                        1.0-plant(BR,LF)%NFLF,1.0-plant(BR,LF)%NFLF2,1.0-AMAX1(0.0,AMIN1(1.0,plant(BR,LF)%AFLF)),1.0-plant(BR,LF)%TFGLF,1.0-plant(BR,LF)%TFDLF,plant(BR,LF)%DGLF, &  
+                    WRITE (fnumlvs,'(2I6,5A6,5F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL3C,LAPC,LAPSC,1.0-plant(BR,LF)%WFLF, &                          ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
+                        1.0-plant(BR,LF)%NFLF,1.0-AMAX1(0.0,AMIN1(1.0,plant(BR,LF)%AFLF)),1.0-plant(BR,LF)%TFGLF,1.0-plant(BR,LF)%TFDLF,plant(BR,LF)%DGLF, &  
                         plant(BR,LF)%DALF,plant(BR,LF)%DSLF,plant(BR,LF)%DGLF+plant(BR,LF)%DALF+plant(BR,LF)%DSLF,plant(BR,LF)%LDEATHDAP
                 ENDDO
             ENDDO
@@ -71,7 +71,6 @@
                 WRITE(fnumlvs,'(2A)')'! AREAS = Senesced area of cohort of leaves', ' at harvest at leaf position (cm2) '
                 WRITE(fnumlvs,'(2A)')'! WFLF  = Water stress factor for leaf',' (0-1,0=no stress)'
                 WRITE(fnumlvs,'( A)')'! NFLF  = N stress factor for leaf (0-1,0=no stress)'
-                WRITE(fnumlvs,'( A)')'! NFLF2 = N factor for area adjustment (0-1,0=no stress)'
                 ! WRITE(fnumlvs,'(2A)')'! NFLFP = N stress factor for photosynthesis',' (0-1,1=0 stress)'
                 WRITE(fnumlvs,'(2A)')'! AFLF  = Assimilate factor for leaf',' (0-1,0= no limitation)'
                 WRITE(fnumlvs,'(2A)')'! TFGLF = Temperature factor for leaf expansion ',' (0-1,0 =no limitation)'
