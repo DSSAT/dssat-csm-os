@@ -13,9 +13,9 @@ Rain withheld for 72 days in one treatment Published in Field Crops Research, 4:
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
  1 1 0 0 C1*E1 MCol-22;Control      1  1  0  1  1  0  1  0  1  0  0  1  1
- 2 1 0 0 C1*E2 MCol-22;Reduced rai  1  1  0  1  1  0  1  0  1  0  2  1  2
+ 2 1 0 0 C1*E2 MCol-22;Reduced rai  1  1  0  1  1  0  1  0  1  0  2  1  1
  3 1 0 0 C2*E1 MMex-59;Control      2  1  0  1  1  0  1  0  1  0  0  1  1
- 4 1 0 0 C2*E2 MMex-59;Reduced rai  2  1  0  1  1  0  1  0  1  0  2  1  2
+ 4 1 0 0 C2*E2 MMex-59;Reduced rai  2  1  0  1  1  0  1  0  1  0  2  1  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -45,7 +45,7 @@ Rain withheld for 72 days in one treatment Published in Field Crops Research, 4:
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 79115   -99     1     1     V     R   100    90    30   400   -99   -99   -99    25                        -99
+ 1 79115   -99     1     1     V     R   100    90    30   450   -99   -99   -99    25                        -99
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
@@ -72,14 +72,13 @@ Rain withheld for 72 days in one treatment Published in Field Crops Research, 4:
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
  1 ME              M     M     E     R     S     C     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
- 1 MA              A     N     R     R     R
+ 1 MA              R     N     R     R     R
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+ 1 OU              N     Y     Y     2     Y     N     Y     Y     N     N     Y     N     N
 
- 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
- 1 PL          79115 79250    40   100    20    40    10
+ 1 PL          79108 79122    40   100    30    40    10
 @N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
  1 IR             30    50   100 IB001 IBI01    10     1
 @N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
@@ -89,27 +88,5 @@ Rain withheld for 72 days in one treatment Published in Field Crops Research, 4:
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 80115   100     0
 
-@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 2 GE              1     1     P 79115  2150 WATER SUPPLY  2C*2E  (CO
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 2 OP              Y     N     N     N     N     N     N     Y     M
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
- 2 ME              M     M     E     R     S     C     R     1     G     S     2
-@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
- 2 MA              A     N     R     R     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 2 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
-
-@  AUTOMATIC MANAGEMENT 
-@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
- 2 PL          79115 79250    40   100    20    40    10
-@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
- 2 IR             30    50   100 IB001 IBI01    10     1
-@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
- 2 NI             30    50    25 IB001 IB001
-@N RESIDUES    RIPCN RTIME RIDEP
- 2 RE            100     1    20
-@N HARVEST     HFRST HLAST HPCNP HPCNR
- 2 HA              0 80115   100     0
 
 

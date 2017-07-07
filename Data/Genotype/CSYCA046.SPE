@@ -48,7 +48,7 @@ $SPECIES:CSYCA046.010114   Last edit:12JAN2016 LPM
 ! Phase durations
 @PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
 ! oC.d gCH2O/TT                                                              
-   120   0.1
+   120   0.05
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN ! Photoperiod threshold,sensitivity type  
 !  0-1     h  Code                                  
@@ -95,7 +95,7 @@ $SPECIES:CSYCA046.010114   Last edit:12JAN2016 LPM
 ! Stems
 @SLIG%  SAWS  SERX  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
 !    % cm2/g  cm/d  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
-  10.0  25.0   2.4   2.0
+  10.0  25.0   2.4   4.0
 ! Crown (Planting stick)
 @ CRFR ! Fraction of stem growth
 !   fr
