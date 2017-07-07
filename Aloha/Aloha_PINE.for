@@ -159,8 +159,8 @@ C-----------------------------------------------------------------------
      &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
 
       CALL Aloha_GROSUB  (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
-     &    XSTAGE,                                             !Input
+     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE,                  !Input
+     &    TURFAC, WEATHER, XSTAGE,                            !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
      &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
@@ -176,8 +176,8 @@ C-----------------------------------------------------------------------
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, 
-     &   BIOMAS, GPSM, GPP, HARVFRAC, ISDATE, MDATE,      !Input
-     &   PMDATE, STGDOY, STOVER, WTINITIAL, YIELD,        !Input
+     &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
+     &   MDATE, PMDATE, STGDOY, STOVER, WTINITIAL, YIELD, !Input
      &   YRDOY, YRPLT)                                    !Input
 
 !=======================================================================
@@ -256,8 +256,8 @@ C----------------------------------------------------------------------
       
 !        IF (ISTAGE .LT. 6) THEN
            CALL Aloha_GROSUB  (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
-     &    XSTAGE,                                             !Input
+     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE,                  !Input
+     &    TURFAC, WEATHER, XSTAGE,                            !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
      &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
@@ -295,8 +295,8 @@ C-----------------------------------------------------------------------
 
      
         CALL Aloha_GROSUB  (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
-     &    XSTAGE,                                             !Input
+     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE,                  !Input
+     &    TURFAC, WEATHER, XSTAGE,                            !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
      &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
@@ -313,8 +313,8 @@ C-----------------------------------------------------------------------
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, 
-     &   BIOMAS, GPSM, GPP, HARVFRAC, ISDATE, MDATE,      !Input
-     &   PMDATE, STGDOY, STOVER, WTINITIAL, YIELD,        !Input
+     &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
+     &   MDATE, PMDATE, STGDOY, STOVER, WTINITIAL, YIELD, !Input
      &   YRDOY, YRPLT)                                    !Input
 
 !=======================================================================
@@ -328,8 +328,8 @@ C-----------------------------------------------------------------------
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, 
-     &   BIOMAS, GPSM, GPP, HARVFRAC, ISDATE, MDATE,      !Input
-     &   PMDATE, STGDOY, STOVER, WTINITIAL, YIELD,        !Input
+     &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
+     &   MDATE, PMDATE, STGDOY, STOVER, WTINITIAL, YIELD, !Input
      &   YRDOY, YRPLT)                                    !Input
 
 !=======================================================================

@@ -1,4 +1,4 @@
-C=======================================================================
+ï»¿C=======================================================================
 C  OPSPAM, Subroutine, C.H.Porter from Soil Water portions of OPDAY
 C  Generates output for daily soil water data
 C-----------------------------------------------------------------------
@@ -319,8 +319,8 @@ C-----------------------------------------------------------------------
 ! EMAA    Average mulch evaporation since last printout (mm/d)
 ! ETAA    Average evapotranspiration since last printout (mm/d)
 ! AVSRAD  Average solar radiation since last printout (MJ/m2-d)
-! AVTMN   Average min temperature since last printout (ºC)
-! AVTMX   Average max temperature since last printout (ºC)
+! AVTMN   Average min temperature since last printout (ï¿½C)
+! AVTMX   Average max temperature since last printout (ï¿½C)
 ! AVWTD   Average water table depth since last printout (cm)
 ! CEP     Cumulative transpiration (mm)
 ! CES     Cumulative evaporation (mm)
@@ -337,14 +337,14 @@ C-----------------------------------------------------------------------
 ! NL      Maximum number of soil layers = 20 
 ! LUN     Unit number for spam output file 
 ! OUTW    Filename for soil water output file (set in IPIBS) 
-! ST(L)   Soil temperature in soil layer L (°C)
+! ST(L)   Soil temperature in soil layer L (ï¿½C)
 ! SW(L)   Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! TDRAIN  Cumulative daily drainage from profile (mm)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
-! TMAX    Maximum daily temperature (°C)
-! TMIN    Minimum daily temperature (°C)
+! TMAX    Maximum daily temperature (ï¿½C)
+! TMIN    Minimum daily temperature (ï¿½C)
 ! TOTIR   Total seasonal irrigation (mm)
 ! TRUNOF  Cumulative runoff (mm)
 ! WTDEP   Water table depth  (cm)

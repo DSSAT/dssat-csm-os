@@ -49,8 +49,8 @@ C  TTMP   :
 C=======================================================================
 
       SUBROUTINE Aloha_GROSUB (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE, TURFAC, WEATHER, !Input
-     &    XSTAGE,                                             !Input
+     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE,                  !Input
+     &    TURFAC, WEATHER, XSTAGE,                            !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
      &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
@@ -86,7 +86,7 @@ C=======================================================================
       REAL    PAR, CC, TEMPM, TRF2, CARBO, SWFAC, TRNU
       REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP
       REAL    PDWI, PGRORT, DM, FBIOM, MAXLAI, PHOTOSYNEYE, FRUITS
-      REAL    YIELD, PEYEWT, GPSM, STOVER, FDMC, YIELDB, HBIOM, XSTAGE
+      REAL    YIELD, PEYEWT, GPSM, STOVER, YIELDB, HBIOM, XSTAGE  !, FDMC
 
       REAL    CO2, SRAD, TMIN, TMAX
       REAL    PLTPOP, SDWTPL, PLANTSIZE

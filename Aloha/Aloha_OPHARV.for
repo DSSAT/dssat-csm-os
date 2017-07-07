@@ -7,10 +7,10 @@
 !=======================================================================
 
       SUBROUTINE Aloha_OPHARV(CONTROL, 
-     &   BIOMAS, GPSM, GPP, HARVFRAC, ISDATE, MDATE,      !Input
-     &   PMDATE, STGDOY, STOVER, WTINITIAL, YIELD,        !Input
+     &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
+     &   MDATE, PMDATE, STGDOY, STOVER, WTINITIAL, YIELD, !Input
      &   YRDOY, YRPLT)                                    !Input
-!     &   BWAH, SDWTAH)                                    !Output
+!     &   BWAH, SDWTAH)                                   !Output
 !     N variables
 !     &   WTNSD,TOTNUP,WTNUP,FBIOM,XGNP,APTNUP,GNUP,
 
@@ -39,7 +39,7 @@
       INTEGER STGDOY(20)
       
       REAL AGEFAC, APTNUP, BWAH, BWAM, CANNAA, CANWAA
-      REAL GNUP, GPP, GPSM, HI, StovSenes
+      REAL CRWNWT, GNUP, GPP, GPSM, HI, StovSenes
       REAL MAXLAI, NSTRES, PBIOMS, PODWT, PSDWT
       REAL Pstres1, Pstres2   
       REAL SDRATE
@@ -448,7 +448,7 @@ C
       LABEL(12) = 'NUCM'; VALUE(12) = WTNUP*10.
       LABEL(13) = 'CNAM'; VALUE(13) = WTNCAN*10.
       LABEL(14) = 'GNAM'; VALUE(14) = 0.0 ! GNUP = WTNSD*10.
-      LABEL(15) = 'PWAM'; VALUE(15) = PODWT*10.
+      LABEL(15) = 'PWAM'; VALUE(15) = CRWNWT*10.
       LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
       LABEL(17) = 'HIAM'; VALUE(17) = HI
       LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
