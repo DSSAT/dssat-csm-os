@@ -126,7 +126,7 @@ Subroutine CsvOut_cscer(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
    DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, CARBOA, LAI, &
    SAIDOUT, TWAD, SDWAD, RWAD, CWAD, LLWADOUT, STWADOUT, GWAD, HIAD, CHWADOUT,&
    EWAD, RSWAD, DWAD, SENW0C, SENWSC, RSCD, GRNUMAD, HWUDC, TNUMAD, SLAOUT, &
-   RTDEP, PTF, H2OA, WAVR, WUPR, WFT, WFP, WFg0, NFT, NFP, NFg0, NUPR, TFP, TFg0,& 
+   RTDEP, PTF, H2OA, WAVR, WUPR, WFT, WFP, WFG, NFT, NFP, NFG, NUPR, TFP, TFG,& 
    VF, DF, Csvline, pCsvline, lngth)
          
    ! Input vars
@@ -137,7 +137,7 @@ Subroutine CsvOut_cscer(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, &
    Real,Intent(in) :: TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, CARBOA, &
       LAI, SAIDOUT, TWAD, SDWAD, RWAD, CWAD, LLWADOUT, STWADOUT, GWAD, HIAD, &       
       CHWADOUT, EWAD, RSWAD, DWAD, RSCD, GRNUMAD, TNUMAD, SLAOUT, RTDEP, PTF, &     
-      H2OA, WAVR, WUPR, WFT, WFP, WFg0, NFT, NFP, NFg0, NUPR, TFP, TFg0, VF, DF  
+      H2OA, WAVR, WUPR, WFT, WFP, WFG, NFT, NFP, NFG, NUPR, TFP, TFG, VF, DF  
 
    CHARACTER(6),Intent(in) :: SENW0C, SENWSC, HWUDC
 
@@ -522,7 +522,7 @@ end Subroutine CsvOut_mzcer
 !------------------------------------------------------------------------------
 ! Sub for plantn.csv output
 Subroutine CsvOutPlNCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
-   WTNCAN, WTNSD, WTNVEg0, PCNSDP, PCNVEg0, WTNFX, WTNUP, WTNLF, WTNST, PCNLP, &
+   WTNCAN, WTNSD, WTNVEG, PCNSDP, PCNVEG, WTNFX, WTNUP, WTNLF, WTNST, PCNLP, &
    PCNSTP, PCNSHP, PCNRTP, NFIXN, CUMSENSURFN, CUMSENSOILN, &
    Csvline, pCsvline, lngth) 
     
@@ -532,7 +532,7 @@ Subroutine CsvOutPlNCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
 !   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
 !   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
 !   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
-   Real,Intent(IN) :: WTNCAN, WTNSD, WTNVEg0, PCNSDP, PCNVEg0, WTNFX, WTNUP
+   Real,Intent(IN) :: WTNCAN, WTNSD, WTNVEG, PCNSDP, PCNVEG, WTNFX, WTNUP
    REAL,Intent(IN) :: WTNLF, WTNST, PCNLP, PCNSTP, PCNSHP, PCNRTP, NFIXN
    REAL,Intent(IN) :: CUMSENSURFN, CUMSENSOILN 
   
@@ -558,7 +558,7 @@ Subroutine CsvOutPlNCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
   
 !  Unofmatted   
    Write(tmp,'(24(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
-      DAP, cWTNCAN1, cWTNSD1, cWTNVEG1, PCNSDP, PCNVEg0, cWTNFX1, cWTNUP1, cWTNLF1,&
+      DAP, cWTNCAN1, cWTNSD1, cWTNVEG1, PCNSDP, PCNVEG, cWTNFX1, cWTNUP1, cWTNLF1,&
       cWTNST1, PCNLP, PCNSTP, PCNSHP, PCNRTP, cNFIXN1, CUMSENSURFN, CUMSENSOILN
    
    lngth = Len(Trim(Adjustl(tmp)))
@@ -697,7 +697,7 @@ end Subroutine CsvOutSoilNi
 !------------------------------------------------------------------------------
 ! Sub for plantn.csv output
 Subroutine CsvOutPlNMzCer(EXCODE, RUNRUNI, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
-   DAP, WTNCAN, WTNSD, WTNVEg0, PCNGRN, PCNVEg0, WTNUP, WTNLF, WTNST, PCNL, &
+   DAP, WTNCAN, WTNSD, WTNVEG, PCNGRN, PCNVEG, WTNUP, WTNLF, WTNST, PCNL, &
    PCNST, PCNRT, CUMSENSURFN, CUMSENSOILN, Csvline, pCsvline, lngth) 
     
 !  Input vars
@@ -707,7 +707,7 @@ Subroutine CsvOutPlNMzCer(EXCODE, RUNRUNI, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
 !  INTEGER,Intent(in)  :: SN         ! Sequence number,crop rotation  #
 !  INTEGER,Intent(in)  :: ON         ! Option number (sequence runs)  #
 !  INTEGER,Intent(in)  :: CN         ! Crop component (multicrop)     #
-   REAL,Intent(IN) :: WTNCAN, WTNSD, WTNVEg0, PCNGRN, PCNVEg0, WTNUP, WTNLF
+   REAL,Intent(IN) :: WTNCAN, WTNSD, WTNVEG, PCNGRN, PCNVEG, WTNUP, WTNLF
    REAL,Intent(IN) :: WTNST, PCNL, PCNST, PCNRT, CUMSENSURFN, CUMSENSOILN
   
    Character(:), allocatable, Target, Intent(Out) :: Csvline
@@ -728,7 +728,7 @@ Subroutine CsvOutPlNMzCer(EXCODE, RUNRUNI, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    cWTNST1  = WTNST  * 10.0
              
    Write(tmp,'(21(g0,","),g0)') RUNRUNI, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
-      DAS, DAP, cWTNCAN1, cWTNSD1, cWTNVEG1, PCNGRN, PCNVEg0, cWTNUP1, &
+      DAS, DAP, cWTNCAN1, cWTNSD1, cWTNVEG1, PCNGRN, PCNVEG, cWTNUP1, &
       cWTNLF1, cWTNST1, PCNL, PCNST, PCNRT, CUMSENSURFN, CUMSENSOILN  
    
    lngth = Len(Trim(Adjustl(tmp)))
@@ -741,7 +741,7 @@ end Subroutine CsvOutPlNMzCer
 !------------------------------------------------------------------------------
 ! Sub for weather.csv output
 Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
-   DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVg0, TDAY, TDEW, TGROAV, &
+   DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG, TDAY, TDEW, TGROAV, &
    TGRODY, WINDSP, CO2, Csvline, pCsvline, lngth) 
     
 !  Input vars
@@ -761,7 +761,7 @@ Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
 !  End of vars
 
    Write(tmp,'(22(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
-     DAS, RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVg0, TDAY, TDEW, &
+     DAS, RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG, TDAY, TDEW, &
      TGROAV, TGRODY, WINDSP, CO2
       
    lngth = Len(Trim(Adjustl(tmp)))
@@ -832,8 +832,8 @@ end Subroutine CsvOutPlGr2
 !------------------------------------------------------------------------------------ 
 ! Sub for output PlantGrf.csv
 Subroutine CsvOutPlGrf(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
-   DAP, TMEAN, ZSTAGE, DU, VF, DF, TFGEM, WFGE, TFP, WFP, NFP, CO2FP, RSFP, TFg0, &
-   WFg0, NFg0, WFT, NFT, WAVR, WUPR, H2OA, EOP, SNH4PROFILE, SNO3PROFILE, LCNF, SCNF,&
+   DAP, TMEAN, ZSTAGE, DU, VF, DF, TFGEM, WFGE, TFP, WFP, NFP, CO2FP, RSFP, TFG, &
+   WFG, NFG, WFT, NFT, WAVR, WUPR, H2OA, EOP, SNH4PROFILE, SNO3PROFILE, LCNF, SCNF,&
    RCNF, Csvline, pCsvline, lngth)
     
 !  Input vars
@@ -842,7 +842,7 @@ Subroutine CsvOutPlGrf(EXCODE, RUN, TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, &
    Integer, Intent(IN) :: RUN           ! run number
    INTEGER,Intent(in) :: TN, RN, SN, ON, REP, CN, YEAR, DOY, DAS, DAP        
    REAL,Intent(in) :: TMEAN, ZSTAGE, DU, VF, DF, TFGEM, WFGE, TFP, WFP, NFP, CO2FP           
-   REAL,Intent(in) :: RSFP, TFg0, WFg0, NFg0, WFT, NFT, WAVR, WUPR, H2OA, EOP, SNH4PROFILE   
+   REAL,Intent(in) :: RSFP, TFG, WFG, NFG, WFT, NFT, WAVR, WUPR, H2OA, EOP, SNH4PROFILE   
    REAL,Intent(in) :: SNO3PROFILE, LCNF, SCNF, RCNF          
    
 !  Temp vars
@@ -958,7 +958,7 @@ Subroutine CsvOutEvalCsCer(EXCODE, RUN, TN, ROTNUM,  REPNO, CR, Edap, Edapm, &
 end Subroutine CsvOutEvalCsCer
 ! ----------------------------------------------------------------------------------
 ! Sub for evaluate.csv output
-Subroutine CsvOutEvOpsum(EXCODE, RUNRUNI, Cg0, TN, ROTNUM, CR, Simulated, Measured, &
+Subroutine CsvOutEvOpsum(EXCODE, RUNRUNI, CG, TN, ROTNUM, CR, Simulated, Measured, &
    ICOUNT, Csvline, pCsvline, lngth) 
     
 !  Input vars
@@ -983,7 +983,7 @@ Subroutine CsvOutEvOpsum(EXCODE, RUNRUNI, Cg0, TN, ROTNUM, CR, Simulated, Measur
    Character(Len=100) :: tmp1  
    Character (Len=20) :: fmt
       
-   Write(tmp1,'(6(g0,","))') RUNRUNI,  EXCODE, Cg0, TN, ROTNUM, CR      
+   Write(tmp1,'(6(g0,","))') RUNRUNI,  EXCODE, CG, TN, ROTNUM, CR      
     
    Write(fmt,'(I3)') 2*ICOUNT-1   
    fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
@@ -1064,7 +1064,7 @@ end Subroutine CsvOutSumOpsum
 
 ! Sub for plantc.csv output Plant C CropGro
 Subroutine CsvOutPlCCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
-   TOTWT, Pg0, CMINEA, GROWTH, GRWRES, MAINR, CADLF, CADST, RHOLP, RHOSP, TGRO, &
+   TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, CADST, RHOLP, RHOSP, TGRO, &
    TGROAV, PCNSDP, PCLSDP, PCCSDP, TS, Csvline, pCsvline, lngth) 
     
 !  Input vars
@@ -1073,7 +1073,7 @@ Subroutine CsvOutPlCCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
 !   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
 !   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
 !   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
-   REAL,Intent(IN) :: TOTWT, Pg0, CMINEA, GROWTH, GRWRES, MAINR, CADLF, CADST
+   REAL,Intent(IN) :: TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, CADST
    REAL,Intent(IN) :: RHOLP, RHOSP, TGROAV, PCNSDP, PCLSDP, PCCSDP  
    REAL,Dimension(TS),Intent(IN)      :: TGRO
     
@@ -1092,7 +1092,7 @@ Subroutine CsvOutPlCCrGro(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
    cCADLF1 = CADLF + CADST  
             
    Write(tmp,'(22(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
-     DAP, TOTWT1, Pg0, CMINEA, GROWTH, GRWRES, MAINR, cCADLF1, RHOLP, RHOSP, &
+     DAP, TOTWT1, PG, CMINEA, GROWTH, GRWRES, MAINR, cCADLF1, RHOLP, RHOSP, &
      TGRO(12), TGROAV, PCNSDP, PCLSDP, PCCSDP
    
   lngth = Len(Trim(Adjustl(tmp)))
@@ -1219,7 +1219,7 @@ end Subroutine CsvOutSoilOrg2
 !---------------------------------------------------------------------------------
 ! Sub for csv output for ETPhot.OUT
 Subroutine CsvOutETPhot(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, PCINPD, &
-   Pg0, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN,LMXSHN,TGRO,TGROAV,&  
+   PG, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN,LMXSHN,TGRO,TGROAV,&  
    Csvline, pCsvline, lngth) 
   
   ! Input vars
@@ -1228,7 +1228,7 @@ Subroutine CsvOutETPhot(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, PCINPD,
 !        INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
 !        INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
 !        INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     # 
-  Real,Intent(IN) :: PCINPD, Pg0, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, PNLSHN
+  Real,Intent(IN) :: PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, PNLSHN
   Real,Intent(IN) :: LMXSLN, LMXSHN, TGROAV
   Real,Dimension(24),Intent(IN) :: TGRO
     
@@ -1240,7 +1240,7 @@ Subroutine CsvOutETPhot(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, PCINPD,
   ! End of vars
 
   Write(tmp,'(19(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
-     PCINPD, Pg0, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN, &
+     PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN, &
      TGRO(12), TGROAV
    
     lngth = Len(Trim(Adjustl(tmp)))
@@ -1291,9 +1291,9 @@ end Subroutine CsvOutMulch
 Subroutine CsvOutPlantP(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    PConc_Shut_opt, PConc_Root_opt, PConc_Shel_opt, PConc_Seed_opt, PConc_Shut_min, & 
    PConc_Root_min, PConc_Shel_min, PConc_Seed_min, PConc_Shut, PConc_Root, &
-   PConc_Shel, PConc_Seed, PConc_Plant, PShut_kg0, PRoot_kg0, PShel_kg0, PSeed_kg0, &
-   PPlant_kg0, PS1_AV, PS2_AV, PUptakeProf, PUptake_Cum, CumSenSurfP, CumSenSoilP, & 
-   PhFrac1, PhFrac2, Shut_kg0, Root_kg0, Shel_kg0, Seed_kg0, PSTRESS_RATIO, N2P, PTotDem, &
+   PConc_Shel, PConc_Seed, PConc_Plant, PShut_kg, PRoot_kg, PShel_kg, PSeed_kg, &
+   PPlant_kg, PS1_AV, PS2_AV, PUptakeProf, PUptake_Cum, CumSenSurfP, CumSenSoilP, & 
+   PhFrac1, PhFrac2, Shut_kg, Root_kg, Shel_kg, Seed_kg, PSTRESS_RATIO, N2P, PTotDem, &
    Csvline, pCsvline, lngth) 
      
 !  Input vars
@@ -1304,9 +1304,9 @@ Subroutine CsvOutPlantP(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
 !        INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     # 
    Real,Intent(IN) :: PConc_Shut_opt, PConc_Root_opt, PConc_Shel_opt, PConc_Seed_opt, &
       PConc_Shut_min, PConc_Root_min, PConc_Shel_min, PConc_Seed_min, PConc_Shut,     & 
-      PConc_Root, PConc_Shel, PConc_Seed, PConc_Plant, PShut_kg0, PRoot_kg0, PShel_kg0,  &
-      PSeed_kg0, PPlant_kg0, PS1_AV, PS2_AV, PUptakeProf, PUptake_Cum, CumSenSurfP,     & 
-      CumSenSoilP, PhFrac1, PhFrac2, Shut_kg0, Root_kg0, Shel_kg0, Seed_kg0, PSTRESS_RATIO,&
+      PConc_Root, PConc_Shel, PConc_Seed, PConc_Plant, PShut_kg, PRoot_kg, PShel_kg,  &
+      PSeed_kg, PPlant_kg, PS1_AV, PS2_AV, PUptakeProf, PUptake_Cum, CumSenSurfP,     & 
+      CumSenSoilP, PhFrac1, PhFrac2, Shut_kg, Root_kg, Shel_kg, Seed_kg, PSTRESS_RATIO,&
       N2P, PTotDem
       
    Character(:), allocatable, Target, Intent(Out) :: Csvline
@@ -1343,8 +1343,8 @@ Subroutine CsvOutPlantP(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    Write(tmp,'(41(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
       PConc_Shut_opt1, PConc_Root_opt1, PConc_Shel_opt1, PConc_Seed_opt1, &
       PConc_Shut_min1, PConc_Root_min1, PConc_Shel_min1, PConc_Seed_min1, &
-      PConc_Shut1, PConc_Root1, PConc_Shel1, PConc_Seed1, PConc_Plant1, PShut_kg0,&
-      PRoot_kg0, PShel_kg0, PSeed_kg0, PPlant_kg0, PS1_AV, PS2_AV, PUptakeProf, &
+      PConc_Shut1, PConc_Root1, PConc_Shel1, PConc_Seed1, PConc_Plant1, PShut_kg,&
+      PRoot_kg, PShel_kg, PSeed_kg, PPlant_kg, PS1_AV, PS2_AV, PUptakeProf, &
       PUptake_Cum, CumSenSurfP, CumSenSoilP, PhFrac1, PhFrac2, Shut_kg1, Root_kg1,&
       Shel_kg1, Seed_kg1, PSTRESS_RATIO, N2P, PTotDem
    

@@ -17,9 +17,10 @@
 !   the Fortran Preprocessor Option Category.
 !=======================================================================
 
-#if defined __APPLE__ || defined __linux__ || defined linux || defined __unix__
-      CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
-#else
+#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
       CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
+#else
+      CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
+#endif
 
       END MODULE CRSIMDEF

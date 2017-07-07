@@ -50,10 +50,10 @@ C             CHP Added TRTNUM to CONTROL variable.
 !   the Fortran Preprocessor Option Category.
 !=======================================================================
 
-#if defined __APPLE__ || defined __linux__ || defined linux || defined __unix__
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
-#else
+#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
       CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
+#else
+      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
 #endif
 
 !=======================================================================
