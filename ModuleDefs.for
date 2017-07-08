@@ -74,12 +74,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 5
-        INTEGER :: Build = 2
+        INTEGER :: Build = 3
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.5.03 chp 07/08/2017 Cross-platform compatibility, 
+!                    potato temperature sensitivity (R.Raymundo)
 !       4.6.5.02 chp 07/06/2017 Y2K-2025, EXNAME in Summary.OUT, data updates
 !       4.6.5.01 chp 05/10/2017 Workshop 2017 version. Remove SALUS. 
 !       4.6.1.14 chp 05/09/2017 CSV output updates, minor sunflower changes, 
