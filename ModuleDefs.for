@@ -562,6 +562,7 @@ C-GH    Set to DSSAT46
         REAL AGEFAC, PG                   !photosynthese
         REAL CEF, CEM, CEO, CEP, CES, CET !Cumulative ET - mm
         REAL  EF,  EM,  EO,  EP,  ES,  ET !Daily ET - mm/d
+        REAL  EOP, EVAP                   !Daily mm/d
         REAL, DIMENSION(NL) :: UH2O       !Root water uptake
       End Type SPAMType
 
@@ -785,6 +786,8 @@ C-GH    Set to DSSAT46
         Case ('EP');     Value = SAVE_data % SPAM % EP
         Case ('ES');     Value = SAVE_data % SPAM % ES
         Case ('ET');     Value = SAVE_data % SPAM % ET
+        Case ('EOP');    Value = SAVE_data % SPAM % EOP
+        Case ('EVAP');   Value = SAVE_data % SPAM % EVAP
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -899,6 +902,8 @@ C-GH    Set to DSSAT46
         Case ('EP');     SAVE_data % SPAM % EP     = Value
         Case ('ES');     SAVE_data % SPAM % ES     = Value
         Case ('ET');     SAVE_data % SPAM % ET     = Value
+        Case ('EOP');    SAVE_data % SPAM % EOP    = Value
+        Case ('EVAP');   SAVE_data % SPAM % EVAP   = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

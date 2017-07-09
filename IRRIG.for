@@ -101,6 +101,7 @@ C=======================================================================
 !     ET-based auto-irrig
       REAL ET_THRESH, ACCUM_ET
       REAL ET     !, EP, ES, E0
+      REAL EOP, EVAP, RUNOFF
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
@@ -694,6 +695,22 @@ C-----------------------------------------------------------------------
       EFFIRR = IREFF(IRINC)
       IrrFreq = IFREQ(IRINC)
 
+      IF (DSOIL < 1) THEN
+        DSOIL = 30.
+      ENDIF
+      IF (THETAC < 1) THEN
+        THETAC = 50.
+      ENDIF
+      IF (THETAU < THETAC) THEN
+        THETAU = 100.
+      ENDIF
+      IF (AIRAMT < 0) THEN
+        AIRAMT = 0.
+      ENDIF
+      IF (EFFIRR < 0) THEN
+        EFFIRR = 1.0
+      ENDIF
+
 !     For 'E' and 'T' options, DSOIL is the accumulated ET amount to 
 !         trigger an irrigation event
       IF (IIRRI == 'E' .or. IIRRI == 'T') THEN
@@ -747,12 +764,20 @@ C             Apply fixed irrigation amount
 !         ET determines demand        
           CASE ('E', 'T')
             CALL GET('SPAM','ET',ET)
+            CALL GET('SPAM','EOP',EOP)
+            CALL GET('SPAM','EVAP',EVAP)
+            CALL GET('WATER','RUNOFF',RUNOFF)
 
-            ACCUM_ET = MAX(0.0, ACCUM_ET + ET - RAIN)
+!           Today's accum demand = Yest. accum demand + demand - supply
+            ACCUM_ET = ACCUM_ET + (EOP + EVAP) - (RAIN - RUNOFF)
+            ACCUM_ET = MAX(0.0, ACCUM_ET)
+
+!KJB - use effective rainfall? Infiltration?
+! Use potential transpiration???
             IF (ACCUM_ET > ET_THRESH) THEN
               IF (IIRRI .EQ. 'E') THEN
 C               Determine supplemental irrigation amount.
-                IRRAPL = ACCUM_ET
+                IRRAPL = ACCUM_ET * THETAU / 100.
                 IRRAPL = MAX(0.,IRRAPL)
 
               ELSE IF (IIRRI .EQ. 'T') THEN
