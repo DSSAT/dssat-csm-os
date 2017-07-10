@@ -199,7 +199,6 @@
         laix = 0.0
         laixm = -99.0
         lanc = 0.0
-        plant%lap = 0.0
         laphc = 0.0
         plant%lapp = 0.0
         plant%laps = 0.0

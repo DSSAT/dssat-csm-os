@@ -48,8 +48,7 @@
             PLA = PLA + PLAGSB4                                                                                        !EQN 453
             PLAX = AMAX1(PLAX,PLA)
             !LAP(LNUMSG) = LAP(LNUMSG) + PLAGSB4                                                                        !EQN 454
-            plant(BRSTAGE,LNUMSIMSTG(BRSTAGE))%LAP = plant(BRSTAGE,LNUMSIMSTG(BRSTAGE))%LAP + PLAGSB4 
-            
+            !plant(BRSTAGE,LNUMSIMSTG(BRSTAGE))%LAP = plant(BRSTAGE,LNUMSIMSTG(BRSTAGE))%LAP + PLAGSB4  !LPM10JUL2017 Adjust leaf area at leaf position using LATL3 (actual leaf area by cohort)
             DO L = 1,INT(SHNUM+1)
                 IF (SHNUM.GE.1.0.OR.SHNUM-FLOAT(L-1).GT.0.0) THEN
                     SHLA(L) = SHLA(L) + SHLAGB4(L)                                                                    !LPM21MAR15 
@@ -80,12 +79,12 @@
             !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
             DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR) 
-                    IF (plant(BR,LF)%LAP-plant(BR,LF)%LAPS > PLASTMP) THEN                                                                     ! DA If the leaf can senesce more
+                    IF (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS > PLASTMP) THEN                                                                     ! DA If the leaf can senesce more
                         plant(BR,LF)%LAPS = plant(BR,LF)%LAPS + PLASTMP                                                                        !EQN 459a
                         PLASTMP = 0.0
                     ELSE
-                        PLASTMP = PLASTMP - (plant(BR,LF)%LAP-plant(BR,LF)%LAPS)                                                               
-                        plant(BR,LF)%LAPS = plant(BR,LF)%LAP                                                                                   !EQN 459b    ! DA The leaf area is totally senesced
+                        PLASTMP = PLASTMP - (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS)                                                               
+                        plant(BR,LF)%LAPS = plant(BR,LF)%LATL3T                                                                                   !EQN 459b    ! DA The leaf area is totally senesced
                     ENDIF
                     IF (PLASTMP <= 0.0) EXIT
                 ENDDO
@@ -111,8 +110,8 @@
             !ENDDO
             DO BR = 0, BRSTAGE                                                                                        !LPM 28MAR15 Change to include cohorts
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (plant(BR,LF)%LAP-plant(BR,LF)%LAPS > 0.0) THEN
-                        plant(BR,LF)%LAPS = plant(BR,LF)%LAPS + (plant(BR,LF)%LAP - plant(BR,LF)%LAPS) * HAFR     !EQN 461
+                    IF (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS > 0.0) THEN
+                        plant(BR,LF)%LAPS = plant(BR,LF)%LAPS + (plant(BR,LF)%LATL3T - plant(BR,LF)%LAPS) * HAFR     !EQN 461
                     ENDIF
                 ENDDO
             ENDDO

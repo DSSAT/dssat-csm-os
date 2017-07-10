@@ -43,8 +43,8 @@
             DO LF = 1, LNUMSIMSTG(BR)         
                 IF (plant(BR,LF)%LAGETT+TTLFLIFE*EMRGFR <= LLIFGTT+LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
                 IF (plant(BR,LF)%LATL3T-plant(BR,LF)%LAPS > 0.0) THEN
-                    LAPSTMP = AMIN1((plant(BR,LF)%LATL3T - plant(BR,LF)%LAPS),(plant(BR,LF)%LATL3T/LLIFSTT*AMIN1((plant(BR,LF)%LAGETT+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
-                        (TTLFLIFE*EMRGFR))))
+                    LAPSTMP = AMIN1((plant(BR,LF)%LATL3T - plant(BR,LF)%LAPS),(plant(BR,LF)%LATL3T*(AMIN1((plant(BR,LF)%LAGETT+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), &         !EQN 372
+                        (TTLFLIFE*EMRGFR))/LLIFSTT)))
                     plant(BR,LF)%LAPS = plant(BR,LF)%LAPS + LAPSTMP
                     PLASP = PLASP + LAPSTMP                                                                                !EQN 370
                 ENDIF
