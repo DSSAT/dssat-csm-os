@@ -72,8 +72,10 @@ C=======================================================================
 
 !      PARAMETER (CO2BAS = 330.0)
       PARAMETER (ERRKEY = 'WEATHR')
-!      PARAMETER (RAD=2.0*PI/365.0)
-
+!      PARAMETER (PI=3.14159, RAD=2.0*PI/360.0)
+!           changed denominator from 365 to 360 Bruce Kimball on 10JAN17
+!           but getting message that PI and RAD coming from ModuleDefs
+      
       INTERFACE 
         SUBROUTINE OPSTRESS(CONTROL, IDETO,   
      &    PlantStres, WEATHER, YIELD, BIOMAS)
@@ -417,7 +419,6 @@ C-----------------------------------------------------------------------
 
       RETURN
       END SUBROUTINE WEATHR
-
 !***********************************************************************
 !***********************************************************************
 ! WEATHR Variables
@@ -476,7 +477,8 @@ C-----------------------------------------------------------------------
 ! TGRODY     Average temperature during daylight hours (°C)
 ! TMAX       Maximum daily temperature (°C)
 ! TMIN       Minimum daily temperature (°C)
-! TS         Number of intermediate time steps (=24) 
+! TS         Number of intermediate time steps per day (usually 24)
+!                    set = 240 on 9JAN17 by Bruce Kimball      
 ! WINDHR(TS) Hourly wind speed (m/s)
 ! WINDHT     Reference height for wind speed (m)
 ! WINDSP     Wind speed (km/d)

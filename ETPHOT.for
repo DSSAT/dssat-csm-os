@@ -61,7 +61,8 @@ C-----------------------------------------------------------------------
       CHARACTER FILEIO*30,ISWWAT*1,MEEVP*1,MEPHO*1,METEMP*1,
      &  TYPPGN*3,TYPPGL*3, CROP*2
       INTEGER DAS,DYNAMIC,H,I,NELAYR,NHOUR, DOY, YRDOY, YEAR,
-     &  NLAYR,NR5, LUNIO
+     &  NLAYR,NR5, LUNIO, TSV2
+!         TSV2 = index for mid-day hour added by Bruce Kimball on 9JAN17
       LOGICAL DAYTIM
       REAL AGEFAC,AWEV1,AZIR,AZZON(TS),BETA(TS),BETN,
      &  CANHT,CANWH,CEC,CEN,CLOUDS,CO2,CO2HR,DAYKP,DAYKR,DAYPAR,
@@ -85,7 +86,8 @@ C-----------------------------------------------------------------------
      &  XLMAXT(6),XSW(NL,3),YLMAXT(6),YSCOND(NL,3),YSHCAP(NL,3),TMIN
       REAL SAT(NL),TGRO(TS),TGROAV,TGRODY,TAV,TAMP
       REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR
-      PARAMETER (TINCR=24.0/TS)
+!      PARAMETER (TINCR=24.0/TS)
+!                TINCR is the lenfth of a time increment in hours
       REAL PHTHRS10, PLTPOP
       REAL PORMIN, RWUMX
       REAL PALBW, SALBW, SRAD, DayRatio
@@ -117,6 +119,9 @@ C         added by BAK on 10DEC2015
       TYPE (SwitchType)  ISWITCH
       TYPE (WeatherType) WEATHER
 
+!      PARAMETER (TINCR=24.0/TS)
+        TINCR =24.0/REAL(TS)
+!                TINCR is the lenfth of a time increment in hours
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
       DAS     = CONTROL % DAS
@@ -135,8 +140,8 @@ C         added by BAK on 10DEC2015
 !     on soil albedo) and CMSALB (also includes canopy cover effects)
       SALBW  = SOILPROP % SALB
 
-      SLPF   = SOILPROP % SLPF  
-      SAT    = SOILPROP % SAT
+      SLPF = SOILPROP % SLPF
+      SAT  = SOILPROP % SAT
 
       ISWWAT = ISWITCH % ISWWAT
       MEEVP  = ISWITCH % MEEVP
@@ -354,11 +359,15 @@ C       and sum for day (TS=24 for hourly).
 !       is used by daily model.  The 2.0 accounts for lower transpiration
 !       during early morning hours, with high relative humidity.
         DayRatio = 24.0 / (WEATHER % DAYL - 2.0)
-
+!                 Note that DayRatio will blow up when DAYL is two hours, but this would only occur at high and low lattitudes
+!                 on each side of winter when temperatures likely are too cold for crop growth. BAK.
+        
+!       Conpute index for mid-day time step added by Bruce Kimball on 9JAN17        
+        TSV2 = INT(TS/2)
         DO H=1,TS
 
 C         Calculate real and solar time.
-
+          
           HS = REAL(H) * TINCR
           IF (HS.GT.SNUP .AND. HS.LT.SNDN) THEN
             DAYTIM = .TRUE.
@@ -401,8 +410,11 @@ C  KJB The problem is the need to come back to this after iterative to
 C  KJB create the actual water extracted.  So, need to call EXTRACT
 C  KJB and SPSUM hourly.
 
-          RWUH = TRWUP * RADHR(H) / SRAD * 3600. / 1.E6 * 10.
+!         RWUH = TRWUP * RADHR(H) / SRAD * 3600. / 1.E6 * 10.
 !         mm/h = cm/d *  J/m2-s  / MJ/m2-d  * s/hr / J/MJ * mm/cm
+          RWUH = (TRWUP*10.) * ((RADHR(H)*TINCR*3600.) / (SRAD * 1.E6))
+! mm/time step =  cm/d * mm/cm    J/s-m2* h/timestep * s/h / (MJ/m2-d * J/MJ)
+!        changed by Bruce Kimball on 10Jan17
 
 !         Need multiplier to account for hourly : daily uptake rate
           RWUH = RWUH * DayRatio
@@ -465,7 +477,8 @@ C         and mm/d).
 C         Remember noon values (ET in mm/h; PG in mg CO2/m2/s).
 
 C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
-          IF (H .EQ. 12) THEN
+!            Get mid-day values
+          IF (H .EQ. TSV2) THEN
             IF (MEPHO .EQ. 'L') THEN
               FRDFPN = FRDIFP(H)
               LMXSLN = LFMXSL * 0.044
@@ -530,7 +543,7 @@ C     Next 3 lines added by BAK on 10DEC2015
           ENDIF
 
 C       Remember midnight values
-          IF(H.EQ.24 .AND. MEEVP .EQ. "Z") THEN
+          IF(H.EQ.TS .AND. MEEVP .EQ. "Z") THEN
             ETnit = EHR + THR
             TEMnit = TAIRHR(H)
             Enit = EHR

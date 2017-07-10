@@ -36,11 +36,12 @@ C-------------------------------------------------------------------
       CHARACTER*10 OUTETP
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, NOUTDC
-      INTEGER RUN, YEAR, YRDOY
+      INTEGER RUN, YEAR, YRDOY, TSV2
 
       REAL PCINPD,PG, PGNOON, PCINPN
       REAL SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN
-      REAL TGRO(24), TGROAV
+      REAL TGRO(TS), TGROAV
+!           changed from 24 to TS by Bruce Kimball on 9JAN17
       REAL Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit(3), TSRFN(3), CSHnit, CSLnit, LSHnit, LSLnit,
@@ -130,10 +131,12 @@ C-----------------------------------------------------------------------
      &       DAS == 1) THEN 
 
           CALL YR_DOY(YRDOY, YEAR, DOY) 
-
+          
+          TSV2 = INT(TS/2)
+          ! added by Bruce Kimball on 9JAN17
           WRITE (NOUTDC,300) YEAR, DOY, DAS, 
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(12), TGROAV,
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TSV2), TGROAV,
      &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,

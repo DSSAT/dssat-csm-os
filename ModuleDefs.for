@@ -64,7 +64,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 3
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-Engy_Bal '
+!     CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
@@ -143,7 +144,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Global constants
       INTEGER, PARAMETER :: 
      &    NL       = 20,    !Maximum number of soil layers 
-     &    TS       = 24,    !Number of hourly time steps per day
+     &    TS       = 48,   !Number of hourly time steps per day
+! Time steps changed to 240 per day by Bruce Kimball on 9JAN17      
      &    NAPPL    = 300,   !Maximum number of applications or operations
      &    NCOHORTS = 300,   !Maximum number of cohorts
      &    NELEM    = 3,     !Number of elements modeled (currently N & P)
