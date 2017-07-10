@@ -21,8 +21,16 @@
 
         REAL    CSYVAL      , TFAC4                                                                       ! Real function call
         
-        REAL, PARAMETER :: NDLEV_B = 86.015564  ! this is 'b' from  1/(1+(NDLEV/b)**c) see issue #24
-        REAL, PARAMETER :: NDLEV_C = 6.252552   ! this is 'c' from  1/(1+(NDLEV/b)**c) see issue #24
+        ! Full NODEWTGB equation
+        ! NDDAED = NDDAE/d
+        ! NODEWTGB = 1/(1+(NDLEV/b)**c)  *  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))  * VF * TT
+        REAL, PARAMETER :: NDLEV_B = 86.015564      ! this is 'b' from  1/(1+(NDLEV/b)**c) see issue #24
+        REAL, PARAMETER :: NDLEV_C = 6.252552       ! this is 'c' from  1/(1+(NDLEV/b)**c) see issue #24
+        REAL, PARAMETER :: NDDAE_D = 235.16408564   ! this is 'd' from  NDDAE/d
+        REAL, PARAMETER :: NDDAE_E = 0.007610082    ! this is 'e' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
+        REAL, PARAMETER :: NDDAE_F = -2.045472      ! this is 'f' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
+        REAL, PARAMETER :: NDDAE_G = -1.045472      ! this is 'g' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
+        REAL NDDAED
 
         !-----------------------------------------------------------------------
         !           Partitioning of C to above ground and roots (minimum) 
@@ -323,9 +331,10 @@
           !      plant(BR,LF)%NODEWTGB = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-plant(BR,LF)%NDDAE+1)/163.082822)**-2.81690408)/ & 
           !      (((((DAE-plant(BR,LF)%NDDAE+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
           
+                NDDAED=(DAE-plant(BR,LF)%NDDAE+1)/NDDAE_D
+          
                 !LPM23FEB2017 New high initial rate
-                plant(BR,LF)%NODEWTGB = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.007610082*(((DAE-plant(BR,LF)%NDDAE+1)/235.16408564)**-2.045472)/ & 
-                (((((DAE-plant(BR,LF)%NDDAE+1)/235.16408564)**-1.045472)+1)**2))*TFG*NODWT) 
+                plant(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))  *  (NDDAE_E*(((NDDAED)**NDDAE_F) / ((NDDAED**NDDAE_G)+1)**2))  *  TFG  *NODWT
            
                 plant(BR,LF)%NODEWTG = plant(BR,LF)%NODEWTGB
                 !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
