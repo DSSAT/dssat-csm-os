@@ -22,9 +22,6 @@
 !     the output did not change. The output of this final version was the same in all 26 .OUT files apart from the
 !     time stamp of each run.
 !     
-!     The original CSCAS.FOR is in E:\DSSAT_Revision\DSSAT_EX_LPM_11DE14\dssat-csm-develop.zip. IF YOU NEED TO WORK
-!     ON ANY OF THE CODE, PLEASE EXTRACT THE CODE YOU NEED, BUT PLEASE DO NOT MODIFY THE ARCHIVE.
-!
 !*******************************************************************************************************************************
 
       SUBROUTINE  CSYCA (FILEIOIN, RUN, TN, RN, RNMODE,                                       & !Command line
