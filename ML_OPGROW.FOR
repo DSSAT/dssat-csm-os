@@ -114,9 +114,9 @@ C  Calls:     None
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-          WRITE (NOUTDG, '("!",230(" ") ,"Root Dens. (cm/cm3)",
+          WRITE (NOUTDG, '("!",327(" ") ,"Root Dens. (cm/cm3)",
      &      " by soil depth (cm):",
-     &    /,"!",T227,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
+     &    /,"!",T325,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
 
           WRITE (NOUTDG,201, ADVANCE='NO')
   201     FORMAT('@YEAR DOY   DAS   DAP',
@@ -125,8 +125,8 @@ C  Calls:     None
      &   '   P#AD   WSPD   WSGD   NSTD   EWSD  PST1A  PST2A',
      &   '   KSTD   LN%D   SH%D   HIPD   PWDD   PWTD',
      &   '     SLAD   CHTD   CWID   RDPD ',
-     &   '  MLAG1  TLAG1  MPLAG  TPLAG   MPLA   TPLA   PLA',
-     &   '  MLFWT  TLFWT MSTMWT TSTMWT  AMLWT   ATLWT ') 
+     &   ' MLAG1  TLAG1  MPLAG  TPLAG   MPLA   TPLA    PLA',
+     &   '  MLFWT  TLFWT MSTMWT TSTMWT  AMLWT  ATLWT') 
 
           DO L = 1, N_LYR
             IF (L < 10) THEN
