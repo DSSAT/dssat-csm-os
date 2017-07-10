@@ -64,8 +64,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 6
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
-!     CHARACTER(len=10) :: VBranch = '-release  '
+      CHARACTER(len=10) :: VBranch = '-QUT_N2O  '
 
 !     Version history:  
 !       4.6.1.06 chp 07/21/2016 DSSAT soil temperature is default method, per GH.
@@ -220,7 +219,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) IHARI, IPLTI, IIRRI, ISIMI
         CHARACTER (len=1) ISWCHE, ISWDIS, ISWNIT
         CHARACTER (len=1) ISWPHO, ISWPOT, ISWSYM, ISWTIL, ISWWAT
-        CHARACTER (len=1) MEEVP, MEHYD, MEINF, MELI, MEPHO
+        CHARACTER (len=1) MEEVP, MEGHG, MEHYD, MEINF, MELI, MEPHO
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
         CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2
@@ -266,7 +265,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL ALES, DMOD, SLPF         !DMOD was SLNF
         REAL CMSALB, MSALB, SWALB, SALB      !Albedo 
         REAL, DIMENSION(NL) :: BD, CEC, CLAY, DLAYR, DS, DUL
-        REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL
+        REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL, POROS
         REAL, DIMENSION(NL) :: SAND, SAT, SILT, STONES, SWCN
         
       !Residual water content
@@ -306,6 +305,9 @@ C             CHP Added TRTNUM to CONTROL variable.
       !Second tier soils data that could be used:
 !        REAL, DIMENSION(NL) :: EXTAL, EXTFE, EXTMN, 
 !        REAL, DIMENSION(NL) :: EXMG, EXTS, SLEC
+
+!     Diffusion coefficient added June 16, 2016 chp, pg
+      REAL DiffFactor
 
       END TYPE SoilType
 
@@ -439,7 +441,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       Note: Use DSSAT45 directory for now. 
 C-GH    Set to DSSAT46
         STDPATH = 'C:\DSSAT46\' 
-D       STDPATH = 'D:\DSSAT46\' 
+!debugD       STDPATH = 'D:\DSSAT46\' 
 
       CASE ('LINUX','UNIX ')
 !       Linux, Unix
@@ -559,7 +561,7 @@ D       STDPATH = 'D:\DSSAT46\'
 
 !     Data transferred from Soil Inorganic Nitrogen routine
       Type NiType
-        REAL TNOXD, TLCHD
+        REAL TNOXD    !, TLeachD, TN2OD     ! added N2O PG
       End Type NiType
 
 !     Data transferred from Organic C routines
@@ -786,7 +788,8 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); Value = SAVE_data % NITR % TNOXD
-        Case ('TLCHD'); Value = SAVE_data % NITR % TLCHD
+!       Case ('TLeachD'); Value = SAVE_data % NITR % TLeachD
+!       Case ('TN2OD'); Value = SAVE_data % NITR % TN2OD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -899,7 +902,8 @@ D       STDPATH = 'D:\DSSAT46\'
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); SAVE_data % NITR % TNOXD = Value
-        Case ('TLCHD'); SAVE_data % NITR % TLCHD = Value
+!       Case ('TLeachD'); SAVE_data % NITR % TLeachD = Value
+!       Case ('TN2OD'); SAVE_data % NITR % TN2OD = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

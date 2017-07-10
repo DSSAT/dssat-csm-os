@@ -413,6 +413,7 @@ C
           IF (G1 .LT. 50.0) THEN
              RGFILL = G2/P5*(G1/50.0)
           ENDIF
+          
           MFILL   = 0.0
           TFILL   = 0.0
           VANC    = TANC
@@ -435,7 +436,12 @@ C
 
           PANIWT  = 0.0
           G1FAC   = AMIN1 (1.0,G1/50.0)
-          PANFAC  = 0.65*G1FAC                       ! .55
+          PANFAC  = 0.65*G1FAC    
+          IF (STRHEAT .LT. 1.0) THEN
+             PANFAC = PANFAC * STRHEAT
+             !WRITE(*,*)'PNF STRH', PANFAC,STRHEAT,G1
+             !PAUSE
+          ENDIF
           !STRESSW = AMAX1 (SI2(3),SI2(4))
           PANIWT  = (MSTMWT*0.4+MLFWT*0.20)*G1FAC*(1.0-0.5*STRESSW) 
 
@@ -465,7 +471,9 @@ C
 
           IF (GPP .GT. 0.0) THEN
              GRNWT  = PANFAC*PANIWT                  ! 0.35
-             !
+             
+             !write(*,*)'grnwt panfac paniwt',GRNWT,PANFAC,PANIWT,gpp
+             !pause
              ! GRAINN content is 2X > pan N content
              !
              !GRAINN    = GRNWT * 0.011
@@ -512,6 +520,8 @@ C
 CCCCC-PW
           SKERWT = G2*GSIZE
           GRAIN  = GRNWT/(G2*GSIZE)
+          !write(*,*)'gpp grain gsize',gpp,grain,gsize,g2
+          !pause
           IF (GRAIN .GT. GPP .AND. GPP .GT. 0.0) THEN
              SKERWT = AMIN1 (GRNWT/GPP,G2*1.05)
           ENDIF
@@ -588,7 +598,7 @@ CCCCC-PW
       !
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
       PCARB = PCARB*PCO2
-      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-26.0)**2   
+      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-26.0)**2   !need to lower so temp is 10 for prft=0 mar17
       PRFT  = AMAX1 (PRFT,0.0)
       IF (PRFT .GT. 1.0) THEN
           PRFT = 1.0                                
@@ -1104,7 +1114,7 @@ C
       PTF    =(LFWT + STMWT + PANIWT + GRNWT)/(LFWT + STMWT + PANIWT +
      &         GRNWT + (RTWT + 0.5*GRORT - 0.005*RTWT))
       ! TODAY'S PTF FOR NUPTAKE CALCULATION
-      SLFW   = 0.950 + 0.050*SWFAC
+      SLFW   = 0.950 + 0.050*SWFAC !MAR17
 
 !      SLFN   = 0.995 + 0.005*NSTRES
 !      IF (ISTAGE .GE. 4 .AND. LAI .GE. 2.0) THEN    
@@ -1450,6 +1460,8 @@ C-----------------------------------------------------------------------
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
       READ (LUNIO,100, IOSTAT=ERR) P5, G1, G2, G3, PHINT
   100 FORMAT (42X,F6.0,6X,3F6.0,6X,F6.0)
+      !WRITE(*,*)'P5, G1, G2, G3, PHINT',P5, G1, G2, G3, PHINT
+      !PAUSE
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 

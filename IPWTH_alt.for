@@ -573,8 +573,11 @@ C         Read in weather file header.
 
         SRAD   = SRAD_A(I)  
         TMAX   = TMAX_A(I)  
+        !TMAX   = 31.0    ! MAR17
         TMIN   = TMIN_A(I)  
+        !TMIN   = 22.0    ! MAR17
         RAIN   = RAIN_A(I)  
+        !RAIN   =0.0
         TDEW   = TDEW_A(I)  
         WINDSP = WINDSP_A(I)
         PAR    = PAR_A(I)   

@@ -298,9 +298,7 @@ C-----------------------------------------------------------------------
             SWFAC = TRWUP / EP1
           ENDIF
         ENDIF
-
         !PHEFAC = 1.0
-
        !WRESR growth and depth routine
         CALL RI_ROOTGR (CONTROL, 
      &    DTT, FLOOD, GRORT, ISWNIT, ISWWAT,              !Input

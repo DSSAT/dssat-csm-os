@@ -67,8 +67,9 @@ C-----------------------------------------------------------------------
       CHARACTER*50 SLDESC, TAXON
       INTEGER NLAYR
       REAL CN, DMOD, KTRANS, SALB, SLDP, SLPF, SWCON, TEMP, TOTAW, U
+      REAL DiffFactor
       REAL, DIMENSION(NL) :: ADCOEF, BD, CEC, CLAY, DLAYR, DS, DUL
-      REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, SAND, SAT, SILT
+      REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, POROS, SAND, SAT, SILT
       REAL, DIMENSION(NL) :: SW, SWCN, TOTN, TotOrgN, WCR, WR
 !     REAL, DIMENSION(NL) :: RGIMPF
       LOGICAL, DIMENSION(NL) :: COARSE
@@ -242,6 +243,8 @@ C-----------------------------------------------------------------------
       EXCA   = -99.
       EXK    = -99.
       EXNA   = -99.
+      
+      DiffFactor = -99.
 
 !-----------------------------------------------------------------------
 !     Should not need to run this unless soil water is being simulated.
@@ -270,9 +273,18 @@ C-----------------------------------------------------------------------
       
 !-----------------------------------------------------------------------
       READ(LUNIO, 80, IOSTAT=ERRNUM,ERR=1000) 
-     &           SALB, U, SWCON, CN, DMOD, SLPF, SMPX
+     &           SALB, U, SWCON, CN, DMOD, SLPF, SMPX, DiffFactor
    80 FORMAT(7X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),
-     &       7X,A5,12X)
+     &       7X,A5,12X,F6.0)
+     
+! From OPTEMPY2K:
+!        WRITE (LUNIO,980,IOSTAT=ERRNUM) SCOM,SALB,U,SWCON,CN2,SLNF,SLPF,
+!     &         SMHB,SMPX,SMKE,SGRP, DiffFactor
+!       980 FORMAT (1X,A5,1X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),4(1X,A5),F6.2)
+! From DSSAT46.INP:
+!SCOM   SALB     U SWCON    CN  SLNF  SLPF SMHB  SMPX  SMKE  SGRP DIFFFACTOR
+!-99    0.18   2.0  0.65   60.  1.00  0.92 IB001 IB001 IB001 -99  0.82  
+     
       LNUM = LNUM + 1
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LNUM)
 
@@ -755,6 +767,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       DO L = 1, NLAYR
 !       Conversion from kg/ha to ppm (or mg/l).  Recalculate daily.
         KG2PPM(L) = 10.0 / (BD(L) * DLAYR(L))   
+        POROS(L)  = 1.0 - BD(L) / 2.65
 
         IF (TOTN(L) > 1.E-5) THEN
 !         Use inorganic N values to calculate organic N in kg/ha
@@ -877,6 +890,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % PHKCL  = PHKCL  
       SOILPROP % PTERMA = PTERMA  
       SOILPROP % PTERMB = PTERMB  
+      SOILPROP % POROS  = POROS
 !     SOILPROP % RGIMPF = RGIMPF  !Root growth impedance factor    
       SOILPROP % SALB   = SALB  
       SOILPROP % MSALB  = SALB
@@ -916,6 +930,8 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
       SOILPROP % TAXON         = TAXON
 
       SOILPROP % COARSE = COARSE
+      
+      SOILPROP % DiffFactor = DiffFactor
 
       CALL PUT(SOILPROP)
 
@@ -1000,6 +1016,7 @@ C  tillage and rainfall kinetic energy
       DO L = 1, NLAYR
 !       Conversion from kg/ha to ppm (or mg/l).  Recalculate daily.
         KG2PPM(L) = 10.0 / (BD(L) * DLAYR(L))   
+        POROS(L)  = 1.0 - BD(L) / 2.65
       ENDDO
 
       SOILPROP % BD    = BD
@@ -1010,6 +1027,7 @@ C  tillage and rainfall kinetic energy
       SOILPROP % LL    = LL    
       SOILPROP % KG2PPM= KG2PPM    
       SOILPROP % OC    = OC
+      SOILPROP % POROS = POROS
       SOILPROP % SAT   = SAT   
       SOILPROP % SWCN  = SWCN  
       SOILPROP % TOTN  = TOTN
@@ -1375,8 +1393,9 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 
 !       Available water capacity (mm)
         TOTAW = TOTAW + (DUL(L) - LL(L)) * DLAYR(L) * 10.
+        POROS(L)  = 1.0 - BD(L) / 2.65
       ENDDO
- 
+
       SOILPROP % BD     = BD     
       SOILPROP % CN     = CN     
       SOILPROP % DLAYR  = DLAYR  !thickness of tilled soil layers 
@@ -1386,7 +1405,8 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
       SOILPROP % LL     = LL    
       SOILPROP % OC     = OC
       SOILPROP % SAT    = SAT    
-      SOILPROP % SWCN   = SWCN   
+      SOILPROP % SWCN   = SWCN 
+      SOILPROP % POROS  = POROS  
 
       CALL PUT(SOILPROP)
 

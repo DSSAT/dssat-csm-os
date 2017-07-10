@@ -627,7 +627,7 @@ c                         Set error value to false
 c             If there was an error, write warning to WARNINGS.OUT
               IF (EERROR) THEN
                   CALL WARNING(1,'CULT COEFF', ERRMSG)
-d                  WRITE(*, '(A)') ERRMSG(1)
+!debugd                  WRITE(*, '(A)') ERRMSG(1)
               ENDIF
 
 

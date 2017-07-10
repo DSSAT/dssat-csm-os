@@ -42,10 +42,10 @@ C=======================================================================
       INTEGER LEAFNO, MDATE, NDAS, NDAT, NLAYR
       INTEGER YR, YRPLT, YRSIM, YRSOW
 
-      REAL TOPTMX, TOPTD, TOPTDX, TDELAYMX, TMPNPI, TMPNFL, TMPXFL   ! NEW VARIABLE TO BE READ IN SPP FILE
+      REAL TOPTMX, TOPTD, TOPTDX, TDELAYMX      ! NEW VARIABLE TO BE READ IN SPP FILE
       REAL AGEFAC, ATEMP, BIOMAS, CDTT_TP, CNSD1, CNSD2, CSD1, CSD2
       REAL CUMDEP, CUMDTT, CUMTMP, DTT, FERTILE
-      REAL G4, G5, NSTRES      ! G5 ID FOR LOW TEMP TOL/SENSITIVITY -CUL FILE
+      REAL G4, NSTRES
       REAL P1, P1T, P3, P4, P5, P8, P9, P2O, P2R
       REAL PHEFAC, PHINT, PLANTS, RTDEP
       REAL SDAGE, SDEPTH, SDTT_TP, SEEDNI, SIND, SRAD
@@ -91,7 +91,6 @@ C=======================================================================
       LL    = SOILPROP % LL
       DLAYR = SOILPROP % DLAYR
       NLAYR = SOILPROP % NLAYR
-      G5 = 1.0     ! TO BE READ FROM CUL FILE
       
       CALL YR_DOY (YRDOY,YR,DOY)
 
@@ -105,7 +104,7 @@ C=======================================================================
       CALL StnameFill(STNAME)
 
       CALL RI_IPPHEN (CONTROL,                            !Input
-     &    ATEMP, G4, G5, P1, P2O, P2R, P5, PLME, SDAGE)       !Output
+     &    ATEMP, G4, P1, P2O, P2R, P5, PLME, SDAGE)       !Output
 
       CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &    CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
@@ -122,13 +121,11 @@ C=======================================================================
       DTT      = 0.0        
       WSTRES = 1.0
       RATEIN = 0.0
-      TOPT = 28.0  !/G4      ! IN SPP FILE MAR17
-      TOPTMX = 36.0  !/G4    !IN SPP FILE MAR17
-      TMPNPI = 15.0    !IN SPP FILE MAR17
-      TMPNFL = 15.0
-      TMPXFL = 28.0
+      TOPT = 30.0     ! IN SPP FILE MAR17
+      TOPTMX = 36.0    !IN SPP FILE MAR17
+      TOPTD = 33.0
       TOPTDX = 40.0
-      TDELAYMX = 46.0
+      TDELAYMX = 48.0
 
       ! Initialze stress indices - FROM INPLNT
       DO I = 1, 6
@@ -227,10 +224,8 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IF (TF_GRO) THEN
-         !TOPT = TOPT            !  MADE TOPT -- CROP SPECIFIC G4 > 1 FOR HEAT SENSITIVE CUL Mar17
-         !TOPTMX = TOPTMX
-         !tmax = 55.0   ! high temp test mar17
-          !TMIN = 32.0 !
+         TOPT = TOPT/G4                     ! MAKE 30 -- CROP SPECIFIC  Mar17
+         tmax = 55.0   ! high temp test mar17
          IF (TMAX .LT. TBASE) THEN
            DTT = 0.0
          !ELSEIF (TMIN .GT. TOPT) THEN
@@ -243,22 +238,45 @@ C=======================================================================
            ACOEF  = 0.01061 * SRAD + 0.5902
            TDSOIL = ACOEF * TMAX + (1.0 - ACOEF) * TMIN
            TNSOIL = 0.36354 * TMAX + 0.63646 * TMIN
+           WRITE(*,*)'TDSOIL=', TDSOIL,'TNSOIL=',TNSOIL
            IF (TDSOIL .LT. TBASE) THEN
              DTT = 0.0
            ELSE
+             !IF (TNSOIL .GT. TOPT) THEN   ! FOR NIGHT TIME USE TOPT (MEAN)
+             !    TNSOIL = TOPT - (TNSOIL - TOPT)
+             !    WRITE(*,*)'TN > TOPT',TNSOIL,TOPT
+             !ENDIF
+             !IF (TDSOIL .LE. TOPTDX) THEN    ! FOR DAY TIME USE TOPTDX (DAY MAX)
+             !  IF (TDSOIL .GT. TOPTD) THEN
+             !    TDSOIL = TOPTD
+             !    WRITE (*,*)'TDSOIL IS 33-40',TDSOIL,TOPTD
+             !  ENDIF
+             !ELSE
+             !    TDSOIL = TOPTD - (TDSOIL - TOPTDX)  
+             !    WRITE(*,*)'TDSOIL > 40',TDSOIL,TOPTD,TOPTDX
+             !    ! Delay in development (Snyder & Gesch) 
+             !ENDIF
              TMSOIL = TDSOIL*(DAYL/24.)+TNSOIL*((24.-DAYL)/24.)
+             WRITE(*,*) 'TMSOIL=',TMSOIL
              IF (TMSOIL .LT. TBASE) THEN
                  DTT = (TBASE+TDSOIL)/2.0 - TBASE
+                 WRITE(*,*) 'TMSOIL < TBASE', TMSOIL, TBASE,DTT
              ELSEIF (TMSOIL .GT. TDELAYMX) THEN
                  DTT = 0.0
+                    WRITE(*,*)'TMSOIL > TDEL',TMSOIL,TDELAYMX,DTT
              ELSEIF (TMSOIL .GT. TOPT .AND. TMSOIL .LE. TOPTMX) THEN
+                 WRITE(*,*) 'TMSOIL 30-36', TMSOIL,TOPT,TOPTMX,DTT
                  TMSOIL = TOPT 
                  DTT = TMSOIL - TBASE
+                 WRITE(*,*) 'TMSOIL 30-36 X2', TMSOIL,TOPT,TOPTMX,DTT
              ELSEIF (TMSOIL .GT. TOPTMX .AND. TMSOIL .LE. TDELAYMX) THEN
-                 TMSOIL = TOPT - (TMSOIL - TOPT)
+             WRITE(*,*) 'TMSOIL 36-48',TMSOIL,TOPT,TOPTMX,TDELAYMX,DTT
+                 TMSOIL = TOPT - (TMSOIL - TOPTMX)
                  DTT = TMSOIL - TBASE
-             ELSEIF (TMSOIL .GE. TBASE .AND. TMSOIL .LE. TOPT) THEN     
+       WRITE(*,*) 'TMSOIL 36-48 X2',TMSOIL,TOPT,TOPTMX,TDELAYMX,DTT
+             ELSEIF (TMSOIL .GE. TBASE .AND. LE. TOPT) THEN     
                  DTT = TMSOIL - TBASE
+                 WRITE (*,*)'TMSOIL, FINAL DTT',TMSOIL,DTT
              ENDIF
                !
                ! Statement added ... GoL and LAH, CIMMYT, 1999
@@ -270,29 +288,34 @@ C=======================================================================
            DTT = 0.0
            DO I = 1, 24
              TH = (TMAX+TMIN)/2. + (TMAX-TMIN)/2. * SIN(3.14/12.*I)
-             IF (TH .LT. TBASE .OR. TH .GT. TDELAYMX) THEN
-             TH = TBASE
+             WRITE (*,*)' TH =', TH
+             IF (TH .LT. TBASE) THEN
+                TH = TBASE
              ENDIF
              IF (TH .GT. TOPTMX) THEN
-                TH = TOPT - (TH - TOPT)  !Development delay VARIABLE FOR SPP FILE MAR17
+                TH = TOPT - (TH - TOPTMX)  !Development delay VARIABLE FOR SPP FILE MAR17
+                WRITE (*,*)'TH > 36',TH
              ELSEIF (TH .GT. TOPT .AND. TH .LE. TOPTMX) THEN
                 TH = TOPT
+                WRITE (*,*)'TH 30-36',TH
              ENDIF
              DTT = DTT + (TH-TBASE)/24.0
            END DO
          ELSE
            DTT = (TMAX+TMIN)/2.0 - TBASE
          ENDIF
+         WRITE (*,*)'DTT MAX MIN TOPT TOPTMX',DTT,TMAX,TMIN,TOPT,TOPTMX
+         PAUSE
          ! DROUGHT STRESS APPLIES ONLY TO LOWLAND RICE  MAR17????
          ! BUNDED IS USED AS SURROGATE FOR UPLAND - ECOTYPE FILE
-         IF (PHEFAC .LT. 1.0 .AND. BUNDED) THEN   ! MAR17
+         IF (PHEFAC .LT. 1.0 .AND. BUNDED) THEN
              TMPDTT = DTT
-            IF (ISTAGE .EQ. 2 .OR. ISTAGE .EQ. 1) THEN
+            IF (ISTAGE .EQ. 2) THEN
                 DTT    = AMIN1 ((DTT * PHEFAC),TMPDTT)
             ELSEIF(ISTAGE .EQ. 3) THEN
                 DTT    = AMIN1 ((DTT * PHEFAC**1.33),TMPDTT)
             ELSEIF (ISTAGE .GT. 3 .AND. ISTAGE .LT. 6) THEN
-                DTT = DTT * AMIN1 (1.5,(1.5 - PHEFAC))   !need to check mar17
+                DTT = DTT * AMIN1 (1.5,(1.5 - PHEFAC))
                 DTT = AMAX1 (DTT, TMPDTT)
             ENDIF
          ENDIF
@@ -463,10 +486,12 @@ C=======================================================================
              PDTT = SUMDTT - P1
           ENDIF
           TN     = (0.25*TMAX)+(0.75*TMIN)
-          IF (LEAFNO .LE. 10) THEN
-             TN = TNSOIL
-          ENDIF
           CUMTMP = CUMTMP + TN
+
+          !Import TWILEN from WEATHR module
+          ! same variable as HRLT
+          !RATEIN = 1.0/136.0
+          !IF (HRLT .GT. P2O) THEN
           IF (TWILEN .GT. P2O) THEN
           !   RATEIN = 1.0/(136.0+P2R*(HRLT-P2O))
              RATEIN = 1.0/(136.0+P2R*(TWILEN-P2O))
@@ -490,26 +515,29 @@ C=======================================================================
           ! P Model
           !VegFrac = MAX(VegFrac, SUMDTT/(P1+7.*(TOPT - TBASE)+P3))
           VegFrac = MAX(VegFrac, XSTAGE/4.5)    
+   !   write(98,*) 'day',yrdoy,'xst=',xstage/10,'new',xstage/4.5
+		
 		IF (SIND .LT. 1.0) THEN
              RETURN
           ENDIF
-          TMPI = CUMTMP/(ICSDUR)   !*G5
+          TMPI = CUMTMP/(ICSDUR)*G4
+          !
           ! Check if night temp (NT) was below 15 C during this stage
-             !
+          !
           IF (.NOT. PI_TF) THEN
-             IF (TN .GT. TMPNPI*G5 .AND. IDUR1 .GE. 1) THEN
+             IF (TN .GT. 15.0/G4 .AND. IDUR1 .GE. 1) THEN
                 PI_TF    = .TRUE.
               ELSE
-                PI_TF    = .FALSE.   
+                PI_TF    = .FALSE.
                 IDUR1 = 0
              ENDIF
-             IF (TMPI .LT. TMPNPI*G5) THEN  ! AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
-                IF (TN .GT. TMPNPI*G5) THEN
-                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
+             IF (TMPI .LT. 15.0) THEN
+                IF (TN .GT. 15.0/G4) THEN
+                   IDUR1 = IDUR1 + 1
                 ENDIF
                 RETURN
              ENDIF
-
+             !
              ! NOTE: If night temp > 15 for 2 successive days 
              ! after daylength requirement for PI_TF had been met
              ! then allow plant to reaach PI_TF
@@ -527,9 +555,9 @@ C=======================================================================
           !FROM PHASEI
           ISTAGE = 3          !HEADING
          ! P3     = 374.0 
-          P4     = 120.0                        ! 120.0 MAKE THIS SPP MAR17
+          P4     = 120.0                        ! 120.0
           XNTI   = SUMDTT/PHINT
-          P3     = 5.5*PHINT+0.135*SUMDTT      !SPP FILE
+          P3     = 5.5*PHINT+0.135*SUMDTT
           SUMDTT_2 = SUMDTT 
           !VegFrac = MAX(VegFrac,SUMDTT_2 / (SUMDTT_2 + P3))
           VegFrac = MAX(VegFrac, XSTAGE/4.5)   
@@ -546,7 +574,7 @@ C=======================================================================
           ENDIF
           XSTAGE = MAX(XSTAGE, 1.5 + 3.0*SUMDTT/P3)
 
-          IF (SUMDTT .GT. 0.65*P3) THEN   
+          IF (SUMDTT .GT. 0.65*P3) THEN
              TD      = 0.75*TMAX+0.25*TMIN
              CUMHEAT = CUMHEAT + TD
              IDUR1   = IDUR1   + 1
@@ -554,10 +582,8 @@ C=======================================================================
              ! HEENAN & LEWIS,'81 J.AUST.INST.AG.SC.47:118
              !
              TCANOPY = 0.87 + 0.92*TMIN
-       !WRITE(*,*)'TD H TC CT 15G5',TD,CUMHEAT,TCANOPY,CUMTMP,TMPNFL*G5
-   
-             IF (TCANOPY .LE. TMPNFL*G5) THEN    !TMPMNFL CRITICAL LOW TEMP FOR STERILITY SPP FILE MAR17
-                CUMTMP = CUMTMP + (TMPNFL*G5-TCANOPY)
+             IF (TCANOPY .LE. 15.0/G4) THEN
+                CUMTMP = CUMTMP + (15.0/G4-TCANOPY)
              ENDIF
           ENDIF
 
@@ -586,15 +612,10 @@ C=======================================================================
           ! Effect of extreme temperature on spikelet number
           !
           STRCOLD = 1.0-(0.01*CUMTMP)**1.667
-          THEAD   = (CUMHEAT/IDUR1)                      
-          IF (THEAD .GE. TMPXFL/G4) THEN          ! MAKE SPP FILE
-             STRHEAT = 1.0 - 0.1*(THEAD-TMPXFL/G4)  !0.85 - 0.1
-             !WRITE(*,*)'IN TH>28',THEAD,TMPXFL/G4,STRHEAT
-             !PAUSE
+          THEAD   = (CUMHEAT/IDUR1)*G4
+          IF (THEAD .GE. 35.0) THEN
+             STRHEAT = 0.85 - 0.1*(THEAD-35.0)
           ENDIF
-          !WRITE(*,*)'STRC THD STRH',STRCOLD,THEAD,STRHEAT,TMPXFL/G4
-          !WRITE(*,*)'MEAN TEMP',(TMAX+TMIN)/2.0
-          !PAUSE
           STRHEAT = AMIN1 (STRHEAT,1.0)
           STRHEAT = AMAX1 (STRHEAT,0.0)
           STRCOLD = AMIN1 (STRCOLD,1.0)
@@ -658,14 +679,14 @@ C=======================================================================
              RETURN
           ENDIF
 
-          !TFERT  = (CUMTMP/IDUR1)*G4
-          !IF (TFERT .GT. TMPNFL*G5 .AND. TFERT .LT. TMPXFL/G4) THEN
+          TFERT  = (CUMTMP/IDUR1)*G4
+          IF (TFERT .GT. 17.0 .AND. TFERT .LT. 35.0) THEN
              FERTILE = 1.0
-           !ELSEIF (TFERT .GE. TMPXFL/G4) THEN
-             !FERTILE = 0.85 - 0.1*(TFERT-TMPXFL/G4)   !MAR17
-           !ELSEIF (TFERT .LE. TMPNFL*G5) THEN
-            ! FERTILE = 0.85 - 0.1*(TMPNFL*G5-TFERT)
-          !ENDIF
+           ELSEIF (TFERT .GE. 35.0) THEN
+             FERTILE = 0.85 - 0.1*(TFERT-35.0)
+           ELSEIF (TFERT .LE. 17.0) THEN
+             FERTILE = 0.85 - 0.1*(17.0-TFERT)
+          ENDIF
 
           FERTILE = AMAX1 (FERTILE,0.0)
           !!
@@ -740,7 +761,7 @@ C=======================================================================
              ENDIF
           ENDIF
           STGDOY(12) = YRDOY
-          TSGRWT = (CUMTMP/IDUR1)   ! NO CULTIVAR EFFECT
+          TSGRWT = (CUMTMP/IDUR1)*G4
 
           CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
@@ -1052,7 +1073,7 @@ C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
 
       SUBROUTINE RI_IPPHEN (CONTROL,                      !Input
-     &    ATEMP, G4, G5, P1, P2O, P2R, P5, PLME, SDAGE)       !Output
+     &    ATEMP, G4, P1, P2O, P2R, P5, PLME, SDAGE)       !Output
 
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -1064,7 +1085,7 @@ C=======================================================================
       PARAMETER (ERRKEY = 'IPRICE')
       CHARACTER*30 FILEIO
       INTEGER LINC, LNUM, LUNIO, ERR, FOUND
-      REAL ATEMP, G4, G5, P1, P2R, P5, P2O, SDAGE
+      REAL ATEMP, G4, P1, P2R, P5, P2O, SDAGE
 
 C     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
@@ -1097,12 +1118,9 @@ C-----------------------------------------------------------------------
       SECTION = '*CULTI'
       CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-      READ (LUNIO,100, IOSTAT=ERR) P1, P2R, P5, P2O, G4; 
-     & LNUM = LNUM + 1
+      READ (LUNIO,100, IOSTAT=ERR) P1, P2R, P5, P2O, G4; LNUM = LNUM + 1
 !CHP  100 FORMAT (30X,4(F6.1),18X,F6.2)
-  100 FORMAT (30X,4(F6.0),18X,1(F6.0))
-      !write(*,*)'P1 P2R P5 P2O G4 G5',P1, P2R, P5, P2O, G4!, G5
-      !pause
+  100 FORMAT (30X,4(F6.0),18X,F6.0)
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
       CLOSE (LUNIO)
