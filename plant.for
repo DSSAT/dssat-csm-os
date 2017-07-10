@@ -51,6 +51,7 @@ C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 !  06/03/2015 LPM Added CSYCA model (CIAT cassava)
+!  05/10/2017 CHP removed SALUS model
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -66,7 +67,7 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
 !     The following models are currently supported:
-!         'CRGRO' - CROPGRO 
+!         'CRGRO' - CROPGRO
 !         'CSCER' - CERES Wheat, Barley
 !         'CSCRP' - CropSim Wheat, Barley
 !         'CSCAS' - CropSim/GumCAS Cassava
@@ -80,11 +81,11 @@ C-----------------------------------------------------------------------
 !         'SGCER' - CERES-Sorghum
 !         'SWCER' - CERES-Sweet corn
 !         'MZIXM' - IXIM Maize
-!         'TNARO' - Aroids - Tanier, Taro
-!         'ORYZA' - IRRI Rice model
-!         'SALUS' - SALUS generic crop model
+!         'TNARO' - Aroids - Tanier
+!         'TRARO' - Aroids - Taro
+!         'RIORZ' - IRRI ORYZA Rice model
 !         'WHAPS' - APSIM N-wheat
-
+!         'PRFRM' - Perennial forage model
 C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
@@ -183,7 +184,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !       in the future, we need to make this check on a crop by crop basis.
 !     The plant routines do not use these codes, but the SPAM module
 !       does and it will bomb when species parameters are not found.
-      IF (INDEX(MODEL,'CRGRO') <= 0 .AND. ISWITCH % MEPHO .EQ. 'L') THEN
+      IF (INDEX(MODEL,'CRGRO') <= 0 .and. index(model,'PRFRM') <= 0 
+     &  .AND. ISWITCH % MEPHO .EQ. 'L') THEN
         ISWITCH % MEPHO = 'C'
 !       Put ISWITCH data where it can be retreived 
 !         by other modules as needed.
@@ -200,7 +202,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
   120 FORMAT('option, which is not available for crop ', A2, '.')
   130 FORMAT('Canopy photosynthesis option will be used.')
 
-      IF (INDEX(MODEL,'CRGRO') <= 0 .AND. ISWITCH % MEEVP .EQ. 'Z') THEN
+      IF (INDEX(MODEL,'CRGRO') <= 0 .and. index(model,'PRFRM') <= 0 
+     &  .AND. ISWITCH % MEEVP .EQ. 'Z') THEN
 !       Default to Priestly-Taylor potential evapotranspiration
         ISWITCH % MEEVP = 'R'
 !       Put ISWITCH data where it can be retreived 
@@ -309,6 +312,16 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    NSTRES, PSTRES1,                                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
      &    STGDOY, FracRts, UNH4, UNO3, XHLAI, XLAI)       !Output
+!-----------------------------------------------------------------------
+!     Forage model
+      CASE('PRFRM') 
+      call FORAGE(CONTROL, ISWITCH, 
+     &    EOP, HARVFRAC, NH4, NO3, SOILPROP,              !Input
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
+     &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
+     &    NSTRES, PSTRES1,                                !Output
+     &    PORMIN, RLV, RWUMX, SENESCE,                    !Output
+     &    STGDOY, UNH4, UNO3, XHLAI, XLAI)                !Output
 
 !     -------------------------------------------------
 !     Wheat and Barley CSCER
@@ -471,16 +484,16 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           XHLAI = XLAI
         ENDIF
 
-!     -------------------------------------------------
-!	Generic Salus crop model
-!	KD 09/14/2009
-	CASE('SALUS') 
-	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,         !Input
-     &  HARVFRAC, YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,  !Input
-     &  KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	            !Output
-	  IF (DYNAMIC .EQ. INTEGR) THEN
-          XLAI = XHLAI
-        ENDIF
+!!     -------------------------------------------------
+!!	Generic Salus crop model
+!!	KD 09/14/2009
+!	CASE('SALUS') 
+!	  CALL SALUS(CONTROL, ISWITCH, WEATHER, SOILPROP, ST,         !Input
+!     &  HARVFRAC, YRPLT, EOP, SW, RWU, TRWUP, NH4, NO3, SPi_AVAIL,  !Input
+!     &  KCAN, MDATE, RLV, XHLAI, UNO3, UNH4, PUptake)  	            !Output
+!	  IF (DYNAMIC .EQ. INTEGR) THEN
+!          XLAI = XHLAI
+!        ENDIF
 
 !     -------------------------------------------------
 !     Sugarcane - CANEGRO

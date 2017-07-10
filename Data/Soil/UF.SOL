@@ -1,0 +1,33 @@
+*SOILS: Florida Muck Soils
+
+!  Soils defined by data from USGS/ USDA/SCS 1976 Soil Survey of Palm Beach County 1976
+!  There is no Muck texture description in DSSAT soils modules.  The designations LS and S were used simply to make the model run.
+
+*UFBG760001  USGS        LS      105 Okeelanta Muck
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ EREC        USA            26.600  80.600 Euic, Typic, Hydric Medisaprist
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BL  0.09   6.0  0.40  61.0  1.00  1.00 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+   100     A 0.200 0.500 0.800 1.000  5.00  0.35 58.00   5.0  10.0   0.0   -99   6.0   -99   -99   -99 
+   105     C 0.026 0.058 0.402 0.129  0.10  1.53  0.01   0.0   0.0   0.0   -99   8.4   -99   -99   -99 
+@  SLB  SLPX  SLPT  SLPO CACO3  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC  SLCA
+   100  96.0 210.0 187.0  0.00  2.30  2.30   -99   0.1   -99   -99  0.10  0.10  0.00 13.30   -99   -99 
+   105  56.0 183.0 155.0  0.00  2.00  2.30   -99   -99   -99   -99  0.00  0.10  0.00 15.30   -99   -99 
+
+*UFBG760002  SCS         S        71 Lauderhill Muck
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ EREC        USA            26.400  80.400 euic, hyperthermic Lithic Haplosaprist
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BL  0.09   6.0  0.25  61.0  1.00  1.00 IB001 SA001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    20   Oap 0.150 0.250 0.500 1.000 21.00  0.35 45.00   5.0   5.0   0.0 3.500   6.2   -99 211.0   -99 
+    45   Oa2 0.150 0.250 0.500 0.522 21.00  0.35 46.00   5.0   5.0   0.0 3.500   6.3   -99 210.0   -99 
+    60   Oa3 0.150 0.250 0.500 0.330 21.00  0.35 40.00   5.0   5.0   0.0 3.500   6.6   -99 141.0   -99 
+    71   -99 0.026 0.058 0.402 0.010  0.01  1.53  0.07   0.0   0.0  80.0   -99   8.4   -99   -99   -99 
+@  SLB  SLPX  SLPT  SLPO CACO3  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC  SLCA
+    20  96.0 210.0 187.0  0.27  2.30  2.30   -99   0.1   -99   -99  0.08  0.13  0.00 13.30   -99  0.27 
+    45  56.0 183.0 155.0  0.12  2.01  2.30   -99   -99   -99   -99  0.03  0.05  0.00 15.30   -99  0.12 
+    60  40.0 150.3 100.0  0.11  1.25  2.30   -99   -99   -99   -99  0.03  0.04  0.00 14.10   -99  0.11 
+    71   0.1   0.1   0.1  0.09  0.09  0.90  0.09   0.1  0.09  0.09  0.09  0.09  0.00 90.09  0.09  0.10 
+

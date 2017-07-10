@@ -1,0 +1,54 @@
+*SOILS: General DSSAT Soil Input File
+!The ACE ID is N/A.
+!This soil data is used for the experiment of CPLI1305_1.
+!
+
+*CPLI000021  UNALM/WISE  L        120  -99
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ La Molina.J Peru adju.     14.828  43.309 Eutric Fluvisol (FLe)
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99   .13     1    .4    76     1     1   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99   .15  .284  .438     1  1.32  1.42  .824    26    35   -99   .07   7.4   -99  12.8   -99
+    62   -99   .19  .302  .409  .399   .43   1.5  .824    34    20   -99   .06   7.3   -99  11.1   -99
+   120   -99   .18  .298  .416  .162   .23  1.48  .824    32    24   -99   .04   7.3   -99  10.1   -99
+!The ACE ID is N/A.
+!This soil data is used for the experiment of CPLI1202_1.
+!
+
+*CPLI000020  UNALM/WISE    CL     150  -99
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ La Molina   Peru adju.     14.828  43.309 Eutric Fluvisol (FLe)
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99   .13     1    .2    75     1     1   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99   .15  .284  .438     1  1.32  1.42  .824    36    35   -99   .07   7.4   -99  12.8   -99
+    62   -99   .19  .302  .409  .399   .43   1.5  .824    34    20   -99   .06   7.3   -99  11.1   -99
+   120   -99   .18  .298  .416  .162   .23  1.48  .824    32    24   -99   .04   7.3   -99  10.1   -99
+   150   -99  .195  .302  .417  .067   .43  1.47    .7    30    20   -99   .02   7.2   -99   9.8   -99
+!The ACE ID is N/A.
+!This soil data is used for the experiment of CPHY1206_1.
+!
+
+*CPHY000024  UNALM       CL        90  -99
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Huancayo    Peru              -99     -99 -99
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99   .13     1    .5    76     1     1   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99  .241  .414  .435     1   .23   1.4  1.67    34    40   -99   1.4   7.7   -99  12.8   -99
+    60   -99  .246   .41  .437  .407   .23   1.4  1.45    36    38   -99   1.3   7.7   -99  10.2   -99
+    90   -99  .246   .41  .499  .223   .23  1.23  1.45    36    38   -99   1.3   7.7   -99  10.2   -99
+!The ACE ID is N/A.
+!This soil data is used for the experiment of CPSR1307_1.
+!
+
+*CPSR000022  UNALM       SL        90  -99
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ -99         -99               -99     -99 -99
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99   .13     1    .5    76     1     1   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99  .104  .199  .408     1  2.59   1.5  .481    13    22   -99   -99   5.5   -99     8   -99
+    60   -99  .118  .203  .388  .407  2.59   1.4  .278    21    18   -99   -99   5.7   -99   9.9   -99
+    90   -99  .136  .212  .379  .223   .43   1.5   .18    17    14   -99   -99   5.5   -99   9.3   -99

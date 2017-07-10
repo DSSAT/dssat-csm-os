@@ -12,7 +12,8 @@ C  Calls:         None
 C=======================================================================
       SUBROUTINE OpETPhot(CONTROL, ISWITCH, 
      &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
-     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV) 
+     &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV, 
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
 
 C-------------------------------------------------------------------
 C
@@ -20,6 +21,9 @@ C  ETPHOT OUTPUT File
 C
 C-------------------------------------------------------------------
       USE ModuleDefs
+       ! VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 
@@ -32,6 +36,9 @@ C-------------------------------------------------------------------
       REAL PCINPD,PG, PGNOON, PCINPN
       REAL SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN
       REAL TGRO(24), TGROAV
+
+      real  AGEQESLN, CO2QESLN, QEFFSLN
+
 
       LOGICAL FEXIST
 
@@ -49,7 +56,9 @@ C-------------------------------------------------------------------
       FROP    = CONTROL % FROP  
       RNMODE  = CONTROL % RNMODE
       RUN     = CONTROL % RUN    
-      YRDOY   = CONTROL % YRDOY   
+      YRDOY   = CONTROL % YRDOY  
+      
+      FMOPT = ISWITCH % FMOPT     ! VSH
 
       IDETC   = ISWITCH % IDETC
       IF (IDETC .NE. 'Y') RETURN
@@ -60,6 +69,7 @@ C-------------------------------------------------------------------
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+        IF (FMOPT == 'A' .OR. FMOPT == ' ' ) THEN       ! VSH
         OUTETP = 'ETPhot.OUT'
         CALL GETLUN(OUTETP, NOUTDC)
 
@@ -81,14 +91,15 @@ C-------------------------------------------------------------------
   120   FORMAT('@YEAR DOY   DAS',
      &   '    LI%D   PHAD   PHAN    LI%N   SLLN   SLHN',
      &   '   N%LN   N%HN   LMLN   LMHN   TGNN   TGAV')
-
+        END IF   ! VSH
 !***********************************************************************
 !***********************************************************************
 !     Daily Output
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
-        IF (NOUTDC == 0) RETURN
+!       VSH
+        IF ((NOUTDC == 0).AND. (FMOPT == 'A'.OR. FMOPT == ' ')) RETURN
 
         IF ((DYNAMIC .EQ. OUTPUT.AND. MOD(DAS,FROP) .EQ. 0) .OR.
      &      (DYNAMIC .EQ. SEASEND .AND. MOD(DAS,FROP) .NE. 0) .OR. 
@@ -96,14 +107,29 @@ C-----------------------------------------------------------------------
 
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN      ! VSH
           WRITE (NOUTDC,300) YEAR, DOY, DAS, 
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(12), TGROAV
  300      FORMAT(1X,I4,1X,I3.3,1X,I5,
      &        F8.2,2(1X,F6.2),F8.2,6(1X,F6.2),2(1X,F6.1))
+          END IF   ! VSH
+          
+        !     VSH     
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutETPhot(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, 
+     &PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,   
+     &vCsvlineETPhot, vpCsvlineETPhot, vlngthETPhot)
+     
+         CALL LinklstETPhot(vCsvlineETPhot)
+      END IF         
+        
         ENDIF
-
-        IF (DYNAMIC .EQ. SEASEND) THEN
+      
+        IF ((DYNAMIC .EQ. SEASEND) 
+     & .AND. ((FMOPT == 'A') .OR. (FMOPT == ' '))) THEN   ! VSH
           CLOSE (NOUTDC)
         ENDIF
 

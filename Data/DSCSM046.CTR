@@ -6,7 +6,7 @@ $SIMULATION_CONTROLS
 !-----------------------------------------------------------------------------------------
 *CONTROLS_SWITCH
 @CTRNO DESCRIPTION  
-     2 Summary, evaluate files only (VBOSE='0' - zero)
+    00 No change 
 
 *CONTROLS
 !-----------------------------------------------------------------------------------------
@@ -44,6 +44,12 @@ $SIMULATION_CONTROLS
  6 All output (VBOSE='A') 
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
  6 OU              .     .     .     .     .     .     .     .     .     .     A     .     .
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+ 7 CSV outputs
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 7 OU              .     .     .     .     .     .     .     .     .     .     .     .     .     C
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
@@ -242,6 +248,12 @@ $SIMULATION_CONTROLS
 95 CSCER wheat, barley
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
 95 GE              .     .     .     .     . CSCRP046                  CSCER
+
+!-----------------------------------------------------------------------------------------
+@N CONTROLS_TITLE
+96 N-Wheat
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... MODEL...
+96 GE              .     .     .     .     . N-Wheat                   WHAPS
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE

@@ -2,27 +2,13 @@
 
 *TEMPERATURE EFFECTS
 !       TBASE  TOP1  TOP2  TMAX CURV
-!  PRFTC  10.0  20.0  40.0  50.0  LIN     !Effect of temperature on photosynthesis!same as original
-!  PRFTC  12.0  25.0  48.0  50.0  LIN     !Effect of temperature on photosynthesis !Ken 6/7/2015
-!  PRFTC  10.0  20.0  48.0  50.0  LIN     !Effect of temperature on photosynthesis !same as original!PS of 5/26
-!  PRFTC  11.0  22.0  48.0  50.0  LIN     !Effect of temperature on photosynthesis !same as original!PS of 5/26
   PRFTC  11.0  22.0  35.0  48.0  LIN     !Effect of temperature on photosynthesis !same as original!PS of 5/26
-!  RGFIL   7.0  22.0  48.0  50.0  LIN     !org-Effect of temperature on relative grain filling rate, COULD BE QDR
-!  RGFIL   7.0  22.0  28.0  60.0  LIN     !Effect of temperature on relative grain filling rate !PS of 5/26
   RGFIL   7.0  22.0  27.0  60.0  LIN     !Effect of temperature on relative grain filling rate !PS of 5/26
-!  RGFIL   8.0  23.0  29.0  65.0  LIN     !Effect of temperature on relative grain filling rate,Ken 6/7/2015
-!  RGSET  -10.  12.0  48.0  50.0  LIN     !Effect of temperature on relative grain set--original
   RGSET  -10.  12.0  33.0  39.0  LIN     !Effect of temperature on relative grain set--modified!PS of 5/26
-!  RGSET  -10.  12.0  34.0  39.0  LIN     !Effect of temperature on relative grain set--modified!Ken 6/7/2015
-!  RGLAI   8.0  14.0  36.0  46.0  LIN     !Effect of temperature on relative leaf area expansion
-!  RGLAI   8.0  14.0  32.0  42.0  LIN     !orig-Effect of temperature on relative leaf area expansion!PS of 5/26
   RGLAI   8.0  23.0  32.0  42.0  LIN     !orig-Effect of temperature on relative leaf area expansion!PS of 5/26
-!  RGLAI   8.0  23.0  38.0  48.0  LIN     !Effect of temperature on relative leaf area expansion !Ken 6/7/2015
 
 *PHOTOSYNTHESIS PARAMETERS 
   PARSR   0.50      !Conversion of solar radiation to PAR 
-! CO2X     0   220   330   440   550   660   770   880   990  9999  orig
-! CO2Y  0.00  0.81  1.00  1.03  1.06  1.10  1.13  1.16  1.18  1.25  orig
   CO2X     0   220   280   330   400   490   570   750   990  9999
   CO2Y  0.00  0.85  0.95  1.00  1.02  1.04  1.05  1.06  1.07  1.08
 

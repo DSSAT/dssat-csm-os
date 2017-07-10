@@ -24,7 +24,7 @@
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH	
 
-      LOGICAL FIRST
+      LOGICAL FIRST, FOPEN
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -50,6 +50,11 @@
         IF (FILEX /= FILEX_LAST) THEN
           EXPNO = EXPNO + 1
           FILEX_LAST = FILEX
+        ENDIF
+
+        INQUIRE (FILE='RunList.OUT', OPENED = FOPEN)
+        IF (.NOT. FOPEN) THEN
+          OPEN(UNIT=RLUN,FILE='RunList.OUT',ACCESS='APPEND')
         ENDIF
 
         WRITE(RLUN,200) RUN, EXPNO, TRTNUM, NYRS, FILEX 

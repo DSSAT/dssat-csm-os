@@ -20,7 +20,8 @@ C  Calls:     None
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs
+      USE ModuleDefs     
+      USE CsvOutput   ! VSH
       IMPLICIT NONE
       SAVE
 
@@ -59,6 +60,7 @@ C  Calls:     None
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
 
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 !-----------------------------------------------------------------------
       IF(DYNAMIC.EQ.RUNINIT) THEN
 
@@ -71,7 +73,7 @@ C  Calls:     None
 !     Seasonal initialization - run once per season
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
-
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
 !     Initialize daily plant nitrogen output file
         INQUIRE (FILE = OUTPN, EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -90,7 +92,8 @@ C  Calls:     None
   230   FORMAT('@YEAR DOY   DAS   DAP',
      &        '   CNAD   GNAD   VNAD   GN%D   VN%D   NUPC',
      &        '   LNAD   SNAD   LN%D   SN%D   RN%D   SNN0C   SNN1C')
-
+       END IF   ! VSH
+       
         !cumul. senes. N soil and surface
         CUMSENSURFN = 0.0
         CUMSENSOILN = 0.0   
@@ -123,7 +126,8 @@ C  Calls:     None
      &      .OR. (YRDOY .EQ. MDATE)) THEN   !at harvest maturity 
 
             CALL YR_DOY(YRDOY, YEAR, DOY)
-
+            
+            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN ! VSH
 !           Print 
             WRITE (NOUTDN,300) YEAR, DOY, DAS, DAP,
      &       (WTNCAN*10.0), (WTNSD*10.0), (WTNVEG*10.0),
@@ -132,6 +136,19 @@ C  Calls:     None
      &        CUMSENSURFN, CUMSENSOILN
  300        FORMAT (1X,I4,1X,I3.3,2(1X,I5),3(1X,F6.1),2(1X,F6.2),
      &        4(1X,F6.1),2(1X,F6.2), 2F8.2)
+            END IF    ! VSH
+     
+ !    VSH CSV output corresponding to PlantN.OUT
+      IF (FMOPT == 'C') THEN    
+         CALL CsvOutPlNMzCer(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &WTNCAN, WTNSD, WTNVEG, PCNGRN, PCNVEG, WTNUP, WTNLF,  
+     &WTNST, PCNL, PCNST, PCNRT, CUMSENSURFN, CUMSENSOILN,  
+     &vCsvlinePlNMZCER, vpCsvlinePlNMZCER, vlngthPlNMZCER)
+    
+         CALL LinklstPlNMZCER(vCsvlinePlNMZCER)
+      END IF 
+     
           ENDIF
         ENDIF
       ENDIF
@@ -140,7 +157,8 @@ C  Calls:     None
 !***********************************************************************
 !     SEASEND
 !***********************************************************************
-      IF (DYNAMIC .EQ. SEASEND) THEN
+      IF ((DYNAMIC .EQ. SEASEND)
+     & .AND. (FMOPT == 'A' .OR. FMOPT == ' ')) THEN    ! VSH
 !-----------------------------------------------------------------------
         CLOSE (NOUTDN)
 

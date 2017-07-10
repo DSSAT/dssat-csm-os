@@ -3,6 +3,8 @@ Thumbs.db
 *.onetoc?
 .gitignore
 #Ignore files build by Visual Studio
+Makefile
+*/Makefile
 *.obj
 *.[eE][xX][eE]
 *.pdb
@@ -47,4 +49,9 @@ resource.h
 *.o
 *.mod
 *.ico
+.DS_Store
+Data/.DS_Store
 Resources/RC*
+*makefile*
+build/
+nbproject/
