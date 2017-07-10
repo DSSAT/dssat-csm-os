@@ -268,11 +268,11 @@
                             ENDDO
                         
                             ! Stress factors for individual leaves                       
-                            plant(BR,LF+1)%WFLF = AMIN1(1.0,plant(BR,LF+1)%WFLF+WFG * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                             !EQN 336
-                            plant(BR,LF+1)%NFLF = AMIN1(1.0,plant(BR,LF+1)%NFLF+NFG * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                             !EQN 337
-                            plant(BR,LF+1)%NFLFP = AMIN1(1.0,plant(BR,LF+1)%NFLFP+NFP * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                           !EQN 338
-                            plant(BR,LF+1)%TFGLF = AMIN1(1.0,plant(BR,LF+1)%TFGLF+TFG * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                           !EQN 339
-                            plant(BR,LF+1)%TFDLF = AMIN1(1.0,plant(BR,LF+1)%TFDLF+TFD * plant(BR,LF+1)%LATL/plant(BR,LF+1)%LAPOTX)                                           !EQN 340
+                            plant(BR,LF+1)%WFLF = AMIN1(1.0,plant(BR,LF+1)%WFLF+WFG * plant(BR,LF+1)%LAGL/plant(BR,LF+1)%LAPOTX)                                             !EQN 336
+                            plant(BR,LF+1)%NFLF = AMIN1(1.0,plant(BR,LF+1)%NFLF+NFG * plant(BR,LF+1)%LAGL/plant(BR,LF+1)%LAPOTX)                                             !EQN 337
+                            plant(BR,LF+1)%NFLFP = AMIN1(1.0,plant(BR,LF+1)%NFLFP+NFP * plant(BR,LF+1)%LAGL/plant(BR,LF+1)%LAPOTX)                                           !EQN 338
+                            plant(BR,LF+1)%TFGLF = AMIN1(1.0,plant(BR,LF+1)%TFGLF+TFG * plant(BR,LF+1)%LAGL/plant(BR,LF+1)%LAPOTX)                                           !EQN 339
+                            plant(BR,LF+1)%TFDLF = AMIN1(1.0,plant(BR,LF+1)%TFDLF+TFD * plant(BR,LF+1)%LAGL/plant(BR,LF+1)%LAPOTX)                                           !EQN 340
                         ENDIF
                     ENDIF
                 ENDDO
