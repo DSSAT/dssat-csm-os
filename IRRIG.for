@@ -100,7 +100,7 @@ C=======================================================================
 
 !     ET-based auto-irrig
       REAL ET_THRESH, ACCUM_ET
-      REAL ET     !, EP, ES, E0
+!      REAL ET     !, EP, ES, E0
       REAL EOP, EVAP, RUNOFF
 
 !-----------------------------------------------------------------------
@@ -760,20 +760,24 @@ C             Apply fixed irrigation amount
             ENDIF
 
           ENDIF
-
+!-----------------------------------------------------------------------
 !         ET determines demand        
+!         Accumulate potential transpiration plus actual soil evaporation 
+!             minus infiltration (rainfall minus runoff)
+!         Irrigation event triggered when threshold accumulation is met
+!         IIRRI = 'E': compute irrigation based on ET and deficit irrigation %
+!         IIRRI = 'T': fixed irrigation amount 
+!-----------------------------------------------------------------------
           CASE ('E', 'T')
-            CALL GET('SPAM','ET',ET)
+!           CALL GET('SPAM','ET',ET)
             CALL GET('SPAM','EOP',EOP)
             CALL GET('SPAM','EVAP',EVAP)
             CALL GET('WATER','RUNOFF',RUNOFF)
 
-!           Today's accum demand = Yest. accum demand + demand - supply
+!           Today's accum demand = SUM(demand - supply)
             ACCUM_ET = ACCUM_ET + (EOP + EVAP) - (RAIN - RUNOFF)
             ACCUM_ET = MAX(0.0, ACCUM_ET)
 
-!KJB - use effective rainfall? Infiltration?
-! Use potential transpiration???
             IF (ACCUM_ET > ET_THRESH) THEN
               IF (IIRRI .EQ. 'E') THEN
 C               Determine supplemental irrigation amount.
@@ -782,11 +786,11 @@ C               Determine supplemental irrigation amount.
 
               ELSE IF (IIRRI .EQ. 'T') THEN
 C               Apply fixed irrigation amount
-                IRRAPL = AIRAMT
+                IRRAPL = MAX(0.0, AIRAMT)
               ENDIF
 
 !             TEMP CHP
-              write(555,'(I7,2F10.2)') YRDOY, ACCUM_ET, IRRAPL
+!             write(555,'(I7,2F10.2)') YRDOY, ACCUM_ET, IRRAPL
             ENDIF
           END SELECT
 
