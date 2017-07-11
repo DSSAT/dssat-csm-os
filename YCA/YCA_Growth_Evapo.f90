@@ -19,16 +19,9 @@
         
         USE ModuleDefs
         USE YCA_First_Trans_m
-        USE YCA_Environment
-        USE YCA_VPDEffect
-        
    
         IMPLICIT NONE
         
-        TYPE (DailyEnvironment_type)                     :: env
-        TYPE (VPDEffect_type)                            :: vpde
-        REAL hourlyStomatalConductance
-        REAL dailyRelativeTranspiration, dailyPotentialTranspiration
         
         !TYPE (WeatherType) WEATHER                                                            ! MF Defined in ModuleDefs
 
@@ -206,17 +199,6 @@
           !ENDIF  
           
         
-        env = DailyEnvironment_type(TMin, TMax,TDEW,SRAD)
-        vpde = VPDEffect_type(PHTV,PHSV)
-        
-        
-        dailyRelativeTranspiration = 0.0
-        dailyPotentialTranspiration = 0.0
-        DO I = 1, 24
-            hourlyStomatalConductance = vpde%affectStomatalConductance(env%hourlyVPD(I))
-            dailyrelativeTranspiration = dailyrelativeTranspiration + env%hourlyTranspiration(I, hourlyStomatalConductance) ! sumatory of relative transpiration according to conductance
-            dailyPotentialTranspiration = dailyPotentialTranspiration + env%hourlyTranspiration(I, 1.0)                     ! sumatory of potential transpiration at full coductance
-        END DO
             
           
       END SUBROUTINE YCA_Growth_Evapo
