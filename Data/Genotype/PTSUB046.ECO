@@ -3,6 +3,7 @@
 !                            1     2
 @ECO#  ECONAME..........  RUE1  RUE2
 IB0001 GENERIC POTATO      3.5   4.0
+!IB0001 GENERIC POTATO      3.0   3.0
 IB0002 GENERIC POTATO+10%  3.8   4.4
 DFAULT DEFAULT             3.5   4.0
 

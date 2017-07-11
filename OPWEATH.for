@@ -142,7 +142,8 @@ C       Generate output for file Weather.OUT
          CALL CsvOutWth(EXPNAME, RUN, CONTROL%TRTNUM, 
      &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
      &RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX,  
-     &TMIN, TAVG, TDAY, TDEW, TGROAV, TGRODY, WINDSP, CO2,   
+     &TMIN, TAVG, TDAY, TDEW, TGROAV, TGRODY, WINDSP, CO2,
+     &VPDF, vpd_transp,   
      &vCsvlineWth, vpCsvlineWth, vlngthWth)
      
          CALL LinklstWth(vCsvlineWth)

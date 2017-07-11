@@ -1,0 +1,18 @@
+!This soil file is created by DSSAT translator tool on Tue May 27 22:35:16 EDT 2014.
+*SOILS: Benton, WashingtonDenmark; 
+
+! Waring: There is a variable [sl_source] with oversized content [Calculated with DSSAT], only first 11 bits will be applied.
+!The ACE ID is N/A.
+!This soil data is used for the experiment of USBE0301_1.
+!
+*USBE000001  Calculated  S       -99 -99
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ -99         -99               -99     -99 -99
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.13  5.6   0.6   64    1.00  1.00   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99 0.078 0.177 0.466     1  6.83  1.33     1     5    20   -99   -99   -99   -99     7   -99
+    60   -99 0.076 0.172  0.39 0.407  2.33  1.54   0.9     5    20   -99   -99   -99   -99     7   -99
+    90   -99 0.065 0.151 0.368 0.223  2.08  1.61   0.5     5    20   -99   -99   -99   -99     7   -99
+   120   -99 0.065 0.151 0.368 0.223  2.08  1.61   0.5     5    20   -99   -99   -99   -99     7   -99
+
