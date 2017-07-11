@@ -956,17 +956,24 @@ Contains
        
       If(.Not. Associated(headET)) Return
       
-      nl = MIN(10, MAX(4,nlayers))
-  
-      Write(numtoch1,'(I2)') nl - 1  
+!      nl = MIN(10, MAX(4,nlayers))
+      nl = nlayers
+      If (nl < 11) then
+          Write(numtoch1,'(I2)') nl - 1  
+           
+          fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+          fmt = Trim(Adjustl(fmt))
        
-      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
-      fmt = Trim(Adjustl(fmt))
-   
-      Write (tmp,fmt) ("ES",i,"D,",i=1,nl - 1)
-      tmp = Trim(Adjustl(tmp)) 
-      Write(numtoch2,'(I2)') nl  
-      tmp = Trim(Adjustl(tmp)) // "ES" // Trim(Adjustl(numtoch2)) // "D"     
+          Write (tmp,fmt) ("ES",i,"D,",i=1,nl - 1)
+          tmp = Trim(Adjustl(tmp)) 
+          Write(numtoch2,'(I2)') nl  
+          tmp = Trim(Adjustl(tmp)) // "ES" // Trim(Adjustl(numtoch2)) // "D" 
+      Else
+          fmt = '(9(A2,I1,A2))'
+          Write (tmp,fmt) ("ES",i,"D,",i=1,9)
+          tmp = Trim(Adjustl(tmp)) 
+          tmp = Trim(Adjustl(tmp)) // "ES10D" 
+      End If    
      
   length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
   //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &

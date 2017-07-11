@@ -415,26 +415,42 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    INTEGER,Intent(IN) :: N_LYR
    REAL, Dimension(N_LYR), Intent(IN) :: ES_LYR 
   
-   Integer :: i, size
-  
+   Integer :: i, size   
+   Real :: ES10
+   
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
    Integer, Intent(Out) :: lngth
   
    Character(Len=550) :: tmp 
    Character(Len=200) :: tmp1  
-   Character(Len=20) :: fmt     
+   Character(Len=20) :: fmt  
+   Character(Len=20) :: cES10   
 !  End of vars
               
    Write(tmp,'(26(g,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
       AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA , EMAA, &
       CEO, CET, CEP, CES, CEF, CEM, TRWU
    
-   Write(fmt,'(I2)') N_LYR - 1  
-   fmt = '('//Trim(Adjustl(fmt))//'(g,","),g)'
-   fmt = Trim(Adjustl(fmt))
+   If (N_LYR < 11) Then
+     Write(fmt,'(I2)') N_LYR - 1  
+     fmt = '('//Trim(Adjustl(fmt))//'(g,","),g)'
+     fmt = Trim(Adjustl(fmt))
    
-   Write(tmp1,fmt) (ES_LYR(i), i = 1, N_LYR)        
+     Write(tmp1,fmt) (ES_LYR(i), i = 1, N_LYR)        
+   Else
+     ES10 = 0.0
+     DO i = 10, N_LYR
+       ES10 = ES10 + ES_LYR(i)
+     ENDDO
+     Write(fmt,'(I2)') N_LYR - (N_LYR-10) - 1 
+     fmt = '('//Trim(Adjustl(fmt))//'(g,","),g)'
+     fmt = Trim(Adjustl(fmt))
+   
+     Write(tmp1,fmt) (ES_LYR(i), i = 1, 9)
+     Write(cES10, '(g)') ES10
+     tmp1 = Trim(Adjustl(tmp1)) // Trim(Adjustl(cES10)) 
+   End IF
    
    tmp = Trim(Adjustl(tmp)) // Trim(Adjustl(tmp1)) 
    
