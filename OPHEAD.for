@@ -806,7 +806,7 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
       CASE ('RICER')
 !      ELSEIF (INDEX ('RI',CROP) .GT. 0) THEN
          WRITE (HEADER(I), 906) P1,P2R,P5,P2O; I=I+1
-         WRITE (HEADER(I),1006) G1,G2,G3,G4; I=I+1
+         WRITE (HEADER(I),1006) G1,G2,G3,G4,G5; I=I+1
 
 !-----------------------------------------------------------------------
 !     Aroids
@@ -949,7 +949,7 @@ C-----------------------------------------------------------------------
      &         '  PHINT  :',F8.3)
  1005 FORMAT (1X,'PD     :',F7.2,'  P2     :',F7.3,'  TC     :',F7.3)
  1006 FORMAT (1X,'G1     :',F6.1,'  G2     :',F6.4,
-     &         '  G3     :',F6.2,'  G4     :',F6.2)
+     &         '  G3     :',F6.2,'  G4     :',F6.2,'  G5     :',F6.2)
  1007 FORMAT (1X,'G1     :',F6.1,'  PI1    :',F6.1,
      &         '  PI2    :',F6.1,'  DTTPI  :',F6.1)
  1057 FORMAT (1X,' M1    :',F6.1,'   M2   :',F6.1,

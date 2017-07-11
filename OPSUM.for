@@ -846,7 +846,6 @@ C=======================================================================
       IF (VALUE > 1.E-6) THEN
         WRITE(PRINT_TXT,FTXT1) VALUE
       ELSE
-        !FTXT2="(I3)"
         WRITE(PRINT_TXT,FTXT2) "-99"
       ENDIF
 
