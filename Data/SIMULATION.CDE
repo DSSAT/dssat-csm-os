@@ -103,9 +103,9 @@ D        Days after planting                                                  IB
 
 *Simulation/Management/Residue
 @CDE     DESCRIPTION                                                          SO
-!A        Automatic when required                                              IB
+!A        Automatic when required                                             IB
 N        No applications                                                      IB
-!F        Fixed amount automatic                                               IB
+!F        Fixed amount automatic                                              IB
 R        On reported dates                                                    IB
 D        Days after planting                                                  IB
 
