@@ -58,8 +58,11 @@
         ENDIF
         
         ! STAGES:Overall development
-        CUMDU = CUMDU + DU
-        DABR = DABR + (DU*WFG)
+        IF (DAG>=0) THEN !LPM 10JUL2017 To avoid accumulation of developmental units for branching before germination
+            CUMDU = CUMDU + DU
+            DABR = DABR + (DU*WFG)
+        ENDIF
+        
         ! BRANCH NUMBER     !LPM 07MAR15 This section was moved from CS_Growth_Part (has to be before of the estimation of brstage)       
         ! Old method (1 fork number throughout)
         ! BRNUMST = AMAX1(1.0,BRNUMFX**(INT(brstage)-1))
@@ -87,7 +90,7 @@
             !ELSEIF (BRSTAGE.GT.0.0) THEN
             !    BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             !ENDIF
-            BRDAE(TVR1) = DAE
+            BRDAE(TVR1) = DAG !LPM 10JUL2017 To consider root and stem development after germination and before emergence (planting stick below-ground)
             IF (BRSTAGE.EQ.0.0) THEN
                 BRNUMST(TVR1) = 1                                                                                    ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
             ELSEIF (BRSTAGE.GT.0.0) THEN
@@ -197,10 +200,11 @@
         ENDIF
         
         IF (GYEARDOY.LE.0.0.AND.GERMFR.GT.0.0) THEN
-            GYEARDOY = PLYEARDOY
+            GYEARDOY = YEARDOY
             GDAP = DAP
             GDAYFR = 1.0 - GERMFR
             GDAPFR = FLOAT(DAP) + GDAYFR
+            DAG = 0 !LPM 10JUL2017 To consider root and stem develpment after germination and before emergence (planting stick below-ground)
         ENDIF
         
         IF (EYEARDOY.LE.0.0.AND.EMRGFR.GT.0.0) THEN
@@ -303,7 +307,7 @@
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 
                 IF(plant(BR,LF)%NDDAE < 1.0) THEN 
-                    plant(BR,LF)%NDDAE = DAE                                             ! calculate date leaf appereance
+                    plant(BR,LF)%NDDAE = DAG                                             ! calculate date leaf appereance
                 ENDIF
             ENDDO
         ENDDO

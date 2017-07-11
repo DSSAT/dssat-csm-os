@@ -75,6 +75,7 @@
         cwamm = -99.0
         dae = -99
         dabr = 0.0 !LPM 24APR2016 DABR added as developmental age for branching (with stress)
+        dag=-99 !LPM 10JUL2017 To consider root and stem develpment after germination and before emergence (planting stick below-ground)
         dagerm = 0.0 !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
         dals = 0.0 !LPM 24APR2016 DALS added as developmental age for leaf size (when DAWWP> 900)
         dap = -99

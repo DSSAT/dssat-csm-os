@@ -56,7 +56,7 @@
         !-----------------------------------------------------------------------
 
         IF(GROSTP >0.0) THEN
-            !LPM06JUL2017 It is assumed an branching angle of 60 from the horizontal (cos(60)=0.5) 
+            !LPM06JUL2017 It is assumed an branching angle of 60 from the vertical line (cos(60)=0.5) 
             IF(BRSTAGE>=1.0) THEN
                 CANHTG = MAX(0.0,SESR*GROSTADJ*((plant(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP)*0.5)
             ELSE
