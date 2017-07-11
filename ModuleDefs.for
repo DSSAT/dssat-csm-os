@@ -40,15 +40,21 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Change this line to switch between Windows and Linux compilers
 !     Operating system
-! The code below works with intel fortran compiler across OSs
+!=======================================================================
+! By Willingthon Pavan (2017-04-24):
+! Intel ifort understands the C-style preprocessor directives, so it might
+! be easiest to convert the files to that style. Then we would have a
+! single code base that would work with both compilers (Intel & gfortran).
+! * Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
+! * Microsoft Visual Studio IDE: set the Preprocess Source File option to Yes in 
+!   the Fortran Preprocessor Option Category.
+!=======================================================================
 
-      !DEC$ IF DEFINED(__linux__)
-          CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
-      !DEC$ ELSE IF DEFINED (__APPLE__)
-          CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
-      !DEC$ ELSE
-          CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
-      !DEC$ END IF
+!#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
+      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
+!#else
+!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
+!#endif
 
 !=======================================================================
 !     Compiler directives used to set library for system calls
@@ -68,12 +74,15 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 5
-        INTEGER :: Build = 1
+        INTEGER :: Build = 3
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.5.03 chp 07/08/2017 Cross-platform compatibility, 
+!                    potato temperature sensitivity (R.Raymundo)
+!       4.6.5.02 chp 07/06/2017 Y2K-2025, EXNAME in Summary.OUT, data updates
 !       4.6.5.01 chp 05/10/2017 Workshop 2017 version. Remove SALUS. 
 !       4.6.1.14 chp 05/09/2017 CSV output updates, minor sunflower changes, 
 !                               remove auto forage variables
@@ -182,7 +191,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    MaxPest = 500    !Maximum number of pest operations
 
       REAL, PARAMETER :: 
-     &    PI = 3.141586, 
+     &    PI = 3.14159265,
      &    RAD=PI/180.0
 
       INTEGER, PARAMETER :: 

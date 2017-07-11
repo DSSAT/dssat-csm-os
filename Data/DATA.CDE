@@ -405,17 +405,17 @@ NI9D   NO3 layer 9     NO3, soil layer 9 (ug [N]/g [soil])                      
 NIAD   Tot soil N kg/haTotal soil NO3+NH4 (kg [N]/ha)                           .
 NIMC   N Immobilize    Cumulative N immobilization (kg [N]/ha)                  .
 NITC   Nitrification   Cumulative nitrification (kg [N]/ha)                     .
-NITRD  Daily nitrif    Daily nitrification, soil profile (g[N]/ha/d)           .
-NIT10  Nitrif layer 10 Daily nitrification, soil layer 10(g[N]/ha)             .
-NIT1D  Nitrif layer 1  Daily nitrification, soil layer 1 (g[N]/ha)             .
-NIT2D  Nitrif layer 2  Daily nitrification, soil layer 2 (g[N]/ha)             .
-NIT3D  Nitrif layer 3  Daily nitrification, soil layer 3 (g[N]/ha)             .
-NIT4D  Nitrif layer 4  Daily nitrification, soil layer 4 (g[N]/ha)             .
-NIT5D  Nitrif layer 5  Daily nitrification, soil layer 5 (g[N]/ha)             .
-NIT6D  Nitrif layer 6  Daily nitrification, soil layer 6 (g[N]/ha)             .
-NIT7D  Nitrif layer 7  Daily nitrification, soil layer 7 (g[N]/ha)             .
-NIT8D  Nitrif layer 8  Daily nitrification, soil layer 8 (g[N]/ha)             .
-NIT9D  Nitrif layer 9  Daily nitrification, soil layer 9 (g[N]/ha)             .
+NITRD  Daily nitrif    Daily nitrification, soil profile (g[N]/ha/d)            .
+NIT10  Nitrif layer 10 Daily nitrification, soil layer 10(g[N]/ha)              .
+NIT1D  Nitrif layer 1  Daily nitrification, soil layer 1 (g[N]/ha)              .
+NIT2D  Nitrif layer 2  Daily nitrification, soil layer 2 (g[N]/ha)              .
+NIT3D  Nitrif layer 3  Daily nitrification, soil layer 3 (g[N]/ha)              .
+NIT4D  Nitrif layer 4  Daily nitrification, soil layer 4 (g[N]/ha)              .
+NIT5D  Nitrif layer 5  Daily nitrification, soil layer 5 (g[N]/ha)              .
+NIT6D  Nitrif layer 6  Daily nitrification, soil layer 6 (g[N]/ha)              .
+NIT7D  Nitrif layer 7  Daily nitrification, soil layer 7 (g[N]/ha)              .
+NIT8D  Nitrif layer 8  Daily nitrification, soil layer 8 (g[N]/ha)              .
+NIT9D  Nitrif layer 9  Daily nitrification, soil layer 9 (g[N]/ha)              .
 NITD   Total NO3 kg/ha Total soil NO3 (kg [N]/ha)                               .
 NLCC   N Leached kg/ha N leached (kg [N]/ha)                                    .
 NMNC   N Mineralize    Cumulative N mineralization (kg [N]/ha)                  .
