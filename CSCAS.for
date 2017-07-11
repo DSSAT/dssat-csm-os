@@ -2912,7 +2912,7 @@
 !       Read ecotype information
 !-----------------------------------------------------------------------
 
-        CALL FVCHECK(ECDIRFLE,GENFLCHK)
+        IF (RNMODE.NE.'T') CALL FVCHECK(ECDIRFLE,GENFLCHK)
         CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',canhts)
         CALL ECREADR (ECDIRFLE,ECONO,'SRN%S',srnpcs)
         IF (SRNPCS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
