@@ -103,7 +103,8 @@ Module YCA_First_Trans_m
     REAL    :: CWAMM                   ! Canopy wt,maturity,measured    kg/ha      ! (From SeasInit)  
     REAL    :: CWAN(HANUMX)            ! Canopy wt minimum after harvst kg/ha      ! (From SeasInit)
     REAL    :: DABR                    ! Cumulative dev. units stress   #          ! (From SeasInit) 
-    INTEGER :: DAE                     ! Days after emergence           d          ! (From SeasInit)  
+    INTEGER :: DAE                     ! Days after emergence           d          ! (From SeasInit)
+    INTEGER :: DAG                     ! Days after germination         d          !  !LPM 10JUL2017 To consider root and stem development after germination and before emergence (planting stick below-ground)
     REAL    :: DAGERM                  ! Dev. age for germination       #          ! (From SeasInit)  !LPM 21MAR2015 DAGERM added to save develpomental age at germination (with stress)
     REAL    :: DALS                    ! Development Age leaf size (2)  C.d        ! (From SeasInit) !LPM 24APR2016 DALS added to save Dev. age for potential leaf size (with stress)
     INTEGER :: DALSMAX                 ! DAE with the max leaf size     d          ! LPM 28FEB15 

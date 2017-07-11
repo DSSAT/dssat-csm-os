@@ -24,7 +24,8 @@
         !-----------------------------------------------------------------------
         IF (YEARDOY.GT.PLYEARDOY) THEN
             DAP = DAP + 1
-            IF (EYEARDOY.GT.0) DAE = DAE + 1
+            IF (GYEARDOY > 0) DAG = DAG + 1
+            IF (EYEARDOY > 0) DAE = DAE + 1
         ENDIF
         TVI1 = LNUMSOLDESTA
         LNUMSOLDESTA = -99
