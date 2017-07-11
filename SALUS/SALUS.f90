@@ -14,6 +14,7 @@
 ! 03/27/2014 KAD    Removed SALUS.OUT; added more variables to PlantGro.OUT; temporarily disabled
 !                   dynamic harvest index
 ! 04/02/2014 KAD    Adapted MZ_OPHARV for SALUS
+! 12/05/2016 CHP    Comment out calls to NPuptake routines, run-time errors because of parameter in arg list
 !==============================================================================
 
 subroutine SALUS(control, iswitch, weather, soilprop, st, harvfrac,  & !Input
@@ -265,17 +266,18 @@ if(iswnit /= 'N' .OR. iswpho /= 'N') then
    call warning(2, errkey, message)  
 end if
    
-if(iswnit /= 'N') then         
-   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
-        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
-        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                         !Output
-end if
-   
-if(iswpho /= 'N') then
-   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
-        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
-        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                         !Output
-end if
+!N & P stresses not yet linked
+!if(iswnit /= 'N') then         
+!   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
+!        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
+!        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                         !Output
+!end if
+!   
+!if(iswpho /= 'N') then
+!   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg, 	& !Input
+!        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,  	                    & !Output
+!        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                         !Output
+!end if
    	
 ! Initialize Output PlantGrow.OUT
 call SALUS_Opgrow(control, iswitch, dtt, mdate, biomassrootc, biomassc, xhlai, yrplt, droughtfac,  &
@@ -475,9 +477,10 @@ if(iswnit /= 'N') then
      NSupply_kg(layer) = SNO3(layer) + SNH4(layer)
    end do   
    
-   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg,    & !Input
-        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,                          & !Output
-        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
+!N & P stresses not yet linked
+!   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg,    & !Input
+!        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,                          & !Output
+!        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
    
    !NSupply_Tot = SUM(NSupply_kg)
    do layer = 1, nlayr
@@ -486,12 +489,13 @@ if(iswnit /= 'N') then
    end do
 end if
         
+!N & P stresses not yet linked
 ! Activate P routine if P limitation is simulated
-if(iswpho /= 'N') then
-   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg,    & !Input
-        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,                          & !Output
-        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
-end if        
+!if(iswpho /= 'N') then
+!   call SALUS_NPuptake(dynamic, rwu, RootLayerFrac, dae, biomass, biomassroot, NConcOpt_par, NSupply_kg,    & !Input
+!        reltt, relttemerge, soilprop, NConcAct, NConcMin, NConcOpt, NSupplyRed_Kg,                          & !Output
+!        NSupply_Tot, NDemand_Kg, NPlant_Kg, NUptake, SWaterFac, NFac)                                        !Output
+!end if        
 
 !==============================================================================
 ! OUTPUT

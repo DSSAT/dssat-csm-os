@@ -40,9 +40,9 @@ C=======================================================================
       USE ModuleDefs
       IMPLICIT NONE
 
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSOI.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSOI.blk'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER*1  ANS,WMODI,SWSPRF, RNMODE
       CHARACTER*2  CROPC,CROP,PRCROP

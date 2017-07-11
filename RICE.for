@@ -193,7 +193,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
-     &    YRPLT,FLOODWAT,                                  !Input
+     &    YRPLT,FLOODWAT, LAI,                            !Input
      &    CUMDTT, EMAT, ISDATE, PLANTS, RTDEP, YRSOW,     !I/O
      &    CDTT_TP, DTT, FERTILE, FIELD, ISTAGE,           !Output
      &    ITRANS, LTRANS, MDATE, NDAT, NEW_PHASE, P1, P1T,!Output
@@ -318,7 +318,7 @@ C-----------------------------------------------------------------------
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
-     &    YRPLT,FLOODWAT,                                  !Input
+     &    YRPLT,FLOODWAT, LAI,                            !Input
      &    CUMDTT, EMAT, ISDATE, PLANTS, RTDEP, YRSOW,     !I/O
      &    CDTT_TP, DTT, FERTILE, FIELD, ISTAGE,           !Output
      &    ITRANS, LTRANS, MDATE, NDAT, NEW_PHASE, P1, P1T,!Output

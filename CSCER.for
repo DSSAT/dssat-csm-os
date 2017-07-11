@@ -6092,12 +6092,16 @@
               OUTPG2 = 'PlantGr2.OUT'
               OUTPGF = 'PlantGrf.OUT'
               OUTPN = 'PlantN.OUT  '
-              IF (FNAME.EQ.'Y') THEN
-                OUTPG = EXCODE(1:8)//'.OPG'
-                OUTPG2 = EXCODE(1:8)//'.OG2'
-                OUTPGF = EXCODE(1:8)//'.OGF'
-                OUTPN = EXCODE(1:8)//'.ONI'
-              ENDIF
+
+! File names are changed at end of simulation by CSM
+! Changing names here eliminates wheat output in sequence runs.
+              !IF (FNAME.EQ.'Y') THEN
+              !  OUTPG = EXCODE(1:8)//'.OPG'
+              !  OUTPG2 = EXCODE(1:8)//'.OG2'
+              !  OUTPGF = EXCODE(1:8)//'.OGF'
+              !  OUTPN = EXCODE(1:8)//'.ONI'
+              !ENDIF
+
               CALL GETLUN ('PlantGro.OUT',NOUTPG)
               CALL GETLUN ('PlantN.OUT',NOUTPN)
               CALL GETLUN ('PlantGr2.OUT',NOUTPG2)

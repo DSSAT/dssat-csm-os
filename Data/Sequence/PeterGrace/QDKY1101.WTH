@@ -3,7 +3,7 @@
 !Created from WTH files from PG - DSSAT workshop
 
 @ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT
-  QDKY  -26.971  152.390   441  17.8  13.7 -99.0 -99.0
+  QDKY  -26.582  151.829   441  17.8  13.7 -99.0 -99.0
 @DATE  SRAD  TMAX  TMIN  RAIN  DEWP  WIND   PAR  EVAP  RHUM
 11001  18.0  28.0  17.0   0.0                              
 11002  22.0  30.0  20.5   3.7                              

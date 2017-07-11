@@ -14,6 +14,7 @@ C. 07/31/2002 WDB Added pest damage, SLPF, satfac
 C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 !  03/30/2006 CHP Added composition of senesced matter for SOM modules
+!  April-May 2015 - KJB major revisions
 C-----------------------------------------------------------------------
 C  Called : ML_CERES
 C
@@ -22,7 +23,8 @@ C-----------------------------------------------------------------------
 
       SUBROUTINE ML_GROSUB (
      & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     & CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
+     & CO2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     & PRFTC, GFLTC, LAITC, PRFTYP,GFLTYP, LAITYP,
      & GPP, GRAINN, GROLF, GRORT, GROSTM, ISTAGE, 
      & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
      & NFAC, NLAYR, NH4,NSTRES, NO3, P3, P4, P5, PAF, PANWT, 
@@ -33,8 +35,8 @@ C-----------------------------------------------------------------------
      & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TILN, 
      & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      & XN,XSTAGE, EOP, TRWUP, RWUEP1,DYNAMIC,UNO3,UNH4,KG2PPM,
-     & PRFTC,PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
-     & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS,G1,
+     & PORMIN,PARSR,RUE,SLPF,SATFAC, RESERVE,
+     & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS,G1,G0,
      & VANC,VMNC,TLAG1, SENESCE, MPLA, TPLA, MPLAG, TPLAG)
 
       USE ModuleDefs
@@ -71,6 +73,9 @@ C----------------------------------------------------------------
       CHARACTER ISWDIS*1
       CHARACTER ISWNIT*1
       CHARACTER ISWWAT*1
+      CHARACTER*3 PRFTYP, GFLTYP, LAITYP
+      REAL    PRFTC(4), GFLTC(4), LAITC(4)
+      REAL  RTEMF
       REAL LAI
       INTEGER LEAFNO
       REAL LFWT
@@ -89,11 +94,10 @@ C----------------------------------------------------------------
       REAL PHINT
       REAL PLA
       REAL PLAN
+      REAL PLTPOP
       REAL PLAG
       REAL PLAO
       REAL PLATO
-      REAL PLTPOP
-      REAL PRFTC(4)
       REAL PTF
       REAL RANC
       REAL RCNP
@@ -146,7 +150,7 @@ C-----------------------------------------------------------------
 	INTEGER   NLAYR
       REAL      NSINK,NPOOL1,NPOOL2,NPOOL,NSDR
       REAL      TT,PCARB,PRFT,TTMP,PC
-      REAL      GRF,RGFILL,GROPAN
+      REAL      GRF,RGFILL,GROPAN,GROPANP
       REAL      RMNC,XNF,TNLAB,RNLAB,RNOUT,SLFW,SLFN,SLFC,SLFT,PLAS
       REAL      TABEX,PCO2
       REAL      DLAYR(NL)
@@ -177,7 +181,7 @@ C--------------------------------------------------------------------
       REAL TOPSINK,TOPMAIN,MGROLF,MGROSTM,TCARBO
       REAL TGROLF,TGROSTM
       REAL MLAG2,MPLAG,MLAG1,TPLAG,SENF,RESERVE
-      REAL G1,STMGF,VANC,VMNC,MPLA,TPLA,MLFWT,TLFWT
+      REAL G1,G0,STMGF,VANC,VMNC,MPLA,TPLA,MLFWT,TLFWT
       REAL MSTMWT,TSTMWT,TLAG1
 
 !----------------------------------------------------------------------
@@ -248,7 +252,12 @@ C--------------------------------------------------------------------
          BIOMAS = 0.0
          MLAG1  = 0.0
          MLAG2  = 0.0
-
+!KJB INITIALIZED MPLAG, CRAZY RESULTS AT COLD TEMPERATURE 14C, BUT THIS WAS NOT THE PROBLEM
+! THE PROBLEM WAS TOO MUCH CARBO.  MPLAG INITIALIZED IN PHASEI.FOR.  BUT TWICE IS NO PROBLEM
+         PCARB = 0.0
+         MPLAG = 0.0
+! KJB - added NSINK here.  If used with N "off", then it should be zero
+         NSINK = 0.0
          SENESCE % ResWt  = 0.0
          SENESCE % ResLig = 0.0
          SENESCE % ResE   = 0.0
@@ -373,7 +382,17 @@ C--------------------------------------------------------------------
       !-------------------------------------------------------------
                 
       PAR = SRAD*PARSR        !PAR local variable
-      LIFAC =1.5 - 0.768 * ((ROWSPC * 0.01)**2 * PLTPOP)**0.1
+C
+C KJB Equation is much too sensitive to Row Spacing, Boote,Singh, Jones
+C     The coefficient 0.05 makes it less sensitive, but also increases LIFAC
+C     The 0.05 has considerable effect.  Try 0.06 or 0.04
+C     Needed 0.04 to get reasonable yield for 150 cm row spacing in 2 expts.
+C     May need to reduce 1.5 to 1.4 or decrease the slope of 0.768.  NO!
+C     Note:  model is extremely sensitive to change from 1.5 to 1.4.
+C
+      LIFAC =1.48 - 0.768 * ((ROWSPC * 0.01)**2 * PLTPOP)**0.04
+
+C      LIFAC =1.5 - 0.768 * ((ROWSPC * 0.01)**2 * PLTPOP)**0.1
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
       PCARB = RUE * PAR/PLTPOP * (1.0 - EXP(-LIFAC * LAI))
       PCARB = PCARB*PCO2      !chp added
@@ -381,7 +400,7 @@ C--------------------------------------------------------------------
       TEMPM = (TMAX + TMIN)*0.5   !Mean air temperature, C
 
       TT    = 0.25*TMIN+0.75*TMAX 
-      PRFT = CURV('LIN',PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4),TT)
+      PRFT = CURV(PRFTYP,PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4),TT)
       PRFT  = AMAX1 (PRFT,0.0)
       PRFT = MIN(PRFT,1.0)
 
@@ -398,35 +417,49 @@ C WDB 10/20/03      CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES,(1-SATFAC))*SLPF
       !---------------------------------------------------------------
       !      Compute temperature effect on leaf expansion
       !---------------------------------------------------------------
-      TEMF  = 1.0
+C KJB  Deleted this code, replaced with look-up function
+C      TEMF  = 1.0
+C
+C      DO I = 1, 8
+C         TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
+C      END DO
+C
+C
+C      IF (TMIN .LT. 14.0 .OR. TMAX .GT. 32.0) THEN
+C         IF (TMAX .LT. TBASE) THEN
+C            TEMF = 0.0
+C         ENDIF
+C         IF (TEMF .NE. 0.0) THEN
+C            TEMF = 0.0
+C            DO I = 1, 8
+C               TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
+C               IF (TTMP .GT. 14.0 .AND. TTMP .LE. 32.0) THEN
+C                   TEMF = TEMF + 1.0/8.0
+C               ENDIF
+C               IF (TTMP .GE.  8.0 .AND. TTMP .LT. 14.0) THEN
+C                   TEMF = TEMF + 0.021*(TTMP-8.0)
+C               ENDIF
+C               IF (TTMP .GT. 32.0 .AND. TTMP .LT. 42.0) THEN
+C                   TEMF = TEMF + 0.0125*(42.0-TTMP)
+C               ENDIF
+C            END DO
+C         ENDIF
+C      ENDIF
 
+C  KJB, NOW USING LOOK-UP 4-POINT LOOK-UP, WITH LIN, QDR possible
       DO I = 1, 8
-         TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
+      TMFAC1(I) = 0.931 + 0.114*I-0.0703*I**2+0.0053*I**3
+      END DO
+      TEMF = 0.0      
+      DO I = 1, 8
+               TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
+      RTEMF = CURV(LAITYP,LAITC(1),LAITC(2),LAITC(3),LAITC(4),TTMP)
+      RTEMF  = AMAX1 (RTEMF,0.0)
+      RTEMF = AMIN1(RTEMF,1.0)
+      TEMF = TEMF + RTEMF / 8.
       END DO
 
-
-      IF (TMIN .LT. 14.0 .OR. TMAX .GT. 32.0) THEN
-         IF (TMAX .LT. TBASE) THEN
-            TEMF = 0.0
-         ENDIF
-         IF (TEMF .NE. 0.0) THEN
-            TEMF = 0.0
-            DO I = 1, 8
-               TTMP = TMIN + TMFAC1(I)*(TMAX-TMIN)
-               IF (TTMP .GT. 14.0 .AND. TTMP .LE. 32.0) THEN
-                   TEMF = TEMF + 1.0/8.0
-               ENDIF
-               IF (TTMP .GE.  8.0 .AND. TTMP .LT. 14.0) THEN
-                   TEMF = TEMF + 0.021*(TTMP-8.0)
-               ENDIF
-               IF (TTMP .GT. 32.0 .AND. TTMP .LT. 42.0) THEN
-                   TEMF = TEMF + 0.0125*(42.0-TTMP)
-               ENDIF
-            END DO
-         ENDIF
-      ENDIF
-
-
+C     TEMF SHOULD BE USED AS BEFORE
       !--------------------------------------------------------------
       !       Compute leaf characteristics for different stages
       !--------------------------------------------------------------
@@ -446,35 +479,56 @@ C WDB 10/20/03      CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES,(1-SATFAC))*SLPF
       !     ISTAGE = 2
       !--------------------------------------------------------------
 
+C KJB - Note:  I think there is a flaw in logic for all leaf area expansion eqs.
+C KJB - as there should be a "delta HU", e.g. DTT in all these equations to represent
+C KJB - the increment of that leaf area expansion expressed per day.  True for MS
+C KJB - and tillers.  If this was corrected, I think the model would show higher
+C KJB - LAI at warm conditions.  Right now LAI is highest if quite cool (20C)
+C KJB - in the short term, I am avoiding this change, as the model is mostly balanced.
+C KJB - DTT alone is not enough.  Need to create cm2 per DTT. or DTT/24 equals thermal day
+C          MPLAG   = DTT/24. * (MLAG2-MLAG1) * AMIN1(TURFAC,TEMF,AGEFAC)
+C KJB  - I tried this.  It did not do much.  Do not understand it.
+C
       IF (ISTAGE .LE. 2) THEN
           MLAG2   = G1 * (18.0*EXP(0.00787*CUMDTT)-18.4)
-          MPLAG   = (MLAG2-MLAG1) * AMIN1(TURFAC,TEMF,AGEFAC)
+          MPLAG   = (MLAG2-MLAG1) * AMIN1(TURFAC,TEMF,AGEFAC)  
           MGROLF  = MPLAG  * 0.004
           MGROSTM = MGROLF * 0.20
           IF (CUMDTT .LE. 125.0) THEN
              IF(SEEDRV .GT. 0.0) THEN
-                CARBO = SEEDRV + CARBO
-                IF (MGROLF .LT. CARBO) THEN
+! KJB - COOL, 14-17C, SEEDRV GOES WAY UP, AS HIGH AS 0.634, WHEN SEEDRV =0.006 INITIAL
+! THIS CAUSED HAYWIRE CARBO IN NEXT LINE, POSSIBLY BECAUSE TEMPERATURE ON PCARB IS WRONG
+! KJB - DECIDE SEEDRV SHOULD NEVER EXCEED TWICE INITIAL SEED WT, WHICH IS 6 MG
+! KJB - SO PUT A LIMIT ON SEEDRV OF 0.012 G
+! KJB - THIS IS ONLY PART OF THE PROBLEM. PUSHING THE TB AND TOPT FOR PCARB UP, HELPED 
+! KJB - CONSIDERABLY.  REMEMBER THAT PCARB'S TT USES 3/4TH OF TMAX AND 1/4 OF TMIN
+!                 CARBO = SEEDRV + CARBO
+                 CARBO = AMIN1(SEEDRV,0.012) + CARBO
+                     IF (MGROLF .LT. CARBO) THEN
                    GRORT = MGROLF
-                ENDIF
+                     ENDIF
+!                SEEDRV = CARBO - MGROLF - GRORT
                 SEEDRV = CARBO - MGROLF - GRORT
+                     IF (SEEDRV .GT. 0.012) THEN 
+                          SEEDRV = 0.012
+                     ENDIF
                 IF (SEEDRV .LT. 0.0) THEN
                    GRORT  = 0.25*CARBO
                    MGROLF = CARBO-GRORT
                    SEEDRV = 0.0
                 ENDIF
-              ELSE
+             ELSE
                 GRORT = CARBO - MGROSTM - MGROLF
              END IF
              IF (GRORT .LT. 0.25*CARBO) THEN
-                GRORT   = CARBO*0.25
-                MGROLF  = 0.65*CARBO
-                MGROSTM = CARBO-GRORT-MGROLF
-                MPLAG   = MGROLF/0.0040
+                 GRORT   = CARBO*0.25
+                 MGROLF  = 0.65*CARBO
+                 MGROSTM = CARBO-GRORT-MGROLF
+                 MPLAG   = MGROLF/0.0040
              END IF
            ELSEIF (CUMDTT .GT. 125.0) THEN
              CALL ML_TILLSUB (DYNAMIC,TURFAC,AGEFAC,
-     &       G1,CUMDTT,TPLAG,TLAG1,TGROLF,TGROSTM,TCARBO,
+     &       G0,CUMDTT,TPLAG,TLAG1,TGROLF,TGROSTM,TCARBO,
      &       CARBO,SUMDTT,DTT,TEMF, ISTAGE)
           END IF
 
@@ -510,7 +564,13 @@ C WDB 10/20/03      CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES,(1-SATFAC))*SLPF
           TOPMAIN = MGROSTM + MGROLF
           TCARBO  = CARBO   - MGROLF - MGROSTM - GRORT
 C-WALTER  GRF     = 0.45*AMIN1(AGEFAC,TEMF,SWFAC)
-          GRF     = 0.45*AMIN1(AGEFAC,TEMF,TURFAC)
+C KJB    increasing GRF as function of lack of canopy cover
+C        shifts more of LAI to tillers and less to main stem
+C
+          GRF     = 0.45 * (1.0 + 0.4 * EXP(-LIFAC * LAI))
+C          GRF     = 0.55 
+     &               *AMIN1(AGEFAC,TEMF,SWFAC)
+C     &    *AMIN1(AGEFAC,TEMF,TURFAC)
           IF (TCARBO .LT. GRF*CARBO) THEN
              TCARBO  = GRF*CARBO
              MGROLF  = (CARBO-GRORT-TCARBO)*(MGROLF/TOPMAIN)
@@ -519,7 +579,7 @@ C-WALTER  GRF     = 0.45*AMIN1(AGEFAC,TEMF,SWFAC)
           END IF
           IF (TCARBO .GT. 0.0) THEN
               CALL ML_TILLSUB (DYNAMIC,TURFAC,AGEFAC,
-     &        G1,CUMDTT,TPLAG,TLAG1,TGROLF,TGROSTM,TCARBO,
+     &        G0,CUMDTT,TPLAG,TLAG1,TGROLF,TGROSTM,TCARBO,
      &        CARBO,SUMDTT,DTT,TEMF, ISTAGE)
           ENDIF
 
@@ -528,39 +588,50 @@ C-WALTER  GRF     = 0.45*AMIN1(AGEFAC,TEMF,SWFAC)
       !--------------------------------------------------------------
        ELSEIF (ISTAGE .EQ. 4) THEN
 C-WALTER  MGROSTM = 0.095*DTT*AMIN1(TEMF,AGEFAC,SWFAC)   ! 0.15
-          MGROSTM = 0.095*DTT*AMIN1(TEMF,AGEFAC,TURFAC)  ! 0.15
+C-KJB     MGROSTM = 0.095*DTT*AMIN1(TEMF,AGEFAC,TURFAC)  ! 0.15
+           MGROSTM = 0.095*DTT*AMIN1(TEMF,AGEFAC,SWFAC)  ! 0.15
           GRORT   = CARBO*(0.25-0.15*AMIN1(SWFAC,NSTRES))
           TCARBO  = CARBO-MGROSTM-GRORT
 C-WALTER  GRF     = 0.50*AMIN1(AGEFAC,TEMF,SWFAC)
-          GRF     = 0.50*AMIN1(AGEFAC,TEMF,TURFAC)
+C-KJB     GRF     = 0.50*AMIN1(AGEFAC,TEMF,TURFAC)
+          GRF     = 0.50*AMIN1(AGEFAC,TEMF,SWFAC)
           IF (TCARBO .LT. CARBO*GRF) THEN
              TCARBO  = CARBO*GRF
              MGROSTM = CARBO-GRORT-TCARBO
           ENDIF
           IF (TCARBO .GT. 0.0) THEN
               CALL ML_TILLSUB (DYNAMIC,TURFAC,AGEFAC,
-     &        G1,CUMDTT,TPLAG,TLAG1,TGROLF,TGROSTM,TCARBO,
+     &        G0,CUMDTT,TPLAG,TLAG1,TGROLF,TGROSTM,TCARBO,
      &        CARBO,SUMDTT,DTT,TEMF, ISTAGE)
           ENDIF
       !--------------------------------------------------------------
       !     ISTAGE = 5
       !--------------------------------------------------------------
-       ELSEIF (ISTAGE .EQ. 5) THEN
-          SENF   = 0.85-0.5*AMIN1(AGEFAC,TURFAC)
+      ELSEIF (ISTAGE .EQ. 5) THEN
+C-KJB     SENF   = 0.85-0.5*AMIN1(AGEFAC,TURFAC)
+          SENF   = 0.85-0.5*AMIN1(AGEFAC,SWFAC)
           CARBO  = CARBO*(1.-SENF*(SUMDTT/P5))   !0.40
           RGFILL = 1.0
-          IF (TEMPM .LT. 22.) THEN
-             RGFILL = (TEMPM-7.0)/15.0
-          ENDIF
-          RGFILL = AMAX1 (RGFILL,0.0)
+! KJB Replaced with a look up function
+!          IF (TEMPM .LT. 22.) THEN
+!             RGFILL = (TEMPM-7.0)/15.0
+!          ENDIF
+!          RGFILL = AMAX1 (RGFILL,0.0)
+      RGFILL = CURV(GFLTYP,GFLTC(1),GFLTC(2),GFLTC(3),GFLTC(4),TEMPM)
+      RGFILL  = AMAX1 (RGFILL,0.0)
+      RGFILL = MIN(RGFILL,1.0)
           GROLF  = 0.0
           IF (SUMDTT .LE. P5) THEN
 C-WALTER     GROPAN = PGC*(1.0+0.0040*SUMDTT)*AMIN1(SWFAC,AGEFAC)   !.0036
-             GROPAN = PGC*(1.0+0.0040*SUMDTT)*AMIN1(TURFAC,AGEFAC) 
+C-KJB        GROPAN = PGC*(1.0+0.0040*SUMDTT)*AMIN1(TURFAC,AGEFAC) 
+!             GROPAN = PGC*(1.0+0.0040*SUMDTT)*AMIN1(SWFAC**0.5,AGEFAC)
+C KJB - used SWFAC**0.8 and AGEFAC on GROPAN all the time, not just lag phase
+             GROPAN = PGC*(1.0+0.0040*SUMDTT)
              IF (GROPAN .GT. 1.75*PGC) THEN
                 GROPAN = 1.75*PGC
              ENDIF
-             GROPAN = GROPAN*RGFILL
+!             GROPAN = GROPAN*RGFILL
+             GROPAN = GROPAN*RGFILL*AMIN1(SWFAC**0.8,AGEFAC)
              GRORT  = CARBO*(0.3-0.28*AMIN1(SWFAC,NSTRES))
              GROSTM = CARBO - GRORT - GROPAN
              IF (GROSTM .LT. 0.0) THEN
@@ -577,11 +648,16 @@ C-WALTER     GROPAN = PGC*(1.0+0.0040*SUMDTT)*AMIN1(SWFAC,AGEFAC)   !.0036
                    GROSTM = AMAX1(GROSTM, -STMWT)
                 ENDIF
               ELSE
-                STMGF   = AMIN1((0.5+0.003*SUMDTT),1.0)
+!  KJB          STMGF   = AMIN1((0.5+0.003*SUMDTT),1.0)
+                STMGF   = AMIN1((0.6+0.003*SUMDTT),1.0)
                 RESERVE = RESERVE+GROSTM*STMGF
-             ENDIF
-           ELSE
-             GROPAN = 0.72-0.006*(SUMDTT-P5)         ! .0067
+              ENDIF
+                GROPANP = GROPAN
+          ELSE
+! KJB PRIOR GROPAN WAS FOR A FIXED PLANT, NOT GOOD, NOW NORMALIZED
+! ALSO FASTER, AS THIS IS AFTER P5 COMPLETION
+!             GROPAN = 0.72-0.006*(SUMDTT-P5)         ! .0067
+             GROPAN = GROPANP * (0.72-0.007*(SUMDTT-P5))/0.72
              GROSTM = CARBO - GROPAN
              IF (GROSTM .LT. 0.0) THEN
                 GROSTM = 0.0
@@ -688,19 +764,36 @@ C--------------------------------------------------------------------
          MPLA   = MPLA   + MPLAG
          TPLA   = TPLA   + TPLAG
          PLA    = MPLA   + TPLA
-         MLFWT  = MLFWT  + MGROLF
-         TLFWT  = TLFWT  + TGROLF
-         MSTMWT = MSTMWT + MGROSTM
-         TSTMWT = TSTMWT + TGROSTM
+! KJB - ATTEMPT TO TRANSFER MASS OF N AWAY FROM VEG
+! KJB  - DO WE NEED TO PUT IT INTO GRAIN TOO?
+! KJB  - REASON:  HARVEST INDEX IS LOW BECAUSE OF POOR ACCOUNTING
+! KJB  - IF AS PROTEIN, MAY NEED A MULTIPLIER OF 6.25 TO GET DM
+         !         MLFWT  = MLFWT  + MGROLF
+         MLFWT  = MLFWT  + MGROLF - 6.25* NSINK * MLFWT /(LFWT+STMWT)
+!         TLFWT  = TLFWT  + TGROLF
+         TLFWT  = TLFWT  + TGROLF - 6.25* NSINK * TLFWT /(LFWT+STMWT)
+!         MSTMWT = MSTMWT + MGROSTM
+!         TSTMWT = TSTMWT + TGROSTM
+         MSTMWT = MSTMWT + MGROSTM - 6.25*NSINK * MSTMWT /(LFWT+STMWT)
+         TSTMWT = TSTMWT + TGROSTM - 6.25*NSINK * TSTMWT /(LFWT+STMWT)
          IF (ISTAGE .NE. 5) THEN
             GROSTM = MGROSTM + TGROSTM
             STMWT  = MSTMWT  + TSTMWT
             GROLF  = MGROLF  + TGROLF
             LFWT   = MLFWT   + TLFWT
-          ELSE
-            STMWT  = STMWT   + GROSTM
-            PANWT  = PANWT   + GROPAN
-            LFWT   = LFWT    + GROLF
+         ELSE
+! KJB - looks strange, but STMWT and LFWT never defined to this point. Need
+! KJB - to substract NSINK during ISTAGE5.  ALSO, GROSTM is never defined
+! KJB by itself until ISTAGE5, so that is why GROSTM and GROLF needed again
+! KJB - code works to causes DM decline in leaf and stem, under concept that
+! KJB - protein DM is lost from veg tissue, but half "C-energy" is respired 
+! KJB - Hence, 3.12* NSINK going to PANWT
+! KJB - prior code had no loss of DM from leaf or stem
+!            STMWT  = STMWT   + GROSTM
+            STMWT  = STMWT   + GROSTM - 6.25*NSINK * STMWT /(LFWT+STMWT)
+            PANWT  = PANWT   + GROPAN + 3.12*NSINK * STMWT /(LFWT+STMWT)
+!            LFWT   = LFWT    + GROLF
+            LFWT   = LFWT    + GROLF - 6.25* NSINK * LFWT /(LFWT+STMWT)
          ENDIF
          BIOMAS = (LFWT+STMWT+PANWT)*PLTPOP
          DM     = BIOMAS*10.0
@@ -806,7 +899,7 @@ C  GRF    :
 C  TLG    :
 C  FLG    :
 C  GGG    :
-C  RGFILL : Rate of grain fill - mg/day
+C  RGFILL : Rate of grain fill - mg/day, NO.  Just relative rate of grain fill
 C  WSTR   :
 C  FSTR   :
 C  GROPAN : Daily growth of the pannicle - g

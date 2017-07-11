@@ -11,6 +11,7 @@ C  3. Added switch block, code cleanup            P.W.W.      2-7-93
 C  4. Modified TT calculations to reduce line #'s P.W.W.      2-7-93
 C  5. Modified for MILLET model                   W.T.B.      MAY 94
 C  6. Converted to modular format                 W.D.B.      7-31-02
+C  7. Major revisions to millet model             K.J.B April-May 2015
 C-----------------------------------------------------------------------
 C  INPUT  : YRDOY
 C
@@ -34,7 +35,7 @@ C=======================================================================
 
       SUBROUTINE ML_PHENOL (APTNUP,BIOMAS,BIOMS2,
      & CSD1, 
-     & CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT,  
+     & CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, SETTC, SETTYP,  
      & EMAT, GNUP, GPP, GPSM, GRAINN, GRNWT, IDETO,
      & IDUR1, IPRINT, ISDATE, ISM, ISTAGE, ISWNIT, ISWWAT,
      & LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
@@ -44,7 +45,7 @@ C=======================================================================
      & SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
      & TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
 C      Variables passed through PHENOL to phasei but not used in phenol
-     & AGEFAC, BIOMS1, CUMDTT, CUMPH, G4, GROLF,
+     & AGEFAC, BIOMS1, CUMDTT, CUMPH, G4, G5, GROLF,
      & GRORT, GROSTM, LFWT, MGROLF, MGROPAN, MGROSTM, 
      & MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NSTRES, PAF, 
      & PGC, PLA, PLAN, PLAO, PLATO, PLAMX, PTF, RANC, 
@@ -69,6 +70,7 @@ C------------------------------------------------------------------------
       REAL DGET
       REAL DJTI
       REAL G4
+      REAL G5
       REAL GROLF
       REAL GRORT
       REAL GROSTM
@@ -124,6 +126,13 @@ C------------------------------------------------------------------------
       REAL VMNC
       REAL WSTR1
       REAL XNTI
+      REAL RGSET
+      REAL CRGSET
+      REAL CURV
+      REAL SETTC(4)
+      CHARACTER*3  SETTYP
+      REAL      TEMPST
+      REAL      XRGSET
 C------------------------------------------------------------------------
 C   VARIABLES IN OLD COMMON BLOCKS
 C------------------------------------------------------------------------
@@ -208,12 +217,14 @@ C------------------------------------------------------------------------
 C     LOCAL VARIABLES
 C------------------------------------------------------------------------
       INTEGER   STGDOY(20),YRDOY,I,NDAS,L,L0
+      INTEGER   NCOUNT
       REAL      XANC,TEMPCN,TEMPCX,XS,
      +          SWSD,PDTT,RATEIN,PFLOWR,
      +          YIELDB,TWILEN
       REAL      MAXLAI2,MAXLAI3
       REAL      DAYL,ACOEF,TNSOIL,TDSOIL,TMSOIL
       REAL      TH,DOPT
+
 
 !     Variables needed to send message to WARNING.OUT file
       CHARACTER*78 MESSAGE(10)
@@ -340,7 +351,8 @@ C--------------------------------------------------------------------
       CNSD2 = CNSD2 + 1.0-AGEFAC
       ICSDUR = ICSDUR + 1
 
-
+C     KJB added
+      TEMPST = (TMAX + TMIN)*0.5   !Mean air temperature, C
 
 
 C--------------------------------------------------------------------
@@ -363,11 +375,13 @@ C--------------------------------------------------------------------
       IF (ISTAGE .EQ. 7) THEN
           STGDOY(ISTAGE) = YRDOY
           NDAS           = 0.0
+          CRGSET          = 0.0
+          XRGSET = 1.0
 
           CALL ML_PHASEI (
      &    AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR,
-     &    DTT, EMAT, G4, GPP, GRAINN, GRNWT,
+     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     &    DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
      &    GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
      &    ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, MGROPAN,
      &    MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
@@ -411,8 +425,8 @@ C--------------------------------------------------------------------
 
           CALL ML_PHASEI (
      &    AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR,
-     &    DTT, EMAT, G4, GPP, GRAINN, GRNWT,
+     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     &    DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
      &    GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
      &    ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, MGROPAN,
      &    MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
@@ -458,8 +472,8 @@ C--------------------------------------------------------------------
 
           CALL ML_PHASEI (
      &    AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR,
-     &    DTT, EMAT, G4, GPP, GRAINN, GRNWT,
+     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     &    DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
      &    GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
      &    ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, MGROPAN,
      &    MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
@@ -529,6 +543,9 @@ C--------------------------------------------------------------------
               CANNAA = STOVN*PLTPOP
               CANWAA = BIOMAS
 
+! KJB - to add temp effect on seed set
+              NCOUNT = 0
+              CRGSET = 0.0
 C--------------------------------------------------------------------
 C         ISTAGE = 4: Determine end of panicle growth
 C--------------------------------------------------------------------
@@ -536,6 +553,26 @@ C--------------------------------------------------------------------
           NDAS = NDAS + 1
           PFLOWR = 50.0
           XSTAGE = 5.0 + SUMDTT/PFLOWR
+! KJB - to add temp effect on seed set
+          NCOUNT = NCOUNT + 1
+          
+C  KJB:  ADD TEMP EFFECT ON GRAIN-SET, AVERAGE TEMP PRIOR days of ISTAGE4
+
+      RGSET = CURV(SETTYP,SETTC(1),SETTC(2),SETTC(3),SETTC(4),TEMPST)
+      RGSET  = AMAX1(RGSET,0.0)
+      RGSET = AMIN1(RGSET,1.0)
+          CRGSET = CRGSET + RGSET
+          XRGSET = CRGSET/NCOUNT
+C  KJB
+C  Previous code tried, but failed to compute WSTR1 in PHASEI, always csd1=0 and icsdur=1
+C  WSTR1 was not passed in initial code.  No longer use it, as PCARB during ISTAGE4
+C  carries water stress effect now via CARBO
+          IF (ISWWAT .EQ. 'N') THEN
+              WSTR1 = 0.0
+          ELSE
+             WSTR1 = CSD1/ICSDUR
+          ENDIF
+C  KJB
           IF (SUMDTT .LE. PFLOWR) THEN
              IDUR1 = IDUR1 + 1
              ENDIF
@@ -643,8 +680,8 @@ C--------------------------------------------------------------------
 
       CALL ML_PHASEI (
      &    AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR,
-     &    DTT, EMAT, G4, GPP, GRAINN, GRNWT,
+     &    CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     &    DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
      &    GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
      &    ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, MGROPAN,
      &    MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,

@@ -216,7 +216,7 @@ C  06/15/2014 CHP Written
       LOGICAL FEXIST
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
-      INTEGER, PARAMETER :: SUMNUM = 1
+      INTEGER, PARAMETER :: SUMNUM = 2
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
 
@@ -311,7 +311,7 @@ C-----------------------------------------------------------------------
      & 'T',SPACES,
      & ',"Denitrification (g[N]/ha) by soil depth (cm):",',
      & 'T',(SPACES+N_LYR*8),
-     & ',"Nitrification (kg[N]/ha) by soil depth (cm):",',
+     & ',"Nitrification (g[N]/ha) by soil depth (cm):",',
      & 'T',(SPACES+2*N_LYR*8),
      & ',"N2O flux (g[N]/ha) by soil depth (cm):",',
      & 'T',(SPACES+3*N_LYR*8),
@@ -362,10 +362,6 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASINIT) THEN
 C-----------------------------------------------------------------------
-      IF (IDETN == 'N') RETURN
-      IF (MOD(DAS, FROP) .NE. 0) RETURN
-
-      CALL YR_DOY(YRDOY, YEAR, DOY) 
 
       TOTCO2 = SUM(newCO2)
       CumTotCO2 = CumTotCO2 + TOTCO2
@@ -375,7 +371,12 @@ C-----------------------------------------------------------------------
       CN2O_emitted = N2O_data % CN2O_emitted 
       CN2_emitted  = N2O_data % CN2_emitted  
       
-       WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
+      IF (IDETN == 'N') RETURN
+      IF (MOD(DAS, FROP) .NE. 0) RETURN
+
+      CALL YR_DOY(YRDOY, YEAR, DOY) 
+
+      WRITE(FRMT2,'(A,A,A,I2.2,A,I2.2,A,I2.2,A)') 
      &   '(1X,I4,1X,I3.3,I6,',
      &   '2F8.2,I8,F8.2,F8.1,3F8.3,',
      &   '2F8.1,I8,F8.1,I8,3F8.2,',
@@ -405,6 +406,7 @@ C-----------------------------------------------------------------------
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
       LABEL(1)  = 'N2OEC'; VALUE(1)  = CN2O_emitted
+      LABEL(2)  = 'CO2EC'; VALUE(2)  = NINT(CumTotCO2)
 
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 

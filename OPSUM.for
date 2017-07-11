@@ -25,6 +25,7 @@ C                   HIAM, EPCM, ESCM
 !  02/23/2011 CHP Added seasonal average environmental values
 !  03/27/2012 CHP Fixed format bug for very large HWUM
 !  07/19/2016 CHP Add cumulative N2O emissions in Nitrogen section
+!  09/09/2016 CHP Add cumulative CO2 emissions from OC decomposition
 C=======================================================================
 
       MODULE SumModule
@@ -63,6 +64,7 @@ C=======================================================================
         
 !       Added 7/19/2016 N2O emissions
         REAL N2OEC
+        INTEGER CO2EC
 
       End Type SummaryType
 
@@ -133,6 +135,7 @@ C-----------------------------------------------------------------------
       INTEGER NDCH
       REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
       REAL N2OEC
+      INTEGER CO2EC
 
       LOGICAL FEXIST
 
@@ -312,6 +315,7 @@ C     Initialize OPSUM variables.
       
 !     N2O emissions
       SUMDAT % N2OEC  = -99. !N2O emissions (kg/ha)
+      SUMDAT % CO2EC  = -99  !CO2 emissions from OM decomp (kg/ha)
       
       SUMDAT % RECM   = -99
       SUMDAT % ONTAM  = -99
@@ -405,6 +409,7 @@ C     Initialize OPSUM variables.
       CNAM = SUMDAT % CNAM    !Tops N at Maturity (kg/ha)
       GNAM = SUMDAT % GNAM    !Grain N at Maturity (kg/ha)
       N2OEC= SUMDAT % N2OEC   !N2O emissions (kg/ha)
+      CO2EC= SUMDAT % CO2EC   !CO2 emissions (kg/ha)
 
       RECM = SUMDAT % RECM    !Residue Applied (kg/ha)
       ONTAM= SUMDAT % ONTAM   !Organic N at maturity, soil & surf (kg/h)
@@ -500,7 +505,7 @@ C-------------------------------------------------------------------
      &'NITROGEN............................................  ',
      &'PHOSPHORUS............  ',
      &'POTASSIUM.............  ',
-     &'ORGANIC MATTER..................................    ',
+     &'ORGANIC MATTER..........................................    ',
      &'WATER PRODUCTIVITY..................................',
      &'................    ',
      &'NITROGEN PRODUCTIVITY...........  ',
@@ -516,7 +521,7 @@ C-------------------------------------------------------------------
      &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OEC',
      &    '  PI#M  PICM  PUPC  SPAM',
      &    '  KI#M  KICM  KUPC  SKAM',
-     &    '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM',
+     &    '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM   CO2EC',
      &    '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
      &    '     YPTM     YPIM',
      &    '    DPNAM    DPNUM    YPNAM    YPNUM',
@@ -597,7 +602,7 @@ C-------------------------------------------------------------------
      &    N2OEC_TXT,
      &    PINUMM, PICM, PUPC, SPAM,        !P data
      &    KINUMM, KICM, KUPC, SKAM,        !K data
-     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
+     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC,
 !         Water productivity
      &    DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT, 
      &                 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT,
@@ -623,8 +628,8 @@ C-------------------------------------------------------------------
 !       KINUMM, KICM, KUPC, SKAM, RECM, 
      &  9(1X,I5),
        
-!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
-     &  4(1X,I6),2(1X,I7),       
+!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC,
+     &  4(1X,I6),3(1X,I7),       
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
 !    &  4F9.1,4F9.2,
@@ -946,6 +951,7 @@ C=======================================================================
 
 !       From N2O_Mod
         CASE ('N2OEC');SUMDAT % N2OEC  = VALUE(I)
+        CASE ('CO2EC');SUMDAT % CO2EC  = VALUE(I)
 
         END SELECT
       ENDDO

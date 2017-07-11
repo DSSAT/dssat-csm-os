@@ -48,7 +48,7 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER*1   UPCASE,ISIMI, RNMODE
       CHARACTER*2   CROP
@@ -113,13 +113,12 @@ C=======================================================================
          MESOM   = 'G'
          MESOL   = '2'    !was '1'
          MESEV   = 'S'    !new Sulieman-Ritchie (2006)
-!        METMP   = 'D'    !DSSAT original soil temperature
-         METMP   = 'E'    ! EPIC soil temp routine.
+         METMP   = 'D'    !DSSAT original soil temperature
+!        METMP   = 'E'    ! EPIC soil temp routine.
          MEGHG   = '0'
 !                   0  => DSSAT original denitrification routine, no methane
 !                   1  => DayCent N2O calculation, no methane
 !                   2  => DayCent N2O calculations plus methane
-
 
          IPLTI   = 'R'
          IIRRI   = 'R'
@@ -707,8 +706,8 @@ C-----------------------------------------------------------------------
      &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
       USE ModuleDefs 
       USE ModuleData
-      INCLUDE 'COMSWI.BLK'
-      INCLUDE 'COMIBS.BLK'
+      INCLUDE 'COMSWI.blk'
+      INCLUDE 'COMIBS.blk'
 
       CHARACTER*1 RNMODE
       CHARACTER*8 MODEL
@@ -1160,7 +1159,8 @@ C-----------------------------------------------------------------------
             IF (INDEX('123',MESOL) == 0) MESOL = ' '
             IF (INDEX('RS' ,MESEV) == 0) MESEV = ' '
             IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
-            IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
+!           IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
+            IF (INDEX('ED' ,METMP) == 0) METMP = 'D' !7/21/2016
             IF (INDEX('012',MEGHG) == 0) MEGHG = '0'
 
 !         Fourth line of simulation controls
