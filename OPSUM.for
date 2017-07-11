@@ -490,7 +490,7 @@ C-------------------------------------------------------------------
      &'SITE INFORMATION............ ',
      &'DATES..........................................  ',
      &'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
-     &'..................  ',
+     &'....................  ',
      &'WATER...............................................  ',
      &'NITROGEN......................................  ',
      &'PHOSPHORUS............  ',
@@ -507,7 +507,8 @@ C-------------------------------------------------------------------
      &    'FNAM.... WSTA.... SOIL_ID...  ',
      &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
      &    '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
-     &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
+!     &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
+     &    '    HWUM    H#AM    H#UM  HIAM  LAIX',
      &    '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
      &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM',
      &    '  PI#M  PICM  PUPC  SPAM',
@@ -553,7 +554,8 @@ C-------------------------------------------------------------------
         ENDIF
         WRITE (NOUTDS,FMT,ADVANCE="NO") HWUM
 
-        WRITE (NOUTDS,'(1X,I5,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
+!        WRITE (NOUTDS,'(1X,I5,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
+        WRITE (NOUTDS,'(1X,I7,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
 
         IF (HIAM < -.01)  THEN; FMT = '(1X,F5.0)'
         ELSE                  ; FMT = '(1X,F5.3)'
