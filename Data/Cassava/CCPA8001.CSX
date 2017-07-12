@@ -52,7 +52,7 @@ AGRICULTURAL UNIVERSITY,WAGENINGEN,NETHERLANDS CIAT Experiment 3
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 80029   -99     1     1     V   -99   100    90    20   400   -99   -99   -99    25                        -99
+ 1 80029   -99     1     1     V   -99   100    90    20   450   -99   -99   -99    25                        -99
 
 *HARVEST DETAILS
 @H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME

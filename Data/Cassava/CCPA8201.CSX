@@ -45,7 +45,7 @@ Misting experiment PhD Thesis Porto Physiological Mechanisms of Drought Toleranc
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 82127   -99     1     1     V   -99   100    90    20   150   -99   -99   -99    25                        -99
+ 1 82127   -99     1     1     V   -99   100    90    20   450   -99   -99   -99    25                        -99
 
 *ENVIRONMENT MODIFICATIONS
 @E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  

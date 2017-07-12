@@ -57,8 +57,8 @@ Water stress at 3 and 6 months old plants PhD Thesis Porto Physiological Mechani
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 82257   -99  1.25  1.25     V     R   100    90    15   400   -99   -99   -99    20                        -99
- 2 82165   -99  1.25  1.25     V     R   100    90    15   400   -99   -99   -99    20                        -99
+ 1 82257   -99  1.25  1.25     V     R   100    90    15   450   -99   -99   -99    20                        -99
+ 2 82165   -99  1.25  1.25     V     R   100    90    15   450   -99   -99   -99    20                        -99
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME

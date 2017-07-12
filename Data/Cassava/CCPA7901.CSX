@@ -52,7 +52,7 @@ PALMIRA,COLOMBIA  3.52;-76.35;423;AW
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 79194   -99     1     1     V     R   100    90    20   400   -99   -99   -99    25                        -99
+ 1 79194   -99     1     1     V     R   100    90    20   450   -99   -99   -99    25                        -99
 
 *HARVEST DETAILS
 @H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
