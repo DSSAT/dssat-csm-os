@@ -452,6 +452,8 @@ C       and total potential water uptake rate.
       CALL PUT('SPAM', 'EO',  EO)
       CALL PUT('SPAM', 'EP',  EP)
       CALL PUT('SPAM', 'ES',  ES)
+      CALL PUT('SPAM', 'EOP', EOP)
+      CALL PUT('SPAM', 'EVAP',EVAP)
 
 !***********************************************************************
 !***********************************************************************
