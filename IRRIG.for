@@ -780,19 +780,14 @@ C             Apply fixed irrigation amount
 
             IF (ACCUM_ET > ET_THRESH) THEN
               IF (IIRRI .EQ. 'E') THEN
-C               Determine supplemental irrigation amount.
+!               Determine supplemental irrigation amount.
                 IRRAPL = ACCUM_ET * THETAU / 100.
                 IRRAPL = MAX(0.,IRRAPL)
 
               ELSE IF (IIRRI .EQ. 'T') THEN
-C               Apply fixed irrigation amount
+!               Apply fixed irrigation amount
                 IRRAPL = MAX(0.0, AIRAMT)
               ENDIF
-
-!here is a change
-
-!             TEMP CHP
-!             write(555,'(I7,2F10.2)') YRDOY, ACCUM_ET, IRRAPL
             ENDIF
           END SELECT
 
