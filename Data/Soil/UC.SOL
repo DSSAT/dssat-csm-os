@@ -1,0 +1,44 @@
+*SOILS: UNIVERSITY of GUELPH,CANADA
+
+*UCEA880001  UOGUELPH LO L       150 LONDON;GLEYED ORTHIC MELANIC BRUNISOL
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ ELORA       CANADA         43.400  80.250 Loam,Eutrochrept or Hapludoll
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.13  12.0  0.12  84.0  1.00  1.00   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     5    Ah 0.150 0.280 0.310 1.000   -99  1.10  2.60  12.2  45.7   -99   -99   6.9   -99  18.2   -99   
+    15    Ah 0.150 0.280 0.310 1.000   -99  1.10  2.60  12.2  45.7   -99   -99   6.9   -99  18.2   -99   
+    30   Aeg 0.150 0.280 0.310 0.740   -99  1.40  0.60  15.0  38.9   -99   -99   7.3   -99  10.7   -99   
+    45   Btg 0.140 0.270 0.310 0.550   -99  1.60  0.56  18.0  34.2   -99   -99   7.5   -99  11.8   -99   
+    60    C1 0.140 0.270 0.420 0.410   -99  1.80  0.04  12.6  28.4   -99   -99   8.0   -99   3.9   -99   
+    90    C2 0.140 0.250 0.410 0.260   -99  1.90  0.04  14.4  37.8   -99   -99   8.0   -99   2.7   -99   
+   120    C2 0.140 0.240 0.410 0.140   -99  1.90  0.04  14.4  37.8   -99   -99   8.0   -99   2.7   -99   
+   150    C2 0.140 0.230 0.410 0.080   -99  1.90  0.04  14.1  37.8   -99   -99   8.0   -99   2.7   -99   
+
+*UCJG920001  GOUDRIAN LO L       100 ARTIFICIAL SOIL FOR TRIAL PURPOSES
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ GENERAL     ANYWHERE       40.000  90.000 NO CLASSIFICATION
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.13  12.0  0.12  84.0  1.00  1.00   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     5    Ah 0.150 0.350 0.400 1.000   -99  1.10  2.60  12.2  45.7   -99   -99   -99   -99   -99   -99   
+    15    Ah 0.150 0.350 0.400 1.000   -99  1.10  2.60  12.2  45.7   -99   -99   -99   -99   -99   -99   
+    30   Aeg 0.150 0.350 0.400 0.740   -99  1.40  0.60  15.0  38.9   -99   -99   -99   -99   -99   -99   
+    60    C1 0.150 0.350 0.400 0.410   -99  1.80  0.04  12.6  28.4   -99   -99   -99   -99   -99   -99   
+    90    C2 0.150 0.350 0.400 0.260   -99  1.90  0.04  14.4  37.8   -99   -99   -99   -99   -99   -99   
+   100    C2 0.150 0.350 0.400 0.140   -99  1.90  0.04  14.4  37.8   -99   -99   -99   -99   -99   -99   
+
+*UCWK910001  UGUELPH LOA L       150 LONDON; GLEYED ORTHIC MELANIC BRUNISOL
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ WOODSTOCK C CANADA         43.800  80.450 Loam,Eutrochrept or Hapludoll
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.13  12.0  0.12  84.0  1.00  1.00   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     5    Ah 0.100 0.280 0.310 1.000   -99  1.10  2.60  12.2  45.7   -99   -99   6.9   -99  18.2   -99   
+    15    Ah 0.100 0.280 0.310 1.000   -99  1.10  2.60  12.2  45.7   -99   -99   6.9   -99  18.2   -99   
+    30   Aeg 0.100 0.280 0.310 0.740   -99  1.40  0.60  15.0  38.9   -99   -99   7.3   -99  10.7   -99   
+    45   Btg 0.100 0.270 0.310 0.550   -99  1.60  0.56  18.0  34.2   -99   -99   7.5   -99  11.8   -99   
+    60    C1 0.100 0.270 0.420 0.410   -99  1.80  0.04  12.6  28.4   -99   -99   8.0   -99   3.9   -99   
+    90    C2 0.100 0.250 0.410 0.260   -99  1.90  0.04  14.4  37.8   -99   -99   8.0   -99   2.7   -99   
+   120    C2 0.100 0.240 0.410 0.140   -99  1.90  0.04  14.4  37.8   -99   -99   8.0   -99   2.7   -99   
+   150    C2 0.100 0.230 0.410 0.080   -99  1.90  0.04  14.1  37.8   -99   -99   8.0   -99   2.7   -99   

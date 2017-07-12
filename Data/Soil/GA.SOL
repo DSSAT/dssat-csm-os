@@ -1,0 +1,84 @@
+*Soils: Georgia Soils
+
+K. J. Boote added 0.1 for SRGF to 183 cm layer (to mimic deep rooting, like NCEP)
+*GAGI810014  Perkinsetal LS      183 Tifton loamy sand
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ GibbsFarm   USA            31.430 -83.580 Fine-loamy,siliceous,thermic Plinthic Paleudults
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN  0.13   7.3  0.60  76.0  1.00  0.93 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   Apc 0.067 0.141 0.323 1.000  5.36  1.73  0.74   4.2  10.9   0.0   -99   5.9   -99   2.5   -99 
+    51  Btc1 0.148 0.241 0.309 0.700  7.06  1.76  1.08  18.6  11.9   0.0   -99   4.8   -99   3.2   -99 
+    76  Btc2 0.192 0.276 0.384 0.500  3.59  1.57  0.34  31.3  12.9   0.0   -99   5.1   -99   3.8   -99 
+   104  Btv1 0.194 0.278 0.314 0.300  0.11  1.77  0.19  32.6  13.9   0.0   -99   4.9   -99   4.5   -99 
+   135  Btv2 0.177 0.263 0.302 0.200  0.03  1.80  0.25  28.8  15.6   0.0   -99   4.8   -99   3.9   -99 
+   183    Bt 0.190 0.273 0.329 0.100  0.03  1.73  0.04  32.5  15.6   0.0   -99   4.6   -99   4.4   -99 
+@  SLB  SLPX  SLPT  SLPO  SLCA  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC 
+    30   -99   -99   -99   -99    .0   -99   -99   -99   -99   -99    .1   -99   -99   -99   -99 
+    51   -99   -99   -99   -99    .3   -99   -99   -99   -99   -99    .2   -99   -99   -99   -99 
+    76   -99   -99   -99   -99    .1   -99   -99   -99   -99   -99    .2   -99   -99   -99   -99 
+   104   -99   -99   -99   -99    .2   -99   -99   -99   -99   -99    .1   -99   -99   -99   -99 
+   135   -99   -99   -99   -99    .7   -99   -99   -99   -99   -99    .1   -99   -99   -99   -99 
+   183   -99   -99   -99   -99   1.4   -99   -99   -99   -99   -99    .0   -99   -99   -99   -99 
+
+*GAGI810114  Perkinsetal LS      183 Tifton loamy sand (original)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ GibbsFarm   USA            31.430 -83.580 Fine-loamy,siliceous,thermic Plinthic Paleudults
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN  0.13   7.3  0.60  76.0  1.00  0.90 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   Apc 0.020 0.053 0.301 1.000  5.36  1.73  0.74   4.2  10.9  24.0   -99   5.9   -99   2.5   -99 
+    51  Btc1 0.068 0.119 0.345 1.000  7.06  1.76  1.08  18.6  11.9  38.0   -99   4.8   -99   3.2   -99 
+    76  Btc2 0.118 0.174 0.372 0.500  3.59  1.57  0.34  31.3  12.9  27.0   -99   5.1   -99   3.8   -99 
+   104  Btv1 0.135 0.196 0.399 0.300  0.11  1.77  0.19  32.6  13.9   6.0   -99   4.9   -99   4.5   -99 
+   135  Btv2 0.129 0.194 0.344 0.200  0.03  1.80  0.25  28.8  15.6  12.0   -99   4.8   -99   3.9   -99 
+   183    Bt 0.134 0.205 0.344 0.000  0.03  1.73  0.04  32.5  15.6   7.0   -99   4.6   -99   4.4   -99 
+@  SLB  SLPX  SLPT  SLPO  SLCA  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC 
+    30   -99   -99   -99   -99    .0   -99   -99   -99   -99   -99    .1   -99   -99   -99   -99 
+    51   -99   -99   -99   -99    .3   -99   -99   -99   -99   -99    .2   -99   -99   -99   -99 
+    76   -99   -99   -99   -99    .1   -99   -99   -99   -99   -99    .2   -99   -99   -99   -99 
+   104   -99   -99   -99   -99    .2   -99   -99   -99   -99   -99    .1   -99   -99   -99   -99 
+   135   -99   -99   -99   -99    .7   -99   -99   -99   -99   -99    .1   -99   -99   -99   -99 
+   183   -99   -99   -99   -99   1.4   -99   -99   -99   -99   -99    .0   -99   -99   -99   -99 
+
+!K. J. Boote added 0.1 for SRGF to layers to 165 cm (to mimic deep rooting, like NCEP)
+*GAPL850009  NRCS-USDA   S       300 Lucy, Loamy Sand
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Sumter      US             32.000 -84.230 Loamy, siliceous, thermic Arenic Paleudult
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     Y  0.17   6.0  0.60  76.0  1.00  0.93 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    22    AP 0.066 0.129 0.378 1.000 21.00  1.58  0.65   4.4   6.5   0.0 0.040   4.5   -99   3.8   -99 
+    75     E 0.094 0.155 0.361 0.600  2.59  1.64  0.15  12.7   9.2   0.0 0.010   5.1   -99   2.8   -99 
+   100   Bt1 0.118 0.179 0.354 0.250  2.59  1.66  0.13  17.6   8.3   0.0 0.010   5.4   -99   3.3   -99 
+   122   Bt2 0.166 0.224 0.325 0.100  0.43  1.74  0.09  27.5   4.0   0.0 0.010   5.3   -99   4.4   -99
+   165   Bt2 0.166 0.224 0.325 0.100  0.43  1.74  0.09  27.5   4.0   0.0 0.010   5.3   -99   4.4   -99 
+   245   Bt3 0.164 0.221 0.326 0.000  0.43  1.74  0.07  27.3   3.3   0.0 0.010   5.1   -99   4.4   -99 
+   300     C 0.170 0.226 0.319 0.000  0.43  1.76  0.05  28.5   3.3   0.0 0.000   5.3   -99   3.6   -99
+
+*GAPL850019  NRCS-USDA   S       300 Lucy, Loamy Sand original (original)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Sumter      US             32.000 -84.230 Loamy, siliceous, thermic Arenic Paleudult
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     Y  0.17   6.0  0.60  76.0  1.00  0.90 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    22    AP 0.066 0.129 0.378 1.000 21.00  1.58  0.65   4.4   6.5   0.0 0.040   4.5   -99   3.8   -99 
+    75     E 0.094 0.155 0.361 0.600  2.59  1.64  0.15  12.7   9.2   0.0 0.010   5.1   -99   2.8   -99 
+   100   Bt1 0.118 0.179 0.354 0.050  2.59  1.66  0.13  17.6   8.3   0.0 0.010   5.4   -99   3.3   -99 
+   165   Bt2 0.166 0.224 0.325 0.000  0.43  1.74  0.09  27.5   4.0   0.0 0.010   5.3   -99   4.4   -99 
+   245   Bt3 0.164 0.221 0.326 0.000  0.43  1.74  0.07  27.3   3.3   0.0 0.010   5.1   -99   4.4   -99 
+   300     C 0.170 0.226 0.319 0.000  0.43  1.76  0.05  28.5   3.3   0.0 0.000   5.3   -99   3.6   -99
+   
+*GAGR040001  Athens Lab  S       120 Rainout Sand
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Griffin     USA            33.260  84.280 Sandy
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G  0.13   6.0  0.85  61.0  0.90  0.85 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     5     a 0.072 0.136 0.434 1.000 21.00  1.42  0.94   4.0   4.0   0.0 0.080   6.3   -99   -99   -99 
+    15    ab 0.067 0.140 0.447 1.000 21.00  1.38  1.15   2.0   6.0   0.0 0.100   6.0   -99   -99   -99 
+    30    ab 0.070 0.133 0.430 0.538 21.00  1.43  0.88   4.0   4.0   0.0 0.080   6.0   -99   -99   -99 
+    60    ab 0.054 0.111 0.429 0.120 21.00  1.44  0.66   2.0   4.0   0.0 0.060   6.0   -99   -99   -99 
+    90    ab 0.065 0.120 0.425 0.083 21.00  1.45  0.70   4.0   2.0   0.0 0.060   5.8   -99   -99   -99 
+   120    ab 0.046 0.084 0.391 0.012 21.00  1.56  0.62   4.0   2.0   0.0 0.050   5.6   -99   -99   -99 
+ 

@@ -1,0 +1,21 @@
+!
+! This file was created for ISU NE Research center, Nashua, Iowa 
+! Created in June 1997 by sjm 
+! Soil properties were obtained by the soil survey, former AE graduate
+! students' thesis and USDA, 1977
+! The others were estimated from the books and reference papers.
+
+*IUBF950107  AMES, IA              0 Clarion, well drained                             
+@SITE        COUNTRY          LAT     LONG SCS FAMILY                           
+ -99         -99              42.0   -99.0                                                   
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE                    
+   -99   .16   9.8   .55  91.0   .90  1.00 IB001 IB001 IB001      
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC    
+     5   -99  .181  .239  .314 1.000   .81  1.52  2.03  18.0  31.0   2.5 -99.0   6.4 -99.0 -99.0
+    15   -99  .177  .241  .323 1.000  2.86  1.47  2.03  18.0  31.0   2.5 -99.0   6.4 -99.0 -99.0
+    25   -99  .192  .266  .350  .900  5.28  1.39  2.03  22.0  31.0   2.5 -99.0   6.4 -99.0 -99.0
+    30   -99  .204  .261  .325  .800  3.71  1.53  2.03  22.0  31.0   2.5 -99.0   6.4 -99.0 -99.0
+    50   -99  .150  .262  .334  .600  4.99  1.48   .44  21.0  28.0   5.0 -99.0   6.7 -99.0 -99.0
+    70   -99  .150  .262  .329  .400  7.08  1.51   .44  21.0  28.0   7.5 -99.0   6.7 -99.0 -99.0
+   110   -99  .127  .247  .322  .300 10.38  1.50   .15  17.0  32.0   7.5 -99.0   7.9 -99.0 -99.0
+   120   -99  .127  .247  .307  .200 14.78  1.60   .15  17.0  32.0   7.5 -99.0   7.9 -99.0 -99.0

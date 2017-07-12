@@ -1,0 +1,18 @@
+*SOILS
+! These soils are for use with the nitrate leaching version of the models
+! which allows for input of an adsorption coefficient (SADC) for each layer.
+
+*EBMZ850001  SCS         -99     120 LATOSSOLO VERMELHO AMARELLO
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ CPAC        BRASIL        -15.590 -47.700 CLAYEY, OXIDIC, ISOTHERMIC ANIONIC ACRUSTOX
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    RY  0.14   7.1  0.50  76.0  1.00  1.00 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99 0.191 0.349 0.389 1.000   -99  0.93  1.81   -99   -99   -99   -99   5.9   -99   -99   0.0
+    30   -99 0.237 0.339 0.367 0.200   -99  1.03  1.45   -99   -99   -99   -99   5.3   -99   -99   0.0
+    45   -99 0.250 0.329 0.371 0.200   -99  1.01  1.20   -99   -99   -99   -99   5.2   -99   -99   0.0
+    60   -99 0.256 0.329 0.385 0.200   -99  0.95  1.03   -99   -99   -99   -99   4.8   -99   -99   0.4
+    75   -99 0.263 0.327 0.389 0.200   -99  0.93  0.81   -99   -99   -99   -99   4.5   -99   -99   0.8
+    90   -99 0.266 0.320 0.394 0.200   -99  0.91  0.76   -99   -99   -99   -99   4.7   -99   -99   1.0
+   105   -99 0.271 0.323 0.394 0.020   -99  0.91  0.69   -99   -99   -99   -99   4.8   -99   -99   1.2
+   120   -99 0.275 0.328 0.394 0.010   -99  0.91  0.63   -99   -99   -99   -99   4.9   -99   -99   1.6
