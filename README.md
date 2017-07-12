@@ -23,10 +23,7 @@ to simulate production over time and space for different purposes
     │       ├── SetCompileFlag.cmake
     │       └── SetFortranFlags.cmake
     ├── build
-    │   ├── CMakeFiles
-    │   │   └── ...
-    │   ├── bin
-    │   └── mod
+    │   └── ...
     └── Data
         ├── Documentation
         ├── Cotton
@@ -68,9 +65,9 @@ This file defines a function that will test a set of compiler flags to see which
 
 This file uses the function from `SetCompilerFlag.cmake` to set the DEBUG, TESTING, and RELEASE compile flags for your build.  You might want to inspect this file and edit the flags to your liking.
 
-### build/bin/ and build/mod ###
+### build ###
 
-These folders are created after running `make`.  Any libraries created end up in `mod/`, as well as compiled Fortran `.mod` files.  The executable will end up in `bin/`.  
+This folder should be created aims to keep all working files inside it, avoiding messing your source folder. During compilation and linking, working folders are created automatically inside this folder. Any libraries created end up in `mod/`, as well as compiled Fortran `.mod` files.  The executable will end up in `bin/`.  
 
 ### Data ###
 
@@ -94,3 +91,11 @@ As written, this template will allow you to specify one of three different sets 
 or
 
     $ cmake .. -DCMAKE_BUILD_TYPE=TESTING
+
+You can provide all kind of information CMake. Some examples can be find at [[CMake Command-Line Options](https://cmake.org/cmake/help/cmake-2.4.html)].
+
+One usable examples could be:
+
+    $ cmake -G "Unix Makefiles" -DCMAKE_Fortran_COMPILER=ifort ..
+
+In this example we are specifying the fortran compiler and the kind of project we want as result (make file project). 

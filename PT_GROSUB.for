@@ -23,7 +23,8 @@ C=======================================================================
      &    CO2, CUMDTT, DLAYR, DTT, DUL, FILEIO,           !Input
      &    ISTAGE, ISWNIT, KG2PPM, LL, NH4, NLAYR, NO3,    !Input
      &    RLV, RTF, SAT, SLPF, SRAD, STGDOY, STT, SW,     !Input
-     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,       !Input
+!     &    SWFAC, TGROAV,TMAX, TMIN, TURFAC, XSTAGE, YRDOY,!Input
+     &    SWFAC, TMAX, TMIN, TURFAC, XSTAGE, YRDOY,!Input
 
      &    GRORT, SEEDRV,                                  !I/O
 
@@ -56,7 +57,7 @@ C-----------------------------------------------------------------------
       REAL G2, G3, GRAINN, GRF, GROLF, GROPLNT, GRORT
       REAL GROSTM, GROTOP, GROTUB
       REAL LALWR, LFWT, NFAC, NSTRES, PT_PAR, PCARB
-      REAL PCO2, PD, PGRTUB, PLA, PLAG
+      REAL PCO2, PD, PGRTUB, PLA, PLAG, P5
       REAL PLAS, PLTPOP, PRFT, PTF, PTUBGR
       REAL RANC, RCNP, RLGR, ROOTN, RTF, RTPAR, RTWT
       REAL RVCAV, RVCHO, RVCMAX, RVCUSD
@@ -66,13 +67,19 @@ C-----------------------------------------------------------------------
       REAL TABEX, TANC, TCNP, TEMPM, TIND, TMAX, TMIN
       REAL TMNC, TOPSN, TOPWT, TRNU, TUBANC, TUBCNP, TUBN
       REAL TUBWT, TURFAC, WTNCAN, WTNLO, WTNUP, XLAI, XSTAGE
+      !REAL SLFT_TMAX, SLFT_TMIN, TGROAV, ALIN, MIN
+      REAL SLFT_TMAX, SLFT_TMIN, ALIN, MIN
 
       REAL DTII(3)
       TYPE (ResidueType) SENESCE 
 
+      REAL, DIMENSION(4)  :: SENST, SENSF
       REAL, DIMENSION(10) :: CO2X, CO2Y
       REAL, DIMENSION(NL) :: DLAYR, DUL, KG2PPM, LL, 
      &    NH4, NO3, RLV, SAT, SW, UNO3, UNH4  
+
+!     temp chp
+      REAL X1, X2, X3, X4
 
 !      DATA  LALWR, SLAN /270.,0./
       DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
@@ -85,7 +92,8 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       CALL PT_IPGRO(
      &    FILEIO,                                                 !Input
-     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP, SDWTPL, RUE1, RUE2)!Output
+     &    CO2X, CO2Y, G2, G3, P5, PD, PLME, PLTPOP,               !Output
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST)                       !Output
 
       IF (PLME .EQ. 'B') THEN
         !Bed width ratio = Bed width / Row Spacing
@@ -231,21 +239,34 @@ C-----------------------------------------------------------------------
       END IF   
 
       TEMPM = (TMAX + TMIN)/2.0         ! Mean temp. calculation
-      PRFT  = 1.2 - 0.0035*(TEMPM - 22.5)**2
-      !
+      !PRFT  = 1.2 - 0.0035*(TEMPM - 22.5)**2 !original funtion
+      !--------Beggin----effect of Tmean on PRFT, modified by RR 02/15/2016
+      IF (TEMPM .LE. 14) THEN
+          PRFT  = 1.2 - 0.0035*(TEMPM - 22.5)**2
       ! The next 2 lines set the bounds of PRFT at 0.0 and 1.0
       !
-      PRFT  = AMAX1 (PRFT,0.0)
-      PRFT  = AMIN1 (PRFT,1.0)
+          PRFT  = AMAX1 (PRFT,0.0)
+          PRFT  = AMIN1 (PRFT,1.0)
+
+      ELSEIF (TEMPM .GT. 14 .AND. TEMPM .LE. 24) THEN
+          PRFT = 1.0
+      ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
+          PRFT = -0.0909*(TEMPM) + 3.1818 !RR linear function from 24 to 40  y = -0.0909x + 3.1818      
+      ELSE
+          PRFT = 0
+      END IF
+      !--------End-----effect of Tmean on PRFT, modified by RR 02/15/2016
       !
+    
       ! Calculation of daily leaf senescence, begin
       !
       SELECT CASE (ISTAGE)
         CASE (1)                        ! Natural senescence, SLAN
           SLAN = CUMDTT*PLA/10000.
         CASE (2)
-          SLAN = (CUMDTT*PLA/10000.)*EXP(-1.60 + XSTAGE)*(PD**0.5)
-     &           *(1/NFAC)
+!         SLAN = (CUMDTT*PLA/10000.)*EXP(-1.60 + XSTAGE)*(PD**0.5)
+          SLAN = (CUMDTT*PLA/10000.)*EXP(-1.60 + XSTAGE)*(P5**0.5)
+     &           *(1./NFAC)
       END SELECT
 
       IF (ISTAGE .EQ. 2) THEN              ! Senescence from stress
@@ -255,11 +276,12 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
          SLFC = 1.0                        ! ...Competition
          IF (XLAI .GT. 4.) THEN
             SLFC = 1. - 0.008*(XLAI - 4.)
-         ENDIF     
-         SLFT = 1.0                        ! ...Temperature
-         IF (TEMPM .LE. 6.0) THEN
-            SLFT = 1. - (6.0 - TEMPM)/6.0
          ENDIF
+
+!         SLFT = 1.0                        ! ...Temperature
+!         IF (TMIN .LE. 0.0) THEN
+!             SLFT = 0
+         !ENDIF
          !
          ! The following was causing the plant to die; modified 
          ! temporarily, so that T factor SLFT will be very small 
@@ -269,15 +291,25 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
          ! With SLFT = 0, means all leaf area senesced!
          ! SLFT = 1.0 - 0.02*TMIN**2 was taken from SIMPOTATO V1.53
          !
-         IF (TMIN .LE. 0.0) THEN
-C           SLFT = 0.0
-            SLFT = 1.0 - (6.0 - TEMPM)/6.0
-         ENDIF
-         SLFT = AMAX1 (SLFT,0.0)
+!        SA/CHP 9/2/2015. Introduce a high temperature function 
+!          based on that in NWheat model.
+!         IF (TMIN .LE. 0.0) THEN
+!           SLFT = 1.0 - (6.0 - TEMPM)/6.0
+!         ENDIF
+         SLFT_TMIN = 1.0 - (6.0 - TEMPM)/6.0
+
+         SLFT_TMAX = (ALIN(SENST,SENSF,4,TMAX)) ! RR 01/14/2016
+
+!        Use the maximum here, but in the next equation, it's minimum!
+         SLFT = MAX(SLFT_TMIN, SLFT_TMAX) !changed to MIN RR
+         SLFT = MIN(SLFT_TMIN, SLFT_TMAX)
+         SLFT = MAX (SLFT, 0.0)
+         IF (TMIN <= 0.0) SLFT = 0.0
+
          PLAS = PLA*(1.0 - AMIN1(SLFW,SLFC,SLFT,SLFN))
        ELSE
          PLAS = 0.0
-      END IF
+       END IF
 
       DDEADLF = AMAX1(SLAN,PLAS)/LALWR               ! Daily leaf loss
 
@@ -294,7 +326,7 @@ C           SLFT = 0.0
       ! Senescence calculation, end
       !
       ! Update of haulm after senescence
-      !
+
       LFWT   = LFWT   - DDEADLF
       PLA    = LFWT   * LALWR
 !      XLAI   = PLA    * PLANTS * 0.0001
@@ -308,9 +340,20 @@ C           SLFT = 0.0
          TOPSN  = TOPSN  - (DDEADLF*TMNC)
          DEADLN = DEADLN + (DDEADLF*TMNC)
       ENDIF
-      !
+      
+      !This unction was merged with PRFT
+      !--------beggin----RR effect of Tmean on RUE 02/15/2016
+      !IF (TEMPM .LE. 24) THEN
+      !    TX_RUE = 1.0
+      !ELSEIF (TEMPM .GT. 24 .AND. TEMPM .LE. 35) THEN
+      !    TX_RUE = -0.0909*(TEMPM) + 3.1818 !RR linear function from 24 to 40  y = -0.0909x + 3.1818      
+      !ELSE
+      !   TX_RUE = 0
+      !END IF
+      !--------end----------
+      
       ! Potential carbon fixation
-      !
+      !      
       PT_PAR = SRAD*0.5               ! PAR = SRAD*.02092
       IF (ISTAGE .LT. 2) THEN
          !PCARB = 3.5*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
@@ -318,6 +361,7 @@ C           SLFT = 0.0
        ELSE
          !PCARB = 4.0*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
          PCARB = RUE2*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
+         !PCARB = RUE2*TX_RUE*PT_PAR/PLTPOP*(1.0 - EXP(-0.55*XLAI))    !CHP
       END IF
 
       IF (PLME .EQ. 'B') THEN                 !WM
@@ -327,8 +371,11 @@ C           SLFT = 0.0
       ! Calculate Photosynthetic Response to CO2
       !
       PCO2   = TABEX (CO2Y,CO2X,CO2,10)
-      PCARB  = PCARB*PCO2
-      CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES)*SLPF + 0.5*DDEADLF
+      !PCARB  = PCARB*PCO2 ! original function 02/15/2016
+      PCARB  = PCARB*PCO2*PRFT
+      !CARBO  = PCARB*AMIN1(PRFT, SWFAC, NSTRES)*SLPF + 0.5*DDEADLF ! original function 02/15/2016
+      CARBO  = PCARB*AMIN1(SWFAC, NSTRES)*SLPF + 0.5*DDEADLF ! Modified by RR 02/15/2016
+      
       RVCUSD = 0.0                                   ! Reserve C used
 
       SWFAC  = AMAX1 (SWFAC, 0.1)
@@ -421,7 +468,8 @@ C           SLFT = 0.0
           !
           DTII(1) = DTII(2)
           DTII(2) = DTII(3)
-          DTII(3) = RTF + 0.5 * (1.0 - AMIN1(SWFAC, NSTRES, 1.0))
+          DTII(3) = RTF + 0.5 * (1.0 - AMIN1(SWFAC, NSTRES,1.0))
+          !DTII(3) = RTF + 0.5 * (1.0 - AMIN1(SWFAC, NSTRES, LFT,1.0)) !added tmax stress
           DTII(3) = AMIN1 (DTII(3),1.0)
           !
           ! DEVEFF is used to limit carbon demand of tubers
@@ -443,11 +491,11 @@ C           SLFT = 0.0
            ELSEIF (TEMPM .GE. 15.0 .AND. TEMPM .LE. 23.0) THEN
              ETGT = 1.0
            ELSEIF (TEMPM .GT. 23.0 .AND. TEMPM .LT. 33.0) THEN
-             ETGT = 1.0 - 0.1*(TEMPM-23.0)
+             ETGT = 1.0 - 0.1*(TEMPM-23.0) 
            ELSE
              ETGT = 0.0
-          ENDIF
-          !
+           ENDIF
+               
           ! Calculation of potential growth .. Set priorities for carbon
           !
 !          PTUBGR  = G3*ETGT/PLTPOP    !CHP
@@ -457,7 +505,7 @@ C           SLFT = 0.0
           IF (PLME .EQ. 'B') THEN                     !WM
             PTUBGR  = PTUBGR / BWRATIO                !WM
           ENDIF                                       !WM
-
+!          SLFT = (ALIN(SENST,SENSF,4,TMAX))
           GROTUB  = PTUBGR*AMIN1 (TURFAC, AGEFAC, 1.0)*TIND
 !          PLAG    = G2*DTT/PLANTS
           PLAG    = G2*DTT/PLTPOP     !CHP
@@ -646,7 +694,8 @@ C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
       SUBROUTINE PT_IPGRO(
      &    FILEIO,                                                 !Input
-     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP, SDWTPL, RUE1, RUE2)!Output
+     &    CO2X, CO2Y, G2, G3, P5, PD, PLME, PLTPOP,               !Output
+     &    SDWTPL, RUE1, RUE2, SENSF, SENST)                       !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -660,7 +709,7 @@ C=======================================================================
       CHARACTER*6, PARAMETER :: ERRKEY = 'GROSUB'
 
       CHARACTER*2   CROP
-      CHARACTER*4   ACRO(4)  
+      CHARACTER*5   ACRO(4)  
       CHARACTER*6   SECTION, ECONO, ECOTYP
       CHARACTER*12  FILEC, FILEE
       CHARACTER*16  ECONAM
@@ -672,7 +721,8 @@ C=======================================================================
 
       INTEGER ERR, FOUND, I, J, LINC, LNUM, PATHL, ISECT
 
-      REAL G2, G3, PD, PLTPOP, SDWTPL, RUE1, RUE2
+      REAL G2, G3, PD, P5, PLTPOP, SDWTPL, RUE1, RUE2
+      REAL, DIMENSION(4) :: SENST, SENSF
       REAL CO2X(10), CO2Y(10)
       
 !      LOGICAL EOF
@@ -721,8 +771,8 @@ C     Read crop genetic information
         IF (INDEX ('PT',CROP) .GT. 0) THEN
 !         READ (LUNIO,'(31X,F6.0,F6.0,6X,F6.0)', IOSTAT=ERR) G2, G3, PD
 !         READ (LUNIO,'(31X,F6.0,F6.0,F6.0)', IOSTAT=ERR) G2, G3, PD
-          READ (LUNIO,'(24X,A6,1X,3F6.0)',IOSTAT=ERR) 
-     &          ECONO, G2, G3, PD
+          READ (LUNIO,'(24X,A6,1X,3F6.0,18X,F6.0)',IOSTAT=ERR) 
+     &          ECONO, G2, G3, PD, P5
           LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF
@@ -745,20 +795,26 @@ C     Read Crop Parameters from FILEC
 
       ACRO(1) = 'CO2X'
       ACRO(2) = 'CO2Y'
+      ACRO(3) = 'SENST'
+      ACRO(4) = 'SENSF'
       LNUM = 0
-!     EOF not portable. CHP 7/24/2007
-!     DO WHILE (.NOT. EOF (LUNCRP))
+
       DO WHILE (ERR == 0)
-        LNUM = LNUM + 1
-        READ (LUNCRP,'(A180)',IOSTAT=ERR, END=200) CHAR
+!       READ (LUNCRP,'(A180)',IOSTAT=ERR, END=200) CHAR
+        CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
+        IF (ISECT == 0) EXIT
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEC,LNUM)
-        DO J = 1, 2
-          IF (CHAR(10:13) .EQ. ACRO(J)) THEN
+        DO J = 1, 4
+          IF (INDEX(CHAR(1:15),ACRO(J)) > 0) THEN
             SELECT CASE (J)
               CASE (1)
                 READ (CHAR(16:66),'(10F5.0)',IOSTAT=ERR)(CO2X(I),I=1,10)
               CASE (2)
                 READ (CHAR(16:66),'(10F5.2)',IOSTAT=ERR)(CO2Y(I),I=1,10)
+              CASE (3)
+                READ (CHAR(16:39),'(10F6.0)',IOSTAT=ERR)(SENST(I),I=1,4)
+              CASE (4)
+                READ (CHAR(16:39),'(10F6.0)',IOSTAT=ERR)(SENSF(I),I=1,4)
             END SELECT
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEC,LNUM)
           ENDIF

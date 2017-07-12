@@ -44,7 +44,7 @@ C=======================================================================
 
       IMPLICIT NONE
 
-      INCLUDE 'COMGEN.BLK'
+      INCLUDE 'COMGEN.blk'
 
       CHARACTER*1   LINE(80),RNMODE,BLANK,ANS
       CHARACTER*2   CROP
@@ -154,7 +154,7 @@ C
         READ (C360,'(6X,A6,1X,A16,7X,A)',IOSTAT=ERRNUM) VARTY, 
      &         VRNAME, PLAINTXT
 !     CROPGRO crops **
-      CASE ('CRGRO')  
+      CASE ('CRGRO','PRFRM')  
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,CSDVAR,
      &       PPSEN,PH2T5,PHTHRS(6),PHTHRS(8),PHTHRS(10),PHTHRS(13),
      &       LFMAX,SLAVAR,SIZELF,XFRUIT,WTPSD,SFDUR,SDPDVR,PODUR,

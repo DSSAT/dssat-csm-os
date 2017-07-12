@@ -76,6 +76,13 @@ C=======================================================================
             OLDRUN = RUN
           ENDIF
         ENDIF
+!         VSH
+          CALL GETLUN('OUTWARN', LUN)
+          INQUIRE (FILE = WarnOut, OPENED = FOPEN)
+          IF (.NOT. FOPEN) THEN
+             OPEN (UNIT=LUN, FILE=WarnOut, STATUS='OLD',
+     &             POSITION='APPEND')
+          ENDIF          
       ENDIF
 
       IF (ICOUNT > 0) THEN

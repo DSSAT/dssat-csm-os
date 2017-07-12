@@ -62,10 +62,10 @@ C=======================================================================
       USE ModuleDefs
       IMPLICIT NONE
 
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSOI.BLK'
-      INCLUDE 'COMSWI.BLK'
-      INCLUDE 'COMGEN.BLK'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSOI.blk'
+      INCLUDE 'COMSWI.blk'
+      INCLUDE 'COMGEN.blk'
 
       CHARACTER*1  RNMODE
       CHARACTER*2  CROP,PRCROP
@@ -599,7 +599,7 @@ C-----------------------------------------------------------------------
      &         trim(PLAINTXT)
 
 !       CROPGRO crops
-        CASE('CRGRO')
+        CASE('CRGRO','PRFRM')
 
 !        CASE ('BN','PN','SB','TM','PE','CH','PP','PR',
 !     &        'C3','C4','G0','G1','G2','G3','G4','G5','G6','G7','G8',

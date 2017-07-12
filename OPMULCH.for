@@ -12,6 +12,9 @@ C=======================================================================
 !     &  MULWATADD, RESWATADD)
  
       USE ModuleDefs
+!     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 
@@ -36,6 +39,8 @@ C=======================================================================
       DYNAMIC = CONTROL % DYNAMIC
       FROP    = CONTROL % FROP
       YRDOY   = CONTROL % YRDOY
+           
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 
 !***********************************************************************
 !***********************************************************************
@@ -57,6 +62,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       IF (PRINTDAY) THEN
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         call getlun("Mulch.OUT", DLUN)
         INQUIRE (FILE = "Mulch.OUT", EXIST = FEXIST)
         IF (FEXIST) THEN
@@ -71,11 +77,27 @@ C=======================================================================
           WRITE(DLUN,
      &      '("@YEAR DOY   DAS    MCFD   MDEPD    MWAD    MWTD")')
         ENDIF
+        END IF ! VSH
 
         CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
+        
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE(DLUN,200) YEAR, DOY, DAS, MULCH % MULCHCOVER,
      &      MULCH % MULCHTHICK, NINT(MULCH % MULCHMASS), MULCH %MULCHWAT
   200   FORMAT(1X,I4,1X,I3.3,1X,I5,F8.3,F8.2,I8,F8.2)
+      
+        END IF ! VSH
+        
+        !     VSH
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutMulch(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &MULCH % MULCHCOVER, MULCH % MULCHTHICK,  
+     &MULCH % MULCHMASS, MULCH %MULCHWAT,   
+     &vCsvlineMulch, vpCsvlineMulch, vlngthMulch)
+     
+         CALL LinklstMulch(vCsvlineMulch)
+      END IF
       
       ENDIF
 !-----------------------------------------------------------------------
@@ -122,9 +144,22 @@ C=======================================================================
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
         CALL YR_DOY(YRDOY, YEAR, DOY) 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE(DLUN,200) YEAR, DOY, DAS, MULCH % MULCHCOVER,
      &      MULCH % MULCHTHICK, NINT(MULCH % MULCHMASS), MULCH %MULCHWAT
+        END IF   ! VSH
       ENDIF
+      
+!     VSH
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutMulch(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &MULCH % MULCHCOVER, MULCH % MULCHTHICK,  
+     &MULCH % MULCHMASS, MULCH %MULCHWAT,   
+     &vCsvlineMulch, vpCsvlineMulch, vlngthMulch)
+     
+         CALL LinklstMulch(vCsvlineMulch)
+      END IF
 !-----------------------------------------------------------------------
 !      IF (PRINTBAL) THEN
 !
@@ -188,12 +223,15 @@ C=======================================================================
 !     Transfer data from constructed variable to local variables
       CALL YR_DOY(YRDOY, YEAR, DOY) 
 
-        CALL YR_DOY(YRDOY, YEAR, DOY) 
+        CALL YR_DOY(YRDOY, YEAR, DOY)
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH 
         WRITE(DLUN,200) YEAR, DOY, DAS, MULCH % MULCHCOVER,
      &      MULCH % MULCHTHICK, NINT(MULCH % MULCHMASS), MULCH %MULCHWAT
+        END IF   ! VSH
       ENDIF
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
       CLOSE(DLUN)       
-
+      END IF   ! VSH
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT

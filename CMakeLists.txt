@@ -55,16 +55,27 @@ ENDIF(FCNAME STREQUAL "pgf90")
 ##########################################################################################
 
 # Define the executable name
-SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR}.exe)
+IF(WIN32)
+    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
+    add_definitions(-DWIN32=1})
+ELSE()
+    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR}.exe)
+ENDIF(WIN32)
 
 # Add the source files
 file(GLOB CSM_FILES
-    "${CMAKE_SOURCE_DIR}/*.f??"
-    "${CMAKE_SOURCE_DIR}/ttutil/*.f??"
-    "${CMAKE_SOURCE_DIR}/SALUS/*.f??"
-    "${CMAKE_SOURCE_DIR}/OP_OBS/*.f??"
-    "${CMAKE_SOURCE_DIR}/ORYZA/*.f??"
     "${CMAKE_SOURCE_DIR}/CSVOUTS/*.f??"
+    "${CMAKE_SOURCE_DIR}/CSVOUTS/*.F??"
+    "${CMAKE_SOURCE_DIR}/*.f??"
+    "${CMAKE_SOURCE_DIR}/*.F??"
+    "${CMAKE_SOURCE_DIR}/ttutil/*.f??"
+    "${CMAKE_SOURCE_DIR}/ttutil/*.F??"
+    "${CMAKE_SOURCE_DIR}/SALUS/*.f??"
+    "${CMAKE_SOURCE_DIR}/SALUS/*.F??"
+    "${CMAKE_SOURCE_DIR}/OP_OBS/*.f??"
+    "${CMAKE_SOURCE_DIR}/OP_OBS/*.F??"
+    "${CMAKE_SOURCE_DIR}/ORYZA/*.f??"
+    "${CMAKE_SOURCE_DIR}/ORYZA/*.F??"
 )
 ADD_EXECUTABLE(${EXECUTABLE_NAME} ${CSM_FILES})
 
