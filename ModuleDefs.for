@@ -74,12 +74,13 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 5
-        INTEGER :: Build = 3
+        INTEGER :: Build = 4
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 
 !     Version history:  
+!       4.6.5.04 chp 07/12/2017 ET-based irrigation, minor fixes 
 !       4.6.5.03 chp 07/08/2017 Cross-platform compatibility, 
 !                    potato temperature sensitivity (R.Raymundo)
 !       4.6.5.02 chp 07/06/2017 Y2K-2025, EXNAME in Summary.OUT, data updates
@@ -571,6 +572,7 @@ C-GH    Set to DSSAT46
         REAL AGEFAC, PG                   !photosynthese
         REAL CEF, CEM, CEO, CEP, CES, CET !Cumulative ET - mm
         REAL  EF,  EM,  EO,  EP,  ES,  ET !Daily ET - mm/d
+        REAL  EOP, EVAP                   !Daily mm/d
         REAL, DIMENSION(NL) :: UH2O       !Root water uptake
       End Type SPAMType
 
@@ -794,6 +796,8 @@ C-GH    Set to DSSAT46
         Case ('EP');     Value = SAVE_data % SPAM % EP
         Case ('ES');     Value = SAVE_data % SPAM % ES
         Case ('ET');     Value = SAVE_data % SPAM % ET
+        Case ('EOP');    Value = SAVE_data % SPAM % EOP
+        Case ('EVAP');   Value = SAVE_data % SPAM % EVAP
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -908,6 +912,8 @@ C-GH    Set to DSSAT46
         Case ('EP');     SAVE_data % SPAM % EP     = Value
         Case ('ES');     SAVE_data % SPAM % ES     = Value
         Case ('ET');     SAVE_data % SPAM % ET     = Value
+        Case ('EOP');    SAVE_data % SPAM % EOP    = Value
+        Case ('EVAP');   SAVE_data % SPAM % EVAP   = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

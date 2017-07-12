@@ -98,6 +98,11 @@ C=======================================================================
       REAL GSWatUsed      ! Water used to date in current growth stage
       REAL, PARAMETER :: VeryLargeNumber = 99999999.
 
+!     ET-based auto-irrig
+      REAL ET_THRESH, ACCUM_ET
+!      REAL ET     !, EP, ES, E0
+      REAL EOP, EVAP, RUNOFF
+
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
@@ -152,6 +157,7 @@ C-----------------------------------------------------------------------
       TIL_IRR = 0.0
       GSWatUsed = 0.0
       DaysSinceIrrig = 999
+      ACCUM_ET = 0.0
 
       IF (ISWWAT .EQ. 'Y') THEN
 
@@ -172,6 +178,10 @@ C-----------------------------------------------------------------------
 !        IrrText = 'Automatic irrigation based on soil water deficit'
 !      CASE ('F')
 !        IrrText = 'Automatic irrigation with fixed amount (AIRAMT)'
+!      CASE ('E')
+!        IrrText = 'ET-based automatic irrigation'
+!      CASE ('T')
+!        IrrText = 'ET-based auto-irrig with fixed amount (AIRAMT)'
 !      CASE ('P')
 !        IrrText = 'As reported through last reported day, then ' //
 !     &       'automatic to re-fill profile (as in option A)'
@@ -184,7 +194,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C      Read Automatic Management
 C-----------------------------------------------------------------------
-          IF (INDEX('AFPW', ISWITCH % IIRRI) > 0) THEN
+          IF (INDEX('AFPWET', ISWITCH % IIRRI) > 0) THEN
             SECTION = '!AUTOM'
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
@@ -655,10 +665,14 @@ C-----------------------------------------------------------------------
           END DO LOOP2
         ENDIF
 
+!-----------------------------------------------------------------------
+! IIRRI Irrigation rules
+!   A   Automatic irrigation based on soil moisture content
+!   F   Fixed amount automatic irrigation based on soil moisture content
+!   E   Automatic irrigation based on ET
+!   T   Fixed amount automatic irrigation based on ET
 C-----------------------------------------------------------------------
-C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
-C-----------------------------------------------------------------------
-      CASE ('A', 'F')
+      CASE ('A', 'F', 'E', 'T')
 
 !-----------------------------------------------------------------------
 !     Check for growth stage dependent irrigation
@@ -681,6 +695,28 @@ C-----------------------------------------------------------------------
       EFFIRR = IREFF(IRINC)
       IrrFreq = IFREQ(IRINC)
 
+      IF (DSOIL < 1) THEN
+        DSOIL = 30.
+      ENDIF
+      IF (THETAC < 1) THEN
+        THETAC = 50.
+      ENDIF
+      IF (THETAU < THETAC) THEN
+        THETAU = 100.
+      ENDIF
+      IF (AIRAMT < 0) THEN
+        AIRAMT = 0.
+      ENDIF
+      IF (EFFIRR < 0) THEN
+        EFFIRR = 1.0
+      ENDIF
+
+!     For 'E' and 'T' options, DSOIL is the accumulated ET amount to 
+!         trigger an irrigation event
+      IF (IIRRI == 'E' .or. IIRRI == 'T') THEN
+        ET_THRESH = DSOIL
+      ENDIF
+
 !     Check for water availability today
       IF (SeasonalWL) THEN
 !       Water available today = seasonal limitation minus seasonal use
@@ -698,12 +734,17 @@ C-----------------------------------------------------------------------
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
+
+!         Soil water irrigation
+          SELECT CASE (IIRRI)
+          CASE ('A', 'F')
+!         Soil water content determins demand
           CALL SWDEFICIT(
      &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
      &        ATHETA, SWDEF)                              !Output
 
           IF (ATHETA .LE. THETAC*0.01) THEN
-!         A soil water deficit exists - automatic irrigation today.
+!           A soil water deficit exists - automatic irrigation today.
 
             IF (IIRRI .EQ. 'A') THEN
 C             Determine supplemental irrigation amount.
@@ -718,17 +759,48 @@ C             Apply fixed irrigation amount
               IRRAPL = AIRAMT
             ENDIF
 
-            IF (IRRAPL .GT. AVWATT) THEN  
-              IRRAPL = AVWATT   ! IF irrigation greater than water available, limit irrigation
-            ENDIF
-           
-            SELECT CASE(AIRRCOD)
-              CASE(1:4,6); TIL_IRR = TIL_IRR + IRRAPL
-            END SELECT
-
-            DEPIR = DEPIR + IRRAPL
-            IF (DEPIR > 0.0001) NAP = NAP + 1
           ENDIF
+!-----------------------------------------------------------------------
+!         ET determines demand        
+!         Accumulate potential transpiration plus actual soil evaporation 
+!             minus infiltration (rainfall minus runoff)
+!         Irrigation event triggered when threshold accumulation is met
+!         IIRRI = 'E': compute irrigation based on ET and deficit irrigation %
+!         IIRRI = 'T': fixed irrigation amount 
+!-----------------------------------------------------------------------
+          CASE ('E', 'T')
+!           CALL GET('SPAM','ET',ET)
+            CALL GET('SPAM','EOP',EOP)
+            CALL GET('SPAM','EVAP',EVAP)
+            CALL GET('WATER','RUNOFF',RUNOFF)
+
+!           Today's accum demand = SUM(demand - supply)
+            ACCUM_ET = ACCUM_ET + (EOP + EVAP) - (RAIN - RUNOFF)
+            ACCUM_ET = MAX(0.0, ACCUM_ET)
+
+            IF (ACCUM_ET > ET_THRESH) THEN
+              IF (IIRRI .EQ. 'E') THEN
+!               Determine supplemental irrigation amount.
+                IRRAPL = ACCUM_ET * THETAU / 100.
+                IRRAPL = MAX(0.,IRRAPL)
+
+              ELSE IF (IIRRI .EQ. 'T') THEN
+!               Apply fixed irrigation amount
+                IRRAPL = MAX(0.0, AIRAMT)
+              ENDIF
+            ENDIF
+          END SELECT
+
+          IF (IRRAPL .GT. AVWATT) THEN  
+            IRRAPL = AVWATT   ! IF irrigation greater than water available, limit irrigation
+          ENDIF
+          
+          SELECT CASE(AIRRCOD)
+            CASE(1:4,6); TIL_IRR = TIL_IRR + IRRAPL
+          END SELECT
+
+          DEPIR = DEPIR + IRRAPL
+          IF (DEPIR > 0.0001) NAP = NAP + 1
         ENDIF
        ENDIF
 C-----------------------------------------------------------------------
@@ -813,6 +885,7 @@ C-----------------------------------------------------------------------
         TOTEFFIRR = TOTEFFIRR + IRRAMT
         GSWatUsed = GSWatUsed + DEPIR
         DaysSinceIrrig = 1
+        ACCUM_ET = 0.0
       ELSE
 !       Keep track of the number of days since last irrigation
         DaysSinceIrrig = DaysSinceIrrig + 1
