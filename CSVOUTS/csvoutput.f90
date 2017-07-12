@@ -432,16 +432,10 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
       AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA , EMAA, &
       CEO, CET, CEP, CES, CEF, CEM, TRWU
    
-<<<<<<< HEAD
    If (N_LYR < 11) Then
-     Write(fmt,'(I2)') N_LYR - 1  
-     fmt = '('//Trim(Adjustl(fmt))//'(g,","),g)'
-     fmt = Trim(Adjustl(fmt))
-=======
    Write(fmt,'(I2)') N_LYR - 1  
    fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
    fmt = Trim(Adjustl(fmt))
->>>>>>> refs/remotes/DSSAT/develop
    
      Write(tmp1,fmt) (ES_LYR(i), i = 1, N_LYR)        
    Else
