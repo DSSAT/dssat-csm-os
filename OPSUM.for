@@ -825,8 +825,8 @@ C=======================================================================
 !=======================================================================
       Function PRINT_TXT(VALUE, FTXT)
 
-      CHARACTER(LEN=6) PRINT_TXT              !text string for real value
-      CHARACTER(LEN=6) FTXT                   !format for real value
+      CHARACTER(LEN=*) PRINT_TXT              !text string for real value
+      CHARACTER(LEN=*) FTXT                   !format for real value
       CHARACTER(LEN=6) FTXT1                  !modified format for real value
       CHARACTER(LEN=7) FTXT2                  !format for "-99"
       REAL VALUE

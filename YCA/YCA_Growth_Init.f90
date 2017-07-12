@@ -107,6 +107,14 @@
             Tfdf = 1.0  ! LAH No temperature effect on DF ! 
             DF = DF + (1.0-DF)*(1.0-TFDF)                                                                              !EQN 049
             DFNEXT = DFNEXT + (1.0-DFNEXT)*(1.0-TFDF)
+        ELSEIF (PPSEN.EQ.'LL') THEN      ! Long day response,linear 
+            DF = 1.0 - AMIN1(1.0,DAYLS(INT(BRSTAGETMP))*(PPTHR-DAYL))                                                       !EQN 050
+            !IF (BRSTAGETMP.LT.FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
+            IF (BRSTAGETMP.LT.FLOAT(PSX)) THEN
+                DFNEXT = 1.-AMIN1(1.0,DAYLS(INT(BRSTAGETMP+1))*(PPTHR-DAYL))
+            ELSE
+                DFNEXT = DF
+            ENDIF
         ENDIF
 
         ! Set daylength factor for output (Is dfpe before emergence)
