@@ -415,26 +415,42 @@ Subroutine CsvOutET(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, AVSRAD, &
    INTEGER,Intent(IN) :: N_LYR
    REAL, Dimension(N_LYR), Intent(IN) :: ES_LYR 
   
-   Integer :: i, size
-  
+   Integer :: i, size   
+   Real :: ES10
+   
    Character(:), allocatable, Target, Intent(Out) :: Csvline
    Character(:), Pointer, Intent(Out) :: pCsvline
    Integer, Intent(Out) :: lngth
   
    Character(Len=550) :: tmp 
    Character(Len=200) :: tmp1  
-   Character(Len=20) :: fmt     
+   Character(Len=20) :: fmt  
+   Character(Len=20) :: cES10   
 !  End of vars
               
    Write(tmp,'(26(g0,","))') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
       AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA , EMAA, &
       CEO, CET, CEP, CES, CEF, CEM, TRWU
    
+   If (N_LYR < 11) Then
    Write(fmt,'(I2)') N_LYR - 1  
    fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
    fmt = Trim(Adjustl(fmt))
    
-   Write(tmp1,fmt) (ES_LYR(i), i = 1, N_LYR)        
+     Write(tmp1,fmt) (ES_LYR(i), i = 1, N_LYR)        
+   Else
+     ES10 = 0.0
+     DO i = 10, N_LYR
+       ES10 = ES10 + ES_LYR(i)
+     ENDDO
+     Write(fmt,'(I2)') N_LYR - (N_LYR-10) - 1 
+     fmt = '('//Trim(Adjustl(fmt))//'(g0,","),g0)'
+     fmt = Trim(Adjustl(fmt))
+   
+     Write(tmp1,fmt) (ES_LYR(i), i = 1, 9)
+     Write(cES10, '(g0)') ES10
+     tmp1 = Trim(Adjustl(tmp1)) // Trim(Adjustl(cES10)) 
+   End IF
    
    tmp = Trim(Adjustl(tmp)) // Trim(Adjustl(tmp1)) 
    
@@ -765,7 +781,7 @@ Subroutine CsvOutWth(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, RAIN, &
    Character(Len=400) :: tmp      
 !  End of vars
 
-   Write(tmp,'(22(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
+   Write(tmp,'(24(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, &
      DAS, RAIN, DAYL, TWILEN, SRAD, PAR, CLOUDS, TMAX, TMIN, TAVG, TDAY, TDEW, &
      TGROAV, TGRODY, WINDSP, CO2, VPDF, vpd_transp
       
@@ -1470,7 +1486,7 @@ Subroutine CsvOut_mlcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    cCUMSENSURF1 = NINT(CUMSENSURF)  
    cCUMSENSOIL1 = NINT(CUMSENSOIL) 
 
-   Write(tmp,'(58(g,","))')RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,& 
+   Write(tmp,'(58(g0,","))')RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS,DAP,& 
       VSTAGE, RSTAGE, XLAI, cWTLF1, cSTMWT1, cSDWT1, cRTWT1, VWAD, cTOPWT1, &
       cSEEDNO1, SDSIZE, HI, cPODWT1, cPODNO1, SWF_AV, TUR_AV, NST_AV, EXW_AV, &
       PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIP, cPODWTD1, cPodSum, SLA, &
@@ -1480,7 +1496,7 @@ Subroutine CsvOut_mlcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
       cWTCO1, cWTLO1, cWTSO1,cCUMSENSURF1,cCUMSENSOIL1,DTT  
     
    Write(fmt,'(I2)') N_LYR - 1   
-   fmt = '('//trim(adjustl(fmt))//'(g,","),g)'
+   fmt = '('//trim(adjustl(fmt))//'(g0,","),g0)'
    fmt=trim(adjustl(fmt))
    
    Write(tmp1,fmt) (RLV(i), i = 1, N_LYR)
