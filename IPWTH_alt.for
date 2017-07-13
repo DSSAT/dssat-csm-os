@@ -379,6 +379,7 @@ C       Substitute default values if REFHT or WINDHT are missing.
       ENDIF
 
       IF (NRecords == 0) THEN
+!       Use YRDOY_WY here (different argument than next call)
         CALL IpWRec(CONTROL, MaxRecords,
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
      &    LUNWTH, YRDOY_WY,                               !Input
@@ -523,6 +524,7 @@ C         Read in weather file header.
         ENDIF
 
 !       Read in another batch of data
+!       Use YRDOYWY here (different argument than previous call)
         CALL IpWRec(CONTROL, MaxRecords, 
      &    COL, ICOUNT, FILEWW, HEADER, LINWTH,            !Input
      &    LUNWTH, YRDOYWY,                                !Input
@@ -1179,10 +1181,10 @@ c                   available.
       WRITE(MSG(NMSG-1),'(2X,A)') FILEWW(1:NCHAR)
 
       MSG(NMSG) = "Simulation will end."
-      CALL WARNING(NMSG,ERRKEY,MSG)
       YREND = CONTROL%YRDOY
       CONTROL % ErrCode = ErrCode
       CALL PUT(CONTROL)
+      CALL WARNING(NMSG,ERRKEY,MSG)
 
 !!     Stop the run for these errors:
 !      SELECT CASE(ErrCode)

@@ -106,6 +106,12 @@ C         previous 7 lines added by Bruce Kimball on 2DEC14
 C         added by BAK on 10DEC2015
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
+      
+      CHARACTER(len=2) PGPATH
+      character(len=8) model
+      REAL CCNEFF, CICAD, CMXSF, CQESF
+      REAL AGEQESL, AGEQESLN, CO2QESL, CO2QESLN, QEFFSL, QEFFSLN
+
       REAL PSTRES1  !3/22/2011
 
 !      SAVE AZIR,BETN,CEC,DLAYR,DLAYR2,DULE,FNPGL,FNPGN,LFANGD,
@@ -128,6 +134,7 @@ C         added by BAK on 10DEC2015
       DYNAMIC = CONTROL % DYNAMIC
       FILEIO  = CONTROL % FILEIO
       LUNIO   = CONTROL % LUNIO
+      model   = control % model
 
       BD     = SOILPROP % BD
       DLAYR  = SOILPROP % DLAYR
@@ -213,11 +220,12 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
 
         IF (MEPHO .EQ. 'L' .AND. CROP .NE. 'FA') THEN
           CALL PGINP(
-     &      FILEIO, LUNIO, SALB,                          !Input
+     &      model,FILEIO, LUNIO, SALB,                    !Input
      &      AZIR, BETN, FNPGL, FNPGN, LFANGD, LMXREF,     !Output
      &      LNREF, NSLOPE, PALBW, QEREF, ROWSPC,          !Output
      &      SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,         !Output
-     &      XLMAXT, YLMAXT, PHTHRS10)                     !Output
+     &      XLMAXT, YLMAXT, PHTHRS10,                     !Output
+     &      CCNEFF, CICAD, cmxsf,cqesf,pgpath)            !Output
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
@@ -230,8 +238,9 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C            added by BAK on 10DEC2015
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
         ENDIF
 
 !***********************************************************************
@@ -294,9 +303,10 @@ C            added by BAK on 10DEC2015
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C            added by BAK on 10DEC2015
-            ENDIF
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
+        ENDIF
 
 C***********************************************************************
 C***********************************************************************
@@ -436,8 +446,10 @@ C  KJB and SPSUM hourly.
      &      G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,    !Output
 C       CONDSH, CONDSL, RA, RB, RSURF, RNET output added by
 C           Bruce Kimball on 2DEC14
-     &     RBSH, RBSL, RBSS)                              !Output
+     &     RBSH, RBSL, RBSS,                              !Output
 C            added by BAK on 10DEC2015
+     &      CCNEFF, CICAD, CMXSF, CQESF, PGPATH,          !Input
+     &      AGEQESL, CO2QESL, QEFFSL)                     !Output
 
 C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
@@ -449,7 +461,7 @@ C         and mm/d).
           ENDIF
 
           IF (MEEVP .EQ. 'Z') THEN
-            EDAY = EDAY + TINCR*EHR
+            EDAY= EDAY + TINCR*EHR
             TDAY = TDAY + TINCR*THR
             EOP = EOP + TINCR*T0HR
             DO I=1,NLAYR
@@ -491,6 +503,9 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               PNLSHN = PCNLSH
               SLWSLN = SLWSL * 1000.
               SLWSHN = SLWSH * 1000.
+              QEFFSLN = QEFFSL
+              CO2QESLN = CO2QESL
+              AGEQESLN = AGEQESL
             ENDIF
             IF (MEEVP .EQ. 'Z') THEN
               ETNOON = EHR + THR
@@ -619,9 +634,11 @@ C           add by Bruce Kimball on 9MAR15
 !     &      RWU)
 !CHP
 !          AWEV1 = (SW2(1)-LL2(1)*SWEF) * DLAYR2(1) * 10.0
-          AWEV1 = (SW(1)-LL(1)*SWEF) * DLAYR(1) * 10.0
+C         AWEV1 = (SW(1)-LL(1)*SWEF) * DLAYR(1) * 10.0
           EP = MAX(TDAY,0.0)
-          ES = MAX(MIN(EDAY,AWEV1),0.0)
+C WHY SHOULD AWEV1 LIMIT IF SWE ALREADY SETS LIMIT. REMOVE AWEV1, KJB & BK 10 JULY 2017
+C          ES = MAX(MIN(EDAY,AWEV1),0.0)
+          ES = MAX(EDAY,0.0)
         ENDIF
 
         IF (MEPHO .EQ. 'L') THEN
@@ -683,10 +700,10 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
-         ENDIF
-
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
+        ENDIF
 !***********************************************************************
 !***********************************************************************
 !     SEASEND
@@ -705,9 +722,10 @@ C       preveious line added by BAK on 10DEC2015
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
-      ENDIF
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
+        ENDIF
       
         IF(MEEVP .EQ. "Z") THEN
             CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
@@ -1001,11 +1019,12 @@ C  Calls:       ERROR,FIND
 C=======================================================================
 
       SUBROUTINE PGINP(
-     &  FILEIO, LUNIO, SALBW,                             !Input
+     &  model,FILEIO, LUNIO, SALBW,                       !Input
      &  AZIR, BETN, FNPGL, FNPGN, LFANGD, LMXREF,         !Output
      &  LNREF, NSLOPE, PALBW, QEREF, ROWSPC,              !Output
      &  SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,             !Output
-     &  XLMAXT, YLMAXT, PHTHRS10)                         !Output
+     &  XLMAXT, YLMAXT, PHTHRS10,                         !Output
+     &  ccneff, cicad, cmxsf, cqesf, pgpath)              !Output
 
       IMPLICIT NONE
       SAVE
@@ -1022,6 +1041,10 @@ C=======================================================================
       REAL AZIR,BETN,FNPGL(4),LFANGB,LFANGD(3),LMXREF,LNREF,NSLOPE,
      &  PALBW,PLTPOP,QEREF,ROWSPC,SALBW,SCVP,SLWREF,
      &  SLWSLO,FNPGN(4),XLMAXT(6),YLMAXT(6),PHTHRS10
+
+      character(len=2) pgpath
+      character(len=8) model
+      real ccneff, cicad, cmxsf, cqesf
 
 C     Read IBSNAT35.INP file.
 
@@ -1098,6 +1121,22 @@ C     Read species file.
       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)  !9th line
       READ(C80,'(4F6.0)',IOSTAT=ERRNUM) SLWREF,SLWSLO,NSLOPE,LNREF
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
+
+      if( model(1:5) == 'PRFRM' ) then
+         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+         CALL IGNORE(LUNCRP,LNUM,ISECT,C80) !12th line
+         READ(C80,'(4F6.0,2X,A)',IOSTAT=ERRNUM) CICAD,CCNEFF,
+     &        CMXSF,CQESF,PGPATH 
+         IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
+      else
+         pgpath='  '
+         cicad = -99
+         ccneff = -99
+         cmxsf = -99
+         cqesf = -99
+      end if
+
 
       CLOSE(LUNCRP)
 

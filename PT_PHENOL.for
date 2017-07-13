@@ -43,7 +43,7 @@ C=======================================================================
       REAL NSTRES, P2, TWILEN, PLANTS, PLTPOP
       REAL RDLF, RTF, RTWT, SDEPTH, STT, SWFAC, SEEDAV
       REAL SEEDRV, SENLA, SPGROF, SPRLAP, SPRLTH, SPRWT, SWSD
-      REAL TC, TEMP, TII, TMAX, TMIN, TOPSN, TOTNUP, TSPRWT
+      REAL TC, TCPLUS, TEMP, TII, TMAX, TMIN, TOPSN, TOTNUP, TSPRWT
       REAL XDEPTH, XDTT, XPLANT, XSTAGE
 
       REAL, DIMENSION(NL) :: DLAYR, LL, ST, SW
@@ -56,7 +56,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       CALL PT_IPPHEN(
      &    FILEIO, 
-     &    CROP, IEMRG, P2, PLANTS, SDEPTH, SPRLAP, TC)
+     &    CROP, IEMRG, P2, PLANTS, SDEPTH, SPRLAP, TC, TCPLUS)
 
       ISTAGE = 5
       XSTAGE = 0.0
@@ -115,8 +115,13 @@ C=======================================================================
               RTF = AMAX1 (RTF,0.0)
            ELSEIF (TEMP .GT. 10.0 .AND. TEMP .LE. TC) THEN
               RTF = 1.0                           
-           ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+8.0) THEN
-              RTF = 1.0 - (1./64.)*(TEMP-TC)**2
+
+!          Externalize TCPlus variable (was hardwired to 8.0)
+!          ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+8.0) THEN
+           ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+TCPLUS) THEN
+!             Use linear function between TC and TCPLUS
+              RTF = 1.0 - (1./64.)*(TEMP-TC)**2 !original_CUADRATIC FUNCTION
+!              RTF = 1.0 - (TEMP - TC)/TCPLUS    !linear function 
               RTF = AMAX1 (RTF,0.0)
            ELSE
               RTF = 0.0
@@ -247,8 +252,8 @@ C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
         CASE (1)
-          !
-          ! Begin Tuber Growth
+          ! Vegetative growth.
+          ! Determine when Tuber Growth begins
           !
           MAXLAI = AMAX1 (MAXLAI,XLAI)      ! Maximum XLAI season
           NDAS   = NDAS + 1
@@ -285,15 +290,16 @@ C-----------------------------------------------------------------------
           END IF
 C-----------------------------------------------------------------------
         CASE (2)
-          !
-          ! Maturity Date
+          ! Tuber growth.
+          ! Determine Maturity Date
           !
           XSTAGE = 2.0 + (CUMDTT-XDTT)/100.0
           NDAS   = NDAS + 1
           MAXLAI = AMAX1 (MAXLAI,XLAI)      ! Maximum XLAI season
           GNUP   = GRAINN*PLTPOP*10.0
 
-          IF (XLAI .LT. 0.1*MAXLAI .OR. YRDOY .EQ. MDATE) THEN
+          !IF (XLAI .LT. 0.1*MAXLAI .OR. YRDOY .EQ. MDATE) THEN !Original function
+          IF (XLAI .LT. 0.01*MAXLAI .OR. YRDOY .EQ. MDATE) THEN !modified by modified by RR 02/15/2016
              STGDOY(ISTAGE) = YRDOY
              CALL PT_PHASEI (
      &         ISTAGE, CUMDTT, XPLANT, SPRLAP,            !I/O
@@ -304,8 +310,10 @@ C-----------------------------------------------------------------------
           END IF      
         CASE DEFAULT
           STOP 'Illegal value for ISTAGE in PHENOL module'
-      END SELECT
-
+          END SELECT
+!       open (unit = 7, file = "c:\\visual\\SLFTTMAXOutput.txt")
+!        write (7, *) DTT,CUMDTT, XDTT,YRDOY ! print in file
+          
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
@@ -329,7 +337,7 @@ C=======================================================================
 
       SUBROUTINE PT_IPPHEN(
      &    FILEIO, 
-     &    CROP, IEMRG, P2, PLANTS, SDEPTH, SPRLAP, TC)
+     &    CROP, IEMRG, P2, PLANTS, SDEPTH, SPRLAP, TC, TCPLUS)
 
 C-----------------------------------------------------------------------
       IMPLICIT NONE
@@ -344,7 +352,7 @@ C-----------------------------------------------------------------------
 
       INTEGER ERR, FOUND, LINC, LNUM, IEMRG
 
-      REAL P2, PLANTS, SDEPTH, SPRLAP, TC
+      REAL P2, PLANTS, SDEPTH, SPRLAP, TC, TCPLUS
 
 !-----------------------------------------------------------------------
 !     Read data from FILEIO for use in phenology module
@@ -381,9 +389,7 @@ C     Read crop genetic information
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
         IF (INDEX ('PT',CROP) .GT. 0) THEN
-!CHP          READ (LUNIO,'(55X,2F6.1)', IOSTAT=ERR) P2, TC
-          READ (LUNIO,'(50X,2F6.0)', IOSTAT=ERR) P2, TC
-!          READ (LUNIO,'(55X,2F6.0)', IOSTAT=ERR) P2, TC
+          READ (LUNIO,'(49X,3F6.0)', IOSTAT=ERR) P2, TC, TCPLUS
           LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF

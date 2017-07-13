@@ -1294,7 +1294,7 @@ C=======================================================================
 !       File does not exist in data directory, check directory
 !         with executable.
         CALL GETARG(0,PATHX)
-        call path_adj(pathx)
+!        call path_adj(pathx)
         call get_dir(pathx,datax)
         datax = trim(datax)//filecde
 !        IPX = LEN_TRIM(PATHX)
@@ -1463,13 +1463,43 @@ C=======================================================================
 
 
 
-!=======================================================================
-!  path_adj, Subroutine
+!!=======================================================================
+!!  path_adj, Subroutine
+!!
+!!  Subroutine adjusts path for indications of relative path such as up one 
+!!    directory '..'
+!!-----------------------------------------------------------------------
+!!  Revision history
+!!
+!!  3/26/2014 PDA Written
+!!=======================================================================
 !
-!  Subroutine adjusts path for indications of relative path such as up one 
-!    directory '..'
-!-----------------------------------------------------------------------
-!  Revision history
+!      subroutine path_adj(path)
+!
+!        use moduledefs
+!
+!        implicit none
+!
+!        character(len=*),intent(inout) :: path
+!
+!        integer           :: p1,p2,p3
+!
+!          p1=index(path,'.')
+!          p2=index(path,'..')
+!
+!          if(p1>1)then
+!             p3=len_trim(path)
+!             p1=index(path(1:p1),slash,back=.true.)
+!             if(p2>0)then
+!                p2=p2+3
+!                p1=index(path(1:(p1-1)),slash,back=.true.)
+!             else
+!                p2 = p1 + 2
+!             end if
+!                path = path(1:p1)//path(p2:p3)
+!          end if
+!
+!      end subroutine path_adj
 !
 !  3/26/2014 PDA Written
 !=======================================================================

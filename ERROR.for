@@ -59,7 +59,7 @@ C=======================================================================
       WRITE(ELUN,'(A,", Trt",I5)') CONTROL%FILEX, CONTROL%TRTNUM
 
       CALL GETARG(0,PATHX)
-      call path_adj(pathx)
+!      call path_adj(pathx)
       call get_dir(pathx,errorx)
       errorx = trim(errorx)//'MODEL.ERR'
 

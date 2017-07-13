@@ -26,6 +26,7 @@ C  Calls:     None
 !----------------------------------------------------------------------
       USE ModuleDefs 
       USE ModuleData
+      USE CsvOutput   ! VSH
       IMPLICIT NONE
       SAVE
 !----------------------------------------------------------------------
@@ -70,6 +71,8 @@ C  Calls:     None
       RNMODE  = CONTROL % RNMODE
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
+      
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 
 !-----------------------------------------------------------------------
 !                                 DYNAMIC = RUNINIT
@@ -85,6 +88,7 @@ C  Calls:     None
           !-------------------------------------------------------------
           !   Open PlantGro.OUT as new or append
           !-------------------------------------------------------------
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           INQUIRE (FILE = OUTG, EXIST = FEXIST)
           IF (FEXIST) THEN
             OPEN (UNIT=NOUTDG, FILE=OUTG, STATUS='OLD',
@@ -101,10 +105,12 @@ C  Calls:     None
           ! Generate variable heading for GROWTH.OUT
           !---------------------------------------------------------
           CALL HEADER(SEASINIT, NOUTDG, RUN)
+          END IF   ! VSH
 
           CALL GET(SOILPROP)
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE (NOUTDG, '("!",230(" ") ,"Root Dens. (cm/cm3)",
      &      " by soil depth (cm):",
      &    /,"!",T227,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
@@ -127,7 +133,8 @@ C  Calls:     None
 
           WRITE (NOUTDG,207)
   207     FORMAT('   CDAD   LDAD   SDAD   SNW0C   SNW1C  DTTD') 
-
+          END IF ! VSH
+          
         CUMSENSURF = 0.0
         CUMSENSOIL = 0.0
         SWF_AV = 0.0
@@ -195,6 +202,7 @@ C  Calls:     None
 
             VWAD = NINT(WTLF*10. + STMWTO*10.)
       
+            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             WRITE(NOUTDG,400,ADVANCE='NO')
      &        YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
      &        NINT(WTLF*10.),NINT(STMWTO*10.),NINT(SDWT*10.),
@@ -214,6 +222,22 @@ C  Calls:     None
      &        NINT(WTCO*10.),NINT(WTLO*10.),NINT(WTSO*10.),
      &         NINT(CUMSENSURF), NINT(CUMSENSOIL), DTT
  404          FORMAT (3(1X,I6), 2I8, F6.2)
+ 
+            END IF   ! VSH
+            
+ !    VSH CSV output corresponding to PlantGro.OUT
+      IF (FMOPT == 'C') THEN    
+         CALL CsvOut_MZCER(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &VSTAGE, RSTAGE, XLAI, WTLF, STMWTO, SDWT, RTWT, PLTPOP, VWAD, 
+     &TOPWT, SEEDNO, SDSIZE, HI, PODWT, PODNO, SWF_AV, TUR_AV, NST_AV, 
+     &EXW_AV, PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIP, PODWTD, SLA,
+     &CANHT, CANWH, RTDEP, N_LYR, RLV, WTCO, WTLO, WTSO, CUMSENSURF, 
+     &CUMSENSOIL, DTT, vCsvlineMZCER, vpCsvlineMZCER, vlngthMZCER)
+    
+         CALL LinklstMZCER(vCsvlineMZCER)
+      END IF
+  
           ENDIF
 
 !         Set average stress factors since last printout back to zero
@@ -232,7 +256,8 @@ C  Calls:     None
 !-----------------------------------------------------------------------
 C     Simulation Summary File
 C-------------------------------------------------------------------
-      ELSEIF (DYNAMIC .EQ. SEASEND) THEN
+      ELSEIF ((DYNAMIC .EQ. SEASEND) 
+     & .AND. (FMOPT == 'A' .OR. FMOPT == ' ')) THEN
         !Close daily output files.
         CLOSE (NOUTDG)
 

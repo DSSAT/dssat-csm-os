@@ -1302,6 +1302,7 @@ C         changes in surface roughness.
           AS = 0.205 * OC(1)
           SRate = 30.
           RSTL = SRate * (1.0 - AS)
+          RSTL = MAX(0.0, RSTL)   !CHP 12/15/2016
 C**        RSTL = 5.0 * (1.0 - AS)
           KECHGE(0) = EXP(-RSTL * SUMKE) 
           CN = CN_INIT + (CN_TILLED - CN_INIT) * KECHGE(0)
@@ -1314,6 +1315,7 @@ c         IF (CN .GT. CN_INIT ) CN = CN_INIT
             AS = 0.205 * OC(L)
 C** WDB          RSTL = 5.0 * (1.0 - AS)
             RSTL = SRate * (1.0 - AS)
+            RSTL = MAX(0.0, RSTL)   !CHP 12/15/2016
 c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
             SUMKEL = SUMKE * EXP(-0.05*MCUMDEP)
             KECHGE(L) = EXP(-RSTL * SUMKEL)

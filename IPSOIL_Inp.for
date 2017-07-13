@@ -37,7 +37,7 @@ C=======================================================================
       USE ModuleDefs
       IMPLICIT NONE
 
-      INCLUDE 'COMSOI.BLK'
+      INCLUDE 'COMSOI.blk'
 
       CHARACTER*1   LINE(80),RNMODE,BLANK,ANS,UPCASE
       CHARACTER*5   MH(NL)
@@ -51,7 +51,7 @@ C=======================================================================
       INTEGER I,J,P1,NLAYRI,LINSOL,ISECT
       INTEGER NSENS,NLSOIL,NLOOP,ERR,LUNSL,PATHL, LINSOL_1
 
-!     05/27/2004 CHP Added these variables to COMSOI.BLK
+!     05/27/2004 CHP Added these variables to COMSOI.blk
 !      REAL    PTERMA(NL),PTERMB(NL),EXK(NL),EXMG(NL),EXNA(NL),EXTS(NL)
 !      REAL    SLEC(NL),ZLYR(NL),ZZLYR(NL)
       REAL    ZLYR(NL)
