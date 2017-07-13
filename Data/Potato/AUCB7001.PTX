@@ -1,0 +1,90 @@
+*EXP.DETAILS: AUCB7001PT AUSTRALIA, 1970: SOLAR RADIATION INTENSITY
+
+*GENERAL
+@PEOPLE
+-99
+@ADDRESS
+-99
+@SITE
+-99
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 Radiation=100% Deficit=2.  1  1  0  1  1  0  1  1  0  0  1  1  1
+ 2 1 0 0 Radiation= 79% Deficit=2.  1  1  0  1  1  0  1  1  0  0  2  1  1
+ 3 1 0 0 Radiation= 66% Deficit=2.  1  1  0  1  1  0  1  1  0  0  3  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 PT IB0002 SEBAGO
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 AUCB0001 AUCB         0     0 IB000     0     0 00000 -99      0  IBPT910002 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    PT 70218    10     0     1     1   -99    10  1.14     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    10    .3   3.4   9.8
+ 1    25    .3   3.2   7.3
+ 1    40    .3   2.5   5.1
+ 1    65    .3   2.2   4.7
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 70222 70273    10    10     S     R    71     0     8  1500   -99   -99   -99     2                        -99 
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 70220 FE002   -99    10   300     0     0     0     0   -99 -99
+ 1 70280 FE002   -99     1   125   -99   -99   -99   -99   -99 -99
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 70218 RE001    10  1.14     0     0   100    15   -99 -99
+
+*ENVIRONMENT MODIFICATIONS
+@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
+ 1 70273 A   0 A   0 A   0 A   0 A 0.0 A   0 A   0 A   0 
+ 2 70273 A   0 M .79 M .79 M .79 A 0.0 A   0 A   0 A   0 
+ 3 70273 A   0 M .66 M .66 M .66 A 0.0 A   0 A   0 A   0 
+
+! 1 70273 A   0 A   0 A   0 A   0 A 0.0 A   0 A   0 A   0 GH Original 
+! 2 70273 A   0 M  .8 A   0 A   0 A 0.0 A   0 A   0 A   0 GH Original
+! 3 70273 A   0 M  .7 A   0 A   0 A 0.0 A   0 A   0 A   0 GH Original
+! 1 70273 A   0 A   0 A   0 A   0 A 0.0 A   0 A   0 A   0  GH 8/2011
+! 2 70273 A   0 M  .8 M  .8 M  .9 A 0.0 A   0 A   0 A   0  GH 8/2011
+! 3 70273 A   0 M  .7 M  .7 M  .8 A 0.0 A   0 A   0 A   0  GH 8/2011
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 70356 GS000   -99   -99   -99     0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 70218  2150 Australia, 1970: solar r
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     R     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     A     R     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          70215 70229    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    80   100 IB001 IBI01    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 71222   100     0
