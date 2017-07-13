@@ -1,0 +1,53 @@
+*SOILS: Ludhiana
+
+*PULU010001  SOILSPAU    SL      150 50 INCEPTISOL, Typic Ustochrept, Fatehpur Series
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ LUDHIANA    INDIA          30.900  75.800 Typic Ustochrept
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.15  10.0  0.60  60.0  1.00  0.90 SA001 SA001 SA006
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99 0.060 0.250 0.350 1.000   -99  1.60  0.39  10.0  20.0   0.0   -99   8.0   -99  10.3   -99   
+    30   -99 0.080 0.270 0.360 0.900   -99  1.55  0.14  12.0  23.0   0.0   -99   8.1   -99   9.8   -99   
+    45   -99 0.100 0.300 0.380 0.750   -99  1.50  0.21  18.0  22.0   0.0   -99   8.1   -99   8.4   -99   
+    60   -99 0.100 0.300 0.380 0.500   -99  1.50  0.13  18.0  22.0   0.0   -99   8.2   -99   7.7   -99   
+    75   -99 0.100 0.300 0.380 0.250   -99  1.50  0.11  18.0  22.0   0.0   -99   8.2   -99   7.2   -99   
+    90   -99 0.100 0.300 0.380 0.000   -99  1.50  0.10  18.0  22.0   0.0   -99   8.0   -99   5.1   -99   
+   105   -99 0.100 0.300 0.380 0.000   -99  1.50  0.10  19.0  23.0   0.0   -99   8.0   -99   -99   -99   
+   120   -99 0.100 0.300 0.380 0.000   -99  1.50  0.10  18.0  23.0   0.0   -99   8.0   -99   -99   -99   
+   150   -99 0.100 0.300 0.380 0.000   -99  1.50  0.10  18.0  23.0   0.0   -99   8.0   -99   -99   -99   
+
+*PULU010002  SOILSPAU    SL       75 50 ENTISOL, Typic Ustipsamment, Fatehpur Series
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ LUDHIANA    INDIA          30.910  75.850 Typic Ustipsamment
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.20   5.0  0.60  60.0  1.00  0.90 SA001 SA001 SA006
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99 0.060 0.220 0.410 1.000   -99  1.56  0.42  10.0  16.0   -99   -99   7.1   -99   9.9   -99   
+    30   -99 0.060 0.220 0.380 0.900   -99  1.69  0.26  11.0  14.0   -99   -99   7.1   -99   9.0   -99   
+    45   -99 0.050 0.220 0.350 0.750   -99  1.66  0.17   9.0  12.0   -99   -99   7.3   -99   8.4   -99   
+    60   -99 0.040 0.210 0.340 0.500   -99  1.65  0.13   8.0  12.0   -99   -99   7.3   -99   7.2   -99   
+    75   -99 0.040 0.200 0.340 0.250   -99  1.65  0.16   7.0   8.0   -99   -99   7.4   -99   6.7   -99   
+
+*PULU010011  SOILSPAU    SL       75 50 ENTISOL, Typic Ustipsamment, Fatehpur Series
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ LUDHIANA    INDIA          30.910  75.850 Typic Ustipsamment
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.20   5.0  0.60  60.0  1.00  0.90 SA001 SA001 SA006
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99 0.060 0.220 0.400 1.000   -99  1.58  0.39   8.0  15.0  77.0   -99   6.5   -99  10.3   -99   
+    30   -99 0.060 0.220 0.380 0.900   -99  1.72  0.14   8.0  18.0  74.0   -99   7.1   -99   9.8   -99   
+    45   -99 0.050 0.220 0.350 0.750   -99  1.68  0.21   7.0  10.0  83.0   -99   7.1   -99   8.4   -99   
+    60   -99 0.040 0.210 0.340 0.500   -99  1.68  0.13   6.0   4.0  90.0   -99   7.2   -99   7.7   -99   
+    75   -99 0.040 0.200 0.330 0.250   -99  1.68  0.11   6.0   8.0  86.0   -99   7.2   -99   7.2   -99   
+
+*PULU000001  SOILSPAU    SL       75 50 ENTISOL, Typic Ustipsamment, Fatehpur Series
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Ludhiana    India          30.910  75.850 Typic Ustipsamment
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.20   5.0  0.60  60.0  1.00  0.90  SA00  SA00  SA00
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99 0.060 0.220 0.410 1.000   -99  1.57  0.34  10.0  14.0   -99   -99   7.2   -99   8.0   -99   
+    30   -99 0.060 0.220 0.370 0.900   -99  1.69  0.24   9.0  15.0   -99   -99   7.1   -99   -99   -99   
+    45   -99 0.050 0.220 0.340 0.750   -99  1.62  0.20   6.0  12.0   -99   -99   7.2   -99   -99   -99   
+    60   -99 0.040 0.210 0.340 0.500   -99  1.66  0.19   6.0   6.0   -99   -99   7.3   -99   -99   -99   
+    75   -99 0.040 0.200 0.340 0.250   -99  1.64  0.11   6.0   9.0   -99   -99   7.2   -99   -99   -99   

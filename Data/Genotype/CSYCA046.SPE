@@ -54,7 +54,7 @@ $SPECIES:CSYCA046.010114   Last edit:12JAN2016 LPM
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN ! Photoperiod threshold,sensitivity type  
 !  0-1     h  Code                                  
-   1.0  15.5    LQ 
+   1.0  15.5    LL 
 ! Roots
 @RLIG%  RLWR  RSEN RRESP RDGS   ! Lignin%,length/wt;sen,resp;dpth growth
 !    %  cm/g     %    fr cm/d                                        
@@ -218,7 +218,7 @@ CH2O distribution/mobilization
 ! PHSV    Photosynthesis,sensitivity to VPD (fr/kPa)
 ! PHTV    Photosynthesis,threshold VPD for reduction in rate (kPa)
 ! PPFPE   Photoperiod factor,pre emergence (#,0-1,0=No development)
-! PPSEN   Photoperiod sensitivity (S=Short day response,L=linear)
+! PPSEN   Photoperiod sensitivity (SL=Short day response linear,LQ= long day quadratic, LL=long day linear)
 ! PPTHR   Photoperiod threshold (h below which no effect)
 ! PSABV   Principal stage abbreviation (text)
 ! PSNAME  Principal stage name (text)

@@ -335,7 +335,7 @@
                 NDDAED=(DAG-plant(BR,LF)%NDDAE+1)/NDDAE_D
           
                 !LPM23FEB2017 New high initial rate
-                plant(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))  *  (NDDAE_E*(((NDDAED)**NDDAE_F) / ((NDDAED**NDDAE_G)+1)**2))  *  TFG  *NODWT
+                plant(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))  *  (NDDAE_E*(((NDDAED)**NDDAE_F) / ((NDDAED**NDDAE_G)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
            
                 plant(BR,LF)%NODEWTG = plant(BR,LF)%NODEWTGB
                 !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
