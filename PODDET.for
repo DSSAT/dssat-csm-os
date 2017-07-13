@@ -137,10 +137,11 @@ C     Compute thermal time using hourly predicted air temperature
 C     based on observed max and min temperature.
 C--------------------------------------------------------------------
       FT = 0.0
-      DO I = 1, 24
+      DO I = 1,TS
          FTHR = CURV('LIN',TB(3),TO1(3),TO2(3),TM(3),TGRO(I))
-         FT = FT + FTHR/24.
+         FT = FT + FTHR/TS
       END DO
+C      24 changed to TS on 5 July 2017 by Bruce Kimball
 C -------------------------------------------------------------------
 C  Compute ratio of leaf area per pod cm2/pod
 C  and leaf mass per pod mass g/g

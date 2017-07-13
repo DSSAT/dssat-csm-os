@@ -44,12 +44,8 @@ C========================================================================
 
       SUBROUTINE ETPHOT (CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
-     &    WEATHER, XLAI,                                  !Input
+     &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
-C     &    Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,        !Output
-C     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
-C     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
-C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -60,9 +56,8 @@ C-----------------------------------------------------------------------
 
       CHARACTER FILEIO*30,ISWWAT*1,MEEVP*1,MEPHO*1,METEMP*1,
      &  TYPPGN*3,TYPPGL*3, CROP*2
-      INTEGER DAS,DYNAMIC,H,I,NELAYR,NHOUR, DOY, YRDOY, YEAR,
-     &  NLAYR,NR5, LUNIO, TSV2
-!         TSV2 = index for mid-day hour added by Bruce Kimball on 9JAN17
+      INTEGER DAS,DYNAMIC,H,I,NELAYR,NHOUR,
+     &  NLAYR,NR5, LUNIO
       LOGICAL DAYTIM
       REAL AGEFAC,AWEV1,AZIR,AZZON(TS),BETA(TS),BETN,
      &  CANHT,CANWH,CEC,CEN,CLOUDS,CO2,CO2HR,DAYKP,DAYKR,DAYPAR,
@@ -78,40 +73,21 @@ C-----------------------------------------------------------------------
      &  RADHR(TS),RADN,RCUTIC,REFHT,RHUMHR(TS),RLV(NL),RNITP,ROWSPC,
      &  RWU(NL),RWUH,SALB,SCVIR,SCVP,SHCAP(NL),SLAAD,SLWREF,
      &  SLWSH,SLWSHN,
-     &  SLWSL,SLWSLN,SLWSLO,SNDN,SNUP,ST(NL),STn(NL),ST2(NL),STCOND(NL),
+     &  SLWSL,SLWSLN,SLWSLO,SNDN,SNUP,ST(NL),ST2(NL),STCOND(NL),
      &  SW(NL),SW2(NL),SWFAC,SWE,SWEF,T0HR,TAIRHR(TS),TA,
      &  TCAN(TS),TCANAV,TCANDY,TDAY,TEMPN,THR,TINCR,TRWUP,
-     &  TSHR(NL), TSRF(3),TSRFN(3),TSURF(3,1),HOLDWH,WINDHR(TS),
-     &  XLAI, TSHRn(NL),
+     &  TSHR(NL),TSRF(3),TSRFN(3),TSURF(3,1),HOLDWH,WINDHR(TS),
+     &  XLAI, 
      &  XLMAXT(6),XSW(NL,3),YLMAXT(6),YSCOND(NL,3),YSHCAP(NL,3),TMIN
-      REAL SAT(NL),TGRO(TS),TGROAV,TGRODY,TAV,TAMP
+      REAL SAT(NL),TGRO(TS),TGROAV,TGRODY
       REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR
-!      PARAMETER (TINCR=24.0/TS)
-!                TINCR is the lenfth of a time increment in hours
+      PARAMETER (TINCR=24.0/TS)
       REAL PHTHRS10, PLTPOP
       REAL PORMIN, RWUMX
       REAL PALBW, SALBW, SRAD, DayRatio
 
-      REAL CONDSH, CONDSL, RA, RB(3), RSURF(3), Rnet(3,1)
-      REAL Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit, TCnit,
-     &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit, SRFTEMP,
-     &    G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1),
-     &     GN, LHN, LHEATN(3), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3),
-     &     GMT, LHT, LHEATT(3), RSSHT, RSSLT, RSSST, SHT, SHEATT(3),
-     &     RNETN(3),RNETT(3),
-     &     TAnn, TAnit, TGROnn, TGROnit, 
-C         previous 7 lines added by Bruce Kimball on 2DEC14
-     &     RBSH,RBSL,RBSS,RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
-C         added by BAK on 10DEC2015
-
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
       
-      CHARACTER(len=2) PGPATH
-      character(len=8) model
-      REAL CCNEFF, CICAD, CMXSF, CQESF
-      REAL AGEQESL, AGEQESLN, CO2QESL, CO2QESLN, QEFFSL, QEFFSLN
-
       REAL PSTRES1  !3/22/2011
 
 !      SAVE AZIR,BETN,CEC,DLAYR,DLAYR2,DULE,FNPGL,FNPGN,LFANGD,
@@ -125,16 +101,12 @@ C         added by BAK on 10DEC2015
       TYPE (SwitchType)  ISWITCH
       TYPE (WeatherType) WEATHER
 
-!      PARAMETER (TINCR=24.0/TS)
-        TINCR =24.0/REAL(TS)
-!                TINCR is the lenfth of a time increment in hours
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
       DAS     = CONTROL % DAS
       DYNAMIC = CONTROL % DYNAMIC
       FILEIO  = CONTROL % FILEIO
       LUNIO   = CONTROL % LUNIO
-      model   = control % model
 
       BD     = SOILPROP % BD
       DLAYR  = SOILPROP % DLAYR
@@ -147,8 +119,8 @@ C         added by BAK on 10DEC2015
 !     on soil albedo) and CMSALB (also includes canopy cover effects)
       SALBW  = SOILPROP % SALB
 
-      SLPF = SOILPROP % SLPF
-      SAT  = SOILPROP % SAT
+      SLPF   = SOILPROP % SLPF  
+      SAT    = SOILPROP % SAT
 
       ISWWAT = ISWITCH % ISWWAT
       MEEVP  = ISWITCH % MEEVP
@@ -185,8 +157,7 @@ C         added by BAK on 10DEC2015
       Call GET('PLANT', 'RNITP',  RNITP) 
       Call GET('PLANT', 'SLAAD',  SLAAD) 
       Call GET('PLANT', 'XPOD',   XPOD)  
-      
-      CALL YR_DOY(YRDOY, YEAR, DOY) !LPM 04DEC12 for OPSTEMP
+
 C========================================================================
 C MEPHO  MEEVP
 C -----  -----
@@ -220,27 +191,15 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
 
         IF (MEPHO .EQ. 'L' .AND. CROP .NE. 'FA') THEN
           CALL PGINP(
-     &      model,FILEIO, LUNIO, SALB,                    !Input
+     &      FILEIO, LUNIO, SALB,                          !Input
      &      AZIR, BETN, FNPGL, FNPGN, LFANGD, LMXREF,     !Output
      &      LNREF, NSLOPE, PALBW, QEREF, ROWSPC,          !Output
      &      SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,         !Output
-     &      XLMAXT, YLMAXT, PHTHRS10,                     !Output
-     &      CCNEFF, CICAD, cmxsf,cqesf,pgpath)            !Output
+     &      XLMAXT, YLMAXT, PHTHRS10)                     !Output
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon, ETNOON, WINDn,TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C            added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
 
 !***********************************************************************
@@ -253,7 +212,6 @@ C            added by BAK on 10DEC2015
           DO I=1,NLAYR
 !           TSHR(I) = TAV
             TSHR(I) = TA
-           ST(I) = TSHR(I) 
           ENDDO
           DO I = 1, TS
             TGRO(I) = TA
@@ -268,9 +226,6 @@ C            added by BAK on 10DEC2015
                TSRF(I) = TA
                TSRFN(I) = TA
             ENDDO
-            SRFTEMP = TSRFN(3)    !LPM 04DEC14 to include the surface temperature as output
-            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST,TAV,TAMP)  !LPM
-          
           CALL ROOTWU(SEASINIT,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
      &      RWU,  TRWUP)                           !Output
@@ -294,18 +249,7 @@ C            added by BAK on 10DEC2015
         IF (MEPHO .EQ. 'L') THEN
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C            added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
 
 C***********************************************************************
@@ -369,15 +313,11 @@ C       and sum for day (TS=24 for hourly).
 !       is used by daily model.  The 2.0 accounts for lower transpiration
 !       during early morning hours, with high relative humidity.
         DayRatio = 24.0 / (WEATHER % DAYL - 2.0)
-!                 Note that DayRatio will blow up when DAYL is two hours, but this would only occur at high and low lattitudes
-!                 on each side of winter when temperatures likely are too cold for crop growth. BAK.
-        
-!       Conpute index for mid-day time step added by Bruce Kimball on 9JAN17        
-        TSV2 = INT(TS/2)
+
         DO H=1,TS
 
 C         Calculate real and solar time.
-          
+
           HS = REAL(H) * TINCR
           IF (HS.GT.SNUP .AND. HS.LT.SNDN) THEN
             DAYTIM = .TRUE.
@@ -420,11 +360,8 @@ C  KJB The problem is the need to come back to this after iterative to
 C  KJB create the actual water extracted.  So, need to call EXTRACT
 C  KJB and SPSUM hourly.
 
-!         RWUH = TRWUP * RADHR(H) / SRAD * 3600. / 1.E6 * 10.
+          RWUH = TRWUP * RADHR(H) / SRAD * 3600. / 1.E6 * 10.
 !         mm/h = cm/d *  J/m2-s  / MJ/m2-d  * s/hr / J/MJ * mm/cm
-          RWUH = (TRWUP*10.) * ((RADHR(H)*TINCR*3600.) / (SRAD * 1.E6))
-! mm/time step =  cm/d * mm/cm    J/s-m2* h/timestep * s/h / (MJ/m2-d * J/MJ)
-!        changed by Bruce Kimball on 10Jan17
 
 !         Need multiplier to account for hourly : daily uptake rate
           RWUH = RWUH * DayRatio
@@ -437,31 +374,22 @@ C  KJB and SPSUM hourly.
      &      NSLOPE, PARSH, PARSUN, QEREF, RABS, RCUTIC,   !Input
      &      REFHT, RHUMHR(H), RNITP, RWUH, SHCAP, SLAAD,  !Input
      &      SLWREF, SLWSLO, STCOND, SWE, TAIRHR(H), TA,   !Input
-     &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XLAI,        !Input
+     &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XLAI,       !Input
      &      XLMAXT, YLMAXT,                               !Input
      &      AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,  !Output
      &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
-     &      TSURF,                                        !Output
-     &      CONDSH, CONDSL, RA, RB, RSURF, Rnet,          !Output
-     &      G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,    !Output
-C       CONDSH, CONDSL, RA, RB, RSURF, RNET output added by
-C           Bruce Kimball on 2DEC14
-     &     RBSH, RBSL, RBSS,                              !Output
-C            added by BAK on 10DEC2015
-     &      CCNEFF, CICAD, CMXSF, CQESF, PGPATH,          !Input
-     &      AGEQESL, CO2QESL, QEFFSL)                     !Output
+     &      TSURF)                                        !Output
 
 C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
 C         and mm/d).
-
 
           IF (MEPHO .EQ. 'L') THEN
             PGDAY = PGDAY + TINCR*PGHR*44.0*0.0036
           ENDIF
 
           IF (MEEVP .EQ. 'Z') THEN
-            EDAY= EDAY + TINCR*EHR
+            EDAY = EDAY + TINCR*EHR
             TDAY = TDAY + TINCR*THR
             EOP = EOP + TINCR*T0HR
             DO I=1,NLAYR
@@ -489,8 +417,7 @@ C         and mm/d).
 C         Remember noon values (ET in mm/h; PG in mg CO2/m2/s).
 
 C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
-!            Get mid-day values
-          IF (H .EQ. TSV2) THEN
+          IF (H .EQ. 12) THEN
             IF (MEPHO .EQ. 'L') THEN
               FRDFPN = FRDIFP(H)
               LMXSLN = LFMXSL * 0.044
@@ -503,9 +430,6 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               PNLSHN = PCNLSH
               SLWSLN = SLWSL * 1000.
               SLWSHN = SLWSH * 1000.
-              QEFFSLN = QEFFSL
-              CO2QESLN = CO2QESL
-              AGEQESLN = AGEQESL
             ENDIF
             IF (MEEVP .EQ. 'Z') THEN
               ETNOON = EHR + THR
@@ -514,79 +438,10 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               PCINRN = PCINTR
               PCABRN = PCABSR
               TEMPN = TAIRHR(H)
-
               DO I=1,3
                 TSRFN(I) = TSURF(I,1)
               ENDDO
-              SRFTEMP = TSRFN(3)           !LPM 04DEC14 to include the surface temperature as output
-              DO I=1,NLAYR
-                  TSHRn(I) = TSHR(I)
-              ENDDO
-              CALL SOIL05(
-     &          TSHRn,0,NLAYR,                                  !Input
-     &          STn)                                           !Output
-              ST = STn           !LPM 04DEC14 to include the temperature as output (OPSTEMP)
-C       The following 8 variales added by Bruce Kimball on 1Dec2014
-              Enoon = EHR
-              Tnoon = THR
-              WINDN = WINDHR(H)
-              TCANn = TCAN(H)
-              CSHnn = CONDSH
-              CSLnn = CONDSL
-              LSHnn = LAISH
-              LSLnn = LAISL
-              GN = G
-              LHN = LH
-              SHN = SH
-              RSSHN = RSSH
-              RSSLN = RSSL
-              RSSSN = RSSS
-C     Next 3 lines added by BAK on 10DEC2015
-              RBSHN = RBSH
-              RBSLN = RBSL
-              RBSSN = RBSS
-              DO I=1,3
-                LHEATN(I)=LHEAT(I,1)
-                SHEATN(I)=SHEAT(I,1)
-                RNETN(I)=RNET(I,1)
-                ENDDO
-
             ENDIF
-            !     Print soil temperature data in STEMP.OUT
-            !CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
-            ! BAK 8Jun15 above line commented out because soil output seems to be called too much
-          ENDIF
-
-C       Remember midnight values
-          IF(H.EQ.TS .AND. MEEVP .EQ. "Z") THEN
-            ETnit = EHR + THR
-            TEMnit = TAIRHR(H)
-            Enit = EHR
-            Tnit = THR
-            WINnit = WINDHR(H)
-            TCnit = TCAN(H)
-            DO I = 1,3
-                TSRnit(I) = TSURF(I,1)
-            ENDDO
-            CSHnit = CONDSH
-            CSLnit = CONDSL
-            LSHnit = LAISH
-            LSLnit = LAISL
-            GMT = G
-              LHT = LH
-              SHT = SH
-              RSSHT = RSSH
-              RSSLT = RSSL
-              RSSST = RSSS
-C next 3 lines added by BAK on 10DEC2015
-              RBSHT = RBSH
-              RBSLT = RBSL
-              RBSST = RBSS
-              DO I=1,3
-                LHEATT(I)=LHEAT(I,1)
-                SHEATT(I)=SHEAT(I,1)
-                RNETT(I)=RNET(I,1)
-                ENDDO
           ENDIF
         ENDDO
 
@@ -617,14 +472,6 @@ C       Assign daily values.
           DO  I=1,TS
             TGRO(I) = TCAN(I)
           ENDDO
-
-C           Save noon and midnight growth and air temperatures
-C           add by Bruce Kimball on 9MAR15
-          TGROnn = TGRO(TS/2)
-          TGROnit = TGRO(TS)
-          TAnn = TAIRHR(TS/2)
-          TAnit = TAIRHR(TS)
-
           CALL SOIL05(
      &      ST2,0,NLAYR,                                  !Input
      &      ST)                                           !Output
@@ -634,11 +481,9 @@ C           add by Bruce Kimball on 9MAR15
 !     &      RWU)
 !CHP
 !          AWEV1 = (SW2(1)-LL2(1)*SWEF) * DLAYR2(1) * 10.0
-C         AWEV1 = (SW(1)-LL(1)*SWEF) * DLAYR(1) * 10.0
+          AWEV1 = (SW(1)-LL(1)*SWEF) * DLAYR(1) * 10.0
           EP = MAX(TDAY,0.0)
-C WHY SHOULD AWEV1 LIMIT IF SWE ALREADY SETS LIMIT. REMOVE AWEV1, KJB & BK 10 JULY 2017
-C          ES = MAX(MIN(EDAY,AWEV1),0.0)
-          ES = MAX(EDAY,0.0)
+          ES = MAX(MIN(EDAY,AWEV1),0.0)
         ENDIF
 
         IF (MEPHO .EQ. 'L') THEN
@@ -691,18 +536,7 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C       preveious line added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
 !***********************************************************************
 !***********************************************************************
@@ -713,24 +547,8 @@ C       preveious line added by BAK on 10DEC2015
         IF (MEPHO .EQ. 'L') THEN
                 CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
-     &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C       preveious line added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV)
         ENDIF
-      
-        IF(MEEVP .EQ. "Z") THEN
-            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
-            ENDIF
-!      BAK 8Jun15 Added the IF statement for call to OPSTEMP
 
 !***********************************************************************
 !***********************************************************************
@@ -748,19 +566,9 @@ C       preveious line added by BAK on 10DEC2015
       CALL PUT('SPAM', 'AGEFAC', AGEFAC)
       CALL PUT('SPAM', 'PG'    , PG)
 
-C       If the method to compute ET is energy balance, then
-C       grow the plants at canopy temperature. Else grow them
-C       at air temperature (TGRO initialized to TA in HMET.)
-C       IF added by Bruce Kimball on 9MAR15
-      IF(MEEVP .EQ. 'Z') THEN
-        WEATHER % TGROAV = TCANAV
-        WEATHER % TGRO   = TCAN
-        WEATHER % TGRODY = TCANDY
-        ELSE
-        WEATHER % TGROAV = TGROAV   !I/O
-        WEATHER % TGRO   = TGRO     !I/O
-        WEATHER % TGRODY = TGRODY
-        ENDIF
+      WEATHER % TGROAV = TGROAV   !I/O
+      WEATHER % TGRO   = TGRO     !I/O
+      WEATHER % TGRODY = TGRODY
 
       RETURN
       END SUBROUTINE ETPHOT
@@ -1019,12 +827,11 @@ C  Calls:       ERROR,FIND
 C=======================================================================
 
       SUBROUTINE PGINP(
-     &  model,FILEIO, LUNIO, SALBW,                       !Input
+     &  FILEIO, LUNIO, SALBW,                             !Input
      &  AZIR, BETN, FNPGL, FNPGN, LFANGD, LMXREF,         !Output
      &  LNREF, NSLOPE, PALBW, QEREF, ROWSPC,              !Output
      &  SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,             !Output
-     &  XLMAXT, YLMAXT, PHTHRS10,                         !Output
-     &  ccneff, cicad, cmxsf, cqesf, pgpath)              !Output
+     &  XLMAXT, YLMAXT, PHTHRS10)                         !Output
 
       IMPLICIT NONE
       SAVE
@@ -1041,10 +848,6 @@ C=======================================================================
       REAL AZIR,BETN,FNPGL(4),LFANGB,LFANGD(3),LMXREF,LNREF,NSLOPE,
      &  PALBW,PLTPOP,QEREF,ROWSPC,SALBW,SCVP,SLWREF,
      &  SLWSLO,FNPGN(4),XLMAXT(6),YLMAXT(6),PHTHRS10
-
-      character(len=2) pgpath
-      character(len=8) model
-      real ccneff, cicad, cmxsf, cqesf
 
 C     Read IBSNAT35.INP file.
 
@@ -1121,22 +924,6 @@ C     Read species file.
       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)  !9th line
       READ(C80,'(4F6.0)',IOSTAT=ERRNUM) SLWREF,SLWSLO,NSLOPE,LNREF
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
-
-      if( model(1:5) == 'PRFRM' ) then
-         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-         CALL IGNORE(LUNCRP,LNUM,ISECT,C80) !12th line
-         READ(C80,'(4F6.0,2X,A)',IOSTAT=ERRNUM) CICAD,CCNEFF,
-     &        CMXSF,CQESF,PGPATH 
-         IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
-      else
-         pgpath='  '
-         cicad = -99
-         ccneff = -99
-         cmxsf = -99
-         cqesf = -99
-      end if
-
 
       CLOSE(LUNCRP)
 

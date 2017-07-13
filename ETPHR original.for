@@ -23,18 +23,11 @@ C=======================================================================
      &  NSLOPE, PARSH, PARSUN, QEREF, RABS, RCUTIC,       !Input
      &  REFHT, RHUMHR, RNITP, RWUH, SHCAP, SLAAD,         !Input
      &  SLWREF, SLWSLO, STCOND, SWE, TAIRHR, TA,          !Input
-     &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,               !Input
+     &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,              !Input
      &  XLMAXT, YLMAXT,                                   !Input
      &  AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,      !Output
      &  PGHR, SLWSH, SLWSL, T0HR, TCAN, THR, TSHR,        !Output
-     &  TSURF,                                            !Output
-!     Added by BAK DEC2014
-     &  CONDSH, CONDSL, RA, RB, RSURF, RNET,              !Output
-     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
-!     Added by BAK on 10DEC15
-     &                RBSH, RBSL, RBSS,                   !Output
-     &  CCNEFF, CICAD, CMXSF, CQESF, PGPATH,              !Input
-     &  AGEQESL, CO2QESL, QEFFSL)                         !Output
+     &  TSURF)                                            !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -58,15 +51,6 @@ C=======================================================================
      &  SLWREF,SLWSH,SLWSL,SLWSLO,STCOND(NL),SWE,T0HR,TAIRHR,TA,TMIN,
      &  TCAN,TCPREV,THR,TPREV,TSHR(NL),TSUM,TSURF(3,1),USTAR,
      &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6)
-
-!     Added by BAK
-      REAL RB(3),RSURF(3),RNET(3,1),
-     &  G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1),
-     &  RBSH, RBSL, RBSS
-      CHARACTER PGPATH*2
-      REAL CCNEFF, CICAD, CMXSF, CQESF
-      REAL AGEQESL, CO2QESL, QEFFSL
-
       PARAMETER (ERRBND=0.01)
 
 C     Initialize.
@@ -112,23 +96,14 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        XLMAXT, YLMAXT,                             !Input
      &        AGEFAC, CONDSH, CONDSL, CSHSTR, CSLSTR,     !Output
      &        LFMXSH, LFMXSL, PCNLSH, PCNLSL, PGHR,       !Output
-     &        SLWREF, SLWSH, SLWSL, STRESS,              !Output
-     &        CCNEFF,CICAD,CMXSF,CQESF,PGPATH,           !Input
-     &        AGEQESL,CO2QESL,QEFFSL)                    !Output
+     &        SLWREF, SLWSH, SLWSL, STRESS)               !Output
             CALL CANPET(
      &        CANHT, CEC, CEN, CLOUDS, CONDSH, CONDSL,    !Input
      &        DLAYR2, FRACSH, FRSHV, KDIRBL, LAISH,       !Input
      &        LAISHV, LAISL, LAISLV, LWIDTH, RABS,        !Input
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
-     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
-     &        RB(3), RSURF, RNET,                         !Output
-     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
-C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
-C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
-     &        RBSL, RBSL, RBSS)                           !Output
-C          added by BAK on 10DEC2015           
-
+     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)     !Output
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
               TCAN = TSUM / ITER
@@ -163,14 +138,7 @@ C            CONDSH = CONDSH * (THR-RWUH)/THR
      &          LAISHV, LAISL, LAISLV, LWIDTH, RABS,      !Input
      &          RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,    !Input
      &          WINDHR,                                   !Input
-     &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,   !Output
-     &          RB, RSURF, RNET,                          !Output
-     &          G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,!Output
-C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
-C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
-     &   RBSH, RBSL, RBSS)                               !Output
-C       preveious line added by BAK on 10DEC2015
-
+     &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)   !Output
               TSUM = TSUM + TCAN
               IF (ITER .GT. 5) THEN
                 TCAN = TSUM / ITER
@@ -198,9 +166,7 @@ C       preveious line added by BAK on 10DEC2015
      &        XLMAXT, YLMAXT,                             !Input
      &        AGEFAC, CONDSH, CONDSL, CSHSTR, CSLSTR,     !Output
      &        LFMXSH, LFMXSL, PCNLSH, PCNLSL, PGHR,       !Output
-     &        SLWREF, SLWSH, SLWSL, STRESS,               !Output
-     &        CCNEFF,CICAD,CMXSF,CQESF,PGPATH,            !Input
-     &        AGEQESL,CO2QESL,QEFFSL)                     !Output
+     &        SLWREF, SLWSH, SLWSL, STRESS)               !Output
             STRESS = .FALSE.
           ENDIF
         ELSE
@@ -211,9 +177,7 @@ C       preveious line added by BAK on 10DEC2015
      &      XLMAXT, YLMAXT,                               !Input
      &      AGEFAC, CONDSH, CONDSL, CSHSTR, CSLSTR,       !Output
      &      LFMXSH, LFMXSL, PCNLSH, PCNLSL, PGHR,         !Output
-     &      SLWREF, SLWSH, SLWSL, STRESS,                 !Output
-     &      CCNEFF,CICAD,CMXSF,CQESF,PGPATH,              !Input
-     &      AGEQESL,CO2QESL,QEFFSL)                       !Output
+     &      SLWREF, SLWSH, SLWSL, STRESS)                 !Output
         ENDIF
 
 C     Night hours or bare soil.
@@ -233,14 +197,7 @@ C     Night hours or bare soil.
      &        LAISHV, LAISL, LAISLV, LWIDTH, RABS,        !Input
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
-     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
-     &        RB, RSURF, RNET,                            !Output
-     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
-C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
-C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
-     &        RBSL, RBSL, RBSS)                           !Output
-C             added by BAK on 10DEC2015
-
+     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)     !Output
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
               TCAN = TSUM / ITER
@@ -266,15 +223,12 @@ C     difference.
         CALL HSOILT(
      &    DLAYR2, NLAYR, SHCAP, STCOND, TA, TSURF(3,1),   !Input
      &    TSHR)                                           !Output
-C       SWE = SWE
-C        DULE = DULE
-C       LLE = LLE
-C       CEN = CEN
-C previous 4 lines commented out by BK and KB on 11Jul17       
-        SWE = MAX(SWE-EHR,0.0)
-        CEN = (DULE-SWE) / (DULE-LLE) * 100.0
-C previous two lines uncommented by BK and KB on 11Jul17
-C per version 3.5 of DSSAT
+        SWE = SWE
+        DULE = DULE
+        LLE = LLE
+        CEN = CEN
+c       SWE = MAX(SWE-EHR,0.0)
+c       CEN = (DULE-SWE) / (DULE-LLE) * 100.0
       ENDIF
 
       RETURN
@@ -303,9 +257,7 @@ C=======================================================================
      &  XLMAXT, YLMAXT,                                   !Input
      &  AGEFAC, CONDSH, CONDSL, CSHSTR, CSLSTR,           !Output
      &  LFMXSH, LFMXSL, PCNLSH, PCNLSL, PGHR,             !Output
-     &  SLWREF, SLWSH, SLWSL, STRESS,                     !Output
-     &  CCNEFF,CICAD,CMXSF,CQESF,PGPATH,                  !Input
-     &  AGEQESL,CO2QESL,QEFFSL)                           !Output
+     &  SLWREF, SLWSH, SLWSL, STRESS)                     !Output
 
       IMPLICIT  NONE
       SAVE
@@ -319,11 +271,6 @@ C=======================================================================
      &  QEFFSL,RNITP,SLAAD,TEMPSH,TEMPSL,TSURF(3,1),FNPGN(4),
      &  FNPGL(4),XLMAXT(6),XLAI,YLMAXT(6),CSLSTR,CSHSTR,SLWSL,
      &  SLWSH,PCNLSL,PCNLSH,SLWSLO,SLWREF,TMIN
-
-      CHARACTER PGPATH*2
-      REAL CCNEFF, CICAD, CMXSF, CQESF
-      REAL AGEQESH, AGEQESL, CO2QESH, CO2QESL
-
 
 C     Initialize.
 
@@ -348,16 +295,12 @@ C     Calulate leaf photosynthesis for SH and SL leaves.
      &  CO2HR, FNPGL, FNPGN, LMXREF, LNREF, QEREF,        !Input
      &  PCNLSH, SLWSH, SLWREF, TEMPSH, TMIN, TYPPGL,      !Input
      &  TYPPGN, XLMAXT, YLMAXT,                           !Input
-     &  AGMXSH, LFMXSH, QEFFSH,                           !Output
-     &  CCNEFF, CICAD, CMXSF,CQESF,PGPATH,                !Input
-     &  CO2QESH,AGEQESH)                                  !Output
+     &  AGMXSH, LFMXSH, QEFFSH)                           !Output
       CALL PGLFEQ(
      &  CO2HR, FNPGL, FNPGN, LMXREF, LNREF, QEREF,        !Input
      &  PCNLSL, SLWSL, SLWREF, TEMPSL, TMIN, TYPPGL,      !Input
      &  TYPPGN, XLMAXT, YLMAXT,                           !Input
-     &  AGMXSL, LFMXSL, QEFFSL,                           !Output
-     &  CCNEFF, CICAD, CMXSF,CQESF,PGPATH,                !Input
-     &  CO2QESL,AGEQESL)                                  !Output
+     &  AGMXSL, LFMXSL, QEFFSL)                           !Output
 
 C     Gaussian integration of photosynthesis and leaf CO2 conductance
 C     over three leaf classes for sunlit leaves.
@@ -367,8 +310,7 @@ C     over three leaf classes for sunlit leaves.
       DO I=1,3
         CALL PGLEAF(
      &    CO2HR, LFMXSL, PARSUN(I), QEFFSL, TEMPSL,       !Input
-     &    CONSUN, PGSUN,                                  !Output
-     &    CCNEFF,CICAD,PGPATH)                            !Input
+     &    CONSUN, PGSUN)                                  !Output
         IF (I .EQ. 2) THEN
           PGSUM = PGSUM + PGSUN*1.6
           CONSUM = CONSUM + CONSUN*1.6
@@ -384,8 +326,7 @@ C     Compute photosynthesis and leaf CO2 conductance for shaded leaves
 
       CALL PGLEAF(
      &  CO2HR, LFMXSH, PARSH, QEFFSH, TEMPSH,             !Input
-     &  CONDSH, PGSH,                                     !Output
-     &  CCNEFF,CICAD,PGPATH)                              !Input
+     &  CONDSH, PGSH)                                     !Output
 
 C     Compute canopy photosynthesis (µmol CO2/m2/s).
 
@@ -435,9 +376,7 @@ C========================================================================
      &  CO2HR, FNPGL, FNPGN, LMXREF, LNREF, QEREF,        !Input
      &  RNITP, SLW, SLWREF, TEMPHR, TMIN, TYPPGL,         !Input
      &  TYPPGN, XLMAXT, YLMAXT,                           !Input
-     &  AGEMXL, LFMAX, QEFF,                              !Output
-     &  CCNEFF, CICAD, CMXSF, CQESF, PGPATH,              !Input
-     &  CO2QE, AGEQE)                                     !Output
+     &  AGEMXL, LFMAX, QEFF)                              !Output
 
       USE MODULEDATA
 	 
@@ -449,10 +388,6 @@ C========================================================================
      &  CURV,FNPGN(4),FNPGL(4),GAMST,LFMAX,LNREF,LMXREF,LXREF,
      &  O2,QEFF, QEREF,RGAS,RNITP,RT,SLW,SLWMAX,SLWREF,TABEX,TAU,
      &  TEMPHR,TEMPMX,TK,XLMAXT(6),YLMAXT(6),TMIN,CHILL
-
-      CHARACTER PGPATH*2
-      REAL CCNEFF, CICAD, CMXSF, CQESF
-
       PARAMETER (O2=210000.0,RGAS=8.314)
 
       REAL BETALS,PDLA,BETAMX
@@ -469,11 +404,7 @@ C     combined with the temperature effect on the specificity factor (TAU)
 C     and the compensation point in the absence of dark respiration (GAMST).
       !CHP 4/15/03 Prevent overflow
       IF (RT .GT. 1000.) THEN
-         if(pgpath .eq. "C4" .or. pgpath .eq. 'c4')then
-            tau = exp(-3.949 + 28990.0/RT)*CCNEFF
-         else
-            TAU = EXP(-3.949 + 28990.0/RT)
-         end if
+        TAU = EXP(-3.949 + 28990.0/RT)
         GAMST = 0.5 * O2 / TAU
       ELSE
         TAU = 1E10
@@ -492,17 +423,10 @@ C     For the computation of LMXREF, Ci/Ca = 0.7 for CO2=350 µL/L.  The factor
 C     7.179 scales CO2MAX to 1.0 at 30 oC and 350 µL/L CO2.
 
 C     CICA = 0.4+0.6*EXP(-0.002*CO2HR)
-        IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
-           CICA = CICAD
-           CINT = CICA*CO2HR + (1.0-CICA)*GAMST
-           CINT = MAX(CINT,GAMST)
-           CO2MAX = CMXSF * (CINT-GAMST) / (4.0*CINT+8.0*GAMST)
-        ELSE 
-           CICA = 0.7
-           CINT = CICA*CO2HR + (1.0-CICA)*GAMST
-           CINT = MAX(CINT,GAMST)
-           CO2MAX = 7.179 * (CINT-GAMST) / (4.0*CINT+8.0*GAMST)
-        ENDIF
+      CICA = 0.7
+      CINT = CICA*CO2HR + (1.0-CICA)*GAMST
+      CINT = MAX(CINT,GAMST)
+      CO2MAX = 7.179 * (CINT-GAMST) / (4.0*CINT+8.0*GAMST)
 
 C     Temperature and saturating CO2.
 
@@ -534,11 +458,7 @@ C     For the computation of QEFF, Ci/Ca = 1.0.  The factor 6.225 scales CO2QE
 C     to 1.0 at 30 oC and 350 µL/L CO2.
 
       CINT = MAX(CO2HR,GAMST)
-      IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
-         CO2QE = CQESF * (CINT-GAMST) / (4.*CINT+8.*GAMST)	
-      ELSE
-         CO2QE = 6.225 * (CINT-GAMST) / (4.*CINT+8.*GAMST)
-      ENDIF
+      CO2QE = 6.225 * (CINT-GAMST) / (4.*CINT+8.*GAMST)
 
 C     Nitrogen effects on QEFF.  Photosynthesis is affected both by
 C     plant nutrition (small in legumes) and age.
@@ -584,18 +504,13 @@ C=======================================================================
 
       SUBROUTINE PGLEAF(
      &  CO2HR, LFMAX, PARLF, QEFF, TEMPHR,                !Input
-     &  CONDLF, PGLF,                                     !Output
-     &  CCNEFF, CICAD, PGPATH)                            !Input
+     &  CONDLF, PGLF)                                     !Output
 
       IMPLICIT NONE
       SAVE
 
       REAL A,B,C,CICA,CINT,CO2HR,CCO2LF,CONDLF,CVTURE,GAMST,LFMAX,QEFF,
      &  PARLF,PATM,PGLF,PNLF,RGAS,RT,TAU,TEMPHR
-
-      CHARACTER PGPATH*2
-      REAL CCNEFF, CICAD
-
       PARAMETER (CVTURE=0.8, PATM=101300.0, RGAS=8.314)
 
 C     Initialization.
@@ -625,11 +540,7 @@ C     Leaf respiration neglected so PNLF=PGLF.
 
       !CHP 4/15/03 Prevent overflow
       IF (RT .GT. 1000.) THEN
-         IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
-            TAU = EXP(-3.9489 + 28990.0/RT) * CCNEFF
-         ELSE
-            TAU = EXP(-3.9489 + 28990.0/RT)
-         ENDIF
+        TAU = EXP(-3.9489 + 28990.0/RT)
         GAMST = 1.0E6 * 0.5 * 0.21 / TAU
       ELSE
         TAU = 1E10
@@ -638,11 +549,7 @@ C     Leaf respiration neglected so PNLF=PGLF.
 
 
 C     CICA = 0.4+0.6*EXP(-0.002*CO2HR)
-      if (pgpath .eq. 'C4' .or. pgpath .eq. 'c4') then
-         cica=cicad
-      else
-         CICA = 0.7
-      end if
+      CICA = 0.7
       CINT = CICA*CO2HR + (1.0-CICA)*GAMST
       CCO2LF = MAX(PNLF/(CO2HR-CINT),0.0)
 
@@ -673,13 +580,7 @@ C=======================================================================
      &  LAISHV, LAISL, LAISLV, LWIDTH, RABS,              !Input
      &  RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,            !Input
      &  WINDHR,                                           !Input
-     &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,           !Output
-     &  RB, RSURF, RNET,                                  !Output
-     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
-C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
-C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
-     &    RBSH, RBSL, RBSS)                               !Output
-C       added by BAK on 10DEC15
+     &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)           !Output
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -697,11 +598,6 @@ C       added by BAK on 10DEC15
      &  VPD(3,1),VPSAT,WINDHR,CLOUDS,DAIR,DAIRD,DVAPOR,Q,SH,SHEAT(3,1),
      &  SHAIRD,TK,MWATER,RGAS,MAIR,LAISHV,LAISLV,RADBK(3),
      &  USTAR,XLAI,ZERO
-
-      REAL RB(3), RSURF(3),RSSH,RSSL,RSSS,RBSH,RBSL,RBSS
-C         RB, RSURF RSSH RSSL RSSS added DEC2014 by Bruce Kimball
-C         RBSH,RBSL,RBSS added by BAK on 10DEC15
-
       PARAMETER (RGAS=8.314,MWATER=0.01802,MAIR=0.02897,PATM=101300.0,
      &  SHAIRD=1005.0, ZERO=1.0E-6)
 
@@ -735,23 +631,7 @@ C     Create vpd and resistance matrices.
      &  CANHT, CEC, CEN, CONDSH, CONDSL, FRACSH, FRSHV,   !Input
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
      &  TAIRHR, TCAN, WINDHR,                             !Input
-     &  RA, RL, RS, USTAR,                                !Output
-     &  RB,RSURF)
-C          RB and RSURF Added by BAK on 1DEC2014
-        RBSL = RB(1)
-        RBSH = RB(2)
-        RBSS = RB(3)
-        IF(RBSL .GT. 20000.) THEN
-            RBSL = 20000.
-            ENDIF
-        IF(RBSH .GT. 20000.) THEN
-            RBSH = 20000.
-            ENDIF
-        IF(RBSS .GT. 20000.) THEN
-            RBSS = 20000.
-            ENDIF
-C       Obtain the resistances of sunlit, shaded leaves and
-C         soil surface. Added by BAK on 18MAR15
+     &  RA, RL, RS, USTAR)                                !Output
 
 C     Calculate NET total by subtracting net (back) longwave radiation.
 
@@ -800,8 +680,7 @@ C========================================================================
      &  CANHT, CEC, CEN, CONDSH, CONDSL, FRACSH, FRSHV,   !Input
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
      &  TAIRHR, TCAN, WINDHR,                             !Input
-     &  RA, RL, RS, USTAR, RB, RSURF)                     !Output
-C        added RB and RSURF to output on 1DEC2014 by Bruce Kimball
+     &  RA, RL, RS, USTAR)                                !Output
 
       IMPLICIT NONE
       SAVE
@@ -853,18 +732,10 @@ C     reduced to constant 0.0117 using the average RNA from Jagtap (1976).
 C     If RNET is included again, may need a RNMIN too.
 
       IF (CEN .LE. CEC) THEN
-C        RSSS = 100.0 commented out by Bruce Kimball on 10DEC15
-C          RSSS = 100.0
-C  RESET JULY 10 2017 BK AND KJB
-          RSSS=0.0
-C  set back to zero per DSSAT 3.5 on 11Jul17
+        RSSS = 100.0
       ELSE
-        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.37)-1.0)
-C  uncommented back to DSSAT 3.5 on 11Jul17 by BK and KB       
-C  RESET FOR RSSS ON JULY 10 2017 BK AND KJB
-C        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0) 
-commented out by Bruce Kimball on 10DEC15
-C          RSSS = 10000
+C       RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.37)-1.0)
+        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0)
       ENDIF
       RSURF(3) = MIN(RSSS,RMAX)
 
@@ -918,10 +789,7 @@ C     Initialization and calculation of zero plane displacement height and
 C     canopy surface roughness (Brutsaert, 1982).
 
       XLAI = LAISH + LAISL
-      WINDSP = MAX(WINDHR,0.1)
-C     changed on 1Dec2014 by Bruce Kimball. 1.0 m/s is too high a
-C       wind speed to be the minimum.
-C     WINDSP = MAX(WINDHR,1.0)
+      WINDSP = MAX(WINDHR,1.0)
       H = CANHT
       ZS0M = 0.03                                                  ! m
       Z0M = MAX(ZS0M,0.13*H)                                       ! m

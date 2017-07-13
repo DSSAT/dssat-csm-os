@@ -77,7 +77,9 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 4
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-Engy_Bal '
+!     CHARACTER(len=10) :: VBranch = '-develop  '
+!     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
 !       4.6.5.04 chp 07/12/2017 ET-based irrigation, minor fixes 
@@ -218,7 +220,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       character(len=3)  exe_string
       CHARACTER(LEN=3)  ModelVerTxt
       CHARACTER(LEN=12) DSSATPRO 
-      CHARACTER(LEN=30) STDPATH 
+      CHARACTER(LEN=11) STDPATH 
       CHARACTER(LEN=6)  LIBRARY    !library required for system calls
 
       CHARACTER*3 MonthTxt(12)
@@ -231,11 +233,10 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE ControlType
         CHARACTER (len=1)  MESIC, RNMODE
         CHARACTER (len=2)  CROP
-        CHARACTER (len=8)  MODEL
+        CHARACTER (len=8)  MODEL, ENAME
         CHARACTER (len=12) FILEX
         CHARACTER (len=30) FILEIO
         CHARACTER (len=102)DSSATP
-        character (len=60)  :: ename = ' '
         CHARACTER (len=120) :: SimControl = 
      &  "                                                            "//
      &  "                                                            "
