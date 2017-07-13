@@ -60,7 +60,7 @@ C=======================================================================
                call get_next_string(line,7,pathc)
                pathc = trim(adjustl(line(5:6)))//trim(pathc)
             end if
-          
+            
 C-SUN       PATHC  = LINE(8:80)
             PATHL  = INDEX (PATHC,BLANK)
             IF (PATHL .EQ. 1) THEN
@@ -311,6 +311,7 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.      !ORYZA
      &    (INDEX(MODEL(3:5),'IXM') .EQ. 0) .AND.      !IXIM
      &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.      !CROPGRO
+     &    (INDEX(MODEL(3:5),'FRM') .EQ. 0) .AND.      !FORAGE
      &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.      !CROPSIM (Cereal)
      &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.      !CSCAS (Cassava)
      &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.      !CROPSIM (Cassava)
@@ -336,6 +337,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat 
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton
+     &    (INDEX(MODEL(1:5),'PRFRM') .EQ. 0) .AND.    !FORAGE 
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES
      &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND.    !Maize IXIM
      &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND.    !Millet

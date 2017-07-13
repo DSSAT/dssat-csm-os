@@ -21,14 +21,19 @@ C=======================================================================
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST)
+     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
+     &        AGEQESLN, CO2QESLN, QEFFSLN)
+
 C-------------------------------------------------------------------
 C
 C  ETPHOT OUTPUT File
 C
 C-------------------------------------------------------------------
       USE ModuleDefs
+       ! VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 
@@ -52,6 +57,9 @@ C           previous line added by Bruce Kimball on 9MAR15
       Real RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
 C       preveious line added by BAK on 10DEC2015
 
+      real  AGEQESLN, CO2QESLN, QEFFSLN
+
+
       LOGICAL FEXIST
 
 !-----------------------------------------------------------------------
@@ -68,7 +76,9 @@ C       preveious line added by BAK on 10DEC2015
       FROP    = CONTROL % FROP  
       RNMODE  = CONTROL % RNMODE
       RUN     = CONTROL % RUN    
-      YRDOY   = CONTROL % YRDOY   
+      YRDOY   = CONTROL % YRDOY  
+      
+      FMOPT = ISWITCH % FMOPT     ! VSH
 
       IDETC   = ISWITCH % IDETC
       IF (IDETC .NE. 'Y') RETURN
@@ -79,6 +89,7 @@ C       preveious line added by BAK on 10DEC2015
 !***********************************************************************
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+        IF (FMOPT == 'A' .OR. FMOPT == ' ' ) THEN       ! VSH
         OUTETP = 'ETPhot.OUT'
         CALL GETLUN(OUTETP, NOUTDC)
 
@@ -99,31 +110,30 @@ C       preveious line added by BAK on 10DEC2015
         WRITE (NOUTDC,120)
   120   FORMAT('@YEAR DOY   DAS',
      &   '    LI%D   PHAD   PHAN    LI%N   SLLN   SLHN',
-     &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV',
-     &   '   ENN    TNN    ETn    WDNN   TCNN    CSHn         CSLn    ',
-     &   ' LSHn   LSLn   ETnt   TEMt   Enit   Tnit   WINn   TCnt',
-     &   '   TSR1t  TSR2t TSR3t   TSR1n  TSR2n TSR3n',
-     &   '      CSHt        CSLt     LSHt   LSLt  ', 
-     &   '   GN      LHN        LH1N    LH2N    LH3N      RSHN',
-     &   '        RSLN       RSSN         SHN         SH1N       SH2N',
-     &   '        SH3N',
-     &   '          GMT         LHT         LH1T       LH2T',
-     &   '          LHE3T      RSHT',
-     &   '         RSLT       RSST        SHT         SH1T',
-     &   '         SH2T       SH3T',
-     &   '       TAnn     TAnt     TG12     TG24     TGDY',
-     &   '         RBSHN      RBSLN      RBSSN',
-     &   '         RBSHT      RBSLT      RBSST TestSpace')
-C       preveious line added by BAK on 10DEC2015
-
-
+     &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV')
+C        
+C   Commented out extra variables on 12Jul17 for
+C     "publication purposes. Bruce Kimball
+C     &   '    ENN    TNN    ETn   WDNN   TCNN   CSHn',
+C     &   '   CSLn   LSHn   LSLn   ETnt   TEMt   Enit',
+C     &   '   Tnit   WINn   TCnt  TSR1t  TSR2t  TSR3t',
+C     &   '  TSR1n  TSR2n  TSR3n   CSHt   CSLt   LSHt',
+C     &   '   LSLt     GN    LHN   LH1N   LH2N   LH3N',
+C     &   '   RSHN   RSLN   RSSN    SHN   SH1N   SH2N',
+C     &   '   SH3N    GMT    LHT   LH1T   LH2T  LHE3T',
+C     &   '   RSHT   RSLT   RSST    SHT   SH1T   SH2T',
+C     &   '   SH3T   TAnn   TAnt   TG12   TG24   TGDY',
+C     &   '  RBSHN  RBSLN   BSSN  RBSHT  RBSLT  RBSST',
+C     &   '   N%LN   N%HN   LMLN   LMHN   TGNN   TGAV')
+        END IF   ! VSH
 !***********************************************************************
 !***********************************************************************
 !     Daily Output
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
-        IF (NOUTDC == 0) RETURN
+!       VSH
+        IF ((NOUTDC == 0).AND. (FMOPT == 'A'.OR. FMOPT == ' ')) RETURN
 
         IF ((DYNAMIC .EQ. OUTPUT.AND. MOD(DAS,FROP) .EQ. 0) .OR.
      &      (DYNAMIC .EQ. SEASEND .AND. MOD(DAS,FROP) .NE. 0) .OR. 
@@ -131,27 +141,51 @@ C-----------------------------------------------------------------------
 
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN      ! VSH
           WRITE (NOUTDC,300) YEAR, DOY, DAS, 
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(12), TGROAV,
-     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
-     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
-     &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
-     &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
-     &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous FIVE output lines added by Bruce Kimball on 2DEC14
-     &    TAnn,TAnit,TGROnn,TGROnit,TGRODY,
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TS/2), TGROAV
+C     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn,
+C     &    CSLnn, LSHnn, LSLnn, ETnit, TEMnit, Enit,
+C     &    Tnit, WINnit, TCnit, TSRnit, TSRFN, CSHnit,
+C     &    CSLnit, LSHnit, LSLnit, GN, LHN, LHEATN,
+C     &    RSSHN, RSSLN, RSSSN, SHN, SHEATN,GMT,
+C     &    LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT,
+C     &    SHEATT,
+C         previous SEVEN output lines added by Bruce Kimball on 2DEC14
+C     &    TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C         previous line added by Bruce Kimball on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
+C     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
 C       preveious line added by BAK on 10DEC2015
- 300     FORMAT(1X,I4,1X,I3.3,1X,I5,
-     &      F8.2,2(1X,F6.2),F8.2,6(1X,F6.2),2(1X,F6.1),
-     &      5(1x,F6.2),2(1x,E11.4),14(1x,F6.3),2(1x,E11.4),2(1x,F6.3),
-     &      5(1x,F8.3),19(1x,E11.4),
-     &       5(1x,F8.3),6(1x,E11.4))
-        ENDIF
+          
+ 300      FORMAT(1X,I4,1X,I3.3,1X,I5,
+     &      1X,F7.2,1X,F6.2,1X,F7.2,1X,F6.2,1X,F6.2,1X,F6.2,
+     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
+C     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.1,1X,F6.1,
+C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3, 
+C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
+C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3, 
+C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,        
+C     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,
+C     &      1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1)
 
-        IF (DYNAMIC .EQ. SEASEND) THEN
+          END IF   ! VSH
+          
+        !     VSH     
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutETPhot(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, 
+     &PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,   
+     &vCsvlineETPhot, vpCsvlineETPhot, vlngthETPhot)
+     
+         CALL LinklstETPhot(vCsvlineETPhot)
+      END IF         
+        
+        ENDIF
+      
+        IF ((DYNAMIC .EQ. SEASEND) 
+     & .AND. ((FMOPT == 'A') .OR. (FMOPT == ' '))) THEN   ! VSH
           CLOSE (NOUTDC)
         ENDIF
 

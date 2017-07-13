@@ -9,14 +9,15 @@ C                 Written
 C  08-07-1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
-!  02/20/2012 CHP / US Modify temperature response
+!  02/20/2012 CHP/US Modify temperature response
+!  12/06/2016 CHP/US Add check for small LAI during grainfilling - triggers maturity
 C=======================================================================
 
       SUBROUTINE RI_PHENOL (CONTROL, ISWITCH, 
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
-     &    YRPLT,FLOODWAT,                                 !Input
+     &    YRPLT,FLOODWAT, LAI,                            !Input
      &    CUMDTT, EMAT, ISDATE, PLANTS, RTDEP, YRSOW,     !I/O
      &    CDTT_TP, DTT, FERTILE, FIELD, ISTAGE,           !Output
      &    ITRANS, LTRANS, MDATE, NDAT, NEW_PHASE, P1, P1T,!Output
@@ -44,7 +45,7 @@ C=======================================================================
 
       REAL AGEFAC, ATEMP, BIOMAS, CDTT_TP, CNSD1, CNSD2, CSD1, CSD2
       REAL CUMDEP, CUMDTT, CUMTMP, DTT, FERTILE
-      REAL G4, NSTRES
+      REAL G4, NSTRES, LAI
       REAL P1, P1T, P3, P4, P5, P8, P9, P2O, P2R
       REAL PHEFAC, PHINT, PLANTS, RTDEP
       REAL SDAGE, SDEPTH, SDTT_TP, SEEDNI, SIND, SRAD
@@ -63,6 +64,8 @@ C=======================================================================
       REAL HARVMAT,TN,TSGRWT,TMPI
       REAL SWSD,TOPT,TNSOIL,TDSOIL
       REAL TMSOIL,ACOEF,DAYL,TH,SUMHDTT
+
+      REAL LAIX   !LOCAL VARIABLE
 
 !     CHP/US added for P model
       REAL SeedFrac, VegFrac
@@ -121,6 +124,8 @@ C=======================================================================
       WSTRES = 1.0
       RATEIN = 0.0
 
+      LAIX = 0.0
+
       ! Initialze stress indices - FROM INPLNT
       DO I = 1, 6
          SI1(I) = 0.0
@@ -151,6 +156,12 @@ C=======================================================================
 
       NEW_PHASE = .FALSE.
 
+!! temp chp
+!      write(3000,'(A)') 
+!     & "   yrdoy  xstage icsdur     dtt    sind     tn    tmpi" //
+!     &  "  idur1     lai"
+
+
 !***********************************************************************
 !***********************************************************************
 !     Daily rate / integration calculations
@@ -168,6 +179,8 @@ C=======================================================================
 !     CHP/US 4/03/2008  P model
       SeedFrac = 0.0
       VegFrac  = 0.0
+
+      IF (LAI > LAIX) LAIX = LAI
 
 !-----------------------------------------------------------------------
 !     Transplant date
@@ -488,11 +501,17 @@ C=======================================================================
              RETURN
           ENDIF
           TMPI = CUMTMP/(ICSDUR)*G4
-          !
+
           ! Check if night temp (NT) was below 15 C during this stage
           !
           IF (.NOT. PI_TF) THEN
-             IF (TN .GT. 15.0/G4 .AND. IDUR1 .GE. 1) THEN
+             IF ((TN .GT. 15.0/G4 .AND. IDUR1 .GE. 1) 
+!             Additional criteria of SIND > 3 added 1/11/2017
+!               by CHP and RMO - needs to blessed by Upendra!!
+!           Slow rice progression with continuous addition of biomass
+!              under cool, but not freezing conditions. This causes 
+!              development to progress after a long vegetative phase.
+     &            .OR. SIND > 2.0) THEN
                 PI_TF    = .TRUE.
               ELSE
                 PI_TF    = .FALSE.
@@ -502,6 +521,11 @@ C=======================================================================
                 IF (TN .GT. 15.0/G4) THEN
                    IDUR1 = IDUR1 + 1
                 ENDIF
+
+!! temp chp
+!      write(3000,3000) yrdoy, xstage, icsdur, dtt,sind,tn,tmpi,idur1,lai
+! 3000 format(i8,f8.3,i7,2f8.3,f7.2,f8.3,I7,f8.3)
+
                 RETURN
              ENDIF
              !
@@ -509,6 +533,7 @@ C=======================================================================
              ! after daylength requirement for PI_TF had been met
              ! then allow plant to reaach PI_TF
           ENDIF
+
           STGDOY(ISTAGE) = YRDOY
           CUMHEAT = 0.0
           STRCOLD = 1.0
@@ -696,9 +721,13 @@ C=======================================================================
 		SeedFrac = AMIN1 (1.0, (SUMDTT + SUMDTT_4) / P5)
 	    VegFrac = 1.0
 
-          IF (SUMDTT .LT. 0.90*P5) THEN
-             RETURN
+!         Check for LAI > small number, continue season, otherwise maturity triggered
+          IF (LAI > 1.E-4) THEN
+            IF (SUMDTT .LT. 0.90*P5) THEN
+               RETURN
+            ENDIF
           ENDIF
+
 		SeedFrac = AMIN1 (1.0, (SUMDTT + SUMDTT_4) / P5)
           VegFrac = 1.0
           IF (ISM .LE. 0) THEN

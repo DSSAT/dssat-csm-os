@@ -44,7 +44,7 @@ C=======================================================================
 
       IMPLICIT NONE
 
-      INCLUDE 'COMGEN.BLK'
+      INCLUDE 'COMGEN.blk'
 
       CHARACTER*1   LINE(80),RNMODE,BLANK,ANS
       CHARACTER*2   CROP
@@ -52,6 +52,7 @@ C=======================================================================
       CHARACTER*8   MODEL
       CHARACTER*12  FILEG
       CHARACTER*16  VRNAME
+      CHARACTER*78  MSG(2)
       CHARACTER*80  PATHGE
       CHARACTER*92  FILEGG
       CHARACTER*1000 C360,ATLINE
@@ -153,7 +154,7 @@ C
         READ (C360,'(6X,A6,1X,A16,7X,A)',IOSTAT=ERRNUM) VARTY, 
      &         VRNAME, PLAINTXT
 !     CROPGRO crops **
-      CASE ('CRGRO')  
+      CASE ('CRGRO','PRFRM')  
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,CSDVAR,
      &       PPSEN,PH2T5,PHTHRS(6),PHTHRS(8),PHTHRS(10),PHTHRS(13),
      &       LFMAX,SLAVAR,SIZELF,XFRUIT,WTPSD,SFDUR,SDPDVR,PODUR,
@@ -252,7 +253,15 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Ceres Millet **
       CASE ('MLCER')
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-     &            P1,P2O,P2R,P5,G1,G4,PHINT
+     &            P1,P2O,P2R,P5,G1,G4,PHINT,G0,G5
+        IF (G4 > 1.2) THEN
+          MSG(1)="G4 is fraction partitioning and should not exceed 1.2"
+          MSG(2)=
+     &  "G4 (from cultivar file) set equal to 1.2 for this simulation."
+          CALL WARNING(2, ERRKEY, MSG)
+          G4 = 1.2
+        ENDIF
+
 
 !     Substor Potato **
       CASE ('PTSUB')
@@ -351,7 +360,7 @@ C-----------------------------------------------------------------------
   510 FORMAT (6X,'ERROR! Variety Selection must be an INTEGER value',/)
 
 ! 800 FORMAT (A6,1X,A16,1X,A6,15(F6.0))
-  800 FORMAT (A6,1X,A16,7X,A6,19F6.0)                     !11/8/07
+  800 FORMAT (A6,1X,A16,7X,A6,21F6.0)                     !11/8/07
 
 
   810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010

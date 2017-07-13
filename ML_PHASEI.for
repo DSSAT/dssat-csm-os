@@ -10,6 +10,9 @@ C======================================================================
 !  3. Added switch common block, restructured     P.W.W.      2-7-93
 !  4. Removed Y1 and Y2 variables                 B.D.B.      6-21-1994
 !  5. Converted to modular format                 W.D.B.      7-31-02
+!  6. April-May 2015 - KJB major revisions, to set PANWT and GPP as
+!     50:50 function of cumulative biomass and CGR during ISTAGE4
+!     Also, to realistically simulate single seed growth (size) over time
 !-----------------------------------------------------------------------
 !  INPUT  : ISWWAT,ISWNIT
 !
@@ -31,8 +34,8 @@ C======================================================================
 
       SUBROUTINE ML_PHASEI (
      & AGEFAC, BIOMAS, BIOMS1, BIOMS2, CNSD1, CNSD2, 
-     & CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR,
-     & DTT, EMAT, G4, GPP, GRAINN, GRNWT,
+     & CSD2, CSD1, CUMDEP, CUMDTT, CUMPH, DLAYR, NCOUNT,
+     & DTT, EMAT, P5, G4, G5, XRGSET, GPP, GRAINN, GRNWT,
      & GROLF, GRORT, GROSTM, ICSDUR, IDUR1, ISM,
      & ISTAGE, ISWWAT,ISWNIT,LAI, LEAFNO, LFWT, MGROLF, 
      & MGROPAN,MGROSTM,MLAG1, MLFWT, MPANWT, MPLAG, MPLA, MSTMWT, NLAYR,
@@ -56,6 +59,10 @@ C======================================================================
       REAL BIOMAS
       REAL BIOMS1
       REAL BIOMS2
+      REAL BIOMS3
+      REAL BIOMS4
+      REAL EFFBIO
+      REAL CGRP4
       REAL CNSD1
       REAL CNSD2
       REAL CSD2
@@ -66,7 +73,9 @@ C======================================================================
       REAL DLAYR(NL)
       REAL DTT
       REAL EMAT
+      REAL P5
       REAL G4
+      REAL G5
       REAL GPP
       REAL GRAINN
       REAL GRNWT
@@ -77,6 +86,7 @@ C======================================================================
       INTEGER IDUR1
       INTEGER ISM
       INTEGER ISTAGE
+      INTEGER   NCOUNT
       REAL LAI
       INTEGER LEAFNO
       REAL LFWT
@@ -144,11 +154,13 @@ C======================================================================
       REAL VMNC
       REAL WSTR1
       REAL XNTI
+
 !------------------------------------------------------------------------
 !  LOCAL VARIABLES NOT IN OLD COMMON BLOCKS
 !------------------------------------------------------------------------
       CHARACTER ISWWAT*1,ISWNIT*1
       REAL      GROPAN,PANDW
+      REAL      XRGSET
       INTEGER   L,L1
 
 !--------------------------------------------------------------------
@@ -183,6 +195,8 @@ C======================================================================
           SIND   = 0.0
           BIOMS1 = 0.1
           BIOMS2 = 0.1
+          BIOMS3 = 0.1
+          BIOMS4 = 0.1
           RETURN
       !--------------------------------------------------------------
       !  ISTAGE = 2: Panicle Initiation
@@ -207,6 +221,7 @@ C======================================================================
           PGC    = 0.0
           PAF    = 0.1
           MPLAG  = 0.0
+          BIOMS3 = BIOMAS/PLTPOP
           !
           ! SWMIN is set equal to STMWT in version 2.1 at ISTAGE 4
           !
@@ -227,16 +242,36 @@ C======================================================================
           MGROLF  = 0.0
           MGROSTM = 0.0
           TPLAG   = 0.0
-          IF (ISWWAT .EQ. 'N') THEN
-              WSTR1 = 0.0
-          ELSE
-             WSTR1 = CSD1/ICSDUR
-          ENDIF
+          BIOMS4 = BIOMAS/PLTPOP
+          CGRP4 = (BIOMS4-BIOMS3)/NCOUNT
+C  KJB
+C  Previous code tried, but failed to compute WSTR1 in PHASEI, always csd1=0 and icsdur=1
+C  WSTR1 is now passed to it, and it works.
+!          IF (ISWWAT .EQ. 'N') THEN
+!              WSTR1 = 0.0
+!          ELSE
+!             WSTR1 = CSD1/ICSDUR
+!          ENDIF
           !
           ! G4 IS GRAIN PART. COEFF DIFF FOR HYV(1.0) & VARS(0.5).
-          !
-          PANWT = (STMWT + LFWT) * 0.15 * (1.0 - 0.5 * WSTR1) * G4
-
+! KJB 
+!     Using 50:50 ratio of STMWT+LEWT and CGRP4 to reduce effect of
+!     long daylength to set too much panwt and GPP.  Used on both
+!     In one case example, the BIOMS2/IDUR was 0.391 of the CGRP4
+!     The BIOMS2/IDUR was 1.27 and the PGC later was 1.242 from .15 *.15 * (LFWT+STMWT)
+!         EFFBIO = CGRP4 * 0.391 / (0.15 * 0.15)
+         EFFBIO = CGRP4 * 0.410/ (0.15 * 0.15)
+!  KJB - XRGSET IS Tave effect on grain # and partitioning
+!        computed during end leaf to end panicle (ISTAGE 4)
+!          PANWT = (STMWT + LFWT) * 0.15 * (1.0 - 0.5 * WSTR1) * G4 
+!last          PANWT = XRGSET * (STMWT + LFWT) * 0.15 * (1.0-0.1*WSTR1) * G4
+!          PANWT = XRGSET * (0.5*(STMWT + LFWT) + 0.5 * EFFBIO) 
+!     &          * 0.15 * (1.0-0.05*WSTR1) * G4
+!KJB, with the EFFBIO (from CGR during ISTAGE4, and cumul Biomass) we do not
+!  need to double count water stress during ISTAGE4.  It already reduces CARBO in EFFBIO
+!  in addition, that WSTR1 is not in GPP equation.
+          PANWT = XRGSET * (0.50 * (STMWT + LFWT) + 0.50 * EFFBIO) 
+     &          * 0.15 * G4
 !         CHP 12/14/2006 Limit PANWT <= STMWT
           PANWT = AMIN1(PANWT, STMWT)
 
@@ -245,7 +280,26 @@ C======================================================================
           PGC   = PANWT * 0.15
           RESERVE = PGC
           ISM   = 0
-          GPP   = 3130.0 * (BIOMS2/IDUR1)
+
+!   BIOMAS2/IDURI is CGR. 31.3 IS ALMOST DAYS OF GRAIN FILL, 1000 IS mg/g
+!   Divide by G5 (size in mg) causes fewer grain if large grain
+!   Multiply by G4, adds number proportional to PANWT above, but
+!   with a scalar because higher G4 partitioning, runs into assim supply
+!   0.8 is sort of a scalar, initially reference G4.  Is it needed?
+!   P5/300 is to increase seed number (lower ISGR) for long P5, to hold 
+!   seed size as definable with long or short P5. KJBOOTE, 3-7-2015
+!   XRGSET is Tave effect on grain # and partitioning, computed during ISTAGE 4
+          
+!          GPP   = (BIOMS2/IDUR1)*1000*31.3/G5*(G4**0.75)/0.8
+!     &             *340/340
+!          GPP   = (BIOMS2/IDUR1)*1000./G5*31.3*(G4+0.1*(1.-G4))/0.8
+!     &             *P5/300.
+!last          GPP   = XRGSET * (BIOMS2/IDUR1)*1000./G5*31.3
+!last     &             *(G4+0.1*(1.-G4))/0.8 * P5/300.
+!         GPP  = XRGSET*(0.50*(BIOMS2/IDUR1)+0.50*(LFWT+STMWT)*0.15*0.15)
+      GPP  = XRGSET*(0.50 *(CGRP4*0.410)+0.50*(LFWT+STMWT)*0.15*0.15)
+     &    *1000./G5*31.3*(G4+0.1*(1.-G4))/0.8 * P5/300.           
+!  original        GPP   = 3130.0 * (BIOMS2/IDUR1)
           SUMDTT = SUMDTT - P4
           EMAT   = 0.0
           RETURN
@@ -339,8 +393,10 @@ C======================================================================
           IDUR1  = 0
           STOVWT = LFWT
           SEEDRV =  0.006
-          MLAG1  =  0.5
-          TLAG1  =  0.5
+! KJB  MLAG1 AND TLAG1 INITIALIZED AT 0.0 IN GROSUB AND TILLSUB, WHY HERE?
+!          MLAG1  =  0.5
+!          TLAG1  =  0.5
+          TLAG1  =  0.0
           LAI    = PLTPOP*PLA*0.0001
           BIOMAS = STOVWT
       ENDIF

@@ -20,6 +20,9 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
       USE FloodModule    ! which contain control information, soil
                          ! parameters, hourly weather data.
+!     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 
@@ -63,7 +66,8 @@ C=======================================================================
       IDETL   = ISWITCH % IDETL
       IDETW   = ISWITCH % IDETW
       ISWWAT  = ISWITCH % ISWWAT
-      MEINF   = ISWITCH % MEINF
+      MEINF   = ISWITCH % MEINF    
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 
       TOTBUNDRO = FLOODWAT % TOTBUNDRO
       MULCHWAT  = MULCH % MULCHWAT
@@ -94,6 +98,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
 C   Generate headings for output file
 C-----------------------------------------------------------------------
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
       CALL GETLUN('OUTWAT', NOUTDW)
       INQUIRE (FILE = OUTWAT, EXIST = FEXIST)
       IF (FEXIST) THEN
@@ -104,19 +109,22 @@ C-----------------------------------------------------------------------
      &    IOSTAT = ERRNUM)
         WRITE(NOUTDW,'("*SOIL WATER DAILY OUTPUT FILE")')
       ENDIF
-
+      END IF   ! VSH
 C-----------------------------------------------------------------------
 C     Variable heading for WATER.OUT
 C-----------------------------------------------------------------------
       IF (RNMODE .NE. 'Q' .OR. RUN .EQ. 1) THEN
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         IF (RNMODE .EQ. 'Q') THEN
           CALL HEADER(SEASINIT, NOUTDW, REPNO)
         ELSE
           CALL HEADER(SEASINIT, NOUTDW, RUN)
         ENDIF
-
+        END IF   ! VSH
+        
         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
 !       IF (INDEX('RSN',MEINF) <= 0) THEN   
         IF (INDEX('RSM',MEINF) > 0) THEN   
 !         New print format includes mulch, tiledrain and runoff info
@@ -144,7 +152,8 @@ C-----------------------------------------------------------------------
           WRITE (NOUTDW,1122) ("SW",L,"D",L=1,9), "    SW10"
  1122     FORMAT(9("    ",A2,I1,A1),A8)
         ENDIF
-
+        END IF   ! VSH
+        
         YRSTART = YRDOY
         CALL YR_DOY(INCDAT(YRSTART,-1),YEAR,DOY)
 
@@ -156,6 +165,7 @@ C-----------------------------------------------------------------------
           PESW = 0.0
         ENDIF
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         IF (INDEX('RSM',MEINF) > 0) THEN   
 !         New print format includes mulch, tiledrain and runoff info
           WRITE (NOUTDW,1300)YEAR,DOY,DAS, NINT(TSW), 
@@ -175,7 +185,18 @@ C-----------------------------------------------------------------------
  1302     FORMAT(1X,I4,1X,I3.3,3(1X,I5),3(1X,I6),3(1X,I5),
      &      10(F8.3))
         ENDIF
-
+        END IF   ! VSH
+         
+      IF (FMOPT == 'C') THEN
+         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
+         CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
+     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD, TDFC, RUNOFF,
+     &N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
+     
+         CALL LinklstSW(vCsvlineSW)
+      END IF     
+     
       ENDIF
 !
 !!     Temporary header for runoff debugging info
@@ -243,6 +264,7 @@ C-----------------------------------------------------------------------
             AVWTD = WTDEP
           ENDIF
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
 !         IF (INDEX('RSN',MEINF) <= 0) THEN   
           IF (INDEX('RSM',MEINF) > 0) THEN   
 !           New print format includes mulch, tiledrain and runoff info
@@ -258,10 +280,24 @@ C-----------------------------------------------------------------------
      &        NAP, NINT(TOTIR),NINT(AVWTD), 
      &        (SW(L),L=1,N_LYR)
           ENDIF
+          END IF   ! VSH 
 
+!     VSH CSV output corresponding to SoilWat.OUT
+      IF (FMOPT == 'C') THEN
+         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
+         CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+     &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
+     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD, TDFC, RUNOFF,
+     &N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
+     
+         CALL LinklstSW(vCsvlineSW)
+      END IF         
+      
           NAVWB = 0
-          AVWTD = 0.
+          AVWTD = 0.        
+        
         ENDIF
+     
       ENDIF
 
 !***********************************************************************

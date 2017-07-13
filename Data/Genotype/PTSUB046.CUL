@@ -13,23 +13,150 @@
 !             that immediately follows tuber induction
 ! P2          Tuber initiation sensitivity to long photoperiods
 ! TC          Upper critical temperature for tuber initiation (C)
+! TC+         Offset for upper critical temperature at which progression stops
+! P5          Index that affects senescence in stage 2
 
-@VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    PD    P2    TC
-IB0001 MAJESTIC             . IB0001 2000.  22.5   0.8   0.6  17.0
-IB0002 SEBAGO               . IB0001 1100.  22.5   0.9   0.0  19.0
-IB0003 RUSSET BURBANK       . IB0001 1100.  26.0   0.9   0.6  17.0
-IB0004 KATHADIN             . IB0001 2000.  25.0   0.5   0.7  20.0
-IB0005 ATLANTIC             . IB0001 1000.  25.0   0.9   0.6  17.0
-IB0006 MARIS PIPER          . IB0001 2000.  25.0   0.8   0.4  17.0
-IB0007 KING EDWARD          . IB0001 2000.  22.5   1.0   0.6  17.0
-IB0008 DESIREE              . IB0001 2000.  25.0   0.9   0.6  17.0
-IB0009 LT-1                 . IB0001 2000.  25.0   0.9   0.8  21.0
-IB0010 C14-343              . IB0001 2000.  25.0   0.9   0.4  21.0
-IB0011 NORCHIP              . IB0001 2000.  25.0   1.0   0.4  17.0
-IB0012 SHEPODY              . IB0001 2000.  25.0   0.7   0.6  19.0
-UF0001 RED LASODA           . IB0001 2000.  22.0   0.7   0.4  19.0
-
-!IB0002 SEBAGO               . IB0001 2000.  22.5   0.7   0.8  15.0 old
-!IB0003 RUSSET BURBANK       . IB0001 2000.  22.5   0.6   0.6  17.0 old
-!IB0004 KATHADIN             . IB0001 2000.  25.0   0.7   0.6  19.0 old
-!IB0005 ATLANTIC             . IB0001 2000.  25.0   0.9   0.6  17.0 old
+@VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    PD    P2    TC   Tc+    P5
+IB0001 MAJESTIC             . IB0001 2000.  22.5   0.8   0.6  17.0   8.0   0.6
+IB0002 SEBAGO               . IB0001 1100.  22.5   0.9   0.0  19.0   8.0   0.9
+IB0003 RUSSET BURBANK       . IB0001 1100.  26.0   0.9   0.2  17.0   8.0   0.9 !p2=0.6 to p2=0.2 Changed by Rubi Raymundo
+IB0004 KATHADIN             . IB0001 2000.  25.0   0.5   0.7  20.0   8.0   0.5
+IB0005 ATLANTIC             . IB0001 1000.  25.0   0.9   0.9  21.0   8.0   0.9
+IB0006 MARIS PIPER          . IB0001 2000.  25.0   0.8   0.4  17.0   8.0   0.8
+IB0007 KING EDWARD          . IB0001 2000.  22.5   1.0   0.6  17.0   8.0   1.0
+IB0008 DESIREE              . IB0001 2000.  25.0   0.9   0.6  16.0   8.0   0.9
+TB0001 DESIREE1             . IB0001 1000.  25.0   0.2   0.6  16.0   8.0   0.2
+TB0002 DESIRE11             . IB0001 2000.  25.0   0.9   0.6  15.0   8.0   0.9
+IB0009 LT-1                 . IB0001 2000.  25.0   0.9   0.8  17.0   8.0   0.9! TC 21
+IB0010 C14-343              . IB0001 2000.  25.0   0.9   0.4  21.0   8.0   0.9
+IB0011 NORCHIP              . IB0001 2000.  25.0   1.0   0.4  17.0   8.0   1.0
+IB0012 SHEPODY              . IB0001 2000.  25.0   0.7   0.6  19.0   8.0   0.7
+UF0001 RED LASODA           . IB0001 1000.  22.0   0.9   0.9  19.0   8.0   0.9
+CH0022 KEXIN                . IB0001 1600.  25.0   0.7   0.8  18.0   8.0   0.9 !optimization
+CH0023 NEISHU               . IB0001 1600.  23.0   0.7   0.8  18.0   8.0   0.9 !optimization NEISHU
+CH0024 ZIBAHUIA             . IB0001 2000.  24.5   0.9   0.8  17.0   8.0   0.9 ! This is kexin 1, and this parameters are being used for that purpose
+CH0025 JINGUAN              . IB0001 2000.  23.5   0.9   0.8  17.0   8.0   0.9
+!IB0013 BINTJIE              . IB0001 1000.  30.0   0.4  0.1  18.8   8.0   0.9!PD was 0.1 PD 0.8...Bintje with 30 (G3) works fine (1000)
+IB0013 BINTJIE              . IB0001 1000.  30.0   0.8   0.1  18.8   8.0   0.8!PD was 0.1 PD 0.8...Bintje with 30 (G3) works fine (1000Ideal usar un PD de 0.2 para bintje)
+!IB0013 BINTJIE              . IB0001 1000.  25.0   1.0   0.6  18.5 ! from davide 1000
+UF0001 RED LASODA           . IB0001 1000.  22.0   0.5   0.9  19.0   8.0   0.9
+!Wbowen
+IB0001 MAJESTIC             . IB0001 2000.  22.5  0.8   0.6  17.0   8.0   0.8
+CP0001 INIAP ESPERANZA      . IB0001 2000.  25.0  0.7   0.6  19.0   8.0   0.7
+CP0002 INIAP GABRIELA       . IB0001 2000.  22.0  0.4   0.5  19.0   8.0   0.4
+CP0003 INIAP MARIA          . IB0001 2000.  20.0  0.2   0.6  19.0   8.0   0.2
+CP0004 CHOLA                . IB0001 2000.  25.0  0.7   0.6  19.0   8.0   0.7
+CP0005 INIAP ROSITA         . IB0001 2000.  25.0  0.7   0.6  17.0   8.0   0.7
+CP0006 DTO-33               . IB0001 2000.  25.0  0.7   0.6  17.0   8.0   0.7 !WB TC-19!RR 17 pd0.7
+CP0007 DT0-34               . IB0001 2000.  25.0  0.8   0.6  17.0   8.0   0.8
+CP0009 DT0-35               . IB0001 2000.  25.0  0.2   0.6  17.0   8.0   0.2
+CP0009 DT0-35               . IB0001 2000.  25.0  0.9   0.6  17.0   8.0   0.9
+!CP0006 DTO-33               . IB0001 1000.  24.0  0.6   0.3  16.0 !GLUE
+CP0007 REVOLUCION           . IB0001 2000.  25.0  1.0   0.6  15.0   8.0   1.0 ! wb pd-1, tc15!RR pd-0.4,tc17
+CP0008 MARIVA               . IB0001 1000.  20.0  0.7   0.7  21.0   8.0   0.7
+CP0009 MI PERU              . IB0001 1000.  25.0  0.6   0.6  19.0   8.0   0.6
+CP0010 SUPERCHOLA           . IB0001 2000.  28.0  0.9   0.8  17.0   8.0   0.9 
+CP0011 CAPIRO               . IB0001 1000.  22.0  0.6   0.7  16.5   8.0   0.6 
+IP0013 K BADSHAH            . IB0001 2000.  21.0  1.0   0.8  23.0   8.0   1.0
+IP0014 K BAHAR              . IB0001 2000.  21.0  0.9   0.8  23.0   8.0   0.9
+IB0024 ARBOLONA             . IB0001 2000.  24.0  0.1   0.5  15.0   8.0   0.1
+IB0014 GRANOLA              . IB0001 2000.  25.0  1.0   0.4  17.0   8.0   1.0
+!IB0015 ARBOLONA-lina    IB0001  200.  15.0  0.20   0.3   0.1   4.0
+!Ulrick
+IB0020 ASANTE               . IB0001 2000.  26.0  0.7   0.9  21.0   8.0   0.7
+IB0016 BASE                 . IB0001 2000.  26.0  0.7   0.9  21.0   8.0   0.7
+IB0017 UNO                  . IB0001 2000.  26.0  0.9   0.9  21.0   8.0   0.9 !ASANT-10%shortcyc
+IB0018 DOS                  . IB0001 2000.  26.0  0.7   0.9  23.1   8.0   0.7 !ASANT-base+heat
+IB0019 TRES                 . IB0001 2000.  26.0  0.9   0.9  23.1   8.0   0.9 !ASANT-10%shorcy+hea
+!Bruno
+PR0001 AJANHUIRI            . IB0001  917.  24.9  0.5   0.5  20.6   8.0   0.5
+PR0002 CONDORI              . IB0001 2000.  23.2  0.8   0.6  16.0   8.0   0.8
+PR0003 GENDARME             . IB0001 1000.  21.0  0.6   0.5  17.0   8.0   0.6
+PR0004 ILLIMANY             . IB0001 1600.  21.2  0.9   0.6  19.0   8.0   0.9
+PR0005 IMILLA NEGRA         . IB0001 1200.  21.0  0.9   0.3  15.4   8.0   0.9
+PR0007 MALCHACO             . IB0001 2000.  15.0  0.7   0.6  21.8   8.0   0.7
+PR0008 PAMPENA              . IB0001 2000.  12.0  0.6   0.5  19.9   8.0   0.6
+PR0009 POTOSINA             . IB0001 2000.  10.0  0.8   0.4  18.3   8.0   0.8
+PR0010 PRECIOSA             . IB0001 2000.  10.0  0.9   0.4  15.8   8.0   0.9
+PR0011 SAJAMA               . IB0001 2000.  21.0  0.9   0.6  18.0   8.0   0.9
+PR0012 TOTORENA             . IB0001 2089.  18.3  0.9   0.7  18.4   8.0   0.9
+PR0013 TUNARI               . IB0001 1249.  20.0  0.6   0.4  20.0   8.0   0.6
+PR0006 LUKI                 . IB0001 1600.  21.0  0.8   0.5  15.0   8.0   0.8
+PR0026 LUKI1                . IB0001 2000.  21.0  0.2   0.8  15.0   8.0   0.2 ! 2da cal
+PR0027 L2KI2                . IB0001 2000.  21.0  0.4   0.8  15.0   8.0   0.4 
+PR0028 L3KI3                . IB0001 1000.  21.0  0.5   0.8  14.0   8.0   0.5
+PR0014 WAYCHA               . IB0001 1200.  23.0  0.6   0.3  15.0   8.0   0.6
+PR0050 WYCHA1               . IB0001 1200.  23.0  0.3   0.3  15.0   8.0   0.3
+PR0015 CHASCA               . IB0001 1500.  21.0  0.9   0.6  20.0   8.0   0.9
+PR0016 SANI IMILLA          . IB0001 1200.  10.0  0.9   0.3  15.4   8.0   0.9
+PR0017 ALPHA                . IB0001 1000.  25.0  0.6   0.4  20.0   8.0   0.6
+PR0018 APHA                 . IB0001 1000.  25.0  0.9   0.4  20.0   8.0   0.9
+!IB0008 DESIREE              . IB0001 2000.  25.0  0.9   0.6  17.0
+DM0001 POSMO                . IB0001 1500.  24.0  0.9   0.3  18.0   8.0   0.9
+DM0002 DIANELLA             . IB0001 1800.  24.0  0.6   0.4  18.0   8.0   0.6
+DM0003 SAVA                 . IB0001 1300.  24.0  0.6   0.4  21.0   8.0   0.6
+DM0004 KAPTAH               . IB0001 1500.  24.0  0.6   0.3  18.0   8.0   0.6
+DM0005 TILVA                . IB0001 1500.  24.0  0.6   0.3  18.0   8.0   0.6
+!MTRAVASO
+AR0001 SPUNTA               . IB0001 1800.  24.0  1.0   0.1  19.0   8.0   1.0
+AR0002 HUINKUL              . IB0001 1500.  24.0  1.0   0.2  21.0   8.0   1.0
+AR0003 ACHIRANA             . IB0001 2000.  21.0  0.8   0.5  21.0   8.0   0.8
+AR0004 ACHIRANA1            . IB0001 1000.  21.0  0.2   0.5  18.0   8.0   0.2
+!!!! Modern cultivars calibrated at CIP
+IB0023 AMARILIS             . IB0001 2000.  30.0  0.9   0.9  20.0   8.0   0.9
+IB0040 ASANTE               . IB0001 2000.  26.0  0.7   0.9  21.0   8.0   0.7
+IB0030 SANTE                . IB0001 2000.  25.0  0.9   0.6  17.0   8.0   0.9
+IB0024 KUFRI BAHAR          . IB0001 2000.  21.0  0.9   0.8  23.0   8.0   0.9
+!!!! Virtual cultivars for ASANTE/VICTORIA, created at CIP
+!GF0006 - the 06 stands for the baseline cultivar (identical to IB0040)
+!GF0106 - the 01 stands for a 10% shorter growth cycle (needs to be complemented by adjustments in the harvest date!)
+!GF1206 - the 12 stands for the baseline cultivar + heat tolerance
+!GF1306 - the 13 stands for a 10% shorter growth cycle (needs to be complemented by adjustments in the harvest date!)
+!! Steps performed for allowing for 10% shorter growth cycle:
+!  1. Calculate average of original life cycle length from all experiments, calculate 10% of this value: Average crop age was 101.42 days, 10% is 10 days.
+!  2. Create new experiment for each original experiment in the filesX with harvest date for a 10% shorter growth seasons. Use average value calculated before.
+!  3. Look at yield losses due to this change
+!  4. Adjust PD to reduce part of the yield losses (!The value chosen is a rather arbitrary assumption which should be discussed in the team)
+!@VAR#  VAR-NAME........ EXPNO ECO#    G2    G3    PD    P2    TC    TC+   P5
+GF0006 ASANT-base           . IB0001 2000.  26.0   0.7   0.9  21.0   8.0   0.7
+GF0106 ASANT-10%shortcyc    . IB0001 2000.  26.0   0.9   0.9  21.0   8.0   0.9
+GF1206 ASANT-base+heat      . IB0001 2000.  26.0   0.7   0.9  23.1   8.0   0.7
+GF1306 ASANT-10%shorcy+hea  . IB0001 2000.  26.0   0.9   0.9  23.1   8.0   0.9
+!MGASTELO
+CI0001 CLON7316             . IB0001 2000.  27.0   0.5   0.6  21.0   8.0   0.5 !TC=17-> original, PD=0.9
+CI0002 CLON7716             . IB0001 1000.  30.0   0.2   0.6  21.0   8.0   0.2 !TC=17-> original, PD=0.9
+CI0003 CLON77161            . IB0001 2000.  30.0   0.2   0.8  21.0   8.0   0.2
+CI0004 CLLN77162            . IB0001 2000.  30.0   0.4   0.3  21.0   8.0   0.4
+CI0005 CLLNL7163            . IB0001 1000.  30.0   0.2   0.6  18.0   5.4   0.2
+IB0051 ABLANT14             . IB0001 1000.  25.0   0.2   0.9  17.0   8.0   0.2 
+IB0052 ACLANT15             . IB0001 1000.  25.0   0.9   0.9  18.0   8.0   0.9
+IB0053 ADLANT16             . IB0001 1000.  25.0   0.9   0.9  17.0   8.0   0.9
+IB0054 AELANT17             . IB0001 1000.  25.0   0.2   0.9  17.0   8.0   0.2
+IB0055 AFLANT18             . IB0001 1000.  25.0   0.2   0.9  18.0   8.0   0.2
+IB0056 AGLANT20             . IB0001 1000.  25.0   0.2   0.9  20.0   8.0   0.2
+IB0057 AHLANT21             . IB0001 1000.  25.0   0.2   0.9  21.0   8.0   0.2
+AR0005 ACHIRA14             . IB0001 2000.  21.0   0.8   0.5  14.0   8.0   0.8
+AR0006 BCHIRA15             . IB0001 2000.  21.0   0.8   0.5  15.0   8.0   0.8
+AR0007 CCHIRA16             . IB0001 2000.  21.0   0.8   0.5  16.0   8.0   0.8
+AR0008 DCHIRA17             . IB0001 2000.  21.0   0.8   0.5  17.0   8.0   0.8
+AR0009 ECHIRA18             . IB0001 2000.  21.0   0.2   0.5  17.0   8.0   0.2
+AR0010 FCHIRA20             . IB0001 2000.  21.0   0.2   0.5  18.0   8.0   0.2
+AR0011 GCHIRA21             . IB0001 2000.  21.0   0.8   0.5  18.0   8.0   0.8
+AR0012 GCHI0517             . IB0001 2000.  21.0   0.5   0.5  17.0   8.0   0.5
+CI0006 CA771614             . IB0001 1000.  30.0   0.2   0.6  17.0   8.0   0.2
+CI0007 CB771615             . IB0001 1000.  30.0   0.2   0.6  15.0   8.0   0.2
+CI0008 CC771616             . IB0001 1000.  30.0   0.2   0.6  16.0   8.0   0.2
+CI0009 CD771617             . IB0001 1000.  30.0   0.2   0.6  17.0   8.0   0.2
+CI0010 CE771618             . IB0001 1000.  30.0   0.8   0.6  17.0   8.0   0.8
+CI0011 CF771619             . IB0001 1000.  30.0   0.8   0.6  18.0   8.0   0.8
+CI0012 CG771620             . IB0001 1000.  30.0   0.2   0.6  17.0   8.0   0.2
+!De Juan
+CP0004 PERRICHOLI           . IB0001 2000.  30.0   0.2   0.8  21.0   8.0   0.2
+CP0005 CLON7754             . IB0001 1800.  22.0   0.2   0.6  18.0   8.0   0.2
+CP0006 CLON7462             . IB0001 1800.  25.0   0.2   0.6  21.0   8.0   0.2
+CP0007 CLON1159             . IB0001 2000.  23.0   0.2   0.6  17.0   8.0   0.2
+!AGMIP 3
+AG0001 AGBURUNDI            . IB0001 2000.  25.0   0.8   0.8  21.0   8.0   0.8
+AG0002 AGBOLIVIA            . IB0001 1600.  24.0   0.7   0.7  21.0   8.0   0.7
+AG0003 AGDENMARK            . IB0001 1200.  22.0   0.9   0.7  18.0   8.0   0.9
+AG0004 AGUNITEDS            . IB0001 1000.  23.0   0.5   0.6  18.0   8.0   0.5

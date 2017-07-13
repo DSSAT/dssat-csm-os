@@ -353,8 +353,8 @@ C-----------------------------------------------------------------------
      &            P2AF,P3AF,P4AF,P5AF,P6AF,
      &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2;
-     &            LNUM = LNUM + 1 
+     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+            LNUM = LNUM + 1 
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
 1800           FORMAT (A6,1X,A16,1X,A6,1X,43F6.0)   

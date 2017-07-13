@@ -32,7 +32,7 @@ C  Called by: WATBAL
 C  Calls  : None
 C=======================================================================
       SUBROUTINE IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT,               !Input
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT , STGDOY,       !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
 
 !-----------------------------------------------------------------------
@@ -47,18 +47,20 @@ C=======================================================================
       PARAMETER (ERRKEY = 'IRRIG')
 
       CHARACTER*1  IIRRI, ISWWAT, PLME, RNMODE, MESOM
+      CHARACTER*5 IOFF   ! old IRON, for compatibility with old files
       CHARACTER*6  SECTION
       CHARACTER*30 FILEIO
       CHARACTER*90 CHAR
       CHARACTER*78 MSG(10)
 
-      INTEGER AIRRCOD, DAP, DYNAMIC, ERRNUM, FOUND, I, IDATE
+      INTEGER AIRRCOD, DAP, DYNAMIC, DAS, ERRNUM, FOUND, I, IDATE
       INTEGER LUNIO, LINC, LNUM
       INTEGER MULTI, NAP, NAPW, JIRR, NLAYR, NTBL, NMSG
       INTEGER YR, MDATE, RUN, YRDOY, YRPLT, YRSIM, TIMDIF
-      INTEGER YRDIF
+      INTEGER YRDIF, NDAYS_DRY
       INTEGER, DIMENSION(NAPPL) :: IDLAPL, IRRCOD
       INTEGER, DIMENSION(NAPPL) :: JULAPL, JULWTB, JWTBRD
+      INTEGER STGDOY(20)
 
       REAL AIRAMT, AIRAMX, ATHETA, DEPIR, DSOIL, DSOILX
       REAL EFFIRR, EFFIRX, IRRAMT
@@ -73,12 +75,35 @@ C=======================================================================
       INTEGER CONDAT(NAPPL)   !, IIRRC(NAPPL)
       REAL BUND(NAPPL), IPERC(NAPPL), PWAT(NAPPL), COND(NAPPL)
       REAL RAIN, IRRAPL, TIL_IRR, PLOWPAN
+      
+!     Growth stage dependent irrigation 
+      REAL AVWAT        ! Available water for irrigation
+	REAL AVWATI(20)   ! Water available for irrigation at planting (mm)
+	REAL IMDEP(20)
+	REAL ITHRL(20)
+	REAL ITHRU(20)
+	INTEGER IRON(20)
+	REAL IRAMT(20)
+	REAL IREFF(20)
+      INTEGER IFREQ(20)
+	CHARACTER*5 V_IRONC(20)
+	CHARACTER*5 IRONC(20)
+      INTEGER IRRFREQ, DaysSinceIrrig
+	REAL AVWATT         ! Water available for irrigation today (mm)
+	INTEGER NGSIrrigs   ! The number of irrigation inputs entered by the user
+	INTEGER IRINC       ! Counter keeping track of irrigation input been used
+	REAL THETAU         ! Threshold, % of available water stopping irrigation
+      INTEGER NWaterLimits !Number of water limit entrees
+      LOGICAL SeasonalWL  ! T or F - only one water limitation for the entire season?
+      REAL GSWatUsed      ! Water used to date in current growth stage
+      REAL, PARAMETER :: VeryLargeNumber = 99999999.
 
 !-----------------------------------------------------------------------
       TYPE (ControlType)  CONTROL
       TYPE (SwitchType)   ISWITCH
       TYPE (SoilType)     SOILPROP
       TYPE (FloodWatType) FLOODWAT
+      Type (MgmtType)     MGMT
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -93,6 +118,9 @@ C=======================================================================
       IIRRI  = ISWITCH % IIRRI
 
       PUDDLED= FLOODWAT % PUDDLED
+
+      DAS = CONTROL % DAS
+
 
 C***********************************************************************
 C***********************************************************************
@@ -119,16 +147,13 @@ C-----------------------------------------------------------------------
       NPERC  = 0  !# percs
 
       IRRAMT = 0.0
-      NAP    = 0
       TOTIR  = 0.
       TOTEFFIRR = 0.
       TIL_IRR = 0.0
+      GSWatUsed = 0.0
+      DaysSinceIrrig = 999
 
       IF (ISWWAT .EQ. 'Y') THEN
-      !Data is read if not sequenced or seasonal run or for first
-      !  season of sequence or seasonal runs.
-!        IF ((INDEX('QF',RNMODE) .EQ. 0 .OR. RUN .EQ. 1) 
-!     &        .AND. MULTI .LE. 1) THEN
 
           JIRR = 0.0
           OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
@@ -163,8 +188,10 @@ C-----------------------------------------------------------------------
             SECTION = '!AUTOM'
             CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
             IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-            READ(LUNIO,'(/,14X,2(1X,F5.0),16X,I2,2(1X,F5.0))',
-     &        IOSTAT=ERRNUM) DSOIL, THETAC, AIRRCOD, AIRAMT, EFFIRR
+            READ(LUNIO,'(/,14X,3(1X,F5.0),1X,A5,4X,I2,2(1X,F5.0))',
+     &        IOSTAT=ERRNUM) DSOIL, THETAC, THETAU, IOFF, AIRRCOD,
+     &                       AIRAMT, EFFIRR
+
             LNUM = LNUM + 2
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
           ENDIF
@@ -205,6 +232,37 @@ C-----------------------------------------------------------------------
    50     CONTINUE
           CLOSE (LUNIO)
 !        ENDIF
+
+!     Import array values for growth stage based irrigation directly from input module
+      IMDEP = SAVE_data % MGMT % V_IMDEP       ! Depth
+      ITHRL = SAVE_data % MGMT % V_ITHRL       ! Lower threshold triggering irrigation
+      ITHRU = SAVE_data % MGMT % V_ITHRU       ! Upper threshold triggering irrigation
+      IRONC = SAVE_data % MGMT % V_IRONC       ! IRON in text (for compatibility)
+      IRON  = SAVE_data % MGMT % V_IRON        ! Growth Stage for parameters
+      IRAMT = SAVE_data % MGMT % V_IRAMT       ! Automatic irrigation with fixed amount
+      IREFF = SAVE_data % MGMT % V_IREFF       ! Irrigation Efficiency fraction
+      AVWATI =SAVE_data % MGMT % V_AVWAT       ! Water available for irrigation
+      IFREQ = SAVE_data % MGMT % V_IFREQ       ! Frequency limitation for irrigation
+      NGSIrrigs  =SAVE_data % MGMT % GSIRRIG
+
+!-----------------------------------------------------------------------
+      IRINC = 1
+
+!     Handle growth stage dependent available water
+      NWaterLimits = 0
+      DO i = 1, NGSIrrigs
+        IF (ABS(AVWATI(i) - -99.) < 1.E-3) THEN
+          AVWATI(i) = VeryLargeNumber  !Set to something huge, no limitation
+        ELSE
+          NWaterLimits = NWaterLimits + 1
+        ENDIF
+      ENDDO
+
+      SeasonalWL = .FALSE.
+      IF (NWaterLimits == 1 .AND. AVWATI(1) < VeryLargeNumber-1) THEN
+        SeasonalWL = .TRUE. 
+        AVWAT = AVWATI(1)
+      ENDIF
 
 C-----------------------------------------------------------------------
 C     Set Irrigation Management
@@ -392,22 +450,6 @@ C
         IF (NMSG > 1) CALL WARNING(NMSG, ERRKEY, MSG)
       ENDIF
 
-!!     Check for using flooded conditions with Century method of 
-!!     soil organic matter.  
-!      MESOM = ISWITCH % MESOM
-!      IF (NBUND .GT. 0 .AND. MESOM .EQ. 'P') THEN
-!!        MSG(1) = 'Flooded field not available with Century SOM model.'
-!!        MSG(2) = 'Change either management or SOM method in FILEX.'
-!!        MSG(3) = 'Program will stop.'
-!
-!        MSG(1) = 
-!     &'Century model was not intended to be used with flooded fields.'
-!        MSG(2) = 'Change either management or SOM method in FILEX.'
-!        CALL WARNING(2, ERRKEY, MSG)
-!!        WRITE(*,'(/,A78,/,A78,/,A78,/)') MSG(1), MSG(2), MSG(3)
-!!        CALL ERROR(ERRKEY, 10, "", 0)
-!      ENDIF
-
 !-----------------------------------------------------------------------
 !     Adjust irrigation dates for multi-year simulations
 !     This section was taken from the MRUN subroutine.
@@ -531,6 +573,8 @@ C-----------------------------------------------------------------------
       CALL PUT('MGMT','IRRAMT',IRRAMT)
       CALL PUT('MGMT','DEPIR', DEPIR)
 
+      NDAYS_DRY = 0
+
       FLOODWAT % PUDDLED = PUDDLED
       FLOODWAT % PLOWPAN = PLOWPAN
 
@@ -539,7 +583,7 @@ C-----------------------------------------------------------------------
 !     DAILY RATE CALCULATIONS
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. RATE) THEN
-C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
       DEPIR  = 0.
       IRRAMT = 0.
       IRRAPL = 0.0
@@ -559,6 +603,14 @@ C-----------------------------------------------------------------------
      &    FLOODWAT,                                       !I/O
      &    DEPIR)                                          !Output
         IF (DEPIR > 1.E-3) NAP = NAP + 1
+
+        IF (FLOODWAT % FLOOD <= 0.0) THEN
+          NDAYS_DRY = NDAYS_DRY + 1
+          IF (NDAYS_DRY > 29) PUDDLED = .FALSE.
+        ELSE
+          NDAYS_DRY = 0
+        ENDIF
+
       ELSE
 
 !-----------------------------------------------------------------------
@@ -607,11 +659,47 @@ C-----------------------------------------------------------------------
 C** IIRRI = A - Automatic irrigation or F-Fixed Amount Automatic Irrigation
 C-----------------------------------------------------------------------
       CASE ('A', 'F')
+
+!-----------------------------------------------------------------------
+!     Check for growth stage dependent irrigation
+      IF (IRINC < NGSIrrigs) THEN
+        IF (YRDOY .GE. STGDOY(IRON(IRINC + 1))) THEN
+          IRINC = IRINC + 1  ! If you reach the next GS specified, add 1 to IRINC
+          GSWatUsed = 0.0    ! reset accumulator for water used in this growth stage
+        END IF
+      ENDIF
+
+      IF (IRINC .GT. NGSIrrigs) THEN
+        IRINC = NGSIrrigs  ! IRINC cannot exceed NGSIrrigs
+      END IF
+
+!     Set variables for growth stage driven simulation
+      DSOIL  = IMDEP(IRINC)
+      THETAC = ITHRL(IRINC)
+      THETAU = ITHRU(IRINC)
+      AIRAMT = IRAMT(IRINC)
+      EFFIRR = IREFF(IRINC)
+      IrrFreq = IFREQ(IRINC)
+
+!     Check for water availability today
+      IF (SeasonalWL) THEN
+!       Water available today = seasonal limitation minus seasonal use
+        AVWATT = AVWAT - TOTIR 
+      ELSE
+!       Water available today = GS limitation minus GS use 
+        AVWATT = AVWATI(IRINC) - GSWatUsed
+      ENDIF
+
+      IF (AVWATT < 1.E-5 .OR. DaysSinceIrrig < IrrFreq) THEN
+          IRRAMT = 0.0
+          DEPIR  = 0.0
+      ELSE
+!       There is water available, check for demand
         IF ((YRDOY .GE. YRPLT .AND. YRDOY .LE. MDATE ).OR. 
      &      (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
           CALL SWDEFICIT(
-     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
+     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
      &        ATHETA, SWDEF)                              !Output
 
           IF (ATHETA .LE. THETAC*0.01) THEN
@@ -630,19 +718,19 @@ C             Apply fixed irrigation amount
               IRRAPL = AIRAMT
             ENDIF
 
+            IF (IRRAPL .GT. AVWATT) THEN  
+              IRRAPL = AVWATT   ! IF irrigation greater than water available, limit irrigation
+            ENDIF
+           
             SELECT CASE(AIRRCOD)
               CASE(1:4,6); TIL_IRR = TIL_IRR + IRRAPL
             END SELECT
 
             DEPIR = DEPIR + IRRAPL
-            NAP = NAP + 1
-!           chp 3/20/2014 these are not used and result in array bounds errors 
-!             in long simulations.
-            !JULAPL(NAP) = YRDOY
-            !AMIR(NAP)   = IRRAPL
+            IF (DEPIR > 0.0001) NAP = NAP + 1
           ENDIF
         ENDIF
-
+       ENDIF
 C-----------------------------------------------------------------------
 C** IIRRI = P - As Reported through last reported day, then automatic
 C          to re-fill profile (as in option A)
@@ -659,7 +747,7 @@ C-----------------------------------------------------------------------
               EXIT LOOP3
             ENDIF
           END DO LOOP3
-        ENDIF
+		ENDIF
 
 C-----------------------------------------------------------------------
 C       If Today's date is after the last record in the IRRIG section
@@ -673,7 +761,7 @@ C-----------------------------------------------------------------------
      &        (YRDOY .GE. YRPLT .AND. MDATE .LE.  -99)) THEN
 
             CALL SWDEFICIT(
-     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW,           !Input
+     &        DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,   !Input
      &        ATHETA, SWDEF)                              !Output
 
             IF (ATHETA .LE. THETAC*0.01) THEN
@@ -720,18 +808,22 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. INTEGR) THEN
 C-----------------------------------------------------------------------
-      IF (DEPIR .GT. 0.0) THEN
-        !NAP    = NAP + 1
+      IF (DEPIR .GT. 1.E-5) THEN
         TOTIR  = TOTIR + DEPIR
         TOTEFFIRR = TOTEFFIRR + IRRAMT
+        GSWatUsed = GSWatUsed + DEPIR
+        DaysSinceIrrig = 1
+      ELSE
+!       Keep track of the number of days since last irrigation
+        DaysSinceIrrig = DaysSinceIrrig + 1
       ENDIF
 
 !     Transfer data to ModuleData
-      CALL PUT('MGMT','DEPIR', DEPIR)   !Total irrig amt today (mm)
-      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm)
-      CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
+      CALL PUT('MGMT','DEPIR', DEPIR)   !Total applied irrig amt today (mm) (includes losses)
       CALL PUT('MGMT','IRRAMT',IRRAMT)  !Effective irrig amt today (mm)
-
+      CALL PUT('MGMT','TOTIR', TOTIR)   !Total applied irrigation (mm) (includes losses)
+      CALL PUT('MGMT','TOTEFFIRR',TOTEFFIRR) !Total effective irrigation (mm)
+      CALL PUT('MGMT','EFFIRR',EFFIRR)  !Effective irrigation %
 !***********************************************************************
       ENDIF
 !***********************************************************************
@@ -750,7 +842,7 @@ C  Determines soil water deficit for automatic irrigation requirments
 C-----------------------------------------------------------------------
 
       SUBROUTINE SWDEFICIT(
-     &    DSOIL, DLAYR, DUL, LL, NLAYR, SW,               !Input
+     &    DSOIL, DLAYR, DUL, LL, NLAYR, SW, THETAU,       !Input
      &    ATHETA, SWDEF)                                  !Output
 
       USE ModuleDefs
@@ -762,6 +854,7 @@ C-----------------------------------------------------------------------
       INTEGER L, NLAYR
       REAL, DIMENSION(NL) :: DLAYR, DUL, LL, SW
       REAL ATHETA, DEPMAX, DSOIL, SWDEF, TSWTOP, WET1, XDEP, XDEPL
+      REAL THETAU
 
       WET1 = 0.0
       DEPMAX = 0.0
@@ -783,7 +876,8 @@ C-----------------------------------------------------------------------
       ENDDO
 
       ATHETA = TSWTOP / WET1
-      SWDEF  = MAX(0.0,(WET1 - TSWTOP))
+!      SWDEF  = MAX(0.0,(WET1 - (TSWTOP)))                 ! old, upper limit for automatic irrigation does not work
+      SWDEF  = MAX(0.0,((WET1*THETAU*0.01) - TSWTOP))
 
       RETURN
       END SUBROUTINE SWDEFICIT
@@ -842,7 +936,7 @@ C=======================================================================
 ! NTBL      Number of water table values read 
 ! SECTION   Section name in input file 
 ! SWDEF     Soil water deficit (cm)
-! THETAC    Threshold, % of maximum available water triggering irrigation
+! THETAC    Threshold, % of available water triggering irrigation
 !             (%)
 ! THETCX    Threshold for automatic aplication, % of maximum avail water.
 !             (%)

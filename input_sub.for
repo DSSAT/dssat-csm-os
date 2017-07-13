@@ -87,9 +87,9 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMSOI.BLK'
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMSOI.blk'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER*  1 WMODI, RNMODE
       CHARACTER*  2 CROP,PRCROP
@@ -139,7 +139,7 @@ C-----------------------------------------------------------------------
 C   Fortran Compaq Visual Fortran
 C-----------------------------------------------------------------------
       CALL GETARG (0,INPUTX)
-      call path_adj(inputx)
+!      call path_adj(inputx)
       IPX = LEN_TRIM(INPUTX)
 D     INPUTX = STDPATH // 'DSCSM046.EXE'
       CALL PATHD  (DSSATP,INPUTX,IPX)
@@ -148,7 +148,7 @@ D     INPUTX = STDPATH // 'DSCSM046.EXE'
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      INPUT = INPUTX((index(inputx,slash,back=.true.)+1):IPX)
+!      INPUT = INPUTX((index(inputx,slash,back=.true.)+1):IPX)
 
 C-----------------------------------------------------------------------
 C    Initialize and delete previous copy of FILEIO
