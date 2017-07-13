@@ -2477,28 +2477,11 @@
           ! Additional controls that not handled by CSM
           ! To get name and location of x-file to -> special controls.
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'AFILE',filea)
-          !LPM 05MAY2017 modified to allow the use of default path
-          !FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+          FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
           CALL LTRIM2 (FILEX,filenew)
           FILELEN = TVILENT(FILENEW)
-          !LPM 05MAY2017 modified to allow the use of default path
-          !FILENEW(FILELEN:FILELEN)= 'X'
-          !FILEX = FILENEW
-          FILELEN = MAX(FILELEN-12, 0) 
-            
-            IF (TVILENT(FILEADIR).GT.3) THEN
-              IF (FILEADIR(TVILENT(FILEADIR):
-     &            TVILENT(FILEADIR)).NE.SLASH)THEN
-                FILEX = FILEADIR(1:TVILENT(FILEADIR))//
-     &           SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
-              ELSE
-                FILEX = FILEADIR(1:TVILENT(FILEADIR))//
-     &           EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
-              ENDIF
-            ELSE
-              FILEX = FILENEW(1:FILELEN-12)//EXCODE(1:8)//'.'//
-     &         EXCODE(9:10)//'X'
-            ENDIF  
+          FILENEW(FILELEN:FILELEN)= 'X'
+          FILEX = FILENEW
           ! Experimental controls
           CALL XREADC(FILEX,TN,RN,SN,ON,CN,'LLIFE',cfllflife)
         ENDIF
@@ -2929,7 +2912,7 @@
 !       Read ecotype information
 !-----------------------------------------------------------------------
 
-        IF (RNMODE.NE.'T') CALL FVCHECK(ECDIRFLE,GENFLCHK) !LPM 28FEB2017 Modified to avoid verification of ecotype file according to LAH 
+        CALL FVCHECK(ECDIRFLE,GENFLCHK)
         CALL ECREADR (ECDIRFLE,ECONO,'HTSTD',canhts)
         CALL ECREADR (ECDIRFLE,ECONO,'SRN%S',srnpcs)
         IF (SRNPCS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)

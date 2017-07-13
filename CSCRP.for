@@ -2949,27 +2949,11 @@
           ! Additional controls that not handled by CSM
           ! To get name and location of x-file to -> special controls.
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'AFILE',filea)
-          !LPM 05MAY2017 modified to allow the use of default path
-          !FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
+          FILEX = FILEADIR(1:TVILENT(FILEADIR))//FILEA(1:TVILENT(FILEA))
           CALL LTRIM2 (FILEX,filenew)
           FILELEN = TVILENT(FILENEW)
-          !FILENEW(FILELEN:FILELEN)= 'X'
-          !FILEX = FILENEW
-          FILELEN = MAX(FILELEN-12, 0) 
-
-            IF (TVILENT(FILEADIR).GT.3) THEN
-              IF (FILEADIR(TVILENT(FILEADIR):
-     &            TVILENT(FILEADIR)).NE.SLASH)THEN
-                FILEX = FILEADIR(1:TVILENT(FILEADIR))//
-     &           SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
-              ELSE
-                FILEX = FILEADIR(1:TVILENT(FILEADIR))//
-     &           EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
-              ENDIF
-            ELSE
-              FILEX = FILENEW(1:FILELEN-12)//EXCODE(1:8)//'.'//
-     &         EXCODE(9:10)//'X'
-            ENDIF  
+          FILENEW(FILELEN:FILELEN)= 'X'
+          FILEX = FILENEW
           ! Experimental controls
           CALL XREADC(FILEX,TN,RN,SN,ON,CN,'PHASE',cflphaseadj)
           IF (CFLPHASEADJ.NE.'N'.AND.CFLPHASEADJ.NE.'Y') THEN
@@ -5200,7 +5184,7 @@
           WRITE(MESSAGE(1),'(A34,A37)')
      &      'NO reserve CH2O included in the wt',
      &      ' of leaves,stems,and crown.          ' 
-          CALL WARNING(1,'CSCRP',MESSAGE)
+          CALL WARNING(1,'CSCAS',MESSAGE)
           WRITE(Fnumwrk,*)' '
           WRITE(FNUMWRK,'(A35,A38)')
      &      ' NO reserve CH2O included in the wt',
@@ -5211,7 +5195,7 @@
           WRITE(MESSAGE(1),'(A34,A37)')
      &      'NO reserve CH2O included in the wt',
      &      ' of leaves,stems,and crown.          ' 
-          CALL WARNING(1,'CSCRP',MESSAGE)
+          CALL WARNING(1,'CSCAS',MESSAGE)
           WRITE(Fnumwrk,*)' '
           WRITE(FNUMWRK,'(A35,A38)')
      &      ' NO reserve CH2O included in the wt',
@@ -5479,7 +5463,7 @@
           IF (EO.GT.0.0) EOC = EOC + EO
           
           ! Cumulative canopy-air temperature difference
-          TDIFSUM = TDIFSUM+(TCAN-TMEAN)                                                                               !EQN 144
+          TDIFSUM = TDIFSUM+(TCAN-TMEAN)
           TDIFNUM = TDIFNUM + 1
           TDIFAV = TDIFSUM/TDIFNUM
 
@@ -13130,14 +13114,14 @@
         IF (.NOT.fopen) OPEN (UNIT = fnumwrk,FILE = 'WORK.OUT')
       ENDIF
 
-      RT = 8.314 * ((TMAX+TMIN)*0.5 + 273.0)             ! N.m/mol ??                                                  !EQN 059
-      VPAIR = CSVPSAT(TDEW)                              ! Pa                                                          !EQN 061
-      DAIR = 0.1*18.0/RT*((PATM-VPAIR)/0.622+VPAIR)      ! kg/m3                                                       !EQN 064
-      LHVAP = (2501.0-2.373*(TMAX+TMIN)*0.5)*1000.0      ! J/kg                                                        !EQN 065
-      PSYCON = SHAIR * PATM / (0.622*LHVAP)              ! Pa/K                                                        !EQN 066
-      VPSAT = (CSVPSAT(TMAX)+CSVPSAT(TMIN)) / 2.0        ! Pa                                                          !EQN 062
-      VPD = VPSAT - VPAIR                                ! Pa                                                          !EQN 063
-      S = (VPSLOP(TMAX)+VPSLOP(TMIN)) / 2.0              ! Pa/K                                                        !EQN 067-068 vpslop defined on HMET line 666
+      RT = 8.314 * ((TMAX+TMIN)*0.5 + 273.0)             ! N.m/mol ??
+      VPAIR = CSVPSAT(TDEW)                              ! Pa
+      DAIR = 0.1*18.0/RT*((PATM-VPAIR)/0.622+VPAIR)      ! kg/m3
+      LHVAP = (2501.0-2.373*(TMAX+TMIN)*0.5)*1000.0      ! J/kg
+      PSYCON = SHAIR * PATM / (0.622*LHVAP)              ! Pa/K
+      VPSAT = (CSVPSAT(TMAX)+CSVPSAT(TMIN)) / 2.0        ! Pa
+      VPD = VPSAT - VPAIR                                ! Pa
+      S = (VPSLOP(TMAX)+VPSLOP(TMIN)) / 2.0              ! Pa/K
 
       ! Default for use when no RATM specified for EO
       IF (TASKFLAG.EQ.'O') THEN
@@ -13151,7 +13135,7 @@
 
       ! Adjusted resistance
       IF (TASKFLAG.EQ.'R') THEN
-         RSADJ =                                                                                                       !EQN 069
+         RSADJ =
      &    ((((((S*RNETMG+(DAIR*1.0E-2*SHAIR*1.0E-6*VPD)
      &    /(RATM*1.157407E-05))/
      &    TVR1)-S))/PSYCON)-1)*(RATM*1.157407E-05)
@@ -13164,34 +13148,34 @@
         ! Net radiation (MJ/m2/d). RADB constants Jensen et al (1989)
         ! for semi-humid conditions. 0.005 changes 0.158 from kPa to Pa.
         G = 0.0
-        TK4 = ((TMAX+273.)**4+(TMIN+273.)**4) / 2.0                                                                    !EQN 075
-        RADB = SBZCON*TK4*(0.4-0.005*SQRT(VPAIR))*(1.1*(1.-CLOUDS)-0.1)                                                !EQN 074
-        RNET= (1.0-ALBEDO)*SRAD - RADB                                                                                 !EQN 072
-        RNETMG = (RNET-G) / LHVAP * 1.0E6 ! MJ/m2.d to mm/day                                                          !EQN 071
+        TK4 = ((TMAX+273.)**4+(TMIN+273.)**4) / 2.0
+        RADB = SBZCON*TK4*(0.4-0.005*SQRT(VPAIR))*(1.1*(1.-CLOUDS)-0.1)
+        RNET= (1.0-ALBEDO)*SRAD - RADB
+        RNETMG = (RNET-G) / LHVAP * 1.0E6 ! MJ/m2.d to mm/day
         ! Resistance using FAO wind function. Multipliers for WNDFAO are
         ! 1000 times smaller than Jensen et al (1979) to convert VPD Pa
         ! to kPa.
-        WFNFAO = 0.0027 * (1.0+0.01*WINDSP)                                                                            !EQN 078
-        EOPEN = (S*RNETMG + PSYCON*WFNFAO*VPD) / (S+PSYCON)                                                            !EQN 070
+        WFNFAO = 0.0027 * (1.0+0.01*WINDSP)
+        EOPEN = (S*RNETMG + PSYCON*WFNFAO*VPD) / (S+PSYCON)
       ENDIF
 
       ! Monteith-Penman
       IF (TASKFLAG.EQ.'A'.OR.TASKFLAG.EQ.MEEVP) THEN
-        EOMP = ((S*RNETMG+(DAIR*1.0E-2*SHAIR*1.0E-6*VPD)                                                               !EQN 079
+        EOMP = ((S*RNETMG+(DAIR*1.0E-2*SHAIR*1.0E-6*VPD)
      &   /(RATM*1.157407E-05))/
      &   (S+PSYCON*(1+rcrop/ratm)))
       ENDIF
 
       ! Priestley-Taylor (so-called!)
       IF (TASKFLAG.EQ.'A'.OR.TASKFLAG.EQ.MEEVP) THEN
-        TD = 0.60*TMAX+0.40*TMIN                                                                                       !EQN 083
-        SLANG = SRAD*23.923                                                                                            !EQN 082
-        EEQ = SLANG*(2.04E-4-1.83E-4*ALBEDO)*(TD+29.0)                                                                 !EQN 081
-        EOPT = EEQ*1.1                                                                                                 !EQN 080b
+        TD = 0.60*TMAX+0.40*TMIN
+        SLANG = SRAD*23.923
+        EEQ = SLANG*(2.04E-4-1.83E-4*ALBEDO)*(TD+29.0)
+        EOPT = EEQ*1.1
         IF (TMAX .GT. 35.0) THEN
-          EOPT = EEQ*((TMAX-35.0)*0.05+1.1)                                                                            !EQN 080c
+          EOPT = EEQ*((TMAX-35.0)*0.05+1.1)
         ELSE IF (TMAX .LT. 5.0) THEN
-          EOPT = EEQ*0.01*EXP(0.18*(TMAX+20.0))                                                                        !EQN 080a
+          EOPT = EEQ*0.01*EXP(0.18*(TMAX+20.0))
         ENDIF
         ! From CSM (Gives slightly different results.Maybe albedo)
         !  TD = 0.60*TMAX+0.40*TMIN
@@ -13216,13 +13200,13 @@
         tair = (tmax+tmin)/2.0
         sigma=5.673*1.0E-8     ! Stephan Bolzman constant (J m-2k-4s-1)
         !emisa=0.72+0.005*tair
-        emisa=0.61+0.05*sqrt(vpair/100)! Emissivity,cloudless Campbell                                                 !EQN 084
-        emisac=emisa+clouds*(1.-emisa-(8.0/(tair+273.0)))                                                              !EQN 085
-        dlw=emisac*sigma*(tair+273.0)**4.                                                                              !EQN 086
+        emisa=0.61+0.05*sqrt(vpair/100)! Emissivity,cloudless Campbell
+        emisac=emisa+clouds*(1.-emisa-(8.0/(tair+273.0)))
+        dlw=emisac*sigma*(tair+273.0)**4.
         cp=1.005                           ! Specific heat (J g-1 c-1)
         apress=100000.0                    ! Atmospheric pressure (pa)
-        rhoa=(3.4838*apress/(tair+273.))   ! Air density  (g/m3)                                                       !EQN 087
-        htvap=2500.3-2.297*tair            ! Latent ht  J g-1                                                          !EQN 088
+        rhoa=(3.4838*apress/(tair+273.))   ! Air density  (g/m3)
+        htvap=2500.3-2.297*tair            ! Latent ht  J g-1
         dlw = dlw*(60.0*60.0*24.0*1.0E-6)  ! MJ/,2.d <-- J/m2.s
         tcan = tair
         loops = 0
@@ -13230,8 +13214,8 @@
         subvar = 1.0
  333    CONTINUE
         loops = loops + 1
-        vpaircan = CSVPSAT(tcan)                    ! Pa                                                               !EQN 089
-        hfluxc=(cp*rhoa*(tcan-tair)/(ratm*0.6))     ! Heat J/m2.s                                                      !EQN 090
+        vpaircan = CSVPSAT(tcan)                    ! Pa
+        hfluxc=(cp*rhoa*(tcan-tair)/(ratm*0.6))     ! Heat J/m2.s
         hfluxc = hfluxc/(1.0E6/(60.0*60.0*24.0))    ! MJ/,2.d <-- J/m2.s
         IF (taskflag.NE.'C') THEN
           ! Calculate leflux (ie.EO}
@@ -13240,9 +13224,9 @@
           lefluxc = lefluxc/(1.0E6/(60.0*60.0*24.0))! MJ/,2.d <-- J/m2.s
         ELSEIF (TASKFLAG.EQ.'C') THEN
           ! Use eo brought into routine (Calculate canopy temp)
-          lefluxc = eo/1.0E6*lhvap                                                                                     !EQN 143
+          lefluxc = eo/1.0E6*lhvap  
         ENDIF
-        ulw=sigma*(tcan+273.)**4.   ! Upward long wave radiation                                                       !EQN 092
+        ulw=sigma*(tcan+273.)**4.   ! Upward long wave radiation
         ulw = ulw/(1.0E6/(60.0*60.0*24.0))  ! MJ/,2.d <-- J/m2.s
         input = (srad+dlw)
         output = ulw + hfluxc + lefluxc
@@ -13251,7 +13235,7 @@
           IF (addvar.GE.0.5.AND.addvar.LT.1.0) subvar = 0.3
           IF (addvar.GE.0.3.AND.addvar.LT.0.5) subvar = 0.2
           IF (addvar.GE.0.2.AND.addvar.LT.0.3) subvar = 0.1
-          tcan = tcan + addvar                                                                                         !EQN 093a
+          tcan = tcan + addvar
           IF (loops.LT.20.AND.ABS(input-output).GE.1.0) GO TO 333
         ENDIF
         IF (input.LT.output) THEN
@@ -13259,10 +13243,10 @@
           IF (subvar.GE.0.5.AND.subvar.LT.1.0) addvar = 0.3
           IF (subvar.GE.0.3.AND.subvar.LT.0.5) addvar = 0.2
           IF (subvar.GE.0.2.AND.subvar.LT.0.3) addvar = 0.1
-          TCAN = TCAN - subvar                                                                                         !EQN 093b
+          TCAN = TCAN - subvar
           IF (loops.LT.20.AND.ABS(input-output).GE.1.0) GO TO 333
         ENDIF
-        eoe = lefluxc/lhvap*1.0E6                                                                                      !EQN 094
+        eoe = lefluxc/lhvap*1.0E6
       ENDIF
 
       RETURN
