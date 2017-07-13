@@ -13,7 +13,7 @@ C=======================================================================
       SUBROUTINE OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, PAR, RAIN, SRAD,         !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
-     &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
+     &    TMIN, TWILEN, WINDSP, WEATHER)       !Daily values
 
 !     Daily values:
 !     SRAD,TMAX,TMIN,RAIN,TDEW,WINDSP,PAR,RHUM
@@ -40,6 +40,7 @@ C=======================================================================
      &  CLOUDS, CO2, DAYL, PAR, RAIN, SRAD, 
      &  TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, WINDSP, VPDF, vpd_transp
+
 
       LOGICAL FEXIST
       TYPE (WeatherType) WEATHER

@@ -523,11 +523,13 @@
 !     Calculate function for modifying pod setting with temperature
 !-----------------------------------------------------------------------
         TEMPOD = 0.
-        DO I = 1,24
+        DO I = 1,TS
           TEMPOD = TEMPOD +
      &      CURV(TYPPDT,FNPDT(1),FNPDT(2),FNPDT(3),FNPDT(4),TGRO(I))
         ENDDO
-        TEMPOD = TEMPOD/24.
+        TEMPOD = TEMPOD/REAL(TS)
+C 24 changed to TS on 3Jul17 by Bruce Kimball
+        
 !-----------------------------------------------------------------------
 !     Avg soil water (SWBAR) over DSWBAR depth to affect flower,
 !         pod addition

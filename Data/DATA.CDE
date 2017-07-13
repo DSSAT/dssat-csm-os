@@ -305,22 +305,6 @@ WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
 TFDD   Temp.factor,dev Temperature factor for development (0-1)                 .
 RSFPD  Reserves factor Reserves factor for photosynthesis (0-1)                 .
-!SALUS-Simple-specific daily variables
-RELTT  Rel.Therm Time  Relative thermal time 
-RUE    Rad. Use Eff.   Radiation Use Efficiency (g/MJ)
-RELLAI Rel. LAI        Relative Leaf Area Index
-DTTC   Cum deg-days    Cumulative growing degree days (°C-d) 
-MPLA   Main stem LAI   Main stem leaf area index
-TPLA   Tiller LAI      Tiller (sum) leaf area index
-PLA    Plant LAI       Plant LAI, same as XLAI 
-NOLN   # Leaf Nodes    Number of Leaf Nodes
-ATRS   Accum Temp Rep  Accumulated Temperature during Reproductive Stage        .
-HERB   Herbage kg/ha   Herbage mass harvested kg/ha                             .
-FHL%   % Leaf in herb  Percent leaf in the harvested herbage                    .
-LF%D   % Leaf of tops  Percent leaf of tops (LWAD*100/CWAD)                     .
-DWTCO  Dead canopy     Dead canopy weight (kg [dm]/ha)
-DWTLO  Dead leaf       Dead leaf weight (kg [dm]/ha)
-DWTSO  Dead stem       Dead stem weight (kg [dm]/ha)
 
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -426,6 +410,7 @@ NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 OXRN   Oxnitr kgN/ha/d Ox Layer Nitrif Rt (kg [N]/ha/d)                         .
 R#AC   Res Applic #    Number of organic matter applications                    .
+RADN   Solar@noon W/m2 Solar radiation at noon (W/m2)                           .
 RCNF   Roots Crit N Fc Roots critical [N] factor (ratio)                        .
 RN%CD  RootN% critical Root tissue critical N conc. (%)                         .
 RN%D   Root N %        Root N concentration (%)                                 .
@@ -465,6 +450,8 @@ DTWT   Water table cm  Water table depth (cm)                                   
 EFAA   Flood evap mm/d Avg flood evaporation (mm/d)                             .
 EMAA   Mulch EVAP mm/d Average mulch evaporation (mm/d)                         .
 EMAC   Mulch EVAP mm   Cumulative mulch evaporation (mm)                        .
+Enit   Evap@midnt mm/h Soil evaporation rate at midnight (mm/h)                 .
+Enoon  Evap@noon mm/h  Soil evaporation rate at noon (mm/h)                     .
 EOAA   Pot ET mm/d     Avg pot.evapotranspiration (mm/d)                        .
 EOAC   Pot ET mm       Cumulative potential evapotranspiration (mm)             .
 EOAD   Pot ET mm/d     Potential evapotranspiration (mm/d)                      .
@@ -490,6 +477,8 @@ ESAD   Soil EVAP mm/d  Soil evaporation (mm/d)                                  
 ETAA   Evapotrans mm/d Avg evapotranspiration (mm/d)                            .
 ETAC   Evapotrans mm   Cumulative evapotranspiration (mm)                       .
 ETAD   Evapotrans mm/d Evapotranspiration (mm/d)                                .
+ETnit  ET@midnite mm/h Evapotranspiration rate at midnight (mm/h)               .
+ETNOON ET@noon mm/h    Evapotranspiration rate at noon (mm/h)                   .
 H2OA   H2O in root zn  Water available in root zone (mm)                        .
 IR#C   Irrigation #    Irrigation applications (no)                             .
 IRRC   Irrig effect mm Cumulative effective irrigation (mm)                     .
@@ -518,10 +507,12 @@ SW9D   SWC layer 9     Soil water, soil layer 9 (cm3/cm3)                       
 SWTD   Total water     Total soil water in profile (mm)                         .
 SWXD   Extr water mm   Extractable water (mm)                                   .
 TCADD  Canopy-air temp Canopy-air temperature difference (oC)                   .
+TCnt   Cano.T midnight Canopy temperature at midnight (oC)                      TCAN(h)
 TDFC   Cum. tile drain Cumulative water lost to tile drain (mm)                 .
 TDFD   Tile drainage   Water lost to tile drain (mm/d)                          .
 TMINA  Minimum temp °C Avg minimum air temperature (°C)                         TMNA
 TMAXA  Maximum temp °C Avg maximum air temperature (°C)                         TMXA
+TSRNIT Surf T midnight Surface temperature midnight (°C)                        TSURF
 TS0D   Surface temp °C Soil surface temperature (°C)                            .
 TS10   S-TMP layer 10  Soil temperature, soil layer 10(°C)                      .
 TS1D   S-TMP layer 1   Soil temperature, soil layer 1 (°C)                      .
@@ -533,25 +524,48 @@ TS6D   S-TMP layer 6   Soil temperature, soil layer 6 (°C)                      
 TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (°C)                      .
 TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (°C)                      .
 TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (°C)                      .
+WINNIT Wind speed(noon)Wind speed at midnight (m/s)                             WINDHR 
 
 *CARBON
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 CGRD   CGR g/m2.d      Crop growth rate (g [top+store]/(m2.d))                  .
 CHAD   CH2O g/m2.d     Carbohydrate accumulation (g [CH2O]/(m2.d))              .
+CSHn   Lf conductance  Leaf conductance to water for sunlit leaves at noon m/s  CONDSH
+CSHt   Lf conductance  Leaf conductance to water for sunlit leaves midnight m/s CONDSH
+CSLn   Lf conductance  Leaf conductance to water for shaded leaves at noon m/s  CONDSL
+CSLt   Lf conductance  Leaf conductance to water for shaded leaves midnight m/s CONDSL
 CL%D   LEAF CH2O %     Carbohydrate in leaf (%)                                 .
 CMAD   CH2O MOB g/m2.d Carbohydrate mobilization (g [CH2O]/(m2.d))              .
 CS%D   STEM C %        Carbohydrate in stem (%)                                 .
 GC%D   GRAIN CH2O %    Seed carbohydrate concentration (%)                      .
+Enit   Evap@midnt mm/h Soil evaporation rate at midnight (mm/h)                 EHR
+ENN    Evap@noon mm/h  Soil evaporation rate at noon (mm/h)                     EHR
+ETnt   ET@midnite mm/h Evapotranspiration rate at midnight (mm/h)               .
+ETn    ET@noon mm/h    Evapotranspiration rate at noon (mm/h)                   .
+GMT    Mt S Ht Fx W/m2 Midnight surface Soil Heat Flux (W/m2)                   .
+GN     Nn S Ht Fx W/m2 Noon surface Soil Heat Flux (W/m2)                       .
 GRAD   GR RESP g/m2.d  Growth respiration (g [CH2O]/(m2.d))                     .
 HUM1   SOIL C1 kg/ha   Soil carbon in layer 1 (kg/ha)                           .
 HUM2   SOIL C2 kg/ha   Soil carbon in layer 2 (kg/ha)                           .
 HUM3   SOIL C3 kg/ha   Soil carbon in layer 3 (kg/ha)                           .
 HUM4   SOIL C4 kg/ha   Soil carbon in layer 4 (kg/ha)                           .
 HUM5   SOIL C5 kg/ha   Soil carbon in layer 5 (kg/ha)                           .
+LH1n   Nn Lt Ht 1 W/m2 Noon latent heat flux from sunlit leaves (W/m2)          .
+LH2n   Nn Lt Ht 2 W/m2 Noon latent heat flux from shaded leaves (W/m2)          .
+LH3n   Nn Lt Ht 3 W/m2 Noon latent heat flux from soil surface (W/m2)           .
+LH1t   Mt Lt Ht 1 W/m2 Midnight latent heat flux from sunlit leaves (W/m2)      .
+LH2t   Mt Lt Ht 2 W/m2 Midnight latent heat flux from shaded leaves (W/m2)      .
+LH3t   Mt Lt Ht 3 W/m2 Midnight latent heat flux from soil surface (W/m2)      .
+LHN    Nn Lt Ht (W/m2) Noon total latent heat flux (W/m2)                       .
+LHT    MT Lt Ht (W/m2) Midnight total latent heat flux (W/m2)                   .
 LI%D   LIGHT INTER %   Light (PAR) interception (%)                             .
 LI%N   NOON LIGHT IN % Noon light (PAR) interception (%)                        .
 LMHN   NOON PMAX,SHADE Noon Pmax shaded leaves (mg/(m2.s))                      .
 LMLN   NOON PMAX,LIGHT Noon Pmax sunlit leaves (mg/(m2.s))                      .
+LSHn   LAI-shaded noon Leaf area index of shaded leaves at noon (m2/m2)         LAISH 
+LSHt   LAIshaded night Leaf area index of shaded leaves at midnight (m2/m2)     LAISH 
+LSLt   LAIsunlit night Leaf area index of sunlit leaves at midnight (m2/m2)     LAISL
+LSLn   LAI-sunlit noon noon Leaf area index of sunlit leaves at noon            LAISL
 MRAD   M RESP g/m2.d   Maintenance resp (g [CH2O]/(m2.d))                       .
 N%HN   NOON N,SHADE %  Noon N shaded leaves (%)                                 .
 N%LN   NOON N,LIGHT %  Noon N sunlit leaves (%)                                 .
@@ -565,7 +579,21 @@ ONAC   ON APPL kg/ha   Cumulative N in applied organic matter (kg [N]/ha)       
 OPAC   OP APPL kg/ha   Cumulative P in applied organic matter (kg [P]/ha)       .
 PHAD   P GROSS g/m2.d  Gross photosynthesis (g [CH2O]/(m2.d))                   .
 PHAN   PG,NOON mg/m2.s Gross photosyn.,noon (mg CO2/(m2.s))                     .
+RSHN   Rshn s/m        Noon resistance of shaded leaves (s/m)                   .
+RSHT   Rsht s/m        Midnight resistance of shaded leaves (s/m)               .
+RSLN   Rsln s/m        Noon resistance of sunlit leaves (s/m)                   .
+RSLT   Rslt s/m        Midnight resistance of sunlit leaves (s/m)               .
+RSSN   Rssn s/m        Noon resistance of soil surface (s/m)                    .
+RSST   Rsst s/m        Midnight resistance of soil surface (s/m)                .
 SCDD   SOIL ORG C      Stable soil org. C @ user depth (kg/ha)                  .
+SHN    Noon Sn Ht W/m2 Noon total sensible heat (W/m2)                          .
+SHT    Mdnt Sn Ht W/m2 Midnight total sensible heat (W/m2)                      .
+SH1N   Nn Sn Ht 1 W/m2 Noon sensible heat from sunlit leaves (W/m2)             .
+SH2N   Nn Sn Ht 2 W/m2 Noon sensisble heat from shaded leaves (W/m2)            .
+SH3N   Nn Sn Ht 3 W/m2 Noon sensible heat from soil surface (W/m2)              .
+SH1T   Mt Sn Ht 1 W/m2 Midnight sensible heat from sunlit leaves (W/m2)         .
+SN2T   Mt Sn Ht 2 W/m2 Midnight sensible heat from shaded leaves (W/m2)         .
+SN3T   Mt Sn Ht 3 W/m2 Midnight sensible heat from soil surface (W/m2)          .
 SLHN   NOON SLW,SHADE  SLW in shaded leaves,noon (mg [dm]/cm2)                  .
 SLLN   NOON SLW,Light  SLW in sunlit leaves,noon (mg [dm]/cm2)                  .
 SNDD   SOIL ORG N      Stable soil org. N @ user depth (kg/ha)                  .
@@ -573,11 +601,23 @@ SOCD   SOIL OC kg/ha   Soil plus surface organic carbon (kg/ha)                 
 SOND   SOIL ON kg/ha   Soil plus surface organic nitrogen (kg/ha)               .
 SOPD   SOIL OP kg/ha   Soil plus surface organic phosphorus (kg/ha)             .
 SPDD   SOIL ORG P      Stable soil org. P @ user depth (kg/ha)                  .
+TCNN   Canopy T noon   Canopy temperature at noon (oC)                          .
+TEMt   Temp/h midnight Hourly air temperature at midnight                       TAIRHR
 TFOM   RESIDUE kg/ha   Plant residue remaining (kg [dm]/ha)                     .
 TFON   RESIDUE N kg/ha Plant residue N remaining (kg/ha)                        .
 TGAV   AVG CAN TMP °C  Daily average canopy temp (°C)                           .
-TGNN   NOON CAN TMP °C Noon canopy temperature (°C)                             .
+TGON   NOON GRO TMP °C Noon growth temperature (°C)                             .
+Tnit   Temp midnight°C Temperature midnight (°C)                                THR
+TNN    T@noon mm/h     Transpiration rate at noon (mm/h) 
+TSR1n  Sur T sunlit nt Surface temperature sunlit leaves midnight (°C)          TSURF(1)
+TSR1t  Sur T sunlit nt Surface temperature sunlit leaves midnight (°C)          TSURF(1)
+TSR2n  Sur T sunlit nt Surface temperature shaded leaves midnight (°C)          TSURF(2)
+TSR2t  Sur T sunlit nt Surface temperature shaded leaves midnight (°C)          TSURF(2)
+TSR3n  Sur T sunlit nt Surface temperature soil  midnight (°C)                  TSURF(3)
+TSR3t  Sur T sunlit nt Surface temperature soil  midnight (°C)                  TSURF(3)
 TWAD   TOTAL WT kg/ha  Tops+roots+storage wt (kg [dm]/ha)                       .
+WDNN   Wind speed(noon)Wind speed at noon (m/s)                                 WINDHR 
+WINn   Wind speed(noon)Wind speed at noon (m/s)                                 WINDHR 
 
 *PESTS
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS

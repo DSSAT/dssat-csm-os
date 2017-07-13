@@ -484,7 +484,8 @@ C-----------------------------------------------------------------------
           WRITE (NOUTPC,510) YEAR, DOY, DAS, DAP,
      &        NINT(TOTWT*10), PG, CMINEA, GROWTH,
      &        GRWRES, MAINR, (CADLF + CADST), RHOLP, RHOSP,
-     &        TGRO(12), TGROAV, PCNSDP, PCLSDP, PCCSDP
+     &        TGRO(TS/2), TGROAV, PCNSDP, PCLSDP, PCCSDP
+C       changed from 12 to TS/2 on 9Jul17 by Bruce Kimball
   510     FORMAT(1X,I4,1X,I3.3,2(1X,I5),1X,I6,5(F8.4),F8.5,2(F7.3),
      &        2(1X,F6.3),3(1X,F7.4))
 !  510     FORMAT(1X,I4,1X,I3.3,2(1X,I5),1X,I6,6(1X,F7.2),2(1X,F6.1),
