@@ -43,7 +43,8 @@
                     CALL Csopline(lapc,plant(BR,LF)%LATL3T)
                     CALL Csopline(lapsc,plant(BR,LF)%laps)
                     ! Adjust for growth period of non fully expanded leaves
-                    IF (plant(BR,LF)%LAGETT<=LLIFGTT) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
+!CHP                IF (plant(BR,LF)%LAGETT<=LLIFGTT) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
+                    IF (plant(BR,LF)%LAGETT<=LLIFGTT .AND. plant(BR,LF)%LAGETT > 1.E-3) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
                         plant(BR,LF)%WFLF = AMIN1(1.0,plant(BR,LF)%WFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
                         plant(BR,LF)%NFLF = AMIN1(1.0,plant(BR,LF)%NFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
                         plant(BR,LF)%NFLFP =AMIN1(1.0,plant(BR,LF)%NFLFP/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
