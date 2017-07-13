@@ -82,6 +82,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Version history:  
 !       4.6.5.05 chp 07/13/2017 Z energy balance re-instated (BAK/KJB)
+!                               New YCA cassava model added (PM/DA)
 !       4.6.5.04 chp 07/12/2017 ET-based irrigation, minor fixes 
 !       4.6.5.03 chp 07/08/2017 Cross-platform compatibility, 
 !                    potato temperature sensitivity (R.Raymundo)
