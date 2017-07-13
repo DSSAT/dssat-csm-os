@@ -68,7 +68,7 @@ Rain withheld for 72 days in one treatment Published in Field Crops Research, 4:
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
  1 GE              1     1     P 79115  2150 WATER SUPPLY  2C*2E  (CO
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 1 OP              N     N     N     N     N     N     N     Y     M
+ 1 OP              Y     N     N     N     N     N     N     Y     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
  1 ME              M     M     E     R     S     C     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
