@@ -1,0 +1,176 @@
+*EXP.DETAILS: Temperature Sensitivity Analysis w Environ Mod & Auto Irrig
+
+*GENERAL
+@PEOPLE
+ Jeff White                           
+
+@NOTES
+Prepared for testing pre-release versions of CSM.  Created to 
+characterize the temperature response of crops using ficticious 
+weather data and soil conditions for a site at 0o latitude 
+(to avoid confounding effcts of photoperiod).
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+01 0 0 0 Tmean = 03                 1  1  0  1  1 01 01  0  0  0 01  0  1
+02 0 0 0 Tmean = 04                 1  1  0  1  1 01 01  0  0  0 02  0  1
+03 0 0 0 Tmean = 05                 1  1  0  1  1 01 01  0  0  0 03  0  1
+04 0 0 0 Tmean = 06                 1  1  0  1  1 01 01  0  0  0 04  0  1
+05 0 0 0 Tmean = 07                 1  1  0  1  1 01 01  0  0  0 05  0  1
+06 0 0 0 Tmean = 08                 1  1  0  1  1 01 01  0  0  0 06  0  1
+07 0 0 0 Tmean = 09                 1  1  0  1  1 01 01  0  0  0 07  0  1
+08 0 0 0 Tmean = 10                 1  1  0  1  1 01 01  0  0  0 08  0  1
+09 0 0 0 Tmean = 11                 1  1  0  1  1 01 01  0  0  0 09  0  1
+10 0 0 0 Tmean = 12                 1  1  0  1  1 01 01  0  0  0 10  0  1
+11 0 0 0 Tmean = 13                 1  1  0  1  1 01 01  0  0  0 11  0  1
+12 0 0 0 Tmean = 14                 1  1  0  1  1 01 01  0  0  0 12  0  1
+13 0 0 0 Tmean = 15                 1  1  0  1  1 01 01  0  0  0 13  0  1
+14 0 0 0 Tmean = 16                 1  1  0  1  1 01 01  0  0  0 14  0  1
+15 0 0 0 Tmean = 17                 1  1  0  1  1 01 01  0  0  0 15  0  1
+16 0 0 0 Tmean = 18                 1  1  0  1  1 01 01  0  0  0 16  0  1
+17 0 0 0 Tmean = 19                 1  1  0  1  1 01 01  0  0  0 17  0  1
+18 0 0 0 Tmean = 20                 1  1  0  1  1 01 01  0  0  0 18  0  1
+19 0 0 0 Tmean = 21                 1  1  0  1  1 01 01  0  0  0 19  0  1
+20 0 0 0 Tmean = 22                 1  1  0  1  1 01 01  0  0  0 20  0  1
+21 0 0 0 Tmean = 23                 1  1  0  1  1 01 01  0  0  0 21  0  1
+22 0 0 0 Tmean = 24                 1  1  0  1  1 01 01  0  0  0 22  0  1
+23 0 0 0 Tmean = 25                 1  1  0  1  1 01 01  0  0  0 23  0  1
+24 0 0 0 Tmean = 26                 1  1  0  1  1 01 01  0  0  0 24  0  1
+25 0 0 0 Tmean = 27                 1  1  0  1  1 01 01  0  0  0 25  0  1
+26 0 0 0 Tmean = 28                 1  1  0  1  1 01 01  0  0  0 26  0  1
+27 0 0 0 Tmean = 29                 1  1  0  1  1 01 01  0  0  0 27  0  1
+28 0 0 0 Tmean = 30                 1  1  0  1  1 01 01  0  0  0 28  0  1
+29 0 0 0 Tmean = 31                 1  1  0  1  1 01 01  0  0  0 29  0  1
+30 0 0 0 Tmean = 32                 1  1  0  1  1 01 01  0  0  0 30  0  1
+31 0 0 0 Tmean = 33                 1  1  0  1  1 01 01  0  0  0 31  0  1
+32 0 0 0 Tmean = 34                 1  1  0  1  1 01 01  0  0  0 32  0  1
+33 0 0 0 Tmean = 35                 1  1  0  1  1 01 01  0  0  0 33  0  1
+34 0 0 0 Tmean = 36                 1  1  0  1  1 01 01  0  0  0 34  0  1
+35 0 0 0 Tmean = 37                 1  1  0  1  1 01 01  0  0  0 35  0  1
+36 0 0 0 Tmean = 38                 1  1  0  1  1 01 01  0  0  0 36  0  1
+37 0 0 0 Tmean = 39                 1  1  0  1  1 01 01  0  0  0 37  0  1
+38 0 0 0 Tmean = 40                 1  1  0  1  1 01 01  0  0  0 38  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 BN 990006 MesoAm Hab 2 & 3
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 IB000001 AZMC8901   -99     0 DR000     0     0 00000 -99    130  IB00000005 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SG 89001     0     0     1     1   -99     0   1.6     0   100    10 -99
+@C  ICBL  SH2O  SNH4  SNO3  SAOC
+ 1     5  .250    .0   0.5   0.1
+ 1    20  .250    .0   0.5   0.0
+ 1    30  .250    .0   0.4   0.0
+ 1    40  .250    .0   0.4   0.0
+ 1    50  .250    .0   0.4   0.0
+ 1    70  .250    .0   0.2   0.0
+ 1    90  .250    .0   0.2   0.0
+ 1   120  .250    .0   0.2   0.0
+ 1   150  .250    .0   0.2   0.0
+
+*PLANTING DETAILS
+! For maize used 15 pl/60 cm row spacing vs 30/30 for soybean, common bean
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 89031   -99    30    30     S     R    60     0     5   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 89026 IR001   100
+ 1 89045 IR001    50
+ 1 89059 IR001    50
+ 1 89073 IR001    50
+ 1 89087 IR001    50
+ 1 89101 IR001    50
+ 1 89115 IR001    50
+ 1 89129 IR001    50
+ 1 89143 IR001    50
+ 1 89157 IR001    50
+ 1 89171 IR001    50
+ 1 89185 IR001    50
+ 1 89199 IR001    50
+ 1 89213 IR001    50
+ 1 89227 IR001    50
+ 1 89241 IR001    50
+ 1 89255 IR001    50
+ 1 89269 IR001    50
+ 1 89283 IR001    50
+
+*FERTILIZERS (INORGANIC)
+! Ammonium nitrate broadcast one day prior to planting
+! Subsequent applications are amonia injected to 10 cm
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+01 89031 FE001 AP002    10   200   -99   -99   -99   -99   -99 N= 200 kg/ha
+
+*ENVIRONMENT MODIFICATIONS
+@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
+01 89001 A   0 A   0 R  08 R  -2 A 0.0 A   0 A   0 A   0 Tmean=01
+02 89001 A   0 A   0 R  09 R  -1 A 0.0 A   0 A   0 A   0 Tmean=02
+03 89001 A   0 A   0 R  10 R   0 A 0.0 A   0 A   0 A   0 Tmean=03
+04 89001 A   0 A   0 R  11 R  01 A 0.0 A   0 A   0 A   0 Tmean=04
+05 89001 A   0 A   0 R  12 R  02 A 0.0 A   0 A   0 A   0 Tmean=05
+06 89001 A   0 A   0 R  13 R  03 A 0.0 A   0 A   0 A   0 Tmean=06
+07 89001 A   0 A   0 R  14 R  04 A 0.0 A   0 A   0 A   0 Tmean=07
+08 89001 A   0 A   0 R  15 R  05 A 0.0 A   0 A   0 A   0 Tmean=08
+09 89001 A   0 A   0 R  16 R  06 A 0.0 A   0 A   0 A   0 Tmean=09
+10 89001 A   0 A   0 R  17 R  07 A 0.0 A   0 A   0 A   0 Tmean=10
+11 89001 A   0 A   0 R  18 R  08 A 0.0 A   0 A   0 A   0 Tmean=11
+12 89001 A   0 A   0 R  19 R  09 A 0.0 A   0 A   0 A   0 Tmean=12
+13 89001 A   0 A   0 R  20 R  10 A 0.0 A   0 A   0 A   0 Tmean=13
+14 89001 A   0 A   0 R  21 R  11 A 0.0 A   0 A   0 A   0 Tmean=14
+15 89001 A   0 A   0 R  22 R  12 A 0.0 A   0 A   0 A   0 Tmean=15
+16 89001 A   0 A   0 R  23 R  13 A 0.0 A   0 A   0 A   0 Tmean=16
+17 89001 A   0 A   0 R  24 R  14 A 0.0 A   0 A   0 A   0 Tmean=17
+18 89001 A   0 A   0 R  25 R  15 A 0.0 A   0 A   0 A   0 Tmean=18
+19 89001 A   0 A   0 R  26 R  16 A 0.0 A   0 A   0 A   0 Tmean=19
+20 89001 A   0 A   0 R  27 R  17 A 0.0 A   0 A   0 A   0 Tmean=20
+21 89001 A   0 A   0 R  28 R  18 A 0.0 A   0 A   0 A   0 Tmean=21
+22 89001 A   0 A   0 R  29 R  19 A 0.0 A   0 A   0 A   0 Tmean=22
+23 89001 A   0 A   0 R  30 R  20 A 0.0 A   0 A   0 A   0 Tmean=23
+24 89001 A   0 A   0 R  31 R  21 A 0.0 A   0 A   0 A   0 Tmean=24
+25 89001 A   0 A   0 R  32 R  22 A 0.0 A   0 A   0 A   0 Tmean=25
+26 89001 A   0 A   0 R  33 R  23 A 0.0 A   0 A   0 A   0 Tmean=26
+27 89001 A   0 A   0 R  34 R  24 A 0.0 A   0 A   0 A   0 Tmean=27
+28 89001 A   0 A   0 R  35 R  25 A 0.0 A   0 A   0 A   0 Tmean=28
+29 89001 A   0 A   0 R  36 R  26 A 0.0 A   0 A   0 A   0 Tmean=29
+30 89001 A   0 A   0 R  37 R  27 A 0.0 A   0 A   0 A   0 Tmean=30
+31 89001 A   0 A   0 R  38 R  28 A 0.0 A   0 A   0 A   0 Tmean=31
+32 89001 A   0 A   0 R  39 R  29 A 0.0 A   0 A   0 A   0 Tmean=32
+33 89001 A   0 A   0 R  40 R  30 A 0.0 A   0 A   0 A   0 Tmean=33
+34 89001 A   0 A   0 R  41 R  31 A 0.0 A   0 A   0 A   0 Tmean=34
+35 89001 A   0 A   0 R  42 R  32 A 0.0 A   0 A   0 A   0 Tmean=35
+36 89001 A   0 A   0 R  43 R  33 A 0.0 A   0 A   0 A   0 Tmean=36
+37 89001 A   0 A   0 R  44 R  34 A 0.0 A   0 A   0 A   0 Tmean=37
+38 89001 A   0 A   0 R  45 R  35 A 0.0 A   0 A   0 A   0 Tmean=38
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 89001  2150 Temperature response
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     N     D
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     A     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          00001 00030    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    75   100 GS000 IR001    50     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    75    40 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA            361 00365   100     0
