@@ -57,7 +57,7 @@ C-----------------------------------------------------------------------
       REAL G2, G3, GRAINN, GRF, GROLF, GROPLNT, GRORT
       REAL GROSTM, GROTOP, GROTUB
       REAL LALWR, LFWT, NFAC, NSTRES, PT_PAR, PCARB
-      REAL PCO2, PD, PGRTUB, PLA, PLAG, P5
+      REAL PCO2, PD, PGRTUB, PLA, PLAG
       REAL PLAS, PLTPOP, PRFT, PTF, PTUBGR
       REAL RANC, RCNP, RLGR, ROOTN, RTF, RTPAR, RTWT
       REAL RVCAV, RVCHO, RVCMAX, RVCUSD
@@ -83,7 +83,7 @@ C-----------------------------------------------------------------------
 
 !      DATA  LALWR, SLAN /270.,0./
       DATA  LALWR /270./      !leaf area:leaf wt. ratio (cm2/g)
-
+     
 !***********************************************************************
 !***********************************************************************
 !     Seasonal Initialization - Called once per season
@@ -92,7 +92,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       CALL PT_IPGRO(
      &    FILEIO,                                                 !Input
-     &    CO2X, CO2Y, G2, G3, P5, PD, PLME, PLTPOP,               !Output
+     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,                   !Output
      &    SDWTPL, RUE1, RUE2, SENSF, SENST)                       !Output
 
       IF (PLME .EQ. 'B') THEN
@@ -264,8 +264,7 @@ C-----------------------------------------------------------------------
         CASE (1)                        ! Natural senescence, SLAN
           SLAN = CUMDTT*PLA/10000.
         CASE (2)
-!         SLAN = (CUMDTT*PLA/10000.)*EXP(-1.60 + XSTAGE)*(PD**0.5)
-          SLAN = (CUMDTT*PLA/10000.)*EXP(-1.60 + XSTAGE)*(P5**0.5)
+          SLAN = (CUMDTT*PLA/10000.)*EXP(-1.60 + XSTAGE)*(PD**0.5)
      &           *(1./NFAC)
       END SELECT
 
@@ -694,7 +693,7 @@ C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
       SUBROUTINE PT_IPGRO(
      &    FILEIO,                                                 !Input
-     &    CO2X, CO2Y, G2, G3, P5, PD, PLME, PLTPOP,               !Output
+     &    CO2X, CO2Y, G2, G3, PD, PLME, PLTPOP,                   !Output
      &    SDWTPL, RUE1, RUE2, SENSF, SENST)                       !Output
 
 !     ------------------------------------------------------------------
@@ -721,12 +720,11 @@ C=======================================================================
 
       INTEGER ERR, FOUND, I, J, LINC, LNUM, PATHL, ISECT
 
-      REAL G2, G3, PD, P5, PLTPOP, SDWTPL, RUE1, RUE2
+      REAL G2, G3, PD, PLTPOP, SDWTPL, RUE1, RUE2
       REAL, DIMENSION(4) :: SENST, SENSF
       REAL CO2X(10), CO2Y(10)
       
 !      LOGICAL EOF
-
 !-----------------------------------------------------------------------
 !     Read data from FILEIO for use in GROSUB module
       CALL GETLUN('FILEIO', LUNIO)
@@ -769,10 +767,8 @@ C     Read crop genetic information
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
         IF (INDEX ('PT',CROP) .GT. 0) THEN
-!         READ (LUNIO,'(31X,F6.0,F6.0,6X,F6.0)', IOSTAT=ERR) G2, G3, PD
-!         READ (LUNIO,'(31X,F6.0,F6.0,F6.0)', IOSTAT=ERR) G2, G3, PD
-          READ (LUNIO,'(24X,A6,1X,3F6.0,18X,F6.0)',IOSTAT=ERR) 
-     &          ECONO, G2, G3, PD, P5
+          READ (LUNIO,'(24X,A6,1X,3F6.0)',IOSTAT=ERR) 
+     &          ECONO, G2, G3, PD
           LNUM = LNUM + 1
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
         ENDIF
