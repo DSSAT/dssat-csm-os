@@ -204,7 +204,9 @@ C
 !        IF (INDEX ('BNSBPNPECHPPVBCPCBFB',CROP) .EQ. 0) THEN
          SELECT CASE (CROP)
          CASE ('BN','SB','PN','PE','CH','PP',
-     &          'VB','CP','CB','FB','GB','LT')
+     &          'VB','CP','CB','FB','GB','LT','AL')
+C     &          'VB','CP','CB','FB','GB','LT')
+C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
 !          Do nothing -- these crops fix N and can have Y or N
          CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
          END SELECT
@@ -1441,8 +1443,10 @@ C-----------------------------------------------------------------------
 
       ISWSYM_SAVE = ISWSYM
       SELECT CASE (CONTROL % CROP)
-        CASE ('BN','SB','PN','PE','CH','PP',
-     &          'VB','CP','CB','FB','GB','LT')
+      CASE ('BN','SB','PN','PE','CH','PP',
+     &          'VB','CP','CB','FB','GB','LT','AL')
+C     &          'VB','CP','CB','FB','GB','LT')
+C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
 !         Do nothing -- CROPGRO crops can have Y or N
         CASE DEFAULT; ISWSYM = 'N'  !other crops don't have a choice
       END SELECT

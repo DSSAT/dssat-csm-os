@@ -1,0 +1,37 @@
+*SOILS: General DSSAT Soil Input File
+
+*alal209a16  eurofins    SIC      120  alfalfa 209-a
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ 209         spain             -99     -99 -99
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G   .13     6    .6    73     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99  .317  .433  .497     1   .09   1.5   1.8  42.9    51   -99   -99     8   -99    16   -99
+    60   -99   .32  .449  .553  .407   .68   1.5    .5   6.4    70   -99   -99     8   -99    13   -99
+    90   -99  .319   .47  .507  .223   .68   1.5    .8  24.4    60   -99   -99     8   -99    11   -99
+   120   -99  .323  .464  .546  .122   .68   1.4    .4   5.5    67   -99   -99     8   -99    14   -99
+
+*alal209b16  eurofins    SIC      120  alfalfa 209-b
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ 209         spain             -99     -99 -99
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G   .13     6    .6    73     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99  .325  .439  .497     1   .09   1.5   1.4    38    54   -99   -99     8   -99    16   -99
+    60   -99  .343  .407  .553  .407   .68   1.5    .6    26    58   -99   -99     8   -99    13   -99
+    90   -99  .278  .398  .507  .223   .68   1.5    .3    12    64   -99   -99     8   -99    11   -99
+   120   -99  .268  .373  .546  .122   .68   1.4    .3     9    60   -99   -99     8   -99    14   -99
+
+*alfincaa16  eurofins    SIC      120  alfalfa finca
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ fin         spain             -99     -99 -99
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G   .13     6    .6    73     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99  .111  .244  .497     1   .09   1.5   0.7    13    37   -99   -99     8   -99    16   -99
+    60   -99  .086  .218  .553  .407   .68   1.5    .3    12    33   -99   -99     8   -99    13   -99
+    90   -99  .083  .218  .507  .223   .68   1.5    .3    11    35   -99   -99     8   -99    11   -99
+   120   -99  .086  .237  .546  .122   .68   1.4    .3    11    43   -99   -99     8   -99    14   -99
+
+
+
