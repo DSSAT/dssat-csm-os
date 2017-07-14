@@ -1,14 +1,13 @@
 C=======================================================================
-C  COPYRIGHT 1998-2015 DSSAT Foundation
+C  COPYRIGHT 1998-2017 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      University of Guelph, Guelph, Ontario
-C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C
-C     CROPPING SYSTEM MODEL Version 4.6.1
+C     CROPPING SYSTEM MODEL Version 4.6.5
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
