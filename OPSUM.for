@@ -837,17 +837,17 @@ C=======================================================================
       READ (FTXT,'(2X,I1)',IOSTAT=ERRNUM) I   !width of field
       IF (ERRNUM == 0 .AND. I > 0) THEN
         FTXT1 = FTXT
-        WRITE(FTXT2,'("(",I1,"X,I3)")') I-3   
+        WRITE(FTXT2,'("(",I1,"X,A3)")') I-3   
       ELSE
         FTXT1 = "(F6.1)"
-        FTXT2 = "(3X,I3)"
+        FTXT2 = "(3X,A3)"
       ENDIF
 
       IF (VALUE > 1.E-6) THEN
         WRITE(PRINT_TXT,FTXT1) VALUE
       ELSE
         !FTXT2="(I3)"
-        WRITE(PRINT_TXT,FTXT2) -99
+        WRITE(PRINT_TXT,FTXT2) "-99"
       ENDIF
 
       End Function PRINT_TXT
