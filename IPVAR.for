@@ -276,7 +276,6 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
           G4 = 1.2
         ENDIF
 
-
 !     Substor Potato **
       CASE ('PTSUB')
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
@@ -287,6 +286,13 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
       CASE ('RICER')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
      &            P1,P2R,P5,P2O,G1,G2,G3,G4, PHINT,G5
+!       For backwards compatibility for cultivar files with no G5.
+        IF (ERRNUM /= 0) THEN
+          READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+     &            P1,P2R,P5,P2O,G1,G2,G3,G4, PHINT
+          G5 = 1.0
+        ENDIF
+        IF (G5 < 0.0) G5 = 1.0
 
 !     ORYZA Rice **
 !     Read name of OYRZA crop file
