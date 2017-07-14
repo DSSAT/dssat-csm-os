@@ -1082,7 +1082,7 @@ C=======================================================================
       PARAMETER (ERRKEY = 'IPRICE')
       CHARACTER*30 FILEIO
       INTEGER LINC, LNUM, LUNIO, ERR, FOUND
-      REAL ATEMP, G4, P1, P2R, P5, P2O, SDAGE
+      REAL ATEMP, G4, P1, P2R, P5, P2O, SDAGE, G5
 
 C     The variable "CONTROL" is of type "ControlType".
       TYPE (ControlType) CONTROL
