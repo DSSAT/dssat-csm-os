@@ -83,6 +83,9 @@ C-----------------------------------------------------------------------
       USE SumModule     
       USE ModuleDefs
       USE ModuleData
+!     VSH
+      USE CsvOutput
+      USE Linklist
       IMPLICIT NONE
       SAVE
 
@@ -131,6 +134,15 @@ C-----------------------------------------------------------------------
 
       LOGICAL FEXIST
 
+!     Text values for some variables that get overflow with "-99" values
+      CHARACTER*9 PRINT_TXT !Max field width for variable format printing
+      CHARACTER*9 DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT
+      CHARACTER*9 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT
+      CHARACTER*9 DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT
+      CHARACTER*6 TMINA_TXT, TMAXA_TXT, SRADA_TXT, DAYLA_TXT
+      CHARACTER*7 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
+
+
 !     Evaluate.OUT variables:
       INTEGER ICOUNT   !Number of observations for this crop
       CHARACTER*6,  DIMENSION(EvaluateNum) :: OLAP    !Labels
@@ -166,7 +178,7 @@ C-----------------------------------------------------------------------
       IDETS   = ISWITCH % IDETS
       IDETO   = ISWITCH % IDETO
       IDETL   = ISWITCH % IDETL
-
+      FMOPT   = ISWITCH % FMOPT   ! VSH
 C***********************************************************************
 C***********************************************************************
 C     Run initialization - run once per simulation
@@ -436,6 +448,7 @@ C  Simulation Summary File
 C
 C-------------------------------------------------------------------
       IF (INDEX('ADY',IDETS) .GT. 0) THEN
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         INQUIRE (FILE = OUTS, EXIST = FEXIST)
         IF (FEXIST) THEN
           OPEN (UNIT = NOUTDS, FILE = OUTS, STATUS = 'OLD',
@@ -473,10 +486,11 @@ C-------------------------------------------------------------------
           WRITE(NOUTDS,310)
   310     FORMAT(/,
      &'!IDENTIFIERS......................... ',
-     &'TREATMENT................ SITE INFORMATION............ ',
+     &'EXPERIMENT AND TREATMENT.......... ', 
+     &'SITE INFORMATION............ ',
      &'DATES..........................................  ',
      &'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
-     &'..................  ',
+     &'....................  ',
      &'WATER...............................................  ',
      &'NITROGEN......................................  ',
      &'PHOSPHORUS............  ',
@@ -489,10 +503,12 @@ C-------------------------------------------------------------------
 
           WRITE (NOUTDS,400)
   400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL... ',
-     &    'TNAM..................... FNAM.... WSTA.... SOIL_ID...  ',
+     &    'EXNAME.. TNAM..................... ',
+     &    'FNAM.... WSTA.... SOIL_ID...  ',
      &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
      &    '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
-     &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
+!     &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
+     &    '    HWUM    H#AM    H#UM  HIAM  LAIX',
      &    '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
      &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM',
      &    '  PI#M  PICM  PUPC  SPAM',
@@ -504,22 +520,24 @@ C-------------------------------------------------------------------
      &    '  NDCH TMAXA TMINA SRADA DAYLA   CO2A   PRCP   ETCP',
      &    '   ESCP   EPCP')
         ENDIF
+        END IF   ! VSH
 
         IF (BWAH < -1) BWAH = -9.9
 
         MODEL = CONTROL % MODEL
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
-     &    CROP, MODEL, TITLET, FLDNAM, WSTAT, SLNO,
+     &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO,
      &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
 !       RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
   500   FORMAT (I9,1X,I6,3(I3),               
 
-!       CROP, MODEL, TITLET, FLDNAM, WSTAT, SLNO,
-     &  1X,A2,1X,A8,1X,A25,1X,A8,1X,A8,1X,A10,      
+!       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, SLNO,
+     &  1X,A2,1X,A8,1X,A8,1X,A25,1X,A8,1X,A8,1X,A10,      
 
 !       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &  6(1X,I7),
@@ -536,12 +554,40 @@ C-------------------------------------------------------------------
         ENDIF
         WRITE (NOUTDS,FMT,ADVANCE="NO") HWUM
 
-        WRITE (NOUTDS,'(1X,I5,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
+!        WRITE (NOUTDS,'(1X,I5,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
+        WRITE (NOUTDS,'(1X,I7,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
 
         IF (HIAM < -.01)  THEN; FMT = '(1X,F5.0)'
         ELSE                  ; FMT = '(1X,F5.3)'
         ENDIF
         WRITE (NOUTDS,FMT,ADVANCE='NO') HIAM
+
+!       Handle formatting for real numbers which may have value of "-99"
+        DMPPM_TXT = PRINT_TXT(DMPPM, "(F9.1)")
+        DMPEM_TXT = PRINT_TXT(DMPEM, "(F9.1)")
+        DMPTM_TXT = PRINT_TXT(DMPTM, "(F9.1)")
+        DMPIM_TXT = PRINT_TXT(DMPIM, "(F9.1)")
+
+        YPPM_TXT  = PRINT_TXT(YPPM,  "(F9.1)")
+        YPEM_TXT  = PRINT_TXT(YPEM,  "(F9.1)")
+        YPTM_TXT  = PRINT_TXT(YPTM,  "(F9.1)")
+        YPIM_TXT  = PRINT_TXT(YPIM,  "(F9.1)")
+
+        DPNAM_TXT = PRINT_TXT(DPNAM, "(F9.1)")
+        DPNUM_TXT = PRINT_TXT(DPNUM, "(F9.1)")
+        YPNAM_TXT = PRINT_TXT(YPNAM, "(F9.1)")
+        YPNUM_TXT = PRINT_TXT(YPNUM, "(F9.1)")
+
+        TMINA_TXT = PRINT_TXT(TMINA, "(F6.1)")
+        TMAXA_TXT = PRINT_TXT(TMAXA, "(F6.1)")
+        SRADA_TXT = PRINT_TXT(SRADA, "(F6.1)")
+        DAYLA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
+
+        CO2A_TXT = PRINT_TXT(CO2A, "(F7.1)")
+        PRCP_TXT = PRINT_TXT(PRCP, "(F7.1)")
+        ETCP_TXT = PRINT_TXT(ETCP, "(F7.1)")
+        ESCP_TXT = PRINT_TXT(ESCP, "(F7.1)")
+        EPCP_TXT = PRINT_TXT(EPCP, "(F7.1)")
 
         WRITE (NOUTDS,503) LAIX, 
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
@@ -550,9 +596,11 @@ C-------------------------------------------------------------------
      &    KINUMM, KICM, KUPC, SKAM,        !K data
      &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
 !         Water productivity
-     &    DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM,
-     &    DPNAM, DPNUM, YPNAM, YPNUM,
-     &    NDCH, TMAXA, TMINA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
+     &    DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT, 
+     &                 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT,
+     &    DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT,
+     &    NDCH, TMAXA_TXT, TMINA_TXT, SRADA_TXT, DAYLA_TXT, 
+     &                 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
 
   503   FORMAT(     
                                               
@@ -571,15 +619,38 @@ C-------------------------------------------------------------------
      &  4(1X,I6),2(1X,I7),       
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
-     &  4F9.1,4F9.2,
+!    &  4F9.1,4F9.2,
+     &  8A,
 
 !       DPNAM, DPNUM, YPNAM, YPNUM
-     &  4F9.1,
+!    &  4F9.1,
+     &  4A,
 
 !       NDCH, TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-     &  I6,3F6.1,F6.2,5F7.1)
+!    &  I6,3F6.1,F6.2,5F7.1)
+     &  I6,9A)
 
         CLOSE (NOUTDS)
+        END IF   ! VSH
+        
+!       VSH summary.csv header
+        IF (FMOPT == 'C') THEN
+            
+            CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
+     &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO, YRSIM, 
+     &YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, 
+     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
+     &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
+     &NIAM, CNAM, GNAM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, 
+     &SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
+     &DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, DPNAM, 
+     &DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, DAYLA, CO2A, 
+     &PRCP, ETCP, ESCP, EPCP,   
+     &vCsvlineSumOpsum, vpCsvlineSumOpsum, vlngthSumOpsum) 
+            
+            CALL LinklstSumOpsum(vCsvlineSumOpsum) 
+        END IF
+                
       ENDIF
 C-------------------------------------------------------------------
 C     Console output for multi-season runs:
@@ -662,54 +733,84 @@ C-------------------------------------------------------------------
 !     IDETO = Y - both Overview and Evaluate are printed
 !     IDETO = N - neither Overview nor Evaluate are printed
 !     IDETO = E - only Evaluate is printed.
-      IF (INDEX('YE',IDETO) > 0 .AND. 
-     &        CROP .NE. 'WH' .AND. CROP .NE. 'BA' .AND.
-     &        CROP .NE. 'CS') THEN
+!      IF (INDEX('YE',IDETO) > 0 .AND. 
+      IF (INDEX('YE',IDETO) > 0) THEN
+!     &        CROP .NE. 'WH' .AND. CROP .NE. 'BA' .AND.
+!     &        CROP .NE. 'BA' .AND. !JZW changed
+!     &        CROP .NE. 'CS') THEN
+!     CHP 18 Aug 2015 Exclude by model, not crop
+!        SELECT CASE(MODEL)
+        SELECT CASE(MODEL(1:5))
+        CASE('CSCER', 'CSCRP', 'CSCAS')
+!         These models write out Evaluate.OUT using separate routines
+!         CSCER    BA   CROPSIM-CERES-Barley
+!         CSCER    WH   CROPSIM-CERES-Wheat
+!         CSCRP    BA   CSCRP-Barley
+!         CSCAS    CS   CSCAS-Cassava
+!         CSCRP    WH   CSCRP-Wheat
+          CONTINUE 
 
-        ICOUNT    = EvaluateData % ICOUNT
-        OLAP      = EvaluateData % OLAP
-        DESCRIP   = EvaluateData % DESCRIP
-        Simulated = EvaluateData % Simulated
-        Measured  = EvaluateData % Measured
+!       All other models, print out Evaluate.OUT
+        CASE DEFAULT
+          ICOUNT    = EvaluateData % ICOUNT
+          OLAP      = EvaluateData % OLAP
+          DESCRIP   = EvaluateData % DESCRIP
+          Simulated = EvaluateData % Simulated
+          Measured  = EvaluateData % Measured
 
-!       Check for simulation aborted (YRSIM == YRDOY)
-!       Print out "-99"s
-        IF (CONTROL % ERRCODE > 0) THEN
-          Simulated = "     -99"
-        ENDIF
+!         Check for simulation aborted (YRSIM == YRDOY)
+!         Print out "-99"s
+          IF (CONTROL % ERRCODE > 0) THEN
+            Simulated = "     -99"
+          ENDIF
 
-!       Open or create Evaluate.out file
-        INQUIRE (FILE = SEVAL, EXIST = FEXIST)
-        IF (FEXIST) THEN
-          OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'OLD',
-     &      IOSTAT = ERRNUM, POSITION = 'APPEND')
-        ELSE
-          OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'NEW',
-     &      IOSTAT = ERRNUM)
-          CALL DATE_AND_TIME (VALUES=DATE_TIME)
-          WRITE (SLUN,700) EXPER, CG, ENAME, Version, VBranch,
-!         WRITE (SLUN,700) MODEL, EXPER, CG, ENAME, Version,
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
+!         Open or create Evaluate.out file
+          INQUIRE (FILE = SEVAL, EXIST = FEXIST)
+          IF (FEXIST) THEN
+            OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'OLD',
+     &        IOSTAT = ERRNUM, POSITION = 'APPEND')
+          ELSE
+            OPEN (UNIT = SLUN, FILE = SEVAL, STATUS = 'NEW',
+     &        IOSTAT = ERRNUM)
+            CALL DATE_AND_TIME (VALUES=DATE_TIME)
+            WRITE (SLUN,700) EXPER, CG, ENAME, Version, VBranch,
+!           WRITE (SLUN,700) MODEL, EXPER, CG, ENAME, Version,
      &        MonthTxt(DATE_TIME(2)), DATE_TIME(3), DATE_TIME(1), 
      &        DATE_TIME(5), DATE_TIME(6), DATE_TIME(7)
-  700     FORMAT ('*EVALUATION : ',A8,A2,1X,A60,1X,
-! 700     FORMAT ('*EVALUATION : ',A8,1X,A8,A2,1X,A60,1X,
+  700       FORMAT ('*EVALUATION : ',A8,A2,1X,A60,1X,
+! 700       FORMAT ('*EVALUATION : ',A8,1X,A8,A2,1X,A60,1X,
      &    'DSSAT Cropping System Model Ver. ',I1,'.',I1,'.',I1,'.',I3.3,
      &     1X,A10,4X,A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
-        ENDIF
+          ENDIF
 
-!       Write headers if new crop is being processed
-        IF (MODEL .NE. MODEL_LAST) THEN
-          WRITE(SLUN,
+!         Write headers if new crop is being processed
+          IF (MODEL .NE. MODEL_LAST) THEN
+            WRITE(SLUN,
      &       '(/,"@RUN EXCODE        TN RN CR",80(1X,A7))')   
      &       (ADJUSTR(OLAP(I))//"S",ADJUSTR(OLAP(I))//"M",I = 1, ICOUNT)
-          MODEL_LAST = MODEL
-        ENDIF
+            MODEL_LAST = MODEL
+          ENDIF
 
-!       Write evaluation data
-        WRITE(SLUN,750) RUN, EXPER, CG, TRTNUM, ROTNO, CROP, 
+!         Write evaluation data
+          WRITE(SLUN,750) RUN, EXPER, CG, TRTNUM, ROTNO, CROP, 
      &            (Simulated(I), Measured(I), I= 1,ICOUNT)
-  750   FORMAT(I4,1X,A8,A2,I6,I3,1X,A2,80A8)
-        CLOSE(SLUN)
+  750     FORMAT(I4,1X,A8,A2,I6,I3,1X,A2,80A8)
+          CLOSE(SLUN)
+          END IF   ! VSH
+         
+!        VSH  for evaluate.csv 
+         IF (FMOPT == 'C') THEN 
+            csvICOUNT = ICOUNT
+            csvOLAP = OLAP
+            CALL CsvOutEvOpsum(EXPER, RUN, CG, TRTNUM, ROTNO,  CROP, 
+     &Simulated, Measured, ICOUNT,   
+     &vCsvlineEvOpsum, vpCsvlineEvOpsum, vlngthEvOpsum) 
+            
+            CALL LinklstEvOpsum(vCsvlineEvOpsum)
+         END IF
+         
+        END SELECT
       ENDIF
 
 !***********************************************************************
@@ -722,6 +823,36 @@ C-------------------------------------------------------------------
       END SUBROUTINE OPSUM
 C=======================================================================
 
+!=======================================================================
+!=======================================================================
+      Function PRINT_TXT(VALUE, FTXT)
+
+      CHARACTER(LEN=*) PRINT_TXT              !text string for real value
+      CHARACTER(LEN=*) FTXT                   !format for real value
+      CHARACTER(LEN=6) FTXT1                  !modified format for real value
+      CHARACTER(LEN=7) FTXT2                  !format for "-99"
+      REAL VALUE
+      INTEGER I, ERRNUM
+
+      READ (FTXT,'(2X,I1)',IOSTAT=ERRNUM) I   !width of field
+      IF (ERRNUM == 0 .AND. I > 0) THEN
+        FTXT1 = FTXT
+        WRITE(FTXT2,'("(",I1,"X,A3)")') I-3   
+      ELSE
+        FTXT1 = "(F6.1)"
+        FTXT2 = "(3X,A3)"
+      ENDIF
+
+      IF (VALUE > 1.E-6) THEN
+        WRITE(PRINT_TXT,FTXT1) VALUE
+      ELSE
+        !FTXT2="(I3)"
+        WRITE(PRINT_TXT,FTXT2) "-99"
+      ENDIF
+
+      End Function PRINT_TXT
+!=======================================================================
+!=======================================================================
 
 !=======================================================================
 !  SUMVALS, Subroutine C. H. Porter

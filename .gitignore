@@ -1,10 +1,12 @@
 #ignore thumbnails created by windows
 Thumbs.db
 *.onetoc?
-*.gitignore
+.gitignore
 #Ignore files build by Visual Studio
+Makefile
+*/Makefile
 *.obj
-*.exe
+*.[eE][xX][eE]
 *.pdb
 *.user
 *.aps
@@ -35,8 +37,21 @@ _ReSharper*/
 resource
 resource.h
 *.wjf
+*.INH
+*.INP
+*.DSSBATCH.V*
+*.LST
+*.INI
 *.sln
 *.vfproj
 *.u2d
 *.OUT
-*.LST
+*.o
+*.mod
+*.ico
+.DS_Store
+Data/.DS_Store
+Resources/RC*
+*makefile*
+build/
+nbproject/

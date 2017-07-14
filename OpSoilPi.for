@@ -25,6 +25,9 @@ C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+!     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 
@@ -77,6 +80,8 @@ C-----------------------------------------------------------------------
       CumFertP = FertData % AMTFER(P)
 
       NLAYR = SOILPROP % NLAYR
+         
+      FMOPT = ISWITCH % FMOPT   ! VSH
 
 !***********************************************************************
 !***********************************************************************
@@ -93,6 +98,7 @@ C-----------------------------------------------------------------------
       IDETL = ISWITCH % IDETL
       IF (IDETP .NE. 'Y' .OR. ISWPHO .NE. 'Y' .OR. IDETL == '0') RETURN
 
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
       CALL GETLUN(OUTSP, LUN)
 
       INQUIRE (FILE = OUTSP, EXIST = FEXIST)
@@ -104,9 +110,10 @@ C-----------------------------------------------------------------------
      &    IOSTAT = ERRNUM)
         WRITE(LUN,'("*Soil Inorganic Phosphorus daily output file")')
       ENDIF
-
-      IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
+      END IF   ! VSH
       
+      IF (RUN .EQ. 1 .OR. INDEX('QF',RNMODE) .LE. 0) THEN
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         !For sequenced run, use replicate
         ! number instead of run number in header.
         IF (RNMODE .EQ. 'Q') THEN
@@ -114,7 +121,8 @@ C-----------------------------------------------------------------------
         ELSE
           CALL HEADER(SEASINIT, LUN, RUN)
         ENDIF
-
+        END IF   ! VSH
+        
 !       Text describing soil layer depths
         LayerText = SoilProp % LayerText
 !       LayerText(11) is for layers 5 thru NLAYR
@@ -122,6 +130,7 @@ C-----------------------------------------------------------------------
           LayerText(5) = SOILPROP % LayerText(11)
         ENDIF
 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (LUN,'("!",T112,"P avail (kg/ha) by soil depth (cm):",
      &    T157,"P uptake (kg/ha) by soil depth (cm):",
      &    T202,"Labile P (ppm) by soil depth (cm):")')
@@ -146,7 +155,7 @@ C-----------------------------------------------------------------------
 !     &  '  SPSOLN1  SPSOLN2  SPSOLN3  SPSOLN4  SPSOLN5',
 !     &  '  SPLABR1  SPLABR2  SPLABR3  SPLABR4  SPLABR5',
 !     &  '  SPLABN1  SPLABN2  SPLABN3  SPLABN4  SPLABN5')
-
+         END IF   ! VSH
       ENDIF
 
       ENDIF
@@ -212,8 +221,9 @@ C-----------------------------------------------------------------------
       END SELECT
 
 
-      IF (DOPRINT) THEN
+      IF (DOPRINT) THEN    
         CALL YR_DOY(YRDOY, YEAR, DOY) 
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (LUN,300) YEAR, DOY, DAS, 
      &    SPiTotProf, SPiAvlProf, SPiSolProf, 
      &    SPiLabProf, SPiActProf, SPiStaProf, 
@@ -229,8 +239,21 @@ C-----------------------------------------------------------------------
 !     &   ,(SPiLabRts(L),L=1,5), (SPiLabNoRts(L),L=1,5)
   300   FORMAT(1X,I4,1X,I3.3,1X,I5,
      &    F9.1, 2F9.3, 3F9.1, F9.1, 3F9.2, 10F9.3, 5F9.2)
+        END IF   ! VSH
       ENDIF
 
+!     VSH
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutSoilPi(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &SPiTotProf, SPiAvlProf, SPiSolProf, SPiLabProf, SPiActProf, 
+     &SPiStaProf, CumFertP, CMinerP, CImmobP, CumUptakeP, SPi_AVAIL, 
+     &PUptake, PiLabile,  
+     &vCsvlineSoilPi, vpCsvlineSoilPi, vlngthSoilPi)
+     
+         CALL LinklstSoilPi(vCsvlineSoilPi)
+      END IF
+      
 !***********************************************************************
 !***********************************************************************
 !     SEASEND
@@ -259,6 +282,7 @@ C-----------------------------------------------------------------------
         IF (MOD(DAS, FROP) .NE. 0) THEN
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
+          IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE (LUN,300) YEAR, DOY, DAS, 
      &    SPiTotProf, SPiAvlProf, SPiSolProf, 
      &    SPiLabProf, SPiActProf, SPiStaProf, 
@@ -271,6 +295,7 @@ C-----------------------------------------------------------------------
 !     &   ,(PiLabRts(L),L=1,5), (PiLabNoRts(L),L=1,5),
 !     &    (SPiSolRts(L),L=1,5), (SPiSolNoRts(L),L=1,5)
 !     &   ,(SPiLabRts(L),L=1,5), (SPiLabNoRts(L),L=1,5)
+          END IF   ! VSH
         ENDIF
 
 !       Close daily output files.

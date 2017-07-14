@@ -44,7 +44,7 @@ C=======================================================================
      &    FLOOD, NH4, NO3, PDWI, PGRORT, PLANTS, PTF,     !Input
      &    RCNP, RLV, RTWT, SOILPROP, ST, STOVWT, SW, TCNP,!Input
      &    FLOODN, STOVN, RANC, ROOTN, TANC,               !I/O
-     &    RNLOSS, TRNLOS, UNH4, UNO3)                     !Output
+     &    RNLOSS, TRNLOS, UNH4, UNO3, WTNUP)             !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -64,7 +64,7 @@ C=======================================================================
       INTEGER DYNAMIC, L, L1, NLAYR
 
       REAL FLDH4, FLDH4C, FLDN3, FLDN3C, FLOOD, PDWI, PGRORT
-      REAL RANC, RCNP, ROOTN, STOVN, STOVWT, TANC, TCNP, TRNU
+      REAL RANC, RCNP, ROOTN, STOVN, STOVWT, TANC, TCNP, TRNU, WTNUP
       REAL CUMFNU !Cumulative flood N uptake
       REAL, DIMENSION(NL) :: DLAYR, DUL, ESW, KG2PPM, LL, NH4, NO3
       REAL, DIMENSION(NL) :: RLV, RNLOSS, SNH4, SNO3, ST, SW, UNO3, UNH4
@@ -99,6 +99,7 @@ C=======================================================================
       FRNH4U = 0.0
       FRNO3U = 0.0
       CUMFNU = 0.0
+      WTNUP = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -109,7 +110,6 @@ C=======================================================================
 C     Initialize daily variables
 C-----------------------------------------------------------------------
       DO L = 1, NLAYR
-        !KG2PPM(L) = 1.0 / (BD(L) * 1.E-01 * DLAYR(L))
         SNO3(L) = NO3(L) / KG2PPM(L)
         SNH4(L) = NH4(L) / KG2PPM(L)
         ESW(L) = DUL(L) - LL(L)
@@ -164,7 +164,6 @@ C-----------------------------------------------------------------------
       TNDEM  = AMAX1((STOVWT*(TCNP-TANC) + DNG),0.0)
       RNDEM  = AMAX1((RTWT  *(RCNP-RANC) + PGRORT*RCNP),0.0)
       NDEM   = TNDEM  + RNDEM
-
 C-----------------------------------------------------------------------
 C     Convert total N demand from g N/plt to kg N/ha (ANDEM)
 C-----------------------------------------------------------------------
@@ -268,19 +267,19 @@ C-------------------------------------------------------------------------
             RNLOSS(L) = RANC*RTWT*0.075*PLANTS*RLV(L)/TRLV
          ENDIF
          TRNLOS  = TRNLOS + RNLOSS(L)
-!         FON(L)  = FON(L) + RNLOSS
          TRNU    = TRNU + UNO3(L) + UNH4(L)       !kg[N]/ha
       END DO
 
       IF (FLOOD .GT. 0.0 .AND. RLV(1) .GT. 1.0) THEN
-         FRNO3U  = FRNO3U * NUF    !*TEMPRU(1)
+         FRNO3U  = FRNO3U * NUF 
          FRNO3U  = AMIN1 (FRNO3U,FLDN3)
 
-         FRNH4U  = FRNH4U * NUF    !*TEMPRU(1)
+         FRNH4U  = FRNH4U * NUF   
          FRNH4U  = AMIN1 (FRNH4U, FLDH4)
 
          TRNU  = TRNU  + FRNO3U  + FRNH4U         !kg[N]/ha
       ENDIF
+      WTNUP = WTNUP + TRNU
       TRNU = TRNU/(PLANTS*10.0)                   !g[N]/plant
       CUMFNU = CUMFNU + (FRNH4U + FRNO3U) / (PLANTS * 10.0)
 
@@ -298,13 +297,13 @@ C-----------------------------------------------------------------------
 
       DSTOVN = 0.0
       DROOTN = 0.0
+C   DSTOVN and DROOTN calculated and not allowed to be less than 0.0 US/RO Mar 27 2014
       IF (NDEM .GT. 0) THEN
          DSTOVN = TNDEM/NDEM*TRNU-     PTF *TRNLOS/(PLANTS*10.0)
-	   IF (DSTOVN. LT. 0.0) DSTOVN =0.0   !TO PREVENT NEGATIVE VALUE US/RO MAR 26 2014
-         DROOTN = RNDEM/NDEM*TRNU-(1.0-PTF)*TRNLOS/(PLANTS*10.0)
-	   IF (DROOTN. LT. 0.0) DROOTN =0.0   !TO PREVENT NEGATIVE VALUE US/RO MAR 26 2014
+	   IF (DSTOVN. LT. 0.0) DSTOVN =0.0
+	   DROOTN = RNDEM/NDEM*TRNU-(1.0-PTF)*TRNLOS/(PLANTS*10.0)
+	   IF (DROOTN. LT. 0.0) DROOTN = 0.0
       ENDIF
-
       STOVN = STOVN + DSTOVN
       ROOTN = ROOTN + DROOTN
 	IF (STOVWT .GT. 0.0) THEN
@@ -312,14 +311,12 @@ C-----------------------------------------------------------------------
 	ELSE
 	  TANC = 0.0
 	ENDIF
+
 	IF (RTWT .GT. 0.0) THEN
-	  RANC = ROOTN/RTWT
+	  RANC = AMIN1 (ROOTN/RTWT,0.02)
 	ELSE
 	  RANC = 0.0
 	ENDIF
-      !TANC  = STOVN/STOVWT
-      !RANC  = ROOTN/RTWT
-
 
 !***********************************************************************
 !***********************************************************************

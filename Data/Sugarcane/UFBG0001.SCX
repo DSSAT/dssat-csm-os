@@ -64,7 +64,7 @@ EREC, Shelton & Plant Science Research Unit
 
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 1 GE              1     1     S 00336  2150 Plant Cane                SCSP045
+ 1 GE              1     1     S 00336  2150 Plant Cane                SCCSP
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              N     N     N     N     N     N     N     N     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL

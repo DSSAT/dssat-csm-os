@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.6; 07/01/2014
+! DSSAT v4.6; 07/01/2015
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -89,7 +89,7 @@ HYAH   Field wt Mg/ha  Field weight at harvest (Mg [fm]/ha)                     
 IDAP   Panicle in day  Panicle Initiation day (dap)                             .
 IDAT   Panicle in date Panicle Initiation date (YrDoy)                          .
 IR#M   Irrig apps #    Irrigation applications (no)                             .
-IRCM   Irrig mm        Season irrigation (mm)                                   .
+IRCM   Irrig mm        Season applied irrigation (includes losses) (mm)         .
 KI#M   K application # Number of K applications (no)                            .
 KICM   K applied kg/ha Inorganic K applied (kg/ha)                              .
 KUPC   K uptake kg/ha  Seasonal cumulative K uptake (kg[K]/ha)                  .
@@ -114,6 +114,7 @@ ONAM   Organic N kg/ha Organic soil N at maturity (kg/ha)                       
 ONTAM  Tot Org N kg/ha Total Organic N at maturity, soil and surface (kg/ha)    .
 OPAM   Organic P kg/ha Organic soil P at maturity (kg/ha)                       .
 OPTAM  Tot Org P kg/ha Total Organic P at maturity, soil and surface (kg/ha)    .
+OZONX  Max ozone ppb   Maximum daily surface ozone concentration (ppb)          .
 P#AM   Pod/Panicle#/m2 Pod or panicle number (no/m2)                            .
 PD1P   1st pod day yd  First pod day (dap)                                      .
 PD1T   1st pod date yd First pod date (YrDoy)                                   .
@@ -304,11 +305,6 @@ WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
 TFDD   Temp.factor,dev Temperature factor for development (0-1)                 .
 RSFPD  Reserves factor Reserves factor for photosynthesis (0-1)                 .
-!SALUS-Simple-specific daily variables
-RELTT  Rel.Therm Time  Relative thermal time 
-RUE    Rad. Use Eff.   Radiation Use Efficiency (g/MJ)
-RELLAI Rel. LAI        Relative Leaf Area Index
-DTTC   Cum deg-days    Cumulative growing degree days (°C-d) 
 
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -320,8 +316,53 @@ GNAD   Grain N kg/ha   Grain N (kg/ha)                                          
 LCNF   Leaf Crit N Fac Leaf critical N factor (ratio)                           .
 LN%RD  LeafN% relative Leaf tissue relative (to critical) N conc. (%)           .
 LNAD   Leaf N kg/ha    Leaf N (kg/ha)                                           .
+
+N2EC   Cum N2 emitted  Cumulative N2 emissions from soil (kg[N]/ha)             .
+N2ED   N2 emitted/d    Daily N2 emissions from soil (g[N]/ha)                   .
+N2FLC  Cum N2 flux k/h Cumulative N2 flux, soil profile (kg[N]/ha)              .
+N2FLD  Day N2 flux g/h Daily N2 flux, soil profile (g[N]/ha/d)                  .
+N2F10  N2 flux lyr 10  Daily N2 flux, soil layer 10(g[N]/ha)                    .
+N2F1D  N2 flux layer 1 Daily N2 flux, soil layer 1 (g[N]/ha)                    .
+N2F2D  N2 flux layer 2 Daily N2 flux, soil layer 2 (g[N]/ha)                    .
+N2F3D  N2 flux layer 3 Daily N2 flux, soil layer 3 (g[N]/ha)                    .
+N2F4D  N2 flux layer 4 Daily N2 flux, soil layer 4 (g[N]/ha)                    .
+N2F5D  N2 flux layer 5 Daily N2 flux, soil layer 5 (g[N]/ha)                    .
+N2F6D  N2 flux layer 6 Daily N2 flux, soil layer 6 (g[N]/ha)                    .
+N2F7D  N2 flux layer 7 Daily N2 flux, soil layer 7 (g[N]/ha)                    .
+N2F8D  N2 flux layer 8 Daily N2 flux, soil layer 8 (g[N]/ha)                    .
+N2F9D  N2 flux layer 9 Daily N2 flux, soil layer 9 (g[N]/ha)                    .
+                                                                                .
+N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
+N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
+N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
+N2OED  N2O emitted/d   Daily N2O emissions from soil (g[N]/ha)                  .
+N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
+N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
+N2ONC  Cum N2O nitrif  Cumulative N2O from nitrification, soil profile (kg/ha)  .
+N2OND  Day N2O nitrif  Daily N2O from nitrification, soil profile (g[N]/ha/d)   .
+N2O10  N2O flux lyr 10 Daily N2O flux, soil layer 10(g[N]/ha)                   .
+N2O1D  N2O flux lyr 1  Daily N2O flux, soil layer 1 (g[N]/ha)                   .
+N2O2D  N2O flux lyr 2  Daily N2O flux, soil layer 2 (g[N]/ha)                   .
+N2O3D  N2O flux lyr 3  Daily N2O flux, soil layer 3 (g[N]/ha)                   .
+N2O4D  N2O flux lyr 4  Daily N2O flux, soil layer 4 (g[N]/ha)                   .
+N2O5D  N2O flux lyr 5  Daily N2O flux, soil layer 5 (g[N]/ha)                   .
+N2O6D  N2O flux lyr 6  Daily N2O flux, soil layer 6 (g[N]/ha)                   .
+N2O7D  N2O flux lyr 7  Daily N2O flux, soil layer 7 (g[N]/ha)                   .
+N2O8D  N2O flux lyr 8  Daily N2O flux, soil layer 8 (g[N]/ha)                   .
+N2O9D  N2O flux lyr 9  Daily N2O flux, soil layer 9 (g[N]/ha)                   .
 NAPC   N Applied kg/ha Inorganic N applied (kg/ha)                              .
 NDNC   Denitrification Cumulative denitrification (kg [N]/ha)                   .
+NDND   Day denit g/ha  Daily denitrification, soil profile (g[N]/ha/d)          .
+NDN10  Denit layer 10  Daily denitrification, soil layer 10(g[N]/ha)            .
+NDN1D  Denit layer 1   Daily denitrification, soil layer 1 (g[N]/ha)            .
+NDN2D  Denit layer 2   Daily denitrification, soil layer 2 (g[N]/ha)            .
+NDN3D  Denit layer 3   Daily denitrification, soil layer 3 (g[N]/ha)            .
+NDN4D  Denit layer 4   Daily denitrification, soil layer 4 (g[N]/ha)            .
+NDN5D  Denit layer 5   Daily denitrification, soil layer 5 (g[N]/ha)            .
+NDN6D  Denit layer 6   Daily denitrification, soil layer 6 (g[N]/ha)            .
+NDN7D  Denit layer 7   Daily denitrification, soil layer 7 (g[N]/ha)            .
+NDN8D  Denit layer 8   Daily denitrification, soil layer 8 (g[N]/ha)            .
+NDN9D  Denit layer 9   Daily denitrification, soil layer 9 (g[N]/ha)            .
 NFXC   N Fixed kg/ha   N fixed (kg/ha)                                          .
 NFXD   N Fixed kg/ha.d N fixation rate (kg/(ha.day))                            .
 NH10   NH4  layer 10   NH4, soil layer 10(ug [N]/g [soil])                      .
@@ -348,6 +389,17 @@ NI9D   NO3 layer 9     NO3, soil layer 9 (ug [N]/g [soil])                      
 NIAD   Tot soil N kg/haTotal soil NO3+NH4 (kg [N]/ha)                           .
 NIMC   N Immobilize    Cumulative N immobilization (kg [N]/ha)                  .
 NITC   Nitrification   Cumulative nitrification (kg [N]/ha)                     .
+NITRD  Daily nitrif    Daily nitrification, soil profile (g[N]/ha/d)            .
+NIT10  Nitrif layer 10 Daily nitrification, soil layer 10(g[N]/ha)              .
+NIT1D  Nitrif layer 1  Daily nitrification, soil layer 1 (g[N]/ha)              .
+NIT2D  Nitrif layer 2  Daily nitrification, soil layer 2 (g[N]/ha)              .
+NIT3D  Nitrif layer 3  Daily nitrification, soil layer 3 (g[N]/ha)              .
+NIT4D  Nitrif layer 4  Daily nitrification, soil layer 4 (g[N]/ha)              .
+NIT5D  Nitrif layer 5  Daily nitrification, soil layer 5 (g[N]/ha)              .
+NIT6D  Nitrif layer 6  Daily nitrification, soil layer 6 (g[N]/ha)              .
+NIT7D  Nitrif layer 7  Daily nitrification, soil layer 7 (g[N]/ha)              .
+NIT8D  Nitrif layer 8  Daily nitrification, soil layer 8 (g[N]/ha)              .
+NIT9D  Nitrif layer 9  Daily nitrification, soil layer 9 (g[N]/ha)              .
 NITD   Total NO3 kg/ha Total soil NO3 (kg [N]/ha)                               .
 NLCC   N Leached kg/ha N leached (kg [N]/ha)                                    .
 NMNC   N Mineralize    Cumulative N mineralization (kg [N]/ha)                  .
@@ -358,6 +410,7 @@ NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 OXRN   Oxnitr kgN/ha/d Ox Layer Nitrif Rt (kg [N]/ha/d)                         .
 R#AC   Res Applic #    Number of organic matter applications                    .
+RADN   Solar@noon W/m2 Solar radiation at noon (W/m2)                           .
 RCNF   Roots Crit N Fc Roots critical [N] factor (ratio)                        .
 RN%CD  RootN% critical Root tissue critical N conc. (%)                         .
 RN%D   Root N %        Root N concentration (%)                                 .
@@ -397,6 +450,8 @@ DTWT   Water table cm  Water table depth (cm)                                   
 EFAA   Flood evap mm/d Avg flood evaporation (mm/d)                             .
 EMAA   Mulch EVAP mm/d Average mulch evaporation (mm/d)                         .
 EMAC   Mulch EVAP mm   Cumulative mulch evaporation (mm)                        .
+Enit   Evap@midnt mm/h Soil evaporation rate at midnight (mm/h)                 .
+Enoon  Evap@noon mm/h  Soil evaporation rate at noon (mm/h)                     .
 EOAA   Pot ET mm/d     Avg pot.evapotranspiration (mm/d)                        .
 EOAC   Pot ET mm       Cumulative potential evapotranspiration (mm)             .
 EOAD   Pot ET mm/d     Potential evapotranspiration (mm/d)                      .
@@ -406,7 +461,7 @@ EOSA   Pot soil evap   Average potential soil evaporation per day  (mm/day)     
 EPAA   Transpir mm/d   Avg plant transpiration (mm/d)                           .
 EPAC   Transpiration   Cumulative transpiration (mm)                            .
 EPAD   Transpir mm/d   Plant transpiration (mm/d)                               .
-ES10   Evap layer 10   Soil evaporation, layer 10 (mm/d)                        .
+ES10   Evap layer 10   Soil evaporation, layer 10(mm/d)                         .
 ES1D   Evap layer 1    Soil evaporation, layer 1 (mm/d)                         .
 ES2D   Evap layer 2    Soil evaporation, layer 2 (mm/d)                         .
 ES3D   Evap layer 3    Soil evaporation, layer 3 (mm/d)                         .
@@ -422,9 +477,12 @@ ESAD   Soil EVAP mm/d  Soil evaporation (mm/d)                                  
 ETAA   Evapotrans mm/d Avg evapotranspiration (mm/d)                            .
 ETAC   Evapotrans mm   Cumulative evapotranspiration (mm)                       .
 ETAD   Evapotrans mm/d Evapotranspiration (mm/d)                                .
+ETnit  ET@midnite mm/h Evapotranspiration rate at midnight (mm/h)               .
+ETNOON ET@noon mm/h    Evapotranspiration rate at noon (mm/h)                   .
 H2OA   H2O in root zn  Water available in root zone (mm)                        .
 IR#C   Irrigation #    Irrigation applications (no)                             .
-IRRC   Irrigation mm   Cumulative irrigation  (mm)                              .
+IRRC   Irrig effect mm Cumulative effective irrigation (mm)                     .
+IRRAC  Irrig apply mm  Cumulative applied irrigation (includes losses) (mm)     .
 MCFD   Mulch coverage  Fraction of soil covered by mulch                        .
 MDEPD  Mulch thick cm  Thickness of mulch layer (cm)                            .
 MWAD   Mulch mass k/h  Mass of mulch layer (kg/ha)                              .
@@ -449,10 +507,12 @@ SW9D   SWC layer 9     Soil water, soil layer 9 (cm3/cm3)                       
 SWTD   Total water     Total soil water in profile (mm)                         .
 SWXD   Extr water mm   Extractable water (mm)                                   .
 TCADD  Canopy-air temp Canopy-air temperature difference (oC)                   .
+TCnt   Cano.T midnight Canopy temperature at midnight (oC)                      TCAN(h)
 TDFC   Cum. tile drain Cumulative water lost to tile drain (mm)                 .
 TDFD   Tile drainage   Water lost to tile drain (mm/d)                          .
 TMINA  Minimum temp °C Avg minimum air temperature (°C)                         TMNA
 TMAXA  Maximum temp °C Avg maximum air temperature (°C)                         TMXA
+TSRNIT Surf T midnight Surface temperature midnight (°C)                        TSURF
 TS0D   Surface temp °C Soil surface temperature (°C)                            .
 TS10   S-TMP layer 10  Soil temperature, soil layer 10(°C)                      .
 TS1D   S-TMP layer 1   Soil temperature, soil layer 1 (°C)                      .
@@ -464,26 +524,48 @@ TS6D   S-TMP layer 6   Soil temperature, soil layer 6 (°C)                      
 TS7D   S-TMP layer 7   Soil temperature, soil layer 7 (°C)                      .
 TS8D   S-TMP layer 8   Soil temperature, soil layer 8 (°C)                      .
 TS9D   S-TMP layer 9   Soil temperature, soil layer 9 (°C)                      .
-
+WINNIT Wind speed(noon)Wind speed at midnight (m/s)                             WINDHR 
 
 *CARBON
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 CGRD   CGR g/m2.d      Crop growth rate (g [top+store]/(m2.d))                  .
 CHAD   CH2O g/m2.d     Carbohydrate accumulation (g [CH2O]/(m2.d))              .
+CSHn   Lf conductance  Leaf conductance to water for sunlit leaves at noon m/s  CONDSH
+CSHt   Lf conductance  Leaf conductance to water for sunlit leaves midnight m/s CONDSH
+CSLn   Lf conductance  Leaf conductance to water for shaded leaves at noon m/s  CONDSL
+CSLt   Lf conductance  Leaf conductance to water for shaded leaves midnight m/s CONDSL
 CL%D   LEAF CH2O %     Carbohydrate in leaf (%)                                 .
 CMAD   CH2O MOB g/m2.d Carbohydrate mobilization (g [CH2O]/(m2.d))              .
 CS%D   STEM C %        Carbohydrate in stem (%)                                 .
 GC%D   GRAIN CH2O %    Seed carbohydrate concentration (%)                      .
+Enit   Evap@midnt mm/h Soil evaporation rate at midnight (mm/h)                 EHR
+ENN    Evap@noon mm/h  Soil evaporation rate at noon (mm/h)                     EHR
+ETnt   ET@midnite mm/h Evapotranspiration rate at midnight (mm/h)               .
+ETn    ET@noon mm/h    Evapotranspiration rate at noon (mm/h)                   .
+GMT    Mt S Ht Fx W/m2 Midnight surface Soil Heat Flux (W/m2)                   .
+GN     Nn S Ht Fx W/m2 Noon surface Soil Heat Flux (W/m2)                       .
 GRAD   GR RESP g/m2.d  Growth respiration (g [CH2O]/(m2.d))                     .
 HUM1   SOIL C1 kg/ha   Soil carbon in layer 1 (kg/ha)                           .
 HUM2   SOIL C2 kg/ha   Soil carbon in layer 2 (kg/ha)                           .
 HUM3   SOIL C3 kg/ha   Soil carbon in layer 3 (kg/ha)                           .
 HUM4   SOIL C4 kg/ha   Soil carbon in layer 4 (kg/ha)                           .
 HUM5   SOIL C5 kg/ha   Soil carbon in layer 5 (kg/ha)                           .
+LH1n   Nn Lt Ht 1 W/m2 Noon latent heat flux from sunlit leaves (W/m2)          .
+LH2n   Nn Lt Ht 2 W/m2 Noon latent heat flux from shaded leaves (W/m2)          .
+LH3n   Nn Lt Ht 3 W/m2 Noon latent heat flux from soil surface (W/m2)           .
+LH1t   Mt Lt Ht 1 W/m2 Midnight latent heat flux from sunlit leaves (W/m2)      .
+LH2t   Mt Lt Ht 2 W/m2 Midnight latent heat flux from shaded leaves (W/m2)      .
+LH3t   Mt Lt Ht 3 W/m2 Midnight latent heat flux from soil surface (W/m2)      .
+LHN    Nn Lt Ht (W/m2) Noon total latent heat flux (W/m2)                       .
+LHT    MT Lt Ht (W/m2) Midnight total latent heat flux (W/m2)                   .
 LI%D   LIGHT INTER %   Light (PAR) interception (%)                             .
 LI%N   NOON LIGHT IN % Noon light (PAR) interception (%)                        .
 LMHN   NOON PMAX,SHADE Noon Pmax shaded leaves (mg/(m2.s))                      .
 LMLN   NOON PMAX,LIGHT Noon Pmax sunlit leaves (mg/(m2.s))                      .
+LSHn   LAI-shaded noon Leaf area index of shaded leaves at noon (m2/m2)         LAISH 
+LSHt   LAIshaded night Leaf area index of shaded leaves at midnight (m2/m2)     LAISH 
+LSLt   LAIsunlit night Leaf area index of sunlit leaves at midnight (m2/m2)     LAISL
+LSLn   LAI-sunlit noon noon Leaf area index of sunlit leaves at noon            LAISL
 MRAD   M RESP g/m2.d   Maintenance resp (g [CH2O]/(m2.d))                       .
 N%HN   NOON N,SHADE %  Noon N shaded leaves (%)                                 .
 N%LN   NOON N,LIGHT %  Noon N sunlit leaves (%)                                 .
@@ -497,7 +579,21 @@ ONAC   ON APPL kg/ha   Cumulative N in applied organic matter (kg [N]/ha)       
 OPAC   OP APPL kg/ha   Cumulative P in applied organic matter (kg [P]/ha)       .
 PHAD   P GROSS g/m2.d  Gross photosynthesis (g [CH2O]/(m2.d))                   .
 PHAN   PG,NOON mg/m2.s Gross photosyn.,noon (mg CO2/(m2.s))                     .
+RSHN   Rshn s/m        Noon resistance of shaded leaves (s/m)                   .
+RSHT   Rsht s/m        Midnight resistance of shaded leaves (s/m)               .
+RSLN   Rsln s/m        Noon resistance of sunlit leaves (s/m)                   .
+RSLT   Rslt s/m        Midnight resistance of sunlit leaves (s/m)               .
+RSSN   Rssn s/m        Noon resistance of soil surface (s/m)                    .
+RSST   Rsst s/m        Midnight resistance of soil surface (s/m)                .
 SCDD   SOIL ORG C      Stable soil org. C @ user depth (kg/ha)                  .
+SHN    Noon Sn Ht W/m2 Noon total sensible heat (W/m2)                          .
+SHT    Mdnt Sn Ht W/m2 Midnight total sensible heat (W/m2)                      .
+SH1N   Nn Sn Ht 1 W/m2 Noon sensible heat from sunlit leaves (W/m2)             .
+SH2N   Nn Sn Ht 2 W/m2 Noon sensisble heat from shaded leaves (W/m2)            .
+SH3N   Nn Sn Ht 3 W/m2 Noon sensible heat from soil surface (W/m2)              .
+SH1T   Mt Sn Ht 1 W/m2 Midnight sensible heat from sunlit leaves (W/m2)         .
+SN2T   Mt Sn Ht 2 W/m2 Midnight sensible heat from shaded leaves (W/m2)         .
+SN3T   Mt Sn Ht 3 W/m2 Midnight sensible heat from soil surface (W/m2)          .
 SLHN   NOON SLW,SHADE  SLW in shaded leaves,noon (mg [dm]/cm2)                  .
 SLLN   NOON SLW,Light  SLW in sunlit leaves,noon (mg [dm]/cm2)                  .
 SNDD   SOIL ORG N      Stable soil org. N @ user depth (kg/ha)                  .
@@ -505,11 +601,23 @@ SOCD   SOIL OC kg/ha   Soil plus surface organic carbon (kg/ha)                 
 SOND   SOIL ON kg/ha   Soil plus surface organic nitrogen (kg/ha)               .
 SOPD   SOIL OP kg/ha   Soil plus surface organic phosphorus (kg/ha)             .
 SPDD   SOIL ORG P      Stable soil org. P @ user depth (kg/ha)                  .
+TCNN   Canopy T noon   Canopy temperature at noon (oC)                          .
+TEMt   Temp/h midnight Hourly air temperature at midnight                       TAIRHR
 TFOM   RESIDUE kg/ha   Plant residue remaining (kg [dm]/ha)                     .
 TFON   RESIDUE N kg/ha Plant residue N remaining (kg/ha)                        .
 TGAV   AVG CAN TMP °C  Daily average canopy temp (°C)                           .
-TGNN   NOON CAN TMP °C Noon canopy temperature (°C)                             .
+TGON   NOON GRO TMP °C Noon growth temperature (°C)                             .
+Tnit   Temp midnight°C Temperature midnight (°C)                                THR
+TNN    T@noon mm/h     Transpiration rate at noon (mm/h) 
+TSR1n  Sur T sunlit nt Surface temperature sunlit leaves midnight (°C)          TSURF(1)
+TSR1t  Sur T sunlit nt Surface temperature sunlit leaves midnight (°C)          TSURF(1)
+TSR2n  Sur T sunlit nt Surface temperature shaded leaves midnight (°C)          TSURF(2)
+TSR2t  Sur T sunlit nt Surface temperature shaded leaves midnight (°C)          TSURF(2)
+TSR3n  Sur T sunlit nt Surface temperature soil  midnight (°C)                  TSURF(3)
+TSR3t  Sur T sunlit nt Surface temperature soil  midnight (°C)                  TSURF(3)
 TWAD   TOTAL WT kg/ha  Tops+roots+storage wt (kg [dm]/ha)                       .
+WDNN   Wind speed(noon)Wind speed at noon (m/s)                                 WINDHR 
+WINn   Wind speed(noon)Wind speed at noon (m/s)                                 WINDHR 
 
 *PESTS
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
@@ -649,7 +757,8 @@ FLUR   FLD UREA kgN/ha Floodwater Urea N (kg N/Ha)                              
 FROD   FLOOD RO mm/d   Flood water runoff over bund (mm/d)                      .
 FUHY   UREA HYD kgN/ha Urea Hydrolysis Rate in Floodwater (kg [N]/(ha.day))     .
 INFD   INFILT mm/d     Infiltration rate (mm/d)                                 .
-IRRD   IRRIG mm/d      Irrigation (mm/d)                                        .
+IRRD   Eff Irrig mm/d  Daily effective irrigation (mm/d)                        .
+IRRAD  App Irrig mm/d  Daily applied irrigation (includes losses) (mm/d)        .
 TL#C   TILLAGE #       Number of tillage operations                             .
 TLDD   TILL DEP cm     Depth of last tillage operation (cm)                     .
 
@@ -739,7 +848,8 @@ TFGD   TEMP FAC GROWTH Temperature factor for leaf growth (0-1)                 
 TFPD   TEMP FAC PHS    Temperature factor for photosynthesis (0-1)              .
 TNAD   TOPS N kg/ha    Tops (ie canopy) N (kg/ha)                               .
 TRRD   TRANSLOC RESP   Translocation respiration (g/(m2.d) or kg/(ha.d))        .
-TWUPD  Pot H2O uptake  Potential root water uptake (cm)                         .
+TRWUD  Act H2O uptake  Root water uptake (cm/d)                                 .
+TWUPD  Pot H2O uptake  Potential root water uptake (cm/d)                       .
 VNCD   Veg N conc. fr  Vegetative above-ground tissue N concentration (fr)      .
 VN%D   Veg N%          Vegetative above-ground tissue N concentration (%)       .
 VN%LD  Veg N% minimum  Vegetative above-ground tissue minimum N conc. (%)       .
@@ -753,8 +863,10 @@ YEAR   YEAR            Year (4 digits)                                          
 
 *SOIL ORGANIC MATTER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
-CO20C  SurfCO2 (kg/ha) Accumulated surface CO2 (kg/ha)                          .
-CO2SC  SoilCO2 (kg/ha) Accumulated soil CO2 (kg/ha)                             .
+CO20C  SurfCO2 (kg/ha) Cumul. CO2 from surface organic matter decomp (kg/ha)    .
+CO2SC  SoilCO2 (kg/ha) Cumul. CO2 from soil organic matter decomposition (kg/ha).
+CO2TD  SoilCO2(k/h/d)  Daily CO2 from surface + soil OM decomposition (kg/ha)   . 
+CO2TC  TotSoilCO2(k/h) Cumul. CO2 from surface + soil OM decomposition (kg/ha)  . 
 HRNH   N harvest res   N in harvest residue (kg [N]/ha)                         .
 HRPH   P harvest res   P in harvest residue (kg [P]/ha)                         .
 LC0D   LitC L0 (kg/ha) Litter C on surface (kg/ha)                              .
@@ -1005,6 +1117,8 @@ AFPWM  FreshWt g/fruit Avg fresh fruit (pod, ear) weight at maturity (g/fruit)  
 FCULD  Fr wt cull      Fresh weight for cull fruit/pods (g/m2)                  .
 FPWAD  Tot Fr Wt kg/ha Total fresh fruit (pod, ear) weight (kg/ha)              .
 FPWAM  FreshPodWt k/h  Fresh pod (ear) weight at maturity (kg/ha)               .
+RTFPW  FreshMatWt k/h  Fresh weight of mature fruits (periodic) (kg/ha)
+RTDPW  DryWtMatur k/h  Dry weight of mature fruits (periodic) (kg/ha)
 FSZ1D  Fr wt 1 g/m2    Fresh weight for size class 1 (g/m2)                     .
 FSZ2D  Fr wt 2 g/m2    Fresh weight for size class 2 (g/m2)                     .
 FSZ3D  Fr wt 3 g/m2    Fresh weight for size class 3 (g/m2)                     .

@@ -1,5 +1,5 @@
 C=======================================================================
-C  COPYRIGHT 1998-2014 DSSAT Foundation
+C  COPYRIGHT 1998-2015 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      University of Guelph, Guelph, Ontario
@@ -8,11 +8,11 @@ C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C
-C     CROPPING SYSTEM MODEL Version 4.6
+C     CROPPING SYSTEM MODEL Version 4.6.1
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     February 2014  CSM Version 4.6
+C     July 2015  CSM Version 4.6.1
 C
 C     Gerrit Hoogenboom, J.W. Jones, Cheryl Porter, K.J. Boote, 
 C
@@ -91,6 +91,7 @@ C     The variable "ISWITCH" is of type "SwitchType".
       TYPE (SwitchType) ISWITCH
 
 !C-----------------------------------------------------------------------
+
       DONE = .FALSE.
       YRDOY_END = 9999999
 
@@ -107,7 +108,8 @@ C-----------------------------------------------------------------------
 C    Get argument from runtime module to determine path of the EXE files
 C-----------------------------------------------------------------------
       CALL GETARG(0,PATHX)   !,IPX
-      CALL GETARG(1,DUMMY)   !,IP
+!      call path_adj(pathx)
+      CALL GETARG(1,DUMMY)  !,IP
       IF ((INDEX('ABCDEFGILNQSTabcdefginlqst',DUMMY(1:1)).GT. 0) .AND. 
      &    (DUMMY(2:2) .EQ. BLANK))THEN
         CALL GETARG(1,RNMODE)   !,IP

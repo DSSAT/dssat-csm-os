@@ -434,7 +434,7 @@ C     SDRATE  = PSDWT * PLTPOP * 10.0
       SDRATE  = PSDWT*PLTPOP/0.8*10
 
       PODWT = PANWT * PLTPOP  !g/m2 CHP 7/21/2005 was * 10.
-
+      BWAH = BWAH/10.         !Converts to g/m2
 !       Store Summary.out labels and values in arrays to send to
 !       OPSUM routines for printing.  Integers are temporarily 
 !       saved as real numbers for placement in real array.
@@ -456,7 +456,7 @@ C     SDRATE  = PSDWT * PLTPOP * 10.0
         LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
         LABEL(17) = 'HIAM'; VALUE(17) = HI
         LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
-
+        
         !Send labels and values to OPSUM
         CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 !      ENDIF

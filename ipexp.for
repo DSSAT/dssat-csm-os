@@ -67,11 +67,13 @@ C=======================================================================
      &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
 
       USE ModuleDefs
+      USE ModuleData    
+      Use CsvOutput   ! VSH
       IMPLICIT NONE
       SAVE
 
-      INCLUDE 'COMIBS.BLK'
-      INCLUDE 'COMSWI.BLK'
+      INCLUDE 'COMIBS.blk'
+      INCLUDE 'COMSWI.blk'
 
       CHARACTER* 1 LINE(80),BLANK, RNMODE
       CHARACTER* 1 WMODI,ANS
@@ -80,7 +82,7 @@ C=======================================================================
       CHARACTER* 4 WSTA1
       CHARACTER* 6 VARNO,ERRKEY,FINDCH
       CHARACTER* 7 FILELS
-      CHARACTER* 8 FILES_a, FILES_b, MODEL, MODELARG
+      CHARACTER* 8 FILES_a, FILES_b, MODEL, MODELARG, FILEW4
       CHARACTER*10 SLNO
       CHARACTER*12 NAMEF, FILEX
       CHARACTER*25 TITLET
@@ -96,9 +98,9 @@ C=======================================================================
       INTEGER NYRS,FROP,EXPN,EXPP,TRTN,ERRNUM,IFIND,FTYPEN
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
-      INTEGER TRTNUM, ROTNUM
+      INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
-      REAL    FLAG,EXP,TRT,PLTFOR
+      REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -235,6 +237,8 @@ C
         READ(FILEX(1:8),'(A8)') EXPER
       ENDIF
 
+!     VSH
+      EXPNAME = EXPER
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -257,6 +261,7 @@ C-----------------------------------------------------------------------
         CALL ERROR (ERRKEY,29,FILEX_P,0)
       ENDIF
       READ(LUNEXP,1500) ENAME
+      control % ename = ename
  1500 FORMAT(25X,A60)
       IF (RNMODE .EQ. 'I') CALL CLEAR
       IF (EXPN .NE. EXPP) THEN
@@ -688,32 +693,52 @@ C-----------------------------------------------------------------------
          CALL ERROR (ERRKEY,22,FILEX,LINEXP)
       ENDIF
 
+!     Check weather filename in current directory
       INQUIRE (FILE = FILEW,EXIST = FEXIST)
-      IF (.NOT. FEXIST) THEN
+      IF (FEXIST) THEN
+        PATHWT = BLANK
+!     Check weather filename in data directory
+      ELSE
         FILETMP = TRIM(PATHEX)//FILEW
         INQUIRE (FILE = FILETMP,EXIST = FEXIST)
-        IF (.NOT. FEXIST) THEN
+        IF (FEXIST) THEN
+          PATHWT = TRIM(PATHEX)
+!       Check weather filename in default DSSAT directory
+        ELSE
           CALL PATH(PROCOD,DSSATP,PATHWT,1,NAMEF)
           FILETMP = TRIM(PATHWT) // FILEW
           INQUIRE (FILE=FILETMP, EXIST = FEXIST)
-          IF (.NOT. FEXIST) THEN
-            FILEW = FILEW(1:4) // ".WTH"
-            FILETMP = TRIM(PATHWT) // FILEW
+          IF (FEXIST) THEN
+            PATHWT = PATHWT
+!         Check 4-character file name in data directory
+          ELSE
+            FILEW4 = FILEW(1:4) // ".WTH"
+            FILETMP = TRIM(PATHEX) // FILEW4
             INQUIRE (FILE=FILETMP, EXIST = FEXIST)
-!            IF (.NOT. FEXIST .AND. INDEX('T',RNMODE) < 1) THEN
-!!             For RNMODE = 'T', let weather routine end run for missing weather file.
-!              MSG(1) = "Weather file not found. Program will end."
-!              MSG(2) = FILEW // 
-!     &          " not found in weather or experiment directories."
-!              CALL WARNING(2,ERRKEY,MSG)
-!              CALL ERROR(ERRKEY,29,FILEW,0)
-!            ENDIF
+            IF (FEXIST) THEN
+              PATHWT = TRIM(PATHEX)
+              FILEW = FILEW4
+!           Check 4-character filename in default DSSAT directory
+            ELSE
+              FILETMP = TRIM(PATHWT) // FILEW
+              INQUIRE (FILE=FILETMP, EXIST = FEXIST)
+              IF (FEXIST) THEN
+                PATHWT = PATHWT
+                FILEW = FILEW4
+              ELSE
+                MSG(1) = "Weather file not found."
+                MSG(2) = "  Neither " // FILEW // " nor " // FILEW4
+                MSG(3) = 
+     &            "  were found in weather or experiment directories."
+                MSG(4) = "Simulation will end."
+                CONTROL % ErrCode = 29
+                CALL PUT(CONTROL)
+                CALL WARNING(4,ERRKEY,MSG)
+!               CALL ERROR(ERRKEY,29,FILEW,0)
+              ENDIF
+            ENDIF
           ENDIF
-        ELSE
-          PATHWT = TRIM(PATHEX)
         ENDIF
-      ELSE
-        PATHWT = BLANK
       ENDIF
 
 C-----------------------------------------------------------------------
@@ -742,7 +767,7 @@ C-----------------------------------------------------------------------
 C     Call IPHAR
 C-----------------------------------------------------------------------
       CALL IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &     NHAR,IHARI,YRSIM,CROP,HBPC)
+     &     NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
 C-----------------------------------------------------------------------
 C     Call IPIRR

@@ -1,0 +1,204 @@
+*EXP.DETAILS: WABE0301PT NITROGEN FATE (ALVA ET AL., 2010)
+
+*GENERAL
+@PEOPLE
+-99
+@ADDRESS
+ United States Department of Agriculture
+@SITE
+ Columbia Basin region in Benton County, Washington
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+@NOTES
+ Cultivar Additional Info C RM CNAME CUL_NOTES 1 -99 table
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 B (9 N app)                1  1  1  1  1  1  1  0  0  0  0  1  1
+ 2 1 1 0 D (5 N app)                1  1  1  1  1  1  2  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 PT IB0003 RUSSET BURBANK
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 USBE0301 USBE0301   -99   -99   -99   -99   -99   -99 S      -99  WABE000001 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1          -119.5            45.9       125               -99   -99   -99   -99   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 03087   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    10   1.3     1   -99   -99   -99   -99   -99    .7
+ 1    30   1.5    .9   -99   -99   -99   -99   -99    .8
+ 1    60   1.6    .7   -99   -99   -99   -99   -99   .98
+ 1    90   1.6    .5   -99   -99   -99   -99   -99   .98
+ 1   120   1.6    .2   -99   -99   -99   -99   -99   .98
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1   -99 03087   300   -99   -99   -99   -99  2000   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    30    .1    .6   5.8
+ 1    60   .07    .6   5.8
+ 1    90  .094    .6   5.8
+ 1   120  .097    .6   5.8
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2   -99 03087   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 03087 03110     5     5     S   -99    80   -99     5   444   -99   -99   -99    .1                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   -99   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 03087 IR004   6.9
+ 1 03091 IR004   5.4
+ 1 03098 IR004   7.6
+ 1 03106 IR004   3.2
+ 1 03108 IR004   7.6
+ 1 03112 IR004   6.5
+ 1 03116 IR004   5.4
+ 1 03118 IR004   6.5
+ 1 03122 IR004   6.5
+ 1 03124 IR004   6.5
+ 1 03126 IR004   6.5
+ 1 03127 IR004   6.5
+ 1 03129 IR004   7.6
+ 1 03132 IR004   7.6
+ 1 03133 IR004   8.4
+ 1 03134 IR004   8.4
+ 1 03135 IR004   6.5
+ 1 03136 IR004   6.5
+ 1 03139 IR004   7.6
+ 1 03140 IR004   2.6
+ 1 03141 IR004   6.8
+ 1 03142 IR004   8.4
+ 1 03143 IR004   7.6
+ 1 03145 IR004   7.6
+ 1 03146 IR004   7.6
+ 1 03147 IR004   5.2
+ 1 03148 IR004   6.5
+ 1 03151 IR004   7.6
+ 1 03152 IR004   8.4
+ 1 03153 IR004   8.4
+ 1 03154 IR004   6.8
+ 1 03156 IR004   7.6
+ 1 03157 IR004   8.4
+ 1 03158 IR004   7.6
+ 1 03160 IR004   7.6
+ 1 03162 IR004   6.8
+ 1 03163 IR004   7.6
+ 1 03164 IR004   8.4
+ 1 03165 IR004   6.5
+ 1 03166 IR004   7.6
+ 1 03167 IR004   7.6
+ 1 03168 IR004   6.8
+ 1 03170 IR004   6.8
+ 1 03171 IR004   8.4
+ 1 03172 IR004   7.6
+ 1 03174 IR004   7.6
+ 1 03175 IR004   7.6
+ 1 03176 IR004   7.6
+ 1 03177 IR004   7.6
+ 1 03178 IR004   7.6
+ 1 03179 IR004   7.6
+ 1 03180 IR004   7.6
+ 1 03181 IR004   7.6
+ 1 03182 IR004   7.6
+ 1 03183 IR004   7.6
+ 1 03184 IR004   8.4
+ 1 03185 IR004   8.4
+ 1 03186 IR004   8.4
+ 1 03187 IR004   7.6
+ 1 03188 IR004   6.8
+ 1 03189 IR004   7.6
+ 1 03190 IR004   7.6
+ 1 03191 IR004   7.6
+ 1 03192 IR004   6.8
+ 1 03193 IR004   7.6
+ 1 03194 IR004   7.6
+ 1 03196 IR004   8.4
+ 1 03197 IR004   7.6
+ 1 03198 IR004   7.6
+ 1 03199 IR004   8.4
+ 1 03200 IR004   8.4
+ 1 03201 IR004   8.4
+ 1 03202 IR004   7.6
+ 1 03203 IR004   7.6
+ 1 03205 IR004   7.6
+ 1 03206 IR004   7.6
+ 1 03207 IR004   7.6
+ 1 03208 IR004   8.4
+ 1 03209 IR004   7.6
+ 1 03210 IR004     0
+ 1 03211 IR004   7.6
+ 1 03212 IR004   7.6
+ 1 03213 IR004   7.6
+ 1 03214 IR004   7.6
+ 1 03217 IR004   7.6
+ 1 03219 IR004   7.6
+ 1 03220 IR004   6.5
+ 1 03222 IR004   6.5
+ 1 03223 IR004   7.6
+ 1 03225 IR004   7.6
+ 1 03226 IR004   7.6
+ 1 03228 IR004   7.6
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 03087 FE001   -99     6   112   -99   -99   -99   -99   -99 B
+ 1 03135 FE001   -99     6    22   -99   -99   -99   -99   -99 B
+ 1 03140 FE001   -99     6    11   -99   -99   -99   -99   -99 B
+ 1 03141 FE001   -99     6    45   -99   -99   -99   -99   -99 B
+ 1 03147 FE001   -99     6    22   -99   -99   -99   -99   -99 B
+ 1 03148 FE001   -99     6    45   -99   -99   -99   -99   -99 B
+ 1 03155 FE001   -99     6    11   -99   -99   -99   -99   -99 B
+ 1 03156 FE001   -99     6    45   -99   -99   -99   -99   -99 B
+ 1 03162 FE001   -99     6    11   -99   -99   -99   -99   -99 B
+ 2 03087 FE001   -99     6   168   -99   -99   -99   -99   -99 D
+ 2 03135 FE001   -99     6    22   -99   -99   -99   -99   -99 D
+ 2 03141 FE001   -99     6    45   -99   -99   -99   -99   -99 D
+ 2 03148 FE001   -99     6    45   -99   -99   -99   -99   -99 D
+ 2 03156 FE001   -99     6    45   -99   -99   -99   -99   -99 D
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 03087   -99   -99   -99   -99   -99   -99   -99   -99 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 03231 GS000   -99   -99   -99   -99 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 03087  2150 DEFAULT SIMULATION CONTR  PTSUB
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     P     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          82050 82064    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 83057   100     0
+
+
+! Waring: There is a variable [dssat_cul_id] with oversized content [RUSSET BURBANK], only first 6 bits will be applied.
+! Waring: There is a variable [icbl] with oversized number [] (Limitation is 5 bits)
+

@@ -1,6 +1,5 @@
-$ECOTYPES:WHCER046.280513   Last edit:060613 
-
-
+$ECOTYPES:WHCER046.010115   Last edit:231214 
+ 
 ! Coefficients presented here differ from those used in DSSAT 
 ! Version 3.5. They have been developed from 'parameters'
 ! embedded in the code of the Ceres model,from the Cropsim model,
@@ -21,7 +20,7 @@ $ECOTYPES:WHCER046.280513   Last edit:060613
 DFAULT   200   .25   200   200  0.25  0.10   200   0.6   2.7   2.7    15   1.3   5.0  0.10  0.50   400   5.5   6.3   3.5   2.5   1.0   2.5   6.0   4.0   3.0   100   0.0   .85    30   3.0   0.0   -10
                                                                                                                                                                                                       
 CAWH01   362   .25   258   172   .25   .10   200   0.5   2.7   2.7    13   1.0   3.0  0.05  0.30   300   4.2   6.0   3.0   2.5   1.0   2.7   6.0   4.0   3.0   100   0.0   .85    30   3.0   2.0   -10
-USWH01   400   .25   285   190   .25   .10   200   1.0   2.7   2.7    13   1.0   2.0  0.15  0.01   400   5.1   6.5   4.5   2.0   0.8   2.2   6.0   4.0   3.0   100   5.0   .85    30   2.2   1.9   -20
+USWH01   400   .25   285   190   .25   .10   200   1.0   2.3   2.3    13   1.0   2.0  0.15  0.01   400   5.1   6.5   4.5   2.0   0.8   2.2   6.0   4.0   3.0   100   5.0   .85    30   2.2   1.9   -20
 UKWH01   421   .25   300   200   .25   .10   200   0.5   2.7   2.7    13   1.0   2.0  0.10  0.30   485   5.7   6.3   4.5   2.0   0.5   2.2   6.0  20.0   3.0   100   0.0   .85    60   2.0   1.0   -15                                  
 
 AZWH18   460   .25   328   219   .25   .10   200   0.6   2.7   2.7    13   1.0   2.0  0.15  0.50   400   5.3   6.5   4.5   2.0   0.8   2.2   6.0   4.0   3.0   100   5.0   .85    30   2.2   1.9   -20   
@@ -69,3 +68,4 @@ CI0001   400   .25   280   200   .25   .10   260   0.6   2.0   2.5    13   1.0  
 ! VEFF    Vernalization effect (Rate reduction when unvernalized (fr)
 ! WFGU    Water stress factor,growth,upper (fr)
 ! WFPU    Water stress factor,photosynthesis,upper (fr)
+

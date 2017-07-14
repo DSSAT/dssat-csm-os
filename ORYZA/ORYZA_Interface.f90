@@ -355,6 +355,7 @@
         pv%pwl0 = wl0
 
         CALL WaterPotential(SW, SOILPROP, FLOODWAT % FLOOD, WPkPa)
+        CALL PotentialOp(CONTROL, ISWITCH, SOILPROP, WPkPa)
 
         DO L = 1, NLAYR
           WCL(L) = SW(L)      !Soil water content (mm3/mm3)
@@ -432,7 +433,6 @@
       ELSE
 
         ITASK = 0
-        CALL PotentialOp(CONTROL, ISWITCH, SOILPROP, WPkPa)
 
         IF (DYNAMIC == SEASEND) THEN
           STGDOY(20) = YRDOY
@@ -826,7 +826,8 @@ SUBROUTINE SET_ZERO_PV
 		pv%Prunoff=0.0;			pv%Pdrain=0.0
 		pv%Pirrig=0.0;			pv%Plai=0.001
 		pv%PResNum=0;			pv%PResName=''
-		pv%PResType=0.0;		pv%PResC=0.0
+!chp		pv%PResType=0.0;		pv%PResC=0.0
+		pv%PResType=0;    		pv%PResC=0.0
 		pv%PResN=0.0;			pv%dlt_res_c_biom=0.0
 		pv%dlt_res_c_hum=0.0;	pv%ProotD=0.0
 		pv%ProotDen=0.0;		pv%PSROOTL=0.0

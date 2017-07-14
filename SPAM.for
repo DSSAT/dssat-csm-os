@@ -160,10 +160,10 @@ C=======================================================================
      &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &        SRFTEMP, ST)                                    !Output
           CASE DEFAULT  !DSSAT soilt temperature
-            CALL STEMP(CONTROL, ISWITCH,
+           CALL STEMP(CONTROL, ISWITCH,
      &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &    SRFTEMP, ST)                                    !Output
-          END SELECT
+     &    SRFTEMP, ST)   !Output
+     	   END SELECT
       ENDIF
 !     ---------------------------------------------------------
       IF (MEEVP .NE. 'Z') THEN
@@ -209,7 +209,7 @@ C=======================================================================
 
 !     Call OPSPAM to open and write headers to output file
       IF (IDETW .EQ. 'Y') THEN
-        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -243,10 +243,12 @@ C=======================================================================
             CALL STEMP_EPIC(CONTROL, ISWITCH,  
      &        SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
      &        SRFTEMP, ST)                                    !Output
-          CASE DEFAULT  !DSSAT soilt temperature
-            CALL STEMP(CONTROL, ISWITCH,
-     &        SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &        SRFTEMP, ST)                                    !Output
+          CASE DEFAULT  
+!     7/21/2016 - DSSAT method is default, per GH
+!     CASE ('D')  !DSSAT soil temperature
+        CALL STEMP(CONTROL, ISWITCH,
+     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
           END SELECT
       ENDIF
 !-----------------------------------------------------------------------
@@ -345,7 +347,7 @@ C       and total potential water uptake rate.
      &          ES)                                       !Output
 
 !           ------------------------
-            CASE DEFAULT !SALUS soil evaporation routine is default
+            CASE DEFAULT ! Sulieman-Ritchie soil evaporation routine is default
 !             Note that this routine calculates UPFLOW, unlike the SOILEV.
 !             Calculate the availability of soil water for use in SOILEV.
               CALL ESR_SoilEvap(
@@ -414,6 +416,7 @@ C       and total potential water uptake rate.
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
+          EVAP = ES  !CHP / BK 7/13/2017
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -449,6 +452,8 @@ C       and total potential water uptake rate.
       CALL PUT('SPAM', 'EO',  EO)
       CALL PUT('SPAM', 'EP',  EP)
       CALL PUT('SPAM', 'ES',  ES)
+      CALL PUT('SPAM', 'EOP', EOP)
+      CALL PUT('SPAM', 'EVAP',EVAP)
 
 !***********************************************************************
 !***********************************************************************
@@ -464,11 +469,17 @@ C       and total potential water uptake rate.
         CEO = CEO + EO
         CEP = CEP + EP
         CES = CES + ES
-        CET = CET + ET
+C JULY 11 2017, KB AND BK TO GET CUM ET OUT  
+            !    IF (MEEVP .EQ. 'Z') THEN
+            !      CET = CET + EP + ES
+            !    ELSE
+                  CET = CET + ET
+            !    ENDIF
+C KB 
       ENDIF
 
       IF (IDETW .EQ. 'Y') THEN
-        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+        CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -505,8 +516,20 @@ C-----------------------------------------------------------------------
      &        SRFTEMP, ST)                                    !Output
           END SELECT
       ENDIF
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  
+!     7/21/2016 - DSSAT method is default, per GH
+!     CASE ('D')  !DSSAT soil temperature
+        CALL STEMP(CONTROL, ISWITCH,
+     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+      END SELECT
 
-      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -526,7 +549,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
-      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT,
+      CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
@@ -544,7 +567,20 @@ C-----------------------------------------------------------------------
      &        SRFTEMP, ST)                                    !Output
           END SELECT
       ENDIF
-      
+
+      SELECT CASE (METMP)
+      CASE ('E')    !EPIC soil temperature routine
+        CALL STEMP_EPIC(CONTROL, ISWITCH,  
+     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
+     &    SRFTEMP, ST)                                    !Output
+      CASE DEFAULT  
+!     7/21/2016 - DSSAT method is default, per GH
+!     CASE ('D')  !DSSAT soil temperature
+        CALL STEMP(CONTROL, ISWITCH,
+     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
+     &    SRFTEMP, ST)                                    !Output
+      END SELECT
+
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
