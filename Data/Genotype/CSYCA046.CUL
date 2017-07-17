@@ -1,4 +1,4 @@
-$CULTIVARS:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
+$CULTIVARS:CSYCA046.010114   Last edit:060717 LPM commit 0c604468efcd0e7af9094381ac54158121a20a10
 
 
 ! Coefficients used in the Cropsim cassava module differ from those used
@@ -16,7 +16,7 @@ $CULTIVARS:CSCGR046.010114   Last edit:030615 LPM (After GM, LAH)
 ! the initial conditions and computing the microbial release of nitrogen 
 ! and other nutrients.
 
-*CULTIVARS:CSCAS046
+*CULTIVARS:CSYCA46
 ! The following cultivars have not been calibrated well and the coefficients are                                                                            
 ! present merely to allow the experiments to be run. A user should spend time calibrating for                                                                    
 ! his/her own data. 
