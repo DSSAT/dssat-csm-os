@@ -1,5 +1,23 @@
 # DSSAT-CSM #
 
+The Decision Support System for Agrotechnology Transfer (DSSAT) Version is a software 
+application program that comprises crop simulation models for over 42 crops (as of Version 4.6).
+
+For DSSAT to be functional it is supported by data base management programs for soil, 
+weather, and crop management and experimental data, and by utilities and application 
+programs. The crop simulation models simulate growth, development and yield as a 
+function of the soil-plant-atmosphere dynamics.
+
+DSSAT and its crop simulation models have been used for many applications ranging from 
+on-farm and precision management to regional assessments of the impact of climate 
+variability and climate change. It has been in use for more than 20 years by researchers, 
+educators, consultants, extension agents, growers, and policy and decision makers 
+in over 100 countries worldwide.
+
+Read more about DSSAT at http://dssat.net/about
+
+## The directory structure ##
+
 DSSAT cropping system model (CSM) design is a modular structure in which components 
 separate along scientific discipline lines and are structured to allow easy replacement 
 or addition of modules. It has one Soil module, a Crop Template module which can simulate 
@@ -11,9 +29,16 @@ those that help researchers adapt and test the CSM to those that operate the DSS
 to simulate production over time and space for different purposes 
 [[The DSSAT cropping system model](http://abe.ufl.edu/jjones/ABE_5646/Xtra%20files/The%20DSSAT%20Cropping%20System%20Model.pdf)].
 
-## The directory structure ##
+## Compiling the code ##
 
+The code is compatible with the CMake utility for generating make files
+and setting up projects for a variety of IDEs and compilers. To use this feature, 
+first download and install CMake. Then set up a CMake project by pointing to the
+source code directory and the build directory.
+
+## Structure of the code ##
     .
+    ├── <source files>
     ├── CMakeLists.txt
     ├── distclean.cmake
     ├── README.md
