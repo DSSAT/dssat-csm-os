@@ -55,3 +55,5 @@ Resources/RC*
 *makefile*
 build/
 nbproject/
+CMakeFiles/
+CMakeCache.txt
