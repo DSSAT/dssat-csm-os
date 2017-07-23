@@ -14,7 +14,7 @@ Module YCA_First_Trans_m
     INTEGER,PARAMETER::KEYSTX =10 ! Maximum number of key stages
     INTEGER,PARAMETER::DCNX =  10 ! Disease control #,maximum
     !INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts
-    INTEGER,PARAMETER::LCNUMX=100 ! Maximum number of leaf cohorts LPM 23MAR15 Change for a more logical value lower than LNUMX
+    INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts LPM 23JUL15 using LNUMX to avoid errors for late or non branching varieties
     INTEGER,PARAMETER::NGMAX=30  ! Maximum number of groups of nodes
     REAL,PARAMETER::LLIFGD = 10.0 ! Leaf growing duration in days
     INTEGER,PARAMETER::LNUMX= 500 ! Maximum number of leaves/axis
