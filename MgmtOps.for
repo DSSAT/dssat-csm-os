@@ -626,8 +626,9 @@ C-----------------------------------------------------------------------
 
 !       Planting
         IF (YRDOY == YRPLT .AND. CROP .NE. 'FA') THEN
-          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+          WRITE(DLUN2,98) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
      &          "Planting       "
+   98     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A)
         ENDIF
 
 !       Physiological Maturity
