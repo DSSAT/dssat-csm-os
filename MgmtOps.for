@@ -624,11 +624,11 @@ C-----------------------------------------------------------------------
         CALL NAILUJ(DOY,YEAR,RMON,NDAY)
         Write(Date_Txt,'(A3,I3,", ",I4)') RMON, NDAY, YEAR 
 
-!!       Planting
-!        IF (YRDOY == YRPLT .AND. CROP .NE. 'FA') THEN
-!          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
-!     &          "Planting       "
-!        ENDIF
+!       Planting
+        IF (YRDOY == YRPLT .AND. CROP .NE. 'FA') THEN
+          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+     &          "Planting       "
+        ENDIF
 
 !       Physiological Maturity
         IF (MDATE == YRDOY) THEN
