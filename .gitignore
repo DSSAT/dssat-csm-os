@@ -55,3 +55,10 @@ Resources/RC*
 *makefile*
 build/
 nbproject/
+.metadata/
+.project
+.cproject
+Makefile
+cluster.patch
+Jlopez@*
+readme*
