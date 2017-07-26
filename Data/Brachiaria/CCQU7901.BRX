@@ -1,0 +1,89 @@
+*EXP.DETAILS: CCQU7901BR BRACHIARIA ON QUILICHAO
+
+*GENERAL
+@PEOPLE
+CIAT
+@ADDRESS
+CIAT, Palmira, Colombia
+@SITE
+Quilichao
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 0 0 0 79 Treatment 1             1  1  1  1  1  0  1  0  0  0  0  1  1
+ 2 0 0 0 79 Treatment 2             1  1  1  1  1  0  1  0  0  0  0  1  1
+ 3 0 0 0 79 Treatment 3             1  1  1  1  1  0  1  0  0  0  0  1  1
+ 4 0 0 0 79 Treatment 4             1  1  1  1  1  0  1  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 BR CC0005 BRACHIARIA
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 CCQU0001 CCQU         0     0 DR000     0     0     0 CLLO   260  CCQU790001 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0       990                 0     0     0     0   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1   -99 SA011 SA001 SA001  -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SB 79246     0     0     1     1   -99     0     0     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5   .47     1   3.9
+ 1    15  .473     1   3.8
+ 1    28  .491     1   3.2
+ 1    44   .51    .5     2
+ 1    65  .527     1   1.1
+ 1    96  .536     1    .5
+ 1   122  .549     1    .4
+ 1   150  .553     1    .2
+ 1   178  .541     1    .2
+ 1   196  .488     1    .1
+ 1   230  .488     1    .1
+ 1   260  .488     1    .1
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 79254 79262   100   100     S     R    10     0     1     3   -99   -99   -99     0                        -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 79254 FE005 AP002     0    50     0     0     0     0   -99 -99
+ 1 79315 FE005 AP002     0    50     0     0     0     0   -99 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 82125 GS000     C   -99   100     0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 79246  2150 BRACH : C4GRASS 4 YR      CRGRO
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     Y     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     P     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     N     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     Y     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          79247 79261    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     0
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 80254   100     0
+
+
+

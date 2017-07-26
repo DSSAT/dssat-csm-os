@@ -5,7 +5,7 @@ C  Generates output file for daily growth variables
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  01/01/1990 GH  Written
-C  09/21/1998 CHP Split off from OPDAY.FOR file
+C  09/21/1998 CHP Split off from OPDAY.for file
 C  05/11/1999 GH  Incorporated in CROPGRO
 C  06/19/2001 GH  Modified output format
 C  08/20/2002 GH  Modified for Y2K
@@ -473,7 +473,7 @@ C-----------------------------------------------------------------------
          CALL CsvOutPlCCrGro(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
      &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
      &TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, 
-     &CADST, RHOLP, RHOSP, TGRO(12), TGROAV, PCNSDP, PCLSDP, 
+     &CADST, RHOLP, RHOSP, TGRO, TGROAV, PCNSDP, PCLSDP, 
      &PCCSDP, TS, 
      &vCsvlinePlCCrGro, vpCsvlinePlCCrGro, vlngthPlCCrGro)
       
@@ -484,7 +484,8 @@ C-----------------------------------------------------------------------
           WRITE (NOUTPC,510) YEAR, DOY, DAS, DAP,
      &        NINT(TOTWT*10), PG, CMINEA, GROWTH,
      &        GRWRES, MAINR, (CADLF + CADST), RHOLP, RHOSP,
-     &        TGRO(12), TGROAV, PCNSDP, PCLSDP, PCCSDP
+     &        TGRO(TS/2), TGROAV, PCNSDP, PCLSDP, PCCSDP
+C       changed from 12 to TS/2 on 9Jul17 by Bruce Kimball
   510     FORMAT(1X,I4,1X,I3.3,2(1X,I5),1X,I6,5(F8.4),F8.5,2(F7.3),
      &        2(1X,F6.3),3(1X,F7.4))
 !  510     FORMAT(1X,I4,1X,I3.3,2(1X,I5),1X,I6,6(1X,F7.2),2(1X,F6.1),

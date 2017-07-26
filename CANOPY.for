@@ -185,10 +185,11 @@ C-----------------------------------------------------------------------
 C     Calculate effect of temperature on canopy expansion, HWTEM
 C-----------------------------------------------------------------------
       HWTEM = 0.0
-      DO I = 1, 24
+      DO I = 1, TS
         HWTEM = HWTEM + TABEX(YHWTEM,XHWTEM,TGRO(I),5)
       ENDDO
-      HWTEM = HWTEM / 24.
+      HWTEM = HWTEM /TS
+C       24 changed to TS on 5 July 2017 by Bruce Kimball
 
 C-----------------------------------------------------------------------
 C     Calculate effect of day's PAR on canopy expansion, HPAR.

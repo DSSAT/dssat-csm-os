@@ -15,6 +15,7 @@ C=======================================================================
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
+
 !-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
@@ -48,6 +49,8 @@ C=======================================================================
       INTEGER, PARAMETER :: SUMNUM = 3
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
+      
+      CHARACTER*20 FRMT  ! VSH
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -131,13 +134,16 @@ C-----------------------------------------------------------------------
      &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
 
             IF (N_LYR < 10) THEN
-              WRITE(FMT,'(A1,I1,A)') "(",N_LYR,"(4X,A2,I1,A1))"
-              WRITE (LUN,FMT,ADVANCE='NO') ("ES",L,"D",L=1,N_LYR)
-!121         FORMAT(N_LYR("    ",A2,I1,A1))
-              WRITE(LUN,'(A8)') "    RWUD"
+!              VSH
+!              WRITE (LUN,121) ("ES",L,"D",L=1,N_LYR), "   TRWU" ! ADD by JZW
+!  121         FORMAT(9("    ",A2,I1,A1), A8)
+               WRITE(FRMT,'(I1)') N_LYR
+               FRMT = '('//Trim(Adjustl(FRMT))//'(4X,A2,I1,A1),A8)'
+               WRITE (LUN,FRMT) ("ES",L,"D",L=1,N_LYR), 'TRWUD' 
             ELSE
-              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
-  122         FORMAT(9("    ",A2,I1,A1),A25)
+!              WRITE (LUN,122)("ES",L,"D",L=1,9, "        ES10D    RWUD")
+              WRITE (LUN,122)("ES",L,"D",L=1,9), "  ES10D   TRWUD"  !VSH
+  122         FORMAT(9("    ",A2,I1,A1),A16)
             ENDIF
             END IF   ! VSH
           ELSE
@@ -243,7 +249,8 @@ C-----------------------------------------------------------------------
                 ES10 = ES10 + ES_LYR(L)
               ENDDO
               IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-              WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10, TRWU
+!              WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
+               WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
               END IF   ! VSH
             ENDIF    
           ELSE
@@ -254,10 +261,12 @@ C-----------------------------------------------------------------------
 
 !     VSH CSV output corresponding to ET.OUT
       IF (FMOPT == 'C') THEN 
+!         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+         N_LYR = SOILPROP%NLAYR
          CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
      &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
-     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR,
+     &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR, TRWU,
      &vCsvlineET, vpCsvlineET, vlngthET)
      
          CALL LinklstET(vCsvlineET)
@@ -319,8 +328,8 @@ C-----------------------------------------------------------------------
 ! EMAA    Average mulch evaporation since last printout (mm/d)
 ! ETAA    Average evapotranspiration since last printout (mm/d)
 ! AVSRAD  Average solar radiation since last printout (MJ/m2-d)
-! AVTMN   Average min temperature since last printout (�C)
-! AVTMX   Average max temperature since last printout (�C)
+! AVTMN   Average min temperature since last printout (oC)
+! AVTMX   Average max temperature since last printout (oC)
 ! AVWTD   Average water table depth since last printout (cm)
 ! CEP     Cumulative transpiration (mm)
 ! CES     Cumulative evaporation (mm)
@@ -332,19 +341,19 @@ C-----------------------------------------------------------------------
 ! ES      Actual soil evaporation rate (mm/d)
 ! ET      Actual evapotranspiration rate (mm/d)
 ! MODEL   Name of CROPGRO executable file 
-! NAP     Number of irrigation applications 
+! NAP     Number of irrigation applications  
 ! NAVWB   Number of days since last printout (d)
 ! NL      Maximum number of soil layers = 20 
 ! LUN     Unit number for spam output file 
 ! OUTW    Filename for soil water output file (set in IPIBS) 
-! ST(L)   Soil temperature in soil layer L (�C)
+! ST(L)   Soil temperature in soil layer L (oC)
 ! SW(L)   Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])
 ! TDRAIN  Cumulative daily drainage from profile (mm)
 ! TIMDIF  Integer function which calculates the number of days between two 
 !           Julian dates (da)
-! TMAX    Maximum daily temperature (�C)
-! TMIN    Minimum daily temperature (�C)
+! TMAX    Maximum daily temperature (oC)
+! TMIN    Minimum daily temperature (oC)
 ! TOTIR   Total seasonal irrigation (mm)
 ! TRUNOF  Cumulative runoff (mm)
 ! WTDEP   Water table depth  (cm)

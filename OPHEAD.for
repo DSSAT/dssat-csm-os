@@ -1,5 +1,5 @@
 !=======================================================================
-! OPHEAD.FOR
+! OPHEAD.for
 ! Includes:
 ! Module HeaderMod contains header data
 ! OPHEAD generates general header for OVERVIEW.OUT & daily output files
@@ -8,8 +8,8 @@
 !-----------------------------------------------------------------------
 !  Revision history
 !  09/25/2007 CHP Created HeaderMod 
-!                 Moved OPSOIL to OPHEAD.FOR
-!                 Moved HEADER to OPHEAD.FOR
+!                 Moved OPSOIL to OPHEAD.for
+!                 Moved HEADER to OPHEAD.for
 !                 Subroutines rewritten to use array of header data, 
 !                   rather than saved ASCII file
 !=======================================================================
@@ -344,19 +344,39 @@ c     MJ, Mar 2008: Soil information
             ENDIF
             WRITE (HEADER(I),660) NINT(TOTAPW),NNAPW; I=I+1
           ELSE IF (IIRRI .EQ. 'A') THEN
-            WRITE (HEADER(I),670); I=I+1
-            WRITE (HEADER(I),680) DSOIL/100.,THETAC; I=I+1
+            WRITE (HEADER(I),665); I=I+1
+            WRITE (HEADER(I),666) DSOIL/100.,THETAC; I=I+1
           ELSE IF (IIRRI .EQ. 'F') THEN
-            WRITE (HEADER(I),685); I=I+1
-            WRITE (HEADER(I),686) DSOIL/100.,THETAC; I=I+1
+            WRITE (HEADER(I),670); I=I+1
+            WRITE (HEADER(I),666) DSOIL/100.,THETAC; I=I+1
+          ELSE IF (IIRRI .EQ. 'E') THEN
+            WRITE (HEADER(I),675); I=I+1
+            WRITE (HEADER(I),676) DSOIL; I=I+1
+          ELSE IF (IIRRI .EQ. 'T') THEN
+            WRITE (HEADER(I),680); I=I+1
+            WRITE (HEADER(I),676) DSOIL; I=I+1
           ELSE IF (IIRRI .EQ. 'N') THEN
             WRITE (HEADER(I),690); I=I+1
-            WRITE (HEADER(I),700); I=I+1
+            WRITE (HEADER(I),691); I=I+1
          ENDIF
-       ELSE IF (ISWWAT .EQ. 'N') THEN
+
+  660 FORMAT(' IRRIGATION     : ',I8,' mm IN ',I5,' APPLICATIONS')
+  665 FORMAT(' WATER BALANCE  : AUTOMATIC IRRIGATION - REFILL PROFILE')
+  666 FORMAT(' IRRIGATION     : AUTOMATIC [SOIL DEPTH:',F5.2,' m',1X,
+     &            F3.0,'%]')
+  670 FORMAT(' WATER BALANCE  : AUTOMATIC IRRIGATION - FIXED AMOUNT')
+  675 FORMAT(' WATER BALANCE  : ET AUTO IRRIGATION - REFILL PROFILE')
+  676 FORMAT(' IRRIGATION     : AUTOMATIC [ET ACCUM:',F5.2,' mm ]')
+  680 FORMAT(' WATER BALANCE  : ET AUTOMATIC IRRIGATION - FIXED AMOUNT')
+  690 FORMAT(' WATER BALANCE  : RAINFED')
+  691 FORMAT(' IRRIGATION     : NOT IRRIGATED')
+
+      ELSE IF (ISWWAT .EQ. 'N') THEN
          WRITE (HEADER(I),705); I=I+1
          WRITE (HEADER(I),710); I=I+1
       ENDIF
+
+
 
       IF (ISWNIT .EQ. 'Y') THEN
          IF (ISWSYM .EQ. 'Y') THEN
@@ -438,17 +458,6 @@ C-----------------------------------------------------------------------
      &           ' REPORTED DATE(S)')
   655 FORMAT (1X,'WATER BALANCE',2X,':',1X,'IRRIGATE ON REPORTED',
      &           ' DAP')
-  660 FORMAT (1X,'IRRIGATION',5X,':',1X,I8,' mm IN ',I5,' APPLICATIONS')
-  670 FORMAT (1X,'WATER BALANCE',2X,':',1X,
-     &           'AUTOMATIC IRRIGATION - REFILL PROFILE')
-  680 FORMAT (1X,'IRRIGATION',5X,': AUTOMATIC - PLANTING -> MATURITY ',
-     &           '[ SOIL DEPTH:',F5.2,'m',1X,F3.0,'%]')
-  685 FORMAT (1X,'WATER BALANCE',2X,':',1X,
-     &           'AUTOMATIC IRRIGATION - FIXED AMOUNT')
-  686 FORMAT (1X,'IRRIGATION',5X,': AUTOMATIC - PLANTING -> MATURITY ',
-     &           '[ SOIL DEPTH:',F5.2,'m',1X,F3.0,'%]')
-  690 FORMAT (1X,'WATER BALANCE',2X,':',1X,'RAINFED')
-  700 FORMAT (1X,'IRRIGATION',5X,':',1X,'NOT IRRIGATED')
   705 FORMAT (1X,'WATER BALANCE',2X,':',1X,'NOT SIMULATED ;',
      &           ' NO H2O-STRESS')
   710 FORMAT (1X,'IRRIGATION',5X,':')
@@ -606,7 +615,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
 !     CROPGRO
-      CASE ('CRGRO')
+      CASE ('CRGRO','PRFRM')
 !      IF (INDEX (MODEL, 'CRGRO') > 0) THEN
         IF (INDEX ('BN,PN,SB,PE,CH,PP,VB,CP,BR,FB,NP,GB,PE,LT',CROP) 
      &    > 0) THEN
@@ -726,6 +735,35 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
             IF (J2 > LENGTH) EXIT
           ENDDO
         ENDIF
+!-----------------------------------------------------------------------
+!     Cassava CIAT      
+      CASE ('CSYCA')
+         WRITE (HEADER(I),'(A,A)')
+     &     "  PPS1 B01ND B12ND SR#WT  HMPC "
+          I=I+1
+          WRITE (HEADER(I),'(F6.2,2F6.0,2F6.2)') 
+     &     PPS1, B01ND, B12ND, SRNWT, HMPC
+         I=I+1
+         WRITE (HEADER(I),'(A,A)') 
+     &     "  LA1S  LAXS  SLAS",
+     &     " LLIFA LPEFR LNSLP NODWT NODLT"
+        I=I+1
+         WRITE (HEADER(I),'(F6.1,F6.0,2F6.1,3F6.2, 1F6.1)') 
+     &    LA1S, LAXS, SLASS, LLIFA,
+     &    LPEFR, LNSLP, NODWT, NODLT
+       I=I+1
+!       Print optional extra stuff from ecotype file
+        LENGTH = LenString(PLAINTXT)
+        IF (LENGTH > 0) THEN
+          DO J=1,3
+            J1 = (J-1)*78+1
+            J2 = J1 + 77
+            WRITE( HEADER(I),'(A)') TRIM(ATLINE(J1+149:J2+149))
+            WRITE( HEADER(I+1),'(A)') TRIM(PLAINTXT(J1:J2))
+            I = I + 2
+            IF (J2 > LENGTH) EXIT
+          ENDDO
+        ENDIF
 
 !-----------------------------------------------------------------------
 !     CERES-Maize
@@ -768,7 +806,7 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
       CASE ('RICER')
 !      ELSEIF (INDEX ('RI',CROP) .GT. 0) THEN
          WRITE (HEADER(I), 906) P1,P2R,P5,P2O; I=I+1
-         WRITE (HEADER(I),1006) G1,G2,G3,G4; I=I+1
+         WRITE (HEADER(I),1006) G1,G2,G3,G4,G5; I=I+1
 
 !-----------------------------------------------------------------------
 !     Aroids
@@ -911,7 +949,7 @@ C-----------------------------------------------------------------------
      &         '  PHINT  :',F8.3)
  1005 FORMAT (1X,'PD     :',F7.2,'  P2     :',F7.3,'  TC     :',F7.3)
  1006 FORMAT (1X,'G1     :',F6.1,'  G2     :',F6.4,
-     &         '  G3     :',F6.2,'  G4     :',F6.2)
+     &         '  G3     :',F6.2,'  G4     :',F6.2,'  G5     :',F6.2)
  1007 FORMAT (1X,'G1     :',F6.1,'  PI1    :',F6.1,
      &         '  PI2    :',F6.1,'  DTTPI  :',F6.1)
  1057 FORMAT (1X,' M1    :',F6.1,'   M2   :',F6.1,

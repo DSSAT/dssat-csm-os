@@ -154,7 +154,7 @@ C
         READ (C360,'(6X,A6,1X,A16,7X,A)',IOSTAT=ERRNUM) VARTY, 
      &         VRNAME, PLAINTXT
 !     CROPGRO crops **
-      CASE ('CRGRO')  
+      CASE ('CRGRO','PRFRM')  
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,CSDVAR,
      &       PPSEN,PH2T5,PHTHRS(6),PHTHRS(8),PHTHRS(10),PHTHRS(13),
      &       LFMAX,SLAVAR,SIZELF,XFRUIT,WTPSD,SFDUR,SDPDVR,PODUR,
@@ -199,7 +199,21 @@ C-GH  Add cassava model
 C-GH &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
      &      LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR, PLAINTXT
-        
+
+C-LPM  Add CIAT cassava model
+!     CASSAVA: cassava **
+      CASE ('CSYCA')
+
+!DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15          
+!         READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
+!     &      PPS1, B01ND, B12ND, SRNWT, HMPC, LA1S, LAXS, 
+!     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
+                    
+          READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
+     &      PPS1, B01ND, B12ND, SRNWT, HMPC, LAXS, 
+     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
+          
+	 
 !     Ceres-wheat: wheat, barley **
       CASE ('CSCER')
 !       READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
@@ -262,7 +276,6 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
           G4 = 1.2
         ENDIF
 
-
 !     Substor Potato **
       CASE ('PTSUB')
         READ (C360, 800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
@@ -272,7 +285,14 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Ceres Rice **
       CASE ('RICER')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+     &            P1,P2R,P5,P2O,G1,G2,G3,G4, PHINT,G5
+!       For backwards compatibility for cultivar files with no G5.
+        IF (ERRNUM /= 0) THEN
+          READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
      &            P1,P2R,P5,P2O,G1,G2,G3,G4, PHINT
+          G5 = 1.0
+        ENDIF
+        IF (G5 < 0.0) G5 = 1.0
 
 !     ORYZA Rice **
 !     Read name of OYRZA crop file
@@ -365,6 +385,10 @@ C-----------------------------------------------------------------------
   810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)         !WHCRP, BACRP 03/16/2010
 C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
+     
+!  821 FORMAT (A6,1X,A16,7X,A6,13F6.0,A)         !CSYCA        06/05/2015 !DA 04OCT2016 Changed since LA1S variable is removed, is not used according to LPM 07MAR15 
+  821 FORMAT (A6,1X,A16,7X,A6,12F6.0,A)         !CSYCA        06/05/2015 
+
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
   850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A)
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07

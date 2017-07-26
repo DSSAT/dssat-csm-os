@@ -644,6 +644,27 @@ C-----------------------------------------------------------------------
         STNAME(15)= 'Sowing    '
         STNAME(16)= 'Harvest   '
 
+!KJB - 5/4/2017 adding stages for sunflower and safflower (maybe CROPGRO wheat later)
+      CASE ('SU','SA')
+!     For stage-dependant irrigation - send GSTAGE back to irrig routine
+        STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
+        STNAME(2) = 'Unifoliate'
+        STNAME(3) = 'End Juven.'
+        STNAME(4) = 'Flower Ind'
+        STNAME(5) = 'Star burst'
+        STNAME(6) = '1st thalam'
+        STNAME(7) = '1st thalam'
+        STNAME(8) = '1st Flw/Sd'
+        STNAME(9) = 'End Sd-add'
+        STNAME(10)= 'Phys. Mat '
+        STNAME(11)= 'Harv. Mat '
+        STNAME(12)= 'End Msnode'
+        STNAME(13)= 'End Leaf  '
+        STNAME(14)= 'Start Sim '
+        STNAME(15)= 'Sowing    '
+        STNAME(16)= 'Harvest   '
+
+! KJB
       CASE ('PN')
         STNAME(1) = 'Emergence '
         STNAME(2) = 'Unifoliate'

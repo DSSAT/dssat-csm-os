@@ -430,6 +430,148 @@ C-------------------------------------------------------------------------------
       ENDIF
 C-------------------------------------------------------------------------------
 C-------------------------------------------------------------------------------
+C-------------------------------------------------------------------------------
+C     Curve type REV - Reversible process - used for cold hardening
+C	Rate of cold hardening increases as TMIN decreases from X1 to XB
+C	Cold hardening reverses at an increasing rate as TMIN increases from X1 to X2
+C     Process at maximum rate at or below XB
+C	Rate decreases linearly to 0 at X1
+C	Process reverses at a linear rate from X1 to X2
+C	XM is the maximum absolute rate
+C-------------------------------------------------------------------------------
+      IF(CTYPE .EQ. 'REV' .OR. CTYPE .EQ. 'rev') THEN
+        CURV = 1.
+        IF(X .GT. XB .AND. X .LT. X1)CURV = 1.0-((X-XB)/(X1-XB))
+        IF(X .GE. X1 .AND. X .LE. X2)CURV = 0.0-((X-X1)/(X2-X1))
+        IF(X .GT. X2 )CURV = -1.0 
+        CURV = MAX(CURV,-1.0)
+        CURV = MIN(CURV,1.0)
+	  CURV = CURV * XM
+      ENDIF
+C-------------------------------------------------------------------------------
+C     Curve type DHD - used for cold dehardening in spring
+C	No cold dehardening below XB (rate=0)
+C	Rate of cold dehardening increases as TMIN increases from XB to X1
+C     Process at maximum rate at or above X1
+C	X2 is not used
+C	XM is the maximum absolute rate
+C-------------------------------------------------------------------------------
+      IF(CTYPE .EQ. 'DHD' .OR. CTYPE .EQ. 'dhd') THEN
+        CURV = 0.
+        IF(X .GT. XB .AND. X .LT. X1)CURV = (X-XB)/(X1-XB)
+        IF(X .GE. X1 .AND. X .LE. X2)CURV = 1
+        IF(X .GT. X2 )CURV = 1
+        CURV = MAX(CURV,0.0)
+        CURV = MIN(CURV,1.0)
+	  CURV = CURV * XM
+      ENDIF
+
+C-------------------------------------------------------------------------------
+C     Curve type DRD - used for reducing rates of processes as dormancy advances
+C	Multiply rates by this factor to reduce them on short days, 
+C	no effect on long days
+C	XM is the maximum reduction factor at full dormancy (daylength=XB)
+C	Less reduction as daylength gets longer
+C     Process at maximum rate at or above X1
+C	X2 is not used
+C-------------------------------------------------------------------------------
+      IF(CTYPE .EQ. 'DRD' .OR. CTYPE .EQ. 'drd') THEN
+        CURV = X2
+        IF(X .GT. XB .AND. X .LT. X1)
+     &	  CURV = X2+(XM-X2)*(X-XB)/(X1-XB)
+        IF(X .GE. X1 )CURV = XM
+        CURV = MAX(CURV,X2)
+        CURV = MIN(CURV,XM)
+      ENDIF
+
+C-------------------------------------------------------------------------------
+C    Curve type CDD - used for reducing rates of processes as dormancy advances
+C	Multiply rates by this factor to reduce them on short days, 
+C	Long day effect depends on value of XM
+C	X2 is the maximum reduction factor at full dormancy (daylength=XB)
+C	Less reduction as daylength gets longer
+C    Process at maximum rate at or above X1
+C	Curvilinear version of DRD
+C-------------------------------------------------------------------------------
+
+      IF(CTYPE .EQ. 'CDD' .OR. CTYPE .EQ. 'cdd') THEN
+        CURV = X2
+        IF(X .GT. XB .AND. X .LT. X1)
+     &	  CURV = XM-((XM-X2)*((X1-X)/(X1-XB))**2)
+        IF(X .GE. X1)CURV = XM
+        CURV = MAX(CURV,X2)
+        CURV = MIN(CURV,XM)
+      ENDIF
+
+C-------------------------------------------------------------------------------
+C	Curve type EXK - generic exponential function with "k"
+C	XB sets the amplitude of the curve (max Y value)
+C	X1/XM sets the amount of curvature (k) and shape of the curve (+ or -)
+C	X2 shifts the curve left (- X2) or right (+X2) on the X axis 
+C	If X1/XM is positive, X2 is the X-intercept 
+C-------------------------------------------------------------------------------
+
+      IF(CTYPE .EQ. 'EXK' .OR. CTYPE .EQ. 'exk') THEN
+
+        CURV = XB - EXP(X1*(X-X2)/XM)
+      ENDIF
+C-------------------------------------------------------------------------------
+C-------------------------------------------------------------------------------
+C     Curve type VOP - Variable Order Polynomial
+C	Polynomial order (quadratic, cubic, etc.) is continuously variable 
+C	(not discete steps)
+C	XB=T0, the lower temperature where the function scales to 0
+C	XM=T0', the upper temperature where the function scales to 0
+C	X1=Tref, reference temperature at which the functio scales to 1.0
+C	X2=qft, variable that sets the order of the polynomial
+C	Set X2=1 the function is quadratic, X2=2 cubic, X2=3 quartic, etc. 
+C     X2 does not have to be an integer
+C	Function scales to 0 below XB and above XM
+C	Minimum CURV value =0.0, maximum can exceed 1.0
+C	Can use mft, a multiplier, to set the scale of the function
+C	Read mft in from file and apply in main section of code (ex. mft*CURV)
+C-------------------------------------------------------------------------------
+      IF(CTYPE .EQ. 'VOP' .OR. CTYPE .EQ. 'vop') THEN
+        CURV=0.0
+	  IF(X .GT. XB .AND. X .LT. XM)
+     &	  CURV = (((X-XB)**X2)*(XM-X))/(((X1-XB)**X2)*(XM-X1))
+        IF(X .GE. XM ) CURV = 0.0
+        CURV = MAX(CURV,0.0)
+      ENDIF
+
+C-------------------------------------------------------------------------------
+C-------------------------------------------------------------------------------
+C     Curve type Q10 - basic Q10 function
+C	XB=Tref, reference temperature
+C	X1=k, te response at Tref
+C	X2= Q10 increase in the response for every 10°K increase in temperature
+C	XM is not used
+C-------------------------------------------------------------------------------
+      IF(CTYPE .EQ. 'Q10' .OR. CTYPE .EQ. 'q10') THEN
+	  CURV=X1*(X2**((X-XB)/10))
+      ENDIF
+
+C-------------------------------------------------------------------------------
+C-------------------------------------------------------------------------------
+C     Curve type PWR - basic function raising X to some power with scaling
+C	XB=multiplier for main function
+C	X1=power to raise X to
+C	X2= scaling multiplier to scale reults to a given range
+C	XM is not used
+C	Added condition for negative values of X - was generating NaN with
+C	negative values of X and fractional vlaues of X1 
+C	(ex. Temp=-1.8C and X1=1.5905).  Now uses value for 0.0 when X<0.0
+C-------------------------------------------------------------------------------
+      IF(CTYPE .EQ. 'PWR' .OR. CTYPE .EQ. 'pwr') THEN
+		IF (X .LT. 0.0) THEN
+		CURV=X2*XB*(0**X1)
+		ELSE
+		CURV=X2*XB*(X**X1)
+		ENDIF
+      ENDIF
+
+C-------------------------------------------------------------------------------
+
       END FUNCTION CURV
 
 C=======================================================================
@@ -651,7 +793,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !========================================================================
-!  09/25/2007 CHP  Moved HEADER to OPHEAD.FOR
+!  09/25/2007 CHP  Moved HEADER to OPHEAD.for
 !=======================================================================
 
 
@@ -826,6 +968,11 @@ C                 rather than delete all *.OUT files.
 C=======================================================================
       SUBROUTINE OPCLEAR
       USE ModuleDefs
+!cDEC$ IF (COMPILER == 0) 
+!        USE DFPORT
+!cDEC$ ELSE
+C        USE IFPORT
+!cDEC$ ENDIF
       IMPLICIT NONE
 
       Type (OutputType) FileData
@@ -905,6 +1052,11 @@ C=======================================================================
       SUBROUTINE OPNAMES(FNAME)
       USE ModuleDefs
       USE ModuleData
+!!!!cDEC$ IF (COMPILER == 0) 
+!        USE DFPORT
+!!!!cDEC$ ELSE
+C        USE IFPORT
+!!!!cDEC$ ENDIF
       IMPLICIT NONE
 
       SAVE
@@ -1119,7 +1271,7 @@ C=======================================================================
       CHARACTER*80 CHARTEST
       CHARACTER*120 DATAX, PATHX
 
-      INTEGER ERR, I, IPX, ISECT, LNUM, LUN
+      INTEGER ERR, I, ISECT, LNUM, LUN
       LOGICAL FEXIST      !EOF, 
       TYPE (OutputType) FileData
 
@@ -1142,14 +1294,17 @@ C=======================================================================
 !       File does not exist in data directory, check directory
 !         with executable.
         CALL GETARG(0,PATHX)
-        IPX = LEN_TRIM(PATHX)
-        DATAX = PATHX(1:(IPX-12)) // FILECDE
+!        call path_adj(pathx)
+        call get_dir(pathx,datax)
+        datax = trim(datax)//filecde
+!        IPX = LEN_TRIM(PATHX)
+!        DATAX = PATHX(1:(IPX-12)) // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF        
 
       IF (.NOT. FEXIST) THEN
 !       Last, check for file in C:\DSSAT45 directory
-        DATAX = STDPATH // FILECDE
+        DATAX = trim(STDPATH) // FILECDE
         INQUIRE (FILE = DATAX, EXIST = FEXIST)
       ENDIF
 
@@ -1305,3 +1460,167 @@ C=======================================================================
       END Subroutine Join_Trim
 
 !=======================================================================
+
+
+
+!!=======================================================================
+!!  path_adj, Subroutine
+!!
+!!  Subroutine adjusts path for indications of relative path such as up one 
+!!    directory '..'
+!!-----------------------------------------------------------------------
+!!  Revision history
+!!
+!!  3/26/2014 PDA Written
+!!=======================================================================
+!
+!      subroutine path_adj(path)
+!
+!        use moduledefs
+!
+!        implicit none
+!
+!        character(len=*),intent(inout) :: path
+!
+!        integer           :: p1,p2,p3
+!
+!          p1=index(path,'.')
+!          p2=index(path,'..')
+!
+!          if(p1>1)then
+!             p3=len_trim(path)
+!             p1=index(path(1:p1),slash,back=.true.)
+!             if(p2>0)then
+!                p2=p2+3
+!                p1=index(path(1:(p1-1)),slash,back=.true.)
+!             else
+!                p2 = p1 + 2
+!             end if
+!                path = path(1:p1)//path(p2:p3)
+!          end if
+!
+!      end subroutine path_adj
+!
+!  3/26/2014 PDA Written
+!=======================================================================
+
+      subroutine path_adj(path)
+
+        use moduledefs
+
+        implicit none
+
+        character(len=*),intent(inout) :: path
+
+        integer           :: p1,p2,p3
+        
+           p1 = index(path,slash//'..'//slash)
+
+           do while(p1>1)
+              p2 = p1 + 4
+              p1=index(path(1:(p1-1)),slash,back=.true.)
+              p3=len_trim(path)
+              if(p3<p1+4)then
+                 path = path(1:p1)
+              else
+                 path = path(1:p1)//path(p2:p3)
+              end if
+              p1 = index(path,slash//'..'//slash)
+           end do
+
+      end subroutine path_adj
+
+!=======================================================================
+!  skipspc, Subroutine
+!
+!  Subroutine to skip spaces in a string
+!-----------------------------------------------------------------------
+!  Revision history
+!
+!  3/26/2014 PDA Added to CSM
+!=======================================================================
+
+      SUBROUTINE SKIPSPC(STRING,POS,DIRECTION)
+    
+        IMPLICIT NONE
+
+        INTEGER         :: POS
+
+        CHARACTER(LEN=*):: STRING
+        CHARACTER(LEN=*):: DIRECTION
+        
+      
+        SELECT CASE(DIRECTION)
+            CASE('R','r')
+                DO WHILE(STRING(POS:POS)==' ')
+                    IF (POS < LEN(STRING)) THEN
+                        POS = POS + 1
+                    ELSE
+                        EXIT
+                    ENDIF
+                ENDDO
+            CASE('L','l')
+                DO WHILE(STRING(POS:POS)==' ')
+                    IF (POS > 1 ) THEN
+                        POS = POS - 1
+                    ELSE
+                        EXIT
+                    ENDIF
+                ENDDO
+        END SELECT
+        
+      END SUBROUTINE SKIPSPC
+
+
+!=======================================================================
+!  get_next_string, Subroutine
+!
+!  Subroutine to get next non-space substring from a larger string
+!-----------------------------------------------------------------------
+!  Revision history
+!
+!  3/26/2014 PDA Added to CSM
+!=======================================================================
+
+      subroutine get_next_string(full_string,start,next_string)
+
+        implicit none
+
+        character(len=*),intent(in)  :: full_string
+        character(len=*),intent(out) :: next_string
+        integer,intent(in)           :: start
+        integer                      :: pos
+
+        pos = start + index(full_string(start:len(full_string)),' ') - 1
+
+        call skipspc(full_string,pos,'R')
+
+        read(full_string(pos:len(full_string)),'(a)') next_string
+
+      end subroutine get_next_string
+
+!=======================================================================
+!  get_dir, Subroutine
+!
+!  Subroutine to strip file name from full path and return only the directory
+!-----------------------------------------------------------------------
+!  Revision history
+!
+!  3/26/2014 PDA Written
+!=======================================================================
+
+      subroutine get_dir(full_path,only_dir)
+
+        use moduledefs
+
+        implicit none
+
+        character(len=*),intent(in)  :: full_path
+        character(len=*),intent(out) :: only_dir
+        integer pos
+
+        pos = index(full_path,slash,back=.true.)
+
+        only_dir = full_path(1:pos)        
+
+      end subroutine get_dir

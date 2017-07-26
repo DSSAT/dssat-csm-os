@@ -599,7 +599,7 @@ C-----------------------------------------------------------------------
      &         trim(PLAINTXT)
 
 !       CROPGRO crops
-        CASE('CRGRO')
+        CASE('CRGRO','PRFRM')
 
 !        CASE ('BN','PN','SB','TM','PE','CH','PP','PR',
 !     &        'C3','C4','G0','G1','G2','G3','G4','G5','G6','G7','G8',
@@ -612,7 +612,7 @@ C-----------------------------------------------------------------------
 
 !       Ceres wheat, barley
 !       CropSim - wheat, barley, cassava
-        CASE('WHCER', 'BACER', 'CSCRP','CSCAS')
+        CASE('WHCER', 'BACER', 'CSCRP','CSCAS','CSYCA')
 !       Do nothing - these models read the INH file written by OPTEMPXY2K
 
 !       APSIM Wheat (NWheat)
@@ -652,7 +652,7 @@ C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !       Ceres rice
         CASE ('RICER')
             WRITE (LUNIO,1985,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
-     &             P1,P2R,P5,P2O,G1,G2,G3,G4,PHINT
+     &             P1,P2R,P5,P2O,G1,G2,G3,G4,PHINT, G5
 
 !       ORYZA rice
         CASE ('RIORZ')
@@ -814,7 +814,7 @@ c1960 FORMAT (A6,1X,A16,1X,A6,1X,F6.2,F8.4,F7.2,F8.2,F7.3,F4.0)
  1960 FORMAT (A6,1X,A16,1X,A6,1X,F5.1,1X,F5.2,1X,F5.1,1X,F5.0,1X,F5.2,
      &        1X,F5.0)
  1975 FORMAT (A6,1X,A16,1X,A6,4(F6.0),2(F6.2),3(F6.1))
- 1985 FORMAT (A6,1X,A16,1X,A6,5(F6.1),F6.4,2(F6.2),F6.1)
+ 1985 FORMAT (A6,1X,A16,1X,A6,5(F6.1),F6.4,2(F6.2),F6.1,F6.2)
  1995 FORMAT (A6,1X,A16,1X,A6,F6.1,3(F6.3),F6.2,F6.1)
  2000 FORMAT ('*MODEL INPUT FILE   ',9X,A1,5(1X,I5))
  2040 FORMAT ('MODEL          ',A8,5X,A80)

@@ -3,8 +3,10 @@ Module Linklist
 !
 Implicit None
 Save
-    Character(Len=1) :: switchcsv
-   
+ 
+Integer :: csvICOUNT
+Character(Len=6),  Dimension(40) :: csvOLAP    !Labels
+
 ! Data dictionary: declare variable types & definitions 
 !------------------------------------------------------------------------------
 
@@ -81,6 +83,19 @@ Save
     Type (lin_valueMZCER), Pointer :: ptrMZCER       
     
     Integer :: istatMZCER                            
+!------------------------------------------------------------------------------
+
+!   for MLCER
+    Type :: lin_valueMLCER
+       Character(:), Allocatable :: pclineMLCER
+       Type (lin_valueMLCER), Pointer :: pMLCER
+    End Type
+
+    Type (lin_valueMLCER), Pointer :: headMLCER      
+    Type (lin_valueMLCER), Pointer :: tailMLCER      
+    Type (lin_valueMLCER), Pointer :: ptrMLCER       
+    
+    Integer :: istatMLCER                            
 !------------------------------------------------------------------------------
 
 !   for PlNCrGro
@@ -439,6 +454,32 @@ Contains
 
  End Subroutine LinklstMZCER
 !------------------------------------------------------------------------------
+ Subroutine LinklstMLCER(ptxtlineMLCER)
+
+    Character(:), Allocatable :: ptxtlineMLCER            
+        
+    If(.Not. Associated(headMLCER)) Then          
+      Allocate(headMLCER, Stat=istatMLCER)        
+      If(istatMLCER==0) Then                      
+        tailMLCER => headMLCER                    
+        Nullify(tailMLCER%pMLCER)                 
+        tailMLCER%pclineMLCER = ptxtlineMLCER     
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailMLCER%pMLCER, Stat=istatMLCER)      
+      If(istatMLCER==0) Then                           
+        tailMLCER=> tailMLCER%pMLCER                   
+        Nullify(tailMLCER%pMLCER)                      
+        tailMLCER%pclineMLCER = ptxtlineMlCER          
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstMLCER
+!------------------------------------------------------------------------------
 
  Subroutine LinklstPlNCrGro(ptxtlinePlNCrGro)
 
@@ -704,14 +745,49 @@ Contains
 
  End Subroutine LinklstSumOpsum
 !------------------------------------------------------------------------------
-   Subroutine Listtofile
+   Subroutine ListtofilePlantgrCrGro(nlayers)
       Integer          :: nf       ! Number for growth output file  #
       Character(Len=12):: fn       ! Growth output file code  
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=220) :: tmp
+      Character(:),Allocatable :: Header 
+      Integer :: ErrNum, length, nlayers, i, nl
       
+      If(.Not. Associated(head)) Return
+
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
+  //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
+  //'PST1A,PST2A,KSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,')&
+  + Len('SNW0C,SNW1C,') + Len(Trim(Adjustl(tmp)))
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
+  //'LWAD,SWAD,GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,' &
+  //'PST1A,PST2A,KSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,'&
+  // 'SNW0C,SNW1C,' // Trim(Adjustl(tmp))
+         
       fn = 'plantgro.csv'
       Call GETLUN (fn,nf)
-   
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+  
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE',  &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
 
       ! write out the data
       ptr => head
@@ -723,18 +799,48 @@ Contains
 
       Nullify(ptr, head, tail)
       Close(nf)
-  End Subroutine Listtofile
+  End Subroutine ListtofilePlantgrCrGro
 !------------------------------------------------------------------------------
 
-   Subroutine ListtofileSW
-      Integer          :: nf       
-      Character(Len=12):: fn        
+   Subroutine ListtofileSW(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Character(Len=12):: fn
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=220) :: tmp
+      Character(:),Allocatable :: Header 
       
+      If(.Not. Associated(headsw)) Return
+      
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("SW",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "SW" // Trim(Adjustl(numtoch2)) // "D"  
+       
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
+  //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,') + Len(Trim(Adjustl(tmp)))
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SWTD,SWXD,ROFC,DRNC,' &
+  //'PREC,IR#C,IRRC,DTWT,MWTD,TDFD,TDFC,ROFD,' // Trim(Adjustl(tmp)) 
+  
       fn = 'soilwat.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+       
       ptrsw => headsw
       Do
         If(.Not. Associated(ptrsw)) Exit             
@@ -747,14 +853,44 @@ Contains
    End Subroutine ListtofileSW
 !------------------------------------------------------------------------------
 
-   Subroutine ListtofileTemp
-      Integer          :: nf       
+   Subroutine ListtofileTemp(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
       Character(Len=12):: fn         
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=220) :: tmp
+      Character(:),Allocatable :: Header 
       
+      If(.Not. Associated(headtemp)) Return
+      
+      nl = MIN(10, MAX(4,nlayers))
+  
+       Write(numtoch1,'(I2)') nl - 1  
+       
+       fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+       fmt = Trim(Adjustl(fmt))
+   
+       Write (tmp,fmt) ("TS",i,"D,",i=1,nl - 1)
+       tmp = Trim(Adjustl(tmp)) 
+       Write(numtoch2,'(I2)') nl  
+       tmp = Trim(Adjustl(tmp)) // "TS" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,') + &
+          Len(Trim(Adjustl(tmp)))
+  
+       Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,TS0D,' // & 
+            Trim(Adjustl(tmp))
+             
       fn = 'soiltemp.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
 
       ptrtemp => headtemp
       Do
@@ -768,15 +904,36 @@ Contains
    End Subroutine ListtofileTemp
 !------------------------------------------------------------------------------
 
-   Subroutine ListtofileCsCer
-      Integer          :: nf       
-      Character(Len=12):: fn         
+   Subroutine ListtofilePlantGrCsCer
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header        
       
+      If(.Not. Associated(headCsCer)) Return
+
+  length= Len('RUN,EXP,TR,RN,SN,ON,REP,CN,YEAR,DOY,DAS,DAP,TMEAN,TKILL,GSTD,' &
+    //'L#SD,PARID,PARUD,AWAD,LAID,SAID,CAID,TWAD,SDWAD,RWAD,CWAD,LWAD,SWAD,' &
+    //'HWAD,HIAD,CHWAD,EWAD,RSWAD,SNWPD,SNWLD,SNWSD,RS%D,H#AD,HWUD,T#AD,SLAD,' &
+    //'RDPD,PTFD,SWXD,WAVRD,WUPRD,WFTD,WFPD,WFGD,NFTD,NFPD,NFGD,NUPRD,TFPD,' &
+    //'TFGD,VRNFD,DYLFD')
+  
+       Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,SN,ON,REP,CN,YEAR,DOY,DAS,DAP,TMEAN,TKILL,GSTD,' &
+    //'L#SD,PARID,PARUD,AWAD,LAID,SAID,CAID,TWAD,SDWAD,RWAD,CWAD,LWAD,SWAD,' &
+    //'HWAD,HIAD,CHWAD,EWAD,RSWAD,SNWPD,SNWLD,SNWSD,RS%D,H#AD,HWUD,T#AD,SLAD,' &
+    //'RDPD,PTFD,SWXD,WAVRD,WUPRD,WFTD,WFPD,WFGD,NFTD,NFPD,NFGD,NUPRD,TFPD,' &
+    //'TFGD,VRNFD,DYLFD' 
+          
       fn = 'plantgro.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+       
       ptrCsCer => headCsCer
       Do
         If(.Not. Associated(ptrCsCer)) Exit                
@@ -786,18 +943,57 @@ Contains
 
       Nullify(ptrCsCer, headCsCer, tailCsCer)
       Close(nf)
-   End Subroutine ListtofileCsCer
+   End Subroutine ListtofilePlantGrCsCer
 !------------------------------------------------------------------------------
 
-   Subroutine ListtofileET
-      Integer          :: nf       
+   Subroutine ListtofileET (nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl        
       Character(Len=12):: fn         
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=220) :: tmp
+      Character(:),Allocatable :: Header 
+       
+      If(.Not. Associated(headET)) Return
       
-      fn = 'ET.csv'
+!      nl = MIN(10, MAX(4,nlayers))
+      nl = nlayers
+      If (nl < 11) then
+          Write(numtoch1,'(I2)') nl - 1  
+           
+          fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+          fmt = Trim(Adjustl(fmt))
+       
+          Write (tmp,fmt) ("ES",i,"D,",i=1,nl - 1)
+          tmp = Trim(Adjustl(tmp)) 
+          Write(numtoch2,'(I2)') nl  
+          tmp = Trim(Adjustl(tmp)) // "ES" // Trim(Adjustl(numtoch2)) // "D" 
+      Else
+          fmt = '(9(A2,I1,A2))'
+          Write (tmp,fmt) ("ES",i,"D,",i=1,9)
+          tmp = Trim(Adjustl(tmp)) 
+          tmp = Trim(Adjustl(tmp)) // "ES10D" 
+      End If    
+     
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
+  //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
+  //'EMAC,TRWUD,') + Len(Trim(Adjustl(tmp)))
+  
+       Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,SRAA,TMAXA,TMINA,' &
+  //'EOAA,EOPA,EOSA,ETAA,EPAA,ESAA,EFAA,EMAA,EOAC,ETAC,EPAC,ESAC,EFAC,' &
+  //'EMAC,TRWUD,' // Trim(Adjustl(tmp)) 
+  
+      fn = 'et.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+       
       ptrET => headET
       Do
         If(.Not. Associated(ptrET)) Exit             
@@ -810,14 +1006,48 @@ Contains
   End Subroutine ListtofileET
 !------------------------------------------------------------------------------
 
-  Subroutine ListtofileMZCER
-      Integer          :: nf       
-      Character(Len=12):: fn         
+  Subroutine ListtofileMZCER(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Character(Len=12):: fn 
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=100) :: tmp
+      Character(:),Allocatable :: Header 
       
+      If(.Not. Associated(headMZCER)) Return
+
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,' // Trim(Adjustl(tmp)) 
+        
       fn = 'plantgro.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
 
       ptrMZCER => headMZCER
       Do
@@ -831,14 +1061,85 @@ Contains
   End Subroutine ListtofileMZCER
 !------------------------------------------------------------------------------
 
-  Subroutine ListtofilePlNCrGro
-      Integer          :: nf       
-      Character(Len=12):: fn         
+  Subroutine ListtofileMLCER(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Character(Len=12):: fn 
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=100) :: tmp
+      Character(:),Allocatable :: Header 
       
-      fn = 'plantn.csv'
+      If(.Not. Associated(headMLCER)) Return
+
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&
+  //'MLAG1,TLAG1,MPLAG,TPLAG,MPLA,TPLA,PLA,MLFWT,TLFWT,MSTMWT,TSTMWT,AMLWT,ATLWT,' &   
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,')+ Len(Trim(Adjustl(tmp)))
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,LWAD,SWAD,' &
+  //'GWAD,RWAD,VWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,WSGD,NSTD,EWSD,PST1A,' &
+  //'PST2A,KSTD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,RDPD,'&
+  //'MLAG1,TLAG1,MPLAG,TPLAG,MPLA,TPLA,PLA,MLFWT,TLFWT,MSTMWT,TSTMWT,AMLWT,ATLWT,'&    
+  //'CDAD,LDAD,SDAD,SNW0C,SNW1C,DTTD,' // Trim(Adjustl(tmp)) 
+        
+      fn = 'plantgro.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+
+      ptrMLCER => headMLCER
+      Do
+        If(.Not. Associated(ptrMLCER)) Exit                
+        Write(nf,'(A)') ptrMLCER % pclineMLCER            
+        ptrMLCER => ptrMLCER % pMLCER                      
+      End Do
+
+      Nullify(ptrMLCER, headMLCER, tailMLCER)
+      Close(nf)
+  End Subroutine ListtofileMLCER
+!------------------------------------------------------------------------------
+  Subroutine ListtofilePlNCrGro
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headPlNCrGro)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  //'VN%D,NFXC,NUPC,LNAD,SNAD,LN%D,SN%D,SHND,RN%D,NFXD,SNN0C,SNN1C')
+  
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  //'VN%D,NFXC,NUPC,LNAD,SNAD,LN%D,SN%D,SHND,RN%D,NFXD,SNN0C,SNN1C' 
+  
+      fn = 'plantn.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
 
       ptrPlNCrGro => headPlNCrGro
       Do
@@ -853,14 +1154,31 @@ Contains
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlNCsCer
-      Integer          :: nf       
-      Character(Len=12):: fn         
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
       
+      If(.Not. Associated(headPlNCsCer)) Return
+      
+        length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TMEAN,GSTD,NUAD,TNAD,SDNAD,' &
+  //'RNAD,CNAD,LNAD,SNAD,HNAD,HIND,RSNAD,SNNPD,SNN0D,SNN1D,RN%D,LN%D,SN%D,' &
+  //'HN%D,SDN%D,VN%D,LN%RD,SN%RD,RN%RD,VCN%,VMN%,NUPRD,NDEMD')
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TMEAN,GSTD,NUAD,TNAD,SDNAD,' &
+  //'RNAD,CNAD,LNAD,SNAD,HNAD,HIND,RSNAD,SNNPD,SNN0D,SNN1D,RN%D,LN%D,SN%D,' &
+  //'HN%D,SDN%D,VN%D,LN%RD,SN%RD,RN%RD,VCN%,VMN%,NUPRD,NDEMD'
+  
       fn = 'plantn.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+        Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
       ptrPlNCsCer => headPlNCsCer
       Do
         If(.Not. Associated(ptrPlNCsCer)) Exit              
@@ -872,16 +1190,54 @@ Contains
       Close(nf)
    End Subroutine ListtofilePlNCsCer
 !------------------------------------------------------------------------------
-
-   Subroutine ListtofileSoilNi
-      Integer          :: nf       
-      Character(Len=12):: fn         
+   Subroutine ListtofileSoilNi(nlayers)
+      Integer          :: nf, ErrNum, length, nlayers, i, nl       
+      Character(Len=12):: fn
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=100) :: tmp, tmp1
+      Character(:),Allocatable :: Header 
       
+      If(.Not. Associated(headSoilNi)) Return
+
+!      nl = MIN(10, MAX(4,nlayers))
+      nl = 10   ! always for 10 layers
+      
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("NI",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "NI" // Trim(Adjustl(numtoch2)) // "D," 
+      
+      Write (tmp1,fmt) ("NH",i,"D,",i=1,nl - 1)
+      tmp1 = Trim(Adjustl(tmp1)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp1 = Trim(Adjustl(tmp1)) // "NH" // Trim(Adjustl(numtoch2)) // "D,"
+      
+     
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,') + &
+          Len(Trim(Adjustl(tmp)))  + Len(Trim(Adjustl(tmp1))) + &
+          Len('NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM')
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,NAPC,NI#M,NLCC,NIAD,NITD,NHTD,' &
+  // Trim(Adjustl(tmp)) // Trim(Adjustl(tmp1)) &
+  // 'NMNC,NITC,NDNC,NIMC,AMLC,NNMNC,NUCM' 
+        
       fn = 'soilni.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+        Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
       ptrSoilNi => headSoilNi
       Do
         If(.Not. Associated(ptrSoilNi)) Exit                
@@ -895,14 +1251,29 @@ Contains
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlNMzCer
-      Integer          :: nf       
-      Character(Len=12):: fn         
+      Integer          :: nf, ErrNum, length        
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header         
+  
+      If(.Not. Associated(headPlNMzCer)) Return
       
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
+  //'NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C') 
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,VN%D,' &
+  //'NUPC,LNAD,SNAD,LN%D,SN%D,RN%D,SNN0C,SNN1C' 
+  
       fn = 'plantn.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+        Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
       ptrPlNMzCer => headPlNMzCer
       Do
         If(.Not. Associated(ptrPlNMzCer)) Exit                
@@ -916,13 +1287,28 @@ Contains
 !------------------------------------------------------------------------------
 
    Subroutine ListtofileWth
-      Integer          :: nf       
+      Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn         
+      Character(:),Allocatable :: Header
       
+      If(.Not. Associated(headWth)) Return
+      
+  length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,PRED,DAYLD,TWLD,SRAD,' &
+  //'PARD,CLDD,TMXD,TMND,TAVD,TDYD,TDWD,TGAD,TGRD,WDSD,CO2D,VPDF,VPD') 
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,PRED,DAYLD,TWLD,SRAD,' &
+  //'PARD,CLDD,TMXD,TMND,TAVD,TDYD,TDWD,TGAD,TGRD,WDSD,CO2D,VPDF,VPD' 
+  
       fn = 'weather.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+         Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
 
       ptrWth => headWth
       Do
@@ -936,14 +1322,31 @@ Contains
    End Subroutine ListtofileWth
 !------------------------------------------------------------------------------
    Subroutine ListtoFilePlGr2
-      Integer          :: nf       
-      Character(Len=12):: fn         
-      
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header 
+        
+      If(.Not. Associated(headPlGr2)) Return
+  
+  length= Len('RUN,EXP,TR,RN,REP,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,RSTD,' &
+  //'LAIPD,LAISD,LAID,CHTD,SDWAD,SNWLD,SNWSD,H#AD,HWUD,SHRTD,PTFD,RDPD,RL1D,' &
+  //'RL2D,RL3D,RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,RL10D') 
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,RSTD,' &
+  //'LAIPD,LAISD,LAID,CHTD,SDWAD,SNWLD,SNWSD,H#AD,HWUD,SHRTD,PTFD,RDPD,RL1D,' &
+  //'RL2D,RL3D,RL4D,RL5D,RL6D,RL7D,RL8D,RL9D,RL10D' 
+        
       fn = 'plantgr2.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE',  &
+         Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
       ptrPlGr2 => headPlGr2
       Do
         If(.Not. Associated(ptrPlGr2)) Exit          
@@ -956,14 +1359,31 @@ Contains
    End Subroutine ListtofilePlGr2
 !------------------------------------------------------------------------------
    Subroutine ListtoFilePlGrf
-      Integer          :: nf       
-      Character(Len=12):: fn         
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header 
       
+      If(.Not. Associated(headPlGrf)) Return  
+      
+  length= Len('RUN,EXP,TR,RN,REP,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,DU,' &
+  //'VRNFD,DYLFD,TFGEM,WFGE,TFPD,WFPD,NFPD,CO2FD,RSFPD,TFGD,WFGD,NFGD,WFTD,' &
+  //'NFTD,WAVRD,WUPRD,SWXD,EOPD,SNXD,LN%RD,SN%RD,RN%RD')
+  
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,SN,ON,CN,YEAR,DOY,DAS,DAP,TMEAN,GSTD,DU,' &
+  //'VRNFD,DYLFD,TFGEM,WFGE,TFPD,WFPD,NFPD,CO2FD,RSFPD,TFGD,WFGD,NFGD,WFTD,' &
+  //'NFTD,WAVRD,WUPRD,SWXD,EOPD,SNXD,LN%RD,SN%RD,RN%RD' 
+        
       fn = 'plantgrf.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+         Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
       ptrPlGrf => headPlGrf
       Do
         If(.Not. Associated(ptrPlGrf)) Exit          
@@ -976,14 +1396,33 @@ Contains
    End Subroutine ListtofilePlGrf
 !------------------------------------------------------------------------------
    Subroutine ListtofileEvalCsCer
-      Integer          :: nf       
-      Character(Len=12):: fn        
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header        
+      
+      If(.Not. Associated(headEvalCsCer)) Return
+      
+        length= Len('RUN,EXCODE,TRNO,RN,REP,CR,EDAPS,EDAPM,DRAPS,DRAPM,TSAPS,TSAPM,' &
+  //'ADAPS,ADAPM,MDAPS,MDAPM,HWAMS,HWAMM,HWUMS,HWUMM,H#AMS,H#AMM,H#GMS,H#GMM,' &
+  //'LAIXS,LAIXM,L#SMS,L#SMM,T#AMS,T#AMM,CWAMS,CWAMM,VWAMS,VWAMM,HIAMS,HIAMM,' &
+  //'HN%MS,HN%MM,VN%MS,VN%MM,CNAMS,CNAMM,HNAMS,HNAMM,HINMS,HINMM' )
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXCODE,TRNO,RN,REP,CR,EDAPS,EDAPM,DRAPS,DRAPM,TSAPS,TSAPM,' &
+  //'ADAPS,ADAPM,MDAPS,MDAPM,HWAMS,HWAMM,HWUMS,HWUMM,H#AMS,H#AMM,H#GMS,H#GMM,' &
+  //'LAIXS,LAIXM,L#SMS,L#SMM,T#AMS,T#AMM,CWAMS,CWAMM,VWAMS,VWAMM,HIAMS,HIAMM,' &
+  //'HN%MS,HN%MM,VN%MS,VN%MM,CNAMS,CNAMM,HNAMS,HNAMM,HINMS,HINMM'
       
       fn = 'evaluate.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+         Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
       ptrEvalCsCer => headEvalCsCer
       Do
         If(.Not. Associated(ptrEvalCsCer)) Exit                
@@ -996,14 +1435,36 @@ Contains
    End Subroutine ListtofileEvalCsCer
 !------------------------------------------------------------------------------
    Subroutine ListtofileEvOpsum
-      Integer          :: nf       
+      Integer          :: nf, i, ErrNum, length       
       Character(Len=12):: fn         
+      Character(:),Allocatable :: Header 
+      Character(Len=700) :: tmp1 
+      
+      If(.Not. Associated(headEvOpsum)) Return
+      
+      length= Len('RUN,EXCODE,CG,TN,RN,CR')
+
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXCODE,CG,TN,RN,CR' 
+   
+      tmp1 = trim(adjustl(csvOLAP(1))) //'S'// ',' // trim(adjustl(csvOLAP(1))) //'M'
+      do i = 2, csvICOUNT
+         tmp1 = trim(tmp1) // ',' // trim(adjustl(csvOLAP(i))) // 'S' // ',' // &
+            trim(adjustl(csvOLAP(i))) // 'M'
+      end do            
+
+      tmp1 = Header // ',' // trim(adjustl(tmp1))
       
       fn = 'evaluate.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+         Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')tmp1
+      Deallocate(Header)
+      
       ptrEvOpsum => headEvOpsum
       Do
         If(.Not. Associated(ptrEvOpsum)) Exit                
@@ -1016,14 +1477,39 @@ Contains
    End Subroutine ListtofileEvOpsum
 !------------------------------------------------------------------------------
    Subroutine ListtofileSumOpsum
-      Integer          :: nf       
-      Character(Len=12):: fn         
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn  
+      Character(:),Allocatable :: Header        
+      
+      If(.Not. Associated(headSumOpsum)) Return
+      
+   length= Len('RUNNO,TRNO,R#,O#,C#,CR,MODEL,EXNAME,TNAM,FNAM,WSTA,SOIL_ID,' &
+  // 'SDAT,PDAT,EDAT,ADAT,MDAT,HDAT,DWAP,CWAM,HWAM,HWAH,BWAH,PWAM,HWUM,' &
+  // 'H#AM,H#UM,HIAM,LAIX,IR#M,IRCM,PRCM,ETCM,EPCM,ESCM,ROCM,DRCM,SWXM,' &
+  // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,CNAM,GNAM,PI#M,PICM,PUPC,SPAM,KI#M,' &
+  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,DMPPM,DMPEM,' &
+  // 'DMPTM,DMPIM,YPPM,YPEM,YPTM,YPIM,DPNAM,DPNUM,YPNAM,YPNUM,NDCH,TMAXA,' &
+  // 'TMINA,SRADA,DAYLA,CO2A,PRCP,ETCP,ESCP,EPCP')
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUNNO,TRNO,R#,O#,C#,CR,MODEL,EXNAME,TNAM,FNAM,WSTA,SOIL_ID,' &
+  // 'SDAT,PDAT,EDAT,ADAT,MDAT,HDAT,DWAP,CWAM,HWAM,HWAH,BWAH,PWAM,HWUM,' &
+  // 'H#AM,H#UM,HIAM,LAIX,IR#M,IRCM,PRCM,ETCM,EPCM,ESCM,ROCM,DRCM,SWXM,' &
+  // 'NI#M,NICM,NFXM,NUCM,NLCM,NIAM,CNAM,GNAM,PI#M,PICM,PUPC,SPAM,KI#M,' &
+  // 'KICM,KUPC,SKAM,RECM,ONTAM,ONAM,OPTAM,OPAM,OCTAM,OCAM,DMPPM,DMPEM,' &
+  // 'DMPTM,DMPIM,YPPM,YPEM,YPTM,YPIM,DPNAM,DPNUM,YPNAM,YPNUM,NDCH,TMAXA,' &
+  // 'TMINA,SRADA,DAYLA,CO2A,PRCP,ETCP,ESCP,EPCP'      
       
       fn = 'summary.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+       
       ptrSumOpsum => headSumOpsum
       Do
         If(.Not. Associated(ptrSumOpsum)) Exit                 
@@ -1037,13 +1523,28 @@ Contains
 !------------------------------------------------------------------------------
 
    Subroutine ListtofilePlCCrGro
-      Integer          :: nf       
-      Character(Len=12):: fn         
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn 
+      Character(:),Allocatable :: Header         
       
+      If(.Not. Associated(headPlCCrGro)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,CMAD,CGRD,' &
+  //'GRAD,MRAD,CHAD,CL%D,CS%D,TGNN,TGAV,GN%D,GL%D,GC%D') 
+
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,CMAD,CGRD,' &
+  //'GRAD,MRAD,CHAD,CL%D,CS%D,TGNN,TGAV,GN%D,GL%D,GC%D' 
+  
       fn = 'plantc.csv'
       Call GETLUN (fn,nf)
-   
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+  
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+         Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
 
       ptrPlCCrGro => headPlCCrGro
       Do
@@ -1107,14 +1608,45 @@ Contains
 
  End Subroutine LinklstSoilOrg
 !------------------------------------------------------------------------------
-   Subroutine ListtofileSoilOrg
-      Integer          :: nf       
-      Character(Len=12):: fn         
+   Subroutine ListtofileSoilOrg(N_ELEMS)
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn  
+      Character(:),Allocatable :: Header        
+      
+      Integer :: N_ELEMS       ! Number of elements: 1 = N, 2 = N+P, 3 = N+P+S (-)
+
+      If(.Not. Associated(headSoilOrg)) Return
+      
+      If (N_ELEMS > 1) Then 
+         length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,OMAC,SCDD,SOCD,' &
+         //'SC0D,SCTD,SOMCT,LCTD,ONAC,SNDD,SOND,SN0D,SNTD,' &
+         //'SOMNT,LNTD,OPAC,SPDD,SOPD,SP0D,SPTD,SOMPT,LPTD') 
+
+         Allocate(character(LEN=length) :: Header)
+
+         Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,OMAC,SCDD,SOCD,' &
+         //'SC0D,SCTD,SOMCT,LCTD,ONAC,SNDD,SOND,SN0D,SNTD,' &
+         //'SOMNT,LNTD,OPAC,SPDD,SOPD,SP0D,SPTD,SOMPT,LPTD' 
+      Else
+         length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+         //'OMAC,SCDD,SOCD,SC0D,SCTD,SOMCT,LCTD,ONAC,SNDD,' &
+         //'SOND,SN0D,SNTD,SOMNT,LNTD')
+
+         Allocate(character(LEN=length) :: Header)
+
+         Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+         //'OMAC,SCDD,SOCD,SC0D,SCTD,SOMCT,LCTD,ONAC,SNDD,' &
+         //'SOND,SN0D,SNTD,SOMNT,LNTD' 
+      End If 
       
       fn = 'soilorg.csv'
       Call GETLUN (fn,nf)
-   
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+      
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
+        IOSTAT = ErrNum)
+     
+      Write(nf,'(A)')Header
+      Deallocate(Header)
 
       ptrSoilOrg => headSoilOrg
       Do
@@ -1153,14 +1685,29 @@ Contains
  End Subroutine LinklstETPhot
 !------------------------------------------------------------------------------
    Subroutine ListtofileETPhot
-      Integer          :: nf       
-      Character(Len=12):: fn         
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn  
+      Character(:),Allocatable :: Header 
+            
+      If (.NOT. Associated(headETPhot)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+     //'LI%D,PHAD,PHAN,LI%N,SLLN,SLHN,N%LN,N%HN,LMLN,LMHN,TGNN,TGAV') 
+
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+     //'LI%D,PHAD,PHAN,LI%N,SLLN,SLHN,N%LN,N%HN,LMLN,LMHN,TGNN,TGAV' 
       
       fn = 'etphot.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
+         IOSTAT = ErrNum)
+      
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
       ptrETPhot => headETPhot
       Do
         If(.Not. Associated(ptrETPhot)) Exit          
@@ -1170,6 +1717,7 @@ Contains
 
       Nullify(ptrETPhot, headETPhot, tailETPhot)
       Close(nf)
+      
    End Subroutine ListtofileETPhot
 !------------------------------------------------------------------------------
  Subroutine LinklstMulch(ptxtlineMulch)
@@ -1198,14 +1746,27 @@ Contains
  End Subroutine LinklstMulch
 !------------------------------------------------------------------------------
   Subroutine ListtofileMulch
-      Integer          :: nf       
-      Character(Len=12):: fn         
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header          
+      
+      If(.Not. Associated(headMulch)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,MCFD,MDEPD,MWAD,MWTD') 
+
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,MCFD,MDEPD,MWAD,MWTD' 
       
       fn = 'mulch.csv'
       Call GETLUN (fn,nf)
    
-      OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
-
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
+         IOSTAT = ErrNum)
+     
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+      
       ptrMulch => headMulch
       Do
         If(.Not. Associated(ptrMulch)) Exit          
@@ -1243,13 +1804,32 @@ Contains
  End Subroutine LinklstPlantP
 !------------------------------------------------------------------------------
  Subroutine ListtofilePlantP
-    Integer          :: nf       
-    Character(Len=12):: fn       
+    Integer          :: nf, ErrNum, length       
+    Character(Len=12):: fn 
+    Character(:),Allocatable :: Header       
+    
+    If (.NOT. Associated(headPlantP)) Return
+    
+    length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+     //'PSHOD,PRTOD,PSLOD,PSDOD,PSHMD,PRTMD,PSLMD,PSDMD,SHPPD,RTPPD,SLPPD,' &
+     //'SDPPD,PLPPD,SHPAD,RTPAD,SLPAD,SDPAD,PLPAD,PST1A,PST2A,PUPD,PUPC,' &
+     //'SNP0C,SNP1C,PHFR1,PHFR2,SHWAD,RWAD,SHAD,GWAD,PSTRAT,NTOPD,PTDD')
+     
+      Allocate(character(LEN=length) :: Header) 
 
+     Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+     //'PSHOD,PRTOD,PSLOD,PSDOD,PSHMD,PRTMD,PSLMD,PSDMD,SHPPD,RTPPD,SLPPD,' &
+     //'SDPPD,PLPPD,SHPAD,RTPAD,SLPAD,SDPAD,PLPAD,PST1A,PST2A,PUPD,PUPC,' &
+     //'SNP0C,SNP1C,PHFR1,PHFR2,SHWAD,RWAD,SHAD,GWAD,PSTRAT,NTOPD,PTDD'
+     
     fn = 'plantp.csv'
     Call GETLUN (fn,nf)
 
-    OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+    Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
+         IOSTAT = ErrNum)
+     
+    Write(nf,'(A)')Header
+    Deallocate(Header)
 
     ptrPlantP => headPlantP
     Do
@@ -1260,6 +1840,7 @@ Contains
 
     Nullify(ptrPlantP, headPlantP, tailPlantP)
     Close(nf)
+        
  End Subroutine ListtofilePlantP
 !------------------------------------------------------------------------------
  Subroutine LinklstSoilPi(ptxtlineSoilPi)
@@ -1288,13 +1869,32 @@ Contains
  End Subroutine LinklstSoilPi
 !------------------------------------------------------------------------------
  Subroutine ListtofileSoilPi
-    Integer          :: nf       
-    Character(Len=12):: fn         
+    Integer          :: nf, ErrNum, length       
+    Character(Len=12):: fn 
+    Character(:),Allocatable :: Header        
+    
+    If (.NOT. Associated(headSoilPi)) Return
+    
+    length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+     //'PIAD,PAVLD,PSOLD,PLABD,PACTD,PSTAD,PAPC,PMNC,PIMC,' &
+     //'PUPC,PAV1D,PAV2D,PAV3D,PAV4D,PAV5D,PUP1D,PUP2D,PUP3D,' &
+     //'PUP4D,PUP5D,PLAB1,PLAB2,PLAB3,PLAB4,PLAB5') 
 
+      Allocate(character(LEN=length) :: Header)
+
+    Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+     //'PIAD,PAVLD,PSOLD,PLABD,PACTD,PSTAD,PAPC,PMNC,PIMC,' &
+     //'PUPC,PAV1D,PAV2D,PAV3D,PAV4D,PAV5D,PUP1D,PUP2D,PUP3D,' &
+     //'PUP4D,PUP5D,PLAB1,PLAB2,PLAB3,PLAB4,PLAB5'
+     
     fn = 'soilpi.csv'
     Call GETLUN (fn,nf)
 
-    OPEN (UNIT = nf,FILE = fn,FORM='FORMATTED', POSITION='APPEND', Action='Write')
+    Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', Action='Write', &
+         IOSTAT = ErrNum)
+     
+    Write(nf,'(A)')Header
+    Deallocate(Header)
 
     ptrSoilPi => headSoilPi
     Do
@@ -1305,7 +1905,9 @@ Contains
 
     Nullify(ptrSoilPi, headSoilPi, tailSoilPi)
     Close(nf)
+    
  End Subroutine ListtofileSoilPi
-!------------------------------------------------------------------------------
+
+!------------------------------------------------------------------------------ 
 
 End Module Linklist

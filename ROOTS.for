@@ -59,7 +59,7 @@ C-----------------------------------------------------------------------
       REAL SWEXF, PORMIN, RTEXF, RTSURV
       REAL RTDEPI, SUMEX, SUMRL, SATFAC
       REAL PLTPOP, WTNEW, VSTAGE
-      REAL TABEX              !Function subroutine located in UTILS.FOR
+      REAL TABEX              !Function subroutine located in UTILS.for
       REAL XRTFAC(4), YRTFAC(4)
       REAL DLAYR(NL), DS(NL), DUL(NL), ESW(NL), LL(NL), RLDF(NL)
       REAL RLGRW(NL), RLSEN(NL), RLV(NL), RLV_WS(NL), RRLF(NL)

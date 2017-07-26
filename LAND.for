@@ -516,7 +516,11 @@ C-----------------------------------------------------------------------
         CALL WARNING(0,'ENDRUN',MSG)
         CALL INFO(1,'ENDRUN',MSG)
       ENDIF
-
+      
+!     VSH
+      if (SOILPROP % NLAYR > maxnlayers ) then
+         maxnlayers = SOILPROP % NLAYR
+      end if 
 C*********************************************************************** 
 C***********************************************************************
 C     End of Run
@@ -544,7 +548,8 @@ C***********************************************************************
 
 !      VSH CSV outputs
        IF (ISWITCH % FMOPT == 'C') THEN
-          CALL CsvOutputs(CONTROL % MODEL(1:5), CONTROL % N_ELEMS)
+          CALL CsvOutputs(CONTROL % MODEL(1:5), CONTROL % N_ELEMS,
+     & maxnlayers)
         END IF 
 
 !***********************************************************************

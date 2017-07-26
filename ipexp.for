@@ -32,7 +32,7 @@ C  02/21/2006 GH  Moved logic for crop model selection to DSSATPRO.V45
 !  01/12/2007 CHP Rotation number used for sequence runs.
 !  02/05/2007 CHP Reverse location of MESEV and METMP in FILEX
 C  02/09/2007 GH  Allow for improved path selection for input files
-!  03/26/2007 CHP MESOL = 2 is default (see LYRSET2 in LMATCH.FOR)
+!  03/26/2007 CHP MESOL = 2 is default (see LYRSET2 in LMATCH.for)
 !  07/04/2007 CHP MESEV = 2 is default (Sulieman-Ritchie soil evap)
 !  07/05/2007 CHP Default simulation controls file added.
 !  09/18/2007 CHP Added codes for IXIM maize model 
@@ -98,9 +98,9 @@ C=======================================================================
       INTEGER NYRS,FROP,EXPN,EXPP,TRTN,ERRNUM,IFIND,FTYPEN
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
-      INTEGER TRTNUM, ROTNUM
+      INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
-      REAL    FLAG,EXP,TRT,PLTFOR
+      REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -261,6 +261,7 @@ C-----------------------------------------------------------------------
         CALL ERROR (ERRKEY,29,FILEX_P,0)
       ENDIF
       READ(LUNEXP,1500) ENAME
+      control % ename = ename
  1500 FORMAT(25X,A60)
       IF (RNMODE .EQ. 'I') CALL CLEAR
       IF (EXPN .NE. EXPP) THEN
@@ -766,7 +767,7 @@ C-----------------------------------------------------------------------
 C     Call IPHAR
 C-----------------------------------------------------------------------
       CALL IPHAR (LUNEXP,FILEX,LNHAR,HDATE,HSTG,HCOM,HSIZ,HPC,
-     &     NHAR,IHARI,YRSIM,CROP,HBPC)
+     &     NHAR,IHARI,YRSIM,CROP,HBPC,FREQ,CUHT)!NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
 C-----------------------------------------------------------------------
 C     Call IPIRR

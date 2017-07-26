@@ -64,7 +64,7 @@ C=======================================================================
       REAL WSENP(20), NSENP(20), PSENP(20), PHZACC(20)
       REAL SW(NL), ST(NL)
       REAL FNSTR(20), FPSTR(20), FSW(20), FT(20), FUDAY(20)
-      REAL TGRO(24)
+      REAL TGRO(TS)
 
       REAL  CURV  !Function subroutine
 
@@ -229,10 +229,11 @@ C-----------------------------------------------------------------------
       DO J = 2,NPHS
         K = TSELC(J)
         FT(J) = 0.0
-        DO I = 1,24
+        DO I = 1,TS
           FTHR = CURV(CTMP(J),TB(K),TO1(K),TO2(K),TM(K),TGRO(I))
-          FT(J) = FT(J) + FTHR/24.
+          FT(J) = FT(J) + FTHR/REAL(TS)
         ENDDO
+C 24 changed to TS by Bruce Kimball on 3Jul17
 
         IF (DAS .LT. NR1) THEN
           FUDAY(J) = CURV(DLTYP(J),1.0,CSDVAR,CLDVAR,THVAR,DAYL)

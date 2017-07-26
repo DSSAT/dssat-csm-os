@@ -38,7 +38,8 @@ C=======================================================================
       INTEGER DAS, H, Stalk, Zone
 	INTEGER, PARAMETER :: CanopyLayers=3
 
-	REAL LMF, R30C2, RES30C, RLF30C, RL, RO, RP, SLAREF, SLASTK    
+	REAL LMF, R30C2, RES30C, RLF30C, RL, RO, RP, SLAREF, SLASTK, SCLTS
+C             SCLTS added on 4 July 2017 by Bruce Kimball
 
       REAL TGROAV, TGRO(TS), TRSFAC
 
@@ -74,9 +75,15 @@ C-----------------------------------------------------------------------
 C     Hourly temperature effect on maintenance respiration (McCree, 1974)
 
       TRSFAC = 0.0
-      DO H = 1,24
-        TRSFAC = TRSFAC + 0.044+0.0019*TGRO(H)+0.001*TGRO(H)**2
+      SCLTS = 24./TS
+      DO H = 1,TS
+C        TRSFAC = TRSFAC + 0.044+0.0019*TGRO(H)+0.001*TGRO(H)**2
+         TRSFAC = TRSFAC + (0.044+0.0019*TGRO(H)+0.001*TGRO(H)**2)*SCLTS
+C    scaling factor of 24/TS added on 4 July 2017 by Bruce Kimball
       ENDDO
+C 24 changed to TS on 3 Jul 17 by Bruce Kimball
+C Look suspicious because TRSFAC will accumulate according to number of time steps
+      
 C-----------------------------------------------------------------------
 C     Convert hourly maintenance respiration to daily, temperature-based 
 C     value. RES30C and RLF30C are the g CH2O/g DW/hr used in maintenance 

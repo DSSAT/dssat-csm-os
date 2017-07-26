@@ -87,6 +87,18 @@ C=======================================================================
   200   FORMAT(1X,I4,1X,I3.3,1X,I5,F8.3,F8.2,I8,F8.2)
       
         END IF ! VSH
+        
+        !     VSH
+      IF (FMOPT == 'C') THEN 
+         CALL CsvOutMulch(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &MULCH % MULCHCOVER, MULCH % MULCHTHICK,  
+     &MULCH % MULCHMASS, MULCH %MULCHWAT,   
+     &vCsvlineMulch, vpCsvlineMulch, vlngthMulch)
+     
+         CALL LinklstMulch(vCsvlineMulch)
+      END IF
+      
       ENDIF
 !-----------------------------------------------------------------------
 !      IF (PRINTBAL) THEN

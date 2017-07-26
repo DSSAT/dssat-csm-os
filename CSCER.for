@@ -6094,14 +6094,16 @@
               OUTPG2 = 'PlantGr2.OUT'
               OUTPGF = 'PlantGrf.OUT'
               OUTPN = 'PlantN.OUT  '
-              IF (FNAME.EQ.'Y') THEN
+
 ! File names are changed at end of simulation by CSM
 ! Changing names here eliminates wheat output in sequence runs.
-                !OUTPG = EXCODE(1:8)//'.OPG'
-                !OUTPG2 = EXCODE(1:8)//'.OG2'
-                !OUTPGF = EXCODE(1:8)//'.OGF'
-                !OUTPN = EXCODE(1:8)//'.ONI'
-              ENDIF
+              !IF (FNAME.EQ.'Y') THEN
+              !  OUTPG = EXCODE(1:8)//'.OPG'
+              !  OUTPG2 = EXCODE(1:8)//'.OG2'
+              !  OUTPGF = EXCODE(1:8)//'.OGF'
+              !  OUTPN = EXCODE(1:8)//'.ONI'
+              !ENDIF
+
               CALL GETLUN ('PlantGro.OUT',NOUTPG)
               CALL GETLUN ('PlantN.OUT',NOUTPN)
               CALL GETLUN ('PlantGr2.OUT',NOUTPG2)
@@ -6348,7 +6350,7 @@
 
 !     VSH CSV output corresponding to PlantGro.OUT
       IF (FMOPT == 'C') THEN 
-         CALL CsvOut(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,DOY,
+         CALL CsvOut(EXCODE, RUN,TN,RN,SN, ON, REP, CN, YEAR,DOY,
      &DAS, DAP, TMEAN, TKILL, ZSTAGE, LNUMSD, PARIOUT, PARUED, CARBOA, 
      &LAI, SAIDOUT, TWAD, SDWAD, RWAD, CWAD, LLWADOUT, STWADOUT, GWAD,
      &HIAD, CHWADOUT, EWAD, RSWAD, DWAD, SENW0C, SENWSC, RSCD, GRNUMAD,
@@ -6378,7 +6380,7 @@
              
 !     VSH CSV output corresponding to PlantGr2.OUT
       IF (FMOPT == 'C') THEN
-         CALL CsvOutPlGr2(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,
+         CALL CsvOutPlGr2(EXCODE, RUN,TN,RN,SN, ON, REP, CN, YEAR,
      &DOY, DAS, DAP, TMEAN, GSTAGEC, RSTAGE, LAIPRODC, SENLA, PLTPOP, 
      &LAIC, CANHTC, SDWAD, SENW0C, SENWSC, GRNUMAD, hwudc, SHRTD, PTF,
      &RTDEP, NL, RLV,
@@ -6404,7 +6406,7 @@
  
  !    VSH CSV output corresponding to PlantGrf.OUT
       IF (FMOPT == 'C') then
-       CALL CsvOutPlGrf(EXCODE, RUNRUNI,TN,RN,SN, ON, REP, CN, YEAR,DOY,
+       CALL CsvOutPlGrf(EXCODE, RUN,TN,RN,SN, ON, REP, CN, YEAR,DOY,
      &DAS, DAP, TMEAN, ZSTAGE, DU, VF, DF, TFGEM, WFGE, TFP, WFP, NFP, 
      &CO2FP, RSFP, TFG, WFG, NFG, WFT, NFT, WAVR, WUPR, H2OA, EOP, 
      &SNH4PROFILE, SNO3PROFILE, LCNF, SCNF, RCNF, 
@@ -6440,7 +6442,7 @@
 
 !     VSH
       IF (FMOPT == 'C') then  
-         CALL CsvOutPlNCsCer(EXCODE, RUNRUNI, TN, 
+         CALL CsvOutPlNCsCer(EXCODE, RUN, TN, 
      &RN, REP, YEAR, DOY, DAS, DAP, 
      &TMEAN,ZSTAGE,NUAD,TNAD,SDNAD,RNAD,CNAD,LLNAD,SNAD, GNAD, 
      &HIND,RSNAD,DNAD,SENN0C,SENNSC,RANC, LANC, SANC, GRAINANC, 
@@ -7840,7 +7842,7 @@
 
 !     VSH CSV output corresponding to Evaluate.OUT
       IF (FMOPT == 'C') then
-         CALL CsvOutEvalCsCer(EXCODE, RUNRUNI, TN, RN,  REP, 
+         CALL CsvOutEvalCsCer(EXCODE, RUN, TN, RN,  REP, 
      &CR,Edap,Edapm,Drdap,Drdapm,Tsdap,Tsdapm,Adap,Adapm,Mdap,
      &Mdapm, Gwam, Gwamm, Gwumc, Gwummc, Hnumam, Hnumamm, Hnumgm,
      &Hnumgmm,Laix,Laixm, Lnumsm,Lnumsmm,Tnumam, Tnumamm, Cwam, 
@@ -9033,7 +9035,7 @@
 !  01/01/89 JWJ Modified for climate change using ETRATIO subroutine.
 !  12/05/93 NBP Made into subroutine and changed to TRATIO function.
 !  10/13/97 CHP Modified for modular format.
-!  11/25/97 CHP Put in file TRANS.FOR w/ TRATIO and BLRRES
+!  11/25/97 CHP Put in file TRANS.for w/ TRATIO and BLRRES
 !  09/01/99 GH  Incorporated into CROPGRO
 !  01/13/00 NBP Added DYNAMIC contruct to input KCAN
 !  04/09/01 LAH Modified for CROPGRO-SIM

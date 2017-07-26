@@ -11,6 +11,7 @@ C  09/17/2007 JIL Added codes for IXIM maize model
 C  08/09/2012 GH  Add codes for CSCAS cassava model
 C  04/16/2013 CHP/KAD Added codes for SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
+C  06/03/2015 LPM Added codes for CSYCA CIAT cassava model 
 C  06/18/2015 GH  Add error code for configuration file issues      
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
@@ -54,8 +55,13 @@ C=======================================================================
       DO I = 1, 500
          READ (LUNPR,'(A80)',IOSTAT=ERRNUM) LINE
          IF (LINE(1:3) .EQ. PROCOD) THEN
-            PATHC  = LINE(5:6) // LINE(8:80)
-          
+!            PATHC  = LINE(5:6) // LINE(8:80)
+            call get_next_string(line,4,pathc)
+            if(index(line,trim(pathc))<7)then
+               call get_next_string(line,7,pathc)
+               pathc = trim(adjustl(line(5:6)))//trim(pathc)
+            end if
+            
 C-SUN       PATHC  = LINE(8:80)
             PATHL  = INDEX (PATHC,BLANK)
             IF (PATHL .EQ. 1) THEN
@@ -144,7 +150,7 @@ C=======================================================================
 
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
       IF (.NOT. FEXIST) THEN
-        DSSATP = STDPATH // TRIM(DSSATPRO)
+        DSSATP = trim(STDPATH) // TRIM(DSSATPRO)
       ENDIF
 
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
@@ -187,7 +193,7 @@ C=======================================================================
 
       CHARACTER*1   UPCASE
       CHARACTER*2   CROP
-      CHARACTER*3   PROCOD, EXE_STRING    !, MODELVER
+      CHARACTER*3   PROCOD!, EXE_STRING    !, MODELVER
       CHARACTER*6   ERRKEY
       CHARACTER*8   MODEL, CRMODEL
       CHARACTER*78  MSG(4)
@@ -202,7 +208,7 @@ C=======================================================================
 
       PARAMETER (LUNPR = 25)
       PARAMETER (ERRKEY = 'MODELN')
-      PARAMETER (EXE_STRING = 'EXE')
+!      PARAMETER (EXE_STRING = 'EXE')
 
       IF (LENSTRING(CRMODEL) > 0) THEN
         DO I = 1,8
@@ -253,8 +259,12 @@ C=======================================================================
       ELSEIF (LINE(1:3) .NE. PROCOD) THEN
          GO TO 100
       ELSE
-         EXE_POS = INDEX(LINE,EXE_STRING)
-         MODEL = LINE((EXE_POS+4):(EXE_POS+11))
+         EXE_POS = INDEX(LINE,'DSCSM')
+         if(exe_pos==0) exe_pos = index(line,'dscsm')
+!         MODEL = LINE((EXE_POS+4):(EXE_POS+11))
+         call get_next_string(line,8,model)
+         exe_pos = index(line,model)
+         call get_next_string(line,exe_pos,model)
          DO I = 1,5
            MODEL(I:I)= UPCASE(MODEL(I:I))
          ENDDO
@@ -302,8 +312,10 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'ORZ') .EQ. 0) .AND.      !ORYZA
      &    (INDEX(MODEL(3:5),'IXM') .EQ. 0) .AND.      !IXIM
      &    (INDEX(MODEL(3:5),'GRO') .EQ. 0) .AND.      !CROPGRO
+     &    (INDEX(MODEL(3:5),'FRM') .EQ. 0) .AND.      !FORAGE
      &    (INDEX(MODEL(3:5),'CSM') .EQ. 0) .AND.      !CROPSIM (Cereal)
      &    (INDEX(MODEL(3:5),'CAS') .EQ. 0) .AND.      !CSCAS (Cassava)
+     &    (INDEX(MODEL(3:5),'YCA') .EQ. 0) .AND.      !CSYCA (CIAT -Cassava)
      &    (INDEX(MODEL(3:5),'SIM') .EQ. 0) .AND.      !CROPSIM (Cassava)
      &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.      !SUBSTOR
      &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.      !CANEGRO
@@ -324,9 +336,11 @@ C=======================================================================
       IF ((INDEX(MODEL(1:5),'CSCER') .EQ. 0) .AND.    !Wheat and Barley
      &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Wheat and barley
      &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND.    !Cassava
+     &    (INDEX(MODEL(1:5),'CSYCA') .EQ. 0) .AND.    !Cassava CIAT
      &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat 
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
 !                         grain legumes, grasses, vegetables and cotton
+     &    (INDEX(MODEL(1:5),'PRFRM') .EQ. 0) .AND.    !FORAGE 
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES
      &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND.    !Maize IXIM
      &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND.    !Millet
