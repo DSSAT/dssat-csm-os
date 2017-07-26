@@ -1,4 +1,4 @@
-$CULTIVARS:CSYCA046.010114   Last edit:030615 LPM (After GM, LAH)
+$CULTIVARS:CSYCA046.010114   Last edit:060717 LPM commit 0c604468efcd0e7af9094381ac54158121a20a10
 
 
 ! Coefficients used in the Cropsim cassava module differ from those used
@@ -16,21 +16,21 @@ $CULTIVARS:CSYCA046.010114   Last edit:030615 LPM (After GM, LAH)
 ! the initial conditions and computing the microbial release of nitrogen 
 ! and other nutrients.
 
-*CULTIVARS:CSCAS046
+*CULTIVARS:CSYCA46
 ! The following cultivars have not been calibrated well and the coefficients are                                                                            
 ! present merely to allow the experiments to be run. A user should spend time calibrating for                                                                    
 ! his/her own data. 
 
 !                                    PPSEN -BRANCHING -STORA.ROOTS- -------------- LEAVES ------------ -- STEM ---  
-@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND SR#WT  HMPC  LAXS  SLAS LLIFA LPEFR LNSLP NODWT NODLT
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    
-!                                             Tu    Tu   #/g     %   cm2 cm2/g    Tu    fr     #     g    cm
-UC0002 MCol-22              . 990002     0 726.0 726.0  0.25    50   600   220   700  0.33  1.00  5.00   2.0
-UC0004 MMEX-59              . 990001     0 500.0 500.0  0.25    50   600   250   650  0.33  1.20  5.60   2.0
-UC0006 MCol-1684            . 990003     0 370.0 500.0  0.25    50   550   270   600  0.33  1.00  5.60   2.0
-UC0007 MVen-77              . 990003     0 1023. 650.0  0.25    50   750   240   800  0.33  1.10  5.60   2.0
-UC0008 MPtr-26              . 990004     0 1034. 950.0  0.25    50   800   220   700  0.33  1.20  5.60   2.0
-UC0009 MCol-638             . 990001     0 781.0 750.0  0.25    50   600   220   700  0.33  0.80  5.60   2.0
+@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND  HMPC  LAXS  SLAS LLIFA LPEFR LNSLP NODWT NODLT
+!                                        1     2     3     4     5     6     7     8     9    10    11    
+!                                             Tu    Tu     %   cm2 cm2/g    Tu    fr     #     g    cm
+UC0002 MCol-22              . 990002     0 726.0 726.0    50   600   180   700  0.33  1.00  8.00   2.0
+UC0004 MMEX-59              . 990001     0 500.0 500.0    50   600   180   650  0.33  1.20  5.60   2.0
+UC0006 MCol-1684            . 990003     0 370.0 500.0    50   550   180   600  0.33  1.00  5.60   2.0
+UC0007 MVen-77              . 990003     0 1023. 650.0    50   750   180   800  0.33  1.10  5.60   2.0
+UC0008 MPtr-26              . 990004     0 1034. 950.0    50   800   180   700  0.33  1.20  5.60   2.0
+UC0009 MCol-638             . 990001     0 781.0 750.0    50   600   180   700  0.33  0.80  5.60   2.0
 
 
 ! COEFF       DEFINITION
@@ -41,8 +41,7 @@ UC0009 MCol-638             . 990001     0 781.0 750.0  0.25    50   600   220  
 ! ECO#        Ecotype code for this cultivar,points to entry in the ECO file
 ! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
 ! BxyND       Duration from branch x to branch y (ie.tier x,node number)
-! SR#WT       Storage root number per unit canopy weight at initiation (#/g)
-! HMPC        Harvest product moisture content (%)
+! HMPC        Harvest product moisture content (%) (currently this variable doesn't affect calibration)
 ! LA1S        Area/leaf (cm2) of the first leaves when growing without stress.
 ! LAXS        Area/leaf at maximum area/leaf (cm2)
 ! SLAS        Specific leaf lamina area when crop growing without stress (cm2/g)
@@ -51,4 +50,3 @@ UC0009 MCol-638             . 990001     0 781.0 750.0  0.25    50   600   220  
 ! LNSLP       Slope for leaf production (0.8 low rate, 1.0 medium rate, 1.2 high rate)
 ! NODWT       Node weight for the first stem of the shoot before branching at 3400 ˚Cd
 ! NODLT       Mean internode length (cm) for for the first stem of the shoot before branching when is lignified 
-
