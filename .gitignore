@@ -60,5 +60,6 @@ nbproject/
 .cproject
 Makefile
 cluster.patch
-Jlopez@*
 readme*
+CMakeFiles/
+CMakeCache.txt

@@ -5,16 +5,24 @@
 ##########################################################################################
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.5)
+
+if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+   message(FATAL_ERROR "DSSAT in-source builds are not permitted. \nMake a separate folder" 
+   						"for building:\nmkdir build; cd build; cmake ..\nBefore that," 
+   						"remove the files already created:\n"
+   						"CMakeCache.txt and CMakeFiles\n")
+endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+
 PROJECT(DSSAT-CSM Fortran )
 
 ##########################################################################################
 # DSSAT_VERSION from ModuleDefs.for
 ##########################################################################################
 
-set(FILE_NAME "${CMAKE_SOURCE_DIR}/ModuleDefs.for")
+set(FILE_NAME "${CMAKE_SOURCE_DIR}/ModuleDefs.fpp")
 file(READ ${FILE_NAME} File_Content)
 
-# Take DSSAT_VERSION from ModulesDefs.for
+# Take DSSAT_VERSION from ModulesDefs.fpp
 STRING(REGEX REPLACE ".*Major = ([0-9]+).*" "\\1" MAJOR "${File_Content}")
 STRING(REGEX REPLACE ".*Minor = ([0-9]+).*" "\\1" MINOR "${File_Content}")
 STRING(REGEX REPLACE ".*Model = ([0-9]+).*" "\\1" MODEL "${File_Content}")
