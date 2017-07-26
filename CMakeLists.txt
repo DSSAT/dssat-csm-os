@@ -19,10 +19,10 @@ PROJECT(DSSAT-CSM Fortran )
 # DSSAT_VERSION from ModuleDefs.for
 ##########################################################################################
 
-set(FILE_NAME "${CMAKE_SOURCE_DIR}/ModuleDefs.for")
+set(FILE_NAME "${CMAKE_SOURCE_DIR}/ModuleDefs.fpp")
 file(READ ${FILE_NAME} File_Content)
 
-# Take DSSAT_VERSION from ModulesDefs.for
+# Take DSSAT_VERSION from ModulesDefs.fpp
 STRING(REGEX REPLACE ".*Major = ([0-9]+).*" "\\1" MAJOR "${File_Content}")
 STRING(REGEX REPLACE ".*Minor = ([0-9]+).*" "\\1" MINOR "${File_Content}")
 STRING(REGEX REPLACE ".*Model = ([0-9]+).*" "\\1" MODEL "${File_Content}")
