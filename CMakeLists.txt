@@ -5,6 +5,14 @@
 ##########################################################################################
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.5)
+
+if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+   message(FATAL_ERROR "DSSAT in-source builds are not permitted. \nMake a separate folder" 
+   						"for building:\nmkdir build; cd build; cmake ..\nBefore that," 
+   						"remove the files already created:\n"
+   						"CMakeCache.txt and CMakeFiles\n")
+endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+
 PROJECT(DSSAT-CSM Fortran )
 
 ##########################################################################################
