@@ -14,7 +14,7 @@ C  Determines soil temperature by layer
 C-----------------------------------------------------------------------
 C  Revision history
 C  12/01/1980     Originally based on EPIC soil temperature routines
-C  12/01/1999 CHP Combined SOILT and INSOILT into STEMP.FOR for modular 
+C  12/01/1999 CHP Combined SOILT and INSOILT into STEMP.for for modular 
 C                 format.
 C  01/01/2000 AJG Added surface temperature for the CENTURY-based
 C                 SOM/soil-N module.

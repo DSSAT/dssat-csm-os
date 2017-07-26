@@ -9,7 +9,7 @@ C-----------------------------------------------------------------------
 !  11/14/2001 O.H. Daza wrote for the sugarcane model
 C  07/26/2004 CHP Removed variables which were not being used
 C-----------------------------------------------------------------------
-!  Called:      IPDMND_SC.FOR
+!  Called:      IPDMND_SC.for
 C=======================================================================
 
       SUBROUTINE CSP_IPDMND_OUT(
@@ -61,7 +61,7 @@ C      PARAMETER (LUNIO = 21)
 
       WRITE(WLUN,'(1X, "")')   !chp for portability
       WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"RESULTS FROM IPDMND_SC.FOR")')
+      WRITE(WLUN,'(1X,"RESULTS FROM IPDMND_SC.for")')
       WRITE(WLUN,'(1X,"--------------------------")')
       WRITE(WLUN,'(1X, "")')
 
@@ -389,7 +389,7 @@ C-----------------------------------------------------------------------
 !      CLOSE (LUNECO)
 
       WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"END RESULTS FROM IPDMND_SC_OUT.FOR")')
+      WRITE(WLUN,'(1X,"END RESULTS FROM IPDMND_SC_OUT.for")')
 
 !      CLOSE (WLUN)
 

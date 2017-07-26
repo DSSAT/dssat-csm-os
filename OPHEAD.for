@@ -1,5 +1,5 @@
 !=======================================================================
-! OPHEAD.FOR
+! OPHEAD.for
 ! Includes:
 ! Module HeaderMod contains header data
 ! OPHEAD generates general header for OVERVIEW.OUT & daily output files
@@ -8,8 +8,8 @@
 !-----------------------------------------------------------------------
 !  Revision history
 !  09/25/2007 CHP Created HeaderMod 
-!                 Moved OPSOIL to OPHEAD.FOR
-!                 Moved HEADER to OPHEAD.FOR
+!                 Moved OPSOIL to OPHEAD.for
+!                 Moved HEADER to OPHEAD.for
 !                 Subroutines rewritten to use array of header data, 
 !                   rather than saved ASCII file
 !=======================================================================

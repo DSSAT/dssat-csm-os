@@ -15,7 +15,7 @@
 !  07/13/2006 CHP Added P model
 !  02/09/2007 GH  Add path for FileA
 !  08/28/2009 CHP added EDAT, EDAP 
-!  06/27/2011 FSR created WH_OPHARV.FOR for APSIM NWheat (WHAPS) adaptation
+!  06/27/2011 FSR created WH_OPHARV.for for APSIM NWheat (WHAPS) adaptation
 !=======================================================================
 
       SUBROUTINE WH_OPHARV(CONTROL, 

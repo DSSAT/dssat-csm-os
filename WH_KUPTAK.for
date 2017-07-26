@@ -6,7 +6,7 @@
 !  Revision history
 !
 !  10/31/2007 US / CHP Written based on WH_NUPTAK
-!  06/27/2011 FSR created WH_KUPTAK.FOR for APSIM NWheat adaptation.
+!  06/27/2011 FSR created WH_KUPTAK.for for APSIM NWheat adaptation.
 !----------------------------------------------------------------------
 !  Called by: WH_GROSUB 
 !

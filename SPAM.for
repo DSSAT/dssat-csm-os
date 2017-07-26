@@ -22,12 +22,12 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !  12/09/2008 CHP Remove METMP
 C-----------------------------------------------------------------------
 C  Called by: Main
-C  Calls:     XTRACT, OPSPAM    (File SPSUBS.FOR)
-C             PET     (File PET.FOR)
-C             PSE     (File PET.FOR)
-C             ROOTWU  (File ROOTWU.FOR)
-C             SOILEV  (File SOILEV.FOR)
-C             TRANS   (File TRANS.FOR)
+C  Calls:     XTRACT, OPSPAM    (File SPSUBS.for)
+C             PET     (File PET.for)
+C             PSE     (File PET.for)
+C             ROOTWU  (File ROOTWU.for)
+C             SOILEV  (File SOILEV.for)
+C             TRANS   (File TRANS.for)
 C=======================================================================
 
       SUBROUTINE SPAM(CONTROL, ISWITCH,

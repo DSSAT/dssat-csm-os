@@ -115,5 +115,5 @@ C
 C  Generates output for soil data
 C-----------------------------------------------------------------------
 C  Revision history
-!  09/25/2007 CHP Moved OPSOIL to OPHEAD.FOR to generate headers
+!  09/25/2007 CHP Moved OPSOIL to OPHEAD.for to generate headers
 C=======================================================================

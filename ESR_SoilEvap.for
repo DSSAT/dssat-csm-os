@@ -1,5 +1,5 @@
 !=======================================================================
-!  SALUS SOIL EVAPORATION MODULE - File ESR_SoilEvap.FOR
+!  SALUS SOIL EVAPORATION MODULE - File ESR_SoilEvap.for
 !=======================================================================
 !  ESR_SoilEvap, Subroutine, J. Ritchie, C. Porter
 !

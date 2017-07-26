@@ -788,7 +788,10 @@ C-----------------------------------------------------------------------
      &      CONTROL, ISWITCH, FROP, MODEL, NYRS, RNMODE)
       USE ModuleDefs 
       USE ModuleData
+<<<<<<< HEAD
       USE CsvOutput   ! VSH
+=======
+>>>>>>> 7ba519ff88d16c448684c99534a8adc210f25ef9
       INCLUDE 'COMSWI.blk'
       INCLUDE 'COMIBS.blk'
 
