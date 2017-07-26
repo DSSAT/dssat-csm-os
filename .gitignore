@@ -51,3 +51,4 @@ resource.h
 Data/.DS_Store
 Resources/RC*
 *makefile*
+/build
