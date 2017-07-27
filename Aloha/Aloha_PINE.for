@@ -175,10 +175,10 @@ C-----------------------------------------------------------------------
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
-      CALL Aloha_OPHARV(CONTROL, 
+      CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   MDATE, PMDATE, STGDOY, STOVER, WTINITIAL, YIELD, !Input
-     &   YRDOY, YRPLT)                                    !Input
+     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER, WTINITIAL,   !Input
+     &   YIELD, YRDOY, YRPLT)                             !Input
 
 !=======================================================================
 C     Beginning of daily simulation loop
@@ -312,10 +312,10 @@ C-----------------------------------------------------------------------
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
-      CALL Aloha_OPHARV(CONTROL, 
+      CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   MDATE, PMDATE, STGDOY, STOVER, WTINITIAL, YIELD, !Input
-     &   YRDOY, YRPLT)                                    !Input
+     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER, WTINITIAL,   !Input
+     &   YIELD, YRDOY, YRPLT)                             !Input
 
 !=======================================================================
 C     Call end of season output routine
@@ -327,10 +327,10 @@ C-----------------------------------------------------------------------
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
      &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
 
-      CALL Aloha_OPHARV(CONTROL, 
+      CALL Aloha_OPHARV(CONTROL, ISWITCH,
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   MDATE, PMDATE, STGDOY, STOVER, WTINITIAL, YIELD, !Input
-     &   YRDOY, YRPLT)                                    !Input
+     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER, WTINITIAL,   !Input
+     &   YIELD, YRDOY, YRPLT)                             !Input
 
 !=======================================================================
       END SELECT

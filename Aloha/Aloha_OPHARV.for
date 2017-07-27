@@ -6,10 +6,10 @@
 !  06/24/2017 CHP Written, based on MZ_OPHARV
 !=======================================================================
 
-      SUBROUTINE Aloha_OPHARV(CONTROL, 
+      SUBROUTINE Aloha_OPHARV(CONTROL, ISWITCH,
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   MDATE, PMDATE, STGDOY, STOVER, WTINITIAL, YIELD, !Input
-     &   YRDOY, YRPLT)                                    !Input
+     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER, WTINITIAL,   !Input
+     &   YIELD, YRDOY, YRPLT)                             !Input
 !     &   BWAH, SDWTAH)                                   !Output
 !     N variables
 !     &   WTNSD,TOTNUP,WTNUP,FBIOM,XGNP,APTNUP,GNUP,
@@ -40,12 +40,12 @@
       
       REAL AGEFAC, APTNUP, BWAH, BWAM, CANNAA, CANWAA
       REAL CRWNWT, GNUP, GPP, GPSM, HI, StovSenes
-      REAL MAXLAI, NSTRES, PBIOMS, PODWT, PSDWT
+      REAL MAXLAI, NSTRES, PODWT, PSDWT
       REAL Pstres1, Pstres2   
       REAL SDRATE
       REAL SDWT, SDWTAH, SDWTAM, SEEDNO, SKERWT, STOVER
-      REAL SWFAC, BIOMAS, TURFAC
-      REAL WTINITIAL, WTNCAN, WTNUP, XGNP, XLAI, XN
+      REAL SWFAC, BIOMAS, Biomass_kg_ha, TURFAC
+      REAL WTINITIAL, WTNCAN, WTNUP, XGNP, LAI, LN
       REAL YIELD 
 
       REAL, DIMENSION(2) :: HARVFRAC
@@ -64,6 +64,7 @@
       CHARACTER*50 DESCRIP(EvaluateNum)
 
       TYPE (ControlType) CONTROL
+      TYPE (SwitchType)  ISWITCH
       TYPE (ResidueType) SENESCE
 
 !     Variables added for environmental and stress factors output
@@ -142,11 +143,15 @@
 
       Pstres1 = 1.0
       Pstres2 = 1.0
+
+      IDETO = ISWITCH % IDETO
+
+      Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
       
       CALL OPVIEW(CONTROL, 
-     &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN, 
+     &    Biomass_kg_ha, ACOUNT, DESCRIP, IDETO, LN, 
      &    Measured, PlantStres, Simulated, STGDOY, 
-     &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
+     &    STNAME, WTNCAN, LAI, NINT(YIELD), YRPLT, ISTAGE)
 
 !***********************************************************************
 !***********************************************************************
@@ -168,10 +173,12 @@
       PlantStres % StageName(4) = 'SCY - Early Flwr       '
       PlantStres % StageName(5) = 'Early Flwr - Fruit Harv'
 
+      Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
+
       CALL OPVIEW(CONTROL, 
-     &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN, 
+     &    Biomass_kg_ha, ACOUNT, DESCRIP, IDETO, LN, 
      &    Measured, PlantStres, Simulated, STGDOY, 
-     &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
+     &    STNAME, WTNCAN, LAI, NINT(YIELD), YRPLT, ISTAGE)
 
       MAXLAI = 0.0
 
@@ -181,7 +188,7 @@
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. OUTPUT) THEN
 !-----------------------------------------------------------------------
-      MAXLAI = AMAX1 (MAXLAI,XLAI)      ! Maximum XLAI season
+      MAXLAI = AMAX1 (MAXLAI,LAI)      ! Maximum LAI season
 
       PlantStres % W_grow = TURFAC 
       PlantStres % W_phot = SWFAC  
@@ -228,11 +235,13 @@
         ENDIF
       ENDIF
 
+      Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
+
 !     Send data to Overview.out data on days where stages occur
       CALL OPVIEW(CONTROL, 
-     &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN, 
+     &    Biomass_kg_ha, ACOUNT, DESCRIP, IDETO, LN, 
      &    Measured, PlantStres, Simulated, STGDOY, 
-     &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
+     &    STNAME, WTNCAN, LAI, NINT(YIELD), YRPLT, ISTAGE)
 
 !***********************************************************************
 !***********************************************************************
@@ -334,6 +343,9 @@ C
       !FYIELD = YIELD/1000.0
       !PVEGWT = STOVER/1000.0
 
+      Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
+
+
         CALL READA_Dates(X(1), YRSIM, IFLR)
         IF (IFLR .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DFLR = TIMDIF(YRPLT,IFLR)
@@ -397,7 +409,7 @@ C
       WRITE(Simulated(8),'(F8.4)') SKERWT
                                         WRITE(Measured(8),'(A8)') X(8)    !HWUM 
       WRITE(Simulated(9),'(F8.1)') GPP; WRITE(Measured(9),'(A8)') X(9)    !H#UM 
-      WRITE(Simulated(10),'(I8)') NINT(PBIOMS)
+      WRITE(Simulated(10),'(I8)') NINT(BIOMAS)
                                         WRITE(Measured(10),'(A8)') X(10)  !CWAM
 
 !     08/11/2005 CHP changed from BWAH to BWAM, 
@@ -419,7 +431,7 @@ C
                                         WRITE(Measured(19),'(A8)') X(19)  !CWAA
       WRITE(Simulated(20),'(I8)') NINT(CANNAA*10)
                                         WRITE(Measured(20),'(A8)') X(20)  !CNAA
-      WRITE(Simulated(21),'(F8.2)') XN; WRITE(Measured(21),'(A8)') X(21)  !L#SM
+      WRITE(Simulated(21),'(F8.2)') LN; WRITE(Measured(21),'(A8)') X(21)  !L#SM
       WRITE(Simulated(22),'(I8)') DNR0; WRITE(Measured(22),'(I8)') DEMRG
 
       ENDIF
@@ -457,9 +469,9 @@ C
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
       CALL OPVIEW(CONTROL, 
-     &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN, 
+     &    Biomass_kg_ha, ACOUNT, DESCRIP, IDETO, LN, 
      &    Measured, PlantStres, Simulated, STGDOY, 
-     &    STNAME, WTNCAN, XLAI, NINT(YIELD), YRPLT, ISTAGE)
+     &    STNAME, WTNCAN, LAI, NINT(YIELD), YRPLT, ISTAGE)
 
       !Send Measured and Simulated datat to OPSUM
       CALL EvaluateDat (ACOUNT, Measured, Simulated, DESCRIP, OLAP) 

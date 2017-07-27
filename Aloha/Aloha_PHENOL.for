@@ -89,7 +89,7 @@ C=======================================================================
       ISTAGE = 7
       XSTAGE = 0.1
 
-      STGDOY(14) = YRSIM
+      STGDOY(14) = CONTROL%YRSIM
       MDATE      = -99
       HAREND     = -99
       EDATE      = 9999999
