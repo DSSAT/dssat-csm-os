@@ -148,6 +148,7 @@ C-----------------------------------------------------------------------
       CALL Aloha_IPCROP ()
 
       PLTPOP = PLANTING % PLTPOP
+      RWUEP1 = SPECIES % RWEP
 
 C-----------------------------------------------------------------------
 C     Call PHENOLOGY initialization routine

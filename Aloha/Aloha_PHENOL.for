@@ -65,6 +65,7 @@ C=======================================================================
 
       LL    = SOILPROP % LL
       NLAYR = SOILPROP % NLAYR
+      DLAYR = SOILPROP % DLAYR
 
 !     7 - Preplanting
 !     8 - Planting to root initiation
