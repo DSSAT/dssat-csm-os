@@ -33,7 +33,7 @@ C=======================================================================
 !     REAL, DIMENSION(NL) :: FBIOM
 !     REAL, DIMENSION(20) :: SI1, SI2, SI3, SI4
 
-      INTEGER      DYNAMIC, EDATE, MDATE,YRSIM,HAREND
+      INTEGER      DYNAMIC, EDATE, MDATE,HAREND
       REAL         XSTAGE
 !TEMP      REAL         GRAINN
 
