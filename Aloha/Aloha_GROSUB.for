@@ -880,13 +880,13 @@ C-----------------------------------------------------------------------
         SELECT CASE (ISTAGE)
         CASE (1)
           PLAG    = 0.0                 ! PLAG (cm^2) is daily green leaf area growth
-  !        LAI     = PLTPOP*PLA*0.0001   ! leaf area index (m2 leaf/m2 ground)
-  !        LFWT    = WTINITIAL*0.53      ! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
+  !        LAI     = PLTPOP*PLA*0.0001   !! leaf area index (m2 leaf/m2 ground)
+  !        LFWT    = WTINITIAL*0.53      !! LFWT (g/plant) is green leaf weight which is assumed to be 53% of initial crown weight
           RTWT    = 0.20                ! RTWT (g/plant) is root weight
-  !        STMWT   = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
-  !        BASLFWT = LFWT*0.66           ! Basal white leaf weight is 66% of green leaf weight
+  !        STMWT   = WTINITIAL*0.115     !! STMWT is 115% of initial crown weight
+  !        BASLFWT = LFWT*0.66           !! Basal white leaf weight is 66% of green leaf weight
           FLRWT   = 0.0                 ! Inflorescence weight is set to 0.0
-  !        STOVWT  = WTINITIAL           ! STOVWT (g/plant) is stover weight
+  !        STOVWT  = WTINITIAL           !! STOVWT (g/plant) is stover weight
           FLRWT   = 0.0
           GROSTM  = 0.0                 ! GROSTM (g/plant/day) is daily stem growth
           SENLA   = 0.0                 ! SENLA (cm2/plant) is area of leaf senesces due to stress on a given day
