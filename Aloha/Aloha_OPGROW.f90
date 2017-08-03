@@ -266,26 +266,24 @@
 
             IF (FMOPT /= 'C') THEN   ! VSH
               WRITE (NOUTDG,400) YEAR, DOY, DAS, DAP,VSTAGE,ISTAGE,XLAI,      &
-!400          FORMAT (          1X,I4,1X,I3.3,  2I6,1X,F6.1, 1X,I6,1X,F6.2,
-!                NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(FRTWT*GM2KG),           &
-!                NINT(RTWT*GM2KG),NINT(BASLFWT*10.0),NINT(CRWNWT*GM2KG),        &
-!                NINT(SKWT*GM2KG),HI,                                           &
-                WTLF*10.0,STMWT*GM2KG,FRTWT*GM2KG,           &
-                RTWT*GM2KG,BASLFWT*10.0,CRWNWT*GM2KG,        &
-                SKWT*GM2KG,HI,                                           &
-!                   7(1X,I6),1X,F6.3,           &
-                NINT(PODWT*GM2KG),NINT(PODNO),(1.0-SWFAC),(1.0-TURFAC),        &
-                (1.0-NSTRES),       &
-!                      2(1X,I6), 3(1X,F6.3),
-                PCNL,SHELPC,   SLA,  CANHT,CANWH,SATFAC,               &
-!                2(1X,F6.2),1X,F6.1, 2(1X,F6.2),1X,F6.3,          &
-                (RTDEP/100),(RLV(I),I=1,10)
-!                    F7.3,    10(1X,F6.2))
- 400          FORMAT (1X,I4,1X,I3.3,2I6,1X,F6.1,1X,I6,1X,F6.2,   &
-                7(1X,F6.1),1X,F6.3,                                &
-                2(1X,I6),3(1X,F6.3),         &
-                2(1X,F6.2),1X,F6.1,2(1X,F6.2),1X,F6.3,          &
-                F7.3,10(1X,F6.2))
+!   Regular output:
+                NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(FRTWT*GM2KG),          &
+                NINT(RTWT*GM2KG),NINT(BASLFWT*10.0),NINT(CRWNWT*GM2KG),       &
+                NINT(SKWT*GM2KG),HI,                                          &
+!   Expanded output:
+!                WTLF*10.0,STMWT*GM2KG,FRTWT*GM2KG,           &
+!                RTWT*GM2KG,BASLFWT*10.0,CRWNWT*GM2KG,        &
+!                SKWT*GM2KG,HI,                               &
+                NINT(PODWT*GM2KG),NINT(PODNO),(1.0-SWFAC),(1.0-TURFAC),(1.0-NSTRES), &
+                PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,               &
+                (RTDEP/100), (RLV(I),I=1,10)
+
+  400          FORMAT (1X,I4,1X,I3.3,2I6,1X,F6.1,1X,I6,1X,F6.2,   &
+                  7(1X,I6),1X,F6.3,           &    !Regular output
+!                 7(1X,F6.1),1X,F6.3,         &    !Expanded output
+                  2(1X,I6), 3(1X,F6.3),       &
+                  2(1X,F6.2),1X,F6.1,2(1X,F6.2),1X,F6.3,          &
+                  F7.3, 10(1X,F6.2))
 
 !-------------------------------------------------------------------------
 !           VSH CSV output corresponding to PlantGro.OUT
