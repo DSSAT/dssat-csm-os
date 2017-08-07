@@ -8,19 +8,9 @@
       SAVE
 
 !=======================================================================
-! By Willingthon Pavan (2017-04-24):
-! Intel ifort understands the C-style preprocessor directives, so it might
-! be easiest to convert the files to that style. Then we would have a
-! single code base that would work with both compilers (Intel & gfortran).
-! * Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
-! * Microsoft Visual Studio IDE: set the Preprocess Source File option to Yes in 
-!   the Fortran Preprocessor Option Category.
+! '\' !DOS, Windows
+! '/' !Linux, Unix
 !=======================================================================
-
-#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
-      CHARACTER(LEN=1),PARAMETER::SLASH = '\' !DOS, Windows
-#else
-      CHARACTER(LEN=1),PARAMETER::SLASH = '/' !Linux, Unix
-#endif
+      CHARACTER(LEN=1),PARAMETER::SLASH = '\' !See above comments
 
       END MODULE CRSIMDEF

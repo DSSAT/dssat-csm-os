@@ -38,23 +38,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       SAVE
 
 !=======================================================================
-!     Change this line to switch between Windows and Linux compilers
-!     Operating system
-!=======================================================================
-! By Willingthon Pavan (2017-04-24):
-! Intel ifort understands the C-style preprocessor directives, so it might
-! be easiest to convert the files to that style. Then we would have a
-! single code base that would work with both compilers (Intel & gfortran).
-! * Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
-! * Microsoft Visual Studio IDE: set the Preprocess Source File option to Yes in 
-!   the Fortran Preprocessor Option Category.
-!=======================================================================
 
-#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
-#else
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
-#endif
+      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows, Linux, UNIX
 
 !=======================================================================
 !     Compiler directives used to set library for system calls
