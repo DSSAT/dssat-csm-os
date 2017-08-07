@@ -63,3 +63,6 @@ cluster.patch
 readme*
 CMakeFiles/
 CMakeCache.txt
+ModuleDefsLINUX.for
+CRSIMDEFLINUX.for
+
