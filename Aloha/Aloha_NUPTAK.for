@@ -25,7 +25,11 @@ C  Calls  : None
 C-----------------------------------------------------------------------
 C=======================================================================
 
-      SUBROUTINE Aloha_NUPTAK()
+      SUBROUTINE Aloha_NUPTAK(CONTROL, 
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
+     &    STOVWT, SW, TCNP, XSTAGE,                       !Input
+     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
       USE ModuleDefs
       IMPLICIT  NONE
       SAVE
@@ -37,7 +41,8 @@ C=======================================================================
       !INCLUDE  'NTRC2.BLK'
 
       REAL, DIMENSION(NL) :: ANO3, ANH4, DLAYR, KG2PPM, LL, NH4, NO3, 
-     &     RLV, RNO3U, RNH4U, SAT, SHF, SNH4, SNO3, SW, UNH4, UNO3
+     &     RLV, RNO3U, RNH4U, SAT, SHF, SNH4, SNO3, SW, UNH4, UNO3, FON
+      INTEGER DYNAMIC
 
       REAL        ANDEM              
       REAL        DNG         
@@ -46,13 +51,14 @@ C=======================================================================
       REAL        FACTOR      
       REAL        FNH4        
       REAL        FNO3        
-      INTEGER     L           
-      INTEGER     L1          
+      INTEGER     L, L1           
+      INTEGER     ISTAGE          
       REAL        NDEM        
       REAL        NUF
       INTEGER     NLAYR       
       REAL        PDWI        
-      REAL        PGRORT      
+      REAL        PGRORT 
+      REAL        PLIGRT    
       REAL        PLTPOP      
       REAL        PTF         
       REAL        RANC        
@@ -70,18 +76,24 @@ C=======================================================================
       REAL        TNDEM       
       REAL        TRLV        
       REAL        TRNLOS      
-      REAL        TRNU        
+      REAL        TRNU  
+      REAL        WTNUP      
       REAL        XMIN        
       REAL        XNDEM       
-      REAL        XSTAGE      
+      REAL        XSTAGE   
 
+      LOGICAL     FIRST   
+
+      TYPE (ControlType) CONTROL
       TYPE (ResidueType) SENESCE
+      TYPE (SoilType) SOILPROP
 
-!----------------------------------------------------------------------
-!     CHP 3/30/2006
-!     Proportion of lignin in roots
-      REAL PLIGRT
-
+      DYNAMIC = CONTROL % DYNAMIC
+      DLAYR   = SOILPROP % DLAYR
+      KG2PPM  = SOILPROP % KG2PPM
+      LL      = SOILPROP % LL
+      SAT     = SOILPROP % SAT
+      SHF     = SOILPROP % WR
 
 !=======================================================================
       SELECT CASE (DYNAMIC)
@@ -111,25 +123,55 @@ C=======================================================================
       L1 = 0
       UNH4 = 0.0
       UNO3 = 0.0
+      ROOTN = 0.0
+      STOVN  = 0.0
+      WTNUP  = 0.0
+
+      NLAYR = SOILPROP % NLAYR
 
 !=======================================================================
       CASE (SEASINIT)
 !=======================================================================
-
-      IF (RTWT.GT.0.0) RANC   = ROOTN / RTWT
-      IF (STOVWT.GT.0.0) TANC   = STOVN / STOVWT
+      RANC  = 0.022
+      TANC   = 0.044
+      WTNUP  = 0.0
+      FIRST = .TRUE.
 
 !=======================================================================
       CASE (RATE)
 !=======================================================================
+      TRNLOS = 0.0
+      RANC   = ROOTN / RTWT
+      TANC   = STOVN / STOVWT
+      TRLV   = 0.0
+      ANO3   = 0.0
+      ANH4   = 0.0
+      DROOTN = 0.0
+      DSTOVN = 0.0
+      TRNU   = 0.0
+      NUF    = 0.0
+      XNDEM = 0.0
+      XMIN = 0.0
+      TNDEM = 0.0
+      RNLOSS = 0.0
+      RNDEM = 0.0
+      RFAC = 0.0
+      NDEM = 0.0
+      FNO3 = 0.0
+      FNH4 = 0.0
+      FACTOR = 0.0
+      DNG = 0.0
+      ANDEM = 0.0
+      L1 = 0
+      UNH4 = 0.0
+      UNO3 = 0.0
+
       DO L = 1, NLAYR
          RNO3U(L) = 0.0
          RNH4U(L) = 0.0
-!         TRLV     = TRLV    + RLV(L)
          TRLV     = TRLV    + RLV(L) * DLAYR(L)
 !        NO3(L)   = SNO3(L) * FAC(L)
 !        NH4(L)   = SNH4(L) * FAC(L)
-         !KG2PPM(L) = 10.0/(BD(L)*DLAYR(L))
          SNO3(L) = NO3(L) / KG2PPM(L) 
          SNH4(L) = NH4(L) / KG2PPM(L)
       END DO
@@ -153,7 +195,7 @@ C-----------------------------------------------------------------------
 
       TNDEM  = STOVWT * (TCNP-TANC) + DNG
       RNDEM  = RTWT   * (RCNP-RANC) + PGRORT*RCNP
-      NDEM   = TNDEM  + RNDEM
+      NDEM   = MAX(0.0, TNDEM  + RNDEM)
 
 C-----------------------------------------------------------------------
 C     Convert total N demand from g N/plt to kg N/ha (ANDEM)
@@ -210,20 +252,23 @@ C-------------------------------------------------------------------------
 
       DO L = 1, L1
          UNO3(L) = RNO3U(L)*NUF
-         UNH4(L) = RNH4U(L)*NUF
          XMIN    = 0.25/KG2PPM(L)
          UNO3(L) = MIN (UNO3(L),SNO3(L) - XMIN)
          UNO3(L) = MAX(UNO3(L),0.0)  
-         SNO3(L) = MAX (SNO3(L) - UNO3(L), 0.0)
+!        SNO3(L) = MAX (SNO3(L) - UNO3(L), 0.0)
+!        NO3(L)  = SNO3(L) * FAC(L)
+
+         UNH4(L) = RNH4U(L)*NUF
          XMIN    = 0.5/KG2PPM(L)
          UNH4(L) = MIN (UNH4(L),SNH4(L) - XMIN)
          UNH4(L) = MAX(UNH4(L),0.0) 
-         SNH4(L) = MAX (SNH4(L) - UNH4(L), 0.0)
-!        NO3(L)  = SNO3(L) * FAC(L)
+!        SNH4(L) = MAX (SNH4(L) - UNH4(L), 0.0)
 !        NH4(L)  = SNH4(L) * FAC(L)
+
          TRNU    = TRNU + UNO3(L) + UNH4(L)   !kg[N]/ha
       END DO
 
+!     Why take it back to per plant basis?
       IF (PLTPOP .GT. 0.0) THEN
         TRNU = TRNU/(PLTPOP*10.0)               !g[N]/plant
       ELSE
@@ -249,9 +294,27 @@ C-----------------------------------------------------------------------
          ! Calculate root exudation losses (if any)
          !
          DO L = 1, L1
-            RNLOSS = 0.0
-            IF (TANC .GT. TCNP) THEN
-               RNLOSS = RANC*RTWT*0.05*PLTPOP*RLV(L)/TRLV
+!CHP/JIL 2/1/06 
+            !RNLOSS = 0.0
+            !IF (TANC .GT. TCNP) THEN
+              !RNLOSS = RANC * RTWT * 0.05 * PLTPOP * RLV(L) / TRLV
+               RNLOSS = RANC * RTWT * 0.005 * PLTPOP * 
+     &                                RLV(L)*DLAYR(L) / TRLV
+          !   g[N]/m2 = g[N]/g[root]       * plants/m2
+          !                  * g[root]/plant        * fraction
+            !ENDIF
+
+            !Calculate N in senesced roots (kg/ha)
+            SENESCE % ResE(L,1) = RNLOSS * 10.0
+!                      kg[N]/ha =  g/m2  * 10.
+
+            !Back calculate senesced root mass from N senesced.
+            IF (RANC .GT. 0.0) THEN
+              SENESCE % ResWt(L) = SENESCE % ResE(L,1) / RANC   
+            ELSE                               !kg[dry matter]/ha
+              SENESCE % ResWt(L) = SENESCE % ResE(L,1) * 10.0 / 0.40   
+!              kg[dry matter]/ha =       kg[N]/ha * kg[C]/kg[N]         
+!                                                 / kg[C]/kg[dry matter]
             ENDIF
             !Compute lignin, cellulose and carbohydrate portions
             SENESCE % ResLig(L) = SENESCE % ResWt(L) * PLIGRT
@@ -271,12 +334,33 @@ C-----------------------------------------------------------------------
          ENDIF
       ENDIF
 
-      STOVN = STOVN + DSTOVN
-      IF(STOVWT.GT.0.0) TANC  = STOVN / STOVWT
-      ROOTN = ROOTN + DROOTN
-      IF(RTWT.GT.0.1*RTWT.AND.RTWT.GT.0.0) 
-     &   RANC  = ROOTN / (RTWT-0.01*RTWT)
+!=======================================================================
+!     Integration
+!-----------------------------------------------------------------------
+      CASE (INTEGR)
+!=======================================================================
+!     Initialize RLV at stage 1 - from PHASEI
+      IF (ISTAGE == 1 .AND. FIRST) THEN
+        FIRST = .FALSE.
+!       RANC  = 0.022
+!        TANC  = 0.044
+        ROOTN = RANC*RTWT
+        STOVN = STOVWT*TANC
 
+!        IF (RTWT .GT. 0.0)   RANC   = ROOTN / RTWT
+!        IF (STOVWT .GT. 0.0) TANC   = STOVN / STOVWT
+      ENDIF
+
+      IF (ISTAGE .LT. 7) THEN
+        STOVN = STOVN + DSTOVN
+        IF(STOVWT.GT.0.001) TANC  = STOVN / STOVWT
+        ROOTN = ROOTN + DROOTN
+        IF(RTWT.GT.0.001) RANC  = ROOTN / (RTWT-0.01*RTWT)
+      ENDIF
+
+!     Moved from OPGROW
+      WTNUP = WTNUP + TRNU * PLTPOP
+            
 !=======================================================================
       END SELECT
 !=======================================================================
@@ -319,6 +403,7 @@ C           of a simulation
 ! RCNP        !Root critical nitrogen concentration, g N/g root dry weight
 !  RFAC       !Interim variable describing the effects of root length density
 !              on potential N uptake from a layer
+! RLV(20)     !Root length density for soil layer L, cm root/cm2 soil
 ! RNDEM       !Plant root demand for nitrogen (g/plant)
 ! RNH4U(20)   !Potential ammonia uptake from layer L, kg N/ha
 ! RNLOSS      !Loss of N from the plant via root exudation in one layer (g N/m2)

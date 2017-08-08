@@ -49,13 +49,15 @@ C  TTMP   :
 C=======================================================================
 
       SUBROUTINE Aloha_GROSUB (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE,                  !Input
-     &    TURFAC, WEATHER, XSTAGE,                            !Input
+     &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
+     &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
-     &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
+     &    SKWT, STMWT, STOVER, STOVN, STOVWT, UNH4, UNO3,     !Output
+     &    WTNUP, WTINITIAL, YIELD)                            !Output
 
       USE Aloha_mod
+      USE Interface_SenLig_Ceres
       IMPLICIT  NONE
       SAVE
 
@@ -64,14 +66,13 @@ C=======================================================================
      &          SLFW,SLFN,SLFC,SLFT,PLAS
       REAL      TABEX,PCO2,Y1
 
-!TEMP REMOVE N VARIABLES
-!      CHARACTER ISWNIT*1
-!      REAL    GROGRN,SFAC,TFAC,RMNC,XNF,TNLAB,RNLAB
-!      REAL      NSINK,NPOOL1,NPOOL2,NPOOL,NSDR,RNOUT,
-!     INTEGER , ICSDUR
-!     REAL    SEEDNI, ROOTN, STOVN, GRAINN, SEEDN, XANC
-!     REAL    APTNUP, RANC, GNP, NFAC, RCNP, 
-!     REAL    TANC, VANC, VMNC, TMNC
+      CHARACTER ISWNIT*1
+      REAL    GROGRN,SFAC,TFAC,RMNC,XNF,TNLAB,RNLAB
+      REAL    NSINK,NPOOL1,NPOOL2,NPOOL,NSDR,RNOUT
+      INTEGER ICSDUR
+      REAL    SEEDNI, ROOTN, STOVN, GRAINN, SEEDN, XANC
+      REAL    APTNUP, RANC, GNP, NFAC, RCNP 
+      REAL    TANC, VANC, VMNC, TMNC
 
       CHARACTER*6, PARAMETER :: ERRKEY ='GROSUB'
       CHARACTER*78 MSG(2)
@@ -83,7 +84,7 @@ C=======================================================================
       REAL    GROBSL, GROLF, CUMPH, LN, CUMDEP, SUMP, PLAMX, GROFLR
       REAL    GROCRWN, GROFRT, FRTWT, CRWNWT, SKWT, GROSK, PTF, EYEWT
       REAL    SWMAX, SWMIN, NDEF3, NSTRES, AGEFAC
-      REAL    PAR, CC, TEMPM, TRF2, CARBO, SWFAC, TRNU
+      REAL    PAR, CC, TEMPM, TRF2, CARBO, SWFAC  !,TRNU
       REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP
       REAL    PDWI, PGRORT, DM, FBIOM, MAXLAI, PHOTOSYNEYE, FRUITS
       REAL    YIELD, PEYEWT, GPSM, STOVER, YIELDB, HBIOM, XSTAGE  !, FDMC
@@ -92,13 +93,19 @@ C=======================================================================
       REAL    PLTPOP, SDWTPL, PLANTSIZE
       REAL    G2, G3, P4, PHINT, TBASE
       INTEGER PMTYPE, NFORCING
+      REAL    GRNWT, SDWTAH, SDWTAM, WTNUP, TOPWT, BWAH
+      REAL    WTNLF, WTNST, WTNSH, WTNRT, WTNLO
+      REAL    NDEF4, ANFAC, ATANC, TCNP, XGNP, GNUP, TOTNUP
+      REAL    CUMDTT, CANNAA, CANWAA
+      REAL    PLIGLF, PLIGRT
 
       REAL, DIMENSION(10) :: CO2X, CO2Y
-      REAL, DIMENSION(NL) :: RLV
+      REAL, DIMENSION(NL) :: RLV, NO3, NH4, SW, UNH4, UNO3
 
       TYPE (ControlType) CONTROL
- !     TYPE (SwitchType)  ISWITCH
       TYPE (WeatherType) WEATHER
+      TYPE (SoilType) SOILPROP
+      TYPE (ResidueType) SENESCE
 
       DYNAMIC = CONTROL % DYNAMIC
       CO2  = WEATHER % CO2
@@ -119,7 +126,6 @@ C=======================================================================
       STMWT      = 0.0
       STOVWT     = 0.0
       SWFAC      = 1.0
-      NSTRES     = 1.0
       TURFAC     = 1.0
       LN     = 0.0
 
@@ -132,18 +138,17 @@ C=======================================================================
       SENLA  = 0.0
       SLAN   = 0.0
       CARBO  = 0.0
-!      GRNWT  = 0.0
+      GRNWT  = 0.0  !Not ever given a value, but used to compute SDWT
       RTWT   = 0.0
-!      SDWTAH = 0.0
-!      SDWTAM = 0.0
-!      WTNUP  = 0.0
-!      TOPWT  = 0.0
-!      BWAH   = 0.0
-!      WTNLF  = 0.0
-!      WTNST  = 0.0
-!      WTNSH  = 0.0
-!      WTNRT  = 0.0
-!      WTNLO  = 0.0
+      SDWTAH = 0.0  !Only used for output in OPHarv
+      SDWTAM = 0.0
+      TOPWT  = 0.0
+      BWAH   = 0.0
+      WTNLF  = 0.0
+      WTNST  = 0.0
+      WTNSH  = 0.0
+      WTNRT  = 0.0
+      WTNLO  = 0.0
       GPSM   = 0.0
       GPP    = 0.0
       PTF    = 0.0
@@ -159,35 +164,33 @@ C=======================================================================
 !      ICSDUR = 0
       SWFAC  = 1.0
       TURFAC = 1.0
-      NSTRES = 1.0
-      AGEFAC = 1.0
-      NDEF3  = 1.0
-!      NDEF4  = 1.0
-!      ANFAC  = 0.0
-!      NFAC   = 1.0
-!      ATANC  = 0.0
-!      TANC   = 0.044
-!      RANC   = 0.0
-!      VANC   = 0.0
-!      VMNC   = 0.0
-!      TMNC   = 0.0
-!      RCNP   = 0.0
-!      TCNP   = 0.0
-!      SEEDNI = 0.0
-!      STOVN  = 0.0
-!      ROOTN  = 0.0
-!      GRAINN = 0.0
-!      GNP    = 0.0
-!      XGNP   = 0.0
-!      APTNUP = 0.0
-!      GNUP   = 0.0
-!      TOTNUP = 0.0
-!      CUMDTT = 0.0
+      NDEF4  = 1.0
+      ANFAC  = 0.0
+      ATANC  = 0.0
+      VANC   = 0.0
+      VMNC   = 0.0
+      SEEDNI = 0.0
+      GRAINN = 0.0
+      GNP    = 0.0
+      XGNP   = 0.0
+      APTNUP = 0.0
+      GNUP   = 0.0
+      TOTNUP = 0.0
+      CUMDTT = 0.0
       SUMDTT = 0.0
       DTT    = 0.0
-!      CANNAA = 0.05
-!      CANWAA = 0.0
-      TRNU = 0.0
+      CANNAA = 0.05
+      CANWAA = 0.0
+
+      CALL Aloha_NFACTO (DYNAMIC, 
+     &    ISTAGE, TANC, XSTAGE,                           !Input
+     &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
+
+      CALL Aloha_NUPTAK(CONTROL, 
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
+     &    STOVWT, SW, TCNP, XSTAGE,                       !Input
+     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
 
 !=======================================================================
       CASE (SEASINIT)
@@ -215,28 +218,41 @@ C=======================================================================
       BASLFWT    = 0.0
       STMWT      = 0.0
       STOVWT     = 0.0
-      NSTRES     = 1.0
       LN     = 0.0
 
-!TEMP CHP
-!      ! Calculate initial SEED N
-!      !
-!      SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
+      ! Calculate initial SEED N
+      !
+      SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
 
       ISTAGE_OLD = 0
 
+!     Initialize senescence variables
+      CALL SenLig_Ceres(PLIGLF=PLIGLF, PLIGRT=PLIGRT)
+
+      CALL Aloha_NFACTO (DYNAMIC, 
+     &    ISTAGE, TANC, XSTAGE,                           !Input
+     &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
+
+      CALL Aloha_NUPTAK(CONTROL, 
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
+     &    STOVWT, SW, TCNP, XSTAGE,                       !Input
+     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
 
 !=======================================================================
       CASE (RATE)
 !=======================================================================
-!TEMP CHP
-!      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
-!      APTNUP = STOVN*10.0*PLTPOP
+      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
+      APTNUP = STOVN*10.0*PLTPOP
 
-! chp temp
-      !IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
-      !   CALL NFACTO
-      !ENDIF
+      IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
+        CALL Aloha_NFACTO (DYNAMIC, 
+     &    ISTAGE, TANC, XSTAGE,                           !Input
+     &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
+
+        write(2345,'(i7,8f8.3)') control.yrdoy, 
+     &    agefac, ndef3, nfac, nstres, rcnp, tanc, tcnp, tmnc
+      ENDIF
 
 !-----------------------------------------------------------------
 !     7 - Preplanting
@@ -253,13 +269,6 @@ C=======================================================================
       IF (ISTAGE .GT. 5) RETURN
 
 !-----------------------------------------------------------------
-!TEMP CHP
-!      IF (ISWNIT .NE. 'N') THEN
-!         RANC  = 0.022
-!         TANC  = 0.044
-!         ROOTN = RANC*RTWT
-!         STOVN = STOVWT*TANC
-!      ENDIF
 
       PAR   = 0.5*SRAD
       Y1    = EXP(-0.52*LAI)                        ! Beer's law
@@ -269,8 +278,6 @@ C=======================================================================
       !
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
       PCARB = PCARB*PCO2
-
-      write(5551,'(i7,i5,3f10.4)') control.yrdoy, istage, pco2, par, y1
 
       TEMPM = 0.6*TMIN + 0.4*TMAX
       SELECT CASE (ISTAGE)
@@ -304,8 +311,6 @@ C=======================================================================
          CARBO = PCARB*AMIN1(PRFT,SWFAC,NSTRES)
       ENDIF
       DTT = AMAX1 (DTT,0.0)
-
-      write(666,'(i7,3f10.4)') control.yrdoy, pcarb, carbo, prft
 
 !-----------------------------------------------------------------
       IF (ISTAGE .LE. 3) THEN
@@ -717,49 +722,47 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
             CRWNWT  = CRWNWT + GROCRWN
         END SELECT
 
-!TEMP CHP
- 1900    CONTINUE
- !1900   IF (ISWNIT .EQ. 'Y') THEN
- !          !
- !          ! Grain N allowed to vary between .01 and .018.
- !          ! High temp., low soil water, and high N increase grain N
- !          !
- !          SFAC  = 1.125 - 0.1250*TURFAC
- !          TFAC  = 0.690 + 0.0125*TEMPM
- !          GNP   = (0.004+0.013*NFAC)*AMAX1(SFAC,TFAC)
- !          NSINK = GROGRN*GNP                !!!!!!!!!!!! GROGRN*GNP
- !
- !          IF (NSINK .GT. 0.0) THEN
- !             RMNC   = 0.75*RCNP
- !             RANC   = AMAX1  (RANC,RMNC)
- !             VANC   = STOVN / STOVWT
- !             VANC   = AMAX1  (VANC,VMNC)
- !             NPOOL1 = STOVWT*(VANC-VMNC)
- !             NPOOL2 = RTWT  *(RANC-RMNC)
- !             XNF    = 0.15  + 0.25*NFAC
- !             TNLAB  = XNF   * NPOOL1
- !             RNLAB  = XNF   * NPOOL2
- !             NPOOL  = TNLAB + RNLAB
- !             IF (ICSDUR .EQ. 1) THEN
- !                GPP = AMIN1(GPP*NDEF3,(NPOOL/(0.062*.0095)))
- !             ENDIF
- !             NSDR = NPOOL/NSINK
- !             IF (NSDR .LT. 1.0) THEN
- !                NSINK = NSINK*NSDR
- !             ENDIF
- !             IF (NSINK .GT. TNLAB) THEN
- !                STOVN = STOVN - TNLAB
- !                RNOUT = NSINK - TNLAB
- !                ROOTN = ROOTN - RNOUT
- !                RANC  = ROOTN / RTWT
- !              ELSE
- !                STOVN = STOVN - NSINK
- !                VANC  = STOVN / STOVWT
- !             ENDIF
- !          ENDIF
- !
- !          GRAINN = GRAINN + NSINK
- !       ENDIF
+ 1900   IF (ISWNIT .EQ. 'Y') THEN
+           !
+           ! Grain N allowed to vary between .01 and .018.
+           ! High temp., low soil water, and high N increase grain N
+           !
+           SFAC  = 1.125 - 0.1250*TURFAC
+           TFAC  = 0.690 + 0.0125*TEMPM
+           GNP   = (0.004+0.013*NFAC)*AMAX1(SFAC,TFAC)
+           NSINK = GROGRN*GNP                !!!!!!!!!!!! GROGRN*GNP
+ 
+           IF (NSINK .GT. 0.0) THEN
+              RMNC   = 0.75*RCNP
+              RANC   = AMAX1  (RANC,RMNC)
+              VANC   = STOVN / STOVWT
+              VANC   = AMAX1  (VANC,VMNC)
+              NPOOL1 = STOVWT*(VANC-VMNC)
+              NPOOL2 = RTWT  *(RANC-RMNC)
+              XNF    = 0.15  + 0.25*NFAC
+              TNLAB  = XNF   * NPOOL1
+              RNLAB  = XNF   * NPOOL2
+              NPOOL  = TNLAB + RNLAB
+              IF (ICSDUR .EQ. 1) THEN
+                 GPP = AMIN1(GPP*NDEF3,(NPOOL/(0.062*.0095)))
+              ENDIF
+              NSDR = NPOOL/NSINK
+              IF (NSDR .LT. 1.0) THEN
+                 NSINK = NSINK*NSDR
+              ENDIF
+              IF (NSINK .GT. TNLAB) THEN
+                 STOVN = STOVN - TNLAB
+                 RNOUT = NSINK - TNLAB
+                 ROOTN = ROOTN - RNOUT
+                 RANC  = ROOTN / RTWT
+               ELSE
+                 STOVN = STOVN - NSINK
+                 VANC  = STOVN / STOVWT
+              ENDIF
+           ENDIF
+ 
+           GRAINN = GRAINN + NSINK
+        ENDIF
         !
         ! Update fruit weight
         !
@@ -849,13 +852,16 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
       TOTPLTWT =  LFWT + STMWT + FLRWT + BASLFWT + SKWT
       DM       = BIOMAS*10.0
       STOVWT   = LFWT + STMWT
-      PTF      = (LFWT+BASLFWT+STMWT+FLRWT+SKWT)/(RTWT+LFWT+
-     &            BASLFWT+SKWT+STMWT+FLRWT)
+      PTF      = (LFWT+BASLFWT+STMWT+FLRWT+SKWT) /
+     &           (LFWT+BASLFWT+STMWT+FLRWT+SKWT+RTWT)
       
-!TEMP CHP
-!      IF (ISWNIT .NE. 'N') THEN
-!         CALL NUPTAK
-!      ENDIF
+      IF (ISWNIT .NE. 'N') THEN
+      CALL Aloha_NUPTAK(CONTROL, 
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
+     &    STOVWT, SW, TCNP, XSTAGE,                       !Input
+     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
+      ENDIF
 
 !-----------------------------------------------------------------
       RETURN
@@ -935,8 +941,8 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           GROSK  =  0.0
           PTF    =  1.0                 ! PTF is plant top fraction in gram/plant.
           EYEWT  =  0.0                 ! EYEWT (G/eye) is weight of the eye
-!temp          VANC   = TANC                 ! Variable used in nitrogen balance
-!temp          VMNC   = TMNC                 ! .....
+          VANC   = TANC                 ! Variable used in nitrogen balance
+          VMNC   = TMNC                 ! .....
 
         CASE (5)
           FRTWT  = FLRWT*0.5            ! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
@@ -972,27 +978,30 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           STMWT      = WTINITIAL*0.115     ! STMWT is 115% of initial crown weight
           STOVWT     = WTINITIAL           ! STOVWT (g/plant) is stover weight
 
-          NSTRES     = 1.0
+!          NSTRES     = 1.0
 
-!TEMP REMOVE N ROUTINES
-!          IF (ISWNIT .NE. 'N') THEN
-!             IF (FRTWT .GT. 0.0) THEN
-!                XGNP = (GRAINN/FRTWT)*100.0
-!C               XPTN = XGNP*6.25
-!                GNUP = GRAINN*FRUITS*10.0
-!             ENDIF
-!             TOTNUP = GNUP + APTNUP
-!          ENDIF
+          IF (ISWNIT .NE. 'N') THEN
+             IF (FRTWT .GT. 0.0) THEN
+                XGNP = (GRAINN/FRTWT)*100.0
+C               XPTN = XGNP*6.25
+                GNUP = GRAINN*FRUITS*10.0
+             ENDIF
+             TOTNUP = GNUP + APTNUP
+          ENDIF
 
-        CASE (9)
-          NDEF3  =  1.0
-          NSTRES =  1.0
-          AGEFAC =  1.0
+!        CASE (9)
+!          NDEF3  =  1.0
+!          NSTRES =  1.0
+!          AGEFAC =  1.0
 
         END SELECT
       ENDIF
 
-
+      CALL Aloha_NUPTAK (CONTROL, 
+     &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
+     &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
+     &    STOVWT, SW, TCNP, XSTAGE,                       !Input
+     &    ROOTN, SENESCE, STOVN, TANC, UNH4, UNO3, WTNUP) !Output
 
 !=======================================================================
       END SELECT

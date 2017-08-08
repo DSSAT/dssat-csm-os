@@ -581,7 +581,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
         CALL Aloha_Pineapple(CONTROL, ISWITCH, 
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SW, TRWUP,   !Input
      &    WEATHER, YRPLT,                                 !Input
-     &    MDATE, RLV, STGDOY, LAI)                        !Output
+     &    LAI, MDATE, RLV, SENESCE, STGDOY, UNH4, UNO3)   !Output
 
         XLAI  = LAI
         XHLAI = LAI 

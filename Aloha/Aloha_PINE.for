@@ -32,7 +32,7 @@ C=======================================================================
       Subroutine Aloha_Pineapple(CONTROL, ISWITCH, 
      &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SW, TRWUP,   !Input
      &    WEATHER, YRPLT,                                 !Input
-     &    MDATE, RLV, STGDOY, LAI)                        !Output
+     &    LAI, MDATE, RLV, SENESCE, STGDOY, UNH4, UNO3)   !Output
 
       USE Aloha_mod
       IMPLICIT NONE
@@ -53,10 +53,10 @@ C=======================================================================
 !      REAL    CARBO, PTF, LEAFNO, XN, AGEFAC, NDEF3, NDEF4
       REAL    BASLFWT, BIOMAS, LAI, NSTRES, STOVN, RTDEP, RTWT, SKWT
 !      REAL    ANFAC, NFAC, ATANC, TANC, RANC, VANC, VMNC, TMNC, RCNP
-!      REAL    TCNP, ROOTN, GRAINN, GNP, XGNP, APTNUP, GNUP, TOTNUP
-      REAL    GRORT, XSTAGE
+!      REAL    TCNP, GRAINN, GNP, XGNP, APTNUP, GNUP, TOTNUP
+      REAL    GRORT, XSTAGE, STOVWT, ROOTN, WTNUP
 !     REAL, DIMENSION(6)  :: SI1, SI2, SI3, SI4
-      REAL, DIMENSION(NL) :: NH4, NO3, RLV, SW
+      REAL, DIMENSION(NL) :: NH4, NO3, RLV, SW, UNH4, UNO3
 
       REAL      CANNAA,CANWAA
       REAL      DTT
@@ -74,7 +74,7 @@ C=======================================================================
       TYPE (SoilType)    SOILPROP
       TYPE (SwitchType)  ISWITCH
 !      Type (ResidueType) HARVRES
-!      Type (ResidueType) SENESCE
+      Type (ResidueType) SENESCE
       TYPE (WeatherType) WEATHER
 
 !      CHARACTER*1 RNMODE
@@ -160,11 +160,12 @@ C-----------------------------------------------------------------------
      &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
 
       CALL Aloha_GROSUB  (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE,                  !Input
-     &    TURFAC, WEATHER, XSTAGE,                            !Input
+     &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
+     &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
-     &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
+     &    SKWT, STMWT, STOVER, STOVN, STOVWT, UNH4, UNO3,     !Output
+     &    WTNUP, WTINITIAL, YIELD)                            !Output
 
       CALL Aloha_ROOTGR (CONTROL,
      &     CUMDTT, DTT, GRORT, ISTAGE, ISWITCH, NO3, NH4,     !Input
@@ -173,13 +174,14 @@ C-----------------------------------------------------------------------
 
       CALL Aloha_OpGrow (CONTROL, ISWITCH,  
      &   BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, 
-     &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
-     &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
+     &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, ROOTN,  
+     &   RTDEP, RTWT, SKWT, STMWT, STOVN, STOVWT, SWFAC,    
+     &   TRNU, TURFAC, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER, WTINITIAL,   !Input
-     &   YIELD, YRDOY, YRPLT)                             !Input
+     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
+     &   WTINITIAL, YIELD, YRDOY, YRPLT)                  !Input
 
 !=======================================================================
 C     Beginning of daily simulation loop
@@ -257,11 +259,12 @@ C----------------------------------------------------------------------
       
 !        IF (ISTAGE .LT. 6) THEN
            CALL Aloha_GROSUB  (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE,                  !Input
-     &    TURFAC, WEATHER, XSTAGE,                            !Input
+     &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
+     &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
-     &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
+     &    SKWT, STMWT, STOVER, STOVN, STOVWT, UNH4, UNO3,     !Output
+     &    WTNUP, WTINITIAL, YIELD)                            !Output
 !        ENDIF
 
          IF (YRDOY .EQ. STGDOY(3)) THEN
@@ -293,14 +296,14 @@ C-----------------------------------------------------------------------
      &     CUMDTT, DTT, GRORT, ISTAGE, ISWITCH, NO3, NH4,     !Input
      &     SOILPROP, SW, SWFAC,                               !Input
      &     RLV, RTDEP, RTWT)                                  !Output
-
      
         CALL Aloha_GROSUB  (CONTROL, 
-     &    DTT, ISTAGE, SWFAC, SUMDTT, TBASE,                  !Input
-     &    TURFAC, WEATHER, XSTAGE,                            !Input
+     &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
+     &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, RTWT, SKWT, STMWT,      !Output
-     &    STOVER, TRNU, WTINITIAL, YIELD)                     !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
+     &    SKWT, STMWT, STOVER, STOVN, STOVWT, UNH4, UNO3,     !Output
+     &    WTNUP, WTINITIAL, YIELD)                            !Output
 
 !=======================================================================
 C        Call daily output subroutine
@@ -310,13 +313,14 @@ C-----------------------------------------------------------------------
 
       CALL Aloha_OpGrow (CONTROL, ISWITCH,  
      &   BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, 
-     &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
-     &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
+     &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, ROOTN,  
+     &   RTDEP, RTWT, SKWT, STMWT, STOVN, STOVWT, SWFAC,    
+     &   TRNU, TURFAC, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER, WTINITIAL,   !Input
-     &   YIELD, YRDOY, YRPLT)                             !Input
+     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
+     &   WTINITIAL, YIELD, YRDOY, YRPLT)                  !Input
 
 !=======================================================================
 C     Call end of season output routine
@@ -325,13 +329,14 @@ C-----------------------------------------------------------------------
 !=======================================================================
       CALL Aloha_OpGrow (CONTROL, ISWITCH,  
      &   BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, 
-     &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, RTDEP,  
-     &   RTWT, SKWT, STMWT, SWFAC, TRNU, TURFAC, YRPLT)     
+     &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, ROOTN,  
+     &   RTDEP, RTWT, SKWT, STMWT, STOVN, STOVWT, SWFAC,    
+     &   TRNU, TURFAC, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH,
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER, WTINITIAL,   !Input
-     &   YIELD, YRDOY, YRPLT)                             !Input
+     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
+     &   WTINITIAL, YIELD, YRDOY, YRPLT)                  !Input
 
 !=======================================================================
       END SELECT

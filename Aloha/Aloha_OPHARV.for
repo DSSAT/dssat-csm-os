@@ -8,11 +8,8 @@
 
       SUBROUTINE Aloha_OPHARV(CONTROL, ISWITCH,
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER, WTINITIAL,   !Input
-     &   YIELD, YRDOY, YRPLT)                             !Input
-!     &   BWAH, SDWTAH)                                   !Output
-!     N variables
-!     &   WTNSD,TOTNUP,WTNUP,FBIOM,XGNP,APTNUP,GNUP,
+     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
+     &   WTINITIAL, YIELD, YRDOY, YRPLT)                  !Input
 
 !-----------------------------------------------------------------------
       USE Aloha_mod
@@ -280,7 +277,7 @@ C-----------------------------------------------------------------------
 !     modified to handle automatic management
 !-----------------------------------------------------------------------
 !      IF (INDEX ('PI',CROP) .EQ. 0) THEN
-!         TOTNUP = WTNUP
+!      TOTNUP = WTNUP
 !      ENDIF
       PSDWT = 0.0
 
