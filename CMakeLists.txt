@@ -19,10 +19,9 @@ PROJECT(DSSAT-CSM Fortran )
 # DSSAT_VERSION from ModuleDefs.for
 ##########################################################################################
 
-set(FILE_NAME "${CMAKE_SOURCE_DIR}/ModuleDefs.fpp")
-file(READ ${FILE_NAME} File_Content)
+file(READ "${CMAKE_SOURCE_DIR}/ModuleDefs.for" File_Content)
 
-# Take DSSAT_VERSION from ModulesDefs.fpp
+# Take DSSAT_VERSION from ModulesDefs.for
 STRING(REGEX REPLACE ".*Major = ([0-9]+).*" "\\1" MAJOR "${File_Content}")
 STRING(REGEX REPLACE ".*Minor = ([0-9]+).*" "\\1" MINOR "${File_Content}")
 STRING(REGEX REPLACE ".*Model = ([0-9]+).*" "\\1" MODEL "${File_Content}")
@@ -31,6 +30,20 @@ MESSAGE(STATUS "MAJOR: ${MAJOR} MINOR: ${MINOR} MODEL: ${MODEL} BUILD: ${BUILD}"
 
 # Set the version
 SET(VERSION ${MAJOR}.${MINOR}.${MODEL})
+
+##########################################################################################
+# ModuleDefs AND CRSIMDEF Cross-Platform Setup
+##########################################################################################
+
+IF(NOT WIN32)
+	file(READ "${CMAKE_SOURCE_DIR}/ModuleDefs.for" File_Content)
+	STRING(REGEX REPLACE "OPSYS = 'WINDO'" "OPSYS = 'LINUX'" File_Content "${File_Content}")
+	file(WRITE "${CMAKE_SOURCE_DIR}/ModuleDefs.for" "${File_Content}")	
+
+	file(READ "${CMAKE_SOURCE_DIR}/CRSIMDEF.for" File_Content)
+	STRING(REGEX REPLACE "SLASH = '\\\\'" "SLASH = '/'" File_Content "${File_Content}")
+	file(WRITE "${CMAKE_SOURCE_DIR}/CRSIMDEF.for" "${File_Content}")
+ENDIF(NOT WIN32)
 
 ##########################################################################################
 
