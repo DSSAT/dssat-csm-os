@@ -318,7 +318,7 @@
       ! Returns full name (inc directory) for specified file
       ! Uses cfg.file
 
-      USE CRSIMDEF
+      USE OSDefinitions
 
       IMPLICIT NONE
 
@@ -2653,7 +2653,7 @@
       SUBROUTINE WTHDATA(FILEIO,WTHSTA,WTHFTYPE,wthdirfl,wthss)
       ! To find the name and location of weather data
 
-      USE CRSIMDEF
+      USE OSDefinitions
 
       IMPLICIT NONE
 
