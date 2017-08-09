@@ -1,0 +1,52 @@
+*SUNFLOWER GENOTYPE COEFFICIENTS: CRGRO046 MODEL                                                                                                                                                          
+!                                                                                                                                                          
+! COEFF       DEFINITIONS                                                                                                                                                                               
+! =====       ===========                                                                                                                                                                               
+! VAR#        Identification code or number for a specific cultivar.                                                                                                                                    
+! VAR-NAME    Name of cultivar                                                                                                                                                                          
+! EXPNO       Number of experiments used to estimate cultivar parameters                                                                                                                                
+! ECO#        Code for the ecotype to which this cultivar belongs (see *.eco file)                                                                                                                      
+! CSDL        Critical Short Day Length below which reproductive development                                                                                                                            
+!             progresses with no daylength effect (for shortday plants) (hour)                                                                                                                          
+! PPSEN       Slope of the relative response of development to photoperiod with time                                                                                                                    
+!             (positive for shortday plants) (1/hour)                                                                                                                                                   
+! EM-FL       Time between plant emergence and flower appearance (R1)                                                                                                                                   
+!             (photothermal days)                                                                                                                                                                       
+! FL-SH       Time between first flower and first pod (R3) (photothermal days)                                                                                                                          
+! FL-SD       Time between first flower and first seed (R5) (photothermal days)                                                                                                                         
+! SD-PM       Time between first seed (R5) and physiological maturity (R7)                                                                                                                              
+!             (photothermal days)                                                                                                                                                                       
+! FL-LF       Time between first flower (R1) and end of leaf expansion                                                                                                                                  
+!             (photothermal days)                                                                                                                                                                       
+! LFMAX       Maximum leaf photosynthesis rate at 30 C, 350 vpm CO2, and high light                                                                                                                     
+!             (mg CO2/m2-s)                                                                                                                                                                             
+! SLAVR       Specific leaf area of cultivar under standard growth conditions                                                                                                                           
+!             (cm2/g)                                                                                                                                                                                   
+! SIZLF       Maximum size of full leaf (three leaflets) (cm2)                                                                                                                                          
+! XFRT        Maximum fraction of daily growth that is partitioned to seed + shell                                                                                                                      
+! WTPSD       Maximum weight per seed (g)                                                                                                                                                               
+! SFDUR       Seed filling duration for pod cohort at standard growth conditions                                                                                                                        
+!             (photothermal days)                                                                                                                                                                       
+! SDPDV       Average seed per pod under standard growing conditions (#/pod)                                                                                                                            
+! PODUR       Time required for cultivar to reach final pod load under optimal                                                                                                                          
+!             conditions (photothermal days)                                                                                                                                                            
+! THRSH       Threshing percentage. The maximum ratio of (seed/(seed+shell))                                                                                                                            
+!             at maturity. Causes seeds to stop growing as their dry weight                                                                                                                             
+!             increases until shells are filled in a cohort.                                                                                                                                            
+! SDPRO       Fraction protein in seeds (g(protein)/g(seed))                                                                                                                                            
+! SDLIP       Fraction oil in seeds (g(oil)/g(seed))                                                                                                                                                    
+!                                                                                                                                                                                                       
+@VAR#  VAR-NAME........ EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP                                                        
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18                                                        
+!                                                                                                                                                                                                       
+IB0009 E-353                . SU0702 15.00-0.086  18.6   6.0  11.7 21.70 14.00  2.00  235. 200.0  0.76  0.09  24.0  2.00   4.5  74.0  .140  .450
+IB0013 SUNGRO-385           . SU0702 15.00-0.086  20.6   6.0  11.2 29.00 14.50  2.10  235. 200.0  0.86  0.07  24.0  2.00   4.5  74.0  .140  .480                                                        
+IB0014 SW-101               . SU0702 15.00-0.086  17.6   5.5  10.2 30.00 14.00  2.00  235. 200.0  0.87  0.09  24.0  2.00   4.5  74.0  .140  .430
+IB0015 S-530                . SU0702 15.00-0.086  21.0   6.0  12.2 29.00 15.00  2.10  235. 200.0  0.89  0.07  24.0  2.00   4.5  74.0  .140  .450
+IB0019 Sungold TT-all       . SU0702 15.00-0.086  17.6   5.5  10.2 30.00 14.00  2.10  235. 200.0  0.97  0.06  24.0  2.00   4.2  74.0  .140  .480
+
+!IB0009 E-353                . SU0701 15.00-0.086  17.6   5.5  10.7 21.70 13.66  2.25  235. 200.0  0.76  0.06  24.0  2.00   4.5  78.0  .140  .500
+!IB0013 SUNGRO-385           . SU0702 15.00-0.086  17.6   5.5  10.2 29.00 13.66  2.25  235. 200.0  0.97  0.06  24.0  2.00   4.5  78.0  .140  .500                                                        
+!IB0014 SW-101               . SU0702 15.00-0.086  17.6   5.5  10.2 29.00 13.66  2.25  235. 200.0  0.97  0.06  24.0  2.00   4.5  78.0  .140  .500
+!IB0015 S-530                . SU0702 15.00-0.086  17.6   5.5  10.2 29.00 13.66  2.25  235. 200.0  0.97  0.06  24.0  2.00   4.5  78.0  .140  .500
+!IB0019 Sungold TT-all       . SU0702 15.00-0.086  17.6   5.5  10.2 29.00 13.66  2.25  235. 200.0  0.97  0.06  24.0  2.00   4.5  78.0  .140  .500
