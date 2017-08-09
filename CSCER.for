@@ -170,7 +170,7 @@
       !    that is currently set to 0 .. hence no saturation 
       !    effect. Need to use switch in CSM somehow.
 
-      USE CRSIMDEF
+      USE OSDefinitions
       USE CSVOUTPUT  ! VSH
       
       IMPLICIT NONE

@@ -131,7 +131,7 @@
       !    2. Blips in response curves and reasons for these
       !    3  All declarations,initialisations to 0 or -99
 
-      USE CRSIMDEF
+      USE OSDefinitions
       
       IMPLICIT NONE
 

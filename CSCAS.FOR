@@ -72,7 +72,7 @@
       !       with N on growth because lack of N->reduced growth->
       !       reduced uptake!
 
-      USE CRSIMDEF
+      USE OSDefinitions
       
       IMPLICIT NONE
 
