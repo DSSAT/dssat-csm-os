@@ -16,12 +16,12 @@ endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 PROJECT(DSSAT-CSM Fortran )
 
 ##########################################################################################
-# DSSAT_VERSION from CSMVersion.for
+# DSSAT_VERSION from ModuleDefs.for
 ##########################################################################################
 
-file(READ "${CMAKE_SOURCE_DIR}/CSMVersion.for" File_Content)
+file(READ "${CMAKE_SOURCE_DIR}/ModuleDefs.for" File_Content)
 
-# Take DSSAT_VERSION from CSMVersion.for
+# Take DSSAT_VERSION from ModuleDefs.for
 STRING(REGEX REPLACE ".*Major = ([0-9]+).*" "\\1" MAJOR "${File_Content}")
 STRING(REGEX REPLACE ".*Minor = ([0-9]+).*" "\\1" MINOR "${File_Content}")
 STRING(REGEX REPLACE ".*Model = ([0-9]+).*" "\\1" MODEL "${File_Content}")
@@ -74,7 +74,6 @@ ENDIF(WIN32)
 # Add the source files
 ADD_EXECUTABLE(${EXECUTABLE_NAME} 
 	${OSDefinitions}
-	CSMVersion.for
 	ModuleDefs.for
 	ASMDM.for
 	AUTHAR.for
