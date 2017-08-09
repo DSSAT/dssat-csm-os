@@ -42,12 +42,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "DSSAT Foundation"
-            VALUE "FileDescription", "CSM46"
+            VALUE "FileDescription", "DSSAT Cropping System Model"
             VALUE "FileVersion", "4.7.0.0"
-            VALUE "InternalName", "CSM46"
-            VALUE "LegalCopyright", "Copyright © 2016"
-            VALUE "OriginalFilename", "DSCSM046.exe"
-            VALUE "ProductName", "University of Florida DSCSM46"
+            VALUE "InternalName", "DSCSM047"
+            VALUE "LegalCopyright", "Copyright © 2017"
+            VALUE "OriginalFilename", "DSCSM047.exe"
+            VALUE "ProductName", "DSSAT CSM"
             VALUE "ProductVersion", "4.7.0.0"
         END
     END
