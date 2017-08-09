@@ -433,35 +433,15 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 
 !======================================================================
-      CONTAINS
-
-!----------------------------------------------------------------------
-      SUBROUTINE SETOP ()
-!     Set variables for current operating system
-      IMPLICIT NONE
-
-      WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
+!      CONTAINS
 !
-!!      call op_sys(slash,dssatpro,stdpath)
-!      SELECT CASE (OPSYS)
-!      CASE ('WINDO','DOS  ')
-!!       DOS, Windows
-!        SLASH = '\' 
-!        DSSATPRO = 'DSSATPRO.V46'
-!!       Note: Use DSSAT45 directory for now. 
-!C-GH    Set to DSSAT46
-!        STDPATH = 'C:\DSSAT46\' 
-!        exe_string = 'EXE'
+!!----------------------------------------------------------------------
+!      SUBROUTINE SETOP ()
+!      IMPLICIT NONE
 !
-!      CASE ('LINUX','UNIX ')
-!!       Linux, Unix
-!        SLASH = '/' 
-!        DSSATPRO = 'DSSATPRO.L46'
-!        STDPATH = '/DSSAT46/'
-!        exe_string = '.so'
-!      END SELECT
-
-      END SUBROUTINE SETOP
+!      WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
+!
+!      END SUBROUTINE SETOP
 
 !======================================================================
       END MODULE ModuleDefs

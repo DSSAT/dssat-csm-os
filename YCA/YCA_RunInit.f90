@@ -32,9 +32,9 @@
         !-----------------------------------------------------------------------
             
         IF (RUNCRP.LE.0) THEN
-            MODNAME(1:8) = 'CSYCA046'
+            MODNAME(1:8) = 'CSYCA' // ModelVerTxt 
             VERSIONCSCAS = 010114                                                             ! MF 15SE14 Changed from VERSION, conflict with ModuleDefs 
-            GENFLCHK(1:15) = 'CSYCA046.010114'
+            GENFLCHK(1:15) = 'CSYCA047.08102017'
             
             !-----------------------------------------------------------------------
             !         Set parameters (Most should be placed in input files!)
