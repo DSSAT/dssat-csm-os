@@ -193,7 +193,7 @@ C=======================================================================
 
       CHARACTER*1   UPCASE
       CHARACTER*2   CROP
-      CHARACTER*3   PROCOD!, EXE_STRING    !, MODELVER
+      CHARACTER*3   PROCOD
       CHARACTER*6   ERRKEY
       CHARACTER*8   MODEL, CRMODEL
       CHARACTER*78  MSG(4)

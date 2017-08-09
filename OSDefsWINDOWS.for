@@ -12,7 +12,6 @@
 !=======================================================================
 
       CHARACTER(LEN=1), PARAMETER ::  SLASH = '\'
-!     character(len=3), PARAMETER ::  exe_string = 'EXE'
       CHARACTER(LEN=12), PARAMETER :: DSSATPRO = 'DSSATPRO.V47'
       CHARACTER(LEN=11), PARAMETER :: STDPATH = 'C:\DSSAT47\'
 
