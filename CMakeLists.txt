@@ -63,11 +63,11 @@ ENDIF(FCNAME STREQUAL "pgf90")
 
 # Define the executable name and OSDefinitions file
 IF(WIN32)
-    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
+    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR}.exe)
     SET(OSDefinitions "OSDefsWINDOWS.for")    
     add_definitions(-DWIN32=1})
 ELSE()
-    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR}.exe)
+    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
     SET(OSDefinitions "OSDefsLINUX.for")    
 ENDIF(WIN32)
 
