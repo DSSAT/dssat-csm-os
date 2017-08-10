@@ -1,10 +1,12 @@
 *BRACHIARIA SPECIES COEFICIENTS                                                                          
 ! Bracharia brizantha - Marandu - Diego Pequeno                                                                     
 !*PHOTOSYNTHESIS PARAMETERS                                                                         
-!  35.0  82.0  0.55 
- 35.00 82.00  0.55  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE
-!  45.0 130.0  0.55                         PARMAX,PHTMAX,KCAN  0.55                                 
-  11.0  1.23 .0081                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN                    
+! KJB 6/2017, C version to mimic L version, CO2 sensitivity C version set way-down for C-4
+!  35.0  82.0  0.55  
+!  11.0  1.23 .0081                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN                    
+! 35.00 82.00  0.55  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE
+ 34.00 88.00  0.55  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE
+  11.0  1.07 .0087                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN                    
   0.80  4.00  10.0  10.0   QDR             FNPGN(4),TYPPGN-LF N EFFECT ON PG     ML                 
   12.0  25.0  38.0  50.0   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG                    
   -5.0   6.2  40.2  50.0  55.0  60.0       XLMAXT (6 VALUES)Modified Bahia values -  DP             
@@ -32,10 +34,13 @@
                                                                                                     
                                                                                                     
 !*PLANT COMPOSITION VALUES                                                                          
- 0.240 0.160 0.035 0.120 0.080 0.025   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF - DP optimized with
-  .101  .040  .022  .039  .039  .038   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF                    
+ 0.260 0.160 0.040 0.140 0.080 0.030   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF - KJB 6/14/17 to impr CP
+! 0.240 0.160 0.035 0.120 0.080 0.025   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF - DP optimized with
+  .111  .040  .030  .039  .039  .038   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF - KJB to impr root%N
+!  .101  .040  .022  .039  .039  .038   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF                    
   .115  .115  .300  .015  .019  .800   SDPROS,SDPROG,PRONOD,PROMIN,PROMAX,THETA                     
-  .602  .697  .702  .251  .750  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO                    
+  .562  .667  .692  .251  .750  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO - kjb,did not sum to 1.0
+!  .602  .697  .702  .251  .750  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO                    
   .025  .020  .020  .011  .050         PLIPLF,PLIPST,PLIPRT,PLIPSH,PLIPNO                           
   .040  .060  .070  .100  .030  .070   PLIGLF,PLIGST,PLIGRT,PLIGSH,PLIGSD,PLIGNO                    
   .050  .050  .050  .040  .040  .050   POALF,POAST,POART,POASH,POASD,POANO                          
@@ -86,7 +91,7 @@
   0.80  0.80  0.72  0.63  0.52  0.51  0.50  0.50  YLFEST VALUES -     DP Manual-2                         
   0.10  0.10  0.14  0.17  0.32  0.36  0.35  0.35  YSTEST VALUES -     DP                            
   0.01  0.01  0.03  0.04  0.04  0.04  0.04  0.04  YSREST VALUES -     DP                            
-
+  60.0                                SDLEST !photothermal days sowing to established perennial                                                                                                  
                                                                                                     
 !*LEAF GROWTH PARAMETERS                                                                            
   150.  190.   2.0  0.0   0.00        FINREF,SLAREF,SIZREF,VSSINK,EVMODC -     BP                   
@@ -99,8 +104,9 @@
                                                                                                     
 !*LEAF SENESCENCE FACTORS                                                                           
   0.80  0.20  .060  -5.0 -18.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2 -     BP                   
-  1.17  13.1  0.01                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen
-                                                                                                    
+  1.17  13.1  .014                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen
+!  1.17  13.1  0.01                     ICMP,TCMP(Light comp, time constant-senes),LFSEN (natural sen
+! KJB, incr lfsen to improve predictions 6/14/17, LAI and leaf too high.                            
                                                                                                     
 ! .......XSTAGE.........  .......XSENMX.........                                                    
    0.0   5.0   9.0  50.0   3.0   5.0  10.0  50.0                                                    

@@ -1020,8 +1020,8 @@ C    Read Ecotype Parameter File
 !-----------------------------------------------------------------------
 !FSR - The de-bugging routines below were not included in this build.  
 !      If they are needed, they will need to be adjusted to the DSSAT
-!      ver 4.0 variables.  Other files needed will be CSP_IPDMND_OUT.FOR
-!      and CSP_IPPLNT_OUT.FOR.  
+!      ver 4.0 variables.  Other files needed will be CSP_IPDMND_OUT.for
+!      and CSP_IPPLNT_OUT.for.  
 !-----------------------------------------------------------------------
 
 ! Echoes input data
@@ -1094,7 +1094,7 @@ C    Read Ecotype Parameter File
       OPEN(UNIT = 400, FILE = "TestDemand_SC.out", STATUS = "UNKNOWN", 
      & ACTION = "WRITE", POSITION = "REWIND", IOSTAT = OpenStatus)
 
-      WRITE(400,'(1X,"RESULTS FROM DEMAND_SC.FOR")')
+      WRITE(400,'(1X,"RESULTS FROM DEMAND_SC.for")')
       WRITE(400,'(1X, " ")')    !chp for portability
       WRITE(400,'(1X,"  YRDOY   YRSIM")', ADVANCE="NO") 
       WRITE(400,'(1X,"AGRLF AGRRT AGRSTM AGRSU")', ADVANCE="NO") 
@@ -1170,7 +1170,7 @@ C    Read Ecotype Parameter File
       END  ! SUBROUTINE PRNT_DEMAND_SC
 
 
-! Open file to write results from DEMAND_SC.FOR
+! Open file to write results from DEMAND_SC.for
 
 !FORMAT
 

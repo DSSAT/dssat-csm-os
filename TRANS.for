@@ -1,5 +1,5 @@
 !***********************************************************************
-!     TRANSPIRATION MODULE - File TRANS.FOR
+!     TRANSPIRATION MODULE - File TRANS.for
 !***********************************************************************
 !     Includes subroutines:
 !         TRANS - Calculates actual transpiration rate.
@@ -15,7 +15,7 @@ C  01/01/1989 JR  Written
 C  01/01/1989 JWJ Modified for climate change using ETRATIO subroutine.
 C  12/05/1993 NBP Made into subroutine and changed to TRATIO function.
 C  10/13/1997 CHP Modified for modular format.
-C  11/25/1997 CHP Put in file TRANS.FOR w/ TRATIO and BLRRES
+C  11/25/1997 CHP Put in file TRANS.for w/ TRATIO and BLRRES
 C  09/01/1999 GH  Incorporated into CROPGRO
 C  01/13/2000 NBP Added DYNAMIC contruct to input KCAN and calc. FDINT
 C  02/06/2003 KJB/CHP Replaced KCAN with KEP
@@ -150,7 +150,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
 !     FUNCTION SUBROUTINES:
-      REAL VPSLOP     !(found in file HMET.FOR)
+      REAL VPSLOP     !(found in file HMET.for)
 
 !-----------------------------------------------------------------------
       IF (XHLAI .LT. 0.01) THEN

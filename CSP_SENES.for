@@ -111,7 +111,7 @@ C========================================================================
       IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
      &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
-	  ! Open temp file to write results from CSP_PHENOL.FOR
+	  ! Open temp file to write results from CSP_PHENOL.for
         CALL GETLUN('CSP_SENES', LUN)
         OPEN(UNIT = LUN, FILE = "CSP_SENES.OUT", STATUS = "UNKNOWN",
      &    ACTION = "WRITE", POSITION = "REWIND", IOSTAT = OpenStatus)
@@ -217,7 +217,7 @@ C------ Find particular ECOTYPE ----------------------------------------
 
       WRITE(WLUN,*)
       WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_SENES.FOR")')
+      WRITE(WLUN,'(1X,"RESULTS FROM CSP_SENES.for")')
       WRITE(WLUN,'(1X,"-------------------------")')
       WRITE(WLUN,*)
       WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
@@ -242,7 +242,7 @@ C------ Find particular ECOTYPE ----------------------------------------
       WRITE(WLUN,'(1X,"SENMAX : ",4F6.2)') (SENMAX(II),II=1,4)
 
       WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"END RESULTS FROM CSP_SENES.FOR")')
+      WRITE(WLUN,'(1X,"END RESULTS FROM CSP_SENES.for")')
 
 !      CLOSE (WLUN)
 
@@ -273,13 +273,13 @@ C------ Find particular ECOTYPE ----------------------------------------
       END DO  ! Stalk
 
 !-----------------------------------------------------------------------
-! Open output file to write results from CSP_SENES.FOR
+! Open output file to write results from CSP_SENES.for
 !-----------------------------------------------------------------------
       IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
      &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
 
 !       Variable heading for CSP_SENES.OUT
-        WRITE(LUN,'(1X,"RESULTS FROM CSP_SENES.FOR")')
+        WRITE(LUN,'(1X,"RESULTS FROM CSP_SENES.for")')
         WRITE(LUN,*)
 	  
         WRITE(LUN,'(1X,"All senescense values represent the percentage
@@ -566,7 +566,7 @@ C	 LeafNum(DAS,Stalk) for VSTAGE.  FSR
       END DO  ! Stalk
 
 !-----------------------------------------------------------------------
-! Root senescence is calculated in subroutine CSP_ROOTS.FOR
+! Root senescence is calculated in subroutine CSP_ROOTS.for
 !-----------------------------------------------------------------------
 !***********************************************************************
 !     Daily Output

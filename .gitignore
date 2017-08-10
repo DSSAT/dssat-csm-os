@@ -55,3 +55,11 @@ Resources/RC*
 *makefile*
 build/
 nbproject/
+.metadata/
+.project
+.cproject
+Makefile
+cluster.patch
+readme*
+CMakeFiles/
+CMakeCache.txt

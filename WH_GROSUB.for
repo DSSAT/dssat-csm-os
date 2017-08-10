@@ -4,7 +4,7 @@
 !  WHAPS wheat growth subroutine
 !----------------------------------------------------------------------
 !  Revision history
-!  06/27/2011 FSR created WH_GROSUB.FOR for APSIM NWheat (WHAPS) adaptation
+!  06/27/2011 FSR created WH_GROSUB.for for APSIM NWheat (WHAPS) adaptation
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
 !
@@ -1163,7 +1163,7 @@ C The statements begining with !*! are refer to APSIM source codes
 
       !---------------------------------------------------------------
       !       Find and Read GROWTH STAGE (Nwheat)
-      !**!       note: moved to StageFlags subroutine in WH_PHENOL.FOR
+      !**!       note: moved to StageFlags subroutine in WH_PHENOL.for
       !---------------------------------------------------------------
       SECTION = '*GROWT'
       CALL FIND(LUNCRP, SECTION, LNUM, FOUND)

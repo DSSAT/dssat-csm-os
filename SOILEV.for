@@ -1,5 +1,5 @@
 !***********************************************************************
-!     SOIL EVAPORATION MODULE - File SOILEV.FOR
+!     SOIL EVAPORATION MODULE - File SOILEV.for
 !***********************************************************************
 !     Includes subroutines:
 !         SOILEV - Calculates actual soil evaporation (ES, mm/d).

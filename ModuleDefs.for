@@ -30,43 +30,66 @@ C             CHP Added TRTNUM to CONTROL variable.
 !  11/25/2008 CHP Mauna Loa CO2 is default
 !  12/09/2008 CHP Remove METMP
 !  11/19/2010 CHP Added "branch" to version to keep track of non-release branches
+!  08/08/2017 WP  Version identification moved to CSMVersion.for
+!  08/08/2017 WP  Definitions related with OS platform moved to OSDefinitions.for
 !=======================================================================
 
       MODULE ModuleDefs
 !     Contains defintion of derived data types and constants which are 
 !     used throughout the model.
+
+!=======================================================================
+      USE OSDefinitions
+!=======================================================================
+
       SAVE
-
-!=======================================================================
-!     Change this line to switch between Windows and Linux compilers
-!     Operating system
-!=======================================================================
-! By Willingthon Pavan (2017-04-24):
-! Intel ifort understands the C-style preprocessor directives, so it might
-! be easiest to convert the files to that style. Then we would have a
-! single code base that would work with both compilers (Intel & gfortran).
-! * Using the fpp Preprocessor(INTEL): https://software.intel.com/en-us/node/694581
-! * Microsoft Visual Studio IDE: set the Preprocess Source File option to Yes in 
-!   the Fortran Preprocessor Option Category.
+      
 !=======================================================================
 
-!#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
-      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'WINDO'   !DOS, Windows
-!#else
-!      CHARACTER(LEN=5), PARAMETER :: OPSYS = 'LINUX'   !Linux, UNIX
-!#endif
+!     Global constants
+      INTEGER, PARAMETER :: 
+     &    NL       = 20,  !Maximum number of soil layers 
+     &    TS       = 24,  !Number of hourly time steps per day
+     &    NAPPL    = 9000,!Maximum number of applications or operations
+     &    NCOHORTS = 300, !Maximum number of cohorts
+     &    NELEM    = 3,   !Number of elements modeled (currently N & P)
+!            Note: set NELEM to 3 for now so Century arrays will match
+     &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
+     &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
+     &    EvaluateNum = 40, !Number of evaluation variables
+     &    MaxFiles = 200,   !Maximum number of output files
+     &    MaxPest = 500    !Maximum number of pest operations
 
-!=======================================================================
-!     Compiler directives used to set library for system calls
-!     Compiler pre-processor definitions can be set in:
-!     Project Settings - FORTRAN - General - Preprocessor definitions
+      REAL, PARAMETER :: 
+     &    PI = 3.14159265,
+     &    RAD=PI/180.0
 
-!     OR -- set them here
-!cDEC$ DEFINE COMPILER=0   !Compaq Visual Fortran compiler
-!cDEC$ DEFINE COMPILER=1   !Intel compilers
+      INTEGER, PARAMETER :: 
+         !Dynamic variable values
+     &    RUNINIT  = 1, 
+     &    INIT     = 2,  !Will take the place of RUNINIT & SEASINIT
+                         !     (not fully implemented)
+     &    SEASINIT = 2, 
+     &    RATE     = 3,
+     &    EMERG    = 3,  !Used for some plant processes.  
+     &    INTEGR   = 4,  
+     &    OUTPUT   = 5,  
+     &    SEASEND  = 6,
+     &    ENDRUN   = 7 
 
-!     OR -- search code for IFPORT and replace with library required 
-!       for your compiler
+      INTEGER, PARAMETER :: 
+         !Nutrient array positions:
+     &    N = 1,          !Nitrogen
+     &    P = 2,          !Phosphorus
+     &    Kel = 3         !Potassium
+
+      CHARACTER(LEN=3)  ModelVerTxt
+      CHARACTER(LEN=6)  LIBRARY    !library required for system calls
+
+      CHARACTER*3 MonthTxt(12)
+      DATA MonthTxt /'JAN','FEB','MAR','APR','MAY','JUN',
+     &               'JUL','AUG','SEP','OCT','NOV','DEC'/
+
 !=======================================================================
 
 !     Global CSM Version Number
@@ -74,13 +97,16 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 5
-        INTEGER :: Build = 5
+        INTEGER :: Build = 8
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.5.08 chp 08/09/2017 ModuleDefs.for, OSDefinitions module
+!       4.6.5.07 chp 07/26/2017 ModuleDefs.fpp (was .for), portability changes
+!       4.6.5.06 chp 07/14/2017 Alfalfa added (KJB)
 !       4.6.5.05 chp 07/13/2017 Z energy balance re-instated (BAK/KJB)
 !                               New YCA cassava model added (PM/DA)
 !       4.6.5.04 chp 07/12/2017 ET-based irrigation, minor fixes 
@@ -179,57 +205,6 @@ C             CHP Added TRTNUM to CONTROL variable.
 !       4.0.1.0  chp 01/28/2004 Release Version 
 
 !=======================================================================
-
-!     Global constants
-      INTEGER, PARAMETER :: 
-     &    NL       = 20,  !Maximum number of soil layers 
-     &    TS       = 24,  !Number of hourly time steps per day
-     &    NAPPL    = 9000,!Maximum number of applications or operations
-     &    NCOHORTS = 300, !Maximum number of cohorts
-     &    NELEM    = 3,   !Number of elements modeled (currently N & P)
-!            Note: set NELEM to 3 for now so Century arrays will match
-     &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
-     &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
-     &    EvaluateNum = 40, !Number of evaluation variables
-     &    MaxFiles = 200,   !Maximum number of output files
-     &    MaxPest = 500    !Maximum number of pest operations
-
-      REAL, PARAMETER :: 
-     &    PI = 3.14159265,
-     &    RAD=PI/180.0
-
-      INTEGER, PARAMETER :: 
-         !Dynamic variable values
-     &    RUNINIT  = 1, 
-     &    INIT     = 2,  !Will take the place of RUNINIT & SEASINIT
-                         !     (not fully implemented)
-     &    SEASINIT = 2, 
-     &    RATE     = 3,
-     &    EMERG    = 3,  !Used for some plant processes.  
-     &    INTEGR   = 4,  
-     &    OUTPUT   = 5,  
-     &    SEASEND  = 6,
-     &    ENDRUN   = 7 
-
-      INTEGER, PARAMETER :: 
-         !Nutrient array positions:
-     &    N = 1,          !Nitrogen
-     &    P = 2,          !Phosphorus
-     &    Kel = 3         !Potassium
-
-      CHARACTER(LEN=1)  SLASH  
-      character(len=3)  exe_string
-      CHARACTER(LEN=3)  ModelVerTxt
-      CHARACTER(LEN=12) DSSATPRO 
-      CHARACTER(LEN=11) STDPATH 
-      CHARACTER(LEN=6)  LIBRARY    !library required for system calls
-
-      CHARACTER*3 MonthTxt(12)
-      DATA MonthTxt /'JAN','FEB','MAR','APR','MAY','JUN',
-     &               'JUL','AUG','SEP','OCT','NOV','DEC'/
-
-!=======================================================================
-
 !     Data construct for control variables
       TYPE ControlType
         CHARACTER (len=1)  MESIC, RNMODE
@@ -466,25 +441,25 @@ C             CHP Added TRTNUM to CONTROL variable.
       IMPLICIT NONE
 
       WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
-
-!      call op_sys(slash,dssatpro,stdpath)
-      SELECT CASE (OPSYS)
-      CASE ('WINDO','DOS  ')
-!       DOS, Windows
-        SLASH = '\' 
-        DSSATPRO = 'DSSATPRO.V46'
-!       Note: Use DSSAT45 directory for now. 
-C-GH    Set to DSSAT46
-        STDPATH = 'C:\DSSAT46\' 
-        exe_string = 'EXE'
-
-      CASE ('LINUX','UNIX ')
-!       Linux, Unix
-        SLASH = '/' 
-        DSSATPRO = 'DSSATPRO.L46'
-        STDPATH = '../DSSAT46/'
-        exe_string = '.so'
-      END SELECT
+!
+!!      call op_sys(slash,dssatpro,stdpath)
+!      SELECT CASE (OPSYS)
+!      CASE ('WINDO','DOS  ')
+!!       DOS, Windows
+!        SLASH = '\' 
+!        DSSATPRO = 'DSSATPRO.V46'
+!!       Note: Use DSSAT45 directory for now. 
+!C-GH    Set to DSSAT46
+!        STDPATH = 'C:\DSSAT46\' 
+!        exe_string = 'EXE'
+!
+!      CASE ('LINUX','UNIX ')
+!!       Linux, Unix
+!        SLASH = '/' 
+!        DSSATPRO = 'DSSATPRO.L46'
+!        STDPATH = '/DSSAT46/'
+!        exe_string = '.so'
+!      END SELECT
 
       END SUBROUTINE SETOP
 

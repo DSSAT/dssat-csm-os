@@ -1,0 +1,271 @@
+*EXP.DETAILS: SDFR0001 Sowing dates to cause frost damage
+*GENERAL
+@PEOPLE
+J White
+@NOTES
+Special File-X created for DSSAT pre-release testing.
+This specific file uses sowing dates changed every 15 days to expose the
+crop to frost.
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+01 1 1 0 Sow 1985-06-14, 85165      1  1  0  0 01 01 01  0  0  0  0  0  1
+02 1 1 0 Sow 1985-06-29, 85180      1  1  0  0 02 02 02  0  0  0  0  0  1
+03 1 1 0 Sow 1985-07-14, 85195      1  1  0  0 03 03 03  0  0  0  0  0  1
+04 1 1 0 Sow 1985-07-29, 85210      1  1  0  0 04 04 04  0  0  0  0  0  1
+05 1 1 0 Sow 1985-08-13, 85225      1  1  0  0 05 05 05  0  0  0  0  0  1
+06 1 1 0 Sow 1985-08-28, 85240      1  1  0  0 06 06 06  0  0  0  0  0  1
+07 1 1 0 Sow 1985-09-12, 85255      1  1  0  0 07 07 07  0  0  0  0  0  1
+08 1 1 0 Sow 1985-09-27, 85270      1  1  0  0 08 08 08  0  0  0  0  0  1
+09 1 1 0 Sow 1985-10-12, 85285      1  1  0  0 09 09 09  0  0  0  0  0  1
+10 1 1 0 Sow 1985-10-27, 85300      1  1  0  0 10 10 10  0  0  0  0  0  1
+11 1 1 0 Sow 1985-11-11, 85315      1  1  0  0 11 11 11  0  0  0  0  0  1
+12 1 1 0 Sow 1985-11-26, 85330      1  1  0  0 12 12 12  0  0  0  0  0  1
+13 1 1 0 Sow 1985-12-10, 85345      1  1  0  0 13 13 13  0  0  0  0  0  1
+14 1 1 0 Sow 1985-12-25, 85360      1  1  0  0 14 14 14  0  0  0  0  0  1
+15 1 1 0 Sow 1985-01-10, 85010      1  1  0  0 15 15 15  0  0  0  0  0  1
+16 1 1 0 Sow 1985-01-25, 85025      1  1  0  0 16 16 16  0  0  0  0  0  1
+17 1 1 0 Sow 1985-02-09, 85040      1  1  0  0 17 17 17  0  0  0  0  0  1
+18 1 1 0 Sow 1985-02-24, 85055      1  1  0  0 18 18 18  0  0  0  0  0  1
+19 1 1 0 Sow 1985-03-11, 85070      1  1  0  0 19 19 19  0  0  0  0  0  1
+20 1 1 0 Sow 1985-03-26, 85085      1  1  0  0 20 20 20  0  0  0  0  0  1
+21 1 1 0 Sow 1985-04-10, 85100      1  1  0  0 21 21 21  0  0  0  0  0  1
+22 1 1 0 Sow 1985-04-25, 85115      1  1  0  0 22 22 22  0  0  0  0  0  1
+23 1 1 0 Sow 1985-05-10, 85130      1  1  0  0 23 23 23  0  0  0  0  0  1
+24 1 1 0 Sow 1985-05-25, 85145      1  1  0  0 24 24 24  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+01 SG IB0040 RS610
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 MSKB0001 MSKB8501   -99     0 DR000     0     0 00000 -99    151  IBMZ910023 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1          -66.51          18.001         8               -99   -99   -99   -99   -99   -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+01 85165   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-06-14, 85165
+02 85180   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-06-29, 85180
+03 85195   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-07-14, 85195
+04 85210   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-07-29, 85210
+05 85225   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-08-13, 85225
+06 85240   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-08-28, 85240
+07 85255   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-09-12, 85255
+08 85270   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-09-27, 85270
+09 85285   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-10-12, 85285
+10 85300   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-10-27, 85300
+11 85315   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-11-11, 85315
+12 85330   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-11-26, 85330
+13 85345   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-12-10, 85345
+14 85360   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-12-25, 85360
+15 85010   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-01-10, 85010
+16 85025   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-01-25, 85025
+17 85040   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-02-09, 85040
+18 85055   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-02-24, 85055
+19 85070   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-03-11, 85070
+20 85085   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-03-26, 85085
+21 85100   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-04-10, 85100
+22 85115   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-04-25, 85115
+23 85130   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-05-10, 85130
+24 85145   -99     5     5     S     R    76     0   2.5   -99   -99   -99   -99     0                        Sow 1985-05-25, 85145
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 85165 IR001    80
+ 1 85180 IR001    80
+ 1 85195 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+02 85180 IR001    80
+02 85195 IR001    80
+02 85210 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 3     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+03 85195 IR001    80
+03 85210 IR001    80
+03 85225 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 4     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+04 85210 IR001    80
+04 85225 IR001    80
+04 85240 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 5     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+05 85225 IR001    80
+05 85240 IR001    80
+05 85255 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 6     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+06 85240 IR001    80
+06 85255 IR001    80
+06 85270 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 7     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+07 85255 IR001    80
+07 85270 IR001    80
+07 85285 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 8     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+08 85270 IR001    80
+08 85285 IR001    80
+08 85300 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 9     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+09 85285 IR001    80
+09 85300 IR001    80
+09 85315 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+10     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+10 85300 IR001    80
+01 85315 IR001    80
+01 85340 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+11     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+11 85315 IR001    80
+11 85330 IR001    80
+11 85345 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+12     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+12 85330 IR001    80
+12 85345 IR001    80
+12 85360 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+13     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+13 85345 IR001    80
+13 85360 IR001    80
+13 86010 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+14     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+14 85360 IR001    80
+14 86010 IR001    80
+14 86025 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+15     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+15 85010 IR001    80
+15 85025 IR001    80
+15 85040 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+16     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+16 85025 IR001    80
+16 85040 IR001    80
+16 85055 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+17     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+17 85040 IR001    80
+17 85055 IR001    80
+17 85070 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+18     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+18 85055 IR001    80
+18 85070 IR001    80
+18 85085 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+19     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+19 85070 IR001    80
+19 85085 IR001    80
+19 85100 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+20     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+20 85085 IR001    80
+20 85100 IR001    80
+20 85115 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+21     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+21 85100 IR001    80
+21 85115 IR001    80
+21 85130 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+22     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+22 85115 IR001    80
+22 85130 IR001    80
+22 85145 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+23     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+23 85130 IR001    80
+23 85145 IR001    80
+23 85160 IR001    80
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+24     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+24 85145 IR001    80
+24 85160 IR001    80
+24 85175 IR001    80
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+01 85165 FE005 AP009    10   150     0     0     0     0   -99 -99
+02 85180 FE005 AP009    10   150     0     0     0     0   -99 -99
+03 85195 FE005 AP009    10   150     0     0     0     0   -99 -99
+04 85210 FE005 AP009    10   150     0     0     0     0   -99 -99
+05 85225 FE005 AP009    10   150     0     0     0     0   -99 -99
+06 85240 FE005 AP009    10   150     0     0     0     0   -99 -99
+07 85255 FE005 AP009    10   150     0     0     0     0   -99 -99
+08 85270 FE005 AP009    10   150     0     0     0     0   -99 -99
+09 85285 FE005 AP009    10   150     0     0     0     0   -99 -99
+10 85300 FE005 AP009    10   150     0     0     0     0   -99 -99
+11 85315 FE005 AP009    10   150     0     0     0     0   -99 -99
+12 85330 FE005 AP009    10   150     0     0     0     0   -99 -99
+13 85345 FE005 AP009    10   150     0     0     0     0   -99 -99
+14 85360 FE005 AP009    10   150     0     0     0     0   -99 -99
+15 85010 FE005 AP009    10   150     0     0     0     0   -99 -99
+16 85025 FE005 AP009    10   150     0     0     0     0   -99 -99
+17 85040 FE005 AP009    10   150     0     0     0     0   -99 -99
+18 85055 FE005 AP009    10   150     0     0     0     0   -99 -99
+19 85070 FE005 AP009    10   150     0     0     0     0   -99 -99
+20 85085 FE005 AP009    10   150     0     0     0     0   -99 -99
+21 85100 FE005 AP009    10   150     0     0     0     0   -99 -99
+22 85115 FE005 AP009    10   150     0     0     0     0   -99 -99
+23 85130 FE005 AP009    10   150     0     0     0     0   -99 -99
+24 85145 FE005 AP009    10   150     0     0     0     0   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 85001  2150 Planting dates w frost
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     A     N     N     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 5 PL          81090 81104    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 5 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 5 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 5 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 5 HA              0 82097   100     0
+
+

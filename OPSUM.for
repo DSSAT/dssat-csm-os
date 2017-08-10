@@ -135,7 +135,7 @@ C-----------------------------------------------------------------------
       LOGICAL FEXIST
 
 !     Text values for some variables that get overflow with "-99" values
-      CHARACTER*9 PRINT_TXT !Max field width for variable format printing
+      CHARACTER*9 PRINT_TXT, PRINT_TXT_neg !Max field width for variable format printing
       CHARACTER*9 DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT
       CHARACTER*9 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT
       CHARACTER*9 DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT
@@ -578,8 +578,8 @@ C-------------------------------------------------------------------
         YPNAM_TXT = PRINT_TXT(YPNAM, "(F9.1)")
         YPNUM_TXT = PRINT_TXT(YPNUM, "(F9.1)")
 
-        TMINA_TXT = PRINT_TXT(TMINA, "(F6.1)")
-        TMAXA_TXT = PRINT_TXT(TMAXA, "(F6.1)")
+        TMINA_TXT = PRINT_TXT_neg(TMINA, "(F6.1)")   !Allow negative numbers!
+        TMAXA_TXT = PRINT_TXT_neg(TMAXA, "(F6.1)")   !Allow negative numbers!
         SRADA_TXT = PRINT_TXT(SRADA, "(F6.1)")
         DAYLA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
 
@@ -846,11 +846,37 @@ C=======================================================================
       IF (VALUE > 1.E-6) THEN
         WRITE(PRINT_TXT,FTXT1) VALUE
       ELSE
-        !FTXT2="(I3)"
         WRITE(PRINT_TXT,FTXT2) "-99"
       ENDIF
 
       End Function PRINT_TXT
+!=======================================================================
+!=======================================================================
+      Function PRINT_TXT_neg(VALUE, FTXT)
+
+      CHARACTER(LEN=*) PRINT_TXT_neg          !text string for real value
+      CHARACTER(LEN=*) FTXT                   !format for real value
+      CHARACTER(LEN=6) FTXT1                  !modified format for real value
+!     CHARACTER(LEN=7) FTXT2                  !format for "-99"
+      REAL VALUE
+      INTEGER I, ERRNUM
+
+      READ (FTXT,'(2X,I1)',IOSTAT=ERRNUM) I   !width of field
+      IF (ERRNUM == 0 .AND. I > 0) THEN
+        FTXT1 = FTXT
+!       WRITE(FTXT2,'("(",I1,"X,A3)")') I-3   
+      ELSE
+        FTXT1 = "(F6.1)"
+!       FTXT2 = "(3X,A3)"
+      ENDIF
+
+!     IF (VALUE > 1.E-6) THEN
+        WRITE(PRINT_TXT_neg,FTXT1) VALUE
+!     ELSE
+!       WRITE(PRINT_TXT,FTXT2) "-99"
+!     ENDIF
+
+      End Function PRINT_TXT_neg
 !=======================================================================
 !=======================================================================
 
@@ -962,7 +988,8 @@ C=======================================================================
         CASE ('YPNUM');SUMDAT % YPNUM  = VALUE(I)
 
         CASE ('NDCH'); SUMDAT % NDCH   = NINT(VALUE(I))
-        CASE ('TMINA');SUMDAT % TMINA  = VALUE(I)
+        CASE ('TMINA')
+                       SUMDAT % TMINA  = VALUE(I)
         CASE ('TMAXA');SUMDAT % TMAXA  = VALUE(I)
         CASE ('SRADA');SUMDAT % SRADA  = VALUE(I)
         CASE ('DAYLA');SUMDAT % DAYLA  = VALUE(I)

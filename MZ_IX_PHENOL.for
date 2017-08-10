@@ -393,7 +393,7 @@ C      REAL            PRLF  ! JIL Prolificacy level
 
 !         -------------------------------------------------------------
 !             Compute Crown Temperature under snow pack.
-!             Used in COLD.FOR
+!             Used in COLD.for
 !         -------------------------------------------------------------
           ! TEMPCN = crown temperature when snow is present and 
           !   TMIN < 0. This function computes crown temperature 

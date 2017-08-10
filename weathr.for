@@ -7,12 +7,12 @@ C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C  CROPGRO Weather Module consists of the following files:
-C     WEATHR.FOR  - Main routine for weather module
-C     HMET.FOR    - Generates hourly meteorological values from daily data
-C     IPWTH.FOR   - Reads daily weather data from FILEW
-C     SOLAR.FOR   - Computes day length (DAYLEN) and solar parameters (SOLAR)
-C     WGEN.FOR    - Generates daily weather data
-C     WTHMOD.FOR  - Modification of daily data based on user-supplied
+C     WEATHR.for  - Main routine for weather module
+C     HMET.for    - Generates hourly meteorological values from daily data
+C     IPWTH.for   - Reads daily weather data from FILEW
+C     SOLAR.for   - Computes day length (DAYLEN) and solar parameters (SOLAR)
+C     WGEN.for    - Generates daily weather data
+C     WTHMOD.for  - Modification of daily data based on user-supplied
 C                     parameters
 C
 C=======================================================================

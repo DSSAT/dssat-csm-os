@@ -58,7 +58,7 @@ C=======================================================================
 !
 !      WRITE(2000,'')
 !      WRITE(2000,'')
-      WRITE(MSG(1),'("RESULTS FROM INCOMP_SC.FOR")')
+      WRITE(MSG(1),'("RESULTS FROM INCOMP_SC.for")')
 
 
       SECTION = '!*RESP'
@@ -76,7 +76,7 @@ C=======================================================================
 
       SECTION = '!*PLAN'
 
-      WRITE(MSG(1),'("RESULTS FROM INCOMP_SC.FOR (continued)")')
+      WRITE(MSG(1),'("RESULTS FROM INCOMP_SC.for (continued)")')
       WRITE(MSG(2),'("SECTION: ",A6)') SECTION
       WRITE(MSG(3),'("PROLFI : ",F6.3)') PROLFI
       WRITE(MSG(4),'("PROSTI : ",F6.3)') PROSTI
@@ -89,7 +89,7 @@ C=======================================================================
       WRITE(MSG(10),'("PCARSU : ",F6.3)') PCARSU
       CALL INFO(10,ERRKEY,MSG)
 
-      WRITE(MSG(1),'("RESULTS FROM INCOMP_SC.FOR (continued)")')
+      WRITE(MSG(1),'("RESULTS FROM INCOMP_SC.for (continued)")')
       WRITE(MSG(2),'("SECTION: ",A6)') SECTION
       WRITE(MSG(3),'("PLIPLF : ",F6.3)') PLIPLF
       WRITE(MSG(4),'("PLIPST : ",F6.3)') PLIPST
@@ -102,7 +102,7 @@ C=======================================================================
       WRITE(MSG(10),'("PLIGSU : ",F6.3)') PLIGSU
       CALL INFO(10,ERRKEY,MSG)
 
-      WRITE(MSG(1),'("RESULTS FROM INCOMP_SC.FOR (continued)")')
+      WRITE(MSG(1),'("RESULTS FROM INCOMP_SC.for (continued)")')
       WRITE(MSG(2),'("SECTION: ",A6)') SECTION
       WRITE(MSG(3),'("POALF  : ",F6.3)') POALF
       WRITE(MSG(4),'("POAST  : ",F6.3)') POAST
@@ -116,7 +116,7 @@ C=======================================================================
       CALL INFO(10,ERRKEY,MSG)
 
 !      WRITE(MSG(2),'')
-!      WRITE(MSG(2),'("END RESULTS FROM INCOMP_SC.FOR")')
+!      WRITE(MSG(2),'("END RESULTS FROM INCOMP_SC.for")')
 
 !      CLOSE (2000)
 

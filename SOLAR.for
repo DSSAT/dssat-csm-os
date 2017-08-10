@@ -1,5 +1,5 @@
 C=======================================================================
-C  SOLAR.FOR contains:
+C  SOLAR.for contains:
 C     SOLAR  - Computes declination, solar time of sunrise and sunset,
 C                daily solar constant and cloudiness factor.
 C     DAYLEN - Computes solar day length
