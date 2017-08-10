@@ -1,5 +1,5 @@
 *ALFALFA GENOTYPE COEFFICIENTS
-! presently Marandu - Diego Pequeno  
+! presently Marandu - Diego Pequeno
 !
 ! COEFF   DEFINITIONS
 ! =====   ===========
@@ -30,9 +30,12 @@
 !         conditions (photothermal days)
 !
 ! 5/16 KJB - SET LFMAX TO 1.50
-@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP  
+@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP
 !                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18
 SP0001 Marandu                G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.80  350.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
 !AL0001 alfalfa                G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.50  280.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
-AL0001 alfalfa                G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.50  280.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+AL0001 alfalfa                G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.40  280.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+!AL0001 alfalfa                G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.37  280.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+!AL0001 alfalfa                G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.35  280.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
+!AL0001 alfalfa                G00001 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.40  280.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
 AL0002 alfalfa rmd6           G00002 12.50 0.200  99.0  10.0  18.0 33.00 25.00  1.40  280.   2.0  0.01 0.020  15.0  2.05  20.0  78.0  .115  .035
