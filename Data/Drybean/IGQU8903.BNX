@@ -1,0 +1,76 @@
+*EXP.DETAILS: IGQU8903BN ICTA-OSTUA,RABIA DE GATO,TURBO-III;1989
+
+*GENERAL
+@PEOPLE
+Leeroy Gillespie and Gerrit Hoogenboom
+@ADDRESS
+Dept. of Biological and Agricultural Engineering, the University of Georgia
+@SITE
+Famer's Field, Quezada, Guatemala, IGQU 14.27;-90.03
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 ICTA-OSTUA                 1  1  0  1  1  0  1  0  0  0  0  0  1
+ 2 1 0 0 RABIA DE GATO              2  1  0  1  2  0  1  0  0  0  0  0  1
+ 3 1 0 0 TURBO-III                  3  1  0  1  3  0  1  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 BN IB0006 ICTA-Ostua
+ 2 BN IB0007 Rabia de Gato
+ 3 BN IB0008 Turbo III
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 IGQU0001 IGQU8901   -99     0 DR000     0     0 00000 -99    150  IBBN910038 Famer's Field
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1           14.27             -90         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    BN 89157    60     0     1     1   -99   600   .53     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .091     0     0
+ 1    15  .091     0     0
+ 1    45  .121     0     0
+ 1    72  .128     0     0
+ 1    95  .136     0     0
+ 1   120  .136     0     0
+ 1   150  .266     0     0
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 89157   -99  21.7  21.7     S     R    40     0     3   -99   -99   -99   -99     0                        -99
+ 2 89157   -99  21.5  21.5     S     R    40     0     3   -99   -99   -99   -99     0                        -99
+ 3 89157   -99  19.6  19.6     S     R    40     0     3   -99   -99   -99   -99     0                        -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 89157 FE005   -99     5    39   -99   -99   -99   -99   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 89157  2150 ICTA-OSTUA,RABIA DE GATO
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     N     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          89150 89164    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 90157   100     0
+
+
+

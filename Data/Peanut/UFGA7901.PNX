@@ -1,0 +1,79 @@
+*EXP.DETAILS: UFGA7901PN IRRIGATED, FLORUNNER & STARR
+
+*GENERAL
+@PEOPLE
+K. J. Boote
+@ADDRESS
+ UNIVERSITY OF FLORIDA, GAINESVILLE, FL, USA
+@SITE
+Sandy soil,UF.CAMPUS (not IREP)  29.63;-82.37;40.;FLA
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 IRRIGATED, FLORUNNER       1  1  0  1  1  0  0  0  0  0  0  1  1
+ 2 1 0 0 IRRIGATED, STARR           2  1  0  1  1  0  0  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 PN IB0002 FLORUNNER, std
+ 2 PN IB0001 STARR
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UFGA0003 UFGA       -99     0 DR000     0     0 00000 -99      0  IBPN910015 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    PN 79128   100     0     1     1   -99  1000    .8     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .086    .6   1.5
+ 1    15  .086    .6   1.5
+ 1    30  .086    .6   1.5
+ 1    45  .086    .6   1.5
+ 1    60  .086    .6   1.5
+ 1    90  .076    .6    .6
+ 1   120  .076    .6    .5
+ 1   150   .13    .6    .5
+ 1   180  .258    .6    .5
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 79128   -99  12.9  12.9     S     R    76     0     4   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   .75    30    50   100 GS000 IR001    10 -99
+@I IDATE  IROP IRVAL
+ 1 79128   -99   -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 79257 GS003 IBHCS IBHCS   100     0 
+ 2 79247 GS003 IBHCS IBHCS   100     0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 79128  2150 IRRIGATED, FLORUNNER & S
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     N     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          79121 79135    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 80128   100     0
+

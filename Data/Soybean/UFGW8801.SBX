@@ -1,0 +1,88 @@
+*EXP.DETAILS: UFGW8801SB CRAWFORD, IRRIG LEFLORE, GREENWOOD
+
+*GENERAL
+@PEOPLE
+K.J. Boote, J.M.BENNETT
+@ADDRESS
+Dept. of Agronomy, University of Florida, Gainesville, Florida, USA
+@SITE
+Greenwood, University of Florida
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 88 ONFARM, IRR. LEFLORE    1  1  0  1  1  1  0  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 SB IB0013 LEFLORE 6
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UFGW0001 UFGW8801   -99     0 DR000     0     0 00000 -99    190  IBSB910055 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SB 88155   100   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .118    .6   1.5
+ 1    15  .118    .6   1.5
+ 1    30  .123    .6   1.5
+ 1    45   .14    .6   1.5
+ 1    60  .141    .6   1.5
+ 1    90  .144    .6    .6
+ 1   120  .152    .6    .5
+ 1   145  .152    .6    .5
+ 1   167  .218    .6    .5
+ 1   190  .218    .6    .5
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 88155   -99  31.8  31.8     S     R    91     0     4   -99   -99   -99   -99   -99                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 88169 IR001    25
+ 1 88176 IR001    28
+ 1 88195 IR001    10
+ 1 88211 IR001    23
+ 1 88216 IR001    25
+ 1 88226 IR001    25
+ 1 88231 IR001    29
+ 1 88242 IR001    23
+! 100% EFFICIENCY BECAUSE WE CATCH THE WATER IN RAIN GAUGE
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 88155 IB001  1000    .8   -99   -99   -99    15   -99 -99
+!ACTUALLY CHECK THIS, PROBABLY PLOWED DOWN WHEAT STRAW
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 88155  2150 CRAWFORD, IRRIG LEFLORE,
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          88155 88200    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 88365   100     0
+
