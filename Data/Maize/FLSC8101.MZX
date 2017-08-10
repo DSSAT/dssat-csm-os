@@ -1,0 +1,104 @@
+*EXP.DETAILS: FLSC8101MZ N X IRRIG., S.C. (CERES MAIZE BK)
+
+*GENERAL
+@PEOPLE
+-99
+@ADDRESS
+ SOUTH CAROLINA
+@SITE
+ FLORENCE,SC,USA 34.00;0;-99;SC
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 Irrigated, 200 kg N/ha     1  1  0  1  1  1  1  0  0  0  0  0  1
+ 2 1 0 0 Nonirrigated, 200 kg N/ha  1  1  0  2  1  0  1  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 MZ IB0012 PIO 3382
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 FLSC0001 FLSC       -99     0 DR000     0     0 00000 -99    151  IBMZ910023 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    MZ 81089   200     0     1     1   -99   500    .5     0   100    10 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    10  .189     2     5
+ 1    20  .189     2     5
+ 1    41  .228     2     5
+ 1    71   .31     2     5
+ 1   101   .32     1     2
+ 1   126   .28     1     2
+ 1   151   .28     1     2
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2    MZ 81089   200     0     1     1   -99   500    .5     0   100    10 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 2    10  .075     2     5
+ 2    20  .075     2     5
+ 2    41    .1     2     5
+ 2    71   .21     2     5
+ 2   101   .21     1     2
+ 2   126  .193     1     2
+ 2   151  .213     1     2
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 81097   -99   7.1   7.1     S     R    50     0     4   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 81121 IR001    14
+ 1 81133 IR001     4
+ 1 81139 IR001    14
+ 1 81146 IR001    14
+ 1 81153 IR001     6
+ 1 81160 IR001    11
+ 1 81162 IR001    27
+ 1 81168 IR001    27
+ 1 81170 IR001    27
+ 1 81174 IR001    26
+ 1 81177 IR001    26
+ 1 81201 IR001    28
+ 1 81205 IR001    27
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 81090 FE005 AP009    10    66     0     0     0     0   -99 -99
+ 1 81139 FE005 AP009    10    66     0     0     0     0   -99 -99
+ 1 81153 FE005 AP009    10    66     0     0     0     0   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 81089  2150 N X IRRIG., S.C. (CERES
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          81090 81104    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 82097   100     0
+
+
+! 1 ME              M     M     E     R     S     C     R     1     P   !Century
+
