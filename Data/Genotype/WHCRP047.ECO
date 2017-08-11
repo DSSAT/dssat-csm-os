@@ -1,5 +1,4 @@
-$ECOTYPES:WHCRP046.010115   Last edit:231214 
-
+$ECOTYPES:WHCRP047.08102017   Last edit: 08/11/2017 GH
 
 ! Coefficients presented here differ from those used in previous
 ! model versions. They have been developed by taking into account
@@ -18,7 +17,7 @@ $ECOTYPES:WHCRP046.010115   Last edit:231214
 ! not accounted for in the model (eg.awns,peduncles),or even
 ! because of differences in disease intensities.
 
-*ECOTYPE:WHCRP046        
+*ECOTYPE:WHCRP047
 !                        --MAX_RUE--  LEAF_APPEARANCE,AREA/WT,SENESCENCE TILLER_PRODUCTION ------TILLER_DEATH----- ROOTS -----CANOPY------  ------COMPOSITION-----  KILL STEM_SENECE
 @ECO#  ECONAME.......... PARUE PARU2  PHL2  PHF3  SLAS LSENI LSPHS LSPHE TIL#S TILPE TIFAC TDPHS TDPHE TDFAC  TDSF  RDGS HTSTD  AWNS  KCAN  RS%A  GN%S GN%MN  GM%H  TKFH SSPHS SSPHE
 !                            1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26 

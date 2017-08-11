@@ -1,5 +1,4 @@
-$SPECIES:BACRP046.010115   Last edit:010314 
-
+$SPECIES:BACRP047.08102017   Last edit: 08/11/2017 GH
 
 ! Coefficients differ from those used in DSSAT Versions 3.5 and 4.0x.
 ! They have been developed from 'parameters' embedded in the code of
@@ -7,7 +6,7 @@ $SPECIES:BACRP046.010115   Last edit:010314
 ! model,and from the literature. They may change as experience is
 ! gained,and should not be taken as 'fixed'.
 
-*SPECIES:BACRP046
+*SPECIES:BACRP047
 ! Principal Stages (S=Standard,K=Key(those that may be outputed)
 @ PSNO PSTYP PSABV PSNAME
 ! Stg#  Type Abrev Name
