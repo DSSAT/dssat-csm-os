@@ -1,14 +1,13 @@
-*EXP.DETAILS: AUTA8101SU TATURA-OBSERVED
+*EXP.DETAILS: AUTA8101SU TATURA
+! Missing irrigation schedule, so assumed automatic irrigation
 
 *GENERAL
 @PEOPLE
--99
+Data from Scott Chapman
 @ADDRESS
 -99
 @SITE
 -99
-@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
-    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
@@ -18,7 +17,6 @@
 *CULTIVARS
 @C CR INGENO CNAME
  1 SU IB0019 SunGold
-
 
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
