@@ -86,9 +86,9 @@
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME....................
  1 GE              1     1     S 91032  2150 CORDOBA PP91. VILLALOBOS
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL
- 1 OP              Y     Y     Y     N     N     N     N     N
+ 1 OP              Y     Y     N     N     N     N     N     N
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO
- 1 ME              M     M     E     R     S     C     R
+ 1 ME              M     M     E     R     S     L     R
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     R     R     N     M
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT  LONG CHOUT OPOUT
