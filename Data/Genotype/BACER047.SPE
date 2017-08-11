@@ -1,5 +1,4 @@
-$SPECIES:BACER046.010115   Last edit:060613 
-
+$SPECIES:BACER047.08102017   Last edit: 08/11/2017 GH
 
 ! Coefficients differ from those used in DSSAT  Versions 3.5 and 4.0x. 
 ! They have been developed from 'parameters' embedded in the code of 
@@ -9,7 +8,7 @@ $SPECIES:BACER046.010115   Last edit:060613
 ! temperature response characteristics, and for some root growth 
 ! and activity coefficients.  
 
-*SPECIES:BACER046
+*SPECIES:BACER047
 ! Phase durations
 @PGERM PEMRG    P0    P6  ! Germination,emrgence/cm,juvenile,post-maturity
 !  HTu Tu/cm  oC.d  oC.d
