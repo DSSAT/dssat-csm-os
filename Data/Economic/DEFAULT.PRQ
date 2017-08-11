@@ -1,0 +1,33 @@
+* PRICE-COST_FILE : DEFAULT FOR SEQUENCE ANALYSIS
+
+! Line for which YRDY=# is %SD of price/cost
+
+* MZ
+@YRDOY      GRAN      BYPR      BASE       NFER     NCOS      IRRI      IRCO     SCOS       RESM      PCOS      PFER      KCOS      KFER
+      #     10.00      0.00      0.00      0.00       .00      0.00       .00       .00       .00       .00       .00       .00       .00
+2008001    130.00     10.00    195.00       .50     12.00       .50     15.00      0.50      0.00       .00       .00       .00       .00
+
+* SG
+@YRDOY      GRAN      BYPR      BASE       NFER     NCOS      IRRI      IRCO     SCOS       RESM      PCOS      PFER      KCOS      KFER
+      #     10.00      0.00      0.00      0.00       .00      0.00       .00       .00       .00       .00       .00       .00       .00
+2008001    330.00     10.00    395.00       .50     12.00       .50     15.00      0.50      0.00       .00       .00       .00       .00
+
+* FA
+@YRDOY      GRAN      BYPR      BASE       NFER     NCOS      IRRI      IRCO     SCOS       RESM      PCOS      PFER      KCOS      KFER
+      #      0.00      0.00      0.00      0.00       .00      0.00       .00       .00       .00       .00       .00       .00       .00
+2008001      0.00      0.00     25.00       .50     12.00       .50     15.00      0.50      0.00       .00       .00       .00       .00
+
+* SB
+@YRDOY      GRAN      BYPR      BASE       NFER     NCOS      IRRI      IRCO     SCOS       RESM      PCOS      PFER      KCOS      KFER
+      #      5.00      0.00      0.00      0.00       .00      0.00       .00       .00       .00       .00       .00       .00       .00
+2008001    330.00     10.00    395.00       .50     12.00       .50     15.00      0.50      0.00       .00       .00       .00       .00
+
+* BN
+@YRDOY      GRAN      BYPR      BASE       NFER     NCOS      IRRI      IRCO     SCOS       RESM      PCOS      PFER      KCOS      KFER
+      #      5.00      0.00      0.00      0.00       .00      0.00       .00       .00       .00       .00       .00       .00       .00
+2008001    310.00     10.00    295.00       .50     12.00       .50     15.00      0.50      0.00       .00       .00       .00       .00
+
+* CH
+@YRDOY      GRAN      BYPR      BASE       NFER     NCOS      IRRI      IRCO     SCOS       RESM      PCOS      PFER      KCOS      KFER
+      #      5.00      0.00      0.00      0.00       .00      0.00       .00       .00       .00       .00       .00       .00       .00
+2008001    310.00     10.00    295.00       .50     12.00       .50     15.00      0.50      0.00       .00       .00       .00       .00
