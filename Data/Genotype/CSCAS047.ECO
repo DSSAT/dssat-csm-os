@@ -1,4 +1,4 @@
-$ECOTYPES:CSCAS047.081017   Last edit:08 10 20174 GH 
+$ECOTYPES:CSCAS047.081017   Last edit: 08/11/2017 GH
 
 
 ! Coefficients presented here have no direct equivalents in the
@@ -18,7 +18,7 @@ $ECOTYPES:CSCAS047.081017   Last edit:08 10 20174 GH
 ! because of variation in the proportion of diffuse radiation
 ! in the incoming solar and sky components.
 
-*ECOTYPE:CSCRP046
+*ECOTYPE:CSCAS047
 @ECO#  ECONAME.......... PARUE HTSTD DUSRI SRN%S BR1FX BR2FX BR3FX BR4FX BR5FX BR6FX
 !                            1     2     3     4     5     6     7     8     9    10
 !                         g/MJ    cm  oC.d     %    F#    F#    F#    F#    F#    F#

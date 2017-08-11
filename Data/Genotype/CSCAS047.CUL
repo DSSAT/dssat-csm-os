@@ -1,4 +1,4 @@
-$CULTIVARS:CSCAS047.081017   Last edit:08 10 20174 GH 
+$CULTIVARS:CSCAS047.081017   Last edit: 08/111/2017 GH
 
 
 ! Coefficients used in the Cropsim cassava module differ from those used
@@ -16,7 +16,7 @@ $CULTIVARS:CSCAS047.081017   Last edit:08 10 20174 GH
 ! the initial conditions and computing the microbial release of nitrogen 
 ! and other nutrients.
 
-*CULTIVARS:CSCAS046
+*CULTIVARS:CSCAS047
 !                                    PPSEN ------------ BRANCHING ------------ - STORAGE ROOTS - ---- LEAF PRODUCTION,SIZES,SP.AREA,LONGEVITY,PETIOLES -----  STEM  
 @VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND B23ND B34ND B45ND B56ND SR#WT  SRFR  HMPC PHINT  LA1S  LAXS LAXND LAXN2  LAFS LAFND  SLAS LLIFA LPEFR  STFR
 !                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21

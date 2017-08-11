@@ -1,4 +1,4 @@
-$SPECIES:CSYCA047.08102017   Last edit:12JAN2016 LPM
+$SPECIES:CSYCA047.08102017    Last edit: 08/11/2017 GH/LPM 
 
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
@@ -28,7 +28,7 @@ $SPECIES:CSYCA047.08102017   Last edit:12JAN2016 LPM
 ! Further,the coefficient SDSZ is a default that is used only if no planting-stick
 ! size is entered in the experiment details file.
 
-*SPECIES:CSYCA046
+*SPECIES:CSYCA047
 ! Harvest product
 @HPROD
 ! Code 

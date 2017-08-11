@@ -1,4 +1,4 @@
-$SPECIES:CSCAS047.081017   Last edit:08 10 20174 GH 
+$SPECIES:CSCAS047.081017   Last edit: 08/11/2017 GH
 
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
@@ -28,7 +28,7 @@ $SPECIES:CSCAS047.081017   Last edit:08 10 20174 GH
 ! Further,the coefficient SDSZ is a default that is used only if no planting-stick
 ! size is entered in the experiment details file.
 
-*SPECIES:CSCRP046
+*SPECIES:CSCAS047
 ! Harvest product
 @HPROD
 ! Code 
