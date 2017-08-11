@@ -1,0 +1,109 @@
+*EXP.DETAILS: UCCO9101SU CORDOBA PP91. VILLALOBOS ET AL.
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 PP91 SW-101  0.5           1  1  0  1  1  1  1  0  0  0  0  0  1
+ 2 1 0 0 PP91 SW-101  2.0           1  1  0  1  2  1  1  0  0  0  0  0  1
+ 3 1 0 0 PP91 SW-101  5.0           1  1  0  1  3  1  1  0  0  0  0  0  1
+ 4 1 0 0 PP91 SW-101 10.0           1  1  0  1  4  1  1  0  0  0  0  0  1
+ 5 1 0 0 PP91 A E353  0.5           2  1  0  1  1  1  1  0  0  0  0  0  1
+ 6 1 0 0 PP91 A E353  2.0           2  1  0  1  2  1  1  0  0  0  0  0  1
+ 7 1 0 0 PP91 A E353  5.0           2  1  0  1  3  1  1  0  0  0  0  0  1
+ 8 1 0 0 PP91 A E353 10.0           2  1  0  1  4  1  1  0  0  0  0  0  1
+ 9 1 0 0 PP91 SUNGRO  0.5           3  1  0  1  1  1  1  0  0  0  0  0  1
+10 1 0 0 PP91 SUNGRO  2.0           3  1  0  1  2  1  1  0  0  0  0  0  1
+11 1 0 0 PP91 SUNGRO  5.0           3  1  0  1  3  1  1  0  0  0  0  0  1
+12 1 0 0 PP91 SUNGRO 10.0           3  1  0  1  4  1  1  0  0  0  0  0  1
+13 1 0 0 PP91 S-530   0.5           4  1  0  1  1  1  1  0  0  0  0  0  1
+14 1 0 0 PP91 S-530   2.0           4  1  0  1  2  1  1  0  0  0  0  0  1
+15 1 0 0 PP91 S-530   5.0           4  1  0  1  3  1  1  0  0  0  0  0  1
+16 1 0 0 PP91 S-530  10.0           4  1  0  1  4  1  1  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 SU IB0014 SW-101
+ 2 SU IB0009 E-353
+ 3 SU IB0013 SUNGRO-385
+ 4 SU IB0015 S-530
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX   SLDP ID_SOIL
+ 1 UCCO0001 UCCO     -99.0     0 DR000     0     0 00000 -99     300 IBSU910045
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS
+ 1         0.00000         0.00000      0.00               0.0     0   0.0   0.0
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID
+ 1    SU 91032   500     0  1.00  1.00 -99.0  1000  0.53  0.00   100    30
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    10 0.200   3.6   5.6
+ 1    30 0.200   3.6   5.6
+ 1    60 0.223   2.2   3.2
+ 1    90 0.230   2.5   2.4
+ 1   120 0.230   2.5   2.5
+ 1   150 0.210   2.5   2.7
+ 1   180 0.210   2.5   2.5
+ 1   210 0.220   2.5   2.3
+ 1   240 0.225   2.5   1.9
+ 1   270 0.215   2.5   1.9
+ 1   300 0.210   2.5   1.6
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL
+ 1 91045   -99   0.5   0.5     S     R    70     0   5.0   -99   -99 -99.0 -99.0   0.0
+ 2 91045   -99   2.0   2.0     S     R    70     0   5.0   -99   -99 -99.0 -99.0   0.0
+ 3 91045   -99   5.0   5.0     S     R    70     0   5.0   -99   -99 -99.0 -99.0   0.0
+ 4 91045   -99  10.0  10.0     S     R    70     0   5.0   -99   -99 -99.0 -99.0   0.0
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT
+ 1  1.00   -99   -99   -99   -99   -99    10
+@I IDATE  IROP IRVAL
+ 1 91110 IR001    50
+ 1 91124 IR001    50
+ 1 91131 IR001    60
+ 1 91138 IR001    60
+ 1 91145 IR001    60
+ 1 91152 IR001    60
+ 1 91159 IR001    60
+ 1 91166 IR001    60
+ 1 91173 IR001    60
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD
+ 1 91042 FE005 AP001    10   170     0     0     0     0   -99
+ 1 91134 FE005 AP001    10   145     0     0     0     0   -99
+
+*CHEMICAL APPLICATIONS
+@C CDATE CHCOD CHAMT  CHME CHDEP   CHT
+ 1 91032 CH001 10.00 AP006     0 WEEDS
+
+*TILLAGE AND ROTATIONS
+@T TDATE TIMPL  TDEP
+ 1 91032 TI987    10
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME....................
+ 1 GE              1     1     S 91032  2150 CORDOBA PP91. VILLALOBOS
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL
+ 1 OP              Y     Y     Y     N     N     N     N     N
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO
+ 1 ME              M     M     E     R     S     C     R
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT  LONG CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          91038 91052    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10  1.00
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 92045   100     0
+
+
