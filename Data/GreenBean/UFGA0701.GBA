@@ -1,0 +1,11 @@
+*EXP. DATA (A): UFGA0701GB Snap Bean Spring 07                                         
+
+! Data exists for low, medium, and optimum N rates, for low, optimum, and over-irrigated (n = 12).  
+! Ask Djidonou and Boote after paper is published.
+! File last edited on day 05/01/2008
+!
+@TRNO   HDAP  ADAT  MDAT  CHTA  THAM  CWAM  PWAM  HWAM  HIPM  HIAM  LAIX
+     1 07136 07115 07150 0.375 20.64 2524. 1062. 210.1 0.417  0.08 1.586
+     2 07136 07115 07150 0.415 18.82 3296. 1450. 261.2 0.437 0.079 2.052
+     3 07136 07115 07150 0.397 21.42 3820. 1776. 359.8 0.463  0.09 2.471
+     4 07136 07115 07150 0.401 23.31 3599. 1713. 378.4 0.476 0.105 2.263

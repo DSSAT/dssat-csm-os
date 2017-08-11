@@ -1,0 +1,9 @@
+*EXP. DATA (A): UFGA9602TM TM Irrigation Trial, AGRISET, DRIP IRRIGATED experiment summary (A) data
+! only 4 treatments.  I don't know what XDAT, formerly PDAT, means.  
+! File last edited on day 07/18/2007 at 5:15:10 PM
+!
+@TRNO   XDAT  HDAT  CWAM  LWAM  SWAM  PWAM  CNAM  LAIX
+     1  0.88   172  5347   994  1075  3257 124.8  1.69
+     2  0.88   172  5442  1047  1344  3027 123.5  1.96
+     3  0.88   172  6582  1335  1707  3551 138.2  2.59
+     4  0.88   172  7260  1188  1661  4403 169.4  2.63
