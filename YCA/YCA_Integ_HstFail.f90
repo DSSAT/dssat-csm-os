@@ -65,15 +65,6 @@
              
             CFLHAR = 'Y'
         ENDIF
-        IF(IHARI.EQ.'R'.AND.CFLHAR.EQ.'N')THEN
-            !IF (CUMDU.GT.PSTART(MSTG) .AND. CFLHARMSG .NE. 'Y') THEN !LPM 04MAR15 MSTG TO PSX !LPM 24APR2016
-            IF (DABR.GT.PSTART(PSX) .AND. CFLHARMSG .NE. 'Y') THEN
-           
-                WRITE(Message(1),'(A54,I7)') 'Maturity reached but waiting for reported harvest on: ', YEARDOYHARF !LPM 04MAR15 Maybe this section it is not necessary for cassava
-                CALL WARNING(1,'CSYCA',MESSAGE)
-                CFLHARMSG = 'Y'
-            ENDIF
-        ENDIF
                 
         IF (CFLFAIL.EQ.'Y' .OR. CFLHAR.EQ.'Y') THEN
                     
