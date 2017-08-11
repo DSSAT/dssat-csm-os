@@ -12,10 +12,10 @@ Piracicaba, SP, Brazil
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 1 0 Tifton8528D Irrig          1  1  0  1  1  1  1  0  0  0  0  1  1
- 2 1 1 0 Tifton8542D Irrig          1  1  0  1  1  1  2  0  0  0  0  1  1
- 3 1 1 0 Tifton8528D Rainfed        1  1  0  1  1  2  1  0  0  0  0  1  1
- 4 1 1 0 Tifton8542D Rainfed        1  1  0  1  1  2  2  0  0  0  0  1  1
+ 1 1 1 0 Tifton85 28D Irrig         1  1  0  1  1  1  1  0  0  0  0  1  1
+ 2 1 1 0 Tifton85 42D Irrig         1  1  0  1  1  1  2  0  0  0  0  1  1
+ 3 1 1 0 Tifton8 528D Rainfed       1  1  0  1  1  2  1  0  0  0  0  1  1
+ 4 1 1 0 Tifton8 542D Rainfed       1  1  0  1  1  2  2  0  0  0  0  1  1
 
 *CULTIVARS
 @C CR INGENO CNAME
