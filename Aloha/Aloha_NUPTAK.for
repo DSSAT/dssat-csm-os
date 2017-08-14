@@ -294,43 +294,18 @@ C-----------------------------------------------------------------------
          ! Calculate root exudation losses (if any)
          !
          DO L = 1, L1
-!CHP/JIL 2/1/06 
-            !RNLOSS = 0.0
-            !IF (TANC .GT. TCNP) THEN
-              !RNLOSS = RANC * RTWT * 0.05 * PLTPOP * RLV(L) / TRLV
-               RNLOSS = RANC * RTWT * 0.005 * PLTPOP * 
-     &                                RLV(L)*DLAYR(L) / TRLV
-          !   g[N]/m2 = g[N]/g[root]       * plants/m2
-          !                  * g[root]/plant        * fraction
-            !ENDIF
-
-            !Calculate N in senesced roots (kg/ha)
-            SENESCE % ResE(L,1) = RNLOSS * 10.0
-!                      kg[N]/ha =  g/m2  * 10.
-
-            !Back calculate senesced root mass from N senesced.
-            IF (RANC .GT. 0.0) THEN
-              SENESCE % ResWt(L) = SENESCE % ResE(L,1) / RANC   
-            ELSE                               !kg[dry matter]/ha
-              SENESCE % ResWt(L) = SENESCE % ResE(L,1) * 10.0 / 0.40   
-!              kg[dry matter]/ha =       kg[N]/ha * kg[C]/kg[N]         
-!                                                 / kg[C]/kg[dry matter]
+            RNLOSS = 0.0
+            IF (TANC .GT. TCNP) THEN
+               RNLOSS = RANC*RTWT*0.05*PLTPOP*RLV(L)/TRLV
             ENDIF
-            !Compute lignin, cellulose and carbohydrate portions
-            SENESCE % ResLig(L) = SENESCE % ResWt(L) * PLIGRT
-
             TRNLOS  = TRNLOS + RNLOSS
             !FON(L)  = FON(L) + RNLOSS     !FON is local variable here
          END DO
 
          ! Adjust DSTOVN and DROOTN to compensate for N lost to FON
          IF(NDEM.GT.0.0.AND.PLTPOP.GT.0.0) THEN
-!           DSTOVN = TNDEM / NDEM*TRNU-      PTF*TRNLOS/(PLTPOP*10.0)
-!           DROOTN = RNDEM / NDEM*TRNU-(1.0-PTF)*TRNLOS/(PLTPOP*10.0)
-!     JIL 06/25/2007
-           DSTOVN = TNDEM / NDEM*TRNU-      PTF*TRNLOS/(PLTPOP)
-           DROOTN = RNDEM / NDEM*TRNU-(1.0-PTF)*TRNLOS/(PLTPOP)
-!          g N/pl =   fraction  *g N/pl- fraction*g N/m2/(pl/m2) 
+         DSTOVN = TNDEM / NDEM*TRNU-      PTF*TRNLOS/(PLTPOP*10.0)
+         DROOTN = RNDEM / NDEM*TRNU-(1.0-PTF)*TRNLOS/(PLTPOP*10.0)
          ENDIF
       ENDIF
 
