@@ -568,19 +568,6 @@ C-----------------------------------------------------------------------
           END SELECT
       ENDIF
 
-      SELECT CASE (METMP)
-      CASE ('E')    !EPIC soil temperature routine
-        CALL STEMP_EPIC(CONTROL, ISWITCH,  
-     &    SOILPROP, SW, TAVG, TMAX, TMIN, TAV, WEATHER,   !Input
-     &    SRFTEMP, ST)                                    !Output
-      CASE DEFAULT  
-!     7/21/2016 - DSSAT method is default, per GH
-!     CASE ('D')  !DSSAT soil temperature
-        CALL STEMP(CONTROL, ISWITCH,
-     &    SOILPROP, SRAD, SW, TAVG, TMAX, XLAT, TAV, TAMP,!Input
-     &    SRFTEMP, ST)                                    !Output
-      END SELECT
-
       IF (MEPHO .EQ. 'L') THEN
         CALL ETPHOT(CONTROL, ISWITCH,
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input

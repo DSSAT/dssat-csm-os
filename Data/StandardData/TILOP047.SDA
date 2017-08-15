@@ -1,10 +1,10 @@
 *TILLAGE
-! DSSAT v4.6.1.0; 07/01/2015
+! DSSAT v4.7.0.0; 09/01/2017
 !  Tilllage Input File
 !
-!  JWW/CP/BB ...
-!  13/ 5/2003
-!  21/ 8/2008 - JWW minor edits, added roller harrow
+!  JWW/CP/BB
+!  13/05/2003 - JWW Created
+!  21/08/2008 - JWW minor edits, added roller harrow
 !   7/11/2008 - JWW changed CN effect to reduce values for most tillage
 !  Implement names are changed substantially from Details.Cde
 !
