@@ -142,8 +142,12 @@
             CN          , DOY         , FILEIOIN    , FROP        , IDETL       , ISWNIT      , ON          , RN          , &
             RNMODE      , RUN         , SN          , TN          , YEAR        & 
             )
-            
-        WRITE (fnumwrk,'(2A, 2F9.5)') 'ALBEDOS (soil albedo) and ALBEDO (canopy ',  &  ! MF 19JA15  For WORK.OUT
+        
+        INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
+        IF (.NOT.FOPEN) THEN
+            OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',ACTION = 'READWRITE')
+        END IF
+        WRITE (fnumwrk,'(2A, 2F9.5)') 'ALBEDOS (soil albedo) and ALBEDO (canopy ',  &  ! MF 19JA15  For WORK.OUT   
             'albedo) AFTER YCA_RunInit in CSYCA) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
             
 !*******************************************************************************************************************************
