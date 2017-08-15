@@ -1,7 +1,7 @@
-*Organic Matter Application PARAMETER FILE - DSCSM046 Model 07/01/2015
+*Organic Matter Application PARAMETER FILE - DSCSM047 Model 09/01/2017
 
 @VERSION
- 4.6.1.0
+ 4.7.0.0
 
 ! Model parameter file which externalizes many of the
 ! coefficients needed for simulating the composition
