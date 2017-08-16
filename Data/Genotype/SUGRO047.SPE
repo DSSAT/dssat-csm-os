@@ -1,8 +1,12 @@
-*SUNFLOWER  SPECIES COEFFICIENTS: CRGRO046 MODEL                                                       
+*SUNFLOWER  SPECIES COEFFICIENTS: CRGRO047 MODEL                                                       
 ! Optimized by KJB against OIL-SUN output of Villobos Exp which was used as File T
 ! where OIL-SUN was challenged with row spacing, temperature, N fertility, water
 ! CROPGRO was optimized against that data using Bayesian methods to mimic OIL-SUN.
-! Now it needs testing against more extensive data from diverse environments
+! KJB re-optimized manually 8/10/17 against UFAD0801 experiment data-Pakistan (3 cultivars).
+! Especially to replace the very incorrectly high PRORTI values from OILSUN, to 
+! decrease partition to root, decrease root senesence. Increase leaf abscision to reduce LAI
+! Modified NMOBMX, VSMOB, SLWREF.  Modification done with L-version only, although
+! PARMAX, PHTMAX, KCAN and FNPGT(4) were previously set relatively close for C version
                                                                                                 
 !*PHOTOSYNTHESIS PARAMETERS                                                                         
   34.3  76.3  0.74  0.12                   PARMAX,PHTMAX,KCAN, KC_SLOPE                             
@@ -10,13 +14,13 @@
 !Kc_slope is the slope of Kcan with ratio of Rowsp:PlantSp (see DEMAND subroutine).                 
 !Kc_slope is optional, default value is 0.10.                                                       
   79.0  2.08 .0106                         CCMP,CCMAX,CCEFF; CO2 EFFECT ON PGCAN                    
-  0.74  2.87  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG                      
+  0.74  3.87  20.0  20.0   QDR             FNPGN(4),TYPPGN-LEAF N EFFECT ON PG                      
    3.9  19.1  34.6  44.5   LIN             FNPGT(4),TYPPGT-TEMP EFFECT-CANOPY PG                    
    0.0   5.7  30.0  39.0  48.0  55.0       XLMAXT (6 VALUES)                                        
    0.0   0.0   1.0   0.4   0.0   0.0       YLMAXT (6 VALUES)                                        
   -0.4  11.7  50.0  60.0   QDR             FNPGL(4),TYPPGL-TMIN EFFECT-LEAF PG                      
  .0541  0.20  0.80   3.0                   PGEFF SCV KDIF, LFANGB                                   
- .0022 .0004 .3000  3.03 2.250             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF                         
+ .0026 .0004 .3000  3.03 2.000             SLWREF,SLWSLO,NSLOPE,LNREF,PGREF                         
                                                                                                     
    0.0  .001  .002  .003 .0035  .004  .005  .006  .008  .010  XPGSLW(1-10)                          
   .162  .679  .867  .966 1.000 1.027 1.069 1.100 1.141 1.167  YPGSLW(1-10)                          
@@ -28,21 +32,20 @@
                                                                                                     
 !*PLANT COMPOSITION VALUES                                                                          
  0.379 0.117 0.068 0.259 0.098 0.041   PROLFI,PROLFG,PROLFF,PROSTI,PROSTG,PROSTF !run4              
- 0.259 0.070 0.041  .150  .098  .050   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF                    
+ 0.092 0.064 0.041  .150  .098  .050   PRORTI,PRORTG,PRORTF,PROSHI,PROSHG,PROSHF                    
   .140  .140  .300 0.010 0.054 0.900   SDPROS,SDPROG,PRONOD,PROMIN,PROMAX,THETA                     
-  .327  .449  .544  .630  .248  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO                    
+  .327  .449  .711  .630  .248  .480   PCARLF,PCARST,PCARRT,PCARSH,PCARSD,PCARNO                    
   .050  .020  .020  .050  .050         PLIPLF,PLIPST,PLIPRT,PLIPSH,PLIPNO                           
   .100  .176  .070  .100  .047  .070   PLIGLF,PLIGST,PLIGRT,PLIGSH,PLIGSD,PLIGNO                    
   .050  .050  .050  .040  .040  .050   POALF,POAST,POART,POASH,POASD,POANO                          
-  .094  .046  .057  .030  .025  .050   PMINLF,PMINST,PMINRT,PMINSH,PMINSD,PMINNO                    
-                                                                                                    
+  .094  .046  .057  .030  .025  .050   PMINLF,PMINST,PMINRT,PMINSH,PMINSD,PMINNO                                                                                                                     
                                                                                                     
 !*SEED  COMPOSITION VALUES                                                                          
 ! 7.168 23.65 0.908 0.180               LIPTB,LIPOPT,SLOSUM*100,CARMIN                              
 -5.168 23.65 0.908 0.180               LIPTB,LIPOPT,SLOSUM*100,CARMIN                               
                                                                                                     
 !*CARBON AND NITROGEN MINING PARAMETERS                                                             
- 0.050  0.75 0.250 0.090 0.855  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR  !run 4             
+ 0.050  0.75 0.250 0.110 0.555  0.15   CMOBMX,CADSTF,CADPR1,NMOBMX,NVSMOB,NRCVR             
     SD                                 XPODF                                                        
   0.04  0.08  0.04  0.08               ALPHL,ALPHS,ALPHR,ALPHSH                                     
                                                                                                     
@@ -56,14 +59,14 @@
                                                                                                     
 !*VEGETATIVE PARTITIONING PARAMETERS                                                                
    0.0   3.0   6.6  10.0  15.6  21.0  48.0  80.0  XLEAF VALUES                                      
-  0.47  0.44  0.42  0.42  0.37  0.34  0.29  0.28  YLEAF VALUES                                      
-  0.09  0.10  0.16  0.24  0.32  0.56  0.64  0.65  YSTEM VALUES                                      
-  0.55  0.00  0.60  0.16  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD                          
+  0.47  0.46  0.44  0.42  0.40  0.36  0.30  0.29  YLEAF VALUES                                      
+  0.09  0.12  0.19  0.26  0.36  0.55  0.63  0.63  YSTEM VALUES                                      
+  0.55  0.00  0.63  0.22  1.00  0.05  WTFSD,PORPT,FRSTMF,FRLFF,ATOP,FRCNOD                          
   0.70                                FRLFMX                                                        
                                                                                                     
 !*LEAF GROWTH PARAMETERS                                                                            
-  120.  235. 200.0   8.5   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC                            
-  580.  235. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA                                   
+  120.  240. 200.0   8.5   0.0        FINREF,SLAREF,SIZREF,VSSINK,EVMODC                            
+  580.  240. -.048  1.50              SLAMAX,SLAMIN,SLAPAR,TURSLA                                   
                                                                                                     
    0.0   2.0   4.5   7.0   9.5  12.0  XVGROW(1-6), VSTAGE VALUES                                    
    0.0  18.8  62.4 160.0 424.2 580.0  YVREF(1-6), LEAF AREA VALUES,CM2                              
@@ -71,7 +74,7 @@
   0.25  0.30  0.49  1.00  0.36        YSLATM(1-5),EFFECT ON SLA                                     
                                                                                                     
 !*LEAF SENESCENCE FACTORS                                                                           
-  1.00  0.00  0.03 -15.0 -15.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2                            
+  1.60  0.05  0.03 -15.0 -15.0        SENRTE,SENRT2,SENDAY,FREEZ1,FREEZ2                            
   0.80  10.0                          ICMP,TCMP(Light comp, time constant-senes)                    
                                                                                                     
 ! .......XSTAGE.........  .......XSENMX.........                                                    
@@ -80,7 +83,7 @@
    0.0   0.0  0.12  0.12   0.0   0.2   0.6   0.6                                                    
                                                                                                     
 !*ROOT PARAMETERS                                                                                   
-  22.0 9800. 0.010   0.1 0.010  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX             
+  22.0 9800. 0.005   0.1 0.010  1.50  0.04  RTDEPI,RFAC1,RTSEN,RLDSM,RTSDF,RWUEP1,RWUMX             
    0.0  2.70   3.0  1.90   6.0  1.50  30.0  1.40   XRTFAC,YRTFAC                                    
  0.019 0.017  0.02  0.10                    RTNO3,RTNH4,PORMIN,RTEXF                                
                                                                                                     
@@ -117,10 +120,8 @@
   6  6  NON  LIN  2 -0.20  0.00  0.00  1ST FL(STG 6) TO 1ST PEG(STG 7) PHASE                        
   7  6  NON  LIN  2 -0.20  0.00  0.00  1ST FL(STG 6) TO 1ST POD(STG 8) PHASE                        
   8  6  NON  LIN  2 -0.20  0.00  0.00  1ST FL(STG 6) TO 1ST SD(STG 9) PHASE                         
-  9  9  NON  LIN  3  0.20  0.40  0.00  1ST SD(STG 9) TO LST SD(STG 10) PHASE                        
- 10  9  NON  LIN  3  0.20  0.40  0.00  1ST SD(STG 9) TO PH MAT(STG 11) PHASE                        
-! 9  9  INL  LIN  3  0.20  0.40  0.00  1ST SD(STG 9) TO LST SD(STG 10) PHASE                        
-!10  9  INL  LIN  3  0.20  0.40  0.00  1ST SD(STG 9) TO PH MAT(STG 11) PHASE                        
+  9  9  NON  LIN  3  0.20  0.25  0.00  1ST SD(STG 9) TO LST SD(STG 10) PHASE                        
+ 10  9  NON  LIN  3  0.20  0.25  0.00  1ST SD(STG 9) TO PH MAT(STG 11) PHASE                        
  11 11  NON  LIN  1  0.00  0.00  0.00  PH MAT(STG 11) TO H-MAT(STG 12) PHASE                        
  12  6  NON  LIN  2 -0.20  0.00  0.00  1ST FL(STG 6) TO LST VST(STG 13) PHASE                       
  13  6  NON  LIN  2 -0.20  0.00  0.00  1ST FL(STG 6) TO LST LF(STG 14) PHASE                        

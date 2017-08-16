@@ -1,4 +1,4 @@
-*SUNFLOWER  ECOTYPE COEFFICIENTS: CRGRO046 MODEL       
+*SUNFLOWER  ECOTYPE COEFFICIENTS: CRGRO047 MODEL       
 !                                                                                                                                                    
 ! COEFF   DEFINITIONS                                                                                                                                                                                   
 ! =====   ===========                                                                                                                                                                                   
@@ -25,8 +25,8 @@
 ! LNGSH   Time required for growth of individual shells (photothermal                                                                                                                                   
 !         days)                                                                                                                                                                                         
 ! R7-R8   Time between physiological (R7) and harvest maturity (R8) (days)                                                                                                                              
-! FL-VS   Time from first flower to last leaf on main stem (photothermal                                                                                                                                
-!         days)                                                                                                                                                                                         
+! FL-VS   Time from starburst to last leaf on main stem (photothermal                                                                                                                                
+!         days).  Duration should be slightly less than FL-SD, to mimic determinate.                                                                                                                                                                                         
 ! TRIFL   Rate of appearance of leaves on the mainstem (leaves per                                                                                                                                      
 !         thermal day)                                                                                                                                                                                  
 ! RWDTH   Relative width of this ecotype in comparison to the standard                                                                                                                                  
@@ -37,11 +37,12 @@
 ! R1PPO   Increase in daylength sensitivity after R1 (CSDVAR and CLDVAR                                                                                                                                 
 !         both decrease with the same amount) (h)                                                                                                                                                       
 ! OPTBI   Minimum daily temperature above which there is no effect on                                                                                                                                   
-!         slowing normal development toward flowering (oC)                                                                                                                                              
+!         slowing normal development toward flowering (oC). Soybean only                                                                                                                                             
 ! SLOBI   Slope of relationship reducing progress toward flowering if                                                                                                                                   
-!         TMIN for the day is less than OPTBI                                                                                                                                                           
+!         TMIN for the day is less than OPTBI.  Soybean only                                                                                                                                                           
 !                                                                                                                                                                                                       
 @ECO#  ECONAME.......... MG TM THVAR PL-EM EM-V1 V1-JU JU-R0  PM06  PM09 LNGSH R7-R8 FL-VS TRIFL RWDTH RHGHT R1PPO OPTBI SLOBI                                                                          
 !                                  1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16                                                                          
-SU0702 MATURITY GROUP 7  07 01   0.0   4.8   1.0   0.0  05.0   0.0  0.35   8.0   4.0  10.2  0.83   0.6   1.2  .000   0.0  .000                                                                          
+SU0702 MATURITY GROUP 7  07 01   0.0   4.8   1.0   0.0  05.0   0.0  0.35   8.0   4.0   9.5  0.80   0.6   1.2  .000   0.0  .000
+
                                                                                                                                                                                                       
