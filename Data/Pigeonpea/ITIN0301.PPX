@@ -7,6 +7,8 @@ V.S. Bhatia, K.J. Boote and P.D. Alderman
 bhatia_virender_singh@hotmail.com
 @SITE
 National Research Centre for Soybean, Indore, Madhya Pradesh, India
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 @NOTES
 The experiment was conducted with soybean and pigeonpea intercropping in which sole pigeonpea was one of the treatment
 
@@ -14,12 +16,10 @@ The experiment was conducted with soybean and pigeonpea intercropping in which s
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
  1 1 1 0 2003 ICPL88039             1  1  0  1  1  1  1  0  0  0  0  1  1
- 2 1 1 0 2003 76W                   2  1  0  1  1  1  1  0  0  0  0  1  1
 
 *CULTIVARS
 @C CR INGENO CNAME
  1 PP I88039 ICPL88039
- 2 PP PP0001 76W
 
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
