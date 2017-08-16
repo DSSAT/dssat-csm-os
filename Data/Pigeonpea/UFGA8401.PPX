@@ -1,4 +1,4 @@
-*EXP.DETAILS: UFGA8401PP IRRIGATED & NON-IRRIGATED
+*EXP.DETAILS: UFGA8401PP IRRIGATED & NON-IRRIGATED, GAINESVILLE, FLORIDA
 
 *GENERAL
 @PEOPLE
@@ -7,6 +7,8 @@ K.J. Boote and P.D. Alderman
 Dept. of Agronomy, University of Florida, Gainesville, Florida, USA
 @SITE
 University of Florida
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 ! GROWTH DATA, C.E. MALERO MS THESIS, KJ BOOTE ADVISOR, UNIV. OF FL.
 ! N CONC, NOD WT, NFIX FROM J. deVries MS THESIS, UNIV. OF FLORIDA
 ! Temik 15G at 67 kg/ha broadcast for nematode control.  Better than
@@ -30,76 +32,76 @@ University of Florida
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
  1 UFGA0001 UFGA8401   -99     0 IB000     0     0 00000 -99    180  IBPP910015 -99
-@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS
- 1       -99.00000       -99.00000    -99.00             -99.0 -99.0 -99.0 -99.0
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
 
 *SOIL ANALYSIS
 @A SADAT  SMHB  SMPX  SMKE  SANAME
  1   -99   -99   -99   -99  -99
 @A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1     5   -99    .9   -99   -99   -99   -99   -99   .04
+ 1    15   -99   .69   -99   -99   -99   -99   -99   .03
+ 1    30   -99   .28   -99   -99   -99   -99   -99   .01
+ 1    60   -99    .2   -99   -99   -99   -99   -99   .01
+ 1    90   -99   .09   -99   -99   -99   -99   -99     0
+ 1   120   -99   .03   -99   -99   -99   -99   -99     0
+ 1   150   -99   .03   -99   -99   -99   -99   -99     0
+ 1   180   -99   .03   -99   -99   -99   -99   -99     0
 !Force large %SOM3 with SASC=0.98*SAOC
- 1     5   -99  0.90   -99   -99   -99   -99   -99 0.036 
- 1    15   -99  0.69   -99   -99   -99   -99   -99 0.028 
- 1    30   -99  0.28   -99   -99   -99   -99   -99 0.011 
- 1    60   -99  0.20   -99   -99   -99   -99   -99 0.008 
- 1    90   -99  0.09   -99   -99   -99   -99   -99 0.004 
- 1   120   -99  0.03   -99   -99   -99   -99   -99 0.001 
- 1   150   -99  0.03   -99   -99   -99   -99   -99 0.001 
- 1   180   -99  0.03   -99   -99   -99   -99   -99 0.001 
 
 *INITIAL CONDITIONS
 @C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
- 1    PP 84146   100   -99  1.00  1.00 -99.0   -99   -99   -99   -99   -99 -99
+ 1    PP 84146   100   -99     1     1   -99   -99   -99   -99   -99   -99 -99
 @C  ICBL  SH2O  SNH4  SNO3
- 1     5 0.086   0.6   1.5
- 1    15 0.086   0.6   1.5
- 1    30 0.086   0.6   1.5
- 1    60 0.086   0.6   1.5
- 1    90 0.076   0.6   0.6
- 1   120 0.076   0.6   0.5
- 1   150 0.130   0.6   0.5
- 1   180 0.258   0.6   0.5
+ 1     5  .086    .6   1.5
+ 1    15  .086    .6   1.5
+ 1    30  .086    .6   1.5
+ 1    60  .086    .6   1.5
+ 1    90  .076    .6    .6
+ 1   120  .076    .6    .5
+ 1   150   .13    .6    .5
+ 1   180  .258    .6    .5
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 84164   -99   -99   9.0     S     R    76     0   2.5   -99   -99 -99.0 -99.0 -99.0                        -99
+ 1 84164   -99   -99     9     S     R    76     0   2.5   -99   -99   -99   -99   -99                        -99
 
 *IRRIGATION AND WATER MANAGEMENT
 @I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
- 1  0.75   -99   -99   -99   -99   -99   -99 -99
+ 1   .75   -99   -99   -99   -99   -99   -99 -99
 @I IDATE  IROP IRVAL
- 1 84153 IB001  25.0
- 1 84156 IB001  12.0
- 1 84163 IB001  25.0
- 1 84164 IB001  12.0
- 1 84166 IB001  12.0
- 1 84190 IB001  17.0
- 1 84208 IB001  18.0
- 1 84220 IB001  18.0
- 1 84224 IB001  17.0
- 1 84243 IB001  21.0
- 1 84248 IB001  27.0
- 1 84255 IB001  22.0
- 1 84261 IB001  25.0
- 1 84268 IB001  41.0
- 1 84271 IB001  29.0
- 1 84277 IB001  28.0
- 1 84289 IB001  33.0
- 1 84295 IB001  21.0
+ 1 84153 IR001    25
+ 1 84156 IR001    12
+ 1 84163 IR001    25
+ 1 84164 IR001    12
+ 1 84166 IR001    12
+ 1 84190 IR001    17
+ 1 84208 IR001    18
+ 1 84220 IR001    18
+ 1 84224 IR001    17
+ 1 84243 IR001    21
+ 1 84248 IR001    27
+ 1 84255 IR001    22
+ 1 84261 IR001    25
+ 1 84268 IR001    41
+ 1 84271 IR001    29
+ 1 84277 IR001    28
+ 1 84289 IR001    33
+ 1 84295 IR001    21
 @I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
- 2  0.75   -99   -99   -99   -99   -99   -99 -99
+ 2   .75   -99   -99   -99   -99   -99   -99 -99
 @I IDATE  IROP IRVAL
- 2 84153 IB001  25.0
- 2 84156 IB001  12.0
- 2 84163 IB001  25.0
- 2 84164 IB001  12.0
- 2 84166 IB001  12.0
- 2 84262 IB001  48.0
- 2 84268 IB001  31.0
- 2 84271 IB001  28.0
- 2 84277 IB001  32.0
- 2 84289 IB001  34.0
- 2 84295 IB001  21.0
+ 2 84153 IR001    25
+ 2 84156 IR001    12
+ 2 84163 IR001    25
+ 2 84164 IR001    12
+ 2 84166 IR001    12
+ 2 84262 IR001    48
+ 2 84268 IR001    31
+ 2 84271 IR001    28
+ 2 84277 IR001    32
+ 2 84289 IR001    34
+ 2 84295 IR001    21
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
@@ -107,29 +109,29 @@ University of Florida
 
 *RESIDUES AND ORGANIC FERTILIZER
 @R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
- 1 84146 IB001  1000  0.80   -99   -99   -99    15   -99 -99
+ 1 84146 IB001  1000    .8   -99   -99   -99    15   -99 -99
 
 *HARVEST DETAILS
 @H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
- 1 84322   -99   -99   -99 100.0   0.0 
+ 1 84322 GS000   -99   -99   100     0 
 
 *SIMULATION CONTROLS
-@N GENERAL     NYERS NREPS START SDATE RSEED SNAME....................
- 1 GE              1     1     S 84146  2150 BRAGG, IRRIGATED & NON-IR
-@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL
- 1 OP              Y     Y     Y     N     N     N     N     N
-@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM
- 1 ME              M     M     E     R     S     L     R     1     P
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 84146  2150 BRAGG, IRRIGATED & NON-I
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     P     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     R     R     R     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT  LONG CHOUT OPOUT
- 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     Y     Y     Y     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     Y     Y     Y     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
  1 PL          84150 84178    40   100    30    40    10
 @N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
- 1 IR             30    70   100 IB001 IB001    10  0.75
+ 1 IR             30    70   100 IB001 IB001    10   .75
 @N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
  1 NI             30    50    25 IB001 IB001
 @N RESIDUES    RIPCN RTIME RIDEP
@@ -137,3 +139,5 @@ University of Florida
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 84365   100     0
 
+
+
