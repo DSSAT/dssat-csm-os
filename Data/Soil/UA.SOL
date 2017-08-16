@@ -1,4 +1,4 @@
-*Soils: University of Agriculture Faisalabad Soils
+*SOILS: University of Agriculture, Faisalabad, Pakistan
 
 *UAFD040001  SSOP        SIL     152 LYALLPUR ( SANDY CLAY LOAM)
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
