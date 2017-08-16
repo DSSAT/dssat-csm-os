@@ -2,13 +2,11 @@
 
 *GENERAL
 @PEOPLE
-Cecilia M. Tojo Soler - Paulo C. Sentelhas - Gerrit Hoogenboom
+Cecilia M. Tojo Soler, Paulo C. Sentelhas, and Gerrit Hoogenboom
 @ADDRESS
-Current Address: 1109 Experiment St. Griffin, GA. 30223. USA.
+ESALQ - University of Sao Paulo
 @SITE
-ESALQ - University of Sao Paulo - Piracicaba, SP. Brazil
-@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
-    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+Piracicaba, SP. Brazil
 @NOTES
  Publications 
  Soler, C.M.T., Sentelhas, P.C., Hoogenboom, G. 2007. 
@@ -27,16 +25,17 @@ ESALQ - University of Sao Paulo - Piracicaba, SP. Brazil
  season yield forecast, PhD. Thesis. Escola Superior de Agricultura 
  Luiz de Queiroz, University of Sao Paulo, Piracicaba, Brazil.
 
+
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 0 0 AG9010 - Rainfed           1  1  0  1  1  0  1  1  0  0  0  0  1
- 2 1 0 0 DKB 333B - Rainfed         2  1  0  1  1  0  1  1  0  0  0  0  1
- 3 1 0 0 DAS CO32 - Rainfed         3  1  0  1  1  0  1  1  0  0  0  0  1
- 4 1 0 0 EXCELER - Rainfed          4  1  0  1  1  0  1  1  0  0  0  0  1
- 5 1 0 0 AG9010 - IRRIGATED         1  2  0  2  1  1  2  1  0  0  0  0  1
- 6 1 0 0 DKB 333B - IRRIGATED       2  2  0  2  1  1  2  1  0  0  0  0  1
- 7 1 0 0 DAS CO32 - IRRIGATED       3  2  0  2  1  1  2  1  0  0  0  0  1
- 8 1 0 0 EXCELER - IRRIGATED        4  2  0  2  1  1  2  1  0  0  0  0  1
+ 1 1 0 0 AG9010 - Rainfed           1  1  0  1  1  0  1  0  0  0  0  0  1
+ 2 1 0 0 DKB 333B - Rainfed         2  1  0  1  1  0  1  0  0  0  0  0  1
+ 3 1 0 0 DAS CO32 - Rainfed         3  1  0  1  1  0  1  0  0  0  0  0  1
+ 4 1 0 0 EXCELER - Rainfed          4  1  0  1  1  0  1  0  0  0  0  0  1
+ 5 1 0 0 AG9010 - IRRIGATED         1  2  0  2  1  1  2  0  0  0  0  0  1
+ 6 1 0 0 DKB 333B - IRRIGATED       2  2  0  2  1  1  2  0  0  0  0  0  1
+ 7 1 0 0 DAS CO32 - IRRIGATED       3  2  0  2  1  1  2  0  0  0  0  0  1
+ 8 1 0 0 EXCELER - IRRIGATED        4  2  0  2  1  1  2  0  0  0  0  0  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -130,11 +129,11 @@ ESALQ - University of Sao Paulo - Piracicaba, SP. Brazil
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              Y     Y     N     N     N     N     N     Y     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
- 1 ME              M     M     E     R     S     L     R     1     G     S     2
+ 1 ME              M     M     E     R     S     R     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
- 1 MA              R     R     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+ 1 MA              R     R     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
