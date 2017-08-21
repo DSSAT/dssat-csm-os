@@ -1,3 +1,5 @@
+*SOILS: Nashua, Iowa
+
 !
 ! This file was created for ISU NE Research center, Nashua, Iowa 
 ! Created in June 1997 by sjm 
