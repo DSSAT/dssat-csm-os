@@ -1,3 +1,4 @@
+*SOILS: Morogoro, Tanzania
 
 ! Values SALB, SLU1, SLDR,SLRO, SLNF, SLPF, SSKS were estimated by
 !

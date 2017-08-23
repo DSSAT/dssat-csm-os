@@ -1,7 +1,4 @@
-* SOILS
-
-!ICRISAT Soils at Patancheru farm
-
+*SOILS: ICRISAT Soils, Patancheru, India
 
 *ICSB910195  24                    0
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
