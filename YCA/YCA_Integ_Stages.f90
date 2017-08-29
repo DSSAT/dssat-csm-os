@@ -30,7 +30,7 @@
         DAGERM = DAGERM + TTGEM*WFGE                                                           !LPM 21MAR2016 DA for germination
         !IF (GEUCUM.LT.PEGD) THEN
             !GESTAGE = AMIN1(1.0,GEUCUM/PEGD*0.5)                                                       !EQN 039a !LPM 21MAR2016 To separate germination and emergence
-        IF (DAGERM.LT.PGERM) THEN
+        IF (DAGERM < PGERM .AND. PGERM > 0.0) THEN
             GESTAGE = AMIN1(1.0,DAGERM/PGERM)  
         ELSE
             !IF (PECM*SDEPTHU > 1.E-6) THEN                                    !LPM 21MAR2016 To separate germination and emergence
@@ -70,14 +70,14 @@
         ! First calculate new BRSTAGE as temporary variable
         ! (LAH Check whether can move brstage calc up here! 
         ! (If do this, brstage in brfx below must be reduced by 1))
-        IF (MEDEV.EQ.'LNUM') THEN 
-            IF (PDL(INT(BRSTAGE)).GE.0.0) THEN                                                          ! MSTG = KEYPSNUM
+        IF (MEDEV == 'LNUM') THEN 
+            IF (PDL(INT(BRSTAGE)) > 0.0) THEN                                                          ! MSTG = KEYPSNUM
                 TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE)+1)           ! EQN 004
             ELSE
                 TVR1 = FLOAT(INT(BRSTAGE))
             ENDIF
         ELSE
-            IF (PD(INT(BRSTAGE)).GE.0.0) THEN                                                          ! MSTG = KEYPSNUM
+            IF (PD(INT(BRSTAGE)) >= 0.0) THEN                                                          ! MSTG = KEYPSNUM
                 TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE)+1)              ! EQN 004
             ELSE
                 TVR1 = FLOAT(INT(BRSTAGE))
@@ -186,7 +186,9 @@
         IF (PSDAT(L).LE.0.0.AND.DABR.GE.PSTART(L)) THEN
             PSDAT(L) = YEARDOY
             !IF (DU.GT.0.0) PSDAPFR(L)=(PSTART(L)-(CUMDU-DU))/DU !LPM 24APR2016 Using DABR instead of CUMDU
-            IF (DU.GT.0.0) PSDAPFR(L)=(PSTART(L)-(DABR-DU))/DU
+            IF (DU > 0.0) THEN
+                PSDAPFR(L)=(PSTART(L)-(DABR-DU))/DU
+            ENDIF
             PSDAPFR(L) = FLOAT(DAP) + PSDAPFR(L)
             PSDAP(L) = DAP
             !IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN  !LPM 06MAR15 MSTG TO PSX
@@ -272,7 +274,7 @@
             
             PDAYS(INT(BRSTAGE)) = PDAYS(INT(BRSTAGE)) + 1
             CDAYS = CDAYS + 1
-            IF (PDAYS(INT(BRSTAGE)).GT.0) THEN
+            IF (PDAYS(INT(BRSTAGE)) > 0.0) THEN
                 TMAXPAV(INT(BRSTAGE)) = TMAXPC / PDAYS(INT(BRSTAGE))
                 TMINPAV(INT(BRSTAGE)) = TMINPC / PDAYS(INT(BRSTAGE))
                 TMEANAV(INT(BRSTAGE)) = TMEANPC / PDAYS(INT(BRSTAGE))

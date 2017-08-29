@@ -69,7 +69,9 @@
         
         ! Harvest index for N
         HIND = 0.0
-        IF ((LEAFN+STEMN+RSN).GT.0.0) HIND = HPRODN/(LEAFN+STEMN+HPRODN+RSN)                                           !EQN 258
+        IF ((LEAFN+STEMN+RSN) > 0.0) THEN 
+            HIND = HPRODN/(LEAFN+STEMN+HPRODN+RSN)                                           !EQN 258
+        ENDIF
     
     END SUBROUTINE YCA_Integ_N
         

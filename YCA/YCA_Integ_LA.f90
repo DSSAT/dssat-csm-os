@@ -26,7 +26,9 @@
         !-----------------------------------------------------------------------
         
         IF (LFWT+STWT+CRWT.GT.0.0) RSCD = RSWT/(LFWT+STWT+CRWT+RSWT)                                                   !EQN 451
-        IF (RSCD.LT.0.0.AND.RSCD.GT.-1.0E-7) RSCD = 0.0
+        IF (RSCD.LT.0.0.AND.RSCD > -1.0E-7) THEN 
+            RSCD = 0.0
+        ENDIF
         RSCX = AMAX1(RSCX,RSCD)
         
         !-----------------------------------------------------------------------
@@ -35,8 +37,10 @@
         
         ! First for leaf senescence
         DO L = 1,INT(SHNUM+1)
-            IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
-                IF (PLA-SENLA.GT.0.0) SHLAS(L) = SHLAS(L) + PLAS*(SHLA(L)-SHLAS(L))/(PLA-SENLA)                        !EQN 452
+            IF (SHNUM-FLOAT(L-1) > 0.0) THEN
+                IF (PLA-SENLA > 0.0) THEN
+                    SHLAS(L) = SHLAS(L) + PLAS*(SHLA(L)-SHLAS(L))/(PLA-SENLA)                        !EQN 452
+                ENDIF
             ENDIF
         ENDDO
         
@@ -148,7 +152,9 @@
         !-----------------------------------------------------------------------
         
         SLA = -99.0
-        IF (LFWT.GT.1.0E-6) SLA=(PLA-SENLA-LAPHC) / (LFWT*(1.0-LPEFR))                                                 !EQN 465
+        IF (LFWT > ZERO) THEN
+            SLA=(PLA-SENLA-LAPHC) / (LFWT*(1.0-LPEFR))                                                 !EQN 465
+        ENDIF
         
         !-----------------------------------------------------------------------
         !         Update leaf petiole and stem area
@@ -170,12 +176,12 @@
         !         Update root depth and length
         !-----------------------------------------------------------------------
         
-        IF (SDEPTH.GT.0.0 .AND.RTDEP.LE.0.0) RTDEP = AMAX1(0.0,SDEPTHU)   !LPM 26MAR2016 To consider root growth from the same depth of bud growth
+        IF (SDEPTH > 0.0 .AND.RTDEP <= 0.0) RTDEP = AMAX1(0.0,SDEPTHU)   !LPM 26MAR2016 To consider root growth from the same depth of bud growth
         RTDEP = AMIN1 (RTDEP+RTDEPG,DEPMAX)                                                                            !EQN 390
         DO L = 1, NLAYR
             RLV(L)=RTWTL(L)*RLWR*PLTPOP/DLAYR(L)   ! cm/cm3                                                            !EQN 389
-            IF (L.EQ.NLAYR.AND.RLV(L).GT.0.0)THEN
-                IF (RTSLXDATE.LE.0.0) RTSLXDATE = YEARDOY
+            IF (L.EQ.NLAYR.AND.RLV(L) > 0.0)THEN
+                IF (RTSLXDATE <= 0.0) RTSLXDATE = YEARDOY
             ENDIF
         END DO
         

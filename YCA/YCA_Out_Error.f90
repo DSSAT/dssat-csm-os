@@ -36,8 +36,10 @@
                 ENDIF
             ENDDO
             !IF (L.EQ.0) L = INT((FLOAT(MSTG)/2.0)+1) !LPM 06MAR15 MSTG TO PSX
-            IF (L.EQ.0) L = INT((FLOAT(PSX)/2.0)+1)
-            IF (L.GT.0) THEN
+            IF (L == 0) THEN
+                L = INT((FLOAT(PSX)/2.0)+1)
+            ENDIF
+            IF (L > 0) THEN
                 PSIDAP = PSDAP(L)
             ELSE
                 WRITE (fnumwrk,*)' '
@@ -49,13 +51,13 @@
             ENDIF
                     
             ! Errors (A-data)
-            IF (TDATANUM.LE.0 .AND. .NOT.FEXISTA) THEN
+            IF (TDATANUM <= 0 .AND. .NOT.FEXISTA) THEN
                 WRITE (fnumwrk,*)' '
                 WRITE (fnumwrk,*)' No data so cannot write PLANTERA'
                 OPEN (UNIT=FNUMTMP,FILE=FNAMEERA,STATUS='UNKNOWN')
                 CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
             ELSE ! If data availabe
-                IF (edapm.GT.0) THEN
+                IF (edapm > 0.0) THEN
                     emdaterr = 100.0*(Edap-Edapm)/edapm
                 ELSE
                     emdaterr = -99
@@ -70,64 +72,64 @@
                 ELSE
                     mdaterr = -99
                 Endif
-                IF (hwahm.GT.0.AND.hwam.GT.0.AND.hpcf.GT.0) THEN
+                IF (hwahm > 0 .AND. hwam > 0.AND. hpcf > 0) THEN
                     hwaherr = 100.*(hwam*hpcf/100.-hwahm)/(hwahm*hpcf/100.)
                     IF (hwaherr.GT.99999.0) hwaherr = 99999.0
                     IF (hwaherr.LT.-9999.0) hwaherr = -9999.0
                 ELSE
                     hwaherr = -99
                 ENDIF
-                IF (hwumm.GT.0.AND.hwum.GT.0) THEN
+                IF (hwumm > 0 .AND. hwum > 0) THEN
                     hwumerr = 100.0*(hwum-hwumm)/hwumm
                 ELSE
                     hwumerr = -99
                 ENDIF
-                IF (hnumamm.GT.0.AND.hnumam.GT.0) THEN
+                IF (hnumamm > 0.AND. hnumam > 0) THEN
                     hnumaerr = 100.0*(hnumam-hnumamm)/(hnumamm)
                 ELSE
                     hnumaerr = -99
                 ENDIF
-                IF (hnumgmm.GT.0.AND.hnumgm.GT.0) THEN
+                IF (hnumgmm.GT.0.AND. hnumgm.GT.0) THEN
                     hnumgerr = 100.0*((hnumgm-hnumgmm)/hnumgmm)
                 ELSE
                     hnumgerr = -99
                 ENDIF
-                IF (laixm.GT.0.AND.laix.GT.0) THEN
+                IF (laixm > 0.AND. laix > 0) THEN
                     laixerr = 100.0*((laix-laixm)/laixm)
                 ELSE
                     laixerr = -99
                 ENDIF
-                IF (lnumsmm.GT.0.AND.lnumsm.GT.0) THEN
+                IF (lnumsmm > 0 .AND. lnumsm > 0) THEN
                     lnumserr = 100.0*((lnumsm-lnumsmm)/lnumsmm)
                 ELSE
                     lnumserr = -99
                 ENDIF
-                IF (cwamm.GT.0.AND.cwam.GT.0) THEN
+                IF (cwamm > 0.AND. cwam > 0) THEN
                     cwamerr = 100.0*(cwam-cwamm)/cwamm
                 ELSE
                     cwamerr = -99
                 Endif
-                IF (vwamm.GT.0.AND.vwam.GT.0) THEN
+                IF (vwamm > 0 .AND. vwam > 0) THEN
                     vwamerr = 100.0*(vwam-vwamm)/vwamm
                 ELSE
                     vwamerr = -99
                 Endif
-                IF (hiamm.GT.0.AND.hiam.GT.0) THEN
+                IF (hiamm > 0.AND. hiam > 0) THEN
                     hiamerr = 100.0*(hiam-hiamm)/hiamm
                 ELSE
                     hiamerr = -99
                 Endif
-                IF (hnpcmm.GT.0.AND.hnpcm.GT.0) THEN
+                IF (hnpcmm > 0 .AND. hnpcm > 0) THEN
                     hnpcmerr = 100.0*(hnpcm-hnpcmm)/hnpcmm
                 ELSE
                     hnpcmerr = -99
                 Endif
-                IF (cnamm.GT.0.AND.cnam.GT.0) THEN
+                IF (cnamm > 0.AND. cnam > 0) THEN
                     cnamerr = 100.0*(cnam-cnamm)/cnamm
                 ELSE
                     cnamerr = -99
                 Endif
-                IF (RUN.EQ.1) THEN
+                IF (RUN == 1) THEN
                     OPEN (UNIT=FNUMERA,FILE=FNAMEERA,POSITION='APPEND')
                     WRITE (FNUMERA, FMT996)
                     WRITE (FNUMERA, FMT896)
@@ -241,7 +243,7 @@
                         CALL Getstrr(tlinet,l,tfval)
                         CALL Getstrr(tlinegro,pgrocol(l),pgval)
                         ERRORVAL = 0.0
-                        IF(TFVAL.GT.0.0.AND.PGVAL.GT.-99.AND.PGVAL.NE.0.0)THEN
+                        IF(TFVAL > 0.0 .AND. PGVAL > -99 > PGVAL /= 0.0)THEN
                             ERRORVAL = 100.0 * (PGVAL - TFVAL) / TFVAL
                         ELSE
                             ERRORVAL = -99.0
