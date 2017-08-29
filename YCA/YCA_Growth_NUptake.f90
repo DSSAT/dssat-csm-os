@@ -76,9 +76,11 @@
             TRLV = 0.0
             DO L = 1, NLAYR
                 TRLV = TRLV + RLV(L)
-                FAC(L) = 10.0/(BD(L)*DLAYR(L))                                                                         !EQN 169
-                SNO3(L) = NO3LEFT(L) / FAC(L)                                                                          !EQN 170
-                SNH4(L) = NH4LEFT(L) / FAC(L)                                                                          !EQN 186
+                IF((BD(L)*DLAYR(L)) > 0.0) THEN
+                    FAC(L) = 10.0/(BD(L)*DLAYR(L))                                                                         !EQN 169
+                    SNO3(L) = NO3LEFT(L) / FAC(L)                                                                          !EQN 170
+                    SNH4(L) = NH4LEFT(L) / FAC(L)                                                                          !EQN 186
+                ENDIF
                 SNO3PROFILE = SNO3PROFILE + SNO3(L)
                 SNH4PROFILE = SNH4PROFILE + SNH4(L)
                 IF (RLV(L).GT.0.0) THEN
@@ -91,7 +93,7 @@
             LNDEM = GROLFP*LNCX + (LFWT-SENLFG-SENLFGRS)*AMAX1(0.0,NTUPF*(LNCX-LANC)) - GROLSRTN                        !EQN 152
             !SNDEM = AMAX1(0.0,GROST+GROCR)*SNCX + (STWT+CRWT)*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
             RNDEM = RTWTG*RNCX + (RTWT-SENRTG-GROLSRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
-            !SRNDEM = (GROSR+SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
@@ -157,7 +159,7 @@
             ENDDO
     
             ! Ratio (NUPRATIO) to indicate N supply for output
-            IF (ANDEM > 0) THEN
+            IF (ANDEM > 0.0) THEN
                 NUPRATIO = NUPAP/ANDEM                                                                                 !EQN 192
             ELSE
                 IF (NUPAP > 0.0) THEN
@@ -180,13 +182,13 @@
             DO L = 1, NLAYRROOT
                 UNO3(L) = RNO3U(L)*NUF                                                                                 !EQN 196
                 UNH4(L) = RNH4U(L)*NUF                                                                                 !EQN 198
-                IF (FAC(L).LE.0.0) THEN
+                IF (FAC(L) <= 0.0) THEN
                     XMIN = 0.0
                 ELSE  
                     XMIN = NO3MN/FAC(L)                                                                                !EQN 194
                 ENDIF  
                 UNO3(L) = MAX(0.0,MIN (UNO3(L),SNO3(L)-XMIN))                                                          !EQN 197
-                IF (FAC(L).LE.0.0) THEN
+                IF (FAC(L) <= 0.0) THEN
                     XMIN = 0.0
                 ELSE  
                     XMIN = NH4MN/FAC(L)                                                                                !EQN 195 
