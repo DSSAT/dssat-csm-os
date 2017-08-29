@@ -248,8 +248,6 @@
     
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
             IF (NDEMMN > NULEFT) THEN
-                !GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213 !LPM 02SEP2016 Use potential growth
-                !GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 GROSTADJ = GROSTP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
                 GROCRADJ = GROCRP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
@@ -288,7 +286,6 @@
                     ENDDO
                 ENDDO
                 RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
-                !SRNUSE(2) = (SRNDEM-SRNUSE(1))*AMIN1(1.0,NULEFT/NDEM2)                                                 !EQN 222 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
                 SRNUSE(2) = (SRNDEM)*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
                 NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)                                                      !EQN 223
                 IF (NULEFT.GT.0.0) THEN
@@ -324,7 +321,11 @@
             NPOOLS = 0
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)          
-                    plant(BR,LF)%NPOOLSN = AMAX1 (0.0,((plant(BR,LF)%NODEWT * (STWT+CRWT)/(STWTP+CRWTP))*( plant(BR,LF)%SANC - plant(BR,LF)%SNCM )*NUSEFAC))  
+                    IF(STWTP+CRWTP > 0.0)THEN
+                        plant(BR,LF)%NPOOLSN = AMAX1 (0.0,((plant(BR,LF)%NODEWT * (STWT+CRWT)/(STWTP+CRWTP))*( plant(BR,LF)%SANC - plant(BR,LF)%SNCM )*NUSEFAC))  
+                    ELSE
+                        plant(BR,LF)%NPOOLSN = 0.0
+                    ENDIF
                     NPOOLS =  NPOOLS + plant(BR,LF)%NPOOLSN                                                                 !EQN 232
                 ENDDO
             ENDDO
@@ -332,7 +333,7 @@
             IF (ABS(NULEFT).LE.1.0E-5) THEN   ! Inadequate N
                 IF (NLLG > 0.0 .AND. LNCX > 0.0) THEN 
                     !IF ((LNUSE(1)+LNUSE(2))/GROLF.LT.(LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
-                    IF ((LNUSE(1)+LNUSE(2))/GROLFP.LT.(LNCX*NLLG)) THEN 
+                    IF ((LNUSE(1)+LNUSE(2))/GROLFP < (LNCX*NLLG)) THEN 
                         GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
                     ELSE  
                         !GROLFADJ = GROLF                                                                               !EQN 233b !LPM 02SEP2016 Use GROLFP instead of GROLF
