@@ -169,7 +169,8 @@ C=======================================================================
       DO L = 1, NLAYR
          RNO3U(L) = 0.0
          RNH4U(L) = 0.0
-         TRLV     = TRLV    + RLV(L) * DLAYR(L)
+!     THIS NEEDS TO BE FIXED LATER:
+         TRLV     = TRLV    + RLV(L) !* DLAYR(L)
 !        NO3(L)   = SNO3(L) * FAC(L)
 !        NH4(L)   = SNH4(L) * FAC(L)
          SNO3(L) = NO3(L) / KG2PPM(L) 
@@ -245,6 +246,8 @@ C-----------------------------------------------------------------------
          NUF   = ANDEM/TRNU
          TRNU  = 0.0
       ENDIF
+
+      write(4545,'()') yrdoy, 
 
 C-------------------------------------------------------------------------
 C     Calculate N uptake in soil layers with roots based on demand (kg/ha)
