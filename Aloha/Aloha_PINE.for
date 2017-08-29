@@ -66,6 +66,7 @@ C=======================================================================
       REAL      SWFAC, TURFAC, TRNU
 
       REAL      PLTPOP,   TBASE, STOVER, WTINITIAL, YIELD
+      REAL    WTNCAN, WTNGRN
 
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -109,6 +110,13 @@ C=======================================================================
       !TMAX   = WEATHER % TMAX
       !TMIN   = WEATHER % TMIN
       !TWILEN = WEATHER % TWILEN
+
+!================================
+!     chp temp debug
+      nh4 = 1.0
+      no3 = 1.0
+      sw = soilprop%dul
+!================================
 
 !=======================================================================
       SELECT CASE (DYNAMIC)
@@ -176,12 +184,13 @@ C-----------------------------------------------------------------------
      &   BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, 
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, ROOTN,  
      &   RTDEP, RTWT, SKWT, STMWT, STOVN, STOVWT, SWFAC,    
-     &   TRNU, TURFAC, WTNUP, YRPLT)     
+     &   TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
      &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
-     &   WTINITIAL, YIELD, YRDOY, YRPLT)                  !Input
+     &   WTINITIAL, WTNCAN, WTNGRN, WTNUP, YIELD,         !Input
+     &   YRDOY, YRPLT)                                    !Input
 
 !=======================================================================
 C     Beginning of daily simulation loop
@@ -315,12 +324,13 @@ C-----------------------------------------------------------------------
      &   BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, 
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, ROOTN,  
      &   RTDEP, RTWT, SKWT, STMWT, STOVN, STOVWT, SWFAC,    
-     &   TRNU, TURFAC, WTNUP, YRPLT)     
+     &   TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
      &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
-     &   WTINITIAL, YIELD, YRDOY, YRPLT)                  !Input
+     &   WTINITIAL, WTNCAN, WTNGRN, WTNUP, YIELD,         !Input
+     &   YRDOY, YRPLT)                                    !Input
 
 !=======================================================================
 C     Call end of season output routine
@@ -331,12 +341,13 @@ C-----------------------------------------------------------------------
      &   BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, 
      &   LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, ROOTN,  
      &   RTDEP, RTWT, SKWT, STMWT, STOVN, STOVWT, SWFAC,    
-     &   TRNU, TURFAC, WTNUP, YRPLT)     
+     &   TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH,
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
      &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
-     &   WTINITIAL, YIELD, YRDOY, YRPLT)                  !Input
+     &   WTINITIAL, WTNCAN, WTNGRN, WTNUP, YIELD,         !Input
+     &   YRDOY, YRPLT)                                    !Input
 
 !=======================================================================
       END SELECT

@@ -9,7 +9,8 @@
       SUBROUTINE Aloha_OPHARV(CONTROL, ISWITCH,
      &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
      &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
-     &   WTINITIAL, YIELD, YRDOY, YRPLT)                  !Input
+     &   WTINITIAL, WTNCAN, WTNGRN, WTNUP, YIELD,         !Input
+     &   YRDOY, YRPLT)                                    !Input
 
 !-----------------------------------------------------------------------
       USE Aloha_mod
@@ -42,7 +43,7 @@
       REAL SDRATE
       REAL SDWT, SDWTAH, SDWTAM, SEEDNO, SKERWT, STOVER
       REAL SWFAC, BIOMAS, Biomass_kg_ha, TURFAC
-      REAL WTINITIAL, WTNCAN, WTNUP, XGNP, LAI, LN
+      REAL WTINITIAL, WTNCAN, WTNGRN, WTNUP, XGNP, LAI, LN
       REAL YIELD 
 
       REAL, DIMENSION(2) :: HARVFRAC
@@ -456,7 +457,7 @@ C
       LABEL(11) = 'NFXM'; VALUE(11) = 0.0         !WTNFX*10.
       LABEL(12) = 'NUCM'; VALUE(12) = WTNUP*10.
       LABEL(13) = 'CNAM'; VALUE(13) = WTNCAN*10.
-      LABEL(14) = 'GNAM'; VALUE(14) = 0.0 ! GNUP = WTNSD*10.
+      LABEL(14) = 'GNAM'; VALUE(14) = WTNGRN*10.
       LABEL(15) = 'PWAM'; VALUE(15) = CRWNWT*10.
       LABEL(16) = 'LAIX'; VALUE(16) = MAXLAI
       LABEL(17) = 'HIAM'; VALUE(17) = HI
