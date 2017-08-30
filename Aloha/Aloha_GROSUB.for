@@ -249,9 +249,6 @@ C=======================================================================
         CALL Aloha_NFACTO (DYNAMIC, 
      &    ISTAGE, TANC, XSTAGE,                           !Input
      &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
-
-        write(2345,'(i7,8f8.3)') control.yrdoy, 
-     &    agefac, ndef3, nfac, nstres, rcnp, tanc, tcnp, tmnc
       ENDIF
 
 !-----------------------------------------------------------------
@@ -964,8 +961,6 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
              STGDOY (ISTAGE) = YRDOY
           ENDIF
           HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
-
-          WRITE(777,'(i7,f10.2)') control.YRDOY, YIELD
 
         CASE (8)
           WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt

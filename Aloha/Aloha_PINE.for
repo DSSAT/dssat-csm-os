@@ -111,13 +111,6 @@ C=======================================================================
       !TMIN   = WEATHER % TMIN
       !TWILEN = WEATHER % TWILEN
 
-!================================
-!     chp temp debug
-      nh4 = 1.0
-      no3 = 1.0
-      sw = soilprop%dul
-!================================
-
 !=======================================================================
       SELECT CASE (DYNAMIC)
 !=======================================================================
@@ -291,8 +284,6 @@ C-----------------------------------------------------------------------
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
      &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
         ENDIF
-         write(4444,'(i7,i5,2F10.4,F8.2)') 
-     &     yrdoy, istage, DTT, SUMDTT, TBASE
 
         CUMDTT = CUMDTT + DTT
 
