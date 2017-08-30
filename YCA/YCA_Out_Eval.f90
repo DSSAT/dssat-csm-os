@@ -90,8 +90,8 @@
                 FILELEN = TVILENT(FILENEW)
                 FILELEN = MAX(FILELEN-12, 0) 
                     
-                IF (TVILENT(FILEADIR).GT.3) THEN
-                    IF (FILEADIR(TVILENT(FILEADIR):TVILENT(FILEADIR)).NE.SLASH) THEN                       
+                IF (TVILENT(FILEADIR) > 3) THEN
+                    IF (FILEADIR(TVILENT(FILEADIR):TVILENT(FILEADIR)) /= SLASH) THEN                       
                     FILEA = FILEADIR(1:TVILENT(FILEADIR))//SLASH//EXCODE(1:8)//'.'//EXCODE(9:10)//'A'      
                     ELSE
                         FILEA = FILEADIR(1:TVILENT(FILEADIR))//EXCODE(1:8)//'.'//EXCODE(9:10)//'A'

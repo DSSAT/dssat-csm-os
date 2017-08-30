@@ -126,12 +126,12 @@
             
             ! Nitrogen
             ! WARNING No N stress after emergence on day that emerges
-            IF (ISWNIT.NE.'N') THEN
-              IF (LFWT.GT.1.0E-5) THEN
+            IF (ISWNIT /= 'N') THEN
+              IF (LFWT > ZERO) THEN
                 !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))
                 LNCGL = LNCM + NFGL * (LNCX-LNCM)                                                                      !EQN 164
                 LNCGU = LNCM + NFGU * (LNCX-LNCM)                                                                      !EQN 165
-                IF (LNCGU - LNCGL > 1.E-6) THEN
+                IF (LNCGU - LNCGL > ZERO) THEN
                  !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))                                                 !EQN 163 !LPM 02SEP2016 To keep NFG as NFLF2
                  NFG = plant(0,0)%NFLF2                                                 !EQN 163
                 ELSE
@@ -139,7 +139,7 @@
                 ENDIF
                 LNCPL = LNCM + NFPL * (LNCX-LNCM)
                 LNCPU = LNCM + NFPU * (LNCX-LNCM)
-                IF (LNCPU - LNCPL > 1.E-6) THEN                                                                        !EQN 167
+                IF (LNCPU - LNCPL > ZERO) THEN                                                                        !EQN 167
                  !NFP =AMIN1(1.0,AMAX1(0.0,(LANC-LNCPL)/(LNCPU-LNCPL)))                                                 !EQN 166 !LPM 02SEP2016 Use NFLF2 intead of original equation
                  NFP =plant(0,0)%NFLF2 
                 ELSE
@@ -155,7 +155,7 @@
             ENDIF
 
             ! If N stress switched off early in cycle. 
-            IF (ISWNITEARLY.EQ.'N') THEN
+            IF (ISWNITEARLY == 'N') THEN
               NFG = 1.0
               NFP = 1.0  
             ENDIF
@@ -183,7 +183,7 @@
             IF (PHTV.GT.0.0) THEN
               IF (TDEW.LE.-98.0) TDEW = TMIN
               VPD = CSVPSAT(tmax) - CSVPSAT(TDEW)    ! Pa                                                              !EQN 262
-              IF (VPD/1000.0.GT.PHTV) &
+              IF (VPD/1000.0 > PHTV) &
                VPDFP = AMAX1(0.0,1.0+PHSV*(VPD/1000.0-PHTV))                                                           !EQN 263
             ENDIF
 

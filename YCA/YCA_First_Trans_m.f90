@@ -19,6 +19,7 @@ Module YCA_First_Trans_m
     REAL,PARAMETER::LLIFGD = 10.0 ! Leaf growing duration in days
     INTEGER,PARAMETER::LNUMX= 500 ! Maximum number of leaves/axis
     INTEGER,PARAMETER::HANUMX= 40 ! Maximum # harvest instructions
+    REAL, PARAMETER:: ZERO = 1.0E-5 ! The "first" real number after zero (0) #MathUtils
 
 
     TYPE (Node_type),DIMENSION(0:PSX,0:LCNUMX)  :: plant

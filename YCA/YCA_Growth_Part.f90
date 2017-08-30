@@ -297,7 +297,9 @@
             !ENDDO
             
             ! Potential leaf weight increase.
-            IF (LAWL(1).GT.0.0) GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+            IF (LAWL(1) > 0.0) THEN
+                GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+            ENDIF
         ENDIF
         
         !LPM 02MAR15 Stem weight increase by cohort: 1 axis,main shoot
@@ -327,10 +329,7 @@
           DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
-                
-                
-          !      plant(BR,LF)%NODEWTGB = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-plant(BR,LF)%NDDAE+1)/163.082822)**-2.81690408)/ & 
-          !      (((((DAE-plant(BR,LF)%NDDAE+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
+
           
                 NDDAED=(DAG-plant(BR,LF)%NDDAE+1)/NDDAE_D
           
@@ -459,7 +458,9 @@
         GROSTCRP = GROSTP                                                                                          !EQN 381a
         
         
-        IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
+        IF (GROLFP+GROSTCRP > 0.0) THEN
+            GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
+        ENDIF
         ! LAH RSFRS is the fraction of stem growth to reserves
         ! May need to have this change as stem growth proceeds
         
@@ -471,7 +472,7 @@
         !in the planting stick (In the future it could be modified as an input in the X-file)
         GROST = GROSTCR
         
-        IF (GROLSP.GT.0.0) THEN
+        IF (GROLSP > 0.0) THEN
             GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR 
             RTWTG = GROLS*(GRORP/GROLSP) !LPM 22DEC2016 Root development 
         ENDIF
