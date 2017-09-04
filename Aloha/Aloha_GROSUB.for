@@ -48,13 +48,13 @@ C  TNLAB  :
 C  TTMP   :
 C=======================================================================
 
-      SUBROUTINE Aloha_GROSUB (CONTROL, 
+      SUBROUTINE Aloha_GROSUB (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
-     &    SKWT, STMWT, STOVER, STOVN, STOVWT, UNH4, UNO3,     !Output
-     &    WTNUP, WTINITIAL, YIELD)                            !Output
+     &    SKWT, STMWT, STOVER, STOVN, STOVWT, TEMPM,          !Output
+     &    UNH4, UNO3, WTNUP, WTINITIAL, YIELD)                !Output
 
       USE Aloha_mod
       USE Interface_SenLig_Ceres
@@ -84,7 +84,7 @@ C=======================================================================
       REAL    GROBSL, GROLF, CUMPH, LN, CUMDEP, SUMP, PLAMX, GROFLR
       REAL    GROCRWN, GROFRT, FRTWT, CRWNWT, SKWT, GROSK, PTF, EYEWT
       REAL    SWMAX, SWMIN, NDEF3, NSTRES, AGEFAC
-      REAL    PAR, CC, TEMPM, TRF2, CARBO, SWFAC  !,TRNU
+      REAL    PAR, CC, TRF2, CARBO, SWFAC, TEMPM  !,TRNU
       REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP
       REAL    PDWI, PGRORT, DM, FBIOM, MAXLAI, PHOTOSYNEYE, FRUITS
       REAL    YIELD, PEYEWT, GPSM, STOVER, YIELDB, HBIOM, XSTAGE  !, FDMC
@@ -103,6 +103,7 @@ C=======================================================================
       REAL, DIMENSION(NL) :: RLV, NO3, NH4, SW, UNH4, UNO3
 
       TYPE (ControlType) CONTROL
+      TYPE (SwitchType)  ISWITCH
       TYPE (WeatherType) WEATHER
       TYPE (SoilType) SOILPROP
       TYPE (ResidueType) SENESCE
@@ -118,6 +119,7 @@ C=======================================================================
 !=======================================================================
       CASE (RUNINIT)
 !=======================================================================
+      ISWNIT     = ISWITCH % ISWNIT
       PLA        = 0.0
       LAI        = 0.0
       BIOMAS     = 0.0
@@ -186,7 +188,7 @@ C=======================================================================
      &    ISTAGE, TANC, XSTAGE,                           !Input
      &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
 
-      CALL Aloha_NUPTAK(CONTROL, 
+      CALL Aloha_NUPTAK(CONTROL, ISWITCH, 
      &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
@@ -233,7 +235,7 @@ C=======================================================================
      &    ISTAGE, TANC, XSTAGE,                           !Input
      &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
 
-      CALL Aloha_NUPTAK(CONTROL, 
+      CALL Aloha_NUPTAK(CONTROL, ISWITCH, 
      &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
@@ -242,13 +244,17 @@ C=======================================================================
 !=======================================================================
       CASE (RATE)
 !=======================================================================
-      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
-      APTNUP = STOVN*10.0*PLTPOP
+      TEMPM = (WEATHER % TMAX + WEATHER % TMIN) / 2.
 
-      IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
-        CALL Aloha_NFACTO (DYNAMIC, 
-     &    ISTAGE, TANC, XSTAGE,                           !Input
-     &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
+      IF (ISWNIT .NE. 'N') THEN
+        XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
+        APTNUP = STOVN*10.0*PLTPOP
+
+        IF (ISTAGE .LT. 7) THEN
+          CALL Aloha_NFACTO (DYNAMIC, 
+     &      ISTAGE, TANC, XSTAGE,                           !Input
+     &      AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
+        ENDIF
       ENDIF
 
 !-----------------------------------------------------------------
@@ -853,7 +859,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
      &           (LFWT+BASLFWT+STMWT+FLRWT+SKWT+RTWT)
       
       IF (ISWNIT .NE. 'N') THEN
-      CALL Aloha_NUPTAK(CONTROL, 
+        CALL Aloha_NUPTAK(CONTROL, ISWITCH, 
      &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
@@ -992,7 +998,7 @@ C               XPTN = XGNP*6.25
         END SELECT
       ENDIF
 
-      CALL Aloha_NUPTAK (CONTROL, 
+      CALL Aloha_NUPTAK (CONTROL, ISWITCH, 
      &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input

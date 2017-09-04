@@ -25,7 +25,7 @@ C  Calls  : None
 C-----------------------------------------------------------------------
 C=======================================================================
 
-      SUBROUTINE Aloha_NUPTAK(CONTROL, 
+      SUBROUTINE Aloha_NUPTAK(CONTROL, ISWITCH,
      &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
      &    PLTPOP, PTF, RANC, RCNP, RLV, RTWT, SOILPROP,   !Input
      &    STOVWT, SW, TCNP, XSTAGE,                       !Input
@@ -85,6 +85,7 @@ C=======================================================================
       LOGICAL     FIRST   
 
       TYPE (ControlType) CONTROL
+      TYPE (SwitchType)  ISWITCH
       TYPE (ResidueType) SENESCE
       TYPE (SoilType) SOILPROP
 
@@ -140,6 +141,8 @@ C=======================================================================
 !=======================================================================
       CASE (RATE)
 !=======================================================================
+      IF (ISWITCH % ISWNIT .NE. 'Y') RETURN
+
       TRNLOS = 0.0
       RANC   = ROOTN / RTWT
       TANC   = STOVN / STOVWT
@@ -315,6 +318,8 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       CASE (INTEGR)
 !=======================================================================
+      IF (ISWITCH % ISWNIT .NE. 'Y') RETURN
+
 !     Initialize RLV at stage 1 - from PHASEI
       IF (ISTAGE == 1 .AND. FIRST) THEN
         FIRST = .FALSE.

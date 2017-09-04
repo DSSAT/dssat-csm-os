@@ -15,7 +15,7 @@ C=======================================================================
       SUBROUTINE Aloha_PHENOL (CONTROL, ISWITCH,
      &    SW, WEATHER, SOILPROP,                              !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
-     &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
+     &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
 
       USE Aloha_mod
       IMPLICIT    NONE
@@ -46,8 +46,8 @@ C=======================================================================
       REAL        TMIN, TMAX, TEMPFMX, SUMDTT, CUMDEP, GPP
       REAL        FRTWT, TEMPFM, TOTPLTWT
       REAL        P1, P2, P3, P4, P5, P6, TBASE1
-      REAL        G2
-      REAL, DIMENSION(NL) :: SW, LL, DLAYR, CUMDTT
+      REAL        G2, CUMDTT
+      REAL, DIMENSION(NL) :: SW, LL, DLAYR
 
       REAL PLTPOP, SDEPTH, PLANTSIZE
       INTEGER NFORCING, NDOF
@@ -136,9 +136,9 @@ C=======================================================================
 
 !moved to grosub      XANC   = TANC*100.0               ! Top actual N concentration (g N/g Dry weight)
 !moved to grosub      APTNUP = STOVN*10.0*PLTPOP
-!move to below        DTT    = TEMPM - TBASE
 !from FileX           SDEPTH = 5.0
 
+      DTT    = TEMPM - TBASE
       SELECT CASE (ISTAGE)
         CASE (1,2,3,7,8,9)
           IF (TMIN .GT. TBASE .AND. TMAX .LT. 35.0) THEN

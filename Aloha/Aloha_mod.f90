@@ -39,6 +39,7 @@
       Type (AlohaSow_type) Planting
 
       CHARACTER*10 STNAME(20)
+!     REAL TEMPM
 
       DATA STNAME/    &
         'Zero Stem ', &   ! 1

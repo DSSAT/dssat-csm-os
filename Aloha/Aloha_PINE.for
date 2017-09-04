@@ -42,7 +42,7 @@ C=======================================================================
       REAL      FDINT
 !      REAL      SEEDNI,WTNLF,WTNST,WTNSH,WTNRT,WTNLO
 
-      CHARACTER*1 ISWWAT, ISWNIT
+      CHARACTER*1 ISWWAT
       INTEGER EDATE, ISTAGE, YRDOY, YRPLT, MDATE, ISDATE, PMDATE
 !      INTEGER ICSDUR, 
       INTEGER, DIMENSION(20) :: STGDOY
@@ -63,7 +63,7 @@ C=======================================================================
       REAL    CUMDTT, SUMDTT      !,SDWTAH,BWAH, 
       REAL      XLAT
       REAL      EOP, EP1, TRWUP, RWUEP1
-      REAL      SWFAC, TURFAC, TRNU
+      REAL      SWFAC, TURFAC, TRNU, TEMPM
 
       REAL      PLTPOP,   TBASE, STOVER, WTINITIAL, YIELD
       REAL    WTNCAN, WTNGRN
@@ -123,7 +123,6 @@ C-----------------------------------------------------------------------
       XLAT   = WEATHER % XLAT
 
       ISWWAT = ISWITCH % ISWWAT
-      ISWNIT = ISWITCH % ISWNIT
 
       CUMDTT = 0.0
 
@@ -158,15 +157,15 @@ C-----------------------------------------------------------------------
       CALL Aloha_PHENOL (CONTROL, ISWITCH,
      &    SW, WEATHER, SOILPROP,                              !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
-     &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
+     &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
 
-      CALL Aloha_GROSUB  (CONTROL, 
+      CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
-     &    SKWT, STMWT, STOVER, STOVN, STOVWT, UNH4, UNO3,     !Output
-     &    WTNUP, WTINITIAL, YIELD)                            !Output
+     &    SKWT, STMWT, STOVER, STOVN, STOVWT, TEMPM,          !Output
+     &    UNH4, UNO3, WTNUP, WTINITIAL, YIELD)                !Output
 
       CALL Aloha_ROOTGR (CONTROL,
      &     CUMDTT, DTT, GRORT, ISTAGE, ISWITCH, NO3, NH4,     !Input
@@ -198,7 +197,6 @@ C        EDATE = Emergence Date
 C        MDATE = Maturity Date
 C        YRDOY = Year - Day of Year (Dynamic Variable)
 C-----------------------------------------------------------------------
-
 !         EDATE = STGDOY(9)
 
 !temp chp
@@ -226,7 +224,6 @@ C-----------------------------------------------------------------------
 !         SI3(ISTAGE) = CNSD1 / ICSDUR
 !         SI4(ISTAGE) = CNSD2 / ICSDUR
 !      ENDIF
-
 
 C-----------------------------------------------------------------------
 C        Calculate light interception for transpiration.
@@ -260,13 +257,13 @@ C        Call GROSUB
 C----------------------------------------------------------------------
       
 !        IF (ISTAGE .LT. 6) THEN
-           CALL Aloha_GROSUB  (CONTROL, 
+           CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
-     &    SKWT, STMWT, STOVER, STOVN, STOVWT, UNH4, UNO3,     !Output
-     &    WTNUP, WTINITIAL, YIELD)                            !Output
+     &    SKWT, STMWT, STOVER, STOVN, STOVWT, TEMPM,          !Output
+     &    UNH4, UNO3, WTNUP, WTINITIAL, YIELD)                !Output
 !        ENDIF
 
          IF (YRDOY .EQ. STGDOY(3)) THEN
@@ -282,7 +279,7 @@ C-----------------------------------------------------------------------
            CALL Aloha_PHENOL (CONTROL, ISWITCH, 
      &    SW, WEATHER, SOILPROP,                              !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
-     &    STGDOY, SUMDTT, TBASE, XSTAGE)                      !Output
+     &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
         ENDIF
 
         CUMDTT = CUMDTT + DTT
@@ -297,13 +294,13 @@ C-----------------------------------------------------------------------
      &     SOILPROP, SW, SWFAC,                               !Input
      &     RLV, RTDEP, RTWT)                                  !Output
      
-        CALL Aloha_GROSUB  (CONTROL, 
+        CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
      &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
      &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
-     &    SKWT, STMWT, STOVER, STOVN, STOVWT, UNH4, UNO3,     !Output
-     &    WTNUP, WTINITIAL, YIELD)                            !Output
+     &    SKWT, STMWT, STOVER, STOVN, STOVWT, TEMPM,          !Output
+     &    UNH4, UNO3, WTNUP, WTINITIAL, YIELD)                !Output
 
 !=======================================================================
 C        Call daily output subroutine

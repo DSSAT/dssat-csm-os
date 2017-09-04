@@ -44,7 +44,7 @@
      &     SOILPROP, SW, SWFAC                                !Input
       INTENT(OUT):: RLV, RTDEP, RTWT
 
-      CHARACTER ISWNIT*1
+      CHARACTER ISWWAT*1
       REAL      RNFAC,RLNEW,SWDF,TRLDF,RNLF,GRORT, RTWT, RTDEP, CUMDEP
       REAL  PLTPOP, DTT, CUMDTT, DEPFAC, SWFAC
       REAL, DIMENSION(NL) :: RLDF, RLV, DLAYR, ESW, SW, NO3, NH4
@@ -69,20 +69,27 @@
       PLTPOP = Planting % PLTPOP
       NLAYR  = SOILPROP % NLAYR
 
+      FIRST = .TRUE.
+
+      ISWWAT = ISWITCH % ISWWAT
+      IF (ISWWAT .NE. 'Y') RETURN
       DO L = 1, NLAYR
         ESW(L) = SOILPROP % DUL(L) - SOILPROP % LL(L)
       ENDDO
 
-      FIRST = .TRUE.
 !=======================================================================
       CASE (RATE)
 !=======================================================================
 !     from phenology
       SELECT CASE (ISTAGE)
-        CASE (1,9)
+        CASE (1)
+          IF (ISWWAT .NE. 'Y') RETURN
+          RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
+        CASE (9)
           RTDEP  = RTDEP + 0.01*DTT     ! Depth of root (f) DTT
       END SELECT
 
+      IF (ISWWAT .NE. 'Y') RETURN
       IF (GRORT < 0.0001) RETURN
 C
 C     The small differences between root length/weight ratios used in earlier
@@ -159,6 +166,8 @@ C
 !-----------------------------------------------------------------------
       CASE (INTEGR)
 !=======================================================================
+      IF (ISWWAT .NE. 'Y') RETURN
+
 !     Initialize RLV at stage 1
       IF (ISTAGE == 1 .AND. FIRST) THEN
         FIRST = .FALSE.

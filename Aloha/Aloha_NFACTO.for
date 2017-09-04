@@ -33,7 +33,7 @@ C=======================================================================
       SAVE
 
       INTEGER ISTAGE, DYNAMIC
-      REAL AGEFAC, CNSD1, CNSD2, NDEF3, NFAC, NSTRES
+      REAL AGEFAC, NDEF3, NFAC, NSTRES    !, CNSD1, CNSD2
       REAL RCNP, TANC, TCNP, TMNC, XSTAGE
 
 !=======================================================================
