@@ -85,10 +85,11 @@ C=======================================================================
 	INTEGER IRON(20)
 	REAL IRAMT(20)
 	REAL IREFF(20)
-      INTEGER IFREQ(20)
+      REAL IFREQ(20)
 	CHARACTER*5 V_IRONC(20)
 	CHARACTER*5 IRONC(20)
-      INTEGER IRRFREQ, DaysSinceIrrig
+      INTEGER DaysSinceIrrig
+      REAL IRRFREQ        !IRRFREQ as real value at request of IK 9/4/2017
 	REAL AVWATT         ! Water available for irrigation today (mm)
 	INTEGER NGSIrrigs   ! The number of irrigation inputs entered by the user
 	INTEGER IRINC       ! Counter keeping track of irrigation input been used
@@ -726,7 +727,7 @@ C-----------------------------------------------------------------------
         AVWATT = AVWATI(IRINC) - GSWatUsed
       ENDIF
 
-      IF (AVWATT < 1.E-5 .OR. DaysSinceIrrig < IrrFreq) THEN
+      IF (AVWATT < 1.E-5 .OR. float(DaysSinceIrrig) < IrrFreq) THEN
           IRRAMT = 0.0
           DEPIR  = 0.0
       ELSE

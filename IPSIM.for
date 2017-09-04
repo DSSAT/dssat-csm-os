@@ -67,7 +67,7 @@ C=======================================================================
       INTEGER PLDATE,PWDINF,PWDINL,HLATE,HDLAY,NRESDL
       INTEGER IFIND,LN,ERRNUM,FTYPEN,YRSIM,YEAR,RUN,RSEED1,RRSEED1
       INTEGER YRPLT
-      INTEGER FIST1, FIST2, IFREQ
+      INTEGER FIST1, FIST2
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
@@ -75,8 +75,8 @@ C=======================================================================
       REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
       REAL V_IMDEP(20)
       REAL V_ITHRL(20)
-      REAL V_ITHRU(20)
-      INTEGER V_IRON(20), V_IFREQ(20)
+      REAL V_ITHRU(20), V_IFREQ(20), IFREQ
+      INTEGER V_IRON(20)
       CHARACTER*5 V_IRONC(20)
       CHARACTER*5 V_IMETH(20)
       REAL V_IRAMT(20)
@@ -431,7 +431,7 @@ C
 
                READ(CHARTEST,'(63x,A5)') TEXT     ! Read value of IFREQ in text to check if blank or missing
                CHARLEN = LEN_TRIM(TEXT)
-               IF (CHARLEN==0) IFREQ = 0          ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
+               IF (CHARLEN==0) IFREQ = 0.0        ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
 
 
               V_IMDEP(GSIRRIG) = DSOIL                   ! Save growth stage specific variables in data vectors
@@ -766,7 +766,7 @@ C-----------------------------------------------------------------------
   68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
 !69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I5,
 !    &        1X,I5,1x,F5.0, 2(1x, F5.3))
-  69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I6)
+  69  FORMAT(I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,F6.0)
   70  FORMAT (3X,I2)
 
       END SUBROUTINE IPSIM
