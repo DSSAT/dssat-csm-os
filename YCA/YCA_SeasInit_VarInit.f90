@@ -201,6 +201,7 @@
         laixm = -99.0
         lanc = 0.0
         laphc = 0.0
+        NLAYRROOT = 0 !LPM 07SEP2017 To initialize this variable for initial estimation of WFG 
         plant%lapp = 0.0
         plant%laps = 0.0
         plant%latl = 0.0
