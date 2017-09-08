@@ -55,7 +55,9 @@
             IF ((STWT+CRWT) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                       plant(BR,LF)%SANC = plant(BR,LF)%STEMNN / (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))
+                        IF (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP) > 0) THEN
+                            plant(BR,LF)%SANC = plant(BR,LF)%STEMNN / (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))
+                        ENDIF
                     ENDDO
                 ENDDO
             ENDIF
