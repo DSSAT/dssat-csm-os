@@ -106,11 +106,13 @@
             ENDDO
             ! Seed use if no roots
             ! N use same % of initial as for CH20,if needed.
-            IF (RTWT <= 0.0) THEN
-                SEEDNUSE = AMAX1(0.0, AMIN1(SEEDN,LNDEM+SNDEM+RNDEM,SEEDNI/SDDUR*(TT/STDAY)))                          !EQN 203a
-            ELSE
-                ! Some use of seed (0.5 need) even if may not be needed
-                SEEDNUSE = AMAX1(0.0,AMIN1(SEEDN, 0.5*(LNDEM+SNDEM+RNDEM),SEEDNI/SDDUR*(TT/STDAY)))                    !EQN 203b
+            IF (STDAY /= 0) THEN
+                IF (RTWT <= 0.0) THEN
+                    SEEDNUSE = AMAX1(0.0, AMIN1(SEEDN,LNDEM+SNDEM+RNDEM,SEEDNI/SDDUR*(TT/STDAY)))                          !EQN 203a
+                ELSE
+                    ! Some use of seed (0.5 need) even if may not be needed
+                    SEEDNUSE = AMAX1(0.0,AMIN1(SEEDN, 0.5*(LNDEM+SNDEM+RNDEM),SEEDNI/SDDUR*(TT/STDAY)))                    !EQN 203b
+                ENDIF
             ENDIF
     
             ! Reserves used before uptake

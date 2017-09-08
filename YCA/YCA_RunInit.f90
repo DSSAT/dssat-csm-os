@@ -26,9 +26,8 @@
         CHARACTER(LEN=1)   IDETL       , ISWNIT      , ISWWAT      , RNMODE      
         CHARACTER(LEN=120) FILEIOIN    
         CHARACTER(LEN=10)  TL10FROMI                                                          ! Character function call
-
         !-----------------------------------------------------------------------
-        !         Reinitializing variables
+        !         Reinitializing first trans variables
         !-----------------------------------------------------------------------        
         CALL clear_YCA_First_Trans_m()
         

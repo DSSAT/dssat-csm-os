@@ -97,10 +97,12 @@
     
             ! Root depth growth
             RTDEPG = 0.0
-            IF (ISWWAT /='N'.AND. (STDAY*GERMFR > 0)) THEN
-                RTDEPG = TTGEM*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
-            ELSE
-                RTDEPG = TTGEM*RDGS/STDAY*GERMFR                                                                          !EQN 391b
+            IF (STDAY*GERMFR > 0) THEN
+                IF (ISWWAT /='N') THEN
+                    RTDEPG = TTGEM*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
+                ELSE
+                    RTDEPG = TTGEM*RDGS/STDAY*GERMFR                                                                          !EQN 391b
+                ENDIF
             ENDIF
             L = 0
             CUMDEP = 0.0
@@ -130,20 +132,22 @@
             NLAYRROOT = L
             ! Root senescence
             SENRTG = 0.0
-            DO L = 1, NLAYRROOT
-                RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TTGEM/STDAY                                                             !EQN 395
-                ! LAH Temperature effect above is not from soil temp
-                !LPM 19DEC2016 The model is considering now the soil temp (TTGEM)
-                IF (RTWT > 0.0) THEN
-                    RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
-                ENDIF
-                SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
-                IF (ISWNIT.NE.'N') THEN
-                    RTNSL(L) = RTWTSL(L)*RANC                                                                          !EQN 398
-                ELSE
-                    RTNSL(L) = 0.0
-                ENDIF  
-            ENDDO
+            IF(STDAY /= 0) THEN
+                DO L = 1, NLAYRROOT
+                    RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TTGEM/STDAY                                                             !EQN 395
+                    ! LAH Temperature effect above is not from soil temp
+                    !LPM 19DEC2016 The model is considering now the soil temp (TTGEM)
+                    IF (RTWT > 0.0) THEN
+                        RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
+                    ENDIF
+                    SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
+                    IF (ISWNIT.NE.'N') THEN
+                        RTNSL(L) = RTWTSL(L)*RANC                                                                          !EQN 398
+                    ELSE
+                        RTNSL(L) = 0.0
+                    ENDIF  
+                ENDDO
+            ENDIF
     
             ! Root weight growth by layer
             TRLDF = 0.0
