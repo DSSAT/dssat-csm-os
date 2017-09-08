@@ -26,11 +26,16 @@
         CHARACTER(LEN=1)   IDETL       , ISWNIT      , ISWWAT      , RNMODE      
         CHARACTER(LEN=120) FILEIOIN    
         CHARACTER(LEN=10)  TL10FROMI                                                          ! Character function call
+
+        !-----------------------------------------------------------------------
+        !         Reinitializing variables
+        !-----------------------------------------------------------------------        
+        CALL clear_YCA_First_Trans_m()
         
         !-----------------------------------------------------------------------
         !         The body of YCA_RunInit
         !-----------------------------------------------------------------------
-            
+        
         IF (RUNCRP.LE.0) THEN
             MODNAME(1:8) = 'CSYCA' // ModelVerTxt 
             VERSIONCSCAS = 010114                                                             ! MF 15SE14 Changed from VERSION, conflict with ModuleDefs 

@@ -341,14 +341,14 @@
                             WRITE(Fnumwrk,*)' '
                             WRITE(Fnumwrk,'(A45)')' FINISHED SIMULATION. PREPARING FINAL OUTPUTS'
                             WRITE(Fnumwrk,*)' '
-                            IF (HWAMM.LE.0.0) THEN
+                            IF (HWAMM <= 0.0) THEN
                                 IF (HWADT.GT.0.0) THEN
                                     HWAMM = HWADT
                                     WRITE(Fnumwrk,'(A32)')'  Time-course data used for HWAM'
                                 ENDIF
                             ELSE
-                                IF (HWADT.GT.0.0) THEN
-                                    IF (ABS(100.0*ABS(HWAMM-HWADT)/HWAMM).GT.0.0) THEN
+                                IF (HWADT > 0.0) THEN
+                                    IF (ABS(100.0*ABS(HWAMM-HWADT)/HWAMM) > 0.0) THEN
                                         WRITE(Fnumwrk,'(A48,F8.2)')'  Pc difference between final,time-course yields', &
                                             100.0*ABS(HWAMM-HWADT)/HWAMM
                                         WRITE(Fnumwrk,'(A22,I6)')'  Final yield         ',NINT(HWAMM)
@@ -357,7 +357,7 @@
                                 ENDIF
                             ENDIF
                             IF (CWAMM.LE.0.0) THEN
-                                IF (CWADT.GT.0.0) THEN
+                                IF (CWADT > 0.0) THEN
                                     CWAMM = CWADT
                                     WRITE(Fnumwrk,'(A33)')'  Time-course data used for CWAMM'
                                 ENDIF
