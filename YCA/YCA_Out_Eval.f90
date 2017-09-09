@@ -725,7 +725,7 @@
                             CALL Calendar(year,doy,dom,month)
                             CNCTMP = -99
                             IF (CNADSTG(L) > 0.0 .AND. CWADSTG(L) > 0.0) CNCTMP = CNADSTG(L)/CWADSTG(L)*100
-                            WRITE (FNUMOV,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,F7.1,F5.1,F6.1,F6.2,F6.2)')STGYEARDOY(L), &
+                            WRITE (FNUMOV,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,F7.1,I5,F6.1,F6.2,F6.2)')STGYEARDOY(L), &
                                 DOM,MONTH,Dapcalc(stgyeardoy(L),(plyeardoy/1000),plday),l,psname(l),NINT(CWADSTG(L)), &
                                 LAIC,LNUMSTG(L),NINT(CNADSTG(L)),CNCTMP,1.0-WFPPAV(L-1),1.0-NFPPAV(L-1)
                         ENDIF
@@ -738,7 +738,7 @@
                         CALL Calendar(year,doy,dom,month)
                         CNCTMP = -99
                         IF (CNAD>0.0 .AND. CWAD > 0.0)CNCTMP = CNAD/CWAD*100
-                        WRITE (FNUMOV,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,F7.1,F5.1,F6.1,F6.2,F6.2)')YEARDOY,DOM, &
+                        WRITE (FNUMOV,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,F7.1,I5,F6.1,F6.2,F6.2)')YEARDOY,DOM, &
                             MONTH,Dapcalc(yeardoy,(plyeardoy/1000),plday),l,'Harvest      ',NINT(HWAD),LAIC,LNUM, &
                             NINT(CNAD),CNCTMP,1.0-WFPPAV(PSX-1),1.0-NFPPAV(PSX-1)
                             !NINT(CNAD),CNCTMP,1.0-WFPPAV(MSTG-1),1.0-NFPPAV(MSTG-1) !LPM 06MAR15 MSTG TO PSX
