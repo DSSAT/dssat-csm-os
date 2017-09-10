@@ -1244,6 +1244,10 @@ Module YCA_First_Trans_m
         
         
         L = 0
+        LF = 0
+        Bcount = 0
+        Lcount = 0
+        BR=0
         L1 = 0
         L2 = 0
         I = 0
