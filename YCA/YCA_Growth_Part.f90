@@ -173,7 +173,9 @@
         
                 
             IF (DAWWP.LT.900) THEN
+                open(unit = 2, file = "Lnumsimstg.txt")
                 plant(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX =  LAXS*((DAWWP*1E-3)+0.10)                  ! LPM 07MAR15 
+                write(2,*) (LNUMSIMSTG(BRSTAGE)+1), plant(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX
             ELSE
                 IF (DAWWP-TT.LT.900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
                 !LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(4.154582E-2*(DAE-DALSMAX))))
