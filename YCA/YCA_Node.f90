@@ -81,6 +81,7 @@ Module YCA_Node !Module of environment
         Node_type_constructor%lagl3t = 0.0
         Node_type_constructor%laglt = 0.0
         Node_type_constructor%lapp = 0.0
+        Node_type_constructor%LAPOTX = 0.0
         Node_type_constructor%laps = 0.0
         Node_type_constructor%latl = 0.0
         Node_type_constructor%latl2 = 0.0 !LPM 15NOV15 added to save leaf area by cohort
