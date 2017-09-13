@@ -100,8 +100,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 1
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
-!     CHARACTER(len=10) :: VBranch = '-release  '
+!     CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
 !       4.7.0.1  chp 09/13/2017 Add Aloha-Pineapple model
