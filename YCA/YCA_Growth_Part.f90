@@ -172,12 +172,10 @@
             !b_slope_lsize = MAX(0.0,0.0375-(0.0071*((TRDV1(3)-TRDV1(2))-TT20)))       ! LPM 28FEB15
         
                 
-            IF (DAWWP.LT.900) THEN
-                open(unit = 2, file = "Lnumsimstg.txt")
+            IF (DAWWP < 900) THEN
                 plant(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX =  LAXS*((DAWWP*1E-3)+0.10)                  ! LPM 07MAR15 
-                write(2,*) (LNUMSIMSTG(BRSTAGE)+1), plant(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX
             ELSE
-                IF (DAWWP-TT.LT.900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
+                IF (DAWWP-TT< 900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
                 !LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(4.154582E-2*(DAE-DALSMAX))))
                 !LPM 12JUL2015 test with thermal time with optimum of 20 C
                 !LPM 24APR2016 Use of DALS (considering water stress) instead of TTCUMLS
@@ -188,7 +186,7 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                SHLAG2B(BR) = 0.0  
                 DO LF = 1, LNUMSIMSTG(BR)+1
-                    IF (plant(BR,LF)%LAGETT<=LLIFGTT) THEN
+                    IF (plant(BR,LF)%LAGETT <= LLIFGTT) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
                         plant(BR,LF)%LATLPREV = plant(BR,LF)%LATL
