@@ -320,7 +320,7 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'SUB') .EQ. 0) .AND.      !SUBSTOR
      &    (INDEX(MODEL(3:5),'CAN') .EQ. 0) .AND.      !CANEGRO
      &    (INDEX(MODEL(3:5),'CSP') .EQ. 0) .AND.      !CASUPRO
-!    &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.      !ALOHA
+     &    (INDEX(MODEL(3:5),'ALO') .EQ. 0) .AND.      !ALOHA
      &    (INDEX(MODEL(3:5),'ARO') .EQ. 0) .AND.      !AROIDS
      &    (INDEX(MODEL(3:5),'CRP') .EQ. 0) .AND.      !CropSim cassava
      &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.      !APSIM N-wheat
@@ -344,6 +344,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES
      &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND.    !Maize IXIM
      &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND.    !Millet
+     &    (INDEX(MODEL(1:5),'PIALO') .EQ. 0) .AND.    !Aloha Pineapple
      &    (INDEX(MODEL(1:5),'PTSUB') .EQ. 0) .AND.    !Potato
      &    (INDEX(MODEL(1:5),'RICER') .EQ. 0) .AND.    !CERES-Rice
      &    (INDEX(MODEL(1:5),'RIORZ') .EQ. 0) .AND.    !ORYZA-Rice
