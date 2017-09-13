@@ -75,6 +75,15 @@ ENDIF(WIN32)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} 
 	${OSDefinitions}
 	ModuleDefs.for
+	Aloha/Aloha_mod.f90
+	Aloha/Aloha_GROSUB.for
+	Aloha/Aloha_NFACTO.for
+	Aloha/Aloha_NUPTAK.for
+	Aloha/Aloha_OPGROW.f90
+	Aloha/Aloha_OPHARV.for
+	Aloha/Aloha_PHENOL.for
+	Aloha/Aloha_ROOTGR.for
+	Aloha/Aloha_PINE.for
 	ASMDM.for
 	AUTHAR.for
 	AUTPLT.for
