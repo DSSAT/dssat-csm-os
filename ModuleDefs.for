@@ -97,13 +97,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 7
         INTEGER :: Model = 0
-        INTEGER :: Build = 0
+        INTEGER :: Build = 1
       END TYPE VersionType
       TYPE (VersionType) Version
 !     CHARACTER(len=10) :: VBranch = '-develop  '
       CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.7.0.1  chp 09/13/2017 Add Aloha-Pineapple model
 !       4.7.0.0  chp 08/09/2017 v4.7
 !       4.6.5.1  chp 05/10/2017 Workshop 2017 version.  
 !       4.6.0.1  chp 06/28/2011 v4.6
@@ -140,8 +141,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) MEEVP, MEHYD, MEINF, MELI, MEPHO
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
         CHARACTER (len=1) METMP !Temperature, EPIC
-        CHARACTER (len=1) IFERI, IRESI, ICO2
-        CHARACTER (len=1) FMOPT   ! VSH
+        CHARACTER (len=1) IFERI, IRESI, ICO2, FMOPT
         INTEGER NSWI
       END TYPE SwitchType
 
