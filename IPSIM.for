@@ -275,6 +275,10 @@ C
            ENDIF
          ENDIF
 
+! ** DEFAULT MESOL = 2 ** 3/26/2007
+!  MESOL = '1' Original soil layer distribution. Calls LYRSET.
+!  MESOL = '2' New soil layer distribution. Calls LYRSET2.
+!  MESOL = '3' User specified soil layer distribution. Calls LYRSET3.
          IF (INDEX('123',MESOL) < 1) THEN
             MESOL = '2'
          ENDIF
