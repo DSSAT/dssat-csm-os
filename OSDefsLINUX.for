@@ -4,7 +4,7 @@
 !=======================================================================
 
       MODULE OSDefinitions
-!     Contains defintion for Windows Platform which are used throughout 
+!     Contains defintion for Linux Platform which are used throughout 
 !     the model.
 
       SAVE
