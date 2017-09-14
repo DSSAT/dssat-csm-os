@@ -170,7 +170,7 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
                  Fortran "/unroll"        # Intel Windows
                          "-funroll-loops" # GNU
                          "-unroll"        # Intel
-			 "-Munroll"       # Portland Group
+			             "-Munroll"       # Portland Group
                 )
 
 # Inline functions
@@ -182,7 +182,7 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
                 )
 
 # Interprocedural (link-time) optimizations
-SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE #"${CMAKE_Fortran_FLAGS_RELEASE}"
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
                  Fortran "/Qipo"    # Intel Windows
                          "-ipo"     # Intel
                          "-flto"    # GNU
@@ -190,7 +190,7 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE #"${CMAKE_Fortran_FLAGS_RELEASE}"
                 )
 
 # Single-file optimizations
-SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE #"${CMAKE_Fortran_FLAGS_RELEASE}"
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
                  Fortran "/Qip" # Intel Windows
                          "-ip"  # Intel
                 )
