@@ -1,28 +1,28 @@
-*EXP.DETAILS: SPPI1209AL ALFALFA SPAIN
+*EXP.DETAILS: AGZG1501AL SPRINKLER IRRIGATED AND FERTILIZED ALFALFA, SPAIN
 
 *GENERAL
 @PEOPLE
-Wafa Malik; K.J. BOOTE
+WAFA MALIK; K.J. BOOTE; FARIDA DECHMI; RAMON ISLA; JOSE CAVERO.
 @ADDRESS
-hidrante 209-a
+AGRIFOOD RESEARCH AND TECHNOLOGY CENTRE OF ARAGON, SPAIN 
 @SITE
-SPAIN
+MONTANANA, ZARAGOZA.
 @ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
       2   -99   -99   -99   -99   -99     1   -99   -99 pping
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 1 0 209-a                      1  1  0  0  1  1  1  0  0  0  0  1  1
+ 1 1 1 0 IRRIGATED, 63 kg N/ha      1  1  0  0  1  1  1  0  0  0  0  1  1
 
 *CULTIVARS
 @C CR INGENO CNAME
- 1 AL AL0001 alfalfa
+ 1 AL AL0001 Aragon
 
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
- 1 SPPI1209 TARD       -99   -99   -99   -99   -99   -99 -99    -99  alal209a16 209-a (2015-2017)
+ 1 AGZA1501 TARD       -99   -99   -99   -99   -99   -99 -99    -99  ALSP209115 IRRIGATED, 63 kg N/ha (2015-2017)
 @L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
- 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+ 1              42               0       222               -99   -99   -99   -99   -99   -99
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
@@ -160,3 +160,5 @@ SPAIN
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 01001     0     0
 
+
+
