@@ -66,7 +66,7 @@
     REAL    TLCHD       , TAIRHR(24)  , TMAX        , TMIN        , TNIMBSOM    , TNOXD       , TOMINFOM    , TOMINSOM                                                   
     REAL    TOMINSOM1   , TOMINSOM2   , TOMINSOM3   , TRWUP       , UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP      
 !    REAL    PARHR(24)   , RADHR(24)   , RHUMHR(24)  , VPDHR(24)                                                        !MF 14SE14 Hourly weather data
-    REAL    CSVPSAT     , TFAC4       , YVALXY      , CSYVAL                                                           ! Real function calls
+    REAL    CSVPSAT     , TFAC4       , TFAC5       ,YVALXY      , CSYVAL                                               ! Real function calls !LPM 15sep2017 Added TFAC5 
 
     CHARACTER(LEN=1)  :: IDETG, IDETL, IDETO, IDETS, ISWDIS, ISWNIT, ISWWAT      
     CHARACTER(LEN=1)  :: MESOM, RNMODE      
