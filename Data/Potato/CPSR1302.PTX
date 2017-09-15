@@ -1,10 +1,10 @@
-*EXP.DETAILS: CPSR9302PT CIP 1993
+*EXP.DETAILS: CPSR1302PT CIP 2013 3 cultivars
 
 *GENERAL
 @PEOPLE
--99
+Manuel Gastelo, Juan Concha
 @ADDRESS
- CIP
+International Potato Center CIP
 @SITE
  San Ramon, Peru
 
@@ -12,7 +12,7 @@
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
  1 1 1 0 Achirana                   1  1  1  1  1  1  1  0  0  0  0  1  1
  2 1 1 0 Atlantic                   2  1  1  1  1  1  1  0  0  0  0  1  1
- 4 1 1 0 397077.16                  4  1  1  1  1  1  1  0  0  0  0  1  1
+ 4 1 1 0 CLON 7716                  4  1  1  1  1  1  1  0  0  0  0  1  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -22,19 +22,19 @@
 
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
- 1 CPSR9302 CPSR9301   -99   -99   -99   -99   -99   -99 L      -99  CPSR000022 -99
+ 1 CPSR1302 CPSR1301   -99   -99   -99   -99   -99   -99 L      -99  CPSR000022 -99
 @L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
  1       -75.35639        -11.1275       830               -99   -99   -99   -99   -99   -99
 
 *SOIL ANALYSIS
 @A SADAT  SMHB  SMPX  SMKE  SANAME
- 1 93213   -99   -99   -99  -99
+ 1 13213   -99   -99   -99  -99
 @A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
  1    15   1.5   .48   .04   5.5   -99   -99   5.9   -99
 
 *INITIAL CONDITIONS
 @C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
- 1   -99 93213   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 -99
+ 1   -99 13213   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 -99
 @C  ICBL  SH2O  SNH4  SNO3
  1    30  .128    .8   6.8
  1    60  .139    .8   6.8
@@ -42,43 +42,47 @@
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 93213 93228 3.333 3.333     S   -99   100   -99     5   444   -99   -99   -99     2                        -99
+ 1 13213 13228 3.333 3.333     S   -99   100   -99     5   444   -99   -99   -99     2                        -99
 
 *IRRIGATION AND WATER MANAGEMENT
 @I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
  1   -99   -99   -99   -99   -99   -99   -99 -99
 @I IDATE  IROP IRVAL
- 1 93213 IR004    15
- 1 93219 IR004    39
- 1 93225 IR004    29
- 1 93228 IR004    30
- 1 93232 IR004    29
- 1 93236 IR004    30
- 1 93241 IR004    16
- 1 93249 IR004    15
- 1 93255 IR004    40
- 1 93258 IR004    28
- 1 93262 IR004    31
- 1 93267 IR004    31
- 1 93271 IR004    30
- 1 93277 IR004    31
- 1 93285 IR004    33
- 1 93292 IR004    22
+ 1 13213 IR004    15
+ 1 13219 IR004    39
+ 1 13225 IR004    29
+ 1 13228 IR004    30
+ 1 13232 IR004    29
+ 1 13236 IR004    30
+ 1 13241 IR004    16
+ 1 13249 IR004    15
+ 1 13255 IR004    40
+ 1 13258 IR004    28
+ 1 13262 IR004    31
+ 1 13267 IR004    31
+ 1 13271 IR004    30
+ 1 13277 IR004    31
+ 1 13285 IR004    33
+ 1 13292 IR004    22
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
- 1 93213 FE005 AP004     5   150   -99   -99   -99   -99   -99 -99
- 1 93213 FE013 AP004     5     0   300   -99   -99   -99   -99 -99
- 1 93213 FE016 AP004     5     0   -99   265   -99   -99   -99 -99
- 1 93253 FE005 AP004     5   150   -99   -99   -99   -99   -99 -99
+ 1 13213 FE005 AP004     5   150   -99   -99   -99   -99   -99 -99
+ 1 13213 FE013 AP004     5     0   300   -99   -99   -99   -99 -99
+ 1 13213 FE016 AP004     5     0   -99   265   -99   -99   -99 -99
+ 1 13253 FE005 AP004     5   150   -99   -99   -99   -99   -99 -99
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 13213   -99   -99   -99   -99   -99   -99   -99   -99 -99
 
 *HARVEST DETAILS
 @H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
- 1 93318 GS000   -99   -99   -99   -99 
+ 1 13318 GS000   -99   -99   -99   -99 
 
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 1 GE              1     1     S 93213  2150 DEFAULT SIMULATION CONTR
+ 1 GE              1     1     S 13213  2150 DEFAULT SIMULATION CONTR
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              Y     N     Y     N     N     N     N     Y     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
@@ -101,6 +105,7 @@
  1 HA              0 83057   100     0
 
 
+!
 ! Waring: There is a variable [dssat_cul_id] with oversized content [Achirana], only first 6 bits will be applied.
 ! Waring: There is a variable [dssat_cul_id] with oversized content [Atlantic], only first 6 bits will be applied.
 ! Waring: There is a variable [dssat_cul_id] with oversized content [397073.16], only first 6 bits will be applied.
