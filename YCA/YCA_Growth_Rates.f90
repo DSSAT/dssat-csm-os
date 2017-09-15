@@ -62,6 +62,8 @@
                 availableCH2O = availableCarbohydrate_methodI(CO2, CO2AIR, CO2EX, CO2FP, CO2COMPC, PARMJFAC, PARFC, PARI, PARU, PLTPOP, RATM, RCROP, RLFC, RLF, RSFP, SLPF, SRAD, TMAX, TMIN, TFP, WFP)
             case ('M')
                 availableCH2O = availableCarbohydrate_methodM(CO2AIR,PARU, RATM, RCROP,RLFC, RLF, WFP, MJPERE, PARMJFAC, SRAD, TFP, RSFP, SLPF, PARI, PLTPOP)
+            case ('V')
+                availableCH2O = availableCarbohydrate_methodV(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
         end select
         CARBOEND = availableCH2O
             
@@ -175,7 +177,7 @@
             ! IF (TMEAN20.LT.0.0) TFP = 0.0
             Tfp = TFAC4(trphs,tmean,TTOUT)                                                                             !EQN 056
             !Tfg = TFAC4(trlfg,tmean,TTB)                                                                               !EQN 058 LPM 21MAR15 TTB will be used to determine DU and branches
-            Tfg = TFAC4(trlfg,tmean,TTL)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
+            Tfg = TFAC4(trdv3,tmean,TTL)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             IF (CFLTFG.EQ.'N') TFG = 1.0
             Tfb = TFAC4(trbrg,tmean,TTB)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             ! Vapour pressure

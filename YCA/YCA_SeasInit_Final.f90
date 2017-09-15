@@ -104,7 +104,7 @@
                 ENDIF        
             ENDIF        
         ENDIF        
-        IF (MEPHO /= 'I'.AND. MEPHO /= 'M' .AND. MEPHO /='R') THEN ! if photosynthesis method doesn't exists
+        IF (MEPHO /= 'I'.AND. MEPHO /= 'M' .AND. MEPHO /='R' .AND. MEPHO /='V') THEN ! if photosynthesis method doesn't exists
                     WRITE(MESSAGE(1),'(A22,A1,A15,A19)')'Photosynthesis method ',MEPHO,' not an option ',' Changed to R (RUE)'
                     
                     CALL WARNING(1,'CSYCA',MESSAGE)
