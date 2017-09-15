@@ -62,6 +62,8 @@
                 availableCH2O = availableCarbohydrate_methodI(CO2, CO2AIR, CO2EX, CO2FP, CO2COMPC, PARMJFAC, PARFC, PARI, PARU, PLTPOP, RATM, RCROP, RLFC, RLF, RSFP, SLPF, SRAD, TMAX, TMIN, TFP, WFP)
             case ('M')
                 availableCH2O = availableCarbohydrate_methodM(CO2AIR,PARU, RATM, RCROP,RLFC, RLF, WFP, MJPERE, PARMJFAC, SRAD, TFP, RSFP, SLPF, PARI, PLTPOP)
+            case ('V')
+                availableCH2O = availableCarbohydrate_methodV(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
         end select
         CARBOEND = availableCH2O
             
@@ -126,12 +128,12 @@
             
             ! Nitrogen
             ! WARNING No N stress after emergence on day that emerges
-            IF (ISWNIT.NE.'N') THEN
-              IF (LFWT.GT.1.0E-5) THEN
+            IF (ISWNIT /= 'N') THEN
+              IF (LFWT > ZERO) THEN
                 !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))
                 LNCGL = LNCM + NFGL * (LNCX-LNCM)                                                                      !EQN 164
                 LNCGU = LNCM + NFGU * (LNCX-LNCM)                                                                      !EQN 165
-                IF (LNCGU - LNCGL > 1.E-6) THEN
+                IF (LNCGU - LNCGL > ZERO) THEN
                  !NFG =AMIN1(1.0,AMAX1(0.0,(LANC-LNCGL)/(LNCGU-LNCGL)))                                                 !EQN 163 !LPM 02SEP2016 To keep NFG as NFLF2
                  NFG = plant(0,0)%NFLF2                                                 !EQN 163
                 ELSE
@@ -139,7 +141,7 @@
                 ENDIF
                 LNCPL = LNCM + NFPL * (LNCX-LNCM)
                 LNCPU = LNCM + NFPU * (LNCX-LNCM)
-                IF (LNCPU - LNCPL > 1.E-6) THEN                                                                        !EQN 167
+                IF (LNCPU - LNCPL > ZERO) THEN                                                                        !EQN 167
                  !NFP =AMIN1(1.0,AMAX1(0.0,(LANC-LNCPL)/(LNCPU-LNCPL)))                                                 !EQN 166 !LPM 02SEP2016 Use NFLF2 intead of original equation
                  NFP =plant(0,0)%NFLF2 
                 ELSE
@@ -155,7 +157,7 @@
             ENDIF
 
             ! If N stress switched off early in cycle. 
-            IF (ISWNITEARLY.EQ.'N') THEN
+            IF (ISWNITEARLY == 'N') THEN
               NFG = 1.0
               NFP = 1.0  
             ENDIF
@@ -175,7 +177,7 @@
             ! IF (TMEAN20.LT.0.0) TFP = 0.0
             Tfp = TFAC4(trphs,tmean,TTOUT)                                                                             !EQN 056
             !Tfg = TFAC4(trlfg,tmean,TTB)                                                                               !EQN 058 LPM 21MAR15 TTB will be used to determine DU and branches
-            Tfg = TFAC4(trlfg,tmean,TTL)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
+            Tfg = TFAC4(trdv3,tmean,TTL)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             IF (CFLTFG.EQ.'N') TFG = 1.0
             Tfb = TFAC4(trbrg,tmean,TTB)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             ! Vapour pressure
@@ -183,7 +185,7 @@
             IF (PHTV.GT.0.0) THEN
               IF (TDEW.LE.-98.0) TDEW = TMIN
               VPD = CSVPSAT(tmax) - CSVPSAT(TDEW)    ! Pa                                                              !EQN 262
-              IF (VPD/1000.0.GT.PHTV) &
+              IF (VPD/1000.0 > PHTV) &
                VPDFP = AMAX1(0.0,1.0+PHSV*(VPD/1000.0-PHTV))                                                           !EQN 263
             ENDIF
 

@@ -1,4 +1,4 @@
-C=======================================================================
+﻿C=======================================================================
 C  OPSPAM, Subroutine, C.H.Porter from Soil Water portions of OPDAY
 C  Generates output for daily soil water data
 C-----------------------------------------------------------------------
@@ -220,57 +220,51 @@ C-----------------------------------------------------------------------
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-          !Daily printout
-          FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),8(F7.3),"
-          IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
-     &        CES > 1000. .OR. CEF > 1000. .OR. CEM > 1000.) THEN
-            FMT = TRIM(FMT) // "6F8.0))"
-          ELSE 
-            FMT = TRIM(FMT) // "6F8.2))"
-          ENDIF
+            !Daily printout
+            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),8(F7.3),"
+            IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
+     &         CES > 1000. .OR. CEF > 1000. .OR. CEM > 1000.) THEN
+              FMT = TRIM(FMT) // "6F8.0))"
+            ELSE 
+              FMT = TRIM(FMT) // "6F8.2))"
+            ENDIF
 
-          WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX, 
+            WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX, 
      &        AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, EMAA,  
      &        CEO, CET, CEP, CES, CEF, CEM   
 !     &        ,SALB, SWALB, MSALB, CMSALB
 !  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
 !     &      8(F7.3),6(F8.2))     
 !     &    ,4F7.2 ,10(F7.3))
-          END IF   ! VSH
           
-          IF (ISWITCH % MESEV == 'S') THEN
-            IF (SOILPROP % NLAYR < 11) THEN
-              IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-              WRITE(LUN,'(11F8.3)') ES_LYR(1:N_LYR) , TRWU
-              END IF   ! VSH
+            IF (ISWITCH % MESEV == 'S') THEN
+              IF (SOILPROP % NLAYR < 11) THEN
+                WRITE(LUN,'(11F8.3)') ES_LYR(1:N_LYR) , TRWU
+              ELSE
+                ES10 = 0.0
+                DO L = 10, SOILPROP % NLAYR
+                  ES10 = ES10 + ES_LYR(L)
+                ENDDO
+!               WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
+                WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
+              ENDIF    
             ELSE
-              ES10 = 0.0
-              DO L = 10, SOILPROP % NLAYR
-                ES10 = ES10 + ES_LYR(L)
-              ENDDO
-              IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-!              WRITE(LUN,'(10F8.3)') ES_LYR(1:9), ES10
-               WRITE(LUN,'(11F8.3)') ES_LYR(1:9), ES10, TRWU !VSH
-              END IF   ! VSH
-            ENDIF    
-          ELSE
-            IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-            WRITE(LUN,'(" ")')
-            END IF   ! VSH
-          ENDIF
+              WRITE(LUN,'(" ")')
+            ENDIF
+          ENDIF   ! VSH
 
-!     VSH CSV output corresponding to ET.OUT
-      IF (FMOPT == 'C') THEN 
-!         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
-         N_LYR = SOILPROP%NLAYR
-         CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
+!         VSH CSV output corresponding to ET.OUT
+          IF (FMOPT == 'C') THEN 
+!           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
+            N_LYR = SOILPROP%NLAYR
+            CALL CsvOutET(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, 
      &AVSRAD, AVTMX, AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, 
      &EMAA, CEO, CET, CEP, CES, CEF, CEM, N_LYR, ES_LYR, TRWU,
      &vCsvlineET, vpCsvlineET, vlngthET)
      
-         CALL LinklstET(vCsvlineET)
-      END IF
+            CALL LinklstET(vCsvlineET)
+          ENDIF
       
           NAVWB = 0
           EFAA  = 0.

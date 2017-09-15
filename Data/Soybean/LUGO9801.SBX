@@ -1,0 +1,115 @@
+*EXP.DETAILS: LUGO9801SB SOJA, REGADIO, FECHAS DE SIEMBRA, 1998
+
+*GENERAL
+@PEOPLE
+ F. SAU & B. RUIZ
+@ADDRESS
+-99
+@SITE
+ LUGO (SPAIN)
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 0 0 0 98, 1ST SOW, LABRADOR IRR  1  1  0  0  1  1  0  0  0  0  0  0  1
+ 2 0 0 0 98, 2ND SOW, LABRADOR IRR  1  1  0  0  2  2  0  0  0  0  0  0  2
+ 3 0 0 0 98, 1ST SOW, MAJOR IRR.    2  1  0  0  3  1  0  0  0  0  0  0  1
+ 4 0 0 0 98, 2ND SOW, MAJOR IRR     2  1  0  0  4  2  0  0  0  0  0  0  2
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 SB LU0004 LABR.  00
+ 2 SB LU0005 MAJ. 000
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 LUGO0001 LUGO         0     0     0     0     0    0S LO     130  LUGO930001 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0       480                 0     0     0     0   -99   -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 98160 98170    50    50     S     R    40    45   2.5   -99   -99   -99   -99     0                        -99
+ 2 98181 98192    50    50     S     R    40    45   2.5   -99   -99   -99   -99     0                        -99
+ 3 98160 98170  46.7  46.7     S     R    40    45   2.5   -99   -99   -99   -99     0                        -99
+ 4 98181 98192  54.2  54.2     S     R    40    45   2.5   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 98162 IR005    11
+ 1 98170 IR005     8
+ 1 98202 IR005    31
+ 1 98208 IR005    16
+ 1 98211 IR005    39
+ 1 98218 IR005    39
+ 1 98223 IR005    16
+ 1 98225 IR005    31
+ 1 98231 IR005    16
+ 1 98239 IR005    16
+ 1 98243 IR005    20
+ 1 98246 IR005    19
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 2 98211 IR005    39
+ 2 98218 IR005    39
+ 2 98223 IR005    16
+ 2 98225 IR005    31
+ 2 98231 IR005    16
+ 2 98237 IR005    26
+ 2 98239 IR005    16
+ 2 98246 IR005    40
+ 2 98266 IR005    27
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 98160  2150 date 1
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     N     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          94143 94157    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 95150   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              1     1     S 98181  2150 date 2
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 2 MA              R     R     N     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 2 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          94143 94157    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 2 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 95150   100     0
+
+
+

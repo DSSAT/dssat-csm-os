@@ -1,5 +1,5 @@
 *Codes for Field and Simulated Data
-! DSSAT v4.6; 07/01/2015
+! DSSAT v4.7; 09/01/2017
 
 ! Codes currently used for both simulated and field data are listed in sections
 ! relating to specific model output files. Codes currently only used for field
@@ -606,6 +606,7 @@ TEMt   Temp/h midnight Hourly air temperature at midnight                       
 TFOM   RESIDUE kg/ha   Plant residue remaining (kg [dm]/ha)                     .
 TFON   RESIDUE N kg/ha Plant residue N remaining (kg/ha)                        .
 TGAV   AVG CAN TMP °C  Daily average canopy temp (°C)                           .
+TGNN   NOON CAN TMP °C Noon canopy temperature (°C)                             .
 TGON   NOON GRO TMP °C Noon growth temperature (°C)                             .
 Tnit   Temp midnight°C Temperature midnight (°C)                                THR
 TNN    T@noon mm/h     Transpiration rate at noon (mm/h) 

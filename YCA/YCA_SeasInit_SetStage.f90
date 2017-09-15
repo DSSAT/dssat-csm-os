@@ -432,8 +432,11 @@
         ! Seed N calculated from total seed
         SDNAP = (SDNPCI/100.0)*SDRATE                                                                                  !EQN 026
         SEEDNI = (SDNPCI/100.0)*(SDRATE/(PPOP*10.0))                                                                !EQN 027
-        IF (ISWNIT.NE.'N') THEN
+        IF (ISWNIT /= 'N') THEN
             SEEDN = SEEDNI
+            WRITE(MESSAGE(1),'(A39)') 'Simulations with N are under evaluation'
+            WRITE(MESSAGE(2),'(A68)') 'it could affect your results, consider to turn off N for simulations'
+            CALL WARNING(2,'CSYCA',MESSAGE)
         ELSE
             SEEDN = 0.0
             SDNAP = 0.0

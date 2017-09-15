@@ -1,0 +1,20 @@
+*EXP.DATA (A): UFGA7801SB BRAGG, IRRIGATED & NON-IRRIGATED                            
+
+! File last edited on day 08/27/2003 at 4:13:49 PM
+!
+!
+! Note:  These yields do not fit with the ones we reported in the ASA and
+! CSRS project reports.  Why don't they?  Where did these values come from?
+! CSRS project report has 2684 (not 3041) and 821 (not 1178) for trt 1 and 2.
+! Treatments 3, 4, and 5 added back 9/4/95 by KJB.  Lost from prior versions
+@TRNO   HWAM  HWUM  H#AM  H#UM  LAIX  CWAM  BWAH  ADAT  MDAT  PD1T  PDFT  PWAM  HIAM  THAM
+     1 3041. .1440 2223.  1.96  4.67 6068. 1958.   211   282   233   233 4009.  .501 75.85
+     2 1178. .1230  969.  1.85  4.50 3491. 1756.   211   282   233   233 1602.  .337 73.53
+     3 2766.   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+     4 2245.   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+     5 2586.   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+
+
+
+

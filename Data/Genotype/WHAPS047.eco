@@ -1,0 +1,20 @@
+*WHEAT ECOTYPE COEFFICIENTS: WHAPS047 MODEL
+
+!                           1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19
+@ECO#  ECONAME.........  TBASE  TOPT  ROPT  TTOP   P20  VREQ  GDDE DSGFT   RUE  KCAN  TSEN  CDAY
+IB0001 GENERIC MEXICAN     0.0  26.0  26.0  34.0  12.5   50.  10.2  200.   4.2  0.85
+IB0002 GENERIC             1.0  34.0  34.0  34.0  12.5   70.   6.0  170.   4.5  0.85
+IB0003 GENERIC             0.0  34.0  34.0  34.0  12.5   50.   6.0  170.   2.2  0.85
+DFAULT DEFAULT             0.0  34.0  34.0  34.0  12.5   50.   6.0  170.   4.2  0.85
+
+!TBASE - base temperature below which no development occurs, C
+!TOPT  - temperature at which maximum development rate occurs during vegetative stages, C
+!ROPT  - temperature at which maximum development rate occurs for reproductive stages, C (no effect, WHAPS)
+!TTOP  - temperature above which no development occurs, C
+!P2O   - Daylength below which daylength does not affect development rate, hours	(no effect, WHAPS)
+!VREQ  - Vernalization required for max.development rate (VDays)
+!GDDE  - Growing degree days per cm seed depth required for emergence, GDD/cm
+!DSGFT - GDD from End Ear Growth to Start Grain Filling period, C
+!RUE   - Radiation use efficiency, g plant dry matter/MJ PAR (no effect, WHAPS)
+!KCAN  - Canopy light extinction coefficient for daily PAR. (no effect, WHAPS)
+!TSEN  - Critical temperature below which leaf damage occurs (default 6°C)

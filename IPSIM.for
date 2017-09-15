@@ -275,6 +275,10 @@ C
            ENDIF
          ENDIF
 
+! ** DEFAULT MESOL = 2 ** 3/26/2007
+!  MESOL = '1' Original soil layer distribution. Calls LYRSET.
+!  MESOL = '2' New soil layer distribution. Calls LYRSET2.
+!  MESOL = '3' User specified soil layer distribution. Calls LYRSET3.
          IF (INDEX('123',MESOL) < 1) THEN
             MESOL = '2'
          ENDIF
@@ -927,7 +931,7 @@ C-----------------------------------------------------------------------
 
         I = INDEX(FILECTL,SLASH)
         IF (I < 1) THEN
-!         No path provided -- look first in DSSAT46 directory
+!         No path provided -- look first in DSSAT47 directory
           CALL GETARG (0,INPUTX)      !Name of model executable
           IPX = LEN_TRIM(INPUTX)
 
@@ -937,7 +941,7 @@ C-----------------------------------------------------------------------
 !     1) Go to pull down menu Project -> Settings -> Fortran (Tab) ->
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
-D     INPUTX = 'C:\DSSAT46\DSCSM046.EXE'
+D     INPUTX = 'C:\DSSAT47\DSCSM047.EXE'
 D     IPX = 23
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

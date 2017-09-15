@@ -1,0 +1,92 @@
+*EXP.DETAILS: KSAS8101WH N RESPONSE,KANSAS STATE  3FE(N)*2IR  (DSSAT3)
+
+*GENERAL
+@PEOPLE
+ WAGGER,M.G. KISSEL,D
+@ADDRESS
+ DEPT.AGRONOMY,KANSAS STATE UNIV,MANHATTAN,KANSAS
+@SITE
+ ASHLAND,KS,USA  39.0;-97.0;226;CFA
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+@NOTES
+Documented in Wagger,M.G. 1983 Nitrogen cycling in the plan-soil system.
+Ph.D. thesis, Kansas State Univ..Mike Wagger currently thought to be at 
+the Agronomy Dept,N.Carolina State Un
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 DRYLAND  - 0 KG N/HA       1  1  0  1  1  0  1  0  0  0  0  0  1
+ 2 1 0 0 DRYLAND  - 60 KG N/HA      1  1  0  1  1  0  2  0  0  0  0  0  1
+ 3 1 0 0 DRYLAND  - 180 KG N/HA SP  1  1  0  1  1  0  3  0  0  0  0  0  1
+ 4 1 0 0 IRRIGATED - 0 KG N/HA      1  1  0  1  1  1  1  0  0  0  0  0  1
+ 5 1 0 0 IRRIGATED - 60 KG N/HA     1  1  0  1  1  1  2  0  0  0  0  0  1
+ 6 1 0 0 IRRIGATED 180 KG N/HA SPL  1  1  0  1  1  1  3  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 WH IB0488 NEWTON
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 KSAS0001 KSAS       -99     0 DR000     0     0 00000 -99    180  IBWH980018 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    WH 81279  1200     0     1     1   -99  6500  1.14     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    15  .205   3.4   9.8
+ 1    30   .17   3.2   7.3
+ 1    60  .092   2.5   5.1
+ 1    90  .065   2.2   4.7
+ 1   120  .066   2.7   4.3
+ 1   150  .066   2.7   4.3
+ 1   180  .066   2.7   4.3
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 81289   -99   162   162     S     R    16     0   5.5   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     0   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 82096 IR001    65
+ 1 82110 IR001    78
+ 1 82117 IR001    70
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 81289 FE001 AP001    15     0     0     0     0     0   -99 -99
+ 2 81289 FE001 AP001    15    60     0     0     0     0   -99 -99
+ 3 81289 FE001 AP001    15    90     0     0     0     0   -99 -99
+ 3 82056 FE001 AP001     1    90     0     0     0     0   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 81279  2150 N x IR ASHLAND,KS
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          81282 81296    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 82289   100     0
+
+
+

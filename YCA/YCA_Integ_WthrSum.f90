@@ -120,7 +120,7 @@
         TTD(1) = TT
         TT20S = TT20S + TTD(1)
         WUPRD(1) = AMAX1(0.0,AMIN1(10.0,WUPR))
-        IF (TMEANNUM.GE.20) THEN
+        IF (TMEANNUM >= 20) THEN
             IF (TMEANNUM.LE.20) TMEAN20P = TMEAN20S/20.0
             SRAD20 = SRAD20S/20.0
             TMEAN20 = TMEAN20S/20.0
@@ -143,12 +143,12 @@
                 
         ! Monthly means
         CALL Calendar (year,doy,dom,month)
-        IF (DOM.GT.1) THEN
+        IF (DOM > 1) THEN
             TMAXSUM = TMAXSUM + TMAX
             TMINSUM = TMINSUM + TMIN
             DAYSUM = DAYSUM + 1.0
         ELSE
-            IF (DAYSUM.GT.0) THEN
+            IF (DAYSUM > 0) THEN
                 IF (TMAXM.LT.TMAXSUM/DAYSUM) TMAXM=TMAXSUM/DAYSUM
                 IF (TMINM.GT.TMINSUM/DAYSUM) TMINM=TMINSUM/DAYSUM
             ENDIF
@@ -161,11 +161,13 @@
         !         Calculate PAR utilization efficiencies
         !-----------------------------------------------------------------------
                 
-        IF (PARMJC.GT.0.0) PARUEC = AMAX1(0.0,(RTWT+LFWT+STWT+CRWT+SRWT+RSWT+SENTOPLITTER+SENROOT-SEEDUSE)* &
-            PLTPOP / PARMJC)
-        IF (PARMJIC.GT.0.0) PARIUED = AMAX1(0.0,(RTWT+LFWT+STWT+CRWT+SRWT+RSWT+SENTOPLITTER+SENROOT-SEEDUSE)* &
-            PLTPOP / PARMJIC)
-        IF (CARBOBEG.GT.0.0) THEN
+        IF (PARMJC > 0.0) THEN
+            PARUEC = AMAX1(0.0,(RTWT+LFWT+STWT+CRWT+SRWT+RSWT+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJC)
+        ENDIF
+        IF (PARMJIC > 0.0) THEN
+            PARIUED = AMAX1(0.0,(RTWT+LFWT+STWT+CRWT+SRWT+RSWT+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJIC)
+        ENDIF
+        IF (CARBOBEG > 0.0) THEN
             PARIUE = (CARBOBEG*PLTPOP)/(PARMJFAC*SRAD*PARI)
         ENDIF
                 

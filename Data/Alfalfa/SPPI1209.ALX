@@ -12,7 +12,7 @@ SPAIN
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 1 0 209-a                      1  1  0  1  1  0  0  0  0  0  0  1  1
+ 1 1 1 0 209-a                      1  1  0  0  1  1  1  0  0  0  0  1  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -20,32 +20,17 @@ SPAIN
 
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
- 1 SPPI1209 TARD       -99   -99   -99   -99   -99   -99 -99    -99  alal209a16 209-a
+ 1 SPPI1209 TARD       -99   -99   -99   -99   -99   -99 -99    -99  alal209a16 209-a (2015-2017)
 @L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
  1             -99             -99       -99               -99   -99   -99   -99   -99   -99
 
-*SOIL ANALYSIS
-@A SADAT  SMHB  SMPX  SMKE  SANAME
- 1 16064 SA011   -99   -99  -99
-@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
- 1     5   -99  1.74   -99   -99   -99   -99   -99   .99
-
-*INITIAL CONDITIONS
-@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
- 1    MZ 16001  2000   -99     1     1   -99  8000     1   -99   100     5 209-a
-@C  ICBL  SH2O  SNH4  SNO3
- 1    30  .433    .1     5
- 1    60  .449    .1     4
- 1    90   .47    .1     4
- 1   120  .464    .1     4
-
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 15263   -99   400   400     S     R     5     0     2  2000   150    32     1     0                        209
+ 1 15263   -99   400   400     S     R    10     0     2  2000   150    32     1     0                        209
 
 *IRRIGATION AND WATER MANAGEMENT
 @I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
- 1     1    30    50   100 GS000 IR001    10 209-a
+ 1     1    30    50   100 GS000 IR001    10 209-a-b
 @I IDATE  IROP IRVAL
  1 16118 IR004  17.2
  1 16119 IR004  10.6
@@ -130,10 +115,22 @@ SPAIN
  1 16252 IR004   5.8
  1 16253 IR004   5.8
  1 16254 IR004   5.8
+ 1 16255 IR004   5.8
+ 1 16257 IR004   5.8
+ 1 16264 IR004   5.8
+ 1 16271 IR004   5.8
+ 1 16278 IR004   5.8
+ 1 16285 IR004   5.8
+ 1 16289 IR004   5.8
+ 1 16294 IR004   5.8
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
- 1 16147 FE001 AP001     1    63   162   -99   -99   -99   -99 28 days
+ 1 16119 FE001 AP001     1    63   162   -99   -99   -99   -99 209a-b
+
+*TILLAGE AND ROTATIONS
+@T TDATE TIMPL  TDEP TNAME
+ 1 15001   -99   -99 -99
 
 *HARVEST DETAILS
 @H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
@@ -147,7 +144,7 @@ SPAIN
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
  1 ME              M     M     E     F     S     L     R     0     P     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
- 1 MA              R     A     R     R     R
+ 1 MA              R     R     R     R     R
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
  1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     Y     Y     Y     N      
 
@@ -162,3 +159,4 @@ SPAIN
  1 RE              0     0     0
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 01001     0     0
+

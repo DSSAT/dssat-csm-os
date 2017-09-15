@@ -539,9 +539,11 @@
         CALL SPREADRA (SPDIRFLE,'TRGEM','4',trgem)
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
         CALL SPREADRA (SPDIRFLE,'TRBRG','4',trbrg) !LPM 19APR15 TRBRG added to represent new cardinal temperatures for branching
+        CALL SPREADRA (SPDIRFLE,'TRLFL','4',trlfl) !LPM 14SEP2017 TRLF added to consider leaf life with different cardinal temperatures
         
         TRDV3 = TRLFG               ! LPM 21MAR15 new variable to change base temperature for leaf size
         TRDV3(1) = TBLSZ            ! LPM 21MAR15 new variable to change base temperature for leaf size
+        TRLFL(1) = TBLSZ            ! LPM 14SEP2017 Assume base temperature for leaf size also has effect in leaf life 
         TRDV4 = TRDV1               ! LPM 21MAR15 new variable to change optimum temperature for leaf size
         TRDV4(2) = 20.0             ! LPM 21MAR15 new variable to change optimum temperature for leaf size
         CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
@@ -549,5 +551,6 @@
         CALL SPREADCA (SPDIRFLE,'PSNAME','20',psname)
         CALL SPREADCA (SPDIRFLE,'PSABV','20',psabv)
         CALL SPREADCA (SPDIRFLE,'PSTYP','20',pstyp)
+        LNUMSIMTOSTG = 0.0 !LPM 12SEP2017 defining again LNUMSIMTOSTG to avoid strange values in Linux
         
     END SUBROUTINE YCA_SeasInit_ReadGeno

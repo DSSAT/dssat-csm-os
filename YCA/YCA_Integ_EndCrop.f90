@@ -41,17 +41,17 @@
                 
         BASELAYER = 0.0
         H2OA = 0.0
-        IF (ISWWAT.NE.'N') THEN
+        IF (ISWWAT /= 'N') THEN
             DO L = 1, NLAYR
                 DLAYRTMP(L) = DLAYR(L)
                 BASELAYER = BASELAYER + DLAYR(L)
-                IF (RTDEP.GT.0.0.AND.RTDEP.LT.BASELAYER) THEN
+                IF (RTDEP > 0.0.AND. RTDEP < BASELAYER) THEN
                     DLAYRTMP(L) = RTDEP-(BASELAYER-DLAYR(L))
-                    IF (DLAYRTMP(L).LE.0.0) EXIT
+                    IF (DLAYRTMP(L) <= 0.0) EXIT
                 ENDIF
                 H2OA = H2OA + 10.0*AMAX1(0.0,(SW(L)-LL(L))*DLAYRTMP(L))
             ENDDO
-            IF (EOP.GT.0.0) THEN
+            IF (EOP > 0.0) THEN
                 WAVR = H2OA/EOP
             ELSE
                 WAVR = 99.9
@@ -63,7 +63,7 @@
         !-----------------------------------------------------------------------
                 
         ! When running in CSM
-        IF (FILEIOT.EQ.'DS4') THEN
+        IF (FILEIOT == 'DS4') THEN
             IF (LAI .LE. 0.0) THEN
                 ALBEDO = ALBEDOS
             ELSE
@@ -87,8 +87,8 @@
             CRWTM = CRWT                   
             LNUMSM = LNUM
                     
-            IF (LFWTM+STWTM+CRWTM+RSWTM.GT.0.0) RSCM = RSWTM/(LFWTM+STWTM+CRWTM)
-            IF (RTWTM.GT.0.0) SHRTM = (LFWTM+STWTM+CRWTM+RSWTM)/RTWTM
+            IF (LFWTM+STWTM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+STWTM+CRWTM)
+            IF (RTWTM > 0.0) SHRTM = (LFWTM+STWTM+CRWTM+RSWTM)/RTWTM
                     
             CWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP*10.0
             VWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP * 10.0
@@ -124,7 +124,7 @@
             !HNUMGM = FLOAT(SRNOPD)        !issue 50
             !HNUMPM = FLOAT(SRNOPD)        !issue 50
             BRNUMSH = BRNUMST
-            IF (SRWT.GT.0.0) HNPCM = SROOTN/SRWT*100.0
+            IF (SRWT > 0.0) HNPCM = SROOTN/SRWT*100.0
                     
         ENDIF    
     

@@ -329,11 +329,10 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
 !     &           P1,P2,P5,G2,G3,O1
 !
-!!     Pineapple **
-!      CASE ('PIALO')
-!        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-!     &           P2,P3,P4,G2,G3,PHINT
-!
+!     Pineapple **
+      CASE ('PIALO')
+        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+     &           P1,P2,P3,P4,P5,P6,G2,G3,PHINT
       END SELECT
 
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEG,LINVAR)

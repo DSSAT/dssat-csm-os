@@ -1,5 +1,6 @@
-﻿!***************************************************************************************************************************
+!***************************************************************************************************************************
 ! This module is intended to calculate environmental factors 
+! 12/09/2017 converted from UTF-8 to ANSI
 ! Atributes:
 !   - tMin minimmun temprature of the day
 !   - tMax maximun temprature of the day

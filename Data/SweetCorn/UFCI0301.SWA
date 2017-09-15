@@ -1,0 +1,15 @@
+*EXP. DATA (A): IBWA8301MZ N X VAR WAPIO, IBSNAT EXP.1983-4                            
+
+! File last edited on day 08/29/2003 at 9:35:13 AM
+!
+! Grain yield (HWAM) expressed as dry weight
+@TRNO   HWAM  LAIX  CWAM  MDAT
+     1    73   1.1  1978   169
+     2  1797   2.1  5897   169
+     3  3806   2.6  8817   169
+     4  4573   2.9  9291   169
+     5  4762   2.8  9816   169
+
+
+
+

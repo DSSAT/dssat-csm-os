@@ -31,7 +31,7 @@ C-----------------------------------------------------------------------
       PARAMETER (BLANK=' ')
       CHARACTER*6 SECTION
       CHARACTER*7,  PARAMETER :: ERRKEY = 'TILLAGE'
-      CHARACTER*12, PARAMETER :: FILETL = 'TILOP046.SDA'
+      CHARACTER*12 FILETL
       CHARACTER*12 NAMEF
       CHARACTER*30 FILEIO
       CHARACTER*78 MSG(NAPPL)
@@ -80,6 +80,9 @@ C-----------------------------------------------------------------------
       ISWTIL  = ISWITCH % ISWTIL
 
       IF (INDEX('YR',ISWTIL) > 0) THEN
+
+      FILETL = 'TILOP' // ModelVerTxt // '.SDA'
+
 C-----------------------------------------------------------------------
 C     Read FILEIO
 C-----------------------------------------------------------------------

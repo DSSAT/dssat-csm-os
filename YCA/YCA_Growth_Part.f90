@@ -172,10 +172,10 @@
             !b_slope_lsize = MAX(0.0,0.0375-(0.0071*((TRDV1(3)-TRDV1(2))-TT20)))       ! LPM 28FEB15
         
                 
-            IF (DAWWP.LT.900) THEN
+            IF (DAWWP < 900) THEN
                 plant(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1))%LAPOTX =  LAXS*((DAWWP*1E-3)+0.10)                  ! LPM 07MAR15 
             ELSE
-                IF (DAWWP-TT.LT.900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
+                IF (DAWWP-TT< 900) DALSMAX = DAE                                 ! LPM 28FEB15 to define the day with the maximum leaf size
                 !LAPOTX(BRSTAGE,(LNUMSIMSTG(BRSTAGE)+1)) = LAXS/((1+(4.154582E-2*(DAE-DALSMAX))))
                 !LPM 12JUL2015 test with thermal time with optimum of 20 C
                 !LPM 24APR2016 Use of DALS (considering water stress) instead of TTCUMLS
@@ -186,13 +186,13 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                SHLAG2B(BR) = 0.0  
                 DO LF = 1, LNUMSIMSTG(BR)+1
-                    IF (plant(BR,LF)%LAGETT<=LLIFGTT) THEN
+                    IF (plant(BR,LF)%LAGETT <= LLIFGTT) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
                         plant(BR,LF)%LATLPREV = plant(BR,LF)%LATL
                         !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 24APR2016 To estimate daily leaf area increase instead of total
-                        plant(BR,LF)%LAPOTX2 = plant(BR,LF)%LAPOTX*TFLFLIFE
-                        plant(BR,LF)%LAGL=plant(BR,LF)%LAPOTX2*(TTLFLIFE/LLIFGTT)
+                        plant(BR,LF)%LAPOTX2 = plant(BR,LF)%LAPOTX*Tflfgrowth
+                        plant(BR,LF)%LAGL=plant(BR,LF)%LAPOTX2*(TTlfgrowth/LLIFGTT)
                         !IF (plant(BR,LF)%LAGL < 0.0) THEN !LPM 07JULY2017 Modified the order to avoid LAGL with negative values
                         !    plant(BR,LF)%LAGL = 0.0
                         !ENDIF
@@ -248,8 +248,8 @@
                         IF (LF.EQ.LNUMSIMSTG(BR).AND.LNUMG.GT.LNUMNEED.AND.BR.EQ.BRSTAGE) THEN                                             ! This is where new leaf is initiated
                             !LAGL(BR,L+1) = LAPOTX(BR,L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331  
                             !LAGL(BR,LF+1)% = LAPOTX(BR,LF+1)% * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG) * AMIN1(WFG,NFG)*Tflflife                                      !LPM 23MAR15 To define proportional growth by day      
-                            plant(BR,LF+1)%LAPOTX2 = plant(BR,LF+1)%LAPOTX * TFLFLIFE
-                            plant(BR,LF+1)%LAGL = plant(BR,LF+1)%LAPOTX2 * (TTLFLIFE/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
+                            plant(BR,LF+1)%LAPOTX2 = plant(BR,LF+1)%LAPOTX * Tflfgrowth
+                            plant(BR,LF+1)%LAGL = plant(BR,LF+1)%LAPOTX2 * (TTlfgrowth/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
                             IF (plant(BR,LF+1)%LAGL < 0.0) THEN 
                                 plant(BR,LF+1)%LAGL = 0.0
                             ENDIF
@@ -297,7 +297,9 @@
             !ENDDO
             
             ! Potential leaf weight increase.
-            IF (LAWL(1).GT.0.0) GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+            IF (LAWL(1) > 0.0) THEN
+                GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+            ENDIF
         ENDIF
         
         !LPM 02MAR15 Stem weight increase by cohort: 1 axis,main shoot
@@ -327,10 +329,7 @@
           DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
-                
-                
-          !      plant(BR,LF)%NODEWTGB = ((1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))*(0.0136142*(((DAE-plant(BR,LF)%NDDAE+1)/163.082822)**-2.81690408)/ & 
-          !      (((((DAE-plant(BR,LF)%NDDAE+1)/163.082822)**-1.81690408)+1)**2))*TFG*NODWT)
+
           
                 NDDAED=(DAG-plant(BR,LF)%NDDAE+1)/NDDAE_D
           
@@ -459,7 +458,9 @@
         GROSTCRP = GROSTP                                                                                          !EQN 381a
         
         
-        IF (GROLFP+GROSTCRP.GT.0.0) GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
+        IF (GROLFP+GROSTCRP > 0.0) THEN
+            GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
+        ENDIF
         ! LAH RSFRS is the fraction of stem growth to reserves
         ! May need to have this change as stem growth proceeds
         
@@ -471,7 +472,7 @@
         !in the planting stick (In the future it could be modified as an input in the X-file)
         GROST = GROSTCR
         
-        IF (GROLSP.GT.0.0) THEN
+        IF (GROLSP > 0.0) THEN
             GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR 
             RTWTG = GROLS*(GRORP/GROLSP) !LPM 22DEC2016 Root development 
         ENDIF
