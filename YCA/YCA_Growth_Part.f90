@@ -191,8 +191,8 @@
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
                         plant(BR,LF)%LATLPREV = plant(BR,LF)%LATL
                         !LATLPOT(L)=LAPOTX(L)*((LAGETT(L)+TTLFLIFE*EMRGFR)/LLIFG)                                                   !EQN 322 !LPM 24APR2016 To estimate daily leaf area increase instead of total
-                        plant(BR,LF)%LAPOTX2 = plant(BR,LF)%LAPOTX*TFLFLIFE
-                        plant(BR,LF)%LAGL=plant(BR,LF)%LAPOTX2*(TTLFLIFE/LLIFGTT)
+                        plant(BR,LF)%LAPOTX2 = plant(BR,LF)%LAPOTX*Tflfgrowth
+                        plant(BR,LF)%LAGL=plant(BR,LF)%LAPOTX2*(TTlfgrowth/LLIFGTT)
                         !IF (plant(BR,LF)%LAGL < 0.0) THEN !LPM 07JULY2017 Modified the order to avoid LAGL with negative values
                         !    plant(BR,LF)%LAGL = 0.0
                         !ENDIF
@@ -248,8 +248,8 @@
                         IF (LF.EQ.LNUMSIMSTG(BR).AND.LNUMG.GT.LNUMNEED.AND.BR.EQ.BRSTAGE) THEN                                             ! This is where new leaf is initiated
                             !LAGL(BR,L+1) = LAPOTX(BR,L+1) * (TTLFLIFE*EMRGFR) * (((LNUMG-LNUMNEED)/LNUMG)/LLIFG)      ! LAGL(LNUMX)         ! Leaf area growth,shoot,lf pos  cm2/l   !EQN 331  
                             !LAGL(BR,LF+1)% = LAPOTX(BR,LF+1)% * EMRGFR * ((LNUMG-LNUMNEED)/LNUMG) * AMIN1(WFG,NFG)*Tflflife                                      !LPM 23MAR15 To define proportional growth by day      
-                            plant(BR,LF+1)%LAPOTX2 = plant(BR,LF+1)%LAPOTX * TFLFLIFE
-                            plant(BR,LF+1)%LAGL = plant(BR,LF+1)%LAPOTX2 * (TTLFLIFE/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
+                            plant(BR,LF+1)%LAPOTX2 = plant(BR,LF+1)%LAPOTX * Tflfgrowth
+                            plant(BR,LF+1)%LAGL = plant(BR,LF+1)%LAPOTX2 * (TTlfgrowth/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
                             IF (plant(BR,LF+1)%LAGL < 0.0) THEN 
                                 plant(BR,LF+1)%LAGL = 0.0
                             ENDIF
