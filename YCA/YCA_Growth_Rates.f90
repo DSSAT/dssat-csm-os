@@ -24,7 +24,7 @@
         
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
         REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
-        REAL    CSVPSAT     , TFAC4       , YVALXY                              ! Real function calls
+        REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
         REAL    availableCH2O
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      

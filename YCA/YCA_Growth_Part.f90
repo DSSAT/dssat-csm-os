@@ -19,7 +19,7 @@
         CHARACTER(LEN=1) ISWNIT      
         REAL    BRSTAGE     , NFP         
 
-        REAL    CSYVAL      , TFAC4                                                                       ! Real function call
+        REAL    CSYVAL      , TFAC4     , TFAC5                                                           ! Real function call !LPM 19SEP2017 Added tfac5
         
         ! Full NODEWTGB equation
         ! NDDAED = NDDAE/d

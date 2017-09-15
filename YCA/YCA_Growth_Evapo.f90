@@ -19,6 +19,7 @@
         
         USE ModuleDefs
         USE YCA_First_Trans_m
+        USE YCA_Environment
    
         IMPLICIT NONE
         
@@ -31,7 +32,8 @@
         REAL    ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR(NL)   , DUL(NL)     , EO          , EOP         
         REAL    ES          , KEP         , LL(NL)      , RLV(NL)     , RWUMX       , RWUPM       , SAT(NL)     , SRAD        
         REAL    SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       , UH2O(NL)    , WINDSP      
-        REAL    CSVPSAT     , TFAC4       , ST(NL)       ! Real function call. !LPM20MAR2016 To consider ST for germination
+        REAL    ST(NL)                                  !LPM20MAR2016 To consider ST for germination
+        REAL    CSVPSAT     , TFAC4                     ! Real function call.  !LPM 19SEP2017 Added tfac5
         
         CHARACTER(LEN=1) IDETG       , ISWWAT      
         
@@ -196,9 +198,9 @@
           !  Ttlflife = Phints   
           !ELSE  
           !  !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
-            Tflfgrowth = TFAC4(trdv3,tmean,TTlfgrowth)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
+            Tflfgrowth = TFAC5(trdv3,tmean,TTlfgrowth)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
             Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
-            Tflflife = TFAC4(trlfl,tmean,TTlflife)              !LPM 14SEP2017 Added new cardinal temperatures for leaf life and other for leaf growth (trdv3 or trlfg)
+            Tflflife = TFAC5(trlfl,tmean,TTlflife)              !LPM 14SEP2017 Added new cardinal temperatures for leaf life and other for leaf growth (trdv3 or trlfg)
             !ENDIF  
           
         
