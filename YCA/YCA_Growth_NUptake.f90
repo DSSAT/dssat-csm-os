@@ -76,9 +76,11 @@
             TRLV = 0.0
             DO L = 1, NLAYR
                 TRLV = TRLV + RLV(L)
-                FAC(L) = 10.0/(BD(L)*DLAYR(L))                                                                         !EQN 169
-                SNO3(L) = NO3LEFT(L) / FAC(L)                                                                          !EQN 170
-                SNH4(L) = NH4LEFT(L) / FAC(L)                                                                          !EQN 186
+                IF((BD(L)*DLAYR(L)) > 0.0) THEN
+                    FAC(L) = 10.0/(BD(L)*DLAYR(L))                                                                         !EQN 169
+                    SNO3(L) = NO3LEFT(L) / FAC(L)                                                                          !EQN 170
+                    SNH4(L) = NH4LEFT(L) / FAC(L)                                                                          !EQN 186
+                ENDIF
                 SNO3PROFILE = SNO3PROFILE + SNO3(L)
                 SNH4PROFILE = SNH4PROFILE + SNH4(L)
                 IF (RLV(L).GT.0.0) THEN
@@ -91,7 +93,7 @@
             LNDEM = GROLFP*LNCX + (LFWT-SENLFG-SENLFGRS)*AMAX1(0.0,NTUPF*(LNCX-LANC)) - GROLSRTN                        !EQN 152
             !SNDEM = AMAX1(0.0,GROST+GROCR)*SNCX + (STWT+CRWT)*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
             RNDEM = RTWTG*RNCX + (RTWT-SENRTG-GROLSRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
-            !SRNDEM = (GROSR+SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
@@ -104,11 +106,13 @@
             ENDDO
             ! Seed use if no roots
             ! N use same % of initial as for CH20,if needed.
-            IF (RTWT <= 0.0) THEN
-                SEEDNUSE = AMAX1(0.0, AMIN1(SEEDN,LNDEM+SNDEM+RNDEM,SEEDNI/SDDUR*(TT/STDAY)))                          !EQN 203a
-            ELSE
-                ! Some use of seed (0.5 need) even if may not be needed
-                SEEDNUSE = AMAX1(0.0,AMIN1(SEEDN, 0.5*(LNDEM+SNDEM+RNDEM),SEEDNI/SDDUR*(TT/STDAY)))                    !EQN 203b
+            IF (STDAY /= 0) THEN
+                IF (RTWT <= 0.0) THEN
+                    SEEDNUSE = AMAX1(0.0, AMIN1(SEEDN,LNDEM+SNDEM+RNDEM,SEEDNI/SDDUR*(TT/STDAY)))                          !EQN 203a
+                ELSE
+                    ! Some use of seed (0.5 need) even if may not be needed
+                    SEEDNUSE = AMAX1(0.0,AMIN1(SEEDN, 0.5*(LNDEM+SNDEM+RNDEM),SEEDNI/SDDUR*(TT/STDAY)))                    !EQN 203b
+                ENDIF
             ENDIF
     
             ! Reserves used before uptake
@@ -157,7 +161,7 @@
             ENDDO
     
             ! Ratio (NUPRATIO) to indicate N supply for output
-            IF (ANDEM > 0) THEN
+            IF (ANDEM > 0.0) THEN
                 NUPRATIO = NUPAP/ANDEM                                                                                 !EQN 192
             ELSE
                 IF (NUPAP > 0.0) THEN
@@ -180,13 +184,13 @@
             DO L = 1, NLAYRROOT
                 UNO3(L) = RNO3U(L)*NUF                                                                                 !EQN 196
                 UNH4(L) = RNH4U(L)*NUF                                                                                 !EQN 198
-                IF (FAC(L).LE.0.0) THEN
+                IF (FAC(L) <= 0.0) THEN
                     XMIN = 0.0
                 ELSE  
                     XMIN = NO3MN/FAC(L)                                                                                !EQN 194
                 ENDIF  
                 UNO3(L) = MAX(0.0,MIN (UNO3(L),SNO3(L)-XMIN))                                                          !EQN 197
-                IF (FAC(L).LE.0.0) THEN
+                IF (FAC(L) <= 0.0) THEN
                     XMIN = 0.0
                 ELSE  
                     XMIN = NH4MN/FAC(L)                                                                                !EQN 195 
@@ -216,6 +220,7 @@
             SRNUSE = 0.0
             SNUSEN = 0.0                                                                              !LPM23MAY2015 To consider different N use by node according with age
             NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD                                                                   !EQN 206
+            plant%NDEMSMN = 0.0      !LPM14SEP2017 Initialize the variable with 0
     
             ! For supplying minimum
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
@@ -246,8 +251,6 @@
     
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
             IF (NDEMMN > NULEFT) THEN
-                !GROSTADJ = GROST*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213 !LPM 02SEP2016 Use potential growth
-                !GROCRADJ = GROCR*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 GROSTADJ = GROSTP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
                 GROCRADJ = GROCRP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
@@ -286,7 +289,6 @@
                     ENDDO
                 ENDDO
                 RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
-                !SRNUSE(2) = (SRNDEM-SRNUSE(1))*AMIN1(1.0,NULEFT/NDEM2)                                                 !EQN 222 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
                 SRNUSE(2) = (SRNDEM)*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
                 NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)                                                      !EQN 223
                 IF (NULEFT.GT.0.0) THEN
@@ -322,7 +324,11 @@
             NPOOLS = 0
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)          
-                    plant(BR,LF)%NPOOLSN = AMAX1 (0.0,((plant(BR,LF)%NODEWT * (STWT+CRWT)/(STWTP+CRWTP))*( plant(BR,LF)%SANC - plant(BR,LF)%SNCM )*NUSEFAC))  
+                    IF(STWTP+CRWTP > 0.0)THEN
+                        plant(BR,LF)%NPOOLSN = AMAX1 (0.0,((plant(BR,LF)%NODEWT * (STWT+CRWT)/(STWTP+CRWTP))*( plant(BR,LF)%SANC - plant(BR,LF)%SNCM )*NUSEFAC))  
+                    ELSE
+                        plant(BR,LF)%NPOOLSN = 0.0
+                    ENDIF
                     NPOOLS =  NPOOLS + plant(BR,LF)%NPOOLSN                                                                 !EQN 232
                 ENDDO
             ENDDO
@@ -330,7 +336,7 @@
             IF (ABS(NULEFT).LE.1.0E-5) THEN   ! Inadequate N
                 IF (NLLG > 0.0 .AND. LNCX > 0.0) THEN 
                     !IF ((LNUSE(1)+LNUSE(2))/GROLF.LT.(LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
-                    IF ((LNUSE(1)+LNUSE(2))/GROLFP.LT.(LNCX*NLLG)) THEN 
+                    IF ((LNUSE(1)+LNUSE(2))/GROLFP < (LNCX*NLLG)) THEN 
                         GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
                     ELSE  
                         !GROLFADJ = GROLF                                                                               !EQN 233b !LPM 02SEP2016 Use GROLFP instead of GROLF

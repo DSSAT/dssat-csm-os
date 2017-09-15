@@ -56,36 +56,36 @@
 
             IF (ISWWAT.NE.'N') THEN    
             
-            ! Call 1  Basic calculations with rcrop = 0  
-            CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*0.0, &
-                EO,EOPEN,EOMPEN,EOPT,EOEBUD,TCAN,'M')
+                ! Call 1  Basic calculations with rcrop = 0  
+                CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*0.0, &
+                    EO,EOPEN,EOMPEN,EOPT,EOEBUD,TCAN,'M')
 
-            EOPENC = EOPENC + EOPEN 
-            EOPTC = EOPTC + EOPT
-            EOMPENC = EOMPENC + EOMPEN
-            EOEBUDC = EOEBUDC + EOEBUD
+                EOPENC = EOPENC + EOPEN 
+                EOPTC = EOPTC + EOPT
+                EOMPENC = EOMPENC + EOMPEN
+                EOEBUDC = EOEBUDC + EOEBUD
              
-            ! CSM with LAI=1.0,CROP=WH,TAVG=20.0,WINDSP=86.4 has
-            ! RATM = 55  RCROP = 45
-            ! Monteith had RATM = 300, RCROP = 150->500
+                ! CSM with LAI=1.0,CROP=WH,TAVG=20.0,WINDSP=86.4 has
+                ! RATM = 55  RCROP = 45
+                ! Monteith had RATM = 300, RCROP = 150->500
             
-            ! Call 2  Using rcrop as read-in from spe file
-            CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP, &
-                EO,EOPEN,EOMPCRP,EOPT,EOEBUDCRP,TCAN,'M')
-            EOMPCRPC = EOMPCRPC + EOMPCRP
-            EOEBUDCRPC = EOEBUDCRPC + EOEBUDCRP
+                ! Call 2  Using rcrop as read-in from spe file
+                CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP, &
+                    EO,EOPEN,EOMPCRP,EOPT,EOEBUDCRP,TCAN,'M')
+                EOMPCRPC = EOMPCRPC + EOMPCRP
+                EOEBUDCRPC = EOEBUDCRPC + EOEBUDCRP
 
-            ! Call 3 Using rcrop adjusted for CO2 effect     
-            IF (RLF.GT.0.0)CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*RLFC/RLF, &
-                EO,EOPEN,EOMPCRPCO2,EOPT,EOEBUDCRPCO2,TCAN,'M')
-            EOMPCRPCO2C = EOMPCRPCO2C + EOMPCRPCO2
-            EOEBUDCRPCO2C = EOEBUDCRPCO2C + EOEBUDCRPCO2
+                ! Call 3 Using rcrop adjusted for CO2 effect     
+                IF (RLF > 0.0)CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*RLFC/RLF, &
+                    EO,EOPEN,EOMPCRPCO2,EOPT,EOEBUDCRPCO2,TCAN,'M')
+                EOMPCRPCO2C = EOMPCRPCO2C + EOMPCRPCO2
+                EOEBUDCRPCO2C = EOEBUDCRPCO2C + EOEBUDCRPCO2
 
-            ! Transpiration ratio (Pot.pl.evap/Pot.soil evap)
-            EPSRATIO = 1.0
-            IF (EOMPEN.GT.0.0) EPSRATIO = EOMPCRPCO2 / EOMPEN
-            TRATIO = 1.0
-            IF (EOMPCRP.GT.0.0) TRATIO = EOMPCRPCO2 / EOMPCRP
+                ! Transpiration ratio (Pot.pl.evap/Pot.soil evap)
+                EPSRATIO = 1.0
+                IF (EOMPEN > 0.0) EPSRATIO = EOMPCRPCO2 / EOMPEN
+                TRATIO = 1.0
+                IF (EOMPCRP > 0.0) TRATIO = EOMPCRPCO2 / EOMPCRP
             ENDIF
             
             IF (fileiot(1:2).NE.'DS') THEN
@@ -111,8 +111,10 @@
             
             ! Call 5 to calcuate canopy temperature
             TVR1 = (TRWU*10.0+ES)
-            CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*RLFC/RLF*(1.0+(1.0-WFP)), &
+            IF (RLF>0.0) THEN 
+                CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*RLFC/RLF*(1.0+(1.0-WFP)), &
                 EO,tvr1,tvr2,tvr3,tvr4,TCAN,'C')
+            ENDIF
           ENDIF
           
           ! Cumulative potential ET as used
@@ -162,7 +164,7 @@
           WFGE = 1.0
           IF (ISWWAT.NE.'N') THEN
               !IF (GESTAGE.LT.1.0) THEN  !LPM 21MAR2015 to estimate WFGE for germination and emergence
-              IF (EMRGFR.LT.1.0) THEN
+              IF (EMRGFR < 1.0) THEN
               !IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH) !LPM 21MAR2015 To estimate LSEED when ISWWAT.EQ.N (linking ST and germination)
                   !IF (LSEED.GT.1) THEN
                   !  SWPSD = SWP(LSEED)
@@ -170,7 +172,7 @@
                   ! SWP(0) = AMIN1(1.,AMAX1(.0,(SWP(1)-0.5*(SWP(2)-SWP(1)))))
                   ! SWPSD = SWP(0) + (SDEPTH/DLAYR(1))*(SWP(2)-SWP(0))
                   !ENDIF
-                  IF (WFGEM.GT.0.0) &
+                  IF (WFGEM > 0.0) &
                    WFGE = AMAX1(0.0,AMIN1(1.0,(SWP(LSEED)/WFGEM)))
             ENDIF
           ENDIF

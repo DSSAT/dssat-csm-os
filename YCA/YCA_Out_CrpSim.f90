@@ -47,7 +47,9 @@
                     CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
                     CALL Calendar(year,doy,dom,month)
                     CNCTMP = 0.0
-                    IF (CWADSTG(L).GT.0.)CNCTMP = CNADSTG(L)/CWADSTG(L)*100
+                    IF (CWADSTG(L) > 0.0) THEN
+                        CNCTMP = CNADSTG(L)/CWADSTG(L)*100
+                    ENDIF
                     WRITE (*,'(I8,I4,1X,A3,I4,1X,I1,1X,A13,I6,A6,F6.1,I6,F6.2,F6.2,F6.2)')STGYEARDOY(L),DOM,MONTH, &
                         Dapcalc(stgyeardoy(L),plyear,plday),L,PSNAME(L),NINT(CWADSTG(L)),LAIC,LNUMSTG(L), &
                         NINT(CNADSTG(L)),CNCTMP,1.0-WFPPAV(L),1.0-NFPPAV(L)

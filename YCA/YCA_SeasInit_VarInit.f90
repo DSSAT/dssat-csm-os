@@ -27,10 +27,12 @@
         
         
         !-----------------------------------------------------------------------
+        !       Reinitializing plant variables
+        !-----------------------------------------------------------------------        
+        CALL clear_YCA_First_Trans_m()
+        !-----------------------------------------------------------------------
         !       Initialize both state and rate variables                   
         !-----------------------------------------------------------------------
-
-        plant%aflf = 0.0
         amtnit = 0.0
         andem = 0.0
         brnumst = 1.0
@@ -89,9 +91,6 @@
         dewdur = -99.0
         df = 1.0
         dfout = 1.0
-        plant%dalf = 0
-        plant%dglf = 0
-        plant%dslf = 0
         drainc = 0.0
         !dstage = 0.0 !LPM 05JUN2015 DSTAGE is not used
         du = 0.0
@@ -186,12 +185,6 @@
         hyeardoy = -99
         idetgnum = 0
         irramtc = 0.0
-        plant%lagett = 0.0
-        !lagep = 0.0
-        plant%lagl = 0.0
-        plant%lagl3 = 0.0 !LPM 15NOV15 added to save leaf area growing by cohort (considering assimilates restriction)
-        plant%lagl3t = 0.0 !LPM 15NOV15 added to save leaf area growing by cohort (considering assimilates restriction)
-        plant%laglt = 0.0 !LPM 15NOV15 added to save leaf area growing by cohort
         lai = 0.0
         laiprev = 0.0
         lail = 0.0
@@ -201,14 +194,7 @@
         laixm = -99.0
         lanc = 0.0
         laphc = 0.0
-        plant%lapp = 0.0
-        plant%laps = 0.0
-        plant%latl = 0.0
-        plant%latl2 = 0.0
-        plant%latl2t = 0.0 !LPM 15NOV15 added to save leaf area by cohort
-        plant%latl3 = 0.0 
-        plant%latl3t = 0.0 !LPM 15NOV15 added to save leaf area by cohort (considering assimilates restriction)
-        plant%latl4 = 0.0
+        NLAYRROOT = 0 !LPM 07SEP2017 To initialize this variable for initial estimation of WFG 
         !lcnum = 0 !LPM 28MAR15 Non necessary variables
         !lcoa = 0.0 !LPM 28MAR15 These variables are not necessary
         !lcoas = 0.0
@@ -245,22 +231,16 @@
         mdat = -99
         mdayfr = -99
         mdoy = -99
-        plant%nddae = 0.0
         nfg = 1.0
         nfgcc = 0.0
         nfgcc = 0.0
         nfgpav = 1.0
         nfgpc = 0.0
-        plant%nflf = 1.0
-        plant%nflf2 = 0.0
-        plant%nflfp = 1.0
         nfp = 1.0
         nfpcav = 1.0
         nfpcc = 0.0
         nfppav = 1.0
         nfppc = 0.0
-        plant%NODEWTGB = 0.0      !LPM 11APR15 New variables of node growth
-        plant%NODEWT = 0.0       !LPM 11APR15 New variables of node growth
         nsdays = 0
         nuf = 1.0
         nupac = 0.0
@@ -367,7 +347,6 @@
         rwam = -99.0
         rwamm = -99.0
         said = 0.0
-        plant%sanc = 0.0
         sancout = 0.0
         sdnad = 0.0
         sdnc = 0.0
@@ -427,7 +406,6 @@
         shrtm = 0.0
         sla = -99.0
         snad = 0.0
-        plant%sncr = 0.0
         sno3profile = 0.0
         sno3profile = 0.0
         sno3rootzone = 0.0
@@ -460,7 +438,6 @@
         staig = 0.0
         stais = 0.0
         stemn = 0.0
-        plant%stemnn = 0.0!LPM 23MAY2015 Added to keep nitrogen content by node
         stgedat = 0
         stgyeardoy = 9999999
         !strswt = 0.0
@@ -474,9 +451,7 @@
         tdifnum = 0
         tdifsum = 0.0
         tfd = 0.0
-        plant%tfdlf = 0.0
         tfg = 1.0
-        plant%tfglf = 0.0
         tfp = 1.0
         tlchc = 0.0
         tmaxcav  = -99.0
@@ -543,7 +518,6 @@
         wfgcc = 0.0
         wfgpav = 1.0
         wfgpc = 0.0
-        plant%wflf = 0.0
         wfp = 1.0
         wfpcav = 1.0
         wfppav = 1.0

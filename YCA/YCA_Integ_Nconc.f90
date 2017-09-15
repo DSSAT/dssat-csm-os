@@ -22,14 +22,7 @@
         !         Calculate nitrogen concentrations
         !-----------------------------------------------------------------------
                     
-        IF (ISWNIT.NE.'N') THEN
-            ! Critical and minimum N concentrations
-            !LNCX = LNCXS(0) + DSTAGE*(LNCXS(1)-LNCXS(0))                                                               !EQN 014
-            !SNCX = SNCXS(0) + DSTAGE*(SNCXS(1)-SNCXS(0))                                                               !EQN 015
-            !RNCX = RNCXS(0) + DSTAGE*(RNCXS(1)-RNCXS(0))                                                               !EQN 016
-            !LNCM = LNCMN(0) + DSTAGE*(LNCMN(1)-LNCMN(0))                                                               !EQN 011
-            !SNCM = SNCMN(0) + DSTAGE*(SNCMN(1)-SNCMN(0))                                                               !EQN 012
-            !RNCM = RNCMN(0) + DSTAGE*(RNCMN(1)-RNCMN(0))                                                               !EQN 013
+        IF (ISWNIT /= 'N') THEN
             
             !LPM 22MAY2015 The leaf nitrogen concentration tends to keep the same value through the growing season however in the future
             !could be considered different leaf nitrogen concentration based on the leaf age (maybe is it not needed that detail?)
@@ -39,52 +32,46 @@
             RNCX = (RNCXS(0) + RNCXS(1))/2.0 
             RNCM = (RNCMN(0) + RNCMN(1))/2.0
             !LPM 22MAY2015 the stem nitrogen concentration changes according with the canopy level age (non-lignified to lignified)
-            DO BR = 0, BRSTAGE                                                                                        
-                DO LF = 1, LNUMSIMSTG(BR)
+            IF((LLIFATT+LLIFSTT) > ZERO) THEN
+                DO BR = 0, BRSTAGE                                                                                        
+                 DO LF = 1, LNUMSIMSTG(BR)
                     plant(BR,LF)%SNCX = SNCXS(0) + (plant(BR,LF)%LAGETT*(SNCXS(1)-SNCXS(0))/(LLIFATT+LLIFSTT))
                     plant(BR,LF)%SNCM = SNCMN(0) + (plant(BR,LF)%LAGETT*(SNCMN(1)-SNCMN(0))/(LLIFATT+LLIFSTT))
+                 ENDDO
                 ENDDO
-            ENDDO
+            ENDIF
             ! N concentrations
-            RANC = 0.0
-            LANC = 0.0
-            plant%SANC = 0.0
-            VANC = 0.0
-            VCNC = 0.0
-            VMNC = 0.0
-            IF (RTWT.GT.1.0E-5) RANC = ROOTN / RTWT                                                                    !EQN 017
-            IF (LFWT.GT.1.0E-5) LANC = LEAFN / LFWT       !EQN 243 
-            !IF (LFWT.GT.1.0E-5) THEN                   !LPM 25OCT2015 To include cohorts for leaf N (to check)
-            !    DO BR = 0, BRSTAGE                                                                                        
-            !        DO LF = 1, LNUMSIMSTG(BR)
-            !            LANC(BR,LF) = LEAFNN(BR,LF) / LFWTN(BR,LF)
-            !        ENDDO
-            !    ENDDO
-            !ENDIF
+            ! Not reseting all to zero an leaving last value just in case it can't be calculated
+            RANC = AMAX1(0.0,RANC)
+            LANC = AMAX1(0.0,LANC)
+            plant%SANC = AMAX1(0.0,plant%SANC)
+            VANC = AMAX1(0.0,VANC)
+            VCNC = AMAX1(0.0,VCNC)
+            VMNC = AMAX1(0.0,VMNC)
             
-            !IF (STWT+CRWT.GT.1.0E-5) SANC = STEMN / (STWT+CRWT)                                                       !LPM25MAY2015 
-            IF (STWT+CRWT.GT.1.0E-5) THEN
+            IF (RTWT > ZERO) RANC = ROOTN / RTWT        !EQN 017
+            IF (LFWT > ZERO) LANC = LEAFN / LFWT        !EQN 243 
+
+            IF ((STWT+CRWT) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                       plant(BR,LF)%SANC = plant(BR,LF)%STEMNN / (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))
+                        IF (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP) > 0.0) THEN
+                            plant(BR,LF)%SANC = plant(BR,LF)%STEMNN / (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))
+                        ENDIF
                     ENDDO
                 ENDDO
             ENDIF
-            IF (VWAD.GT.0.0) VANC = VNAD/VWAD                                                                          !EQN 020
-            IF (LANC.LT.0.0) THEN 
+            IF (VWAD > 0.0) VANC = VNAD/VWAD                                                                          !EQN 020
+            IF (LANC < 0.0) THEN 
                 WRITE(Message(1),'(A27,F4.1)') 'LANC below 0 with value of ',LANC
                 WRITE(Message(2),'(A27,2F5.1)') 'LEAFN,LFWT had values of   ',LEAFN,LFWT
                 CALL WARNING(2,'CSYCA',MESSAGE)
                 LANC = AMAX1(0.0,LANC)
             ENDIF
-            !IF (LFWT+STWT+CRWT.GT.0.0) VCNC = (LNCX*AMAX1(0.0,LFWT)+SNCX*AMAX1(0.0,STWT+CRWT))/ &                      !EQN 021
-            !    (AMAX1(0.0,LFWT)+AMAX1(0.0,STWT+CRWT))
-            !IF (LFWT+STWT+CRWT.GT.0.0) VMNC = (LNCM*AMAX1(0.0,LFWT)+SNCM*AMAX1(0.0,STWT+CRWT))/ &                      !EQN 022
-            !    (AMAX1(0.0,LFWT)+AMAX1(0.0,STWT+CRWT))
             
             SCNCT = 0.0
             SCNMT = 0.0
-            IF (LFWT+STWT+CRWT.GT.0.0) THEN
+            IF ((LFWT+STWT+CRWT) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
                         plant(BR,LF)%SCNC = (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*plant(BR,LF)%SNCX
