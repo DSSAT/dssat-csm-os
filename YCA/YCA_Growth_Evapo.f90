@@ -196,9 +196,10 @@
           !  Ttlflife = Phints   
           !ELSE  
           !  !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
-            Tflflife = TFAC4(trdv3,tmean,TTlflife)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
+            Tflfgrowth = TFAC4(trdv3,tmean,TTlfgrowth)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
             Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
-          !ENDIF  
+            Tflflife = TFAC4(trlfl,tmean,TTlflife)              !LPM 14SEP2017 Added new cardinal temperatures for leaf life and other for leaf growth (trdv3 or trlfg)
+            !ENDIF  
           
         
             

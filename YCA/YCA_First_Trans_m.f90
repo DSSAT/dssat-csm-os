@@ -926,6 +926,7 @@ Module YCA_First_Trans_m
     REAL    :: TFG                     ! Temperature factor,growth 0-1  #          ! (From SeasInit)  
     REAL    :: TFGEM                   ! Temperature factor,germ,emrg   #          ! (From Growth)    
     !REAL    :: TFLAW                   ! Temperature factor,lf area/wt  #          ! (From Growth)  !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA   
+    REAL    :: TFLFGROWTH              ! Temperature factor,leaf growth #          ! (From Growth) !LPM 14SEP2017 New cardinal temperatures for leaf growth
     REAL    :: TFLFLIFE                ! Temperature factor,leaf life   #          ! (From Growth)
     REAL    :: TFLFSIZE                ! Temperature factor,leaf size   #          ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TFP                     ! Temperature factor,phs 0-1     #          ! (From SeasInit)  
@@ -986,6 +987,7 @@ Module YCA_First_Trans_m
     REAL    :: TRGEM(4)                ! Temp response,germ.emergence   #          ! (From SeasInit)  
     REAL    :: TRLDF                   ! Intermediate factor,new roots  #          ! (From Growth)    
     REAL    :: TRLFG(4)                ! Temp response,lf growth, br dev#          ! (From SeasInit) 18MAR15 
+    REAL    :: TRLFL(4)                ! Temp response,lf life          #          ! (From SeasInit) !LPM 14SEP2017 new cardinal temperatures
     REAL    :: TRLV                    ! Total root length density      /cm2       ! (From Growth)    
     REAL    :: TRPHS(4)                ! Temp response,photosynthesis   #          ! (From SeasInit)  
     REAL    :: TRWU                    ! Total water uptake             mm         ! (From Growth)    
@@ -1001,6 +1003,7 @@ Module YCA_First_Trans_m
     REAL    :: TTD(20)                 ! Thermal time,specific day      C          ! (From SeasInit)  
     REAL    :: TTGEM                   ! Daily thermal time,germ,emrg.  C.d        ! (From SeasInit)  
     REAL    :: TTL                     ! Daily thermal time, leaves     C.d        ! LPM 19APR2016 Added to separate the thermal clock for branching and leaf development
+    REAL    :: TTLFGROWTH              ! Daily thermal time,leaf growth C.d        ! (From Growth) !LPM 14SEP2017 Adding new cardinal temperatures for leaf growth
     REAL    :: TTLFLIFE                ! Daily thermal time,leaf life   C.d        ! (From Growth) 
     REAL    :: TTLFSIZE                ! Daily thermal time,leaf size   C.d        ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TTNEED                  ! Thermal time to start new leaf #          ! (From Growth)    
