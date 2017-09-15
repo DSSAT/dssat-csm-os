@@ -220,6 +220,7 @@
             SRNUSE = 0.0
             SNUSEN = 0.0                                                                              !LPM23MAY2015 To consider different N use by node according with age
             NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD                                                                   !EQN 206
+            plant%NDEMSMN = 0.0      !LPM14SEP2017 Initialize the variable with 0
     
             ! For supplying minimum
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
