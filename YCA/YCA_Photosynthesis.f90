@@ -135,8 +135,8 @@
 
     end function availableCarbohydrate_methodM
     
-    ! Alternate method J
-    real function availableCarbohydrate_methodJ(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
+    ! Alternate method V
+    real function availableCarbohydrate_methodV(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
         USE YCA_Environment
         USE YCA_VPDEffect
         implicit none
@@ -155,9 +155,9 @@
             dailyBiomass = dailyBiomass + env%hourlyBiomass(I, KCANI, LAI, PARUE,hourlyStomatalConductance )
         END DO
         
-        availableCarbohydrate_methodJ = dailyBiomass
+        availableCarbohydrate_methodV = dailyBiomass
 
-    end function availableCarbohydrate_methodJ
+    end function availableCarbohydrate_methodV
     
 
     !-------------------------------------------
