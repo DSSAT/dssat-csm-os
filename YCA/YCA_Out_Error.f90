@@ -243,7 +243,7 @@
                         CALL Getstrr(tlinet,l,tfval)
                         CALL Getstrr(tlinegro,pgrocol(l),pgval)
                         ERRORVAL = 0.0
-                        IF(TFVAL > 0.0 .AND. PGVAL > -99 > PGVAL /= 0.0)THEN
+                        IF(TFVAL > 0.0 .AND. PGVAL > -99 .AND. PGVAL /= 0.0)THEN
                             ERRORVAL = 100.0 * (PGVAL - TFVAL) / TFVAL
                         ELSE
                             ERRORVAL = -99.0
