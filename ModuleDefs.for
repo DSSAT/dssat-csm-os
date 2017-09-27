@@ -97,13 +97,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 6
         INTEGER :: Model = 5
-        INTEGER :: Build = 8
+        INTEGER :: Build = 9
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.6.5.09 chp 09/27/2017 Growth stage irrigation frequency read as REAL
 !       4.6.5.08 chp 08/09/2017 ModuleDefs.for, OSDefinitions module
 !       4.6.5.07 chp 07/26/2017 ModuleDefs.fpp (was .for), portability changes
 !       4.6.5.06 chp 07/14/2017 Alfalfa added (KJB)
