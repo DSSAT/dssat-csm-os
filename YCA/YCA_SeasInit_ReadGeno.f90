@@ -549,5 +549,6 @@
         CALL SPREADCA (SPDIRFLE,'PSNAME','20',psname)
         CALL SPREADCA (SPDIRFLE,'PSABV','20',psabv)
         CALL SPREADCA (SPDIRFLE,'PSTYP','20',pstyp)
+        LNUMSIMTOSTG = 0.0 !LPM 12SEP2017 defining again LNUMSIMTOSTG to avoid strange values in Linux
         
     END SUBROUTINE YCA_SeasInit_ReadGeno

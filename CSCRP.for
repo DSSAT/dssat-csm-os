@@ -1782,9 +1782,9 @@
 
        IF (RUNCRP.LE.0) THEN          ! First time through
 
-          MODNAME(1:8) = 'CSCRP046'
+          MODNAME(1:8) = 'CSCRP047'
           VERSION = 010115         
-          GENFLCHK(3:15) = 'CRP046.010115'
+          GENFLCHK(3:15) = 'CRP047.08102017'
           ! Control flags/switches
           CFLPDATE = 'P'      ! P=at planting;I=at first irrigation;
                               ! E=relative to emergence

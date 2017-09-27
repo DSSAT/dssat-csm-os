@@ -1,0 +1,151 @@
+*EXP.DETAILS: BRPI0202MZ MAIZE IRRIGATED AND RAINFALL
+
+*GENERAL
+@PEOPLE
+Cecilia M. Tojo Soler, Paulo C. Sentelhas, and Gerrit Hoogenboom
+@ADDRESS
+ESALQ - University of Sao Paulo
+@SITE
+Piracicaba, SP. Brazil
+@NOTES
+ Publications 
+ Soler, C.M.T., Sentelhas, P.C., Hoogenboom, G. 2007. 
+ Application of the CSM-CERES-Maize model for planting date evaluation
+ and yield forecasting for maize grown off-season in a subtropical 
+ environment, European Journal of Agronomy 27(2), pp. 165-177. 
+ doi:10.1016/j.eja.2007.03.002 
+ Soler, C.M.T., Hoogenboom,G., Sentelhas, P.C., Pereira Duarte, A. 2007. 
+ Impact of water stress on maize grown off-season in a subtropical 
+ environment, Journal of Agronomy and Crop Science 193 (4), pp 247-­261. 
+ doi:10.1111/j.1439-037X.2007.00265.x 
+ Soler, C.M.T., Sentelhas, P.C., Hoogenboom, G. 2005. Thermal time for 
+ phenological development of four maize hybrids grown off-season in a 
+ subtropical environment, Journal of Agricultural Science 143,169-182. 
+ Soler, C. M.T. 2004. Using CERES-Maize model for maize sown off 
+ season yield forecast, PhD. Thesis. Escola Superior de Agricultura 
+ Luiz de Queiroz, University of Sao Paulo, Piracicaba, Brazil.
+
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 AG9010 - Rainfed           1  1  0  1  1  0  1  0  0  0  0  0  1
+ 2 1 0 0 DKB 333B - Rainfed         2  1  0  1  1  0  1  0  0  0  0  0  1
+ 3 1 0 0 DAS CO32 - Rainfed         3  1  0  1  1  0  1  0  0  0  0  0  1
+ 4 1 0 0 EXCELER - Rainfed          4  1  0  1  1  0  1  0  0  0  0  0  1
+ 5 1 0 0 AG9010 - IRRIGATED         1  2  0  2  1  1  2  0  0  0  0  0  1
+ 6 1 0 0 DKB 333B - IRRIGATED       2  2  0  2  1  1  2  0  0  0  0  0  1
+ 7 1 0 0 DAS CO32 - IRRIGATED       3  2  0  2  1  1  2  0  0  0  0  0  1
+ 8 1 0 0 EXCELER - IRRIGATED        4  2  0  2  1  1  2  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 MZ IB0171 AG9010
+ 2 MZ IB0173 DKB 333B
+ 3 MZ IB0172 DAS CO32
+ 4 MZ IB0174 EXCELER
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 BRPI0001 BRPI0201   -99     0 DR000     0     0 00000 -99    120  BRPI020001 RAINFED EXPERIMENT
+ 2 BRPI0002 BRPI0201   -99     0 DR000     0     0 00000 -99    120  BRPI020002 IRRIGATED EXPERIMENT
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+ 2               0               0         0                 0     0     0     0   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 02072   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    MZ 02060   -99   -99     1     1   -99  5100   1.5   -99   100    15 rainfed
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    20   .25    .4   3.9
+ 1    40   .25    .4   3.9
+ 1   120   .26    .4   3.9
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2    MZ 02060   -99   -99     1     1   -99  5800   1.5   -99   100    15 irrigated
+@C  ICBL  SH2O  SNH4  SNO3
+ 2    20   .26    .4   3.9
+ 2    40   .26    .4   3.9
+ 2   120   .25    .4   3.9
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 02072 02078     7     5     S     R    80    45     5   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1    .9    30    50   100 GS000 IR001    10 -99
+@I IDATE  IROP IRVAL
+ 1 02075 IR004     7
+ 1 02079 IR004     7
+ 1 02089 IR004     7
+ 1 02091 IR004    13
+ 1 02095 IR004    13
+ 1 02097 IR004    13
+ 1 02099 IR004     7
+ 1 02101 IR004    13
+ 1 02103 IR004     7
+ 1 02105 IR004    13
+ 1 02107 IR004     7
+ 1 02109 IR004    13
+ 1 02112 IR004    13
+ 1 02114 IR004     7
+ 1 02116 IR004     7
+ 1 02128 IR004    13
+ 1 02130 IR004     4
+ 1 02133 IR004    13
+ 1 02136 IR004    13
+ 1 02148 IR004    13
+ 1 02151 IR004    13
+ 1 02154 IR004    13
+ 1 02158 IR004    13
+ 1 02162 IR004     4
+ 1 02167 IR004    13
+ 1 02170 IR004     4
+ 1 02172 IR004     6
+ 1 02176 IR004    13
+ 1 02179 IR004    13
+ 1 02182 IR004     9
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 02072 FE014 AP001     5    20   -99   -99   -99   -99   -99 -99
+ 1 02093 FE005 AP003     0    50     0     0     0     0   -99 -99
+ 2 02072 FE014 AP004     5    26   -99   -99   -99   -99   -99 -99
+ 2 02095 FE005 AP003     0    50     0     0     0     0   -99 -99
+ 2 02113 FE005 AP003     0    50     0     0     0     0   -99 -99
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 02060   -99     0   -99   -99   -99   -99   -99   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 02060  2150 2002 Maize Experiment Ir
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     R     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          02072 02072    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             40    50   100 GS000 IR004    10    .9
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 02320   100     0
+
+
+

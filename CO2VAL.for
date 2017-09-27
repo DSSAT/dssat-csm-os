@@ -2,9 +2,9 @@
 !  CO2VAL, Subroutine, CHPorter
 !  Determines daily CO2 value
 !  Switch ICO2:
-!  ICO2 = 'D' use static value (CO2BAS from CO2046.WDA)
+!  ICO2 = 'D' use static value (CO2BAS from CO2*.WDA)
 !  ICO2 = 'W' use values (daily and/or annual) read from weather file
-!  ICO2 = 'M' use time series values read from CO2046.WDA file (default)
+!  ICO2 = 'M' use time series values read from CO2*.WDA file (default)
 
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
@@ -73,7 +73,7 @@
 
 !-----------------------------------------------------------------------
 !     Read from CO2???.WDA file
-      FILECO2 = 'CO2046.WDA'
+      FILECO2 = 'CO2' // ModelVerTxt // '.WDA'
       LNUM = 0
       INQUIRE (FILE = FILECO2, EXIST = FEXIST)
 

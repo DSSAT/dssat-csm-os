@@ -25,11 +25,11 @@
 
         ! Germination 
         !LPM 21MAR2016 GEUCUM modified to DAGERM
-        IF (DAGERM.LT.PGERM.AND.DAGERM+TTGEM*WFGE.LT.PGERM) THEN
+        IF (DAGERM < PGERM .AND. DAGERM+TTGEM*WFGE < PGERM) THEN
             GERMFR = 0.0                                                                                               !EQN 046a
-        ELSEIF (DAGERM.LE.PGERM.AND.DAGERM+TTGEM*WFGE.GE.PGERM) THEN
+        ELSEIF (DAGERM <= PGERM .AND. DAGERM+TTGEM*WFGE >= PGERM) THEN
             GERMFR = 1.0 - (PGERM-DAGERM)/(TTGEM*WFGE)                                                                  !EQN 046b
-        ELSEIF (DAGERM.GT.PGERM) THEN
+        ELSEIF (DAGERM > PGERM) THEN
             GERMFR = 1.0                                                                                               !EQN 046c
         ENDIF
 
@@ -92,7 +92,7 @@
         ELSE
             BRSTAGETMP = BRSTAGE
         ENDIF
-        IF (PPSEN.EQ.'SL') THEN      ! Short day response,linear 
+        IF (PPSEN == 'SL') THEN      ! Short day response,linear 
             DF = 1.0 - DAYLS(INT(BRSTAGETMP))/1000.*(PPTHR-DAYL)                                                       !EQN 050
             !IF (BRSTAGETMP.LT.FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
             IF (BRSTAGETMP.LT.FLOAT(PSX)) THEN
@@ -181,8 +181,8 @@
         !           Determine amounts removed by grazing, etc.   
         !-----------------------------------------------------------------------
 
-        IF (HANUM.GT.0) THEN
-            IF (HOP(HANUM).EQ.'G'.AND.CWAD.GT.0.0.AND.CWAD.GT.CWAN(HANUM)) THEN
+        IF (HANUM > 0) THEN
+            IF (HOP(HANUM) == 'G'.AND. CWAD > 0.0 .AND. CWAD > CWAN(HANUM)) THEN
                 HAWAD = AMIN1((CWAD-CWAN(HANUM)),HAMT(HANUM))                                                          !EQN 414
                 HAWAD = AMAX1(0.0,HAWAD)
                 HAFR = AMAX1(0.0,HAWAD/CWAD)                                                                           !EQN 415
@@ -192,7 +192,7 @@
             ENDIF
         ENDIF
               
-        IF (HAFR.GT.0.0) WRITE(fnumwrk,'(A23,3F6.1)')' HARVEST  FR,CWAN,CWAD ',HAFR,CWAN(HANUM),CWAD
+        IF (HAFR > 0.0) WRITE(fnumwrk,'(A23,3F6.1)')' HARVEST  FR,CWAN,CWAD ',HAFR,CWAN(HANUM),CWAD
 
         ! For grazing 
         lwph = lfwt * hafr                                                                                             !EQN 416

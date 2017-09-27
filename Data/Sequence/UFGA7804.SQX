@@ -1,0 +1,175 @@
+*EXP.DETAILS: UFGA7804SQ BN-BN YR 1, SB YR 2 EXAMPLE, 10:5
+
+*GENERAL
+@PEOPLE
+DSSAT Foundation
+@ADDRESS
+Gainesville, Florida
+@SITE
+Gainesville, Florida
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 Bean                       1  1  0  1  1  1  0  0  0  0  0  0  1
+ 1 2 1 0 Fallow                     2  1  0  0  0  0  0  0  0  0  0  1  2
+ 1 3 1 0 Bean                       1  1  0  0  2  1  0  0  0  0  0  0  3
+ 1 4 1 0 Fallow                     2  1  0  0  0  0  0  0  0  0  0  2  2
+ 1 5 1 0 Soybean                    3  1  0  0  1  1  0  0  0  0  0  0  4
+ 1 6 1 0 Fallow                     2  1  0  0  0  0  0  0  0  0  0  3  2
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 BN IB0001 PORILLO SINTETICO
+ 2 FA IB0001 -99
+ 3 SB IB0001 BRAGG
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UFGA0001 UFGA7801   -99     0 IB000     0     0 00000 -99    180  IBSB910015 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SB 78166   100     0     1     1   180  1000    .8     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .086    .6   1.5
+ 1    15  .086    .6   1.5
+ 1    30  .086    .6   1.5
+ 1    45  .086    .6   1.5
+ 1    60  .086    .6   1.5
+ 1    90  .076    .6    .6
+ 1   120  .076    .6    .5
+ 1   150   .13    .6    .5
+ 1   180  .258    .6    .5
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 78120   -99  29.9  29.9     S     R    91     0     4   -99   -99   -99   -99     0                        -99
+ 2 78245   -99  29.9  29.9     S     R    91     0     4   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 78131 IR001    13
+ 1 78150 IR001    13
+ 1 78170 IR001    13
+ 1 78190 IR001    13
+ 1 78210 IR001    11
+ 1 78242 IR001    11
+ 1 78244 IR001    11
+ 1 78246 IR001    11
+ 1 78250 IR001    11
+ 1 78253 IR001    11
+ 1 78256 IR001     8
+ 1 78259 IR001     8
+ 1 78262 IR001     8
+ 1 78265 IR001     8
+ 1 78269 IR001     7
+ 1 78272 IR001     8
+ 1 78279 IR001     7
+ 1 78283 IR001     8
+ 1 78294 IR001    10
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 78244 GS000   -99   -99   100     0 
+ 2 79119 GS000   -99   -99   100     0 
+ 3 80119 GS000   -99   -99   100     0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE             10     5     S 78110  1157 Dry Bean
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     D
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              W     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              Y     N     Y     1     N     N     N     N     N     N     Y     N     N     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          78120 78170    10   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 IB001 IB001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 79120   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              3     1     S 78166  2150 Fallow
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     Y     N     N     N     N     N     Y     D
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              W     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 2 MA              R     R     R     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 2 OU              Y     N     A    10     N     N     N     N     N     N     Y     N     N      
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          78113 78127    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 2 IR             30    50   100 IB001 IB001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 79120   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 3 GE              3     1     S 78110  2150 Dry Bean
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 3 OP              Y     Y     Y     N     N     N     N     Y     D
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 3 ME              W     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 3 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 3 OU              Y     N     A    10     N     N     N     N     N     N     Y     N     N      
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 3 PL          78113 78127    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 3 IR             30    50   100 IB001 IB001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 3 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 3 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 3 HA              0 79120   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 4 GE              3     1     S 78110  2150 Soybean
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 4 OP              Y     Y     Y     N     N     N     N     Y     D
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 4 ME              W     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 4 MA              A     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 4 OU              Y     N     A    10     N     N     N     N     N     N     Y     N     N      
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 4 PL          78113 78127    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 4 IR             30    50   100 IB001 IB001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 4 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 4 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 4 HA              0 79120   100     0
+
+
+

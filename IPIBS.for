@@ -2,7 +2,7 @@ C=======================================================================
 C  IPIBS, Subroutine, G. Hoogenboom
 C-----------------------------------------------------------------------
 C  Reads input variables for temporary data file for transfer of
-C  information from the INPUT module to the CROPGRO module.
+C  information from the INPUT module to CSM.
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  05/01/1989 GH  Written.

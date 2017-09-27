@@ -284,7 +284,7 @@ C-----------------------------------------------------------------------
             ENDIF
             CALL YR_DOY (YRDOY, YR, DOY)
             CALL NAILUJ (DOY, YR, RMM, IPX)
-            IF (YRDOY >= YRPLT) THEN
+!            IF (YRDOY >= YRPLT) THEN
               IF (INDEX('IE',RNMODE) .GT. 0 .AND. NYRS .LE. 1) THEN
                 WRITE(*,4600) IPX, RMM, DAP, STNAME(I), NINT(BIOMAS), 
      &            XLAI, LFNUM, NINT(WTNCAN*10.), WTN, AVDSTR, AVNSTR
@@ -300,7 +300,7 @@ C-----------------------------------------------------------------------
      &                  1X,I4,1X,F4.1,1X,F5.2,1X,F5.2,2(1X,F5.2),I6)
                 WRITE(NOUTDO,'(A)') SimText
               ENDIF
-            ENDIF
+!            ENDIF
           ENDIF
         ENDDO
       ENDIF

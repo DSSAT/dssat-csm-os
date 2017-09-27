@@ -67,23 +67,23 @@
 
 !       Warning that C:E ratio in subroutine PARTIT is unlikely wide.
         IF (ADDMETABEFLAG) THEN
-          WRITE (MSG(1), 900) 
-          WRITE (MSG(2), 901) 
-          WRITE (MSG(3), 902) 
-          WRITE (MSG(4), 903) 
-          WRITE (MSG(5), 904) 
-          WRITE (MSG(6), 905) 
+          WRITE (MSG(1), '(A)') 
+     & 'The carbon/nutrient ratio (C/N or C/P) of the residue'
+          WRITE (MSG(2), '(A)') 
+     & 'or senesced biomass that was added to the soil'
+          WRITE (MSG(3), '(A)') 
+     & 'is outside the common range to which the CESTR'
+          WRITE (MSG(4), '(A,A,A)') 'parameter in the file SOMFX',
+     & ModelVerTxt,'.SDA applies. You have a'
+          WRITE (MSG(5), '(A)') 
+     & 'residue with an extremely low nutrient concentration.'
+          WRITE (MSG(6), '(A)') 
+     & 'Please check your data and/or adapt the CESTR value.'
           CALL WARNING (6, ERRKEY, MSG)
 !         Set back to FALSE; otherwise it prints the warning every day.
           ADDMETABEFLAG = .FALSE.
         ENDIF   !End of IF block on ADDMETABEFLAG
 
-900   FORMAT('The carbon/nutrient ratio (C/N or C/P) of the residue') 
-901   FORMAT('or senesced biomass that was added to the soil')
-902   FORMAT('is outside the common range to which the CESTR')
-903   FORMAT('parameter in the file SOMFX046.SDA applies. You have a') 
-904   FORMAT('residue with an extremely low nutrient concentration.')  
-905   FORMAT('Please check your data and/or adapt the CESTR value.')  
 
 ***********************************************************************
 !***********************************************************************

@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.6; 07/01/2015
+! DSSAT v4.7; 09/01/2017
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -214,7 +214,7 @@ CH100    Pix [Mepiquat Chloride; Growth Regulator]                            IB
 
 *Crop and Weed Species
 @CDE     DESCRIPTION                                                          SO
-AL       Alfalfa/Lucerne                                                      IB
+AL       Alfalfa                                                              IB
 AR       Aroid                                                                IB
 BA       Barley                                                               IB
 BM       Bermuda grass                                                        IB
@@ -246,7 +246,7 @@ PE       Pea                                                                  IB
 PI       Pineapple                                                            IB
 PN       Peanut                                                               IB
 PO       Perennial peanut                                                     IB
-PP       Pigeonpea                                                            IB
+PP       Pigeon pea                                                           IB
 PR       Pepper                                                               IB
 PT       Potato                                                               IB
 RI       Rice                                                                 IB

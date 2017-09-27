@@ -1,0 +1,25 @@
+*EXP. DATA (T): UFBR9101TM POTENTIAL YIELD, SUNNY, SUBIRRIGATED                        
+
+! File last edited on day 08/29/2003 at 10:50:21 AM
+!
+@TRNO   DATE  L#SD  LAID  L#PA  LWAD  RWAD  SWAD  P#AD  PWAD  CWAD  M#AD  SLAD  CHTD  CWID
+     1 91084   5.1   -99   5.0   -99   -99  -99.   0.0     0  -99.   -99  -99.  0.11  0.15
+     1 91092   8.1 0.040  12.1   12.   2.5    5.   0.0     0   17.   -99  255.  0.12  0.17
+     1 91106  13.5 0.732  41.3  244.  21.0  166.   1.0     1  410.   -99  240.  0.37  0.54
+     1 91121  18.0 3.514 120.9  957. 107.5  972.  36.0   182 2110.   -99  346.  0.85  0.66
+     1 91135  20.0 4.499 167.4 1451. 194.5 1737.  51.8   820 4008.   -99  223.  1.11  0.81
+     1 91150  20.0 3.446 171.5 1088. 150.2 1970.  53.0  2916 5973.   -99  205.  1.21  0.97
+     1 91164  20.0 3.477 145.7 1231. 188.1 2603.  66.4  3526 7360.   -99  180.  1.49  0.92
+!L#SD:LEAF NUMBER PER STEM=PLASTACHRON                                          
+!LAID:LEAF AREA INDEX                                                           
+!L#PA:LEAF NUMBER PER AREA (#/M2)                                               
+!LWAD:LEAF DRY WEIGHT  (KG/HA)                                                  
+!RWAD:ROOT DRY WEIGHT (KG/HA)                                                   
+!SWAD:STEM DRY WEIGHT  (KG/HA)                                                  
+!F#AD:FRUIT NUMBER (#/M2)                                                       
+!FWAD:FRUIT DRY WEIGHT (KG/HA)                                                  
+!CWAD:TOTAL CROP DRY WEIGHT (KG/HA) INCLUDES:STEM,LEAVES,AND PODS(FRUITS)       
+!M#AD:MATURE FRUIT NUMBER (#/M2)                                                
+!SLAD:SPECIFIC LEAF AREA (CM2/G)                                                
+!CHTD:CANOPY HEIGHT (M)                                                         
+!CWID:CANOPY WIDTH (M)                                                          
