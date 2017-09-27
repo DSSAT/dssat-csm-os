@@ -572,7 +572,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER V_IRON(20)
         REAL V_IRAMT(20)
         REAL V_IREFF(20)
-        REAL V_IFREQ(20)
+        INTEGER V_IFREQ(20)
         INTEGER GSIRRIG
         CHARACTER*5 V_IRONC(20)
       End Type MgmtType

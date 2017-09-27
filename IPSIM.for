@@ -75,8 +75,8 @@ C=======================================================================
       REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
       REAL V_IMDEP(20)
       REAL V_ITHRL(20)
-      REAL V_ITHRU(20), V_IFREQ(20), IFREQ
-      INTEGER V_IRON(20)
+      REAL V_ITHRU(20), IFREQ
+      INTEGER V_IRON(20), V_IFREQ(20)
       CHARACTER*5 V_IRONC(20)
       CHARACTER*5 V_IMETH(20)
       REAL V_IRAMT(20)
@@ -442,7 +442,7 @@ C
               V_IMETH(GSIRRIG) = IAME
               V_IRAMT(GSIRRIG) = AIRAMT
               V_IREFF(GSIRRIG) = EFFIRR
-              V_IFREQ(GSIRRIG) = IFREQ
+              V_IFREQ(GSIRRIG) = NINT(IFREQ)
               V_AVWAT(GSIRRIG) = AVWAT
 
               CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)                ! Read next line until a second tier header is found
@@ -460,7 +460,7 @@ C
            AIRAMT = V_IRAMT(1)
            EFFIRR = V_IREFF(1)
            AVWAT  = V_AVWAT(1)
-           IFREQ  = V_IFREQ(1)
+           IFREQ  = FLOAT(V_IFREQ(1))
 
            SAVE_data % MGMT % V_IMDEP = V_IMDEP
            SAVE_data % MGMT % V_ITHRL = V_ITHRL
