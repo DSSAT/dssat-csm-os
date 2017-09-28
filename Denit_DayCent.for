@@ -31,7 +31,7 @@ C=======================================================================
       REAL SNO3_AVAIL
       REAL DLTSNO3(NL)   
       REAL BD(NL), DUL(NL), KG2PPM(NL)
-      REAL NO3(NL), SNO3(NL), SW(NL)
+      REAL NO3(NL), SNO3(NL), SW(NL), DLAYR(NL), DS(NL)
       
 !!!!! daycent variables  PG
       REAL wfps(nl)
@@ -48,6 +48,9 @@ C=======================================================================
       INTEGER NDAYS_WET(NL)
       TYPE (SOILTYPE) SOILPROP
 
+      Real Denit_depth, cumdep, frac_layer
+      Integer DD_layer
+
       TYPE (N2O_type) N2O_DATA
 !          Cumul      Daily       Layer ppm        Layer kg
       REAL CNOX,      TNOXD,      denitrifppm(NL), DENITRIF(NL)  !Denitrification
@@ -58,6 +61,7 @@ C=======================================================================
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
       CALL YR_DOY(YRDOY, YEAR, DOY)
+
 
 !***********************************************************************
 !***********************************************************************
@@ -87,6 +91,35 @@ C=======================================================================
 !!   temp chp
 !      write(4000,'(a,/,a)') "DayCent",
 !     &   "  yrdoy Lyr Wet    wfps  ratio1  ratio2"
+
+!     Calculate the number of top layers to accelerate slow denitrificaiont
+!     as in DayCent denitrify.c
+      NLAYR = SOILPROP % NLAYR
+      DLAYR = SOILPROP % DLAYR
+      DS    = SOILPROP % DS
+
+      Denit_depth = 30.   !cm depth for accelerated dentitrification
+      DD_layer = 1        !layer number at depth Denit_depth
+!     Save soil layer at 30 cm (if it's at least half the layer thickness)
+      cumdep = 0.0
+      do L = 1, nlayr
+        cumdep = cumdep + dlayr(L)
+        if (cumdep < Denit_depth) then
+          cycle
+        elseif (L > 1) then
+          frac_layer = (Denit_depth - ds(L-1))/(dlayr(L))
+          if (frac_layer > 0.5) then
+            DD_layer = L
+          else
+            DD_layer = L-1
+          endif
+          exit
+        else
+          DD_layer = 1
+          exit
+        endif
+      enddo
+      if (Denit_depth > DS(nlayr)) DD_layer = nlayr
 
 !***********************************************************************
 !***********************************************************************
@@ -173,6 +206,18 @@ C=======================================================================
         fDco2 = max(0.0, fDco2)
 
         fNO3fCO2 = min (fDco2, fDno3)
+
+!     9/28/2017 Based on DayCent dentitrificaion routine (denitrify.c)
+!        Dtotflux = (fDno3 < fDco2) ? fDno3 : fDco2;
+!        /* Minimum value for potential denitrification in top 2 soil layers */
+!        /* ppm N, 9/18/00 -cindyk */
+! chp: top 2 layers in DayCent = 30 cm
+!        if (ilyr < 2) {
+!          Dtotflux = max(0.066f, Dtotflux);
+!        }
+        if (L <= DD_layer) then
+          fNO3fCO2 = max(fNO3fCO2, 0.066)
+        endif
 
 !       Compute wfps effect on denitrification, (fDwfps, 0-1)
 !       Changed wfps effect on denitrification based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
