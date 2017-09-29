@@ -105,7 +105,7 @@ C=======================================================================
       INTEGER NBUND, NSWITCH
       INTEGER FERTDAY
       INTEGER DLAG(NL), INCYD, LFD10  !REVISED-US
-      REAL ALI, FLOOD, ES, TMAX, TMIN, SRAD, XHLAI, RAIN, SNOW, NOX_PULS
+      REAL ALI, FLOOD, ES, TMAX, TMIN, SRAD, XHLAI, RAIN, SNOW
       REAL TKELVIN, TFACTOR, WFPL, WF2
       REAL PHFACT, T2, TLAG   !, DNFRATE
       REAL CUMFNRO
@@ -126,6 +126,7 @@ C=======================================================================
 !     Added for GHG model
       REAL newCO2(0:nl)
       REAL pn2onitrif
+      real nox_puls, krainNO
 
 !     Added for tile drainage:
       REAL TDFC
@@ -278,6 +279,10 @@ C=======================================================================
       CALL N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 
       CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+
+      IF (CONTROL%RUN .EQ. 1 .OR. INDEX('QF',CONTROL%RNMODE) .LE. 0)THEN
+        call nox_pulse (dynamic, rain, snow, nox_puls)
+      ENDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -597,6 +602,16 @@ C=======================================================================
       
       END DO   !End of soil layer loop.
 
+      N2O_data % NITRIF   = NITRIF
+      N2O_data % N2Onitrif  = N2Onitrif
+
+!-----------------------------------------------------------------------
+!       NOX pulse 
+!-----------------------------------------------------------------------
+!     NOx pulse multiplier from DayCent
+      call nox_pulse (dynamic, rain, snow, nox_puls)
+      krainNO = nox_puls
+
 !-----------------------------------------------------------------------
 !       Denitrification section
 !-----------------------------------------------------------------------
@@ -619,6 +634,7 @@ C=======================================================================
      &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
       ENDIF
+      CALL PUT('NITR','TNOXD',TNOXD) 
 
       CALL N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 
@@ -640,8 +656,6 @@ C=======================================================================
      &  ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &  SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
      &  DLTSNO3, CLeach, TLeachD)                             !Output
-
-      CALL PUT('NITR','TNOXD',TNOXD) 
 
 !***********************************************************************
 !***********************************************************************
