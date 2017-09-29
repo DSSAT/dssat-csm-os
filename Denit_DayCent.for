@@ -39,7 +39,7 @@ C=======================================================================
       REAL a_coeff, wfps_thres, fDno3, Rn2n2O(NL), fRwfps
       REAL fRno3_CO2, k1, fDCO2, fDwfps, X_inflect
       REAL m, fNo3fCo2
-      REAL newCO2(0:nl), dD0_fc(nl)
+      REAL newCO2(0:nl), dD0(nl)
       real A(4)
 !     real RWC
       real min_nitrate
@@ -88,19 +88,15 @@ C=======================================================================
       NDAYS_WET = 0.0
       min_nitrate = 0.1
 
-!!   temp chp
-!      write(4000,'(a,/,a)') "DayCent",
-!     &   "  yrdoy Lyr Wet    wfps  ratio1  ratio2"
-
-!     Calculate the number of top layers to accelerate slow denitrificaiont
+!     Calculate the number of top layers to accelerate slow denitrification
 !     as in DayCent denitrify.c
       NLAYR = SOILPROP % NLAYR
       DLAYR = SOILPROP % DLAYR
       DS    = SOILPROP % DS
 
       Denit_depth = 30.   !cm depth for accelerated dentitrification
-      DD_layer = 1        !layer number at depth Denit_depth
-!     Save soil layer at 30 cm (if it's at least half the layer thickness)
+      DD_layer = 1        !layer number at depth = Denit_depth
+!     Save soil layer at Denit_depth (if it's at least half the layer thickness)
       cumdep = 0.0
       do L = 1, nlayr
         cumdep = cumdep + dlayr(L)
@@ -136,7 +132,7 @@ C=======================================================================
       
 !     ------------------------------------------------------------------
 !     Diffusivity rate calculation
-      call DayCent_diffusivity(dD0_fc, sw, soilprop)
+      call DayCent_diffusivity(dD0, sw, soilprop)
 !     ------------------------------------------------------------------
 
       TNOXD = 0.0
@@ -152,7 +148,6 @@ C=======================================================================
 !     Loop through soil layers for rate calculations
 !     ------------------------------------------------------------------
       DO L = 1, NLAYR
-!        wfps(L) = min(1.0, sw(L) / poros(L))
         
 !!       following code is Rolston pdf document
 !        RWC = SW(L)/SAT(L)                                  
@@ -177,19 +172,19 @@ C=======================================================================
         endif
       
 !       Water Filled Pore Space (WFPS) WFPS_threshold
-        If (dD0_fc(L) .GE. 0.15) then 
+        If (dD0(L) .GE. 0.15) then 
           WFPS_thres = 0.80
         else
-          WFPS_thres = (dD0_fc(L)*250. + 43.)/100.
+          WFPS_thres = (dD0(L)*250. + 43.)/100.
         endif
         
         if(wfps(L) .LE. WFPS_thres) then
           co2_correct(L) = co2PPM(L)
         else
-          if(dD0_fc(L) .GE. 0.15) then
+          if(dD0(L) .GE. 0.15) then
             a_coeff = 0.004
           else 
-            a_coeff = -0.1*dD0_fc(L) + 0.019
+            a_coeff = -0.1*dD0(L) + 0.019
           endif    
           co2_correct(L)=co2PPM(L)*(1.0+a_coeff*(wfps(L)-WFPS_thres))   !the amount labile C is adjusted taking into account diffusion
         endif  
@@ -223,7 +218,7 @@ C=======================================================================
 !       Changed wfps effect on denitrification based on paper "General model for N2O and N2 gas emissions from soils due to denitrification"
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00
 
-        M = min(0.113, dD0_fc(L)) * (-1.25) + 0.145
+        M = min(0.113, dD0(L)) * (-1.25) + 0.145
        
 !       The x_inflection calculation should take into account the corrected CO2 concentration, cak - 07/31/02 
 
@@ -276,7 +271,7 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
 !       Del Grosso et. al, GBC     12/00,  -mdh 5/16/00 
 !       fRno3_co2 estimates the ratio as a function of electron donor to substrate -mdh 5/17/00
 
-        k1 = max(1.5, 38.4 - 350. * dD0_fc(L))
+        k1 = max(1.5, 38.4 - 350. * dD0(L))
 
         if (CO2ppm(L) > 1.E-3) then
           fRno3_co2 = max(0.16 * k1, 
