@@ -11,13 +11,15 @@ C  06/15/2014 CHP Written
       TYPE N2O_type
 !            Daily        Cumul        Layer         
         REAL TNOXD,       CNOX,        DENITRIF(NL)  ![N] Denitrified
-        REAL TN2OdenitD,  CN2Odenit,   n2odenit(NL)  !N2O[N] from denitrification
-        REAL TN2D,        CN2,         n2flux(NL)    !N2[N] from denitrification
+        REAL TN2OdenitD,  CN2Odenit,   N2Odenit(NL)  !N2O[N] from denitrification
+        REAL TN2OnitrifD, CN2Onitrif,  N2ONitrif(NL) !N2O[N] from nitrification
+
+        REAL TN2D,        CN2,         N2flux(NL)    !N2[N] from denitrification
+ 	  REAL                           N2OFLUX(NL)   !N2Oflux = N2Odenit + N2ONitrif
+        REAL                           NOflux(NL)    !NO flux from nitrification
 
         REAL TNITRIFY,    CNITRIFY,    NITRIF(NL)    ![N] Nitrified 
-        REAL TN2OnitrifD, CN2Onitrif,  n2onitrif(NL) !N2O[N] from nitrification
 
- 	  REAL                           N2OFLUX(NL)   !N2Oflux = N2Odenit + N2Onitrif
         REAL N2_emitted,  CN2_emitted                !N2[N] emitted
         REAL N2O_emitted, CN2O_emitted               !N2O[N] emitted
 
@@ -53,7 +55,7 @@ C  09/18/2015 CHP Written, based on PG code.
 
       REAL N2flux(NL)                !N2
       REAL N2Odenit(NL)              !N2O from denitrification
-      REAL N2Onitrif(NL)             !N2O from nitrification
+      REAL N2ONitrif(NL)             !N2O from nitrification
       real wfps(nl)                  ! PG   
 
 !          Daily        Cumul        
@@ -76,7 +78,7 @@ C  09/18/2015 CHP Written, based on PG code.
       YRDOY   = CONTROL % YRDOY
 
       N2Odenit = N2O_data % N2Odenit  
-      N2Onitrif= N2O_data % N2Onitrif  
+      N2Onitrif= N2O_data % N2ONitrif  
       N2flux   = N2O_data % N2flux   
       WFPS     = N2O_data % WFPS  
 
@@ -125,7 +127,7 @@ C-----------------------------------------------------------------------
           RateDiffus = (1.0 - WFPS(L)) * DiffFactor
          
 !         Update soil state variables based on new N2 and N2O today (flux)
-          n2oflux(L) = max(0.0, n2onitrif(L) + n2odenit(L)) 
+          n2oflux(L) = max(0.0, N2ONitrif(L) + n2odenit(L)) 
           n2flux(L)  = max(0.0, n2flux(L))
           n2o_soil(L) = n2o_soil(L) + n2oflux(L)           
           n2_soil(L)  = n2_soil(L)  + n2flux(L)
@@ -205,13 +207,14 @@ C  06/15/2014 CHP Written
 !          Cumul      Daily     Layer         
       REAL CNOX,      TNOXD,    DENITRIF(NL)  !Denitrification
       REAL CNITRIFY,  TNITRIFY, NITRIF(NL)    !Nitrification 
-      REAL TN2D,      CN2,      N2flux(NL)    !N2
+      REAL CN2,       TN2D,     N2flux(NL)    !N2
 !     REAL CN2O,      TN2OD,    N2Oflux(NL)   !N2O total (nitrification + denitrification)
       REAL                      N2Oflux(NL)   !N2O total (nitrification + denitrification)
+      REAL                      NOflux(NL)    !NO total flux
 !     Added N2Odenit for N2O from denitrification only and daily and cumulative variables
       REAL CN2Odenit, TN2OdenitD, N2Odenit(NL)   !N2O from denitrification only 
-!     Daily total and cumulative totals for n2onitrif
-      REAL CN2Onitrif, TN2OnitrifD, N2Onitrif(NL) ! N2O from nitrification only    
+!     Daily total and cumulative totals for N2ONitrif
+      REAL CN2Onitrif, TN2OnitrifD, N2ONitrif(NL) ! N2O from nitrification only    
 
       REAL n2o_emitted, n2_emitted, CN2O_emitted, CN2_emitted  
        
@@ -244,8 +247,9 @@ C  06/15/2014 CHP Written
       DENITRIF = N2O_data % DENITRIF   
       CN2      = N2O_data % CN2      
       TN2D     = N2O_data % TN2D
-      N2Oflux  = N2O_data % N2Oflux       
-      n2flux   = N2O_data % n2flux   
+      N2Oflux  = N2O_data % N2Oflux 
+      NOflux   = N2O_data % NOflux    
+      N2flux   = N2O_data % n2flux   
 
 !     added n2odenit and daily and cumulative variables      
       Cn2odenit = N2O_data % Cn2odenit
@@ -256,10 +260,10 @@ C  06/15/2014 CHP Written
       NITRIF   = N2O_data % NITRIF  
       WFPS     = N2O_data % WFPS  
 
-!     add daily total and cumulative N2ONITRIF variables
+!     add daily total and cumulative N2ONitrif variables
       CN2ONITRIF = N2O_data % CN2ONITRIF
       TN2ONITRIFD= N2O_data % TN2ONITRIFD
-      N2ONITRIF  = N2O_data % N2ONITRIF
+      N2ONitrif  = N2O_data % N2ONitrif
 
 !***********************************************************************
 !***********************************************************************

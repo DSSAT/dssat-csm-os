@@ -124,9 +124,9 @@ C=======================================================================
       REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
 
 !     Added for GHG model
-      REAL newCO2(0:nl)
-      REAL pn2onitrif
-      real nox_puls, krainNO
+      REAL newCO2(0:NL), dD0(NL), NOflux(NL)
+      REAL pn2onitrif, NH4_to_NO
+      real nox_puls, krainNO, NO_N2O_ratio, potential_NOflux
 
 !     Added for tile drainage:
       REAL TDFC
@@ -389,6 +389,15 @@ C=======================================================================
         IUON = .FALSE.
       ENDIF
 
+!-----------------------------------------------------------------------
+!     NOx pulse multiplier from DayCent
+      call nox_pulse (dynamic, rain, snow, nox_puls)
+      krainNO = nox_puls
+
+!     Diffusivity rate calculation from DayCent
+      call DayCent_diffusivity(dD0, sw, soilprop)
+!-----------------------------------------------------------------------
+
 !     ------------------------------------------------------------------
 !     Loop through soil layers for rate calculations
 !     ------------------------------------------------------------------
@@ -441,9 +450,12 @@ C=======================================================================
 !       Limit the soil water factors between 0 and 1.
         WFSOM = AMAX1 (AMIN1 (WFSOM, 1.), 0.)
         
-!     Calculate the soil temperature factor for the urea hydrolysis.
+!       Calculate the soil temperature factor for the urea hydrolysis.
         TFUREA = (ST(L) / 40.) + 0.20
         TFUREA = AMAX1 (AMIN1 (TFUREA, 1.), 0.)
+
+!       Water filled pore space
+        N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
 
 !-----------------------------------------------------------------------
 !       UREA hydrolysis
@@ -592,25 +604,51 @@ C=======================================================================
         XMIN = 0.0
         SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
         NITRIF(L) = AMIN1(NITRIF(L), SNH4_AVAIL)
-
-        n2onitrif(L) = pN2Onitrif * NITRIF(L)    ! for N2O using a proportion of nitrification from original daycent PG
-        N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
-
-        DLTSNO3(L) = DLTSNO3(L) + NITRIF(L) - n2onitrif(L)
         DLTSNH4(L) = DLTSNH4(L) - NITRIF(L)
+
+!       Update available NH4 for the next step
+        SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
+
+!       ------------------------------------------------------------------
+!       N2, N2O, NO fluxes
+!       ------------------------------------------------------------------
+        if (NITRIF(L) > 1.E-6) then
+
+!         for N2O using a proportion of nitrification from original daycent PG
+          N2ONitrif(L) = pN2Onitrif * NITRIF(L)    
+
+!         NO flux 
+          NO_N2O_ratio = 8.0 + (18.0*atan(0.75*PI*(10*dD0(L)-1.86)))/PI
+          NO_N2O_ratio = NO_N2O_ratio * 0.5  !for agricultural systems
+
+          potential_NOflux = NO_N2O_ratio * krainNO * N2ONitrif(L)
+
+          if (potential_NOflux <= NITRIF(L)) then
+            NOflux(L) = potential_NOflux
+          else 
+!           /* take N out of ammonimum to get max NOflux possible */
+            NH4_to_NO = min(SNH4_AVAIL, (potential_NOflux - NITRIF(L)))
+            NOflux(L) = NITRIF(L) + NH4_to_NO
+          endif
+
+          if (NOflux(L) < 1.0E-30) then
+            NOflux(L) = 0.0
+          endif
+
+        else 
+          NO_N2O_ratio = 0.0
+        endif
+
+!**** DO WE NEED TO RECALCULATE N2ONitrif based on NOflux? ****!
+
+        DLTSNO3(L) = DLTSNO3(L) + NITRIF(L) - N2ONitrif(L) - NOflux(L)
         TNITRIFY   = TNITRIFY   + NITRIF(L)
       
       END DO   !End of soil layer loop.
 
       N2O_data % NITRIF   = NITRIF
       N2O_data % N2Onitrif  = N2Onitrif
-
-!-----------------------------------------------------------------------
-!       NOX pulse 
-!-----------------------------------------------------------------------
-!     NOx pulse multiplier from DayCent
-      call nox_pulse (dynamic, rain, snow, nox_puls)
-      krainNO = nox_puls
+      N2O_data % NOflux = NOflux
 
 !-----------------------------------------------------------------------
 !       Denitrification section
