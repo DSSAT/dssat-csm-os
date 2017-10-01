@@ -122,11 +122,15 @@ C=======================================================================
       REAL CNUPTAKE,  WTNUP                                 !N uptake
       REAL CLeach,    TLeachD                               !N leaching
       REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
+      REAL CNOflux,   TNOfluxD,                NOflux(NL)   !NO flux
+      REAL                                     N2ODenit(NL) !N2O from denitrification
 
 !     Added for GHG model
-      REAL newCO2(0:NL), dD0(NL), NOflux(NL)
-      REAL pn2onitrif, NH4_to_NO
-      real nox_puls, krainNO, NO_N2O_ratio, potential_NOflux
+      REAL, DIMENSION(NL) :: dD0, NO_N2O_ratio
+      REAL, DIMENSION(0:NL) :: newCO2
+      REAL pn2onitrif, NH4_to_NO, NITRIF_to_NO
+      real nox_puls, krainNO, potential_NOflux, NITRIF_remaining
+      real canopy_reduction, NOAbsorp
 
 !     Added for tile drainage:
       REAL TDFC
@@ -151,12 +155,6 @@ C=======================================================================
       
 !      PI = 3.1416
       
-!     proportion of N2O from nitrification PG calibrated this variable for DayCent
-      pn2Onitrif = .001  
-!     chp - from DayCent - is this the equivalent value?
-!     double turnovfrac = 0.02;
-! chp - tried pn2Onitrif = .02, but n2o emissions are way too high.
-       
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
@@ -211,11 +209,19 @@ C=======================================================================
         CLeach   = 0.0  !leaching
         WTNUP    = 0.0  !N uptake
         CN2Onitrif=0.0  !N2O[N] from nitrification
+        CNOflux  = 0.0  !NO
 
         nitrif = 0.0
         denitrif = 0.0
         N2O_data % wfps = 0.0
 
+!     proportion of N2O from nitrification PG calibrated this variable for DayCent
+      pn2Onitrif = .001  
+!     pn2Onitrif = .02  
+!     chp - from DayCent - is this the equivalent value?
+!     double turnovfrac = 0.02;
+! chp - tried pn2Onitrif = .02, but n2o emissions are way too high.
+       
         TFNITY = 0.0    !
         IUOF   = 0
         IUON   = .FALSE.
@@ -283,6 +289,11 @@ C=======================================================================
       IF (CONTROL%RUN .EQ. 1 .OR. INDEX('QF',CONTROL%RNMODE) .LE. 0)THEN
         call nox_pulse (dynamic, rain, snow, nox_puls)
       ENDIF
+
+!         temp chp
+          write(555,'(a,a)') 
+     &      "  YRDOY  L   krainNO       dD0    NO:N2O", 
+     &      "   NIT->NO   NH4->NO    NOflux    NitN2O    Nitrif"
 
 !***********************************************************************
 !***********************************************************************
@@ -410,6 +421,7 @@ C=======================================================================
       NITRIF   = 0.0
       TN2OnitrifD = 0.0  !N2O from nitrification
       N2Onitrif = 0.0
+      TNOfluxD  = 0.0   !NO
  
       DO L = 1, NLAYR
 !       ----------------------------------------------------------------
@@ -610,38 +622,49 @@ C=======================================================================
         SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
 
 !       ------------------------------------------------------------------
-!       N2, N2O, NO fluxes
+!       N2, N2O, NO fluxes from Nitrification
 !       ------------------------------------------------------------------
         if (NITRIF(L) > 1.E-6) then
 
 !         for N2O using a proportion of nitrification from original daycent PG
-          N2ONitrif(L) = pN2Onitrif * NITRIF(L)    
+          N2ONitrif(L) = pN2Onitrif * NITRIF(L) 
+          NITRIF_remaining = NITRIF(L) - N2ONitrif(L)   
 
 !         NO flux 
-          NO_N2O_ratio = 8.0 + (18.0*atan(0.75*PI*(10*dD0(L)-1.86)))/PI
-          NO_N2O_ratio = NO_N2O_ratio * 0.5  !for agricultural systems
+          NO_N2O_ratio(L) = 8.0+(18.0*atan(0.75*PI*(10*dD0(L)-1.86)))/PI
+          NO_N2O_ratio(L) = NO_N2O_ratio(L) * 0.5  !for agricultural systems
+          potential_NOflux = NO_N2O_ratio(L) * krainNO * N2ONitrif(L)
 
-          potential_NOflux = NO_N2O_ratio * krainNO * N2ONitrif(L)
-
-          if (potential_NOflux <= NITRIF(L)) then
-            NOflux(L) = potential_NOflux
+          if (potential_NOflux <= NITRIF_remaining) then
+            NITRIF_to_NO = potential_NOflux
+            NH4_to_NO = 0.0
+            NITRIF_remaining = NITRIF_remaining - NITRIF_to_NO
           else 
 !           /* take N out of ammonimum to get max NOflux possible */
-            NH4_to_NO = min(SNH4_AVAIL, (potential_NOflux - NITRIF(L)))
-            NOflux(L) = NITRIF(L) + NH4_to_NO
+            NITRIF_to_NO = NITRIF_remaining
+            NH4_to_NO = AMIN1(SNH4_AVAIL,
+     &                         (potential_NOflux - NITRIF_remaining))
+            NITRIF_remaining = 0.0
           endif
 
-          if (NOflux(L) < 1.0E-30) then
-            NOflux(L) = 0.0
-          endif
+          NOflux(L) = AMAX1(NITRIF_to_NO + NH4_to_NO, 0.0)
+
+!         temp chp
+          write(555,'(i7, i3, 3f10.3, 5e10.3)') 
+     &      YRDOY, L, krainNO, dD0(L), NO_N2O_ratio(L), 
+     &      NITRIF_to_NO, NH4_to_NO, NOflux(L), N2ONitrif(L), nitrif(L)
 
         else 
-          NO_N2O_ratio = 0.0
+          NO_N2O_ratio(L) = 0.0
+          N2ONitrif(L) = 0.0
+          NOflux(L)    = 0.0
+          NITRIF_to_NO = 0.0
+          NH4_to_NO    = 0.0
+          NITRIF_remaining = 0.0
         endif
 
-!**** DO WE NEED TO RECALCULATE N2ONitrif based on NOflux? ****!
-
-        DLTSNO3(L) = DLTSNO3(L) + NITRIF(L) - N2ONitrif(L) - NOflux(L)
+        DLTSNO3(L) = DLTSNO3(L) + NITRIF_remaining
+        DLTSNH4(L) = DLTSNH4(L) - NH4_to_NO
         TNITRIFY   = TNITRIFY   + NITRIF(L)
       
       END DO   !End of soil layer loop.
@@ -674,6 +697,66 @@ C=======================================================================
       ENDIF
       CALL PUT('NITR','TNOXD',TNOXD) 
 
+!       ------------------------------------------------------------------
+!       N2, N2O, NO fluxes from Denitrification
+!       ------------------------------------------------------------------
+!      /* Now compute NOflux from denitrification (new calculation */
+!      /* For denitrification, krainNO is >= 1.0 -mdh 6/22/00 */
+      N2ODenit = N2O_DATA % N2ODenit
+
+      if (sum(n2odenit) > 1.e-6) then
+        DO L = 1, NLAYR
+          potential_NOflux = NO_N2O_ratio(L) * N2ODenit(L) 
+     &                                       * AMIN1(1.0, krainNO)
+          SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
+
+          if (potential_NOflux <= SNH4_AVAIL) then
+!           Take all N out of ammonimum pool
+            NOflux(L) = NOflux(L) + potential_NOflux
+            DLTSNH4(L) = DLTSNH4(L) - potential_NOflux
+          else 
+!           Take N out of available ammonium, then convert some Dn2oflux to NOflux
+            NOflux(L) = NOflux(L) + SNH4_AVAIL
+            DLTSNH4(L) = DLTSNH4(L) - SNH4_AVAIL
+            potential_NOflux = potential_NOflux - SNH4_AVAIL
+            if (potential_NOflux <= N2ODenit(L)) then
+              NOflux(L) = NOflux(L) + potential_NOflux
+              N2ODenit(L) = N2ODenit(L) - potential_NOflux
+            else
+              NOflux(L) = NOflux(L) + N2ODenit(L)
+              N2ODenit(L) = 0.0
+            endif
+          endif
+
+          TNOfluxD = TNOfluxD + NOflux(L)
+        ENDDO
+
+        if (XHLAI > 0.0) then
+!         canopy_reduction appears to be the reabsorbed fraction.
+!             This equation is a parabola with the minimum about 8.28. It reduces
+!             absorption for LAI above that so limit LAI to 8.0. The problem seems
+!             to be the simple biomass to LAI ratio. 200 bu/acre corn is
+!             aglivC > 1100 and an LAI > 34. Obviously its not all leaves. */
+          if (XHLAI > 8.0) then
+            canopy_reduction = 0.4428
+          else
+            canopy_reduction = 0.0077*XHLAI*XHLAI + -0.13 * XHLAI + 0.99
+          endif
+
+!         retain the soil flux value 
+          NOabsorp = TNOfluxD * (1.0 - canopy_reduction)
+          TNOfluxD = TNOfluxD - NOabsorp    !reduce the NOflux by absorption
+          NOflux = NOflux * canopy_reduction
+        else
+          canopy_reduction = 0.0
+        endif
+      endif
+
+      N2O_DATA % NOflux = NOflux
+
+!     ------------------------------------------------------------------
+!     N emissions to atmosphere
+!     ------------------------------------------------------------------
       CALL N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
 
 !     ------------------------------------------------------------------
@@ -777,6 +860,7 @@ C=======================================================================
       CNETMINRN= CMINERN  - CIMMOBN
       CNITRIFY = CNITRIFY + TNITRIFY
       CN2Onitrif = CN2Onitrif + TN2OnitrifD
+      CNOflux  = CNOflux  + TNOfluxD
 
       CNUPTAKE = WTNUP * 10.
 
