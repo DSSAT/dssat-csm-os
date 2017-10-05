@@ -295,14 +295,14 @@ C=======================================================================
         call nox_pulse (dynamic, rain, snow, nox_puls)
       ENDIF
 
-!         temp chp
-          write(555,'(a,a)') 
-     &      "  YRDOY  L   krainNO       dD0    NO:N2O", 
-     &      "   NIT->NO   NH4->NO   nNOflux    NitN2O    Nitrif"
-
-         write(556,'(a,a)')
-     &      "  YRDOY  L SNH4Avail", 
-     &      "  N2ODenit    NO:N2O   krainNO   dNOflux"
+!!         temp chp
+!          write(555,'(a,a)') 
+!     &      "  YRDOY  L   krainNO       dD0    NO:N2O", 
+!     &      "   NIT->NO   NH4->NO   nNOflux    NitN2O    Nitrif"
+!
+!         write(556,'(a,a)')
+!     &      "  YRDOY  L SNH4Avail", 
+!     &      "  N2ODenit    NO:N2O   krainNO   dNOflux"
 
 !***********************************************************************
 !***********************************************************************
@@ -665,10 +665,10 @@ C=======================================================================
           nNOflux(L) = AMAX1(NITRIF_to_NO + NH4_to_NO, 0.0)
           NITRIF(L) = NITRIF(L) + NH4_to_NO
 
-!         temp chp
-          write(555,'(i7, i3, 3f10.3, 5e10.3)') 
-     &      YRDOY, L, krainNO, dD0(L), NO_N2O_ratio(L), 
-     &      NITRIF_to_NO, NH4_to_NO, nNOflux(L), N2ONitrif(L), nitrif(L)
+!!         temp chp
+!          write(555,'(i7, i3, 3f10.3, 5e10.3)') 
+!     &      YRDOY, L, krainNO, dD0(L), NO_N2O_ratio(L), 
+!     &      NITRIF_to_NO, NH4_to_NO, nNOflux(L), N2ONitrif(L), nitrif(L)
 
         else 
           NO_N2O_ratio(L) = 0.0
@@ -755,9 +755,9 @@ C=======================================================================
             !endif
           endif
 
-!         TEMP CHP
-          WRITE(556,'(i7,i3,f10.3,e10.3,2f10.3,e10.3)') YRDOY, L, 
-     &     SNH4_AVAIL, N2ODenit(L), NO_N2O_ratio(L), krainNO, dNOflux(L)
+!!         TEMP CHP
+!          WRITE(556,'(i7,i3,f10.3,e10.3,2f10.3,e10.3)') YRDOY, L, 
+!     &     SNH4_AVAIL, N2ODenit(L), NO_N2O_ratio(L), krainNO, dNOflux(L)
 
         ENDDO
 

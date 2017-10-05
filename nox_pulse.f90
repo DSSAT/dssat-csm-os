@@ -98,10 +98,10 @@
 
       nox_puls = 1.0
 
-      write(334,'(" nppt   rain cumppt sumppt  npl     pl  npm     pm  nph     ph mptr  mtplr pflag nox_puls")')
-      write(334,'(i5,3f7.2,4(i5,f7.3),i6, f8.3)')  &
-         nppt, rain, cumppt(nppt), sumppt, npl, pl(npl), npm, pm(npm),   &
-         nph, ph(nph), mptr, mtplr(mptr), pflag, nox_puls
+!     write(334,'(" nppt   rain cumppt sumppt  npl     pl  npm     pm  nph     ph mptr  mtplr pflag nox_puls")')
+!     write(334,'(i5,3f7.2,4(i5,f7.3),i6, f8.3)')  &
+!        nppt, rain, cumppt(nppt), sumppt, npl, pl(npl), npm, pm(npm),   &
+!        nph, ph(nph), mptr, mtplr(mptr), pflag, nox_puls
 
 ! =================================================================
       case (rate)
@@ -154,9 +154,9 @@
 
       nox_puls = mtplr(mptr)
 
-      write(334,'(i5,3f7.2,4(i5,f7.3),i6,f8.3)')  &
-         nppt, rain, cumppt(nppt), sumppt, npl, pl(npl), npm, pm(npm),   &
-         nph, ph(nph), mptr, mtplr(mptr), pflag, nox_puls
+!     write(334,'(i5,3f7.2,4(i5,f7.3),i6,f8.3)')  &
+!        nppt, rain, cumppt(nppt), sumppt, npl, pl(npl), npm, pm(npm),   &
+!        nph, ph(nph), mptr, mtplr(mptr), pflag, nox_puls
 
       pl(npl) = 1.0
       pm(npm) = 1.0
