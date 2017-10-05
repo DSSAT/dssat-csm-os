@@ -75,6 +75,13 @@ C  09/18/2015 CHP Written, based on PG code.
 !     real, parameter :: DiffFactor = 0.5
       real DiffFactor
 
+!     temp chp
+      real
+     &  TN2Osoil, TN2soil, TNOsoil,  
+     &  TN2Oflux, TN2flux, TNOflux, TNGflux,  
+     &  n2o_in1, n2o_flux1, n2o_soil1, totemit
+
+
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -105,10 +112,17 @@ C-----------------------------------------------------------------------
       CN2O_emitted = 0.0
       CNO_emitted  = 0.0
 
-      NLAYR   = SOILPROP % NLAYR
-      DiffFactor = SOILPROP % DiffFactor
-      IF (DiffFactor <= 0.0) DiffFactor = 0.5
-      SOILPROP % DiffFactor = DiffFactor
+!     For sequenced runs, only read values for RUN 1
+      IF (INDEX('QF',CONTROL%RNMODE) .LE. 0 .OR. CONTROL%RUN .EQ. 1)THEN
+        NLAYR   = SOILPROP % NLAYR
+        DiffFactor = SOILPROP % DiffFactor
+        IF (DiffFactor <= 0.0) DiffFactor = 0.5
+        SOILPROP % DiffFactor = DiffFactor
+        
+        n2o_soil = 0.0
+        no_soil  = 0.0
+        n2_soil  = 0.0
+      endif
       
 !***********************************************************************
 !***********************************************************************
@@ -131,7 +145,15 @@ C-----------------------------------------------------------------------
 ! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
 
 !     For N mass balance, account for N gas in soil
-      TNGSoil = 0.0
+      TN2Osoil = 0.0 
+      TN2soil  = 0.0
+      TNOsoil  = 0.0
+      TNGsoil  = 0.0
+
+      TN2Oflux = 0.0
+      TN2flux  = 0.0
+      TNOflux  = 0.0
+      TNGflux  = 0.0
 
       DO L = NLAYR, 1, -1
 !         Rate of diffusion depends on today's soil water and soil factor
@@ -156,6 +178,7 @@ C-----------------------------------------------------------------------
             no_emitted  = no_diffused
           else
             n2o_soil(L-1) = n2o_soil(L-1) + n2o_diffused
+            if (L == 2) n2o_in1 = n2o_diffused
             n2_soil(L-1) = n2_soil(L-1) + n2_diffused
             no_soil(L-1) = no_soil(L-1) + no_diffused
           endif
@@ -164,12 +187,30 @@ C-----------------------------------------------------------------------
           n2_soil(L)  = n2_soil(L)  - n2_diffused
           no_soil(L)  = no_soil(L)  - no_diffused
 
-          TNGSoil = TNGSoil + n2o_soil(L) + n2_soil(L) + no_soil(L)
+          TN2Osoil = TN2Osoil + n2o_soil(L)
+          TN2soil  = TN2soil  + n2_soil(L)
+          TNOsoil  = TNOsoil  + no_soil(L)
+          TNGsoil  = TNGsoil  + n2o_soil(L) + n2_soil(L) + no_soil(L)
+
+          TN2Oflux = TN2Oflux + n2oflux(L)
+          TN2flux  = TN2flux  + n2flux(L)
+          TNOflux  = TNOflux  + noflux(L)
+          TNGflux  = TNGflux  + n2oflux(L) + n2flux(L) + noflux(L)
       ENDDO
       
       CN2O_emitted = CN2O_emitted + N2O_emitted
       CN2_emitted  = CN2_emitted  + N2_emitted
       CNO_emitted  = CNO_emitted  + NO_emitted
+      totemit = N2O_emitted + N2_emitted + NO_emitted
+
+      WRITE(558,'(i7,20e15.5)') YRDOY, 
+     &  TN2Osoil, TN2Oflux, N2O_emitted, 
+     &  TN2soil, TN2flux, N2_emitted, 
+     &  TNOsoil, TNOflux, NO_emitted, 
+     &  TNGsoil, TNGflux, totemit, 
+     &  n2o_soil(1), n2oflux(1), n2o_in1, n2o_emitted, 
+     &  N2ONitrif(1), n2odenit(1)
+
 
 !***********************************************************************
 !***********************************************************************

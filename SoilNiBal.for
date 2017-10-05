@@ -152,7 +152,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !       Subtractions:
         IMMOBTODAY = CIMMOBN - CIMMOBY
         LCHTODAY   = CLeach - CLeachY
-        WTNUPTODAY = (WTNUP - WTNUPY) * 10.
+        WTNUPTODAY = (WTNUP - WTNUPY) * 10.  
         FNROTODAY  = CUMFNRO - CUMFNROY
         AMLTODAY   = TOTAML - TOTAMLY
         N2Otoday   = N2O_data % CN2O_emitted - N2OY
@@ -178,7 +178,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &    IMMOBTODAY, LCHTODAY, WTNUPTODAY, 
      &    FNROTODAY, AMLTODAY, N2Otoday, N2today, NOtoday,
      &    DAYBAL, CUMBAL
-   50     FORMAT(I5, I4.3, I5, 16F8.4, 2F10.4)
+   50     FORMAT(I5, I4.3, I5, 6F8.3, F8.1, 9F8.4, 2F10.4)
 
 !       Save today's cumulative values for use tomorrow
         AMTFERY  = AMTFER

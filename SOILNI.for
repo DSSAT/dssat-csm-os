@@ -723,7 +723,9 @@ C=======================================================================
 !      /* For denitrification, krainNO is >= 1.0 -mdh 6/22/00 */
 !      N2ODenit = N2O_DATA % N2ODenit
 
-      if (sum(n2odenit) > 1.e-9) then
+!     chp 10/4/2017. Believe it or not, this check for N2Odenit causes a 
+!         mass imbalance. Take it out and all is OK.
+      !if (sum(n2odenit) > 1.e-9) then
         DO L = 1, NLAYR
           potential_NOflux = NO_N2O_ratio(L) * N2ODenit(L) 
      &                                       * AMIN1(1.0, krainNO)
@@ -738,13 +740,19 @@ C=======================================================================
             dNOflux(L) = SNH4_AVAIL
             DLTSNH4(L) = DLTSNH4(L) - SNH4_AVAIL
             potential_NOflux = potential_NOflux - SNH4_AVAIL
-            if (potential_NOflux <= N2ODenit(L)) then
-              dNOflux(L) = dNOflux(L) + potential_NOflux
-              N2ODenit(L) = N2ODenit(L) - potential_NOflux
-            else
-              dNOflux(L) = dNOflux(L) + N2ODenit(L)
-              N2ODenit(L) = 0.0
-            endif
+
+!     chp 10/5/2017
+!     This next bit causes a mass imbalance because N2ODenit has
+!         already been computed and accumulated. Would need to
+!         restructure where N2ODenit is accumulated to fix it.
+!     This is rarely needed and amounts are very small. Ignore for now.
+            !if (potential_NOflux <= N2ODenit(L)) then
+            !  dNOflux(L) = dNOflux(L) + potential_NOflux
+            !  N2ODenit(L) = N2ODenit(L) - potential_NOflux
+            !else
+            !  dNOflux(L) = dNOflux(L) + N2ODenit(L)
+            !  N2ODenit(L) = 0.0
+            !endif
           endif
 
 !         TEMP CHP
@@ -754,12 +762,12 @@ C=======================================================================
         ENDDO
 
 !       Recalculated total denitrified N2O because it may have been modified above.
-!        TN2OdenitD = 0.0
+        !TN2OdenitD = 0.0
 !       Sum total NOflux for the day
         DO L = 1, NLAYR
           NOflux(L) = nNOflux(L) + dNOflux(L)
           TNOfluxD = TNOfluxD + NOflux(L)
-! ***          TN2OdenitD = TN2OdenitD + N2ODenit(L)   
+          !TN2OdenitD = TN2OdenitD + N2ODenit(L)   
         ENDDO
 
 ! Don't need the plant resorption routine because:
@@ -787,7 +795,7 @@ C=======================================================================
 !        else
 !          canopy_reduction = 0.0
 !        endif
-      endif
+!      endif
 !
 !      write(557,'(i7,2e10.3)') yrdoy, 1.0 - canopy_reduction, NOabsorp
 
