@@ -56,12 +56,14 @@ C=======================================================================
       REAL CNOX,      TNOXD,      denitrifppm(NL), DENITRIF(NL)  !Denitrification
       REAL CN2,       TN2D,                        n2flux(nl)    !N2
       REAL CN2Odenit, TN2OdenitD, n2odenitppm(NL), n2odenit(nl)  !N2O from denitrification only
+!     REAL            TNOXD,      denitrifppm(NL), DENITRIF(NL)  !Denitrification
+!     REAL                                         n2flux(nl)    !N2
+!     REAL                        n2odenitppm(NL), n2odenit(nl)  !N2O from denitrification only
 
       TYPE (ControlType) CONTROL
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
       CALL YR_DOY(YRDOY, YEAR, DOY)
-
 
 !***********************************************************************
 !***********************************************************************
@@ -74,7 +76,6 @@ C=======================================================================
 !     CN2O for denitrification only 
       CN2Odenit   = 0.0    ! N2O added        PG
       CN2    = 0.0         ! N2
-
       wfps = n2o_data % wfps
  
 !     Compute the Nitrate effect on Denitrification
@@ -261,7 +262,7 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
         ENDIF
 
 !       chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
-        DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)     
+        DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)  
 ! *** End of Moved section
         
 ! *** Ratio of N2 to N2O        
@@ -324,11 +325,9 @@ C       Calculate N2O
         DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
         CNOX       = CNOX       + DENITRIF(L)
         TNOXD      = TNOXD      + DENITRIF(L)
-        
 !       need to differentiate N2O from denitrification        
-        CN2Odenit  = CN2Odenit  + n2odenit(L)           ! PG added
+        CN2Odenit  = CN2Odenit  + n2odenit(L)         ! PG added
         TN2OdenitD = TN2OdenitD + n2odenit(L)         ! PG added
-
         CN2  = CN2  + N2FLUX(L)            ! PG
         TN2D = TN2D + N2FLUX(L)            ! PG
 

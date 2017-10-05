@@ -122,8 +122,11 @@ C=======================================================================
       REAL CNUPTAKE,  WTNUP                                 !N uptake
       REAL CLeach,    TLeachD                               !N leaching
       REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
+      REAL CN2Odenit, TN2OdenitD,              N2ODenit(NL) !N2O from denitrification
       REAL CNOflux,   TNOfluxD,                NOflux(NL)   !NO flux
-      REAL                                     N2ODenit(NL) !N2O from denitrification
+      REAL                                     nNOflux(NL)  !NO from nitrification
+      REAL                                     dNOflux(NL)  !NO from denitrification
+      REAL CN2,       TN2D,                    N2flux(NL)   !N2 (all from detnitrification)
 
 !     Added for GHG model
       REAL, DIMENSION(NL) :: dD0, NO_N2O_ratio
@@ -209,7 +212,9 @@ C=======================================================================
         CLeach   = 0.0  !leaching
         WTNUP    = 0.0  !N uptake
         CN2Onitrif=0.0  !N2O[N] from nitrification
-        CNOflux  = 0.0  !NO
+        CN2Odenit =0.0  !N2O[N] from nitrification
+        CNOflux   = 0.0 !NO
+        CN2       = 0.0 !N2
 
         nitrif = 0.0
         denitrif = 0.0
@@ -293,7 +298,11 @@ C=======================================================================
 !         temp chp
           write(555,'(a,a)') 
      &      "  YRDOY  L   krainNO       dD0    NO:N2O", 
-     &      "   NIT->NO   NH4->NO    NOflux    NitN2O    Nitrif"
+     &      "   NIT->NO   NH4->NO   nNOflux    NitN2O    Nitrif"
+
+         write(556,'(a,a)')
+     &      "  YRDOY  L SNH4Avail", 
+     &      "  N2ODenit    NO:N2O   krainNO   dNOflux"
 
 !***********************************************************************
 !***********************************************************************
@@ -420,8 +429,14 @@ C=======================================================================
       TLeachD  = 0.0  !leaching
       NITRIF   = 0.0
       TN2OnitrifD = 0.0  !N2O from nitrification
+      TN2OdenitD  = 0.0  !N2O from denitrification
       N2Onitrif = 0.0
       TNOfluxD  = 0.0   !NO
+      NOflux    = 0.0
+      nNOflux   = 0.0
+      dNOflux   = 0.0
+      TN2D      = 0.0
+      N2flux    = 0.0
  
       DO L = 1, NLAYR
 !       ----------------------------------------------------------------
@@ -647,12 +662,13 @@ C=======================================================================
             NITRIF_remaining = 0.0
           endif
 
-          NOflux(L) = AMAX1(NITRIF_to_NO + NH4_to_NO, 0.0)
+          nNOflux(L) = AMAX1(NITRIF_to_NO + NH4_to_NO, 0.0)
+          NITRIF(L) = NITRIF(L) + NH4_to_NO
 
 !         temp chp
           write(555,'(i7, i3, 3f10.3, 5e10.3)') 
      &      YRDOY, L, krainNO, dD0(L), NO_N2O_ratio(L), 
-     &      NITRIF_to_NO, NH4_to_NO, NOflux(L), N2ONitrif(L), nitrif(L)
+     &      NITRIF_to_NO, NH4_to_NO, nNOflux(L), N2ONitrif(L), nitrif(L)
 
         else 
           NO_N2O_ratio(L) = 0.0
@@ -665,7 +681,8 @@ C=======================================================================
 
         DLTSNO3(L) = DLTSNO3(L) + NITRIF_remaining
         DLTSNH4(L) = DLTSNH4(L) - NH4_to_NO
-        TNITRIFY   = TNITRIFY   + NITRIF(L)
+!       This contribution from NH4 can be considered as part of the nitrification process
+        TNITRIFY   = TNITRIFY   + NITRIF(L) 
       
       END DO   !End of soil layer loop.
 
@@ -695,16 +712,18 @@ C=======================================================================
      &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
       ENDIF
+
       CALL PUT('NITR','TNOXD',TNOXD) 
+      N2ODenit = N2O_data % N2ODenit
 
 !       ------------------------------------------------------------------
 !       N2, N2O, NO fluxes from Denitrification
 !       ------------------------------------------------------------------
 !      /* Now compute NOflux from denitrification (new calculation */
 !      /* For denitrification, krainNO is >= 1.0 -mdh 6/22/00 */
-      N2ODenit = N2O_DATA % N2ODenit
+!      N2ODenit = N2O_DATA % N2ODenit
 
-      if (sum(n2odenit) > 1.e-6) then
+      if (sum(n2odenit) > 1.e-9) then
         DO L = 1, NLAYR
           potential_NOflux = NO_N2O_ratio(L) * N2ODenit(L) 
      &                                       * AMIN1(1.0, krainNO)
@@ -712,45 +731,65 @@ C=======================================================================
 
           if (potential_NOflux <= SNH4_AVAIL) then
 !           Take all N out of ammonimum pool
-            NOflux(L) = NOflux(L) + potential_NOflux
+            dNOflux(L) = potential_NOflux
             DLTSNH4(L) = DLTSNH4(L) - potential_NOflux
           else 
 !           Take N out of available ammonium, then convert some Dn2oflux to NOflux
-            NOflux(L) = NOflux(L) + SNH4_AVAIL
+            dNOflux(L) = SNH4_AVAIL
             DLTSNH4(L) = DLTSNH4(L) - SNH4_AVAIL
             potential_NOflux = potential_NOflux - SNH4_AVAIL
             if (potential_NOflux <= N2ODenit(L)) then
-              NOflux(L) = NOflux(L) + potential_NOflux
+              dNOflux(L) = dNOflux(L) + potential_NOflux
               N2ODenit(L) = N2ODenit(L) - potential_NOflux
             else
-              NOflux(L) = NOflux(L) + N2ODenit(L)
+              dNOflux(L) = dNOflux(L) + N2ODenit(L)
               N2ODenit(L) = 0.0
             endif
           endif
 
-          TNOfluxD = TNOfluxD + NOflux(L)
+!         TEMP CHP
+          WRITE(556,'(i7,i3,f10.3,e10.3,2f10.3,e10.3)') YRDOY, L, 
+     &     SNH4_AVAIL, N2ODenit(L), NO_N2O_ratio(L), krainNO, dNOflux(L)
+
         ENDDO
 
-        if (XHLAI > 0.0) then
-!         canopy_reduction appears to be the reabsorbed fraction.
-!             This equation is a parabola with the minimum about 8.28. It reduces
-!             absorption for LAI above that so limit LAI to 8.0. The problem seems
-!             to be the simple biomass to LAI ratio. 200 bu/acre corn is
-!             aglivC > 1100 and an LAI > 34. Obviously its not all leaves. */
-          if (XHLAI > 8.0) then
-            canopy_reduction = 0.4428
-          else
-            canopy_reduction = 0.0077*XHLAI*XHLAI + -0.13 * XHLAI + 0.99
-          endif
+!       Recalculated total denitrified N2O because it may have been modified above.
+!        TN2OdenitD = 0.0
+!       Sum total NOflux for the day
+        DO L = 1, NLAYR
+          NOflux(L) = nNOflux(L) + dNOflux(L)
+          TNOfluxD = TNOfluxD + NOflux(L)
+! ***          TN2OdenitD = TN2OdenitD + N2ODenit(L)   
+        ENDDO
 
-!         retain the soil flux value 
-          NOabsorp = TNOfluxD * (1.0 - canopy_reduction)
-          TNOfluxD = TNOfluxD - NOabsorp    !reduce the NOflux by absorption
-          NOflux = NOflux * canopy_reduction
-        else
-          canopy_reduction = 0.0
-        endif
+! Don't need the plant resorption routine because:
+! - amounts are small
+! - we don't have a mechanism to add back to plants
+! - it only affects NO, which we aren't tracking anyway, except for balance
+ 
+!        if (XHLAI > 0.0) then
+!!         canopy_reduction appears to be the reabsorbed fraction.
+!!             This equation is a parabola with the minimum about 8.28. It reduces
+!!             absorption for LAI above that so limit LAI to 8.0. The problem seems
+!!             to be the simple biomass to LAI ratio. 200 bu/acre corn is
+!!             aglivC > 1100 and an LAI > 34. Obviously its not all leaves. */
+!          if (XHLAI > 8.0) then
+!            canopy_reduction = 0.4428
+!          else
+!            canopy_reduction = 0.0077*XHLAI*XHLAI + -0.13 * XHLAI + 0.99
+!          endif
+!
+!          NOabsorp = TNOfluxD * (1.0 - canopy_reduction)
+!          TNOfluxD = TNOfluxD - NOabsorp    !reduce the NOflux by absorption
+!          NOflux = NOflux * canopy_reduction
+!          nNOflux = nNOflux * canopy_reduction
+!          dNOflux = dNOflux * canopy_reduction
+!        else
+!          canopy_reduction = 0.0
+!        endif
       endif
+!
+!      write(557,'(i7,2e10.3)') yrdoy, 1.0 - canopy_reduction, NOabsorp
 
       N2O_DATA % NOflux = NOflux
 
@@ -855,26 +894,36 @@ C=======================================================================
       TNH4NO3 = TNH4 + TNO3
       
 !     Seasonal cumulative values
-      CMINERN  = CMINERN  + TMINERN 
-      CIMMOBN  = CIMMOBN  + TIMMOBN 
-      CNETMINRN= CMINERN  - CIMMOBN
-      CNITRIFY = CNITRIFY + TNITRIFY
-      CN2Onitrif = CN2Onitrif + TN2OnitrifD
-      CNOflux  = CNOflux  + TNOfluxD
+      CMINERN  = CMINERN  + TMINERN       !mineralization
+      CIMMOBN  = CIMMOBN  + TIMMOBN       !immobilization
+      CNETMINRN= CMINERN  - CIMMOBN       !net mineralization
+
+      CNITRIFY   = CNITRIFY   + TNITRIFY      !Nitrification
+      CN2Onitrif = CN2Onitrif + TN2OnitrifD   !N2O from nitrification
+      CNOflux    = CNOflux    + TNOfluxD      !NO flux
+!     These are accumulated in the Denit routines:
+!     CNOX       = CNOX       + TNOXD         !Denitrification
+!     CN2Odenit  = CN2Odenit  + TN2OdenitD    !N2O from denitrification
+!     CN2        = CN2        + TN2D          !N2 flux                 
 
       CNUPTAKE = WTNUP * 10.
 
-      N2O_data % CNITRIFY = CNITRIFY
-      N2O_data % TNITRIFY = TNITRIFY
       N2O_data % NITRIF   = NITRIF
+      N2O_data % TNITRIFY = TNITRIFY
+      N2O_data % CNITRIFY = CNITRIFY
+
       N2O_data % N2Onitrif  = N2Onitrif
       N2O_data % TN2OnitrifD= TN2OnitrifD
       N2O_data % CN2Onitrif = CN2Onitrif
 
+      N2O_data % NOflux  = NOflux
+      N2O_data % TNOfluxD= TNOfluxD
+      N2O_data % CNOflux = CNOflux
+
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP, N2O_data) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
@@ -906,7 +955,7 @@ C     Write daily output
 
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP, N2O_data) 
 
       CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 

@@ -10,25 +10,24 @@
       SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
      &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, TLITN, 
-     &    TNH4, TNO3, CNOX, TOTAML, TSOM1N, TSOM2N, TSOM3N, WTNUP)
+     &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP,
+     &    CUMFNRO, NGasLoss)
 
 !***********************************************************************
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         !which contain control information, soil
-                         !parameters, hourly weather data.
+      USE N2O_mod 
       IMPLICIT NONE
       SAVE
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
       REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
-     &    CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, TLITN, 
-     &    TNH4, TNO3, CNOX, TOTAML, TSOM1N, TSOM2N, TSOM3N, WTNUP
+     &    CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, 
+     &    TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP, NGasLoss
       REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
 
       CHARACTER(LEN=14), PARAMETER :: SNSUM = 'SolNBalSum.OUT'
-      INTEGER COUNT, ERRNUM, LUNSNS
+      INTEGER COUNT, ERRNUM, LUNSNS, Num
       LOGICAL FEXIST, FIRST
       REAL State(6), Add(4), Sub(4), Bal(2), Miner(2)
 
@@ -55,15 +54,15 @@
  5000   FORMAT(/,"!",T23,"|------------------- N State Variables ----",
      &    "---------------| |------------ N Additions ------------| |",
      &    "---------- N Subtractions -----------| |-Mineralization--|",
-     &  /,"!",T85,"Harvest   Applied",T136,"Denit-             Ammonia",
+     &  /,"!",T85,"Harvest   Applied",T147,"N gas     Flood",
      &    "    Miner-    Immob-  Seasonal",
      &  /,"!",T25,"Surface      SOM1      SOM2      SOM3    Litter    ",
      &    " Inorg   Residue   Residue  Fertiliz   Senesed   Leached   ",
-     &    " rified    Uptake  Volatil.    alized    ilized   Balance",
+     &    " Uptake    Losses    Losses    alized    ilized   Balance",
      &  /,"@Run FILEX         TN      SN0D     S1NTD",
      &     "     S2NTD     S3NTD      LNTD      NIAD      HRNH",
-     &     "     RESNC      NICM     SNNTC      NLCM      NDNC",
-     &     "      NUCM      AMLS      NMNC      NIMC   SEASBAL")
+     &     "     RESNC      NICM     SNNTC      NLCM      NUCM",
+     &     "     NGasC      RNRO      NMNC      NIMC   SEASBAL")
       ENDIF
 
 !     Organic
@@ -81,15 +80,16 @@
       IF (PRESENT(CumSenN))  Add(4) = CumSenN
 
 !     Inorganic
-      IF (PRESENT(TNO3) .AND. PRESENT(TNH4)) THEN
-        State(6) = TNO3 + TNH4
+      
+      IF (PRESENT(N_inorganic)) THEN
+        State(6) = N_inorganic
         IF (PRESENT(Balance)) Bal(2) = Balance
       ENDIF
-      IF (PRESENT(AMTFER)) Add(3) = AMTFER
-      IF (PRESENT(CLeach)) Sub(1) = CLeach
-      IF (PRESENT(CNOX))   Sub(2) = CNOX
-      IF (PRESENT(WTNUP))  Sub(3) = WTNUP
-      IF (PRESENT(WTNUP))  Sub(4) = TOTAML
+      IF (PRESENT(AMTFER))   Add(3) = AMTFER
+      IF (PRESENT(CLeach))   Sub(1) = CLeach
+      IF (PRESENT(WTNUP))    Sub(2) = WTNUP
+      IF (PRESENT(NGasLoss)) Sub(3) = NGasLoss
+      IF (PRESENT(CUMFNRO))  Sub(4) = CUMFNRO
 
 !     Mineralization/immobilization
       IF (PRESENT(CUMMINER)) Miner(1) = CUMMINER
@@ -120,8 +120,15 @@
       COUNT = COUNT + 1
 
       IF (COUNT == 2) THEN
+
+        IF (CONTROL % RNMODE == 'Q') THEN
+          Num = CONTROL % ROTNUM
+        ELSE
+          Num = CONTROL % TRTNUM
+        ENDIF
+
         WRITE(LUNSNS,'(I4,1X,A12,I4,17F10.2)') 
-     &    CONTROL%RUN, CONTROL%FILEX, CONTROL%TRTNUM, 
+     &    CONTROL%RUN, CONTROL%FILEX, Num, 
      &    State, Add, Sub, Miner, Bal(1)+Bal(2)
         COUNT = 0
         State = 0.
@@ -148,12 +155,13 @@
         SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
      &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, TLITN, 
-     &    TNH4, TNO3, CNOX, TOTAML, TSOM1N, TSOM2N, TSOM3N, WTNUP)
+     &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP,
+     &    CUMFNRO, NGasLoss)
           USE ModuleDefs
           TYPE (ControlType), INTENT(IN) :: CONTROL
           REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
-     &        CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, TLITN, 
-     &        TNH4, TNO3, CNOX, TOTAML, TSOM1N, TSOM2N, TSOM3N, WTNUP
+     &      CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, 
+     &      TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP, NGasLoss
           REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
         END SUBROUTINE
       END INTERFACE

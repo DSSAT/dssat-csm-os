@@ -123,17 +123,17 @@ C-----------------------------------------------------------------------
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
           
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-          WRITE(NOUTDN,'(A1,T63,A)',ADVANCE='NO') 
+          WRITE(NOUTDN,'(A1,T54,A)',ADVANCE='NO') 
      &        "!","NO3 (ppm) by soil depth (cm):"
           END IF   ! VSH
           
-          SPACES = N_LYR * 8 - 28
+          SPACES = N_LYR * 8 - 29
           
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE(FRMT,'(A,I2,A)')
      &     '(',SPACES,'X,"NH4 (ppm) by soil depth (cm):")'
           WRITE(NOUTDN,FRMT)
-          WRITE(NOUTDN,'("!",T57,20A8)')
+          WRITE(NOUTDN,'("!",T50,20A8)')
      &        (SoilProp%LayerText(L),L=1,N_LYR), 
      &        (SoilProp%LayerText(L),L=1,N_LYR)
 
