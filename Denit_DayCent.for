@@ -13,7 +13,7 @@ C           SOILNI, YR_DOY, FLOOD_CHEM, OXLAYER
 C=======================================================================
 
       SUBROUTINE Denit_DayCent (CONTROL, ISWNIT, 
-     &    newCO2, NO3, SNO3, SOILPROP, SW,            !Input
+     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
 !-----------------------------------------------------------------------
@@ -132,8 +132,8 @@ C=======================================================================
       NLAYR = SOILPROP % NLAYR
       
 !     ------------------------------------------------------------------
-!     Diffusivity rate calculation
-      call DayCent_diffusivity(dD0, sw, soilprop)
+!     Diffusivity rate calculation - now called from SOILNI
+!     call DayCent_diffusivity(dD0, sw, soilprop)
 !     ------------------------------------------------------------------
 
       TNOXD = 0.0

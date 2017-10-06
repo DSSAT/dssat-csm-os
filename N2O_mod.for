@@ -40,7 +40,7 @@ C  09/18/2015 CHP Written, based on PG code.
 !  05/30/2016 CHP remove diffusion model
 !=======================================================================
 
-      SUBROUTINE N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+      SUBROUTINE N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
 !-------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
@@ -74,6 +74,7 @@ C  09/18/2015 CHP Written, based on PG code.
       real RateDiffus, TNGSoil
 !     real, parameter :: DiffFactor = 0.5
       real DiffFactor
+      real dD0(nl)
 
 !!     temp chp
 !      real
@@ -157,8 +158,9 @@ C-----------------------------------------------------------------------
 
       DO L = NLAYR, 1, -1
 !         Rate of diffusion depends on today's soil water and soil factor
-          RateDiffus = (1.0 - WFPS(L)) * DiffFactor
-         
+!         RateDiffus = (1.0 - WFPS(L)) * DiffFactor
+          RateDiffus = dD0(L) !PG031017
+
 !         Update soil state variables based on new N2 and N2O today (flux)
           n2oflux(L) = max(0.0, N2ONitrif(L) + n2odenit(L)) 
           n2flux(L)  = max(0.0, n2flux(L))

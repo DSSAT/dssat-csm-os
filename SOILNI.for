@@ -275,7 +275,7 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1","2")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    newCO2, NO3, SNO3, SOILPROP, SW,            !Input
+     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
 
@@ -287,7 +287,7 @@ C=======================================================================
      &    CNOX, TNOXD, N2O_data)                      !Output
         END SELECT
 
-      CALL N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+      CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
 
       CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 
@@ -700,7 +700,7 @@ C=======================================================================
         SELECT CASE(MEGHG)
         CASE("1","2")
           CALL Denit_DayCent (CONTROL, ISWNIT, 
-     &    newCO2, NO3, SNO3, SOILPROP, SW,            !Input
+     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
      &    DLTSNO3,                                    !I/O
      &    CNOX, TNOXD, N2O_data)                      !Output
 
@@ -771,9 +771,9 @@ C=======================================================================
         ENDDO
 
 ! Don't need the plant resorption routine because:
-! - amounts are small
-! - we don't have a mechanism to add back to plants
-! - it only affects NO, which we aren't tracking anyway, except for balance
+! 1 - amounts are small
+! 2 - we don't have a mechanism to add back to plants
+! 3 - it only affects NO, which we aren't tracking anyway, except for balance
  
 !        if (XHLAI > 0.0) then
 !!         canopy_reduction appears to be the reabsorbed fraction.
@@ -804,7 +804,7 @@ C=======================================================================
 !     ------------------------------------------------------------------
 !     N emissions to atmosphere
 !     ------------------------------------------------------------------
-      CALL N2Oemit(CONTROL, ISWITCH, SOILPROP, N2O_DATA) 
+      CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
 
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.
