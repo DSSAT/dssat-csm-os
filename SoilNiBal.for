@@ -38,7 +38,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       REAL CLeachY, CNOXY, WTNUPY, CIMMOBY, CMINERY
       REAL TOTAMLY, CUMFNROY, AMTFERY
       REAL TOTSTATE, TOTADD, TOTSUB, DAYBAL, TOTSTATY, CUMBAL
-      REAL CIMMOBN, CMINERN, NGasLoss
+      REAL CIMMOBN, CMINERN, NGasLoss, TNGSOILI
 
       REAL N2OY, N2Y, NOY
 
@@ -91,9 +91,10 @@ C  03/04/2005 CHP wrote based on SoilNBal
       TNO3I  = TNO3
       TNH4I  = TNH4
       TUREAI = TUREA
+      TNGSOILI = N2O_DATA % TNGSoil
 
 !     Sum the initial value of all abiotic N pools (soil, air)
-      TALLNI = TNO3I + TNH4I + TUREA + N2O_DATA % TNGSoil
+      TALLNI = TNO3I + TNH4I + TUREA + TNGSOILI
 
       TOTFLOODNI = TOTFLOODN
       ALGFIXI = ALGFIX
@@ -129,7 +130,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &    'FIX   AFERT  AMINER  RIMMOB    RLCH    RNUP    RNRO    RAML',
      &    '   N2OED    N2ED    NOED      DBAL      CBAL')
         WRITE (LUNSNC,50) YR, DOY, 0, 
-     &    TNO3, TNH4, TUREA, 0.0, TOTFLOODN, ALGFIX, 
+     &    TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 
      &    0.0, 0.0, 
      &    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
       ENDIF
@@ -234,7 +235,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
         WRITE (LUNSNC,100) YRI, DOYI, YR, DOY
 
         WRITE (LUNSNC, 200) TNO3I, TNO3, TNH4I, TNH4, TUREAI, TUREA
-        WRITE (LUNSNC, 210) 0.0, N2O_DATA % TNGSoil
+        WRITE (LUNSNC, 210) TNGSOILI, N2O_DATA % TNGSoil
 
         IF (NBUND .GT. 0) THEN
           WRITE(LUNSNC,300) TOTFLOODNI, TOTFLOODN, ALGFIXI, ALGFIX
