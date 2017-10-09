@@ -257,6 +257,7 @@ RL6D   RLD layer 6     Root density, soil layer 6 (cm/cm3)                      
 RL7D   RLD layer 7     Root density, soil layer 7 (cm/cm3)                      .
 RL8D   RLD layer 8     Root density, soil layer 8 (cm/cm3)                      .
 RL9D   RLD layer 9     Root density, soil layer 9 (cm/cm3)                      .
+RL10   RLD layer 10    Root density, soil layer 10(cm/cm3)                      .
 RSCD   Reserves conc.  Reserves concentration (fr)                              .
 RSPD   Rt senesce g/pl Root senescence (g [dm]/pl)                              .
 RSTD   Reproductive st Reproductive development stage (0-9 for cereals)         .
@@ -304,8 +305,12 @@ WSPD   H20 stress,ph   Water stress - photosynthesis (0-1)                      
 WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         .
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
 TFDD   Temp.factor,dev Temperature factor for development (0-1)                 .
-RSFPD  Reserves factor Reserves factor for photosynthesis (0-1)                 .
-
+DWTSO  Dead stem       Dead stem weight (kg [dm]/ha)RSFPD  Reserves factor Reserves factor for photosynthesis (0-1)                 .
+HERB   Herbage kg/ha   Herbage mass harvested kg/ha                             .
+FHL%   % Leaf in herb  Percent leaf in the harvested herbage                    .
+LF%D   % Leaf of tops  Percent leaf of tops (LWAD*100/CWAD)                     .
+DWTCO  Dead canopy     Dead canopy weight (kg [dm]/ha)
+DWTLO  Dead leaf       Dead leaf weight (kg [dm]/ha)
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 AMLC   NH3vol kgN/ha   Cumulative ammonia volatilization (kg [N]/ha)            .
