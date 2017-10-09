@@ -11,9 +11,9 @@
 
 !=======================================================================
 
-      CHARACTER(LEN=1), PARAMETER ::  SLASH = '\'
-      CHARACTER(LEN=12), PARAMETER :: DSSATPRO = 'DSSATPRO.V47'
-      CHARACTER(LEN=11), PARAMETER :: STDPATH = 'C:\DSSAT47\'
+      CHARACTER(LEN=1), PARAMETER   :: SLASH    = '\'
+      CHARACTER(LEN=12), PARAMETER  :: DSSATPRO = 'DSSATPRO.V47'
+      CHARACTER(LEN=255)            :: STDPATH  = 'C:\DSSAT47\'
 
 !======================================================================
       END MODULE OSDefinitions
