@@ -388,9 +388,9 @@ C-----------------------------------------------------------------------
      &     '(A,A,A,A,A,A,I3.3,A,A,I3.3,A,A,I3.3,A,A,I3.3,A,A,I3.3,A)')
 
      & '("!",14X,',
-     & '" N20emit  N2emit  NOemit     CO2   Denit  Nitrif   ",',
+     & '" N2Oemit  N2emit  NOemit     CO2   Denit  Nitrif   ",',
      & '"N2O-denit+nit      N2      NO",',
-     & '" N20emit  N2emit  NOemit     CO2   Denit  Nitrif   ",',
+     & '" N2Oemit  N2emit  NOemit     CO2   Denit  Nitrif   ",',
      & '"N2O-denit+nit      N2      NO",',
      & 'T',SPACES,
      & ',"Denitrification (g[N]/ha) by soil depth (cm):",',
