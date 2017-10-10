@@ -25,7 +25,7 @@ C           IRESI,IHARI,IOX,IDETO,IDETS,IDETG,IDETC,IDETW,IDETN,IDETP,IDETD,
 C           PWDINF,PWDINL,SWPLTL,SWPLTH,SWPLTD,PTX,PTTN,DSOILX,THETACX,
 C           IEPTX,IOFFX,IAMEX,DSOILN,SOILNC,SOILNX,NEND,RIP,NRESDL,
 C           DRESMG,HDLAY,HLATE
-!           MESOM, METMP, MESOL, MESEV
+!           MESOM, METMP, MESOL, MESEV, MEGHG
 C-----------------------------------------------------------------------
 C  Called : IPEXP
 C
@@ -128,6 +128,10 @@ C=======================================================================
          MESEV   = 'S'    !new Sulieman-Ritchie (2006)
          METMP   = 'D'    !DSSAT original soil temperature
 !        METMP   = 'E'    ! EPIC soil temp routine.
+         MEGHG   = '0'
+!                   0  => DSSAT original denitrification routine
+!                   1  => DayCent N2O calculation
+
          IPLTI   = 'R'
          IIRRI   = 'R'
          IFERI   = 'R'
@@ -236,7 +240,7 @@ C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
          READ (CHARTEST,61,IOSTAT=ERRNUM) LN,MEWTH,MESIC,
      &        MELI,MEEVP,MEINF,MEPHO,MEHYD,NSWITCH, 
-     &        MESOM, MESEV, MESOL, METMP
+     &        MESOM, MESEV, MESOL, METMP, MEGHG
          !IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
          MEWTH = UPCASE(MEWTH)
          MESIC = UPCASE(MESIC)
@@ -248,6 +252,7 @@ C
          MEHYD = UPCASE(MEHYD)
          MESEV = UPCASE(MESEV)
          METMP = UPCASE(METMP)
+         MEGHG = UPCASE(MEGHG)
 
          IF (INDEX('PG',MESOM) .EQ. 0) THEN
             MESOM = 'G'
@@ -287,6 +292,9 @@ C
 !        7/21/2016 chp Default soil temperature method is DSSAT, per GH
          IF (INDEX('ED',METMP) < 1) METMP = 'D'
 !        IF (INDEX('ED',METMP) < 1) METMP = 'E'
+
+!        Default greenhouse gas method is DSSAT
+         IF (INDEX('01',MEGHG) < 1) MEGHG = '0'
 
          SELECT CASE(MESEV)
          CASE('R','r'); MESEV = 'R'
@@ -597,6 +605,7 @@ C-----------------------------------------------------------------------
         MESEV   = ISWITCH % MESEV 
         MESOL   = ISWITCH % MESOL 
         METMP   = ISWITCH % METMP 
+        MEGHG   = ISWITCH % MEGHG 
         IPLTI   = ISWITCH % IPLTI 
         IIRRI   = ISWITCH % IIRRI 
         IFERI   = ISWITCH % IFERI 
@@ -762,7 +771,7 @@ C-----------------------------------------------------------------------
 
   55  FORMAT (I3,11X,2(1X,I5),5X,A1,1X,I5,1X,I5,1X,A25,1X,A8)
   60  FORMAT (I3,11X,9(5X,A1))
-  61  FORMAT (I3,11X,7(5X,A1),5X,I1,4(5X,A1))
+  61  FORMAT (I3,11X,7(5X,A1),5X,I1,5(5X,A1))
   65  FORMAT (I3,11X,3(5X,A1),4X,I2,9(5X,A1),
      &5X, A1)   ! VSH
   66  FORMAT (I3,11X,2(1X,I5),5(1X,F5.0))
@@ -818,7 +827,8 @@ C-----------------------------------------------------------------------
         ISWITCH % MEHYD  = MEHYD   !hydrology
         ISWITCH % MESEV  = MESEV   !soil evaporation
         ISWITCH % MESOL  = MESOL   !soil layer distribution
-        ISWITCH % METMP  = METMP   !soil temperature
+        ISWITCH % METMP  = METMP   !soil temperature method
+        ISWITCH % MEGHG  = MEGHG   !greenhouse gas calculations
         ISWITCH % IDETO  = IDETO   !overview file
         ISWITCH % IDETS  = IDETS   !summary file
         ISWITCH % IDETG  = IDETG   !growth output files
@@ -895,7 +905,7 @@ C-----------------------------------------------------------------------
       CHARACTER*1 ISWWAT,ISWNIT,ISWSYM,ISWPHO,ISWPOT,ISWDIS,MEWTH,MESIC
       CHARACTER*1 ICO2
       CHARACTER*1 MELI,MEEVP,MEINF,MEPHO,IPLTI,IIRRI,IFERI,IRESI,IHARI
-      CHARACTER*1 ISWCHE,ISWTIL,MEHYD,MESOM, MESOL, MESEV, METMP
+      CHARACTER*1 ISWCHE,ISWTIL,MEHYD,MESOM, MESOL, MESEV, METMP, MEGHG
       CHARACTER*1 IDETO,IDETS,IDETG,IDETC,IDETW,IDETN,IDETP,IDETD,IOX
       CHARACTER*1 IDETH,IDETL, IDETR
       !      VSH
@@ -1043,6 +1053,7 @@ D     IPX = 23
         NSWITCH = -99
         MESOM   = ' '
         METMP   = ' '
+        MEGHG   = ' '
         MESOL   = ' '
         MESEV   = ' '
         IPLTI   = ' '
@@ -1192,8 +1203,8 @@ D     IPX = 23
 
 !           READ (CHARTEST,61,IOSTAT=ERRNUM) LN,MEWTH,MESIC,
 !    &           MELI,MEEVP,MEINF,MEPHO,MEHYD,NSWITCH, 
-!    &           MESOM, MESEV, MESOL, METMP
-! 61        FORMAT (I3,11X,7(5X,A1),5X,I1,5X,A1,2(5X,A1),5X,I1)
+!    &           MESOM, MESEV, MESOL, METMP, MEGHG
+! 61        FORMAT (I3,11X,7(5X,A1),5X,I1,5X,A1,2(5X,A1),5X,I1,)
 
             READ (CHARTEST,'(19X,A1)',IOSTAT=ERRNUM) MEWTH
             CALL CHECK_A('MEWTH', MEWTH, ERRNUM, MSG, NMSG)
@@ -1231,6 +1242,9 @@ D     IPX = 23
             READ (CHARTEST,'(85X,A1)',IOSTAT=ERRNUM) METMP
             CALL CHECK_A('METMP', METMP, ERRNUM, MSG, NMSG)
 
+            READ (CHARTEST,'(91X,A1)',IOSTAT=ERRNUM) MEGHG
+            CALL CHECK_A('MEGHG', MEGHG, ERRNUM, MSG, NMSG)
+
             MEWTH = UPCASE(MEWTH)
             MESIC = UPCASE(MESIC)
             MELI  = UPCASE(MELI)
@@ -1241,6 +1255,7 @@ D     IPX = 23
             MEHYD = UPCASE(MEHYD)
             MESEV = UPCASE(MESEV)
             METMP = UPCASE(METMP)
+            MEGHG = UPCASE(MEGHG)
 
             IF (INDEX('PG' ,MESOM) == 0) MESOM = ' '
             IF (INDEX('123',MESOL) == 0) MESOL = ' '
@@ -1248,6 +1263,7 @@ D     IPX = 23
             IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
 !           IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
             IF (INDEX('ED' ,METMP) == 0) METMP = 'D' !7/21/2016
+            IF (INDEX('01' ,MEGHG) == 0) MEGHG = '0'
 
 !         Fourth line of simulation controls
           CASE('@N MAN')
@@ -1497,6 +1513,7 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
       IF (MESEV  /= ' ' .AND. MESEV  /= '.') ISWITCH % MESEV  = MESEV
       IF (MESOL  /= ' ' .AND. MESOL  /= '.') ISWITCH % MESOL  = MESOL
       IF (METMP  /= ' ' .AND. METMP  /= '.') ISWITCH % METMP  = METMP
+      IF (MEGHG  /= ' ' .AND. MEGHG  /= '.') ISWITCH % MEGHG  = MEGHG
       IF (IPLTI  /= ' ' .AND. IPLTI  /= '.') ISWITCH % IPLTI  = IPLTI
       IF (IIRRI  /= ' ' .AND. IIRRI  /= '.') ISWITCH % IIRRI  = IIRRI
       IF (IFERI  /= ' ' .AND. IFERI  /= '.') ISWITCH % IFERI  = IFERI
@@ -1612,6 +1629,7 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
       CASE('MESEV');  MSG_TEXT="Soil evaporation method       "
       CASE('MESOL');  MSG_TEXT="Soil input and partitioning   "
       CASE('METMP');  MSG_TEXT="Soil temperature method       "
+      CASE('MEGHG');  MSG_TEXT="Greenhouse gas calc method    "
       CASE('IPLTI');  MSG_TEXT="Planting method switch        "
       CASE('IIRRI');  MSG_TEXT="Irrigation method switch      "
       CASE('IFERI');  MSG_TEXT="Fertilizer switch             "
