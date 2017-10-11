@@ -343,16 +343,27 @@ C
 
       Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
 
-
-        CALL READA_Dates(X(1), YRSIM, IFLR)
-        IF (IFLR .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
-          DFLR = TIMDIF(YRPLT,IFLR)
+!       Forcing date to DAP
+        CALL READA_Dates(X(1), YRSIM, IFORC)
+        IF (IFORC .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
+          DFORC = TIMDIF(YRPLT,IFORC)
         ELSE
-          DFLR  = -99
+          DFORC  = -99
         ENDIF
-        OLAP(1) = 'ADAP  '
+        OLAP(1) = 'FDAP  '
         CALL GetDesc(1,OLAP(1), DESCRIP(1))
 
+!       Harvest date to DAP
+        CALL READA_Dates(X(2), YRSIM, IHARV)
+        IF (IHARV .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
+          DHARV = TIMDIF(YRPLT,IHARV)
+        ELSE
+          DHARV  = -99
+        ENDIF
+        OLAP(1) = 'HDAP  '
+        CALL GetDesc(1,OLAP(1), DESCRIP(1))
+
+!       Maturity date to DAP
         CALL READA_Dates(X(4), YRSIM, IMAT)
         IF (IMAT .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DMAT = TIMDIF(YRPLT,IMAT)
@@ -362,19 +373,14 @@ C
         OLAP(4) = 'MDAP  '
         CALL GetDesc(1,OLAP(4), DESCRIP(4))
 
-        IF (IFPD .GT. 0 .AND. IPLTI .EQ. 'R') THEN
-          PMAT = TIMDIF (YRPLT,IFPD)
-        ELSE
-          PMAT = -99
-        ENDIF
-
+!       isdate is forcing date
         IF (YRPLT .GT. 0) THEN
-          DNR1 = TIMDIF (YRPLT,ISDATE)
-          IF (DNR1 .LE. 0) THEN
-            DNR1 = -99
+          DFR1 = TIMDIF (YRPLT,ISDATE)
+          IF (DFR1 .LE. 0) THEN
+            DFR1 = -99
           ENDIF
         ELSE
-          DNR1 = -99
+          DFR1 = -99
         ENDIF
   
         IF (YRPLT .GT. 0) THEN
@@ -395,27 +401,27 @@ C
         ENDIF
       ENDIF
 
-      WRITE(Simulated(1),'(I8)') DNR1;  WRITE(Measured(1),'(I8)') DFLR    !ADAT
-      WRITE(Simulated(2),'(I8)') -99 ;  WRITE(Measured(2),'(I8)') -99     !PD1T
-      WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT
-      WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT    !MDAT
-      WRITE(Simulated(5),'(I8)') NINT(YIELD)
-                                        WRITE(Measured(5),'(A8)') X(5)    !HWAM
-      WRITE(Simulated(6),'(I8)') -99 ;  WRITE(Measured(6),'(I8)') -99     !PWAM
-      WRITE(Simulated(7),'(I8)') NINT(GPSM)
-                                        WRITE(Measured(7),'(A8)') X(7)    !H#AM
-      WRITE(Simulated(8),'(F8.4)') SKERWT
-                                        WRITE(Measured(8),'(A8)') X(8)    !HWUM 
-      WRITE(Simulated(9),'(F8.1)') GPP; WRITE(Measured(9),'(A8)') X(9)    !H#UM 
-      WRITE(Simulated(10),'(I8)') NINT(BIOMAS)
-                                        WRITE(Measured(10),'(A8)') X(10)  !CWAM
-
-!     08/11/2005 CHP changed from BWAH to BWAM, 
-      WRITE(Simulated(11),'(I8)') NINT(BWAM)  
-                                        WRITE(Measured(11),'(A8)') X(11)  !BWAM
-
-      WRITE(Simulated(12),'(F8.2)') MAXLAI
-                                        WRITE(Measured(12),'(A8)') X(12)  !LAIX
+      WRITE(Simulated(1),'(I8)') DFR1;  WRITE(Measured(1),'(I8)') DFORC   !FDAT 
+      WRITE(Simulated(2),'(I8)') DHARV; WRITE(Measured(2),'(I8)') -99     !PD1T     ! 'HDAT',    !2 
+      WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT     ! 'PDFT',    !3 
+      WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT    !MDAT  
+      WRITE(Simulated(5),'(I8)') NINT(YIELD)                                     
+                                        WRITE(Measured(5),'(A8)') X(5)    !HWAM     ! 'FWAH',    !5 
+      WRITE(Simulated(6),'(I8)') -99 ;  WRITE(Measured(6),'(I8)') -99     !PWAM  
+      WRITE(Simulated(7),'(I8)') NINT(GPSM)                                      
+                                        WRITE(Measured(7),'(A8)') X(7)    !H#AM     ! 'E#AM',    !7 
+      WRITE(Simulated(8),'(F8.4)') SKERWT                                           
+                                        WRITE(Measured(8),'(A8)') X(8)    !HWUM     ! 'EWUM',    !8    
+      WRITE(Simulated(9),'(F8.1)') GPP; WRITE(Measured(9),'(A8)') X(9)    !H#UM     ! 'E#UM',    !9     
+      WRITE(Simulated(10),'(I8)') NINT(BIOMAS)                                      
+                                        WRITE(Measured(10),'(A8)') X(10)  !CWAM     
+                                                                                    
+!     08/11/2005 CHP changed from BWAH to BWAM,                                     
+      WRITE(Simulated(11),'(I8)') NINT(BWAM)                                        
+                                        WRITE(Measured(11),'(A8)') X(11)  !BWAM / BWAH     
+                                                                                    
+      WRITE(Simulated(12),'(F8.2)') MAXLAI                                          
+                                        WRITE(Measured(12),'(A8)') X(12)  !LAIX     
       WRITE(Simulated(13),'(F8.3)') HI; WRITE(Measured(13),'(A8)') X(13)  !HIAM
       WRITE(Simulated(14),'(I8)') -99 ; WRITE(Measured(14),'(I8)') -99    !THAM
       WRITE(Simulated(15),'(I8)') NINT(GNUP)
@@ -429,10 +435,31 @@ C
                                         WRITE(Measured(19),'(A8)') X(19)  !CWAA
       WRITE(Simulated(20),'(I8)') NINT(CANNAA*10)
                                         WRITE(Measured(20),'(A8)') X(20)  !CNAA
-      WRITE(Simulated(21),'(F8.2)') LN; WRITE(Measured(21),'(A8)') X(21)  !L#SM
+      WRITE(Simulated(21),'(F8.2)') LN; WRITE(Measured(21),'(A8)') X(21)  !L#SM 
       WRITE(Simulated(22),'(I8)') DNR0; WRITE(Measured(22),'(I8)') DEMRG
 
       ENDIF
+! 'FDAT',    !1  
+! 'HDAT',    !2  
+! 'PDFT',    !3  
+! 'MDAT',    !4  
+! 'FWAH',    !5  
+! 'PWAM',    !6  
+! 'E#AM',    !7  
+! 'EWUM',    !8  
+! 'E#UM',    !9  
+! 'CWAM',    !10 
+! 'BWAH',    !11
+! 'LAIX',    !12
+! 'HIAM',    !13
+! 'THAM',    !14
+! 'GNAM',    !15
+! 'CNAM',    !16
+! 'SNAM',    !17
+! 'GN%M',    !18
+! 'CWAA',    !19
+! 'CNAA',    !20
+! 'L#SM',    !21
 
 !-------------------------------------------------------------------
 !     Send information to OPSUM to generate SUMMARY.OUT file
