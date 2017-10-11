@@ -1,0 +1,199 @@
+*EXP.DETAILS: UAFD7465SN EFFECT OF PLANT DENSITY (1-4) AND N RATES (0-300)
+
+*GENERAL
+@PEOPLE
+Shakeel Ahmad,Abid Hussain,Ashfaq Ahmad and Gerrit Hoogenboom 
+@ADDRESS
+Bahauddin Zakariya, University of Agriculture and University of Florida
+@SITE
+Faisalabad, Pakistan
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 1seedling+0                1  1  0  1  1  1  1  0  0  0  0  0  1
+ 2 1 0 0 1seedling+25               1  1  0  1  1  1  2  0  0  0  0  0  1
+ 3 1 0 0 1seedling+50               1  1  0  1  1  1  3  0  0  0  0  0  1
+ 4 1 0 0 1seedling+75               1  1  0  1  1  1  4  0  0  0  0  0  1
+ 5 1 0 0 1seedling+100              1  1  0  1  1  1  5  0  0  0  0  0  1
+ 6 1 0 0 1seedling+125              1  1  0  1  1  1  6  0  0  0  0  0  1
+ 7 1 0 0 1seedling+150              1  1  0  1  1  1  7  0  0  0  0  0  1
+ 8 1 0 0 1seedling+175              1  1  0  1  1  1  8  0  0  0  0  0  1
+ 9 1 0 0 1seedling+200              1  1  0  1  1  1  9  0  0  0  0  0  1
+10 1 0 0 1seedling+225              1  1  0  1  1  1 10  0  0  0  0  0  1
+11 1 0 0 1seedling+250              1  1  0  1  1  1 11  0  0  0  0  0  1
+12 1 0 0 1seedling+275              1  1  0  1  1  1 12  0  0  0  0  0  1
+13 1 0 0 1seedling+300              1  1  0  1  1  1 13  0  0  0  0  0  1
+14 1 0 0 2seedling+0                1  1  0  1  2  1  1  0  0  0  0  0  1
+15 1 0 0 2seedling+25               1  1  0  1  2  1  2  0  0  0  0  0  1
+16 1 0 0 2seedling+50               1  1  0  1  2  1  3  0  0  0  0  0  1
+17 1 0 0 2seedling+75               1  1  0  1  2  1  4  0  0  0  0  0  1
+18 1 0 0 2seedling+100              1  1  0  1  2  1  5  0  0  0  0  0  1
+19 1 0 0 2seedling+125              1  1  0  1  2  1  6  0  0  0  0  0  1
+20 1 0 0 2seedling+150              1  1  0  1  2  1  7  0  0  0  0  0  1
+21 1 0 0 2seedling+175              1  1  0  1  2  1  8  0  0  0  0  0  1
+22 1 0 0 2seedling+200              1  1  0  1  2  1  9  0  0  0  0  0  1
+23 1 0 0 2seedling+225              1  1  0  1  2  1 10  0  0  0  0  0  1
+24 1 0 0 2seedling+250              1  1  0  1  2  1 11  0  0  0  0  0  1
+25 1 0 0 2seedling+275              1  1  0  1  2  1 12  0  0  0  0  0  1
+26 1 0 0 2seedling+300              1  1  0  1  2  1 13  0  0  0  0  0  1
+27 1 0 0 3seedling+0                1  1  0  1  3  1  1  0  0  0  0  0  1
+28 1 0 0 3seedling+25               1  1  0  1  3  1  2  0  0  0  0  0  1
+29 1 0 0 3seedling+50               1  1  0  1  3  1  3  0  0  0  0  0  1
+30 1 0 0 3seedling+75               1  1  0  1  3  1  4  0  0  0  0  0  1
+31 1 0 0 3seedling+100              1  1  0  1  3  1  5  0  0  0  0  0  1
+32 1 0 0 3seedling+125              1  1  0  1  3  1  6  0  0  0  0  0  1
+33 1 0 0 3seedling+150              1  1  0  1  3  1  7  0  0  0  0  0  1
+34 1 0 0 3seedling+175              1  1  0  1  3  1  8  0  0  0  0  0  1
+35 1 0 0 3seedling+200              1  1  0  1  3  1  9  0  0  0  0  0  1
+36 1 0 0 3seedling+225              1  1  0  1  3  1 10  0  0  0  0  0  1
+37 1 0 0 3seedling+250              1  1  0  1  3  1 11  0  0  0  0  0  1
+38 1 0 0 3seedling+275              1  1  0  1  3  1 12  0  0  0  0  0  1
+39 1 0 0 3seedling+300              1  1  0  1  3  1 13  0  0  0  0  0  1
+40 1 0 0 4seedling+0                1  1  0  1  4  1  1  0  0  0  0  0  1
+41 1 0 0 4seedling+25               1  1  0  1  4  1  2  0  0  0  0  0  1
+42 1 0 0 4seedling+50               1  1  0  1  4  1  3  0  0  0  0  0  1
+43 1 0 0 4seedling+75               1  1  0  1  4  1  4  0  0  0  0  0  1
+44 1 0 0 4seedling+100              1  1  0  1  4  1  5  0  0  0  0  0  1
+45 1 0 0 4seedling+125              1  1  0  1  4  1  6  0  0  0  0  0  1
+46 1 0 0 4seedling+150              1  1  0  1  4  1  7  0  0  0  0  0  1
+47 1 0 0 4seedling+175              1  1  0  1  4  1  8  0  0  0  0  0  1
+48 1 0 0 4seedling+200              1  1  0  1  4  1  9  0  0  0  0  0  1
+49 1 0 0 4seedling+225              1  1  0  1  4  1 10  0  0  0  0  0  1
+50 1 0 0 4seedling+250              1  1  0  1  4  1 11  0  0  0  0  0  1
+51 1 0 0 4seedling+275              1  1  0  1  4  1 12  0  0  0  0  0  1
+52 1 0 0 4seedling+300              1  1  0  1  4  1 13  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 RI IB0055 Basmati 385
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UAFD0001 UAFD         0     0 DR000     0     0 00000 CL     -99  UAFDLY0001 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 74186   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    WH 74274   500     0     1     1   -99     0     0     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .086    .1    .1
+ 1    15  .086    .1    .1
+ 1    30  .086    .1    .1
+ 1    45  .086    .1    .1
+ 1    60  .086    .1    .1
+ 1    90  .076    .1    .1
+ 1   120  .076    .1    .1
+ 1   150  .013    .1    .1
+ 1   180  .258    .1    .1
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 74186   -99    16    16     T     H    22     0     5   -99    30    25     1     0                        One seedling/hill
+ 2 74186   -99    32    32     T     H    22     0     5   -99    30    25     2     0                        Two seedlings/hill
+ 3 74186   -99    48    48     T     H    22     0     5   -99    30    25     3     0                        Three seedlings/hill
+ 4 74186   -99    64    64     T     H    22     0     5   -99    30    25     4     0                        Four seedlings/hill
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    30    50   100 GS000 IR001    10 15 Irrigations
+@I IDATE  IROP IRVAL
+ 1 74186 IR003   100
+ 1 74193 IR003   100
+ 1 74200 IR003   100
+ 1 74207 IR003   100
+ 1 74214 IR003   100
+ 1 74221 IR003   100
+ 1 74228 IR003   100
+ 1 74235 IR003   100
+ 1 74242 IR003   100
+ 1 74249 IR003   100
+ 1 74256 IR003   100
+ 1 74263 IR003   100
+ 1 74270 IR003   100
+ 1 74277 IR003   100
+ 1 74284 IR003   100
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 74186 FE005 AP002    10     0     0     0     0     0   -99 0 kg N/ha
+ 1 74207 FE005 AP001     1     0     0     0     0     0   -99 0 kg N/ha
+ 2 74186 FE005 AP002    10    13     0     0     0     0   -99 25 kg N/ha
+ 2 74207 FE005 AP001     1    12     0     0     0     0   -99 25 kg N/ha
+ 3 74186 FE005 AP002    10    25     0     0     0     0   -99 50 kg N/ha
+ 3 74207 FE005 AP001     1    25     0     0     0     0   -99 50 kg N/ha
+ 4 74186 FE005 AP002    10    40     0     0     0     0   -99 75 kg N/ha
+ 4 74207 FE005 AP001     1    35     0     0     0     0   -99 75 kg N/ha
+ 5 74186 FE005 AP002    10    50     0     0     0     0   -99 100 kg N/ha
+ 5 74207 FE005 AP001     1    50     0     0     0     0   -99 100 kg N/ha
+ 6 74186 FE005 AP002    10    65     0     0     0     0   -99 125 kg N/ha
+ 6 74207 FE005 AP001     1    60     0     0     0     0   -99 125 kg N/ha
+ 7 74186 FE005 AP002    10    75     0     0     0     0   -99 150 kg N/ha
+ 7 74207 FE005 AP001     1    75     0     0     0     0   -99 150 kg N/ha
+ 8 74186 FE005 AP002    10    90     0     0     0     0   -99 175 kg N/ha
+ 8 74207 FE005 AP001     1    80     0     0     0     0   -99 175 kg N/ha
+ 9 74186 FE005 AP002    10   100     0     0     0     0   -99 200 kg N/ha
+ 9 74207 FE005 AP001     1   100     0     0     0     0   -99 200 kg N/ha
+10 74186 FE005 AP002    10   113     0     0     0     0   -99 225 kg N/ha
+10 74207 FE005 AP001     1   112     0     0     0     0   -99 225 kg N/ha
+11 74186 FE005 AP002    10   125     0     0     0     0   -99 250 kg N/ha
+11 74207 FE005 AP001     1   125     0     0     0     0   -99 250 kg N/ha
+12 74186 FE005 AP002    10   135     0     0     0     0   -99 275 kg N/ha
+12 74207 FE005 AP001     1   140     0     0     0     0   -99 275 kg N/ha
+13 74186 FE005 AP002    10   150     0     0     0     0   -99 300 kg N/ha
+13 74207 FE005 AP001     1   150     0     0     0     0   -99 300 kg N/ha
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 74186   -99   -99   -99   -99   -99   -99   -99   -99 -99
+
+*CHEMICAL APPLICATIONS
+@C CDATE CHCOD CHAMT  CHME CHDEP   CHT..CHNAME
+ 1 74186   -99   -99   -99   -99   -99  -99
+
+*TILLAGE AND ROTATIONS
+@T TDATE TIMPL  TDEP TNAME
+ 1 74186   -99   -99 -99
+
+*ENVIRONMENT MODIFICATIONS
+@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
+ 1 74001 A   0 A   0 A 4.4 A 4.4 A 3.5 M   1 A   0 A   0 
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 74186 GS000   -99   -99   -99   -99 Rice
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE             30     1     S 74001  2150 TEST
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     N     D
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     R     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     A     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              Y     N     Y     5     N     N     N     N     N     N     N     N     N     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          65175 65189    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 66182   100     0
+
+
+
