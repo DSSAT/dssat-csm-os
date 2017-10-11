@@ -68,7 +68,7 @@ AGRICULTURAL UNIVERSITY,WAGENINGEN,NETHERLANDS CIAT Experiment 3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     A     N     N     R
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     2     Y     N     Y     Y     N     N     Y     N     N
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
