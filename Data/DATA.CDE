@@ -101,6 +101,7 @@ LIWAM  Lint Yld kg/ha  Lint Yield at maturity (kg [dm]/ha)                      
 LWAH   Leaf wt kg/ha   Leaf weight at harvest (kg/ha)                           .
 MDAP   Maturity day    Physiological maturity day (dap)                         .
 MDAT   Maturity date   Physiological maturity date (YrDoy)                      .
+N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 NDCH   Days to harvest Number of days from planting to harvest (d)              .
 NFXM   N fixed kg/h    N fixed during season (kg/ha)                            .
 NI#M   N application # N applications (no)                                      .
@@ -343,7 +344,6 @@ N2F8D  N2 flux layer 8 Daily N2 flux, soil layer 8 (g[N]/ha)                    
 N2F9D  N2 flux layer 9 Daily N2 flux, soil layer 9 (g[N]/ha)                    .
 N2ODC  Cum N2O denit   Cumulative N2O from denitrification, soil profile (kg/ha).
 N2ODD  Day N2O denit   Daily N2O from denitrification, soil profile (g[N]/ha/d) .
-N2OEC  Cum N2O emitted Cumulative N2O emissions from soil (kg[N]/ha)            .
 N2OED  N2O emitted/d   Daily N2O emissions from soil (g[N]/ha)                  .
 N2OFC  Cum N2O flux    Cumulative N2O flux, soil profile (kg/ha)                .
 N2OFD  Day N2O flux    Daily N2O flux, soil profile (g[N]/ha/d)                 .
@@ -414,6 +414,20 @@ NLCC   N Leached kg/ha N leached (kg [N]/ha)                                    
 NMNC   N Mineralize    Cumulative N mineralization (kg [N]/ha)                  .
 NNMNC  Net N mineraliz Cumulative net N mineralization (miner - immob)          .
 NOAD   Organic N kg/ha Organic N in soil (kg [N]/ha)                            .
+NOEC   Cum NO emitted  Cumulative NO emissions from soil (kg[N]/ha)             .
+NOED   NO emitted/d    Daily NO emissions from soil (g[N]/ha)                   .
+NOFLC  Cum NO flux k/h Cumulative NO flux, soil profile (kg[N]/ha)              .
+NOFLD  Day NO flux g/h Daily NO flux, soil profile (g[N]/ha/d)                  .
+NOF10  NO flux lyr 10  Daily NO flux, soil layer 10(g[N]/ha)                    .
+NOF1D  NO flux layer 1 Daily NO flux, soil layer 1 (g[N]/ha)                    .
+NOF2D  NO flux layer 2 Daily NO flux, soil layer 2 (g[N]/ha)                    .
+NOF3D  NO flux layer 3 Daily NO flux, soil layer 3 (g[N]/ha)                    .
+NOF4D  NO flux layer 4 Daily NO flux, soil layer 4 (g[N]/ha)                    .
+NOF5D  NO flux layer 5 Daily NO flux, soil layer 5 (g[N]/ha)                    .
+NOF6D  NO flux layer 6 Daily NO flux, soil layer 6 (g[N]/ha)                    .
+NOF7D  NO flux layer 7 Daily NO flux, soil layer 7 (g[N]/ha)                    .
+NOF8D  NO flux layer 8 Daily NO flux, soil layer 8 (g[N]/ha)                    .
+NOF9D  NO flux layer 9 Daily NO flux, soil layer 9 (g[N]/ha)                    .
 NUAC   N Uptake kg/ha  N uptake, cumulative (kg [N]/ha)                         .
 NUAD   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .
 NUPC   N Uptake kg/ha  N uptake (kg [N]/ha)                                     .

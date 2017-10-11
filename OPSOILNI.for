@@ -21,16 +21,9 @@ C  08/20/2002 GH  Modified for Y2K
       SUBROUTINE OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TOTAML)
-C-------------------------------------------------------------------
-C
-C  Soil Nitrogen Aspects OUTPUT File
-C  Soil Carbon Aspects OUTPUT File
-C
+     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
 !-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
-                         ! which contain control information, soil
-                         ! parameters, hourly weather data.
+      USE ModuleDefs
 !     VSH
       USE CsvOutput 
       USE Linklist
@@ -53,7 +46,6 @@ C
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 4
-!      INTEGER, PARAMETER :: N=1, P=2
       CHARACTER*4, DIMENSION(SUMNUM) :: LABEL
       CHARACTER*50 FRMT
       REAL, DIMENSION(SUMNUM) :: VALUE
@@ -62,8 +54,8 @@ C
       REAL CMINERN        !mineralization
       REAL CIMMOBN        !immobilization
       REAL CNITRIFY       !nitrification
-      REAL TNOX           !Denitrification
-      REAL TLCH           !Leaching
+      REAL CNOX           !Denitrification
+      REAL CLeach         !Leaching
       REAL TOTAML         !ammonia volatilization
       REAL CNETMINRN      !net mineralization (mineralized-immobilized)
       REAL CNUPTAKE       !N uptake
@@ -131,7 +123,7 @@ C-----------------------------------------------------------------------
           N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
           
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-          WRITE(NOUTDN,'(A1,T62,A)',ADVANCE='NO') 
+          WRITE(NOUTDN,'(A1,T54,A)',ADVANCE='NO') 
      &        "!","NO3 (ppm) by soil depth (cm):"
           END IF   ! VSH
           
@@ -141,13 +133,13 @@ C-----------------------------------------------------------------------
           WRITE(FRMT,'(A,I2,A)')
      &     '(',SPACES,'X,"NH4 (ppm) by soil depth (cm):")'
           WRITE(NOUTDN,FRMT)
-          WRITE(NOUTDN,'("!",T57,20A8)')
+          WRITE(NOUTDN,'("!",T50,20A8)')
      &        (SoilProp%LayerText(L),L=1,N_LYR), 
      &        (SoilProp%LayerText(L),L=1,N_LYR)
 
           WRITE (NOUTDN,100, ADVANCE='NO')
   100     FORMAT('@YEAR DOY   DAS',
-     &     '  NAPC  NI#M    NLCC   NIAD   NITD   NHTD')
+     &     '  NAPC  NI#M    NIAD   NITD   NHTD')
           IF (N_LYR < 10) THEN
             WRITE (NOUTDN,105, ADVANCE='NO')
      &        ('NI',L,'D',L=1,N_LYR), 
@@ -160,17 +152,18 @@ C-----------------------------------------------------------------------
   110       FORMAT(2(9("    ",A2,I1,A1),A8),"    ")
           ENDIF
           WRITE (NOUTDN,115)
-  115     FORMAT('NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM')
+  115     FORMAT(
+     &   'NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM    NLCC')
           END IF   ! VSH
 
           CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
           
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE (NOUTDN,310) YEAR, DOY, DAS, 0, 
-     &       0, 0.0, TNH4NO3, TNO3, TNH4, 
+     &       0, TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
      &       0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-     &       0.0
+     &       0.0, 0.0
           END IF   ! VSH
           
           
@@ -205,27 +198,26 @@ C-----------------------------------------------------------------------
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE (NOUTDN,310) YEAR, DOY, DAS, NINT(AMTFER(N)), 
 !     &       NAPFER, TLCH, TNH4NO3, NINT(THUMN), TNO3, TNH4, 
-     &       NAPFER(N), TLCH, TNH4NO3, TNO3, TNH4, 
+     &       NAPFER(N), TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
-     &       CMINERN, CNITRIFY, TNOX, CIMMOBN, TOTAML, CNETMINRN, 
-     &       CNUPTAKE
-  310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,F7.1,1X,F6.1,2F7.1,
-     &       20(F8.2), 10F8.2)
+     &       CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, CNETMINRN,
+     &       CNUPTAKE, CLeach
+  310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,1X,F6.1,2F7.1,
+     &       20(F8.2), 10F8.2,F7.1)
           END IF   ! VSH
           
 !     VSH
       IF (FMOPT == 'C') THEN 
          CALL CsvOutSoilNi(EXPNAME, RUN, CONTROL%TRTNUM, 
      &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
-     &N, AMTFER, NAPFER, TLCH,TNH4NO3,TNO3,TNH4, N_LYR, NO3, NH4,
-     &CMINERN, CNITRIFY, TNOX, CIMMOBN, TOTAML, CNETMINRN, CNUPTAKE,
+     &N, AMTFER, NAPFER, CLEACH ,TNH4NO3,TNO3,TNH4, N_LYR, NO3, NH4,
+     &CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, CNETMINRN, CNUPTAKE,
      &vCsvlineSoilNi, vpCsvlineSoilNi, vlngthSoilNi)
      
          CALL LinklstSoilNi(vCsvlineSoilNi)
       END IF
       
         ENDIF
-
       ENDIF
 
 !***********************************************************************
@@ -243,7 +235,7 @@ C-----------------------------------------------------------------------
 !         saved aS real numbers for placement in real array.
           LABEL(1)  = 'NI#M'; VALUE(1)  = FLOAT(NAPFER(N))
           LABEL(2)  = 'NICM'; VALUE(2)  = AMTFER(N)
-          LABEL(3)  = 'NLCM'; VALUE(3)  = TLCH
+          LABEL(3)  = 'NLCM'; VALUE(3)  = CLeach
           LABEL(4)  = 'NIAM'; VALUE(4)  = TNH4NO3
 
           !Send labels and values to OPSUM

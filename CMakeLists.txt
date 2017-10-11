@@ -130,6 +130,9 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	DATES.for
 	DECRAT_C.for
 	DEMAND.for
+	Denit_Ceres.for
+	Denit_DayCent.for
+	diffusiv.for
 	EFLOW_C.for
 	EQUIL2.for
 	ERROR.for
@@ -258,11 +261,13 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	MZ_OPNIT.for
 	MZ_PHENOL.for
 	MZ_ROOTS.for
+	N2O_mod.for
 	NCHECK_C.for
 	NCHECK_inorg.for
 	NCHECK_organic.for
 	NFIX.for
 	NFLUX.for
+	nox_pulse.f90
 	NUPTAK.for
 	OM_Place.for
 	OP_OBS/DS1900.f90

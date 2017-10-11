@@ -298,10 +298,10 @@ C-----------------------------------------------------------------------
      &            AVPSTR1, AVPSTR2, RSTAGE
  4605           FORMAT (1X,I2,1X,A3,1X,I4,1X,A10,I8,1X,F6.2,1X,F5.1,
      &                  1X,I4,1X,F4.1,1X,F5.2,1X,F5.2,2(1X,F5.2),I6)
-                WRITE(NOUTDO,'(A)') SimText
+                IF (YRDOY >= YRPLT) WRITE(NOUTDO,'(A)') SimText
               ENDIF
-!            ENDIF
-          ENDIF
+            ENDIF
+!          ENDIF
         ENDDO
       ENDIF
 
