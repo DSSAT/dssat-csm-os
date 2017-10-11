@@ -757,6 +757,7 @@ C     Initialize curve number (according to J.T. Ritchie) 1-JUL-97 BDB
 !       Conversion from kg/ha to ppm (or mg/l).  Recalculate daily.
         KG2PPM(L) = 10.0 / (BD(L) * DLAYR(L))   
         POROS(L)  = 1.0 - BD(L) / 2.65
+        IF (POROS(L) < DUL(L)) POROS(L) = SAT(L)
 
         IF (TOTN(L) > 1.E-5) THEN
 !         Use inorganic N values to calculate organic N in kg/ha
@@ -1004,6 +1005,7 @@ C  tillage and rainfall kinetic energy
 !       Conversion from kg/ha to ppm (or mg/l).  Recalculate daily.
         KG2PPM(L) = 10.0 / (BD(L) * DLAYR(L))   
         POROS(L)  = 1.0 - BD(L) / 2.65
+        IF (POROS(L) < DUL(L)) POROS(L) = SAT(L)
       ENDDO
 
       SOILPROP % BD    = BD
@@ -1383,6 +1385,7 @@ c** wdb orig          SUMKEL = SUMKE * EXP(-0.15*MCUMDEP)
 !       Available water capacity (mm)
         TOTAW = TOTAW + (DUL(L) - LL(L)) * DLAYR(L) * 10.
         POROS(L)  = 1.0 - BD(L) / 2.65
+        IF (POROS(L) < DUL(L)) POROS(L) = SAT(L)
       ENDDO
 
       SOILPROP % BD     = BD     
