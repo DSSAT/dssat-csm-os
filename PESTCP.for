@@ -101,6 +101,7 @@ C -- Leaf Variables --
       TDLA   = 0.0
       PVSTGD = 0.0
       VSTGD  = 0.0
+      CALL PUT('PDLABETA','PDLA',0.0)
 C -- Stem Variables --
       WSTMD  = 0.0
       PSTMD  = 0.0
