@@ -7,14 +7,13 @@ Jon Lizaso and Bill Batchelor
 219b Davidson Hall,  Agric. and Bios. Eng., Iowa State University, Ames
 @SITE
  AGRONOMY & AGRICULTURAL ENG FARM, AMES, IA
-@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
-    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 @NOTES
 The purpose of this experiment was to collect baseline data to test CERES Maize
 in Iowa. Two plant populations (4.7 and 7.5 plants/m2) and two nitrogen
 rates ((56 and 224 kg N/ha)were established in a randomized complete block
 design. Various biomass data were collected during the season and
 are recorded in the associated fileT.
+
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
@@ -71,8 +70,8 @@ are recorded in the associated fileT.
  1 ME              M     M     E     R     S     C     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     N     R     R     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     N     1     Y     N     Y     Y     N     N     Y     N     N
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -85,3 +84,6 @@ are recorded in the associated fileT.
  1 RE            100     1    20
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 99334   100     0
+
+
+
