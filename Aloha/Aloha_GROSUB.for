@@ -955,18 +955,18 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
 
         CASE (6)
           YIELD = FRTWT*10.0*FRUITS        ! fruit dry weight yield (kg/ha)
-          IF (PLTPOP .GE. 0.0) THEN
-             IF (GPP .GT. 0.0) THEN
-                EYEWT = FRTWT/GPP
-             ENDIF
-             PEYEWT = EYEWT*1000.0            ! Eye weight (mg/eye)
-             GPSM   = GPP*FRUITS              ! Number of eyes per square meter
-             STOVER = BIOMAS*10.0-YIELD       ! Total plant weight except fruit
-             YIELD  = YIELD / Species % FDMC  ! Fresh fruit yield (kg/ha)
-             YIELDB = YIELD/0.8914            ! Fresh fruit yield (lb/acre)
-             STGDOY (ISTAGE) = YRDOY
-          ENDIF
-          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
+!         IF (PLTPOP .GE. 0.0) THEN
+!            IF (GPP .GT. 0.0) THEN
+!               EYEWT = FRTWT/GPP
+!            ENDIF
+!            PEYEWT = EYEWT*1000.0            ! Eye weight (mg/eye)
+!            GPSM   = GPP*FRUITS              ! Number of eyes per square meter
+!            STOVER = BIOMAS*10.0-YIELD       ! Total plant weight except fruit
+!            YIELD  = YIELD / Species % FDMC  ! Dry fruit yield (kg/ha)
+!            YIELDB = YIELD/0.8914            ! Fresh fruit yield (lb/acre)
+            STGDOY (ISTAGE) = YRDOY
+!         ENDIF
+!         HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
 
         CASE (8)
           WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt

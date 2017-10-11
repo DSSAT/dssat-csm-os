@@ -38,24 +38,16 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-!      REAL      TOPWT,WTNUP,SDWTAM
-      REAL      FDINT
-!      REAL      SEEDNI,WTNLF,WTNST,WTNSH,WTNRT,WTNLO
-
       CHARACTER*1 ISWWAT
       INTEGER EDATE, ISTAGE, YRDOY, YRPLT, MDATE, ISDATE, PMDATE
 !      INTEGER ICSDUR, 
       INTEGER, DIMENSION(20) :: STGDOY
       REAL HARVFRAC(2)
-      REAL    LN, CRWNWT, FRTWT  
-!      REAL    FLRWT, GROSK, YIELD, SENLA, SLAN
+      REAL      FDINT
+      REAL    LN, CRWNWT, FRTWT, FRUITS  
       REAL    LFWT, STMWT, GPSM, GPP
-!      REAL    CARBO, PTF, LEAFNO, XN, AGEFAC, NDEF3, NDEF4
       REAL    BASLFWT, BIOMAS, LAI, NSTRES, STOVN, RTDEP, RTWT, SKWT
-!      REAL    ANFAC, NFAC, ATANC, TANC, RANC, VANC, VMNC, TMNC, RCNP
-!      REAL    TCNP, GRAINN, GNP, XGNP, APTNUP, GNUP, TOTNUP
       REAL    GRORT, XSTAGE, STOVWT, ROOTN, WTNUP
-!     REAL, DIMENSION(6)  :: SI1, SI2, SI3, SI4
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, SW, UNH4, UNO3
 
       REAL      CANNAA,CANWAA
@@ -179,10 +171,10 @@ C-----------------------------------------------------------------------
      &   TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
-     &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
-     &   WTINITIAL, WTNCAN, WTNGRN, WTNUP, YIELD,         !Input
-     &   YRDOY, YRPLT)                                    !Input
+     &   BIOMAS, CRWNWT, FRTWT, FRUITS, GPSM, GPP,        !Input
+     &   HARVFRAC, ISDATE, LAI, LN, MDATE, PLTPOP,        !Input
+     &   PMDATE, STGDOY, STOVER, WTINITIAL, WTNCAN,       !Input
+     &   WTNGRN, WTNUP, YIELD, YRDOY, YRPLT)              !Input
 
 !=======================================================================
 C     Beginning of daily simulation loop
@@ -315,10 +307,10 @@ C-----------------------------------------------------------------------
      &   TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
-     &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
-     &   WTINITIAL, WTNCAN, WTNGRN, WTNUP, YIELD,         !Input
-     &   YRDOY, YRPLT)                                    !Input
+     &   BIOMAS, CRWNWT, FRTWT, FRUITS, GPSM, GPP,        !Input
+     &   HARVFRAC, ISDATE, LAI, LN, MDATE, PLTPOP,        !Input
+     &   PMDATE, STGDOY, STOVER, WTINITIAL, WTNCAN,       !Input
+     &   WTNGRN, WTNUP, YIELD, YRDOY, YRPLT)              !Input
 
 !=======================================================================
 C     Call end of season output routine
@@ -332,10 +324,10 @@ C-----------------------------------------------------------------------
      &   TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT)     
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH,
-     &   BIOMAS, CRWNWT, GPSM, GPP, HARVFRAC, ISDATE,     !Input
-     &   LAI, LN, MDATE, PMDATE, STGDOY, STOVER,          !Input
-     &   WTINITIAL, WTNCAN, WTNGRN, WTNUP, YIELD,         !Input
-     &   YRDOY, YRPLT)                                    !Input
+     &   BIOMAS, CRWNWT, FRTWT, FRUITS, GPSM, GPP,        !Input
+     &   HARVFRAC, ISDATE, LAI, LN, MDATE, PLTPOP,        !Input
+     &   PMDATE, STGDOY, STOVER, WTINITIAL, WTNCAN,       !Input
+     &   WTNGRN, WTNUP, YIELD, YRDOY, YRPLT)              !Input
 
 !=======================================================================
       END SELECT
