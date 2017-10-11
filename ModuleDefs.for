@@ -473,7 +473,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data transferred from Soil Inorganic Nitrogen routine
       Type NiType
-        REAL TNOXD    !, TLeachD, TN2OD     ! added N2O PG
+        REAL TNOXD, TLeachD    !, TN2OD     ! added N2O PG
       End Type NiType
 
 !     Data transferred from Organic C routines
@@ -703,7 +703,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); Value = SAVE_data % NITR % TNOXD
-!       Case ('TLeachD'); Value = SAVE_data % NITR % TLeachD
+       Case ('TLCHD'); Value = SAVE_data % NITR % TLeachD
 !       Case ('TN2OD'); Value = SAVE_data % NITR % TN2OD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
@@ -820,7 +820,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); SAVE_data % NITR % TNOXD = Value
-!       Case ('TLeachD'); SAVE_data % NITR % TLeachD = Value
+        Case ('TLCHD'); SAVE_data % NITR % TLeachD = Value
 !       Case ('TN2OD'); SAVE_data % NITR % TN2OD = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
