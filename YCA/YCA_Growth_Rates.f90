@@ -97,7 +97,7 @@
                         RAW = RAW/(TRLV)
                     ELSE
                         !RAW = 0.0 !LPM 11JUL2017 to avoid RAW of 0 with the roots just start to growth at planting
-                        RAW = SWP(NLAYRROOT)
+                        RAW = SWP(LSEED)
                     ENDIF
                     !Linear decrease according SWP
                     IF (WFGU-WFGL.GT.0.0) &
