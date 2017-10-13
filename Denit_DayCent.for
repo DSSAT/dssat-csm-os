@@ -276,8 +276,8 @@ C       Convert total dentrification, N2O and N2 to kg/ha/d from ppm
 
         if (CO2ppm(L) > 1.E-3) then
           fRno3_co2 = max(0.16 * k1, 
-!chp &      k1 * exp(-0.8 * no3(L)/co2_correct(L)))
-     &      k1 * exp(-0.8 * no3(L)/CO2ppm(L)))
+     &      k1 * exp(-0.8 * no3(L)/co2_correct(L)))
+!DayCent    k1 * exp(-0.8 * no3(L)/CO2ppm(L)))
         else
           fRno3_co2 = 0.16 * k1
         endif
