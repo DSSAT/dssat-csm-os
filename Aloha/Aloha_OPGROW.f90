@@ -9,7 +9,8 @@
         BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, &
         LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, ROOTN,  &
         RTDEP, RTWT, SKWT, STMWT, STOVN, STOVWT, SWFAC,    &
-        TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT)     
+        TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT,        &
+        VNAM, VWATM, FRNAM, CNAM, FRNpctM)    !Output for Overview.OUT 
 
       USE Aloha_mod
       IMPLICIT  NONE
@@ -23,8 +24,9 @@
       REAL LFWT, PLTPOP, SDWT, XLAI, LAI, GPSM, CRWNWT, GPP, TRNU, LN   !, GRNWT
       REAL GM2KG, SHELPC, SHELLW, SDSIZE, HI, BIOMAS, VWAD, STMWT
       REAL RTWT, RTDEP, RLV(NL)
-      REAL FRTWT, BASLFWT, SKWT !, RSTAGE
+      REAL FRTWT, BASLFWT, SKWT, TOPWT !, RSTAGE
       REAL STOVN, GRAINN, STOVWT, ROOTN, WTNVEG, WTNGRN, PCNVEG, PCNGRN
+      REAL VNAM, VWATM, FRNAM, CNAM, FRNpctM
 
       INTEGER I, LEAFNO
       INTEGER DAP,YRPLT,YRDOY
@@ -88,24 +90,24 @@
           CALL HEADER(SEASINIT, NOUTDG, RUN)
 
           WRITE (NOUTDG,'(A)') '!                       Leaf   Grow        <----' // &
-          '------------ Dry  Weight ----------------->   Harv <--- Pod ---> <--' // &
-          ' Stress (0-1) -->   Leaf  Shell   Spec  <- Canopy ->          Root  ' // &
-          '<--------------- Root Length Density ------------------------------>'
+          '---------------- Dry  Weight -------------------->   Harv <--- Pod -' // &
+          '--> <-- Stress (0-1) -->   Leaf  Shell   Spec  <- Canopy ->          ' // &
+          'Root  <--------------- Root Length Density ------------------------------>'
 
-          WRITE (NOUTDG,'(A)') '!                        Num  Stage    LAI   Lea' // &
+          WRITE (NOUTDG,'(A)') '!                        Num  Stage    LAI  Total   Lea' // &
           'f   Stem  Fruit   Root  Basal  Crown   Suck  Index   Wgt.    No.    ' // &
           '  Water      Nitr   Nitr   -ing   Leaf   Hght  Width         Depth  ' // &
           '<---------------   cm3/cm3  of soil  ------------------------------>'
 
-          WRITE (NOUTDG,'(A210)') '!                                          <----' // &
-          '---------------- kg/Ha ------------------->         kg/ha          P' // &
+          WRITE (NOUTDG,'(A)') '!                                          <----' // &
+          '-------------------- kg/Ha ---------------------->         kg/ha          P' // &
           'hot   Grow             %      %   Area      m      m             m  ' // &
           '<------------------------------------------------------------------>'
 
-          WRITE (NOUTDG,'(A)') '@YEAR DOY   DAS   DAP   L#SD   GSTD   LAID   LWA' // &
-          'D   SWAD   FWAD   RWAD   BWAD   CRAD   SUGD   HIAD   EWAD   E#AD   W' // &
-          'SPD   WSGD   NSTD   LN%D   SH%D   SLAD   CHTD   CWID   EWSD   RDPD  ' // &
-          ' RL1D   RL2D   RL3D   RL4D   RL5D   RL6D   RL7D   RL8D   RL9D   RL10'
+          WRITE (NOUTDG,'(A)') '@YEAR DOY   DAS   DAP   L#SD   GSTD   LAID   CW' // &
+          'AD   LWAD   SWAD   FWAD   RWAD   BWAD   CRAD   SUGD   HIAD   EWAD  ' // &
+          ' E#AD   WSPD   WSGD   NSTD   LN%D   SH%D   SLAD   CHTD   CWID   EWSD' // &
+          '   RDPD   RL1D   RL2D   RL3D   RL4D   RL5D   RL6D   RL7D   RL8D   RL9D   RL10'
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -218,6 +220,8 @@
             ELSE
                PODNO = 0.0
             ENDIF
+
+            TOPWT = BIOMAS * 10.
             
 !           Moved to NUPTAK
 !           WTNUP = WTNUP + TRNU * PLTPOP
@@ -277,8 +281,9 @@
             IF (FMOPT /= 'C') THEN   ! VSH
               WRITE (NOUTDG,400) YEAR, DOY, DAS, DAP,VSTAGE,ISTAGE,XLAI,      &
 !   Regular output:
-                NINT(WTLF*10.0),NINT(STMWT*GM2KG),NINT(FRTWT*GM2KG),          &
-                NINT(RTWT*GM2KG),NINT(BASLFWT*10.0),NINT(CRWNWT*GM2KG),       &
+                NINT(TOPWT),                                                  &
+                NINT(LFWT*GM2KG),NINT(STMWT*GM2KG),NINT(FRTWT*GM2KG),          &
+                NINT(RTWT*GM2KG),NINT(BASLFWT*GM2KG),NINT(CRWNWT*GM2KG),       &
                 NINT(SKWT*GM2KG),HI,                                          &
 !   Expanded output:
 !                WTLF*10.0,STMWT*GM2KG,FRTWT*GM2KG,           &
@@ -289,7 +294,7 @@
                 (RTDEP/100), (RLV(I),I=1,10)
 
   400          FORMAT (1X,I4,1X,I3.3,2I6,1X,F6.1,1X,I6,1X,F6.2,   &
-                  7(1X,I6),1X,F6.3,           &    !Regular output
+                  8(1X,I6),1X,F6.3,           &    !Regular output
 !                 7(1X,F6.1),1X,F6.3,         &    !Expanded output
                   2(1X,I6), 3(1X,F6.3),       &
                   2(1X,F6.2),1X,F6.1,2(1X,F6.2),1X,F6.3,          &
@@ -354,8 +359,6 @@
                      PCNVEG, PCNL, PCNST, PCNRT
             !DATE    DAP  NUPC  CNAD  GNAD  VNAD  LNAD  SNAD  GN%D  VN%D  LN%D  SN%D  SHND  RN%D
   300         FORMAT (1X,I4, 1X,I3.3, 2I6, 6(1X,F6.1), 4(1X,F6.2))
-                               
-                 
 
 !---------  --------------------------------------------------------------
 !           CSV output corresponding to PlantN.OUT
@@ -385,8 +388,14 @@
         KST_AV = 0.0
 
 !-----------------------------------------------------------------------
-
-!TEMP CHP      CALL OPVIEW ()
+!       Save values at maturity for Overview.OUT
+        IF (YRDOY == MDATE) THEN
+          VWATM = VWAD / 1000.  !Veg wt at maturity, t/ha
+          CNAM  = WTNCAN * 10.0 !Canopy N at maturity, kg/ha
+          VNAM  = WTNVEG * 10.0 !Veg N at maturity, kg/ha
+          FRNAM = WTNSD * 10.0  !Fruit N at maturity, kg/ha
+          FRNpctM = PCNGRN      !Fruit N, %
+        ENDIF
 
 !***********************************************************************
 !***********************************************************************

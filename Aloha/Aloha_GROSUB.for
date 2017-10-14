@@ -51,10 +51,11 @@ C=======================================================================
       SUBROUTINE Aloha_GROSUB (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
-     &    SKWT, STMWT, STOVER, STOVN, STOVWT, TEMPM,          !Output
-     &    UNH4, UNO3, WTNUP, WTINITIAL, YIELD)                !Output
+     &    BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,              !Output
+     &    FRUITS, GPP, GPSM, GRAINN, GRORT, LAI,              !Output
+     &    LFWT, LN, NSTRES, RLV, ROOTN, RTWT,                 !Output
+     &    SENESCE, SKWT, STMWT, STOVER, STOVN, STOVWT,        !Output
+     &    TEMPM, UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)   !Output
 
       USE Aloha_mod
       USE Interface_SenLig_Ceres
@@ -93,7 +94,7 @@ C=======================================================================
       REAL    PLTPOP, SDWTPL, PLANTSIZE
       REAL    G2, G3, P4, PHINT, TBASE
       INTEGER PMTYPE, NFORCING
-      REAL    GRNWT, SDWTAH, SDWTAM, WTNUP, TOPWT, BWAH
+      REAL    GRNWT, SDWTAH, SDWTAM, WTNUP, BWAH
       REAL    WTNLF, WTNST, WTNSH, WTNRT, WTNLO
       REAL    NDEF4, ANFAC, ATANC, TCNP, XGNP, GNUP, TOTNUP
       REAL    CUMDTT, CANNAA, CANWAA
@@ -144,7 +145,6 @@ C=======================================================================
       RTWT   = 0.0
       SDWTAH = 0.0  !Only used for output in OPHarv
       SDWTAM = 0.0
-      TOPWT  = 0.0
       BWAH   = 0.0
       WTNLF  = 0.0
       WTNST  = 0.0
@@ -553,6 +553,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         BASLFWT = BASLFWT + GROBSL
         STMWT   = STMWT   + GROSTM
         FLRWT   = FLRWT   + GROFLR
+        CRWNWT  = FLRWT       !CHP 10/13/2017
 
         IF (GROLF .GT. 0.0) THEN
            SLAN = PLA/1000.0
@@ -605,6 +606,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         ENDIF
         STMWT = STMWT + GROSTM
         FLRWT = FLRWT + GROFLR
+        CRWNWT  = FLRWT       !CHP 10/13/2017
         SKWT  = SKWT  + GROSK
 
 !-----------------------------------------------------------------

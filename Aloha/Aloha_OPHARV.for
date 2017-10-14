@@ -7,10 +7,11 @@
 !=======================================================================
 
       SUBROUTINE Aloha_OPHARV(CONTROL, ISWITCH,
-     &   BIOMAS, CRWNWT, FRTWT, FRUITS, GPSM, GPP,        !Input
-     &   HARVFRAC, ISDATE, LAI, LN, MDATE, PLTPOP,        !Input
-     &   PMDATE, STGDOY, STOVER, WTINITIAL, WTNCAN,       !Input
-     &   WTNGRN, WTNUP, YIELD, YRDOY, YRPLT)              !Input
+     &   BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM, FRNpctM,     !Input
+     &   FRTWT, FRUITS, GPSM, GPP, HARVFRAC,              !Input
+     &   ISDATE, LAI, LN, MDATE, PLTPOP, PMDATE,          !Input
+     &   STGDOY, STOVER, VNAM, VWATM, WTINITIAL, WTNCAN,  !Input
+     &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
 
 !-----------------------------------------------------------------------
       USE Aloha_mod
@@ -35,15 +36,17 @@
       INTEGER TRT_ROT
       INTEGER STGDOY(20)
       
-      REAL AGEFAC, APTNUP, BWAH, BWAM, CANNAA, CANWAA
-      REAL CRWNWT, EYEWT, FRTWT, FRUITS, GNUP, GPP, GPSM, HI, StovSenes
-      REAL MAXLAI, NSTRES, PEYEWT, PSDWT, PLTPOP 
+      REAL AGEFAC, BWAH, BWAM, CANNAA, CANWAA
+      REAL CRWNWT, EYEWT, FBIOM, FBTONS, FRTWT, FRUITS
+      REAL GNUP, GPP, GPSM, HI
+      REAL MAXLAI, NSTRES, PBIOMS, PEYEWT, PSDWT, PLTPOP 
       REAL Pstres1, Pstres2   
       REAL SDRATE
-      REAL SDWT, SDWTAH, SDWTAM, STOVER  
+      REAL SDWT, SDWTAH, SDWTAM, STOVER   !, StovSenes  
       REAL SWFAC, BIOMAS, Biomass_kg_ha, TURFAC
       REAL WTINITIAL, WTNCAN, WTNGRN, WTNUP, XGNP, LAI, LN
       REAL YIELD, YIELDB, HBIOM, TOPWT
+      REAL VNAM, VWATM, FRNAM, CNAM, FRNpctM
 
       REAL, DIMENSION(2) :: HARVFRAC
 
@@ -68,16 +71,9 @@
       TYPE (PlStresType) PlantStres
 
       DYNAMIC = CONTROL % DYNAMIC
-      CROP    = CONTROL % CROP
-      YRSIM   = CONTROL % YRSIM
-      RNMODE  = CONTROL % RNMODE
-      FILEIO  = CONTROL % FILEIO
-      RUN     = CONTROL % RUN
-
-      StovSenes = SENESCE % ResWt(0)
 
 !-----------------------------------------------------------------------
-      ACOUNT = 21  !Number of FILEA headings.
+      ACOUNT = 19  !Number of FILEA headings.
 !     Headings in FILEA for Measured data
       DATA OLAB /
      &    'FDAT',    !1  
@@ -85,23 +81,38 @@
      &    'PDFT',    !3  
      &    'MDAT',    !4  
      &    'FWAH',    !5  
-     &    'PWAM',    !6  
+     &    'VWATM',   !6  
      &    'E#AM',    !7  
      &    'EWUM',    !8  
      &    'E#UM',    !9  
-     &    'CWAM',    !10 
-     &    'BWAH',    !11
+     &    'BADMF',   !10 
+     &    'BADMH',   !11
      &    'LAIX',    !12
      &    'HIAM',    !13
      &    'THAM',    !14
-     &    'GNAM',    !15
+     &    'FRNAM',   !15
      &    'CNAM',    !16
-     &    'SNAM',    !17
-     &    'GN%M',    !18
-     &    'CWAA',    !19
-     &    'CNAA',    !20
-     &    'L#SM',    !21
-     &    19*'    '/ 
+     &    'VNAM',    !17
+     &    'FRN%M',   !18
+     &    'L#SM',    !19
+     &    21*'    '/ 
+!                                                                                       Old    New 
+! ORIGINAL ALOHA MODEL OUTPUT:                                           Simul   Meas   FileA  FileA
+! 400 FORMAT (6X, 'FORCING DATE (DAP)             ',2X,I6,7X,I6,/,  !  1 DNR1,   DFLR   FDAT - OK
+!    &        6X, 'HARVEST DATE (DAP)             ',2X,I6,7X,I6,/,  ! 2? DNR3,   PMAT   HDAT - OK
+!    &        6X, 'PHYSIO. MATURITY DATE          ',2X,I6,7X,I6,/,  ! 4? DNR7,   DMAT   MDAT - OK
+!    &        6X, 'FRESH FRUIT YIELD (T/HA)       ',F8.2, 7X,A6,/,  !  5 FYIELD, XGWT   FWAH - OK
+!    &        6X, 'EYE WEIGHT (G)                 ',F8.3, 7X,A6,/,  !  8 EYEWT,  XGWU   EWUM - OK
+!    &        6X, 'EYE PER SQ METER               ',F8.0, 7X,A6,/,  !  7 GPSM,   XNOGR  E#AM - OK
+!    &        6X, 'EYE PER FRUIT                  ',F8.2, 7X,A6,/,  !  9 GPP,    XNOGU  E#UM - OK
+!    &        6X, 'MAX. LAI                       ',F8.2, 7X,A6,/,  ! 12 MAXLAI, XLAM   LAIX - OK
+!    &        6X, 'DRY BIOM @ FORC. (T/HA)        ',F8.2, 7X,A6,/,  ! 10 FBTONS, XCWT   CWAM - BADMF, aerial biomass at forcing, t/ha
+!    &        6X, 'DRY BIOMASS (T/HA)             ',F8.2, 7X,A6,/,  ! 11 PBIOMS, XSWT   BWAM - BADMH, aerial biomass at harvest, t/ha
+!    &        6X, 'DRY VEG. WT. (T/HA)            ',F8.2, 7X,A6,/,  !  6 PVEGWT, XPDW   PWAM - VWATM, veg wt @ maturity, t/ha 
+!    &        6X, 'FRUIT N%                       ',F8.2, 7X,A6,/,  ! 18 XGNP,   XNPS   GN%M - FRN%M, fruit N concentration at maturity, %
+!    &        6X, 'TOT N UPTAKE (KG N/HA)         ',F8.1, 7X,A6,/,  ! 16 TOTNUP, XNTP   CNAM - OK
+!    &        6X, 'VEGETATIVE N UPTAKE            ',F8.1, 7X,A6,/,  ! 17 APTNUP, XNST   SNAM - VNAM, veg N at maturity, kg/ha
+!    &        6X, 'FRUIT N UPTAKE                 ',F8.1, 7X,A6)    ! 15 GNUP,   XNGR   GNAM - FRNAM, fruit N at maturity, kg/ha
 
 !***********************************************************************
 !***********************************************************************
@@ -109,6 +120,13 @@
 !***********************************************************************
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
+      CROP    = CONTROL % CROP
+      YRSIM   = CONTROL % YRSIM
+      RNMODE  = CONTROL % RNMODE
+      FILEIO  = CONTROL % FILEIO
+      RUN     = CONTROL % RUN
+      IPLTI   = ISWITCH % IPLTI
+
 !       Read FILEIO
         CALL GETLUN('FILEIO', LUNIO)
         OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
@@ -156,6 +174,12 @@
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
+      CROP    = CONTROL % CROP
+      YRSIM   = CONTROL % YRSIM
+      RNMODE  = CONTROL % RNMODE
+      FILEIO  = CONTROL % FILEIO
+      RUN     = CONTROL % RUN
+
       Simulated = ' '
       Measured  = ' '
 
@@ -256,6 +280,7 @@
 !      WTNCAN = TOTNUP/10.0
 !      WTNSD  = GNUP  /10.0
 
+!      StovSenes = SENESCE % ResWt(0)
 C-----------------------------------------------------------------------
 C     Adjust dates since Pineapple grows after harvest
 C-----------------------------------------------------------------------
@@ -319,37 +344,10 @@ C-----------------------------------------------------------------------
          CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !-----------------------------------------------------------------------
-!     Convert from YRDOY format to DAP.  Change descriptions to match.
-C
-C     Initialize observed values to -99 before reading values
-C
-      !IFLR   =     -99
-      !IFPD   =     -99
-      !IFSD   =     -99
-      !IMAT   =     -99
-      !XGWT   = '   -99'
-      !XPDW   = '   -99'
-      !XNOGR  = '   -99'
-      !XGWU   = '   -99'
-      !XNOGU  = '   -99'
-      !XCWT   = '   -99'
-      !XSWT   = '   -99'
-      !XLAM   = '   -99'
-      !XHIN   = '   -99'
-      !XNGR   = '   -99'
-      !XNST   = '   -99'
-      !XNTP   = '   -99'
-      !XNPS   = '   -99'
-      !XTHR   = '   -99'
-      !XCWAA  = '   -99'
-      !XCNAA  = '   -99'
-      !XLFNO  = '   -99'
-
-      !FBTONS = FBIOM*0.01
-      !PBIOMS = (BIOMAS*10.0)/1000.0
+      FBTONS = FBIOM*0.01
+      PBIOMS = (BIOMAS*10.0)/1000.0
       !FYIELD = YIELD/1000.0
       !PVEGWT = STOVER/1000.0
-
       Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
 
 !     Change observed (FileA) dates to DAP
@@ -370,8 +368,8 @@ C
         ELSE
           DHARV  = -99
         ENDIF
-        OLAP(1) = 'HDAP  '
-        CALL GetDesc(1,OLAP(1), DESCRIP(1))
+        OLAP(2) = 'HDAP  '
+        CALL GetDesc(1,OLAP(2), DESCRIP(2))
 
 !       Maturity date to DAP
         CALL READA_Dates(X(4), YRSIM, IMAT)
@@ -425,56 +423,31 @@ C
       WRITE(Simulated(2),'(I8)') HDAP;  WRITE(Measured(2),'(I8)') DHARV   !HDAT   
       WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT  
       WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT    !MDAT  
-      WRITE(Simulated(5),'F8.2') YIELD/1000.                                     
+      WRITE(Simulated(5),'(F8.2)') YIELD/1000.                                     
                                         WRITE(Measured(5),'(A8)') X(5)    !FWAH 
-      WRITE(Simulated(6),'(I8)') -99 ;  WRITE(Measured(6),'(I8)') -99     !PWAM  
+      WRITE(Simulated(6),'(F8.2)')VWATM;WRITE(Measured(6),'(A8)') X(6)    !VWATM  
       WRITE(Simulated(7),'(I8)') NINT(GPSM)                                      
                                         WRITE(Measured(7),'(A8)') X(7)    !E#AM 
       WRITE(Simulated(8),'(F8.3)') EYEWT                                           
                                         WRITE(Measured(8),'(A8)') X(8)    !EWUM    
       WRITE(Simulated(9),'(F8.1)') GPP; WRITE(Measured(9),'(A8)') X(9)    !E#UM     
-      WRITE(Simulated(10),'(I8)') NINT(Biomass_kg_ha)                                      
-                                        WRITE(Measured(10),'(A8)') X(10)  !CWAM     
-                                                                                    
-!     08/11/2005 CHP changed from BWAH to BWAM,                                     
-      WRITE(Simulated(11),'(I8)') NINT(BWAM)                                        
-                                        WRITE(Measured(11),'(A8)') X(11)  !BWAM / BWAH     
-                                                                                    
+      WRITE(Simulated(10),'(F8.1)') FBTONS                                      
+                                        WRITE(Measured(10),'(A8)') X(10)  !BADMF     
+      WRITE(Simulated(11),'(F8.1)') PBIOMS                                        
+                                        WRITE(Measured(11),'(A8)') X(11)  !BADMH    
       WRITE(Simulated(12),'(F8.2)') MAXLAI                                          
                                         WRITE(Measured(12),'(A8)') X(12)  !LAIX     
       WRITE(Simulated(13),'(F8.3)') HI; WRITE(Measured(13),'(A8)') X(13)  !HIAM
       WRITE(Simulated(14),'(I8)') -99 ; WRITE(Measured(14),'(I8)') -99    !THAM
-      WRITE(Simulated(15),'(I8)') NINT(GNUP)
-                                        WRITE(Measured(15),'(A8)') X(15)  !GNAM
-      WRITE(Simulated(16),'(I8)') NINT(WTNCAN*10.)
-                                        WRITE(Measured(16),'(A8)') X(16)  !CNAM
-      WRITE(Simulated(17),'(I8)') NINT(APTNUP)
-                                        WRITE(Measured(17),'(A8)') X(17)  !SNAM
-      WRITE(Simulated(18),'(F8.1)')XGNP;WRITE(Measured(18),'(A8)') X(18)  !GN%M
-      WRITE(Simulated(19),'(I8)') NINT(CANWAA*10)
-                                        WRITE(Measured(19),'(A8)') X(19)  !CWAA
-      WRITE(Simulated(20),'(I8)') NINT(CANNAA*10)
-                                        WRITE(Measured(20),'(A8)') X(20)  !CNAA
-      WRITE(Simulated(21),'(F8.2)') LN; WRITE(Measured(21),'(A8)') X(21)  !L#SM 
+      WRITE(Simulated(15),'(F8.1)') FRNAM
+                                        WRITE(Measured(15),'(A8)') X(15)  !FRNAM
+      WRITE(Simulated(16),'(F8.1)')CNAM;WRITE(Measured(16),'(A8)') X(16)  !CNAM
+      WRITE(Simulated(17),'(F8.1)')VNAM;WRITE(Measured(17),'(A8)') X(17)  !VNAM
+      WRITE(Simulated(18),'(F8.1)')FRNpctM
+                                        WRITE(Measured(18),'(A8)') X(18)  !FRN%M
+      WRITE(Simulated(19),'(F8.1)') LN; WRITE(Measured(19),'(A8)') X(19)  !L#SM 
 
       ENDIF
-
-!ORIGINAL MODEL OUTPUT:                                                  Simul   Meas   FileA
-! 400 FORMAT (6X, 'FORCING DATE (DAP)             ',2X,I6,7X,I6,/,  !  1 DNR1,   DFLR   FDAT - OK
-!    &        6X, 'HARVEST DATE (DAP)             ',2X,I6,7X,I6,/,  ! 2? DNR3,   PMAT   HDAT - OK
-!    &        6X, 'PHYSIO. MATURITY DATE          ',2X,I6,7X,I6,/,  ! 4? DNR7,   DMAT   MDAT - OK
-!    &        6X, 'FRESH FRUIT YIELD (T/HA)       ',F8.2, 7X,A6,/,  !  5 FYIELD, XGWT   FWAH - OK
-!    &        6X, 'EYE WEIGHT (G)                 ',F8.3, 7X,A6,/,  !  8 EYEWT,  XGWU   EWUM - OK
-!    &        6X, 'EYE PER SQ METER               ',F8.0, 7X,A6,/,  !  7 GPSM,   XNOGR  E#AM - OK
-!    &        6X, 'EYE PER FRUIT                  ',F8.2, 7X,A6,/,  !  9 GPP,    XNOGU  E#UM - OK
-!    &        6X, 'MAX. LAI                       ',F8.2, 7X,A6,/,  ! 12 MAXLAI, XLAM   LAIX - OK
-!    &        6X, 'DRY BIOM @ FORC. (T/HA)        ',F8.2, 7X,A6,/,  ! 10 FBTONS, XCWT   CWAM - NEED A NEW VARIABLE FOR THIS
-!    &        6X, 'DRY BIOMASS (T/HA)             ',F8.2, 7X,A6,/,  ! 11 PBIOMS, XSWT   BWAM / BWAH  CHANGE TO BADMH
-!    &        6X, 'DRY VEG. WT. (T/HA)            ',F8.2, 7X,A6,/,  !  6 PVEGWT, XPDW   PWAM  CHANGE FILEA TO KG/HA
-!    &        6X, 'FRUIT N%                       ',F8.2, 7X,A6,/,  ! 18 XGNP,   XNPS   GN%M - MAY NEED A NEW VARIABLE BECAUSE "GRAIN" IS NOT APPROPRIATE
-!    &        6X, 'TOT N UPTAKE (KG N/HA)         ',F8.1, 7X,A6,/,  ! 16 TOTNUP, XNTP   CNAM - OK
-!    &        6X, 'VEGETATIVE N UPTAKE            ',F8.1, 7X,A6,/,  ! 17 APTNUP, XNST   SNAM CHANGE TO VNAM?? NEW VARIABLE
-!    &        6X, 'FRUIT N UPTAKE                 ',F8.1, 7X,A6)    ! 15 GNUP,   XNGR   GNAM - NEED FRUIT N VARIABLE
 
 !-------------------------------------------------------------------
 !     Send information to OPSUM to generate SUMMARY.OUT file
