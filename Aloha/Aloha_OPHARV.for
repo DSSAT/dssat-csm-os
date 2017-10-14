@@ -7,10 +7,11 @@
 !=======================================================================
 
       SUBROUTINE Aloha_OPHARV(CONTROL, ISWITCH,
-     &   BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM, FRNpctM,     !Input
-     &   FRTWT, FRUITS, GPSM, GPP, HARVFRAC,              !Input
-     &   ISDATE, LAI, LN, MDATE, PLTPOP, PMDATE,          !Input
-     &   STGDOY, STOVER, VNAM, VWATM, WTINITIAL, WTNCAN,  !Input
+     &   AGEFAC, BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM,      !Input
+     &   FRNpctM, FRTWT, FRUITS, GPSM, GPP, HARVFRAC,     !Input
+     &   ISDATE, LAI, LN, MDATE, NSTRES, PLTPOP,          !Input
+     &   PMDATE, PSTRES1, PSTRES2, STGDOY, STOVER,        !Input
+     &   SWFAC, TURFAC, VNAM, VWATM, WTINITIAL, WTNCAN,   !Input
      &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
 
 !-----------------------------------------------------------------------
@@ -45,7 +46,7 @@
       REAL SDWT, SDWTAH, SDWTAM, STOVER   !, StovSenes  
       REAL SWFAC, BIOMAS, Biomass_kg_ha, TURFAC
       REAL WTINITIAL, WTNCAN, WTNGRN, WTNUP, XGNP, LAI, LN
-      REAL YIELD, YIELDB, HBIOM, TOPWT
+      REAL YIELD, YIELDB, HBIOM, TOPWT, YieldFresh
       REAL VNAM, VWATM, FRNAM, CNAM, FRNpctM
 
       REAL, DIMENSION(2) :: HARVFRAC
@@ -73,29 +74,31 @@
       DYNAMIC = CONTROL % DYNAMIC
 
 !-----------------------------------------------------------------------
-      ACOUNT = 19  !Number of FILEA headings.
+      ACOUNT = 15  !Number of FILEA headings.
 !     Headings in FILEA for Measured data
       DATA OLAB /
-     &    'FDAT',    !1  
-     &    'HDAT',    !2  
-     &    'PDFT',    !3  
-     &    'MDAT',    !4  
-     &    'FWAH',    !5  
-     &    'VWATM',   !6  
-     &    'E#AM',    !7  
-     &    'EWUM',    !8  
-     &    'E#UM',    !9  
-     &    'BADMF',   !10 
-     &    'BADMH',   !11
-     &    'LAIX',    !12
-     &    'HIAM',    !13
-     &    'THAM',    !14
-     &    'FRNAM',   !15
-     &    'CNAM',    !16
-     &    'VNAM',    !17
-     &    'FRN%M',   !18
-     &    'L#SM',    !19
-     &    21*'    '/ 
+     &    'FDAT',    !1  forcing date
+     &    'MDAT',    !2  maturity date (was 4) 
+     &    'HDAT',    !3  harvest date (was 2)
+     &    'FWAH',    !4  yield fresh weight, t/ha (was 5) 
+     &    'YDWAH',   !5  yield dry weight, t/ha (new) 
+     &    'BADMF',   !6  biomass at forcing, t/ha (was 10)
+     &    'BADMH',   !7  biomass at harvest, t/ha (was 11)
+     &    'VWATM',   !8  veg dry matter @ mat, t/ha (was 6)
+     &    'LAIX',    !9  max LAI (was 12) 
+     &    'L#SM',    !10 Leaf # (was 19)
+     &    'HIAM',    !11 HI (was 13)
+     &    'E#AM',    !12 eye number/m2 (was 7)
+     &    'E#UM',    !13 eye number/fruit (was 9)
+     &    'EWUM',    !14 eye unit weight (was 8)
+     &    'CNAM',    !15 tops N, kg/ha (was 16)
+
+!    &    'PDFT',    !not used (was 3)
+!    &    'THAM',    !not used (was 14)
+!    &    'FRNAM',   !not used (was 15)
+!    &    'FRN%M',   !not used (was 18)
+!    &    'VNAM',    !not used - same as CNAM (was 17)
+     &    25*'    '/ 
 !                                                                                       Old    New 
 ! ORIGINAL ALOHA MODEL OUTPUT:                                           Simul   Meas   FileA  FileA
 ! 400 FORMAT (6X, 'FORCING DATE (DAP)             ',2X,I6,7X,I6,/,  !  1 DNR1,   DFLR   FDAT - OK
@@ -298,8 +301,8 @@ C-----------------------------------------------------------------------
          ENDIF
          GPSM   = GPP*FRUITS              ! Number of eyes per square meter
          STOVER = BIOMAS*10.0-YIELD       ! Total plant weight except fruit (g/m2)
-         YIELD  = YIELD / Species % FDMC  ! Dry fruit yield (kg/ha)
-         YIELDB = YIELD / 0.8914          ! Fresh fruit yield (lb/acre)
+         YIELDFresh  = YIELD / Species % FDMC  ! Fresh fruit yield (kg/ha)
+         YIELDB = YIELDFresh / 0.8914          ! Fresh fruit yield (lb/acre)
       ENDIF
 
       SDWT   = YIELD  / 10.0
@@ -361,25 +364,25 @@ C-----------------------------------------------------------------------
         OLAP(1) = 'FDAP  '
         CALL GetDesc(1,OLAP(1), DESCRIP(1))
 
-!       Harvest date to DAP
-        CALL READA_Dates(X(2), YRSIM, IHARV)
-        IF (IHARV .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
-          DHARV = TIMDIF(YRPLT,IHARV)
-        ELSE
-          DHARV  = -99
-        ENDIF
-        OLAP(2) = 'HDAP  '
-        CALL GetDesc(1,OLAP(2), DESCRIP(2))
-
 !       Maturity date to DAP
-        CALL READA_Dates(X(4), YRSIM, IMAT)
+        CALL READA_Dates(X(2), YRSIM, IMAT)
         IF (IMAT .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DMAT = TIMDIF(YRPLT,IMAT)
         ELSE
           DMAT  = -99
         ENDIF
-        OLAP(4) = 'MDAP  '
-        CALL GetDesc(1,OLAP(4), DESCRIP(4))
+        OLAP(2) = 'MDAP  '
+        CALL GetDesc(1,OLAP(2), DESCRIP(2))
+
+!       Harvest date to DAP
+        CALL READA_Dates(X(3), YRSIM, IHARV)
+        IF (IHARV .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
+          DHARV = TIMDIF(YRPLT,IHARV)
+        ELSE
+          DHARV  = -99
+        ENDIF
+        OLAP(3) = 'HDAP  '
+        CALL GetDesc(1,OLAP(3), DESCRIP(3))
 
 !       Change simulated dates to DAP
 !       isdate is forcing date
@@ -420,32 +423,36 @@ C-----------------------------------------------------------------------
       ENDIF
 
       WRITE(Simulated(1),'(I8)') DFR1;  WRITE(Measured(1),'(I8)') DFORC   !FDAT 
-      WRITE(Simulated(2),'(I8)') HDAP;  WRITE(Measured(2),'(I8)') DHARV   !HDAT   
-      WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT  
-      WRITE(Simulated(4),'(I8)') DNR7;  WRITE(Measured(4),'(I8)') DMAT    !MDAT  
+      WRITE(Simulated(2),'(I8)') DNR7;  WRITE(Measured(2),'(I8)') DMAT    !MDAT  
+      WRITE(Simulated(3),'(I8)') HDAP;  WRITE(Measured(3),'(I8)') DHARV   !HDAT   
+      WRITE(Simulated(4),'(F8.2)') YIELDFresh/1000.                                     
+                                        WRITE(Measured(4),'(A8)') X(4)    !FWAH 
       WRITE(Simulated(5),'(F8.2)') YIELD/1000.                                     
-                                        WRITE(Measured(5),'(A8)') X(5)    !FWAH 
-      WRITE(Simulated(6),'(F8.2)')VWATM;WRITE(Measured(6),'(A8)') X(6)    !VWATM  
-      WRITE(Simulated(7),'(I8)') NINT(GPSM)                                      
-                                        WRITE(Measured(7),'(A8)') X(7)    !E#AM 
-      WRITE(Simulated(8),'(F8.3)') EYEWT                                           
-                                        WRITE(Measured(8),'(A8)') X(8)    !EWUM    
-      WRITE(Simulated(9),'(F8.1)') GPP; WRITE(Measured(9),'(A8)') X(9)    !E#UM     
-      WRITE(Simulated(10),'(F8.1)') FBTONS                                      
-                                        WRITE(Measured(10),'(A8)') X(10)  !BADMF     
-      WRITE(Simulated(11),'(F8.1)') PBIOMS                                        
-                                        WRITE(Measured(11),'(A8)') X(11)  !BADMH    
-      WRITE(Simulated(12),'(F8.2)') MAXLAI                                          
-                                        WRITE(Measured(12),'(A8)') X(12)  !LAIX     
-      WRITE(Simulated(13),'(F8.3)') HI; WRITE(Measured(13),'(A8)') X(13)  !HIAM
-      WRITE(Simulated(14),'(I8)') -99 ; WRITE(Measured(14),'(I8)') -99    !THAM
-      WRITE(Simulated(15),'(F8.1)') FRNAM
-                                        WRITE(Measured(15),'(A8)') X(15)  !FRNAM
-      WRITE(Simulated(16),'(F8.1)')CNAM;WRITE(Measured(16),'(A8)') X(16)  !CNAM
-      WRITE(Simulated(17),'(F8.1)')VNAM;WRITE(Measured(17),'(A8)') X(17)  !VNAM
-      WRITE(Simulated(18),'(F8.1)')FRNpctM
-                                        WRITE(Measured(18),'(A8)') X(18)  !FRN%M
-      WRITE(Simulated(19),'(F8.1)') LN; WRITE(Measured(19),'(A8)') X(19)  !L#SM 
+                                        WRITE(Measured(5),'(A8)') X(5)    !YDWAH 
+      WRITE(Simulated(6),'(F8.1)') FBTONS                                      
+                                        WRITE(Measured(6),'(A8)') X(6)    !BADMF     
+      WRITE(Simulated(7),'(F8.1)') PBIOMS                                        
+                                        WRITE(Measured(7),'(A8)') X(7)    !BADMH    
+      WRITE(Simulated(8),'(F8.2)')VWATM;WRITE(Measured(8),'(A8)') X(8)    !VWATM  
+      WRITE(Simulated(9),'(F8.2)') MAXLAI                                          
+                                        WRITE(Measured(9),'(A8)') X(9)    !LAIX     
+      WRITE(Simulated(10),'(F8.1)') LN; WRITE(Measured(10),'(A8)')X(10)   !L#SM 
+      WRITE(Simulated(11),'(F8.3)') HI; WRITE(Measured(11),'(A8)')X(11)   !HIAM
+      WRITE(Simulated(12),'(I8)') NINT(GPSM)                                      
+                                        WRITE(Measured(12),'(A8)')X(12)   !E#AM 
+      WRITE(Simulated(13),'(F8.1)') GPP;WRITE(Measured(13),'(A8)')X(13)   !E#UM     
+      WRITE(Simulated(14),'(F8.3)') EYEWT                                          
+                                        WRITE(Measured(14),'(A8)')X(14)   !EWUM    
+      WRITE(Simulated(15),'(F8.1)')CNAM;WRITE(Measured(15),'(A8)')X(15)   !CNAM
+
+! These aren't calculated - remove from Overview output
+!     WRITE(Simulated(3),'(I8)') -99 ;  WRITE(Measured(3),'(I8)') -99     !PDFT - not used
+!     WRITE(Simulated(14),'(I8)') -99 ; WRITE(Measured(14),'(I8)') -99    !THAM
+!     WRITE(Simulated(15),'(F8.1)') FRNAM
+!                                       WRITE(Measured(15),'(A8)') X(15)  !FRNAM
+!     WRITE(Simulated(18),'(F8.1)')FRNpctM
+!                                       WRITE(Measured(18),'(A8)') X(18)  !FRN%M
+!     WRITE(Simulated(16),'(F8.1)')VNAM;WRITE(Measured(16),'(A8)')X(16)   !VNAM
 
       ENDIF
 
@@ -462,8 +469,8 @@ C-----------------------------------------------------------------------
       LABEL(2)  = 'MDAT'; VALUE(2)  = FLOAT(MDATE)
       LABEL(3)  = 'DWAP'; VALUE(3)  = SDRATE
       LABEL(4)  = 'CWAM'; VALUE(4)  = BIOMAS*10.
-      LABEL(5)  = 'HWAM'; VALUE(5)  = SDWTAM*10.
-      LABEL(6)  = 'HWAH'; VALUE(6)  = SDWTAH*10.
+      LABEL(5)  = 'HWAM'; VALUE(5)  = YIELD/1000.
+      LABEL(6)  = 'HWAH'; VALUE(6)  = YIELD/1000.
 ! BWAH multiplied by 10.0 in OPSUM - divide by 10. here to preserve units. (?????)
       LABEL(7)  = 'BWAH'; VALUE(7)  = BWAH  
       LABEL(8)  = 'HWUM'; VALUE(8)  = PSDWT       !*1000.

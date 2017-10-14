@@ -60,6 +60,7 @@ C=======================================================================
       REAL      PLTPOP,   TBASE, STOVER, WTINITIAL, YIELD
       REAL    WTNCAN, WTNGRN
       REAL VNAM, VWATM, FRNAM, CNAM, FRNpctM
+      REAL AGEFAC, PSTRES1, PSTRES2
 
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -77,32 +78,7 @@ C=======================================================================
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
-!      CROP    = CONTROL % CROP
-!      MODEL   = CONTROL % MODEL
-!      FROP    = CONTROL % FROP
-!      RUN     = CONTROL % RUN
-!      RNMODE  = CONTROL % RNMODE
-!      FILEIO  = CONTROL % FILEIO
       YRDOY   = CONTROL % YRDOY
-!      YRSIM   = CONTROL % YRSIM
-
-      !DLAYR  = SOILPROP % DLAYR  
-      !DS     = SOILPROP % DS     
-      !DUL    = SOILPROP % DUL    
-      !KG2PPM = SOILPROP % KG2PPM    
-      !LL     = SOILPROP % LL     
-      !NLAYR  = SOILPROP % NLAYR  
-      !SAT    = SOILPROP % SAT    
-      !SHF    = SOILPROP % WR
-      !SLPF   = SOILPROP % SLPF   
-      !
-      !AMTRH  = WEATHER % AMTRH
-      !CO2    = WEATHER % CO2
-      !DAYL   = WEATHER % DAYL
-      !SRAD   = WEATHER % SRAD
-      !TMAX   = WEATHER % TMAX
-      !TMIN   = WEATHER % TMIN
-      !TWILEN = WEATHER % TWILEN
 
 !=======================================================================
       SELECT CASE (DYNAMIC)
@@ -119,18 +95,10 @@ C-----------------------------------------------------------------------
 
       CUMDTT = 0.0
 
-      !!
-      !! Initialze stress indices
-      !!
-      !DO I = 1, 6
-      !   SI1(I) = 0.0
-      !   SI2(I) = 0.0
-      !   SI3(I) = 0.0
-      !   SI4(I) = 0.0
-      !END DO
-
-      SWFAC = 1.0
-      TURFAC = 1.0
+      SWFAC   = 1.0
+      TURFAC  = 1.0
+      PSTRES1 = 1.0
+      PSTRES2 = 1.0
 
 C-----------------------------------------------------------------------
 C     Call IPIBS .. Read in IBSNAT31.INP file
@@ -155,7 +123,7 @@ C-----------------------------------------------------------------------
       CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,              !Output
+     &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,      !Output
      &    FRUITS, GPP, GPSM, GRAINN, GRORT, LAI,              !Output
      &    LFWT, LN, NSTRES, RLV, ROOTN, RTWT,                 !Output
      &    SENESCE, SKWT, STMWT, STOVER, STOVN, STOVWT,        !Output
@@ -174,10 +142,11 @@ C-----------------------------------------------------------------------
      &  VNAM, VWATM, FRNAM, CNAM, FRNpctM)    !Output for Overview.OUT 
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
-     &   BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM, FRNpctM,     !Input
-     &   FRTWT, FRUITS, GPSM, GPP, HARVFRAC,              !Input
-     &   ISDATE, LAI, LN, MDATE, PLTPOP, PMDATE,          !Input
-     &   STGDOY, STOVER, VNAM, VWATM, WTINITIAL, WTNCAN,  !Input
+     &   AGEFAC, BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM,      !Input
+     &   FRNpctM, FRTWT, FRUITS, GPSM, GPP, HARVFRAC,     !Input
+     &   ISDATE, LAI, LN, MDATE, NSTRES, PLTPOP,          !Input
+     &   PMDATE, PSTRES1, PSTRES2, STGDOY, STOVER,        !Input
+     &   SWFAC, TURFAC, VNAM, VWATM, WTINITIAL, WTNCAN,   !Input
      &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
 
 !=======================================================================
@@ -256,7 +225,7 @@ C----------------------------------------------------------------------
            CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,              !Output
+     &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,      !Output
      &    FRUITS, GPP, GPSM, GRAINN, GRORT, LAI,              !Output
      &    LFWT, LN, NSTRES, RLV, ROOTN, RTWT,                 !Output
      &    SENESCE, SKWT, STMWT, STOVER, STOVN, STOVWT,        !Output
@@ -294,7 +263,7 @@ C-----------------------------------------------------------------------
         CALL Aloha_GROSUB  (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,              !Output
+     &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,      !Output
      &    FRUITS, GPP, GPSM, GRAINN, GRORT, LAI,              !Output
      &    LFWT, LN, NSTRES, RLV, ROOTN, RTWT,                 !Output
      &    SENESCE, SKWT, STMWT, STOVER, STOVN, STOVWT,        !Output
@@ -314,10 +283,11 @@ C-----------------------------------------------------------------------
      &  VNAM, VWATM, FRNAM, CNAM, FRNpctM)    !Output for Overview.OUT 
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
-     &   BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM, FRNpctM,     !Input
-     &   FRTWT, FRUITS, GPSM, GPP, HARVFRAC,              !Input
-     &   ISDATE, LAI, LN, MDATE, PLTPOP, PMDATE,          !Input
-     &   STGDOY, STOVER, VNAM, VWATM, WTINITIAL, WTNCAN,  !Input
+     &   AGEFAC, BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM,      !Input
+     &   FRNpctM, FRTWT, FRUITS, GPSM, GPP, HARVFRAC,     !Input
+     &   ISDATE, LAI, LN, MDATE, NSTRES, PLTPOP,          !Input
+     &   PMDATE, PSTRES1, PSTRES2, STGDOY, STOVER,        !Input
+     &   SWFAC, TURFAC, VNAM, VWATM, WTINITIAL, WTNCAN,   !Input
      &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
 
 !=======================================================================
@@ -333,10 +303,11 @@ C-----------------------------------------------------------------------
      &  VNAM, VWATM, FRNAM, CNAM, FRNpctM)    !Output for Overview.OUT 
 
       CALL Aloha_OPHARV(CONTROL, ISWITCH,
-     &   BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM, FRNpctM,     !Input
-     &   FRTWT, FRUITS, GPSM, GPP, HARVFRAC,              !Input
-     &   ISDATE, LAI, LN, MDATE, PLTPOP, PMDATE,          !Input
-     &   STGDOY, STOVER, VNAM, VWATM, WTINITIAL, WTNCAN,  !Input
+     &   AGEFAC, BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM,      !Input
+     &   FRNpctM, FRTWT, FRUITS, GPSM, GPP, HARVFRAC,     !Input
+     &   ISDATE, LAI, LN, MDATE, NSTRES, PLTPOP,          !Input
+     &   PMDATE, PSTRES1, PSTRES2, STGDOY, STOVER,        !Input
+     &   SWFAC, TURFAC, VNAM, VWATM, WTINITIAL, WTNCAN,   !Input
      &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
 
 !=======================================================================

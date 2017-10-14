@@ -89,25 +89,12 @@
           !Write headers
           CALL HEADER(SEASINIT, NOUTDG, RUN)
 
-          WRITE (NOUTDG,'(A)') '!                       Leaf   Grow        <----' // &
-          '---------------- Dry  Weight -------------------->   Harv <--- Pod -' // &
-          '--> <-- Stress (0-1) -->   Leaf  Shell   Spec  <- Canopy ->          ' // &
-          'Root  <--------------- Root Length Density ------------------------------>'
+          WRITE (NOUTDG,'(A,/,A,/,A,/,A)') & 
+ '!                       Leaf   Grow        <----------------------- Dry  Weight ------------------------>   Harv <--- Pod ---> <-- Stress (0-1) -->   Leaf  Shell   Spec  <- Canopy ->          Root  <--------------- Root Length Density ------------------------------>', &
+ '!                        Num  Stage    LAI   Tops    Veg   Leaf   Stem  Fruit  Crown  Basal   Suck   Root  Index   Wgt.    No.      Water      Nitr   Nitr   -ing   Leaf   Hght  Width         Depth  <---------------   cm3/cm3  of soil  ------------------------------>', &
+ '!                                          <--------------------------- kg/Ha -------------------------->         kg/ha          Phot   Grow             %      %   Area      m      m             m  <------------------------------------------------------------------>', &
+ '@YEAR DOY   DAS   DAP   L#SD   GSTD   LAID   CWAD   VWAD   LWAD   SWAD   FWAD   CRAD   BWAD   SUGD   RWAD   HIAD   EWAD   E#AD   WSPD   WSGD   NSTD   LN%D   SH%D   SLAD   CHTD   CWID   EWSD   RDPD   RL1D   RL2D   RL3D   RL4D   RL5D   RL6D   RL7D   RL8D   RL9D   RL10'
 
-          WRITE (NOUTDG,'(A)') '!                        Num  Stage    LAI  Total   Lea' // &
-          'f   Stem  Fruit   Root  Basal  Crown   Suck  Index   Wgt.    No.    ' // &
-          '  Water      Nitr   Nitr   -ing   Leaf   Hght  Width         Depth  ' // &
-          '<---------------   cm3/cm3  of soil  ------------------------------>'
-
-          WRITE (NOUTDG,'(A)') '!                                          <----' // &
-          '-------------------- kg/Ha ---------------------->         kg/ha          P' // &
-          'hot   Grow             %      %   Area      m      m             m  ' // &
-          '<------------------------------------------------------------------>'
-
-          WRITE (NOUTDG,'(A)') '@YEAR DOY   DAS   DAP   L#SD   GSTD   LAID   CW' // &
-          'AD   LWAD   SWAD   FWAD   RWAD   BWAD   CRAD   SUGD   HIAD   EWAD  ' // &
-          ' E#AD   WSPD   WSGD   NSTD   LN%D   SH%D   SLAD   CHTD   CWID   EWSD' // &
-          '   RDPD   RL1D   RL2D   RL3D   RL4D   RL5D   RL6D   RL7D   RL8D   RL9D   RL10'
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -281,21 +268,16 @@
             IF (FMOPT /= 'C') THEN   ! VSH
               WRITE (NOUTDG,400) YEAR, DOY, DAS, DAP,VSTAGE,ISTAGE,XLAI,      &
 !   Regular output:
-                NINT(TOPWT),                                                  &
+                NINT(TOPWT),  NINT((LFWT+STMWT)*GM2KG),                        &
                 NINT(LFWT*GM2KG),NINT(STMWT*GM2KG),NINT(FRTWT*GM2KG),          &
-                NINT(RTWT*GM2KG),NINT(BASLFWT*GM2KG),NINT(CRWNWT*GM2KG),       &
-                NINT(SKWT*GM2KG),HI,                                          &
-!   Expanded output:
-!                WTLF*10.0,STMWT*GM2KG,FRTWT*GM2KG,           &
-!                RTWT*GM2KG,BASLFWT*10.0,CRWNWT*GM2KG,        &
-!                SKWT*GM2KG,HI,                               &
+                NINT(CRWNWT*GM2KG),NINT(BASLFWT*GM2KG),NINT(SKWT*GM2KG),       &
+                NINT(RTWT*GM2KG),HI,                                          &
                 NINT(PODWT*GM2KG),NINT(PODNO),(1.0-SWFAC),(1.0-TURFAC),(1.0-NSTRES), &
                 PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,               &
-                (RTDEP/100), (RLV(I),I=1,10)
+                (RTDEP/100.), (RLV(I),I=1,10)
 
   400          FORMAT (1X,I4,1X,I3.3,2I6,1X,F6.1,1X,I6,1X,F6.2,   &
-                  8(1X,I6),1X,F6.3,           &    !Regular output
-!                 7(1X,F6.1),1X,F6.3,         &    !Expanded output
+                  9(1X,I6),1X,F6.3,           &    
                   2(1X,I6), 3(1X,F6.3),       &
                   2(1X,F6.2),1X,F6.1,2(1X,F6.2),1X,F6.3,          &
                   F7.2, 10(1X,F6.2))
