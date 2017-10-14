@@ -51,7 +51,7 @@ C=======================================================================
       SUBROUTINE Aloha_GROSUB (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,              !Output
+     &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, FBIOM, FRTWT,      !Output
      &    FRUITS, GPP, GPSM, GRAINN, GRORT, LAI,              !Output
      &    LFWT, LN, NSTRES, RLV, ROOTN, RTWT,                 !Output
      &    SENESCE, SKWT, STMWT, STOVER, STOVN, STOVWT,        !Output
@@ -553,7 +553,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         BASLFWT = BASLFWT + GROBSL
         STMWT   = STMWT   + GROSTM
         FLRWT   = FLRWT   + GROFLR
-        CRWNWT  = FLRWT       !CHP 10/13/2017
+        FRTWT  = FLRWT*0.7      !CHP 10/14/2017
+        CRWNWT = FLRWT*0.3      !CHP 10/14/2017
 
         IF (GROLF .GT. 0.0) THEN
            SLAN = PLA/1000.0
@@ -606,7 +607,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         ENDIF
         STMWT = STMWT + GROSTM
         FLRWT = FLRWT + GROFLR
-        CRWNWT  = FLRWT       !CHP 10/13/2017
+        FRTWT  = FLRWT*0.7      !CHP 10/14/2017
+        CRWNWT = FLRWT*0.3      !CHP 10/14/2017
         SKWT  = SKWT  + GROSK
 
 !-----------------------------------------------------------------
@@ -850,7 +852,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
       RTWT = RTWT + 0.45*GRORT - 0.0025*RTWT
       !
       ! Finally, total biomass per unit area (BIOMAS g/m2), total plant weight,
-      ! Total plant dry weight per hactare (DM kg/ha) and Plant top fraction
+      ! Total plant dry weight per hectare (DM kg/ha) and Plant top fraction
       ! (PTF) are calculated
       !
       BIOMAS   = (LFWT + STMWT + FLRWT + BASLFWT + SKWT)*PLTPOP
@@ -941,7 +943,7 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           GPP    = AMAX1 (GPP,0.0)
           FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
 
-          FLRWT  =  0.1*STMWT           ! FLRWT stands for the weight ofwhole inflorescence STMWT is stem weight.  Both are in gram/plant.
+!CHP 10/14/2017          FLRWT  =  0.1*STMWT           ! FLRWT stands for the weight ofwhole inflorescence STMWT is stem weight.  Both are in gram/plant.
           SKWT   =  0.0
           GROSK  =  0.0
           PTF    =  1.0                 ! PTF is plant top fraction in gram/plant.
@@ -950,8 +952,14 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           VMNC   = TMNC                 ! .....
 
         CASE (5)
-          FRTWT  = FLRWT*0.5            ! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
-          CRWNWT = FLRWT*0.2            ! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
+! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
+! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
+!         FRTWT  = FLRWT*0.5            
+!         CRWNWT = FLRWT*0.2            
+! 10/14/2017 CHP 50% to fruit and 20% to crown causes 30% of flower mass to be lost. 
+!     change ratios to add up to 1, maintaining approximately the same ratio.
+          FRTWT  = FLRWT*0.7 
+          CRWNWT = FLRWT*0.3 
           SWMAX  = 0.0
           SWMIN  = 0.0
 
