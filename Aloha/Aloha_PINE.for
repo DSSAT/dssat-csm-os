@@ -106,7 +106,7 @@ C-----------------------------------------------------------------------
 
       CALL Aloha_IPPlant (CONTROL) !formerly call to IPIBS
       
-      CALL Aloha_IPCROP ()
+      CALL Aloha_IPCROP (CONTROL)
 
       PLTPOP = PLANTING % PLTPOP
       RWUEP1 = SPECIES % RWEP
