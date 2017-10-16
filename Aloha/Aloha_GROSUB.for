@@ -88,7 +88,7 @@ C=======================================================================
       REAL    PAR, CC, TRF2, CARBO, SWFAC, TEMPM  !,TRNU
       REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP
       REAL    PDWI, PGRORT, DM, FBIOM, MAXLAI, PHOTOSYNEYE, FRUITS
-      REAL    YIELD, PEYEWT, GPSM, STOVER, YIELDB, HBIOM, XSTAGE  !, FDMC
+      REAL    YIELD, GPSM, STOVER, XSTAGE  !, FDMC
 
       REAL    CO2, SRAD, TMIN, TMAX
       REAL    PLTPOP, SDWTPL, PLANTSIZE

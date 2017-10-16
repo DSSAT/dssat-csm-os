@@ -43,7 +43,7 @@ C=======================================================================
 !      INTEGER ICSDUR, 
       INTEGER, DIMENSION(20) :: STGDOY
       REAL HARVFRAC(2)
-      REAL APTNUP, FBIOM, FDINT
+      REAL FBIOM, FDINT
       REAL    LN, CRWNWT, FRTWT, FRUITS  
       REAL    LFWT, STMWT, GPSM, GPP, GRAINN
       REAL    BASLFWT, BIOMAS, LAI, NSTRES, STOVN, RTDEP, RTWT, SKWT
