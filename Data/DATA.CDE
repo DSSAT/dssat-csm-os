@@ -38,6 +38,8 @@ B2DAT  Branch 2 date   Date of second branching  (YrDoy)                        
 B3DAT  Branch 3 date   Date of third branching (YrDoy)                          B3DAT
 B4DAT  Branch 4 date   Date of fourth branching (YrDoy)                         B4DAT
 B5DAT  Branch 5 date   Date of fifth branching (YrDoy)                          B5DAT
+BADMF  Biomass@forcing Above-ground biomass at forcing (pineapple, t/ha)        .
+BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
 CFAH   F cane yl kg/ha Fresh cane yield (kg/ha)                                 .
@@ -45,6 +47,7 @@ CHTA   Canopy height m Canopy height (m)                                        
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
 CO2A   Avg CO2 (ppm)   Average atmospheric CO2 (ppm), planting to harvest       .
+CO2EC  Cum CO2 emitted Cumulative CO2 emissions from soil (kg[C]/ha)            .
 CPAM   Tops P kg/ha    Tops P at maturity (kg/ha)                               .
 CWAA   Tops wt,anthsis Tops weight at anthesis (kg [dm]/ha)                     .
 CWAM   Tops wt kg/ha   Tops weight at maturity (kg [dm]/ha)                     .
@@ -67,9 +70,12 @@ ETCM   ET total mm     Total season evapotranspiration, Simulation-harvest (mm) 
 ETCP   ET plant seas   Total evapotranspiration (mm), planting to harvest       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. (g)     Eye weight (g)                                           .
+FDAP   Forcing dap     Forcing date (dap)                                       .
 FDAT   Forcing date    Forcing date (YrDoy)                                     .
 FNAM   Field name      Field name                                               .
-FWAH   Fresh wt. harv  Fresh weight at harvest (t/ha)                           .
+FRN%M  Fruit N% @ mat  Fruit N concentration at maturity (%)                    .
+FRNAM  Fruit N @ mat   Fruit N content at maturity (kg/ha)                      .
+FWAH   Fresh wt @ harv Yield fresh weight at harvest (t/ha)                     .
 GL%M   Grain oil%,matu Grain oil at maturity (%)                                .
 GN%M   Grain N%,mature Grain N at maturity (%)                                  .
 GNAM   Grain N kg/ha   Grain N at maturity (kg/ha)                              .
@@ -164,8 +170,11 @@ UN%H   Tuber N %       Tuber N at harvest (%)                                   
 UNAM   Tuber N kg/ha   Tuber N at harvest (kg/ha)                               .
 UWAH   Tuber kg dm/ha  Tuber dry weight (kg [dm]/ha) harvest                    .
 UYAH   Tuber Mg fm/ha  Tuber fresh weight (Mg [fm]/ha) harvest                  .
-VN%M   Veg N% @ matur. Vegetative above-ground material N at maturity (%)       .
+VN%M   Veg N% @ matur. Vegetative N at maturity (%)                             .
+VNAM   Veg N @ matur.  Vegetative N at maturity (kg/ha)                         .
+VWATM  Veg t/h @ matur Vegetative dry matter at maturity (t/ha)                 .
 WSTA   Weather station Weather station                                          .
+YDWAH  Yield, dry t/ha Yield dry weight at harvest (t/ha)                       .
 YPEM   Yd-ET Prod      Yield-ET productivity (kg[yield]/ha/mm[ET])              .
 YPIM   Yd-Irrig Prod   Yield-irrigation productivity (kg[yield]/ha/mm[irrig])   .
 YPNAM  Yd-N fert Prod  Yield-N fertilizer productivity (kg[yield]/kg[N fert]    .
@@ -176,7 +185,6 @@ YPTM   Yd-EP Prod      Yield-transpiration productivity (kg[yield]/ha/mm[EP])   
 *GROWTH
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 A#PD   Apex number     Apex number per plant (#)                                .
-BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
 BWAD   Basal weight    Basal weight (kg [dm]/ha)                                .
 CAID   Canopy area ix  Canopy area index (Laminae+sheaths+stems+ear+??)         .
 CDAD   Dead canopy     Dead canopy weight (kg [dm]/ha)                          .
@@ -205,7 +213,7 @@ EAID   Ear area index  Ear area index (ha [ear]/ha [ground])                    
 EWAD   Ear wt. kg/ha   Ear (grain+chaff) or eye weight (kg [dm]/ha)             .
 EWSD   Excess H20 str  Excess Water Stress - (0-1)                              .
 FHL%   % Leaf in herb  Percent leaf in the harvested herbage                    .
-FWAD   Fruit weight    Fresh Fruit Weight (kg/ha)                               .
+FWAD   Fruit weight    Fruit Weight (kg[DM]/ha)                                 .
 G#AD   Grain no #/m2   Grain number (no/m2)                                     .
 GL%D   Grain oil %     Grain oil (%)                                            .
 GSTD   Growth stage    Growth stage                                             .
@@ -325,6 +333,8 @@ CNAD   Crop N kg/ha    Tops N (kg/ha)                                           
 CPROT  Crude prot %    Crude protein (forage herbage) %                         .
 GN%D   Grain N %       Grain N concentration (%)                                .
 GNAD   Grain N kg/ha   Grain N (kg/ha)                                          .
+FRN%D  Fruit N %       Fruit N (%)                                              .
+FRNAD  Fruit N kg/ha   Fruit N (kg/ha)                                          .
 LCNF   Leaf Crit N Fac Leaf critical N factor (ratio)                           .
 LN%RD  LeafN% relative Leaf tissue relative (to critical) N conc. (%)           .
 LNAD   Leaf N kg/ha    Leaf N (kg/ha)                                           .
