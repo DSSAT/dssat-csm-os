@@ -184,6 +184,15 @@ C=======================================================================
       CANNAA = 0.05
       CANWAA = 0.0
 
+      PLAG    = 0.0                 ! PLAG (cm^2) is daily green leaf area growth
+      GROSTM  = 0.0                 ! GROSTM (g/plant/day) is daily stem growth
+      GRORT   = 0.0                 ! GRORT (g/plant/day) is daily root growth
+      GROBSL  = 0.0                 ! GROBSL (g/plant/day) is daily basal leaf growth
+      GROLF   = 0.0                 ! GROLF (g/plant/day) is daily green leaf growth
+      GROFLR  = 0.0
+      GROCRWN = 0.0
+      GROFRT  = 0.0
+
       CALL Aloha_NFACTO (DYNAMIC, 
      &    ISTAGE, TANC, XSTAGE,                           !Input
      &    AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
