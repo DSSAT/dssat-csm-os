@@ -295,37 +295,33 @@ C-----------------------------------------------------------------------
 !     YIELD variable is in kg/ha
 !-----------------------------------------------------------------------
       IF (PLTPOP .GE. 0.0) THEN
-         IF (GPP .GT. 0.0) THEN           ! GPP = eyes per 
+         IF (GPP .GT. 0.0) THEN           ! GPP = eyes per fruit
             EYEWT = FRTWT/GPP             ! Eye weight (g/eye)
             PEYEWT = EYEWT * 1000.0       ! Eye weight (mg/eye)
          ENDIF
-         GPSM   = GPP*FRUITS              ! Number of eyes per square meter
+         GPSM   = GPP*FRUITS              ! # eyes/m2
          STOVER = BIOMAS*10.0-YIELD       ! Total plant weight except fruit (g/m2)
          YIELDFresh  = YIELD / Species % FDMC  ! Fresh fruit yield (kg/ha)
          YIELDB = YIELDFresh / 0.8914          ! Fresh fruit yield (lb/acre)
       ENDIF
 
-      SDWT   = YIELD  / 10.0
-      SDWTAM = YIELD / 10.0
-      SDWTAH = SDWT * HARVFRAC(1)
-
-!-----------------------------------------------------------------------
-!     Calculate variables for output
-!     update nitrogen and residue applications after routines have been
-!     modified to handle automatic management
-!-----------------------------------------------------------------------
-!      IF (INDEX ('PI',CROP) .EQ. 0) THEN
-!      TOTNUP = WTNUP
-!      ENDIF
-      PSDWT = 0.0
+      SDWT   = YIELD  / 10.0      !g/m2
+      SDWTAM = YIELD / 10.0       !g/m2
+      SDWTAH = SDWT * HARVFRAC(1) !g/m2
 
       SDRATE = WTINITIAL
+
+!     CHP 10/17/2017
+!     Oddly, PSDWT = SDWT/GPSM is exactly equal to EYEWT = FRTWT/GPP
+!       Actually, not so odd:
+!       PSDWT = SDWT/GPSM = FRTWT*FRUITS/GPSM = (FRTWT*FRUITS)/(GPP*FRUITS) = FRTWT/GPP = EYEWT
+      PSDWT = 0.0
       IF (GPSM .GT. 0.0 .AND. SDWT  .GE. 0.0) THEN
-         PSDWT = SDWT/GPSM
+         PSDWT = SDWT/GPSM            !Unit weight of eye g/unit = (g/m2) / (#/m2)
       ENDIF
 
       IF (BIOMAS .GT. 0.0 .AND. YIELD .GE. 0.0) THEN
-         HI = YIELD/(BIOMAS*10.0)
+         HI = YIELD/(BIOMAS*10.0)     !Harvest index
        ELSE
          HI = 0.0
       ENDIF
@@ -334,7 +330,6 @@ C-----------------------------------------------------------------------
 !     Actual byproduct harvested (default is 0 %)
 !     Byproduct not harvested is incorporated
 !-----------------------------------------------------------------------
-
       BWAH   = STOVER * HARVFRAC(2)/100.0
 
       IF ((INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) 
@@ -347,11 +342,11 @@ C-----------------------------------------------------------------------
          CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !-----------------------------------------------------------------------
-      FBTONS = FBIOM*0.01
-      PBIOMS = (BIOMAS*10.0)/1000.0
+      FBTONS = FBIOM*0.01             !Biomass at forcing, t/ha
+      PBIOMS = (BIOMAS*10.0)/1000.0   !Biomass at maturity, t/ha
       !FYIELD = YIELD/1000.0
       !PVEGWT = STOVER/1000.0
-      Biomass_kg_ha = BIOMAS * 10. !Convert from g/m2 to kg/ha
+      Biomass_kg_ha = BIOMAS * 10.    !Convert from g/m2 to kg/ha
 
 !     Change observed (FileA) dates to DAP
 !       Forcing date to DAP
@@ -465,17 +460,17 @@ C-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
-      LABEL(1)  = 'ADAT'; VALUE(1)  = FLOAT(YRNR1)
+      LABEL(1)  = 'ADAT'; VALUE(1)  = FLOAT(ISDATE)
       LABEL(2)  = 'MDAT'; VALUE(2)  = FLOAT(MDATE)
       LABEL(3)  = 'DWAP'; VALUE(3)  = SDRATE
       LABEL(4)  = 'CWAM'; VALUE(4)  = BIOMAS*10.
-      LABEL(5)  = 'HWAM'; VALUE(5)  = YIELD/1000.
-      LABEL(6)  = 'HWAH'; VALUE(6)  = YIELD/1000.
+      LABEL(5)  = 'HWAM'; VALUE(5)  = YIELD
+      LABEL(6)  = 'HWAH'; VALUE(6)  = YIELD
 ! BWAH multiplied by 10.0 in OPSUM - divide by 10. here to preserve units. (?????)
       LABEL(7)  = 'BWAH'; VALUE(7)  = BWAH  
-      LABEL(8)  = 'HWUM'; VALUE(8)  = PSDWT       !*1000.
-      LABEL(9)  = 'H#AM'; VALUE(9)  = GPSM
-      LABEL(10) = 'H#UM'; VALUE(10) = GPP
+      LABEL(8)  = 'HWUM'; VALUE(8)  = EYEWT       !unit eye weight g/unit
+      LABEL(9)  = 'H#AM'; VALUE(9)  = GPSM        !# eyes/m2 at maturity
+      LABEL(10) = 'H#UM'; VALUE(10) = GPP         !# eyes/fruit at maturity
       LABEL(11) = 'NFXM'; VALUE(11) = 0.0         !WTNFX*10.
       LABEL(12) = 'NUCM'; VALUE(12) = WTNUP*10.
       LABEL(13) = 'CNAM'; VALUE(13) = WTNCAN*10.
