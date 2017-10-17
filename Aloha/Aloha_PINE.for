@@ -144,7 +144,7 @@ C-----------------------------------------------------------------------
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   AGEFAC, BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM,      !Input
      &   FRNpctM, FRTWT, FRUITS, GPSM, GPP, HARVFRAC,     !Input
-     &   ISDATE, LAI, LN, MDATE, NSTRES, PLTPOP,          !Input
+     &   ISDATE, ISTAGE, LAI, LN, MDATE, NSTRES, PLTPOP,  !Input
      &   PMDATE, PSTRES1, PSTRES2, STGDOY, STOVER,        !Input
      &   SWFAC, TURFAC, VNAM, VWATM, WTINITIAL, WTNCAN,   !Input
      &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
@@ -285,7 +285,7 @@ C-----------------------------------------------------------------------
       CALL Aloha_OPHARV(CONTROL, ISWITCH, 
      &   AGEFAC, BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM,      !Input
      &   FRNpctM, FRTWT, FRUITS, GPSM, GPP, HARVFRAC,     !Input
-     &   ISDATE, LAI, LN, MDATE, NSTRES, PLTPOP,          !Input
+     &   ISDATE, ISTAGE, LAI, LN, MDATE, NSTRES, PLTPOP,  !Input
      &   PMDATE, PSTRES1, PSTRES2, STGDOY, STOVER,        !Input
      &   SWFAC, TURFAC, VNAM, VWATM, WTINITIAL, WTNCAN,   !Input
      &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
@@ -305,7 +305,7 @@ C-----------------------------------------------------------------------
       CALL Aloha_OPHARV(CONTROL, ISWITCH,
      &   AGEFAC, BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM,      !Input
      &   FRNpctM, FRTWT, FRUITS, GPSM, GPP, HARVFRAC,     !Input
-     &   ISDATE, LAI, LN, MDATE, NSTRES, PLTPOP,          !Input
+     &   ISDATE, ISTAGE, LAI, LN, MDATE, NSTRES, PLTPOP,  !Input
      &   PMDATE, PSTRES1, PSTRES2, STGDOY, STOVER,        !Input
      &   SWFAC, TURFAC, VNAM, VWATM, WTINITIAL, WTNCAN,   !Input
      &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
