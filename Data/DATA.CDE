@@ -214,9 +214,11 @@ EWAD   Ear wt. kg/ha   Ear (grain+chaff) or eye weight (kg [dm]/ha)             
 EWSD   Excess H20 str  Excess Water Stress - (0-1)                              .
 EY#AD  Eye #/m2        Eye number per area (#/m2)                               .
 EY#UD  Eye #/fruit     Eye number per fruit (#/fruit)                           .
+EYWAD  Eye mass kg/ha  Eye weight (kg[dm]/ha)                                   .
 EYWUD  Eye unit wt g   Eye unit weight (g/eye)                                  .
 FHL%   % Leaf in herb  Percent leaf in the harvested herbage                    .
 FWAD   Fruit weight    Fruit Weight (kg[DM]/ha)                                 .
+FLWAD  Flower weight   Flower Weight (kg[DM]/ha)                                .
 G#AD   Grain no #/m2   Grain number (no/m2)                                     .
 GL%D   Grain oil %     Grain oil (%)                                            .
 GSTD   Growth stage    Growth stage                                             .
