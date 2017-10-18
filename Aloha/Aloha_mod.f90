@@ -76,54 +76,69 @@
 !  06/15/1994 PWW Original written
 !  03/29/2017 CGO Revised for v4.6
 !=======================================================================
-      SUBROUTINE Aloha_IPCROP ()
+      SUBROUTINE Aloha_IPCROP (CONTROL)
 
       IMPLICIT    NONE
       SAVE
 
-! For now, hard wire all parameters until they are collected from the code.
-! Then write read routines (or use Willingthon Pavan's)
+      CHARACTER*6 SECTION
+      CHARACTER*8, PARAMETER :: ERRKEY = 'IP_ALOHA' 
+      CHARACTER*200 FILESPE, TEXTLINE
+      INTEGER ERR, FOUND, I, ISECT, L, LNUM, LUNIO, LUNSPE
 
-! ----------------------------------------------------------------------
-! Species parameters
-! ----------------------------------------------------------------------
-
-!Growth
-    Species % CONV  = 1.8    ! CONV    Rams dry matter/mj PAR
-    Species % FDMC  = 0.12   ! FDMC    Fruit dry matter content (0 to 1.0)
-
-    Species % TBASV = 16.    ! TBASV   Base temperature during leaf emergence
-    Species % TOPTV = 35.    ! TOPTV   Upper limit of optimum temperature - veg phase
-    Species % TTOPV = 45.    ! TTOPV   Maximum temperature for development - veg phase
-
-    Species % TBASR = 18.    ! TBASV   Base temperature during reproductive phase
-    Species % TOPTR = 33.    ! TOPTV   Upper limit of optimum temperature - rep phase
-    Species % TTOPR = 45.    ! TTOPV   Maximum temperature for development - rep phase
+      TYPE (ControlType) CONTROL
+      LUNIO  = CONTROL % LUNIO
 
 
-!Photosynthesis
-    Species % LIFAC = 0.52   ! LIFAC   Light interception coefficient
+!-----------------------------------------------------------------------
+!   Open species file, parse headers, and read data.
+    FILESPE = TRIM(Species%SPEpath) // TRIM(Species%SPEfile)
+    CALL GETLUN('FILEC', LUNSPE)
+    OPEN (LUNSPE, FILE = FILESPE, ACTION = 'READ', IOSTAT=ERR)
+    IF (ERR .NE. 0) THEN
+       CALL ERROR(ERRKEY,ERR,FILESPE,0)
+    END IF
 
-!Roots
-    Species % RWEP = 1.50    ! RWEP    
-    Species % PORM = 0.02    ! PORM    Minimum pore space
-    Species % RWMX = 0.03    ! RWMX    Max root water uptake
-    Species % RLWR = 0.98    ! RLWR    Root length weight ratio
+    SECTION = "*SPECI"
+    CALL FIND(LUNSPE,SECTION,LNUM,FOUND)
 
-!Management factor - WHAT IS THIS???
-    Species % CMFC = 1.0     ! CMFC    Management condition factor
+    L=0
+    DO WHILE (.TRUE.)  
+      CALL IGNORE (LUNSPE, LNUM, ISECT, TEXTLINE)
+      
+      SELECT CASE(ISECT)
+      CASE(0); EXIT   !End of file 
 
-!CO2 effect
-    Species % CO2X(1) =   0. ; Species % CO2Y(1) = 0.00
-    Species % CO2X(2) = 220. ; Species % CO2Y(2) = 0.81
-    Species % CO2X(3) = 330. ; Species % CO2Y(3) = 1.00
-    Species % CO2X(4) = 440. ; Species % CO2Y(4) = 1.03
-    Species % CO2X(5) = 550. ; Species % CO2Y(5) = 1.06
-    Species % CO2X(6) = 660. ; Species % CO2Y(6) = 1.10
-    Species % CO2X(7) = 770. ; Species % CO2Y(7) = 1.13
-    Species % CO2X(8) = 880. ; Species % CO2Y(8) = 1.16
-    Species % CO2X(9) = 990. ; Species % CO2Y(9) = 1.18
-    Species % CO2X(10)=9999. ; Species % CO2Y(10)= 1.25
+!     -----------------------------------------
+!     Read species file parameters
+      CASE(1);        !Data record 
+        L = L + 1
+        SELECT CASE(L)
+        CASE (1); READ(TEXTLINE,'(2F7.0)',IOSTAT=ERR) Species % CONV,  Species % FDMC
+        CASE (2); READ(TEXTLINE,'(3F7.0)',IOSTAT=ERR) Species % TBASV, Species % TOPTV, Species % TTOPV
+        CASE (3); READ(TEXTLINE,'(3F7.0)',IOSTAT=ERR) Species % TBASR, Species % TOPTR, Species % TTOPR
+        CASE (4); READ(TEXTLINE,'(1F7.0)',IOSTAT=ERR) Species % LIFAC
+        CASE (5); READ(TEXTLINE,'(4F7.0)',IOSTAT=ERR) Species % RWEP, Species % PORM, Species % RWMX, Species % RLWR
+        CASE (6); READ(TEXTLINE,'(2F7.0)',IOSTAT=ERR) Species % CMFC
+        CASE (7:16); I = L - 6
+                  READ(TEXTLINE,'(2F7.0)',IOSTAT=ERR) Species % CO2X(I), Species % CO2Y(I)
+        END SELECT !L = Data line selection
+        IF (ERR .NE. 0) GOTO 100
+!     -----------------------------------------
+
+      CASE(2); EXIT   !End of section 
+      END SELECT !ISECT
+    ENDDO
+
+    RETURN
+
+100 CALL ERROR(ERRKEY,ERR,FILESPE,LNUM)   
+
+!   -------------------------------------------
+!   No ecotype file for now
+!      READ(LUNIO,51,IOSTAT=ERR) FILEE, PATHEC; LNUM = LNUM + 1
+!   51 FORMAT(15X,A12,1X,A80)
+!      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
       RETURN
       END SUBROUTINE Aloha_IPCROP
