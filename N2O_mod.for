@@ -74,13 +74,6 @@ C  09/18/2015 CHP Written, based on PG code.
       real RateDiffus, TNGSoil
       real dD0(nl)
 
-!!     temp chp
-!      real
-!     &  TN2Osoil, TN2soil, TNOsoil,  
-!     &  TN2Oflux, TN2flux, TNOflux, TNGflux,  
-!     &  n2o_in1, n2o_flux1, n2o_soil1, totemit
-
-
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -141,15 +134,7 @@ C-----------------------------------------------------------------------
 ! n2o emitted (output as g N/ha in N2O.OUT) is total emission from layer 1 on any day
 
 !     For N mass balance, account for N gas in soil
-!      TN2Osoil = 0.0 
-!      TN2soil  = 0.0
-!      TNOsoil  = 0.0
       TNGsoil  = 0.0
-
-!      TN2Oflux = 0.0
-!      TN2flux  = 0.0
-!      TNOflux  = 0.0
-!      TNGflux  = 0.0
 
       DO L = NLAYR, 1, -1
           RateDiffus = dD0(L) !PG031017
@@ -182,30 +167,12 @@ C-----------------------------------------------------------------------
           n2_soil(L)  = n2_soil(L)  - n2_diffused
           no_soil(L)  = no_soil(L)  - no_diffused
 
-!          TN2Osoil = TN2Osoil + n2o_soil(L)
-!          TN2soil  = TN2soil  + n2_soil(L)
-!          TNOsoil  = TNOsoil  + no_soil(L)
           TNGsoil  = TNGsoil  + n2o_soil(L) + n2_soil(L) + no_soil(L)
-
-!          TN2Oflux = TN2Oflux + n2oflux(L)
-!          TN2flux  = TN2flux  + n2flux(L)
-!          TNOflux  = TNOflux  + noflux(L)
-!          TNGflux  = TNGflux  + n2oflux(L) + n2flux(L) + noflux(L)
       ENDDO
       
       CN2O_emitted = CN2O_emitted + N2O_emitted
       CN2_emitted  = CN2_emitted  + N2_emitted
       CNO_emitted  = CNO_emitted  + NO_emitted
-!      totemit = N2O_emitted + N2_emitted + NO_emitted
-
-!      WRITE(558,'(i7,20e15.5)') YRDOY, 
-!     &  TN2Osoil, TN2Oflux, N2O_emitted, 
-!     &  TN2soil, TN2flux, N2_emitted, 
-!     &  TNOsoil, TNOflux, NO_emitted, 
-!     &  TNGsoil, TNGflux, totemit, 
-!     &  n2o_soil(1), n2oflux(1), n2o_in1, n2o_emitted, 
-!     &  N2ONitrif(1), n2odenit(1)
-
 
 !***********************************************************************
 !***********************************************************************
