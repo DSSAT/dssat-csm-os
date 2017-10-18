@@ -101,11 +101,7 @@ C-----------------------------------------------------------------------
       PSTRES2 = 1.0
 
 C-----------------------------------------------------------------------
-C     Call IPIBS .. Read in IBSNAT31.INP file
-C-----------------------------------------------------------------------
-
       CALL Aloha_IPPlant (CONTROL) !formerly call to IPIBS
-      
       CALL Aloha_IPCROP (CONTROL)
 
       PLTPOP = PLANTING % PLTPOP
@@ -180,22 +176,10 @@ C-----------------------------------------------------------------------
              ENDIF
           ENDIF
 
-!      CSD1   = CSD1 + 1.0 - SWFAC
-!      CSD2   = CSD2 + 1.0 - TURFAC
-!      ICSDUR = ICSDUR + 1
-!     IF (ISWWAT .NE. 'N') THEN
-!         SI1(ISTAGE) = CSD1  / ICSDUR
-!         SI2(ISTAGE) = CSD2  / ICSDUR
-!         SI3(ISTAGE) = CNSD1 / ICSDUR
-!         SI4(ISTAGE) = CNSD2 / ICSDUR
-!      ENDIF
-
-C-----------------------------------------------------------------------
-C        Calculate light interception for transpiration.
-C        Note: this is discontinues function at LAI = 3.
-C        Consider CROPGRO approach with KCAN later.
-C-----------------------------------------------------------------------
-
+!-----------------------------------------------------------------------
+!        Calculate light interception for transpiration.
+!        Note: this is discontinues function at LAI = 3.
+!        Consider CROPGRO approach with KCAN later.
          IF (LAI .LE. 3.0) THEN
            FDINT = 1.0 - EXP(-LAI)
          ELSE

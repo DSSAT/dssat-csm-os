@@ -84,7 +84,7 @@
       CHARACTER*6 SECTION
       CHARACTER*8, PARAMETER :: ERRKEY = 'IP_ALOHA' 
       CHARACTER*200 FILESPE, TEXTLINE
-      INTEGER ERR, FOUND, I, ISECT, L, LINES, LNUM, LUNIO, LUNSPE
+      INTEGER ERR, FOUND, I, ISECT, L, LNUM, LUNIO, LUNSPE
 
       TYPE (ControlType) CONTROL
       LUNIO  = CONTROL % LUNIO
@@ -134,50 +134,11 @@
 
 100 CALL ERROR(ERRKEY,ERR,FILESPE,LNUM)   
 
-
+!   -------------------------------------------
 !   No ecotype file for now
 !      READ(LUNIO,51,IOSTAT=ERR) FILEE, PATHEC; LNUM = LNUM + 1
 !   51 FORMAT(15X,A12,1X,A80)
 !      IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
-
-
-!!Test species data
-!!Growth
-!    Species % CONV  = 1.8    ! CONV    Rams dry matter/mj PAR
-!    Species % FDMC  = 0.12   ! FDMC    Fruit dry matter content (0 to 1.0)
-!
-!    Species % TBASV = 16.    ! TBASV   Base temperature during leaf emergence
-!    Species % TOPTV = 35.    ! TOPTV   Upper limit of optimum temperature - veg phase
-!    Species % TTOPV = 45.    ! TTOPV   Maximum temperature for development - veg phase
-!
-!    Species % TBASR = 18.    ! TBASV   Base temperature during reproductive phase
-!    Species % TOPTR = 33.    ! TOPTV   Upper limit of optimum temperature - rep phase
-!    Species % TTOPR = 45.    ! TTOPV   Maximum temperature for development - rep phase
-!
-!
-!!Photosynthesis
-!    Species % LIFAC = 0.52   ! LIFAC   Light interception coefficient
-!
-!!Roots
-!    Species % RWEP = 1.50    ! RWEP    
-!    Species % PORM = 0.02    ! PORM    Minimum pore space
-!    Species % RWMX = 0.03    ! RWMX    Max root water uptake
-!    Species % RLWR = 0.98    ! RLWR    Root length weight ratio
-!
-!!Management factor - affects leaf growth rate
-!    Species % CMFC = 1.0     ! CMFC    Management condition factor
-!
-!!CO2 effect
-!    Species % CO2X(1) =   0. ; Species % CO2Y(1) = 0.00
-!    Species % CO2X(2) = 220. ; Species % CO2Y(2) = 0.81
-!    Species % CO2X(3) = 330. ; Species % CO2Y(3) = 1.00
-!    Species % CO2X(4) = 440. ; Species % CO2Y(4) = 1.03
-!    Species % CO2X(5) = 550. ; Species % CO2Y(5) = 1.06
-!    Species % CO2X(6) = 660. ; Species % CO2Y(6) = 1.10
-!    Species % CO2X(7) = 770. ; Species % CO2Y(7) = 1.13
-!    Species % CO2X(8) = 880. ; Species % CO2Y(8) = 1.16
-!    Species % CO2X(9) = 990. ; Species % CO2Y(9) = 1.18
-!    Species % CO2X(10)=9999. ; Species % CO2Y(10)= 1.25
 
       RETURN
       END SUBROUTINE Aloha_IPCROP

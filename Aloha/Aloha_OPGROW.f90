@@ -5,12 +5,13 @@
 !  REVISION       HISTORY
 !  03/28/2017 CHP Written
 !=======================================================================
-      SUBROUTINE Aloha_OpGrow (CONTROL, ISWITCH,           &
-        BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, ISTAGE, &
-        LAI, LFWT, LN, MDATE, NSTRES, PLTPOP, RLV, ROOTN,  &
-        RTDEP, RTWT, SKWT, STMWT, STOVN, STOVWT, SWFAC,    &
-        TRNU, TURFAC, WTNCAN, WTNGRN, WTNUP, YRPLT,        &
-        VNAM, VWATM, FRNAM, CNAM, FRNpctM)    !Output for Overview.OUT 
+      SUBROUTINE Aloha_OpGrow (CONTROL, ISWITCH,          &
+        BASLFWT, BIOMAS, CRWNWT, EYEWT, FLRWT, FRTWT,     &
+        FRUITS, GPP, GPSM, ISTAGE, LAI, LFWT, LN, MDATE,  &
+        NSTRES, PLTPOP, RLV, ROOTN,  RTDEP, RTWT, SKWT,   &
+        STMWT, STOVN, STOVWT, SWFAC, TURFAC, WTNCAN,      &
+        WTNGRN, WTNUP, YRPLT,                             &
+        VNAM, VWATM, CNAM)    !Output for Overview.OUT 
 
       USE Aloha_mod
       IMPLICIT  NONE
@@ -20,23 +21,25 @@
       CHARACTER*1 IDETG, IDETL, IDETN, FMOPT, ISWNIT
       LOGICAL FEXIST
       REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV , PS2_AV, KST_AV
-      REAL SWFAC, TURFAC, NSTRES, SATFAC, PSTRES1, PSTRES2, KSTRES
-      REAL LFWT, PLTPOP, SDWT, XLAI, LAI, GPSM, CRWNWT, GPP, TRNU, LN   !, GRNWT
-      REAL GM2KG, SHELPC, SHELLW, SDSIZE, HI, BIOMAS, VWAD, STMWT
+      REAL SWFAC, TURFAC, NSTRES, PSTRES1, PSTRES2, KSTRES
+      REAL LFWT, PLTPOP, SDWT, XLAI, LAI, CRWNWT, LN   
+      REAL GM2KG, HI, BIOMAS, VWAD, STMWT
       REAL RTWT, RTDEP, RLV(NL)
-      REAL FRTWT, BASLFWT, SKWT, TOPWT !, RSTAGE
+      REAL BASLFWT, SKWT, TOPWT 
       REAL STOVN, GRAINN, STOVWT, ROOTN, WTNVEG, WTNGRN, PCNVEG, PCNGRN
-      REAL VNAM, VWATM, FRNAM, CNAM, FRNpctM
+      REAL VNAM, VWATM, CNAM
 
       INTEGER I, LEAFNO
       INTEGER DAP,YRPLT,YRDOY
       INTEGER DAS
       INTEGER COUNT, FROP, MDATE, YEAR, DOY
 
-      REAL    WTNUP, GRNWT
-      REAL    SLA,PODWT,PODNO
-      REAL    WTLF,SEEDNO,WTNLF,WTNST,WTNSD,WTNSH,WTNRT, WTNCAN
-      REAL    PCNL,PCNST,PCNRT,VSTAGE,CANHT,CANWH   !,PCNSH
+      REAL    WTNUP, SLA
+      REAL    WTLF,WTNLF,WTNST,WTNSD,WTNSH,WTNRT, WTNCAN
+      REAL    PCNL,PCNST,PCNRT,VSTAGE 
+
+      REAL    LWAD, SWAD, CRAD, BWAD, SUGD, RWAD, FWAD, EYWAD, EYEWT, FLWAD
+      REAL    FRUITS, FRTWT, FLRWT, GPP, GPSM
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
@@ -63,12 +66,6 @@
 !-----------------------------------------------------------------------
         CALL GETLUN('PlantGro.OUT', NOUTDG)
         CALL GETLUN('PlantN.OUT'  , NOUTPN)
-
-!not used -need to remove from output
-        SATFAC = 0.0 
-        CANHT  = 0.0 
-        CANWH  = 0.0 
-        GRNWT  = 0.0
 
 !***********************************************************************
 !***********************************************************************
@@ -130,7 +127,6 @@
         KST_AV = 0.0
         COUNT = 0
 
-!        WTNUP   = 0.0
         PSTRES1 = 1.0
         PSTRES2 = 1.0
         KSTRES  = 1.0
@@ -147,7 +143,7 @@
         SWF_AV = SWF_AV + (1.0 - SWFAC)
         TUR_AV = TUR_AV + (1.0 - TURFAC)
         NST_AV = NST_AV + (1.0 - NSTRES)
-        EXW_AV = EXW_AV + SATFAC
+!       EXW_AV = EXW_AV + SATFAC
         PS1_AV = PS1_AV + (1.0 - PSTRES1)
         PS2_AV = PS2_AV + (1.0 - PSTRES2)
         KST_AV = KST_AV + (1.0 - KSTRES)
@@ -375,8 +371,6 @@
           VWATM = VWAD / 1000.  !Veg wt at maturity, t/ha
           CNAM  = WTNCAN * 10.0 !Canopy N at maturity, kg/ha
           VNAM  = WTNVEG * 10.0 !Veg N at maturity, kg/ha
-          FRNAM = WTNSD * 10.0  !Fruit N at maturity, kg/ha
-          FRNpctM = PCNGRN      !Fruit N, %
         ENDIF
 
 !***********************************************************************
@@ -401,9 +395,6 @@
 !     FORMAT Strings
 !----------------------------------------------------------------------
  200  FORMAT (2(1X,I5),3(1X,F5.1),2(1X,F5.2),1X,I5,4(1X,F5.1),1X,I5)
-! 300  FORMAT (2(1X,I5),3(1X,F5.1),2(1X,F5.2),1X,I5,4(1X,F5.1),1X,I5,  &
-!              2(1X,F5.1),4(1X,F5.2),23(1X,F5.1))
- 
  2190 FORMAT (A80)
  2196 FORMAT (4(A5,I1))
  2197 FORMAT (10(A5,I1))
