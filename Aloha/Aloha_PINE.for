@@ -95,6 +95,10 @@ C-----------------------------------------------------------------------
       PSTRES1 = 1.0
       PSTRES2 = 1.0
 
+      SENESCE % ResWt  = 0.0
+      SENESCE % ResLig = 0.0
+      SENESCE % ResE   = 0.0
+
 C-----------------------------------------------------------------------
       CALL Aloha_IPPlant (CONTROL) !formerly call to IPIBS
       CALL Aloha_IPCROP (CONTROL)
@@ -273,6 +277,11 @@ C-----------------------------------------------------------------------
      &   PSTRES1, PSTRES2, STGDOY, STOVER, SWFAC,         !Input
      &   TURFAC, VWATM, WTINITIAL, WTNCAN, WTNGRN,        !Input
      &   WTNUP, YIELD, YRDOY, YRPLT)                      !Input
+
+        !Set senescence variable to zero for next season
+        SENESCE % ResWt    = 0.0
+        SENESCE % ResLig = 0.0
+        SENESCE % ResE     = 0.0
 
 !=======================================================================
       END SELECT

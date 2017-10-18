@@ -47,7 +47,7 @@
       REAL SWFAC, BIOMAS, Biomass_kg_ha, TURFAC
       REAL WTINITIAL, WTNCAN, WTNGRN, WTNUP, LAI, LN
       REAL YIELD, YIELDB, YieldFresh
-      REAL VWATM, CNAM
+      REAL VWATM, CNAM, BWAM, HWAH, StovSenes
 
       REAL, DIMENSION(2) :: HARVFRAC
 
@@ -283,7 +283,8 @@
 !      WTNCAN = TOTNUP/10.0
 !      WTNSD  = GNUP  /10.0
 
-!      StovSenes = SENESCE % ResWt(0)
+!     For now the senesced leaf mass is not tracked, so this will be zero
+      StovSenes = SENESCE % ResWt(0)
 C-----------------------------------------------------------------------
 C     Adjust dates since Pineapple grows after harvest
 C-----------------------------------------------------------------------
@@ -327,10 +328,14 @@ C-----------------------------------------------------------------------
       ENDIF
 
 !-----------------------------------------------------------------------
+!     Actual yield harvested (default is 100 %)
+      HWAH = YIELD * HARVFRAC(1)
+
 !     Actual byproduct harvested (default is 0 %)
 !     Byproduct not harvested is incorporated
+      BWAM = BIOMAS*10. - YIELD 
+      BWAH = (BWAM + StovSenes) * HARVFRAC(2) 
 !-----------------------------------------------------------------------
-      BWAH   = STOVER * HARVFRAC(2)/100.0
 
       IF ((INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) 
      &  .OR. (INDEX('AY',IDETS) .GT. 0 .AND. CROP .NE. 'FA')) THEN
@@ -344,8 +349,8 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       FBTONS = FBIOM*0.01             !Biomass at forcing, t/ha
       PBIOMS = (BIOMAS*10.0)/1000.0   !Biomass at maturity, t/ha
-      !FYIELD = YIELD/1000.0
-      !PVEGWT = STOVER/1000.0
+!     FYIELD = YIELD/1000.0
+!     PVEGWT = STOVER/1000.0
       Biomass_kg_ha = BIOMAS * 10.    !Convert from g/m2 to kg/ha
 
 !     Change observed (FileA) dates to DAP
@@ -454,9 +459,6 @@ C-----------------------------------------------------------------------
 !-------------------------------------------------------------------
 !     Send information to OPSUM to generate SUMMARY.OUT file
 !-------------------------------------------------------------------
-!      PSDWT  = SKERWT
-!      SDRATE = -99.0
-
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
@@ -465,9 +467,9 @@ C-----------------------------------------------------------------------
       LABEL(3)  = 'DWAP'; VALUE(3)  = SDRATE
       LABEL(4)  = 'CWAM'; VALUE(4)  = BIOMAS*10.
       LABEL(5)  = 'HWAM'; VALUE(5)  = YIELD
-      LABEL(6)  = 'HWAH'; VALUE(6)  = YIELD
-! BWAH multiplied by 10.0 in OPSUM - divide by 10. here to preserve units. (?????)
-      LABEL(7)  = 'BWAH'; VALUE(7)  = BWAH  
+      LABEL(6)  = 'HWAH'; VALUE(6)  = HWAH
+!     BWAH multiplied by 10.0 in OPSUM - divide by 10. here to preserve units. (?????)
+      LABEL(7)  = 'BWAH'; VALUE(7)  = BWAH / 10. 
       LABEL(8)  = 'HWUM'; VALUE(8)  = EYEWT       !unit eye weight g/unit
       LABEL(9)  = 'H#AM'; VALUE(9)  = GPSM        !# eyes/m2 at maturity
       LABEL(10) = 'H#UM'; VALUE(10) = GPP         !# eyes/fruit at maturity
@@ -480,7 +482,7 @@ C-----------------------------------------------------------------------
       LABEL(17) = 'HIAM'; VALUE(17) = HI
       LABEL(18) = 'EDAT'; VALUE(18) = FLOAT(YREMRG)
 
-      !Send labels and values to OPSUM
+!     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
       CALL OPVIEW(CONTROL, 
@@ -488,7 +490,7 @@ C-----------------------------------------------------------------------
      &    Measured, PlantStres, Simulated, STGDOY, 
      &    STNAME, WTNCAN, LAI, NINT(YIELD), YRPLT, ISTAGE)
 
-      !Send Measured and Simulated datat to OPSUM
+!     Send Measured and Simulated datat to OPSUM
       CALL EvaluateDat (ACOUNT, Measured, Simulated, DESCRIP, OLAP) 
 
 !***********************************************************************
