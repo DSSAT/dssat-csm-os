@@ -851,7 +851,18 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
       ! Total plant dry weight per hectare (DM kg/ha) and Plant top fraction
       ! (PTF) are calculated
       !
-      BIOMAS   = (LFWT + STMWT + FLRWT + BASLFWT + SKWT)*PLTPOP
+!     When fruit development starts, the fruit population (FRUITS) is
+!       less than the plant population (PLTPOP). Need to differentiate
+!       for consistency with daily and seasonal outputs.
+      SELECT CASE(ISTAGE)
+      CASE(5,6)
+!       In this case FLRWT is fruit + crown
+        BIOMAS   = (LFWT + STMWT + BASLFWT + SKWT)*PLTPOP 
+     &                + (FLRWT * FRUITS) 
+      CASE DEFAULT
+        BIOMAS   = (LFWT + STMWT + FLRWT + BASLFWT + SKWT)*PLTPOP
+      END SELECT 
+
       TOTPLTWT =  LFWT + STMWT + FLRWT + BASLFWT + SKWT
       DM       = BIOMAS*10.0
       STOVWT   = LFWT + STMWT
