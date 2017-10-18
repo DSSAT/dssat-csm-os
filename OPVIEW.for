@@ -38,7 +38,7 @@ C=======================================================================
       CHARACTER*84 SimText
 
       INTEGER DAP, DOY, DSTRES, DYNAMIC, ERRNUM, FOUND
-      INTEGER I, IPX, ISENS, LINC, LNUM, LUNIO
+      INTEGER I, IPX, ISENS, LINC, LNUM, LUNIO, NameLength
       INTEGER NOUTDO, NYRS, RUN, TIMDIF, TRTNUM
       INTEGER YIELD, YR, YRDOY, YRPLT, RSTAGE
       INTEGER STGDOY(20)
@@ -245,7 +245,8 @@ C-----------------------------------------------------------------------
 !     At each plant stage, print growth data.
       IF (PRINT_STAGES) THEN
         DO I = 1, 20
-          IF (YRDOY .EQ. STGDOY(I) .AND. LenString(STNAME(I)) > 0) THEN
+          NameLength = LenString(STNAME(I))
+          IF (YRDOY .EQ. STGDOY(I) .AND. NameLength > 0) THEN
 
             !Store current Stage, STGDOY and STNAME
             CALL PUT('PLANT','iSTAGE', I)
