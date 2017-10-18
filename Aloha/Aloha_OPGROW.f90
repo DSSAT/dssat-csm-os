@@ -87,10 +87,10 @@
           CALL HEADER(SEASINIT, NOUTDG, RUN)
 
           WRITE (NOUTDG,'(A,/,A,/,A,/,A)') & 
- '!                       Leaf   Grow        <----------------------- Dry  Weight ------------------------>   Harv <--- Pod ---> <-- Stress (0-1) -->   Leaf  Shell   Spec  <- Canopy ->          Root  <--------------- Root Length Density ------------------------------>', &
- '!                        Num  Stage    LAI   Tops    Veg   Leaf   Stem  Fruit  Crown  Basal   Suck   Root  Index   Wgt.    No.      Water      Nitr   Nitr   -ing   Leaf   Hght  Width         Depth  <---------------   cm3/cm3  of soil  ------------------------------>', &
- '!                                          <--------------------------- kg/Ha -------------------------->         kg/ha          Phot   Grow             %      %   Area      m      m             m  <------------------------------------------------------------------>', &
- '@YEAR DOY   DAS   DAP   L#SD   GSTD   LAID   CWAD   VWAD   LWAD   SWAD   FWAD   CRAD   BWAD   SUGD   RWAD   HIAD   EWAD   E#AD   WSPD   WSGD   NSTD   LN%D   SH%D   SLAD   CHTD   CWID   EWSD   RDPD   RL1D   RL2D   RL3D   RL4D   RL5D   RL6D   RL7D   RL8D   RL9D   RL10'
+ '!                       Leaf   Grow        <--------------------------- Dry  Weight --------------------------->   Harv <--- Eye ---> <-- Stress (0-1) -->   Leaf   Spec   Root  <--------------- Root Length Density ------------------------------>', &
+ '!                        Num  Stage    LAI   Tops    Veg   Leaf   Stem Flower  Fruit  Crown  Basal   Suck   Root  Index   Wgt.    No.      Water      Nitr   Nitr   Leaf  Depth  <---------------   cm3/cm3  of soil  ------------------------------>', &
+ '!                                          <------------------------------ kg/Ha ------------------------------>         kg/ha          Phot   Grow             %   Area      m  <------------------------------------------------------------------>', &
+ '@YEAR DOY   DAS   DAP   L#SD   GSTD   LAID   CWAD   VWAD   LWAD   SWAD  FLWAD   FWAD   CRAD   BWAD   SUGD   RWAD   HIAD  EYWAD  EY#AD   WSPD   WSGD   NSTD   LN%D   SLAD   RDPD   RL1D   RL2D   RL3D   RL4D   RL5D   RL6D   RL7D   RL8D   RL9D   RL10'
 
         ENDIF
 
@@ -188,61 +188,67 @@
 !         PlantGro.OUT
 !-----------------------------------------------------------------------
           IF (IDETG == 'Y') THEN
-            WTLF   = LFWT   * PLTPOP
-            SDWT   = GRNWT  * PLTPOP
+
+            LEAFNO = LN
+            VSTAGE = REAL (LEAFNO)
+
+!           GM2KG converts gm/plant to kg/ha
+            GM2KG  = PLTPOP * 10.0
+            
+            TOPWT  = BIOMAS * 10.    !topwt in kg/ha, biomas in g/m2
+
+            WTLF = LFWT * PLTPOP      !leaf, g/m2
+            LWAD = LFWT * GM2KG       !leaf, kg/ha
+            SWAD = STMWT* GM2KG       !stem, kg/ha
+            VWAD = LWAD + SWAD        !veg,  kg/ha
+
+            BWAD = BASLFWT * GM2KG    !basal, kg/ha
+            SUGD = SKWT    * GM2KG    !sucker,kg/ha
+            RWAD = RTWT    * GM2KG    !roots, kg/ha
+
+            IF (FRUITS < 1.E-6) THEN
+!             At stage 5, flower weight becomes fruit and crown
+!             Some mass is lost because fruits/m2 < plants/m2
+              FLWAD= FLRWT * GM2KG    !flower,kg/ha
+              FWAD = 0.0
+              CRAD = 0.0
+            ELSE
+!             Fruit and crown weights are calculated using FRUITS/m2, not PLTPOP/m2
+              FWAD = FRTWT * FRUITS * 10. !fruit, kg/ha
+              CRAD = CRWNWT* FRUITS * 10. !crown, kg/ha
+              FLWAD = 0.0
+            ENDIF
+
+            IF (TOPWT .GT. 0.0) THEN
+              HI = FWAD / TOPWT
+            ELSE
+              HI = 0.0
+            ENDIF
+
+            IF (GPP > 1.E-6) THEN
+              EYEWT = FRTWT / GPP         !eye weight, g/eye
+              GPSM  = GPP * FRUITS        !# eyes/m2
+              EYWAD = EYEWT * GPSM * 10.  !eye weight, kg/ha  
+        ! this makes eye weight exactly equal to fruit weight. Hmmmm.  
+            ELSE
+              EYEWT = 0.0
+              EYWAD = 0.0
+            ENDIF        
+            
             XLAI   = LAI
             IF (WTLF .GT. 0.0) THEN
                SLA  = LAI * 10000 / WTLF
             ELSE
                SLA = 0.0
             ENDIF
-            SEEDNO = GPSM
-            PODWT  = CRWNWT
-            IF (GPP .GT. 0.0) THEN
-               PODNO = SEEDNO/GPP
-            ELSE
-               PODNO = 0.0
-            ENDIF
 
-            TOPWT = BIOMAS * 10.
-            
-!           Moved to NUPTAK
-!           WTNUP = WTNUP + TRNU * PLTPOP
-            
-            LEAFNO = LN
-            VSTAGE = REAL (LEAFNO)
-            !IF (LEAFNO .GT. 0.0) THEN
-            !   RSTAGE = REAL(ISTAGE)
-            ! ELSE
-            !   RSTAGE = 0.0
-            !ENDIF
-            SDWT = GRNWT    !CONTRADICTS PREVIOUS CALC
-            
-!           GM2KG converts gm/plant to kg/ha
-            GM2KG  = PLTPOP * 10.0
-            SHELPC = 0.0
-            IF (PODWT .GT. 0.1) THEN
-               SHELPC = SDWT*100.0/PODWT
-            ENDIF
-            SHELLW = PODWT - SDWT
-            SDSIZE = 0.0
-            IF (SEEDNO .GT. 0.0) THEN
-               SDSIZE = SDWT*PLTPOP/SEEDNO*1000.0
-            ENDIF
-            HI     = 0.0
-            IF (BIOMAS .GT. 0.0 .AND. SDWT .GE. 0.0) THEN
-               HI = SDWT*PLTPOP/BIOMAS
-            ENDIF
-            
-            VWAD = NINT(WTLF*10. + STMWT*10.)
-
-!!Not yet used but could be:
-!!      IF (CROP .EQ.'PI') THEN
-!         YIELDB = YIELD/0.8914         ! Fresh fruit yield (lb/acre)
-!!      ELSE
-!!         YIELDB = SDWT*10.0/ACREFC * 2.2046
-!!      ENDIF
-!      PEYEWT = EYEWT*1000.          ! Eye weight (mg/eye)
+!           SEEDNO = GPSM
+!           PODWT  = CRWNWT
+!           IF (GPP .GT. 0.0) THEN
+!              PODNO = SEEDNO/GPP
+!           ELSE
+!              PODNO = 0.0
+!           ENDIF
 
             IF ((LFWT+STMWT) .GT. 0.0) THEN
               WTNLF = STOVN * (LFWT  / STOVWT) * PLTPOP
@@ -258,25 +264,24 @@
               PCNL = 0.0
             ENDIF
 
-!*** Note: SATFAC not used by pineapple model. Probably some other variables, too.
-!   Need to remove.
-
             IF (FMOPT /= 'C') THEN   ! VSH
-              WRITE (NOUTDG,400) YEAR, DOY, DAS, DAP,VSTAGE,ISTAGE,XLAI,      &
-!   Regular output:
-                NINT(TOPWT),  NINT((LFWT+STMWT)*GM2KG),                        &
-                NINT(LFWT*GM2KG),NINT(STMWT*GM2KG),NINT(FRTWT*GM2KG),          &
-                NINT(CRWNWT*GM2KG),NINT(BASLFWT*GM2KG),NINT(SKWT*GM2KG),       &
-                NINT(RTWT*GM2KG),HI,                                          &
-                NINT(PODWT*GM2KG),NINT(PODNO),(1.0-SWFAC),(1.0-TURFAC),(1.0-NSTRES), &
-                PCNL, SHELPC, SLA, CANHT, CANWH, SATFAC,               &
-                (RTDEP/100.), (RLV(I),I=1,10)
+              WRITE (NOUTDG,400) YEAR, DOY, DAS, DAP, VSTAGE, ISTAGE, XLAI,         &
+                NINT(TOPWT),  NINT(VWAD), NINT(LWAD), NINT(SWAD), NINT(FLWAD),      &
+                NINT(FWAD), NINT(CRAD), NINT(BWAD), NINT(SUGD), NINT(RWAD), HI,     &
+                NINT(EYWAD), NINT(GPSM), (1.0-SWFAC), (1.0-TURFAC), (1.0-NSTRES),   &
+                PCNL, SLA, (RTDEP/100.), (RLV(I),I=1,10)       
+
+!YEAR DOY   DAS   DAP VSTAGE ISTAGE   XLAI  TOPWT   VWAD   LWAD   SWAD  FLWAD   FWAD   CRAD   BWAD   SUGD   RWAD    HI   EYWAD  GPSM   SWFAC TURFAC NSTRES   PCNL    SLA  RTDEP   RLV(I),I=1,10
+!YEAR DOY   DAS   DAP   L#SD   GSTD   LAID   CWAD   VWAD   LWAD   SWAD  FLWAD   FWAD   CRAD   BWAD   SUGD   RWAD   HIAD  EYWAD  EY#AD   WSPD   WSGD   NSTD   LN%D   SLAD   RDPD   RL1D   RL2D   RL3D   RL4D   RL5D   RL6D   RL7D   RL8D   RL9D   RL10
+!1989 166     7     0    0.0      8   0.22    595    384    315     68      0      0      0    208      0      0  0.000      0      0  0.000  0.000  0.000   0.00   71.3   0.05   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00
+!1989 167     8     1    0.0      9   0.22    595    384    315     68      0      0      0    208      0      0  0.000      0      0  0.000  0.000  0.000   0.00   71.3   0.05   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00
+
 
   400          FORMAT (1X,I4,1X,I3.3,2I6,1X,F6.1,1X,I6,1X,F6.2,   &
-                  9(1X,I6),1X,F6.3,           &    
+                  10(1X,I6),1X,F6.3,           &    
                   2(1X,I6), 3(1X,F6.3),       &
-                  2(1X,F6.2),1X,F6.1,2(1X,F6.2),1X,F6.3,          &
-                  F7.2, 10(1X,F6.2))
+                  1X,F6.2, 1X,F6.1, F7.2, 10(1X,F6.2))        
+                  
 
 !-------------------------------------------------------------------------
 !           VSH CSV output corresponding to PlantGro.OUT

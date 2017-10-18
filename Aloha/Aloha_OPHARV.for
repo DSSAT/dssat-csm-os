@@ -7,12 +7,12 @@
 !=======================================================================
 
       SUBROUTINE Aloha_OPHARV(CONTROL, ISWITCH,
-     &   AGEFAC, BIOMAS, CNAM, CRWNWT, FBIOM, FRNAM,      !Input
-     &   FRNpctM, FRTWT, FRUITS, GPSM, GPP, HARVFRAC,     !Input
-     &   ISDATE, ISTAGE, LAI, LN, MDATE, NSTRES, PLTPOP,  !Input
-     &   PMDATE, PSTRES1, PSTRES2, STGDOY, STOVER,        !Input
-     &   SWFAC, TURFAC, VNAM, VWATM, WTINITIAL, WTNCAN,   !Input
-     &   WTNGRN, WTNUP, XGNP, YIELD, YRDOY, YRPLT)        !Input
+     &   AGEFAC, BIOMAS, CNAM, CRWNWT, EYEWT, FBIOM,      !Input
+     &   FRTWT, FRUITS, GPSM, GPP, HARVFRAC, ISDATE,      !Input
+     &   ISTAGE, LAI, LN, MDATE, NSTRES, PLTPOP, PMDATE,  !Input
+     &   PSTRES1, PSTRES2, STGDOY, STOVER, SWFAC,         !Input
+     &   TURFAC, VWATM, WTINITIAL, WTNCAN, WTNGRN,        !Input
+     &   WTNUP, YIELD, YRDOY, YRPLT)                      !Input
 
 !-----------------------------------------------------------------------
       USE Aloha_mod

@@ -152,16 +152,15 @@
       GPSM   = 0.0
       GPP    = 0.0
       PTF    = 0.0
+      FRUITS = 0.0
 
       DO I = 1, NL
          RLV(I) = 0.0
       END DO
 
       BIOMAS = 0.0
-!      LEAFNO = 0.0
       LAI    = 0.0
       XN     = 0.0
-!      ICSDUR = 0
       SWFAC  = 1.0
       TURFAC = 1.0
       NDEF4  = 1.0
@@ -548,8 +547,10 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         BASLFWT = BASLFWT + GROBSL
         STMWT   = STMWT   + GROSTM
         FLRWT   = FLRWT   + GROFLR
-        FRTWT  = FLRWT*0.7      !CHP 10/14/2017
-        CRWNWT = FLRWT*0.3      !CHP 10/14/2017
+!     chp added FRTWT and CRWNWT because these are in daily output
+!     this allows mass balance to work.
+!       FRTWT  = FLRWT*0.7      !CHP 10/14/2017
+!       CRWNWT = FLRWT*0.3      !CHP 10/14/2017
 
         IF (GROLF .GT. 0.0) THEN
            SLAN = PLA/1000.0
@@ -602,8 +603,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         ENDIF
         STMWT = STMWT + GROSTM
         FLRWT = FLRWT + GROFLR
-        FRTWT  = FLRWT*0.7      !CHP 10/14/2017
-        CRWNWT = FLRWT*0.3      !CHP 10/14/2017
+!       FRTWT  = FLRWT*0.7      !CHP 10/14/2017
+!       CRWNWT = FLRWT*0.3      !CHP 10/14/2017
         SKWT  = SKWT  + GROSK
 
 !-----------------------------------------------------------------
@@ -937,7 +938,9 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
      &             (0.7+0.3*PLANTSIZE/550.)
           GPP    = AMIN1 (GPP,G2)                ! G2 is genetic coefficient for potential eye number
           GPP    = AMAX1 (GPP,0.0)
-          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
+
+!         Move from Istage 4 because no actual fruits until stage 5
+!         FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
 
 !CHP 10/14/2017          FLRWT  =  0.1*STMWT           ! FLRWT stands for the weight ofwhole inflorescence STMWT is stem weight.  Both are in gram/plant.
           SKWT   =  0.0
@@ -948,6 +951,12 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           VMNC   = TMNC                 ! .....
 
         CASE (5)
+
+!         Move from Istage 4 because no actual fruits until stage 5
+          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
+!         There will be some loss of mass when going from flower mass
+!           to fruit + crown because FRUITS (#/m2) < PLTPOP (#/m2)
+
 ! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
 ! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
 !         FRTWT  = FLRWT*0.5            
