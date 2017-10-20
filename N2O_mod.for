@@ -51,7 +51,7 @@ C  09/18/2015 CHP Written, based on PG code.
       TYPE (SoilType)    SOILPROP
       TYPE (N2O_type)    N2O_DATA
 
-      CHARACTER*1  IDETN, ISWNIT, ISWWAT  
+      CHARACTER*1  IDETL, IDETN, ISWNIT, ISWWAT  
       CHARACTER*10, PARAMETER :: OUTSN2O = 'N2O.OUT'
 
       INTEGER DAS, DYNAMIC, L, NLAYR, YRDOY
@@ -225,7 +225,7 @@ C  06/15/2014 CHP Written
       TYPE (SoilType)    SOILPROP
       TYPE (N2O_type)    N2O_DATA
 
-      CHARACTER*1  IDETN, ISWNIT, ISWWAT, RNMODE
+      CHARACTER*1  IDETL, IDETN, ISWNIT, ISWWAT, RNMODE
       CHARACTER*10, PARAMETER :: OUTSN2O = 'N2O.OUT'
       CHARACTER*500 FRMT, FRMT2
 
@@ -257,6 +257,7 @@ C  06/15/2014 CHP Written
       INTEGER, PARAMETER :: SUMNUM = 2
       CHARACTER*5, DIMENSION(SUMNUM) :: LABEL
       REAL, DIMENSION(SUMNUM) :: VALUE
+
 
 !-----------------------------------------------------------------------
 !     Transfer values from constructed data types into local variables.
@@ -306,6 +307,11 @@ C-----------------------------------------------------------------------
 C     Variable heading for N2O.OUT
 C-----------------------------------------------------------------------
       CumTotCO2 = 0.0
+
+!     chp 10/20/2017. At FAO request. Temporarily hide N2O output
+!     No output unless detail switch is on.
+      IDETL = ISWITCH % IDETL
+      IF (INDEX('AD',IDETL) .EQV. 0) RETURN
 
       IF (IDETN .EQ. 'Y') THEN
 
@@ -412,6 +418,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASINIT) THEN
 C-----------------------------------------------------------------------
+      IF (INDEX('AD',IDETL) .EQV. 0) RETURN
 
       TOTCO2 = SUM(newCO2)
       CumTotCO2 = CumTotCO2 + TOTCO2
@@ -453,6 +460,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
+      IF (INDEX('AD',IDETL) .EQV. 0) RETURN
       !Close daily output files.
       CLOSE(NOUTDN)
 
