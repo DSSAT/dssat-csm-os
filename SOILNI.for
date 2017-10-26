@@ -657,8 +657,12 @@ C=======================================================================
           else 
 !           /* take N out of ammonimum to get max NOflux possible */
             NITRIF_to_NO = NITRIF_remaining
-            NH4_to_NO = AMIN1(SNH4_AVAIL,
-     &                         (potential_NOflux - NITRIF_remaining))
+
+!     chp 10/26/2017 - don't remove any from NH4 pool - 
+!       affects some experiments, including CCPO9002.BNX, trt 13
+            NH4_to_NO = 0.0
+!            NH4_to_NO = AMIN1(SNH4_AVAIL,
+!     &                         (potential_NOflux - NITRIF_remaining))
             NITRIF_remaining = 0.0
           endif
 
