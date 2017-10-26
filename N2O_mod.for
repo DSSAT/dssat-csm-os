@@ -311,7 +311,7 @@ C-----------------------------------------------------------------------
 !     chp 10/20/2017. At FAO request. Temporarily hide N2O output
 !     No output unless detail switch is on.
       IDETL = ISWITCH % IDETL
-      IF (INDEX('AD',IDETL) .EQV. 0) RETURN
+      IF (INDEX('AD',IDETL) == 0) RETURN
 
       IF (IDETN .EQ. 'Y') THEN
 
@@ -418,7 +418,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. OUTPUT .OR. DYNAMIC .EQ. SEASINIT) THEN
 C-----------------------------------------------------------------------
-      IF (INDEX('AD',IDETL) .EQV. 0) RETURN
+      IF (INDEX('AD',IDETL) == 0) RETURN
 
       TOTCO2 = SUM(newCO2)
       CumTotCO2 = CumTotCO2 + TOTCO2
@@ -460,7 +460,7 @@ C-----------------------------------------------------------------------
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
-      IF (INDEX('AD',IDETL) .EQV. 0) RETURN
+      IF (INDEX('AD',IDETL) == 0) RETURN
       !Close daily output files.
       CLOSE(NOUTDN)
 
