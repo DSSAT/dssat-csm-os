@@ -103,10 +103,9 @@ C-----------------------------------------------------------------------
   100 FORMAT(' Freeze occurred at ',I4,' days after planting.')
   110 FORMAT('   (DAY : ',I7,' )')
 !      WRITE (*,'(/,10X,A78,/,10X,A78,/)') MESSAGE(1), MESSAGE(2)
-      IF (IDETO .EQ. 'Y')  THEN
-        WRITE (NOUTDO,'(/,5X,A78,/,5X,A78,/)') MESSAGE(1), MESSAGE(2)
-
-      ENDIF
+!      IF (IDETO .EQ. 'Y')  THEN
+!        WRITE (NOUTDO,'(/,5X,A78,/,5X,A78,/)') MESSAGE(1), MESSAGE(2)
+!      ENDIF
 C-----------------------------------------------------------------------
       RETURN
       END ! SUBROUTINE FREEZE

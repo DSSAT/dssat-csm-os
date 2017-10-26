@@ -209,5 +209,7 @@
         IF ((LFWT+STWT+CRWT+RSWT).GT.0.0) THEN
             HIAD = SRWT/(LFWT+STWT+CRWT+SRWT+RSWT)                                                                     !EQN 293
         ENDIF
-        IF (RTWT.GT.0.0) SHRTD = (LFWT+STWT+CRWT+RSWT) / RTWT                                                          !EQN 294
+        IF (RTWT > 0.0) THEN
+            SHRTD = (LFWT+STWT+CRWT+RSWT) / RTWT                                                          !EQN 294
+        ENDIF
     END SUBROUTINE YCA_Integ_AgesWts

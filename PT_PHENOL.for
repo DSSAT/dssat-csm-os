@@ -117,8 +117,8 @@ C=======================================================================
               RTF = 1.0                           
 
 !          Externalize TCPlus variable (was hardwired to 8.0)
-!          ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+8.0) THEN
-           ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+TCPLUS) THEN
+           ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+8.0) THEN
+!           ELSEIF (TEMP .GT. TC .AND. TEMP .LE. TC+TCPLUS) THEN
 !             Use linear function between TC and TCPLUS
               RTF = 1.0 - (1./64.)*(TEMP-TC)**2 !original_CUADRATIC FUNCTION
 !              RTF = 1.0 - (TEMP - TC)/TCPLUS    !linear function 

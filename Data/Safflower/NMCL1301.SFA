@@ -1,0 +1,21 @@
+*EXP. DATA (A): NMCL1301SA My Safflower experiment time course (A) data                  
+
+! File last edited on day 2/23/2015 at 4:18:08 PM
+!
+!Like sunflower, achene (ovule) is present when flowering.  So here, the
+!ADAT is a dummy stage, whereas PDFT beginning seed is the real flowering date 
+! 
+@TRNO   ADAT  PDFT  MDAT  CWAM  HWAM  HIAM  EDAT  CHTA
+     1   183   183   225  7591  2516 0.368   130  0.42
+     2   180   180   225  4083  1638  0.37   130  0.32
+     3   183   183   223  5685  2094  0.36   130   0.4
+     4   180   180   223  3459  1299  0.36   130  0.32
+     5   224   224   258  7083  2497 0.395   176  0.56
+     6   221   221   257  4195  1798 0.451   176  0.42
+     7   224   224   258  5954  2012  0.38   176  0.56
+     8   221   221   257  3763  1362 0.449   176  0.39
+
+
+
+
+

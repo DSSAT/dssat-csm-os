@@ -1,4 +1,4 @@
-*SOILS: General DSSAT Soil Input File
+*SOILS: DSSAT Soil Input File
 !The ACE ID is N/A.
 !This soil data is used for the experiment of CPLI1305_1.
 !

@@ -1,0 +1,121 @@
+*Soils: CENICAÑA, Colombia soils
+
+*CNPA030001  CENICAÑA    SIC     147 Cantarina (Pachic Vertic Haplustolls)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BL  0.09   6.0  0.60  73.0  1.00  1.00 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    42  Assp 0.242 0.369 0.404 1.000  0.10  1.33  2.80  51.8  46.9   0.0 0.260   6.8   -99  33.1   -99 
+    60    AB 0.152 0.337 0.393 0.361  0.09  1.35  0.54  33.9  63.8   0.0 0.050   7.4   -99  13.8   -99 
+    90   Bw1 0.222 0.403 0.441 0.223  0.13  1.41  0.40  37.1  58.5   0.0 0.040   7.4   -99  20.1   -99 
+   126   Bw2 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.1   -99  18.6   -99 
+   147   Bw3 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.0   -99   -99   -99 
+@  SLB  SLPX  SLPT  SLPO CACO3  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC  SLCA
+    42   -99   -99   -99 20.60  0.00   -99   -99   -99   -99   -99  0.60  8.90  0.51   -99   -99   -99 
+    60   -99   -99   -99  9.30  0.00   -99   -99   -99   -99   -99  0.20  5.00  0.34   -99   -99   -99 
+    90   -99   -99   -99 12.10  0.00   -99   -99   -99   -99   -99  0.40  7.90  0.41   -99   -99   -99 
+   126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
+   147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
+
+*CNPA030011  CENICAÑA    SIC     167 Cantarina (Pachic Vertic Haplustolls)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BL  0.09   6.0  0.60  60.0  1.00  1.00 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    42  Assp 0.242 0.369 0.404 1.000  0.10  1.33  2.80  51.8  46.9   0.0 0.260   6.8   -99  33.1   -99 
+    60    AB 0.152 0.337 0.393 0.361  0.09  1.35  0.54  33.9  63.8   0.0 0.050   7.4   -99  13.8   -99 
+    90   Bw1 0.222 0.403 0.441 0.223  0.13  1.41  0.40  37.1  58.5   0.0 0.040   7.4   -99  20.1   -99 
+   126   Bw2 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.1   -99  18.6   -99 
+   147   Bw3 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.0   -99   -99   -99
+   167   Bw4 0.205 0.372 0.451 0.115  .001  1.39  0.13   -99   -99   -99   -99   8.0   -99   -99   -99
+@  SLB  SLPX  SLPT  SLPO CACO3  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC  SLCA
+    42   -99   -99   -99 20.60  0.00   -99   -99   -99   -99   -99  0.60  8.90  0.51   -99   -99   -99 
+    60   -99   -99   -99  9.30  0.00   -99   -99   -99   -99   -99  0.20  5.00  0.34   -99   -99   -99 
+    90   -99   -99   -99 12.10  0.00   -99   -99   -99   -99   -99  0.40  7.90  0.41   -99   -99   -99 
+   126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
+   147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
+   167   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+! Same as CNPA030001, but with a very-low-periable bottom layer added (SSKS = 0), and low run-off number
+! to approximate the high water table that characterizes these soils (FSR). 
+
+*CNPA030002  CENICAÑA    SIC     147 Cantarina (compacted Pachic Vertic Haplustolls)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BL  0.09   6.0  0.60  73.0  1.00  0.90 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    42  Assp 0.242 0.369 0.404 1.000  0.10  1.33  2.80  51.8  46.9   0.0 0.260   6.8   -99  33.1   -99 
+    60    AB 0.152 0.337 0.393 0.361  0.09  1.35  0.54  33.9  63.8   0.0 0.050   7.4   -99  13.8   -99 
+    90   Bw1 0.222 0.403 0.441 0.223  0.13  1.41  0.40  37.1  58.5   0.0 0.040   7.4   -99  20.1   -99 
+   126   Bw2 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.1   -99  18.6   -99 
+   147   Bw3 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.0   -99   -99   -99 
+@  SLB  SLPX  SLPT  SLPO CACO3  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC  SLCA
+    42   -99   -99   -99 20.60  0.00   -99   -99   -99   -99   -99  0.60  8.90  0.51   -99   -99   -99 
+    60   -99   -99   -99  9.30  0.00   -99   -99   -99   -99   -99  0.20  5.00  0.34   -99   -99   -99 
+    90   -99   -99   -99 12.10  0.00   -99   -99   -99   -99   -99  0.40  7.90  0.41   -99   -99   -99 
+   126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
+   147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
+
+*CNPA030021  CENICAÑA    SIC     167 Cantarina (compacted Pachic Vertic Haplustolls)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BL  0.09   6.0  0.60  73.0  1.00  0.90 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    42  Assp 0.242 0.369 0.404 1.000  0.10  1.33  2.80  51.8  46.9   0.0 0.260   6.8   -99  33.1   -99 
+    60    AB 0.152 0.337 0.393 0.361  0.09  1.35  0.54  33.9  63.8   0.0 0.050   7.4   -99  13.8   -99 
+    90   Bw1 0.222 0.403 0.441 0.223  0.13  1.41  0.40  37.1  58.5   0.0 0.040   7.4   -99  20.1   -99 
+   126   Bw2 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.1   -99  18.6   -99 
+   147   Bw3 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.0   -99   -99   -99
+   167   Bw4 0.205 0.372 0.451 0.115  .001  1.39  0.13   -99   -99   -99   -99   8.0   -99   -99   -99 
+@  SLB  SLPX  SLPT  SLPO CACO3  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC  SLCA
+    42   -99   -99   -99 20.60  0.00   -99   -99   -99   -99   -99  0.60  8.90  0.51   -99   -99   -99 
+    60   -99   -99   -99  9.30  0.00   -99   -99   -99   -99   -99  0.20  5.00  0.34   -99   -99   -99 
+    90   -99   -99   -99 12.10  0.00   -99   -99   -99   -99   -99  0.40  7.90  0.41   -99   -99   -99 
+   126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
+   147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
+   167   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+! Same as CNPA030002, but with a very-low-periable bottom layer added (SSKS = 0), and low run-off number
+! to approximate the high water table that characterizes these soils (FSR). 
+
+*CNPA030003  CENICAÑA    SIC     147 Cantarina (very compacted Pachic Vertic Haplustoll
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BL  0.09   6.0  0.60  73.0  1.00  0.85 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    42  Assp 0.242 0.369 0.404 1.000  0.10  1.33  2.80  51.8  46.9   0.0 0.260   6.8   -99  33.1   -99 
+    60    AB 0.152 0.337 0.393 0.361  0.09  1.35  0.54  33.9  63.8   0.0 0.050   7.4   -99  13.8   -99 
+    90   Bw1 0.222 0.403 0.441 0.223  0.13  1.41  0.40  37.1  58.5   0.0 0.040   7.4   -99  20.1   -99 
+   126   Bw2 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.1   -99  18.6   -99 
+   147   Bw3 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.0   -99   -99   -99 
+@  SLB  SLPX  SLPT  SLPO CACO3  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC  SLCA
+    42   -99   -99   -99 20.60  0.00   -99   -99   -99   -99   -99  0.60  8.90  0.51   -99   -99   -99 
+    60   -99   -99   -99  9.30  0.00   -99   -99   -99   -99   -99  0.20  5.00  0.34   -99   -99   -99 
+    90   -99   -99   -99 12.10  0.00   -99   -99   -99   -99   -99  0.40  7.90  0.41   -99   -99   -99 
+   126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
+   147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
+
+*CNPA030031  CENICAÑA    SIC     147 Cantarina (very compacted Pachic Vertic Haplustoll
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BL  0.09   6.0  0.60  73.0  1.00  0.85 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    42  Assp 0.242 0.369 0.404 1.000  0.10  1.33  2.80  51.8  46.9   0.0 0.260   6.8   -99  33.1   -99 
+    60    AB 0.152 0.337 0.393 0.361  0.09  1.35  0.54  33.9  63.8   0.0 0.050   7.4   -99  13.8   -99 
+    90   Bw1 0.222 0.403 0.441 0.223  0.13  1.41  0.40  37.1  58.5   0.0 0.040   7.4   -99  20.1   -99 
+   126   Bw2 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.1   -99  18.6   -99 
+   147   Bw3 0.205 0.372 0.451 0.115  0.04  1.39  0.13  35.0  55.6   0.0 0.010   8.0   -99   -99   -99
+   167   Bw4 0.205 0.372 0.451 0.115  .001  1.39  0.13   -99   -99   -99   -99   8.0   -99   -99   -99  
+@  SLB  SLPX  SLPT  SLPO CACO3  SLAL  SLFE  SLMN  SLBS  SLPA  SLPB  SLKE  SLMG  SLNA  SLSU  SLEC  SLCA
+    42   -99   -99   -99 20.60  0.00   -99   -99   -99   -99   -99  0.60  8.90  0.51   -99   -99   -99 
+    60   -99   -99   -99  9.30  0.00   -99   -99   -99   -99   -99  0.20  5.00  0.34   -99   -99   -99 
+    90   -99   -99   -99 12.10  0.00   -99   -99   -99   -99   -99  0.40  7.90  0.41   -99   -99   -99 
+   126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
+   147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+! Same as CNPA030003, but with a very-low-periable bottom layer added (SSKS = 0), and low run-off number
+! to approximate the high water table that characterizes these soils (FSR). 
+

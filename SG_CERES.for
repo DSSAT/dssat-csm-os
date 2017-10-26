@@ -458,7 +458,7 @@ C----------------------------------------------------------------------
       !--------------------------------------------------------------
 
           !----------------------------------------------------------
-          !     Read input file name (ie. DSSAT46.INP) and path
+          !     Read input file name (ie. DSSAT47.INP) and path
           !----------------------------------------------------------
           CALL GETLUN('FILEIO', LUNIO)
           OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)  
@@ -836,7 +836,7 @@ C--------------------------------------------------------------------
 !      !--------------------------------------------------------------
 !
 !          !----------------------------------------------------------
-!          !     Read input file name (ie. DSSAT46.INP) and path
+!          !     Read input file name (ie. DSSAT47.INP) and path
 !          !----------------------------------------------------------
 !          CALL GETLUN('FILEIO', LUNIO)
 !          OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)  
@@ -1632,7 +1632,7 @@ C----------------------------------------------------------------------
 ! ERRNUM      !Error number to print to screen in case of error
 ! ESW(20)     !Extractable soil water, cm3 water/cm3 soil  
 ! FILEC       !Path and name of species file (ie. *.spe)
-! FILEIO      !Name if input file (ie. DSSAT46.INP)               
+! FILEIO      !Name if input file (ie. DSSAT47.INP)               
 ! FOUND        !Flag used to warn user if information in an input file does not exist 
 ! G2          !Maximum kernel number (kernels/plant)
 ! G3          !Potential kernel growth rate, mg/kernel/day 

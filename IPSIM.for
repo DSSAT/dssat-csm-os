@@ -67,7 +67,7 @@ C=======================================================================
       INTEGER PLDATE,PWDINF,PWDINL,HLATE,HDLAY,NRESDL
       INTEGER IFIND,LN,ERRNUM,FTYPEN,YRSIM,YEAR,RUN,RSEED1,RRSEED1
       INTEGER YRPLT
-      INTEGER FIST1, FIST2, IFREQ
+      INTEGER FIST1, FIST2
 
       REAL DSOIL,THETAC,DSOILN,SOILNC,SOILNX,SWPLTL,SWPLTH,SWPLTD
       REAL PTX,PTTN,DRESMG,RIP,IEPT,HPP,HRP,AIRAMT,EFFIRR, AVWAT
@@ -75,7 +75,7 @@ C=======================================================================
       REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
       REAL V_IMDEP(20)
       REAL V_ITHRL(20)
-      REAL V_ITHRU(20)
+      REAL V_ITHRU(20), IFREQ
       INTEGER V_IRON(20), V_IFREQ(20)
       CHARACTER*5 V_IRONC(20)
       CHARACTER*5 V_IMETH(20)
@@ -275,6 +275,10 @@ C
            ENDIF
          ENDIF
 
+! ** DEFAULT MESOL = 2 ** 3/26/2007
+!  MESOL = '1' Original soil layer distribution. Calls LYRSET.
+!  MESOL = '2' New soil layer distribution. Calls LYRSET2.
+!  MESOL = '3' User specified soil layer distribution. Calls LYRSET3.
          IF (INDEX('123',MESOL) < 1) THEN
             MESOL = '2'
          ENDIF
@@ -431,7 +435,7 @@ C
 
                READ(CHARTEST,'(63x,A5)') TEXT     ! Read value of IFREQ in text to check if blank or missing
                CHARLEN = LEN_TRIM(TEXT)
-               IF (CHARLEN==0) IFREQ = 0          ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
+               IF (CHARLEN==0) IFREQ = 0.0        ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
 
 
               V_IMDEP(GSIRRIG) = DSOIL                   ! Save growth stage specific variables in data vectors
@@ -442,7 +446,7 @@ C
               V_IMETH(GSIRRIG) = IAME
               V_IRAMT(GSIRRIG) = AIRAMT
               V_IREFF(GSIRRIG) = EFFIRR
-              V_IFREQ(GSIRRIG) = IFREQ
+              V_IFREQ(GSIRRIG) = NINT(IFREQ)
               V_AVWAT(GSIRRIG) = AVWAT
 
               CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)                ! Read next line until a second tier header is found
@@ -460,7 +464,7 @@ C
            AIRAMT = V_IRAMT(1)
            EFFIRR = V_IREFF(1)
            AVWAT  = V_AVWAT(1)
-           IFREQ  = V_IFREQ(1)
+           IFREQ  = FLOAT(V_IFREQ(1))
 
            SAVE_data % MGMT % V_IMDEP = V_IMDEP
            SAVE_data % MGMT % V_ITHRL = V_ITHRL
@@ -766,7 +770,7 @@ C-----------------------------------------------------------------------
   68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
 !69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I5,
 !    &        1X,I5,1x,F5.0, 2(1x, F5.3))
-  69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I6)
+  69  FORMAT(I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,F6.0)
   70  FORMAT (3X,I2)
 
       END SUBROUTINE IPSIM
@@ -927,7 +931,7 @@ C-----------------------------------------------------------------------
 
         I = INDEX(FILECTL,SLASH)
         IF (I < 1) THEN
-!         No path provided -- look first in DSSAT46 directory
+!         No path provided -- look first in DSSAT47 directory
           CALL GETARG (0,INPUTX)      !Name of model executable
           IPX = LEN_TRIM(INPUTX)
 
@@ -937,7 +941,7 @@ C-----------------------------------------------------------------------
 !     1) Go to pull down menu Project -> Settings -> Fortran (Tab) ->
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
-D     INPUTX = 'C:\DSSAT46\DSCSM046.EXE'
+D     INPUTX = 'C:\DSSAT47\DSCSM047.EXE'
 D     IPX = 23
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

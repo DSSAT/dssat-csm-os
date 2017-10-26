@@ -1,0 +1,42 @@
+*CLIMATE : Experiment_Georgia
+@ INSI      LAT     LONG  ELEV   TAV   AMP  SRAY  TMXY  TMNY  RAIY
+  GAEX   33.240  -84.250   299  16.5  12.3  15.9  22.6  10.3  1295
+@START  DURN  ANGA  ANGB REFHT WNDHT SOURCE
+  1992     7  0.25  0.50 -99.0 -99.0 Calculated_from_daily_data
+@ GSST  GSDU
+     1   365
+
+*MONTHLY AVERAGES
+@  MTH  SAMN  XAMN  NAMN  RTOT  RNUM  SHMN  AMTH  BMTH
+     1   8.9  13.7   1.2 130.4  12.9 -99.0 0.250 0.500
+     2  11.8  15.3   2.7 131.5  10.4 -99.0 0.250 0.500
+     3  16.1  18.6   5.4 111.1  10.0 -99.0 0.250 0.500
+     4  20.1  22.8   9.1  94.9   8.4 -99.0 0.250 0.500
+     5  22.6  26.9  13.9  59.5   8.3 -99.0 0.250 0.500
+     6  21.5  29.8  18.2  94.9  10.9 -99.0 0.250 0.500
+     7  21.6  32.2  20.5 151.8  12.4 -99.0 0.250 0.500
+     8  19.3  30.6  19.3 102.0  10.1 -99.0 0.250 0.500
+     9  16.6  27.9  16.4 123.1   9.9 -99.0 0.250 0.500
+    10  13.5  22.8  10.2  82.0   7.9 -99.0 0.250 0.500
+    11  10.4  17.2   4.8 122.0   9.6 -99.0 0.250 0.500
+    12   8.1  13.8   2.1  91.7  11.8 -99.0 0.250 0.500
+
+*RANGE CHECK VALUES
+@      SRAD  TMAX  TMIN  RAIN  DEWP  WIND  SUNH   PAR  TDRY  TWET  EVAP
+MIN :   5.0   5.0 -20.0   0.0   0.0   0.0   0.0   5.0   0.0   0.0   0.0
+MAX :  85.0  40.0  30.0 600.0  25.0 500.0 100.0  85.0  35.0  25.0  15.0
+RATE:  70.0  20.0  20.0 500.0   5.0 300.0  90.0  70.0  20.0  20.0  15.0
+
+
+*FLAGGED DATA COUNT
+ BEGYR BEGDY ENDYR ENDDY
+  1992     1  1999   139
+@         TOTAL   SRAD   TMAX   TMIN   RAIN
+TOTAL  :  10784   2696   2696   2696   2696
+VALID  :  10724   2684   2648   2696   2696
+MISSING:      0      0      0      0      0
+ERROR  :      0      0      0      0      0
+ABOVE  :      0      0      0      0      0
+BELOW  :     59     11     48      0      0
+RATE   :      1      1      0      0      0
+

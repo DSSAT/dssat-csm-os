@@ -1,0 +1,93 @@
+*EXP.DETAILS: DTCM0301SN CHIANG MAI, THAILAND; 7 CULTIVARS @ 160 KG N
+
+*GENERAL
+@PEOPLE
+DSSAT Foundation
+@ADDRESS
+Gainesville, Florida
+@SITE
+Chiang Mai, Thailand
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 V.SHORT SEASON             4  1  0  1  1  1  1  0  0  0  0  0  1
+ 2 1 0 0 EDO                        5  1  0  1  1  1  1  0  0  0  0  0  1
+ 3 1 0 0 CARGILL 111S               6  1  0  1  1  1  1  0  0  0  0  0  1
+ 4 1 0 0 F7 x F2                    7  1  0  1  1  1  1  0  0  0  0  0  1
+ 5 1 0 0 SUWAN-1                    1  1  0  1  1  1  1  0  0  0  0  0  1
+ 6 1 0 0 PIO x 304C                 2  1  0  1  1  1  1  0  0  0  0  0  1
+ 7 1 0 0 PIO 3720                   3  1  0  1  1  1  1  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 MZ IB0065 SUWAN-1
+ 2 MZ IB0063 PIO X 304C
+ 3 MZ IB0024 PIO 3720
+ 4 MZ 990004 V.SHORT SEASON
+ 5 MZ IB0007 EDO
+ 6 MZ IB0070 CARGILL 111S
+ 7 MZ IB0004 F7 X F2
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 DTCM0001 DTCM         0     0 DR000     0     0 00000 -99    -99  IBSB910015 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1   -99 65274     0     0     1     1   -99     0     0     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .086    .6   1.5
+ 1    15  .086    .6   1.5
+ 1    30  .086    .6   1.5
+ 1    45  .086    .6   1.5
+ 1    60  .086    .6   1.5
+ 1    90  .076    .6    .6
+ 1   120  .076    .6    .5
+ 1   150   .13    .6    .5
+ 1   180  .258    .6    .5
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 65274   -99    10    10     S     R    50     0     5   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    30    50   100 GS000 IR001    10 -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 65274 FE005 AP002    15    40     0     0     0     0   -99 -99
+ 1 65293 FE005 AP002    15    40     0     0     0     0   -99 -99
+ 1 65314 FE005 AP002    15    40     0     0     0     0   -99 -99
+ 1 65334 FE005 AP002    15    40     0     0     0     0   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE             50     1     S 65171  2150 TEST
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     D
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              S     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     A     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              Y     N     Y     5     N     N     N     N     N     N     N     N     N     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          65175 65189    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 66182   100     0
+
+
+

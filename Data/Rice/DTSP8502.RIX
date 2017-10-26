@@ -1,0 +1,98 @@
+*EXP.DETAILS: DTSP8502RI EFFECTS OF APPL. N & ENVIR. ON RICE
+
+*GENERAL
+@PEOPLE
+-99
+@ADDRESS
+-99
+@SITE
+-99
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 0-0-0 NPK                  1  1  0  1  1  1  0  1  0  0  0  0  1
+ 2 1 0 0 38 kg ha-1 of applied N    1  1  0  1  1  1  1  1  0  0  0  0  1
+ 3 1 0 0 75 kg ha-1 of applied N    1  1  0  1  1  1  2  1  0  0  0  0  1
+ 4 1 0 0 113 kg ha-1 of applied N   1  1  0  1  1  1  3  1  0  0  0  0  1
+ 5 1 0 0 150 kg ha-1 of applied N   1  1  0  1  1  1  4  1  0  0  0  0  1
+ 6 1 0 0 188 kg ha-1 of applied N   1  1  0  1  1  1  5  1  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 RI IB0020 RD 23 (cal.)
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 DTSP0001 DTSP       -99     0 IB000     0     0 00000 -99     51  IBRI910024 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    RI 85246   500   -99     1     1     1     0     0     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .374    10    .7
+ 1     8  .374    10    .7
+ 1    19  .341     5    .5
+ 1    28  .369     3    .3
+ 1    38  .369     3    .3
+ 1    51  .344     3    .3
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 85246   -99    75    25     T     H    20     0     5     0    25    25     3     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   -99   -99   -99   -99   -99   -99    10 -99
+@I IDATE  IROP IRVAL
+ 1 85246 IR006    50
+ 1 85246 IR009   100
+ 1 85246 IR008     2
+ 1 85246 IR010     0
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 85246 FE002 AP016    10    19   -99   -99   -99   -99   -99 -99
+ 1 85276 FE002 AP012     1    19   -99   -99   -99   -99   -99 -99
+ 2 85246 FE002 AP016    10    37   -99   -99   -99   -99   -99 -99
+ 2 85276 FE002 AP012     1    37   -99   -99   -99   -99   -99 -99
+ 3 85246 FE002 AP016    10    56   -99   -99   -99   -99   -99 -99
+ 3 85276 FE002 AP012     1    56   -99   -99   -99   -99   -99 -99
+ 4 85246 FE002 AP016    10    75   -99   -99   -99   -99   -99 -99
+ 4 85276 FE002 AP012     1    75   -99   -99   -99   -99   -99 -99
+ 5 85246 FE002 AP016    10    94   -99   -99   -99   -99   -99 -99
+ 5 85276 FE002 AP012     1    94   -99   -99   -99   -99   -99 -99
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 85246 RE001   500   .53   -99   -99   -99    15   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 85246  2150 Effects of appl. N & env
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          85239 85253    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 IB001 IB001    10    .5
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 86246   100     0
+
+
+

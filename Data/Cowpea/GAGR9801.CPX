@@ -1,0 +1,99 @@
+*EXP.DETAILS: GAGR9801CP GRIFFIN 1998 FIELD EXPERIMENT
+
+*GENERAL
+@PEOPLE
+Gabriel Rodriguez & Gerrit Hoogenboom
+@ADDRESS
+Dept. of Biological & Agricultural Engineering, the University of Georgia
+@SITE
+Georgia Experiment Station, Griffin, Georgia
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 0 0 0 TVU 3046 INDIA             1  1  0  1  1  1  1  0  0  0  0  0  1
+ 2 0 0 0 UCR 368 KENYA              2  1  0  1  2  1  1  0  0  0  0  0  1
+ 3 0 0 0 TVU 3644  NIGERIA          3  1  0  1  3  1  1  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 CP CP0003 TVU3046 -INDIA
+ 2 CP CP0004 UCR 368 -KENYA
+ 3 CP CP0005 TVU3644 -NIGERIA
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 GAGF0001 GAGR         0     0 DR000     0     0 00000 -99    191  GA00620001 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SB 98155     0     0     1     1   -99     0     0     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    18  .209   1.6   3.2
+ 1    28  .275   1.6   3.2
+ 1   127  .392    .5    .8
+ 1   191  .392    .5    .8
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 98155 98161   8.5   8.5     S     R    75     0     4   -99   -99   -99   -99     0                        -99
+ 2 98155 98161   8.8   8.8     S     R    75     0     4   -99   -99   -99   -99     0                        -99
+ 3 98155 98161   8.4   8.4     S     R    75     0     4   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    30    50   100 GS000 IR001    10 -99
+@I IDATE  IROP IRVAL
+ 1 98160 IR004     4
+ 1 98163 IR004    11
+ 1 98167 IR004     8
+ 1 98170 IR004     8
+ 1 98177 IR004     5
+ 1 98180 IR004    13
+ 1 98183 IR004    22
+ 1 98190 IR004    12
+ 1 98194 IR004    13
+ 1 98197 IR004    20
+ 1 98200 IR004     5
+ 1 98208 IR004    12
+ 1 98215 IR004     6
+ 1 98226 IR004    18
+ 1 98230 IR004     6
+ 1 98240 IR004     9
+ 1 98246 IR004     4
+ 1 98254 IR004     9
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 98155 FE005 AP001     2    73     0     0     0     0   -99 -99
+ 1 98155 FE001 AP001     2    47     0     0     0     0   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 98155  2150 GRIFFIN
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     Y     Y     Y     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          99354 99354    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 98354   100     0
+
+
+

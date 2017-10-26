@@ -270,7 +270,7 @@ C-----------------------------------------------------------------------
 !     Set ACTIVE variable to indicate that current phase is active
       SELECT CASE (CROP)
       CASE ('BN','CH','CN','CO','CP','CT','FB','PE',
-     &      'PN','PP','PR','SB','TM','VB','GB','LT')
+     &      'PN','PP','PR','SB','TM','VB','GB','LT','SF')
         IF (YRDOY > STGDOY(1) .AND. YRDOY <= STGDOY(5)) THEN
           PlantStres % ACTIVE(1) = .TRUE.
         ENDIF
@@ -645,7 +645,7 @@ C-----------------------------------------------------------------------
         STNAME(16)= 'Harvest   '
 
 !KJB - 5/4/2017 adding stages for sunflower and safflower (maybe CROPGRO wheat later)
-      CASE ('SU','SA')
+      CASE ('SU','SF')
 !     For stage-dependant irrigation - send GSTAGE back to irrig routine
         STNAME(1) = 'Emergence '    !; GSTAGE(1) = "GS001"
         STNAME(2) = 'Unifoliate'

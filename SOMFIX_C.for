@@ -567,15 +567,18 @@
 
 
 !     ------------------------------------------------------------------
+      USE ModuleDefs
       IMPLICIT  NONE
 !     ------------------------------------------------------------------
 !      CHARACTER*6  ROUTIN
       CHARACTER*6, PARAMETER :: ERRKEY = 'SOMFIX'
       CHARACTER*12 EXPECT, NAME
-      CHARACTER*13, PARAMETER :: SOMFILE = 'SOMFX046.SDA'
+      CHARACTER*12 SOMFILE 
       CHARACTER*78  MSG(4)
       INTEGER ERRNUM, LNUM
       INTEGER LEN
+
+      SOMFILE = 'SOMFX' // ModelVerTxt // '.SDA'
 
       IF (ERRNUM /= 0) CALL ERROR(ERRKEY,ERRNUM,SOMFILE,LNUM)
       LNUM = LNUM + 1

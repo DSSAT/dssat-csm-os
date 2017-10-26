@@ -1,0 +1,9 @@
+*CLIMATE : Lumle, Nepal
+
+@ INSI      LAT     LONG  ELEV   TAV   AMP  SRAY  TMXY  TMNY  RAIY
+  LUML   28.300   83.800   300 -99.0 -99.0 -99.0 -99.0 -99.0   -99
+@START  DURN  ANGA  ANGB REFHT WNDHT SOURCE
+     0     1  0.25  0.50 -99.0 -99.0 Calculated_from_daily_data
+@ GSST  GSDU
+     1   365
+

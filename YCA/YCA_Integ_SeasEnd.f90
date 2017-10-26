@@ -43,7 +43,9 @@
         LLWAD = LFWT*(1.0-LPEFR)*10.0*PLTPOP
         LPEWAD = LFWT*LPEFR*10.0*PLTPOP
         RWAD = RTWT*PLTPOP*10.0
-        IF (SEEDRS.LT.0.0) SEEDRS = SDSZ*(SDRS/100.0)*SPRL   !LPM 23MAR2016  to initialize the value of SEEDRS
+        IF (SEEDRS < 0.0) THEN 
+            SEEDRS = SDSZ*(SDRS/100.0)*SPRL   !LPM 23MAR2016  to initialize the value of SEEDRS
+        ENDIF
         SDWT = (SEEDRS+SDCOAT)*10.0*PLTPOP
         TWAD = (SEEDRS+SDCOAT+RTWT+LFWT+STWT+CRWT+SRWT+RSWT)* PLTPOP*10.0
 
@@ -90,7 +92,7 @@
                 
         ! LAH Note that no reserves included in sancout
         ! SANCOUT = SNAD/(STWAD+STRSWAD + LPEWAD+LPERSWAD)  ! With rs
-        IF (STWAD.GT.1.0E-5) SANCOUT = SNAD/STWAD
+        IF (STWAD > ZERO) SANCOUT = SNAD/STWAD
                 
         HWAD = SRWAD
         ! HWUD = SRWUD ! issue 50

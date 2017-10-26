@@ -1,4 +1,4 @@
-*SOILS: General DSSAT Soil Input File
+*SOILS: DSSAT Soil Input File
 
 *DITY000001  complemente S        200  -99
 @SITE        COUNTRY          LAT     LONG SCS FAMILY

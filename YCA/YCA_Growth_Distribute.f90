@@ -35,10 +35,13 @@
         ! Reserves to STORAGE ROOT if conc too great (overflow!)
         SRWTGRS = 0.0
         ! Determine potential new concentration
-        IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ.GT.0.0) TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &  !EQN 310
-        (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))
-        IF(TVR1.LT.0.0.AND.TVR1.GT.-1.0E-07) TVR1 = 0.0
-        IF (TVR1.GT.RSPCO/100.0) THEN   ! If potential>standard 
+        IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ > 0.0) THEN
+            TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS) + (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))  !EQN 310
+        ENDIF
+        IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
+            TVR1 = 0.0
+        END IF
+        IF (TVR1 > RSPCO/100.0) THEN   ! If potential>standard 
             TVR2 = RSWT+GRORS             ! What rswt could be                                                         !EQN 311
             TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-SENLFG-SENLFGRS+STWT+CRWT+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
             SRWTGRS = (TVR2 - TVR3)                                                                                    !EQN 313
@@ -55,7 +58,7 @@
         !           Height growth
         !-----------------------------------------------------------------------
 
-        IF(GROSTP >0.0) THEN
+        IF(GROSTP > 0.0) THEN
             !LPM06JUL2017 It is assumed an branching angle of 60 from the vertical line (cos(60)=0.5) 
             IF(BRSTAGE>=1.0) THEN
                 CANHTG = MAX(0.0,SESR*GROSTADJ*((plant(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP)*0.5)
@@ -81,41 +84,39 @@
             ! Establish water factor for root depth growth
             IF (ISWWAT.NE.'N') THEN
                 LRTIP = CSIDLAYR (NLAYR, DLAYR, RTDEP) ! Root tip layer
-                IF (LRTIP.GT.1) THEN
+                IF (LRTIP > 1) THEN
                     SWPRTIP = SWP(LRTIP)                                                                               !EQN 392a
                 ELSE
                     SWPRTIP = AMIN1(SWP(2),(SWP(2)-((DLAYR(1)-RTDEP)/DLAYR(1))*(SWP(2)-SWP(1))))                       !EQN 392b
                 ENDIF
                 WFRG = 1.0
-                IF (WFRTG.GT.0.0)WFRG = AMAX1(0.0,AMIN1(1.0,(SWPRTIP/WFRTG)))                                          !EQN 393
+                IF (WFRTG > 0.0)WFRG = AMAX1(0.0,AMIN1(1.0,(SWPRTIP/WFRTG)))                                          !EQN 393
             ELSE
                 WFRG = 1.0
             ENDIF
     
             ! Root depth growth
             RTDEPG = 0.0
-            IF (ISWWAT.NE.'N') THEN
-                ! LAH Note reduced effect of SHF, AND no acceleration
-                !LPM 19DEC2016 Now using soil temperature ST with TTGEM instead of TT
-                !RTDEPG = TT*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
-                RTDEPG = TTGEM*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
-            ELSE
-                !RTDEPG = TT*RDGS/STDAY*GERMFR                                                                          !EQN 391b
-                RTDEPG = TTGEM*RDGS/STDAY*GERMFR                                                                          !EQN 391b
+            IF (STDAY*GERMFR > 0) THEN
+                IF (ISWWAT /='N') THEN
+                    RTDEPG = TTGEM*RDGS/STDAY*GERMFR* SQRT(AMAX1(0.3,SHF(LRTIP))) * WFRG                                      !EQN 391a
+                ELSE
+                    RTDEPG = TTGEM*RDGS/STDAY*GERMFR                                                                          !EQN 391b
+                ENDIF
             ENDIF
             L = 0
             CUMDEP = 0.0
             RTDEPTMP = RTDEP+RTDEPG                                                                                    !EQN 402
-            DO WHILE ((CUMDEP.LE.RTDEPTMP) .AND. (L.LT.NLAYR))
+            DO WHILE ((CUMDEP <= RTDEPTMP) .AND. (L < NLAYR))
                 L = L + 1
                 CUMDEP = CUMDEP + DLAYR(L)                                                                             !EQN 401
                 ! LAH Limit on WFRG. 0 WFRG (when 1 layer) -> 0 TRLDF.
-                IF (ISWWAT.NE.'N'.AND.WFRTG.GT.0.0) THEN
+                IF (ISWWAT /='N'.AND. WFRTG > 0.0) THEN
                     WFRG = AMIN1(1.0,AMAX1(0.1,SWP(L)/WFRTG))                                                          !EQN 394
                 ELSE
                     WFRG = 1.0
                 ENDIF
-                IF (ISWNIT.NE.'N'.AND.NCRG.GT.0.0) THEN
+                IF (ISWNIT/='N'.AND.NCRG > 0.0) THEN
                     NFRG = AMIN1(1.0,AMAX1(0.1,(NO3LEFT(L)+NH4LEFT(L))/NCRG))                                          !EQN 168
                 ELSE
                     NFRG = 1.0
@@ -123,33 +124,37 @@
                 ! LAH Tried to use AMAX1 here because layer may have 
                 ! lots H20,no N,or inverse, and therefore need roots
                 ! But with KSAS8101,AMAX1 lowered yield. Return to AMIN1
-                !RLDF(L) = AMAX1(WFRG,NFRG)*SHF(L)*DLAYR(L)
                 RLDF(L) = AMIN1(WFRG,NFRG)*SHF(L)*DLAYR(L)                                                             !EQN 403
             END DO
-            IF (L.GT.0.AND.CUMDEP.GT.RTDEPTMP) RLDF(L) = RLDF(L)*(1.0-((CUMDEP-RTDEPTMP)/DLAYR(L)))
+            IF (L > 0 .AND. CUMDEP > RTDEPTMP .AND. DLAYR(L) > 0.0) THEN
+                RLDF(L) = RLDF(L)*(1.0-((CUMDEP-RTDEPTMP)/DLAYR(L)))
+            ENDIF
             NLAYRROOT = L
             ! Root senescence
             SENRTG = 0.0
-            DO L = 1, NLAYRROOT
-                !RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TT/STDAY                                                             !EQN 395
-                RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TTGEM/STDAY                                                             !EQN 395
-                ! LAH Temperature effect above is not from soil temp
-                !LPM 19DEC2016 The model is considering now the soil temp (TTGEM)
-                IF (RTWT.GT.0.0) RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
-                SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
-                IF (ISWNIT.NE.'N') THEN
-                    RTNSL(L) = RTWTSL(L)*RANC                                                                          !EQN 398
-                ELSE
-                    RTNSL(L) = 0.0
-                ENDIF  
-            ENDDO
+            IF(STDAY /= 0) THEN
+                DO L = 1, NLAYRROOT
+                    RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TTGEM/STDAY                                                             !EQN 395
+                    ! LAH Temperature effect above is not from soil temp
+                    !LPM 19DEC2016 The model is considering now the soil temp (TTGEM)
+                    IF (RTWT > 0.0) THEN
+                        RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
+                    ENDIF
+                    SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
+                    IF (ISWNIT.NE.'N') THEN
+                        RTNSL(L) = RTWTSL(L)*RANC                                                                          !EQN 398
+                    ELSE
+                        RTNSL(L) = 0.0
+                    ENDIF  
+                ENDDO
+            ENDIF
     
             ! Root weight growth by layer
             TRLDF = 0.0
             DO  L = 1, NLAYRROOT
                 TRLDF = TRLDF + RLDF(L)
             END DO
-            IF (TRLDF.GT.0.0) THEN
+            IF (TRLDF > 0.0) THEN
                 DO  L = 1, NLAYRROOT
                     RTWTGL(L) = (RLDF(L)/TRLDF)*(RTWTGADJ)                                                             !EQN 400
                 END DO
