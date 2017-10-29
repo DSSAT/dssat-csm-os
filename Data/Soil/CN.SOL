@@ -1,6 +1,6 @@
-*Soils: CENICAÑA, Colombia soils
+*Soils: Colombia soils
 
-*CNPA030001  CENICAÑA    SIC     147 Cantarina (Pachic Vertic Haplustolls)
+*CNPA030001  CENICANA    SIC     147 Cantarina (Pachic Vertic Haplustolls)
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -18,7 +18,7 @@
    126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
    147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
 
-*CNPA030011  CENICAÑA    SIC     167 Cantarina (Pachic Vertic Haplustolls)
+*CNPA030011  CENICANA    SIC     167 Cantarina (Pachic Vertic Haplustolls)
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -40,7 +40,7 @@
 ! Same as CNPA030001, but with a very-low-periable bottom layer added (SSKS = 0), and low run-off number
 ! to approximate the high water table that characterizes these soils (FSR). 
 
-*CNPA030002  CENICAÑA    SIC     147 Cantarina (compacted Pachic Vertic Haplustolls)
+*CNPA030002  CENICANA    SIC     147 Cantarina (compacted Pachic Vertic Haplustolls)
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -58,7 +58,7 @@
    126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
    147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
 
-*CNPA030021  CENICAÑA    SIC     167 Cantarina (compacted Pachic Vertic Haplustolls)
+*CNPA030021  CENICANA    SIC     167 Cantarina (compacted Pachic Vertic Haplustolls)
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -80,7 +80,7 @@
 ! Same as CNPA030002, but with a very-low-periable bottom layer added (SSKS = 0), and low run-off number
 ! to approximate the high water table that characterizes these soils (FSR). 
 
-*CNPA030003  CENICAÑA    SIC     147 Cantarina (very compacted Pachic Vertic Haplustoll
+*CNPA030003  CENICANA    SIC     147 Cantarina (very compacted Pachic Vertic Haplustoll
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -98,7 +98,7 @@
    126   -99   -99   -99 24.00  0.00   -99   -99   -99   -99   -99  0.50  6.10  0.40   -99   -99   -99 
    147   -99   -99   -99   -99  0.00   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
 
-*CNPA030031  CENICAÑA    SIC     147 Cantarina (very compacted Pachic Vertic Haplustoll
+*CNPA030031  CENICANA    SIC     147 Cantarina (very compacted Pachic Vertic Haplustoll
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  Palmira     Colombia        3.500 -76.350 famila fina, esmectítica y isohipertérmica
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
