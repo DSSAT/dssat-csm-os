@@ -56,7 +56,7 @@
       SUBROUTINE SoilOrg (CONTROL, ISWITCH, 
      &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
-     &    IMM, LITC, MNR, MULCH, SomLit, SomLitC,         !Output
+     &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
      &    SomLitE, SSOMC)                                 !Output
 
 !-----------------------------------------------------------------------
@@ -122,6 +122,9 @@
       INTEGER I, TILDATE
       REAL DEPTH, FR, HOLD
       REAL MIXPCT, RESINC, RESINCN, RESINCP, TDEP, TILRESINC
+
+!     Added for N2O
+      REAL newCO2(0:NL)
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -654,6 +657,13 @@ C         recruit (NREQ-N CONC) g of N
       CALL PUT('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
       CALL PUT('ORGC','TOMINSOM' ,TOMINSOM) !Miner from SOM (kg/ha)
       CALL PUT('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
+
+
+!     newCO2(1) = - DLTHUMC(0) - DLTHUMC(1)
+!     DO L = 2, NLAYR
+      DO L = 0, NLAYR
+        newCO2(L) = - DLTHUMC(L)
+      ENDDO
 
 !***********************************************************************
 !***********************************************************************

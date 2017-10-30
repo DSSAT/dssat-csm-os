@@ -1,4 +1,4 @@
-* PRICE-COST_FILE : C:\DSSAT45\ECONOMIC\UFGA7805.PRI    
+* PRICE-COST_FILE : C:\DSSAT47\ECONOMIC\UFGA7805.PRI    
                                                                                 
 ! if IDIS=-1, cost/price component is ignored in analysis                       
 ! if IDIS= 0, fixed value in PAR1                                               

@@ -177,7 +177,7 @@ C
       SMPX   = '-99  '
       SMKE   = '-99  '
       SGRP   = '-99  '
-
+      
       SLAT   = -99.
       SLONG  = -99.
       SLDP   = -99.

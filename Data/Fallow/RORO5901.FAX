@@ -10,7 +10,10 @@ ROTHAMSTED (UK)
 @ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
     -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 @NOTES
-Experiment started in 1959 by ploughing up a long-term grassland. Ploughed four times per year after that. Residues from weeds: 200 kg[C]/ha per year ==> 500 kg[DM]. Dry and wet N deposition: 40-50 kg[N]/ha per year (here applied as fertilizer)
+Experiment started in 1959 by ploughing up a long-term grassland. Ploughed four times per
+year after that. Residues from weeds: 200 kg[C]/ha per year ==> 500 kg[DM]. Dry and wet N
+deposition: 40-50 kg[N]/ha per year (here applied as fertilizer)
+
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
@@ -23,8 +26,12 @@ Experiment started in 1959 by ploughing up a long-term grassland. Ploughed four 
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
  1 ROTH5901 ROR1         0     0 DR000     0     0 00000 -99    -99  ROTH5901   -99
-@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
- 1               0               0         0                 0     0     0     0   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 59344   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
 
 *INITIAL CONDITIONS
 @C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
@@ -36,6 +43,10 @@ Experiment started in 1959 by ploughing up a long-term grassland. Ploughed four 
  1    50   .37    .5   2.3
  1   100   .37    .5   2.3
  1   150   .37    .5   2.3
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 59001   -99     1     1     S     R    50     0     5   -99   -99   -99   -99   -99                        -99
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
@@ -340,8 +351,8 @@ Experiment started in 1959 by ploughing up a long-term grassland. Ploughed four 
  1 ME              M     M     E     R     S     C     R     1     P     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     N     R     R     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     N     Y     Y     Y     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     N     Y     Y     Y     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN

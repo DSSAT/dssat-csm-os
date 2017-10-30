@@ -88,7 +88,9 @@ C=======================================================================
       INTEGER IFREQ(20)
 	CHARACTER*5 V_IRONC(20)
 	CHARACTER*5 IRONC(20)
-      INTEGER IRRFREQ, DaysSinceIrrig
+      INTEGER DaysSinceIrrig
+!      REAL IRRFREQ       !IRRFREQ as real value at request of IK 9/4/2017
+      INTEGER IRRFREQ     !Change back to integer, converted from real input 9/27/2017
 	REAL AVWATT         ! Water available for irrigation today (mm)
 	INTEGER NGSIrrigs   ! The number of irrigation inputs entered by the user
 	INTEGER IRINC       ! Counter keeping track of irrigation input been used

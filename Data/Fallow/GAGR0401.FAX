@@ -7,10 +7,17 @@ Gerrit Hoogenboom & J.W. White
 Dept. of Biological and Agricultural Engineering, Univ. of Georgia
 @SITE
 Georgia Experiment Station, Griffin
-@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
-    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 @NOTES
-Weather data collected by the Georgia Automated Environmental Monitoring Network(AEMN; www.Georgiaweather.net). The network uses a Campbell ScientificCR10/CR10X as the basic data logger with various sensors attached, includingthe Texas Electronics TE525 for measuring rainfall, the Vaisala HMP54C formeasuring air temperature and relative humidity, the Licor LI1200 for measuringsolar radiation, the Campbell Scientific 107 for measuring soil temperatureand the Campbell Scientific Reflectometer CS615 or CS616 for measuringsoil moisture. Sensors are scanned at a one-second frequency and dataare summarized every 15 minutes. The daily extremes, totals and averagesare calculated at midnight.
+Weather data collected by the Georgia Automated Environmental Monitoring Network
+(AEMN; www.Georgiaweather.net). The network uses a Campbell Scientific CR10/CR10X
+as the basic data logger with various sensors attached, including the Texas
+Electronics TE525 for measuring rainfall, the Vaisala HMP54C formeasuring air
+temperature and relative humidity, the Licor LI1200 for measuringsolar radiation, 
+the Campbell Scientific 107 for measuring soil temperatureand the Campbell Scientific
+Reflectometer CS615 or CS616 for measuringsoil moisture. Sensors are scanned at
+a one-second frequency and dataare summarized every 15 minutes. The daily extremes, 
+totals and averagesare calculated at midnight.
+
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
@@ -52,8 +59,8 @@ Weather data collected by the Georgia Automated Environmental Monitoring Network
  1 ME              M     M     E     R     S     C     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     R     R     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN

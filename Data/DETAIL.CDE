@@ -386,10 +386,10 @@ IR011    Constant flood depth, mm                                             IB
 SA001    Olsen                                                                IB
 SA002    Bray No. 1                                                           IB
 SA003    Bray No. 2                                                           IB
-SA004    Mehlich I (double acid, 1:5)                                         IB
+SA004    Mehlich 1 (double acid, 1:5)                                         IB
 SA005    Anion exchange resin                                                 IB
 SA006    Truog                                                                IB
-SA007    Mehlich I (double acid, 1:10)                                        IB
+SA007    Mehlich 1 (double acid, 1:10)                                        IB
 SA008    Colwell                                                              IB
 SA009    Water                                                                IB
 SA010    IFDC Pi strip                                                        IB

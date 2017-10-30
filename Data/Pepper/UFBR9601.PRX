@@ -16,11 +16,11 @@ University of Florida, Gainesville, Florida, USA
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 0 0 0 kg/ha N Bradenton        1  1  0  1  1  1  0  0  0  0  0  1  2
- 2 1 0 0 180 N kg/ha Bradenton      1  1  0  1  1  1  1  0  0  0  0  1  2
- 3 1 0 0 255 N kg/ha Bradenton      1  1  0  1  1  1  2  0  0  0  0  1  2
- 4 1 0 0 333 N kg/ha Bradenton      1  1  0  1  1  1  3  0  0  0  0  1  2
- 5 1 0 0 No N and H2O Balance       1  1  0  1  1  1  0  0  0  0  0  1  1
+ 1 1 0 0 0 kg/ha N Bradenton        1  1  0  1  1  0  0  0  0  0  0  1  2
+ 2 1 0 0 180 N kg/ha Bradenton      1  1  0  1  1  0  1  0  0  0  0  1  2
+ 3 1 0 0 255 N kg/ha Bradenton      1  1  0  1  1  0  2  0  0  0  0  1  2
+ 4 1 0 0 333 N kg/ha Bradenton      1  1  0  1  1  0  3  0  0  0  0  1  2
+ 5 1 0 0 No N and H2O Balance       1  1  0  1  1  0  0  0  0  0  0  1  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -53,10 +53,6 @@ University of Florida, Gainesville, Florida, USA
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
  1 96249   -99   4.3   4.3     T     R    75    90     1  12.9    16    20     1   -99                        -99
-
-*IRRIGATION AND WATER MANAGEMENT
-@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
- 1   .95     5   -99   -99   -99   -99   -99 -99
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
