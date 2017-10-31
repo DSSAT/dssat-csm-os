@@ -166,7 +166,6 @@
 
       FILEIO = CONTROL % FILEIO
       
-
 !     -----------------------------------------------------------------
 !     Read input file name (ie. DSSAT45.INP) and path
       CALL GETLUN('FILEIO', LUNIO)
@@ -191,8 +190,8 @@
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
-        READ (LUNIO,70) PLANTING % PLTPOP, PLANTING % SDEPTH, PLANTING % SDWTPL, PLANTING % NFORCING, & 
-                        PLANTING % PLANTSIZE, PLANTING % NDOF, PLANTING % PMTYPE
+        READ (LUNIO,70) PLANTING % PLTPOP, PLANTING % SDEPTH, PLANTING % SDWTPL !, PLANTING % NFORCING, & 
+!                        PLANTING % PLANTSIZE, PLANTING % NDOF, PLANTING % PMTYPE
    70   FORMAT (24X,F6.0,24X,2F6.0,24X,I6,F6.0,2I6)
       ENDIF
 
@@ -203,8 +202,14 @@
 !    yrplt   iemrg      pltpop  plme  plds       azir sdepth      sdage  atemp  plph    nforcing        ndof  
 !                 plants                  rowspc           sdwtpl                   sprlap   plantsize       pmtype 
 
+!     May want to remove PMTYPE and PLANTSIZE 
+      PLANTING % PMTYPE = 0
+      PLANTING % NFORCING = 0
+      PLANTING % PLANTSIZE = 0.0
+      PLANTING % PMTYPE = 0
+
 !     -----------------------------------------------------------------
-!     Read Planting Details Section
+!     Read Chemical applications section to get forcing date
       SECTION = '*CHEMI'
       CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
       PLANTING % NFORCING = 0
