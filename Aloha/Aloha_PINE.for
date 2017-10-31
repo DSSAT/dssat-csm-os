@@ -111,7 +111,7 @@ C     Call PHENOLOGY initialization routine
 C-----------------------------------------------------------------------
 
       CALL Aloha_PHENOL (CONTROL, ISWITCH,
-     &    SW, WEATHER, SOILPROP,                              !Input
+     &    SW, WEATHER, SOILPROP, YRPLT,                       !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
      &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
 
@@ -209,7 +209,7 @@ C-----------------------------------------------------------------------
 
         IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
           CALL Aloha_PHENOL (CONTROL, ISWITCH, 
-     &    SW, WEATHER, SOILPROP,                              !Input
+     &    SW, WEATHER, SOILPROP, YRPLT,                       !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
      &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
         ENDIF
