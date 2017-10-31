@@ -96,14 +96,15 @@ C             CHP Added TRTNUM to CONTROL variable.
       TYPE VersionType
         INTEGER :: Major = 4
         INTEGER :: Minor = 7
-        INTEGER :: Model = 0
-        INTEGER :: Build = 4
+        INTEGER :: Model = 1
+        INTEGER :: Build = 0
       END TYPE VersionType
       TYPE (VersionType) Version
 !     CHARACTER(len=10) :: VBranch = '-develop  '
       CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.7.1.0  chp 10/27/2017 Modifications to data, tweaks to output
 !       4.7.0.4  chp 10/18/2017 Updates to Aloha, N2O, YCA, potato
 !       4.7.0.3  chp 10/10/2017 N2O emissions model added
 !       4.7.0.2  chp 09/27/2017 Merge v4.7 branch into develop

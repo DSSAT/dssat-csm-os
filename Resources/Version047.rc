@@ -25,8 +25,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,7,0,4
- PRODUCTVERSION 4,7,0,4
+ FILEVERSION 4,7,1,0
+ PRODUCTVERSION 4,7,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -43,12 +43,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "DSSAT Foundation"
             VALUE "FileDescription", "DSSAT Cropping System Model"
-            VALUE "FileVersion", "4.7.0.4"
+            VALUE "FileVersion", "4.7.1.0"
             VALUE "InternalName", "DSCSM047"
             VALUE "LegalCopyright", "Copyright © 2017"
             VALUE "OriginalFilename", "DSCSM047.exe"
             VALUE "ProductName", "DSSAT CSM"
-            VALUE "ProductVersion", "4.7.0.4"
+            VALUE "ProductVersion", "4.7.1.0"
         END
     END
     BLOCK "VarFileInfo"
