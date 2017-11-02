@@ -1464,7 +1464,7 @@
     90   -99 0.250 0.380 0.460 0.050   -99  1.22  0.36   -99   -99   -99   -99   6.0   -99   -99   -99 
    110   -99 0.260 0.400 0.480 0.020   -99  1.17  0.27   -99   -99   -99   -99   6.0   -99   -99   -99 
 
-*IBAR910030  SCS         -99     137 87p294
+*IBAR910030  SCS         -99     137 Clay
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  -99         -99               -99    -99  CLAYEY, KAOLINITIC, ISOHYPERTHERMIC TROPEPTIC HAPL
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE

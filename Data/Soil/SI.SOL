@@ -1,6 +1,6 @@
-*SOILS
+*SOILS: Spain soils
 
-*SIAZ950001  SCS         L        80 Shallow, using Exp. FC and WP
+*SIAZ950001  SCS         L        80 Shallow loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  ZA          SPAIN          41.480   0.530 UNKNOWN- Corrected LL, DUL, shallow
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -10,7 +10,7 @@
     60   -99 0.091 0.275 0.333 0.300   -99  1.38  0.49  11.3  26.4   0.0  0.05   8.3   -99   -99   -99   
     80   -99 0.080 0.271 0.342 0.150   -99  1.38  0.43  12.4  30.6   0.0  0.05   8.4   -99   -99   -99   
 
-*SIAZ950002  SCS         L       150 150 cm, DSSAT estimates of FC,WP
+*SIAZ950002  SCS         L       150 Loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  ZA          SPAIN          41.480   0.530 UNKNOWN
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
