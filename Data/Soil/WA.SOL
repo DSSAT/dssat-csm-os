@@ -13,9 +13,9 @@
     30   -99   .05   .15    .3   .64    21  1.55    .5   -99   -99   -99   -99     8   -99   -99   -99
     60   -99   .05   .15    .3   .41    21  1.55    .5   -99   -99   -99   -99   8.3   -99   -99   -99
 
-*WABE000001  Calculated  S       -99 -99
+*WABE000001  Calculated  S       -99 Sand
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
- -99         -99               -99     -99 -99
+ -99         USA               -99     -99 -99
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
    -99  0.13  5.6   0.6   64    1.00  1.00   -99   -99   -99
 @  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
