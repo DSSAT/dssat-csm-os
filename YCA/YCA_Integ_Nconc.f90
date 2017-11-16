@@ -35,8 +35,8 @@
             IF((LLIFATT+LLIFSTT) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                  DO LF = 1, LNUMSIMSTG(BR)
-                    plant(BR,LF)%SNCX = SNCXS(0) + (plant(BR,LF)%LAGETT*(SNCXS(1)-SNCXS(0))/(LLIFATT+LLIFSTT))
-                    plant(BR,LF)%SNCM = SNCMN(0) + (plant(BR,LF)%LAGETT*(SNCMN(1)-SNCMN(0))/(LLIFATT+LLIFSTT))
+                    plant(BR,LF)%SNCX = SNCXS(0) + (plant(BR,LF)%LAGETT*(SNCXS(1)-SNCXS(0)) / (LLIFATT+LLIFSTT) )
+                    plant(BR,LF)%SNCM = SNCMN(0) + (plant(BR,LF)%LAGETT*(SNCMN(1)-SNCMN(0)) / (LLIFATT+LLIFSTT) )
                  ENDDO
                 ENDDO
             ENDIF

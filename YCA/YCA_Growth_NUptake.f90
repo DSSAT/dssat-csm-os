@@ -362,20 +362,13 @@
                 !NFLF2(0) = 1.0                                                                                           !LPM 21MAR15
                 !DO L = MAX(1,LNUMSG-1-INT((LLIFG/PHINTS))),LNUMSG+1                                                      !LPM 21MAR15 Change to include cohorts BR,L
                 plant(0,0)%NFLF2 = 1.0
-                !DO BR = 0, BRSTAGE              !LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))                                                                          !LPM 21MAR15
-                !    DO LF = 1, LNUMSIMSTG(BR)                                                                              !LPM 21MAR15
-                !        IF (LNUMSIMSTG(BR).LT.LCNUMX) THEN
-                !            LATL4(BR,LF)= LATL3(BR,LF) * NFLF2(0,0)            
-                !            NFLF2(BR,LF) = AMIN1(1.0,NFLF2(BR,LF) + AMAX1(0.0,NFLF2(0,0)) * (LATLPOT(BR,LF)-LATLPREV(BR,LF))/LAPOTX(BR,LF))
-                !        ENDIF
-                !    ENDDO
-                !ENDDO
+
                 
             ENDIF
     
         ELSE     ! ISWNIT = N   
     
-            !LATL4 = LATL3 !LPM 02SEP2016 Factor for each leaf defined below (min(WFG,AFLF,NFLF2))
+            
             plant(0,0)%NFLF2 = 1.0
             plant(BR,LF)%NFLF2 = 1.0            
     

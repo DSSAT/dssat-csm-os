@@ -34,22 +34,7 @@
         ENDIF
 
         ! Emergence
-        ! LPM 21MAR2016 To separate germination and emergence
-        
-        !IF (GEUCUM.LT.PEGD+PECM*SDEPTHU.AND.GEUCUM+TTGEM*WFGE.LE.PEGD+PECM*SDEPTHU) THEN
-        !    EMRGFR = 0.0                                                                                               !EQN 047a
-        !ELSEIF (GEUCUM.LE.PEGD+PECM*SDEPTHU.AND.GEUCUM+TTGEM*WFGE.GT.PEGD+PECM*SDEPTHU) THEN
-        !    EMRGFR = 1.0 - (PEGD+PECM*SDEPTHU-GEUCUM)/(TTGEM*WFGE)                                                     !EQN 047b
-        !IF (EMFLAG.NE.'Y') THEN
-        !    WRITE(FNUMWRK,*)' ' 
-        !    WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
-        !    EMFLAG = 'Y'
-        !ENDIF
-        !LNUMSG = 1     ! LAH NEW
-        !ELSEIF (GEUCUM.GT.PEGD+PECM*SDEPTHU) THEN
-        !    EMRGFR = 1.0                                                                                               !EQN 047c
-        !ENDIF
-        
+       
         ! LPM 21MAR2016 Added reserves in the planting stake
         !LPM 02SEP2016 Deleted SDEPTHU.GT.0.0 as conditional:Reserves could be used even if the bud is above ground
         IF (GERMFR.GT.0.0.AND.EMRGFR.LT.1.0) THEN

@@ -400,10 +400,10 @@ Module YCA_First_Trans_m
     INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
     REAL    :: LFWT                    ! Leaf weight                    g/p        ! (From SeasInit)  
     REAL    :: LFWTM                   ! Leaf weight,maturity           g/p        ! (From SeasInit)  
-    REAL    :: LLIFA                   ! Leaf life duration,active,read #          ! (From SeasInit)  
-    REAL    :: LLIFATT                 ! Leaf life duration,active      C.d        ! (From SeasInit)  
-    REAL    :: LLIFG                   ! Leaf growth duration,as read   #          ! (From SeasInit)  
-    REAL    :: LLIFGTT                 ! Leaf growth duration           C.d        ! (From SeasInit)  
+    REAL    :: LLIFA                   ! Leaf active duration,read      #          ! (From SeasInit)  
+    REAL    :: LLIFATT                 ! Leaf active duration           C.d        ! (From SeasInit)  
+    REAL    :: LLIFG                   ! Leaf expansion duration,read   #          ! (From SeasInit)  
+    REAL    :: LLIFGTT                 ! Leaf expansion duration        C.d        ! (From SeasInit)  
     REAL    :: LLIFS                   ! Leaf senescence dur,as read    d          ! (From SeasInit)  
     REAL    :: LLIFSTT                 ! Leaf senescence duration,Ttime C.d        ! (From SeasInit)  
     REAL    :: LLIFX                   ! Leaf ageing acceleration,max   Tu         ! (From SeasInit)  
@@ -925,8 +925,8 @@ Module YCA_First_Trans_m
     REAL    :: TFDNEXT                 ! Temperature factor,development #          ! (From Growth)    
     REAL    :: TFG                     ! Temperature factor,growth 0-1  #          ! (From SeasInit)  
     REAL    :: TFGEM                   ! Temperature factor,germ,emrg   #          ! (From Growth)    
-    !REAL    :: TFLAW                   ! Temperature factor,lf area/wt  #          ! (From Growth)  !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA   
-    REAL    :: TFLFGROWTH              ! Temperature factor,leaf growth #          ! (From Growth) !LPM 14SEP2017 New cardinal temperatures for leaf growth
+    !REAL    :: TFLAW                   ! Temperature factor,lf area/wt #          ! (From Growth)  !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA   
+    REAL    :: TFLFGROWTH              ! Temperature factor,leaf expansion #       ! (From Growth)  !LPM 14SEP2017 New cardinal temperatures for leaf expansion
     REAL    :: TFLFLIFE                ! Temperature factor,leaf life   #          ! (From Growth)
     REAL    :: TFLFSIZE                ! Temperature factor,leaf size   #          ! LPM 12JUL2015 Added to consider a different optimum temperature for leaf size
     REAL    :: TFP                     ! Temperature factor,phs 0-1     #          ! (From SeasInit)  

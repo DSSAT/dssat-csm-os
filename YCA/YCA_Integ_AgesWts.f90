@@ -36,27 +36,15 @@
                     plant(BR,LF)%LAGETT = plant(BR,LF)%LAGETT + TTLFLife*EMRGFR                                              !EQN 358
                     ! Accelerated senescence at base of dense leaf canopy
                     IF (plant(BR,LF)%LAIByCohort > LAIXX) THEN
-                        !IF (LF==TVI1 .AND. BR==BROldestA) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf
                             IF (plant(BR,LF)%LAGETT < LLIFGTT+LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
-                                ! LLIFXUnused = (LAGETT(BR,LF)+LLIFX)-LLIFATT                                                    !EQN 360a LPM 28MAR15 LLIFXUNUSED should be before of the estimation of LAGETT 
                                 plant(BR,LF)%LAGETT = LLIFGTT+LLIFATT                                             !EQN 359
-                            !ELSE
-                            !    LLIFXUnused = LLIFX                                                                            !EQN 360b
                             ENDIF
-                        !ENDIF
-                        ! If not all acceleration used up
-                        !IF (LF == TVI1+1) THEN
-                        !    IF (LLIFXUnused > 0.0) THEN
-                        !        IF (LAGETT(BR,LF).LT.LLIFATT) LAGETT(BR,LF) = AMIN1(LAGETT(BR,LF)+LLIFXUnused,LLIFATT)     !EQN 361
-                        !    ENDIF
-                        !ENDIF
+
                     ENDIF
-                !LAGEP(BR,LF) = LAGEP(BR,LF) + (TTLFLIFE*EMRGFR)/PHINT                                                              !EQN 362 !LPM21MAY2015 this variable is not used
-                
-                ! Days active
+                 ! Days active
                     IF (plant(BR,LF)%LAGETT > LLIFGTT .AND. plant(BR,LF)%LAGETT <= LLIFGTT+LLIFATT ) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
                         IF (LNUMSOLDESTA < 0) THEN
                             LNUMSOLDESTA = LF

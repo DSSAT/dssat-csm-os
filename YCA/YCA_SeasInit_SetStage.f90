@@ -333,8 +333,6 @@
         !-----------------------------------------------------------------------
         
         ! Initial leaf growth aspects
-        !LAPOTX(1) = LA1S !LPM 07MAR15 LA1S will not be used and it is assumed as 0.1*LAXS
-        !plant(0,1)%LAPOTX = LAXS*0.1
         
         ! If max LAI not read-in,calculate from max interception
         IF (LAIXX.LE.0.0) LAIXX = LOG(1.0-PARIX)/(-KCAN)                                                               ! EQN 008
@@ -342,22 +340,11 @@
         !PHINT = PHINTS  !LPM 21MAY2015 this variable is not used
         
         ! Leaf life
-        !IF (CFLLFLIFE.EQ.'P')THEN   !LPM 21MAY2015 this variable (PHINT) is not used
-        !    ! Read-in as phyllochrons 
-        !    LLIFGTT = LLIFG * PHINT                                                                                    !EQN 349
-        !    LLIFATT = LLIFA * PHINT                                                                                    !EQN 350 
-        !    LLIFSTT = LLIFS * PHINT                                                                                    !EQN 351 
-        !ELSEIF (CFLLFLIFE.EQ.'T')THEN
-        IF (CFLLFLIFE.EQ.'T')THEN
+        IF (CFLLFLIFE=='T')THEN
             ! Read-in as thermal time 
             LLIFGTT = LLIFG                                                                                            !EQN 352
             LLIFATT = LLIFA                                                                                            !EQN 353 
             LLIFSTT = LLIFS                                                                                            !EQN 354
-        !ELSEIF (CFLLFLIFE.EQ.'D')THEN
-        !    ! Read-in as days. Thermal time for each day set to PHINT
-        !    LLIFGTT = LLIFG * PHINT                                                                                    !EQN 355 
-        !    LLIFATT = LLIFA * PHINT                                                                                    !EQN 356 
-        !    LLIFSTT = LLIFS * PHINT                                                                                    !EQN 357 
         ENDIF  
         
         ! Extinction coeff for SRAD

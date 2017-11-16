@@ -37,7 +37,7 @@
                 IF (plant(BR,LF)%SANC < plant(BR,LF)%SNCX) THEN 
                     plant(BR,LF)%STEMNEXCESSN = (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*(plant(BR,LF)%SANC-plant(BR,LF)%SNCX)
                     STEMNEXCESS = STEMNEXCESS + plant(BR,LF)%STEMNEXCESSN
-                    plant(BR,LF)%STEMNN = plant(BR,LF)%STEMNN + SNUSEN(0,BR,LF)-plant(BR,LF)%SNPHN- plant(BR,LF)%STEMNEXCESSN  
+                    plant(BR,LF)%STEMNN = plant(BR,LF)%STEMNN + SNUSEN(0,BR,LF) - plant(BR,LF)%SNPHN - plant(BR,LF)%STEMNEXCESSN  
                     STEMN = STEMN + plant(BR,LF)%STEMNN
                 ENDIF 
             ENDDO
