@@ -923,12 +923,12 @@ C-----------------------------------------------------------------------
           GROSTM = 0.0                   ! Daily stem growth (g/plant/day).
 
         CASE (3)
-          IF (NFORCING .GE. 2) THEN
+!          IF (NFORCING .GE. 2) THEN
              ! Forcing by number of days after planting
              PLANTSIZE = TOTPLTWT
-          ELSE    
-             PLANTSIZE = PLANTING % PLANTSIZE
-          ENDIF
+!          ELSE    
+!             PLANTSIZE = PLANTING % PLANTSIZE
+!          ENDIF
           FBIOM  = BIOMAS               ! Record biomass at forcing
           SUMP   = 0.0                  ! SUMP is the total weight of biomass cumulated in Istage 4.
           IDURP  = 0                    ! Duration of stage 3 (days)

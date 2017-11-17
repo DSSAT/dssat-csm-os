@@ -31,7 +31,7 @@
 
       TYPE AlohaSow_type
         REAL PLTPOP, SDEPTH, SDWTPL, PLANTSIZE
-        INTEGER NFORCING, NDOF, PMTYPE
+        INTEGER NFORCING, NDOF, PMTYPE, ForcingYRDOY
       End Type AlohaSow_type
 
       Type (AlohaCul_type) Cultivar
@@ -158,14 +158,14 @@
       SAVE
 
       CHARACTER*6, PARAMETER :: ERRKEY = 'IPPLNT'
+      CHARACTER*5 ChemType
       CHARACTER*6 SECTION
       CHARACTER*12 FILEIO
-      INTEGER LUNIO, ERR, LNUM, LINC, FOUND
+      INTEGER LUNIO, ERR, LNUM, LINC, FOUND, ChemYRDOY
       TYPE (ControlType) CONTROL
 
       FILEIO = CONTROL % FILEIO
       
-
 !     -----------------------------------------------------------------
 !     Read input file name (ie. DSSAT45.INP) and path
       CALL GETLUN('FILEIO', LUNIO)
@@ -190,8 +190,8 @@
       IF (FOUND .EQ. 0) THEN
         CALL ERROR(SECTION, 42, FILEIO, LNUM)
       ELSE
-        READ (LUNIO,70) PLANTING % PLTPOP, PLANTING % SDEPTH, PLANTING % SDWTPL, PLANTING % NFORCING, & 
-                        PLANTING % PLANTSIZE, PLANTING % NDOF, PLANTING % PMTYPE
+        READ (LUNIO,70) PLANTING % PLTPOP, PLANTING % SDEPTH, PLANTING % SDWTPL !, PLANTING % NFORCING, & 
+!                        PLANTING % PLANTSIZE, PLANTING % NDOF, PLANTING % PMTYPE
    70   FORMAT (24X,F6.0,24X,2F6.0,24X,I6,F6.0,2I6)
       ENDIF
 
@@ -202,6 +202,32 @@
 !    yrplt   iemrg      pltpop  plme  plds       azir sdepth      sdage  atemp  plph    nforcing        ndof  
 !                 plants                  rowspc           sdwtpl                   sprlap   plantsize       pmtype 
 
+!     May want to remove PMTYPE and PLANTSIZE 
+      PLANTING % PMTYPE = 0
+      PLANTING % NFORCING = 0
+      PLANTING % PLANTSIZE = 0.0
+      PLANTING % PMTYPE = 0
+
+!     -----------------------------------------------------------------
+!     Read Chemical applications section to get forcing date
+      SECTION = '*CHEMI'
+      CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
+      PLANTING % NFORCING = 0
+      IF (FOUND .NE. 0) THEN
+        DO WHILE (.TRUE.)
+          READ (LUNIO,'(3X,I7,1X,A5)', IOSTAT=ERR) ChemYRDOY, ChemType
+          IF (ERR .NE. 0) EXIT
+          IF (ChemType == 'CH101' .OR. ChemTYPE == 'CH102') THEN
+            PLANTING % NFORCING = 2 
+            PLANTING % ForcingYRDOY = ChemYRDOY
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF
+
+!*CHEMICALS          
+!   1990350 CH102  1.00 AP006 -99.0   -99  -99     
+                                
 !     -----------------------------------------------------------------
  !     Read crop cultivar coefficients
        SECTION = '*CULTI'

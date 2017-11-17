@@ -3,7 +3,7 @@
 !This soil data is used for the experiment of CPLI1305_1.
 !
 
-*CPLI000021  UNALM/WISE  L        120  -99
+*CPLI000021  UNALM/WISE  L        120  Loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  La Molina.J Peru adju.     14.828  43.309 Eutric Fluvisol (FLe)
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -16,7 +16,7 @@
 !This soil data is used for the experiment of CPLI1202_1.
 !
 
-*CPLI000020  UNALM/WISE    CL     150  -99
+*CPLI000020  UNALM/WISE    CL     150  Clay loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  La Molina   Peru adju.     14.828  43.309 Eutric Fluvisol (FLe)
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -30,7 +30,7 @@
 !This soil data is used for the experiment of CPHY1206_1.
 !
 
-*CPHY000024  UNALM       CL        90  -99
+*CPHY000024  UNALM       CL        90  Clay loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  Huancayo    Peru              -99     -99 -99
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -43,7 +43,7 @@
 !This soil data is used for the experiment of CPSR1307_1.
 !
 
-*CPSR000022  UNALM       SL        90  -99
+*CPSR000022  UNALM       SL        90  Silty loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  -99         -99               -99     -99 -99
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE

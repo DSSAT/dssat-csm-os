@@ -2,11 +2,11 @@
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 0 0 Plant Population 2.61 p/m  1  1  0  1  1  1  0  0  0  0  0  0  1
- 2 1 0 0 Plant Population 5.22 p/m  1  1  0  2  2  1  1  0  0  0  0  0  1
- 3 1 0 0 Plant Population 7.83 p/m  1  1  0  3  3  1  2  0  0  0  0  0  1
- 4 1 0 0 Plant Population 10.1 p/m  1  1  0  4  4  1  0  0  0  0  0  0  1
- 5 1 0 0 Plant Population 12.8 p/m  1  1  0  5  5  1  1  0  0  0  0  0  1
+ 1 1 0 0 Plant Population 2.61 p/m  1  1  0  1  1  1  0  0  1  0  0  0  1
+ 2 1 0 0 Plant Population 5.22 p/m  1  1  0  2  2  1  1  0  1  0  0  0  1
+ 3 1 0 0 Plant Population 7.83 p/m  1  1  0  3  3  1  2  0  1  0  0  0  1
+ 4 1 0 0 Plant Population 10.1 p/m  1  1  0  4  4  1  0  0  1  0  0  0  1
+ 5 1 0 0 Plant Population 12.8 p/m  1  1  0  5  5  1  1  0  1  0  0  0  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -71,12 +71,19 @@
  5   110   .32    .1    .1
 
 *PLANTING DETAILS
-@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL  NFOR  PLSZ  NDOF  PMTY PLNAME
- 1 89227   -99   2.6   2.6     S     R    53     0   5.0   520 -99.0 -99.0 -99.0   0.0     2 378.3   398     0 -99
- 2 89227   -99   5.2   5.2     S     R    53     0   5.0  1040 -99.0 -99.0 -99.0   0.0     2 316.5   398     0 -99
- 3 89227   -99   7.8   7.8     S     R    53     0   5.0  1560 -99.0 -99.0 -99.0   0.0     2 257.4   398     0 -99
- 4 89227   -99  10.1  10.1     S     R    53     0   5.0  2020 -99.0 -99.0 -99.0   0.0     2 213.7   398     0 -99
- 5 89227   -99  12.8  12.8     S     R    53     0   5.0  2560 -99.0 -99.0 -99.0   0.0     2 153.4   398     0 -99
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL
+ 1 89227   -99   2.6   2.6     S     R    53     0   5.0   520 -99.0 -99.0 -99.0   0.0
+ 2 89227   -99   5.2   5.2     S     R    53     0   5.0  1040 -99.0 -99.0 -99.0   0.0
+ 3 89227   -99   7.8   7.8     S     R    53     0   5.0  1560 -99.0 -99.0 -99.0   0.0
+ 4 89227   -99  10.1  10.1     S     R    53     0   5.0  2020 -99.0 -99.0 -99.0   0.0
+ 5 89227   -99  12.8  12.8     S     R    53     0   5.0  2560 -99.0 -99.0 -99.0   0.0
+!Forcing date was previously in planting section  - now moved to chemical application
+!P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL  NFOR  PLSZ  NDOF  PMTY PLNAME
+!1 89227   -99   2.6   2.6     S     R    53     0   5.0   520 -99.0 -99.0 -99.0   0.0     2 378.3   398     0 -99
+!2 89227   -99   5.2   5.2     S     R    53     0   5.0  1040 -99.0 -99.0 -99.0   0.0     2 316.5   398     0 -99
+!3 89227   -99   7.8   7.8     S     R    53     0   5.0  1560 -99.0 -99.0 -99.0   0.0     2 257.4   398     0 -99
+!4 89227   -99  10.1  10.1     S     R    53     0   5.0  2020 -99.0 -99.0 -99.0   0.0     2 213.7   398     0 -99
+!5 89227   -99  12.8  12.8     S     R    53     0   5.0  2560 -99.0 -99.0 -99.0   0.0     2 153.4   398     0 -99
 
 *IRRIGATION AND WATER MANAGEMENT
 @I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
@@ -116,11 +123,15 @@
  2 90006 FE005   -99     5    67   -99   -99   -99   -99   -99 -99
  2 90041 FE005   -99     5    67   -99   -99   -99   -99   -99 -99
 
+*CHEMICAL APPLICATIONS
+@C CDATE CHCOD CHAMT  CHME CHDEP   CHT..CHNAME
+ 1 90260 CH102     1 AP006   -99   -99  -99
+
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
  1 GE              1     1     S 89160  2150 POPULATION, KUNIA, UH EX
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 1 OP              Y     Y     N     N     N     N     N     N
+ 1 OP              Y     Y     N     N     N     N     Y     N
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
  1 ME              M     M     E     R     S     C     R     1     G     R     1
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS

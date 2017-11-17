@@ -224,7 +224,7 @@ C  KJB, ADDED AL TO THIS, SO N-FIXATION WORKS FOR ALFALFA
          IF (ISWWAT .EQ. 'N') THEN
             ISWNIT = 'N'
             ISWPHO = 'N'
-            ISWCHE = 'N'
+!            ISWCHE = 'N'
          ENDIF
 
          IF (INDEX('FNQS',RNMODE) > 0) THEN
