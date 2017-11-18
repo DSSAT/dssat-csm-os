@@ -1,4 +1,4 @@
-*EXP.DETAILS: NDCR1400BS NDCR 2014 SB
+*EXP.DETAILS: NDCR1601BS NDCR 2014 SB
 
 *GENERAL
 @PEOPLE
@@ -12,7 +12,7 @@ CREC
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 1 0 NDCR 2014 SB               1  1  0  0  1  0  0  0  0  0  0  0  1
+ 1 1 1 0 NDCR 2016 SB               1  1  0  1  1  0  0  0  0  0  0  0  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -20,7 +20,7 @@ CREC
 
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
- 1 crec0001 CRTN       -99   -99   -99   -99   -99 00000 -99    -99  CREC002014 -99
+ 1 crec0001 CRND       -99   -99   -99   -99   -99 00000 -99    -99  CREC002014 -99
 @L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
  1             -99             -99       -99               -99   -99   -99   -99   -99   -99
 
@@ -32,29 +32,26 @@ CREC
 
 *INITIAL CONDITIONS
 @C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
- 1    BS 14147   200   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+ 1    BS 16122   200   -99     1     1   -99   -99   -99   -99   -99   -99 -99
 @C  ICBL  SH2O  SNH4  SNO3
- 1     5  .145    .1    .6
- 1    10  .145    .1    .6
- 1    20  .141    .1    .6
- 1    38  .165    .1    .6
- 1    58  .304    .1    .6
- 1    79  .304    .1    .6
- 1    95  .305    .1    .6
- 1   112  .305    .1    .6
- 1   129  .292    .1    .6
- 1   147  .292    .1    .6
- 1   173  .318    .1    .6
- 1   201  .335    .1    .6
- 1   229  .335    .1    .6
+ 1    15  .112     0    .5
+ 1    30  .112     0    .5
+ 1    45  .156     0    .5
+ 1    60  .167     0    .5
+ 1    90  .141     0    .4
+ 1   115  .131     0    .4
+ 1   130  .131     0    .4
+ 1   150  .108     0    .4
+ 1   160  .108     0    .4
+ 1   180  .108     0    .4
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 14147   -99     8   7.4     S     R    50   -99     3   -99   -99   -99   -99   -99                        -99
+ 1 16133   -99   7.4   -99     S     R    50   -99     3   -99   -99   -99   -99   -99                        -99
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
- 1 14147   -99 AP003   -99   100    20   -99   -99    10     0 -99
+ 1 16132   -99 AP003   -99   112    22   -99   -99    11     0 -99
 
 *ENVIRONMENT MODIFICATIONS
 @E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
@@ -66,7 +63,7 @@ CREC
 
 *SIMULATION CONTROLS
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
- 1 GE              1     1     S 14147  2150 DEFAULT SIMULATION CONTR
+ 1 GE              1     1     S 16132  2150 DEFAULT SIMULATION CONTR
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              Y     Y     N     N     N     N     N     N     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
