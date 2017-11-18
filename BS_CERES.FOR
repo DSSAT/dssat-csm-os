@@ -1,5 +1,3 @@
-
-
 !=======================================================================
 !  COPYRIGHT 1998-2010 Iowa State University, Ames, Iowa
 !                      University of Florida, Gainesville, Florida
@@ -17,15 +15,11 @@
 !----------------------------------------------------------------------
 !  Revision history
 !
-!  03/25/2015 Written                        
+!  03/25/2015 Written   
+!  WDB July 2016 for UNH4 and UNO3 as arguments
 !----------------------------------------------------------------------
 !  Called : Alt_Plant
 !----------------------------------------------------------------------
-
-! Revisions
-! WDB Dec. 2015. Corrected many errors throughout the code to reflect sugarbeet
-!                rather than maize growth.
-!WDB July 2016. 
 
 
       SUBROUTINE BS_CERES (CONTROL, ISWITCH,              !Input
@@ -34,9 +28,7 @@
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, MDATE,              !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
-     &     STGDOY, FracRts, UNH4,UNO3,XLAI, XHLAI)                  !Output
-
- 
+     &     STGDOY, FracRts, XLAI, XHLAI)       !Output
 
       USE ModuleDefs
 
@@ -191,12 +183,6 @@ C      REAL            PRLF
       INTEGER         YRSIM    
 	REAL            Z2STAGE
 
-! WDB 7/2016 Added new sugar beet cultivar coefficients    
-      REAL PHYL1 !Phylochron interval for first 20 leaves
-      REAL PHYL2 !Phylochron interval for leaves later than 20
-      REAL FRSUG  !Target fraction of sugar in storage organ (to be used later)
-      REAL DRCER  !Relative resistance to cercospora (to be used later)
-
 !     Added by W.D.B. for pest damage at CIMMYT 4/14/2001
 
       REAL    AREALF,CLW,CSW,LAGSD,LNGPEG
@@ -227,7 +213,7 @@ C      REAL            PRLF
       Type (ResidueType) SENESCE
       TYPE (WeatherType) WEATHER
 
-      PARAMETER       (ERRKEY='MAIZE') 
+      PARAMETER       (ERRKEY='SUGARBEET') 
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -337,8 +323,6 @@ C----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,                                 !I/O
-!WDB 7/2016 Added new cultivar coefficients
-     &      PHYL1,PHYL2,FRSUG,DRCER,
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -437,8 +421,6 @@ C-----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,                                 !I/O
-!WDB 7/2016 Added new cultivar coefficients
-     &      PHYL1,PHYL2,FRSUG,DRCER,          
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -551,8 +533,6 @@ C----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,                                 !I/O
-!WDB 7/2016 Added new cultivar coefficients
-     &      PHYL1,PHYL2,FRSUG,DRCER,          
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -605,8 +585,6 @@ C----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,                                 !I/O
-!WDB 7/2016 Added new cultivar coefficients
-     &      PHYL1,PHYL2,FRSUG,DRCER,          
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -671,8 +649,6 @@ C----------------------------------------------------------------------
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,                                 !I/O
-!WDB 7/2016 Added new cultivar coefficients
-     &      PHYL1,PHYL2,FRSUG,DRCER,          
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -706,7 +682,6 @@ C----------------------------------------------------------------------
      &    TOPWT, TURFAC,WTNCAN, WTNUP, XGNP, XLAI, XN,    !Input
      &    YIELD, YREMRG, YRPLT,                           !Input
      &    BWAH, SDWTAH)                                   !Output
-                
 
         CALL HRes_Ceres(CONTROL,
      &    CROP, DLAYR, GRNWT, HARVFRAC, NLAYR,            !Input
@@ -770,7 +745,7 @@ C----------------------------------------------------------------------
 ! FILEC       !Path and name of species file (ie. *.spe)
 ! FILEIO      !Name if input file (ie. DSSAT45.INP)               
 ! FOUND        !Flag used to warn user if information in an input file does not exist 
-! G2          !Maximum kernel number (kernels/plant)
+! G2          !Potential leaf growth rate(cm2/cm2)
 ! GNUP        !Total grain N uptake, kg N/ha
 ! GPP         !Grain number per plant, grains/plant 
 ! GPSM        !Grain numbers, grains/m2 

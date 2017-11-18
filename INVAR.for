@@ -365,11 +365,11 @@ C
 C        Branch to menu choice
          SELECT CASE (IPARAM)
          CASE (0); RETURN
-         CASE (1); CALL GETREAL (P1,'P1   ', 80.0, 700.0)
-         CASE (2); CALL GETREAL (P2,'P2   ',  0.0,  10.0)
-         CASE (3); CALL GETREAL (P5,'P5   ',100.0,2000.0)
-         CASE (4); CALL GETREAL (G2,'G2   ',100.0,2000.0)
-         CASE (5); CALL GETREAL (G3,'G3   ',  1.0,  15.0)
+         CASE (1); CALL GETREAL (P1,'P1   ', 450.0, 1100.0)
+         CASE (2); CALL GETREAL (P2,'P2   ',  0.0,  0.0001)
+         CASE (3); CALL GETREAL (P5,'P5   ',600.0,1000.0)
+         CASE (4); CALL GETREAL (G2,'G2   ',170.0,220.0)
+         CASE (5); CALL GETREAL (G3,'G3   ', 20.0,  50.0)
          CASE (6); CALL GETREAL (PHINT,'PHINT',1.0,200.0)
          END SELECT
          
