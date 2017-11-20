@@ -21,20 +21,44 @@
   
     
     ! true is leaf is active
-    logical function isActive(leaf)
+    logical function isLeafActive(node)
         implicit none
-        class (Node_type), intent(in) :: leaf
+        class (Node_type), intent(in) :: node
         
-        isActive = leaf%LAGETT < LLIFGTT+LLIFATT
-    end function isActive
+        isLeafActive = node%LAGETT < LLIFGTT+LLIFATT
+    end function isLeafActive
     
     ! true is leaf is alive
-    logical function isAlive(leaf)
+    logical function isLeafAlive(node)
         implicit none
-        class (Node_type), intent(in) :: leaf
+        class (Node_type), intent(in) :: node
         
-        isAlive = leaf%LAGETT < LLIFGTT+LLIFATT+LLIFSTT
-    end function isAlive
+        isLeafAlive = node%LAGETT < LLIFGTT+LLIFATT+LLIFSTT
+    end function isLeafAlive
+    
+    ! set leaf age to active 
+    subroutine setLeafAsActive(node)
+        implicit none
+        class (Node_type), intent(inout) :: node
+        
+        node%LAGETT = LLIFGTT
+    end subroutine setLeafAsActive
+    
+        ! set leaf age to fall 
+    subroutine setLeafAsSenescing(node)
+        implicit none
+        class (Node_type), intent(inout) :: node
+        
+        node%LAGETT = LLIFGTT+LLIFATT
+    end subroutine setLeafAsSenescing
+    
+    ! set leaf age to fall 
+    subroutine setLeafAsFall(node)
+        implicit none
+        class (Node_type), intent(inout) :: node
+        
+        node%LAGETT = LLIFGTT+LLIFATT+LLIFSTT
+    end subroutine setLeafAsFall
 
     
     
