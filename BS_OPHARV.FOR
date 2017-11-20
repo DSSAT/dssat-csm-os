@@ -4,6 +4,7 @@
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  05/25/2015 CHP Written, based on OPHARV
+!  03/15/2017 Updated for HI equation based on Taro model
 !=======================================================================
 
       SUBROUTINE BS_OPHARV(CONTROL, 
@@ -40,7 +41,8 @@
       INTEGER TRT_ROT
       INTEGER STGDOY(20)
       
-      REAL AGEFAC, APTNUP, BWAH, BWAM, CANNAA, CANWAA
+      REAL AGEFAC, APTNUP, BIOMAS, BWAH, BWAM, CANNAA, CANWAA
+      REAL EARWT, LFWT, STMWT, PLTPOP
       REAL GNUP, GPP, GPSM, HI, StovSenes
       REAL MAXLAI, NSTRES, PBIOMS, PODWT, PSDWT
       REAL Pstres1, Pstres2   
@@ -115,13 +117,12 @@
      &    18*'      '/  
  
 !-----------------------------------------------------------------------
-!WDB 12/2015 Change growth stage names for Sugarbeet
       DATA STNAME /   !Stage
      &  'End Juveni',   !1
-     &  'Beg Leaf  ',   !2
-     &  '          ',   !3
-     &  'Root Expan',   !4
-     &  '          ',   !5
+     &  'Floral Ini',   !2
+     &  '75% Silkin',   !3
+     &  'Beg Gr Fil',   !4
+     &  'End Gr Fil',   !5
      &  'Maturity  ',   !6
      &  'Sowing    ',   !7
      &  'Germinate ',   !8
@@ -136,29 +137,7 @@
      &  '          ',   !17
      &  '          ',   !18
      &  '          ',   !19
-     &  'Harvest   '/   !20      
-      
-!WDB Old stages for Maize
-!     &  'End Juveni',   !1
-!     &  'Floral Ini',   !2
-!     &  '75% Silkin',   !3
-!     &  'Beg Gr Fil',   !4
-!     &  'End Gr Fil',   !5
-!     &  'Maturity  ',   !6
-!     &  'Sowing    ',   !7
-!     &  'Germinate ',   !8
-!     &  'Emergence ',   !9
-!     &  '          ',   !10
-!     &  '          ',   !11
-!     &  '          ',   !12
-!     &  '          ',   !13
-!     &  'Start Sim ',   !14
-!     &  'End Sim   ',   !15
-!     &  'Harvest   ',   !16
-!     &  '          ',   !17
-!     &  '          ',   !18
-!     &  '          ',   !19
-!     &  'Harvest   '/   !20
+     &  'Harvest   '/   !20
 
 !***********************************************************************
 !***********************************************************************
@@ -302,8 +281,8 @@ C** original code         HI = YIELD/(TOPWT*10.0)
 C** end changes          
        ELSE
          HI = 0.0
-      ENDIF
-
+       ENDIF
+       
 !-----------------------------------------------------------------------
 !     Actual yield harvested (default is 100 %)
 !-----------------------------------------------------------------------
@@ -311,18 +290,17 @@ C** end changes
       SDWT   = YIELD  / 10.0
       SDWTAM = SDWT
       SDWTAH = SDWT * HARVFRAC(1)
-
+      
 !-----------------------------------------------------------------------
 !     Actual byproduct harvested (default is 0 %)
 !     Byproduct not harvested is incorporated
 ! 08/11/2005 Senesced leaf and stem stay on plant and are
 !         available for by-product harvest.
 !-----------------------------------------------------------------------
-      BWAM = STOVER + StovSenes
-
-      BWAH   = (STOVER + StovSenes) * HARVFRAC(2) 
-      PBIOMS = TOPWT * 10.0
-
+      STOVER  = (LFWT+STMWT+EARWT)*PLTPOP*10.
+      BWAM   = STOVER + HARVFRAC(2) 
+      BWAH   = STOVER + HARVFRAC(2) 
+            
 !-----------------------------------------------------------------------
       IF ((INDEX('YE',IDETO) > 0 .OR. INDEX('IAEBCGDT',RNMODE) .GT. 0) 
      &  .OR. (INDEX('AY',IDETS) .GT. 0 .AND. CROP .NE. 'FA')) THEN
@@ -420,7 +398,7 @@ C** end changes
       WRITE(Simulated(10),'(I8)') NINT(PBIOMS)
                                         WRITE(Measured(10),'(A8)') X(10)  !CWAM
 
-!     08/11/2005 CHP changed from BWAH to BWAM, 
+!     08/11/2005 CHP changed from BWAH to BWAM, valu eremains the same as (TOPWT) 
       WRITE(Simulated(11),'(I8)') NINT(BWAM)  
                                         WRITE(Measured(11),'(A8)') X(11)  !BWAM
 

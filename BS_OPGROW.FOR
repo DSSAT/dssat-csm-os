@@ -42,7 +42,7 @@ C  Calls:     None
       REAL CUMSENSURF, CUMSENSOIL     !cumul. senes. soil and surface
 
 !     Average stresses since last printout
-      REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV,KST_AV
+      REAL SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV
 
       CHARACTER*1     IDETG
       CHARACTER*6, PARAMETER :: ERRKEY = 'BS_OPG'
@@ -128,11 +128,8 @@ C  Calls:     None
         TUR_AV = 0.0
         NST_AV = 0.0
         EXW_AV = 0.0
-C**WDB Added following lines to be consistent with other CERES models        
-        PS1_AV = 0.0
-        PS2_AV = 0.0
-        KST_AV = 0.0
-C**WDB End changes        
+!        PS1_AV = 0.0
+!        PS2_AV = 0.0
 
 !-----------------------------------------------------------------------
 !                         DYNAMIC = OUTPUT
@@ -182,11 +179,8 @@ C**WDB End changes
               TUR_AV = TUR_AV / COUNT
               NST_AV = NST_AV / COUNT
               EXW_AV = EXW_AV / COUNT
-C**WDB 12/2015 Added following 3 lines to match other CERES output.               
-              PS1_AV = PS1_AV / COUNT
-              PS2_AV = PS2_AV / COUNT
-              KST_AV = KST_AV / COUNT
-C**WDB End changes              
+!              PS1_AV = PS1_AV / COUNT
+!              PS2_AV = PS2_AV / COUNT
               COUNT = 0
             ENDIF
 
@@ -198,10 +192,9 @@ C**WDB End changes
      &        NINT(RTWT*10.*PLTPOP), VWAD, NINT(TOPWT*10.),
      &        NINT(SEEDNO),SDSIZE,HI,NINT(PODWT*10.),NINT(PODNO),
      &        SWF_AV, TUR_AV, NST_AV, EXW_AV, PS1_AV, PS2_AV, 
-c**WDB 12/2015 added variable KST_AV to following line.            
-     &        KST_AV, PCNL,SHELPC,HIP, NINT(PODWTD*10.),
+     &        PCNL,SHELPC,HIP, NINT(PODWTD*10.),
      &        NINT((PODWTD+PODWT)*10.),SLA,CANHT,CANWH, (RTDEP/100.)
-400    FORMAT (1X,I4,1X,I3.3,2(1X,I5),1X,F6.1,1X,I6,1X,F6.2,
+ 400        FORMAT (1X,I4,1X,I3.3,2(1X,I5),1X,F6.1,1X,I6,1X,F6.2,
      &        7(1X,I6),1X,F6.1,1X,F6.3,2(1X,I6),7(1X,F6.3),3(1X,F6.2),
      &        2(1X,I6),1X,F8.1,2(1X,F6.2),1X,F6.2)
 

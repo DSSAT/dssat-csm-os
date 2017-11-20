@@ -6,13 +6,10 @@
 !  Revision history
 !
 !                 Written
-!  04/15/2015 Model developed by Mohammad J Anar based on CERES-Beet model developed by Leviel et al. 2000                
+!  04/15/2015 Model developed by Mohammad J Anar based on CERES-Beet model developed by Leviel et al. 2000     
+!  03/15/2017 Model modified for parameter G2, that was related to GPP in original CERES-Beet at ISTAGE 4
 
 !----------------------------------------------------------------------
-      
-!WDB December 2015. Corrected many errors and converted coefficients to reflect beet rather than maize growth
-!WDB July 2016. 
-      
       SUBROUTINE BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
      &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
@@ -93,9 +90,7 @@
       CHARACTER*80    PATHSR
       CHARACTER*80    PATHER        
       REAL            PDTT
-      REAL            PHINT
-      REAL            PHYL1
-      REAL            PHYL2
+      REAL            PHINT          
       REAL            PLTPOP         
       REAL            PSKER          
       REAL            RATEIN         
@@ -159,10 +154,6 @@
 
 !     CHP added for P model
       REAL SeedFrac, VegFrac
-      
-!WDB 7/2016 added cultivar coefficients for sugarbeet      
-      REAL FRSUG  !Fraction of sugar in storage organ, g/g
-      REAL DRCER  !Relative resistance to cercospora leafspot
         
 !----------------------------------------------------------------------
 !         DYNAMIC = RUNINIT OR DYNAMIC = SEASINIT
@@ -174,7 +165,7 @@
           CALL GETLUN('OUTO', NOUTDO)
 
           !-------------------------------------------------------
-          !     Read input file name (ie. DSSAT46.INP) and path
+          !     Read input file name (ie. DSSAT45.INP) and path
           !-------------------------------------------------------
           CALL GETLUN('FILEIO', LUNIO)
           OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)  
@@ -215,9 +206,9 @@
             CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
-     %         P1,P2,P5,G2,G3,PHYL1,PHYL2,FRSUG,DRCER; LNUM = LNUM + 1 
+     %                   P1,P2,P5,G2,G3,PHINT ; LNUM = LNUM + 1 
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
-1800        FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)    
+1800        FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)    
           ENDIF
           CLOSE(LUNIO)
 
@@ -403,7 +394,7 @@
           ! from the species file.
           !------------------------------------------------------------
           
-          !   DOPT, Development optimum temperature, is set to TOPT 
+          !   DOPT, Devlopment optimum temperature, is set to TOPT 
           !   during vegetative growth and to ROPT after anthesis
           
           DOPT = TOPT
@@ -566,13 +557,7 @@
               CUMDTT =  0.0
               SUMDTT =  0.0
 
-C**WDB 12/2015
-c**WDB          I don't know where this P9 equation came from. ISOW is not defined so P9 is always -450 gdd.
-c**WDB          P9    = GDDE*ISOW-450.
-C**WDB         Change back to CERES Maize P9 calculation
-                P9=45+GDDE*SDEPTH
-c                p9=gdde*isow-450
-                
+              P9    = GDDE*ISOW-450.
               RETURN
 
 
@@ -665,8 +650,8 @@ c                p9=gdde*isow-450
               PDTT   = 1.0   
               SIND = SIND + RATEIN
               !Return if panicle initiation has not been reached
-              
-      
+              IF (SIND .LT. 1.0) RETURN           
+
 
               !---------------------------------------------------------
               !   New Growth Stage Occurred Today. Initialize Some Varia
@@ -675,15 +660,8 @@ c                p9=gdde*isow-450
               ISTAGE = 3
               XNTI   = SUMDTT/43.0
            !Next 2 lines: Change implemented at CIMMYT 1999 - JTR,US
-!WDB 12/2015 Need to add a few more leaves
- !Original    TLNO    = (SUMDTT/21.0+6.0)   
-              TLNO    = (SUMDTT/21.0+6.0)+ 4
-             
-              !WDB CHECK FOR TLNO
-              TLNO = FRSUG
-              !NEED TO TAKE THIS OUT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-              
-              P3      = ((TLNO - 2.) * PHYL1)+96. - SUMDTT 
+              TLNO    = (SUMDTT/21.0+6.0)           
+              P3      = ((TLNO - 2.) * PHINT)+96. - SUMDTT 
               XNTI    = XN
 
 !             chp 5/11/2005
@@ -702,10 +680,6 @@ c                p9=gdde*isow-450
 
               VegFrac = MAX(VegFrac,(SUMDTT + SUMDTT_2) / (SUMDTT_2+P3))
 
-               !WDB remain in ISTAGE 3 for remainder of season
-              RETURN
-              !wdb
-              
               IF (SUMDTT .LT. 0.8*P3) RETURN
 
               !---------------------------------------------------------
@@ -714,9 +688,6 @@ c                p9=gdde*isow-450
               STGDOY(ISTAGE) = YRDOY
               ISDATE = YRDOY      
               ISTAGE = 4
-              
-              
- !WARNING... SUMDTT GOES NEGATIVE HERE WDB 7/2016             
               SUMDTT = SUMDTT - P3
               IDURP  = 0
 
@@ -744,27 +715,20 @@ c                p9=gdde*isow-450
               !  begins.  Compute grains per plant, ears per pla
               !  and barrenness
 
-              PSKER = SUMP*1000.0/IDURP*3.4/5.0
-              GPP   = G2*(PSKER-195.)/(1213.2+PSKER-195.)
-              GPP   = AMIN1 (GPP, G2)
-              GPP   = AMAX1 (GPP,0.0)
-              EARS  = PLTPOP
+              !PSKER = SUMP*1000.0/IDURP*3.4/5.0
+              !GPP   = G2*(PSKER-195.)/(1213.2+PSKER-195.)
+              !GPP   = AMIN1 (GPP, G2)
+              !GPP   = AMAX1 (GPP,0.0)
+              !EARS  = PLTPOP
 
-              GPP = AMAX1 (GPP,51.0)
+              !GPP = AMAX1 (GPP,51.0)
  
                   !
-                      IF (GPP .LT. G2*0.55) THEN
-                              EARS = PLTPOP*((GPP-50.)/(G2-50.))**0.33
-                      ENDIF
+                      !IF (GPP .LT. G2*0.55) THEN
+                              !EARS = PLTPOP*((GPP-50.)/(G2-50.))**0.33
+                      !ENDIF
 
-              EARS           = AMAX1 (EARS,0.0)
-
-C**WDB 12/2015 Sugarbeet does not grow an ear or seeds. Set them both
-C**WDB        to zero.
-              EARS = 0.0
-              GPP =0.0
-C**WDB    End Changes              
-              
+              !EARS           = AMAX1 (EARS,0.0)
               STGDOY(ISTAGE) = YRDOY
               ISTAGE = 5
       !-----------------------------------------------------------------
@@ -883,8 +847,6 @@ C**WDB    End Changes
 ! PATHCR     Pathname of species file
 ! DTT
 ! PHINT      Phyllochron interval. Number of GDD required for new leaf e
-! PHYL1     Phylochron interval (GDD) for first 20 leaves
-! PHYL2     Phylochron interval (GDD) for remaining leaves (>20 leaves)
 ! PLTPOP     Plant population, no./m2
 ! PSKER      Average rate of photosynthesis during ISTAGE 4
 ! RATEIN     Rate of floral induction

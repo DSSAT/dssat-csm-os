@@ -6,7 +6,10 @@
 !  Revision history
 !
 !                 Written
-!  04/15/2015 Model developed by Mohammad J Anar based on CERES beet model developed by Leviel et al. (2000)   
+!  04/15/2015 Model developed by Mohammad J Anar based on CERES beet model developed by Leviel et al. (2000)
+!  03/15/2017 Removed old equations for HI 
+!  03/15/2017 Model equation updated for parameter G2 and G3.These parameters in original CERES-Beet were linked to
+!      grain production. These parameters were modified to link with leaf growth and root growth respectively.
 ! 
 !----------------------------------------------------------------------
 !
@@ -24,8 +27,6 @@
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail,                          !Input
      &      EARS, GPP, MDATE,                                 !I/O
-!WDB 7/2016 Added new cultivar coefficients
-     &       PHYL1,PHYL2,FRSUG,DRCER,      
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
@@ -91,6 +92,7 @@
       INTEGER     EMAT        
       REAL        EOP
       REAL        EP1
+      REAL        ETGT
       INTEGER         ERR 
       CHARACTER*6     ERRKEY          
       PARAMETER       (ERRKEY='BS_GRO')   
@@ -310,12 +312,6 @@
       REAL        YIELD       
       REAL        YIELDB      
       INTEGER     YR, YRDOY    
-      
-! WDB 7/2016 Added new sugar beet cultivar coefficients    
-      REAL PHYL1 !Phylochron interval for first 20 leaves
-      REAL PHYL2 !Phylochron interval for leaves later than 20
-      REAL FRSUG  !Target fraction of sugar in storage organ (to be used later)
-      REAL DRCER  !Relative resistance to cercospora (to be used later)      
 
 !     Added to send messages to WARNING.OUT
       CHARACTER*78 MESSAGE(10)
@@ -399,9 +395,9 @@
               CALL ERROR(SECTION, 42, FILEIO, LNUM)
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
-     %                 P1,P2,P5,G2,G3,PHYL1,PHYL2,FRSUG,DRCER 
-!CHP 1800        FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),5(F6.2))    
-1800        FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)    
+     %                 P1,P2,P5,G2,G3,PHINT  
+!CHP 1800        FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2))    
+1800        FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)    
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 
@@ -879,6 +875,7 @@
               PLA     = PLAE
               SENLA  = 0.0
               LAI    = PLTPOP*PLA*0.0001 
+              CUMPH   = 0.514
               IF (ISWNIT .NE. 'N') THEN
                   GRAINN = 0.000
                   TANC = TANCE
@@ -1042,15 +1039,10 @@
                   PC  = 0.66+0.068*CUMPH      
               ENDIF
 
-              TI     = DTT/(PHYL1*PC)
-              CUMPH  = CUMPH + DTT/(PHYL1*PC)
+              TI     = DTT/(PHINT*PC)
+              CUMPH  = CUMPH + DTT/(PHINT*PC)
               XN     = CUMPH + 1.0
               LEAFNO = INT(XN)
-              
-              !WDB Need to set max LEAFNO to user defined value in cultivar file for sugar beets
-                 IF (LEAFNO.GT.FRSUG) THEN
-                    LEAFNO = FRSUG
-                 ENDIF 
           ENDIF
 
 
@@ -1066,7 +1058,6 @@
               Endif
 !              PLA = PLA + PLAG 
               PLA = PLA+PLAG-PLAS
-               
               XLFWT  = (PLA/267.0)**1.25      
               GROLF  = 50.*PLAG/10000.
               GROSTM = 0.80*GROLF
@@ -1112,33 +1103,20 @@
                IF (XN .LT. 12.0) THEN
                   PLAG   = 3.0*XN*XN*TI
      &                *AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
-                  GROLF  = 0.00116*PLAG*PLA**0.25 
+                  GROLF  = 0.00116*PLAG*PLA**0.25
                   GRORT = GROLF*0.08*(XN-XNTI)**2
               ELSEIF (XN .LT. TLNO-3.0) THEN
-                  PLAG   = 3.0*170.0*TI
+                  PLAG   = 3.0*G2*TI
      &                *AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
                   GROLF  = 0.00116*PLAG*PLA**0.25
                   GRORT = GROLF*0.08*(XN-XNTI)**2
-                  
-                  !wdb SLOW DOWN ROOT GROWTH DURING ISTAGE 3 COMPARED TO CERES-MAIZE RULE
-      
-                  GRORT = GRORT * PHYL2  !PHYL2 is in cultivar file
-                  !wdb
-                  
-              ELSEIF (LEAFNO.LT.FRSUG) THEN
-                  PLAG   = 170.0*3.5/((XN+5.0-TLNO)**0.5)*TI*
+              ELSE
+                  PLAG   = G2*3.5/((XN+5.0-TLNO)**0.5)*TI*
      &                     AMIN1(AGEFAC,TURFAC,(1.0-SATFAC))
                   GROLF  = 0.00116*PLAG*PLA**0.25
                   GRORT = 3.5*3.1*TI*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
-                  
-                  !wdb SLOW DOWN ROOT GROWTH DURING ISTAGE 3 COMPARED TO CERES-MAIZE RULE
-                  GRORT = GRORT * PHYL2  !PHYL2 is in cultivar file
-                  !wdb   
-              ELSEIF (LEAFNO.EQ.FRSUG) THEN
-                  GROLF = 0.1*CARBO                  !WDB carbon allocation after last leaf formed
-                  GRORT = 0.8*CARBO
+
               ENDIF         
-              
                   GROSTM  = CARBO - GROLF - GRORT 
 
               IF (GROSTM .LT. 0.10*CARBO .AND. TURFAC .GE. 0.0) THEN
@@ -1151,42 +1129,46 @@
                   PLA    = (LFWT+GROLF)**0.88*267.0
                   LFWT   = LFWT  + GROLF 
                   STMWT  = STMWT + GROSTM
-
-                  
-                  !WDB Need more sensecence due to age during this stage for sugarbeets
-                  !Original Code SLAN   = PLA/1000.0
-                  SLAN = PLA*DRCER
-                  !WDB end change
-                  
+                  SLAN   = PLA/1000.0
                   RTWT  = RTWT + GRORT
                   CumLeafSenes = SLAN / 600. * PLTPOP * 10.
-
 
 !      --------------------------------------------------------------------
 !         ISTAGE = 4 (End of Leaf Growth to Beginning Effective Growth)
 !      --------------------------------------------------------------------
 
           ELSEIF (ISTAGE .EQ. 4) THEN
+              
+              IF (TEMPM .GT. 2.0 .AND. TEMPM .LT. 12.0) THEN
+               ETGT = 0.0769*(TEMPM-2.0)
+              ELSEIF (TEMPM .GE. 12.0 .AND. TEMPM .LE. 27.0) THEN
+               ETGT = 1.0
+              ELSEIF (TEMPM .GT. 27.0 .AND. TEMPM .LT. 33.0) THEN
+               ETGT = 1.0 - 0.1*(TEMPM-27.0)
+              ELSE
+               ETGT = 0.0
+              ENDIF
 
-              GROEAR = 0.10*DTT*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
-              GROSTM = GROEAR*0.40
-C**WDB for Sugarbeet, set GROEAR to zero
-              GROEAR = 0.0
-C**WDB End canges              
-              GRORT = CARBO-GROEAR-GROSTM
+          GRORT = G3*PCO2*ETGT/PLTPOP*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
+              GROSTM = 0.04*DTT*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
+              GROEAR = CARBO-GRORT-GROSTM
+              !GROEAR = 0.10*DTT*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
+              !GROSTM = GROEAR*0.40
+              !GRORT = CARBO-GROEAR-GROSTM
               
               IF (GRORT .LE. CARBO*0.85) THEN
                   GRF   = CARBO*0.15/(GROSTM+GROEAR)                  
-C** WDB. No ears in sugarbeet   GROEAR  = GROLF*GRF
+                  GROEAR  = GROLF*GRF
                   GROSTM = GROSTM*GRF
                   GRORT = CARBO*0.85
               ENDIF
 
               SLAN   = PLA*(0.08+SUMDTT/170.0*0.05)
-              LFWT   = LFWT  - SLAN/1000.0
-              EARWT  = EARWT + GROEAR
+              LFWT   = LFWT  - SLAN/10000.0
+              !EARWT  = EARWT + GROEAR
               STMWT  = STMWT + GROSTM
               SUMP   = SUMP  + CARBO
+              RTWT  = RTWT + GRORT
               CumLeafSenes = SLAN / 600. * PLTPOP * 10. 
 !                kg/ha     =  g/plant * plants/m2 * (kg/ha)/(g/m2)
 
@@ -1228,8 +1210,20 @@ C** WDB. No ears in sugarbeet   GROEAR  = GROLF*GRF
 !**************************************************************************
 !**************************************************************************
 
-                  GROGRN = RGFILL*GPP*G3*0.001*(0.45+0.55*SWFAC)      !
+                  !GROGRN = RGFILL*GPP*G3*0.001*(0.45+0.55*SWFAC)      !
+              IF (TEMPM .GT. 2.0 .AND. TEMPM .LT. 12.0) THEN
+               ETGT = 0.0769*(TEMPM-2.0)
+              ELSEIF (TEMPM .GE. 12.0 .AND. TEMPM .LE. 27.0) THEN
+               ETGT = 1.0
+              ELSEIF (TEMPM .GT. 27.0 .AND. TEMPM .LT. 33.0) THEN
+               ETGT = 1.0 - 0.1*(TEMPM-27.0)
+              ELSE
+               ETGT = 0.0
+              ENDIF
 
+              !GROEAR = 0.10*DTT*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
+          GRORT = G3*PCO2*ETGT/PLTPOP*AMIN1(AGEFAC,TURFAC,(1.-SATFAC))
+             
                   IF (RGFILL.GT.RSGR) THEN   
                       EMAT  = 0                                       !
 !                      GRORT = 0.0                                    !
@@ -1253,51 +1247,36 @@ C** WDB. No ears in sugarbeet   GROEAR  = GROLF*GRF
               ELSE                                                    !
                   CMAT = CMAT + 1
                   IF (CMAT.GE.CARBOT) THEN
-                    SUMDTT = P5                                         !
-                    CALL YR_DOY(YRDOY, YR, DOY)
-                    WRITE(MESSAGE(1),2700) DOY                          !
-                    CALL WARNING(1,ERRKEY, MESSAGE)                     !
-                    WRITE (     *,2700) DOY                             !
-                    IF (IDETO .EQ. 'Y') THEN                            !
+                  SUMDTT = P5                                         !
+                  CALL YR_DOY(YRDOY, YR, DOY)
+                  WRITE(MESSAGE(1),2700) DOY                          !
+                  CALL WARNING(1,ERRKEY, MESSAGE)                     !
+                  WRITE (     *,2700) DOY                             !
+                  IF (IDETO .EQ. 'Y') THEN                            !
                       WRITE (NOUTDO,2700) DOY                         !
-                    ENDIF                                               !
-                    EMAT   = 0                                          !
-!                   GRORT  = 0.0                                        !
+                  ENDIF                                               !
+                  EMAT   = 0                                          !
+!                  GRORT  = 0.0                                        !
                   ENDIF
               ENDIF           !<--------------------------------------!
 
+              GROSTM = CARBO - GRORT
 
-
-C**WDB 12/2015
-C**WDB This modification to the GRORT function is how they
-C**WDB generate large root mass. The factor of 2.5 is much higher
-C**WDB than the 0.5 used in CERES Maize
-C**WDB Changed partitioning to stem and root    
-!WDB 12/2015 Setting GPP=0 creates tremendous carbon pool for stem growth and later, root growth. 
-
-C*WDB Original Code  GROSTM = CARBO - GROGRN  
-                  STMWT = STMWT    !WDB Terminate stem growth for Sugarbeet
-                  GRORT = CARBO    !WDB Send all carbon to roots
-                  
-              goto 888             !WDB 12/2015 Skip the following check since all carbon going to root
-         
               IF (GROSTM .GE. 0.0) THEN           !<------------------!
-                  STMWT  = STMWT + GROSTM*0.50                 !
-                  GRORT  = GROSTM*2.5                          !
-
+                  STMWT  = STMWT + GROSTM*0.50                        !
+                  !GRORT  = GROSTM*2.50                               !
               ELSE                                                    !
-                  STMWT  = STMWT + CARBO - GROGRN                     !
+                  STMWT  = STMWT + CARBO - GRORT                     !
                   IF (STMWT .LE. SWMIN*1.07) THEN                     !
                       STMWT  = STMWT + LFWT*0.0050 
                       LFWT   = LFWT *0.9950
                       IF (STMWT .LT. SWMIN) THEN                      !
                           STMWT  = SWMIN                              !
-                          GROGRN = CARBO                               !
+                          GRORT = CARBO                               !
                       ENDIF                                           !
                   ENDIF                                               !
               ENDIF                               !<------------------!
-              
- 888         Continue
+
 
               IF (ISWNIT .NE. 'N') THEN     !<------------------------!
                                                                       !
@@ -1307,7 +1286,7 @@ C*WDB Original Code  GROSTM = CARBO - GROGRN
                   SFAC   = 1.125 - 0.1250*TURFAC                      !
                   TFAC   = 0.690 + 0.0125*TEMPM                       !
                   GNP    = (0.007+ 0.01*NFAC)*AMAX1(SFAC,TFAC)      !
-                  NSINK  = GROGRN*GNP                                 !
+                  NSINK  = GRORT*GNP                                 !
                                                                       !
                   IF (NSINK .NE. 0.0) THEN                            !
                       RMNC   = 0.75*RCNP                              !
@@ -1328,15 +1307,15 @@ C*WDB Original Code  GROSTM = CARBO - GROGRN
                       RNLAB  = XNF   * NPOOL2                         !
                       NPOOL  = TNLAB + RNLAB                          !
 
-                      IF (ICSDUR .EQ. 1) THEN                         !
-                        GPP  = AMIN1 (GPP*NDEF3,(NPOOL/(0.2*0.0095)))
+                      !IF (ICSDUR .EQ. 1) THEN                         !
+                        !GPP  = AMIN1 (GPP*NDEF3,(NPOOL/(0.2*0.0095)))
 !                   ! Put a max to GPP based on N supply... JIL
                           ! Corrected GPSM calculations .. PWW 2-2-94
                           !
 !                        GPSM = GPP * EARS                            !
-                      ENDIF                                           !
+                      !ENDIF                                           !
 
-                      NSDR   = NPOOL/NSINK                            !
+                      !NSDR   = NPOOL/NSINK                            !
  
                       IF (NSDR .LT. 1.0) THEN                         !
                           NSINK = NSINK*NSDR                          !
@@ -1354,15 +1333,15 @@ C*WDB Original Code  GROSTM = CARBO - GROGRN
                                                                       !
                   ENDIF                                               !
                                                                       !
-                  GRAINN = GRAINN + NSINK                             !
+                  !GRAINN = GRAINN + NSINK                             !
               ENDIF                       !<--------------------------!
 
-              GRNWT  = GRNWT  + GROGRN                     ! g/pl
+              !GRNWT  = GRNWT  + GROGRN                     ! g/pl
               RTWT  = RTWT  + GRORT
               STMWT  = AMIN1 (STMWT,SWMAX)
               
 !             5/11/2005 CHP Added cumulative leaf senescence
-!              CumLeafSenes = SLAN / 600. * PLTPOP * 10. 
+              CumLeafSenes = SLAN / 600. * PLTPOP * 10. 
 !             kg/ha     =  g/plant * plants/m2 * (kg/ha)/(g/m2)
 
       !----------------------------------------------------------------
@@ -1406,7 +1385,6 @@ C*WDB Original Code  GROSTM = CARBO - GROGRN
           PLAS  = (PLA-SENLA)*(1.0-AMIN1(SLFW,SLFC,SLFT,SLFN)) 
           SENLA = SENLA + PLAS
           SENLA = AMIN1 (SENLA,SLAN)
-
           
           LAI   = (PLA-SENLA)*PLTPOP*0.0001
 
@@ -1464,13 +1442,13 @@ C*WDB Original Code  GROSTM = CARBO - GROGRN
           ENDIF
 
       ! Grain Weight and Number
-          IF (GRNWT .GT. 0.AND.PLTPOP.GT.0) THEN
-            GRAINN = GRAINN - GRAINN*(SWIDOT/PLTPOP)/GRNWT
-            GPP = GPP - GPP*(SWIDOT/PLTPOP)/GRNWT
-          ENDIF
+          !IF (GRNWT .GT. 0.AND.PLTPOP.GT.0) THEN
+            !GRAINN = GRAINN - GRAINN*(SWIDOT/PLTPOP)/GRNWT
+            !GPP = GPP - GPP*(SWIDOT/PLTPOP)/GRNWT
+          !ENDIF
 
           IF(PLTPOP.GT.0.0) THEN 
-            GRNWT = GRNWT - SWIDOT/PLTPOP
+            !GRNWT = GRNWT - SWIDOT/PLTPOP
             EARWT = EARWT - SWIDOT/PLTPOP
           ENDIF
 
@@ -1507,7 +1485,6 @@ C*WDB Original Code  GROSTM = CARBO - GROGRN
           !                      STATE VARIABLES
           !------------------------------------------------------------
 
-          RTWT   = RTWT  + GRORT-0.001*RTWT
           LFWT = MAX(0.0,LFWT)
           PLA = MAX(0.0,PLA)
           LAI = MAX(0.0,LAI)
@@ -1580,13 +1557,13 @@ C*WDB Original Code  GROSTM = CARBO - GROGRN
 
 !     12/16/2004 CHP, GH changed to account for barrenness factor
 !          SDWT = GRNWT*PLTPOP       !Seed weight, g/m2
-          SDWT = GRNWT*EARS         !Seed weight, g/m2
+!          SDWT = GRNWT*EARS         !Seed weight, g/m2
           GPSM = GPP * EARS         !Seed no/m2, but units don't match?
           SEEDNO=GPSM               !Seed no./m2
 
           IF(GPP.GT.0) THEN
-!              PODNO = SEEDNO/GPP    !Pod (ear) No/m2 
-              PODNO = EARS
+              PODNO = SEEDNO/GPP    !Pod (ear) No/m2 
+              !PODNO = EARS
           ELSE
               PODNO = 0
           ENDIF
@@ -1599,7 +1576,18 @@ C*WDB Original Code  GROSTM = CARBO - GROGRN
 
           SHELPC = MIN(SHELPC,99.99)
 
-          IF (TOPWT .GT. 0. .AND. SDWT .GE. 0.) THEN
+          !IF (TOPWT .GT. 0. .AND. SDWT .GE. 0.) THEN
+              !HI = SDWT/TOPWT
+          !ELSE
+              !HI = 0.
+          !ENDIF
+
+          !IF (TOPWT .GT. 0. .AND. PODWT .GE. 0.) THEN
+              !HIP = PODWT/TOPWT
+          !ELSE
+              !HIP = 0.
+          !ENDIF
+          IF (TOPWT .GT. 0. .AND. RTWT .GE. 0.) THEN
 c**WDB 12/2015 Need to change HI to reflect root storage rather than seed weight
 C**WDB         Note that yield is defined as 0.95*RTWT. 
 C**WDB Original code   
@@ -1737,15 +1725,14 @@ c                 HI = SDWT/TOPWT
 !----------------------------------------------------------------------
       
       ELSEIF(DYNAMIC.EQ.OUTPUT) THEN
-          
-C**WDB 12/2015 Note that Yield is redefined as root yield, which affects BWAM calculation for output.           
-        YIELD = RTWT*0.95*10.0*PLTPOP
-          IF (GPP.GT. 0) THEN
-            SKERWT = GRNWT/GPP
-          ELSE
-            SKERWT = 0.0
-          ENDIF
-          GPSM = GPP*EARS
+
+           YIELD = RTWT*0.95*10.0*PLTPOP
+          !IF (GPP.GT. 0) THEN
+            !SKERWT = GRNWT/GPP
+          !ELSE
+            !SKERWT = 0.0
+          !ENDIF
+          !GPSM = GPP*EARS
           APTNUP = STOVN*10.0*PLTPOP
           TOTNUP = APTNUP
 
@@ -1781,14 +1768,13 @@ C**WDB 12/2015 Note that Yield is redefined as root yield, which affects BWAM ca
 !----------------------------------------------------------------------
 
       ELSEIF(DYNAMIC.EQ.SEASEND) THEN
-      
           
 C**WDB 12/2015 Yield was redefined above as the root storage pool. Need to 
 C**WDB change the STOVER equation to just include above ground biomass
 C**WDB original        STOVER  = (LFWT+STMWT+EARWT)*PLTPOP*10.
 C**WDB original        STOVER  = BIOMAS-YIELD
       STOVER  = (LFWT+STMWT)*PLTPOP*10.
-C**WDB end changes      
+        !STOVER  = BIOMAS-YIELD
         YIELDB  = YIELD/62.8         
             ! Yield in bu/ac at 0% moisture content
         XANC   = TANC*100.0

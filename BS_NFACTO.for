@@ -1,7 +1,7 @@
 C======================================================================
 C  BS_NFACTO, Subroutine
 C
-C  Determines N deficit in Maize
+C  Determines N deficit in Sugarbeet
 C----------------------------------------------------------------------
 C  Revision history
 C  xx/xx/19xx     Written

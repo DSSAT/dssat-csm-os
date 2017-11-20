@@ -434,7 +434,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &     SOILPROP, SW, TRWUP, WEATHER, YREND, YRPLT,    !Input
      &     CANHT, HARVRES, KCAN, KEP, MDATE,              !Output
      &     NSTRES, PORMIN, PUptake, RLV, RWUMX, SENESCE,  !Output
-     &     STGDOY, FracRts,UNH4,UNO3,XLAI, XHLAI)          !Output
+     &     STGDOY, FracRts,XLAI, XHLAI)          !Output
 
         IF (DYNAMIC < RATE) THEN
           KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
