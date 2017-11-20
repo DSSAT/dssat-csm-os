@@ -373,10 +373,10 @@
         
         ! Critical and starting N concentrations
         LNCX = LNCXS(0)
-        plant%SNCX = SNCXS(0)
+        node%SNCX = SNCXS(0)
         RNCX = RNCXS(0)
         LNCM = LNCMN(0)
-        plant%SNCM = SNCMN(0)
+        node%SNCM = SNCMN(0)
         RNCM = RNCMN(0)
         
         ! Storage root N  NB.Conversion protein->N factor = 6.25

@@ -144,7 +144,7 @@
                     HINDC,RSNAD,SENN0C,SENNSC,RANC*100.0,LANC*100.0,SANCOUT*100.0,AMIN1(9.9,HNC*100.0), &
                     !SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCR,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &        !LPM 25MAY2015 SNCR to SNCRM
                     SDNC*100.0,AMIN1(9.9,VANC*100.0),LNCR,SNCRM,RNCR,VCNC*100.0,VMNC*100.0,AMIN1(2.,NUPRATIO), &
-                    ANDEM,1.0-plant(0,0)%NFLF2                                                                                !LPM 21MAR15 NFLF2(0) as NFLF2(0,0)
+                    ANDEM,1.0-node(0,0)%NFLF2                                                                                !LPM 21MAR15 NFLF2(0) as NFLF2(0,0)
                                      
             ENDIF  ! ISWNIT  Plantn writes
                              

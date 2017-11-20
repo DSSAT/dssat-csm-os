@@ -35,28 +35,28 @@
                 '  WFLF  NFLF  AFLF TFGLF TFDLF ',' LLIFG LLIFA LLIFS LLIFE   DAP'  !LPM 07JUL2017 Issue #41 eliminate NFLF2 (same than NFLF)
             DO BR = 0, BRSTAGE
                 DO LF = 1, INT(LNUMSIMSTG(BR))  
-                    CALL Csopline(lapotxc,plant(BR,LF)%lapotx)
-                    CALL Csopline(latlc,AMAX1(0.0,plant(BR,LF)%LATL))
-                    CALL Csopline(latl2c,AMAX1(0.0,plant(BR,LF)%LATL2))
-                    CALL Csopline(latl3c,AMAX1(0.0,plant(BR,LF)%LATL3))
-                    CALL Csopline(latl4c,AMAX1(0.0,plant(BR,LF)%LATL4))
-                    CALL Csopline(lapc,plant(BR,LF)%LATL3T)
-                    CALL Csopline(lapsc,plant(BR,LF)%laps)
+                    CALL Csopline(lapotxc,node(BR,LF)%lapotx)
+                    CALL Csopline(latlc,AMAX1(0.0,node(BR,LF)%LATL))
+                    CALL Csopline(latl2c,AMAX1(0.0,node(BR,LF)%LATL2))
+                    CALL Csopline(latl3c,AMAX1(0.0,node(BR,LF)%LATL3))
+                    CALL Csopline(latl4c,AMAX1(0.0,node(BR,LF)%LATL4))
+                    CALL Csopline(lapc,node(BR,LF)%LATL3T)
+                    CALL Csopline(lapsc,node(BR,LF)%laps)
                     ! Adjust for growth period of non fully expanded leaves
-!CHP                IF (plant(BR,LF)%LAGETT<=LLIFGTT) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
-                    IF (plant(BR,LF)%LAGETT<=LLIFGTT .AND. plant(BR,LF)%LAGETT > 1.E-3) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
-                        plant(BR,LF)%WFLF = AMIN1(1.0,plant(BR,LF)%WFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
-                        plant(BR,LF)%NFLF = AMIN1(1.0,plant(BR,LF)%NFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
-                        plant(BR,LF)%NFLFP =AMIN1(1.0,plant(BR,LF)%NFLFP/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
-                        plant(BR,LF)%TFGLF =AMIN1(1.0,plant(BR,LF)%TFGLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
-                        plant(BR,LF)%AFLF = AMIN1(1.0,plant(BR,LF)%AFLF/AMIN1(1.0,(plant(BR,LF)%LAGETT/LLIFGTT)))
+!CHP                IF (node(BR,LF)%LAGETT<=LLIFGTT) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
+                    IF (node(BR,LF)%LAGETT<=LLIFGTT .AND. node(BR,LF)%LAGETT > 1.E-3) THEN !LPM 24APR2016 Estimate when the leaves are growing   !MF 21AU16 ADDED DIMENSIONS TO LAGETT
+                        node(BR,LF)%WFLF = AMIN1(1.0,node(BR,LF)%WFLF/AMIN1(1.0,(node(BR,LF)%LAGETT/LLIFGTT)))
+                        node(BR,LF)%NFLF = AMIN1(1.0,node(BR,LF)%NFLF/AMIN1(1.0,(node(BR,LF)%LAGETT/LLIFGTT)))
+                        node(BR,LF)%NFLFP =AMIN1(1.0,node(BR,LF)%NFLFP/AMIN1(1.0,(node(BR,LF)%LAGETT/LLIFGTT)))
+                        node(BR,LF)%TFGLF =AMIN1(1.0,node(BR,LF)%TFGLF/AMIN1(1.0,(node(BR,LF)%LAGETT/LLIFGTT)))
+                        node(BR,LF)%AFLF = AMIN1(1.0,node(BR,LF)%AFLF/AMIN1(1.0,(node(BR,LF)%LAGETT/LLIFGTT)))
                     ENDIF
-                    IF (plant(BR,LF)%LDEATHDAP == 0) THEN
-                        plant%LDEATHDAP = -99
+                    IF (node(BR,LF)%LDEATHDAP == 0) THEN
+                        node%LDEATHDAP = -99
                     ENDIF
-                    WRITE (fnumlvs,'(2I6,5A6,5F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL3C,LAPC,LAPSC,1.0-plant(BR,LF)%WFLF, &                          ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
-                        1.0-plant(BR,LF)%NFLF,1.0-AMAX1(0.0,AMIN1(1.0,plant(BR,LF)%AFLF)),1.0-plant(BR,LF)%TFGLF,1.0-plant(BR,LF)%TFDLF,plant(BR,LF)%DGLF, &  
-                        plant(BR,LF)%DALF,plant(BR,LF)%DSLF,plant(BR,LF)%DGLF+plant(BR,LF)%DALF+plant(BR,LF)%DSLF,plant(BR,LF)%LDEATHDAP
+                    WRITE (fnumlvs,'(2I6,5A6,5F6.2,4F6.1,I6)')BR, LF,LAPOTXC,LATLC,LATL3C,LAPC,LAPSC,1.0-node(BR,LF)%WFLF, &                          ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
+                        1.0-node(BR,LF)%NFLF,1.0-AMAX1(0.0,AMIN1(1.0,node(BR,LF)%AFLF)),1.0-node(BR,LF)%TFGLF,1.0-node(BR,LF)%TFDLF,node(BR,LF)%DGLF, &  
+                        node(BR,LF)%DALF,node(BR,LF)%DSLF,node(BR,LF)%DGLF+node(BR,LF)%DALF+node(BR,LF)%DSLF,node(BR,LF)%LDEATHDAP
                 ENDDO
             ENDDO
                 

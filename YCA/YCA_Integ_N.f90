@@ -28,17 +28,17 @@
         LNPHC = LNPHC +  LNPH                                                                                       !EQN 423
         IF (LEAFN.LT.1.0E-10) LEAFN = 0.0
         STEMNEXCESS = 0.0
-        plant%STEMNEXCESSN = 0.0
+        node%STEMNEXCESSN = 0.0
         !IF (SANC.GT.SNCX) STEMNEXCESS = (STWT+CRWT)*(SANC-SNCX)                                                     !EQN 246
         !STEMN = STEMN + SNUSE(0) - SNPH - STEMNEXCESS                                                               !EQN 247
         
         DO BR = 0, BRSTAGE                                                                                                                                                          
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   
-                IF (plant(BR,LF)%SANC < plant(BR,LF)%SNCX) THEN 
-                    plant(BR,LF)%STEMNEXCESSN = (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*(plant(BR,LF)%SANC-plant(BR,LF)%SNCX)
-                    STEMNEXCESS = STEMNEXCESS + plant(BR,LF)%STEMNEXCESSN
-                    plant(BR,LF)%STEMNN = plant(BR,LF)%STEMNN + SNUSEN(0,BR,LF) - plant(BR,LF)%SNPHN - plant(BR,LF)%STEMNEXCESSN  
-                    STEMN = STEMN + plant(BR,LF)%STEMNN
+                IF (node(BR,LF)%SANC < node(BR,LF)%SNCX) THEN 
+                    node(BR,LF)%STEMNEXCESSN = (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*(node(BR,LF)%SANC-node(BR,LF)%SNCX)
+                    STEMNEXCESS = STEMNEXCESS + node(BR,LF)%STEMNEXCESSN
+                    node(BR,LF)%STEMNN = node(BR,LF)%STEMNN + SNUSEN(0,BR,LF) - node(BR,LF)%SNPHN - node(BR,LF)%STEMNEXCESSN  
+                    STEMN = STEMN + node(BR,LF)%STEMNN
                 ENDIF 
             ENDDO
         ENDDO

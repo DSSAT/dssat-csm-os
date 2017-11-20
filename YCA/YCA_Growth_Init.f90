@@ -186,7 +186,7 @@
         rswph = rswt * hafr                                                                                            !EQN 419
         lnph = leafn * hafr                                                                                            !EQN 420
         snph = stemn * hafr                                                                                            !EQN 421
-        plant%snphn = plant%stemnn * hafr                                                                         !LPM 23MAY2015 to consider stem N by node cohort 
+        node%snphn = node%stemnn * hafr                                                                         !LPM 23MAY2015 to consider stem N by node cohort 
         rsnph = rsn * hafr                                                                                             !EQN 422
         
     END SUBROUTINE YCA_Growth_Init

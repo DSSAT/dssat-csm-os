@@ -22,7 +22,7 @@ Module YCA_First_Trans_m
     REAL, PARAMETER:: ZERO = 1.0E-5 ! The "first" real number after zero (0) #MathUtils
 
 
-    TYPE (Node_type),DIMENSION(0:PSX,0:LCNUMX)  :: plant
+    TYPE (Node_type),DIMENSION(0:PSX,0:LCNUMX)  :: node
     
     REAL    :: AH2OPROFILE             ! Available H2o,profile          mm         ! (From Growth)    
     REAL    :: AH2OROOTZONE            ! Available h2o in root zone     mm         ! (From Growth)    
@@ -1243,7 +1243,7 @@ Module YCA_First_Trans_m
     subroutine clear_YCA_First_Trans_m()
         USE YCA_First_Trans_m
         implicit none
-        plant=Node_type_constructor()
+        node=Node_type_constructor()
         
         
         L = 0
