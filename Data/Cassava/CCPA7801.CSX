@@ -8,7 +8,8 @@ VELTKAMP,H.J.
 @SITE
 PALMIRA,COLOMBIA  3.52;-76.35;423;AW
 @ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
-    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99@NOTES
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+@NOTES
  AGRICULTURAL UNIVERSITY,WAGENINGEN,NETHERLANDS CIAT Experiment 1
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
