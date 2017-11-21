@@ -353,7 +353,7 @@
           CALL GETLUN('OUTO', NOUTDO)
           ISWNIT = ISWITCH % ISWNIT
           ISWPOT = ISWITCH % ISWPOT
-!          ISWPHO = ISWITCH % ISWPHO
+          ISWPHO = ISWITCH % ISWPHO
           ISWWAT = ISWITCH % ISWWAT
           IDETO  = ISWITCH % IDETO
 
