@@ -99,7 +99,7 @@ C
           CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
           NSENS = 0
-          IF (INDEX('GRO,CAS,CSM,CSP,CER',MODEL(3:5)) .GT. 0) THEN 
+          IF (INDEX('GRO,CAS,CSM,CSP,CER,YCA',MODEL(3:5)) .GT. 0) THEN 
                   CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &            ECONO,IVRGRP,MODEL)
           ENDIF
@@ -119,7 +119,7 @@ C
              NSENS = 0
              CALL IPVAR (FILEG,NSENS,RNMODE,VARNO,
      &         VARTY,VRNAME,PATHGE,ECONO, MODEL, ATLINE, CROP)
-	       IF (INDEX('GRO,CAS,CSM,CSP,CER',MODEL(3:5)) .GT. 0) THEN 
+	       IF (INDEX('GRO,CAS,CSM,CSP,CER,YCA',MODEL(3:5)) .GT. 0) THEN 
                  CALL IPECO(FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &               ECONO,IVRGRP,MODEL)
              ENDIF
@@ -137,7 +137,7 @@ C**WDB 12/8/2015 added BSCER to case statement for sugarbeet model
      &         'PTSUB','RICER','TRARO','TNARO',
      &         'SCCAN','SCCSP','BSCER')
             CALL INVRCE (CROP, MODEL)
-          CASE ('CSCER','CSCAS')
+          CASE ('CSCER','CSCAS','CSYCA')
 !           CALL INVRCS
             CALL INVRCE (CROP, MODEL)
           END SELECT
@@ -155,7 +155,8 @@ C**WDB 12/8/2015 added BSCER to case statement for sugarbeet model
 
 !=======================================================================
       ELSE IF (MENU .EQ. 4) THEN
-        IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS',MODEL(3:5)) .GT. 0)THEN
+        IF (INDEX('GRO,CSM,CSP,CER,CRP,CAN,CAS,YCA',MODEL(3:5)) .GT. 0)
+     &   THEN
               CALL IPECO (FILEE,NSENS,RNMODE,PATHEC,ECOTYP,ECONAM,
      &            ECONO,IVRGRP,MODEL)
           ENDIF

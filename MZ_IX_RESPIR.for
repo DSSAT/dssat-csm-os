@@ -76,7 +76,9 @@ C=======================================================================
       REAL        RCST      
       REAL        RES30C    
       REAL        RO        
-      REAL        RP        
+      REAL        RP
+      REAL        SCLTS 
+C                     SCLTS added on 4 July 2017 by Bruce Kimball
       REAL        TAIRHR(24)
       REAL        TRSFAC    
       REAL        WTMAIN    
@@ -107,8 +109,11 @@ C-----------------------------------------------------------------------
 C     Temperature effect on maintenance respiration (McCree, 1974)
 C-----------------------------------------------------------------------
         TRSFAC = 0.0
-        DO H = 1,24
-          TRSFAC = TRSFAC + 0.044+0.0019*TAIRHR(H)+0.001*TAIRHR(H)**2
+        SCLTS = 24./TS
+        DO H = 1,TS
+C         TRSFAC = TRSFAC + 0.044+0.0019*TAIRHR(H)+0.001*TAIRHR(H)**2
+      TRSFAC = TRSFAC +(0.044+0.0019*TAIRHR(H)+0.001*TAIRHR(H)**2)*SCLTS
+C     scaling to number of time steps 24/TS added by Bruce Kimball on 4 July 2017
         ENDDO
 	  TRSFAC = TRSFAC*1.0
 C-----------------------------------------------------------------------

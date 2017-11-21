@@ -1,0 +1,258 @@
+*EXP.DETAILS: SPPI1101BM TIFTON 85
+
+*GENERAL
+@PEOPLE
+D.N.L. Pequeno; C.G.S.Pedreira; K.J. BOOTE
+@ADDRESS
+Av. Padua Dias, 11 - USP/ESALQ
+@SITE
+Piracicaba, SP, Brazil
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+     20   -99   -99   -99   -99   -99   1.5   -99   -99 pping
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 Tifton85 28D Irrig         1  1  0  1  1  1  1  0  0  0  0  1  1
+ 2 1 1 0 Tifton85 42D Irrig         1  1  0  1  1  1  2  0  0  0  0  1  1
+ 3 1 1 0 Tifton85 28D Rainfed       1  1  0  1  1  2  1  0  0  0  0  1  1
+ 4 1 1 0 Tifton85 42D Rainfed       1  1  0  1  1  2  2  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 BM UF0001 Tifton 85
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 SPPI1101 SPPI       -99   -99   -99   -99   -99   -99 -99    -99  EBPI080100 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 11097   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    BH 11001   -99   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    20  .519    .1    .8
+ 1    40  .366    .1    .8
+ 1    70  .366    .1    .8
+ 1    90  .366    .1    .8
+ 1   110  .366    .1    .8
+ 1   130  .366    .1    .8
+ 1   160  .366    .1    .8
+ 1   180  .366    .1    .8
+ 1   200  .366    .1    .8
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 11001   -99   999   999     T     R     2     0     2  2000   500    32     1     0                        -99
+! KJB Must have PLRS at 2 cm, for complete canopy.  Using RS=20, gives bad early results
+! Interaction with light interception (Ht Width) equations for Leaf Ps version.
+! No effect of C version of model is used.
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    30    50   100 GS000 IR001    10 -99
+@I IDATE  IROP IRVAL
+ 1 11125 IR004  10.5
+ 1 11139 IR004  10.5
+ 1 11143 IR004     7
+ 1 11146 IR004  12.3
+ 1 11153 IR004   7.9
+ 1 11161 IR004  10.5
+ 1 11166 IR004  10.5
+ 1 11172 IR004     7
+ 1 11178 IR004   6.1
+ 1 11181 IR004     7
+ 1 11185 IR004     7
+ 1 11189 IR004  10.5
+ 1 11197 IR004  10.5
+ 1 11201 IR004  10.5
+ 1 11206 IR004   8.8
+ 1 11207 IR004   4.4
+ 1 11210 IR004  10.5
+ 1 11215 IR004   5.3
+ 1 11218 IR004   3.5
+ 1 11221 IR004   5.3
+ 1 11223 IR004   6.1
+ 1 11225 IR004   2.6
+ 1 11228 IR004   5.3
+ 1 11231 IR004   8.8
+ 1 11232 IR004   5.3
+ 1 11238 IR004   8.8
+ 1 11241 IR004  12.3
+ 1 11248 IR004  10.5
+ 1 11253 IR004  10.5
+ 1 11255 IR004  13.1
+ 1 11257 IR004   126
+ 1 11265 IR004   8.8
+ 1 11269 IR004     7
+ 1 11272 IR004  11.6
+ 1 11276 IR004     7
+ 1 11279 IR004  10.5
+ 1 11286 IR004  10.5
+ 1 11293 IR004  10.5
+ 1 11298 IR004  10.5
+ 1 11302 IR004   7.9
+ 1 11307 IR004     7
+ 1 11310 IR004  10.5
+ 1 11312 IR004   5.3
+ 1 11317 IR004     7
+ 1 11338 IR004   9.6
+ 1 11346 IR004  12.3
+ 1 11350 IR004   6.1
+ 1 11351 IR004  10.5
+ 1 11354 IR004  13.1
+ 1 11357 IR004  15.8
+ 1 11360 IR004  13.1
+ 1 12030 IR004  10.5
+ 1 12035 IR004  15.8
+ 1 12038 IR004   8.8
+ 1 12041 IR004  19.3
+ 1 12047 IR004  10.5
+ 1 12061 IR004   9.6
+ 1 12066 IR004   8.8
+ 1 12069 IR004  19.3
+ 1 12075 IR004    14
+ 1 12078 IR004  34.1
+ 1 12082 IR004    21
+ 1 12094 IR004  26.3
+ 1 12103 IR004  10.5
+ 1 12107 IR004  10.5
+ 1 12116 IR004  10.5
+ 1 12125 IR004  12.3
+ 1 12139 IR004    14
+ 1 12142 IR004   8.8
+ 1 12149 IR004  17.5
+ 1 12152 IR004  19.3
+ 1 12165 IR004  14.9
+ 1 12178 IR004  16.6
+ 1 12186 IR004  17.5
+ 1 12205 IR004  15.8
+ 1 12213 IR004    21
+ 1 12218 IR004  12.3
+ 1 12222 IR004  15.8
+ 1 12229 IR004  15.8
+ 1 12230 IR004  10.5
+ 1 12240 IR004  10.5
+ 1 12242 IR004  12.3
+ 1 12248 IR004    21
+ 1 12250 IR004  10.5
+ 1 12252 IR004  15.8
+ 1 12255 IR004  10.5
+ 1 12257 IR004  15.8
+ 1 12260 IR004  10.5
+ 1 12273 IR004   8.8
+ 1 12274 IR004  12.3
+ 1 12278 IR004  15.8
+ 1 12281 IR004  17.5
+ 1 12283 IR004  13.1
+ 1 12289 IR004  10.5
+ 1 12290 IR004   1.8
+ 1 12300 IR004  10.5
+ 1 12303 IR004   5.3
+ 1 12304 IR004  15.8
+ 1 12321 IR004  10.5
+ 1 12322 IR004   4.4
+ 1 12327 IR004  10.5
+ 1 12333 IR004   8.8
+ 1 12334 IR004  10.5
+ 1 12340 IR004     7
+ 1 12343 IR004  15.8
+ 1 12346 IR004  10.5
+ 1 12358 IR004  12.3
+ 1 13005 IR004   7.9
+ 1 13060 IR004   7.9
+ 1 13062 IR004  10.5
+ 1 13064 IR004  10.5
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2     1    30    50   100 GS000 IR001    10 -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 11013 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11041 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11069 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11097 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11125 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11153 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11181 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11209 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11237 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11265 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11293 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11321 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 11349 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12012 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12040 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12068 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12096 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12124 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12152 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12180 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12208 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12236 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12264 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12292 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12320 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 12348 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 13010 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 13038 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 13066 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 1 13094 FE001 AP001     1    31   -99   -99   -99   -99   -99 28 days
+ 2 11013 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 11055 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 11097 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 11139 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 11181 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 11223 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 11265 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 11307 FE001 AP001     1    31   -99   -99   -99   -99   -99 42 days
+ 2 11335 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12012 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12054 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12096 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12138 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12180 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12222 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12264 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12306 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 12334 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 13010 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 13052 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+ 2 13094 FE001 AP001     1    46   -99   -99   -99   -99   -99 42 days
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 13106 GS000     C     A   -99   -99 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 11001  2150 DEFAULT SIMULATION CNTRL  PRFRM
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     F     S     L     R     0     P     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     Y     Y     Y     N     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          04001 04001     0     0     0     0     0
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR              0     0     0 GS000 IR001     0     0
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI              0     0     0 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE              0     0     0
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 00001     0     0
+
+
+

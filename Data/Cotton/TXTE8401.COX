@@ -1,0 +1,89 @@
+*EXP.DETAILS: TXTE8401CO 1984 COTTON ROOT GROWTH AND SOIL WATER EXTRACTION
+
+*GENERAL
+@PEOPLE
+Bland WL, and WA Dugas.     
+@ADDRESS
+Blackland Res. Center, Texas Agric. Exp. Stn., Texas A&M Univ. System
+@SITE
+Blackland Res. Center
+@NOTES
+!Bland and Dugas, Texas A&M, Temple, Texas
+!Cotton root growth and soil water extraction
+!Soil Sci.Soc.Am.J. 53:1850
+!K. Boote calibrated DUL and LL of the soil to match obs soil water on 4/29/2010.
+!The initial soil water content was also modified in some cases by K. Boote.
+!Rooting function (SRGF) was almost good. Used 12000 cm/g root, calibrated from
+!other experiments. No confidence in the N fertilization as 1985 supposedly
+!had no N applied. Result is lower LAI than expected, maybe because of N deficit.
+!Upper soil layers are drier than Suleiman evaporation function allows. Problem?
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 1984 season                1  1  0  1  1  1  1  0  0  0  0  0  1
+ 
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 CO TX0003 GP 3774
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 TXBD0001 TXBD       -99   -99 DR000   -99   -99   -99 C      210  TXBD000005 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1   -99 84156   -99   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5   .18    .5    .5
+ 1    15   .18    .5    .5
+ 1    30   .24    .5    .5
+ 1    45   .25    .5    .5
+ 1    60    .3    .5    .5
+ 1    90   .34    .5    .5
+ 1   120   .37    .5    .5
+ 1   150   .37    .5    .5
+ 1   180   .37    .5    .5
+ 1   210   .35    .5    .5
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1   -99 84156   -99    15     S     R    68   -99     6   -99   -99   -99   -99   -99                        1994 Exp
+
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   .95   -99   -99   -99 GS000 IR001    10 NR-OI
+@I IDATE  IROP IRVAL
+ 1 84193 IR004    32
+ 1 84194 IR004    29
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 84156 FE004 AP009     6    45   -99   -99   -99   -99   -99 CHANGED TO SOWING APPL
+ 1 84220 FE004 AP009     6    40   -99   -99   -99   -99   -99 CHANGED TO SOWING APPL
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     E 84156  2150 1984 START AT EMER
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          84001 84001    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 98001   100     0

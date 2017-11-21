@@ -191,8 +191,8 @@ C-----------------------------------------------------------------------
          N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
          CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
-     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD, TDFC, RUNOFF,
-     &N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
+     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD*10., TDFC*10.,
+     &RUNOFF, N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
      
          CALL LinklstSW(vCsvlineSW)
       END IF     
@@ -271,7 +271,7 @@ C-----------------------------------------------------------------------
             WRITE (NOUTDW,1300)YEAR,DOY,MOD(DAS,100000), NINT(TSW), 
      &      NINT(PESW*10),NINT(TRUNOF),NINT(TDRAIN),NINT(CRAIN),
      &        NAP, NINT(TOTIR),NINT(AVWTD), 
-     &        MULCHWAT, TDFD, TDFC, RUNOFF, 
+     &        MULCHWAT, TDFD*10., TDFC*10., RUNOFF, 
      &        (SW(L),L=1,N_LYR)
 
           ELSE        !match old printout
@@ -287,8 +287,8 @@ C-----------------------------------------------------------------------
          N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR)) 
          CALL CsvOutSW_crgro(EXPNAME,CONTROL%RUN, CONTROL%TRTNUM,
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, TSW, PESW, TRUNOF,
-     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD, TDFC, RUNOFF,
-     &N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
+     &TDRAIN, CRAIN, NAP, TOTIR, AVWTD, MULCHWAT, TDFD*10., TDFC*10.,
+     &RUNOFF, N_LYR, SW, vCsvlineSW, vpCsvlineSW, vlngthSW)
      
          CALL LinklstSW(vCsvlineSW)
       END IF         

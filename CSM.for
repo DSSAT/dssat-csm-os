@@ -1,18 +1,17 @@
 C=======================================================================
-C  COPYRIGHT 1998-2015 DSSAT Foundation
+C  COPYRIGHT 1998-2017 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      University of Guelph, Guelph, Ontario
-C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
 C
-C     CROPPING SYSTEM MODEL Version 4.6.1
+C     CROPPING SYSTEM MODEL Version 4.7.0
 C
 C     Decision Support System for Agrotechnology Transfer (DSSAT)
 C
-C     July 2015  CSM Version 4.6.1
+C     August 2017  CSM Version 4.7.0
 C
 C     Gerrit Hoogenboom, J.W. Jones, Cheryl Porter, K.J. Boote, 
 C
@@ -95,14 +94,14 @@ C     The variable "ISWITCH" is of type "SwitchType".
       DONE = .FALSE.
       YRDOY_END = 9999999
 
-!     OPSYS defined in ModuleDefs.
-      CALL SETOP()  
+!     Pick up model version for setting the name of some files
+      WRITE(ModelVerTxt,'(I2.2,I1)') Version%Major, Version%Minor
 
       !Delete existing output files
       CALL OPCLEAR
 
       CALL GETLUN('FILEIO', LUNIO)
-      FILEIO = 'DSSAT46.INP'
+      FILEIO = 'DSSAT47.INP'
 
 C-----------------------------------------------------------------------
 C    Get argument from runtime module to determine path of the EXE files

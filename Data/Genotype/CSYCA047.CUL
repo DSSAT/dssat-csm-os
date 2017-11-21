@@ -1,0 +1,63 @@
+$CULTIVARS:CSYCA047.08102017   Last edit: 08/13/2017 LPM 
+
+
+! Coefficients used in the Cropsim cassava module differ from those used
+! in the earlier DSSAT cassava model. It is best,therefore,not to attempt
+! to convert 'old' coefficients, but to calibrate anew using the available
+! experiments. And even with a fresh calibration,it is good practice to 
+! test any set of coefficients by using them with real experiments that
+! were not used for calibration,and then comparing model outputs to 
+! measured values. 
+
+! Users should also be aware that some of the coefficients (eg.PHINT) may 
+! vary from region to region,and perhaps even from sowing date to sowing 
+! date,reflecting not only the current incomplete understanding of the 
+! environmental physiology of the crop, but also deficiencies in defining 
+! the initial conditions and computing the microbial release of nitrogen 
+! and other nutrients.
+
+*CULTIVARS:CSYCA47
+! The following cultivars have not been calibrated well and the coefficients are                                                                            
+! present merely to allow the experiments to be run. A user should spend time calibrating for                                                                    
+! his/her own data. 
+
+!                                    PPSEN -BRANCHING -STORA.ROOTS- ------- LEAVES ------- -- STEM ---  
+@VAR#  VAR-NAME........  EXP#   ECO#  PPS1 B01ND B12ND  HMPC  LAXS  SLAS LLIFA LPEFR LNSLP NODWT NODLT
+!                                        1     2     3     4     5     6     7     8     9    10    11    
+!                                             Tu    Tu     %   cm2 cm2/g    Tu    fr     #     g    cm
+UC0002 MCol-22              . 990002     0 420.0 500.0    50   430   200   957  0.33  1.20  6.30   2.0
+UC0003 CMC 40               . 990014     0 680.0 300.0    50   320   200   600  0.33  1.60  8.00   2.0
+UC0004 MMEX-59              . 990001     0 430.0 420.0    50   550   250   800  0.33  1.30 10.00   2.0
+UC0005 Ceiba                . 990013     0 705.0 700.0    50   600   200   800  0.33  1.20  6.50   2.0
+UC0006 MCol-1684            . 990003     0 380.0 410.0    50   550   220   900  0.33  1.10  6.00   2.0
+UC0007 MVen-77              . 990005     0 950.0 300.0    50   900   200   850  0.33  1.40 18.00   2.0
+UC0008 MPtr-26              . 990004     0 1000. 350.0    50   550   180  1019  0.33  1.60 12.00   2.0
+UC0009 MCol-638             . 990006     0 700.0 450.0    50   900   180  1060  0.33  1.10  8.00   2.0
+UC0010 TMS 30572            . 990004     0 696.0 1206.    50   600   220   700  0.33  0.80  5.60   2.0
+UC0011 MCol-113             . 990008     0 420.0 600.0    50   430   200   957  0.33  1.20  6.30   2.0
+UC0012 CM 523-7             . 990007     0 696.0 1206.    50   400   253  1000  0.33  1.80  5.00   2.0
+UC0013 MCol-72              . 990002     0 420.0 500.0    50   430   200   957  0.33  1.20  6.30   2.0
+UC0014 CM 507-37            . 990007     0 750.0 500.0    50   600   220   600  0.33  1.80  5.00   2.0
+UC0015 MMex-11              . 990002     0 696.0 1206.    50   600   220   700  0.33  0.80  5.60   2.0
+UC0016 MCol-113 3Br         . 990009     0 420.0 600.0    50   430   200   957  0.33  1.20  6.30   2.0
+UC0017 MCol-113 2Br         . 990010     0 420.0 600.0    50   430   200   957  0.33  1.20  6.30   2.0
+UC0018 MCol-113 1Br         . 990011     0 420.0 600.0    50   430   200   957  0.33  1.20  6.30   2.0
+UC0019 MCol-113 1-4Br       . 990012     0 420.0 600.0    50   430   200   957  0.33  1.20  6.30   2.0
+
+! COEFF       DEFINITION
+! ========    ==========
+! VAR#        Identification code or number for the specific cultivar.
+! VAR-NAME    Name of cultivar.
+! EXP#        Number of experiments used for calibration.
+! ECO#        Ecotype code for this cultivar,points to entry in the ECO file
+! PPSn        Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
+! BxyND       Duration from branch x to branch y (ie.tier x,node number)
+! HMPC        Harvest product moisture content (%) (currently this variable doesn't affect calibration)
+! LA1S        Area/leaf (cm2) of the first leaves when growing without stress.
+! LAXS        Area/leaf at maximum area/leaf (cm2)
+! SLAS        Specific leaf lamina area when crop growing without stress (cm2/g)
+! LLIFA       Leaf life,from full expansion to start senescence (Thermal units)
+! LPEFR       Leaf petiole fraction (fr of lamina+petiole)
+! LNSLP       Slope for leaf production (0.8 low rate, 1.0 medium rate, 1.2 high rate)
+! NODWT       Node weight for the first stem of the shoot before branching at 3400 ˚Cd
+! NODLT       Mean internode length (cm) for for the first stem of the shoot before branching when is lignified 

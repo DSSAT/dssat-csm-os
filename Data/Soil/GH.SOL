@@ -42,7 +42,7 @@
     90 B3    0.130 0.200 0.347  0.05 -99.0  1.45  0.17  18.2  27.7  47.5   -99   6.0 -99.0 -99.0
 !   113 B3    0.130 0.197 0.347  0.02 -99.0  1.45  0.17  18.2  27.7  47.5   -99   6.0 -99.0 -99.0
 
-*GHWA040001  unknown     LS       90 90 unknown                                                                                                            
+*GHWA040001  unknown     LS       90 Loamy Silt                                                                                                            
 @SITE        COUNTRY          LAT     LONG SCS FAMILY                                                                                                      
  Wa          Ghana          10.005  -2.496 unknown                                                                                                         
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE                                                                                               

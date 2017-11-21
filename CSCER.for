@@ -170,7 +170,7 @@
       !    that is currently set to 0 .. hence no saturation 
       !    effect. Need to use switch in CSM somehow.
 
-      USE CRSIMDEF
+      USE OSDefinitions
       USE CSVOUTPUT  ! VSH
       
       IMPLICIT NONE
@@ -1468,9 +1468,9 @@
 
         IF (DYNAMIC.EQ.RUNINIT) THEN
 
-          MODNAME = 'CSCER046'
+          MODNAME = 'CSCER047'
           VERSION = 010115
-          GENFLCHK(3:15) = 'CER046.010115'
+          GENFLCHK(3:15) = 'CER047.08102017'
 
           ! Parameters
           STDAY = 20.0    ! TT in standard day
@@ -9035,7 +9035,7 @@
 !  01/01/89 JWJ Modified for climate change using ETRATIO subroutine.
 !  12/05/93 NBP Made into subroutine and changed to TRATIO function.
 !  10/13/97 CHP Modified for modular format.
-!  11/25/97 CHP Put in file TRANS.FOR w/ TRATIO and BLRRES
+!  11/25/97 CHP Put in file TRANS.for w/ TRATIO and BLRRES
 !  09/01/99 GH  Incorporated into CROPGRO
 !  01/13/00 NBP Added DYNAMIC contruct to input KCAN
 !  04/09/01 LAH Modified for CROPGRO-SIM

@@ -9,7 +9,7 @@ C  02/08/1993 PWW Header revision and minor changes
 C  03/29/2001 WDB Converted to modular form                      
 C  12/01/2001 WDB Further modular conversion  
 C  02/25/2005 CHP Check for NFAC < 0.                   
-C  06/27/2011 FSR created WH_NFACTO.FOR for APSIM NWheat adaptation
+C  06/27/2011 FSR created WH_NFACTO.for for APSIM NWheat adaptation
 C JZW question, the codes are from DSSAT and only used for WH_OPHARV?
 C----------------------------------------------------------------------
 C

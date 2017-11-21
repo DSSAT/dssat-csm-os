@@ -155,7 +155,7 @@ C     Seasonal initialization - run once per season
 C***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 C-----------------------------------------------------------------------
-! Open file to write results from CSP_PHOTO.FOR
+! Open file to write results from CSP_PHOTO.for
       CALL GET(ISWITCH)
       IF (INDEX('Y'  ,ISWITCH%IDETG) > 0 .AND. 
      &    INDEX('YDA',ISWITCH%IDETL) > 0) THEN
@@ -164,7 +164,7 @@ C-----------------------------------------------------------------------
         OPEN(UNIT = PLUN, FILE = "CSP_PHOTO.OUT", STATUS = "UNKNOWN", 
      &     ACTION = "WRITE", POSITION = "REWIND", IOSTAT = OpenStatus)
 
-        WRITE(PLUN,'(1X,"RESULTS FROM CSP_PHOTO.FOR")')
+        WRITE(PLUN,'(1X,"RESULTS FROM CSP_PHOTO.for")')
         WRITE(PLUN,'(90X,"LeafArea m2")')
         WRITE(PLUN,'(1X,"  YRDOY  DAS XHLAI LAIAZ SHLAI FRSHA 
      &LIalt    LI LITOT LIsun LIshd LIgnd     PG  PGTOT  GP1  GP2

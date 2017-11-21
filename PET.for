@@ -1,6 +1,6 @@
 !***********************************************************************
 !  POTENTIAL EVAPOTRANSPIRATION 
-!     File PET.FOR
+!     File PET.for
 !***********************************************************************
 !  Includes modules:
 !MEEVP Routine Description
@@ -163,7 +163,7 @@ C     PARAMETER (SHAIR = 1005.0)
       PARAMETER (SBZCON=4.903E-9)   !(MJ/K4/m2/d) fixed constant 5/6/02
 !-----------------------------------------------------------------------
 !     FUNCTION SUBROUTINES:
-      REAL VPSLOP, VPSAT      !Found in file HMET.FOR
+      REAL VPSLOP, VPSAT      !Found in file HMET.for
 
 C-----------------------------------------------------------------------
 C     Compute air properties.
@@ -394,7 +394,7 @@ C     PARAMETER (SHAIR = 1005.0)
       PARAMETER (SBZCON=4.903E-9)   !(MJ/K4/m2/d) fixed constant 5/6/02
 !-----------------------------------------------------------------------
 !     FUNCTION SUBROUTINES:
-      REAL VPSLOP, VPSAT      !Found in file HMET.FOR
+      REAL VPSLOP, VPSAT      !Found in file HMET.for
 
 C-----------------------------------------------------------------------
 C     Compute air properties.
@@ -687,7 +687,7 @@ C=======================================================================
       PARAMETER (SBZCON=4.903E-9)   !(MJ/K4/m2/d) fixed constant 5/6/02 
 !-----------------------------------------------------------------------
 !     FUNCTION SUBROUTINES:
-      REAL VPSLOP, VPSAT      !Found in file HMET.FOR
+      REAL VPSLOP, VPSAT      !Found in file HMET.for
 
 C-----------------------------------------------------------------------
 C     Compute air properties.

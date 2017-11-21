@@ -1,0 +1,46 @@
+*SOILS: General DSSAT Soil Input File
+
+*USOT070001  Dept. Labs  SCL      30 Sandy clay loam
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Onatta      Italy           39.25    9.31 Lithic Xerorthents
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G   .13     6   .25    81     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99  .171  .256  .409     1   .43  1.47  1.16    23   6.4     1   .15   6.3   -99   -99   -99
+    30   -99  .165  .251  .404  .638   .43  1.49   .96    23   8.8     1   .13   6.5   -99   -99   -99
+
+*USOT070002  Dept. Labs  SCL      30 Sandy clay loam
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Ottava      Italy           40.46    8.09 Typic Xerochrepts
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G   .13     6   .25    73     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99  .174   .27  .419     1   .43  1.44  1.28    23    10     1   .11   8.3   -99   -99   -99
+    30   -99  .151  .245  .417  .638  2.59  1.45  1.16    19    12     1    .1   8.4   -99   -99   -99
+
+*USOT050001  Dept. Labs  SCL      30 Sandy clay loam (Ottava)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Ottava      Italy           40.46    8.09 Typic Xerochrepts
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G   .13     6   .25    73     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99  .174   .27  .419     1   .43  1.44  1.28    23    10     1   .11   8.3   -99   -99   -99
+    30   -99  .151  .245  .417  .638  2.59  1.45  1.16    19    12     1    .1   8.4   -99   -99   -99
+
+*USOT070003  Dept. Labs  SCL     120 Sandy clay loam (Ottava)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Ottava      Italy           40.46    8.09 Typic Xerochrepts
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G   .13     6   .25    73     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99  .174   .27  .419     1   .43  1.44  1.28    23    10     1   -99   8.3   -99   -99   -99
+    30   -99  .151  .245  .417  .638  2.59  1.45  1.16    19    12     1   -99   8.4   -99   -99   -99
+    60   -99  .151  .245  .417  .500  2.59  1.45  1.16    19    12     1   -99   8.4   -99   -99   -99
+    90   -99  .151  .245  .417  .250  2.59  1.45  1.16    19    12     1   -99   8.4   -99   -99   -99
+   120   -99  .151  .245  .417  .100  2.59  1.45  1.16    19    12     1   -99   8.4   -99   -99   -99
+
+
+
+
+
+  

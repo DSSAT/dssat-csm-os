@@ -57,6 +57,7 @@ C-----------------------------------------------------------------------
 
       CHARACTER(len=1), PARAMETER :: BLANK = ' '
       CHARACTER(len=6), PARAMETER :: ERRKEY = 'IPSOIL'
+      CHARACTER(len=3)   ModelVersionDecimal
       CHARACTER(len=9)   VERSION_TXT
       CHARACTER(len=12)  FILESS, NAMEF
       CHARACTER(len=30)  FILEIO
@@ -115,6 +116,8 @@ C-----------------------------------------------------------------------
         LUNIO   = CONTROL % LUNIO
 
         FILESS = 'RESCH' // ModelVerTxt // '.SDA'
+        WRITE(ModelVersionDecimal,'(I1,".",I1)')
+     &     Version%Major, Version%Minor
 
         SOILNF = FILESS
         INQUIRE (FILE = SOILNF, EXIST = FEXIST)
@@ -142,7 +145,8 @@ C-----------------------------------------------------------------------
 !             Read version number
               CALL IGNORE(LUNSOL,LNUM,ISECT,CHAR)
               READ(CHAR,'(A9)',IOSTAT=ERR) VERSION_TXT
-              IF (INDEX(VERSION_TXT,"4.6") < 1 .OR. ERR /= 0) THEN 
+              IF (INDEX(VERSION_TXT,ModelVersionDecimal) < 1 .OR. 
+     &                ERR /= 0) THEN 
 !               Version not found in file, or wrong version
                 EROR = .TRUE.
                 ERR = 50

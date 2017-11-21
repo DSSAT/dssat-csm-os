@@ -144,7 +144,7 @@ C Variables for adding storage organ and dormancy functions
 
       CHARACTER*3 TYPLMOB, TYPNMOB 
       REAL LRMOB(4), NRMOB(4)
-      REAL PHZACC(20)
+      REAL PHZACC(20), SDLEST
       REAL XLFEST(8), YLFEST(8), YSREST(8), YSTEST(8)
 
 !-----------------------------------------------------------------------
@@ -174,7 +174,7 @@ C Variables for apportioning NDMVEG and NDMOLD
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XLFEST, XSLATM, XTRFAC, XVGROW,    !Output
      &  XXFTEM, YLEAF, YLFEST, YSLATM, YSTEM, YSTEST,       !Output
-     &  YTRFAC, YVREF, YXFTEM,                                     !Output
+     &  YTRFAC, YVREF, YXFTEM, SDLEST,                           !Output
      &  FRSTRF, FRSTRMX, LRMOB, NMOBSRN,                              !Output
      &  NMOBSRX, NRMOB, PLME, PROLFR, PRORTR, PROSRF,            !Output
      &  PROSRI, PROSRR, PROSTR,                                          !Output
@@ -275,7 +275,7 @@ C-----------------------------------------------------------------------
 
         IF (PLME .EQ. 'T') THEN
       
-        IF (PHZACC(4) .GE. 60) THEN 
+        IF (PHZACC(4) .GE. SDLEST) THEN 
         FRLF = TABEX(YLFEST,XLFEST,VSTAGE,8)
         FRSTM = TABEX(YSTEST,XLFEST,VSTAGE,8)
         FRSTR = TABEX(YSREST,XLFEST,VSTAGE,8)
@@ -576,7 +576,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Calculate Pattern of Vegetative Partitioning, a function of V-STAGE
 C-----------------------------------------------------------------------
-        IF (PHZACC(4) .GE. 60) THEN 
+        IF (PHZACC(4) .GE. SDLEST) THEN 
         FRLF  = TABEX(YLFEST,XLFEST,VSTAGE,8)
         FRSTM = TABEX(YSTEST,XLFEST,VSTAGE,8)
         FRSTR = TABEX(YSREST,XLFEST,VSTAGE,8)
@@ -863,7 +863,8 @@ C=======================================================================
      &  SRMAX, THRESH, TURSLA, TYPSDT, VSSINK, XFRMAX,    !Output
      &  XFRUIT, XLEAF, XLFEST, XSLATM, XTRFAC, XVGROW,    !Output
      &  XXFTEM, YLEAF, YLFEST, YSLATM, YSTEM, YSTEST,       !Output
-     &  YTRFAC, YVREF, YXFTEM,                                      !Output
+     &  YTRFAC, YVREF, YXFTEM, SDLEST,                           !Output
+C     &  YTRFAC, YVREF, YXFTEM,                                      !Output
      &  FRSTRF, FRSTRMX, LRMOB, NMOBSRN,                              !Output
      &  NMOBSRX, NRMOB, PLME, PROLFR, PRORTR, PROSRF,            !Output
      &  PROSRI, PROSRR, PROSTR,                                          !Output
@@ -910,7 +911,7 @@ C=======================================================================
 
       CHARACTER*3 TYPLMOB, TYPNMOB 
 
-      REAL LRMOB(4)
+      REAL LRMOB(4), SDLEST
       REAL NRMOB(4), VEGNPCT, VEGNPMX, VNMOBR, VNSTAT
       REAL XLFEST(8), YLFEST(8), YSTEST(8), YSREST(8)
 
@@ -1117,6 +1118,10 @@ C-----------------------------------------------------------------------
 
         CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
         READ(C80,'(8F6.0)',IOSTAT=ERR)(YSREST(II),II=1,8)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+        READ(C80,'(F6.1)',IOSTAT=ERR) SDLEST
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 
       ENDIF

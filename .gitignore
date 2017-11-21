@@ -53,4 +53,13 @@ resource.h
 Data/.DS_Store
 Resources/RC*
 *makefile*
-build
+build/
+nbproject/
+.metadata/
+.project
+.cproject
+Makefile
+cluster.patch
+readme*
+CMakeFiles/
+CMakeCache.txt

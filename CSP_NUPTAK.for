@@ -106,7 +106,7 @@ C=======================================================================
 
       WRITE(WLUN,'(1X, "")')   !chp for portability
       WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"RESULTS FROM NUPTAK_SC.FOR")')
+      WRITE(WLUN,'(1X,"RESULTS FROM NUPTAK_SC.for")')
       WRITE(WLUN,'(1X,"--------------------------")')
       WRITE(WLUN,'(1X, "")')
       WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
@@ -115,7 +115,7 @@ C=======================================================================
 	WRITE(WLUN,'(1X,"RTNO3  : ",F6.3)') RTNO3
       WRITE(WLUN,'(1X,"RTNH4  : ",F6.3)') RTNH4
       WRITE(WLUN,'(1X, "")')
-      WRITE(WLUN,'(1X,"END RESULTS FROM NUPTAK_SC.FOR")')
+      WRITE(WLUN,'(1X,"END RESULTS FROM NUPTAK_SC.for")')
 
 !      CLOSE (WLUN)
 

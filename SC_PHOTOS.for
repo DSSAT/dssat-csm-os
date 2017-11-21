@@ -193,7 +193,7 @@ c     Array of corresponding relative photosynthesis rates
 c     Atmospheric CO2 content (ppm)
       REAL, INTENT(IN) ::  CO2            
 c     Linear interpolation function
-c     (defined in UTILS.FOR, provided by CSM)
+c     (defined in UTILS.for, provided by CSM)
       REAL  TABEX
 c     Loop counter
       INTEGER I

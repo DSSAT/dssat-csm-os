@@ -38,7 +38,7 @@ C=======================================================================
       CHARACTER*84 SimText
 
       INTEGER DAP, DOY, DSTRES, DYNAMIC, ERRNUM, FOUND
-      INTEGER I, IPX, ISENS, LINC, LNUM, LUNIO
+      INTEGER I, IPX, ISENS, LINC, LNUM, LUNIO, NameLength
       INTEGER NOUTDO, NYRS, RUN, TIMDIF, TRTNUM
       INTEGER YIELD, YR, YRDOY, YRPLT, RSTAGE
       INTEGER STGDOY(20)
@@ -245,7 +245,8 @@ C-----------------------------------------------------------------------
 !     At each plant stage, print growth data.
       IF (PRINT_STAGES) THEN
         DO I = 1, 20
-          IF (YRDOY .EQ. STGDOY(I) .AND. LenString(STNAME(I)) > 0) THEN
+          NameLength = LenString(STNAME(I))
+          IF (YRDOY .EQ. STGDOY(I) .AND. NameLength > 0) THEN
 
             !Store current Stage, STGDOY and STNAME
             CALL PUT('PLANT','iSTAGE', I)
@@ -284,7 +285,7 @@ C-----------------------------------------------------------------------
             ENDIF
             CALL YR_DOY (YRDOY, YR, DOY)
             CALL NAILUJ (DOY, YR, RMM, IPX)
-            IF (YRDOY >= YRPLT) THEN
+!            IF (YRDOY >= YRPLT) THEN
               IF (INDEX('IE',RNMODE) .GT. 0 .AND. NYRS .LE. 1) THEN
                 WRITE(*,4600) IPX, RMM, DAP, STNAME(I), NINT(BIOMAS), 
      &            XLAI, LFNUM, NINT(WTNCAN*10.), WTN, AVDSTR, AVNSTR
@@ -298,10 +299,10 @@ C-----------------------------------------------------------------------
      &            AVPSTR1, AVPSTR2, RSTAGE
  4605           FORMAT (1X,I2,1X,A3,1X,I4,1X,A10,I8,1X,F6.2,1X,F5.1,
      &                  1X,I4,1X,F4.1,1X,F5.2,1X,F5.2,2(1X,F5.2),I6)
-                WRITE(NOUTDO,'(A)') SimText
+                IF (YRDOY >= YRPLT) WRITE(NOUTDO,'(A)') SimText
               ENDIF
             ENDIF
-          ENDIF
+!          ENDIF
         ENDDO
       ENDIF
 

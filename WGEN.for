@@ -1,5 +1,5 @@
 C=======================================================================
-C  WGEN.FOR contains:
+C  WGEN.for contains:
 C    WGEN   - Generates daily weather data for crop models.
 C    WGENIN - Reads inputs from parameter file and creates two matrices:
 C                       inputs and correction factors.

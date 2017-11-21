@@ -23,11 +23,16 @@ C=======================================================================
      &  NSLOPE, PARSH, PARSUN, QEREF, RABS, RCUTIC,       !Input
      &  REFHT, RHUMHR, RNITP, RWUH, SHCAP, SLAAD,         !Input
      &  SLWREF, SLWSLO, STCOND, SWE, TAIRHR, TA,          !Input
-     &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,              !Input
+     &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,               !Input
      &  XLMAXT, YLMAXT,                                   !Input
      &  AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,      !Output
      &  PGHR, SLWSH, SLWSL, T0HR, TCAN, THR, TSHR,        !Output
      &  TSURF,                                            !Output
+!     Added by BAK DEC2014
+     &  CONDSH, CONDSL, RA, RB, RSURF, RNET,              !Output
+     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
+!     Added by BAK on 10DEC15
+     &                RBSH, RBSL, RBSS,                   !Output
      &  CCNEFF, CICAD, CMXSF, CQESF, PGPATH,              !Input
      &  AGEQESL, CO2QESL, QEFFSL)                         !Output
 
@@ -54,6 +59,10 @@ C=======================================================================
      &  TCAN,TCPREV,THR,TPREV,TSHR(NL),TSUM,TSURF(3,1),USTAR,
      &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6)
 
+!     Added by BAK
+      REAL RB(3),RSURF(3),RNET(3,1),
+     &  G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1),
+     &  RBSH, RBSL, RBSS
       CHARACTER PGPATH*2
       REAL CCNEFF, CICAD, CMXSF, CQESF
       REAL AGEQESL, CO2QESL, QEFFSL
@@ -112,7 +121,14 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        LAISHV, LAISL, LAISLV, LWIDTH, RABS,        !Input
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
-     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)     !Output
+     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
+     &        RB(3), RSURF, RNET,                         !Output
+     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
+C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
+C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
+     &        RBSL, RBSL, RBSS)                           !Output
+C          added by BAK on 10DEC2015           
+
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
               TCAN = TSUM / ITER
@@ -147,7 +163,14 @@ C            CONDSH = CONDSH * (THR-RWUH)/THR
      &          LAISHV, LAISL, LAISLV, LWIDTH, RABS,      !Input
      &          RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,    !Input
      &          WINDHR,                                   !Input
-     &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)   !Output
+     &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,   !Output
+     &          RB, RSURF, RNET,                          !Output
+     &          G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,!Output
+C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
+C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
+     &   RBSH, RBSL, RBSS)                               !Output
+C       preveious line added by BAK on 10DEC2015
+
               TSUM = TSUM + TCAN
               IF (ITER .GT. 5) THEN
                 TCAN = TSUM / ITER
@@ -210,7 +233,14 @@ C     Night hours or bare soil.
      &        LAISHV, LAISL, LAISLV, LWIDTH, RABS,        !Input
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
-     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)     !Output
+     &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
+     &        RB, RSURF, RNET,                            !Output
+     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
+C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
+C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
+     &        RBSL, RBSL, RBSS)                           !Output
+C             added by BAK on 10DEC2015
+
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
               TCAN = TSUM / ITER
@@ -236,12 +266,15 @@ C     difference.
         CALL HSOILT(
      &    DLAYR2, NLAYR, SHCAP, STCOND, TA, TSURF(3,1),   !Input
      &    TSHR)                                           !Output
-        SWE = SWE
-        DULE = DULE
-        LLE = LLE
-        CEN = CEN
-c       SWE = MAX(SWE-EHR,0.0)
-c       CEN = (DULE-SWE) / (DULE-LLE) * 100.0
+C       SWE = SWE
+C        DULE = DULE
+C       LLE = LLE
+C       CEN = CEN
+C previous 4 lines commented out by BK and KB on 11Jul17       
+        SWE = MAX(SWE-EHR,0.0)
+        CEN = (DULE-SWE) / (DULE-LLE) * 100.0
+C previous two lines uncommented by BK and KB on 11Jul17
+C per version 3.5 of DSSAT
       ENDIF
 
       RETURN
@@ -640,7 +673,13 @@ C=======================================================================
      &  LAISHV, LAISL, LAISLV, LWIDTH, RABS,              !Input
      &  RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,            !Input
      &  WINDHR,                                           !Input
-     &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR)           !Output
+     &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,           !Output
+     &  RB, RSURF, RNET,                                  !Output
+     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
+C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
+C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
+     &    RBSH, RBSL, RBSS)                               !Output
+C       added by BAK on 10DEC15
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -658,6 +697,10 @@ C=======================================================================
      &  VPD(3,1),VPSAT,WINDHR,CLOUDS,DAIR,DAIRD,DVAPOR,Q,SH,SHEAT(3,1),
      &  SHAIRD,TK,MWATER,RGAS,MAIR,LAISHV,LAISLV,RADBK(3),
      &  USTAR,XLAI,ZERO
+
+      REAL RB(3), RSURF(3),RSSH,RSSL,RSSS,RBSH,RBSL,RBSS
+C         RB, RSURF RSSH RSSL RSSS added DEC2014 by Bruce Kimball
+C         RBSH,RBSL,RBSS added by BAK on 10DEC15
 
       PARAMETER (RGAS=8.314,MWATER=0.01802,MAIR=0.02897,PATM=101300.0,
      &  SHAIRD=1005.0, ZERO=1.0E-6)
@@ -692,7 +735,23 @@ C     Create vpd and resistance matrices.
      &  CANHT, CEC, CEN, CONDSH, CONDSL, FRACSH, FRSHV,   !Input
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
      &  TAIRHR, TCAN, WINDHR,                             !Input
-     &  RA, RL, RS, USTAR)                                !Output
+     &  RA, RL, RS, USTAR,                                !Output
+     &  RB,RSURF)
+C          RB and RSURF Added by BAK on 1DEC2014
+        RBSL = RB(1)
+        RBSH = RB(2)
+        RBSS = RB(3)
+        IF(RBSL .GT. 20000.) THEN
+            RBSL = 20000.
+            ENDIF
+        IF(RBSH .GT. 20000.) THEN
+            RBSH = 20000.
+            ENDIF
+        IF(RBSS .GT. 20000.) THEN
+            RBSS = 20000.
+            ENDIF
+C       Obtain the resistances of sunlit, shaded leaves and
+C         soil surface. Added by BAK on 18MAR15
 
 C     Calculate NET total by subtracting net (back) longwave radiation.
 
@@ -741,7 +800,8 @@ C========================================================================
      &  CANHT, CEC, CEN, CONDSH, CONDSL, FRACSH, FRSHV,   !Input
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
      &  TAIRHR, TCAN, WINDHR,                             !Input
-     &  RA, RL, RS, USTAR)                                !Output
+     &  RA, RL, RS, USTAR, RB, RSURF)                     !Output
+C        added RB and RSURF to output on 1DEC2014 by Bruce Kimball
 
       IMPLICIT NONE
       SAVE
@@ -793,10 +853,18 @@ C     reduced to constant 0.0117 using the average RNA from Jagtap (1976).
 C     If RNET is included again, may need a RNMIN too.
 
       IF (CEN .LE. CEC) THEN
-        RSSS = 100.0
+C        RSSS = 100.0 commented out by Bruce Kimball on 10DEC15
+C          RSSS = 100.0
+C  RESET JULY 10 2017 BK AND KJB
+          RSSS=0.0
+C  set back to zero per DSSAT 3.5 on 11Jul17
       ELSE
-C       RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.37)-1.0)
-        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0)
+        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.37)-1.0)
+C  uncommented back to DSSAT 3.5 on 11Jul17 by BK and KB       
+C  RESET FOR RSSS ON JULY 10 2017 BK AND KJB
+C        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0) 
+commented out by Bruce Kimball on 10DEC15
+C          RSSS = 10000
       ENDIF
       RSURF(3) = MIN(RSSS,RMAX)
 
@@ -850,7 +918,10 @@ C     Initialization and calculation of zero plane displacement height and
 C     canopy surface roughness (Brutsaert, 1982).
 
       XLAI = LAISH + LAISL
-      WINDSP = MAX(WINDHR,1.0)
+      WINDSP = MAX(WINDHR,0.1)
+C     changed on 1Dec2014 by Bruce Kimball. 1.0 m/s is too high a
+C       wind speed to be the minimum.
+C     WINDSP = MAX(WINDHR,1.0)
       H = CANHT
       ZS0M = 0.03                                                  ! m
       Z0M = MAX(ZS0M,0.13*H)                                       ! m

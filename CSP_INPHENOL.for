@@ -1,4 +1,4 @@
-C= FILE: CSP_INPHENOL.FOR===============================================
+C= FILE: CSP_INPHENOL.for===============================================
 C  CSP_INPHENOL - Adapted by O.H. Daza
 C  INPHENOL  - CHP
 C  Initializes phenological parameters.
@@ -9,7 +9,7 @@ C  12/11/2000 GH  added cowpea code
 C  09/26/2001 OHD adapted for the sugarcane model CASUPRO 
 C  07/26/2004 CHP Removed variables which were not being used
 C-----------------------------------------------------------------------
-C  Called by: CSP_PHENOL  in CSP_PHENOL.FOR
+C  Called by: CSP_PHENOL  in CSP_PHENOL.for
 C  Calls    : None
 C=======================================================================
       SUBROUTINE CSP_INPHENOL(

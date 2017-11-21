@@ -186,7 +186,8 @@ C=======================================================================
      &          "  - Value changed to    ",":",ICREN,"%"
               WRITE(MSG(7),'(A)')
      &          "To change allowable N content, modify SCN parameter "
-              WRITE(MSG(8),'(A)')"  in RESCH046.SDA file."
+              WRITE(MSG(8),'(A,A,A)')
+     &          "  in RESCH", ModelVerTxt, ".SDA file."
               CALL WARNING(8, ERRKEY, MSG) 
             ENDIF
           ENDIF
@@ -219,7 +220,8 @@ C=======================================================================
      &          "  - Value changed to    ",":",ICREP,"%"
               WRITE(MSG(7),'(A)')
      &          "To change allowable P content, modify SCP parameter "
-              WRITE(MSG(8),'(A)')"  in RESCH046.SDA file."
+              WRITE(MSG(8),'(A,A,A)')
+     &          "  in RESCH", ModelVerTxt, ".SDA file."
               CALL WARNING(8, ERRKEY, MSG) 
             ENDIF
           ENDIF

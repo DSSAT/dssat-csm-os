@@ -1,0 +1,12 @@
+*SOILS: General DSSAT Soil Input File
+
+*ALSP209115  EUROFINS    SIC      120  ALFALFA, HYDRANT-209
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ LA VIOLADA  SPAIN              41       0 PETROCALCIC CALCIXEREPT
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+     G   .13     6    .6    73     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99  .117  .433  .497     1   .09   1.5   1.8  42.9    51   -99   -99     8   -99    16   -99
+    60   -99   .22  .449  .553  .407   .68   1.5    .5   6.4    70   -99   -99     8   -99    13   -99
+    90   -99  .219   .47  .507  .223   .68   1.5    .8  24.4    60   -99   -99     8   -99    11   -99
+   120   -99  .223  .464  .546  .122   .68   1.4    .4   5.5    67   -99   -99     8   -99    14   -99

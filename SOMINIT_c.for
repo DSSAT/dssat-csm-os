@@ -733,7 +733,9 @@
       REAL, DIMENSION(NL) :: SASC, SILT, SOM_TOT
 
       LOGICAL DONE
-      CHARACTER*12, PARAMETER :: SOMFILE = 'SOMFR046.SDA'
+      CHARACTER*12 SOMFILE 
+
+      SOMFILE = 'SOMFR' // ModelVerTxt // '.SDA'
 
 !     ------------------------------------------------------------------
       DS      = SOILPROP % DS
