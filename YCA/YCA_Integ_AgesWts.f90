@@ -33,8 +33,8 @@
         ! Leaves that present at beginning of day
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM 23MAY2015 Modified to avoid high values of LAGETT 
-                IF (node(BR,LF)%LAGETT < LLIFGTT+LLIFATT+LLIFSTT) THEN             !LPM 24APR2016 Leaf age in thermal time
-                    node(BR,LF)%LAGETT = node(BR,LF)%LAGETT + TTLFLife*EMRGFR                                              !EQN 358
+                IF (isLeafAlive(node(BR,LF))) THEN             !LPM 24APR2016 Leaf age in thermal time
+                    call leafAge(node(BR,LF))
                     ! Accelerated senescence at base of dense leaf canopy
                     IF (node(BR,LF)%LAIByCohort > LAIXX) THEN
                             ! Increase age if deep shading at base of canopy
@@ -63,15 +63,15 @@
                         ENDIF
                     ENDIF
                     ! Days senescing
-                    IF (node(BR,LF)%LAGETT > LLIFGTT+LLIFATT) THEN                                                                 ! DA  If leaf is senescing
-                        IF (node(BR,LF)%LAGETT-TTLFLife*EMRGFR < LLIFGTT+LLIFATT) THEN                                             ! DA  (and) If leaf started senescing today
+                    IF (isLeafSenescing(node(BR,LF))) THEN                                                                 ! DA  If leaf is senescing
+                        IF (didLeafSenescingToday(node(BR,LF))) THEN                                             ! DA  (and) If leaf started senescing today
                             TVR1 = (LLIFGTT+LLIFATT-(node(BR,LF)%LAGETT-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
                             node(BR,LF)%DSLF = node(BR,LF)%DSLF + (1.0-TVR1)                                                            ! EQN 365a
                         ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
-                            IF (node(BR,LF)%LAGETT < LLIFGTT+LLIFATT+LLIFSTT) THEN                                                ! DA If the leaf is still alive
+                            IF (isLeafAlive(node(BR,LF))) THEN                                                ! DA If the leaf is still alive
                                 node(BR,LF)%DSLF = node(BR,LF)%DSLF + 1.0                                                               ! EQN 365b
                             ELSE
-                                IF (node(BR,LF)%LAGETT-TTLFLife*EMRGFR < LLIFGTT+LLIFATT+LLIFSTT) THEN                             ! DA Or, if leaf died today
+                                IF (didLeafFallToday(node(BR,LF))) THEN                             ! DA Or, if leaf died today
                                     TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(node(BR,LF)%LAGETT-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
                                     node(BR,LF)%DSLF = node(BR,LF)%DSLF + TVR1                                                          ! EQN 365c
                                     node(BR,LF)%LDEATHDAP = DAP                                                                    ! DA establish decease date
@@ -80,7 +80,7 @@
                         ENDIF
                         !LPM 12DEC2016 To generate a restriction for leaf senescence duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
                         IF (node(BR,LF)%DSLF>(2.0*LLIFSTT/(TRDV3(2)-TRDV3(1)))) THEN 
-                            call setLeafAsFall(node(BR,LF))
+                            call leafAsFall(node(BR,LF))
                         ENDIF
                     ENDIF
                 
@@ -89,7 +89,7 @@
                         node(BR,LF)%DGLF = node(BR,LF)%DGLF + EMRGFR
                         !LPM 13DEC2016 To generate a restriction for leaf growing duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
                         IF (node(BR,LF)%DGLF>(2.0*LLIFGTT/(TRDV3(2)-TRDV3(1)))) THEN 
-                            call setLeafAsActive(node(BR,LF))
+                            call leafAsActive(node(BR,LF))
                         ENDIF
                     ENDIF
                 ENDIF
