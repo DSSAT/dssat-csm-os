@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 5047 - 5350 of the original CSCAS code.The names of the 
+! This is the code from the section (DYNAMIC == RATE) lines 5047 - 5350 of the original CSCAS code.The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -83,7 +83,7 @@
                 ENDIF
                 SNO3PROFILE = SNO3PROFILE + SNO3(L)
                 SNH4PROFILE = SNH4PROFILE + SNH4(L)
-                IF (RLV(L).GT.0.0) THEN
+                IF (RLV(L) > 0.0) THEN
                     SNO3ROOTZONE = SNO3ROOTZONE + SNO3(L)
                     SNH4ROOTZONE = SNH4ROOTZONE + SNH4(L)
                 ENDIF
@@ -282,7 +282,7 @@
                 !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
-                        IF (GROSTP.GT.0.0) THEN
+                        IF (GROSTP > 0.0) THEN
                             SNUSEN(2,BR,LF) = (node(BR,LF)%SNDEMN - SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
                             SNUSE(2) = SNUSE(2)+ SNUSEN(2,BR,LF)
                         ENDIF
@@ -291,7 +291,7 @@
                 RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
                 SRNUSE(2) = (SRNDEM)*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
                 NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)                                                      !EQN 223
-                IF (NULEFT.GT.0.0) THEN
+                IF (NULEFT > 0.0) THEN
                     LNUSE(3) = NULEFT                                                                                  !EQN 224
                 ELSE
                     LNUSE(3) = 0.0
@@ -307,7 +307,7 @@
             SNUSE(0) = SNUSE(1) + SNUSE(2)                                                                             !EQN 226
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (GROSTP.GT.0.0) THEN
+                    IF (GROSTP > 0.0) THEN
                         SNUSEN(0,BR,LF) = SNUSEN(1,BR,LF) + SNUSEN(2,BR,LF)
                     ENDIF
                 ENDDO
@@ -333,9 +333,9 @@
                 ENDDO
             ENDDO
             ! Check N and reduce leaf growth if not enough N  
-            IF (ABS(NULEFT).LE.1.0E-5) THEN   ! Inadequate N
+            IF (ABS(NULEFT) <= 1.0E-5) THEN   ! Inadequate N
                 IF (NLLG > 0.0 .AND. LNCX > 0.0) THEN 
-                    !IF ((LNUSE(1)+LNUSE(2))/GROLF.LT.(LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
+                    !IF ((LNUSE(1)+LNUSE(2))/GROLF < (LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
                     IF ((LNUSE(1)+LNUSE(2))/GROLFP < (LNCX*NLLG)) THEN 
                         GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
                     ELSE  
@@ -349,7 +349,7 @@
                  AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*LAWL(1)                                              !EQN 235 
                 
                 ! If not enough N set N factor
-                !IF (PLAGSB3.GT.AREAPOSSIBLEN.AND.PLAGSB3.GT.0.0)THEN !LPM 02SEP2016 Use of PLAGSB2 instead of PLAGSB3
+                !IF (PLAGSB3 > AREAPOSSIBLEN.AND.PLAGSB3 > 0.0)THEN !LPM 02SEP2016 Use of PLAGSB2 instead of PLAGSB3
                 IF (PLAGSB2 > AREAPOSSIBLEN .AND. PLAGSB2 > 0.0)THEN
                         node(0,0)%NFLF2 = AREAPOSSIBLEN/PLAGSB2                                                                   !EQN 236
                 ELSE    
@@ -394,7 +394,7 @@
                                         node(BR,LF)%LATL3T = node(BR,LF)%LATL3T+(node(BR,LF)%LATL3*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
                                     ENDIF
                                 ENDDO
-                                !IF (CFLAFLF.EQ.'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
+                                !IF (CFLAFLF == 'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
                             ENDIF  
                          ELSE
                             IF (node(BR,LF)%LAPOTX2 <= 0.0 ) THEN
@@ -420,7 +420,7 @@
             !GROLFADJ = AMIN1(GROLF,GROLFADJ)
                         ! Potential leaf weight increase.
             !LPM 16DEC2016 GROLFADJ is defined by the new estimation of leaf area which is considering water stress (WFG), carbohydrates available (AFLF) and nitrogen restrictions (NFLF2)
-            IF (LAWL(1).GT.0.0) GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+            IF (LAWL(1) > 0.0) GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
             
             GROSTADJ = AMIN1(GROST,GROSTADJ)
             RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)

@@ -1,10 +1,10 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6901 - 7148 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 6901 - 7148 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
 !
-! SUBROUTINE YCA_Out_PlGrow covers outputs of plant growth factors (Plantgro, gr2, grf, N) (IDETG .NE. N). 
+! SUBROUTINE YCA_Out_PlGrow covers outputs of plant growth factors (Plantgro, gr2, grf, N) (IDETG  /=  N). 
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Out_PlGrow ( & 
@@ -28,12 +28,12 @@
         !         Plant growth factors: Plantgro, gr2, grf, N (Outputs for IDETG NE N )
         !---------------------------------------------------------------------------------------------------------------     
             
-        IF ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A') THEN
+        IF ((IDETG /= 'N'.AND.IDETL /= '0').OR.IDETL == 'A') THEN
                 
             ! PlantGro
-            IF (YEARDOY.EQ.PLYEARDOY) THEN
+            IF (YEARDOY == PLYEARDOY) THEN
                 OPEN (UNIT = NOUTPG, FILE = OUTPG,POSITION = 'APPEND')
-                IF (FILEIOT(1:2).EQ.'DS') THEN
+                IF (FILEIOT(1:2) == 'DS') THEN
                     CALL HEADER(2, NOUTPG, RUN)
                 ELSE
                     WRITE (NOUTPG,'(/,A79,/)') OUTHED
@@ -62,14 +62,14 @@
               !  SLAOUT, RTDEP/100.0,PTF,H2OA,AMIN1(99.9,WAVR),AMIN1(15.0,WUPR),1.0-WFP,1.0-WFG,1.0-NFP,1.0-NFG, &
               !  AMIN1(2.0,NUPRATIO),1.0-TFP,1.0-TFG,1.0-DFOUT        
             ! PlantGroReductionFactors
-            IF (YEARDOY.GT.PLYEARDOY) THEN
+            IF (YEARDOY > PLYEARDOY) THEN
                 TCDIF = TCAN - TMEAN
             ELSE  
                 TCDIF = -99
             ENDIF
-            IF (YEARDOY.EQ.PLYEARDOY) THEN
+            IF (YEARDOY == PLYEARDOY) THEN
                 OPEN (UNIT = NOUTPGF, FILE = OUTPGF,POSITION = 'APPEND')
-                IF (FILEIOT(1:2).EQ.'DS') THEN
+                IF (FILEIOT(1:2) == 'DS') THEN
                     CALL HEADER(2, NOUTPGF, RUN)
                 ELSE
                     WRITE (NOUTPGF,'(/,A79,/)') OUTHED
@@ -93,9 +93,9 @@
             ! End Plantgro reduction factor writes
                          
             ! PlantGr2
-            IF (YEARDOY.EQ.PLYEARDOY) THEN
+            IF (YEARDOY == PLYEARDOY) THEN
                 OPEN (UNIT = NOUTPG2, FILE = OUTPG2, STATUS='UNKNOWN',POSITION = 'APPEND')
-                IF (FILEIOT(1:2).EQ.'DS') THEN
+                IF (FILEIOT(1:2) == 'DS') THEN
                     CALL HEADER(2, NOUTPG2, RUN)
                 ELSE
                     WRITE (NOUTPG2,'(/,A79,/)') OUTHED
@@ -120,10 +120,10 @@
             ! End PlantGr2 writes
                              
                 ! PlantN
-            IF (ISWNIT.NE.'N') THEN
-                IF (YEARDOY.EQ.PLYEARDOY) THEN
+            IF (ISWNIT /= 'N') THEN
+                IF (YEARDOY == PLYEARDOY) THEN
                     OPEN (UNIT = NOUTPN, FILE = OUTPN, STATUS='UNKNOWN',POSITION = 'APPEND')
-                    IF (FILEIOT(1:2).EQ.'DS') THEN
+                    IF (FILEIOT(1:2) == 'DS') THEN
                         CALL HEADER(2, NOUTPN, RUN)
                     ELSE
                         WRITE (NOUTPN,'(/,A79,/)') OUTHED
@@ -148,9 +148,9 @@
                                      
             ENDIF  ! ISWNIT  Plantn writes
                              
-        ELSE ! (IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A'
+        ELSE ! (IDETG /= 'N'.AND.IDETL /= '0').OR.IDETL == 'A'
                 
-            IF (IDETGNUM.LE.0) THEN
+            IF (IDETGNUM <= 0) THEN
                 OPEN (UNIT=FNUMTMP, FILE=OUTPG, STATUS = 'UNKNOWN', IOSTAT = IOCHECK)
                 CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
                 OPEN (UNIT=FNUMTMP, FILE=OUTPG2, STATUS = 'UNKNOWN')
@@ -162,7 +162,7 @@
                 IDETGNUM = IDETGNUM + 1 
             ENDIF  
                 
-        ENDIF ! End ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A' 
+        ENDIF ! End ((IDETG /= 'N'.AND.IDETL /= '0').OR.IDETL == 'A' 
     
     END SUBROUTINE YCA_Out_PlGrow
             

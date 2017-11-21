@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 4707 - 5046 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == RATE) lines 4707 - 5046 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -61,16 +61,16 @@
         !-----------------------------------------------------------------------
 
         !GROSR = 0.0 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used  !LPM 05JUN2015 DUSRI is not used
-        !IF(CUMDU+DU.LT.DUSRI)THEN 
+        !IF(CUMDU+DU < DUSRI)THEN 
         !    SRDAYFR = 0.0                                                                                              !EQN 290a
-        !ELSEIF(CUMDU.LT.DUSRI.AND.CUMDU+DU.GE.DUSRI)THEN
+        !ELSEIF(CUMDU < DUSRI.AND.CUMDU+DU >= DUSRI)THEN
         !    SRDAYFR = (DUSRI-CUMDU)/DU                                                                                 !EQN 290b
-        !ELSEIF(CUMDU.GT.DUSRI)THEN
+        !ELSEIF(CUMDU > DUSRI)THEN
         !    SRDAYFR = 1.0                                                                                              !EQN 290c
         !ENDIF
         !GROSR = SRFR*CARBOT*SRDAYFR                                                                                    !EQN 289
             
-        !IF(CUMDU.GE.DUSRI.AND.SRNOPD.LE.0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT > 0 See CS_Growth_Distribute.f90
+        !IF(CUMDU >= DUSRI.AND.SRNOPD <= 0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT > 0 See CS_Growth_Distribute.f90
         !    SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291
         !ENDIF
                      
@@ -79,19 +79,19 @@
         !-----------------------------------------------------------------------
         !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         
-        !IF (LAWTR.GT.0.0.AND.LAWTS.GT.0.0.AND.LAWTS.GT.TMEAN) THEN
+        !IF (LAWTR > 0.0.AND.LAWTS > 0.0.AND.LAWTS > TMEAN) THEN
         !    TFLAW = 1.0+LAWTR*(TMEAN-LAWTS)                                                                            !EQN 305
         !ELSE
         !    TFLAW = 1.0
         !ENDIF
-        !IF (LAWWR.GT.0.0.AND.WFG.LT.1.0) THEN
+        !IF (LAWWR > 0.0.AND.WFG < 1.0) THEN
         !    WFLAW = 1.0+LAWWR*(WFG-1.0)                                                                                !EQN 306
         !ELSE
         !    WFLAW = 1.0
         !ENDIF
         !
         !! Position effect on standard SLA
-        !IF (LNUMSG.GT.0) THEN
+        !IF (LNUMSG > 0) THEN
         !    LAWL(1) = AMAX1(LAWS*LAWFF,LAWS+(LAWS*LAWCF)*(LNUMSG-1))                                                  !EQN 307
         !    ! Temperature and water stress effects on SLA at position
         !    LAWL(1) = AMAX1(LAWL(1)*LAWMNFR,LAWL(1)*TFLAW*WFLAW)                                                      !EQN 308
@@ -131,23 +131,23 @@
         !! First calculate new BRSTAGE as temporary variable
         !! (LAH Check whether can move brstage calc up here! 
         !! (If do this, brstage in brfx below must be reduced by 1))
-        !IF (MEDEV.EQ.'LNUM') THEN 
-        !    IF (PDL(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
+        !IF (MEDEV == 'LNUM') THEN 
+        !    IF (PDL(INT(BRSTAGE)) > 0.0) THEN                                                          ! MSTG = KEYPSNUM
         !        TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE))           ! EQN 004
         !    ELSE
         !        TVR1 = FLOAT(INT(BRSTAGE))
         !    ENDIF
         !ELSE
-        !    IF (PD(INT(BRSTAGE)).GT.0.0) THEN                                                          ! MSTG = KEYPSNUM
+        !    IF (PD(INT(BRSTAGE)) > 0.0) THEN                                                          ! MSTG = KEYPSNUM
         !        TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE))              ! EQN 004
         !    ELSE
         !        TVR1 = FLOAT(INT(BRSTAGE))
         !    ENDIF        
         !ENDIF    
-        !IF (INT(TVR1).GT.INT(BRSTAGEPREV)) THEN
-        !    IF (BRSTAGE.EQ.0.0) THEN
+        !IF (INT(TVR1) > INT(BRSTAGEPREV)) THEN
+        !    IF (BRSTAGE == 0.0) THEN
         !        BRNUMST = 1                                                                         ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
-        !    ELSEIF (BRSTAGE.GT.0.0) THEN
+        !    ELSEIF (BRSTAGE > 0.0) THEN
         !        BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
         !    ENDIF
         !ENDIF 
@@ -196,7 +196,7 @@
                         node(BR,LF)%LAGLT = node(BR,LF)%LAGL * BRNUMST(BR) ! To initialize before adding over shoots     
                         node(BR,LF)%LATL2T = node(BR,LF)%LATL2 * BRNUMST(BR)
                         DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
-                            IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
+                            IF (SHNUM-FLOAT(L-1) > 0.0) THEN
                                 node(BR,LF)%LAGLT = node(BR,LF)%LAGLT+(node(BR,LF)%LAGL*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
                                 node(BR,LF)%LATL2T = node(BR,LF)%LATL2T+(node(BR,LF)%LATL2*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
                             ENDIF
@@ -236,7 +236,7 @@
                             node(BR,LF+1)%LAGLT = node(BR,LF+1)%LAGL*BRNUMST(BR)
                             node(BR,LF+1)%LATL2T = node(BR,LF+1)%LATL2*BRNUMST(BR)
                             DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
-                                IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
+                                IF (SHNUM-FLOAT(L-1) > 0.0) THEN
                                     node(BR,LF+1)%LAGLT = node(BR,LF+1)%LAGLT+(node(BR,LF+1)%LAGL*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))
                                     node(BR,LF+1)%LATL2T = node(BR,LF+1)%LATL2T+(node(BR,LF+1)%LATL2*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
                                 ENDIF
@@ -257,7 +257,7 @@
             ! Leaf area increase:growing leaves on 1 axis,all shoots
             PLAGSB2 = SHLAG2(1) ! To initialize before adding over shoots                                                  
             DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
-                IF (SHNUM-FLOAT(L-1).GT.0.0) THEN
+                IF (SHNUM-FLOAT(L-1) > 0.0) THEN
                     PLAGSB2 = PLAGSB2+SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                         !EQN 341
                     SHLAG2(L) = SHLAG2(1)*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                             !EQN 342
                 ENDIF
@@ -280,14 +280,14 @@
         !LPM 02MAR15 Stem weight increase by cohort: 1 axis,main shoot
         !DO L = 1,LNUMSG+1  
         !    DO I = 0, INT(BRSTAGE)
-        !    IF (L.LE.LNUMTOSTG(I-1) THEN
+        !    IF (L <= LNUMTOSTG(I-1) THEN
         !        BRNUMST = 1                                                                         
-        !    ELSEIF (BRSTAGE.GT.0.0) THEN
+        !    ELSEIF (BRSTAGE > 0.0) THEN
         !        BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                
         !    ENDIF        
         
         ! Potential leaf+stem weight increase. !LPM 11APR15 Comment out to test the node development and the potential stem growth 
-        !IF (SWFR.GT.0.0.AND.SWFR.LT.1.0) THEN
+        !IF (SWFR > 0.0.AND.SWFR < 1.0) THEN
         !    GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))                                                                  !EQN 295a
         !ELSE
         !    GROLSP = GROLFP                                                                                            !EQN 295b
@@ -312,7 +312,7 @@
                 node(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))  *  (NDDAE_E*(((NDDAED)**NDDAE_F) / ((NDDAED**NDDAE_G)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
            
                 node(BR,LF)%NODEWTG = node(BR,LF)%NODEWTGB
-                !IF (BR.EQ.0.AND.LF.EQ.1.AND.DAE.EQ.1.AND.SEEDUSES.GT.0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
+                !IF (BR == 0.AND.LF == 1.AND.DAE == 1.AND.SEEDUSES > 0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
                 node(BR,LF)%NODEWT = node(BR,LF)%NODEWT + node(BR,LF)%NODEWTG
                 GROSTP = GROSTP + (node(BR,LF)%NODEWTG*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
                 STWTP = STWTP + (node(BR,LF)%NODEWTG*BRNUMST(BR))
@@ -331,20 +331,20 @@
         !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
         GROLSP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
-        IF (GROLSP.GT.0.0) THEN
+        IF (GROLSP > 0.0) THEN
             ! Leaf+stem weight increase from assimilates
             !GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROSR))                                                              !EQN 298 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
             GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT))                                                                     !EQN 298
             ! Leaf+stem weight increase from senescence 
-            IF (GROLSA.LT.GROLSP) THEN
+            IF (GROLSA < GROLSP) THEN
 
                 GROLSSEN = AMIN1(GROLSP-GROLSA,SENLFGRS)
             ENDIF
             
-            IF (GROLSA+GROLSSEN.LT.GROLSP) THEN
+            IF (GROLSA+GROLSSEN < GROLSP) THEN
                 ! Leaf+stem weight increase from seed reserves
                 ! LAH May need to restrict seed use.To use by roots?
-                IF (DAE.LE.0.0)THEN !LPM 23MAR2016 Before emergence use the SEEDUSED according with CS_growth_Init.f90
+                IF (DAE <= 0.0)THEN !LPM 23MAR2016 Before emergence use the SEEDUSED according with CS_growth_Init.f90
                     GROLSSD = AMIN1((GROLSP-GROLSA-GROLSSEN),SEEDUSED)                                                     !EQN 300
                 ELSE
                     GROLSSD = AMIN1((GROLSP-GROLSA-GROLSSEN),SEEDRSAV)                                                     !EQN 300
@@ -352,7 +352,7 @@
                 ENDIF
                
                 
-                IF ( LAI.LE.0.0.AND.GROLSSD.LE.0.0.AND.SEEDRSAV.LE.0.0.AND.ESTABLISHED.NE.'Y') THEN
+                IF ( LAI <= 0.0.AND.GROLSSD <= 0.0.AND.SEEDRSAV <= 0.0.AND.ESTABLISHED /= 'Y') THEN
                     CFLFAIL = 'Y'
                     WRITE (Message(1),'(A41)') 'No seed reserves to initiate leaf growth '
                     WRITE (Message(2),'(A33,F8.3,F6.1)') '  Initial seed reserves,seedrate ',seedrsi,sdrate
@@ -361,15 +361,15 @@
                 ENDIF
             ENDIF
             ! Leaf+stem weight increase from plant reserves
-            IF (GROLSA+GROLSSD+GROLSSEN.LT.GROLSP) THEN
+            IF (GROLSA+GROLSSD+GROLSSEN < GROLSP) THEN
                 GROLSRS =  AMIN1(RSWT*RSUSE,GROLSP-GROLSA-GROLSSD-GROLSSEN)                                            !EQN 301
             ENDIF
             ! Leaf+stem weight increase from roots (after drought)
             GROLSRT = 0.0
             GROLSRTN = 0.0
-            IF ((GROLSA+GROLSSD+GROLSRS+GROLSSEN).LT.GROLSP.AND.SHRTD.LT.1.0.AND.RTUFR.GT.0.0.AND.ESTABLISHED.EQ.'Y') THEN
+            IF ((GROLSA+GROLSSD+GROLSRS+GROLSSEN) < GROLSP.AND.SHRTD < 1.0.AND.RTUFR > 0.0.AND.ESTABLISHED == 'Y') THEN
                 GROLSRT = AMIN1(RTWT*RTUFR,(GROLSP-GROLSA-GROLSSD-GROLSSEN-GROLSRS))                                   !EQN 302
-                IF (ISWNIT.NE.'N') THEN
+                IF (ISWNIT /= 'N') THEN
                     GROLSRTN = GROLSRT * RANC                                                                          !EQN 244
                 ELSE
                     GROLSRTN = 0.0
@@ -381,7 +381,7 @@
             ! Leaf+stem weight increase from all sources
             GROLS = GROLSA + GROLSSEN + GROLSSD + GROLSRS+GROLSRT                                                      !EQN 303
             ! Leaf weight increase from all sources
-            IF ((GROLSP).GT.0.0) THEN
+            IF ((GROLSP) > 0.0) THEN
                 GROLF = GROLS * GROLFP/GROLSP                                                                          !EQN 304
             ELSE  
                 GROLF = 0.0
@@ -395,7 +395,7 @@
             ELSE  
                 node(0,0)%AFLF = 1.0
             ENDIF
-            IF (CFLAFLF.EQ.'N') node(0,0)%AFLF = 1.0                                                                            !MF 21AU16 ErrorFix Added second subscript to AFLF.
+            IF (CFLAFLF == 'N') node(0,0)%AFLF = 1.0                                                                            !MF 21AU16 ErrorFix Added second subscript to AFLF.
 
 
         ENDIF                                                                                                            !MF 21AU16 ErrorFix. Added to terminate block
@@ -421,7 +421,7 @@
         STAIG = 0.0
         STAIS = 0.0
         !! Potential stem weight increase.
-        !IF (SWFR.LT.1.0) THEN
+        !IF (SWFR < 1.0) THEN
         !    GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
         !    GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
         !ELSE  

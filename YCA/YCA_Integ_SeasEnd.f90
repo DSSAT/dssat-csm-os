@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6305 - 6418 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 6305 - 6418 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -75,7 +75,7 @@
                 
         SHNUMAD = SHNUM*PLTPOP
                 
-        IF (NUPAC.LT.0.0) THEN
+        IF (NUPAC < 0.0) THEN
             NUPAC = NUPAD
         ELSE 
             NUPAC = NUPAC+NUPAD
@@ -107,7 +107,7 @@
         ENDDO
                 
         ! After harvest residues
-        IF (STGYEARDOY(11).EQ.YEARDOY) THEN
+        IF (STGYEARDOY(11) == YEARDOY) THEN
             ! Surface
             RESWALG(0) = VWAD*(1.0-HBPCF/100.0)
             RESNALG(0) = (LEAFN+STEMN)*PLTPOP*10.*(1.0-HBPCF/100.)

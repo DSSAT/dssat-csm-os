@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6148 - 6202 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 6148 - 6202 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -90,12 +90,12 @@
             
             SDNC = 0.0
             SRANC = 0.0
-            IF (SEEDRS.GT.0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
-            IF (SRWT.GT.0) SRANC = SROOTN/SRWT
+            IF (SEEDRS > 0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
+            IF (SRWT > 0) SRANC = SROOTN/SRWT
             LNCR = 0.0
             node%SNCR = 0.0
             RNCR = 0.0
-            IF (LNCX.GT.0.0) LNCR = AMAX1(0.0,AMIN1(1.0,LANC/LNCX))
+            IF (LNCX > 0.0) LNCR = AMAX1(0.0,AMIN1(1.0,LANC/LNCX))
             DO BR = 0, BRSTAGE                                                                              !LPM25MAY2015 To consider different N concentration by node according with node age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)  
                     IF (node(BR,LF)%SNCX > 0.0) THEN
@@ -103,7 +103,7 @@
                     ENDIF
                 ENDDO
             ENDDO
-            !SNCRM = SUM(SNCR, MASK = SNCR.GE.0.0)/MAX(1,COUNT(SNCR))
+            !SNCRM = SUM(SNCR, MASK = SNCR >= 0.0)/MAX(1,COUNT(SNCR))
             SNCRM = 1.0
             IF (RNCX > 0.0) RNCR = AMAX1(0.0,AMIN1(1.0,RANC/RNCX))
         ELSE

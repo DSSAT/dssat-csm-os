@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 5351 - 5530 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == RATE) lines 5351 - 5530 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -30,7 +30,7 @@
 
         !GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ-GROSR                                       !EQN 309 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
         GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS+GROLSRS-GROLFADJ-GROSTADJ-GROCRADJ                                      !LPM 05OCT2015 Added GROLSRS to avoid negative values of reserves
-        IF(GRORS.LT.0.0.AND.GRORS.GT.-1.0E-07) GRORS = 0.0
+        IF(GRORS < 0.0.AND.GRORS > -1.0E-07) GRORS = 0.0
 
         ! Reserves to STORAGE ROOT if conc too great (overflow!)
         SRWTGRS = 0.0
@@ -46,11 +46,11 @@
             TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-SENLFG-SENLFGRS+STWT+CRWT+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
             SRWTGRS = (TVR2 - TVR3)                                                                                    !EQN 313
             ! Determine FINAL new concentration
-            IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ.GT.0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &             !EQN 314
+            IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &             !EQN 314
                 (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
         ENDIF
         
-        !IF(SRWTGRS.GT.0.0.AND.SRNOPD.LE.0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT >0   ! issue 50
+        !IF(SRWTGRS > 0.0.AND.SRNOPD <= 0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT >0   ! issue 50
             !SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291 ! issue 50  SR#WT is not used
         !ENDIF  ! issue 50
                 
@@ -78,11 +78,11 @@
         RTWTUL = 0.0
         RTNSL = 0.0
 
-        !IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
-        IF (GERMFR.GT.0.0.OR.GESTAGE.GE.1.0) THEN
+        !IF (GERMFR > 0.0.OR.GESTAGE >= 0.5) THEN !LPM 21MAR2016 To separate germination and emergence
+        IF (GERMFR > 0.0.OR.GESTAGE >= 1.0) THEN
     
             ! Establish water factor for root depth growth
-            IF (ISWWAT.NE.'N') THEN
+            IF (ISWWAT /= 'N') THEN
                 LRTIP = CSIDLAYR (NLAYR, DLAYR, RTDEP) ! Root tip layer
                 IF (LRTIP > 1) THEN
                     SWPRTIP = SWP(LRTIP)                                                                               !EQN 392a
@@ -141,7 +141,7 @@
                         RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
                     ENDIF
                     SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
-                    IF (ISWNIT.NE.'N') THEN
+                    IF (ISWNIT /= 'N') THEN
                         RTNSL(L) = RTWTSL(L)*RANC                                                                          !EQN 398
                     ELSE
                         RTNSL(L) = 0.0
@@ -172,7 +172,7 @@
         DO L = 1, NLAYR
             AH2OPROFILE = AH2OPROFILE+((SW(L)-LL(L))*DLAYR(L))*10.                                                     !EQN 404              
             H2OPROFILE = H2OPROFILE + SW(L)*DLAYR(L)*10.0                                                              !EQN 405
-            IF (RLV(L).GT.0.0) THEN
+            IF (RLV(L) > 0.0) THEN
                 AH2OROOTZONE=AH2OROOTZONE+((SW(L)-LL(L))*DLAYR(L))*10.
                 H2OROOTZONE = H2OROOTZONE+SW(L)*DLAYR(L)*10.
             ENDIF
@@ -208,6 +208,6 @@
             SENNAGS = SENNAGS + SENNALG(L)
         ENDDO
 
-        IF (ESTABLISHED.NE.'Y'.AND.SHRTD.GT.2.0) ESTABLISHED = 'Y' 
+        IF (ESTABLISHED /= 'Y'.AND.SHRTD > 2.0) ESTABLISHED = 'Y' 
         
     END SUBROUTINE YCA_Growth_Distribute

@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 8387 - 8515 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 8387 - 8515 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -25,7 +25,7 @@
         !-----------------------------------------------------------------------------------------------------------
         !         Output leaves and tiers data (IDETL = Y or D)
         !-----------------------------------------------------------------------------------------------------------
-        IF (IDETL.EQ.'Y'.OR.IDETL.EQ.'D'.OR.IDETL.EQ.'A') THEN
+        IF (IDETL == 'Y'.OR.IDETL == 'D'.OR.IDETL == 'A') THEN
                     
             ! LEAVES.OUT
             OPEN(UNIT=FNUMLVS,FILE=FNAMELEAVES,POSITION='APPEND')
@@ -60,7 +60,7 @@
                 ENDDO
             ENDDO
                 
-            IF (RUN.EQ.1) THEN
+            IF (RUN == 1) THEN
                 WRITE(fnumlvs,*)' '
                 WRITE(fnumlvs,'( A)')'! NB. Data are summed over all fork branches'
                 WRITE(fnumlvs,*)' '
@@ -92,12 +92,12 @@
                 '  TIER_END  '
             !DO L=1,MSTG-2       !LPM  07MAR15 MSTG TO PSX
             DO L=0,PSX-2
-                IF (STGYEARDOY(L).LT.9999999.AND.L.NE.0.AND.L.NE.10.AND.L.NE.11) &
+                IF (STGYEARDOY(L) < 9999999.AND.L /= 0.AND.L /= 10.AND.L /= 11) &
                     WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')L,sradpav(L),tmaxpav(L),tminpav(L),rainpav(L), &
                     daylpav(L),NINT(co2pav(L)),1.0-wfppav(L),1.0-wfgpav(L),1.0-nfppav(L),1.0-nfgpav(L), &
                     psname(MIN(L+1,PSX))
             ENDDO
-            !IF(yeardoyharf.EQ.yeardoy)THEN             !LPM  07MAR15 MSTG TO PSX
+            !IF(yeardoyharf == yeardoy)THEN             !LPM  07MAR15 MSTG TO PSX
             !    WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')mstg-1,sradpav(mstg-1),tmaxpav(mstg-1), &
             !        tminpav(mstg-1),rainpav(mstg-1),daylpav(mstg-1),NINT(co2pav(mstg-1)),1.0-wfppav(mstg-1), &
             !        1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1),'Harvest      '
@@ -106,7 +106,7 @@
             !        tminpav(mstg-1),rainpav(mstg-1),daylpav(mstg-1),NINT(co2pav(mstg-1)),1.0-wfppav(mstg-1), &
             !        1.0-wfgpav(mstg-1),1.0-nfppav(mstg-1),1.0-nfgpav(mstg-1),psname(mstg)
             !ENDIF
-            IF(yeardoyharf.EQ.yeardoy)THEN
+            IF(yeardoyharf == yeardoy)THEN
                 WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')psx-1,sradpav(psx-1),tmaxpav(psx-1), &
                     tminpav(psx-1),rainpav(psx-1),daylpav(psx-1),NINT(co2pav(psx-1)),1.0-wfppav(psx-1), &
                     1.0-wfgpav(psx-1),1.0-nfppav(psx-1),1.0-nfgpav(psx-1),'Harvest      '

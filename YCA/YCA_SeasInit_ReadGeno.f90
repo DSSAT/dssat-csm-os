@@ -1,5 +1,5 @@
 !**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 2580 - 3108 of the original CSCAS code.
+! This is the code from the section (DYNAMIC == RUNINIT) ! Initialization, lines 2580 - 3108 of the original CSCAS code.
 ! The names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared 
 ! here. The variables that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all 
 ! comments are those of the original CSCAS.FOR code.
@@ -30,13 +30,13 @@
         !       Create genotype file names
         !-----------------------------------------------------------------------------------------------------------------------
         
-        IF (FILEIOT(1:2).EQ.'DS') THEN
+        IF (FILEIOT(1:2) == 'DS') THEN
             ! Cultivar
             PATHL = INDEX(PATHCR,' ') 
-            IF (PATHL.LE.5.OR.PATHCR(1:3).EQ.'-99') THEN
+            IF (PATHL <= 5.OR.PATHCR(1:3) == '-99') THEN
                 CUDIRFLE = CUFILE
             ELSE
-                IF (PATHCR(PATHL-1:PATHL-1) .NE. SLASH) THEN          
+                IF (PATHCR(PATHL-1:PATHL-1)  /=  SLASH) THEN          
                     CUDIRFLE = PATHCR(1:(PATHL-1)) // SLASH // CUFILE   
                 ELSE
                     CUDIRFLE = PATHCR(1:(PATHL-1)) // CUFILE
@@ -44,10 +44,10 @@
             ENDIF
             ! Ecotype
             PATHL = INDEX(PATHEC,' ')
-            IF (PATHL.LE.5.OR.PATHEC(1:3).EQ.'-99') THEN
+            IF (PATHL <= 5.OR.PATHEC(1:3) == '-99') THEN
                 ECDIRFLE = ECFILE
             ELSE
-                IF (PATHEC(PATHL-1:PATHL-1) .NE. SLASH) THEN          
+                IF (PATHEC(PATHL-1:PATHL-1)  /=  SLASH) THEN          
                     ECDIRFLE = PATHEC(1:(PATHL-1)) // SLASH // ECFILE   
                 ELSE
                     ECDIRFLE = PATHEC(1:(PATHL-1)) // ECFILE
@@ -55,17 +55,17 @@
             ENDIF
             ! Species
             PATHL = INDEX(PATHSP, ' ')
-            IF (PATHL.LE.5.OR.PATHSP(1:3).EQ.'-99') THEN
+            IF (PATHL <= 5.OR.PATHSP(1:3) == '-99') THEN
                 SPDIRFLE = SPFILE
             ELSE
-                IF (PATHSP(PATHL-1:PATHL-1) .NE. SLASH) THEN          
+                IF (PATHSP(PATHL-1:PATHL-1)  /=  SLASH) THEN          
                     SPDIRFLE = PATHSP(1:(PATHL-1)) // SLASH // SPFILE
                 ELSE
                     SPDIRFLE = PATHSP(1:(PATHL-1)) // SPFILE
                 ENDIF
             ENDIF
         ELSE
-            IF (CUDIRFLE.NE.CUDIRFLPREV .OR. VARNO.NE.VARNOPREV) THEN
+            IF (CUDIRFLE /= CUDIRFLPREV .OR. VARNO /= VARNOPREV) THEN
                 ! Cultivar
                 CUFILE = CROP//MODNAME(3:8)//'.CUL'
                 INQUIRE (FILE = CUFILE,EXIST = FFLAG)
@@ -74,7 +74,7 @@
                 ELSE
                     CALL FINDDIR (FNUMTMP,CFGDFILE,'CRD',CUFILE,CUDIRFLE)
                 ENDIF
-                IF (RNMODE.EQ.'G'.OR.RNMODE.EQ.'T') THEN
+                IF (RNMODE == 'G'.OR.RNMODE == 'T') THEN
                     CUFILE = 'GENCALC2.CUL'
                     CUDIRFLE = ' '
                     CUDIRFLE(1:12) = CUFILE
@@ -87,7 +87,7 @@
                 ELSE
                     CALL FINDDIR (FNUMTMP,CFGDFILE,'CRD',ECFILE,ECDIRFLE)
                 ENDIF
-                IF (RNMODE.EQ.'G'.OR.RNMODE.EQ.'T') THEN
+                IF (RNMODE == 'G'.OR.RNMODE == 'T') THEN
                     ECFILE = 'GENCALC2.ECO'
                     ECDIRFLE = ' '
                     ECDIRFLE(1:12) = ECFILE
@@ -107,7 +107,7 @@
         !       Check for cultivar number, genotype files' existance and version
         !-----------------------------------------------------------------------------------------------------------------------
         
-        IF (VARNO.EQ.'-99   ') THEN
+        IF (VARNO == '-99   ') THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*)' '
             WRITE(fnumerr,*)'Cultivar number not found '
@@ -239,8 +239,8 @@
         no3mn = -99
         rsfrs = -99
 
-        IF (FILEIOT(1:2).EQ.'DS') THEN
-            IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
+        IF (FILEIOT(1:2) == 'DS') THEN
+            IF (RNMODE /= 'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
             
             CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS1',dayls(1))
@@ -306,7 +306,7 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NODWT',nodwt)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'NODLT',nodlt)
         ELSE
-            IF (RNMODE.NE.'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
+            IF (RNMODE /= 'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
             CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
             CALL CUREADR (CUDIRFLE,VARNO,'PPS1',dayls(1))
             CALL CUREADR (CUDIRFLE,VARNO,'PPS2',dayls(2))
@@ -373,10 +373,10 @@
         !       Read ecotype information
         !-----------------------------------------------------------------------------------------------------------------------
         
-        IF (RNMODE.NE.'T') CALL FVCHECK(ECDIRFLE,GENFLCHK) !LPM 28FEB2017 Modified to avoid verification of ecotype file according to LAH 
+        IF (RNMODE /= 'T') CALL FVCHECK(ECDIRFLE,GENFLCHK) !LPM 28FEB2017 Modified to avoid verification of ecotype file according to LAH 
         CALL ECREADR (ECDIRFLE,ECONO,'SRN%S',srnpcs)
-        IF (SRNPCS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
-        IF (SRPRS.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRPRS',srprs)
+        IF (SRNPCS < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
+        IF (SRPRS < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRPRS',srprs)
         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
         !CALL ECREADR (ECDIRFLE,ECONO,'DUSRI',dusri) !LPM 05JUN2015 DUSRI is not used
         ! LAH Following set up to allow for change in stem fraction
@@ -394,24 +394,24 @@
         CALL ECREADR (ECDIRFLE,ECONO,'BR4FX',brfx(4))
         ! Following may have been (temporarily) in the CUL file
         ! Radiation use efficiency
-        IF (PARUE.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
-        IF (PARU2.LT.-89.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',paru2)
+        IF (PARUE <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
+        IF (PARU2 < -89.0) CALL ECREADR (ECDIRFLE,ECONO,'PARU2',paru2)
         ! Leaf area
-        !IF (LA1S.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)                             !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15 
-        IF (LAXS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAXS',laxs)
-        IF (LAWS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',laws)
+        !IF (LA1S <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'LA1S',la1s)                             !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15 
+        IF (LAXS <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'LAXS',laxs)
+        IF (LAWS <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',laws)
         ! Roots
-        IF (RDGS.LE.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RDGS',rdgs)
+        IF (RDGS <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'RDGS',rdgs)
         ! Reduction factors
-        IF (NFGU.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
-        IF (NFGL.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
+        IF (NFGU < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
+        IF (NFGL < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
         ! N uptake
-        IF (NO3CF.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NUPNF',no3cf)
-        IF (H2OCF.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NUPWF',h2ocf)
-        IF (RTNO3.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RTNUP',rtno3)
-        IF (RTNH4.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'RTNH4',rtnh4)
-        IF (NO3MN.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NO3MN',no3mn)
-        IF (NH4MN.LT.0.0) CALL ECREADR (ECDIRFLE,ECONO,'NH4MN',nh4mn)
+        IF (NO3CF < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NUPNF',no3cf)
+        IF (H2OCF < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NUPWF',h2ocf)
+        IF (RTNO3 < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'RTNUP',rtno3)
+        IF (RTNH4 < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'RTNH4',rtnh4)
+        IF (NO3MN < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NO3MN',no3mn)
+        IF (NH4MN < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NH4MN',nh4mn)
         
         !-----------------------------------------------------------------------------------------------------------------------
         !       Read species information
@@ -450,7 +450,7 @@
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
         CALL SPREADR (SPDIRFLE,'RS%O' ,rspco)
         CALL SPREADR (SPDIRFLE,'RSEN' ,rsen)
-        IF (RSEN.LT.0.0) CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)
+        IF (RSEN < 0.0) CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)
         CALL SPREADR (SPDIRFLE,'RSFPL',rsfpl)
         CALL SPREADR (SPDIRFLE,'RSFPU',rsfpu)
         CALL SPREADR (SPDIRFLE,'RSUSE',rsuse)
@@ -478,36 +478,36 @@
         CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
         ! LAH Following set up to allow for change in stem fraction
         ! Currently not used ... just one stem fraction (STFR)
-        !IF (SWFRN.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRN',swfrn) !LPM 05JUN2015 SWFRNL is not used
-        !IF (SWFRNL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRNL',swfrnl)!LPM 05JUN2015 SWFRNL is not used 
-        !IF (SWFRXL.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFXL',swfrxl)!LPM 05JUN2015 SWFRXL is not used 
-        !IF (SWFRX.LE.0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx) !LPM 05JUN2015 SWFRX is not used   
+        !IF (SWFRN <= 0.0) CALL SPREADR (SPDIRFLE,'SWFRN',swfrn) !LPM 05JUN2015 SWFRNL is not used
+        !IF (SWFRNL <= 0.0) CALL SPREADR (SPDIRFLE,'SWFRNL',swfrnl)!LPM 05JUN2015 SWFRNL is not used 
+        !IF (SWFRXL <= 0.0) CALL SPREADR (SPDIRFLE,'SWFXL',swfrxl)!LPM 05JUN2015 SWFRXL is not used 
+        !IF (SWFRX <= 0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx) !LPM 05JUN2015 SWFRX is not used   
         ! Following may be temporarily in ECO or CUL file
-        IF (PD(9).LE.0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
-        !IF (DUSRI.LT.0.0) CALL SPREADR (SPDIRFLE,'DUSRI',dusri) !LPM 05JUN2015 DUSRI is not used
-        IF (LLIFA.LE.0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
-        !IF (SRFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
-        IF (RDGS.LE.0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
-        IF (LAXS.LE.0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
-        IF (RLWR.LE.0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
-        IF (NFGL.LT.0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
-        IF (NLLG.LE.0.0) CALL SPREADR (SPDIRFLE,'NLLG',nllg)
-        IF (NFGU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
-        IF (NFPU.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
-        IF (NFPL.LE.0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
-        IF (KCAN.LE.0.0) CALL SPREADR (SPDIRFLE,'KCAN',kcan)
-        !IF (LAWCF.LE.0.0) CALL SPREADR (SPDIRFLE,'SLACF',lawcf) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-        !IF (LAWMNFR.LE.0.0) CALL SPREADR (SPDIRFLE,'SLAMN',lawmnfr) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-        IF (DFPE.LT.0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
-        IF (PPEXP.LT.0.0) CALL SPREADR (SPDIRFLE,'PPEXP',ppexp)
+        IF (PD(9) <= 0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
+        !IF (DUSRI < 0.0) CALL SPREADR (SPDIRFLE,'DUSRI',dusri) !LPM 05JUN2015 DUSRI is not used
+        IF (LLIFA <= 0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
+        !IF (SRFR <= 0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
+        IF (RDGS <= 0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
+        IF (LAXS <= 0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
+        IF (RLWR <= 0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
+        IF (NFGL < 0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
+        IF (NLLG <= 0.0) CALL SPREADR (SPDIRFLE,'NLLG',nllg)
+        IF (NFGU <= 0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)
+        IF (NFPU <= 0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
+        IF (NFPL <= 0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
+        IF (KCAN <= 0.0) CALL SPREADR (SPDIRFLE,'KCAN',kcan)
+        !IF (LAWCF <= 0.0) CALL SPREADR (SPDIRFLE,'SLACF',lawcf) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
+        !IF (LAWMNFR <= 0.0) CALL SPREADR (SPDIRFLE,'SLAMN',lawmnfr) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
+        IF (DFPE < 0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
+        IF (PPEXP < 0.0) CALL SPREADR (SPDIRFLE,'PPEXP',ppexp)
         ! N uptake 
-        IF (NO3CF.LT.0.0) CALL SPREADR (SPDIRFLE,'NUPNF',no3cf)
-        IF (H2OCF.LT.0.0) CALL SPREADR (SPDIRFLE,'NUPWF',h2ocf)
-        IF (RTNO3.LT.0.0) CALL SPREADR (SPDIRFLE,'RTNUP',rtno3)
-        IF (RTNH4.LT.0.0) CALL SPREADR (SPDIRFLE,'RTNH4',rtnh4)
-        IF (NO3MN.LT.0.0) CALL SPREADR (SPDIRFLE,'NO3MN',no3mn)
-        IF (NH4MN.LT.0.0) CALL SPREADR (SPDIRFLE,'NH4MN',nh4mn)
-        IF (RSFRS.LT.0.0) CALL SPREADR (SPDIRFLE,'RSFRS',rsfrs)
+        IF (NO3CF < 0.0) CALL SPREADR (SPDIRFLE,'NUPNF',no3cf)
+        IF (H2OCF < 0.0) CALL SPREADR (SPDIRFLE,'NUPWF',h2ocf)
+        IF (RTNO3 < 0.0) CALL SPREADR (SPDIRFLE,'RTNUP',rtno3)
+        IF (RTNH4 < 0.0) CALL SPREADR (SPDIRFLE,'RTNH4',rtnh4)
+        IF (NO3MN < 0.0) CALL SPREADR (SPDIRFLE,'NO3MN',no3mn)
+        IF (NH4MN < 0.0) CALL SPREADR (SPDIRFLE,'NH4MN',nh4mn)
+        IF (RSFRS < 0.0) CALL SPREADR (SPDIRFLE,'RSFRS',rsfrs)
 
         CALL SPREADC (SPDIRFLE,'HPROD',hprod)
         CALL SPREADC (SPDIRFLE,'PPSEN',ppsen)
@@ -522,7 +522,7 @@
 
         ! Temperature responses
         CALL SPREADRA (SPDIRFLE,'TRDV1','4',trdv1)
-        IF (trdv1(1).LT.-98.0) THEN
+        IF (trdv1(1) < -98.0) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '
             WRITE(fnumerr,*) ' No temp response data for development'
@@ -534,7 +534,7 @@
         ENDIF
         
         CALL SPREADRA (SPDIRFLE,'TRDV2','4',trdv2)
-        IF (trdv2(1).LT.-98.0) TRDV2 = TRDV1
+        IF (trdv2(1) < -98.0) TRDV2 = TRDV1
         
         CALL SPREADRA (SPDIRFLE,'TRGEM','4',trgem)
         CALL SPREADRA (SPDIRFLE,'TRLFG','4',trlfg)
@@ -547,7 +547,7 @@
         TRDV4 = TRDV1               ! LPM 21MAR15 new variable to change optimum temperature for leaf size
         TRDV4(2) = 20.0             ! LPM 21MAR15 new variable to change optimum temperature for leaf size
         CALL SPREADRA (SPDIRFLE,'TRPHS','4',trphs)
-        IF (diffacr(1).LT.0.0) CALL SPREADRA (SPDIRFLE,'DIFFR','3',diffacr)
+        IF (diffacr(1) < 0.0) CALL SPREADRA (SPDIRFLE,'DIFFR','3',diffacr)
         CALL SPREADCA (SPDIRFLE,'PSNAME','20',psname)
         CALL SPREADCA (SPDIRFLE,'PSABV','20',psabv)
         CALL SPREADCA (SPDIRFLE,'PSTYP','20',pstyp)

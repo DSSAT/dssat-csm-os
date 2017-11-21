@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 4234 - 4384 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == RATE) lines 4234 - 4384 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -36,18 +36,18 @@
         ! Emergence
        
         ! LPM 21MAR2016 Added reserves in the planting stake
-        !LPM 02SEP2016 Deleted SDEPTHU.GT.0.0 as conditional:Reserves could be used even if the bud is above ground
-        IF (GERMFR.GT.0.0.AND.EMRGFR.LT.1.0) THEN
+        !LPM 02SEP2016 Deleted SDEPTHU > 0.0 as conditional:Reserves could be used even if the bud is above ground
+        IF (GERMFR > 0.0.AND.EMRGFR < 1.0) THEN
             SEEDUSED = AMIN1(SEEDRS, PEMRG*TTGEM*WFGE)
             SEEDUSES = SEEDUSES + SEEDUSED
             SEEDUSE = SEEDUSES
             SEEDRS = AMAX1(0.0,SEEDRS - SEEDUSED)
             SELONG = SESR * SEEDUSED
-            IF (SELONGT+SELONG.LT.SDEPTHU) THEN
+            IF (SELONGT+SELONG < SDEPTHU) THEN
                 EMRGFR = 0.0                                                                                               !EQN 047a
             ELSE                                                                         
                 EMRGFR = 1.0
-                IF (EMFLAG.NE.'Y') THEN
+                IF (EMFLAG /= 'Y') THEN
                     WRITE(FNUMWRK,*)' ' 
                     WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
                     EMFLAG = 'Y'
@@ -58,7 +58,7 @@
         ELSE
             SEEDUSES = 0.0     
             EMRGFR = 1.0
-            IF (EMFLAG.NE.'Y') THEN
+            IF (EMFLAG /= 'Y') THEN
                 WRITE(FNUMWRK,*)' ' 
                 WRITE(FNUMWRK,'(A18,I8)')' Emergence on day ',yeardoy 
                 EMFLAG = 'Y'
@@ -79,23 +79,23 @@
         ENDIF
         IF (PPSEN == 'SL') THEN      ! Short day response,linear 
             DF = 1.0 - DAYLS(INT(BRSTAGETMP))/1000.*(PPTHR-DAYL)                                                       !EQN 050
-            !IF (BRSTAGETMP.LT.FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
-            IF (BRSTAGETMP.LT.FLOAT(PSX)) THEN
+            !IF (BRSTAGETMP < FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
+            IF (BRSTAGETMP < FLOAT(PSX)) THEN
                 DFNEXT = 1.-DAYLS(INT(BRSTAGETMP+1))/1000.*(PPTHR-DAYL)
             ELSE
                 DFNEXT = DF
             ENDIF 
-        ELSEIF (PPSEN.EQ.'LQ') THEN  ! Long day response,quadratic
+        ELSEIF (PPSEN == 'LQ') THEN  ! Long day response,quadratic
             DF = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP))/10000.*(PPTHR-DAYL)**PPEXP)))                         !EQN 048
-            IF (BRSTAGETMP.LT.10.0) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP+1.0))/10000.*(PPTHR-DAYL)**PPEXP)))
+            IF (BRSTAGETMP < 10.0) DFNEXT = AMAX1(0.0,AMIN1(1.0,1.0-(DAYLS(INT(BRSTAGETMP+1.0))/10000.*(PPTHR-DAYL)**PPEXP)))
             Tfdf = AMAX1(0.0,1.0-AMAX1(0.0,(TMEAN-10.0)/10.0))
             Tfdf = 1.0  ! LAH No temperature effect on DF ! 
             DF = DF + (1.0-DF)*(1.0-TFDF)                                                                              !EQN 049
             DFNEXT = DFNEXT + (1.0-DFNEXT)*(1.0-TFDF)
-        ELSEIF (PPSEN.EQ.'LL') THEN      ! Long day response,linear 
+        ELSEIF (PPSEN == 'LL') THEN      ! Long day response,linear 
             DF = 1.0 - AMIN1(1.0,DAYLS(INT(BRSTAGETMP))*(PPTHR-DAYL))                                                       !EQN 050
-            !IF (BRSTAGETMP.LT.FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
-            IF (BRSTAGETMP.LT.FLOAT(PSX)) THEN
+            !IF (BRSTAGETMP < FLOAT(MSTG)) THEN  !LPM 06MAR15 MSTG to PSX
+            IF (BRSTAGETMP < FLOAT(PSX)) THEN
                 DFNEXT = 1.-AMIN1(1.0,DAYLS(INT(BRSTAGETMP+1))*(PPTHR-DAYL))
             ELSE
                 DFNEXT = DF
@@ -103,7 +103,7 @@
         ENDIF
 
         ! Set daylength factor for output (Is dfpe before emergence)
-        IF (EMRGFR.GE.1.0) THEN
+        IF (EMRGFR >= 1.0) THEN
             DFOUT = DF
         ELSE
             DFOUT = DFPE
@@ -117,10 +117,10 @@
         DUPHASE = 0.0
         DUPNEXT = 0.0
         ! To avoid exceeding the array sizes
-        IF (BRSTAGETMP.LT.10.0) THEN
+        IF (BRSTAGETMP < 10.0) THEN
             !DUNEED = PSTART(INT(BRSTAGETMP+1.0))-CUMDU                                                                 !EQN 051
             DUNEED = PSTART(INT(BRSTAGETMP+1.0))-DABR                                                                 !EQN 051!LPM 24APR2016 using the thermal clock with stress
-            IF (DUNEED.GE.TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN                                                    !LPM 21MAR15 use TTB instead of TT (TO1=24=TO2)
+            IF (DUNEED >= TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR))THEN                                                    !LPM 21MAR15 use TTB instead of TT (TO1=24=TO2)
                 DUPHASE = TTB*(DFPE*(GERMFR-EMRGFR)+DF*EMRGFR)                                                          !EQN 052a !LPM 21MAR15/19APR2016 use TTB instead of TT (TO1=24=TO2)
                 TIMENEED = 1.0
                 DUPNEXT = 0.0
@@ -137,8 +137,8 @@
         !-----------------------------------------------------------------------
         !           Set seed reserve use for root growth and update av.reserves
         !-----------------------------------------------------------------------
-        !IF (GERMFR.GT.0.0.OR.GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
-        !IF (GERMFR.GT.0.0.OR.GESTAGE.GE.1.0) THEN
+        !IF (GERMFR > 0.0.OR.GESTAGE >= 0.5) THEN !LPM 21MAR2016 To separate germination and emergence
+        !IF (GERMFR > 0.0.OR.GESTAGE >= 1.0) THEN
         !    SEEDRSAVR = AMIN1(SEEDRS,SEEDRSI/SDDUR*(TTGEM/STDAY)*GERMFR)                                                  !EQN 286 
         !    !LPM 22MAR2016 use for roots the same amount of reserves than aboveground (SEEDUSED)
         !    !SEEDRSAVR = AMIN1(SEEDUSED,SEEDRS) 
@@ -153,12 +153,12 @@
         !-----------------------------------------------------------------------
 
         DO I = 1, 20
-            IF (HYEARDOY(I).EQ.YEARDOY) THEN
+            IF (HYEARDOY(I) == YEARDOY) THEN
                 HANUM = I
                 WRITE(fnumwrk,*) ' '
                 WRITE(fnumwrk,'(A20,i2,A12,A1,A6,i8)')' Harvest instruction ',hanum,'  Operation ',hop(i),'  Day ',yeardoy
                 CALL CSUCASE(HOP(I)) 
-                IF (hop(i).EQ.'F') YEARDOYHARF = YEARDOY 
+                IF (hop(i) == 'F') YEARDOYHARF = YEARDOY 
             ENDIF
         END DO
 

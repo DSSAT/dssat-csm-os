@@ -90,7 +90,7 @@
             CO2INTPPM = AMAX1(CO2COMPC+20.0,CO2INT *(8.314*1.0E7*((TMAX+TMIN)*.5+273.))/(1.0E12*1.0E-6*44.))			!EQN 269
             CO2FPI = PARFC*((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2COMPC)))										!EQN 268
             CARBOTMPI = CARBOTMP * CO2FPI		
-            IF (ABS(CO2INTPPM-CO2INTPPMP).LT.1.0) EXIT
+            IF (ABS(CO2INTPPM-CO2INTPPMP) < 1.0) EXIT
             CO2INTPPMP = CO2INTPPM
         ENDDO
         CARBOBEGIA = 0.0
@@ -103,8 +103,8 @@
             CO2FPI = PARFC*((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2COMPC)))
             CARBOTMPI = CARBOTMP * CO2FPI
             !---- DA 25APR2017 is this used at all?
-            IF (ABS(CO2INTPPM-CO2INTPPMP).LT.1.0) EXIT
-            IF (ABS(CO2INTPPM-CO2COMPC).LT.1.0) EXIT
+            IF (ABS(CO2INTPPM-CO2INTPPMP) < 1.0) EXIT
+            IF (ABS(CO2INTPPM-CO2COMPC) < 1.0) EXIT
             CO2INTPPMP = CO2INTPPM
             !----
             
