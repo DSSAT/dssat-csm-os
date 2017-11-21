@@ -1,6 +1,6 @@
-$SPECIES:PIALO046 PINEAPPLE
+$SPECIES:PIALO047 ALOHA pineapple model
 
-*SPECIES:PIALO046
+*SPECIES:PIALO047
      
 !Growth
 @  CONV   FDMC
@@ -15,7 +15,7 @@ $SPECIES:PIALO046 PINEAPPLE
 ! TTOPV   Maximum temperature for development - veg phase
 
 @ TBASR  TOPTR  TTOPR
-     16    35.
+     18    33.    45.
 ! TBASR   Base temperature during reproductive phase
 ! TOPTR   Upper limit of optimum temperature - rep phase
 ! TTOPR   Maximum temperature for development - rep phase
@@ -32,10 +32,10 @@ $SPECIES:PIALO046 PINEAPPLE
 ! RWMX    Max root water uptake
 ! RLWR    Root length weight ratio
    
-!Management factor - WHAT IS THIS???
+!Management factor
 @  CMFC
       1
-! CMFC    Management condition factor
+! CMFC    Management condition factor affecting leaf growth rate
 
 !CO2 effect
 @  CO2X   CO2Y

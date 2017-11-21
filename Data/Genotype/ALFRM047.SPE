@@ -1,5 +1,5 @@
-*ALFALFA SPECIES COEFICIENTS                                                                          
-! presently Bracharia brizantha - Marandu - Diego Pequeno                                                                     
+*ALFALFA SPECIES COEFICIENTS: PRFRM047 MODEL                                                                     
+! 
 !*PHOTOSYNTHESIS PARAMETERS                                                                         
 !  35.0  82.0  0.55 
 ! 35.00 82.00  0.55  0.10                   PARMAX,PHTMAX,KCAN, KC_SLOPE

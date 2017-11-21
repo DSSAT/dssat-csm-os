@@ -15,14 +15,14 @@ This is an example of one of the experiments of the Kellogg Biological Station(K
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
  1 1 1 0 LTER TREAT 1 HI MZ         1  1  0  1  1  0  1  0  0  1  0  1  1
- 1 2 1 0 LTER TREAT 1 HI FA         2  1  0  0  2  0  0  0  0  0  0  2  1
- 1 3 1 0 LTER TREAT 1 HI SB         3  1  0  0  3  0  0  0  0  2  0  3  2
- 1 4 1 0 LTER TREAT 1 HI FA         2  1  0  0  4  0  0  0  0  0  0  4  1
- 1 5 1 0 LTER TREAT 1 HI MZ         4  1  0  0  5  0  2  0  0  3  0  5  1
- 1 6 1 0 LTER TREAT 1 HI FA         2  1  0  0  6  0  0  0  0  0  0  6  1
- 1 7 1 0 LTER TREAT 1 HI SB         3  1  0  0  7  0  0  0  0  4  0  7  2
- 1 8 1 0 LTER TREAT 1 HI FA         2  1  0  0  8  0  0  0  0  0  0  8  1
- 1 9 1 0 LTER TREAT 1 HI MZ         5  1  0  0  9  0  3  0  0  5  0  9  1
+ 1 2 1 0 LTER TREAT 1 HI FA         2  1  0  0  2  0  0  0  0  2  0  2  1
+ 1 3 1 0 LTER TREAT 1 HI SB         3  1  0  0  3  0  0  0  0  0  0  3  2
+ 1 4 1 0 LTER TREAT 1 HI FA         2  1  0  0  4  0  0  0  0  4  0  4  1
+ 1 5 1 0 LTER TREAT 1 HI MZ         4  1  0  0  5  0  2  0  0  0  0  5  1
+ 1 6 1 0 LTER TREAT 1 HI FA         2  1  0  0  6  0  0  0  0  6  0  6  1
+ 1 7 1 0 LTER TREAT 1 HI SB         3  1  0  0  7  0  0  0  0  7  0  7  2
+ 1 8 1 0 LTER TREAT 1 HI FA         2  1  0  0  8  0  0  0  0  8  0  8  1
+ 1 9 1 0 LTER TREAT 1 HI MZ         5  1  0  0  9  0  3  0  0  9  0  9  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -77,12 +77,12 @@ This is an example of one of the experiments of the Kellogg Biological Station(K
  1 89121 TI002    15 -99
  2 90145 TI003    25 -99
  2 90145 TI005    22 -99
- 3 91115 TI005    22 -99
- 3 91122 TI003    15 -99
- 4 92136 TI005    22 -99
- 4 92139 TI003    15 -99
- 5 93118 TI005    22 -99
- 5 93127 TI003    15 -99
+ 4 91115 TI005    22 -99
+ 4 91122 TI003    15 -99
+ 6 92136 TI005    22 -99
+ 7 92139 TI003    15 -99
+ 8 93118 TI005    22 -99
+ 9 93127 TI003    15 -99
 
 *HARVEST DETAILS
 @H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME

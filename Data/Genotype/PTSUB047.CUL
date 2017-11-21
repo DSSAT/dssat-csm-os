@@ -1,4 +1,4 @@
-*POTATO CULTIVAR COEFFICIENTS: PTSUB046 MODEL
+*POTATO CULTIVAR COEFFICIENTS: PTSUB047 MODEL
 
 ! COEFF       DEFINITIONS
 ! ========    ===========
@@ -17,9 +17,13 @@
 @VAR#  VAR-NAME........ EXPNO   ECO#    G2    G3    PD    P2    TC
 IB0001 MAJESTIC             . IB0001 2000.  22.5   0.8   0.6  17.0   
 IB0002 SEBAGO               . IB0001 1100.  22.5   0.9   0.0  19.0   
-IB0003 Russet Burbank       . IB0003 1800.  41.0   0.1   0.0  19.0  
+IB0003 Russet Burbank       . IB0001 1100.  26.0   0.9   0.2  17.0 
 IB0004 KATHADIN             . IB0001 2000.  25.0   0.5   0.7  20.0   
-IB0005 ATLANTIC             . IB0001 1000.  25.0   0.9   0.9  21.0   
+IB0005 ATLANTIC             . IB0001 1000.  30.0   0.8   0.1  21.0
+CI0001 CLON7316             . IB0001 1100.  25.0   0.2   0.8  21.0
+CI0002 CLON7716             . IB0001 1100.  25.0   0.2   0.8  21.0
+AR0003 ACHIRANA             . IB0001 1100.  26.0   0.9   0.2  21.0 
+DM0004 KAPTAH               . IB0001 1500.  24.0   0.6   0.4  18.0 
 IB0006 MARIS PIPER          . IB0001 2000.  25.0   0.8   0.4  17.0   
 IB0007 KING EDWARD          . IB0001 2000.  22.5   1.0   0.6  17.0   
 IB0008 DESIREE              . IB0001 2000.  25.0   0.9   0.6  16.0   
@@ -27,10 +31,8 @@ IB0009 LT-1                 . IB0001 2000.  25.0   0.9   0.8  17.0
 IB0010 C14-343              . IB0001 2000.  25.0   0.9   0.4  21.0   
 IB0011 NORCHIP              . IB0001 2000.  25.0   1.0   0.4  17.0   
 IB0012 SHEPODY              . IB0001 2000.  25.0   0.7   0.6  19.0  
-IB0018 Hilite Russet        . IB0003 1000.  27.0   0.2   0.1  20.0   
-UF0001 RED LASODA           . IB0001 1000.  22.0   0.9   0.9  19.0   
-AR0003 ACHIRANA             . IB0001 2000.  21.0   0.8   0.5  21.0 
-CI0001 CLON7316             . IB0001 2000.  27.0   0.5   0.6  21.0
-CI0002 CLON7716             . IB0001 1000.  30.0   0.2   0.6  21.0
-DM0004 KAPTAH               . IB0001 1500.  24.0   0.6   0.3  18.0   
+IB0018 Hilite Russet        . IB0001 1000.  27.0   0.2   0.1  20.0   
+UF0001 RED LASODA           . IB0001 2000.  22.0   0.7   0.4  19.0   
+
+  
 

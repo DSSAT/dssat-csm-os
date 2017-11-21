@@ -7,10 +7,14 @@ Allan Andales, Richard Carlson, Bill Batchelor, and Joel Paz
 Agricultural and Biosystems Engineering,Iowa State University, Ames, Iowa
 @SITE
 ISU Agronomy Research Farm
-@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
-    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 @NOTES
-This was a bare soil temperature study conducted from for 10 years from 1982 to 1990 and in 1995 at the ISU Agronomy Research Center. Soil temperature was measured at depths of 6.4, 10, 20,51, and 102 cm. Dr. Richard Carlson (Agronomy, ISU) provided the data.Andales, A. A., W. D. Batchelor, and C. E. Anderson. 2000. Modification of a soybean model to improve soil temperature and emergence date prediction. Transactions of the ASAE 43(1):121-129.
+This was a bare soil temperature study conducted from for 10 years from 1982 to 1990 and
+in 1995 at the ISU Agronomy Research Center. Soil temperature was measured at depths
+of 6.4, 10, 20,51, and 102 cm. Dr. Richard Carlson (Agronomy, ISU) provided the data.
+Andales, A. A., W. D. Batchelor, and C. E. Anderson. 2000. Modification of a soybean 
+model to improve soil temperature and emergence date prediction. 
+Transactions of the ASAE 43(1):121-129.
+
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
@@ -165,6 +169,10 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
 10   110  .247   -99   -99
 10   120  .247   -99   -99
 
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 82001   -99     1     1     S     R    50     0     5   -99   -99   -99   -99   -99                        -99
+
 *HARVEST DETAILS
 @H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
  1 82303 GS000   -99   -99   -99   -99 
@@ -187,8 +195,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  1 ME              M     M     E     R     S     C     R     1     G     S     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -210,8 +218,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  2 ME              M     M     E     R     S     C     R     1     G     S     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  2 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 2 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 2 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -233,8 +241,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  3 ME              M     M     E     R     S     C     R     1     G     S     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  3 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 3 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 3 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -256,8 +264,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  4 ME              M     M     E     R     S     C     R     1     G     S     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  4 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 4 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 4 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -279,8 +287,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  5 ME              M     M     E     R     S     C     R     1     G     S     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  5 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 5 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 5 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -302,8 +310,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  6 ME              M     M     E     R     S     C     R     1     G     R     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  6 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 6 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 6 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -325,8 +333,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  7 ME              M     M     E     R     S     C     R     1     G     R     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  7 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 7 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 7 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -348,8 +356,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  8 ME              M     M     E     R     S     C     R     1     G     R     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  8 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 8 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 8 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -371,8 +379,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
  9 ME              M     M     E     R     S     C     R     1     G     R     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  9 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 9 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 9 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -394,8 +402,8 @@ This was a bare soil temperature study conducted from for 10 years from 1982 to 
 10 ME              M     M     E     R     S     C     R     1     G     R     3
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
 10 MA              R     N     N     N     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
-10 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+10 OU              N     Y     Y     1     N     N     Y     N     N     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN

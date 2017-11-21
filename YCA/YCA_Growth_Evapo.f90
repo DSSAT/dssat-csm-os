@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 4075 - 4215 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == RATE) lines 4075 - 4215 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -35,7 +35,7 @@
         
         CHARACTER(LEN=1) IDETG       , ISWWAT      
         
-          IF (PLYEAR.LE.0) PLYEAR = YEAR
+          IF (PLYEAR <= 0) PLYEAR = YEAR
 
 !-----------------------------------------------------------------------
 !         Calculate potential plant evaporation,water uptake if neeeded
@@ -52,9 +52,9 @@
           RLFC = 9.72 + 0.0757 *  CO2  + 10.0
           YEARDOY = YEARDOY                                                 ! MF For WORK.OUT
                                                          
-          IF (FILEIOT.EQ.'DS4'.AND.IDETG.NE.'N'.OR.FILEIOT.NE.'DS4') THEN                  
+          IF (FILEIOT == 'DS4'.AND.IDETG /= 'N'.OR.FILEIOT /= 'DS4') THEN                  
 
-            IF (ISWWAT.NE.'N') THEN    
+            IF (ISWWAT /= 'N') THEN    
             
                 ! Call 1  Basic calculations with rcrop = 0  
                 CALL EVAPO('M',SRAD,CLOUDS,TMAX,TMIN,TDEW,WINDSP,ALBEDO,RATM,RCROP*0.0, &
@@ -88,7 +88,7 @@
                 IF (EOMPCRP > 0.0) TRATIO = EOMPCRPCO2 / EOMPCRP
             ENDIF
             
-            IF (fileiot(1:2).NE.'DS') THEN
+            IF (fileiot(1:2) /= 'DS') THEN
               ! Calculate plant potential evaporation 
               EOP = MAX(0.0,EO/EOMPEN*EOMPCRPCO2 * (1.0-EXP(-LAI*KEP)))
               ! Ratio necessary because EO method may not be Monteith
@@ -130,15 +130,15 @@
 !!-----------------------------------------------------------------------
 !
 !          Tfd = TFAC4(trdv1,tmean,TT)
-!          IF (brstage+1.0.LT.10.0) &
+!          IF (brstage+1.0 < 10.0) &
 !           Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
-!          IF (trgem(3).GT.0.0) THEN
+!          IF (trgem(3) > 0.0) THEN
 !            Tfgem = TFAC4(trgem,ST(LSEED),TTGEM)
 !            !Tfgem = TFAC4(trgem,tmean,TTGEM)  !LPM 20MAR2016 To modify 
 !          ELSE
 !            Ttgem = tt
 !          ENDIF    
-!          !IF (Cfllflife.EQ.'D') THEN 
+!          !IF (Cfllflife == 'D') THEN 
 !          !  ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
 !          !  Ttlflife = Phints   
 !          !ELSE  
@@ -160,13 +160,13 @@
 !         Calculate water factor for germination
 !-----------------------------------------------------------------------
 
-          IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH)
+          IF (LSEED < 0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH)
           WFGE = 1.0
-          IF (ISWWAT.NE.'N') THEN
-              !IF (GESTAGE.LT.1.0) THEN  !LPM 21MAR2015 to estimate WFGE for germination and emergence
+          IF (ISWWAT /= 'N') THEN
+              !IF (GESTAGE < 1.0) THEN  !LPM 21MAR2015 to estimate WFGE for germination and emergence
               IF (EMRGFR < 1.0) THEN
-              !IF (LSEED.LT.0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH) !LPM 21MAR2015 To estimate LSEED when ISWWAT.EQ.N (linking ST and germination)
-                  !IF (LSEED.GT.1) THEN
+              !IF (LSEED < 0) LSEED = CSIDLAYR (NLAYR, DLAYR, SDEPTH) !LPM 21MAR2015 To estimate LSEED when ISWWAT == N (linking ST and germination)
+                  !IF (LSEED > 1) THEN
                   !  SWPSD = SWP(LSEED)
                   !ELSE
                   ! SWP(0) = AMIN1(1.,AMAX1(.0,(SWP(1)-0.5*(SWP(2)-SWP(1)))))
@@ -176,22 +176,22 @@
                    WFGE = AMAX1(0.0,AMIN1(1.0,(SWP(LSEED)/WFGEM)))
             ENDIF
           ENDIF
-          IF (ISWWATCROP.EQ.'N') WFGE = 1.0
+          IF (ISWWATCROP == 'N') WFGE = 1.0
           
 !-----------------------------------------------------------------------
 !         Calculate thermal time
 !-----------------------------------------------------------------------
 
           Tfd = TFAC4(trdv1,tmean,TT)
-          IF (brstage+1.0.LT.10.0) &
+          IF (brstage+1.0 < 10.0) &
            Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
-          IF (trgem(3).GT.0.0) THEN
+          IF (trgem(3) > 0.0) THEN
             Tfgem = TFAC4(trgem,ST(LSEED),TTGEM)
             !Tfgem = TFAC4(trgem,tmean,TTGEM)  !LPM 20MAR2016 To modify the TT for germination using ST 
           ELSE
             Ttgem = tt
           ENDIF    
-          !IF (Cfllflife.EQ.'D') THEN 
+          !IF (Cfllflife == 'D') THEN 
           !  ! Leaf life read-in as days (eg.7 phyllochrons->7 days)
           !  Ttlflife = Phints   
           !ELSE  

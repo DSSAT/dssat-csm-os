@@ -181,12 +181,12 @@ SCCAN    SC   CANEGRO-Sugarcane
 SCCSP    SC   CASUPRO-Sugarcane
 SGCER    SG   CERES-Sorghum
 SWCER    SW   CERES-Sweetcorn
-PIALO    PI   Pineapple
+PIALO    PI   ALOHA-Pineapple
 TRARO    TR   AROIDS-Taro
 TNARO    TN   AROIDS-Tanier
-WHAPS    WH   NWheat
-PRFRM    BM   Bermudagrass
-PRFRM    BR   Brachiaria
-PRFRM    BH   Bahiagrass
-PRFRM    G0   Perennial Forage Model
-PRFRM    AL   CROPGRO-Alfalfa
+WHAPS    WH   NWHEAT-Wheat
+PRFRM    BM   FORAGE-Bermudagrass
+PRFRM    BR   FORAGE-Brachiaria
+PRFRM    BH   FORAGE-Bahiagrass
+PRFRM    G0   FORAGE-Generic
+PRFRM    AL   FORAGE-Alfalfa

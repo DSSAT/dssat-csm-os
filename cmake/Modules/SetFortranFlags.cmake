@@ -63,8 +63,8 @@ ELSE()
 ENDIF()
 # Optimize for the host's architecture
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
-                 Fortran "/QxHost"       # Intel Windows
-                         "-xHost"        # Intel
+                 Fortran "/QxAVX"       # Intel Windows
+                         "-xAVX"        # Intel
                          ${GNUNATIVE}    # GNU
                          "-ta=host"      # Portland Group
                 )
@@ -108,8 +108,8 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
 # Ref: https://software.intel.com/en-us/node/694581
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                  Fortran "/fpp" # Intel Windows
-				    "-fpp" # Intel
-                 	    "-cpp"
+				         "-fpp" # Intel
+                 	     "-cpp"
                 )
                 
 ###################
@@ -168,9 +168,9 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_TESTING "${CMAKE_Fortran_FLAGS_TESTING}"
 # Unroll loops
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
                  Fortran "/unroll"        # Intel Windows
-                         "-unroll"        # Intel
                          "-funroll-loops" # GNU
-                         "-Munroll"       # Portland Group
+                         "-unroll"        # Intel
+			             "-Munroll"       # Portland Group
                 )
 
 # Inline functions
@@ -182,18 +182,18 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
                 )
 
 # Interprocedural (link-time) optimizations
-#SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE #"${CMAKE_Fortran_FLAGS_RELEASE}"
-#                 Fortran "/Qipo"    # Intel Windows
-#                         "-ipo"     # Intel
-#                         "-flto"    # GNU
-#                         "-Mipa"    # Portland Group
-#                )
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
+                 Fortran "/Qipo"    # Intel Windows
+                         "-ipo"     # Intel
+                         "-flto"    # GNU
+                         "-Mipa"    # Portland Group
+                )
 
 # Single-file optimizations
-#SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE #"${CMAKE_Fortran_FLAGS_RELEASE}"
-#                 Fortran "/Qip" # Intel Windows
-#                         "-ip"  # Intel
-#                )
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
+                 Fortran "/Qip" # Intel Windows
+                         "-ip"  # Intel
+                )
 
 # Vectorize code
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"

@@ -234,9 +234,8 @@ C OUTPUTS: LINEXP - Line number last read by the routine
 C          ISECT - Indicator of completion of IGNORE2 routine
 C                  0 - End of file encountered
 C                  1 - Found a good line to read
-C                  2 - End of Section in file encountered, denoted by *
-C                      in column 1
-C                  3 - Second tier headers found
+C                  2 - End of Section in file encountered ("*") found
+C                  3 - Second tier headers found ("@" found)
 C          CHARTEST - 80-character variable containing the contents of
 C                     the last line read by the IGNORE2 routine
 C=======================================================================

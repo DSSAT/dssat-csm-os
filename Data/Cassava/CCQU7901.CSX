@@ -12,10 +12,10 @@ Rain withheld for 72 days in one treatment Published in Field Crops Research, 4:
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 0 0 C1*E1 MCol-22;Control      1  1  0  1  1  0  1  0  1  0  0  1  1
- 2 1 0 0 C1*E2 MCol-22;Reduced rai  1  1  0  1  1  0  1  0  1  0  2  1  1
- 3 1 0 0 C2*E1 MMex-59;Control      2  1  0  1  1  0  1  0  1  0  0  1  1
- 4 1 0 0 C2*E2 MMex-59;Reduced rai  2  1  0  1  1  0  1  0  1  0  2  1  1
+ 1 1 0 0 C1*E1 MCol-22;Control      1  1  0  0  1  0  1  0  1  0  0  1  1
+ 2 1 0 0 C1*E2 MCol-22;Reduced rai  1  1  0  0  1  0  1  0  1  0  2  1  1
+ 3 1 0 0 C2*E1 MMex-59;Control      2  1  0  0  1  0  1  0  1  0  0  1  1
+ 4 1 0 0 C2*E2 MMex-59;Reduced rai  2  1  0  0  1  0  1  0  1  0  2  1  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -45,7 +45,7 @@ Rain withheld for 72 days in one treatment Published in Field Crops Research, 4:
 
 *PLANTING DETAILS
 @P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
- 1 79115   -99     1     1     V     R   100    90    30   450   -99   -99   -99    25                        -99
+ 1 79115   -99     1     1     V     R   100    90    20   450   -99   -99   -99    25                        -99
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
@@ -70,11 +70,11 @@ Rain withheld for 72 days in one treatment Published in Field Crops Research, 4:
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
  1 OP              Y     N     N     N     N     N     N     Y     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
- 1 ME              M     M     E     R     S     C     R     1     G     S     2
+ 1 ME              M     M     E     R     S     R     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     N     R     R     R
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     2     Y     N     Y     Y     N     N     Y     N     N
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN

@@ -4,7 +4,7 @@
 ! Atributes:
 !   - tMin minimmun temprature of the day
 !   - tMax maximun temprature of the day
-!   - dewPoint dew point temperature of the day
+!   - dewPointTemp dew point temperature of the day
 !   - dayRadiation registered during the day
 ! Type functions:
 !        hourlyTemperature
@@ -42,7 +42,7 @@
         
         real, private :: tMin_ = 0
         real, private :: tMax_ = 0
-        real, private :: dewPoint_ = 0
+        real, private :: dewPointTemp_ = 0
         real, private :: dayRadiation_ = 0                                      ! solar radiation
         
         
@@ -63,8 +63,8 @@
         procedure, pass (this) :: setTMin
         procedure, pass (this) :: getTMax
         procedure, pass (this) :: setTMax
-        procedure, pass (this) :: getDewPoint
-        procedure, pass (this) :: setDewPoint
+        procedure, pass (this) :: getDewPointTemp
+        procedure, pass (this) :: setDewPointTemp
         procedure, pass (this) :: getDayRadiation
         procedure, pass (this) :: setDayRadiation
         
@@ -81,14 +81,14 @@
     ! constructor for the type
     ! tMin          mandatory
     ! tMax          mandatory 
-    ! dewPoint
+    ! dewPointTemp
     ! dayRadiation
-    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint, dayRadiation)
+    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPointTemp, dayRadiation)
         implicit none
-        real, intent (in) :: tMin, tMax, dewPoint,dayRadiation
+        real, intent (in) :: tMin, tMax, dewPointTemp,dayRadiation
         DailyEnvironment_type_constructor%TMin_ = tMin
         DailyEnvironment_type_constructor%TMax_ = tMax
-        DailyEnvironment_type_constructor%dewPoint_ = dewPoint
+        DailyEnvironment_type_constructor%dewPointTemp_ = dewPointTemp
         DailyEnvironment_type_constructor%dayRadiation_ = dayRadiation
     end function DailyEnvironment_type_constructor    
     
@@ -148,7 +148,7 @@
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
         
-        hourlyRH =  calculateRH(hourlyTemperature(this, Hour), this%dewpoint_)
+        hourlyRH =  calculateRH(hourlyTemperature(this, Hour), this%dewPointTemp_)
 
     end function hourlyRH
     
@@ -158,7 +158,7 @@
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
         
-        hourlyVPD =  calculateVPD(hourlyTemperature(this, Hour), this%dewpoint_)
+        hourlyVPD =  calculateVPD(hourlyTemperature(this, Hour), this%dewPointTemp_)
 
     end function hourlyVPD
     
@@ -220,22 +220,22 @@
     end function calculateWHCAIR
      
     ! obtain the relative humidity                                                              ! % 
-    real function calculateRH(temperature, dewPoint)
+    real function calculateRH(temperature, dewPointTemp)
         implicit none
-        real, intent (in) :: temperature, dewPoint
+        real, intent (in) :: temperature, dewPointTemp
         
         !(RHt) = WHCAIRdp/WHCAIRt
-        calculateRH =  calculateWHCAIR(dewPoint)/calculateWHCAIR(temperature)
+        calculateRH =  calculateWHCAIR(dewPointTemp)/calculateWHCAIR(temperature)
 
     end function calculateRH
     
     ! obtain the Vapor Preasure Deficit VPD                                                     ! (KPa)
-    real function calculateVPD(temperature, dewPoint)
+    real function calculateVPD(temperature, dewPointTemp)
         implicit none
-        real, intent (in) :: temperature, dewPoint
+        real, intent (in) :: temperature, dewPointTemp
         
         ! VPD = (1 - (RH/100)) * SVP
-        calculateVPD =  ((1 - (calculateRH(temperature, dewPoint)/100)) * calculateSVP(temperature))/1000
+        calculateVPD =  ((1 - (calculateRH(temperature, dewPointTemp)/100)) * calculateSVP(temperature))/1000
 
     end function calculateVPD
     
@@ -326,22 +326,22 @@
         this%tMax_ = tMax
     end subroutine setTMax
     
-    ! get dewPoint
-    real function getDewPoint(this)
+    ! get dewPointTemp
+    real function getDewPointTemp(this)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         
-        getDewPoint = this%dewPoint_
-    end function getDewPoint
+        getDewPointTemp = this%dewPointTemp_
+    end function getDewPointTemp
     
-    ! set dewPoint    
-    subroutine setDewPoint(this, dewPoint)
+    ! set dewPointTemp    
+    subroutine setDewPointTemp(this, dewPointTemp)
         implicit none
         class (DailyEnvironment_type), intent(inout) :: this
-        real, intent (in) :: dewPoint
+        real, intent (in) :: dewPointTemp
         
-        this%dewPoint_ = dewPoint
-    end subroutine setDewPoint
+        this%dewPointTemp_ = dewPointTemp
+    end subroutine setDewPointTemp
     
     ! get day radiation
     real function getDayRadiation(this)

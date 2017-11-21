@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6148 - 6202 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 6148 - 6202 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -35,8 +35,8 @@
             IF((LLIFATT+LLIFSTT) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                  DO LF = 1, LNUMSIMSTG(BR)
-                    plant(BR,LF)%SNCX = SNCXS(0) + (plant(BR,LF)%LAGETT*(SNCXS(1)-SNCXS(0))/(LLIFATT+LLIFSTT))
-                    plant(BR,LF)%SNCM = SNCMN(0) + (plant(BR,LF)%LAGETT*(SNCMN(1)-SNCMN(0))/(LLIFATT+LLIFSTT))
+                    node(BR,LF)%SNCX = SNCXS(0) + (node(BR,LF)%LAGETT*(SNCXS(1)-SNCXS(0)) / (LLIFATT+LLIFSTT) )
+                    node(BR,LF)%SNCM = SNCMN(0) + (node(BR,LF)%LAGETT*(SNCMN(1)-SNCMN(0)) / (LLIFATT+LLIFSTT) )
                  ENDDO
                 ENDDO
             ENDIF
@@ -44,7 +44,7 @@
             ! Not reseting all to zero an leaving last value just in case it can't be calculated
             RANC = AMAX1(0.0,RANC)
             LANC = AMAX1(0.0,LANC)
-            plant%SANC = AMAX1(0.0,plant%SANC)
+            node%SANC = AMAX1(0.0,node%SANC)
             VANC = AMAX1(0.0,VANC)
             VCNC = AMAX1(0.0,VCNC)
             VMNC = AMAX1(0.0,VMNC)
@@ -55,8 +55,8 @@
             IF ((STWT+CRWT) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                        IF (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP) > 0.0) THEN
-                            plant(BR,LF)%SANC = plant(BR,LF)%STEMNN / (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))
+                        IF (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP) > 0.0) THEN
+                            node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))
                         ENDIF
                     ENDDO
                 ENDDO
@@ -74,10 +74,10 @@
             IF ((LFWT+STWT+CRWT) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                        plant(BR,LF)%SCNC = (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*plant(BR,LF)%SNCX
-                        SCNCT =  SCNCT + plant(BR,LF)%SCNC
-                        plant(BR,LF)%SCNM = (plant(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*plant(BR,LF)%SNCM
-                        SCNMT =  SCNMT + plant(BR,LF)%SCNM
+                        node(BR,LF)%SCNC = (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*node(BR,LF)%SNCX
+                        SCNCT =  SCNCT + node(BR,LF)%SCNC
+                        node(BR,LF)%SCNM = (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*node(BR,LF)%SNCM
+                        SCNMT =  SCNMT + node(BR,LF)%SCNM
                     ENDDO
                 ENDDO
                 VCNC = (LNCX*AMAX1(0.0,LFWT)+SCNCT)/ &                      !EQN 021
@@ -90,25 +90,25 @@
             
             SDNC = 0.0
             SRANC = 0.0
-            IF (SEEDRS.GT.0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
-            IF (SRWT.GT.0) SRANC = SROOTN/SRWT
+            IF (SEEDRS > 0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
+            IF (SRWT > 0) SRANC = SROOTN/SRWT
             LNCR = 0.0
-            plant%SNCR = 0.0
+            node%SNCR = 0.0
             RNCR = 0.0
-            IF (LNCX.GT.0.0) LNCR = AMAX1(0.0,AMIN1(1.0,LANC/LNCX))
+            IF (LNCX > 0.0) LNCR = AMAX1(0.0,AMIN1(1.0,LANC/LNCX))
             DO BR = 0, BRSTAGE                                                                              !LPM25MAY2015 To consider different N concentration by node according with node age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)  
-                    IF (plant(BR,LF)%SNCX > 0.0) THEN
-                        plant(BR,LF)%SNCR = AMAX1(0.0,AMIN1(1.0,plant(BR,LF)%SANC/plant(BR,LF)%SNCX))
+                    IF (node(BR,LF)%SNCX > 0.0) THEN
+                        node(BR,LF)%SNCR = AMAX1(0.0,AMIN1(1.0,node(BR,LF)%SANC/node(BR,LF)%SNCX))
                     ENDIF
                 ENDDO
             ENDDO
-            !SNCRM = SUM(SNCR, MASK = SNCR.GE.0.0)/MAX(1,COUNT(SNCR))
+            !SNCRM = SUM(SNCR, MASK = SNCR >= 0.0)/MAX(1,COUNT(SNCR))
             SNCRM = 1.0
             IF (RNCX > 0.0) RNCR = AMAX1(0.0,AMIN1(1.0,RANC/RNCX))
         ELSE
             LNCR = 1.0
-            plant%SNCR = 1.0
+            node%SNCR = 1.0
             RNCR = 1.0
         ENDIF
         
