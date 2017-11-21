@@ -35,18 +35,19 @@
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM 23MAY2015 Modified to avoid high values of LAGETT 
                 IF (isLeafAlive(node(BR,LF))) THEN             !LPM 24APR2016 Leaf age in thermal time
                     call leafAge(node(BR,LF))
+                    
                     ! Accelerated senescence at base of dense leaf canopy
                     IF (node(BR,LF)%LAIByCohort > LAIXX) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf
-                            IF (node(BR,LF)%LAGETT < LLIFGTT+LLIFATT) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
-                                node(BR,LF)%LAGETT = LLIFGTT+LLIFATT                                             !EQN 359
+                            IF (isLeafExpanding(node(BR,LF)) .OR. isLeafActive(node(BR,LF))) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                                call leafAsSenescing(node(BR,LF))
                             ENDIF
 
                     ENDIF
                  ! Days active
-                    IF (node(BR,LF)%LAGETT > LLIFGTT .AND. node(BR,LF)%LAGETT <= LLIFGTT+LLIFATT ) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
+                    IF (isLeafActive(node(BR,LF))) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
                         IF (LNUMSOLDESTA < 0) THEN
                             LNUMSOLDESTA = LF
                             BROLDESTA = BR
@@ -57,14 +58,14 @@
                             node(BR,LF)%LAGETT = LLIFGTT+LLIFATT
                         ENDIF
                     ELSE
-                        IF (node(BR,LF)%LAGETT > LLIFGTT .AND. node(BR,LF)%LAGETT-TTLFLIFE*EMRGFR < LLIFGTT+LLIFATT) THEN                     !LPM 28MAR15 LLIFGT was deleted 
+                        IF (didLeafStartActiveToday(node(BR,LF))) THEN                     !LPM 28MAR15 LLIFGT was deleted 
                             TVR1 = (LLIFATT-(node(BR,LF)%LAGETT-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
                             node(BR,LF)%DALF = node(BR,LF)%DALF + TVR1                                                                   !EQN 364c
                         ENDIF
                     ENDIF
                     ! Days senescing
                     IF (isLeafSenescing(node(BR,LF))) THEN                                                                 ! DA  If leaf is senescing
-                        IF (didLeafSenescingToday(node(BR,LF))) THEN                                             ! DA  (and) If leaf started senescing today
+                        IF (didLeafStartSenescingToday(node(BR,LF))) THEN                                             ! DA  (and) If leaf started senescing today
                             TVR1 = (LLIFGTT+LLIFATT-(node(BR,LF)%LAGETT-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
                             node(BR,LF)%DSLF = node(BR,LF)%DSLF + (1.0-TVR1)                                                            ! EQN 365a
                         ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
@@ -85,7 +86,7 @@
                     ENDIF
                 
                 !ELSE 
-                    IF (node(BR,LF)%LAGETT < LLIFGTT) THEN
+                    IF (isLeafExpanding(node(BR,LF))) THEN
                         node(BR,LF)%DGLF = node(BR,LF)%DGLF + EMRGFR
                         !LPM 13DEC2016 To generate a restriction for leaf growing duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
                         IF (node(BR,LF)%DGLF>(2.0*LLIFGTT/(TRDV3(2)-TRDV3(1)))) THEN 

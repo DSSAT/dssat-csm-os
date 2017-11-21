@@ -21,11 +21,19 @@
   
     
     ! true is leaf is active
+    logical function isLeafExpanding(node)
+        implicit none
+        class (Node_type), intent(in) :: node
+        
+        isLeafExpanding = node%LAGETT <= LLIFGTT
+    end function isLeafExpanding
+    
+    ! true is leaf is active
     logical function isLeafActive(node)
         implicit none
         class (Node_type), intent(in) :: node
         
-        isLeafActive = node%LAGETT < LLIFGTT+LLIFATT
+        isLeafActive = node%LAGETT > LLIFGTT .AND. node%LAGETT <= LLIFGTT+LLIFATT
     end function isLeafActive
     
     ! true is leaf is senescing
@@ -33,7 +41,7 @@
         implicit none
         class (Node_type), intent(in) :: node
         
-        isLeafSenescing = node%LAGETT > LLIFGTT+LLIFATT .AND. node%LAGETT < LLIFGTT+LLIFATT+LLIFSTT
+        isLeafSenescing = node%LAGETT > LLIFGTT+LLIFATT .AND. node%LAGETT <= LLIFGTT+LLIFATT+LLIFSTT
     end function isLeafSenescing
     
     ! true is leaf is alive
@@ -41,24 +49,34 @@
         implicit none
         class (Node_type), intent(in) :: node
         
-        isLeafAlive = node%LAGETT < LLIFGTT+LLIFATT+LLIFSTT
+        isLeafAlive = node%LAGETT <= LLIFGTT+LLIFATT+LLIFSTT
     end function isLeafAlive
     
-    ! true is leaf is alive
+    ! true is leaf was active today
+    logical function didLeafStartActiveToday(node)
+        implicit none
+        class (Node_type), intent(in) :: node
+        
+        didLeafStartActiveToday = node%LAGETT-TTLFLife*EMRGFR  <= LLIFGTT .AND. isLeafActive(node)
+    end function didLeafStartActiveToday
+    
+    ! true is leaf was senescing today
+    logical function didLeafStartSenescingToday(node)
+        implicit none
+        class (Node_type), intent(in) :: node
+        
+        didLeafStartSenescingToday = node%LAGETT-TTLFLife*EMRGFR  <= LLIFGTT+LLIFATT .AND. isLeafSenescing(node)
+    end function didLeafStartSenescingToday
+    
+    ! true is leaf is alive today
     logical function didLeafFallToday(node)
         implicit none
         class (Node_type), intent(in) :: node
         
-        didLeafFallToday = node%LAGETT-TTLFLife*EMRGFR  < LLIFGTT+LLIFATT+LLIFSTT .AND. .NOT. isLeafAlive(node)
+        didLeafFallToday = node%LAGETT-TTLFLife*EMRGFR  <= LLIFGTT+LLIFATT+LLIFSTT .AND. .NOT. isLeafAlive(node)
     end function didLeafFallToday
     
-        ! true is leaf is alive
-    logical function didLeafSenescingToday(node)
-        implicit none
-        class (Node_type), intent(in) :: node
-        
-        didLeafSenescingToday = node%LAGETT-TTLFLife*EMRGFR  < LLIFGTT+LLIFATT .AND. isLeafSenescing(node)
-    end function didLeafSenescingToday
+
     
     ! set leaf age to active 
     subroutine leafAsActive(node)
@@ -68,12 +86,12 @@
         node%LAGETT = LLIFGTT
     end subroutine leafAsActive
     
-        ! set leaf age to fall 
+    ! set leaf age to senescing 
     subroutine leafAsSenescing(node)
         implicit none
         class (Node_type), intent(inout) :: node
         
-        node%LAGETT = LLIFGTT+LLIFATT
+        node%LAGETT = LLIFGTT+LLIFATT                                             !EQN 359
     end subroutine leafAsSenescing
     
     ! set leaf age to fall 
@@ -84,7 +102,7 @@
         node%LAGETT = LLIFGTT+LLIFATT+LLIFSTT
     end subroutine leafAsFall
     
-    ! set leaf age to fall 
+    ! increase leaf age 
     subroutine leafAge(node)
         implicit none
         class (Node_type), intent(inout) :: node
