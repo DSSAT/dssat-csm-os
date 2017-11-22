@@ -448,7 +448,6 @@ C=======================================================================
      &     AOFER,FOCOD,TOTNAP,IFERI,ISWWAT,LNSIM)
 
       USE ModuleDefs
-      USE ModuleData
       IMPLICIT     NONE
 
       CHARACTER*1  ISWNIT,ISWPHO,ISWPOT,IFERI,ISWWAT
@@ -462,13 +461,9 @@ C=======================================================================
       REAL         DFERT(NAPPL),ANFER(NAPPL),APFER(NAPPL),AKFER(NAPPL)
       REAL         ACFER(NAPPL),AOFER(NAPPL),TOTNAP
 
-      TYPE (ControlType) CONTROL
-
       PARAMETER   (ERRKEY ='IPFERT')
 
                    FINDCH ='*FERTI'
-
-      CALL GET(CONTROL)
 
       NFERT  = 0
       TOTNAP = 0.0
@@ -514,7 +509,7 @@ C
                CALL ERROR (ERRKEY,10,FILEX,LINEXP)
             ENDIF
             IF (IFERI .EQ. 'R') THEN
-              CALL Y2KC_DOY(FDAY(NFERT), CONTROL%CENTURY)
+              CALL Y2K_DOY(FDAY(NFERT))
             ENDIF
             IF (IFERI .EQ. 'R' .AND. FDAY(NFERT) .LT. YRSIM)  THEN
                CALL ERROR (ERRKEY,3,FILEX,LINEXP)

@@ -129,7 +129,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &  "                                                            "
         INTEGER   DAS, DYNAMIC, FROP, ErrCode, LUNIO, MULTI, N_ELEMS
         INTEGER   NYRS, REPNO, ROTNUM, RUN, TRTNUM
-        INTEGER   YRDIF, YRDOY, YRSIM, CENTURY
+        INTEGER   YRDIF, YRDOY, YRSIM
       END TYPE ControlType
 
 !=======================================================================

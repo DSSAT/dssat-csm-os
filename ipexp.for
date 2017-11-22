@@ -99,7 +99,6 @@ C=======================================================================
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
       INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-      INTEGER CENTURY
 
       REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
@@ -653,8 +652,7 @@ C-----------------------------------------------------------------------
          YRSIM = YRSIM - 1
       ENDIF
       CALL YR_DOY (YRSIM,YEAR,ISIM)
-      CENTURY = (YRSIM - MOD(YRSIM,100000)) / 1000
-      CONTROL % CENTURY = CENTURY
+      CONTROL % YRSIM = YRSIM
 
 C-----------------------------------------------------------------------
 C     Now establish the weather file FILEW as WSTA + .WT?  where ? :

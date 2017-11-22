@@ -69,7 +69,6 @@ C=======================================================================
       IMPLICIT NONE
 
       INTEGER DOY,YR,YRDOY
-      
 
       IF (YRDOY .LE. 99365) THEN
         YR  = INT(YRDOY / 1000)
@@ -77,8 +76,8 @@ C=======================================================================
         IF (YRDOY .GT. 0) THEN
 !     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
 !     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
-!     CHP 05/23/2017 - change "cross-over" year from 2020 to 2030
-          IF (YR .LE. 20) THEN
+!     CHP 07/06/2017 - change "cross-over" year from 2020 to 2025
+          IF (YR .LE. 25) THEN
             YRDOY = (2000 + YR) * 1000 + DOY
           ELSE
             YRDOY = (1900 + YR) * 1000 + DOY
@@ -87,39 +86,6 @@ C=======================================================================
       ENDIF
         
       END SUBROUTINE Y2K_DOY
-
-C=======================================================================
-C  Y2KC_DOY, Subroutine, Gerrit Hoogenboom 6/7/2002
-C  Converts YRDOY to Y2K
-C-----------------------------------------------------------------------
-C  Input : YRDOY
-C  Output: YRDOY
-C=======================================================================
-
-      SUBROUTINE Y2KC_DOY(YRDOY, CENTURY)
-
-      IMPLICIT NONE
-
-      INTEGER DOY,YR,YRDOY, CENTURY
-      
-
-      IF (YRDOY .LE. 99365) THEN
-        YR  = INT(YRDOY / 1000)
-        DOY = YRDOY - YR * 1000
-        IF (YRDOY .GT. 0) THEN
-!     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
-!     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
-!     CHP 05/23/2017 - change "cross-over" year from 2020 to 2030
-!          IF (YR .LE. 30) THEN
-!            YRDOY = (2000 + YR) * 1000 + DOY
-!          ELSE
-!            YRDOY = (1900 + YR) * 1000 + DOY
-!          ENDIF
-          YRDOY = (CENTURY + YR) * 1000 + DOY
-        ENDIF
-      ENDIF
-        
-      END SUBROUTINE Y2KC_DOY
 
 C=======================================================================
 C  Y2K_DOYW, Subroutine, C. Porter, 02/05/2004
