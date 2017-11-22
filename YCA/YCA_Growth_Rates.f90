@@ -24,7 +24,7 @@
         
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
         REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
-        REAL    CSVPSAT     , TFAC4       , YVALXY                              ! Real function calls
+        REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
         REAL    availableCH2O
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      
@@ -177,7 +177,7 @@
             ! IF (TMEAN20 < 0.0) TFP = 0.0
             Tfp = TFAC4(trphs,tmean,TTOUT)                                                                             !EQN 056
             !Tfg = TFAC4(trlfg,tmean,TTB)                                                                               !EQN 058 LPM 21MAR15 TTB will be used to determine DU and branches
-            Tfg = TFAC4(trdv3,tmean,TTL)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
+            Tfg = calculateTemperatureFactor(trdv3,tmean,TTL)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             IF (CFLTFG == 'N') TFG = 1.0
             Tfb = TFAC4(trbrg,tmean,TTB)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             ! Vapour pressure

@@ -1,6 +1,6 @@
 !***************************************************************************************************************************
 ! This module is intended to calculate environmental factors 
-! 12/09/2017 converted from UTF-8 to ANSI
+! 15SEP2017 added function TFAC5 to estimate cardinal temperatures with a plateau by @lpmorenoc
 ! Atributes:
 !   - tMin minimmun temprature of the day
 !   - tMax maximun temprature of the day
@@ -24,6 +24,7 @@
 !        calculatateHourlyRadiation
 !        calculateBiomass
 !        calculateTranspiration
+!        TFAC5 
 ! Authors
 ! @danipilze
 !*********
@@ -288,6 +289,40 @@
 
     end function calculateTranspiration
     
+    ! Estimate thermal time with a plateau after second cardinal temperature by @lpmorenoc
+    ! Calculate temp factor and thermal units from cardinal temps
+    ! ARGUMENTS
+    ! tcard,temp,tunit
+    ! MODIFES
+    ! tunit
+    ! RETURNS
+    ! tfac5
+    real function calculateTemperatureFactor(tcard,temp,tunit)
+    
+
+      implicit none
+      real, intent (in) ::      tcard(4),temp
+      real                      tfac5
+      real                      tunit
+
+      IF (temp <= tcard(1)) THEN
+        tfac5 = 0.0
+      ELSEIF (temp > tcard(1) .AND. temp <= tcard(2)) THEN
+        tfac5 = (temp-tcard(1))/(tcard(2)-tcard(1))
+      ELSEIF (temp > tcard(2) .AND. temp <= tcard(3)) THEN
+        tfac5 = 1.0
+      ELSEIF (temp > tcard(3) .AND. temp <= tcard(4) .AND. tcard(3) < tcard(4)) THEN
+        tfac5 = 1.0 - ((temp-tcard(3))/(tcard(4)-tcard(3)))
+      ELSEIF (temp > tcard(4) .AND. tcard(3) < tcard(4)) THEN
+        tfac5 = 0.0
+      ELSEIF (temp > tcard(3)) THEN
+        tfac5 = 1.0
+      ENDIF
+
+      calculateTemperatureFactor = AMAX1(0.0,AMIN1(1.0,tfac5))
+      tunit = tfac5 * (tcard(2)-tcard(1))
+      
+      end function calculateTemperatureFactor
     !-------------------------------------------
     ! GETTERS AND SETTERS
     !------------------------------------------

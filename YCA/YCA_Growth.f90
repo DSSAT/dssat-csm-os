@@ -38,8 +38,8 @@
         REAL    SRAD        , ST(NL)      , SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       
         REAL    UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP
         
-        REAL    CSVPSAT     , CSYVAL      , TFAC4                                                                           ! Real function calls
-        REAL    YVALXY                                                                                                      ! Real function calls
+        REAL    CSVPSAT     , CSYVAL      , TFAC4                                                                          ! Real function calls 
+        REAL    YVALXY      , TFAC5                                                                                        ! Real function calls !LPM 15sep2017 Added TFAC5 
 
         CHARACTER(LEN=1) IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , RNMODE  
     
