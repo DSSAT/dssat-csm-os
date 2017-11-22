@@ -14,6 +14,7 @@
         
         USE ModuleDefs
         USE YCA_First_Trans_m
+        USE YCA_LeafControl
         
         IMPLICIT NONE
         
@@ -83,11 +84,11 @@
             !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
             DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR) 
-                    IF (node(BR,LF)%LATL3T-node(BR,LF)%LAPS > PLASTMP) THEN                                                                     ! DA If the leaf can senesce more
+                    IF (leafAreaLeftToSenescence(node(BR,LF)) > PLASTMP) THEN                                                                     ! DA If the leaf can senesce more
                         node(BR,LF)%LAPS = node(BR,LF)%LAPS + PLASTMP                                                                        !EQN 459a
                         PLASTMP = 0.0
                     ELSE
-                        PLASTMP = PLASTMP - (node(BR,LF)%LATL3T-node(BR,LF)%LAPS)                                                               
+                        PLASTMP = PLASTMP - leafAreaLeftToSenescence(node(BR,LF))                                                               
                         node(BR,LF)%LAPS = node(BR,LF)%LATL3T                                                                                   !EQN 459b    ! DA The leaf area is totally senesced
                     ENDIF
                     IF (PLASTMP <= 0.0) EXIT
@@ -114,8 +115,8 @@
             !ENDDO
             DO BR = 0, BRSTAGE                                                                                        !LPM 28MAR15 Change to include cohorts
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (node(BR,LF)%LATL3T-node(BR,LF)%LAPS > 0.0) THEN
-                        node(BR,LF)%LAPS = node(BR,LF)%LAPS + (node(BR,LF)%LATL3T - node(BR,LF)%LAPS) * HAFR     !EQN 461
+                    IF (leafAreaLeftToSenescence(node(BR,LF)) > 0.0) THEN
+                        node(BR,LF)%LAPS = node(BR,LF)%LAPS + (leafAreaLeftToSenescence(node(BR,LF))) * HAFR     !EQN 461
                     ENDIF
                 ENDDO
             ENDDO
