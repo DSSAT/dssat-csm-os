@@ -83,12 +83,9 @@
             DO Lcount=0,LNUMSIMSTG(BR)-1
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
                 IF (isLeafAlive(node(BR,LF))) THEN                      ! DA if leave is alive
-                    IF(BR == INT(BRSTAGE) .AND. LF == INT(LNUMSIMSTG(INT(BRSTAGE)))) THEN                   ! DA if the very first leaf of the top of the highest branch
-                        node(BR,LF)%LAIByCohort = (leafAreaLeftToSenescence(node(BR,LF)))*PLTPOP*0.0001                      ! DA calculate LAI of the leaf
-                    ELSE                                                                                    ! DA if further leaf
-                        node(BR,LF)%LAIByCohort= LAI + (leafAreaLeftToSenescence(node(BR,LF)))*PLTPOP*0.0001                ! DA the LAI calculation is accumulative from the previous cohort LAI
-                    ENDIF
-                    LAI = node(BR,LF)%LAIByCohort                                                                  ! DA updating LAI
+
+                    node(BR,LF)%LAIByCohort = LAI + (leafAreaLeftToSenescence(node(BR,LF)))*PLTPOP*0.0001             ! DA the LAI calculation is accumulative from the previous cohort LAI
+                    LAI = node(BR,LF)%LAIByCohort                                                                     ! DA updating LAI
                     
                 ENDIF
             ENDDO
