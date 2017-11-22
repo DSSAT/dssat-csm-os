@@ -42,7 +42,7 @@
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf
                             IF (isLeafExpanding(node(BR,LF)) .OR. isLeafActive(node(BR,LF))) THEN                                                  !LPM 28MAR15 LLIFGT was deleted 
-                                call leafAsSenescing(node(BR,LF))
+                                call setLeafAsSenescing(node(BR,LF))
                             ENDIF
 
                     ENDIF
@@ -81,7 +81,7 @@
                         ENDIF
                         !LPM 12DEC2016 To generate a restriction for leaf senescence duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
                         IF (node(BR,LF)%DSLF>(2.0*LLIFSTT/(TRDV3(2)-TRDV3(1)))) THEN 
-                            call leafAsFall(node(BR,LF))
+                            call setLeafAsFall(node(BR,LF))
                         ENDIF
                     ENDIF
                 
@@ -90,7 +90,7 @@
                         node(BR,LF)%DGLF = node(BR,LF)%DGLF + EMRGFR
                         !LPM 13DEC2016 To generate a restriction for leaf growing duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
                         IF (node(BR,LF)%DGLF>(2.0*LLIFGTT/(TRDV3(2)-TRDV3(1)))) THEN 
-                            call leafAsActive(node(BR,LF))
+                            call setLeafAsActive(node(BR,LF))
                         ENDIF
                     ENDIF
                 ENDIF

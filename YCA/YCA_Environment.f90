@@ -24,7 +24,7 @@
 !        calculatateHourlyRadiation
 !        calculateBiomass
 !        calculateTranspiration
-!        TFAC5 
+!        calculateTemperatureFactor 
 ! Authors
 ! @danipilze
 !*********
@@ -289,8 +289,8 @@
 
     end function calculateTranspiration
     
-    ! Estimate thermal time with a plateau after second cardinal temperature by @lpmorenoc
-    ! Calculate temp factor and thermal units from cardinal temps
+    ! Estimate thermal time with a plateau after second cardinal temperature                        ! by @lpmorenoc
+    ! Calculate temp factor and thermal units from cardinal temps                                   ! 0EQN 58
     ! ARGUMENTS
     ! tcard,temp,tunit
     ! MODIFES
@@ -299,7 +299,6 @@
     ! tfac5
     real function calculateTemperatureFactor(tcard,temp,tunit)
     
-
       implicit none
       real, intent (in) ::      tcard(4),temp
       real                      tfac5

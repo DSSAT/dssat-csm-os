@@ -60,7 +60,7 @@
         didLeafStartActiveToday = node%LAGETT-TTLFLife*EMRGFR  < LLIFGTT .AND. isLeafActive(node)
     end function didLeafStartActiveToday
     
-    ! true is leaf was senescing today
+    ! true is leaf started senescing today
     logical function didLeafStartSenescingToday(node)
         implicit none
         class (Node_type), intent(in) :: node
@@ -68,7 +68,15 @@
         didLeafStartSenescingToday = node%LAGETT-TTLFLife*EMRGFR  < LLIFGTT+LLIFATT .AND. isLeafSenescing(node)
     end function didLeafStartSenescingToday
     
-    ! true is leaf is alive today
+    ! true is leaf will start senescing today
+    logical function willLeafStartSenescingToday(node)
+        implicit none
+        class (Node_type), intent(in) :: node
+        
+        willLeafStartSenescingToday = isLeafActive(node) .AND. node%LAGETT+TTLFLife*EMRGFR  <= LLIFGTT+LLIFATT                                                      !EQN 371
+    end function willLeafStartSenescingToday
+    
+    ! true is leaf fell today
     logical function didLeafFallToday(node)
         implicit none
         class (Node_type), intent(in) :: node
@@ -76,31 +84,37 @@
         didLeafFallToday = node%LAGETT-TTLFLife*EMRGFR  < LLIFGTT+LLIFATT+LLIFSTT .AND. .NOT. isLeafAlive(node)
     end function didLeafFallToday
     
-
+    ! real value of the leaf area left to senescence
+    real function leafAreaLeftToSenescence(node)
+        implicit none
+        class (Node_type), intent(in) :: node
+        
+        leafAreaLeftToSenescence = node%LATL3T - node%LAPS
+    end function leafAreaLeftToSenescence
     
     ! set leaf age to active 
-    subroutine leafAsActive(node)
+    subroutine setLeafAsActive(node)
         implicit none
         class (Node_type), intent(inout) :: node
         
         node%LAGETT = LLIFGTT
-    end subroutine leafAsActive
+    end subroutine setLeafAsActive
     
     ! set leaf age to senescing 
-    subroutine leafAsSenescing(node)
+    subroutine setLeafAsSenescing(node)
         implicit none
         class (Node_type), intent(inout) :: node
         
         node%LAGETT = LLIFGTT+LLIFATT                                             !EQN 359
-    end subroutine leafAsSenescing
+    end subroutine setLeafAsSenescing
     
     ! set leaf age to fall 
-    subroutine leafAsFall(node)
+    subroutine setLeafAsFall(node)
         implicit none
         class (Node_type), intent(inout) :: node
         
         node%LAGETT = LLIFGTT+LLIFATT+LLIFSTT
-    end subroutine leafAsFall
+    end subroutine setLeafAsFall
     
     ! increase leaf age 
     subroutine leafAge(node)
