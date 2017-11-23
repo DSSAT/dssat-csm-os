@@ -13,39 +13,7 @@
 
     Module YCA_Control_Photosyntesis !Module of environment
 
-    type Photosyntesis_type
-        
-        character , private :: method_   ! photosytesis method 
-    
-        contains
-    
-        procedure, pass (this) :: getMethod
-        procedure, pass (this) :: setMethod
-        
-    end Type Photosyntesis_type
-        
-    
-    ! interface to reference the constructor
-    interface Photosyntesis_type
-        module procedure Photosyntesis_type_constructor
-    end interface Photosyntesis_type
-    
     contains
-    
-    ! constructor for the type
-    type (Photosyntesis_type) function Photosyntesis_type_constructor(method)
-        implicit none
-        character, intent (in) :: method
-        Photosyntesis_type_constructor%method_ = method
-        
-    end function Photosyntesis_type_constructor    
-    
-    
-    !-------------------------------------------
-    ! OBJECT FUNCTIONS
-    !-------------------------------------------
-    
-    
     
     
     !-------------------------------------------
@@ -159,26 +127,6 @@
 
     end function availableCarbohydrate_methodV
     
-
-    !-------------------------------------------
-    ! GETTERS AND SETTERS
-    !------------------------------------------
-    ! get photosytesis method
-    character function getMethod(this)
-        implicit none
-        class (Photosyntesis_type), intent(in) :: this
-        
-        getMethod = this%method_
-    end function getMethod
-    
-    ! set photosytesis method    
-    subroutine setMethod(this, method)
-        implicit none
-        class (Photosyntesis_type), intent(inout) :: this
-        character, intent (in) :: method
-        
-        this%method_ = method
-    end subroutine setMethod
     
 END Module YCA_Control_Photosyntesis
     
