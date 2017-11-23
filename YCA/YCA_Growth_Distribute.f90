@@ -14,6 +14,7 @@
     
         USE ModuleDefs
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
     
         IMPLICIT NONE
         
@@ -189,14 +190,14 @@
         SENCAGS = 0.0
         SENLAGS = 0.0
         SENNAGS = 0.0
-        SENWALG(0) = SENTOPLITTERG * PLTPOP*10.0                                                                       !EQN 406
+        SENWALG(0) = SENTOPLITTERG * plantPopulation()                                                                       !EQN 406
         SENCALG(0) = SENWALG(0) * 0.4                                                                                  !EQN 407
-        SENLALG(0) = (SENLFG*LLIGP/100) * PLTPOP*10.0                                                                  !EQN 408
-        SENNALG(0) = SENNLFG * SENFR * PLTPOP*10.0                                                                     !EQN 409
+        SENLALG(0) = (SENLFG*LLIGP/100) * plantPopulation()                                                                  !EQN 408
+        SENNALG(0) = SENNLFG * SENFR * plantPopulation()                                                                     !EQN 409
         ! Root senescence
         DO L = 1, NLAYR
-            SENWALG(L) = RTWTSL(L) * PLTPOP*10.0                                                                       !EQN 410
-            SENNALG(L) = RTNSL(L) * PLTPOP*10.0                                                                        !EQN 411
+            SENWALG(L) = RTWTSL(L) * plantPopulation()                                                                       !EQN 410
+            SENNALG(L) = RTNSL(L) * plantPopulation()                                                                        !EQN 411
             SENCALG(L) = SENWALG(L) * 0.4                                                                              !EQN 412
             SENLALG(L) = SENWALG(L) * RLIGP/100.0                                                                      !EQN 413
             SENWAGS = SENWAGS + SENWALG(L)

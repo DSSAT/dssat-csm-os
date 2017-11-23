@@ -55,39 +55,39 @@
             WRITE(fnumwrk,'(A27,F11.2)')'  Product/Total wt (HI)    ',HIAM
             WRITE(fnumwrk,*) ' '
             WRITE(fnumwrk,'(A26,A10,I3)')' CH2O BALANCE (kg/ha) FOR ',excode,tn
-            WRITE(fnumwrk,'(A27,3F11.1)')'  SEED+FIXED (1) Seed,fixed',(SEEDRSI+SDCOAT+CARBOC)*PLTPOP*10.0, &
-                (SEEDRSI+SDCOAT)*PLTPOP*10.0,CARBOC*PLTPOP*10.0
-            TVR1 = (SEEDRSI+SDCOAT+CARBOC)*PLTPOP*10.0
-            WRITE(fnumwrk,'(A27,3F11.1)')'  RESPIRED (2)  Tops,root  ',RESPC*PLTPOP*10.0,RESPTC*PLTPOP*10.0, &
-                RESPRC*PLTPOP*10.0 
-            TVR2 = RESPC*PLTPOP*10.0
-            WRITE(fnumwrk,'(A27,3F11.1)')'  SENESCED (3)  Tops,root  ',(SENTOPLITTER+SENROOT)*PLTPOP*10.0, &
-                SENTOPLITTER*PLTPOP*10.0,SENROOT*PLTPOP*10.0
-            TVR3 = (SENTOPLITTER+SENROOT)*PLTPOP*10.0
-            TVR4 = (SEEDRS+SDCOAT+RTWT+SRWT+vegetativeCanopyWeight())*PLTPOP*10.0
+            WRITE(fnumwrk,'(A27,3F11.1)')'  SEED+FIXED (1) Seed,fixed',(SEEDRSI+SDCOAT+CARBOC)*plantPopulation(), &
+                (SEEDRSI+SDCOAT)*plantPopulation(),CARBOC*plantPopulation()
+            TVR1 = (SEEDRSI+SDCOAT+CARBOC)*plantPopulation()
+            WRITE(fnumwrk,'(A27,3F11.1)')'  RESPIRED (2)  Tops,root  ',RESPC*plantPopulation(),RESPTC*plantPopulation(), &
+                RESPRC*plantPopulation() 
+            TVR2 = RESPC*plantPopulation()
+            WRITE(fnumwrk,'(A27,3F11.1)')'  SENESCED (3)  Tops,root  ',(SENTOPLITTER+SENROOT)*plantPopulation(), &
+                SENTOPLITTER*plantPopulation(),SENROOT*plantPopulation()
+            TVR3 = (SENTOPLITTER+SENROOT)*plantPopulation()
+            TVR4 = (SEEDRS+SDCOAT+RTWT+SRWT+vegetativeCanopyWeight())*plantPopulation()
             WRITE(fnumwrk,'(A27,3F11.1)')'  PLANT+SEED_RESIDUE Pl,sd ',(SEEDRS+SDCOAT+RTWT+SRWT+vegetativeCanopyWeight()) &
-                *PLTPOP*10.0,(RTWT+SRWT+vegetativeCanopyWeight())*PLTPOP*10.0,(SEEDRS+SDCOAT)*PLTPOP*10.0
-            WRITE(fnumwrk,'(A27,2F11.1)')'  RESERVES (5)             ',RSWT*PLTPOP*10.0 
-            TVR5 = RSWT*PLTPOP*10.0
-            WRITE(fnumwrk,'(A29, F9.1)')'  HARVESTED DURING CYCLE (6) ',(LWPHC+SWPHC+RSWPHC)*PLTPOP*10.0
-            TVR6 = (LWPHC+SWPHC+RSWPHC)*PLTPOP*10.0
+                *plantPopulation(),(RTWT+SRWT+vegetativeCanopyWeight())*plantPopulation(),(SEEDRS+SDCOAT)*plantPopulation()
+            WRITE(fnumwrk,'(A27,2F11.1)')'  RESERVES (5)             ',RSWT*plantPopulation() 
+            TVR5 = RSWT*plantPopulation()
+            WRITE(fnumwrk,'(A29, F9.1)')'  HARVESTED DURING CYCLE (6) ',(LWPHC+SWPHC+RSWPHC)*plantPopulation()
+            TVR6 = (LWPHC+SWPHC+RSWPHC)*plantPopulation()
             WRITE(fnumwrk,'(A27, F11.2)')'  BALANCE (1-(2+3+4+6))    ',TVR1 -(TVR2+TVR3+TVR4+TVR6)
             IF (ABS(TVR1-(TVR2+TVR3+TVR4+TVR6)) > 0.05)WRITE(fnumwrk,'(A29,A10,A1,I2)') &
                 '  *PROBLEM WITH CH2O BALANCE ',EXCODE,' ',TN
                     
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A21,A10,I3)')' RESERVES STATUS FOR ',excode,tn
-            WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at maximum    ',RSWTX*PLTPOP*10.0
+            WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at maximum    ',RSWTX*plantPopulation()
             WRITE (fnumwrk,'(A22,F7.1)')'  % above ground      ',RSCX*100.
             WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at harvest    ',RSWAD
             IF (vegetativeCanopyWeight() > 0) WRITE (fnumwrk,'(A22,F7.1)')'  % above ground      ', &
                 rswt/(vegetativeCanopyWeight())*100.0
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A34,A10,I3)')' SEED USE (KG/HA or PER CENT) FOR ',excode,tn
-            WRITE (fnumwrk,'(A22,F7.3)')'  Initial reserves    ',seedrsi*pltpop*10.0
-            WRITE (fnumwrk,'(A22,F7.3)')'  Use for tops        ',seeduset*pltpop*10.0
-            WRITE (fnumwrk,'(A22,F7.3)')'  Use for roots       ',seeduser*pltpop*10.0
-            WRITE (fnumwrk,'(A22,F7.3)')'  Total use           ',(seeduset+seeduser)*pltpop*10.0
+            WRITE (fnumwrk,'(A22,F7.3)')'  Initial reserves    ',seedrsi*plantPopulation()
+            WRITE (fnumwrk,'(A22,F7.3)')'  Use for tops        ',seeduset*plantPopulation()
+            WRITE (fnumwrk,'(A22,F7.3)')'  Use for roots       ',seeduser*plantPopulation()
+            WRITE (fnumwrk,'(A22,F7.3)')'  Total use           ',(seeduset+seeduser)*plantPopulation()
             IF (seeduser+seeduset > 0.0)WRITE (fnumwrk,'(A22,F7.3)')'  Percent to tops     ', &
                 seeduset/(seeduset+seeduser)*100.0
             WRITE(fnumwrk,*)' '
@@ -159,17 +159,17 @@
             IF (ISWNIT /= 'N') THEN
                 WRITE (fnumwrk,*) ' '
                 WRITE (fnumwrk,'(A25,A10,I3)')' N BALANCE (kg/ha) FOR ',excode,tn
-                WRITE (fnumwrk,'(A34,F8.2,2F11.2)')'   N UPTAKE + SEED (1)            ', (NUPC+SEEDNI)*PLTPOP*10.0, &
+                WRITE (fnumwrk,'(A34,F8.2,2F11.2)')'   N UPTAKE + SEED (1)            ', (NUPC+SEEDNI)*plantPopulation(), &
                     NUPC*PLTPOP*10.,SEEDNI*PLTPOP*10.
-                TVR1 = (NUPC+SEEDNI)*PLTPOP*10.0  
-                WRITE (fnumwrk,'(A33,F9.2,2F11.2)')'   TOTAL N SENESCED (2) Tops,Root',(SENNL(0)+SENNS)*PLTPOP*10.0, &
-                    SENNL(0)*PLTPOP*10.0,SENNS*PLTPOP*10.0
-                TVR2 = (SENNL(0)+SENNS)*PLTPOP*10.0 
+                TVR1 = (NUPC+SEEDNI)*plantPopulation()  
+                WRITE (fnumwrk,'(A33,F9.2,2F11.2)')'   TOTAL N SENESCED (2) Tops,Root',(SENNL(0)+SENNS)*plantPopulation(), &
+                    SENNL(0)*plantPopulation(),SENNS*plantPopulation()
+                TVR2 = (SENNL(0)+SENNS)*plantPopulation() 
                 WRITE (fnumwrk,'(A34,F8.2)')'   TOTAL N IN PLANT (3)           ', &
-                    PLTPOP*10.0*(ROOTN+SROOTN+LEAFN+STEMN+RSN+SEEDN)
-                TVR3 = (ROOTN+SROOTN+LEAFN+STEMN+RSN+SEEDN)*PLTPOP*10.0         
-                WRITE (fnumwrk,'(A33, F9.2)')'   HARVESTED DURING CYCLE (4)    ',PLTPOP*10.0*LNPHC+SNPHC+RSNPHC
-                TVR4 = (LNPHC+SNPHC+RSNPHC)* PLTPOP*10.0
+                    plantPopulation()*(ROOTN+SROOTN+LEAFN+STEMN+RSN+SEEDN)
+                TVR3 = (ROOTN+SROOTN+LEAFN+STEMN+RSN+SEEDN)*plantPopulation()         
+                WRITE (fnumwrk,'(A33, F9.2)')'   HARVESTED DURING CYCLE (4)    ',plantPopulation()*LNPHC+SNPHC+RSNPHC
+                TVR4 = (LNPHC+SNPHC+RSNPHC)* plantPopulation()
                 WRITE (fnumwrk,'(A34,F8.3)')'   BALANCE (1-(2+3+4))            ',TVR1-TVR2-TVR3-TVR4
                 IF (ABS(TVR1-(TVR2+TVR3+TVR4)) > 0.005)WRITE(fnumwrk,'(A26,A10,A1,I2)')'  *PROBLEM WITH N BALANCE ' &
                     ,EXCODE,' ',TN

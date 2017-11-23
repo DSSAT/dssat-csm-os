@@ -14,6 +14,7 @@
     
         USE ModuleDefs
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
     
         IMPLICIT NONE
         
@@ -119,7 +120,7 @@
             RSNUSED = AMIN1(LNDEM+SNDEM+RNDEM+SRNDEM-SEEDNUSE,RSN)                                                     !EQN 156
     
             ! N uptake needed 
-            ANDEM = AMAX1(0.0,PLTPOP*10.0* (LNDEM+SNDEM+RNDEM+SRNDEM-SEEDNUSE-RSNUSED))                                !EQN 158
+            ANDEM = AMAX1(0.0,plantPopulation()* (LNDEM+SNDEM+RNDEM+SRNDEM-SEEDNUSE-RSNUSED))                                !EQN 158
             ! Uptake
     
             ! Original from CSM with some 'modification'.  
@@ -200,7 +201,7 @@
                 NUPAD = NUPAD + UNO3(L) + UNH4(L)                                                                      !EQN 200              
             END DO
             IF (PLTPOP > 1.E-6) THEN
-                NUPD = NUPAD/(PLTPOP*10.0)                                                                             !EQN 201
+                NUPD = NUPAD/(plantPopulation())                                                                             !EQN 201
             ELSE
                 NUPD = 0.
             ENDIF

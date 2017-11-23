@@ -14,6 +14,7 @@
         
         USE ModuleDefs
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
     
         IMPLICIT NONE
         
@@ -90,15 +91,15 @@
             IF (LFWTM+STWTM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+STWTM+CRWTM)
             IF (RTWTM > 0.0) SHRTM = (LFWTM+STWTM+CRWTM+RSWTM)/RTWTM
                     
-            CWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP*10.0
+            CWAM = (LFWTM+STWTM+CRWTM+RSWTM)*plantPopulation()
             VWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP * 10.0
                     
             ! For Grazing
-            cwahc = (lwphc+swphc+rswphc)*pltpop*10.0
+            cwahc = (lwphc+swphc+rswphc)*plantPopulation()
             ! Adjustments for spikes that removed by grazing,etc..
                     
-            RWAM = RTWTM*PLTPOP*10.0
-            SDWAM = (SEEDRS+SDCOAT)*PLTPOP*10.0
+            RWAM = RTWTM*plantPopulation()
+            SDWAM = (SEEDRS+SDCOAT)*plantPopulation()
                     
             IF (CWAM > 0.0) THEN
                 HIAM = HIAD

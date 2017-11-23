@@ -12,6 +12,7 @@
         )
         
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
         
         IMPLICIT NONE
         
@@ -56,7 +57,7 @@
         END DO
         ! LAH Maybe also need LEAFNEXESS if LANC > LNCX
         ROOTNEXCESS = 0.0
-        IF (RANC > RNCX) ROOTNEXCESS = (RTWT-(SENWALG(L)/(PLTPOP*10.0)))*(RANC-RNCX)                                  !EQN 253
+        IF (RANC > RNCX) ROOTNEXCESS = (RTWT-(SENWALG(L)/(plantPopulation())))*(RANC-RNCX)                                  !EQN 253
         ROOTN = ROOTN + (RNUSE(0)-ROOTNS-GROLSRTN) - ROOTNEXCESS                                                       !EQN 254
         SROOTN = SROOTN + SRNUSE(0)                                                                                    !EQN 255
         SEEDN = SEEDN - SEEDNUSE - SEEDNUSE2                                                                           !EQN 204

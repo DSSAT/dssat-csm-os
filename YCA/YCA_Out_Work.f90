@@ -15,6 +15,7 @@
         USE YCA_First_Trans_m
         USE YCA_Formats_m
         USE YCA_Control_Leaf
+        USE YCA_Control_Plant
      
         IMPLICIT NONE 
      
@@ -92,11 +93,11 @@
                 WRITE(fnumwrk,'(A,F7.3,6F7.3)')' Phs facs Co2,Temp,H2o,N,Rsvs,Vpd ',co2fp,tfp,wfp,nfp,rsfp,vpdfp
                 WRITE(fnumwrk,'(A,3F7.3)')     ' Phs. Rue,Rue+Co2i,Resistances    ',carbobegr*pltpop,carbobegi*pltpop, &
                     carbobegm*pltpop
-                WRITE(fnumwrk,'(A,3F7.2)')     ' CH2O Start,end,remobilized       ',carbobeg*pltpop*10.,carboend*pltpop*10.0, &
-                    senlfgrs*pltpop*10.0
+                WRITE(fnumwrk,'(A,3F7.2)')     ' CH2O Start,end,remobilized       ',carbobeg*pltpop*10.,carboend*plantPopulation(), &
+                    senlfgrs*plantPopulation()
                 !IF(CUMDU <= DUSRI.AND.CUMDU+DU > DUSRI.AND.SRDAYFR > 0.0)THEN !LPM 05JUN2015 DUSRI is not used
                 !    WRITE(fnumwrk,'(A, I7)')   ' STORAGE ROOT INITIATION (no/pl)  ',srnopd
-                !    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(vegetativeCanopyWeight())*pltpop*10.0
+                !    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(vegetativeCanopyWeight())*plantPopulation()
                 !    WRITE(fnumwrk,'(A,F7.1)')  ' Storage root fraction            ',srfr
                 !ENDIF
                 IF (SRWTGRS+SRWTGRS > 0.0) WRITE(FNUMWRK,'(A)')' Surplus assimilates sent to storage roots      '
@@ -110,12 +111,12 @@
                     ELSE
                         WRITE(FNUMWRK,'(A)')' N demand above zero! Components of demand/use:' 
                     ENDIF  
-                    WRITE(FNUMWRK,*)' Leaves            ',lndem*pltpop*10.0
-                    WRITE(FNUMWRK,*)' Stem              ',sndem*pltpop*10.0
-                    WRITE(FNUMWRK,*)' Roots             ',rndem*pltpop*10.0
-                    WRITE(FNUMWRK,*)' Storage root      ',srndem*pltpop*10.0
-                    WRITE(FNUMWRK,*)' Seed use          ',(seednuse+seednuse2)*pltpop*10.0
-                    WRITE(FNUMWRK,*)' Reserves use      ',rsnused*pltpop*10.0
+                    WRITE(FNUMWRK,*)' Leaves            ',lndem*plantPopulation()
+                    WRITE(FNUMWRK,*)' Stem              ',sndem*plantPopulation()
+                    WRITE(FNUMWRK,*)' Roots             ',rndem*plantPopulation()
+                    WRITE(FNUMWRK,*)' Storage root      ',srndem*plantPopulation()
+                    WRITE(FNUMWRK,*)' Seed use          ',(seednuse+seednuse2)*plantPopulation()
+                    WRITE(FNUMWRK,*)' Reserves use      ',rsnused*plantPopulation()
                     IF (ANDEM > 0.0.AND.NUPAP < ANDEM) WRITE(fnumwrk,'(A)')'  N uptake insufficient to meet demand'
                     IF (ANDEM > 10.0) WRITE(fnumwrk,'(A,F4.1,A,F4.1)')' N demand (',ANDEM, &
                         ') very high! Uptake = ',nuf*andem
