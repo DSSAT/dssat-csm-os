@@ -24,5 +24,12 @@
         vegetativeCanopyWeight = LFWT+STWT+CRWT+RSWT
     end function vegetativeCanopyWeight
     
+    ! real value of the plant green leaf area
+    real function totalWeight()
+        implicit none
+        
+        totalWeight = vegetativeCanopyWeight()+SRWT
+    end function totalWeight
+    
     
     END module YCA_Control_Plant 
