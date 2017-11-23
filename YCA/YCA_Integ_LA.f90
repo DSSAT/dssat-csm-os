@@ -14,7 +14,8 @@
         
         USE ModuleDefs
         USE YCA_First_Trans_m
-        USE YCA_LeafControl
+        USE YCA_Control_Leaf
+        USE YCA_Control_Plant
         
         IMPLICIT NONE
         
@@ -26,7 +27,7 @@
         !         Calculate reserve concentration
         !-----------------------------------------------------------------------
         
-        IF (LFWT+STWT+CRWT > 0.0) RSCD = RSWT/(LFWT+STWT+CRWT+RSWT)                                                   !EQN 451
+        IF (LFWT+STWT+CRWT > 0.0) RSCD = RSWT/(vegetativeCanopyWeight())                                                   !EQN 451
         IF (RSCD < 0.0.AND.RSCD > -1.0E-7) THEN 
             RSCD = 0.0
         ENDIF

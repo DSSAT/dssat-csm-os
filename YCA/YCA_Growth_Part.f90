@@ -71,7 +71,7 @@
         !GROSR = SRFR*CARBOT*SRDAYFR                                                                                    !EQN 289
             
         !IF(CUMDU >= DUSRI.AND.SRNOPD <= 0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT > 0 See CS_Growth_Distribute.f90
-        !    SRNOPD = INT(SRNOW*((LFWT+STWT+CRWT+RSWT)))                                                                !EQN 291
+        !    SRNOPD = INT(SRNOW*((vegetativeCanopyWeight())))                                                                !EQN 291
         !ENDIF
                      
         !-----------------------------------------------------------------------

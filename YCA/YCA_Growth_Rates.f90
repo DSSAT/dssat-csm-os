@@ -16,8 +16,8 @@
         )
         USE ModuleDefs
         USE YCA_First_Trans_m
-        USE YCA_Photosyntesis
-        USE YCA_Environment
+        USE YCA_Control_Photosyntesis
+        USE YCA_Control_Environment
 
         IMPLICIT NONE
         

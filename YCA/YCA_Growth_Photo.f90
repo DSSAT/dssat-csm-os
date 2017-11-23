@@ -16,7 +16,7 @@
         USE ModuleDefs
         USE ModuleData
         USE YCA_First_Trans_m
-        USE YCA_Photosyntesis
+        USE YCA_Control_Photosyntesis
         
         IMPLICIT  NONE
         

@@ -11,7 +11,7 @@
 !! @danipilze
 !!*********
 !
-    Module YCA_LeafControl 
+    Module YCA_Control_Leaf 
     
      USE YCA_First_Trans_m
      USE YCA_Node
@@ -147,4 +147,4 @@
 
     
     
-    END module YCA_LeafControl 
+    END module YCA_Control_Leaf 

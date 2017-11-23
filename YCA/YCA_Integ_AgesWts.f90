@@ -13,7 +13,8 @@
         )
         
         USE YCA_First_Trans_m
-        USE YCA_LeafControl
+        USE YCA_Control_Leaf
+        USE YCA_Control_Plant
     
         IMPLICIT NONE
         
@@ -196,10 +197,10 @@
         ENDIF
         ! IF (SRNOPD > 0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
         
-        IF ((LFWT+STWT+CRWT+RSWT) > 0.0) THEN
-            HIAD = SRWT/(LFWT+STWT+CRWT+SRWT+RSWT)                                                                     !EQN 293
+        IF ((vegetativeCanopyWeight()) > 0.0) THEN
+            HIAD = SRWT/(vegetativeCanopyWeight()+SRWT)                                                                     !EQN 293
         ENDIF
         IF (RTWT > 0.0) THEN
-            SHRTD = (LFWT+STWT+CRWT+RSWT) / RTWT                                                          !EQN 294
+            SHRTD = (vegetativeCanopyWeight()) / RTWT                                                          !EQN 294
         ENDIF
     END SUBROUTINE YCA_Integ_AgesWts

@@ -14,6 +14,7 @@
         
         USE ModuleDefs
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
         
         IMPLICIT NONE
         
@@ -38,7 +39,7 @@
                 
         ! Here,reserves are included in leaf,stem,and Plant. stick weights
         ! And weights are in kg/ha
-        CWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP*10.0                                                                       !EQN 318
+        CWAD = (vegetativeCanopyWeight())*PLTPOP*10.0                                                                       !EQN 318
         SRWAD = SRWT*PLTPOP*10.0
         LLWAD = LFWT*(1.0-LPEFR)*10.0*PLTPOP
         LPEWAD = LFWT*LPEFR*10.0*PLTPOP
@@ -71,7 +72,7 @@
                 
         
                 
-        VWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP * 10.0                                                                     !EQN 019
+        VWAD = (vegetativeCanopyWeight())*PLTPOP * 10.0                                                                     !EQN 019
                 
         SHNUMAD = SHNUM*PLTPOP
                 

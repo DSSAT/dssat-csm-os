@@ -14,6 +14,7 @@
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Formats_m
+        USE YCA_Control_Plant
      
         IMPLICIT NONE 
      
@@ -63,9 +64,9 @@
             WRITE(fnumwrk,'(A27,3F11.1)')'  SENESCED (3)  Tops,root  ',(SENTOPLITTER+SENROOT)*PLTPOP*10.0, &
                 SENTOPLITTER*PLTPOP*10.0,SENROOT*PLTPOP*10.0
             TVR3 = (SENTOPLITTER+SENROOT)*PLTPOP*10.0
-            TVR4 = (SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+CRWT+RSWT)*PLTPOP*10.0
-            WRITE(fnumwrk,'(A27,3F11.1)')'  PLANT+SEED_RESIDUE Pl,sd ',(SEEDRS+SDCOAT+RTWT+SRWT+LFWT+STWT+CRWT+RSWT) &
-                *PLTPOP*10.0,(RTWT+SRWT+LFWT+STWT+CRWT+RSWT)*PLTPOP*10.0,(SEEDRS+SDCOAT)*PLTPOP*10.0
+            TVR4 = (SEEDRS+SDCOAT+RTWT+SRWT+vegetativeCanopyWeight())*PLTPOP*10.0
+            WRITE(fnumwrk,'(A27,3F11.1)')'  PLANT+SEED_RESIDUE Pl,sd ',(SEEDRS+SDCOAT+RTWT+SRWT+vegetativeCanopyWeight()) &
+                *PLTPOP*10.0,(RTWT+SRWT+vegetativeCanopyWeight())*PLTPOP*10.0,(SEEDRS+SDCOAT)*PLTPOP*10.0
             WRITE(fnumwrk,'(A27,2F11.1)')'  RESERVES (5)             ',RSWT*PLTPOP*10.0 
             TVR5 = RSWT*PLTPOP*10.0
             WRITE(fnumwrk,'(A29, F9.1)')'  HARVESTED DURING CYCLE (6) ',(LWPHC+SWPHC+RSWPHC)*PLTPOP*10.0
@@ -79,8 +80,8 @@
             WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at maximum    ',RSWTX*PLTPOP*10.0
             WRITE (fnumwrk,'(A22,F7.1)')'  % above ground      ',RSCX*100.
             WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at harvest    ',RSWAD
-            IF (lfwt+stwt+crwt+rswt > 0) WRITE (fnumwrk,'(A22,F7.1)')'  % above ground      ', &
-                rswt/(lfwt+stwt+crwt+rswt)*100.0
+            IF (vegetativeCanopyWeight() > 0) WRITE (fnumwrk,'(A22,F7.1)')'  % above ground      ', &
+                rswt/(vegetativeCanopyWeight())*100.0
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A34,A10,I3)')' SEED USE (KG/HA or PER CENT) FOR ',excode,tn
             WRITE (fnumwrk,'(A22,F7.3)')'  Initial reserves    ',seedrsi*pltpop*10.0

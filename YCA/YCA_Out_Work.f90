@@ -14,7 +14,7 @@
         
         USE YCA_First_Trans_m
         USE YCA_Formats_m
-        USE YCA_LeafControl
+        USE YCA_Control_Leaf
      
         IMPLICIT NONE 
      
@@ -96,7 +96,7 @@
                     senlfgrs*pltpop*10.0
                 !IF(CUMDU <= DUSRI.AND.CUMDU+DU > DUSRI.AND.SRDAYFR > 0.0)THEN !LPM 05JUN2015 DUSRI is not used
                 !    WRITE(fnumwrk,'(A, I7)')   ' STORAGE ROOT INITIATION (no/pl)  ',srnopd
-                !    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(lfwt+stwt+crwt+rswt)*pltpop*10.0
+                !    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(vegetativeCanopyWeight())*pltpop*10.0
                 !    WRITE(fnumwrk,'(A,F7.1)')  ' Storage root fraction            ',srfr
                 !ENDIF
                 IF (SRWTGRS+SRWTGRS > 0.0) WRITE(FNUMWRK,'(A)')' Surplus assimilates sent to storage roots      '

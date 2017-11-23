@@ -11,7 +11,7 @@
 ! @danipilze
 !*********
 
-    Module YCA_Photosyntesis !Module of environment
+    Module YCA_Control_Photosyntesis !Module of environment
 
     type Photosyntesis_type
         
@@ -137,8 +137,8 @@
     
     ! Alternate method V
     real function availableCarbohydrate_methodV(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
-        USE YCA_Environment
-        USE YCA_VPDEffect
+        USE YCA_Control_Environment
+        USE YCA_Control_VPDEffect
         implicit none
         real, intent (in) :: TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE
         type (DailyEnvironment_type)                     :: env
@@ -180,5 +180,5 @@
         this%method_ = method
     end subroutine setMethod
     
-END Module YCA_Photosyntesis
+END Module YCA_Control_Photosyntesis
     
