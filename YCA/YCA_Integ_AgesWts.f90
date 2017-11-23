@@ -59,21 +59,21 @@
                         ENDIF
                     ELSE
                         IF (didLeafStartActiveToday(node(BR,LF))) THEN                     !LPM 28MAR15 LLIFGT was deleted 
-                            TVR1 = (LLIFATT-(node(BR,LF)%LAGETT-TTLFLIFE*EMRGFR))/(TTLFLIFE*EMRGFR)
+                            TVR1 = (LLIFATT-(node(BR,LF)%LAGETT-dailyGrowth()))/(dailyGrowth())
                             node(BR,LF)%DALF = node(BR,LF)%DALF + TVR1                                                                   !EQN 364c
                         ENDIF
                     ENDIF
                     ! Days senescing
                     IF (isLeafSenescing(node(BR,LF))) THEN                                                                 ! DA  If leaf is senescing
                         IF (didLeafStartSenescingToday(node(BR,LF))) THEN                                             ! DA  (and) If leaf started senescing today
-                            TVR1 = (LLIFGTT+LLIFATT-(node(BR,LF)%LAGETT-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
+                            TVR1 = (LLIFGTT+LLIFATT-(node(BR,LF)%LAGETT-dailyGrowth()))/(dailyGrowth())
                             node(BR,LF)%DSLF = node(BR,LF)%DSLF + (1.0-TVR1)                                                            ! EQN 365a
                         ELSE                                                                                                  ! DA Else, if leaf didn't started senescing today
                             IF (isLeafAlive(node(BR,LF))) THEN                                                ! DA If the leaf is still alive
                                 node(BR,LF)%DSLF = node(BR,LF)%DSLF + 1.0                                                               ! EQN 365b
                             ELSE
                                 IF (didLeafFallToday(node(BR,LF))) THEN                             ! DA Or, if leaf died today
-                                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(node(BR,LF)%LAGETT-TTLFLife*EMRGFR))/(TTLFLife*EMRGFR)
+                                    TVR1 = ((LLIFGTT+LLIFATT+LLIFSTT)-(node(BR,LF)%LAGETT-dailyGrowth()))/(dailyGrowth())
                                     node(BR,LF)%DSLF = node(BR,LF)%DSLF + TVR1                                                          ! EQN 365c
                                     node(BR,LF)%LDEATHDAP = DAP                                                                    ! DA establish decease date
                                 ENDIF
@@ -97,7 +97,7 @@
 
                 IF (LNUMG > 0.0 .AND. BR == BRSTAGE .AND. LF == LNUMSIMSTG(BR)) THEN                                            !LPM 28MAR15 Modified as part of the DO loop
                     IF (LNUMSG < LNUMX) THEN
-                        node(BR,LF+1)%LAGETT = node(BR,LF+1)%LAGETT + (TTLFLIFE*EMRGFR)*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
+                        node(BR,LF+1)%LAGETT = node(BR,LF+1)%LAGETT + (dailyGrowth())*AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                  !EQN 366
                         !LAGEP(BR,LF+1)=LAGEP(BR,LF+1)+AMAX1(0.0,LNUMG-LNUMNEED)                                              !EQN 367 !LPM21MAY2015 this variable is not used
                         node(BR,LF+1)%DGLF = AMAX1(0.0,LNUMG-LNUMNEED)/LNUMG                                                       !EQN 368
                     ENDIF

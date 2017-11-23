@@ -42,11 +42,12 @@
 
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)         
-                IF (node(BR,LF)%LAGETT+TTLFLIFE*EMRGFR <= LLIFGTT+LLIFATT) EXIT                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
-                IF (leafAreaLeftToSenescence(node(BR,LF)) > 0.0) THEN
-                    LAPSTMP = AMIN1((leafAreaLeftToSenescence(node(BR,LF))),(node(BR,LF)%LATL3T*(AMIN1((node(BR,LF)%LAGETT+(TTLFLIFE*EMRGFR)-(LLIFGTT+LLIFATT)), (TTLFLIFE*EMRGFR))/LLIFSTT)))         !EQN 372
-                    node(BR,LF)%LAPS = node(BR,LF)%LAPS + LAPSTMP
-                    PLASP = PLASP + LAPSTMP                                                                                !EQN 370
+                IF (.NOT. willLeafStillGrowingToday(node(BR,LF))) THEN                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
+                    IF (leafAreaLeftToSenescence(node(BR,LF)) > 0.0) THEN
+                        LAPSTMP = AMIN1((leafAreaLeftToSenescence(node(BR,LF))),(node(BR,LF)%LATL3T*(AMIN1((node(BR,LF)%LAGETT+(dailyGrowth())-(LLIFGTT+LLIFATT)), (dailyGrowth()))/LLIFSTT)))         !EQN 372
+                        node(BR,LF)%LAPS = node(BR,LF)%LAPS + LAPSTMP
+                        PLASP = PLASP + LAPSTMP                                                                                !EQN 370
+                    ENDIF
                 ENDIF
             ENDDO
         ENDDO
