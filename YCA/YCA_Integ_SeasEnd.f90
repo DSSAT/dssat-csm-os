@@ -48,7 +48,7 @@
             SEEDRS = SDSZ*(SDRS/100.0)*SPRL   !LPM 23MAR2016  to initialize the value of SEEDRS
         ENDIF
         SDWT = (SEEDRS+SDCOAT)*10.0*PLTPOP
-        TWAD = (SEEDRS+SDCOAT+RTWT+totalWeight())* PLTPOP*10.0
+        TWAD = (SEEDRS+SDCOAT+totalWeight())* PLTPOP*10.0
 
         
         ! Leaf petioles NOT included in stem here

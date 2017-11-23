@@ -17,19 +17,26 @@
 
     contains
     
-    ! real value of the plant green leaf area
+    ! real value of the vegetative weight of the plant: leaves, stem, crown and reserves
     real function vegetativeCanopyWeight()
         implicit none
         
         vegetativeCanopyWeight = LFWT+STWT+CRWT+RSWT
     end function vegetativeCanopyWeight
     
-    ! real value of the plant green leaf area
+    ! real value of the total weight of the plant: leaves, stem, crown, reserves and root storage organ
     real function totalWeight()
         implicit none
         
-        totalWeight = vegetativeCanopyWeight()+SRWT
+        totalWeight = vegetativeCanopyWeight()+SRWT+RTWT
     end function totalWeight
+    
+    ! real value the plant poulation
+    real function plantPopulation()
+        implicit none
+        
+        plantPopulation = PLTPOP*10.0
+    end function plantPopulation
     
     
     END module YCA_Control_Plant 

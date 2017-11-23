@@ -198,7 +198,7 @@
         ! IF (SRNOPD > 0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
         
         IF ((vegetativeCanopyWeight()) > 0.0) THEN
-            HIAD = SRWT/totalWeight()                                                                     !EQN 293
+            HIAD = SRWT/(vegetativeCanopyWeight()+SRWT)                                                                     !EQN 293
         ENDIF
         IF (RTWT > 0.0) THEN
             SHRTD = (vegetativeCanopyWeight()) / RTWT                                                          !EQN 294
