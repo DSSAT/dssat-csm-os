@@ -64,9 +64,9 @@
             WRITE(fnumwrk,'(A27,3F11.1)')'  SENESCED (3)  Tops,root  ',(SENTOPLITTER+SENROOT)*plantPopulation(), &
                 SENTOPLITTER*plantPopulation(),SENROOT*plantPopulation()
             TVR3 = (SENTOPLITTER+SENROOT)*plantPopulation()
-            TVR4 = (SEEDRS+SDCOAT+RTWT+SRWT+vegetativeCanopyWeight())*plantPopulation()
-            WRITE(fnumwrk,'(A27,3F11.1)')'  PLANT+SEED_RESIDUE Pl,sd ',(SEEDRS+SDCOAT+RTWT+SRWT+vegetativeCanopyWeight()) &
-                *plantPopulation(),(RTWT+SRWT+vegetativeCanopyWeight())*plantPopulation(),(SEEDRS+SDCOAT)*plantPopulation()
+            TVR4 = (SEEDRS+SDCOAT+RTWT+SRWT+canopyWeight())*plantPopulation()
+            WRITE(fnumwrk,'(A27,3F11.1)')'  PLANT+SEED_RESIDUE Pl,sd ',(SEEDRS+SDCOAT+RTWT+SRWT+canopyWeight()) &
+                *plantPopulation(),(RTWT+SRWT+canopyWeight())*plantPopulation(),(SEEDRS+SDCOAT)*plantPopulation()
             WRITE(fnumwrk,'(A27,2F11.1)')'  RESERVES (5)             ',RSWT*plantPopulation() 
             TVR5 = RSWT*plantPopulation()
             WRITE(fnumwrk,'(A29, F9.1)')'  HARVESTED DURING CYCLE (6) ',(LWPHC+SWPHC+RSWPHC)*plantPopulation()
@@ -80,8 +80,8 @@
             WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at maximum    ',RSWTX*plantPopulation()
             WRITE (fnumwrk,'(A22,F7.1)')'  % above ground      ',RSCX*100.
             WRITE (fnumwrk,'(A22,F7.1)')'  Kg/ha at harvest    ',RSWAD
-            IF (vegetativeCanopyWeight() > 0) WRITE (fnumwrk,'(A22,F7.1)')'  % above ground      ', &
-                rswt/(vegetativeCanopyWeight())*100.0
+            IF (canopyWeight() > 0) WRITE (fnumwrk,'(A22,F7.1)')'  % above ground      ', &
+                rswt/(canopyWeight())*100.0
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A34,A10,I3)')' SEED USE (KG/HA or PER CENT) FOR ',excode,tn
             WRITE (fnumwrk,'(A22,F7.3)')'  Initial reserves    ',seedrsi*plantPopulation()

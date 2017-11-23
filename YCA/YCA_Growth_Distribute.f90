@@ -15,6 +15,7 @@
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Control_Plant
+        USE YCA_Control_Leaf
     
         IMPLICIT NONE
         
@@ -36,18 +37,18 @@
         ! Reserves to STORAGE ROOT if conc too great (overflow!)
         SRWTGRS = 0.0
         ! Determine potential new concentration
-        IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ > 0.0) THEN
-            TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS) + (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))  !EQN 310
+        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) THEN
+            TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))  !EQN 310
         ENDIF
         IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
             TVR1 = 0.0
         END IF
         IF (TVR1 > RSPCO/100.0) THEN   ! If potential>standard 
             TVR2 = RSWT+GRORS             ! What rswt could be                                                         !EQN 311
-            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-SENLFG-SENLFGRS+STWT+CRWT+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
+            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-leafTotalSenescedWeight()+woodyWeight()+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
             SRWTGRS = (TVR2 - TVR3)                                                                                    !EQN 313
             ! Determine FINAL new concentration
-            IF (LFWT+GROLFADJ+STWT+CRWT+GROSTADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-SENLFG-SENLFGRS)+ &             !EQN 314
+            IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
                 (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
         ENDIF
         

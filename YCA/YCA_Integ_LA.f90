@@ -27,7 +27,7 @@
         !         Calculate reserve concentration
         !-----------------------------------------------------------------------
         
-        IF (LFWT+STWT+CRWT > 0.0) RSCD = RSWT/(vegetativeCanopyWeight())                                                   !EQN 451
+        IF (LFWT + woodyWeight() > 0.0) RSCD = RSWT/(canopyWeight())                                                   !EQN 451
         IF (RSCD < 0.0.AND.RSCD > -1.0E-7) THEN 
             RSCD = 0.0
         ENDIF

@@ -144,6 +144,13 @@
         
         dailyGrowth = TTLFLife*EMRGFR
     end function dailyGrowth
+    
+    ! real value of leaf total senesced weight
+    real function leafTotalSenescedWeight()
+        implicit none
+        
+        leafTotalSenescedWeight = SENLFG + SENLFGRS
+    end function leafTotalSenescedWeight
 
     
     

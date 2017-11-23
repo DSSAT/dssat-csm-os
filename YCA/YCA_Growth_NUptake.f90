@@ -15,6 +15,7 @@
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Control_Plant
+        USE YCA_Control_Leaf
     
         IMPLICIT NONE
         
@@ -90,9 +91,8 @@
                 ENDIF
             END DO
     
-            !LNDEM = GROLF*LNCX + (LFWT-SENLFG-SENLFGRS)*AMAX1(0.0,NTUPF*(LNCX-LANC)) - GROLSRTN                        !EQN 152 !LPM 24APR 2015 Use GROLFP and then select the most restrictive factor N, CHO o water
-            LNDEM = GROLFP*LNCX + (LFWT-SENLFG-SENLFGRS)*AMAX1(0.0,NTUPF*(LNCX-LANC)) - GROLSRTN                        !EQN 152
-            !SNDEM = AMAX1(0.0,GROST+GROCR)*SNCX + (STWT+CRWT)*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
+            LNDEM = GROLFP*LNCX + (LFWT-leafTotalSenescedWeight())*AMAX1(0.0,NTUPF*(LNCX-LANC)) - GROLSRTN                        !EQN 152
+            !SNDEM = AMAX1(0.0,GROST+GROCR)*SNCX + (woodyWeight())*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
             RNDEM = RTWTG*RNCX + (RTWT-SENRTG-GROLSRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
             
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
@@ -320,13 +320,13 @@
             ! N Pools available for re-mobilization
             NUSEFAC = NLABPC/100.0                                                                                     !EQN 229
             NPOOLR = AMAX1 (0.0,((RTWT-SENRTG)*(RANC-RNCM)*NUSEFAC))                                                   !EQN 230
-            NPOOLL = AMAX1 (0.0,((LFWT-SENLFG-SENLFGRS)*(LANC-LNCM)*NUSEFAC))                                          !EQN 231
-            !NPOOLS = AMAX1 (0.0,((STWT+CRWT)*(SANC-SNCM)*NUSEFAC))                                                     !EQN 232
+            NPOOLL = AMAX1 (0.0,((LFWT-leafTotalSenescedWeight())*(LANC-LNCM)*NUSEFAC))                                          !EQN 231
+            !NPOOLS = AMAX1 (0.0,((woodyWeight())*(SANC-SNCM)*NUSEFAC))                                                     !EQN 232
             NPOOLS = 0
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)          
                     IF(STWTP+CRWTP > 0.0)THEN
-                        node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%NODEWT * (STWT+CRWT)/(STWTP+CRWTP))*( node(BR,LF)%SANC - node(BR,LF)%SNCM )*NUSEFAC))  
+                        node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%NODEWT * (woodyWeight())/(STWTP+CRWTP))*( node(BR,LF)%SANC - node(BR,LF)%SNCM )*NUSEFAC))  
                     ELSE
                         node(BR,LF)%NPOOLSN = 0.0
                     ENDIF

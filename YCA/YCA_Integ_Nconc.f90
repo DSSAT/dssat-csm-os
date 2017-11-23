@@ -12,6 +12,7 @@
         )
         
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
         
         IMPLICIT NONE
         
@@ -52,11 +53,11 @@
             IF (RTWT > ZERO) RANC = ROOTN / RTWT        !EQN 017
             IF (LFWT > ZERO) LANC = LEAFN / LFWT        !EQN 243 
 
-            IF ((STWT+CRWT) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
+            IF ((woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                        IF (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP) > 0.0) THEN
-                            node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))
+                        IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
+                            node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
                         ENDIF
                     ENDDO
                 ENDDO
@@ -71,19 +72,19 @@
             
             SCNCT = 0.0
             SCNMT = 0.0
-            IF ((LFWT+STWT+CRWT) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
+            IF ((LFWT+woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                        node(BR,LF)%SCNC = (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*node(BR,LF)%SNCX
+                        node(BR,LF)%SCNC = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCX
                         SCNCT =  SCNCT + node(BR,LF)%SCNC
-                        node(BR,LF)%SCNM = (node(BR,LF)%NODEWT*(STWT+CRWT)/(STWTP+CRWTP))*node(BR,LF)%SNCM
+                        node(BR,LF)%SCNM = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCM
                         SCNMT =  SCNMT + node(BR,LF)%SCNM
                     ENDDO
                 ENDDO
                 VCNC = (LNCX*AMAX1(0.0,LFWT)+SCNCT)/ &                      !EQN 021
-                (AMAX1(0.0,LFWT)+AMAX1(0.0,STWT+CRWT))
+                (AMAX1(0.0,LFWT)+AMAX1(0.0,woodyWeight()))
                 VMNC = (LNCM*AMAX1(0.0,LFWT)+SCNMT)/ &                      !EQN 022
-                (AMAX1(0.0,LFWT)+AMAX1(0.0,STWT+CRWT))
+                (AMAX1(0.0,LFWT)+AMAX1(0.0,woodyWeight()))
             ENDIF  
             
             

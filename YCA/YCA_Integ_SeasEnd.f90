@@ -39,7 +39,7 @@
                 
         ! Here,reserves are included in leaf,stem,and Plant. stick weights
         ! And weights are in kg/ha
-        CWAD = (vegetativeCanopyWeight())*plantPopulation()                                                                       !EQN 318
+        CWAD = (canopyWeight())*plantPopulation()                                                                       !EQN 318
         SRWAD = SRWT*plantPopulation()
         LLWAD = LFWT*(1.0-LPEFR)*10.0*PLTPOP
         LPEWAD = LFWT*LPEFR*10.0*PLTPOP
@@ -72,7 +72,7 @@
                 
         
                 
-        VWAD = (vegetativeCanopyWeight())*PLTPOP * 10.0                                                                     !EQN 019
+        VWAD = (canopyWeight())*PLTPOP * 10.0                                                                     !EQN 019
                 
         SHNUMAD = SHNUM*PLTPOP
                 

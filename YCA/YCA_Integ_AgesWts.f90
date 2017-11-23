@@ -137,9 +137,9 @@
             !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
             !IF (PSTART(PSX) > 0.0) LLRSWT = AMIN1(RSWT,LFWT*(1.0-LPEFR)*(RSCLX/100.0)*DSTAGE)                        !EQN 431
             !IF (PSTART(PSX) > 0.0) LPERSWT = AMIN1(RSWT-LLRSWT,LFWT*LPEFR*(RSCLX/100.0)*DSTAGE)                      !EQN 432
-            !IF (STWT+CRWT > 0.0) THEN
-            !    STRSWT = (RSWT-LLRSWT-LPERSWT)*STWT/(STWT+CRWT)                                                        !EQN 433a
-            !    CRRSWT = (RSWT-LLRSWT-LPERSWT)*CRWT/(STWT+CRWT)                                                        !EQN 434a
+            !IF (woodyWeight() > 0.0) THEN
+            !    STRSWT = (RSWT-LLRSWT-LPERSWT)*STWT/(woodyWeight())                                                        !EQN 433a
+            !    CRRSWT = (RSWT-LLRSWT-LPERSWT)*CRWT/(woodyWeight())                                                        !EQN 434a
             !ELSE
             !    STRSWT = (RSWT-LLRSWT-LPERSWT)                                                                         !EQN 433b
             !    CRRSWT = 0.0                                                                                           !EQN 434b
@@ -197,10 +197,10 @@
         ENDIF
         ! IF (SRNOPD > 0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
         
-        IF ((vegetativeCanopyWeight()) > 0.0) THEN
-            HIAD = SRWT/(vegetativeCanopyWeight()+SRWT)                                                                     !EQN 293
+        IF ((canopyWeight()) > 0.0) THEN
+            HIAD = SRWT/(canopyWeight()+SRWT)                                                                     !EQN 293
         ENDIF
         IF (RTWT > 0.0) THEN
-            SHRTD = (vegetativeCanopyWeight()) / RTWT                                                          !EQN 294
+            SHRTD = (canopyWeight()) / RTWT                                                          !EQN 294
         ENDIF
     END SUBROUTINE YCA_Integ_AgesWts

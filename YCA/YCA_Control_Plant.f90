@@ -17,18 +17,25 @@
 
     contains
     
-    ! real value of the vegetative weight of the plant: leaves, stem, crown and reserves
-    real function vegetativeCanopyWeight()
+    ! real value of the woody weight of the plant: leaves, stem, crown and reserves
+    real function woodyWeight()
         implicit none
         
-        vegetativeCanopyWeight = LFWT+STWT+CRWT+RSWT
-    end function vegetativeCanopyWeight
+        woodyWeight = STWT+CRWT
+    end function woodyWeight
+    
+    ! real value of the canopy weight of the plant: leaves, stem, crown and reserves
+    real function canopyWeight()
+        implicit none
+        
+        canopyWeight = woodyWeight()+LFWT+RSWT
+    end function canopyWeight
     
     ! real value of the total weight of the plant: leaves, stem, crown, reserves and root storage organ
     real function totalWeight()
         implicit none
         
-        totalWeight = vegetativeCanopyWeight()+SRWT+RTWT
+        totalWeight = canopyWeight()+SRWT+RTWT
     end function totalWeight
     
     ! real value the plant poulation
