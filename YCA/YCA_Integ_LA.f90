@@ -39,8 +39,8 @@
         ! First for leaf senescence
         DO L = 1,INT(SHNUM+1)
             IF (SHNUM-FLOAT(L-1) > 0.0) THEN
-                IF (PLA-SENLA > 0.0) THEN
-                    SHLAS(L) = SHLAS(L) + PLAS*(SHLA(L)-SHLAS(L))/(PLA-SENLA)                        !EQN 452
+                IF (plantLeafAreaLeftToSenescence() > 0.0) THEN
+                    SHLAS(L) = SHLAS(L) + PLAS*(SHLA(L)-SHLAS(L))/(plantLeafAreaLeftToSenescence())                        !EQN 452
                 ENDIF
             ENDIF
         ENDDO
@@ -137,7 +137,7 @@
         
         SLA = -99.0
         IF (LFWT > ZERO) THEN
-            SLA=(PLA-SENLA-LAPHC) / (LFWT*(1.0-LPEFR))                                                 !EQN 465
+            SLA=(plantGreenLeafArea()) / (LFWT*(1.0-LPEFR))                                                 !EQN 465
         ENDIF
         
         !-----------------------------------------------------------------------

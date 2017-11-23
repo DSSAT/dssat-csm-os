@@ -60,11 +60,11 @@
         PLASW = 0.0
         PLASN = 0.0
         IF (ISWWAT /= 'N') THEN
-            IF (PLA-SENLA > 0.0.AND.WUPR < WFSU) PLASW = AMAX1(0.0,AMIN1((PLA-SENLA)-PLAS,(PLA-SENLA)*LLOSA))        !EQN 373
+            IF (plantLeafAreaLeftToSenescence() > 0.0.AND.WUPR < WFSU) PLASW = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenescence())-PLAS,(plantLeafAreaLeftToSenescence())*LLOSA))        !EQN 373
         ENDIF
         IF (ISWNIT /= 'N') THEN
             LNCSEN = LNCM + NFSU * (LNCX-LNCM)                                                                         !EQN 374
-            IF (PLA-SENLA > 0.0.AND.LANC < LNCSEN) PLASN = AMAX1(0.0,AMIN1((PLA-SENLA)-PLAS,(PLA-SENLA)*LLOSA))
+            IF (plantLeafAreaLeftToSenescence() > 0.0.AND.LANC < LNCSEN) PLASN = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenescence())-PLAS,(plantLeafAreaLeftToSenescence())*LLOSA))
         ENDIF
         ! LAH TMP
         PLASW = 0.0
@@ -104,7 +104,7 @@
         ! Leaf senescence - overall
         PLAS =  PLASP + PLASI + PLASS + PLASL                                                                          !EQN 369
         ! Overall check to restrict senescence to what available
-        PLAS = AMAX1(0.0,AMIN1(PLAS,PLA-SENLA))
+        PLAS = AMAX1(0.0,AMIN1(PLAS,plantLeafAreaLeftToSenescence()))
 
         !-----------------------------------------------------------------------
         !           Calculate C and N made available through senescence
@@ -114,10 +114,10 @@
         SENLFGRS = 0.0
         SENNLFG = 0.0
         SENNLFGRS = 0.0
-        IF (PLA-SENLA > 0.0) THEN
+        IF (plantLeafAreaLeftToSenescence() > 0.0) THEN
         ! LAH New algorithms 03/04/13
-        SENLFG = AMIN1(LFWT*LWLOS,(AMAX1(0.0,(LFWT*(PLAS/(PLA-SENLA))*LWLOS))))                                        !EQN 375
-        SENLFGRS = AMIN1(LFWT*(1.0-LWLOS),(AMAX1(0.0,(LFWT*(PLAS/(PLA-SENLA))*(1.0-LWLOS)))))                          !EQN 376
+        SENLFG = AMIN1(LFWT*LWLOS,(AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenescence()))*LWLOS))))                                        !EQN 375
+        SENLFGRS = AMIN1(LFWT*(1.0-LWLOS),(AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenescence()))*(1.0-LWLOS)))))                          !EQN 376
         ENDIF
   
         IF (ISWNIT /= 'N') THEN

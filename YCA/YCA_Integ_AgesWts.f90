@@ -55,7 +55,7 @@
                         node(BR,LF)%DALF = node(BR,LF)%DALF + 1.0                                                                        !EQN 364b
                         !LPM 13DEC2016 To generate a restriction for leaf active duration which should not be greater than twice the chronological time at 24 C (TRDV3(2)) 
                         IF (node(BR,LF)%DALF>(2.0*LLIFATT/(TRDV3(2)-TRDV3(1)))) THEN 
-                            node(BR,LF)%LAGETT = LLIFGTT+LLIFATT
+                            call setLeafAsSenescing(node(BR,LF))
                         ENDIF
                     ELSE
                         IF (didLeafStartActiveToday(node(BR,LF))) THEN                     !LPM 28MAR15 LLIFGT was deleted 

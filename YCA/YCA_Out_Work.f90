@@ -14,6 +14,7 @@
         
         USE YCA_First_Trans_m
         USE YCA_Formats_m
+        USE YCA_LeafControl
      
         IMPLICIT NONE 
      
@@ -35,10 +36,10 @@
             WRITE(fnumwrk,'(A34,2F7.3)')' Tcan-Tmean Today and average oC  ',tcan-tmean,tdifav
             WRITE(fnumwrk,'(A34,F7.1)')' Windspeed m/s                    ',windsp     
             WRITE(fnumwrk,'(A34,2F7.3,2F7.1)')' Brstage,Lnum. Beginning,end of day',brstageprev,brstage,lnumprev,lnum
-            IF (PLA-SENLA-LAPHC < 9999.9) THEN
-                WRITE(fnumwrk,'(A34,F7.1,F7.1)')' Laminae area end day /m2,/plant  ',lai,pla-senla-laphc
+            IF (plantGreenLeafArea() < 9999.9) THEN
+                WRITE(fnumwrk,'(A34,F7.1,F7.1)')' Laminae area end day /m2,/plant  ',lai,plantGreenLeafArea()
             ELSE
-                WRITE(fnumwrk,'(A34,F7.1,I7)')' Laminae area end day /m2,/plant  ',lai,NINT(pla-senla-laphc)
+                WRITE(fnumwrk,'(A34,F7.1,I7)')' Laminae area end day /m2,/plant  ',lai,NINT(plantGreenLeafArea())
             ENDIF
             WRITE(fnumwrk,'(A25,I1,A7,2F7.3)')' PARI,competition model,C',CN,' 1-crop',PARI,PARI1
             IF (Rlf > 0.0) THEN

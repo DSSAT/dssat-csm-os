@@ -92,6 +92,20 @@
         leafAreaLeftToSenescence = node%LATL3T - node%LAPS
     end function leafAreaLeftToSenescence
     
+    ! real value of the plant leaf area left to senescence
+    real function plantLeafAreaLeftToSenescence()
+        implicit none
+        
+        plantLeafAreaLeftToSenescence = PLA-SENLA
+    end function plantLeafAreaLeftToSenescence
+    
+    ! real value of the plant green leaf area
+    real function plantGreenLeafArea()
+        implicit none
+        
+        plantGreenLeafArea = plantLeafAreaLeftToSenescence()-LAPHC
+    end function plantGreenLeafArea
+    
     ! set leaf age to active 
     subroutine setLeafAsActive(node)
         implicit none

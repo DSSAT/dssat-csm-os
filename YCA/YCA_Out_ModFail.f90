@@ -15,6 +15,7 @@
         USE YCA_First_Trans_m
         USE YCA_Formats_m
         USE YCA_Environment
+        USE YCA_LeafControl
      
         IMPLICIT NONE 
      
@@ -44,20 +45,20 @@
             LLWADOUT = LLWAD
             STWADOUT = STWAD+LPEWAD
             SDWADOUT = SDWAD
-            !IF (LFWT > 1.0E-6) SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR)+LLRSWT)  !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
-            IF (LFWT > 1.0E-6) SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR)) 
+            !IF (LFWT > 1.0E-6) SLAOUT=(plantGreenLeafArea())/(LFWT*(1.0-LPEFR)+LLRSWT)  !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
+            IF (LFWT > 1.0E-6) SLAOUT=(plantGreenLeafArea())/(LFWT*(1.0-LPEFR)) 
         ELSEIF (OUTCHOICE == 2) THEN
             ! 2. No reserves, stem wt includes petioles
             LLWADOUT = LLWAD
             STWADOUT = STWAD + LPEWAD
             SDWADOUT = SDWAD
-            IF (LFWT > 1.0E-6)SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR))
+            IF (LFWT > 1.0E-6)SLAOUT=(plantGreenLeafArea())/(LFWT*(1.0-LPEFR))
         ELSEIF (OUTCHOICE == 3) THEN
             ! 3. No reserves, stem wt does not includes petioles
             LLWADOUT = LLWAD
             STWADOUT = STWAD
             SDWADOUT = SDWAD
-            IF (LFWT > 1.0E-6)SLAOUT=(PLA-SENLA-LAPHC)/(LFWT*(1.0-LPEFR))
+            IF (LFWT > 1.0E-6)SLAOUT=(plantGreenLeafArea())/(LFWT*(1.0-LPEFR))
         ENDIF
         IF (SLA <= 0.0) SLAOUT = -99.0
         
