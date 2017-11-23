@@ -124,33 +124,6 @@
         SHLAGB3 = 0.0
         SHLAGB4 = 0.0
             
-        !! BRANCH NUMBER            
-        !! Old method (1 fork number throughout)
-        !! BRNUMST = AMAX1(1.0,BRNUMFX**(INT(brstage)-1))
-        !! New method (fork number specified for each forking point)
-        !! First calculate new BRSTAGE as temporary variable
-        !! (LAH Check whether can move brstage calc up here! 
-        !! (If do this, brstage in brfx below must be reduced by 1))
-        !IF (MEDEV == 'LNUM') THEN 
-        !    IF (PDL(INT(BRSTAGE)) > 0.0) THEN                                                          ! MSTG = KEYPSNUM
-        !        TVR1 = FLOAT(INT(BRSTAGE)) + (LNUM-LNUMTOSTG(INT(BRSTAGE)))/PDL(INT(BRSTAGE))           ! EQN 004
-        !    ELSE
-        !        TVR1 = FLOAT(INT(BRSTAGE))
-        !    ENDIF
-        !ELSE
-        !    IF (PD(INT(BRSTAGE)) > 0.0) THEN                                                          ! MSTG = KEYPSNUM
-        !        TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE))              ! EQN 004
-        !    ELSE
-        !        TVR1 = FLOAT(INT(BRSTAGE))
-        !    ENDIF        
-        !ENDIF    
-        !IF (INT(TVR1) > INT(BRSTAGEPREV)) THEN
-        !    IF (BRSTAGE == 0.0) THEN
-        !        BRNUMST = 1                                                                         ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
-        !    ELSEIF (BRSTAGE > 0.0) THEN
-        !        BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
-        !    ENDIF
-        !ENDIF 
         
         
 
@@ -399,17 +372,7 @@
 
 
         ENDIF                                                                                                            !MF 21AU16 ErrorFix. Added to terminate block
-        !    !PLAGSB3 = PLAGSB2 * AFLF(0)                                                                                !EQN 345
-        !    !SHLAGB2 is not necessary, previously defined in the loop as SHLAG2
-        !    !SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
-        !    !SHLAGB3(2) = SHLAGB2(2) * AFLF(0)                                                                          !EQN 240
-        !    !SHLAGB3(3) = SHLAGB2(3) * AFLF(0)                                                                          !EQN 240
-        !    PLAGSB3 = PLAGSB2 * AFLF(0,0) 
-        !    SHLAGB3(1) = SHLAG2(1) * AFLF(0,0)                                                                         !EQN 240
-        !    SHLAGB3(2) = SHLAG2(2) * AFLF(0,0)                                                                         !EQN 240
-        !    SHLAGB3(3) = SHLAG2(3) * AFLF(0,0)                                                                         !EQN 240    
-        !ENDIF
-        !    
+
         !-----------------------------------------------------------------------
         !           Stem and Plant. stick growth                                     
         !-----------------------------------------------------------------------

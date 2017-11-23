@@ -405,13 +405,7 @@
                         ENDIF
                     ENDDO
                 ENDDO
-            !ENDIF                                                                                                      !MF 21AU16 ErrorFix ENDIF without corresponding IF THEN or ELSE. Deleted.
-            !PLAGSB3 = PLAGSB2 * AFLF(0)                                                                                !EQN 345
-            !SHLAGB2 is not necessary, previously defined in the loop as SHLAG2
-            !SHLAGB3(1) = SHLAGB2(1) * AFLF(0)                                                                          !EQN 240
-            !SHLAGB3(2) = SHLAGB2(2) * AFLF(0)                                                                          !EQN 240
-            !SHLAGB3(3) = SHLAGB2(3) * AFLF(0)                                                                          !EQN 240
-            !LPM 02SEP2016 PLAGSB3 is not longer used, selected the min value between AFLF, WFG, NFLF2  
+
             PLAGSB4 = PLAGSB2 * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) 
             SHLAGB4(1) = SHLAG2(1) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                          !EQN 240
             SHLAGB4(2) = SHLAG2(2) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                          !EQN 240
