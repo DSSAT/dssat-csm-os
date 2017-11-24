@@ -23,6 +23,7 @@
         INTEGER NLAYR       
         REAL    DLAYR(NL)   , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SENCALG(0:NL), BRSTAGE
         REAL    SENLALG(0:NL)             , SENNALG(0:NL)             , SHF(NL)     , SW(NL)  
+        REAL    :: RTDEPTMP                ! Root depth,temporary value     cm/d       ! (From Growth)    
 
         INTEGER CSIDLAYR                                                                     ! Integer function call.
 

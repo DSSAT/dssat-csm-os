@@ -22,6 +22,7 @@
         INTEGER NLAYR
         
         REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
+        REAL    :: PLASTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Integrate) 
        
         !-----------------------------------------------------------------------
         !         Calculate reserve concentration
@@ -61,14 +62,6 @@
                 ENDIF
             ENDDO
             
-            !IF (LCNUM < LCNUMX) THEN    !LPM 28MAR15 This section is not necessary
-            !    IF (PLAGSB4 > 0.0) THEN
-            !        LCNUM = LCNUM+1
-            !        LCOA(LCNUM) = PLAGSB4                                                                              !EQN 455a
-            !    ENDIF
-            !ELSE
-            !    LCOA(LCNUM) = LCOA(LCNUM) + PLAGSB4                                                                    !EQN 455b
-            !ENDIF
             
         ENDIF
         
@@ -95,18 +88,6 @@
                     IF (PLASTMP <= 0.0) EXIT
                 ENDDO
             ENDDO
-            !! Cohorts  !LPM 28MAR15 This section is not necessary
-            !PLASTMP2 = AMAX1(0.0,PLAS)
-            !DO L = 1, LCNUM
-            !    IF (LCOA(L)-LCOAS(L) > PLASTMP2) THEN
-            !        LCOAS(L) = LCOAS(L) + PLASTMP2                                                                     !EQN 460a
-            !        PLASTMP2 = 0.0
-            !    ELSE
-            !        PLASTMP2 = PLASTMP2 - (LCOA(L)-LCOAS(L))
-            !        LCOAS(L) = LCOA(L)                                                                                 !EQN 460b
-            !    ENDIF
-            !    IF (PLASTMP2 <= 0.0) EXIT
-            !ENDDO
         ENDIF
         ! Distribute harvested leaf over leaf positions and cohorts
         ! Leaf positions
@@ -121,12 +102,6 @@
                     ENDIF
                 ENDDO
             ENDDO
-            ! Cohorts
-            !DO L = 1, LCNUM
-            !    IF (LCOA(L)-LCOAS(L) > 0.0) THEN
-            !        LCOAS(L) = LCOAS(L) + (LCOA(L)-LCOAS(L)) * HAFR                                                    !EQN 462
-            !    ENDIF
-            !ENDDO
         ENDIF
         
         LAPD = LAI/(PLTPOP*0.0001)
