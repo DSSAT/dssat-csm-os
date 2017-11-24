@@ -41,8 +41,8 @@
         ! First for leaf senescence
         DO L = 1,INT(SHNUM+1)
             IF (SHNUM-FLOAT(L-1) > 0.0) THEN
-                IF (plantLeafAreaLeftToSenescence() > 0.0) THEN
-                    SHLAS(L) = SHLAS(L) + PLAS*(SHLA(L)-SHLAS(L))/(plantLeafAreaLeftToSenescence())                        !EQN 452
+                IF (plantLeafAreaLeftToSenesce() > 0.0) THEN
+                    SHLAS(L) = SHLAS(L) + PLAS*(SHLA(L)-SHLAS(L))/(plantLeafAreaLeftToSenesce())                        !EQN 452
                 ENDIF
             ENDIF
         ENDDO
@@ -78,11 +78,11 @@
             !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
             DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR) 
-                    IF (leafAreaLeftToSenescence(node(BR,LF)) > PLASTMP) THEN                                                                     ! DA If the leaf can senesce more
+                    IF (leafAreaLeftToSenesce(node(BR,LF)) > PLASTMP) THEN                                                                     ! DA If the leaf can senesce more
                         node(BR,LF)%LAPS = node(BR,LF)%LAPS + PLASTMP                                                                        !EQN 459a
                         PLASTMP = 0.0
                     ELSE
-                        PLASTMP = PLASTMP - leafAreaLeftToSenescence(node(BR,LF))                                                               
+                        PLASTMP = PLASTMP - leafAreaLeftToSenesce(node(BR,LF))                                                               
                         node(BR,LF)%LAPS = node(BR,LF)%LATL3T                                                                                   !EQN 459b    ! DA The leaf area is totally senesced
                     ENDIF
                     IF (PLASTMP <= 0.0) EXIT
@@ -97,8 +97,8 @@
             !ENDDO
             DO BR = 0, BRSTAGE                                                                                        !LPM 28MAR15 Change to include cohorts
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (leafAreaLeftToSenescence(node(BR,LF)) > 0.0) THEN
-                        node(BR,LF)%LAPS = node(BR,LF)%LAPS + (leafAreaLeftToSenescence(node(BR,LF))) * HAFR     !EQN 461
+                    IF (leafAreaLeftToSenesce(node(BR,LF)) > 0.0) THEN
+                        node(BR,LF)%LAPS = node(BR,LF)%LAPS + (leafAreaLeftToSenesce(node(BR,LF))) * HAFR     !EQN 461
                     ENDIF
                 ENDDO
             ENDDO

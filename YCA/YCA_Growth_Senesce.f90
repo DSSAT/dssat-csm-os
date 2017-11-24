@@ -44,8 +44,8 @@
         DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
             DO LF = 1, LNUMSIMSTG(BR)         
                 IF (.NOT. willLeafStillGrowingToday(node(BR,LF))) THEN                                                     !EQN 371 LPM28MAR15 Deleted LLIFGTT
-                    IF (leafAreaLeftToSenescence(node(BR,LF)) > 0.0) THEN
-                        LAPSTMP = AMIN1((leafAreaLeftToSenescence(node(BR,LF))),(node(BR,LF)%LATL3T*(AMIN1((node(BR,LF)%LAGETT+(dailyGrowth())-(LLIFGTT+LLIFATT)), (dailyGrowth()))/LLIFSTT)))         !EQN 372
+                    IF (leafAreaLeftToSenesce(node(BR,LF)) > 0.0) THEN
+                        LAPSTMP = AMIN1((leafAreaLeftToSenesce(node(BR,LF))),(node(BR,LF)%LATL3T*(AMIN1((node(BR,LF)%LAGETT+(dailyGrowth())-(LLIFGTT+LLIFATT)), (dailyGrowth()))/LLIFSTT)))         !EQN 372
                         node(BR,LF)%LAPS = node(BR,LF)%LAPS + LAPSTMP
                         PLASP = PLASP + LAPSTMP                                                                                !EQN 370
                     ENDIF
@@ -61,11 +61,11 @@
         PLASW = 0.0
         PLASN = 0.0
         IF (ISWWAT /= 'N') THEN
-            IF (plantLeafAreaLeftToSenescence() > 0.0.AND.WUPR < WFSU) PLASW = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenescence())-PLAS,(plantLeafAreaLeftToSenescence())*LLOSA))        !EQN 373
+            IF (plantLeafAreaLeftToSenesce() > 0.0.AND.WUPR < WFSU) PLASW = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenesce())-PLAS,(plantLeafAreaLeftToSenesce())*LLOSA))        !EQN 373
         ENDIF
         IF (ISWNIT /= 'N') THEN
             LNCSEN = LNCM + NFSU * (LNCX-LNCM)                                                                         !EQN 374
-            IF (plantLeafAreaLeftToSenescence() > 0.0.AND.LANC < LNCSEN) PLASN = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenescence())-PLAS,(plantLeafAreaLeftToSenescence())*LLOSA))
+            IF (plantLeafAreaLeftToSenesce() > 0.0.AND.LANC < LNCSEN) PLASN = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenesce())-PLAS,(plantLeafAreaLeftToSenesce())*LLOSA))
         ENDIF
         ! LAH TMP
         PLASW = 0.0
@@ -86,7 +86,7 @@
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
                 IF (isLeafAlive(node(BR,LF))) THEN                      ! DA if leave is alive
 
-                    node(BR,LF)%LAIByCohort = LAI + (leafAreaLeftToSenescence(node(BR,LF)))*PLTPOP*0.0001             ! DA the LAI calculation is accumulative from the previous cohort LAI
+                    node(BR,LF)%LAIByCohort = LAI + (leafAreaLeftToSenesce(node(BR,LF)))*PLTPOP*0.0001             ! DA the LAI calculation is accumulative from the previous cohort LAI
                     LAI = node(BR,LF)%LAIByCohort                                                                     ! DA updating LAI
                     
                 ENDIF
@@ -105,7 +105,7 @@
         ! Leaf senescence - overall
         PLAS =  PLASP + PLASI + PLASS + PLASL                                                                          !EQN 369
         ! Overall check to restrict senescence to what available
-        PLAS = AMAX1(0.0,AMIN1(PLAS,plantLeafAreaLeftToSenescence()))
+        PLAS = AMAX1(0.0,AMIN1(PLAS,plantLeafAreaLeftToSenesce()))
 
         !-----------------------------------------------------------------------
         !           Calculate C and N made available through senescence
@@ -115,10 +115,10 @@
         SENLFGRS = 0.0
         SENNLFG = 0.0
         SENNLFGRS = 0.0
-        IF (plantLeafAreaLeftToSenescence() > 0.0) THEN
+        IF (plantLeafAreaLeftToSenesce() > 0.0) THEN
         ! LAH New algorithms 03/04/13
-        SENLFG = AMIN1(LFWT*LWLOS,(AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenescence()))*LWLOS))))                                        !EQN 375
-        SENLFGRS = AMIN1(LFWT*(1.0-LWLOS),(AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenescence()))*(1.0-LWLOS)))))                          !EQN 376
+        SENLFG = AMIN1(LFWT*LWLOS,(AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenesce()))*LWLOS))))                                        !EQN 375
+        SENLFGRS = AMIN1(LFWT*(1.0-LWLOS),(AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenesce()))*(1.0-LWLOS)))))                          !EQN 376
         ENDIF
   
         IF (ISWNIT /= 'N') THEN

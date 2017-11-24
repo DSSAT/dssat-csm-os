@@ -84,26 +84,26 @@
         didLeafFallToday = node%LAGETT-dailyGrowth()  < LLIFGTT+LLIFATT+LLIFSTT .AND. .NOT. isLeafAlive(node)
     end function didLeafFallToday
     
-    ! real value of the leaf area left to senescence
-    real function leafAreaLeftToSenescence(node)
+    ! real value of the leaf area left to senesce
+    real function leafAreaLeftToSenesce(node)
         implicit none
         class (Node_type), intent(in) :: node
         
-        leafAreaLeftToSenescence = node%LATL3T - node%LAPS
-    end function leafAreaLeftToSenescence
+        leafAreaLeftToSenesce = node%LATL3T - node%LAPS
+    end function leafAreaLeftToSenesce
     
-    ! real value of the plant leaf area left to senescence
-    real function plantLeafAreaLeftToSenescence()
+    ! real value of the plant leaf area left to senesce
+    real function plantLeafAreaLeftToSenesce()
         implicit none
         
-        plantLeafAreaLeftToSenescence = PLA-SENLA
-    end function plantLeafAreaLeftToSenescence
+        plantLeafAreaLeftToSenesce = PLA-SENLA
+    end function plantLeafAreaLeftToSenesce
     
     ! real value of the plant green leaf area
     real function plantGreenLeafArea()
         implicit none
         
-        plantGreenLeafArea = plantLeafAreaLeftToSenescence()-LAPHC
+        plantGreenLeafArea = plantLeafAreaLeftToSenesce()-LAPHC
     end function plantGreenLeafArea
     
     ! set leaf age to active 
