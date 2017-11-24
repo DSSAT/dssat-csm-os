@@ -34,7 +34,6 @@ Module YCA_First_Trans_m
     REAL    :: AREAPOSSIBLEN           ! Leaf area growth at N limit    cm2        ! (From Growth)    
     INTEGER :: ARGLEN                  ! Argument component length      #          ! (From RunInit)   
     REAL    :: AVGSW                   ! Average soil water in SWPLTD   %          ! (From Growth)    
-    REAL    :: b_slope_lsize           ! Slope to define  max leaf size #          ! LPM 28feb15 
     REAL    :: BASELAYER               ! Depth at base of layer         cm         ! (From Integrate) 
     INTEGER :: BRDAE(PSX)              ! DAE when a new branch appears  d          ! LPM 11APR15 To save the date of branch appearance
     REAL    :: BRFX(0:PSX)             ! Branch # per fork at each fork #          ! (From SeasInit)  
@@ -77,10 +76,6 @@ Module YCA_First_Trans_m
     REAL    :: CO2PC                   ! CO2 concentration,tier,cumul   ppm        ! (From SeasInit)  
     REAL    :: CO2RF(10)               ! CO2 reference concentration    vpm        ! (From SeasInit)  
     INTEGER :: COLNUM                  ! Column number                  #          ! (From Integrate)   
-    !REAL    :: CRRSWAD                 ! Plant. stick reserves               kg/ha ! (From Integrate) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed 
-    !REAL    :: CRRSWT                  ! Plant. stick reserves               g/p   ! (From SeasInit) 
-    !REAL    :: CRWAD                   ! Crown weight                        kg/ha ! (From SeasInit)         ! DA not used in Cassava
-    !REAL    :: CRWADOUT                ! Crown weight for output             kg/ha ! (From Output)           ! DA not used in Cassava
     REAL    :: CRWT                    ! Plant. stick weight                 g/p   ! (From SeasInit)  
     REAL    :: CRWTM                   ! Plant. stick weight at maturity     g/p   ! (From Integrate) 
     REAL    :: CRWTP                   ! Plant. stick weight potential       g/p   ! (From SeasInit)  !LPM 23MAY2015 Added to keep the potential planting stick weight
@@ -246,7 +241,6 @@ Module YCA_First_Trans_m
     REAL    :: GROLSSEN                ! Leaf+stem growth from senesnce g/p        ! (From Growth) 
     REAL    :: GRORP                   ! Potential root growth          g/p        ! (From SeasInit) !LPM 22DEC2016 potential root growth
     REAL    :: GRORS                   ! Reserves growth                g/p        ! (From SeasInit)  
-    !REAL    :: GROSR                   ! Storage root growth            g/p        ! (From SeasInit)  !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
     REAL    :: GROST                   ! Stem growth rate               g/p        ! (From SeasInit)  
     REAL    :: GROSTADJ                ! Stem growth rate N adjusted    g/p        ! (From SeasInit)  
     REAL    :: GROSTCR                 ! Stem+Plant. stick growth rate         g/p ! (From SeasInit)  
