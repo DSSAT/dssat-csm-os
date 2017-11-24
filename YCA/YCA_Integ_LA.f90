@@ -20,6 +20,7 @@
         IMPLICIT NONE
         
         INTEGER NLAYR
+        INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         
         REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
         REAL    :: leafAreaSenesced                 !PLASTMP Leaf area senesced,temporary   cm2/p      ! (From Integrate) 

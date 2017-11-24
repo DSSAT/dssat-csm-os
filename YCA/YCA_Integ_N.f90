@@ -18,6 +18,7 @@
         IMPLICIT NONE
         
         INTEGER NLAYR 
+        INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         REAL BRSTAGE
         
         !-----------------------------------------------------------------------

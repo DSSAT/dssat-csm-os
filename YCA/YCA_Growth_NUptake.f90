@@ -22,6 +22,7 @@
     
         CHARACTER(LEN=1) ISWNIT      
         INTEGER NLAYR       
+        INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         REAL    BD(NL)      , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SAT(NL)     
         REAL    SW(NL)      , UNH4(NL)    , UNO3(NL)    , BRSTAGE
     
@@ -367,11 +368,6 @@
                 
             ENDIF
     
-        ELSE     ! ISWNIT = N   
-    
-            
-            node(0,0)%NFLF2 = 1.0
-            node(BR,LF)%NFLF2 = 1.0            
     
         ENDIF    ! End of N uptake and growth adjustmenets
     

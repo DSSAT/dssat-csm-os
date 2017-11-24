@@ -17,6 +17,7 @@
         IMPLICIT NONE
         
         CHARACTER(LEN=1) ISWNIT   
+        INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         REAL  BRSTAGE 
         
         !-----------------------------------------------------------------------

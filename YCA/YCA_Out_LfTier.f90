@@ -18,6 +18,7 @@
         IMPLICIT NONE 
      
         INTEGER :: RUN         , STGYEARDOY(0:19) 
+        INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         REAL BRSTAGE
 
         CHARACTER(LEN=1)  :: IDETL       
