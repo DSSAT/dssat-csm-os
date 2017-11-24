@@ -21,6 +21,7 @@
         
         INTEGER NLAYR
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
+        INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         
         REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
         REAL    :: leafAreaSenesced                 !PLASTMP Leaf area senesced,temporary   cm2/p      ! (From Integrate) 

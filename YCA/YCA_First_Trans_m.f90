@@ -380,7 +380,6 @@ Module YCA_First_Trans_m
     INTEGER :: LENLINESTAR             ! Length of character string     #          ! (From Output)    
     INTEGER :: LENRNAME                ! Length of run description      #          ! (From SeasInit)  
     INTEGER :: LENTNAME                ! Length,treatment description   #          ! (From SeasInit)  
-    INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
     REAL    :: LFWT                    ! Leaf weight                    g/p        ! (From SeasInit)  
     REAL    :: LFWTM                   ! Leaf weight,maturity           g/p        ! (From SeasInit)  
     REAL    :: LLIFA                   ! Leaf active duration,read      #          ! (From SeasInit)  
@@ -1226,7 +1225,6 @@ Module YCA_First_Trans_m
         
         
         L = 0
-        LF = 0
         L1 = 0
         L2 = 0
         I = 0

@@ -23,6 +23,7 @@
         CHARACTER(LEN=1) ISWNIT      
         INTEGER NLAYR       
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
+        INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL    BD(NL)      , DLAYR(NL)   , DUL(NL)     , LL(NL)      , NH4LEFT(NL) , NO3LEFT(NL) , RLV(NL)     , SAT(NL)     
         REAL    SW(NL)      , UNH4(NL)    , UNO3(NL)    , BRSTAGE
     

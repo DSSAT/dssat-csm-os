@@ -19,6 +19,7 @@
         
         INTEGER NLAYR 
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
+        INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL BRSTAGE
         
         !-----------------------------------------------------------------------
