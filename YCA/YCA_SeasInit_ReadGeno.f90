@@ -330,23 +330,8 @@
             CALL CUREADR (CUDIRFLE,VARNO,'P9',pd(9))
             CALL CUREADR (CUDIRFLE,VARNO,'B01ND',pdl(1))
             CALL CUREADR (CUDIRFLE,VARNO,'B12ND',pdl(2))
-            !CALL CUREADR (CUDIRFLE,VARNO,'B23ND',pdl(3)) !LPM 07MAR15 Those values would not be used
-            !CALL CUREADR (CUDIRFLE,VARNO,'B34ND',pdl(4))
-            !CALL CUREADR (CUDIRFLE,VARNO,'B45ND',pdl(5))
-            !CALL CUREADR (CUDIRFLE,VARNO,'B56ND',pdl(6))
-            !CALL CUREADR (CUDIRFLE,VARNO,'B67ND',pdl(7))
-            !CALL CUREADR (CUDIRFLE,VARNO,'B78ND',pdl(8))
-            !CALL CUREADR (CUDIRFLE,VARNO,'B89ND',pdl(9))
-            !CALL CUREADR (CUDIRFLE,VARNO,'PHINT',phints) !LPM 21MAY2015 this variable is not used
             CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
-            !CALL CUREADR (CUDIRFLE,VARNO,'STFR',swfrs) !LPM 05JUN2016 STFR are not used
-            !CALL CUREADR (CUDIRFLE,VARNO,'SR#WT',srnow)  ! issue 50  SR#WT is not used
-            !CALL CUREADR (CUDIRFLE,VARNO,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
             CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
-            !CALL CUREADR (CUDIRFLE,VARNO,'LAXND',laxno) !LPM 05JUN2016 LAXNO LAXN2 are not used
-            !CALL CUREADR (CUDIRFLE,VARNO,'LAXN2',laxn2)
-            !CALL CUREADR (CUDIRFLE,VARNO,'LAFS',lafs)  !LPM 05JUN2015 LAFS is not used 
-            !CALL CUREADR (CUDIRFLE,VARNO,'LAFND',lafnd) !LPM 05JUN2015 LAFND is not used
             CALL CUREADR (CUDIRFLE,VARNO,'SLAS',laws)
             CALL CUREADR (CUDIRFLE,VARNO,'NFPU',nfpu)
             CALL CUREADR (CUDIRFLE,VARNO,'NFPL',nfpl)
@@ -356,16 +341,13 @@
             CALL CUREADR (CUDIRFLE,VARNO,'RLWR',rlwr)
             CALL CUREADR (CUDIRFLE,VARNO,'PARUE',parue)
             CALL CUREADR (CUDIRFLE,VARNO,'PARU2',paru2)
-            !CALL CUREADR (CUDIRFLE,VARNO,'LA1S',la1s)                                  !DA 03OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15
             CALL CUREADR (CUDIRFLE,VARNO,'LPEFR',lpefr)
-            ! New (Nov 2011) N uptake variables
             CALL CUREADR (CUDIRFLE,VARNO,'NUPNF',no3cf)
             CALL CUREADR (CUDIRFLE,VARNO,'NUPWF',h2ocf)
             CALL CUREADR (CUDIRFLE,VARNO,'RTNUP',rtno3)
             CALL CUREADR (CUDIRFLE,VARNO,'RTNH4',rtnh4)
             CALL CUREADR (CUDIRFLE,VARNO,'NO3MN',no3mn)
             CALL CUREADR (CUDIRFLE,VARNO,'NH4MN',nh4mn)
-            !CALL CUREADR (CUDIRFLE,VARNO,'HMPC',hmpc) ! issue 49
 
         ENDIF     ! End Cultivar reads
         
@@ -378,14 +360,6 @@
         IF (SRNPCS < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRP%S',srprs)
         IF (SRPRS < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'SRPRS',srprs)
         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
-        !CALL ECREADR (ECDIRFLE,ECONO,'DUSRI',dusri) !LPM 05JUN2015 DUSRI is not used
-        ! LAH Following set up to allow for change in stem fraction
-        ! Currently not used ... just one stem fraction (STFR)
-        !CALL ECREADR (ECDIRFLE,ECONO,'SWFRX',swfrx) !LPM 05JUN2015 SWFRX is not used   
-        !CALL ECREADR (ECDIRFLE,ECONO,'SWFRN',swfrn) !LPM 05JUN2015 SWFRN is not used 
-        !CALL ECREADR (ECDIRFLE,ECONO,'SWFNL',swfrnl) !LPM 05JUN2015 SWFRNL is not used 
-        !CALL ECREADR (ECDIRFLE,ECONO,'SWFXL',swfrxl) !LPM 05JUN2015 SWFRL is not used 
-        !CALL ECREADR (ECDIRFLE,ECONO,'SLACF',lawcf) LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
         CALL ECREADR (ECDIRFLE,ECONO,'TBLSZ',tblsz)
         CALL ECREADR (ECDIRFLE,ECONO,'BR1FX',brfx(1))
@@ -476,17 +450,9 @@
         CALL SPREADR (SPDIRFLE,'WFRGU',wfrtg)
         CALL SPREADR (SPDIRFLE,'WFSU' ,wfsu)
         CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)
-        ! LAH Following set up to allow for change in stem fraction
-        ! Currently not used ... just one stem fraction (STFR)
-        !IF (SWFRN <= 0.0) CALL SPREADR (SPDIRFLE,'SWFRN',swfrn) !LPM 05JUN2015 SWFRNL is not used
-        !IF (SWFRNL <= 0.0) CALL SPREADR (SPDIRFLE,'SWFRNL',swfrnl)!LPM 05JUN2015 SWFRNL is not used 
-        !IF (SWFRXL <= 0.0) CALL SPREADR (SPDIRFLE,'SWFXL',swfrxl)!LPM 05JUN2015 SWFRXL is not used 
-        !IF (SWFRX <= 0.0) CALL SPREADR (SPDIRFLE,'SWFRX',swfrx) !LPM 05JUN2015 SWFRX is not used   
         ! Following may be temporarily in ECO or CUL file
         IF (PD(9) <= 0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
-        !IF (DUSRI < 0.0) CALL SPREADR (SPDIRFLE,'DUSRI',dusri) !LPM 05JUN2015 DUSRI is not used
         IF (LLIFA <= 0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
-        !IF (SRFR <= 0.0) CALL SPREADR (SPDIRFLE,'SRFR',srfr) !LPM 08 JUN2015 SRFR is not used   
         IF (RDGS <= 0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
         IF (LAXS <= 0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
         IF (RLWR <= 0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
@@ -496,8 +462,6 @@
         IF (NFPU <= 0.0) CALL SPREADR (SPDIRFLE,'NFPU',nfpu)
         IF (NFPL <= 0.0) CALL SPREADR (SPDIRFLE,'NFPL',nfpl)
         IF (KCAN <= 0.0) CALL SPREADR (SPDIRFLE,'KCAN',kcan)
-        !IF (LAWCF <= 0.0) CALL SPREADR (SPDIRFLE,'SLACF',lawcf) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-        !IF (LAWMNFR <= 0.0) CALL SPREADR (SPDIRFLE,'SLAMN',lawmnfr) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         IF (DFPE < 0.0) CALL SPREADR (SPDIRFLE,'PPFPE',dfpe)
         IF (PPEXP < 0.0) CALL SPREADR (SPDIRFLE,'PPEXP',ppexp)
         ! N uptake 

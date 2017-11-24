@@ -142,13 +142,11 @@ Module YCA_First_Trans_m
     INTEGER :: DOM                     ! Day of month                   #          ! (From Integrate) 
     INTEGER :: DOYCOL                  ! Day of year column number      #          ! (From Output)    
     REAL    :: DRAINC                  ! Drainage from profile,cumulat  mm         ! (From SeasInit)  
-    !REAL    :: DSTAGE                  ! Development stage,linear       #          ! (From SeasInit)  !LPM 05JUN2015 DSTAGE is not used
     REAL    :: DTRY                    ! Effective depth of soil layer  cm         ! (From Growth)    
     REAL    :: DU                      ! Developmental units            PVC.d      ! (From SeasInit)  
     REAL    :: DUNEED                  ! Developmental units needed tir PVC.d      ! (From SeasInit)  
     REAL    :: DUPHASE                 ! Development units,current tier PVoCd      ! (From Growth)    
     REAL    :: DUPNEXT                 ! Development units,next tier    PVoCd      ! (From Growth)    
-    !REAL    :: DUSRI                   ! Degree days to st.root init.   oC.d       ! (From SeasInit)  !LPM 05JUN2015 DUSRI is not used
     REAL    :: DUTOMSTG                ! Developmental units,germ->mat  Du         ! (From SeasInit)  
     INTEGER :: DYNAMICPREV             ! Program control varbl,previous #          ! (From SeasInit)  
     REAL    :: EARLYN                  ! Leaf # for early N switch      #          ! (From Growth)    

@@ -35,70 +35,12 @@
         !-----------------------------------------------------------------------
         !           Partitioning of C to above ground and roots (minimum) 
         !-----------------------------------------------------------------------
-        
-        !LPM 30MAY2015 Delete PTF to consider a spill-over model
-        
-        !PTF = PTFMN+(PTFMX-PTFMN)*DSTAGE                                                                               !EQN 280   
-        ! Partition adjustment for stress effects
-        !PTF = AMIN1(PTFMX,PTF-PTFA*(1.0-AMIN1(WFG,NFG)))                                                               !EQN 281
-        !CARBOR = AMAX1(0.0,(CARBOBEG+CARBOADJ))*(1.0-PTF)                                                              !EQN 282
-        !CARBOT = AMAX1(0.0,(CARBOBEG+CARBOADJ)) - CARBOR                                                               !EQN 283
+
         
         CARBOT = AMAX1(0.0,(CARBOBEG+CARBOADJ))                                                                         !EQN 283
         
-        ! Stem fraction or ratio to leaf whilst leaf still growing
-        ! (If a constant STFR is entered,swfrx is set=stfr earlier)
-        ! Increases linearly between specified limits
-        !SWFR = CSYVAL (LNUM,SWFRNL,SWFRN,SWFRXL,SWFRX)                                                                !EQN 296 !LPM 05JUN2015 SWFR is not used 
 
-        ! Plant. stick fraction                                  !LPM 20MAY2015 Deleted, instead it is used NODEWTGB(0)  
-        !GROCRFR = 0.0
-        !! Increases linearly from start to end of growth cycle
-        !GROCRFR = CRFR * DSTAGE                                                                                        !EQN 386
 
-        !-----------------------------------------------------------------------
-        !           Number determination of storage root 
-        !-----------------------------------------------------------------------
-
-        !GROSR = 0.0 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used  !LPM 05JUN2015 DUSRI is not used
-        !IF(CUMDU+DU < DUSRI)THEN 
-        !    SRDAYFR = 0.0                                                                                              !EQN 290a
-        !ELSEIF(CUMDU < DUSRI.AND.CUMDU+DU >= DUSRI)THEN
-        !    SRDAYFR = (DUSRI-CUMDU)/DU                                                                                 !EQN 290b
-        !ELSEIF(CUMDU > DUSRI)THEN
-        !    SRDAYFR = 1.0                                                                                              !EQN 290c
-        !ENDIF
-        !GROSR = SRFR*CARBOT*SRDAYFR                                                                                    !EQN 289
-            
-        !IF(CUMDU >= DUSRI.AND.SRNOPD <= 0.0) THEN                                  !LPM 05JUN2015 SRNOPD Defined when SRWT > 0 See CS_Growth_Distribute.f90
-        !    SRNOPD = INT(SRNOW*((vegetativeCanopyWeight())))                                                                !EQN 291
-        !ENDIF
-                     
-        !-----------------------------------------------------------------------
-        !           Specific leaf area
-        !-----------------------------------------------------------------------
-        !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
-        
-        !IF (LAWTR > 0.0.AND.LAWTS > 0.0.AND.LAWTS > TMEAN) THEN
-        !    TFLAW = 1.0+LAWTR*(TMEAN-LAWTS)                                                                            !EQN 305
-        !ELSE
-        !    TFLAW = 1.0
-        !ENDIF
-        !IF (LAWWR > 0.0.AND.WFG < 1.0) THEN
-        !    WFLAW = 1.0+LAWWR*(WFG-1.0)                                                                                !EQN 306
-        !ELSE
-        !    WFLAW = 1.0
-        !ENDIF
-        !
-        !! Position effect on standard SLA
-        !IF (LNUMSG > 0) THEN
-        !    LAWL(1) = AMAX1(LAWS*LAWFF,LAWS+(LAWS*LAWCF)*(LNUMSG-1))                                                  !EQN 307
-        !    ! Temperature and water stress effects on SLA at position
-        !    LAWL(1) = AMAX1(LAWL(1)*LAWMNFR,LAWL(1)*TFLAW*WFLAW)                                                      !EQN 308
-        !ELSE  
-        !    LAWL(1) = LAWS
-        !ENDIF 
-        
         LAWL(1) = LAWS
         !-----------------------------------------------------------------------
         !           Leaf growth
@@ -250,22 +192,6 @@
             ENDIF
         ENDIF
         
-        !LPM 02MAR15 Stem weight increase by cohort: 1 axis,main shoot
-        !DO L = 1,LNUMSG+1  
-        !    DO I = 0, INT(BRSTAGE)
-        !    IF (L <= LNUMTOSTG(I-1) THEN
-        !        BRNUMST = 1                                                                         
-        !    ELSEIF (BRSTAGE > 0.0) THEN
-        !        BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                
-        !    ENDIF        
-        
-        ! Potential leaf+stem weight increase. !LPM 11APR15 Comment out to test the node development and the potential stem growth 
-        !IF (SWFR > 0.0.AND.SWFR < 1.0) THEN
-        !    GROLSP = GROLFP * (1.0 + SWFR/(1.0-SWFR))                                                                  !EQN 295a
-        !ELSE
-        !    GROLSP = GROLFP                                                                                            !EQN 295b
-        !ENDIF
-        
         
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         node%NODEWTG = 0.0
@@ -383,31 +309,13 @@
         GROSTCR = 0.0
         STAIG = 0.0
         STAIS = 0.0
-        !! Potential stem weight increase.
-        !IF (SWFR < 1.0) THEN
-        !    GROSTCRP = GROLFP * SWFR/(1.0-SWFR)                                                                        !EQN 381a
-        !    GROSTCRPSTORE = AMAX1(GROLFP,GROSTCRPSTORE)                                                                !EQN 382
-        !ELSE  
-        !    GROSTCRP = GROSTCRPSTORE                                                                                   !EQN 381b
-        !    ! LAH May need to change GROSTCRP as progress
-        !ENDIF
-        
-        ! Potential stem weight increase. !LPM 28APR15 Change according to the new equation for stem development (see above GROSTP)
         GROSTCRP = GROSTP                                                                                          !EQN 381a
         
         
         IF (GROLFP+GROSTCRP > 0.0) THEN
             GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
         ENDIF
-        ! LAH RSFRS is the fraction of stem growth to reserves
-        ! May need to have this change as stem growth proceeds
-        
-        ! Planting stick .. in balance with stem
-        !GROCR = GROSTCR * GROCRFR                                                                                      !EQN 384
-        !GROST = GROSTCR * (1.0-GROCRFR)                                                                                !EQN 385
-        
-        !LPM 20MAY2015 Planting stick grows as BR=0. It assumes an internode length of 2 cm to define the amount of nodes 
-        !in the planting stick (In the future it could be modified as an input in the X-file)
+
         GROST = GROSTCR
         
         IF (GROLSP > 0.0) THEN
