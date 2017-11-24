@@ -36,7 +36,6 @@ Module YCA_First_Trans_m
     REAL    :: AVGSW                   ! Average soil water in SWPLTD   %          ! (From Growth)    
     REAL    :: b_slope_lsize           ! Slope to define  max leaf size #          ! LPM 28feb15 
     REAL    :: BASELAYER               ! Depth at base of layer         cm         ! (From Integrate) 
-    REAL    :: Bcount                  ! counters for iterations in branches (Bcount)
     INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
     INTEGER :: BRDAE(PSX)              ! DAE when a new branch appears  d          ! LPM 11APR15 To save the date of branch appearance
     REAL    :: BRFX(0:PSX)             ! Branch # per fork at each fork #          ! (From SeasInit)  
@@ -373,7 +372,6 @@ Module YCA_First_Trans_m
     REAL    :: LAWTR                   ! Leaf area/weight,temp response fr/C       ! (From SeasInit)  
     REAL    :: LAWTS                   ! Leaf area/weight,temp standard C          ! (From SeasInit)  
     REAL    :: LAXS                    ! Area of biggest leaf,main stem cm2        ! (From SeasInit)  
-    REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
     REAL    :: LEAFN                   ! Leaf N                         g/p        ! (From SeasInit)  
     REAL    :: LEAFNEXCESS             ! Leaf N > critical              g/p        ! (From Integrate) 
     INTEGER :: LENDIS                  ! Length,ISWDIS flag             #          ! (From SeasInit)  
@@ -1230,8 +1228,6 @@ Module YCA_First_Trans_m
         
         L = 0
         LF = 0
-        Bcount = 0
-        Lcount = 0
         BR=0
         L1 = 0
         L2 = 0

@@ -22,7 +22,7 @@
         INTEGER NLAYR
         
         REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
-        REAL    :: PLASTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Integrate) 
+        REAL    :: leafAreaSenesced                 !PLASTMP Leaf area senesced,temporary   cm2/p      ! (From Integrate) 
        
         !-----------------------------------------------------------------------
         !         Calculate reserve concentration
@@ -73,19 +73,19 @@
         SENLALITTER = SENLALITTER + PLAS * SENFR                                                                       !EQN 457
         LAPHC = LAPHC + LAPH  ! Grazed leaf area                                                                       !EQN 458
         ! Distribute senesced leaf over leaf positions and cohorts
-        PLASTMP = PLAS - PLASP
-        IF (LNUMSG > 0 .AND. PLASTMP > 0) THEN
+        leafAreaSenesced = PLAS - PLASP
+        IF (LNUMSG > 0 .AND. leafAreaSenesced > 0) THEN
             !DO L = 1, LNUMSG                              !LPM 28MAR15 Change to introduce cohorts
             DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
                 DO LF = 1, LNUMSIMSTG(BR) 
-                    IF (leafAreaLeftToSenesce(node(BR,LF)) > PLASTMP) THEN                                                                     ! DA If the leaf can senesce more
-                        node(BR,LF)%LAPS = node(BR,LF)%LAPS + PLASTMP                                                                        !EQN 459a
-                        PLASTMP = 0.0
+                    IF (leafAreaLeftToSenesce(node(BR,LF)) > leafAreaSenesced) THEN                                                                     ! DA If the leaf can senesce more
+                        node(BR,LF)%LAPS = node(BR,LF)%LAPS + leafAreaSenesced                                                                        !EQN 459a
+                        leafAreaSenesced = 0.0
                     ELSE
-                        PLASTMP = PLASTMP - leafAreaLeftToSenesce(node(BR,LF))                                                               
+                        leafAreaSenesced = leafAreaSenesced - leafAreaLeftToSenesce(node(BR,LF))                                                               
                         node(BR,LF)%LAPS = node(BR,LF)%LATL3T                                                                                   !EQN 459b    ! DA The leaf area is totally senesced
                     ENDIF
-                    IF (PLASTMP <= 0.0) EXIT
+                    IF (leafAreaSenesced <= 0.0) EXIT
                 ENDDO
             ENDDO
         ENDIF

@@ -15,6 +15,8 @@
     
         IMPLICIT NONE
         
+        REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
+        REAL    :: Bcount                  ! counters for iterations in branches (Bcount)
         CHARACTER(LEN=1) ISWNIT      , ISWWAT
         REAL BRSTAGE
         REAL    :: LAPSTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Growth)    

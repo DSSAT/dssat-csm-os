@@ -16,6 +16,7 @@
     
         IMPLICIT NONE
         
+        REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
         CHARACTER(LEN=1) ISWNIT      
         REAL    BRSTAGE     , NFP         
 
