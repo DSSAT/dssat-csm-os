@@ -18,6 +18,7 @@
         IMPLICIT NONE
         
         REAL    BRSTAGE     , DAYL        
+        REAL    :: BRSTAGETMP              ! Branching stage                #          ! (From Growth)    
     
         !-----------------------------------------------------------------------
         !           Determine when in day germination and emergence occurred

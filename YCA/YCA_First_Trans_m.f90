@@ -46,7 +46,6 @@ Module YCA_First_Trans_m
     REAL    :: BRNUMSTPREV(0:PSX)      ! Branch number/shoot,previous   #          ! (From Output)  !LPM 23MAR15 to have the apex number by branch level      
     INTEGER :: BROLDESTA               ! Br with Leaf  ,oldest active   #          ! (From Integrate)
     REAL    :: BRSTAGEPREV             ! Branching stage,previous       #          ! (From SeasInit)  
-    REAL    :: BRSTAGETMP              ! Branching stage                #          ! (From Growth)    
     REAL    :: CANHTG                  ! Canopy height growth           cm         ! (From SeasInit)  
     REAL    :: CARBOADJ                ! Ch2o adjustment for LAI change g/p        ! (From SeasInit)  
     REAL    :: CARBOBEG                ! Ch2o available,beginning day   g/p        ! (From SeasInit)  
@@ -65,7 +64,6 @@ Module YCA_First_Trans_m
     REAL    :: CNAM                    ! Canopy N at harvest            kg/ha      ! (From SeasInit)  
     REAL    :: CNAMERR                 ! Canopy N,harvest,error         %          ! (From Output)    
     REAL    :: CNAMM                   ! Canopy N,harvest,measured      kg/ha      ! (From SeasInit)  
-    REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
     INTEGER :: CNI                     ! Crop component,initial value   #          ! (From SeasInit)  
     REAL    :: CNPCHM                  ! Canopy N,harvest,measured      %          ! (From Output)    
     REAL    :: CO2AIR                  ! CO2 concentration in air       g/m3       ! (From Growth)    
@@ -290,7 +288,6 @@ Module YCA_First_Trans_m
     REAL    :: HIAM                    ! Harvest index,above ground,mat #          ! (From SeasInit)  
     REAL    :: HIAMERR                 ! Harvest index,maturity,error   %          ! (From Output)    
     REAL    :: HIAMM                   ! Harvest index,mature,measure   #          ! (From SeasInit)  
-    REAL    :: HIAMMTMP                ! Harvest index,mature,temporary #          ! (From Output)    
     REAL    :: HIND                    ! Harvest index,N,above ground   #          ! (From SeasInit)  
     REAL    :: HINM                    ! Harvest index,N,abground,mat   #          ! (From SeasInit)  
     REAL    :: HINMM                   ! Harvest N index,mature,meas    %          ! (From SeasInit)  
@@ -373,20 +370,11 @@ Module YCA_First_Trans_m
     REAL    :: LAPD                    ! Leaf area (green) per plant    cm2        ! (From Growth)    
     REAL    :: LAPH                    ! Leaf area (green) harvested    cm2/d      ! (From Growth)    
     REAL    :: LAPHC                   ! Leaf area (green) harvested,cu cm2/p      ! (From SeasInit)  
-    REAL    :: LAPSTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Growth)    
-    !REAL    :: LAWCF                   ! Leaf area/wt change,fr.st      fr/lf      ! (From SeasInit) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
-    !REAL    :: LAWFF                   ! Leaf area/wt flexibility,fr.st fr         ! (From SeasInit) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA  
     REAL    :: LAWL(2)                 ! Area to wt ratio,n=youngest lf cm2/g      ! (From Growth)    
-    !REAL    :: LAWMNFR                 ! Leaf area/wt ratio,min.fr.std. #          ! (From SeasInit) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA   
     REAL    :: LAWS                    ! Leaf area/wt ratio,standard    cm2/g      ! (From SeasInit)  
     REAL    :: LAWTR                   ! Leaf area/weight,temp response fr/C       ! (From SeasInit)  
     REAL    :: LAWTS                   ! Leaf area/weight,temp standard C          ! (From SeasInit)  
-    !REAL    :: LAXN2                   ! Leaf # (one axis),end max.area #          ! (From SeasInit)  
-    !REAL    :: LAXNO                   ! Leaf # (one axis),maximum area #          ! (From SeasInit) !LPM 05JUN2016 LAXNO LAXN2 are not used 
     REAL    :: LAXS                    ! Area of biggest leaf,main stem cm2        ! (From SeasInit)  
-    !INTEGER :: LCNUM                   ! Leaf cohort number (inc.grow)  #          ! (From SeasInit) !LPM 28MAR15 Non necessary variables  
-    !REAL    :: LCOA(LCNUMX)            ! Leaf cohort area               cm2        ! (From SeasInit) !LPM 25MAR15 Non necessary variables  
-    !REAL    :: LCOAS(LCNUMX)           ! Leaf cohort area senesced      cm2        ! (From SeasInit)  
     REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
     REAL    :: LEAFN                   ! Leaf N                         g/p        ! (From SeasInit)  
     REAL    :: LEAFNEXCESS             ! Leaf N > critical              g/p        ! (From Integrate) 
@@ -448,7 +436,6 @@ Module YCA_First_Trans_m
     INTEGER :: LNUMSOLDESTA            ! Leaf number,oldest acive,axis  #          ! (From Integrate) 
     REAL    :: LNUMSTG(20)             ! Leaf number,specific stage     #          ! (From SeasInit)  
     REAL    :: LNUMT                   ! Leaf number from t file        #          ! (From Output)    
-    REAL    :: LNUMTMP                 ! Leaf #,temporary val for calc  #          ! (From SeasInit)  
     REAL    :: LNUMTOSTG(0:PSX)        ! Leaf numbers at fork stages    #          ! (From SeasInit)  
     REAL    :: LNUSE(0:3)              ! Leaf N use,overall and parts   g          ! (From SeasInit)  
     REAL    :: LPEAI                   ! Leaf petiole area index        m2/m2      ! (From SeasInit)  

@@ -103,6 +103,10 @@
                     RTDEPG = TTGEM*RDGS/STDAY*GERMFR                                                                          !EQN 391b
                 ENDIF
             ENDIF
+            
+            !------------------------------!
+            !     Root weight by layer     !
+            !------------------------------!
             L = 0
             CUMDEP = 0.0
             RTDEPTMP = RTDEP+RTDEPG                                                                                    !EQN 402
@@ -129,6 +133,7 @@
                 RLDF(L) = RLDF(L)*(1.0-((CUMDEP-RTDEPTMP)/DLAYR(L)))
             ENDIF
             NLAYRROOT = L
+            
             ! Root senescence
             SENRTG = 0.0
             IF(STDAY /= 0) THEN

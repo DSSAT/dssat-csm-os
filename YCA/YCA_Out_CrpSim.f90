@@ -20,6 +20,7 @@
         INTEGER :: CN          , DOY         , ON          , REP         , RN          , RUN         , RUNI         
         INTEGER :: SN          , STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
+        REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
 
         ! Screen writes
         IF (IDETD == 'S') THEN

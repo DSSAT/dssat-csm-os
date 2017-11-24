@@ -44,11 +44,7 @@
                 PSNUM = PSNUM + 1                                                       !    5     K B5DAT 5thBranch
             ENDIF                                                                       !    6     K B6DAT 6thBranch until branch level 10
         ENDDO                                                                           !   10     K B0DAT 10thBranch 
-        ! IF MSTG not found, use maximum principal stage number                         
-        !IF (MSTG <= 0) THEN  !LPM 05JUN2015 MSTG is not used
-        !    MSTG = KEYPSNUM
-        !ENDIF
-        ! IF HSTG not found, use maximum principal stage number + 1
+
         IF (HSTG <= 0) THEN
             HSTG = PSX
             !HSTG = MSTG+1                  !LPM 07MAR15 MSTG to PSX
@@ -67,82 +63,13 @@
                     ENDDO
                 ENDIF
                 PSABVO(L) = PSABV(L)
-                ! DAS -> DAP for output
                 PSABVO(L)(5:5) = 'P'
             ENDIF
         ENDDO
         
-        !-----------------------------------------------------------------------
-        !       Calculate/adjust branching tier durations and thresholds
-        !-----------------------------------------------------------------------
-        
-        ! Find number of tiers
-        !MSTG = 0 
-        !IF (PDL(1) > 0.0) THEN !LPM 04MAR15 remove to add IF (MEDEV == 'LNUM')THEN
+
         DUTOMSTG = 0.0
-        LNUMTOSTG = 0.0        
-        !IF (MEDEV == 'LNUM')THEN !LPM 04MAR15 MEDEV defines if branching durations input is as node unit (LNUM) !LPM 21MAY2015 this method is not used
-        !    ! If tier durations input as node units,calculte DU for tiers
-        !    DO L = 0,8 !LPM 07MAR15 here 8 is left (instead of PSX) to avoid problems with the estimation of DSTAGE
-        !        IF (PDL(L) > 0.0) THEN
-        !            MSTG = L+1
-        !            HSTG = MSTG+1  
-        !        ENDIF 
-        !    ENDDO
-        !    ! Check for missing tier durations and if so use previous
-        !    IF (MSTG > 2) THEN   !LPM 07MAR15 here MSTG is not changed to PSX to avoid problems with the estimation of DSTAGE
-        !        DO L = 2,MSTG
-        !            IF (PDL(L) < 0.0) THEN
-        !                PDL(L) = PDL(L-1)
-        !            ENDIF
-        !        ENDDO
-        !    ENDIF  
-        !    ! Calculate leaf # to MSTG
-        !    TVR1 = 0.0
-        !    DO L = 1,MSTG-1
-        !        TVR1 = TVR1 + AMAX1(0.0,PDL(L))                                                                        !EQN 001
-        !    ENDDO  
-        !    ! Now calculate tier durations in Thermal Units
-        !    TVR2 = 0.0
-        !    LNUMTMP = 0.0
-        !    DSTAGE = 0.0
-        !    DO L = 1,1000
-        !        TVR2 = TVR2 + STDAY
-        !        TVR3 = 1.0/((1.0/PHINTS)*(1.0-AMIN1(.8,PHINTFAC*DSTAGE)))                                              !EQN 003
-        !        ! TVR3 is a temporary name for PHINT within the loop 
-        !        LNUMTMP = LNUMTMP + STDAY/TVR3
-        !        DSTAGE = AMIN1(1.0,LNUM/TVR1)                                                                          !EQN 002
-        !        IF(LNUMTMP >= PDL(1).AND.PSTART(2) <= 0.0) PSTART(2) = TVR2
-        !        IF(LNUMTMP >= PDL(1)+PDL(2).AND.PSTART(3) <= 0.0) PSTART(3) = TVR2
-        !        IF(LNUMTMP >= PDL(1)+PDL(2)+PDL(3).AND.PSTART(4) <= 0.0) PSTART(4) = TVR2
-        !        IF(LNUMTMP >= PDL(1)+PDL(2)+PDL(3)+PDL(4).AND. PSTART(5) <= 0.0) PSTART(5) = TVR2
-        !        IF(LNUMTMP >= PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5).AND.PSTART(6) <= 0.0) PSTART(6) = TVR2
-        !        IF(LNUMTMP >= PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6).AND.PSTART(7) <= 0.0) PSTART(7) = TVR2
-        !        IF(LNUMTMP >= PDL(1)+PDL(2)+PDL(3)+PDL(4)+PDL(5)+PDL(6)+PDL(7).AND.PSTART(8) <= 0.0) PSTART(8) = TVR2
-        !    ENDDO 
-        !    DO L = 1,MSTG-1
-        !        PD(L) = PSTART(L+1) - PSTART(L)
-        !    ENDDO
-        !    PDL(MSTG) = 200.0
-        !    PD(MSTG) = PDL(MSTG)*PHINTS
-        !    DSTAGE = 0.0
-        !    
-        !    DO L = 1, MSTG-1  !LPM 06MAR15 move because it should be part of the conditional 
-        !    IF (PD(L) > 0.0) THEN
-        !        DUTOMSTG = DUTOMSTG + PD(L)
-        !        LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)                                                                 !EQN 006
-        !    ENDIF  
-        !    ENDDO
-        !ELSE 
-            ! If tier durations input as developmental units
-            !DO L = 1,8  !LPM 06MAR15 to avoid a fix value of branch levelS (8)
-        !DO L = 0,PSX    !LPM 05JUN2015 MSTG  is not used
-        !    IF (PDL(L) > 0.0) THEN
-        !        MSTG = L+1
-        !        HSTG = MSTG+1  
-        !    ENDIF 
-        !ENDDO
-        ! Check for missing tier durations and if so use previous
+
             
         DO L = 0,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
             IF (L <= 2)THEN
@@ -157,64 +84,31 @@
                 Ctrnumpd = 0
                 !DO L = 2,MSTG-1  !LPM 04MAR15 It is not necessary the -1 because there is not a MSTG with a different value 
                 DO L = 1,PSX
-                    !IF (PD(L) < 0.0) THEN !LPM 04MAR15 We use the same input data PDL instead of create a new coefficient (PD) 
+                    !LPM 04MAR15 We use the same input data PDL instead of create a new coefficient (PD) 
                     IF (PDL(L) < 0.0) THEN  
                         PDL(L) = PDL(L-1)
-                        !PD(L) = PD(L-1) !LPM 04MAR15 We use the same input data PDL instead of create a new coefficient (PD)
+                       !LPM 04MAR15 We use the same input data PDL instead of create a new coefficient (PD)
                         PD(L) = PDL(L-1)
                         CTRNUMPD = CTRNUMPD + 1
                     ENDIF
                 ENDDO
             ENDIF  
-            !IF (CTRNUMPD > 0) THEN   !LPM 07mar15 It would not be necessary. B12ND would be used from the second branch     
-            !    WRITE(MESSAGE(1),'(A11,I2,A24)') 'Duration of',CTRNUMPD,' branches less than zero. ' !LPM 04MAR15 tiers to branches
-            !    MESSAGE(2)='Used value(s) for preceding branch. '
-            !    CALL WARNING(2,'CSCAS',MESSAGE)
-            !ENDIF
-            !PDL(MSTG) = 200.0
-            !PD(MSTG) = PDL(MSTG)  !LPM 04MAR15 PD as PDL (directly from the cultivar file as thermal time) 
-        
-            ! Calculate thresholds 
-            !LPM 04MAR15 It should be part of the conditional (MEDEV== DEVU) to define the values of PSTART, 
-            !if (MEDEV== LNUM) PSTART has been already defined (line 110-116)
-            !DO L = 0,MSTG  !LPM 07MAR15 MSTG to PSX
+
             DO L = 0,PSX
                 PSTART(L) = 0.0
             ENDDO
-            !DO L = 0,MSTG  !LPM 07MAR15 MSTG to PSX
+
             DO L = 1,PSX
                 PSTART(L) = PSTART(L-1) + AMAX1(0.0,PD(L))
             ENDDO
             
-            !DO L = 1, MSTG-1  !LPM 07MAR15 MSTG to PSX
+
             DO L = 1, PSX-1
                 IF (PD(L) > 0.0) THEN
                     DUTOMSTG = DUTOMSTG + PD(L)
-                    !LNUMTOSTG(L+1) = LNUMTOSTG(L) + PDL(L)  !LPM 04MAR15 it is estimated through the simulation                !EQN 006
                 ENDIF  
             ENDDO
-        !ENDIF  
-        
-        
-      
-        !IF (PHINTS <= 0.0) THEN   !LPM 21MAY2015 this variable is not used
-        !    OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
-        !    WRITE(fnumerr,*) ' '
-        !    WRITE(fnumerr,*) 'PHINT <= 0! Please correct genotype files.'
-        !    WRITE(*,*) ' PHINT <= 0! Please correct genotype files.'
-        !    WRITE(*,*) ' Program will have to stop'
-        !    PAUSE
-        !    CLOSE (fnumerr)
-        !    STOP ' '
-        !ENDIF
-        
-        ! Adjust germination duration for seed dormancy
-        !LPM 21MAR
-        !IF (PLMAGE < 0.0.AND.PLMAGE > -90.0) THEN
-        !    PEGD = PGERM - (PLMAGE*STDAY) ! Dormancy has negative age                                                  !EQN 045b
-        !ELSE
-        !    PEGD = PGERM
-        !ENDIF
+
         
         !-----------------------------------------------------------------------
         !       Check and/or adjust coefficients and set defaults if not present
@@ -229,34 +123,11 @@
             RNCMN(L) = RNPCMN(L)/100.0
         ENDDO
         
-        !IF (LA1S <= 0.0) THEN                                                                  !DA 03OCT2016 Removing LA1S variable, use not significant for the model
-        !    LA1S = 5.0
-        !    WRITE(MESSAGE(1),'(A47)') 'Initial leaf size (LA1S) missing. Set to 5 cm2.'
-        !    CALL WARNING(1,'CSCGR',MESSAGE)
-        !ENDIF
-        
-        !IF (LAFND > 0.0.AND.LAFND <= LAXNO.OR.LAFND < 0) THEN
-        !    LAFND = LAXNO + 10
-        !    WRITE(MESSAGE(1),'(A59)') 'Leaf # for final size missing or < maximum! Set to max+10.'
-        !    CALL WARNING(1,'CSCGR',MESSAGE)
-        !ENDIF
         IF (DFPE < 0.0) THEN  
             DFPE = 1.0
             WRITE(MESSAGE(1),'(A51)') 'Pre-emergence development factor missing. Set to 1.'
             CALL WARNING(1,'CSYCA',MESSAGE)
         ENDIF
-        
-        ! Stem fraction constant throughout lifecycle
-        !IF (SWFRS > 0.0) THEN  !LPM 05JUN2015 SWFRS is not used
-        !    SWFRX = SWFRS
-        !    SWFRXL = 9999
-        !    SWFRN = SWFRS
-        !    SWFRNL = 0
-        !ENDIF 
-        
-        ! Storage root 
-        !IF (SRFR < 0.0) SRFR = 0.0 !LPM 08 JUN2015 SRFR is not used   
-        ! IF (HMPC <= 0.0) HMPC = 50.0 !issue 49 20JUN2015 Hmpc is not used
         
         ! Nitrogen uptake                  
         IF (rtno3.le.0.0) RTNO3 = 0.006  ! NO3 uptake/root lgth (mgN/cm)

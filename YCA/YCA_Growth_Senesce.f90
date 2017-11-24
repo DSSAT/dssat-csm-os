@@ -17,6 +17,7 @@
         
         CHARACTER(LEN=1) ISWNIT      , ISWWAT
         REAL BRSTAGE
+        REAL    :: LAPSTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Growth)    
     
         !-----------------------------------------------------------------------
         !           Calculate senescence of leaves,stems,etc..

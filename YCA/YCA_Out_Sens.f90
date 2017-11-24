@@ -19,6 +19,8 @@
      
         INTEGER :: CN          , DOY         , STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
+        
+        REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
 
         CHARACTER(LEN=1)  :: RNMODE      
 

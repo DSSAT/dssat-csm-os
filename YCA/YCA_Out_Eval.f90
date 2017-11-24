@@ -24,6 +24,8 @@
         INTEGER :: CSTIMDIF    , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT            ! Integer function calls
 
         REAL    :: TNIMBSOM    , TOMINSOM1          
+        REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
+        REAL    :: HIAMMTMP                ! Harvest index,mature,temporary #          ! (From Output)    
 
         CHARACTER(LEN=1)  :: IDETG       , IDETL       , IDETO       , ISWNIT      , ISWWAT      , MESOM       
         CHARACTER(LEN=10) :: TL10FROMI                                                        ! Character function call
