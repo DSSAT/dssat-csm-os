@@ -223,7 +223,7 @@ C-----------------------------------------------------------------------
      &    TILLVALS, TILLNO)                               !Output
       ENDIF
 
-      IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+      IF (INDEX('AFRDPWET',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
 !       Calculate irrigation depth for today
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
@@ -248,7 +248,7 @@ C     Call AUTHAR subroutine to check harvest switch and
 C     determine YREND
 C-----------------------------------------------------------------------
 !     Calculate cumulative irrigation
-      IF (INDEX('AFRDPW',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+      IF (INDEX('AFRDPWET',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
         CALL IRRIG(CONTROL, ISWITCH,
      &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
      &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
@@ -419,7 +419,7 @@ C-----------------------------------------------------------------------
 
       IF (IDETR == 'Y') THEN
 !       If irrigation apps, trigger printout  
-        IF ((INDEX('AFPWRD',IIRRI) .GT. 0) .OR.
+        IF ((INDEX('AFPWRDET',IIRRI) .GT. 0) .OR.
 
 !       If Fertilizer applications are activated
      &    (INDEX('AFRFD',IFERI) .GT. 0) .OR.
@@ -461,7 +461,7 @@ C-----------------------------------------------------------------------
 !        ENDIF 
 
 !       If irrigation apps, add headers  
-        IF (INDEX('AFPWRD',IIRRI) .GT. 0) THEN
+        IF (INDEX('AFPWRDET',IIRRI) .GT. 0) THEN
           WRITE(DLUN,'(A)',ADVANCE='NO') '  IR#C  IRRC'
         ENDIF 
 
@@ -558,7 +558,7 @@ C-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
 !         If irrigation apps, print data  
-          IF (INDEX('AFPWRD',IIRRI) .GT. 0) THEN
+          IF (INDEX('AFPWRDET',IIRRI) .GT. 0) THEN
             WRITE(DLUN,"(2(1X,I5))",ADVANCE='NO') NAP, NINT(TOTIR)
           ENDIF     
 
@@ -624,11 +624,12 @@ C-----------------------------------------------------------------------
         CALL NAILUJ(DOY,YEAR,RMON,NDAY)
         Write(Date_Txt,'(A3,I3,", ",I4)') RMON, NDAY, YEAR 
 
-!!       Planting
-!        IF (YRDOY == YRPLT .AND. CROP .NE. 'FA') THEN
-!          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
-!     &          "Planting       "
-!        ENDIF
+!       Planting
+        IF (YRDOY == YRPLT .AND. CROP .NE. 'FA') THEN
+          WRITE(DLUN2,98) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+     &          "Planting       "
+   98     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A)
+        ENDIF
 
 !       Physiological Maturity
         IF (MDATE == YRDOY) THEN

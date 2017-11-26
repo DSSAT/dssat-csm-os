@@ -266,12 +266,14 @@
 !-----------------------------------------------------------------------
         TMPFAC = 0.
         TMPFCS = 0.
-        DO I = 1,24
+        DO I = 1,TS
           TMPFAC =CURV(TYPSDT,FNSDT(1),FNSDT(2),FNSDT(3),FNSDT(4),
      &                  TGRO(I))
         TMPFCS = TMPFCS + TMPFAC
         ENDDO
-        TMPFAC = TMPFCS / 24.
+        TMPFAC = TMPFCS /REAL(TS)
+C 24 changed to TS on 3Jul17 by Bruce Kimball
+        
 !-----------------------------------------------------------------------
 !       Calculate reduction in seed growth due to insect punctures
 !-----------------------------------------------------------------------
@@ -395,10 +397,12 @@
 !     High temp would increase fraction growth to vegetative tissue
 !-----------------------------------------------------------------------
       TEMXFR = 0.
-      DO I = 1,24
+      DO I = 1,TS
         TEMXFR = TEMXFR + TABEX(YXFTEM,XXFTEM,TGRO(I),6)
       ENDDO
-      TEMXFR = TEMXFR/24.
+      TEMXFR = TEMXFR/REAL(TS)
+C 24 changed to TS by Bruce Kimball on 3Jul17
+      
 !-----------------------------------------------------------------------
 !     Partitioning to pods is increased under drought stress conditions
 !        depending on XFRMAX, an input parameter
@@ -511,10 +515,12 @@
 !     Compute F, specific leaf area for new leaf weight
 !-----------------------------------------------------------------------
       TPHFAC = 0.
-      DO I = 1,24
+      DO I = 1,TS
         TPHFAC = TPHFAC + TABEX (YSLATM,XSLATM,TGRO(I),5)
       ENDDO
-      TPHFAC = TPHFAC/24.
+      TPHFAC = TPHFAC/REAL(TS)
+C 24 changed to TS by Bruce Kimball on 3Jul17
+      
 !-----------------------------------------------------------------------
       PARSLA = (SLAMN+(SLAMX-SLAMN)*EXP(SLAPAR*PAR))/SLAMX
       TURFSL = MAX(0.1, (1.0 - (1.0 - TURFAC)*TURSLA))

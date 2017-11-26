@@ -1,0 +1,115 @@
+*EXP.DETAILS: CCPA7801CS 1978 FOUR CULTIVARS
+
+*GENERAL
+@PEOPLE
+VELTKAMP,H.J.
+@ADDRESS
+-99
+@SITE
+PALMIRA,COLOMBIA  3.52;-76.35;423;AW
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+@NOTES
+ AGRICULTURAL UNIVERSITY,WAGENINGEN,NETHERLANDS CIAT Experiment 1
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 C1 MCol-1684               1  1  0  1  1  1  0  0  0  0  0  1  1
+ 2 1 0 0 C2 MVen-77                 2  1  0  1  1  1  0  0  0  0  0  1  1
+ 3 1 0 0 C3 MPtr-26                 3  1  0  1  1  1  0  0  0  0  0  1  1
+ 4 1 0 0 C4 MCol-22                 4  1  0  1  1  1  0  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 CS UC0006 MCol-1684
+ 2 CS UC0007 MVen-77
+ 3 CS UC0008 MPtr-26
+ 4 CS UC0002 MCol-22
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 CIAT0001 CCPA       -99   -99   -99   -99   -99   -99 -99    209  CCPA000030 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1   -99 78349   -99     0     1     1   -99     0     0     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5   .34   -99   -99
+ 1    15   .34   -99   -99
+ 1    25  .345   -99   -99
+ 1    35  .345   -99   -99
+ 1    50  .335   -99   -99
+ 1    65  .323   -99   -99
+ 1    80  .323   -99   -99
+ 1    99  .328   -99   -99
+ 1   122  .325   -99   -99
+ 1   137  .288   -99   -99
+ 1   159  .242   -99   -99
+ 1   184  .177   -99   -99
+ 1   209  .193   -99   -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 78349   -99     1     1     V     R   100    90    20   450   -99   -99   -99    25                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    30    50   100   -99   -99    10 -99
+@I IDATE  IROP IRVAL
+ 1 78349 IR001    30
+ 1 78356 IR001    30
+ 1 78363 IR001    30
+ 1 79005 IR001    30
+ 1 79012 IR001    30
+ 1 79019 IR001    30
+ 1 79026 IR001    30
+ 1 79033 IR001    30
+ 1 79040 IR001    30
+ 1 79047 IR001    30
+ 1 79054 IR001    30
+ 1 79061 IR001    30
+ 1 79068 IR001    30
+ 1 79075 IR001    30
+ 1 79082 IR001    30
+ 1 79278 IR001    30
+ 1 79292 IR001    30
+ 1 79306 IR001    30
+ 1 79320 IR001    30
+ 1 79334 IR001    30
+ 1 79348 IR001    30
+ 1 79362 IR001    30
+ 1 80010 IR001    30
+ 1 80024 IR001    30
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 79346 GS000   -99   -99   -99   -99 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     P 78349  2150 Cultivars  4C  (Veltkam1
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     N     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     R     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     N     N     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          78342 78356    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 IB001 IBI01    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 79349   100     0
+
+
+

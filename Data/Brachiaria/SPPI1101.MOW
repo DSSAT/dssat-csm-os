@@ -1,3 +1,7 @@
+!This file is for parameters controlling simulated mowing events for Marandu brachiaria for
+!the CROPGRO-Forage model.  
+!Mow height is not used any where, except to affect canopy height as m or cm.
+
 @TRNO   DATE   MOW RSPLF   MVS  RSHT
      1 11014  2694    22     3  10.0
      1 11042  2852    26     3  10.0

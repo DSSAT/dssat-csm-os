@@ -141,14 +141,14 @@ C-----------------------------------------------------------------------
       CALL GETARG (0,INPUTX)
 !      call path_adj(inputx)
       IPX = LEN_TRIM(INPUTX)
-D     INPUTX = STDPATH // 'DSCSM046.EXE'
+D     INPUTX = STDPATH // 'DSCSM047.EXE'
       CALL PATHD  (DSSATP,INPUTX,IPX)
       CONTROL % DSSATP = DSSATP
 
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
-      INPUT = INPUTX((index(inputx,slash,back=.true.)+1):IPX)
+!      INPUT = INPUTX((index(inputx,slash,back=.true.)+1):IPX)
 
 C-----------------------------------------------------------------------
 C    Initialize and delete previous copy of FILEIO

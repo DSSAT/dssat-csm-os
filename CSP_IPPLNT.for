@@ -1,4 +1,4 @@
-C== CSP_IPPLNT.FOR ======================================================
+C== CSP_IPPLNT.for ======================================================
 C
 C  Based on IPPLNT, Subroutine, C.H. Porter
 C-----------------------------------------------------------------------
@@ -525,7 +525,7 @@ C------ Find particular ECOTYPE ----------------------------------------
       CALL GETLUN('OUTO', NOUTDO)
 !-----------------------------------------------------------------------
 ! Write results of input  If this is re-activated, must incorporate
-!                         file CSP_IPPLNT_OUT.FOR, which is not fully
+!                         file CSP_IPPLNT_OUT.for, which is not fully
 !                         converted from DSSAT 3.5 format.
 !-----------------------------------------------------------------------
 !     CALL CSP_IPPLNT_OUT(CONTROL,

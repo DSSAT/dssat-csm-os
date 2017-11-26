@@ -1,5 +1,5 @@
 C=======================================================================
-!  WTHMOD.FOR contains:   
+!  WTHMOD.for contains:   
 !     WTHMOD - Input weather modification array, Adjust weather variables
 !     WTHSET - Update WTHADJ array.
 C=======================================================================

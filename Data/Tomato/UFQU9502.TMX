@@ -1,0 +1,247 @@
+*EXP.DETAILS: UFQU9502TM FALL 1995,SOLARSET,N-RATE,DRIP-IRR
+
+*GENERAL
+@PEOPLE
+Johan Scholberg, Ph.D. Diss.  B. L.McNeal was advisor
+@ADDRESS
+Drip irrigated, states to be N rates but only one set of data here Trt 14?
+@SITE
+Quncy, FL
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+14 1 0 0 95F-180 N AI, N-B "off"    1  1  0  1  1  1  4  0  0  0  0  1  1
+! 1 1 0 0 0 N AI, N-B "off"          1  1  0  1  1  1  1  0  0  0  0  1  1
+! 2 1 0 0 60 N AI, N-B "off"         1  1  0  1  1  1  2  0  0  0  0  1  1
+! 3 1 0 0 120 N AI, N-B "off"        1  1  0  1  1  1  3  0  0  0  0  1  1
+! 4 1 0 0 180 N AI, N-B "off"        1  1  0  1  1  1  4  0  0  0  0  1  1
+! 5 1 0 0 240 N AI, N-B "off"        1  1  0  1  1  1  5  0  0  0  0  1  1
+! 6 1 0 0 0 N AI, N-B "on"           1  1  0  1  1  1  1  0  0  0  0  1  2
+! 7 1 0 0 60 N AI, N-B "on"          1  1  0  1  1  1  2  0  0  0  0  1  2
+! 8 1 0 0 120 N AI, N-B "on"         1  1  0  1  1  1  3  0  0  0  0  1  2
+! 9 1 0 0 180 N AI, N-B "on"         1  1  0  1  1  1  4  0  0  0  0  1  2
+!10 1 0 0 240 N AI, N-B "on"         1  1  0  1  1  1  5  0  0  0  0  1  2
+!11 1 0 0 0 N DI, N-B "on "          1  1  0  1  1  1  1  0  0  0  0  1  3
+!12 1 0 0 60 N DI, N-B "on "         1  1  0  1  1  1  2  0  0  0  0  1  3
+!13 1 0 0 120 N DI, N-B "on "        1  1  0  1  1  1  3  0  0  0  0  1  3
+!15 1 0 0 240 N DI, N-B "on "        1  1  0  1  1  1  5  0  0  0  0  1  3
+!16 1 0 0 180 N DI        Mulched    1  2  0  1  1  1  4  0  0  0  0  1  4
+!17 1 0 0 0 N DI   , OM*0            1  4  0  1  1  1  1  0  0  0  0  1  4
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 TM TM0002 Solarset
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UFQU0001 UFQU9501   -99     0 DR000     0     0  0000 SL     180  IBTM910017 -99
+ 2 UFQU0002 UFQU9501   -99     0 DR000     0     0  0000 SA     180  UFQU950002 -99
+ 3 UFQU0003 UFQU9501   -99     0 DR000     0     0  0000 SA     180  UFQU950003 -99
+ 4 UFQU0004 UFQU9501   -99     0 DR000     0     0  0000 SA     180  UFQU950004 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+ 2             -99             -99       -99               -99   -99   -99   -99   -99   -99
+ 3             -99             -99       -99               -99   -99   -99   -99   -99   -99
+ 4             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1   -99 95048     1     0     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    15   .21    .5     1
+ 1    38  .182    .5     1
+ 1    66  .182    .5     1
+ 1   112  .287     0     0
+ 1   157  .267     0     0
+ 1   203  .294     0     0
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2   -99 95048     1     0     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 2    15   .21    .5    .5
+ 2    38  .182    .5    .5
+ 2    66  .182    .5    .5
+ 2   112  .287     0     0
+ 2   157  .267     0     0
+ 2   203  .294     0     0
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 3   -99 95048     1     0     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 3    15   .21    .5     2
+ 3    38  .182    .5     2
+ 3    66  .182    .5     2
+ 3   112  .287     0     0
+ 3   157  .267     0     0
+ 3   203  .294     0     0
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 95199   -99   1.2   1.2     T     R   183    90     1     3    25    25     1   -99                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    20    80    95   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 95199 IR005   3.8
+ 1 95200 IR005   3.8
+ 1 95201 IR005   3.8
+ 1 95202 IR005   3.8
+ 1 95203 IR005   3.8
+ 1 95204 IR005   3.8
+ 1 95205 IR005   3.8
+ 1 95206 IR005   3.8
+ 1 95207 IR005   3.8
+ 1 95208 IR005   3.8
+ 1 95209 IR005   3.8
+ 1 95210 IR005   3.8
+ 1 95211 IR005   3.8
+ 1 95212 IR005   3.8
+ 1 95213 IR005   1.9
+ 1 95214 IR005   1.9
+ 1 95215 IR005   1.9
+ 1 95216 IR005   1.9
+ 1 95217 IR005   1.9
+ 1 95218 IR005   1.9
+ 1 95219 IR005   1.9
+ 1 95220 IR005   1.9
+ 1 95221 IR005   1.9
+ 1 95222 IR005   1.9
+ 1 95223 IR005   1.9
+ 1 95224 IR005   1.9
+ 1 95225 IR005   1.9
+ 1 95226 IR005   1.9
+ 1 95227 IR005   1.9
+ 1 95228 IR005   1.9
+ 1 95229 IR005   1.9
+ 1 95230 IR005   1.9
+ 1 95231 IR005   1.9
+ 1 95232 IR005   1.9
+ 1 95233 IR005   1.9
+ 1 95234 IR005   3.8
+ 1 95235 IR005   3.8
+ 1 95236 IR005   3.8
+ 1 95237 IR005   3.8
+ 1 95238 IR005   3.8
+ 1 95239 IR005   3.8
+ 1 95240 IR005   3.8
+ 1 95241 IR005   3.8
+ 1 95242 IR005   3.8
+ 1 95243 IR005   3.8
+ 1 95244 IR005   3.8
+ 1 95245 IR005   3.8
+ 1 95246 IR005   3.8
+ 1 95247 IR005   3.8
+ 1 95248 IR005   3.8
+ 1 95249 IR005   3.8
+ 1 95249 IR005   3.8
+ 1 95250 IR005   3.8
+ 1 95251 IR005   3.8
+ 1 95252 IR005   3.8
+ 1 95253 IR005   3.8
+ 1 95254 IR005   3.8
+ 1 95255 IR005   3.8
+ 1 95256 IR005   3.8
+ 1 95257 IR005   3.8
+ 1 95258 IR005   3.8
+ 1 95259 IR005   3.8
+ 1 95260 IR005   3.8
+ 1 95261 IR005   3.8
+ 1 95262 IR005   3.8
+ 1 95263 IR005   3.8
+ 1 95264 IR005   3.8
+ 1 95265 IR005   3.8
+ 1 95266 IR005   3.8
+ 1 95267 IR005   3.8
+ 1 95268 IR005   3.8
+ 1 95269 IR005   3.8
+ 1 95270 IR005   1.9
+ 1 95271 IR005   1.9
+ 1 95272 IR005   1.9
+ 1 95273 IR005   1.9
+ 1 95274 IR005   1.9
+ 1 95275 IR005   1.9
+ 1 95276 IR005   1.9
+ 1 95277 IR005   1.9
+ 1 95278 IR005   1.9
+ 1 95279 IR005   1.9
+ 1 95270 IR005   1.9
+ 1 95271 IR005   1.9
+ 1 95272 IR005   1.9
+ 1 95273 IR005   1.9
+ 1 95274 IR005   1.9
+ 1 95275 IR005   1.9
+ 1 95276 IR005   1.9
+ 1 95277 IR005   1.9
+ 1 95278 IR005   1.9
+ 1 95279 IR005   1.9
+ 1 95280 IR005   1.9
+ 1 95281 IR005   1.9
+ 1 95282 IR005   1.9
+ 1 95283 IR005   1.9
+ 1 95284 IR005   1.9
+ 1 95285 IR005   1.9
+ 1 95286 IR005   1.9
+ 1 95287 IR005   1.9
+ 1 95288 IR005   1.9
+ 1 95289 IR005   1.9
+ 1 95290 IR005   1.9
+ 1 95291 IR005   1.9
+ 1 95292 IR005   1.9
+ 1 95293 IR005   1.9
+ 1 95294 IR005   1.9
+ 1 95295 IR005   1.9
+ 1 95296 IR005   1.9
+ 1 95297 IR005   1.9
+ 1 95298 IR005   1.9
+ 1 95299 IR005   1.9
+ 1 95300 IR005   1.9
+ 1 95301 IR005   1.9
+ 1 95302 IR005   1.9
+ 1 95303 IR005   1.9
+ 1 95304 IR005   1.9
+ 1 95305 IR005   1.9
+ 1 95306 IR005   1.9
+ 1 95307 IR005   1.9
+ 1 95308 IR005   1.9
+ 1 95309 IR005   1.9
+ 1 95310 IR005   1.9
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 95192 FE001 AP004     5     0     0     0     0     0     0 -99
+ 2 95192 FE001 AP004     5    67     0     0     0     0     0 -99
+ 3 95192 FE001 AP004     5   133     0     0     0     0     0 -99
+ 4 95192 FE001 AP004     5   200     0     0     0     0     0 -99
+ 5 95192 FE001 AP004     5   266     0     0     0     0     0 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 95283 GS000   -99   -99   -99   -99 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 95192  2150 Fert Trial
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              N     N     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     A     R     N     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          95064 95064    40   100    30    45    40
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    80   100 GS000 IR005    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI            200    50    25 SI001 SI001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100    60    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA            283 95283    75     0
+
+
+

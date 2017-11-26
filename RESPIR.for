@@ -27,16 +27,24 @@ C=======================================================================
       IMPLICIT NONE
 
       INTEGER H
-      REAL MAINR, PG, R30C2, RES30C, RO, RP, TRSFAC, WTMAIN
+      REAL MAINR, PG, R30C2, RES30C, RO, RP, TRSFAC, WTMAIN, SCLTS
+C     SCLTS added on 4 July 2017 by Bruce Kimball
       REAL TGRO(TS)
 
 C-----------------------------------------------------------------------
 C     Temperature effect on maintenance respiration (McCree, 1974)
 C-----------------------------------------------------------------------
       TRSFAC = 0.0
-      DO H = 1,24
-        TRSFAC = TRSFAC + 0.044+0.0019*TGRO(H)+0.001*TGRO(H)**2
+      SCLTS = 24./TS
+      DO H = 1,TS
+C        TRSFAC = TRSFAC + 0.044+0.0019*TGRO(H)+0.001*TGRO(H)**2
+         TRSFAC = TRSFAC + (0.044+0.0019*TGRO(H)+0.001*TGRO(H)**2)*SCLTS
+C         scaling factor of 24/TS added on 4July2017 by Bruce Kimball
       ENDDO
+C 24 changed to TS on 3 July 2017 by Bruce Kimball
+C This equation look really suspicious because TRSFAC very 
+C dependent on number of times through the loop!
+      
 C-----------------------------------------------------------------------
 C     Convert maintainence respiration to actual temperature. RES30C is
 C     the g CH2O/g DW/hr used in maintenance respiration at 30 C.

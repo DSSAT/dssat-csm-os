@@ -21,6 +21,7 @@ C  03/31/2004 GH  Changed to release version CSM v4.0
 C  08/31/2005 GH  Changed to release version CSM Version 4.0.2
 C  02/21/2006 GH  Change to working version CSM v4.5
 C  02/06/2007 CHP Change to working version CSM v4.6
+C  08/09/2017 CHP Change to working version CSM v4.7
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C
@@ -57,7 +58,7 @@ C=======================================================================
      & 'ิออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ'/
 
       DATA BOX_DAT/
-     & 'ณ                                     1 March 2014       ณ'/
+     & 'ณ                                    10 Aug 2017       ณ'/
 
       DATA ZCG/
      & '                    DSSAT FOUNDATION                    ',
@@ -97,7 +98,7 @@ C=======================================================================
 
       RETURN
 
-  100 FORMAT (10X,A1,13X,'DSSAT Version 4.6.0 Generic Input',10X,A1)
+  100 FORMAT (10X,A1,13X,'DSSAT Version 4.7.0 Generic Input',10X,A1)
   150 FORMAT (10X,A1,4X,
      &        'Please press < ENTER > key (ฤฤู) to continue',7X,A1)
   252 FORMAT (10X,A1,"  DSSAT Cropping System Model (CSM) Version ", 

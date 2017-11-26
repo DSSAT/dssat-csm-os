@@ -12,9 +12,9 @@
 !  07/07/2005 FSR Modified
 !----------------------------------------------------------------------
 !  Called from:  CASUPRO
-!  Calls:        CSP_INPHENOL  in CSP_INPHENOL.FOR
-!                CSP_IPPHENOL  in CSP_IPPHENOL.FOR
-!                CURV          in UTILS.FOR
+!  Calls:        CSP_INPHENOL  in CSP_INPHENOL.for
+!                CSP_IPPHENOL  in CSP_IPPHENOL.for
+!                CURV          in UTILS.for
 !----------------------------------------------------------------------
 !
       SUBROUTINE CSP_PHENOL(CONTROL, ISWITCH, FILECC,
@@ -165,7 +165,7 @@
 
 !----------------------------------------------------------------------
 !FSR - Introduced another output file that is readable by G-Build.  
-!      Included the following line in UTILS.FOR:
+!      Included the following line in UTILS.for:
 
 !     CASE ('OUTPHNL'); LUN = 48  !PHENOLOGY.OUT - FSR 
   
@@ -222,7 +222,7 @@
       OPEN(UNIT = WLUN, FILE = "WORK.OUT", STATUS = "UNKNOWN",
      &   ACTION = "WRITE", POSITION = "APPEND")
 
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_IPPHENOL.FOR")')
+      WRITE(WLUN,'(1X,"RESULTS FROM CSP_IPPHENOL.for")')
       WRITE(WLUN,*)
       WRITE(WLUN,'(1X,"Input file: ",A)') FILEIO
       WRITE(WLUN,'(1X,"Crop  : ",A2)') CROP
@@ -290,7 +290,7 @@
 
 ! TEMPORARY: Statements to test output from CSP_INPHENOL above
       WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_INPHENOL.FOR")')
+      WRITE(WLUN,'(1X,"RESULTS FROM CSP_INPHENOL.for")')
       WRITE(WLUN,*)
       WRITE(WLUN,'(1X,"Phase OptStageDur CumOptStageDur  STNAME")')
       WRITE(WLUN,'(1X,"         (days)       (days)")')
@@ -449,14 +449,14 @@
 
 ! TEMPORARY: Statements to test output from PHENOL_SC
       WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_PHENOL.FOR - SEASINIT")')
+      WRITE(WLUN,'(1X,"RESULTS FROM CSP_PHENOL.for - SEASINIT")')
       WRITE(WLUN,*)
       WRITE(WLUN,'(1X,"YRSIM:",I7)') YRSIM
       WRITE(WLUN,'(1X,"YRPLT:",I7)') YRPLT
       WRITE(WLUN,*)
       WRITE(WLUN,'(1X,"CropTypeName: ",A11)') CropTypeName
       WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM CSP_PHENOL.FOR - INTEGR")')
+      WRITE(WLUN,'(1X,"RESULTS FROM CSP_PHENOL.for - INTEGR")')
       WRITE(WLUN,*)
 
       WRITE(WLUN,'(1X,"  YRDOY DAS DAP PHSTG NSKST    STTD  
@@ -521,7 +521,7 @@
 
 !************************************************************************
 ! Environmental factor as a function of water stress factor
-! This factor is taken from the equation below defined in PHENOL.FOR and adapted 
+! This factor is taken from the equation below defined in PHENOL.for and adapted 
 ! for the sugarcane model.  Will P-stress be added here?  FSR
 
 ! VSTAGE = VSTAGE + DTX * TRIFOL * EVMOD * TURFAC * (1.0 - XPOD)

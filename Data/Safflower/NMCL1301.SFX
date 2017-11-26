@@ -1,0 +1,211 @@
+*EXP.DETAILS: NMCL1301SF CRITICAL STAGE BASED IRRIGATION
+
+*GENERAL
+@PEOPLE
+-99
+@ADDRESS
+-99
+@SITE
+-99
+!Singh, S., K. J. Boote, S. V. Angadi, K. Grover, S. Begna and D. Auld (2016).
+! Adapting the CROPGRO model to simulate growth and yield of spring safflower
+! in semi-arid conditions. Agronomy Journal. 108(1): 64-72.
+!S. Singh and D. Auld = Texas Tech University
+!S. V. Angadi, K. Grover and S. Begna = New Mexico State University
+!K. J. Boote = University of Florida
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 13 Irrigated               1  1  0  0  1  1  1  0  0  0  0  0  1
+ 2 1 1 0 13 V-stress                1  1  0  0  1  2  1  0  0  0  0  0  1
+ 3 1 1 0 13 R-stress                1  1  0  0  1  3  1  0  0  0  0  0  1
+ 4 1 1 0 13 Rainfed                 1  1  0  0  1  4  1  0  0  0  0  0  1
+ 5 1 1 0 14 Irrigated               1  2  0  0  2  5  2  0  0  0  0  0  2
+ 6 1 1 0 14 V-stress                1  2  0  0  2  6  2  0  0  0  0  0  2
+ 7 1 1 0 14 R-stress                1  2  0  0  2  7  2  0  0  0  0  0  2
+ 8 1 1 0 14 Rainfed                 1  2  0  0  2  8  2  0  0  0  0  0  2
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 SF IB0001 PI8311
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 NMCL0001 ACNM1301   -99   -99   -99   -99   -99   -99 CL     -99  NMCL CURRY -99
+ 2 NMCL0002 ACNM1401   -99   -99   -99   -99   -99   -99 CL     -99  NMCL CURRY -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+ 2             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 13119   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    WH 13119   -99   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5   -99   -99   -99
+ 1    15   -99   -99   -99
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2    WH 14167   -99   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 2     5   -99   -99   -99
+ 2    15   -99   -99   -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 13120   -99    48    48     S     R    15     0   3.5   -99   -99   -99   -99   -99                        -99
+ 2 14168   -99    37    37     S     R    15     0   3.5   -99   -99   -99   -99   -99                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    30    50   100 GS000 IR001    10 Irrigated
+@I IDATE  IROP IRVAL
+ 1 13135 IR004    51
+ 1 13151 IR004    38
+ 1 13162 IR004    38
+ 1 13175 IR004    44
+ 1 13180 IR004    38
+ 1 13188 IR004    44
+ 1 13206 IR004    25
+ 1 13217 IR004    25
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2     1    30    50   100 GS000 IR001    10 V-stress
+@I IDATE  IROP IRVAL
+ 2 13135 IR004    51
+ 2 13151 IR004     0
+ 2 13162 IR004     0
+ 2 13175 IR004     0
+ 2 13180 IR004    38
+ 2 13188 IR004    44
+ 2 13206 IR004    25
+ 2 13217 IR004    25
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 3     1    30    50   100 GS000 IR001    10 R-stress
+@I IDATE  IROP IRVAL
+ 3 13135 IR004    51
+ 3 13151 IR004    38
+ 3 13162 IR004    38
+ 3 13175 IR004    44
+ 3 13180 IR004     0
+ 3 13188 IR004     0
+ 3 13206 IR004     0
+ 3 13217 IR004     0
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 4     1    30    50   100 GS000 IR001    10 Rainfed
+@I IDATE  IROP IRVAL
+ 4 13135 IR004    51
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 5     1    30    50   100 GS000 IR001    10 Irrigated
+@I IDATE  IROP IRVAL
+ 5 14176 IR004    38
+ 5 14191 IR004    38
+ 5 14200 IR004    13
+ 5 14206 IR004    38
+ 5 14213 IR004    18
+ 5 14219 IR004    38
+ 5 14226 IR004    38
+ 5 14233 IR004    25
+ 5 14241 IR004    25
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 6     1    30    50   100 GS000 IR001    10 V-stress
+@I IDATE  IROP IRVAL
+ 6 14176 IR004    38
+ 6 14191 IR004     0
+ 6 14200 IR004     0
+ 6 14206 IR004     0
+ 6 14213 IR004     0
+ 6 14219 IR004    38
+ 6 14226 IR004    38
+ 6 14233 IR004    25
+ 6 14241 IR004    25
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 7     1    30    50   100 GS000 IR001    10 R-stress
+@I IDATE  IROP IRVAL
+ 7 14176 IR004    38
+ 7 14191 IR004    38
+ 7 14200 IR004    13
+ 7 14206 IR004    38
+ 7 14213 IR004    18
+ 7 14219 IR004     0
+ 7 14226 IR004     0
+ 7 14233 IR004     0
+ 7 14241 IR004     0
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 8     1    30    50   100 GS000 IR001    10 Rainfed
+@I IDATE  IROP IRVAL
+ 8 14176 IR004    38
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 13119 FE001 AP002    15   100    40   -99   -99   -99   -99 -99
+ 2 14167 FE001 AP002    15    56    18   -99   -99   -99   -99 -99
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 13119   -99   -99   -99   -99   -99   -99   -99   -99 -99
+
+*TILLAGE AND ROTATIONS
+@T TDATE TIMPL  TDEP TNAME
+ 1 13119   -99   -99 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 13120 GS015   -99   -99   -99   -99 Safflower
+ 1 13183 GS004   -99   -99   -99   -99 Safflower
+ 1 13246 GS016   -99   -99   -99   -99 Safflower
+ 2 13239 GS016   -99   -99   -99   -99 Safflower
+ 3 14279 GS016   -99   -99   -99   -99 Safflower
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 13119  2150 Common                    CRGRO
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     N     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     N     N     N     Y     N     N     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          13001 13001    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 01001   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              1     1     S 14167  2150 Common                    CRGRO
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     N     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 2 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 2 OU              N     Y     Y     1     Y     Y     Y     N     N     N     Y     N     N     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          14001 14001    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 2 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 01001   100     0
+
+
+

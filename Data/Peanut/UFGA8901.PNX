@@ -1,0 +1,146 @@
+*EXP.DETAILS: UFGA8901PN 1989 RAINFED AND IRRIGATED, FLORUNNER
+
+*GENERAL
+@PEOPLE
+K.J. Boote
+@ADDRESS
+Dept. of Agronomy, University of Florida, Gainesville, Florida, USA
+@SITE
+Irrigation Park, University of Florida, Gainesville
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 89 RAINFED FLORUNNER,GVL.  1  1  0  1  1  1  0  1  0  0  0  1  1
+ 2 1 1 0 89 IRRIG. FLORUNNER, GVL.  1  1  0  1  2  2  0  1  0  0  0  1  1
+ 3 1 1 0 89-DATE2-RF-FLO            1  1  0  2  3  3  0  2  0  0  0  0  2
+ 4 1 1 0 89-DATE2-IR-FLO            1  1  0  2  4  4  0  2  0  0  0  0  2
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 PN IB0002 FLORUNNER, STD
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UFGA0001 UFGA8901   -99     0 IB000     0     0 00000 -99    180  IBPN910016 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    PN 89096   100   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .089    .6   1.5
+ 1    15  .089    .6   1.5
+ 1    30  .068    .6   1.5
+ 1    45  .075    .6   1.5
+ 1    60  .075    .6   1.5
+ 1    90  .073    .6    .6
+ 1   120  .069    .6    .5
+ 1   150  .072    .6    .5
+ 1   180  .085    .6    .5
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2    PN 89143     1   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 2     5  .089    .6   1.5
+ 2    15  .089    .6   1.5
+ 2    30  .068    .6   1.5
+ 2    45  .075    .6   1.5
+ 2    60  .075    .6   1.5
+ 2    90  .073    .6    .6
+ 2   120  .069    .6    .5
+ 2   150  .072    .6    .5
+ 2   180  .085    .6    .5
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 89096   -99  17.5  17.5     S     R    91     0   5.7   -99   -99   -99   -99   -99                        -99
+ 2 89096   -99    17    17     S     R    91     0   5.7   -99   -99   -99   -99   -99                        -99
+ 3 89143   -99  19.2  19.2     S     R    91     0   5.7   -99   -99   -99   -99   -99                        -99
+ 4 89143   -99  18.7  18.7     S     R    91     0   5.7   -99   -99   -99   -99   -99                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 89118 IR001    15
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 2 89118 IR001    15
+ 2 89136 IR001    19
+ 2 89152 IR001    12
+ 2 89157 IR001    12
+ 2 89192 IR001    25
+ 2 89213 IR001    19
+ 2 89221 IR001    19
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 3   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 3 89150 IR001    12
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 4   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 4 89150 IR001    12
+ 4 89152 IR001    12
+ 4 89192 IR001    25
+ 4 89213 IR001    19
+ 4 89221 IR001    19
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 89096 IB001  1000    .8   -99   -99   -99    15   -99 -99
+ 2 89143 IB001  1000    .8   -99   -99   -99    15   -99 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 89242 IBH03 IBHCS IBHCS   100   -99 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 89096  2150 IRRIGATED(2,4), RAINFED(
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     N     R
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          99155 99200    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    70   100 IB001 IB001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 89365   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              1     1     S 89143  2150 IRRIGATED(2,4), RAINFED(
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     Y     Y     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 2 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 2 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          99155 99200    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 2 IR             30    70   100 IB001 IB001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 89365   100     0
+
+
+

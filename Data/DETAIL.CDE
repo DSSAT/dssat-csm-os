@@ -1,5 +1,5 @@
 *EXPERIMENTAL DETAILS CODES
-! DSSAT v4.6; 07/01/2015
+! DSSAT v4.7; 09/01/2017
 
 ! Headers used in the @ line to identify variables are listed first, codes to
 ! identify methods, chemicals, etc. are listed next in sections that relate to
@@ -211,10 +211,12 @@ CH055    Mancozeb [Fungicide]                                                 IB
 CH056    Tilt [Fungicide]                                                     IB
 CH057    Rhizobium (for legume crops)                                         IB
 CH100    Pix [Mepiquat Chloride; Growth Regulator]                            IB
+CH101    Ethephon [Growth Regulator]                                          IB
+CH102    Ethylene [Growth Regulator]                                          IB
 
 *Crop and Weed Species
 @CDE     DESCRIPTION                                                          SO
-AL       Alfalfa/Lucerne                                                      IB
+AL       Alfalfa                                                              IB
 AR       Aroid                                                                IB
 BA       Barley                                                               IB
 BM       Bermuda grass                                                        IB
@@ -246,19 +248,21 @@ PE       Pea                                                                  IB
 PI       Pineapple                                                            IB
 PN       Peanut                                                               IB
 PO       Perennial peanut                                                     IB
-PP       Pigeonpea                                                            IB
+PP       Pigeon pea                                                           IB
 PR       Pepper                                                               IB
 PT       Potato                                                               IB
 RI       Rice                                                                 IB
 RP       Rhizoma peanut                                                       IB
 SB       Soybean                                                              IB
 SC       Sugarcane                                                            IB
+SF       Safflower                                                            IB
 SG       Grain sorghum                                                        IB
 SI       Switch grass                                                         IB
 SQ       Sequence                                                             IB
 SS       Sesame                                                               IB
 SU       Sunflower                                                            IB
 SW       Sweetcorn                                                            IB
+TF       Teff                                                                 IB
 TM       Tomato                                                               IB
 TN       Tanier                                                               IB
 TR       Taro                                                                 IB
@@ -384,10 +388,10 @@ IR011    Constant flood depth, mm                                             IB
 SA001    Olsen                                                                IB
 SA002    Bray No. 1                                                           IB
 SA003    Bray No. 2                                                           IB
-SA004    Mehlich I (double acid, 1:5)                                         IB
+SA004    Mehlich 1 (double acid, 1:5)                                         IB
 SA005    Anion exchange resin                                                 IB
 SA006    Truog                                                                IB
-SA007    Mehlich I (double acid, 1:10)                                        IB
+SA007    Mehlich 1 (double acid, 1:10)                                        IB
 SA008    Colwell                                                              IB
 SA009    Water                                                                IB
 SA010    IFDC Pi strip                                                        IB

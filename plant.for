@@ -50,6 +50,7 @@ C  10/31/2007 US/RO/CHP Added TR_SUBSTOR (taro)
 C  08/09/2012 GH  Added CSCAS model
 !  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
+!  06/03/2015 LPM Added CSYCA model (CIAT cassava)
 !  05/10/2017 CHP removed SALUS model
 C=======================================================================
 
@@ -70,6 +71,7 @@ C-----------------------------------------------------------------------
 !         'CSCER' - CERES Wheat, Barley
 !         'CSCRP' - CropSim Wheat, Barley
 !         'CSCAS' - CropSim/GumCAS Cassava
+!         'CSYCA' - CIAT Cassava model
 !         'MLCER' - CERES-Millet 
 !         'MZCER' - CERES-Maize
 !         'PTSUB' - SUBSTOR-Potato
@@ -108,7 +110,7 @@ C-----------------------------------------------------------------------
       INTEGER STGDOY(20)
 
       REAL CANHT, CO2, DAYL, EO, EOP, EORATIO, EOS, EP, ES
-      REAL KCAN, KEP, KSEVAP, KTRANS, NSTRES
+      REAL KCAN, KEP, KSEVAP, KTRANS, LAI, NSTRES
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW
       REAL TMAX, TMIN, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
@@ -368,7 +370,22 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         ELSEIF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI
         ENDIF
+!     -------------------------------------------------
+!     Cassava CSYCA (CIAT cassava model)
+      CASE('CSYCA')
+        CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
+     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
+     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,        !Output
+     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,             !Output
+     &    UNH4, UNO3, XLAI)                               !Output
 
+        IF (DYNAMIC .EQ. SEASINIT) THEN
+          KTRANS = KEP
+          KSEVAP = KEP
+        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
 !     -------------------------------------------------
 !     APSIM N-wheat WHAPS
       CASE('WHAPS')
@@ -558,6 +575,17 @@ c     Total LAI must exceed or be equal to healthy LAI:
           XHLAI = XLAI
         ENDIF
 
+!     -------------------------------------------------
+!     Pineapple - Aloha model 
+      CASE('PIALO')
+        CALL Aloha_Pineapple(CONTROL, ISWITCH, 
+     &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SW, TRWUP,   !Input
+     &    WEATHER, YRPLT,                                 !Input
+     &    LAI, MDATE, RLV, SENESCE, STGDOY, UNH4, UNO3)   !Output
+
+        XLAI  = LAI
+        XHLAI = LAI 
+!     -------------------------------------------------
       END SELECT
 
 !***********************************************************************
@@ -597,7 +625,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! Variable listing for Alt_Plant - updated 08/18/2003
 ! --------------------------------------------------------------------------
 ! CANHT     Canopy height (m)
-! CO2       Atmospheric carbon dioxide concentration (�mol[CO2] / mol[air])
+! CO2       Atmospheric carbon dioxide concentration (µmol[CO2] / mol[air])
 ! CONTROL   Composite variable containing variables related to control 
 !             and/or timing of simulation.  The structure of the variable 
 !             (ControlType) is defined in ModuleDefs.for. 
@@ -636,9 +664,9 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! MESSAGE   Text array containing information to be written to WARNING.OUT 
 !             file. 
 ! MODEL     Name of CROPGRO executable file 
-! NH4(L)    Ammonium N in soil layer L (�g[N] / g[soil])
+! NH4(L)    Ammonium N in soil layer L (µg[N] / g[soil])
 ! NL        Maximum number of soil layers = 20 
-! NO3(L)    Nitrate in soil layer L (�g[N] / g[soil])
+! NO3(L)    Nitrate in soil layer L (µg[N] / g[soil])
 ! NSTRES    Nitrogen stress factor (1=no stress, 0=max stress) 
 ! NVALP0    Set to 100,000 in PHENOLOG, used for comparison of times of 
 !             plant stages (d)
@@ -661,12 +689,12 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !             density, drained upper limit, lower limit, pH, saturation 
 !             water content.  Structure defined in ModuleDefs. 
 ! SRAD      Solar radiation (MJ/m2-d)
-! ST(L)     Soil temperature in soil layer L (�C)
+! ST(L)     Soil temperature in soil layer L (°C)
 ! STGDOY(I) Day when plant stage I occurred (YYYYDDD)
 ! SW(L)     Volumetric soil water content in layer L
 !            (cm3 [water] / cm3 [soil])
-! TMAX      Maximum daily temperature (�C)
-! TMIN      Minimum daily temperature (�C)
+! TMAX      Maximum daily temperature (°C)
+! TMIN      Minimum daily temperature (°C)
 ! TRWUP     Potential daily root water uptake over soil profile (cm/d)
 ! TWILEN    Daylength from twilight to twilight (h)
 ! UNH4(L)   Rate of root uptake of NH4, computed in NUPTAK

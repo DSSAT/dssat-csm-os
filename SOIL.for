@@ -98,11 +98,12 @@ C=====================================================================
 
       INTEGER DYNAMIC
 
+      REAL, DIMENSION(0:NL) :: newCO2 !DayCent
       REAL, DIMENSION(NL) :: DRN
       REAL, DIMENSION(NL) :: SPi_Labile
       REAL, DIMENSION(0:NL) :: LITC, SSOMC
       REAL, DIMENSION(0:NL,NELEM) :: IMM, MNR
-
+      
 !     Added for tile drainage:
       REAL TDFC
       INTEGER TDLNO
@@ -139,22 +140,24 @@ C=====================================================================
      &    NO3, OMADATA, SENESCE, SOILPROP, SPi_Labile,    !Input
      &    SRFTEMP, ST, SW, TILLVALS,                      !Input
      &    IMM, LITC, MNR, MULCH, SomLit, SomLitC,         !Output
-     &    SomLitE, SSOMC)                                 !Output
+     &    SomLitE, SSOMC,                                 !Output
+     &    newCO2)                                         !for DayCent in SOILNI added by PG
       ELSE
 !      ELSEIF (MESOM .EQ. 'G') THEN
 !       Godwin (Ceres-based) soil organic matter module (formerly NTRANS)
         CALL SoilOrg (CONTROL, ISWITCH, 
      &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
-     &    IMM, LITC, MNR, MULCH, SomLit, SomLitC,         !Output
+     &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
      &    SomLitE, SSOMC)                                 !Output
       ENDIF
 
 !     Inorganic N (formerly NTRANS)
       CALL SoilNi (CONTROL, ISWITCH, 
      &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    SOILPROP, SSOMC, ST, SW, TDFC, TDLNO, TILLVALS, !Input
-     &    UNH4, UNO3, UPFLOW, WEATHER, XHLAI,             !Input
+     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
+     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
+     &    XHLAI,                                          !Input
      &    FLOODN,                                         !I/O
      &    NH4, NO3, UPPM)                                 !Output
 

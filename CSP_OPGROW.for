@@ -6,7 +6,7 @@ C  Generates output file for daily growth variables
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  01/01/1990 GH  Written
-C  09/21/1998 CHP Split off from OPDAY.FOR file
+C  09/21/1998 CHP Split off from OPDAY.for file
 C  05/11/1999 GH  Incorporated in CROPGRO
 C  06/19/2001 GH  Modified output format
 C  11/11/2001 O.H. Daza modified for sugarcane
@@ -1062,7 +1062,8 @@ C-----------------------------------------------------------------------
           WRITE (NOUTPC,510) YEAR, DOY, DAS, DAP,
      &        NINT(TOTWT*10), PGT, CMINEA, GROWTH,
      &        GRWRES, MAINR, (CADLF + CADST), RHOLP, RHOSP,
-     &        TGRO(12), TGROAV, PCNSDP, PCLSDP, PCCSDP
+     &        TGRO(TS/2), TGROAV, PCNSDP, PCLSDP, PCCSDP
+C            changed from 12 to TS/2 on 9Jan17 by Bruce Kimball          
   510     FORMAT(1X,I4,1X,I3.3,2(1X,I5),1X,I6,6(1X,F7.2),2(1X,F6.1),
      &        2(1X,F6.1),3(1X,F7.2))
 C-----------------------------------------------------------------------

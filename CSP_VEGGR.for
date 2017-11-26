@@ -173,7 +173,7 @@ C========================================================================
 
       WRITE(WLUN,*)
       WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"RESULTS FROM VEGGR_SC.FOR")')
+      WRITE(WLUN,'(1X,"RESULTS FROM VEGGR_SC.for")')
       WRITE(WLUN,'(1X,"-------------------------")')
       WRITE(WLUN,*)
       WRITE(WLUN,'(1X,"*** FILECC : ",A80)') FILECC
@@ -202,7 +202,7 @@ C========================================================================
       WRITE(WLUN,'(1X,"ATOP   : ",F6.3)') ATOP
 
       WRITE(WLUN,*)
-      WRITE(WLUN,'(1X,"END RESULTS FROM VEGGR_SC.FOR")')
+      WRITE(WLUN,'(1X,"END RESULTS FROM VEGGR_SC.for")')
 
 !      CLOSE (WLUN)
 
@@ -815,7 +815,7 @@ C-----------------------------------------------------------------------
       OPEN(UNIT = 600, FILE = "TestVeggr_SC.out", STATUS = "UNKNOWN", 
      & ACTION = "WRITE", POSITION = "REWIND", IOSTAT = OpenStatus)
 
-      WRITE(600,'(1X,"RESULTS FROM VEGGR_SC.FOR")')
+      WRITE(600,'(1X,"RESULTS FROM VEGGR_SC.for")')
       WRITE(600,*)
       WRITE(600,'(1X,"  YRDOY   YRSIM")', ADVANCE="NO") 
       WRITE(600,'(1X,"AGRLF AGRRT AGRSTM AGRSU")', ADVANCE="NO") 

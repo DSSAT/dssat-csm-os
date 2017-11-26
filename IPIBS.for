@@ -2,7 +2,7 @@ C=======================================================================
 C  IPIBS, Subroutine, G. Hoogenboom
 C-----------------------------------------------------------------------
 C  Reads input variables for temporary data file for transfer of
-C  information from the INPUT module to the CROPGRO module.
+C  information from the INPUT module to CSM.
 C-----------------------------------------------------------------------
 C  REVISION       HISTORY
 C  05/01/1989 GH  Written.
@@ -56,7 +56,7 @@ C-----------------------------------------------------------------------
       CHARACTER*1  ISWWAT, ISWNIT, ISWCHE, ISWTIL, ICO2
       CHARACTER*1  ISWSYM, ISWPHO, ISWPOT, ISWDIS
       CHARACTER*1  MEEVP, MEHYD, MEINF, MEPHO, MESIC
-      CHARACTER*1  MESOL, MESOM, MESEV, METMP
+      CHARACTER*1  MESOL, MESOM, MESEV, METMP, MEGHG
       CHARACTER*1  UPCASE, RNMODE
       CHARACTER*2  CROP
       CHARACTER*6  ERRKEY, SECTION
@@ -143,8 +143,8 @@ C-----------------------------------------------------------------------
           ICO2   = UPCASE(ICO2)
 
           READ (LUNIO,200, IOSTAT=ERRNUM) MESIC, MEEVP, MEINF, MEPHO, 
-     &        MEHYD, NSWI, MESOM, MESEV, MESOL, METMP
-  200     FORMAT(25X,A1,11X,A1,3(5X,A1),5X,I1,4(5X,A1))
+     &        MEHYD, NSWI, MESOM, MESEV, MESOL, METMP, MEGHG
+  200     FORMAT(25X,A1,11X,A1,3(5X,A1),5X,I1,5(5X,A1))
           LNUM = LNUM + 1 
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
 
@@ -281,6 +281,7 @@ C-----------------------------------------------------------------------
         ISWITCH % MESOM  = MESOM
         ISWITCH % METMP  = METMP
         ISWITCH % MESEV  = MESEV
+        ISWITCH % MEGHG  = MEGHG
 
         ISWITCH % IPLTI  = IPLTI
         ISWITCH % IIRRI  = IIRRI

@@ -24,6 +24,8 @@ C                   HIAM, EPCM, ESCM
 !  02/10/2010 CHP Added EDAT.
 !  02/23/2011 CHP Added seasonal average environmental values
 !  03/27/2012 CHP Fixed format bug for very large HWUM
+!  07/19/2016 CHP Add cumulative N2O emissions in Nitrogen section
+!  09/09/2016 CHP Add cumulative CO2 emissions from OC decomposition
 C=======================================================================
 
       MODULE SumModule
@@ -59,6 +61,10 @@ C=======================================================================
 !       Added 02/23/2011 Seasonal average environmental data
         INTEGER NDCH
         REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
+        
+!       Added 7/19/2016 N2O emissions
+        REAL N2OEC
+        INTEGER CO2EC
 
       End Type SummaryType
 
@@ -131,17 +137,19 @@ C-----------------------------------------------------------------------
 !     Added 02/23/2011 Seasonal average environmental data
       INTEGER NDCH
       REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
+      REAL N2OEC
+      INTEGER CO2EC
 
       LOGICAL FEXIST
 
 !     Text values for some variables that get overflow with "-99" values
-      CHARACTER*9 PRINT_TXT !Max field width for variable format printing
+      CHARACTER*9 PRINT_TXT, PRINT_TXT_neg !Max field width for variable format printing
       CHARACTER*9 DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT
       CHARACTER*9 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT
       CHARACTER*9 DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT
       CHARACTER*6 TMINA_TXT, TMAXA_TXT, SRADA_TXT, DAYLA_TXT
       CHARACTER*7 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
-
+      CHARACTER*6 N2OEC_TXT
 
 !     Evaluate.OUT variables:
       INTEGER ICOUNT   !Number of observations for this crop
@@ -307,6 +315,11 @@ C     Initialize OPSUM variables.
       SUMDAT % NIAM   = -99
       SUMDAT % CNAM   = -99
       SUMDAT % GNAM   = -99
+      
+!     N2O emissions
+      SUMDAT % N2OEC  = -99. !N2O emissions (kg/ha)
+      SUMDAT % CO2EC  = -99  !CO2 emissions from OM decomp (kg/ha)
+      
       SUMDAT % RECM   = -99
       SUMDAT % ONTAM  = -99
       SUMDAT % ONAM   = -99
@@ -398,6 +411,8 @@ C     Initialize OPSUM variables.
       NIAM = SUMDAT % NIAM    !Inorganic N at maturity (kg N/ha)
       CNAM = SUMDAT % CNAM    !Tops N at Maturity (kg/ha)
       GNAM = SUMDAT % GNAM    !Grain N at Maturity (kg/ha)
+      N2OEC= SUMDAT % N2OEC   !N2O emissions (kg/ha)
+      CO2EC= SUMDAT % CO2EC   !CO2 emissions (kg/ha)
 
       RECM = SUMDAT % RECM    !Residue Applied (kg/ha)
       ONTAM= SUMDAT % ONTAM   !Organic N at maturity, soil & surf (kg/h)
@@ -486,16 +501,16 @@ C-------------------------------------------------------------------
           WRITE(NOUTDS,310)
   310     FORMAT(/,
      &'!IDENTIFIERS......................... ',
-     &'EXPERIMENT AND TREATMENT.............. ', 
+     &'EXPERIMENT AND TREATMENT.......... ', 
      &'SITE INFORMATION............ ',
      &'DATES..........................................  ',
      &'DRY WEIGHT, YIELD AND YIELD COMPONENTS....................',
-     &'..................  ',
+     &'....................  ',
      &'WATER...............................................  ',
-     &'NITROGEN......................................  ',
+     &'NITROGEN............................................  ',
      &'PHOSPHORUS............  ',
      &'POTASSIUM.............  ',
-     &'ORGANIC MATTER..................................    ',
+     &'ORGANIC MATTER..........................................    ',
      &'WATER PRODUCTIVITY..................................',
      &'................    ',
      &'NITROGEN PRODUCTIVITY...........  ',
@@ -503,16 +518,17 @@ C-------------------------------------------------------------------
 
           WRITE (NOUTDS,400)
   400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL... ',
-     &    'EXNAME...... TNAM..................... ',
+     &    'EXNAME.. TNAM..................... ',
      &    'FNAM.... WSTA.... SOIL_ID...  ',
      &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
      &    '  DWAP    CWAM    HWAM    HWAH    BWAH  PWAM',
-     &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
+!     &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
+     &    '    HWUM    H#AM    H#UM  HIAM  LAIX',
      &    '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
-     &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM',
+     &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OEC',
      &    '  PI#M  PICM  PUPC  SPAM',
      &    '  KI#M  KICM  KUPC  SKAM',
-     &    '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM',
+     &    '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM   CO2EC',
      &    '    DMPPM    DMPEM    DMPTM    DMPIM     YPPM     YPEM',
      &    '     YPTM     YPIM',
      &    '    DPNAM    DPNUM    YPNAM    YPNUM',
@@ -528,7 +544,7 @@ C-------------------------------------------------------------------
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
      &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
-     &    CROP, MODEL, CONTROL%FILEX, TITLET, FLDNAM, WSTAT, SLNO,
+     &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO,
      &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
@@ -536,7 +552,7 @@ C-------------------------------------------------------------------
   500   FORMAT (I9,1X,I6,3(I3),               
 
 !       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, SLNO,
-     &  1X,A2,1X,A8,1X,A12,1X,A25,1X,A8,1X,A8,1X,A10,      
+     &  1X,A2,1X,A8,1X,A8,1X,A25,1X,A8,1X,A8,1X,A10,      
 
 !       YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &  6(1X,I7),
@@ -553,7 +569,8 @@ C-------------------------------------------------------------------
         ENDIF
         WRITE (NOUTDS,FMT,ADVANCE="NO") HWUM
 
-        WRITE (NOUTDS,'(1X,I5,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
+!        WRITE (NOUTDS,'(1X,I5,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
+        WRITE (NOUTDS,'(1X,I7,1X,F7.1)',ADVANCE="NO") HNUMAM, HNUMUM
 
         IF (HIAM < -.01)  THEN; FMT = '(1X,F5.0)'
         ELSE                  ; FMT = '(1X,F5.3)'
@@ -576,8 +593,8 @@ C-------------------------------------------------------------------
         YPNAM_TXT = PRINT_TXT(YPNAM, "(F9.1)")
         YPNUM_TXT = PRINT_TXT(YPNUM, "(F9.1)")
 
-        TMINA_TXT = PRINT_TXT(TMINA, "(F6.1)")
-        TMAXA_TXT = PRINT_TXT(TMAXA, "(F6.1)")
+        TMINA_TXT = PRINT_TXT_neg(TMINA, "(F6.1)")   !Allow negative numbers!
+        TMAXA_TXT = PRINT_TXT_neg(TMAXA, "(F6.1)")   !Allow negative numbers!
         SRADA_TXT = PRINT_TXT(SRADA, "(F6.1)")
         DAYLA_TXT = PRINT_TXT(DAYLA, "(F6.1)")
 
@@ -587,12 +604,15 @@ C-------------------------------------------------------------------
         ESCP_TXT = PRINT_TXT(ESCP, "(F7.1)")
         EPCP_TXT = PRINT_TXT(EPCP, "(F7.1)")
 
+        N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.2)")
+
         WRITE (NOUTDS,503) LAIX, 
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
      &    NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, CNAM, GNAM, 
+     &    N2OEC_TXT,
      &    PINUMM, PICM, PUPC, SPAM,        !P data
      &    KINUMM, KICM, KUPC, SKAM,        !K data
-     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
+     &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC,
 !         Water productivity
      &    DMPPM_TXT, DMPEM_TXT, DMPTM_TXT, DMPIM_TXT, 
      &                 YPPM_TXT, YPEM_TXT, YPTM_TXT, YPIM_TXT,
@@ -609,12 +629,17 @@ C-------------------------------------------------------------------
 
 !       IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
 !       NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, CNAM, GNAM, 
+     &  17(1X,I5),
+
+!        N2OEC_TXT,
+     &  A,
+
 !       PINUMM, PICM, PUPC, SPAM, 
 !       KINUMM, KICM, KUPC, SKAM, RECM, 
-     &  26(1X,I5),
+     &  9(1X,I5),
        
-!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM,
-     &  4(1X,I6),2(1X,I7),       
+!       ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC,
+     &  4(1X,I6),3(1X,I7),       
    
 !       DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM
 !    &  4F9.1,4F9.2,
@@ -635,12 +660,12 @@ C-------------------------------------------------------------------
         IF (FMOPT == 'C') THEN
             
             CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
-     &MODEL, TITLET, FLDNAM, WSTAT, SLNO, YRSIM, YRPLT, EDAT, ADAT, 
-     &MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, PWAM, 
-     &HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
+     &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO, YRSIM, 
+     &YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, 
+     &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
      &EPCM, ESCM, ROCM, DRCM, SWXM, NINUMM, NICM, NFXM, NUCM, NLCM, 
-     &NIAM, CNAM, GNAM, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, KUPC, 
-     &SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, 
+     &NIAM, CNAM, GNAM, N2OEC, PINUMM, PICM, PUPC, SPAM, KINUMM, KICM, 
+     &KUPC, SKAM, RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC, 
      &DMPPM, DMPEM, DMPTM, DMPIM, YPPM, YPEM, YPTM, YPIM, DPNAM, 
      &DPNUM, YPNAM, YPNUM, NDCH, TMAXA, TMINA, SRADA, DAYLA, CO2A, 
      &PRCP, ETCP, ESCP, EPCP,   
@@ -835,19 +860,46 @@ C=======================================================================
       READ (FTXT,'(2X,I1)',IOSTAT=ERRNUM) I   !width of field
       IF (ERRNUM == 0 .AND. I > 0) THEN
         FTXT1 = FTXT
-        WRITE(FTXT2,'("(",I1,"X,I3)")') I-3   
+        WRITE(FTXT2,'("(",I1,"X,A3)")') I-3   
       ELSE
         FTXT1 = "(F6.1)"
-        FTXT2 = "(3X,I3)"
+        FTXT2 = "(3X,A3)"
       ENDIF
 
       IF (VALUE > 1.E-6) THEN
         WRITE(PRINT_TXT,FTXT1) VALUE
       ELSE
-        WRITE(PRINT_TXT,FTXT2) -99
+        WRITE(PRINT_TXT,FTXT2) "-99"
       ENDIF
 
       End Function PRINT_TXT
+!=======================================================================
+!=======================================================================
+      Function PRINT_TXT_neg(VALUE, FTXT)
+
+      CHARACTER(LEN=*) PRINT_TXT_neg          !text string for real value
+      CHARACTER(LEN=*) FTXT                   !format for real value
+      CHARACTER(LEN=6) FTXT1                  !modified format for real value
+!     CHARACTER(LEN=7) FTXT2                  !format for "-99"
+      REAL VALUE
+      INTEGER I, ERRNUM
+
+      READ (FTXT,'(2X,I1)',IOSTAT=ERRNUM) I   !width of field
+      IF (ERRNUM == 0 .AND. I > 0) THEN
+        FTXT1 = FTXT
+!       WRITE(FTXT2,'("(",I1,"X,A3)")') I-3   
+      ELSE
+        FTXT1 = "(F6.1)"
+!       FTXT2 = "(3X,A3)"
+      ENDIF
+
+!     IF (VALUE > 1.E-6) THEN
+        WRITE(PRINT_TXT_neg,FTXT1) VALUE
+!     ELSE
+!       WRITE(PRINT_TXT,FTXT2) "-99"
+!     ENDIF
+
+      End Function PRINT_TXT_neg
 !=======================================================================
 !=======================================================================
 
@@ -959,7 +1011,8 @@ C=======================================================================
         CASE ('YPNUM');SUMDAT % YPNUM  = VALUE(I)
 
         CASE ('NDCH'); SUMDAT % NDCH   = NINT(VALUE(I))
-        CASE ('TMINA');SUMDAT % TMINA  = VALUE(I)
+        CASE ('TMINA')
+                       SUMDAT % TMINA  = VALUE(I)
         CASE ('TMAXA');SUMDAT % TMAXA  = VALUE(I)
         CASE ('SRADA');SUMDAT % SRADA  = VALUE(I)
         CASE ('DAYLA');SUMDAT % DAYLA  = VALUE(I)
@@ -968,6 +1021,10 @@ C=======================================================================
         CASE ('ETCP'); SUMDAT % ETCP   = VALUE(I)
         CASE ('ESCP'); SUMDAT % ESCP   = VALUE(I)
         CASE ('EPCP'); SUMDAT % EPCP   = VALUE(I)
+
+!       From N2O_Mod
+        CASE ('N2OEC');SUMDAT % N2OEC  = VALUE(I)
+        CASE ('CO2EC');SUMDAT % CO2EC  = VALUE(I)
 
         END SELECT
       ENDDO

@@ -166,24 +166,18 @@
           SubToday(IEL) = 0.0
           IF (IEL == N .AND. PRINTN) THEN
             WRITE(LUNSNC,10)
+!           Write initial conditions output to SoilNoBal.OUT.
+            WRITE (LUNSNC,50) YR2, DOY2, DAS, TSOME(N), TLITE(N), 
+     &      MULCHE(N), 0.0, 0.0, 0.0, 
+     &      0.0, 0.0, 0.0
           ENDIF
           IF (IEL == P .AND. PRINTP) THEN
             WRITE(LUNSPC,15)
-          ENDIF
-        ENDIF
-
-        IF (IEL == N .AND. PRINTN) THEN
-!         Write daily output to SoilNoBal.OUT.
-          WRITE (LUNSNC,50) YR2, DOY2, DAS, TSOME(N), TLITE(N), 
-     &      MULCHE(N), 0.0, 0.0, 0.0, 
-     &      0.0, 0.0, 0.0
-        ENDIF
-      
-        IF (IEL == P .AND. PRINTP) THEN
-!         Write daily output to SoilPoBal.OUT.
-          WRITE (LUNSPC,55) YR2, DOY2, DAS, TSOME(P), TLITE(P), 
+!           Write initial conditions output to SoilPoBal.OUT.
+            WRITE (LUNSPC,55) YR2, DOY2, DAS, TSOME(P), TLITE(P), 
      &      MULCHE(P), 0.0, 0.0, 0.0, 
      &      0.0, 0.0, 0.0
+          ENDIF
         ENDIF
 
         TORGEY(IEL)   = TORGEI(IEL) + HarvResE(IEL)

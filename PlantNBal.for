@@ -2,7 +2,7 @@ C***********************************************************************
 C  PlantNBal, Subroutine
 C 
 C  Purpose: Provides output N balance for plant growth processes 
-C     (file PlantN.bal).  Based on old NBAL.FOR, which combined
+C     (file PlantN.bal).  Based on old NBAL.for, which combined
 C     plant and soil N balances.
 C
 C  REVISION   HISTORY

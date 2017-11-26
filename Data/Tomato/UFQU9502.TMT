@@ -1,0 +1,10 @@
+*EXP. DATA (T): UFQU9502TM Solarest Fall experiment DI 180 N (T) data                  
+
+! File last edited on day 03/30/2008 at 10:18:13 AM
+!
+@TRNO   DATE  LAID  CWAD  PWAD
+    14 95199 0.004  7.89     0
+    14 95222  0.17   165     0
+    14 95242  1.25  1268 11.96
+    14 95262  2.94  3242   534
+    14 95283  1.99  6051  3254

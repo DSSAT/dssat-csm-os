@@ -1,9 +1,8 @@
 C=======================================================================
-C  COPYRIGHT 1998-2011 DSSAT Foundation
+C  COPYRIGHT 1998-2017 DSSAT Foundation
 C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      Universidad Politechnica de Madrid
-C                      Washington State University
 C  ALL RIGHTS RESERVED
 C=======================================================================
 C=======================================================================
@@ -20,7 +19,7 @@ C                   as defined in ModuleDefs.for
 C  12/17/2004 CHP Modified HRESCeres call for harvest residue
 C  08/17/2005 CHP Renamed to PT_SUBSTOR to accomodate TN, TR SUBSTOR
 C                 routines.
-C  08/23/2011 GH Added response to CO2 for tuber growth
+C  08/23/2011 GH Added CO2 response for tuber growth
 C=======================================================================
 
       SUBROUTINE PT_SUBSTOR(CONTROL, ISWITCH,
