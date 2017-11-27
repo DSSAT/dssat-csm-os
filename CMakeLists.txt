@@ -87,6 +87,15 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	ASMDM.for
 	AUTHAR.for
 	AUTPLT.for
+	BS_CERES.for
+	BS_GROSUB.for
+	BS_NFACTO.for
+	BS_NUPTAK.for
+	BS_OPGROW.for
+	BS_OPHARV.for
+	BS_OPNIT.for
+	BS_PHENOL.for
+	BS_ROOTS.for
 	CANOPY.for
 	CE_RATIO_C.for
 	CENTURY.for
@@ -130,6 +139,9 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	DATES.for
 	DECRAT_C.for
 	DEMAND.for
+	Denit_Ceres.for
+	Denit_DayCent.for
+	diffusiv.for
 	EFLOW_C.for
 	EQUIL2.for
 	ERROR.for
@@ -258,11 +270,13 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	MZ_OPNIT.for
 	MZ_PHENOL.for
 	MZ_ROOTS.for
+	N2O_mod.for
 	NCHECK_C.for
 	NCHECK_inorg.for
 	NCHECK_organic.for
 	NFIX.for
 	NFLUX.for
+	nox_pulse.f90
 	NUPTAK.for
 	OM_Place.for
 	OP_OBS/DS1900.f90

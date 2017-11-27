@@ -1,6 +1,6 @@
 *SOILS: University of Agriculture, Faisalabad, Pakistan
 
-*UAFD040001  SSOP        SIL     152 LYALLPUR ( SANDY CLAY LOAM)
+*UAFD040001  SSOP        SIL     152 SANDY CLAY LOAM (Experimental Site 1)
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  FAISALABAD  PAKISTAN         31.4   73.11 Fine loamy, silik.,therm.
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -14,7 +14,7 @@
    127  B3Ca  .158  .293  .409  .212   .23  1.51   .46    30    50     0   .04   8.8   -99  14.4   -99
    152     C  .165  .313  .423  .161   .15  1.53   .42    32    54     0   .04   8.2   -99  15.2   -99
 
-*UAFD040002  SSOP        SIL     152 LYALLPUR ( SANDY CLAY LOAM)
+*UAFD040002  SSOP        SIL     152 SANDY CLAY LOAM (Experimental site 2)
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  FAISALABAD  PAKISTAN         31.4   73.11 Fine loamy, silik.,therm.
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -53,7 +53,7 @@
    103  BCnk  .105   .28  .512  .167   .26  1.22   .13    15    66     0   .01   9.4   -99   -99   -99
    130   Cnk  .093  .269  .516  .097   .68  1.21   .06    13    68     0     0   9.4   -99   -99   -99
 
-*UAFD040002  SSP         SIL     190 JARANWALA (Silt loam)
+*UAFD040002  SSP         SIL     190 Lyallpur (Silt loam)
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  SAHIWAL     PAKISTAN         30.4   73.06 Coarse-silty,Mixed, hyperthermic Typic Calciargids
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -67,3 +67,14 @@
    128  BtK2  .069  .225   .44  .088   .68  1.42   .12     8    58   -99   .01   8.4   -99  15.3   -99
    167   BCK  .053  .207  .433  .052   .68  1.44   .06     5    59   -99     0   8.5   -99   9.7   -99
    190    Ck  .067   .22  .434  .028   .68  1.44   .03     8    58   -99     0   8.8   -99   -99   -99
+
+*UAFDLY0001  SSOP        SIL      190  SANDY CLAY LOAM (Experimental site 3)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Faisalabad  Pakistan        31.42   73.07 Coarse-silty,mixed,hyperthermic,Typic Calciargids
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN   .13     9   .23    61     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15    AP  .146  .294  .422     1   .68   1.5   .89    26    56     0   .07   7.8   -99   9.6   -99
+    92    B2  .152  .293  .414  .343   .15  1.51   .69    28    53     0   .03   7.9   -99  10.4   -99
+   127  B3Ca  .158  .293  .409  .112   .23  1.51   .46    30    50     0   .04   8.8   -99  14.4   -99
+   152     C  .165  .313  .423  .061   .15  1.53   .42    32    54     0   .04   8.2   -99  15.2   -99

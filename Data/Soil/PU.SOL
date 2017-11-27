@@ -1,6 +1,6 @@
-*SOILS: Ludhiana
+*SOILS: Ludhiana,India
 
-*PULU010001  SOILSPAU    SL      150 50 INCEPTISOL, Typic Ustochrept, Fatehpur Series
+*PULU010001  SOILSPAU    SL      150 Silty loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  LUDHIANA    INDIA          30.900  75.800 Typic Ustochrept
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -16,7 +16,7 @@
    120   -99 0.100 0.300 0.380 0.000   -99  1.50  0.10  18.0  23.0   0.0   -99   8.0   -99   -99   -99   
    150   -99 0.100 0.300 0.380 0.000   -99  1.50  0.10  18.0  23.0   0.0   -99   8.0   -99   -99   -99   
 
-*PULU010002  SOILSPAU    SL       75 50 ENTISOL, Typic Ustipsamment, Fatehpur Series
+*PULU010002  SOILSPAU    SL       75 Silty loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  LUDHIANA    INDIA          30.910  75.850 Typic Ustipsamment
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -28,7 +28,7 @@
     60   -99 0.040 0.210 0.340 0.500   -99  1.65  0.13   8.0  12.0   -99   -99   7.3   -99   7.2   -99   
     75   -99 0.040 0.200 0.340 0.250   -99  1.65  0.16   7.0   8.0   -99   -99   7.4   -99   6.7   -99   
 
-*PULU010011  SOILSPAU    SL       75 50 ENTISOL, Typic Ustipsamment, Fatehpur Series
+*PULU010011  SOILSPAU    SL       75 Silty loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  LUDHIANA    INDIA          30.910  75.850 Typic Ustipsamment
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
@@ -40,7 +40,7 @@
     60   -99 0.040 0.210 0.340 0.500   -99  1.68  0.13   6.0   4.0  90.0   -99   7.2   -99   7.7   -99   
     75   -99 0.040 0.200 0.330 0.250   -99  1.68  0.11   6.0   8.0  86.0   -99   7.2   -99   7.2   -99   
 
-*PULU000001  SOILSPAU    SL       75 50 ENTISOL, Typic Ustipsamment, Fatehpur Series
+*PULU000001  SOILSPAU    SL       75 Silty loam
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  Ludhiana    India          30.910  75.850 Typic Ustipsamment
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE

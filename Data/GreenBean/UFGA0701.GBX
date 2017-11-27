@@ -21,11 +21,11 @@ Absolutely does not work with Godwin version, extreme N stress.
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 1 0 Low N + Optim Irr FreshH   1  1  0  1  1  2  1  0  0  0  0  1  1
- 2 1 1 0 Med N + Optim Irr FreshH   1  1  0  1  1  2  2  0  0  0  0  1  1
- 3 1 1 0 Opt N + Optim Irr FreshH   1  1  0  1  1  2  3  0  0  0  0  1  1
- 4 1 1 0 Hi N + Opt Irr, FreshHarv  1  1  0  1  1  2  4  0  0  0  0  1  1
- 5 1 1 0 Hi N + Opt Irr, to dry sd  1  1  0  1  1  2  4  0  0  0  0  0  2
+ 1 1 1 0 Low N + Optim Irr FreshH   1  1  0  1  1  1  1  0  0  0  0  1  1
+ 2 1 1 0 Med N + Optim Irr FreshH   1  1  0  1  1  1  2  0  0  0  0  1  1
+ 3 1 1 0 Opt N + Optim Irr FreshH   1  1  0  1  1  1  3  0  0  0  0  1  1
+ 4 1 1 0 Hi N + Opt Irr, FreshHarv  1  1  0  1  1  1  4  0  0  0  0  1  1
+ 5 1 1 0 Hi N + Opt Irr, to dry sd  1  1  0  1  1  1  4  0  0  0  0  0  2
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -58,29 +58,29 @@ Absolutely does not work with Godwin version, extreme N stress.
 
 *IRRIGATION AND WATER MANAGEMENT
 @I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
- 2     1    30    50   100 GS000 IR001    10 Optimum Irrigation
+ 1     1    30    50   100 GS000 IR001    10 Optimum Irrigation
 @I IDATE  IROP IRVAL
- 2 07073 IR004  15.2
- 2 07074 IR004  13.2
- 2 07081 IR004   5.8
- 2 07085 IR004   8.2
- 2 07089 IR004   9.7
- 2 07093 IR004   9.7
- 2 07102 IR004   7.4
- 2 07104 IR004   9.1
- 2 07110 IR004     9
- 2 07114 IR004  11.7
- 2 07117 IR004  14.8
- 2 07120 IR004  15.3
- 2 07123 IR004  15.4
- 2 07126 IR004  17.4
- 2 07130 IR004  14.9
- 2 07133 IR004    21
- 2 07135 IR004   3.3
- 2 07140 IR004  13.3
- 2 07144 IR004  15.2
- 2 07145 IR004   7.1
- 2 07150 IR004  14.2
+ 1 07073 IR004  15.2
+ 1 07074 IR004  13.2
+ 1 07081 IR004   5.8
+ 1 07085 IR004   8.2
+ 1 07089 IR004   9.7
+ 1 07093 IR004   9.7
+ 1 07102 IR004   7.4
+ 1 07104 IR004   9.1
+ 1 07110 IR004     9
+ 1 07114 IR004  11.7
+ 1 07117 IR004  14.8
+ 1 07120 IR004  15.3
+ 1 07123 IR004  15.4
+ 1 07126 IR004  17.4
+ 1 07130 IR004  14.9
+ 1 07133 IR004    21
+ 1 07135 IR004   3.3
+ 1 07140 IR004  13.3
+ 1 07144 IR004  15.2
+ 1 07145 IR004   7.1
+ 1 07150 IR004  14.2
 
 *FERTILIZERS (INORGANIC)
 @F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME

@@ -13,6 +13,7 @@ C  04/16/2013 CHP/KAD Added codes for SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 C  06/03/2015 LPM Added codes for CSYCA CIAT cassava model 
 C  06/18/2015 GH  Add error code for configuration file issues      
+C  09/26/2017 WP  Add DSSAT_HOME environment variable configuration
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -130,7 +131,8 @@ C=======================================================================
 !     CHARACTER*12 DSSATF
       CHARACTER*102 DSSATP
       CHARACTER*120 INPUTX
-
+      CHARACTER(len=255) :: DSSAT_HOME
+      
       INTEGER      I
       INTEGER    IP
 
@@ -150,6 +152,10 @@ C=======================================================================
 
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
       IF (.NOT. FEXIST) THEN
+        CALL get_environment_variable("DSSAT_HOME", DSSAT_HOME)
+        IF(TRIM(DSSAT_HOME) .NE. '') THEN
+            STDPATH = TRIM(DSSAT_HOME)
+        ENDIF
         DSSATP = trim(STDPATH) // TRIM(DSSATPRO)
       ENDIF
 
@@ -351,6 +357,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'SGCER') .EQ. 0) .AND.    !Sorghum
      &    (INDEX(MODEL(1:5),'SCCSP') .EQ. 0) .AND.    !Sugarcane CASUPRO
      &    (INDEX(MODEL(1:5),'SCCAN') .EQ. 0) .AND.    !Sugarcane CaneGro
+     &    (INDEX(MODEL(1:5),'BSCER') .EQ. 0) .AND.    !Sugarbeet VSH
      &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND.    !Sweet corn
      &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND.    !Tanier
      &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND.    !Taro

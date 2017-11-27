@@ -189,7 +189,7 @@ C
 C-----------------------------------------------------------------------
       LINIO = LINIO + 1
       WRITE (LUNIO,915,IOSTAT=ERRNUM) MEWTH,MESIC,MELI,MEEVP,
-     & MEINF,MEPHO,MEHYD,NSWITCH,MESOM, MESEV, MESOL, METMP
+     & MEINF,MEPHO,MEHYD,NSWITCH,MESOM, MESEV, MESOL, METMP, MEGHG
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
 C-----------------------------------------------------------------------
 C
@@ -628,7 +628,11 @@ C-----------------------------------------------------------------------
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
      &                    P1,P2,P5,G2,G3,PHINT     
-     
+!WDB 7/2016 Added new coefficients for sugar beets
+        CASE('BSCER')
+		  WRITE (LUNIO,1802,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
+     &                    P1,P2,P5,G2,G3,PHYL1,PHYL2,FRSUG,DRCER  
+            
 !       Ixim maize
         CASE('MZIXM')
             WRITE (LUNIO,1801,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
@@ -762,7 +766,7 @@ C-Y2K 100 FORMAT (3X,I5,3(1X,A5),2(1X,F5.0))
   900 FORMAT (14X,I6,1X,I5,5X,A1,1X,I7,1X,I5,1X,A25)
 C-Y2K 900 FORMAT (18X,I2,2X,I4,5X,A1,2(1X,I5),1X,A25,1X,A5)
   910 FORMAT (14X,9(5X,A1),2I6)
-  915 FORMAT (14X,7(5X,A1),5X,I1,4(5X,A1))
+  915 FORMAT (14X,7(5X,A1),5X,I1,5(5X,A1))
   920 FORMAT (14X,3(5X,A1),4X,I2,9(5X,A1))
 C-Y2K 930 FORMAT (14X,2(1X,I5),5(1X,F5.0))
   930 FORMAT (14X,2(1X,I7),5(1X,F5.0))
@@ -771,7 +775,8 @@ C-Y2K 930 FORMAT (14X,2(1X,I5),5(1X,F5.0))
   960 FORMAT (1X,A10,2X,A11,1X,A5,1X,F5.0,1X,A50)
   970 FORMAT (2(1X,A11),2(F8.3),1X,A50)
 
-  980 FORMAT (1X,A5,1X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),4(1X,A5))
+  980 FORMAT (1X,A5,1X,F5.2,1X,F5.1,1X,F5.2,1X,F5.0,2(1X,F5.2),4(1X,A5),
+     &        F6.2)
 
 C-GH  989 FORMAT (1X,F5.0,6X,4(1X,F5.3),1X,F5.3,2(1X,F5.2),3(1X,F5.1),
 C     &        1X,F5.2,19(1X,F5.1))
@@ -806,6 +811,7 @@ C     &        1X,F5.2,19(1X,F5.1))
      &       F6.2, F6.2, F6.2, F6.3, F6.3, F6.3, F6.2, F6.2, F6.1, F6.2,
      &       F6.3, F6.0, F6.0)
  1801 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2),2(F6.1),I4)
+ 1802 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),5(F6.2))     
  1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,4(F6.1))
 C-GH 1900 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.2,4(F6.1),F6.2,2(F6.1))
  1901 FORMAT (2F6.2)

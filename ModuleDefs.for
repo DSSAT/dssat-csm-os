@@ -40,10 +40,35 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !=======================================================================
       USE OSDefinitions
+      SAVE
 !=======================================================================
 
-      SAVE
-      
+!     Global CSM Version Number
+      TYPE VersionType
+        INTEGER :: Major = 4
+        INTEGER :: Minor = 7
+        INTEGER :: Model = 1
+        INTEGER :: Build = 2
+      END TYPE VersionType
+      TYPE (VersionType) Version
+      CHARACTER(len=10) :: VBranch = '-develop  '
+!     CHARACTER(len=10) :: VBranch = '-release  '
+
+!     Version history:  
+!       4.7.1.2  chp 11/21/2017 Sugarbeet model added
+!       4.7.1.1  chp 10/31/2017 Pineapple forcing with chemical application
+!       4.7.1.0  chp 10/27/2017 Modifications to data, tweaks to output
+!       4.7.0.4  chp 10/18/2017 Updates to Aloha, N2O, YCA, potato
+!       4.7.0.3  chp 10/10/2017 N2O emissions model added
+!       4.7.0.2  chp 09/27/2017 Merge v4.7 branch into develop
+!       4.7.0.1  chp 09/13/2017 Add Aloha-Pineapple model
+!       4.7.0.0  chp 08/09/2017 v4.7
+!       4.6.5.1  chp 05/10/2017 Workshop 2017 version.  
+!       4.6.0.1  chp 06/28/2011 v4.6
+!       4.5.1.0  chp 10/10/2010 V4.5 Release version
+!       4.0.2.0  chp 08/11/2005 Release
+!       4.0.1.0  chp 01/28/2004 Release Version 
+
 !=======================================================================
 
 !     Global constants
@@ -91,29 +116,6 @@ C             CHP Added TRTNUM to CONTROL variable.
      &               'JUL','AUG','SEP','OCT','NOV','DEC'/
 
 !=======================================================================
-
-!     Global CSM Version Number
-      TYPE VersionType
-        INTEGER :: Major = 4
-        INTEGER :: Minor = 7
-        INTEGER :: Model = 0
-        INTEGER :: Build = 2
-      END TYPE VersionType
-      TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-develop  '
-!     CHARACTER(len=10) :: VBranch = '-release  '
-
-!     Version history:  
-!       4.7.0.2  chp 09/27/2017 Merge v4.7 branch into develop
-!       4.7.0.1  chp 09/13/2017 Add Aloha-Pineapple model
-!       4.7.0.0  chp 08/09/2017 v4.7
-!       4.6.5.1  chp 05/10/2017 Workshop 2017 version.  
-!       4.6.0.1  chp 06/28/2011 v4.6
-!       4.5.1.0  chp 10/10/2010 V4.5 Release version
-!       4.0.2.0  chp 08/11/2005 Release
-!       4.0.1.0  chp 01/28/2004 Release Version 
-
-!=======================================================================
 !     Data construct for control variables
       TYPE ControlType
         CHARACTER (len=1)  MESIC, RNMODE
@@ -139,7 +141,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=1) IHARI, IPLTI, IIRRI, ISIMI
         CHARACTER (len=1) ISWCHE, ISWDIS, ISWNIT
         CHARACTER (len=1) ISWPHO, ISWPOT, ISWSYM, ISWTIL, ISWWAT
-        CHARACTER (len=1) MEEVP, MEHYD, MEINF, MELI, MEPHO
+        CHARACTER (len=1) MEEVP, MEGHG, MEHYD, MEINF, MELI, MEPHO
         CHARACTER (len=1) MESOM, MESOL, MESEV, MEWTH
         CHARACTER (len=1) METMP !Temperature, EPIC
         CHARACTER (len=1) IFERI, IRESI, ICO2, FMOPT
@@ -185,7 +187,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL ALES, DMOD, SLPF         !DMOD was SLNF
         REAL CMSALB, MSALB, SWALB, SALB      !Albedo 
         REAL, DIMENSION(NL) :: BD, CEC, CLAY, DLAYR, DS, DUL
-        REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL
+        REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL, POROS
         REAL, DIMENSION(NL) :: SAND, SAT, SILT, STONES, SWCN
         
       !Residual water content
@@ -472,7 +474,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
 !     Data transferred from Soil Inorganic Nitrogen routine
       Type NiType
-        REAL TNOXD, TLCHD
+        REAL TNOXD, TLeachD    !, TN2OD     ! added N2O PG
       End Type NiType
 
 !     Data transferred from Organic C routines
@@ -702,7 +704,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); Value = SAVE_data % NITR % TNOXD
-        Case ('TLCHD'); Value = SAVE_data % NITR % TLCHD
+       Case ('TLCHD'); Value = SAVE_data % NITR % TLeachD
+!       Case ('TN2OD'); Value = SAVE_data % NITR % TN2OD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -818,7 +821,8 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('NITR')
         SELECT CASE (VarName)
         Case ('TNOXD'); SAVE_data % NITR % TNOXD = Value
-        Case ('TLCHD'); SAVE_data % NITR % TLCHD = Value
+        Case ('TLCHD'); SAVE_data % NITR % TLeachD = Value
+!       Case ('TN2OD'); SAVE_data % NITR % TN2OD = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

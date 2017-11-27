@@ -48,6 +48,7 @@ C  04/20/2004 US  Modified DLAG, removed IFDENIT
 !                  inorganic routines.
 !  02/25/2005 CHP changed HUMC to SSOMC to match Century variable name
 !  04/13/2005 CHP changed subroutine name to SoilNi.for (was SoilN_inorg)
+!  06/12/2014 CHP DayCent calcs for N2O emissions from Peter Grace
 C-----------------------------------------------------------------------
 C  Called : SOIL
 C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
@@ -56,20 +57,21 @@ C=======================================================================
 
       SUBROUTINE SoilNi (CONTROL, ISWITCH, 
      &    DRN, ES, FERTDATA, FLOODWAT, IMM, LITC, MNR,    !Input
-     &    SOILPROP, SSOMC, ST, SW, TDFC, TDLNO, TILLVALS, !Input
-     &    UNH4, UNO3, UPFLOW, WEATHER, XHLAI,             !Input
+     &    newCO2, SNOW, SOILPROP, SSOMC, ST, SW, TDFC,    !Input
+     &    TDLNO, TILLVALS, UNH4, UNO3, UPFLOW, WEATHER,   !Input
+     &    XHLAI,                                          !Input
      &    FLOODN,                                         !I/O
      &    NH4, NO3, UPPM)                                 !Output
 
 !-----------------------------------------------------------------------
-      USE ModuleDefs 
+      USE N2O_mod 
       USE ModuleData
       USE FloodModule
       USE ModSoilMix
       IMPLICIT  NONE
       SAVE
 !-----------------------------------------------------------------------
-      CHARACTER*1 ISWNIT
+      CHARACTER*1 ISWNIT, MEGHG
 
       LOGICAL IUON
 
@@ -77,23 +79,22 @@ C=======================================================================
       INTEGER NLAYR
       INTEGER NSOURCE, YEAR, YRDOY   
 
-      REAL AD, AK, ALGFIX, CW
-      REAL NFAC, NITRIF, NNOM
+      REAL AD, AK, ALGFIX 
+      REAL NFAC, NNOM   
       REAL SNH4_AVAIL, SNO3_AVAIL, SUMFERT
-      REAL SWEF, TFDENIT, TFUREA
-      REAL TMINERN, TIMMOBN, TLCH, TLCHD
-      REAL TNH4, TNH4NO3, TNO3, TNOX, UHYDR, TNOXD
-      REAL WFDENIT, WFSOM, WFUREA, XL, XMIN
-      REAL WTNUP, TNITRIFY, TUREA
+      REAL SWEF, TFUREA
+      REAL TNH4, TNH4NO3, TNO3, UHYDR
+      REAL WFSOM, WFUREA, XL, XMIN
+      REAL TUREA
       
-      REAL ADCOEF(NL), BD(NL), DENITRIF(NL), DLAYR(NL) 
+      REAL ADCOEF(NL), BD(NL), DLAYR(NL) 
       REAL DLTSNH4(NL), DLTSNO3(NL), DLTUREA(NL), DRN(NL), DUL(NL)
       REAL UPFLOW(NL)
       REAL KG2PPM(NL), LITC(0:NL), LL(NL) 
       REAL NH4(NL), NO3(NL), PH(NL), SAT(NL), SNH4(NL)
       REAL SNO3(NL), SSOMC(0:NL), ST(NL), SW(NL)
       REAL TFNITY(NL), UNH4(NL), UNO3(NL), UREA(NL), UPPM(NL)
-
+      
       REAL IMM(0:NL,NELEM), MNR(0:NL,NELEM)
 
 !     Variables added for flooded conditions analysis:
@@ -104,17 +105,35 @@ C=======================================================================
       INTEGER NBUND, NSWITCH
       INTEGER FERTDAY
       INTEGER DLAG(NL), INCYD, LFD10  !REVISED-US
-      REAL ALI, FLOOD, ES, TMAX, TMIN, SRAD, XHLAI
+      REAL ALI, FLOOD, ES, TMAX, TMIN, SRAD, XHLAI, RAIN, SNOW
       REAL TKELVIN, TFACTOR, WFPL, WF2
-      REAL PHFACT, T2, TLAG, ARNTRF   !, DNFRATE
+      REAL PHFACT, T2, TLAG   !, DNFRATE
       REAL CUMFNRO
       REAL BD1
       REAL TOTAML, TOTFLOODN
 
-      REAL CNITRIFY           !Cumulative Nitrification 
-      REAL CMINERN, CIMMOBN   !Cumul. mineralization, immobilization
-      REAL CNETMINRN          !Cumul. net mineralization
-      REAL CNUPTAKE
+      TYPE (N2O_type)    N2O_DATA
+!          Cumul,     Daily,    Layer ppm,     Layer kg
+      REAL CNOX,      TNOXD,                   DENITRIF(NL) !Denitrification
+      REAL CNITRIFY,  TNITRIFY, NITRIFppm(NL), NITRIF(NL)   !Nitrification 
+      REAL CMINERN,   TMINERN                               !Mineralization
+      REAL CIMMOBN,   TIMMOBN                               !Immobilization
+      REAL CNETMINRN                                        !Net mineralization
+      REAL CNUPTAKE,  WTNUP                                 !N uptake
+      REAL CLeach,    TLeachD                               !N leaching
+      REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
+      REAL CN2Odenit, TN2OdenitD,              N2ODenit(NL) !N2O from denitrification
+      REAL CNOflux,   TNOfluxD,                NOflux(NL)   !NO flux
+      REAL                                     nNOflux(NL)  !NO from nitrification
+      REAL                                     dNOflux(NL)  !NO from denitrification
+      REAL CN2,       TN2D,                    N2flux(NL)   !N2 (all from detnitrification)
+
+!     Added for GHG model
+      REAL, DIMENSION(NL) :: dD0, NO_N2O_ratio
+      REAL, DIMENSION(0:NL) :: newCO2
+      REAL pn2onitrif, NH4_to_NO, NITRIF_to_NO
+      real nox_puls, krainNO, potential_NOflux, NITRIF_remaining
+      real canopy_reduction, NOAbsorp
 
 !     Added for tile drainage:
       REAL TDFC
@@ -136,7 +155,9 @@ C=======================================================================
       TYPE (FertType)    FERTDATA
       TYPE (TillType)    TILLVALS
       TYPE (WeatherType) WEATHER
-
+      
+!      PI = 3.1416
+      
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
       YRDOY   = CONTROL % YRDOY
@@ -153,6 +174,7 @@ C=======================================================================
 
       NSWITCH = ISWITCH % NSWI
       ISWNIT  = ISWITCH % ISWNIT
+      MEGHG   = ISWITCH % MEGHG
 
       NBUND = FLOODWAT % NBUND
       FLOOD = FLOODWAT % FLOOD
@@ -162,6 +184,7 @@ C=======================================================================
       SRAD = WEATHER % SRAD
       TMAX = WEATHER % TMAX
       TMIN = WEATHER % TMIN
+      RAIN = WEATHER % RAIN
 
 !***********************************************************************
 !***********************************************************************
@@ -173,6 +196,8 @@ C=======================================================================
         TMINERN  = 0.0  !mineralization
         TIMMOBN  = 0.0  !immobilization
         TNITRIFY = 0.0  !nitrification
+        TNOXD    = 0.0  !denitrification
+        TLeachD  = 0.0  !leaching
 
         !*** temp debugging chp
         TNOM = 0.0
@@ -183,10 +208,25 @@ C=======================================================================
         CNETMINRN= 0.0  !net mineralization
         CNITRIFY = 0.0  !nitrification
         CNUPTAKE = 0.0  !cumulative N uptake
-        TNOX   = 0.0    !denitrification
-        TLCH   = 0.0    !leaching
-        WTNUP  = 0.0    !N uptake
+        CNOX     = 0.0  !denitrification
+        CLeach   = 0.0  !leaching
+        WTNUP    = 0.0  !N uptake
+        CN2Onitrif=0.0  !N2O[N] from nitrification
+        CN2Odenit =0.0  !N2O[N] from nitrification
+        CNOflux   = 0.0 !NO
+        CN2       = 0.0 !N2
 
+        nitrif = 0.0
+        denitrif = 0.0
+        N2O_data % wfps = 0.0
+
+!     proportion of N2O from nitrification PG calibrated this variable for DayCent
+      pn2Onitrif = .001  
+!     pn2Onitrif = .02  
+!     chp - from DayCent - is this the equivalent value?
+!     double turnovfrac = 0.02;
+! chp - tried pn2Onitrif = .02, but n2o emissions are way too high.
+       
         TFNITY = 0.0    !
         IUOF   = 0
         IUON   = .FALSE.
@@ -200,6 +240,7 @@ C=======================================================================
           !  value on first day of multi-season runs.
           UNH4(L)       = 0.0
           UNO3(L)       = 0.0
+          N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
         ENDDO
 
 !        IF (INDEX('N',ISWNIT) > 0) RETURN
@@ -230,6 +271,38 @@ C=======================================================================
      &    ALI, TOTAML)                                    !Output
 
         LFD10 = CONTROL % YRSIM
+
+        SELECT CASE(MEGHG)
+        CASE("1")
+          CALL Denit_DayCent (CONTROL, ISWNIT, 
+     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
+     &    DLTSNO3,                                    !I/O
+     &    CNOX, TNOXD, N2O_data)                      !Output
+
+        CASE DEFAULT
+          CALL Denit_Ceres (CONTROL, ISWNIT, 
+     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    SSOMC, SNO3, ST, SW,                        !Input
+     &    DLTSNO3,                                    !I/O
+     &    CNOX, TNOXD, N2O_data)                      !Output
+        END SELECT
+
+      CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
+
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
+
+      IF (CONTROL%RUN .EQ. 1 .OR. INDEX('QF',CONTROL%RNMODE) .LE. 0)THEN
+        call nox_pulse (dynamic, rain, snow, nox_puls)
+      ENDIF
+
+!!         temp chp
+!          write(555,'(a,a)') 
+!     &      "  YRDOY  L   krainNO       dD0    NO:N2O", 
+!     &      "   NIT->NO   NH4->NO   nNOflux    NitN2O    Nitrif"
+!
+!         write(556,'(a,a)')
+!     &      "  YRDOY  L SNH4Avail", 
+!     &      "  N2ODenit    NO:N2O   krainNO   dNOflux"
 
 !***********************************************************************
 !***********************************************************************
@@ -336,15 +409,35 @@ C=======================================================================
         IUON = .FALSE.
       ENDIF
 
+!-----------------------------------------------------------------------
+!     NOx pulse multiplier from DayCent
+      call nox_pulse (dynamic, rain, snow, nox_puls)
+      krainNO = nox_puls
+
+!     Diffusivity rate calculation from DayCent
+      call DayCent_diffusivity(dD0, sw, soilprop)
+!-----------------------------------------------------------------------
+
 !     ------------------------------------------------------------------
 !     Loop through soil layers for rate calculations
 !     ------------------------------------------------------------------
-      NNOM = 0.0
+      NNOM     = 0.0
       TMINERN  = 0.0
       TIMMOBN  = 0.0
       TNITRIFY = 0.0
-      TNOXD = 0.0
-
+      TNOXD    = 0.0  !denitrification
+      TLeachD  = 0.0  !leaching
+      NITRIF   = 0.0
+      TN2OnitrifD = 0.0  !N2O from nitrification
+      TN2OdenitD  = 0.0  !N2O from denitrification
+      N2Onitrif = 0.0
+      TNOfluxD  = 0.0   !NO
+      NOflux    = 0.0
+      nNOflux   = 0.0
+      dNOflux   = 0.0
+      TN2D      = 0.0
+      N2flux    = 0.0
+ 
       DO L = 1, NLAYR
 !       ----------------------------------------------------------------
 !       Environmental limitation factors for the soil processes.
@@ -363,6 +456,7 @@ C=======================================================================
 
 !         Soil water factor WFSOM.
           WFSOM = (SW(L) - AD) / (DUL(L) - AD)
+
         ELSE
 !         If the soil water content is higher than the drained upper 
 !         limit (field capacity), calculate the excess water as fraction
@@ -371,8 +465,10 @@ C=======================================================================
 
 !         Soil water factor WFSOM.
           WFSOM = 1.0 - 0.5 * XL
+          
         ENDIF   !End of IF block on SW vs. DUL.
 
+!     
 !       PH factor (from RICE model)
         IF (FLOOD .GT. 0.0) THEN
            WFSOM    = 0.75
@@ -380,10 +476,13 @@ C=======================================================================
 
 !       Limit the soil water factors between 0 and 1.
         WFSOM = AMAX1 (AMIN1 (WFSOM, 1.), 0.)
-
+        
 !       Calculate the soil temperature factor for the urea hydrolysis.
         TFUREA = (ST(L) / 40.) + 0.20
         TFUREA = AMAX1 (AMIN1 (TFUREA, 1.), 0.)
+
+!       Water filled pore space
+        N2O_data % wfps(L) = min (1.0, sw(L) / soilprop % poros(L))
 
 !-----------------------------------------------------------------------
 !       UREA hydrolysis
@@ -512,14 +611,13 @@ C=======================================================================
           TLAG = 1.0
         ENDIF
         NFAC = AMAX1(0.0, AMIN1(1.0, TFACTOR * WF2 * PHFACT * TLAG))
-        NITRIF = NFAC * NH4(L)
+        NITRIFppm(L) = NFAC * NH4(L)
 
         IF (NSWITCH .EQ. 5) THEN
-          ARNTRF = 0.0
+          NITRIF(L) = 0.0
         ELSE
-!         chp (via Peter Grace) 8/17/2013
-!         ARNTRF  = NITRIF * KG2PPM(L)
-          ARNTRF  = NITRIF / KG2PPM(L)
+!         NITRIFppm in ppm; NITRIF in kg/ha
+          NITRIF(L)  = NITRIFppm(L) / KG2PPM(L) ! changed by PG from * kg2ppm
         ENDIF
 
         IF (NH4(L).LE. 0.01) THEN
@@ -529,180 +627,209 @@ C=======================================================================
             TFNITY(L) = TFNITY(L) + 1.0
           ENDIF
         ENDIF
-
+           
         XMIN = 0.0
         SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
-        ARNTRF = AMIN1(ARNTRF, SNH4_AVAIL)
+        NITRIF(L) = AMIN1(NITRIF(L), SNH4_AVAIL)
+        DLTSNH4(L) = DLTSNH4(L) - NITRIF(L)
 
-        DLTSNO3(L) = DLTSNO3(L) + ARNTRF
-        DLTSNH4(L) = DLTSNH4(L) - ARNTRF
-        TNITRIFY   = TNITRIFY   + ARNTRF
+!       Update available NH4 for the next step
+        SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
+
+!       ------------------------------------------------------------------
+!       N2, N2O, NO fluxes from Nitrification
+!       ------------------------------------------------------------------
+        if (NITRIF(L) > 1.E-6) then
+
+!         for N2O using a proportion of nitrification from original daycent PG
+          N2ONitrif(L) = pN2Onitrif * NITRIF(L) 
+          NITRIF_remaining = NITRIF(L) - N2ONitrif(L)   
+
+!         NO flux 
+          NO_N2O_ratio(L) = 8.0+(18.0*atan(0.75*PI*(10*dD0(L)-1.86)))/PI
+          NO_N2O_ratio(L) = NO_N2O_ratio(L) * 0.5  !for agricultural systems
+          potential_NOflux = NO_N2O_ratio(L) * krainNO * N2ONitrif(L)
+
+          if (potential_NOflux <= NITRIF_remaining) then
+            NITRIF_to_NO = potential_NOflux
+            NH4_to_NO = 0.0
+            NITRIF_remaining = NITRIF_remaining - NITRIF_to_NO
+          else 
+!           /* take N out of ammonimum to get max NOflux possible */
+            NITRIF_to_NO = NITRIF_remaining
+
+!     chp 10/26/2017 - don't remove any from NH4 pool - 
+!       affects some experiments, including CCPO9002.BNX, trt 13
+            NH4_to_NO = 0.0
+!            NH4_to_NO = AMIN1(SNH4_AVAIL,
+!     &                         (potential_NOflux - NITRIF_remaining))
+            NITRIF_remaining = 0.0
+          endif
+
+          nNOflux(L) = AMAX1(NITRIF_to_NO + NH4_to_NO, 0.0)
+          NITRIF(L) = NITRIF(L) + NH4_to_NO
+
+!!         temp chp
+!          write(555,'(i7, i3, 3f10.3, 5e10.3)') 
+!     &      YRDOY, L, krainNO, dD0(L), NO_N2O_ratio(L), 
+!     &      NITRIF_to_NO, NH4_to_NO, nNOflux(L), N2ONitrif(L), nitrif(L)
+
+        else 
+          NO_N2O_ratio(L) = 0.0
+          N2ONitrif(L) = 0.0
+          NOflux(L)    = 0.0
+          NITRIF_to_NO = 0.0
+          NH4_to_NO    = 0.0
+          NITRIF_remaining = 0.0
+        endif
+
+        DLTSNO3(L) = DLTSNO3(L) + NITRIF_remaining
+        DLTSNH4(L) = DLTSNH4(L) - NH4_to_NO
+!       This contribution from NH4 can be considered as part of the nitrification process
+        TNITRIFY   = TNITRIFY   + NITRIF(L) 
+      
+      END DO   !End of soil layer loop.
+
+      N2O_data % NITRIF   = NITRIF
+      N2O_data % N2Onitrif  = N2Onitrif
+      N2O_data % NOflux = NOflux
 
 !-----------------------------------------------------------------------
 !       Denitrification section
 !-----------------------------------------------------------------------
-!       Denitrification only occurs if there is nitrate, SW > DUL and
-!       soil temperature > 5.
-        IF (NO3(L) .GT. 0.01 .AND. SW(L) .GT. DUL(L) .AND.
-     &       ST(L) .GE. 5.0) THEN
+      IF (NSWITCH .EQ. 6) THEN
+        DENITRIF = 0.0
+      ELSE
 
-!         Water extractable soil carbon: estimated according to
-!         Rolston et al. 1980, as cited in Godwin & Jones 1991 (ASA
-!         monograph #31). Calculate carbohydrate carbon as 40% of the
-!         carbohydrate pool.
-C-UPS     Corrected per e-mail 03/29/00
-!         CW = 24.5 + 0.0031 * (SSOMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L)
+        SELECT CASE(MEGHG)
+        CASE("1","2")
+          CALL Denit_DayCent (CONTROL, ISWNIT, 
+     &    dD0, newCO2, NO3, SNO3, SOILPROP, SW,       !Input
+     &    DLTSNO3,                                    !I/O
+     &    CNOX, TNOXD, N2O_data)                      !Output
 
-!     ----------------------------------------------------------------
-!11/18/2003 UPS: THE NEW NTRANS SHOULD READ: 
-!         CW = 24.5 + {0.0031 * SSOMC(L) + 0.4 * FPOOL(L,1)} * KG2PPM(L) 
-!            = 24.5 + AVAILABLE CARBON FROM HUMIC FRACTION + FRESH C from  CARBOHYDRATE POOL 
+        CASE DEFAULT
+          CALL Denit_Ceres (CONTROL, ISWNIT, 
+     &    DUL, FLOOD, KG2PPM, LITC, NLAYR, NO3, SAT,  !Input
+     &    SSOMC, SNO3, ST, SW,                        !Input
+     &    DLTSNO3,                                    !I/O
+     &    CNOX, TNOXD, N2O_data)                      !Output
+        END SELECT
+      ENDIF
 
-!NOTES: 1. ONLY THE HUMIC C IS MULTIPLIED BY 0.0031 
-!       2. SOILC IN GODWIN&JONES INCLUDED BOTH HUMIC C AND FRESH (LITTER POOL C) 
-!       3. WE ARE USING ONLY THE CARBOHYDRATE POOL (*0.4 TO C) = ALL AVAILABLE 
-!       4. FPOOL is still kg of Organic matter/ha (and not kg C/ha)?? 
+      CALL PUT('NITR','TNOXD',TNOXD) 
+      N2ODenit = N2O_data % N2ODenit
 
-!     SO WE NEED TO FIX BOTH DSSAT4 AND GODWIN AND SINGH EQN TO THE ABOVE. 
+!       ------------------------------------------------------------------
+!       N2, N2O, NO fluxes from Denitrification
+!       ------------------------------------------------------------------
+!      /* Now compute NOflux from denitrification (new calculation */
+!      /* For denitrification, krainNO is >= 1.0 -mdh 6/22/00 */
+!      N2ODenit = N2O_DATA % N2ODenit
 
-!          CW = 24.5 + (0.0031 * SSOMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L) 
+!     chp 10/4/2017. Believe it or not, this check for N2Odenit causes a 
+!         mass imbalance. Take it out and all is OK.
+      !if (sum(n2odenit) > 1.e-9) then
+        DO L = 1, NLAYR
+          potential_NOflux = NO_N2O_ratio(L) * N2ODenit(L) 
+     &                                       * AMIN1(1.0, krainNO)
+          SNH4_AVAIL = AMAX1(0.0, SNH4(L) + DLTSNH4(L) - XMIN)
 
-!     The above removed on 1/14/2004 as per email from AJG and UPS
+          if (potential_NOflux <= SNH4_AVAIL) then
+!           Take all N out of ammonimum pool
+            dNOflux(L) = potential_NOflux
+            DLTSNH4(L) = DLTSNH4(L) - potential_NOflux
+          else 
+!           Take N out of available ammonium, then convert some Dn2oflux to NOflux
+            dNOflux(L) = SNH4_AVAIL
+            DLTSNH4(L) = DLTSNH4(L) - SNH4_AVAIL
+            potential_NOflux = potential_NOflux - SNH4_AVAIL
 
-!     ----------------------------------------------------------------
-!     DENITRIFICATION - CORRECTIONS - 13 Jan 2004 (US)
-!         From NTRANS:
-!          CW = 24.5 + 0.0031 * (HUMC(L) + 0.4 * FPOOL(L,1)) * KG2PPM(L)
-!     ----------------------------------------------------------------
+!     chp 10/5/2017
+!     This next bit causes a mass imbalance because N2ODenit has
+!         already been computed and accumulated. Would need to
+!         restructure where N2ODenit is accumulated to fix it.
+!     This is rarely needed and amounts are very small. Ignore for now.
+            !if (potential_NOflux <= N2ODenit(L)) then
+            !  dNOflux(L) = dNOflux(L) + potential_NOflux
+            !  N2ODenit(L) = N2ODenit(L) - potential_NOflux
+            !else
+            !  dNOflux(L) = dNOflux(L) + N2ODenit(L)
+            !  N2ODenit(L) = 0.0
+            !endif
+          endif
 
-!        From Century:
-         !CHP changed 1/14/2004 per email from UPS / AJG
-          CW = 24.5 + 0.0031 * (SSOMC(L) + 0.2 * LITC(L)) * KG2PPM(L)
-!     ----------------------------------------------------------------
+!!         TEMP CHP
+!          WRITE(556,'(i7,i3,f10.3,e10.3,2f10.3,e10.3)') YRDOY, L, 
+!     &     SNH4_AVAIL, N2ODenit(L), NO_N2O_ratio(L), krainNO, dNOflux(L)
+
+        ENDDO
+
+!       Recalculated total denitrified N2O because it may have been modified above.
+        !TN2OdenitD = 0.0
+!       Sum total NOflux for the day
+        DO L = 1, NLAYR
+          NOflux(L) = nNOflux(L) + dNOflux(L)
+          TNOfluxD = TNOfluxD + NOflux(L)
+          !TN2OdenitD = TN2OdenitD + N2ODenit(L)   
+        ENDDO
+
+! Don't need the plant resorption routine because:
+! 1 - amounts are small
+! 2 - we don't have a mechanism to add back to plants
+! 3 - it only affects NO, which we aren't tracking anyway, except for balance
+ 
+!        if (XHLAI > 0.0) then
+!!         canopy_reduction appears to be the reabsorbed fraction.
+!!             This equation is a parabola with the minimum about 8.28. It reduces
+!!             absorption for LAI above that so limit LAI to 8.0. The problem seems
+!!             to be the simple biomass to LAI ratio. 200 bu/acre corn is
+!!             aglivC > 1100 and an LAI > 34. Obviously its not all leaves. */
+!          if (XHLAI > 8.0) then
+!            canopy_reduction = 0.4428
+!          else
+!            canopy_reduction = 0.0077*XHLAI*XHLAI + -0.13 * XHLAI + 0.99
+!          endif
 !
-!     The DENITRIF or DNRATE calculations are identical in NTRANS 
-!             (DSSAT4) and Godwin and Singh:
+!          NOabsorp = TNOfluxD * (1.0 - canopy_reduction)
+!          TNOfluxD = TNOfluxD - NOabsorp    !reduce the NOflux by absorption
+!          NOflux = NOflux * canopy_reduction
+!          nNOflux = nNOflux * canopy_reduction
+!          dNOflux = dNOflux * canopy_reduction
+!        else
+!          canopy_reduction = 0.0
+!        endif
+!      endif
 !
-!     DENITRIF = {6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * TFDENIT * DLAG }/ KG2PPM(L)
-!     -- AS in NTRANS (DSSAT4)
-!
-!         = {in concentration unit}/KG2PPM
-!         = kg N (denitrified)
-!         = {in conc unit }/(10/BD*DLAYR)
-!
-!     DENITRIF = 6.0*1.E-05 * CW * NO3(L) * WFDENIT * TFDENIT * DLAG*BD(L)*DLAYR(L)
-!     -- AS in GODWIN & SINGH
-!
-!     NOTE: CW is in concentration unit!!  Extractable C concentration.
-!
-!     CW = (SOILC*KG2PPM(L))*0.0031 + 24.5
-!
-!       where SOILC = SSOMC(L) + 0.4 * FOM(L) in kg/ha - Origianl definition
-!        Later corrected to:
-!        SOILC = SSOMC(L) + 0.4 * FPOOL(L,1)  -- because only carbohydrate 
-!             pool from the FOM is assumed to provide labile/extractable C.
-! 
-!     CW   = ({SSOMC(L) + 0.4 * FPOOL(L,1)} * KG2PPM(L))*0.0031 + 24.5
-!
-!     The equations in Godwin and Jones as well as Godwin and Singh are incorrect!!
+!      write(557,'(i7,2e10.3)') yrdoy, 1.0 - canopy_reduction, NOabsorp
 
-!     ----------------------------------------------------------------
-!         Temperature factor for denitrification.
-          TFDENIT = 0.1 * EXP (0.046 * ST(L))
-          TFDENIT = AMAX1 (AMIN1 (TFDENIT, 1.), 0.)
+      N2O_DATA % NOflux = NOflux
 
-!         Water factor for denitrification: only if SW > DUL.
-          WFDENIT = 1. - (SAT(L) - SW(L)) / (SAT(L) - DUL(L))
-          WFDENIT = AMAX1 (AMIN1 (WFDENIT, 1.), 0.)
-
-          IF (WFDENIT .GT. 0.0) THEN
-            DLAG(L) = DLAG(L) + 1
-          ELSE
-            DLAG(L) = 0
-          ENDIF
-
-          IF (DLAG(L) .LT. 5) THEN
-            WFDENIT = 0.0
-          ENDIF
-
-!         Denitrification rate
-C-UPS     Corrected per e-mail 03/29/00
-!         DLAG REMOVED REVISED-US 4/20/2004
-          DENITRIF(L) = 6.0 * 1.E-04 * CW * NO3(L) * WFDENIT * 
-     &                 TFDENIT / KG2PPM(L)       
-          DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
-
-!         The minimum amount of NO3 that stays behind in the soil and 
-!         cannot denitrify is XMIN.
-!         XMIN    = 0.25 / KG2PPM(L)
-          XMIN    = 0.       !AJG
-
-!         Check that no more NO3 denitrifies than there is, taking
-!         into account what has already been removed by other
-!         processes (thus use only negative DLTSNO3 values). This is a
-!         protection against negative values at the integration step.
-          SNO3_AVAIL = SNO3(L) + AMIN1 (DLTSNO3(L), 0.) - XMIN
-
-!         Take the minimum of the calculated denitrification and the
-!         amount of NO3 available for denitrification. 
-          DENITRIF(L)  = AMIN1 (DENITRIF(L), SNO3_AVAIL)
-
-C         If flooded, lose all nitrate --------REVISED-US
-!          IF (FLOOD .GT. 0.0) THEN
-!            !DNFRATE = SNO3(L) - 0.5/KG2PPM(L)        !XMIN?, SNO3_AVAIL?
-!            DNFRATE = SNO3_AVAIL - 0.5/KG2PPM(L)        !XMIN?, SNO3_AVAIL?
-!          ELSE
-!            DNFRATE = 0.0
-!          ENDIF
-
-!         chp/us 4/21/2006
-          IF (FLOOD .GT. 0.0 .AND. WFDENIT > 0.0) THEN
-!            DENITRIF(L) = SNO3_AVAIL
-!           chp 9/6/2011 remove 50% NO3/d = 97% removed in 5 days
-!           previously removed 100% NO3/d
-            DENITRIF(L) = SNO3_AVAIL * 0.5
-          ENDIF
-
-!chp 4/20/2004   DENITRIF = AMAX1 (DENITRIF, DNFRATE)
-          DENITRIF(L) = AMAX1 (DENITRIF(L), 0.0)
-          IF (NSWITCH .EQ. 6) THEN
-            DENITRIF(L) = 0.0
-          ENDIF
-
-!         Reduce soil NO3 by the amount denitrified and add this to
-!         the NOx pool
-          DLTSNO3(L) = DLTSNO3(L) - DENITRIF(L)
-          TNOX       = TNOX       + DENITRIF(L)
-          TNOXD      = TNOXD      + DENITRIF(L)
-
-        ELSE
-!         IF SW, ST OR NO3 FALL BELOW CRITICAL IN ANY LAYER RESET LAG EFFECT.
-          DLAG(L) = 0      !REVISED-US
-        ENDIF   !End of IF block on denitrification.
-
-      END DO   !End of soil layer loop.
+!     ------------------------------------------------------------------
+!     N emissions to atmosphere
+!     ------------------------------------------------------------------
+      CALL N2Oemit(CONTROL, ISWITCH, dD0, SOILPROP, N2O_DATA) 
 
 !     ------------------------------------------------------------------
 !     Downward and upward N movement with the water flow.
 !     ------------------------------------------------------------------
-      TLCHD = 0.0
+      TLeachD = 0.0
 
       IF (IUON) THEN
         NSOURCE = 1    !Urea.
         CALL NFLUX ( 
      &    ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,     !Input
      &    UREA, NSOURCE, SW, TDFC, TDLNO,                 !Input
-     &    DLTUREA, TLCH, TLCHD)                           !Output
+     &    DLTUREA, CLeach, TLeachD)                           !Output
       ENDIF
 
       NSOURCE = 2   !NO3.
       CALL NFLUX ( 
      &  ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &  SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
-     &  DLTSNO3, TLCH, TLCHD)                             !Output
-
-      CALL PUT('NITR','TNOXD',ARNTRF)
-      CALL PUT('NITR','TLCHD',TLCHD)
+     &  DLTSNO3, CLeach, TLeachD)                             !Output
+      
+      CALL PUT('NITR','TLCHD',TLeachD) 
 
 !***********************************************************************
 !***********************************************************************
@@ -751,7 +878,7 @@ C         If flooded, lose all nitrate --------REVISED-US
 !       Conversions.
         NO3(L)  = SNO3(L) * KG2PPM(L)
         NH4(L)  = SNH4(L) * KG2PPM(L)
-        UPPM(L) = UREA(L) * KG2PPM(L)
+        !UPPM(L) = UREA(L) * KG2PPM(L)
       ENDDO
 
 !     Call NCHECK to check for and fix negative values.
@@ -762,10 +889,12 @@ C         If flooded, lose all nitrate --------REVISED-US
       TNH4   = 0.0
       TNO3   = 0.0
       TUREA  = 0.0
+      TN2OnitrifD = 0.0
       DO L = 1, NLAYR
         TNH4  = TNH4  + SNH4(L)
         TNO3  = TNO3  + SNO3(L)
         TUREA = TUREA + UREA(L)
+        TN2OnitrifD = TN2OnitrifD + N2Onitrif(L)
         WTNUP = WTNUP + (UNO3(L) + UNH4(L)) / 10.    !g[N]/m2 cumul.
         IF (L ==1) THEN
           TMINERN = MNR(0,N) + MNR(1,N)
@@ -777,23 +906,43 @@ C         If flooded, lose all nitrate --------REVISED-US
       ENDDO
 
       TNH4NO3 = TNH4 + TNO3
-
+      
 !     Seasonal cumulative values
-      CMINERN  = CMINERN  + TMINERN 
-      CIMMOBN  = CIMMOBN  + TIMMOBN 
-      CNETMINRN= CMINERN  - CIMMOBN
-      CNITRIFY = CNITRIFY + TNITRIFY
+      CMINERN  = CMINERN  + TMINERN       !mineralization
+      CIMMOBN  = CIMMOBN  + TIMMOBN       !immobilization
+      CNETMINRN= CMINERN  - CIMMOBN       !net mineralization
+
+      CNITRIFY   = CNITRIFY   + TNITRIFY      !Nitrification
+      CN2Onitrif = CN2Onitrif + TN2OnitrifD   !N2O from nitrification
+      CNOflux    = CNOflux    + TNOfluxD      !NO flux
+!     These are accumulated in the Denit routines:
+!     CNOX       = CNOX       + TNOXD         !Denitrification
+!     CN2Odenit  = CN2Odenit  + TN2OdenitD    !N2O from denitrification
+!     CN2        = CN2        + TN2D          !N2 flux                 
+
       CNUPTAKE = WTNUP * 10.
+
+      N2O_data % NITRIF   = NITRIF
+      N2O_data % TNITRIFY = TNITRIFY
+      N2O_data % CNITRIFY = CNITRIFY
+
+      N2O_data % N2Onitrif  = N2Onitrif
+      N2O_data % TN2OnitrifD= TN2OnitrifD
+      N2O_data % CN2Onitrif = CN2Onitrif
+
+      N2O_data % NOflux  = NOflux
+      N2O_data % TNOfluxD= TNOfluxD
+      N2O_data % CNOflux = CNOflux
 
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
-     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, TLCH,  
-     &    TNH4, TNO3, TNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
+     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP, N2O_data) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TOTAML)
+     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
       ENDIF
 
 !***********************************************************************
@@ -808,7 +957,7 @@ C     Write daily output
       CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    TLCH, TNH4, TNH4NO3, TNO3, TNOX, TOTAML)
+     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
 
       IF (NBUND > 0) THEN
         CALL FLOOD_CHEM(CONTROL, ISWITCH, 
@@ -819,8 +968,10 @@ C     Write daily output
       ENDIF
 
       CALL SoilNiBal (CONTROL, ISWITCH,
-     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, TLCH,  
-     &    TNH4, TNO3, TNOX, TOTAML, TOTFLOODN, TUREA, WTNUP) 
+     &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
+     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP, N2O_data) 
+
+      CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 
 C***********************************************************************
 C***********************************************************************
@@ -828,6 +979,7 @@ C     END OF SECOND DYNAMIC IF CONSTRUCT
 C***********************************************************************
       ENDIF
 C-----------------------------------------------------------------------
+  
       RETURN
       END SUBROUTINE SoilNi
 
@@ -848,7 +1000,7 @@ C-----------------------------------------------------------------------
 !                 potential, calculated from the previous day’s value (d-1)
 ! ALGFIX        N in algae (kg [N] / ha)
 ! ALI            
-! ARNTRF        Daily nitrification rate (kg [N] / ha / d)
+! NITRIF(L)     Daily nitrification rate (kg [N] / ha / d)
 ! BD(L)         Bulk density, soil layer L (g [soil] / cm3 [soil])
 ! BD1           Bulk density of oxidized layer (g [soil] / cm3 [soil])
 ! CONTROL       Composite variable containing variables related to control 
@@ -915,7 +1067,7 @@ C-----------------------------------------------------------------------
 !                 limit (cm3 [water] / cm3 [soil])
 ! NBUND         Number of bund height records 
 ! NH4(L)        Ammonium N in soil layer L (µg[N] / g[soil])
-! NITRIF        Nitrification rate (kg [N] / ha - d)
+! NITRIFppm        Nitrification rate (kg [N] / ha - d)
 ! NL            Maximum number of soil layers = 20 
 ! NLAYR         Actual number of soil layers 
 ! NNOM          Net mineral N release from all SOM sources (kg [N] / ha)
@@ -955,7 +1107,7 @@ C-----------------------------------------------------------------------
 ! TIMMOBILIZE   Cumulative N immoblized (kg [N] / ha)
 ! TKELVIN       Soil temperature (oK)
 ! TLAG          Temperature factor for nitrification (0-1) 
-! TLCH          Total N leached from soil (kg [N] / ha)
+! CLeach        Cumulative N leached from soil (kg [N] / ha)
 ! TMAX          Maximum daily temperature (°C)
 ! TMIN          Minimum daily temperature (°C)
 ! TMINERALIZE   Cumulative mineralization (kg [N] / ha)
@@ -964,7 +1116,7 @@ C-----------------------------------------------------------------------
 !                 profile (kg [N] / ha)
 ! CNITRIFY      Cumulative nitrification (kg [N] / ha)
 ! TNO3          Total extractable nitrate N in soil profile (kg [N] / ha)
-! TNOX          Denitrification across the total soil profile  adding to 
+! CNOX          Cumulative denitrification across the total soil profile adding to 
 !                 the nitrous oxide (NOx) pool of the air (kg [N] / ha)
 ! TOTAML        Cumulative ammonia volatilization (kg [N] / ha)
 ! TOTFLOODN     Current N in flood water (kg [N] / ha)

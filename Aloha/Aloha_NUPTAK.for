@@ -1,29 +1,27 @@
-C=======================================================================
-C  Aloha_NUPTAK, Subroutine
-C
-C  Determines N uptake
-C-----------------------------------------------------------------------
-C  Revision history
-C
-C  1. Written
-C  2  Modified by
-C  3. Header revision and minor changes               P.W.W.      2-8-93
-C  4  Modified by                                   W.T.B.     JUNE 94
-C  5. Changed water content dependent factor J.T.R. & B.D.B. 28-Jun-1994
-C-----------------------------------------------------------------------
-C  INPUT  : None
-C
-C  LOCAL  : NUF,NDEM,L,L1,THUMN,RNH4U,RNO3U,TRNLOS,TRLV,TOTN,DNG,
-C           TNDEM,RNDEM,ANDEM,DROOTN,DSTOVN,FNH4,FNO3,SMDFR,RFAC,UNO3,UNH4,
-C           XMIN,RNLOSS,XNDEM,FACTOR
-C
-C  OUTPUT : None
-C-----------------------------------------------------------------------
-C  Called : GROSUB SGROSUB MGROSUB WGROSUB
-C
-C  Calls  : None
-C-----------------------------------------------------------------------
-C=======================================================================
+!=======================================================================
+!  Aloha_NUPTAK, Subroutine
+!
+!  Determines N uptake
+!-----------------------------------------------------------------------
+!  Revision history
+!  02/08/1993 PWW Header revision and minor changes   
+!  06/--/1993 WTB Modifications
+!  06/28/1994 JTR & BDB Changed water content dependent factor 
+!  10/17/2017 CHP Adpated for CSM v4.7
+!-----------------------------------------------------------------------
+!  INPUT  : None
+!
+!  LOCAL  : NUF,NDEM,L,L1,THUMN,RNH4U,RNO3U,TRNLOS,TRLV,TOTN,DNG,
+!           TNDEM,RNDEM,ANDEM,DROOTN,DSTOVN,FNH4,FNO3,SMDFR,RFAC,UNO3,UNH4,
+!           XMIN,RNLOSS,XNDEM,FACTOR
+!
+!  OUTPUT : None
+!-----------------------------------------------------------------------
+!  Called : GROSUB SGROSUB MGROSUB WGROSUB
+!
+!  Calls  : None
+!-----------------------------------------------------------------------
+!=======================================================================
 
       SUBROUTINE Aloha_NUPTAK(CONTROL, ISWITCH,
      &    ISTAGE, NO3, NH4, PDWI, PGRORT, PLIGRT,         !Input
@@ -33,12 +31,6 @@ C=======================================================================
       USE ModuleDefs
       IMPLICIT  NONE
       SAVE
-
-      !INCLUDE  'GEN1.BLK'
-      !INCLUDE  'GEN3.BLK'
-      !INCLUDE  'GEN4.BLK'
-      !INCLUDE  'NTRC1.BLK'
-      !INCLUDE  'NTRC2.BLK'
 
       REAL, DIMENSION(NL) :: ANO3, ANH4, DLAYR, KG2PPM, LL, NH4, NO3, 
      &     RLV, RNO3U, RNH4U, SAT, SHF, SNH4, SNO3, SW, UNH4, UNO3, FON

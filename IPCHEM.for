@@ -47,7 +47,9 @@ C=======================================================================
       PARAMETER   (ERRKEY ='IPCHEM')
       FINDCH ='*CHEMI'
 
+
       NCHEM = 0
+      IF (ISWCHE .EQ. 'N') RETURN
 
       DO J = 1, NAPPL
          CHCOD(J)  = '     '
@@ -56,10 +58,10 @@ C=======================================================================
          CHDEP(J)  = 0.0
       END DO
 
-      IF ( ISWWAT .NE. 'N' .AND. LNCHE .GT. 0) THEN
-         IF (ISWCHE .EQ. 'N' .AND. LNSIM .EQ. 0) THEN
-            ISWCHE = 'Y'
-         ENDIF
+!      IF ( ISWWAT .NE. 'N' .AND. LNCHE .GT. 0) THEN
+!         IF (ISWCHE .EQ. 'N' .AND. LNSIM .EQ. 0) THEN
+!            ISWCHE = 'Y'
+!         ENDIF
          NCHEM = 1
          CALL FIND (LUNEXP,FINDCH,LINEXP,IFIND)
          IF (IFIND .EQ. 0) CALL ERROR (ERRKEY,1,FILEX,LINEXP)
@@ -94,13 +96,13 @@ C    &            CHDEP(NCHEM),CHT(NCHEM)
             NCHEM = NCHEM + 1
             IF (NCHEM .GT. NAPPL) GO TO 120
           ELSE
-	      IF (NCHEM .EQ. 1) THEN
-	        CALL ERROR (ERRKEY,2,FILEX,LINEXP)
-	      ENDIF
+	      !IF (NCHEM .EQ. 1) THEN
+	      !  CALL ERROR (ERRKEY,2,FILEX,LINEXP)
+	      !ENDIF
             GO TO 120
          ENDIF
          GO TO 50
-      ENDIF
+!      ENDIF
 
  120  REWIND (LUNEXP)
       NCHEM = MAX((NCHEM-1),0)
