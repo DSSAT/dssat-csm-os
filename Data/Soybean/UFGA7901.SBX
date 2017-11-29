@@ -7,6 +7,8 @@ K.J. Boote
 Dept. of Agronomy, University of Florida, Gainesville, Florida, USA
 @SITE
 Irrigation Park
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 ! TREATMENT 3 NOT CORRECT START OF WITHHOLDING WATER,KJB NOTE
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
@@ -26,6 +28,12 @@ Irrigation Park
  1 UFGA0001 UFGA7901     0     0 IB000     0     0 00000 -99      0  IBSB910015 -99
 @L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
  1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 79170   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
 
 *INITIAL CONDITIONS
 @C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
@@ -69,7 +77,7 @@ Irrigation Park
 
 *RESIDUES AND ORGANIC FERTILIZER
 @R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
- 1 79170   -99  1000    .8   -99   -99   -99    15   -99 -99
+ 1 79170 RE001  1000    .8   -99   -99   -99    15   -99 -99
 
 *ENVIRONMENT MODIFICATIONS
 @E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
@@ -84,8 +92,8 @@ Irrigation Park
  1 ME              M     M     E     R     S     L     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     R     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -107,8 +115,8 @@ Irrigation Park
  2 ME              M     M     E     R     S     L     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  2 MA              R     N     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 2 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 2 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -122,3 +130,5 @@ Irrigation Park
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  2 HA              0 79365   100     0
 
+
+

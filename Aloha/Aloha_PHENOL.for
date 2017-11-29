@@ -13,7 +13,7 @@ C  5. Modified for MILLET model                   W.T.B.      MAY 94
 C=======================================================================
 
       SUBROUTINE Aloha_PHENOL (CONTROL, ISWITCH,
-     &    SW, WEATHER, SOILPROP,                              !Input
+     &    SW, WEATHER, SOILPROP, YRPLT,                       !Input
      &    DTT, EDATE, ISDATE, ISTAGE, MDATE, PMDATE,          !Output
      &    STGDOY, SUMDTT, TBASE, TEMPM, XSTAGE)               !Output
 
@@ -21,7 +21,7 @@ C=======================================================================
       IMPLICIT    NONE
       SAVE
 
-      INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0
+      INTEGER     STGDOY(20),YRDOY,I,NDAS,L,L0, TIMDIF, YRPLT
       REAL        TTMP,SWSD,XLAT
 
 !     REAL        YIELDB,PHOTOSYNEYE,PEYEWT,LAI, BIOMAS, MAXLAI, SUMP
@@ -261,6 +261,10 @@ C     6 - Physiological maturity
                  NDAS = NDAS + 1
                  IF (SWSD .LT. 0.02) RETURN
              ENDIF
+          ENDIF
+
+          IF (PLANTING % NFORCING .GE. 2) THEN
+            NDOF = TIMDIF(YRPLT, PLANTING % ForcingYRDOY)
           ENDIF
 
 !         After 140 days, give up

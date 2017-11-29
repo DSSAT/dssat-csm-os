@@ -211,6 +211,8 @@ CH055    Mancozeb [Fungicide]                                                 IB
 CH056    Tilt [Fungicide]                                                     IB
 CH057    Rhizobium (for legume crops)                                         IB
 CH100    Pix [Mepiquat Chloride; Growth Regulator]                            IB
+CH101    Ethephon [Growth Regulator]                                          IB
+CH102    Ethylene [Growth Regulator]                                          IB
 
 *Crop and Weed Species
 @CDE     DESCRIPTION                                                          SO

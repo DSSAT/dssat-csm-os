@@ -7,8 +7,6 @@
  AGRICULTURAL AND BIOSYSTEMS ENG., IOWA STATE UNIV., AMES, IA 50011
 @SITE
  SORENSON FARMS, AMES, IA
-@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
-    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
@@ -69,13 +67,13 @@
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
  1 GE              1     1     S 97133  2150 1997 AT SORENSON FARM, I
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 1 OP              Y     Y     Y     N     N     Y     N     Y     M
+ 1 OP              Y     Y     Y     N     N     N     N     N     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
  1 ME              M     M     E     R     S     L     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     R     R     R     R
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
@@ -88,3 +86,6 @@
  1 RE            100     1    20
 @N HARVEST     HFRST HLAST HPCNP HPCNR
  1 HA              0 97365   100     0
+
+
+

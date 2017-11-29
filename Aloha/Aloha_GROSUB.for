@@ -1,60 +1,59 @@
-C=======================================================================
-C  Aloha_GROSUB, Subroutine
-C
-C  Maize growth routine
-C-----------------------------------------------------------------------
-C  Revision history
-C
-C  1. Written
-C  2. Header revision and minor changes           P.W.W.      2-7-93
-C  3. Switch block added, etc                     P.W.W.      2-7-93
-C  4. Updated PCARB calculation          J.T.R. & B.D.B. 21-Jun-1994
-C-----------------------------------------------------------------------
-C  INPUT  : NOUTDO,ISWNIT
-C
-C  LOCAL  : NSINK,NPOOL1,NPOOL2,NPOOL,NSDR,I,ICOLD,PCARB,PRFT,PC,
-C           GRF,GROEAR,RGFILL,TTMP,GROGRN,SFAC,TFAC,RMNC,XNF,TNLAB,
-C           RNLAB,RNOUT,SLFW,SLFN,SLFC,SLFT,PLAS,TI
-C
-C  OUTPUT :
-C-----------------------------------------------------------------------
-C  Called : PINE
-C
-C  Calls  : NFACTO NUPTAK
-C-----------------------------------------------------------------------
-C                         DEFINITIONS
-C
-C  GRF    :
-C  GROGRN : Daily growth of the grain - g
-C  I      : Loop counter
-C  ICOLD  :
-C  NOUTDO : File handle
-C  NPOOL  : Total plant N available for translocation to grain (g/plant)
-C  NPOOL1 : Tops N available for translocation to grain (g/plant)
-C  NPOOL2 : Root N available for translocation to grain (g/plant)
-C  NSDR   : Plant N supply/demand ratio used to modify grain N content
-C  NSINK  : Demand for N associated with grain filling (g/plant/day)
-C  PAR    : Daily photosynthetically active radiation, calculated as half
-C           the solar radiation - MJ/square metre
-C  PC     :
-C  PCARB  : Daily amount of carbon fixed - g
-C  PLAS   : The rate of senescence of leaf area on one plant - sq. cm/day
-C  PRFT   : Photosynthetic reduction factor for low and high temperatures
-C  RGFILL : Rate of grain fill - mg/day
-C  RMNC   : Root minimum nitrogen concentration (g N/g root dry weight)
-C  TI     : Fraction of a phyllochron interval which occurred as a fraction
-C           of today's daily thermal time
-C  TNLAB  :
-C  TTMP   :
-C=======================================================================
+!=======================================================================
+!  Aloha_GROSUB, Subroutine
+!
+!  Maize growth routine
+!-----------------------------------------------------------------------
+!  Revision history
+!  02/07/1993 PWW Header revision and minor changes   
+!  02/07/1993 PWW Switch block added, etc
+!  10/17/2017 CHP Adpated for CSM v4.7
+!-----------------------------------------------------------------------
+!  INPUT  : NOUTDO,ISWNIT
+!
+!  LOCAL  : NSINK,NPOOL1,NPOOL2,NPOOL,NSDR,I,ICOLD,PCARB,PRFT,PC,
+!           GRF,GROEAR,RGFILL,TTMP,GROGRN,SFAC,TFAC,RMNC,XNF,TNLAB,
+!           RNLAB,RNOUT,SLFW,SLFN,SLFC,SLFT,PLAS,TI
+!
+!  OUTPUT :
+!-----------------------------------------------------------------------
+!  Called : PINE
+!
+!  Calls  : NFACTO NUPTAK
+!-----------------------------------------------------------------------
+!                         DEFINITIONS
+!
+!  GRF    :
+!  GROGRN : Daily growth of the grain - g
+!  I      : Loop counter
+!  ICOLD  :
+!  NOUTDO : File handle
+!  NPOOL  : Total plant N available for translocation to grain (g/plant)
+!  NPOOL1 : Tops N available for translocation to grain (g/plant)
+!  NPOOL2 : Root N available for translocation to grain (g/plant)
+!  NSDR   : Plant N supply/demand ratio used to modify grain N content
+!  NSINK  : Demand for N associated with grain filling (g/plant/day)
+!  PAR    : Daily photosynthetically active radiation, calculated as half
+!           the solar radiation - MJ/square metre
+!  PC     :
+!  PCARB  : Daily amount of carbon fixed - g
+!  PLAS   : The rate of senescence of leaf area on one plant - sq. cm/day
+!  PRFT   : Photosynthetic reduction factor for low and high temperatures
+!  RGFILL : Rate of grain fill - mg/day
+!  RMNC   : Root minimum nitrogen concentration (g N/g root dry weight)
+!  TI     : Fraction of a phyllochron interval which occurred as a fraction
+!           of today's daily thermal time
+!  TNLAB  :
+!  TTMP   :
+!=======================================================================
 
       SUBROUTINE Aloha_GROSUB (CONTROL, ISWITCH, 
      &    DTT, ISTAGE, NH4, NO3, SOILPROP, SW, SWFAC,         !Input
      &    SUMDTT, TBASE, TURFAC, WEATHER, XSTAGE,             !Input
-     &    BASLFWT, BIOMAS, CRWNWT, FRTWT, GPP, GPSM, GRORT,   !Output
-     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT, SENESCE,   !Output
-     &    SKWT, STMWT, STOVER, STOVN, STOVWT, TEMPM,          !Output
-     &    UNH4, UNO3, WTNUP, WTINITIAL, YIELD)                !Output
+     &    AGEFAC, BASLFWT, BIOMAS, CRWNWT, EYEWT, FBIOM,      !Output
+     &    FLRWT, FRTWT, FRUITS, GPP, GPSM, GRAINN, GRORT,     !Output
+     &    LAI, LFWT, LN, NSTRES, RLV, ROOTN, RTWT,            !Output
+     &    SENESCE, SKWT, STMWT, STOVN, STOVWT,  TEMPM,        !Output
+     &    UNH4, UNO3, WTNUP, WTINITIAL, XGNP, YIELD)          !Output
 
       USE Aloha_mod
       USE Interface_SenLig_Ceres
@@ -87,13 +86,13 @@ C=======================================================================
       REAL    PAR, CC, TRF2, CARBO, SWFAC, TEMPM  !,TRNU
       REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP
       REAL    PDWI, PGRORT, DM, FBIOM, MAXLAI, PHOTOSYNEYE, FRUITS
-      REAL    YIELD, PEYEWT, GPSM, STOVER, YIELDB, HBIOM, XSTAGE  !, FDMC
+      REAL    YIELD, GPSM, XSTAGE  !, FDMC
 
       REAL    CO2, SRAD, TMIN, TMAX
       REAL    PLTPOP, SDWTPL, PLANTSIZE
       REAL    G2, G3, P4, PHINT, TBASE
       INTEGER PMTYPE, NFORCING
-      REAL    GRNWT, SDWTAH, SDWTAM, WTNUP, TOPWT, BWAH
+      REAL    GRNWT, SDWTAH, SDWTAM, WTNUP, BWAH
       REAL    WTNLF, WTNST, WTNSH, WTNRT, WTNLO
       REAL    NDEF4, ANFAC, ATANC, TCNP, XGNP, GNUP, TOTNUP
       REAL    CUMDTT, CANNAA, CANWAA
@@ -144,7 +143,6 @@ C=======================================================================
       RTWT   = 0.0
       SDWTAH = 0.0  !Only used for output in OPHarv
       SDWTAM = 0.0
-      TOPWT  = 0.0
       BWAH   = 0.0
       WTNLF  = 0.0
       WTNST  = 0.0
@@ -154,16 +152,15 @@ C=======================================================================
       GPSM   = 0.0
       GPP    = 0.0
       PTF    = 0.0
+      FRUITS = 0.0
 
       DO I = 1, NL
          RLV(I) = 0.0
       END DO
 
       BIOMAS = 0.0
-!      LEAFNO = 0.0
       LAI    = 0.0
       XN     = 0.0
-!      ICSDUR = 0
       SWFAC  = 1.0
       TURFAC = 1.0
       NDEF4  = 1.0
@@ -183,6 +180,15 @@ C=======================================================================
       DTT    = 0.0
       CANNAA = 0.05
       CANWAA = 0.0
+
+      PLAG    = 0.0   ! PLAG (cm^2) is daily green leaf area growth
+      GROSTM  = 0.0   ! GROSTM (g/plant/day) is daily stem growth
+      GRORT   = 0.0   ! GRORT (g/plant/day) is daily root growth
+      GROBSL  = 0.0   ! GROBSL (g/plant/day) is daily basal leaf growth
+      GROLF   = 0.0   ! GROLF (g/plant/day) is daily green leaf growth
+      GROFLR  = 0.0
+      GROCRWN = 0.0
+      GROFRT  = 0.0
 
       CALL Aloha_NFACTO (DYNAMIC, 
      &    ISTAGE, TANC, XSTAGE,                           !Input
@@ -222,8 +228,7 @@ C=======================================================================
       STOVWT     = 0.0
       LN     = 0.0
 
-      ! Calculate initial SEED N
-      !
+!     Calculate initial SEED N
       SEEDNI = (ROOTN+STOVN+GRAINN+SEEDN)*PLTPOP
 
       ISTAGE_OLD = 0
@@ -256,18 +261,6 @@ C=======================================================================
      &      AGEFAC, NDEF3, NFAC, NSTRES, RCNP, TCNP, TMNC)  !Output
         ENDIF
       ENDIF
-
-!-----------------------------------------------------------------
-!     7 - Preplanting
-!     8 - Planting to root initiation
-!     9 - Root initiation to first new leaf emergence
-!     1 - First new leaf emergence to net zero root growth
-!     2 - Net zero stem growth to forcing
-!     3 - Forcing to sepals closed on youngest flowers
-!     4 - SCY to first open flower
-!     5 - Fruit growth
-!     6 - Physiological maturity
-!-----------------------------------------------------------------
 
       IF (ISTAGE .GT. 5) RETURN
 
@@ -364,16 +357,17 @@ C=======================================================================
          LN    = XN                     ! LN is leaf number
       ENDIF
 
-C     7 - Preplanting
-C     8 - Planting to root initiation
-C     9 - Root initiation to first new leaf emergence
-C     1 - First new leaf emergence to net zero root growth
-C     2 - Net zero stem growth to forcing
-C     3 - Forcing to sepals closed on youngest flowers
-C     4 - SCY to first open flower
-C     5 - Fruit growth
-C     6 - Physiological maturity
-
+!-----------------------------------------------------------------
+!  ISTAGE Definition
+!     7 - Preplanting
+!     8 - Planting to root initiation
+!     9 - Root initiation to first new leaf emergence
+!     1 - First new leaf emergence to net zero root growth
+!     2 - Net zero stem growth to forcing
+!     3 - Forcing to sepals closed on youngest flowers
+!     4 - SCY to first open flower
+!     5 - Fruit growth
+!     6 - Physiological maturity
 !-----------------------------------------------------------------
       SELECT CASE (ISTAGE)
 !-----------------------------------------------------------------
@@ -553,6 +547,10 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         BASLFWT = BASLFWT + GROBSL
         STMWT   = STMWT   + GROSTM
         FLRWT   = FLRWT   + GROFLR
+!     chp added FRTWT and CRWNWT because these are in daily output
+!     this allows mass balance to work.
+!       FRTWT  = FLRWT*0.7      !CHP 10/14/2017
+!       CRWNWT = FLRWT*0.3      !CHP 10/14/2017
 
         IF (GROLF .GT. 0.0) THEN
            SLAN = PLA/1000.0
@@ -605,6 +603,8 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
         ENDIF
         STMWT = STMWT + GROSTM
         FLRWT = FLRWT + GROFLR
+!       FRTWT  = FLRWT*0.7      !CHP 10/14/2017
+!       CRWNWT = FLRWT*0.3      !CHP 10/14/2017
         SKWT  = SKWT  + GROSK
 
 !-----------------------------------------------------------------
@@ -733,7 +733,7 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
            SFAC  = 1.125 - 0.1250*TURFAC
            TFAC  = 0.690 + 0.0125*TEMPM
            GNP   = (0.004+0.013*NFAC)*AMAX1(SFAC,TFAC)
-           NSINK = GROGRN*GNP                !!!!!!!!!!!! GROGRN*GNP
+           NSINK = GROGRN*GNP   
  
            IF (NSINK .GT. 0.0) THEN
               RMNC   = 0.75*RCNP
@@ -848,10 +848,21 @@ C       PLA     = (LFWT+GROLF)**0.87*96.0
       RTWT = RTWT + 0.45*GRORT - 0.0025*RTWT
       !
       ! Finally, total biomass per unit area (BIOMAS g/m2), total plant weight,
-      ! Total plant dry weight per hactare (DM kg/ha) and Plant top fraction
+      ! Total plant dry weight per hectare (DM kg/ha) and Plant top fraction
       ! (PTF) are calculated
       !
-      BIOMAS   = (LFWT + STMWT + FLRWT + BASLFWT + SKWT)*PLTPOP
+!     When fruit development starts, the fruit population (FRUITS) is
+!       less than the plant population (PLTPOP). Need to differentiate
+!       for consistency with daily and seasonal outputs.
+      SELECT CASE(ISTAGE)
+      CASE(5,6)
+!       In this case FLRWT is fruit + crown
+        BIOMAS   = (LFWT + STMWT + BASLFWT + SKWT)*PLTPOP 
+     &                + (FLRWT * FRUITS) 
+      CASE DEFAULT
+        BIOMAS   = (LFWT + STMWT + FLRWT + BASLFWT + SKWT)*PLTPOP
+      END SELECT 
+
       TOTPLTWT =  LFWT + STMWT + FLRWT + BASLFWT + SKWT
       DM       = BIOMAS*10.0
       STOVWT   = LFWT + STMWT
@@ -882,6 +893,7 @@ C-----------------------------------------------------------------------
 !=======================================================================
 !     This code used to be in PhaseI subroutine. Put here to make timing match 
 !     with old code.
+!     Some of the code was removed to other subroutines.
       IF (ISTAGE /= ISTAGE_old) THEN
         ISTAGE_OLD = ISTAGE
 
@@ -911,12 +923,12 @@ C-----------------------------------------------------------------------
           GROSTM = 0.0                   ! Daily stem growth (g/plant/day).
 
         CASE (3)
-          IF (NFORCING .GE. 2) THEN
+!          IF (NFORCING .GE. 2) THEN
              ! Forcing by number of days after planting
              PLANTSIZE = TOTPLTWT
-          ELSE    
-             PLANTSIZE = PLANTING % PLANTSIZE
-          ENDIF
+!          ELSE    
+!             PLANTSIZE = PLANTING % PLANTSIZE
+!          ENDIF
           FBIOM  = BIOMAS               ! Record biomass at forcing
           SUMP   = 0.0                  ! SUMP is the total weight of biomass cumulated in Istage 4.
           IDURP  = 0                    ! Duration of stage 3 (days)
@@ -937,9 +949,11 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
      &             (0.7+0.3*PLANTSIZE/550.)
           GPP    = AMIN1 (GPP,G2)                ! G2 is genetic coefficient for potential eye number
           GPP    = AMAX1 (GPP,0.0)
-          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
 
-          FLRWT  =  0.1*STMWT           ! FLRWT stands for the weight ofwhole inflorescence STMWT is stem weight.  Both are in gram/plant.
+!         Move from Istage 4 because no actual fruits until stage 5
+!         FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
+
+!CHP 10/14/2017          FLRWT  =  0.1*STMWT           ! FLRWT stands for the weight ofwhole inflorescence STMWT is stem weight.  Both are in gram/plant.
           SKWT   =  0.0
           GROSK  =  0.0
           PTF    =  1.0                 ! PTF is plant top fraction in gram/plant.
@@ -948,25 +962,37 @@ C         ABIOMS      = BIOMAS            ! Above biomass per square meter (g/m^
           VMNC   = TMNC                 ! .....
 
         CASE (5)
-          FRTWT  = FLRWT*0.5            ! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
-          CRWNWT = FLRWT*0.2            ! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
+
+!         Move from Istage 4 because no actual fruits until stage 5
+          FRUITS = PLTPOP*(1.-0.10*PLTPOP/14.0)  ! number of fruits=PLTPOP/m2*FRUITING%
+!         There will be some loss of mass when going from flower mass
+!           to fruit + crown because FRUITS (#/m2) < PLTPOP (#/m2)
+
+! FRTWT (g/plant) is fruit weight.  It is assumed to be 50% of inflorescence at begining of the stage
+! CRWNWT (g/plant) is crown weight which is assumed to be 20% of inflorescence at the begining of the stage
+!         FRTWT  = FLRWT*0.5            
+!         CRWNWT = FLRWT*0.2            
+! 10/14/2017 CHP 50% to fruit and 20% to crown causes 30% of flower mass to be lost. 
+!     change ratios to add up to 1, maintaining approximately the same ratio.
+          FRTWT  = FLRWT*0.7 
+          CRWNWT = FLRWT*0.3 
           SWMAX  = 0.0
           SWMIN  = 0.0
 
         CASE (6)
           YIELD = FRTWT*10.0*FRUITS        ! fruit dry weight yield (kg/ha)
-          IF (PLTPOP .GE. 0.0) THEN
-             IF (GPP .GT. 0.0) THEN
-                EYEWT = FRTWT/GPP
-             ENDIF
-             PEYEWT = EYEWT*1000.0            ! Eye weight (mg/eye)
-             GPSM   = GPP*FRUITS              ! Number of eyes per square meter
-             STOVER = BIOMAS*10.0-YIELD       ! Total plant weight except fruit
-             YIELD  = YIELD / Species % FDMC  ! Fresh fruit yield (kg/ha)
-             YIELDB = YIELD/0.8914            ! Fresh fruit yield (lb/acre)
-             STGDOY (ISTAGE) = YRDOY
-          ENDIF
-          HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
+!         IF (PLTPOP .GE. 0.0) THEN
+!            IF (GPP .GT. 0.0) THEN
+!               EYEWT = FRTWT/GPP
+!            ENDIF
+!            PEYEWT = EYEWT*1000.0            ! Eye weight (mg/eye)
+!            GPSM   = GPP*FRUITS              ! Number of eyes per square meter
+!            STOVER = BIOMAS*10.0-YIELD       ! Total plant weight except fruit
+!            YIELD  = YIELD / Species % FDMC  ! Dry fruit yield (kg/ha)
+!            YIELDB = YIELD/0.8914            ! Fresh fruit yield (lb/acre)
+            STGDOY (ISTAGE) = YRDOY
+!         ENDIF
+!         HBIOM  = BIOMAS                 ! Record biomass at fruit harvest date
 
         CASE (8)
           WTINITIAL = SDWTPL/(PLTPOP*10.0)        ! kg/ha  --> g/plt
