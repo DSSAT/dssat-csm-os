@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 8965 - 9278 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 8965 - 9278 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -25,17 +25,17 @@
         !         Errora, Errort, Errors (IDETL = A)
         !-----------------------------------------------------------------------------------------------------------
                 
-        IF (IDETL.EQ.'A') THEN     ! Write some error outputs
+        IF (IDETL == 'A') THEN     ! Write some error outputs
                     
             ! Find intermediate stage dates
             !DO L = MSTG-1,1,-1 !LPM 06MAR15 MSTG TO PSX this section could be not necessary
             DO L = PSX-1,0,-1
-                IF (psdapm(l).GT.0.0) THEN
+                IF (psdapm(l) > 0.0) THEN
                     psidapm = psdapm(l)
                     EXIT
                 ENDIF
             ENDDO
-            !IF (L.EQ.0) L = INT((FLOAT(MSTG)/2.0)+1) !LPM 06MAR15 MSTG TO PSX
+            !IF (L == 0) L = INT((FLOAT(MSTG)/2.0)+1) !LPM 06MAR15 MSTG TO PSX
             IF (L == 0) THEN
                 L = INT((FLOAT(PSX)/2.0)+1)
             ENDIF
@@ -62,20 +62,20 @@
                 ELSE
                     emdaterr = -99
                 Endif
-                IF (psidapm.GT.0) THEN
+                IF (psidapm > 0) THEN
                     psidaterr = 100.0*(psidap-psidapm)/psidapm
                 ELSE
                     psidaterr = -99
                 Endif
-                IF (mdatm.GT.0) THEN
+                IF (mdatm > 0) THEN
                     mdaterr = 100.0*(mdap-mdapm)/mdapm
                 ELSE
                     mdaterr = -99
                 Endif
                 IF (hwahm > 0 .AND. hwam > 0.AND. hpcf > 0) THEN
                     hwaherr = 100.*(hwam*hpcf/100.-hwahm)/(hwahm*hpcf/100.)
-                    IF (hwaherr.GT.99999.0) hwaherr = 99999.0
-                    IF (hwaherr.LT.-9999.0) hwaherr = -9999.0
+                    IF (hwaherr > 99999.0) hwaherr = 99999.0
+                    IF (hwaherr < -9999.0) hwaherr = -9999.0
                 ELSE
                     hwaherr = -99
                 ENDIF
@@ -89,7 +89,7 @@
                 ELSE
                     hnumaerr = -99
                 ENDIF
-                IF (hnumgmm.GT.0.AND. hnumgm.GT.0) THEN
+                IF (hnumgmm > 0.AND. hnumgm > 0) THEN
                     hnumgerr = 100.0*((hnumgm-hnumgmm)/hnumgmm)
                 ELSE
                     hnumgerr = -99
@@ -145,9 +145,9 @@
             ENDIF ! End ErrorA writes (If data available)
                     
             ! Errors (T)
-            IF (.NOT.FEXISTT .OR. FROPADJ.GT.1 .OR. IDETG.EQ.'N') THEN
+            IF (.NOT.FEXISTT .OR. FROPADJ > 1 .OR. IDETG == 'N') THEN
                 WRITE (fnumwrk,*) ' '
-                IF (FROPADJ.GT.1) THEN
+                IF (FROPADJ > 1) THEN
                     WRITE (fnumwrk,*) ' Cannot write PLANT ERRORS (T).',' Frequency of output > 1 day'
                 ELSE  
                     WRITE (fnumwrk,*)' No data so cannot write PLANT ERRORS (T)'
@@ -159,12 +159,12 @@
                 IF (FOPEN) CLOSE (NOUTPG)
                 STARNUM = 0
                 OPEN (UNIT=FNUMT,FILE='Measured.out',STATUS='UNKNOWN')
-                DO WHILE (TLINET(1:1).NE.'@')
+                DO WHILE (TLINET(1:1) /= '@')
                     TLINET = ' '
                     READ (FNUMT, FMT1502, END=1600, ERR=1600) TLINET
-                    IF (TLINET(1:1).EQ.'*') STARNUM = STARNUM + 1
-                    IF (TLINET(1:1).EQ.'@') THEN
-                        IF (STARNUM.NE.STARNUMM) THEN
+                    IF (TLINET(1:1) == '*') STARNUM = STARNUM + 1
+                    IF (TLINET(1:1) == '@') THEN
+                        IF (STARNUM /= STARNUMM) THEN
                             TLINET = ' '
                             READ (FNUMT, FMT1502, END=1600, ERR=1600) TLINET
                         ENDIF
@@ -173,12 +173,12 @@
                 tlinet(1:1) = ' '
                 STARNUM = 0
                 OPEN (UNIT=NOUTPG,FILE='PlantGro.OUT',STATUS='UNKNOWN')
-                DO WHILE (TLINEGRO(1:1).NE.'@')
+                DO WHILE (TLINEGRO(1:1) /= '@')
                     TLINEGRO = ' '
                     READ (NOUTPG,'(A254)') TLINEGRO
-                    IF (TLINEGRO(1:4).EQ.'*RUN') STARNUM = STARNUM + 1
-                    IF (TLINEGRO(1:1).EQ.'@') THEN
-                        IF (STARNUM.NE.STARNUMO) THEN
+                    IF (TLINEGRO(1:4) == '*RUN') STARNUM = STARNUM + 1
+                    IF (TLINEGRO(1:1) == '@') THEN
+                        IF (STARNUM /= STARNUMO) THEN
                             TLINEGRO = ' '
                             READ (NOUTPG,'(A254)') TLINEGRO
                         ENDIF
@@ -188,11 +188,11 @@
                 ! Find headers from Measured file
                 DO L = 1,20
                     CALL Getstr(tlinet,l,thead(l))
-                    IF (THEAD(L)(1:3).EQ.'-99') EXIT
-                    IF (THEAD(L)(1:3).EQ.'DAP') tfdapcol = l
+                    IF (THEAD(L)(1:3) == '-99') EXIT
+                    IF (THEAD(L)(1:3) == 'DAP') tfdapcol = l
                 ENDDO
                 TFCOLNUM = L-1
-                IF (TFCOLNUM.LE.0) THEN
+                IF (TFCOLNUM <= 0) THEN
                     WRITE (FNUMWRK,*) 'No columns found in T-file '
                     GO TO 7777
                 ENDIF
@@ -201,9 +201,9 @@
                 TLINETMP(1:1) = '@'
                 DO L = 1, TFCOLNUM
                     TLPOS = (L-1)*6+1
-                    IF (THEAD(L).EQ.'TRNO'.OR.THEAD(L).EQ.'YEAR'.OR.THEAD(L).EQ.'DATE') THEN
+                    IF (THEAD(L) == 'TRNO'.OR.THEAD(L) == 'YEAR'.OR.THEAD(L) == 'DATE') THEN
                         TLINETMP(TLPOS+2:TLPOS+5)=THEAD(L)(1:4)
-                    ELSEIF(THEAD(L).EQ.'DOY'.OR.THEAD(L).EQ.'DAP' .OR.THEAD(L).EQ.'DAS'.OR.THEAD(L).EQ.'DAY') THEN
+                    ELSEIF(THEAD(L) == 'DOY'.OR.THEAD(L) == 'DAP' .OR.THEAD(L) == 'DAS'.OR.THEAD(L) == 'DAY') THEN
                         TLINETMP(TLPOS+3:TLPOS+5)=THEAD(L)(1:3)
                     ELSE
                         WRITE (TCHAR,'(I6)') NINT(ERRORVAL*100.0)
@@ -223,17 +223,17 @@
                 DO L1 = 1,200
                     TLINET = ' '
                     READ (FNUMT, FMT7778,ERR=7777,END=7777) TLINET
-                    IF (TLINET(1:1).EQ.'*') EXIT
-                    IF (TLINET(1:6).EQ.'      ') GO TO 7776
+                    IF (TLINET(1:1) == '*') EXIT
+                    IF (TLINET(1:6) == '      ') GO TO 7776
                     CALL Getstri(tlinet,tfdapcol,tfdap)
-                    IF (TFDAP.LE.0.0) THEN
+                    IF (TFDAP <= 0.0) THEN
                         EXIT
                     ENDIF
-                    DO WHILE (tfdap.NE.pgdap)
+                    DO WHILE (tfdap /= pgdap)
                         TLINEGRO = ' '
                         READ (NOUTPG, FMT7779, ERR=7777, END=7777) TLINEGRO
                         CALL Getstri(tlinegro,pgrocol(tfdapcol),pgdap)
-                        IF (PGDAP.LT.0) THEN
+                        IF (PGDAP < 0) THEN
                             WRITE (FNUMWRK,*) 'DAP in Plantgro file < 0 '
                             EXIT
                         ENDIF
@@ -248,8 +248,8 @@
                         ELSE
                             ERRORVAL = -99.0
                         ENDIF
-                        IF (THEAD(L).EQ.'TRNO'.OR.THEAD(L).EQ.'YEAR' .OR.THEAD(L).EQ.'DOY'.OR.THEAD(L).EQ.'DAP' .OR. &
-                            THEAD(L).EQ.'DAY' .OR.THEAD(L).EQ.'DAS'.OR.THEAD(L).EQ.'DATE') THEN
+                        IF (THEAD(L) == 'TRNO'.OR.THEAD(L) == 'YEAR' .OR.THEAD(L) == 'DOY'.OR.THEAD(L) == 'DAP' .OR. &
+                            THEAD(L) == 'DAY' .OR.THEAD(L) == 'DAS'.OR.THEAD(L) == 'DATE') THEN
                             CALL Getstri(tlinet,l,tvi1)
                             WRITE (TCHAR,'(I6)') TVI1
                         ELSE
@@ -272,7 +272,7 @@
                 CLOSE (NOUTPG)
                 ! Re-open file if open at start of work here
                 IF (FOPEN) OPEN (UNIT=NOUTPG,FILE='PlantGro.OUT',POSITION='APPEND')
-            ENDIF  ! .NOT.FEXISTT .OR. FROPADJ.GT.1 .OR. IDETG.EQ.'N'
+            ENDIF  ! .NOT.FEXISTT .OR. FROPADJ > 1 .OR. IDETG == 'N'
             ! End of ErrorT writes
                     
         ELSE ! No ERROR files called for ... must be deleted          
@@ -282,7 +282,7 @@
             OPEN (UNIT=FNUMTMP,FILE=FNAMEERT,STATUS='UNKNOWN')
             CLOSE (UNIT=FNUMTMP, STATUS = 'DELETE')
                     
-        ENDIF ! End of Error writes  IDETL.EQ.'A'
+        ENDIF ! End of Error writes  IDETL == 'A'
 
     END SUBROUTINE YCA_Out_Error   
 

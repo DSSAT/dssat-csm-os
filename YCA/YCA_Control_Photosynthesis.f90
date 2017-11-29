@@ -11,41 +11,9 @@
 ! @danipilze
 !*********
 
-    Module YCA_Photosyntesis !Module of environment
+    Module YCA_Control_Photosyntesis !Module of environment
 
-    type Photosyntesis_type
-        
-        character , private :: method_   ! photosytesis method 
-    
-        contains
-    
-        procedure, pass (this) :: getMethod
-        procedure, pass (this) :: setMethod
-        
-    end Type Photosyntesis_type
-        
-    
-    ! interface to reference the constructor
-    interface Photosyntesis_type
-        module procedure Photosyntesis_type_constructor
-    end interface Photosyntesis_type
-    
     contains
-    
-    ! constructor for the type
-    type (Photosyntesis_type) function Photosyntesis_type_constructor(method)
-        implicit none
-        character, intent (in) :: method
-        Photosyntesis_type_constructor%method_ = method
-        
-    end function Photosyntesis_type_constructor    
-    
-    
-    !-------------------------------------------
-    ! OBJECT FUNCTIONS
-    !-------------------------------------------
-    
-    
     
     
     !-------------------------------------------
@@ -90,7 +58,7 @@
             CO2INTPPM = AMAX1(CO2COMPC+20.0,CO2INT *(8.314*1.0E7*((TMAX+TMIN)*.5+273.))/(1.0E12*1.0E-6*44.))			!EQN 269
             CO2FPI = PARFC*((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2COMPC)))										!EQN 268
             CARBOTMPI = CARBOTMP * CO2FPI		
-            IF (ABS(CO2INTPPM-CO2INTPPMP).LT.1.0) EXIT
+            IF (ABS(CO2INTPPM-CO2INTPPMP) < 1.0) EXIT
             CO2INTPPMP = CO2INTPPM
         ENDDO
         CARBOBEGIA = 0.0
@@ -103,8 +71,8 @@
             CO2FPI = PARFC*((1.-EXP(-CO2EX*CO2INTPPM))-(1.-EXP(-CO2EX*CO2COMPC)))
             CARBOTMPI = CARBOTMP * CO2FPI
             !---- DA 25APR2017 is this used at all?
-            IF (ABS(CO2INTPPM-CO2INTPPMP).LT.1.0) EXIT
-            IF (ABS(CO2INTPPM-CO2COMPC).LT.1.0) EXIT
+            IF (ABS(CO2INTPPM-CO2INTPPMP) < 1.0) EXIT
+            IF (ABS(CO2INTPPM-CO2COMPC) < 1.0) EXIT
             CO2INTPPMP = CO2INTPPM
             !----
             
@@ -137,8 +105,8 @@
     
     ! Alternate method V
     real function availableCarbohydrate_methodV(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
-        USE YCA_Environment
-        USE YCA_VPDEffect
+        USE YCA_Control_Environment
+        USE YCA_Control_VPDEffect
         implicit none
         real, intent (in) :: TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE
         type (DailyEnvironment_type)                     :: env
@@ -159,26 +127,6 @@
 
     end function availableCarbohydrate_methodV
     
-
-    !-------------------------------------------
-    ! GETTERS AND SETTERS
-    !------------------------------------------
-    ! get photosytesis method
-    character function getMethod(this)
-        implicit none
-        class (Photosyntesis_type), intent(in) :: this
-        
-        getMethod = this%method_
-    end function getMethod
     
-    ! set photosytesis method    
-    subroutine setMethod(this, method)
-        implicit none
-        class (Photosyntesis_type), intent(inout) :: this
-        character, intent (in) :: method
-        
-        this%method_ = method
-    end subroutine setMethod
-    
-END Module YCA_Photosyntesis
+END Module YCA_Control_Photosyntesis
     

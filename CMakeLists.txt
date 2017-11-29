@@ -690,7 +690,11 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	YCA/CSYCA.f90
 	YCA/CSYCA_Interface.for
 	YCA/YCA_Albedo_Check_m.f90
-	YCA/YCA_Environment.f90
+	YCA/YCA_Control_Environment.f90
+	YCA/YCA_Control_Leaf.f90
+	YCA/YCA_Control_Photosynthesis
+	YCA/YCA_Control_Plant
+	YCA/YCA_Control_VPDEffect.f90
 	YCA/YCA_First_Trans_m.f90
 	YCA/YCA_Formats_m.f90
 	YCA/YCA_Growth.f90
@@ -726,7 +730,6 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	YCA/YCA_Out_Work.f90
 	YCA/YCA_Out_WrkPhenRes.f90
 	YCA/YCA_Output.f90
-	YCA/YCA_Photosynthesis.f90
 	YCA/YCA_PrePlant.f90
 	YCA/YCA_RunInit.f90
 	YCA/YCA_SeasInit.f90
@@ -736,7 +739,6 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	YCA/YCA_SeasInit_ReadXfile.f90
 	YCA/YCA_SeasInit_SetStage.f90
 	YCA/YCA_SeasInit_VarInit.f90
-	YCA/YCA_VPDEffect.f90
 )
 #####################################
 # Tell how to install this executable

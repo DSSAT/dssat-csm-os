@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 4643 - 4706 of the original CSCAS code.The names of the 
+! This is the code from the section (DYNAMIC == RATE) lines 4643 - 4706 of the original CSCAS code.The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -16,7 +16,7 @@
         USE ModuleDefs
         USE ModuleData
         USE YCA_First_Trans_m
-        USE YCA_Photosyntesis
+        USE YCA_Control_Photosyntesis
         
         IMPLICIT  NONE
         

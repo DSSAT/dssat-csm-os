@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 8316 - 8386 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 8316 - 8386 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -25,19 +25,19 @@
     !         IDETS OUTPUTS (Plantsum)
     !-----------------------------------------------------------------------------------------------------------
                 
-    IF ((IDETS.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A') THEN
+    IF ((IDETS /= 'N'.AND.IDETL /= '0').OR.IDETL == 'A') THEN
                     
         ! PLANT SUMMARY (SIMULATED)'
-        IF (CROP.NE.CROPPREV.OR.RUN.EQ.1) THEN
+        IF (CROP /= CROPPREV.OR.RUN == 1) THEN
             OPEN (UNIT=fnumpsum,FILE=FNAMEPSUM,POSITION='APPEND')
             WRITE (FNUMPSUM,'(/,A)') '*SUMMARY'
             WRITE (FNUMPSUM,'(3A)',ADVANCE='NO') '@  RUN EXCODE    TRNO RN',' TNAME....................', &
                 ' REP  RUNI S O C    CR PYEAR  PDAT'
             !DO L = 1,KEYSTX
             DO L = 0,KEYSTX
-                IF (KEYPS(L).GT.0) THEN
+                IF (KEYPS(L) > 0) THEN
                     WRITE (FNUMPSUM,'(A6)',ADVANCE='NO') PSABVO(KEYPS(L))
-                    !IF (PSABVO(KEYPS(L)).EQ.'TSDAP') THEN
+                    !IF (PSABVO(KEYPS(L)) == 'TSDAP') THEN
                     ! WRITE (FNUMPSUM,'(A6)',ADVANCE='NO') '  DAYL'
                     !ENDIF
                 ENDIF
@@ -51,9 +51,9 @@
         WRITE (fnumpsum, FMT400, ADVANCE='NO') run,excode,tn,rn,tname,rep,runi,sn,on,cn,crop,plyear,plday
         !DO L = 1,KEYSTX
         DO L = 0,KEYSTX
-            IF (KEYPS(L).GT.0) THEN
+            IF (KEYPS(L) > 0) THEN
                 WRITE (FNUMPSUM,'(I6)',ADVANCE='NO') PSDAP(KEYPS(L))
-                IF (PSABVO(KEYPS(L)).EQ.'TSDAP') THEN
+                IF (PSABVO(KEYPS(L)) == 'TSDAP') THEN
                     WRITE (FNUMPSUM,'(F6.1)',ADVANCE='NO') DAYLST(L)
                 ENDIF  
             ENDIF

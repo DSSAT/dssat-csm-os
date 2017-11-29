@@ -1,10 +1,10 @@
 !***************************************************************************************************************************
 ! This module is intended to calculate environmental factors 
-! 15SEP2017 LPM added function TFAC5 to estimate cardinal temperatures with a plateau
+! 15SEP2017 added function TFAC5 to estimate cardinal temperatures with a plateau by @lpmorenoc
 ! Atributes:
 !   - tMin minimmun temprature of the day
 !   - tMax maximun temprature of the day
-!   - dewPoint dew point temperature of the day
+!   - dewPointTemp dew point temperature of the day
 !   - dayRadiation registered during the day
 ! Type functions:
 !        hourlyTemperature
@@ -24,12 +24,12 @@
 !        calculatateHourlyRadiation
 !        calculateBiomass
 !        calculateTranspiration
-!        TFAC5 
+!        calculateTemperatureFactor 
 ! Authors
 ! @danipilze
 !*********
 
-    Module YCA_Environment         !Module of environment
+    Module YCA_Control_Environment         !Module of environment
     
     ! STATIC ATRIBUTES
     real, private :: PI =  4 * atan (1.0_8)
@@ -43,7 +43,7 @@
         
         real, private :: tMin_ = 0
         real, private :: tMax_ = 0
-        real, private :: dewPoint_ = 0
+        real, private :: dewPointTemp_ = 0
         real, private :: dayRadiation_ = 0                                      ! solar radiation
         
         
@@ -64,8 +64,8 @@
         procedure, pass (this) :: setTMin
         procedure, pass (this) :: getTMax
         procedure, pass (this) :: setTMax
-        procedure, pass (this) :: getDewPoint
-        procedure, pass (this) :: setDewPoint
+        procedure, pass (this) :: getDewPointTemp
+        procedure, pass (this) :: setDewPointTemp
         procedure, pass (this) :: getDayRadiation
         procedure, pass (this) :: setDayRadiation
         
@@ -82,14 +82,14 @@
     ! constructor for the type
     ! tMin          mandatory
     ! tMax          mandatory 
-    ! dewPoint
+    ! dewPointTemp
     ! dayRadiation
-    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPoint, dayRadiation)
+    type (DailyEnvironment_type) function DailyEnvironment_type_constructor(tMin, tMax, dewPointTemp, dayRadiation)
         implicit none
-        real, intent (in) :: tMin, tMax, dewPoint,dayRadiation
+        real, intent (in) :: tMin, tMax, dewPointTemp,dayRadiation
         DailyEnvironment_type_constructor%TMin_ = tMin
         DailyEnvironment_type_constructor%TMax_ = tMax
-        DailyEnvironment_type_constructor%dewPoint_ = dewPoint
+        DailyEnvironment_type_constructor%dewPointTemp_ = dewPointTemp
         DailyEnvironment_type_constructor%dayRadiation_ = dayRadiation
     end function DailyEnvironment_type_constructor    
     
@@ -149,7 +149,7 @@
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
         
-        hourlyRH =  calculateRH(hourlyTemperature(this, Hour), this%dewpoint_)
+        hourlyRH =  calculateRH(hourlyTemperature(this, Hour), this%dewPointTemp_)
 
     end function hourlyRH
     
@@ -159,7 +159,7 @@
         class (DailyEnvironment_type), intent(in) :: this
         integer, intent (in) :: hour
         
-        hourlyVPD =  calculateVPD(hourlyTemperature(this, Hour), this%dewpoint_)
+        hourlyVPD =  calculateVPD(hourlyTemperature(this, Hour), this%dewPointTemp_)
 
     end function hourlyVPD
     
@@ -221,22 +221,22 @@
     end function calculateWHCAIR
      
     ! obtain the relative humidity                                                              ! % 
-    real function calculateRH(temperature, dewPoint)
+    real function calculateRH(temperature, dewPointTemp)
         implicit none
-        real, intent (in) :: temperature, dewPoint
+        real, intent (in) :: temperature, dewPointTemp
         
         !(RHt) = WHCAIRdp/WHCAIRt
-        calculateRH =  calculateWHCAIR(dewPoint)/calculateWHCAIR(temperature)
+        calculateRH =  calculateWHCAIR(dewPointTemp)/calculateWHCAIR(temperature)
 
     end function calculateRH
     
     ! obtain the Vapor Preasure Deficit VPD                                                     ! (KPa)
-    real function calculateVPD(temperature, dewPoint)
+    real function calculateVPD(temperature, dewPointTemp)
         implicit none
-        real, intent (in) :: temperature, dewPoint
+        real, intent (in) :: temperature, dewPointTemp
         
         ! VPD = (1 - (RH/100)) * SVP
-        calculateVPD =  ((1 - (calculateRH(temperature, dewPoint)/100)) * calculateSVP(temperature))/1000
+        calculateVPD =  ((1 - (calculateRH(temperature, dewPointTemp)/100)) * calculateSVP(temperature))/1000
 
     end function calculateVPD
     
@@ -289,18 +289,20 @@
 
     end function calculateTranspiration
     
-    !Estimate thermal time with a plateau after second cardinal temperature
-    real function Tfac5(tcard,temp,TUNIT)
-
-      ! Calculate temp factor and thermal units from cardinal temps
-
-      IMPLICIT NONE
-
-      REAL      tcard(4),temp,tunit
-
-      INTRINSIC AMAX1,AMIN1
-
-      SAVE
+    ! Estimate thermal time with a plateau after second cardinal temperature                        ! by @lpmorenoc
+    ! Calculate temp factor and thermal units from cardinal temps                                   ! 0EQN 58
+    ! ARGUMENTS
+    ! tcard,temp,tunit
+    ! MODIFES
+    ! tunit
+    ! RETURNS
+    ! tfac5
+    real function calculateTemperatureFactor(tcard,temp,tunit)
+    
+      implicit none
+      real, intent (in) ::      tcard(4),temp
+      real                      tfac5
+      real                      tunit
 
       IF (temp <= tcard(1)) THEN
         tfac5 = 0.0
@@ -316,11 +318,10 @@
         tfac5 = 1.0
       ENDIF
 
-      tfac5 = AMAX1(0.0,AMIN1(1.0,tfac5))
+      calculateTemperatureFactor = AMAX1(0.0,AMIN1(1.0,tfac5))
       tunit = tfac5 * (tcard(2)-tcard(1))
-
-      RETURN
-      END
+      
+      end function calculateTemperatureFactor
     !-------------------------------------------
     ! GETTERS AND SETTERS
     !------------------------------------------
@@ -359,22 +360,22 @@
         this%tMax_ = tMax
     end subroutine setTMax
     
-    ! get dewPoint
-    real function getDewPoint(this)
+    ! get dewPointTemp
+    real function getDewPointTemp(this)
         implicit none
         class (DailyEnvironment_type), intent(in) :: this
         
-        getDewPoint = this%dewPoint_
-    end function getDewPoint
+        getDewPointTemp = this%dewPointTemp_
+    end function getDewPointTemp
     
-    ! set dewPoint    
-    subroutine setDewPoint(this, dewPoint)
+    ! set dewPointTemp    
+    subroutine setDewPointTemp(this, dewPointTemp)
         implicit none
         class (DailyEnvironment_type), intent(inout) :: this
-        real, intent (in) :: dewPoint
+        real, intent (in) :: dewPointTemp
         
-        this%dewPoint_ = dewPoint
-    end subroutine setDewPoint
+        this%dewPointTemp_ = dewPointTemp
+    end subroutine setDewPointTemp
     
     ! get day radiation
     real function getDayRadiation(this)
@@ -393,5 +394,5 @@
         this%dayRadiation_ = dayRadiation
     end subroutine setDayRadiation
     
-END Module YCA_Environment
+END Module YCA_Control_Environment
     

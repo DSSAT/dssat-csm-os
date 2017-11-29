@@ -131,7 +131,7 @@
         ALBEDOS_In = ALBEDOS                                                                                           ! MF 19JA15  For WORK.OUT
     
 !*******************************************************************************************************************************
-    IF (DYNAMIC.EQ.RUNINIT) THEN    ! Initialization                           ! MF Equivalent to line 1476 in CSCAS.FOR
+    IF (DYNAMIC == RUNINIT) THEN    ! Initialization                           ! MF Equivalent to line 1476 in CSCAS.FOR
 !*******************************************************************************************************************************
         !-----------------------------------------------------------------------------------------------------------------------
         !     Run initialization procedure in SUBROUTINE YCA_RunInit..
@@ -151,7 +151,7 @@
             'albedo) AFTER YCA_RunInit in CSYCA) ', ALBEDOS,   ALBEDO                   ! MF 19JA15  For WORK.OUT
             
 !*******************************************************************************************************************************
-    ELSEIF (DYNAMIC.EQ.SEASINIT) THEN    ! Initialization                      ! MF Equivalent to line 1824 in CSCAS.FOR
+    ELSEIF (DYNAMIC == SEASINIT) THEN    ! Initialization                      ! MF Equivalent to line 1824 in CSCAS.FOR
 !*******************************************************************************************************************************
         
         !-----------------------------------------------------------------------------------------------------------------------
@@ -174,7 +174,7 @@
 
             
 !*******************************************************************************************************************************
-    ELSEIF (DYNAMIC.EQ.RATE) THEN                                              ! MF Equivalent to line 3943 in CSCAS.FOR
+    ELSEIF (DYNAMIC == RATE) THEN                                              ! MF Equivalent to line 3943 in CSCAS.FOR
 !*******************************************************************************************************************************
 
         !-----------------------------------------------------------------------------------------------------------------------
@@ -201,7 +201,7 @@
         !!=======================================================================================================================
 
 !*******************************************************************************************************************************
-    ELSEIF (DYNAMIC.EQ.INTEGR) THEN                                            ! MF Equivalent to line 5535 in CSCAS.FOR
+    ELSEIF (DYNAMIC == INTEGR) THEN                                            ! MF Equivalent to line 5535 in CSCAS.FOR
 !*******************************************************************************************************************************
 
             CALL YCA_Integrate ( &
@@ -214,7 +214,7 @@
                 )
 
 !*******************************************************************************************************************************
-    ELSEIF (DYNAMIC .EQ. OUTPUT .AND. STEP .EQ. STEPNUM .OR. DYNAMIC .EQ. SEASEND .AND. SEASENDOUT .NE. 'Y') THEN
+    ELSEIF (DYNAMIC  ==  OUTPUT .AND. STEP  ==  STEPNUM .OR. DYNAMIC  ==  SEASEND .AND. SEASENDOUT  /=  'Y') THEN
                                                                                ! MF Equivalent to line 6665 in CSCAS.FOR
 !*******************************************************************************************************************************
         
@@ -234,10 +234,10 @@
             )
 
 !*******************************************************************************************************************************
-      ELSEIF (DYNAMIC.EQ.SEASEND) THEN                                         ! MF Equivalent to line 9630 in CSCAS.FOR
+      ELSEIF (DYNAMIC == SEASEND) THEN                                         ! MF Equivalent to line 9630 in CSCAS.FOR
 !*******************************************************************************************************************************
 
-        IF (STGYEARDOY(11).NE.YEARDOY) THEN  ! End for non-crop reason
+        IF (STGYEARDOY(11) /= YEARDOY) THEN  ! End for non-crop reason
           WRITE (fnumwrk,*)' '
           WRITE (fnumwrk,'(A50)') &
            ' Run terminated.(Usually because ran out of weather data).'

@@ -1,5 +1,5 @@
 !**********************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization, lines 1827 - 2336 of the original CSCAS code.
+! This is the code from the section (DYNAMIC == RUNINIT) ! Initialization, lines 1827 - 2336 of the original CSCAS code.
 ! The names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared 
 ! here. The variables that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all 
 ! comments are those of the original CSCAS.FOR code.
