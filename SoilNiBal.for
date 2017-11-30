@@ -10,7 +10,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       SUBROUTINE SoilNiBal (CONTROL, ISWITCH, 
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP, N2O_data) 
+     &    TNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    N2O_data) 
 
 !     ------------------------------------------------------------------
       USE N2O_mod
@@ -28,14 +29,14 @@ C  03/04/2005 CHP wrote based on SoilNBal
       INTEGER YR, DOY, YRI, DOYI
 
       REAL ALGFIX, ALGFIXI, AMTFER, TALLN, TALLNI, CLeach, TNH4, TNH4I,
-     &  TNO3, TNO3I,  CNOX, TUREA, TUREAI, WTNUP
+     &  TNO3, TNO3I,  CNOX, TUREA, TUREAI, WTNUP, TNTILEDR   !HJ added
       REAL TOTAML, CUMFNRO, TOTFLOODN, TOTFLOODNI
       REAL STATEN, BALANCE
 
-      REAL LCHTODAY, NOXTODAY, IMMOBTODAY, MINERTODAY
+      REAL LCHTODAY, NTILEDRTODAY, NOXTODAY, IMMOBTODAY, MINERTODAY !HJ
       REAL WTNUPTODAY, AMLTODAY, FNROTODAY, AMTFERTODAY
       REAL N2Otoday, N2today, NOtoday
-      REAL CLeachY, CNOXY, WTNUPY, CIMMOBY, CMINERY
+      REAL CLeachY, TNTILEDRY, CNOXY, WTNUPY, CIMMOBY, CMINERY !HJ
       REAL TOTAMLY, CUMFNROY, AMTFERY
       REAL TOTSTATE, TOTADD, TOTSUB, DAYBAL, TOTSTATY, CUMBAL
       REAL CIMMOBN, CMINERN, NGasLoss, TNGSOILI
@@ -107,6 +108,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
         CMINERY  = 0.0
         CIMMOBY  = 0.0
         CLeachY  = 0.0
+        TNTILEDRY = 0.0
         WTNUPY   = 0.0
         CUMFNROY = 0.0
         TOTAMLY  = 0.0
@@ -121,18 +123,18 @@ C  03/04/2005 CHP wrote based on SoilNBal
         CUMBAL   = 0.0
         DAYBAL = 0.0
         CALL YR_DOY(INCDAT(YRDOY,-1), YR, DOY)
-        
+!       HJ added RLTD for N loss to tile        
         WRITE(LUNSNC,10)
    10     FORMAT('!',15X,'|--------------- STATE VARIABLES -----------',
-     &    '----|---- ADDED ---|------------------------- REMOVED TODAY',
-     &    ' ----------------------|    DAILY     CUMUL',/,
+     &    '----|---- ADDED ---|----------------------------- REMOVED ',
+     &    'TODAY --------------------------|    DAILY     CUMUL',/,
      &    '@YEAR DOY  DAS     NO3     NH4   TUREA   TNGAS  FLOODN  ALG',
-     &    'FIX   AFERT  AMINER  RIMMOB    RLCH    RNUP    RNRO    RAML',
-     &    '   N2OED    N2ED    NOED      DBAL      CBAL')
+     &    'FIX   AFERT  AMINER  RIMMOB    RLCH    RLTD    RNUP    RNRO',
+     &    '    RAML   N2OED    N2ED    NOED      DBAL      CBAL')
         WRITE (LUNSNC,50) YR, DOY, 0, 
      &    TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 
      &    0.0, 0.0, 
-     &    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+     &    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
       ENDIF
 
       CALL SoilNBalSum (CONTROL, N_inorganic=TOTSTATY)
@@ -153,6 +155,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !       Subtractions:
         IMMOBTODAY = CIMMOBN - CIMMOBY
         LCHTODAY   = CLeach - CLeachY
+        NTILEDRTODAY = TNTILEDR - TNTILEDRY             !HJ added
         WTNUPTODAY = (WTNUP - WTNUPY) * 10.  
         FNROTODAY  = CUMFNRO - CUMFNROY
         AMLTODAY   = TOTAML - TOTAMLY
@@ -167,7 +170,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
         TOTADD   = AMTFERTODAY + MINERTODAY
         TOTSUB   = IMMOBTODAY + LCHTODAY + WTNUPTODAY + FNROTODAY 
      &           + AMLTODAY + N2Otoday + N2today + NOtoday
-     &                 
+     &           + NTILEDRTODAY !HJ added
+	 
         DAYBAL = TOTSTATE - TOTSTATY - TOTADD + TOTSUB
         CUMBAL   = CUMBAL + DAYBAL
 
@@ -176,16 +180,17 @@ C  03/04/2005 CHP wrote based on SoilNBal
         WRITE (LUNSNC,50) YR, DOY, DAS, 
      &    TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 
      &    AMTFERTODAY, MINERTODAY, 
-     &    IMMOBTODAY, LCHTODAY, WTNUPTODAY, 
+     &    IMMOBTODAY, LCHTODAY, NTILEDRTODAY, WTNUPTODAY, !HJ
      &    FNROTODAY, AMLTODAY, N2Otoday, N2today, NOtoday,
      &    DAYBAL, CUMBAL
-   50     FORMAT(I5, I4.3, I5, 6F8.3, F8.1, 9F8.4, 2F10.4)
+   50     FORMAT(I5, I4.3, I5, 6F8.3, F8.1, 10F8.4, 2F10.4)
 
 !       Save today's cumulative values for use tomorrow
         AMTFERY  = AMTFER
         CMINERY  = CMINERN
         CIMMOBY  = CIMMOBN
         CLeachY  = CLeach
+        TNTILEDRY = TNTILEDR            !HJ added
         WTNUPY   = WTNUP
         CUMFNROY = CUMFNRO
         TOTAMLY  = TOTAML
@@ -227,7 +232,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
         TALLN = STATEN +                          !State end of day
 !    &          CLeach + CNOX + WTNUP * 10. +       !Losses
 !    &          TOTAML + CIMMOBN           !Losses
-     &          CIMMOBN + CLeach + WTNUP * 10. + TOTAML +       
+!               HJ adeed TNTILEDR
+     &          CIMMOBN + CLeach + TNTILEDR + WTNUP * 10. + TOTAML +       
      &          N2O_data % CN2O_emitted + N2O_data % CN2_emitted + 
      &          N2O_data % CNO_emitted     
 
@@ -242,10 +248,11 @@ C  03/04/2005 CHP wrote based on SoilNBal
           TALLN = TALLN + TOTFLOODN + ALGFIX
           STATEN = STATEN + TOTFLOODN + ALGFIX
         ENDIF
-
+!       HJ adeed TNTILEDR
         WRITE (LUNSNC,600) AMTFER, CMINERN, 
-     &    CIMMOBN, CLeach, WTNUP * 10., TOTAML, N2O_data % CN2O_emitted,
-     &    N2O_data % CN2_emitted, N2O_data % CNO_emitted 
+     &    CIMMOBN, CLeach, TNTILEDR, WTNUP * 10., TOTAML, 
+     &    N2O_data % CN2O_emitted, N2O_data % CN2_emitted,
+     &    N2O_data % CNO_emitted 
 
         IF (NBUND .GT. 0) THEN
           TALLN = TALLN + CUMFNRO     !Factor in runoff over bund
@@ -280,9 +287,12 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &     /,'! N additions:'
      &     /,'!', 3X, 'Fertilizer N',         T48, F10.2,
      &     /,'!', 3X, 'Mineralized N',        T48, F10.2,
+	 
+!          HJ added N loss to tile drainage
      &    //,'! N subtractions:',
      &     /,'!', 3X, 'N immobilized',                    T68, F10.2,
      &     /,'!', 3X, 'N leached',                        T68, F10.2,
+     &     /,'!', 3X, 'N loss to tile drainage',          T68, F10.2,
      &     /,'!', 3X, 'N Uptake From Soil',               T68, F10.2,
      &     /,'!', 3X, 'NH3 loss',                         T68, F10.2,
      &     /,'!', 3X, 'N2O loss',                         T68, F10.2,
@@ -296,10 +306,10 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       NGasLoss = TOTAML + N2O_data % CN2O_emitted +
      &    N2O_data % CN2_emitted + N2O_data % CNO_emitted
-
+!     HJ added TNTILEDR
       CALL SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, 
-     &    CLeach=CLeach, N_inorganic=StateN, 
+     &    CLeach=CLeach, TNTILEDR=TNTILEDR, N_inorganic=StateN, 
      &    WTNUP=WTNUP*10., NGasLoss=NGasLoss)
 
       IF (NBUND > 0) THEN
