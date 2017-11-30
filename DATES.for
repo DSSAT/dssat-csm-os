@@ -74,7 +74,6 @@ C=======================================================================
         YR  = INT(YRDOY / 1000)
         DOY = YRDOY - YR * 1000
         IF (YRDOY .GT. 0) THEN
-!         IF (YR .LE. 10) THEN
 !     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
 !     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
 !     CHP 07/06/2017 - change "cross-over" year from 2020 to 2025
