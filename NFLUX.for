@@ -28,7 +28,7 @@
       SUBROUTINE NFLUX (
      &  ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &  NORIG, NSOURCE, SW, TDFC, TDLNO,                  !Input
-     &  DLTN, CLeach, TLeachD, TNTILEDR, NTILEDR)         !Output !HJ
+     &  DLTN, CLeach, TLeachD, CNTILEDR, NTILEDR)         !Output !HJ
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -49,7 +49,7 @@
 
 !CHP - Tile drain variables
       INTEGER TDLNO
-      REAL NTILEDR, TNTILEDR, TDFC           !HJ added TNTILEDR
+      REAL NTILEDR, CNTILEDR, TDFC           !HJ added CNTILEDR
 
 !     ------------------------------------------------------------------
       DO L = 1, NLAYR
@@ -147,7 +147,7 @@
 !     Accumulate the N lost by leaching below profile depth.
       CLeach  = CLeach  + NDOWN(NLAYR)    !Season cumulative
       TLeachD = TLeachD + NDOWN(NLAYR)    !Today's leached N
-      TNTILEDR = TNTILEDR + NTILEDR !HJ N loss to TD, season cumulative
+      CNTILEDR = CNTILEDR + NTILEDR !HJ N loss to TD, season cumulative
 !     ------------------------------------------------------------------
 !     DLTxxx section.
 !     ------------------------------------------------------------------
@@ -209,5 +209,5 @@
 ! TDFC           Flow through tile drain (cm / d)
 ! TDLNO          Layer number containing tile drain
 ! CLeach         Total N leached from soil (kg [N] / ha)
-! TNTILEDR       Total N loss to tile drain (kg [N] / ha)
+! CNTILEDR       Total N loss to tile drain (kg [N] / ha)
 !==========================================================================

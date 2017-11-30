@@ -6,10 +6,10 @@
 !  REVISION   HISTORY
 !  07/11/2006 CHP Written
 !***********************************************************************
-!     HJ added TNTILEDR
+!     HJ added CNTILEDR
       SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
-     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, TNTILEDR, TLITN, 
+     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, CNTILEDR, TLITN, 
      &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP,
      &    CUMFNRO, NGasLoss)
 
@@ -23,7 +23,7 @@
       TYPE (ControlType), INTENT(IN) :: CONTROL
       REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
      &    CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach,
-     &    TNTILEDR, TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N,	 
+     &    CNTILEDR, TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N,	 
      &    WTNUP, NGasLoss
       REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
 
@@ -64,7 +64,7 @@
      &    "   Balance",
      &  /,"@Run FILEX         TN      SN0D     S1NTD",
      &     "     S2NTD     S3NTD      LNTD      NIAD      HRNH",
-     &   "     RESNC      NICM     SNNTC      NLCM      NLTD      NUCM",
+     &   "     RESNC      NICM     SNNTC      NLCM      TDFC      NUCM",
      &     "     NGasC      RNRO      NMNC      NIMC   SEASBAL")
       ENDIF
 
@@ -90,7 +90,7 @@
       ENDIF
       IF (PRESENT(AMTFER))   Add(3) = AMTFER
       IF (PRESENT(CLeach))   Sub(1) = CLeach
-	  IF (PRESENT(TNTILEDR)) Sub(2) = TNTILEDR     !HJ added
+	  IF (PRESENT(CNTILEDR)) Sub(2) = CNTILEDR     !HJ added
       IF (PRESENT(WTNUP))    Sub(3) = WTNUP
       IF (PRESENT(NGasLoss)) Sub(4) = NGasLoss
       IF (PRESENT(CUMFNRO))  Sub(5) = CUMFNRO
@@ -155,18 +155,18 @@
 !=======================================================================
       MODULE Interface_SoilNBalSum
 !     Interface needed for optional arguments with SoilNBalSum
-!     HJ added TNTILEDR following
+!     HJ added CNTILEDR following
       INTERFACE
         SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
-     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, TNTILEDR, TLITN, 
+     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, CNTILEDR, TLITN, 
      &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP,
      &    CUMFNRO, NGasLoss)
           USE ModuleDefs
           TYPE (ControlType), INTENT(IN) :: CONTROL
           REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
      &      CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, 
-     &      TNTILEDR, TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N,
+     &      CNTILEDR, TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N,
      &      WTNUP, NGasLoss
           REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
         END SUBROUTINE

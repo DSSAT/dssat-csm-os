@@ -10,7 +10,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       SUBROUTINE SoilNiBal (CONTROL, ISWITCH, 
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    TNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
      &    N2O_data) 
 
 !     ------------------------------------------------------------------
@@ -29,7 +29,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       INTEGER YR, DOY, YRI, DOYI
 
       REAL ALGFIX, ALGFIXI, AMTFER, TALLN, TALLNI, CLeach, TNH4, TNH4I,
-     &  TNO3, TNO3I,  CNOX, TUREA, TUREAI, WTNUP, TNTILEDR   !HJ added
+     &  TNO3, TNO3I,  CNOX, TUREA, TUREAI, WTNUP, CNTILEDR   !HJ added
       REAL TOTAML, CUMFNRO, TOTFLOODN, TOTFLOODNI
       REAL STATEN, BALANCE
 
@@ -155,7 +155,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !       Subtractions:
         IMMOBTODAY = CIMMOBN - CIMMOBY
         LCHTODAY   = CLeach - CLeachY
-        NTILEDRTODAY = TNTILEDR - TNTILEDRY             !HJ added
+        NTILEDRTODAY = CNTILEDR - TNTILEDRY             !HJ added
         WTNUPTODAY = (WTNUP - WTNUPY) * 10.  
         FNROTODAY  = CUMFNRO - CUMFNROY
         AMLTODAY   = TOTAML - TOTAMLY
@@ -190,7 +190,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
         CMINERY  = CMINERN
         CIMMOBY  = CIMMOBN
         CLeachY  = CLeach
-        TNTILEDRY = TNTILEDR            !HJ added
+        TNTILEDRY = CNTILEDR            !HJ added
         WTNUPY   = WTNUP
         CUMFNROY = CUMFNRO
         TOTAMLY  = TOTAML
@@ -232,8 +232,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
         TALLN = STATEN +                          !State end of day
 !    &          CLeach + CNOX + WTNUP * 10. +       !Losses
 !    &          TOTAML + CIMMOBN           !Losses
-!               HJ adeed TNTILEDR
-     &          CIMMOBN + CLeach + TNTILEDR + WTNUP * 10. + TOTAML +       
+!               HJ adeed CNTILEDR
+     &          CIMMOBN + CLeach + CNTILEDR + WTNUP * 10. + TOTAML +       
      &          N2O_data % CN2O_emitted + N2O_data % CN2_emitted + 
      &          N2O_data % CNO_emitted     
 
@@ -248,9 +248,9 @@ C  03/04/2005 CHP wrote based on SoilNBal
           TALLN = TALLN + TOTFLOODN + ALGFIX
           STATEN = STATEN + TOTFLOODN + ALGFIX
         ENDIF
-!       HJ adeed TNTILEDR
+!       HJ adeed CNTILEDR
         WRITE (LUNSNC,600) AMTFER, CMINERN, 
-     &    CIMMOBN, CLeach, TNTILEDR, WTNUP * 10., TOTAML, 
+     &    CIMMOBN, CLeach, CNTILEDR, WTNUP * 10., TOTAML, 
      &    N2O_data % CN2O_emitted, N2O_data % CN2_emitted,
      &    N2O_data % CNO_emitted 
 
@@ -306,10 +306,10 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
       NGasLoss = TOTAML + N2O_data % CN2O_emitted +
      &    N2O_data % CN2_emitted + N2O_data % CNO_emitted
-!     HJ added TNTILEDR
+!     HJ added CNTILEDR
       CALL SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, 
-     &    CLeach=CLeach, TNTILEDR=TNTILEDR, N_inorganic=StateN, 
+     &    CLeach=CLeach, CNTILEDR=CNTILEDR, N_inorganic=StateN, 
      &    WTNUP=WTNUP*10., NGasLoss=NGasLoss)
 
       IF (NBUND > 0) THEN
