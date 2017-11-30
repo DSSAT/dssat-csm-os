@@ -95,7 +95,6 @@
                     IF (node(BR,LF)%LAGETT <= LLIFGTT) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
-                        node(BR,LF)%LATLPREV = node(BR,LF)%LATL
                         node(BR,LF)%LAPOTX2 = node(BR,LF)%LAPOTX*Tflfgrowth
                         node(BR,LF)%LAGL=node(BR,LF)%LAPOTX2*(TTlfgrowth/LLIFGTT)
                         IF (node(BR,LF)%LAGL > (node(BR,LF)%LAPOTX2-node(BR,LF)%LATL3)) THEN                                           !DA IF there is something left to grow
@@ -149,7 +148,6 @@
                             node(BR,LF+1)%LATL = node(BR,LF+1)%LATL + node(BR,LF+1)%LAGL                                                   ! LATL(LNUMX)         ! Leaf area,shoot,lf#,potential  cm2/l   !EQN 333   
                             node(BR,LF+1)%LATL2 = node(BR,LF+1)%LATL2 + node(BR,LF+1)%LAGL                              ! LATL2(LNUMX)        ! Leaf area,shoot,lf#,+h2o,n,tem cm2/l   !EQN 334
                             SHLAG2B(BR) = SHLAG2B(BR) + node(BR,LF+1)%LAGL                              ! SHLAG2(25)          ! Shoot lf area gr,1 axis,H2oNt  cm2     !EQN 335
-                            node(BR,LF+1)%LBIRTHDAP = DAP                                                                ! LBIRTHDAP(LCNUMX)   ! DAP on which leaf initiated #  
                         
                             node(BR,LF+1)%LAGLT = node(BR,LF+1)%LAGL*BRNUMST(BR)
                             node(BR,LF+1)%LATL2T = node(BR,LF+1)%LATL2*BRNUMST(BR)

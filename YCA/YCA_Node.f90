@@ -26,9 +26,6 @@ Module YCA_Node !Module of environment
         REAL    :: LATL3                        ! Leaf area,shoot,lf#,+assim.    cm2/l      ! (From SeasInit)  
         REAL    :: LATL3T                       ! Leaf area by cohort lf#,+assim cm2/cohort ! (From SeasInit)!LPM 15NOV15 Added to have the leaf area by cohort +assim
         REAL    :: LATL4                        ! Leaf area,shoot,lf#,+assim.+N  cm2/l      ! (From SeasInit)  
-        REAL    :: LATLPOT                      ! Leaf area,shoot,leaf,pot       cm2/l      ! (From Growth)    
-        REAL    :: LATLPREV                     ! Leaf area,shoot,leaf,prev.     cm2/l      ! (From Growth)    
-        INTEGER :: LBIRTHDAP                    ! DAP on which leaf initiated    #          ! (From Growth)   !LPM 25MAR15 Adjusted to consider two dimensions  
         INTEGER :: LDEATHDAP                    ! DAP on which leaf 100% dead    #          ! (From Integrate) 
         REAL    :: NDDAE                        ! DAE when a new node appears     ! DA 13DIC2016
         REAL    :: NDEMSMN                      ! N demand for growth/node min   g/p        !LPM 25MAY2015 addet to consider stem N by node cohort
@@ -52,16 +49,11 @@ Module YCA_Node !Module of environment
         REAL    :: TFDLF                        ! Temp factor,dev for leaf,av    #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
         REAL    :: TFGLF                        ! Temp factor,exp for leaf,av    #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
         REAL    :: WFLF                         ! H2O factor for leaf,average    #          ! (From SeasInit) !LPM 23MAR15 Change to consider two dimensions
-        !TYPE    :: leafStatus                         ! Status of the leaf
-            
+
     contains
 
     
     end Type Node_type
-    
-    !ENUM, BIND(C) :: Status
-    !    ENUMERATOR :: EMERGING = 0, ACTIVE = 1, SENESCING=2, FALL=3
-    !END ENUM
     
     ! interface to reference the leaf constructor
     interface Node_type
@@ -83,8 +75,10 @@ Module YCA_Node !Module of environment
         Node_type_constructor%lagl3 = 0.0
         Node_type_constructor%lagl3t = 0.0
         Node_type_constructor%laglt = 0.0
+        Node_type_constructor%LAIByCohort = 0.0
         Node_type_constructor%lapp = 0.0
         Node_type_constructor%LAPOTX = 0.0
+        Node_type_constructor%LAPOTX2 = 0.0        
         Node_type_constructor%laps = 0.0
         Node_type_constructor%latl = 0.0
         Node_type_constructor%latl2 = 0.0 !LPM 15NOV15 added to save leaf area by cohort
@@ -92,19 +86,25 @@ Module YCA_Node !Module of environment
         Node_type_constructor%latl3 = 0.0   !LPM 15NOV15 added to save leaf area by cohort
         Node_type_constructor%latl3t = 0.0 !LPM 15NOV15 added to save leaf area by cohort (considering assimilates restriction)
         Node_type_constructor%latl4 = 0.0 !LPM 15NOV15 added to save leaf area by cohort
+        Node_type_constructor%LDEATHDAP = -99
         Node_type_constructor%nddae = 0.0
+        Node_type_constructor%NDEMSMN = 0.0
         Node_type_constructor%nflf = 1.0
         Node_type_constructor%nflf2 = 0.0
         Node_type_constructor%nflfp = 1.0
         Node_type_constructor%NODEWTGB = 0.0 !LPM 11APR15 New variables of node growth
         Node_type_constructor%NODEWT = 0.0 !LPM 11APR15 New variables of node growth
+        Node_type_constructor%NPOOLSN = 0.0
         Node_type_constructor%sanc = 0.0
+        Node_type_constructor%SCNC = 0.0
+        Node_type_constructor%SCNM = 0.0
         Node_type_constructor%sncr = 0.0
+        Node_type_constructor%SNDEMN = 0.0
+        Node_type_constructor%STEMNEXCESSN = 0.0
         Node_type_constructor%stemnn = 0.0 !LPM 23MAY2015 Added to keep nitrogen content by node
         Node_type_constructor%tfdlf = 0.0
         Node_type_constructor%tfglf = 0.0
         Node_type_constructor%wflf = 0.0
-        !Node_type_constructor%leadStatus = 0
         
         
     end function Node_type_constructor
