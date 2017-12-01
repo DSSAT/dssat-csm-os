@@ -846,7 +846,7 @@ Module YCA_First_Trans_m
     INTEGER :: STARNUMM                ! Star line number,measured data #          ! (From Output)    
     INTEGER :: STARNUMO                ! Star line number,output file   #          ! (From Output)    
     REAL    :: STDAY                   ! Standard day                   C.d/d      ! (From RunInit)   
-    REAL    :: STEMN                   ! Stem N                         g/p        ! (From SeasInit)  
+    REAL    :: StemN                   ! Stem N                         g/p        ! (From SeasInit)  
     REAL    :: STEMNEXCESS             ! Stem N > critical              g/p        ! (From Integrate) 
     INTEGER :: STEPNUM                 ! Step number per day            #          ! (From RunInit)   
     INTEGER :: STGEDAT                 ! Stem growth end date (Yrdoy)   #          ! (From SeasInit)  
@@ -1597,7 +1597,7 @@ Module YCA_First_Trans_m
         stai = 0.0
         staig = 0.0
         stais = 0.0
-        stemn = 0.0
+        StemN = 0.0
         stgedat = 0
         stwad = 0.0
         stwt = 0.0

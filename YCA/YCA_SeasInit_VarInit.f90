@@ -437,7 +437,7 @@
         stai = 0.0
         staig = 0.0
         stais = 0.0
-        stemn = 0.0
+        StemN = 0.0
         stgedat = 0
         stgyeardoy = 9999999
         !strswt = 0.0
