@@ -59,7 +59,7 @@
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
-                            node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
+                            node(BR,LF)%SANC = node(BR,LF)%StemNByNode / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
                         ENDIF
                     ENDDO
                 ENDDO

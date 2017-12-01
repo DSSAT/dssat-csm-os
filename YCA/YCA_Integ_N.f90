@@ -27,10 +27,15 @@
         !-----------------------------------------------------------------------
         NUPC = NUPC + NUPD                                                                                          !EQN 202
         LEAFNEXCESS = 0.0
-        IF (LANC > LNCX) LEAFNEXCESS = (LFWT-leafTotalSenescedWeight())*(LANC-LNCX)                                          !EQN 245 !LPM 25OCT2015 to consider N by cohort LANC has to be by cohort
+        IF (LANC > LNCX) THEN
+            LEAFNEXCESS = (LFWT-leafTotalSenescedWeight())*(LANC-LNCX)                                          !EQN 245 !LPM 25OCT2015 to consider N by cohort LANC has to be by cohort
+        ENDIF
         LEAFN = LEAFN + GROLSRTN + LNUSE(0) - SENNLFG - SENNLFGRS - lnph - LEAFNEXCESS                              !EQN 242
         LNPHC = LNPHC +  LNPH                                                                                       !EQN 423
-        IF (LEAFN < 1.0E-10) LEAFN = 0.0
+        IF (LEAFN < 1.0E-10) THEN 
+            LEAFN = 0.0
+        ENDIF
+            
         STEMNEXCESS = 0.0
         node%STEMNEXCESSN = 0.0
         !IF (SANC > SNCX) STEMNEXCESS = (woodyWeight())*(SANC-SNCX)                                                     !EQN 246
@@ -41,8 +46,8 @@
                 IF (node(BR,LF)%SANC < node(BR,LF)%SNCX) THEN 
                     node(BR,LF)%STEMNEXCESSN = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*(node(BR,LF)%SANC-node(BR,LF)%SNCX)
                     STEMNEXCESS = STEMNEXCESS + node(BR,LF)%STEMNEXCESSN
-                    node(BR,LF)%STEMNN = node(BR,LF)%STEMNN + SNUSEN(0,BR,LF) - node(BR,LF)%SNPHN - node(BR,LF)%STEMNEXCESSN  
-                    STEMN = STEMN + node(BR,LF)%STEMNN
+                    node(BR,LF)%StemNByNode = node(BR,LF)%StemNByNode + ShootNUseByNode(0,BR,LF) - node(BR,LF)%StemNHarvstByNode - node(BR,LF)%STEMNEXCESSN  
+                    STEMN = STEMN + node(BR,LF)%StemNByNode
                 ENDIF 
             ENDDO
         ENDDO

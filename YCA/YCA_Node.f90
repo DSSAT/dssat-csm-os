@@ -43,8 +43,8 @@ Module YCA_Node !Module of environment
         REAL    :: SNCR                         ! Stem N relative to maximum     #          ! (From SeasInit) !LPM 25MAY2015 Modified to include cohorts   
         REAL    :: SNCX                         ! Stem N conc,maximum            fr         ! (From SeasInit) !LPM 23MAY2015 Modified to include cohorts  
         REAL    :: SNDEMN                       ! Stem demand for N by node      g/p        !
-        REAL    :: SNPHN                        ! Stem N harvested by node       g/n/p        !
-        REAL    :: STEMNN                       ! Stem N by cohort               g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  
+        REAL    :: StemNHarvstByNode            ! Stem N harvested by node       g/n/p      ! DA 01DIC2017 SNPHN
+        REAL    :: StemNByNode                  ! Stem N by cohort               g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  ! DA 01DIC2017 STEMNN
         REAL    :: STEMNEXCESSN                 ! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node
         REAL    :: TFDLF                        ! Temp factor,dev for leaf,av    #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
         REAL    :: TFGLF                        ! Temp factor,exp for leaf,av    #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
@@ -101,7 +101,7 @@ Module YCA_Node !Module of environment
         Node_type_constructor%sncr = 0.0
         Node_type_constructor%SNDEMN = 0.0
         Node_type_constructor%STEMNEXCESSN = 0.0
-        Node_type_constructor%stemnn = 0.0 !LPM 23MAY2015 Added to keep nitrogen content by node
+        Node_type_constructor%StemNByNode = 0.0 !LPM 23MAY2015 Added to keep nitrogen content by node
         Node_type_constructor%tfdlf = 0.0
         Node_type_constructor%tfglf = 0.0
         Node_type_constructor%wflf = 0.0

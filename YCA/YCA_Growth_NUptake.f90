@@ -34,15 +34,6 @@
 
         ! Set adjusted values to unadjusted 
         ! For when no adjustment necessary, or when not simulating N
-        !GROCRADJ = GROCR
-        !GROLFADJ = GROLF
-        !GROSTADJ = GROST
-        !PLAGSB4 = PLAGSB3
-        !RSSRWTGLFADJ = 0.0
-        !RTRESPADJ = RTRESP   
-        !RTWTGADJ = RTWTG
-        !SHLAGB4 = SHLAGB3
-        
         GROCRADJ = GROCRP
         GROLFADJ = GROLFP
         GROSTADJ = GROSTP
@@ -221,7 +212,7 @@
             SNUSE = 0.0
             RNUSE = 0.0
             SRNUSE = 0.0
-            SNUSEN = 0.0                                                                              !LPM23MAY2015 To consider different N use by node according with age
+            ShootNUseByNode = 0.0                                                                              !LPM23MAY2015 To consider different N use by node according with age
             NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD                                                                   !EQN 206
             node%NDEMSMN = 0.0      !LPM14SEP2017 Initialize the variable with 0
     
@@ -245,8 +236,8 @@
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP > 0.0) THEN
                         !SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
-                        SNUSEN(1,BR,LF) = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
-                        SNUSE(1) = SNUSE(1)+ SNUSEN(1,BR,LF)
+                        ShootNUseByNode(1,BR,LF) = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
+                        SNUSE(1) = SNUSE(1)+ ShootNUseByNode(1,BR,LF)
                     ENDIF
                 ENDDO
             ENDDO
@@ -266,7 +257,8 @@
                 RTWTGADJ = RTWTG
                 RTRESPADJ = RTRESP   
             ENDIF
-    
+            
+                                    
             !NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
             NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)
             ! 5.For leaf growth to standard N (N to leaves first)
@@ -286,8 +278,8 @@
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (GROSTP > 0.0) THEN
-                            SNUSEN(2,BR,LF) = (node(BR,LF)%SNDEMN - SNUSEN(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
-                            SNUSE(2) = SNUSE(2)+ SNUSEN(2,BR,LF)
+                            ShootNUseByNode(2,BR,LF) = (node(BR,LF)%SNDEMN - ShootNUseByNode(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
+                            SNUSE(2) = SNUSE(2)+ ShootNUseByNode(2,BR,LF)
                         ENDIF
                     ENDDO
                 ENDDO
@@ -311,7 +303,7 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP > 0.0) THEN
-                        SNUSEN(0,BR,LF) = SNUSEN(1,BR,LF) + SNUSEN(2,BR,LF)
+                        ShootNUseByNode(0,BR,LF) = ShootNUseByNode(1,BR,LF) + ShootNUseByNode(2,BR,LF)
                     ENDIF
                 ENDDO
             ENDDO
@@ -335,15 +327,14 @@
                     NPOOLS =  NPOOLS + node(BR,LF)%NPOOLSN                                                                 !EQN 232
                 ENDDO
             ENDDO
+
             ! Check N and reduce leaf growth if not enough N  
             IF (ABS(NULEFT) <= 1.0E-5) THEN   ! Inadequate N
                 IF (NLLG > 0.0 .AND. LNCX > 0.0) THEN 
-                    !IF ((LNUSE(1)+LNUSE(2))/GROLF < (LNCX*NLLG)) THEN  !LPM 02SEP2016 Use GROLFP instead of GROLF
-                    IF ((LNUSE(1)+LNUSE(2))/GROLFP < (LNCX*NLLG)) THEN 
+                    IF ((LNUSE(1)+LNUSE(2))/GROLFP < (LNCX*NLLG)) THEN !LPM 02SEP2016 Use GROLFP instead of GROLF
                         GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
                     ELSE  
-                        !GROLFADJ = GROLF                                                                               !EQN 233b !LPM 02SEP2016 Use GROLFP instead of GROLF
-                        GROLFADJ = GROLFP                                                                               !EQN 233b
+                        GROLFADJ = GROLFP                                                                               !EQN 233b !LPM 02SEP2016 Use GROLFP instead of GROLF
                     ENDIF  
                 ENDIF
                 !RSSRWTGLFADJ = GROLF - GROLFADJ                                                                        !EQN 234 !LPM 02SEP2016 Keep GROLF but restrict to 0 if N growth is greater than CHO growth (GROLF)
@@ -412,7 +403,9 @@
             !GROLFADJ = AMIN1(GROLF,GROLFADJ)
                         ! Potential leaf weight increase.
             !LPM 16DEC2016 GROLFADJ is defined by the new estimation of leaf area which is considering water stress (WFG), carbohydrates available (AFLF) and nitrogen restrictions (NFLF2)
-            IF (LAWL(1) > 0.0) GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+            IF (LAWL(1) > 0.0) THEN
+                GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+            ENDIF
             
             GROSTADJ = AMIN1(GROST,GROSTADJ)
             RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)

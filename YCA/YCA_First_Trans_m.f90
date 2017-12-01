@@ -802,7 +802,7 @@ Module YCA_First_Trans_m
     REAL    :: SNPH                    ! Stem N harvested               g/p        ! (From SeasInit)  
     REAL    :: SNPHC                   ! Stem N harvested,cumulative    g/p        ! (From SeasInit)  
     REAL    :: SNUSE(0:2)              ! Shoot N use,overall and parts  g          ! (From SeasInit)  
-    REAL    :: SNUSEN(0:2,0:PSX,0:LCNUMX)!Shoot N use by canopy level   g          !LPM 23MAY2015 added to consider N concentration by node
+    REAL    :: ShootNUseByNode(0:2,0:PSX,0:LCNUMX)!Shoot N use by canopy level   g          !LPM 23MAY2015 added to consider N concentration by node ! DA 01DIC2017 SNUSEN
     REAL    :: SPRL                    ! Sprout/cutting length          cm         ! (From SeasInit)  
     REAL    :: SRAD20                  ! Solar radiation av,20 days     MJ/m2      ! (From Integrate) 
     REAL    :: SRAD20S                 ! Solar radiation sum            MJ/m2      ! (From Integrate) 
