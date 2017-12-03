@@ -35,6 +35,9 @@
         REAL, PARAMETER :: F_ = -2.045472      ! this is 'f' from  (e * (D_NewNodeDAE)**f / (NDDAE * ((D_NewNodeDAE**g)+1)**2))
         REAL, PARAMETER :: G_ = -1.045472      ! this is 'g' from  (e * (D_NewNodeDAE)**f / (NDDAE * ((D_NewNodeDAE**g)+1)**2))
         REAL D_NewNodeDAE
+        
+        REAL :: StemMinimunNForGrowth = 0.08 ! %  from flow document section 7 Potential nodal unit growth
+        REAL :: StemNContent = 0.0
 
         !-----------------------------------------------------------------------
         !           Partitioning of C to above ground and roots (minimum) 
@@ -205,14 +208,18 @@
           DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 Lcount = Lcount+1
-
+           
+                 
           
                 D_NewNodeDAE=(DAG-node(BR,LF)%NewNodeDAE+1)/D_
           
                 !LPM23FEB2017 New high initial rate
                 node(BR,LF)%CohortWeightGrowth = (1/(1+(((Lcount)/B_)**C_)))  *  (E_*(((D_NewNodeDAE)**F_) / ((D_NewNodeDAE**G_)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
-           
-                node(BR,LF)%CohortWeight = node(BR,LF)%CohortWeight + node(BR,LF)%CohortWeightGrowth
+                StemNContent = (node(BR,LF)%StemNByNode/(node(BR,LF)%CohortWeight+ZERO))
+                IF (StemNContent < ZERO .OR. StemNContent > StemMinimunNForGrowth ) THEN !  growth only if node have enough N
+                    node(BR,LF)%CohortWeight = node(BR,LF)%CohortWeight + node(BR,LF)%CohortWeightGrowth
+                ENDIF
+                
                 StemGrowthP = StemGrowthP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
                 STWTP = STWTP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR))
                 

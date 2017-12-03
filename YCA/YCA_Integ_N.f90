@@ -47,7 +47,9 @@
                     node(BR,LF)%StemNExcessByNode = (node(BR,LF)%CohortWeight*(woodyWeight())/(STWTP+CRWTP))*(node(BR,LF)%SANC-node(BR,LF)%SNCX)
                     StemNExcess = StemNExcess + node(BR,LF)%StemNExcessByNode
                     node(BR,LF)%StemNByNode = node(BR,LF)%StemNByNode + ShootNUseByNode(0,BR,LF) - node(BR,LF)%StemNHarvstByNode - node(BR,LF)%StemNExcessByNode  
+                    
                     StemN = StemN + node(BR,LF)%StemNByNode
+                     
                 ENDIF 
             ENDDO
         ENDDO
