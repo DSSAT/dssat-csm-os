@@ -40,7 +40,7 @@
                     call leafAge(node(BR,LF))
                     
                     ! Accelerated senescence at base of dense leaf canopy
-                    IF (node(BR,LF)%LAIByCohort > LAIXX) THEN
+                    IF (node(BR,LF)%CohortLAI > LAIXX) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf

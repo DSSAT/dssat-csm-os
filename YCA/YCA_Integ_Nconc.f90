@@ -58,8 +58,8 @@
             IF ((woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                        IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
-                            node(BR,LF)%SANC = node(BR,LF)%StemNByNode / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
+                        IF (node(BR,LF)%CohortWeight*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
+                            node(BR,LF)%SANC = node(BR,LF)%StemNByNode / (node(BR,LF)%CohortWeight*(woodyWeight())/(STWTP+CRWTP))
                         ENDIF
                     ENDDO
                 ENDDO
@@ -77,9 +77,9 @@
             IF ((LFWT+woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                        node(BR,LF)%SCNC = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCX
+                        node(BR,LF)%SCNC = (node(BR,LF)%CohortWeight*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCX
                         SCNCT =  SCNCT + node(BR,LF)%SCNC
-                        node(BR,LF)%SCNM = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCM
+                        node(BR,LF)%SCNM = (node(BR,LF)%CohortWeight*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCM
                         SCNMT =  SCNMT + node(BR,LF)%SCNM
                     ENDDO
                 ENDDO

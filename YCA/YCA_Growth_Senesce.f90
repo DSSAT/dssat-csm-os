@@ -81,7 +81,7 @@
         !-----------------------------------------------------------------------
         !        LAI by Cohort
         !-----------------------------------------------------------------------
-        node(BR,LF)%LAIByCohort=0.0                               ! DA re-initializing LAIByCohort
+        node(BR,LF)%CohortLAI=0.0                               ! DA re-initializing LAIByCohort
         LAI=0.0                                              ! DA re-initializing LAI
         
         DO Bcount=0,BRSTAGE
@@ -90,8 +90,8 @@
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
                 IF (isLeafAlive(node(BR,LF))) THEN                      ! DA if leave is alive
 
-                    node(BR,LF)%LAIByCohort = LAI + (leafAreaLeftToSenesce(node(BR,LF)))*PLTPOP*0.0001             ! DA the LAI calculation is accumulative from the previous cohort LAI
-                    LAI = node(BR,LF)%LAIByCohort                                                                     ! DA updating LAI
+                    node(BR,LF)%CohortLAI = LAI + (leafAreaLeftToSenesce(node(BR,LF)))*PLTPOP*0.0001             ! DA the LAI calculation is accumulative from the previous cohort LAI
+                    LAI = node(BR,LF)%CohortLAI                                                                     ! DA updating LAI
                     
                 ENDIF
             ENDDO

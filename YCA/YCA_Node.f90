@@ -15,7 +15,7 @@ Module YCA_Node !Module of environment
         REAL    :: LAGL3                        ! Leaf area growth,shoot,lf+assim cm2/l     ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
         REAL    :: LAGL3T                       ! Leaf area by cohort lf+assim   cm2/cohort ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
         REAL    :: LAGLT                        ! Leaf area growth by cohort     cm2/cohort ! (From SeasInit) !LPM 25OCT15 added to keep the leaf area by cohort
-        REAL    :: LAIByCohort                  ! Leaf area index by cohort      #          !                 !DA  28OCT2016 Added to save eaf area index from cohort data   
+        REAL    :: CohortLAI                  ! Leaf area index by cohort      #          !                 !DA  28OCT2016 Added to save eaf area index from cohort data   
         REAL    :: LAPOTX                       ! Leaf area potentials,maxima    cm2/l      ! (From SeasInit)  
         REAL    :: LAPOTX2                      ! Leaf area potentials,max/day   cm2/l      ! (From SeasInit) !LPM 24APR2016 To estimate a modified daily leaf area potential modified by temperature 
         REAL    :: LAPP                         ! Leaf area diseased,leaf posn   cm2/p      ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions currently it is not used    
@@ -32,8 +32,8 @@ Module YCA_Node !Module of environment
         REAL    :: NFLF                         ! N factor for leaf,average      #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions  
         REAL    :: NFLF2                        ! N factor for leaf area adj     #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions 
         REAL    :: NFLFP                        ! N factor phs leaf,average      #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
-        REAL    :: NODEWT                       ! Node wt  by cohort             g/p        ! LPM 11APR15
-        REAL    :: NodeWeightGrowthByCohort     ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 ! DA NODEWTG
+        REAL    :: CohortWeight                 ! Node wt  by cohort             g/p        ! LPM 11APR15 ! DA NODEWT
+        REAL    :: CohortWeightGrowth           ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 ! DA NODEWTG
         REAL    :: NPOOLSN                      ! Stem N pool by node            g/p        ! LPM 25MAY2015 Added to consider different N concentration by node 
         REAL    :: SANC                         ! Stem N concentration           #          ! (From SeasInit) !LPM 25MAY2015 change the dimensions to include values by node
         REAL    :: SCNC                         ! Stem critical max N conc/node  #/n        !LPM 25MAY2015 Added to estimate the value by cohort
@@ -74,7 +74,7 @@ Module YCA_Node !Module of environment
         Node_type_constructor%lagl3 = 0.0
         Node_type_constructor%lagl3t = 0.0
         Node_type_constructor%laglt = 0.0
-        Node_type_constructor%LAIByCohort = 0.0
+        Node_type_constructor%CohortLAI = 0.0
         Node_type_constructor%lapp = 0.0
         Node_type_constructor%LAPOTX = 0.0
         Node_type_constructor%LAPOTX2 = 0.0        
@@ -91,8 +91,8 @@ Module YCA_Node !Module of environment
         Node_type_constructor%nflf = 1.0
         Node_type_constructor%nflf2 = 0.0
         Node_type_constructor%nflfp = 1.0
-        Node_type_constructor%NodeWeightGrowthByCohort = 0.0 !LPM 11APR15 New variables of node growth
-        Node_type_constructor%NODEWT = 0.0 !LPM 11APR15 New variables of node growth
+        Node_type_constructor%CohortWeightGrowth = 0.0 !LPM 11APR15 New variables of node growth
+        Node_type_constructor%CohortWeight = 0.0 !LPM 11APR15 New variables of node growth
         Node_type_constructor%NPOOLSN = 0.0
         Node_type_constructor%sanc = 0.0
         Node_type_constructor%SCNC = 0.0
