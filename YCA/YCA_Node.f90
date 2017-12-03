@@ -44,7 +44,7 @@ Module YCA_Node !Module of environment
         REAL    :: SNDEMN                       ! Stem demand for N by node      g/p        !
         REAL    :: StemNHarvstByNode            ! Stem N harvested by node       g/n/p      ! DA 01DIC2017 SNPHN
         REAL    :: StemNByNode                  ! Stem N by cohort               g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  ! DA 01DIC2017 STEMNN
-        REAL    :: StemNExcessByNode            ! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  ! DA 01DIC2017 STEMNEXCESSN
+        REAL    :: StemNExcessByNode            ! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  ! DA 01DIC2017 StemNExcessN
         REAL    :: TFDLF                        ! Temp factor,dev for leaf,av    #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
         REAL    :: TFGLF                        ! Temp factor,exp for leaf,av    #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
         REAL    :: WFLF                         ! H2O factor for leaf,average    #          ! (From SeasInit) !LPM 23MAR15 Change to consider two dimensions

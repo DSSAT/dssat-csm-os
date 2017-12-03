@@ -36,16 +36,16 @@
             LEAFN = 0.0
         ENDIF
             
-        STEMNEXCESS = 0.0
+        StemNExcess = 0.0
         node%StemNExcessByNode = 0.0
-        !IF (SANC > SNCX) STEMNEXCESS = (woodyWeight())*(SANC-SNCX)                                                     !EQN 246
-        !STEMN = STEMN + SNUSE(0) - SNPH - STEMNEXCESS                                                               !EQN 247
+        !IF (SANC > SNCX) StemNExcess = (woodyWeight())*(SANC-SNCX)                                                     !EQN 246
+        !STEMN = STEMN + SNUSE(0) - SNPH - StemNExcess                                                               !EQN 247
         
         DO BR = 0, BRSTAGE                                                                                                                                                          
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   
                 IF (node(BR,LF)%SANC < node(BR,LF)%SNCX) THEN 
                     node(BR,LF)%StemNExcessByNode = (node(BR,LF)%CohortWeight*(woodyWeight())/(STWTP+CRWTP))*(node(BR,LF)%SANC-node(BR,LF)%SNCX)
-                    STEMNEXCESS = STEMNEXCESS + node(BR,LF)%StemNExcessByNode
+                    StemNExcess = StemNExcess + node(BR,LF)%StemNExcessByNode
                     node(BR,LF)%StemNByNode = node(BR,LF)%StemNByNode + ShootNUseByNode(0,BR,LF) - node(BR,LF)%StemNHarvstByNode - node(BR,LF)%StemNExcessByNode  
                     StemN = StemN + node(BR,LF)%StemNByNode
                 ENDIF 
@@ -70,7 +70,7 @@
         SROOTN = SROOTN + SRNUSE(0)                                                                                    !EQN 255
         SEEDN = SEEDN - SEEDNUSE - SEEDNUSE2                                                                           !EQN 204
         IF (SEEDN < 1.0E-6) SEEDN = 0.0
-        RSN = RSN - RSNUSED + SENNLFGRS - RSNPH + LEAFNEXCESS + STEMNEXCESS + ROOTNEXCESS                              !EQN 157
+        RSN = RSN - RSNUSED + SENNLFGRS - RSNPH + LEAFNEXCESS + StemNExcess + ROOTNEXCESS                              !EQN 157
         RSNPHC = RSNPHC +  RSNPH                                                                                       !EQN 256
         SENNL(0) = SENNL(0) + SENNLFG                                                                                  !EQN 257
         
