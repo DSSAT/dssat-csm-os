@@ -31,8 +31,8 @@
         !           Reserves growth
         !-----------------------------------------------------------------------
 
-        !GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ-GROSR                                       !EQN 309 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-        GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS+GROLSRS-GROLFADJ-GROSTADJ-GROCRADJ                                      !LPM 05OCT2015 Added GROLSRS to avoid negative values of reserves
+        !GRORS = CARBOT+StemLeafGrowthSD+StemLeafGrowthRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ-GROSR                                       !EQN 309 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+        GRORS = CARBOT+StemLeafGrowthSD+StemLeafGrowthRT+SENLFGRS+StemLeafGrowthRS-GROLFADJ-GROSTADJ-GROCRADJ                                      !LPM 05OCT2015 Added StemLeafGrowthRS to avoid negative values of reserves
         IF(GRORS < 0.0.AND.GRORS > -1.0E-07) GRORS = 0.0
 
         ! Reserves to STORAGE Root if conc too great (overflow!)
@@ -143,7 +143,7 @@
                     ! LAH Temperature effect above is not from soil temp
                     !LPM 19DEC2016 The model is considering now the soil temp (TTGEM)
                     IF (RTWT > 0.0) THEN
-                        RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
+                        RTWTUL(L) = RTWTL(L)*StemLeafGrowthRT/RTWT                                                     !EQN 396
                     ENDIF
                     SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
                     IF (ISWNIT /= 'N') THEN

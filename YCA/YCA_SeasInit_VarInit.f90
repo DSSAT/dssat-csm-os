@@ -152,7 +152,7 @@
         !grosr = 0.0 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
         grost = 0.0
         grostadj = 0.0
-        grostcr = 0.0
+        stemstickgrowth = 0.0
         gyeardoy = -99
         hamt = 0.0
         hbpc = -99.0

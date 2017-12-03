@@ -30,7 +30,7 @@
         IF (LANC > LNCX) THEN
             LeafNEXCESS = (LFWT-leafTotalSenescedWeight())*(LANC-LNCX)                                          !EQN 245 !LPM 25OCT2015 to consider N by cohort LANC has to be by cohort
         ENDIF
-        LeafN = LeafN + GROLSRTN + LNUSE(0) - SENNLFG - SENNLFGRS - lnph - LeafNEXCESS                              !EQN 242
+        LeafN = LeafN + StemLeafGrowthRTN + LNUSE(0) - SENNLFG - SENNLFGRS - lnph - LeafNEXCESS                              !EQN 242
         LNPHC = LNPHC +  LNPH                                                                                       !EQN 423
         IF (LeafN < 1.0E-10) THEN 
             LeafN = 0.0
@@ -66,7 +66,7 @@
         ! LAH Maybe also need LeafNEXESS if LANC > LNCX
         RootNEXCESS = 0.0
         IF (RANC > RNCX) RootNEXCESS = (RTWT-(SENWALG(L)/(plantPopulation())))*(RANC-RNCX)                                  !EQN 253
-        RootN = RootN + (RNUSE(0)-RootNS-GROLSRTN) - RootNEXCESS                                                       !EQN 254
+        RootN = RootN + (RNUSE(0)-RootNS-StemLeafGrowthRTN) - RootNEXCESS                                                       !EQN 254
         SRootN = SRootN + SRNUSE(0)                                                                                    !EQN 255
         SEEDN = SEEDN - SEEDNUSE - SEEDNUSE2                                                                           !EQN 204
         IF (SEEDN < 1.0E-6) SEEDN = 0.0

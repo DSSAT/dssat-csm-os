@@ -13,7 +13,8 @@
     
         USE ModuleDefs
         USE YCA_First_Trans_m
-    
+        USE YCA_Control_Leaf
+        
         IMPLICIT NONE
         
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
@@ -53,14 +54,14 @@
         GROLF = 0.0
         GROLFADJ = 0.0
         GROLFP = 0.0
-        GROLSRS = 0.0
-        GROLS = 0.0
-        GROLSA = 0.0
-        GROLSP = 0.0
-        GROLSRT = 0.0
-        GROLSSEN = 0.0
-        GROLSRTN = 0.0
-        GROLSSD = 0.0
+        StemLeafGrowthRS = 0.0
+        StemLeafGrowth = 0.0
+        StemLeafGrowthA = 0.0
+        StemLeafGrowthP = 0.0
+        StemLeafGrowthRT = 0.0
+        StemLeafGrowthSEN = 0.0
+        StemLeafGrowthRTN = 0.0
+        StemLeafGrowthSD = 0.0
         !LAGEG = 0.0   !LPM 28MAR15 This variable is not used
         !PLAGS2 = 0.0  !LPM 23MAR15 non necessary PLAGSB2 considers all the branches and shoots
         SHLAG2 = 0.0
@@ -92,7 +93,7 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                SHLAG2B(BR) = 0.0  
                 DO LF = 1, LNUMSIMSTG(BR)+1
-                    IF (node(BR,LF)%LAGETT <= LLIFGTT) THEN
+                    IF (isLeafExpanding(node(BR,LF))) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
                         node(BR,LF)%LAPOTX2 = node(BR,LF)%LAPOTX*Tflfgrowth
@@ -227,30 +228,30 @@
         GRORP = (GROLFP + GROSTP)*PTFA
         !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
         !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
-        GROLSP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
+        StemLeafGrowthP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
-        IF (GROLSP > 0.0) THEN
+        IF (StemLeafGrowthP > 0.0) THEN
             ! Leaf+stem weight increase from assimilates
-            !GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT-GROSR))                                                              !EQN 298 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-            GROLSA = AMAX1(0.,AMIN1(GROLSP,CARBOT))                                                                     !EQN 298
+            !StemLeafGrowthA = AMAX1(0.,AMIN1(StemLeafGrowthP,CARBOT-GROSR))                                                              !EQN 298 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            StemLeafGrowthA = AMAX1(0.,AMIN1(StemLeafGrowthP,CARBOT))                                                                     !EQN 298
             ! Leaf+stem weight increase from senescence 
-            IF (GROLSA < GROLSP) THEN
+            IF (StemLeafGrowthA < StemLeafGrowthP) THEN
 
-                GROLSSEN = AMIN1(GROLSP-GROLSA,SENLFGRS)
+                StemLeafGrowthSEN = AMIN1(StemLeafGrowthP-StemLeafGrowthA,SENLFGRS)
             ENDIF
             
-            IF (GROLSA+GROLSSEN < GROLSP) THEN
+            IF (StemLeafGrowthA+StemLeafGrowthSEN < StemLeafGrowthP) THEN
                 ! Leaf+stem weight increase from seed reserves
                 ! LAH May need to restrict seed use.To use by roots?
                 IF (DAE <= 0.0)THEN !LPM 23MAR2016 Before emergence use the SEEDUSED according with CS_growth_Init.f90
-                    GROLSSD = AMIN1((GROLSP-GROLSA-GROLSSEN),SEEDUSED)                                                     !EQN 300
+                    StemLeafGrowthSD = AMIN1((StemLeafGrowthP-StemLeafGrowthA-StemLeafGrowthSEN),SEEDUSED)                                                     !EQN 300
                 ELSE
-                    GROLSSD = AMIN1((GROLSP-GROLSA-GROLSSEN),SEEDRSAV)                                                     !EQN 300
-                    SEEDRSAV = SEEDRSAV - GROLSSD                                                                          !EQN 288
+                    StemLeafGrowthSD = AMIN1((StemLeafGrowthP-StemLeafGrowthA-StemLeafGrowthSEN),SEEDRSAV)                                                     !EQN 300
+                    SEEDRSAV = SEEDRSAV - StemLeafGrowthSD                                                                          !EQN 288
                 ENDIF
                
                 
-                IF ( LAI <= 0.0.AND.GROLSSD <= 0.0.AND.SEEDRSAV <= 0.0.AND.ESTABLISHED /= 'Y') THEN
+                IF ( LAI <= 0.0.AND.StemLeafGrowthSD <= 0.0.AND.SEEDRSAV <= 0.0.AND.ESTABLISHED /= 'Y') THEN
                     CFLFAIL = 'Y'
                     WRITE (Message(1),'(A41)') 'No seed reserves to initiate leaf growth '
                     WRITE (Message(2),'(A33,F8.3,F6.1)') '  Initial seed reserves,seedrate ',seedrsi,sdrate
@@ -259,28 +260,28 @@
                 ENDIF
             ENDIF
             ! Leaf+stem weight increase from plant reserves
-            IF (GROLSA+GROLSSD+GROLSSEN < GROLSP) THEN
-                GROLSRS =  AMIN1(RSWT*RSUSE,GROLSP-GROLSA-GROLSSD-GROLSSEN)                                            !EQN 301
+            IF (StemLeafGrowthA+StemLeafGrowthSD+StemLeafGrowthSEN < StemLeafGrowthP) THEN
+                StemLeafGrowthRS =  AMIN1(RSWT*RSUSE,StemLeafGrowthP-StemLeafGrowthA-StemLeafGrowthSD-StemLeafGrowthSEN)                                            !EQN 301
             ENDIF
             ! Leaf+stem weight increase from roots (after drought)
-            GROLSRT = 0.0
-            GROLSRTN = 0.0
-            IF ((GROLSA+GROLSSD+GROLSRS+GROLSSEN) < GROLSP.AND.SHRTD < 1.0.AND.RTUFR > 0.0.AND.ESTABLISHED == 'Y') THEN
-                GROLSRT = AMIN1(RTWT*RTUFR,(GROLSP-GROLSA-GROLSSD-GROLSSEN-GROLSRS))                                   !EQN 302
+            StemLeafGrowthRT = 0.0
+            StemLeafGrowthRTN = 0.0
+            IF ((StemLeafGrowthA+StemLeafGrowthSD+StemLeafGrowthRS+StemLeafGrowthSEN) < StemLeafGrowthP.AND.SHRTD < 1.0.AND.RTUFR > 0.0.AND.ESTABLISHED == 'Y') THEN
+                StemLeafGrowthRT = AMIN1(RTWT*RTUFR,(StemLeafGrowthP-StemLeafGrowthA-StemLeafGrowthSD-StemLeafGrowthSEN-StemLeafGrowthRS))                                   !EQN 302
                 IF (ISWNIT /= 'N') THEN
-                    GROLSRTN = GROLSRT * RANC                                                                          !EQN 244
+                    StemLeafGrowthRTN = StemLeafGrowthRT * RANC                                                                          !EQN 244
                 ELSE
-                    GROLSRTN = 0.0
+                    StemLeafGrowthRTN = 0.0
                 ENDIF
                 WRITE(Message(1),'(A16,A12,F3.1,A8,F7.4,A7,F7.4,A9,F7.4)') &
-                    'Roots -> leaves ',' Shoot/root ',shrtd,' Grolsp ',grolsp,' Grols ',grols,' Grolsrt ',grolsrt
+                    'Roots -> leaves ',' Shoot/root ',shrtd,' StemLeafGrowthP ',StemLeafGrowthP,' StemLeafGrowth ',StemLeafGrowth,' StemLeafGrowthRT ',StemLeafGrowthRT
                 CALL WARNING(1,'CSYCA',MESSAGE)
             ENDIF
             ! Leaf+stem weight increase from all sources
-            GROLS = GROLSA + GROLSSEN + GROLSSD + GROLSRS+GROLSRT                                                      !EQN 303
+            StemLeafGrowth = StemLeafGrowthA + StemLeafGrowthSEN + StemLeafGrowthSD + StemLeafGrowthRS+StemLeafGrowthRT                                                      !EQN 303
             ! Leaf weight increase from all sources
-            IF ((GROLSP) > 0.0) THEN
-                GROLF = GROLS * GROLFP/GROLSP                                                                          !EQN 304
+            IF ((StemLeafGrowthP) > 0.0) THEN
+                GROLF = StemLeafGrowth * GROLFP/StemLeafGrowthP                                                                          !EQN 304
             ELSE  
                 GROLF = 0.0
             ENDIF
@@ -303,23 +304,23 @@
         !-----------------------------------------------------------------------
         
         GROCR = 0.0
-        GROSTCRP = 0.0
+        StemStickGrowthP = 0.0
         GROST = 0.0
-        GROSTCR = 0.0
+        StemStickGrowth = 0.0
         STAIG = 0.0
         STAIS = 0.0
-        GROSTCRP = GROSTP                                                                                          !EQN 381a
+        StemStickGrowthP = GROSTP                                                                                          !EQN 381a
         
         
-        IF (GROLFP+GROSTCRP > 0.0) THEN
-            GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
+        IF (GROLFP+StemStickGrowthP > 0.0) THEN
+            StemStickGrowth = StemLeafGrowth * StemStickGrowthP/(StemLeafGrowthP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider StemLeafGrowthP
         ENDIF
 
-        GROST = GROSTCR
+        GROST = StemStickGrowth
         
-        IF (GROLSP > 0.0) THEN
-            GROCR = GROLS*(GROCRP/GROLSP)   !LPM 05OCT2015 To avoid wrong values for GROCR 
-            RTWTG = GROLS*(GRORP/GROLSP) !LPM 22DEC2016 Root development 
+        IF (StemLeafGrowthP > 0.0) THEN
+            GROCR = StemLeafGrowth*(GROCRP/StemLeafGrowthP)   !LPM 05OCT2015 To avoid wrong values for GROCR 
+            RTWTG = StemLeafGrowth*(GRORP/StemLeafGrowthP) !LPM 22DEC2016 Root development 
         ENDIF
         
         !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)                      

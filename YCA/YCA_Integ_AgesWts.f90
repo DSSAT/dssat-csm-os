@@ -182,8 +182,8 @@
             SRWT = SRWT + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                              !EQN 447
         ENDIF
         IF (DAGERM+TTGEM*WFGE >= PGERM) THEN !LPM 23MAR2016 To consider reserves of stake after germination
-            !SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD-SEEDRSAVR)                                                                   !EQN 285 !LPM 23MAR2016 SEEDRSAVR subtracted in CS_Growth_Init.f90
-            SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD)                                                                       !EQN 285
+            !SEEDRS = AMAX1(0.0,SEEDRS-StemLeafGrowthSD-SEEDRSAVR)                                                                   !EQN 285 !LPM 23MAR2016 SEEDRSAVR subtracted in CS_Growth_Init.f90
+            SEEDRS = AMAX1(0.0,SEEDRS-StemLeafGrowthSD)                                                                       !EQN 285
             IF (CFLSDRSMSG /= 'Y'.AND.SEEDRS <= 0.0.AND.LNUM < 4.0) THEN
                 WRITE(Message(1),'(A44,F3.1)') 'Seed reserves all used but leaf number only ',lnum
                 WRITE(Message(2),'(A58)') 'For good establishment seed reserves should last to leaf 4'
@@ -191,11 +191,11 @@
                 CALL WARNING(3,'CSYCA',MESSAGE)
                 CFLSDRSMSG = 'Y'
             ENDIF
-            !SEEDUSE = SEEDUSE + GROLSSD+SEEDRSAVR  !LPM 22DEC2016 Root growth based on top growth (deleted SEEDRSAVR)                                                                         !EQN 448
-            SEEDUSE = SEEDUSE + GROLSSD
+            !SEEDUSE = SEEDUSE + StemLeafGrowthSD+SEEDRSAVR  !LPM 22DEC2016 Root growth based on top growth (deleted SEEDRSAVR)                                                                         !EQN 448
+            SEEDUSE = SEEDUSE + StemLeafGrowthSD
             !SEEDUSER = SEEDUSER + SEEDRSAVR                                                                                !EQN 449
             SEEDUSER = SEEDUSER
-            SEEDUSET = SEEDUSET + GROLSSD                                                                                  !EQN 450
+            SEEDUSET = SEEDUSET + StemLeafGrowthSD                                                                                  !EQN 450
             SEEDRSAV = SEEDRS
         ENDIF
         ! IF (SRNOPD > 0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
