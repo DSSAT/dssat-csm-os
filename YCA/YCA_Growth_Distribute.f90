@@ -61,9 +61,9 @@
         IF(GROSTP > 0.0) THEN
             !LPM06JUL2017 It is assumed an branching angle of 60 from the vertical line (cos(60)=0.5) 
             IF(BRSTAGE>=1.0) THEN
-                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP)*0.5)
+                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NodeWeightGrowthByCohort)/GROSTP)*0.5)
             ELSE
-                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP))
+                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NodeWeightGrowthByCohort)/GROSTP))
             ENDIF
         ELSE
             CANHTG = 0.0

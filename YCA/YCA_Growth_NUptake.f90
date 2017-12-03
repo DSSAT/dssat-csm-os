@@ -45,7 +45,7 @@
 
         node(0,0)%NFLF2 = 1.0
         
-        IF (SUM(node%NODEWTG) > 0 .AND. ISWNIT /= 'N') THEN    !If plant nodes has weight and nitrogen restrictions are activated
+        IF (SUM(node%NodeWeightGrowthByCohort) > 0 .AND. ISWNIT /= 'N') THEN    !If plant nodes has weight and nitrogen restrictions are activated
     
             ANDEM = 0.0
             RNDEM = 0.0
@@ -92,7 +92,7 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP>0.0) THEN
-                        node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%NODEWTG)*node(BR,LF)%SNCX + &
+                        node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%NodeWeightGrowthByCohort)*node(BR,LF)%SNCX + &
                         (node(BR,LF)%NODEWT*AMAX1(0.0,NTUPF*(node(BR,LF)%SNCX-node(BR,LF)%SANC)))  
                         SNDEM = SNDEM + node(BR,LF)%SNDEMN
                     ENDIF
@@ -219,8 +219,8 @@
             ! For supplying minimum
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    !NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
-                    node(BR,LF)%NDEMSMN = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM
+                    !NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NodeWeightGrowthByCohort(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
+                    node(BR,LF)%NDEMSMN = node(BR,LF)%NodeWeightGrowthByCohort * node(BR,LF)%SNCM
                 ENDDO
             ENDDO
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
@@ -235,8 +235,8 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (GROSTP > 0.0) THEN
-                        !SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NODEWTG(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
-                        ShootNUseByNode(1,BR,LF) = node(BR,LF)%NODEWTG * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
+                        !SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*NodeWeightGrowthByCohort(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
+                        ShootNUseByNode(1,BR,LF) = node(BR,LF)%NodeWeightGrowthByCohort * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ ShootNUseByNode(1,BR,LF)
                     ENDIF
                 ENDDO

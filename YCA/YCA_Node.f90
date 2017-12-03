@@ -33,8 +33,7 @@ Module YCA_Node !Module of environment
         REAL    :: NFLF2                        ! N factor for leaf area adj     #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions 
         REAL    :: NFLFP                        ! N factor phs leaf,average      #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
         REAL    :: NODEWT                       ! Node wt  by cohort             g/p        ! LPM 11APR15
-        REAL    :: NODEWTG                      ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 
-        REAL    :: NodeWeightGrowth             ! Node wt growth     g/d/leaf   ! DA 16DIC16 ! DA NODEWTGB
+        REAL    :: NodeWeightGrowthByCohort     ! Node wt growth by cohort       g/d/p      ! LPM 02MAR15 ! DA NODEWTG
         REAL    :: NPOOLSN                      ! Stem N pool by node            g/p        ! LPM 25MAY2015 Added to consider different N concentration by node 
         REAL    :: SANC                         ! Stem N concentration           #          ! (From SeasInit) !LPM 25MAY2015 change the dimensions to include values by node
         REAL    :: SCNC                         ! Stem critical max N conc/node  #/n        !LPM 25MAY2015 Added to estimate the value by cohort
@@ -92,7 +91,7 @@ Module YCA_Node !Module of environment
         Node_type_constructor%nflf = 1.0
         Node_type_constructor%nflf2 = 0.0
         Node_type_constructor%nflfp = 1.0
-        Node_type_constructor%NodeWeightGrowth = 0.0 !LPM 11APR15 New variables of node growth
+        Node_type_constructor%NodeWeightGrowthByCohort = 0.0 !LPM 11APR15 New variables of node growth
         Node_type_constructor%NODEWT = 0.0 !LPM 11APR15 New variables of node growth
         Node_type_constructor%NPOOLSN = 0.0
         Node_type_constructor%sanc = 0.0
