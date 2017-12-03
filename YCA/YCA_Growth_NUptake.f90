@@ -36,7 +36,7 @@
         ! For when no adjustment necessary, or when not simulating N
         GROCRADJ = GROCRP
         GROLFADJ = GROLFP
-        GROSTADJ = GROSTP
+        StemGrowthADJ = StemGrowthP
         PLAGSB4 = PLAGSB2
         RSSRWTGLFADJ = 0.0
         RTRESPADJ = RTRESP   
@@ -85,13 +85,13 @@
             END DO
     
             LNDEM = GROLFP*LNCX + (LFWT-leafTotalSenescedWeight())*AMAX1(0.0,NTUPF*(LNCX-LANC)) - StemLeafGrowthRTN                        !EQN 152
-            !SNDEM = AMAX1(0.0,GROST+GROCR)*SNCX + (woodyWeight())*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
+            !SNDEM = AMAX1(0.0,StemGrowth+GROCR)*SNCX + (woodyWeight())*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
             RNDEM = RTWTG*RNCX + (RTWT-SENRTG-StemLeafGrowthRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
             
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (GROSTP>0.0) THEN
+                    IF (StemGrowthP>0.0) THEN
                         node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%CohortWeightGrowth)*node(BR,LF)%SNCX + &
                         (node(BR,LF)%CohortWeight*AMAX1(0.0,NTUPF*(node(BR,LF)%SNCX-node(BR,LF)%SANC)))  
                         SNDEM = SNDEM + node(BR,LF)%SNDEMN
@@ -219,23 +219,23 @@
             ! For supplying minimum
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    !NDEMSMN(BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
+                    !NDEMSMN(BR,LF) = ((StemGrowth+GROCR)/(StemGrowthP+GROCR))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
                     node(BR,LF)%NDEMSMN = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM
                 ENDDO
             ENDDO
-            !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(GROST+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
+            !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(StemGrowth+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
             !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
             !NDEMMN = GROLF*LNCM+RTWTG*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using GROLFP instead of GROLF
             !LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             NDEMMN = GROLFP*LNCM+RTWTG*RNCM+SUM(node%NDEMSMN) 
             LNUSE(1) = (GROLFP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
-            !SNUSE(1) = ((GROST+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
+            !SNUSE(1) = ((StemGrowth+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
             
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (GROSTP > 0.0) THEN
-                        !SNUSEN(1,BR,LF) = ((GROST+GROCR)/(GROSTP+GROCR))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
+                    IF (StemGrowthP > 0.0) THEN
+                        !SNUSEN(1,BR,LF) = ((StemGrowth+GROCR)/(StemGrowthP+GROCR))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
                         ShootNUseByNode(1,BR,LF) = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ ShootNUseByNode(1,BR,LF)
                     ENDIF
@@ -245,14 +245,14 @@
     
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
             IF (NDEMMN > NULEFT) THEN
-                GROSTADJ = GROSTP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
+                StemGrowthADJ = StemGrowthP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
                 GROCRADJ = GROCRP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
                 RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
                 RTRESPADJ = RTWTGADJ*RRESP/(1.0-RRESP)                                                                 !EQN 216   
             ELSE
-                !GROSTADJ = GROST   !LPM 02SEP2016 Use potential growth
+                !StemGrowthADJ = StemGrowth   !LPM 02SEP2016 Use potential growth
                 !GROCRADJ = GROCR
-                GROSTADJ = GROSTP
+                StemGrowthADJ = StemGrowthP
                 GROCRADJ = GROCRP
                 RTWTGADJ = RTWTG
                 RTRESPADJ = RTRESP   
@@ -277,7 +277,7 @@
                 !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
-                        IF (GROSTP > 0.0) THEN
+                        IF (StemGrowthP > 0.0) THEN
                             ShootNUseByNode(2,BR,LF) = (node(BR,LF)%SNDEMN - ShootNUseByNode(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
                             SNUSE(2) = SNUSE(2)+ ShootNUseByNode(2,BR,LF)
                         ENDIF
@@ -302,7 +302,7 @@
             SNUSE(0) = SNUSE(1) + SNUSE(2)                                                                             !EQN 226
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    IF (GROSTP > 0.0) THEN
+                    IF (StemGrowthP > 0.0) THEN
                         ShootNUseByNode(0,BR,LF) = ShootNUseByNode(1,BR,LF) + ShootNUseByNode(2,BR,LF)
                     ENDIF
                 ENDDO
@@ -407,7 +407,7 @@
                 GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
             ENDIF
             
-            GROSTADJ = AMIN1(GROST,GROSTADJ)
+            StemGrowthADJ = AMIN1(StemGrowth,StemGrowthADJ)
             RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)
             RTRESPADJ = AMIN1(RTRESP,RTRESPADJ)    
             RTWTGADJ = AMIN1(RTWTG,RTWTGADJ)

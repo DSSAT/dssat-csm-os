@@ -241,12 +241,12 @@ Module YCA_First_Trans_m
     REAL    :: StemLeafGrowthSEN                ! Leaf+stem growth from senesnce g/p        ! (From Growth) 
     REAL    :: GRORP                   ! Potential root growth          g/p        ! (From SeasInit) !LPM 22DEC2016 potential root growth
     REAL    :: GRORS                   ! Reserves growth                g/p        ! (From SeasInit)  
-    REAL    :: GROST                   ! Stem growth rate               g/p        ! (From SeasInit)  
-    REAL    :: GROSTADJ                ! Stem growth rate N adjusted    g/p        ! (From SeasInit)  
+    REAL    :: StemGrowth                   ! Stem growth rate               g/p        ! (From SeasInit)  
+    REAL    :: StemGrowthADJ                ! Stem growth rate N adjusted    g/p        ! (From SeasInit)  
     REAL    :: StemStickGrowth                 ! Stem+Plant. stick growth rate         g/p ! (From SeasInit)  
     REAL    :: StemStickGrowthP                ! Stem+Plant. stick growth potential    g/p ! (From Growth)    
     REAL    :: StemStickGrowthPSTORE           ! Stem+Plant. stick gr potentl,previous g/p ! (From Growth)    
-    REAL    :: GROSTP                  ! Potential stem growth rate     g/p        ! LPM11APR15  
+    REAL    :: StemGrowthP                  ! Potential stem growth rate     g/p        ! LPM11APR15  
     REAL    :: GrP_EP                  ! Harvest product per unit EP    g/mm       ! (From Output)    
     REAL    :: GRP_ET                  ! Harvest product per unit water g/mm       ! (From Output)    
     REAL    :: GrP_Irr                 ! Harvest dm per unit irrigation g/mm       ! (From Output)    
@@ -1335,8 +1335,8 @@ Module YCA_First_Trans_m
         grolf = 0.0
         grolfadj = 0.0
         grors = 0.0
-        grost = 0.0
-        grostadj = 0.0
+        stemgrowth = 0.0
+        stemgrowthadj = 0.0
         stemstickgrowth = 0.0
         gyeardoy = -99
         hamt = 0.0

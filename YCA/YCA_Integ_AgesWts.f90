@@ -155,7 +155,7 @@
                 ENDIF
             ENDIF
             RSWTX = AMAX1(RSWTX,RSWT)
-            STWT = STWT + GROSTADJ - SWPH
+            STWT = STWT + StemGrowthADJ - SWPH
             IF (STWT < 1.0E-06) THEN
                 IF (STWT < 0.0) WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
                 STWT = 0.0

@@ -197,7 +197,7 @@
         
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         node%CohortWeightGrowth = 0.0
-        GROSTP = 0.0
+        StemGrowthP = 0.0
         GROCRP = 0.0
         Lcount = 0
         !IF (DAE > 0.0) THEN !LPM 01SEP16 putting a conditional DAE > 0.0 to avoid illogical values of CohortWeightGrowth
@@ -213,7 +213,7 @@
                 node(BR,LF)%CohortWeightGrowth = (1/(1+(((Lcount)/B_)**C_)))  *  (E_*(((D_NewNodeDAE)**F_) / ((D_NewNodeDAE**G_)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
            
                 node(BR,LF)%CohortWeight = node(BR,LF)%CohortWeight + node(BR,LF)%CohortWeightGrowth
-                GROSTP = GROSTP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
+                StemGrowthP = StemGrowthP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
                 STWTP = STWTP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR))
                 
                 
@@ -225,10 +225,10 @@
         
         GROCRP = node(0,1)%CohortWeightGrowth * SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
-        GRORP = (GROLFP + GROSTP)*PTFA
-        !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
-        !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
-        StemLeafGrowthP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
+        GRORP = (GROLFP + StemGrowthP)*PTFA
+        !GRORP = (GROLFP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        !GRORP = (GROLFP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        StemLeafGrowthP = GROLFP + StemGrowthP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
         IF (StemLeafGrowthP > 0.0) THEN
             ! Leaf+stem weight increase from assimilates
@@ -305,18 +305,18 @@
         
         GROCR = 0.0
         StemStickGrowthP = 0.0
-        GROST = 0.0
+        StemGrowth = 0.0
         StemStickGrowth = 0.0
         STAIG = 0.0
         STAIS = 0.0
-        StemStickGrowthP = GROSTP                                                                                          !EQN 381a
+        StemStickGrowthP = StemGrowthP                                                                                          !EQN 381a
         
         
         IF (GROLFP+StemStickGrowthP > 0.0) THEN
             StemStickGrowth = StemLeafGrowth * StemStickGrowthP/(StemLeafGrowthP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider StemLeafGrowthP
         ENDIF
 
-        GROST = StemStickGrowth
+        StemGrowth = StemStickGrowth
         
         IF (StemLeafGrowthP > 0.0) THEN
             GROCR = StemLeafGrowth*(GROCRP/StemLeafGrowthP)   !LPM 05OCT2015 To avoid wrong values for GROCR 
