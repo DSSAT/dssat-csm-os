@@ -24,9 +24,9 @@
 
         REAL    CSYVAL      , TFAC4     , TFAC5                                                           ! Real function call !LPM 19SEP2017 Added tfac5
         
-        ! Full NODEWTGB equation
+        ! Full NodeWeightGrowth equation
         ! D_NewNodeDAE = NewNodeDAE/D_
-        ! NODEWTGB = 1/(1+(NDLEV/D_)**C_)  *  (E_ * (D_NewNodeDAE)**F_ / (NewNodeDAE * ((D_NewNodeDAE**G_)+1)**2))  * VF * TT
+        ! NodeWeightGrowth = 1/(1+(NDLEV/D_)**C_)  *  (E_ * (D_NewNodeDAE)**F_ / (NewNodeDAE * ((D_NewNodeDAE**G_)+1)**2))  * VF * TT
         REAL, PARAMETER :: B_ = 86.015564      ! this is 'b' from  1/(1+(NDLEV/b)**c) see issue #24
         REAL, PARAMETER :: C_ = 6.252552       ! this is 'c' from  1/(1+(NDLEV/b)**c) see issue #24
         REAL, PARAMETER :: D_ = 235.16408564   ! this is 'd' from  NDDAE/d
@@ -195,7 +195,7 @@
         
         
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
-        node%NODEWTG = 0.0
+        node%NodeWeightGrowth = 0.0
         GROSTP = 0.0
         GROCRP = 0.0
         Lcount = 0
@@ -209,10 +209,9 @@
                 D_NewNodeDAE=(DAG-node(BR,LF)%NewNodeDAE+1)/D_
           
                 !LPM23FEB2017 New high initial rate
-                node(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/B_)**C_)))  *  (E_*(((D_NewNodeDAE)**F_) / ((D_NewNodeDAE**G_)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
+                node(BR,LF)%NodeWeightGrowth = (1/(1+(((Lcount)/B_)**C_)))  *  (E_*(((D_NewNodeDAE)**F_) / ((D_NewNodeDAE**G_)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
            
-                node(BR,LF)%NODEWTG = node(BR,LF)%NODEWTGB
-                !IF (BR == 0.AND.LF == 1.AND.DAE == 1.AND.SEEDUSES > 0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
+                node(BR,LF)%NODEWTG = node(BR,LF)%NodeWeightGrowth
                 node(BR,LF)%NODEWT = node(BR,LF)%NODEWT + node(BR,LF)%NODEWTG
                 GROSTP = GROSTP + (node(BR,LF)%NODEWTG*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
                 STWTP = STWTP + (node(BR,LF)%NODEWTG*BRNUMST(BR))
@@ -224,7 +223,7 @@
         
 
         
-        GROCRP = node(0,1)%NODEWTGB * SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
+        GROCRP = node(0,1)%NodeWeightGrowth * SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
         GRORP = (GROLFP + GROSTP)*PTFA
         !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
