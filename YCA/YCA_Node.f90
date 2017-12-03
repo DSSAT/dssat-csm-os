@@ -27,7 +27,7 @@ Module YCA_Node !Module of environment
         REAL    :: LATL3T                       ! Leaf area by cohort lf#,+assim cm2/cohort ! (From SeasInit)!LPM 15NOV15 Added to have the leaf area by cohort +assim
         REAL    :: LATL4                        ! Leaf area,shoot,lf#,+assim.+N  cm2/l      ! (From SeasInit)  
         INTEGER :: LDEATHDAP                    ! DAP on which leaf 100% dead    #          ! (From Integrate) 
-        REAL    :: NDDAE                        ! DAE when a new node appears     ! DA 13DIC2016
+        REAL    :: NewNodeDAE                   ! DAE when a new node appears     ! DA 13DIC2016 ! NDDAE
         REAL    :: NDEMSMN                      ! N demand for growth/node min   g/p        !LPM 25MAY2015 addet to consider stem N by node cohort
         REAL    :: NFLF                         ! N factor for leaf,average      #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions  
         REAL    :: NFLF2                        ! N factor for leaf area adj     #          ! (From SeasInit) !LPM 23MAR15 Adjusted to consider two dimensions 
@@ -87,7 +87,7 @@ Module YCA_Node !Module of environment
         Node_type_constructor%latl3t = 0.0 !LPM 15NOV15 added to save leaf area by cohort (considering assimilates restriction)
         Node_type_constructor%latl4 = 0.0 !LPM 15NOV15 added to save leaf area by cohort
         Node_type_constructor%LDEATHDAP = -99
-        Node_type_constructor%nddae = 0.0
+        Node_type_constructor%NewNodeDAE = 0.0
         Node_type_constructor%NDEMSMN = 0.0
         Node_type_constructor%nflf = 1.0
         Node_type_constructor%nflf2 = 0.0

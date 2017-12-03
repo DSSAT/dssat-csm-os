@@ -25,14 +25,14 @@
         REAL    CSYVAL      , TFAC4     , TFAC5                                                           ! Real function call !LPM 19SEP2017 Added tfac5
         
         ! Full NODEWTGB equation
-        ! NDDAED = NDDAE/d
-        ! NODEWTGB = 1/(1+(NDLEV/b)**c)  *  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))  * VF * TT
-        REAL, PARAMETER :: NDLEV_B = 86.015564      ! this is 'b' from  1/(1+(NDLEV/b)**c) see issue #24
-        REAL, PARAMETER :: NDLEV_C = 6.252552       ! this is 'c' from  1/(1+(NDLEV/b)**c) see issue #24
-        REAL, PARAMETER :: NDDAE_D = 235.16408564   ! this is 'd' from  NDDAE/d
-        REAL, PARAMETER :: NDDAE_E = 0.007610082    ! this is 'e' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
-        REAL, PARAMETER :: NDDAE_F = -2.045472      ! this is 'f' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
-        REAL, PARAMETER :: NDDAE_G = -1.045472      ! this is 'g' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
+        ! NDDAED = NewNodeDAE/D_
+        ! NODEWTGB = 1/(1+(NDLEV/D_)**C_)  *  (E_ * (NDDAED)**F_ / (NewNodeDAE * ((NDDAED**G_)+1)**2))  * VF * TT
+        REAL, PARAMETER :: B_ = 86.015564      ! this is 'b' from  1/(1+(NDLEV/b)**c) see issue #24
+        REAL, PARAMETER :: C_ = 6.252552       ! this is 'c' from  1/(1+(NDLEV/b)**c) see issue #24
+        REAL, PARAMETER :: D_ = 235.16408564   ! this is 'd' from  NDDAE/d
+        REAL, PARAMETER :: E_ = 0.007610082    ! this is 'e' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
+        REAL, PARAMETER :: F_ = -2.045472      ! this is 'f' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
+        REAL, PARAMETER :: G_ = -1.045472      ! this is 'g' from  (e * (NDDAED)**f / (NDDAE * ((NDDAED**g)+1)**2))
         REAL NDDAED
 
         !-----------------------------------------------------------------------
@@ -206,10 +206,10 @@
                 Lcount = Lcount+1
 
           
-                NDDAED=(DAG-node(BR,LF)%NDDAE+1)/NDDAE_D
+                NDDAED=(DAG-node(BR,LF)%NewNodeDAE+1)/D_
           
                 !LPM23FEB2017 New high initial rate
-                node(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))  *  (NDDAE_E*(((NDDAED)**NDDAE_F) / ((NDDAED**NDDAE_G)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
+                node(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/B_)**C_)))  *  (E_*(((NDDAED)**F_) / ((NDDAED**G_)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
            
                 node(BR,LF)%NODEWTG = node(BR,LF)%NODEWTGB
                 !IF (BR == 0.AND.LF == 1.AND.DAE == 1.AND.SEEDUSES > 0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
