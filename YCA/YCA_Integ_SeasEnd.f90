@@ -81,15 +81,15 @@
         ELSE 
             NUPAC = NUPAC+NUPAD
         ENDIF  
-        CNAD = (LeafN+STEMN+RSN)*plantPopulation()
+        CNAD = (LeafN+StemN+RSN)*plantPopulation()
         SRNAD = SROOTN*plantPopulation()
         LLNAD = LeafN*(1.0-LPEFR)*plantPopulation()
         RNAD = ROOTN*plantPopulation()
         RSNAD = RSN*plantPopulation()
         SDNAD = SEEDN*plantPopulation()
-        SNAD = STEMN*plantPopulation()
-        TNAD = (ROOTN+LeafN+STEMN+RSN+HPRODN+SEEDN)*plantPopulation()
-        VNAD = (LeafN+STEMN+RSN)*plantPopulation()                                                                           !EQN 018
+        SNAD = StemN*plantPopulation()
+        TNAD = (ROOTN+LeafN+StemN+RSN+HPRODN+SEEDN)*plantPopulation()
+        VNAD = (LeafN+StemN+RSN)*plantPopulation()                                                                           !EQN 018
                 
         ! LAH Note that no reserves included in sancout
         ! SANCOUT = SNAD/(STWAD+STRSWAD + LPEWAD+LPERSWAD)  ! With rs
@@ -111,7 +111,7 @@
         IF (STGYEARDOY(11) == YEARDOY) THEN
             ! Surface
             RESWALG(0) = VWAD*(1.0-HBPCF/100.0)
-            RESNALG(0) = (LeafN+STEMN)*PLTPOP*10.*(1.0-HBPCF/100.)
+            RESNALG(0) = (LeafN+StemN)*PLTPOP*10.*(1.0-HBPCF/100.)
             RESCALG(0) = RESWALG(0) * 0.4
             RESLGALG(0) = LLWAD*LLIGP/100.0*(1.0-HBPCF/100.0)+ LPEWAD*SLIGP/100.0*(1.0-HBPCF/100.0)+ &
                 STWAD*SLIGP/100.0*(1.0-HBPCF/100.0)

@@ -39,7 +39,7 @@
         StemNExcess = 0.0
         node%StemNExcessByNode = 0.0
         !IF (SANC > SNCX) StemNExcess = (woodyWeight())*(SANC-SNCX)                                                     !EQN 246
-        !STEMN = STEMN + SNUSE(0) - SNPH - StemNExcess                                                               !EQN 247
+        !StemN = STEMN + SNUSE(0) - SNPH - StemNExcess                                                               !EQN 247
         
         DO BR = 0, BRSTAGE                                                                                                                                                          
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   
@@ -54,7 +54,7 @@
            
         
         SNPHC = SNPHC +  SNPH                                                                                       !EQN 248
-        IF (StemN < 1.0E-10) STEMN = 0.0
+        IF (StemN < 1.0E-10) StemN = 0.0
         ROOTNS = 0.0
         SENNGS = 0.0
         DO L = 1, NLAYR
@@ -78,8 +78,8 @@
         
         ! Harvest index for N
         HIND = 0.0
-        IF ((LeafN+STEMN+RSN) > 0.0) THEN 
-            HIND = HPRODN/(LeafN+STEMN+HPRODN+RSN)                                           !EQN 258
+        IF ((LeafN+StemN+RSN) > 0.0) THEN 
+            HIND = HPRODN/(LeafN+StemN+HPRODN+RSN)                                           !EQN 258
         ENDIF
     
     END SUBROUTINE YCA_Integ_N
