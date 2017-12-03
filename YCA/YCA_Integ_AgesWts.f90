@@ -174,7 +174,7 @@
                 SENLL(L) = SENLL(L) + RTWTSL(L) * RLIGP/100.0                                                          !EQN 442
                 ! Totals
                 RTWT = RTWT + RTWTL(L)                                                                                 !EQN 443
-                SENROOT = SENROOT + RTWTSL(L)                                                                          !EQN 444
+                SENRoot = SENRoot + RTWTSL(L)                                                                          !EQN 444
                 SENCS = SENCS + RTWTSL(L) * 0.4                                                                        !EQN 445
                 SENLS = SENLS + RTWTSL(L) * RLIGP/100.0                                                                !EQN 446
             END DO

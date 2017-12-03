@@ -105,7 +105,7 @@
                 HIAM = HIAD
             ENDIF
                     
-            SENWACM = SENTOPLITTERA+SENROOTA
+            SENWACM = SENTOPLITTERA+SENRootA
                     
             RSWAM = RSWAD
                     
@@ -125,7 +125,7 @@
             !HNUMGM = FLOAT(SRNOPD)        !issue 50
             !HNUMPM = FLOAT(SRNOPD)        !issue 50
             BRNUMSH = BRNUMST
-            IF (SRWT > 0.0) HNPCM = SROOTN/SRWT*100.0
+            IF (SRWT > 0.0) HNPCM = SRootN/SRWT*100.0
                     
         ENDIF    
     

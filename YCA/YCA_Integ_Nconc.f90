@@ -52,7 +52,7 @@
             VCNC = AMAX1(0.0,VCNC)
             VMNC = AMAX1(0.0,VMNC)
             
-            IF (RTWT > ZERO) RANC = ROOTN / RTWT        !EQN 017
+            IF (RTWT > ZERO) RANC = RootN / RTWT        !EQN 017
             IF (LFWT > ZERO) LANC = LeafN / LFWT        !EQN 243 
 
             IF ((woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
@@ -94,7 +94,7 @@
             SDNC = 0.0
             SRANC = 0.0
             IF (SEEDRS > 0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
-            IF (SRWT > 0) SRANC = SROOTN/SRWT
+            IF (SRWT > 0) SRANC = SRootN/SRWT
             LNCR = 0.0
             node%SNCR = 0.0
             RNCR = 0.0

@@ -915,12 +915,12 @@
                         WRITE(FNUMWRK,*) ' '
                         WRITE(FNUMWRK,'(A)')' INORGANIC N (kg/ha) LEFT IN SOIL AT HARVEST '
                         WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in PROFILE: ',SNO3PROFILE,SNH4PROFILE
-                        WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in ROOTZONE:',SNO3ROOTZONE,SNH4ROOTZONE
+                        WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in RootZONE:',SNO3RootZONE,SNH4RootZONE
                     ENDIF   ! End Iswnit NE N
                     WRITE(FNUMWRK,*) ' '
                     WRITE(FNUMWRK,'(A)')' H2O (mm) LEFT IN SOIL AT HARVEST '
                     WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in PROFILE: ',H2OPROFILE,AH2OPROFILE
-                    WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in ROOTZONE:',H2OROOTZONE,AH2OROOTZONE
+                    WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in RootZONE:',H2ORootZONE,AH2ORootZONE
                     WRITE (fnumwrk,*) ' '
                     WRITE (fnumwrk,'(A,A10,I3)')' CRITICAL PERIOD CONDITIONS FOR ',excode,tn
                     WRITE (fnumwrk,'(A,F6.1)')'  Temperature mean,germination         ',TMEANG

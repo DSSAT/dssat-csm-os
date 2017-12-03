@@ -66,8 +66,8 @@
     
             SNO3PROFILE = 0.0
             SNH4PROFILE = 0.0
-            SNO3ROOTZONE = 0.0
-            SNH4ROOTZONE = 0.0
+            SNO3RootZONE = 0.0
+            SNH4RootZONE = 0.0
             TRLV = 0.0
             DO L = 1, NLAYR
                 TRLV = TRLV + RLV(L)
@@ -79,8 +79,8 @@
                 SNO3PROFILE = SNO3PROFILE + SNO3(L)
                 SNH4PROFILE = SNH4PROFILE + SNH4(L)
                 IF (RLV(L) > 0.0) THEN
-                    SNO3ROOTZONE = SNO3ROOTZONE + SNO3(L)
-                    SNH4ROOTZONE = SNH4ROOTZONE + SNH4(L)
+                    SNO3RootZONE = SNO3RootZONE + SNO3(L)
+                    SNH4RootZONE = SNH4RootZONE + SNH4(L)
                 ENDIF
             END DO
     
@@ -127,7 +127,7 @@
             TVR1 = -0.08  ! Could be AMAX1(0.01,(0.20-NconcU*0.004))
             DO L=1,NLAYR
                 IF (RLV(L) > 0.0) THEN
-                    NLAYRROOT = L
+                    NLAYRRoot = L
                     ! N concentration effects
                     FNH4 = 1.0-EXP(TVR1*NH4CF * NH4Left(L))                                                            !EQN 159
                     FNO3 = 1.0-EXP(TVR1*NO3CF * NO3Left(L))                                                            !EQN 160
@@ -175,7 +175,7 @@
             UNH4 = 0.0
             NUPD = 0.0
             NUPAD = 0.0
-            DO L = 1, NLAYRROOT
+            DO L = 1, NLAYRRoot
                 UNO3(L) = RNO3U(L)*NUF                                                                                 !EQN 196
                 UNH4(L) = RNH4U(L)*NUF                                                                                 !EQN 198
                 IF (FAC(L) <= 0.0) THEN

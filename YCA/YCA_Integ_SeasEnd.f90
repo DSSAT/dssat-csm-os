@@ -61,7 +61,7 @@
         !CRRSWAD = CRRSWT*plantPopulation()
                 
         ! Need to CHECK these
-        SENROOTA = SENROOT*10.0*PLTPOP
+        SENRootA = SENRoot*10.0*PLTPOP
         SENCAS = SENCS*10.0*PLTPOP
         SENLAS = SENLS*10.0*PLTPOP
         SENTOPLITTERA = SENTOPLITTER*plantPopulation()
@@ -82,13 +82,13 @@
             NUPAC = NUPAC+NUPAD
         ENDIF  
         CNAD = (LeafN+StemN+RSN)*plantPopulation()
-        SRNAD = SROOTN*plantPopulation()
+        SRNAD = SRootN*plantPopulation()
         LLNAD = LeafN*(1.0-LPEFR)*plantPopulation()
-        RNAD = ROOTN*plantPopulation()
+        RNAD = RootN*plantPopulation()
         RSNAD = RSN*plantPopulation()
         SDNAD = SEEDN*plantPopulation()
         SNAD = StemN*plantPopulation()
-        TNAD = (ROOTN+LeafN+StemN+RSN+HPRODN+SEEDN)*plantPopulation()
+        TNAD = (RootN+LeafN+StemN+RSN+HPRODN+SEEDN)*plantPopulation()
         VNAD = (LeafN+StemN+RSN)*plantPopulation()                                                                           !EQN 018
                 
         ! LAH Note that no reserves included in sancout

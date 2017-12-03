@@ -194,7 +194,7 @@
         laixm = -99.0
         lanc = 0.0
         laphc = 0.0
-        NLAYRROOT = 0 !LPM 07SEP2017 To initialize this variable for initial estimation of WFG 
+        NLAYRRoot = 0 !LPM 07SEP2017 To initialize this variable for initial estimation of WFG 
         !lcnum = 0 !LPM 28MAR15 Non necessary variables
         !lcoa = 0.0 !LPM 28MAR15 These variables are not necessary
         !lcoas = 0.0

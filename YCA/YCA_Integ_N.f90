@@ -55,26 +55,26 @@
         
         SNPHC = SNPHC +  SNPH                                                                                       !EQN 248
         IF (StemN < 1.0E-10) StemN = 0.0
-        ROOTNS = 0.0
+        RootNS = 0.0
         SENNGS = 0.0
         DO L = 1, NLAYR
             SENNL(L) = SENNL(L) + RTNSL(L)                                                                             !EQN 249
-            ROOTNS = ROOTNS + RTNSL(L)                                                                                 !EQN 250
+            RootNS = RootNS + RTNSL(L)                                                                                 !EQN 250
             SENNS = SENNS + RTNSL(L)                                                                                   !EQN 251
             SENNGS = SENNGS + RTNSL(L)                                                                                 !EQN 252
         END DO
         ! LAH Maybe also need LeafNEXESS if LANC > LNCX
-        ROOTNEXCESS = 0.0
-        IF (RANC > RNCX) ROOTNEXCESS = (RTWT-(SENWALG(L)/(plantPopulation())))*(RANC-RNCX)                                  !EQN 253
-        ROOTN = ROOTN + (RNUSE(0)-ROOTNS-GROLSRTN) - ROOTNEXCESS                                                       !EQN 254
-        SROOTN = SROOTN + SRNUSE(0)                                                                                    !EQN 255
+        RootNEXCESS = 0.0
+        IF (RANC > RNCX) RootNEXCESS = (RTWT-(SENWALG(L)/(plantPopulation())))*(RANC-RNCX)                                  !EQN 253
+        RootN = RootN + (RNUSE(0)-RootNS-GROLSRTN) - RootNEXCESS                                                       !EQN 254
+        SRootN = SRootN + SRNUSE(0)                                                                                    !EQN 255
         SEEDN = SEEDN - SEEDNUSE - SEEDNUSE2                                                                           !EQN 204
         IF (SEEDN < 1.0E-6) SEEDN = 0.0
-        RSN = RSN - RSNUSED + SENNLFGRS - RSNPH + LeafNEXCESS + StemNExcess + ROOTNEXCESS                              !EQN 157
+        RSN = RSN - RSNUSED + SENNLFGRS - RSNPH + LeafNEXCESS + StemNExcess + RootNEXCESS                              !EQN 157
         RSNPHC = RSNPHC +  RSNPH                                                                                       !EQN 256
         SENNL(0) = SENNL(0) + SENNLFG                                                                                  !EQN 257
         
-        HPRODN = SROOTN
+        HPRODN = SRootN
         
         ! Harvest index for N
         HIND = 0.0

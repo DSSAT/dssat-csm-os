@@ -35,7 +35,7 @@
         GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS+GROLSRS-GROLFADJ-GROSTADJ-GROCRADJ                                      !LPM 05OCT2015 Added GROLSRS to avoid negative values of reserves
         IF(GRORS < 0.0.AND.GRORS > -1.0E-07) GRORS = 0.0
 
-        ! Reserves to STORAGE ROOT if conc too great (overflow!)
+        ! Reserves to STORAGE Root if conc too great (overflow!)
         SRWTGRS = 0.0
         ! Determine potential new concentration
         IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) THEN
@@ -133,12 +133,12 @@
             IF (L > 0 .AND. CUMDEP > RTDEPTMP .AND. DLAYR(L) > 0.0) THEN
                 RLDF(L) = RLDF(L)*(1.0-((CUMDEP-RTDEPTMP)/DLAYR(L)))
             ENDIF
-            NLAYRROOT = L
+            NLAYRRoot = L
             
             ! Root senescence
             SENRTG = 0.0
             IF(STDAY /= 0) THEN
-                DO L = 1, NLAYRROOT
+                DO L = 1, NLAYRRoot
                     RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TTGEM/STDAY                                                             !EQN 395
                     ! LAH Temperature effect above is not from soil temp
                     !LPM 19DEC2016 The model is considering now the soil temp (TTGEM)
@@ -156,11 +156,11 @@
     
             ! Root weight growth by layer
             TRLDF = 0.0
-            DO  L = 1, NLAYRROOT
+            DO  L = 1, NLAYRRoot
                 TRLDF = TRLDF + RLDF(L)
             END DO
             IF (TRLDF > 0.0) THEN
-                DO  L = 1, NLAYRROOT
+                DO  L = 1, NLAYRRoot
                     RTWTGL(L) = (RLDF(L)/TRLDF)*(RTWTGADJ)                                                             !EQN 400
                 END DO
             ENDIF
@@ -172,14 +172,14 @@
             
         AH2OPROFILE = 0.0
         H2OPROFILE = 0.0
-        AH2OROOTZONE = 0.0
-        H2OROOTZONE = 0.0
+        AH2ORootZONE = 0.0
+        H2ORootZONE = 0.0
         DO L = 1, NLAYR
             AH2OPROFILE = AH2OPROFILE+((SW(L)-LL(L))*DLAYR(L))*10.                                                     !EQN 404              
             H2OPROFILE = H2OPROFILE + SW(L)*DLAYR(L)*10.0                                                              !EQN 405
             IF (RLV(L) > 0.0) THEN
-                AH2OROOTZONE=AH2OROOTZONE+((SW(L)-LL(L))*DLAYR(L))*10.
-                H2OROOTZONE = H2OROOTZONE+SW(L)*DLAYR(L)*10.
+                AH2ORootZONE=AH2ORootZONE+((SW(L)-LL(L))*DLAYR(L))*10.
+                H2ORootZONE = H2ORootZONE+SW(L)*DLAYR(L)*10.
             ENDIF
         END DO
 
