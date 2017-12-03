@@ -31,6 +31,7 @@
             IF (GYEARDOY > 0) DAG = DAG + 1
             IF (EYEARDOY > 0) DAE = DAE + 1
         ENDIF
+
         TVI1 = LNUMSOLDESTA
         LNUMSOLDESTA = -99
         ! Leaves that present at beginning of day

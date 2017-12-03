@@ -53,7 +53,7 @@
             VMNC = AMAX1(0.0,VMNC)
             
             IF (RTWT > ZERO) RANC = ROOTN / RTWT        !EQN 017
-            IF (LFWT > ZERO) LANC = LEAFN / LFWT        !EQN 243 
+            IF (LFWT > ZERO) LANC = LeafN / LFWT        !EQN 243 
 
             IF ((woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
@@ -67,7 +67,7 @@
             IF (VWAD > 0.0) VANC = VNAD/VWAD                                                                          !EQN 020
             IF (LANC < 0.0) THEN 
                 WRITE(Message(1),'(A27,F4.1)') 'LANC below 0 with value of ',LANC
-                WRITE(Message(2),'(A27,2F5.1)') 'LEAFN,LFWT had values of   ',LEAFN,LFWT
+                WRITE(Message(2),'(A27,2F5.1)') 'LeafN,LFWT had values of   ',LeafN,LFWT
                 CALL WARNING(2,'CSYCA',MESSAGE)
                 LANC = AMAX1(0.0,LANC)
             ENDIF

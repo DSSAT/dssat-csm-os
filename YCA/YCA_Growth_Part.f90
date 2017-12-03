@@ -138,7 +138,7 @@
                             node(BR,LF)%TFDLF = 1.0                                   !EQN 330
                         ENDIF
                         
-                            ! New LEAF
+                            ! New Leaf
                         IF (LF == LNUMSIMSTG(BR) .AND. LNUMG > LNUMNEED .AND. BR == BRSTAGE) THEN                                             ! This is where new leaf is initiated
                             node(BR,LF+1)%LAPOTX2 = node(BR,LF+1)%LAPOTX * Tflfgrowth
                             node(BR,LF+1)%LAGL = node(BR,LF+1)%LAPOTX2 * (TTlfgrowth/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)

@@ -748,8 +748,8 @@
                     IF (RUN == 1 .AND. RUNI == 1) THEN
                         WRITE(fnumov,*)' '
                         WRITE(fnumov,*)'BIOMASS  = Above-ground dry weight (Excl.seed;kg/ha)'
-                        WRITE(fnumov,*)'LEAF AREA  = Leaf area index (m2/m2)'
-                        WRITE(fnumov,*)'LEAF NUMBER  = Leaf number produced on main axis'
+                        WRITE(fnumov,*)'Leaf AREA  = Leaf area index (m2/m2)'
+                        WRITE(fnumov,*)'Leaf NUMBER  = Leaf number produced on main axis'
                         WRITE(fnumov,*)'CROP N  = Above-ground N (Excl.seed;kg/ha)'
                         WRITE(fnumov,*)'CROP N%  = Above-ground N concentration(%)'
                         WRITE(fnumov,*)'H2O STRESS = ','Photosynthesis stress, prior to stage (0=none,1=max)'

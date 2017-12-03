@@ -124,10 +124,10 @@
             ! NB. N loss has a big effect if low N
             ! Assumes that all reserve N in leaves
             IF (LFWT > 0.0) THEN 
-                LANCRS = (LEAFN+RSN) / LFWT                                                               !EQN 377
+                LANCRS = (LeafN+RSN) / LFWT                                                               !EQN 377
             ENDIF
-            SENNLFG = AMIN1(LEAFN,(SENLFG+SENLFGRS)*LNCM)                                                              !EQN 378
-            SENNLFGRS = AMIN1(LEAFN-SENNLFG,(SENLFG+SENLFGRS)*(LANC-LNCM))                                             !EQN 379
+            SENNLFG = AMIN1(LeafN,(SENLFG+SENLFGRS)*LNCM)                                                              !EQN 378
+            SENNLFGRS = AMIN1(LeafN-SENNLFG,(SENLFG+SENLFGRS)*(LANC-LNCM))                                             !EQN 379
         ELSE
             SENNLFG = 0.0
             SENNLFGRS = 0.0

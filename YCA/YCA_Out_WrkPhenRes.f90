@@ -109,7 +109,7 @@
             ENDIF
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A40)')' PRINCIPAL AND SECONDARY STAGES         '
-            WRITE (fnumwrk,'(A40)')'  STAGE NAME   DAYS > PLANTING  LEAF #  '
+            WRITE (fnumwrk,'(A40)')'  STAGE NAME   DAYS > PLANTING  Leaf #  '
             WRITE (fnumwrk,'(A15,F7.1)')'   Germination ',gdapfr
             WRITE (fnumwrk,'(A15,F7.1)')'   Emergence   ',edapfr
             DO L = 2,PSNUM
@@ -166,8 +166,8 @@
                     SENNL(0)*plantPopulation(),SENNS*plantPopulation()
                 TVR2 = (SENNL(0)+SENNS)*plantPopulation() 
                 WRITE (fnumwrk,'(A34,F8.2)')'   TOTAL N IN PLANT (3)           ', &
-                    plantPopulation()*(ROOTN+SROOTN+LEAFN+STEMN+RSN+SEEDN)
-                TVR3 = (ROOTN+SROOTN+LEAFN+STEMN+RSN+SEEDN)*plantPopulation()         
+                    plantPopulation()*(ROOTN+SROOTN+LeafN+STEMN+RSN+SEEDN)
+                TVR3 = (ROOTN+SROOTN+LeafN+STEMN+RSN+SEEDN)*plantPopulation()         
                 WRITE (fnumwrk,'(A33, F9.2)')'   HARVESTED DURING CYCLE (4)    ',plantPopulation()*LNPHC+SNPHC+RSNPHC
                 TVR4 = (LNPHC+SNPHC+RSNPHC)* plantPopulation()
                 WRITE (fnumwrk,'(A34,F8.3)')'   BALANCE (1-(2+3+4))            ',TVR1-TVR2-TVR3-TVR4

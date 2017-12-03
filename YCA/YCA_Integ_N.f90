@@ -26,14 +26,14 @@
         !         Update nitrogen amounts
         !-----------------------------------------------------------------------
         NUPC = NUPC + NUPD                                                                                          !EQN 202
-        LEAFNEXCESS = 0.0
+        LeafNEXCESS = 0.0
         IF (LANC > LNCX) THEN
-            LEAFNEXCESS = (LFWT-leafTotalSenescedWeight())*(LANC-LNCX)                                          !EQN 245 !LPM 25OCT2015 to consider N by cohort LANC has to be by cohort
+            LeafNEXCESS = (LFWT-leafTotalSenescedWeight())*(LANC-LNCX)                                          !EQN 245 !LPM 25OCT2015 to consider N by cohort LANC has to be by cohort
         ENDIF
-        LEAFN = LEAFN + GROLSRTN + LNUSE(0) - SENNLFG - SENNLFGRS - lnph - LEAFNEXCESS                              !EQN 242
+        LeafN = LeafN + GROLSRTN + LNUSE(0) - SENNLFG - SENNLFGRS - lnph - LeafNEXCESS                              !EQN 242
         LNPHC = LNPHC +  LNPH                                                                                       !EQN 423
-        IF (LEAFN < 1.0E-10) THEN 
-            LEAFN = 0.0
+        IF (LeafN < 1.0E-10) THEN 
+            LeafN = 0.0
         ENDIF
             
         StemNExcess = 0.0
@@ -63,14 +63,14 @@
             SENNS = SENNS + RTNSL(L)                                                                                   !EQN 251
             SENNGS = SENNGS + RTNSL(L)                                                                                 !EQN 252
         END DO
-        ! LAH Maybe also need LEAFNEXESS if LANC > LNCX
+        ! LAH Maybe also need LeafNEXESS if LANC > LNCX
         ROOTNEXCESS = 0.0
         IF (RANC > RNCX) ROOTNEXCESS = (RTWT-(SENWALG(L)/(plantPopulation())))*(RANC-RNCX)                                  !EQN 253
         ROOTN = ROOTN + (RNUSE(0)-ROOTNS-GROLSRTN) - ROOTNEXCESS                                                       !EQN 254
         SROOTN = SROOTN + SRNUSE(0)                                                                                    !EQN 255
         SEEDN = SEEDN - SEEDNUSE - SEEDNUSE2                                                                           !EQN 204
         IF (SEEDN < 1.0E-6) SEEDN = 0.0
-        RSN = RSN - RSNUSED + SENNLFGRS - RSNPH + LEAFNEXCESS + StemNExcess + ROOTNEXCESS                              !EQN 157
+        RSN = RSN - RSNUSED + SENNLFGRS - RSNPH + LeafNEXCESS + StemNExcess + ROOTNEXCESS                              !EQN 157
         RSNPHC = RSNPHC +  RSNPH                                                                                       !EQN 256
         SENNL(0) = SENNL(0) + SENNLFG                                                                                  !EQN 257
         
@@ -78,8 +78,8 @@
         
         ! Harvest index for N
         HIND = 0.0
-        IF ((LEAFN+STEMN+RSN) > 0.0) THEN 
-            HIND = HPRODN/(LEAFN+STEMN+HPRODN+RSN)                                           !EQN 258
+        IF ((LeafN+STEMN+RSN) > 0.0) THEN 
+            HIND = HPRODN/(LeafN+STEMN+HPRODN+RSN)                                           !EQN 258
         ENDIF
     
     END SUBROUTINE YCA_Integ_N
