@@ -38,8 +38,7 @@
             
         StemNExcess = 0.0
         node%StemNExcessByNode = 0.0
-        !IF (SANC > SNCX) StemNExcess = (woodyWeight())*(SANC-SNCX)                                                     !EQN 246
-        !StemN = STEMN + SNUSE(0) - SNPH - StemNExcess                                                               !EQN 247
+
         
         DO BR = 0, BRSTAGE                                                                                                                                                          
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   

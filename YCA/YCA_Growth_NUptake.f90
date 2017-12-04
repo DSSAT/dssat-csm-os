@@ -35,7 +35,7 @@
         ! Set adjusted values to unadjusted 
         ! For when no adjustment necessary, or when not simulating N
         StickGrowthADJ = StickGrowthP
-        GROLFADJ = GROLFP
+        LeafGrowthADJ = LeafGrowthP
         StemGrowthADJ = StemGrowthP
         PLAGSB4 = PLAGSB2
         RSSRWTGLFADJ = 0.0
@@ -84,7 +84,7 @@
                 ENDIF
             END DO
     
-            LNDEM = GROLFP*LNCX + (LFWT-leafTotalSenescedWeight())*AMAX1(0.0,NTUPF*(LNCX-LANC)) - StemLeafGrowthRTN                        !EQN 152
+            LNDEM = LeafGrowthP*LNCX + (LFWT-leafTotalSenescedWeight())*AMAX1(0.0,NTUPF*(LNCX-LANC)) - StemLeafGrowthRTN                        !EQN 152
             RNDEM = RootGrowth*RNCX + (RTWT-SENRTG-StemLeafGrowthRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
             
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
@@ -222,12 +222,12 @@
                     node(BR,LF)%NDEMSMN = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM
                 ENDDO
             ENDDO
-            !NDEMMN = GROLF*LNCM+RootGrowth*RNCM+(StemGrowth+StickGrowth)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
+            !NDEMMN = LeafGrowth*LNCM+RootGrowth*RNCM+(StemGrowth+StickGrowth)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
             !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-            !NDEMMN = GROLF*LNCM+RootGrowth*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using GROLFP instead of GROLF
-            !LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
-            NDEMMN = GROLFP*LNCM+RootGrowth*RNCM+SUM(node%NDEMSMN) 
-            LNUSE(1) = (GROLFP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
+            !NDEMMN = LeafGrowth*LNCM+RootGrowth*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using LeafGrowthP instead of LeafGrowth
+            !LNUSE(1) = (LeafGrowth*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
+            NDEMMN = LeafGrowthP*LNCM+RootGrowth*RNCM+SUM(node%NDEMSMN) 
+            LNUSE(1) = (LeafGrowthP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
             RNUSE(1) = (RootGrowth*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
             !SNUSE(1) = ((StemGrowth+StickGrowth)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
             
@@ -261,12 +261,12 @@
             !NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
             NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)
             ! 5.For leaf growth to standard N (N to leaves first)
-            !LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX)-LNUSE(1))                                                             !EQN 217 !LPM 02SEP2016 To use potential growth instead of CHO restricted growth
-            LNUSE(2) = AMIN1(NULEFT,(GROLFP*LNCX)-LNUSE(1))                                                             !EQN 217
+            !LNUSE(2) = AMIN1(NULEFT,(LeafGrowth*LNCX)-LNUSE(1))                                                             !EQN 217 !LPM 02SEP2016 To use potential growth instead of CHO restricted growth
+            LNUSE(2) = AMIN1(NULEFT,(LeafGrowthP*LNCX)-LNUSE(1))                                                             !EQN 217
             !Could use the NLLG parameter but may need to adjust 
             !the photosynthesis-leaf N response parameters, or
             !the standard PARUE  
-            !LNUSE(2) = AMIN1(NULEFT,(GROLF*LNCX*NLLG)-LNUSE(1))
+            !LNUSE(2) = AMIN1(NULEFT,(LeafGrowth*LNCX*NLLG)-LNUSE(1))
             NULEFT = NULEFT - LNUSE(2)                                                                                 !EQN 218
     
             ! 6.For distribution of remaining N to st,rt,storage root
@@ -330,16 +330,16 @@
             ! Check N and reduce leaf growth if not enough N  
             IF (ABS(NULEFT) <= 1.0E-5) THEN   ! Inadequate N
                 IF (NLLG > 0.0 .AND. LNCX > 0.0) THEN 
-                    IF ((LNUSE(1)+LNUSE(2))/GROLFP < (LNCX*NLLG)) THEN !LPM 02SEP2016 Use GROLFP instead of GROLF
-                        GROLFADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
+                    IF ((LNUSE(1)+LNUSE(2))/LeafGrowthP < (LNCX*NLLG)) THEN !LPM 02SEP2016 Use LeafGrowthP instead of LeafGrowth
+                        LeafGrowthADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
                     ELSE  
-                        GROLFADJ = GROLFP                                                                               !EQN 233b !LPM 02SEP2016 Use GROLFP instead of GROLF
+                        LeafGrowthADJ = LeafGrowthP                                                                               !EQN 233b !LPM 02SEP2016 Use LeafGrowthP instead of LeafGrowth
                     ENDIF  
                 ENDIF
-                !RSSRWTGLFADJ = GROLF - GROLFADJ                                                                        !EQN 234 !LPM 02SEP2016 Keep GROLF but restrict to 0 if N growth is greater than CHO growth (GROLF)
-                RSSRWTGLFADJ = AMAX1(0.0,GROLF - GROLFADJ)                                                              !EQN 234 
-                !AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                              !EQN 235 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
-                 AREAPOSSIBLEN =GROLFADJ*(1.0-LPEFR)*LAWL(1)                                              !EQN 235 
+                !RSSRWTGLFADJ = LeafGrowth - LeafGrowthADJ                                                                        !EQN 234 !LPM 02SEP2016 Keep LeafGrowth but restrict to 0 if N growth is greater than CHO growth (LeafGrowth)
+                RSSRWTGLFADJ = AMAX1(0.0,LeafGrowth - LeafGrowthADJ)                                                              !EQN 234 
+                !AREAPOSSIBLEN =LeafGrowthADJ*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                              !EQN 235 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
+                 AREAPOSSIBLEN =LeafGrowthADJ*(1.0-LPEFR)*LAWL(1)                                              !EQN 235 
                 
                 ! If not enough N set N factor
                 !IF (PLAGSB3 > AREAPOSSIBLEN.AND.PLAGSB3 > 0.0)THEN !LPM 02SEP2016 Use of PLAGSB2 instead of PLAGSB3
@@ -399,11 +399,11 @@
             SHLAGB4(3) = SHLAG2(3) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                         !EQN 240    
 
             StickGrowthADJ = AMIN1(StickGrowth,StickGrowthADJ)
-            !GROLFADJ = AMIN1(GROLF,GROLFADJ)
+            !LeafGrowthADJ = AMIN1(LeafGrowth,LeafGrowthADJ)
                         ! Potential leaf weight increase.
-            !LPM 16DEC2016 GROLFADJ is defined by the new estimation of leaf area which is considering water stress (WFG), carbohydrates available (AFLF) and nitrogen restrictions (NFLF2)
+            !LPM 16DEC2016 LeafGrowthADJ is defined by the new estimation of leaf area which is considering water stress (WFG), carbohydrates available (AFLF) and nitrogen restrictions (NFLF2)
             IF (LAWL(1) > 0.0) THEN
-                GROLFADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+                LeafGrowthADJ = (PLAGSB4/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
             ENDIF
             
             StemGrowthADJ = AMIN1(StemGrowth,StemGrowthADJ)

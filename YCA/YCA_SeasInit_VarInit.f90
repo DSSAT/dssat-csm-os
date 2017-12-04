@@ -146,8 +146,8 @@
         geucum = 0.0
         stickgrowth = 0.0
         stickgrowthadj = 0.0
-        grolf = 0.0
-        grolfadj = 0.0
+        LeafGrowth = 0.0
+        LeafGrowthadj = 0.0
         grors = 0.0
         !grosr = 0.0 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
         stemgrowth = 0.0

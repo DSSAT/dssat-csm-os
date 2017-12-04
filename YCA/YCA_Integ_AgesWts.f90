@@ -123,7 +123,7 @@
             RESPRC = RESPRC + RTRESPADJ                                                                                !EQN 425
             RESPTC = 0.0  ! Respiration tops - not yet used
             RESPC = RESPRC + RESPTC                                                                                    !EQN 426
-            LFWT = LFWT + GROLFADJ - SENLFG - SENLFGRS - LWPH                                                          !EQN 427
+            LFWT = LFWT + LeafGrowthADJ - SENLFG - SENLFGRS - LWPH                                                          !EQN 427
             LWPHC = LWPHC +  LWPH                                                                                      !EQN 428
             IF (LFWT < -1.0E-8) THEN
                 WRITE(Message(1),'(A35,F4.1,A14)') 'Leaf weight less than 0! Weight of ',lfwt,' reset to zero'

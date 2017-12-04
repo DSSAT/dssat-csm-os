@@ -228,9 +228,9 @@ Module YCA_First_Trans_m
     REAL    :: StickGrowthADJ                ! Plant. stick growth rate N adjusted   g/p ! (From SeasInit)  
     REAL    :: StickGrowthFR                 ! Plant. stick growth rate,fraction st  #   ! (From Growth)    
     REAL    :: StickGrowthP                  ! Plant. stick growth rate potential    g/p ! (From SeasInit)
-    REAL    :: GROLF                   ! Leaf growth rate               g/p        ! (From SeasInit)  
-    REAL    :: GROLFADJ                ! Leaf growth rate N adjusted    g/p        ! (From SeasInit)  
-    REAL    :: GROLFP                  ! Leaf growth,potential          g/p        ! (From Growth)    
+    REAL    :: LeafGrowth                   ! Leaf growth rate               g/p        ! (From SeasInit)  
+    REAL    :: LeafGrowthADJ                ! Leaf growth rate N adjusted    g/p        ! (From SeasInit)  
+    REAL    :: LeafGrowthP                  ! Leaf growth,potential          g/p        ! (From Growth)    
     REAL    :: StemLeafGrowth                   ! Leaf+stem growth               g/p        ! (From Growth)    
     REAL    :: StemLeafGrowthA                  ! Leaf+stem gr from assimilates  g/p        ! (From Growth)    
     REAL    :: StemLeafGrowthP                  ! Leaf+stem growth potential     g/p        ! (From Growth)    
@@ -1326,8 +1326,8 @@ Module YCA_First_Trans_m
         geucum = 0.0
         stickgrowth = 0.0
         stickgrowthadj = 0.0
-        grolf = 0.0
-        grolfadj = 0.0
+        LeafGrowth = 0.0
+        LeafGrowthadj = 0.0
         grors = 0.0
         stemgrowth = 0.0
         stemgrowthadj = 0.0

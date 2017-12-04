@@ -54,9 +54,9 @@
         !-----------------------------------------------------------------------
 
         
-        GROLF = 0.0
-        GROLFADJ = 0.0
-        GROLFP = 0.0
+        LeafGrowth = 0.0
+        LeafGrowthADJ = 0.0
+        LeafGrowthP = 0.0
         StemLeafGrowthRS = 0.0
         StemLeafGrowth = 0.0
         StemLeafGrowthA = 0.0
@@ -193,7 +193,7 @@
             
             ! Potential leaf weight increase.
             IF (LAWL(1) > 0.0) THEN
-                GROLFP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
+                LeafGrowthP = (PLAGSB2/LAWL(1)) / (1.0-LPEFR)                                                   !EQN 297    
             ENDIF
         ENDIF
         
@@ -229,10 +229,10 @@
         
         StickGrowthP = node(0,1)%CohortWeightGrowth * SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
         CRWTP = CRWTP + StickGrowthP    !LPM 23MAY2015 Added to keep the potential planting stick weight
-        RootGrowthP = (GROLFP + StemGrowthP)*PTFA
-        !RootGrowthP = (GROLFP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
-        !RootGrowthP = (GROLFP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
-        StemLeafGrowthP = GROLFP + StemGrowthP + StickGrowthP + RootGrowthP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
+        RootGrowthP = (LeafGrowthP + StemGrowthP)*PTFA
+        !RootGrowthP = (LeafGrowthP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        !RootGrowthP = (LeafGrowthP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        StemLeafGrowthP = LeafGrowthP + StemGrowthP + StickGrowthP + RootGrowthP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
         IF (StemLeafGrowthP > 0.0) THEN
             ! Leaf+stem weight increase from assimilates
@@ -285,13 +285,13 @@
             StemLeafGrowth = StemLeafGrowthA + StemLeafGrowthSEN + StemLeafGrowthSD + StemLeafGrowthRS+StemLeafGrowthRT                                                      !EQN 303
             ! Leaf weight increase from all sources
             IF ((StemLeafGrowthP) > 0.0) THEN
-                GROLF = StemLeafGrowth * GROLFP/StemLeafGrowthP                                                                          !EQN 304
+                LeafGrowth = StemLeafGrowth * LeafGrowthP/StemLeafGrowthP                                                                          !EQN 304
             ELSE  
-                GROLF = 0.0
+                LeafGrowth = 0.0
             ENDIF
             ! Check if enough assimilates to maintain SLA within limits
-            !AREAPOSSIBLE = GROLF*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                                     !EQN 148 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
-            AREAPOSSIBLE = GROLF*(1.0-LPEFR)*LAWL(1)
+            !AREAPOSSIBLE = LeafGrowth*(1.0-LPEFR)*(LAWL(1)*(1.0+LAWFF))                                                     !EQN 148 !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA 
+            AREAPOSSIBLE = LeafGrowth*(1.0-LPEFR)*LAWL(1)
             ! If not enough assim.set assimilate factor
             IF (PLAGSB2 > AREAPOSSIBLE.AND.PLAGSB2 > 0.0)THEN
                 node(0,0)%AFLF = AREAPOSSIBLE/PLAGSB2                                                                         !EQN 149
@@ -316,7 +316,7 @@
         StemStickGrowthP = StemGrowthP                                                                                          !EQN 381a
         
         
-        IF (GROLFP+StemStickGrowthP > 0.0) THEN
+        IF (LeafGrowthP+StemStickGrowthP > 0.0) THEN
             StemStickGrowth = StemLeafGrowth * StemStickGrowthP/(StemLeafGrowthP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider StemLeafGrowthP
         ENDIF
 
