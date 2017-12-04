@@ -84,15 +84,15 @@
             RSWTM = RSWT
             RTWTM = RTWT
             LFWTM = LFWT
-            STWTM = STWT
+            StemWeightM = StemWeight
             CRWTM = CRWT                   
             LNUMSM = LNUM
                     
-            IF (LFWTM+STWTM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+STWTM+CRWTM)
-            IF (RTWTM > 0.0) SHRTM = (LFWTM+STWTM+CRWTM+RSWTM)/RTWTM
+            IF (LFWTM+StemWeightM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+StemWeightM+CRWTM)
+            IF (RTWTM > 0.0) SHRTM = (LFWTM+StemWeightM+CRWTM+RSWTM)/RTWTM
                     
-            CWAM = (LFWTM+STWTM+CRWTM+RSWTM)*plantPopulation()
-            VWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP * 10.0
+            CWAM = (LFWTM+StemWeightM+CRWTM+RSWTM)*plantPopulation()
+            VWAM = (LFWTM+StemWeightM+CRWTM+RSWTM)*PLTPOP * 10.0
                     
             ! For Grazing
             cwahc = (lwphc+swphc+rswphc)*plantPopulation()

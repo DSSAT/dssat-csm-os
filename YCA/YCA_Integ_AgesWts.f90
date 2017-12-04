@@ -141,7 +141,7 @@
             !IF (PSTART(PSX) > 0.0) LLRSWT = AMIN1(RSWT,LFWT*(1.0-LPEFR)*(RSCLX/100.0)*DSTAGE)                        !EQN 431
             !IF (PSTART(PSX) > 0.0) LPERSWT = AMIN1(RSWT-LLRSWT,LFWT*LPEFR*(RSCLX/100.0)*DSTAGE)                      !EQN 432
             !IF (woodyWeight() > 0.0) THEN
-            !    STRSWT = (RSWT-LLRSWT-LPERSWT)*STWT/(woodyWeight())                                                        !EQN 433a
+            !    STRSWT = (RSWT-LLRSWT-LPERSWT)*StemWeight/(woodyWeight())                                                        !EQN 433a
             !    CRRSWT = (RSWT-LLRSWT-LPERSWT)*CRWT/(woodyWeight())                                                        !EQN 434a
             !ELSE
             !    STRSWT = (RSWT-LLRSWT-LPERSWT)                                                                         !EQN 433b
@@ -155,20 +155,20 @@
                 ENDIF
             ENDIF
             RSWTX = AMAX1(RSWTX,RSWT)
-            STWT = STWT + StemGrowthADJ - SWPH
-            IF (STWT < 1.0E-06) THEN
-                IF (STWT < 0.0) WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
-                STWT = 0.0
+            StemWeight = StemWeight + StemGrowthADJ - SWPH
+            IF (StemWeight < 1.0E-06) THEN
+                IF (StemWeight < 0.0) WRITE(fnumwrk,*)'Stem weight less than 0! ',StemWeight
+                StemWeight = 0.0
             ENDIF
             SWPHC = SWPHC +  SWPH                                                                                      !EQN 435
-            CRWT = CRWT + GROCRADJ                                                                                     !EQN 436 
+            CRWT = CRWT + StickGrowthADJ                                                                                     !EQN 436 
             
             SENTOPLITTER = SENTOPLITTER + SENTOPLITTERG                                                                !EQN 437
             SENCL(0) = SENCL(0) + SENTOPLITTERG*0.4                                                                    !EQN 438
             SENLL(0) = SENLL(0) + (SENLFG*LLIGP/100)*(SENFR)                                                           !EQN 439
             RTWT = 0.0
             DO L = 1, NLAYR
-                RTWTL(L) = RTWTL(L) + RTWTGL(L) - RTWTSL(L) - RTWTUL(L)                                                !EQN 399
+                RTWTL(L) = RTWTL(L) + RootGrowthL(L) - RTWTSL(L) - RTWTUL(L)                                                !EQN 399
                 SENWL(L) = SENWL(L) + RTWTSL(L)                                                                        !EQN 440
                 SENCL(L) = SENCL(L) + RTWTSL(L) * 0.4                                                                  !EQN 441
                 SENLL(L) = SENLL(L) + RTWTSL(L) * RLIGP/100.0                                                          !EQN 442
@@ -178,8 +178,8 @@
                 SENCS = SENCS + RTWTSL(L) * 0.4                                                                        !EQN 445
                 SENLS = SENLS + RTWTSL(L) * RLIGP/100.0                                                                !EQN 446
             END DO
-            !SRWT = SRWT + GROSR + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-            SRWT = SRWT + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                              !EQN 447
+            !SRWT = SRWT + GROSR + SRWTGRS + (RootGrowth-RootGrowthADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            SRWT = SRWT + SRWTGRS + (RootGrowth-RootGrowthADJ+RTRESP-RTRESPADJ) ! Root N adjustment                              !EQN 447
         ENDIF
         IF (DAGERM+TTGEM*WFGE >= PGERM) THEN !LPM 23MAR2016 To consider reserves of stake after germination
             !SEEDRS = AMAX1(0.0,SEEDRS-StemLeafGrowthSD-SEEDRSAVR)                                                                   !EQN 285 !LPM 23MAR2016 SEEDRSAVR subtracted in CS_Growth_Init.f90

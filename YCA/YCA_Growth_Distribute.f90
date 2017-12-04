@@ -31,26 +31,26 @@
         !           Reserves growth
         !-----------------------------------------------------------------------
 
-        !GRORS = CARBOT+StemLeafGrowthSD+StemLeafGrowthRT+SENLFGRS-GROLFADJ-StemGrowthADJ-GROCRADJ-GROSR                                       !EQN 309 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-        GRORS = CARBOT+StemLeafGrowthSD+StemLeafGrowthRT+SENLFGRS+StemLeafGrowthRS-GROLFADJ-StemGrowthADJ-GROCRADJ                                      !LPM 05OCT2015 Added StemLeafGrowthRS to avoid negative values of reserves
+        !GRORS = CARBOT+StemLeafGrowthSD+StemLeafGrowthRT+SENLFGRS-GROLFADJ-StemGrowthADJ-StickGrowthADJ-GROSR                                       !EQN 309 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+        GRORS = CARBOT+StemLeafGrowthSD+StemLeafGrowthRT+SENLFGRS+StemLeafGrowthRS-GROLFADJ-StemGrowthADJ-StickGrowthADJ                                      !LPM 05OCT2015 Added StemLeafGrowthRS to avoid negative values of reserves
         IF(GRORS < 0.0.AND.GRORS > -1.0E-07) GRORS = 0.0
 
         ! Reserves to STORAGE Root if conc too great (overflow!)
         SRWTGRS = 0.0
         ! Determine potential new concentration
-        IF (LFWT+GROLFADJ+woodyWeight()+StemGrowthADJ+GROCRADJ > 0.0) THEN
-            TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+StemGrowthADJ+CRWT+GROCRADJ)+(RSWT+GRORS))  !EQN 310
+        IF (LFWT+GROLFADJ+woodyWeight()+StemGrowthADJ+StickGrowthADJ > 0.0) THEN
+            TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (StemWeight+StemGrowthADJ+CRWT+StickGrowthADJ)+(RSWT+GRORS))  !EQN 310
         ENDIF
         IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
             TVR1 = 0.0
         END IF
         IF (TVR1 > RSPCO/100.0) THEN   ! If potential>standard 
             TVR2 = RSWT+GRORS             ! What rswt could be                                                         !EQN 311
-            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-leafTotalSenescedWeight()+woodyWeight()+StemGrowthADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
+            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-leafTotalSenescedWeight()+woodyWeight()+StemGrowthADJ+StickGrowthADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
             SRWTGRS = (TVR2 - TVR3)                                                                                    !EQN 313
             ! Determine FINAL new concentration
-            IF (LFWT+GROLFADJ+woodyWeight()+StemGrowthADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
-                (STWT+StemGrowthADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
+            IF (LFWT+GROLFADJ+woodyWeight()+StemGrowthADJ+StickGrowthADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
+                (StemWeight+StemGrowthADJ+CRWT+StickGrowthADJ)+(RSWT+GRORS-SRWTGRS))
         ENDIF
         
                 
@@ -73,7 +73,7 @@
         !           Root depth and length growth, and distribution
         !-----------------------------------------------------------------------
 
-        RTWTGL = 0.0
+        RootGrowthL = 0.0
         RTWTSL = 0.0
         RTWTUL = 0.0
         RTNSL = 0.0
@@ -161,7 +161,7 @@
             END DO
             IF (TRLDF > 0.0) THEN
                 DO  L = 1, NLAYRRoot
-                    RTWTGL(L) = (RLDF(L)/TRLDF)*(RTWTGADJ)                                                             !EQN 400
+                    RootGrowthL(L) = (RLDF(L)/TRLDF)*(RootGrowthADJ)                                                             !EQN 400
                 END DO
             ENDIF
         ENDIF

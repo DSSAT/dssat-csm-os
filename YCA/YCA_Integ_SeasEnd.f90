@@ -52,7 +52,7 @@
 
         
         ! Leaf petioles NOT included in stem here
-        STWAD = STWT*plantPopulation()
+        STWAD = StemWeight*plantPopulation()
         SDWAD = CRWT*plantPopulation()
         RSWAD = RSWT*plantPopulation()
         !LLRSWAD = LLRSWT*plantPopulation() !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed

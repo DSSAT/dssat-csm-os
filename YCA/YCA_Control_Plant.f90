@@ -21,7 +21,7 @@
     real function woodyWeight()
         implicit none
         
-        woodyWeight = STWT+CRWT
+        woodyWeight = StemWeight+CRWT
     end function woodyWeight
     
     ! real value of the canopy weight of the plant: leaves, stem, crown and reserves

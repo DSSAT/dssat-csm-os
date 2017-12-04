@@ -201,7 +201,7 @@
         !LPM 11APR15  Rate of node weight increase by branch level and cohort  
         node%CohortWeightGrowth = 0.0
         StemGrowthP = 0.0
-        GROCRP = 0.0
+        StickGrowthP = 0.0
         Lcount = 0
         !IF (DAE > 0.0) THEN !LPM 01SEP16 putting a conditional DAE > 0.0 to avoid illogical values of CohortWeightGrowth
         IF (DAG > 0.0) THEN !LPM 10JUL2017 DAG instead of DAE To consider root and stem develpment after germination and before emergence (planting stick below-ground)
@@ -216,13 +216,10 @@
                 !LPM23FEB2017 New high initial rate
                 node(BR,LF)%CohortWeightGrowth = (1/(1+(((Lcount)/B_)**C_)))  *  (E_*(((D_NewNodeDAE)**F_) / ((D_NewNodeDAE**G_)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
                 StemNContent = (node(BR,LF)%StemNByNode/(node(BR,LF)%CohortWeight+ZERO))
-                IF (StemNContent < ZERO .OR. StemNContent > StemMinimunNForGrowth ) THEN !  growth only if node have enough N
-                    node(BR,LF)%CohortWeight = node(BR,LF)%CohortWeight + node(BR,LF)%CohortWeightGrowth
-                ENDIF
+                node(BR,LF)%CohortWeight = node(BR,LF)%CohortWeight + node(BR,LF)%CohortWeightGrowth
                 
                 StemGrowthP = StemGrowthP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
-                STWTP = STWTP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR))
-                
+                StemWeightP = StemWeightP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR))
                 
                 ENDDO
             ENDDO
@@ -230,12 +227,12 @@
         
 
         
-        GROCRP = node(0,1)%CohortWeightGrowth * SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
-        CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
-        GRORP = (GROLFP + StemGrowthP)*PTFA
-        !GRORP = (GROLFP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
-        !GRORP = (GROLFP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
-        StemLeafGrowthP = GROLFP + StemGrowthP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
+        StickGrowthP = node(0,1)%CohortWeightGrowth * SPRL/NODLT   !LPM 02OCT2015 Added to consider the potential increase of the planting stick                
+        CRWTP = CRWTP + StickGrowthP    !LPM 23MAY2015 Added to keep the potential planting stick weight
+        RootGrowthP = (GROLFP + StemGrowthP)*PTFA
+        !RootGrowthP = (GROLFP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        !RootGrowthP = (GROLFP + StemGrowthP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
+        StemLeafGrowthP = GROLFP + StemGrowthP + StickGrowthP + RootGrowthP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
         
         IF (StemLeafGrowthP > 0.0) THEN
             ! Leaf+stem weight increase from assimilates
@@ -310,7 +307,7 @@
         !           Stem and Plant. stick growth                                     
         !-----------------------------------------------------------------------
         
-        GROCR = 0.0
+        StickGrowth = 0.0
         StemStickGrowthP = 0.0
         StemGrowth = 0.0
         StemStickGrowth = 0.0
@@ -326,11 +323,11 @@
         StemGrowth = StemStickGrowth
         
         IF (StemLeafGrowthP > 0.0) THEN
-            GROCR = StemLeafGrowth*(GROCRP/StemLeafGrowthP)   !LPM 05OCT2015 To avoid wrong values for GROCR 
-            RTWTG = StemLeafGrowth*(GRORP/StemLeafGrowthP) !LPM 22DEC2016 Root development 
+            StickGrowth = StemLeafGrowth*(StickGrowthP/StemLeafGrowthP)   !LPM 05OCT2015 To avoid wrong values for StickGrowth 
+            RootGrowth = StemLeafGrowth*(RootGrowthP/StemLeafGrowthP) !LPM 22DEC2016 Root development 
         ENDIF
         
-        !CRWTP = CRWTP + GROCR                 !LPM 020CT2015 Deleted to consider before (line 320)                      
+        !CRWTP = CRWTP + StickGrowth                 !LPM 020CT2015 Deleted to consider before (line 320)                      
 
         
     END SUBROUTINE YCA_Growth_Part

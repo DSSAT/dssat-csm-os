@@ -224,10 +224,10 @@ Module YCA_First_Trans_m
     REAL    :: GESTAGE                 ! Germination,emergence stage    #          ! (From SeasInit)  
     REAL    :: GESTAGEPREV             ! Germ,emerg stage,previous day  #          ! (From SeasInit)  
     REAL    :: GEUCUM                  ! Cumulative germ+emergence unit #          ! (From SeasInit)  
-    REAL    :: GROCR                   ! Plant. stick growth rate              g/p ! (From SeasInit)  
-    REAL    :: GROCRADJ                ! Plant. stick growth rate N adjusted   g/p ! (From SeasInit)  
-    REAL    :: GROCRFR                 ! Plant. stick growth rate,fraction st  #   ! (From Growth)    
-    REAL    :: GROCRP                  ! Plant. stick growth rate potential    g/p ! (From SeasInit)
+    REAL    :: StickGrowth                   ! Plant. stick growth rate              g/p ! (From SeasInit)  
+    REAL    :: StickGrowthADJ                ! Plant. stick growth rate N adjusted   g/p ! (From SeasInit)  
+    REAL    :: StickGrowthFR                 ! Plant. stick growth rate,fraction st  #   ! (From Growth)    
+    REAL    :: StickGrowthP                  ! Plant. stick growth rate potential    g/p ! (From SeasInit)
     REAL    :: GROLF                   ! Leaf growth rate               g/p        ! (From SeasInit)  
     REAL    :: GROLFADJ                ! Leaf growth rate N adjusted    g/p        ! (From SeasInit)  
     REAL    :: GROLFP                  ! Leaf growth,potential          g/p        ! (From Growth)    
@@ -239,7 +239,7 @@ Module YCA_First_Trans_m
     REAL    :: StemLeafGrowthRTN                ! Leaf+stem N growth from root N g/p        ! (From Growth)    
     REAL    :: StemLeafGrowthSD                 ! Leaf+stem gr from seed         g/p        ! (From Growth)    
     REAL    :: StemLeafGrowthSEN                ! Leaf+stem growth from senesnce g/p        ! (From Growth) 
-    REAL    :: GRORP                   ! Potential root growth          g/p        ! (From SeasInit) !LPM 22DEC2016 potential root growth
+    REAL    :: RootGrowthP                   ! Potential root growth          g/p        ! (From SeasInit) !LPM 22DEC2016 potential root growth
     REAL    :: GRORS                   ! Reserves growth                g/p        ! (From SeasInit)  
     REAL    :: StemGrowth                   ! Stem growth rate               g/p        ! (From SeasInit)  
     REAL    :: StemGrowthADJ                ! Stem growth rate N adjusted    g/p        ! (From SeasInit)  
@@ -681,9 +681,9 @@ Module YCA_First_Trans_m
     REAL    :: RTUFR                   ! Max fraction root wt useable   fr         ! (From SeasInit)  
     REAL    :: RTWT                    ! Root weight                    g/p        ! (From SeasInit)  
     REAL    :: RTWTAL(20)              ! Root weight by layer           kg/ha      ! (From SeasInit)  
-    REAL    :: RTWTG                   ! Root weight growth             g/p        ! (From SeasInit)  
-    REAL    :: RTWTGADJ                ! Root growth rate N adjusted    g/p        ! (From SeasInit)  
-    REAL    :: RTWTGL(20)              ! Root weight growth by layer    g/p        ! (From SeasInit)  
+    REAL    :: RootGrowth                   ! Root weight growth             g/p        ! (From SeasInit)  
+    REAL    :: RootGrowthADJ                ! Root growth rate N adjusted    g/p        ! (From SeasInit)  
+    REAL    :: RootGrowthL(20)              ! Root weight growth by layer    g/p        ! (From SeasInit)  
     REAL    :: RTWTL(20)               ! Root weight by layer           g/p        ! (From SeasInit)  
     REAL    :: RTWTM                   ! Root weight,maturity           g/p        ! (From SeasInit)  
     REAL    :: RTWTSL(20)              ! Root weight senesced by layer  g/p        ! (From SeasInit)  
@@ -862,16 +862,10 @@ Module YCA_First_Trans_m
     !REAL    :: STRSWAD                 ! Stem reserves                  kg/ha      ! (From Integrate) !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
     !REAL    :: STRSWT                  ! Stem reserves                  g/p        ! (From SeasInit)  !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
     REAL    :: STWAD                   ! Stem structural weight         kg/ha      ! (From SeasInit)  
-    REAL    :: STWADOUT                ! Stem weight for output         kg/ha      ! (From Output)    
-    REAL    :: STWT                    ! Stem weight                    g/p        ! (From SeasInit)  
-    REAL    :: STWTM                   ! Stem weight,maturity           g/p        ! (From SeasInit)  
-    REAL    :: STWTP                   ! Stem weight potential          g/p        !LPM 23MAY2015 Added to keep the potential stem weight
-    !REAL    :: SWFR                    ! Stem fraction,actual           #          ! (From Growth)  !LPM 05JUN2015 SWFR is not used    
-    !REAL    :: SWFRN                   ! Stem fraction minimum          #          ! (From SeasInit)  !LPM 05JUN2015 SWFRN is not used 
-    !REAL    :: SWFRNL                  ! Leaf number for min stem fr    #          ! (From SeasInit) !LPM 05JUN2015 SWFRNL is not used  
-    !REAL    :: SWFRS                   ! Stem fraction,standard         #          ! (From SeasInit) !LPM 05JUN2015 SWFRS is not used 
-    !REAL    :: SWFRX                   ! Stem fraction maximum          #          ! (From SeasInit) !LPM 05JUN2015 SWFRX is not used   
-    !REAL    :: SWFRXL                  ! Leaf number for max stem fr    #          ! (From SeasInit)  !LPM 05JUN2015 SWFRXL is not used 
+    REAL    :: STWADOUT                ! Stem weight for output         kg/ha      ! (From Output)    ! DA StemWeight
+    REAL    :: StemWeight              ! Stem weight                    g/p        ! (From SeasInit)  
+    REAL    :: StemWeightM                   ! Stem weight,maturity           g/p        ! (From SeasInit)  
+    REAL    :: StemWeightP                   ! Stem weight potential          g/p        !LPM 23MAY2015 Added to keep the potential stem weight
     REAL    :: SWP(0:20)               ! Soil water 'potential'         #          ! (From Growth) 
     REAL    :: SWPH                    ! Stem weight harvested          g/p        ! (From Growth)    
     REAL    :: SWPHC                   ! Stem wt harvested,cumulative   g/p        ! (From SeasInit)  
@@ -1330,8 +1324,8 @@ Module YCA_First_Trans_m
         gestage = 0.0
         gestageprev = 0.0
         geucum = 0.0
-        grocr = 0.0
-        grocradj = 0.0
+        stickgrowth = 0.0
+        stickgrowthadj = 0.0
         grolf = 0.0
         grolfadj = 0.0
         grors = 0.0
@@ -1501,9 +1495,9 @@ Module YCA_First_Trans_m
         rtslxdate = -99 
         rtwt = 0.0
         rtwtal = 0.0
-        rtwtg = 0.0
-        rtwtgadj = 0.0
-        rtwtgl = 0.0
+        RootGrowth = 0.0
+        RootGrowthadj = 0.0
+        RootGrowthl = 0.0
         rtwtl = 0.0
         rtwtm = 0.0
         rtwtsl = 0.0
@@ -1600,9 +1594,9 @@ Module YCA_First_Trans_m
         StemN = 0.0
         stgedat = 0
         stwad = 0.0
-        stwt = 0.0
-        stwtp = 0.0 !LPM 23MAY2015 Added to keep the potential stem weight
-        stwtm = 0.0
+        stemweight = 0.0
+        stemweightp = 0.0 !LPM 23MAY2015 Added to keep the potential stem weight
+        stemweightm = 0.0
         swphc = 0.0
         tcan = 0.0
         tdifav = -99.0

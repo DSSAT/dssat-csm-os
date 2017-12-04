@@ -34,13 +34,13 @@
 
         ! Set adjusted values to unadjusted 
         ! For when no adjustment necessary, or when not simulating N
-        GROCRADJ = GROCRP
+        StickGrowthADJ = StickGrowthP
         GROLFADJ = GROLFP
         StemGrowthADJ = StemGrowthP
         PLAGSB4 = PLAGSB2
         RSSRWTGLFADJ = 0.0
         RTRESPADJ = RTRESP   
-        RTWTGADJ = RTWTG
+        RootGrowthADJ = RootGrowth
         SHLAGB4 = SHLAGB2
 
         node(0,0)%NFLF2 = 1.0
@@ -85,8 +85,8 @@
             END DO
     
             LNDEM = GROLFP*LNCX + (LFWT-leafTotalSenescedWeight())*AMAX1(0.0,NTUPF*(LNCX-LANC)) - StemLeafGrowthRTN                        !EQN 152
-            !SNDEM = AMAX1(0.0,StemGrowth+GROCR)*SNCX + (woodyWeight())*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
-            RNDEM = RTWTG*RNCX + (RTWT-SENRTG-StemLeafGrowthRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
+            !SNDEM = AMAX1(0.0,StemGrowth+StickGrowth)*SNCX + (woodyWeight())*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
+            RNDEM = RootGrowth*RNCX + (RTWT-SENRTG-StemLeafGrowthRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
             
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
@@ -219,23 +219,23 @@
             ! For supplying minimum
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    !NDEMSMN(BR,LF) = ((StemGrowth+GROCR)/(StemGrowthP+GROCR))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
+                    !NDEMSMN(BR,LF) = ((StemGrowth+StickGrowth)/(StemGrowthP+StickGrowth))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
                     node(BR,LF)%NDEMSMN = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM
                 ENDDO
             ENDDO
-            !NDEMMN = GROLF*LNCM+RTWTG*RNCM+(StemGrowth+GROCR)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
+            !NDEMMN = GROLF*LNCM+RootGrowth*RNCM+(StemGrowth+StickGrowth)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
             !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-            !NDEMMN = GROLF*LNCM+RTWTG*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using GROLFP instead of GROLF
+            !NDEMMN = GROLF*LNCM+RootGrowth*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using GROLFP instead of GROLF
             !LNUSE(1) = (GROLF*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
-            NDEMMN = GROLFP*LNCM+RTWTG*RNCM+SUM(node%NDEMSMN) 
+            NDEMMN = GROLFP*LNCM+RootGrowth*RNCM+SUM(node%NDEMSMN) 
             LNUSE(1) = (GROLFP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
-            RNUSE(1) = (RTWTG*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
-            !SNUSE(1) = ((StemGrowth+GROCR)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
+            RNUSE(1) = (RootGrowth*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
+            !SNUSE(1) = ((StemGrowth+StickGrowth)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
             
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (StemGrowthP > 0.0) THEN
-                        !SNUSEN(1,BR,LF) = ((StemGrowth+GROCR)/(StemGrowthP+GROCR))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
+                        !SNUSEN(1,BR,LF) = ((StemGrowth+StickGrowth)/(StemGrowthP+StickGrowth))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
                         ShootNUseByNode(1,BR,LF) = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
                         SNUSE(1) = SNUSE(1)+ ShootNUseByNode(1,BR,LF)
                     ENDIF
@@ -246,15 +246,15 @@
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
             IF (NDEMMN > NULEFT) THEN
                 StemGrowthADJ = StemGrowthP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
-                GROCRADJ = GROCRP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
-                RTWTGADJ = RTWTG*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
-                RTRESPADJ = RTWTGADJ*RRESP/(1.0-RRESP)                                                                 !EQN 216   
+                StickGrowthADJ = StickGrowthP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
+                RootGrowthADJ = RootGrowth*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
+                RTRESPADJ = RootGrowthADJ*RRESP/(1.0-RRESP)                                                                 !EQN 216   
             ELSE
                 !StemGrowthADJ = StemGrowth   !LPM 02SEP2016 Use potential growth
-                !GROCRADJ = GROCR
+                !StickGrowthADJ = StickGrowth
                 StemGrowthADJ = StemGrowthP
-                GROCRADJ = GROCRP
-                RTWTGADJ = RTWTG
+                StickGrowthADJ = StickGrowthP
+                RootGrowthADJ = RootGrowth
                 RTRESPADJ = RTRESP   
             ENDIF
             
@@ -319,8 +319,8 @@
             NPOOLS = 0
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)          
-                    IF(STWTP+CRWTP > 0.0)THEN
-                        node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%CohortWeight * (woodyWeight())/(STWTP+CRWTP))*( node(BR,LF)%SANC - node(BR,LF)%SNCM )*NUSEFAC))  
+                    IF(StemWeightP+CRWTP > 0.0)THEN
+                        node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%CohortWeight * (woodyWeight())/(StemWeightP+CRWTP))*( node(BR,LF)%SANC - node(BR,LF)%SNCM )*NUSEFAC))  
                     ELSE
                         node(BR,LF)%NPOOLSN = 0.0
                     ENDIF
@@ -399,7 +399,7 @@
             SHLAGB4(2) = SHLAG2(2) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                          !EQN 240
             SHLAGB4(3) = SHLAG2(3) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                         !EQN 240    
 
-            GROCRADJ = AMIN1(GROCR,GROCRADJ)
+            StickGrowthADJ = AMIN1(StickGrowth,StickGrowthADJ)
             !GROLFADJ = AMIN1(GROLF,GROLFADJ)
                         ! Potential leaf weight increase.
             !LPM 16DEC2016 GROLFADJ is defined by the new estimation of leaf area which is considering water stress (WFG), carbohydrates available (AFLF) and nitrogen restrictions (NFLF2)
@@ -410,5 +410,5 @@
             StemGrowthADJ = AMIN1(StemGrowth,StemGrowthADJ)
             RSSRWTGLFADJ = AMAX1(0.0, RSSRWTGLFADJ)
             RTRESPADJ = AMIN1(RTRESP,RTRESPADJ)    
-            RTWTGADJ = AMIN1(RTWTG,RTWTGADJ)
+            RootGrowthADJ = AMIN1(RootGrowth,RootGrowthADJ)
     END SUBROUTINE YCA_Growth_NUptake

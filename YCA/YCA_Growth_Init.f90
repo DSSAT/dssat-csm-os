@@ -183,7 +183,7 @@
         ! For grazing 
         lwph = lfwt * hafr                                                                                             !EQN 416
         laph = lapd * hafr                                                                                             !EQN 417
-        swph = stwt * hafr                                                                                             !EQN 418
+        swph = stemweight * hafr                                                                                             !EQN 418
         rswph = rswt * hafr                                                                                            !EQN 419
         lnph = leafn * hafr                                                                                            !EQN 420
         snph = StemN * hafr                                                                                            !EQN 421

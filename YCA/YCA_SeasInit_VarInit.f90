@@ -144,8 +144,8 @@
         gestage = 0.0
         gestageprev = 0.0
         geucum = 0.0
-        grocr = 0.0
-        grocradj = 0.0
+        stickgrowth = 0.0
+        stickgrowthadj = 0.0
         grolf = 0.0
         grolfadj = 0.0
         grors = 0.0
@@ -336,9 +336,9 @@
         rtslxdate = -99 
         rtwt = 0.0
         rtwtal = 0.0
-        rtwtg = 0.0
-        rtwtgadj = 0.0
-        rtwtgl = 0.0
+        RootGrowth = 0.0
+        RootGrowthadj = 0.0
+        RootGrowthl = 0.0
         rtwtl = 0.0
         rtwtm = 0.0
         rtwtsl = 0.0
@@ -442,9 +442,9 @@
         stgyeardoy = 9999999
         !strswt = 0.0
         stwad = 0.0
-        stwt = 0.0
-        stwtp = 0.0 !LPM 23MAY2015 Added to keep the potential stem weight
-        stwtm = 0.0
+        stemweight = 0.0
+        stemweightp = 0.0 !LPM 23MAY2015 Added to keep the potential stem weight
+        stemweightm = 0.0
         swphc = 0.0
         tcan = 0.0
         tdifav = -99.0
