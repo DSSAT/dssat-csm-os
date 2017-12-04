@@ -48,14 +48,14 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 7
         INTEGER :: Model = 1
-        INTEGER :: Build = 2
+        INTEGER :: Build = 3
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = '-tiledrain'
-!     CHARACTER(len=10) :: VBranch = '-develop  '
+      CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.7.1.3  chp 11/30/2017 Tiledrain N loss, Hanseok Jeong
 !       4.7.1.2  chp 11/21/2017 Sugarbeet model added
 !       4.7.1.1  chp 10/31/2017 Pineapple forcing with chemical application
 !       4.7.1.0  chp 10/27/2017 Modifications to data, tweaks to output
