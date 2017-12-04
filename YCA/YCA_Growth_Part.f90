@@ -91,7 +91,7 @@
                                                                                                               
             DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                SHLAG2B(BR) = 0.0  
-                DO LF = 1, LNUMSIMSTG(BR)+1
+                DO LF = 1, LNUMSIMSTG(BR)
                     IF (node(BR,LF)%LAGETT <= LLIFGTT) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
