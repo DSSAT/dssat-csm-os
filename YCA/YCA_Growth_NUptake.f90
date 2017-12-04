@@ -374,7 +374,7 @@
     
     ! Area and assimilate factors for each leaf
                 DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
-                    DO LF = 1, LNUMSIMSTG(BR)   
+                    DO LF = 1, LNUMSIMSTG(BR)+1   
                         IF (node(BR,LF)%LAGETT <= LLIFGTT .AND. node(BR,LF)%LAPOTX2 > 0.0 ) THEN
                             IF (LNUMSIMSTG(BR) < LCNUMX) THEN
                                 !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
@@ -393,6 +393,20 @@
                                     ENDIF
                                 ENDDO
                                 !IF (CFLAFLF == 'N') AFLF(BR,LF) = 1.0                                                 !LPM 23MAR15 Define previously  
+                                IF (LF == LNUMSIMSTG(BR) .AND. LNUMG > LNUMNEED .AND. BR == BRSTAGE) THEN                                             ! This is where new leaf is initiated
+                                    node(BR,LF+1)%LAGL3 = node(BR,LF+1)%LAGL * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)
+                                    node(BR,LF+1)%LATL3= node(BR,LF+1)%LATL3 + node(BR,LF+1)%LAGL3                                             !EQN 150 !LPM 24APR2016 to keep leaf area value with stress
+                                    node(BR,LF+1)%AFLF = AMIN1(1.0,node(BR,LF+1)%AFLF + AMAX1(0.0,node(0,0)%AFLF) * (node(BR,LF+1)%LAGL)/node(BR,LF+1)%LAPOTX2)             !EQN 151   
+                                    node(BR,LF+1)%NFLF2 = AMIN1(1.0,node(BR,LF+1)%NFLF2 + AMAX1(0.0,node(0,0)%NFLF2) * (node(BR,LF)%LAGL)/node(BR,LF+1)%LAPOTX2)  !EQN 237 !LPM 02SEP2016 To save NFLF2
+                                    node(BR,LF+1)%LAGL3T = node(BR,LF+1)%LAGL3*BRNUMST(BR) 
+                                    node(BR,LF+1)%LATL3T = node(BR,LF+1)%LATL3*BRNUMST(BR)
+                                    DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
+                                        IF (SHNUM-FLOAT(L-1) > 0.0) THEN
+                                            node(BR,LF+1)%LAGL3T = node(BR,LF+1)%LAGL3T+(node(BR,LF+1)%LAGL3*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
+                                            node(BR,LF+1)%LATL3T = node(BR,LF+1)%LATL3T+(node(BR,LF+1)%LATL3*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))  
+                                        ENDIF
+                                    ENDDO
+                                ENDIF
                             ENDIF  
                          ELSE
                             IF (node(BR,LF)%LAPOTX2 <= 0.0 ) THEN
