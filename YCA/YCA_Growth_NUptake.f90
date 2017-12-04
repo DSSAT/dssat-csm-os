@@ -85,15 +85,14 @@
             END DO
     
             LNDEM = GROLFP*LNCX + (LFWT-leafTotalSenescedWeight())*AMAX1(0.0,NTUPF*(LNCX-LANC)) - StemLeafGrowthRTN                        !EQN 152
-            !SNDEM = AMAX1(0.0,StemGrowth+StickGrowth)*SNCX + (woodyWeight())*AMAX1(0.0,NTUPF*(SNCX-SANC))                             !EQN 153
             RNDEM = RootGrowth*RNCX + (RTWT-SENRTG-StemLeafGrowthRT)*AMAX1(0.0,NTUPF*(RNCX-RANC))                                    !EQN 154
             
             SRNDEM = (SRWTGRS)*(SRNPCS/100.0) + SRWT*AMAX1(0.0,NTUPF*((SRNPCS/100.0)-SRANC))                     !EQN 155
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N demand by node according with its age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (StemGrowthP>0.0) THEN
-                        node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%CohortWeightGrowth)*node(BR,LF)%SNCX + &
-                        (node(BR,LF)%CohortWeight*AMAX1(0.0,NTUPF*(node(BR,LF)%SNCX-node(BR,LF)%SANC)))  
+                        node(BR,LF)%SNDEMN = AMAX1(0.0,node(BR,LF)%CohortWeightGrowth)*node(BR,LF)%StemMaxNConc + &
+                        (node(BR,LF)%CohortWeight*AMAX1(0.0,NTUPF*(node(BR,LF)%StemMaxNConc-node(BR,LF)%StemNConc)))  
                         SNDEM = SNDEM + node(BR,LF)%SNDEMN
                     ENDIF
                 ENDDO
@@ -320,7 +319,7 @@
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)          
                     IF(StemWeightP+CRWTP > 0.0)THEN
-                        node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%CohortWeight * (woodyWeight())/(StemWeightP+CRWTP))*( node(BR,LF)%SANC - node(BR,LF)%SNCM )*NUSEFAC))  
+                        node(BR,LF)%NPOOLSN = AMAX1 (0.0,((node(BR,LF)%CohortWeight * (woodyWeight())/(StemWeightP+CRWTP))*( node(BR,LF)%StemNConc - node(BR,LF)%SNCM )*NUSEFAC))  
                     ELSE
                         node(BR,LF)%NPOOLSN = 0.0
                     ENDIF

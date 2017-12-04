@@ -43,8 +43,8 @@
         
         DO BR = 0, BRSTAGE                                                                                                                                                          
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   
-                IF (node(BR,LF)%SANC < node(BR,LF)%SNCX) THEN 
-                    node(BR,LF)%StemNExcessByNode = (node(BR,LF)%CohortWeight*(woodyWeight())/(StemWeightP+CRWTP))*(node(BR,LF)%SANC-node(BR,LF)%SNCX)
+                IF (node(BR,LF)%StemNConc < node(BR,LF)%StemMaxNConc) THEN 
+                    node(BR,LF)%StemNExcessByNode = (node(BR,LF)%CohortWeight*(woodyWeight())/(StemWeightP+CRWTP))*(node(BR,LF)%StemNConc-node(BR,LF)%StemMaxNConc)
                     StemNExcess = StemNExcess + node(BR,LF)%StemNExcessByNode
                     node(BR,LF)%StemNByNode = node(BR,LF)%StemNByNode + ShootNUseByNode(0,BR,LF) - node(BR,LF)%StemNHarvstByNode - node(BR,LF)%StemNExcessByNode  
                     
