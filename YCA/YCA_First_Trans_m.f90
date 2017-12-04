@@ -769,7 +769,7 @@ Module YCA_First_Trans_m
     REAL    :: SHGR(22)                ! Shoot size relative to 1       #          ! (From SeasInit)  
     REAL    :: SHLA(25)                ! Shoot leaf area produced       cm2        ! (From SeasInit)  
     REAL    :: SHLAG2(25)              ! Shoot lf area gr,all axis,H2oN cm2        ! (From SeasInit)  
-    REAL    :: SHLAG2B(0:PSX)          ! Shoot lf area gr by br,H2oNt   cm2        ! (From SeasInit)
+    REAL    :: SHLAG2B(0:PSX)          ! Shoot lf area gr by br         cm2        ! (From SeasInit)
     REAL    :: SHLAGB2(25)             ! Shoot lf area gr,+br,H2oNt     cm2        ! (From Growth)    
     REAL    :: SHLAGB3(25)             ! Shoot lf area gr,+br,H2oNtA    cm2        ! (From Growth)    
     REAL    :: SHLAGB4(25)             ! Shoot lf area gr,+br,H2oNtAN2  cm2        ! (From Growth)    
