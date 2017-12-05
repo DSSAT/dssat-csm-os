@@ -37,7 +37,6 @@
         REAL D_NewNodeDAE
         
         REAL :: StemMinimunNForGrowth = 0.08 ! %  from flow document section 7 Potential nodal unit growth
-        REAL :: StemNContent = 0.0
 
         !-----------------------------------------------------------------------
         !           Partitioning of C to above ground and roots (minimum) 
@@ -215,7 +214,6 @@
           
                 !LPM23FEB2017 New high initial rate
                 node(BR,LF)%CohortWeightGrowth = (1/(1+(((Lcount)/B_)**C_)))  *  (E_*(((D_NewNodeDAE)**F_) / ((D_NewNodeDAE**G_)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
-                StemNContent = (node(BR,LF)%StemNByNode/(node(BR,LF)%CohortWeight+ZERO))
                 node(BR,LF)%CohortWeight = node(BR,LF)%CohortWeight + node(BR,LF)%CohortWeightGrowth
                 
                 StemGrowthP = StemGrowthP + (node(BR,LF)%CohortWeightGrowth*BRNUMST(BR)) !LPM08JUN2015 added BRNUMST(BR) to consider the amount of branches by br. level
@@ -282,7 +280,7 @@
                 CALL WARNING(1,'CSYCA',MESSAGE)
             ENDIF
             ! Leaf+stem weight increase from all sources
-            StemLeafGrowth = StemLeafGrowthA + StemLeafGrowthSEN + StemLeafGrowthSD + StemLeafGrowthRS+StemLeafGrowthRT                                                      !EQN 303
+            StemLeafGrowth = StemLeafGrowthA + StemLeafGrowthSEN + StemLeafGrowthSD + StemLeafGrowthRS + StemLeafGrowthRT                                                      !EQN 303
             ! Leaf weight increase from all sources
             IF ((StemLeafGrowthP) > 0.0) THEN
                 LeafGrowth = StemLeafGrowth * LeafGrowthP/StemLeafGrowthP                                                                          !EQN 304
