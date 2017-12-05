@@ -329,7 +329,7 @@
 
             ! Check N and reduce leaf growth if not enough N  
             IF (ABS(NULEFT) <= 1.0E-5) THEN   ! Inadequate N
-                IF (NLLG > 0.0 .AND. LNCX > 0.0 .AND. LeafGrowthP > 0.0) THEN 
+                IF (NLLG > 0.0 .AND. LNCX > 0.0 .AND. LeafGrowthP >= 0.0) THEN 
                     IF ((LNUSE(1)+LNUSE(2))/LeafGrowthP < (LNCX*NLLG)) THEN !LPM 02SEP2016 Use LeafGrowthP instead of LeafGrowth
                         LeafGrowthADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a
                     ELSE  
