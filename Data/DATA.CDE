@@ -435,7 +435,8 @@ NIT7D  Nitrif layer 7  Daily nitrification, soil layer 7 (g[N]/ha)              
 NIT8D  Nitrif layer 8  Daily nitrification, soil layer 8 (g[N]/ha)              .
 NIT9D  Nitrif layer 9  Daily nitrification, soil layer 9 (g[N]/ha)              .
 NITD   Total NO3 kg/ha Total soil NO3 (kg [N]/ha)                               .
-NLCC   N Leached kg/ha N leached (kg [N]/ha)                                    .
+NLCD   N Leached kg/ha Daily N leached (kg [N]/ha/d)                            .
+NLCC   N Leached kg/ha Cumulative N leached (kg [N]/ha)                         .
 NMNC   N Mineralize    Cumulative N mineralization (kg [N]/ha)                  .
 NNMNC  Net N mineraliz Cumulative net N mineralization (miner - immob)          .
 NOAD   Organic N kg/ha Organic N in soil (kg [N]/ha)                            .
@@ -656,6 +657,8 @@ SOND   SOIL ON kg/ha   Soil plus surface organic nitrogen (kg/ha)               
 SOPD   SOIL OP kg/ha   Soil plus surface organic phosphorus (kg/ha)             .
 SPDD   SOIL ORG P      Stable soil org. P @ user depth (kg/ha)                  .
 TCNN   Canopy T noon   Canopy temperature at noon (oC)                          .
+TDNC   Cum tile N lost Cumulative N lost to tile drain (kg[N]/ha/d)             .
+TDND   Tile N lost k/h Daily N lost to tile drain (kg[N]/ha/d)                  .
 TEMt   Temp/h midnight Hourly air temperature at midnight                       TAIRHR
 TFOM   RESIDUE kg/ha   Plant residue remaining (kg [dm]/ha)                     .
 TFON   RESIDUE N kg/ha Plant residue N remaining (kg/ha)                        .
@@ -914,7 +917,7 @@ YEAR   YEAR            Year (4 digits)                                          
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 CO20C  SurfCO2 (kg/ha) Cumul. CO2 from surface organic matter decomp (kg/ha)    .
 CO2SC  SoilCO2 (kg/ha) Cumul. CO2 from soil organic matter decomposition (kg/ha).
-CO2TD  SoilCO2(k/h/d)  Daily CO2 from surface + soil OM decomposition (kg/ha)   . 
+CO2TD  SoilCO2(g/h/d)  Daily CO2 from surface + soil OM decomposition (g/ha)    . 
 CO2TC  TotSoilCO2(k/h) Cumul. CO2 from surface + soil OM decomposition (kg/ha)  . 
 HRNH   N harvest res   N in harvest residue (kg [N]/ha)                         .
 HRPH   P harvest res   P in harvest residue (kg [P]/ha)                         .
