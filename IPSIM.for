@@ -13,7 +13,7 @@ C  02/21/2006 GH  Removed crop model selection
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2009 CHP IPSIM separate file.  
 !  02/11/2010 CHP Added checks for P model linked with crop models.
-!  12/29/2017 WP  Added reading code for IPESTID (used for pest identification).
+
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
@@ -53,7 +53,7 @@ C=======================================================================
 
       CHARACTER*1   UPCASE,ISIMI, RNMODE
       CHARACTER*2   CROP
-      CHARACTER*5   NEND,NCODE,IOFF,IAME, TEXT, IPESTID
+      CHARACTER*5   NEND,NCODE,IOFF,IAME, TEXT
       CHARACTER*6   ERRKEY,FINDCH
       CHARACTER*8   MODEL, MODELARG, CRMODEL, TRY_MODEL, Try_MODELARG
       CHARACTER*12  FILEX
@@ -314,15 +314,14 @@ C
 C        Read FOURTH line of simulation control
 C
          CALL IGNORE(LUNEXP,LINEXP,ISECT,CHARTEST)
-         READ (CHARTEST,59,IOSTAT=ERRNUM) LN,IPLTI,IIRRI,
-     &        IFERI,IRESI,IHARI,IPESTID
+         READ (CHARTEST,60,IOSTAT=ERRNUM) LN,IPLTI,IIRRI,
+     &        IFERI,IRESI,IHARI
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
          IPLTI = UPCASE(IPLTI)
          IIRRI = UPCASE(IIRRI)
          IFERI = UPCASE(IFERI)
          IRESI = UPCASE(IRESI)
          IHARI = UPCASE(IHARI)
-         IPESTID = UPCASE(IPESTID)
 
          IF ((INDEX('CSPT',CROP)) .GT. 0) THEN
            IF (IHARI .EQ. 'A') THEN
@@ -771,7 +770,6 @@ C     FORMAT Strings
 C-----------------------------------------------------------------------
 
   55  FORMAT (I3,11X,2(1X,I5),5X,A1,1X,I5,1X,I5,1X,A25,1X,A8)
-  59  FORMAT (I3,11X,5(5X,A1),1X,A5)
   60  FORMAT (I3,11X,9(5X,A1))
   61  FORMAT (I3,11X,7(5X,A1),5X,I1,5(5X,A1))
   65  FORMAT (I3,11X,3(5X,A1),4X,I2,9(5X,A1),
