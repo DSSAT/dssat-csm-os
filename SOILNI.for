@@ -49,6 +49,7 @@ C  04/20/2004 US  Modified DLAG, removed IFDENIT
 !  02/25/2005 CHP changed HUMC to SSOMC to match Century variable name
 !  04/13/2005 CHP changed subroutine name to SoilNi.for (was SoilN_inorg)
 !  06/12/2014 CHP DayCent calcs for N2O emissions from Peter Grace
+!  11/21/2017 HJ  modified this subroutine to include N loss to tile
 C-----------------------------------------------------------------------
 C  Called : SOIL
 C  Calls  : Fert_Place, IPSOIL, NCHECK, NFLUX, RPLACE,
@@ -121,7 +122,8 @@ C=======================================================================
       REAL CNETMINRN                                        !Net mineralization
       REAL CNUPTAKE,  WTNUP                                 !N uptake
       REAL CLeach,    TLeachD                               !N leaching
-      REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
+      REAL CNTILEDR,  NTILEDR                               !N loss to tile (HJ added)
+	  REAL CN2Onitrif,TN2OnitrifD,             N2Onitrif(NL)!N2O from nitrification
       REAL CN2Odenit, TN2OdenitD,              N2ODenit(NL) !N2O from denitrification
       REAL CNOflux,   TNOfluxD,                NOflux(NL)   !NO flux
       REAL                                     nNOflux(NL)  !NO from nitrification
@@ -210,6 +212,7 @@ C=======================================================================
         CNUPTAKE = 0.0  !cumulative N uptake
         CNOX     = 0.0  !denitrification
         CLeach   = 0.0  !leaching
+        CNTILEDR = 0.0  !N loss to tile drainage     !HJ added
         WTNUP    = 0.0  !N uptake
         CN2Onitrif=0.0  !N2O[N] from nitrification
         CN2Odenit =0.0  !N2O[N] from nitrification
@@ -427,6 +430,7 @@ C=======================================================================
       TNITRIFY = 0.0
       TNOXD    = 0.0  !denitrification
       TLeachD  = 0.0  !leaching
+      NTILEDR = 0.0   !N loss to tile !HJ added
       NITRIF   = 0.0
       TN2OnitrifD = 0.0  !N2O from nitrification
       TN2OdenitD  = 0.0  !N2O from denitrification
@@ -814,20 +818,21 @@ C=======================================================================
 !     Downward and upward N movement with the water flow.
 !     ------------------------------------------------------------------
       TLeachD = 0.0
+      NTILEDR = 0.0   !HJ added
 
       IF (IUON) THEN
         NSOURCE = 1    !Urea.
         CALL NFLUX ( 
      &    ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,     !Input
      &    UREA, NSOURCE, SW, TDFC, TDLNO,                 !Input
-     &    DLTUREA, CLeach, TLeachD)                           !Output
+     &    DLTUREA, CLeach, TLeachD, CNTILEDR, NTILEDR)    !Output !HJ
       ENDIF
 
       NSOURCE = 2   !NO3.
       CALL NFLUX ( 
      &  ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &  SNO3, NSOURCE, SW, TDFC, TDLNO,                   !Input
-     &  DLTSNO3, CLeach, TLeachD)                             !Output
+     &  DLTSNO3, CLeach, TLeachD, CNTILEDR, NTILEDR)      !Output !HJ
       
       CALL PUT('NITR','TLCHD',TLeachD) 
 
@@ -934,15 +939,17 @@ C=======================================================================
       N2O_data % TNOfluxD= TNOfluxD
       N2O_data % CNOflux = CNOflux
 
+!     HJ added CNTILEDR in SoilNiBal and OpSoilNi
       IF (DYNAMIC .EQ. SEASINIT) THEN
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP, N2O_data) 
+     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &	  N2O_data) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
+     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
       ENDIF
 
 !***********************************************************************
@@ -953,11 +960,12 @@ C=======================================================================
 C-----------------------------------------------------------------------
       IF (INDEX('N',ISWNIT) > 0) RETURN
 
+!     HJ added CNTILEDR in OpSoilNi and SoilNiBal
 C     Write daily output
       CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
+     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
 
       IF (NBUND > 0) THEN
         CALL FLOOD_CHEM(CONTROL, ISWITCH, 
@@ -969,7 +977,8 @@ C     Write daily output
 
       CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
-     &    TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP, N2O_data) 
+     &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
+     &	  N2O_data) 
 
       CALL OpN2O(CONTROL, ISWITCH, SOILPROP, newCO2, N2O_DATA) 
 

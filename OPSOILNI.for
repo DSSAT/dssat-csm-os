@@ -13,15 +13,16 @@ C  08/20/2002 GH  Modified for Y2K
 !     Note:  in Century, AMTFER is an array for soil elements, in
 !                 NTRANS, AMTFER is a scalar and represents only N.
 !  01/18/2005 CHP changed AMTFER to array of 3 for consistency
+!  11/21/2017 HJ  added CNTILEDR to soil N output
 !-----------------------------------------------------------------------
 !  Called from:   SoilNi (formerly NTRANS)
 !  Calls:         None
 !=======================================================================
-
+!     HJ added CNTILEDR
       SUBROUTINE OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 
      &    FertData, NH4, NO3, 
-     &    CLeach, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
+     &    CLeach, CNTILEDR, TNH4, TNH4NO3, TNO3, CNOX, TOTAML)
 !-----------------------------------------------------------------------
       USE ModuleDefs
 !     VSH
@@ -56,6 +57,7 @@ C  08/20/2002 GH  Modified for Y2K
       REAL CNITRIFY       !nitrification
       REAL CNOX           !Denitrification
       REAL CLeach         !Leaching
+      REAL CNTILEDR       !N loss to tile drainage    !HJ added
       REAL TOTAML         !ammonia volatilization
       REAL CNETMINRN      !net mineralization (mineralized-immobilized)
       REAL CNUPTAKE       !N uptake
@@ -153,7 +155,8 @@ C-----------------------------------------------------------------------
           ENDIF
           WRITE (NOUTDN,115)
   115     FORMAT(
-     &   'NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM    NLCC')
+     &   'NMNC    NITC    NDNC    NIMC    AMLC   NNMNC    NUCM    NLCC',
+     &   '    TDFC')  !HJ NLTD
           END IF   ! VSH
 
           CALL YR_DOY(INCDAT(YRDOY,-1), YEAR, DOY) 
@@ -163,7 +166,7 @@ C-----------------------------------------------------------------------
      &       0, TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
      &       0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-     &       0.0, 0.0
+     &       0.0, 0.0, 0.0                           !HJ 0.0
           END IF   ! VSH
           
           
@@ -198,12 +201,13 @@ C-----------------------------------------------------------------------
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
           WRITE (NOUTDN,310) YEAR, DOY, DAS, NINT(AMTFER(N)), 
 !     &       NAPFER, TLCH, TNH4NO3, NINT(THUMN), TNO3, TNH4, 
+!             HJ added CNTILEDR 
      &       NAPFER(N), TNH4NO3, TNO3, TNH4, 
      &       (NO3(I),I=1,N_LYR), (NH4(I),I=1,N_LYR),
      &       CMINERN, CNITRIFY, CNOX, CIMMOBN, TOTAML, CNETMINRN,
-     &       CNUPTAKE, CLeach
+     &       CNUPTAKE, CLeach, CNTILEDR
   310     FORMAT(1X,I4,1X,I3.3,3(1X,I5),1X,1X,F6.1,2F7.1,
-     &       20(F8.2), 10F8.2,F7.1)
+     &       20(F8.2), 10F8.2,2(F7.1)) !HJ modified
           END IF   ! VSH
           
 !     VSH
