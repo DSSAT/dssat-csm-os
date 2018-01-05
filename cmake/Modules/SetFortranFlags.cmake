@@ -202,4 +202,3 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
                          "-vec-report0"  # Intel
                          "-Mvect"        # Portland Group
                 )
-
