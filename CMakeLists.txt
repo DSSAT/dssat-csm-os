@@ -765,21 +765,9 @@ foreach(source IN LISTS source_list)
     source_group("${source_path_msvc}" FILES "${source}")
 endforeach()
 
-#####################################
-# Tell how to install this executable
-#####################################
-
-IF(WIN32)
-    SET(CMAKE_INSTALL_PREFIX "C:\\DSSAT47")
-ELSE()
-    SET(CMAKE_INSTALL_PREFIX ~/DSSAT47)
-ENDIF(WIN32)
-INSTALL(TARGETS ${EXECUTABLE_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
-
-# Add a distclean target to the Makefile
-ADD_CUSTOM_TARGET(distclean 
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/distclean.cmake
-)
+##################################################
+# Resume information about flags and option used #
+##################################################
 
 message( "-- Flags" )
 message( "   FFLAGS       ${CMAKE_Fortran_FLAGS}" )
