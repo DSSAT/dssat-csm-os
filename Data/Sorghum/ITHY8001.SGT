@@ -1,0 +1,17 @@
+*EXP.DATA (T): ITHY8001SG ICRISAT Alfisol N 1980 EXPT 80-1                            
+
+! File last edited on day 08/28/2003 at 11:25:21 AM
+!
+@TRNO   DATE  CWAD  GWAD
+     1 80272 10770  5230
+     2 80272 11860  6120
+     3 80272 12440  6570
+
+@TRNO   DATE  CNAD  GN%D  SNAD  GNAD
+     1 80272  89.0  1.22  25.5  63.9
+     2 80272 124.0  1.49  33.2  91.0
+     3 80272 127.0  1.42  33.8  93.2
+
+
+
+

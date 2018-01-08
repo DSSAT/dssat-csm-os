@@ -1,0 +1,147 @@
+*EXP.DETAILS: MSKB8901SQ KELLOGG BIOLOGICAL STATION LONG-TERM ECOLOGICAL RESEARCH
+
+*GENERAL
+@PEOPLE
+Peter Grace and Phil Robertson
+@ADDRESS
+Michigan State University, Hickory Corners, Michigan
+@SITE
+W.K. Kellogg Biological Station
+@NOTES
+The KBS Long-Term Ecological Research in Row-Crop Agriculture Site (LTER)
+This is an example of one of the experiments of the Kellogg Biological Station(KBS) Long-Term Ecological Research in Row-Crop Agriculture (LTER)ResearchEffort. It only includes the first nine components of treatment 1: the corn -soybean rotation under conventional tillage and high inputs. This example willbe expanded as more experimental data become available. For further informationsee the KBS LTER web site at http://lter.kbs.msu.edu.
+
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 LTER TREAT 1 HI MZ         1  1  0  1  1  0  1  0  0  1  0  1  1
+ 1 2 1 0 LTER TREAT 1 HI FA         2  1  0  0  2  0  0  0  0  2  0  2  1
+ 1 3 1 0 LTER TREAT 1 HI SB         3  1  0  0  3  0  0  0  0  0  0  3  2
+ 1 4 1 0 LTER TREAT 1 HI FA         2  1  0  0  4  0  0  0  0  4  0  4  1
+ 1 5 1 0 LTER TREAT 1 HI MZ         4  1  0  0  5  0  2  0  0  0  0  5  1
+ 1 6 1 0 LTER TREAT 1 HI FA         2  1  0  0  6  0  0  0  0  6  0  6  1
+ 1 7 1 0 LTER TREAT 1 HI SB         3  1  0  0  7  0  0  0  0  7  0  7  2
+ 1 8 1 0 LTER TREAT 1 HI FA         2  1  0  0  8  0  0  0  0  8  0  8  1
+ 1 9 1 0 LTER TREAT 1 HI MZ         5  1  0  0  9  0  3  0  0  9  0  9  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 MZ IB0089 GREAT LAKES 582
+ 2 FA IB0001 FALLOW
+ 3 SB MS0077 PIO9272 (00)
+ 4 MZ IB0090 GL 482
+ 5 MZ IB0091 GL 450
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 MSLT0001 MSKB         0     0 DR000   150     0 00000 -99    150  MSKB890006 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SB 89060  3000     0     1     1   -99  4000     0     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    10  .237    .5   5.7
+ 1    22  .237    .2   3.3
+ 1    31  .237    .2   2.3
+ 1    41  .253    .5     1
+ 1    51  .284    .5    .7
+ 1    61  .284    .5    .7
+ 1    75  .177    .2    .3
+ 1    89    .1    .2    .1
+ 1   102    .1    .2    .1
+ 1   120    .1    .2    .1
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 89124   -99   6.2   6.2     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+ 2 89267   -99   6.2   6.2     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+ 3 90149   -99    47    47     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+ 4 90291   -99   6.2   6.2     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+ 5 91123   -99   6.2   6.2     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+ 6 91284   -99   6.2   6.2     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+ 7 92139   -99    47    47     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+ 8 92301   -99    47    47     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+ 9 93127   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 89178 FE001 AP001     1   123     0     0     0     0   -99 -99
+ 2 91166 FE001 AP001     1   123     0     0     0     0   -99 -99
+ 3 93182 FE001 AP001     1    84     0     0     0     0   -99 -99
+
+*TILLAGE AND ROTATIONS
+@T TDATE TIMPL  TDEP TNAME
+ 1 89111 TI005    22 -99
+ 1 89121 TI002    15 -99
+ 2 90145 TI003    25 -99
+ 2 90145 TI005    22 -99
+ 4 91115 TI005    22 -99
+ 4 91122 TI003    15 -99
+ 6 92136 TI005    22 -99
+ 7 92139 TI003    15 -99
+ 8 93118 TI005    22 -99
+ 9 93127 TI003    15 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 89266 GS000   -99   -99   100     0 
+ 2 90148 GS000   -99   -99   100     0 
+ 3 90290 GS000   -99   -99   100     0 
+ 4 91122 GS000   -99   -99   100     0 
+ 5 91283 GS000   -99   -99   100     0 
+ 6 92138 GS000   -99   -99   100     0 
+ 7 92300 GS000   -99   -99   100     0 
+ 8 93126 GS000   -99   -99   100     0 
+ 9 93313 GS000   -99   -99   100     0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              9     1     S 89060  2150 Standard
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     N     R     N     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              Y     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          89117 89131    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 90124   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              9     1     S 89060  2150 Nitrogen Fixation
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 2 MA              R     N     R     N     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 2 OU              Y     Y     A     1     Y     Y     Y     Y     Y     N     Y     N     Y      
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          89117 89131    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 2 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 90124   100     0
+
+
+

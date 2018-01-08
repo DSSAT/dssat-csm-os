@@ -1,0 +1,101 @@
+*EXP.DETAILS: GACM0401CO 2004 SIRP IRRIGATED VS RAINFED COTTON EXPERIMENT
+
+*GENERAL
+@PEOPLE
+Larry C. Guerra, Axel Garcia y Garcia, Gerrit Hoogenboom
+@ADDRESS
+The University of Georgia, Bio & Ag Engineering
+@SITE
+VRI Pivot, Stripling Irrigation Research Park, Camilla
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 Irrigated DP 555 BG/RR     1  1  0  1  1  0  1  0  0  0  0  0  1
+ 2 1 1 0 Rainfed DP 555 BG/RR       1  1  0  1  1  0  1  0  0  0  0  0  2
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 CO IB0004 DP 555 BG/RR
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 GACM0101 GACM0401   -99   -99   -99   -99   -99     0 LS     245  GAPL850009 VRIPivot
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    WH 04121   300   -99     1     1   -99  4000     3   -99   100    15 VRIPivot
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    22  .129    .2   1.6
+ 1    75  .155    .2   1.6
+ 1   100  .179    .2   1.6
+ 1   165  .224    .2   1.6
+ 1   245  .221    .2   1.6
+ 1   300  .226    .2   1.6
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 04127 04133    14    11     S     R    90   -99     4   -99   -99   -99   -99   -99                        VRI Pivot
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   .85    35    50   100 GS000 IR001    10 -99
+@I IDATE  IROP IRVAL
+ 1 03001   -99   -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 04127 FE001 AP004    10    20   -99   -99   -99   -99   -99 VRI Pivot
+ 1 04148 FE001 AP004    10    20   -99   -99   -99   -99   -99 VRI Pivot
+ 1 04179 FE001 AP004    10    50   -99   -99   -99   -99   -99 VRI Pivot
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 04121  2150 VRI Pivot_Irrigated
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     A     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          03001 03001    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             40    60   100 GS000 IR004    10   .95
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 03001   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              1     1     S 04121  2150 VRI Pivot_Rainfed
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 2 MA              R     N     R     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 2 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          03001 03001    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 2 IR             35    60   100 GS000 IR004    10   .95
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 03001   100     0
+
+
+

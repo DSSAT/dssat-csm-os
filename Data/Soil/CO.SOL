@@ -1,0 +1,35 @@
+*SOILS
+
+*CORD860001  SPAIN       SALO    195 DEFAULT - DEEP SANDY LOAM
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Generic     Generic          -99      -99 Generic
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.21   6.0  0.60  60.0  1.00  1.00 IB001 IB001 IB001
+! DRY ALBEDO IS 0.26,  WET ALBEDO IS 0.16, SOIL IS WHITE
+! F. SAU, CALIBRATED DUL, LL, AGAINST OBSERVED SOIL WATER DATA, CUT LAST LAYER
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC
+     5   -99  .070  .270  .390 1.000   -99  1.61  0.70    10    30     0  .070   7.1   -99   -99
+    15   -99  .070  .270  .390 1.000   -99  1.61  0.70    10    30     0  .070   7.1   -99   -99
+    45   -99  .070  .250  .350 0.600   -99  1.61  0.58    10    30     0  .058   7.1   -99   -99
+    75   -99  .070  .220  .320 0.300   -99  1.61  0.58    10    30     0  .058   7.1   -99   -99
+   105   -99  .070  .200  .300 0.220   -99  1.61  0.43    10    30     0  .043   7.1   -99   -99
+   135   -99  .070  .195  .285 0.220   -99  1.62  0.26    10    30     0  .026   7.1   -99   -99
+   165   -99  .070  .180  .280 0.220   -99  1.62  0.12    10    30     0  .012   7.1   -99   -99
+   195   -99  .070  .220  .310 0.220   -99  1.62  0.04    10    30     0  .004   7.1   -99   -99
+
+*CORD870001  SPAIN       SALO    195 DEFAULT - DEEP SANDY LOAM
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Generic     Generic          -99      -99 Generic
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.21   6.0  0.50  60.0  1.00  1.00 IB001 IB001 IB001
+! DRY ALBEDO IS 0.26,  WET ALBEDO IS 0.16, SOIL IS WHITE
+! F. SAU, CALIBRATED DUL, LL, AGAINST OBSERVED SOIL WATER DATA, CUT LAST LAYER
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC
+     5   -99  .090  .365  .470 1.000   -99  1.61  0.70    10    30     0  .070   7.1   -99   -99
+    15   -99  .090  .365  .470 1.000   -99  1.61  0.70    10    30     0  .070   7.1   -99   -99
+    45   -99  .115  .300  .410 0.600   -99  1.61  0.58    10    30     0  .058   7.1   -99   -99
+    75   -99  .115  .290  .400 0.300   -99  1.61  0.58    10    30     0  .058   7.1   -99   -99
+   105   -99  .115  .270  .360 0.220   -99  1.61  0.43    10    30     0  .043   7.1   -99   -99
+   135   -99  .115  .250  .350 0.220   -99  1.62  0.26    10    30     0  .026   7.1   -99   -99
+   165   -99  .115  .235  .340 0.220   -99  1.62  0.12    10    30     0  .012   7.1   -99   -99
+   195   -99  .115  .235  .350 0.220   -99  1.62  0.04    10    30     0  .004   7.1   -99   -99

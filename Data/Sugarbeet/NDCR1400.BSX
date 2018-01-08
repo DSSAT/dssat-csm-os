@@ -1,0 +1,92 @@
+*EXP.DETAILS: NDCR1400BS NDCR 2014 SB
+
+*GENERAL
+@PEOPLE
+Anar
+@ADDRESS
+NDSU
+@SITE
+CREC
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    186   -99    15   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 NDCR 2014 SB               1  1  0  0  1  0  0  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 BS CR0001 SVRR1142E
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 crec0001 CRTN       -99   -99   -99   -99   -99 00000 -99    -99  CREC002014 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 14147   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    BS 14147   200   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .145    .1    .6
+ 1    10  .145    .1    .6
+ 1    20  .141    .1    .6
+ 1    38  .165    .1    .6
+ 1    58  .304    .1    .6
+ 1    79  .304    .1    .6
+ 1    95  .305    .1    .6
+ 1   112  .305    .1    .6
+ 1   129  .292    .1    .6
+ 1   147  .292    .1    .6
+ 1   173  .318    .1    .6
+ 1   201  .335    .1    .6
+ 1   229  .335    .1    .6
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 14147   -99     8   7.4     S     R    50   -99     3   -99   -99   -99   -99   -99                        -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 14147   -99 AP003   -99   100    20   -99   -99    10     0 -99
+
+*ENVIRONMENT MODIFICATIONS
+@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
+ 1 14147 A   0 A   0 A   0 A   0 A 0.0 A   0 A   0 A   0 
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 14290 GS000     H     A   100   100 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 14147  2150 DEFAULT SIMULATION CONTR
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y      
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          14001 14001    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 01001   100     0
+
+
+

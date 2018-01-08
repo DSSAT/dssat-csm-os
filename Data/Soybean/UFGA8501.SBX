@@ -1,0 +1,114 @@
+*EXP.DETAILS: UFGA8501SB COBB, IRR & NON-IRR, RKN (IRR & NON-IRR)
+
+*GENERAL
+@PEOPLE
+K.J. Boote, M.A. STANTON (M.S. THESIS)
+@ADDRESS
+Dept. of Agronomy, University of Florida, Gainesville, Florida, USA
+@SITE
+University of Florida
+!Treatments 3 and 4 data are all present, BUT we
+!still need to turn on pest, create damage, and create file T for RKN.
+!Lots of other data, light interception, leaf and canopy Ps, root mass
+!Unpublished data of Marsha Stanton
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 85 IRRIGATED               1  1  0  1  1  1  0  1  0  0  0  0  1
+ 2 1 1 0 85 NON-IRRIGATED           1  1  0  1  2  2  0  1  0  0  0  0  1
+!3 1 1 0 RKN Nematodes, Irrigated   1  1  0  1  3  1  0  1  0  0  0  0  1
+!4 1 1 0 RKN Nematodes, Non-Irrig   1  1  0  1  4  2  0  1  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 SB IB0002 COBB
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 UFGA0001 UFGA8501   -99     0 IB000     0     0 00000 -99    180  IBSB910015 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SB 85171   100   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .086    .6   1.5
+ 1    15  .086    .6   1.5
+ 1    30  .086    .6   1.5
+ 1    45  .086    .6   1.5
+ 1    60  .086    .6   1.5
+ 1    90  .076    .6    .6
+ 1   120  .076    .6    .5
+ 1   150   .13    .6    .5
+ 1   180  .258    .6    .5
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 85171   -99    22    22     S     R    76     0     3   -99   -99   -99   -99   -99                        -99
+ 2 85171   -99  22.2  22.2     S     R    76     0     3   -99   -99   -99   -99   -99                        -99
+ 3 85171   -99    22    22     S     R    76     0     3   -99   -99   -99   -99   -99                        -99
+ 4 85171   -99  21.8  21.8     S     R    76     0     3   -99   -99   -99   -99   -99                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 85172 IR001    13
+ 1 85175 IR001    10
+ 1 85191 IR001    13
+ 1 85199 IR001    10
+ 1 85205 IR001    10
+ 1 85209 IR001    15
+ 1 85253 IR001    15
+ 1 85262 IR001     8
+ 1 85263 IR001     8
+ 1 85267 IR001    15
+ 1 85270 IR001    15
+ 1 85273 IR001    13
+ 1 85277 IR001    19
+ 1 85287 IR001    15
+ 1 85292 IR001    19
+ 1 85298 IR001    19
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2   .75   -99   -99   -99   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 2 85172 IR001    13
+ 2 85175 IR001    10
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 85171   -99   -99   -99   -99   -99   -99   -99   -99   -99 -99
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 85171   -99  1000    .8   -99   -99   -99    15   -99 -99
+
+*TILLAGE AND ROTATIONS
+@T TDATE TIMPL  TDEP TNAME
+ 1 85171   -99   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 85171  2150 BRAGG, IRRIGATED & NON-I
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          85155 85200    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    70   100 IB001 IB001    10   .75
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 85365   100     0
+

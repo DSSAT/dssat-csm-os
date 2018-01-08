@@ -1,0 +1,23 @@
+*Soils: Canada North Bay soils
+
+*NOTH030001  Verner  CL          100 North Bay
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Verner      Canada           -99      -99 GL   HG    O
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99   .13    10    .4    74     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    25     A  .153  .378  .521     1  0.68   1.3   2.1    14    67     0   -99   6.9   -99   26   -99
+    40     B  .119  .322  .402  .522  0.68   1.5    .3    17    77     0   -99   7.0   -99   18   -99
+   100    BC  .111   .31  .321  .247  0.68   1.5    .2    16    76     0   -99   7.1   -99   16   -99
+
+*NOTH030003  Verner  CL          100 North Bay
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Verner      Canada           -99      -99 GL   HG    O
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99   .13    10    .4    74     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30     A  .153  .378  .521     1  0.68   1.3   2.1    14    67     0   -99   6.9   -99   26   -99
+    40     B  .119  .322  .402  .522  0.68   1.5   0.3    17    77     0   -99   7.0   -99   18   -99
+   100    BC  .111   .31  .321  .247  0.68   1.5    .2    16    76     0   -99   7.1   -99   16   -99
+
+

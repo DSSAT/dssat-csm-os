@@ -1,0 +1,80 @@
+*SOILS: University of Agriculture, Faisalabad, Pakistan
+
+*UAFD040001  SSOP        SIL     152 SANDY CLAY LOAM (Experimental Site 1)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ FAISALABAD  PAKISTAN         31.4   73.11 Fine loamy, silik.,therm.
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN   .13     9   .23    61     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15    AP  .146  .294  .422     1   .68   1.5   .89    26    56     0   .07   7.8   -99   9.6   -99
+    30    B2  .152  .293  .414  .743   .15  1.51   .69    28    53     0   .03   7.9   -99  10.4   -99
+    45    B2  .152  .293  .414  .543   .15  1.51   .69    28    53     0   .03   7.9   -99  10.4   -99
+    60    B2  .152  .293  .414  .443   .15  1.51   .69    28    53     0   .03   7.9   -99  10.4   -99
+    92    B2  .152  .293  .414  .343   .15  1.51   .69    28    53     0   .03   7.9   -99  10.4   -99
+   127  B3Ca  .158  .293  .409  .212   .23  1.51   .46    30    50     0   .04   8.8   -99  14.4   -99
+   152     C  .165  .313  .423  .161   .15  1.53   .42    32    54     0   .04   8.2   -99  15.2   -99
+
+*UAFD040002  SSOP        SIL     152 SANDY CLAY LOAM (Experimental site 2)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ FAISALABAD  PAKISTAN         31.4   73.11 Fine loamy, silik.,therm.
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN   .13     9   .23    61     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15    AP  .146  .294  .422     1   .68   1.5   .89    26    56     0   .07   7.8   -99   9.6   -99
+    92    B2  .152  .293  .414  .343   .15  1.51   .69    28    53     0   .03   7.9   -99  10.4   -99
+   127  B3Ca  .158  .293  .409  .112   .23  1.51   .46    30    50     0   .04   8.8   -99  14.4   -99
+   152     C  .165  .313  .423  .061   .15  1.53   .42    32    54     0   .04   8.2   -99  15.2   -99
+
+*UASG040001  SSP         SIL     190 BHALWAL
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ GUJRANWALA  PAKISTAN        32.03    72.4 Fine-silty,mixed,hyperthermic typic calciargids
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN   .13     9   .25    71     1   .97 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    12    Ap   .12  .296  .381     1   .68  1.57    .7    15    59     0   .06   8.2   -99  15.3   -99
+    23   BAt  .109   .28  .383     1   .68  1.57   .47    14    60     0    .4   8.2   -99  12.1   -99
+    68   Bt1  .124  .288  .422  .403   .68  1.47   .12    19    59     0   .01   8.3   -99   9.7   -99
+    92   Bt2  .128  .294  .401  .202   .68  1.53   .08    20    60     0   .01   8.4   -99   -99   -99
+   110   Btk  .118  .283  .505  .133   .68  1.24   .06    18    61     0     0   8.4   -99   -99   -99
+   146  CBk1  .108  .276  .512  .077   .68  1.22   .06    16    63     0     0   8.4   -99   -99   -99
+   176  CBk2  .107  .278  .505   .04   .68  1.24   .02    16    65     0     0   8.5   -99   -99   -99
+   190   Ck1  .107  .274  .509  .026   .68  1.23   .02    16    63     0     0   8.5   -99   -99   -99
+
+*UASL040001  SSP         SIL     130 PUCCA (SILTY LOAM)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ MULTAN      PAKISTAN        31.58    72.2 Coarse silty, mixed, hyperthermic Calcic Aquisalid
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN   .13    11   .55    61     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     4    Ap  .154  .331  .466     1   .22  1.34   .47    23    60     0   .04   9.7   -99   -99   -99
+    15  Batn   .12  .286  .467     1   .22  1.34   .33    17    58     0   .02   9.6   -99   -99   -99
+    59   Btn  .112  .273  .418  .477   .22  1.48   .22    16    57     0   .02   9.4   -99   -99   -99
+    76   Bnk  .116  .276  .414  .259   .26  1.49   .17    17    57     0   .01   9.3   -99   -99   -99
+   103  BCnk  .105   .28  .512  .167   .26  1.22   .13    15    66     0   .01   9.4   -99   -99   -99
+   130   Cnk  .093  .269  .516  .097   .68  1.21   .06    13    68     0     0   9.4   -99   -99   -99
+
+*UAFD040002  SSP         SIL     190 Lyallpur (Silt loam)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ SAHIWAL     PAKISTAN         30.4   73.06 Coarse-silty,Mixed, hyperthermic Typic Calciargids
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN   .13    11   .55    61     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    11    Ap   .09  .253  .354     1   .68  1.65   .53    10    56   -99   .04   8.3   -99   9.7   -99
+    25   BAt  .096  .247  .357     1   .68  1.65    .2    13    53   -99   .02   8.4   -99   8.9   -99
+    65   Bt1  .115  .266  .472  .407   .68  1.33   .13    17    53   -99   .02   8.2   -99   -99   -99
+    90   Bt2  .109  .261  .462  .212   .68  1.36   .12    16    54   -99   .01   8.3   -99   -99   -99
+   115  BtK1  .089  .247   .44  .129   .68  1.42   .12    12    58   -99   .01   8.4   -99   -99   -99
+   128  BtK2  .069  .225   .44  .088   .68  1.42   .12     8    58   -99   .01   8.4   -99  15.3   -99
+   167   BCK  .053  .207  .433  .052   .68  1.44   .06     5    59   -99     0   8.5   -99   9.7   -99
+   190    Ck  .067   .22  .434  .028   .68  1.44   .03     8    58   -99     0   8.8   -99   -99   -99
+
+*UAFDLY0001  SSOP        SIL      190  SANDY CLAY LOAM (Experimental site 3)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Faisalabad  Pakistan        31.42   73.07 Coarse-silty,mixed,hyperthermic,Typic Calciargids
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN   .13     9   .23    61     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15    AP  .146  .294  .422     1   .68   1.5   .89    26    56     0   .07   7.8   -99   9.6   -99
+    92    B2  .152  .293  .414  .343   .15  1.51   .69    28    53     0   .03   7.9   -99  10.4   -99
+   127  B3Ca  .158  .293  .409  .112   .23  1.51   .46    30    50     0   .04   8.8   -99  14.4   -99
+   152     C  .165  .313  .423  .061   .15  1.53   .42    32    54     0   .04   8.2   -99  15.2   -99
