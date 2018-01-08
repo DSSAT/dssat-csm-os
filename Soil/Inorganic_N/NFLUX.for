@@ -20,6 +20,8 @@
 !                SKGN      NORIG
 !                OUTN      NDOWN_SAT, NDOWN_UNSAT, NUP
 !  11/07/2003 CHP Added tile drain N loss.
+!  11/21/2017 HJ  Modified tile drain N loss.
+
 !  Called: NTRANS_inorg
 !  Calls : --
 !***********************************************************************
@@ -27,7 +29,7 @@
       SUBROUTINE NFLUX (
      &  ADCOEF, BD, DLAYR, DRN, DUL, UPFLOW, NLAYR,       !Input
      &  NORIG, NSOURCE, SW, TDFC, TDLNO,                  !Input
-     &  DLTN, CLeach, TLeachD)                            !Output
+     &  DLTN, CLeach, TLeachD, CNTILEDR, NTILEDR)         !Output !HJ
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
@@ -48,7 +50,7 @@
 
 !CHP - Tile drain variables
       INTEGER TDLNO
-      REAL NTILEDR, TDFC
+      REAL NTILEDR, CNTILEDR, TDFC           !HJ added CNTILEDR
 
 !     ------------------------------------------------------------------
       DO L = 1, NLAYR
@@ -56,7 +58,7 @@
         NUP(L) = 0. 
         NDOWN_SAT(L) = 0.
         NDOWN_UNSAT(L) = 0.
-        NTILEDR = 0.
+!       NTILEDR = 0.  !HJ modified and initialized in SOILNI.for (L.820)
 
 !       FRAC_SOLN is the fraction of NO3 in a layer that is in solution
 !       and can move with the water flux. ADCOEF is the anion adsorption
@@ -146,7 +148,7 @@
 !     Accumulate the N lost by leaching below profile depth.
       CLeach  = CLeach  + NDOWN(NLAYR)    !Season cumulative
       TLeachD = TLeachD + NDOWN(NLAYR)    !Today's leached N
-
+      CNTILEDR = CNTILEDR + NTILEDR !HJ N loss to TD, season cumulative
 !     ------------------------------------------------------------------
 !     DLTxxx section.
 !     ------------------------------------------------------------------
@@ -208,4 +210,5 @@
 ! TDFC           Flow through tile drain (cm / d)
 ! TDLNO          Layer number containing tile drain
 ! CLeach         Total N leached from soil (kg [N] / ha)
+! CNTILEDR       Total N loss to tile drain (kg [N] / ha)
 !==========================================================================

@@ -6,10 +6,10 @@
 !  REVISION   HISTORY
 !  07/11/2006 CHP Written
 !***********************************************************************
-
+!     HJ added CNTILEDR
       SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
-     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, TLITN, 
+     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, CNTILEDR, TLITN, 
      &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP,
      &    CUMFNRO, NGasLoss)
 
@@ -22,14 +22,15 @@
 
       TYPE (ControlType), INTENT(IN) :: CONTROL
       REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
-     &    CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, 
-     &    TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP, NGasLoss
+     &    CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach,
+     &    CNTILEDR, TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N,	 
+     &    WTNUP, NGasLoss
       REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
 
       CHARACTER(LEN=14), PARAMETER :: SNSUM = 'SolNBalSum.OUT'
       INTEGER COUNT, ERRNUM, LUNSNS, Num
       LOGICAL FEXIST, FIRST
-      REAL State(6), Add(4), Sub(4), Bal(2), Miner(2)
+      REAL State(6), Add(4), Sub(5), Bal(2), Miner(2) !HJ changed Sub(4)
 
       DATA FIRST /.TRUE./
       DATA COUNT /0/
@@ -53,15 +54,17 @@
         WRITE(LUNSNS,5000) 
  5000   FORMAT(/,"!",T23,"|------------------- N State Variables ----",
      &    "---------------| |------------ N Additions ------------| |",
-     &    "---------- N Subtractions -----------| |-Mineralization--|",
-     &  /,"!",T85,"Harvest   Applied",T147,"N gas     Flood",
+     &    "--------------- N Subtractions ----------------|",
+     &    " |-Mineralization--|",
+     &  /,"!",T85,"Harvest   Applied",T137,"Tile-     N gas     Flood",
      &    "    Miner-    Immob-  Seasonal",
      &  /,"!",T25,"Surface      SOM1      SOM2      SOM3    Litter    ",
      &    " Inorg   Residue   Residue  Fertiliz   Senesed   Leached   ",
-     &    " Uptake    Losses    Losses    alized    ilized   Balance",
+     &    "drained    Uptake    Losses    Losses    alized    ilized",
+     &    "   Balance",
      &  /,"@Run FILEX         TN      SN0D     S1NTD",
      &     "     S2NTD     S3NTD      LNTD      NIAD      HRNH",
-     &     "     RESNC      NICM     SNNTC      NLCM      NUCM",
+     &   "     RESNC      NICM     SNNTC      NLCM      TDFC      NUCM",
      &     "     NGasC      RNRO      NMNC      NIMC   SEASBAL")
       ENDIF
 
@@ -87,9 +90,10 @@
       ENDIF
       IF (PRESENT(AMTFER))   Add(3) = AMTFER
       IF (PRESENT(CLeach))   Sub(1) = CLeach
-      IF (PRESENT(WTNUP))    Sub(2) = WTNUP
-      IF (PRESENT(NGasLoss)) Sub(3) = NGasLoss
-      IF (PRESENT(CUMFNRO))  Sub(4) = CUMFNRO
+	  IF (PRESENT(CNTILEDR)) Sub(2) = CNTILEDR     !HJ added
+      IF (PRESENT(WTNUP))    Sub(3) = WTNUP
+      IF (PRESENT(NGasLoss)) Sub(4) = NGasLoss
+      IF (PRESENT(CUMFNRO))  Sub(5) = CUMFNRO
 
 !     Mineralization/immobilization
       IF (PRESENT(CUMMINER)) Miner(1) = CUMMINER
@@ -127,7 +131,7 @@
           Num = CONTROL % TRTNUM
         ENDIF
 
-        WRITE(LUNSNS,'(I4,1X,A12,I4,17F10.2)') 
+        WRITE(LUNSNS,'(I4,1X,A12,I4,18F10.2)')   !HJ changed 17F10.2
      &    CONTROL%RUN, CONTROL%FILEX, Num, 
      &    State, Add, Sub, Miner, Bal(1)+Bal(2)
         COUNT = 0
@@ -151,17 +155,19 @@
 !=======================================================================
       MODULE Interface_SoilNBalSum
 !     Interface needed for optional arguments with SoilNBalSum
+!     HJ added CNTILEDR following
       INTERFACE
         SUBROUTINE SoilNBalSum (CONTROL, 
      &    AMTFER, Balance, CUMIMMOB, CUMMINER, CUMRESN, 
-     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, TLITN, 
+     &    CumSenN, HARVRESN, LITE, SOM1E, CLeach, CNTILEDR, TLITN, 
      &    N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP,
      &    CUMFNRO, NGasLoss)
           USE ModuleDefs
           TYPE (ControlType), INTENT(IN) :: CONTROL
           REAL, INTENT(IN), OPTIONAL :: AMTFER, Balance, CUMIMMOB, 
      &      CUMFNRO, CUMMINER, CUMRESN, CumSenN, HARVRESN, CLeach, 
-     &      TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N, WTNUP, NGasLoss
+     &      CNTILEDR, TLITN, N_inorganic, TSOM1N, TSOM2N, TSOM3N,
+     &      WTNUP, NGasLoss
           REAL, DIMENSION(0:NL,3), INTENT(IN), OPTIONAL :: LITE, SOM1E
         END SUBROUTINE
       END INTERFACE
