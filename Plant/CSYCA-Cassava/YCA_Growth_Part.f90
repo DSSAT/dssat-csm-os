@@ -36,7 +36,6 @@
         REAL, PARAMETER :: G_ = -1.045472      ! this is 'g' from  (e * (D_NewNodeDAE)**f / (NDDAE * ((D_NewNodeDAE**g)+1)**2))
         REAL D_NewNodeDAE
         
-        REAL :: StemMinimunNForGrowth = 0.08 ! %  from flow document section 7 Potential nodal unit growth
 
         !-----------------------------------------------------------------------
         !           Partitioning of C to above ground and roots (minimum) 
