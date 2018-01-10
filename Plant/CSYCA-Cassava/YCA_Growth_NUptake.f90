@@ -212,41 +212,34 @@
             RNUSE = 0.0
             SRNUSE = 0.0
             ShootNUseByNode = 0.0                                                                              !LPM23MAY2015 To consider different N use by node according with age
-            NULEFT = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD                                                                   !EQN 206
-            node%NDEMSMN = 0.0      !LPM14SEP2017 Initialize the variable with 0
+            NUptakeRemaining = SEEDNUSE+SEEDNUSE2+RSNUSED+NUPD                                                                   !EQN 206
+            node%NDemandForGrowth = 0.0      !LPM14SEP2017 Initialize the variable with 0
     
             ! For supplying minimum
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
-                    !NDEMSMN(BR,LF) = ((StemGrowth+StickGrowth)/(StemGrowthP+StickGrowth))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF) !LMP 02SEP2016 To consider potential growth
-                    node(BR,LF)%NDEMSMN = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM
+                    node(BR,LF)%NDemandForGrowth = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM
                 ENDDO
             ENDDO
-            !NDEMMN = LeafGrowth*LNCM+RootGrowth*RNCM+(StemGrowth+StickGrowth)*SNCM+GROSR*(SRNPCS/100.0)*0.5                                 !EQN 207 !LPM 25MAY2015 To consider different N concentration by node according with node age 
-            !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-            !NDEMMN = LeafGrowth*LNCM+RootGrowth*RNCM+SUM(NDEMSMN)  !LPM 24APR2016 using LeafGrowthP instead of LeafGrowth
-            !LNUSE(1) = (LeafGrowth*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
-            NDEMMN = LeafGrowthP*LNCM+RootGrowth*RNCM+SUM(node%NDEMSMN) 
-            LNUSE(1) = (LeafGrowthP*LNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 208
-            RNUSE(1) = (RootGrowth*RNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                           !EQN 209
-            !SNUSE(1) = ((StemGrowth+StickGrowth)*SNCM)*AMIN1(1.0,NULEFT/NDEMMN)                                                   !EQN 210
+
+            NDemandForGrowthMinimun = LeafGrowthP*LNCM+RootGrowth*RNCM+SUM(node%NDemandForGrowth) 
+            LNUSE(1) = (LeafGrowthP*LNCM)*AMIN1(1.0,NUptakeRemaining/NDemandForGrowthMinimun)                                                           !EQN 208
+            RNUSE(1) = (RootGrowth*RNCM)*AMIN1(1.0,NUptakeRemaining/NDemandForGrowthMinimun)                                                           !EQN 209
             
             DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)
                     IF (StemGrowthP > 0.0) THEN
-                        !SNUSEN(1,BR,LF) = ((StemGrowth+StickGrowth)/(StemGrowthP+StickGrowth))*CohortWeightGrowth(BR,LF)*SNCM(BR,LF)* & !LPM 02SEP2016 To use potential growth 
-                        ShootNUseByNode(1,BR,LF) = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM * AMIN1(1.0,NULEFT/NDEMMN)
+                        ShootNUseByNode(1,BR,LF) = node(BR,LF)%CohortWeightGrowth * node(BR,LF)%SNCM * AMIN1(1.0,NUptakeRemaining/NDemandForGrowthMinimun)
                         SNUSE(1) = SNUSE(1)+ ShootNUseByNode(1,BR,LF)
                     ENDIF
                 ENDDO
             ENDDO
-            !SRNUSE(1) = (GROSR*(SRNPCS/100.0)*0.5)*AMIN1(1.0,NULEFT/NDEMMN)                                            !EQN 211 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-    
+ 
             ! Reduce stem,Plant. stick,root growth if N < supply minimum
-            IF (NDEMMN > NULEFT) THEN
-                StemGrowthADJ = StemGrowthP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 213
-                StickGrowthADJ = StickGrowthP*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 214
-                RootGrowthADJ = RootGrowth*AMIN1(1.0,NULEFT/NDEMMN)                                                              !EQN 215
+            IF (NDemandForGrowthMinimun > NUptakeRemaining) THEN
+                StemGrowthADJ = StemGrowthP*AMIN1(1.0,NUptakeRemaining/NDemandForGrowthMinimun)                                                              !EQN 213
+                StickGrowthADJ = StickGrowthP*AMIN1(1.0,NUptakeRemaining/NDemandForGrowthMinimun)                                                              !EQN 214
+                RootGrowthADJ = RootGrowth*AMIN1(1.0,NUptakeRemaining/NDemandForGrowthMinimun)                                                              !EQN 215
                 RTRESPADJ = RootGrowthADJ*RRESP/(1.0-RRESP)                                                                 !EQN 216   
             ELSE
                 !StemGrowthADJ = StemGrowth   !LPM 02SEP2016 Use potential growth
@@ -258,35 +251,32 @@
             ENDIF
             
                                     
-            !NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)-SRNUSE(1)                                                     !EQN 212 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
-            NULEFT = NULEFT - LNUSE(1)-RNUSE(1)-SNUSE(1)
+            NUptakeRemaining = NUptakeRemaining - LNUSE(1)-RNUSE(1)-SNUSE(1)
             ! 5.For leaf growth to standard N (N to leaves first)
-            !LNUSE(2) = AMIN1(NULEFT,(LeafGrowth*LNCX)-LNUSE(1))                                                             !EQN 217 !LPM 02SEP2016 To use potential growth instead of CHO restricted growth
-            LNUSE(2) = AMIN1(NULEFT,(LeafGrowthP*LNCX)-LNUSE(1))                                                             !EQN 217
+            LNUSE(2) = AMIN1(NUptakeRemaining,(LeafGrowthP*LNCX)-LNUSE(1))                                                             !EQN 217
             !Could use the NLLG parameter but may need to adjust 
             !the photosynthesis-leaf N response parameters, or
             !the standard PARUE  
-            !LNUSE(2) = AMIN1(NULEFT,(LeafGrowth*LNCX*NLLG)-LNUSE(1))
-            NULEFT = NULEFT - LNUSE(2)                                                                                 !EQN 218
+            NUptakeRemaining = NUptakeRemaining - LNUSE(2)                                                                                 !EQN 218
     
             ! 6.For distribution of remaining N to st,rt,storage root
             !NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM-SRNUSE(1)                                                     !EQN 219 !LPM 05JUN2105 SRNUSE(1) for basic growth of storage roots will not be used
             NDEM2 = SNDEM-SNUSE(1)+RNDEM-RNUSE(1)+SRNDEM                                                                !EQN 219
             IF (NDEM2 > 0.0)THEN
-                !SNUSE(2) = (SNDEM-SNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 220
+
                 DO BR = 0, BRSTAGE                                                                                        !LPM23MAY2015 To consider different N concentration by node according with age                                                                       
                     DO LF = 1, LNUMSIMSTG(BR)
                         IF (StemGrowthP > 0.0) THEN
-                            ShootNUseByNode(2,BR,LF) = (node(BR,LF)%SNDEMN - ShootNUseByNode(1,BR,LF))* AMIN1(1.0,NULEFT/NDEM2)
+                            ShootNUseByNode(2,BR,LF) = (node(BR,LF)%SNDEMN - ShootNUseByNode(1,BR,LF))* AMIN1(1.0,NUptakeRemaining/NDEM2)
                             SNUSE(2) = SNUSE(2)+ ShootNUseByNode(2,BR,LF)
                         ENDIF
                     ENDDO
                 ENDDO
-                RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NULEFT/NDEM2)                                                  !EQN 221
-                SRNUSE(2) = (SRNDEM)*AMIN1(1.0,NULEFT/NDEM2)                                                           !EQN 222
-                NULEFT = NULEFT - SNUSE(2) - RNUSE(2) - SRNUSE(2)                                                      !EQN 223
-                IF (NULEFT > 0.0) THEN
-                    LNUSE(3) = NULEFT                                                                                  !EQN 224
+                RNUSE(2) = (RNDEM-RNUSE(1)) * AMIN1(1.0,NUptakeRemaining/NDEM2)                                                  !EQN 221
+                SRNUSE(2) = (SRNDEM)*AMIN1(1.0,NUptakeRemaining/NDEM2)                                                           !EQN 222
+                NUptakeRemaining = NUptakeRemaining - SNUSE(2) - RNUSE(2) - SRNUSE(2)                                                      !EQN 223
+                IF (NUptakeRemaining > 0.0) THEN
+                    LNUSE(3) = NUptakeRemaining                                                                                  !EQN 224
                 ELSE
                     LNUSE(3) = 0.0
                 ENDIF
@@ -328,7 +318,7 @@
             ENDDO
 
             ! Check N and reduce leaf growth if not enough N  
-            IF (ABS(NULEFT) <= 1.0E-5) THEN   ! Inadequate N
+            IF (ABS(NUptakeRemaining) <= 1.0E-5) THEN   ! Inadequate N
                 IF (NLLG > 0.0 .AND. LNCX > 0.0 .AND. LeafGrowthP >= 0.0) THEN 
                     IF ((LNUSE(1)+LNUSE(2))/LeafGrowthP < (LNCX*NLLG)) THEN !LPM 02SEP2016 Use LeafGrowthP instead of LeafGrowth
                         LeafGrowthADJ = (LNUSE(1)+LNUSE(2))/(LNCX*NLLG)                                                     !EQN 233a

@@ -454,7 +454,7 @@ Module YCA_First_Trans_m
     !INTEGER :: MSTG                    ! Maturity stage(eg.black layer) #          ! (From SeasInit) !LPM 05JAN2015 MSTG is not used  
     REAL    :: NCRG                    ! N factor,root growth           ppm        ! (From SeasInit)  
     REAL    :: NDEM2                   ! N demand for growth>minimum    g/p        ! (From Growth)    
-    REAL    :: NDEMMN                  ! N demand for growth at minimum g/p        ! (From Growth)    
+    REAL    :: NDemandForGrowthMinimun ! N demand for growth at minimum g/p        ! (From Growth)    
     REAL    :: NFG                     ! N factor,growth 0-1            #          ! (From SeasInit)  
     REAL    :: NFGCAV                  ! N factor,growth,average,cycle  #          ! (From Integrate) 
     REAL    :: NFGCC                   ! N factor,growh,cycle sum       #          ! (From SeasInit)  
@@ -490,7 +490,7 @@ Module YCA_First_Trans_m
     INTEGER :: NSDAYS                  ! N stress days                  #          ! (From SeasInit)  
     REAL    :: NTUPF                   ! N top-up fraction              /d         ! (From SeasInit)  
     REAL    :: NUF                     ! Plant N supply/demand,max=1.0  #          ! (From SeasInit)  
-    REAL    :: NULEFT                  ! N uptake remaining for use     g          ! (From Growth)    
+    REAL    :: NUptakeRemaining        ! N uptake remaining for use     g          ! (From Growth)    
     REAL    :: NUPAC                   ! N uptake,cumulative            kg/ha      ! (From SeasInit)  
     REAL    :: NUPACM                  ! N uptake,cumulative,measured   kg/ha      ! (From Output)    
     REAL    :: NUPAD                   ! N uptake rate (/d)             kg/ha      ! (From SeasInit)  
