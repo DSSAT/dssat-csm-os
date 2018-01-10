@@ -1,0 +1,207 @@
+*EXP.DETAILS: MTIS9201TR TARO VAR EXPT, PUERTO RICO
+
+@PEOPLE
+-99
+@ADDRESS
+-99
+@SITE
+-99
+*GENERAL
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 BLANCA Cultivars           1  1  0  1  1  1  1  0  0  0  0  0  1
+ 2 1 1 0 LILA Cultivars             2  1  0  1  1  1  1  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 TR IB0008 BLANCA
+ 2 TR IB0009 LILA
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 MTIS0001 MTIS9201     0     0 DR000     0     0 00000 -99    -99  IBAR910043 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    TR 92167   100   -99     1     1   -99  1000   .53     0     0    20 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .356   9.1    11
+ 1    10  .356   9.1    11
+ 1    22  .356   8.9  11.2
+ 1    35  .443   8.7  11.3
+ 1    48  .443   8.7  11.3
+ 1    63   .44   8.7  11.3
+ 1    78   .44   8.7  11.3
+ 1    97  .448     1     1
+ 1   116  .438     1     1
+ 1   135  .438     1     1
+ 1   167  .406     1     1
+ 1   197  .426     1     1
+ 1   227  .426     1     1
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 92177   -99   2.4   2.4     S     R    91     0    13   -99   -99   -99   -99     0                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1   -99   -99   -99   -99   -99    10 -99
+@I IDATE  IROP IRVAL
+ 1 92177 IR001     6
+ 1 92178 IR001    38
+ 1 92181 IR001     6
+ 1 92184 IR001    38
+ 1 92188 IR001    13
+ 1 92192 IR001     1
+ 1 92197 IR001     2
+ 1 92198 IR001     2
+ 1 92209 IR001     2
+ 1 92213 IR001     2
+ 1 92216 IR001     2
+ 1 92218 IR001     2
+ 1 92223 IR001     3
+ 1 92224 IR001     2
+ 1 92232 IR001     2
+ 1 92246 IR001     4
+ 1 92248 IR001     3
+ 1 92255 IR001     3
+ 1 92260 IR001     4
+ 1 92262 IR001     1
+ 1 92265 IR001     3
+ 1 92274 IR001     3
+ 1 92276 IR001     3
+ 1 92279 IR001     3
+ 1 92281 IR001     4
+ 1 92283 IR001     9
+ 1 92286 IR001     4
+ 1 92290 IR001     6
+ 1 92293 IR001     6
+ 1 92295 IR001     3
+ 1 92297 IR001     6
+ 1 92304 IR001     1
+ 1 92311 IR001     4
+ 1 92314 IR001     3
+ 1 92316 IR001     4
+ 1 92323 IR001     2
+ 1 92325 IR001     4
+ 1 92330 IR001     1
+ 1 92339 IR001     3
+ 1 92342 IR001     3
+ 1 92344 IR001     6
+ 1 92346 IR001     4
+ 1 92353 IR001     3
+ 1 92366 IR001     1
+ 1 93005 IR001     2
+ 1 93008 IR001     1
+ 1 93011 IR001     2
+ 1 93015 IR001     4
+ 1 93019 IR001     3
+ 1 93022 IR001     3
+ 1 93027 IR001     4
+ 1 93036 IR001     2
+ 1 93041 IR001     4
+ 1 93043 IR001     4
+ 1 93047 IR001     2
+ 1 93050 IR001     5
+ 1 93053 IR001     2
+ 1 93055 IR001     3
+ 1 93057 IR001     3
+ 1 93060 IR001     3
+ 1 93061 IR001     3
+ 1 93063 IR001     3
+ 1 93067 IR001     3
+ 1 93068 IR001     3
+ 1 93071 IR001     3
+ 1 93074 IR001     3
+ 1 93076 IR001     3
+ 1 93078 IR001     5
+ 1 93081 IR001     3
+ 1 93083 IR001     3
+ 1 93092 IR001     3
+ 1 93106 IR001     3
+ 1 93108 IR001     3
+ 1 93109 IR001     4
+ 1 93132 IR001     3
+ 1 93306 IR001     2
+! 1 92004 IR001     2
+! 1 92005 IR001     2
+! 1 92008 IR001     1
+! 1 92011 IR001     2
+! 1 92015 IR001     4
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 92209 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92209 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92223 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92223 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92246 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92246 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92260 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92260 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92274 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92274 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92286 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92286 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92304 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92304 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92307 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92307 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92311 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92311 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92325 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92330 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 92339 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92339 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92353 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92353 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 92366 FE017   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 92366 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93008 FE017   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93015 FE017   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93015 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93018 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93022 FE017   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93022 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93036 FE017   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93036 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93041 FE017   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93041 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93057 FE017   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 93057 FE005   -99     5     4   -99   -99   -99   -99   -99 -99
+ 1 93078 FE017   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93078 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93109 FE017   -99     5     2   -99   -99   -99   -99   -99 -99
+ 1 93109 FE005   -99     5     2   -99   -99   -99   -99   -99 -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 92167  2150 TARO VAR EXPT, PUERTO RI
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              N     N     Y     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     3     Y     N     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          92155 92200    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 92365   100     0
+
+
+

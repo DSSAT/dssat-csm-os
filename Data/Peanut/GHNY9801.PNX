@@ -1,0 +1,189 @@
+*EXP.DETAILS: GHNY9801PN 1998 VARIETY X PLANTING DATE EXPERIMENT
+
+*GENERAL
+@PEOPLE
+J. B. Naab, Francis Tsigbey, Savannah Agricultural Research Institute
+@ADDRESS
+Wa, Ghana
+@SITE
+Experiment done at Tamale (SARI)
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 0 0 0 98 DATE 1 CHINESE  DEF     1  1  0  1  1  0  0  0  0  0  0  0  1
+ 2 0 0 0 98 DATE 1 F-MIX    DEF     2  1  0  1  1  0  0  0  0  0  0  0  1
+ 3 0 0 0 98 DATE 2 CHINESE  DEF     1  1  0  2  2  0  0  0  0  0  0  0  2
+ 4 0 0 0 98 DATE 2 F-MIX    DEF     2  1  0  2  2  0  0  0  0  0  0  0  2
+ 5 0 0 0 98 DATE 3 CHINESE  DEF     1  1  0  3  3  0  0  0  0  0  0  0  3
+ 6 0 0 0 98 DATE 3 F-MIX    DEF     2  1  0  3  3  0  0  0  0  0  0  0  3
+ 7 0 0 0 98 DATE 4 CHINESE  DEF     1  1  0  4  4  0  0  0  0  0  0  0  4
+ 8 0 0 0 98 DATE 4 F-MIX    DEF     2  1  0  4  4  0  0  0  0  0  0  0  4
+ 9 0 0 0 98 DATE 1 CHINESE          1  1  0  1  1  0  0  0  0  0  0  0  1
+10 0 0 0 98 DATE 1 F-MIX            2  1  0  1  1  0  0  0  0  0  0  0  1
+11 0 0 0 98 DATE 2 CHINESE          1  1  0  2  2  0  0  0  0  0  0  0  2
+12 0 0 0 98 DATE 2 F-MIX            2  1  0  2  2  0  0  0  0  0  0  0  2
+13 0 0 0 98 DATE 3 CHINESE          1  1  0  3  3  0  0  0  0  0  0  0  3
+14 0 0 0 98 DATE 3 F-MIX            2  1  0  3  3  0  0  0  0  0  0  0  3
+15 0 0 0 98 DATE 4 CHINESE          1  1  0  4  4  0  0  0  0  0  0  0  4
+16 0 0 0 98 DATE 4 F-MIX            2  1  0  4  4  0  0  0  0  0  0  0  4
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 PN GH0001 CHINESE
+ 2 PN GH0002 F_MIX
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 GHNY0001 GHNY         0     0 DR000     0     0 00000 -99    -99  GH00970003 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 98142   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    PN 98142   100   -99     1     1   -99  1000   .53     0     0    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .074   -99   -99
+ 1    15  .074   -99   -99
+ 1    30  .074   -99   -99
+ 1    45  .214   -99   -99
+ 1    60  .208   -99   -99
+ 1    90  .203   -99   -99
+ 1   113  .206   -99   -99
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2    PN 98170   100   -99     1     1   -99  1000   .53     0     0    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 2     5   .16   -99   -99
+ 2    15   .16   -99   -99
+ 2    30   .14   -99   -99
+ 2    45  .194   -99   -99
+ 2    60  .203   -99   -99
+ 2    90  .188   -99   -99
+ 2   113  .186   -99   -99
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 3    PN 98201   100   -99     1     1   -99  1000   .53     0     0    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 3     5   .19   -99   -99
+ 3    15   .19   -99   -99
+ 3    30   .16   -99   -99
+ 3    45  .168   -99   -99
+ 3    60   .15   -99   -99
+ 3    90   .17   -99   -99
+ 3   113  .181   -99   -99
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 4    PN 98229   100   -99     1     1   -99  1000   .53     0     0    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 4     5  .206   -99   -99
+ 4    15  .206   -99   -99
+ 4    30  .206   -99   -99
+ 4    45   .21   -99   -99
+ 4    60  .204   -99   -99
+ 4    90  .206   -99   -99
+ 4   113  .166   -99   -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 98142   -99    20    18     S     R    50     0     5   -99   -99   -99   -99     0                        -99
+ 2 98170   -99    20    18     S     R    50     0     5   -99   -99   -99   -99     0                        -99
+ 3 98201   -99    20    16     S     R    50     0     5   -99   -99   -99   -99     0                        -99
+ 4 98229   -99    20    12     S     R    50     0     5   -99   -99   -99   -99     0                        -99
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 98142  2150 Date 1
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     Y     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     N     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     Y     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          98142 98156    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 98149   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 2 GE              1     1     S 98170  2150 Date 2
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 2 OP              Y     Y     Y     N     N     Y     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 2 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 2 MA              R     R     N     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 2 OU              N     Y     Y     1     Y     N     Y     Y     N     Y     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 2 PL          98142 98156    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 2 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 2 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 2 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 2 HA              0 98149   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 3 GE              1     1     S 98201  2150 Date 3
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 3 OP              Y     Y     Y     N     N     Y     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 3 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 3 MA              R     R     N     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 3 OU              N     Y     Y     1     Y     N     Y     Y     N     Y     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 3 PL          98142 98156    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 3 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 3 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 3 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 3 HA              0 98149   100     0
+
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 4 GE              1     1     S 98229  2150 Date 4
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 4 OP              Y     Y     Y     N     N     Y     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 4 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 4 MA              R     R     N     N     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 4 OU              N     Y     Y     1     Y     N     Y     Y     N     Y     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 4 PL          98142 98156    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 4 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 4 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 4 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 4 HA              0 98149   100     0

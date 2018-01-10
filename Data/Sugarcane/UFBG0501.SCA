@@ -1,0 +1,40 @@
+*EXP. DATA (A): UFBG0501SC EREC DATA    SUCARCANE Trinexpac EXP.      
+
+! File last edited on day 04/01/2009 at 1:18:48 PM
+!
+! Dates should be entered as YrDoy
+!
+!	CAN CSP	 indicates which observed values are compared by each model, CaneGro (CAN) or Casupro (CSP)
+!      ---------
+! AELH   X      Aerial biomass (green+dead), dm at harvest (t/ha)
+! BADMH      X  Aerial biomass (green+dead), dm at harvest (t/ha)
+! CHTA   X      Canopy height at harvest(m)                       
+! EDAT0      X  Primary stalk emergence day (YrDoy)                 
+! EDAT1      X  First tiller emergence day (YrDoy)                  
+! EDAT2      X  Second tiller emergence day (YrDoy)                 
+! HIAM   X   X  Harvest index [sucrose / (stalk dm + sucrose)]         
+! L#SM   X      Green leaf number at harvest                      
+! LAASH      X  Leaf area per stalk at harvest - average (cm2/stalk)
+! LAIH   X   X  Leaf area index, at harvest                       
+! LAIX       X  Leaf area index, maximum during season            
+! LAIXD      X  Day at which maximum leaf area index occurs (YrDoy) 
+! LWASH      X  Weight (dm) of green leaves per stalk at harvest - average (g /stalk) 
+! NAPSH      X  Nodes per stalk at harvest - average (nodes/stalk)  
+! S#AH       X  Stalk population at harvest (stalks/m2)               
+! SDAH   X      Dead stem weight at harvest (t/ha)                
+! SHTH       X  Height of stalks at harvest - average (m)           
+! SMFMH      X  Millable cane fresh weight at harvest (t/ha)      
+! SPDAT      X  Primary stalk bud sprouts from sett day (YrDoy)
+! SSTKH      X  Stalk (fiber+other; no sugar) dry mass at harvest (t/ha)
+! STKH   X      Stalk (millable) dry mass at harvest (t/ha)      .
+! SUCH   X   X  Sucrose dry mass at harvest (t/ha)                
+! T#MX       X  Tiller maximum population (stalks/m2)             
+! T#MXD      X  Tiller maximum population day (YrDoy)               
+! TDECD      X  Initiation of tiller population decline (YrDoy)     
+! TRSH   X   X  Trash (residue) dry mass at harvest (t/ha)        
+!
+!CaneGro:                       AELH                   LAIGD
+@TRNO  SMFMH  SUCH  STKH SSTKH BADMH  TRSH  LAIX LAIXD  LAIH LAASH LWASH  L#SM NAPSH SPDAT EDAT0 EDAT1 EDAT2  T#MX T#MXD TDECD  S#AH  SHTH  CHTA  HIAM  SDAH
+     1  91.2 10.90 19.54  8.64   -99   -99   -99   -99  2.68   -99   -99   8.0   -99   -99 05346 06100 06116  7.85 06158 06181  5.83 2.635 2.845  .247   -99
+     3 143.9 17.45 33.52 16.07   -99   -99   -99   -99  4.51   -99   -99   9.0   -99   -99 05346 06100 06116 12.76 06158 06181  8.51 2.287 2.945  .488   -99
+     5 109.5 13.35 24.98 11.63   -99   -99   -99   -99  3.49   -99   -99  10.0   -99   -99 05346 06100 06116 11.67 06158 06181  7.78 1.962 2.710  .499   -99

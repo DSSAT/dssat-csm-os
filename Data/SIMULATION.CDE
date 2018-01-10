@@ -1,0 +1,192 @@
+*Codes for Simulations Options
+! DSSAT v4.7; 09/01/2017
+!
+! Codes currently used for simulation options for the DSSAT crop simulation
+! models.
+
+*Start Simulation
+@CDE     DESCRIPTION                                                          SO
+!E        On reported emergence date                                          IB
+!I        When initial conditions measured                                    IB
+!P        On reported planting date                                           IB
+S        On specified date                                                    IB
+
+*Simulation/Options/Water
+@CDE     DESCRIPTION                                                          SO
+Y        Yes                                                                  IB
+N        No                                                                   IB
+
+*Simulation/Options/Symbiosis
+@CDE     DESCRIPTION                                                          SO
+Y        Yes                                                                  IB
+N        No                                                                   IB
+U        Unlimited N                                                          IB
+
+*Simulation/Options/CO2
+@CDE     DESCRIPTION
+W        Read from weather file
+M        Actual CO2; Mauna Loa, Hawaii (Keeling curve)
+D        Use default value (380 vpm)
+
+*Simulation/Methods/Weather
+@CDE     DESCRIPTION                                                          SO
+M        Measured data                                                        IB
+G        Generated(WTG files)                                                 IB
+W        Simulated internal(WGEN)                                             IB
+S        Simulated(SIMMETEO)                                                  IB
+
+*Simulation/Methods/Initial Soil Conditions
+@CDE     DESCRIPTION                                                          SO
+M        As reported                                                          IB
+!S        Simulated output from previous model run                            IB
+
+*Simulation/Methods/Evapotransportation
+@CDE     DESCRIPTION                                                          SO
+F        FAO-56                                                               IB
+!D       Dynamic Penman-Monteith                                              IB
+!P       FAO-24/(old Penman)                                                  IB
+R        Priestley-Taylor/Ritchie                                             IB
+!Z       Hourly energy bal. method                                            IB
+
+*Simulation/Methods/Infiltration
+@CDE     DESCRIPTION                                                          SO
+R        Ritchie method                                                       IB
+S        Soil Conservation Service                                            IB
+N        No mulch effects                                                     IB
+
+*Simulation/Methods/Photosynthesis
+@CDE     DESCRIPTION                                                          SO
+C        Canopy curve (daily)                                                 IB
+R        Radiation efficiency                                                 IB
+L        Leaf photosynthesis response curve (hourly)                          IB
+
+*Simulation/Methods/Hydrology
+@CDE     DESCRIPTION                                                          SO
+R        Ritchie water balance                                                IB
+
+*Simulation/Methods/SOM
+@CDE     DESCRIPTION                                                          SO
+G        Ceres (Godwin)                                                       IB
+P        Century (Parton)                                                     IB
+
+*Simulation/Methods/Soil Evaporation
+@CDE     DESCRIPTION                                                          SO
+R        Ritchie-Ceres                                                        IB
+S        Suleiman-Ritchie                                                     IB
+
+*Simulation/Methods/Soil Layer Distribution
+@CDE     DESCRIPTION                                                          SO
+1        Model-specified soil layers                                          IB
+2        Modified soil profile                                                IB
+3        Unmodified soil profile                                              IB
+
+*Simulation/Management/Planting
+@CDE     DESCRIPTION                                                          SO
+A        Automatic                                                            IB
+R        On reported date                                                     IB
+
+*Simulation/Management/Irrigation
+@CDE     DESCRIPTION                                                          SO
+A        Automatic when required                                              IB
+N        Not irrigated                                                        IB
+F        Fixed amount automatic                                               IB
+R        On reported dates                                                    IB
+D        Days after planting                                                  IB
+
+*Simulation/Management/Fertilization
+@CDE     DESCRIPTION                                                          SO
+!A       Automatic when required                                              IB
+N        Not fertilized                                                       IB
+!F        Fixed amount automatic                                              IB
+R        On reported dates                                                    IB
+D        Days after planting                                                  IB
+
+*Simulation/Management/Residue
+@CDE     DESCRIPTION                                                          SO
+!A        Automatic when required                                             IB
+N        No applications                                                      IB
+!F        Fixed amount automatic                                              IB
+R        On reported dates                                                    IB
+D        Days after planting                                                  IB
+
+*Simulation/Management/Harvest
+@CDE     DESCRIPTION                                                          SO
+A        Automatic                                                            IB
+!G       At reported stage(s)                                                 IB
+M        At maturity                                                          IB
+R        On reported date(s)                                                  IB
+D        Days after planting                                                  IB
+
+*Simulation/Outputs
+@CDE     DESCRIPTION                                                          SO
+Y        Experiment                                                           IB
+N        Default                                                              IB
+
+*Simulation/Outputs/Options
+@CDE     DESCRIPTION                                                          SO
+Y        Yes                                                                  IB
+N        No                                                                   IB
+
+*Simulation/Outputs/Verbose
+@CDE     DESCRIPTION                                                          SO
+0        Only Summary.OUT                                                     IB
+N        Minimal output                                                       IB
+Y        Normal output                                                        IB
+D        Detailed output                                                      IB
+A        All outputs                                                          IB
+
+*Simulation/Outputs/Format
+@CDE     DESCRIPTION                                                          SO
+A        Text Format (ASCII)                                                  IB
+C        Comma Separated Values (CSV)                                         IB
+
+*Simulation/Crop Models
+@MODEL  CROP  Description
+BSCER    BS   CERES-Sugarbeet
+CRGRO    BM   CROPGRO-Bermuda
+CRGRO    BH   CROPGRO-Bahia
+CRGRO    BN   CROPGRO-Dry bean
+CRGRO    BR   CROPGRO-Brachiaria
+CRGRO    CB   CROPGRO-Cabbage
+CRGRO    CH   CROPGRO-Chickpea
+CRGRO    CN   CROPGRO-Canola
+CRGRO    CO   CROPGRO-Cotton
+CRGRO    CP   CROPGRO-Cowpea
+CRGRO    FA   CROPGRO-Fallow
+CRGRO    FB   CROPGRO-Faba bean
+CRGRO    GB   CROPGRO-Grean bean
+CRGRO    LT   CROPGRO-Lentil
+CRGRO    NP   CROPGRO-Napier grass
+CRGRO    PN   CROPGRO-Peanut
+CRGRO    PP   CROPGRO-Pigeonpea
+CRGRO    PR   CROPGRO-Bellpepper
+CRGRO    SF   CROPGRO-Safflower
+CRGRO    SB   CROPGRO-Soybean
+CRGRO    SU   CROPGRO-Sunflower
+CRGRO    TM   CROPGRO-Tomato
+CRGRO    VB   CROPGRO-Velvetbean
+CSCER    BA   CROPSIM-CERES-Barley
+CSCER    WH   CROPSIM-CERES-Wheat
+CSCRP    BA   CSCRP-Barley
+CSCAS    CS   CSCAS-Cassava
+CSYCA    CS   CSYCA-Cassava
+CSCRP    WH   CSCRP-Wheat
+MLCER    ML   CERES-Millet
+MZCER    MZ   CERES-Maize
+MZIXM    MZ   IXIM-Maize
+PTSUB    PT   SUBSTOR-Potato
+RICER    RI   CERES-Rice
+RIORZ    RI   ORYZA-Rice
+SCCAN    SC   CANEGRO-Sugarcane
+SCCSP    SC   CASUPRO-Sugarcane
+SGCER    SG   CERES-Sorghum
+SWCER    SW   CERES-Sweetcorn
+PIALO    PI   ALOHA-Pineapple
+TRARO    TR   AROIDS-Taro
+TNARO    TN   AROIDS-Tanier
+WHAPS    WH   NWHEAT-Wheat
+PRFRM    BM   FORAGE-Bermudagrass
+PRFRM    BR   FORAGE-Brachiaria
+PRFRM    BH   FORAGE-Bahiagrass
+PRFRM    G0   FORAGE-Generic
+PRFRM    AL   FORAGE-Alfalfa

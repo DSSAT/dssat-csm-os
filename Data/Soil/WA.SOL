@@ -1,0 +1,25 @@
+*SOILS: State of Washington, USA - Soil Input File
+! DSSAT v4.7; 09/01/2017
+!
+!======================================================================================================
+
+*WAPA920016  -99         -99       60  Quincy Sand
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ Paterson    USA             45.83 -119.87 Fine sand
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN   .13   6.2    .8    64     1     1 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    15   -99   .05   .15    .3     1    21  1.55    .5   -99   -99   -99   -99   7.6   -99   -99   -99
+    30   -99   .05   .15    .3   .64    21  1.55    .5   -99   -99   -99   -99     8   -99   -99   -99
+    60   -99   .05   .15    .3   .41    21  1.55    .5   -99   -99   -99   -99   8.3   -99   -99   -99
+
+*WABE000001  Calculated  S       -99 Sand
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ -99         USA               -99     -99 -99
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+   -99  0.13  5.6   0.6   64    1.00  1.00   -99   -99   -99
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+    30   -99 0.078 0.177 0.466     1  6.83  1.33     1     5    20   -99   -99   -99   -99     7   -99
+    60   -99 0.076 0.172  0.39 0.407  2.33  1.54   0.9     5    20   -99   -99   -99   -99     7   -99
+    90   -99 0.065 0.151 0.368 0.223  2.08  1.61   0.5     5    20   -99   -99   -99   -99     7   -99
+   120   -99 0.065 0.151 0.368 0.223  2.08  1.61   0.5     5    20   -99   -99   -99   -99     7   -99

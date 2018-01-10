@@ -1,0 +1,269 @@
+*EXP.DETAILS: UFGA9601TM SPRING 1996,AGRISET,N-RATE,DRIP-IRR
+
+*GENERAL
+@PEOPLE
+Johan Scholberg, Ph.D. Disertation
+@ADDRESS
+Hort Unit, not IREP, 5 Trts here
+@SITE
+-99
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 3 1 1 1 96-N=200 N-B "off" A.I.    1  3  0  1  1  1  3  0  0  0  0  1  1
+! 1 1 1 1 N=0   N-B "off" A.I.       1  3  0  1  1  1  1  0  0  0  0  1  1
+! 2 1 1 1 N=133 N-B "off" A.I.       1  3  0  1  1  1  2  0  0  0  0  1  1
+! 4 1 1 1 N=266 N-B "off" A.I.       1  3  0  1  1  1  4  0  0  0  0  1  1
+! 5 1 1 1 N=333 N-B "off" A.I.       1  3  0  1  1  1  5  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 TM TM0005 Agriset 761
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 2 UFGA0002 UFGA       -99     0 DR000   -99     0 00000 SA     201  UFGA950002 -99
+ 3 UFGA0003 UFGA9601   -99     0 DR000   -99     0 00000 SA     201  UFGA950003 -99
+ 4 UFGA0004 UFGA9601   -99     0 DR000   -99     0 00000 SA     201  UFGA950004 -99
+ 5 UFGA0005 UFGA9601   -99     0 DR000   -99     0 00000 SA     201  UFGA950005 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 2             -99             -99       -99               -99   -99   -99   -99   -99   -99
+ 3             -99             -99       -99               -99   -99   -99   -99   -99   -99
+ 4             -99             -99       -99               -99   -99   -99   -99   -99   -99
+ 5             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    FA 96061     1     0     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    15  .092    .5     1
+ 1    25  .104    .5     1
+ 1    30  .104    .5    .5
+ 1    89  .113     0     0
+ 1   147    .2     0     0
+ 1   157    .2     0     0
+ 1   175  .196     0     0
+ 1   203  .248     0     0
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 2    FA 95061     1     0     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 2    15  .092    .5     2
+ 2    25  .104    .5     2
+ 2    30  .104    .5     2
+ 2    89  .113     0     0
+ 2   147    .2     0     0
+ 2   157    .2     0     0
+ 2   175  .196     0     0
+ 2   203  .248     0     0
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 3    FA 95061     1     0     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 3    15  .092    .5     6
+ 3    25  .104    .5     6
+ 3    30  .104    .5     6
+ 3    89  .113     0     0
+ 3   147    .2     0     0
+ 3   157    .2     0     0
+ 3   175  .196     0     0
+ 3   203  .248     0     0
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 96074 96074   1.2   1.2     T     R   183    90     1     3    28    25     1   -99                        28
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   .95    20    80    95   -99   -99   -99 -99
+@I IDATE  IROP IRVAL
+ 1 96075 IR005   3.3
+ 1 96076 IR005   3.3
+ 1 96077 IR005   3.3
+ 1 96078 IR005    .9
+ 1 96079 IR005    .9
+ 1 96080 IR005    .9
+ 1 96081 IR005    .2
+ 1 96082 IR005    .2
+ 1 96083 IR005    .1
+ 1 96084 IR005    .1
+ 1 96085 IR005   1.2
+ 1 96086 IR005     0
+ 1 96087 IR005     0
+ 1 96088 IR005     0
+ 1 96089 IR005     0
+ 1 96090 IR005     0
+ 1 96091 IR005     0
+ 1 96092 IR005     0
+ 1 96093 IR005     0
+ 1 96094 IR005     0
+ 1 96095 IR005   1.1
+ 1 96096 IR005     0
+ 1 96097 IR005     0
+ 1 96098 IR005     0
+ 1 96099 IR005     0
+ 1 96100 IR005     0
+ 1 96101 IR005     0
+ 1 96102 IR005     0
+ 1 96104 IR005     0
+ 1 96105 IR005     0
+ 1 96106 IR005     0
+ 1 96107 IR005     0
+ 1 96108 IR005     0
+ 1 96109 IR005   1.1
+ 1 96110 IR005    .1
+ 1 96111 IR005   1.2
+ 1 96112 IR005   1.2
+ 1 96113 IR005   1.2
+ 1 96114 IR005    .3
+ 1 96115 IR005    .3
+ 1 96116 IR005   1.1
+ 1 96117 IR005   1.9
+ 1 96118 IR005    .9
+ 1 96119 IR005    .9
+ 1 96120 IR005    .9
+ 1 96121 IR005    .9
+ 1 96122 IR005     0
+ 1 96123 IR005   1.2
+ 1 96124 IR005   1.9
+ 1 96125 IR005   3.2
+ 1 96126 IR005   3.2
+ 1 96127 IR005   3.2
+ 1 96128 IR005  14.9
+ 1 96129 IR005  14.9
+ 1 96130 IR005   4.9
+ 1 96131 IR005   7.3
+ 1 96132 IR005   5.7
+ 1 96133 IR005   1.5
+ 1 96134 IR005   1.5
+ 1 96135 IR005   6.7
+ 1 96136 IR005   1.1
+ 1 96137 IR005   2.4
+ 1 96138 IR005   6.2
+ 1 96139 IR005   3.8
+ 1 96140 IR005   3.8
+ 1 96141 IR005   2.3
+ 1 96142 IR005   2.3
+ 1 96143 IR005   2.3
+ 1 96144 IR005   1.1
+ 1 96145 IR005   6.6
+ 1 96146 IR005   2.6
+ 1 96147 IR005   2.6
+ 1 96148 IR005   2.6
+ 1 96149 IR005   2.6
+ 1 96150 IR005   7.1
+ 1 96151 IR005   1.1
+ 1 96152 IR005   5.9
+ 1 96153 IR005   5.9
+ 1 96154 IR005   5.9
+ 1 96155 IR005   5.9
+ 1 96156 IR005   5.9
+ 1 96157 IR005   3.9
+ 1 96158 IR005   3.9
+ 1 96159 IR005   3.9
+ 1 96160 IR005  15.7
+ 1 96161 IR005     3
+ 1 96162 IR005   3.3
+ 1 96163 IR005   4.6
+ 1 96164 IR005   4.6
+ 1 96165 IR005   3.7
+ 1 96166 IR005   3.7
+ 1 96167 IR005   3.7
+ 1 96168 IR005   4.9
+ 1 96169 IR005   4.9
+ 1 96170 IR005   3.7
+ 1 96171 IR005   4.5
+ 1 96172 IR005   4.4
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 96061 FE003 AP002    10     0    10    64   -99   -99   -99 -99
+ 1 96081 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96088 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96095 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96102 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96109 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96116 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96123 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96130 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96135 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 1 96142 FE003 AP002     1     0     0    10   -99   -99   -99 -99
+ 2 96061 FE003 AP002    10    53    10    64   -99   -99   -99 -99
+ 2 96081 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96088 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96095 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96102 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96109 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96116 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96123 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96130 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96137 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 2 96144 FE003 AP002     1     8     0    10   -99   -99   -99 -99
+ 3 96061 FE003 AP002    10    80    10    64   -99   -99   -99 -99
+ 3 96081 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96088 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96095 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96102 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96109 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96116 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96123 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96130 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96137 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 3 96144 FE003 AP002     1    12     0    10   -99   -99   -99 -99
+ 4 96061 FE003 AP002    10   106    10    64   -99   -99   -99 -99
+ 4 96081 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96088 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96095 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96102 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96109 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96116 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96123 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96130 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96137 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 4 96144 FE003 AP002     1    16     0    10   -99   -99   -99 -99
+ 5 96061 FE003 AP002    10   133    10    64   -99   -99   -99 -99
+ 5 96081 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96088 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96095 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96102 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96109 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96116 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96123 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96130 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96137 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+ 5 96144 FE003 AP002     1    20     0    10   -99   -99   -99 -99
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 96061 RE004     0     6     2   1.5   100    10   -99 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 96165 GS000   -99   -99   -99   -99 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 96061  2150 POTENTIAL YIELD
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              N     N     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     A     R     N     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     N     N     Y     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          96020 96020    40   100    30    45    40
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    80   100 GS000 SI005     5     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI            200    50    25 SI001 SI001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100    60    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA            160 96165    75     0
+
+
+

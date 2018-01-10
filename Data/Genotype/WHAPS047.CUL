@@ -1,0 +1,76 @@
+*NWHEAT CULTIVAR COEFFICIENTS: WHAPS047 MODEL
+!
+!********** NWheat transition Cultivar Coefficient File ***************
+!
+!(Comments Here)
+!
+! COEFF       DEFINITIONS
+! ========    ===========
+! VAR#        Identification code or number for a specific cultivar
+! VAR-NAME    Name of cultivar
+! EXPNO       Number of experiments used to estimate cultivar parameters
+! ECO#        Ecotype code of this cultivar, points to the Ecotype in the
+!             ECO file (currently not used).
+!
+! VSEN	      sensitivity to vernalisation
+! PPSEN       sensitivity to photoperiod
+! P1	        Thermal time from seedling emergence to the end of the juvenile phase
+! P5	        Thermal time (base 0oC) from beginning of grainfill to maturity: range 500 to 700
+! PHINT       Phyllochron interval
+! GRNO        Coefficient of kernel number per stem weight at the beginning of grain filling [kernels (g stem)-1] 
+! MXFIL       Potential kernel growth rate [mg kernel-1 day-1]:  Values between 1.0 and 3.0
+! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) values 1.0 - 3.0
+! SLAP1       ratio of leaf area to mass at emergence (cm2/g)
+! SLAP2       ratio of leaf area to mass at end of leaf growth (cm2/g) 
+! TC1P1       for calculating tc1: tiller number from emerg. to term. spik.(=stem elongation) 
+! TC1P2       tc1 = tc1_p1 + tc1_p2 *cumph_nw(istage)
+! DTNP1       for calculating dtiln: tiller number after term. spik.(=stem elongation)
+! PLGP1       for calculating plag: potential leaf growth.  plag= plag_p1*cumph(istage)**plag_p2
+! PLGP2       for calculating plag: potential leaf growth.  plag= plag_p1*cumph(istage)**plag_p2
+! P2AF        threshold AD in a layer becoming effective on root growth
+! P3AF        length of downwards root not effected under aeration deficit
+! P4AF        days to be accumulated before aeration deficit effects root growth
+! P5AF        power term at af1
+! P6AF        days to be accumulated before aeration deficit effects crop growth
+! ADLAI       threshold aeration deficit (AF2) affecting LAI        (set to 1.0 for no stress run)
+! ADTIL       threshold aeration deficit (AF2) effecting tillering  (set to 1.0 for no stress run)
+! ADPHO       threshold aeration deficit (AF2) effecting photosyn.  (set to 1.0 for no stress run)
+! STEMN       0=original C to grain translocation, >0 to 1.0 sets % of C of stem to be transloc. to grain
+! MXNUP       max N uptake per day
+! MXNCR       0.035=20%,   .04=23% protein, max n:c ratio of grain growth
+! WFNU        power term for water effect on N supply
+! PNUPR       potential uptake rate (mg/meter/day)
+! EXNO3       exponent for NO3 supply factor
+! MNNO3       minimum for NO3 supply factor
+! EXNH4       exponent for NH4 supply factor
+! MNNH4       minimum for NH4 supply factor
+! INGWT       initial grain weight  (mg/grain?)
+! INGNC       % protein, initial grain N conc   (init_grain_nconc or p_init_grain_nconc from APSIM Nwheat)
+! FREAR       fraction between end ear and begin grainfilling, setting min stem weight for remobilisation
+! MNNCR       % protein, min n:c ratio of grain growth
+! GPPSS       gpp_start_stage - Grain per plant: 2=stem elong., 3=end leaf stage at which to start accumo. stem for gpp calc.
+! GPPES       gpp_end_stage - Start grainfilling stage at which to end accumulation stem for Grain per plant calc
+! MXGWT       maximum kernal weight  [100 = no effect]
+! MNRTN       min root n due to grain n initialisation [0 = off] (root_n_min or p_root_n_min from APSIM Nwheat)
+! NOMOB       fraction of accum stem weight that is not mobile [0 = original]
+! RTDP1       sw effect, 0 = old version
+! RTDP2       crop stress effect, 0 = old version
+!																   *	 *     *				   *     *                                                                                                                  
+!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    28    29    30    31    32    33    34    35    36    37    38    39    40    41    42    43
+@VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1 SLAP2 TC1P1 TC1P2 DTNP1 PLGP1 PLGP2  P2AF  P3AF  P4AF  P5AF  P6AF ADLAI ADTIL ADPHO STEMN MXNUP MXNCR  WFNU PNUPR EXNO3 MNNO3 EXNH4 MNNH4 INGWT INGNC FREAR MNNCR GPPSS GPPES MXGWT MNRTN NOMOB RTDP1 RTDP2
+AW0071 YECORA ROJO          . IB0001  1.00  1.20 400.0 600.0 120.0  24.0  1.90  3.00 300.0 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB0002 ARMINDA              . IB0001  4.00  4.50 400.0 640.0 100.0  32.0  2.50  3.00 280.0 270.0  2.50  0.60 0.005 1400.  0.60  0.10  50.0  3.00  3.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB0003 Lely                 . IB0001  4.00  4.50 400.0 640.0 100.0  32.0  2.50  1.00 280.0 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  3.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB0004 RONGOTEA             . IB0001  1.00  2.00 400.0 600.0 130.0  20.0  1.60  3.00 300.0 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+AW0005 Bacanora 88          . IB0001  1.90  1.50 400.0 700.0 120.0  25.5  2.40  3.00 300.0 270.0  2.50  1.00 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+AW0006 Nesser               . IB0001  1.40  1.50 400.0 660.0 120.0  24.0  2.40  3.00 300.0 270.0  2.50  1.00 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+SP0007 Spear                . IB0001  1.50  3.50 400.0 740.0 110.0  24.0  2.10  3.00 300.0 225.0  2.50  1.00 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+WI0008 Wilgoyne             . IB0001  1.40  1.60 400.0 680.0 100.0  22.0  1.90  3.00 300.0 225.0  2.50  1.00 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB0010 Gamenya              . IB0001  1.60  2.00 400.0 700.0 110.0  22.0  1.90  1.50 280.0 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB0012 Recital              . IB0001  4.00  3.50 380.0 580.0  85.0  32.0  1.90  3.00 280.0 270.0  2.50  0.60 0.005 1400.  0.60  0.10  50.0  3.00  3.00  3.00  0.50  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB0013 Yitpi                . IB0001  1.50  2.90 400.0 680.0 105.0  22.0  1.90  3.00 300.0 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  0.70  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+
+!Three cultivars existing in CERES-Wheat added to NWheat by Yujing 05/05/2017
+IB1500 MANITOU           1,14 DFAULT  0.66  4.23 330.0 277.0  86.0 30.67  1.47  1.28 280.0 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB0488 NEWTON             1,6 DFAULT  3.69  3.17 520.0 457.0  95.0 33.33  1.91  1.03 280.0 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB1015 MARIS FUNDIN       1,8 DFAULT  2.46  3.51 530.0 472.0 100.0  20.0  2.81  1.64 300.0 270.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  3.50 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1

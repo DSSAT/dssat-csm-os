@@ -1,0 +1,25 @@
+*CLIMATE : OahuSugarCo.(Waimanalo)
+@ INSI      LAT     LONG  ELEV   TAV  TAMP  SRAY  TMXY  TMNY  RAIY
+  IBWM   21.332  158.093    11  24.1   2.4 -99.0 -99.0 -99.0   -99
+@START  DURN  ANGA  ANGB REFHT WNDHT SOURCE
+  1971    16  0.25  0.50  0.00  0.00 HSPAWX
+@ GSST  GSDU
+     1   365
+
+*MONTHLY AVERAGES
+@  MTH  SAMN  XAMN  NAMN  RTOT  RNUM
+     1  14.4  27.7  16.5 102.4   7.7
+     2  16.6  27.6  15.8  83.7   5.9
+     3  18.9  28.0  17.5  35.3   5.7
+     4  20.5  28.5  18.3  40.6   6.8
+     5  20.9  29.4  18.9  37.1   4.7
+     6  21.7  30.4  19.9  19.4   3.4
+     7  23.7  31.0  21.1   8.8   3.7
+     8  22.6  31.8  21.3   9.8   3.2
+     9  19.6  31.9  20.7  22.7   4.4
+    10  17.2  31.1  20.3  57.4   5.1
+    11  15.2  29.7  19.2  59.6   6.6
+    12  13.6  28.3  17.2  84.2   6.3
+
+
+

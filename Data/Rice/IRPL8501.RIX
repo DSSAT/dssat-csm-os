@@ -1,0 +1,125 @@
+*EXP.DETAILS: IRPL8501RI IRRI, PILA JAN 85 UREASE INHIBITORS 15N
+
+*GENERAL
+@PEOPLE
+-99
+@ADDRESS
+IRRI, LOS BANOS, PHILIPPINES
+@SITE
+IRRI
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 Control 0 N                1  1  0  1  1  1  0  1  0  0  0  0  1
+ 2 1 0 0 Control 0 N (drained)      1  1  0  1  1  2  0  1  0  0  0  0  1
+ 3 1 0 0 30 kg N as urea(2/3 18DT   1  1  0  1  1  1  1  1  0  0  0  0  1
+ 4 1 0 0 30 kg N as urea(2/3 18DT   1  1  0  1  1  2  1  1  0  0  0  0  1
+ 5 1 0 0 60 kg N as urea(2/3 18DT   1  1  0  1  1  1  2  1  0  0  0  0  1
+ 6 1 0 0 60 kg N as urea(2/3 18DT   1  1  0  1  1  2  2  1  0  0  0  0  1
+ 7 1 0 0 90 kg N as urea(2/3 18DT   1  1  0  1  1  1  3  1  0  0  0  0  1
+ 8 1 0 0 90 kg N as urea(2/3 18DT   1  1  0  1  1  2  3  1  0  0  0  0  1
+ 9 1 0 0 120 kg N as urea(2/3 18DT  1  1  0  1  1  1  4  1  0  0  0  0  1
+10 1 0 0 120 kg N as urea(2/3 18DT  1  1  0  1  1  2  4  1  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 RI IB0012 IR 58
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 IRPL0001 IRPI       -99     0 DR000     0     0 00000 -99     50  IBRI910001 UNKNOWN
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    RI 85032   300   -99     1     1   -99     0     0     0   100    15 UNKNOWN
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5    .7  12.7    .1
+ 1    20   .65  12.7    .1
+ 1    35    .6   3.2    .1
+ 1    50    .6   3.2    .1
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 85035   -99    75    25     T     H    20     0     2     0    23    25     3     0                        UNKNOWN
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1   -99   -99   -99   -99   -99   -99     1 UNKNOWN
+@I IDATE  IROP IRVAL
+ 1 85032 IR011     5
+ 1 85032 IR009    20
+ 1 85032 IR008     2
+ 1 85032 IR010     0
+ 1 85038 IR011    30
+ 1 85038 IR009   100
+ 1 85042 IR011    50
+ 1 85042 IR009   150
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 2   -99   -99   -99   -99   -99   -99     1 UNKNOWN
+@I IDATE  IROP IRVAL
+ 2 85032 IR008     2
+ 2 85032 IR009    20
+ 2 85032 IR011     5
+ 2 85032 IR010     0
+ 2 85038 IR009   100
+ 2 85038 IR011    30
+ 2 85042 IR009   150
+ 2 85042 IR011    50
+ 2 85051 IR011     5
+ 2 85051 IR009     5
+ 2 85052 IR006   100
+ 2 85052 IR009   150
+ 2 85056 IR009   150
+ 2 85056 IR011    50
+ 2 85071 IR009     4
+ 2 85071 IR011     4
+ 2 85072 IR009   150
+ 2 85072 IR006   100
+ 2 85076 IR011    50
+ 2 85076 IR009   150
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 85053 FE005 AP012     1    20   -99   -99   -99   -99   -99 UNKNOWN
+ 1 85073 FE005 AP011     1    10   -99   -99   -99   -99   -99 UNKNOWN
+ 2 85053 FE005 AP012     1    40   -99   -99   -99   -99   -99 UNKNOWN
+ 2 85073 FE005 AP011     1    20   -99   -99   -99   -99   -99 UNKNOWN
+ 3 85053 FE005 AP012     1    60   -99   -99   -99   -99   -99 UNKNOWN
+ 3 85073 FE005 AP011     1    30   -99   -99   -99   -99   -99 UNKNOWN
+ 4 85053 FE005 AP012     1    80   -99   -99   -99   -99   -99 UNKNOWN
+ 4 85073 FE005 AP011     1    40   -99   -99   -99   -99   -99 UNKNOWN
+
+*RESIDUES AND ORGANIC FERTILIZER
+@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME
+ 1 85032 RE001   200  1.33   -99   -99   -99    15   -99 UNKNOWN
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 85032  2150 IRRI, PILA JAN 85 UREASE
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     N     Y     Y     N     N     D     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          85028 85042    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 IB001 IB001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 IB001 IB001
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 86035   100     0
+
+
+

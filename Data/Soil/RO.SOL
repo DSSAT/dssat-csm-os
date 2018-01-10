@@ -1,0 +1,62 @@
+*SOILS: Rothamsted, United Kingdom
+!============================================================================================
+!Data for a long-term (40 yrs) fallow simulation: Highfield bare-fallow experiment in
+!Rothamsted, UK.
+!
+!Reference: A.J. Gijsman et al. 2002. Modifying DSSAT crop models for low-input
+!agricultural systems, using a soil organic matter - residue module from CENTURY.
+!Agronomy Journal 94:462-474.
+!
+!The field measurements at Rothamsted were done with one soil layer of 0-23 cm, but the soil
+!profile is much deeper. There were, however, no data on texture, soil-N, pH etc. for these
+!deeper layers; these were filled in with artificial data, just to get the model running
+!with a suffiently deep profile to get the water balance realistic. Don't pay any attention 
+!though to the results of these deeper layers.
+!
+!DSSAT uses a default soil-layer distribution of 5-15-30-45-etc. This makes the third layer
+!15 cm thick with lower boundary at 30 cm depth, which is thus far too much. Since in the
+!Rothamsted soil profile (ROTH5901) the SOM carbon declines quite strongly after 23 cm depth
+!(from 2.45 to 1.50%), this automatic redistribution of soil layers would mean that the
+!15-30-cm layer gets a C concentration of somewhere in-between 2.45% and 1.50% instead of
+!there being a 0-23-cm layer with 2.45% SOM and a 23-30-cm layer with 1.50% C. To get good
+!results, this fileX has to be run without redistribution of the soil profile or the results
+!have to be recalculated manually.
+!
+!============================================================================================
+
+*ROTH5901    Rothamsted   SCL    150 Batcombe Series
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ ROTHAMSTED  UK             52.500  -0.500 Stagnogleyic paleo-agrillic brown earth
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN  0.13   9.7  0.70  73.0  1.00  1.00 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     5    XX 0.183 0.311 0.468 0.950   -99  1.30  2.54  23.4  23.0   4.0 0.210   5.0   5.0   -99   -99 
+    15    XX 0.183 0.309 0.468 0.860   -99  1.32  2.50  23.4  23.0   4.0 0.210   5.0   5.0   -99   -99 
+    23    XX 0.182 0.308 0.468 0.680   -99  1.35  2.45  23.4  23.0   4.0 0.200   5.0   5.0   -99   -99 
+    50    XX 0.167 0.279 0.468 0.480   -99  1.35  1.50  23.4  23.0   4.0 0.200   5.0   5.0   -99   -99 
+   100    XX 0.159 0.265 0.468 0.200   -99  1.35  1.00  23.4  23.0   4.0 0.080   5.0   5.0   -99   -99 
+   150    XX 0.159 0.265 0.468 0.200   -99  1.35  1.00  23.4  23.0   4.0 0.080   5.0   5.0   -99   -99 
+!The soil texture data were expressed in European (or ISSS) textural units, in which silt is
+!the 2-20-µm class, while DSSAT and CENTURY use the American unit system with silt equal to
+!2-50 µm. This not only affects the SOM decomposition process directly, as the fractions of
+!sand and clay influence the SOM decomposition rate and the flows between pools in the
+!CENTURY-based SOM/residue module, but also indirectly, as texture was used for estimating
+!the soil-water retention characteristics. A sensitivity analysis in which the model was run
+!for both the measured silt (2-20 µm) fraction of 23% and for an estimated silt (2-50 µm)
+!fraction of 30% (and thus a reduced sand fraction) showed that the percentage of silt hardly 
+!affected the results. The LL, DUL, SAT for this were estimated using Rawls et al. (1982;
+!Transactions ASAE 25: 1316-1328).
+!
+
+*ROTH5902    Rothamsted  L       150 Batcombe (Sensitivity analysis: silt set to 30%)
+@SITE        COUNTRY          LAT     LONG SCS FAMILY
+ ROTHAMSTED  UK             52.500  -0.500 Stagnogleyic paleo-agrillic brown earth
+@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
+    BN  0.13   9.7  0.70  73.0  1.00  1.00 IB001 IB001 IB001
+@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC
+     5    XX 0.183 0.325 0.473 0.950   -99  1.30  2.54  23.4  30.0   4.0 0.210   5.0   5.0   -99   -99 
+    15    XX 0.183 0.323 0.473 0.860   -99  1.32  2.50  23.4  30.0   4.0 0.210   5.0   5.0   -99   -99 
+    23    XX 0.182 0.322 0.473 0.680   -99  1.35  2.45  23.4  30.0   4.0 0.200   5.0   5.0   -99   -99 
+    50    XX 0.182 0.322 0.473 0.480   -99  1.35  1.50  23.4  30.0   4.0 0.200   5.0   5.0   -99   -99 
+   100    XX 0.159 0.279 0.473 0.200   -99  1.35  1.00  23.4  30.0   4.0 0.080   5.0   5.0   -99   -99 
+   150    XX 0.159 0.279 0.473 0.200   -99  1.35  1.00  23.4  30.0   4.0 0.080   5.0   5.0   -99   -99 
