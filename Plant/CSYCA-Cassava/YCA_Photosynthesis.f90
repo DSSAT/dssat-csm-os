@@ -1,4 +1,3 @@
-!***************************************************************************************************************************
 ! This module is intended to calculate photosynthesis effects in the plant
 ! 12/09/2017 converted from UTF-8 to ANSI
 ! Atributes:
@@ -181,4 +180,3 @@
     end subroutine setMethod
     
 END Module YCA_Photosyntesis
-    

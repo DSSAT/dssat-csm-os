@@ -88,14 +88,14 @@ c     Local variables:
 c     ::::::::::::::::
 
 c         Array of coefficient names:
-          CHARACTER*20 CF_NAMES(100)
+          CHARACTER*20 CF_NAMES(120)
 
 c         Array of coefficient values:
-          REAL CF_VALUES(100)
+          REAL CF_VALUES(120)
 
 c         Array of logical values indicating whether or not a value
 c         was actually read from file:
-          LOGICAL CF_OK(100)
+          LOGICAL CF_OK(120)
 
 c         The name of the cultivar file
           CHARACTER*256 FILENAME
@@ -118,7 +118,7 @@ c         The Filex and fileio number:
 
 c         A line of the cultivar file (to be read) from file, then
 c         parsed:
-          CHARACTER*1024 LINE, LINE2, ELINE, ELINE2
+          CHARACTER*2048 LINE, LINE2, ELINE, ELINE2
 
 c         Has the file been opened?
           LOGICAL OPENED, FIO_OPENED
@@ -136,7 +136,7 @@ c         Temp. variable name:
           CHARACTER*20 VARNAME, CHTEMP
 
 !CHP      Message text array to INFO.OUT
-          CHARACTER*78 MSG(100)
+          CHARACTER*78 MSG(120)
 
 C-KRT *****************************************************************
 C-KRT Modified declaration statements for compatability with g95.
@@ -302,7 +302,7 @@ c                 DSSAT will select an unused one (hopefully) and return that.
 !c                 Set filename (comes from INP file, but this is the default):
 !                  FILENAME = STDPATH//'Genotype'//SLASH//'SCCAN045.CUL'
 !
-c                 Code copied from ETPHOT.for:
+c                 Code copied from ETPHOT.FOR:
 c                 ::::::::::::::::::::::::::::
 c                 Get the cultivar/eco filenames from the INP file:
 c                 :::::::::::::::::::::::::::::::::::::::
@@ -452,7 +452,7 @@ c                 Open ECO file:
 c                 Read ecotype code from cultivar file:
 !chp              READ(LINE2, '(26X, A6)') ECOTYPE
                   READ(LINE2, '(23X, A6)') ECOTYPE
-c                  WRITE(*, '(A)') 'Ecotype is ', ECOTYPE
+                  ! WRITE(*, '(A)') 'Ecotype is ', ECOTYPE
 
 
 c                 Loop through file, until ECOTYPE is found:
@@ -498,16 +498,19 @@ c                             Exit from loop, because ELINE contains headings
                           ENDIF
                       ENDIF
 
-                  ENDDO
+                  ENDDO 
 
 
 c                 Close ECO file:
                   CLOSE(ECOFILE)
 
-c                 * Now, join the column name strings and column value strings *
+c                 * Now, join the cul and eco column name strings and column value strings *
 c                 * excluding the initial text (25 characters) *
                   LINE  = TRIM(LINE) // ' ' // ELINE(26:)
                   LINE2 = TRIM(LINE2) // ' ' // ELINE2(26:)
+                  
+                  ! WRITE(*, '(A)') LINE
+                  ! WRITE(*, '(A)') LINE2
 
 
 c                 :::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -604,7 +607,7 @@ c             Assume the worst:
               EERROR = .TRUE.
               ERRMSG(1) = 'Could not find cultivar param: '
      &                    // COEFF_NAME
-              DO I=1,100
+              DO I=1,120
 c                 Compare strings
 c                 WRITE(*, '(1H#,A,1H#)') CF_NAMES(I)
 c                 WRITE(*, '(1H#,A,1H#)') COEFF_NAME
@@ -627,7 +630,7 @@ c                         Set error value to false
 c             If there was an error, write warning to WARNINGS.OUT
               IF (EERROR) THEN
                   CALL WARNING(1,'CULT COEFF', ERRMSG)
-!debugd                  WRITE(*, '(A)') ERRMSG(1)
+d                  WRITE(*, '(A)') ERRMSG(1)
               ENDIF
 
 
@@ -713,7 +716,7 @@ c         Erase from original string:
       END
 
 
-!CHP moved to READS.for as LOGICAL FUNCTION FIND_IN_FILE
+!CHP moved to READS.FOR as LOGICAL FUNCTION FIND_IN_FILE
 !      SUBROUTINE FIND_IN_FILE(NEEDLE, HAYSTACK)
 !          IMPLICIT NONE
 !c         File unit number of file in which to search
@@ -904,7 +907,7 @@ c                 Note: no specific file number is allocated to the species file
 c                 DSSAT will select an unused one (hopefully) and return that.
                   CALL GETLUN('SPEC', CFILE)
 
-c                 Code copied from ETPHOT.for:
+c                 Code copied from ETPHOT.FOR:
 c                 ::::::::::::::::::::::::::::
 c                 Get the species filename from the INP file:
 c                 :::::::::::::::::::::::::::::::::::::::
@@ -929,6 +932,10 @@ c                 :::::::::::::::::::::::::::::::::::::::
                   ELSE
                     FILECC = PATHCR(1:(PATHL-1)) // FILEC
                   ENDIF
+
+
+                  WRITE(*, '(2A)') 'Species file path is ', FILECC
+
 c                 Close the file
                   CLOSE(LUNIO)
 c                 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -988,7 +995,7 @@ c     &                                                   REAL_VAL
 c                                 Assign to array(s):
 c                                  TMP_STR = TRIM(LINE(1:EQ_IND))
                                   TMP_STR = LINE(1:EQ_IND-1)
-c                                  WRITE(*, '(A, I3)') TMP_STR, EQ_IND
+                                  WRITE(*, '(A, I3)') TMP_STR, EQ_IND
                                   WRITE(CF_NAMES(X), '(A20)') 
      &                                                TRIM(TMP_STR)
                                   CF_VALUES(X) = REAL_VAL
@@ -1004,10 +1011,10 @@ c          ********************
 
 c             PAUSE
 c             Print out arrays:
-c              DO I=1, 50
-c                  IF(CF_OK(I)) WRITE(*, '(A20,A,F10.5)') 
-c     &               CF_NAMES(I), ' = ', CF_VALUES(I)
-c              ENDDO
+!              DO I=1, 50
+!                  IF(CF_OK(I)) WRITE(*, '(A20,A,F10.5)') 
+!     &               CF_NAMES(I), ' = ', CF_VALUES(I)
+!              ENDDO
 
 c                 ::::::::::::::
 c             End of 'is the file opened?' condition statement
