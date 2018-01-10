@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/kthorp.PW47/Desktop/DSSAT/DSSAT source/DSSAT-CSM/src/Resources/Version047.rc
+resource.
+C:/Users/kthorp.PW47/Desktop/DSSAT/DSSAT source/DSSAT-CSM/src/Resources/resource.
+afxres.h
+C:/Users/kthorp.PW47/Desktop/DSSAT/DSSAT source/DSSAT-CSM/src/Resources/afxres.h
+
