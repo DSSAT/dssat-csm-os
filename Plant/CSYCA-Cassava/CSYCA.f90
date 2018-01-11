@@ -237,7 +237,7 @@
       ELSEIF (DYNAMIC == SEASEND) THEN                                         ! MF Equivalent to line 9630 in CSCAS.FOR
 !*******************************************************************************************************************************
 
-        IF (STGYEARDOY(11) /= YEARDOY) THEN  ! End for non-crop reason
+        IF (STGYEARDOY(PSX+1) /= YEARDOY) THEN  ! End for non-crop reason
           WRITE (fnumwrk,*)' '
           WRITE (fnumwrk,'(A50)') &
            ' Run terminated.(Usually because ran out of weather data).'

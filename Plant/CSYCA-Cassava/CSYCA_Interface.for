@@ -21,19 +21,18 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       USE YCA_Albedo_Check_m                                             ! MF 18JA15 For WORK.OUT
+      USE YCA_First_Trans_m
 
       IMPLICIT NONE
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
-      CHARACTER*1   ISWDIS, ISWWAT, ISWNIT, MESOM, RNMODE
-      CHARACTER*2   CROP                                             
-      CHARACTER*78  MESSAGE(10)
+      CHARACTER*1   ISWDIS, ISWWAT, ISWNIT, MESOM, RNMODE                                            
       CHARACTER (LEN=120) FILEIOIN      ! Name of input file
 
       INTEGER DYNAMIC, RUN, TN, RUNI, RN, ON
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY
-      INTEGER MDATE, L, NLAYR
+      INTEGER MDATE, NLAYR
       INTEGER MULTI, FROP, SN, YEAR, DOY
       INTEGER STGYEARDOY(0:19), STGDOY(0:19), YRPLT
       INTEGER YEARPLTCSM                                                ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS                                        

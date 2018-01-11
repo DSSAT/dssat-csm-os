@@ -68,7 +68,7 @@
         !-------------------------------------------------------------------------------------------------------------------
 
         IF (  (MOD(DAS,FROPADJ) == 0.AND.YEARDOY >= PLYEARDOY).OR. (YEARDOY == PLYEARDOY).OR. (YEARDOY == STGYEARDOY(0)).OR. &
-            (YEARDOY == STGYEARDOY(HSTG)).OR. (YEARDOY == STGYEARDOY(11))) THEN
+            (YEARDOY == STGYEARDOY(HSTG)).OR. (YEARDOY == STGYEARDOY(PSX+1))) THEN
             
             !---------------------------------------------------------------------------------------------------------------
             !          Output WORK data (IDETL: Work details)
@@ -99,7 +99,7 @@
         ! (MOD(DAS,FROPADJ) == 0.AND.YEARDOY >= PLYEARDOY),etc..
             
         !***************************************************************************************************************
-        IF (STGYEARDOY(11) == YEARDOY .OR.DYNAMIC == SEASEND) THEN         ! If harvest/failure day
+        IF (STGYEARDOY(PSX+1) == YEARDOY .OR.DYNAMIC == SEASEND) THEN         ! If harvest/failure day
         !***************************************************************************************************************
 
             !-----------------------------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@
                 IDETO       , ISWNIT      , STGYEARDOY  &
                 )
                 
-        ENDIF ! End STGYEARDOY(11) == YEARDOY.OR.DYNAMIC == SEASEND
+        ENDIF ! End STGYEARDOY(PSX-1) == YEARDOY.OR.DYNAMIC == SEASEND
         
         !---------------------------------------------------------------------------------------------------------------
         !       Store variables for possible use next day/step and re-initialize if harvest/fail

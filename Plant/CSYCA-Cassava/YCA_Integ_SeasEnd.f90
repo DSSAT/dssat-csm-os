@@ -108,7 +108,7 @@
         ENDDO
                 
         ! After harvest residues
-        IF (STGYEARDOY(11) == YEARDOY) THEN
+        IF (STGYEARDOY(PSX+1) == YEARDOY) THEN
             ! Surface
             RESWALG(0) = VWAD*(1.0-HBPCF/100.0)
             RESNALG(0) = (LeafN+StemN)*PLTPOP*10.*(1.0-HBPCF/100.)

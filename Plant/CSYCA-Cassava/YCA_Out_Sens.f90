@@ -33,7 +33,7 @@
             WRITE(*,*) ' '
             DO L = 0, PSNUM
                 CALL Csopline(laic,laistg(l))
-                IF (STGYEARDOY(L) < 9999999.AND.L /= 10.AND.L /= 11) THEN
+                IF (STGYEARDOY(L) < 9999999.AND.L /= PSX.AND.L /= PSX+1) THEN
                     CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
                     CALL Calendar(year,doy,dom,month)
                     CNCTMP = 0.0
