@@ -17,7 +17,7 @@
      
         IMPLICIT NONE 
      
-        INTEGER :: RUN         , STGYEARDOY(0:19) 
+        INTEGER :: RUN         , STGYEARDOY(0:PSX) 
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL BRSTAGE
@@ -32,7 +32,7 @@
             ! LEAVES.OUT
             OPEN(UNIT=FNUMLVS,FILE=FNAMELEAVES,POSITION='APPEND')
             WRITE (FNUMLVS,'(/,A79,/)') OUTHED
-            WRITE (FNUMLVS,'(A14,F6.1)') '! LEAF NUMBER ',LNUM
+            WRITE (FNUMLVS,'(A14,F6.1)') '! Leaf NUMBER ',LNUM
             WRITE (FNUMLVS,'(/,A42,A30,A30)')'@ BRNUM LNUM AREAP AREA1 AREA2 AREAT AREAS', &                 ! DA 26JAN2017 issue #5 removed LATL2C and LATL4C
                 '  WFLF  NFLF  AFLF TFGLF TFDLF ',' LLIFG LLIFA LLIFS LLIFE   DAP'  !LPM 07JUL2017 Issue #41 eliminate NFLF2 (same than NFLF)
             DO BR = 0, BRSTAGE
@@ -94,7 +94,7 @@
                 '  TIER_END  '
             !DO L=1,MSTG-2       !LPM  07MAR15 MSTG TO PSX
             DO L=0,PSX-2
-                IF (STGYEARDOY(L) < 9999999.AND.L /= 0.AND.L /= 10.AND.L /= 11) &
+                IF (STGYEARDOY(L) < 9999999.AND.L /= 0.AND.L /= PSX.AND.L /= PSX+1) &
                     WRITE (fnumpha,'(I6,3F6.1,2F6.2,I6,4F6.2,1X,A13)')L,sradpav(L),tmaxpav(L),tminpav(L),rainpav(L), &
                     daylpav(L),NINT(co2pav(L)),1.0-wfppav(L),1.0-wfgpav(L),1.0-nfppav(L),1.0-nfgpav(L), &
                     psname(MIN(L+1,PSX))

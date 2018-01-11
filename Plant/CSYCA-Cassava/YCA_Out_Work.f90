@@ -96,7 +96,7 @@
                 WRITE(fnumwrk,'(A,3F7.2)')     ' CH2O Start,end,remobilized       ',carbobeg*pltpop*10.,carboend*plantPopulation(), &
                     senlfgrs*plantPopulation()
                 !IF(CUMDU <= DUSRI.AND.CUMDU+DU > DUSRI.AND.SRDAYFR > 0.0)THEN !LPM 05JUN2015 DUSRI is not used
-                !    WRITE(fnumwrk,'(A, I7)')   ' STORAGE ROOT INITIATION (no/pl)  ',srnopd
+                !    WRITE(fnumwrk,'(A, I7)')   ' STORAGE Root INITIATION (no/pl)  ',srnopd
                 !    WRITE(fnumwrk,'(A,2F7.1)') ' Canopy wt at end of day (kg/ha)  ',(vegetativeCanopyWeight())*plantPopulation()
                 !    WRITE(fnumwrk,'(A,F7.1)')  ' Storage root fraction            ',srfr
                 !ENDIF

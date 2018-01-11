@@ -52,7 +52,7 @@
 
         
         ! Leaf petioles NOT included in stem here
-        STWAD = STWT*plantPopulation()
+        STWAD = StemWeight*plantPopulation()
         SDWAD = CRWT*plantPopulation()
         RSWAD = RSWT*plantPopulation()
         !LLRSWAD = LLRSWT*plantPopulation() !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
@@ -61,7 +61,7 @@
         !CRRSWAD = CRRSWT*plantPopulation()
                 
         ! Need to CHECK these
-        SENROOTA = SENROOT*10.0*PLTPOP
+        SENRootA = SENRoot*10.0*PLTPOP
         SENCAS = SENCS*10.0*PLTPOP
         SENLAS = SENLS*10.0*PLTPOP
         SENTOPLITTERA = SENTOPLITTER*plantPopulation()
@@ -81,15 +81,15 @@
         ELSE 
             NUPAC = NUPAC+NUPAD
         ENDIF  
-        CNAD = (LEAFN+STEMN+RSN)*plantPopulation()
-        SRNAD = SROOTN*plantPopulation()
-        LLNAD = LEAFN*(1.0-LPEFR)*plantPopulation()
-        RNAD = ROOTN*plantPopulation()
+        CNAD = (LeafN+StemN+RSN)*plantPopulation()
+        SRNAD = SRootN*plantPopulation()
+        LLNAD = LeafN*(1.0-LPEFR)*plantPopulation()
+        RNAD = RootN*plantPopulation()
         RSNAD = RSN*plantPopulation()
         SDNAD = SEEDN*plantPopulation()
-        SNAD = STEMN*plantPopulation()
-        TNAD = (ROOTN+LEAFN+STEMN+RSN+HPRODN+SEEDN)*plantPopulation()
-        VNAD = (LEAFN+STEMN+RSN)*plantPopulation()                                                                           !EQN 018
+        SNAD = StemN*plantPopulation()
+        TNAD = (RootN+LeafN+StemN+RSN+HPRODN+SEEDN)*plantPopulation()
+        VNAD = (LeafN+StemN+RSN)*plantPopulation()                                                                           !EQN 018
                 
         ! LAH Note that no reserves included in sancout
         ! SANCOUT = SNAD/(STWAD+STRSWAD + LPEWAD+LPERSWAD)  ! With rs
@@ -108,10 +108,10 @@
         ENDDO
                 
         ! After harvest residues
-        IF (STGYEARDOY(11) == YEARDOY) THEN
+        IF (STGYEARDOY(PSX+1) == YEARDOY) THEN
             ! Surface
             RESWALG(0) = VWAD*(1.0-HBPCF/100.0)
-            RESNALG(0) = (LEAFN+STEMN)*PLTPOP*10.*(1.0-HBPCF/100.)
+            RESNALG(0) = (LeafN+StemN)*PLTPOP*10.*(1.0-HBPCF/100.)
             RESCALG(0) = RESWALG(0) * 0.4
             RESLGALG(0) = LLWAD*LLIGP/100.0*(1.0-HBPCF/100.0)+ LPEWAD*SLIGP/100.0*(1.0-HBPCF/100.0)+ &
                 STWAD*SLIGP/100.0*(1.0-HBPCF/100.0)

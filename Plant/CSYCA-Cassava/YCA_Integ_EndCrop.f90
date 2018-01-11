@@ -78,21 +78,21 @@
         !         Compute weights,etc. at end crop
         !-----------------------------------------------------------------------
                 
-        IF (STGYEARDOY(11) == YEARDOY) THEN
+        IF (STGYEARDOY(PSX+1) == YEARDOY) THEN
                     
             ! LAH No adjustment for fraction of day to maturity
             RSWTM = RSWT
             RTWTM = RTWT
             LFWTM = LFWT
-            STWTM = STWT
+            StemWeightM = StemWeight
             CRWTM = CRWT                   
             LNUMSM = LNUM
                     
-            IF (LFWTM+STWTM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+STWTM+CRWTM)
-            IF (RTWTM > 0.0) SHRTM = (LFWTM+STWTM+CRWTM+RSWTM)/RTWTM
+            IF (LFWTM+StemWeightM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+StemWeightM+CRWTM)
+            IF (RTWTM > 0.0) SHRTM = (LFWTM+StemWeightM+CRWTM+RSWTM)/RTWTM
                     
-            CWAM = (LFWTM+STWTM+CRWTM+RSWTM)*plantPopulation()
-            VWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP * 10.0
+            CWAM = (LFWTM+StemWeightM+CRWTM+RSWTM)*plantPopulation()
+            VWAM = (LFWTM+StemWeightM+CRWTM+RSWTM)*PLTPOP * 10.0
                     
             ! For Grazing
             cwahc = (lwphc+swphc+rswphc)*plantPopulation()
@@ -105,7 +105,7 @@
                 HIAM = HIAD
             ENDIF
                     
-            SENWACM = SENTOPLITTERA+SENROOTA
+            SENWACM = SENTOPLITTERA+SENRootA
                     
             RSWAM = RSWAD
                     
@@ -125,7 +125,7 @@
             !HNUMGM = FLOAT(SRNOPD)        !issue 50
             !HNUMPM = FLOAT(SRNOPD)        !issue 50
             BRNUMSH = BRNUMST
-            IF (SRWT > 0.0) HNPCM = SROOTN/SRWT*100.0
+            IF (SRWT > 0.0) HNPCM = SRootN/SRWT*100.0
                     
         ENDIF    
     

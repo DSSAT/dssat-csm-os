@@ -28,7 +28,7 @@
         !INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator                             ! MF In ModuleDefs 
         
         !***************************************************************************************************************
-        IF (STGYEARDOY(11) == YEARDOY .OR.DYNAMIC == SEASEND) THEN         ! If harvest/failure day
+        IF (STGYEARDOY(PSX+1) == YEARDOY .OR.DYNAMIC == SEASEND) THEN         ! If harvest/failure day
         !***************************************************************************************************************
             !-----------------------------------------------------------------------------------------------------------
             !            Re-initialize
@@ -48,7 +48,7 @@
             IF (IDETL /= 'N') WRITE (fnumwrk,*) ' '
             SEASENDOUT = 'Y'
                 
-        ENDIF ! End STGYEARDOY(11) == YEARDOY.OR.DYNAMIC == SEASEND
+        ENDIF ! End STGYEARDOY(PSX) == YEARDOY.OR.DYNAMIC == SEASEND
         
         !---------------------------------------------------------------------------------------------------------------
         !       Store variables for possible use next day/step

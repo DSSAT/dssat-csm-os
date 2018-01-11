@@ -18,7 +18,7 @@
         IMPLICIT NONE 
      
         INTEGER :: CN          , DOY         , ON          , REP         , RN          , RUN         , RUNI         
-        INTEGER :: SN          , STGYEARDOY(0:19)            , TN          , YEAR
+        INTEGER :: SN          , STGYEARDOY(0:PSX)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
         REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
 
@@ -44,7 +44,7 @@
             !WRITE(*, FMT9600)
             DO L = 0, PSNUM
                 CALL Csopline(laic,laistg(l))
-                IF (STGYEARDOY(L) < 9999999.AND.L /= 10.AND.L /= 11) THEN
+                IF (STGYEARDOY(L) < 9999999.AND.L /= PSX.AND.L /= PSX+1) THEN
                     CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
                     CALL Calendar(year,doy,dom,month)
                     CNCTMP = 0.0

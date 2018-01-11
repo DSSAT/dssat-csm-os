@@ -31,6 +31,7 @@
             IF (GYEARDOY > 0) DAG = DAG + 1
             IF (EYEARDOY > 0) DAE = DAE + 1
         ENDIF
+
         TVI1 = LNUMSOLDESTA
         LNUMSOLDESTA = -99
         ! Leaves that present at beginning of day
@@ -40,7 +41,7 @@
                     call leafAge(node(BR,LF))
                     
                     ! Accelerated senescence at base of dense leaf canopy
-                    IF (node(BR,LF)%LAIByCohort > LAIXX) THEN
+                    IF (node(BR,LF)%CohortLAI > LAIXX) THEN
                             ! Increase age if deep shading at base of canopy
                             ! (Maximum accelerated ageing set in SPE file)
                             ! Accelerated ageing of lowermost active leaf
@@ -122,7 +123,7 @@
             RESPRC = RESPRC + RTRESPADJ                                                                                !EQN 425
             RESPTC = 0.0  ! Respiration tops - not yet used
             RESPC = RESPRC + RESPTC                                                                                    !EQN 426
-            LFWT = LFWT + GROLFADJ - SENLFG - SENLFGRS - LWPH                                                          !EQN 427
+            LFWT = LFWT + LeafGrowthADJ - SENLFG - SENLFGRS - LWPH                                                          !EQN 427
             LWPHC = LWPHC +  LWPH                                                                                      !EQN 428
             IF (LFWT < -1.0E-8) THEN
                 WRITE(Message(1),'(A35,F4.1,A14)') 'Leaf weight less than 0! Weight of ',lfwt,' reset to zero'
@@ -140,7 +141,7 @@
             !IF (PSTART(PSX) > 0.0) LLRSWT = AMIN1(RSWT,LFWT*(1.0-LPEFR)*(RSCLX/100.0)*DSTAGE)                        !EQN 431
             !IF (PSTART(PSX) > 0.0) LPERSWT = AMIN1(RSWT-LLRSWT,LFWT*LPEFR*(RSCLX/100.0)*DSTAGE)                      !EQN 432
             !IF (woodyWeight() > 0.0) THEN
-            !    STRSWT = (RSWT-LLRSWT-LPERSWT)*STWT/(woodyWeight())                                                        !EQN 433a
+            !    STRSWT = (RSWT-LLRSWT-LPERSWT)*StemWeight/(woodyWeight())                                                        !EQN 433a
             !    CRRSWT = (RSWT-LLRSWT-LPERSWT)*CRWT/(woodyWeight())                                                        !EQN 434a
             !ELSE
             !    STRSWT = (RSWT-LLRSWT-LPERSWT)                                                                         !EQN 433b
@@ -154,35 +155,35 @@
                 ENDIF
             ENDIF
             RSWTX = AMAX1(RSWTX,RSWT)
-            STWT = STWT + GROSTADJ - SWPH
-            IF (STWT < 1.0E-06) THEN
-                IF (STWT < 0.0) WRITE(fnumwrk,*)'Stem weight less than 0! ',STWT
-                STWT = 0.0
+            StemWeight = StemWeight + StemGrowthADJ - SWPH
+            IF (StemWeight < 1.0E-06) THEN
+                IF (StemWeight < 0.0) WRITE(fnumwrk,*)'Stem weight less than 0! ',StemWeight
+                StemWeight = 0.0
             ENDIF
             SWPHC = SWPHC +  SWPH                                                                                      !EQN 435
-            CRWT = CRWT + GROCRADJ                                                                                     !EQN 436 
+            CRWT = CRWT + StickGrowthADJ                                                                                     !EQN 436 
             
             SENTOPLITTER = SENTOPLITTER + SENTOPLITTERG                                                                !EQN 437
             SENCL(0) = SENCL(0) + SENTOPLITTERG*0.4                                                                    !EQN 438
             SENLL(0) = SENLL(0) + (SENLFG*LLIGP/100)*(SENFR)                                                           !EQN 439
             RTWT = 0.0
             DO L = 1, NLAYR
-                RTWTL(L) = RTWTL(L) + RTWTGL(L) - RTWTSL(L) - RTWTUL(L)                                                !EQN 399
+                RTWTL(L) = RTWTL(L) + RootGrowthL(L) - RTWTSL(L) - RTWTUL(L)                                                !EQN 399
                 SENWL(L) = SENWL(L) + RTWTSL(L)                                                                        !EQN 440
                 SENCL(L) = SENCL(L) + RTWTSL(L) * 0.4                                                                  !EQN 441
                 SENLL(L) = SENLL(L) + RTWTSL(L) * RLIGP/100.0                                                          !EQN 442
                 ! Totals
                 RTWT = RTWT + RTWTL(L)                                                                                 !EQN 443
-                SENROOT = SENROOT + RTWTSL(L)                                                                          !EQN 444
+                SENRoot = SENRoot + RTWTSL(L)                                                                          !EQN 444
                 SENCS = SENCS + RTWTSL(L) * 0.4                                                                        !EQN 445
                 SENLS = SENLS + RTWTSL(L) * RLIGP/100.0                                                                !EQN 446
             END DO
-            !SRWT = SRWT + GROSR + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-            SRWT = SRWT + SRWTGRS + (RTWTG-RTWTGADJ+RTRESP-RTRESPADJ) ! Root N adjustment                              !EQN 447
+            !SRWT = SRWT + GROSR + SRWTGRS + (RootGrowth-RootGrowthADJ+RTRESP-RTRESPADJ) ! Root N adjustment                      !EQN 447 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+            SRWT = SRWT + SRWTGRS + (RootGrowth-RootGrowthADJ+RTRESP-RTRESPADJ) ! Root N adjustment                              !EQN 447
         ENDIF
         IF (DAGERM+TTGEM*WFGE >= PGERM) THEN !LPM 23MAR2016 To consider reserves of stake after germination
-            !SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD-SEEDRSAVR)                                                                   !EQN 285 !LPM 23MAR2016 SEEDRSAVR subtracted in CS_Growth_Init.f90
-            SEEDRS = AMAX1(0.0,SEEDRS-GROLSSD)                                                                       !EQN 285
+            !SEEDRS = AMAX1(0.0,SEEDRS-StemLeafGrowthSD-SEEDRSAVR)                                                                   !EQN 285 !LPM 23MAR2016 SEEDRSAVR subtracted in CS_Growth_Init.f90
+            SEEDRS = AMAX1(0.0,SEEDRS-StemLeafGrowthSD)                                                                       !EQN 285
             IF (CFLSDRSMSG /= 'Y'.AND.SEEDRS <= 0.0.AND.LNUM < 4.0) THEN
                 WRITE(Message(1),'(A44,F3.1)') 'Seed reserves all used but leaf number only ',lnum
                 WRITE(Message(2),'(A58)') 'For good establishment seed reserves should last to leaf 4'
@@ -190,11 +191,11 @@
                 CALL WARNING(3,'CSYCA',MESSAGE)
                 CFLSDRSMSG = 'Y'
             ENDIF
-            !SEEDUSE = SEEDUSE + GROLSSD+SEEDRSAVR  !LPM 22DEC2016 Root growth based on top growth (deleted SEEDRSAVR)                                                                         !EQN 448
-            SEEDUSE = SEEDUSE + GROLSSD
+            !SEEDUSE = SEEDUSE + StemLeafGrowthSD+SEEDRSAVR  !LPM 22DEC2016 Root growth based on top growth (deleted SEEDRSAVR)                                                                         !EQN 448
+            SEEDUSE = SEEDUSE + StemLeafGrowthSD
             !SEEDUSER = SEEDUSER + SEEDRSAVR                                                                                !EQN 449
             SEEDUSER = SEEDUSER
-            SEEDUSET = SEEDUSET + GROLSSD                                                                                  !EQN 450
+            SEEDUSET = SEEDUSET + StemLeafGrowthSD                                                                                  !EQN 450
             SEEDRSAV = SEEDRS
         ENDIF
         ! IF (SRNOPD > 0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292

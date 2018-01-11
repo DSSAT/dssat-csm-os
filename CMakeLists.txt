@@ -660,6 +660,7 @@ set(
         "Plant/SUBSTOR-Potato/PT_ROOTGR.for" 
         "Plant/SUBSTOR-Potato/PT_SUBSTOR.for" 
         "Plant/SUBSTOR-Potato/PT_THTIME.for" 
+        "Resources/Version047.rc" 
         "Soil/SOIL.for" 
         "Soil/CENTURY_OrganicMatter/CENTURY.for" 
         "Soil/CENTURY_OrganicMatter/CE_RATIO_C.for" 
