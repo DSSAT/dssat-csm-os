@@ -232,7 +232,7 @@
         IF (NFG < 0.99999) NSDAYS = NSDAYS + 1
         
         !IF (GESTAGE > 0.1) THEN !LPM 21MAR2016 Branching after emergence
-        IF (GESTAGE > 1.0) THEN
+        IF (GESTAGE >= 1.0) THEN
             IF (INT(BRSTAGE) /= INT(BRSTAGEPREV)) THEN
                 TMAXPC = 0.0
                 TMINPC = 0.0
