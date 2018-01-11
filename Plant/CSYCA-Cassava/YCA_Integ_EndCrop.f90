@@ -78,7 +78,7 @@
         !         Compute weights,etc. at end crop
         !-----------------------------------------------------------------------
                 
-        IF (STGYEARDOY(11) == YEARDOY) THEN
+        IF (STGYEARDOY(PSX+1) == YEARDOY) THEN
                     
             ! LAH No adjustment for fraction of day to maturity
             RSWTM = RSWT

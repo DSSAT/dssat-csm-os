@@ -77,21 +77,21 @@
                 
         IF (CFLFAIL == 'Y' .OR. CFLHAR == 'Y') THEN
                     
-            IF (CFLFAIL == 'Y' .AND. BRSTAGE <= 12 .AND. BRSTAGE > 0 ) THEN       
-                STGYEARDOY(12) = YEARDOY
-                TMAXPAV(12) = TMAXPAV(INT(BRSTAGE))
-                TMINPAV(12) = TMINPAV(INT(BRSTAGE))
-                SRADPAV(12) = SRADPAV(INT(BRSTAGE))
-                DAYLPAV(12) = DAYLPAV(INT(BRSTAGE))
-                RAINPAV(12) = RAINPAV(INT(BRSTAGE))
-                CO2PAV(12) = CO2PAV(INT(BRSTAGE))
-                NFPPAV(12) = NFPPAV(INT(BRSTAGE))
-                WFPPAV(12) = WFPPAV(INT(BRSTAGE))
-                WFGPAV(12) = WFGPAV(INT(BRSTAGE))
-                NFGPAV(12) = NFGPAV(INT(BRSTAGE))
+            IF (CFLFAIL == 'Y' .AND. BRSTAGE <= PSX+2 .AND. BRSTAGE > 0 ) THEN       
+                STGYEARDOY(PSX+2) = YEARDOY
+                TMAXPAV(PSX+2) = TMAXPAV(INT(BRSTAGE))
+                TMINPAV(PSX+2) = TMINPAV(INT(BRSTAGE))
+                SRADPAV(PSX+2) = SRADPAV(INT(BRSTAGE))
+                DAYLPAV(PSX+2) = DAYLPAV(INT(BRSTAGE))
+                RAINPAV(PSX+2) = RAINPAV(INT(BRSTAGE))
+                CO2PAV(PSX+2) = CO2PAV(INT(BRSTAGE))
+                NFPPAV(PSX+2) = NFPPAV(INT(BRSTAGE))
+                WFPPAV(PSX+2) = WFPPAV(INT(BRSTAGE))
+                WFGPAV(PSX+2) = WFGPAV(INT(BRSTAGE))
+                NFGPAV(PSX+2) = NFGPAV(INT(BRSTAGE))
             ENDIF
-            STGYEARDOY(10) = YEARDOY  ! Harvest
-            STGYEARDOY(11) = YEARDOY  ! Crop End
+            STGYEARDOY(PSX) = YEARDOY  ! Harvest
+            STGYEARDOY(PSX+1) = YEARDOY  ! Crop End
             ! IF (HSTG > 0) THEN
             !    PSDAPFR(HSTG) = FLOAT(DAP)
             !    PSDAP(HSTG) = DAP

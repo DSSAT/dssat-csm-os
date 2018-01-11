@@ -124,8 +124,8 @@
                 ELSE
                     IF (YEARDOY > PWDINL) THEN
                         CFLFAIL = 'Y'
-                        STGYEARDOY(12) = YEARDOY  ! Failure
-                        STGYEARDOY(11) = YEARDOY  ! End Crop
+                        STGYEARDOY(PSX+2) = YEARDOY  ! Failure
+                        STGYEARDOY(PSX+1) = YEARDOY  ! End Crop
                         Message(1) = 'Automatic planting failure '
                         CALL WARNING(1,'CSYCA',MESSAGE)
                     ENDIF
