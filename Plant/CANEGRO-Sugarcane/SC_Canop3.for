@@ -930,29 +930,8 @@ c         Canopy heights, etc
               ! PER = 0.
               CaneCrop%CANHEIGHT = 0.
 
-
-
-
-
 c         Init tempop:
           TEMPOP = 0.
-
-!      CALL GETLUN('WORK.OUT',SCLUN)
-c                    WRITE(SCLUN, '(A, 30(F10.0))') 'TEMPOP is ',TEMPOP
-
-c         Now output the leaf dynamics arrays, for verification:
-c         ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-c          DO I=1, 30
-c              WRITE(*,'(4(F10.5, 2X))') CaneCrop%AREAMX(I), 
-c     &        CaneCrop%LMAX(I),CaneCrop%WMAX(I),CaneCrop%WIDTH(I)
-
-c          ENDDO
-c          I = 0
-
-
-c     Mass-balance based LAI calc:
-c     TOPDM_yest = 0.
-
 
 c     End of initialisation section
 c    ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
