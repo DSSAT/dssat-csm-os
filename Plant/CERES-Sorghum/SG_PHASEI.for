@@ -150,8 +150,8 @@ C------------------------------------------------------------------------
 C  LOCAL VARIABLES NOT IN OLD COMMON BLOCKS
 C------------------------------------------------------------------------
       CHARACTER ISWWAT*1,ISWNIT*1
-      REAL      AG2,GROPAN,PANDW,GDD1,GDD2
-C-GH REAL       PP3,AG2,GROPAN,PANDW,GDD1,GDD2
+      REAL      AG2,GROPAN,PANDW
+C-GH REAL       PP3,AG2,GROPAN,PANDW
       INTEGER   L,L1
 
 C--------------------------------------------------------------------
@@ -186,7 +186,6 @@ C--------------------------------------------------------------------
           BIOMS1 = 0.1
           BIOMS2 = 0.1
 	    CUMP2  = 0.0
-          GDD2=CUMDTT
 
          RETURN
       !--------------------------------------------------------------
@@ -337,7 +336,6 @@ C-GH      P4    = 4.0*PHINT + 38.0
           SEEDRV = 0.020
           LAI    = PLTPOP*PLA*0.0001
           BIOMAS = STOVWT
-          GDD1=CUMDTT
       ENDIF
 
 
