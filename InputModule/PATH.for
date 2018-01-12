@@ -11,8 +11,8 @@ C  09/17/2007 JIL Added codes for IXIM maize model
 C  08/09/2012 GH  Add codes for CSCAS cassava model
 C  04/16/2013 CHP/KAD Added codes for SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
-C  06/03/2015 LPM Added codes for CSYCA CIAT cassava model
-C  06/18/2015 GH  Add error code for configuration file issues
+C  06/03/2015 LPM Added codes for CSYCA CIAT cassava model 
+C  06/18/2015 GH  Add error code for configuration file issues      
 C  09/26/2017 WP  Add DSSAT_HOME environment variable configuration
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
