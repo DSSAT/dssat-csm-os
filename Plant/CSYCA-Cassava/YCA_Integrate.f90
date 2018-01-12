@@ -52,9 +52,7 @@
         !         Update nitrogen amounts
         !-----------------------------------------------------------------------
         IF (ISWNIT  /=  'N') THEN
-        CALL YCA_Integ_N ( &
-                NLAYR  , BRSTAGE     & 
-             )
+            CALL YCA_Integ_N (NLAYR  , BRSTAGE)
         ENDIF
         !-----------------------------------------------------------------------
         !         Update stages; returns if germinating.

@@ -108,11 +108,10 @@
             !------------------------------!
             !     Root weight by layer     !
             !------------------------------!
-            L = 0
+            L = 1
             CUMDEP = 0.0
             RTDEPTMP = RTDEP+RTDEPG                                                                                    !EQN 402
-            DO WHILE ((CUMDEP <= RTDEPTMP) .AND. (L < NLAYR))
-                L = L + 1
+            DO WHILE ((CUMDEP <= RTDEPTMP) .AND. (L <= NLAYR))
                 CUMDEP = CUMDEP + DLAYR(L)                                                                             !EQN 401
                 ! LAH Limit on WFRG. 0 WFRG (when 1 layer) -> 0 TRLDF.
                 IF (ISWWAT /='N'.AND. WFRTG > 0.0) THEN
@@ -129,6 +128,7 @@
                 ! lots H20,no N,or inverse, and therefore need roots
                 ! But with KSAS8101,AMAX1 lowered yield. Return to AMIN1
                 RLDF(L) = AMIN1(WFRG,NFRG)*SHF(L)*DLAYR(L)                                                             !EQN 403
+                L = L + 1
             END DO
             IF (L > 0 .AND. CUMDEP > RTDEPTMP) THEN
                 IF(DLAYR(L) > 0.0) THEN
