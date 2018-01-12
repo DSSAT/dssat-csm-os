@@ -163,10 +163,10 @@
         !-----------------------------------------------------------------------
                 
         IF (PARMJC > 0.0) THEN
-            PARUEC = AMAX1(0.0,(totalWeight()+SENTOPLITTER+SENRoot-SEEDUSE)* PLTPOP / PARMJC)
+            PARUEC = AMAX1(0.0,(totalWeight()+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJC)
         ENDIF
         IF (PARMJIC > 0.0) THEN
-            PARIUED = AMAX1(0.0,(totalWeight()+SENTOPLITTER+SENRoot-SEEDUSE)* PLTPOP / PARMJIC)
+            PARIUED = AMAX1(0.0,(totalWeight()+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJIC)
         ENDIF
         IF (CARBOBEG > 0.0) THEN
             PARIUE = (CARBOBEG*PLTPOP)/(PARMJFAC*SRAD*PARI)

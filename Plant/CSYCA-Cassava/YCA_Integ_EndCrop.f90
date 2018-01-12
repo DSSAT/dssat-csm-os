@@ -84,15 +84,15 @@
             RSWTM = RSWT
             RTWTM = RTWT
             LFWTM = LFWT
-            StemWeightM = StemWeight
+            STWTM = STWT
             CRWTM = CRWT                   
             LNUMSM = LNUM
                     
-            IF (LFWTM+StemWeightM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+StemWeightM+CRWTM)
-            IF (RTWTM > 0.0) SHRTM = (LFWTM+StemWeightM+CRWTM+RSWTM)/RTWTM
+            IF (LFWTM+STWTM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+STWTM+CRWTM)
+            IF (RTWTM > 0.0) SHRTM = (LFWTM+STWTM+CRWTM+RSWTM)/RTWTM
                     
-            CWAM = (LFWTM+StemWeightM+CRWTM+RSWTM)*plantPopulation()
-            VWAM = (LFWTM+StemWeightM+CRWTM+RSWTM)*PLTPOP * 10.0
+            CWAM = (LFWTM+STWTM+CRWTM+RSWTM)*plantPopulation()
+            VWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP * 10.0
                     
             ! For Grazing
             cwahc = (lwphc+swphc+rswphc)*plantPopulation()
@@ -105,7 +105,7 @@
                 HIAM = HIAD
             ENDIF
                     
-            SENWACM = SENTOPLITTERA+SENRootA
+            SENWACM = SENTOPLITTERA+SENROOTA
                     
             RSWAM = RSWAD
                     
@@ -125,7 +125,7 @@
             !HNUMGM = FLOAT(SRNOPD)        !issue 50
             !HNUMPM = FLOAT(SRNOPD)        !issue 50
             BRNUMSH = BRNUMST
-            IF (SRWT > 0.0) HNPCM = SRootN/SRWT*100.0
+            IF (SRWT > 0.0) HNPCM = SROOTN/SRWT*100.0
                     
         ENDIF    
     

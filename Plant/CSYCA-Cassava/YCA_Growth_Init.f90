@@ -183,11 +183,11 @@
         ! For grazing 
         lwph = lfwt * hafr                                                                                             !EQN 416
         laph = lapd * hafr                                                                                             !EQN 417
-        swph = stemweight * hafr                                                                                             !EQN 418
+        swph = stwt * hafr                                                                                             !EQN 418
         rswph = rswt * hafr                                                                                            !EQN 419
         lnph = leafn * hafr                                                                                            !EQN 420
-        snph = StemN * hafr                                                                                            !EQN 421
-        node%StemNHarvstByNode = node%StemNByNode * hafr                                                               !LPM 23MAY2015 to consider stem N by node cohort 
+        snph = stemn * hafr                                                                                            !EQN 421
+        node%snphn = node%stemnn * hafr                                                                         !LPM 23MAY2015 to consider stem N by node cohort 
         rsnph = rsn * hafr                                                                                             !EQN 422
         
     END SUBROUTINE YCA_Growth_Init

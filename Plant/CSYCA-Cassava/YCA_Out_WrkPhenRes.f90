@@ -61,9 +61,9 @@
             WRITE(fnumwrk,'(A27,3F11.1)')'  RESPIRED (2)  Tops,root  ',RESPC*plantPopulation(),RESPTC*plantPopulation(), &
                 RESPRC*plantPopulation() 
             TVR2 = RESPC*plantPopulation()
-            WRITE(fnumwrk,'(A27,3F11.1)')'  SENESCED (3)  Tops,root  ',(SENTOPLITTER+SENRoot)*plantPopulation(), &
-                SENTOPLITTER*plantPopulation(),SENRoot*plantPopulation()
-            TVR3 = (SENTOPLITTER+SENRoot)*plantPopulation()
+            WRITE(fnumwrk,'(A27,3F11.1)')'  SENESCED (3)  Tops,root  ',(SENTOPLITTER+SENROOT)*plantPopulation(), &
+                SENTOPLITTER*plantPopulation(),SENROOT*plantPopulation()
+            TVR3 = (SENTOPLITTER+SENROOT)*plantPopulation()
             TVR4 = (SEEDRS+SDCOAT+RTWT+SRWT+canopyWeight())*plantPopulation()
             WRITE(fnumwrk,'(A27,3F11.1)')'  PLANT+SEED_RESIDUE Pl,sd ',(SEEDRS+SDCOAT+RTWT+SRWT+canopyWeight()) &
                 *plantPopulation(),(RTWT+SRWT+canopyWeight())*plantPopulation(),(SEEDRS+SDCOAT)*plantPopulation()
@@ -91,12 +91,12 @@
             IF (seeduser+seeduset > 0.0)WRITE (fnumwrk,'(A22,F7.3)')'  Percent to tops     ', &
                 seeduset/(seeduset+seeduser)*100.0
             WRITE(fnumwrk,*)' '
-            WRITE (fnumwrk,'(A35,A10,I3)')' DEAD MATTER AND RootS (KG/HA) FOR ',excode,tn
+            WRITE (fnumwrk,'(A35,A10,I3)')' DEAD MATTER AND ROOTS (KG/HA) FOR ',excode,tn
             WRITE(fnumwrk,'(A32,F8.1)')'  DEAD MATERIAL LEFT ON SURFACE  ',SENTOPLITTERA
-            WRITE(fnumwrk,'(A32,F8.1)')'  DEAD MATERIAL LEFT IN SOIL     ',SENRootA
-            WRITE(fnumwrk,'(A32,F8.1)')'  Root WEIGHT AT HARVEST/FAILURE ',RWAD
+            WRITE(fnumwrk,'(A32,F8.1)')'  DEAD MATERIAL LEFT IN SOIL     ',SENROOTA
+            WRITE(fnumwrk,'(A32,F8.1)')'  ROOT WEIGHT AT HARVEST/FAILURE ',RWAD
             WRITE (fnumwrk,*) ' '
-            WRITE (fnumwrk,'(A20,A10,I3)')' RootS BY LAYER FOR ',excode,tn
+            WRITE (fnumwrk,'(A20,A10,I3)')' ROOTS BY LAYER FOR ',excode,tn
             WRITE (fnumwrk,'(A19)')'  LAYER  RTWT   RLV'
             DO L=1,NLAYR
                 IF (RTWTAL(L) > 0.0) WRITE (fnumwrk,'(I6,F7.1,F6.2)')L,RTWTAL(L),RLV(L)
@@ -109,7 +109,7 @@
             ENDIF
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A40)')' PRINCIPAL AND SECONDARY STAGES         '
-            WRITE (fnumwrk,'(A40)')'  STAGE NAME   DAYS > PLANTING  Leaf #  '
+            WRITE (fnumwrk,'(A40)')'  STAGE NAME   DAYS > PLANTING  LEAF #  '
             WRITE (fnumwrk,'(A15,F7.1)')'   Germination ',gdapfr
             WRITE (fnumwrk,'(A15,F7.1)')'   Emergence   ',edapfr
             DO L = 2,PSNUM
@@ -166,8 +166,8 @@
                     SENNL(0)*plantPopulation(),SENNS*plantPopulation()
                 TVR2 = (SENNL(0)+SENNS)*plantPopulation() 
                 WRITE (fnumwrk,'(A34,F8.2)')'   TOTAL N IN PLANT (3)           ', &
-                    plantPopulation()*(RootN+SRootN+LeafN+StemN+RSN+SEEDN)
-                TVR3 = (RootN+SRootN+LeafN+StemN+RSN+SEEDN)*plantPopulation()         
+                    plantPopulation()*(ROOTN+SROOTN+LEAFN+STEMN+RSN+SEEDN)
+                TVR3 = (ROOTN+SROOTN+LEAFN+STEMN+RSN+SEEDN)*plantPopulation()         
                 WRITE (fnumwrk,'(A33, F9.2)')'   HARVESTED DURING CYCLE (4)    ',plantPopulation()*LNPHC+SNPHC+RSNPHC
                 TVR4 = (LNPHC+SNPHC+RSNPHC)* plantPopulation()
                 WRITE (fnumwrk,'(A34,F8.3)')'   BALANCE (1-(2+3+4))            ',TVR1-TVR2-TVR3-TVR4

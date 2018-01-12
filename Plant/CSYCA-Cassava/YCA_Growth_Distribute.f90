@@ -31,26 +31,26 @@
         !           Reserves growth
         !-----------------------------------------------------------------------
 
-        !GRORS = CARBOT+StemLeafGrowthSD+StemLeafGrowthRT+SENLFGRS-LeafGrowthADJ-StemGrowthADJ-StickGrowthADJ-GROSR                                       !EQN 309 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
-        GRORS = CARBOT+StemLeafGrowthSD+StemLeafGrowthRT+SENLFGRS+StemLeafGrowthRS-LeafGrowthADJ-StemGrowthADJ-StickGrowthADJ                                      !LPM 05OCT2015 Added StemLeafGrowthRS to avoid negative values of reserves
+        !GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS-GROLFADJ-GROSTADJ-GROCRADJ-GROSR                                       !EQN 309 !LPM 05JUN2105 GROSR or basic growth of storage roots will not be used
+        GRORS = CARBOT+GROLSSD+GROLSRT+SENLFGRS+GROLSRS-GROLFADJ-GROSTADJ-GROCRADJ                                      !LPM 05OCT2015 Added GROLSRS to avoid negative values of reserves
         IF(GRORS < 0.0.AND.GRORS > -1.0E-07) GRORS = 0.0
 
-        ! Reserves to STORAGE Root if conc too great (overflow!)
+        ! Reserves to STORAGE ROOT if conc too great (overflow!)
         SRWTGRS = 0.0
         ! Determine potential new concentration
-        IF (LFWT+LeafGrowthADJ+woodyWeight()+StemGrowthADJ+StickGrowthADJ > 0.0) THEN
-            TVR1 = (RSWT+GRORS)/((LFWT+LeafGrowthADJ-leafTotalSenescedWeight()) + (StemWeight+StemGrowthADJ+CRWT+StickGrowthADJ)+(RSWT+GRORS))  !EQN 310
+        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) THEN
+            TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))  !EQN 310
         ENDIF
         IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
             TVR1 = 0.0
         END IF
         IF (TVR1 > RSPCO/100.0) THEN   ! If potential>standard 
             TVR2 = RSWT+GRORS             ! What rswt could be                                                         !EQN 311
-            TVR3 =   ((RSPCO/100.0)*(LFWT+LeafGrowthADJ-leafTotalSenescedWeight()+woodyWeight()+StemGrowthADJ+StickGrowthADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
+            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-leafTotalSenescedWeight()+woodyWeight()+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
             SRWTGRS = (TVR2 - TVR3)                                                                                    !EQN 313
             ! Determine FINAL new concentration
-            IF (LFWT+LeafGrowthADJ+woodyWeight()+StemGrowthADJ+StickGrowthADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+LeafGrowthADJ-leafTotalSenescedWeight())+ &             !EQN 314
-                (StemWeight+StemGrowthADJ+CRWT+StickGrowthADJ)+(RSWT+GRORS-SRWTGRS))
+            IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
+                (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
         ENDIF
         
                 
@@ -58,12 +58,12 @@
         !           Height growth
         !-----------------------------------------------------------------------
 
-        IF(StemGrowthP > 0.0) THEN
+        IF(GROSTP > 0.0) THEN
             !LPM06JUL2017 It is assumed an branching angle of 60 from the vertical line (cos(60)=0.5) 
             IF(BRSTAGE>=1.0) THEN
-                CANHTG = MAX(0.0,SESR*StemGrowthADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%CohortWeightGrowth)/StemGrowthP)*0.5)
+                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP)*0.5)
             ELSE
-                CANHTG = MAX(0.0,SESR*StemGrowthADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%CohortWeightGrowth)/StemGrowthP))
+                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP))
             ENDIF
         ELSE
             CANHTG = 0.0
@@ -73,7 +73,7 @@
         !           Root depth and length growth, and distribution
         !-----------------------------------------------------------------------
 
-        RootGrowthL = 0.0
+        RTWTGL = 0.0
         RTWTSL = 0.0
         RTWTUL = 0.0
         RTNSL = 0.0
@@ -108,10 +108,11 @@
             !------------------------------!
             !     Root weight by layer     !
             !------------------------------!
-            L = 1
+            L = 0
             CUMDEP = 0.0
             RTDEPTMP = RTDEP+RTDEPG                                                                                    !EQN 402
-            DO WHILE ((CUMDEP <= RTDEPTMP) .AND. (L <= NLAYR))
+            DO WHILE ((CUMDEP <= RTDEPTMP) .AND. (L < NLAYR))
+                L = L + 1
                 CUMDEP = CUMDEP + DLAYR(L)                                                                             !EQN 401
                 ! LAH Limit on WFRG. 0 WFRG (when 1 layer) -> 0 TRLDF.
                 IF (ISWWAT /='N'.AND. WFRTG > 0.0) THEN
@@ -128,24 +129,21 @@
                 ! lots H20,no N,or inverse, and therefore need roots
                 ! But with KSAS8101,AMAX1 lowered yield. Return to AMIN1
                 RLDF(L) = AMIN1(WFRG,NFRG)*SHF(L)*DLAYR(L)                                                             !EQN 403
-                L = L + 1
             END DO
-            IF (L > 0 .AND. CUMDEP > RTDEPTMP) THEN
-                IF(DLAYR(L) > 0.0) THEN
-                    RLDF(L) = RLDF(L)*(1.0-((CUMDEP-RTDEPTMP)/DLAYR(L)))
-                ENDIF
+            IF (L > 0 .AND. CUMDEP > RTDEPTMP .AND. DLAYR(L) > 0.0) THEN
+                RLDF(L) = RLDF(L)*(1.0-((CUMDEP-RTDEPTMP)/DLAYR(L)))
             ENDIF
-            NLAYRRoot = L
+            NLAYRROOT = L
             
             ! Root senescence
             SENRTG = 0.0
             IF(STDAY /= 0) THEN
-                DO L = 1, NLAYRRoot
+                DO L = 1, NLAYRROOT
                     RTWTSL(L) = RTWTL(L)*(RSEN/100.0)*TTGEM/STDAY                                                             !EQN 395
                     ! LAH Temperature effect above is not from soil temp
                     !LPM 19DEC2016 The model is considering now the soil temp (TTGEM)
                     IF (RTWT > 0.0) THEN
-                        RTWTUL(L) = RTWTL(L)*StemLeafGrowthRT/RTWT                                                     !EQN 396
+                        RTWTUL(L) = RTWTL(L)*GROLSRT/RTWT                                                     !EQN 396
                     ENDIF
                     SENRTG = SENRTG + RTWTSL(L)                                                                            !EQN 397
                     IF (ISWNIT /= 'N') THEN
@@ -158,12 +156,12 @@
     
             ! Root weight growth by layer
             TRLDF = 0.0
-            DO  L = 1, NLAYRRoot
+            DO  L = 1, NLAYRROOT
                 TRLDF = TRLDF + RLDF(L)
             END DO
             IF (TRLDF > 0.0) THEN
-                DO  L = 1, NLAYRRoot
-                    RootGrowthL(L) = (RLDF(L)/TRLDF)*(RootGrowthADJ)                                                             !EQN 400
+                DO  L = 1, NLAYRROOT
+                    RTWTGL(L) = (RLDF(L)/TRLDF)*(RTWTGADJ)                                                             !EQN 400
                 END DO
             ENDIF
         ENDIF
@@ -174,14 +172,14 @@
             
         AH2OPROFILE = 0.0
         H2OPROFILE = 0.0
-        AH2ORootZONE = 0.0
-        H2ORootZONE = 0.0
+        AH2OROOTZONE = 0.0
+        H2OROOTZONE = 0.0
         DO L = 1, NLAYR
             AH2OPROFILE = AH2OPROFILE+((SW(L)-LL(L))*DLAYR(L))*10.                                                     !EQN 404              
             H2OPROFILE = H2OPROFILE + SW(L)*DLAYR(L)*10.0                                                              !EQN 405
             IF (RLV(L) > 0.0) THEN
-                AH2ORootZONE=AH2ORootZONE+((SW(L)-LL(L))*DLAYR(L))*10.
-                H2ORootZONE = H2ORootZONE+SW(L)*DLAYR(L)*10.
+                AH2OROOTZONE=AH2OROOTZONE+((SW(L)-LL(L))*DLAYR(L))*10.
+                H2OROOTZONE = H2OROOTZONE+SW(L)*DLAYR(L)*10.
             ENDIF
         END DO
 

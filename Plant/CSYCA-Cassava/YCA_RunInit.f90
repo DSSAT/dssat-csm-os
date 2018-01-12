@@ -310,7 +310,7 @@
                 CLOSE(FNUMPSUM)
                 
                 OPEN(UNIT=FNUMLVS,FILE=FNAMELEAVES)
-                WRITE (FNUMLVS,'(A11)') '$Leaf_SIZES'
+                WRITE (FNUMLVS,'(A11)') '$LEAF_SIZES'
                 CLOSE(FNUMLVS)
                 
                 OPEN(UNIT=FNUMPHA,FILE=FNAMEPHASES)

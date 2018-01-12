@@ -244,7 +244,7 @@
         
         ! Critical and starting N concentrations
         LNCX = LNCXS(0)
-        node%StemMaxNConc = SNCXS(0)
+        node%SNCX = SNCXS(0)
         RNCX = RNCXS(0)
         LNCM = LNCMN(0)
         node%SNCM = SNCMN(0)

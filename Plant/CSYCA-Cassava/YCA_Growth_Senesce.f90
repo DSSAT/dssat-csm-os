@@ -65,11 +65,11 @@
         PLASW = 0.0
         PLASN = 0.0
         IF (ISWWAT /= 'N') THEN
-            IF (plantLeafAreaLeftToSenesce() > 0.0 .AND. WUPR < WFSU) PLASW = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenesce())-PLAS,(plantLeafAreaLeftToSenesce())*LLOSA))        !EQN 373
+            IF (plantLeafAreaLeftToSenesce() > 0.0.AND.WUPR < WFSU) PLASW = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenesce())-PLAS,(plantLeafAreaLeftToSenesce())*LLOSA))        !EQN 373
         ENDIF
         IF (ISWNIT /= 'N') THEN
             LNCSEN = LNCM + NFSU * (LNCX-LNCM)                                                                         !EQN 374
-            IF (plantLeafAreaLeftToSenesce() > 0.0 .AND. LANC < LNCSEN) PLASN = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenesce())-PLAS,(plantLeafAreaLeftToSenesce())*LLOSA))
+            IF (plantLeafAreaLeftToSenesce() > 0.0.AND.LANC < LNCSEN) PLASN = AMAX1(0.0,AMIN1((plantLeafAreaLeftToSenesce())-PLAS,(plantLeafAreaLeftToSenesce())*LLOSA))
         ENDIF
         ! LAH TMP
         PLASW = 0.0
@@ -81,7 +81,7 @@
         !-----------------------------------------------------------------------
         !        LAI by Cohort
         !-----------------------------------------------------------------------
-        node(BR,LF)%CohortLAI=0.0                               ! DA re-initializing LAIByCohort
+        node(BR,LF)%LAIByCohort=0.0                               ! DA re-initializing LAIByCohort
         LAI=0.0                                              ! DA re-initializing LAI
         DO Bcount=0,BRSTAGE
             BR= BRSTAGE - Bcount                                                        ! DA 28OCT2016 to run the loop to the higher branch to the lowest
@@ -89,8 +89,8 @@
                 LF=LNUMSIMSTG(BR)-Lcount                                                ! DA to run the loop to the higher leaf to the lowest
                 IF (isLeafAlive(node(BR,LF))) THEN                      ! DA if leave is alive
 
-                    node(BR,LF)%CohortLAI = LAI + (leafAreaLeftToSenesce(node(BR,LF)))*PLTPOP*0.0001             ! DA the LAI calculation is accumulative from the previous cohort LAI
-                    LAI = node(BR,LF)%CohortLAI                                                                     ! DA updating LAI
+                    node(BR,LF)%LAIByCohort = LAI + (leafAreaLeftToSenesce(node(BR,LF)))*PLTPOP*0.0001             ! DA the LAI calculation is accumulative from the previous cohort LAI
+                    LAI = node(BR,LF)%LAIByCohort                                                                     ! DA updating LAI
                     
                 ENDIF
             ENDDO
@@ -99,6 +99,11 @@
         ! Leaf senescence - low light at base of canopy
         ! NB. Just senesces any leaf below critical light fr 
         PLASL = 0.0
+        !IF (LAI > LAIXX) THEN
+        !    PLASL = (LAI-LAIXX) / (PLTPOP*0.0001)
+        !    ! LAH Eliminated! Replaced by accelerated senescence
+        !    PLASL = 0.0
+        !ENDIF
             
         ! Leaf senescence - overall
         PLAS =  PLASP + PLASI + PLASS + PLASL                                                                          !EQN 369
@@ -114,19 +119,17 @@
         SENNLFG = 0.0
         SENNLFGRS = 0.0
         IF (plantLeafAreaLeftToSenesce() > 0.0) THEN
-            ! LAH New algorithms 03/04/13
-            SENLFG = AMIN1(LFWT*LWLOS , (AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenesce()))*LWLOS))))                                        !EQN 375
-            SENLFGRS = AMIN1(LFWT*(1.0-LWLOS) , (AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenesce()))*(1.0-LWLOS)))))                          !EQN 376
+        ! LAH New algorithms 03/04/13
+        SENLFG = AMIN1(LFWT*LWLOS,(AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenesce()))*LWLOS))))                                        !EQN 375
+        SENLFGRS = AMIN1(LFWT*(1.0-LWLOS),(AMAX1(0.0,(LFWT*(PLAS/(plantLeafAreaLeftToSenesce()))*(1.0-LWLOS)))))                          !EQN 376
         ENDIF
   
         IF (ISWNIT /= 'N') THEN
             ! NB. N loss has a big effect if low N
             ! Assumes that all reserve N in leaves
-            IF (LFWT > 0.0) THEN 
-                LANCRS = (LeafN+RSN) / LFWT                                                               !EQN 377
-            ENDIF
-            SENNLFG = AMIN1(LeafN,(SENLFG+SENLFGRS)*LNCM)                                                              !EQN 378
-            SENNLFGRS = AMIN1(LeafN-SENNLFG,(SENLFG+SENLFGRS)*(LANC-LNCM))                                             !EQN 379
+            IF (LFWT > 0.0) LANCRS = (LEAFN+RSN) / LFWT                                                               !EQN 377
+            SENNLFG = AMIN1(LEAFN,(SENLFG+SENLFGRS)*LNCM)                                                              !EQN 378
+            SENNLFGRS = AMIN1(LEAFN-SENNLFG,(SENLFG+SENLFGRS)*(LANC-LNCM))                                             !EQN 379
         ELSE
             SENNLFG = 0.0
             SENNLFGRS = 0.0

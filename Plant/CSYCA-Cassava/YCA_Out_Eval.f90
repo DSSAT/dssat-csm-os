@@ -748,8 +748,8 @@
                     IF (RUN == 1 .AND. RUNI == 1) THEN
                         WRITE(fnumov,*)' '
                         WRITE(fnumov,*)'BIOMASS  = Above-ground dry weight (Excl.seed;kg/ha)'
-                        WRITE(fnumov,*)'Leaf AREA  = Leaf area index (m2/m2)'
-                        WRITE(fnumov,*)'Leaf NUMBER  = Leaf number produced on main axis'
+                        WRITE(fnumov,*)'LEAF AREA  = Leaf area index (m2/m2)'
+                        WRITE(fnumov,*)'LEAF NUMBER  = Leaf number produced on main axis'
                         WRITE(fnumov,*)'CROP N  = Above-ground N (Excl.seed;kg/ha)'
                         WRITE(fnumov,*)'CROP N%  = Above-ground N concentration(%)'
                         WRITE(fnumov,*)'H2O STRESS = ','Photosynthesis stress, prior to stage (0=none,1=max)'
@@ -915,12 +915,12 @@
                         WRITE(FNUMWRK,*) ' '
                         WRITE(FNUMWRK,'(A)')' INORGANIC N (kg/ha) LEFT IN SOIL AT HARVEST '
                         WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in PROFILE: ',SNO3PROFILE,SNH4PROFILE
-                        WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in RootZONE:',SNO3RootZONE,SNH4RootZONE
+                        WRITE(FNUMWRK,'(A,2F6.1)')'  NO3 and NH4 N in ROOTZONE:',SNO3ROOTZONE,SNH4ROOTZONE
                     ENDIF   ! End Iswnit NE N
                     WRITE(FNUMWRK,*) ' '
                     WRITE(FNUMWRK,'(A)')' H2O (mm) LEFT IN SOIL AT HARVEST '
                     WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in PROFILE: ',H2OPROFILE,AH2OPROFILE
-                    WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in RootZONE:',H2ORootZONE,AH2ORootZONE
+                    WRITE(FNUMWRK,'(A,2F6.1)')'  H2O and AVAILABLE H2O in ROOTZONE:',H2OROOTZONE,AH2OROOTZONE
                     WRITE (fnumwrk,*) ' '
                     WRITE (fnumwrk,'(A,A10,I3)')' CRITICAL PERIOD CONDITIONS FOR ',excode,tn
                     WRITE (fnumwrk,'(A,F6.1)')'  Temperature mean,germination         ',TMEANG

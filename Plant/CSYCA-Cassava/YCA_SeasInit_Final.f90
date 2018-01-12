@@ -161,7 +161,7 @@
         IF (MEEXP == 'E')WRITE(fnumwrk,'(A26,A1)')'   EXPERIMENTAL ALGORITHM ',MEEXP
         WRITE(fnumwrk,'(A26,A1)') '   PHOTOSYNTHESIS         ',MEPHO
         WRITE(fnumwrk,'(A26,A1,1X,A1)') '   WATER AND N SWITCHES   ',ISWWAT,ISWNIT
-        WRITE(fnumwrk,'(A26,A1)') '   Leaf LIFE SWITCH       ',CFLLFLIFE     
+        WRITE(fnumwrk,'(A26,A1)') '   LEAF LIFE SWITCH       ',CFLLFLIFE     
         WRITE(fnumwrk,'(A26,A3)')  '   N UPTAKE               ',MERNU
         WRITE(fnumwrk,'(A26,I1)') ' '
         WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN

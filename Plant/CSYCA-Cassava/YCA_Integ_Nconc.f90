@@ -38,7 +38,7 @@
             IF((LLIFATT+LLIFSTT) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                  DO LF = 1, LNUMSIMSTG(BR)
-                    node(BR,LF)%StemMaxNConc = SNCXS(0) + (node(BR,LF)%LAGETT*(SNCXS(1)-SNCXS(0)) / (LLIFATT+LLIFSTT) )
+                    node(BR,LF)%SNCX = SNCXS(0) + (node(BR,LF)%LAGETT*(SNCXS(1)-SNCXS(0)) / (LLIFATT+LLIFSTT) )
                     node(BR,LF)%SNCM = SNCMN(0) + (node(BR,LF)%LAGETT*(SNCMN(1)-SNCMN(0)) / (LLIFATT+LLIFSTT) )
                  ENDDO
                 ENDDO
@@ -47,19 +47,19 @@
             ! Not reseting all to zero an leaving last value just in case it can't be calculated
             RANC = AMAX1(0.0,RANC)
             LANC = AMAX1(0.0,LANC)
-            node%StemNConc = AMAX1(0.0,node%StemNConc)
+            node%SANC = AMAX1(0.0,node%SANC)
             VANC = AMAX1(0.0,VANC)
             VCNC = AMAX1(0.0,VCNC)
             VMNC = AMAX1(0.0,VMNC)
             
-            IF (RTWT > ZERO) RANC = RootN / RTWT        !EQN 017
-            IF (LFWT > ZERO) LANC = LeafN / LFWT        !EQN 243 
+            IF (RTWT > ZERO) RANC = ROOTN / RTWT        !EQN 017
+            IF (LFWT > ZERO) LANC = LEAFN / LFWT        !EQN 243 
 
-            IF ((woodyWeight()) > ZERO .AND. (StemWeightP+CRWTP) > ZERO) THEN
+            IF ((woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                        IF (node(BR,LF)%CohortWeight*(woodyWeight())/(StemWeightP+CRWTP) > 0.0) THEN
-                            node(BR,LF)%StemNConc = node(BR,LF)%StemNByNode / (node(BR,LF)%CohortWeight*(woodyWeight())/(StemWeightP+CRWTP))
+                        IF (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP) > 0.0) THEN
+                            node(BR,LF)%SANC = node(BR,LF)%STEMNN / (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))
                         ENDIF
                     ENDDO
                 ENDDO
@@ -67,19 +67,19 @@
             IF (VWAD > 0.0) VANC = VNAD/VWAD                                                                          !EQN 020
             IF (LANC < 0.0) THEN 
                 WRITE(Message(1),'(A27,F4.1)') 'LANC below 0 with value of ',LANC
-                WRITE(Message(2),'(A27,2F5.1)') 'LeafN,LFWT had values of   ',LeafN,LFWT
+                WRITE(Message(2),'(A27,2F5.1)') 'LEAFN,LFWT had values of   ',LEAFN,LFWT
                 CALL WARNING(2,'CSYCA',MESSAGE)
                 LANC = AMAX1(0.0,LANC)
             ENDIF
             
             SCNCT = 0.0
             SCNMT = 0.0
-            IF ((LFWT+woodyWeight()) > ZERO .AND. (StemWeightP+CRWTP) > ZERO) THEN
+            IF ((LFWT+woodyWeight()) > ZERO .AND. (STWTP+CRWTP) > ZERO) THEN
                 DO BR = 0, BRSTAGE                                                                                        
                     DO LF = 1, LNUMSIMSTG(BR)
-                        node(BR,LF)%SCNC = (node(BR,LF)%CohortWeight*(woodyWeight())/(StemWeightP+CRWTP))*node(BR,LF)%StemMaxNConc
+                        node(BR,LF)%SCNC = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCX
                         SCNCT =  SCNCT + node(BR,LF)%SCNC
-                        node(BR,LF)%SCNM = (node(BR,LF)%CohortWeight*(woodyWeight())/(StemWeightP+CRWTP))*node(BR,LF)%SNCM
+                        node(BR,LF)%SCNM = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*node(BR,LF)%SNCM
                         SCNMT =  SCNMT + node(BR,LF)%SCNM
                     ENDDO
                 ENDDO
@@ -94,15 +94,15 @@
             SDNC = 0.0
             SRANC = 0.0
             IF (SEEDRS > 0.0) SDNC = SEEDN/(SEEDRS+SDCOAT)
-            IF (SRWT > 0) SRANC = SRootN/SRWT
+            IF (SRWT > 0) SRANC = SROOTN/SRWT
             LNCR = 0.0
             node%SNCR = 0.0
             RNCR = 0.0
             IF (LNCX > 0.0) LNCR = AMAX1(0.0,AMIN1(1.0,LANC/LNCX))
             DO BR = 0, BRSTAGE                                                                              !LPM25MAY2015 To consider different N concentration by node according with node age                                                                       
                 DO LF = 1, LNUMSIMSTG(BR)  
-                    IF (node(BR,LF)%StemMaxNConc > 0.0) THEN
-                        node(BR,LF)%SNCR = AMAX1(0.0,AMIN1(1.0,node(BR,LF)%StemNConc/node(BR,LF)%StemMaxNConc))
+                    IF (node(BR,LF)%SNCX > 0.0) THEN
+                        node(BR,LF)%SNCR = AMAX1(0.0,AMIN1(1.0,node(BR,LF)%SANC/node(BR,LF)%SNCX))
                     ENDIF
                 ENDDO
             ENDDO

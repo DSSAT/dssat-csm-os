@@ -94,7 +94,7 @@
               ! Calculate plant potential evaporation 
               EOP = MAX(0.0,EO/EOMPEN*EOMPCRPCO2 * (1.0-EXP(-LAI*KEP)))
               ! Ratio necessary because EO method may not be Monteith
-              CALL CSCRPRootWU(ISWWAT,NLAYR, DLAYR, LL, SAT, WFEU, MEWNU,EOP, RLV, RWUPM, RLFWU, RWUMX, RTDEP, &
+              CALL CSCRPROOTWU(ISWWAT,NLAYR, DLAYR, LL, SAT, WFEU, MEWNU,EOP, RLV, RWUPM, RLFWU, RWUMX, RTDEP, &
                   SW, WTDEP, uh2o, trwup, trwu)
             ENDIF
             

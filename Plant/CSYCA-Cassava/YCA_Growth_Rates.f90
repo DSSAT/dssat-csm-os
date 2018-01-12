@@ -90,7 +90,7 @@
               !ENDIF
                 RAW = 0.0
                 TRLV = 0.0
-                DO L = 1, NLAYRRoot
+                DO L = 1, NLAYRROOT
                     RAW = RAW + (SWP(L)*DLAYRTMP(L)*RLV(L))
                     TRLV = TRLV + (RLV(L)*DLAYRTMP(L))
                 ENDDO
