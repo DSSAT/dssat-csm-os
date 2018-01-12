@@ -131,7 +131,7 @@
                 RLDF(L) = AMIN1(WFRG,NFRG)*SHF(L)*DLAYR(L)                                                             !EQN 403
             END DO
             IF (L > 0 .AND. CUMDEP > RTDEPTMP) THEN
-                IF(DLAYR(L) > 0.0)
+                IF(DLAYR(L) > 0.0) THEN
                     RLDF(L) = RLDF(L)*(1.0-((CUMDEP-RTDEPTMP)/DLAYR(L)))
                 ENDIF
             ENDIF
