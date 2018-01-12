@@ -287,6 +287,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
           Soil%SW(I)    = SW(I)
           Soil%DLAYR(I) = SOILPROP%DLAYR(I)
           Soil%NLAYR    = SOILPROP%NLAYR
+          Soil%SAT      = SOILPROP%SAT
       ENDDO
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c    
@@ -638,6 +639,7 @@ c         Init RLV:
 
 c         Set RLV (subroutine output to DSSAT CSM):
           RLV = WaterBal%RLV
+          WaterBal%ANAERF = 1.0
 c     :::::::::::::::::::::::::::::::::
 
 c     :::::::::::::::::::::::::::::::::
@@ -741,16 +743,27 @@ c         ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c           If there is NO potential transp., there can be no water stress...
             WaterBal%SWDF1 = 1.0
             WaterBal%SWDF2 = 1.0
+            WaterBal%ANAERF = 1.0
           ELSE
 c           Init:
             WaterBal%SWDF1 = 1.0
             WaterBal%SWDF2 = 1.0
             EP1 = EOP * 0.1
 
-c           SWDF1
+c           SWDF1 
             WaterBal%SWDF1 = MIN(1., (1./RWUEP1* TRWUP/EP1))
 c           SWDF2
             WaterBal%SWDF2 = MIN(1., (1./RWUEP2 * TRWUP/EP1))
+            
+c           Find an equivalent value from DSSAT!
+            ! WaterBal%ANAERF = 1.
+            ! MJ, Jan 2018: Calculate anaerobic stress factor
+            CALL SC_ANAERF(
+     &        Soil%NLAYR, RLV, SW, Soil%DUL, Soil%SAT, 
+     &        Soil%DLAYR, WaterBal%ANAERF)
+c           SCV    = 0.2
+            WRITE(*, '(F10.5)') WaterBal%ANAERF
+                      
           ENDIF
         ENDIF
       ENDIF
@@ -804,9 +817,7 @@ c     Do photosynthesis calculations:
 c     :::::::::::::::::::::::::::::::
 c       Initialise PHOTOS variables
 c       :::::::::::::::::::::::::::
-c         Find an equivalent value from DSSAT!
-          WaterBal%ANAERF = 1.
-c          SCV    = 0.2
+
 
 c         For now...
 c#        Read from XLAT?

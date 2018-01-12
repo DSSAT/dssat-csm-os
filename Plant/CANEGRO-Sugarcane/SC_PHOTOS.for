@@ -991,3 +991,97 @@ c     ::::::::::
        RETURN 
        END 
 
+
+!>@brief A subroutine for calculating waterlogging
+!>       stress in Canegro.  (Anaerobic conditions)
+!> @param[out] ANAERF Anaerobic stress factor that limits photosynthesis
+!> @param[in]  NLAYR  Number of soil layers
+!> @param[in]  RLV    Root length density (cm/cm3)
+!> @param[in]  SW     Soil moisture content (cm3/cm3)
+!> @param[in]  DUL    Drained upper limit of soil moisture content (cm3/cm3)
+!> @param[in]  SAT    Saturated limit of soil moisture content (cm3/cm3)
+       SUBROUTINE SC_ANAERF(
+     &   NLAYR, RLV, SW, DUL, SAT, DLAYR, ! Inputs  
+     &   ANAERF)
+
+       INTENT(IN) :: NLAYR, RLV, SW, DUL, SAT, DLAYR
+       INTENT(OUT) :: ANAERF
+       
+       REAL ANAERF
+       REAL SWC_RTD, DUL_RTD, SAT_RTD
+       REAL AERSTp
+       INTEGER I
+       REAL SWC_RTDi, DUL_RTDi, SAT_RTDi
+       REAL WTRLG, WTRLG_7
+       INTEGER NROOTD
+       REAL, DIMENSION(NLAYR) :: RLV, SW, DUL, SAT, AERST, NSTLAYR, 
+     &   DLAYR
+
+
+c        Soil excess water stress
+c        'Aeration stress' (Steduto, et al)
+c        :::::::::::::::::::::::::::::::::::::::::::::
+         SWC_RTD = 0.0
+         DUL_RTD = 0.0
+         SAT_RTD = 0.0
+         AERSTp = 0.0
+c        Get total SWC, SAT for the whole rooted profile
+         DO I=1, NLAYR
+           IF (RLV(I) .GT. 0.0001) THEN
+           ! this layer is rooted
+           NROOTD = I  
+c          Rooted profile soil water content (cm)
+           SWC_RTDi = SW(I) * DLAYR(I)
+c          Rooted profile DUL (anything above is waterlogging)
+           DUL_RTDi = DUL(I) * DLAYR(I)
+c          Rooted profile SAT (anything above is runoff)
+           SAT_RTDi = SAT(I) * DLAYR(I)
+
+c          Aeration stress per layer (used to distribute whole-profile
+c          aeration stress only):
+c          # possibility to have a lower denominator for
+c          # reducing expansive growth (e.g. ((SAT_RTDi - DUL_RTDi)/2.0) )
+c          # more than photosynthesis
+           AERST(I) = MAX(0.0, SWC_RTDi - DUL_RTDi) /
+     &       (SAT_RTDi - DUL_RTDi)
+
+c          Totals:
+           SWC_RTD = SWC_RTD + SWC_RTDi
+           DUL_RTD = DUL_RTD + DUL_RTDi
+           SAT_RTD = SAT_RTD + SAT_RTDi
+           AERSTp = AERSTp + AERST(I)
+           
+           ENDIF
+         ENDDO     
+
+c        Extent of aeration stress over the rooted profile
+         ! WTRLG = MAX(0.0, SWC_RTD - DUL_RTD) / (SAT_RTD - DUL_RTD)
+c        Use the lowest per-layer value to determine per-profile aeration stress:
+c        Appears not to be working so well with the Ritchie / CERES WU model.
+c        The basic thinking was that if any part of the root system 
+c        has access to air, that will be enough for the whole plant.
+c        But of course, some very thin layer with air will probably not be 
+c        enough...  So a more robust model is required!
+         ! WTRLG = MINVAL(AERST)
+         WTRLG = DOT_PRODUCT(AERST(1:NROOTD),DLAYR(1:NROOTD))/NROOTD
+         IF (WTRLG .GT. 1.0) THEN
+           WRITE(*, '(2F10.5)') WTRLG, MAXVAL(AERST)
+         ENDIF
+c        Now calculate 7-day running average aeration stress:
+         ! #todo
+         WTRLG_7 = WTRLG
+c        If there is aeration stress, distribute by layer in order
+c        to limit transpiration according to per-layer relative 
+c        aeration stress:
+         IF (WTRLG_7 .GT. 0.00001) THEN
+c        Consider rooted layers only
+         DO I=1, NROOTD
+c          This layer's SWDF1 'aeration stress' is weighted by the 
+c          previously-calculated relative aeration stress and scaled 
+c          to per-profile stress.
+            NSTLAYR(I) = (AERST(I) / AERSTp) * (1.0 - WTRLG_7)
+         ENDDO
+c        And update the whole-profile water stress factor:
+         ANAERF = (1.0 - WTRLG_7)
+         ENDIF
+       END
