@@ -11,7 +11,7 @@ Module YCA_First_Trans_m
     INTEGER,PARAMETER::DINX =   3 ! Disease number,maximum
     INTEGER,PARAMETER::PSX  =  17 ! Principal stages,maximum !LPM 07MAR15 change to a maximum value of branching levels of 10 
     INTEGER,PARAMETER::SSX  =  20 ! Secondary stages,maximum
-    INTEGER,PARAMETER::KEYSTX =20 ! Maximum number of key stages
+    INTEGER,PARAMETER::KEYSTX =17 ! Maximum number of key stages
     INTEGER,PARAMETER::DCNX =  10 ! Disease control #,maximum
     !INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts
     INTEGER,PARAMETER::LCNUMX=500 ! Maximum number of leaf cohorts LPM 23JUL15 using LNUMX to avoid errors for late or non branching varieties
