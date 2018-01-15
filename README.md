@@ -16,7 +16,7 @@ in over 100 countries worldwide.
 
 Read more about DSSAT at http://dssat.net/about
 
-See also: [Non-threatening best practice DSSAT Fortran coding guidelines](https://dssat.net/wp-admin/post.php?post=2565&action=edit). 
+See also: [Non-threatening best practice DSSAT Fortran coding guidelines](https://dssat.net/non-threatening-best-practice-dssat-fortran-coding-guidelines). 
 
 ## The directory structure ##
 
