@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 9574 - 9620 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 9574 - 9620 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -28,7 +28,7 @@
         !INTEGER,PARAMETER::SEASEND= 6 ! Program ending indicator                             ! MF In ModuleDefs 
         
         !***************************************************************************************************************
-        IF (STGYEARDOY(11).EQ.YEARDOY .OR.DYNAMIC.EQ.SEASEND) THEN         ! If harvest/failure day
+        IF (STGYEARDOY(PSX+1) == YEARDOY .OR.DYNAMIC == SEASEND) THEN         ! If harvest/failure day
         !***************************************************************************************************************
             !-----------------------------------------------------------------------------------------------------------
             !            Re-initialize
@@ -45,18 +45,18 @@
                 
             WRITE (fnumwrk,*) ' '
             WRITE (fnumwrk,'(A50)')' END OF RUN. WILL BEGIN NEW CYCLE IF CALLED FOR.  '
-            IF (IDETL.NE.'N') WRITE (fnumwrk,*) ' '
+            IF (IDETL /= 'N') WRITE (fnumwrk,*) ' '
             SEASENDOUT = 'Y'
                 
-        ENDIF ! End STGYEARDOY(11).EQ.YEARDOY.OR.DYNAMIC.EQ.SEASEND
+        ENDIF ! End STGYEARDOY(PSX) == YEARDOY.OR.DYNAMIC == SEASEND
         
         !---------------------------------------------------------------------------------------------------------------
         !       Store variables for possible use next day/step
         !---------------------------------------------------------------------------------------------------------------
         
         CNADPREV = CNAD
-        IF (CN.LE.1) CROPPREV = CROP
-        IF (RNMODE.NE.'G') CUDIRFLPREV = CUDIRFLE
+        IF (CN <= 1) CROPPREV = CROP
+        IF (RNMODE /= 'G') CUDIRFLPREV = CUDIRFLE
         CWADPREV = CWAD
         ECONOPREV = ECONO
         EMRGFRPREV = EMRGFR

@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 5534 - 6649 of the original CSCAS code.  The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 5534 - 6649 of the original CSCAS code.  The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -51,10 +51,8 @@
         !-----------------------------------------------------------------------
         !         Update nitrogen amounts
         !-----------------------------------------------------------------------
-        IF (ISWNIT .EQ. 'Y') THEN
-            CALL YCA_Integ_N ( &
-                NLAYR  , BRSTAGE     & 
-                )
+        IF (ISWNIT  /=  'N') THEN
+            CALL YCA_Integ_N (NLAYR  , BRSTAGE)
         ENDIF
         !-----------------------------------------------------------------------
         !         Update stages; returns if germinating.
@@ -67,8 +65,8 @@
         !-----------------------------------------------------------------------
         !         Calculate nitrogen concentrations, skip if germinating.
         !-----------------------------------------------------------------------
-        !IF (GESTAGE.GE.0.5) CALL YCA_Integ_Nconc ( &  !LPM 21MAR2016 To separate germination and emergence
-        IF (GESTAGE.GE.1.0) CALL YCA_Integ_Nconc ( &
+        !IF (GESTAGE >= 0.5) CALL YCA_Integ_Nconc ( &  !LPM 21MAR2016 To separate germination and emergence
+        IF (GESTAGE >= 1.0) CALL YCA_Integ_Nconc ( &
             ISWNIT      , BRSTAGE           & 
             )   
             

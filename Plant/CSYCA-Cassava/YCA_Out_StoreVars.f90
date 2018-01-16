@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 9459 - 9573 of the original CSCAS code.  The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 9459 - 9573 of the original CSCAS code.  The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -29,7 +29,7 @@
         ! CSM OPSUM routine for printing.  Integers are temporarily
         ! saved as real numbers for placement in real array.
                 
-        IF (IDETO.EQ.'E'.OR.IDETO.EQ.'N') THEN
+        IF (IDETO == 'E'.OR.IDETO == 'N') THEN
             ! Resource productivity calculations 
             ! (Nnot done earlier because no Overview called for)
             DMP_Rain = -99.
@@ -60,7 +60,7 @@
                 DMP_Irr = CWAM / IRRAMTC 
                 GrP_Irr = HWAM  / IRRAMTC
             ENDIF
-            IF (ISWNIT.NE.'N') THEN
+            IF (ISWNIT /= 'N') THEN
                 IF (Amtnit > 1.E-3) THEN
                     DMP_NApp = CWAM / Amtnit
                     GrP_NApp = HWAM  / Amtnit
@@ -75,7 +75,7 @@
             IF (IRRAMTC > 1.E-3) THEN
                 WRITE(FNUMWRK, FMT1210) IRRAMTC, DMP_Irr*0.1, DMP_Irr, GrP_Irr*0.1, GrP_Irr
             ENDIF  
-            IF (ISWNIT.NE.'N') THEN
+            IF (ISWNIT /= 'N') THEN
                 IF (Amtnit > 1.E-3) THEN
                     WRITE(FNUMWRK, FMT1220) Amtnit, DMP_NApp, GrP_NApp 
                 ENDIF
@@ -86,9 +86,9 @@
         ENDIF
                 
         LABEL(1) = 'ADAT'; VALUE(1) = -99.0
-        !IF (stgyeardoy(mstg).LT.9999999) THEN                     !LPM  07MAR15 MSTG TO PSX
+        !IF (stgyeardoy(mstg) < 9999999) THEN                     !LPM  07MAR15 MSTG TO PSX
         !    LABEL(2) = 'MDAT'; VALUE(2) = FLOAT(stgyeardoy(mstg))
-        IF (stgyeardoy(PSX).LT.9999999) THEN
+        IF (stgyeardoy(PSX) < 9999999) THEN
             LABEL(2) = 'MDAT'; VALUE(2) = FLOAT(stgyeardoy(PSX))
         ELSE
             LABEL(2) = 'MDAT'; VALUE(2) = -99.0
@@ -132,6 +132,6 @@
         LABEL(36) = 'PRCP ' ; VALUE(36) = RAINCC       
         LABEL(37) = 'ETCP ' ; VALUE(37) = ETCC      
                 
-        IF (FILEIOT(1:2).EQ.'DS') CALL SUMVALS (SUMNUM, LABEL, VALUE)
+        IF (FILEIOT(1:2) == 'DS') CALL SUMVALS (SUMNUM, LABEL, VALUE)
     
     END SUBROUTINE YCA_Out_StoreVars     

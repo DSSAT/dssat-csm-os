@@ -21,19 +21,18 @@ C=======================================================================
       USE ModuleDefs
       USE ModuleData
       USE YCA_Albedo_Check_m                                             ! MF 18JA15 For WORK.OUT
+      USE YCA_First_Trans_m
 
       IMPLICIT NONE
       SAVE
 
       CHARACTER*1   IDETG, IDETL, IDETO, IDETS
-      CHARACTER*1   ISWDIS, ISWWAT, ISWNIT, MESOM, RNMODE
-      CHARACTER*2   CROP                                             
-      CHARACTER*78  MESSAGE(10)
+      CHARACTER*1   ISWDIS, ISWWAT, ISWNIT, MESOM, RNMODE                                            
       CHARACTER (LEN=120) FILEIOIN      ! Name of input file
 
       INTEGER DYNAMIC, RUN, TN, RUNI, RN, ON
       INTEGER REP, STEP, CN, YRHAR, YREND, YRDOY
-      INTEGER MDATE, L, NLAYR
+      INTEGER MDATE, NLAYR
       INTEGER MULTI, FROP, SN, YEAR, DOY
       INTEGER STGYEARDOY(0:19), STGDOY(0:19), YRPLT
       INTEGER YEARPLTCSM                                                ! MF 26OC14 to run CSCAS from ORIGINAL_CSCAS                                        
@@ -121,7 +120,7 @@ C=======================================================================
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
 !     Print warning if Century soil N routine used
-      IF (DYNAMIC .EQ. RUNINIT .AND. ISWITCH % MESOM .EQ. 'P') THEN
+      IF (DYNAMIC  ==  RUNINIT .AND. ISWITCH % MESOM  ==  'P') THEN
         WRITE(MESSAGE(1),100) 
         WRITE(MESSAGE(2),110)  
         WRITE(MESSAGE(3),120) 
@@ -132,7 +131,7 @@ C=======================================================================
   110 FORMAT('The CSYCA (cassava) routines have not been ')
   120 FORMAT('calibrated for use with this model.' )
 
-      IF (DYNAMIC .EQ. RUNINIT .OR. DYNAMIC .EQ. SEASINIT) THEN
+      IF (DYNAMIC  ==  RUNINIT .OR. DYNAMIC  ==  SEASINIT) THEN
         TN = 0
         RN = 0
         SN = 0
@@ -225,7 +224,7 @@ C-----------------------------------------------------------------------
 
       STGDOY = STGYEARDOY
 
-      IF (STGDOY(11).EQ.YRDOY) THEN
+      IF (STGDOY(11) == YRDOY) THEN
         MDATE = YRDOY
         YREND = YRDOY
       ENDIF 
@@ -238,7 +237,7 @@ C-----------------------------------------------------------------------
         ENDDO
       endif
                       
-      IF (YREND.EQ.YRDOY .AND. DYNAMIC.EQ.INTEGR) THEN 
+      IF (YREND == YRDOY .AND. DYNAMIC == INTEGR) THEN 
         !Transfer harvest residue from senescence variable to 
         !harvest residue variable on day of harvest.
         HARVRES = SENESCE

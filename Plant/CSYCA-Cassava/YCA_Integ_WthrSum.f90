@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6419 - 6541 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 6419 - 6541 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -14,6 +14,7 @@
         )
         
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
         
         IMPLICIT NONE
         
@@ -29,8 +30,8 @@
                 
         ! Cumulatives
         !LPM 24MAR2016 TTCUM estimated after germination, before is DAGERM and GEUCUM
-        IF (GERMFR.GT.0.0) THEN
-            IF (DAE.GT.0.0) THEN
+        IF (GERMFR > 0.0) THEN
+            IF (DAE > 0.0) THEN
                 TTCUM = TTCUM + TT
             ELSE
                 TTCUM = TTCUM + TTGEM
@@ -40,14 +41,14 @@
         ENDIF
         
         
-        IF (ISWWAT.EQ.'Y') THEN
+        IF (ISWWAT == 'Y') THEN
             DAWWP = DAWWP + (TT*WFG) !LPM 31JUL2015 Added to have a new clock with water stress
         ELSE
             DAWWP = TTCUM
         ENDIF
-        IF (DAWWP.GT.900.0) THEN
+        IF (DAWWP > 900.0) THEN
             TTCUMLS = TTCUMLS + TTlfsize   ! LPM 12JUL2015 added to consider a different optimum temperature for potential leaf size
-            IF (ISWWAT.EQ.'Y') THEN
+            IF (ISWWAT == 'Y') THEN
                 DALS = DALS + (TTlfsize*WFG) !LPM 24APR2015 Added to have a new clock with water stress
             ELSE
                 DALS = TTCUMLS
@@ -64,7 +65,7 @@
         TOFIXC = TOFIXC + TNIMBSOM
         TOMINFOMC = TOMINFOMC + TOMINFOM
         TOMINSOMC = TOMINSOMC + TOMINSOM
-        IF (TOMINSOM1.GE.0.0) THEN
+        IF (TOMINSOM1 >= 0.0) THEN
             TOMINSOM1C = TOMINSOM1C + TOMINSOM1
             TOMINSOM2C = TOMINSOM2C + TOMINSOM2
             TOMINSOM3C = TOMINSOM3C + TOMINSOM3
@@ -121,7 +122,7 @@
         TT20S = TT20S + TTD(1)
         WUPRD(1) = AMAX1(0.0,AMIN1(10.0,WUPR))
         IF (TMEANNUM >= 20) THEN
-            IF (TMEANNUM.LE.20) TMEAN20P = TMEAN20S/20.0
+            IF (TMEANNUM <= 20) TMEAN20P = TMEAN20S/20.0
             SRAD20 = SRAD20S/20.0
             TMEAN20 = TMEAN20S/20.0
             TT20 = TT20S/20.0
@@ -149,8 +150,8 @@
             DAYSUM = DAYSUM + 1.0
         ELSE
             IF (DAYSUM > 0) THEN
-                IF (TMAXM.LT.TMAXSUM/DAYSUM) TMAXM=TMAXSUM/DAYSUM
-                IF (TMINM.GT.TMINSUM/DAYSUM) TMINM=TMINSUM/DAYSUM
+                IF (TMAXM < TMAXSUM/DAYSUM) TMAXM=TMAXSUM/DAYSUM
+                IF (TMINM > TMINSUM/DAYSUM) TMINM=TMINSUM/DAYSUM
             ENDIF
             TMAXSUM = TMAX
             TMINSUM = TMIN
@@ -162,10 +163,10 @@
         !-----------------------------------------------------------------------
                 
         IF (PARMJC > 0.0) THEN
-            PARUEC = AMAX1(0.0,(RTWT+LFWT+STWT+CRWT+SRWT+RSWT+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJC)
+            PARUEC = AMAX1(0.0,(totalWeight()+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJC)
         ENDIF
         IF (PARMJIC > 0.0) THEN
-            PARIUED = AMAX1(0.0,(RTWT+LFWT+STWT+CRWT+SRWT+RSWT+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJIC)
+            PARIUED = AMAX1(0.0,(totalWeight()+SENTOPLITTER+SENROOT-SEEDUSE)* PLTPOP / PARMJIC)
         ENDIF
         IF (CARBOBEG > 0.0) THEN
             PARIUE = (CARBOBEG*PLTPOP)/(PARMJFAC*SRAD*PARI)

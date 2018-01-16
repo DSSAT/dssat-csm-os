@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) ! Initialization lines 2530 - 2570 of the original CSCAS code. The 
+! This is the code from the section (DYNAMIC == RUNINIT) ! Initialization lines 2530 - 2570 of the original CSCAS code. The 
 ! names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The 
 ! variables that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are 
 ! those of the original CSCAS.FOR code.
@@ -23,7 +23,7 @@
       
       ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
       ! CHP 09/28/09 - account for planting date >> simulation date.
-      IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
+      IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
           PLYEAR = YEAR
           PLYEARTMP = YEAR
       ENDIF
@@ -34,20 +34,20 @@
       ! Upgrade harvest date for seasonal and sequential runs
       yeardoyharf = (plyear+pltoharyr)*1000 +hday
       
-      IF (IPLTI.NE.'A') THEN
-          IF (PLDAY.GE.DOY) THEN
+      IF (IPLTI /= 'A') THEN
+          IF (PLDAY >= DOY) THEN
               PLYEARDOYT = PLYEARTMP*1000 + PLDAY
-          ELSEIF (PLDAY.LT.DOY) THEN
+          ELSEIF (PLDAY < DOY) THEN
               PLYEARDOYT = (YEAR+1)*1000 + PLDAY
           ENDIF
       ELSE
           PLYEARDOYT = 9999999
-          IF (PWDINF.GT.0 .AND. PWDINF.LT.YEARDOY) THEN
+          IF (PWDINF > 0 .AND. PWDINF < YEARDOY) THEN
               TVI1 = INT((YEARDOY-PWDINF)/1000)
               PWDINF = PWDINF + TVI1*1000
               PWDINL = PWDINL + TVI1*1000
-              IF (HFIRST.GT.0) HFIRST = HFIRST + TVI1*1000
-              IF (HLAST.GT.0)  HLAST  = HLAST + (TVI1+1)*1000
+              IF (HFIRST > 0) HFIRST = HFIRST + TVI1*1000
+              IF (HLAST > 0)  HLAST  = HLAST + (TVI1+1)*1000
           ENDIF
       ENDIF
       
@@ -55,7 +55,7 @@
       !       Set control flags if not already done
       !-----------------------------------------------------------------------
       
-      IF (CFLLFLIFE.EQ.'T'.OR.CFLLFLIFE.EQ.'P'.OR.CFLLFLIFE.EQ.'D') THEN
+      IF (CFLLFLIFE == 'T'.OR.CFLLFLIFE == 'P'.OR.CFLLFLIFE == 'D') THEN
           CFLLFLIFE = CFLLFLIFE
       ELSE  
           CFLLFLIFE = 'T'  ! Default to thermal time 
