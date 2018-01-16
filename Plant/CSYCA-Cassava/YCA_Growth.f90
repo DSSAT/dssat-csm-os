@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RATE) lines 4084 - 5516 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == RATE) lines 4084 - 5516 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -38,8 +38,8 @@
         REAL    SRAD        , ST(NL)      , SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       
         REAL    UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP
         
-        REAL    CSVPSAT     , CSYVAL      , TFAC4                                                                           ! Real function calls
-        REAL    YVALXY                                                                                                      ! Real function calls
+        REAL    CSVPSAT     , CSYVAL      , TFAC4                                                                          ! Real function calls 
+        REAL    YVALXY      , TFAC5                                                                                        ! Real function calls !LPM 15sep2017 Added TFAC5 
 
         CHARACTER(LEN=1) IDETG       , ISWDIS      , ISWNIT      , ISWWAT      , RNMODE  
     
@@ -54,7 +54,7 @@
             )
         
         !===================================================================================================================
-        IF (YEARDOY.GT.PLYEARDOY) THEN ! If planted (assumed in evening)
+        IF (YEARDOY > PLYEARDOY) THEN ! If planted (assumed in evening)
         !===================================================================================================================
         !----------------------------------------------------------------------------------------------------------------------
         !     Determine whether the water and thermal conditions allow the planting material to grow (called germination).
@@ -70,7 +70,7 @@
                 )
             
             !=============================================================================================================
-            IF (DAGERM+TTGEM*WFGE.GE.PGERM) THEN  ! If germinated by endday
+            IF (DAGERM+TTGEM*WFGE >= PGERM) THEN  ! If germinated by endday
             !=============================================================================================================
         
                 !--------------------------------------------------------------------------------

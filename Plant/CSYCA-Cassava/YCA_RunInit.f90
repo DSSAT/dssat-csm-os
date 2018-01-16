@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.RUNINIT) lines 1479 - 1822 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == RUNINIT) lines 1479 - 1822 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -31,7 +31,7 @@
         !         The body of YCA_RunInit
         !-----------------------------------------------------------------------
         
-        IF (RUNCRP.LE.0) THEN
+        IF (RUNCRP <= 0) THEN
             MODNAME(1:8) = 'CSYCA' // ModelVerTxt 
             VERSIONCSCAS = 010114                                                             ! MF 15SE14 Changed from VERSION, conflict with ModuleDefs 
             GENFLCHK(1:15) = 'CSYCA047.08102017'
@@ -73,13 +73,13 @@
             CALL GETARG(0,arg)
             arglen = len_trim(arg)
             DO tvi1 = 1,arglen
-                IF (arg(tvi1:tvi1).EQ.Slash) tvi2=tvi1
-                IF (arg(tvi1:tvi1).EQ.'.') tvi3=tvi1
-                IF (arg(tvi1:tvi1).EQ.' ' .AND. tvi4.EQ.0) tvi4=tvi1
+                IF (arg(tvi1:tvi1) == Slash) tvi2=tvi1
+                IF (arg(tvi1:tvi1) == '.') tvi3=tvi1
+                IF (arg(tvi1:tvi1) == ' ' .AND. tvi4 == 0) tvi4=tvi1
             ENDDO
-            IF (TVI3.EQ.0 .AND. TVI4.GT.0) THEN
+            IF (TVI3 == 0 .AND. TVI4 > 0) THEN
                 tvi3 = tvi4
-            ELSEIF (TVI3.EQ.0 .AND. TVI4.EQ.0) THEN
+            ELSEIF (TVI3 == 0 .AND. TVI4 == 0) THEN
                 tvi3 = arglen+1
             ENDIF
             MODEL = ARG(TVI2+1:TVI3-1)
@@ -89,9 +89,9 @@
             !         Set configuration file name (Cropsim)
             !-----------------------------------------------------------------------
             
-            IF (FILEIOT(1:2).NE.'DS') THEN
+            IF (FILEIOT(1:2) /= 'DS') THEN
                 CFGDFILE = ' '
-                IF (TVI2.GT.1) THEN
+                IF (TVI2 > 1) THEN
                     CFGDFILE = ARG(1:TVI2)//'CROPSIM.CFG'
                 ELSE
                     CFGDFILE(1:12) = 'CROPSIM.CFG '
@@ -103,7 +103,7 @@
             !-----------------------------------------------------------------------
             
             TVI1 = TVILENT(FILEIOIN)
-            IF (FILEIOIN(TVI1-2:TVI1).EQ.'INP') THEN
+            IF (FILEIOIN(TVI1-2:TVI1) == 'INP') THEN
                 FILEIOIN(TVI1:TVI1) = 'H'
                 FILEIOT = 'DS4'
             ELSE
@@ -134,7 +134,7 @@
             
             CNCHAR = ' '
             CNCHAR2 = '  '
-            IF (CN.EQ.1.OR.CN.EQ.0) THEN
+            IF (CN == 1.OR.CN == 0) THEN
                 OUT = 'OUT'
                 CNCHAR2= '1 '
             ELSE
@@ -147,18 +147,18 @@
             !         Set output flags to agree with run modes and control switches
             !-----------------------------------------------------------------------
             
-            IF (FILEIOT.EQ.'XFL') THEN
-                IF (RNMODE.EQ.'I'.OR.RNMODE.EQ.'E'.OR.RNMODE.EQ.'A') THEN
+            IF (FILEIOT == 'XFL') THEN
+                IF (RNMODE == 'I'.OR.RNMODE == 'E'.OR.RNMODE == 'A') THEN
                     IDETD = 'M'
-                ELSEIF (RNMODE.EQ.'B'.OR.RNMODE.EQ.'N'.OR.RNMODE.EQ.'Q')THEN
+                ELSEIF (RNMODE == 'B'.OR.RNMODE == 'N'.OR.RNMODE == 'Q')THEN
                     IDETD = 'S'
                 ENDIF  
             ELSE
                 IDETD = 'N'
             ENDIF
             FROPADJ = FROP
-            IF (RNMODE.EQ.'T') FROPADJ = 1
-            IF (IDETL.EQ.'D'.OR.IDETL.EQ.'A') FROPADJ = 1
+            IF (RNMODE == 'T') FROPADJ = 1
+            IF (IDETL == 'D'.OR.IDETL == 'A') FROPADJ = 1
             
             !-----------------------------------------------------------------------
             !         Set file names and determine file unit numbers
@@ -175,7 +175,7 @@
             ! IDETG FILES
             ! Check if need to change file names
             CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'FNAME',fname)
-            IF (FNAME.EQ.'Y') THEN   ! File name change required.
+            IF (FNAME == 'Y') THEN   ! File name change required.
                 CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'EXPER',excode)
                 !NB. Renaming of Plantgro and Plantn handled by CSM
                 OUTPG = 'PlantGro.'//OUT
@@ -237,14 +237,14 @@
             ! WARNING AND WORK FILES
             INQUIRE (FILE = 'WORK.OUT',OPENED = FOPEN)
             IF (.NOT.FOPEN) THEN
-                IF (RUN.EQ.1) THEN
+                IF (RUN == 1) THEN
                     OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
                     WRITE(FNUMWRK,*) 'CSYCA  CIAT Cassava Module '
                 ELSE
                     OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT',POSITION='APPEND',ACTION = 'READWRITE')
                     WRITE(fnumwrk,*) ' '
                     WRITE(fnumwrk,*) 'CSYCA  CIAT Cassava Module '
-                    IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
+                    IF (IDETL == '0'.OR.IDETL == 'Y'.OR.IDETL == 'N') THEN
                         CLOSE (FNUMWRK)
                         OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT')
                         WRITE(fnumwrk,*) ' '
@@ -252,7 +252,7 @@
                     ENDIF  
                 ENDIF
             ELSE          
-                IF (IDETL.EQ.'0'.OR.IDETL.EQ.'Y'.OR.IDETL.EQ.'N') THEN
+                IF (IDETL == '0'.OR.IDETL == 'Y'.OR.IDETL == 'N') THEN
                     ! Close and re-open Work file
                     CLOSE (FNUMWRK, STATUS = 'DELETE')
                     OPEN (UNIT = FNUMWRK,FILE = 'WORK.OUT', STATUS = 'NEW', ACTION = 'READWRITE')
@@ -270,7 +270,7 @@
                 ENDIF
             ENDIF  
             
-            IF (RUN.EQ.1) THEN
+            IF (RUN == 1) THEN
                 ! IDETG FILES
                 OPEN (UNIT = NOUTPG, FILE = OUTPG)
                 WRITE (NOUTPG,'(A27)')'$GROWTH ASPECTS OUTPUT FILE'
@@ -281,7 +281,7 @@
                 OPEN (UNIT = NOUTPGF, FILE = OUTPGF)
                 WRITE (NOUTPGF,'(A27)')'$GROWTH FACTOR OUTPUTS FILE'
                 CLOSE (NOUTPGF)
-                IF (ISWNIT.NE.'N') THEN
+                IF (ISWNIT /= 'N') THEN
                     OPEN (UNIT = NOUTPN, FILE = OUTPN)
                     WRITE (NOUTPN,'(A35)')'$PLANT NITROGEN ASPECTS OUTPUT FILE'
                     CLOSE (NOUTPN)

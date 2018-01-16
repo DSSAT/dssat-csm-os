@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6305 - 6418 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 6305 - 6418 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -14,6 +14,7 @@
         
         USE ModuleDefs
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
         
         IMPLICIT NONE
         
@@ -38,57 +39,57 @@
                 
         ! Here,reserves are included in leaf,stem,and Plant. stick weights
         ! And weights are in kg/ha
-        CWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP*10.0                                                                       !EQN 318
-        SRWAD = SRWT*PLTPOP*10.0
+        CWAD = (canopyWeight())*plantPopulation()                                                                       !EQN 318
+        SRWAD = SRWT*plantPopulation()
         LLWAD = LFWT*(1.0-LPEFR)*10.0*PLTPOP
         LPEWAD = LFWT*LPEFR*10.0*PLTPOP
-        RWAD = RTWT*PLTPOP*10.0
+        RWAD = RTWT*plantPopulation()
         IF (SEEDRS < 0.0) THEN 
             SEEDRS = SDSZ*(SDRS/100.0)*SPRL   !LPM 23MAR2016  to initialize the value of SEEDRS
         ENDIF
         SDWT = (SEEDRS+SDCOAT)*10.0*PLTPOP
-        TWAD = (SEEDRS+SDCOAT+RTWT+LFWT+STWT+CRWT+SRWT+RSWT)* PLTPOP*10.0
+        TWAD = (SEEDRS+SDCOAT+totalWeight())* plantPopulation()
 
         
         ! Leaf petioles NOT included in stem here
-        STWAD = STWT*PLTPOP*10.0
-        SDWAD = CRWT*PLTPOP*10.0
-        RSWAD = RSWT*PLTPOP*10.0
-        !LLRSWAD = LLRSWT*PLTPOP*10.0 !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
-        !LPERSWAD = LPERSWT*PLTPOP*10.0 
-        !STRSWAD = STRSWT*PLTPOP*10.0
-        !CRRSWAD = CRRSWT*PLTPOP*10.0
+        STWAD = STWT*plantPopulation()
+        SDWAD = CRWT*plantPopulation()
+        RSWAD = RSWT*plantPopulation()
+        !LLRSWAD = LLRSWT*plantPopulation() !LPM 21MAY2015 The reserves distribution will not be included, it needs to be reviewed
+        !LPERSWAD = LPERSWT*plantPopulation() 
+        !STRSWAD = STRSWT*plantPopulation()
+        !CRRSWAD = CRRSWT*plantPopulation()
                 
         ! Need to CHECK these
         SENROOTA = SENROOT*10.0*PLTPOP
         SENCAS = SENCS*10.0*PLTPOP
         SENLAS = SENLS*10.0*PLTPOP
-        SENTOPLITTERA = SENTOPLITTER*PLTPOP*10.0
+        SENTOPLITTERA = SENTOPLITTER*plantPopulation()
         DO L =1,NLAYR
-            RTWTAL(L) = RTWTL(L)*PLTPOP*10.0
-            SENWAL(L) = SENWL(L)*PLTPOP*10.0
+            RTWTAL(L) = RTWTL(L)*plantPopulation()
+            SENWAL(L) = SENWL(L)*plantPopulation()
         ENDDO
                 
         
                 
-        VWAD = (LFWT+STWT+CRWT+RSWT)*PLTPOP * 10.0                                                                     !EQN 019
+        VWAD = (canopyWeight())*PLTPOP * 10.0                                                                     !EQN 019
                 
         SHNUMAD = SHNUM*PLTPOP
                 
-        IF (NUPAC.LT.0.0) THEN
+        IF (NUPAC < 0.0) THEN
             NUPAC = NUPAD
         ELSE 
             NUPAC = NUPAC+NUPAD
         ENDIF  
-        CNAD = (LEAFN+STEMN+RSN)*PLTPOP*10.0
-        SRNAD = SROOTN*PLTPOP*10.0
-        LLNAD = LEAFN*(1.0-LPEFR)*PLTPOP*10.0
-        RNAD = ROOTN*PLTPOP*10.0
-        RSNAD = RSN*PLTPOP*10.0
-        SDNAD = SEEDN*PLTPOP*10.0
-        SNAD = STEMN*PLTPOP*10.0
-        TNAD = (ROOTN+LEAFN+STEMN+RSN+HPRODN+SEEDN)*PLTPOP*10.0
-        VNAD = (LEAFN+STEMN+RSN)*PLTPOP*10.0                                                                           !EQN 018
+        CNAD = (LEAFN+STEMN+RSN)*plantPopulation()
+        SRNAD = SROOTN*plantPopulation()
+        LLNAD = LEAFN*(1.0-LPEFR)*plantPopulation()
+        RNAD = ROOTN*plantPopulation()
+        RSNAD = RSN*plantPopulation()
+        SDNAD = SEEDN*plantPopulation()
+        SNAD = STEMN*plantPopulation()
+        TNAD = (ROOTN+LEAFN+STEMN+RSN+HPRODN+SEEDN)*plantPopulation()
+        VNAD = (LEAFN+STEMN+RSN)*plantPopulation()                                                                           !EQN 018
                 
         ! LAH Note that no reserves included in sancout
         ! SANCOUT = SNAD/(STWAD+STRSWAD + LPEWAD+LPERSWAD)  ! With rs
@@ -100,14 +101,14 @@
         HNAD = SRNAD
         HNC = SRANC
         SENNAS = SENNS*10.0*PLTPOP
-        SENNAL(0) = SENNL(0)*PLTPOP*10.0
+        SENNAL(0) = SENNL(0)*plantPopulation()
         SENNATC = SENNAL(0)+SENNAS
         DO L =1,NLAYR
-            SENNAL(L) = SENNL(L)*PLTPOP*10.0
+            SENNAL(L) = SENNL(L)*plantPopulation()
         ENDDO
                 
         ! After harvest residues
-        IF (STGYEARDOY(11).EQ.YEARDOY) THEN
+        IF (STGYEARDOY(PSX+1) == YEARDOY) THEN
             ! Surface
             RESWALG(0) = VWAD*(1.0-HBPCF/100.0)
             RESNALG(0) = (LEAFN+STEMN)*PLTPOP*10.*(1.0-HBPCF/100.)
@@ -116,10 +117,10 @@
                 STWAD*SLIGP/100.0*(1.0-HBPCF/100.0)
             ! Soil
             DO L = 1, NLAYR
-                RESWALG(L) = RTWTL(L)*PLTPOP*10.0
-                RESNALG(L) = RTWTL(L)*PLTPOP*10.0 * RANC
-                RESCALG(L) = RTWTL(L)*PLTPOP*10.0 * 0.4
-                RESLGALG(L) = RTWTL(L)*PLTPOP*10.0 * RLIGP/100.0
+                RESWALG(L) = RTWTL(L)*plantPopulation()
+                RESNALG(L) = RTWTL(L)*plantPopulation() * RANC
+                RESCALG(L) = RTWTL(L)*plantPopulation() * 0.4
+                RESLGALG(L) = RTWTL(L)*plantPopulation() * RLIGP/100.0
             ENDDO
                     
             ! Surface
