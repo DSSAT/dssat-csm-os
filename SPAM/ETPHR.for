@@ -458,6 +458,7 @@ C========================================================================
       REAL BETALS,PDLA,BETAMX
         
 C     Initialization.  Convert LMXREF from mgCO2/m2/s to µmol/m2/s.
+C     LMXREF is LFMAX from cultivar file.
 
       TK = TEMPHR + 273.
       RT = RGAS * TK

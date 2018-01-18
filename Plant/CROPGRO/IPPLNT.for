@@ -14,11 +14,12 @@ C  08/12/2003 CHP Added I/O error checking
 C  06/30/2006 CHP/CDM Added KC_SLOPE to SPE file and KC_ECO to ECO file.
 C                 Added warning for use of default ecotype.
 !  09/11/2008 KJB, CHP Added 5 species parameters affecting N stress
+C  01/18/2018 KRT Added functionality for ASCE dual Kc ET routines
 C-----------------------------------------------------------------------
 !  Called:      PLANT
 !  Calls:       FIND, ERROR, IGNORE
 C=======================================================================
-      SUBROUTINE IPPLNT(CONTROL, 
+      SUBROUTINE IPPLNT(CONTROL, ISWITCH, 
      &  CADPR1, CMOBMX, CROP, DETACH, ECONO,              !Output
      &  EORATIO, FILECC, FILEGC, FRCNOD, FREEZ1, FREEZ2,  !Output
      &  KCAN, KC_SLOPE, KEP, NOUTDO, PCARSH, PCH2O,       !Output
@@ -31,10 +32,11 @@ C=======================================================================
 C-----------------------------------------------------------------------
 
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
 
 !-----------------------------------------------------------------------
-      CHARACTER*1  BLANK, UPCASE, DETACH
+      CHARACTER*1  BLANK, UPCASE, DETACH, MEEVP
       PARAMETER (BLANK  = ' ')
 
       CHARACTER*2 CROP
@@ -63,6 +65,10 @@ C-----------------------------------------------------------------------
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KCAN_ECO, KC_SLOPE
+      REAL SKC, KCBMIN, KCBMAX
+      
+      TYPE (SwitchType) ISWITCH
+      MEEVP = ISWITCH % MEEVP      
 
 !     Species parameters for N stress  9/11/2008
 !     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
@@ -323,6 +329,12 @@ C-----------------------------------------------------------------------
         ELSE
           CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
           READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
+          IF (MEEVP .EQ. 'A' .OR. MEEVP .EQ. 'G') THEN
+            READ(CHAR,'(3F6.0)',IOSTAT=ERR) SKC, KCBMIN, KCBMAX
+            CALL PUT('SPAM', 'SKC', SKC)
+            CALL PUT('SPAM', 'KCBMIN', KCBMIN)
+            CALL PUT('SPAM', 'KCBMAX', KCBMAX)
+          ENDIF
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         ENDIF
 

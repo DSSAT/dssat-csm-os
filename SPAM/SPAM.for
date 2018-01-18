@@ -135,6 +135,12 @@ C=======================================================================
      &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
       ENDIF
+      
+      !Initialize ASCE dual KC ET variables (KRT)
+      CALL PUT('SPAM', 'REFET', -99.0)
+      CALL PUT('SPAM', 'KCB', -99.0)
+      CALL PUT('SPAM', 'KE', -99.0)
+      CALL PUT('SPAM', 'KC', -99.0)
 
 !***********************************************************************
 !***********************************************************************
