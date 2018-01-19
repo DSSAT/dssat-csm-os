@@ -66,9 +66,6 @@ C-----------------------------------------------------------------------
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KCAN_ECO, KC_SLOPE
       REAL SKC, KCBMIN, KCBMAX
-      
-      TYPE (SwitchType) ISWITCH
-      MEEVP = ISWITCH % MEEVP      
 
 !     Species parameters for N stress  9/11/2008
 !     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
@@ -77,8 +74,10 @@ C-----------------------------------------------------------------------
 !     defined in ModuleDefs.for, and contains the following variables.
 !     The components are copied into local variables for use here.
       TYPE (ControlType) CONTROL
+      TYPE (SwitchType) ISWITCH
       FILEIO = CONTROL % FILEIO
       LUNIO  = CONTROL % LUNIO
+      MEEVP = ISWITCH % MEEVP
 
 !-----------------------------------------------------------------------
 !       Read data from FILEIO for use in PLANT module
@@ -471,6 +470,8 @@ C-----------------------------------------------------------------------
 !            line to read, 2 - End of Section in file encountered, denoted 
 !            by * in column 1
 ! ISWDIS   Pest damage simulation switch (Y or N) 
+! KCBMAX   Maximum basal crop coefficient for ASCE dual Kc ET method
+! KCBMIN   Minimum basal crop coefficient for ASCE dual Kc ET method
 ! LUNCRP   Logical unit number for FILEC (*.spe file) 
 ! MODEL    Name of CROPGRO executable file 
 ! NL       maximum number of soil layers = 20 
@@ -517,6 +518,7 @@ C-----------------------------------------------------------------------
 !            (g[CH2O] / g[product])
 ! RPRO     Respiration required for re-synthesizing protein from mobilized 
 !            N (g[CH2O] / g[protein])
+! SKC      Shaping coefficient for ASCE dual Kc ET approach
 ! TTFIX    Physiological days delay in nodule initiation
 !            (photo-thermal days / day)
 !-----------------------------------------------------------------------

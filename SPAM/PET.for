@@ -127,6 +127,9 @@ C  Calculates reference evapotranspiration using the ASCE
 C  Standardized Reference Evapotranspiration Equation.
 C  Adjusts reference evapotranspiration to potential evapotranspiration
 C  using dual crop coefficients.
+C  DeJonge K. C., Thorp, K. R., 2017. Implementing standardized refernce
+C  evapotranspiration and dual crop coefficient approach in the DSSAT
+C  Cropping System Model. Transactions of the ASABE. 60(6):1965-1981.
 !-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  08/19/2013 KRT Added the ASCE Standardize Reference ET approach
@@ -1279,6 +1282,7 @@ c
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
@@ -1327,9 +1331,11 @@ c
 !-----------------------------------------------------------------------
 !     PSE VARIABLES:
 !-----------------------------------------------------------------------
-! EO         Potential evapotranspiration rate (mm/d)
-! EOS        Potential rate of soil evaporation (mm/d)
-! XLAI      Leaf area index (m2[leaf] / m2[ground])
+! EO     Potential evapotranspiration rate (mm/d)
+! EOS    Potential rate of soil evaporation (mm/d)
+! KE     Evaporation coefficient for ASCE dual Kc ET method
+! REFET  ASCE Standardized Reference Evapotranspiration (alfalfa or grass)
+! XLAI   Leaf area index (m2[leaf] / m2[ground])
 !-----------------------------------------------------------------------
 !     END SUBROUTINE PSE
 C=======================================================================
