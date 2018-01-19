@@ -119,6 +119,7 @@ C=======================================================================
 
       RETURN
       END SUBROUTINE PET
+      
 C=======================================================================
 
 C=======================================================================
@@ -249,12 +250,6 @@ C=======================================================================
       REFET = REFET/(UDELTA+PSYCON*(1.0+Cd*WIND2m)) !mm/d
       REFET = MAX(0.0001, REFET)
 
-!      CALL GETLUN('ETCHECK.TXT', FOUT)
-!      OPEN (FOUT, FILE='ETCHECK.TXT', POSITION='APPEND')
-!      WRITE(FOUT,1000) DOY, ETo, ES, EA, PSYCON, UDELTA, RN
-!      CLOSE (FOUT)
-!1000  FORMAT(i3,6(1X,f10.7))
-
 !     FAO-56 dual crop coefficient approach
 !     Basal crop coefficient (Kcb)
 !     Also similar to FAO-56 Eq. 97
@@ -262,9 +257,6 @@ C=======================================================================
       CALL GET('SPAM', 'SKC', SKC)
       CALL GET('SPAM', 'KCBMIN', KCBMIN)
       CALL GET('SPAM', 'KCBMAX', KCBMAX)
-      SKC    = MAX(0.50,MIN(1.0,SKC))
-      KCBMIN = MAX(0.00,MIN(1.1,KCBMIN))
-      KCBMAX = MAX(0.25,MIN(1.5,KCBMAX))
       IF (XHLAI .LE. 0.0) THEN
          KCB = 0.0
       ELSE
