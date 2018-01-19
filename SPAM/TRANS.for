@@ -21,6 +21,7 @@ C  01/13/2000 NBP Added DYNAMIC contruct to input KCAN and calc. FDINT
 C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  06/19/2003 JWJ/CHP Replaced KEP with KTRANS
 !  10/31/2011 CHP Use EVAP instead of ES (can include flood and mulch evap)
+!   1/18/2018 KRT Added KCB and REFET for ASCE dual Kc ET method
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !  Calls:     None

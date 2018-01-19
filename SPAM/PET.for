@@ -259,12 +259,12 @@ C=======================================================================
 !     Basal crop coefficient (Kcb)
 !     Also similar to FAO-56 Eq. 97
 !     KCB is zero when LAI is zero
-      CALL GET('SPAM', 'KCBMAX', KCBMAX)
-      CALL GET('SPAM', 'KCBMIN', KCBMIN)
       CALL GET('SPAM', 'SKC', SKC)
-      KCBMAX = MAX(0.25,MIN(1.5,KCBMAX))
-      KCBMIN = MAX(0.00,MIN(1.1,KCBMIN))
+      CALL GET('SPAM', 'KCBMIN', KCBMIN)
+      CALL GET('SPAM', 'KCBMAX', KCBMAX)
       SKC    = MAX(0.50,MIN(1.0,SKC))
+      KCBMIN = MAX(0.00,MIN(1.1,KCBMIN))
+      KCBMAX = MAX(0.25,MIN(1.5,KCBMAX))
       IF (XHLAI .LE. 0.0) THEN
          KCB = 0.0
       ELSE

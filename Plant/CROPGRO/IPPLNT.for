@@ -327,12 +327,13 @@ C-----------------------------------------------------------------------
           CALL ERROR(SECTION, 42, FILECC, LNUM)
         ELSE
           CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-          READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
-          IF (MEEVP .EQ. 'A' .OR. MEEVP .EQ. 'G') THEN
-            READ(CHAR,'(3F6.0)',IOSTAT=ERR) SKC, KCBMIN, KCBMAX
+          IF (MEEVP .EQ. 'A' .OR. MEEVP .EQ. 'G') THEN !ASCE dual Kc ET
+            READ(CHAR,'(5F6.0)',IOSTAT=ERR) KEP,EORATIO,SKC,KCBMIN,KCBMAX
             CALL PUT('SPAM', 'SKC', SKC)
             CALL PUT('SPAM', 'KCBMIN', KCBMIN)
             CALL PUT('SPAM', 'KCBMAX', KCBMAX)
+          ELSE
+            READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
           ENDIF
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         ENDIF
