@@ -168,10 +168,10 @@ C-------------------------------------------
 
         OUTDRM  = 'Dormancy.OUT'
         CALL GETLUN('OUTDRM', NOUTDRM)
-        END IF    ! VSH
+
         OUTSTOR  = 'Storage.OUT '
         CALL GETLUN('OUTSTOR', NOUTSTOR)
-
+        END IF    ! VSH
 !        OUTINSTR  = 'StorSpIn.OUT'
 !        CALL GETLUN('OUTINSTR', NOUTINSTR)
 
@@ -471,12 +471,12 @@ C-----------------------------------------------------------------------
      &    TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN,  
      &    WSRFDOT, WSRI, WSRIDOT, WTNSR, NINT(WTNSRA*10), 
      &    WTNSRO, NINT(WTSRO*10.), XSTR
-       END IF    ! VSH
+
 710    FORMAT(1X,I4,1X,I3.3,2(1X,I5),2(1X,F5.2),1X,F5.4,3(1X,F5.2),
      &    1X,I5,2(1X,F5.2),4(1X,F5.3),9(1X,F5.2),7(1X,F5.2),1X, 
      &    F5.3,5(1X,F5.2),1X,I5,2(1X,F5.3),1X,F5.1,5(1X,F5.2),
      &    1X,F5.0,2(1X,F5.2),1X,I5,1X,F5.2,1X,I6,1X,F5.2)
-
+       END IF    ! VSH
 
         ENDIF       
       ENDIF
