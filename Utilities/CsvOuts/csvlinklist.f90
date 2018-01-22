@@ -2011,10 +2011,12 @@ End Subroutine LinklstPlGroPrFrm
       If(.Not. Associated(headPlNPrFrm)) Return
       
       length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  //'VN%D,NFXC,NUPC,LNAD,SNAD,QNAD,LN%D,SN%D,QN%D,SHND,RN%D,NFXD')
   
       Allocate(character(LEN=length) :: Header)
 
   Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  //'VN%D,NFXC,NUPC,LNAD,SNAD,QNAD,LN%D,SN%D,QN%D,SHND,RN%D,NFXD' 
   
       fn = 'plantn.csv'
       Call GETLUN (fn,nf)
