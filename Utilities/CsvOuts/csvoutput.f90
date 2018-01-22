@@ -1635,7 +1635,8 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofilePlNMzCer              ! plantn.csv
                  Call ListtofileEvOpsum               ! evaluate.csv
              Case('PRFRM')
-                 Call ListtofilePlGroPrFrm(nlayers) ! plantgro.csv
+                 Call ListtofilePlGroPrFrm(nlayers)   ! plantgro.csv
+                 Call ListtofilePlNPrFrm              ! plantn.csv
          End Select
 
          Call ListtofileSW(nlayers)         ! SoilWat.csv
