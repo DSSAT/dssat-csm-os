@@ -299,6 +299,18 @@ Type :: lin_valuePlantP
     Type (lin_valuePlGroPrFrm), Pointer :: ptrPlGroPrFrm       
     
     Integer :: istatPlGroPrFrm 
+!------------------------------------------------------------------------------
+!   for PlNPrFrm
+    Type :: lin_valuePlNPrFrm
+       Character(:), Allocatable :: pclinePlNPrFrm
+       Type (lin_valuePlNPrFrm), Pointer :: pPlNPrFrm
+    End Type
+
+    Type (lin_valuePlNPrFrm), Pointer :: headPlNPrFrm    
+    Type (lin_valuePlNPrFrm), Pointer :: tailPlNPrFrm    
+    Type (lin_valuePlNPrFrm), Pointer :: ptrPlNPrFrm     
+    
+    Integer :: istatPlNPrFrm                             
 !--------------------------------------------------------------------------------------    
 Contains
 
