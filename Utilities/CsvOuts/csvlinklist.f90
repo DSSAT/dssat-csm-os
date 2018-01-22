@@ -2003,5 +2003,37 @@ End Subroutine LinklstPlGroPrFrm
       Close(nf)
    End Subroutine ListtofilePlGroPrFrm 
 !------------------------------------------------------------------------------ 
-   
+  Subroutine ListtofilePlNPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headPlNPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  
+      fn = 'plantn.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrPlNPrFrm => headPlNPrFrm
+      Do
+        If(.Not. Associated(ptrPlNPrFrm)) Exit          
+        Write(nf,'(A)') ptrPlNPrFrm % pclinePlNPrFrm    
+        ptrPlNPrFrm => ptrPlNPrFrm % pPlNPrFrm          
+      End Do
+
+      Nullify(ptrPlNPrFrm, headPlNPrFrm, tailPlNPrFrm)
+      Close(nf)
+  End Subroutine ListtofilePlNPrFrm
+!------------------------------------------------------------------------------   
 End Module Linklist
