@@ -2037,5 +2037,31 @@ End Subroutine LinklstPlGroPrFrm
       Nullify(ptrPlNPrFrm, headPlNPrFrm, tailPlNPrFrm)
       Close(nf)
   End Subroutine ListtofilePlNPrFrm
-!------------------------------------------------------------------------------   
+!------------------------------------------------------------------------------ 
+Subroutine LinklstPlNPrFrm(ptxtlinePlNPrFrm)
+
+    Character(:), Allocatable :: ptxtlinePlNPrFrm            
+        
+    If(.Not. Associated(headPlNPrFrm)) Then             
+      Allocate(headPlNPrFrm, Stat=istatPlNPrFrm)        
+      If(istatPlNPrFrm==0) Then                         
+        tailPlNPrFrm => headPlNPrFrm                    
+        Nullify(tailPlNPrFrm%pPlNPrFrm)                 
+        tailPlNPrFrm%pclinePlNPrFrm = ptxtlinePlNPrFrm  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailPlNPrFrm%pPlNPrFrm, Stat=istatPlNPrFrm)      
+      If(istatPlNPrFrm==0) Then                                 
+        tailPlNPrFrm=> tailPlNPrFrm%pPlNPrFrm                   
+        Nullify(tailPlNPrFrm%pPlNPrFrm)                         
+        tailPlNPrFrm%pclinePlNPrFrm = ptxtlinePlNPrFrm          
+      Else
+      ! Error message
+      End If
+    End If
+
+ End Subroutine LinklstPlNPrFrm
+!------------------------------------------------------------------------------
 End Module Linklist
