@@ -482,7 +482,7 @@ C-----------------------------------------------------------------------
           Call CsvOutPlNPrFrm(EXPNAME, RUN, CONTROL%TRTNUM, 
      & CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, WTNCAN, 
      & WTNSD, WTNVEG, PCNSD, PCNVEG, WTNFX, WTNUP, WTNLF, WTNST, WTNSR, 
-     & PCNL, PCNST, PCNSR, PCNSH, PCNRT, NFIXN, &
+     & PCNL, PCNST, PCNSR, PCNSH, PCNRT, NFIXN,
      & vCsvlinePlNPrFrm, vpCsvlinePlNPrFrm, vlngthPlNPrFrm)
            
           CALL LinklstPlNPrFrm(vCsvlinePlNPrFrm)
