@@ -1662,8 +1662,53 @@ Subroutine CsvOutPlNPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    Csvline = Trim(Adjustl(tmp))
    
    Return
-end Subroutine CsvOutPlNPrFrm
-!---------------------------------------------------------------------------------   
+   end Subroutine CsvOutPlNPrFrm
+!---------------------------------------------------------------------------------
+! Sub for plantc.csv output Plant C PRFRM
+Subroutine CsvOutPlCPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, CADST, CADSR, RHOL, RHOS, &
+   RHOSR, RHOR, TGRO, TGROAV, PCNSD, PCLSD, PCCSD, TS, Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, TS           
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   REAL,Intent(IN) :: TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, CADST
+   REAL,Intent(IN) :: CADSR, RHOL, RHOS, RHOSR, RHOR, TGROAV, PCNSD, PCLSD, PCCSD  
+   REAL,Dimension(TS),Intent(IN)      :: TGRO
+    
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=400) :: tmp      
+!  End of vars
+  
+!  Recalculated vars
+   Integer :: TOTWT1 
+   Real :: cCADLF1, RHOL1, RHOS1, RHOSR1, RHOR1
+  
+   TOTWT1= NINT(TOTWT * 10.0)
+   cCADLF1 = CADLF + CADST
+   RHOL1 = RHOL * 100.
+   RHOS1 = RHOS * 100.
+   RHOSR1 = RHOSR * 100.
+   RHOR1 = RHOR * 100.
+            
+   Write(tmp,'(25(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     DAP, TOTWT1, PG, CMINEA, GROWTH, GRWRES, MAINR, cCADLF1, CADSR, RHOL1, RHOS1, &
+     RHOSR1, RHOR1, TGRO(12), TGROAV, PCNSD, PCLSD, PCCSD
+   
+  lngth = Len(Trim(Adjustl(tmp)))
+  size = lngth
+  Allocate(Character(Len = size)::Csvline)
+  Csvline = Trim(Adjustl(tmp))
+   
+  Return
+end Subroutine CsvOutPlCPrFrm
+!---------------------------------------------------------------------------------
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
     Character(Len=5) :: CropModel
