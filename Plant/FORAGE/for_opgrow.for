@@ -476,8 +476,18 @@ C-----------------------------------------------------------------------
      &    1X,I5,2(1X,F5.2),4(1X,F5.3),9(1X,F5.2),7(1X,F5.2),1X, 
      &    F5.3,5(1X,F5.2),1X,I5,2(1X,F5.3),1X,F5.1,5(1X,F5.2),
      &    1X,F5.0,2(1X,F5.2),1X,I5,1X,F5.2,1X,I6,1X,F5.2)
-       END IF    ! VSH
-
+        END IF    ! VSH
+        
+        IF (FMOPT == 'C') THEN   ! VSH
+          Call CsvOutPlNPrFrm(EXPNAME, RUN, CONTROL%TRTNUM, 
+     & CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, WTNCAN, 
+     & WTNSD, WTNVEG, PCNSD, PCNVEG, WTNFX, WTNUP, WTNLF, WTNST, WTNSR, 
+     & PCNL, PCNST, PCNSR, PCNSH, PCNRT, NFIXN,
+     & vCsvlinePlNPrFrm, vpCsvlinePlNPrFrm, vlngthPlNPrFrm)
+           
+          CALL LinklstPlNPrFrm(vCsvlinePlNPrFrm)
+        END IF ! VSH 
+        
         ENDIF       
       ENDIF
 
