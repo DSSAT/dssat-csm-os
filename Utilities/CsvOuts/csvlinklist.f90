@@ -2092,7 +2092,7 @@ End Subroutine LinklstPlNPrFrm
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
       
-      If(.Not. Associated(headPlNPrFrm)) Return
+      If(.Not. Associated(headPlCPrFrm)) Return
       
       length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
   //'CMAD,CGRD,GRAD,MRAD,CHAD,QHAD,CL%D,CS%D,QC%D,CR%D,TGNN,TGAV,'&
