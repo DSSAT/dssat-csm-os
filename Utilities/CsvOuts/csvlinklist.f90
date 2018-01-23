@@ -2074,6 +2074,43 @@ Subroutine LinklstPlNPrFrm(ptxtlinePlNPrFrm)
       End If
     End If
 
- End Subroutine LinklstPlNPrFrm
+End Subroutine LinklstPlNPrFrm
+!------------------------------------------------------------------------------
+  Subroutine ListtofilePlCPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headPlNPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
+  //'CMAD,CGRD,GRAD,MRAD,CHAD,QHAD,CL%D,CS%D,QC%D,CR%D,TGNN,TGAV,'&
+  //'GN%D,GL%D,GC%D')
+  
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
+  //'CMAD,CGRD,GRAD,MRAD,CHAD,QHAD,CL%D,CS%D,QC%D,CR%D,TGNN,TGAV,'&
+  //'GN%D,GL%D,GC%D' 
+  
+      fn = 'plantc.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrPlCPrFrm => headPlCPrFrm
+      Do
+        If(.Not. Associated(ptrPlCPrFrm)) Exit          
+        Write(nf,'(A)') ptrPlCPrFrm % pclinePlCPrFrm    
+        ptrPlCPrFrm => ptrPlCPrFrm % pPlCPrFrm          
+      End Do
+
+      Nullify(ptrPlCPrFrm, headPlCPrFrm, tailPlCPrFrm)
+      Close(nf)
+  End Subroutine ListtofilePlCPrFrm
 !------------------------------------------------------------------------------
 End Module Linklist
