@@ -124,6 +124,11 @@ Character(:), allocatable, Target :: vCsvlinePlNPrFrm
 Character (:), Pointer :: vpCsvlinePlNPrFrm
 Integer :: vlngthPlNPrFrm
 !------------------------------------------------------------------------------
+! for Plant C Forage
+Character(:), allocatable, Target :: vCsvlinePlCPrFrm
+Character (:), Pointer :: vpCsvlinePlCPrFrm
+Integer :: vlngthPlCPrFrm
+!------------------------------------------------------------------------------
 !------------------------------------------------------------------------------
 ! Generic subroutine CsvOut
 ! 
