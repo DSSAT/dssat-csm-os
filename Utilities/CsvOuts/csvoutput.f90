@@ -1743,7 +1743,8 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
              Case('PRFRM')
                  Call ListtofilePlGroPrFrm(nlayers)   ! plantgro.csv
                  Call ListtofilePlNPrFrm              ! plantn.csv
-                 Call ListtofilePlCPrFrm              ! plantn.csv
+                 Call ListtofilePlCPrFrm              ! plantc.csv
+                 Call ListtofileDormPrFrm             ! dormancy.csv
          End Select
 
          Call ListtofileSW(nlayers)         ! SoilWat.csv
