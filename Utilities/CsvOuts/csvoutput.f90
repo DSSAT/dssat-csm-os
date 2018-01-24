@@ -129,6 +129,11 @@ Character(:), allocatable, Target :: vCsvlinePlCPrFrm
 Character (:), Pointer :: vpCsvlinePlCPrFrm
 Integer :: vlngthPlCPrFrm
 !------------------------------------------------------------------------------
+! for dormancy Forage
+Character(:), allocatable, Target :: vCsvlineDormPrFrm
+Character (:), Pointer :: vpCsvlineDormPrFrm
+Integer :: vlngthDormPrFrm
+!------------------------------------------------------------------------------
 !------------------------------------------------------------------------------
 ! Generic subroutine CsvOut
 ! 
