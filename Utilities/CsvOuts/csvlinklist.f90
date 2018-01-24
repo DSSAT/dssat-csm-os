@@ -2150,4 +2150,39 @@ Subroutine LinklstPlCPrFrm(ptxtlinePlCPrFrm)
 
 End Subroutine LinklstPlCPrFrm
 !------------------------------------------------------------------------------
+  Subroutine ListtofileDormPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headDormPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QDSD,PPGF,PPMF,PPTF,TSRD,TS1D,FRZ2,LV%D,SV%D,QV%D,RV%D')
+  
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QDSD,PPGF,PPMF,PPTF,TSRD,TS1D,FRZ2,LV%D,SV%D,QV%D,RV%D' 
+  
+      fn = 'dormancy.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrDormPrFrm => headDormPrFrm
+      Do
+        If(.Not. Associated(ptrDormPrFrm)) Exit          
+        Write(nf,'(A)') ptrDormPrFrm % pclineDormPrFrm    
+        ptrDormPrFrm => ptrDormPrFrm % pDormPrFrm          
+      End Do
+
+      Nullify(ptrDormPrFrm, headDormPrFrm, tailDormPrFrm)
+      Close(nf)
+  End Subroutine ListtofileDormPrFrm
+!------------------------------------------------------------------------------
 End Module Linklist
