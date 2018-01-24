@@ -114,6 +114,17 @@ Character(:), allocatable, Target :: vCsvlineMLCER
 Character (:), Pointer :: vpCsvlineMLCER
 Integer :: vlngthMLCER
 !------------------------------------------------------------------------------
+! for PlantGro PRFRM
+Character(:), allocatable, Target :: vCsvlinePlGroPrFrm
+Character (:), Pointer :: vpCsvlinePlGroPrFrm
+Integer :: vlngthPlGroPrFrm
+!------------------------------------------------------------------------------
+! for Plant N Forage
+Character(:), allocatable, Target :: vCsvlinePlNPrFrm
+Character (:), Pointer :: vpCsvlinePlNPrFrm
+Integer :: vlngthPlNPrFrm
+!------------------------------------------------------------------------------
+!------------------------------------------------------------------------------
 ! Generic subroutine CsvOut
 ! 
 Interface CsvOut
@@ -1510,8 +1521,149 @@ Subroutine CsvOut_mlcer(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
    pCsvline => Csvline
    
    return
-end Subroutine CsvOut_mlcer
+   end Subroutine CsvOut_mlcer
 !------------------------------------------------------------------------------
+   
+! Sub for csv output PRFRM PlantGro.csv
+Subroutine CsvOut_PlGroPrFrm(EXCODE, RUN, TN, ROTNUM,  REPNO, YEAR, DOY, DAS, DAP, &
+   VSTAGE, RSTAGE, XLAI, WTLF, STMWT, STRWT, PSRSRFL, PSRLYR1, SDWT, RTWT, TOPWT, & 
+   SEEDNO, SDSIZE, HI, PODWT, PODNO, SWFAC, TURFAC, NSTRES, SATFAC, PCNL, SHELPC, &  
+   HIP, PODWTD, SLA, CANHT, CANWH, DWNOD, RTDEP, WTCO, WTLO, WTSO, WTSRO, FHWAH, &  
+   FHLPH, PELF, DWTCO, DWTLO, DWTSO, fhpctn, N_LYR, RLV, Csvline, pCsvline, lngth) 
+     
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer,Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP                     
+!        INTEGER,Intent(in)      :: SN      ! Sequence number,crop rotation  #
+!        INTEGER,Intent(in)      :: ON      ! Option number (sequence runs)  #
+!        INTEGER,Intent(in)      :: CN      ! Crop component (multicrop)     #
+   Real,Intent(IN) :: VSTAGE, XLAI, WTLF, STMWT, STRWT, PSRSRFL, PSRLYR1, SDWT  
+   Real,Intent(IN) :: RTWT, TOPWT, SEEDNO, SDSIZE, HI, PODWT, PODNO, SWFAC
+   Real,Intent(IN) :: TURFAC, NSTRES, SATFAC, PCNL, SHELPC, HIP, DWNOD, RTDEP, WTSRO  
+   Real,Intent(IN) :: CANHT, CANWH, fhpctn, SLA, PODWTD, WTCO, WTLO, WTSO
+   Real,Intent(IN) :: FHWAH, FHLPH, PELF, DWTCO, DWTLO, DWTSO
+   Integer,Intent(IN) :: RSTAGE 
+   Integer,Intent(IN) :: N_LYR
+   Real, Dimension(N_LYR),Intent(IN) :: RLV 
+   
+!  Recalculated vars
+   Integer :: cWTLF1, cSTMWT1, cSTRWT1, cSDWT1, cRTWT1, cTOPWT1, cSEEDNO1, cPODWT1
+   Integer :: cPODNO1, cPODWTD1, cPodSum, WTSRO1, FHWAH1, DWTCO1, DWTLO1, DWTSO1, CANHT1
+   Integer :: cWTLO1, cWTSO1, cWTCO1 
+   Real :: DWNOD1, NSTRES1, RTDEP1, SWFAC1, TURFAC1, fhpctn1
+  
+   Integer :: i
+  
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+  
+   Character(Len=1200) :: tmp
+   Character(Len=300) :: tmp1
+   Character(Len=20) :: fmt      
+!  End of vars
+          
+!  Recalculation
+   cWTLF1 = NINT(WTLF*10.)
+   cSTMWT1 = NINT(STMWT*10.)
+   cSTRWT1 = NINT(STRWT*10.)
+   cSDWT1 = NINT(SDWT*10.)
+   cRTWT1 = NINT(RTWT*10.)
+   cTOPWT1 = NINT(TOPWT*10.)
+   cSEEDNO1 = NINT(SEEDNO)
+   cPODWT1 = NINT(PODWT*10.)
+   cPODNO1 = NINT(PODNO)
+   SWFAC1 = 1. - SWFAC
+   TURFAC1 = 1. - TURFAC
+   NSTRES1 = 1. - NSTRES
+   cPODWTD1 = NINT(PODWTD*10.)
+   cPodSum = NINT((PODWTD+PODWT)*10.)
+   DWNOD1 = DWNOD * 10. 
+   RTDEP1 = RTDEP / 100.
+   cWTCO1 = NINT(WTCO*10.)
+   cWTLO1 = NINT(WTLO*10.)
+   cWTSO1 = NINT(WTSO*10.)
+   WTSRO1 = NINT(WTSRO*10.)
+   FHWAH1 = NINT(FHWAH*10.)
+   DWTCO1 = NINT(DWTCO*10.)
+   DWTLO1 = NINT(DWTLO*10.)
+   DWTSO1 = NINT(DWTSO*10.)
+   CANHT1 = NINT(CANHT*100.)
+   fhpctn1 = fhpctn * 6.25
+   
+   Write(tmp,'(52(g0,","))')RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,& 
+      VSTAGE, RSTAGE, XLAI, cWTLF1, cSTMWT1, cSTRWT1, PSRSRFL, PSRLYR1, cSDWT1, &
+      cRTWT1, cTOPWT1, cSEEDNO1, SDSIZE, HI, cPODWT1, cPODNO1, SWFAC1, TURFAC1, & 
+      NSTRES1, SATFAC, PCNL, SHELPC, HIP, cPODWTD1, cPodSum, SLA, CANHT, &
+      CANWH, DWNOD1, RTDEP1, cWTCO1, cWTLO1, cWTSO1, WTSRO1, FHWAH1, FHLPH, PELF, &
+      DWTCO1, DWTLO1, DWTSO1, CANHT1, fhpctn1  
+      
+   Write(fmt,'(I2)') N_LYR - 1   
+   fmt = '('//trim(adjustl(fmt))//'(g0,","),g0)'
+   fmt=trim(adjustl(fmt))
+   
+   Write(tmp1,fmt) (RLV(i), i = 1, N_LYR)
+      
+   tmp = trim(tmp) // trim(adjustl(tmp1))  
+   
+   lngth = Len(Trim(tmp))
+   Allocate(Character(Len=Len(Trim(tmp)))::Csvline)
+   Csvline = Trim(tmp)
+   pCsvline => Csvline
+   
+   return
+   end Subroutine CsvOut_PlGroPrFrm
+!------------------------------------------------------------------------------
+! Sub for plantn.csv output for PRFRM
+Subroutine CsvOutPlNPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
+   WTNCAN, WTNSD, WTNVEG, PCNSD, PCNVEG, WTNFX, WTNUP, WTNLF, WTNST, WTNSR, &
+   PCNL, PCNST, PCNSR, PCNSH, PCNRT, NFIXN, &
+   Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP           
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   Real,Intent(IN) :: WTNCAN, WTNSD, WTNVEG, PCNSD, PCNVEG, WTNFX, WTNUP
+   REAL,Intent(IN) :: WTNLF, WTNST, WTNSR, PCNL, PCNST, PCNSR, PCNSH, PCNRT 
+   REAL,Intent(IN) :: NFIXN 
+  
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=400) :: tmp      
+!  End of vars
+  
+!  Recalculated vars
+   Real :: cWTNCAN1, cWTNSD1, cWTNVEG1, cWTNFX1, cWTNUP1, cWTNLF1, cWTNST1  
+   Real :: cWTNSR1, cNFIXN1
+  
+   cWTNCAN1 = WTNCAN * 10.0
+   cWTNSD1  = WTNSD  * 10.0
+   cWTNVEG1 = WTNVEG * 10.0
+   cWTNFX1  = WTNFX  * 10.0
+   cWTNUP1  = WTNUP  * 10.0
+   cWTNLF1  = WTNLF  * 10.0
+   cWTNST1  = WTNST  * 10.0
+   cWTNSR1  = WTNSR  * 10.0
+   cNFIXN1  = NFIXN  * 10.0
+  
+!  Unofmatted   
+   Write(tmp,'(24(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+      DAP, cWTNCAN1, cWTNSD1, cWTNVEG1, PCNSD, PCNVEG, cWTNFX1, cWTNUP1, cWTNLF1,&
+      cWTNST1, cWTNSR1, PCNL, PCNST, PCNSR, PCNSH, PCNRT, cNFIXN1
+   
+   lngth = Len(Trim(Adjustl(tmp)))
+   size = lngth
+   Allocate(Character(Len = size)::Csvline)
+   Csvline = Trim(Adjustl(tmp))
+   
+   Return
+end Subroutine CsvOutPlNPrFrm
+!---------------------------------------------------------------------------------   
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
     Character(Len=5) :: CropModel
@@ -1538,6 +1690,9 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofileMLCER(nlayers)        ! plantgro.csv
                  Call ListtofilePlNMzCer              ! plantn.csv
                  Call ListtofileEvOpsum               ! evaluate.csv
+             Case('PRFRM')
+                 Call ListtofilePlGroPrFrm(nlayers)   ! plantgro.csv
+                 Call ListtofilePlNPrFrm              ! plantn.csv
          End Select
 
          Call ListtofileSW(nlayers)         ! SoilWat.csv
