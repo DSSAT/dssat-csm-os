@@ -323,8 +323,20 @@ Type :: lin_valuePlantP
     Type (lin_valuePlCPrFrm), Pointer :: ptrPlCPrFrm     
     
     Integer :: istatPlCPrFrm  
-Contains
+!-------------------------------------------------------------------------------------- 
+!   for DormPrFrm
+    Type :: lin_valueDormPrFrm
+       Character(:), Allocatable :: pclineDormPrFrm
+       Type (lin_valueDormPrFrm), Pointer :: pDormPrFrm
+    End Type
 
+    Type (lin_valueDormPrFrm), Pointer :: headDormPrFrm    
+    Type (lin_valueDormPrFrm), Pointer :: tailDormPrFrm    
+    Type (lin_valueDormPrFrm), Pointer :: ptrDormPrFrm     
+    
+    Integer :: istatDormPrFrm 
+!-------------------------------------------------------------------------------------- 
+Contains
 !------------------------------------------------------------------------------
 
  Subroutine Linklst(ptxtline)
