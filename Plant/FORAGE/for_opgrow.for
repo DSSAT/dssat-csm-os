@@ -486,6 +486,15 @@ C-----------------------------------------------------------------------
      & vCsvlinePlNPrFrm, vpCsvlinePlNPrFrm, vlngthPlNPrFrm)
            
           CALL LinklstPlNPrFrm(vCsvlinePlNPrFrm)
+          
+          CALL CsvOutPlCPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, 
+     &CADST, CADSR, RHOL, RHOS, RHOSR, RHOR, TGRO, TGROAV, PCNSD, 
+     &PCLSD, PCCSD, TS, 
+     &vCsvlinePlCPrFrm, vpCsvlinePlCPrFrm, vlngthPlCPrFrm)
+      
+         CALL LinklstPlCPrFrm(vCsvlinePlCPrFrm)
         END IF ! VSH 
         
         ENDIF       
