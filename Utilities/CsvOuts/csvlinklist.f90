@@ -335,7 +335,19 @@ Type :: lin_valuePlantP
     Type (lin_valueDormPrFrm), Pointer :: ptrDormPrFrm     
     
     Integer :: istatDormPrFrm 
-!-------------------------------------------------------------------------------------- 
+!--------------------------------------------------------------------------------------
+!   for StorPrFrm
+    Type :: lin_valueStorPrFrm
+       Character(:), Allocatable :: pclineStorPrFrm
+       Type (lin_valueStorPrFrm), Pointer :: pStorPrFrm
+    End Type
+
+    Type (lin_valueStorPrFrm), Pointer :: headStorPrFrm    
+    Type (lin_valueStorPrFrm), Pointer :: tailStorPrFrm    
+    Type (lin_valueStorPrFrm), Pointer :: ptrStorPrFrm     
+    
+    Integer :: istatStorPrFrm 
+!--------------------------------------------------------------------------------------
 Contains
 !------------------------------------------------------------------------------
 
