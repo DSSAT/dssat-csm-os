@@ -1751,7 +1751,61 @@ Subroutine CsvOutDormPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
   Csvline = Trim(Adjustl(tmp))
    
   Return
-end Subroutine CsvOutDormPrFrm
+   end Subroutine CsvOutDormPrFrm
+!---------------------------------------------------------------------------------
+! Sub for storage.csv output PRFRM
+Subroutine CsvOutStorPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, CSTRM, DSTOR, FNINSR, & 
+   FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, NSRDOT,&
+   NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, PSRSRFL, PSRLYR1, &
+   RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, &
+   WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, WTNSR, WTNSRA,&
+   WTNSRO, WTSRO, XSTR, Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP           
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   REAL,Intent(IN) :: AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, CSTRM, &       
+      DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, &
+      NSRALL, NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, &
+      PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, SSRNDOT, STRWT, &
+      TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, &
+      WSRIDOT, WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR
+       
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=1000) :: tmp      
+!  End of vars
+  
+!  Recalculated vars
+   Integer :: CSRW1, STRWT1, WTNSRA1, WTSRO1 
+  
+   CSRW1= NINT(CSRW)
+   STRWT1 = NINT(STRWT * 10.)
+   WTNSRA1 = NINT(WTNSRA * 10.)
+   WTSRO1 = NINT(WTSRO * 10.)
+   
+   Write(tmp,'(59(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     DAP, AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW1, CSTRM, DSTOR, &
+     FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, &
+     NSRALL, NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, &
+     PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, SSRNDOT, STRWT1, &
+     TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, &
+     WSRIDOT, WTNSR, WTNSRA1, WTNSRO, WTSRO1, XSTR   
+   
+   
+  lngth = Len(Trim(Adjustl(tmp)))
+  size = lngth
+  Allocate(Character(Len = size)::Csvline)
+  Csvline = Trim(Adjustl(tmp))
+   
+  Return
+end Subroutine CsvOutStorPrFrm
 !---------------------------------------------------------------------------------
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
