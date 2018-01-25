@@ -2223,4 +2223,47 @@ Subroutine LinklstDormPrFrm(ptxtlineDormPrFrm)
 
 End Subroutine LinklstDormPrFrm
 !------------------------------------------------------------------------------
+  Subroutine ListtofileStorPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headStorPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QCQD,QHAD,QC%M,QRAD,QMAD,QCFD,QCAD,QCDD,QDTD,QN%X,'&
+  //'QN%I,QV%D,QV%T,QNAA,QNRX,QNRN,QNAR,QNAM,QNAG,QNAN,'&
+  //'QNAL,QN%N,QN%D,QW%C,QP%W,QL%S,QL%1,QS%D,Q1%D,QC%D,'&
+  //'QCAM,QFDS,QFD1,QEAD,QEWD,QWAD,QT%S,QT%1,QCRD,QNMD,'&
+  //'QCAG,QWNG,QWND,QFAD,QWAI,QMAM,QNAD,QNAC,QNLC,QDAD,XSTR')
+  
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QCQD,QHAD,QC%M,QRAD,QMAD,QCFD,QCAD,QCDD,QDTD,QN%X,'&
+  //'QN%I,QV%D,QV%T,QNAA,QNRX,QNRN,QNAR,QNAM,QNAG,QNAN,'&
+  //'QNAL,QN%N,QN%D,QW%C,QP%W,QL%S,QL%1,QS%D,Q1%D,QC%D,'&
+  //'QCAM,QFDS,QFD1,QEAD,QEWD,QWAD,QT%S,QT%1,QCRD,QNMD,'&
+  //'QCAG,QWNG,QWND,QFAD,QWAI,QMAM,QNAD,QNAC,QNLC,QDAD,XSTR' 
+  
+      fn = 'storage.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrStorPrFrm => headStorPrFrm
+      Do
+        If(.Not. Associated(ptrStorPrFrm)) Exit          
+        Write(nf,'(A)') ptrStorPrFrm % pclineStorPrFrm    
+        ptrStorPrFrm => ptrStorPrFrm % pStorPrFrm          
+      End Do
+
+      Nullify(ptrStorPrFrm, headStorPrFrm, tailStorPrFrm)
+      Close(nf)
+  End Subroutine ListtofileStorPrFrm
+!------------------------------------------------------------------------------
 End Module Linklist
