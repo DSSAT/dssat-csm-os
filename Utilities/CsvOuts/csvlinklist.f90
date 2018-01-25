@@ -323,8 +323,20 @@ Type :: lin_valuePlantP
     Type (lin_valuePlCPrFrm), Pointer :: ptrPlCPrFrm     
     
     Integer :: istatPlCPrFrm  
-Contains
+!-------------------------------------------------------------------------------------- 
+!   for DormPrFrm
+    Type :: lin_valueDormPrFrm
+       Character(:), Allocatable :: pclineDormPrFrm
+       Type (lin_valueDormPrFrm), Pointer :: pDormPrFrm
+    End Type
 
+    Type (lin_valueDormPrFrm), Pointer :: headDormPrFrm    
+    Type (lin_valueDormPrFrm), Pointer :: tailDormPrFrm    
+    Type (lin_valueDormPrFrm), Pointer :: ptrDormPrFrm     
+    
+    Integer :: istatDormPrFrm 
+!-------------------------------------------------------------------------------------- 
+Contains
 !------------------------------------------------------------------------------
 
  Subroutine Linklst(ptxtline)
@@ -2149,5 +2161,66 @@ Subroutine LinklstPlCPrFrm(ptxtlinePlCPrFrm)
     End If
 
 End Subroutine LinklstPlCPrFrm
+!------------------------------------------------------------------------------
+  Subroutine ListtofileDormPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headDormPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QDSD,PPGF,PPMF,PPTF,TSRD,TS1D,FRZ2,LV%D,SV%D,QV%D,RV%D')
+  
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QDSD,PPGF,PPMF,PPTF,TSRD,TS1D,FRZ2,LV%D,SV%D,QV%D,RV%D' 
+  
+      fn = 'dormancy.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrDormPrFrm => headDormPrFrm
+      Do
+        If(.Not. Associated(ptrDormPrFrm)) Exit          
+        Write(nf,'(A)') ptrDormPrFrm % pclineDormPrFrm    
+        ptrDormPrFrm => ptrDormPrFrm % pDormPrFrm          
+      End Do
+
+      Nullify(ptrDormPrFrm, headDormPrFrm, tailDormPrFrm)
+      Close(nf)
+  End Subroutine ListtofileDormPrFrm
+!------------------------------------------------------------------------------
+Subroutine LinklstDormPrFrm(ptxtlineDormPrFrm)
+
+    Character(:), Allocatable :: ptxtlineDormPrFrm            
+        
+    If(.Not. Associated(headDormPrFrm)) Then             
+      Allocate(headDormPrFrm, Stat=istatDormPrFrm)        
+      If(istatDormPrFrm==0) Then                         
+        tailDormPrFrm => headDormPrFrm                    
+        Nullify(tailDormPrFrm%pDormPrFrm)                 
+        tailDormPrFrm%pclineDormPrFrm = ptxtlineDormPrFrm  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailDormPrFrm%pDormPrFrm, Stat=istatDormPrFrm)      
+      If(istatDormPrFrm==0) Then                                 
+        tailDormPrFrm=> tailDormPrFrm%pDormPrFrm                   
+        Nullify(tailDormPrFrm%pDormPrFrm)                         
+        tailDormPrFrm%pclineDormPrFrm = ptxtlineDormPrFrm          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstDormPrFrm
 !------------------------------------------------------------------------------
 End Module Linklist

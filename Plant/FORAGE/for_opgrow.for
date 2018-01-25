@@ -495,6 +495,14 @@ C-----------------------------------------------------------------------
      &vCsvlinePlCPrFrm, vpCsvlinePlCPrFrm, vlngthPlCPrFrm)
       
          CALL LinklstPlCPrFrm(vCsvlinePlCPrFrm)
+         
+         CALL CsvOutDormPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST, FREEZ2, FRLF, FRSTM,  
+     &FRSTR, FRRT, TS, 
+     &vCsvlineDormPrFrm, vpCsvlineDormPrFrm, vlngthDormPrFrm)
+
+         CALL LinklstDormPrFrm(vCsvlineDormPrFrm)
         END IF ! VSH 
         
         ENDIF       

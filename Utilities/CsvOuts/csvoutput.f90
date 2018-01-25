@@ -129,6 +129,11 @@ Character(:), allocatable, Target :: vCsvlinePlCPrFrm
 Character (:), Pointer :: vpCsvlinePlCPrFrm
 Integer :: vlngthPlCPrFrm
 !------------------------------------------------------------------------------
+! for dormancy Forage
+Character(:), allocatable, Target :: vCsvlineDormPrFrm
+Character (:), Pointer :: vpCsvlineDormPrFrm
+Integer :: vlngthDormPrFrm
+!------------------------------------------------------------------------------
 !------------------------------------------------------------------------------
 ! Generic subroutine CsvOut
 ! 
@@ -1712,7 +1717,41 @@ Subroutine CsvOutPlCPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
   Csvline = Trim(Adjustl(tmp))
    
   Return
-end Subroutine CsvOutPlCPrFrm
+   end Subroutine CsvOutPlCPrFrm
+!---------------------------------------------------------------------------------
+! Sub for plantc.csv output Plant C PRFRM
+Subroutine CsvOutDormPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST, FREEZ2, FRLF, FRSTM, FRSTR, FRRT, &
+   TS, Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, TS           
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   Character(6),Intent(IN):: DRMST
+   REAL,Intent(IN) :: PPGFAC, PPMFAC, PPTFAC, SRFTEMP, FREEZ2, FRLF, FRSTM 
+   REAL,Intent(IN) :: FRSTR, FRRT  
+   REAL,Dimension(TS),Intent(IN)      :: ST
+    
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=400) :: tmp      
+!  End of vars
+            
+   Write(tmp,'(19(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     DAP, DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST(1), FREEZ2, FRLF, FRSTM, FRSTR, FRRT
+   
+  lngth = Len(Trim(Adjustl(tmp)))
+  size = lngth
+  Allocate(Character(Len = size)::Csvline)
+  Csvline = Trim(Adjustl(tmp))
+   
+  Return
+end Subroutine CsvOutDormPrFrm
 !---------------------------------------------------------------------------------
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
@@ -1743,7 +1782,8 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
              Case('PRFRM')
                  Call ListtofilePlGroPrFrm(nlayers)   ! plantgro.csv
                  Call ListtofilePlNPrFrm              ! plantn.csv
-                 Call ListtofilePlCPrFrm              ! plantn.csv
+                 Call ListtofilePlCPrFrm              ! plantc.csv
+                 Call ListtofileDormPrFrm             ! dormancy.csv
          End Select
 
          Call ListtofileSW(nlayers)         ! SoilWat.csv
