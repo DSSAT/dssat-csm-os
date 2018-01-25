@@ -503,6 +503,18 @@ C-----------------------------------------------------------------------
      &vCsvlineDormPrFrm, vpCsvlineDormPrFrm, vlngthDormPrFrm)
 
          CALL LinklstDormPrFrm(vCsvlineDormPrFrm)
+         
+         CALL CsvOutStorPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, AGRSTR, 
+     &CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, CSTRM, DSTOR, FNINSR,
+     &FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, 
+     &NSRALL, NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD,
+     &PSRLYRD, PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT,
+     &SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT,
+     &WSRDOTN, WSRFDOT, WSRI, WSRIDOT, WTNSR, WTNSRA,WTNSRO, WTSRO,XSTR,
+     &vCsvlineStorPrFrm, vpCsvlineStorPrFrm, vlngthStorPrFrm)
+
+         CALL LinklstStorPrFrm(vCsvlineStorPrFrm)
         END IF ! VSH 
         
         ENDIF       
