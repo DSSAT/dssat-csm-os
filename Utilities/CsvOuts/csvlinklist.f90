@@ -2266,4 +2266,30 @@ End Subroutine LinklstDormPrFrm
       Close(nf)
   End Subroutine ListtofileStorPrFrm
 !------------------------------------------------------------------------------
+Subroutine LinklstStorPrFrm(ptxtlineStorPrFrm)
+
+    Character(:), Allocatable :: ptxtlineStorPrFrm            
+        
+    If(.Not. Associated(headStorPrFrm)) Then             
+      Allocate(headStorPrFrm, Stat=istatStorPrFrm)        
+      If(istatStorPrFrm==0) Then                         
+        tailStorPrFrm => headStorPrFrm                    
+        Nullify(tailStorPrFrm%pStorPrFrm)                 
+        tailStorPrFrm%pclineStorPrFrm = ptxtlineStorPrFrm  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailStorPrFrm%pStorPrFrm, Stat=istatStorPrFrm)      
+      If(istatStorPrFrm==0) Then                                 
+        tailStorPrFrm=> tailStorPrFrm%pStorPrFrm                   
+        Nullify(tailStorPrFrm%pStorPrFrm)                         
+        tailStorPrFrm%pclineStorPrFrm = ptxtlineStorPrFrm          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstStorPrFrm
+!------------------------------------------------------------------------------
 End Module Linklist
