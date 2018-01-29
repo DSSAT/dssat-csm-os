@@ -1810,7 +1810,71 @@ Subroutine CsvOutStorPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
   Csvline = Trim(Adjustl(tmp))
    
   Return
-end Subroutine CsvOutStorPrFrm
+   end Subroutine CsvOutStorPrFrm
+!---------------------------------------------------------------------------------
+! Sub for somlitn.csv output PRFRM
+Subroutine CsvOutSomNPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD, TN, SOM1E, &
+   S1N, TSOM2E, S2N, TSOM3E, S3N, LITE, TLITE, LIN, METABE, TMETABE, STRUCE, &
+   TSTRUCE, STN, CUMRESE,  
+   NLR, N, NELEM, Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, NLR           
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   REAL,Intent(IN) :: SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD
+   
+   REAL,Dimension(NLR),Intent(IN)      :: TN, S1N, S2N, S3N, LIN, MEN, STN 
+   REAL,Intent(IN) :: SOM1E(0:NLR,3), LITE(0:NLR,3), METABE(0:NLR,3), STRUCE 
+   REAL,Dimension(NELEM),Intent(IN) :: TSOM1E, TSOM2E, TSOM3E, TMETABE, TSTRUCE, &
+       TLITE, CUMRESE
+   
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=1000) :: tmp      
+!  End of vars
+  
+!  Recalculated vars
+   Integer :: k, SON_20CM1, SON_40CM1, TNTD1, TN0D1, TNSD1
+   Integer, Dimension(NLR) :: TN1, S1N1, S2N1, S3N1
+   Integer :: SOM1E1(0:NLR,3)
+   Integer,Dimension(NELEM) :: TSOM1E1, TSOM2E1, TSOM3E1, CUMRESE 
+   
+       
+   SON_20CM1 = NINT(SON_20CM)
+   SON_40CM1 = NINT(SON_40CM)
+   TNTD1 = NINT(TNTD) 
+   TN0D1 = NINT(TN0D)
+   TNSD1 = NINT(TNSD)
+   TN1 = NINT(TN)
+   SOM1E1 = NINT(SOM1E)
+   TSOM1E1 = NINT(TSOM1E)
+   S1N1 = NINT(S1N)
+   TSOM2E1 = NINT(TSOM2E)
+   S2N1 = NINT(S2N)
+   TSOM3E1 = NINT(TSOM3E)
+   S3N1 = NINT(S3N)
+   CUMRESE1 = NINT(CUMRESE)
+   
+   Write(tmp,'(59(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     DAP, SON_20CM1, SON_20CM_P, SON_40CM1, SON_40CM_P, TNTD1, TN0D1, TNSD1, &
+     ((TN1(k)), k=1, 5), SOM1E1(0,N), TSOM1E1(N), ((S1N1(k)), k=1, 5), TSOM2E1(N), & 
+     ((S2N1(k)), k=1, 5), TSOM3E1(N), ((S3N1(k)), k=1, 5), LITE(0,N), TLITE(N), &
+     ((LIN(k)), k=1, 5), METABE(0,N), TMETABE(N), ((MEN(k)), k=1, 5), STRUCE(0,N), &
+     TSTRUCE(N), ((STN(k)), k=1, 5), CUMRESE1(N)
+   
+  lngth = Len(Trim(Adjustl(tmp)))
+  size = lngth
+  Allocate(Character(Len = size)::Csvline)
+  Csvline = Trim(Adjustl(tmp))
+   
+  Return
+end Subroutine CsvOutSomNPrFrm
 !---------------------------------------------------------------------------------
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
