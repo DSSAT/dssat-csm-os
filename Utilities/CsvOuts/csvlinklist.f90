@@ -2349,4 +2349,30 @@ End Subroutine LinklstStorPrFrm
       Close(nf)
   End Subroutine ListtofileSomNPrFrm
 !------------------------------------------------------------------------------
+Subroutine LinklstSomNPrFrm(ptxtlineSomNPrFrm)
+
+    Character(:), Allocatable :: ptxtlineSomNPrFrm            
+        
+    If(.Not. Associated(headSomNPrFrm)) Then             
+      Allocate(headSomNPrFrm, Stat=istatSomNPrFrm)        
+      If(istatSomNPrFrm==0) Then                         
+        tailSomNPrFrm => headSomNPrFrm                    
+        Nullify(tailSomNPrFrm%pSomNPrFrm)                 
+        tailSomNPrFrm%pclineSomNPrFrm = ptxtlineSomNPrFrm  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailSomNPrFrm%pSomNPrFrm, Stat=istatSomNPrFrm)      
+      If(istatSomNPrFrm==0) Then                                 
+        tailSomNPrFrm=> tailSomNPrFrm%pSomNPrFrm                   
+        Nullify(tailSomNPrFrm%pSomNPrFrm)                         
+        tailSomNPrFrm%pclineSomNPrFrm = ptxtlineSomNPrFrm          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstSomNPrFrm
+!------------------------------------------------------------------------------
 End Module Linklist
