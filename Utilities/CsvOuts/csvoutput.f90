@@ -1844,6 +1844,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofilePlCPrFrm              ! plantc.csv
                  Call ListtofileDormPrFrm             ! dormancy.csv
                  Call ListtofileStorPrFrm             ! storage.csv
+                 Call ListtofileSomNPrFrm             ! somlitn.csv
          End Select
 
          Call ListtofileSW(nlayers)         ! SoilWat.csv
