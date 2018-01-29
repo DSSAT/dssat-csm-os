@@ -348,6 +348,18 @@ Type :: lin_valuePlantP
     
     Integer :: istatStorPrFrm 
 !--------------------------------------------------------------------------------------
+!   for SOM N PrFrm
+    Type :: lin_valueSomNPrFrm
+       Character(:), Allocatable :: pclineSomNPrFrm
+       Type (lin_valueSomNPrFrm), Pointer :: pSomNPrFrm
+    End Type
+
+    Type (lin_valueSomNPrFrm), Pointer :: headSomNPrFrm    
+    Type (lin_valueSomNPrFrm), Pointer :: tailSomNPrFrm    
+    Type (lin_valueSomNPrFrm), Pointer :: ptrSomNPrFrm     
+    
+    Integer :: istatSomNPrFrm 
+!--------------------------------------------------------------------------------------
 Contains
 !------------------------------------------------------------------------------
 
