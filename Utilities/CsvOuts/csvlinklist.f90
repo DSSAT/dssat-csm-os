@@ -2323,7 +2323,7 @@ End Subroutine LinklstStorPrFrm
       
       If(.Not. Associated(headSomNPrFrm)) Return
       
-      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
   //'SNS20D,SN%20D,SNS40D,SN%40D,SOND,SN0D,SNTD,SN1D,SN2D,'&
   //'SN3D,SN4D,SN5+D,S1N0D,S1NTD,S1N1D,S1N2D,S1N3D,S1N4D,' &
   //'S1N5+D,S2NTD,S2N1D,S2N2D,S2N3D,S2N4D,S2N5+D,S3NTD,S3N1D,'&
@@ -2333,7 +2333,7 @@ End Subroutine LinklstStorPrFrm
   
       Allocate(character(LEN=length) :: Header)
 
-      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
   //'SNS20D,SN%20D,SNS40D,SN%40D,SOND,SN0D,SNTD,SN1D,SN2D,'&
   //'SN3D,SN4D,SN5+D,S1N0D,S1NTD,S1N1D,S1N2D,S1N3D,S1N4D,' &
   //'S1N5+D,S2NTD,S2N1D,S2N2D,S2N3D,S2N4D,S2N5+D,S3NTD,S3N1D,'&

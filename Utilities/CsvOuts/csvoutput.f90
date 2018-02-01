@@ -1818,21 +1818,21 @@ Subroutine CsvOutStorPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
    end Subroutine CsvOutStorPrFrm
 !---------------------------------------------------------------------------------
 ! Sub for somlitn.csv output PRFRM
-Subroutine CsvOutSomNPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+Subroutine CsvOutSomNPrFrm(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD, TN, SOM1E, &
-   S1N, TSOM2E, S2N, TSOM3E, S3N, LITE, TLITE, LIN, METABE, TMETABE, STRUCE, &
-   TSTRUCE, STN, CUMRESE, NLR, N, NELEM, Csvline, pCsvline, lngth) 
+   TSOM1E, S1N, TSOM2E, S2N, TSOM3E, S3N, LITE, TLITE, LIN, METABE, TMETABE,  &
+   MEN, STRUCE, TSTRUCE, STN, CUMRESE, NLR, N, NELEM, Csvline, pCsvline, lngth) 
     
 !  Input vars
    Character(8),Intent(IN):: EXCODE    
-   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, NLR           
+   Integer, Intent(IN) :: RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, NLR, NELEM, N           
 !   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
 !   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
 !   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
    REAL,Intent(IN) :: SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD
    
    REAL,Dimension(NLR),Intent(IN) :: TN, S1N, S2N, S3N, LIN, MEN, STN 
-   REAL,Intent(IN) :: SOM1E(0:NLR,3), LITE(0:NLR,3), METABE(0:NLR,3), STRUCE 
+   REAL,Intent(IN) :: SOM1E(0:NLR,3), LITE(0:NLR,3), METABE(0:NLR,3), STRUCE(0:NLR,3) 
    REAL,Dimension(NELEM),Intent(IN) :: TSOM1E, TSOM2E, TSOM3E, TMETABE, TSTRUCE, &
        TLITE, CUMRESE
    
@@ -1847,7 +1847,7 @@ Subroutine CsvOutSomNPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
    Integer :: k, SON_20CM1, SON_40CM1, TNTD1, TN0D1, TNSD1
    Integer, Dimension(NLR) :: TN1, S1N1, S2N1, S3N1
    Integer :: SOM1E1(0:NLR,3)
-   Integer,Dimension(NELEM) :: TSOM1E1, TSOM2E1, TSOM3E1, CUMRESE 
+   Integer,Dimension(NELEM) :: TSOM1E1, TSOM2E1, TSOM3E1, CUMRESE1 
    
    SON_20CM1 = NINT(SON_20CM)
    SON_40CM1 = NINT(SON_40CM)
@@ -1864,8 +1864,8 @@ Subroutine CsvOutSomNPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
    S3N1 = NINT(S3N)
    CUMRESE1 = NINT(CUMRESE)
    
-   Write(tmp,'(61(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
-     DAP, SON_20CM1, SON_20CM_P, SON_40CM1, SON_40CM_P, TNTD1, TN0D1, TNSD1, &
+   Write(tmp,'(60(g0,","),g0)') RUN, EXCODE, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     SON_20CM1, SON_20CM_P, SON_40CM1, SON_40CM_P, TNTD1, TN0D1, TNSD1, &
      ((TN1(k)), k=1, 5), SOM1E1(0,N), TSOM1E1(N), ((S1N1(k)), k=1, 5), TSOM2E1(N), & 
      ((S2N1(k)), k=1, 5), TSOM3E1(N), ((S3N1(k)), k=1, 5), LITE(0,N), TLITE(N), &
      ((LIN(k)), k=1, 5), METABE(0,N), TMETABE(N), ((MEN(k)), k=1, 5), STRUCE(0,N), &
