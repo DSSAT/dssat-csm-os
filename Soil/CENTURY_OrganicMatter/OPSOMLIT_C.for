@@ -510,6 +510,17 @@
      &    NINT(CUMRESE(N))
   310   FORMAT (1X,I4,1X,I3.3,1X,I5, 2(I8,F8.3), 27I8, 21F8.2, I8)
         END IF    ! VSH
+        
+      !     VSH CSV output corresponding to somlitn.outs
+      IF (FMOPT == 'C') THEN
+       Call CsvOutSomNPrFrm(EXPNAME, RUN, CONTROL%TRTNUM,
+     & CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     & SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD, TN,
+     & SOM1E, S1N, TSOM2E, S2N, TSOM3E, S3N, LITE, TLITE, LIN, METABE,  
+     & TMETABE, STRUCE, TSTRUCE, STN, CUMRESE, NLR, N, NELEM,  
+     & vCsvlineSomNPrFrm, vpCsvlineSomNPrFrm, vlngthSomNPrFrm)
+       CALL LinklstSomNPrFrm(vCsvlineSomNPrFrm)
+      END IF
 !!       C:N ratios
 !        TCNTD = 0.0; TCN0D = 0.0; TCNSD = 0.0
 !        IF (TNTD > 1.E-9) TCNTD = TCTD / TNTD
