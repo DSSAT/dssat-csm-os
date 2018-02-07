@@ -188,6 +188,9 @@ C-GH  REAL            DJTI
       REAL            SI3(6)
       REAL            SKERWT
       REAL            SLA
+      REAL            SLA1
+      REAL            SLA2
+      REAL            SLA3
       REAL            SNOW
       REAL            SRAD
       REAL            STOVER
@@ -652,6 +655,33 @@ C         ***********************************************************
              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
           ENDIF
 
+
+        !----------------------------------------------------------
+
+          !        Find and Read leaf parameters
+
+          !----------------------------------------------------------
+
+          SECTION = '*LEAF '
+
+          CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+          IF (FOUND .EQ. 0) THEN
+             CALL ERROR(SECTION, 42, FILECC, LNUM)
+          ELSE
+
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA1
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA2
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA3
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+          ENDIF
+
 C-GH      !----------------------------------------------------------
 C         !        Find and Read Partitioning parameters
 C         !----------------------------------------------------------
@@ -756,6 +786,7 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
      &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2, SLA3,
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
@@ -1164,6 +1195,7 @@ C--------------------------------------------------------------------
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
      &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2,SLA3,
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
@@ -1293,6 +1325,7 @@ C----------------------------------------------------------------------
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
      &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2,SLA3,
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
@@ -1462,6 +1495,7 @@ c         WTNRT = ROOTN * PLTPOP
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
      &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2,SLA3,
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
@@ -1529,6 +1563,7 @@ C----------------------------------------------------------------------
      &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
      &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
      &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2,SLA3,
      &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
      &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
      &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,

@@ -41,6 +41,7 @@ C-----------------------------------------------------------------------
      & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
      & NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
      & PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     & SLA1, SLA2,SLA3,
      & PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
      & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
      & STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
@@ -119,6 +120,7 @@ C-----------------------------------------------------------------------
       REAL        SEEDRV
       REAL        SENLA
       REAL        SLA
+      real        SLA1,SLA2, SLA3
       REAL        SLAN
       REAL        SLW
       REAL        SRAD
@@ -564,7 +566,9 @@ C-MA add Pstress 2 as for maize ( JULY 2016)
             PLAG  = PLAG + PLAGT
          END IF
 
-         GROLF  = PLAG  * 0.0038
+C-MA                PLAG   = GROLF/0.0038
+               GROLF  = PLAG  * (1/SLA1)! myriam 7feb2018
+
          GRORT  = CARBO - GROLF
 
 C-GH      IF (GRORT .LE. 0.25*CARBO) THEN
@@ -576,7 +580,8 @@ C-GH         GRORT  = CARBO*0.25
                 SEEDRV = 0.0
 C-GH            GROLF  = CARBO*0.7500
                 GROLF  = CARBO * (1.0 - RTPC)
-                PLAG   = GROLF/0.0038
+C-MA                PLAG   = GROLF/0.0038
+                 PLAG   = GROLF/(1/SLA1) ! myriam 7feb2018
              ENDIF
          ENDIF
 
@@ -602,7 +607,9 @@ C-MA add Pstress 2 as for maize ( JULY 2016)
 
          CARBO  = CARBO + SEEDRV
          SEEDRV = 0.0
-         GROLF  = PLAG*0.0053
+
+         GROLF  = PLAG  * (1/SLA2)! myriam 7feb2018
+C-ma         GROLF  = PLAG*0.0053
 C        GROSTM = GROLF*0.1
          GROSTM = GROLF * STPC
 C-GH   Defined STPC and moved to Species file
@@ -627,7 +634,9 @@ C-GH         END IF
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
             ENDIF
-            PLAG   = GROLF/0.0053
+C-MA            PLAG   = GROLF/0.0053
+         PLAG   = GROLF/ (1/SLA2)!MA! myriam 7feb2018
+
          ELSE IF (GRORT .GE. CARBO * RTPC) THEN
             GRORT  = CARBO  * RTPC
             IF ((GROLF+GROSTM) .GT. 0.0) THEN
@@ -638,7 +647,9 @@ C-GH         END IF
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
             ENDIF
-            PLAG   = GROLF/0.0053
+             PLAG   = GROLF/SLA2 ! myriam 7feb2018
+C-ma         GROLF  = PLAG*0.0053
+
          ENDIF
 
          PLA    = PLA   + PLAG
@@ -674,7 +685,9 @@ C            Allow PLAG to decline if tiller dies I.E. PLAGT < 0
 C
          ENDIF
 
-         GROLF = PLAG*0.0078
+C-MA         GROLF = PLAG*0.0078
+          GROLF = PLAG*(1/SLA3) !sla = 250cm2.g-1
+
          FLG   = 5.0*PHINT
 
 C-GH     IF (SUMDTT .LE. P3-FLG) THEN
@@ -707,7 +720,9 @@ C-GH        GRF    = CARBO  * 0.75/(GROLF+GROSTM)
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
             ENDIF
-            PLAG   = GROLF  / 0.0078
+c-MA            PLAG   = GROLF  / 0.0078
+           PLAG   = GROLF  / (1/SLA3)
+
             SUMRTR = SUMRTR + GRF
             TCON   = SUMRTR / TDUR
          ELSE IF (GRORT .GE. CARBO * RTPC) THEN
