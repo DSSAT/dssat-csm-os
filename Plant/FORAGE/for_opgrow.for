@@ -486,6 +486,35 @@ C-----------------------------------------------------------------------
      & vCsvlinePlNPrFrm, vpCsvlinePlNPrFrm, vlngthPlNPrFrm)
            
           CALL LinklstPlNPrFrm(vCsvlinePlNPrFrm)
+          
+          CALL CsvOutPlCPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, 
+     &CADST, CADSR, RHOL, RHOS, RHOSR, RHOR, TGRO, TGROAV, PCNSD, 
+     &PCLSD, PCCSD, TS, 
+     &vCsvlinePlCPrFrm, vpCsvlinePlCPrFrm, vlngthPlCPrFrm)
+      
+         CALL LinklstPlCPrFrm(vCsvlinePlCPrFrm)
+         
+         CALL CsvOutDormPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST, FREEZ2, FRLF, FRSTM,  
+     &FRSTR, FRRT, TS, 
+     &vCsvlineDormPrFrm, vpCsvlineDormPrFrm, vlngthDormPrFrm)
+
+         CALL LinklstDormPrFrm(vCsvlineDormPrFrm)
+         
+         CALL CsvOutStorPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, AGRSTR, 
+     &CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, CSTRM, DSTOR, FNINSR,
+     &FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, 
+     &NSRALL, NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD,
+     &PSRLYRD, PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT,
+     &SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT,
+     &WSRDOTN, WSRFDOT, WSRI, WSRIDOT, WTNSR, WTNSRA,WTNSRO, WTSRO,XSTR,
+     &vCsvlineStorPrFrm, vpCsvlineStorPrFrm, vlngthStorPrFrm)
+
+         CALL LinklstStorPrFrm(vCsvlineStorPrFrm)
         END IF ! VSH 
         
         ENDIF       
