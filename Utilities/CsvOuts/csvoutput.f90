@@ -124,6 +124,21 @@ Character(:), allocatable, Target :: vCsvlinePlNPrFrm
 Character (:), Pointer :: vpCsvlinePlNPrFrm
 Integer :: vlngthPlNPrFrm
 !------------------------------------------------------------------------------
+! for Plant C Forage
+Character(:), allocatable, Target :: vCsvlinePlCPrFrm
+Character (:), Pointer :: vpCsvlinePlCPrFrm
+Integer :: vlngthPlCPrFrm
+!------------------------------------------------------------------------------
+! for dormancy Forage
+Character(:), allocatable, Target :: vCsvlineDormPrFrm
+Character (:), Pointer :: vpCsvlineDormPrFrm
+Integer :: vlngthDormPrFrm
+!------------------------------------------------------------------------------
+! for storage Forage
+Character(:), allocatable, Target :: vCsvlineStorPrFrm
+Character (:), Pointer :: vpCsvlineStorPrFrm
+Integer :: vlngthStorPrFrm
+!------------------------------------------------------------------------------
 !------------------------------------------------------------------------------
 ! Generic subroutine CsvOut
 ! 
@@ -1662,8 +1677,141 @@ Subroutine CsvOutPlNPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP,&
    Csvline = Trim(Adjustl(tmp))
    
    Return
-end Subroutine CsvOutPlNPrFrm
-!---------------------------------------------------------------------------------   
+   end Subroutine CsvOutPlNPrFrm
+!---------------------------------------------------------------------------------
+! Sub for plantc.csv output Plant C PRFRM
+Subroutine CsvOutPlCPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, CADST, CADSR, RHOL, RHOS, &
+   RHOSR, RHOR, TGRO, TGROAV, PCNSD, PCLSD, PCCSD, TS, Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, TS           
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   REAL,Intent(IN) :: TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, CADST
+   REAL,Intent(IN) :: CADSR, RHOL, RHOS, RHOSR, RHOR, TGROAV, PCNSD, PCLSD, PCCSD  
+   REAL,Dimension(TS),Intent(IN)      :: TGRO
+    
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=400) :: tmp      
+!  End of vars
+  
+!  Recalculated vars
+   Integer :: TOTWT1 
+   Real :: cCADLF1, RHOL1, RHOS1, RHOSR1, RHOR1
+  
+   TOTWT1= NINT(TOTWT * 10.0)
+   cCADLF1 = CADLF + CADST
+   RHOL1 = RHOL * 100.
+   RHOS1 = RHOS * 100.
+   RHOSR1 = RHOSR * 100.
+   RHOR1 = RHOR * 100.
+            
+   Write(tmp,'(25(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     DAP, TOTWT1, PG, CMINEA, GROWTH, GRWRES, MAINR, cCADLF1, CADSR, RHOL1, RHOS1, &
+     RHOSR1, RHOR1, TGRO(12), TGROAV, PCNSD, PCLSD, PCCSD
+   
+  lngth = Len(Trim(Adjustl(tmp)))
+  size = lngth
+  Allocate(Character(Len = size)::Csvline)
+  Csvline = Trim(Adjustl(tmp))
+   
+  Return
+   end Subroutine CsvOutPlCPrFrm
+!---------------------------------------------------------------------------------
+! Sub for plantc.csv output Plant C PRFRM
+Subroutine CsvOutDormPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST, FREEZ2, FRLF, FRSTM, FRSTR, FRRT, &
+   TS, Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, TS           
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   Character(6),Intent(IN):: DRMST
+   REAL,Intent(IN) :: PPGFAC, PPMFAC, PPTFAC, SRFTEMP, FREEZ2, FRLF, FRSTM 
+   REAL,Intent(IN) :: FRSTR, FRRT  
+   REAL,Dimension(TS),Intent(IN)      :: ST
+    
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=400) :: tmp      
+!  End of vars
+            
+   Write(tmp,'(19(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     DAP, DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST(1), FREEZ2, FRLF, FRSTM, FRSTR, FRRT
+   
+  lngth = Len(Trim(Adjustl(tmp)))
+  size = lngth
+  Allocate(Character(Len = size)::Csvline)
+  Csvline = Trim(Adjustl(tmp))
+   
+  Return
+   end Subroutine CsvOutDormPrFrm
+!---------------------------------------------------------------------------------
+! Sub for storage.csv output PRFRM
+Subroutine CsvOutStorPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, &
+   AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, CSTRM, DSTOR, FNINSR, & 
+   FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, NSRALL, NSRDOT,&
+   NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, PSRSRFL, PSRLYR1, &
+   RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, &
+   WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, WSRIDOT, WTNSR, WTNSRA,&
+   WTNSRO, WTSRO, XSTR, Csvline, pCsvline, lngth) 
+    
+!  Input vars
+   Character(8),Intent(IN):: EXCODE    
+   Integer, Intent(IN) :: RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP           
+!   INTEGER,Intent(in)      :: SN         ! Sequence number,crop rotation  #
+!   INTEGER,Intent(in)      :: ON         ! Option number (sequence runs)  #
+!   INTEGER,Intent(in)      :: CN         ! Crop component (multicrop)     #
+   REAL,Intent(IN) :: AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, CSTRM, &       
+      DSTOR, FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, &
+      NSRALL, NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, &
+      PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, SSRNDOT, STRWT, &
+      TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, &
+      WSRIDOT, WTNSR, WTNSRA, WTNSRO, WTSRO, XSTR
+       
+   Character(:), allocatable, Target, Intent(Out) :: Csvline
+   Character(:), Pointer, Intent(Out) :: pCsvline
+   Integer, Intent(Out) :: lngth
+   Integer :: size
+   Character(Len=1000) :: tmp      
+!  End of vars
+  
+!  Recalculated vars
+   Integer :: CSRW1, STRWT1, WTNSRA1, WTSRO1 
+  
+   CSRW1= NINT(CSRW)
+   STRWT1 = NINT(STRWT * 10.)
+   WTNSRA1 = NINT(WTNSRA * 10.)
+   WTSRO1 = NINT(WTSRO * 10.)
+   
+   Write(tmp,'(59(g0,","),g0)') RUN, EXCODE, TN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+     DAP, AGRSTR, CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW1, CSTRM, DSTOR, &
+     FNINSR, FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, &
+     NSRALL, NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD, PSRLYRD, &
+     PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT, SSRNDOT, STRWT1, &
+     TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT, WSRDOTN, WSRFDOT, WSRI, &
+     WSRIDOT, WTNSR, WTNSRA1, WTNSRO, WTSRO1, XSTR   
+   
+   
+  lngth = Len(Trim(Adjustl(tmp)))
+  size = lngth
+  Allocate(Character(Len = size)::Csvline)
+  Csvline = Trim(Adjustl(tmp))
+   
+  Return
+end Subroutine CsvOutStorPrFrm
+!---------------------------------------------------------------------------------
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
     Character(Len=5) :: CropModel
@@ -1693,6 +1841,9 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
              Case('PRFRM')
                  Call ListtofilePlGroPrFrm(nlayers)   ! plantgro.csv
                  Call ListtofilePlNPrFrm              ! plantn.csv
+                 Call ListtofilePlCPrFrm              ! plantc.csv
+                 Call ListtofileDormPrFrm             ! dormancy.csv
+                 Call ListtofileStorPrFrm             ! storage.csv
          End Select
 
          Call ListtofileSW(nlayers)         ! SoilWat.csv
