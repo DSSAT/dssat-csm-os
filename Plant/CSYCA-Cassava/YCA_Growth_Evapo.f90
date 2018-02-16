@@ -101,10 +101,7 @@
                   SW, WTDEP, uh2o, trwup, trwu)
             ENDIF
             
-                      open (unit = 7, file = "log.csv")
 
-          write (7,*) DAP,EOP,affected_EOP_with_VPD_effect(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP, EOP)
-            
             
             ! Call 4 Using rcrop adjusted for CO2 & H2O effect     
             ! NB. Using previous days WFP. 
