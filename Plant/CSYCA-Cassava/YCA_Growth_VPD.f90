@@ -25,7 +25,7 @@
 
 Module YCA_Growth_VPD
     contains 
-    REAL function calculate_VPD (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP, EOP)
+    REAL function affected_EOP_with_VPD_effect (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP, EOP)
     
         USE ModuleDefs
         USE YCA_Model_VPD                                                                               ! To transfer hourly VPD factor to other routines (could be incorporated in ModuleDefs later).
@@ -40,6 +40,8 @@ Module YCA_Growth_VPD
         TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
+        
+        
         REAL, DIMENSION(TS) ::   TAIRHR, PARHR   , RADHR  , RHUMHR  , VPDHR ! These are all declared in ModuleDefs
         REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
         REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
@@ -156,8 +158,12 @@ Module YCA_Growth_VPD
              ET0(hour) = ET0(hour) * VPDFPHR(hour)
              EOP = EOP + ET0(hour)
         END DO
-        calculate_VPD=EOP
-    END function calculate_VPD
+        
+        
+        affected_EOP_with_VPD_effect=EOP
+        
+        
+    END function affected_EOP_with_VPD_effect
 END Module YCA_Growth_VPD
     
 !-----------------------------------------------------------------------

@@ -13,18 +13,20 @@
         ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , RWUPM       , &
         SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
         UH2O        , &
-        !WEATHER     ,                                                                                                       ! MF WEATHER needed for VPD 
+        WEATHER     , SOILPROP, CONTROL, &                                                                                                    ! MF WEATHER needed for VPD 
         WINDSP      , YEAR        , ST          &    !LPM20MAR2016 To consider ST for germination
         )
         
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Control_Environment
+        USE YCA_Growth_VPD
    
         IMPLICIT NONE
         
-        
-        !TYPE (WeatherType) WEATHER                                                            ! MF Defined in ModuleDefs
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs                                                            ! MF Defined in ModuleDefs
 
         INTEGER NLAYR       , YEAR         
         INTEGER CSIDLAYR                                                                      ! Integer function call.
@@ -93,10 +95,15 @@
             IF (fileiot(1:2) /= 'DS') THEN
               ! Calculate plant potential evaporation 
               EOP = MAX(0.0,EO/EOMPEN*EOMPCRPCO2 * (1.0-EXP(-LAI*KEP)))
+
               ! Ratio necessary because EO method may not be Monteith
               CALL CSCRPROOTWU(ISWWAT,NLAYR, DLAYR, LL, SAT, WFEU, MEWNU,EOP, RLV, RWUPM, RLFWU, RWUMX, RTDEP, &
                   SW, WTDEP, uh2o, trwup, trwu)
             ENDIF
+            
+                      open (unit = 7, file = "log.csv")
+
+          write (7,*) DAP,EOP,affected_EOP_with_VPD_effect(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP, EOP)
             
             
             ! Call 4 Using rcrop adjusted for CO2 & H2O effect     
