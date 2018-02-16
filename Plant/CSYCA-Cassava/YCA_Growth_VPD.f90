@@ -23,39 +23,40 @@
 ! Ritchie, J.T. (1998). Soil water balance and plant water stress. In: G.Y. Tsuji, G. Hoogenboom and P.K. Thornton (eds.) Understanding Options for Agricultural Production. Dordrecht: Kluwer. Pp.41–54.
 ! Suleiman, A.A. and Hoogenboom, G. (2007). Comparison of Priestley-Taylor and FAO-56 Penman-Monteith for daily reference evapotranspiration estimation in Georgia. Journal of Irrigation and Drainage Engineering 133(2):175-182.
 
-    SUBROUTINE YCA_Growth_VPD ( &
-        TAIRHR      , WEATHER     , CONTROL   , SOILPROP   , EOP        &
-        )
+Module YCA_Growth_VPD
+    contains 
+    REAL function calculate_VPD (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP, EOP)
     
         USE ModuleDefs
-        USE YCA_First_Trans_m
         USE YCA_Model_VPD                                                                               ! To transfer hourly VPD factor to other routines (could be incorporated in ModuleDefs later).
         
         IMPLICIT NONE
         SAVE
 
-        TYPE (ControlType) CONTROL    ! Defined in ModuleDefs
-        TYPE (WeatherType) WEATHER    ! Defined in ModuleDefs
-        TYPE (SoilType)    SOILPROP   ! Defined in ModuleDefs
-        
-        REAL    INTEGVPDFPHR                                                                       ! Added for VPD response of transpiration
-        REAL    TAIRHR(TS)  , PARHR(TS)   , RADHR(TS)   , RHUMHR(TS)  , VPDHR(TS)                  ! These are all declared in ModuleDefs, but need to be declared here locally.
+        INTEGER, intent (in) :: DAP
+        REAL, intent (in) :: LAI
+        REAL, intent (in) :: PHSV
+        REAL, intent (in) :: PHTV
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
+        REAL, DIMENSION(TS) ::   TAIRHR, PARHR   , RADHR  , RHUMHR  , VPDHR ! These are all declared in ModuleDefs
+        REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
         REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
         REAL    VPDFPPREV   , VPDMAXHRPREV
         REAL    CSVPSAT                                                                            ! REAL function
         REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
         REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
-        INTEGER INT                                                                                ! INTEGER function
-        INTEGER DYNAMIC  
-        !INTEGER L                                                                                  ! Loop counter
+        INTEGER hour                                                                                  ! Loop counter
+        REAL ALBEDO
         
         SAVE
         
 !     Transfer values from constructed data types into local variables.
-      DYNAMIC = CONTROL % DYNAMIC
+
          
 !****************************************************************************************
-    IF (DYNAMIC == RATE) THEN                                              ! Only executed for actual growing conditions
+
 !****************************************************************************************
         TDEW   = WEATHER % TDEW
         PARHR  = WEATHER % PARHR
@@ -65,7 +66,7 @@
         RHUMHR = WEATHER % RHUMHR
         TAIRHR = WEATHER % TAIRHR
         RADHR  = WEATHER % RADHR
-        SNUP   = WEATHER % SNUP
+        SNUP = WEATHER % SNUP
         SNDN   = WEATHER % SNDN
         SRAD   = WEATHER % SRAD
         MSALB  = SOILPROP% MSALB
@@ -81,17 +82,17 @@
         ! Calculate the hourly variables, and reference transpiration using formulae and constants from http://agsys.cra-cin.it/tools
         ! Integrate the hourly data for the day.
         ET0DAY = 0.0
-        DO L = 1,TS
-            DeltaVP = 4098 * (0.6108 * EXP(17.27 * TAIRHR(L)/(TAIRHR(L) + 237.3)))/((TAIRHR(L) + 237.3)**2)
+        DO hour = 1,TS
+            DeltaVP = 4098 * (0.6108 * EXP(17.27 * TAIRHR(hour)/(TAIRHR(hour) + 237.3)))/((TAIRHR(hour) + 237.3)**2)
                                                                                      ! Slope of the saturation vapor pressure–temperature relation, delta (kPa/°C).
-            LambdaLH = 2.501 - 0.002361 * TAIRHR(L)                                  ! Latent heat of vaporization of water, lambda (MJ/kg)
+            LambdaLH = 2.501 - 0.002361 * TAIRHR(hour)                                  ! Latent heat of vaporization of water, lambda (MJ/kg)
             GammaPS = 0.001013 * 101.325 / (0.622 * LambdaLH)                        ! Psychrometric constant, gamma (kPa/°C)
                                      ! The figure for the specific heat of moist air at constant pressure (Cp = 0.001013 MJ/kg/°C) is correct.
                                      ! GammaPS is affected by atmospheric pressure (101.325 kPa), so it should be adjusted to take account 
                                      ! of the site's elevation.
-            ET0(L) = (AlphaPT/(LambdaLH)) * (DeltaVP * ((RADHR(L)*3.6/1000.) * &     ! RADHR is in J/m2/s. Multiply by 3600, divide by 10^6 for MJ/m2/hr.
+            ET0(hour) = (AlphaPT/(LambdaLH)) * (DeltaVP * ((RADHR(hour)*3.6/1000.) * &     ! RADHR is in J/m2/s. Multiply by 3600, divide by 10^6 for MJ/m2/hr.
                 (1.0 - ALBEDO) - 0.0)) / (DeltaVP + GammaPS)
-            ET0DAY = ET0DAY + ET0(L)
+            ET0DAY = ET0DAY + ET0(hour)
         END DO
         ! Calculate total ET the day based on weighted mean temperature.
         ! For comparison only with hourly calculations.
@@ -106,8 +107,8 @@
         !Hourly loop for VPD stomatal response
         
         IF (TDEW.LE.-98.0) TDEW = TMIN
-        DO L = 1, TS
-            VPDHR(L) = (CSVPSAT(TAIRHR(L)) - CSVPSAT(TDEW))/1000.0                   ! VPDHR = VPD, hourly (kPa) 
+        DO hour =1, TS
+            VPDHR(hour) = (CSVPSAT(TAIRHR(hour)) - CSVPSAT(TDEW))/1000.0                   ! VPDHR = VPD, hourly (kPa) 
         END DO 
         
         
@@ -116,50 +117,48 @@
         VPDFPPREV = 1.0                                                              ! VPDFPREV = VPD factor, hourly, previous hour (#)
         VPDStartHr = 0.0
         VPDMaxHr = 0.0
-        DO L = 1, TS
+        DO hour =1, TS
             IF (PHTV > 0.0) THEN                                                    ! If PHTV has a value (.NE. -99)
-                IF (VPDHR(L) > PHTV) THEN
-                    VPDFPHR(L) = AMIN1(1.0,AMAX1(0.0,1.0+PHSV*(VPDHR(L)-PHTV)))
-                    IF (L > 1 .AND. VPDStartHr == 0.0) VPDStartHr = FLOAT(L)    ! Hour start of stomatal closure in response to VPD
-                    VPDMaxHr = FLOAT(L)                                              ! Hour start of stomatal closure in response to VPD
+                IF (VPDHR(hour) > PHTV) THEN
+                    VPDFPHR(hour) = AMIN1(1.0,AMAX1(0.0,1.0+PHSV*(VPDHR(hour)-PHTV)))
+                    IF (hour > 1 .AND. VPDStartHr == 0.0) VPDStartHr = FLOAT(hour)    ! Hour start of stomatal closure in response to VPD
+                    VPDMaxHr = FLOAT(hour)                                              ! Hour start of stomatal closure in response to VPD
                 END IF
             ENDIF                                                                    ! PHTV is VPD response threshold, PHSV is the slope (negative) both set in CSCAS046.SPE. PHTV >= 5 shuts off the response.
-            IF(VPDFPHR(L) > VPDFPPREV) THEN                                         ! If stomata close in response to VPD (VPDFPHR < 1.0), do not reopen (maintain VPDFPHR at its minimum value).
-                VPDFPHR(L) = VPDFPPREV
+            IF(VPDFPHR(hour) > VPDFPPREV) THEN                                         ! If stomata close in response to VPD (VPDFPHR < 1.0), do not reopen (maintain VPDFPHR at its minimum value).
+                VPDFPHR(hour) = VPDFPPREV
                 VPDMaxHr = VPDMaxHrPrev                                              ! Hour of maximum stomatal closure in response to VPD.
             ELSE
-                VPDFPPREV = VPDFPHR(L)                                               ! Current hourly stomatal factor response to VPD
-                VPDMaxHrPrev = FLOAT(L)                                              ! Current hour.
+                VPDFPPREV = VPDFPHR(hour)                                               ! Current hourly stomatal factor response to VPD
+                VPDMaxHrPrev = FLOAT(hour)                                              ! Current hour.
             ENDIF
         END DO
         
         ! Calculate mean VPD photosynthesis factor for the day 
         ! For comparison only with hourly calculations.
         INTEGVPDFPHR = 0.0
-        DO L = 1, TS
+        DO hour =1, TS
             ! Adjust VPDFPHR for the fraction of hour at sunrise and sunset
-            IF (L == INT(SNUP))THEN 
-                VPDFPHR(L) = VPDFPHR(L) * (REAL(L+1) - SNUP) 
+            IF (hour == INT(SNUP))THEN 
+                VPDFPHR(hour) = VPDFPHR(hour) * (REAL(hour+1) - SNUP) 
             ENDIF
-            IF (L == INT(SNDN)) THEN !DA can i assume it's >=
-                VPDFPHR(L) = VPDFPHR(L) * (SNDN - REAL(L))
+            IF (hour == INT(SNDN)) THEN !DA can i assume it's >=
+                VPDFPHR(hour) = VPDFPHR(hour) * (SNDN - REAL(hour))
             ENDIF
-            INTEGVPDFPHR = INTEGVPDFPHR + VPDFPHR(L)
+            INTEGVPDFPHR = INTEGVPDFPHR + VPDFPHR(hour)
         END DO
         IF (DAP >= 1) MNVPDFPHR = AMIN1(1.0, AMAX1(0.0, (INTEGVPDFPHR / (SNDN - SNUP))))      ! MNVPDFPHR is the integral of the hourly VPDFPHR divided by the hours from sunrise to sunset. Range 0-1.
         CONTINUE
         
         ! Adjust PT estimate of hourly ET by the VPD factor. Note this is on the whole ET, not the transpiration component.
         EOP = 0.0
-        DO L = 1, TS
-             ET0(L) = ET0(L) * VPDFPHR(L)
-             EOP = EOP + ET0(L)
+        DO hour =1, TS
+             ET0(hour) = ET0(hour) * VPDFPHR(hour)
+             EOP = EOP + ET0(hour)
         END DO
-       
-!****************************************************************************************    
-    END IF                                              ! DYNAMIC SECTION
-!****************************************************************************************
-    END SUBROUTINE YCA_Growth_VPD
+        calculate_VPD=EOP
+    END function calculate_VPD
+END Module YCA_Growth_VPD
     
 !-----------------------------------------------------------------------
 !     VARIABLE DEFINITIONS: (updated 05NO16)
