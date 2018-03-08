@@ -348,17 +348,17 @@ Type :: lin_valuePlantP
     
     Integer :: istatStorPrFrm 
 !--------------------------------------------------------------------------------------
-!   for SOM N PrFrm
-    Type :: lin_valueSomNPrFrm
-       Character(:), Allocatable :: pclineSomNPrFrm
-       Type (lin_valueSomNPrFrm), Pointer :: pSomNPrFrm
+!   for SOM N 
+    Type :: lin_valueSomN
+       Character(:), Allocatable :: pclineSomN
+       Type (lin_valueSomN), Pointer :: pSomN
     End Type
 
-    Type (lin_valueSomNPrFrm), Pointer :: headSomNPrFrm    
-    Type (lin_valueSomNPrFrm), Pointer :: tailSomNPrFrm    
-    Type (lin_valueSomNPrFrm), Pointer :: ptrSomNPrFrm     
+    Type (lin_valueSomN), Pointer :: headSomN    
+    Type (lin_valueSomN), Pointer :: tailSomN    
+    Type (lin_valueSomN), Pointer :: ptrSomN     
     
-    Integer :: istatSomNPrFrm 
+    Integer :: istatSomN 
 !--------------------------------------------------------------------------------------
 Contains
 !------------------------------------------------------------------------------
@@ -2316,12 +2316,12 @@ Subroutine LinklstStorPrFrm(ptxtlineStorPrFrm)
 
 End Subroutine LinklstStorPrFrm
 !------------------------------------------------------------------------------
-  Subroutine ListtofileSomNPrFrm
+  Subroutine ListtofileSomN
       Integer          :: nf, ErrNum, length       
       Character(Len=12):: fn
       Character(:),Allocatable :: Header         
       
-      If(.Not. Associated(headSomNPrFrm)) Return
+      If(.Not. Associated(headSomN)) Return
       
       length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
   //'SNS20D,SN%20D,SNS40D,SN%40D,SOND,SN0D,SNTD,SN1D,SN2D,'&
@@ -2350,41 +2350,41 @@ End Subroutine LinklstStorPrFrm
       Write(nf,'(A)')Header
       Deallocate(Header)    
 
-      ptrSomNPrFrm => headSomNPrFrm
+      ptrSomN => headSomN
       Do
-        If(.Not. Associated(ptrSomNPrFrm)) Exit          
-        Write(nf,'(A)') ptrSomNPrFrm % pclineSomNPrFrm    
-        ptrSomNPrFrm => ptrSomNPrFrm % pSomNPrFrm          
+        If(.Not. Associated(ptrSomN)) Exit          
+        Write(nf,'(A)') ptrSomN % pclineSomN    
+        ptrSomN => ptrSomN % pSomN          
       End Do
 
-      Nullify(ptrSomNPrFrm, headSomNPrFrm, tailSomNPrFrm)
+      Nullify(ptrSomN, headSomN, tailSomN)
       Close(nf)
-  End Subroutine ListtofileSomNPrFrm
+  End Subroutine ListtofileSomN
 !------------------------------------------------------------------------------
-Subroutine LinklstSomNPrFrm(ptxtlineSomNPrFrm)
+Subroutine LinklstSomN(ptxtlineSomN)
 
-    Character(:), Allocatable :: ptxtlineSomNPrFrm            
+    Character(:), Allocatable :: ptxtlineSomN            
         
-    If(.Not. Associated(headSomNPrFrm)) Then             
-      Allocate(headSomNPrFrm, Stat=istatSomNPrFrm)        
-      If(istatSomNPrFrm==0) Then                         
-        tailSomNPrFrm => headSomNPrFrm                    
-        Nullify(tailSomNPrFrm%pSomNPrFrm)                 
-        tailSomNPrFrm%pclineSomNPrFrm = ptxtlineSomNPrFrm  
+    If(.Not. Associated(headSomN)) Then             
+      Allocate(headSomN, Stat=istatSomN)        
+      If(istatSomN==0) Then                         
+        tailSomN => headSomN                    
+        Nullify(tailSomN%pSomN)                 
+        tailSomN%pclineSomN = ptxtlineSomN  
       Else
         ! Error message
       End If
     Else
-      Allocate(tailSomNPrFrm%pSomNPrFrm, Stat=istatSomNPrFrm)      
-      If(istatSomNPrFrm==0) Then                                 
-        tailSomNPrFrm=> tailSomNPrFrm%pSomNPrFrm                   
-        Nullify(tailSomNPrFrm%pSomNPrFrm)                         
-        tailSomNPrFrm%pclineSomNPrFrm = ptxtlineSomNPrFrm          
+      Allocate(tailSomN%pSomN, Stat=istatSomN)      
+      If(istatSomN==0) Then                                 
+        tailSomN=> tailSomN%pSomN                   
+        Nullify(tailSomN%pSomN)                         
+        tailSomN%pclineSomN = ptxtlineSomN          
       Else
       ! Error message
       End If
     End If
 
-End Subroutine LinklstSomNPrFrm
+End Subroutine LinklstSomN
 !------------------------------------------------------------------------------
 End Module Linklist
