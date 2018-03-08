@@ -140,9 +140,9 @@ Character (:), Pointer :: vpCsvlineStorPrFrm
 Integer :: vlngthStorPrFrm
 !------------------------------------------------------------------------------
 ! for SOM N Forage
-Character(:), allocatable, Target :: vCsvlineSomNPrFrm
-Character (:), Pointer :: vpCsvlineSomNPrFrm
-Integer :: vlngthSomNPrFrm
+Character(:), allocatable, Target :: vCsvlineSomN
+Character (:), Pointer :: vpCsvlineSomN
+Integer :: vlngthSomN
 !------------------------------------------------------------------------------
 !------------------------------------------------------------------------------
 ! Generic subroutine CsvOut
@@ -1818,7 +1818,7 @@ Subroutine CsvOutStorPrFrm(EXCODE, RUN, TN, ROTNUM, REPNO, YEAR, DOY, DAS, DAP, 
    end Subroutine CsvOutStorPrFrm
 !---------------------------------------------------------------------------------
 ! Sub for somlitn.csv output PRFRM
-Subroutine CsvOutSomNPrFrm(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
+Subroutine CsvOutSomN(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
    SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD, TN, SOM1E, &
    TSOM1E, S1N, TSOM2E, S2N, TSOM3E, S3N, LITE, TLITE, LIN, METABE, TMETABE,  &
    MEN, STRUCE, TSTRUCE, STN, CUMRESE, NLR, N, NELEM, Csvline, pCsvline, lngth) 
@@ -1877,7 +1877,7 @@ Subroutine CsvOutSomNPrFrm(EXCODE, RUN, TRN, ROTNUM, REPNO, YEAR, DOY, DAS, &
   Csvline = Trim(Adjustl(tmp))
    
   Return
-end Subroutine CsvOutSomNPrFrm
+end Subroutine CsvOutSomN
 !---------------------------------------------------------------------------------
 Subroutine CsvOutputs(CropModel, numelem, nlayers)
 
@@ -1911,7 +1911,6 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
                  Call ListtofilePlCPrFrm              ! plantc.csv
                  Call ListtofileDormPrFrm             ! dormancy.csv
                  Call ListtofileStorPrFrm             ! storage.csv
-                 Call ListtofileSomNPrFrm             ! somlitn.csv
          End Select
 
          Call ListtofileSW(nlayers)         ! SoilWat.csv
@@ -1925,6 +1924,7 @@ Subroutine CsvOutputs(CropModel, numelem, nlayers)
          Call ListtofileMulch               ! Mulch.csv
          Call ListtofilePlantP              ! PlantP.csv
          Call ListtofileSoilPi              ! SoilPi.csv
+         Call ListtofileSomN                ! somlitn.csv
          
          Return
 End Subroutine CsvOutputs
