@@ -52,7 +52,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       END TYPE VersionType
       TYPE (VersionType) Version
 !     CHARACTER(len=10) :: VBranch = '-develop  '
-      CHARACTER(len=10) :: VBranch = '-release  '
+      CHARACTER(len=10) :: VBranch = '-N2O_out  '
 
 !     Version history:  
 !       4.7.1.5  chp 02/16/2018 forage and csv mods
