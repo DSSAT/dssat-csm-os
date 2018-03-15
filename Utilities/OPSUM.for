@@ -111,6 +111,7 @@ C-----------------------------------------------------------------------
       INTEGER I, IRCM, LUNIO, LINC, LNUM, MDAT, IRNUM, NINUMM
       INTEGER NFXM, NIAM, NICM, NLCM, NLINES  !, NNAPHO
       INTEGER NOUTDS, NUCM, NYRS, PRCM, RECM, ROCM, ONAM, OCAM
+      INTEGER REPNO  !CHP 3/15/2018
       INTEGER ROTNO, ROTOPT, RUN, SLUN, SWXM, TIMDIF, TRTNUM, YRPLT
       INTEGER YRSIM, YRDOY
       INTEGER RUN2, SimLen, LenString
@@ -179,6 +180,7 @@ C-----------------------------------------------------------------------
       LUNIO   = CONTROL % LUNIO
       RUN     = CONTROL % RUN
       RNMODE  = CONTROL % RNMODE
+      REPNO   = CONTROL % REPNO
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
       NYRS    = CONTROL % NYRS
@@ -517,7 +519,8 @@ C-------------------------------------------------------------------
      &'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..............')
 
           WRITE (NOUTDS,400)
-  400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL... ',
+! CHP 3/14/2018 USE P# for REPNO instead of C# for CRPNO, which isn't used.
+  400     FORMAT ('@   RUNNO   TRNO R# O# P# CR MODEL... ',
      &    'EXNAME.. TNAM..................... ',
      &    'FNAM.... WSTA.... SOIL_ID...  ',
      &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
@@ -544,12 +547,12 @@ C-------------------------------------------------------------------
 
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
-     &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
+     &    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, 
      &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO,
      &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
-!       RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
+!       RUN, TRTNUM, ROTNO, ROTOPT, REPNO (was CRPNO), 
   500   FORMAT (I9,1X,I6,3(I3),               
 
 !       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, SLNO,
@@ -662,7 +665,8 @@ C-------------------------------------------------------------------
 !       VSH summary.csv header
         IF (FMOPT == 'C') THEN
             
-            CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
+!           CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
+            CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP,
      &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO, YRSIM, 
      &YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, 
      &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,
