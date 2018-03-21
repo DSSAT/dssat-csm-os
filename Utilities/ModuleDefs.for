@@ -52,7 +52,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       END TYPE VersionType
       TYPE (VersionType) Version
 !     CHARACTER(len=10) :: VBranch = '-develop  '
-      CHARACTER(len=10) :: VBranch = '-release  '
+      CHARACTER(len=10) :: VBranch = 'rice_ophar'
 
 !     Version history:  
 !       4.7.1.4  chp 01/16/2018 YCA update, data file updates
