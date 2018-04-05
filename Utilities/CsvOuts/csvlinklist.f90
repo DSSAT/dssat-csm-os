@@ -277,7 +277,7 @@ Type :: lin_valuePlantP
     
     Integer :: istatPlantP                             
 !--------------------------------------------------------------------------------------
-Type :: lin_valueSoilPi
+    Type :: lin_valueSoilPi
        Character(:), Allocatable :: pclineSoilPi
        Type (lin_valueSoilPi), Pointer :: pSoilPi
     End Type
@@ -288,9 +288,67 @@ Type :: lin_valueSoilPi
     
     Integer :: istatSoilPi                             
 !--------------------------------------------------------------------------------------
-               
-Contains
+!   for PlantGro PRFRM
+    Type :: lin_valuePlGroPrFrm
+       Character(:), Allocatable :: pclinePlGroPrFrm
+       Type (lin_valuePlGroPrFrm), Pointer :: pPlGroPrFrm
+    End Type
 
+    Type (lin_valuePlGroPrFrm), Pointer :: headPlGroPrFrm      
+    Type (lin_valuePlGroPrFrm), Pointer :: tailPlGroPrFrm      
+    Type (lin_valuePlGroPrFrm), Pointer :: ptrPlGroPrFrm       
+    
+    Integer :: istatPlGroPrFrm 
+!------------------------------------------------------------------------------
+!   for PlNPrFrm
+    Type :: lin_valuePlNPrFrm
+       Character(:), Allocatable :: pclinePlNPrFrm
+       Type (lin_valuePlNPrFrm), Pointer :: pPlNPrFrm
+    End Type
+
+    Type (lin_valuePlNPrFrm), Pointer :: headPlNPrFrm    
+    Type (lin_valuePlNPrFrm), Pointer :: tailPlNPrFrm    
+    Type (lin_valuePlNPrFrm), Pointer :: ptrPlNPrFrm     
+    
+    Integer :: istatPlNPrFrm                             
+!-------------------------------------------------------------------------------------- 
+!   for PlCPrFrm
+    Type :: lin_valuePlCPrFrm
+       Character(:), Allocatable :: pclinePlCPrFrm
+       Type (lin_valuePlCPrFrm), Pointer :: pPlCPrFrm
+    End Type
+
+    Type (lin_valuePlCPrFrm), Pointer :: headPlCPrFrm    
+    Type (lin_valuePlCPrFrm), Pointer :: tailPlCPrFrm    
+    Type (lin_valuePlCPrFrm), Pointer :: ptrPlCPrFrm     
+    
+    Integer :: istatPlCPrFrm  
+!-------------------------------------------------------------------------------------- 
+!   for DormPrFrm
+    Type :: lin_valueDormPrFrm
+       Character(:), Allocatable :: pclineDormPrFrm
+       Type (lin_valueDormPrFrm), Pointer :: pDormPrFrm
+    End Type
+
+    Type (lin_valueDormPrFrm), Pointer :: headDormPrFrm    
+    Type (lin_valueDormPrFrm), Pointer :: tailDormPrFrm    
+    Type (lin_valueDormPrFrm), Pointer :: ptrDormPrFrm     
+    
+    Integer :: istatDormPrFrm 
+!--------------------------------------------------------------------------------------
+!   for StorPrFrm
+    Type :: lin_valueStorPrFrm
+       Character(:), Allocatable :: pclineStorPrFrm
+       Type (lin_valueStorPrFrm), Pointer :: pStorPrFrm
+    End Type
+
+    Type (lin_valueStorPrFrm), Pointer :: headStorPrFrm    
+    Type (lin_valueStorPrFrm), Pointer :: tailStorPrFrm    
+    Type (lin_valueStorPrFrm), Pointer :: ptrStorPrFrm     
+    
+    Integer :: istatStorPrFrm 
+!--------------------------------------------------------------------------------------
+Contains
 !------------------------------------------------------------------------------
 
  Subroutine Linklst(ptxtline)
@@ -1909,5 +1967,341 @@ Contains
  End Subroutine ListtofileSoilPi
 
 !------------------------------------------------------------------------------ 
+Subroutine LinklstPlGroPrFrm(ptxtlinePlGroPrFrm)
+    Character(:), Allocatable :: ptxtlinePlGroPrFrm           
+        
+    If(.Not. Associated(headPlGroPrFrm)) Then           
+      Allocate(headPlGroPrFrm, Stat=istatPlGroPrFrm)        
+      If(istatPlGroPrFrm==0) Then                       
+        tailPlGroPrFrm => headPlGroPrFrm                    
+        Nullify(tailPlGroPrFrm%pPlGroPrFrm)                 
+        tailPlGroPrFrm%pclinePlGroPrFrm = ptxtlinePlGroPrFrm    
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailPlGroPrFrm%pPlGroPrFrm, Stat=istatPlGroPrFrm)   
+      If(istatPlGroPrFrm==0) Then                          
+        tailPlGroPrFrm=> tailPlGroPrFrm%pPlGroPrFrm                
+        Nullify(tailPlGroPrFrm%pPlGroPrFrm)                    
+        tailPlGroPrFrm%pclinePlGroPrFrm = ptxtlinePlGroPrFrm       
+      Else
+      ! Error message
+      End If
+    End If
 
+End Subroutine LinklstPlGroPrFrm
+!------------------------------------------------------------------------------ 
+   Subroutine ListtofilePlGroPrFrm(nlayers)
+      Integer          :: nf       ! Number for growth output file  #
+      Character(Len=12):: fn       ! Growth output file code  
+      Character(Len=14) :: fmt
+      Character(Len=2) :: numtoch1, numtoch2 
+      Character(Len=220) :: tmp
+      Character(:),Allocatable :: Header 
+      Integer :: ErrNum, length, nlayers, i, nl
+      
+      If(.Not. Associated(headPlGroPrFrm)) Return
+
+      nl = MIN(10, MAX(4,nlayers))
+  
+      Write(numtoch1,'(I2)') nl - 1  
+       
+      fmt = '('//Trim(Adjustl(numtoch1))//'(A2,I1,A2))'
+      fmt = Trim(Adjustl(fmt))
+   
+      Write (tmp,fmt) ("RL",i,"D,",i=1,nl - 1)
+      tmp = Trim(Adjustl(tmp)) 
+      Write(numtoch2,'(I2)') nl  
+      tmp = Trim(Adjustl(tmp)) // "RL" // Trim(Adjustl(numtoch2)) // "D" 
+       
+  length= Len('RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
+  //'LWAD,SWAD,QWAD,QS%D,Q1%D,GWAD,RWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,' &
+  //'WSGD,NSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,' &
+  //'CDAD,LDAD,SDAD,QDAD,HERB,FHL%,LF%D,DWTCO,DWTLO,DWTSO,CHTCM,CPROT,') &
+  + Len(Trim(Adjustl(tmp)))
+  
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TRTNUM,ROTNUM,REPNO,YEAR,DOY,DAS,DAP,L#SD,GSTD,LAID,' &
+  //'LWAD,SWAD,QWAD,QS%D,Q1%D,GWAD,RWAD,CWAD,G#AD,GWGD,HIAD,PWAD,P#AD,WSPD,' &
+  //'WSGD,NSTD,EWSD,LN%D,SH%D,HIPD,PWDD,PWTD,SLAD,CHTD,CWID,NWAD,RDPD,' &
+  //'CDAD,LDAD,SDAD,QDAD,HERB,FHL%,LF%D,DWTCO,DWTLO,DWTSO,CHTCM,CPROT,' &
+  // Trim(Adjustl(tmp))
+         
+      fn = 'plantgro.csv'
+      Call GETLUN (fn,nf)
+  
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE',  &
+          Action='Write', IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)
+
+      ! write out the data
+      ptrPlGroPrFrm => headPlGroPrFrm
+      Do
+        If(.Not. Associated(ptrPlGroPrFrm)) Exit           ! Pointer valid?
+        Write(nf,'(A)') ptrPlGroPrFrm % pclinePlGroPrFrm   ! Yes: Write value
+        ptrPlGroPrFrm => ptrPlGroPrFrm % pPlGroPrFrm       ! Get next pointer
+      End Do
+
+      Nullify(ptrPlGroPrFrm, headPlGroPrFrm, tailPlGroPrFrm)
+      Close(nf)
+   End Subroutine ListtofilePlGroPrFrm 
+!------------------------------------------------------------------------------ 
+  Subroutine ListtofilePlNPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headPlNPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  //'VN%D,NFXC,NUPC,LNAD,SNAD,QNAD,LN%D,SN%D,QN%D,SHND,RN%D,NFXD')
+  
+      Allocate(character(LEN=length) :: Header)
+
+  Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,CNAD,GNAD,VNAD,GN%D,' &
+  //'VN%D,NFXC,NUPC,LNAD,SNAD,QNAD,LN%D,SN%D,QN%D,SHND,RN%D,NFXD' 
+  
+      fn = 'plantn.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrPlNPrFrm => headPlNPrFrm
+      Do
+        If(.Not. Associated(ptrPlNPrFrm)) Exit          
+        Write(nf,'(A)') ptrPlNPrFrm % pclinePlNPrFrm    
+        ptrPlNPrFrm => ptrPlNPrFrm % pPlNPrFrm          
+      End Do
+
+      Nullify(ptrPlNPrFrm, headPlNPrFrm, tailPlNPrFrm)
+      Close(nf)
+  End Subroutine ListtofilePlNPrFrm
+!------------------------------------------------------------------------------ 
+Subroutine LinklstPlNPrFrm(ptxtlinePlNPrFrm)
+
+    Character(:), Allocatable :: ptxtlinePlNPrFrm            
+        
+    If(.Not. Associated(headPlNPrFrm)) Then             
+      Allocate(headPlNPrFrm, Stat=istatPlNPrFrm)        
+      If(istatPlNPrFrm==0) Then                         
+        tailPlNPrFrm => headPlNPrFrm                    
+        Nullify(tailPlNPrFrm%pPlNPrFrm)                 
+        tailPlNPrFrm%pclinePlNPrFrm = ptxtlinePlNPrFrm  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailPlNPrFrm%pPlNPrFrm, Stat=istatPlNPrFrm)      
+      If(istatPlNPrFrm==0) Then                                 
+        tailPlNPrFrm=> tailPlNPrFrm%pPlNPrFrm                   
+        Nullify(tailPlNPrFrm%pPlNPrFrm)                         
+        tailPlNPrFrm%pclinePlNPrFrm = ptxtlinePlNPrFrm          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstPlNPrFrm
+!------------------------------------------------------------------------------
+  Subroutine ListtofilePlCPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headPlCPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
+  //'CMAD,CGRD,GRAD,MRAD,CHAD,QHAD,CL%D,CS%D,QC%D,CR%D,TGNN,TGAV,'&
+  //'GN%D,GL%D,GC%D')
+  
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,TWAD,PHAD,' &
+  //'CMAD,CGRD,GRAD,MRAD,CHAD,QHAD,CL%D,CS%D,QC%D,CR%D,TGNN,TGAV,'&
+  //'GN%D,GL%D,GC%D' 
+  
+      fn = 'plantc.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrPlCPrFrm => headPlCPrFrm
+      Do
+        If(.Not. Associated(ptrPlCPrFrm)) Exit          
+        Write(nf,'(A)') ptrPlCPrFrm % pclinePlCPrFrm    
+        ptrPlCPrFrm => ptrPlCPrFrm % pPlCPrFrm          
+      End Do
+
+      Nullify(ptrPlCPrFrm, headPlCPrFrm, tailPlCPrFrm)
+      Close(nf)
+  End Subroutine ListtofilePlCPrFrm
+!------------------------------------------------------------------------------
+Subroutine LinklstPlCPrFrm(ptxtlinePlCPrFrm)
+
+    Character(:), Allocatable :: ptxtlinePlCPrFrm            
+        
+    If(.Not. Associated(headPlCPrFrm)) Then             
+      Allocate(headPlCPrFrm, Stat=istatPlCPrFrm)        
+      If(istatPlCPrFrm==0) Then                         
+        tailPlCPrFrm => headPlCPrFrm                    
+        Nullify(tailPlCPrFrm%pPlCPrFrm)                 
+        tailPlCPrFrm%pclinePlCPrFrm = ptxtlinePlCPrFrm  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailPlCPrFrm%pPlCPrFrm, Stat=istatPlCPrFrm)      
+      If(istatPlCPrFrm==0) Then                                 
+        tailPlCPrFrm=> tailPlCPrFrm%pPlCPrFrm                   
+        Nullify(tailPlCPrFrm%pPlCPrFrm)                         
+        tailPlCPrFrm%pclinePlCPrFrm = ptxtlinePlCPrFrm          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstPlCPrFrm
+!------------------------------------------------------------------------------
+  Subroutine ListtofileDormPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headDormPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QDSD,PPGF,PPMF,PPTF,TSRD,TS1D,FRZ2,LV%D,SV%D,QV%D,RV%D')
+  
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QDSD,PPGF,PPMF,PPTF,TSRD,TS1D,FRZ2,LV%D,SV%D,QV%D,RV%D' 
+  
+      fn = 'dormancy.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrDormPrFrm => headDormPrFrm
+      Do
+        If(.Not. Associated(ptrDormPrFrm)) Exit          
+        Write(nf,'(A)') ptrDormPrFrm % pclineDormPrFrm    
+        ptrDormPrFrm => ptrDormPrFrm % pDormPrFrm          
+      End Do
+
+      Nullify(ptrDormPrFrm, headDormPrFrm, tailDormPrFrm)
+      Close(nf)
+  End Subroutine ListtofileDormPrFrm
+!------------------------------------------------------------------------------
+Subroutine LinklstDormPrFrm(ptxtlineDormPrFrm)
+
+    Character(:), Allocatable :: ptxtlineDormPrFrm            
+        
+    If(.Not. Associated(headDormPrFrm)) Then             
+      Allocate(headDormPrFrm, Stat=istatDormPrFrm)        
+      If(istatDormPrFrm==0) Then                         
+        tailDormPrFrm => headDormPrFrm                    
+        Nullify(tailDormPrFrm%pDormPrFrm)                 
+        tailDormPrFrm%pclineDormPrFrm = ptxtlineDormPrFrm  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailDormPrFrm%pDormPrFrm, Stat=istatDormPrFrm)      
+      If(istatDormPrFrm==0) Then                                 
+        tailDormPrFrm=> tailDormPrFrm%pDormPrFrm                   
+        Nullify(tailDormPrFrm%pDormPrFrm)                         
+        tailDormPrFrm%pclineDormPrFrm = ptxtlineDormPrFrm          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstDormPrFrm
+!------------------------------------------------------------------------------
+  Subroutine ListtofileStorPrFrm
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headStorPrFrm)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QCQD,QHAD,QC%M,QRAD,QMAD,QCFD,QCAD,QCDD,QDTD,QN%X,'&
+  //'QN%I,QV%D,QV%T,QNAA,QNRX,QNRN,QNAR,QNAM,QNAG,QNAN,'&
+  //'QNAL,QN%N,QN%D,QW%C,QP%W,QL%S,QL%1,QS%D,Q1%D,QC%D,'&
+  //'QCAM,QFDS,QFD1,QEAD,QEWD,QWAD,QT%S,QT%1,QCRD,QNMD,'&
+  //'QCAG,QWNG,QWND,QFAD,QWAI,QMAM,QNAD,QNAC,QNLC,QDAD,XSTR')
+  
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,DAP,' &
+  //'QCQD,QHAD,QC%M,QRAD,QMAD,QCFD,QCAD,QCDD,QDTD,QN%X,'&
+  //'QN%I,QV%D,QV%T,QNAA,QNRX,QNRN,QNAR,QNAM,QNAG,QNAN,'&
+  //'QNAL,QN%N,QN%D,QW%C,QP%W,QL%S,QL%1,QS%D,Q1%D,QC%D,'&
+  //'QCAM,QFDS,QFD1,QEAD,QEWD,QWAD,QT%S,QT%1,QCRD,QNMD,'&
+  //'QCAG,QWNG,QWND,QFAD,QWAI,QMAM,QNAD,QNAC,QNLC,QDAD,XSTR' 
+  
+      fn = 'storage.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrStorPrFrm => headStorPrFrm
+      Do
+        If(.Not. Associated(ptrStorPrFrm)) Exit          
+        Write(nf,'(A)') ptrStorPrFrm % pclineStorPrFrm    
+        ptrStorPrFrm => ptrStorPrFrm % pStorPrFrm          
+      End Do
+
+      Nullify(ptrStorPrFrm, headStorPrFrm, tailStorPrFrm)
+      Close(nf)
+  End Subroutine ListtofileStorPrFrm
+!------------------------------------------------------------------------------
+Subroutine LinklstStorPrFrm(ptxtlineStorPrFrm)
+
+    Character(:), Allocatable :: ptxtlineStorPrFrm            
+        
+    If(.Not. Associated(headStorPrFrm)) Then             
+      Allocate(headStorPrFrm, Stat=istatStorPrFrm)        
+      If(istatStorPrFrm==0) Then                         
+        tailStorPrFrm => headStorPrFrm                    
+        Nullify(tailStorPrFrm%pStorPrFrm)                 
+        tailStorPrFrm%pclineStorPrFrm = ptxtlineStorPrFrm  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailStorPrFrm%pStorPrFrm, Stat=istatStorPrFrm)      
+      If(istatStorPrFrm==0) Then                                 
+        tailStorPrFrm=> tailStorPrFrm%pStorPrFrm                   
+        Nullify(tailStorPrFrm%pStorPrFrm)                         
+        tailStorPrFrm%pclineStorPrFrm = ptxtlineStorPrFrm          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstStorPrFrm
+!------------------------------------------------------------------------------
 End Module Linklist
