@@ -25,7 +25,7 @@
 
 Module YCA_Growth_VPD
     contains 
-    REAL function affected_EOP_with_VPD_effect (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP, EOP)
+    REAL function affected_EOP_with_VPD_effect (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
     
 
         USE YCA_Model_VPD                                                                               ! To transfer hourly VPD factor to other routines (could be incorporated in ModuleDefs later).
@@ -84,7 +84,7 @@ Module YCA_Growth_VPD
         ! Calculate the hourly variables, and reference transpiration using formulae and constants from http://agsys.cra-cin.it/tools
         ! Integrate the hourly data for the day.
         ET0DAY = 0.0
-        DO hour = 1,TS
+        DO hour = 1,TS !
             DeltaVP = 4098 * (0.6108 * EXP(17.27 * TAIRHR(hour)/(TAIRHR(hour) + 237.3)))/((TAIRHR(hour) + 237.3)**2)
                                                                                      ! Slope of the saturation vapor pressure–temperature relation, delta (kPa/°C).
             LambdaLH = 2.501 - 0.002361 * TAIRHR(hour)                                  ! Latent heat of vaporization of water, lambda (MJ/kg)
@@ -108,7 +108,9 @@ Module YCA_Growth_VPD
         
         !Hourly loop for VPD stomatal response
         
-        IF (TDEW.LE.-98.0) TDEW = TMIN
+        IF (TDEW <= -98.0) THEN ! validating if it is -99
+            TDEW = TMIN
+        ENDIF
         DO hour =1, TS
             VPDHR(hour) = (CSVPSAT(TAIRHR(hour)) - CSVPSAT(TDEW))/1000.0                   ! VPDHR = VPD, hourly (kPa) 
         END DO 
@@ -144,15 +146,19 @@ Module YCA_Growth_VPD
             IF (hour == INT(SNUP))THEN 
                 VPDFPHR(hour) = VPDFPHR(hour) * (REAL(hour+1) - SNUP) 
             ENDIF
-            IF (hour == INT(SNDN)) THEN !DA can i assume it's >=
+            IF (hour == INT(SNDN)) THEN 
                 VPDFPHR(hour) = VPDFPHR(hour) * (SNDN - REAL(hour))
             ENDIF
             INTEGVPDFPHR = INTEGVPDFPHR + VPDFPHR(hour)
         END DO
-        IF (DAP >= 1) MNVPDFPHR = AMIN1(1.0, AMAX1(0.0, (INTEGVPDFPHR / (SNDN - SNUP))))      ! MNVPDFPHR is the integral of the hourly VPDFPHR divided by the hours from sunrise to sunset. Range 0-1.
+        IF (DAP >= 1) THEN
+            ! MNVPDFPHR is the integral of the hourly VPDFPHR divided by the hours from sunrise to sunset. Range 0-1.
+            MNVPDFPHR = AMIN1(1.0, AMAX1(0.0, (INTEGVPDFPHR / (SNDN - SNUP))))
+        ENDIF
         CONTINUE
         
-        ! Adjust PT estimate of hourly ET by the VPD factor. Note this is on the whole ET, not the transpiration component.
+        ! Adjust PT estimate of hourly ET by the VPD factor. 
+        ! Note this is on the whole ET, not the transpiration component.
         EOP = 0.0
         DO hour =1, TS
              ET0(hour) = ET0(hour) * VPDFPHR(hour)
