@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code feom the section (DYNAMIC.EQ.RUNINIT) ! Initialization lines 2333 - 2525 of the original CSCAS code. 
+! This is the code feom the section (DYNAMIC == RUNINIT) ! Initialization lines 2333 - 2525 of the original CSCAS code. 
 ! The names of the dummy arguments are the same as in the original CSCAS code and the call statement and are declared 
 ! here. The variables that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all 
 ! comments are those of the original CSCAS.FOR code.
@@ -42,7 +42,7 @@
 
         ! Planting date information
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'PLANT',iplti)
-        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+        IF(IPLTI == 'A'.OR.IPLTI == 'a')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PLAST',pwdinl)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OL',swpltl)
@@ -85,31 +85,31 @@
         CALL XREADRA(FILEIO,TN,RN,SN,ON,CN,'LSWT','40',lswt)
         
         DO I = 1,20
-          IF (hyrdoy(i).EQ.-99) THEN
+          IF (hyrdoy(i) == -99) THEN
             hnumber = i - 1
             EXIT  
           ENDIF
           hyeardoy(i) = CSYEARDOY(hyrdoy(i))
         ENDDO 
-        IF (hnumber.LE.1) HOP(1) = 'F' 
+        IF (hnumber <= 1) HOP(1) = 'F' 
         yeardoyharf = -99
         DO I = 1, 20
-          IF (HYEARDOY(I).GT.0) THEN
+          IF (HYEARDOY(I) > 0) THEN
             hnumber = I
-            IF (hop(i).EQ.'F') THEN
+            IF (hop(i) == 'F') THEN
               hpcf = hpc(i)
               hbpcf = hbpc(i)
               yeardoyharf = hyeardoy(i)
             ENDIF 
           ENDIF
         END DO
-        IF (hnumber.EQ.1) THEN
+        IF (hnumber == 1) THEN
           hpcf = hpc(1)
           hbpcf = hbpc(1)
           yeardoyharf = hyeardoy(1)
         ENDIF 
         ! If running CSM use harvfrac so as to handle automatic mngement
-        IF (FILEIOT .NE. 'DS4') THEN
+        IF (FILEIOT  /=  'DS4') THEN
           hpcf = harvfrac(1)*100.0   ! Harvest %
           hbpcf = harvfrac(2)*100.0
         ENDIF
@@ -131,7 +131,7 @@
         DCDUR = -99
         DCFAC = -99
         DCTAR = -99
-        IF (LENDIS.EQ.1.AND.ISWDIS(LENDIS:LENDIS).EQ.'R') THEN
+        IF (LENDIS == 1.AND.ISWDIS(LENDIS:LENDIS) == 'R') THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'D1DAT',didat(1))
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'D2DAT',didat(2))
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'D3DAT',didat(3))
@@ -145,11 +145,11 @@
           CALL XREADRA(FILEIO,TN,RN,SN,ON,CN,'DCDUR','10',dcdur)
           CALL XREADRA(FILEIO,TN,RN,SN,ON,CN,'DCFAC','10',dcfac)
           CALL XREADIA(FILEIO,TN,RN,SN,ON,CN,'DCTAR','10',dctar)
-        ELSEIF (LENDIS.EQ.1.AND.ISWDIS(LENDIS:LENDIS).EQ.'Y') THEN
+        ELSEIF (LENDIS == 1.AND.ISWDIS(LENDIS:LENDIS) == 'Y') THEN
           DIGFAC(1) = 1.0
           DIGFAC(2) = 1.0
           DIGFAC(3) = 1.0
-        ELSEIF (LENDIS.GT.1) THEN
+        ELSEIF (LENDIS > 1) THEN
           ! LAH ISWDIS DEFINED AS NUMBER FOR WHICH DISEASES
           ! NOT JUST ONE NUMBER OR CHARACTER
           ! DISCUSS WITH CHP 
@@ -162,7 +162,7 @@
           !DIGFAC(3) = DIGFACTMP/10.0
         ENDIF
 
-        IF (FILEIOT(1:2).EQ.'DS') THEN
+        IF (FILEIOT(1:2) == 'DS') THEN
           ! Genotype file names and locations
           CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'CFILE',cufile)
           CALL XREADT (FILEIO,TN,RN,SN,ON,CN,'CDIR',pathcr)
@@ -185,9 +185,9 @@
           !FILEX = FILENEW
           FILELEN = MAX(FILELEN-12, 0) 
             
-            IF (TVILENT(FILEADIR).GT.3) THEN
+            IF (TVILENT(FILEADIR) > 3) THEN
               IF (FILEADIR(TVILENT(FILEADIR): &
-                  TVILENT(FILEADIR)).NE.SLASH)THEN
+                  TVILENT(FILEADIR)) /= SLASH)THEN
                 FILEX = FILEADIR(1:TVILENT(FILEADIR))//  &
                 SLASH //EXCODE(1:8)//'.'//EXCODE(9:10)//'X'
               ELSE
@@ -231,11 +231,11 @@
 !       Insert defaults for missing non-critical aspects
 !-----------------------------------------------------------------------
 
-        IF (digfac(1).LT.0.0) digfac(1) = 1.0
-        IF (digfac(2).LT.0.0) digfac(2) = 1.0
-        IF (digfac(3).LT.0.0) digfac(3) = 1.0
-        IF (plmage.LE.-98.0) plmage = 0.0
-        IF (hnumber.LE.0) THEN 
+        IF (digfac(1) < 0.0) digfac(1) = 1.0
+        IF (digfac(2) < 0.0) digfac(2) = 1.0
+        IF (digfac(3) < 0.0) digfac(3) = 1.0
+        IF (plmage <= -98.0) plmage = 0.0
+        IF (hnumber <= 0) THEN 
           hpcf = 100.0
           hbpcf = 0.0
         ENDIF
