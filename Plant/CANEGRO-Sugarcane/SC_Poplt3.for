@@ -277,15 +277,17 @@ c             Now in stalks/m2
 
 c         Read from cultivar file:
 c         ::::::::::::::::::::::::
-              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(1), 'POPCF(1)',
-     -                                CONTROL, CF_ERR)
-              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(2), 'POPCF(2)',
-     -                                CONTROL, CF_ERR)
+!              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(1), 'POPCF(1)',
+!     -                                CONTROL, CF_ERR)
+!              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(2), 'POPCF(2)',
+!     -                                CONTROL, CF_ERR)
 
               CALL GET_CULTIVAR_COEFF(TT_POPGROWTH, 'TT_POPGROWTH',
      -                                CONTROL, CF_ERR)
-              CALL GET_CULTIVAR_COEFF(MAX_POP, 'MAX_POP',
-     -                                CONTROL, CF_ERR)
+! Removed by MJ, Feb 2018: new tillering model no longer needs this.  60 /m2
+! maximum is retained as a hard-coded param.
+!              CALL GET_CULTIVAR_COEFF(MAX_POP, 'MAX_POP',
+!     -                                CONTROL, CF_ERR)
 
 c             Cultivar coeff is in stalks/m2 - x 10 to get to 1000 stalks/ha
 c             as model wants

@@ -47,7 +47,7 @@ c     Inputs and outputs are passed solely through this
 c     interface.  This forms the PLANT GROWTH MODULE for
 c     sugarcane.  Soil and atmospheric processes, along 
 c     with external calculations like irrigation are
-c     handled OUTSIDE of this module.
+c     handled OUTSIDE this module.
 c     [interface copied from MZ_CERES.for]
 !  Added IRRAMT July 2015
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -58,7 +58,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
      &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,      !Input
      &    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,        !Output
      &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,           !Output
-     &    UNO3, XLAI, XHLAI, EORATIO)                         !Output
+     &    UNO3, XLAI, XHLAI, EORATIO)                 !Output
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Define DSSAT composite variables:
 c     [Taken from MZ_CERES.for]
@@ -267,6 +267,15 @@ c     Soil water stress for tillering (not used in this sub):
       
 c     Sunlit LAI fraction
       REAL F_SL      
+
+c     Variables for calculating waterlogging stress
+c     (saturation factor)      
+
+      REAL  SATFAC
+      REAL SUMEX, SUMRL, SWEXF
+      INTEGER L
+      REAL TSS(NL)
+      
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     ~~~~~~~~ SUBROUTINE CODE  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -670,6 +679,15 @@ c     Call the climate change summary output file subroutine (module).
       CALL SC_ETOUT(CONTROL, Out%PAR, 
      &  Growth%Li, EP, ES, EO, YRPLT, XHLAI, EORATIO, MDATE, YREND)
 
+c	Water logging stress 
+      PORMIN = 0.05 
+      CALL GET_SPECIES_COEFF(PORMIN,'PORM', CONTROL, SPC_ERROR) 
+      ! init waterlogging stress
+      !WRITE(*, '(A, F10.5)') 'PORMIN is ', PORMIN
+      DO I=1, NL
+        TSS(I) = 0.0
+      ENDDO
+      SATFAC = 0.0
 
 c     END of SEASINIT
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -729,6 +747,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::
 c         Water balance is NOT used
           WaterBal%SWDF1 = 1.0
           WaterBal%SWDF2 = 1.0
+          SATFAC = 0.0
         ELSE
           WaterBal%EOP = EOP
           WaterBal%EOS = EOS
@@ -744,6 +763,7 @@ c           If there is NO potential transp., there can be no water stress...
             WaterBal%SWDF1 = 1.0
             WaterBal%SWDF2 = 1.0
             WaterBal%ANAERF = 1.0
+            SATFAC = 0.0
           ELSE
 c           Init:
             WaterBal%SWDF1 = 1.0
@@ -758,11 +778,77 @@ c           SWDF2
 c           Find an equivalent value from DSSAT!
             ! WaterBal%ANAERF = 1.
             ! MJ, Jan 2018: Calculate anaerobic stress factor
-            CALL SC_ANAERF(
-     &        Soil%NLAYR, RLV, SW, Soil%DUL, Soil%SAT, 
-     &        Soil%DLAYR, WaterBal%ANAERF)
-c           SCV    = 0.2
-            WRITE(*, '(F10.5)') WaterBal%ANAERF
+            PORMIN = 0.20
+!            CALL SC_ANAERF(
+!     &        Soil%NLAYR, RLV, SW, Soil%DUL, Soil%SAT, 
+!     &        Soil%DLAYR, CONTROL, WaterBal%ANAERF)
+!c           SCV    = 0.2
+!            WRITE(*, '(F10.5)') WaterBal%ANAERF
+
+          !-------------------------------------------------------------
+          !      Compute Water Saturation Factors       
+          ! ------------------------------------------------------------
+          ! taken from the CERES-Maize model, MZ_GROSUB.for
+          ! Added by MJ, Jan 2018
+          ! This is meant as a sort of fudge.  I will adjust PORMIN 
+          ! until I get a similar fit to v4.5 with the AquaCrop 
+          ! waterlogging stress routine.
+          
+
+          SATFAC = 0.0    
+          SUMEX = 0.0
+          SUMRL = 0.0
+      
+          DO L = 1, SoilProp%NLAYR
+
+          !------------------------------------------------------------
+          !PORMIN = Minimum pore space required for supplying oxygen to 
+          !         roots for optimum growth and function    
+          !TSS(L) = Number of days soil layer L has been saturated 
+          !         above PORMIN
+          !------------------------------------------------------------
+              IF ((SOILPROP%SAT(L)-SW(L)) .GE. PORMIN) THEN
+                  TSS(L) = 0.
+              ELSE
+                  TSS(L) = TSS(L) + 1.
+              ENDIF
+          !------------------------------------------------------------
+          ! Delay of 2 days after soil layer is saturated before root
+          ! water uptake is affected
+          !------------------------------------------------------------
+              IF (TSS(L) .GT. 2.) THEN
+                  SWEXF = (SOILPROP%SAT(L)-SW(L))/PORMIN
+                  SWEXF = MAX(SWEXF,0.0)
+              ELSE
+                  SWEXF = 1.0
+              ENDIF
+
+              SWEXF = MIN(SWEXF,1.0)
+              SUMEX  = SUMEX + SOILPROP%DLAYR(L)*RLV(L)*(1.0 - SWEXF)
+              SUMRL  = SUMRL + SOILPROP%DLAYR(L)*RLV(L)
+          ENDDO
+
+          IF (SUMRL .GT. 0.0) THEN
+              SATFAC = SUMEX/SUMRL
+          ELSE
+              SATFAC = 0.0
+          ENDIF
+          SATFAC = AMAX1(SATFAC,0.0)
+          SATFAC = AMIN1(SATFAC,1.0)
+          ! WaterBal%ANAERF is passed to SC_PHOTOS and reduces
+          ! photosynthesis rates.
+          ! The same calculation is done in the ROOTWU routine
+          ! (SATFAC reduces water uptake), and SWDF1 (and SWDF2)
+          ! are calculated a function of total root water uptake
+          ! and potential transp. - so this is maybe
+          ! double-counting?  (Comment in MZ_GROSUB confirms this)
+          ! WaterBal%ANAERF = 1.0 - SATFAC
+          ! In CERES Maize, SATFAC is used in the calculation of
+          ! leaf area growth, but not in photosynthesis.  Leaf
+          ! area in growth in Canegro is limited by SWDF2, which
+          ! includes some effect of SATFAC in ROOTWU... but there
+          ! might be an argument for an additional effect of
+          ! SATFAC on leaf elongation rate?
                       
           ENDIF
         ENDIF

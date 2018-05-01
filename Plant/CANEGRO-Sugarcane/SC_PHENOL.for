@@ -200,14 +200,15 @@ c             Set defaults:
               TBaseCS      = 16.
 
 c             Read from file
-              CALL GET_CULTIVAR_COEFF(TBasePop, 'TTBASEPOP', 
-     -                                CONTROL, CF_ERR)
+!              CALL GET_CULTIVAR_COEFF(TBasePop, 'TTBASEPOP', 
+!     -                                CONTROL, CF_ERR)
               CALL GET_CULTIVAR_COEFF(TBaseLeaf, 'TTBASELFEX', 
      -                                CONTROL, CF_ERR)              
               CALL GET_CULTIVAR_COEFF(TBaseEm, 'TTBASEEM', 
      -                                CONTROL, CF_ERR)    
-              CALL GET_CULTIVAR_COEFF(TBaseCS, 'TBase', 
-     -                                CONTROL, CF_ERR)   
+! Removed by MJ, Feb 2018
+!              CALL GET_CULTIVAR_COEFF(TBaseCS, 'TBase', 
+!     -                                CONTROL, CF_ERR)   
      
      
 c         New coefficient calls for ASA work:

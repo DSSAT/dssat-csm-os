@@ -826,16 +826,12 @@ C         Branch to menu choice
     
 !=======================================================================
 !     CANEGRO sugarcane model
-!     CANEGRO currently reads from the cultivar file directly.  It
-!     reads the header line and the cultivar info as text, then
-!     parses the data into the variables.  Can't run sensitivity
-!     for canegro at this time.
       CASE ('SCCAN')
         WRITE (*,5900) 
-     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
      &      LFMAX, MXLFAREA, MXLFARNO, PI1, PI2, PSWITCH, TTPLNTEM, 
-     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
-     &      LG_AMBASE 
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, POPTT16, 
+     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5 
 
 5900    FORMAT (12X,'0. End of changes',//,
      &  12X,' 1. MaxPARCE (Max radiation conversion eff).....[',F7.2,/,
@@ -843,21 +839,23 @@ C         Branch to menu choice
      &  12X,' 3. STKPFMAX (Frac aerial DM to stalk)..........[',F7.1,/,
      &  12X,' 4. SUCA (Max sucrose in stalk base)............[',F7.1,/,
      &  12X,' 5. TBFT (Temp for 50% partitioning to sucrose).[',F7.1,/,
-     &  12X,' 6. Tthalfo (Thermal time to half canopy).......[',F7.1,/,
-     &  12X,' 7. TBase (Base temperature for canopy dev).....[',F7.1,/,
-     &  12X,' 8. LFMAX (Max number leaves)...................[',F7.1,/,
-     &  12X,' 9. MXLFAREA (Max leaf area above MXLFARNO).....[',F7.1,/,
-     &  12X,'10. MXLFARNO (Leaf # for MXLFAREA)..............[',F7.1,/,
-     &  12X,'11. PI1 (Phyllocron interal 1)..................[',F7.1,/,
-     &  12X,'12. PI2 (Phyllocron interal 2)..................[',F7.1,/,
-     &  12X,'13. PSWITCH (Leaf #, switch between PI1 & PI2)..[',F7.1,/,
-     &  12X,'14. TTPLNTEM (Thermal time to emergence, plant).[',F7.1,/,
-     &  12X,'15. TTRATNEM (Thermal time to emergence, ratoon)[',F7.1,/,
-     &  12X,'16. CHUPIBASE (Thermal time emerg to stalk gr)..[',F7.1,/,
-     &  12X,'17. TT_POPGROWTH (Thermal time to peak tiller)..[',F7.1,/,
-     &  12X,'18. MAX_POP (Maximum tiller population).........[',F7.1,/,
-     &  12X,'19. POPTT16 (Stalk population, 1600 dd).........[',F7.1,/,
-     &  12X,'20. LG_AMBASE (Aerial mass for lodging).........[',F7.1,/)
+     &  12X,' 6. LFMAX (Max number leaves)...................[',F7.1,/,
+     &  12X,' 7. MXLFAREA (Max leaf area above MXLFARNO).....[',F7.1,/,
+     &  12X,' 8. MXLFARNO (Leaf # for MXLFAREA)..............[',F7.1,/,
+     &  12X,' 9. PI1 (Phyllocron interal 1)..................[',F7.1,/,
+     &  12X,'10. PI2 (Phyllocron interal 2)..................[',F7.1,/,
+     &  12X,'11. PSWITCH (Leaf #, switch between PI1 & PI2)..[',F7.1,/,
+     &  12X,'12. TTPLNTEM (Thermal time to emergence, plant).[',F7.1,/,
+     &  12X,'13. TTRATNEM (Thermal time to emergence, ratoon)[',F7.1,/,
+     &  12X,'14. CHUPIBASE (Thermal time emerg to stalk gr)..[',F7.1,/,
+     &  12X,'15. TT_POPGROWTH (Thermal time to peak tiller)..[',F7.1,/,
+     &  12X,'16. POPTT16 (Stalk population, 1600 dd).........[',F7.1,/,
+     &  12X,'17. TAR0 (Tiller apprnc rate, t/stalk/dd).......[',F7.1,/,
+     &  12X,'18. TDELAY (Delay from p shoot to 1st tiller)...[',F7.1,/,
+     &  12X,'19. LER0 (Leaf elong. rate, cm/dd)..............[',F7.1,/,
+     &  12X,'20. SER0 (Stalk elong. rate, cm/dd).............[',F7.1,/,
+     &  12X,'21. LG_AMBASE (Aerial mass for lodging).........[',F7.1,/,
+     &  12X,'22. AQP_UP5 (Soil water stress deplet., 0-1)....[',F7.1,/)
 
            WRITE (*,5100)
 C
@@ -875,22 +873,24 @@ C          Branch to menu choice
              CASE (3); CALL GETREAL (STKPFMAX,'STKPFMAX', 0.0, 1.)
              CASE (4); CALL GETREAL (SUCA,    'SUCA',     0.0, 1.)
              CASE (5); CALL GETREAL (TBFT,    'TBFT',     0.0, 45.)
-             CASE (6); CALL GETREAL (Tthalfo, 'Tthalfo',  0.0, 10000.)
-             CASE (7); CALL GETREAL (TBase,   'TBase',    0.0, 10000.)
-             CASE (8); CALL GETREAL (LFMAX,   'LFMAX',    0.0, 10000.)
-             CASE (9); CALL GETREAL (MXLFAREA,'MXLFAREA', 0.0, 10000.)
-             CASE(10); CALL GETREAL (MXLFARNO,'MXLFARNO', 0.0, 10000.)
-             CASE(11); CALL GETREAL (PI1,     'PI1',      0.0, 10000.)
-             CASE(12); CALL GETREAL (PI2,     'PI2',      0.0, 10000.)
-             CASE(13); CALL GETREAL (PSWITCH, 'PSWITCH',  0.0, 10000.)
-             CASE(14); CALL GETREAL (TTPLNTEM,'TTPLNTEM', 0.0, 10000.)
-             CASE(15); CALL GETREAL (TTRATNEM,'TTRATNEM', 0.0, 10000.)
-             CASE(16); CALL GETREAL (CHUPIBASE,'CHUPIBASE',0.0, 10000.)
-             CASE(17); CALL GETREAL (TT_POPGROWTH,'TT_POPGROWTH',0.0,
+             CASE (6); CALL GETREAL (LFMAX,   'LFMAX',    0.0, 10000.)
+             CASE (7); CALL GETREAL (MXLFAREA,'MXLFAREA', 0.0, 10000.)
+             CASE (8); CALL GETREAL (MXLFARNO,'MXLFARNO', 0.0, 10000.)
+             CASE (9); CALL GETREAL (PI1,     'PI1',      0.0, 10000.)
+             CASE(10); CALL GETREAL (PI2,     'PI2',      0.0, 10000.)
+             CASE(11); CALL GETREAL (PSWITCH, 'PSWITCH',  0.0, 10000.)
+             CASE(12); CALL GETREAL (TTPLNTEM,'TTPLNTEM', 0.0, 10000.)
+             CASE(13); CALL GETREAL (TTRATNEM,'TTRATNEM', 0.0, 10000.)
+             CASE(14); CALL GETREAL (CHUPIBASE,'CHUPIBASE',0.0, 10000.)
+             CASE(15); CALL GETREAL (TT_POPGROWTH,'TT_POPGROWTH',0.0,
      &                                                         10000.)
-             CASE(18); CALL GETREAL (MAX_POP, 'MAX_POP',  0.0, 10000.)
-             CASE(19); CALL GETREAL (POPTT16, 'POPTT16',  0.0, 10000.)
-             CASE(20); CALL GETREAL (LG_AMBASE,'LG_AMBASE',0.0,10000.)
+             CASE(16); CALL GETREAL (POPTT16, 'POPTT16',  0.0, 10000.)
+             CASE(17); CALL GETREAL (TAR0,'TAR0',0.0,10000.)
+             CASE(18); CALL GETREAL (TDELAY,'TDELAY',0.0,10000.)
+             CASE(19); CALL GETREAL (LER0,'LER0',0.0,10000.)
+             CASE(20); CALL GETREAL (SER0,'SER0',0.0,10000.)
+             CASE(21); CALL GETREAL (LG_AMBASE,'LG_AMBASE',0.0,10000.)
+             CASE(22); CALL GETREAL (AQP_UP5,'AQP_UP5',0.0,10000.)
            END SELECT 
 
 !=======================================================================

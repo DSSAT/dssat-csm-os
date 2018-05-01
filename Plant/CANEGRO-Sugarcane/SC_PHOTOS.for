@@ -415,11 +415,11 @@ c         Read from cultivar file:
           CALL GET_CULTIVAR_COEFF(MX_PAR_CONV, 'MaxPARCE', 
      &                                         Control, C_ERR)  
      
-c         #Todo: add read from species file (PARCE_oL376)
-          PARCEMX376 = 5.7
-c         Read from species file:
-          CALL GET_SPECIES_COEFF(PARCEMX376,'PARCEMAX_NCo376',
-     &                           Control, SPE_ERR)
+!c         #Todo: add read from species file (PARCE_oL376)
+!          PARCEMX376 = 5.7
+!c         Read from species file:
+!          CALL GET_SPECIES_COEFF(PARCEMX376,'PARCEMAX_NCo376',
+!     &                           Control, SPE_ERR)
                
 c         #todo: make species params: Sunlit and shaded efficiency
           EPS_SL = 1.00
@@ -653,17 +653,17 @@ c      MX_PAR_CONV now represents a rather awkward concept.  It is canopy-level 
 c      transformed from the NCo376 value to the cultivar-specific value by relative
 c      leaf-level photos rates (or stomatal conductance).
 
-c     Difference between this cultivar's MaxPARCE and that of NCo376
-c     (leaf level)
-      D_PRC_OL = MX_PAR_CONV - PARCEMX376
-c     Scaled to canopy level via sunlit and shaded LAI fractions, taking into account
-c     the relative efficiencies of sunlit and shaded canopy fractions (EPS_SL and EPS_SH)
-      D_PRC_OC = (EPS_SL * D_PRC_OL * F_SL) + 
-     &           (EPS_SH * D_PRC_OL * (1.0 - F_SL))
-c     Actual MaxPARCE value for this cultivar, today:
-      NMX_PAR_CONV = PARCEMX376 + D_PRC_OC     
-!      WRITE(*, '(5(F8.3))')  MX_PAR_CONV, PARCEMX376, F_SL, D_PRC_OC, 
-!     & NMX_PAR_CONV
+!c     Difference between this cultivar's MaxPARCE and that of NCo376
+!c     (leaf level)
+!      D_PRC_OL = MX_PAR_CONV - PARCEMX376
+!c     Scaled to canopy level via sunlit and shaded LAI fractions, taking into account
+!c     the relative efficiencies of sunlit and shaded canopy fractions (EPS_SL and EPS_SH)
+!      D_PRC_OC = (EPS_SL * D_PRC_OL * F_SL) + 
+!     &           (EPS_SH * D_PRC_OL * (1.0 - F_SL))
+!c     Actual MaxPARCE value for this cultivar, today:
+!      NMX_PAR_CONV = PARCEMX376 + D_PRC_OC     
+!!      WRITE(*, '(5(F8.3))')  MX_PAR_CONV, PARCEMX376, F_SL, D_PRC_OC, 
+!!     & NMX_PAR_CONV
 
 c     Calculate change in thermal time, then normalise to effective 
 c     temperature index
@@ -672,8 +672,8 @@ c     temperature index
      &  (TOpt1-TBasePhotos)
 c     Calculate temperature-influenced radiation use efficiency
 c     Revised for ASA 2013 work by MJ
-      ! PARCE = MX_PAR_CONV * EFFTEMPC 
-      PARCE = NMX_PAR_CONV * EFFTEMPC 
+      PARCE = MX_PAR_CONV * EFFTEMPC 
+      ! PARCE = NMX_PAR_CONV * EFFTEMPC 
 
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1000,12 +1000,16 @@ c     ::::::::::
 !> @param[in]  SW     Soil moisture content (cm3/cm3)
 !> @param[in]  DUL    Drained upper limit of soil moisture content (cm3/cm3)
 !> @param[in]  SAT    Saturated limit of soil moisture content (cm3/cm3)
+! Not used for now
        SUBROUTINE SC_ANAERF(
-     &   NLAYR, RLV, SW, DUL, SAT, DLAYR, ! Inputs  
+     &   NLAYR, RLV, SW, DUL, SAT, DLAYR, CONTROL, ! Inputs  
      &   ANAERF)
 
-       INTENT(IN) :: NLAYR, RLV, SW, DUL, SAT, DLAYR
+       USE MODULEDEFS
+       INTENT(IN) :: NLAYR, RLV, SW, DUL, SAT, DLAYR, Control
        INTENT(OUT) :: ANAERF
+       
+       TYPE (ControlType) Control
        
        REAL ANAERF
        REAL SWC_RTD, DUL_RTD, SAT_RTD
@@ -1065,7 +1069,12 @@ c        enough...  So a more robust model is required!
          ! WTRLG = MINVAL(AERST)
          WTRLG = DOT_PRODUCT(AERST(1:NROOTD),DLAYR(1:NROOTD))/NROOTD
          IF (WTRLG .GT. 1.0) THEN
-           WRITE(*, '(2F10.5)') WTRLG, MAXVAL(AERST)
+           ! WRITE(*, '(2F10.5)') WTRLG, MAXVAL(AERST)
+           WRITE(*, '(I10)') CONTROL%YRDOY 
+           WRITE(*, '(5A10)') 'RLV', 'SW', 'DUL', 'SAT', 'DLAYR'
+           DO I=1, NLAYR
+           WRITE(*, '(5F10.5)') RLV(I), SW(I), DUL(I), SAT(I), DLAYR(I)
+           ENDDO
          ENDIF
 c        Now calculate 7-day running average aeration stress:
          ! #todo

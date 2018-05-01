@@ -252,7 +252,9 @@ c       Tillering delay factor (°Cd)  [Genetic trait parameter]
 
 c       Mature stalk population:
         POPN_m2       = 13.3
-        CALL GET_CULTIVAR_COEFF(POPN_m2, 'POPN_m2', CONTROL,  CF_ERR)
+!       MJ, Feb 2018: CUL param name changed from GTP's POPN_m2 to regular Canegro's
+!       'POPTT16'.        
+        CALL GET_CULTIVAR_COEFF(POPN_m2, 'POPTT16', CONTROL,  CF_ERR)
 
 c       Germination and Emergence
 c       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -626,7 +628,7 @@ c     Mature stalk population:
 c     Set default:
       POPN_m2       = 13.3
 c     Read from genotype file:
-      CALL GET_CULTIVAR_COEFF(POPN_m2, 'POPN_m2', CONTROL,  CF_ERR)
+      CALL GET_CULTIVAR_COEFF(POPN_m2, 'POPTT16', CONTROL,  CF_ERR)
 
 c     Get row-spacing
 c     Read row-spacing from INP file (m):

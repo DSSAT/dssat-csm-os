@@ -15,7 +15,7 @@ c     :::::::::::::::::::::::::::
 c     This subroutine is perhaps theoretically best as a function.  The idea
 c     is that it presents a first layer of abstraction; from here, the 
 c     inputs can come from anywhere (file / internet / database / ?).  Usage
-c     was intended as:
+c     was intended as: 
 c     x = Get_Cultivar_Coeff('x')
 c     Creating a module that is also a function, however, is confusing, at 
 c     the very least.  It might also corrupt the idea of a DSSAT module.  
@@ -219,14 +219,7 @@ c                      ENDIF
 c                  ENDDO
 
 
-c             Matthew Jones, 2007-06-27
-c             :::::::::::::::::::::::::
-c             Embarassingly, the system can't handle more than one cultivar;
-c             it appears that a relic of earlier development work has remained.
-c             The following code allows the system to retrieve the correct
-c             cultivar code from the INP file and this is then read later on
-c             from the cultivar file.
-c             - fixed.
+
 c             :::::::::::::::::::::::::::::::::::::::::::::::::::
               IF (.NOT.(FIO_OPENED)) THEN
 c                 Get file handle number for FILEIO (INP file)
@@ -509,8 +502,8 @@ c                 * excluding the initial text (25 characters) *
                   LINE  = TRIM(LINE) // ' ' // ELINE(26:)
                   LINE2 = TRIM(LINE2) // ' ' // ELINE2(26:)
                   
-                  ! WRITE(*, '(A)') LINE
-                  ! WRITE(*, '(A)') LINE2
+!                  WRITE(*, '(A)') LINE
+!                  WRITE(*, '(A)') LINE2
 
 
 c                 :::::::::::::::::::::::::::::::::::::::::::::::::::

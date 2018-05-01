@@ -590,8 +590,9 @@ c         Maximum leaf area:
              AREAMX_CF(3) = -20.8
 
 c             Read from file:
-              CALL GET_CULTIVAR_COEFF(AREAMX_CF(1), 'AREAMX_CF(1)',
-     -                             CONTROL,  CF_ERR)
+!  MJ, April 2018: this was always 0, so I removed it from ECO file
+!              CALL GET_CULTIVAR_COEFF(AREAMX_CF(1), 'AREAMX_CF(1)',
+!     -                             CONTROL,  CF_ERR)
 c             Read from file:
               CALL GET_CULTIVAR_COEFF(AREAMX_CF(2), 'AREAMX_CF(2)',
      -                             CONTROL,  CF_ERR)
@@ -708,26 +709,26 @@ c         Defaults:
             TBaseSTKEX = 16.0
             TOptSTKEX  = 35.0 
             TFinSTKEX  = 48.0
-          CALL GET_CULTIVAR_COEFF(TBaseSTKEX, 'TBaseSTKEX',  
+          CALL GET_CULTIVAR_COEFF(TBaseSTKEX, 'TBASE_STKEX',  
      &       Control, CF_ERR)
-          CALL GET_CULTIVAR_COEFF(TOptSTKEX, 'TOptSTKEX',  
+          CALL GET_CULTIVAR_COEFF(TOptSTKEX, 'TOPT_STKEX',  
      &       Control, CF_ERR)
-          CALL GET_CULTIVAR_COEFF(TFinSTKEX, 'TFinSTKEX',  
-     &       Control, CF_ERR)            
+          CALL GET_CULTIVAR_COEFF(TFinSTKEX, 'TFin_STKEX',  
+     &       Control, CF_ERR)             
 
 
 c         Thermal time parameters for leaf elongation:
 c         :::::::::::::::::::::::::::::::::::::::::::::
 c         Defaults:
             TBaseLFEX = 10.0
-            TOptLFEX  = 30.0 
+            TOptLFEX  = 30.0
             TFinLFEX  = 43.0
-          CALL GET_CULTIVAR_COEFF(TBaseLFEX, 'TBaseLFEX',  
+          CALL GET_CULTIVAR_COEFF(TBaseLFEX, 'TBASE_LFEX',  
      &       Control, CF_ERR)
-          CALL GET_CULTIVAR_COEFF(TOptLFEX, 'TOptLFEX',  
+          CALL GET_CULTIVAR_COEFF(TOptLFEX, 'TOPT_LFEX',  
      &       Control, CF_ERR)
-          CALL GET_CULTIVAR_COEFF(TFinLFEX, 'TFinLFEX',  
-     &       Control, CF_ERR)            
+          CALL GET_CULTIVAR_COEFF(TFinLFEX, 'TFin_LFEX', 
+     &       Control, CF_ERR)           
 
 
 c         END READ VALUES FROM CULTIVAR FILE
@@ -1100,6 +1101,11 @@ c       Modification to calculation of delta thermal time, based on ASA 2013 wor
         !PER = SWDF2 * dPERdT * MAX(0., TMEAN-TBASEPER) * 24./10.
         !LER = SWDF2 * dPERdT * DTT_LER * 24./10.
         !SER = SWDF2 * dPERdT * DTT_SER * 24./10.
+        
+        ! MJ, Jan 2018:
+        ! Do we want to include water logging stress here, over and
+        ! above the effects already included in SWDF2 via limited
+        ! water uptake as calculated in ROOTWU?
         LER = SWDF2 * LER0 * DTT_LER * 24./10.
         SER = SWDF2 * SER0 * DTT_SER * 24./10.
         

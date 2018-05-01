@@ -343,11 +343,11 @@ c         Defaults:
             TBaseREX = 10.0
             TOptREX  = 30.0 
             TFinREX  = 43.0
-          CALL GET_CULTIVAR_COEFF(TBaseREX, 'TBaseREX',  
+          CALL GET_CULTIVAR_COEFF(TBaseREX, 'TBASE_REX',  
      &       Control, CF_ERR)
-          CALL GET_CULTIVAR_COEFF(TOptREX, 'TOptREX',  
+          CALL GET_CULTIVAR_COEFF(TOptREX, 'TOPT_REX',  
      &       Control, CF_ERR)
-          CALL GET_CULTIVAR_COEFF(TFinREX, 'TFinREX',  
+          CALL GET_CULTIVAR_COEFF(TFinREX, 'TFin_REX',  
      &       Control, CF_ERR)       
 
 

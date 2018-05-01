@@ -300,7 +300,7 @@ c             MAX_ROOTPF
 c      Fibre partitioning
 c      MJ, June 2015
        FF_CELLSE = 0.50
-       CALL GET_CULTIVAR_COEFF(FF_CELLSE, 'FF_CELLSE', CONTROL, CF_ERR)
+!       CALL GET_CULTIVAR_COEFF(FF_CELLSE, 'FF_CELLSE', CONTROL, CF_ERR)
        CELLSE_DM = 0.0
           
 c         :::::::::::::::::::::::::::::::::::::::::::::::::::::::
