@@ -130,7 +130,11 @@ C-------------------------------------------------------------------------
           DEP = MIN(RTDEPI - CUMDEP, DLAYR(L))
    !       RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * DEP / ( RTDEP *
    !    &       10000 )
+!         PLWR from *.spe is in ((cm/g)*1E-4)
           RLINIT = GRORT * RLWR * PLTPOP
+      !cm[root]      g     cm  # plants    1E-4*m2 
+      !--------- = ---- * ---- * ---------*------
+      !cm2[ground] plant   g       m2        cm2  
           CUMDEP = CUMDEP + DEP
           RLV(L) = RLINIT / DLAYR(L)
           IF (CUMDEP .GE. RTDEPI) EXIT
@@ -190,6 +194,20 @@ C-------------------------------------------------------------------------
         ENDDO
 
       ENDIF
+
+       ! RLWR  Root length to weight ration, (cm/g)*1E-4 
+!        TotRootMass = (TRLV / RLWR) * 10.
+!                   cm[root]   g[root]   10000 cm2   10(kg/ha)
+!          kg/ha  = -------- * ------- * -------- * ---------
+!                  cm2[soil]   cm[root]     m2         (g/m2)
+
+!        CumRootMass=CumRootMass+ GRORT * PLTPOP *  10 ! 1 ha = 10000m2
+       ! kg[root]       kg        g      # plants     kg/ha
+       !----------- = --------+ ------ * --------*  --------
+       ! ha             ha       plant      m2         g/m2
+!        Write(93,931) "1D,RLNEW,",RLnew, ",cm/cm2,CmRtMs,", CumRootMass,
+!     &              ",kg/ha,TotRtMs,",  TotRootMass, ",kg/ha"
+ 931    format (A9,F7.3,A15,F8.3,A15, F8.3,A6)
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
@@ -293,3 +311,35 @@ C-----------------------------------------------------------------------
       RETURN
       END SUBROUTINE PT_IPROOT
 C=======================================================================
+!==============================================================================
+!-----------------------------------------------------------------------
+! Variable definitions
+!-----------------------------------------------------------------------
+! CUMDEP       The buttom of current row
+! DTT          Growing degree days today, degrees C 
+! ESW(L)       Plant extractable soil water by layer (= DUL - LL) (cm3/cm3)
+! L,L1         Loop counter
+! GRORT        Root growth rate, g/plant/day
+! NH4(L)       Ammonium N in soil layer L (¦Ìg[N] / g[soil])
+! PLTPOP       Plant population (# plants / m2)
+! RLDF(L)      A root length density factor for soil layer L used to calculate new root growth distribution 
+!              It's intermediat calculated value was in cm, but finally - unitless
+! RLINIT       Initial root density (cm[root]/cm2[ground])
+! RLNEW        New root growth added to the total root system length (cm[root]/cm2[ground])
+! RLV(L)       Root length density for soil layer L (cm[root] / cm3[soil]) 
+! RLWR         Root length to weight ration, (cm/g)*1E-4  
+! RNFAC        Zero to unity factor describing mineral N availability effect on
+!              root growth in Layer L
+! RNLF         Intermediate factor used to calculate distribution of new root. !JZW this variable should be removed
+! RTDEP        Root length in col=1 at the begining of the day (cm)
+! RTDEPnew     Root length in col=1 at the end of the day (cm)
+! SHF          Soil hospitality factor 0-1,  PT_SUBSTOR.FOR(98): SHF = SOILPROP % WR
+! SWDF         Soil water deficit factor for Layer L used to calculate root
+!              growth and water uptake - unitless value between 0 and 1   
+! SWFAC        Effect of soil-water stress on photosynthesis, 1.0=no stress,0.0=max stress 
+! TRLDF        An intermediate calculation used to calculate distribution of
+!              new root growth in soil (cm)
+! TRLV         Total root length per square cm soil today (cm[root]/cm2[soil])
+!***********************************************************************
+! END SUBROUTINES PT_ROOTGR, PT_IPROOT
+!=======================================================================
