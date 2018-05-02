@@ -10,7 +10,7 @@ Module YCA_Node !Module of environment
         REAL    :: DALF                         ! Days during which leaf active  d          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
         REAL    :: DGLF                         ! Days during which leaf growing #          ! (From SeasInit) !LPM 28MAR15 Adjusted to consider two dimensions    
         REAL    :: DSLF                         ! Days during which leaf senesng #          ! (From SeasInit)  !LPM 28MAR15 Adjusted to consider two dimensions 
-        REAL    :: LAGETT                       ! Leaf age after growing         C.d        ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions    
+        REAL    :: LAGETT                       ! Leaf age after leaf emergence  C.d        ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions    
         REAL    :: LAGL                         ! Leaf area growth,shoot,lf pos  cm2/l      ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
         REAL    :: LAGL3                        ! Leaf area growth,shoot,lf+assim cm2/l     ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
         REAL    :: LAGL3T                       ! Leaf area by cohort lf+assim   cm2/cohort ! (From SeasInit) !LPM 15NOV15 Added to save leaf area by cohort
@@ -50,15 +50,18 @@ Module YCA_Node !Module of environment
         REAL    :: STEMNN                       ! Stem N by cohort               g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node  
         REAL    :: STEMNEXCESSN                 ! Stem N > critical by node      g/n/p      ! !LPM 23MAY2015 added to consider N concentration by node
         REAL    :: TFDLF                        ! Temp factor,dev for leaf,av    #          ! (From SeasInit) !LPM 25MAR15 Adjusted to consider two dimensions  
-        REAL    :: TFGLF                        ! Temp factor,gr for leaf,av     #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
+        REAL    :: TFGLF                        ! Temp factor,exp for leaf,av    #          ! (From SeasInit)  !LPM 25MAR15 Adjusted to consider two dimensions  
         REAL    :: WFLF                         ! H2O factor for leaf,average    #          ! (From SeasInit) !LPM 23MAR15 Change to consider two dimensions
+        !TYPE    :: leafStatus                         ! Status of the leaf
             
     contains
-    
-        !procedure, pass (this) :: isActive
-        !procedure, pass (this) :: isAlive
+
     
     end Type Node_type
+    
+    !ENUM, BIND(C) :: Status
+    !    ENUMERATOR :: EMERGING = 0, ACTIVE = 1, SENESCING=2, FALL=3
+    !END ENUM
     
     ! interface to reference the leaf constructor
     interface Node_type
@@ -101,27 +104,10 @@ Module YCA_Node !Module of environment
         Node_type_constructor%tfdlf = 0.0
         Node_type_constructor%tfglf = 0.0
         Node_type_constructor%wflf = 0.0
+        !Node_type_constructor%leadStatus = 0
         
         
     end function Node_type_constructor
-    
-
-    !! true is leaf is active
-    !logical function isActive(this)
-    !    implicit none
-    !    class (Node_type), intent(in) :: this
-    !    
-    !    isActive = this%LAGETT < LLIFGTT+LLIFATT
-    !end function isActive
-    !
-    !! true is leaf is alive
-    !logical function isAlive(this)
-    !    implicit none
-    !    class (Node_type), intent(in) :: this
-    !    
-    !    isAlive = this%LAGETT < LLIFGTT+LLIFATT+LLIFSTT
-    !end function isAlive
-
     
     
 END Module YCA_Node  

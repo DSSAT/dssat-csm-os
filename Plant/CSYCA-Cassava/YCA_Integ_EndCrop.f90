@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 6542 - 6649 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 6542 - 6649 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -14,6 +14,7 @@
         
         USE ModuleDefs
         USE YCA_First_Trans_m
+        USE YCA_Control_Plant
     
         IMPLICIT NONE
         
@@ -27,7 +28,7 @@
         !         Determine if nitrogen fertilizer applied
         !-----------------------------------------------------------------------
                 
-        IF (FERNIT.GT.FERNITPREV) THEN
+        IF (FERNIT > FERNITPREV) THEN
             FAPPNUM = FAPPNUM + 1
             AMTNIT = FERNIT
             WRITE(fappline(fappnum),'(A1,I4,A10,I7,A13,I4,A6)') ' ',NINT(FERNIT-FERNITPREV),' kg/ha on ', YEARDOY, &
@@ -64,7 +65,7 @@
                 
         ! When running in CSM
         IF (FILEIOT == 'DS4') THEN
-            IF (LAI .LE. 0.0) THEN
+            IF (LAI  <=  0.0) THEN
                 ALBEDO = ALBEDOS
             ELSE
                 ALBEDO = 0.23-(0.23-ALBEDOS)*EXP(-0.75*LAI)                                                            !EQN 073
@@ -77,7 +78,7 @@
         !         Compute weights,etc. at end crop
         !-----------------------------------------------------------------------
                 
-        IF (STGYEARDOY(11).EQ.YEARDOY) THEN
+        IF (STGYEARDOY(PSX+1) == YEARDOY) THEN
                     
             ! LAH No adjustment for fraction of day to maturity
             RSWTM = RSWT
@@ -90,17 +91,17 @@
             IF (LFWTM+STWTM+CRWTM+RSWTM > 0.0) RSCM = RSWTM/(LFWTM+STWTM+CRWTM)
             IF (RTWTM > 0.0) SHRTM = (LFWTM+STWTM+CRWTM+RSWTM)/RTWTM
                     
-            CWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP*10.0
+            CWAM = (LFWTM+STWTM+CRWTM+RSWTM)*plantPopulation()
             VWAM = (LFWTM+STWTM+CRWTM+RSWTM)*PLTPOP * 10.0
                     
             ! For Grazing
-            cwahc = (lwphc+swphc+rswphc)*pltpop*10.0
+            cwahc = (lwphc+swphc+rswphc)*plantPopulation()
             ! Adjustments for spikes that removed by grazing,etc..
                     
-            RWAM = RTWTM*PLTPOP*10.0
-            SDWAM = (SEEDRS+SDCOAT)*PLTPOP*10.0
+            RWAM = RTWTM*plantPopulation()
+            SDWAM = (SEEDRS+SDCOAT)*plantPopulation()
                     
-            IF (CWAM.GT.0.0) THEN
+            IF (CWAM > 0.0) THEN
                 HIAM = HIAD
             ENDIF
                     
@@ -119,7 +120,7 @@
             ! Set harvest product outputs
             HWAM = SRWT * PLTPOP * 10.0
             HNAM = SRNAM
-            !IF (SRNOPD.GT.0.0) HWUM = SRWT/FLOAT(SRNOPD) !issue 50
+            !IF (SRNOPD > 0.0) HWUM = SRWT/FLOAT(SRNOPD) !issue 50
             !HNUMAM = FLOAT(SRNOPD)*PLTPOP !issue 50
             !HNUMGM = FLOAT(SRNOPD)        !issue 50
             !HNUMPM = FLOAT(SRNOPD)        !issue 50

@@ -764,12 +764,13 @@ C-------------------------------------------------------------------
 !     CHP 18 Aug 2015 Exclude by model, not crop
 !        SELECT CASE(MODEL)
         SELECT CASE(MODEL(1:5))
-        CASE('CSCER', 'CSCRP', 'CSCAS')
+        CASE('CSCER', 'CSCRP', 'CSCAS', 'CSYCA')
 !         These models write out Evaluate.OUT using separate routines
 !         CSCER    BA   CROPSIM-CERES-Barley
 !         CSCER    WH   CROPSIM-CERES-Wheat
 !         CSCRP    BA   CSCRP-Barley
 !         CSCAS    CS   CSCAS-Cassava
+!         CSYCA    CS   CSYCA-Cassava
 !         CSCRP    WH   CSCRP-Wheat
           CONTINUE 
 

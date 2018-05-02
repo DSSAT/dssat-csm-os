@@ -143,7 +143,7 @@ C=======================================================================
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
       IF (.NOT. FEXIST .AND. IP .GT. 12) THEN
          DO I = IP, 0, -1
-            IF (INPUTX(I:I) .EQ. SLASH .OR. INPUTX(I:I) .EQ. "/") GO TO 10
+           IF (INPUTX(I:I) .EQ. SLASH .OR. INPUTX(I:I) .EQ. "/")GO TO 10
          END DO
    10    CONTINUE
 !        DSSATP(1:I+12) = INPUTX(1:I) // DSSATF

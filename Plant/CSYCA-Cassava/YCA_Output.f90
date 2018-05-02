@@ -67,8 +67,8 @@
         !       TIME SEQUENCE OUTPUTS (Work, Plantgro, gr2, grf)
         !-------------------------------------------------------------------------------------------------------------------
 
-        IF (  (MOD(DAS,FROPADJ).EQ.0.AND.YEARDOY.GE.PLYEARDOY).OR. (YEARDOY.EQ.PLYEARDOY).OR. (YEARDOY.EQ.STGYEARDOY(0)).OR. &
-            (YEARDOY.EQ.STGYEARDOY(HSTG)).OR. (YEARDOY.EQ.STGYEARDOY(11))) THEN
+        IF (  (MOD(DAS,FROPADJ) == 0.AND.YEARDOY >= PLYEARDOY).OR. (YEARDOY == PLYEARDOY).OR. (YEARDOY == STGYEARDOY(0)).OR. &
+            (YEARDOY == STGYEARDOY(HSTG)).OR. (YEARDOY == STGYEARDOY(PSX+1))) THEN
             
             !---------------------------------------------------------------------------------------------------------------
             !          Output WORK data (IDETL: Work details)
@@ -86,7 +86,7 @@
                 NFP         , RLV         , RUN         , TN          , YEAR        &
                 )  
             
-        ELSEIF(YEARDOY.LT.PLYEARDOY.AND.(MOD(DAS,FROPADJ)).EQ.0.AND.IPLTI.EQ.'A') THEN
+        ELSEIF(YEARDOY < PLYEARDOY.AND.(MOD(DAS,FROPADJ)) == 0.AND.IPLTI == 'A') THEN
                 
             !! Automatic planting                                                              ! MF Commented out bt LAH in original code. Left in case useful in debugging.
             !WRITE (fnumwrk,*) 'Yeardoy ',yeardoy
@@ -96,10 +96,10 @@
             !WRITE (fnumwrk,*) 'Temperature ',tsdep
                 
         ENDIF  ! End time-course outputs (appropriate day, etc.)
-        ! (MOD(DAS,FROPADJ).EQ.0.AND.YEARDOY.GE.PLYEARDOY),etc..
+        ! (MOD(DAS,FROPADJ) == 0.AND.YEARDOY >= PLYEARDOY),etc..
             
         !***************************************************************************************************************
-        IF (STGYEARDOY(11).EQ.YEARDOY .OR.DYNAMIC.EQ.SEASEND) THEN         ! If harvest/failure day
+        IF (STGYEARDOY(PSX+1) == YEARDOY .OR.DYNAMIC == SEASEND) THEN         ! If harvest/failure day
         !***************************************************************************************************************
 
             !-----------------------------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@
                 IDETO       , ISWNIT      , STGYEARDOY  &
                 )
                 
-        ENDIF ! End STGYEARDOY(11).EQ.YEARDOY.OR.DYNAMIC.EQ.SEASEND
+        ENDIF ! End STGYEARDOY(PSX-1) == YEARDOY.OR.DYNAMIC == SEASEND
         
         !---------------------------------------------------------------------------------------------------------------
         !       Store variables for possible use next day/step and re-initialize if harvest/fail

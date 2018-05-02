@@ -1,8 +1,8 @@
 C*************************************************************************
 C  DRY MATTER PARTITIONING
-       SUBROUTINE PARTIT (WaterBal, Part, Climate, CaneCrop,
+       SUBROUTINE SC_PARTIT (WaterBal, Part, Climate, CaneCrop,
      -                    Growth, Out, Control, ISWITCH,
-     -                    STGDOY)
+     -                    STGDOY, DSUCyest, CELLSE_DM, LEAFTT)
 c     Use the modules:
       USE CNG_MODULEDEFS
       USE MODULEDEFS
@@ -32,7 +32,9 @@ c      REAL    IRR
 
 c     Common 'OUTBLOCK' variables in use:
 c     :::::::::::::::::::::::::::::::::::
-      REAL    CHUPI
+c     Thermal time for leaf development --> start of stalk elongation
+      ! REAL    CHUPI, LEAFTT
+      REAL    LEAFTT
       REAL    ROOTDM
       REAL    TRASDM
 
@@ -58,6 +60,18 @@ c      REAL    TBDELTT
       REAL    TBFT
       REAL    TDMAS
       REAL    TOPDM
+
+
+
+c     FIBRE PARTITIONING
+c     MJ, June 2015
+c     Note: Additional state variables not in the PART block
+c     Cellulosic DM (t/ha)
+      REAL, INTENT(OUT) ::  CELLSE_DM
+c     Genetic parameters related to fibre partitioning
+c     Fraction of stalk fibre that is cellulose
+      REAL FF_CELLSE
+
 
 c     Common WATER variables in use:
 c     ::::::::::::::::::::::::::::::
@@ -100,6 +114,10 @@ c     Maximum root partitioning fraction
 
 c     For reading coeffs:
       LOGICAL CF_ERR, SPC_ERR
+
+c     Yesterday's value of delta sucrose mass:
+c     t/ha/d
+      REAL, INTENT(OUT) :: DSUCyest
 
 
 c     *******************************************************************
@@ -148,7 +166,7 @@ c       MJ, Mar 2010: zero all of the partitioning variables in the composite va
          Part%TOTBASE  = 0.0
 
 c      Now zero local variables 
-         CHUPI = 0.
+         ! CHUPI = 0.
          ROOTDM = 0.
          TRASDM = 0.    
          AERDWDT  = 0.0
@@ -279,7 +297,12 @@ c             MAX_ROOTPF
      &                               Control, SPC_ERR)
 
 
-
+c      Fibre partitioning
+c      MJ, June 2015
+       FF_CELLSE = 0.50
+!       CALL GET_CULTIVAR_COEFF(FF_CELLSE, 'FF_CELLSE', CONTROL, CF_ERR)
+       CELLSE_DM = 0.0
+          
 c         :::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
@@ -297,6 +320,9 @@ c         These are variables that need to be zeroed for each run/treatment:
           Part%TOPDM     = 0.
           Out%ROOTDM     = 0.
           Part%ROOTF     = 0.5    
+
+c         No sucrose yesterday...
+          DSUCyest = 0.0
 
       ELSEIF (CONTROL%DYNAMIC .EQ. RATE) THEN
 
@@ -342,7 +368,7 @@ c     :::::::::
 c     Outblock:
 c     :::::::::
 c     Note: rootdm and trasdm should be in different block...
-      CHUPI  = Out%CHUPI + Out%HUPI
+      ! CHUPI  = Out%CHUPI + Out%HUPI
       ROOTDM = Out%ROOTDM
       TRASDM = Out%TRASDM
 
@@ -410,6 +436,8 @@ c          STKPF=STKPFMAX
 
 C     sdb added 16/10/2003
 c     MJ, Feb 2010: replaced hard-coded value with STKPFMAX, as was meant to be:
+c     MJ, Jun 2017: partitioning fraction exceeds 1 between 9 and 10 deg C.
+c       I don't see anywhere that stkpf is restricted to 0.0-1.0!
 	    stkpf = STKPFMAX + exp(-0.5 * (((tempmx+tempmn)/2.0)-7.5))
 
 
@@ -417,7 +445,7 @@ c         If the stalk has not yet emerged, 0 biomass is allocated to the
 c         stalk:
 c         ::::::
 c         CNB/AS-Apr2002-partitioning to stalk now triggered by CHUPI
-	    IF (chupi.LT.Chupibase) THEN 
+	    IF (LEAFTT .LT. Chupibase) THEN 
               STKPF=0.000 
           ELSE
 c             Stalk emergence phenological phase
@@ -444,7 +472,9 @@ c         Update non-stalk aerial dry mass
 	    NNSTK = AMAX1(DNSTKDT + TRASDM + TOPDM,0.0)
 
 c         Calculate trash amount
-	    TRASDM = 0.52 * NNSTK *  (TMEANDEDLF / (TMEANLF+0.00001))
+!          TRASDM = 0.52 * NNSTK *  (TMEANDEDLF / (TMEANLF+0.00001))
+!          MJ, June 2015: changed 0.52 to 0.70 based on 08RE14 experimental data
+	    TRASDM = 0.70 * NNSTK *  (TMEANDEDLF / (TMEANLF+0.00001))
 	    IF (TRASDM.GT.NNSTK) TRASDM=NNSTK
 	    IF (NNSTK.LT.5.0) TRASDM=0.0
 
@@ -470,6 +500,8 @@ c     FWDELTA=(1-SWDF9) Another option that works quite well (EP1=3 instead of E
       	DELTA=DELTTMAX*(FWDELTA+FTDELTA-FWDELTA*FTDELTA)
 	    IF (DELTA.LT.0.01) DELTA=0.01
 
+
+c     NOTE: STKDM *MUST* be updated to today's integrated value before running this code.
 	    IF (STKDM.LT.(SUCA/DELTA)) THEN
 c             SUCPF IS THE PARTITIONING FRACTION TO SUCROSE IN THE STALK
 c             ...and is only used as an output, if at all.
@@ -490,8 +522,19 @@ c             ...and is only used as an output, if at all.
 
           DNSUCDT = DNSUCTEMP
           DSUCDT  = DSTKDT - DNSUCDT 
+          DSUCyest = DSUCDT
           SUCMAS  = SUCMAS + DSUCDT
           NSUCMAS = NSUCMAS + DNSUCDT
+
+c     MJ, June 2015:
+c     Partitioning of fibre into cellulosic products
+c     Currently a static partitioning.
+c     Non-sucrose mass: NSUCMAS
+c     Leaf mass: TOPDM
+c     Trash mass: TRASDM
+      CELLSE_DM = (NSUCMAS + TOPDM + TRASDM) * FF_CELLSE
+      
+
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 

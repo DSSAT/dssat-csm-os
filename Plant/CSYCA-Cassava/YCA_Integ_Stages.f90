@@ -1,5 +1,5 @@
 !***************************************************************************************************************************
-! This is the code from the section (DYNAMIC.EQ.INTEGR) lines 5925 - 6147 of the original CSCAS code. The names of the 
+! This is the code from the section (DYNAMIC == INTEGR) lines 5925 - 6147 of the original CSCAS code. The names of the 
 ! dummy arguments are the same as in the original CSCAS code and the call statement and are declared here. The variables 
 ! that are not arguments are declared in module YCA_First_Trans_m. Unless identified as by MF, all comments are those of 
 ! the original CSCAS.FOR code.
@@ -17,6 +17,8 @@
         IMPLICIT NONE
         
         INTEGER DOY         , STGYEARDOY(0:19) 
+        INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
+        INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL    BRSTAGE     , CO2         , DAYL        , EP          , ET          , NFP         , RAIN        , SRAD          
         REAL    TMAX        , TMIN        
        
@@ -28,7 +30,7 @@
         ! NB 0.5 factor used to equate to Zadoks)
         GEUCUM = GEUCUM + TTGEM                                                                                   !EQN 038
         DAGERM = DAGERM + TTGEM*WFGE                                                           !LPM 21MAR2016 DA for germination
-        !IF (GEUCUM.LT.PEGD) THEN
+        !IF (GEUCUM < PEGD) THEN
             !GESTAGE = AMIN1(1.0,GEUCUM/PEGD*0.5)                                                       !EQN 039a !LPM 21MAR2016 To separate germination and emergence
         IF (DAGERM < PGERM .AND. PGERM > 0.0) THEN
             GESTAGE = AMIN1(1.0,DAGERM/PGERM)  
@@ -41,17 +43,17 @@
         ENDIF
         
         ! Germination conditions  
-        IF (GESTAGEPREV.LT.1.0) THEN                               !LPM 23MAR2016 To separate germination and emergence
+        IF (GESTAGEPREV < 1.0) THEN                               !LPM 23MAR2016 To separate germination and emergence
             TMEANGC = TMEANGC + TMEAN
             GEDAYSG = GEDAYSG + 1
             TMEANG = TMEANGC/GEDAYSG                                                                                   !EQN 040
         ENDIF  
         
         ! Germination to emergence conditions  
-        !IF (GESTAGE.LT.0.5) THEN                      !LPM 21MAR2016 To separate germination and emergence
-        IF (GESTAGE.LT.1.0) THEN
+        !IF (GESTAGE < 0.5) THEN                      !LPM 21MAR2016 To separate germination and emergence
+        IF (GESTAGE < 1.0) THEN
             RETURN !GOTO 6666                                                             ! MF 27AU14 This is not a very nice construction! See note in Integrate_Subroutines.docx. Change to RETuRN
-        ELSEIF (GESTAGEPREV.LT.1.0) THEN                                                  
+        ELSEIF (GESTAGEPREV < 1.0) THEN                                                  
             TMEANEC = TMEANEC + TMEAN                                                                                  !EQN 041
             GEDAYSE = GEDAYSE + 1
             TMEANE = TMEANEC/GEDAYSE
@@ -85,40 +87,40 @@
         ENDIF    
         
         IF (INT(TVR1) > INT(BRSTAGEPREV)) THEN
-            !IF (BRSTAGE.EQ.0.0) THEN
+            !IF (BRSTAGE == 0.0) THEN
             !    BRNUMST = 1                                                                         ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)! to have the apex number by branch level
-            !ELSEIF (BRSTAGE.GT.0.0) THEN
+            !ELSEIF (BRSTAGE > 0.0) THEN
             !    BRNUMST = BRNUMST*BRFX(INT(BRSTAGE))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             !ENDIF
             BRDAE(TVR1) = DAG !LPM 10JUL2017 To consider root and stem development after germination and before emergence (planting stick below-ground)
-            IF (BRSTAGE.EQ.0.0) THEN
+            IF (BRSTAGE == 0.0) THEN
                 BRNUMST(TVR1) = 1                                                                                    ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
-            ELSEIF (BRSTAGE.GT.0.0) THEN
-                IF (BRFX(INT(TVR1)).LE.0.0) BRFX(INT(TVR1)) = BRFX(INT(TVR1-1))                                 !LPM 09JUN2015 To avoid number of branches 0 for BRSTAGE>6
+            ELSEIF (BRSTAGE > 0.0) THEN
+                IF (BRFX(INT(TVR1)) <= 0.0) BRFX(INT(TVR1)) = BRFX(INT(TVR1-1))                                 !LPM 09JUN2015 To avoid number of branches 0 for BRSTAGE>6
                 BRNUMST(TVR1) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             ENDIF
         ENDIF 
         
         !LPM 05JUN2015 DSTAGE is not used
-        !IF (MEDEV.EQ.'DEVU'.AND.PSTART(MSTG).GT.0.0) THEN   !LPM 04MAR15 MSTG TO PSX
-        !IF (MEDEV.EQ.'DEVU'.AND.PSTART(PSX).GT.0.0) THEN                                 ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
+        !IF (MEDEV == 'DEVU'.AND.PSTART(MSTG) > 0.0) THEN   !LPM 04MAR15 MSTG TO PSX
+        !IF (MEDEV == 'DEVU'.AND.PSTART(PSX) > 0.0) THEN                                 ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
         !    ! Calculate dstage from developmental unit accumulation 
-        !    !IF (PSTART(MSTG).GT.0.0) DSTAGE = CUMDU/PSTART(MSTG) !LPM 04MAR15 MSTG TO PSX
-        !    IF (PSTART(PSX).GT.0.0) DSTAGE = CUMDU/PSTART(PSX)
+        !    !IF (PSTART(MSTG) > 0.0) DSTAGE = CUMDU/PSTART(MSTG) !LPM 04MAR15 MSTG TO PSX
+        !    IF (PSTART(PSX) > 0.0) DSTAGE = CUMDU/PSTART(PSX)
         !ELSE
         !    ! Alternative method.Calculate dstage from leaf number
-        !    !IF (LNUMTOSTG(MSTG).GT.0.0) DSTAGE = LNUM/LNUMTOSTG(MSTG)                                                  !EQN 037b !LPM 04MAR15 MSTG TO PSX
-        !    IF (LNUMTOSTG(PSX).GT.0.0) DSTAGE = LNUM/LNUMTOSTG(PSX)                                                  !EQN 037b
-        !    IF (LAFND.GT.0.0) DSTAGE = LNUM/LAFND                                                                      !EQN 037a
+        !    !IF (LNUMTOSTG(MSTG) > 0.0) DSTAGE = LNUM/LNUMTOSTG(MSTG)                                                  !EQN 037b !LPM 04MAR15 MSTG TO PSX
+        !    IF (LNUMTOSTG(PSX) > 0.0) DSTAGE = LNUM/LNUMTOSTG(PSX)                                                  !EQN 037b
+        !    IF (LAFND > 0.0) DSTAGE = LNUM/LAFND                                                                      !EQN 037a
         !ENDIF 
         
         ! STAGES:Branching
-        !IF (GESTAGE.GE.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
+        !IF (GESTAGE >= 0.5) THEN !LPM 21MAR2016 To separate germination and emergence
         IF (GESTAGE >= 1.0) THEN
             IF (MEDEV == 'DEVU') THEN                                                     ! MEDEV is hard coded in CS_RunInit.f90(53) CHARACTER (LEN=4)  :: MEDEV         ! Switch,development control
                 !DO L = HSTG,1,-1                                                          !LPM 03MAR15 It should be as MEDEV = LNUM DO L = HSTG,0,-1
                 DO L = HSTG-1,0,-1  
-                    !IF (CUMDU.GE.PSTART(L).AND.PD(L+1).GT.0.0) THEN !LPM24APR2016 Using DABR instead of CUMDU
+                    !IF (CUMDU >= PSTART(L).AND.PD(L+1) > 0.0) THEN !LPM24APR2016 Using DABR instead of CUMDU
                     !    BRSTAGE = FLOAT(L) + (CUMDU-PSTART(L))/PD(L+1)
                     IF (DABR >= PSTART(L) .AND. PD(L+1) > 0.0) THEN
                         BRSTAGE = FLOAT(L) + (DABR-PSTART(L))/PD(L+1)
@@ -155,8 +157,8 @@
         !         Record stage dates and states
         !-----------------------------------------------------------------------
         
-        !IF (INT(BRSTAGE).GT.10 .OR. INT(BRSTAGE).LT.0.AND.GESTAGE.GT.0.5) THEN !LPM 21MAR2016 To separate germination and emergence
-        IF (INT(BRSTAGE).GT.10 .OR. INT(BRSTAGE).LT.0.AND.GESTAGE.GT.1.0) THEN
+        !IF (INT(BRSTAGE) > 10 .OR. INT(BRSTAGE) < 0.AND.GESTAGE > 0.5) THEN !LPM 21MAR2016 To separate germination and emergence
+        IF (INT(BRSTAGE) > 10 .OR. INT(BRSTAGE) < 0.AND.GESTAGE > 1.0) THEN
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '
             WRITE(fnumerr,*) 'Brstage out of range allowed for branching        '
@@ -170,7 +172,7 @@
             STOP ' '
         ENDIF
         ! NB. Status at start of branch tier
-        IF (INT(BRSTAGE).GT.INT(BRSTAGEPREV).AND.STGYEARDOY(INT(BRSTAGE)).GE.9999999) THEN
+        IF (INT(BRSTAGE) > INT(BRSTAGEPREV).AND.STGYEARDOY(INT(BRSTAGE)) >= 9999999) THEN
             STGYEARDOY(INT(BRSTAGE)) = YEARDOY
             LAISTG(INT(BRSTAGE)) = LAIPREV 
             LNUMSTG(INT(BRSTAGE)) = LNUMPREV
@@ -180,19 +182,19 @@
         ENDIF
         
         ! Primary stages.   Calculated using Pstart
-        IF (BRSTAGEPREV.LT.0.0) BRSTAGEPREV = 0.0
+        IF (BRSTAGEPREV < 0.0) BRSTAGEPREV = 0.0
         L = INT(BRSTAGEPREV) + 1
-        !IF (PSDAT(L).LE.0.0.AND.CUMDU.GE.PSTART(L)) THEN !LPM 24APR2016 Using DABR instead of CUMDU
-        IF (PSDAT(L).LE.0.0.AND.DABR.GE.PSTART(L)) THEN
+        !IF (PSDAT(L) <= 0.0.AND.CUMDU >= PSTART(L)) THEN !LPM 24APR2016 Using DABR instead of CUMDU
+        IF (PSDAT(L) <= 0.0.AND.DABR >= PSTART(L)) THEN
             PSDAT(L) = YEARDOY
-            !IF (DU.GT.0.0) PSDAPFR(L)=(PSTART(L)-(CUMDU-DU))/DU !LPM 24APR2016 Using DABR instead of CUMDU
+            !IF (DU > 0.0) PSDAPFR(L)=(PSTART(L)-(CUMDU-DU))/DU !LPM 24APR2016 Using DABR instead of CUMDU
             IF (DU > 0.0) THEN
                 PSDAPFR(L)=(PSTART(L)-(DABR-DU))/DU
             ENDIF
             PSDAPFR(L) = FLOAT(DAP) + PSDAPFR(L)
             PSDAP(L) = DAP
-            !IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.MSTG) THEN  !LPM 06MAR15 MSTG TO PSX
-            IF (PSABV(L).EQ.'MDAT '.OR.L.EQ.PSX) THEN
+            !IF (PSABV(L) == 'MDAT '.OR.L == MSTG) THEN  !LPM 06MAR15 MSTG TO PSX
+            IF (PSABV(L) == 'MDAT '.OR.L == PSX) THEN
                 MDAT = YEARDOY
                 MDOY = DOY
                 MDAP = DAP
@@ -201,7 +203,7 @@
             ENDIF
         ENDIF
         
-        IF (GYEARDOY.LE.0.0.AND.GERMFR.GT.0.0) THEN
+        IF (GYEARDOY <= 0.0.AND.GERMFR > 0.0) THEN
             GYEARDOY = YEARDOY
             GDAP = DAP
             GDAYFR = 1.0 - GERMFR
@@ -209,7 +211,7 @@
             DAG = 0 !LPM 10JUL2017 To consider root and stem develpment after germination and before emergence (planting stick below-ground)
         ENDIF
         
-        IF (EYEARDOY.LE.0.0.AND.EMRGFR.GT.0.0) THEN
+        IF (EYEARDOY <= 0.0.AND.EMRGFR > 0.0) THEN
             EYEARDOY = YEARDOY
             EDAP = DAP
             EDAYFR = 1.0 - EMRGFR
@@ -217,7 +219,7 @@
             DAE = 0
         ENDIF
         
-        IF (SHDAT.LE.0.0.AND.SHNUM.GT.1.0) THEN
+        IF (SHDAT <= 0.0.AND.SHNUM > 1.0) THEN
             SHDAT = YEARDOY
             SHDAP = FLOAT(DAP)
         ENDIF
@@ -226,12 +228,12 @@
         !         Calculate branch interval and crop cycle conditions
         !-----------------------------------------------------------------------
         
-        IF (WFG.LT.0.99999) WSDAYS = WSDAYS + 1
-        IF (NFG.LT.0.99999) NSDAYS = NSDAYS + 1
+        IF (WFG < 0.99999) WSDAYS = WSDAYS + 1
+        IF (NFG < 0.99999) NSDAYS = NSDAYS + 1
         
-        !IF (GESTAGE.GT.0.1) THEN !LPM 21MAR2016 Branching after emergence
-        IF (GESTAGE.GT.1.0) THEN
-            IF (INT(BRSTAGE).NE.INT(BRSTAGEPREV)) THEN
+        !IF (GESTAGE > 0.1) THEN !LPM 21MAR2016 Branching after emergence
+        IF (GESTAGE >= 1.0) THEN
+            IF (INT(BRSTAGE) /= INT(BRSTAGEPREV)) THEN
                 TMAXPC = 0.0
                 TMINPC = 0.0
                 TMEANPC = 0.0
@@ -288,7 +290,7 @@
                 WFPPAV(INT(BRSTAGE)) = WFPPC / PDAYS(INT(BRSTAGE))
                 WFGPAV(INT(BRSTAGE)) = WFGPC / PDAYS(INT(BRSTAGE))
             ENDIF
-            IF (CDAYS.GT.0) THEN              
+            IF (CDAYS > 0) THEN              
                 TMAXCAV = TMAXCC / CDAYS
                 TMINCAV = TMINCC / CDAYS 
                 SRADCAV = SRADCC / CDAYS
@@ -308,8 +310,8 @@
         DO BR = 0, BRSTAGE               ! for each branch   
             DO LF = 1, LNUMSIMSTG(BR)    ! and each node of the branches
                 
-                IF(plant(BR,LF)%NDDAE < 1.0) THEN 
-                    plant(BR,LF)%NDDAE = DAG                                             ! calculate date leaf appereance
+                IF(node(BR,LF)%NDDAE < 1.0) THEN 
+                    node(BR,LF)%NDDAE = DAG                                             ! calculate date leaf appereance
                 ENDIF
             ENDDO
         ENDDO
