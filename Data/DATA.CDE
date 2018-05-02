@@ -70,8 +70,8 @@ ETCM   ET total mm     Total season evapotranspiration, Simulation-harvest (mm) 
 ETCP   ET plant seas   Total evapotranspiration (mm), planting to harvest       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. (g)     Eye weight (g)                                           .
-FDAP   Forcing dap     Forcing date (dap)                                       .
-FDAT   Forcing date    Forcing date (YrDoy)                                     .
+FDAP   Forcing dap     Forcing or flowering date (dap)                          .
+FDAT   Forcing date    Forcing or flowering date (YrDoy)                        .
 FNAM   Field name      Field name                                               .
 FRN%M  Fruit N% @ mat  Fruit N concentration at maturity (%)                    .
 FRNAM  Fruit N @ mat   Fruit N content at maturity (kg/ha)                      .
