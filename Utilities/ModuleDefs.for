@@ -51,7 +51,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Build = 3
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=10) :: VBranch = 'MJ_SCCAN47'
+      CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  

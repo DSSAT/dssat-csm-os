@@ -106,8 +106,8 @@ end program dummyprog
     ENDFOREACH(flag ${FLAGLIST})
 
     # Raise an error if no flag was found
-#    IF(FLAG_REQUIRED AND NOT FLAG_FOUND)
-#        MESSAGE(FATAL_ERROR "No compile flags were found")
-#    ENDIF(FLAG_REQUIRED AND NOT FLAG_FOUND)
+    IF(FLAG_REQUIRED AND NOT FLAG_FOUND)
+        MESSAGE(FATAL_ERROR "No compile flags were found")
+    ENDIF(FLAG_REQUIRED AND NOT FLAG_FOUND)
 
 ENDFUNCTION()
