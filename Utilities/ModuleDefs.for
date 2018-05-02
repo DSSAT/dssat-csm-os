@@ -85,7 +85,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
      &    EvaluateNum = 40, !Number of evaluation variables
-     &    MaxFiles = 200,   !Maximum number of output files
+     &    MaxFiles = 500,   !Maximum number of output files
      &    MaxPest = 500    !Maximum number of pest operations
 
       REAL, PARAMETER :: 

@@ -35,6 +35,8 @@ _ReSharper*/
 *.orig
 *.aps
 resource.h
+Resources/
+Version047.rc
 *.wjf
 *.INH
 *.INP

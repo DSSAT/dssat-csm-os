@@ -53,6 +53,7 @@ C  08/09/2012 GH  Added CSCAS model
 !  06/03/2015 LPM Added CSYCA model (CIAT cassava)
 !  05/10/2017 CHP removed SALUS model
 !  12/01/2015 WDB added Sugarbeet
+!  09/01/2018  MJ modified Canegro interface, IRRAMT added.
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH, 
@@ -60,6 +61,7 @@ C=======================================================================
      &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
+     &    IRRAMT,                                         !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -113,7 +115,7 @@ C-----------------------------------------------------------------------
 
       REAL CANHT, CO2, DAYL, EO, EOP, EORATIO, EOS, EP, ES
       REAL KCAN, KEP, KSEVAP, KTRANS, LAI, NSTRES
-      REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW
+      REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW, IRRAMT
       REAL TMAX, TMIN, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
 
@@ -373,21 +375,21 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           XHLAI = XLAI
         ENDIF
 !     -------------------------------------------------
-!     Cassava CSYCA (CIAT cassava model)
-      CASE('CSYCA')
-        CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
-     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
-     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
-     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,        !Output
-     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,             !Output
-     &    UNH4, UNO3, XLAI)                               !Output
-
-        IF (DYNAMIC .EQ. SEASINIT) THEN
-          KTRANS = KEP
-          KSEVAP = KEP
-        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
-          XHLAI = XLAI
-        ENDIF
+!!     Cassava CSYCA (CIAT cassava model)
+!      CASE('CSYCA')
+!        CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
+!     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
+!     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
+!     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,        !Output
+!     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,             !Output
+!     &    UNH4, UNO3, XLAI)                               !Output
+!
+!        IF (DYNAMIC .EQ. SEASINIT) THEN
+!          KTRANS = KEP
+!          KSEVAP = KEP
+!        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
+!          XHLAI = XLAI
+!        ENDIF
 !     -------------------------------------------------
 !     APSIM N-wheat WHAPS
       CASE('WHAPS')
@@ -519,29 +521,17 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Matthew Jones, 2006-09-20
 !     :::::::::::::::::::::::::
       CASE('SCCAN')
+      !  MJ Added IRRAMT July 2015
+      !  MJ Added ES July 2015
+      !  MJ added SATFAC Jan 2018
         CALL SC_CNGRO (
      &    CONTROL, ISWITCH,                                   !Input
-     &    CO2, DAYL, EOP, EP, EO, HARVFRAC, NH4, NO3, SNOW,   !Input
+     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,   !Input
      &    SOILPROP, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   !Input
-     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER,              !Input
+     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,      !Input
      $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,        !Output
      &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,           !Output
-     &    UNO3, XLAI, XHLAI, EORATIO)                         !Output
-
-c       MJ: this is apparently necessary.
-c        KSEVAP = KTRANS
-!          KTRANS = 1.
-
-c          WRITE(55, '(A, F10.5)') 'XLAI is ', XLAI
-c      IF (DYNAMIC .EQ. SEASINIT) THEN
-!          KTRANS = KCAN + 0.15        !Or use KEP here??
-c          KTRANS = KEP        !KJB/WDB/CHP 10/22/2003
-c          KSEVAP = KEP        
-c        IF (DYNAMIC .EQ. INTEGR) THEN
-c          XHLAI = XLAI
-c        ENDIF
-!     - end of sugarcane model -
-!     ::::::::::::::::::::::::::
+     &    UNO3, XLAI, XHLAI, EORATIO)                 !Output
 
 c     Added by MJ, 2007-04-04:
 c     ::::::::::::::::::::::::
@@ -668,6 +658,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! ISWITCH   Composite variable containing switches which control flow of 
 !             execution for model.  The structure of the variable 
 !             (SwitchType) is defined in ModuleDefs.for. 
+! IRRAMT    Irrigation amount (mm)
 ! KCAN      Canopy light extinction coefficient for daily PAR, for 
 !             equidistant plant spacing, modified when in-row and between 
 !             row spacing are not equal 
