@@ -70,7 +70,7 @@ c     Days after planting
       
       INTEGER YRHV
       
-      REAL EToc, ETo, ETc_ETo, ETc_EToc 
+      REAL EToc, ETo, ETc_ETo, ETc_EToc, ETc_ETo14 
       ! Runoff and drainage
       REAL cRUNOFF, cDRAIN, dRUNOFF, dDRAIN
       
@@ -111,13 +111,13 @@ c       Open the file
 c         In append mode if the file already exists
           OPEN (UNIT=ETOUT, FILE=OFILE, STATUS='OLD',
      &      IOSTAT=ERRNUM, POSITION='APPEND')
-          WRITE(*,*) 'Appending to existing file.'
+!         WRITE(*,*) 'Appending to existing file.'
         ELSE
 c         A new file if not existing
           OPEN (UNIT=ETOUT, FILE=OFILE, STATUS='NEW',
      &      IOSTAT = ERRNUM)
      
-          WRITE(*,*) 'Writing to new file.' 
+!         WRITE(*,*) 'Writing to new file.' 
           
           WRITE(ETOUT,'("*MONTHLY EVAPORATION SUMMARY OUTPUT FILE")')
           WRITE(ETOUT,'("! RUNNO - Cumulative irrigation (mm)")')
@@ -300,10 +300,18 @@ c         Growth year number
           GRYRNO = YEAR - PLNTYR + 1
           
 c         Average monthly fractional interception
-          AvgFi = CumFi/COUNTER
+          if (COUNTER > 0) then
+            AvgFi = CumFi/COUNTER
+          else
+            AvgFi = 0.0
+          endif
           
-          ETc_ETo = ETV/ETo
-          
+          if (ETo > 1.E-6) then
+            ETc_ETo = ETV/ETo
+          else
+            ETc_ETo = 0.0
+          endif
+    
 c         MONTH END
 c         CALL MTHEND(YR,MTH)
 
@@ -316,7 +324,13 @@ c         CALL MTHEND(YR,MTH)
           CALL NAILUJ(DOYHV,YRHV,MONHV,NDAYHV)
           
           YRHV = YEARHV(1)/1000
-        
+
+          if (EToc > 1.E-6) then
+            ETc_ETo14 = ETV/EToc
+          else
+            ETc_ETo14 = 0.0
+          endif
+      
 c         Write summary data to file.
 		  WRITE(ETOUT, '(A8, 1H , ' // !File name1
      &                 'I5, 1X , '//  !Run number2
@@ -347,7 +361,8 @@ c         Write summary data to file.
      &      EToc,            !Sum of EO for the month11
      &      ETc_ETo,         !Sum of EO for the month12
      &      ETo,             !Monthly average ETc_ETo13
-     &      (ETV/EToc),      !Monthly average ETc_ETo14
+!    &      (ETV/EToc),      !Monthly average ETc_ETo14
+     &      ETc_ETo14,       !Monthly average ETc_ETo14
      &      cRUNOFF,         ! Monthly cumulative runoff
      &      cDRAIN           ! Monthly cumulative drainage
      
