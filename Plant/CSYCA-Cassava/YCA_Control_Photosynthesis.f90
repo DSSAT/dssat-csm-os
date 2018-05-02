@@ -1,3 +1,4 @@
+!***************************************************************************************************************************
 ! This module is intended to calculate photosynthesis effects in the plant
 ! 12/09/2017 converted from UTF-8 to ANSI
 ! Atributes:
@@ -128,9 +129,5 @@
     end function availableCarbohydrate_methodV
     
     
-<<<<<<< HEAD:Plant/CSYCA-Cassava/YCA_Photosynthesis.f90
-END Module YCA_Photosyntesis
-=======
 END Module YCA_Control_Photosyntesis
     
->>>>>>> e5313a346267150a2acdb966834de44c7c18b079:Plant/CSYCA-Cassava/YCA_Control_Photosynthesis.f90
