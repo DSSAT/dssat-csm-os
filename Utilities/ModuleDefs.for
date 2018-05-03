@@ -48,13 +48,16 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER :: Major = 4
         INTEGER :: Minor = 7
         INTEGER :: Model = 1
-        INTEGER :: Build = 3
+        INTEGER :: Build = 6
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=10) :: VBranch = '-develop  '
 !     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.7.1.6  chp 05/02/2018 Canegro Jones & Singels, 2018; pineapple data files
+!       4.7.1.5  chp 02/16/2018 forage and csv mods
+!       4.7.1.4  chp 01/16/2018 YCA update, data file updates
 !       4.7.1.3  chp 11/30/2017 Tiledrain N loss, Hanseok Jeong
 !       4.7.1.2  chp 11/21/2017 Sugarbeet model added
 !       4.7.1.1  chp 10/31/2017 Pineapple forcing with chemical application
@@ -83,7 +86,7 @@ C             CHP Added TRTNUM to CONTROL variable.
      &    NumOfDays = 1000, !Maximum days in sugarcane run (FSR)
      &    NumOfStalks = 42, !Maximum stalks per sugarcane stubble (FSR)
      &    EvaluateNum = 40, !Number of evaluation variables
-     &    MaxFiles = 200,   !Maximum number of output files
+     &    MaxFiles = 500,   !Maximum number of output files
      &    MaxPest = 500    !Maximum number of pest operations
 
       REAL, PARAMETER :: 

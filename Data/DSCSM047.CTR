@@ -19,7 +19,11 @@ $SIMULATION_CONTROLS
 @N CONTROLS_TITLE
  2 Summary, evaluate files only (VBOSE='0' - zero)
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 2 OU              .     .     .     .     .     .     .     .     .     .     0     .     .
+ 2 OU              .     E     Y     .     N     N     N     N     N     N     N     N     N
+!Bug introduced with csv inputs - can't use VBOSE="0" or no summary.out is produced.
+!  - fixed with v4.7.1.5!
+!  - instead supress outputs using "N" in each file output switch
+!  - OVVEW = 'E' forces evaluate.out file.
 
 !-----------------------------------------------------------------------------------------
 @N CONTROLS_TITLE
@@ -263,7 +267,7 @@ $SIMULATION_CONTROLS
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
 98 OP              .     .     .     .     .     .     .     .     .
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL METMP MEGHG
-98 ME              .     .     .     .     .     .     .     .     .     .     .     .     1
+98 ME              .     .     .     .     .     .     .     .     .     .     .     .     .
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
 98 MA              .     .     .     .     .
 @N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT

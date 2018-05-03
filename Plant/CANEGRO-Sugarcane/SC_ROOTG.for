@@ -118,6 +118,22 @@ c         [I] Mass of photosynthate partitioned to roots today
 c     Vars used in the CLIMT common block, used here:
           REAL DTT
 
+c       Modification to calculation of delta thermal time, based on ASA 2013 work:
+c       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+c       Delta thermal time (°Cd) for stalk elongation
+        REAL DTT_RER
+c       Function for calculating delta thermal time
+        REAL D_TT
+c       Base, optimal and final temperatures for thermal time accum. (°C)
+c       These are cultivar params.
+c       For roots
+        REAL TBaseREX, ToptREX, TFinREX
+c       Mean daily temperature
+        REAL TMEAN
+c       Reference root elongation rate per unit thermal time (cm/°Cd)
+        REAL RER0
+
+
 c     Cumulative soil depth
 c      REAL CUMDEP
 
@@ -134,7 +150,7 @@ c     Temporary stress array:
       LOGICAL CF_ERR, SPC_ERR
 
 !     Unit number for output
-      INTEGER SCLUN   !CHP
+      INTEGER SCLUN, OU   !CHP
 
       DATA RatCarryOver%RTDEP /0./
 
@@ -233,6 +249,14 @@ c     ===========
            DTT  =  0.0
            GRORT  =  0.0
            RTCMPG  =  0.0
+
+
+!      CALL GETLUN('ROOTOUT', OU)
+!      OPEN(UNIT=OU, FILE="ROOTOUT.OUT")
+!
+!      WRITE(OU, '(9(A8, 1X))') 
+!     &  'TRNO', 'RUNNO', 'YRDOY',
+!     &  'DTT_RER', 'SWDF1', 'RER0', 'SWDF', 'ActSWDF', 'RTDEP'
          
        ENDIF
        
@@ -268,6 +292,10 @@ c     :::::::::::::::::
 c     Climate variables:
 c     ::::::::::::::::::
           DTT    = Climate%DTT       
+
+
+
+
       
       IF (CONTROL%DYNAMIC .EQ. SEASINIT) THEN
 c     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -308,6 +336,23 @@ c         Minimum Root length density
           RLVMIN = 0.02
           CALL GET_SPECIES_COEFF(RLVMIN, 'RLVMIN', Control, 
      &                           SPC_ERR)
+
+c         Thermal time parameters for leaf elongation:
+c         :::::::::::::::::::::::::::::::::::::::::::::
+c         Defaults:
+            TBaseREX = 10.0
+            TOptREX  = 30.0 
+            TFinREX  = 43.0
+          CALL GET_CULTIVAR_COEFF(TBaseREX, 'TBASE_REX',  
+     &       Control, CF_ERR)
+          CALL GET_CULTIVAR_COEFF(TOptREX, 'TOPT_REX',  
+     &       Control, CF_ERR)
+          CALL GET_CULTIVAR_COEFF(TFinREX, 'TFin_REX',  
+     &       Control, CF_ERR)       
+
+
+c     Reference root elongation rate:
+      RER0 = 0.22
 
 c     Switches:
 c     :::::::::
@@ -353,6 +398,10 @@ c     ::::::::::::::::::::::::
       IF (CaneCrop%RATOON .LT. 1) THEN
           DO I=1, Soil%NLAYR
               RLV(I) = MAX(RLV(I), RLVMIN)
+              CALL FIND_INP(RTDEP, 'PLANT_DEPTH', Control)
+              IF (RTDEP .LT. 5.1) THEN
+                RTDEP = 5.1
+              ENDIF
           ENDDO
       ELSE
 c         It is a ratoon; init roots accordingly:
@@ -366,6 +415,11 @@ c             crop is initialised with higher RLV in layers lower
 c             than 40 cm otherwise.
               RLV(I) = AMAX1((0.2-0.005*CUMDEP),RLVMIN)
           ENDDO
+          ! MJ, Jan 2014: fudge to ensure that water stress is not super-sensitive to
+          ! a dry top layer:
+          RLV(1) = 0.05
+          RLV(2) = 0.25
+          RTDEP = DEPMAX
 
 c         If ratoon has been carried over:
           IF (CaneCrop%CARRY_OVER) THEN
@@ -395,6 +449,18 @@ C
 C---------------------------------------------------------------------
 c      WRITE(SCLUN, '(A, F10.3)') 'GRORT is ', GRORT
 
+
+c     Mean daily temperature
+      TMEAN = (Climate%TEMPMX + Climate%TEMPMN) / 2.0
+
+c     Calculate non-linear thermal time
+      DTT_RER = D_TT(TMEAN, TBaseREX, TOptREX, TFinREX) 
+
+
+
+
+
+
 C     I have converted GRORT from g/plant to g/m^2 per day. GIB 12/4/89  
       IF (GRORT.GT.0.) THEN
 C     GRORT is mass of dm allocated to roots in one day (g/m2), convert this to g 
@@ -414,8 +480,8 @@ c     Root cm per g DM RTCMPG is read in as a variable
            SWDF=1.
 c          If water balance is modeled, calc SWDF:
            IF (ISWATBAL) THEN
-              IF (SW(L)-LL(L).LT.0.25*ESW(L)) SWDF=4.*(SW(L)-LL(L))/
-     1        ESW(L)
+              IF (SW(L)-LL(L).LT.0.25*ESW(L)) 
+     &          SWDF=4.*(SW(L)-LL(L))/ESW(L)
            ENDIF
            IF (SWDF.LT.0.) SWDF=0.
            ROOTSWDF(L) = SWDF
@@ -435,13 +501,20 @@ C              RNFAC=1.0-(1.17*EXP(-0.15*(NO3(L)+NH4(L))))
 C              IF(RNFAC.LT.0.1)RNFAC=0.1
 C           ENDIF
 
+
+
            RLDF(L)=AMIN1(SWDF,RNFAC,AERFAC)*WR(L)*dlayr(L)
            IF (CUMDEP.LT.RTDEP) GO TO 2900
 !           RTDEP=RTDEP+DTT*0.22*AMIN1((SWDF1*2.0),SWDF)
 !          MJ: MvdL noticed that 'DTT'is cumulative. UseHU16 instead:
-           RTDEP=RTDEP+HU16*0.22*AMIN1((SWDF1*2.0),SWDF)
+c          ...and revised for ASA2013
+c          MJ, Jan 2014: set minimum root depth to 5.1 cm
+           RTDEP=MAX(5.1, RTDEP+DTT_RER*RER0*AMIN1((SWDF1*2.0),SWDF))
+           
 c          :::::::::::::::::::::::::::::::::::::::::::
-c           WRITE(SCLUN, '(A, F10.5)') 'SWDF1 is ', SWDF1
+!      WRITE(OU, '(I8, 1X, 2(I8, 1X), 6(F8.3,1X))') 
+!     &  Control%TRTNUM, Control%RUN, Control%YRDOY,
+!     &  DTT_RER, SWDF1, RER0, SWDF, AMIN1((SWDF1*2.0),SWDF), RTDEP
 c          :::::::::::::::::::::::::::::::::::::::::::
            IF (RTDEP.GT.DEPMAX) RTDEP=DEPMAX
            RLDF(L)=RLDF(L)*(1.-(CUMDEP-RTDEP)/DLAYR(L))

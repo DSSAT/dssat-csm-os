@@ -37,7 +37,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE SC_OPGROW (CONTROL, CaneCrop, Growth,
      - Part, Out, WaterBal, SW, SoilProp,
-     - YRPLT)
+     - YRPLT, CELLSE_DM)
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Define DSSAT composite variables:
 c     [Taken from MZ_CERES.for]
@@ -114,6 +114,9 @@ c     different units, etc)
 c     ::::::::::::::::::::::
 c     Stalk population per m2
       REAL STKPOPm2 
+
+c     Cellulosic DM (t/ha)
+      REAL, INTENT(IN) ::  CELLSE_DM
 
 c     CANEGRO 3.5 variables:
 c     ::::::::::::::::::::::
@@ -517,14 +520,33 @@ c     Water stress (CWSI)
           DATA GROHEAD(4, 46) /'CWSI'/
 
 c     Respiration rate
-          DATA GROHEAD(1, 47) /'RESPCF'/
-          DATA GROHEAD(2, 47) /'Resp.'/
+          DATA GROHEAD(1, 47) /'PARCE'/
+          DATA GROHEAD(2, 47) /'RUE'/
           DATA GROHEAD(3, 47) /'Rate'/
-          DATA GROHEAD(4, 47) /'RESPCF'/
+          DATA GROHEAD(4, 47) /'PARCE'/
+
+c     Growth respiration rate
+          DATA GROHEAD(1, 48) /'G_RESP'/
+          DATA GROHEAD(2, 48) /'Growth '/
+          DATA GROHEAD(3, 48) /'Resp.'/
+          DATA GROHEAD(4, 48) /'G_RESP'/
+
+c     Maintenance respiration rate
+          DATA GROHEAD(1, 49) /'M_RESP'/
+          DATA GROHEAD(2, 49) /'Resp.'/
+          DATA GROHEAD(3, 49) /'Maint.'/
+          DATA GROHEAD(4, 49) /'M_RESP'/
+
+c     Maintenance respiration rate
+          DATA GROHEAD(1, 50) /'Cell-'/
+          DATA GROHEAD(2, 50) /'ulosic'/
+          DATA GROHEAD(3, 50) /'DM yld'/
+          DATA GROHEAD(4, 50) /'CMDMD'/
+
 
 c          ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c          Number of output variables (important for output!)
-           DATA NUM_OVARS /47/
+           DATA NUM_OVARS /50/
 
 c          Width of output columns:
            DATA VAR_WIDTH /12/
@@ -798,7 +820,7 @@ c                     ((area (m2) * LI * number of leaves/area) / total leaf DM)
             SLAD     = 0.
             IF (LGDMD .GT. 0.) SLAD = ((10000. * Growth%LI * 
      -                                Growth%LAI) / LGDMD)
-            CHTD     = CaneCrop%SHGT / 100.
+            CHTD     = CaneCrop%SHGT ! / 100.
             
             
             RDPD     = WaterBal%RTDEP / 100.
@@ -855,7 +877,8 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
      -                     WaterBal%RLV(1:10), EOSA, RTLD,
      -                     LIPD, SLAD, GROSSP, BRDMD, 
      -                     Part%FLODGE, TTEBC, TTSPC, TTLEC, SUDMD,
-     -                     SUFMD, Canecrop%CWSI, Part%RESPCF
+     &              SUFMD, Canecrop%CWSI, PARCE, Part%RESP_G,
+     &              Part%RESP_M, CELLSE_DM
 
 c         Format statement
 c         Original one

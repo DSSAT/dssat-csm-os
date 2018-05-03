@@ -395,7 +395,7 @@ C     CALCULATE P CONCENTRATIONS (fractions)
       ELSE
         PConc_Shel = 0.
       ENDIF
-      
+C MA problem of transfer of shoot ( stems) to panicle at grain filling      
       IF (Shut_kg > 0.) THEN      
         PConc_Shut = PShut_kg / Shut_kg 
       ELSE

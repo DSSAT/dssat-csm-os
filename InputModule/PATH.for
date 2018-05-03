@@ -62,7 +62,7 @@ C=======================================================================
                call get_next_string(line,7,pathc)
                pathc = trim(adjustl(line(5:6)))//trim(pathc)
             end if
-            
+
 C-SUN       PATHC  = LINE(8:80)
             PATHL  = INDEX (PATHC,BLANK)
             IF (PATHL .EQ. 1) THEN
@@ -85,7 +85,7 @@ C-SUN       PATHC  = LINE(8:80)
             RETURN
          ENDIF
       END DO
-      
+
       IF (PFLAG .EQ. 1) THEN
          WRITE(*,600) PROCOD, DSSATP
  600     FORMAT(' CODE ',A3,' not found in file ',A)
@@ -132,7 +132,7 @@ C=======================================================================
       CHARACTER*102 DSSATP
       CHARACTER*120 INPUTX
       CHARACTER(len=255) :: DSSAT_HOME
-      
+
       INTEGER      I
       INTEGER    IP
 
@@ -143,7 +143,7 @@ C=======================================================================
       INQUIRE (FILE = DSSATP,EXIST = FEXIST)
       IF (.NOT. FEXIST .AND. IP .GT. 12) THEN
          DO I = IP, 0, -1
-            IF (INPUTX(I:I) .EQ. SLASH) GO TO 10
+           IF (INPUTX(I:I) .EQ. SLASH .OR. INPUTX(I:I) .EQ. "/")GO TO 10
          END DO
    10    CONTINUE
 !        DSSATP(1:I+12) = INPUTX(1:I) // DSSATF
@@ -175,10 +175,10 @@ C-----------------------------------------------------------------------
 C  Revision history
 C
 C  02/21/2006 GH  Written
-!  10/25/2006 CHP Added CRMODEL, the model name from FILEX which will   
+!  10/25/2006 CHP Added CRMODEL, the model name from FILEX which will
 !                   override MODEL from DSSATPRO, if valid.
 !  09/17/2007 JIL Added codes for IXIM maize model
-!  04/17/2013 CHP Added exception for crop-model matching for 
+!  04/17/2013 CHP Added exception for crop-model matching for
 !                   SALUS generic crop model
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
@@ -206,7 +206,7 @@ C=======================================================================
       CHARACTER*80  LINE
       CHARACTER*102 DSSATP
 !     CHARACTER*120 PATHX
-      
+
       INTEGER      EXE_POS,LUNPR,LINPR,ERRNUM,ISECT,I,J   !, IPX
       INTEGER      ValidModel, LENSTRING
 
@@ -244,11 +244,11 @@ C=======================================================================
       IF (FEXIST) THEN
          OPEN (LUNPR,FILE=TRIM(DSSATP),STATUS = 'OLD',IOSTAT=ERRNUM)
          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,1,DSSATP,0)
-      ELSE 
+      ELSE
          CALL ERROR (ERRKEY,2,DSSATP,0)
       ENDIF
 
-      PROCOD = 'M' // CROP  
+      PROCOD = 'M' // CROP
 
       REWIND(LUNPR)
       LINPR = 0
@@ -275,7 +275,7 @@ C=======================================================================
            MODEL(I:I)= UPCASE(MODEL(I:I))
          ENDDO
       ENDIF
-      
+
       CLOSE (LUNPR)
 
 !     Check MODEL for validity.
@@ -308,8 +308,8 @@ C=======================================================================
       ValidModel = 0      !0 indicates no error
 
 !     Blank model = error 6
-      IF (MODEL(1:3) .EQ. '   ') THEN 
-        ValidModel = 6 
+      IF (MODEL(1:3) .EQ. '   ') THEN
+        ValidModel = 6
         RETURN
       ENDIF
 
@@ -332,9 +332,9 @@ C=======================================================================
      &    (INDEX(MODEL(3:5),'APS') .EQ. 0) .AND.      !APSIM N-wheat
      &    (INDEX(MODEL(3:5),'OIL') .EQ. 0) .AND.      !OILCROP
      &    (INDEX(MODEL(3:5),'LUS') .EQ. 0)            !SALUS
-     &    ) THEN   
+     &    ) THEN
 !       Invalid model = error 4
-        ValidModel = 4 
+        ValidModel = 4
         RETURN
       ENDIF
 
@@ -343,10 +343,10 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'CSCRP') .EQ. 0) .AND.    !Wheat and barley
      &    (INDEX(MODEL(1:5),'CSCAS') .EQ. 0) .AND.    !Cassava
      &    (INDEX(MODEL(1:5),'CSYCA') .EQ. 0) .AND.    !Cassava CIAT
-     &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat 
-     &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All 
+     &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat
+     &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All
 !                         grain legumes, grasses, vegetables and cotton
-     &    (INDEX(MODEL(1:5),'PRFRM') .EQ. 0) .AND.    !FORAGE 
+     &    (INDEX(MODEL(1:5),'PRFRM') .EQ. 0) .AND.    !FORAGE
      &    (INDEX(MODEL(1:5),'MZCER') .EQ. 0) .AND.    !Maize CERES
      &    (INDEX(MODEL(1:5),'MZIXM') .EQ. 0) .AND.    !Maize IXIM
      &    (INDEX(MODEL(1:5),'MLCER') .EQ. 0) .AND.    !Millet
@@ -361,10 +361,10 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND.    !Sweet corn
      &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND.    !Tanier
      &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND.    !Taro
-     &    (INDEX(MODEL(1:5),'SALUS') .EQ. 0)          !Salus generic 
+     &    (INDEX(MODEL(1:5),'SALUS') .EQ. 0)          !Salus generic
      &    ) THEN
 !       Invalid module name = error 5
-        ValidModel = 5 
+        ValidModel = 5
         RETURN
       ENDIF
 
@@ -375,7 +375,7 @@ C=======================================================================
         FIRST = .FALSE.
       ENDIF
 
-!     Generic SALUS model can be used for any crop, 
+!     Generic SALUS model can be used for any crop,
 !       identified in cultivar data
       IF (MODEL(1:5) == 'SALUS') THEN
         ValidModel = 0
@@ -408,13 +408,13 @@ C-----------------------------------------------------------------------
 C     OLD CODE:
 
 C-----------------------------------------------------------------------
-     
+
 c         IF (INDEX ('SBPNBNCHPPPEVBTMPRCBFACPFB',CROP) .GT. 0) THEN
 c           CRMODEL = 'CRGRO'
 c         ELSEIF (INDEX ('C3C4G0G1G2G3G4G5G6G7BR',CROP) .GT. 0) THEN
 c           CRMODEL = 'CRGRO'
 c         ELSEIF (INDEX ('COCT',CROP) .GT. 0) THEN
-c           CRMODEL = 'CRGRO'       
+c           CRMODEL = 'CRGRO'
 !         ELSEIF (INDEX ('BASGML',CROP) .GT. 0) THEN
 !           CRMODEL = 'GECER'
 c         ELSEIF (INDEX ('SG',CROP) .GT. 0) THEN
@@ -442,7 +442,7 @@ c         ELSEIF (INDEX ('PI',CROP) .GT. 0) THEN
 c           CRMODEL = 'PIALO'
 c         ELSEIF (INDEX ('TNTA',CROP) .GT. 0) THEN
 c           CRMODEL = 'ARSUB'
-c        ELSE 
+c        ELSE
 c          WRITE (*,260)
 c 260       FORMAT( ' No models have currently been defined for this',
 c     &             ' crop. !',/,
@@ -450,7 +450,7 @@ c     &            ' Please contact the CSM Model developers for'
 c     &            ' additional information.')
 c          STOP
 c         ENDIF
-c      ENDIF   
+c      ENDIF
 
 
 C-----------------------------------------------------------------------
@@ -481,15 +481,15 @@ C     CROP = G5 for CROPGRO - GRASSES     Version 4.7 (2017)
 C     CROP = G6 for CROPGRO - GRASSES     Version 4.7 (2017)
 C     CROP = G7 for CROPGRO - GRASSES     Version 4.7 (2017)
 C     CROP = G8 for CROPGRO - GRASSES     Version 4.7 (2017)
-C     CROP = BR for CROPGRO - Brachiaria                
+C     CROP = BR for CROPGRO - Brachiaria
 C                               decumbens Version 4.7 (2017)
 C     CROP = FB for CROPGRO - FABA BEAN   Version 4.7 (2017)
 C     CROP = CO for CROPGRO - COTTON      Version 4.7 (2017)
 C     CROP = NP for CROPGRO - Napier grassVersion 4.7 (2017)
 C     CROP = GB for CROPGRO - Green Bean  Version 4.7 (2017)
 C     CROP = PE for CROPGRO - Pea         Version 4.7 (2017)
-                                                         
-                                                         
+
+
 
 
 C     CROP = CT for CROPGRO - CITRUS      Version 4.7 (2017)
