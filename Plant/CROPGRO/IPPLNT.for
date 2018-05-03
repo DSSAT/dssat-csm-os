@@ -328,7 +328,7 @@ C-----------------------------------------------------------------------
         ELSE
           CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
           IF (MEEVP .EQ. 'A' .OR. MEEVP .EQ. 'G') THEN !ASCE dual Kc ET
-            READ(CHAR,'(5F6.0)',IOSTAT=ERR) KEP,EORATIO,SKC,KCBMIN,KCBMAX
+            READ(CHAR,'(5F6.0)',IOSTAT=ERR)KEP,EORATIO,SKC,KCBMIN,KCBMAX
             SKC    = MAX(0.50,MIN(1.0,SKC))
             KCBMIN = MAX(0.00,MIN(1.1,KCBMIN))
             KCBMAX = MAX(0.25,MIN(1.5,KCBMAX))

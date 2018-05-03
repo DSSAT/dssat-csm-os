@@ -246,7 +246,7 @@ C=======================================================================
       END SELECT
 
 !     Standardized reference evapotranspiration (ASCE Standard Eq. 1)
-      REFET = 0.408*UDELTA*(RN-G)+PSYCON*(Cn/(TAVG+273.0))*WIND2m*(ES-EA)
+      REFET =0.408*UDELTA*(RN-G)+PSYCON*(Cn/(TAVG+273.0))*WIND2m*(ES-EA)
       REFET = REFET/(UDELTA+PSYCON*(1.0+Cd*WIND2m)) !mm/d
       REFET = MAX(0.0001, REFET)
 
