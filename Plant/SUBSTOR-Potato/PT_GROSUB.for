@@ -477,7 +477,7 @@ C        SLFN = 0.95 + 0.05*AGEFAC         ! ...Nitrogen stress
           !
           DEVEFF = AMIN1 ((XSTAGE - 2.0) * 10. * PD, 1.0)
           IF (NFAC .GT. 1.0) THEN
-             TIND = (DTII(1)+DTII(2)+DTII(3)/3.0)*(1./NFAC)*DEVEFF
+             TIND = (DTII(1)+DTII(2)+DTII(3)/3.0)*(1./NFAC)*DEVEFF     
            ELSE
              TIND = (DTII(1)+DTII(2)+DTII(3)/3.0)*DEVEFF
           END IF
