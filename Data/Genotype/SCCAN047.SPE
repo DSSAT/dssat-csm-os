@@ -42,32 +42,44 @@
 !-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *PHOTOSYNTHESIS & BIOMASS PARTITIONING
-        TBasePhotos = 7.
+        TBasePhotos = 10.0
           CRITSW    = 0.2
-          HuRecover = 150.
+          HuRecover = 150.0
           RespQ10   = 1.68
           PCB       = 0.6
-          RESPGCF   = 0.242
           MAX_ROOTPF =   0.95
           FTCON     = 0.32
           SURCON    = 0.99
+!  Growth respiration: based on daily mass of fibre synthesis
+!  i.e. growth of leaves, roots, stalks; photos partitioned to sucrose excluded.   
+!  I think is from Ampthor       
+          RESPGCF   = 0.330
+!  Maintenance respiration: only roots, leaves (green tissues) and sucrose have Rm    
+!  Based on / derived from Liu & Bull (2001); Inman-Bamber 1989, 1991.      
+   RESPCON_ROOTS    = 0.00292
+   RESPCON_LEAVES   = 0.00292
+   RESPCON_SUCR     = 0.00121
 *ROOTS
-          RTCMPG     = 500.
+          RTCMPG     = 500.0
           WRK        =  -0.01
           RLVMIN     = 0.02
+! Added Jan 2018
+! Minimum pore space for avoiding waterlogging (cm3/cm3)
+          PORM       = 0.05          
 *CANOPY
-          SENESF    = 5.
-          RESET     = 5.
-          PERCoeff  = 0.16
+          SENESF    = 5.0
+          RESET     = 5.0
+!         Changed from 0.16 by MJ following TT calc changes          
+          PERCoeff  = 0.35
           CHTCoeff  = 0.864  
           HillPar1  = 2.453
 *WATER BALANCE
           EORATIO   = 1.15
-          RWUEP1    = 1.
-          RWUEP2    = 2.
+          RWUEP1    = 1.0
+          RWUEP2    = 2.0
           RWUMX     = 0.07
 *LODGING
-        LG_RATING   = 8.
+        LG_RATING   = 8.0
     LG_CRIT_WIND    = 200.
 
 
@@ -84,10 +96,10 @@ CO2X_10 = 9999
 CO2Y_1 = 0
 CO2Y_2 = 0.85
 CO2Y_3 = 0.95
-CO2Y_4 = 1
-CO2Y_5 = 1.02
-CO2Y_6 = 1.04
-CO2Y_7 = 1.05
-CO2Y_8 = 1.06
-CO2Y_9 = 1.07
-CO2Y_10 = 1.08
+CO2Y_4 = 1.00
+CO2Y_5 = 1.00
+CO2Y_6 = 1.00
+CO2Y_7 = 1.00
+CO2Y_8 = 1.00
+CO2Y_9 = 1.00
+CO2Y_10 = 1.00

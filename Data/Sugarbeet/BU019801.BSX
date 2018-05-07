@@ -1,0 +1,95 @@
+*EXP.DETAILS: BU019801BS BUCHAREST, ROMANIA 1998
+
+*GENERAL
+@PEOPLE
+Leviel
+@ADDRESS
+-99
+@SITE
+-99
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+     10   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 Bucharest 1998             1  1  0  0  1  0  0  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 BS BU0003 Emma
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 BUCH0001 BUCH       -99   -99   -99   -99   -99   -99 SIC    -99  IB00000001 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1             -99             -99       -99               -99   -99   -99   -99   -99   -99
+
+*SOIL ANALYSIS
+@A SADAT  SMHB  SMPX  SMKE  SANAME
+ 1 98094   -99   -99   -99  -99
+@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC
+ 1    15   -99   -99   -99   -99   -99   -99   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    BS 98094   200   -99     1     1   -99   -99   -99   -99   -99   -99 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1     5  .385    .1    .8
+ 1    15  .385    .1    .8
+ 1    30  .406    .1    .8
+ 1    45  .406    .1    .8
+ 1    60  .406    .1    .8
+ 1    90  .456    .1    .8
+ 1   120  .341    .1    .8
+ 1   150  .365    .1    .8
+ 1   180  .361    .1    .8
+ 1   210  .361    .1    .8
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 98094   -99  10.2    10     S   -99    50   -99     3   -99   -99   -99   -99   -99                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    30    50   100 GS000 IR001    10 -99
+@I IDATE  IROP IRVAL
+ 1 98094   -99   -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 98094   -99 AP003   -99   300   -99   -99   -99   -99   -99 -99
+
+*CHEMICAL APPLICATIONS
+@C CDATE CHCOD CHAMT  CHME CHDEP   CHT..CHNAME
+ 1 98094   -99   -99   -99   -99   -99  -99
+
+*ENVIRONMENT MODIFICATIONS
+@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME  
+ 1 98094 A   0 A   0 A   0 A   0 A 0.0 A   0 A   0 A   0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 98094  2150 DEFAULT SIMULATION CONTR
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y     A
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          98001 98001    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 99001   100     0
+
+
+
