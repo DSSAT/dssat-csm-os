@@ -837,7 +837,7 @@ TMND   MIN TEMP °C     Minimum daily temperature (°C)                           
 TMXD   MAX TEMP °C     Maximum daily temperature (°C)                           .
 TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     .
 VPD    Vapor Pres Def  Vapor pressure deficit                                   .
-VPDF   Vapor P Factor  Vapor pressure factor                                    .
+VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
 WDSD   WIND SPEED km/d Wind speed (km/d)                                        .
 
 *OTHER MODELS
