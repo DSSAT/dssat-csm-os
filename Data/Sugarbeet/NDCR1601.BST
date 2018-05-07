@@ -1,7 +1,8 @@
-*EXP. DATA (T): NDCR1601BA My Barley experiment observed (T) data                      
+*EXP. DATA (T): NDCR1601BS My Sugar beet experiment Time-course (T) data               
 
-! File last edited on day 05/26/2017 at 9:54:59 AM
+! File last edited on day 05/03/2018 at 5:02:30 PM
 !
+! 
 ! 
 ! 
 ! 

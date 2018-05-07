@@ -1,6 +1,6 @@
 *SOILS : Carrington Research Extension Center, Carrington, ND, USA
 
-*CREC002014  -99         -99      152  -99
+*CREC002014  -99         -99      152  CREC soil
 @SITE        COUNTRY          LAT     LONG SCS FAMILY
  CREC        US             47.449 -99.124 -99
 @ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE
