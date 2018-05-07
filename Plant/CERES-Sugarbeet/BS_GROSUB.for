@@ -1233,13 +1233,13 @@
                           GRORT  = 0.0                                !
                       ELSE                                            !
                           SUMDTT = P5                                 !
-                          CALL YR_DOY(YRDOY, YR, DOY)
-                          WRITE(MESSAGE(1),2700) DOY                  !
-                          CALL WARNING(1,ERRKEY, MESSAGE)             !
-                          WRITE (     *,2700) DOY                     !
-                          IF (IDETO .EQ. 'Y') THEN                    !
-                              WRITE (NOUTDO,2700) DOY                 !
-                          ENDIF                                       !
+C-GH                      CALL YR_DOY(YRDOY, YR, DOY)
+C-GH                      WRITE(MESSAGE(1),2700) DOY                  !
+C-GH                      CALL WARNING(1,ERRKEY, MESSAGE)             !
+C-GH                      WRITE (     *,2700) DOY                     !
+C-GH                      IF (IDETO .EQ. 'Y') THEN                    !
+C-GH                          WRITE (NOUTDO,2700) DOY                 !
+C-GH                      ENDIF                                       !
                           EMAT   = 0                                  !
 !                          GRORT  = 0.0                                !
                       ENDIF                                           !
@@ -1249,12 +1249,12 @@
                   IF (CMAT.GE.CARBOT) THEN
                   SUMDTT = P5                                         !
                   CALL YR_DOY(YRDOY, YR, DOY)
-                  WRITE(MESSAGE(1),2700) DOY                          !
-                  CALL WARNING(1,ERRKEY, MESSAGE)                     !
-                  WRITE (     *,2700) DOY                             !
-                  IF (IDETO .EQ. 'Y') THEN                            !
-                      WRITE (NOUTDO,2700) DOY                         !
-                  ENDIF                                               !
+C-GH              WRITE(MESSAGE(1),2700) DOY                          !
+C-GH              CALL WARNING(1,ERRKEY, MESSAGE)                     !
+C-GH              WRITE (     *,2700) DOY                             !
+C-GH              IF (IDETO .EQ. 'Y') THEN                            !
+C-GH                  WRITE (NOUTDO,2700) DOY                         !
+C-GH              ENDIF                                               !
                   EMAT   = 0                                          !
 !                  GRORT  = 0.0                                        !
                   ENDIF
@@ -1814,7 +1814,7 @@ C**WDB original        STOVER  = BIOMAS-YIELD
 !     Format Strings
 !----------------------------------------------------------------------
 
- 2700 FORMAT (2X,'Crop mature on JD',I4,' due to slowed grain filling')
+C-GH 2700 FORMAT (2X,'Crop mature on JD',I4,' due to slowed grain filling')
  2800 FORMAT (2X,'Crop failure growth program terminated ')
 
 

@@ -1,4 +1,4 @@
-*EXP.DETAILS: NDCR1601BS CREC. NORTH DAKOTA 2016
+*EXP.DETAILS: NDCR1601BS CREC, NORTH DAKOTA 2016
 
 *GENERAL
 @PEOPLE
@@ -12,7 +12,7 @@ CREC
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 1 0 2016                       1  1  0  1  1  0  0  0  0  0  0  0  1
+ 1 1 1 0 CREC 2016                  1  1  0  1  1  0  0  0  0  0  0  0  1
 
 *CULTIVARS
 @C CR INGENO CNAME
