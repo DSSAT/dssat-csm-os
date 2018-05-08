@@ -39,6 +39,11 @@
   RLWR    0.98      !Root length to weight ratio, cm/g
   RWUEP1  1.50      !Factor to modify water stress for cell expansion
 
+*LEAF PARAMETERS
+  SLA1    500.0     !SLA stage 1 cm2.g-1
+  SLA2    300.0     !SLA stage 2
+  SLA3    200.0     !SLA stage 3
+
 *PARTITIONING
   STPC    0.10      !Partitioning to stem growth as a fraction of potential leaf growth
   RTPC    0.25      !Partitioning to root growth as a fraction of available carbohydrates
