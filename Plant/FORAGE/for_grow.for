@@ -93,9 +93,10 @@ C=======================================================================
       CHARACTER*1  ISWSYM, ISWNIT, IDETO, IHARI, PLME
       CHARACTER*2  XPODF, CROP
       CHARACTER*6  ERRKEY
-      PARAMETER (ERRKEY = 'GROW  ')
+      PARAMETER (ERRKEY = 'FRGROW')
       CHARACTER*30 FILEIO
       CHARACTER*92 FILECC, FILEGC
+      CHARACTER*78 MSG(2)
       CHARACTER*80 MOW80
       CHARACTER*12 MOWFILE
       CHARACTER*6   SECTION
@@ -1297,28 +1298,39 @@ C     DIEGO ADDED DAILY SENESCENCE 11/22/2016
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         END IF
 
-        MOWLUN=999
-        OPEN (UNIT=MOWLUN,FILE=MOWFILE,STATUS='OLD')
-        REWIND(MOWLUN)
-        ISECT = 0
-        MOWCOUNT = 0
-        write(trtchar,'(i6)') trtno
-        DO WHILE (ISECT.EQ.0)
-          READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
-          IF (MOW80(1:1).NE."@"
-     &       .AND.MOW80(1:1).NE."!"
-     &       .AND.MOW80(1:20).NE."                    "
-     &       .and.mow80(1:6)==trtchar
-     &       .AND.ISECT.EQ.0)THEN
-             MOWCOUNT = MOWCOUNT + 1
-          END IF
-        END DO
-        REWIND(MOWLUN)
+!       MOWLUN=999
+        CALL GETLUN('MOWFILE', MOWLUN)
+        OPEN (UNIT=MOWLUN,FILE=MOWFILE,IOSTAT=ERR,STATUS='OLD')
+        IF (ERR .NE. 0) THEN
+          MOWCOUNT = 0
+          MSG(1)="MOW file is missing. DSSAT-CSM will stop."
+          CALL WARNING(1,ERRKEY,MSG)
+          CALL ERROR(ERRKEY,ERR,MOWFILE,0)
+        ELSE
+          REWIND(MOWLUN)
+          ISECT = 0
+          MOWCOUNT = 0
+          write(trtchar,'(i6)') trtno
+          DO WHILE (ISECT.EQ.0)
+            READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
+            IF (MOW80(1:1).NE."@"
+     &          .AND.MOW80(1:1).NE."!"
+     &          .AND.MOW80(1:20).NE."                    "
+     &          .and.mow80(1:6)==trtchar
+     &          .AND.ISECT.EQ.0)THEN
+              MOWCOUNT = MOWCOUNT + 1
+            END IF
+          END DO
+          REWIND(MOWLUN)
+        ENDIF
 
         IF (MOWCOUNT.GT.0) THEN
           ALLOCATE(TRNO(MOWCOUNT),DATE(MOWCOUNT),MOW(MOWCOUNT))
 !          ALLOCATE(RSPLF(MOWCOUNT),MVS(MOWCOUNT),rsht(mowcount))
         ELSE
+          MSG(1)="MOW file has no data for this treatment."
+          CALL WARNING(1,ERRKEY,MSG)
+          CALL ERROR(ERRKEY,ERR,MOWFILE,0)
           ALLOCATE(MOW(1))
           MOW (1) = -99
           RETURN

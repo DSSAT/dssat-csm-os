@@ -18,6 +18,8 @@ c     Set parameter values:
 
       PARAMETER (MAX_TILLER_COHORTS = 100)
 
+      PARAMETER (MAXCOHORTS = 50)
+
 c     Phenological stages:
 c      INTEGER SEEDCANE, GERMINATED, EMERGED
 
@@ -250,6 +252,10 @@ c         :::::::::::::::::::::::::::::::::::::::::
               REAL     RFA
               REAL     RFB
               REAL     RFC
+c             Daily growth respiration rate (t/ha/d)
+              REAL RESP_G
+c             Daily maintenance respiration rate (t/ha/d)
+              REAL RESP_M
               REAL     ROOTF
               REAL     STKDM
               REAL     STKPFMAX
@@ -337,6 +343,31 @@ c         sure how to handle this (CANEGRO does not handle it).
 c             Root depth
               REAL RTDEP
           END TYPE RatoonCarryOverType
+
+
+c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+c     MJ, May 2012
+c     Define the tiller cohort type.
+c     This composite variable represents a set of shoots.
+c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+      TYPE SHOOT_COHORT
+c        Date of emergence (TT_BASE_EMERGE)
+         REAL EMERGE_TTDATE 
+c        Age of this shoot cohort in Degree Days (Base TT16 ~ TT_Emerge)
+         REAL AGE_TT
+         REAL DTT_POP
+c        The number of shoots this cohort represents (shoots/m)
+         REAL NUMSHOOTS, D_NUMSHOOTS
+c        Change in the number of tillers (if this is a primary cohort)
+c        (whole numbers)
+         REAL D_N_TILLERS
+c        Is this a primary shoot or a tiller cohort?
+         LOGICAL ISPRIMARY
+c        Unique ID for this shoot cohort (in case it's useful!)
+         INTEGER UNIQUE_ID
+      END TYPE SHOOT_COHORT
+c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  
+
 
 c     ==================================================================
       END MODULE CNG_ModuleDefs
@@ -1382,6 +1413,9 @@ c             If a ratoon is specifically selected, then use ratoon
 c             Any other form of planting will be treated as seed(cane) = plant
                   var = 0.
               ENDIF
+
+          CASE ('PLTPOP')
+              var = PLTPOP
       END SELECT
 
       CONTINUE
@@ -1844,3 +1878,84 @@ c          RatCarryOver%RTDEP = WaterBal%RTDEP
       ENDIF
 
       END
+
+
+c     ===============================================================      
+c     A function that calculates change in degree days based on 
+c     mean daily temperature (TMEAN), a base temperature (TBase), 
+c     an optimal temperature (TOpt), 
+c     and a final cutoff temperature (TFinal) above which the
+c     plant stops responding to temperature
+c     DTT |___/\__
+c            °C
+c     MJ, Dec 2012
+      REAL FUNCTION D_TT(TMEAN, TBase, TOpt, TFinal)
+c     ===============================================================      
+      IMPLICIT NONE
+      REAL, INTENT(IN) :: TMEAN, TBase, TOpt, TFinal
+      REAL SLOPE, INTERCEPT
+c     Note: Tbase < TOpt < TFinal
+
+      IF (TMEAN .LE. TBase) THEN
+c       Temperatures less than TBase:
+        D_TT = 0.
+      ELSE IF (TMEAN .LE. TOpt) THEN
+c       Temperatures up to TOpt
+        D_TT = MAX(0., TMEAN - TBase)
+      ELSE IF (TMEAN .LE. TFinal) THEN
+c       Temperatures between TOpt and TFinal
+c       Calculate slope of decrease in D_TT
+        SLOPE = (TOpt - TBase)/(TOpt-TFinal)
+c       and the intercept
+        INTERCEPT = -SLOPE*TFinal
+c       Now calculate the D_TT:
+        D_TT = SLOPE * TMEAN + INTERCEPT
+      ELSE
+        D_TT = 0.
+      ENDIF
+
+      END
+c     =============================================================== 
+
+
+
+c     ===============================================================      
+c     A function that calculates change in degree days based on 
+c     mean daily temperature (TMEAN), a base temperature (TBase), 
+c     an optimal temperature range start (Topt1), an optimal
+c     temperature range end (Topt2),
+c     and a final cutoff temperature (TFinal) above which the
+c     plant stops responding to temperature
+c     DTT |___/--\__
+c            °C
+c     MJ, Dec 2012
+      REAL FUNCTION D_TT4(TMEAN, TBase, TOpt1, Topt2, TFinal)
+c     ===============================================================      
+      IMPLICIT NONE
+      REAL, INTENT(IN) :: TMEAN, TBase, TOpt1, TOpt2, TFinal
+      REAL SLOPE, INTERCEPT
+c     Note: Tbase < TOpt1 < TOpt2 < TFinal
+
+      IF (TMEAN .LE. TBase) THEN
+c       Temperatures less than TBase:
+        D_TT4 = 0.
+      ELSE IF (TMEAN .LE. TOpt1) THEN
+c       Temperatures up to TOpt
+        D_TT4 = MAX(0., TMEAN - TBase)
+      ELSE IF (TMEAN .LE. TOpt2) THEN
+c       Temperatures between TOpt1 and TOpt2
+        D_TT4 = TOpt1 - TBase
+      ELSE IF (TMEAN .LE. TFinal) THEN
+c       Temperatures between TOpt and TFinal
+c       Calculate slope of decrease in D_TT
+        SLOPE = (TOpt1 - TBase)/(TOpt2-TFinal)
+c       and the intercept
+        INTERCEPT = -SLOPE*TFinal
+c       Now calculate the D_TT:
+        D_TT4 = SLOPE * TMEAN + INTERCEPT
+      ELSE
+        D_TT4 = 0.
+      ENDIF
+
+      END
+c     =============================================================== 
