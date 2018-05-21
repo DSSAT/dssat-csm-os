@@ -103,3 +103,7 @@ TEMP.bat                                                              OUTBAT
 WARNING.OUT        Warning messages                                   OUTWARN
 WORK.OUT           CSCER, CSP information output file
 LUN.LST            List of output files generated                     LUNLST
+
+! MJ & SK Climate change summary output file
+CCSUMMRY.OUT    CC Climate change summary output file                 OUTCC
+ETSUMMRY.OUT    ET extended summary output file                       OUTEX
