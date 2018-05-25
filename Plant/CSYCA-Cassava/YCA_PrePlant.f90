@@ -149,7 +149,6 @@
                 PLTPOP = PPOP !LPM 06MAR2016 To have just one name for PPOP
             ENDIF  
             
-            write(*,* ) PLTPOPE,PPOP,PPOE, PLTPOP
             ! Shoot # set equal to plants per hill
             IF (PLPH > 0.0) THEN
                 SHNUM = PLPH
