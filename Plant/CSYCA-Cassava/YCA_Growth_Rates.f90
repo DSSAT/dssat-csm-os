@@ -12,7 +12,8 @@
     
     SUBROUTINE YCA_Growth_Rates ( &
         CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
-        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF  &                                !LPM 26MAR2016 RLV added
+        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF        , & !LPM 26MAR2016 RLV added 
+        SW          , LL          , DUL &   !DA 20ABR2018 SW, LL, DUL added
         )
         USE ModuleDefs
         USE YCA_First_Trans_m
@@ -24,8 +25,11 @@
         
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
         REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
+        REAL    SW(NL)          , LL(NL)          , DUL(NL)
         REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
         REAL    availableCH2O
+        
+        INTEGER LAYER
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      
 
@@ -91,16 +95,28 @@
                 RAW = 0.0
                 TRLV = 0.0
                 DO L = 1, NLAYRROOT
-                    RAW = RAW + (SWP(L)*DLAYRTMP(L)*RLV(L))
+                    !RAW = RAW + (SWP(L)*DLAYRTMP(L)*RLV(L)) ! DA 20APR2018 removed, changing RAW calculation
+                    
                     TRLV = TRLV + (RLV(L)*DLAYRTMP(L))
                 ENDDO
+                
+                
+                
                 IF (EMRGFR >= 1.0) THEN
-                    IF (TRLV > 0.0) THEN
-                        RAW = RAW/(TRLV)
-                    ELSE
-                        !RAW = 0.0 !LPM 11JUL2017 to avoid RAW of 0 with the roots just start to growth at planting
-                        RAW = SWP(LSEED)
-                    ENDIF
+                    
+                   ! IF (TRLV > 0.0) THEN
+                   !     RAW = RAW/(TRLV)
+                   ! ELSE
+                   !    !RAW = 0.0 !LPM 11JUL2017 to avoid RAW of 0 with the roots just start to growth at planting
+                   !     RAW = SWP(LSEED)
+                   ! ENDIF
+                    
+                   LAYER = 10
+                   RAW = (SW(LAYER)- LL(LAYER)) / (DUL(LAYER)-LL(LAYER)) ! DA 20APR2018 added, changing RAW calculation
+                   
+                    write(*,'(I3,4F10.3)') DAP, RAW, SWP(LAYER), LL(LAYER), DUL(LAYER) ! to delete
+                    
+                    
                     !Linear decrease according SWP
                     IF (WFGU-WFGL > 0.0) &
                         WFG = AMAX1(0.0,AMIN1(1.0,(RAW-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
@@ -240,5 +256,6 @@
                     LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TTGEM                                              !LPM 21/02/2015 leaf number curve
                 ENDIF
             ENDIF
+            
     END SUBROUTINE YCA_Growth_Rates
     
