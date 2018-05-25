@@ -114,7 +114,6 @@
                    LAYER = 10
                    RAW = (SW(LAYER)- LL(LAYER)) / (DUL(LAYER)-LL(LAYER)) ! DA 20APR2018 added, changing RAW calculation
                    
-                    write(*,'(I3,4F10.3)') DAP, RAW, SWP(LAYER), LL(LAYER), DUL(LAYER) ! to delete
                     
                     
                     !Linear decrease according SWP
