@@ -61,7 +61,7 @@ c     For canesim canopy:
 
       REAL TBasePop, TBaseLeaf, TBaseEm
 c     For canesim canopy:
-      REAL Tbase
+      REAL TbaseCS
       REAL AVGTEMP
 
 c     Phenological growth stage dates
@@ -72,6 +72,31 @@ c     STGDOY(I) = 'YYYYDDD'
       INTEGER STGDOY(20)
       INTEGER I
 
+
+c     Variables to support ASA 2013-style coefficient reads
+c     and non-linear thermal time accumulation
+c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
+c     D_TT function defined in SC_CNG_MODS
+      REAL D_TT
+c     Array to store daily change in thermal time values for each
+c     of leaves, shoots, emergence, °Cd
+      REAL DTT(3)
+      CHARACTER*20 TP_PRFIX
+c     Set this to one of the PARAMETER values below
+      INTEGER TP_CHOICE 
+c     Trait parameter prefixes for different processes
+      CHARACTER*20 TP_PRFICES(3)
+c     Local storage arrays for trait params
+      REAL, DIMENSION(3) :: TBase, TOpt, TFin
+c     Code constants
+      INTEGER GermEm, LeafApp, Shootpop
+      PARAMETER (GermEm = 1,
+     &           LeafApp  = 2,
+     &           Shootpop = 3)
+      DATA TP_PRFICES/'GE_EM','LFEM','TLREM'/
+
+      
+c         
     
 
 c     ===============================================================
@@ -172,17 +197,73 @@ c             Set defaults:
               TBasePop   = 16.
               TBaseLeaf  = 16.
               TBaseEm    = 10.
-              TBase      = 16.
+              TBaseCS      = 16.
 
 c             Read from file
-              CALL GET_CULTIVAR_COEFF(TBasePop, 'TTBASEPOP', 
-     -                                CONTROL, CF_ERR)
+!              CALL GET_CULTIVAR_COEFF(TBasePop, 'TTBASEPOP', 
+!     -                                CONTROL, CF_ERR)
               CALL GET_CULTIVAR_COEFF(TBaseLeaf, 'TTBASELFEX', 
      -                                CONTROL, CF_ERR)              
               CALL GET_CULTIVAR_COEFF(TBaseEm, 'TTBASEEM', 
      -                                CONTROL, CF_ERR)    
-              CALL GET_CULTIVAR_COEFF(TBase, 'TBase', 
-     -                                CONTROL, CF_ERR)    
+! Removed by MJ, Feb 2018
+!              CALL GET_CULTIVAR_COEFF(TBaseCS, 'TBase', 
+!     -                                CONTROL, CF_ERR)   
+     
+     
+c         New coefficient calls for ASA work:
+c         :::::::::::::::::::::::::::::::::::
+
+c         GERMINATION AND EMERGENCE
+c         :::::::::::::::::::::::::
+          TP_CHOICE = GermEm
+c         Look up prefix 
+          TP_PRFIX = TP_PRFICES(TP_CHOICE)
+c         Read coefficients into array
+c         Tbase_***
+          CALL GET_CULTIVAR_COEFF(TBase(TP_CHOICE), 'TBASE_'//TP_PRFIX,
+     &                                CONTROL, CF_ERR)
+c         TOpt_***
+          CALL GET_CULTIVAR_COEFF(TOpt(TP_CHOICE), 'TOPT_'//TP_PRFIX, 
+     &                                CONTROL, CF_ERR)
+c         TFin_***
+          CALL GET_CULTIVAR_COEFF(TFin(TP_CHOICE), 'TFin_'//TP_PRFIX, 
+     &                                CONTROL, CF_ERR)
+
+
+c         LEAF APPEARANCE
+c         :::::::::::::::::::::::::
+          TP_CHOICE = LeafApp
+c         Look up prefix 
+          TP_PRFIX = TP_PRFICES(TP_CHOICE)
+c         Read coefficients into array
+c         Tbase_***
+          CALL GET_CULTIVAR_COEFF(TBase(TP_CHOICE), 'TBASE_'//TP_PRFIX,
+     &                                CONTROL, CF_ERR)
+c         TOpt_***
+          CALL GET_CULTIVAR_COEFF(TOpt(TP_CHOICE), 'TOPT_'//TP_PRFIX, 
+     &                                CONTROL, CF_ERR)
+c         TFin_***
+          CALL GET_CULTIVAR_COEFF(TFin(TP_CHOICE), 'TFin_'//TP_PRFIX, 
+     &                                CONTROL, CF_ERR)
+
+
+c         SHOOT POPULATION
+c         :::::::::::::::::::::::::
+          TP_CHOICE = Shootpop
+c         Look up prefix 
+          TP_PRFIX = TP_PRFICES(TP_CHOICE)
+c         Read coefficients into array
+c         Tbase_***
+          CALL GET_CULTIVAR_COEFF(TBase(TP_CHOICE), 'TBASE_'//TP_PRFIX,
+     &                                CONTROL, CF_ERR)
+c         TOpt_***
+          CALL GET_CULTIVAR_COEFF(TOpt(TP_CHOICE), 'TOPT_'//TP_PRFIX, 
+     &                                CONTROL, CF_ERR)
+c         TFin_***
+          CALL GET_CULTIVAR_COEFF(TFin(TP_CHOICE), 'TFin_'//TP_PRFIX, 
+     &                                CONTROL, CF_ERR)
+
 
                
               CONTINUE         
@@ -225,21 +306,36 @@ c         :::::::::::::::::::::
 c         Average temperature:
               AVGTEMP = (Climate%TEMPMX + Climate%TEMPMN) / 2.
 c         Heat units:
+
+c         Calculate daily thermal time accumulation (°Cd)
+c         Germination
+          DTT(GermEm) = D_TT(AVGTEMP, TBase(GermEm), TOpt(GermEm), 
+     &      TFin(GermEm))
+c         Leaf appearance
+          DTT(LeafApp) = D_TT(AVGTEMP, TBase(LeafApp), TOpt(LeafApp), 
+     &      TFin(LeafApp))
+c         Shoot population
+          DTT(ShootPop) = D_TT(AVGTEMP, TBase(ShootPop), TOpt(ShootPop),
+     &      TFin(ShootPop))
+
 c         Today's thermal time:
 c             Calculate
 c             heat units for emergence:
-          HUBaseEm   = MAX(0., AVGTEMP - TBaseEm)
+          !HUBaseEm   = MAX(0., AVGTEMP - TBaseEm)
+          HUBaseEm =  DTT(GermEm)
           IF ((CHUBaseEm + HUbaseEm) .GE. TT_EMERG) THEN
               
 c             Calculate heat units for population, canopy,
 c             etc (not emergence), after the plant has emerged
               HU10 = MAX(0., AVGTEMP - 10.)
               HU16 = MAX(0., AVGTEMP - 16.)
-              HUBaseLeaf = MAX(0., AVGTEMP - TBaseLeaf)
-              HUBasePop  = MAX(0., AVGTEMP - TBasePop)   
+              !HUBaseLeaf = MAX(0., AVGTEMP - TBaseLeaf)
+              HUBaseLeaf = DTT(LeafApp)
+              !HUBasePop  = MAX(0., AVGTEMP - TBasePop)   
+              HUBasePop  = DTT(Shootpop)
 
 c             For canesim canopy:
-              HU_CANESIM = MAX(0., AVGTEMP - TBase)
+              HU_CANESIM = MAX(0., AVGTEMP - TBaseCS)
               
 c             Set date of emergence growth stage:
               IF (.NOT.(EMERGED)) THEN
@@ -250,8 +346,9 @@ c                 (tillering comes after emergence)
                   CaneCrop%GROPHASE = 2
               ENDIF
 
-
+c             Changed by MJ, ASA 2013
               Out%HUPI = HUBaseEm
+              ! Out%HUPI = HUBaseLeaf
 
           ENDIF
 
@@ -276,9 +373,11 @@ c     Accumulate heat units:
 c     ::::::::::::::::::::::
           CHU10 = CHU10 + HU10
           CHU16 = CHU16 + HU16
-          CHUBaseLeaf = CHUBaseLeaf + HUBaseLeaf
+
+          ! modified for ASA 2013:
           CHUBaseEm   = CHUBaseEm   + HUBaseEm
           CHUBasePop  = CHUBasePop  + HUBasePop
+          CHUBaseLeaf = CHUBaseLeaf + HUBaseLeaf
 c         For canesim canopy:
           CHU_CANESIM = CHU_CANESIM + HU_CANESIM
 

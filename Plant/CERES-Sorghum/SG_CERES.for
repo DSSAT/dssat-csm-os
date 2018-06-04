@@ -1,6 +1,6 @@
 C=======================================================================
 C  COPYRIGHT 1998-2014 DSSAT Foundation
-C                      University of Florida, Gainesville, Florida                   
+C                      University of Florida, Gainesville, Florida
 C                      International Fertilizer Development Center
 C                      USDA-ARS-ALARC, Phoenix, AZ
 C                      Washington State University
@@ -10,12 +10,12 @@ C======================================================================
 C  Main CERES-Sorghum CSM Routine
 C
 C  This subroutine coordinates calling of SG_GROSUB, SG_PHENOL
-C  and SG_ROOTGR. It was rewritten based on the Generic Ceres v3.5 
-C  source code distributed with DSSAT v3.5. 
+C  and SG_ROOTGR. It was rewritten based on the Generic Ceres v3.5
+C  source code distributed with DSSAT v3.5.
 C----------------------------------------------------------------------
 C  Revision history
 C
-C  07/15/2002 WDB Written 
+C  07/15/2002 WDB Written
 C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  08/12/2003 CHP Added I/O error checking
@@ -29,6 +29,7 @@ C  12/12/2010 GH  Moved STPC and RTPC to Ecotype file
 C  05/19/2011 GH  Reorganized cultivar coefficients
 C  08/26/2011 GH  Add new tillering coefficient in Ecotype file
 C  05/31/2007 GH Added P-model (unfinished)
+C  02/07/2018 MA Externalized initial leaf area A
 C----------------------------------------------------------------------
 C
 C  Called : Alt_Plant
@@ -36,7 +37,7 @@ C
 C  Calls  : SG_GROSUB, SG_PHENOL, SG_ROOTS
 C----------------------------------------------------------------------
 
-      SUBROUTINE SG_CERES (CONTROL, ISWITCH, 
+      SUBROUTINE SG_CERES (CONTROL, ISWITCH,
      &     CO2, DAYL, EOP, HARVFRAC, NH4, NO3,                  !Input
      &     SNOW, SOILPROP, SPi_AVAIL, SRAD, SW, TMAX, TMIN,     !Input
      &     TRWUP, TWILEN, YREND, YRPLT,                         !Input
@@ -49,194 +50,197 @@ C----------------------------------------------------------------------
       IMPLICIT NONE
       SAVE
 
-      REAL            AGEFAC   
-      REAL            APTNUP       
+      REAL            AGEFAC
+      REAL            APTNUP
       REAL            BIOMAS
-      CHARACTER*1     BLANK  
+      CHARACTER*1     BLANK
       PARAMETER (BLANK=' ')
       REAL            BWAH
       CHARACTER*255   C255
-      REAL            CANHT        
-      REAL            CANNAA    
-      REAL            CANWAA   
-      REAL            CANWH   
-      REAL            CARBO      
-      REAL            CNSD1    
-      REAL            CNSD2    
-      REAL            CO2      
-      REAL            CO2X(10)  
+      REAL            CANHT
+      REAL            CANNAA
+      REAL            CANWAA
+      REAL            CANWH
+      REAL            CARBO
+      REAL            CNSD1
+      REAL            CNSD2
+      REAL            CO2
+      REAL            CO2X(10)
       REAL            CO2Y(10)
-      CHARACTER*2     CROP   
-      INTEGER         CTYPE    
-      REAL            CUMDEP      
-      REAL            CUMDTT    
-      REAL            CUMPH   
-      REAL            DAYL   
-      REAL            DEPMAX     
+      CHARACTER*2     CROP
+      INTEGER         CTYPE
+      REAL            CUMDEP
+      REAL            CUMDTT
+      REAL            CUMPH
+      REAL            DAYL
+      REAL            DEPMAX
       REAL            DGET
 C-GH  REAL            DJTI
       REAL            P2, PANTH, PFLOWR
-      REAL            DLAYR(NL) 
-      REAL            DM         
-      INTEGER         DOY 
-      REAL            DS(NL)     
+      REAL            DLAYR(NL)
+      REAL            DM
+      INTEGER         DOY
+      REAL            DS(NL)
       REAL            DSGT
-      REAL            DTT      
-      REAL            DUL(NL)    
-      INTEGER         DYNAMIC     
-      REAL            EARWT 
+      REAL            DTT
+      REAL            DUL(NL)
+      INTEGER         DYNAMIC
+      REAL            EARWT
       CHARACTER*16    ECONAM
-      CHARACTER*6     ECOTYP     
-      REAL            EOP           
+      CHARACTER*6     ECOTYP
+      REAL            EOP
       CHARACTER*6     ERRKEY
-      INTEGER         ERRNUM    
-      REAL            ESW(NL)       
-      CHARACTER*12    FILEC   
+      INTEGER         ERRNUM
+      REAL            ESW(NL)
+      CHARACTER*12    FILEC
       CHARACTER*92    FILEGC
-      CHARACTER*30    FILEIO     
-      INTEGER         FOUND 
-      INTEGER         FROP    
-      REAL            G2       
-      REAL            GDDE         
-      REAL            GNUP      
-      REAL            GPP    
-      REAL            GPSM     
-      REAL            GRNWT     
-      REAL            GRAINN   
-      REAL            GRORT    
-      INTEGER         YREND 
+      CHARACTER*30    FILEIO
+      INTEGER         FOUND
+      INTEGER         FROP
+      REAL            G2
+      REAL            GDDE
+      REAL            GNUP
+      REAL            GPP
+      REAL            GPSM
+      REAL            GRNWT
+      REAL            GRAINN
+      REAL            GRORT
+      INTEGER         YREND
       REAL            HARVFRAC(2)
-      REAL            HI               
-      REAL            HIP            
-      INTEGER         I          
-      INTEGER         ICSDUR 
-      CHARACTER*1     IDETO 
-      CHARACTER*1     IPLTI     
-      INTEGER         ISDATE        
-      INTEGER         ISTAGE  
+      REAL            HI
+      REAL            HIP
+      INTEGER         I
+      INTEGER         ICSDUR
+      CHARACTER*1     IDETO
+      CHARACTER*1     IPLTI
+      INTEGER         ISDATE
+      INTEGER         ISTAGE
       CHARACTER*1     ISWWAT
-      CHARACTER*1     ISWNIT  
+      CHARACTER*1     ISWNIT
       CHARACTER*1     ISWDIS
       REAL            KCAN
       REAL            KEP
       REAL            KG2PPM(NL)
-      REAL            LAI         
-      INTEGER         LEAFNO 
-      CHARACTER*1     IDETS              
-      REAL            LFWT      
-      REAL            LL(NL)    
-      INTEGER         LINC    
-      INTEGER         LNUM    
-      INTEGER         LUNECO   
-      INTEGER         LUNIO  
-      REAL            MAXLAI     
-      INTEGER         MDATE 
- 
-      REAL            NH4(NL)    
-      INTEGER         NLAYR  
-      REAL            NO3(NL)  
-      INTEGER         NOUTDO  
-      REAL            NSTRES     
-      REAL            P1                
-      REAL            P5          
+      REAL            LAI
+      INTEGER         LEAFNO
+      CHARACTER*1     IDETS
+      REAL            LFWT
+      REAL            LL(NL)
+      INTEGER         LINC
+      INTEGER         LNUM
+      INTEGER         LUNECO
+      INTEGER         LUNIO
+      REAL            MAXLAI
+      INTEGER         MDATE
+
+      REAL            NH4(NL)
+      INTEGER         NLAYR
+      REAL            NO3(NL)
+      INTEGER         NOUTDO
+      REAL            NSTRES
+      REAL            P1
+      REAL            P5
       CHARACTER*80    PATHCR
       INTEGER         PATHL
-      REAL            PCNGRN   
-      REAL            PCNVEG     
-      REAL            PCNL      
-      REAL            PCNST     
-      REAL            PCNRT   
-      REAL            PDWI     
-      REAL            PGRORT  
-      REAL            PHINT    
-      REAL            PLA     
-      REAL            PLAG    
-      REAL            PODNO      
-      REAL            PODWT   
-      REAL            PORMIN  
-      REAL            PLTPOP    
-      REAL            PTF        
-      REAL            RCNP        
-      REAL            RLV(NL)   
-      REAL            RLWR      
-      CHARACTER*1     RNMODE   
-      REAL            ROOTN       
-      REAL            ROPT     
-      REAL            ROWSPC     
-      INTEGER         RSTAGE   
-      REAL            RTDEP             
-      REAL            RTWT     
-      REAL            RTWTO     
+      REAL            PCNGRN
+      REAL            PCNVEG
+      REAL            PCNL
+      REAL            PCNST
+      REAL            PCNRT
+      REAL            PDWI
+      REAL            PGRORT
+      REAL            PHINT
+      REAL            PLA
+      REAL            PLAG
+      REAL            PODNO
+      REAL            PODWT
+      REAL            PORMIN
+      REAL            PLTPOP
+      REAL            PTF
+      REAL            RCNP
+      REAL            RLV(NL)
+      REAL            RLWR
+      CHARACTER*1     RNMODE
+      REAL            ROOTN
+      REAL            ROPT
+      REAL            ROWSPC
+      INTEGER         RSTAGE
+      REAL            RTDEP
+      REAL            RTWT
+      REAL            RTWTO
       REAL            RUE
-      INTEGER         RUN  
-      REAL            RWUEP1   
-      REAL            RWUMX   
-      REAL            SAT(NL)  
-      REAL            SATFAC    
-      REAL            SDEPTH    
-      REAL            SDSIZE       
-      REAL            SDWT 
+      INTEGER         RUN
+      REAL            RWUEP1
+      REAL            RWUMX
+      REAL            SAT(NL)
+      REAL            SATFAC
+      REAL            SDEPTH
+      REAL            SDSIZE
+      REAL            SDWT
       REAL            SDWTAH
       CHARACTER*6     SECTION
-      REAL            SEEDNO   
-      REAL            SENLA    
+      REAL            SEEDNO
+      REAL            SENLA
       CHARACTER*10    SGSTGNAM(20)
-      REAL            SHELPC    
-      REAL            SHF(NL)  
-      REAL            SI1(6)     
-      REAL            SI3(6)   
-      REAL            SKERWT    
-      REAL            SLA      
-      REAL            SNOW          
-      REAL            SRAD     
-      REAL            STOVER    
-      REAL            STOVN      
-      REAL            STOVWT  
-      INTEGER         STGDOY(20)   
-      CHARACTER*10    STNAME(20)      
-      REAL            STMWT     
-      REAL            STMWTO       
-      REAL            SUMDTT            
-      REAL            SW(NL)     
+      REAL            SHELPC
+      REAL            SHF(NL)
+      REAL            SI1(6)
+      REAL            SI3(6)
+      REAL            SKERWT
+      REAL            SLA
+      REAL            SLA1
+      REAL            SLA2
+      REAL            SLA3
+      REAL            SNOW
+      REAL            SRAD
+      REAL            STOVER
+      REAL            STOVN
+      REAL            STOVWT
+      INTEGER         STGDOY(20)
+      CHARACTER*10    STNAME(20)
+      REAL            STMWT
+      REAL            STMWTO
+      REAL            SUMDTT
+      REAL            SW(NL)
       REAL            SWCG
-      REAL            SWFAC    
-      REAL            TANC    
-      REAL            TBASE   
-      REAL            TLNO 
-      REAL            TMIN    
-      REAL            TMAX   
-      REAL            TOPT      
-      REAL            TOPWT      
-      REAL            TOTNUP  
-      REAL            TRNU    
-      REAL            TRWUP     
-      REAL            TURFAC 
+      REAL            SWFAC
+      REAL            TANC
+      REAL            TBASE
+      REAL            TLNO
+      REAL            TMIN
+      REAL            TMAX
+      REAL            TOPT
+      REAL            TOPWT
+      REAL            TOTNUP
+      REAL            TRNU
+      REAL            TRWUP
+      REAL            TURFAC
       REAL            TWILEN
-      REAL            UNH4(NL)      
-      REAL            UNO3(NL)    
-      REAL            VSTAGE   
-      REAL            VMNC      
-      REAL            WTCO    
-      REAL            WTLF    
-      REAL            WTLO   
-      REAL            WTSO     
-      REAL            WTNCAN      
-      REAL            WTNVEG     
-      REAL            WTNLF 
-      REAL            WTNSD 
-      REAL            WTNST    
-      REAL            WTNUP   
-      REAL            XHLAI     
-      REAL            XGNP      
-      REAL            XLAI            
-      REAL            XN        
-      REAL            XNTI     
-      REAL            XSTAGE   
-      INTEGER         YR   
-      REAL            YIELD    
-      INTEGER         YRDOY    
-      INTEGER         YRPLT 
-      INTEGER         YRSIM    
+      REAL            UNH4(NL)
+      REAL            UNO3(NL)
+      REAL            VSTAGE
+      REAL            VMNC
+      REAL            WTCO
+      REAL            WTLF
+      REAL            WTLO
+      REAL            WTSO
+      REAL            WTNCAN
+      REAL            WTNVEG
+      REAL            WTNLF
+      REAL            WTNSD
+      REAL            WTNST
+      REAL            WTNUP
+      REAL            XHLAI
+      REAL            XGNP
+      REAL            XLAI
+      REAL            XN
+      REAL            XNTI
+      REAL            XSTAGE
+      INTEGER         YR
+      REAL            YIELD
+      INTEGER         YRDOY
+      INTEGER         YRPLT
+      INTEGER         YRSIM
 
       REAL    AREALF,CLW,CSW,LAGSD,LNGPEG
       REAL    SLDOT,SSDOT,WLFDOT
@@ -315,7 +319,7 @@ C------------------------------------------------------------------------
       REAL VANC
 !     REAL WSTR1
 C-----------------------------------------------------------------------
-C  VARIABLES NEEDED IN SG_GROSUB 
+C  VARIABLES NEEDED IN SG_GROSUB
 C-----------------------------------------------------------------------
       REAL LAT
       REAL NDEF3
@@ -331,7 +335,7 @@ C-----------------------------------------------------------------------
 
       CHARACTER*80    C80
       CHARACTER*6     ECONO
-      INTEGER         ERR 
+      INTEGER         ERR
       PARAMETER       (ERRKEY='SG_CERES')
       CHARACTER*12    FILES
       CHARACTER*12    FILEE
@@ -355,12 +359,12 @@ C-----------------------------------------------------------------------
 
 !     P, K variables
       CHARACTER*1 ISWPHO
-      REAL PUptake(NL), SPi_AVAIL(NL), FracRts(NL)       
+      REAL PUptake(NL), SPi_AVAIL(NL), FracRts(NL)
       REAL PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
       REAL SeedFrac, VegFrac, PSTRES1, PSTRES2
       REAL KSTRES
 
-      REAL STPC,RTPC
+      REAL STPC,RTPC,A
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -369,8 +373,8 @@ C-----------------------------------------------------------------------
       TYPE (SwitchType)  ISWITCH
       Type (ResidueType) HARVRES
       Type (ResidueType) SENESCE
-      
-C      PARAMETER       (ERRKEY='MAIZE') 
+
+C      PARAMETER       (ERRKEY='MAIZE')
 
 !     Transfer values from constructed data types into local variables.
       DYNAMIC = CONTROL % DYNAMIC
@@ -382,14 +386,14 @@ C      PARAMETER       (ERRKEY='MAIZE')
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
 
-      DLAYR  = SOILPROP % DLAYR  
-      DS     = SOILPROP % DS     
-      DUL    = SOILPROP % DUL    
+      DLAYR  = SOILPROP % DLAYR
+      DS     = SOILPROP % DS
+      DUL    = SOILPROP % DUL
       KG2PPM = SOILPROP % KG2PPM
-      LL     = SOILPROP % LL     
-      NLAYR  = SOILPROP % NLAYR 
-      SLPF   = SOILPROP % SLPF 
-      SAT    = SOILPROP % SAT    
+      LL     = SOILPROP % LL
+      NLAYR  = SOILPROP % NLAYR
+      SLPF   = SOILPROP % SLPF
+      SAT    = SOILPROP % SAT
       SHF    = SOILPROP % WR
 
       ISWWAT = ISWITCH % ISWWAT
@@ -421,7 +425,7 @@ C      PARAMETER       (ERRKEY='MAIZE')
      &  '          ',   !18
      &  '          ',   !19
      &  'Harvest   '/   !20
- 
+
 
 C----------------------------------------------------------------------
 C
@@ -438,21 +442,21 @@ C
 C----------------------------------------------------------------------
 
       IF(DYNAMIC.EQ.RUNINIT) THEN
-          !Define names for growth stages for screen output in CROPGRO. 
+          !Define names for growth stages for screen output in CROPGRO.
           !Not used anywhere else in CERES
           DO I = 1, 20
               STNAME(I) = '          '
-              STNAME(I) = SGSTGNAM (I)    
+              STNAME(I) = SGSTGNAM (I)
           END DO
-          
+
           STGDOY(14) = YRSIM
 
           CALL GETLUN('OUTO', NOUTDO)
           CALL GETLUN('FILEIO', LUNIO)
-          
-          
+
+
 ! MA/KD (19dec2013) change to read input files before we do anything
-          
+
       !--------------------------------------------------------------
       !                   READ INPUT FILES
       !--------------------------------------------------------------
@@ -461,7 +465,7 @@ C----------------------------------------------------------------------
           !     Read input file name (ie. DSSAT47.INP) and path
           !----------------------------------------------------------
           CALL GETLUN('FILEIO', LUNIO)
-          OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)  
+          OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
 
           READ(LUNIO,50,IOSTAT=ERR) FILES, PATHSR; LNUM = 7
@@ -499,10 +503,10 @@ C----------------------------------------------------------------------
               READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
      &               P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
 C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
- 1800         FORMAT (A6,1X,A16,1X,A6,1X,11F6.0)    
+ 1800         FORMAT (A6,1X,A16,1X,A6,1X,11F6.0)
 
 C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
-C-GH 1800         FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)    
+C-GH 1800         FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)
 
 c             READ (LUNIO,'(F6.2)',IOSTAT=ERR) PHINT
 c             LNUM = LNUM + 1
@@ -521,7 +525,7 @@ c             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
 C         ***********************************************************
 C         ***********************************************************
-C 
+C
 C                             READ SPECIES FILE
 C
 C         ***********************************************************
@@ -600,7 +604,7 @@ C         ***********************************************************
                READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFP
                IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
              ENDIF
- 
+
           ENDIF
           REWIND(LUNCRP)
 
@@ -623,7 +627,7 @@ C         ***********************************************************
              CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
              READ(C80,'(8X,F6.3)',IOSTAT=ERR) SWCG
              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-          ENDIF    
+          ENDIF
           REWIND(LUNCRP)
 
           !----------------------------------------------------------
@@ -651,6 +655,33 @@ C         ***********************************************************
              IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
           ENDIF
 
+
+        !----------------------------------------------------------
+
+          !        Find and Read leaf parameters
+
+          !----------------------------------------------------------
+
+          SECTION = '*LEAF '
+
+          CALL FIND(LUNCRP, SECTION, LNUM, FOUND)
+          IF (FOUND .EQ. 0) THEN
+             CALL ERROR(SECTION, 42, FILECC, LNUM)
+          ELSE
+
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA1
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA2
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+
+             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+             READ(C80,'(9X,F6.3)',IOSTAT=ERR) SLA3
+             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
+          ENDIF
+
 C-GH      !----------------------------------------------------------
 C         !        Find and Read Partitioning parameters
 C         !----------------------------------------------------------
@@ -667,12 +698,12 @@ C        CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
 C            READ(C80,'(9X,F6.3)',IOSTAT=ERR) RTPC
 C            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 C-GH      ENDIF
-      
+
           CLOSE (LUNCRP)
 
 C         ***********************************************************
 C         ***********************************************************
-C 
+C
 C                             READ ECOTYPE FILE
 C
 C         ***********************************************************
@@ -697,19 +728,19 @@ C         ***********************************************************
         LNUM = 0
 
         DO WHILE (ECOTYP .NE. ECONO)
-  
+
           CALL IGNORE(LUNECO, LNUM, ISECT, C255)
           IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
      &          C255(1:1) .NE. '*') THEN
              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
-     &            ROPT,GDDE,RUE,KCAN,STPC,RTPC,TILFAC
-C-GH &            ROPT,GDDE,RUE,KCAN     
+     &            ROPT,GDDE,RUE,KCAN,STPC,RTPC,TILFAC,A
+C-GH &            ROPT,GDDE,RUE,KCAN
 C-gh &            ROPT,DJTI,GDDE,RUE,KCAN
 
 c             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
 c     &            ROPT,DJTI,GDDE,RUE,KCAN,P3,P4
 
- 3100         FORMAT (A6,1X,A16,1X,9(1X,F5.0))
+ 3100         FORMAT (A6,1X,A16,1X,10(1X,F5.0))
 C-GH3100         FORMAT (A6,1X,A16,1X,8(1X,F5.0))
 c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
@@ -718,75 +749,76 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
           ENDIF
         ENDDO
         CLOSE (LUNECO)
-        
-        
+
+
 
           !------------------------------------------------------------
           !        Call Phenology routine
           !------------------------------------------------------------
           CALL SG_PHENOL (DYNAMIC,
      &      APTNUP,BIOMAS,BIOMS2,CSD1, CSD2,
-     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, 
+     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT,
      &      EMAT, G1, G2, GDDE, GNUP, GPP, GPSM, GRAINN, GRNWT, ICSDUR,
      &      IDETO, IDUR1, IPRINT, ISDATE, ISTAGE, ISWNIT, ISWWAT,
-     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
+     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR,
      &      P1, P2O, P2R, P3, P4, P5, P9, PANTH, PANWT, PGRNWT, PHINT,
-     &      PBASE, PSAT, PFLOWR, 
+     &      PBASE, PSAT, PFLOWR,
      &      PLTPOP, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
-     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
-     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
-     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
+     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN,
+     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN,
+     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,
      &      AGEFAC, BIOMS1, CUMDTT, CUMPH, GROLF,
-     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM, 
-     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF, 
-     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
-     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
+     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM,
+     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF,
+     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC,
+     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN,
      &      STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
      &      TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
-     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
-     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
+     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
+     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)                                 
+     &      SeedFrac, VegFrac)
 
           CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2, SLA3,
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE,
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,A,
      &      FILECC,
-     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,
      &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
      &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
      &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
      &      STMWTO, WTLF, FSLFP)
 
-         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+         !Output routines, MZ_OPGROW and MZ_OPNIT are used for
          !  maize, sorghum and millet.
-          CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
-     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+          CALL MZ_OPGROW(CONTROL, ISWITCH,
+     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES,
+     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE,
+     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA,
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,
      &    WTSO, XLAI, YRPLT)
 
           CALL MZ_OPNIT(CONTROL, ISWITCH,     !Yes, MZ is correct!
      &    YRPLT, MDATE, NLAYR, SENESCE,
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
-       
 
-          CALL SG_OPHARV(CONTROL, 
+
+          CALL SG_OPHARV(CONTROL,
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, GNUP,   !Input
      &    GPP, GPSM, HARVFRAC, IDETO, IDETS, IPLTI,       !Input
      &    ISDATE, ISTAGE, MAXLAI, MDATE, NSTRES, PODWT,   !Input
@@ -796,7 +828,7 @@ c 3100         FORMAT (A6,1X,A16,1X,7(1X,F5.1),2(1X,F5.0))
      &    BWAH, SDWTAH)                                   !Output
 
           !IF (ISWDIS.EQ.'Y') THEN
-             CALL PEST(CONTROL, ISWITCH, 
+             CALL PEST(CONTROL, ISWITCH,
      &       AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
      &       PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
      &       SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
@@ -820,7 +852,7 @@ C--------------------------------------------------------------------
          EARWT  = 0.0
 
 !        CHP 5/18/2011
-         MDATE      = -99      
+         MDATE      = -99
 
 !        Temporary -- until P is integrated with this crop module
          PConc_Shut = 0.0
@@ -839,7 +871,7 @@ C--------------------------------------------------------------------
 !          !     Read input file name (ie. DSSAT47.INP) and path
 !          !----------------------------------------------------------
 !          CALL GETLUN('FILEIO', LUNIO)
-!          OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)  
+!          OPEN (LUNIO, FILE = FILEIO,STATUS = 'OLD',IOSTAT=ERR)
 !          IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,0)
 !
 !          READ(LUNIO,50,IOSTAT=ERR) FILES, PATHSR; LNUM = 7
@@ -877,10 +909,10 @@ C--------------------------------------------------------------------
 !              READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
 !     &               P1,P2,P2O,P2R,PANTH,P3,P4,P5,PHINT,G1,G2
 !C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4,P2,PANTH
-! 1800         FORMAT (A6,1X,A16,1X,A6,1X,11F6.0)    
+! 1800         FORMAT (A6,1X,A16,1X,A6,1X,11F6.0)
 !
 !C-GH &               P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
-!C-GH 1800         FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)    
+!C-GH 1800         FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)
 !
 !c             READ (LUNIO,'(F6.2)',IOSTAT=ERR) PHINT
 !c             LNUM = LNUM + 1
@@ -899,7 +931,7 @@ C--------------------------------------------------------------------
 !
 !C         ***********************************************************
 !C         ***********************************************************
-!C 
+!C
 !C                             READ SPECIES FILE
 !C
 !C         ***********************************************************
@@ -978,7 +1010,7 @@ C--------------------------------------------------------------------
 !               READ(C80,'(9X,F6.3)',IOSTAT=ERR) FSLFP
 !               IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 !             ENDIF
-! 
+!
 !          ENDIF
 !          REWIND(LUNCRP)
 !
@@ -1001,7 +1033,7 @@ C--------------------------------------------------------------------
 !             CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
 !             READ(C80,'(8X,F6.3)',IOSTAT=ERR) SWCG
 !             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-!          ENDIF    
+!          ENDIF
 !          REWIND(LUNCRP)
 !
 !          !----------------------------------------------------------
@@ -1045,12 +1077,12 @@ C--------------------------------------------------------------------
 !C            READ(C80,'(9X,F6.3)',IOSTAT=ERR) RTPC
 !C            IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
 !C-GH      ENDIF
-!      
+!
 !          CLOSE (LUNCRP)
 !
 !C         ***********************************************************
 !C         ***********************************************************
-!C 
+!C
 !C                             READ ECOTYPE FILE
 !C
 !C         ***********************************************************
@@ -1075,13 +1107,13 @@ C--------------------------------------------------------------------
 !        LNUM = 0
 !
 !        DO WHILE (ECOTYP .NE. ECONO)
-!  
+!
 !          CALL IGNORE(LUNECO, LNUM, ISECT, C255)
 !          IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
 !     &          C255(1:1) .NE. '*') THEN
 !             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
 !     &            ROPT,GDDE,RUE,KCAN,STPC,RTPC,TILFAC
-!C-GH &            ROPT,GDDE,RUE,KCAN     
+!C-GH &            ROPT,GDDE,RUE,KCAN
 !C-gh &            ROPT,DJTI,GDDE,RUE,KCAN
 !
 !c             READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
@@ -1100,13 +1132,13 @@ C--------------------------------------------------------------------
         KEP = KCAN/(1-0.07)*(1-0.25)
 
 
-     
+
 
       !---------------------------------------------------------------
       !   Subroutine IPPARM reads FILEP, the PEST progress file.
       !---------------------------------------------------------------
           IF (ISWDIS.EQ.'Y') THEN
-          CALL PEST(CONTROL, ISWITCH, 
+          CALL PEST(CONTROL, ISWITCH,
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
      &    PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
      &    SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
@@ -1115,12 +1147,12 @@ C--------------------------------------------------------------------
      &    ASMDOT, DISLA, NPLTD, PPLTD,                    !Output
      &    SDDES, WLIDOT, WRIDOT, WSIDOT,SDWT)             !Output
           ENDIF
-      
+
           DO I = 1, 20
               STNAME(I) = '          '
-              STNAME(I) = SGSTGNAM (I)    
+              STNAME(I) = SGSTGNAM (I)
           END DO
-          
+
           DO I=1,NLAYR
           ESW(I) = DUL(I) - LL(I)
           END DO
@@ -1130,62 +1162,63 @@ C--------------------------------------------------------------------
       !--------------------------------------------------------------
       !             Initialize Variables
       !--------------------------------------------------------------
-          CTYPE = 1 
+          CTYPE = 1
 
           CALL SG_PHENOL (DYNAMIC,
      &      APTNUP,BIOMAS,BIOMS2,CSD1, CSD2,
-     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, 
+     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT,
      &      EMAT, G1, G2, GDDE, GNUP, GPP, GPSM, GRAINN, GRNWT, ICSDUR,
      &      IDETO, IDUR1, IPRINT, ISDATE, ISTAGE, ISWNIT, ISWWAT,
-     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
+     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR,
      &      P1, P2O, P2R, P3, P4, P5, P9, PANTH, PANWT, PGRNWT, PHINT,
-     &      PBASE, PSAT, PFLOWR, 
+     &      PBASE, PSAT, PFLOWR,
      &      PLTPOP, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
-     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
-     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
-     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
+     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN,
+     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN,
+     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,
      &      AGEFAC, BIOMS1, CUMDTT, CUMPH, GROLF,
-     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM, 
-     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF, 
-     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
-     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
+     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM,
+     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF,
+     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC,
+     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN,
      &      STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
      &      TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
-     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
-     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
+     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
+     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)         
-          
+     &      SeedFrac, VegFrac)
+
              CALL SG_GROSUB (DYNAMIC, STGDOY, YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2,SLA3,
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE,
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,A,
      &      FILECC,
-     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,
      &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
      &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
      &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
      &      STMWTO, WTLF, FSLFP)
 
-         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+         !Output routines, MZ_OPGROW and MZ_OPNIT are used for
          !  maize, sorghum and millet.
-          CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
-     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+          CALL MZ_OPGROW(CONTROL, ISWITCH,
+     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES,
+     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE,
+     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA,
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,
      &    WTSO, XLAI, YRPLT)
 
           CALL MZ_OPNIT(CONTROL, ISWITCH,     !Yes, MZ is correct!
@@ -1194,7 +1227,7 @@ C--------------------------------------------------------------------
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
 
 
-          CALL SG_OPHARV(CONTROL, 
+          CALL SG_OPHARV(CONTROL,
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, GNUP,   !Input
      &    GPP, GPSM, HARVFRAC, IDETO, IDETS, IPLTI,       !Input
      &    ISDATE, ISTAGE, MAXLAI, MDATE, NSTRES, PODWT,   !Input
@@ -1215,7 +1248,7 @@ C----------------------------------------------------------------------
 
 
         IF (ISWDIS.EQ.'Y') THEN
-          CALL PEST(CONTROL, ISWITCH, 
+          CALL PEST(CONTROL, ISWITCH,
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
      &    PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
      &    SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
@@ -1235,7 +1268,7 @@ C----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.INTEGR) THEN
 
         IF (ISWDIS.EQ.'Y') THEN
-          CALL PEST(CONTROL, ISWITCH, 
+          CALL PEST(CONTROL, ISWITCH,
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
      &    PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
      &    SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
@@ -1248,34 +1281,34 @@ C----------------------------------------------------------------------
           !------------------------------------------------------------
           !        Call SG_PHENOL
           !------------------------------------------------------------
-        IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN               
+        IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN
           IF (CROP .NE. 'FA') THEN
 
           IF(YRDOY.EQ.YRPLT) ISTAGE = 7
 
           CALL SG_PHENOL (DYNAMIC,
      &      APTNUP,BIOMAS,BIOMS2,CSD1, CSD2,
-     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT, 
+     &      CNSD1, CNSD2, CTYPE, CUMDEP, DLAYR, DTT,
      &      EMAT, G1, G2, GDDE, GNUP, GPP, GPSM, GRAINN, GRNWT, ICSDUR,
      &      IDETO, IDUR1, IPRINT, ISDATE, ISTAGE, ISWNIT, ISWWAT,
-     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR, 
+     &      LAI, LEAFNO, LL, MAXLAI, MDATE, NOUTDO, NLAYR,
      &      P1, P2O, P2R, P3, P4, P5, P9, PANTH, PANWT, PGRNWT, PHINT,
-     &      PBASE, PSAT, PFLOWR, 
+     &      PBASE, PSAT, PFLOWR,
      &      PLTPOP, ROPT, RTDEP, SDEPTH, SI1, SI2, SI3,
-     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN, 
-     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN, 
-     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,  
+     &      SI4, SIND, SKERWT, SNOW, SRAD, STGDOY,STMWT, STOVER, STOVN,
+     &      SUMDTT, SW, TANC, TBASE, TEMPCR, TMAX, TMIN,
+     &      TOPT,TOTNUP, TPSM, YIELD, YRDOY,XGNP, XSTAGE,
      &      AGEFAC, BIOMS1, CUMDTT, CUMPH, GROLF,
-     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM, 
-     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF, 
-     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC, 
-     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN, 
+     &      GRORT, GROSTM, LFWT, LWMIN, MGROLF, MGROPAN, MGROSTM,
+     &      MLFWT, MPANWT, MSTMWT, NSTRES, PAF,
+     &      PGC, PLA, PLAN, PLAO, PLATO, PLAY, PLAMX, PTF, RANC,
+     &      RLV, ROOTN, RTWT, RWU, SEEDRV, SENLA, SLAN,
      &      STOVWT, SUMRTR, SWMAX, SWMIN, TCARBO, TCNP, TDUR, TGROLF,
      &      TGROPAN, TGROSTM, TILN, TLFWT, TLNO, TMNC,
-     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,  
-     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2, 
+     &      TPANWT, TSIZE, TSTMWT, VANC, VMNC,
+     &      XNTI,SWFAC,TURFAC,DGET,SWCG,P2,
      &      DAYL, TWILEN, CANWAA, CANNAA,CUMP4,
-     &      SeedFrac, VegFrac)                                 
+     &      SeedFrac, VegFrac)
 
           ENDIF
         ENDIF
@@ -1283,26 +1316,27 @@ C----------------------------------------------------------------------
           !------------------------------------------------------------
           !Call SG_GROSUB
           !------------------------------------------------------------
-          IF (ISTAGE .LT. 6) THEN 
- 
+          IF (ISTAGE .LT. 6) THEN
+
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2,SLA3,
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE,
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,A,
      &      FILECC,
-     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,
      &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
      &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
      &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
@@ -1320,7 +1354,7 @@ C----------------------------------------------------------------------
           DEPMAX = DS(NLAYR)
           CALL SG_ROOTGR (
      &      CUMDEP, CUMDTT, DEPMAX, DLAYR, DTT,
-     &      ESW, GRORT, ISWNIT, LL, NH4, NLAYR, NO3, 
+     &      ESW, GRORT, ISWNIT, LL, NH4, NLAYR, NO3,
      &      PLTPOP, PORMIN,RLV, RLWR, RTDEP, SAT,SHF, SW, SWFAC)
 
           ENDIF
@@ -1328,7 +1362,7 @@ C----------------------------------------------------------------------
 C----------------------------------------------------------------------
 C ---------------------------------------------------------------------
 C
-C                         DYNAMIC = OUTPUT 
+C                         DYNAMIC = OUTPUT
 C
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
@@ -1339,7 +1373,7 @@ C----------------------------------------------------------------------
 
 !        IF (YRDOY .GE. YRPLT) THEN
 !
-!        ENDIF   
+!        ENDIF
 
       !--------------------------------------------------------------
       !      Compute Biomass variables needed for output routines
@@ -1360,7 +1394,7 @@ C----------------------------------------------------------------------
           STMWTO = STMWT * PLTPOP !g/m2
           RTWTO = RTWT*PLTPOP     !g/m2
 
-!     CHP 02/04/2005 
+!     CHP 02/04/2005
 !          PODWT = EARWT * PLTPOP  !g/m2
           PODWT = PANWT * PLTPOP  !g/m2
 
@@ -1386,7 +1420,7 @@ c Original 10/1/03          SDWT = PANWT*PLTPOP     !g/m2
           XLAI = LAI
           XHLAI = LAI
           SHELPC = 0.0
-         
+
           IF(SEEDNO.GT.0) THEN
              SDSIZE = SDWT/SEEDNO*1000
           ELSE
@@ -1433,7 +1467,7 @@ c         WTNRT = ROOTN * PLTPOP
           ELSE
              PCNVEG = 0.0
           ENDIF
-      
+
          WTNUP = WTNUP + TRNU * PLTPOP
 
          IF(LFWT.GT.0.0.AND.PLTPOP.GT.0.0) THEN
@@ -1455,36 +1489,37 @@ c         WTNRT = ROOTN * PLTPOP
          ENDIF
          IF (YRDOY .GE. YRPLT) THEN
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2,SLA3,
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE,
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,A,
      &      FILECC,
-     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,
      &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
      &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
      &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
      &      STMWTO, WTLF, FSLFP)
-	   ENDIF 
+	   ENDIF
 
-         !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+         !Output routines, MZ_OPGROW and MZ_OPNIT are used for
          !  maize, sorghum and millet.
-         CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
-     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+         CALL MZ_OPGROW(CONTROL, ISWITCH,
+     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES,
+     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE,
+     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA,
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,
      &    WTSO, XLAI, YRPLT)
 
          CALL MZ_OPNIT(CONTROL, ISWITCH,      !Yes, MZ is correct!
@@ -1492,7 +1527,7 @@ c         WTNRT = ROOTN * PLTPOP
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
 
-         CALL SG_OPHARV(CONTROL, 
+         CALL SG_OPHARV(CONTROL,
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, GNUP,   !Input
      &    GPP, GPSM, HARVFRAC, IDETO, IDETS, IPLTI,       !Input
      &    ISDATE, ISTAGE, MAXLAI, MDATE, NSTRES, PODWT,   !Input
@@ -1502,7 +1537,7 @@ c         WTNRT = ROOTN * PLTPOP
      &    BWAH, SDWTAH)                                   !Output
 
          IF (ISWDIS.EQ.'Y') THEN
-         CALL PEST(CONTROL, ISWITCH, 
+         CALL PEST(CONTROL, ISWITCH,
      &    AREALF, CLW, CSW, LAGSD, LNGPEG, NR2, CARBO,    !Input
      &    PHTIM, PLTPOP, RTWTO, SLA, SLDOT, SOILPROP,     !Input
      &    SSDOT, STMWTO, TOPWT, WLFDOT, WTLF, YRPLT,      !Input
@@ -1514,7 +1549,7 @@ c         WTNRT = ROOTN * PLTPOP
 C----------------------------------------------------------------------
 C ---------------------------------------------------------------------
 C
-C                         DYNAMIC = SEASEND 
+C                         DYNAMIC = SEASEND
 C
 C----------------------------------------------------------------------
 C----------------------------------------------------------------------
@@ -1522,35 +1557,36 @@ C----------------------------------------------------------------------
 
 
            CALL SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     &      AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     &      CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     &      GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
+     &      ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
+     &      NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
+     &      PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     &      SLA1, SLA2,SLA3,
+     &      PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
+     &      SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
+     &      STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
      &      SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      &      TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      &      XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      &      PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     &      ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE,
+     &      KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,A,
      &      FILECC,
-     &      DS, ISWPHO, SPi_AVAIL, PUptake,  
+     &      DS, ISWPHO, SPi_AVAIL, PUptake,
      &      RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
      &      PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
      &      PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
      &      STMWTO, WTLF, FSLFP)
 
-        !Output routines, MZ_OPGROW and MZ_OPNIT are used for 
+        !Output routines, MZ_OPGROW and MZ_OPNIT are used for
         !  maize, sorghum and millet.
-        CALL MZ_OPGROW(CONTROL, ISWITCH,  
-     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES, 
-     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE, 
-     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA, 
-     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO, 
+        CALL MZ_OPGROW(CONTROL, ISWITCH,
+     &    CANHT, CANWH, DTT, HI, HIP, KSTRES, MDATE, NLAYR, NSTRES,
+     &    PCNL, PLTPOP, PODNO, PODWT, PSTRES1, PSTRES2, RLV, RSTAGE,
+     &    RTDEP, RTWT, SATFAC, SDWT, SEEDNO, SENESCE, SHELPC, SLA,
+     &    STMWTO, SWFAC, TOPWT, TURFAC, VSTAGE, WTCO, WTLF, WTLO,
      &    WTSO, XLAI, YRPLT)
 
         CALL MZ_OPNIT(CONTROL, ISWITCH,       !Yes, MZ is correct!
@@ -1558,7 +1594,7 @@ C----------------------------------------------------------------------
      &    WTNCAN,WTNSD,WTNVEG,PCNGRN,PCNVEG,
      &    WTNUP,WTNLF,WTNST,PCNL,PCNST,PCNRT)
 
-        CALL SG_OPHARV(CONTROL, 
+        CALL SG_OPHARV(CONTROL,
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, GNUP,   !Input
      &    GPP, GPSM, HARVFRAC, IDETO, IDETS, IPLTI,       !Input
      &    ISDATE, ISTAGE, MAXLAI, MDATE, NSTRES, PODWT,   !Input
@@ -1590,219 +1626,219 @@ C           Variable Definitions
 C
 C----------------------------------------------------------------------
 
-! AGEFAC      !Nitrogen stress factor affecting cell expansion 
-! ANO3(20)    !Total extractable nitrate N in soil profile (kg N/ha)    
-! ANH4(20)    !Total extractable ammonium N in soil profile (kg N/ha) 
+! AGEFAC      !Nitrogen stress factor affecting cell expansion
+! ANO3(20)    !Total extractable nitrate N in soil profile (kg N/ha)
+! ANH4(20)    !Total extractable ammonium N in soil profile (kg N/ha)
 ! APTNUP      !Nitrogen in stover (above ground biomass) kg N/ha
 ! AREALF     Area of leaves (one side) per unit ground area
 !              (cm2[leaf] / m2[ground])
 ! ASMDOT     Daily assimilative damage (g[CH2O] /m2 / d)
-! BIOMAS      !Above ground biomass, g/m2  
+! BIOMAS      !Above ground biomass, g/m2
 ! CANHT       !Canopy height, m (currently not calculated)
-! CANNAA      !Stover N at anthesis, g N/M2    
-! CANWAA      !Canopy weight at anthesis, g/m2  
+! CANNAA      !Stover N at anthesis, g N/M2
+! CANWAA      !Canopy weight at anthesis, g/m2
 ! CANWH            !Canopy width, m (currently not calculated)
-! CARBO       !Daily biomass production, g/plant/day  
+! CARBO       !Daily biomass production, g/plant/day
 ! CLW        Cumulative leaf growth (g[leaf]/m2)
-! CNSD1       !Cum. water stress on photosynthesis during growth stage    
-! CNSD2       !Cumulative water stress on growth during growth stage  
-! CO2         !Atmospheric CO2, ppm  
+! CNSD1       !Cum. water stress on photosynthesis during growth stage
+! CNSD2       !Cumulative water stress on growth during growth stage
+! CO2         !Atmospheric CO2, ppm
 ! CO2X(10)    !CO2 effect on photosynthesis, X axis is CO2 level, ppm
-! CO2Y(10)    !CO2 effect on photosynthesis, Y axis is relative effect 
+! CO2Y(10)    !CO2 effect on photosynthesis, Y axis is relative effect
 ! CROP        !Two character representation of crop (ie. MZ)
 ! CSW         !Cumulative stem growth (g[stem]/m2)
 ! CTYPE       !Crop type (Always 1 for maize)
-! CUMDEP      !Cum. soil depth, cm 
-! CUMDTT      !Cum. growing degree days, degrees C    
-! CUMPH       !Cum. phyllochron intervals, or fully expanded leaves 
+! CUMDEP      !Cum. soil depth, cm
+! CUMDTT      !Cum. growing degree days, degrees C
+! CUMPH       !Cum. phyllochron intervals, or fully expanded leaves
 ! DAP         !Days after planting
 ! DEPMAX      !Depth of soil, cm
 ! DISLA       Diseased leaf area (cm2[leaf]/m2[ground]/d)
 ! DLAYR(L)    Soil thickness in layer L (cm)
-! DM          !Total above ground biomass, kg/ha   
+! DM          !Total above ground biomass, kg/ha
 ! DOY         !Day of year
-! DS(20)      !Depth of soil in layer, cm  
-! DTT         !Growing degree days today, degrees C    
-! DUL(20)     !Drained upper limite, cm3/cm3 
+! DS(20)      !Depth of soil in layer, cm
+! DTT         !Growing degree days today, degrees C
+! DUL(20)     !Drained upper limite, cm3/cm3
 ! DYNAMIC     !Main control variable to tell each module which section of code to run
-! EARS        !Ears per plant, computed here and used in grosub.  
+! EARS        !Ears per plant, computed here and used in grosub.
 ! EARWT       !Ear weight, g/ear!
 ! EOP         !Potential plant transpiration, mm/day
 ! ERRKEY      !Key or error messages
 ! ERRNUM      !Error number to print to screen in case of error
-! ESW(20)     !Extractable soil water, cm3 water/cm3 soil  
+! ESW(20)     !Extractable soil water, cm3 water/cm3 soil
 ! FILEC       !Path and name of species file (ie. *.spe)
-! FILEIO      !Name if input file (ie. DSSAT47.INP)               
-! FOUND        !Flag used to warn user if information in an input file does not exist 
+! FILEIO      !Name if input file (ie. DSSAT47.INP)
+! FOUND        !Flag used to warn user if information in an input file does not exist
 ! G2          !Maximum kernel number (kernels/plant)
-! G3          !Potential kernel growth rate, mg/kernel/day 
+! G3          !Potential kernel growth rate, mg/kernel/day
 ! GNP         !Nitrogen concentration in new grain growth, gN/g dry matter
 ! GNUP        !Total grain N uptake, kg N/ha
-! GPP         !Grain number per plant, grains/plant 
-! GPSM        !Grain numbers, grains/m2 
+! GPP         !Grain number per plant, grains/plant
+! GPSM        !Grain numbers, grains/m2
 ! GRNWT       !Grain weight, g/plan
-! GRAINN      !Grain nitrogen content, g N/plant   
+! GRAINN      !Grain nitrogen content, g N/plant
 ! GRORT       !Root growth rate, g/plant/day
 ! YREND       !Year and day of year for harvest
 ! HI          !Harvest index, Seed weight/above ground plant weight
 ! HIP         !Harvest index of ear, (g ear + seed weight)/(g above ground plant weight)
 ! I           !Index counter
-! ICSDUR      !Calendar day accumulator for each growth stage 
+! ICSDUR      !Calendar day accumulator for each growth stage
 ! IDETO       !Switch for printing overview.out file
 ! IPLTI       !
 ! ISDATE      !Year and day of year for end of leaf growth
 ! ISTAGE      !Growth stage
 ! ISWDIS      !Disease switch
 ! ISWWAT      !Water balance switch
-! ISWNIT      !Nitrogen balance switch 
+! ISWNIT      !Nitrogen balance switch
 ! KG2PPM(20)  !Factor that convergs mg elemental N/kg soil to kg N/ha for soil layer L
 ! LAGSD      Not used in CERES except to pass 0 into pest.for
-! LAI         !Leaf area index, cm2/cm2 
+! LAI         !Leaf area index, cm2/cm2
 ! LEAFNO      !Number of oldest leaf per plant (same as XN)
 ! IDETS       !Code to generate several output files
 ! L           !Index counter
 ! LNGPEG      Not used in CERES except to pass 0 into pest.for
 ! IDURP       !Duration of ISTAGE 4, calendar days
-! LFWT        !Leaf weight, g/plant   
+! LFWT        !Leaf weight, g/plant
 ! LL(20)      !Volumetric lower limit of soil water holding capacity, cm3 water/cm3 soil
 ! LNUM        !Line number in an input datafile
 ! LUNIO       !Logical unit number for file
 ! MAXLAI      !Maximum leaf area index, m2/m2
 ! MDATE       !Maturity data, year and day of year
 
-! NH4(20)     !Ammonium in soil layer L, mg elemental N/kg soil 
+! NH4(20)     !Ammonium in soil layer L, mg elemental N/kg soil
 ! NLAYR       !Number of soil layers
 ! NPEST       !Number of pests defined in the crop pest file
 ! NPLTD      Number of plants destroyed (#/m2/d)
-! NO3(20)     !Nitrate in soil layer L (mg elemental N/kg soil) 
+! NO3(20)     !Nitrate in soil layer L (mg elemental N/kg soil)
 ! NOUTDO   !Output file name
-! NSTRES      !Nitrogen stress factor affecting growth (0-1) 
-! P1          !Growing degree days (base 8C) from seedling emergence to end of Juvenile phase    
-! P2          !Photoperiod sensitivity coefficient, 1/hr    
+! NSTRES      !Nitrogen stress factor affecting growth (0-1)
+! P1          !Growing degree days (base 8C) from seedling emergence to end of Juvenile phase
+! P2          !Photoperiod sensitivity coefficient, 1/hr
 ! P5          !Cumulative growing degree days (Base 8C) from silking to physioligical maturity
 ! PATHCR  !Path to species filee
 ! PCNGRN      !Nitrogen content in grain, %
-! PCNVEG      !Percent nitrogen in vegetative tissue (leaf and stem), kg N/ha  
+! PCNVEG      !Percent nitrogen in vegetative tissue (leaf and stem), kg N/ha
 ! PCNL        !Percent nitrogen in leaf tissue, %
 ! PCNSD       !Percent nitrogen in seeds, %
 ! PCNST       !Percent of nitrogen in stems, %
 ! PCNRT       !Percent of nitrogen in roots, %
 ! PCPID(40,6) !Pest coupling point identification code for pest i and couping point j
-! PCTID(I)   Pest damage characterization method for pest I: (1) absolute 
-!              daily damage rate, (2) percent observed damage, (3) daily 
+! PCTID(I)   Pest damage characterization method for pest I: (1) absolute
+!              daily damage rate, (2) percent observed damage, (3) daily
 !              percent damage rate
-! PDCF1(I,J) Pest damage coefficient asscociated with pest I, coupling 
-!              point J 
+! PDCF1(I,J) Pest damage coefficient asscociated with pest I, coupling
+!              point J
 ! PID(I)     Pest identification header from FILE
-! PDWI        !Potential increment in new shoot growth, g/plant 
+! PDWI        !Potential increment in new shoot growth, g/plant
 ! PL(I)             Pest level for pest I today
 
 ! PGRORT      !Potential increment in new root growth, g/plant
-! PHINT       !Phylochron interval. Number of GDD for new leaf emergence, degrees C 
+! PHINT       !Phylochron interval. Number of GDD for new leaf emergence, degrees C
 ! PHTIM      Not used in CERES except to pass 0 into pest.for
-! PLA         !Plant leaf area, cm2/plant 
-! PLAG        !Leaf area growth rate, cm2/plant/day (MA 20dec2013: unit correction)  
-! PLTPOP      !Plant Population, Pl/m  
+! PLA         !Plant leaf area, cm2/plant
+! PLAG        !Leaf area growth rate, cm2/plant/day (MA 20dec2013: unit correction)
+! PLTPOP      !Plant Population, Pl/m
 ! PODNO       !Ear number, #/m2
 ! PODWT       !Pod (ear) weight, g/m2
-! PORMIN      !Minimum pore volume before soil water saturation effects growth (not used), cm3/cm3    
+! PORMIN      !Minimum pore volume before soil water saturation effects growth (not used), cm3/cm3
 ! PPLTD      Percent plants destroyed  (%/m2/d)
-! PTF         !Ratio of above ground biomass to total biomass 
-! RCNP        !Root critical nitrogen concentration, g N/g root dry weight 
+! PTF         !Ratio of above ground biomass to total biomass
+! RCNP        !Root critical nitrogen concentration, g N/g root dry weight
 ! RLV(20)     !Root length volume of soil layer, cm3 root/cm3 soil
-! RLWR        !Root length to weight ration, cm/g   
+! RLWR        !Root length to weight ration, cm/g
 ! RNMODE    !Run mode
-! ROOTN       !Root nitrogen content, g N/plant   
-! ROPT        !Second optimum temperature for development from species file, 
-! ROWSPC      !Row spacing, cm  
+! ROOTN       !Root nitrogen content, g N/plant
+! ROPT        !Second optimum temperature for development from species file,
+! ROWSPC      !Row spacing, cm
 ! RSTAGE        !Growth stage (same as ISTAGE), 1-6.
-! RTDEP       !Root depth, cm 
+! RTDEP       !Root depth, cm
 ! RTWO        !Root weight, g/m2
-! RTWT        !Root weight, g/plant 
+! RTWT        !Root weight, g/plant
 ! RTWTO       !Root weight, g/m2  (same as RTWO)
 ! RUN      !Run number
 ! RWUEP1      !Factor to modify water stress for cell expansion (in species file), mm/day
-! RWUMX       !Maximum root water uptake parameter from species file  
+! RWUMX       !Maximum root water uptake parameter from species file
 ! SAT(20)     !Saturated water holding capacity for soil layer, cm3 water/cm3 soil
 ! SATFAC      !Reduction of growth due to water logging (0-1.0)
-! SDDES(J)   Number of seeds destroyed today in cohort J when shells are 
+! SDDES(J)   Number of seeds destroyed today in cohort J when shells are
 !              not destroyed (#/m2/day)
-! SDEPTH      !Sowing depth, cm        
+! SDEPTH      !Sowing depth, cm
 ! SDNO(J)    Need to figure out how to use this array to pass in seed number???
 ! SDSIZE      !Average seed size, mg/seed
 ! SDSZ        !Maximum potential seed size, mg/kernel
 ! SDWT        !Seed (grain) weight, g/m2
 ! SECTION !Variable indicating which section to look for in an input file
 ! SEEDNO           !Seed number, #/m2
-! SENLA       !Normal leaf senescence today, cm2/plant 
+! SENLA       !Normal leaf senescence today, cm2/plant
 ! SGSTGNAM(20)!Array containing names of various growth stages
 ! SHELPC           !Shelling percentage (grain weight/ear weight)
 ! SHELN(J)   Number of shells for cohort J (#/m2)
-! SHF(20)     !Soil hospitality factor, unitless    
-! SI1(6)      !Water stress during a growth stage used for output           
+! SHF(20)     !Soil hospitality factor, unitless
+! SI1(6)      !Water stress during a growth stage used for output
 ! SI3(6)      !Nitrogen stress during a growth stage used for output
-! SKERWT      !Weight per kernel, g/kernel 
+! SKERWT      !Weight per kernel, g/kernel
 ! SLA              !Specific leaf area, cm2/g
 ! SLDOT      Defoliation due to daily leaf senescence (g/m2/day)
 ! SNOW             !Snow accumulation today, mm
-! SRAD        !Total solar radiation today, MJ/m2  
+! SRAD        !Total solar radiation today, MJ/m2
 ! SSDOT      Not used in CERES except to pass 0 into pest.for
 ! STOVER           !Stover weight (leaf+stem), kg/ha
-! STOVN       !Nitrogen content in stover, g N/plant 
-! STOVWT      !Stover weight (Stem + leaf), g/plant 
+! STOVN       !Nitrogen content in stover, g N/plant
+! STOVWT      !Stover weight (Stem + leaf), g/plant
 ! STGDOY(20)   !Array storing the dates that different growth stages occurred
 ! STNAME(20)      !Array containing names of various growth stages
 ! STMWT       !Stem weight, g/plant
 ! STMWTO           !Stem weight, g/m2
-! SUMDTT      !Sum of growing degree days since stage initiation, C  
-! SUMP        !Cumulative plant growth during ISTAGE 4, g/plant 
-! SW(20)      !Volumetric soil water content of soil layer, cm3 water/cm3 soil   
+! SUMDTT      !Sum of growing degree days since stage initiation, C
+! SUMP        !Cumulative plant growth during ISTAGE 4, g/plant
+! SW(20)      !Volumetric soil water content of soil layer, cm3 water/cm3 soil
 ! SWFAC       !Soil water stress effect on growth (0-1), 1 is no stress, 0 is full stress
 ! SWIDOT      !Daily seed mass damage (g/m2/day)
-! TANC        !Nitrogen content in above ground biomass, decimal   
-! TBASE       !Base temperature below which no development occurs, C 
-! TILFAC      !Tillering factor (0 is no tillering; 1 is tillering)   
+! TANC        !Nitrogen content in above ground biomass, decimal
+! TBASE       !Base temperature below which no development occurs, C
+! TILFAC      !Tillering factor (0 is no tillering; 1 is tillering)
 ! TLNO        !Total number of leaves that the plant produces
-! TMIN        !Minimum temperature today, C    
-! TMAX        !Maximum temperature today, C 
+! TMIN        !Minimum temperature today, C
+! TMAX        !Maximum temperature today, C
 ! TOPT        !Optimum temperature for development (from species file), C
 ! TOPWT       !Total above ground biomass, g/m2
 ! TOTNUP      !Total shoot N uptake at maturity, kg N/ha
-! TRNU        !Total potential root nitrogen uptake, kg N/ha 
+! TRNU        !Total potential root nitrogen uptake, kg N/ha
 ! TRWUP       !Total root water uptake, cm/day
 ! TURFAC      !Soil water stress effecting cell expansion
 ! UNH4(20)    !Plant uptake of ammonium from layer (kg N/ha/day)
 ! UNO3(20)    !Plant uptake of nitrate from a layer (kg N/ha/day)
 ! VSTAGE      !Vegetative growth stage (number of leaves)
-! VMNC        !Plant vegetative minimum nitrogen concentration, g N/g plant 
+! VMNC        !Plant vegetative minimum nitrogen concentration, g N/g plant
 ! WLFDOT     Leaf weight losses due to freezing (g[leaf]/m2-d)
 ! WLIDOT     Daily pest or freeze damage to leaf mass (g/m2/day)
 ! WRIDOT     Daily pest damage to root mass (g/m2/day)
 ! WSHIDT     Weight of shell tissue consumed by pests today (g[shell]/m2-d)
 ! WSIDOT     Daily pest damage to stem mass (g/m2/day)
-! WTCO        !Cumulative loss of plant tissue, g/m2  (not computed)  
+! WTCO        !Cumulative loss of plant tissue, g/m2  (not computed)
 ! WTLF        !Leaf weight, g/m2
-! WTLO        !Cumulative loss of leaf tissue, g/m2 (not computed)    
+! WTLO        !Cumulative loss of leaf tissue, g/m2 (not computed)
 ! WTSD(J)    Seed mass  for cohort J (g/m2)
-! WTSO        !Cumulative stem loss of stem tissue, g/m2 (not computed) 
-! WTHADJ(2,8) !Used on mz_phenol but not passed into maize.for ???????  
-! WTNCAN      !Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha    
-! WTNVEG      !Weight of nitrogen in vegetative tissue, kg N/ha    
-! WTNLF       !Weight of nitrogen in leaf tissue, kg N/h    
+! WTSO        !Cumulative stem loss of stem tissue, g/m2 (not computed)
+! WTHADJ(2,8) !Used on mz_phenol but not passed into maize.for ???????
+! WTNCAN      !Weight of nitrogen in above ground biomass (stem, leaf, grain), kg N/ha
+! WTNVEG      !Weight of nitrogen in vegetative tissue, kg N/ha
+! WTNLF       !Weight of nitrogen in leaf tissue, kg N/h
 ! WTNSD       !Weight of nitrogen in seed, g[N] / m2[ground]
-! WTNST       !Weight of nitrogen in stem tissue, kg N/ha     
-! WTNUP       !Total nitrogen uptake, g/m2  
+! WTNST       !Weight of nitrogen in stem tissue, kg N/ha
+! WTNUP       !Total nitrogen uptake, g/m2
 ! WTSHE(J)   Shell mass  for cohort J (g/m2)
-! XHLAI       !Healthy leaf area, cm2/cm2  
+! XHLAI       !Healthy leaf area, cm2/cm2
 ! XGNP        !Nitrogen content of grain, %
 ! XLAI             !Leaf area index, m2/m2
-! XN          !Number of oldest expanding leaf    
+! XN          !Number of oldest expanding leaf
 ! XNTI        !Number of leaves at tassel initiation
-! XSTAGE      !Non-integer growth stage indicator    
+! XSTAGE      !Non-integer growth stage indicator
 ! YR       !Year
 ! YIELD       !Yield in kg/ha at 0% moisture content
 ! YRDOY    !Current year and day of year
-! YREMRG   !Year and day of year of emergence 
+! YREMRG   !Year and day of year of emergence
 ! YRPLT    !Year and day of year of planting
 ! YRSIM    !Year and day of year of first day of simulation
 
