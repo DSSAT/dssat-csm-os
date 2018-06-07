@@ -112,7 +112,7 @@
                    ! ENDIF
                     
                    LAYER = 10
-                   RAW = (SW(LAYER)- LL(LAYER)) / (DUL(LAYER)-LL(LAYER)) ! DA 20APR2018 added, changing RAW calculation
+                   RAW = (SW(LAYER)- LL(LAYER)) / (DUL(LAYER)-LL(LAYER)) ! DA 20APR2018 added, changing RAW calculation                                                       !EQN 161 
                    
                     
                     
