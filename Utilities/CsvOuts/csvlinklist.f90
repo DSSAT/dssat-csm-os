@@ -348,6 +348,18 @@ Type :: lin_valuePlantP
     
     Integer :: istatStorPrFrm 
 !--------------------------------------------------------------------------------------
+!   for SOM N 
+    Type :: lin_valueSomN
+       Character(:), Allocatable :: pclineSomN
+       Type (lin_valueSomN), Pointer :: pSomN
+    End Type
+
+    Type (lin_valueSomN), Pointer :: headSomN    
+    Type (lin_valueSomN), Pointer :: tailSomN    
+    Type (lin_valueSomN), Pointer :: ptrSomN     
+    
+    Integer :: istatSomN 
+!--------------------------------------------------------------------------------------
 Contains
 !------------------------------------------------------------------------------
 
@@ -2303,5 +2315,76 @@ Subroutine LinklstStorPrFrm(ptxtlineStorPrFrm)
     End If
 
 End Subroutine LinklstStorPrFrm
+!------------------------------------------------------------------------------
+  Subroutine ListtofileSomN
+      Integer          :: nf, ErrNum, length       
+      Character(Len=12):: fn
+      Character(:),Allocatable :: Header         
+      
+      If(.Not. Associated(headSomN)) Return
+      
+      length= Len('RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+  //'SNS20D,SN%20D,SNS40D,SN%40D,SOND,SN0D,SNTD,SN1D,SN2D,'&
+  //'SN3D,SN4D,SN5+D,S1N0D,S1NTD,S1N1D,S1N2D,S1N3D,S1N4D,' &
+  //'S1N5+D,S2NTD,S2N1D,S2N2D,S2N3D,S2N4D,S2N5+D,S3NTD,S3N1D,'&
+  //'S3N2D,S3N3D,S3N4D,S3N5+D,LN0D,LNTD,LN1D,LN2D,LN3D,LN4D,' &
+  //'LN5+D,MEN0D,MENTD,MEN1D,MEN2D,MEN3D,MEN4D,MEN5+D,STN0D,' &
+  //'STNTD,STN1D,STN2D,STN3D,STN4D,STN5+D,RESNC')
+  
+      Allocate(character(LEN=length) :: Header)
+
+      Header = 'RUN,EXP,TR,RN,REP,YEAR,DOY,DAS,' &
+  //'SNS20D,SN%20D,SNS40D,SN%40D,SOND,SN0D,SNTD,SN1D,SN2D,'&
+  //'SN3D,SN4D,SN5+D,S1N0D,S1NTD,S1N1D,S1N2D,S1N3D,S1N4D,' &
+  //'S1N5+D,S2NTD,S2N1D,S2N2D,S2N3D,S2N4D,S2N5+D,S3NTD,S3N1D,'&
+  //'S3N2D,S3N3D,S3N4D,S3N5+D,LN0D,LNTD,LN1D,LN2D,LN3D,LN4D,' &
+  //'LN5+D,MEN0D,MENTD,MEN1D,MEN2D,MEN3D,MEN4D,MEN5+D,STN0D,' &
+  //'STNTD,STN1D,STN2D,STN3D,STN4D,STN5+D,RESNC' 
+  
+      fn = 'somlitn.csv'
+      Call GETLUN (fn,nf)
+
+      Open (UNIT = nf, FILE = fn, FORM='FORMATTED', STATUS = 'REPLACE', &
+          IOSTAT = ErrNum)
+        
+      Write(nf,'(A)')Header
+      Deallocate(Header)    
+
+      ptrSomN => headSomN
+      Do
+        If(.Not. Associated(ptrSomN)) Exit          
+        Write(nf,'(A)') ptrSomN % pclineSomN    
+        ptrSomN => ptrSomN % pSomN          
+      End Do
+
+      Nullify(ptrSomN, headSomN, tailSomN)
+      Close(nf)
+  End Subroutine ListtofileSomN
+!------------------------------------------------------------------------------
+Subroutine LinklstSomN(ptxtlineSomN)
+
+    Character(:), Allocatable :: ptxtlineSomN            
+        
+    If(.Not. Associated(headSomN)) Then             
+      Allocate(headSomN, Stat=istatSomN)        
+      If(istatSomN==0) Then                         
+        tailSomN => headSomN                    
+        Nullify(tailSomN%pSomN)                 
+        tailSomN%pclineSomN = ptxtlineSomN  
+      Else
+        ! Error message
+      End If
+    Else
+      Allocate(tailSomN%pSomN, Stat=istatSomN)      
+      If(istatSomN==0) Then                                 
+        tailSomN=> tailSomN%pSomN                   
+        Nullify(tailSomN%pSomN)                         
+        tailSomN%pclineSomN = ptxtlineSomN          
+      Else
+      ! Error message
+      End If
+    End If
+
+End Subroutine LinklstSomN
 !------------------------------------------------------------------------------
 End Module Linklist

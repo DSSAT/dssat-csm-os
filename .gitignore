@@ -34,8 +34,9 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.orig
 *.aps
-resource
 resource.h
+Resources/
+Version047.rc
 *.wjf
 *.INH
 *.INP
@@ -63,3 +64,4 @@ cluster.patch
 readme*
 CMakeFiles/
 CMakeCache.txt
+.vscode

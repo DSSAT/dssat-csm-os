@@ -65,13 +65,15 @@ E#UM   Number #/unit   Eye number at maturity (no/fruit)                        
 EDAP   Emergence day   Emergence day (dap)                                      .
 EDAT   Emergence date  Emergence date (YrDoy)                                   .
 EPCM   EP total mm     Total season transpiration (mm)                          .
+EPCP   EP plant seas   Total transpiration, planting to harvest (mm)            .
 ESCM   ES total mm     Total season soil evaporation (mm)                       .
-ETCM   ET total mm     Total season evapotranspiration, Simulation-harvest (mm) .
-ETCP   ET plant seas   Total evapotranspiration (mm), planting to harvest       .
+ESCP   ES plant seas   Total soil evaporation, planting to harvest (mm)         .
+ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) .
+ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. (g)     Eye weight (g)                                           .
-FDAP   Forcing dap     Forcing date (dap)                                       .
-FDAT   Forcing date    Forcing date (YrDoy)                                     .
+FDAP   Forcing dap     Forcing or flowering date (dap)                          .
+FDAT   Forcing date    Forcing or flowering date (YrDoy)                        .
 FNAM   Field name      Field name                                               .
 FRN%M  Fruit N% @ mat  Fruit N concentration at maturity (%)                    .
 FRNAM  Fruit N @ mat   Fruit N content at maturity (kg/ha)                      .
@@ -421,7 +423,7 @@ NI7D   NO3 layer 7     NO3, soil layer 7 (ug [N]/g [soil])                      
 NI8D   NO3 layer 8     NO3, soil layer 8 (ug [N]/g [soil])                      .
 NI9D   NO3 layer 9     NO3, soil layer 9 (ug [N]/g [soil])                      .
 NIAD   Tot soil N kg/haTotal soil NO3+NH4 (kg [N]/ha)                           .
-NIMC   N Immobilize    Cumulative N immobilization (kg [N]/ha)                  .
+NIMC   N Immobilized   Cumulative N immobilization (kg [N]/ha)                  .
 NITC   Nitrification   Cumulative nitrification (kg [N]/ha)                     .
 NITRD  Daily nitrif    Daily nitrification, soil profile (g[N]/ha/d)            .
 NIT10  Nitrif layer 10 Daily nitrification, soil layer 10(g[N]/ha)              .
@@ -837,6 +839,8 @@ TMEAN  MEAN TEMP °C    Mean Temperature (TMAX+TMIN/2; °C)                       
 TMND   MIN TEMP °C     Minimum daily temperature (°C)                           .
 TMXD   MAX TEMP °C     Maximum daily temperature (°C)                           .
 TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     .
+VPD    Vapor Pres Def  Vapor pressure deficit                                   .
+VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
 WDSD   WIND SPEED km/d Wind speed (km/d)                                        .
 
 *OTHER MODELS
@@ -889,12 +893,12 @@ SNN0C  Senes Surf N    Cumulative senesced N to surface (kg[N]/ha)              
 SNN0D  Senes Surf N    Senesced N to surface (kg[N]/ha.d)                       .
 SNN1C  Senes Soil N    Cumulative senesced N to soil (kg[N]/ha)                 .
 SNN1D  Senes Soil N    Senesced N to soil (kg[N]/ha.d)                          .
-SNNTC  Senes Soil N    Senesced N to soil and surface (kg[N]/ha)                .
-SNPTC  Senes Soil P    Senesced P to soil and surface (kg[P]/ha)                .
+SNNTC  Senes Soil N    Cumulative senesced N to soil and surface (kg[N]/ha)     .
+SNPTC  Senes Soil P    Cumulative senesced P to soil and surface (kg[P]/ha)     .
 SNW0C  Senes Surf Wt.  Cumulative senesced dry matter to surface (kg/ha)        .
-SNW0D  Senes Surf Wt.  Senesced dry matter to surface (kg/ha.d)                 .
+SNW0D  Senes Surf Wt.  Daily senesced dry matter to surface (kg/ha.d)           .
 SNW1C  Senes Soil Wt.  Cumulative senesced dry matter to soil (kg/ha)           .
-SNW1D  Senes Soil Wt.  Senesced dry matter to soil (kg/ha.d)                    .
+SNW1D  Senes Soil Wt.  Daily senesced dry matter to soil (kg/ha.d)              .
 SNXD   Extr. N kg/ha   Extractable soil N (kg[N]/ha)                            .
 SSAD   STRUCTURAL STEM Structural stem weight (g/m2 or kg/ha)                   .
 TFGD   TEMP FAC GROWTH Temperature factor for leaf growth (0-1)                 .
@@ -915,10 +919,10 @@ YEAR   YEAR            Year (4 digits)                                          
 
 *SOIL ORGANIC MATTER
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
-CO20C  SurfCO2 (kg/ha) Cumul. CO2 from surface organic matter decomp (kg/ha)    .
-CO2SC  SoilCO2 (kg/ha) Cumul. CO2 from soil organic matter decomposition (kg/ha).
-CO2TD  SoilCO2(g/h/d)  Daily CO2 from surface + soil OM decomposition (g/ha)    . 
-CO2TC  TotSoilCO2(k/h) Cumul. CO2 from surface + soil OM decomposition (kg/ha)  . 
+CO20C  SurfCO2 (kg/ha) Cumul. CO2 from surface org. matter decomp (kg[C]/ha)    .
+CO2SC  SoilCO2 (kg/ha) Cumul. CO2 from soil org. matter decomposition (kg[C]/ha).
+CO2TC  TotSoilCO2(k/h) Cumul. CO2 from surface + soil OM decomp. (kg[C]/ha)     . 
+CO2TD  SoilCO2(g/h/d)  Daily CO2 from surface + soil OM decomp. (g[C]/ha)       . 
 HRNH   N harvest res   N in harvest residue (kg [N]/ha)                         .
 HRPH   P harvest res   P in harvest residue (kg [P]/ha)                         .
 LC0D   LitC L0 (kg/ha) Litter C on surface (kg/ha)                              .
@@ -1125,9 +1129,11 @@ PAV4D  P avail layer 4 P available for uptake in soil layer 4 (kg [P]/ha)       
 PAV5D  P avail layer 5 P available for uptake in soil layer 5 (kg [P]/ha)       .
 PAVLD  P Avail kg/ha   P available to plant, soluble in root zone (kg [P]/ha)   .
 PIAD   Tot soil P kg/h Total soil inorganic P (kg [P]/ha)                       .
-PIMC   P Immobilize    Cumulative P immobilized (kg [P]/ha)                     .
+PIMC   P Immobilized   Cumulative P immobilized (kg[P]/ha)                      .
+PIMD   P Immobilized   Daily P immobilized (kg[P]/ha/d)                         .
 PLABD  P Labile kg/ha  Labile soil P (kg [P]/ha)                                .
 PMNC   P Mineralize    Cumulative P mineralized (kg [P]/ha)                     .
+PMND   P Mineralize    Cumulative P mineralized (kg[P]/ha/d)                    .
 PSOLD  P Soluble kg/ha Soluble P (kg [P]/ha)                                    .
 PSTAD  P Stable kg/ha  Stable soil P (kg [P]/ha)                                .
 PUP1D  P uptake layr 1 P uptake in soil layer 1 (kg [P]/ha)                     .

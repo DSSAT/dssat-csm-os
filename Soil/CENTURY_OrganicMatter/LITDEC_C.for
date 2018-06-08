@@ -15,6 +15,7 @@
 !                 CE_RATIO_C.
 !  01/19/2004 AJG Added a P option,
 !  08/30/2004 AJG Corrected some layout irregularities.
+!  05/04/2011 JW  Change DOCULT(0:20) to DOCULT(0:NL)
 !
 !  Called: CENTURY
 !  Calls : EFLOW_C
@@ -37,7 +38,7 @@
       IMPLICIT NONE
       SAVE
 !     ------------------------------------------------------------------
-      LOGICAL DOCULT(0:20)
+      LOGICAL DOCULT(0:NL)
 
       INTEGER L, N_ELEMS
 

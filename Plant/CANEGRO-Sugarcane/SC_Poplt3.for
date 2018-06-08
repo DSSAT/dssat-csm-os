@@ -7,10 +7,10 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 C************************************************************************
       SUBROUTINE POPLT3 (tt,t0,pplast,newbat,rowspc,stdaye,stddiv, 
-     1                   WATERBAL, CANECROP, SOIL, ISWITCH, CONTROL,
-     1                   STGDOY)
+     &                   WATERBAL, CANECROP, SOIL, ISWITCH, CONTROL,
+     &                   STGDOY, DTT_EM, FI)
 
-c     Instruct compiler to use CANEGRO module defns:
+c     Instruct compiler to use CANEGRO module defns: 
 c     ::::::::::::::::::::::::::::::::::::::::::::::
       USE CNG_ModuleDefs
       USE ModuleDefs
@@ -19,7 +19,7 @@ c     ::::::::::::::::::::::::::::::::::::::::::::::
       SAVE
 
 c     The DSSAT simulation control object
-c     :::::::::::::::::::::::::::::::::::
+c     ::::::::::::::::::::::::::::::::::: 
       Type (SwitchType) ISWITCH
 
 c     The water properties 'object'
@@ -48,10 +48,15 @@ c     ::::::::::::::::::::::::::::::::::::::::::::::
       REAL    STDAYE
       REAL    STDDIV
 
-c     Yesterday's heat units
+c     Yesterday's heat units (Cumulative)
       REAL    T0
-c     TOday's heat units
+c     TOday's heat units (Cumulative), for shoot pop
       REAL    TT
+c     Today's change in thermal time for emergence
+      REAL   DTT_EM
+      INTENT(IN) :: DTT_EM
+c     Fractional interception of radiation (PAR)
+      REAL, INTENT(IN) :: FI
 
 
 c     Declare previously undeclared local variables:
@@ -62,6 +67,8 @@ c     ::::::::::::::::::::::::::::::::::::::::::::::
       INTEGER N1
       REAL    CDEP
       REAL    DELTA
+c     Delta calculated by GTP shoots module
+      REAL GTP_DELTA
       REAL    EXTRA
       REAL    FX
       REAL    STRPOP
@@ -104,6 +111,10 @@ c     Thermal time at which population increase ceases
       REAL    TT_POPGROWTH
 c     Max tiller population
       REAL    MAX_POP
+c     Shoot population for increasing popn phase as
+c     calculated by the GTP shoots module
+c     Today and yesterday ('Y_')
+      REAL POPHA_GTP, Y_POPHA_GTP
 
 c     Population decay coefficient: this number
 c     affects how rapidly the stalk population decreases
@@ -162,6 +173,7 @@ c     :::::::::::::::::::::::::::::::::::
          TEMPTOT  =  0.0
          TOTMAX  =  0.0
          TOTPOP  =  0.0
+         POPHA_GTP = 0.0
          TT  =  0.0
          TT_POPGROWTH  =  0.0
          XS  =  0.0
@@ -265,21 +277,17 @@ c             Now in stalks/m2
 
 c         Read from cultivar file:
 c         ::::::::::::::::::::::::
-              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(1), 'POPCF(1)',
-     -                                CONTROL, CF_ERR)
-              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(2), 'POPCF(2)',
-     -                                CONTROL, CF_ERR)
-c              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(3), 'POPCF(3)',
-c     -                                CONTROL, CF_ERR)
-c              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(4), 'POPCF(4)',
-c     -                                CONTROL, CF_ERR)
-c              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(5), 'POPCF(5)',
-c     -                                CONTROL, CF_ERR)
+!              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(1), 'POPCF(1)',
+!     -                                CONTROL, CF_ERR)
+!              CALL GET_CULTIVAR_COEFF(CaneCrop%POPCF(2), 'POPCF(2)',
+!     -                                CONTROL, CF_ERR)
 
               CALL GET_CULTIVAR_COEFF(TT_POPGROWTH, 'TT_POPGROWTH',
      -                                CONTROL, CF_ERR)
-              CALL GET_CULTIVAR_COEFF(MAX_POP, 'MAX_POP',
-     -                                CONTROL, CF_ERR)
+! Removed by MJ, Feb 2018: new tillering model no longer needs this.  60 /m2
+! maximum is retained as a hard-coded param.
+!              CALL GET_CULTIVAR_COEFF(MAX_POP, 'MAX_POP',
+!     -                                CONTROL, CF_ERR)
 
 c             Cultivar coeff is in stalks/m2 - x 10 to get to 1000 stalks/ha
 c             as model wants
@@ -304,6 +312,7 @@ c         ============================================
           CaneCrop%TMEANDEDLF = 0.
           CaneCrop%TMEANLF    = 0.
           CaneCrop%TOTPOP     = 0.
+          POPHA_GTP = 0.0
 
 c         Copy array values
 c         :::::::::::::::::
@@ -316,6 +325,13 @@ c         :::::::::::::::::
           ENDDO
 
           CaneCrop%SHGT = 0.
+
+c        Initialise the GTP shoot population module
+         Y_POPHA_GTP = 0.0
+         POPHA_GTP = 0.0
+
+         CALL SC_GTP_SHOOTPOP(CONTROL, ISWITCH,  
+     &     TT-T0, DTT_EM, FI, SWDF30, POPHA_GTP)
 
 c     ===============================================================
 c     RATE CALCULATIONS
@@ -357,7 +373,10 @@ c            WRITE(*,'(3H   ,F10.5)') FX*DLAYR(I)
          cdep=cdep-dlayr(i)
          swdf30=swdf30/cdep 
          SWDF30 = MIN(1.,SWDF30)
+
+         !# MJ
          ! SWDF30 = 1.
+
          WaterBal%SWDF30 = SWDF30
 
 c  16     stdaye=stdaye+(1.0-swdf2)
@@ -424,19 +443,28 @@ c     ---------------------------------------------------------------
 c       For increasing population phase
 c       TT_POPGROWTH is 600 for NCo376
 
+        ! strpop = 0.0;
+        
 c       ::::::::::::::::::::::::::::::::
         if(T1 .LT. TT_POPGROWTH) then
+c            Call the GTP shoot population module
+             CALL SC_GTP_SHOOTPOP(CONTROL, ISWITCH,  
+     &         TT-T0, DTT_EM, FI, SWDF30, POPHA_GTP)
+c            Calculate the GTP model shoots delta:
+             GTP_DELTA = (POPHA_GTP - Y_POPHA_GTP) / 1000.0
+!             WRITE(*, '(A, 2F10.2)') 'DELTA, POPHA_GTP = ', 
+!     &         GTP_DELTA, POPHA_GTP
+
 c            Calculate total population
-             totmax = 0. + popcf(1)*T1 + popcf(2)*T1**2. 
-c             WRITE(*, '(A, F10.0)') 'Totmax is ', totmax
+             !totmax = 0. + popcf(1)*T1 + popcf(2)*T1**2. 
+             totmax =  POPHA_GTP / 1000.0
 
 c            Calculate change in stalk population (1st derivative)
              delta  =  (popcf(1) + popcf(2)*T1*2.) * (tt-t0) 
 
-c             WRITE(*, '(A, F10.0)') 'Delta is ', delta
-
 c            Modify this according to water stress affecting stalk pop.
-             delta  = max(delta * (1. - strpop),0.0)
+             !delta  = max(delta * (1. - strpop),0.0)
+             delta  = max(GTP_DELTA * (1. - strpop),0.0)
         else
 c       For stable / decreasing population phase:
 c       :::::::::::::::::::::::::::::::::::::::::
@@ -483,7 +511,18 @@ c        WRITE(*,*) strpop
 
 c       Update total population as existing population + 
 c       change in population
-        totpop=totpop+delta*1000.0*1.4/rowspc
+        ! MJ, Jun 2015: ROWSPC already accounted-for by GTP model in
+        ! tiller increase phase
+        IF (T1 .LT. TT_POPGROWTH) THEN
+          totpop=totpop+delta*1000.0
+          !totpop=totpop+delta*1000.0*1.4/rowspc
+        else
+          totpop=totpop+delta*1000.0*1.4/rowspc
+        ENDIF
+
+        ! Was:
+        ! totpop=totpop+delta*1000.0*1.4/rowspc
+        
 
 c        WRITE(*, '(A, F10.0)') 'Totpop is ', TOTPOP
 c        WRITE(*, '(A, F10.4)') 'Delta is ', delta
@@ -699,6 +738,19 @@ c     ::::
 c     ===============================================================
 c     END OF DYNAMIC = RATE
 c     ===============================================================
+
+c     ===============================================================
+c     INTEGRATION CALCULATIONS
+c     ===============================================================
+      ELSEIF(Control%DYNAMIC.EQ.INTEGR) THEN     
+         ! WRITE(*, '(A)') 'Calling shootpopn integration'
+         Y_POPHA_GTP = POPHA_GTP
+           if(T1 .LT. TT_POPGROWTH) then
+c            Call the GTP shoot population module
+             CALL SC_GTP_SHOOTPOP(CONTROL, ISWITCH,  
+     &         TT-T0, DTT_EM, FI, SWDF30, POPHA_GTP)
+           ENDIF
+
 c     END OF CONTROL%DYNAMIC = ? conditional statement
 c     ================================================
       ENDIF
