@@ -313,7 +313,7 @@ c       New variables for initial leaf and stalk elongation rates (SK, 08/10/15)
 
 c      Warning text string:
        CHARACTER*78 WRNING_TEXT(2)
-       LOGICAL WARNED
+       INTEGER WARNED
 
 !     Unit number for output
 !      INTEGER SCLUN   !CHP
@@ -494,7 +494,7 @@ c     ::::::::::::::::::
       IF (CONTROL%DYNAMIC .EQ. SEASINIT) THEN
 
 c       Reset warning check
-        WARNED = .FALSE.
+        WARNED = 0
 
 c         An option to control which Light Interception method to use;
 c         This is a throwback to old CANEGRO days.  This should be set
@@ -1164,13 +1164,13 @@ c           This check prevents this.
             L = LLL
             IF (L .GT. 70) THEN
               L = 70
-              IF (NOT(WARNED)) THEN
+              IF (WARNED .EQ. 0) THEN
               WRNING_TEXT(1) = "More than 70 leaves simulated - " //
      &         "usually a sign that harvest age is too high."
               WRNING_TEXT(2) ="Please check dates and " // 
      &        " simulation outputs CAREFULLY."
               CALL WARNING(2, "SCCAN045: SCCNGRO", WRNING_TEXT)
-              WARNED = .TRUE.
+              WARNED = 1
               ENDIF
             ENDIF
 
