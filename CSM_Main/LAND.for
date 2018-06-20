@@ -190,6 +190,7 @@ C-----------------------------------------------------------------------
      &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
+     &    IRRAMT,                                         !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -260,6 +261,7 @@ C-----------------------------------------------------------------------
      &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
+     &    IRRAMT,                                         !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -333,6 +335,7 @@ C-----------------------------------------------------------------------
      &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
+     &    IRRAMT,                                         !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -378,6 +381,7 @@ C-----------------------------------------------------------------------
      &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
+     &    IRRAMT,                                         !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -429,6 +433,7 @@ C-----------------------------------------------------------------------
      &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
+     &    IRRAMT,                                         !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output
@@ -474,6 +479,7 @@ C     Print seasonal summaries and close files.
      &    NH4, NO3, RWU, SKi_Avail, SomLitC, SomLitE,     !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
+     &    IRRAMT,                                         !Input
      &    FLOODN,                                         !I/O
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS,        !Output
      &    KUptake, MDATE, NSTRES, PSTRES1,                !Output

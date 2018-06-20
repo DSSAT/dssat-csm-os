@@ -313,7 +313,8 @@ C-----------------------------------------------------------------------
          CALL READA (FILEA, PATHEX,OLAB, TRT_ROT, YRSIM, X)
 
 !       Convert from YRDOY format to DAP.  Change descriptions to match.
-        CALL READA_Dates(X(2), YRSIM, IFLR)
+!       CALL READA_Dates(X(2), YRSIM, IFLR)
+        CALL READA_Dates(X(2), YRPLT, IFLR)
         IF (IFLR .GT. 0 .AND. IPLTI .EQ. 'R' .AND. ISENS .EQ. 0) THEN
           DFLR = TIMDIF(YRPLT,IFLR)
         ELSE

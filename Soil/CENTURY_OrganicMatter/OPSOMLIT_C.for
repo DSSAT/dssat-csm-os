@@ -31,6 +31,9 @@
       USE ModuleDefs     !Definitions of constructed variable types, 
                          !which contain control information, soil
                          !parameters, hourly weather data.
+      ! VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT  NONE
       SAVE
 !     ------------------------------------------------------------------
@@ -126,18 +129,21 @@
       DS    = SOILPROP % DS
       DLAYR = SOILPROP % DLAYR
       NLAYR = SOILPROP % NLAYR
-
+      
+      FMOPT  = ISWITCH % FMOPT    ! VSH
 !***********************************************************************
 !***********************************************************************
 !     INPUT + RUNINIT
 !***********************************************************************
       IF (DYNAMIC == RUNINIT) THEN
 !     ------------------------------------------------------------------
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
 !     SOM daily output file
       OUTSOMC = 'SOMLITC.OUT'
       OUTSOMN = 'SOMLITN.OUT'
       CALL GETLUN('OUTSOMC', NOUTDC)
       CALL GETLUN('OUTSOMN', NOUTDN)
+      END IF    ! VSH
 
       IF (N_ELEMS > 1) THEN
         OUTSOMP = 'SOMLITP.OUT'
@@ -164,7 +170,8 @@
       IF (ISWITCH % IDETC == 'Y') PRINTC = .TRUE.
       IF (ISWITCH % IDETN == 'Y' .AND. N_ELEMS > 0) PRINTN = .TRUE.
       IF (ISWITCH % IDETP == 'Y' .AND. N_ELEMS > 1) PRINTP = .TRUE.
-
+      
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
       IF (PRINTC) THEN
 !       Open SOMC output file and print headers.
         INQUIRE (FILE = OUTSOMC, EXIST = FEXIST)
@@ -188,7 +195,9 @@
 !     &      "@ RUNNO   TRNO R# CR  SC%20I  SC%20H  SC%40I  SC%40H")')
 !        ENDIF
       ENDIF
+      END IF    ! VSH
 
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
       IF (PRINTN) THEN
 !       Open SOM-N output file and print headers.
         INQUIRE (FILE = OUTSOMN, EXIST = FEXIST)
@@ -210,7 +219,8 @@
 !          WRITE(NOUTCN,'("*SOM C:N RATIO DAILY OUTPUT FILE")')
 !        ENDIF
       ENDIF
-
+      END IF    ! VSH
+      
       IF (PRINTP) THEN
 !       Open SOM-P output file and print headers.
         INQUIRE (FILE = OUTSOMP, EXIST = FEXIST)
@@ -238,7 +248,8 @@
         IF (NLAYR > 4) THEN
           LayerText(5) = SOILPROP % LayerText(11)
         ENDIF
-
+        
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
         IF (PRINTC) THEN
           CALL HEADER(SEASINIT, NOUTDC, RUNNO)
           WRITE (NOUTDC, 100) 
@@ -266,7 +277,8 @@
 !     &      (LayerText(L), L=1,5)
 !          WRITE (NOUTCN, 215)
         ENDIF
-
+        END IF    ! VSH
+        
         IF (PRINTP) THEN
           CALL HEADER(SEASINIT, NOUTDP, RUNNO)
           WRITE (NOUTDP,120)
@@ -435,7 +447,8 @@
 !        SC_40I = SOC_40CM_P
 !        IF (.NOT. DOPRINT) RETURN
 !      ENDIF
-
+      
+      IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
       IF (PRINTC) THEN
         WRITE (NOUTDC, 300) YEAR, DOY, DAS,  
      &    NINT(SOC_20CM), SOC_20CM_P, 
@@ -452,7 +465,8 @@
      &    NINT(CUMRESC), NINT(ACCCO2(SRFC)), NINT(ACCCO2(SOIL))
   300   FORMAT (1X,I4,1X,I3.3,1X,I5, 4(I8,F8.3), I10, 60(I8))
       ENDIF
-
+      END IF    ! VSH
+      
 !     Nitrogen
 !     Layer 5 includes all SOM and Lit N to bottom of profile
       IF (PRINTN) THEN
@@ -482,6 +496,7 @@
         TN0D = SomLitE(0,N)
         TNSD = TSOME(N) + TLITE(N)
         
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
         WRITE (NOUTDN, 310) YEAR, DOY, DAS, 
      &    NINT(SON_20CM), SON_20CM_P, 
      &    NINT(SON_40CM), SON_40CM_P,
@@ -494,7 +509,18 @@
      &    STRUCE(0,N), TSTRUCE(N), (STN(L), L=1, 5), 
      &    NINT(CUMRESE(N))
   310   FORMAT (1X,I4,1X,I3.3,1X,I5, 2(I8,F8.3), 27I8, 21F8.2, I8)
-
+        END IF    ! VSH
+        
+      !     VSH CSV output corresponding to somlitn.outs
+      IF (FMOPT == 'C') THEN
+       Call CsvOutSomN(EXPNAME, RUN, CONTROL%TRTNUM,
+     & CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,  
+     & SON_20CM, SON_20CM_P, SON_40CM, SON_40CM_P, TNTD, TN0D, TNSD, TN,
+     & SOM1E, TSOM1E, S1N, TSOM2E, S2N, TSOM3E, S3N, LITE, TLITE, LIN,
+     & METABE, TMETABE, MEN, STRUCE, TSTRUCE, STN, CUMRESE, NL,N,NELEM,
+     & vCsvlineSomN, vpCsvlineSomN, vlngthSomN)
+       CALL LinklstSomN(vCsvlineSomN)
+      END IF
 !!       C:N ratios
 !        TCNTD = 0.0; TCN0D = 0.0; TCNSD = 0.0
 !        IF (TNTD > 1.E-9) TCNTD = TCTD / TNTD
@@ -685,8 +711,11 @@
 !***********************************************************************
       IF (DYNAMIC == SEASEND) THEN
 !     ------------------------------------------------------------------
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
         CLOSE (NOUTDC)
         CLOSE (NOUTDN)
+        END IF    ! VSH
+        
         CLOSE (NOUTDP)
 
 !!       TEMP CHP

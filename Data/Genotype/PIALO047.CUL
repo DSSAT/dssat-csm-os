@@ -8,6 +8,7 @@
 ! P6 Growing degree days from root initiation to first leaf emerged
 ! G2 Potential eye number
 ! G3 Potential eye growth rate
+! PHINT Phylochron interval; the interval in thermal time (degree days) between successive leaf tip appearances.
 !
 @VAR#  VAR-NAME........ EXPNO   ECO#    P1    P2    P3    P4    P5    P6    G2    G3 PHINT
 !                                        1     2     3     4     5     6     7     8     9

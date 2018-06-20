@@ -216,9 +216,9 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
 #                         "-ip"  # Intel
 #                )
 
-# Vectorize code
-SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
-                 Fortran "/Qvec-report0" # Intel Windows
-                         "-vec-report0"  # Intel
-                         "-Mvect"        # Portland Group
-                )
+## Vectorize code
+#SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
+#                 Fortran "/Qvec-report0" # Intel Windows
+#                         "-vec-report0"  # Intel
+#                         "-Mvect"        # Portland Group
+#                )

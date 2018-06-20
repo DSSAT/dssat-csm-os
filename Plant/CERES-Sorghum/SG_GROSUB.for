@@ -6,11 +6,11 @@ C-----------------------------------------------------------------------
 C  Revision history
 C
 C                 Written
-C  02/07/1993 PWW Header revision and minor changes   
-C  02/07/1993 PWW Added switch common block          
-C  06/21/1991 JTR/BDB Updated PCARB calculation      
-C  07/31/2002 WDB Converted to modular format        
-C. 07/31/2002 WDB Added pest damage, SLPF, satfac    
+C  02/07/1993 PWW Header revision and minor changes
+C  02/07/1993 PWW Added switch common block
+C  06/21/1991 JTR/BDB Updated PCARB calculation
+C  07/31/2002 WDB Converted to modular format
+C. 07/31/2002 WDB Added pest damage, SLPF, satfac
 C  03/12/2003 CHP Changed senescence variable to composite (SENESCE)
 C                   as defined in ModuleDefs.for
 C  03/30/2006 CHP Added composition of senesced matter for SOM modules
@@ -19,7 +19,7 @@ C  04/21/2007 GH  Externalized root partitioning RTPC=0.25
 C  05/31/2007 GH  Added P-model (unfinished)
 C  08/26/2011 GH  Update early partitioning and decrease root distribution
 C  08/10/2015 GH  Check for negative root growth ISTAGE = 4
-
+C  02/07/2018 MA  Externalized initial leaf area A= 6000
 C-----------------------------------------------------------------------
 C  INPUT  : None
 C
@@ -35,23 +35,24 @@ C  Calls  : SG_NFACT SG_NUPTAK
 C-----------------------------------------------------------------------
 
       SUBROUTINE SG_GROSUB (DYNAMIC,STGDOY,YRDOY,
-     & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y, 
-     & CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,  
-     & GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE, 
-     & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3, 
-     & NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT, 
-     & PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO, 
-     & PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT, 
-     & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD, 
-     & STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR, 
+     & AGEFAC, BIOMAS, CARBO, CNSD1,CNSD2, CO2X, CO2Y,
+     & CO2, CSD2, CUMDTT, CUMPH, DLAYR,DM, DTT,
+     & GPP, GRAINN, GROLF, GRORT, GROSTM, ICSDUR, ISTAGE,
+     & ISWNIT, ISWWAT, LAI, LEAFNO, LFWT, LL, LWMIN, NDEF3,
+     & NFAC, NLAYR, NH4,NSTRES, NO3, P1, P3, P4, P5, PAF, PANWT,
+     & PDWI, PGC, PGRORT, PHINT, PLA, PLAN, PLAG, PLAO, PLATO,
+     & SLA1, SLA2,SLA3,
+     & PLAY, PLTPOP, PTF, RANC, RCNP, RLV,ROOTN, ROWSPC, RTWT,
+     & SAT,SEEDRV, SENLA, SHF, SLAN, SLW, SRAD,
+     & STMWT, STOVN, STOVWT, SW, SWMAX, SWMIN, SUMDTT, SUMRTR,
      & SWFAC, TANC, TBASE, TCNP,TEMF, TEMPM, TDUR, TILN, TILFAC,
      & TMAX, TMFAC1, TMIN, TMNC, TRNU,TSIZE, TURFAC,
      & XN,XSTAGE, EOP, TRWUP, RWUEP1,UNO3,UNH4,
      & PRFTC,RGFIL,PORMIN,PARSR,RUE,SLPF,SATFAC,FSLFW,FSLFN,
-     & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE, 
-     & KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,
+     & ASMDOT,WLIDOT,WSIDOT,WRIDOT,PPLTD,SWIDOT,ISWDIS, SENESCE,
+     & KG2PPM,STPC,RTPC,PANTH,PFLOWR,CUMP4,A,
      & FILECC,
-     & DS, ISWPHO, SPi_AVAIL, PUptake,  
+     & DS, ISWPHO, SPi_AVAIL, PUptake,
      & RTDEP, SeedFrac, FracRts, VegFrac, YRPLT,
      & PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed,
      & PSTRES1, PSTRES2, MDATE, PCNVEG, PODWT, RTWTO, SDWT,
@@ -59,96 +60,97 @@ C-----------------------------------------------------------------------
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
- 
+
       IMPLICIT  NONE
- 
+
       SAVE
 
-      INTEGER     DYNAMIC     
+      INTEGER     DYNAMIC
 
       REAL        AGEFAC, ASMDOT, BIOMAS, CARBO, CNSD1, CNSD2
 	REAL        CO2X(10), CO2Y(10), CO2, CSD2, CUMDTT, CUMPH
-      REAL        CUMP4, CURV, DM, DTT         
-      
+      REAL        CUMP4, CURV, DM, DTT
+
       REAL        EOP
       REAL        EP1
       REAL        FSLFW
-      REAL        FSLFN  
-      REAL        GPP         
-      REAL        GRAINN      
-      REAL        GROLF       
-      REAL        GRORT       
-      REAL        GROSTM      
-      INTEGER     ICSDUR      
-      INTEGER     ISTAGE    
+      REAL        FSLFN
+      REAL        GPP
+      REAL        GRAINN
+      REAL        GROLF
+      REAL        GRORT
+      REAL        GROSTM
+      INTEGER     ICSDUR
+      INTEGER     ISTAGE
       CHARACTER   ISWDIS*1
       CHARACTER   ISWNIT*1
       CHARACTER   ISWWAT*1
-      REAL        KG2PPM(NL)   
-      REAL        LAI         
+      REAL        KG2PPM(NL)
+      REAL        LAI
       REAL        LAT
-      INTEGER     LEAFNO 
-      REAL        LFWT        
+      INTEGER     LEAFNO
+      REAL        LFWT
       REAL        LWMIN
-      REAL        NDEF3       
-      REAL        NFAC        
-      REAL        NSTRES      
+      REAL        NDEF3
+      REAL        NFAC
+      REAL        NSTRES
       REAL        P1, P3, P4, P5, PFLOWR
       REAL        PAF
       REAL        PANWT
-      REAL        PDWI        
+      REAL        PDWI
       REAL        PGC
-      REAL        PGRORT      
-      REAL        PHINT       
-      REAL        PLA    
+      REAL        PGRORT
+      REAL        PHINT
+      REAL        PLA
       REAL        PLAN
-      REAL        PLAG        
+      REAL        PLAG
       REAL        PLAO
       REAL        PLATO
       REAL        PLAY
-      REAL        PLTPOP      
+      REAL        PLTPOP
       REAL        PRFTC(4)
-      REAL        PTF         
-      REAL        RANC        
-      REAL        RCNP        
-      REAL        RGFIL(4)     
-      REAL        ROOTN 
+      REAL        PTF
+      REAL        RANC
+      REAL        RCNP
+      REAL        RGFIL(4)
+      REAL        ROOTN
       REAL        ROWSPC
       REAL        RTWT
       REAL        RWUEP1
-      REAL        SEEDRV      
+      REAL        SEEDRV
       REAL        SENLA
       REAL        SLA
+      real        SLA1,SLA2, SLA3
       REAL        SLAN
       REAL        SLW
-      REAL        SRAD        
-      REAL        STMWT   
-      REAL        STOVN       
-      REAL        STOVWT      
-      REAL        SWMAX       
-      REAL        SWMIN       
+      REAL        SRAD
+      REAL        STMWT
+      REAL        STOVN
+      REAL        STOVWT
+      REAL        SWMAX
+      REAL        SWMIN
       REAL        SUMDTT
       REAL        SUMRTR
       REAL        SWFAC
-      REAL        TANC 
+      REAL        TANC
       REAL        TBASE
-      REAL        TCNP        
+      REAL        TCNP
       REAL        TEMF
-      REAL        TEMPM       
+      REAL        TEMPM
       REAL        TDUR
       REAL        TILN, TILFAC
-      REAL        TMAX        
+      REAL        TMAX
       REAL        TMFAC1(8)
-      REAL        TMIN        
+      REAL        TMIN
       REAL        TMNC
       REAL        TRWUP
       REAL        TSIZE
-      REAL        TURFAC      
-      REAL        UNO3(NL)    
+      REAL        TURFAC
+      REAL        UNO3(NL)
       REAL        UNH4(NL)
 
-      REAL        XN          
-      REAL        XSTAGE           
+      REAL        XN
+      REAL        XSTAGE
 C      PEST DAMAGE
       REAL        WLIDOT
       REAL        LAIDOT
@@ -198,27 +200,27 @@ C--------------------------------------------------------------------
       REAL TSS(NL)
 
 !----------------------------------------------------------------------
-      TYPE (ResidueType) SENESCE   
+      TYPE (ResidueType) SENESCE
 !     CHP 3/31/2006
 !     Proportion of lignin in STOVER and Roots
       REAL PLIGLF, PLIGRT
 
 !     Added to send messages to WARNING.OUT
       CHARACTER*78 MESSAGE(10)
-      CHARACTER*6  ERRKEY          
-      PARAMETER    (ERRKEY='SG_GRO') 
+      CHARACTER*6  ERRKEY
+      PARAMETER    (ERRKEY='SG_GRO')
 
-!-GH  Added for P model 
+!-GH  Added for P model
       CHARACTER*1  ISWPHO
       CHARACTER*92 FILECC
 
       INTEGER     YRPLT, MDATE
       INTEGER     STGDOY(20),YRDOY
 
-      REAL        DS(NL), RTDEP, FracRts(NL)      
+      REAL        DS(NL), RTDEP, FracRts(NL)
       REAL        SPi_AVAIL(NL), PUptake(NL)
       REAL        FSLFP, PStres1
-      REAL        PStres2, SeedFrac, VegFrac, SLFP      
+      REAL        PStres2, SeedFrac, VegFrac, SLFP
       REAL        PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed
       REAL        CumLeafSenes    !today's cumul. leaf senescence
       REAL        PCNVEG, PODWT, RTWTO, SDWT, Stem2Ear, STMWTO, WTLF
@@ -268,7 +270,7 @@ C--------------------------------------------------------------------
          TRNU   = 0.0
          TSIZE  = 0.0
          XN     = 0.0
-         CumLeafSenes = 0.0  
+         CumLeafSenes = 0.0
          Stem2Ear = 0.0
 C
 C-GH     Check for appropriate equations to be added to the code
@@ -277,7 +279,7 @@ C
            CALL SG_NFACT(DYNAMIC,
      &       AGEFAC, CNSD1, CNSD2, ISTAGE, NDEF3, NFAC,
      &       NSTRES, RANC, RCNP, TANC, TCNP, TMNC, XSTAGE)
-      
+
          ELSE
            AGEFAC = 1.0
            NSTRES = 1.0
@@ -290,7 +292,7 @@ C
      %    RLV,NO3,NH4,PDWI,TCNP,UNO3,UNH4,
      %    XSTAGE,RCNP,PGRORT,PLTPOP,SW,LL,SAT,DLAYR,
      %    SHF,PTF, SENESCE, KG2PPM, PLIGRT)
-      
+
         CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &    CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &    PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
@@ -301,7 +303,7 @@ C
      &    PConc_Shut, PConc_Root, PConc_Shel, PConc_Seed, !Output
      &    PStres1, PStres2, PUptake, FracRts)             !Output
 
-C-----------------------------------------------------------------------  
+C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C
 C                     DYNAMIC = RATE
@@ -309,7 +311,7 @@ C
 C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
       ELSEIF(DYNAMIC.EQ.RATE) THEN
-   
+
 !         Daily senescence
           SENESCE % ResWt  = 0.0
           SENESCE % ResLig = 0.0
@@ -327,7 +329,7 @@ C              Emergence
           WTLF = LFWT * PLTPOP      !Leaf weight, g/m2
           STMWTO = STMWT * PLTPOP   !Stem weight, g/m2
           RTWTO = RTWT * PLTPOP     !Root weight, g/m2
-           
+
               CALL P_Ceres (EMERG, ISWPHO,                      !Input
      &          CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &          PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
@@ -355,7 +357,7 @@ C              Emergence
       ENDIF
 
       !-------------------------------------------------------------
-      !      Compute Water Stress Factors       
+      !      Compute Water Stress Factors
       ! ------------------------------------------------------------
       SWFAC  = 1.0
       TURFAC = 1.0
@@ -378,18 +380,18 @@ C              Emergence
       TURFAC = REAL(INT(TURFAC*1000))/1000
 
       !-------------------------------------------------------------
-      !      Compute Water Saturation Factors       
+      !      Compute Water Saturation Factors
       ! ------------------------------------------------------------
-      SATFAC = 0.0    
+      SATFAC = 0.0
       SUMEX = 0.0
       SUMRL = 0.0
-      
+
       DO L = 1,NLAYR
 
       !------------------------------------------------------------
-      !PORMIN = Minimum pore space required for supplying oxygen to 
-      !         roots for optimum growth and function    
-      !TSS(L) = Number of days soil layer L has been saturated 
+      !PORMIN = Minimum pore space required for supplying oxygen to
+      !         roots for optimum growth and function
+      !TSS(L) = Number of days soil layer L has been saturated
       !         above PORMIN
       !------------------------------------------------------------
           IF ((SAT(L)-SW(L)) .GE. PORMIN) THEN
@@ -428,7 +430,7 @@ C              Emergence
       !-------------------------------------------------------------
       !                Daily Photosynthesis Rate
       !-------------------------------------------------------------
-  
+
       PAR = SRAD*PARSR        !PAR local variable
       LIFAC =1.5 - 0.768 * ((ROWSPC * 0.01)**2 * PLTPOP)**0.1
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
@@ -437,7 +439,7 @@ C              Emergence
 
       TEMPM = (TMAX + TMIN)*0.5   !Mean air temperature, C
 
-      TT    = 0.25*TMIN+0.75*TMAX 
+      TT    = 0.25*TMIN+0.75*TMAX
       PRFT = CURV('LIN',PRFTC(1),PRFTC(2),PRFTC(3),PRFTC(4),TT)
       PRFT  = AMAX1 (PRFT,0.0)
       PRFT = MIN(PRFT,1.0)
@@ -448,7 +450,7 @@ C      through SWFAC. Do not need to also cause reduction through SATFAC
 C WDB 10/20/03      CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES,(1-SATFAC))*SLPF
 
       CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES, PStres1)*SLPF
-      
+
 C-GH  CARBO = PCARB*AMIN1 (PRFT,SWFAC,NSTRES)*SLPF
       !Reduce CARBO for assimilate pest damage
       CARBO = CARBO - ASMDOT
@@ -501,7 +503,7 @@ C-GH  &    (ISTAGE .EQ. 3  .AND. SUMDTT .GT. (PANTH-P3)-3.0*PHINT)) THEN
 
       PC     = 1.0
       IF (CUMPH .LT. 5.0) THEN
-          PC  = 0.66+0.068*CUMPH      
+          PC  = 0.66+0.068*CUMPH
       ENDIF
 
       TI     = DTT/(PHINT*PC)
@@ -515,7 +517,7 @@ C-GH  &    (ISTAGE .EQ. 3  .AND. SUMDTT .GT. (PANTH-P3)-3.0*PHINT)) THEN
 
       GCS    = 0.33
       XTN    = -10.34*EXP(-PLAY*CUMPH)
-	A      = 6000.0
+C-MA       A      = 6000.0
 
       IF (SUMDTT .GE. 120.0 .AND. ISTAGE .LE. 2) THEN
          IF (DTT .LE. 0.0) THEN
@@ -556,27 +558,30 @@ C      Plant leaf area
 C-GH     PLAG = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,AGEFAC)
 
          PLAO = PLAN
-
+C-MA add Pstress 2 as for maize ( JULY 2016)
          IF (TILN .GT. 1.0 .AND. CUMPH .GT. 5.0) THEN
             PLATN = (0.79-0.049*(5.0-TILN)**2)*((CUMPH-5.0)**3)*0.5
-            PLAGT = (PLATN-PLATO)*AMIN1(TURFAC,TEMF,AGEFAC)
+            PLAGT = (PLATN-PLATO)*AMIN1(TURFAC,TEMF,PStres2,AGEFAC)
             PLATO = PLATN
             PLAG  = PLAG + PLAGT
          END IF
 
-         GROLF  = PLAG  * 0.0038
-         GRORT  = CARBO - GROLF          
+C-MA                PLAG   = GROLF/0.0038
+               GROLF  = PLAG  * (1/SLA1)! myriam 7feb2018
+
+         GRORT  = CARBO - GROLF
 
 C-GH      IF (GRORT .LE. 0.25*CARBO) THEN
           IF (GRORT .LE. RTPC * CARBO) THEN
 C-GH         GRORT  = CARBO*0.25
              GRORT  = CARBO * RTPC
-             SEEDRV = SEEDRV + CARBO - GROLF - GRORT 
+             SEEDRV = SEEDRV + CARBO - GROLF - GRORT
              IF (SEEDRV .LE. 0.0) THEN
                 SEEDRV = 0.0
 C-GH            GROLF  = CARBO*0.7500
                 GROLF  = CARBO * (1.0 - RTPC)
-                PLAG   = GROLF/0.0038
+C-MA                PLAG   = GROLF/0.0038
+                 PLAG   = GROLF/(1/SLA1) ! myriam 7feb2018
              ENDIF
          ENDIF
 
@@ -588,20 +593,23 @@ C                      ISTAGE = 2
 C--------------------------------------------------------------------
       IF (ISTAGE .EQ. 2) THEN
 C      Plant leaf area
+C-MA add Pstress 2 as for maize ( JULY 2016)
          PLAN   = A*EXP(XTN)
-         PLAG   = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,AGEFAC)
+         PLAG   = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,PStres2,AGEFAC)
          PLAO   = PLAN
 
          IF (TILN .GT. 1.0) THEN
             PLATN = (0.79-0.049*(5.0-TILN)**2)*((CUMPH-5.0)**3)*0.5
-            PLAGT = (PLATN-PLATO)*AMIN1(TURFAC,TEMF,AGEFAC)
+            PLAGT = (PLATN-PLATO)*AMIN1(TURFAC,TEMF,PStres2,AGEFAC)
             PLATO = PLATN
             PLAG  = PLAG + PLAGT
          END IF
 
          CARBO  = CARBO + SEEDRV
          SEEDRV = 0.0
-         GROLF  = PLAG*0.0053
+
+         GROLF  = PLAG  * (1/SLA2)! myriam 7feb2018
+C-ma         GROLF  = PLAG*0.0053
 C        GROSTM = GROLF*0.1
          GROSTM = GROLF * STPC
 C-GH   Defined STPC and moved to Species file
@@ -614,7 +622,7 @@ C-GH            GROLF  = GROLF*GRF
 C-GH            GROSTM = GROSTM*GRF
 C-GH            PLAG   = GROLF/0.0053
 C-GH         END IF
-         
+
          GRORT  = CARBO - GROLF - GROSTM
          IF (GRORT .LT. CARBO * RTPC) THEN
             GRORT  = CARBO  * RTPC
@@ -625,8 +633,10 @@ C-GH         END IF
             ELSE
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
-            ENDIF   
-            PLAG   = GROLF/0.0053
+            ENDIF
+C-MA            PLAG   = GROLF/0.0053
+         PLAG   = GROLF/ (1/SLA2)!MA! myriam 7feb2018
+
          ELSE IF (GRORT .GE. CARBO * RTPC) THEN
             GRORT  = CARBO  * RTPC
             IF ((GROLF+GROSTM) .GT. 0.0) THEN
@@ -636,8 +646,10 @@ C-GH         END IF
             ELSE
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
-            ENDIF   
-            PLAG   = GROLF/0.0053                       
+            ENDIF
+             PLAG   = GROLF/SLA2 ! myriam 7feb2018
+C-ma         GROLF  = PLAG*0.0053
+
          ENDIF
 
          PLA    = PLA   + PLAG
@@ -650,20 +662,21 @@ C                     ISTAGE = 3
 C--------------------------------------------------------------------
       IF (ISTAGE .EQ. 3) THEN
 C      Plant leaf area
+C-MA add Pstress 2 as for maize ( JULY 2016)
          PLAN  = A*EXP(XTN)
-         PLAG  = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,AGEFAC)
+         PLAG  = (PLAN-PLAO)*AMIN1(TURFAC,TEMF,PStres2,AGEFAC)
          PLAO  = PLAN
 C      Tiller Growth
          TLG   = PHINT*5.0
-          
+
          IF (SUMDTT .GE. (PANTH - P3) - TLG) THEN
             PLAG = PLAG*(0.7+0.2*(((PANTH - P3)-SUMDTT)/TLG)**2)
          ENDIF
-	   
+
 
          IF (TILN .GT. 1.0) THEN
             PLATN = (0.79-0.049*(5.0-TILN)**2)*((CUMPH-5.0)**3)*0.5
-            PLAGT = (PLATN-PLATO)*AMIN1(TURFAC,TEMF,AGEFAC)
+            PLAGT = (PLATN-PLATO)*AMIN1(TURFAC,TEMF,PStres2,AGEFAC)
             PLATO = PLATN
             PLAG  = PLAG + PLAGT
             PLAG  = AMAX1 (PLAG,0.0)
@@ -672,7 +685,9 @@ C            Allow PLAG to decline if tiller dies I.E. PLAGT < 0
 C
          ENDIF
 
-         GROLF = PLAG*0.0078
+C-MA         GROLF = PLAG*0.0078
+          GROLF = PLAG*(1/SLA3) !sla = 250cm2.g-1
+
          FLG   = 5.0*PHINT
 
 C-GH     IF (SUMDTT .LE. P3-FLG) THEN
@@ -681,7 +696,12 @@ C          GROSTM = GROLF*(0.1+0.8*(SUMDTT/P3)**2)
            GROSTM = GROLF*(STPC + 0.8*(SUMDTT/(PANTH-P3))**2)
 C-GH   Defined STPC and moved to Species file
          ELSE
-           GROSTM = 0.048*DTT*TILN*AMIN1(TURFAC,TEMF)*49.0/PHINT
+
+C	                 KSTM=0.00008827*(CUMDTT-GDD2)
+C JOSE UF: OBTAINED REGRESSION FOR STEM GROWTH RATE CHANGE OVER TIME BASED ON FIELD MEASUREMTNS (12-13)
+C                     GROSTM = KSTM*DTT*TILN*AMIN1(TURFAC,TEMF)
+                GROSTM = 0.048*DTT*TILN*AMIN1(TURFAC,PStres2,TEMF)
+     &                *49.0/PHINT
          ENDIF
 
          TDUR  = TDUR + 1.0
@@ -699,8 +719,10 @@ C-GH        GRF    = CARBO  * 0.75/(GROLF+GROSTM)
             ELSE
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
-            ENDIF 
-            PLAG   = GROLF  / 0.0078
+            ENDIF
+c-MA            PLAG   = GROLF  / 0.0078
+           PLAG   = GROLF  / (1/SLA3)
+
             SUMRTR = SUMRTR + GRF
             TCON   = SUMRTR / TDUR
          ELSE IF (GRORT .GE. CARBO * RTPC) THEN
@@ -712,17 +734,17 @@ C-GH        GRF    = CARBO  * 0.75/(GROLF+GROSTM)
             ELSE
               GROLF  = (CARBO - GRORT)/(1.0 + STPC)
               GROSTM = GROLF * STPC
-            ENDIF 
+            ENDIF
             PLAG   = GROLF  / 0.0078
             SUMRTR = SUMRTR + 1.0
             TCON   = SUMRTR / TDUR
          ENDIF
-         
+
          IF (TILFAC .GT. 0.5) THEN
            TILN  = TILN*(0.4+0.6*TCON)
            TILN  = AMAX1 (TILN,1.0)
          ENDIF
-         LFWT   = LFWT  + GROLF 
+         LFWT   = LFWT  + GROLF
          STMWT  = STMWT + GROSTM
          PLA   = PLA   + PLAG
 C-GH     SLAN  = 1.0+200.0*(SUMDTT/P3)**2
@@ -732,8 +754,14 @@ C--------------------------------------------------------------------
 C                    ISTAGE = 4
 C--------------------------------------------------------------------
       IF (ISTAGE .EQ. 4) THEN
-         GROSTM = 0.07*DTT*(1.0+(TILN-1.0)*TSIZE)*AMIN1(TURFAC,TEMF)*
-     &             49.0/PHINT
+
+C      	KSTM=0.00008827*(CUMDTT-GDD2)
+C JOSE UF: OBTAINED REGRESSION FOR STEM GROWTH RATE CHANGE OVER TIME BASED ON FIELD MEASUREMTNS (2012-2013)
+C        GROSTM = KSTM*DTT*(1.0+(TILN-1.0)*TSIZE)*AMIN1(TURFAC,TEMF)
+
+C-MA add Pstress 2 as for maize ( JULY 2016)
+      GROSTM =0.07*DTT*(1.0+(TILN-1.0)*TSIZE)*AMIN1(TURFAC,PStres2,TEMF)
+     &             *49.0/PHINT
 C
 C         GROSTM coeff changed from 0.07 to 0.10
 C         TSIZE is relative size of tillers compared to main culm.
@@ -748,24 +776,24 @@ C-GH
              GRORT = 0.0
              GROSTM = CARBO
          ENDIF
-                  
+
          GROLF  = 0.0
 
 c-MA     IF (GRORT .LT. 0.08*CARBO) THEN
 c-MA        GRORT =CARBO *0.08
 c-MA        GROSTM = CARBO*0.92
 c-MA     ENDIF
-   
-c MA 4dec2014 
-c change to fix the root biomass partitioning during stage 4 
+
+c MA 4dec2014
+c change to fix the root biomass partitioning during stage 4
 c verification done in the standard dssat shell x file + the x file for sorghum in west Africa
 c generally this change improved the simulation in term of grain yield and above ground biomass
-   
+
          IF (GRORT .GT. 0.08*CARBO) THEN
             GRORT = CARBO *0.08
             GROSTM = CARBO*0.92
          ENDIF
-         
+
 C-GH     GGG    = (CUMDTT-P1-100.0-P3)/(P4+P5)
 C-GH     GGG    = (CUMDTT-P1-100.0-(PANTH-P3))/(PFLOWR + P5)
          GGG    = CUMP4/(PFLOWR + P5)
@@ -780,13 +808,13 @@ C--------------------------------------------------------------------
 
          IF (CARBO .EQ. 0.0 .AND. SUMDTT .LT. P5) THEN
             SUMDTT = P5
-            WRITE(MESSAGE(1),100) 
+            WRITE(MESSAGE(1),100)
             CALL WARNING(1,ERRKEY, MESSAGE)             !
  100        FORMAT('Crop matured early due to extreme stress')
          ENDIF
 
          CARBO  = CARBO*(1.0-0.35*(SUMDTT/P5))
-                  
+
 C-GH     SLAN   = PLA*(0.07+GCS*(CUMDTT-P1-100.0-P3)/(P3 + P4 + P5))
 C-GH     SLAN   = PLA*(0.07+GCS*(CUMDTT-P1-100.0-(PANTH - P3))/
 C-GH &            (PFLOWR + P4 + P5))
@@ -813,11 +841,11 @@ C
          IF (ISWNIT .EQ. 'Y') THEN
             FSTR = 1.0 - CNSD2/ICSDUR
          ENDIF
-         
+
          GROPAN = RGFILL*PGC*PAF*(1.0+(TILN-1.)*TSIZE)*AMIN1(FSTR,WSTR)
          GRORT  = 0.0
          GROSTM = CARBO - GROPAN
-         
+
          IF ((STMWT+GROSTM) .GE. SWMIN) THEN
             IF (GROSTM .GT. 0.0) THEN
                GRORT = GROSTM*0.5
@@ -877,7 +905,7 @@ C           Adjusted from wheat model to sorghum grain size
                   ENDIF
                   ROOTN = ROOTN - RNOUT
                   RANC  = ROOTN / RTWT
-                      ELSE 
+                      ELSE
                   STOVN = STOVN - NSINK
                ENDIF
             ENDIF
@@ -895,7 +923,7 @@ C           Adjusted from wheat model to sorghum grain size
          GROSTM = AMAX1 (GROSTM,0.0)
          PANWT  = PANWT + GROPAN
       ENDIF
-      
+
 C--------------------------------------------------------------------
 C                          ISTAGE = 6
 C--------------------------------------------------------------------
@@ -918,7 +946,7 @@ C  Compute Leaf Senescence Factors
 C------------------------------------------------------------
 
 !     Senescence due to water
-      SLFW   = (1-FSLFW) + FSLFW*SWFAC  
+      SLFW   = (1-FSLFW) + FSLFW*SWFAC
 
 !     Senescence due to nitrogen
       SLFN   = (1-FSLFN) + FSLFN*NSTRES
@@ -928,7 +956,7 @@ C------------------------------------------------------------
       SLFP   = (1-FSLFP) + FSLFP * PSTRES1
 
 !     Senescence due to light competition
-      SLFC   = 1.00        
+      SLFC   = 1.00
       IF (LAI .GT. 4.0) THEN
          SLFC = 1.0-0.008*(LAI-4.0)
       ENDIF
@@ -937,7 +965,7 @@ C------------------------------------------------------------
       SLFT   = 1.0
       IF (TEMPM .LE. 6.0) THEN
          SLFT   = 1.0-(6.0-TEMPM)/6.0
-      ENDIF   
+      ENDIF
 
       IF (TMIN .LE. 0.0) THEN
          SLFT = 0.0
@@ -956,7 +984,7 @@ C--------------------------------------------------------------
      &      LAIDOT = WLIDOT*(PLA-SENLA)/(LFWT*PLTPOP)  !cm2/plant/day
           IF(PLTPOP.GT.0.0)
      &      LFWT = LFWT - WLIDOT/PLTPOP
-           
+
           PLA = PLA - LAIDOT
           LAI = LAI - LAIDOT*PLTPOP/10000
 
@@ -978,7 +1006,7 @@ C--------------------------------------------------------------
             GRAINN = GRAINN - GRAINN*(SWIDOT/PLTPOP)/PANWT
           ENDIF
 
-          IF(PLTPOP.GT.0.0) THEN 
+          IF(PLTPOP.GT.0.0) THEN
             PANWT = PANWT - SWIDOT/PLTPOP
 C           EARWT = EARWT - SWIDOT/PLTPOP
           ENDIF
@@ -1002,8 +1030,8 @@ C--------------------------------------------------------------
 
 !     Specific leaf area (cm2/g)
       IF (LFWT .GT. 0.) THEN
-        SLA = LAI*10000/LFWT  
-      ELSE    
+        SLA = LAI*10000/LFWT
+      ELSE
         SLA = 0
       ENDIF
 
@@ -1097,12 +1125,12 @@ C           the solar radiation - MJ/square metre
 C  TT     :
 C  PCARB  : Daily amount of carbon fixed - g
 C  PRFT   : Photosynthetic reduction factor for low and high temperatures
-C  TTMP   :
-C  PC     :
+C  TTMP   : c-MA  11dec2014 i think create to reduce leaf growth due to temp effect, but not yet implemented
+C  PC     : c-MA 11dec2014 factor used to reduce leaf growth under 5 fully expended leaves.
 C  TI     : Fraction of a phyllochron interval which occurred as a fraction
 C           of today's daily thermal time
-C  XTN    :
-C  A      : Zero to unity factor for relative nitrification rate (unitless)
+C  XTN    :  C-MA 11dec2014 Exponent factor from equation 2 p35 in ceres sorghum documentation, depend on PLAY( corresponding to K in eq.2, which dependent on G1,)
+C  A      : Zero to unity factor for relative nitrification rate (unitless) c-ma it's actually the A from eq.2 which represents max leaf area ar infinite time
 C  RTR    :
 C  TC1    :
 C  TC2    :
