@@ -116,7 +116,7 @@
                    
                     
                     
-                    !Linear decrease according SWP
+                    !Linear decrease according RAW
                     IF (WFGU-WFGL > 0.0) &
                         WFG = AMAX1(0.0,AMIN1(1.0,(RAW-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
                     IF (WFPU-WFPL > 0.0) &

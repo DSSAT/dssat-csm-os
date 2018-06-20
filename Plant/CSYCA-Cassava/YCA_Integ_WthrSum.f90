@@ -41,11 +41,17 @@
         ENDIF
         
         
-        IF (ISWWAT == 'Y') THEN
-            DAWWP = DAWWP + (TT*WFG) !LPM 31JUL2015 Added to have a new clock with water stress
+        IF (DAG > 0) THEN ! @DANIPILZE 20JUN2018 Calculating DAWWP only after germination
+            IF (ISWWAT == 'Y') THEN
+                DAWWP = DAWWP + (TT*WFG) !LPM 31JUL2015 Added to have a new clock with water stress
+            ELSE
+                DAWWP = TTCUM
+            ENDIF
         ELSE
-            DAWWP = TTCUM
+            DAWWP = 0.0
         ENDIF
+        
+        
         IF (DAWWP > 900.0) THEN
             TTCUMLS = TTCUMLS + TTlfsize   ! LPM 12JUL2015 added to consider a different optimum temperature for potential leaf size
             IF (ISWWAT == 'Y') THEN
