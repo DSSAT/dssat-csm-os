@@ -28,8 +28,10 @@
         REAL    SW(NL)          , LL(NL)          , DUL(NL)
         REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
         REAL    availableCH2O
+        REAL    depth
+        REAL    rawByLayer(NL)
         
-        INTEGER LAYER
+        INTEGER LAYER, layerCount
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      
 
@@ -94,14 +96,30 @@
               !ENDIF
                 RAW = 0.0
                 TRLV = 0.0
-                DO L = 1, NLAYRROOT
+                DO layerCount = 1, NLAYRROOT
                     !RAW = RAW + (SWP(L)*DLAYRTMP(L)*RLV(L)) ! DA 20APR2018 removed, changing RAW calculation
+                        
+                    TRLV = TRLV + (RLV(layerCount)*DLAYRTMP(layerCount))
                     
-                    TRLV = TRLV + (RLV(L)*DLAYRTMP(L))
+                    ! calculating RAW for each soil layer
+                    rawByLayer(layerCount) = (SW(layerCount)- LL(layerCount)) / (DUL(layerCount)-LL(layerCount))          !EQN 161 
+                    rawByLayer(layerCount) = AMAX1(0.0, rawByLayer(layerCount))
                 ENDDO
                 
+                depth = DLAYRTMP(1) ! initiating with the depth of the first layer
+                RAW = rawByLayer(1) ! initiating with the raw of the first layer
+                DO layerCount = 2, NLAYRROOT
+                    if (depth<50) then ! cheking the layers that reach the 50cm of depth
+                        depth = depth + DLAYRTMP(layerCount)
+                        RAW = RAW + rawByLayer(layerCount)
+                    else
+                        exit !exit when the depth is exceeded 
+                    endif
+                ENDDO
+                layerCount=layerCount-1 ! compensate the last incrase on the loop
+                RAW = RAW / layerCount ! RAW as the average of the RAW of each soil layer
                 
-                
+         
                 IF (EMRGFR >= 1.0) THEN
                     
                    ! IF (TRLV > 0.0) THEN
@@ -111,12 +129,9 @@
                    !     RAW = SWP(LSEED)
                    ! ENDIF
                     
-                   LAYER = 10
-                   RAW = (SW(LAYER)- LL(LAYER)) / (DUL(LAYER)-LL(LAYER)) ! DA 20APR2018 added, changing RAW calculation                                                       !EQN 161 
-                   
+
                     
-                    
-                    !Linear decrease according SWP
+                    !Linear decrease according RAW
                     IF (WFGU-WFGL > 0.0) &
                         WFG = AMAX1(0.0,AMIN1(1.0,(RAW-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
                     IF (WFPU-WFPL > 0.0) &
@@ -242,6 +257,10 @@
             !!LNUMG = LNUMEND - LNUM
             !LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
             !LPM 24MAR2016 
+            
+            open (unit = 8, file = "DAWWP.txt") ! to delete
+            write (8,*) DAP,DAWWP, TT, WFG
+
             
             IF (DAG > 0) THEN
                 IF (ISWWAT == 'Y') THEN
