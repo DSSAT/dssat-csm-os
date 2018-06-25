@@ -203,15 +203,13 @@ C-GH &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
 C-LPM  Add CIAT cassava model
 !     CASSAVA: cassava **
       CASE ('CSYCA')
-
-!DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15          
-!         READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-!     &      PPS1, B01ND, B12ND, SRNWT, HMPC, LA1S, LAXS, 
-!     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
-                    
+                        
           READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      PPS1, B01ND, B12ND, SRNWT, HMPC, LAXS, 
+     &      PPS1, B01ND, B12ND, BR1FX, BR2FX, BR3FX, BR4FX, 
+     &      LAXS,
      &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
+          
+
           
 	 
 !     Ceres-wheat: wheat, barley **
@@ -403,16 +401,14 @@ C-----------------------------------------------------------------------
 C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
      
-!  821 FORMAT (A6,1X,A16,7X,A6,13F6.0,A)         !CSYCA        06/05/2015 !DA 04OCT2016 Changed since LA1S variable is removed, is not used according to LPM 07MAR15 
-  821 FORMAT (A6,1X,A16,7X,A6,12F6.0,A)         !CSYCA        06/05/2015 
+  821 FORMAT (A6,1X,A16,7X,A6,14F6.0,A)         !CSYCA        06/05/2015 
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
-  850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 
+  850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A)
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
  1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 
 !!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)       !02/10/2009 
- ! 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                   !02/10/2009 
- 1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)                   !02/21/2018 
+ 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                   !02/10/2009 
 
 !1500 FORMAT (A6,1X,A16,1X,A255)
  1500 FORMAT (A6,1X,A16,7X,A)                             !11/8/07

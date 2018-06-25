@@ -13,7 +13,7 @@
       REAL          LAXND, LAXN2, LAFS, LAFND, SLASS, LLIFA, LPEFR
       REAL          STFR
 !     For CSYCA-cassava
-      REAL          LNSLP, NODWT, NODLT
+      REAL          LNSLP, NODWT, NODLT, BR1FX, BR2FX, BR3FX, BR4FX
 
 	  
 !     For CSCRP-wheat
@@ -35,7 +35,8 @@
      &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
      &      MXLFAREA, MXLFARNO, PSWITCH, TTPLNTEM, 
      &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, POPTT16, 
-     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5 
+     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5, 
+     &      Tthalfo, TBase, MAX_POP
 
       REAL          CSDVAR,PHTHRS(20),SDPDVR,SLAVAR,LFMAX,XFRUIT,WTPSD
       REAL          SFDUR,PODUR,PPSEN,PH2T5,SIZELF

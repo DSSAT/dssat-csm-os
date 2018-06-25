@@ -266,6 +266,10 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P9',pd(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B01ND',pdl(1))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B12ND',pdl(2))
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR1FX',brfx(1))
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR2FX',brfx(2))
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR3FX',brfx(3))
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR4FX',brfx(4))
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B23ND',pdl(3))!LPM 05JUN2016 B23ND to B89ND are not used
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B34ND',pdl(4))
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B45ND',pdl(5))
@@ -330,6 +334,10 @@
             CALL CUREADR (CUDIRFLE,VARNO,'P9',pd(9))
             CALL CUREADR (CUDIRFLE,VARNO,'B01ND',pdl(1))
             CALL CUREADR (CUDIRFLE,VARNO,'B12ND',pdl(2))
+            CALL CUREADR (CUDIRFLE,VARNO,'BR1FX',brfx(1))
+            CALL CUREADR (CUDIRFLE,VARNO,'BR2FX',brfx(2))
+            CALL CUREADR (CUDIRFLE,VARNO,'BR3FX',brfx(3))
+            CALL CUREADR (CUDIRFLE,VARNO,'BR4FX',brfx(4))
             CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
             CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
             CALL CUREADR (CUDIRFLE,VARNO,'SLAS',laws)
@@ -362,10 +370,6 @@
         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
         CALL ECREADR (ECDIRFLE,ECONO,'TBLSZ',tblsz)
-        CALL ECREADR (ECDIRFLE,ECONO,'BR1FX',brfx(1))
-        CALL ECREADR (ECDIRFLE,ECONO,'BR2FX',brfx(2))
-        CALL ECREADR (ECDIRFLE,ECONO,'BR3FX',brfx(3))
-        CALL ECREADR (ECDIRFLE,ECONO,'BR4FX',brfx(4))
         ! Following may have been (temporarily) in the CUL file
         ! Radiation use efficiency
         IF (PARUE <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)

@@ -301,16 +301,9 @@ C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2,A)
         write(*,*) 
         WRITE(LUNIO,'(A)') TRIM(ATLINE)
         
-!DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15        
-!          WRITE (LUNIO,167,IOSTAT=ERRNUM) 
-!     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
-!     &      PPS1, B01ND, B12ND, SRNWT, HMPC, 
-!     &      LA1S, LAXS,                                       
-!     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, TRIM(PLAINTXT)
-          
            WRITE (LUNIO,167,IOSTAT=ERRNUM) 
      &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
-     &      PPS1, B01ND, B12ND, SRNWT, HMPC, 
+     &      PPS1, B01ND, B12ND,  BR1FX, BR2FX, BR3FX, BR4FX,
      &      LAXS,                                       
      &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, TRIM(PLAINTXT)
           
@@ -320,29 +313,21 @@ C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,3F6.2,A)
 !     &      F6.2,2F6.0,1F6.2,2F6.1,3F6.0,3F6.2,1F6.1,A)   !LPM modified to read LLIFA greater than 999
 
   167     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &      F6.2,2F6.0,1F6.2,1F6.1,3F6.0,3F6.2,1F6.1,A)   !LPM modified to read LLIFA greater than 999
+     &      F6.2,2F6.0,4F6.0,3F6.0,3F6.2,1F6.1,A)   !LPM modified to read LLIFA greater than 999
 
 C-LPM       F6.2,6F6.1,2F6.2,3F6.1,F6.0,7F6.1,F6.2,A) 
 C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,2F6.2,A)
      
       CASE ('SCCAN')
-      
-        ! WRITE(*, '(A, F10.5)') 'SER0 is ', SER0 
-        WRITE(LUNIO,'(A)') TRIM(ATLINE) 
+        WRITE(LUNIO,'(A)') TRIM(ATLINE)
         WRITE(LUNIO,170,IOSTAT=ERRNUM)
      &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
-     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
      &      LFMAX, MXLFAREA, MXLFARNO, PI1, PI2, PSWITCH, TTPLNTEM, 
-     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, POPTT16, 
-     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5 
-     
-!  170   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-!     &      4F15.2,16F15.1,2F15.2,F15.10,F15.1,2F15.10)
-  170    FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &           F15.4,F15.4,F15.4,F15.4,F15.2,F15.2,F15.2,
-     &           F15.2,F15.1,F15.1,
-     &           F15.1,F15.1,F15.1,F15.1,F15.3,F15.3,F15.5,
-     &           F15.1,F15.4,F15.4,F15.1,F15.4)
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
+     &      LG_AMBASE 
+  170   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
+     &      4F15.2,16F15.1)
 
       CASE DEFAULT     
         WRITE (LUNIO,'("@C  CR INGENO CNAME")')
