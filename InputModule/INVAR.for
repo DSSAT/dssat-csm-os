@@ -815,10 +815,10 @@ C         Branch to menu choice
 !     for canegro at this time.
       CASE ('SCCAN')
         WRITE (*,5900) 
-     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
      &      LFMAX, MXLFAREA, MXLFARNO, PI1, PI2, PSWITCH, TTPLNTEM, 
-     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
-     &      LG_AMBASE 
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, POPTT16, 
+     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5 
 
 5900    FORMAT (12X,'0. End of changes',//,
      &  12X,' 1. MaxPARCE (Max radiation conversion eff).....[',F7.2,/,
@@ -858,22 +858,24 @@ C          Branch to menu choice
              CASE (3); CALL GETREAL (STKPFMAX,'STKPFMAX', 0.0, 1.)
              CASE (4); CALL GETREAL (SUCA,    'SUCA',     0.0, 1.)
              CASE (5); CALL GETREAL (TBFT,    'TBFT',     0.0, 45.)
-             CASE (6); CALL GETREAL (Tthalfo, 'Tthalfo',  0.0, 10000.)
-             CASE (7); CALL GETREAL (TBase,   'TBase',    0.0, 10000.)
-             CASE (8); CALL GETREAL (LFMAX,   'LFMAX',    0.0, 10000.)
-             CASE (9); CALL GETREAL (MXLFAREA,'MXLFAREA', 0.0, 10000.)
-             CASE(10); CALL GETREAL (MXLFARNO,'MXLFARNO', 0.0, 10000.)
-             CASE(11); CALL GETREAL (PI1,     'PI1',      0.0, 10000.)
-             CASE(12); CALL GETREAL (PI2,     'PI2',      0.0, 10000.)
-             CASE(13); CALL GETREAL (PSWITCH, 'PSWITCH',  0.0, 10000.)
-             CASE(14); CALL GETREAL (TTPLNTEM,'TTPLNTEM', 0.0, 10000.)
-             CASE(15); CALL GETREAL (TTRATNEM,'TTRATNEM', 0.0, 10000.)
-             CASE(16); CALL GETREAL (CHUPIBASE,'CHUPIBASE',0.0, 10000.)
-             CASE(17); CALL GETREAL (TT_POPGROWTH,'TT_POPGROWTH',0.0,
+             CASE (6); CALL GETREAL (LFMAX,   'LFMAX',    0.0, 10000.)
+             CASE (7); CALL GETREAL (MXLFAREA,'MXLFAREA', 0.0, 10000.)
+             CASE (8); CALL GETREAL (MXLFARNO,'MXLFARNO', 0.0, 10000.)
+             CASE (9); CALL GETREAL (PI1,     'PI1',      0.0, 10000.)
+             CASE(10); CALL GETREAL (PI2,     'PI2',      0.0, 10000.)
+             CASE(11); CALL GETREAL (PSWITCH, 'PSWITCH',  0.0, 10000.)
+             CASE(12); CALL GETREAL (TTPLNTEM,'TTPLNTEM', 0.0, 10000.)
+             CASE(13); CALL GETREAL (TTRATNEM,'TTRATNEM', 0.0, 10000.)
+             CASE(14); CALL GETREAL (CHUPIBASE,'CHUPIBASE',0.0, 10000.)
+             CASE(15); CALL GETREAL (TT_POPGROWTH,'TT_POPGROWTH',0.0,
      &                                                         10000.)
-             CASE(18); CALL GETREAL (MAX_POP, 'MAX_POP',  0.0, 10000.)
-             CASE(19); CALL GETREAL (POPTT16, 'POPTT16',  0.0, 10000.)
-             CASE(20); CALL GETREAL (LG_AMBASE,'LG_AMBASE',0.0,10000.)
+             CASE(16); CALL GETREAL (POPTT16, 'POPTT16',  0.0, 10000.)
+             CASE(17); CALL GETREAL (TAR0,'TAR0',0.0,10000.)
+             CASE(18); CALL GETREAL (TDELAY,'TDELAY',0.0,10000.)
+             CASE(19); CALL GETREAL (LER0,'LER0',0.0,10000.)
+             CASE(20); CALL GETREAL (SER0,'SER0',0.0,10000.)
+             CASE(21); CALL GETREAL (LG_AMBASE,'LG_AMBASE',0.0,10000.)
+             CASE(22); CALL GETREAL (AQP_UP5,'AQP_UP5',0.0,10000.)
            END SELECT 
 
 !=======================================================================
