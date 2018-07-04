@@ -178,8 +178,9 @@
                   ! SWP(0) = AMIN1(1.,AMAX1(.0,(SWP(1)-0.5*(SWP(2)-SWP(1)))))
                   ! SWPSD = SWP(0) + (SDEPTH/DLAYR(1))*(SWP(2)-SWP(0))
                   !ENDIF
-                  IF (WFGEM > 0.0) &
+                  IF (WFGEM > 0.0) then
                    WFGE = AMAX1(0.0,AMIN1(1.0,(SWP(LSEED)/WFGEM)))
+                  endif
             ENDIF
           ENDIF
           IF (ISWWATCROP == 'N') WFGE = 1.0
