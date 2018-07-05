@@ -1164,7 +1164,7 @@ c           This check prevents this.
             L = LLL
             IF (L .GT. 70) THEN
               L = 70
-              IF (.not.WARNED) THEN
+              IF (WARNED .EQ. 0) THEN
               WRNING_TEXT(1) = "More than 70 leaves simulated - " //
      &         "usually a sign that harvest age is too high."
               WRNING_TEXT(2) ="Please check dates and " // 
