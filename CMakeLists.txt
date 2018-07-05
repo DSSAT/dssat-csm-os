@@ -72,8 +72,12 @@ ELSE()
     SET(OSDefinitions "Utilities/OSDefsLINUX.for")
     configure_file(
         "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47.in"
-	"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47"
+		"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47"
     )
+	configure_file(
+		"${PROJECT_SOURCE_DIR}/Utilities/run_dssat.in"
+		"${PROJECT_SOURCE_DIR}/Utilities/run_dssat"
+	)
 ENDIF(WIN32)
 
 # Add the source files
@@ -777,6 +781,8 @@ endforeach()
 
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION
 	RUNTIME DESTINATION .)
+
+install(FILES Utilities/run_dssat DESTINATION .)
 
 install(DIRECTORY Data/ DESTINATION .
 	PATTERN "*.in" EXCLUDE)
