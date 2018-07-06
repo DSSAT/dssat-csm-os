@@ -292,13 +292,13 @@ c     Temp values read from file
 
 c       Modification to calculation of delta thermal time, based on ASA 2013 work:
 c       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-c       Delta thermal time (°Cd) for stalk elongation
+c       Delta thermal time (Â°Cd) for stalk elongation
         REAL DTT_SER
-c       Delta thermal time (°Cd) for leaf elongation
+c       Delta thermal time (Â°Cd) for leaf elongation
         REAL DTT_LER
 c       Function for calculating delta thermal time
         REAL D_TT
-c       Base, optimal and final temperatures for thermal time accum. (°C)
+c       Base, optimal and final temperatures for thermal time accum. (Â°C)
 c       These are cultivar params.
 c       For leaves
         REAL TBaseLFEX, ToptLFEX, TFinLFEX
