@@ -62,13 +62,12 @@ ENDIF(FCNAME STREQUAL "pgf90")
 ##########################################################################################
 
 # Define the executable name and OSDefinitions file
+SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
 IF(WIN32)
-    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
     SET(OSDefinitions "Utilities/OSDefsWINDOWS.for")
     add_definitions(-DWIN32=1})
 ELSE()
     SET(DSSAT_INSTALL_DIR $CMAKE_INSTALL_PREFIX)
-    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
     SET(OSDefinitions "Utilities/OSDefsLINUX.for")
     configure_file(
         "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47.in"
