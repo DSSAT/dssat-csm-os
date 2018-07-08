@@ -16,18 +16,16 @@ endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 PROJECT(DSSAT-CSM Fortran )
 
 ##########################################################################################
-# DSSAT_VERSION from ModuleDefs.for
+# DSSAT_VERSION
 ##########################################################################################
 
-file(READ "${CMAKE_SOURCE_DIR}/Utilities/ModuleDefs.for" File_Content)
-
-# Take DSSAT_VERSION from ModuleDefs.for
-STRING(REGEX REPLACE ".*Major = ([0-9]+).*" "\\1" MAJOR "${File_Content}")
-STRING(REGEX REPLACE ".*Minor = ([0-9]+).*" "\\1" MINOR "${File_Content}")
-STRING(REGEX REPLACE ".*Model = ([0-9]+).*" "\\1" MODEL "${File_Content}")
-STRING(REGEX REPLACE ".*Build = ([0-9]+).*" "\\1" BUILD "${File_Content}")
+SET(MAJOR 4)
+SET(MINOR 7)
+SET(MODEL 2)
+SET(BUILD 0)
+SET(BRANCH "hipergator")
 MESSAGE(STATUS "MAJOR: ${MAJOR} MINOR: ${MINOR} MODEL: ${MODEL} BUILD: ${BUILD}")
-
+MESSAGE(STATUS "BRANCH: ${BRANCH}")
 # Set the version
 SET(VERSION ${MAJOR}.${MINOR}.${MODEL})
 
@@ -63,6 +61,10 @@ ENDIF(FCNAME STREQUAL "pgf90")
 
 # Define the executable name and OSDefinitions file
 SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
+configure_file(
+    "${PROJECT_SOURCE_DIR}/Utilities/CSMVersion.for.in"
+    "${PROJECT_SOURCE_DIR}/Utilities/CSMVersion.for"
+)
 IF(WIN32)
     SET(OSDefinitions "Utilities/OSDefsWINDOWS.for")
     add_definitions(-DWIN32=1})
@@ -83,6 +85,7 @@ ENDIF(WIN32)
 set(
     source_list
     	"${OSDefinitions}"
+        "Utilities/CSMVersion.for"
         "Utilities/ModuleDefs.for"
         "Utilities/DATES.for"
         "Utilities/ERROR.for"
