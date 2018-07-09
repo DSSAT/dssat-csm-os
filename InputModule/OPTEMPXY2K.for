@@ -326,15 +326,23 @@ C-LPM       F6.2,6F6.1,2F6.2,3F6.1,F6.0,7F6.1,F6.2,A)
 C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,2F6.2,A)
      
       CASE ('SCCAN')
-        WRITE(LUNIO,'(A)') TRIM(ATLINE)
+      
+        ! WRITE(*, '(A, F10.5)') 'SER0 is ', SER0 
+        WRITE(LUNIO,'(A)') TRIM(ATLINE) 
         WRITE(LUNIO,170,IOSTAT=ERRNUM)
      &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
-     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
      &      LFMAX, MXLFAREA, MXLFARNO, PI1, PI2, PSWITCH, TTPLNTEM, 
-     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
-     &      LG_AMBASE 
-  170   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
-     &      4F15.2,16F15.1)
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, POPTT16, 
+     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5 
+     
+!  170   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
+!     &      4F15.2,16F15.1,2F15.2,F15.10,F15.1,2F15.10)
+  170    FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
+     &           F15.4,F15.4,F15.4,F15.4,F15.2,F15.2,F15.2,
+     &           F15.2,F15.1,F15.1,
+     &           F15.1,F15.1,F15.1,F15.1,F15.3,F15.3,F15.5,
+     &           F15.1,F15.4,F15.4,F15.1,F15.4)
 
       CASE DEFAULT     
         WRITE (LUNIO,'("@C  CR INGENO CNAME")')

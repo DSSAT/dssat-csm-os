@@ -352,8 +352,14 @@ C
             IDETW = UPCASE(IDETW)
             IDETN = UPCASE(IDETN)
             IDETP = UPCASE(IDETP)
-            IDETD = UPCASE(IDETD)    
+            IDETD = UPCASE(IDETD)
+   
             FMOPT = UPCASE(FMOPT)   ! VSH
+!           FMOPT = 'A': ASCII format output
+!           FMOPT = 'C': CSV format output
+!           By default, use ASCII outputs
+            IF (INDEX('CA',FMOPT) < 1) FMOPT = 'A'
+
             IF (IDETL .EQ. ' ') THEN
                IDETL = 'N'
             ENDIF
@@ -1352,9 +1358,6 @@ D     IPX = 23
             READ (CHARTEST,'(97X,A1)',IOSTAT=ERRNUM) FMOPT
             CALL CHECK_A('FMOPT', FMOPT, ERRNUM, MSG, NMSG)
 
-            READ (CHARTEST,'(97X,A1)',IOSTAT=ERRNUM) FMOPT
-            CALL CHECK_A('FMOPT', FMOPT, ERRNUM, MSG, NMSG)
-
             IOX   = UPCASE(IOX)
             IDETO = UPCASE(IDETO)
             IDETS = UPCASE(IDETS)
@@ -1382,9 +1385,11 @@ D     IPX = 23
               IDETH = 'N' 
               IDETR = 'N' 
               IDETO = 'E'
-              FMOPT = 'N' ! VSH
+!             FMOPT = 'N' ! VSH  !CHP FMOPT is not tied to IDETL
+
 !             Seasonal and spatial runs do not get evaluate file when IDETL=0
               IF (INDEX('SN',CONTROL%RNMODE) > 0) IDETO = 'N'
+
             ELSEIF (IDETL == 'A') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
@@ -1397,7 +1402,7 @@ D     IPX = 23
               IDETD = 'Y' 
               IDETH = 'Y' 
               IDETR = 'Y' 
-              FMOPT = 'A'  ! VSH
+!             FMOPT = 'A'  ! VSH  !CHP FMOPT is not tied to IDETL
               
 !             Set IDETL back to "D" so no need for changes elsewhere
 !             IDETL = 'D' 

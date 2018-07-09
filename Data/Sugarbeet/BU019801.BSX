@@ -1,4 +1,4 @@
-*EXP.DETAILS: BU019801BS BU019801 CERESBEET
+*EXP.DETAILS: BU019801BS BUCHAREST, ROMANIA 1998
 
 *GENERAL
 @PEOPLE
@@ -12,7 +12,7 @@ Leviel
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 1 0 BU1998 SB                  1  1  0  0  1  0  0  0  0  0  0  0  1
+ 1 1 1 0 Bucharest 1998             1  1  0  0  1  0  0  0  0  0  0  0  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -71,13 +71,13 @@ Leviel
 @N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
  1 GE              1     1     S 98094  2150 DEFAULT SIMULATION CONTR
 @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
- 1 OP              Y     Y     Y     N     N     N     N     Y     M
+ 1 OP              Y     Y     N     N     N     N     N     Y     M
 @N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
  1 ME              M     M     E     R     S     L     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     R     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN

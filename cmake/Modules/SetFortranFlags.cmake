@@ -23,10 +23,10 @@ ELSEIF(BT STREQUAL "TESTING")
       "Choose the type of build, options are DEBUG, RELEASE, or TESTING."
       FORCE)
 ELSEIF(NOT BT)
-    SET(CMAKE_BUILD_TYPE RELEASE CACHE STRING
+    SET(CMAKE_BUILD_TYPE DEBUG CACHE STRING
       "Choose the type of build, options are DEBUG, RELEASE, or TESTING."
       FORCE)
-    MESSAGE(STATUS "CMAKE_BUILD_TYPE not given, defaulting to RELEASE")
+    MESSAGE(STATUS "CMAKE_BUILD_TYPE not given, defaulting to DEBUG")
 ELSE()
     MESSAGE(FATAL_ERROR "CMAKE_BUILD_TYPE not valid, choices are DEBUG, RELEASE, or TESTING")
 ENDIF(BT STREQUAL "RELEASE")
@@ -112,7 +112,27 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
 				         "-fpp" # Intel
                  	     "-cpp"
                 )
-                
+ 
+# 
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "/MACHINE:IX86" # Intel 
+                )
+
+# Links to a single-threaded, static run-time library 
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "/libs:static" # Intel 
+                )
+# Tells the linker to search for unresolved references in a multithreaded run-time library
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "/threads" # Intel Windows
+				         "-threads" # Intel Linux/Mac
+                )
+# Restricts floating-point exceptions by enabling the overflow, the divide-by-zero, and the invalid floating-point exceptions				
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "/fpe:0" # Intel Windows
+                         "-fpe0"  # Intel Linux/Mac		 
+                )
+
 ###################
 ### DEBUG FLAGS ###
 ###################
@@ -196,9 +216,9 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
 #                         "-ip"  # Intel
 #                )
 
-# Vectorize code
-SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
-                 Fortran "/Qvec-report0" # Intel Windows
-                         "-vec-report0"  # Intel
-                         "-Mvect"        # Portland Group
-                )
+## Vectorize code
+#SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
+#                 Fortran "/Qvec-report0" # Intel Windows
+#                         "-vec-report0"  # Intel
+#                         "-Mvect"        # Portland Group
+#                )
