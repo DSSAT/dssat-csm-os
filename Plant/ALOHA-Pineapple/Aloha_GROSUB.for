@@ -82,7 +82,7 @@
       REAL    PLAG, RTWT, FLRWT, GROSTM, SENLA, SLAN, GRORT
       REAL    GROBSL, GROLF, CUMPH, LN, CUMDEP, SUMP, PLAMX, GROFLR
       REAL    GROCRWN, GROFRT, FRTWT, CRWNWT, SKWT, GROSK, PTF, EYEWT
-      REAL    SWMAX, SWMIN, NDEF3, NSTRES, AGEFAC
+      REAL    SWMAX, SWMIN, NDEF3, NSTRES, AGEFAC, LIFAC
       REAL    PAR, CC, TRF2, CARBO, SWFAC, TEMPM  !,TRNU
       REAL    DTT, TURFAC, XN, CMF, TOTPLTWT, SUMDTT, GPP
       REAL    PDWI, PGRORT, DM, FBIOM, MAXLAI, PHOTOSYNEYE, FRUITS
@@ -213,6 +213,7 @@
       CO2Y = SPECIES % CO2Y
       CC   = SPECIES % CONV
       CMF  = Species % CMFC
+      LIFAC= Species % LIFAC
 
       G2  = CULTIVAR % G2
       G3  = CULTIVAR % G3
@@ -267,7 +268,7 @@
 !-----------------------------------------------------------------
 
       PAR   = 0.5*SRAD
-      Y1    = EXP(-0.52*LAI)                        ! Beer's law
+      Y1    = EXP(-LIFAC*LAI)                       ! Beer's law
       PCARB = CC*PAR/PLTPOP*(1.0-Y1)                ! on per plant basis
       !
       ! Calculate Photosynthetic Response to CO2

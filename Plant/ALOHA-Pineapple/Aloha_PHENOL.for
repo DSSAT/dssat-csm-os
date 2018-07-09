@@ -46,7 +46,7 @@ C=======================================================================
       REAL        TMIN, TMAX, TEMPFMX, SUMDTT, CUMDEP, GPP
       REAL        FRTWT, TEMPFM, TOTPLTWT
       REAL        P1, P2, P3, P4, P5, P6, TBASE1
-      REAL        G2, CUMDTT
+      REAL        CUMDTT
       REAL, DIMENSION(NL) :: SW, LL, DLAYR
 
       REAL PLTPOP, SDEPTH, PLANTSIZE
@@ -127,7 +127,6 @@ C=======================================================================
       P4 = Cultivar % P4
       P5 = Cultivar % P5
       P6 = Cultivar % P6
-      G2 = Cultivar % G2
       TBASE1  = 16. !????
 
 !=================================================================

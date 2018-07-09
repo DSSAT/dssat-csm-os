@@ -23,10 +23,12 @@ c         [I] Senescence?
      -        SENESF,
 c         [O] Not sure - needs expla-ing :-)
      -        expla,
-c         [O] Plant extension rate (cm/day)
-     -        PER,
+c         [O] Plant (ASA 2013 - LEAF) extension rate (cm/day)
+     -        LER,
 c         [O] Light extinction coefficient (req'd by TRANS)
      -        EXTINC,
+c         [O] Sunlit Leaf area index fraction
+     -        F_SL,    
 c         [IO] Current stalk population, not used here  *
      -        pplast,
 c         [I] Newbat signals a new stalk pop. cohort
@@ -109,7 +111,8 @@ c      REAL    BOOTLI
       REAL    CHUPI
       REAL    CHUPOP
       REAL    EXPLA
-      REAL    PER
+c     ASA 2013 (MJ)
+      !REAL    PER
       REAL    PPLAST
       REAL    RESET
       REAL    ROWSPC
@@ -126,7 +129,7 @@ c     ::::::::::::::::::::::::::::::::::::::::
      	INTEGER I
      	INTEGER ISTAGE
      	INTEGER J
-     	INTEGER L
+     	INTEGER L, LLL
      	INTEGER LAST
      	INTEGER LCOUNT
      	INTEGER LFNX
@@ -185,7 +188,10 @@ c     ::::::::::::::::::::::::
 c     Growth variables:
 c     :::::::::::::::::
 c     Used here:
-      REAL    LAI
+c     Leaf area index, green and sunlit
+      REAL    LAI, LAI_SL
+c     Sunlit LAI fraction
+      REAL, INTENT(OUT) :: F_SL
       REAL    LI
       REAL    TLAI
 
@@ -247,7 +253,7 @@ c     Coefficient relating canopy height to first leaf maximum size
       REAL CHTCoeff
 
 c     New derived variables for Plant Extension Rate
-      REAL dPERdT, TBASEPER
+c     REAL dPERdT, TBASEPER
 c     For testing
 !      REAL oldPER, oldoldPER
 
@@ -282,6 +288,32 @@ c     Error status of cultivar/species file reads
 c     Temp values read from file
       REAL T_LFNMXEXT, T_MXLFAREA, AL
 !      REAL T_MXLFARNO
+
+
+c       Modification to calculation of delta thermal time, based on ASA 2013 work:
+c       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+c       Delta thermal time (°Cd) for stalk elongation
+        REAL DTT_SER
+c       Delta thermal time (°Cd) for leaf elongation
+        REAL DTT_LER
+c       Function for calculating delta thermal time
+        REAL D_TT
+c       Base, optimal and final temperatures for thermal time accum. (°C)
+c       These are cultivar params.
+c       For leaves
+        REAL TBaseLFEX, ToptLFEX, TFinLFEX
+c       For stalks
+        REAL TBaseSTKEX, ToptSTKEX, TFinSTKEX
+c       Leaf and stalk elongation rate
+c       cm/d
+        REAL SER, LER
+        
+c       New variables for initial leaf and stalk elongation rates (SK, 08/10/15)
+        REAL LER0, SER0
+
+c      Warning text string:
+       CHARACTER*78 WRNING_TEXT(2)
+       INTEGER WARNED
 
 !     Unit number for output
 !      INTEGER SCLUN   !CHP
@@ -367,8 +399,8 @@ c     ::::::::::::::::::::::::::::::::::::
           DEDLFN  =  0.0
           DEPTH  =  0.0
           DLAYR  =  0.0
-          dPERdT = 0.
-          TBASEPER  =  0.0
+c         dPERdT = 0.
+c         TBASEPER  =  0.0
           DTT  =  0.0
           ESW120  =  0.0
           EXPA  =  0.0
@@ -395,7 +427,11 @@ c     ::::::::::::::::::::::::::::::::::::
           LODGE_LI  =  0.0
           MAXLFLENGTH  =  0.0
           MAXLFWIDTH  =  0.0
-          PER  =  0.0
+c         ASA 2013 (MJ)
+          !PER  =  0.0
+          SER = 0.0
+          LER = 0.0
+
           PERCoeff  =  0.0
           PHYLO  =  0.0
           PHYLSWTCH  =  0.0
@@ -407,7 +443,7 @@ c     ::::::::::::::::::::::::::::::::::::
           SENESF  =  0.0
           SHGT  =  0.0
           SHOOTX  =  0.0
-          STDAYC  =  0.0
+          ! STDAYC  =  0.0
           STDAYD  =  0.0
           STDAYE  =  0.0
           STDDIV  =  0.0
@@ -435,7 +471,10 @@ c     ::::::::::::::::::::::::::::::::::::
           WIDCOR  =  0.0
           WIDTH  =  0.0
           WMAX  =  0.0
-          XLI  =  0.0         
+          XLI  =  0.0
+c         Added 08/10/15(SK)
+          SER0 = 0.0
+          LER0 = 0.0         
  
       ENDIF
 
@@ -453,6 +492,9 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Initialise (once!)
 c     ::::::::::::::::::
       IF (CONTROL%DYNAMIC .EQ. SEASINIT) THEN
+
+c       Reset warning check
+        WARNED = 0
 
 c         An option to control which Light Interception method to use;
 c         This is a throwback to old CANEGRO days.  This should be set
@@ -548,8 +590,9 @@ c         Maximum leaf area:
              AREAMX_CF(3) = -20.8
 
 c             Read from file:
-              CALL GET_CULTIVAR_COEFF(AREAMX_CF(1), 'AREAMX_CF(1)',
-     -                             CONTROL,  CF_ERR)
+!  MJ, April 2018: this was always 0, so I removed it from ECO file
+!              CALL GET_CULTIVAR_COEFF(AREAMX_CF(1), 'AREAMX_CF(1)',
+!     -                             CONTROL,  CF_ERR)
 c             Read from file:
               CALL GET_CULTIVAR_COEFF(AREAMX_CF(2), 'AREAMX_CF(2)',
      -                             CONTROL,  CF_ERR)
@@ -613,19 +656,34 @@ c             Read from file:
               CALL GET_CULTIVAR_COEFF(MAXLFWIDTH, 'MAXLFWIDTH',
      -                             CONTROL,  CF_ERR)
 
-
-c         Cultivar parameters for plant extension rate
+        
+c         Cultivar parameters for leaf and stalk elongation rates (SK, 08/10/15)
 c         ::::::::::::::::::::::::::::::::::::::::::::
-              dPERdT   =   .176
-              TBASEPER = 10.057
 
 c         Read from cult file:
-              CALL GET_CULTIVAR_COEFF(dPERdT, 'dPERdT',
+              CALL GET_CULTIVAR_COEFF(SER0, 'SER0',
      -                                CONTROL, CF_ERR)
 
-              CALL GET_CULTIVAR_COEFF(TBASEPER, 'TBASEPER',
+              CALL GET_CULTIVAR_COEFF(LER0, 'LER0',
      -                                CONTROL, CF_ERR)
+     
+
+      ! WRITE(*, '(A, F15.10)') 'SER0 = ', SER0
+      ! WRITE(*, '(A, F15.10)') 'LER0 = ', LER0
+      
+c         Cultivar parameters for plant extension rate
+c         ::::::::::::::::::::::::::::::::::::::::::::
+c             dPERdT   =   .176
+c             TBASEPER = 10.057
+
+c         Read from cult file:
+c             CALL GET_CULTIVAR_COEFF(dPERdT, 'dPERdT',
+c    -                                CONTROL, CF_ERR)
+c
+c             CALL GET_CULTIVAR_COEFF(TBASEPER, 'TBASEPER',
+c    -                                CONTROL, CF_ERR)
           
+
 c         Coeffs for plant extension rate for
 c         canopy height
           PERCoeff = 0.16
@@ -643,6 +701,34 @@ c         Init lodging variable, MJ 2006/09/06:
           CALL GET_CULTIVAR_COEFF(LDG_LI_EFF, 'LDG_FI_REDUC',  
      &                            Control, SPE_ERR)
 
+
+
+c         Thermal time parameters for stalk elongation:
+c         :::::::::::::::::::::::::::::::::::::::::::::
+c         Defaults:
+            TBaseSTKEX = 16.0
+            TOptSTKEX  = 35.0 
+            TFinSTKEX  = 48.0
+          CALL GET_CULTIVAR_COEFF(TBaseSTKEX, 'TBASE_STKEX',  
+     &       Control, CF_ERR)
+          CALL GET_CULTIVAR_COEFF(TOptSTKEX, 'TOPT_STKEX',  
+     &       Control, CF_ERR)
+          CALL GET_CULTIVAR_COEFF(TFinSTKEX, 'TFin_STKEX',  
+     &       Control, CF_ERR)             
+
+
+c         Thermal time parameters for leaf elongation:
+c         :::::::::::::::::::::::::::::::::::::::::::::
+c         Defaults:
+            TBaseLFEX = 10.0
+            TOptLFEX  = 30.0
+            TFinLFEX  = 43.0
+          CALL GET_CULTIVAR_COEFF(TBaseLFEX, 'TBASE_LFEX',  
+     &       Control, CF_ERR)
+          CALL GET_CULTIVAR_COEFF(TOptLFEX, 'TOPT_LFEX',  
+     &       Control, CF_ERR)
+          CALL GET_CULTIVAR_COEFF(TFinLFEX, 'TFin_LFEX', 
+     &       Control, CF_ERR)           
 
 
 c         END READ VALUES FROM CULTIVAR FILE
@@ -839,36 +925,14 @@ c                     Stress days for each tiller cohort
 
 c         Canopy heights, etc
               SHGT = 0.
-              PER = 0.
+              SER = 0.0
+              LER = 0.0
+
+              ! PER = 0.
               CaneCrop%CANHEIGHT = 0.
-
-
-
-
 
 c         Init tempop:
           TEMPOP = 0.
-
-
-!         CHP 3/26/2010
-          STDAYC = 0.0
-
-!      CALL GETLUN('WORK.OUT',SCLUN)
-c                    WRITE(SCLUN, '(A, 30(F10.0))') 'TEMPOP is ',TEMPOP
-
-c         Now output the leaf dynamics arrays, for verification:
-c         ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-c          DO I=1, 30
-c              WRITE(*,'(4(F10.5, 2X))') CaneCrop%AREAMX(I), 
-c     &        CaneCrop%LMAX(I),CaneCrop%WMAX(I),CaneCrop%WIDTH(I)
-
-c          ENDDO
-c          I = 0
-
-
-c     Mass-balance based LAI calc:
-c     TOPDM_yest = 0.
-
 
 c     End of initialisation section
 c    ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -962,33 +1026,7 @@ c     ::::::::::::::::::::::::
 c     None of these variables is used anyway.  Grumble.
 c     :::::::::::::::::::::::::::::::::::::::::::::::::
 
-
-
-
-
-C Stress days for leaf size and number are accumulated STDAYG as in MAIN 
-C but are reset when soil  profile is half full. The stress increment 
-C is doubled every 5 deg C above Tmax = 25C. This is to cope with the 
-c damage done to a canopy which can remain green in a dry soil but will 
-c lose leaves rapidly under very hot conditions.
-
-       TMEAN=(TEMPMN+TEMPMX)/2.0
-       STDAYC =STDAYC  + (1.0-SWDF2)*AMAX1(1.0,TEMPMX/5.0-4.0)
-
-      IF (ISWITCH%ISWWAT .EQ. 'Y') THEN
-c         If water stress is included:
-          IF(precip.GT.reset) THEN
-              STDAYC=0.0
-          ENDIF
-c          WRITE(*,*) 'STDAYC is ', STDAYC
-      ELSE
-c         If water stress excluded:
-          STDAYC=0.0
-      ENDIF
-
-
-c      WRITE(SCLUN, '(A, F10.0)') 'STDAYC is ', STDAYC
-
+      TMEAN=(TEMPMN+TEMPMX)/2.0
 
 c *********
 C The max. no green leaves on primary stalks is reduced according to 
@@ -1056,8 +1094,21 @@ c     To:
 c       1. Derived from this: base T = 10.57 degree days; dPER/dTEMP = 0.176
 c          for NCo376
 c       2. Prevent negative PER with MAX() function
-        PER = SWDF2 * dPERdT * MAX(0., TMEAN-TBASEPER) * 24./10.
 
+c       Modification to calculation of delta thermal time, based on ASA 2013 work:
+        DTT_SER = D_TT(TMEAN, TBaseSTKEX, ToptSTKEX, TFinSTKEX)
+        DTT_LER = D_TT(TMEAN, TBaseLFEX, ToptLFEX, TFinLFEX)
+        !PER = SWDF2 * dPERdT * MAX(0., TMEAN-TBASEPER) * 24./10.
+        !LER = SWDF2 * dPERdT * DTT_LER * 24./10.
+        !SER = SWDF2 * dPERdT * DTT_SER * 24./10.
+        
+        ! MJ, Jan 2018:
+        ! Do we want to include water logging stress here, over and
+        ! above the effects already included in SWDF2 via limited
+        ! water uptake as calculated in ROOTWU?
+        LER = SWDF2 * LER0 * DTT_LER * 24./10.
+        SER = SWDF2 * SER0 * DTT_SER * 24./10.
+        
 c     For verification:
 c        oldPER= MAX(0., SWDF2*(-1.77+0.176*TMEAN)*24.0/10.0)
 c        oldoldPER= SWDF2*(-1.77+0.176*TMEAN)*24.0/10.0
@@ -1106,11 +1157,31 @@ c      WRITE(23, '(I10)') LTX
       
 
 C --------CALCULATE THE AREA OF EXPANDING LEAVES 'EXPAL'OF ONE tiller cohort
-         DO 20 L=1,LTx
+        DO 20 LLL=1,LTx
+c           MJ, Nov 2015: under certain conditions, more than 70 leaves are produced.  This causes
+c           an array overflow, which bombs the simulation and can be a pain with long sequences.
+c           This check prevents this.
+            L = LLL
+            IF (L .GT. 70) THEN
+              L = 70
+              IF (WARNED .EQ. 0) THEN
+              WRNING_TEXT(1) = "More than 70 leaves simulated - " //
+     &         "usually a sign that harvest age is too high."
+              WRNING_TEXT(2) ="Please check dates and " // 
+     &        " simulation outputs CAREFULLY."
+              CALL WARNING(2, "SCCAN045: SCCNGRO", WRNING_TEXT)
+              WARNED = 1
+              ENDIF
+            ENDIF
 
             LCOUNT=L
             IF(LEN(N1,L).EQ.-0.099) GOTO 20      
-            LEN(N1,L)=LEN(N1,L)+PER
+
+
+!            LEN(N1,L)=LEN(N1,L)+PER
+c           ASA 2013 (MJ, Sept 2013)
+            LEN(N1,L)=LEN(N1,L)+LER
+
 
 c Final area of expanding leaves is reduced by as much as 50 % if water 
 c stress is severe.
@@ -1133,7 +1204,7 @@ c             for calculating area of the leaf
      -            EXPA=EXPA+(LEN(N1,L)-0.5*LMAX(L))*WIDTH(L)
              IF (EXPA.GE.areamx(L)*areduc) THEN
                  
-                     LFN(N1)=LFN(N1)+1
+                     LFN(N1)=MIN(70, LFN(N1)+1)
                      LEN(N1,L)=-0.099
                      EXPA=0.0 
                      WIDTH(L)=0.0
@@ -1150,9 +1221,9 @@ c 'glfmat' is number of fully expanded green leaves
        
 c Here the oldest green expanding leaf is 'matured' then senesced if necessary. 
        if(glfmax.lt.ltill(N1)-lfn(N1)) then
-            lfnx=lfn(N1)+1
+            lfnx=MIN(70, lfn(N1)+1)
             len(N1,lfnx)=-0.099
-            lfn(N1)=lfn(N1)+1
+            lfn(N1)=MIN(70, lfn(N1)+1)
        endif
 
 c This assumes glfmax applies less as li tends to 1.0 at which time dead leaf 
@@ -1279,6 +1350,24 @@ c CNBJUN2002: EXTINC-COEFF AT START AND MATURITY TO BE READ IN BY VAR FILE
 c CNBJUN2002: EXTINC-COEFF END
 
 
+c      Singels, Hoffman 2017: Assuming that leaf-level photosynthesis rate measurements,
+c      taken relative to NCo376, can only be scaled up to canopy level for sunlit leaves.
+c      Cultivar differences with shaded leaves are likely to be smaller.  So, NCo376 
+c      MaxPARCE value is used for shaded leaves and the actual cultivar value is used
+c      for sunlit leaves only.
+c      The separation between sunlit and shaded leaves is based on a calculation from: 
+c      Monteith and Unsworth, 2013.
+c     F_SL is used in SC_PHOTOS subroutine
+c     Calculate sunlit LAI:
+      LAI_SL = -1.0/EXTINC * (EXP(-EXTINC*LAI) - 1.0)
+c     Sunlit fraction:
+      IF (LAI .GT. 0.0) THEN
+        F_SL = LAI_SL / LAI
+      ELSE
+        F_SL = 1.0
+      ENDIF
+
+
 c  This is midday Li
         LI=1.0-EXP(-EXTINC*LAI)
 c Correct this upward for integreted diurnal Li
@@ -1288,9 +1377,9 @@ c     MJ, 2006/09/06
 c     CANESIM lodging!
 c     ::::::::::::::::
 c     Canesim: Fi = Fi * (1 - Flodge * Par2)
-! Removed by MJ,2012.  Some confusion.  Lodging is taken into account in
+! -- Removed by MJ,2012.  Some confusion.  Lodging is taken into account in
 ! photosynthesis routine.
-!          LI = LI * (1 - LODGE_LI * LDG_LI_EFF)
+          LI = LI * (1 - LODGE_LI * LDG_LI_EFF)
 c     ::::::::::::::::	  
         xli=li
 c Use li from Bootes photosynthesis if selected (mdl>1)
@@ -1347,7 +1436,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::
       ! MJ, AUg 2012: only accumulate stalk height after stalks
       ! have appeared!
       IF (CaneCrop%GROPHASE .GE. 3) THEN
-        SHGT = SHGT + (PER * PERCoeff)
+        SHGT = SHGT + (SER * PERCoeff)
       ELSE
         SHGT = 0.
       ENDIF

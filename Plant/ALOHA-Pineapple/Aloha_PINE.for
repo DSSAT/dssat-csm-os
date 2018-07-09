@@ -2,6 +2,7 @@
 !   Subroutine Aloha_Pineapple
 !
 !   ALOHA-PINEAPPLE MODEL (formerly PIALO980.EXE)
+!   Assessment of Local Options for Hawaii Agriculture
 !
 !   August 1997
 !

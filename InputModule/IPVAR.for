@@ -308,12 +308,23 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
         ECONO = '      '
 
 !     CaneGro: South African Sugarcane model **
-      CASE ('SCCAN')
+      CASE ('SCCAN') 
+        !WRITE(*, '(A)') C360
         READ (C360,1060,IOSTAT=ERRNUM) VARTY, VRNAME, ECONO,
-     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT, Tthalfo, TBase, 
+     &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
      &      LFMAX, MXLFAREA, MXLFARNO, PI1, PI2, PSWITCH, TTPLNTEM, 
-     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, MAX_POP, POPTT16, 
-     &      LG_AMBASE 
+     &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, POPTT16, 
+     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5 
+     
+! MJ removed 2018-02-08:
+!            TBASE_GE_EM, TOPT_GE_EM, TFin_GE_EM, TBASE_LFEM,
+!     &      TOPT_LFEM, TFinLFEM, TBASE_TLREM, TOPT_TLREM, TFin_TLREM, 
+!     &      TBASE_LFSEN, TOPT_LFSEN, TFin_LFSEN, TBASE_STKEX, 
+!     &      TOPT_STKEX,  TFin_STKEX,  TBASE_LFEX, TOPT_LFEX, TFin_LFEX,
+!     &      TBASE_REX,  TOPT_REX, TFin_REX, TOPT_PHOT, TOPT_PHO2, 
+!     &      TFin_PHOT,  TBASE_RESP,   TOPT_RESP,   TFin_RESP,      
+     
+        !WRITE(*, '(A, F10.5)') 'SER0 is ', SER0     
 
 !     Casupro: Florida-Colombia Sugarcane model **
       CASE ('SCCSP')
@@ -396,11 +407,12 @@ C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   821 FORMAT (A6,1X,A16,7X,A6,12F6.0,A)         !CSYCA        06/05/2015 
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
-  850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A)
+  850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
  1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 
 !!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)       !02/10/2009 
- 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                   !02/10/2009 
+ ! 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                   !02/10/2009 
+ 1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)                   !02/21/2018 
 
 !1500 FORMAT (A6,1X,A16,1X,A255)
  1500 FORMAT (A6,1X,A16,7X,A)                             !11/8/07

@@ -50,6 +50,9 @@ C  Calls:     None
       USE ModuleDefs     !Definitions of constructed variable types, 
         ! which contain control information, soil
         ! parameters, hourly weather data.
+      !     VSH
+      USE CsvOutput 
+      USE Linklist
       IMPLICIT NONE
       SAVE
 !-----------------------------------------------------------------------
@@ -65,6 +68,8 @@ C  Calls:     None
       INTEGER NOUTDG, NOUTPC, NOUTPN, RUN, RSTAGE
       INTEGER NOUTDRM, NOUTSTOR, NOUTINSTR 
       INTEGER TIMDIF, YEAR, YRDOY, MDATE, YRPLT, YRSIM
+      
+      INTEGER :: N_LYR = 10   ! VSH
 
       REAL CADLF, CADST, CANHT, CANWH, CMINEA, DWNOD
       REAL GROWTH, GRWRES, HI, HIP, MAINR, NSTRES
@@ -141,6 +146,8 @@ C-------------------------------------------
       YRSIM   = CONTROL % YRSIM
 
       IDETG = ISWITCH % IDETG
+      
+      FMOPT  = ISWITCH % FMOPT    ! VSH
 
 !***********************************************************************
 !***********************************************************************
@@ -149,6 +156,7 @@ C-------------------------------------------
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
 !      IF (IDETG .EQ. 'Y') THEN
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
         OUTG  = 'PlantGro.OUT'
         CALL GETLUN('OUTG', NOUTDG)
 
@@ -163,7 +171,7 @@ C-------------------------------------------
 
         OUTSTOR  = 'Storage.OUT '
         CALL GETLUN('OUTSTOR', NOUTSTOR)
-
+        END IF    ! VSH
 !        OUTINSTR  = 'StorSpIn.OUT'
 !        CALL GETLUN('OUTINSTR', NOUTINSTR)
 
@@ -176,6 +184,7 @@ C-------------------------------------------
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
 !       Initialize daily growth output file
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
         INQUIRE (FILE = OUTG, EXIST = FEXIST)
         IF (FEXIST) THEN
         OPEN (UNIT = NOUTDG, FILE = OUTG, STATUS = 'OLD',
@@ -299,7 +308,7 @@ C-------------------------------------------
      &   '  QS%D  Q1%D  QC%D  QCAM  QFDS  QFD1  QEAD  QEWD  QWAD',
      &   '  QT%S  QT%1  QCRD  QNMD  QCAG  QWNG  QWND  QFAD  QWAI',
      &   '  QMAM  QNAD  QNAC  QNLC  QDAD  XSTR')
-
+         END IF    ! VSH
 !-----------------------------------------------------------------------
 !       Initialize Storage inputs output file
 !        INQUIRE (FILE = OUTINSTR, EXIST = FEXIST)
@@ -385,7 +394,8 @@ C-----------------------------------------------------------------------
         ELSE
         HIP = 0.
         ENDIF
-
+        
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDG,310)YEAR, DOY, DAS, DAP,VSTAGE,RSTAGE,XLAI,
      &    NINT(WTLF*10.),NINT(STMWT*10.),NINT(STRWT*10.), 
      &    PSRSRFL, PSRLYR1, NINT(SDWT*10.),
@@ -398,12 +408,25 @@ C-----------------------------------------------------------------------
      &    NINT(WTSRO*10.),NINT(FHWAH*10.),FHLPH,
      &    PELF,NINT(DWTCO*10.),NINT(DWTLO*10.),NINT(DWTSO*10.),
      &    NINT(CANHT*100.),fhpctn*6.25    !,MOWC,RSPLC
-310       FORMAT (1X,I4,1X,I3.3,2(1X,I5),
+310     FORMAT (1X,I4,1X,I3.3,2(1X,I5),
      &    1X,F5.1,1X,I5,1X,F5.2,3(1X,I5),2(1X,F5.2),4(1X,I5),
      &    1X,F6.1,1X,F5.3,2(1X,I5),4(1X,F5.3),3(1X,F5.2),
      &    2(1X,I5),1X,F5.1,2(1X,F5.2),1X,F5.1,11(1X,F5.2),
      &    4(I6),1x,I5,2(1X,F5.1),3(I6),I6,F6.2,F6.0,F6.2)
-
+        END IF   ! VSH
+        
+!     VSH CSV output corresponding to PlantGro.OUT
+      IF (FMOPT == 'C') THEN
+       Call CsvOut_PlGroPrFrm(EXPNAME, RUN, CONTROL%TRTNUM,
+     & CONTROL%ROTNUM, CONTROL%REPNO, YEAR,
+     & DOY, DAS, DAP, VSTAGE, RSTAGE, XLAI, WTLF, STMWT, STRWT, PSRSRFL,
+     & PSRLYR1, SDWT, RTWT, TOPWT, SEEDNO, SDSIZE, HI, PODWT, PODNO,    
+     & SWFAC, TURFAC, NSTRES, SATFAC, PCNL, SHELPC, HIP, PODWTD, SLA,   
+     & CANHT, CANWH, DWNOD, RTDEP, WTCO, WTLO, WTSO, WTSRO, FHWAH, 
+     & FHLPH, PELF, DWTCO, DWTLO, DWTSO, fhpctn, N_LYR, RLV, 
+     & vCsvlinePlGroPrFrm, vpCsvlinePlGroPrFrm, vlngthPlGroPrFrm)
+       CALL LinklstPlGroPrFrm(vCsvlinePlGroPrFrm)
+      END IF
 C-----------------------------------------------------------------------
         WTNVEG  = (WTNLF + WTNST)
       
@@ -412,7 +435,8 @@ C-----------------------------------------------------------------------
         ELSE
         PCNVEG = 0.0
         ENDIF
-
+        
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN       ! VSH
         WRITE (NOUTPN,410) YEAR, DOY, DAS, DAP, (WTNCAN*10), 
      &   (WTNSD*10), (WTNVEG*10), PCNSD, PCNVEG, (WTNFX*10),
      &   (WTNUP*10), (WTNLF*10), (WTNST*10), (WTNSR*10.), PCNL, 
@@ -452,8 +476,47 @@ C-----------------------------------------------------------------------
      &    1X,I5,2(1X,F5.2),4(1X,F5.3),9(1X,F5.2),7(1X,F5.2),1X, 
      &    F5.3,5(1X,F5.2),1X,I5,2(1X,F5.3),1X,F5.1,5(1X,F5.2),
      &    1X,F5.0,2(1X,F5.2),1X,I5,1X,F5.2,1X,I6,1X,F5.2)
+        END IF    ! VSH
+        
+        IF (FMOPT == 'C') THEN   ! VSH
+          Call CsvOutPlNPrFrm(EXPNAME, RUN, CONTROL%TRTNUM, 
+     & CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, WTNCAN, 
+     & WTNSD, WTNVEG, PCNSD, PCNVEG, WTNFX, WTNUP, WTNLF, WTNST, WTNSR, 
+     & PCNL, PCNST, PCNSR, PCNSH, PCNRT, NFIXN,
+     & vCsvlinePlNPrFrm, vpCsvlinePlNPrFrm, vlngthPlNPrFrm)
+           
+          CALL LinklstPlNPrFrm(vCsvlinePlNPrFrm)
+          
+          CALL CsvOutPlCPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &TOTWT, PG, CMINEA, GROWTH, GRWRES, MAINR, CADLF, 
+     &CADST, CADSR, RHOL, RHOS, RHOSR, RHOR, TGRO, TGROAV, PCNSD, 
+     &PCLSD, PCCSD, TS, 
+     &vCsvlinePlCPrFrm, vpCsvlinePlCPrFrm, vlngthPlCPrFrm)
+      
+         CALL LinklstPlCPrFrm(vCsvlinePlCPrFrm)
+         
+         CALL CsvOutDormPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
+     &DRMST, PPGFAC, PPMFAC, PPTFAC, SRFTEMP, ST, FREEZ2, FRLF, FRSTM,  
+     &FRSTR, FRRT, TS, 
+     &vCsvlineDormPrFrm, vpCsvlineDormPrFrm, vlngthDormPrFrm)
 
+         CALL LinklstDormPrFrm(vCsvlineDormPrFrm)
+         
+         CALL CsvOutStorPrFrm(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, DAP, AGRSTR, 
+     &CADSR, CMOBSR, CPFSTR, CRUSSR, CSRFRZ, CSRW, CSTRM, DSTOR, FNINSR,
+     &FNINSRG, FRSTR, FRSTRM, NADSR, NGRSR, NGRSRG, NMOBSR, NRUSSR, 
+     &NSRALL, NSRDOT, NSROFF, NVSTSR, PCNSR, PCSTRD, PROSRT, PSRSRFD,
+     &PSRLYRD, PSRSRFL, PSRLYR1, RHOSR, SRDAM, SRSRFD, SRLYRD, SSRDOT,
+     &SSRNDOT, STRWT, TPSRSRFL, TPSRLYR1, WCRSR, WNRSR, WRCSRDT, WSRDOT,
+     &WSRDOTN, WSRFDOT, WSRI, WSRIDOT, WTNSR, WTNSRA,WTNSRO, WTSRO,XSTR,
+     &vCsvlineStorPrFrm, vpCsvlineStorPrFrm, vlngthStorPrFrm)
 
+         CALL LinklstStorPrFrm(vCsvlineStorPrFrm)
+        END IF ! VSH 
+        
         ENDIF       
       ENDIF
 
@@ -486,13 +549,14 @@ C-----------------------------------------------------------------------
  
  
         !Close daily output files.
+        IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         CLOSE (NOUTDG)
         CLOSE (NOUTPN)
         CLOSE (NOUTPC)
         CLOSE (NOUTDRM)
         CLOSE (NOUTSTOR)
 !        CLOSE (NOUTINSTR)
-
+        END IF   ! VSH
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
