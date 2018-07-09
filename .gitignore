@@ -64,4 +64,7 @@ cluster.patch
 readme*
 CMakeFiles/
 CMakeCache.txt
+Data/DSSATPRO.L47
+Utilities/run_dssat
+Utilities/CSMVersion.for
 .vscode

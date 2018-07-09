@@ -16,18 +16,16 @@ endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 PROJECT(DSSAT-CSM Fortran )
 
 ##########################################################################################
-# DSSAT_VERSION from ModuleDefs.for
+# DSSAT_VERSION
 ##########################################################################################
 
-file(READ "${CMAKE_SOURCE_DIR}/Utilities/ModuleDefs.for" File_Content)
-
-# Take DSSAT_VERSION from ModuleDefs.for
-STRING(REGEX REPLACE ".*Major = ([0-9]+).*" "\\1" MAJOR "${File_Content}")
-STRING(REGEX REPLACE ".*Minor = ([0-9]+).*" "\\1" MINOR "${File_Content}")
-STRING(REGEX REPLACE ".*Model = ([0-9]+).*" "\\1" MODEL "${File_Content}")
-STRING(REGEX REPLACE ".*Build = ([0-9]+).*" "\\1" BUILD "${File_Content}")
+SET(MAJOR 4)
+SET(MINOR 7)
+SET(MODEL 2)
+SET(BUILD 1)
+SET(BRANCH "develop")
 MESSAGE(STATUS "MAJOR: ${MAJOR} MINOR: ${MINOR} MODEL: ${MODEL} BUILD: ${BUILD}")
-
+MESSAGE(STATUS "BRANCH: ${BRANCH}")
 # Set the version
 SET(VERSION ${MAJOR}.${MINOR}.${MODEL})
 
@@ -62,19 +60,32 @@ ENDIF(FCNAME STREQUAL "pgf90")
 ##########################################################################################
 
 # Define the executable name and OSDefinitions file
+SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
+configure_file(
+    "${PROJECT_SOURCE_DIR}/Utilities/CSMVersion.for.in"
+    "${PROJECT_SOURCE_DIR}/Utilities/CSMVersion.for"
+)
 IF(WIN32)
-    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR})
     SET(OSDefinitions "Utilities/OSDefsWINDOWS.for")
     add_definitions(-DWIN32=1})
 ELSE()
-    SET(EXECUTABLE_NAME dscsm0${MAJOR}${MINOR}.exe)
+    SET(DSSAT_INSTALL_DIR $CMAKE_INSTALL_PREFIX)
     SET(OSDefinitions "Utilities/OSDefsLINUX.for")
+    configure_file(
+        "${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47.in"
+		"${PROJECT_SOURCE_DIR}/Data/DSSATPRO.L47"
+    )
+	configure_file(
+		"${PROJECT_SOURCE_DIR}/Utilities/run_dssat.in"
+		"${PROJECT_SOURCE_DIR}/Utilities/run_dssat"
+	)
 ENDIF(WIN32)
 
 # Add the source files
 set(
     source_list
     	"${OSDefinitions}"
+        "Utilities/CSMVersion.for"
         "Utilities/ModuleDefs.for"
         "Utilities/DATES.for"
         "Utilities/ERROR.for"
@@ -768,6 +779,17 @@ foreach(source IN LISTS source_list)
     string(REPLACE "/" "\\" source_path_msvc "${source_path}")
     source_group("${source_path_msvc}" FILES "${source}")
 endforeach()
+
+
+install(TARGETS ${EXECUTABLE_NAME} DESTINATION
+	RUNTIME DESTINATION .)
+
+install(FILES Utilities/run_dssat DESTINATION .
+	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+
+install(DIRECTORY Data/ DESTINATION .
+	PATTERN "*.in" EXCLUDE)
 
 ##################################################
 # Resume information about flags and option used #
