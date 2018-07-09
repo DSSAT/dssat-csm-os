@@ -258,10 +258,6 @@
             !LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
             !LPM 24MAR2016 
             
-            open (unit = 8, file = "DAWWP.txt") ! to delete
-            write (8,*) DAP,DAWWP, TT, WFG
-
-            
             IF (DAG > 0) THEN
                 IF (ISWWAT == 'Y') THEN
                     LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TT*WFG)                                      !LPM 31JUL2015 to consider water stress
