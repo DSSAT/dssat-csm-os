@@ -270,6 +270,8 @@ PRSD   Shoot fraction  Partitioning of wt to shoot (ratio)                      
 PWAD   Pod wt kg/ha    Pod weight (kg [dm]/ha)                                  .
 PWDD   Det pod kt/ha   Detached pod mass (kg [dm]/ha)                           .
 PWTD   Pod wt kg/ha    Total pod weight (kg [dm]/ha)                            .
+Q1%D   Stor in layer 1 Storage organ in soil layer 1 (%)                        .
+QS%D   Stor on SS (%)  Storage organ on soil surface (%)                        .
 QWAD   Storage wtkg/ha Storage/stolon/rhizome/crown weight (kg [dm]/ha)         .
 QDAD   Dead stol kg/ha Cumulative dead storage abscised (kg [dm]/ha)            .
 RDAD   Dead root kg/ha Dead root weight (kg [dm]/ha)                            .
@@ -318,6 +320,7 @@ TFDD   Temp.factor,dev Temperature factor for development (0-1)                 
 TKILL  Pl death tmp °C Temperature for plant death (°C)                         .
 TLA_1  Leaf area stk 1 Total green+dead leaf area, primary stalk only (cm2)     .
 TLW_1  Leaf wt stalk 1 Total green+dead leaf+sheath prim stalk (g [dm]/stalk)   .
+TPSM   Tillers no #/m2 Tiller number (no/m2)                                    .
 TRAD   Trash DM kg/ha  Trash weight (kg [dm]/ha)                                .
 TT     Thermal time    Daily thermal (°C.d)                                     .
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
