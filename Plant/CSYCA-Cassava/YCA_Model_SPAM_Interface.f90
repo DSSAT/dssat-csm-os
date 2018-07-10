@@ -45,7 +45,7 @@
     end function getPHTV
     
     ! get EOP
-    real function getEOP(WEATHER, CONTROL, SOILPROP)
+    real function getEO(WEATHER, CONTROL, SOILPROP)
         USE ModuleDefs
         USE YCA_Growth_VPD
         
@@ -56,8 +56,8 @@
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
 
         
-        getEOP = affected_EOP_with_VPD_effect (getDAP(), getLAI(), getPHSV(), getPHTV(),  WEATHER, CONTROL, SOILPROP)
-    end function getEOP
+        getEO = getAffectedEO (getDAP(), getLAI(), getPHSV(), getPHTV(),  WEATHER, CONTROL, SOILPROP)
+    end function getEO
     
     
     

@@ -297,7 +297,7 @@ C       and total potential water uptake rate.
 !-----------------------------------------------------------------------
           SELECT CASE (CONTROL % MODEL(1:5))
              CASE ('CSYCA')    
-              EO = getEOP(WEATHER, CONTROL, SOILPROP)
+              EO = getEO(WEATHER, CONTROL, SOILPROP)
            END SELECT
 
 !-----------------------------------------------------------------------
