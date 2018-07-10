@@ -291,6 +291,14 @@ C       and total potential water uptake rate.
      &      EORATIO, !Needed by Penman-Monteith
      &      CANHT,   !Needed by dynamic Penman-Monteith
      &      EO)      !Output
+          
+!-----------------------------------------------------------------------
+!         POTENTIAL EVAPOTRANSPIRATION - model dependent
+!-----------------------------------------------------------------------
+          SELECT CASE (CONTROL % MODEL(1:5))
+             CASE ('CSYCA')    
+              EO = getEOP(WEATHER, CONTROL, SOILPROP)
+           END SELECT
 
 !-----------------------------------------------------------------------
 !         POTENTIAL SOIL EVAPORATION
@@ -377,14 +385,9 @@ C       and total potential water uptake rate.
 
               TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
               EOP = EOP * TRAT
-             
-             CASE ('CSYCA')    
-              EOP = getEOP(WEATHER, CONTROL, SOILPROP)
-              EOP = MAX(0.0, EOP)
-              EOP = MIN(EO, EOP)
 
             CASE DEFAULT
-!             For all models except ORYZA and CSYCA
+!             For all models except ORYZA
               CALL TRANS(RATE, 
      &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
      &        WINDSP, XHLAI,                              !Input
