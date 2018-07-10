@@ -42,6 +42,7 @@ C=======================================================================
       USE ModuleDefs 
       USE ModuleData
       USE FloodModule
+      USE YCA_Model_SPAM_Interface
 
       IMPLICIT NONE
       SAVE
@@ -376,9 +377,14 @@ C       and total potential water uptake rate.
 
               TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
               EOP = EOP * TRAT
+             
+             CASE ('CSYCA')    
+              EOP = getEOP(WEATHER, CONTROL, SOILPROP)
+              EOP = MAX(0.0, EOP)
+              EOP = MIN(EO, EOP)
 
             CASE DEFAULT
-!             For all models except ORYZA
+!             For all models except ORYZA and CSYCA
               CALL TRANS(RATE, 
      &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
      &        WINDSP, XHLAI,                              !Input
@@ -388,7 +394,7 @@ C       and total potential water uptake rate.
           ELSE
             EOP = 0.0
           ENDIF
-
+          
 !-----------------------------------------------------------------------
 !         ACTUAL TRANSPIRATION
 !-----------------------------------------------------------------------

@@ -27,7 +27,7 @@ Module YCA_Growth_VPD
     contains 
     REAL function affected_EOP_with_VPD_effect (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
     
-
+        USE ModuleDefs
         USE YCA_Model_VPD                                                                               ! To transfer hourly VPD factor to other routines (could be incorporated in ModuleDefs later).
         
         IMPLICIT NONE
