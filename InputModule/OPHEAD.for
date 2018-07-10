@@ -745,7 +745,7 @@ c          WRITE (HEADER(I),'(2F6.0,F6.2)') PHINT, LLIFA, STFR
      &     PPS1, B01ND, B12ND, BR1FX, BR2FX, BR3FX, BR4FX
          I=I+1
          WRITE (HEADER(I),'(A,A)') 
-     &     "   LAXS  SLAS",
+     &     "  LAXS  SLAS",
      &     " LLIFA LPEFR LNSLP NODWT NODLT"
         I=I+1
          WRITE (HEADER(I),'(F6.1,F6.0,2F6.1,3F6.2, 1F6.1)') 
