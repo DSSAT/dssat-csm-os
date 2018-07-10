@@ -119,10 +119,10 @@
 !-----------------------------------------------------------------------
       DATA STNAME /   !Stage
      &  'End Juveni',   !1
-     &  'Floral Ini',   !2
-     &  '75% Silkin',   !3
-     &  'Beg Gr Fil',   !4
-     &  'End Gr Fil',   !5
+     &  'Leaf  grow',   !2
+     &  'End Lf Gro',   !3
+     &  'Beg Ef Gro',   !4
+     &  'End Ef Gro',   !5
      &  'Maturity  ',   !6
      &  'Sowing    ',   !7
      &  'Germinate ',   !8
