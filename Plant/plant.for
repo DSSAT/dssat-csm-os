@@ -375,21 +375,22 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
           XHLAI = XLAI
         ENDIF
 !     -------------------------------------------------
-!!     Cassava CSYCA (CIAT cassava model)
-!      CASE('CSYCA')
-!        CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
-!     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
-!     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
-!     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,        !Output
-!     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,             !Output
-!     &    UNH4, UNO3, XLAI)                               !Output
-!
-!        IF (DYNAMIC .EQ. SEASINIT) THEN
-!          KTRANS = KEP
-!          KSEVAP = KEP
-!        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
-!          XHLAI = XLAI
-!        ENDIF
+!     Cassava CSYCA (CIAT cassava model)
+      CASE('CSYCA')
+        CALL CSYCA_Interface (CONTROL, ISWITCH,           !Input
+     &    EOP, ES, NH4, NO3, SOILPROP, SRFTEMP,           !Input
+     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT, HARVFRAC, !Input
+     &    CANHT, HARVRES, KCAN, KEP, MDATE, NSTRES,       !Output
+     &    PORMIN, RLV, RWUMX, SENESCE, STGDOY,            !Output
+     &    UNH4, UNO3, XLAI)                               !Output
+
+        IF (DYNAMIC .EQ. SEASINIT) THEN
+          KTRANS = KEP
+          KSEVAP = KEP
+        ELSEIF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
+
 !     -------------------------------------------------
 !     APSIM N-wheat WHAPS
       CASE('WHAPS')

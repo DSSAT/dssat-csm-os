@@ -1,8 +1,8 @@
-*EXP.DETAILS: NDCR1601BS NDCR 2014 SB
+*EXP.DETAILS: NDCR1601BS CREC, NORTH DAKOTA 2016
 
 *GENERAL
 @PEOPLE
-Anar
+Mohammad Anar and Zhulu Lin
 @ADDRESS
 NDSU
 @SITE
@@ -12,7 +12,7 @@ CREC
 
 *TREATMENTS                        -------------FACTOR LEVELS------------
 @N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
- 1 1 1 0 NDCR 2016 SB               1  1  0  1  1  0  0  0  0  0  0  0  1
+ 1 1 1 0 CREC 2016                  1  1  0  1  1  0  0  0  0  0  0  0  1
 
 *CULTIVARS
 @C CR INGENO CNAME
@@ -20,7 +20,7 @@ CREC
 
 *FIELDS
 @L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
- 1 crec0001 CRND       -99   -99   -99   -99   -99 00000 -99    -99  CREC002014 -99
+ 1 CREC0001 CRND       -99   -99   -99   -99   -99 00000 -99    -99  CREC002014 -99
 @L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
  1             -99             -99       -99               -99   -99   -99   -99   -99   -99
 
@@ -70,8 +70,8 @@ CREC
  1 ME              M     M     E     R     S     C     R     1     G     S     2
 @N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
  1 MA              R     R     R     R     M
-@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
- 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT FMOPT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y     A
 
 @  AUTOMATIC MANAGEMENT
 @N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN

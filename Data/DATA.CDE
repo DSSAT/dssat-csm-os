@@ -65,9 +65,11 @@ E#UM   Number #/unit   Eye number at maturity (no/fruit)                        
 EDAP   Emergence day   Emergence day (dap)                                      .
 EDAT   Emergence date  Emergence date (YrDoy)                                   .
 EPCM   EP total mm     Total season transpiration (mm)                          .
+EPCP   EP plant seas   Total transpiration, planting to harvest (mm)            .
 ESCM   ES total mm     Total season soil evaporation (mm)                       .
-ETCM   ET total mm     Total season evapotranspiration, Simulation-harvest (mm) .
-ETCP   ET plant seas   Total evapotranspiration (mm), planting to harvest       .
+ESCP   ES plant seas   Total soil evaporation, planting to harvest (mm)         .
+ETCM   ET total mm     Total season evapotranspiration, simulation-harvest (mm) .
+ETCP   ET plant seas   Total evapotranspiration, planting to harvest (mm)       .
 EWAM   Ear wt. kg/ha   Ear (grain+chaff) or eye weight at maturity (kg [dm]/ha) .
 EWUM   Eye wt. (g)     Eye weight (g)                                           .
 FDAP   Forcing dap     Forcing or flowering date (dap)                          .
@@ -841,6 +843,8 @@ TMEAN  MEAN TEMP °C    Mean Temperature (TMAX+TMIN/2; °C)                       
 TMND   MIN TEMP °C     Minimum daily temperature (°C)                           .
 TMXD   MAX TEMP °C     Maximum daily temperature (°C)                           .
 TWLD   TWILIGHT hr     Twilight to twilight day length (hr)                     .
+VPD    Vapor Pres Def  Vapor pressure deficit                                   .
+VPDF   Vapor Pres Fact Vapor pressure deficit factor                            .
 WDSD   WIND SPEED km/d Wind speed (km/d)                                        .
 
 *OTHER MODELS
@@ -1128,14 +1132,14 @@ PAV3D  P avail layer 3 P available for uptake in soil layer 3 (kg [P]/ha)       
 PAV4D  P avail layer 4 P available for uptake in soil layer 4 (kg [P]/ha)       .
 PAV5D  P avail layer 5 P available for uptake in soil layer 5 (kg [P]/ha)       .
 PAVLD  P Avail kg/ha   P available to plant, soluble in root zone (kg [P]/ha)   .
-PIAD   Tot soil P kg/h Total soil inorganic P (kg[P]/ha)                        .
+PIAD   Tot soil P kg/h Total soil inorganic P (kg [P]/ha)                       .
 PIMC   P Immobilized   Cumulative P immobilized (kg[P]/ha)                      .
 PIMD   P Immobilized   Daily P immobilized (kg[P]/ha/d)                         .
 PLABD  P Labile kg/ha  Labile soil P (kg [P]/ha)                                .
 PMNC   P Mineralize    Cumulative P mineralized (kg [P]/ha)                     .
 PMND   P Mineralize    Cumulative P mineralized (kg[P]/ha/d)                    .
-PSOLD  P Soluble kg/ha Soluble P (kg[P]/ha)                                     .
-PSTAD  P Stable kg/ha  Stable soil P (kg[P]/ha)                                 .
+PSOLD  P Soluble kg/ha Soluble P (kg [P]/ha)                                    .
+PSTAD  P Stable kg/ha  Stable soil P (kg [P]/ha)                                .
 PUP1D  P uptake layr 1 P uptake in soil layer 1 (kg [P]/ha)                     .
 PUP2D  P uptake layr 2 P uptake in soil layer 2 (kg [P]/ha)                     .
 PUP3D  P uptake layr 3 P uptake in soil layer 3 (kg [P]/ha)                     .

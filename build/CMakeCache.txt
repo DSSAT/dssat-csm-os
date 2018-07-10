@@ -14,136 +14,116 @@
 # EXTERNAL cache entries
 ########################
 
-//Path to a program.
-CMAKE_AR:FILEPATH=C:/MinGW/bin/ar.exe
-
 //Choose the type of build, options are DEBUG, RELEASE, or TESTING.
-CMAKE_BUILD_TYPE:STRING=RELEASE
+CMAKE_BUILD_TYPE:STRING=DEBUG
 
-//Enable/Disable color output during build.
-CMAKE_COLOR_MAKEFILE:BOOL=ON
+//Semicolon separated list of supported configuration types, only
+// supports Debug, Release, MinSizeRel, and RelWithDebInfo, anything
+// else will be ignored.
+CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release;MinSizeRel;RelWithDebInfo
 
-//Flags used by the linker.
-CMAKE_EXE_LINKER_FLAGS:STRING=
+//Flags used by the linker during all build types.
+CMAKE_EXE_LINKER_FLAGS:STRING=/machine:X86
 
-//Flags used by the linker during debug builds.
-CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING=
+//Flags used by the linker during DEBUG builds.
+CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
 
-//Flags used by the linker during release minsize builds.
-CMAKE_EXE_LINKER_FLAGS_MINSIZEREL:STRING=
+//Flags used by the linker during MINSIZEREL builds.
+CMAKE_EXE_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
 
-//Flags used by the linker during release builds.
-CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=
+//Flags used by the linker during RELEASE builds.
+CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
 
-//Flags used by the linker during Release with Debug Info builds.
-CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
-
-//Fortran compiler
-CMAKE_Fortran_COMPILER:FILEPATH=C:/MinGW/bin/gfortran.exe
-
-//A wrapper around 'ar' adding the appropriate '--plugin' option
-// for the GCC compiler
-CMAKE_Fortran_COMPILER_AR:FILEPATH=CMAKE_Fortran_COMPILER_AR-NOTFOUND
-
-//A wrapper around 'ranlib' adding the appropriate '--plugin' option
-// for the GCC compiler
-CMAKE_Fortran_COMPILER_RANLIB:FILEPATH=CMAKE_Fortran_COMPILER_RANLIB-NOTFOUND
+//Flags used by the linker during RELWITHDEBINFO builds.
+CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 
 //Set the CMAKE_Fortran_FLAGS flags
-CMAKE_Fortran_FLAGS:STRING= -march=native -fd-lines-as-comments -fbounds-check -ffixed-line-length-none -ffree-line-length-none -finit-character=32 -cpp -march=native -fd-lines-as-comments -fbounds-check -ffixed-line-length-none -ffree-line-length-none -finit-character=32 -cpp
+CMAKE_Fortran_FLAGS:STRING=/W1 /nologo /fpp /libs:dll /threads /QxAVX /Qsave /fpp /libs:static /threads /fpe:0
 
 //Set the CMAKE_Fortran_FLAGS_DEBUG flags
-CMAKE_Fortran_FLAGS_DEBUG:STRING=-g -O0 -Wall -fbacktrace -fcheck=bounds -O0 -Wall -fbacktrace -fcheck=bounds
+CMAKE_Fortran_FLAGS_DEBUG:STRING=/Od /debug:full /dbglibs /Od /warn:all /traceback /check:bounds
 
-//Flags used by the compiler during release builds for minimum
-// size.
-CMAKE_Fortran_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG -Os
+//Flags used by the Fortran compiler during MINSIZEREL builds.
+CMAKE_Fortran_FLAGS_MINSIZEREL:STRING=/O1 /DNDEBUG
 
 //Set the CMAKE_Fortran_FLAGS_RELEASE flags
-CMAKE_Fortran_FLAGS_RELEASE:STRING=-O3 -DNDEBUG -O3 -funroll-loops -finline-functions -funroll-loops -finline-functions
+CMAKE_Fortran_FLAGS_RELEASE:STRING=/O2 /DNDEBUG -inline
 
-//Flags used by the compiler during release builds with debug info.
-CMAKE_Fortran_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
+//Flags used by the Fortran compiler during RELWITHDEBINFO builds.
+CMAKE_Fortran_FLAGS_RELWITHDEBINFO:STRING=/O2 /debug:full /DNDEBUG
 
 //Set the CMAKE_Fortran_FLAGS_TESTING flags
-CMAKE_Fortran_FLAGS_TESTING:STRING= -O2
+CMAKE_Fortran_FLAGS_TESTING:STRING= /O2
 
-//Convert GNU import libraries to MS format (requires Visual Studio)
-CMAKE_GNUtoMS:BOOL=OFF
+//Libraries linked by default with all Fortran applications.
+CMAKE_Fortran_STANDARD_LIBRARIES:STRING=user32.lib
 
 //Install path prefix, prepended onto install directories.
 CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/DSSAT-CSM
 
 //Path to a program.
-CMAKE_LINKER:FILEPATH=C:/MinGW/bin/ld.exe
+CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/link.exe
 
-//Path to a program.
-CMAKE_MAKE_PROGRAM:FILEPATH=C:/MinGW/msys/1.0/bin/make.exe
+//Flags used by the linker during the creation of modules during
+// all build types.
+CMAKE_MODULE_LINKER_FLAGS:STRING=/machine:X86
 
-//Flags used by the linker during the creation of modules.
-CMAKE_MODULE_LINKER_FLAGS:STRING=
+//Flags used by the linker during the creation of modules during
+// DEBUG builds.
+CMAKE_MODULE_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
 
-//Flags used by the linker during debug builds.
-CMAKE_MODULE_LINKER_FLAGS_DEBUG:STRING=
+//Flags used by the linker during the creation of modules during
+// MINSIZEREL builds.
+CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
 
-//Flags used by the linker during release minsize builds.
-CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL:STRING=
+//Flags used by the linker during the creation of modules during
+// RELEASE builds.
+CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
 
-//Flags used by the linker during release builds.
-CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=
-
-//Flags used by the linker during Release with Debug Info builds.
-CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
-
-//Path to a program.
-CMAKE_NM:FILEPATH=C:/MinGW/bin/nm.exe
-
-//Path to a program.
-CMAKE_OBJCOPY:FILEPATH=C:/MinGW/bin/objcopy.exe
-
-//Path to a program.
-CMAKE_OBJDUMP:FILEPATH=C:/MinGW/bin/objdump.exe
+//Flags used by the linker during the creation of modules during
+// RELWITHDEBINFO builds.
+CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 
 //Value Computed by CMake
 CMAKE_PROJECT_NAME:STATIC=DSSAT-CSM
 
-//Path to a program.
-CMAKE_RANLIB:FILEPATH=C:/MinGW/bin/ranlib.exe
-
 //RC compiler
-CMAKE_RC_COMPILER:FILEPATH=C:/MinGW/bin/windres.exe
+CMAKE_RC_COMPILER:FILEPATH=rc
 
-//Flags for Windows Resource Compiler.
-CMAKE_RC_FLAGS:STRING=
+//Flags for Windows Resource Compiler during all build types.
+CMAKE_RC_FLAGS:STRING=/DWIN32
 
-//Flags for Windows Resource Compiler during debug builds.
-CMAKE_RC_FLAGS_DEBUG:STRING=
+//Flags for Windows Resource Compiler during DEBUG builds.
+CMAKE_RC_FLAGS_DEBUG:STRING=/D_DEBUG
 
-//Flags for Windows Resource Compiler during release builds for
-// minimum size.
+//Flags for Windows Resource Compiler during MINSIZEREL builds.
 CMAKE_RC_FLAGS_MINSIZEREL:STRING=
 
-//Flags for Windows Resource Compiler during release builds.
+//Flags for Windows Resource Compiler during RELEASE builds.
 CMAKE_RC_FLAGS_RELEASE:STRING=
 
-//Flags for Windows Resource Compiler during release builds with
-// debug info.
+//Flags for Windows Resource Compiler during RELWITHDEBINFO builds.
 CMAKE_RC_FLAGS_RELWITHDEBINFO:STRING=
 
-//Flags used by the linker during the creation of dll's.
-CMAKE_SHARED_LINKER_FLAGS:STRING=
+//Flags used by the linker during the creation of shared libraries
+// during all build types.
+CMAKE_SHARED_LINKER_FLAGS:STRING=/machine:X86
 
-//Flags used by the linker during debug builds.
-CMAKE_SHARED_LINKER_FLAGS_DEBUG:STRING=
+//Flags used by the linker during the creation of shared libraries
+// during DEBUG builds.
+CMAKE_SHARED_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
 
-//Flags used by the linker during release minsize builds.
-CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL:STRING=
+//Flags used by the linker during the creation of shared libraries
+// during MINSIZEREL builds.
+CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL:STRING=/INCREMENTAL:NO
 
-//Flags used by the linker during release builds.
-CMAKE_SHARED_LINKER_FLAGS_RELEASE:STRING=
+//Flags used by the linker during the creation of shared libraries
+// during RELEASE builds.
+CMAKE_SHARED_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
 
-//Flags used by the linker during Release with Debug Info builds.
-CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO:STRING=
+//Flags used by the linker during the creation of shared libraries
+// during RELWITHDEBINFO builds.
+CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 
 //If set, runtime paths are not added when installing shared libraries,
 // but are added when building.
@@ -152,23 +132,25 @@ CMAKE_SKIP_INSTALL_RPATH:BOOL=OFF
 //If set, runtime paths are not added when using shared libraries.
 CMAKE_SKIP_RPATH:BOOL=OFF
 
-//Flags used by the linker during the creation of static libraries.
-CMAKE_STATIC_LINKER_FLAGS:STRING=
+//Flags used by the linker during the creation of static libraries
+// during all build types.
+CMAKE_STATIC_LINKER_FLAGS:STRING=/machine:X86
 
-//Flags used by the linker during debug builds.
+//Flags used by the linker during the creation of static libraries
+// during DEBUG builds.
 CMAKE_STATIC_LINKER_FLAGS_DEBUG:STRING=
 
-//Flags used by the linker during release minsize builds.
+//Flags used by the linker during the creation of static libraries
+// during MINSIZEREL builds.
 CMAKE_STATIC_LINKER_FLAGS_MINSIZEREL:STRING=
 
-//Flags used by the linker during release builds.
+//Flags used by the linker during the creation of static libraries
+// during RELEASE builds.
 CMAKE_STATIC_LINKER_FLAGS_RELEASE:STRING=
 
-//Flags used by the linker during Release with Debug Info builds.
+//Flags used by the linker during the creation of static libraries
+// during RELWITHDEBINFO builds.
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
-
-//Path to a program.
-CMAKE_STRIP:FILEPATH=C:/MinGW/bin/strip.exe
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -177,36 +159,30 @@ CMAKE_STRIP:FILEPATH=C:/MinGW/bin/strip.exe
 CMAKE_VERBOSE_MAKEFILE:BOOL=OFF
 
 //Value Computed by CMake
-DSSAT-CSM_BINARY_DIR:STATIC=C:/Users/kthorp.PW47/Desktop/DSSAT/DSSAT source/DSSAT-CSM/src/build
+DSSAT-CSM_BINARY_DIR:STATIC=C:/dssat-csm/source/build
 
 //Value Computed by CMake
-DSSAT-CSM_SOURCE_DIR:STATIC=C:/Users/kthorp.PW47/Desktop/DSSAT/DSSAT source/DSSAT-CSM/src
+DSSAT-CSM_SOURCE_DIR:STATIC=C:/dssat-csm/source
 
 
 ########################
 # INTERNAL cache entries
 ########################
 
-//ADVANCED property for variable: CMAKE_AR
-CMAKE_AR-ADVANCED:INTERNAL=1
 //This is the directory where this CMakeCache.txt was created
 CMAKE_CACHEFILE_DIR:INTERNAL=c:/dssat-csm/source/build
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
-CMAKE_CACHE_MINOR_VERSION:INTERNAL=9
+CMAKE_CACHE_MINOR_VERSION:INTERNAL=11
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=0
-//ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
-CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=4
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cmake.exe
 //Path to cpack program executable.
 CMAKE_CPACK_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cpack.exe
 //Path to ctest program executable.
 CMAKE_CTEST_COMMAND:INTERNAL=C:/Program Files/CMake/bin/ctest.exe
-//Path to cache edit program executable.
-CMAKE_EDIT_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cmake-gui.exe
 //Executable file format
 CMAKE_EXECUTABLE_FORMAT:INTERNAL=Unknown
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS
@@ -221,12 +197,6 @@ CMAKE_EXE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //Name of external makefile project generator.
 CMAKE_EXTRA_GENERATOR:INTERNAL=
-//ADVANCED property for variable: CMAKE_Fortran_COMPILER
-CMAKE_Fortran_COMPILER-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_Fortran_COMPILER_AR
-CMAKE_Fortran_COMPILER_AR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_Fortran_COMPILER_RANLIB
-CMAKE_Fortran_COMPILER_RANLIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_Fortran_FLAGS
 CMAKE_Fortran_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_Fortran_FLAGS_DEBUG
@@ -237,19 +207,21 @@ CMAKE_Fortran_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_Fortran_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_Fortran_FLAGS_RELWITHDEBINFO
 CMAKE_Fortran_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_Fortran_STANDARD_LIBRARIES
+CMAKE_Fortran_STANDARD_LIBRARIES-ADVANCED:INTERNAL=1
 //Name of generator.
-CMAKE_GENERATOR:INTERNAL=MSYS Makefiles
+CMAKE_GENERATOR:INTERNAL=Visual Studio 14 2015
+//Generator instance identifier.
+CMAKE_GENERATOR_INSTANCE:INTERNAL=
 //Name of generator platform.
 CMAKE_GENERATOR_PLATFORM:INTERNAL=
 //Name of generator toolset.
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/kthorp.PW47/Desktop/DSSAT/DSSAT source/DSSAT-CSM/src
+CMAKE_HOME_DIRECTORY:INTERNAL=C:/dssat-csm/source
 //ADVANCED property for variable: CMAKE_LINKER
 CMAKE_LINKER-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_MAKE_PROGRAM
-CMAKE_MAKE_PROGRAM-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS
 CMAKE_MODULE_LINKER_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS_DEBUG
@@ -260,18 +232,10 @@ CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_MODULE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_NM
-CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
 CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=1
-//ADVANCED property for variable: CMAKE_OBJCOPY
-CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_OBJDUMP
-CMAKE_OBJDUMP-ADVANCED:INTERNAL=1
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_RANLIB
-CMAKE_RANLIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_RC_COMPILER
 CMAKE_RC_COMPILER-ADVANCED:INTERNAL=1
 CMAKE_RC_COMPILER_WORKS:INTERNAL=1
@@ -286,7 +250,7 @@ CMAKE_RC_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_RC_FLAGS_RELWITHDEBINFO
 CMAKE_RC_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //Path to CMake installation.
-CMAKE_ROOT:INTERNAL=C:/Program Files/CMake/share/cmake-3.9
+CMAKE_ROOT:INTERNAL=C:/Program Files/CMake/share/cmake-3.11
 //ADVANCED property for variable: CMAKE_SHARED_LINKER_FLAGS
 CMAKE_SHARED_LINKER_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_SHARED_LINKER_FLAGS_DEBUG
@@ -311,10 +275,10 @@ CMAKE_STATIC_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_STATIC_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_STRIP
-CMAKE_STRIP-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Result of TRY_COMPILE
-FLAG_WORKS:INTERNAL=FALSE
+FLAG_WORKS:INTERNAL=TRUE
+//Result of TRY_COMPILE
+IFORT_LIB_PATH_COMPILED:INTERNAL=TRUE
 
