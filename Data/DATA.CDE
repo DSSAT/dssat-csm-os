@@ -540,11 +540,15 @@ H2OA   H2O in root zn  Water available in root zone (mm)                        
 IR#C   Irrigation #    Irrigation applications (no)                             .
 IRRC   Irrig effect mm Cumulative effective irrigation (mm)                     .
 IRRAC  Irrig apply mm  Cumulative applied irrigation (includes losses) (mm)     .
+KCAA   Crop coef       FAO-56 single crop coefficient                           .
+KCBA   Basal crop coef FAO-56 basal crop coefficient                            .
+KEAA   Evap coef       FAO-56 evaporation coefficient                           .
 MCFD   Mulch coverage  Fraction of soil covered by mulch                        .
 MDEPD  Mulch thick cm  Thickness of mulch layer (cm)                            .
 MWAD   Mulch mass k/h  Mass of mulch layer (kg/ha)                              .
 MWTD   Mulch water mm  Water stored in mulch layer (mm)                         .
 PREC   Precipitation   Cumulative precipitation (mm)                            .
+REFA   Reference ET mm ASCE standardized reference ET (grass or alfalfa)        .
 ROFC   Cum Runoff mm   Cumulative runoff (mm)                                   .
 ROFD   Surface runoff  Total daily surface runoff (mm/d)                        .
 ROSD   Sat surf runoff Daily surface runoff due to sl saturation excess (mm/d)  .
