@@ -1,4 +1,0 @@
-C:/dssat-csm/source/build/CMakeFiles/dscsm047.dir
-C:/dssat-csm/source/build/CMakeFiles/INSTALL.dir
-C:/dssat-csm/source/build/CMakeFiles/ALL_BUILD.dir
-C:/dssat-csm/source/build/CMakeFiles/ZERO_CHECK.dir
