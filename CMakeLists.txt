@@ -23,6 +23,7 @@ SET(MAJOR 4)
 SET(MINOR 7)
 SET(MODEL 2)
 SET(BUILD 1)
+
 # Get the current working branch
 execute_process(
   COMMAND git rev-parse --abbrev-ref HEAD
