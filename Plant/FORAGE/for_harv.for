@@ -150,13 +150,9 @@ C---------------------------------------------------------
         MOWLUN=999
 									  
         OPEN (UNIT=MOWLUN,FILE=MOWFILE,STATUS='OLD',IOSTAT=ERR)
-         IF (ERR .NE. 0) then
-            message(1) = 'MOW file not found'
-															
-            CALL WARNING(1,'CRPGRO', message)
-            CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
-        end if
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,29,MOWFILE,LNUM)
         REWIND(MOWLUN)
+        
         ISECT = 0
         MOWCOUNT = 0
         write(trtchar,'(i6)') trtno
@@ -177,9 +173,9 @@ C---------------------------------------------------------
           ALLOCATE(TRNO(MOWCOUNT),DATE(MOWCOUNT),MOW(MOWCOUNT))
           ALLOCATE(RSPLF(MOWCOUNT),MVS(MOWCOUNT),rsht(mowcount))
         ELSE
-          MSG(1)="MOW file has no data for this treatment."
-          CALL WARNING(1,ERRKEY,MSG)
-          CALL ERROR(ERRKEY,ERR,MOWFILE,0)
+c          MSG(1)="MOW file has no data for this treatment."
+c          CALL WARNING(1,ERRKEY,MSG)
+          CALL ERROR(ERRKEY,2,MOWFILE,0)
           ALLOCATE(MOW(1))
           MOW (1) = -99
           RETURN
