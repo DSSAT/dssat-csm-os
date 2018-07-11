@@ -47,10 +47,6 @@ $SPECIES:CSYCA047.08102017    Last edit: 08/11/2017 GH/LPM
     9      K B9DAT 9thBranch
     9      K B9DAT 9thBranch
    10      K B0DAT 10thBranch
-! Phase durations
-@PGERM PEMRG  ! Germination,gr thru soil(/cm)                             
-! oC.d gCH2O/TT                                                              
-   120  0.05
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN ! Photoperiod threshold,sensitivity type  
 !  0-1     h  Code                                  
@@ -132,7 +128,7 @@ CH2O distribution/mobilization
 ! 1. Based on ratio of soil water content to field capacity 
 @ WFGU  WFGL  WFPU  WFPL  WFSU  WFEU  ! Growth,phs,senescence,evap
 !   fr    fr    fr    fr    fr    fr
-   1.0   0.0   0.5   0.0   0.6   1.5
+   0.6   0.0   0.5   0.0   0.6   1.5
 !   1.0   0.0   1.0   0.0   0.6   1.5 !LPM 25MAR2016 WFGU modified
 ! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
 @WFGEM WFRGU  ! Germination/emergence, root growth
