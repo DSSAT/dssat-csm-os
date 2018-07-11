@@ -215,7 +215,7 @@ Module YCA_First_Trans_m
     REAL    :: FSOILN                  ! Final soil inorganic N         kg/ha      ! (From Integrate) 
     INTEGER :: GDAP                    ! Germination DAP                d          ! (From SeasInit)  
     REAL    :: GDAPFR                  ! Germination DAP+fr             #          ! (From Integrate) 
-    INTEGER :: GDAPM                   ! Germination DAP,measured       #          ! (From SeasInit)  
+    ! INTEGER :: GDAPM                   ! Germination DAP,measured       #          ! (From SeasInit)  ! removed by danipilze/dssat-csm#87
     INTEGER :: GDATM                   ! Germination date,measured      #          ! (From Output)    
     REAL    :: GDAYFR                  ! Fraction of day to germination #          ! (From SeasInit)  
     REAL    :: GEDAYSE                 ! Period germination->emergence  d          ! (From SeasInit)  
@@ -1321,8 +1321,8 @@ Module YCA_First_Trans_m
         fldap = 0
         fln = 0.0
         gdap = -99
-        gdap = -99
-        gdapm = -99
+        ! gdap = -99            ! danipilze/dssat-csm#87
+        ! gdapm = -99           ! danipilze/dssat-csm#87
         gdayfr = 0.0
         gedayse = 0.0
         gedaysg = 0.0

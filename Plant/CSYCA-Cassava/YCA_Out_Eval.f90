@@ -43,7 +43,7 @@
                 cwamm = -99
                 edatm = -99
                 edapm = -99
-                gdapm = -99
+                ! gdapm = -99                   ! removed by danipilze/dssat-csm#87
                 hnamm = -99
                 hnpcmm = -99
                 hiamm = -99
@@ -543,16 +543,16 @@
                 ! Leaf N concentration at harvest 
                 IF (cnpchm <= 0.AND.cnamm > 0.AND.cwamm > 0.0)cnpchm = cnamm/cwamm
                     
-                    
+                ! removed by danipilze/dssat-csm#87
                 ! Express dates as days after planting
-                edapm = -99
-                edapm = Dapcalc(edatm,plyear,plday)
-                IF (edapm > 200) THEN
-                    WRITE (Message(1),'(A31,A31,A11)')'Measured emergence over 200DAP ', &
-                        'Maybe reported before planting.','Check files'
-                    CALL WARNING(1,'CSYCA',MESSAGE)
-                ENDIF
-                gdapm = Dapcalc(gdatm,plyear,plday)
+                !edapm = -99
+                !edapm = Dapcalc(edatm,plyear,plday)
+                !IF (edapm > 200) THEN
+                !    WRITE (Message(1),'(A31,A31,A11)')'Measured emergence over 200DAP ', &
+                !        'Maybe reported before planting.','Check files'
+                !    CALL WARNING(1,'CSYCA',MESSAGE)
+                !ENDIF
+                !gdapm = Dapcalc(gdatm,plyear,plday)
                     
                 IF (mdapm <= 0) mdapm = Dapcalc(mdatm,plyear,plday)
                     
@@ -757,7 +757,7 @@
                     ENDIF
                         WRITE(fnumov,*)' '
                         WRITE (FNUMOV, FMT206)
-                        WRITE (FNUMOV, FMT290) MAX(-99,gdap),MAX(-99,gdapm),MAX(-99,edap),MAX(-99,edapm)
+                        !WRITE (FNUMOV, FMT290) MAX(-99,gdap),MAX(-99,gdapm),MAX(-99,edap),MAX(-99,edapm) ! removed by danipilze/dssat-csm#87
                         !DO L = 1,KEYSTX
                         DO L = 0,KEYSTX
                             IF (KEYPS(L) > 0) THEN
