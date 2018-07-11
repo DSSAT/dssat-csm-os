@@ -1320,12 +1320,9 @@ C     DIEGO ADDED DAILY SENESCENCE 11/22/2016
 
         IF (MOWCOUNT.GT.0) THEN
           ALLOCATE(TRNO(MOWCOUNT),DATE(MOWCOUNT),MOW(MOWCOUNT))
-!          ALLOCATE(RSPLF(MOWCOUNT),MVS(MOWCOUNT),rsht(mowcount))
         ELSE
+c         MOW file has no data for this treatment
           CALL ERROR(ERRKEY,2,MOWFILE,0)
-c         MSG(1)="MOW file has no data for this treatment."
-c         CALL WARNING(1,ERRKEY,MSG)
-c         CALL ERROR(ERRKEY,ERR,MOWFILE,0)
           ALLOCATE(MOW(1))
           MOW (1) = -99
           RETURN
