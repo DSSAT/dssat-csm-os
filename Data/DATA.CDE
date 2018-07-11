@@ -42,7 +42,7 @@ BADMF  Biomass@forcing Above-ground biomass at forcing (pineapple, t/ha)        
 BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
-CFAH   F cane yl kg/ha Fresh cane yield (kg/ha)                                 .
+CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                 .
 CHTA   Canopy height m Canopy height (m)                                        .
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
@@ -193,7 +193,7 @@ CAID   Canopy area ix  Canopy area index (Laminae+sheaths+stems+ear+??)         
 CDAD   Dead canopy     Dead canopy weight (kg [dm]/ha)                          .
 CDAY   Crop age days   Crop age (days from planting)                            .
 CDVD   Crop age vdays  Crop age (Vegetative days)                               .
-CFAD   F cane yl kg/ha Fresh cane yield (kg [fm]/ha)                            .
+CFAD   F cane yl t/ha  Fresh cane yield (t [fm]/ha)                            .
 CHTD   Canopy height m Canopy height (m)                                        .
 CHTCM  Canopy ht, cm   Canopy (forage) height (cm)                              .
 CRAD   Crown weight    Crown weight (kg [dm]/ha)                                .
