@@ -42,7 +42,7 @@ BADMF  Biomass@forcing Above-ground biomass at forcing (pineapple, t/ha)        
 BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
-CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                 .
+CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                  .
 CHTA   Canopy height m Canopy height (m)                                        .
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
@@ -193,14 +193,16 @@ CAID   Canopy area ix  Canopy area index (Laminae+sheaths+stems+ear+??)         
 CDAD   Dead canopy     Dead canopy weight (kg [dm]/ha)                          .
 CDAY   Crop age days   Crop age (days from planting)                            .
 CDVD   Crop age vdays  Crop age (Vegetative days)                               .
-CFAD   F cane yl t/ha  Fresh cane yield (t [fm]/ha)                            .
+CFAD   F cane yl t/ha  Fresh cane yield (t [fm]/ha)                             .
 CHTD   Canopy height m Canopy height (m)                                        .
 CHTCM  Canopy ht, cm   Canopy (forage) height (cm)                              .
+CMDMD  Cellulose DM    Stalk cellulose dry mass (t/ha)                          .
 CRAD   Crown weight    Crown weight (kg [dm]/ha)                                .
 CRWAD  Crown weight    Crown weight (kg [dm]/ha)                                .
 CWAD   Tops wt kg/ha   Tops weight (kg [dm]/ha)                                 .
 CWID   Canopy width m  Canopy width (m;for 1 row)                               .
 CWPD   Tops wt g/pl    Tops weight (g [dm]/pl)                                  .
+CWSI   Water stress    Recovery time-lagged photosynthesis water stress factor  .
 DAP    Days after pl   Days after planting (#)                                  .
 DAS    Days after st   Days after start of simulation (#)                       .
 DCCD   Zadoks code     Growth stage (Zadoks code, 1-90)                         .
@@ -226,6 +228,7 @@ FLWAD  Flower weight   Flower Weight (kg[DM]/ha)                                
 G#AD   Grain no #/m2   Grain number (no/m2)                                     .
 G#AD2  Grain no #/m2   Grain number (no/m2) if there was no temperature effect  .
 GL%D   Grain oil %     Grain oil (%)                                            .
+G_RESP Growth resp.    Growth respiration rate (t/ha/d)                         .
 GSTD   Growth stage    Growth stage                                             .
 GWAD   Grain wt kg/ha  Grain weight (kg [dm]/ha)                                .
 GWGD   Grain wt mg     Unit grain weight (mg [dm]/grain)                        .
@@ -254,6 +257,7 @@ LNUM   Leaf number     Leaf number (Haun stage)                                 
 LRSD   Leaf app rate   Leaf appearance rate (#/bday)                            .
 LWAD   Leaf wt kg/ha   Leaf weight (kg [dm]/ha)                                 .
 LWD_1  Leaf wt stk 1   Green leaf weight, primary stalk (g[dm]/stk)             .
+M_RESP Maint. resp.    Maintenance respiration rate (t/ha/d)                    .
 NFLF2  N factor leaf   N factor for leaf area (0-1)                             .
 NFTID  N factor till   N factor for tillering (0-1)                             .
 NSPAV  N stress (av)   Nitrogen stress (av) - photosynthesis (0-1, 0=none)      .
@@ -265,6 +269,7 @@ O#AD   Corm no #/m2    Corm (no/m2)                                             
 OWAD   Corm kg dm/ha   Corm dry weight (kg/ha)                                  .
 OWGD   Corm wt g       Unit corm weight (g [dm]/corm)                           .
 P#AD   Pod no #/m2     Pod number (no/m2)                                       .
+PARCE  Average RUE     Daily photosynthetic conversion efficiency (g/MJ)        .
 PMWD   Planting wt     Planting material wt (kg/ha)                             .
 PRSD   Shoot fraction  Partitioning of wt to shoot (ratio)                      .
 PWAD   Pod wt kg/ha    Pod weight (kg [dm]/ha)                                  .
@@ -339,6 +344,19 @@ WSGD   H20 stress,ex   Water stress - expansion/partioning/development (0-1)    
 WSPAV  H2O stress (av) Water stress (avg) - photosynthesis (0-1,0=none)         .
 WSPD   H20 stress,ph   Water stress - photosynthesis (0-1)                      .
 WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         .
+
+
+
+CWSI   Water stress    Recovery time-lagged photosynthesis water stress factor
+
+PARCE  Average RUE     Daily photosynthetic conversion efficiency (g/MJ)
+
+G_RESP Growth resp.    Growth respiration rate (t/ha/d)
+
+M_RESP Maint. resp.    Maintenance respiration rate (t/ha/d)
+
+CMDMD  Cellulose DM    Stalk cellulose dry mass (t/ha)
+
 
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
