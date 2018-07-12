@@ -345,19 +345,6 @@ WSPAV  H2O stress (av) Water stress (avg) - photosynthesis (0-1,0=none)         
 WSPD   H20 stress,ph   Water stress - photosynthesis (0-1)                      .
 WUPRD  H2O upt to dem  Water uptake to demand ratio (#)                         .
 
-
-
-CWSI   Water stress    Recovery time-lagged photosynthesis water stress factor
-
-PARCE  Average RUE     Daily photosynthetic conversion efficiency (g/MJ)
-
-G_RESP Growth resp.    Growth respiration rate (t/ha/d)
-
-M_RESP Maint. resp.    Maintenance respiration rate (t/ha/d)
-
-CMDMD  Cellulose DM    Stalk cellulose dry mass (t/ha)
-
-
 *NITROGEN
 @CDE   LABEL           DESCRIPTION............................................  SYNONYMS
 AMLC   NH3vol kgN/ha   Cumulative ammonia volatilization (kg [N]/ha)            .
