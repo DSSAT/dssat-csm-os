@@ -42,6 +42,7 @@ C=======================================================================
       USE ModuleDefs 
       USE ModuleData
       USE FloodModule
+      USE YCA_Model_SPAM_Interface
 
       IMPLICIT NONE
       SAVE
@@ -296,6 +297,14 @@ C       and total potential water uptake rate.
      &      EORATIO, !Needed by Penman-Monteith
      &      CANHT,   !Needed by dynamic Penman-Monteith
      &      EO)      !Output
+          
+!-----------------------------------------------------------------------
+!         POTENTIAL EVAPOTRANSPIRATION - model dependent
+!-----------------------------------------------------------------------
+          SELECT CASE (CONTROL % MODEL(1:5))
+             CASE ('CSYCA')    
+              EO = getEO(WEATHER, CONTROL, SOILPROP)
+           END SELECT
 
 !-----------------------------------------------------------------------
 !         POTENTIAL SOIL EVAPORATION
@@ -394,7 +403,6 @@ C       and total potential water uptake rate.
           ELSE
             EOP = 0.0
           ENDIF
-
 !-----------------------------------------------------------------------
 !         ACTUAL TRANSPIRATION
 !-----------------------------------------------------------------------

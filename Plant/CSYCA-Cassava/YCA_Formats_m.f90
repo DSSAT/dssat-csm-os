@@ -53,7 +53,7 @@
             '25X,"Time  Temp  Temp Solar Photop         Evapo |----Water---|-","-Nitrogen--|--Phosphorus-|",/,' // &
             '25X,"Span   Max   Min   Rad  [day]   Rain  Trans  Photo",9X,"Pho","to         Photo",/,' // &
             '25X,"days     C     C MJ/m2     hr     mm     mm  synth Growth  ","synth Growth  synth Growth",/,110("-"))'
-        CHARACTER(LEN=256) :: FMT501 = '(I5,I4,2I6,F6.1,A6,F6.1,F6.3,F6.2,F6.1,A6,F6.3,A6,4I6,3I6,F6.3,I6,2A6,F6.2,' // & ! issue 50
+        CHARACTER(LEN=256) :: FMT501 = '(I5,I4,2I6,F6.1,A6,I6,F6.3,F6.2,F6.1,A6,F6.3,A6,4I6,3I6,F6.3,I6,2A6,F6.2,' // & ! issue 50
             !'I6,F6.1,2F6.2,F6.1,F6.1, F6.2,2F6.2,2F6.2,F6.1,2F6.2,F6.2)'   !LPM 19MAY2015 to delete PTF as output
             'I6,F6.1,1F6.2,F6.1,F6.1, F6.2,2F6.2,2F6.2,F6.1,2F6.2,F6.2)'
         !CHARACTER(LEN=128) :: FMT502 = '(I5,I4,2I6,F6.1,A6,F6.2,A6,F6.2,A6,A6,F6.1,2A6,I6,A6,2F6.2,F6.3,10F6.2)' !LPM 19MAY2015 to delete PTF as output
@@ -106,15 +106,14 @@
 
         CHARACTER(LEN=384) :: FMT2201 = '("@YEAR DOY   DAS   DAP TMEAN","  GSTD  L#SD"," PARID PARUD  AWAD",' // &
             '"  LAID  SAID  CAID","  TWAD SDWAD  RWAD  CWAD  LWAD  SWAD  HWAD  HIAD"," RSWAD SNWLD SNWSD",' // &
-            !'"  RS%D","  H#AD  HWUD", "  S#AD  SLAD  RDPD  PTFD","  SWXD WAVRD"," WUPRD  WFPD  WFGD","  NFPD  ",' // & !LPM 20MAY2015 to delete PTFD
-            '"  RS%D","  S#AD  SLAD  RDPD","  SWXD WAVRD"," WUPRD  WFPD  WFGD","  NFPD  ",' // & ! issue 50
+            '"  RS%D","  S#PD  SLAD  RDPD","  SWXD WAVRD"," WUPRD  WFPD  WFGD","  NFPD  ",' // & ! issue #50
             '"NFGD NUPRD  TFPD  TFGD", " DYLFD","      ","      ")'
         CHARACTER(LEN=256) :: FMT2205 = '("@YEAR DOY   DAS   DAP TMEAN TCDIF  GSTD","    DU DYLFD  TFPD","  WFPD  NFPD ",' // &
             '"CO2FD RSFPD  TFGD  WFGD  NFGD"," WAVRD WUPRD  SWXD  EOPD","  SNXD LN%RD SN%RD RN%RD            ")'
         CHARACTER(LEN=256) :: FMT2215 = '("!........DATES.......  ...TEMP... STAGE "," ...PHENOLOGY.... ",' // & 
             '" ....PHOTOSYNTHESIS.... ", " .....GROWTH..... ","H2O STRESS DETERMINANTS"," .N STRESS DETERMINANTS.")'
         CHARACTER(LEN=256) :: FMT2251 = '("@YEAR DOY   DAS   DAP TMEAN  GSTD  RSTD"," LAIPD LAISD  LAID  CHTD SDWAD ",' // &
-            '"SNWLD SNWSD"," SHRTD  PTFD  RDPD","  RL1D  RL2D  RL3D  RL4D  RL5D  RL6D  RL7D  RL8D",' // & ! issue 50
+            '"SNWLD SNWSD"," SHRTD  PTFD  RDPD","  RL1D  RL2D  RL3D  RL4D  RL5D  RL6D  RL7D  RL8D",' // & ! issue #50
             '"  RL9D RL10D")'
         CHARACTER(LEN=256) :: FMT2252 = '("@YEAR DOY   DAS   DAP TMEAN  GSTD  NUAD", "  TNAD SDNAD  RNAD  CNAD  LNAD",' // &
             '"  SNAD  HNAD  HIND RSNAD SNN0D SNN1D","  RN%D  LN%D  SN%D  HN%D SDN%D  VN%D"," LN%RD SN%RD RN%RD  ",' // &
