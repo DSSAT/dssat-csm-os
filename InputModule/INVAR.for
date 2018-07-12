@@ -814,10 +814,6 @@ C         Branch to menu choice
     
 !=======================================================================
 !     CANEGRO sugarcane model
-!     CANEGRO currently reads from the cultivar file directly.  It
-!     reads the header line and the cultivar info as text, then
-!     parses the data into the variables.  Can't run sensitivity
-!     for canegro at this time.
       CASE ('SCCAN')
         WRITE (*,5900) 
      &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
