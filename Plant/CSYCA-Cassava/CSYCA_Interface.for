@@ -214,7 +214,6 @@ C-----------------------------------------------------------------------
      & SENCALG, SENNALG, SENLALG,                          !Senescence   
      & RESCALG, RESNALG, RESLGALG,                         !Residues     
      & STGYEARDOY, BRSTAGE,                                !Stage dates  
-     & WEATHER     , SOILPROP    , CONTROL     , 
      & DYNAMIC) !, WEATHER)                                !Control         ! MF 10JA15 WEATHER IS NEEDED FOR HOURLY EVALUATIONS
       
       ! MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of

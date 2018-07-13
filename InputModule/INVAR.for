@@ -759,29 +759,44 @@ C         Branch to menu choice
 !       CSYCA cassava
         CASE ('CSYCA')
             
+!DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15  
+!          WRITE(*,5941)  
+!     &     PPS1, B01ND, B12ND, SRNWT, HMPC, LA1S, 
+!     &     LAXS, SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT
+          
           WRITE(*,5941)  
-     &     PPS1, PGERM, PEMRG, B01ND, B12ND, 
-     &     BR1FX, BR2FX, BR3FX, BR4FX, 
+     &     PPS1, B01ND, B12ND, SRNWT, HMPC, 
      &     LAXS, SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT
           
+!DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15      
+!5941 FORMAT (12X,'0. End of changes ',//,
+!     1  12X,' 1. PPS1  ( 0.00 -   0.00).......................[',F7.3,/,
+!     2  12X,' 2. B01ND ( 10.0 -  100.0).......................[',F6.0,/,
+!     3  12X,' 3. B12ND ( 10.0 -  100.0).......................[',F6.0,/,
+!     4  12X,' 4. SR#WT ( 0.20 -   0.35).......................[',F7.3,/,
+!     5  12X,' 5. HMPC  ( 40.0 -   80.0).......................[',F7.3,/,
+!     6  12X,' 6. LA1S  (200.0 -  400.0).......................[',F7.2,/,
+!     7  12X,' 7. LAXS  ( 1000 -   2000).......................[',F7.1,/,
+!     8  12X,' 8. SLAS  (100.0 -  400.0).......................[',F7.2,/,
+!     9  12X,' 9. LLIFA (300.0 - 1200.0).......................[',F7.1,/,  !LPM redefine limit values
+!     1  12X,'10. LPEFR (0.250 -  0.400).......................[',F7.2,/,
+!     2  12X,'11. LNSLP (0.60 -    1.60).......................[',F7.2,/,
+!     3  12X,'12. NODWT (3.00 -    7.00).......................[',F7.2,/,
+!     4  12X,'13. NODLT (1.00 -    4.00).......................[',F7.1,/)
      
- 5941   FORMAT (12X,'0. End of changes ',//,
+ 5941  FORMAT (12X,'0. End of changes ',//,
      1  12X,' 1. PPS1  ( 0.00 -   0.00).......................[',F7.3,/,
-     2  12X,' 2. PGERM ( 10.0 -  200.0).......................[',F6.0,/,
-     3  12X,' 3. PEMRG ( 10.0 -   10.0).......................[',F6.2,/,
-     3  12X,' 4. B12ND ( 10.0 -  100.0).......................[',F6.0,/,
-     2  12X,' 5. B01ND ( 10.0 -  100.0).......................[',F6.0,/,
-     4  12X,' 7. BR1FX ( 00.0 -   10.0).......................[',F7.3,/,
-     5  12X,' 7. BR2FX ( 00.0 -   10.0).......................[',F7.3,/,
-     6  12X,' 8. BR3FX ( 00.0 -   10.0).......................[',F7.3,/,
-     7  12X,' 9. BR4FX ( 00.0 -   10.0).......................[',F7.3,/,
-     8  12X,'10. LAXS  ( 1000 -   2000).......................[',F7.1,/,
-     9  12X,'11. SLAS  (100.0 -  400.0).......................[',F7.2,/,
-     1  12X,'12. LLIFA (300.0 - 1200.0).......................[',F7.1,/,  !LPM redefine limit values
-     2  12X,'13. LPEFR (0.250 -  0.400).......................[',F7.2,/,
-     3  12X,'14. LNSLP (0.60 -    1.60).......................[',F7.2,/,
-     4  12X,'15. NODWT (3.00 -    7.00).......................[',F7.2,/,
-     5  12X,'16. NODLT (1.00 -    4.00).......................[',F7.1,/)
+     2  12X,' 2. B01ND ( 10.0 -  100.0).......................[',F6.0,/,
+     3  12X,' 3. B12ND ( 10.0 -  100.0).......................[',F6.0,/,
+     4  12X,' 4. SR#WT ( 0.20 -   0.35).......................[',F7.3,/,
+     5  12X,' 5. HMPC  ( 40.0 -   80.0).......................[',F7.3,/,
+     6  12X,' 6. LAXS  ( 1000 -   2000).......................[',F7.1,/,
+     7  12X,' 7. SLAS  (100.0 -  400.0).......................[',F7.2,/,
+     8  12X,' 8. LLIFA (300.0 - 1200.0).......................[',F7.1,/,  !LPM redefine limit values
+     9  12X,' 9. LPEFR (0.250 -  0.400).......................[',F7.2,/,
+     1  12X,'10. LNSLP (0.60 -    1.60).......................[',F7.2,/,
+     2  12X,'11. NODWT (3.00 -    7.00).......................[',F7.2,/,
+     3  12X,'12. NODLT (1.00 -    4.00).......................[',F7.1,/)
  
           WRITE (*,5100)
 C
@@ -794,21 +809,18 @@ C         Branch to menu choice
           SELECT CASE(IPARAM)
           CASE(0);  RETURN
           CASE( 1);  CALL GETREAL (PPS1  ,'PPS1 ', 0.00,  0.00)
-          CASE( 2);  CALL GETREAL (PGERM ,'PGERM ', 0.00,  200.0)
-          CASE( 3);  CALL GETREAL (PEMRG ,'PEMRG ', 0.00,  10.0)
-          CASE( 4);  CALL GETREAL (B01ND ,'B01ND ', 10.0, 100.0)
-          CASE( 5);  CALL GETREAL (B12ND ,'B12ND ', 10.0, 100.0)
-          CASE( 6);  CALL GETREAL (BR1FX ,'BR1FX ', 0.0, 10.0)
-          CASE( 7);  CALL GETREAL (BR2FX ,'BR2FX ', 0.0, 10.0)
-          CASE( 8);  CALL GETREAL (BR3FX ,'BR3FX ', 0.0, 10.0)
-          CASE( 9);  CALL GETREAL (BR4FX ,'BR4FX ', 0.0, 10.0)
-          CASE(10);  CALL GETREAL (LAXS  ,'LAXS',1000.,2000.0)
-          CASE(11);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
-          CASE(12);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) !LPM redefine limit values
-          CASE(13);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
-          CASE(14);  CALL GETREAL (LNSLP ,'LNSLP ', 0.60, 1.60)
-          CASE(15);  CALL GETREAL (NODWT ,'NODWT ', 3.00, 7.00)
-          CASE(16);  CALL GETREAL (NODLT ,'NODLT ', 1.00, 4.00)
+          CASE( 2);  CALL GETREAL (B01ND ,'B01ND ', 10.0, 100.0)
+          CASE( 3);  CALL GETREAL (B12ND ,'B12ND ', 10.0, 100.0)
+          CASE( 4);  CALL GETREAL (SRNWT ,'SR#WT ',0.200, 0.350)
+          CASE( 5);  CALL GETREAL (HMPC  ,'HMPC  ', 40.0,  80.0)
+!          CASE( 6);  CALL GETREAL (LA1S  ,'LA1S ',200.0, 400.0) !DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15   
+          CASE( 6);  CALL GETREAL (LAXS  ,'LAXS',1000.,2000.0)
+          CASE( 7);  CALL GETREAL (SLASS ,'SLAS ',100.0, 400.0)
+          CASE( 8);  CALL GETREAL (LLIFA ,'LLIFA ',300.0,1200.0) !LPM redefine limit values
+          CASE( 9);  CALL GETREAL (LPEFR ,'LPEFR ',0.200, 0.400)
+          CASE(10);  CALL GETREAL (LNSLP ,'LNSLP ', 0.60, 1.60)
+          CASE(11);  CALL GETREAL (NODWT ,'NODWT ', 3.00, 7.00)
+          CASE(12);  CALL GETREAL (NODLT ,'NODLT ', 1.00, 4.00)
         END SELECT
 
     

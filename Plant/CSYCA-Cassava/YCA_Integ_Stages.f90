@@ -29,11 +29,7 @@
         ! STAGES:Germination and emergence (Gestages)
         ! NB 0.5 factor used to equate to Zadoks)
         GEUCUM = GEUCUM + TTGEM                                                                                   !EQN 038
-        DAGERM = DAGERM + TTGEM*WFGE                                                           
-        
-        if (RAW >= WFGE) then                            !    28JUN2018 @danipilze validating
-            DAGERM = DAGERM + TTGEM*WFGE               !LPM 21MAR2016 for germination
-        endif
+        DAGERM = DAGERM + TTGEM*WFGE                                                           !LPM 21MAR2016 DA for germination
         !IF (GEUCUM < PEGD) THEN
             !GESTAGE = AMIN1(1.0,GEUCUM/PEGD*0.5)                                                       !EQN 039a !LPM 21MAR2016 To separate germination and emergence
         IF (DAGERM < PGERM .AND. PGERM > 0.0) THEN
@@ -100,9 +96,7 @@
             IF (BRSTAGE == 0.0) THEN
                 BRNUMST(TVR1) = 1                                                                                    ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
             ELSEIF (BRSTAGE > 0.0) THEN
-                IF (BRFX(INT(TVR1)) <= 0.0) then 
-                    BRFX(INT(TVR1)) = BRFX(INT(TVR1-1))                 !LPM 09JUN2015 To avoid number of branches 0 for BRSTAGE>6
-                endif                                
+                IF (BRFX(INT(TVR1)) <= 0.0) BRFX(INT(TVR1)) = BRFX(INT(TVR1-1))                                 !LPM 09JUN2015 To avoid number of branches 0 for BRSTAGE>6
                 BRNUMST(TVR1) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             ENDIF
         ENDIF 

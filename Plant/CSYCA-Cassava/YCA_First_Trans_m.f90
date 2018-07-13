@@ -215,7 +215,7 @@ Module YCA_First_Trans_m
     REAL    :: FSOILN                  ! Final soil inorganic N         kg/ha      ! (From Integrate) 
     INTEGER :: GDAP                    ! Germination DAP                d          ! (From SeasInit)  
     REAL    :: GDAPFR                  ! Germination DAP+fr             #          ! (From Integrate) 
-    ! INTEGER :: GDAPM                   ! Germination DAP,measured       #          ! (From SeasInit)  ! removed by danipilze/dssat-csm#87
+    INTEGER :: GDAPM                   ! Germination DAP,measured       #          ! (From SeasInit)  
     INTEGER :: GDATM                   ! Germination date,measured      #          ! (From Output)    
     REAL    :: GDAYFR                  ! Fraction of day to germination #          ! (From SeasInit)  
     REAL    :: GEDAYSE                 ! Period germination->emergence  d          ! (From SeasInit)  
@@ -602,7 +602,7 @@ Module YCA_First_Trans_m
     REAL    :: RAINPC(0:PSX)            ! Precipitation tier sum         mm         ! (From SeasInit)  
     REAL    :: RANC                    ! Roots actual N concentration   #          ! (From SeasInit)  
     REAL    :: RATM                    ! Boundary layer,air,resistance  s/m        ! (From SeasInit)  
-    REAL    :: RAW                     ! Readily available water   #               ! (From Growth) ! check if it's % or 0-1
+    REAL    :: RAW                     ! Total soil water 'potential'   #          ! (From Growth)
     REAL    :: RCROP                   ! Stomatal res,crop basis        s/m        ! (From SeasInit)  
     REAL    :: RDGS                    ! Root depth growth rate,standrd cm/d       ! (From SeasInit)  
     REAL    :: RESCAL(0:20)            ! Residue C at maturity,by layer kg/ha      ! (From SeasInit)  
@@ -1321,8 +1321,8 @@ Module YCA_First_Trans_m
         fldap = 0
         fln = 0.0
         gdap = -99
-        ! gdap = -99            ! danipilze/dssat-csm#87
-        ! gdapm = -99           ! danipilze/dssat-csm#87
+        gdap = -99
+        gdapm = -99
         gdayfr = 0.0
         gedayse = 0.0
         gedaysg = 0.0

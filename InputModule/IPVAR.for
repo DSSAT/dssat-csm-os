@@ -203,14 +203,15 @@ C-GH &      SNFX, SRNWT, SRFR, HMPC, PHINT, LA1S, LAXS, LAXND, LAXN2,
 C-LPM  Add CIAT cassava model
 !     CASSAVA: cassava **
       CASE ('CSYCA')
-                        
-          READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      PPS1, PGERM, PEMRG,
-     &      B01ND, B12ND, BR1FX, BR2FX, BR3FX, BR4FX, 
-     &      LAXS,
-     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
-          
 
+!DA 04OCT2016 Removing LA1S variable, is not used according to LPM 07MAR15          
+!         READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
+!     &      PPS1, B01ND, B12ND, SRNWT, HMPC, LA1S, LAXS, 
+!     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
+                    
+          READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
+     &      PPS1, B01ND, B12ND, SRNWT, HMPC, LAXS, 
+     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
           
 	 
 !     Ceres-wheat: wheat, barley **
@@ -402,7 +403,8 @@ C-----------------------------------------------------------------------
 C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
      
-  821 FORMAT (A6,1X,A16,7X,A6,16F6.0,A)         !CSYCA        06/05/2015 
+!  821 FORMAT (A6,1X,A16,7X,A6,13F6.0,A)         !CSYCA        06/05/2015 !DA 04OCT2016 Changed since LA1S variable is removed, is not used according to LPM 07MAR15 
+  821 FORMAT (A6,1X,A16,7X,A6,12F6.0,A)         !CSYCA        06/05/2015 
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
   850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 

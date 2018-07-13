@@ -13,7 +13,7 @@
         ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , RWUPM       , &
         SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
         UH2O        , &
-        WEATHER     , SOILPROP, CONTROL, &                                                                                                    ! MF WEATHER needed for VPD 
+        !WEATHER     ,                                                                                                       ! MF WEATHER needed for VPD 
         WINDSP      , YEAR        , ST          &    !LPM20MAR2016 To consider ST for germination
         )
         
@@ -23,9 +23,8 @@
    
         IMPLICIT NONE
         
-        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
-        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
-        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs                                                            ! MF Defined in ModuleDefs
+        
+        !TYPE (WeatherType) WEATHER                                                            ! MF Defined in ModuleDefs
 
         INTEGER NLAYR       , YEAR         
         INTEGER CSIDLAYR                                                                      ! Integer function call.
@@ -94,13 +93,11 @@
             IF (fileiot(1:2) /= 'DS') THEN
               ! Calculate plant potential evaporation 
               EOP = MAX(0.0,EO/EOMPEN*EOMPCRPCO2 * (1.0-EXP(-LAI*KEP)))
-
               ! Ratio necessary because EO method may not be Monteith
               CALL CSCRPROOTWU(ISWWAT,NLAYR, DLAYR, LL, SAT, WFEU, MEWNU,EOP, RLV, RWUPM, RLFWU, RWUMX, RTDEP, &
                   SW, WTDEP, uh2o, trwup, trwu)
             ENDIF
             
-
             
             ! Call 4 Using rcrop adjusted for CO2 & H2O effect     
             ! NB. Using previous days WFP. 
@@ -177,9 +174,8 @@
                   ! SWP(0) = AMIN1(1.,AMAX1(.0,(SWP(1)-0.5*(SWP(2)-SWP(1)))))
                   ! SWPSD = SWP(0) + (SDEPTH/DLAYR(1))*(SWP(2)-SWP(0))
                   !ENDIF
-                  IF (WFGEM > 0.0) then
+                  IF (WFGEM > 0.0) &
                    WFGE = AMAX1(0.0,AMIN1(1.0,(SWP(LSEED)/WFGEM)))
-                  endif
             ENDIF
           ENDIF
           IF (ISWWATCROP == 'N') WFGE = 1.0
