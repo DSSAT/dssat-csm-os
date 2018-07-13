@@ -143,12 +143,11 @@
                 ISOILH2O = ISOILH2O + SW(I)*DLAYR(I)                                                                   !EQN 031
             ENDDO
             ! Plant population as established; if no data,as planted
-            IF (PPOE > 0) THEN ! DA 25MAY2018 taking in count germination plant population
+            IF (PLTPOPE > 0) THEN
                 PLTPOP = PPOE !LPM 06MAR2016 To have just one name for PPOE
             ELSE
                 PLTPOP = PPOP !LPM 06MAR2016 To have just one name for PPOP
             ENDIF  
-            
             ! Shoot # set equal to plants per hill
             IF (PLPH > 0.0) THEN
                 SHNUM = PLPH
