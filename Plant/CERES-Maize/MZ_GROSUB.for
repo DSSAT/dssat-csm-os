@@ -2046,9 +2046,11 @@
           ENDIF
         ENDIF
         
-        IF (HARVFRAC(2) .LE. 0.0) THEN
-              HARVFRAC(2) = 1.0
-        ENDIF
+!       chp 2018-07-19 - default to zero removal of by-product from field
+!       This default behavior is already handled in the input module.
+!       IF (HARVFRAC(2) .LE. 0.0) THEN
+!              HARVFRAC(2) = 1.0
+!        ENDIF
         
         CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input

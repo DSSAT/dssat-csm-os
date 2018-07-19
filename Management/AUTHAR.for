@@ -358,8 +358,9 @@ C-----------------------------------------------------------------------
         HBPC(1) = HRP
       ENDIF
 
-      IF (HPC(1)  < 0.) HPC(1)  = 100.  !Percent product harvested
-      IF (HBPC(1) < 0.) HBPC(1) = 0.    !Percent by-product harvested
+!     Default to 100% harvest of product, 0% harvest of by-product
+      IF (HPC(1)  <-1.E-4) HPC(1)  = 100.  !Percent product harvested
+      IF (HBPC(1) < 1.E-4) HBPC(1) = 0.    !Percent by-product harvested
 
       RETURN
       END !SUBROUTINE IPAHAR

@@ -527,9 +527,11 @@ CCCCC-PW
           SKERWT = G2*GSIZE
           STOVER = (BIOMAS*PLANTS*10.0)  - DYIELD
 
-          IF (HARVFRAC(2) .LE. 0.0) THEN 
-              HARVFRAC(2) = 1.0
-          ENDIF
+!       chp 2018-07-19 - default to zero removal of by-product from field
+!       This default behavior is already handled in the input module.
+!          IF (HARVFRAC(2) .LE. 0.0) THEN 
+!              HARVFRAC(2) = 1.0
+!          ENDIF
 
 !          IF (STOVER .EQ. 0.0) THEN
 !             GSRATIO = 0.0       !NOT USED
