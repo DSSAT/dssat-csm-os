@@ -1,6 +1,6 @@
 C=======================================================================
 C  ETPHR, Subroutine, N.B. Pickering
-C  Computes canopy ET (mm/h) and gross photosynthesis (µmol CO2/m2/s)
+C  Computes canopy ET (mm/h) and gross photosynthesis (ï¿½mol CO2/m2/s)
 C  for each hour.
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
@@ -122,7 +122,7 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
      &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
-     &        RB(3), RSURF, RNET,                         !Output
+     &        RB, RSURF, RNET,                         !Output
      &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
@@ -282,7 +282,7 @@ C per version 3.5 of DSSAT
 
 C========================================================================
 C  CANOPG, Subroutine, K.J. Boote, J.W. Jones, G. Hoogenboom
-C  Computes instantaneous canopy photosynthesis (µmol CO2/m2/s) and leaf
+C  Computes instantaneous canopy photosynthesis (ï¿½mol CO2/m2/s) and leaf
 C  CO2 conductance (cm/s) of shaded and sunlit leaves.  Uses shaded
 C  and sunlit leaf areas, light intensity on each, and integrates
 C  over leaf angle classes.
@@ -387,7 +387,7 @@ C     Compute photosynthesis and leaf CO2 conductance for shaded leaves
      &  CONDSH, PGSH,                                     !Output
      &  CCNEFF,CICAD,PGPATH)                              !Input
 
-C     Compute canopy photosynthesis (µmol CO2/m2/s).
+C     Compute canopy photosynthesis (ï¿½mol CO2/m2/s).
 
       IF (STRESS) THEN
         IF (CONDSL .GT. 0.0) THEN
@@ -423,12 +423,12 @@ C  Calls:       CURV,TABEX
 C  Notes : Standard conditions and suggested values for QEREF and LXREF.
 C          LXREF is for upper sunlit leaves in the canopy.  Lower
 C          leaves will have a lower rate because of less SLW and N.
-C          QEREF : 30 oC, 350 µL/L CO2, 2% O2, <100 µmol/m2/S PFD
-C                 0.0541 µmol/µmol (Ehleringer and Bjorkman, 1977)
-C                 (converted from 30 oC, 325 µL/L CO2)
-C          LXREF: 30 oC, 350 µL/L CO2, 2% O2, 2000 µmol/m2/S PFD
+C          QEREF : 30 oC, 350 ï¿½L/L CO2, 2% O2, <100 ï¿½mol/m2/S PFD
+C                 0.0541 ï¿½mol/ï¿½mol (Ehleringer and Bjorkman, 1977)
+C                 (converted from 30 oC, 325 ï¿½L/L CO2)
+C          LXREF: 30 oC, 350 ï¿½L/L CO2, 2% O2, 2000 ï¿½mol/m2/S PFD
 C                 measured at SLWREF and LNREF
-C                 BEAN=28, PEANUT=28, SOYBEAN=28 µmol/m2/s
+C                 BEAN=28, PEANUT=28, SOYBEAN=28 ï¿½mol/m2/s
 C========================================================================
 
       SUBROUTINE PGLFEQ(
@@ -457,7 +457,7 @@ C========================================================================
 
       REAL BETALS,PDLA,BETAMX
         
-C     Initialization.  Convert LMXREF from mgCO2/m2/s to µmol/m2/s.
+C     Initialization.  Convert LMXREF from mgCO2/m2/s to ï¿½mol/m2/s.
 
       TK = TEMPHR + 273.
       RT = RGAS * TK
@@ -488,8 +488,8 @@ C     SLW effect on LMXREF assumed linear (Dornhoff and Shibles, 1970).
 
 C     Temperature and non-saturating CO2.
 
-C     For the computation of LMXREF, Ci/Ca = 0.7 for CO2=350 µL/L.  The factor
-C     7.179 scales CO2MAX to 1.0 at 30 oC and 350 µL/L CO2.
+C     For the computation of LMXREF, Ci/Ca = 0.7 for CO2=350 ï¿½L/L.  The factor
+C     7.179 scales CO2MAX to 1.0 at 30 oC and 350 ï¿½L/L CO2.
 
 C     CICA = 0.4+0.6*EXP(-0.002*CO2HR)
         IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
@@ -531,7 +531,7 @@ C     EFFECTS ON QUANTUM EFFICIENCY (QEFF).
 C     Temperature and non-saturating CO2.
 
 C     For the computation of QEFF, Ci/Ca = 1.0.  The factor 6.225 scales CO2QE
-C     to 1.0 at 30 oC and 350 µL/L CO2.
+C     to 1.0 at 30 oC and 350 ï¿½L/L CO2.
 
       CINT = MAX(CO2HR,GAMST)
       IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
@@ -570,7 +570,7 @@ C     Calculate QEFF and LFMAX at ambient conditions.
 C=======================================================================
 C  PGLEAF, Subroutine, K.J.Boote, J.W.Jones, G.Hoogenboom
 C  Calculate instantaneous leaf photosynthesis as a function of PAR
-C  and leaf characteristics (µmol/m2/s).  Leaf conductance calculated
+C  and leaf characteristics (ï¿½mol/m2/s).  Leaf conductance calculated
 C  as a function of net photosynthesis and Ci/Ca ratio (cm/s)
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
@@ -602,7 +602,7 @@ C     Initialization.
 
       RT = RGAS * (TEMPHR+273.0)
 
-C     Calculate leaf photosynthesis (µmol CO2/m2/s) using a non-rectangular
+C     Calculate leaf photosynthesis (ï¿½mol CO2/m2/s) using a non-rectangular
 C     hyperbola (Rabinowitch, 1951; Lommen et al, 1971; Evans and Farquhar,
 C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
 

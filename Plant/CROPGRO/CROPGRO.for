@@ -218,7 +218,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !     Call input routine for CROPGRO module parameters
 !-----------------------------------------------------------------------
-      CALL IPPLNT(CONTROL, 
+      CALL IPPLNT(CONTROL, ISWITCH, 
      &  CADPR1, CMOBMX, CROP, DETACH, ECONO,              !Output
      &  EORATIO, FILECC, FILEGC, FRCNOD, FREEZ1, FREEZ2,  !Output
      &  KCAN, KC_SLOPE, KEP, NOUTDO, PCARSH, PCH2O,       !Output

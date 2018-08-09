@@ -775,6 +775,9 @@ File not found.  Create input file.
 GENERI    1
 Section not found in input file. Check file.
 
+GENERI    2
+Treatment not found in input file. Check file.
+
 GENERI   29
 File not found. Please check file name or create file.
 

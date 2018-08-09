@@ -46,6 +46,7 @@
       CHARACTER*92 FILEX_P
       CHARACTER*6  FINDCH
       CHARACTER*12 FILEX
+      CHARACTER*78 MESSAGE(2)
 
       
       logical exists
@@ -146,39 +147,34 @@ C---------------------------------------------------------
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         END IF
 
-!       MOWLUN=999
-        CALL GETLUN('MOWFILE', MOWLUN)
-        OPEN (UNIT=MOWLUN,FILE=MOWFILE,IOSTAT=ERR,STATUS='OLD')
-        IF (ERR .NE. 0) THEN
-          MOWCOUNT = 0
-          MSG(1)="MOW file is missing. DSSAT-CSM will stop."
-          CALL WARNING(1,ERRKEY,MSG)
-          CALL ERROR(ERRKEY,ERR,MOWFILE,0)
-        ELSE
-          REWIND(MOWLUN)
-          ISECT = 0
-          MOWCOUNT = 0
-          write(trtchar,'(i6)') trtno
-          DO WHILE (ISECT.EQ.0)
-            READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
-            IF (MOW80(1:1).NE."@"
-     &          .AND.MOW80(1:1).NE."!"
-     &          .AND.MOW80(1:20).NE."                    "
-     &          .and.mow80(1:6)==trtchar
-     &          .AND.ISECT.EQ.0)THEN
-              MOWCOUNT = MOWCOUNT + 1
-            END IF
-          END DO
-          REWIND(MOWLUN)
-        ENDIF
+        MOWLUN=999
+									  
+        OPEN (UNIT=MOWLUN,FILE=MOWFILE,STATUS='OLD',IOSTAT=ERR)
+        IF (ERR .NE. 0) CALL ERROR(ERRKEY,29,MOWFILE,LNUM)
+        REWIND(MOWLUN)
+        
+        ISECT = 0
+        MOWCOUNT = 0
+        write(trtchar,'(i6)') trtno
+        DO WHILE (ISECT.EQ.0)
+          READ (MOWLUN,'(A80)',IOSTAT=ISECT) MOW80
+          IF (MOW80(1:1).NE."@"
+     &       .AND.MOW80(1:1).NE."!"
+     &       .AND.MOW80(1:20).NE."                    "
+     &       .and.mow80(1:6)==trtchar
+     &       .AND.ISECT.EQ.0)THEN
+             MOWCOUNT = MOWCOUNT + 1
+          END IF
+        END DO
+        REWIND(MOWLUN)
+			 
 
         IF (MOWCOUNT.GT.0) THEN
           ALLOCATE(TRNO(MOWCOUNT),DATE(MOWCOUNT),MOW(MOWCOUNT))
           ALLOCATE(RSPLF(MOWCOUNT),MVS(MOWCOUNT),rsht(mowcount))
         ELSE
-          MSG(1)="MOW file has no data for this treatment."
-          CALL WARNING(1,ERRKEY,MSG)
-          CALL ERROR(ERRKEY,ERR,MOWFILE,0)
+C         MOW file has no data for this treatment
+          CALL ERROR(ERRKEY,2,MOWFILE,0)
           ALLOCATE(MOW(1))
           MOW (1) = -99
           RETURN
