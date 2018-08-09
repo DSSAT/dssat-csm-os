@@ -528,8 +528,8 @@ C-------------------------------------------------------------------
 !     &    '    HWUM  H#AM    H#UM  HIAM  LAIX',
      &    '    HWUM    H#AM    H#UM  HIAM  LAIX',
      &    '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
-!    &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OEC',
-     &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
+     &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OEC',
+!    &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
      &    '  PI#M  PICM  PUPC  SPAM',
      &    '  KI#M  KICM  KUPC  SKAM',
      &    '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM   CO2EC',
@@ -608,14 +608,27 @@ C-------------------------------------------------------------------
         ESCP_TXT = PRINT_TXT(ESCP, "(F7.1)")
         EPCP_TXT = PRINT_TXT(EPCP, "(F7.1)")
 
-        N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.2)")
-        N2OGC_TXT= PRINT_TXT(N2OEC*1000., "(F6.1)")
+!       N2O emissions
+        IF (N2OEC .LT. -0.00001) THEN
+          N2OEC_TXT = "   -99"
+        ELSEIF (N2OEC .LT. 1) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.3)")       !kg/ha
+        ELSEIF (N2OEC .LT. 10) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.2)")       !kg/ha
+        ELSEIF (N2OEC .LT. 100) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.1)")       !kg/ha
+        ELSE
+          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.0)")       !kg/ha
+        ENDIF
+
+!       Not used
+        N2OGC_TXT= PRINT_TXT(N2OEC*1000., "(F6.1)")   !g/ha
 
         WRITE (NOUTDS,503) LAIX, 
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
      &    NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, CNAM, GNAM, 
-!    &    N2OEC_TXT,
-     &    N2OGC_TXT,
+     &    N2OEC_TXT,
+!    &    N2OGC_TXT,
      &    PINUMM, PICM, PUPC, SPAM,        !P data
      &    KINUMM, KICM, KUPC, SKAM,        !K data
      &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC,
