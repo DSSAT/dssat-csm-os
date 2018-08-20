@@ -63,7 +63,7 @@ C=======================================================================
         REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
         
 !       Added 7/19/2016 N2O emissions
-        REAL N2OEC
+        REAL N2OEC  !kg/ha
         INTEGER CO2EC
 
       End Type SummaryType
@@ -111,6 +111,7 @@ C-----------------------------------------------------------------------
       INTEGER I, IRCM, LUNIO, LINC, LNUM, MDAT, IRNUM, NINUMM
       INTEGER NFXM, NIAM, NICM, NLCM, NLINES  !, NNAPHO
       INTEGER NOUTDS, NUCM, NYRS, PRCM, RECM, ROCM, ONAM, OCAM
+      INTEGER REPNO  !CHP 3/15/2018
       INTEGER ROTNO, ROTOPT, RUN, SLUN, SWXM, TIMDIF, TRTNUM, YRPLT
       INTEGER YRSIM, YRDOY
       INTEGER RUN2, SimLen, LenString
@@ -137,7 +138,7 @@ C-----------------------------------------------------------------------
 !     Added 02/23/2011 Seasonal average environmental data
       INTEGER NDCH
       REAL TMINA, TMAXA, SRADA, DAYLA, CO2A, PRCP, ETCP, ESCP, EPCP
-      REAL N2OEC
+      REAL N2OEC  !kg/ha
       INTEGER CO2EC
 
       LOGICAL FEXIST
@@ -149,7 +150,7 @@ C-----------------------------------------------------------------------
       CHARACTER*9 DPNAM_TXT, DPNUM_TXT, YPNAM_TXT, YPNUM_TXT
       CHARACTER*6 TMINA_TXT, TMAXA_TXT, SRADA_TXT, DAYLA_TXT
       CHARACTER*7 CO2A_TXT, PRCP_TXT, ETCP_TXT, ESCP_TXT, EPCP_TXT
-      CHARACTER*6 N2OEC_TXT
+      CHARACTER*6 N2OEC_TXT, N2OGC_TXT
 
 !     Evaluate.OUT variables:
       INTEGER ICOUNT   !Number of observations for this crop
@@ -179,6 +180,7 @@ C-----------------------------------------------------------------------
       LUNIO   = CONTROL % LUNIO
       RUN     = CONTROL % RUN
       RNMODE  = CONTROL % RNMODE
+      REPNO   = CONTROL % REPNO
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
       NYRS    = CONTROL % NYRS
@@ -517,7 +519,8 @@ C-------------------------------------------------------------------
      &'SEASONAL ENVIRONMENTAL DATA (Planting to harvest)..............')
 
           WRITE (NOUTDS,400)
-  400     FORMAT ('@   RUNNO   TRNO R# O# C# CR MODEL... ',
+! CHP 3/14/2018 USE P# for REPNO instead of C# for CRPNO, which isn't used.
+  400     FORMAT ('@   RUNNO   TRNO R# O# P# CR MODEL... ',
      &    'EXNAME.. TNAM..................... ',
      &    'FNAM.... WSTA.... SOIL_ID...  ',
      &    '  SDAT    PDAT    EDAT    ADAT    MDAT    HDAT',
@@ -526,6 +529,7 @@ C-------------------------------------------------------------------
      &    '    HWUM    H#AM    H#UM  HIAM  LAIX',
      &    '  IR#M  IRCM  PRCM  ETCM  EPCM  ESCM  ROCM  DRCM  SWXM',
      &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OEC',
+!    &    '  NI#M  NICM  NFXM  NUCM  NLCM  NIAM  CNAM  GNAM N2OGC',
      &    '  PI#M  PICM  PUPC  SPAM',
      &    '  KI#M  KICM  KUPC  SKAM',
      &    '  RECM  ONTAM   ONAM  OPTAM   OPAM   OCTAM    OCAM   CO2EC',
@@ -543,12 +547,12 @@ C-------------------------------------------------------------------
 
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE (NOUTDS,500,ADVANCE='NO') 
-     &    RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
+     &    RUN, TRTNUM, ROTNO, ROTOPT, REPNO, 
      &    CROP, MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO,
      &    YRSIM, YRPLT, EDAT, ADAT, MDAT, YRDOY, 
      &    DWAP, CWAM, HWAM, NINT(HWAH), NINT(BWAH*10.), PWAM
 
-!       RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, 
+!       RUN, TRTNUM, ROTNO, ROTOPT, REPNO (was CRPNO), 
   500   FORMAT (I9,1X,I6,3(I3),               
 
 !       CROP, MODEL, FILEX, TITLET, FLDNAM, WSTAT, SLNO,
@@ -604,12 +608,27 @@ C-------------------------------------------------------------------
         ESCP_TXT = PRINT_TXT(ESCP, "(F7.1)")
         EPCP_TXT = PRINT_TXT(EPCP, "(F7.1)")
 
-        N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.2)")
+!       N2O emissions
+        IF (N2OEC .LT. -0.00001) THEN
+          N2OEC_TXT = "   -99"
+        ELSEIF (N2OEC .LT. 1) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.3)")       !kg/ha
+        ELSEIF (N2OEC .LT. 10) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.2)")       !kg/ha
+        ELSEIF (N2OEC .LT. 100) THEN
+          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.1)")       !kg/ha
+        ELSE
+          N2OEC_TXT= PRINT_TXT(N2OEC, "(F6.0)")       !kg/ha
+        ENDIF
+
+!       Not used
+        N2OGC_TXT= PRINT_TXT(N2OEC*1000., "(F6.1)")   !g/ha
 
         WRITE (NOUTDS,503) LAIX, 
      &    IRNUM, IRCM, PRCM, ETCM, EPCM, ESCM, ROCM, DRCM, SWXM, 
      &    NINUMM, NICM, NFXM, NUCM, NLCM, NIAM, CNAM, GNAM, 
      &    N2OEC_TXT,
+!    &    N2OGC_TXT,
      &    PINUMM, PICM, PUPC, SPAM,        !P data
      &    KINUMM, KICM, KUPC, SKAM,        !K data
      &    RECM, ONTAM, ONAM, OPTAM, OPAM, OCTAM, OCAM, CO2EC,
@@ -659,7 +678,8 @@ C-------------------------------------------------------------------
 !       VSH summary.csv header
         IF (FMOPT == 'C') THEN
             
-            CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
+!           CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, CRPNO, CROP,
+            CALL CsvOutSumOpsum(RUN, TRTNUM, ROTNO, ROTOPT, REPNO, CROP,
      &MODEL, CONTROL%FILEX(1:8), TITLET, FLDNAM, WSTAT, SLNO, YRSIM, 
      &YRPLT, EDAT, ADAT, MDAT, YRDOY, DWAP, CWAM, HWAM, HWAH, BWAH, 
      &PWAM, HWUM, HNUMUM, HIAM, LAIX, HNUMAM, IRNUM, IRCM, PRCM, ETCM,

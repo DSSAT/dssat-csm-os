@@ -140,26 +140,26 @@ C=======================================================================
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
 !-----------------------------------------------------------------------
       IF (PRINTDAY .AND. MOD(DAS,FROP) == 0) THEN
-!     Transfer data from constructed variable to local variables
-      CALL YR_DOY(YRDOY, YEAR, DOY) 
+!       Transfer data from constructed variable to local variables
+        CALL YR_DOY(YRDOY, YEAR, DOY) 
 
         CALL YR_DOY(YRDOY, YEAR, DOY) 
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
         WRITE(DLUN,200) YEAR, DOY, DAS, MULCH % MULCHCOVER,
      &      MULCH % MULCHTHICK, NINT(MULCH % MULCHMASS), MULCH %MULCHWAT
         END IF   ! VSH
-      ENDIF
       
 !     VSH
-      IF (FMOPT == 'C') THEN 
+        IF (FMOPT == 'C') THEN 
          CALL CsvOutMulch(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
-     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
-     &MULCH % MULCHCOVER, MULCH % MULCHTHICK,  
-     &MULCH % MULCHMASS, MULCH %MULCHWAT,   
-     &vCsvlineMulch, vpCsvlineMulch, vlngthMulch)
+     &     CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
+     &     MULCH % MULCHCOVER, MULCH % MULCHTHICK,  
+     &     MULCH % MULCHMASS, MULCH %MULCHWAT,   
+     &     vCsvlineMulch, vpCsvlineMulch, vlngthMulch)
      
          CALL LinklstMulch(vCsvlineMulch)
-      END IF
+        END IF
+      ENDIF
 !-----------------------------------------------------------------------
 !      IF (PRINTBAL) THEN
 !

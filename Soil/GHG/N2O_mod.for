@@ -51,7 +51,8 @@ C  09/18/2015 CHP Written, based on PG code.
       TYPE (SoilType)    SOILPROP
       TYPE (N2O_type)    N2O_DATA
 
-      CHARACTER*1  IDETL, IDETN, ISWNIT, ISWWAT  
+!     CHARACTER*1  IDETL  
+      CHARACTER*1  IDETN, ISWNIT, ISWWAT  
       CHARACTER*10, PARAMETER :: OUTSN2O = 'N2O.OUT'
 
       INTEGER DAS, DYNAMIC, L, NLAYR, YRDOY
@@ -467,7 +468,7 @@ C-----------------------------------------------------------------------
 !     Store Summary.out labels and values in arrays to send to
 !     OPSUM routines for printing.  Integers are temporarily 
 !     saved as real numbers for placement in real array.
-      LABEL(1)  = 'N2OEC'; VALUE(1)  = CN2O_emitted
+      LABEL(1)  = 'N2OEC'; VALUE(1)  = CN2O_emitted  !kg/ha
       LABEL(2)  = 'CO2EC'; VALUE(2)  = NINT(CumTotCO2)
 
 !     Send labels and values to OPSUM
