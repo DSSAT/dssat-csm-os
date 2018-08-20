@@ -18,6 +18,7 @@
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
+!     GitHash: 2a075298867dfad73e8e603b9bd97b905a11d619
 
 !     Version history:  
 !       4.7.2.1  chp 07/08/2018 Use CSMVersion, minor bug fixes, Linux hacks, 
