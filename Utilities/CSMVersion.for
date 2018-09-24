@@ -17,8 +17,8 @@
         INTEGER :: Build = 1
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
-!     GitHash: 2a075298867dfad73e8e603b9bd97b905a11d619
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop_N2O_on'
+!     GitHash: 6224d9b6e7461b751ae857eabc73772dd21bf9e6
 
 !     Version history:  
 !       4.7.2.1  chp 07/08/2018 Use CSMVersion, minor bug fixes, Linux hacks, 
