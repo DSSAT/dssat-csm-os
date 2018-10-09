@@ -17,7 +17,7 @@
         INTEGER :: Build = 1
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=*), PARAMETER :: VBranch = '-develop_N2O_on'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 !     GitHash: 6224d9b6e7461b751ae857eabc73772dd21bf9e6
 
 !     Version history:  
