@@ -14,10 +14,10 @@
         INTEGER :: Major = 4
         INTEGER :: Minor = 7
         INTEGER :: Model = 2
-        INTEGER :: Build = 1
+        INTEGER :: Build = 2
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=*), PARAMETER :: VBranch = '-Rice_mods'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 !     GitHash: 6224d9b6e7461b751ae857eabc73772dd21bf9e6
 
 !     Version history:  
