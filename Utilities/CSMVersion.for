@@ -14,7 +14,7 @@
         INTEGER :: Major = 4
         INTEGER :: Minor = 7
         INTEGER :: Model = 2
-        INTEGER :: Build = 1
+        INTEGER :: Build = 2
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
