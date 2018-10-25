@@ -21,6 +21,7 @@
 !     GitHash: @GIT_COMMIT_HASH@
 
 !     Version history:  
+!       4.7.2.3  chp 10/25/2018 Rice - G5 parameter   
 !       4.7.2.2  chp 10/25/2018 Sugarbeet, Forage, Cassava,    
 !                               ASCE ET added (on hold),
 !                               Fixed bug with maize byproduct harvest percentage 
