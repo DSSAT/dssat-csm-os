@@ -6,7 +6,7 @@
 ! @danipilze
 !*********
 
-    Module YCA_Model_SPAM_Interface       
+    Module YCA_Model_VPD_Interface       
     
         
     contains
@@ -45,9 +45,9 @@
     end function getPHTV
     
     ! get EOP
-    real function getEO(WEATHER, CONTROL, SOILPROP)
+    real function getVPDFP(WEATHER, CONTROL, SOILPROP)
         USE ModuleDefs
-        USE YCA_Growth_VPD
+        Use YCA_Growth_VPD
         
         implicit none
         
@@ -56,10 +56,10 @@
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
 
         
-        getEO = getAffectedEO (getDAP(), getLAI(), getPHSV(), getPHTV(),  WEATHER, CONTROL, SOILPROP)
-    end function getEO
+        getVPDFP = get_Growth_VPDFP (getDAP(), getLAI(), getPHSV(), getPHTV(),  WEATHER, CONTROL, SOILPROP)
+    end function getVPDFP
     
     
     
-END Module YCA_Model_SPAM_Interface
+END Module YCA_Model_VPD_Interface
     

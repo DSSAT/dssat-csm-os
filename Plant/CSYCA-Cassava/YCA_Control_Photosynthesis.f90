@@ -13,7 +13,13 @@
 
     Module YCA_Control_Photosyntesis !Module of environment
 
+    
+    
+    
+    
     contains
+    
+    
     
     
     !-------------------------------------------
@@ -22,11 +28,21 @@
     
 
     ! Conventional method using PAR utilization efficiency (P)
-    real function availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP)
-        implicit none
-        real, intent (in) :: PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP
-        real :: CARBOTMPR = 0
+    real function availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WEATHER, CONTROL, SOILPROP)
+        USE ModuleDefs
+        USE YCA_Model_VPD_Interface
         
+        implicit none
+        
+        
+        real, intent (in) :: PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
+        real :: CARBOTMPR = 0
+        real :: VPDFP
+        
+        VPDFP = getVPDFP(WEATHER, CONTROL, SOILPROP)
         
         !CARBOTMPR = 0.0
         !DO L = 1, TS

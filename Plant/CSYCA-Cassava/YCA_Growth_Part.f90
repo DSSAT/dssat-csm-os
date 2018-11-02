@@ -109,7 +109,7 @@
                         node(BR,LF)%LATL2 = node(BR,LF)%LATL2 + node(BR,LF)%LAGL                                  !EQN 324 !LPM 24APR2016 LATL2 with the same value than LATL 
                         node(BR,LF)%LATL2 = AMIN1(node(BR,LF)%LATL2, node(BR,LF)%LAPOTX)                                               !DA 28OCT2016 Limiting LATL2 to not get over the maximum potential
                         SHLAG2B(BR) = SHLAG2B(BR) + node(BR,LF)%LAGL                                    !EQN 325
-                     
+                     write (8,'(3I4,2F8.2)')  DAP, BR, LF, node(BR,LF)%LATL2, node(BR,LF)%LAPOTX2
                         !LPM 15NOV15 Variables LAGLT and LATL2T created to save the leaf are by cohort (all the plant (all branches and shoots))
                         node(BR,LF)%LAGLT = node(BR,LF)%LAGL * BRNUMST(BR) ! To initialize before adding over shoots     
                         node(BR,LF)%LATL2T = node(BR,LF)%LATL2 * BRNUMST(BR)
