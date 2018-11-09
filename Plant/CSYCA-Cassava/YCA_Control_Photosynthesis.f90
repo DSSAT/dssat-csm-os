@@ -30,7 +30,7 @@
     ! Conventional method using PAR utilization efficiency (P)
     real function availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WEATHER, CONTROL, SOILPROP)
         USE ModuleDefs
-        USE YCA_Model_VPD_Interface
+        USE YCA_VPD
         
         implicit none
         
@@ -39,10 +39,13 @@
         TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
-        real :: CARBOTMPR = 0
-        real :: VPDFP
         
-        VPDFP = getVPDFP(WEATHER, CONTROL, SOILPROP)
+        TYPE (VPD_Type) :: VPD
+        real :: CARBOTMPR = 0
+        real :: VPDFP= 1.0
+        
+        VPD = VPD_type(WEATHER, CONTROL, SOILPROP)
+        VPDFP = VPD%getVPDFP()
         
         !CARBOTMPR = 0.0
         !DO L = 1, TS
@@ -120,29 +123,7 @@
 
     end function availableCarbohydrate_methodM
     
-    ! Alternate method V
-    real function availableCarbohydrate_methodV(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
-        USE YCA_Control_Environment
-        USE YCA_Control_VPDEffect
-        implicit none
-        real, intent (in) :: TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE
-        type (DailyEnvironment_type)                     :: env
-        type (VPDEffect_type)                            :: vpde
-        real hourlyStomatalConductance
-        real dailyBiomass
-        integer I
 
-        env = DailyEnvironment_type(TMin, TMax, TDEW, SRAD)
-        vpde = VPDEffect_type(PHTV, PHSV)
-        dailyBiomass = 0.0
-        DO I = 1, 24
-            hourlyStomatalConductance = vpde%affectStomatalConductance(env%hourlyVPD(I))
-            dailyBiomass = dailyBiomass + env%hourlyBiomass(I, KCANI, LAI, PARUE,hourlyStomatalConductance )
-        END DO
-        
-        availableCarbohydrate_methodV = dailyBiomass
-
-    end function availableCarbohydrate_methodV
     
     
 END Module YCA_Control_Photosyntesis

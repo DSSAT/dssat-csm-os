@@ -24,11 +24,19 @@
 ! Suleiman, A.A. and Hoogenboom, G. (2007). Comparison of Priestley-Taylor and FAO-56 Penman-Monteith for daily reference evapotranspiration estimation in Georgia. Journal of Irrigation and Drainage Engineering 133(2):175-182.
 
 Module YCA_Growth_VPD
+    USE ModuleDefs
+    
+    REAL    :: VPDFPHR(TS)                ! Hourly VPD factor, 0-1
+    REAL    :: MNVPDFPHR                  ! Daily mean VPD factor, 0-1MNVPDFPHR
+    REAL    :: VPDStartHr    , VPDMaxHr   ! VPD start hour, VPD max hour
+    REAL    :: ET0(TS)                    ! Hourly reference transpiration
+    REAL    :: ET0DAY                     ! Daily integral of reference transpiration
+
     contains 
-    REAL function get_Growth_VPDFP (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+    
+    REAL function get_Growth_EOP (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
     
         USE ModuleDefs
-        USE YCA_Model_VPD                                                                               ! To transfer hourly VPD factor to other routines (could be incorporated in ModuleDefs later).
         
         IMPLICIT NONE
         SAVE
@@ -92,8 +100,9 @@ Module YCA_Growth_VPD
                                      ! The figure for the specific heat of moist air at constant pressure (Cp = 0.001013 MJ/kg/°C) is correct.
                                      ! GammaPS is affected by atmospheric pressure (101.325 kPa), so it should be adjusted to take account 
                                      ! of the site's elevation.
-            ET0(hour) = (AlphaPT/(LambdaLH)) * (DeltaVP * ((RADHR(hour)*3.6/1000.) * &     ! RADHR is in J/m2/s. Multiply by 3600, divide by 10^6 for MJ/m2/hr.
-                (1.0 - ALBEDO) - 0.0)) / (DeltaVP + GammaPS)
+            ET0(hour) = (AlphaPT/(LambdaLH)) * (DeltaVP * ((RADHR(hour)*3.6/1000.) * (1.0 - (-0.75*LAI)))) / (DeltaVP + GammaPS)    
+            ! RADHR is in J/m2/s. Multiply by 3600, divide by 10^6 for MJ/m2/hr.
+                
             ET0DAY = ET0DAY + ET0(hour)
         END DO
         ! Calculate total ET the day based on weighted mean temperature.
@@ -144,20 +153,14 @@ Module YCA_Growth_VPD
         ! For comparison only with hourly calculations.
         INTEGVPDFPHR = 0.0
         DO hour =1, TS
-            ! Adjust VPDFPHR for the fraction of hour at sunrise and sunset
-            !!IF (hour >= INT(SNUP))THEN 
-            !!    VPDFPHR(hour) = VPDFPHR(hour) * (REAL(hour+1) - SNUP) 
-            !!ENDIF
-            !!IF (hour <= INT(SNDN)) THEN 
-            !!    VPDFPHR(hour) = VPDFPHR(hour) * (SNDN - REAL(hour))
-            !!ENDIF
             INTEGVPDFPHR = INTEGVPDFPHR + VPDFPHR(hour)
         END DO
         IF (DAP >= 1) THEN
             ! MNVPDFPHR is the integral of the hourly VPDFPHR divided by the hours from sunrise to sunset. Range 0-1.
             MNVPDFPHR = AMIN1(1.0, AMAX1(0.0, (INTEGVPDFPHR / (SNDN - SNUP))))
         ENDIF
-        CONTINUE
+        
+
         
         ! Adjust PT estimate of hourly ET by the VPD factor. 
         ! Note this is on the whole ET, not the transpiration component.
@@ -168,24 +171,32 @@ Module YCA_Growth_VPD
              EOP = EOP + ET0(hour)
         END DO
         
-        INTEG_1 = 0.0
-        INTEG_2 = 0.0
-        DO hour =1, TS
-             INTEG_1 = INTEG_1 + RADHR(hour) * VPDFPHR(hour)
-             INTEG_2 = INTEG_2 + RADHR(hour)
-        END DO
+        get_Growth_EOP=EOP
         
         
-        open (unit = 7, file = "miles.csv")
-        VPDFP = INTEG_1/INTEG_2
-        write (7,*)  DAP, EOP, VPDFP
+    END function get_Growth_EOP
+    
+    
+    REAL function get_Growth_VPDFP (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+    
+        USE ModuleDefs
         
+        IMPLICIT NONE
+        SAVE
+
+        INTEGER, intent (in) :: DAP
+        REAL, intent (in) :: LAI
+        REAL, intent (in) :: PHSV
+        REAL, intent (in) :: PHTV
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
-        
-        get_Growth_VPDFP=VPDFP
-        
+        get_Growth_VPDFP=1.0
         
     END function get_Growth_VPDFP
+    
+    
 END Module YCA_Growth_VPD
     
 !-----------------------------------------------------------------------
