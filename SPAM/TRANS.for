@@ -21,6 +21,7 @@ C  01/13/2000 NBP Added DYNAMIC contruct to input KCAN and calc. FDINT
 C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  06/19/2003 JWJ/CHP Replaced KEP with KTRANS
 !  10/31/2011 CHP Use EVAP instead of ES (can include flood and mulch evap)
+!   1/18/2018 KRT Added KCB and REFET for ASCE dual Kc ET method
 !-----------------------------------------------------------------------
 !  Called by: WATBAL
 !  Calls:     None
@@ -32,6 +33,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
 
       CHARACTER*2  CROP
@@ -40,9 +42,13 @@ C=======================================================================
 
       REAL CO2, EO, EVAP, FDINT, KTRANS, TAVG, WINDSP, XHLAI
       REAL EOP, TRAT, EOP_reduc, EOP_max
+      REAL KCB, REFET
 
 !     FUNCTION SUBROUTINES:
       REAL TRATIO
+      
+      CALL GET('SPAM', 'KCB', KCB)
+      CALL GET('SPAM', 'REFET', REFET)
 
 !***********************************************************************
 !***********************************************************************
@@ -72,21 +78,25 @@ C       01/15/03 - Work of Sau et al, shows that a K of 0.5 was better in
 C       all cases, for PT form as well as the Dynamic form for predicting
 C       soil water balance and predicting measured ET.
 
-        FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
-        EOP = EO * FDINT
-        EOP_reduc = EOP * (1. - TRAT)  
-        EOP = EOP * TRAT
+        IF (KCB .GE. 0.0) THEN
+          EOP = KCB * REFET !KRT added for ASCE dual Kc ET approach
+        ELSE  
+          FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
+          EOP = EO * FDINT
+          EOP_reduc = EOP * (1. - TRAT)  
+          EOP = EOP * TRAT
 
-C       01/15/03 KJB  I think the change to "Same" K for EOS and EOP
-C       may cause next function to be less driving, but below still
-C       will depend on whether actual soil evapo (EVAP) meets EOS
+C         01/15/03 KJB  I think the change to "Same" K for EOS and EOP
+C         may cause next function to be less driving, but below still
+C         will depend on whether actual soil evapo (EVAP) meets EOS
 
-!       IF ((EOP + EVAP) .GT. (EO * TRAT)) EOP = EO * TRAT - EVAP
+!         IF ((EOP + EVAP) .GT. (EO * TRAT)) EOP = EO * TRAT - EVAP
 
-!       Need to limit EOP to no more than EO (reduced by TRAT effect on EOP) 
+!         Need to limit EOP to no more than EO (reduced by TRAT effect on EOP) 
 !         minus actual evaporation from soil, mulch and flood
-        EOP_max = EO - EOP_reduc - EVAP
-        EOP = MIN(EOP, EOP_max)
+          EOP_max = EO - EOP_reduc - EVAP
+          EOP = MIN(EOP, EOP_max)
+        ENDIF  
 
         EOP = MAX(EOP,0.0)
 
@@ -110,7 +120,9 @@ C       will depend on whether actual soil evapo (EVAP) meets EOS
 ! KCAN    Canopy light extinction coefficient for daily PAR, for
 !           equidistant plant spacing, modified when in-row and between row
 !           spacings are not equal
+! KCB     Basal crop coefficient for ASCE dual Kc ET method
 ! LNUM    Current line number of input file
+! REFET   ASCE Standardized Reference Evapotranspiration (alfalfa or grass)
 ! TAVG    Average daily temperature (°C)
 ! TRAT    Relative transpiration rate for CO2 values other than 330 ppm
 ! TRATIO  Function subroutine which calculates relative transpiration rate.

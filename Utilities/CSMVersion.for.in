@@ -18,7 +18,7 @@
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-!     CHARACTER(len=10) :: VBranch = '-release  '
+!     GitHash: @GIT_COMMIT_HASH@
 
 !     Version history:  
 !       4.7.2.1  chp 07/08/2018 Use CSMVersion, minor bug fixes, Linux hacks, 

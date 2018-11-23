@@ -488,7 +488,7 @@
 !             8 - Germination
 !             9 - Emergence
 !             1 - End juvenile
-!             2 - Pannicle initiation
+!             2 - Leaf Growth
 !             3 - End leaf growth
 !             4 - Beginning effective growth
 !             5 - Effective Growth
@@ -619,7 +619,7 @@
 
 
       !-----------------------------------------------------------------
-      !       ISTAGE = 2 - End of Juvenile Stage to Tassel Initiation
+      !       ISTAGE = 2 - Leaf Development
       !-----------------------------------------------------------------
           ELSEIF (ISTAGE .EQ. 2) THEN
               !NDAS - number of days after sowing
