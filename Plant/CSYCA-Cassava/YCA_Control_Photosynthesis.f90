@@ -45,7 +45,7 @@
         real :: VPDFP= 1.0
         
         VPD = YCA_VPD_Type(WEATHER, CONTROL, SOILPROP)
-        VPDFP = VPD%get_CSYCA_VPDFP()
+        VPDFP = VPD%get_YCA_VPDFP()
         
         !CARBOTMPR = 0.0
         !DO L = 1, TS

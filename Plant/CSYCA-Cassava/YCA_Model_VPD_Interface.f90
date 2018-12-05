@@ -17,9 +17,9 @@
         
     contains
 
-        procedure, pass (this) :: get_CSYCA_EO
-        procedure, pass (this) :: get_CSYCA_EOP
-        procedure, pass (this) :: get_CSYCA_VPDFP
+        procedure, pass (this) :: get_YCA_EO
+        procedure, pass (this) :: get_YCA_EOP
+        procedure, pass (this) :: get_YCA_VPDFP
         
     
     end Type YCA_VPD_type
@@ -47,73 +47,73 @@
     end function YCA_VPD_type_constructor    
 
 
-    ! get_CSYCA_ DAP
-    integer function get_CSYCA_DAP()
+    ! get_YCA_ DAP
+    integer function get_YCA_DAP()
         USE YCA_First_Trans_m
         implicit none
         
-        get_CSYCA_DAP = DAP
-    end function get_CSYCA_DAP
+        get_YCA_DAP = DAP
+    end function get_YCA_DAP
     
-    ! get_CSYCA_ LAI
-    real function get_CSYCA_LAI()
+    ! get_YCA_ LAI
+    real function get_YCA_LAI()
         USE YCA_First_Trans_m
         implicit none
         
-        get_CSYCA_LAI = LAI
-    end function get_CSYCA_LAI
+        get_YCA_LAI = LAI
+    end function get_YCA_LAI
     
-    ! get_CSYCA_ PHSV
-    real function get_CSYCA_PHSV()
+    ! get_YCA_ PHSV
+    real function get_YCA_PHSV()
         USE YCA_First_Trans_m
         implicit none
         
-        get_CSYCA_PHSV = PHSV
-    end function get_CSYCA_PHSV
+        get_YCA_PHSV = PHSV
+    end function get_YCA_PHSV
     
-    ! get_CSYCA_ PHTV
-    real function get_CSYCA_PHTV()
+    ! get_YCA_ PHTV
+    real function get_YCA_PHTV()
         USE YCA_First_Trans_m
         implicit none
         
-        get_CSYCA_PHTV = PHTV
-    end function get_CSYCA_PHTV
+        get_YCA_PHTV = PHTV
+    end function get_YCA_PHTV
     
-    ! get_CSYCA_ EO
-    real function get_CSYCA_EO(this)
+    ! get_YCA_ EO
+    real function get_YCA_EO(this)
         USE ModuleDefs
         Use YCA_Growth_VPD
         
         implicit none
         class (YCA_VPD_type), intent(in) :: this
         
-        get_CSYCA_EO = get_Growth_EO(get_CSYCA_DAP(), get_CSYCA_LAI(), get_CSYCA_PHSV(), get_CSYCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
+        get_YCA_EO = get_Growth_EO(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
         
-    end function get_CSYCA_EO
+    end function get_YCA_EO
     
-    ! get_CSYCA_ EOP
-    real function get_CSYCA_EOP(this)
+    ! get_YCA_ EOP
+    real function get_YCA_EOP(this)
         USE ModuleDefs
         Use YCA_Growth_VPD
         
         implicit none
         class (YCA_VPD_type), intent(in) :: this
         
-        get_CSYCA_EOP = get_Growth_EOP(get_CSYCA_DAP(), get_CSYCA_LAI(), get_CSYCA_PHSV(), get_CSYCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
+        get_YCA_EOP = get_Growth_EOP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
         
-    end function get_CSYCA_EOP
+    end function get_YCA_EOP
     
-    ! get_CSYCA_ VPDFP
-    real function get_CSYCA_VPDFP(this)
+    ! get_YCA_ VPDFP
+    real function get_YCA_VPDFP(this)
         USE ModuleDefs
         Use YCA_Growth_VPD
         
         implicit none
         class (YCA_VPD_type), intent(in) :: this
         
-        get_CSYCA_VPDFP = get_Growth_VPDFP(get_CSYCA_DAP(), get_CSYCA_LAI(), get_CSYCA_PHSV(), get_CSYCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
+        get_YCA_VPDFP = get_Growth_VPDFP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
         
-    end function get_CSYCA_VPDFP
+    end function get_YCA_VPDFP
     
     
     
