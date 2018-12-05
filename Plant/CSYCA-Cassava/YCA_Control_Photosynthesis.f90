@@ -30,7 +30,7 @@
     ! Conventional method using PAR utilization efficiency (P)
     real function availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WEATHER, CONTROL, SOILPROP)
         USE ModuleDefs
-        USE YCA_VPD
+        USE YCA_Model_VPD_Interface
         
         implicit none
         
@@ -40,12 +40,12 @@
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
-        TYPE (VPD_Type) :: VPD
+        TYPE (YCA_VPD_Type) :: VPD
         real :: CARBOTMPR = 0
         real :: VPDFP= 1.0
         
-        VPD = VPD_type(WEATHER, CONTROL, SOILPROP)
-        VPDFP = VPD%getVPDFP()
+        VPD = YCA_VPD_Type(WEATHER, CONTROL, SOILPROP)
+        VPDFP = VPD%get_CSYCA_VPDFP()
         
         !CARBOTMPR = 0.0
         !DO L = 1, TS
