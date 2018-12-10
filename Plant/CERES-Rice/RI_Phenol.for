@@ -1138,8 +1138,8 @@ C-----------------------------------------------------------------------
       SECTION = '*CULTI'
       CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
-      READ (LUNIO,100, IOSTAT=ERR) P1, P2R, P5, P2O, G4, G5; 
-     & LNUM = LNUM + 1
+      READ (LUNIO,100, IOSTAT=ERR) P1, P2R, P5, P2O, G4, G5 
+      LNUM = LNUM + 1
 !CHP  100 FORMAT (30X,4(F6.1),18X,F6.2)
   100 FORMAT (30X,4(F6.0),18X,1(F6.0),6X,F6.0)
       !write(*,*)'P1 P2R P5 P2O G4 G5',P1, P2R, P5, P2O, G4!, G5
