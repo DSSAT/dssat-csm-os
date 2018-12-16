@@ -148,7 +148,7 @@ C  Calls:     None
         N_LYR = MIN(10, MAX(4,SOILPROP%NLAYR))
 
         IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN    ! VSH
-!        IF (ISWPHO == 'Y') THEN
+!        IF (ISWPHO .NE. 'N') THEN
           WRITE (NOUTDG, 100) "Root Dens. (cm/cm3) by soil ",
      &      "depth (cm):",(SoilProp%LayerText(L), L=1,N_LYR)
   100     FORMAT("!",244X,A,A,/,"!",239X,10A8) 
@@ -163,7 +163,7 @@ C  Calls:     None
      &         '   RWAD   VWAD   CWAD   G#AD    GWGD   HIAD   PWAD',
      &         '   P#AD   WSPD   WSGD   NSTD')
 
-!        IF (ISWPHO .EQ. 'Y') THEN
+!        IF (ISWPHO .NE. 'N') THEN
           WRITE (NOUTDG,"('  PST1A  PST2A')", ADVANCE='NO')
 !        ENDIF
 !        IF (ISWPOT .EQ. 'Y') THEN
@@ -370,7 +370,7 @@ C-----------------------------------------------------------------------
      &        1X,F6.1,1X,I6,1X,F6.3,   7(1X,I6),
      &        1X,F7.1,1X,F6.3,2(1X,I6),3(1X,F6.3))
 
-!          IF (ISWPHO .EQ. 'Y') THEN
+!          IF (ISWPHO .NE. 'N') THEN
             WRITE (NOUTDG,'(2(1X,F6.3))', ADVANCE='NO') PS1_AV, PS2_AV
 !          ENDIF
 

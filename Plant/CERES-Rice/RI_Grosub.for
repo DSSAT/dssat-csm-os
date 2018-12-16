@@ -336,7 +336,7 @@ C=======================================================================
       PODWT = PANWT * PLTPOP    !Panicle weight, g/m2
       SDWT = GRNWT * PLTPOP     !seed weight, g/m2
 
-        IF (ISWPHO == 'Y') THEN
+        IF (ISWPHO .NE. 'N') THEN
           CALL P_Ceres (EMERG, ISWPHO,                           !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
@@ -1213,7 +1213,7 @@ C
      &       ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,        !Input
      &       KUPTAKE, KSTRES)                             !Output
 
-         IF (ISWPHO == 'Y') THEN
+         IF (ISWPHO .NE. 'N') THEN
            CALL P_Ceres (DYNAMIC, ISWPHO,                   !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
@@ -1267,7 +1267,7 @@ C-----------------------------------------------------------------------
       PODWT = PANWT * PLTPOP    !Panicle weight, g/m2
       SDWT = GRNWT * PLTPOP     !seed weight, g/m2
 
-      IF (ISWPHO == 'Y') THEN
+      IF (ISWPHO .NE. 'N') THEN
        CALL P_Ceres (DYNAMIC, ISWPHO,                       !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
