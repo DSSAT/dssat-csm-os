@@ -438,12 +438,7 @@ C
 
           PANIWT  = 0.0
           G1FAC   = AMIN1 (1.0,G1/50.0)
-          PANFAC  = 0.65*G1FAC    
-          IF (STRHEAT .LT. 1.0) THEN
-             PANFAC = PANFAC * STRHEAT
-             !WRITE(*,*)'PNF STRH', PANFAC,STRHEAT,G1
-             !PAUSE
-          ENDIF
+          PANFAC  = 0.65*G1FAC                       ! .55
           !STRESSW = AMAX1 (SI2(3),SI2(4))
           PANIWT  = (MSTMWT*0.4+MLFWT*0.20)*G1FAC*(1.0-0.5*STRESSW) 
 
@@ -473,9 +468,7 @@ C
 
           IF (GPP .GT. 0.0) THEN
              GRNWT  = PANFAC*PANIWT                  ! 0.35
-             
-             !write(*,*)'grnwt panfac paniwt',GRNWT,PANFAC,PANIWT,gpp
-             !pause
+             !
              ! GRAINN content is 2X > pan N content
              !
              !GRAINN    = GRNWT * 0.011
@@ -522,8 +515,6 @@ C
 CCCCC-PW
           SKERWT = G2*GSIZE
           GRAIN  = GRNWT/(G2*GSIZE)
-          !write(*,*)'gpp grain gsize',gpp,grain,gsize,g2
-          !pause
           IF (GRAIN .GT. GPP .AND. GPP .GT. 0.0) THEN
              SKERWT = AMIN1 (GRNWT/GPP,G2*1.05)
           ENDIF
@@ -1464,8 +1455,6 @@ C-----------------------------------------------------------------------
       IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
       READ (LUNIO,100, IOSTAT=ERR) P5, G1, G2, G3, PHINT
   100 FORMAT (42X,F6.0,6X,3F6.0,6X,F6.0)
-      !WRITE(*,*)'P5, G1, G2, G3, PHINT',P5, G1, G2, G3, PHINT
-      !PAUSE
       LNUM = LNUM + 1
       IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
