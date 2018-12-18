@@ -228,6 +228,13 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
       XN     = 0.0
       YIELD  = 0.0
 
+      YREMRG = -99
+      YRNR1  = -99
+      YRNR2  = -99
+      YRNR3  = -99
+      YRNR5  = -99
+      ISDATE = -99
+
       CALL OPVIEW(CONTROL, 
      &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN,  
      &    Measured, PlantStres, Simulated, STGDOY, 
@@ -274,7 +281,7 @@ C-GH      ACOUNT = 21  !Number of FILEA headings.
 !***********************************************************************
       ELSE IF (DYNAMIC .EQ. SEASEND) THEN
 !-----------------------------------------------------------------------
-!     Transfer dates for potato model stages.
+!     Transfer dates for model stages.
       YRNR1  = ISDATE
       YRNR2  = STGDOY(2)
       YRNR3  = STGDOY(3)
