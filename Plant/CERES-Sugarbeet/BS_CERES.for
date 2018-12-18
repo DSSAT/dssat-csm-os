@@ -1,7 +1,6 @@
 !=======================================================================
-!  COPYRIGHT 1998-2010 Iowa State University, Ames, Iowa
-!                      University of Florida, Gainesville, Florida
-!                      The University of Georgia, Griffin, Georgia
+!  COPYRIGHT 1998-2018 DSSAt Foundation
+!                      University of Florida, Gainesville, Florida                  
 !                      International Fertilizer Development Center
 !                      University of Guelph
 !  ALL RIGHTS RESERVED
@@ -15,8 +14,6 @@
 !----------------------------------------------------------------------
 !  Revision history
 !
-!  03/25/2015 Written   
-!  WDB July 2016 for UNH4 and UNO3 as arguments
 !----------------------------------------------------------------------
 !  Called : Alt_Plant
 !----------------------------------------------------------------------

@@ -4,7 +4,7 @@
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  05/25/2015 CHP Written, based on OPHARV
-!  03/15/2017 Updated for HI equation based on Taro model
+!  12/18/2018 GH Updated output
 !=======================================================================
 
       SUBROUTINE BS_OPHARV(CONTROL, 
