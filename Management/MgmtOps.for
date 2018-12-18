@@ -631,12 +631,13 @@ C-----------------------------------------------------------------------
    98     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A)
         ENDIF
 
-!       Physiological Maturity
-        IF (MDATE == YRDOY) THEN
-          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
-     &          "Phys. Maturity "
-  100     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.0,A))
-        ENDIF
+!     Remove this - it gives some strange results for some crops
+!     chp 2018-12-18
+!!       Physiological Maturity
+!        IF (MDATE == YRDOY) THEN
+!          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+!     &          "Phys. Maturity "
+!        ENDIF
 
 !       Retrieve current Stage, STGDOY and STNAME
         CALL GET('PLANT','iSTAGE', iSTAGE)
@@ -728,6 +729,7 @@ C-----------------------------------------------------------------------
         ELSE
           WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
      &            "End Sim        "
+  100     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.0,A))
         ENDIF
 
         WRITE(DLUN2,'(" ")')
