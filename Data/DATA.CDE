@@ -666,7 +666,7 @@ SN3T   Mt Sn Ht 3 W/m2 Midnight sensible heat from soil surface (W/m2)          
 SLHN   NOON SLW,SHADE  SLW in shaded leaves,noon (mg [dm]/cm2)                  .
 SLLN   NOON SLW,Light  SLW in sunlit leaves,noon (mg [dm]/cm2)                  .
 SNDD   SOIL ORG N      Stable soil org. N @ user depth (kg/ha)                  .
-SOCD   SOIL OC kg/ha   Soil plus surface organic carbon (kg/ha)                 .
+SOCD   Total OC kg/ha  Soil plus surface organic carbon (kg/ha)                 .
 SOND   SOIL ON kg/ha   Soil plus surface organic nitrogen (kg/ha)               .
 SOPD   SOIL OP kg/ha   Soil plus surface organic phosphorus (kg/ha)             .
 SPDD   SOIL ORG P      Stable soil org. P @ user depth (kg/ha)                  .
@@ -1043,7 +1043,7 @@ SC4D   SOC L4 (kg/ha)  Organic C in soil layer 4 (kg/ha)                        
 SC5+D  SOC L5+(kg/ha)  Organic C in soil layer 5 thru bottom of profile(kg/ha)  .
 SCS20D SOC 0-20cm kg/h Organic C (SOM) in top 20 cm (kg/ha)                     .
 SCS40D SOC20-40cm kg/h Organic C (SOM) between 20 and 40 cm depth (kg/ha)       .
-SCTD   SOC (kg/ha)     Total soil organic carbon (kg/ha)                        .
+SCTD   SOC (kg/ha)     Soil organic carbon (kg/ha)                              .
 SL%20D TOC 0-20cm (%)  Organic C (SOM + litter) in top 20 cm (%)                .
 SL%40D TOC 20-40cm (%) Organic C (SOM + litter) between 20 and 40 cm depth (%)  .
 SLC20D TOC 0-20cm kg/h Organic C (SOM + litter) in top 20 cm (kg/ha)            .

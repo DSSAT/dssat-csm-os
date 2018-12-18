@@ -479,7 +479,7 @@ C-----------------------------------------------------------------------
                   WRITE(DLUN,"(A)",ADVANCE='NO') '  NAPC  NICM'
                  ENDIF
               CASE (2)
-                IF (ISWPHO == 'Y') THEN
+                IF (ISWPHO .NE. 'N') THEN
                   WRITE(DLUN,"(A)",ADVANCE='NO') '  PAPC  PICM'
                 ENDIF
               CASE (3)
@@ -597,7 +597,7 @@ C-----------------------------------------------------------------------
                   IF (ISWNIT == 'Y') WRITE(DLUN,"(2I6)",ADVANCE='NO') 
      &                NAPFER(I), NINT(AMTFER(I))
                 CASE (2)
-                  IF (ISWPHO == 'Y') WRITE(DLUN,"(2I6)",ADVANCE='NO') 
+                  IF (ISWPHO .NE. 'N') WRITE(DLUN,"(2I6)",ADVANCE='NO') 
      &                NAPFER(I), NINT(AMTFER(I))
                 CASE (3)
                   IF (ISWPOT == 'Y') WRITE(DLUN,"(2I6)",ADVANCE='NO') 
@@ -660,7 +660,7 @@ C-----------------------------------------------------------------------
      &              + SUM(FertData%ADDUREA)
             WRITE(DLUN2,'(F7.0,A)',ADVANCE='NO') TotAmtN, " kg[N]/ha"
           ENDIF
-          IF (ISWPHO == 'Y') THEN
+          IF (ISWPHO .NE. 'N') THEN
             TotAmtP = SUM(FertData%ADDSPi)
             WRITE(DLUN2,'(A,F7.0,A)',ADVANCE='NO')";",TotAmtP,
      &                " kg[P]/ha"

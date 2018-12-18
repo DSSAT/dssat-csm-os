@@ -666,10 +666,12 @@ C
            ENDIF
          ENDIF
          IF (IHARI .EQ. 'R' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
-         IF (HPC(NHAR) .LT. 0.0) THEN
+!        Harvested product defaults to 100%
+         IF (HPC(NHAR) .LT. -1.E-4) THEN
              HPC(NHAR) = 100.0
          ENDIF
-         IF (HBPC(NHAR) .LT. 0.0) THEN
+!        Harvested by-product defaults to 0%
+         IF (HBPC(NHAR) .LT. 1.E-4) THEN
              HBPC(NHAR) = 0.0
          ENDIF
          IF (HSTG(NHAR) .EQ. '     ') THEN

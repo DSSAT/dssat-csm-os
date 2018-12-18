@@ -69,6 +69,7 @@ C-----------------------------------------------------------------------
       INTEGER FOUND, ERR, ISECT, LUNSOL, LNUM
       INTEGER I, J, JJ, LUNIO, NRES, PFLAG
       INTEGER, PARAMETER :: NR=50    !Maximum # of residue types
+      REAL REDUCE_FRAC
 
 !     Keep default values for legacy variables
       REAL ADMINR, ADSNC, APRCEL, APRCHO
@@ -193,7 +194,7 @@ C-----------------------------------------------------------------------
 
 C-----------------------------------------------------------------------
   500   CONTINUE
-!       Re-assign default values to arrays if problems with reading file
+!       Use default values if problems with reading file
         IF (EROR) THEN
           SELECT CASE(ERR)
             CASE (20)
@@ -289,7 +290,17 @@ C-----------------------------------------------------------------------
       IF (PRESENT(PSLIG )) PSLIG = APSLIG(JJ)
       IF (PRESENT(SCN   )) SCN   = ASCN  (JJ)
       IF (PRESENT(SCP   )) SCP   = ASCP  (JJ)
-      IF (PRESENT(PRLIG )) PRLIG = APRLIG(JJ)
+
+!     PRLIG must sum with PRCHO and PRCEL to 1.0
+      IF (PRESENT(PRLIG )) THEN
+        PRLIG = APRLIG(JJ)
+        IF (PRESENT(PRCHO) .AND. PRESENT(PRCEL)) THEN
+          REDUCE_FRAC = (1.0 - PRLIG) / (PRCHO + PRCEL) 
+          PRCHO = PRCHO * REDUCE_FRAC
+          PRCEL = PRCEL * REDUCE_FRAC
+        ENDIF
+      ENDIF
+
       IF (PRESENT(RCN   )) RCN   = ARCN  (JJ)
       IF (PRESENT(RCP   )) RCP   = ARCP  (JJ)
 

@@ -20,7 +20,7 @@
 
         TYPE HeaderType
           INTEGER ICOUNT, ShortCount, RUN
-          CHARACTER*80 Header(100)   !header for Overview
+          CHARACTER*120 Header(100)   !header for Overview
         END TYPE
         TYPE (HeaderType) Headers
 
@@ -37,7 +37,7 @@
         CHARACTER*3 RMS
         CHARACTER*8 WSTAT
         CHARACTER*11 TEXT
-        CHARACTER*80 HEADER2
+        CHARACTER*120 HEADER2
         INTEGER I, IDYS, IPLT, IPYRS, ISIM, RUN, YRPLT
         INTEGER LenString
         TYPE (ControlType) CONTROL
@@ -154,7 +154,7 @@ C=======================================================================
       CHARACTER*16  VRNAME
       CHARACTER*25  TITLET
       CHARACTER*80  PATHEX
-      CHARACTER*80  HEADER(100) !Simulation header
+      CHARACTER*120 HEADER(100) !Simulation header
       CHARACTER*120 WTHSTR
 
       INTEGER       DYNAMIC
@@ -204,6 +204,9 @@ c     MJ, Mar 2008: added HDATE_YR and HDATE_DOY
       WRITE (HEADER(1),100) Version, VBranch, MonthTxt(DATE_TIME(2)),
      &    DATE_TIME(3), DATE_TIME(1), DATE_TIME(5), DATE_TIME(6), 
      &    DATE_TIME(7)
+  100 FORMAT ("*DSSAT Cropping System Model Ver. ",I1,".",I1,".",I1,
+     &    ".",I3.3,1X,A,2X,
+     &    A3," ",I2.2,", ",I4,I3.2,":",I2.2,":",I2.2)
       WRITE (HEADER(2),'(" ")')
 !     WRITE (HEADER(3),200) MOD(RUN,1000),TITLET
 !     WRITE (HEADER(3),201) MOD(RUN,1000),TITLET,MODEL
@@ -432,9 +435,6 @@ C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
-  100 FORMAT ("*DSSAT Cropping System Model Ver. ",I1,".",I1,".",I1,
-     &    ".",I3.3,1X,A10,4X,
-     &    A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
   200 FORMAT ('*RUN ',I3,8X,': ',A25)
 ! 201 FORMAT ('*RUN ',I3,8X,': ',A25,1X,A8)
 
@@ -548,7 +548,7 @@ C=======================================================================
       CHARACTER*8  MODEL
       CHARACTER*16 CROPD
       CHARACTER*16 VRNAME
-      CHARACTER*80  HEADER(100) !Simulation header
+      CHARACTER*120  HEADER(100) !Simulation header
       CHARACTER*1000 ATLINE
 
       INTEGER      NLAYR,I,L, RUN
@@ -1052,7 +1052,7 @@ C========================================================================
 
 !     Write Model info and date-time stamp to all headers
       IF (ICOUNT .GT. 0) THEN
-        WRITE(LUNDES,'(/,A80)') HEADERS % Header(1)
+        WRITE(LUNDES,'(/,A)') TRIM(HEADERS % Header(1))
       ELSE
         CALL DATE_AND_TIME (VALUES=DATE_TIME)
         WRITE (LUNDES,500)Version, VBranch, MonthTxt(DATE_TIME(2)),
@@ -1070,7 +1070,7 @@ C========================================================================
 !-----------------------------------------------------------------------
 !     Write OVERVIEW header info to destination file.
       DO I = 2, ICOUNT
-        WRITE(LUNDES,'(A80)',ERR=200) HEADERS % Header(I)
+        WRITE(LUNDES,'(A)',ERR=200) TRIM(HEADERS % Header(I))
       ENDDO
   200 CONTINUE
 
@@ -1085,7 +1085,7 @@ C========================================================================
       IF (NOHEADER(LUNDES) .AND. RUN > 0 .AND. ICOUNT > 0)THEN
 !       Header exists, write it
         DO I = 2, ShortCount
-          WRITE (LUNDES,'(A)') HEADERS % HEADER(I)
+          WRITE (LUNDES,'(A)') TRIM(HEADERS % HEADER(I))
         ENDDO
         WRITE(LUNDES,*) " "  
         NOHEADER(LUNDES) = .FALSE.
@@ -1107,7 +1107,7 @@ C========================================================================
       RETURN
 
   500   FORMAT ("*DSSAT Cropping System Model Ver. ",I1,".",I1,".",I1,
-     &    ".",I3.3,1X,A10,4X,
+     &    ".",I3.3,1X,A,4X,
      &    A3," ",I2.2,", ",I4,"; ",I2.2,":",I2.2,":",I2.2)
  1200   FORMAT (/,'*RUN ',I3,/)
 

@@ -2,8 +2,11 @@
 !  POTENTIAL EVAPOTRANSPIRATION 
 !     File PET.for
 !***********************************************************************
-!  Includes modules:
-!MEEVP Routine Description
+!  Includes subroutines:
+
+!  MEEVP Routine Description
+!   R  PETPT   Calculates Priestly-Taylor potential evapotranspiration
+!                (default method)
 !   A  PETASCE ASCE Standardized Reference Evapotranspiration Equation
 !                for tall reference (alfalfa) with dual FAO-56 crop 
 !                coefficient
@@ -12,8 +15,6 @@
 !   G  PETASCE ASCE Standardized Reference Evapotranspiration Equation
 !                for short reference (grass) with dual FAO-56 crop
 !                coefficient
-!   R  PETPT   Calculates Priestly-Taylor potential evapotranspiration
-!                (default method)
 !   D  PETDYN  Dynamic Penman-Monteith, pot. evapotranspiration, with
 !                dynamic input of LAI, crop height effects on Ra and Rs
 !   P  PETPNO  FAO Penman (FAO-24) potential evapotranspiration 
@@ -65,14 +66,21 @@ C=======================================================================
       CALL YR_DOY(YRDOY, YEAR, DOY)
 
           SELECT CASE (MEEVP)
-          !Penman-Monteith reference ET based on the ASCE Standardized
-          !Reference Evapotranspiration Equation
-          CASE ('A','G')
-            CALL PETASCE(
-     &        CANHT, DOY, ET_ALB, MEEVP, SRAD, TDEW,      !Input 
-     &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
-     &        XLAT, XELEV,                                !Input
-     &        EO)                                         !Output
+!          !Penman-Monteith reference ET based on the ASCE Standardized
+!          !Reference Evapotranspiration Equation
+! CHP 2018-07-20 A and G methods require changes to species file.
+!     We need to figure out a better way to do this. 
+!     The way the routine is written,  
+!     either parameters for A and G are in the species file, 
+!     OR parameters for all other methods are in the species file.
+!     This requires that different species files are used for the
+!     different methods.
+!          CASE ('A','G')
+!            CALL PETASCE(
+!     &        CANHT, DOY, ET_ALB, MEEVP, SRAD, TDEW,      !Input 
+!     &        TMAX, TMIN, WINDHT, WINDRUN, XHLAI,         !Input
+!     &        XLAT, XELEV,                                !Input
+!     &        EO)                                         !Output
      
 !         ------------------------
           !FAO Penman-Monteith (FAO-56) potential evapotranspiration, 
