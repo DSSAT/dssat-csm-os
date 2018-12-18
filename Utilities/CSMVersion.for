@@ -17,7 +17,8 @@
         INTEGER :: Build = 1
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-'
+!     GitHash: 
 
 !     Version history:  
 !       4.7.2.1  chp 07/08/2018 Use CSMVersion, minor bug fixes, Linux hacks, 
