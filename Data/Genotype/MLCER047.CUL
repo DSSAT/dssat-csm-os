@@ -27,7 +27,7 @@
 ! GT          Tillering coefficient, equivalent to G1, but on tillers
 ! G5          Potential grain size, mg
 !
-@VAR#  VAR-NAME........ EXPNO   ECO#    P1   P20   P2R    P5    G1    G4 PHINT    GT    G5
+@VAR#  VAR-NAME........ EXPNO   ECO#    P1   P2O   P2R    P5    G1    G4 PHINT    GT    G5
 !                                        1     2     3     4     5     6     7     8     9
 ! The sample 3 varieties were estimated to give increasing days to maturity
 ! moving from north to south
