@@ -18,9 +18,13 @@
       END TYPE VersionType
       TYPE (VersionType) Version
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
-!     CHARACTER(len=10) :: VBranch = '-release  '
 
 !     Version history:  
+!       4.7.5.0  chp 12/18/2018 Release version
+!       4.7.2.3  chp 10/25/2018 Rice - G5 parameter (rolled back for v4.7.5)  
+!       4.7.2.2  chp 10/25/2018 Sugarbeet, Forage, Cassava,    
+!                               ASCE ET added (on hold),
+!                               Fixed bug with maize byproduct harvest percentage 
 !       4.7.2.1  chp 07/08/2018 Use CSMVersion, minor bug fixes, Linux hacks, 
 !                                 VSCode files
 !       4.7.2.0  chp 05/07/2018 v4.7.2 Release 2018 Workshop

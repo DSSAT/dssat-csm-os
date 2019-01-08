@@ -42,7 +42,7 @@ BADMF  Biomass@forcing Above-ground biomass at forcing (pineapple, t/ha)        
 BADMH  Aerial t[dm]/ha Aerial biomass (green+dead), dm at harvest (t/ha)        .
 BWAH   Byproduct kg/ha By-product removed during harvest (kg [dm]/ha)           .
 BWAM   Byproduct kg/ha By-product produced (stalk) at maturity (kg[dm]/ha)      .
-CFAH   F cane yl kg/ha Fresh cane yield (kg/ha)                                 .
+CFAH   F cane yl t/ha  Fresh cane yield (t/ha)                                  .
 CHTA   Canopy height m Canopy height (m)                                        .
 CNAA   Tops N,anthesis Tops N at anthesis (kg/ha)                               .
 CNAM   Tops N kg/ha    Tops N at maturity (kg/ha)                               .
@@ -193,14 +193,16 @@ CAID   Canopy area ix  Canopy area index (Laminae+sheaths+stems+ear+??)         
 CDAD   Dead canopy     Dead canopy weight (kg [dm]/ha)                          .
 CDAY   Crop age days   Crop age (days from planting)                            .
 CDVD   Crop age vdays  Crop age (Vegetative days)                               .
-CFAD   F cane yl kg/ha Fresh cane yield (kg [fm]/ha)                            .
+CFAD   F cane yl t/ha  Fresh cane yield (t [fm]/ha)                             .
 CHTD   Canopy height m Canopy height (m)                                        .
 CHTCM  Canopy ht, cm   Canopy (forage) height (cm)                              .
+CMDMD  Cellulose DM    Stalk cellulose dry mass (t/ha)                          .
 CRAD   Crown weight    Crown weight (kg [dm]/ha)                                .
 CRWAD  Crown weight    Crown weight (kg [dm]/ha)                                .
 CWAD   Tops wt kg/ha   Tops weight (kg [dm]/ha)                                 .
 CWID   Canopy width m  Canopy width (m;for 1 row)                               .
 CWPD   Tops wt g/pl    Tops weight (g [dm]/pl)                                  .
+CWSI   Water stress    Recovery time-lagged photosynthesis water stress factor  .
 DAP    Days after pl   Days after planting (#)                                  .
 DAS    Days after st   Days after start of simulation (#)                       .
 DCCD   Zadoks code     Growth stage (Zadoks code, 1-90)                         .
@@ -226,6 +228,7 @@ FLWAD  Flower weight   Flower Weight (kg[DM]/ha)                                
 G#AD   Grain no #/m2   Grain number (no/m2)                                     .
 G#AD2  Grain no #/m2   Grain number (no/m2) if there was no temperature effect  .
 GL%D   Grain oil %     Grain oil (%)                                            .
+G_RESP Growth resp.    Growth respiration rate (t/ha/d)                         .
 GSTD   Growth stage    Growth stage                                             .
 GWAD   Grain wt kg/ha  Grain weight (kg [dm]/ha)                                .
 GWGD   Grain wt mg     Unit grain weight (mg [dm]/grain)                        .
@@ -254,6 +257,7 @@ LNUM   Leaf number     Leaf number (Haun stage)                                 
 LRSD   Leaf app rate   Leaf appearance rate (#/bday)                            .
 LWAD   Leaf wt kg/ha   Leaf weight (kg [dm]/ha)                                 .
 LWD_1  Leaf wt stk 1   Green leaf weight, primary stalk (g[dm]/stk)             .
+M_RESP Maint. resp.    Maintenance respiration rate (t/ha/d)                    .
 NFLF2  N factor leaf   N factor for leaf area (0-1)                             .
 NFTID  N factor till   N factor for tillering (0-1)                             .
 NSPAV  N stress (av)   Nitrogen stress (av) - photosynthesis (0-1, 0=none)      .
@@ -265,11 +269,14 @@ O#AD   Corm no #/m2    Corm (no/m2)                                             
 OWAD   Corm kg dm/ha   Corm dry weight (kg/ha)                                  .
 OWGD   Corm wt g       Unit corm weight (g [dm]/corm)                           .
 P#AD   Pod no #/m2     Pod number (no/m2)                                       .
+PARCE  Average RUE     Daily photosynthetic conversion efficiency (g/MJ)        .
 PMWD   Planting wt     Planting material wt (kg/ha)                             .
 PRSD   Shoot fraction  Partitioning of wt to shoot (ratio)                      .
 PWAD   Pod wt kg/ha    Pod weight (kg [dm]/ha)                                  .
 PWDD   Det pod kt/ha   Detached pod mass (kg [dm]/ha)                           .
 PWTD   Pod wt kg/ha    Total pod weight (kg [dm]/ha)                            .
+Q1%D   Stor in layer 1 Storage organ in soil layer 1 (%)                        .
+QS%D   Stor on SS (%)  Storage organ on soil surface (%)                        .
 QWAD   Storage wtkg/ha Storage/stolon/rhizome/crown weight (kg [dm]/ha)         .
 QDAD   Dead stol kg/ha Cumulative dead storage abscised (kg [dm]/ha)            .
 RDAD   Dead root kg/ha Dead root weight (kg [dm]/ha)                            .
@@ -318,6 +325,7 @@ TFDD   Temp.factor,dev Temperature factor for development (0-1)                 
 TKILL  Pl death tmp °C Temperature for plant death (°C)                         .
 TLA_1  Leaf area stk 1 Total green+dead leaf area, primary stalk only (cm2)     .
 TLW_1  Leaf wt stalk 1 Total green+dead leaf+sheath prim stalk (g [dm]/stalk)   .
+TPSM   Tillers no #/m2 Tiller number (no/m2)                                    .
 TRAD   Trash DM kg/ha  Trash weight (kg [dm]/ha)                                .
 TT     Thermal time    Daily thermal (°C.d)                                     .
 TWUPD  Pot H2O uptake  Potential water uptake (mm/d)                            .
@@ -537,11 +545,15 @@ H2OA   H2O in root zn  Water available in root zone (mm)                        
 IR#C   Irrigation #    Irrigation applications (no)                             .
 IRRC   Irrig effect mm Cumulative effective irrigation (mm)                     .
 IRRAC  Irrig apply mm  Cumulative applied irrigation (includes losses) (mm)     .
+KCAA   Crop coef       FAO-56 single crop coefficient                           .
+KCBA   Basal crop coef FAO-56 basal crop coefficient                            .
+KEAA   Evap coef       FAO-56 evaporation coefficient                           .
 MCFD   Mulch coverage  Fraction of soil covered by mulch                        .
 MDEPD  Mulch thick cm  Thickness of mulch layer (cm)                            .
 MWAD   Mulch mass k/h  Mass of mulch layer (kg/ha)                              .
 MWTD   Mulch water mm  Water stored in mulch layer (mm)                         .
 PREC   Precipitation   Cumulative precipitation (mm)                            .
+REFA   Reference ET mm ASCE standardized reference ET (grass or alfalfa)        .
 ROFC   Cum Runoff mm   Cumulative runoff (mm)                                   .
 ROFD   Surface runoff  Total daily surface runoff (mm/d)                        .
 ROSD   Sat surf runoff Daily surface runoff due to sl saturation excess (mm/d)  .
@@ -1275,3 +1287,27 @@ NFLFP  N stress phs    N stress factor for photosynthesis (0-1,1=0 stress)      
 AFLF   Assimilate fac  Assimilate factor for leaf (0-1,1=0 no limitation)       .
 TFLF   Temperature fac Temperature factor for leaf (0-1,1=0 no limitation)      .
 DAYSG  Days growth lf  Number of days of growth                                 .
+
+*MOW & GRAZING
+@CDE   LABEL           DESCRIPTION............................................  SYNONYMS
+MOW    Residue biomass Residual biomass after mowing (kg/ha)                    . 
+MVS    Residual V stg  Residual vegetative stage after mowing (node #)          .
+RSHT   Residual hght   Residule height after mowing (cm) [not used]             .
+RSPLF  Residual leaf   Residual leaf after mowing (%)                           . 
+
+*FORAGES
+@CDE   LABEL           DESCRIPTION............................................  SYNONYMS
+FHC%H  Harv. For.%CH2O Harvested forage carbohydrate concentration at harvest (percent CH2O)
+FHLGH  Harv. For. Lig. Harvested forage lignin concentration at forage harvest (percent lignin)
+FHL%H  Harv. For. %Lf  Harvested forage leaf percentage at forage harvest (percent leaf)
+FHN%H  Harv. For. %N   Harvested forage nitrogen concentration at forage harvest (percent N)
+FHNAH  Harv. For. N    Harvested forage nitrogen weight at forage harvest (kg N/ha)
+FHNO   Forage harvest  Count of forage harvests within current run
+FHWAH  Harv. For. Wt.  Harvested forage weight (leaf + stem) at forage harvest (kg/ha)
+RCWAH  Resid. Can. Wt. Residual canopy weight after forage harvest (kg/ha)
+RLAIH  Resid. LAI      Residual leaf area index after forage harvest
+RLWAH  Resid. Leaf Wt. Residual leaf weight after forage harvest (kg/ha)
+RSWAH  Resid. Stem Wt. Residual stem weight after forage harvest (kg/ha)
+RSRWH  Resid. Stor.Wt. Residual storage organ weight after forage harvest (kg/ha)
+RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)
+RLAIH  Resid. LAI      Residual leaf area index after forage harvest

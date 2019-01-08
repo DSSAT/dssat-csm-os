@@ -947,13 +947,17 @@ C-----------------------------------------------------------------------
 
         I = INDEX(FILECTL,SLASH)
         IF (I < 1) THEN
-!         No path provided -- look first in DSSAT47 directory
-          CALL GETARG (0,INPUTX)      !Name of model executable
-          IPX = LEN_TRIM(INPUTX)
+!         No path provided -- look first in current directory
+          INQUIRE (FILE = FILECTL, EXIST = FEXIST)
+          IF (.NOT. FEXIST) THEN
+
+!           Next look in DSSAT47 directory
+            CALL GETARG (0,INPUTX)      !Name of model executable
+            IPX = LEN_TRIM(INPUTX)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !   Temporarily fix DSSATPRO file name for debugging purposes:
-!     To use these Debug lines of code (letter D in column 1) with CVF:
+!     To use these Debug lines of code (letter D in column 1) with IVF:
 !     1) Go to pull down menu Project -> Settings -> Fortran (Tab) ->
 !       Debug (Category) -> Check box for Compile Debug(D) Lines
 !     2)  Specify name of DSSATPRO file here:
@@ -961,16 +965,17 @@ D     INPUTX = 'C:\DSSAT47\DSCSM047.EXE'
 D     IPX = 23
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-          IF (IPX > 12) THEN
-            DO I = IPX, 0, -1
-              IF (INPUTX(I:I) .EQ. SLASH) EXIT
-            END DO
-            SIMCTR = INPUTX(1:I) // FILECTL
+            IF (IPX > 12) THEN
+              DO I = IPX, 0, -1
+                IF (INPUTX(I:I) .EQ. SLASH) EXIT
+              END DO
+              SIMCTR = INPUTX(1:I) // FILECTL
+            ELSE
+              RETURN
+            ENDIF
           ELSE
-            RETURN
+            SIMCTR = FILECTL
           ENDIF
-        ELSE
-          SIMCTR = FILECTL
         ENDIF
 
         INQUIRE (FILE = SIMCTR, EXIST = FEXIST)
@@ -1457,7 +1462,8 @@ C-----------------------------------------------------------------------
       ENDIF
 
       MEPHO_SAVE = MEPHO
-      IF (MEPHO .EQ. 'L' .AND. CTRMODEL(1:5) .NE. 'CRGRO') THEN
+!     IF (MEPHO .EQ. 'L' .AND. CTRMODEL(1:5) .NE. 'CRGRO') THEN
+      IF (MEPHO .EQ. 'L' .AND. MODEL(1:5) .NE. 'CRGRO') THEN
         MEPHO = 'C'
         MSG(1)='Photosynthesis method (PHOTO in FILEX) has been changed'
         WRITE (MSG(2),81) CTRMODEL(1:5)

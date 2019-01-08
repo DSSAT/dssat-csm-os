@@ -336,7 +336,7 @@ C=======================================================================
       PODWT = PANWT * PLTPOP    !Panicle weight, g/m2
       SDWT = GRNWT * PLTPOP     !seed weight, g/m2
 
-        IF (ISWPHO == 'Y') THEN
+        IF (ISWPHO .NE. 'N') THEN
           CALL P_Ceres (EMERG, ISWPHO,                           !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
@@ -415,6 +415,7 @@ C
           IF (G1 .LT. 50.0) THEN
              RGFILL = G2/P5*(G1/50.0)
           ENDIF
+          
           MFILL   = 0.0
           TFILL   = 0.0
           VANC    = TANC
@@ -527,9 +528,11 @@ CCCCC-PW
           SKERWT = G2*GSIZE
           STOVER = (BIOMAS*PLANTS*10.0)  - DYIELD
 
-          IF (HARVFRAC(2) .LE. 0.0) THEN 
-              HARVFRAC(2) = 1.0
-          ENDIF
+!       chp 2018-07-19 - default to zero removal of by-product from field
+!       This default behavior is already handled in the input module.
+!          IF (HARVFRAC(2) .LE. 0.0) THEN 
+!              HARVFRAC(2) = 1.0
+!          ENDIF
 
 !          IF (STOVER .EQ. 0.0) THEN
 !             GSRATIO = 0.0       !NOT USED
@@ -590,7 +593,7 @@ CCCCC-PW
       !
       PCO2  = TABEX (CO2Y,CO2X,CO2,10)
       PCARB = PCARB*PCO2
-      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-26.0)**2   
+      PRFT  = 1.0-0.0025*((0.25*TMIN+0.75*TMAX)-26.0)**2   !need to lower so temp is 10 for prft=0 mar17
       PRFT  = AMAX1 (PRFT,0.0)
       IF (PRFT .GT. 1.0) THEN
           PRFT = 1.0                                
@@ -1106,7 +1109,7 @@ C
       PTF    =(LFWT + STMWT + PANIWT + GRNWT)/(LFWT + STMWT + PANIWT +
      &         GRNWT + (RTWT + 0.5*GRORT - 0.005*RTWT))
       ! TODAY'S PTF FOR NUPTAKE CALCULATION
-      SLFW   = 0.950 + 0.050*SWFAC
+      SLFW   = 0.950 + 0.050*SWFAC !MAR17
 
 !      SLFN   = 0.995 + 0.005*NSTRES
 !      IF (ISTAGE .GE. 4 .AND. LAI .GE. 2.0) THEN    
@@ -1201,7 +1204,7 @@ C
      &       ISWPOT, NLAYR, SKi_Avail, UNH4, UNO3,        !Input
      &       KUPTAKE, KSTRES)                             !Output
 
-         IF (ISWPHO == 'Y') THEN
+         IF (ISWPHO .NE. 'N') THEN
            CALL P_Ceres (DYNAMIC, ISWPHO,                   !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
@@ -1255,7 +1258,7 @@ C-----------------------------------------------------------------------
       PODWT = PANWT * PLTPOP    !Panicle weight, g/m2
       SDWT = GRNWT * PLTPOP     !seed weight, g/m2
 
-      IF (ISWPHO == 'Y') THEN
+      IF (ISWPHO .NE. 'N') THEN
        CALL P_Ceres (DYNAMIC, ISWPHO,                       !Input
      &      CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
      &      PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input

@@ -1668,8 +1668,10 @@ C     Calculate sunlit and shaded leaf area indices.
       ELSE
         LAISL = 0.02
       ENDIF
-      LAISH = XLAI - LAISL
-
+C-KRT*******************************
+C-KRT LAISH = XLAI - LAISL
+      LAISH = MAX(0.02,XLAI - LAISL)
+C-KRT*******************************
       RETURN
       END SUBROUTINE LFEXTN
 
@@ -1739,9 +1741,10 @@ C     (ADDR) and diffuse/scattered (ADDF) components of the direct beam.
         ELSE
           ADDR = 0.0
         ENDIF
-
-        ADDF = ADIR - ADDR
-
+C-KRT****************************
+C-KRT   ADDF = ADIR - ADDR
+        ADDF = MAX(0.0,ADIR-ADDR)
+C-KRT****************************
         IF ((KDIRBL*SQV*LAISL/FRACSH) .LT. 20.) THEN
           ADIRSL = FRACSH * (1.0-REFDR) * RADDIR *
      &    (1.0-EXP(-KDIRBL*SQV*LAISL/FRACSH))
@@ -1755,9 +1758,12 @@ C     (ADDR) and diffuse/scattered (ADDF) components of the direct beam.
         ELSE
           ADDRSL = 0.0
         ENDIF
-        ADDFSL = ADIRSL - ADDRSL
-        ADDFSH = ADDF - ADDFSL
-
+C-KRT************************************
+C-KRT   ADDFSL = ADIRSL - ADDRSL
+C-KRT   ADDFSH = ADDF - ADDFSL
+        ADDFSL = MAX(0.0,ADIRSL - ADDRSL)
+        ADDFSH = MAX(0.0,ADDF - ADDFSL)
+C-KRT************************************
       ELSE
         ADIR   = 0.0
         ADDR   = 0.0
@@ -1792,7 +1798,10 @@ C     extended for both between plants (P) and rows (R).
      &  (1.0-EXP(-KDIFBL*SQV*XLAI/DIFPR))
       ADIFSL = DIFPR * (1.0-REFDF) * RADDIF *
      &  (1.0-EXP(-KDIFBL*SQV*LAISL/DIFPR))
-      ADIFSH = ADIF - ADIFSL
+C-KRT********************************
+C-KRT ADIFSH = ADIF - ADIFSL
+      ADIFSH = MAX(0.0,ADIF - ADIFSL)
+C-KRT********************************
 
 C     Light reflected from the soil assumed to be isotropic and diffuse.
 C     Absorption handled in the same manner as diffuse skylight.
@@ -1806,7 +1815,10 @@ C     Absorption handled in the same manner as diffuse skylight.
      &  (1.0-EXP(-KDIFBL*SQV*XLAI/DIFPR))
       AREFSH = DIFPR * (1.0-REFDF) * REFSOI *
      &  (1.0-EXP(-KDIFBL*SQV*LAISH/DIFPR))
-      AREFSL = AREF - AREFSH
+C-KRT********************************
+C-KRT AREFSL = AREF - AREFSH
+      AREFSL = MAX(0.0,AREF - AREFSH)
+C-KRT********************************
       ATOT = ADIR + ADIF + AREF
       REFTOT = REFDIR + REFDIF + REFSOI - AREF
 

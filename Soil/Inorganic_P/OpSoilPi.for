@@ -96,7 +96,7 @@ C-----------------------------------------------------------------------
       IDETP = ISWITCH % IDETP
       ISWPHO= ISWITCH % ISWPHO
       IDETL = ISWITCH % IDETL
-      IF (IDETP .NE. 'Y' .OR. ISWPHO .NE. 'Y' .OR. IDETL == '0') RETURN
+      IF (IDETP .NE. 'Y' .OR. ISWPHO .EQ. 'N' .OR. IDETL == '0') RETURN
 
       IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
       CALL GETLUN(OUTSP, LUN)
@@ -210,7 +210,7 @@ C-----------------------------------------------------------------------
       ENDDO
 
 !     Daily printout
-      IF (IDETP .NE. 'Y' .OR. ISWPHO .NE. 'Y' .OR. IDETL == '0') RETURN
+      IF (IDETP .NE. 'Y' .OR. ISWPHO .EQ. 'N' .OR. IDETL == '0') RETURN
 
       DOPRINT = .FALSE.
       SELECT CASE(DYNAMIC)
@@ -276,7 +276,7 @@ C-----------------------------------------------------------------------
 !     Send labels and values to OPSUM
       CALL SUMVALS (SUMNUM, LABEL, VALUE) 
 
-      IF (IDETP .NE. 'Y' .OR. ISWPHO .NE. 'Y' .OR. IDETL == '0') RETURN
+      IF (IDETP .NE. 'Y' .OR. ISWPHO .EQ. 'N' .OR. IDETL == '0') RETURN
 
 !       Also print on last day if not already done.
         IF (MOD(DAS, FROP) .NE. 0) THEN

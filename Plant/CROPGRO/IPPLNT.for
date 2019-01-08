@@ -14,11 +14,12 @@ C  08/12/2003 CHP Added I/O error checking
 C  06/30/2006 CHP/CDM Added KC_SLOPE to SPE file and KC_ECO to ECO file.
 C                 Added warning for use of default ecotype.
 !  09/11/2008 KJB, CHP Added 5 species parameters affecting N stress
+C  01/18/2018 KRT Added functionality for ASCE dual Kc ET routines
 C-----------------------------------------------------------------------
 !  Called:      PLANT
 !  Calls:       FIND, ERROR, IGNORE
 C=======================================================================
-      SUBROUTINE IPPLNT(CONTROL, 
+      SUBROUTINE IPPLNT(CONTROL, ISWITCH, 
      &  CADPR1, CMOBMX, CROP, DETACH, ECONO,              !Output
      &  EORATIO, FILECC, FILEGC, FRCNOD, FREEZ1, FREEZ2,  !Output
      &  KCAN, KC_SLOPE, KEP, NOUTDO, PCARSH, PCH2O,       !Output
@@ -31,10 +32,11 @@ C=======================================================================
 C-----------------------------------------------------------------------
 
       USE ModuleDefs
+      USE ModuleData
       IMPLICIT NONE
 
 !-----------------------------------------------------------------------
-      CHARACTER*1  BLANK, UPCASE, DETACH
+      CHARACTER*1  BLANK, UPCASE, DETACH, MEEVP
       PARAMETER (BLANK  = ' ')
 
       CHARACTER*2 CROP
@@ -63,6 +65,7 @@ C-----------------------------------------------------------------------
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KCAN_ECO, KC_SLOPE
+      REAL SKC, KCBMIN, KCBMAX
 
 !     Species parameters for N stress  9/11/2008
 !     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
@@ -71,8 +74,10 @@ C-----------------------------------------------------------------------
 !     defined in ModuleDefs.for, and contains the following variables.
 !     The components are copied into local variables for use here.
       TYPE (ControlType) CONTROL
+      TYPE (SwitchType) ISWITCH
       FILEIO = CONTROL % FILEIO
       LUNIO  = CONTROL % LUNIO
+      MEEVP = ISWITCH % MEEVP
 
 !-----------------------------------------------------------------------
 !       Read data from FILEIO for use in PLANT module
@@ -322,7 +327,17 @@ C-----------------------------------------------------------------------
           CALL ERROR(SECTION, 42, FILECC, LNUM)
         ELSE
           CALL IGNORE(LUNCRP,LNUM,ISECT,CHAR)
-          READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
+          !IF (MEEVP .EQ. 'A' .OR. MEEVP .EQ. 'G') THEN !ASCE dual Kc ET
+          !  READ(CHAR,'(5F6.0)',IOSTAT=ERR)KEP,EORATIO,SKC,KCBMIN,KCBMAX
+          !  SKC    = MAX(0.50,MIN(1.0,SKC))
+          !  KCBMIN = MAX(0.00,MIN(1.1,KCBMIN))
+          !  KCBMAX = MAX(0.25,MIN(1.5,KCBMAX))
+          !  CALL PUT('SPAM', 'SKC', SKC)
+          !  CALL PUT('SPAM', 'KCBMIN', KCBMIN)
+          !  CALL PUT('SPAM', 'KCBMAX', KCBMAX)
+          !ELSE
+            READ(CHAR,'(2F6.0)',IOSTAT=ERR) KEP, EORATIO
+          !ENDIF
           IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILECC,LNUM)
         ENDIF
 
@@ -459,6 +474,8 @@ C-----------------------------------------------------------------------
 !            line to read, 2 - End of Section in file encountered, denoted 
 !            by * in column 1
 ! ISWDIS   Pest damage simulation switch (Y or N) 
+! KCBMAX   Maximum basal crop coefficient for ASCE dual Kc ET method
+! KCBMIN   Minimum basal crop coefficient for ASCE dual Kc ET method
 ! LUNCRP   Logical unit number for FILEC (*.spe file) 
 ! MODEL    Name of CROPGRO executable file 
 ! NL       maximum number of soil layers = 20 
@@ -505,6 +522,7 @@ C-----------------------------------------------------------------------
 !            (g[CH2O] / g[product])
 ! RPRO     Respiration required for re-synthesizing protein from mobilized 
 !            N (g[CH2O] / g[protein])
+! SKC      Shaping coefficient for ASCE dual Kc ET approach
 ! TTFIX    Physiological days delay in nodule initiation
 !            (photo-thermal days / day)
 !-----------------------------------------------------------------------

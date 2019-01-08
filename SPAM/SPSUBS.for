@@ -20,6 +20,7 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE ModuleData
       USE FloodModule
 !     VSH
       USE CsvOutput 
@@ -37,8 +38,10 @@ C=======================================================================
       INTEGER REPNO, N_LYR
 
       REAL EF, EM, EO, EP, ES, ET, EOS, EOP, TRWU !JZW add TRWU
+      REAL REFET, KCB, KE, KC
       REAL CEF, CEM, CEO, CEP, CES, CET
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
+      REAL REFA, KCAA, KCBA, KEAA
       REAL AVTMX, AVTMN, AVSRAD
       REAL TMAX, TMIN, SRAD
 !      REAL SALB, SWALB, MSALB, CMSALB
@@ -79,7 +82,12 @@ C=======================================================================
 !      SALB   = SOILPROP % SALB       
 !      SWALB  = SOILPROP % SWALB  
 !      MSALB  = SOILPROP % MSALB  
-!      CMSALB = SOILPROP % CMSALB 
+!      CMSALB = SOILPROP % CMSALB
+
+      CALL GET('SPAM', 'REFET', REFET)
+      CALL GET('SPAM', 'KCB', KCB)
+      CALL GET('SPAM', 'KE', KE)
+      CALL GET('SPAM', 'KC', KC)
 
 !***********************************************************************
 !***********************************************************************
@@ -123,15 +131,15 @@ C-----------------------------------------------------------------------
 !           Include soil evap by soil layer for Suleiman-Ritchie method
 
             IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-            WRITE(LUN,'("!",T146,
+            WRITE(LUN,'("!",T186,
      &        "Soil evaporation (mm/d) by soil depth (cm):"
-     &        ,/,"!",T141,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
+     &        ,/,"!",T181,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
 
             WRITE (LUN,120,ADVANCE='NO')
   120       FORMAT('@YEAR DOY   DAS   SRAA  TMAXA  TMINA',
-     &      '   EOAA   EOPA   EOSA',
-     &      '   ETAA   EPAA   ESAA   EFAA   EMAA',
-     &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC') 
+     &      '    REFA    EOAA    EOPA    EOSA    KCAA    KCBA    KEAA',
+     &      '    ETAA    EPAA    ESAA    EFAA    EMAA',
+     &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC')
 
             IF (N_LYR < 10) THEN
 !              VSH
@@ -168,6 +176,10 @@ C-----------------------------------------------------------------------
         AVTMX = 0.
         AVTMN = 0.
         AVSRAD= 0.
+        KEAA = 0.
+        KCBA = 0.
+        KCAA = 0.
+        REFA = 0.
 
 !***********************************************************************
 !***********************************************************************
@@ -189,6 +201,10 @@ C-----------------------------------------------------------------------
       AVTMX  = AVTMX  + TMAX
       AVTMN  = AVTMN  + TMIN
       AVSRAD = AVSRAD + SRAD
+      KEAA   = KEAA   + (ES+EM+EF)/REFET
+      KCBA   = KCBA   + (EP/REFET)
+      KCAA   = KCAA   + (ET/REFET)
+      REFA   = REFA   + REFET
 
 !***********************************************************************
 !***********************************************************************
@@ -216,21 +232,32 @@ C-----------------------------------------------------------------------
           AVTMX = AVTMX / NAVWB
           AVTMN = AVTMN / NAVWB
           AVSRAD= AVSRAD / NAVWB
+          KEAA  = KEAA  / NAVWB
+          KCBA  = KCBA  / NAVWB
+          KCAA  = KCAA  / NAVWB
+          REFA  = REFA  / NAVWB
 
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             !Daily printout
-            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),8(F7.3),"
+            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),12(F8.3),"
             IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
      &         CES > 1000. .OR. CEF > 1000. .OR. CEM > 1000.) THEN
               FMT = TRIM(FMT) // "6F8.0))"
             ELSE 
               FMT = TRIM(FMT) // "6F8.2))"
             ENDIF
+            
+            IF (REFA .LT. 0.0) THEN
+              KCAA = -99.
+              KCBA = -99.
+              KEAA = -99.
+            ENDIF
 
             WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX, 
-     &        AVTMN, EOAA, EOPA, EOSA, ETAA, EPAA, ESAA, EFAA, EMAA,  
+     &        AVTMN, REFA, EOAA, EOPA, EOSA, KCAA, 
+     &        KCBA, KEAA, ETAA, EPAA, ESAA, EFAA, EMAA,  
      &        CEO, CET, CEP, CES, CEF, CEM   
 !     &        ,SALB, SWALB, MSALB, CMSALB
 !  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
@@ -278,6 +305,10 @@ C-----------------------------------------------------------------------
           AVTMX = 0.
           AVTMN = 0.
           AVSRAD= 0.
+          KEAA = 0.
+          KCBA = 0.
+          KCAA = 0.
+          REFA = 0.
 
         ENDIF
       ENDIF
@@ -334,12 +365,16 @@ C-----------------------------------------------------------------------
 ! EP      Actual plant transpiration rate (mm/d)
 ! ES      Actual soil evaporation rate (mm/d)
 ! ET      Actual evapotranspiration rate (mm/d)
+! KCBA    Actual basal crop coefficient (Kcb)
+! KCAA    Actual crop coefficient (Kc)
+! KEAA    Actual evaporation coefficient (Ke)
 ! MODEL   Name of CROPGRO executable file 
 ! NAP     Number of irrigation applications  
 ! NAVWB   Number of days since last printout (d)
 ! NL      Maximum number of soil layers = 20 
 ! LUN     Unit number for spam output file 
 ! OUTW    Filename for soil water output file (set in IPIBS) 
+! REFA    Actual reference evapotranspiration (ETo or ETr) 
 ! ST(L)   Soil temperature in soil layer L (oC)
 ! SW(L)   Volumetric soil water content in layer L
 !           (cm3 [water] / cm3 [soil])

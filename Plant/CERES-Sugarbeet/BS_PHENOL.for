@@ -6,8 +6,8 @@
 !  Revision history
 !
 !                 Written
-!  04/15/2015 Model developed by Mohammad J Anar based on CERES-Beet model developed by Leviel et al. 2000     
-!  03/15/2017 Model modified for parameter G2, that was related to GPP in original CERES-Beet at ISTAGE 4
+!  04/15/2015 Developed by Mohammad J Anar based on CERES-Beet model developed by Leviel et al. 2000     
+!  03/15/2017 G2 modified, that was related to GPP in original CERES-Beet at ISTAGE 4
 
 !----------------------------------------------------------------------
       SUBROUTINE BS_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
@@ -488,7 +488,7 @@
 !             8 - Germination
 !             9 - Emergence
 !             1 - End juvenile
-!             2 - Pannicle initiation
+!             2 - Leaf Growth
 !             3 - End leaf growth
 !             4 - Beginning effective growth
 !             5 - Effective Growth
@@ -619,7 +619,7 @@
 
 
       !-----------------------------------------------------------------
-      !       ISTAGE = 2 - End of Juvenile Stage to Tassel Initiation
+      !       ISTAGE = 2 - Leaf Development
       !-----------------------------------------------------------------
           ELSEIF (ISTAGE .EQ. 2) THEN
               !NDAS - number of days after sowing
