@@ -1287,3 +1287,27 @@ NFLFP  N stress phs    N stress factor for photosynthesis (0-1,1=0 stress)      
 AFLF   Assimilate fac  Assimilate factor for leaf (0-1,1=0 no limitation)       .
 TFLF   Temperature fac Temperature factor for leaf (0-1,1=0 no limitation)      .
 DAYSG  Days growth lf  Number of days of growth                                 .
+
+*MOW & GRAZING
+@CDE   LABEL           DESCRIPTION............................................  SYNONYMS
+MOW    Residue biomass Residual biomass after mowing (kg/ha)                    . 
+MVS    Residual V stg  Residual vegetative stage after mowing (node #)          .
+RSHT   Residual hght   Residule height after mowing (cm) [not used]             .
+RSPLF  Residual leaf   Residual leaf after mowing (%)                           . 
+
+*FORAGES
+@CDE   LABEL           DESCRIPTION............................................  SYNONYMS
+FHC%H  Harv. For.%CH2O Harvested forage carbohydrate concentration at harvest (percent CH2O)
+FHLGH  Harv. For. Lig. Harvested forage lignin concentration at forage harvest (percent lignin)
+FHL%H  Harv. For. %Lf  Harvested forage leaf percentage at forage harvest (percent leaf)
+FHN%H  Harv. For. %N   Harvested forage nitrogen concentration at forage harvest (percent N)
+FHNAH  Harv. For. N    Harvested forage nitrogen weight at forage harvest (kg N/ha)
+FHNO   Forage harvest  Count of forage harvests within current run
+FHWAH  Harv. For. Wt.  Harvested forage weight (leaf + stem) at forage harvest (kg/ha)
+RCWAH  Resid. Can. Wt. Residual canopy weight after forage harvest (kg/ha)
+RLAIH  Resid. LAI      Residual leaf area index after forage harvest
+RLWAH  Resid. Leaf Wt. Residual leaf weight after forage harvest (kg/ha)
+RSWAH  Resid. Stem Wt. Residual stem weight after forage harvest (kg/ha)
+RSRWH  Resid. Stor.Wt. Residual storage organ weight after forage harvest (kg/ha)
+RRTWH  Resid. Root Wt. Residual root weight after forage harvest (kg/ha)
+RLAIH  Resid. LAI      Residual leaf area index after forage harvest

@@ -211,6 +211,26 @@ C  02/09/2007 GH  Add path for FileA
       PlantStres % StageName(4) = 'End Lf Grth-Beg Grn Fil'
       PlantStres % StageName(5) = 'Grain Filling Phase    '
 
+      APTNUP = 0.0
+      CANWAA = 0.0
+      CANNAA = 0.0
+      MAXLAI = 0.0
+      SDWT   = 0.0
+      SKERWT = 0.0
+      STOVER = 0.0
+      StovSenes = 0.0
+      XGNP   = 0.0
+      XLAI   = 0.0
+      XN     = 0.0
+      YIELD  = 0.0
+
+      YREMRG = -99
+      YRNR1  = -99
+      YRNR2  = -99
+      YRNR3  = -99
+      YRNR5  = -99
+      ISDATE = -99
+
       CALL OPVIEW(CONTROL, 
      &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN, 
      &    Measured, PlantStres, Simulated, STGDOY, 

@@ -1,0 +1,308 @@
+*EXP.DETAILS: MSKB8901SQ KELLOGG BIOLOGICAL STATION LONG-TERM ECOLOGICAL RESEARCH
+
+*GENERAL
+@PEOPLE
+Peter Grace and Phil Robertson
+@ADDRESS
+Michigan State University, Hickory Corners, Michigan
+@SITE
+W.K. Kellogg Biological Station
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+@NOTES
+The KBS Long-Term Ecological Research in Row-Crop Agriculture Site (LTER) Treatment 1
+Support for this research was also provided by the NSF Long-term Ecological Research 
+  Program (DEB 1637653) at the Kellogg Biological Station and by Michigan State 
+  University AgBioResearch.
+For further information see the KBS LTER web site at http://lter.kbs.msu.edu.
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 LTER TREAT 1 HI MZ GL582   6  1  0  1  1  0  1  0  0  1  0  1  1
+ 1 2 1 0 LTER TREAT 1 HI FA         2  1  0  0  2  0  0  0  0  2  0  2  1
+ 1 3 1 0 LTER TREAT 1 HI SB PI9272  3  1  0  0  3  0  0  0  0  0  0  3  1
+ 1 4 1 0 LTER TREAT 1 HI FA         2  1  0  0  4  0  0  0  0  3  0  4  1
+ 1 5 1 0 LTER TREAT 1 HI MZ GL220   6  1  0  0  5  0  2  0  0  0  0  5  1
+ 1 6 1 0 LTER TREAT 1 HI FA         2  1  0  0  6  0  0  0  0  4  0  6  1
+ 1 7 1 0 LTER TREAT 1 HI SB PI9272  3  1  0  0  7  0  0  0  0  0  0  7  1
+ 1 8 1 0 LTER TREAT 1 HI FA         2  1  0  0  8  0  0  0  0  5  0  8  1
+ 1 9 1 0 LTER TREAT 1 HI MZ GL450   6  1  0  0  9  0  3  0  0  0  0  9  1
+ 110 1 0 LTER TREAT 1 HI FA         2  1  0  0 10  0  0  0  0  0  0 10  1
+ 111 1 0 LTER TREAT 1 HI SB PI9202  3  1  0  0 11  0  0  0  0  0  0 11  1
+ 112 1 0 LTER TREAT 1 HI FA         2  1  0  0 12  0  0  0  0  6  0 12  1
+ 113 1 0 LTER TREAT 1 HI WH Chelse  5  1  0  0 13  0  4  0  0  0  0 13  1
+ 114 1 0 LTER TREAT 1 HI FA         2  1  0  0 14  0  0  0  0  7  0 14  1
+ 115 1 0 LTER TREAT 1 HI MZ PI3573  6  1  0  0 15  0  5  0  0  8  0 15  1
+ 116 1 0 LTER TREAT 1 HI FA         2  1  0  0 16  0  0  0  0  9  0 16  1
+ 117 1 0 LTER TREAT 1 HI SB PI9172  3  1  0  0 17  0  0  0  0  0  0 17  1
+ 118 1 0 LTER TREAT 1 HI FA         2  1  0  0 18  0  0  0  0 10  0 18  1
+ 119 1 0 LTER TREAT 1 HI WH PI2552  5  1  0  0 19  0  6  0  0  0  0 19  1
+ 120 1 0 LTER TREAT 1 HI FA         2  1  0  0 20  0  0  0  0 11  0 20  1
+ 121 1 0 LTER TREAT 1 HI MZ PI3573  6  1  0  0 21  0  7  0  0  0  0 21  1
+ 122 1 0 LTER TREAT 1 HI FA         2  1  0  0 22  0  0  0  0 12  0 22  1
+ 123 1 0 LTER TREAT 1 HI SB PI9172  3  1  0  0 23  0  0  0  0  0  0 23  1
+ 124 1 0 LTER TREAT 1 HI FA         2  1  0  0 24  0  0  0  0 13  0 24  1
+ 125 1 0 LTER TREAT 1 HI WH P25R26  5  1  0  0 25  0  8  0  0  0  0 25  1
+ 126 1 0 LTER TREAT 1 HI FA         2  1  0  0 26  0  0  0  0 14  0 26  1
+ 127 1 0 LTER TREAT 1 HI MZ P35Y54  6  1  0  0 27  0  9  0  0  0  0 27  1
+ 128 1 0 LTER TREAT 1 HI FA         2  1  0  0 28  0 10  0  0 15  0 28  1
+ 129 1 0 LTER TREAT 1 HI SB NS20F8  3  1  0  0 29  0  0  0  0  0  0 29  1
+ 130 1 0 LTER TREAT 1 HI FA         2  1  0  0 30  0 11  0  0 16  0 30  1
+ 131 1 0 LTER TREAT 1 HI WH P25R37  5  1  0  0 31  0 12  0  0  0  0 31  1
+ 132 1 0 LTER TREAT 1 HI FA         2  1  0  0 32  0  0  0  0 17  0 32  1
+ 133 1 0 LTER TREAT 1 HI MZ P35Y54  6  0  0  0 33  0 13  0  0  0  0 33  1
+ 134 1 0 LTER TREAT 1 HI FA         2  1  0  0 34  0  0  0  0 18  0 34  1
+ 135 1 0 LTER TREAT 1 HI SB NS20F8  3  1  0  0 35  0  0  0  0  0  0 35  1
+ 136 1 0 LTER TREAT 1 HI FA         2  1  0  0 36  0  0  0  0  0  0 36  1 
+ 137 1 0 LTER TREAT 1 HI WH P25R37  5  1  0  0 37  0 14  0  0  0  0 37  1
+ 138 1 0 LTER TREAT 1 HI FA         2  1  0  0 38  0  0  0  0 19  0 38  1
+ 139 1 0 LTER TREAT 1 HI MZ P36W66  6  1  0  0 39  0 15  0  0  0  0 39  1
+ 140 1 0 LTER TREAT 1 HI FA         2  1  0  0 40  0  0  0  0 20  0 40  1
+ 141 1 0 LTER TREAT 1 HI SB P92Y30  3  1  0  0 41  0  0  0  0  0  0 41  1
+ 142 1 0 LTER TREAT 1 HI FA         2  1  0  0 42  0  0  0  0  0  0 42  1
+ 143 1 0 LTER TREAT 1 HI WH P25R47  5  1  0  0 43  0 16  0  0  0  0 43  1
+ 144 1 0 LTER TREAT 1 HI FA         2  1  0  0 44  0  0  0  0 21  0 44  1
+ 145 1 0 LTER TREAT 1 HI MZ DC5259  4  1  0  0 45  0 17  0  0  0  0 45  1
+ 146 1 0 LTER TREAT 1 HI FA         2  1  0  0 46  0 18  0  0 22  0 46  1
+ 147 1 0 LTER TREAT 1 HI SB P92Y30  3  1  0  0 47  0  0  0  0  0  0 47  1
+ 148 1 0 LTER TREAT 1 HI FA         2  1  0  0 48  0  0  0  0 23  0 48  1 
+ 149 1 0 LTER TREAT 1 HI WH P25R39  5  1  0  0 49  0 19  0  0  0  0 49  1
+ 150 1 0 LTER TREAT 1 HI FA         2  1  0  0 50  0  0  0  0 24  0 50  1
+ 151 1 0 LTER TREAT 1 HI MZ DC5259  6  1  0  0 51  0 20  0  0  0  0 51  1
+ 152 1 0 LTER TREAT 1 HI FA         2  1  0  0 52  0  0  0  0 25  0 52  1
+ 153 1 0 LTER TREAT 1 HI SB 22T69R  3  1  0  0 53  0  0  0  0  0  0 53  1
+ 154 1 0 LTER TREAT 1 HI FA         2  1  0  0 54  0  0  0  0 26  0 54  1
+ 155 1 0 LTER TREAT 1 HI WH D5284R  5  1  0  0 55  0 21  0  0  0  0 55  1
+ 156 1 0 LTER TREAT 1 HI FA         2  1  0  0 56  0  0  0  0  0  0 56  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 MZ IB0089 GREAT LAKES 582
+ 2 FA IB0001 FALLOW
+ 3 SB 990002
+ 4 MZ IB0090 GL 482
+ 5 WH IB0488 NEWTON (Chelsea soft white?)
+ 6 MZ IB0093 GL 582 MOD KBS
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 MSLT0001 MSKB         0     0 DR000   150     0 00000 -99    150  MSKB890006 -99
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1               0               0         0                 0     0     0     0   -99   -99
+
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    SB 89060  3000     0     1     1   -99  3000     1     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    10  .237    .5   5.7
+ 1    22  .237    .2   3.3
+ 1    31  .237    .2   2.3
+ 1    41  .253    .5     1
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 89124   -99   6.2   6.2     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+ 2 89297   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+ 3 90149   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+ 4 90291   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+ 5 91166   -99   6.2   6.2     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+ 6 91284   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0  
+ 7 92139   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+ 8 92301   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+ 9 93127   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+10 93313   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+11 94138   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+12 94285   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+13 94286   -99   400   400     S     R    15     0     5   -99   -99   -99   -99     0                        -99
+14 95204   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+15 96135   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+16 96309   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+17 97142   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+18 97291   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+19 97295   -99   400   400     S     R    15     0     5   -99   -99   -99   -99     0                        -99
+20 98193   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+21 99139   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+22 99279   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+23 00146   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+24 00286   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+25 00304   -99   400   400     S     R    15     0     5   -99   -99   -99   -99     0                        -99
+26 01199   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+27 02130   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+28 02297   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+29 03148   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+30 03280   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+31 03283   -99   400   400     S     R    15     0     5   -99   -99   -99   -99     0                        -99
+32 04196   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+33 05124   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+34 05285   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+35 06156   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+36 06284   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+37 06310   -99   400   400     S     R    15     0     5   -99   -99   -99   -99     0                        -99
+38 07192   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+39 08130   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+40 08295   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+41 09140   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+42 09290   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+43 09310   -99   400   400     S     R    15     0     5   -99   -99   -99   -99     0                        -99
+44 10196   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+45 11129   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+46 11319   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+47 12140   -99    40    40     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+48 12286   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+49 12312   -99   400   400     S     R    15     0     5   -99   -99   -99   -99     0                        -99
+50 13206   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+51 14132   -99   6.4   6.4     S     R    76     0     5   -99   -99   -99   -99     0                        -99
+52 14304   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+53 15139   -99    40    47     S     R    20     0     5   -99   -99   -99   -99     0                        -99
+54 15274   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+55 15279   -99   400   400     S     R    15     0     5   -99   -99   -99   -99     0                        -99
+56 16195   -99     1     1     S     R     1     0     5   -99   -99   -99   -99     0                        -99
+
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 89177 FE001 AP001     1   124     0     0     0     0   -99 -99
+ 2 91166 FE001 AP001     1   124     0     0     0     0   -99 -99
+ 3 93181 FE001 AP001     1    84     0     0     0     0   -99 -99
+ 4 95107 FE001 AP001     1    56     0     0     0     0   -99 -99
+ 5 96135 FE010 AP009     1    27     0     0     0     0   -99 -99
+ 5 96179 FE001 AP001     1   134     0     0     0     0   -99 -99
+ 6 98110 FE001 AP001     1    56     0     0     0     0   -99 -99
+ 7 99139 FE001 AP001     1    27     0     0     0     0   -99 -99
+ 7 99181 FE001 AP001     1   257     0     0     0     0   -99 -99
+ 8 01095 FE010 AP009     1    40     0     0     0     0   -99 -99
+ 8 01108 FE010 AP009     1    40     0     0     0     0   -99 -99
+ 9 02130 FE010 AP009     1    28     0     0     0     0   -99 -99
+ 9 02182 FE010 AP009     1   134     0     0     0     0   -99 -99
+10 03116 FE007 AP001     1     7     0     0     0     0   -99 -99
+11 03281 FE010 AP009     1    36     0     0     0     0   -99 -99
+12 04107 FE010 AP009     1    54     0     0     0     0   -99 -99
+13 05124 FE010 AP009     1    33     0     0     0     0   -99 -99
+13 05171 FE010 AP009     1   124     0     0     0     0   -99 -99
+14 07089 FE010 AP009     1    32     0     0     0     0   -99 -99
+14 07114 FE010 AP009     1    54     0     0     0     0   -99 -99
+15 08130 FE010 AP009     1    33     0     0     0     0   -99 -99
+15 08171 FE010 AP009     1   114     0     0     0     0   -99 -99
+16 10111 FE010 AP009     1    50     0     0     0     0   -99 -99
+16 10119 FE010 AP009     1    37     0     0     0     0   -99 -99
+17 11129 FE010 AP009     1    33     0     0     0     0   -99 -99
+17 11166 FE010 AP009     1   124     0     0     0     0   -99 -99
+18 12110 FE007 AP001     1     8     0     0     0     0   -99 -99
+19 13122 FE010 AP009     1    91     0     0     0     0   -99 -99
+20 14132 FE010 AP009     1    33     0     0     0     0   -99 -99
+20 14140 FE010 AP009     1    33     0     0     0     0   -99 -99
+20 14168 FE010 AP009     1   134     0     0     0     0   -99 -99
+21 16081 FE010 AP009     1    34     0     0     0     0   -99 -99
+21 16096 FE007 AP001     1    24     0     0     0     0   -99 -99
+
+*TILLAGE AND ROTATIONS
+@T TDATE TIMPL  TDEP TNAME
+ 1 89111 TI005    22 -99
+ 2 90145 TI005    25 -99
+ 3 91115 TI005    22 -99
+ 4 92136 TI005    22 -99
+ 5 93118 TI007    12 -99
+ 6 94285 TI003    12 -99
+ 7 96109 TI005    22 -99
+ 8 96135 TI011    15 -99
+ 9 97132 TI005    22 -99
+10 97295 TI011    15 -99
+11 99123 TI006    15 -99
+12 00125 TI006    15 -99
+13 00294 TI013     3 -99
+14 02107 TI006    15 -99
+15 03143 TI006    15 -99
+16 03283 TI011    15 -99
+17 05115 TI006    15 -99
+18 06125 TI006    15 -99
+19 08127 TI006    15 -99
+20 09135 TI006    15 -99
+21 11125 TI006    15 -99
+22 12137 TI006    15 -99
+23 12311 TI013     3 -99
+24 14113 TI006    15 -99
+25 15122 TI006    15 -99
+26 15276 TI006    15 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 89296 GS000   -99   -99   100     0 
+ 2 90148 GS000   -99   -99   100     0 
+ 3 90290 GS000   -99   -99   100     0 
+ 4 91165 GS000   -99   -99   100     0 
+ 5 91283 GS000   -99   -99   100     0 
+ 6 92138 GS000   -99   -99   100     0 
+ 7 92300 GS000   -99   -99   100     0 
+ 8 93126 GS000   -99   -99   100     0 
+ 9 93312 GS000   -99   -99   100     0 
+10 94137 GS000   -99   -99   100     0 
+11 94284 GS000   -99   -99   100     0 
+12 94285 GS000   -99   -99   100     0 
+13 95203 GS000   -99   -99   100    90 
+14 96134 GS000   -99   -99   100     0 
+15 96308 GS000   -99   -99   100     0 
+16 97141 GS000   -99   -99   100     0 
+17 97290 GS000   -99   -99   100     0 
+18 97294 GS000   -99   -99   100     0 
+19 98192 GS000   -99   -99   100    90 
+20 99138 GS000   -99   -99   100     0 
+21 99278 GS000   -99   -99   100     0 
+22 00145 GS000   -99   -99   100     0 
+23 00285 GS000   -99   -99   100     0 
+24 00303 GS000   -99   -99   100     0 
+25 01198 GS000   -99   -99   100    90 
+26 02129 GS000   -99   -99   100     0 
+27 02296 GS000   -99   -99   100     0 
+28 03147 GS000   -99   -99   100     0 
+29 03279 GS000   -99   -99   100     0 
+30 03282 GS000   -99   -99   100     0 
+31 04195 GS000   -99   -99   100    90 
+32 05123 GS000   -99   -99   100     0 
+33 05284 GS000   -99   -99   100     0 
+34 06155 GS000   -99   -99   100     0 
+35 06283 GS000   -99   -99   100     0 
+36 06309 GS000   -99   -99   100     0 
+37 07191 GS000   -99   -99   100    90 
+38 08129 GS000   -99   -99   100     0 
+39 08294 GS000   -99   -99   100     0 
+40 09139 GS000   -99   -99   100     0 
+41 09289 GS000   -99   -99   100     0 
+42 09309 GS000   -99   -99   100     0 
+43 10195 GS000   -99   -99   100    90 
+44 11128 GS000   -99   -99   100     0 
+45 11318 GS000   -99   -99   100     0 
+46 12139 GS000   -99   -99   100     0 
+47 12285 GS000   -99   -99   100     0 
+48 12311 GS000   -99   -99   100     0 
+49 13205 GS000   -99   -99   100    90 
+50 14131 GS000   -99   -99   100     0 
+51 14303 GS000   -99   -99   100     0 
+52 15138 GS000   -99   -99   100     0 
+53 15273 GS000   -99   -99   100     0 
+54 15278 GS000   -99   -99   100     0 
+55 16194 GS000   -99   -99   100    90 
+56 17135 GS000   -99   -99   100     0 
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE             27     1     S 89060  2150 Standard
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     P     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              Y     Y     A     1     Y     Y     Y     Y     Y     N     Y     N     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          89117 89131    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 90124   100     0
+

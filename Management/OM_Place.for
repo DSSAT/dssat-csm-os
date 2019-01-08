@@ -248,7 +248,7 @@
           IF (RESP(I) .LT. 1.E-3) THEN
             CALL IPSOIL(CONTROL, RESTYPE=RESTYP(I), SCP=SCP)
             RESP(I) = SCP !%
-            IF (.NOT. P_msg .AND. ISWPHO == 'Y') THEN
+            IF (.NOT. P_msg .AND. ISWPHO .NE. 'N') THEN
               MSG(1) = "Default P concentration used for one or " //
      &             "more residue applications"
               CALL WARNING(1,ERRKEY,MSG)
