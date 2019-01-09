@@ -63,8 +63,8 @@ ELSE()
 ENDIF()
 # Optimize for the host's architecture
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
-#                 Fortran "/QxHost"       # AMD Windows
-#                         "-xHost"        # AMD
+                 Fortran "/QxHost"       # AMD Windows
+                         "-xHost"        # AMD
                          ${GNUNATIVE}    # GNU
                          "-ta=host"      # Portland Group
                 )
