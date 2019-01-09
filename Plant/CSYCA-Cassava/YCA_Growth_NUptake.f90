@@ -371,13 +371,13 @@
     
     
         ENDIF    ! End of N uptake and growth adjustmenets
-    
+    open (unit = 8, file = "leaves.csv")
     ! Area and assimilate factors for each leaf
                 DO BR = 0, BRSTAGE                                                                                        !LPM 23MAR15 To consider cohorts
                     DO LF = 1, LNUMSIMSTG(BR)   
                         IF (node(BR,LF)%LAGETT <= LLIFGTT .AND. node(BR,LF)%LAPOTX2 > 0.0 ) THEN
                             IF (LNUMSIMSTG(BR) < LCNUMX) THEN
-                                !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf are by cohort (all the plant (all branches and shoots))
+                                !LPM 15NOV15 Variables LAGL3, LAGL3T and LATL3T created to save the actual leaf area by cohort (all the plant (all branches and shoots))
                                 !LAGL3(BR,LF) = LAGL(BR,LF) * AMIN1(AFLF(0,0),WFG,NFG) !LPM 02SEP2016  Use of NFLF2 instead of NFG
                                 node(BR,LF)%LAGL3 = node(BR,LF)%LAGL * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) 
                                 !LATL3(BR,LF)= LATL2(BR,LF)-LAGL(BR,LF) + LAGL3(BR,LF)                                             !EQN 150 !LPM  15NOV15 The reduction is just in the leaf area growing
@@ -386,6 +386,8 @@
                                 node(BR,LF)%NFLF2 = AMIN1(1.0,node(BR,LF)%NFLF2 + AMAX1(0.0,node(0,0)%NFLF2) * (node(BR,LF)%LAGL)/node(BR,LF)%LAPOTX2)  !EQN 237 !LPM 02SEP2016 To save NFLF2
                                 node(BR,LF)%LAGL3T = node(BR,LF)%LAGL3*BRNUMST(BR) 
                                 node(BR,LF)%LATL3T = node(BR,LF)%LATL3*BRNUMST(BR)
+                                
+                                
                                 DO L = 2,INT(SHNUM+2) ! L is shoot cohort,main=cohort 1
                                     IF (SHNUM-FLOAT(L-1) > 0.0) THEN
                                         node(BR,LF)%LAGL3T = node(BR,LF)%LAGL3T+(node(BR,LF)%LAGL3*BRNUMST(BR))*SHGR(L) * AMAX1(0.,AMIN1(FLOAT(L),SHNUM)-FLOAT(L-1))                  
@@ -416,6 +418,10 @@
                         ENDIF
                     ENDDO
                 ENDDO
+                
+                 
+        
+        
 
             PLAGSB4 = PLAGSB2 * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2) 
             SHLAGB4(1) = SHLAG2(1) * AMIN1(node(0,0)%AFLF,WFG,node(0,0)%NFLF2)                                                                          !EQN 240

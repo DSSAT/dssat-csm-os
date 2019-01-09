@@ -86,7 +86,8 @@
                 CALL YCA_Growth_Rates ( &
                     CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , &
                     PARIP       , PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , &
-                    SRAD        , SLPF &
+                    SRAD        , SLPF        , SW          , LL          , DUL         , CONTROL     , WEATHER     , &
+                    SOILPROP  &
                     )
         
                 !-----------------------------------------------------------------------
@@ -103,8 +104,7 @@
                 
                 CALL YCA_Growth_Photo ( &
                     CO2         , NFP         , SLPF        , SRAD        , TAIRHR      , TDEW        , TMAX        , &
-                    TMIN        &
-                    !, WEATHER     &        
+                    TMIN        , CONTROL     , WEATHER     , SOILPROP &
                     )
                 
                 !-----------------------------------------------------------------------

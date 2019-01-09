@@ -42,6 +42,7 @@ C=======================================================================
       USE ModuleDefs 
       USE ModuleData
       USE FloodModule
+      USE YCA_Model_VPD_Interface
 
       IMPLICIT NONE
       SAVE
@@ -90,6 +91,9 @@ C=======================================================================
       TYPE (FloodWatType) FLOODWAT
       TYPE (MulchType)   MULCH
       TYPE (WeatherType)  WEATHER
+      TYPE (YCA_VPD_Type) YCA_VPD_instance
+      
+      YCA_VPD_instance = YCA_VPD_type(WEATHER, CONTROL, SOILPROP)
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -296,7 +300,21 @@ C       and total potential water uptake rate.
      &      EORATIO, !Needed by Penman-Monteith
      &      CANHT,   !Needed by dynamic Penman-Monteith
      &      EO)      !Output
+          
+            CASE ('CSYCA')
+              EO = YCA_VPD_instance%get_YCA_EO()
 
+            CASE DEFAULT
+!             For all models except CSYCA
+              CALL PET(CONTROL, 
+     &        ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
+     &        EORATIO, !Needed by Penman-Monteith
+     &        CANHT,   !Needed by dynamic Penman-Monteith
+     &        EO)      !Output
+          
+
+            END SELECT
+          
 !-----------------------------------------------------------------------
 !         POTENTIAL SOIL EVAPORATION
 !-----------------------------------------------------------------------
@@ -382,9 +400,13 @@ C       and total potential water uptake rate.
 
               TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
               EOP = EOP * TRAT
+          
+            CASE ('CSYCA')
+              EOP = YCA_VPD_instance%get_YCA_EOP()
+
 
             CASE DEFAULT
-!             For all models except ORYZA
+!             For all models except ORYZA and CSYCA
               CALL TRANS(RATE, 
      &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
      &        WINDSP, XHLAI,                              !Input
@@ -394,7 +416,6 @@ C       and total potential water uptake rate.
           ELSE
             EOP = 0.0
           ENDIF
-
 !-----------------------------------------------------------------------
 !         ACTUAL TRANSPIRATION
 !-----------------------------------------------------------------------
