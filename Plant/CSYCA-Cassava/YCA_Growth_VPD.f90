@@ -2,10 +2,10 @@
 Module YCA_Growth_VPD
     USE ModuleDefs
     
-    REAL    :: VPDFPHR(TS)                ! Hourly VPD factor, 0-1
+    REAL, DIMENSION(TS)    :: VPDFPHR                ! Hourly VPD factor, 0-1
+    REAL, DIMENSION(TS)    :: ET0                    ! Hourly reference transpiration
     REAL    :: MNVPDFPHR                  ! Daily mean VPD factor, 0-1MNVPDFPHR
     REAL    :: VPDStartHr    , VPDMaxHr   ! VPD start hour, VPD max hour
-    REAL    :: ET0(TS)                    ! Hourly reference transpiration
     REAL    :: ET0DAY                     ! Daily integral of reference transpiration
 
     contains 
@@ -46,10 +46,6 @@ Module YCA_Growth_VPD
         
 !     Transfer values from constructed data types into local variables.
 
-         
-!****************************************************************************************
-
-!****************************************************************************************
         TDEW   = WEATHER % TDEW
         PARHR  = WEATHER % PARHR
         TMAX   = WEATHER % TMAX
@@ -81,8 +77,13 @@ Module YCA_Growth_VPD
                                      ! The figure for the specific heat of moist air at constant pressure (Cp = 0.001013 MJ/kg/°C) is correct.
                                      ! GammaPS is affected by atmospheric pressure (101.325 kPa), so it should be adjusted to take account 
                                      ! of the site's elevation.
-            ET0(hour) = (AlphaPT/(LambdaLH)) * (DeltaVP * ((RADHR(hour)*3.6/1000.) * (1.0 - (-0.75*LAI)))) / (DeltaVP + GammaPS)    
+            !ET0(hour) = (AlphaPT/(LambdaLH)) * (DeltaVP * ((RADHR(hour)*3.6/1000.) * (1.0 - EXP(-0.75*LAI)))) / (DeltaVP + GammaPS)    
             ! RADHR is in J/m2/s. Multiply by 3600, divide by 10^6 for MJ/m2/hr.
+            
+            
+            ET0(hour) = (AlphaPT/(LambdaLH)) * (DeltaVP * ((RADHR(hour)*3.6/1000.) *   (1.0 - ALBEDO) - 0.0)) / (DeltaVP + GammaPS)
+            ! RADHR is in J/m2/s. Multiply by 3600, divide by 10^6 for MJ/m2/hr.
+              
                 
             ET0DAY = ET0DAY + ET0(hour)
         END DO
@@ -90,21 +91,21 @@ Module YCA_Growth_VPD
         get_Growth_EO=ET0DAY
     
     END function get_Growth_EO
-    
-    
-!****************************************************************************************
-! EOP function
-!****************************************************************************************
 
+         
+!****************************************************************************************
+! Hourly VPD Factor for Photosynthesis function
+!****************************************************************************************
     
-    REAL function get_Growth_EOP (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+    REAL function get_Growth_VPDFPHR (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP, targetHour)
     
-        USE ModuleDefs
+    USE ModuleDefs
         
         IMPLICIT NONE
         SAVE
 
         INTEGER, intent (in) :: DAP
+        INTEGER, intent (in) :: targetHour
         REAL, intent (in) :: LAI
         REAL, intent (in) :: PHSV
         REAL, intent (in) :: PHTV
@@ -128,10 +129,6 @@ Module YCA_Growth_VPD
         
 !     Transfer values from constructed data types into local variables.
 
-         
-!****************************************************************************************
-
-!****************************************************************************************
         TDEW   = WEATHER % TDEW
         PARHR  = WEATHER % PARHR
         TMAX   = WEATHER % TMAX
@@ -143,11 +140,9 @@ Module YCA_Growth_VPD
         SNDN   = WEATHER % SNDN
         SRAD   = WEATHER % SRAD
         MSALB  = SOILPROP% MSALB
- 
-       ET0DAY = get_Growth_EOP
-
-
         
+        
+                
         ! Vapour pressure                                                            ! Code for VPD reponse moved from CS_Growth and modified for hourly response.
         
         !Hourly loop for VPD stomatal response
@@ -184,23 +179,72 @@ Module YCA_Growth_VPD
             ENDIF
         END DO
         
+
+        get_Growth_VPDFPHR = VPDFPHR(targetHour)
         
-        ! Adjust PT estimate of hourly ET by the VPD factor. 
-        ! Note this is on the whole ET, not the transpiration component.
-        EOP = 0.0
+    END function get_Growth_VPDFPHR
+    
+        
+!****************************************************************************************
+! VPD Factor for Photosynthesis function
+!****************************************************************************************
+    
+    REAL function get_Growth_VPDFP(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+    
+    USE ModuleDefs
+        
+        IMPLICIT NONE
+        SAVE
+
+        INTEGER, intent (in) :: DAP
+        REAL, intent (in) :: LAI
+        REAL, intent (in) :: PHSV
+        REAL, intent (in) :: PHTV
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
+        
+        
+        REAL, DIMENSION(TS) ::   TAIRHR, PARHR   , RADHR  , RHUMHR  , VPDHR ! These are all declared in ModuleDefs
+        REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
+        REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
+        REAL    VPDFPPREV   , VPDMAXHRPREV
+        REAL    CSVPSAT                                                                            ! REAL function
+        REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
+        REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
+        INTEGER hour                                                                                  ! Loop counter
+        REAL ALBEDO
+        REAl VPDFP, INTEG_1, INTEG_2
+        
+        SAVE
+
+        VPDFPHR(1) = get_Growth_VPDFPHR(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP,1)
+        ! Calculate mean VPD photosynthesis factor for the day 
+        ! For comparison only with hourly calculations.
+        INTEGVPDFPHR = 0.0
         DO hour =1, TS
-             
-             ET0(hour) = ET0(hour) * VPDFPHR(hour)
-             EOP = EOP + ET0(hour)
+            ! Adjust VPDFPHR for the fraction of hour at sunrise and sunset
+            !IF (hour == INT(SNUP))THEN 
+            !    VPDFPHR(hour) = VPDFPHR(hour) * (REAL(hour+1) - SNUP) 
+            !ENDIF
+            !IF (hour == INT(SNDN)) THEN !DA can i assume it's >=
+            !    VPDFPHR(hour) = VPDFPHR(hour) * (SNDN - REAL(hour))
+            !ENDIF
+            INTEGVPDFPHR = INTEGVPDFPHR + VPDFPHR(hour)
         END DO
+
         
-        get_Growth_EOP=EOP
+        get_Growth_VPDFP = INTEGVPDFPHR
         
-        
-    END function get_Growth_EOP
+    END function get_Growth_VPDFP
     
     
-    REAL function get_Growth_VPDFP (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+!****************************************************************************************
+! EOP function
+!****************************************************************************************
+
+    
+    REAL function get_Growth_EOP(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
     
         USE ModuleDefs
         
@@ -215,11 +259,52 @@ Module YCA_Growth_VPD
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
-        get_Growth_VPDFP=1.0
         
-    END function get_Growth_VPDFP
-    
+        REAL, DIMENSION(TS) ::   TAIRHR, PARHR   , RADHR  , RHUMHR  , VPDHR ! These are all declared in ModuleDefs
+        REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
+        REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
+        REAL    VPDFPPREV   , VPDMAXHRPREV
+        REAL    CSVPSAT                                                                            ! REAL function
+        REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
+        REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
+        INTEGER hour                                                                                  ! Loop counter
+        REAL ALBEDO
+        REAl VPDFP, INTEG_1, INTEG_2
+        
+        SAVE
+        
+!     Transfer values from constructed data types into local variables.
 
+        TDEW   = WEATHER % TDEW
+        PARHR  = WEATHER % PARHR
+        TMAX   = WEATHER % TMAX
+        TMIN   = WEATHER % TMIN
+        RADHR  = WEATHER % RADHR
+        RHUMHR = WEATHER % RHUMHR
+        TAIRHR = WEATHER % TAIRHR
+        SNUP = WEATHER % SNUP
+        SNDN   = WEATHER % SNDN
+        SRAD   = WEATHER % SRAD
+        MSALB  = SOILPROP% MSALB
+        
+        ET0DAY= get_Growth_EO(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+        MNVPDFPHR = get_Growth_VPDFP (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP)
+ 
+
+        ! Adjust PT estimate of hourly ET by the VPD factor. 
+        ! Note this is on the whole ET, not the transpiration component.
+        EOP = 0.0
+        DO hour =1, TS
+             
+             ET0(hour) = ET0(hour) * VPDFPHR(hour)
+             EOP = EOP + ET0(hour)
+        END DO
+        
+        get_Growth_EOP=EOP
+        
+        
+    END function get_Growth_EOP
+    
     
     
 !****************************************************************************************

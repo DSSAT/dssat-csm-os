@@ -43,20 +43,32 @@
         TYPE (YCA_VPD_Type) :: VPD
         real :: CARBOTMPR = 0
         real :: VPDFP= 1.0
+        real, DIMENSION(TS) :: VPDFPHR, CARBOTMPRHR, RADHR
+        integer :: hour = 1
+        
+        RADHR  = WEATHER % RADHR
         
         VPD = YCA_VPD_Type(WEATHER, CONTROL, SOILPROP)
-        VPDFP = VPD%get_YCA_VPDFP()
+        !VPDFP = VPD%get_YCA_VPDFP()
         
-        !CARBOTMPR = 0.0
+        CARBOTMPR = 0.0
         !DO L = 1, TS
         !    CARBOTMPRHR(L) = AMAX1(0.0,(PARMJFAC*RADHR(L)*3.6/1000.)*PARU*CO2FP*TFP* WFP * NFP * RSFP * VPDFPHR(L) * SLPF)       ! MF 17SE14 RADHR is in J/m2/s. Multiply by 3600 for hour, divide by 10^6 for MJ.
         !    CARBOTMPR = CARBOTMPR + CARBOTMPRHR(L)
         !END DO
         !  
         !CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP* WFP * NFP * RSFP * VPDFP * SLPF) !LPM 02SEP2016 Deleted WFP and NFP 
-        CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP* RSFP * VPDFP * SLPF)
         
-        availableCarbohydrate_methodR = CARBOTMPR * PARI / PLTPOP																		   !EQN 259
+        
+        !CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP* RSFP * VPDFP * SLPF) ! @danipilze 05DIC2018 deleted and changed back to hourly
+        
+        DO hour = 1, TS
+            CARBOTMPRHR(hour) = AMAX1(0.0,(PARMJFAC*RADHR(hour)*3.6/1000.)*PARU*CO2FP*TFP* RSFP * VPD%get_YCA_VPDFPHR(hour) * SLPF)       ! MF 17SE14 RADHR is in J/m2/s. Multiply by 3600 for hour, divide by 10^6 for MJ.
+            CARBOTMPR = CARBOTMPR + CARBOTMPRHR(hour)
+        END DO
+        
+        availableCarbohydrate_methodR = CARBOTMPR * PARI / PLTPOP                   !EQN 259
+        
     end function availableCarbohydrate_methodR
         
     ! Modified conventional using internal CO2 (I)

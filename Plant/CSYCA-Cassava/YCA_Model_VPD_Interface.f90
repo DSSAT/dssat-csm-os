@@ -19,6 +19,7 @@
 
         procedure, pass (this) :: get_YCA_EO
         procedure, pass (this) :: get_YCA_EOP
+        procedure, pass (this) :: get_YCA_VPDFPHR
         procedure, pass (this) :: get_YCA_VPDFP
         
     
@@ -102,6 +103,19 @@
         get_YCA_EOP = get_Growth_EOP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
         
     end function get_YCA_EOP
+    
+    ! get_YCA_ VPDFPHR
+    real function get_YCA_VPDFPHR(this, hour)
+        USE ModuleDefs
+        Use YCA_Growth_VPD
+        
+        implicit none
+        class (YCA_VPD_type), intent(in) :: this
+        integer, intent(in) :: hour
+        
+        get_YCA_VPDFPHR = get_Growth_VPDFPHR(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_, hour)
+        
+    end function get_YCA_VPDFPHR
     
     ! get_YCA_ VPDFP
     real function get_YCA_VPDFP(this)
