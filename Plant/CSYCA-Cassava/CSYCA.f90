@@ -40,6 +40,7 @@
        SENCALG, SENNALG, SENLALG,                                                             & !Senescence
        RESCALG, RESNALG, RESLGALG,                                                            & !Residues
        STGYEARDOY, BRSTAGE,                                                                   & !Stage dates     !GSTAGE = BRSTAGE
+       WEATHER     , SOILPROP    , CONTROL     , & 
        DYNAMIC) !, WEATHER)                                                                        !Control
 
     USE ModuleDefs
@@ -49,8 +50,10 @@
       
     IMPLICIT NONE
       
-    TYPE (WeatherType) WEATHER                             
-    
+    TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+    TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+    TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
+        
     INTEGER :: CN       , DOY         , DYNAMIC     , FROP        , NLAYR       , ON          , REP        , RN          
     INTEGER :: RUN      , RUNI        , SN          , STEP        , STGYEARDOY(0:19)            , TN         , YEAR
     INTEGER :: YEARPLTCSM 
@@ -192,7 +195,7 @@
                 RLV         , RNMODE      , RWUMX       , RWUPM       , SAT         , SENCALG     , SENLALG     , SENNALG     , &
                 SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
                 TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
-                !WEATHER     , 
+                WEATHER     , SOILPROP    , CONTROL     , & 
                 WINDSP      , YEAR        , YEARPLTCSM  , &         !LPM 06MAR2016 Added to keep automatic planting
                 IDETG         )
 

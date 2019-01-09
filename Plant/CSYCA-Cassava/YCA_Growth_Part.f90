@@ -98,7 +98,7 @@
                         node(BR,LF)%LATLPREV = node(BR,LF)%LATL
                         node(BR,LF)%LAPOTX2 = node(BR,LF)%LAPOTX*Tflfgrowth
                         node(BR,LF)%LAGL=node(BR,LF)%LAPOTX2*(TTlfgrowth/LLIFGTT)
-                        IF (node(BR,LF)%LAGL > (node(BR,LF)%LAPOTX2-node(BR,LF)%LATL3)) THEN                                           !DA IF there is something left to grow
+                        IF (node(BR,LF)%LAGL > (node(BR,LF)%LAPOTX2-node(BR,LF)%LATL3)) THEN                                           !DA If there is something left to grow, then
                             node(BR,LF)%LAGL = node(BR,LF)%LAPOTX2-node(BR,LF)%LATL3
                         ENDIF
                         IF (node(BR,LF)%LAGL < 0.0) THEN

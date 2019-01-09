@@ -17,7 +17,7 @@
         RLV         , RNMODE      , RWUMX       , RWUPM       , SAT         , SENCALG     , SENLALG     , SENNALG     , &
         SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
         TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
-        !WEATHER     ,                                                                                                       ! MF WEATHER needed for VPD
+        WEATHER     , SOILPROP    , CONTROL     , &                                                                                                      ! MF WEATHER needed for VPD
         WINDSP      , YEAR        , YEARPLTCSM  , &         !LPM 06MAR2016 Added to keep automatic planting
         IDETG         )
     
@@ -26,7 +26,9 @@
 
         IMPLICIT NONE
         
-        !TYPE (WeatherType) WEATHER                                                                                          ! MF Defined in ModuleDefs
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefsR                                                                                          ! MF Defined in ModuleDefs
     
         INTEGER DOY         , NLAYR       , STGYEARDOY(0:19)            , YEAR        , YEARPLTCSM      !LPM 25MAY2015 STGYEARDOY changed according to STGDOY(20) in plant.for            
         INTEGER CSIDLAYR                 
@@ -65,7 +67,7 @@
                 ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , RWUPM       , &
                 SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
                 UH2O        , & 
-                !WEATHER     , 
+                WEATHER     , SOILPROP    , CONTROL      , &
                 WINDSP      , YEAR        , ST          &         !LPM20MAR2016 To consider ST for germination
                 )
             

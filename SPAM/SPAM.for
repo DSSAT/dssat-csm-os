@@ -295,11 +295,7 @@ C       and total potential water uptake rate.
             ET_ALB = MSALB
           ENDIF
 
-          CALL PET(CONTROL, 
-     &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
-     &      EORATIO, !Needed by Penman-Monteith
-     &      CANHT,   !Needed by dynamic Penman-Monteith
-     &      EO)      !Output
+          SELECT CASE (CONTROL % MODEL(1:5))
           
             CASE ('CSYCA')
               EO = YCA_VPD_instance%get_YCA_EO()

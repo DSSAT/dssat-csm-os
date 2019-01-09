@@ -134,9 +134,8 @@
         fernitprev = 0.0
         fldap = 0
         fln = 0.0
-        gdap = -99
-        gdap = -99
-        gdapm = -99
+        ! gdap = -99             ! removed by danipilze/dssat-csm#87
+        ! gdapm = -99           ! removed by danipilze/dssat-csm#87
         gdayfr = 0.0
         gedayse = 0.0
         gedaysg = 0.0
