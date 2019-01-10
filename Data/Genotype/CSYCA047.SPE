@@ -47,6 +47,10 @@ $SPECIES:CSYCA047.08102017    Last edit: 08/11/2017 GH/LPM
     9      K B9DAT 9thBranch
     9      K B9DAT 9thBranch
    10      K B0DAT 10thBranch
+! Phase durations
+@PEMRG  ! gr by cum. soil temperature                             
+! gCH2O/TT                                                              
+  0.05
 ! Development rate responses to environment
 @PPFPE PPTHR PPSEN ! Photoperiod threshold,sensitivity type  
 !  0-1     h  Code                                  

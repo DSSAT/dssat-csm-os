@@ -13,7 +13,7 @@
       REAL          LAXND, LAXN2, LAFS, LAFND, SLASS, LLIFA, LPEFR
       REAL          STFR
 !     For CSYCA-cassava
-      REAL          PEMRG, LNSLP, NODWT, NODLT
+      REAL          LNSLP, NODWT, NODLT
       REAL          BR1FX, BR2FX, BR3FX, BR4FX
 
 !     For CSCRP-wheat
@@ -62,7 +62,7 @@
       COMMON /GEN01/P1,P1V,P1D,P2,P2O,P2R,P3,P4,P5,G1,G2,G3,G4,PHINT,O1,
      &                  PBASE, PSAT,AX,LX,LFN,PANTH,G0,G5
      &        , B01ND, B12ND, B23ND, B34ND, B45ND, B56ND
-     &        , BR1FX, BR2FX, BR3FX, BR4FX, PEMRG
+     &        , BR1FX, BR2FX, BR3FX, BR4FX
      &        , SRNWT, SRFR, HMPC, LA1S, LAXS, LAXND
      &        , LAXN2, LAFS, LAFND, SLASS, LLIFA, LPEFR, STFR
      &        , VREQ, VBASE, VEFF, PPS1, PPS2

@@ -205,10 +205,8 @@ C-LPM  Add CIAT cassava model
       CASE ('CSYCA')
                         
           READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      PPS1, PEMRG,
-     &      B01ND, B12ND, BR1FX, BR2FX, BR3FX, BR4FX, 
-     &      LAXS,
-     &      SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
+     &      PPS1, B01ND, B12ND, BR1FX, BR2FX, BR3FX, BR4FX, 
+     &      LAXS, SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT, PLAINTXT 
           
 
           
@@ -402,7 +400,7 @@ C-----------------------------------------------------------------------
 C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
      
-  821 FORMAT (A6,1X,A16,7X,A6,15F6.0,A)         !CSYCA        06/05/2015 
+  821 FORMAT (A6,1X,A16,7X,A6,14F6.0,A)         !CSYCA        06/05/2015 
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
   850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 
