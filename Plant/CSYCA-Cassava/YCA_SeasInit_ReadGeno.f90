@@ -265,7 +265,6 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P8',pd(8))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P9',pd(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PEMRG',pemrg)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PGERM',pgerm)
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B01ND',pdl(1))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B12ND',pdl(2))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR1FX',brfx(1))
@@ -374,6 +373,7 @@
         CALL ECREADR (ECDIRFLE,ECONO,'LSENI',lseni)
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
         CALL ECREADR (ECDIRFLE,ECONO,'TBLSZ',tblsz)
+        CALL ECREADR (ECDIRFLE,ECONO,'PGERM',PGERM)
         ! Following may have been (temporarily) in the CUL file
         ! Radiation use efficiency
         IF (PARUE <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
