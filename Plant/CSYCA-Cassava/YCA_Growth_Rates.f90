@@ -13,7 +13,8 @@
     SUBROUTINE YCA_Growth_Rates ( &
         CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
         PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF        , & !LPM 26MAR2016 RLV added 
-        SW          , LL          , DUL , CONTROL, WEATHER, SOILPROP &   !DA 20ABR2018 SW, LL, DUL added
+        !SW          , LL          , DUL , 
+        CONTROL, WEATHER, SOILPROP &   !DA 20ABR2018 SW, LL, DUL added
         )
         USE ModuleDefs
         USE YCA_First_Trans_m

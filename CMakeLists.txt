@@ -361,6 +361,7 @@ set(
         "Plant/CSYCA-Cassava/YCA_Growth_Photo.f90"
         "Plant/CSYCA-Cassava/YCA_Growth_Rates.f90"
         "Plant/CSYCA-Cassava/YCA_Growth_Senesce.f90"
+        "Plant/CSYCA-Cassava/YCA_Growth_VPD.f90"
         "Plant/CSYCA-Cassava/YCA_Integrate.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_AgesWts.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_EndCrop.f90"

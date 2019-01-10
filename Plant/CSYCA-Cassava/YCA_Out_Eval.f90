@@ -757,7 +757,7 @@
                     ENDIF
                         WRITE(fnumov,*)' '
                         WRITE (FNUMOV, FMT206)
-                        WRITE (FNUMOV, FMT290) MAX(-99,gdap),MAX(-99,gdapm),MAX(-99,edap),MAX(-99,edapm)
+                        !WRITE (FNUMOV, FMT290) MAX(-99,gdap),MAX(-99,gdapm),MAX(-99,edap),MAX(-99,edapm) ! removed by danipilze/dssat-csm#87
                         !DO L = 1,KEYSTX
                         DO L = 0,KEYSTX
                             IF (KEYPS(L) > 0) THEN
