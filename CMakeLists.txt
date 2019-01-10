@@ -21,8 +21,9 @@ PROJECT(DSSAT-CSM Fortran )
 
 SET(MAJOR 4)
 SET(MINOR 7)
-SET(MODEL 2)
-SET(BUILD 1)
+SET(MODEL 5)
+SET(BUILD 0)
+
 # Get the current working branch
 execute_process(
   COMMAND git rev-parse --abbrev-ref HEAD

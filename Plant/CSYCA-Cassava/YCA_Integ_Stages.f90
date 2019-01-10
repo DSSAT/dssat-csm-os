@@ -29,11 +29,7 @@
         ! STAGES:Germination and emergence (Gestages)
         ! NB 0.5 factor used to equate to Zadoks)
         GEUCUM = GEUCUM + TTGEM                                                                                   !EQN 038
-        DAGERM = DAGERM + TTGEM*WFGE                                                           
-        
-        if (RAW >= WFGE) then                            !    28JUN2018 @danipilze validating
-            DAGERM = DAGERM + TTGEM*WFGE               !LPM 21MAR2016 for germination
-        endif
+        DAGERM = DAGERM + TTGEM*WFGE                                                           !LPM 21MAR2016 DA for germination
         !IF (GEUCUM < PEGD) THEN
             !GESTAGE = AMIN1(1.0,GEUCUM/PEGD*0.5)                                                       !EQN 039a !LPM 21MAR2016 To separate germination and emergence
         IF (DAGERM < PGERM .AND. PGERM > 0.0) THEN

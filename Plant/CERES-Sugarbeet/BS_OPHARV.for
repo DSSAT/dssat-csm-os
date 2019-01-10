@@ -4,7 +4,7 @@
 !-----------------------------------------------------------------------
 !  REVISION HISTORY
 !  05/25/2015 CHP Written, based on OPHARV
-!  03/15/2017 Updated for HI equation based on Taro model
+!  12/18/2018 GH Updated output
 !=======================================================================
 
       SUBROUTINE BS_OPHARV(CONTROL, 
@@ -30,7 +30,7 @@
       CHARACTER*10 STNAME(20)
       CHARACTER*12 FILEA
       CHARACTER*30 FILEIO
-	CHARACTER*80 PATHEX
+	    CHARACTER*80 PATHEX
 
       INTEGER DEMRG, DFLR, DMAT, IFPD, DFPD, IFSD, DFSD
       INTEGER DNR0, DNR1, DNR7, DYNAMIC, ERRNUM, FOUND
@@ -197,10 +197,10 @@
 
       PlantStres % StageName(0) = 'Planting to Harvest    '
       PlantStres % StageName(1) = 'Emergence-End Juvenile '
-      PlantStres % StageName(2) = 'End Juvenil-Floral Init'
-      PlantStres % StageName(3) = 'Floral Init-End Lf Grow'
-      PlantStres % StageName(4) = 'End Lf Grth-Beg Grn Fil'
-      PlantStres % StageName(5) = 'Grain Filling Phase    '
+      PlantStres % StageName(2) = 'End Juvenil-Leaf Grow  '
+      PlantStres % StageName(3) = 'Effec Lf Gro-End Lf Gro'
+      PlantStres % StageName(4) = 'End Lf Grth-Beg Ef Gro '
+      PlantStres % StageName(5) = 'Eff Growth Phase       '
 
       CALL OPVIEW(CONTROL, 
      &    PBIOMS, ACOUNT, DESCRIP, IDETO, XN, 
@@ -406,13 +406,13 @@ C** end changes
                                         WRITE(Measured(12),'(A8)') X(12)  !LAIX
       WRITE(Simulated(13),'(F8.3)') HI; WRITE(Measured(13),'(A8)') X(13)  !HIAM
       WRITE(Simulated(14),'(I8)') -99 ; WRITE(Measured(14),'(I8)') -99    !THAM
-      WRITE(Simulated(15),'(I8)') NINT(GNUP)
-                                        WRITE(Measured(15),'(A8)') X(15)  !GNAM
+!      WRITE(Simulated(15),'(I8)') NINT(GNUP)
+!                                        WRITE(Measured(15),'(A8)') X(15)  !GNAM
       WRITE(Simulated(16),'(I8)') NINT(WTNCAN*10.)
                                         WRITE(Measured(16),'(A8)') X(16)  !CNAM
       WRITE(Simulated(17),'(I8)') NINT(APTNUP)
                                         WRITE(Measured(17),'(A8)') X(17)  !SNAM
-      WRITE(Simulated(18),'(F8.1)')XGNP;WRITE(Measured(18),'(A8)') X(18)  !GN%M
+!      WRITE(Simulated(18),'(F8.1)')XGNP;WRITE(Measured(18),'(A8)') X(18)  !GN%M
       WRITE(Simulated(19),'(I8)') NINT(CANWAA*10)
                                         WRITE(Measured(19),'(A8)') X(19)  !CWAA
       WRITE(Simulated(20),'(I8)') NINT(CANNAA*10)

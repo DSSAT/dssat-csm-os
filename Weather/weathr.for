@@ -65,7 +65,8 @@ C=======================================================================
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, PAR, 
      &  RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
      &  TA, TAMP, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,
-     &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDSP, XELEV, XLAT, XLONG
+     &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDRUN, WINDSP,
+     &  XELEV, XLAT, XLONG
 
       REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR
       REAL, DIMENSION(TS) :: RADHR, RHUMHR, TAIRHR, TGRO, WINDHR
@@ -223,6 +224,7 @@ C     Calculate daily solar parameters.
 !     of Call to HMET on 27MAR14 by BAK
 
 C     Adjust wind speed from reference height to 2m height.
+      WINDRUN = WINDSP
       IF (WINDSP > 0.0) THEN
 !       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
         WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
@@ -315,6 +317,7 @@ C     Calculate daily solar parameters.
 !     ahead of call to HMET on 27MAR14 by BAK
 
 C     Adjust wind speed from reference height to 2m height.
+      WINDRUN = WINDSP
       IF (WINDSP > 0.0) THEN
 !       WINDSP = WINDSP * (2.0 / WINDHT) ** 2.0
         WINDSP = WINDSP * (2.0 / WINDHT) ** 0.2   !chp 8/28/13
@@ -376,7 +379,9 @@ C-----------------------------------------------------------------------
 !     Weather station data
       WEATHER % REFHT  = REFHT
       WEATHER % WINDHT = WINDHT 
-      WEATHER % XLAT   = XLAT  
+      WEATHER % XLAT   = XLAT
+      WEATHER % XLONG  = XLONG
+      WEATHER % XELEV  = XELEV
       WEATHER % TAMP   = TAMP  
       WEATHER % TAV    = TAV   
 
@@ -400,6 +405,7 @@ C-----------------------------------------------------------------------
       WEATHER % TMAX   = TMAX  
       WEATHER % TMIN   = TMIN  
       WEATHER % TWILEN = TWILEN
+      WEATHER % WINDRUN= WINDRUN
       WEATHER % WINDSP = WINDSP
       WEATHER % VAPR   = VAPR
 

@@ -13,7 +13,8 @@
     SUBROUTINE YCA_Growth_Rates ( &
         CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
         PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF        , & !LPM 26MAR2016 RLV added 
-        SW          , LL          , DUL , CONTROL, WEATHER, SOILPROP &   !DA 20ABR2018 SW, LL, DUL added
+        !SW          , LL          , DUL , 
+        CONTROL, WEATHER, SOILPROP &   !DA 20ABR2018 SW, LL, DUL added
         )
         USE ModuleDefs
         USE YCA_First_Trans_m
@@ -27,13 +28,8 @@
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
         REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
-        REAL    SW(NL)          , LL(NL)          , DUL(NL)
         REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
         REAL    availableCH2O
-        REAL    depth
-        REAL    rawByLayer(NL)
-        
-        INTEGER LAYER, layerCount
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      
 
@@ -96,42 +92,18 @@
               !ENDIF
                 RAW = 0.0
                 TRLV = 0.0
-                DO layerCount = 1, NLAYRROOT
-                    !RAW = RAW + (SWP(L)*DLAYRTMP(L)*RLV(L)) ! DA 20APR2018 removed, changing RAW calculation
-                        
-                    TRLV = TRLV + (RLV(layerCount)*DLAYRTMP(layerCount))
-                    
-                    ! calculating RAW for each soil layer
-                    rawByLayer(layerCount) = (SW(layerCount)- LL(layerCount)) / (DUL(layerCount)-LL(layerCount))          !EQN 161 
-                    rawByLayer(layerCount) = AMAX1(0.0, rawByLayer(layerCount))
+                DO L = 1, NLAYRROOT
+                    RAW = RAW + (SWP(L)*DLAYRTMP(L)*RLV(L))
+                    TRLV = TRLV + (RLV(L)*DLAYRTMP(L))
                 ENDDO
-                
-                depth = DLAYRTMP(1) ! initiating with the depth of the first layer
-                RAW = rawByLayer(1) ! initiating with the raw of the first layer
-                DO layerCount = 2, NLAYRROOT
-                    if (depth<50) then ! cheking the layers that reach the 50cm of depth
-                        depth = depth + DLAYRTMP(layerCount)
-                        RAW = RAW + rawByLayer(layerCount)
-                    else
-                        exit !exit when the depth is exceeded 
-                    endif
-                ENDDO
-                layerCount=layerCount-1 ! compensate the last incrase on the loop
-                RAW = RAW / layerCount ! RAW as the average of the RAW of each soil layer
-                
-         
                 IF (EMRGFR >= 1.0) THEN
-                    
-                   ! IF (TRLV > 0.0) THEN
-                   !     RAW = RAW/(TRLV)
-                   ! ELSE
-                   !    !RAW = 0.0 !LPM 11JUL2017 to avoid RAW of 0 with the roots just start to growth at planting
-                   !     RAW = SWP(LSEED)
-                   ! ENDIF
-                    
-
-                    
-                    !Linear decrease according RAW
+                    IF (TRLV > 0.0) THEN
+                        RAW = RAW/(TRLV)
+                    ELSE
+                        !RAW = 0.0 !LPM 11JUL2017 to avoid RAW of 0 with the roots just start to growth at planting
+                        RAW = SWP(LSEED)
+                    ENDIF
+                    !Linear decrease according SWP
                     IF (WFGU-WFGL > 0.0) &
                         WFG = AMAX1(0.0,AMIN1(1.0,(RAW-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
                     IF (WFPU-WFPL > 0.0) &
@@ -257,20 +229,18 @@
             !!LNUMG = LNUMEND - LNUM
             !LNUMG = (TT*EMRGFR)/PHINT                                                                                  !EQN 347
             !LPM 24MAR2016 
-            
-            IF (DAG > 0) THEN
+            IF (DAE > 0) THEN
                 IF (ISWWAT == 'Y') THEN
                     LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TT*WFG)                                      !LPM 31JUL2015 to consider water stress
                 ELSE
                     LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TT                                              !LPM 21/02/2015 leaf number curve
                 ENDIF
-            ELSE
+            ELSEIF (DAG > 0) THEN
                 IF (ISWWAT == 'Y') THEN
                     LNUMG = ((1.048488E6*LNSLP)/((((3.5986E3))+DAWWP)**2))*(TTGEM*WFG)                                      !LPM 31JUL2015 to consider water stress
                 ELSE
                     LNUMG = ((1.048488E6*LNSLP)/(((3.5986E3)+TTCUM)**2))*TTGEM                                              !LPM 21/02/2015 leaf number curve
                 ENDIF
             ENDIF
-            
     END SUBROUTINE YCA_Growth_Rates
     

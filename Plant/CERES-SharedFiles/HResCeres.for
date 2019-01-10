@@ -107,7 +107,7 @@ C-----------------------------------------------------------------------
      &                  + PConc_Shel * COBRES
         ENDIF
 
-C-------------------------------------------------------------------------
+!-------------------------------------------------------------------------
 !       Distribute root+nodule residues by layer, according to the root
 !       length distribution (NB: this may give very wrong results if the
 !       roots vary in thickness by layer, but root weight is not available
@@ -138,6 +138,13 @@ C-------------------------------------------------------------------------
               HResE(L,IEL) = TRTRESE(IEL) * RLV(L) * DLAYR(L) / TRLV
             END DO   !End of IEL loop.
           END DO   !End of soil layer loop.
+        ELSE
+          DO L = 1, NLAYR
+            HResWt(L)  = 0.
+            HResLig(L) = 0.
+            HResE(L,N) = 0.
+            HResE(L,P) = 0.
+          ENDDO
         ENDIF
 
 C-------------------------------------------------------------------------

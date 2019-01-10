@@ -479,7 +479,7 @@ C-----------------------------------------------------------------------
                   WRITE(DLUN,"(A)",ADVANCE='NO') '  NAPC  NICM'
                  ENDIF
               CASE (2)
-                IF (ISWPHO == 'Y') THEN
+                IF (ISWPHO .NE. 'N') THEN
                   WRITE(DLUN,"(A)",ADVANCE='NO') '  PAPC  PICM'
                 ENDIF
               CASE (3)
@@ -597,7 +597,7 @@ C-----------------------------------------------------------------------
                   IF (ISWNIT == 'Y') WRITE(DLUN,"(2I6)",ADVANCE='NO') 
      &                NAPFER(I), NINT(AMTFER(I))
                 CASE (2)
-                  IF (ISWPHO == 'Y') WRITE(DLUN,"(2I6)",ADVANCE='NO') 
+                  IF (ISWPHO .NE. 'N') WRITE(DLUN,"(2I6)",ADVANCE='NO') 
      &                NAPFER(I), NINT(AMTFER(I))
                 CASE (3)
                   IF (ISWPOT == 'Y') WRITE(DLUN,"(2I6)",ADVANCE='NO') 
@@ -631,12 +631,13 @@ C-----------------------------------------------------------------------
    98     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,T57,A)
         ENDIF
 
-!       Physiological Maturity
-        IF (MDATE == YRDOY) THEN
-          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
-     &          "Phys. Maturity "
-  100     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.0,A))
-        ENDIF
+!     Remove this - it gives some strange results for some crops
+!     chp 2018-12-18
+!!       Physiological Maturity
+!        IF (MDATE == YRDOY) THEN
+!          WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
+!     &          "Phys. Maturity "
+!        ENDIF
 
 !       Retrieve current Stage, STGDOY and STNAME
         CALL GET('PLANT','iSTAGE', iSTAGE)
@@ -660,7 +661,7 @@ C-----------------------------------------------------------------------
      &              + SUM(FertData%ADDUREA)
             WRITE(DLUN2,'(F7.0,A)',ADVANCE='NO') TotAmtN, " kg[N]/ha"
           ENDIF
-          IF (ISWPHO == 'Y') THEN
+          IF (ISWPHO .NE. 'N') THEN
             TotAmtP = SUM(FertData%ADDSPi)
             WRITE(DLUN2,'(A,F7.0,A)',ADVANCE='NO')";",TotAmtP,
      &                " kg[P]/ha"
@@ -728,6 +729,7 @@ C-----------------------------------------------------------------------
         ELSE
           WRITE(DLUN2,100) RUN, Date_Txt, DOY, DAS, DAP, CROP, 
      &            "End Sim        "
+  100     FORMAT(I4,1X,A12,2X,I3.3,2(1X,I6),2X,A2,2X,A,3(F7.0,A))
         ENDIF
 
         WRITE(DLUN2,'(" ")')
