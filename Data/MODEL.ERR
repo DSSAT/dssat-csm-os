@@ -1,0 +1,813 @@
+!AUTOM   42
+AUTOMATIC MANAGEMENT section missing.
+
+*CHEMI   42
+CHEMICALS section missing.
+
+*CULTI   42
+CULTIVARS section missing.
+
+*ENVIR   42
+ENVIRONMENT section missing.
+
+*EXP.D   42
+EXP.DETAILS section missing.
+
+*FERTI   42
+FERTILIZERS section missing.
+
+*FIELD   42
+FIELDS section missing.
+
+*HARVE   42
+HARVEST section missing.
+
+*INITI   42
+INITIAL CONDITIONS section missing.
+
+*IRRIG   42
+IRRIGATION section missing.
+
+*PLANT   42
+PLANTING DETAILS section missing.
+
+*RESID   42
+RESIDUES section missing.
+
+*SIMUL   42
+SIMULATION CONTROL section missing.
+
+*SOIL    42
+SOIL section missing.
+
+*TILLA   42
+FILEX 'TILLAGE' section missing.
+
+*TREAT   42
+TREATMENTS section missing.
+
+!*CANO   42
+CANOPY HEIGHT AND WIDTH GROWTH PARAMETERS section missing.
+
+!*CARB   42
+CARBON AND NITROGEN MINING PARAMETERS section missing.
+
+*EMERG   42
+EMERGENCE INITIAL CONDITIONS section missing.
+
+!*EVAP   42
+EVAPOTRANSPIRATION section missing.
+
+!*LEAF   42
+LEAF PARAMETERS section missing.
+
+!*NITR   42
+NITROGEN FIXATION PARAMETERS section missing.
+
+*NITRO   42
+NITROGEN PARAMETERS section missing.
+
+!*PHEN   42
+PHENOLOGY PARAMETERS section missing.
+
+!*PHOT   42
+PHOTOSYNTHESIS PARAMETERS section missing.
+
+*PHOTO   42
+PHOTOSYNTHESIS PARAMETERS section missing.
+
+!*PLAN   42
+PLANT COMPOSITION VALUES section missing.
+
+!*POD    42
+POD LOSS PARAMETERS section missing.
+
+!*ROOT   42
+ROOT PARAMETERS section missing.
+
+!*SEED   42
+SEED parameters section missing.
+
+*SEED    42
+SEED GROWTH PARAMETERS section missing.
+
+*STRES   42
+STRESS RESPONSE section missing.
+
+*TEMPE   42
+TEMPERATURE EFFECTS section missing.
+
+!*VEGE   42
+VEGETATIVE PARTITIONING PARAMETERS section missing.
+
+AUTFER    1
+Error in Fertilizer Sensitivity Analysis Selection.  Fix entry or batch file.
+
+AUTHAR   10
+Invalid harvest code specified.
+
+AUTIRR    1
+Error in Irrigation Sensitivity Analysis Selection.  Fix entry or batch file.
+
+CROPD    29
+Detail.CDE file not found.  Program will stop.
+
+CSM      -1
+End of file encountered.
+
+CSM       1
+Error in the format of the input file.  Please fix the file.
+
+CSM       2
+Input file does not exist.
+
+CSM       3
+Error in DSSAT Configuration file. Please fix the file.
+
+CSM       4
+Your configuration file is incompatible with the current version. Please update the file.
+
+CSM      26
+Error in the format of the batch file.  Please fix the file.
+
+CSM      27
+Input module not found.  Please locate input module.
+
+CSM      28
+Batch file not found.  Please check file name or create file.
+
+CSM      29
+File not found.  Please check file name or create file.
+
+CSM      30
+Output.CDE not found. Program will stop.
+
+CSM      33
+End of file encountered.
+
+CSM      64
+Invalid format in file.
+
+CSM      90
+Runmode not specified or invalid.
+
+GETDSC   29
+Detail.CDE file not found.  Program will stop.
+
+IDWTH     1
+Error in Weather Sensitivity Selection entry.  Fix entry or batch file.
+
+IDWTH     2
+End of File in Weather Sensitivity Selection entry.  Fix entry or batch file.
+
+INPUT     1
+Error in Selection entry.  Fix entry or batch file.
+
+INPUT     2
+Planting Date is Before Start of Simulation.  Please Fix Input File.
+
+INPUTX    0
+Input module failed.  Program execution halted.
+
+IPFERT    2
+Fertilizer input section not found. Please correct input file.
+
+IPCHEM    2
+Chemical input level not found. Please correct input file.
+
+IPCHEM    3
+First chemical application date is defined prior to the start of simulation.
+
+IPCHEM   11
+No input amount defined for chemical applications.
+
+IPCUL     2
+Cultivar input level not found. Please correct input file.
+
+IPECO     1
+Error in Ecotype entry.  Fix entry or batch file.
+
+IPECO     2
+Error in Ecotype entry.  Fix ecotype input file.
+
+IPECO     2
+Error in Ecotype entry.  Fix ecotype input file.
+
+IPECO     3
+DEFAULT Ecotype not found. Fix ecotype input file.
+
+IPECO    21
+Ecotype input section not found.  Please correct file.
+
+IPECO    29
+File not found.  Please check file name or create file.
+
+IPENV     1
+Environmental modification input level not found. Please correct input file.
+
+IPENV     2
+Environmental modification input level not found. Please correct input file.
+
+IPEXP     1
+Treatment input section not found.  Please add to input file.
+
+IPEXP     2
+Error in Experiment Selection entry.  Fix entry or batch file.
+
+IPEXP     3
+Error in Treatment Selection entry.  Fix entry or batch file.
+
+IPEXP     4
+Simulation must begin on or before the planting date.  Correct dates.
+
+IPEXP    10
+Error in crop input.  Correct input file.
+
+IPEXP    11
+Error in cultivar input.  Correct input file.
+
+IPEXP    20
+You selected a crop which can not be simulated by this model.  Please ReExecute
+
+IPEXP    21
+Experiment list input section not found.  Please correct file.
+
+IPEXP    22
+Incorrect weather method option selected.  Please correct file.
+
+IPEXP    29
+File not found.  Please check file name or create file.
+
+IPEXP    80
+No valid soil file found.
+
+IPEXP    64
+Treatment not found.  Please check inputs or input file.
+
+IPEXP    99
+This file can only be run for spatial analysis applications.
+
+IPFERT    1
+Fertilizer input section not found.  Please add to input file.
+
+IPFERT    2
+Fertilizer input level not found. Please correct input file.
+
+IPFERT    3
+First fertilizer application date is defined prior to the start of simulation.
+
+IPFERT   10
+Error in date of fertilizer application input.  Correct input file.
+
+IPFERT   11
+Error in depth of fertilizer application input.  Correct input file.
+
+IPFERT   12
+Error in amount of N-fertilizer input.  Correct input file.
+
+IPFERT   13
+Error in amount of P-fertilizer input.  Correct input file.
+
+IPFERT   14
+Error in fertilizer code.  Correct input file.
+
+IPFLD     1
+Field input section not found.  Please add to input file.
+
+IPFLD     2
+Field input level not found. Please correct input file.
+
+IPFLD    10
+Error in weather station input.  Correct input file.
+
+IPFLD    11
+Error in soil identification input.  Correct input file.
+
+IPHAR     1
+Harvest input section not found.  Please add to input file.
+
+IPHAR     2
+Harvest input level not found. Please correct input file.
+
+IPHAR     3
+Harvest growth stage not found.  Please add to input file.
+
+IPHAR     4
+Reported harvest date not found.  Please add to input file.
+
+IPHAR     5
+Reported harvest date after planting not found.  Please add to input file.
+
+IPHAR    10
+Error in date of harvest input.  Correct input file.
+
+IPHAR    11
+Error in harvest input.  Correct input file.
+
+IPHAR    12
+Error in harvest stage code.  Correct input file.
+
+IPHAR    13
+Error in date of harvest input.  Please define date of harvest.
+
+IPHAR    14
+Automatic harvest option not available for this crop.  Correct input file.
+
+IPIRR     1
+Irrigation input section not found.  Please add to input file.
+
+IPIRR     2
+Irrigation input level not found. Please correct input file.
+
+IPIRR     3
+First irrigation application date is defined prior to the start of simulation.
+
+IPIRR    10
+Error in date of irrigation input.  Correct input file.
+
+IPIRR    11
+Error in amount of irrigation input.  Correct input file.
+
+IPIRR    12
+Error in irrigation code.  Correct input file.
+
+IPPARM   21
+Pest parameter input section not found.  Please correct file.
+
+IPPARM   29
+File not found.  Please check file name or create file.
+
+IPPARM   30
+Maximum number of pests is 100.  Please reduce your number of pests.
+
+IPPHEN    7
+Ecotype input section not found.  Please correct file.
+
+IPPLNT    1
+Planting input section not found.  Please add to input file.
+
+IPPLNT    2
+Error in planting inputs.  Check format.
+
+IPPLNT   10
+Error in planting date input.  Check format.
+
+IPPLNT   11
+Error in plant population input.  Check format.
+
+IPPLNT   12
+Error in row spacing input.  Check format.
+
+IPPLNT   13
+Error in row orientation input.  Check format.
+
+IPPLNT   14
+Error in planting depth input.  Check format.
+
+IPPLNT   15
+Error in emergence date input.  Please check format or add information.
+
+IPPLNT   16
+Error in sprout length input.  Please define sprout length in seed age column.
+
+IPPLNT   17
+Error in initial seed potato weight input.  Please check format.
+
+IPPLNT   18
+Error in initial weight of transplants.  Please check format.
+
+IPPLNT   19
+Invalid planting method.  Please check input data.
+
+IPPLNT   64
+Invalid format in input file.  Please check format.
+
+IPRES     1
+Residue input section not found.  Please add to input file.
+
+IPRES     2
+Residue input level not found. Please correct input file.
+
+IPRES     3
+First residue application date is defined prior to the start of simulation.
+
+IPRES    10
+Error in date of residue application input.  Correct input file.
+
+IPRES    11
+Error in amount of residue input.  Correct input file.
+
+IPRES    12
+Error in amount of residue N input.  Correct input file.
+
+IPRES    13
+Error in amount of residue P input.  Correct input file.
+
+IPRES    14
+Error in amount of residue K input.  Correct input file.
+
+IPRICE   10
+Nursery temperature can not be less than zero. Correct input file.
+
+IPSIM     1
+Simulation control section not found.  Please add to input file.
+
+IPSIM     2
+Incorrect number of lines in simulation control section.  Check format.
+
+IPSIM     3
+Impossible combination--for MEEVP='Z', MEPHO must be 'L'
+
+IPSIM     4
+Automatic harvest option not available for this crop.  Correct input file.
+
+IPSIM     5
+Automatic planting option not available for this crop.  Correct input file.
+
+IPSIM     6
+Phosphorus model not enabled for this crop. Contact CSM team for more info.
+
+IPSIM     7
+Potassium model not enabled for this crop. Contact CSM team for more info.
+
+IPSLAN    1
+Initial soil analysis section not found.  Please add to input file.
+
+IPSLAN    2
+Soil analysis input level not found. Please correct input file.
+
+IPSLAN   10
+Error in initial bulk density inputs.  Please check data.
+
+IPSLAN   11
+Error in initial organic carbon inputs.  Please check data.
+
+IPSLAN   12
+Error in initial nitrogen inputs.  Please check data.
+
+IPSLIN    1
+Initial soil input section not found.  Please add to input file.
+
+IPSLIN    2
+Initial soil conditions input level not found. Please correct input file.
+
+IPSLIN   10
+Error in initial soil water inputs.  Please check data.
+
+IPSLIN   11
+Error in initial NH4 inputs.  Please check data.
+
+IPSLIN   12
+Error in initial NO3 inputs.  Please check data.
+
+IPSLIN   13
+Error in initial residue weight inputs.  Please check data.
+
+IPSLIN   14
+Error in initial residue nodule weight inputs.  Please check data.
+
+IPSLIN   15
+Error in inoculation efficiency data.  Please check data.
+
+IPSLIN   16
+Error in fixation efficiency data.  Please check data.
+
+IPSOIL    1
+Error in Soil Selection entry.  Fix entry or batch file.
+
+IPSOIL    2
+More than 19 layers in the soil profile.  Correct input file.
+
+IPSOIL    3
+Error in Soil Selection entry.  Fix soil input file.
+
+IPSOIL    4
+End of soil file.  Please add missing information to input file.
+
+IPSOIL    5
+Depth of second tier does not match the one of the first tier.  Fix input file.
+
+IPSOIL    6
+Number of layers in second tier does not match the number in the first tier.
+
+IPSOIL    7
+Saturated water content (SAT) is LESS than drained upper limit.  Fix input file.
+
+IPSOIL    8
+Drained upper limit (DUL) is LESS than lower limit (LL).  Fix input file.
+
+IPSOIL    9
+SLU1 is missing or defined as 0. Please define as a value > 0.0.
+
+IPSOIL   10
+SLDR is missing or defined as 0. Please define as a value > 0.0.
+
+IPSOIL   11
+SLRO is missing or defined as 0. Please define as a value > 0.0.
+
+IPSOIL   12
+SALB is missing or defined as 0. Please define as a value > 0.0.
+
+IPSOIL   13
+DUL is missing or defined as 0. Please define as a value > 0.0.
+
+IPSOIL   14
+SHF is missing or defined as < 0. Please define as a value > or = 0.0.
+
+IPSOIL   21
+Soil input section not found.  Please correct file.
+
+IPSOIL   29
+File not found.  Please check soil profile name or create file.
+
+IPTILL    2
+Tillage input level not found. Please correct input file.
+
+IPTILL    3
+First tillage application date is defined prior to the start of simulation.
+
+IPVAR     1
+Error in Cultivar entry.  Fix entry or batch file.
+
+IPVAR     2
+Error in Cultivar entry.  Fix cultivar input file.
+
+IPVAR    21
+Genetics input section not found.  Please correct file.
+
+IPVAR    22
+LFMAX is less than or equal 0.  Please correct file.
+
+IPVAR    23
+SLAVAR is less than or equal 0.  Please correct file.
+
+IPVAR    24
+XFRUIT is less than or equal 0.  Please correct file.
+
+IPVAR    25
+WTPSD  is less than or equal 0.  Please correct file.
+
+IPVAR    26
+SDPDVR is less than or equal 0.  Please correct file.
+
+IPVAR    27
+SFDUR  is less than or equal 0.  Please correct file.
+
+IPVAR    28
+PODUR  is less than or equal 0.  Please correct file.
+
+IPVAR    29
+File not found.  Please check file name or create file.
+
+IPVAR    30
+KCAN  is less than or equal 0.  Please correct file.
+
+IPVAR    50
+THRESH  is less than or equal 0.  Please correct file.
+
+IPVAR    51
+SDPRO  is less than or equal 0.  Please correct file.
+
+IPVAR    52
+SDLIP  is less than or equal 0.  Please correct file.
+
+IPWTH     1
+Simulation date must be AFTER first available weather day.  Correct dates.
+
+IPWTH     2
+Missing day in weather data file.
+
+IPWTH     3
+Missing or negative data in weather data file.
+
+IPWTH     4
+Tmax and Tmin are both set to 0 in weather data file.
+
+IPWTH     5
+Tmax and Tmin have identical values in weather data file.
+
+IPWTH     6
+Tmax is less than Tmin in weather data file.
+
+IPWTH     7
+Duplicate record in weather data file.
+
+IPWTH     8
+Non-sequential record in weather data file.
+
+IPWTH     9
+Unlikely value of WINDSP in weather data file.
+
+IPWTH    10
+Missing required data in weather data file.
+
+IPWTH    29
+File not found.  Please check file name or create file.
+
+IPWTH    30
+Error opening file.
+
+IRRIG    10
+Incompatibility between Century SOM method and flooded field management.
+
+LAND      2
+Planting date is before start of simulation date.  Please fix input file.
+
+MODELN    1
+Error opening file. Please check file.
+
+MODELN    2
+File not find. Please create or copy file to working directory.
+
+MODELN    3
+Code not found. Please fix configuration file.
+
+MODELN    4
+This model does not exist. Please contact the CSM team for further information.
+
+MODELN    5
+This crop module does not exist. Please contact the CSM team for further information.
+
+MODELN    6
+Your configuration file is incompatible with the current version. Please update the file.
+
+MODELN    7
+Crop code incompatible with model specified.
+
+PATH      1
+Code not found in configuration file. Please correct file.
+
+PATH      2
+Configuration file not found.
+
+PATH      3
+Path error in configuration file. Please correct file.
+
+PPLANT   10
+Review P parameters in species file.
+
+READA     1
+Error in experimental data (averages) file.  Could not find @TRNO header line.
+
+READA     2
+Error in experimental data (averages) file.
+
+RTSOLV    1
+P model not enabled for this crop. Contact the CSM team for further info.
+
+SEDLYR    1
+Error in Soil Sensitivity Analysis Selection entry.  Fix entry or batch file.
+
+SEFERT    1
+Error in Fertilizer Sensitivity Analysis Selection.  Fix entry or batch file.
+
+SEFIX     1
+Error in Fixation Sensitivity Analysis Selection.  Fix entry or batch file.
+
+SEFREQ    1
+Error in Output Frequency Selection entry.  Fix entry or batch file.
+
+SEFREQ    2
+Error in Output Frequency Selection entry.  Fix entry or batch file.
+
+SEPEST    1
+Error in Pest Sensitivity Analysis Selection entry.  Fix entry or batch file.
+
+SEINIT    1
+Error in Initialization Sensitivity Analysis Selection. Fix entry or batch file.
+
+SEIRR     1
+Error in Irrigation Sensitivity Analysis Selection.  Fix entry or batch file.
+
+SEPROF    1
+Error in Soil Sensitivity Analysis Selection entry.  Fix entry or batch file.
+
+SESOIL    1
+Error in Soil Sensitivity Analysis Selection entry.  Fix entry or batch file.
+
+SEVAR     1
+Error in Variety Sensitivity Analysis Selection entry. Fix entry or batch file.
+
+SEWTH     1
+Error in Weather Sensitivity Analysis Selection entry. Fix entry or batch file.
+
+SENS      1
+Error in Sensitivity Selection entry.  Fix entry or batch file.
+
+SOILDY   10
+Organic carbon in soil file is zero or undefined.  Please check file.
+
+SOILDY   11
+Missing data in soil file.  Please check file.
+
+SOILDY   29
+File not found.  Please check file name or create file.
+
+SOILDY   33
+End of file encountered.
+
+SOILDY   64
+Invalid format in file.
+
+SOMFIX    1
+File does not exist. Please copy file from the appropriate directory.
+
+SOMINI    1
+File does not exist. Please copy file from the appropriate directory.
+
+SPINIT    1
+Insufficient soil P data provided.  Program will stop.
+
+SWCROP    1
+Error in Crop entry.  Fix entry or batch file.
+
+SWFERT   1
+Error in Fertilizer Sensitivity Analysis Selection.  Fix entry or batch file.
+
+SWFIX    1
+Error in Fertilizer Sensitivity Analysis Selection.  Fix entry or batch file.
+
+SWINSC   1
+Error in Initial Soil Sensitivity Analysis Selection.  Fix entry or batch file.
+
+SWIRR    1
+Error in Irrigation Sensitivity Analysis Selection.  Fix entry or batch file.
+
+SWWTH    1
+Error in Weather Sensitivity Analysis Selection.  Fix entry or batch file.
+
+TILLAG  29
+Tillage operations file not found.
+
+WEATHR   1
+Weather method selected not available.  Please fix input file.
+
+WTHMOD    1
+Environmental modification section not found.
+
+WTHMOD   10
+Weather modification created negative data in minimum data set.  Check changes.
+
+WGENIN    4
+Missing WGEN data in climate file. Program will stop.
+
+SIMMIN    4
+Missing MONTHLY AVERAGES data in climate file. Program will stop.
+
+MISC     -1
+End-of-file encountered in input file.
+
+MISC   6100
+Integer overflow in input file.  Check format.
+
+MISC   6101
+Invalid integer in input file.  Check format.
+
+MISC   6103
+Invalid real in input file.  Check format.
+
+MISC   6205
+A Edit descriptor expexted for Character.  Check format.
+
+MISC   6206
+Invalid format in input file.  Check format.
+
+MISC   6416
+File not found.  Create input file.
+
+GENERI    1
+Section not found in input file. Check file.
+
+GENERI    2
+Treatment not found in input file. Check file.
+
+GENERI   29
+File not found. Please check file name or create file.
+
+GENERI   30
+Error opening file.
+
+GENERI   33
+End of file encountered.
+
+GENERI   35
+Error in ECOTYPE entry.
+
+GENERI   36
+Error in cultivar entry.
+
+GENERI   42
+Input section not found.
+
+GENERI   50
+Missing data.
+
+GENERI   59
+Syntax error.
+
+GENERI   64
+Invalid format in file.
+
+GENERI   75
+Array size exceeded.
+
