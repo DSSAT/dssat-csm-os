@@ -1,0 +1,148 @@
+!Fertilizer properties lookup table
+!
+!Fertilizer data compiled by Upendra Singh, Job Fugice, and Cheryl Porter
+!Much of these data were obtained from: http://www.soilcropandmore.info/soil/fertiliz.htm
+
+! Variable    Definition                                                                                               
+! CDE         Fertilizer type code (combine with "FE" prefix)                                                            
+! Description Common name of fertilizer                                                                              
+! NO3%        Percentage of NO3-N in total N (%)                                                                           
+! NH4%        Percentage of NH4-N in total N (%)                                                                           
+! Urea%       Percentage of urea-N in total N (%)                                                                          
+! UIEFF       Urease inhibitor effectiveness (%)                                                                           
+! UIDUR       Duration of urease inhibitor (d) (acts as a step function, effectiveness goes to zero after this time)       
+! NIEFF       Nitrification inhibitor effectiveness (%)                                                                    
+! NIDUR       Duration of nitrification inhibitor (d) (acts as a step function, effectiveness goes to zero after this time)
+! NREL50      Controlled N release rate, expressed as time for 50% of N to be released (d)                               
+! NRFNC       Controlled N release function type (see below for choices)                                                   
+! NSIGK       Sigmoid logistics curve K value (for step-like function, k=0.8, for linear-like function, k=0.2)             
+! N%          Content of elemental N in fertilizer by weight (%)                                                                       
+! P%          Content of elemental P in fertilizer by weight (%)                                                                       
+! K%          Content of elemental K in fertilizer by weight (%)                                                                       
+! C%          Content of elemental Ca in fertilizer by weight (%)                                                                      
+! MG%         Content of elemental Mg in fertilizer by weight (%)                                                                      
+! S%          Content of elemental S in fertilizer by weight (%)                                                                       
+
+! Values of NRFNC:                                                                  
+! LIN         Linear. Constant rate of N release per day.                                                                    
+! STP         Step function. No N release until day NREL50, when all N is released (e.g., sulphur coating).                  
+! SIG         Sigmoid function. Initially slow release, increasing to a maximum rate at NREL50, then decreasing to zero.     
+!             (for step-like function, k=0.8, for linear-like function, k=0.2)                                                
+
+                                            |--- Nitrogen ----|-- Urease -|- Nitrif --|-- Controlled ---|
+                                            | composition (%) | inhibitor | inhibitor |---- release ----|----- Content by weight (%) ------| 
+@CDE  Description                             NO3%  NH4% Urea% UIEFF UIDUR NIEFF NIDUR NRL50 NRFNC NSIGK FertN FertP FertK FertC FerMg FertS
+FE001 Ammonium Nitrate                          50    50     0     0     0     0     0     0     0     0    34     0     0     0     0     0
+FE002 Ammonium Sulphate                          0   100     0     0     0     0     0     0     0     0    21     0     0     0     0    24
+FE003 Ammonium Nitrate Sulphate                 33    67     0     0     0     0     0     0     0     0    26     0     0     0     0     5
+FE004 Anhydrous Ammonia                          0   100     0     0     0     0     0     0     0     0    70     0     0     0     0     0   !FertN = 60-80%
+FE005 Urea                                       0     0   100     0     0     0     0     0     0     0  46.4     0     0     0     0     0
+FE006 Diammonium Phosphate                       0   100     0     0     0     0     0     0     0     0    18    46     0     0     0     0
+FE007 Monoammonium Phosphate                     0   100     0     0     0     0     0     0     0     0    11    48     0     1     0     0
+FE008 Calcium Nitrate                          100     0     0     0     0     0     0     0     0     0    15     0     0    21     0     0
+FE009 Aqua Ammonia                               0   100     0     0     0     0     0     0     0     0    20     0     0     0     0     0   !FertN = 16-25%
+FE010 Urea Ammonium Nitrate                     25    25    50     0     0     0     0     0     0     0   var     0     0     0     0     0   !FertN varies%
+FE011 Calcium Ammonium Nitrate                  50    50     0     0     0     0     0     0     0     0    27     0     0     0     0     0
+FE012 Ammonium poly-phosphate                    0   100     0     0     0     0     0     0     0     0    10    34     0     0     0     0
+FE013 Single super phosphate                     0     0     0     0     0     0     0     0     0     0     0    20     0    21     0    11
+FE014 Triple super phosphate                     0     0     0     0     0     0     0     0     0     0     0    46     0    14     0     2
+FE015 Liquid phosphoric acid                     0     0     0     0     0     0     0     0     0     0     0   var     0     0     0     0   !FertP varies
+FE016 Potassium chloride                         0     0     0     0     0     0     0     0     0     0     0     0    60     0     0     0
+FE017 Potassium Nitrate                        100     0     0     0     0     0     0     0     0     0    13     0    44     0     0     0
+FE018 Potassium sulfate                          0     0     0     0     0     0     0     0     0     0     0     0    52     0     0    16
+FE019 Urea super granules                        0     0   100     0     0     0     0     0     0     0  46.4     0     0     0     0     0
+FE020 Dolomitic limestone                        0     0     0     0     0     0     0     0     0     0     0     0     0    27     9     0   !FertC = 24-30%, FerMg = 6-12%
+FE021 Rock phosphate                             0     0     0     0     0     0     0     0     0     0     0    18     0     0     0     0   !FertP = 2-35%, FertC and FerMg undetermined 
+FE022 Calcitic limestone                         0     0     0     0     0     0     0     0     0     0     0     0     0    36     0     0
+FE023 Urea Ammonium Sulfate                      0    20    80     0     0     0     0     0     0     0   var     0     0     0     0   var   !FertN, FertS vary
+FE024 Rhizobium                                  0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+                                                    
+FE026 Calcium hydroxide                          0     0     0     0     0     0     0     0     0     0     0     0     0   var     0     0   !FertC varies
+                                                     
+! Generic NPK - for user blend, modify values                                    
+FE027 NPK - ammonium nitrate                    50    50     0     0     0     0     0     0     0     0   var   var   var   var   var   var   !Fertilizer composition varies
+FE028 NPK - urea                                 0     0   100     0     0     0     0     0     0     0   var   var   var   var   var   var   !Fertilizer composition varies
+FE029 NPK - ammonium nitrate urea               25    25    50     0     0     0     0     0     0     0   var   var   var   var   var   var   !Fertilizer composition varies
+FE030 NPK - user blend                         -99   -99   -99     0     0     0     0     0     0     0   var   var   var   var   var   var   !Fertilizer composition varies
+                                               
+!E031 Ammonium nitrate limestone              50??  50??     0     0     0     0     0     0     0     0    20     0     0     6     4     0
+!E032 Calcium cyanamide                         ??    ??     0     0     0     0     0     0     0     0    21     0     0    11     0     0
+!E033 Calcium nitrate/urea                      ??     0    ??     0     0     0     0     0     0     0    34     0     0    10     0     0
+                                              
+! nitrogen solutions                                  
+! (N-SOL or UAN solutions)**                                  
+! (urea/ammonium nitrate):                                  
+FE036 32% UAN (35% urea + 45% A.N.)           28.1  28.1  43.8     0     0     0     0     0     0     0    32     0     0     0     0     0
+FE037 30% UAN (33% urea + 42% A.N.)           28.0  28.0  44.0     0     0     0     0     0     0     0    30     0     0     0     0     0
+FE038 28% UAN (30% urea + 40% A.N.)           28.6  28.5  42.9     0     0     0     0     0     0     0    28     0     0     0     0     0
+FE039 21% AN (60% A.N. + 40% water)           50.0  50.0   0.0     0     0     0     0     0     0    21     0     0     0     0     0     0
+FE040 19% AN (54% A.N. + 46% water)           50.0  50.0   0.0     0     0     0     0     0     0    19     0     0     0     0     0     0
+                                                 
+FE041 Sodium nitrate                           100     0     0     0     0     0     0     0     0     0    16     0     0     0     0     0
+
+FE042 Ammonionated super phosphate             100     0     0     0     0     0     0     0     0     0   var   var     0   ...     0   ...
+FE043 Ammonium phosphate nitrate                50    50     0     0     0     0     0     0     0     0    30    10     0     0     0     0
+FE044 Ammonium phosphate sulfate                 0   100     0     0     0     0     0     0     0     0    16    20     0     0     0    15
+FE045 Basic slag                                 0     0     0     0     0     0     0     0     0     0     0   var   ...   var   ...   ...
+!E046 Bone meal (steamed)                      ???   ???     0     0     0     0     0     0     0     0   var   var     0   var     0     0
+!E047 Nitric phosphate                         100   ???     0     0     0     0     0     0     0     0     0   var   var   ...     0   ...
+
+!E049 Urea ammonium phosphate                    0   ???   ???     0     0     0     0     0     0     0    23    35     0     0     0     0
+FE050 Urea phosphate                             0     0   100     0     0     0     0     0     0     0    17    44     0     0     0     0
+FE052 Greensand                                  0     0     0     0     0     0     0     0     0     0     0     1     6     0     0     0
+
+FE053 Potassium carbonate K2CO3 solid            0     0     0     0     0     0     0     0     0     0     0     0    48     0     0     0
+FE054 Potassium carbonate K2CO3 liquid           0     0     0     0     0     0     0     0     0     0     0     0    34     0     0     0
+FE055 Potassium magnesium sulfate**              0     0     0     0     0     0     0     0     0     0     0     0    21     0    11    23
+FE056 Potassium metaphosphate                    0     0     0     0     0     0     0     0     0     0     0    59    39     0     0     0
+FE057 Potassium nitrate (nitrate of potash)    100     0     0     0     0     0     0     0     0     0    13     0    44     0     0     0
+
+FE058 Magnesium ammonium phosphate               0   100     0     0     0     0     0     0     0     0     8    40     0     0    15     0
+FE059 Potassium magnesium sulfate**              0     0     0     0     0     0     0     0     0     0     0     0    21     0    11    23
+FE060 Ammonium sulfate**                         0   100     0     0     0     0     0     0     0     0    21     0     0     0     0    24
+FE061 Ammonium thiosulfate** (60% solution)      0   100     0     0     0     0     0     0     0     0    12     0     0     0     0    26
+FE062 Potassium magnesium sulfate**              0     0     0     0     0     0     0     0     0     0     0     0    21     0    11    23
+FE063 Potassium sulfate                          0     0     0     0     0     0     0     0     0     0     0     0    52     0     0    16
+
+! Controlled release and inhibitors                                   
+!CDE  Description                             NO3%  NH4% Urea% UIEFF UIDUR NIEFF NIDUR NRL50 NRFNC NSIGK FertN FertP FertK FertC FerMg FertS
+FE201 ESN                                        0     0   100     0     0     0     0    50   LIN     0    30     0     0     0     0     0
+FE202 NBTPT                                      0     0   100    50    25     0     0     0   -99     0    46     0     0     0     0     0
+FE203 DCD                                        0     0   100     0     0    50    30     0   -99     0    46     0     0     0     0     0
+FE204 SuperU                                     0     0   100    50    25    50    30     0   -99     0    46     0     0     0     0     0
+FE205 DMPP                                       0     0   100     0     0    80    60     0   -99     0    46     0     0     0     0     0
+FE206 sulphur coated urea (thin coat)            0     0   100     0     0     0     0    10   STP     0    45     0     0     0     0     0
+FE207 sulphur coated urea (thick coat)           0     0   100     0     0     0     0    20   SIG   0.8    30     0     0     0     0     0
+FE208 ESN + NBTPT                                0     0   100    50    25    50    30    50   SIG   0.2    46     0     0     0     0     0
+FE209 Ureaform (Urea + formaldehyde)             0     0   100     0     0     0     0     0   -99     0    38     0     0     0     0     0
+FE210 Crotonylidene diurea                       0     0   100     0     0     0     0     0   -99     0    32     0     0     0     0     0
+FE211 Isobutylidene diurea                       0     0   100     0     0     0     0     0   -99     0    31     0     0     0     0     0
+                                                        
+! Other, non-NPK:                                    
+! Elemental sulfur (S):                                    
+FE500 Wettable S                                 0     0     0     0     0     0     0     0     0     0     0     0     0     0     090-100
+FE501 Flowable S                                 0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 52-70
+FE502 Flowers of S                               0     0     0     0     0     0     0     0     0     0     0     0     0     0     090-100
+FE503 Gypsum                                     0     0     0     0     0     0     0     0     0     0     0     0     0    22     0    18
+FE504 Magnesium sulfate (epsom salt)             0     0     0     0     0     0     0     0     0     0     0     0     0     0    10    13
+FE505 Sulfuric acid                              0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 20-26
+FE506 Magnesium oxide                            0     0     0     0     0     0     0     0     0     0     0     0     0     0    45     0
+FE508 Magnesium sulfate (Kieserite)              0     0     0     0     0     0     0     0     0     0     0     0     0     0    17    23
+FE509 Calcium chloride                           0     0     0     0     0     0     0     0     0     0     0     0     0    36     0     0
+FE510 Burned lime                                0     0     0     0     0     0     0     0     0     0     0     0     0    70     0     0
+FE511 Selma chalk                                0     0     0     0     0     0     0     0     0     0     0     0     0    32     0     0
+FE513 Hydrated lime                              0     0     0     0     0     0     0     0     0     0     0     0     0    50     0     0
+
+! Generic fertilizer - user to modify values                                
+FE900 Generic fertilizer                       -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+! For testing purposes
+FE901 Urea + SR1                                 0     0   100     0     0     0     0    50   SIG   0.2    46     0     0     0     0     0
+FE902 Urea + SR2                                 0     0   100     0     0     0     0    50   SIG   0.8    46     0     0     0     0     0
+FE903 Urea + SR3                                 0     0   100     0     0     0     0    20   SIG   0.2    46     0     0     0     0     0
+FE904 Urea + SR4                                 0     0   100     0     0     0     0    20   SIG   0.8    46     0     0     0     0     0
+FE905 Urea + UI1                                 0     0   100    50    25     0     0     0   SIG     0    46     0     0     0     0     0
+FE906 Urea + UI2                                 0     0   100    25    10     0     0     0   SIG     0    46     0     0     0     0     0
+FE907 Urea + NI1                                 0     0   100     0     0    50    30     0   SIG     0    46     0     0     0     0     0
+FE908 Urea + NI2                                 0     0   100     0     0    25    10     0   SIG     0    46     0     0     0     0     0
+FE909 Urea + SR1 + UI1 + NI1                     0     0   100    50    25    50    30    50   SIG   0.2    46     0     0     0     0     0
