@@ -178,6 +178,7 @@ set(
         "Management/AUTHAR.for"
         "Management/AUTPLT.for"
         "Management/CHEMICAL.for"
+	"Management/FertType_mod.for"
         "Management/Fert_Place.for"
         "Management/Flood_Irrig.for"
         "Management/IRRIG.for"

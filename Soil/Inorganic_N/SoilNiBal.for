@@ -15,6 +15,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
 !     ------------------------------------------------------------------
       USE N2O_mod
+      USE FertType_mod
       USE Interface_SoilNBalSum
       IMPLICIT NONE
       SAVE
@@ -24,7 +25,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       CHARACTER*1  IDETN, IDETL, ISWNIT
       CHARACTER*13, PARAMETER :: SNiBAL = 'SoilNiBal.OUT'
 
-      INTEGER DAS, DYNAMIC, INCDAT, YRDOY
+      INTEGER DAS, DYNAMIC, INCDAT, YRDOY, I
       INTEGER YRSIM, RUN, LUNSNC, NBUND
       INTEGER YR, DOY, YRI, DOYI
 
@@ -45,6 +46,7 @@ C  03/04/2005 CHP wrote based on SoilNBal
       REAL CIMMOBN, CMINERN, NGasLoss, TNGSOILI
 
       REAL N2OY, N2Y, NOY
+      REAL UnreleasedN  !Slow release fertilizer
 
 !     ------------------------------------------------------------------
       TYPE (ControlType) CONTROL
@@ -124,14 +126,15 @@ C  03/04/2005 CHP wrote based on SoilNBal
         CALL YR_DOY(INCDAT(YRDOY,-1), YR, DOY)
 !       HJ added RLTD for N loss to tile        
         WRITE(LUNSNC,10)
-   10     FORMAT('!',15X,'|--------------- STATE VARIABLES -----------',
-     &    '----|---- ADDED ---|----------------------------- REMOVED ',
-     &    'TODAY --------------------------|    DAILY     CUMUL',/,
-     &    '@YEAR DOY  DAS     NO3     NH4   TUREA   TNGAS  FLOODN  ALG',
-     &    'FIX   AFERT  AMINER  RIMMOB    RLCH    RLTD    RNUP    RNRO',
-     &    '    RAML   N2OED    N2ED    NOED      DBAL      CBAL')
+   10     FORMAT('!',15X,
+     &   '|------------------- STATE VARIABLES -------------------|',
+     &   '---- ADDED ---|----------------------------- REMOVED ',
+     &   'TODAY --------------------------|    DAILY     CUMUL',/,
+     &   '@YEAR DOY  DAS     NO3     NH4   TUREA   TNGAS  FLOODN  ALG',
+     &   'FIX  UNFERT   AFERT  AMINER  RIMMOB    RLCH    RLTD    RNUP',
+     &   '    RNRO    RAML   N2OED    N2ED    NOED      DBAL      CBAL')
         WRITE (LUNSNC,50) YR, DOY, 0, 
-     &    TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 
+     &    TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 0.0,
      &    0.0, 0.0, 
      &    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
       ENDIF
@@ -168,8 +171,19 @@ C  03/04/2005 CHP wrote based on SoilNBal
 
         !FLOODNTODAY = TOTFLOODN - FLOODNY
 
+!       For slow release fertilizers, keep track of unreleased N
+        UnreleasedN = 0.0
+        IF (NActiveSR .GT. 0) THEN
+          DO I = 1, NSlowRelN
+            IF (SlowRelN(I) % ACTIVE) THEN
+              UnreleasedN = UnreleasedN + 
+     &           SlowRelN(I) % N0 - SlowRelN(I) % CumRelToday
+            ENDIF
+          ENDDO
+        ENDIF
+
         TOTSTATE = TNO3 + TNH4 + TUREA + ALGFIX + TOTFLOODN 
-     &           + N2O_DATA % TNGSoil  
+     &           + N2O_DATA % TNGSoil + UnreleasedN
         TOTADD   = AMTFERTODAY + MINERTODAY
         TOTSUB   = IMMOBTODAY + LCHTODAY + WTNUPTODAY + FNROTODAY 
      &           + AMLTODAY + N2Otoday + N2today + NOtoday
@@ -182,11 +196,12 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !       Write daily output to SoilNiBal.OUT.
         WRITE (LUNSNC,50) YR, DOY, DAS, 
      &    TNO3, TNH4, TUREA, N2O_DATA % TNGSoil, TOTFLOODN, ALGFIX, 
+     &    UnreleasedN,
      &    AMTFERTODAY, MINERTODAY, 
      &    IMMOBTODAY, LCHTODAY, NTILEDRTODAY, WTNUPTODAY, !HJ
      &    FNROTODAY, AMLTODAY, N2Otoday, N2today, NOtoday,
      &    DAYBAL, CUMBAL
-   50     FORMAT(I5, I4.3, I5, 6F8.3, F8.1, 10F8.4, 2F10.4)
+   50     FORMAT(I5, I4.3, I5, 7F8.3, F8.1, 10F8.4, 2F10.4)
 
 !       Save today's cumulative values for use tomorrow
         AMTFERY  = AMTFER
@@ -224,8 +239,19 @@ C  03/04/2005 CHP wrote based on SoilNBal
 !       only deals with N uptake from the soil.
         TALLNI  = TALLNI + AMTFER + CMINERN !Initial + add
 
+!       For slow release fertilizers, keep track of unreleased N
+        UnreleasedN = 0.0
+        IF (NActiveSR .GT. 0) THEN
+          DO I = 1, NSlowRelN
+            IF (SlowRelN(I) % ACTIVE) THEN
+              UnreleasedN = UnreleasedN + 
+     &           SlowRelN(I) % N0 - SlowRelN(I) % CumRelToday
+            ENDIF
+          ENDDO
+        ENDIF
+
 !       Sum state N at end of season
-        STATEN = TNO3 + TNH4 + TUREA + N2O_DATA % TNGSoil         
+        STATEN = TNO3 + TNH4 + TUREA + N2O_DATA % TNGSoil + UnreleasedN
 
 !       Sum the initial value of all abiotic N pools (soil, air,
 !       fertilizer), SOM and N uptake (WTNUP multiplied by 10 to
@@ -244,11 +270,12 @@ C  03/04/2005 CHP wrote based on SoilNBal
         WRITE (LUNSNC,100) YRI, DOYI, YR, DOY
 
         WRITE (LUNSNC, 200) TNO3I, TNO3, TNH4I, TNH4, TUREAI, TUREA
-        WRITE (LUNSNC, 210) TNGSOILI, N2O_DATA % TNGSoil
+        WRITE (LUNSNC, 210) TNGSOILI, N2O_DATA % TNGSoil,
+     &        UnreleasedN
 
         IF (NBUND .GT. 0) THEN
           WRITE(LUNSNC,300) TOTFLOODNI, TOTFLOODN, ALGFIXI, ALGFIX
-          TALLN = TALLN + TOTFLOODN + ALGFIX
+          TALLN = TALLN + TOTFLOODN + ALGFIX 
           STATEN = STATEN + TOTFLOODN + ALGFIX
         ENDIF
 !       HJ adeed CNTILEDR
@@ -280,7 +307,8 @@ C  03/04/2005 CHP wrote based on SoilNBal
      &     /,'!', 3X, 'Soil Urea',            T48, F10.2, T68, F10.2)
 
 210     FORMAT (
-     &       '!', 3X, 'Soil N gases',         T48, F10.2, T68, F10.2)
+     &       '!', 3X, 'Soil N gases',         T48, F10.2, T68, F10.2,
+     &     /,'!', 3x, 'Unreleased fert N',                T68, F10.2)
 
 300     FORMAT (
      &       '!', 3X, 'Flood water N',        T48, F10.2, T68, F10.2,
