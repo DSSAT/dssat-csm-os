@@ -1,0 +1,29 @@
+language: bash
+
+sudo: required
+
+services:
+
+- docker
+
+env: SH="docker exec -t ci bash -c"
+
+before_install:
+
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+- docker run --name ci --rm -d -w /home/cidssat marinadezordi/imagercroptest:1.0 tail -f /dev/null
+
+- docker ps
+
+install:
+
+- $SH 'git clone https://'"$GIT_USERNAME"':'"$GIT_PASSWORD"'@github.com/marinadezordi/dssat-csm.git'
+- $SH 'cp -r Data/* dssat-csm/Data'
+- $SH "cd dssat-csm && git checkout develop && mkdir build"
+- $SH "cd dssat-csm/build && cmake -DCMAKE_Fortran_COMPILER=/usr/bin/gfortran-8 -DCMAKE_INSTALL_PREFIX=/DSSAT47/A .. && make -j3 && make install"
+- $SH "cd dssat-csm && git checkout $TRAVIS_BRANCH && rm -rf build && mkdir build"
+- $SH "cd dssat-csm/build && cmake -DCMAKE_Fortran_COMPILER=/usr/bin/gfortran-8 -DCMAKE_INSTALL_PREFIX=/DSSAT47/B .. && make -j3 && make install"
+- $SH "cd /DSSAT47/A/ci && ../run_dssat B AllCrops.v47"
+- $SH "cd /DSSAT47/B/ci && ../run_dssat B AllCrops.v47"
+- $SH "cd /home/test && Rscript citest.R"
