@@ -18,12 +18,12 @@ before_install:
 
 install:
 
-- $SH 'git clone https://'"$GIT_USERNAME"':'"$GIT_PASSWORD"'@github.com/marinadezordi/dssat-csm.git'
-- $SH 'cp -r Data/* dssat-csm/Data'
-- $SH "cd dssat-csm && git checkout develop && mkdir build"
-- $SH "cd dssat-csm/build && cmake -DCMAKE_Fortran_COMPILER=/usr/bin/gfortran-8 -DCMAKE_INSTALL_PREFIX=/DSSAT47/A .. && make -j3 && make install"
-- $SH "cd dssat-csm && git checkout $TRAVIS_BRANCH && rm -rf build && mkdir build"
-- $SH "cd dssat-csm/build && cmake -DCMAKE_Fortran_COMPILER=/usr/bin/gfortran-8 -DCMAKE_INSTALL_PREFIX=/DSSAT47/B .. && make -j3 && make install"
+- $SH 'git clone https://'"$GIT_USERNAME"':'"$GIT_PASSWORD"'@github.com/marinadezordi/dssat-csm-os.git'
+- $SH 'cp -r Data/* dssat-csm-os/Data'
+- $SH "cd dssat-csm-os && git checkout develop && mkdir build"
+- $SH "cd dssat-csm-os/build && cmake -DCMAKE_Fortran_COMPILER=/usr/bin/gfortran-8 -DCMAKE_INSTALL_PREFIX=/DSSAT47/A .. && make -j3 && make install"
+- $SH "cd dssat-csm-os && git checkout $TRAVIS_BRANCH && rm -rf build && mkdir build"
+- $SH "cd dssat-csm-os/build && cmake -DCMAKE_Fortran_COMPILER=/usr/bin/gfortran-8 -DCMAKE_INSTALL_PREFIX=/DSSAT47/B .. && make -j3 && make install"
 - $SH "cd /DSSAT47/A/ci && ../run_dssat B AllCrops.v47"
 - $SH "cd /DSSAT47/B/ci && ../run_dssat B AllCrops.v47"
 - $SH "cd /home/test && Rscript citest.R"
