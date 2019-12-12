@@ -199,8 +199,8 @@
         ENDIF
         ! IF (SRNOPD > 0.0) SRWUD = SRWT/SRNOPD                                                                         !EQN 292
         
-        IF ((canopyWeight()) > 0.0) THEN
-            HIAD = SRWT/(canopyWeight()+SRWT)                                                                     !EQN 293
+        IF ((totalWeight()) > 0.0) THEN !LPM 02OCT2019 To consider the total weight for the harvest index
+            HIAD = SRWT/(totalWeight()+SEEDRS+SDCOAT)                                                                     !EQN 293
         ENDIF
         IF (RTWT > 0.0) THEN
             SHRTD = (canopyWeight()) / RTWT                                                          !EQN 294

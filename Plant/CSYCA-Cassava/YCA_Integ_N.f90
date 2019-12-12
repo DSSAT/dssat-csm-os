@@ -38,7 +38,7 @@
         
         DO BR = 0, BRSTAGE                                                                                                                                                          
             DO LF = 1, LNUMSIMSTG(BR)                                                                            !LPM23MAY2015 To consider different N demand by node according with its age   
-                IF (node(BR,LF)%SANC < node(BR,LF)%SNCX) THEN 
+                IF (node(BR,LF)%SANC > node(BR,LF)%SNCX) THEN 
                     node(BR,LF)%STEMNEXCESSN = (node(BR,LF)%NODEWT*(woodyWeight())/(STWTP+CRWTP))*(node(BR,LF)%SANC-node(BR,LF)%SNCX)
                     STEMNEXCESS = STEMNEXCESS + node(BR,LF)%STEMNEXCESSN
                     node(BR,LF)%STEMNN = node(BR,LF)%STEMNN + SNUSEN(0,BR,LF) - node(BR,LF)%SNPHN - node(BR,LF)%STEMNEXCESSN  

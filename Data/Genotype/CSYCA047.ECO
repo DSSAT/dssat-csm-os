@@ -18,29 +18,29 @@ $ECOTYPES:CSYCA047.08102017   Last edit: 01/11/2019 DA,LPM
 ! in the incoming solar and sky components.
 
 *ECOTYPE:CSYCA047
-@ECO#  ECONAME.......... PARUE TBLSZ SRN%S  KCAN PGERM 
-!                            1     2     3     4     5
-!                         g/MJ    ˚C     %     #    Tu
-999991 MINIMA             2.00  12.0   .25  0.65   120
-999992 MAXIMA             3.20  12.0  1.00  0.65   120
-                                                      
-DFAULT DEFAULT            2.80  12.0   .65  0.65   120
-                                                      
-990001 STANDARD1          1.70  12.0   .65  0.60   120
-990002 STANDARD2          1.70  14.0   .65  0.88   120
-990003 STANDARD3          2.00  12.0   .65  0.85   120
-990004 STANDARD4          2.00  12.0   .65  0.86   120
-990005 STANDARD5          2.10  12.0   .65  0.72   120
-990006 STANDARD6          1.50  12.0   .65  0.61   120
-990007 STANDARD7          2.00  12.0   .65  0.72   120
-990008 STANDARD8          1.90  14.0   .65  0.88   120
-990009 STANDARD9          1.90  14.0   .65  0.88   120
-990010 STANDARD10         1.90  14.0   .65  0.88   120
-990011 STANDARD11         1.90  14.0   .65  0.88   120
-990012 STANDARD12         1.90  14.0   .65  0.88   120
-990013 STANDARD13         2.40  12.0   .65  0.72   120
-990014 STANDARD14         1.90  14.0   .65  0.88   120
-990015 STANDARD15         3.20  14.0   .65  0.50   120
+@ECO#  ECONAME.......... PARUE TBLSZ SRN%S  KCAN PGERM  PPS1  PPS2  PPS3
+!                            1     2     3     4     5     6     7     8
+!                         g/MJ    ˚C     %     #    Tu                  
+999991 MINIMA             2.00  12.0   .25  0.65   120     0     0     0
+999992 MAXIMA             3.20  12.0  1.00  0.65   120     0     0     0
+                                                                        
+DFAULT DEFAULT            2.80  12.0   .65  0.65   120     0     0     0
+                                                                        
+990001 STANDARD1          1.70  12.0   .65  0.60   120     0     0     0
+990002 STANDARD2          1.70  14.0   .65  0.88   120     0     0     0
+990003 STANDARD3          2.00  12.0   .65  0.85   120     0     0     0
+990004 STANDARD4          2.00  12.0   .65  0.86   120     0     0     0
+990005 STANDARD5          2.10  12.0   .65  0.72   120     0     0     0
+990006 STANDARD6          1.50  12.0   .65  0.61   120     0     0     0
+990007 STANDARD7          2.00  12.0   .65  0.72   120     0     0     0
+990008 STANDARD8          1.90  14.0   .65  0.88   120     0     0     0
+990009 STANDARD9          1.90  14.0   .65  0.88   120     0     0     0
+990010 STANDARD10         1.90  14.0   .65  0.88   120     0     0     0
+990011 STANDARD11         1.90  14.0   .65  0.88   120     0     0     0
+990012 STANDARD12         1.90  14.0   .65  0.88   120     0     0     0
+990013 STANDARD13         2.40  12.0   .65  0.72   120     0     0     0
+990014 STANDARD14         1.90  14.0   .65  0.88   120     0     0     0
+990015 STANDARD15         3.20  14.0   .65  0.50   120     0     0     0
 ! COEFF   DEFINITION
 ! =====   ==========
 ! ECO#    Ecotype code (text)
@@ -50,5 +50,6 @@ DFAULT DEFAULT            2.80  12.0   .65  0.65   120
 ! SRN%S   Storage root standard N concentration (% dm)
 ! KCAN    PAR extinction coefficient (#)
 ! PGERM   Germination duration (Tu)
+! PPSn    Photoperiod sensitivity for phase n. (% drop for 10h pp.change)
 
 

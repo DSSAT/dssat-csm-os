@@ -95,9 +95,10 @@
                     IF (node(BR,LF)%LAGETT <= LLIFGTT) THEN
                 ! Basic leaf growth calculated on chronological time base. 
                 ! Basic response (cm2/day) considering a maximum growing duration of 10 days 
+                !!LPM 09OCT2019 Remove TFLfgrowth because it is the same than TFG 
                         node(BR,LF)%LATLPREV = node(BR,LF)%LATL
-                        node(BR,LF)%LAPOTX2 = node(BR,LF)%LAPOTX*Tflfgrowth
-                        node(BR,LF)%LAGL=node(BR,LF)%LAPOTX2*(TTlfgrowth/LLIFGTT)
+                        node(BR,LF)%LAPOTX2 = node(BR,LF)%LAPOTX*TFG
+                        node(BR,LF)%LAGL=node(BR,LF)%LAPOTX2*(TTL/LLIFGTT)
                         IF (node(BR,LF)%LAGL > (node(BR,LF)%LAPOTX2-node(BR,LF)%LATL3)) THEN                                           !DA IF there is something left to grow
                             node(BR,LF)%LAGL = node(BR,LF)%LAPOTX2-node(BR,LF)%LATL3
                         ENDIF
@@ -141,8 +142,9 @@
                         
                             ! New LEAF
                         IF (LF == LNUMSIMSTG(BR) .AND. LNUMG > LNUMNEED .AND. BR == BRSTAGE) THEN                                             ! This is where new leaf is initiated
-                            node(BR,LF+1)%LAPOTX2 = node(BR,LF+1)%LAPOTX * Tflfgrowth
-                            node(BR,LF+1)%LAGL = node(BR,LF+1)%LAPOTX2 * (TTlfgrowth/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
+                            node(BR,LF+1)%LAPOTX2 = node(BR,LF+1)%LAPOTX * TFG
+                            !LPM 09OCT2019 Remove TTLfgrowth because it is the same than TFG 
+                            node(BR,LF+1)%LAGL = node(BR,LF+1)%LAPOTX2 * (TTL/LLIFGTT)* EMRGFR * ((LNUMG-LNUMNEED)/LNUMG)   !LPM 02SEP2016 To register the growth of the leaf according LAGL(BR,LF) (see above)
                             IF (node(BR,LF+1)%LAGL < 0.0) THEN 
                                 node(BR,LF+1)%LAGL = 0.0
                             ENDIF
@@ -211,7 +213,9 @@
                 NDDAED=(DAG-node(BR,LF)%NDDAE+1)/NDDAE_D
           
                 !LPM23FEB2017 New high initial rate
-                node(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))  *  (NDDAE_E*(((NDDAED)**NDDAE_F) / ((NDDAED**NDDAE_G)+1)**2))  *  TFG  * WFG *NODWT !LPM12JUL2017 adding water factor of growth
+                !LPM12JUL2017 adding water factor of growth
+                !LPM 09OCT2019 Removing the water stress factor to be considered at the same time  than the assimilates and the N restrictions
+                node(BR,LF)%NODEWTGB = (1/(1+(((Lcount)/NDLEV_B)**NDLEV_C)))  *  (NDDAE_E*(((NDDAED)**NDDAE_F) / ((NDDAED**NDDAE_G)+1)**2))  *  TFG *NODWT 
            
                 node(BR,LF)%NODEWTG = node(BR,LF)%NODEWTGB
                 !IF (BR == 0.AND.LF == 1.AND.DAE == 1.AND.SEEDUSES > 0.0) NODEWTG(BR,LF) = SEEDUSES + NODEWTGB(BR) !LPM 22MAR2016 To add the increase of weight from reserves 
@@ -232,7 +236,7 @@
         endif
 
         CRWTP = CRWTP + GROCRP    !LPM 23MAY2015 Added to keep the potential planting stick weight
-        GRORP = (GROLFP + GROSTP)*PTFA
+        GRORP = (GROLFP + GROSTP + GROCRP)*PTFA !LPM 08OCT2019 Added to consider planting stick weight
         !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfgem)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
         !GRORP = (GROLFP + GROSTP)*(0.05+0.1*EXP(-0.005*Tfd)) !LPM 09JAN2017 Matthews & Hunt, 1994 (GUMCAS)
         GROLSP = GROLFP + GROSTP + GROCRP + GRORP  !LPM 02OCT2015 Added to consider the potential increase of the planting stick                                                                                    
@@ -318,9 +322,9 @@
         STAIS = 0.0
         GROSTCRP = GROSTP                                                                                          !EQN 381a
         
-        
+        !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
         IF (GROLFP+GROSTCRP > 0.0) THEN
-            GROSTCR = GROLS * GROSTCRP/(GROLSP) * (1.0-RSFRS)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
+            GROSTCR = GROLS * GROSTCRP/(GROLSP)                         !EQN 383 !LPM 02OCT2015 Modified to consider GROLSP
         ENDIF
 
         GROST = GROSTCR

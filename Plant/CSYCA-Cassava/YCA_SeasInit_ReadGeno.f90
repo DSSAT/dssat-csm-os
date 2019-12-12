@@ -237,21 +237,12 @@
         ppexp = -99 
         nh4mn = -99
         no3mn = -99
-        rsfrs = -99
+        !rsfrs = -99 !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
 
         IF (FILEIOT(1:2) == 'DS') THEN
             IF (RNMODE /= 'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
             
             CALL XREADC (FILEIO,TN,RN,SN,ON,CN,'ECO#',econo)
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS1',dayls(1))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS2',dayls(2))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS3',dayls(3))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS4',dayls(4))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS5',dayls(5))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS6',dayls(6))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS7',dayls(7))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS8',dayls(8))
-            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPS9',dayls(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPEXP',ppexp) ! Trial
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PPFPE',dfpe)
             !CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'PHINT',phints) !LPM 21MAY2015 this variable is not used
@@ -266,6 +257,7 @@
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'P9',pd(9))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B01ND',pdl(1))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B12ND',pdl(2))
+            CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'B23ND',pdl(3))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR1FX',brfx(1))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR2FX',brfx(2))
             CALL XREADR (FILEIO,TN,RN,SN,ON,CN,'BR3FX',brfx(3))
@@ -305,15 +297,6 @@
         ELSE
             IF (RNMODE /= 'T') CALL FVCHECK(CUDIRFLE,GENFLCHK)
             CALL CUREADC (CUDIRFLE,VARNO,'ECO#',econo)
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS1',dayls(1))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS2',dayls(2))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS3',dayls(3))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS4',dayls(4))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS5',dayls(5))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS6',dayls(6))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS7',dayls(7))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS8',dayls(8))
-            CALL CUREADR (CUDIRFLE,VARNO,'PPS9',dayls(9))
             CALL CUREADR (CUDIRFLE,VARNO,'PPEXP',ppexp)! Trial
             CALL CUREADR (CUDIRFLE,VARNO,'PPFPE',dfpe)
             CALL CUREADR (CUDIRFLE,VARNO,'P1',pd(1))
@@ -327,6 +310,7 @@
             CALL CUREADR (CUDIRFLE,VARNO,'P9',pd(9))
             CALL CUREADR (CUDIRFLE,VARNO,'B01ND',pdl(1))
             CALL CUREADR (CUDIRFLE,VARNO,'B12ND',pdl(2))
+            CALL CUREADR (CUDIRFLE,VARNO,'B23ND',pdl(3))
             CALL CUREADR (CUDIRFLE,VARNO,'LLIFA',llifa)
             CALL CUREADR (CUDIRFLE,VARNO,'LAXS',laxs)
             CALL CUREADR (CUDIRFLE,VARNO,'SLAS',laws)
@@ -360,6 +344,9 @@
         CALL ECREADR (ECDIRFLE,ECONO,'KCAN',kcan)
         CALL ECREADR (ECDIRFLE,ECONO,'TBLSZ',tblsz)
         CALL ECREADR (ECDIRFLE,ECONO,'PGERM',PGERM)
+        CALL ECREADR (ECDIRFLE,ECONO,'PPS1',dayls(1))
+        CALL ECREADR (ECDIRFLE,ECONO,'PPS2',dayls(2))
+        CALL ECREADR (ECDIRFLE,ECONO,'PPS3',dayls(3))
         ! Following may have been (temporarily) in the CUL file
         ! Radiation use efficiency
         IF (PARUE <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'PARUE',parue)
@@ -464,7 +451,7 @@
         IF (RTNH4 < 0.0) CALL SPREADR (SPDIRFLE,'RTNH4',rtnh4)
         IF (NO3MN < 0.0) CALL SPREADR (SPDIRFLE,'NO3MN',no3mn)
         IF (NH4MN < 0.0) CALL SPREADR (SPDIRFLE,'NH4MN',nh4mn)
-        IF (RSFRS < 0.0) CALL SPREADR (SPDIRFLE,'RSFRS',rsfrs)
+        !IF (RSFRS < 0.0) CALL SPREADR (SPDIRFLE,'RSFRS',rsfrs) !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
 
         CALL SPREADC (SPDIRFLE,'HPROD',hprod)
         CALL SPREADC (SPDIRFLE,'PPSEN',ppsen)

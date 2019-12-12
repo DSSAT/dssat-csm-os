@@ -210,7 +210,7 @@ C-LPM  Add CIAT cassava model
 !     CASSAVA: cassava **
       CASE ('CSYCA')
           READ (C360,821,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO, 
-     &      PPS1, B01ND, B12ND, BR1FX, BR2FX, BR3FX, BR4FX, 
+     &      B01ND, B12ND, B23ND, BR1FX, BR2FX, BR3FX, BR4FX, 
      &      LAXS, SLASS, LLIFA, LPEFR, LNSLP, NODWT, NODLT 
 
 !     Ceres-wheat: wheat, barley **
@@ -413,7 +413,7 @@ C-----------------------------------------------------------------------
 C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)         !CSCAS        02/18/2014
      
-  821 FORMAT (A6,1X,A16,7X,A6,20F6.0)         !CSYCA        01/11/2019 
+  821 FORMAT (A6,1X,A16,7X,A6,14F6.0)         !CSYCA        07/15/2019 
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
   850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 

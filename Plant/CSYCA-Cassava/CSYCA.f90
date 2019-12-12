@@ -29,7 +29,7 @@
        SN, ON, RUNI, REP, YEAR, DOY, STEP, CN,                                                & !Run+loop
        SRAD, TMAX, TMIN, TAIRHR, RAIN, CO2, TDEW,                                             & !Weather
        DRAIN, RUNOFF, IRRAMT,                                                                 & !Water
-       DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                              & !Weather        !TWILEN = DAYL; SOILTEMP = ST
+       DAYL, WINDSP, DEWDUR, CLOUDS, ST, EO, ES,                                              & !Weather        !TWILEN = DAYL; SOILTEMP = ST 
        NLAYR, DLAYR, DEPMAX, LL, DUL, SAT, BD, SHF, SLPF,                                     & !Soil states
        SW, NO3LEFT, NH4LEFT, FERNIT,                                                          & !H2O,N states
        TLCHD, TNIMBSOM, TNOXD, TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,           & !N components
@@ -56,7 +56,7 @@
     INTEGER :: YEARPLTCSM 
     INTEGER :: CSTIMDIF , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT     , CSIDLAYR    , CSYEARDOY              ! Integer function calls
 
-    REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CO2         , DAYL     ! REPLACED ALBEDO WITH ALBEDOS  
+    REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CAID        , CANHT       , CLOUDS      , CO2         , DAYL      ! REPLACED ALBEDO WITH ALBEDOS
     REAL    DEPMAX      , DEWDUR      , DLAYR(NL)   , DRAIN       , DUL(NL)     , EO          , EOP         , EP          
     REAL    ES          , ET          , FERNIT      , HARVFRAC(2) , IRRAMT      , KCAN        , KEP         , LAIL(30)    
     REAL    LAILA(30)   , LL(NL)      , NFP         , NH4LEFT(NL) , NO3LEFT(NL) , PARIP       , PARIPA      , RAIN        

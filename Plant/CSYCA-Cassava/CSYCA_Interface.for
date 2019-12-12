@@ -104,7 +104,7 @@ C=======================================================================
       YRHAR = YREND
       WUPT  = TRWUP
 
-      DAYLT = DAYL
+      
       DEWDUR = 12.
       NH4Left = NH4
       NO3Left = NO3
@@ -174,6 +174,7 @@ C=======================================================================
         CALL GET('ORGC','TOMINSOM3',TOMINSOM3)!Miner from SOM3 (kg/ha)
         CALL GET('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
         CALL GET('SPAM','EP',  EP)
+        DAYLT = DAYL
       ELSEIF (DYNAMIC == INTEGR) THEN
         CALL GET('SPAM','ET',  ET)
       ENDIF
@@ -224,7 +225,7 @@ C-----------------------------------------------------------------------
 
       STGDOY = STGYEARDOY
 
-      IF (STGDOY(11) == YRDOY) THEN
+      IF (STGDOY(19) == YRDOY) THEN
         MDATE = YRDOY
         YREND = YRDOY
       ENDIF 

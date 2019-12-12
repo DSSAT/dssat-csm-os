@@ -58,7 +58,7 @@ $SPECIES:CSYCA047.08102017    Last edit: 01/11/2018 DA,LPM
 ! Roots
 @RLIG%  RLWR  RSEN RRESP RDGS   ! Lignin%,length/wt;sen,resp;dpth growth
 !    %  cm/g     %    fr cm/d                                        
-  10.0   0.5   2.0  0.15  2.6 
+  10.0   1.0   1.0  0.15  2.6 
 ! Leaves
 @LLIG% LPEAW ! Lignin%
 !    %  cm/g
@@ -83,9 +83,9 @@ $SPECIES:CSYCA047.08102017    Last edit: 01/11/2018 DA,LPM
 !   fr
   1.00     
 ! Reserves   
-@RSFRS RS%O RSUSE  ! Standard concs (overall), fr utilizeable/day
-!   fr    %    fr 
-  0.05  2.0   0.1 
+@RS%O RSUSE  ! Standard concs (overall), fr utilizeable/day
+!   %    fr 
+  2.0   0.1 
 ! Stems
 @SLIG%  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
 !    %  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
@@ -119,9 +119,9 @@ CH2O distribution/mobilization
 ! Temperature responses
 @RRATE TRGEM TRDV1 TRLFG TRLFL TRPHS TRBRG  ! Germination/emergence,development,leaf growth,leaf life,phsis, branching
 !    #    oC    oC    oC    oC    oC    oC
-     0  13.0  13.0  13.0  13.0    10  13.0
-   1.0  30.0  30.0  24.0  30.0    25  24.0
-   1.0  35.0  35.0  24.0  30.0    40  24.0
+     0  13.0  13.0  13.0  13.0    10  17.0
+   1.0  30.0  30.0  24.0  30.0    25  22.0
+   1.0  35.0  35.0  24.0  30.0    40  25.0
      0  42.5  42.5  24.0  30.0    50  42.5
 
 ! WATER loss,uptake,etc.
