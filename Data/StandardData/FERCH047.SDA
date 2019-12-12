@@ -34,7 +34,7 @@
 @CDE  Description                             NO3%  NH4% Urea% UIEFF UIDUR NIEFF NIDUR NRL50 NRFNC NSIGK FertN FertP FertK FertC FerMg FertS
 FE001 Ammonium Nitrate                          50    50     0     0     0     0     0     0     0     0    34     0     0     0     0     0
 FE002 Ammonium Sulphate                          0   100     0     0     0     0     0     0     0     0    21     0     0     0     0    24
-FE003 Ammonium Nitrate Sulphate                 33    67     0     0     0     0     0     0     0     0    26     0     0     0     0     5
+FE003 Ammonium Nitrate Sulphate                 25    75     0     0     0     0     0     0     0     0    26     0     0     0     0     5
 FE004 Anhydrous Ammonia                          0   100     0     0     0     0     0     0     0     0    70     0     0     0     0     0   !FertN = 60-80%
 FE005 Urea                                       0     0   100     0     0     0     0     0     0     0  46.4     0     0     0     0     0
 FE006 Diammonium Phosphate                       0   100     0     0     0     0     0     0     0     0    18    46     0     0     0     0

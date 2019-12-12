@@ -66,6 +66,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
       USE N2O_mod 
+      USE FertType_mod
       USE ModuleData
       USE FloodModule
       USE ModSoilMix
@@ -149,6 +150,8 @@ C=======================================================================
       REAL TNOM
       REAL NNOM_a, NNOM_b
 
+      REAL CumSumFert
+
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
       TYPE (ControlType) CONTROL
@@ -218,6 +221,7 @@ C=======================================================================
         CN2Odenit =0.0  !N2O[N] from nitrification
         CNOflux   = 0.0 !NO
         CN2       = 0.0 !N2
+        CumSumFert= 0.0 !Total fertilizer
 
         nitrif = 0.0
         denitrif = 0.0
@@ -298,15 +302,6 @@ C=======================================================================
         call nox_pulse (dynamic, rain, snow, nox_puls)
       ENDIF
 
-!!         temp chp
-!          write(555,'(a,a)') 
-!     &      "  YRDOY  L   krainNO       dD0    NO:N2O", 
-!     &      "   NIT->NO   NH4->NO   nNOflux    NitN2O    Nitrif"
-!
-!         write(556,'(a,a)')
-!     &      "  YRDOY  L SNH4Avail", 
-!     &      "  N2ODenit    NO:N2O   krainNO   dNOflux"
-
 !***********************************************************************
 !***********************************************************************
 !     DAILY RATE CALCULATIONS 
@@ -328,8 +323,8 @@ C=======================================================================
         NH4(L)  = SNH4(L) * KG2PPM(L)
       ENDDO
 
-      IF (FERTDAY == YRDOY) THEN
-!       Fertilizer was placed today
+!     Check for fertilizer added today or active slow release fertilizers 
+      IF (FERTDAY == YRDOY .OR. NActiveSR .GT. 0) THEN
         SUMFERT = 0.0
         DO L = 1, NLAYR
           DLTSNO3(L) = DLTSNO3(L) + FERTDATA % ADDSNO3(L)
@@ -343,6 +338,7 @@ C=======================================================================
           SUMFERT = SUMFERT + FERTDATA % ADDSNO3(L) + 
      &                   FERTDATA % ADDSNH4(L) + FERTDATA % ADDUREA(L)
         ENDDO
+        CumSumFert = CumSumFert + SUMFERT
 
 !       Fertilizer added directly to flooded field
         IF (FLOOD > 1.E-4) THEN
@@ -498,6 +494,12 @@ C=======================================================================
      &              - 0.155 * SSOMC(L) * 1.E-4 * KG2PPM(L) * PH(L)
           AK = AMAX1 (AK, 0.25)
 
+!         If urease inhibitor is active, reduce hydrolysis rate
+          IF ((YRDOY .LT. UIData % UIEND) .AND. 
+     &        (L .LE. UIData % UILYR)) THEN
+            AK = AK * (1.0 - UIData % UIEFF/100.)
+          ENDIF
+
 !         Calculate the soil water factor for the urea hydrolysis, and
 !         limit it between 0 and 1.
           IF (FLOOD .GT. 0.0) THEN
@@ -615,6 +617,13 @@ C=======================================================================
           TLAG = 1.0
         ENDIF
         NFAC = AMAX1(0.0, AMIN1(1.0, TFACTOR * WF2 * PHFACT * TLAG))
+
+!       If nitrification inhibitor is active, reduce rate
+        IF ((YRDOY .LT. NIData % NIEND) .AND. 
+     &      (L .LE. NIData % NILYR)) THEN
+          NFAC = NFAC * (1.0 - NIData % NIEFF/100.)
+        ENDIF
+
         NITRIFppm(L) = NFAC * NH4(L)
 
         IF (NSWITCH .EQ. 5) THEN
@@ -673,11 +682,6 @@ C=======================================================================
 
           nNOflux(L) = AMAX1(NITRIF_to_NO + NH4_to_NO, 0.0)
           NITRIF(L) = NITRIF(L) + NH4_to_NO
-
-!!         temp chp
-!          write(555,'(i7, i3, 3f10.3, 5e10.3)') 
-!     &      YRDOY, L, krainNO, dD0(L), NO_N2O_ratio(L), 
-!     &      NITRIF_to_NO, NH4_to_NO, nNOflux(L), N2ONitrif(L), nitrif(L)
 
         else 
           NO_N2O_ratio(L) = 0.0
@@ -763,11 +767,6 @@ C=======================================================================
             !  N2ODenit(L) = 0.0
             !endif
           endif
-
-!!         TEMP CHP
-!          WRITE(556,'(i7,i3,f10.3,e10.3,2f10.3,e10.3)') YRDOY, L, 
-!     &     SNH4_AVAIL, N2ODenit(L), NO_N2O_ratio(L), krainNO, dNOflux(L)
-
         ENDDO
 
 !       Recalculated total denitrified N2O because it may have been modified above.
@@ -945,7 +944,7 @@ C=======================================================================
         CALL SoilNiBal (CONTROL, ISWITCH,
      &    ALGFIX, CIMMOBN, CMINERN, CUMFNRO, FERTDATA, NBUND, CLeach,  
      &    CNTILEDR, TNH4, TNO3, CNOX, TOTAML, TOTFLOODN, TUREA, WTNUP,
-     &	  N2O_data) 
+     &    N2O_data) 
 
         CALL OpSoilNi(CONTROL, ISWITCH, SoilProp, 
      &    CIMMOBN, CMINERN, CNETMINRN, CNITRIFY, CNUPTAKE, 

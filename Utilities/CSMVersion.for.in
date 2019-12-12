@@ -20,6 +20,7 @@
       CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
 
 !     Version history:  
+!       4.7.5.14 chp 12/11/2019 Flexible fertilizer
 !       4.7.5.13 chp 12/11/2019 Cassava photoperiod sensitivity
 !       4.7.5.12 chp 11/13/2019 Soil C balance routines
 !       4.7.5.11 chp 10/28/2019 Tef model
