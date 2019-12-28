@@ -21,7 +21,7 @@
     !  Edited in: Dec-2017 by Murilo dos S. Vianna  -> New Version Including Layered Photosynthesis, Source-Sink at Phytomer Level, Tillering
     !-------------------------------------------------------------------------
     
-    Use VarDefs
+   !Use VarDefs
     Implicit None
     
     !-----------------------------------------------------------!-------------------------------------------------------------------------------!
