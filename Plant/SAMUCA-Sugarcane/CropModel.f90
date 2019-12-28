@@ -480,7 +480,7 @@
     real		wat_it_ag                                 		!
 
     !--- Arrays Variables
-    real        phprof(max_phy,nphy_att)                        ! Phytomer profile and attributes dimensions    
+    real        phprof(200,60)                        ! Phytomer profile and attributes dimensions    
     real        drld_sl(max_sl)                                 !
     real        dw_rt_sl(max_sl)                                !
     real        ddw_rt_sl(max_sl)                               !
@@ -501,9 +501,9 @@
     real        dlroot(nlay)                                    !
     real        drld(max_sl)                                    !
     real        drld_dead(max_sl)                               !
-    logical     fl_it_AG(max_phy)                               ! Above Ground Internode Flag
-    logical     fl_lf_AG(max_phy)                               ! Above Ground Leaf Flag
-    logical     fl_lf_alive(max_phy) 
+    logical     fl_it_AG(200)                               ! Above Ground Internode Flag
+    logical     fl_lf_AG(200)                               ! Above Ground Leaf Flag
+    logical     fl_lf_alive(200) 
     
     !--- Real Functions
     real        afgen                                           ! Interpolation function (The Fortran Simulation Translator, FST version 2.0)
@@ -511,7 +511,138 @@
     real        asy_ws                                          ! Flexible function for water stress response
     real        tiller_senes                                    ! Tiller senescence function    
     
+    !--- Coupling to DSSAT
+    integer inte_host(500)                                 ! io 	! to avoid mandatory scalar input variable on readings subroutines   
+    real    real_host(500)                                 ! io 	! to avoid mandatory scalar input variable on readings subroutines
+    real 	AMAX		
+    real 	EFF			
+    real 	PHTMAX		
+    real 	PARMAX		
+    real 	CCMP		
+    real 	CCMAX		
+    real 	CCEFF		
+    real 	RUE			
+    real 	TB			
+    real 	TBPER		
+    real 	CHUSTK		
+    real 	CHUPEAK		
+    real 	CHUDEC		
+    real 	CHUMAT		
+    real 	POPMAT		
+    real 	POPPEAK		
+    real 	SLA			
+    real 	RDM			
+    real 	KDIF		
+    real 	DPERCOEFF	
+    real 	MLA			
+    real 	KC_MIN		
+    real 	EORATIO		
+    real 	RWUEP1		
+    real 	RWUEP2		
+    real 	T_MAX_WS_PHO
+    real 	T_MID_WS_PHO
+    real 	T_MIN_WS_PHO
+    real	T_MAX_WS_EXP
+    real	T_MID_WS_EXP
+    real	T_MIN_WS_EXP
+    real	MAXLAI_EO	
+    real	TBM			
+    real	THRESHEWS	
+    real	SWCON1		
+    real	SWCON2		
+    real	SWCON3		
+    real	RWUMAX		
+    real	PORMIN		
+    real	T_MAX_WS_FPF
+    real	T_MID_WS_FPF
+    real	T_MIN_WS_FPF
+    real	T_MAX_WS_TIL
+    real	T_MID_WS_TIL
+    real	T_MIN_WS_TIL
+    real	SGPF		
+    real	DW_IT_AG	
+    real	NSTK		
+    real	LAI			
+    real	DIAC		
+    real	DI		
+    real	DTGA	
+    real	LI		
+    real	SWFACP	
+    real	SWFACE	
+    real	SWFACT	
+    real	SWFACF	
+    real	SRAD	
+    real	TMN		
+    real	TMAX	
+    real	TMIN	
+    integer	DOY		
+    real	LAT_SIM	
+    real	CO2		
+    integer NDWS	
+    integer NDEWS	
+    real 	EOP		
+    logical FLEMERGED	
+    integer OUTP		                ! i/o   !
+    integer outdph                      ! i/o   !
+    integer outd                        ! i/o   !
+    integer outdpp                      ! i/o   !
+    integer outpfac                     ! i/o   !
+    integer outstres                    ! i/o   !
+    
+    logical potential_growth	(50)	! ctrl	!
+    logical writedcrop          (50)    ! ctrl	!
+    logical writeactout         (50)    ! ctrl	!
+    logical usetsoil            (50)    ! ctrl	!
+    logical mulcheffect                 ! ctrl	!
+    logical ratoon				(50)    ! plan	! 
+    integer tillermet			(50)   	! ctrl  ! 
+    integer metpg               (50)    ! ctrl  ! 
+    integer seqnow                      ! ctrl  ! 
+    real    rowsp				(50) 	! ctrl  ! 
+    real    plantdepth          (50)    ! ctrl  !
+    real 	bottom				(200)   ! soil	!
+    real    upper               (200)   ! soil	!
+    real    slthickness         (200)   ! soil	!
+    real    dep                 (200)   ! soil	!
+    real    rld                 (200)   ! soil	!
+    
+    real    rd    
+    real    srl                 
+    real    thour(24)
+    real    trwup
+    real    tsoil
+    real    dileaf
+    real    z               !zero
+    real    dayl
+    real    sinld
+    real    cosld
+    real    resp
+    integer das
+    integer dap
+    integer year
+    real    pol
+    real    kc
+    real    trasw
+    
+    
+    
+    
+    character 	(len = 6)	pltype      ! plan	!  Planting type (Ratoon or PlCane)    
+    character 	(len = 6)	cropstatus  ! plan	!  Dead or Alive
+	character 	(len = 6)	cropdstage  ! plan	!  Development Stage - Only Sprout or Emergd
+    character   (len=100)   CROPFILE(50)
+    character   (len=100)   prjname            				! ctrl 	! 
+    
+    logical     flcropalive
+    logical	    writedetphoto(50)
+     
+    
+    !--- Notes:
+    !--- Make sure crop variables are readed by DSSAT platform (e.g. extcoef)
+    
     save
+    
+    parameter   (z = 1.e-14)
     
     goto(10,20,30) task
     
@@ -1221,41 +1352,41 @@
     agefactor_amax              = 1.d0 
 
     !--- Phytomer Rates
-    phprof(1: max_phy, 2) 		= 0.d0  ! Leaf Sink strenght
-    phprof(1: max_phy, 3) 		= 0.d0  ! Allocated Leaf biomass
-    phprof(1: max_phy, 4) 		= 0.d0  ! Leaf area rate
-    phprof(1: max_phy, 7) 		= 0.d0  ! Internode Sink Strength dw rate g d-1
-    phprof(1: max_phy,21) 		= 0.d0 	! Internode Growth Respiration
-    phprof(1: max_phy,22) 		= 1.d0 	! Maintenance Respiration Factor (0-1) 1 =  is maintenance is ok
-    phprof(1: max_phy,23) 		= 0.d0 	! dLength (cm)
-    phprof(1: max_phy,25) 		= 0.d0 	! mresp leaf
-    phprof(1: max_phy,26) 		= 0.d0 	! gresp leaf
-    phprof(1: max_phy,27) 		= 0.d0 	! dw ss leaf
-    phprof(1: max_phy,28) 		= 1.d0 	! sup_ratio_lf_phy
-    phprof(1: max_phy,29) 		= 0.d0 	! supply_rate_lf
-    phprof(1: max_phy,30) 		= 0.d0 	! sup_ratio_lf_phy
-    phprof(1: max_phy,31) 		= 0.d0 	! supply_used_mresp_lf
-    phprof(1: max_phy,32) 		= 0.d0 	! supply_used_gresp_lf
-    phprof(1: max_phy,33) 		= 0.d0 	! supply_used_dw_lf
-    phprof(1: max_phy,34) 		= 1.d0 	! maintenance_factor_lf
-    phprof(1: max_phy,35) 		= 1.d0 	! reduc_growth_factor_lf
-    phprof(1: max_phy,36) 		= 0.d0 	! mresp internode
-    phprof(1: max_phy,37) 		= 0.d0 	! gresp internode
-    phprof(1: max_phy,38) 		= 0.d0 	! dw ss internode
-    phprof(1: max_phy,39) 		= 0.d0 	! supply_rate_it
-    phprof(1: max_phy,40) 		= 1.d0 	! sup_ratio_it_phy
-    phprof(1: max_phy,41) 		= 0.d0 	! supply_used_it
-    phprof(1: max_phy,42) 		= 0.d0 	! supply_used_mresp_it
-    phprof(1: max_phy,43) 		= 0.d0 	! supply_used_gresp_it
-    phprof(1: max_phy,44) 		= 0.d0 	! supply_used_dw_it
-    phprof(1: max_phy,45) 		= 1.d0 	! maintenance_factor_it
-    phprof(1: max_phy,46) 		= 1.d0 	! reduc_growth_factor_it
-    phprof(1: max_phy,47) 		= 0.d0 	! Internode dry weigth rate [g dt-1]
-    phprof(1: max_phy,48) 		= 0.d0 	! Internode structural dry weigth rate [g dt-1]
-    phprof(1: max_phy,49) 		= 0.d0 	! Internode total sugars rate [g dt-1]    
-    phprof(1: max_phy,55)       = 0.d0  ! Leaf Age rate [dCdays]
-    phprof(1: max_phy,56)       = 0.d0  ! Phytomer Age rate [dCdays]
-    phprof(1: max_phy,57)       = 0.d0  ! Internode Age rate [dCdays]
+    phprof(1: 200, 2) 		= 0.d0  ! Leaf Sink strenght
+    phprof(1: 200, 3) 		= 0.d0  ! Allocated Leaf biomass
+    phprof(1: 200, 4) 		= 0.d0  ! Leaf area rate
+    phprof(1: 200, 7) 		= 0.d0  ! Internode Sink Strength dw rate g d-1
+    phprof(1: 200,21) 		= 0.d0 	! Internode Growth Respiration
+    phprof(1: 200,22) 		= 1.d0 	! Maintenance Respiration Factor (0-1) 1 =  is maintenance is ok
+    phprof(1: 200,23) 		= 0.d0 	! dLength (cm)
+    phprof(1: 200,25) 		= 0.d0 	! mresp leaf
+    phprof(1: 200,26) 		= 0.d0 	! gresp leaf
+    phprof(1: 200,27) 		= 0.d0 	! dw ss leaf
+    phprof(1: 200,28) 		= 1.d0 	! sup_ratio_lf_phy
+    phprof(1: 200,29) 		= 0.d0 	! supply_rate_lf
+    phprof(1: 200,30) 		= 0.d0 	! sup_ratio_lf_phy
+    phprof(1: 200,31) 		= 0.d0 	! supply_used_mresp_lf
+    phprof(1: 200,32) 		= 0.d0 	! supply_used_gresp_lf
+    phprof(1: 200,33) 		= 0.d0 	! supply_used_dw_lf
+    phprof(1: 200,34) 		= 1.d0 	! maintenance_factor_lf
+    phprof(1: 200,35) 		= 1.d0 	! reduc_growth_factor_lf
+    phprof(1: 200,36) 		= 0.d0 	! mresp internode
+    phprof(1: 200,37) 		= 0.d0 	! gresp internode
+    phprof(1: 200,38) 		= 0.d0 	! dw ss internode
+    phprof(1: 200,39) 		= 0.d0 	! supply_rate_it
+    phprof(1: 200,40) 		= 1.d0 	! sup_ratio_it_phy
+    phprof(1: 200,41) 		= 0.d0 	! supply_used_it
+    phprof(1: 200,42) 		= 0.d0 	! supply_used_mresp_it
+    phprof(1: 200,43) 		= 0.d0 	! supply_used_gresp_it
+    phprof(1: 200,44) 		= 0.d0 	! supply_used_dw_it
+    phprof(1: 200,45) 		= 1.d0 	! maintenance_factor_it
+    phprof(1: 200,46) 		= 1.d0 	! reduc_growth_factor_it
+    phprof(1: 200,47) 		= 0.d0 	! Internode dry weigth rate [g dt-1]
+    phprof(1: 200,48) 		= 0.d0 	! Internode structural dry weigth rate [g dt-1]
+    phprof(1: 200,49) 		= 0.d0 	! Internode total sugars rate [g dt-1]    
+    phprof(1: 200,55)       = 0.d0  ! Leaf Age rate [dCdays]
+    phprof(1: 200,56)       = 0.d0  ! Phytomer Age rate [dCdays]
+    phprof(1: 200,57)       = 0.d0  ! Internode Age rate [dCdays]
     
     !--- Check if crop is alive
     if(.not. flcropalive) return
@@ -2411,14 +2542,14 @@
     !--- Check carbon balance discrepancy
     c_check_tol = 0.10
     if(abs(1.d0 - dsug_corr_fac_BG) .gt. c_check_tol)then
-        write(warn,*) 'More than 10% Carbon Balance Discrepancy on Internode Below Ground Sugar/Structural Partitioning at DAS: ',das, &
-            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_BG) * 100.d0, '% was corrected.'
+!        write(warn,*) 'More than 10% Carbon Balance Discrepancy on Internode Below Ground Sugar/Structural Partitioning at DAS: ',das, &
+!            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_BG) * 100.d0, '% was corrected.'
     endif
         
     c_check_tol = 0.10
     if(abs(1.d0 - dsug_corr_fac_AG) .gt. c_check_tol)then
-        write(warn,*) 'More than 10% Carbon Balance Discrepancy on Internode Above Ground Sugar/Structural Partitioning at DAS: ',das, &
-            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_AG) * 100.d0, '% was corrected.'
+!        write(warn,*) 'More than 10% Carbon Balance Discrepancy on Internode Above Ground Sugar/Structural Partitioning at DAS: ',das, &
+!            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_AG) * 100.d0, '% was corrected.'
     endif  
         
     !--- Correct to meet carbon balance
@@ -2677,14 +2808,14 @@
     !--- Check carbon balance discrepancy
     c_check_tol = 0.10d0
     if(abs(1.d0 - dsug_corr_fac_BG) .gt. c_check_tol)then
-        write(warn,*) 'More than 10% Carbon Balance Discrepancy on Internode Below Ground Sugar/Structural Partitioning at DAS: ',das, &
-            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_BG) * 100.d0, '% was corrected.'
+!        write(warn,*) 'More than 10% Carbon Balance Discrepancy on Internode Below Ground Sugar/Structural Partitioning at DAS: ',das, &
+!            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_BG) * 100.d0, '% was corrected.'
     endif
         
     c_check_tol = 0.10d0
     if(abs(1.d0 - dsug_corr_fac_AG) .gt. c_check_tol)then
-        write(warn,*) 'More than 10% Carbon Balance Discrepancy on Internode Above Ground Sugar/Structural Partitioning at DAS: ',das, &
-            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_AG) * 100.d0, '% was corrected.'
+!        write(warn,*) 'More than 10% Carbon Balance Discrepancy on Internode Above Ground Sugar/Structural Partitioning at DAS: ',das, &
+!            'Discrepancy of ', abs(1.d0 - dsug_corr_fac_AG) * 100.d0, '% was corrected.'
     endif        
     
     suc_it_AG   =   suc_it_AG	*	dsug_corr_fac_AG
@@ -2958,7 +3089,7 @@
         !-----------------------------------!
         !--- New phytomer initialization ---!
         !-----------------------------------!
-        phprof(1, 1:nphy_att) = 0.d0
+        phprof(1, 1:60) = 0.d0
         
         !--- Leaf is alive
         fl_lf_alive(1)  = .true.
@@ -3221,80 +3352,6 @@
     
     end subroutine Sugarcane
     
-subroutine sugarcane_new_model(task)
-
-    !-------------------------------------------------------------------------
-    !---------- Agronomic Modular Simulator for Sugarcane (SAMUCA) -----------
-    !-------------------------------------------------------------------------
-    !  Written in Microsoft Visual Studio FORTRAN for PC-compatible machines              
-	!  
-    !  1st Version:
-    !  Author: FABIO R. MARIN Date: 11/10/2010
-    !  Scientific base - dx.doi.org/10.1590/S0103-90162014000100001
-    !  Source Code     - murilodsv@bitbucket.org/murilodsv/samuca_standalone.git
-    !
-    !  2nd Version:
-    !  Authors: MURILO VIANNA; FABIO MARIN (2018)
-    !  Scientific base - http://www.teses.usp.br/teses/disponiveis/11/11152/tde-01082018-150704/pt-br.php
-    !  Source Code     - murilodsv@bitbucket.org/murilodsv/samuca.git
-    !
-    !  Dev. History:
-	!  Edited in: Sep-2015 by Murilo dos S. Vianna  -> Model Review and Assessment
-    !  Edited in: Feb-2016 by Murilo dos S. Vianna  -> Coupled to SWAP: https://scisoc.confex.com/crops/2017am/webprogram/Paper105395.html
-    !  Edited in: Dec-2017 by Murilo dos S. Vianna  -> New Version Including Layered Photosynthesis, Source-Sink at Phytomer Level, Tillering
-    !-------------------------------------------------------------------------
-    
-    Use VarDefs
-    Implicit None
-    
-    !--- Input Parameters
-    integer task
-        
-    !--- Local State Variables
-    
-    save
-    
-    goto(10,20,30) task
-    
-10  continue
-    
-    !----------------------!
-    !--- Initialization ---!
-    !----------------------!
-    
-    
-    return
-    
-20  continue
-    
-    !---------------------------!
-    !--- Potential Condition ---!
-    !---------------------------!    
-    
-    
-    !--- Daily Rates
-    
-    !--- Daily Integration
-    
-    return
-    
-30  continue
-    
-    !----------------------------!
-    !----- Actual Condition -----!
-    !----------------------------!
-    
-    !--- Daily Rates
-    
-    !--- Daily Integration
-    
-    return
-
-    end subroutine sugarcane_new_model
-    
-
-
-    
 subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
 ! ----------------------------------------------------------------------
 ! --- calculates daily total gross assimilation (dtga) by performing
@@ -3305,7 +3362,7 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
 ! --- "Light Distribution. In Canopy Photosynthesis: From Basics to Applications", 2016.
 ! ----------------------------------------------------------------------
       Implicit None    
-      include 'constants.fi'
+ !     include 'constants.fi'
       
       integer ghour
       integer glai
@@ -3511,7 +3568,7 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       dvisabs   = visabsth  * dayl * 3600.d0
       par_ratio = par_check / avrad             ! This should be around 0.5
       if(abs(par_ratio - expected_par_ratio) .gt. 0.05)then
-          write(warn,*) 'PAR ratio (PAR/SRAD) computed from the Gaussian Integration differed more than 0.05 from the expected ratio (',expected_par_ratio , '). '
+          !write(warn,*) 'PAR ratio (PAR/SRAD) computed from the Gaussian Integration differed more than 0.05 from the expected ratio (',expected_par_ratio , '). '
       endif
 
       !--- Fraction of light absorbed by the canopy
@@ -3749,30 +3806,3 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       end
     
     
-    
-    subroutine Grass(task)
-    
-    Use VarDefs
-    Implicit None
-    
-    !Local Variables    
-    integer     task
-    
-    save
-    
-    goto(10,20,30) task
-    
-10  continue
-    
-    
-    return
-    
-20  continue
-    
-    return
-    
-30  continue
-    
-    return   
-    
-end subroutine Grass
