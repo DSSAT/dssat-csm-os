@@ -2788,7 +2788,9 @@
 
         ! Planting date information
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'PLANT',iplti)
-        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+!       IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a'.OR.
+     &     IPLTI.EQ.'F'.OR.IPLTI.EQ.'f')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PLAST',pwdinl)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OL',swpltl)
@@ -3031,7 +3033,8 @@
         ! Upgrade harvest date for seasonal and sequential runs
         yeardoyharf = (plyear+pltoharyr)*1000 +hday
 
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           IF (PLDAY.GE.DOY) THEN
             PLYEARDOYT = PLYEARTMP*1000 + PLDAY
           ELSEIF (PLDAY.LT.DOY) THEN
@@ -4887,7 +4890,8 @@
          WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
          WRITE(fnumwrk,'(A26,A6,2X,A16)')
      &     '  CULTIVAR                ',VARNO,VRNAME
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           WRITE(fnumwrk,'(A23,I7)')
      &     '  PLANTING DATE TARGET:',PLYEARDOYT
         ELSE
@@ -5267,7 +5271,9 @@
         !  PLYEARDOYT = YEARPLTCSM
         !ENDIF
         IF (FILEIOT.EQ.'DS4') THEN
-          IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+!         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'G' .OR. 
+     &       (INDEX('FQN',RNMODE) > 0)) THEN
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
         ENDIF
@@ -9710,7 +9716,8 @@
           ENDIF ! End ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A'
 
         ELSEIF(YEARDOY.LT.PLYEARDOY.AND.(MOD(DAS,FROPADJ)).EQ.0.AND.
-     &   IPLTI.EQ.'A') THEN
+!    &   IPLTI.EQ.'A') THEN
+     &   (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F')) THEN
      
           ! Automatic planting
           !WRITE (fnumwrk,*) 'Yeardoy ',yeardoy

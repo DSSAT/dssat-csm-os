@@ -1754,7 +1754,8 @@
 
         ! Planting information
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'PLANT',iplti)
-        IF(IPLTI.EQ.'A')THEN
+!       IF(IPLTI.EQ.'A')THEN
+        IF(IPLTI.EQ.'A' .OR. IPLTI.EQ.'F')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
           PWDINF = CSYEARDOY(pwdinf)
           CALL CSYR_DOY(PWDINF,PWYEARF,PWDOYF)
@@ -2485,7 +2486,8 @@
         WRITE(fnumwrk,'(A23,A10)')'  EXPERIMENT           ',excode
         WRITE(fnumwrk,'(A21, I3)')'  TREATMENT          ',tn
         WRITE(fnumwrk,'(A23,I1)') '  CROP COMPONENT       ',CN
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           WRITE(fnumwrk,'(A23,I7)') '  PLANTING DATE TARGET ',YEARPLTP
         ELSE  
           WRITE(fnumwrk,'(A40)')
@@ -3501,7 +3503,9 @@
         ! YEARPLTCSM established by CSM;brought across in argument list.
         ! LAH 29/06/11 Added automatic as well
         IF (FILEIOT.EQ.'DS4') THEN
-          IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+!         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'G' .OR. 
+     &       (INDEX('FQN',RNMODE) > 0)) THEN
             YEARPLTP = YEARPLTCSM
           ENDIF  
         ENDIF
