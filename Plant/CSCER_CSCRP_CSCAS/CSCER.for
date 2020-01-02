@@ -209,7 +209,7 @@
       REAL          AMDAYM        ! Anthesis-maturity period,meas  d
       REAL          AMDAYS        ! Anthesis-maturity period,sim   d
       REAL          ANDEM         ! Crop N demand                  kg/ha
-      CHARACTER*128 ARG           ! Argument component             text
+      CHARACTER*250 ARG           ! Argument component             text
       INTEGER       ARGLEN        ! Argument component length      #
       REAL          ASTAGE        ! Stage,start of anthesis/silk   #
       REAL          ASTAGEND      ! Stage at end of anthesis       #
@@ -235,7 +235,7 @@
       REAL          CARBOAT       ! Carbohydrate available,tops    g/p
       REAL          CARBOC        ! Carbohydrate assimilated,cum   g/p
       INTEGER       CCOUNTV       ! Counter for days after max lf# #
-      CHARACTER*120 CFGDFILE      ! Configuration directory+file   text
+      CHARACTER*250 CFGDFILE      ! Configuration directory+file   text
       CHARACTER*1   CFLFAIL       ! Control flag for failure       text
       CHARACTER*1   CFLHEAD       ! Control flag to write headers  code
       CHARACTER*1   CFLINIT       ! Control flag for initiation    text
@@ -279,8 +279,8 @@
       CHARACTER*1   CSWDIS        ! Control switch,disease         code
       INTEGER       CSYDOY        ! Yr+Doy output from function    #
       INTEGER       CSYEARDOY     ! Cropsim function ouptut        #
-      CHARACTER*93  CUDIRFLE      ! Cultivar directory+file        text
-      CHARACTER*93  CUDIRFLP      ! Cultivar directory+file,prev   text
+      CHARACTER*250 CUDIRFLE      ! Cultivar directory+file        text
+      CHARACTER*250 CUDIRFLP      ! Cultivar directory+file,prev   text
       CHARACTER*12  CUFILE        ! Cultivar file                  text
       REAL          CUMDEP        ! Cumulative depth               cm
       REAL          CUMDU         ! Cumulative development units   #
@@ -351,8 +351,8 @@
       REAL          DUL(20)       ! Drained upper limit for soil   #
       INTEGER       DYNAMIC       ! Program control variable       text
       INTEGER       DYNAMICI      ! Module control,internal        code
-      CHARACTER*64  ECDIRFLE      ! Ecotype directory+file         text
-      CHARACTER*64  ECDIRFLP      ! Ecotype directory+file,prev    text
+      CHARACTER*250 ECDIRFLE      ! Ecotype directory+file         text
+      CHARACTER*250 ECDIRFLP      ! Ecotype directory+file,prev    text
       CHARACTER*12  ECFILE        ! Ecotype filename               text
       CHARACTER*6   ECONO         ! Ecotype code                   text
       CHARACTER*6   ECONOP        ! Ecotype code,previous          text
@@ -390,14 +390,14 @@
       LOGICAL       FEXISTA       ! File A existence indicator     code
       LOGICAL       FEXISTT       ! File T existence indicator     code
       LOGICAL       FFLAG         ! Temp file existance indicator  code
-      CHARACTER*120 FILEA         ! Name of A-file                 text
-      CHARACTER*107 FILEADIR      ! Name of A-file directory       text
-      CHARACTER*120 FILEIO        ! Name of input file,after check text
-      CHARACTER*120 FILEIOIN      ! Name of input file             text
+      CHARACTER*250 FILEA         ! Name of A-file                 text
+      CHARACTER*250 FILEADIR      ! Name of A-file directory       text
+      CHARACTER*250 FILEIO        ! Name of input file,after check text
+      CHARACTER*250 FILEIOIN      ! Name of input file             text
       CHARACTER*3   FILEIOT       ! Type of input file             text
       INTEGER       FILELEN       ! Length of file name            #
-      CHARACTER*120 FILENEW       ! Temporary name of file         text
-      CHARACTER*120 FILET         ! Name of T-file                 text
+      CHARACTER*250 FILENEW       ! Temporary name of file         text
+      CHARACTER*250 FILET         ! Name of T-file                 text
       REAL          FLN           ! Final leaf number,Aitken calc. #
       REAL          FLNMODEL      ! Final leaf number              #
       CHARACTER*1   FNAME         ! File name switch (N->standard) code
@@ -812,7 +812,7 @@
       REAL          PARIUEM       ! PARUE,actual,at maturity       g/MJ
       REAL          PARUR         ! PAR utilization effic,reprod   g/MJ
       REAL          PARUV         ! PAR utilization effic,veg      g/MJ
-      CHARACTER*80  PATHCR        ! Path to genotype files         text
+      CHARACTER*250 PATHCR        ! Path to genotype files         text
       INTEGER       PATHL         ! Path length                    #
       REAL          PCARB         ! Potential carbon fixation      g/p
       REAL          PD(0:10)      ! Phase durations                deg.d
@@ -1048,8 +1048,8 @@
       REAL          SNPCMN(0:9)    ! Stem minimum N conc,stage     %
       REAL          SNPCS(0:9)    ! Stem standard N conc,stage     %
       INTEGER       SPDATM        ! Spike emergence date,measured  #
-      CHARACTER*64  SPDIRFLE      ! Species directory+file         text
-      CHARACTER*64  SPDIRFLP      ! Species directory+file,last    text
+      CHARACTER*250 SPDIRFLE      ! Species directory+file         text
+      CHARACTER*250 SPDIRFLP      ! Species directory+file,last    text
       CHARACTER*12  SPFILE        ! Species filename               text
       REAL          SRAD          ! Solar radiation                MJ/m2
       REAL          SRAD20        ! Solar radiation av,20 days     MJ/m2
