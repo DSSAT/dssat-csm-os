@@ -81,6 +81,7 @@ C-----------------------------------------------------------------------
 !         'RICER' - CERES-Rice
 !         'SCCAN' - CANEGRO Sugarcane
 !         'SCCSP' - CASUPRO Sugarcane
+!         'SCSAM' - SAMUCA Sugarcane
 !         'SGCER' - CERES-Sorghum
 !         'SWCER' - CERES-Sweet corn
 !         'MZIXM' - IXIM Maize
