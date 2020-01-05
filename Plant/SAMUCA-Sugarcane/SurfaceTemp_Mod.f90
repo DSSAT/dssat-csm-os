@@ -9,7 +9,7 @@ subroutine SurfaceTemp_Mod(srad,Qo,tmax,tmin,alt,r,rh,lai,kdif,pleng,hrnc,dhrlai
     !Murilo Vianna - 07/24/2017
     
     implicit none
-    include 'Constants.fi'
+    !include 'Constants.fi'
     
     !use VarDefs
     
@@ -55,6 +55,12 @@ subroutine SurfaceTemp_Mod(srad,Qo,tmax,tmin,alt,r,rh,lai,kdif,pleng,hrnc,dhrlai
     parameter (airC = 1.01d0)
     parameter (atmp = 101.3d0)
     parameter (e    = 0.622d0)
+    
+    !--- DSSAT coupling
+    real :: pi      = 3.14159265
+    real :: sigma   = 5.67477e-8
+    real :: lambda  = 2.465e6
+    real :: t_abs   = 273.15
     
     !--- Implementation
     

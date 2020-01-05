@@ -15,7 +15,7 @@ subroutine tridag(N,A,B,C,R,U,ierror)
 !* Output:    U -      solved vector                                   *
 !***********************************************************************
       implicit none
-      include 'Constants.fi'
+      !include 'Constants.fi'
       
 !     Called by soiltemp => tridag (numnod, thoma, thomb, thomc, thomf, tsoil,ierror)
 ! --- global declarations
@@ -30,7 +30,7 @@ subroutine tridag(N,A,B,C,R,U,ierror)
 
 ! --- local declarations
       integer   i
-      real    gammav(macp), beta
+      real    gammav(5000), beta
       character messag*200
 ! ----------------------------------------------------------------------
 

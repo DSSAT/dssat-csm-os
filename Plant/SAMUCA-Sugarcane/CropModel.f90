@@ -611,7 +611,7 @@
     real    srl                 
     real    thour(24)
     real    trwup
-    real    tsoil
+    real    tsoil(200)
     real    dileaf
     real    z               !zero
     real    dayl
@@ -648,8 +648,16 @@
     !--- Notes:
     !--- Make sure crop variables are readed by DSSAT platform (e.g. extcoef)
     
-    pathwork = 'C:\DSSATv47' 
+    !--- Constants:
+    ! max_sl    = 200
+    ! max_id    = 50
+    ! macp      = 5000
+    ! MABBC     = 20*366
+    ! pi        = 3.14159265
+    ! d_2_r     = pi/180.
+    ! r_2_d     = 180./pi
     
+    pathwork = 'C:\DSSATv47'    
     
     !-------------------------------!
     !--- Reading crop parameters ---!

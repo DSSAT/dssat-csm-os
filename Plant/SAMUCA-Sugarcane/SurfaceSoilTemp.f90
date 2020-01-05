@@ -7,7 +7,7 @@
     
     !Use VarDefs
     implicit none
-    include 'Constants.fi'
+    !include 'Constants.fi'
     
     !Input variables
     
@@ -17,8 +17,8 @@
     real mint                       ! minimum air temperature (oC)
     real es                         ! soil evaporation (mm)
     real temp0                      ! soil surface temperature (oC)
-    real dlayer_cm(max_sl)          ! thickness of soil layer I (cm) - slthickness() INPUT for soilT
-    real sw(max_sl)                 ! soil water content of layer L (m3/m3) - swc() INPUT for soilT
+    real dlayer_cm(200)          ! thickness of soil layer I (cm) - slthickness() INPUT for soilT
+    real sw(200)                 ! soil water content of layer L (m3/m3) - swc() INPUT for soilT
     
     !State variables
     real A1        					! area of soil surface elements (m2/m2)
@@ -80,23 +80,28 @@
     real x4							 
     real wattm2    					! incoming shortwave radiation (W/m2)
     real tempm     					! average temperature (oC)
-    real ys(max_sl+1)               ! magnitude of soil thermal admittance (W/m2/K)
-    real phis(max_sl+1)             ! phase angle of soil thermal admittance (rad)
-    real ratio_G(max_sl+1)          ! ratio of heat flux between top and bottom layer boundaries ()
-    real ratio_T(max_sl+1)          ! ratio of temperature between top and bottom layer boundaries ()
+    real ys(200+1)               ! magnitude of soil thermal admittance (W/m2/K)
+    real phis(200+1)             ! phase angle of soil thermal admittance (rad)
+    real ratio_G(200+1)          ! ratio of heat flux between top and bottom layer boundaries ()
+    real ratio_T(200+1)          ! ratio of temperature between top and bottom layer boundaries ()
     integer    node
     integer counter
     
     !--- Constant Values (consider to add in "Constants.fi")
 
     real OMEGA                       ! daily angular frequency (rad/s)
-    parameter (OMEGA = 2.0*PI / 86400.0)
 
     real TZ                          ! temperature freezing point (K)
     parameter (TZ = 273.16D0)
 
     real w2                          ! average width of mulch elements (m)
     parameter (w2 = 0.02D0)
+    
+    !--- DSSAT coupling
+    real :: pi      = 3.14159265
+    real :: sigma   = 5.67477e-8
+    
+    OMEGA = 2.0*PI / 86400.0
     
     !--- Implementation Section ----------------------------------
       
@@ -128,7 +133,7 @@
       beta2 = 1.4*A2 / w2**0.25
       if (beta2 .le. 22.) beta2 = 22.
 
-      call soilt (ys, phis, ratio_G, ratio_T,dlayer_cm,sw)
+      call soilt_sam (ys, phis, ratio_G, ratio_T,dlayer_cm,sw)
         !  DERIVE OTHER PARAMETERS
       IAV = 1.0 - PAV
       RHO1 = SB1

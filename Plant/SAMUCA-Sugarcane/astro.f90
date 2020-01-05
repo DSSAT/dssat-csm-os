@@ -1,4 +1,4 @@
-subroutine astro
+subroutine astro(doy)
 ! ----------------------------------------------------------------------
 ! Subroutine astro (daynr,lat,dayl,daylp,sinld,cosld)
 ! Authors: this routine Astro is based on Sastro (Daniel van Kraalingen)
@@ -30,7 +30,7 @@ subroutine astro
 ! Subprograms called: Warning
 ! File usage        : none
 !----------------------------------------------------------------------
-      use VarDefs
+      !use VarDefs
       implicit none
        
 !     formal parameters(I=input,O=output,C=control,IN=init,T=time)      
@@ -38,6 +38,18 @@ subroutine astro
 !     local parameters
       real  angle,aob,dec,rad,zza,zzcos,zzsin,sc,help1
       character messag*200
+      
+      !--- DSSAT Coupling
+      real  sinld
+      real  cosld
+      real  lat(50)
+      real  dayl
+      real  daylp
+      real  dsinb
+      real  dsinbe
+      real  dso
+      integer   doy
+      real :: pi = 3.14159265
 
       data    angle /-4.0d0/
 ! ----------------------------------------------------------------------

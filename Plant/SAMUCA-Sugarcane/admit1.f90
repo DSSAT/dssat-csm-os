@@ -2,7 +2,7 @@
     subroutine admit1(P, Zdc, C, K, YS1, Y, RG, RT)
     
     implicit none
-    include 'Constants.fi'
+    !include 'Constants.fi'
     
 !  Sub-Program Arguments
       real P         ! (Input) period length (s)
@@ -22,7 +22,8 @@
       COMPLEX SINH
       COMPLEX COSH
       COMPLEX TANH
-
+      
+      real :: pi = 3.14159265
 
 ! Implementation Section ----------------------------------
 

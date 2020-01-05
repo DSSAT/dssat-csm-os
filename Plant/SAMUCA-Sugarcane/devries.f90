@@ -24,19 +24,19 @@ Subroutine Devries (NumNod,swc,sat,HeaCap,HeaCon,FQUARTZ,FCLAY,FORG)
 !* HeaCon - thermal conductivity (W/m/K)                               *
 !***********************************************************************
       Implicit None
-      Include 'Constants.fi'
+      !Include 'Constants.fi'
       
 !     (i) Global declarations                                          
 !     (i.i) Input                                                      
       Integer NumNod
-      real swc(max_sl),sat(max_sl)
+      real swc(200),sat(200)
 !     (i.ii)
-      real HeaCap(MACP), HeaCon(MACP)
+      real HeaCap(5000), HeaCon(5000)
 !     (ii) Local declarations                                          
       Integer Node
       real kqa,kca,kwa,koa,kaa,kqw,kcw,kww,kow,kaw
       Parameter (kaa = 1.0d0, kww = 1.0d0)
-      real fAir(MACP),fClay(MACP),fQuartz(MACP),fOrg(MACP)
+      real fAir(5000),fClay(5000),fQuartz(5000),fOrg(5000)
       real HeaConDry,HeaConWet
 !     (iii) Parameter declarations                                     
 !     (iii.i) Physical constants                                       

@@ -29,9 +29,7 @@ real function afgen(table,iltab,x)
  40   afgen = table(2)
       return
     end
-    
-
-    
+        
 real function fgrowth(d,wend,wini,tb,tm,te,t,delta)
 
     !--- A flexible sigmoid function of determinate growth.
@@ -112,9 +110,8 @@ real function fgrowth(d,wend,wini,tb,tm,te,t,delta)
     end select    
 
 end
-    
-    
-    real function asy_ws(max_ws, min_ws, t_max_ws, t_mid_ws, t_min_ws, watdmd)   
+        
+real function asy_ws(max_ws, min_ws, t_max_ws, t_mid_ws, t_min_ws, watdmd)   
 ! ----------------------------------------------------------------------
 !     source             : Yu. Asymptote curve to model water stress
 ! ----------------------------------------------------------------------
@@ -144,9 +141,7 @@ end
       
       return
     end
-    
-
-    
+        
 real function it_struc_pfac(it_struc_tb_ini,            &   ! Input Parameter
                             it_struc_to1,               &   ! Input Parameter
                             it_struc_to2,               &   ! Input Parameter
@@ -311,8 +306,6 @@ real function temperature_factor(t,tb_ini,to1,to2,tb_end)
     return
 
     end   
- 
-    
     
 real function tiller_senes(dw,nstk,dnstk,tilleragefac,tillerageprof,atln)
     

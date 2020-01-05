@@ -295,7 +295,7 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
     crop = 105
     
     open(crop,file=trim(pathwork)//'\Crop\SAMUCA.crp',status='old',action='read',iostat=ios)    
-    call checkios(ios,1)
+    !call checkios(ios,1)
     
     !--- Read Integer parameters    
     nhd  = 10   ! Number of lines of file header   
@@ -494,11 +494,11 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
         read(iou,'(A1000)',iostat=ios) line
         if(ios .gt. 0) then
             write(msg,'(A,A,A,I,A)') 'Problem in reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
         
         else if(ios .lt. 0) then
             write(msg,'(A,A,A,A,A)') 'No ',trim(search),' information found in ',trim(filen),' file.'
-            call wmsg(5)
+            !call wmsg(5)
             exit
         endif      
     
@@ -512,7 +512,7 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
             
             if(ios .gt. 0) then
             write(msg,'(A,A,A,A,A,I,A)') 'Problem in ',search,' reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
             else if(ios .lt. 0)then
                 exit
             endif   
@@ -647,11 +647,11 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
         read(iou,'(A1000)',iostat=ios) line
         if(ios .gt. 0) then
             write(msg,'(A,A,A,I,A)') 'Problem in reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
         
         else if(ios .lt. 0) then
             write(msg,'(A,A,A,A,A)') 'No ',trim(search),' information found in ',trim(filen),' file.'
-            call wmsg(5)
+            !call wmsg(5)
             exit
         endif      
     
@@ -665,7 +665,7 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
             
             if(ios .gt. 0) then
             write(msg,'(A,A,A,A,A,I,A)') 'Problem in ',search,' reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
             else if(ios .lt. 0)then
                 exit
             endif   
@@ -799,11 +799,11 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
         read(iou,'(A1000)',iostat=ios) line
         if(ios .gt. 0) then
             write(msg,'(A,A,A,I,A)') 'Problem in reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
         
         else if(ios .lt. 0) then
             write(msg,'(A,A,A,A,A)') 'No ',trim(search),' information found in ',trim(filen),' file.'
-            call wmsg(5)
+            !call wmsg(5)
             exit
         endif      
     
@@ -817,7 +817,7 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
             
             if(ios .gt. 0) then
             write(msg,'(A,A,A,A,A,I,A)') 'Problem in ',search,' reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
             else if(ios .lt. 0)then
                 exit
             endif   
@@ -1071,11 +1071,11 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
         read(iou,'(A1000)',iostat=ios) line
         if(ios .gt. 0) then
             write(msg,'(A,A,A,I,A)') 'Problem in reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
         
         else if(ios .lt. 0) then
             write(msg,'(A,A,A,A,A)') 'No ',trim(search),' information found in ',trim(filen),' file.'
-            call wmsg(5)
+            !call wmsg(5)
             exit
         endif      
     
@@ -1089,7 +1089,7 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
             
             if(ios .gt. 0) then
             write(msg,'(A,A,A,A,A,I,A)') 'Problem in ',search,' reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
             else if(ios .lt. 0)then
                 exit
             endif   
@@ -1229,11 +1229,11 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
         read(iou,'(A1000)',iostat=ios) line
         if(ios .gt. 0) then
             write(msg,'(A,A,A,I,A)') 'Problem in reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
         
         else if(ios .lt. 0) then
             write(msg,'(A,A,A,A,A)') 'Date ',trim(search),' not found in ',trim(filen),'.met file.'
-            call wmsg(4)
+            !call wmsg(4)
             exit
         endif      
     
@@ -1258,7 +1258,7 @@ subroutine ReadFile(task, inte_host, real_host, pathwork)
             
             if(ios .gt. 0) then
             write(msg,'(A,A,A,A,A,I,A)') 'Problem in ',search,' reading, please check file',trim(filen),'. Line ',lnumber,'.'
-            call wmsg(5)
+            !call wmsg(5)
             else if(ios .lt. 0)then
                 exit
             endif   

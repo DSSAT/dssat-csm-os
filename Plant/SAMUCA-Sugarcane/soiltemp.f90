@@ -1,4 +1,4 @@
-subroutine soiltemp(task)
+subroutine soiltemp(task, nlay)
     
     !Soil temperature
     !Adapted from SWAP including surface boudary condition (Ts)
@@ -8,7 +8,7 @@ subroutine soiltemp(task)
     ! - empirical relation of AirT and LAI to estimate surface temperature
     ! - theta(i) = swc(i)
     
-    Use VarDefs
+    !Use VarDefs
     Implicit None
     
    ! --- local
@@ -18,19 +18,19 @@ subroutine soiltemp(task)
       integer day
       integer sl
       
-      real  tmpold(macp),tab(mabbc*2),dummy,afgen,gmineral
-      real  thoma(macp),thomb(macp),thomc(macp),thomf(macp)
-      real  theave(macp),heacap(macp),heacnd(macp),heacon(macp)
+      real  tmpold(5000),tab(20*366*2),dummy,afgen,gmineral
+      real  thoma(5000),thomb(5000),thomc(5000),thomf(5000)
+      real  theave(5000),heacap(5000),heacnd(5000),heacon(5000)
       real  heaconbot,qhbot
       real  apar, dzsnw, heaconsnw, Rosnw
       real estimated_lai
       real htora
       real croph
-      real sat_point(max_sl)
-      real tetha(max_sl)
+      real sat_point(200)
+      real tetha(200)
       real avgtmn(365)
       real lai_red
-      real G(max_sl)    ! Soil heat flux (W m-2)
+      real G(200)    ! Soil heat flux (W m-2)
       real heacon_mu_dry
       real heacon_mu_dwet
       real G_soil_surf
@@ -52,6 +52,82 @@ subroutine soiltemp(task)
             
       !--- Minimum number of steps for accurate numerical simulations (2 hrs)
       integer :: min_steps = 12 
+      
+      !--- DSSAT Coupling
+      integer   nlay
+      integer   numnod
+      integer   :: outst = 208
+      integer   year
+      integer   doy
+      integer   das
+      integer   dap
+      integer   seqnow
+      integer   stempm(50)
+      integer   SwBotbHea(50)
+      
+      real      nheat
+      real      tsoil(200)
+      real      zh(200)
+      real      dz(200)
+      real 	    bottom(200)         ! soil	!
+      real      upper(200)          ! soil	!
+      real      slthickness(200)    ! soil	!
+      real      dep(200)            ! soil	!
+      real      sat(200)
+      real      hmulch
+      real      znod(5000)
+      real      disnod(200)
+      real      fquartz(5000)
+      real      fclay(5000)
+      real      forg(5000)
+      real      orgmat(200)
+      real      psand(200)
+      real      psilt(200)
+      real      pclay(200)
+      real      tmn
+      real      tetop
+      real      tebot
+      real      alb_surface
+      real      mualb(50)
+      real      muam(50)
+      real      mumass(50)
+      real      tmin
+      real      tmax
+      real      lai
+      real      qo
+      real      dso
+      real      pleng
+      real      srad
+      real      alt(50)
+      real      rh
+      real      extcoef
+      real      hrnc
+      real      dhrlai
+      real      es
+      real      swc(200)
+      real      swcm1(50)
+      real      dt
+      real      tbot_mean(50)
+      real      tbot_ampli(50)
+      real      tbot_imref(50)
+      real      tbot_ddamp(50)
+      real      lam_dmu_wet(50)
+      real      lam_mu_dry(50)
+      real      muwat
+      real      musat
+      real      rhomulch
+      real      albedo(50)      
+      
+      logical   mulcheffect
+      logical   mulchcover
+      logical   addmulch
+      logical   remmulch     
+      
+      character   (len=100)   prjname            				! ctrl 	! 
+      character :: comma = ','
+      
+      
+      
     save
     
         
@@ -96,7 +172,7 @@ subroutine soiltemp(task)
             dz(1:nlay)      = slthickness(1:nlay)        
         endif
         
-        znod(macp) = 0.d0        
+        znod(5000) = 0.d0        
         do i = 1, numnod            
             !znod(i) = (upper(i) + slthickness(i) / 2.) * -1.            
             if(i .eq. 1) then                                 
@@ -109,7 +185,7 @@ subroutine soiltemp(task)
         enddo
         
         do i = 1, numnod
-            tsoil(i) = afgen(tab,macp*2,abs(znod(i)))          
+            tsoil(i) = afgen(tab,5000*2,abs(znod(i)))          
         end do
     
         ! ---   initialize dry bulk density and volume fractions sand, clay and organic matter
@@ -186,7 +262,7 @@ subroutine soiltemp(task)
              endif
          enddo
 
-         znod(macp) = 0.d0
+         znod(5000) = 0.d0
          do i = 1, numnod
              !--- Mid point depth for each layer and distance among them [cm]
              if(i .eq. 1) then
@@ -220,7 +296,7 @@ subroutine soiltemp(task)
          numnod          = nlay
          dz(1:nlay)      = slthickness(1:nlay)
 
-         znod(macp) = 0.d0
+         znod(5000) = 0.d0
          do i = 1, numnod
              !znod(i) = (upper(i) + slthickness(i) / 2.) * -1.
              if(i .eq. 1) then
@@ -265,7 +341,7 @@ subroutine soiltemp(task)
         !mulch blanket is simulated with low heat conduction to soil surface
                 
         !--- Compute Solar Radiation
-        call astro() !From Weather.f90
+        call astro(doy) !From Weather.f90
         
         Qo      = dso / 1.e6        ! MJ m-2 d-1
         croph   = pleng             ! Crop height        
@@ -420,8 +496,9 @@ subroutine soiltemp(task)
     ! ---   solve for vector tsoil a tridiagonal linear set
         call tridag (numnod, thoma, thomb, thomc, thomf, tsoil,ierror)
         if(ierror.ne.0)then
-           msg = 'During a call from Soil Temperature an error occured in TriDag'
-        call wmsg(4)
+        write(*,*) 'During a call from Soil Temperature an error occured in TriDag'
+            ! msg = 'During a call from Soil Temperature an error occured in TriDag'
+        !call wmsg(4)
         end if    
     
     enddo

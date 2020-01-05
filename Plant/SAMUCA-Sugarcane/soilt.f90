@@ -1,16 +1,16 @@
     
-    subroutine soilt(ys, phis, ratio_G, ratio_T,dlayer_cm,sw)
+    subroutine soilt_sam(ys, phis, ratio_G, ratio_T,dlayer_cm,sw)
     
     implicit none
-    include 'Constants.fi'
+    !include 'Constants.fi'
     
 !  Sub-Program Arguments
-      real ys(max_sl+1)                    ! (Output) magnitude of soil thermal admittance (W/m2/K)
-      real phis(max_sl+1)                  ! (Output) phase angle of soil thermal admittance (rad)
-      real ratio_G(max_sl+1)               ! ratio of heat flux between top and bottom layer boundaries ()
-      real ratio_T(max_sl+1)               ! ratio of temperature between top and bottom layer boundaries ()
-      real dlayer_cm(max_sl)               ! thickness of soil layer I (cm) -slthickness()
-      real sw (max_sl)                     ! soil water content of layer L (m3/m3) - swc()
+      real ys(200+1)                    ! (Output) magnitude of soil thermal admittance (W/m2/K)
+      real phis(200+1)                  ! (Output) phase angle of soil thermal admittance (rad)
+      real ratio_G(200+1)               ! ratio of heat flux between top and bottom layer boundaries ()
+      real ratio_T(200+1)               ! ratio of temperature between top and bottom layer boundaries ()
+      real dlayer_cm(200)               ! thickness of soil layer I (cm) -slthickness()
+      real sw (200)                     ! soil water content of layer L (m3/m3) - swc()
       
 !  Local Variables
       real Zdc           ! layer depth (decimetre)
@@ -137,5 +137,5 @@
       
       return      
       
-    end subroutine soilt
+    end subroutine soilt_sam
     
