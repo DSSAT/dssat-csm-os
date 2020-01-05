@@ -1,12 +1,12 @@
-﻿subroutine Sugarcane(task)
+﻿subroutine SAMUCA(task, nlay)
  
     !-------------------------------------------------------------------------
     !---------- Agronomic Modular Simulator for Sugarcane (SAMUCA) -----------
     !-------------------------------------------------------------------------
-    !  Written in Microsoft Visual Studio FORTRAN for PC-compatible machines              
+    !  Written in Microsoft Visual Studio FORTRAN              
 	!  
     !  1st Version:
-    !  Author: FABIO R. MARIN Date: 11/10/2010
+    !  Author: FABIO R. MARIN (2014)
     !  Scientific base - dx.doi.org/10.1590/S0103-90162014000100001
     !  Source Code     - murilodsv@bitbucket.org/murilodsv/samuca_standalone.git
     !
@@ -65,7 +65,8 @@
     integer		phy                                       		! 
     integer		pos_it_bg                                 		! 
     integer		sl                                        		! 
-    integer		tl                                        		! 
+    integer		tl                                        		!
+    integer     nlay
     logical		fl_potential                              		! 
     logical		fl_appear_leaf                            		! 
     logical		fl_hasleaf                                		! 
@@ -481,9 +482,9 @@
 
     !--- Arrays Variables
     real        phprof(200,60)                        ! Phytomer profile and attributes dimensions    
-    real        drld_sl(max_sl)                                 !
-    real        dw_rt_sl(max_sl)                                !
-    real        ddw_rt_sl(max_sl)                               !
+    real        drld_sl(200)                                 !
+    real        dw_rt_sl(200)                                !
+    real        ddw_rt_sl(200)                               !
     real        srl_prof(1000)                                  !
     real        ddw_rt_prof(1000)                               !
     real        drld_prof(1000)                                 !
@@ -499,8 +500,8 @@
     real        rgf(nlay+1,3)                                   !
     real        lroot(nlay)                                     !
     real        dlroot(nlay)                                    !
-    real        drld(max_sl)                                    !
-    real        drld_dead(max_sl)                               !
+    real        drld(200)                                    !
+    real        drld_dead(200)                               !
     logical     fl_it_AG(200)                               ! Above Ground Internode Flag
     logical     fl_lf_AG(200)                               ! Above Ground Leaf Flag
     logical     fl_lf_alive(200) 
@@ -622,23 +623,17 @@
     integer year
     real    pol
     real    kc
-    real    trasw
-    
-    
-    
+    real    trasw  
     
     character 	(len = 6)	pltype      ! plan	!  Planting type (Ratoon or PlCane)    
     character 	(len = 6)	cropstatus  ! plan	!  Dead or Alive
 	character 	(len = 6)	cropdstage  ! plan	!  Development Stage - Only Sprout or Emergd
     character   (len=100)   CROPFILE(50)
     character   (len=100)   prjname            				! ctrl 	! 
+    character   (len=1000)  pathwork
     
     logical     flcropalive
     logical	    writedetphoto(50)
-     
-    
-    !--- Notes:
-    !--- Make sure crop variables are readed by DSSAT platform (e.g. extcoef)
     
     save
     
@@ -648,11 +643,19 @@
     
 10  continue
     
+    !--- DSSAT coupling ---!
+    
+    !--- Notes:
+    !--- Make sure crop variables are readed by DSSAT platform (e.g. extcoef)
+    
+    pathwork = 'C:\DSSATv47' 
+    
+    
     !-------------------------------!
     !--- Reading crop parameters ---!
     !-------------------------------!
     
-    call ReadFile(6)
+    call ReadFile(6, inte_host, real_host, pathwork)
     
     nsenesleaf_effect        		= inte_host(  1) ! (I)
     maxgl                    		= inte_host(  2) ! (I)
@@ -3350,7 +3353,8 @@
 109     format(I2,3X,A6,3X,I4,4X,I3,3X,I4,4X,I3,1F8.1,2f8.2,3F8.2,8F8.2,3X,A6,2X,A6,2X,A5)  
     return
     
-    end subroutine Sugarcane
+    end subroutine SAMUCA
+    
     
 subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
 ! ----------------------------------------------------------------------
