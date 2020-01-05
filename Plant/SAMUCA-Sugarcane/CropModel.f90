@@ -2081,7 +2081,7 @@
             !----------------------------------------!
             
             !--- Astrological calculations for difuse and direct PAR interception on hourly-step
-            call astro 
+            call astro(doy) 
                         
             !--- Convert CO2 Assimilation rate to kgCO2 ha-1 h-1
             amax_conv   = amax / 1.e3 * 1.e4 * 3600 * 44.d0 / 1.e6
