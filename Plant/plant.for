@@ -557,6 +557,10 @@ c     Added by MJ, 2007-04-04:
 c     ::::::::::::::::::::::::
 c     Total LAI must exceed or be equal to healthy LAI:
           XLAI = MAX(XLAI, XHLAI)
+!     -------------------------------------------------
+!     Sugarcane - SAMUCA
+      CASE('SCSAM')
+          call SAMUCA(1,1,1)                             !Output)
 
 !     -------------------------------------------------
 !     Sugarcane - CASUPRO

@@ -1,4 +1,5 @@
-﻿subroutine SAMUCA(task, nlay)
+﻿subroutine SAMUCA(task, dynamic,                             &
+         YREND)
  
     !-------------------------------------------------------------------------
     !---------- Agronomic Modular Simulator for Sugarcane (SAMUCA) -----------
@@ -19,10 +20,56 @@
 	!  Edited in: Sep-2015 by Murilo dos S. Vianna  -> Model Review and Assessment
     !  Edited in: Feb-2016 by Murilo dos S. Vianna  -> Coupled to SWAP: https://scisoc.confex.com/crops/2017am/webprogram/Paper105395.html
     !  Edited in: Dec-2017 by Murilo dos S. Vianna  -> New Version Including Layered Photosynthesis, Source-Sink at Phytomer Level, Tillering
-    !-------------------------------------------------------------------------
+    !------------------------------------------------------------------------
     
-   !Use VarDefs
+    !--- Global variables
+    use ModuleDefs
+    use SAM_ModuleDefs
+    
     Implicit None
+    save
+    
+    integer     DYNAMIC         ! This is the dynamic call initialization, rate, integration (~task) (IN) 
+    
+    integer 	YREND	        ! (IN)
+ !   integer 	YRPLT			! (IN)
+	!integer 	MDATE			! (OUT)
+	!real    	CO2             ! (IN)
+ !   real    	DAYL            ! (IN)
+ !   real    	EOP             ! (IN)
+ !   real    	EP              ! (IN)
+	!real		EP1             ! (IN)
+	!real		RWUEP1          ! (IN)
+	!real		RWUEP2          ! (IN)
+ !   real    	EO              ! (IN)
+	!real		EOS             ! (IN)
+	!real		ES              ! (IN)
+ !   real    	HARVFRAC(2)     ! (IN)
+ !   real    	NH4(NL)         ! (IN)
+ !   real    	NO3(NL)         ! (IN)
+ !   real    	SNOW            ! (IN)
+ !   real    	SRAD            ! (IN)
+ !   real    	SW(NL)          ! (IN)
+ !   real    	TMAX            ! (IN)
+ !   real    	TMIN            ! (IN)
+ !   real    	TRWUP           ! (IN)
+ !   real    	TRWU            ! (IN)
+ !   real    	TWILEN          ! (IN)
+ !   real 		IRRAMT          ! (IN)	
+	!real     	CANHT			! (OUT)
+ !   real     	KCAN            ! (OUT)
+ !   real     	KTRANS          ! (OUT)
+ !   real     	NSTRES			! (OUT)
+ !   real     	PORMIN			! (OUT)
+ !   real     	RLV(NL)			! (OUT)	    
+ !   
+ !   !--- DSSAT composite variables:
+	!TYPE (ControlType) CONTROL
+	!TYPE (SoilType)    SOILPROP
+	!TYPE (SwitchType)  ISWITCH
+	!Type (ResidueType) HARVRES 
+	!Type (ResidueType) SENESCE
+	!Type (WeatherType) WEATHER
     
     !-----------------------------------------------------------!-------------------------------------------------------------------------------!
     ! Local Variables and Input Parameters                      ! Description                                                                   !
@@ -538,8 +585,8 @@
     real 	MLA			
     real 	KC_MIN		
     real 	EORATIO		
-    real 	RWUEP1		
-    real 	RWUEP2		
+    !real 	RWUEP1		
+    !real 	RWUEP2		
     real 	T_MAX_WS_PHO
     real 	T_MID_WS_PHO
     real 	T_MIN_WS_PHO
@@ -553,7 +600,7 @@
     real	SWCON2		
     real	SWCON3		
     real	RWUMAX		
-    real	PORMIN		
+    !real	PORMIN		
     real	T_MAX_WS_FPF
     real	T_MID_WS_FPF
     real	T_MIN_WS_FPF
@@ -646,7 +693,11 @@
     !--- DSSAT coupling ---!
     
     !--- Notes:
-    !--- Make sure crop variables are readed by DSSAT platform (e.g. extcoef)
+    !--- Make sure crop variables are readed by DSSAT platform 
+    !--- IMPORTANT LINKAGES:
+    ! CANHT
+    ! K
+    ! 
     
     !--- Constants:
     ! max_sl    = 200
@@ -656,6 +707,20 @@
     ! pi        = 3.14159265
     ! d_2_r     = pi/180.
     ! r_2_d     = 180./pi
+    
+    ! IMPORTANT NOTES:
+    
+    ! CUL PARAMETERS ARE DECALRED IN file COMGEM.blk
+    ! tb was declared as tb_sam IN file COMGEM.blk
+    !
+    ! Those parameters are being read as real and then converted to integer
+    ! Their corresponding real variable is decalred in file COMGEM.blk with "_r" suffix
+    !integer nsenesleaf_effect
+	!integer maxgl
+	!integer n_lf_max_ini_la
+	!integer n_lf_when_stk_emerg
+	!integer n_lf_it_form
+	!integer maxdgl
     
     pathwork = 'C:\DSSATv47'    
     
@@ -3294,6 +3359,8 @@
                 f20.5)                  ! incpar(ghour,4)       [total PAR - W/m2]
 
         
+    
+    
     !--- Detailed Crop Outputs (Phytomer Profile)
     if(writedcrop(1))then
         do phy = 1, n_ph           
@@ -3362,6 +3429,7 @@
     return
     
     end subroutine SAMUCA
+    
     
     
 subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)

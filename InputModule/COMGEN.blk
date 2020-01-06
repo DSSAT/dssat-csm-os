@@ -38,7 +38,45 @@
      &      MaxPARCE, APFMX, STKPFMAX, SUCA, TBFT,  
      &      MXLFAREA, MXLFARNO, PSWITCH, TTPLNTEM, 
      &      TTRATNEM, CHUPIBASE, TT_POPGROWTH, POPTT16, 
-     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5 
+     &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5
+
+	!--- SAMUCA's cultivar parameters	(MV, jan-2020)
+	real 	nsenesleaf_effect_r
+	real 	maxgl_r
+	real 	n_lf_max_ini_la_r
+	real 	n_lf_when_stk_emerg_r
+	real 	n_lf_it_form_r
+	real 	maxdgl_r
+	real	amax
+	real	eff
+	real	tb_sam
+	real	tb0pho
+	real	tb1pho
+	real	tb2pho
+	real	tbfpho
+	real	tbper
+	real	tbMax_per
+	real	phyllochron
+	real	sla
+	real	mla
+	real	rwuep1
+	real	rwuep2
+	real	t_max_ws_pho
+	real	t_mid_ws_pho
+	real	t_min_ws_pho
+	real	t_max_ws_exp
+	real	t_mid_ws_exp
+	real	t_min_ws_exp
+	real	plastochron
+	real	cr_source_sink_ratio_ruse
+	real	it_struc_tb_end
+	real	max_it_dw
+	real	mid_tt_it_growth
+	real	end_tt_it_growth
+	real	mid_tt_lf_growth
+	real	end_tt_lf_growth
+	real	tt_chumat_lt
+
 
       REAL          CSDVAR,PHTHRS(20),SDPDVR,SLAVAR,LFMAX,XFRUIT,WTPSD
       REAL          SFDUR,PODUR,PPSEN,PH2T5,SIZELF
