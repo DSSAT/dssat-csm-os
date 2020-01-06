@@ -15,7 +15,7 @@ C  Called from: ETPHOT
 C  Calls:       CANPET,CANOPG,HSOILT
 C=======================================================================
 
-      SUBROUTINE ETPHR(
+      SUBROUTINE ETPHR(CONTROL,H,
      &  CANHT, CEC, CEN, CLOUDS, CO2HR, DAYTIM,           !Input
      &  DLAYR2, DULE, FNPGL, FNPGN, FRACSH, FRSHV,        !Input
      &  KDIRBL, LAISH, LAISHV, LAISL, LAISLV, LLE,        !Input
@@ -24,7 +24,7 @@ C=======================================================================
      &  REFHT, RHUMHR, RNITP, RWUH, SHCAP, SLAAD,         !Input
      &  SLWREF, SLWSLO, STCOND, SWE, TAIRHR, TA,          !Input
      &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,               !Input
-     &  XLMAXT, YLMAXT,                                   !Input
+     &  XLMAXT, YLMAXT, XSW,YSCOND,YSHCAP,                !Input (CSV CXSW,YSCOND,YSHCAP)
      &  AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,      !Output
      &  PGHR, SLWSH, SLWSL, T0HR, TCAN, THR, TSHR,        !Output
      &  TSURF,                                            !Output
@@ -37,7 +37,7 @@ C=======================================================================
      &  AGEQESL, CO2QESL, QEFFSL)                         !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
@@ -45,7 +45,7 @@ C=======================================================================
 
       CHARACTER MEEVP*1,MEPHO*1,TYPPGN*3,TYPPGL*3
 
-      INTEGER ITER,NLAYR
+      INTEGER ITER,NLAYR,H,J
 
       LOGICAL DAYTIM,REPEAT,STRESS
 
@@ -57,7 +57,9 @@ C=======================================================================
      &  RA,RABS(3),RCUTIC,REFHT,RHUMHR,RNITP,RWUH,SHCAP(NL),SLAAD,
      &  SLWREF,SLWSH,SLWSL,SLWSLO,STCOND(NL),SWE,T0HR,TAIRHR,TA,TMIN,
      &  TCAN,TCPREV,THR,TPREV,TSHR(NL),TSUM,TSURF(3,1),USTAR,
-     &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6)
+     &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6),
+CSVC
+     & TABEX,SW2,YHC(3),YTC(3),XSW(NL,3),YSCOND(NL,3),YSHCAP(NL,3),XC(3)
 
 !     Added by BAK
       REAL RB(3),RSURF(3),RNET(3,1),
@@ -66,6 +68,8 @@ C=======================================================================
       CHARACTER PGPATH*2
       REAL CCNEFF, CICAD, CMXSF, CQESF
       REAL AGEQESL, CO2QESL, QEFFSL
+
+      TYPE (ControlType) CONTROL
 
       PARAMETER (ERRBND=0.01)
 
@@ -122,12 +126,12 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        RCUTIC, REFHT, RHUMHR, STCOND, TAIRHR,      !Input
      &        WINDHR,                                     !Input
      &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
-     &        RB, RSURF, RNET,                            !Output
-     &        G, LH, LHEAT, SH, SHEAT,                    !Output
+     &        RB, RSURF, RNET,                         !Output
+     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
      &        RBSL, RBSL, RBSS)                           !Output
-C          added by BAK on 10DEC2015           
+C          added by BAK on 10DEC2015
 
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
@@ -165,7 +169,7 @@ C            CONDSH = CONDSH * (THR-RWUH)/THR
      &          WINDHR,                                   !Input
      &          EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,   !Output
      &          RB, RSURF, RNET,                          !Output
-     &          G, LH, LHEAT, SH, SHEAT,                  !Output
+     &          G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,!Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
      &   RBSH, RBSL, RBSS)                               !Output
@@ -179,10 +183,12 @@ C       preveious line added by BAK on 10DEC2015
               ENDIF
               ERRTC = ABS(TCAN-TCPREV)
               ERRTR = ABS(THR-RWUH)
-              HOLD = CSLPRV+(CONDSL-CSLPRV)/(THR-TPREV)*(RWUH-TPREV)
+CSVC   HOLD = CSLPRV+(CONDSL-CSLPRV)/(THR-TPREV)*(RWUH-TPREV)
+       HOLD = CSLPRV+(CONDSL-CSLPRV)*MAX((RWUH-TPREV)/(THR-TPREV),.05) !CSVC ADD 07/13/2018
               CSLPRV = CONDSL
               CONDSL = MAX(1.0/RCUTIC,HOLD)
-              HOLD = CSHPRV+(CONDSH-CSHPRV)/(THR-TPREV)*(RWUH-TPREV)
+CSVC   HOLD = CSHPRV+(CONDSH-CSHPRV)/(THR-TPREV)*(RWUH-TPREV)
+       HOLD = CSHPRV+(CONDSH-CSHPRV)*MAX((RWUH-TPREV)/(THR-TPREV),.05) !CSVC ADD 07/13/2018
               CSHPRV = CONDSH
               CONDSH = MAX(1.0/RCUTIC,HOLD)
               REPEAT = ERRTR .GT. EMAXTR .AND. ERRTC .GT. EMAXTC
@@ -235,7 +241,7 @@ C     Night hours or bare soil.
      &        WINDHR,                                     !Input
      &        EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,     !Output
      &        RB, RSURF, RNET,                            !Output
-     &        G, LH, LHEAT, SH, SHEAT,                    !Output
+     &        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,  !Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added on 1DEC2014 by Bruce Kimball
      &        RBSL, RBSL, RBSS)                           !Output
@@ -263,18 +269,32 @@ C     Update soil moisture in upper layer, soil and canopy-air temperature
 C     difference.
 
       IF (MEEVP .EQ. 'Z') THEN
-        CALL HSOILT(
-     &    DLAYR2, NLAYR, SHCAP, STCOND, TA, TSURF(3,1),   !Input
-     &    TSHR)                                           !Output
 C       SWE = SWE
 C        DULE = DULE
 C       LLE = LLE
 C       CEN = CEN
-C previous 4 lines commented out by BK and KB on 11Jul17       
+C previous 4 lines commented out by BK and KB on 11Jul17
         SWE = MAX(SWE-EHR,0.0)
         CEN = (DULE-SWE) / (DULE-LLE) * 100.0
+CSVC
+
+
+      SW2=SWE/(DLAYR2(1)*10.0)
+        DO J=1,3
+          XC(J) = XSW(1,J)
+          YHC(J) = YSHCAP(1,J)
+          YTC(J) = YSCOND(1,J)
+        ENDDO
+        SHCAP(1) = TABEX(YHC,XC,SW2,3)
+        STCOND(1) = TABEX(YTC,XC,SW2,3)
 C previous two lines uncommented by BK and KB on 11Jul17
 C per version 3.5 of DSSAT
+
+
+        CALL HSOILT(CONTROL,H,
+     &    DLAYR2, NLAYR, SHCAP, STCOND, TA, TSURF(3,1),   !Input
+     &    TSHR)                                           !Output
+
       ENDIF
 
       RETURN
@@ -391,11 +411,13 @@ C     Compute canopy photosynthesis (µmol CO2/m2/s).
 
       IF (STRESS) THEN
         IF (CONDSL .GT. 0.0) THEN
+            IF(CSLSTR.GT.CONDSL) CSLSTR=CONDSL !CSVC ADD 07/13/2018
           PGSL = PGSL * CSLSTR/CONDSL
         ELSE
           PGSL = 0.0
         ENDIF
         IF (CONDSH .GT. 0.0) THEN
+            IF(CSHSTR.GT.CONDSH) CSHSTR=CONDSH !CSVC ADD 07/13/2018
           PGSH = PGSH * CSHSTR/CONDSH
         ELSE
           PGSH = 0.0
@@ -440,7 +462,7 @@ C========================================================================
      &  CO2QE, AGEQE)                                     !Output
 
       USE MODULEDATA
-	 
+
       IMPLICIT NONE
       SAVE
 
@@ -456,6 +478,7 @@ C========================================================================
       PARAMETER (O2=210000.0,RGAS=8.314)
 
       REAL BETALS,PDLA,BETAMX
+
         
 C     Initialization.  Convert LMXREF from mgCO2/m2/s to µmol/m2/s.
 
@@ -497,7 +520,7 @@ C     CICA = 0.4+0.6*EXP(-0.002*CO2HR)
            CINT = CICA*CO2HR + (1.0-CICA)*GAMST
            CINT = MAX(CINT,GAMST)
            CO2MAX = CMXSF * (CINT-GAMST) / (4.0*CINT+8.0*GAMST)
-        ELSE 
+        ELSE
            CICA = 0.7
            CINT = CICA*CO2HR + (1.0-CICA)*GAMST
            CINT = MAX(CINT,GAMST)
@@ -535,7 +558,7 @@ C     to 1.0 at 30 oC and 350 µL/L CO2.
 
       CINT = MAX(CO2HR,GAMST)
       IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
-         CO2QE = CQESF * (CINT-GAMST) / (4.*CINT+8.*GAMST)	
+         CO2QE = CQESF * (CINT-GAMST) / (4.*CINT+8.*GAMST)
       ELSE
          CO2QE = 6.225 * (CINT-GAMST) / (4.*CINT+8.*GAMST)
       ENDIF
@@ -553,7 +576,7 @@ C
       AGEQE =  (0.0094 + (1.0-EXP(-2.0*AGEMXL))) /
      &  (0.0094 + (1.0-EXP(-2.0*1.0)))
       AGEQE = MIN(MAX(AGEQE,0.0),1.0)
-        
+
 C    25 Apr 2011 KJB,PDA,MPS added code for beta function: PDLA effects on lfmax and QE
       CALL GET('PDLABETA','BETA',BETALS)
       CALL GET('PDLABETA','PDLA',PDLA)
@@ -579,7 +602,7 @@ C  12/10/90 NBP Modified to calculated leaf conductance to H2O
 C  11/23/93 NBP Modified for layer input of SLW
 C-----------------------------------------------------------------------
 C  Called from: CANOPG
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE PGLEAF(
@@ -675,16 +698,14 @@ C=======================================================================
      &  WINDHR,                                           !Input
      &  EHR, RA, TCAN, THR, TSHR, TSURF, USTAR,           !Output
      &  RB, RSURF, RNET,                                  !Output
-     &  G, LH, LHEAT, SH, SHEAT,                          !Output
-! 2019-02-21 CHP removed unused variables
-!     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
+     &  G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,        !Output
 C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
      &    RBSH, RBSL, RBSS)                               !Output
 C       added by BAK on 10DEC15
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
@@ -700,7 +721,7 @@ C       added by BAK on 10DEC15
      &  SHAIRD,TK,MWATER,RGAS,MAIR,LAISHV,LAISLV,RADBK(3),
      &  USTAR,XLAI,ZERO
 
-      REAL RB(3), RSURF(3),RBSH,RBSL,RBSS !,RSSH,RSSL,RSSS
+      REAL RB(3), RSURF(3),RSSH,RSSL,RSSS,RBSH,RBSL,RBSS
 C         RB, RSURF RSSH RSSL RSSS added DEC2014 by Bruce Kimball
 C         RBSH,RBSL,RBSS added by BAK on 10DEC15
 
@@ -736,7 +757,7 @@ C     Create vpd and resistance matrices.
       CALL ETRES(
      &  CANHT, CEC, CEN, CONDSH, CONDSL, FRACSH, FRSHV,   !Input
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
-     &  TAIRHR, TCAN, WINDHR,                             !Input
+     &  TAIRHR, TCAN, WINDHR,VHCAIR,                      !Input
      &  RA, RL, RS, USTAR,                                !Output
      &  RB,RSURF)
 C          RB and RSURF Added by BAK on 1DEC2014
@@ -759,7 +780,7 @@ C     Calculate NET total by subtracting net (back) longwave radiation.
 
       CALL RADB(
      &  CLOUDS, EAIRHR, FRSHV, LAISHV,                    !Input
-     &  LAISLV, TAIRHR, TCAN,                             !Input 
+     &  LAISLV, TAIRHR, TCAN,                             !Input
      &  RADBK)                                            !Output
       RNET(1,1) = RABS(1) - RADBK(1)
       RNET(2,1) = RABS(2) - RADBK(2)
@@ -770,7 +791,7 @@ C     Solve 3-zone model for ET and E (mm/h).
 
       CALL ETSOLV(
      &  DLAYR1, EAIRHR, PSYCON, RL, RNET, RS, STCND1,     !Input
-     &  TAIRHR, TSHR1, VHCAIR, VPD,                       !Input
+     &  TAIRHR, TSHR1, VHCAIR, VPD,XLAI,                       !Input
      &  ECAN, G, LH, LHEAT, SH, SHEAT, TCAN, TSURF)       !Output
       ETHR = LH / LHVAP * 3600.0
       EHR = LHEAT(3,1) / LHVAP * 3600.0
@@ -801,8 +822,8 @@ C========================================================================
       SUBROUTINE ETRES(
      &  CANHT, CEC, CEN, CONDSH, CONDSL, FRACSH, FRSHV,   !Input
      &  KDIRBL, LAISH, LAISL, LWIDTH, RCUTIC, REFHT,      !Input
-     &  TAIRHR, TCAN, WINDHR,                             !Input
-     &  RA, RL, RS, USTAR, RB, RSURF)                     !Output
+     &  TAIRHR, TCAN, WINDHR,VHCAIR,                      !Input
+     &  RA, RL, RS, USTAR, RB, RSURF)               !Output
 C        added RB and RSURF to output on 1DEC2014 by Bruce Kimball
 
       IMPLICIT NONE
@@ -812,7 +833,7 @@ C        added RB and RSURF to output on 1DEC2014 by Bruce Kimball
       REAL CANHT,CEC,CEN,CONDSH,CONDSL,FRACSH,FRSHV,KDIRBL,
      &  LAISH,LAISL,LWIDTH,RCUTIC,RA,RB(3),REFHT,RL(3,3),
      &  RMAX,RS(3,3),RSSH,RSSL,RSSS,RSURF(3),TAIRHR,TCAN,
-     &  WINDHR,XLAI,USTAR
+     &  WINDHR,XLAI,USTAR,VHCAIR
       PARAMETER (RMAX=1.0E4)
 
 C     Initialization.
@@ -823,7 +844,7 @@ C     Calculate canopy and soil boundary layer resistances.
 
       CALL RESBLR(
      &  CANHT, FRACSH, FRSHV, KDIRBL, LAISH, LAISL,       !Input
-     &  LWIDTH, REFHT, TAIRHR, TCAN, WINDHR,              !Input
+     &  LWIDTH, REFHT, TAIRHR, TCAN, WINDHR,VHCAIR,              !Input
      &  RA, RB, USTAR)                                    !Output
 
 C     Calculate leaf surface resistances.
@@ -862,9 +883,9 @@ C  RESET JULY 10 2017 BK AND KJB
 C  set back to zero per DSSAT 3.5 on 11Jul17
       ELSE
         RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.37)-1.0)
-C  uncommented back to DSSAT 3.5 on 11Jul17 by BK and KB       
+C  uncommented back to DSSAT 3.5 on 11Jul17 by BK and KB
 C  RESET FOR RSSS ON JULY 10 2017 BK AND KJB
-C        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0) 
+C        RSSS = 100.0 + 154.0*(EXP(0.0117*(CEN-CEC)**1.275)-1.0)
 commented out by Bruce Kimball on 10DEC15
 C          RSSS = 10000
       ENDIF
@@ -897,13 +918,13 @@ C  02/09/93 NBP Written
 C  04/24/94 NBP Added check to prevent -ve wind speed at top of canopy.
 C-----------------------------------------------------------------------
 C  Called from: ETRES
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE RESBLR(
      &  CANHT, FRACSH, FRSHV, KDIRBL, LAISH, LAISL,       !Input
-     &  LWIDTH, REFHT, TAIRHR, TCAN, WINDHR,              !Input
-     &  RA, RB, USTAR)                                    !Output
+     &  LWIDTH, REFHT, TAIRHR, TCAN, WINDHR,VHCAIR,       !Input
+     &  RA, RB, USTAR)                              !Output
 
       IMPLICIT NONE
       SAVE
@@ -912,7 +933,7 @@ C=======================================================================
      &  KH,LAISH,LAISL,ZMD,HMD,K1,K2,LWIDTH,PSIM,PSIH,RA,
      &  RBLF,RBSH,RBSL,RB(3),REFHT,RMAX,TAIRHR,TCAN,TKAIR,
      &  WINDHR,WINDSP,XLAI,Z0H,Z0M,ZS0H,ZS0M,LHZ0M,LZZ0H,LZZ0M,DT,
-     &  MO,USTAR,X,A,B,PI,RATIO,WINDH,RBSS,ZERO
+     &  MO,USTAR,X,A,B,PI,RATIO,WINDH,RBSS,ZERO,VHCAIR,RASAC,STC,RIN,KS
       PARAMETER (ETAKMX=2.0, ETAWMX=3.0, PI=3.14159, RMAX=1.0E4,
      &  ZERO=1.0E-6)
 
@@ -926,15 +947,20 @@ C       wind speed to be the minimum.
 C     WINDSP = MAX(WINDHR,1.0)
       H = CANHT
       ZS0M = 0.03                                                  ! m
-      Z0M = MAX(ZS0M,0.13*H)                                       ! m
+      Z0M = MAX(ZS0M,0.13*H)                                       ! m #height above d where momentum is complete absorbed
       IF (FRSHV .GT. 0.0 .AND. FRSHV.LT. 1.0) THEN
         Z0M = 4.0 * Z0M
       ENDIF
-      D = 0.77 * H                                                 ! m
+      D = 0.77 * H                                                 ! m #displacement height (where momentum is complete absorbed)
       Z0H = Z0M/5.0                                                ! m
       ZS0H = ZS0M/5.0                                              ! m
       HMD = H - D                                                  ! m
-      ZMD = REFHT - D                                              ! m
+      ZMD = REFHT - D
+
+CSVC   Reference height, taked from WTH, can't be <= Canopy height
+      IF(ZMD.LE.0.5)PRINT*,'WARNING: Canopy height < Ref. height' !CSVC ADD 07/13/2018
+      ZMD=max(ZMD,0.5)                                   !CSVC ADD 07/13/2018
+
       LZZ0M = LOG(ZMD/Z0M)
       LZZ0H = LOG(ZMD/Z0H)
       TKAIR = TAIRHR + 273.
@@ -974,11 +1000,41 @@ C     Aerodynamic resistance.
       USTAR = 0.4 * WINDSP / (LZZ0M-PSIM)
       RA = (LZZ0H-PSIH) / (0.4 * USTAR)                   ! s/m
 
+
+
+CSVC - compute a alternative aerodynamic resistance
+C  Kimball et al. 2015
+
+C       DT = TCAN - TAIRHR
+
+
+        RIN=9.81*(-DT)*ZMD / (TKAIR*WINDSP**2)
+
+        IF(DT.LE.0.0) THEN                !UNDER STABLE CONDITION
+        STC=(1+15*RIN)*sqrt(1+5*RIN)
+        ELSE                              !UNDER UNSTABLE CONDITION
+        KS=(75*(0.4**2)*sqrt((ZMD+Z0M)/Z0M))/(LOG((ZMD+Z0M)/Z0M)**2)
+        STC=1/( 1  - (15*RIN/(1+ KS*SQRT(-RIN))) )
+        ENDIF
+
+
+        RASAC=(1./WINDSP)*( ( (1./0.4) * LOG((ZMD+Z0M)/Z0M))**2 ) * STC
+
+        IF(WINDSP.LT.1.0 .AND. ABS(DT).GT.0.01) THEN
+         RASAC= VHCAIR/( 1.52 * ABS(DT)**(1/3)  )
+         RASAC=MIN(RASAC,VHCAIR/2.32)
+         print*,'low wind ',RASAC
+        ENDIF
+
+       IF(DT.LT.0.0 .OR. WINDSP.LT.1.0 ) RA=RASAC  !USE Kimball et al. 2015
+
+CSVC --------------------
+
 C     Canopy calculations.
 
       IF (XLAI .GT. 0.0) THEN
 
-C       Calculate windspeed at the top of the canopy.
+C       Calculate wind speed at the top of the canopy.
 
         LHZ0M = LOG(HMD/Z0M)
         WINDH = MAX(WINDSP*LHZ0M/LZZ0M,0.1)               ! m/s
@@ -1040,18 +1096,18 @@ C=======================================================================
 
       SUBROUTINE ETSOLV(
      &  DLAYR1, EAIRHR, PSYCON, RL, RNET, RS, STCND1,     !Input
-     &  TAIRHR, TSHR1, VHCAIR, VPD,                       !Input
+     &  TAIRHR, TSHR1, VHCAIR, VPD,XLAI,                 !Input
      &  ECAN, G, LH, LHEAT, SH, SHEAT, TCAN, TSURF)       !Output
 
       IMPLICIT NONE
-      SAVE 
+      SAVE
 
       REAL STCND1,DLAYR1,DZ1,EAIRHR,ECAN,G,PSYCON,RBLCN,SH,LH,
-     &  TAIRHR,TCAN,TSHR1,VHCAIR,VP,VPSLOP,VSP,HOLD
+     &  TAIRHR,TCAN,TSHR1,VHCAIR,VP,VPSLOP,VSP,HOLD,RAUC
       REAL CMAT(3,1),IRL(3,3),IRS(3,3),LMAT(1,1),LHEAT(3,1),ONE(1,3),
      &  RL(3,3),RNET(3,1),RS(3,3),RSL(3,3),RSLRN(3,1),SMAT(1,1),
      &  SHEAT(3,1),TDIFF(3,1),TSURF(3,1),VHAIRS(3,3),VPD(3,1),
-     &  VPIRLD(3,1),VSPIRL(3,3),XMAT(3,3),YMAT(3,1)
+     &  VPIRLD(3,1),VSPIRL(3,3),XMAT(3,3),YMAT(3,1),XLAI
       DATA ONE/1.0,1.0,1.0/
 
 C     Initialize
@@ -1059,6 +1115,21 @@ C     Initialize
       VSP = VHCAIR * VPSLOP(TAIRHR) / PSYCON
       VP = VHCAIR / PSYCON
       DZ1 = DLAYR1 / 2.0
+
+
+CSVC - at stable conditions there is very low heat flux from soil to atmosphere
+       IF ((TAIRHR-TSHR1).GE.1.0 .AND. XLAI.GT.1.0 ) THEN
+         RAUC= VHCAIR/( 1.52 * ABS(TAIRHR-TSHR1)**(1/3)  )
+         RAUC=MIN(RAUC,VHCAIR/2.32)
+c       print*,' FOR STABLE CONDITON ',XLAI,RS(3,1),RAUC
+c         RL(3,1)=RAUC
+c         RL(3,2)=RAUC
+c         RL(3,3)=RAUC
+         RS(3,1)=RAUC
+         RS(3,2)=RAUC
+         RS(3,3)=RAUC
+        ENDIF
+
 
 C     Invert latent and sensible heat matrices to get [iRL] and [iRS].
 C     Create temporary [XMAT] = [iRSL] = [C4] then adjust for G estimated from
@@ -1068,6 +1139,7 @@ C     VHAIRS and VSPIRL saved for later use.
       CALL GAUSSJ(
      &  RL,3,                                             !Input
      &  IRL)                                              !Output
+
       CALL GAUSSJ(
      &  RS,3,                                             !Input
      &  IRS)                                              !Output
@@ -1114,7 +1186,7 @@ C     sum up latent and sensible heats for 3 zones.
       LH = LMAT(1,1)
       SH = SMAT(1,1)
 
-C     Calculate other values.  RBLCN is any off-diagonal element of RS.
+C     Calculate other values.  RBLCN is any off-diagonal element of RS, i.e. RA.
 
       RBLCN = RS(1,2)
       ECAN = (LH*RBLCN/VP) + EAIRHR
@@ -1135,7 +1207,7 @@ C  ??/??/??     Written
 C  01/10/91 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: ETSOLV
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE GAUSSJ(
@@ -1143,7 +1215,7 @@ C=======================================================================
      &  AINV)                                             !Output
 
       IMPLICIT NONE
-      SAVE 
+      SAVE
 
       INTEGER NMAX
       PARAMETER (NMAX = 10)
@@ -1256,7 +1328,7 @@ C  ??/??/89 SSJ Written
 C  01/14/91 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: ETSOLV
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE MATADD(
@@ -1293,7 +1365,7 @@ C  REVISION HISTORY
 C  01/14/91 NBP Written
 C-----------------------------------------------------------------------
 C  Called from: ETSOLV
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE MATCON(
@@ -1331,7 +1403,7 @@ C  ??/??/89 SSJ Written
 C  01/14/91 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: ETSOLV
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE MATPRO(
@@ -1376,12 +1448,12 @@ C  12/10/90 NBP Written
 C  02/09/93 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: CANPET
-C  Calls:       
+C  Calls:
 C=======================================================================
 
       SUBROUTINE RADB(
      &  CLOUDS, EAIRHR, FRSHV, LAISHV,                    !Input
-     &  LAISLV, TAIRHR, TCAN,                             !Input 
+     &  LAISLV, TAIRHR, TCAN,                             !Input
      &  RADBK)                                            !Output
 
       IMPLICIT NONE
@@ -1436,24 +1508,56 @@ C  ??/??/89 SSJ Written
 C  01/14/91 NBP Modified
 C-----------------------------------------------------------------------
 C  Called from: ETPHR
-C  Calls:       
+C  Calls:
 C=======================================================================
 
-      SUBROUTINE HSOILT(
+        SUBROUTINE HSOILT(CONTROL,H,
      &  DLAYR2, NLAYR, SHCAP, STCOND, TA, TEMPSS,         !Input
      &  TSHR)                                             !Output
 
 !     ------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
       IMPLICIT NONE
       SAVE
 
-      INTEGER I,NLAYR
+      INTEGER I,NLAYR,YRDOY,TRTNUM,TIMED,TIMEI,H,DAS
       REAL DT,DZ,DLAYR2(NL),INFLOW,OUTFLO,SCOND,STCOND(NL),SHCAP(NL),
-     &  TA,TINCR,TSHR(NL),TEMPSS,VHCAP(NL)
+     &  TA,TINCR,TSHR(NL),TEMPSS,VHCAP(NL),TIMEMIN
+CSVC----------------------------------------
       PARAMETER (TINCR=24.0/TS*3600.0)
+
+      TYPE (ControlType) CONTROL
+
+
+      YRDOY   = CONTROL % YRDOY
+      DAS     = CONTROL % DAS
+      TRTNUM  = CONTROL%TRTNUM
+
+
+       TIMEMIN = 0.0
+       OUTFLO  = 0.0
+
+      DO I=1,NLAYR
+         IF (I .EQ. 1) THEN
+          DZ = 0.5 * DLAYR2(1)/100.0
+         ELSEIF (I .EQ. NLAYR) THEN
+          DZ = 0.5 * DLAYR2(I)/100.0
+         ELSE
+          DZ = 0.5 * (DLAYR2(I)+DLAYR2(I+1))/100.0
+         ENDIF
+
+         VHCAP(I) = TSHR(I) * SHCAP(I) * DLAYR2(I)/100.0
+         SCOND = STCOND(I)
+         TIMEMIN=MAX(TIMEMIN,1./ABS((SHCAP(I)*(DZ**2)/SCOND)/(3600.)))
+CSVC      PRINT*,I,DZ,INT(TIMEMIN)+1
+      ENDDO
+
+
+        TIMEI=INT(TIMEMIN)+1
+
+      DO TIMED=1,TIMEI
 
 C     Calculate volumetric heat capacity at each node.
 
@@ -1485,14 +1589,34 @@ C     a slowly-varying temperature boundary condition (TA).
           SCOND = 0.5 * (STCOND(I)+STCOND(I+1))
           OUTFLO = DT / DZ * SCOND
         ENDIF
-        VHCAP(I) = VHCAP(I) + (INFLOW-OUTFLO)*TINCR
+CSVC                WRITE (881,*)TRTNUM,YRDOY,I,TSHR(I) ,VHCAP(I),DZ**2,SCOND,
+CSVC     &   (VHCAP(I)*(DZ**2)/SCOND)/60.
+
+        VHCAP(I) = VHCAP(I) + (INFLOW-OUTFLO)*TINCR/REAL(TIMEI)
       ENDDO
+
+
 
 C     Update soil temperatures.
 
       DO I = 1,NLAYR
         TSHR(I) = VHCAP(I) / (DLAYR2(I)/100.0*SHCAP(I))
       ENDDO
+
+        ENDDO
+
+
+	     WRITE (881, 3015)TRTNUM,TIMED,YRDOY,H,0.0,DLAYR2(1),DLAYR2(2),
+     &   DLAYR2(3),DLAYR2(4),DLAYR2(5),DLAYR2(6),DLAYR2(7),
+     &   DLAYR2(8),DLAYR2(9),DLAYR2(10),DLAYR2(11),DLAYR2(12),
+     & DLAYR2(13),TEMPSS,TSHR(1),TSHR(2),TSHR(3),
+     &TSHR(4),TSHR(5),TSHR(6),TSHR(7),TSHR(8),TSHR(9),TSHR(10),TSHR(11),
+     &TSHR(12),TA
+
+
+3015      FORMAT (2(I2,';'),I7,';', I7, 28(';', F6.1))
+CSVC ----------------------
+
 
       RETURN
       END SUBROUTINE HSOILT

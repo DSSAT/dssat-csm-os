@@ -34,7 +34,7 @@ C=====================================================================
 
       SUBROUTINE SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+     &    KUptake, OMAData, PUptake, SENESCE, SRFTEMP, ST,!Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
@@ -60,7 +60,7 @@ C=====================================================================
       TYPE (OrgMatAppType),INTENT(IN) :: OMAData
       REAL, DIMENSION(NL), INTENT(IN) :: PUptake, KUptake
       Type (ResidueType) , INTENT(IN) :: SENESCE
-!     REAL               , INTENT(IN) :: SRFTEMP 
+      REAL               , INTENT(IN) :: SRFTEMP 
       REAL, DIMENSION(NL), INTENT(IN) :: ST
       REAL, DIMENSION(NL), INTENT(IN) :: FracRts
       REAL, DIMENSION(NL), INTENT(IN) :: SWDELTX
@@ -138,7 +138,7 @@ C=====================================================================
         CALL CENTURY(CONTROL, ISWITCH, 
      &    FERTDATA, FLOODWAT, FLOODN, HARVRES, NH4,       !Input
      &    NO3, OMADATA, SENESCE, SOILPROP, SPi_Labile,    !Input
-     &    ST, SW, TILLVALS,                               !Input
+     &    SRFTEMP, ST, SW, TILLVALS,                      !Input
      &    IMM, LITC, MNR, MULCH, SomLit, SomLitC,         !Output
      &    SomLitE, SSOMC,                                 !Output
      &    newCO2)             !for DayCent in SOILNI added by PG

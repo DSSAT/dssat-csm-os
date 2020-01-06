@@ -34,7 +34,7 @@ C  06/21/2001 GH  Add seasonal initialization section
 C  09/17/2001 CHP PORMIN, RWUMX input from Plant Modules.
 C  01/09/2002 CHP SWFAC calculated here.
 C  06/11/2002 GH  Modified for Y2K
-!  10/24/2005 CHP Put weather variables in constructed variable. 
+!  10/24/2005 CHP Put weather variables in constructed variable.
 !                 Removed GETPUT_Weather subroutine.
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
 !  01/10/2019 CHP Remove KRT changes introduced with pull request #201
@@ -55,7 +55,7 @@ C     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
 
 C-----------------------------------------------------------------------
-      USE ModuleDefs     !Definitions of constructed variable types, 
+      USE ModuleDefs     !Definitions of constructed variable types,
       USE ModuleData
 
       IMPLICIT NONE
@@ -64,10 +64,10 @@ C-----------------------------------------------------------------------
       CHARACTER FILEIO*30,ISWWAT*1,MEEVP*1,MEPHO*1,METEMP*1,
      &  TYPPGN*3,TYPPGL*3, CROP*2
       INTEGER DAS,DYNAMIC,H,I,NELAYR,NHOUR, DOY, YRDOY, YEAR,
-     &  NLAYR,NR5, LUNIO, TSV2
+     &  NLAYR,NR5, LUNIO, TSV2,TRTNUM
 !         TSV2 = index for mid-day hour added by Bruce Kimball on 9JAN17
       LOGICAL DAYTIM
-      REAL AGEFAC,AZIR,AZZON(TS),BETA(TS),BETN,   !AWEV1,
+      REAL AGEFAC,AWEV1,AZIR,AZZON(TS),BETA(TS),BETN,
      &  CANHT,CANWH,CEC,CEN,CLOUDS,CO2,CO2HR,DAYKP,DAYKR,DAYPAR,
      &  DAYRAD,DLAYR(NL),DLAYR2(NL),DULE,DYABSP,DYABSR,DYINTP,
      &  DYINTR,EDAY,EHR,EOP,EP,ES,ETNOON,FNPGN(4),FNPGL(4),FRACSH,
@@ -87,6 +87,9 @@ C-----------------------------------------------------------------------
      &  TSHR(NL), TSRF(3),TSRFN(3),TSURF(3,1),HOLDWH,WINDHR(TS),
      &  XLAI, TSHRn(NL),
      &  XLMAXT(6),XSW(NL,3),YLMAXT(6),YSCOND(NL,3),YSHCAP(NL,3),TMIN
+CSVC	REAL DAYG,DAYLH,DAYSH,DAYRN
+	     REAL DAYG,DAYLH,DAYSH,DAYRN
+CSVC
       REAL SAT(NL),TGRO(TS),TGROAV,TGRODY,TAV,TAMP
       REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR
 !      PARAMETER (TINCR=24.0/TS)
@@ -103,13 +106,13 @@ C-----------------------------------------------------------------------
      &     GN, LHN, LHEATN(3), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3),
      &     GMT, LHT, LHEATT(3), RSSHT, RSSLT, RSSST, SHT, SHEATT(3),
      &     RNETN(3),RNETT(3),
-     &     TAnn, TAnit, TGROnn, TGROnit, 
+     &     TAnn, TAnit, TGROnn, TGROnit,
 C         previous 7 lines added by Bruce Kimball on 2DEC14
      &     RBSH,RBSL,RBSS,RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
 C         added by BAK on 10DEC2015
 
       REAL, DIMENSION(NL) :: BD, DUL, SAT2, DUL2, RLV2
-      
+
       CHARACTER(len=2) PGPATH
       character(len=8) model
       REAL CCNEFF, CICAD, CMXSF, CQESF
@@ -134,10 +137,14 @@ C         added by BAK on 10DEC2015
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
       DAS     = CONTROL % DAS
+      YRDOY   = CONTROL % YRDOY
       DYNAMIC = CONTROL % DYNAMIC
       FILEIO  = CONTROL % FILEIO
       LUNIO   = CONTROL % LUNIO
       model   = control % model
+
+CSVC TRTNUM=CONTROL%TRTNUM
+      TRTNUM=CONTROL%TRTNUM
 
       BD     = SOILPROP % BD
       DLAYR  = SOILPROP % DLAYR
@@ -157,38 +164,38 @@ C         added by BAK on 10DEC2015
       MEEVP  = ISWITCH % MEEVP
       MEPHO  = ISWITCH % MEPHO
 
-      AZZON  = WEATHER % AZZON 
-      BETA   = WEATHER % BETA   
+      AZZON  = WEATHER % AZZON
+      BETA   = WEATHER % BETA
       CLOUDS = WEATHER % CLOUDS
-      CO2    = WEATHER % CO2   
-      FRDIFP = WEATHER % FRDIFP 
-      FRDIFR = WEATHER % FRDIFR 
-      PARHR  = WEATHER % PARHR  
-      RADHR  = WEATHER % RADHR  
-      REFHT  = WEATHER % REFHT  
-      RHUMHR = WEATHER % RHUMHR 
-      SNDN   = WEATHER % SNDN   
-      SNUP   = WEATHER % SNUP   
-      SRAD   = WEATHER % SRAD  
-      TA     = WEATHER % TA    
-      TAIRHR = WEATHER % TAIRHR 
+      CO2    = WEATHER % CO2
+      FRDIFP = WEATHER % FRDIFP
+      FRDIFR = WEATHER % FRDIFR
+      PARHR  = WEATHER % PARHR
+      RADHR  = WEATHER % RADHR
+      REFHT  = WEATHER % REFHT
+      RHUMHR = WEATHER % RHUMHR
+      SNDN   = WEATHER % SNDN
+      SNUP   = WEATHER % SNUP
+      SRAD   = WEATHER % SRAD
+      TA     = WEATHER % TA
+      TAIRHR = WEATHER % TAIRHR
       TGRO   = WEATHER % TGRO     !I/O
       TGROAV = WEATHER % TGROAV   !I/O
-      TGRODY = WEATHER % TGRODY 
-      TMIN   = WEATHER % TMIN  
-      WINDHR = WEATHER % WINDHR 
+      TGRODY = WEATHER % TGRODY
+      TMIN   = WEATHER % TMIN
+      WINDHR = WEATHER % WINDHR
 
 !     Retrieve plant module data for use here.
       Call GET('PLANT', 'CANHT',  CANHT)
       Call GET('PLANT', 'CANWH',  CANWH)
       Call GET('PLANT', 'DXR57',  DXR57)
       Call GET('PLANT', 'EXCESS', EXCESS)
-      Call GET('PLANT', 'NR5',    NR5)   
+      Call GET('PLANT', 'NR5',    NR5)
       Call GET('PLANT', 'PLTPOP', PLTPOP)
-      Call GET('PLANT', 'RNITP',  RNITP) 
-      Call GET('PLANT', 'SLAAD',  SLAAD) 
-      Call GET('PLANT', 'XPOD',   XPOD)  
-      
+      Call GET('PLANT', 'RNITP',  RNITP)
+      Call GET('PLANT', 'SLAAD',  SLAAD)
+      Call GET('PLANT', 'XPOD',   XPOD)
+
       CALL YR_DOY(YRDOY, YEAR, DOY) !LPM 04DEC12 for OPSTEMP
 C========================================================================
 C MEPHO  MEEVP
@@ -230,6 +237,7 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
      &      XLMAXT, YLMAXT, PHTHRS10,                     !Output
      &      CCNEFF, CICAD, cmxsf,cqesf,pgpath)            !Output
 
+
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
@@ -243,7 +251,12 @@ C         previous five output lines added by Bruce Kimball DEC14
 C           previous line added by Bruce Kimall on 9MAR15
      &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C            added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        AGEQESLN, CO2QESLN, QEFFSLN,
+CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+CSVC
+
         ENDIF
 
 !***********************************************************************
@@ -256,7 +269,7 @@ C            added by BAK on 10DEC2015
           DO I=1,NLAYR
 !           TSHR(I) = TAV
             TSHR(I) = TA
-           ST(I) = TSHR(I) 
+           ST(I) = TSHR(I)
           ENDDO
           DO I = 1, TS
             TGRO(I) = TA
@@ -271,11 +284,13 @@ C            added by BAK on 10DEC2015
                TSRF(I) = TA
                TSRFN(I) = TA
             ENDDO
+
 !           LPM 04DEC14 to include the surface temperature as output
             SRFTEMP = TSRFN(3)    
-            CALL OPSTEMP(CONTROL,ISWITCH,DOY,SRFTEMP,ST,TAV,TAMP)  !LPM
+          IF (MEEVP .EQ. 'Z')   !CSVC
+     & CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
           
-          CALL ROOTWU(SEASINIT,
+          CALL ROOTWU(SEASINIT,YRDOY,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
      &      RWU,  TRWUP)                           !Output
         ENDIF
@@ -296,6 +311,8 @@ C            added by BAK on 10DEC2015
         SWFAC   = 1.0
 
         IF (MEPHO .EQ. 'L') THEN
+
+
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
@@ -309,9 +326,38 @@ C         previous five output lines added by Bruce Kimball DEC14
 C           previous line added by Bruce Kimall on 9MAR15
      &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C            added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        AGEQESLN, CO2QESLN, QEFFSLN,
+CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+CSVC
+
         ENDIF
 
+CSVC
+       OPEN(880,FILE='HOURLY_ENERGY.OUT',
+     & ACCESS='SEQUENTIAL', STATUS='UNKNOWN')
+       OPEN(881,FILE='HOURLY_HSOILT.OUT',
+     & ACCESS='SEQUENTIAL', STATUS='UNKNOWN')
+       OPEN(882,FILE='DAILY_ROOTWU.OUT',
+     &  STATUS='UNKNOWN')
+
+
+      IF(DAS.eq.0 .and. MEEVP.EQ.'Z'.and.TRTNUM.eq.1) THEN
+        WRITE (880, *)
+     & 'TRTNUM;YRDOY;INT(HS);RADHR;RNET;RNET1;RNET2;RNET3;',
+     & 'LH;LHEAT1;LHEAT2;LHEAT3;SH;SHEAT1;SHEAT2;SHEAT3;G',
+     &  ';TAIRHR;TCAN;TSURF1;TSURF2;TSURF3;TSHR1;TSHR2;WINDHR'
+
+        WRITE (881, *)
+     & 'TRTNUM;TIMED;YRDOY;H;DLAYR0;DLAYR1;DLAYR2;',
+     & 'DLAYR3;DLAYR4;DLAYR5;DLAYR6;DLAYR7;',
+     & 'DLAYR8;DLAYR9;DLAYR10;DLAYR11;DLAYR12;',
+     & 'DLAY13;TSURF;TSHR1;TSHR2;TSHR3;',
+     & 'TSHR4;TSHR5;TSHR6;TSHR7;TSHR8;TSHR9;TSHR10;TSHR11;',
+     & 'TSHR12;TBOT'
+       ENDIF
+CSVC
 C***********************************************************************
 C***********************************************************************
 C     COMPUTE DAILY RATES
@@ -334,7 +380,7 @@ C     Initialize DAILY parameters.
         NHOUR = 0
         TCANAV = 0.0
         TCANDY = 0.0
-        IF (XLAI.GT.0.0 .AND. XLAI.LT.0.002) XLAI = 0.002
+        IF (XLAI.GT.0.0 .AND. XLAI.LT.0.01) XLAI = 0.002 !CKJB change from 0.01
         IF (CANHT.GT.0.0 .AND. CANHT.LT.0.01) CANHT = 0.01
         IF (CANWH.GT.0.0 .AND. CANWH.LT.0.01) CANWH = 0.01
 
@@ -344,13 +390,16 @@ C     Initialize DAILY parameters.
      &      CEN,DAYRAD,DLAYR2,DULE,DYABSR,DYINTR,EDAY,    !Output
      &      EOP,ETNOON,FRDFRN,LLE,NELAYR,NLAYR,PCABRN,    !Output
      &      PCINRN,RADN,RLV2, SALB, SHCAP,ST2,STCOND,SW2, !Output
-     &      SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP) !Output
-
-          CALL ROOTWU(RATE,
+CSVC C    &      SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP)
+     &      SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP,
+CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+CSVC
+          CALL ROOTWU(RATE,YRDOY,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
      &      RWU, TRWUP)                           !Output
 
-C  KJB NOTE TO CP.  NEED TO DELETE RWUH HERE, PUT IT INTO HOURLY
+C  KJB NOTE TO CP.  NEED TO C RWUH HERE, PUT IT INTO HOURLY
 C  KJB CALL TO ROOTWU, DO WE INITIATE HOURLY? PRIOR TO HOURLY RATE?
 C         Increase root water uptake rate 5-fold to account for
 C         instantaeous vs. daily rates and convert to mm/h.
@@ -375,13 +424,13 @@ C       and sum for day (TS=24 for hourly).
         DayRatio = 24.0 / (WEATHER % DAYL - 2.0)
 !                 Note that DayRatio will blow up when DAYL is two hours, but this would only occur at high and low lattitudes
 !                 on each side of winter when temperatures likely are too cold for crop growth. BAK.
-        
-!       Conpute index for mid-day time step added by Bruce Kimball on 9JAN17        
+
+!       Conpute index for mid-day time step added by Bruce Kimball on 9JAN17
         TSV2 = INT(TS/2)
         DO H=1,TS
 
 C         Calculate real and solar time.
-          
+
           HS = REAL(H) * TINCR
           IF (HS.GT.SNUP .AND. HS.LT.SNDN) THEN
             DAYTIM = .TRUE.
@@ -392,7 +441,7 @@ C         Calculate real and solar time.
 
 C         Calculate hourly radiation absorption by canopy/soil.
 
-          CALL RADABS( 
+          CALL RADABS(
      &      AZIR, AZZON(H), BETA(H), BETN, CANHT, CANWH,  !Input
      &      DAYTIM, FRDIFP(H), FRDIFR(H), H, LFANGD,      !Input
      &      MEEVP, MEPHO, PALB, PARHR(H), RADHR(H),       !Input
@@ -433,7 +482,7 @@ C  KJB and SPSUM hourly.
 !         Need multiplier to account for hourly : daily uptake rate
           RWUH = RWUH * DayRatio
 
-          CALL ETPHR(
+          CALL ETPHR(CONTROL,H,
      &      CANHT, CEC, CEN, CLOUDS, CO2HR, DAYTIM,       !Input
      &      DLAYR2, DULE, FNPGL, FNPGN, FRACSH, FRSHV,    !Input
      &      KDIRBL, LAISH, LAISHV, LAISL, LAISLV, LLE,    !Input
@@ -442,7 +491,7 @@ C  KJB and SPSUM hourly.
      &      REFHT, RHUMHR(H), RNITP, RWUH, SHCAP, SLAAD,  !Input
      &      SLWREF, SLWSLO, STCOND, SWE, TAIRHR(H), TA,   !Input
      &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XLAI,        !Input
-     &      XLMAXT, YLMAXT,                               !Input
+     &      XLMAXT, YLMAXT, XSW,YSCOND,YSHCAP,            !Input (CSV CXSW,YSCOND,YSHCAP)
      &      AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,  !Output
      &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
      &      TSURF,                                        !Output
@@ -455,7 +504,7 @@ C            added by BAK on 10DEC2015
      &      CCNEFF, CICAD, CMXSF, CQESF, PGPATH,          !Input
      &      AGEQESL, CO2QESL, QEFFSL)                     !Output
 
-C         Integrate instantaneous canopy photoynthesis (µmol CO2/m2/s)
+C         Integrate instantaneous canopy photoynthesis (\B5mol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
 C         and mm/d).
 
@@ -484,6 +533,25 @@ C         and mm/d).
           DAYRAD = DAYRAD + TINCR*RADHR(H)*0.0036
           DYINTR = DYINTR + TINCR*PCINTR*RADHR(H)*0.000036
           DYABSR = DYABSR + TINCR*PCABSR*RADHR(H)*0.000036
+
+CSVC--------------------------
+          DAYG   = DAYG   + TINCR*G*0.0036    !W.m-2 to MJ.m-2.day-1
+          DAYLH  = DAYLH  + TINCR*LH*0.0036   !W.m-2 to MJ.m-2.day-1
+          DAYSH  = DAYSH  + TINCR*SH*0.0036
+	      DAYRN  = DAYRN  + TINCR*
+     & (RNET(1,1)+RNET(2,1)+RNET(3,1))*0.0036
+
+       if(MEEVP .EQ. 'Z') then
+          WRITE (880, 3010)TRTNUM,YRDOY,INT(HS),RADHR(H),
+     & (RNET(1,1)+RNET(2,1)+RNET(3,1)),RNET(1,1),RNET(2,1),RNET(3,1),
+     & LH,LHEAT(1,1),LHEAT(2,1),LHEAT(3,1),
+     & SH,SHEAT(1,1),SHEAT(2,1),SHEAT(3,1),G,
+     & TAIRHR(H),TCAN(H),TSURF(1,1),TSURF(2,1),TSURF(3,1),
+     & TSHR(1),TSHR(2),WINDHR(H)
+3010      FORMAT (I2,';',I7,';', I7, 22(';', F6.1))
+       ENDIF
+
+CSVC -------------------------
 
           IF (DAYTIM) THEN
             FRSHAV = FRSHAV + FRACSH
@@ -527,7 +595,7 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               DO I=1,NLAYR
                   TSHRn(I) = TSHR(I)
               ENDDO
-              CALL SOIL05(
+              CALL SOIL05NOT(
      &          TSHRn,0,NLAYR,                                  !Input
      &          STn)                                           !Output
 !             LPM 04DEC14 to include the temperature as output (OPSTEMP)
@@ -594,7 +662,8 @@ C next 3 lines added by BAK on 10DEC2015
                 RNETT(I)=RNET(I,1)
                 ENDDO
           ENDIF
-        ENDDO
+        ENDDO !DO H=1,T
+
 
 C       Assign daily values.
 
@@ -631,11 +700,11 @@ C           add by Bruce Kimball on 9MAR15
           TAnn = TAIRHR(TS/2)
           TAnit = TAIRHR(TS)
 
-          CALL SOIL05(
+          CALL SOIL05NOT(
      &      ST2,0,NLAYR,                                  !Input
      &      ST)                                           !Output
 
-!          CALL SOIL05(
+!          CALL SOIL05NOT(
 !     &      RWU2, 0, NLAYR,
 !     &      RWU)
 !CHP
@@ -695,6 +764,7 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
           ENDIF
           PG = PG * EXCESS
 
+
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
@@ -708,7 +778,11 @@ C         previous five output lines added by Bruce Kimball DEC14
 C           previous line added by Bruce Kimall on 9MAR15
      &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        AGEQESLN, CO2QESLN, QEFFSLN,
+CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+CSVC
         ENDIF
 !***********************************************************************
 !***********************************************************************
@@ -717,6 +791,7 @@ C       preveious line added by BAK on 10DEC2015
       ELSEIF (DYNAMIC .EQ. SEASEND .OR. DYNAMIC .EQ. OUTPUT) THEN
 !-----------------------------------------------------------------------
         IF (MEPHO .EQ. 'L') THEN
+
                 CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
@@ -730,12 +805,16 @@ C         previous five output lines added by Bruce Kimball DEC14
 C           previous line added by Bruce Kimall on 9MAR15
      &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        AGEQESLN, CO2QESLN, QEFFSLN,
+CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+CSVC
+
         ENDIF
-      
-        IF(MEEVP .EQ. "Z") THEN
-            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
-            ENDIF
+
+       IF (MEEVP .EQ. 'Z')   !CSVC
+     & CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
 !      BAK 8Jun15 Added the IF statement for call to OPSTEMP
 
 !***********************************************************************
@@ -902,25 +981,35 @@ C     Initialize some parameters.
 C     Transform soil layers from 5,15,etc. to 10,10,etc. (10 in top layer
 C     is necessary to prevent instability in ETPHOT).
 
-      CALL SOIL10(
+
+CSVC	print*,DLAYR
+CSVC	print*,NLAYR
+CSVC	print*,DLAYR2
+      CALL SOIL10NOT(
      &  DLAYR,                                            !Input
      &  1,NLAYR,DLAYR2)                                   !Output
-      CALL SOIL10(
+
+CSVC	print*,DLAYR
+CSVC	print*,NLAYR
+CSVC	print*,DLAYR2
+CSVC	stop
+
+      CALL SOIL10NOT(
      &  LL,                                               !Input
      &  0,NLAYR,LL2)                                      !Output
-      CALL SOIL10(
+      CALL SOIL10NOT(
      &  DUL,                                              !Input
      &  0,NLAYR,DUL2)                                     !Output
-      CALL SOIL10(
+      CALL SOIL10NOT(
      &  SAT,                                              !Input
      &  0,NLAYR,SAT2)                                     !Output
-      CALL SOIL10(
+      CALL SOIL10NOT(
      &  BD,                                               !Input
      &  0,NLAYR,BD2)                                      !Output
-      CALL SOIL10(
+      CALL SOIL10NOT(
      &  HCAPS,                                            !Input
      &  0,NLAYR,HCAPS2)                                   !Output
-      CALL SOIL10(
+      CALL SOIL10NOT(
      &  TCONDS,                                           !Input
      &  0,NLAYR,TCNDS2)                                   !Output
 
@@ -1133,7 +1222,7 @@ C     Read species file.
          CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
          CALL IGNORE(LUNCRP,LNUM,ISECT,C80) !12th line
          READ(C80,'(4F6.0,2X,A)',IOSTAT=ERRNUM) CICAD,CCNEFF,
-     &        CMXSF,CQESF,PGPATH 
+     &        CMXSF,CQESF,PGPATH
          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
       else
          pgpath='  '
@@ -1190,7 +1279,11 @@ C=======================================================================
      &  CEN,DAYRAD,DLAYR2,DULE,DYABSR,DYINTR,EDAY,        !Output
      &  EOP,ETNOON,FRDFRN,LLE,NELAYR,NLAYR,PCABRN,        !Output
      &  PCINRN,RADN,RLV2, SALB, SHCAP,ST2,STCOND,SW2,     !Output
-     &  SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP)     !Output
+CSVC     &  SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP)     !Output
+     &  SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP,     !Output
+CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+CSVC
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types,
@@ -1207,6 +1300,11 @@ C=======================================================================
      &  SW(NL),SW2(NL),SWE,EOP,TABEX,TDAY,TEMPN,TSRF(3),
      &  TSRFN(3),XC(3),XSW(NL,3),YHC(3),YTC(3),YSCOND(NL,3),
      &  YSHCAP(NL,3)
+
+CSVC	REAL DAYG,DAYLH,DAYSH,DAYRN
+	REAL DAYG,DAYLH,DAYSH,DAYRN
+CSVC
+
       REAL SALB, SALBW, SALBD
       REAL, DIMENSION(NL) :: DUL2, RLV, RLV2
 
@@ -1222,6 +1320,13 @@ C     Initialize.
       PCINRN = 0.0
       PCABRN = 0.0
       RADN   = 0.0
+CSVC
+	DAYG  = 0.0
+	DAYLH = 0.0
+	DAYSH = 0.0
+	DAYRN = 0.0
+CSVC
+
       DO I=1,NLAYR
         ST2(I) = 0.0
       ENDDO
@@ -1233,10 +1338,10 @@ C     Initialize.
 
 C     Transform soil layers for SW and RLV.
 
-      CALL SOIL10(
+      CALL SOIL10NOT(
      &  SW,                                               !Input
      &  0,NLAYR,SW2)                                      !Output
-      CALL SOIL10(
+      CALL SOIL10NOT(
      &  RLV,                                              !Input
      &  0,NLAYR,RLV2)                                     !Output
 
@@ -1322,7 +1427,7 @@ C     Initialize.
 
 C     Calculate SW in the transformed layers.
 
-      CALL SOIL10(
+      CALL SOIL10NOT(
      &  SW,                                               !Input
      &  0,NLAYR,SW2)                                      !Output
 
@@ -1349,7 +1454,7 @@ C  Called from: ETPHOT
 C  Calls:       CANABS,LFEXTN,SHADOW
 C=======================================================================
 
-      SUBROUTINE RADABS( 
+      SUBROUTINE RADABS(
      &  AZIR, AZZON, BETA, BETN, CANHT, CANWH,            !Input
      &  DAYTIM, FRDIFP, FRDIFR, H, LFANGD,                !Input
      &  MEEVP, MEPHO, PALB, PARHR, RADHR,                 !Input
@@ -1446,7 +1551,7 @@ C         Calculate infrared radiation absorbed by canopy during day.
               FRDIFI = MIN( (FRDIFR*RADHR-FRDIFP*PARW)/IRHR, 1.0)
             ELSE
               WRITE(MESSAGE(1),100) H
-              WRITE(MESSAGE(2),101) 
+              WRITE(MESSAGE(2),101)
   100         FORMAT('Error in RADHR or PARHR for hour ',I2,'.')
   101         FORMAT('Program will stop.')
               CALL WARNING(2, 'RADABS', MESSAGE)
@@ -1667,17 +1772,21 @@ C     Calculate diffuse light extinction coefficient for black leaves.
 
 C     Calculate sunlit and shaded leaf area indices.
 !CHP added check to prevent underflow 1/16/03
-      IF (KDIRBL .GT. 0.0 .AND. FRACSH .GT. 0.0 .AND. 
-     &        (KDIRBL*XLAI/FRACSH) .LT. 20.) THEN    
+      IF (KDIRBL .GT. 0.0 .AND. FRACSH .GT. 0.0 .AND.
+     &        (KDIRBL*XLAI/FRACSH) .LT. 20.) THEN
         LAISL = (FRACSH/KDIRBL) * (1.0-EXP(-KDIRBL*XLAI/FRACSH))
-        LAISL = MAX(LAISL,0.02)
+        LAISL = MAX(LAISL,0.01) !CSVC 07/13/2018 - CHANGE FROM 0.02 TO 0.01
       ELSE
-        LAISL = 0.02
+        LAISL = 0.01 !CSVC ADD 07/13/2018 - CHANGE FROM 0.02 TO 0.01
       ENDIF
+
+      LAISH = XLAI - LAISL
+      LAISH = MAX(LAISH,0.001) !CSVC 07/13/2018 - CHECK TO PREVENT NEGATIVE LAISH
+
 C-KRT*******************************
 C-KRT  LAISH = XLAI - LAISL
 !-CHP  LAISH = MAX(0.02,XLAI - LAISL)
-       LAISH = XLAI - LAISL
+!       LAISH = XLAI - LAISL
 !       IF (LAISH < 1.E-6) THEN
 !         LAISH = 1.E-6
 !       ENDIF 
@@ -1974,6 +2083,95 @@ C=======================================================================
       END SUBROUTINE SOIL05
 
 C=======================================================================
+
+
+
+C=======================================================================
+C  SOIL10, Subroutine, N.B. Pickering
+C  Converts from soil layers of 5,15.. cm to 10,10.. cm.
+C-----------------------------------------------------------------------
+C  REVISION HISTORY
+C  03/13/94 NBP Written
+C-----------------------------------------------------------------------
+C  Called from: ETIND,ETINP
+C  Calls:
+C=======================================================================
+
+      SUBROUTINE SOIL10NOT(
+     &  ARRAY, ICODE, NLAYR,                              !Input
+     &  ARRAY2)                                           !Output
+
+!     ------------------------------------------------------------------
+      USE ModuleDefs     !Definitions of constructed variable types,
+                         ! which contain control information, soil
+                         ! parameters, hourly weather data.
+      IMPLICIT NONE
+      SAVE
+
+      INTEGER I,ICODE,L,NLAYR
+      REAL ARRAY(NL),ARRAY2(NL)
+
+      DO I=1,NL
+        ARRAY2(I) = 0.0
+      ENDDO
+      IF (ICODE .EQ. 1) THEN
+        ARRAY2(1) = ARRAY(1)
+        ARRAY2(2) = ARRAY(2)
+      ELSE
+        ARRAY2(1) = ARRAY(1)
+        ARRAY2(2) = ARRAY(2)
+      ENDIF
+      DO L=3,NLAYR
+        ARRAY2(L) = ARRAY(L)
+      ENDDO
+
+      RETURN
+      END SUBROUTINE SOIL10NOT
+
+C=======================================================================
+C  SOIL05, Subroutine, N.B. Pickering
+C  Converts from soil layers of 10,10.. cm to 5,15.. cm.
+C-----------------------------------------------------------------------
+C  REVISION HISTORY
+C  03/13/94 NBP Written
+C-----------------------------------------------------------------------
+C  Called from: ETPHOT
+C  Calls:
+C=======================================================================
+
+      SUBROUTINE SOIL05NOT(
+     &  ARRAY2,ICODE, NLAYR,                              !Input
+     &  ARRAY)                                            !Output
+
+!     ------------------------------------------------------------------
+      USE ModuleDefs     !Definitions of constructed variable types,
+                         ! which contain control information, soil
+                         ! parameters, hourly weather data.
+      IMPLICIT NONE
+      SAVE
+
+      INTEGER I,ICODE,L,NLAYR
+      REAL ARRAY(NL),ARRAY2(NL)
+
+      DO I=1,NL
+        ARRAY(I) = 0.0
+      ENDDO
+      IF (ICODE .EQ. 1) THEN
+        ARRAY(1) =  ARRAY2(1)
+        ARRAY(2) =  ARRAY2(2)
+      ELSE
+        ARRAY(1) = ARRAY2(1)
+        ARRAY(2) = ARRAY2(2)
+      ENDIF
+      DO L=3,NLAYR
+        ARRAY(L) = ARRAY2(L)
+      ENDDO
+
+      RETURN
+      END SUBROUTINE SOIL05NOT
+
+C=======================================================================
+
 
 
 

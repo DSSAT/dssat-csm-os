@@ -43,7 +43,7 @@
       SUBROUTINE CENTURY (CONTROL, ISWITCH, 
      &  FERTDATA, FLOODWAT, FLOODN, HARVRES, NH4,         !Input
      &  NO3, OMADATA, SENESCE, SOILPROP, SPi_Labile,      !Input
-     &  ST, SW, TILLVALS,                                 !Input
+     &  SRFTEMP, ST, SW, TILLVALS,                        !Input
      &  IMM, LITC, MNR, MULCH, SomLit, SomLitC,           !Output
      &  SomLitE, SSOMC,                                   !Output
      &  newCO2)                         !added newCO2 from DayCent  PG
@@ -74,7 +74,7 @@
      &  CULS3Q, CULSTRQ, DEPTH, DISTURBDEPTHMAX,
      &  DSNC, FERDEPTH, FERMIXPERC,FLOOD, FRMETI, FRMETS, 
      &  RESDAX, ResDepth, ResMixPerc, SENESSUMC, SENESSUMN, SENESSUMP,
-     &  TILDEP, TILLMIXPERC, MIXDEP, TLITC, TMETABC, 
+     &  SRFTEMP, TILDEP, TILLMIXPERC, MIXDEP, TLITC, TMETABC, 
      &  TSOM1C, TSOM2C, TSOM3C, TSOMC, TSTRUCC
       REAL DECS2(1), DECS3(1)
 

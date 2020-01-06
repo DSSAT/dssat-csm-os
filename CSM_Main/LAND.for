@@ -164,7 +164,7 @@ C     Read initial soil data
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+     &    KUptake, OMAData, PUptake, SENESCE, SRFTEMP, ST,!Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
@@ -246,7 +246,7 @@ C     Seasonal initialization for soil processes
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+     &    KUptake, OMAData, PUptake, SENESCE, SRFTEMP, ST,!Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
@@ -304,7 +304,7 @@ C     change of soil properties.
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+     &    KUptake, OMAData, PUptake, SENESCE, SRFTEMP, ST,!Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
@@ -352,7 +352,7 @@ C     Integrate soil state variables
 C-----------------------------------------------------------------------
       CALL SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+     &    KUptake, OMAData, PUptake, SENESCE, SRFTEMP, ST,!Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
@@ -409,7 +409,7 @@ C***********************************************************************
 
         CALL SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+     &    KUptake, OMAData, PUptake, SENESCE, SRFTEMP, ST,!Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
@@ -459,7 +459,7 @@ C     Call WEATHER module to close current weather file
 C     Print seasonal summaries and close files.
       CALL SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+     &    KUptake, OMAData, PUptake, SENESCE, SRFTEMP, ST,!Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output
@@ -534,7 +534,7 @@ C***********************************************************************
       ELSE IF (DYNAMIC .EQ. ENDRUN) THEN
         CALL SOIL(CONTROL, ISWITCH, 
      &    ES, FERTDATA, HARVRES, IRRAMT, KTRANS,          !Input
-     &    KUptake, OMAData, PUptake, SENESCE, ST,         !Input
+     &    KUptake, OMAData, PUptake, SENESCE, SRFTEMP, ST,!Input
      &    FracRts, SWDELTX,TILLVALS, UNH4, UNO3, UPFLOW,  !Input
      &    WEATHER, XHLAI, FLOODN, FLOODWAT, MULCH,        !I/O
      &    NH4, NO3, SKi_AVAIL, SNOW, SPi_AVAIL, SOILPROP, !Output

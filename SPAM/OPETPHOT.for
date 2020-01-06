@@ -1,5 +1,5 @@
 C=======================================================================
-C  OpETPhot, Subroutine, C.H.Porter from hourly energy balance 
+C  OpETPhot, Subroutine, C.H.Porter from hourly energy balance
 C     portions of OPCARB.
 C  Generates daily output for ETPHOT routine.
 C-----------------------------------------------------------------------
@@ -10,8 +10,8 @@ C-----------------------------------------------------------------------
 C  Called from:   ETPHOT
 C  Calls:         None
 C=======================================================================
-      SUBROUTINE OpETPhot(CONTROL, ISWITCH, 
-     &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
+      SUBROUTINE OpETPhot(CONTROL, ISWITCH,
+     &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
      &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,        !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
@@ -23,7 +23,12 @@ C         previous five output lines added by Bruce Kimball DEC14
 C           previous line added by Bruce Kimall on 9MAR15
      &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
-     &        AGEQESLN, CO2QESLN, QEFFSLN)
+CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
+     &        AGEQESLN, CO2QESLN, QEFFSLN,
+CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+CSVC
+
 
 C-------------------------------------------------------------------
 C
@@ -32,13 +37,16 @@ C
 C-------------------------------------------------------------------
       USE ModuleDefs
        ! VSH
-      USE CsvOutput 
+      USE CsvOutput
       USE Linklist
       IMPLICIT NONE
       SAVE
 
       CHARACTER*1 IDETC, RNMODE
       CHARACTER*10 OUTETP
+
+CSVC CHARACTER*1  MEEVP
+	CHARACTER*1  MEEVP
 
       INTEGER DAS, DOY, DYNAMIC, ERRNUM, FROP, NOUTDC
       INTEGER RUN, YEAR, YRDOY, TSV2
@@ -57,10 +65,11 @@ C         previous five output lines added by Bruce Kimball DEC14
 C           previous line added by Bruce Kimball on 9MAR15
       Real RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
 C       preveious line added by BAK on 10DEC2015
-
       real  AGEQESLN, CO2QESLN, QEFFSLN
 
-
+CSVC      REAL DAYG,DAYLH,DAYSH,DAYRN !Output
+      REAL DAYG,DAYLH,DAYSH,DAYRN !Output
+CSVC
       LOGICAL FEXIST
 
 !-----------------------------------------------------------------------
@@ -72,13 +81,14 @@ C       preveious line added by BAK on 10DEC2015
 !     The variable "ISWITCH" is of type "SwitchType".
       TYPE (SwitchType) ISWITCH
 
-      DAS     = CONTROL % DAS 
-      DYNAMIC = CONTROL % DYNAMIC 
-      FROP    = CONTROL % FROP  
+      DAS     = CONTROL % DAS
+      DYNAMIC = CONTROL % DYNAMIC
+      FROP    = CONTROL % FROP
       RNMODE  = CONTROL % RNMODE
-      RUN     = CONTROL % RUN    
-      YRDOY   = CONTROL % YRDOY  
-      
+      RUN     = CONTROL % RUN
+      YRDOY   = CONTROL % YRDOY
+
+      MEEVP  = ISWITCH % MEEVP    ! SVC
       FMOPT = ISWITCH % FMOPT     ! VSH
 
       IDETC   = ISWITCH % IDETC
@@ -111,8 +121,12 @@ C       preveious line added by BAK on 10DEC2015
         WRITE (NOUTDC,120)
   120   FORMAT('@YEAR DOY   DAS',
      &   '    LI%D   PHAD   PHAN    LI%N   SLLN   SLHN',
-     &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV')
-C        
+CSVC     &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV')
+     &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV',
+CSVC     &   '   DAYG   DAYLH  LMLN   DAYSH  DAYRN')
+     &   '   DAYG  DAYLH  DAYSH  DAYRN')
+CSVC
+C
 C   Commented out extra variables on 12Jul17 for
 C     "publication purposes. Bruce Kimball
 C     &   '    ENN    TNN    ETn   WDNN   TCNN   CSHn',
@@ -137,15 +151,26 @@ C-----------------------------------------------------------------------
         IF ((NOUTDC == 0).AND. (FMOPT == 'A'.OR. FMOPT == ' ')) RETURN
 
         IF ((DYNAMIC .EQ. OUTPUT.AND. MOD(DAS,FROP) .EQ. 0) .OR.
-     &      (DYNAMIC .EQ. SEASEND .AND. MOD(DAS,FROP) .NE. 0) .OR. 
-     &       DAS == 1) THEN 
+     &      (DYNAMIC .EQ. SEASEND .AND. MOD(DAS,FROP) .NE. 0) .OR.
+     &       DAS == 1) THEN
 
-          CALL YR_DOY(YRDOY, YEAR, DOY) 
+        IF(MEEVP .NE. "Z") then       ! SVC
+	     DAYG  =-99.                   ! SVC
+         DAYLH =-99.                   ! SVC
+	     DAYSH =-99.                   ! SVC
+	     DAYRN =-99.                   ! SVC
+	     ENDIF                         ! SVC
+
+          CALL YR_DOY(YRDOY, YEAR, DOY)
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN      ! VSH
-          WRITE (NOUTDC,300) YEAR, DOY, DAS, 
-     &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, 
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TS/2), TGROAV
+          WRITE (NOUTDC,300) YEAR, DOY, DAS,
+     &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
+CSVC     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TS/2), TGROAV
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TS/2), TGROAV,
+CSVC     & DAYG,DAYLH,DAYSH,DAYRN
+     & DAYG,DAYLH,DAYSH,DAYRN
+CSVC
 C     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn,
 C     &    CSLnn, LSHnn, LSLnn, ETnit, TEMnit, Enit,
 C     &    Tnit, WINnit, TCnit, TSRnit, TSRFN, CSHnit,
@@ -158,34 +183,38 @@ C     &    TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C         previous line added by Bruce Kimball on 9MAR15
 C     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
 C       preveious line added by BAK on 10DEC2015
-          
+
  300      FORMAT(1X,I4,1X,I3.3,1X,I5,
      &      1X,F7.2,1X,F6.2,1X,F7.2,1X,F6.2,1X,F6.2,1X,F6.2,
-     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
+CSVC     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
+     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,
+CSVC     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
+     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
+CSVC
 C     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.1,1X,F6.1,
-C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3, 
 C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
-C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3, 
-C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,        
+C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
+C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
+C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
 C     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,
 C     &      1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1)
 
           END IF   ! VSH
-          
-        !     VSH     
-      IF (FMOPT == 'C') THEN 
-         CALL CsvOutETPhot(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM, 
-     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS, 
-     &PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN, 
-     &PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,   
+
+        !     VSH
+      IF (FMOPT == 'C') THEN
+         CALL CsvOutETPhot(EXPNAME, CONTROL%RUN, CONTROL%TRTNUM,
+     &CONTROL%ROTNUM, CONTROL%REPNO, YEAR, DOY, DAS,
+     &PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN, PNLSLN,
+     &PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
      &vCsvlineETPhot, vpCsvlineETPhot, vlngthETPhot)
-     
+
          CALL LinklstETPhot(vCsvlineETPhot)
-      END IF         
-        
+      END IF
+
         ENDIF
-      
-        IF ((DYNAMIC .EQ. SEASEND) 
+
+        IF ((DYNAMIC .EQ. SEASEND)
      & .AND. ((FMOPT == 'A') .OR. (FMOPT == ' '))) THEN   ! VSH
           CLOSE (NOUTDC)
         ENDIF

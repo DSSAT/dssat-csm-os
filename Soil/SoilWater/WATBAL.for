@@ -97,6 +97,8 @@ C=======================================================================
       REAL PINF,  RUNOFF
       REAL SWCON, TDRAIN, TRUNOF
       REAL TSW, TSWINI, WATAVL, WTDEP
+C kjb
+      REAL SWAVL, SWEF
 
       REAL, DIMENSION(NL) :: DLAYR, DLAYR_YEST, DS, DUL, LL  
       REAL, DIMENSION(NL) :: SAT, SWCN, SW_AVAIL
@@ -234,6 +236,11 @@ C=======================================================================
       SWDELTL = 0.0
 
       DLAYR_YEST = DLAYR
+C
+C kjb, 1/15/18.  May need same for second layer?
+!     Set air dry water content for top soil layer:  fraction of LL
+          SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
+C kjb
 
 !***********************************************************************
 !***********************************************************************
@@ -422,13 +429,31 @@ C       extraction (based on yesterday's values) for each soil layer.
       IF (ISWWAT .EQ. 'Y') THEN
 
 !       CALL SUMSW(NLAYR, DLAYR, SW, SWTOT1)
-
-        IF (MESEV .NE. 'S' .OR. MEEVP == 'Z') THEN
+C kjb - 1/15/18 - Z version had negative soil water in layer 1,
+C kjb - This limits layer 1 to air-dry, and takes rest from layer 2
+C kjb - May still need check to prevent negative soil water in layer 2
+C kjb - but it is thicker.  Or pass back limit on ES (to ETPHR)
+C kjb - All this solved if we have hourly soil water balance.
+!     Available water = SW - air dry limit + infil. or sat. flow
+      SWAVL = MAX(0.0, SW(1) - SWEF * LL(1))
+C        IF (MESEV .NE. 'S' .OR. MEEVP == 'Z') THEN
 !         Perform integration of soil water fluxes
 !         Subtract soil evaporation from layer 1
+      
+        IF (MESEV .NE. 'S' .AND. MEEVP .NE. 'Z')      
+     $       SW(1) = SW(1) - 0.1 * ES / DLAYR_YEST(1)
+        
+        IF (MEEVP == 'Z') THEN
+               IF (ES .LT. (10.*SWAVL*DLAYR_YEST(1))) THEN
           SW(1) = SW(1) - 0.1 * ES / DLAYR_YEST(1)
+               ELSE
+C          SW(1) = SW(1) - 0.1 * ES / DLAYR_YEST(1)
+          SW(1) = SW(1) - SWAVL
+          SW(2) = SW(2) - 0.1*(ES-10.*SWAVL*
+     $             DLAYR_YEST(1))/DLAYR_YEST(2)                
+               ENDIF                 
         ENDIF
-
+C kjb end modification 1/15/18
 !       Perform integration of soil water fluxes
         DO L = 1, NLAYR
 !         With introduction of tillage routine, DLAYR can change daily.
