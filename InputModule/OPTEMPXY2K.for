@@ -332,11 +332,57 @@ C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,2F6.2,A)
      
 !  170   FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
 !     &      4F15.2,16F15.1,2F15.2,F15.10,F15.1,2F15.10)
-  170    FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
+  170     FORMAT (I3,1X,A2,1X,A6,1X,A8,1X,A6,
      &           F15.4,F15.4,F15.4,F15.4,F15.2,F15.2,F15.2,
      &           F15.2,F15.1,F15.1,
      &           F15.1,F15.1,F15.1,F15.1,F15.3,F15.3,F15.5,
      &           F15.1,F15.4,F15.4,F15.1,F15.4)
+
+      case ('SCSAM')
+          
+          !--- Write cultivar headers
+          WRITE(LUNIO,'(A)') TRIM(ATLINE) 
+          
+          !--- Write sugarcane SAMUCA cultivar coefficients data to .INH
+          WRITE(LUNIO,1070,IOSTAT=ERRNUM)
+     &      LNCU,CROP,VARNO,VRNAME(1:8),ECONO,
+     &      nsenesleaf_effect_r      ,
+     &      maxgl_r                  ,
+     &      n_lf_max_ini_la_r        ,
+     &      n_lf_when_stk_emerg_r    ,
+     &      n_lf_it_form_r           ,
+     &      maxdgl_r                 ,
+     &      amax                     ,
+     &      eff                      ,
+     &      tb_sam                   ,
+     &      tb0pho                   ,
+     &      tb1pho                   ,
+     &      tb2pho                   ,
+     &      tbfpho                   ,
+     &      tbper                    ,
+     &      tbMax_per                ,
+     &      phyllochron              ,
+     &      sla                      ,
+     &      mla                      ,
+     &      rwuep1                   ,
+     &      rwuep2                   ,
+     &      t_max_ws_pho             ,
+     &      t_mid_ws_pho             ,
+     &      t_min_ws_pho             ,
+     &      t_max_ws_exp             ,
+     &      t_mid_ws_exp             ,
+     &      t_min_ws_exp             ,
+     &      plastochron              ,
+     &      cr_source_sink_ratio_ruse,
+     &      it_struc_tb_end          ,
+     &      max_it_dw                ,
+     &      mid_tt_it_growth         ,
+     &      end_tt_it_growth         ,
+     &      mid_tt_lf_growth         ,
+     &      end_tt_lf_growth         ,
+     &      tt_chumat_lt
+
+1070  format (I3,1X,A2,1X,A6,1X,A8,1X,A6,35F15.0)
 
       CASE DEFAULT     
         WRITE (LUNIO,'("@C  CR INGENO CNAME")')

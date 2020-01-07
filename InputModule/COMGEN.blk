@@ -142,7 +142,46 @@
      &      ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &      PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
      &      MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+	 
+	 
 
 !CHP Add new Ceres-rice coefficients
 	  COMMON /GEN14/ THOT, TCLDP, TCLDF
-
+	  
+!MV	 Add SAMUCA Coefficients
+	  COMMON /GEN15/ 
+     &      nsenesleaf_effect_r         ,
+     &      maxgl_r                     ,
+     &      n_lf_max_ini_la_r           ,
+     &      n_lf_when_stk_emerg_r       ,
+     &      n_lf_it_form_r              ,
+     &      maxdgl_r                    ,
+     &      amax                        ,
+     &      eff                         ,
+     &      tb_sam                      ,
+     &      tb0pho                      ,
+     &      tb1pho                      ,
+     &      tb2pho                      ,
+     &      tbfpho                      ,
+     &      tbper                       ,
+     &      tbMax_per                   ,
+     &      phyllochron                 ,
+     &      sla                         ,
+     &      mla                         ,
+     &      rwuep1                      ,
+     &      rwuep2                      ,
+     &      t_max_ws_pho                ,
+     &      t_mid_ws_pho                ,
+     &      t_min_ws_pho                ,
+     &      t_max_ws_exp                ,
+     &      t_mid_ws_exp                ,
+     &      t_min_ws_exp                ,
+     &      plastochron                 ,
+     &      cr_source_sink_ratio_ruse   ,
+     &      it_struc_tb_end             ,
+     &      max_it_dw                   ,
+     &      mid_tt_it_growth            ,
+     &      end_tt_it_growth            ,
+     &      mid_tt_lf_growth            ,
+     &      end_tt_lf_growth            ,
+     &      tt_chumat_lt                

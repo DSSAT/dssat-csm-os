@@ -560,8 +560,15 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !     -------------------------------------------------
 !     Sugarcane - SAMUCA
       CASE('SCSAM')
-          call SAMUCA(1,1,1)                             !Output)
-
+          call SAMUCA(
+     &    CONTROL, ISWITCH,                                       !Input
+     &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,   !Input
+     &    SOILPROP, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,       !Input
+     &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,          !Input
+     $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,            !Output
+     &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,               !Output
+     &    UNO3, XLAI, XHLAI, EORATIO)                             !Output)
+          
 !     -------------------------------------------------
 !     Sugarcane - CASUPRO
       CASE('SCCSP')

@@ -457,13 +457,13 @@ C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
   850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 
-! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
- 1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 
-!!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)       !02/10/2009 
- ! 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                   !02/10/2009 
- 1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)                   !02/21/2018 
-1070  format (A6,1X,A16,7X,A6,35F15.0)
+! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)             ! 11/8/07
+ 1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                         ! 02/10/2009 
+!!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)           ! 02/10/2009 
+ ! 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                      ! 02/10/2009 
+ 1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)                        ! 02/21/2018 
+1070  format (A6,1X,A16,7X,A6,35F15.0)                        ! 01/07/2020 (SAMUCA)
 !1500 FORMAT (A6,1X,A16,1X,A255)
- 1500 FORMAT (A6,1X,A16,7X,A)                             !11/8/07
+ 1500 FORMAT (A6,1X,A16,7X,A)                                 !11/8/07
 
       END SUBROUTINE IPVAR

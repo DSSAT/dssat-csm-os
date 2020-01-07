@@ -1,5 +1,10 @@
-﻿subroutine SAMUCA(task, dynamic,                             &
-         YREND)
+﻿subroutine SAMUCA(CONTROL, ISWITCH,                             &
+         CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,  &  !Input
+         SOILPROP, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,      &  !Input
+         RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,         &  !Input
+         CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,           &  !Output
+         PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,              &  !Output
+         UNO3, XLAI, XHLAI, EORATIO)
  
     !-------------------------------------------------------------------------
     !---------- Agronomic Modular Simulator for Sugarcane (SAMUCA) -----------
@@ -32,44 +37,53 @@
     integer     DYNAMIC         ! This is the dynamic call initialization, rate, integration (~task) (IN) 
     
     integer 	YREND	        ! (IN)
- !   integer 	YRPLT			! (IN)
-	!integer 	MDATE			! (OUT)
-	!real    	CO2             ! (IN)
- !   real    	DAYL            ! (IN)
- !   real    	EOP             ! (IN)
- !   real    	EP              ! (IN)
-	!real		EP1             ! (IN)
-	!real		RWUEP1          ! (IN)
-	!real		RWUEP2          ! (IN)
- !   real    	EO              ! (IN)
-	!real		EOS             ! (IN)
-	!real		ES              ! (IN)
- !   real    	HARVFRAC(2)     ! (IN)
- !   real    	NH4(NL)         ! (IN)
- !   real    	NO3(NL)         ! (IN)
- !   real    	SNOW            ! (IN)
- !   real    	SRAD            ! (IN)
- !   real    	SW(NL)          ! (IN)
- !   real    	TMAX            ! (IN)
- !   real    	TMIN            ! (IN)
- !   real    	TRWUP           ! (IN)
- !   real    	TRWU            ! (IN)
- !   real    	TWILEN          ! (IN)
- !   real 		IRRAMT          ! (IN)	
-	!real     	CANHT			! (OUT)
- !   real     	KCAN            ! (OUT)
- !   real     	KTRANS          ! (OUT)
- !   real     	NSTRES			! (OUT)
- !   real     	PORMIN			! (OUT)
- !   real     	RLV(NL)			! (OUT)	    
- !   
- !   !--- DSSAT composite variables:
-	!TYPE (ControlType) CONTROL
-	!TYPE (SoilType)    SOILPROP
-	!TYPE (SwitchType)  ISWITCH
-	!Type (ResidueType) HARVRES 
-	!Type (ResidueType) SENESCE
-	!Type (WeatherType) WEATHER
+    integer 	YRPLT			! (IN)
+    integer     STGDOY(20)      ! (IN)
+	integer 	MDATE			! (OUT)
+	real    	CO2             ! (IN)
+    real    	DAYL            ! (IN)
+    real    	EOP             ! (IN)
+    real    	EP              ! (IN)
+	real		EP1             ! (IN)
+	real		RWUEP1          ! (IN)
+	real		RWUEP2          ! (IN)
+    real    	EO              ! (IN)
+	real		EOS             ! (IN)
+	real		ES              ! (IN)
+    real    	HARVFRAC(2)     ! (IN)
+    real    	NH4(NL)         ! (IN)
+    real    	NO3(NL)         ! (IN)
+    real    	SNOW            ! (IN)
+    real    	SRAD            ! (IN)
+    real    	SW(NL)          ! (IN)
+    real    	TMAX            ! (IN)
+    real    	TMIN            ! (IN)
+    real    	TRWUP           ! (IN)
+    real    	TRWU            ! (IN)
+    real    	TWILEN          ! (IN)
+    real 		IRRAMT          ! (IN)	
+	real     	CANHT			! (OUT)
+    real     	KCAN            ! (OUT)
+    real     	KTRANS          ! (OUT)
+    real     	NSTRES			! (OUT)
+    real     	PORMIN			! (OUT)
+    real     	RLV(NL)			! (OUT)	    
+    real        RWUMX           ! (OUT)
+    real        UNH4(NL)        ! (OUT)
+    real        UNO3(NL)        ! (OUT)
+    real        XLAI            ! (OUT)
+    real        XHLAI           ! (OUT)
+    
+    !--- DSSAT composite variables:
+	TYPE (ControlType) CONTROL
+	TYPE (SoilType)    SOILPROP
+	TYPE (SwitchType)  ISWITCH
+	Type (ResidueType) HARVRES 
+	Type (ResidueType) SENESCE
+	Type (WeatherType) WEATHER
+    
+    logical     cf_err          ! Error flag when reading .CUL and .ECO parameters
+    logical     spc_error       ! Error flag when reading .SPE parameters
     
     !-----------------------------------------------------------!-------------------------------------------------------------------------------!
     ! Local Variables and Input Parameters                      ! Description                                                                   !
@@ -113,7 +127,7 @@
     integer		pos_it_bg                                 		! 
     integer		sl                                        		! 
     integer		tl                                        		!
-    integer     nlay
+    integer     nlay                                            !
     logical		fl_potential                              		! 
     logical		fl_appear_leaf                            		! 
     logical		fl_hasleaf                                		! 
@@ -535,18 +549,18 @@
     real        srl_prof(1000)                                  !
     real        ddw_rt_prof(1000)                               !
     real        drld_prof(1000)                                 !
-    real        geot(nlay)                                      !
+    real        geot(nl)                                      !
     real        rootprof(1000)                                  ! Root profile (index = cm comparment)    Up to 10 meters
-    real        dw_rt_prof(nlay)                                !
+    real        dw_rt_prof(nl)                                !
     real        tillerageprof(100,2)                            !
     real        tempfac_h_per(24)                               ! 24 hours
     real        Acanopy(3+1,5+1)                                ! Instantaneous CO2 Assimilation Rate at three hours and five canopy depth in kg(CO2) ha-1(leaf) h-1 
     real        Qleaf(3+1,5+1)                                  ! Instantaneous par absorbed by leaves at three hours and five canopy depth in W m-2
     real        incpar(3,4)                                     ! Incoming direct, difuse and total par radiation above canopy in three hours W m-2
     real        photo_layer_act(3)                              ! Actual Total Daily Photosynthesis per canopy Layer  
-    real        rgf(nlay+1,3)                                   !
-    real        lroot(nlay)                                     !
-    real        dlroot(nlay)                                    !
+    real        rgf(nl+1,3)                                   !
+    real        lroot(nl)                                     !
+    real        dlroot(nl)                                    !
     real        drld(200)                                    !
     real        drld_dead(200)                               !
     logical     fl_it_AG(200)                               ! Above Ground Internode Flag
@@ -619,16 +633,16 @@
     real	SWFACE	
     real	SWFACT	
     real	SWFACF	
-    real	SRAD	
+    !real	SRAD	
     real	TMN		
-    real	TMAX	
-    real	TMIN	
+    !real	TMAX	
+    !real	TMIN	
     integer	DOY		
     real	LAT_SIM	
-    real	CO2		
+    !real	CO2		
     integer NDWS	
     integer NDEWS	
-    real 	EOP		
+    !real 	EOP		
     logical FLEMERGED	
     integer OUTP		                ! i/o   !
     integer outdph                      ! i/o   !
@@ -657,11 +671,11 @@
     real    rd    
     real    srl                 
     real    thour(24)
-    real    trwup
+    !real    trwup
     real    tsoil(200)
     real    dileaf
     real    z               !zero
-    real    dayl
+    !real    dayl
     real    sinld
     real    cosld
     real    resp
@@ -679,6 +693,12 @@
     character   (len=100)   prjname            				! ctrl 	! 
     character   (len=1000)  pathwork
     
+    real        maxgl_r
+    real        maxdgl_r
+    real        n_lf_when_stk_emerg_r
+    real        n_lf_it_form_r
+    
+    
     logical     flcropalive
     logical	    writedetphoto(50)
     
@@ -686,6 +706,31 @@
     
     parameter   (z = 1.e-14)
     
+    !--- Coupling DSSAT DYNAMIC control variable with SAMUCA task variable
+    dynamic = control % dynamic
+    
+    !--- DSSAT DYNAMIC variable values (From ModuleDefs):
+    ! RUNINIT  = 1, 
+    ! INIT     = 2,  !Will take the place of RUNINIT & SEASINIT (not fully implemented)
+    ! SEASINIT = 2, 
+    ! RATE     = 3,
+    ! EMERG    = 3,  !Used for some plant processes.  
+    ! INTEGR   = 4,  
+    ! OUTPUT   = 5,  
+    ! SEASEND  = 6,
+    ! ENDRUN   = 7 
+    
+    !--- Setting up SAMUCA task based on CONTROL DYNAMIC
+    if(dynamic .eq. RUNINIT)    return      ! Not in use by SAMUCA
+    if(dynamic .eq. SEASINIT)   task = 1    ! Crop State Variable Initialization and reading crop parameters
+    if(dynamic .eq. RATE)       task = 3    ! Step-Rate and Integration are in the same block for SAMUCA
+    if(dynamic .eq. EMERG)      return      ! Not in use by SAMUCA
+    if(dynamic .eq. INTEGR)     return      ! Embedded in task=3 (consider moving move here)
+    if(dynamic .eq. OUTPUT)     return      ! Embedded in task=3 (consider moving move here)
+    if(dynamic .eq. SEASEND)    return      ! Not in use by SAMUCA
+    if(dynamic .eq. ENDRUN)     return      ! Not in use by SAMUCA    
+    
+    !--- Go to task!
     goto(10,20,30) task
     
 10  continue
@@ -697,6 +742,8 @@
     !--- IMPORTANT LINKAGES:
     ! CANHT
     ! K
+    !
+    ! nlay needs to be computed from nl
     ! 
     
     !--- Constants:
@@ -722,128 +769,267 @@
 	!integer n_lf_it_form
 	!integer maxdgl
     
+    ! DYNAMIC calls
+    !INTEGER, PARAMETER :: 
+    !     !Dynamic variable values
+    ! &    RUNINIT  = 1, 
+    ! &    INIT     = 2,  !Will take the place of RUNINIT & SEASINIT
+    !                     !     (not fully implemented)
+    ! &    SEASINIT = 2, 
+    ! &    RATE     = 3,
+    ! &    EMERG    = 3,  !Used for some plant processes.  
+    ! &    INTEGR   = 4,  
+    ! &    OUTPUT   = 5,  
+    ! &    SEASEND  = 6,
+    ! &    ENDRUN   = 7 
+    
+    !--- Linking Weather Variables
+    tmax    =   WEATHER % TMAX
+    tmin    =   WEATHER % TMIN
+    srad    =   WEATHER % SRAD
+    
     pathwork = 'C:\DSSATv47'    
     
     !-------------------------------!
     !--- Reading crop parameters ---!
     !-------------------------------!
     
-    call ReadFile(6, inte_host, real_host, pathwork)
+    !--- Reading crop parameters with MJ's subroutine used in CANEGRO    
+    !--- Cultivar parameters
+	call get_cultivar_coeff(             nsenesleaf_effect,      'ns_lf_til', CONTROL, CF_ERR) 
+	call get_cultivar_coeff(                       maxgl_r,          'maxgl', CONTROL, CF_ERR)
+	call get_cultivar_coeff(               n_lf_max_ini_la,   'n_lf_max_ila', CONTROL, CF_ERR)
+	call get_cultivar_coeff(         n_lf_when_stk_emerg_r,    'n_lf_stk_em', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                n_lf_it_form_r,   'n_lf_it_form', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                      maxdgl_r,         'maxdgl', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                          amax,           'amax', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                           eff,            'eff', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                            tb,             'tb', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                        tb0pho,         'tb0pho', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                        tb1pho,         'tb1pho', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                        tb2pho,         'tb2pho', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                        tbfpho,         'tbfpho', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                         tbper,          'tbper', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                     tbMax_per,      'tbMax_per', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                   phyllochron,    'phyllochron', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                           sla,            'sla', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                           mla,            'mla', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                        rwuep1,         'rwuep1', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                        rwuep2,         'rwuep2', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                  t_max_ws_pho,   't_max_ws_pho', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                  t_mid_ws_pho,   't_mid_ws_pho', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                  t_min_ws_pho,   't_min_ws_pho', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                  t_max_ws_exp,   't_max_ws_exp', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                  t_mid_ws_exp,   't_mid_ws_exp', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                  t_min_ws_exp,   't_min_ws_exp', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                   plastochron,    'plastochron', CONTROL, CF_ERR)
+	call get_cultivar_coeff(     cr_source_sink_ratio_ruse,   'so2si_useres', CONTROL, CF_ERR)
+	call get_cultivar_coeff(               it_struc_tb_end,  'it_str_tb_end', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                     max_it_dw,      'max_it_dw', CONTROL, CF_ERR)
+	call get_cultivar_coeff(              mid_tt_it_growth,  'mid_tt_it_gro', CONTROL, CF_ERR)
+	call get_cultivar_coeff(              end_tt_it_growth,  'end_tt_it_gro', CONTROL, CF_ERR)
+	call get_cultivar_coeff(              mid_tt_lf_growth,  'mid_tt_lf_gro', CONTROL, CF_ERR)
+	call get_cultivar_coeff(              end_tt_lf_growth,  'end_tt_lf_gro', CONTROL, CF_ERR)
+	call get_cultivar_coeff(                  tt_chumat_lt,   'tt_chumat_lt', CONTROL, CF_ERR)
     
-    nsenesleaf_effect        		= inte_host(  1) ! (I)
-    maxgl                    		= inte_host(  2) ! (I)
-    n_lf_max_ini_la          		= inte_host(  3) ! (I)
-    n_lf_when_stk_emerg	 	 		= inte_host(  4) ! (I)
-    n_lf_it_form	 	     		= inte_host(  5) ! (I)
-    maxdgl	 	             		= inte_host(  6) ! (I)
-    amax                            = real_host(  1) ! (R)
-    eff                             = real_host(  2) ! (R)
-    phtmax                          = real_host(  3) ! (R)
-    parmax                          = real_host(  4) ! (R)
-    ccmp                            = real_host(  5) ! (R)
-    ccmax                           = real_host(  6) ! (R)
-    cceff                           = real_host(  7) ! (R)
-    rue                             = real_host(  8) ! (R)
-    tb                              = real_host(  9) ! (R)
-    tb0pho                          = real_host( 10) ! (R)
-    tb1pho                          = real_host( 11) ! (R)
-    tb2pho                          = real_host( 12) ! (R)
-    tbfpho                          = real_host( 13) ! (R)
-    tbper                           = real_host( 14) ! (R)
-    tbMax_per                       = real_host( 15) ! (R)
-    chustk                          = real_host( 16) ! (R)
-    chupeak                         = real_host( 17) ! (R)
-    chudec                          = real_host( 18) ! (R)
-    chumat                          = real_host( 19) ! (R)
-    popmat                          = real_host( 20) ! (R)
-    poppeak                         = real_host( 21) ! (R)
-    ltthreshold                     = real_host( 22) ! (R)
-    tillochron                      = real_host( 23) ! (R)
-    fdeadlf                         = real_host( 24) ! (R)
-    phyllochron                     = real_host( 25) ! (R)
-    sla                             = real_host( 26) ! (R)
-    rdm                             = real_host( 27) ! (R)
-    srlMax                          = real_host( 28) ! (R)
-    srlMin                          = real_host( 29) ! (R)
-    rootdrate                       = real_host( 30) ! (R)
-    max_rt_dw                       = real_host( 31) ! (R)
-    end_tt_rt_growth                = real_host( 32) ! (R)
-    rootleftfrac                    = real_host( 33) ! (R)
-    kdif                            = real_host( 34) ! (R)
-    dpercoeff                       = real_host( 35) ! (R)
-    mla                             = real_host( 36) ! (R)
-    kc_min                          = real_host( 37) ! (R)
-    eoratio                         = real_host( 38) ! (R)
-    rwuep1                          = real_host( 39) ! (R)
-    rwuep2                          = real_host( 40) ! (R)
-    t_max_ws_pho                    = real_host( 41) ! (R)
-    t_mid_ws_pho                    = real_host( 42) ! (R)
-    t_min_ws_pho                    = real_host( 43) ! (R)
-    t_max_ws_exp                    = real_host( 44) ! (R)
-    t_mid_ws_exp                    = real_host( 45) ! (R)
-    t_min_ws_exp                    = real_host( 46) ! (R)
-    plastochron                     = real_host( 47) ! (R)
-    frac_suc_BG                     = real_host( 48) ! (R)
-    frac_hex_BG                     = real_host( 49) ! (R)
-    init_leaf_area                  = real_host( 50) ! (R)
-    max_ini_la                      = real_host( 51) ! (R)
-    cr_source_sink_ratio_ruse       = real_host( 52) ! (R)
-    init_plantdepth_ratoon          = real_host( 53) ! (R)
-    maxlai_eo                       = real_host( 54) ! (R)
-    gresp                           = real_host( 55) ! (R)
-    kmr_leaf                        = real_host( 56) ! (R)
-    kmr_stem                        = real_host( 57) ! (R)
-    kmr_root                        = real_host( 58) ! (R)
-    kmr_stor                        = real_host( 59) ! (R)
-    q10_leaf                        = real_host( 60) ! (R)
-    q10_stem                        = real_host( 61) ! (R)
-    q10_root                        = real_host( 62) ! (R)
-    q10_stor                        = real_host( 63) ! (R)
-    tref_mr                         = real_host( 64) ! (R)
-    tbm                             = real_host( 65) ! (R)
-    threshews                       = real_host( 66) ! (R)
-    dshootext_BG_rate               = real_host( 67) ! (R)
-    mid_tt_rt_growth                = real_host( 68) ! (R)
-    it_struc_tb_ini                 = real_host( 69) ! (R)
-    it_struc_to1                    = real_host( 70) ! (R)
-    it_struc_to2                    = real_host( 71) ! (R)
-    it_struc_tb_end                 = real_host( 72) ! (R)
-    max_it_dw                       = real_host( 73) ! (R)
-    mid_tt_it_growth                = real_host( 74) ! (R)
-    end_tt_it_growth                = real_host( 75) ! (R)
-    mid_tt_lf_growth                = real_host( 76) ! (R)
-    end_tt_lf_growth                = real_host( 77) ! (R)
-    it_struc_pfac_max               = real_host( 78) ! (R)
-    it_struc_pfac_min               = real_host( 79) ! (R)
-    it_struc_pfac_tb                = real_host( 80) ! (R)
-    it_struc_pfac_tm                = real_host( 81) ! (R)
-    it_struc_pfac_te                = real_host( 82) ! (R)
-    it_struc_pfac_delta             = real_host( 83) ! (R)
-    it_struc_pfac_temp_max_red      = real_host( 84) ! (R)
-    it_struc_pfac_wate_max_red      = real_host( 85) ! (R)
-    max_it_dw_BG                    = real_host( 86) ! (R)
-    suc_min                         = real_host( 87) ! (R)
-    max_per_it                      = real_host( 88) ! (R)
-    tilleragefac_adjust             = real_host( 89) ! (R)
-    dswat_ddws                      = real_host( 90) ! (R)
-    dswat_dsuc                      = real_host( 91) ! (R)
-    rootshape                       = real_host( 92) ! (R)
-    hex_min                         = real_host( 93) ! (R)
-    suc_acc_ini                     = real_host( 94) ! (R)
-    suc_frac_rate_ts                = real_host( 95) ! (R)
-    swcon1                          = real_host( 96) ! (R)
-    swcon2                          = real_host( 97) ! (R)
-    swcon3                          = real_host( 98) ! (R)
-    rwumax                          = real_host( 99) ! (R)
-    pormin                          = real_host(100) ! (R)
-    tt_chumat_lt                    = real_host(101) ! (R)
-    res_used_emerg_fac              = real_host(102) ! (R)
-    agefactor_fac_amax              = real_host(103) ! (R)
-    agefactor_fac_rue               = real_host(104) ! (R)
-    agefactor_fac_per               = real_host(105) ! (R)
-    c_scattering                    = real_host(106) ! (R)
-    k                               = real_host(107) ! (R)
-    root_front_size                 = real_host(108) ! (R)
+    !--- Ecotype parameters
+    call get_cultivar_coeff(                        chustk,         'chustk', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                       chupeak,        'chupeak', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                        chudec,         'chudec', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                        chumat,         'chumat', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                        popmat,         'popmat', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                       poppeak,        'poppeak', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                   ltthreshold,    'ltthreshold', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                    tillochron,     'tillochron', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                       fdeadlf,        'fdeadlf', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                           rdm,            'rdm', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                     dpercoeff,      'dpercoeff', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                   frac_suc_BG,    'frac_suc_BG', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                   frac_hex_BG,    'frac_hex_BG', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                init_leaf_area,   'init_lf_area', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                    max_ini_la,     'max_ini_la', CONTROL, CF_ERR)
+    call get_cultivar_coeff(        init_plantdepth_ratoon,    'init_pd_rat', CONTROL, CF_ERR)
+    call get_cultivar_coeff(               it_struc_tb_ini,  'it_str_tb_ini', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                  it_struc_to1,     'it_str_to1', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                  it_struc_to2,     'it_str_to2', CONTROL, CF_ERR)
+    call get_cultivar_coeff(             it_struc_pfac_max,  'it_str_pf_max', CONTROL, CF_ERR)
+    call get_cultivar_coeff(             it_struc_pfac_min,  'it_str_pf_min', CONTROL, CF_ERR)
+    call get_cultivar_coeff(              it_struc_pfac_tb,   'it_str_pf_tb', CONTROL, CF_ERR)
+    call get_cultivar_coeff(              it_struc_pfac_tm,   'it_str_pf_tm', CONTROL, CF_ERR)
+    call get_cultivar_coeff(              it_struc_pfac_te,   'it_str_pf_te', CONTROL, CF_ERR)
+    call get_cultivar_coeff(           it_struc_pfac_delta,    'it_str_pf_d', CONTROL, CF_ERR)
+    call get_cultivar_coeff(    it_struc_pfac_temp_max_red,   'it_str_t_red', CONTROL, CF_ERR)
+    call get_cultivar_coeff(    it_struc_pfac_wate_max_red,   'it_str_w_red', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                  max_it_dw_BG,   'max_it_dw_BG', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                       suc_min,        'suc_min', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                    max_per_it,     'max_per_it', CONTROL, CF_ERR)
+    call get_cultivar_coeff(           tilleragefac_adjust,     'tillagefac', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                    dswat_ddws,     'dswat_ddws', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                    dswat_dsuc,     'dswat_dsuc', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                       hex_min,        'hex_min', CONTROL, CF_ERR)
+    call get_cultivar_coeff(                   suc_acc_ini,    'suc_acc_ini', CONTROL, CF_ERR)
+    call get_cultivar_coeff(              suc_frac_rate_ts,   'dsuc_frac_ts', CONTROL, CF_ERR)
+    
+    !--- Species parameters
+    call get_species_coeff(                         srlMax,         'srlMax', CONTROL, SPC_ERROR)
+    call get_species_coeff(                         srlMin,         'srlMin', CONTROL, SPC_ERROR)
+    call get_species_coeff(                      rootdrate,      'rootdrate', CONTROL, SPC_ERROR)
+    call get_species_coeff(                      max_rt_dw,      'max_rt_dw', CONTROL, SPC_ERROR)
+    call get_species_coeff(               end_tt_rt_growth,  'end_tt_rt_gro', CONTROL, SPC_ERROR)
+    call get_species_coeff(                   rootleftfrac,   'rootleftfrac', CONTROL, SPC_ERROR)
+    call get_species_coeff(                           kdif,           'kdif', CONTROL, SPC_ERROR)
+    call get_species_coeff(                         kc_min,         'kc_min', CONTROL, SPC_ERROR)
+    call get_species_coeff(                        eoratio,        'eoratio', CONTROL, SPC_ERROR)
+    call get_species_coeff(                      maxlai_eo,      'maxlai_eo', CONTROL, SPC_ERROR)
+    call get_species_coeff(                          gresp,          'gresp', CONTROL, SPC_ERROR)
+    call get_species_coeff(                       kmr_leaf,       'kmr_leaf', CONTROL, SPC_ERROR)
+    call get_species_coeff(                       kmr_stem,       'kmr_stem', CONTROL, SPC_ERROR)
+    call get_species_coeff(                       kmr_root,       'kmr_root', CONTROL, SPC_ERROR)
+    call get_species_coeff(                       kmr_stor,       'kmr_stor', CONTROL, SPC_ERROR)
+    call get_species_coeff(                       q10_leaf,       'q10_leaf', CONTROL, SPC_ERROR)
+    call get_species_coeff(                       q10_stem,       'q10_stem', CONTROL, SPC_ERROR)
+    call get_species_coeff(                       q10_root,       'q10_root', CONTROL, SPC_ERROR)
+    call get_species_coeff(                       q10_stor,       'q10_stor', CONTROL, SPC_ERROR)
+    call get_species_coeff(                        tref_mr,        'tref_mr', CONTROL, SPC_ERROR)
+    call get_species_coeff(                            tbm,            'tbm', CONTROL, SPC_ERROR)
+    call get_species_coeff(                      threshews,      'threshews', CONTROL, SPC_ERROR)
+    call get_species_coeff(              dshootext_BG_rate,     'dshoot_ext', CONTROL, SPC_ERROR)
+    call get_species_coeff(               mid_tt_rt_growth,  'mid_tt_rt_gro', CONTROL, SPC_ERROR)
+    call get_species_coeff(                      rootshape,      'rootshape', CONTROL, SPC_ERROR)
+    call get_species_coeff(                         swcon1,         'swcon1', CONTROL, SPC_ERROR)
+    call get_species_coeff(                         swcon2,         'swcon2', CONTROL, SPC_ERROR)
+    call get_species_coeff(                         swcon3,         'swcon3', CONTROL, SPC_ERROR)
+    call get_species_coeff(                         rwumax,         'rwumax', CONTROL, SPC_ERROR)
+    call get_species_coeff(                         pormin,         'pormin', CONTROL, SPC_ERROR)
+    call get_species_coeff(             res_used_emerg_fac,   'fres_used_em', CONTROL, SPC_ERROR)
+    call get_species_coeff(             agefactor_fac_amax,    'agefac_amax', CONTROL, SPC_ERROR)
+    call get_species_coeff(              agefactor_fac_per,     'agefac_per', CONTROL, SPC_ERROR)
+    call get_species_coeff(                   c_scattering,   'c_scattering', CONTROL, SPC_ERROR)
+    call get_species_coeff(                              k,              'k', CONTROL, SPC_ERROR)
+    call get_species_coeff(                root_front_size,  'rt_front_size', CONTROL, SPC_ERROR)    
+    
+    !--- Get integer variables
+    maxgl               = aint(maxgl_r)
+    maxdgl              = aint(maxdgl_r)
+    n_lf_when_stk_emerg = aint(n_lf_when_stk_emerg_r)
+    n_lf_it_form        = aint(n_lf_it_form_r)
+    
+!MV call ReadFile(6, inte_host, real_host, pathwork)        ! subroutine from Samuca v2 to read parameters
+    
+    !nsenesleaf_effect        		= inte_host(  1) ! (I)
+    !maxgl                    		= inte_host(  2) ! (I)
+    !n_lf_max_ini_la          		= inte_host(  3) ! (I)
+    !n_lf_when_stk_emerg	 	 		= inte_host(  4) ! (I)
+    !n_lf_it_form	 	     		= inte_host(  5) ! (I)
+    !maxdgl	 	             		= inte_host(  6) ! (I)
+    !amax                            = real_host(  1) ! (R)
+    !eff                             = real_host(  2) ! (R)
+    !phtmax                          = real_host(  3) ! (R)
+    !parmax                          = real_host(  4) ! (R)
+    !ccmp                            = real_host(  5) ! (R)
+    !ccmax                           = real_host(  6) ! (R)
+    !cceff                           = real_host(  7) ! (R)
+    !rue                             = real_host(  8) ! (R)
+    !tb                              = real_host(  9) ! (R)
+    !tb0pho                          = real_host( 10) ! (R)
+    !tb1pho                          = real_host( 11) ! (R)
+    !tb2pho                          = real_host( 12) ! (R)
+    !tbfpho                          = real_host( 13) ! (R)
+    !tbper                           = real_host( 14) ! (R)
+    !tbMax_per                       = real_host( 15) ! (R)
+    !chustk                          = real_host( 16) ! (R)
+    !chupeak                         = real_host( 17) ! (R)
+    !chudec                          = real_host( 18) ! (R)
+    !chumat                          = real_host( 19) ! (R)
+    !popmat                          = real_host( 20) ! (R)
+    !poppeak                         = real_host( 21) ! (R)
+    !ltthreshold                     = real_host( 22) ! (R)
+    !tillochron                      = real_host( 23) ! (R)
+    !fdeadlf                         = real_host( 24) ! (R)
+    !phyllochron                     = real_host( 25) ! (R)
+    !sla                             = real_host( 26) ! (R)
+    !rdm                             = real_host( 27) ! (R)
+    !srlMax                          = real_host( 28) ! (R)
+    !srlMin                          = real_host( 29) ! (R)
+    !rootdrate                       = real_host( 30) ! (R)
+    !max_rt_dw                       = real_host( 31) ! (R)
+    !end_tt_rt_growth                = real_host( 32) ! (R)
+    !rootleftfrac                    = real_host( 33) ! (R)
+    !kdif                            = real_host( 34) ! (R)
+    !dpercoeff                       = real_host( 35) ! (R)
+    !mla                             = real_host( 36) ! (R)
+    !kc_min                          = real_host( 37) ! (R)
+    !eoratio                         = real_host( 38) ! (R)
+    !rwuep1                          = real_host( 39) ! (R)
+    !rwuep2                          = real_host( 40) ! (R)
+    !t_max_ws_pho                    = real_host( 41) ! (R)
+    !t_mid_ws_pho                    = real_host( 42) ! (R)
+    !t_min_ws_pho                    = real_host( 43) ! (R)
+    !t_max_ws_exp                    = real_host( 44) ! (R)
+    !t_mid_ws_exp                    = real_host( 45) ! (R)
+    !t_min_ws_exp                    = real_host( 46) ! (R)
+    !plastochron                     = real_host( 47) ! (R)
+    !frac_suc_BG                     = real_host( 48) ! (R)
+    !frac_hex_BG                     = real_host( 49) ! (R)
+    !init_leaf_area                  = real_host( 50) ! (R)
+    !max_ini_la                      = real_host( 51) ! (R)
+    !cr_source_sink_ratio_ruse       = real_host( 52) ! (R)
+    !init_plantdepth_ratoon          = real_host( 53) ! (R)
+    !maxlai_eo                       = real_host( 54) ! (R)
+    !gresp                           = real_host( 55) ! (R)
+    !kmr_leaf                        = real_host( 56) ! (R)
+    !kmr_stem                        = real_host( 57) ! (R)
+    !kmr_root                        = real_host( 58) ! (R)
+    !kmr_stor                        = real_host( 59) ! (R)
+    !q10_leaf                        = real_host( 60) ! (R)
+    !q10_stem                        = real_host( 61) ! (R)
+    !q10_root                        = real_host( 62) ! (R)
+    !q10_stor                        = real_host( 63) ! (R)
+    !tref_mr                         = real_host( 64) ! (R)
+    !tbm                             = real_host( 65) ! (R)
+    !threshews                       = real_host( 66) ! (R)
+    !dshootext_BG_rate               = real_host( 67) ! (R)
+    !mid_tt_rt_growth                = real_host( 68) ! (R)
+    !it_struc_tb_ini                 = real_host( 69) ! (R)
+    !it_struc_to1                    = real_host( 70) ! (R)
+    !it_struc_to2                    = real_host( 71) ! (R)
+    !it_struc_tb_end                 = real_host( 72) ! (R)
+    !max_it_dw                       = real_host( 73) ! (R)
+    !mid_tt_it_growth                = real_host( 74) ! (R)
+    !end_tt_it_growth                = real_host( 75) ! (R)
+    !mid_tt_lf_growth                = real_host( 76) ! (R)
+    !end_tt_lf_growth                = real_host( 77) ! (R)
+    !it_struc_pfac_max               = real_host( 78) ! (R)
+    !it_struc_pfac_min               = real_host( 79) ! (R)
+    !it_struc_pfac_tb                = real_host( 80) ! (R)
+    !it_struc_pfac_tm                = real_host( 81) ! (R)
+    !it_struc_pfac_te                = real_host( 82) ! (R)
+    !it_struc_pfac_delta             = real_host( 83) ! (R)
+    !it_struc_pfac_temp_max_red      = real_host( 84) ! (R)
+    !it_struc_pfac_wate_max_red      = real_host( 85) ! (R)
+    !max_it_dw_BG                    = real_host( 86) ! (R)
+    !suc_min                         = real_host( 87) ! (R)
+    !max_per_it                      = real_host( 88) ! (R)
+    !tilleragefac_adjust             = real_host( 89) ! (R)
+    !dswat_ddws                      = real_host( 90) ! (R)
+    !dswat_dsuc                      = real_host( 91) ! (R)
+    !rootshape                       = real_host( 92) ! (R)
+    !hex_min                         = real_host( 93) ! (R)
+    !suc_acc_ini                     = real_host( 94) ! (R)
+    !suc_frac_rate_ts                = real_host( 95) ! (R)
+    !swcon1                          = real_host( 96) ! (R)
+    !swcon2                          = real_host( 97) ! (R)
+    !swcon3                          = real_host( 98) ! (R)
+    !rwumax                          = real_host( 99) ! (R)
+    !pormin                          = real_host(100) ! (R)
+    !tt_chumat_lt                    = real_host(101) ! (R)
+    !res_used_emerg_fac              = real_host(102) ! (R)
+    !agefactor_fac_amax              = real_host(103) ! (R)
+    !agefactor_fac_rue               = real_host(104) ! (R)
+    !agefactor_fac_per               = real_host(105) ! (R)
+    !c_scattering                    = real_host(106) ! (R)
+    !k                               = real_host(107) ! (R)
+    !root_front_size                 = real_host(108) ! (R)
     
     !--- Species-related response to CO2
     co2_pho_res_end =   270.d0
