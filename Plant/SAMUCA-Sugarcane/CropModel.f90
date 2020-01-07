@@ -542,27 +542,27 @@
     real		wat_it_ag                                 		!
 
     !--- Arrays Variables
-    real        phprof(200,60)                        ! Phytomer profile and attributes dimensions    
-    real        drld_sl(200)                                 !
-    real        dw_rt_sl(200)                                !
-    real        ddw_rt_sl(200)                               !
+    real        phprof(200,60)                                  ! Phytomer profile and attributes dimensions    
+    real        drld_sl(nl)                                     !
+    real        dw_rt_sl(nl)                                    !
+    real        ddw_rt_sl(nl)                                   !
     real        srl_prof(1000)                                  !
     real        ddw_rt_prof(1000)                               !
     real        drld_prof(1000)                                 !
-    real        geot(nl)                                      !
+    real        geot(SOILPROP%NLAYR)                            !
     real        rootprof(1000)                                  ! Root profile (index = cm comparment)    Up to 10 meters
-    real        dw_rt_prof(nl)                                !
+    real        dw_rt_prof(SOILPROP%NLAYR)                      !
     real        tillerageprof(100,2)                            !
     real        tempfac_h_per(24)                               ! 24 hours
     real        Acanopy(3+1,5+1)                                ! Instantaneous CO2 Assimilation Rate at three hours and five canopy depth in kg(CO2) ha-1(leaf) h-1 
     real        Qleaf(3+1,5+1)                                  ! Instantaneous par absorbed by leaves at three hours and five canopy depth in W m-2
     real        incpar(3,4)                                     ! Incoming direct, difuse and total par radiation above canopy in three hours W m-2
     real        photo_layer_act(3)                              ! Actual Total Daily Photosynthesis per canopy Layer  
-    real        rgf(nl+1,3)                                   !
-    real        lroot(nl)                                     !
-    real        dlroot(nl)                                    !
-    real        drld(200)                                    !
-    real        drld_dead(200)                               !
+    real        rgf(SOILPROP%NLAYR+1,3)                                   !
+    real        lroot(SOILPROP%NLAYR)                                     !
+    real        dlroot(SOILPROP%NLAYR)                                    !
+    real        drld(nl)                                    !
+    real        drld_dead(nl)                               !
     logical     fl_it_AG(200)                               ! Above Ground Internode Flag
     logical     fl_lf_AG(200)                               ! Above Ground Leaf Flag
     logical     fl_lf_alive(200) 
@@ -662,17 +662,17 @@
     integer seqnow                      ! ctrl  ! 
     real    rowsp				(50) 	! ctrl  ! 
     real    plantdepth          (50)    ! ctrl  !
-    real 	bottom				(200)   ! soil	!
-    real    upper               (200)   ! soil	!
-    real    slthickness         (200)   ! soil	!
-    real    dep                 (200)   ! soil	!
-    real    rld                 (200)   ! soil	!
+    real 	bottom				(nl)   ! soil	!
+    real    upper               (nl)   ! soil	!
+    real    slthickness         (nl)   ! soil	!
+    real    dep                 (nl)   ! soil	!
+    real    rld                 (nl)   ! soil	!
     
     real    rd    
     real    srl                 
     real    thour(24)
     !real    trwup
-    real    tsoil(200)
+    real    tsoil(nl)
     real    dileaf
     real    z               !zero
     !real    dayl
@@ -693,11 +693,12 @@
     character   (len=100)   prjname            				! ctrl 	! 
     character   (len=1000)  pathwork
     
+    !--- reading integer parameter as real and convert afterwards
+    !--- This is easier than creating one dedicated subroutine only for that
     real        maxgl_r
     real        maxdgl_r
     real        n_lf_when_stk_emerg_r
-    real        n_lf_it_form_r
-    
+    real        n_lf_it_form_r    
     
     logical     flcropalive
     logical	    writedetphoto(50)
@@ -787,7 +788,14 @@
     tmax    =   WEATHER % TMAX
     tmin    =   WEATHER % TMIN
     srad    =   WEATHER % SRAD
-    
+        
+    !--- Number of soil layers (according to soil profile)
+    nlay        = SOILPROP % NLAYR
+    bottom		= SOILPROP % DS
+    slthickness = SOILPROP % DLAYR
+    upper       = bottom - slthickness
+    dep         = bottom
+        
     pathwork = 'C:\DSSATv47'    
     
     !-------------------------------!
@@ -916,12 +924,12 @@
     
 !MV call ReadFile(6, inte_host, real_host, pathwork)        ! subroutine from Samuca v2 to read parameters
     
-    !nsenesleaf_effect        		= inte_host(  1) ! (I)
-    !maxgl                    		= inte_host(  2) ! (I)
-    !n_lf_max_ini_la          		= inte_host(  3) ! (I)
-    !n_lf_when_stk_emerg	 	 		= inte_host(  4) ! (I)
-    !n_lf_it_form	 	     		= inte_host(  5) ! (I)
-    !maxdgl	 	             		= inte_host(  6) ! (I)
+    !nsenesleaf_effect        		 = inte_host(  1) ! (I)
+    !maxgl                    		 = inte_host(  2) ! (I)
+    !n_lf_max_ini_la          		 = inte_host(  3) ! (I)
+    !n_lf_when_stk_emerg             = inte_host(  4) ! (I)
+    !n_lf_it_form	 	     		 = inte_host(  5) ! (I)
+    !maxdgl	 	             		 = inte_host(  6) ! (I)
     !amax                            = real_host(  1) ! (R)
     !eff                             = real_host(  2) ! (R)
     !phtmax                          = real_host(  3) ! (R)
@@ -1064,7 +1072,7 @@
     
     !--- Tillering
     method_pop        = tillermet(1)
-    
+            
     !--- Hourly Hour temperature
     a_pl        = 1.607 !Calibrated for Sao Paulo State   (original constants from Parton and Logan paper = 2.000)
     b_pl        = 2.762 !Calibrated for Sao Paulo State   (original constants from Parton and Logan paper = 2.200)
@@ -1073,6 +1081,23 @@
     !----------------------------------!
     !--- Crop States Initialization ---!
     !----------------------------------!
+    
+    !------------------------!
+    !---> DEBUGGING CODE <---!
+    !------------------------!
+    seqnow              = 1
+    fl_potential        = .true.
+    method_pop          = 2
+    potential_growth    = .true.
+    writedcrop          = .true.
+    writeactout         = .true.
+    usetsoil            = .false.
+    mulcheffect         = .false.
+    ratoon              = .false.
+    tillermet           = 2
+    metpg               = 2
+    rowsp				= 140.
+    plantdepth          = 20.
     
     !--- Leaf dry weight at end of life-spam of a leaf grown under optimun conditions [g]
     max_lf_dw       = mla / sla ! Use this while the model considers fixed SLA (PIT)
