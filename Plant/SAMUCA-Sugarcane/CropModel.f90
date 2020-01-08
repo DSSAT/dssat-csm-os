@@ -82,6 +82,15 @@
 	Type (ResidueType) SENESCE
 	Type (WeatherType) WEATHER
     
+    !--- Local variables to be exhanged with outputs files
+    TYPE (CNG_SoilType) Soil
+    TYPE (WaterType)    WaterBal
+    TYPE (CaneCropType) CaneCrop
+    TYPE (GrothType)    Growth
+    TYPE (ClimateType)  Climate
+    TYPE (PartType)     Part
+    TYPE (OutType)      Out
+    
     logical     cf_err          ! Error flag when reading .CUL and .ECO parameters
     logical     spc_error       ! Error flag when reading .SPE parameters
     
@@ -692,13 +701,17 @@
     character   (len=100)   CROPFILE(50)
     character   (len=100)   prjname            				! ctrl 	! 
     character   (len=1000)  pathwork
+    character   (len=7)     YRDOY_ch    ! year and doy as character used to extract year and doy from CONTROL%YRDOY
+    
     
     !--- reading integer parameter as real and convert afterwards
     !--- This is easier than creating one dedicated subroutine only for that
     real        maxgl_r
     real        maxdgl_r
     real        n_lf_when_stk_emerg_r
-    real        n_lf_it_form_r    
+    real        n_lf_it_form_r   
+    
+    real        CELLSE_DM ! CANEGRO'S Cellulosic DM (t/ha)
     
     logical     flcropalive
     logical	    writedetphoto(50)
@@ -725,14 +738,37 @@
     if(dynamic .eq. RUNINIT)    return      ! Not in use by SAMUCA
     if(dynamic .eq. SEASINIT)   task = 1    ! Crop State Variable Initialization and reading crop parameters
     if(dynamic .eq. RATE)       task = 3    ! Step-Rate and Integration are in the same block for SAMUCA
-    if(dynamic .eq. EMERG)      return      ! Not in use by SAMUCA
     if(dynamic .eq. INTEGR)     return      ! Embedded in task=3 (consider moving move here)
-    if(dynamic .eq. OUTPUT)     return      ! Embedded in task=3 (consider moving move here)
-    if(dynamic .eq. SEASEND)    return      ! Not in use by SAMUCA
-    if(dynamic .eq. ENDRUN)     return      ! Not in use by SAMUCA    
+    if(dynamic .eq. OUTPUT)     task = 4    ! Write output files
+    if(dynamic .eq. SEASEND)    task = 5    ! Close PlantGro if Ratooning is not carring over
+    if(dynamic .eq. ENDRUN)     return      ! Not in use by SAMUCA   
+        
+    !--- Linking Weather Variables
+    tmax        = WEATHER % TMAX
+    tmin        = WEATHER % TMIN
+    srad        = WEATHER % SRAD
+    lat_sim     = WEATHER % XLAT
+    
+    tmn         = (tmax + tmin) * 0.5
+    
+    !--- Time Control
+    das         = CONTROL % DAS
+    
+    !--- To get year and doy as integers, we read YRDOY as character and break down
+    write(YRDOY_ch, '(I7)')     CONTROL % YRDOY
+    read(YRDOY_ch,'(I4)')       year
+    read(YRDOY_ch,'(4X,I3)')    doy
+            
+    !--- Number of soil layers (according to soil profile)
+    nlay        = SOILPROP % NLAYR
+    bottom		= SOILPROP % DS
+    slthickness = SOILPROP % DLAYR
+    upper       = bottom - slthickness
+    dep         = bottom
+        
     
     !--- Go to task!
-    goto(10,20,30) task
+    goto(10,20,30,40,50) task
     
 10  continue
     
@@ -784,25 +820,13 @@
     ! &    SEASEND  = 6,
     ! &    ENDRUN   = 7 
     
-    !--- Linking Weather Variables
-    tmax    =   WEATHER % TMAX
-    tmin    =   WEATHER % TMIN
-    srad    =   WEATHER % SRAD
-        
-    !--- Number of soil layers (according to soil profile)
-    nlay        = SOILPROP % NLAYR
-    bottom		= SOILPROP % DS
-    slthickness = SOILPROP % DLAYR
-    upper       = bottom - slthickness
-    dep         = bottom
-        
     pathwork = 'C:\DSSATv47'    
     
     !-------------------------------!
     !--- Reading crop parameters ---!
     !-------------------------------!
     
-    !--- Reading crop parameters with MJ's subroutine used in CANEGRO    
+    !--- Reading crop parameters with MJ's subroutine used in CANEGRO
     !--- Cultivar parameters
 	call get_cultivar_coeff(             nsenesleaf_effect,      'ns_lf_til', CONTROL, CF_ERR) 
 	call get_cultivar_coeff(                       maxgl_r,          'maxgl', CONTROL, CF_ERR)
@@ -1082,6 +1106,8 @@
     !--- Crop States Initialization ---!
     !----------------------------------!
     
+    dap     =   1
+    
     !------------------------!
     !---> DEBUGGING CODE <---!
     !------------------------!
@@ -1352,9 +1378,23 @@
     !--- Resources used for emergence (reset plant memory)
     res_used_emerg      = 0.d0
         
-    !----------------------------!
-    !--- Output Files Headers ---!
-    !----------------------------!    
+    
+    !--------------------!
+    !--- Output Files ---!
+    !--------------------!
+    
+    !--- Call the output routine, to initialise output
+    !--- *** Borrowing SC_OPGROW.for from CANEGRO ***
+    call sc_opgrow_SAM( CONTROL,        &
+                        CaneCrop,       &
+                        Growth,         &
+                        Part,           &
+                        Out,            &
+                        WaterBal,       &
+                        SW,             &
+                        SoilProp,       &
+                        YRPLT,          &
+                        CELLSE_DM)
     
     !--- Crop output header     
     write(outp, 11) 'Plant Growth Simulations for: ', trim(cropfile(1))
@@ -1675,8 +1715,11 @@
     phprof(1: 200,56)       = 0.d0  ! Phytomer Age rate [dCdays]
     phprof(1: 200,57)       = 0.d0  ! Internode Age rate [dCdays]
     
-    !--- Check if crop is alive
+    !------------------------------!
+    !--- Check if crop is alive ---!
+    !------------------------------!
     if(.not. flcropalive) return
+    !------------------------------!
     
     !------------------------!
     !--- DEFINING FACTORS ---!
@@ -1717,7 +1760,7 @@
     !-------------------------------------!
     
     !--- Following Mathew Jones and Abraham Singels (https://doi.org/10.1016/j.eja.2017.12.009)
-    !--- No effect on C4 Photosynthesis after 270 ppm - Higher Water Use Efficiency is believed to be the reason of increased biomass gain under increased CO2 (included in ptrans())
+    !--- No effect on C4 Photosynthesis after 270 ppm - Higher Water Use Efficiency is believed to be the reason of increased biomass under increased CO2 (included in ptrans())
     if(co2 .gt. co2_pho_res_end)then
         !--- Optimun CO2 conditions
         pho_fac_co2 =   1.d0                
@@ -2390,10 +2433,6 @@
                         incpar,             & ! Output
                         photo_layer_act,    & ! Output
                         frac_li)              ! Output  
-            
-            call totass_1(doy, dayl, amax_mod, eff_mod, lai_ass, kdif, srad * 1.e6, sinld, cosld, dtga)
-            dtga            = dtga              * 30.d0/44.d0
-            dtga            = dtga              * 1.e-3
             
             !--- Convert CO2 assimilation to CH2O assimilation rate [kgCH2O ha-1] (stoichiometric conversion)
             dtg             = dtg               * 30.d0/44.d0
@@ -3540,14 +3579,12 @@
         
         do glai = 1 ,5
             do ghour = 1, 3
-                write(outdph,111) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', ghour, ',', glai, ',', lai_ass, ',', frac_li, ',', amax_out, ',', eff_out, ',', & 
-                    Acanopy(ghour+1,1), ',', Acanopy(1,glai+1), ',', Qleaf(ghour+1,glai+1), ',', Acanopy(ghour+1,glai+1), ',', incpar(ghour,2), ',', incpar(ghour,3), ',', incpar(ghour,4)
+!                write(outdph,111) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', ghour, ',', glai, ',', lai_ass, ',', frac_li, ',', amax_out, ',', eff_out, ',', & 
+!                    Acanopy(ghour+1,1), ',', Acanopy(1,glai+1), ',', Qleaf(ghour+1,glai+1), ',', Acanopy(ghour+1,glai+1), ',', incpar(ghour,2), ',', incpar(ghour,3), ',', incpar(ghour,4)
             enddo
         enddo
     endif
-    
-    write(outd,'(1x,i4,1x,i3,1x,10f20.5)') das, dap, frac_li, li, dtg, dtga
-    
+        
     
 111 format(     i2,         a1,     &   ! seqnow
                 a6,         a1,     &   ! pltype
@@ -3575,68 +3612,121 @@
     !--- Detailed Crop Outputs (Phytomer Profile)
     if(writedcrop(1))then
         do phy = 1, n_ph           
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Age'                   , ',', 'Cdays'   , ',', phprof(phy,1)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Total DW'              , ',', 'g'       , ',', phprof(phy,6)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Area'                  , ',', 'cm2'     , ',', phprof(phy,5)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Age'              , ',', 'Cdays'   , ',', phprof(phy,58)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Total DW'         , ',', 'g'       , ',', phprof(phy,50)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Structural DW'    , ',', 'g'       , ',', phprof(phy,51)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Total Sugars DW'  , ',', 'g'       , ',', phprof(phy,52)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sucrose DW'       , ',', 'g'       , ',', phprof(phy,53)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Hexose DW'        , ',', 'g'       , ',', phprof(phy,54)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Length'           , ',', 'mm'      , ',', phprof(phy,16)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Phytomer Age'               , ',', 'Cdays'   , ',', phprof(phy,12)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Fiber Fraction'   , ',', 'Cdays'   , ',', phprof(phy,17)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sugars Fraction'  , ',', 'Cdays'   , ',', phprof(phy,18)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sucrose Fraction' , ',', 'Cdays'   , ',', phprof(phy,19)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Hexose Fraction'  , ',', 'Cdays'   , ',', phprof(phy,20)
-            write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Pfac Struc'                 , ',', '0-1'     , ',', phprof(phy,15)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Age'                   , ',', 'Cdays'   , ',', phprof(phy,1)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Total DW'              , ',', 'g'       , ',', phprof(phy,6)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Area'                  , ',', 'cm2'     , ',', phprof(phy,5)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Age'              , ',', 'Cdays'   , ',', phprof(phy,58)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Total DW'         , ',', 'g'       , ',', phprof(phy,50)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Structural DW'    , ',', 'g'       , ',', phprof(phy,51)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Total Sugars DW'  , ',', 'g'       , ',', phprof(phy,52)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sucrose DW'       , ',', 'g'       , ',', phprof(phy,53)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Hexose DW'        , ',', 'g'       , ',', phprof(phy,54)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Length'           , ',', 'mm'      , ',', phprof(phy,16)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Phytomer Age'               , ',', 'Cdays'   , ',', phprof(phy,12)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Fiber Fraction'   , ',', 'Cdays'   , ',', phprof(phy,17)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sugars Fraction'  , ',', 'Cdays'   , ',', phprof(phy,18)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sucrose Fraction' , ',', 'Cdays'   , ',', phprof(phy,19)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Hexose Fraction'  , ',', 'Cdays'   , ',', phprof(phy,20)
+            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Pfac Struc'                 , ',', '0-1'     , ',', phprof(phy,15)
         enddo
 113     format(i2,a1,a6,a1,i4,a1,i3,a1,i4,a1,i4,a1,i3,a1,l1,a1,l1,a1,l1,a1,a25,a1,a5,a1,f12.4)
     endif
     
     !--- Partitioning Factors Outputs
-    write(outpfac, 144) das, dap, fl_use_reserves, cr_source_sink_ratio, dtcrss, tot_gresp_crop, tot_mresp_crop, tot_dw_ss_crop, &
-        dtg*(1.e6/1.e4), sug_it_BG, subs_avail_growth_crop, supply_used_crop, supply_used_mresp_crop, supply_used_gresp_crop, supply_used_dw_crop, &
-        reserves_used_mresp_crop, maintenance_factor_crop, reduc_growth_factor_crop, &
-        dr_rtss, dr_lfss, dr_itss, swfacp, str_it_AG, sug_it_AG, frac_li, li
+    !write(outpfac, 144) das, dap, fl_use_reserves, cr_source_sink_ratio, dtcrss, tot_gresp_crop, tot_mresp_crop, tot_dw_ss_crop, &
+    !    dtg*(1.e6/1.e4), sug_it_BG, subs_avail_growth_crop, supply_used_crop, supply_used_mresp_crop, supply_used_gresp_crop, supply_used_dw_crop, &
+    !    reserves_used_mresp_crop, maintenance_factor_crop, reduc_growth_factor_crop, &
+    !    dr_rtss, dr_lfss, dr_itss, swfacp, str_it_AG, sug_it_AG, frac_li, li
 144     format(1X,I4,3X,i3,3x,l1,3X,200F12.4)  
         
         
     !--- Stress Factors Outputs
-    write(outstres, 145) das, dap, trasw, eop, trwup*10.d0, max(trwup/(eop/10.),0.d0), swfacp, swface, swfacf, swfact, tmn, tempfac_pho, tempfac_per, co2, pho_fac_co2, diacem, agefactor_amax, agefactor_per, sug_it_BG, amaxfbfac, dtg*(1.e6/1.e4), per
+!    write(outstres, 145) das, dap, trasw, eop, trwup*10.d0, max(trwup/(eop/10.),0.d0), swfacp, swface, swfacf, swfact, tmn, tempfac_pho, tempfac_per, co2, pho_fac_co2, diacem, agefactor_amax, agefactor_per, sug_it_BG, amaxfbfac, dtg*(1.e6/1.e4), per
 
 145     format(1X,I4,3X,i4,3x,200F12.4)  
     !--------------------!
     !--- Crop Outputs ---!
     !--------------------!
     if(writeactout(1))then
-        write(outp,109) seqnow,     &
-                        pltype,     &
-                        year,       & 
-                        doy,        &
-                        das,        &
-                        dap,        &
-                        diac,       &
-                        dw_total,   &
-                        dw_it_AG,   &
-                        dw_lf,      &
-                        dw_rt,      &
-                        fw_it_AG,   &
-                        suc_it_AG,  &
-                        pol,        &
-                        lai,        &
-                        nstk,       &
-                        stk_h,      &
-                        n_lf_AG_dewlap*1., &
-                        swface,     &
-                        swfacp,     &
-                        cropstatus, &
-                        cropdstage, &
-                        prjname
+        !write(outp,109) seqnow,     &
+        !                pltype,     &
+        !                year,       & 
+        !                doy,        &
+        !                das,        &
+        !                dap,        &
+        !                diac,       &
+        !                dw_total,   &
+        !                dw_it_AG,   &
+        !                dw_lf,      &
+        !                dw_rt,      &
+        !                fw_it_AG,   &
+        !                suc_it_AG,  &
+        !                pol,        &
+        !                lai,        &
+        !                nstk,       &
+        !                stk_h,      &
+        !                n_lf_AG_dewlap*1., &
+        !                swface,     &
+        !                swfacp,     &
+        !                cropstatus, &
+        !                cropdstage, &
+        !                prjname
     endif
     
 109     format(I2,3X,A6,3X,I4,4X,I3,3X,I4,4X,I3,1F8.1,2f8.2,3F8.2,8F8.2,3X,A6,2X,A6,2X,A5)  
+    
+    !--- Time control
+    dap = dap + 1
+    
+    return
+    
+40  continue
+        
+    !--------------------------!
+    !--- Write Output files ---!    
+    !---  DYNAMIC = OUTPUT  ---!
+    !--------------------------!
+    
+    !--- Passing variables to composite SAMUCA    
+    part    %   STKDM       =   dw_it_AG
+    Out     %   ROOTDM      =   dw_rt
+    Growth  %   LAI         =   lai
+    Part    %   TOPDM       =   dw_lf
+    Part    %   SUCMAS      =   suc_it_AG
+    CaneCrop%   SHGT        =   stk_h
+    Growth  %   LI          =   li
+    CaneCrop%   TOTPOP      =   nstk
+    Part    %   AERLDM      =   dw_aerial
+    WaterBal%   RTDEP       =   rd
+    Out     %   GROSSP      =   dtg
+    Out     %   DWDT        =   dw_total
+    
+    call sc_opgrow_sam( CONTROL,    &
+                        CaneCrop,   &
+                        Growth,     &
+                        Part,       &
+                        Out,        &
+                        WaterBal,   &
+                        SW,         &
+                        SoilProp,   &
+                        YRPLT,      &
+                        CELLSE_DM)
+    
+    return
+    
+50  continue
+    
+    call sc_opgrow_sam( CONTROL,    &
+                        CaneCrop,   &
+                        Growth,     &
+                        Part,       &
+                        Out,        &
+                        WaterBal,   &
+                        SW,         &
+                        SoilProp,   &
+                        YRPLT,      &
+                        CELLSE_DM)
+    
     return
     
     end subroutine SAMUCA
@@ -3653,7 +3743,7 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
 ! --- "Light Distribution. In Canopy Photosynthesis: From Basics to Applications", 2016.
 ! ----------------------------------------------------------------------
       Implicit None    
- !     include 'constants.fi'
+ !     include 'constants.fi' ! (SAMUCA's Crop Modelling Shell)
       
       integer ghour
       integer glai
@@ -3949,151 +4039,5 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
 
     
     
-    subroutine totass_1(daynr,dayl,amax,eff,lai,kdif,avrad,sinld,cosld,dtga)
-! ----------------------------------------------------------------------
-! --- author: daniel van kraalingen, 1986
-! --- calculates daily total gross assimilation (dtga) by performing
-! --- a gaussian integration over time. at three different times of 
-! --- the day, irradiance is computed and used to calculate the instan- 
-! --- taneous canopy assimilation, whereafter integration takes place.
-! --- more information on this routine is given by spitters et al./1988
-! --- subroutines and functions called: assim, radiat
-! ----------------------------------------------------------------------
-      implicit none
-
-      integer i,daynr
-
-      real  lai,kdif
-      real  amax,avrad,cosld,dayl,dtga,eff,fgros,gausr,hour,pardif
-      real  pardir,sinb,sinld
-
-      data    gausr /0.3872983d0/
-! ----------------------------------------------------------------------
-! --- three point gaussian integration over day
-      dtga = 0.
-      if (amax.lt.1.0d-10) return
-      do 10 i=1,3
-        hour = 12.0d0+dayl*0.5*(0.5d0+(i-2)*gausr)
-! --- at a specified hour, diffuse and direct irradiance is computed
-        call radiat_1(daynr,hour,dayl,sinld,cosld,avrad,sinb,pardir,pardif)
-        
-! --- irradiance and crop properties determine assimilation
-        call assim_1(amax,eff,lai,kdif,sinb,pardir,pardif,fgros)
-        
-        if(i.eq.2) fgros=fgros*1.6
-        dtga = dtga+fgros
-10    continue
-      dtga =dtga*dayl/3.6
-
-      return
-      end
-
-! ----------------------------------------------------------------------
-      subroutine radiat_1 (daynr,hour,dayl,sinld,cosld,avrad,sinb,pardir,pardif)
-! ----------------------------------------------------------------------
-! --- author: daniel van kraalingen, 1986
-! --- calculates the fluxes of diffuse and direct photosynthetically
-! --- active radiation from the total daily shortwave radiation actually
-! --- received (avrad) for a given day of the year and hour of the day.
-! --- the input variables dayl, sinld and cosld are calculated in astro.
-! --- for more information: see spitters et al. (1988).
-! ----------------------------------------------------------------------
-      implicit none
-
-      integer daynr
-
-      real  aob,atmtr,avrad,cosld,dayl,dsinb,dsinbe,dso,frdif,hour
-      real  par,pardif,pardir,pi,sc,sinb,sinld
-
-      data    pi /3.1415926d0/
-! ----------------------------------------------------------------------
-! --- calculations on solar elevation
-! --- sine of solar elevation sinb
-      aob = sinld/cosld
-      sinb = max (0.0d0,sinld+cosld*cos(2.0*pi*(hour+12.0d0)/24.0))
-! --- integral of sinb
-      dsinb = 3600.*(dayl*sinld+24.*cosld*sqrt(1.0d0-aob*aob)/pi)
-! --- integral of sinb, corrected for lower atmospheric transmission
-! --- at low solar elevations
-      dsinbe = 3600.*(dayl*(sinld+0.4*(sinld*sinld+cosld*cosld*0.5))+12.0*cosld*(2.0d0+3.0*0.4*sinld)*sqrt(1.0d0-aob*aob)/pi)
-
-! --- solar constant and daily extraterrestrial radiation
-      sc = 1370.*(1.0d0+0.033*cos(2.0*pi*daynr/365.))
-      dso = sc*dsinb
-
-! --- diffuse light fraction from atmospheric transmission
-      atmtr = avrad/dso
-      if (atmtr.gt.0.75d0) frdif = 0.23d0
-      if (atmtr.le.0.75d0.and.atmtr.gt.0.35d0) frdif = 1.33d0-1.46*atmtr
-      if (atmtr.le.0.35d0.and.atmtr.gt.0.07d0) frdif = 1.0d0-2.3*(atmtr-0.07d0)**2
-      if (atmtr.le.0.07d0) frdif = 1.0d0
-
-! --- photosynthetic active radiation, diffuse and direct
-      par = 0.5*avrad*sinb*(1.0d0+0.4*sinb)/dsinbe
-      pardif = min (par,sinb*frdif*atmtr*0.5*sc)
-      pardir = par-pardif
-
-      return
-      end
-
-! ----------------------------------------------------------------------
-      subroutine assim_1 (amax,eff,lai,kdif,sinb,pardir,pardif,fgros)
-! ----------------------------------------------------------------------
-!     author: daniel van kraalingen, 1986
-!     calculates the gross co2 assimilation rate of the whole crop, 
-!     fgros, by performing a gaussian integration over depth in the 
-!     crop canopy. at three different depths in the canopy, i.e. for
-!     different values of lai, the assimilation rate is computed for
-!     given fluxes of photosynthetically active radiation, whereafter
-!     integration over depth takes place. for more information: see 
-!     spitters et al. (1988). the input variables sinb, pardir and 
-!     pardif are calculated in radiat.
-! ----------------------------------------------------------------------
-      implicit none
-
-      integer i
-
-      real  lai,laic,kdif,kdirbl,kdirt
-      real  amax,eff,fgl,fgros,fgrsh,fgrsun,fslla,gausr,pardif,pardir
-      real  refh,refs,scv,sinb,visd,visdf,vispp,visshd,vist
-
-      data    gausr /0.3872983d0/
-! ----------------------------------------------------------------------
-! --- extinction coefficients kdif,kdirbl,kdirt
-      scv = 0.2d0
-      refh = (1.0d0-sqrt(1.0d0-scv))/(1.0d0+sqrt(1.0d0-scv))
-      refs = refh*2.0/(1.0d0+1.6*sinb)
-      kdirbl = (0.5/sinb)*kdif/(0.8*sqrt(1.0d0-scv))
-      kdirt = kdirbl*sqrt(1.0d0-scv)
-
-! --- three point gaussian integration over lai
-      fgros = 0.
-      do 10 i = 1,3
-        laic = 0.5*lai+gausr*(i-2)*lai
-! --- absorbed diffuse radiation (vidf),light from direct
-! --- origine (vist) and direct light(visd)
-        visdf = (1.0d0-refs)*pardif*kdif  *exp(-kdif  *laic)
-        vist = (1.0d0-refs)*pardir*kdirt *exp(-kdirt *laic)
-        visd = (1.0d0-scv) *pardir*kdirbl*exp(-kdirbl*laic)
-! --- absorbed flux in w/m2 for shaded leaves and assimilation
-        visshd = visdf+vist-visd
-        fgrsh = amax*(1.0d0-exp(-visshd*eff/amax))
-! --- direct light absorbed by leaves perpendicular on direct
-! --- beam and assimilation of sunlit leaf area
-        vispp = (1.0d0-scv)*pardir/sinb
-        if (vispp.le.0.0d0) fgrsun = fgrsh
-        if (vispp.gt.0.0d0) fgrsun = amax*(1.0d0-(amax-fgrsh)*(1.0d0-exp(-vispp*eff/amax))/ (eff*vispp))
-! --- fraction of sunlit leaf area (fslla) and local
-! --- assimilation rate (fgl)
-        fslla = exp(-kdirbl*laic)
-        fgl = fslla*fgrsun+(1.0d0-fslla)*fgrsh
-! --- integration
-        if (i.eq.2) fgl = fgl*1.6
-        fgros = fgros+fgl
-10    continue
-      fgros = fgros*lai/3.6
-
-      return
-      end
     
     

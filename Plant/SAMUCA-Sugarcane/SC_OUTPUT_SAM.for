@@ -1,10 +1,15 @@
 c     -----------------------------------------------------
 c     -----------------------------------------------------
 
-c     SUBROUTINE: SC_OPGROW()
+c     SUBROUTINE: SC_OPGROW_SAM()
 c     ----------------------
 c     This subroutine handles the output of growth
 c     aspects (yields, roots, etc)
+
+!     ***************************************************************
+!     *** This subroutine was borrowed from CANEGRO at 01/08/2020 ***
+!     *** Adapted by Murilo Vianna                                ***
+!     ***************************************************************
 
 c     Matthew Jones, Feb 2008:
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -35,7 +40,7 @@ c     for these measures.
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
-      SUBROUTINE SC_OPGROW (CONTROL, CaneCrop, Growth,
+      SUBROUTINE SC_OPGROW_SAM (CONTROL, CaneCrop, Growth,
      - Part, Out, WaterBal, SW, SoilProp,
      - YRPLT, CELLSE_DM)
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -44,8 +49,8 @@ c     [Taken from MZ_CERES.for]
       USE ModuleDefs
       USE ModuleData
 
-c     Define CANEGRO composite variables:
-      USE CNG_ModuleDefs
+c     Define SAMUCA's composite variables:
+      USE SAM_ModuleDefs
 
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     No implicit typing - yuck!
@@ -786,10 +791,10 @@ c     :::::::::::::::::::
             SMDMD    = Part%STKDM
             SMFMD    = Part%STKWM
             SUCMD    = Part%SUCMAS  
-            RWAD     = Out%ROOTDM * 1000.
+            RWAD     = Out%ROOTDM
             RDMD     = Out%ROOTDM
             BADMD    = Part%AERLDM
-            STKPOPm2 = CaneCrop%TOTPOP / 10000.
+            STKPOPm2 = CaneCrop%TOTPOP
             L_SD     = CaneCrop%TMEANLF - CaneCrop%TMEANDEDLF
 c           Harvest index = product / biomass
             IF (Part%STKDM .GT. 0.) THEN

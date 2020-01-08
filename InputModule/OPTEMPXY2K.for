@@ -20,6 +20,7 @@ C  02/22/2006 GH  Fix format for depth of chemical applications
 !  12/09/2008 CHP Remove METMP
 C  08/09/2012 GH  Updated for cassava
 C  11/14/2012 GH  Add READWRITE for temp file
+!  07/01/2020 MV  Add entry for SAMUCA
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
 C           NYRS,VARNO,VRNAME,CROP,PATHMO,FROP,NREP,FILEIO
@@ -382,7 +383,7 @@ C-GH        F6.2,6F6.1,5F6.2,F6.1,F6.0,2F6.1,F6.2,2F6.1,2F6.2,A)
      &      end_tt_lf_growth         ,
      &      tt_chumat_lt
 
-1070  format (I3,1X,A2,1X,A6,1X,A8,1X,A6,35F15.0)
+1070  format (I3,1X,A2,1X,A6,1X,A8,1X,A6,35F15.4)
 
       CASE DEFAULT     
         WRITE (LUNIO,'("@C  CR INGENO CNAME")')
