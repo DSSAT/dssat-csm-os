@@ -5,6 +5,7 @@
 !----------------------------------------------------------------------
 !  Revision history
 !  06/27/2011 FSR created WH_GROSUB.for for APSIM NWheat (WHAPS) adaptation
+!  10/27/2016 BK, JG  added ozone effects
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
 !
@@ -23,7 +24,7 @@ C The statements begining with !*! are refer to APSIM source codes
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR, nh4ppm, no3ppm,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw,        !Input
+     &      OZONX, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input ! OZONX added by BTK, JG
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
@@ -183,6 +184,7 @@ C The statements begining with !*! are refer to APSIM source codes
       real dtiln       
       REAL DUL(NL)
       real duldep(NL)   ! drained upper limit by soil layer
+      real FO3      ! ozone concentration factor for photosynthesis ! added by JG
       REAL fr_intc_radn 
       REAL frlf ! New fraction of oldest expanding leaf
       real fstage
@@ -232,6 +234,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL nwheats_topsfr ! Senthold alternative to topsfr 
       real nwheats_vfac
       real optfr ! fraction of optimum conditions from stress (0-1)
+      real OZONX    ! ozone concentration  ! added by BTK, JG
       real part_shift     ! the shift in allocation from leaves to
       REAL plagtf !plant leaf area growth temperature function(?)
       real pot_growt_leaf ! a potential leaf growth before reallocation
@@ -252,6 +255,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL plwtmn(mxpart) !min wt of each plant part     nwheat
       REAL plantwtmn(mxpart)!Replaced with "plwtmn"      nwheat
       real pntrans(mxpart) ! N translocated to grain.
+      real PRFO3    ! ozone effect on photosynthesis ! added by JG
       REAL ptcarb
       REAL ptfstem  
       REAL ptgrn    ! potential grain growth (g/plant)
@@ -279,6 +283,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL sla_new  ! specific leaf area of new growth (mm2/g)      
       real slan  ! leaf area senesced during normal development (mm^2 ?)
       real slfn     ! N effect on leaf senescence  (0-1)
+      real SLFO3    ! effect of ozone on leaf scenescence ! added by JG
       real slft     ! low temperature factor (0-1)
       real slfw     ! drought stress factor (0-1)
       real stage_gpla ! from function nwheats_slan
@@ -609,6 +614,9 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL, DIMENSION(NL) :: KUptake, SKi_Avail
       REAL KSTRES
 
+!     5/24/2017 CHP / IH
+      REAL Taverage
+      
 !     CHP 3/31/2006
 !     Proportion of lignin in STOVER and Roots
       REAL PLIGLF, PLIGRT
@@ -1522,8 +1530,11 @@ C The statements begining with !*! are refer to APSIM source codes
       ! JZW replace rue_factor/transp_eff_coeff by model equation from David on Mar. 22, 2014
       ! rue_factor  = TABEX (rue_fac, XCO2, WEATHER % CO2 ,8) 
       !Tdepend is Temperature dependent CO2 compensation point
+      !Taverage added to reduce CO2 effect, added by CHP / IH
       if (RUEFAC .eq. 1) then
-        Tdepend = (163 - (Tmax+Tmin)/2)/(5.0 - 0.1* (Tmax+Tmin)/2)
+        Taverage = min(15., (Tmax+Tmin)/2.)
+!        Tdepend = (163 - (Tmax+Tmin)/2)/(5.0 - 0.1* (Tmax+Tmin)/2)
+        Tdepend = (163 - Taverage)/(5.0 - 0.1* Taverage)
         rue_factor = (WEATHER % CO2 - Tdepend) *(350 + 2* Tdepend)/
      &           ((WEATHER % CO2 + 2*Tdepend)*(350 - Tdepend)) 
       else 
@@ -2131,14 +2142,26 @@ cbak optimum of 18oc for photosynthesis
          ! cold morning - too cold for plants to grow today
          prft = 0.0
       endif
- 
+
+          !Effect of Ozone on photosynthesis added by BTK, JG
+      if (OZONX .gt. 25.0) then
+          FO3 = (-0.0006 * OZONX) + 1.015  !Ozone Tolerant cultivars
+          !FO3 = (-0.005 * OZONX) + 1.125   !Ozone Sensitive cultivars
+          !FO3 = (-0.001 * OZONX) + 1.025   !Ozone Intermediate cultivars
+      else
+          FO3 = 1.0
+          Endif
+
+      PRFO3 = min(1.0, (FO3*rue_factor)/swdef(photo_nw)) ! ozone effect added by JG
+            
           ! --------------- actual -----------------
  
           ! now get the actual dry matter (carbohydrate) production on the
           ! day by discounting by temperature, water or N stress factors.
 cnh senthold
 cnh      optfr = min (swdef(photo), nfact(1)) * prft
-      optfr = min (swdef(photo_nw), nfact(1), ADPHO) * prft 
+      optfr = min(swdef(photo_nw), nfact(1), ADPHO, PRFO3) * prft 
+      
         !! threshold aeration deficit (AF2) affecting photosyn
       carbh = ptcarb*optfr
       carbh = MAX(carbh, 0.0)  !*! was: carbh = l_bound (carbh, 0.0)
@@ -2823,10 +2846,10 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 *     ==================================================================
       CALL nwheats_nuptk (SOILPROP,                               !Input
      &      carbh, cnc, EXNH4/100, EXNO3/100,                     !Input
-     &      g_uptake_source, gro_wt, MNNH4, MNNO3,                !Input
+     &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,         !Input
      &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
      &      PNUPR/1000000, rlv_nw, snh4, sno3, swdep,             !Input
-     &      WFNU, xstag_nw, MXNUP,                                !Input, ! MXNUP added, 02/03/2017, btk
+     &      WFNU, xstag_nw,                                       !Input
      &      pnup, snup_nh4, snup_no3)                            !Output
 *     ==================================================================
        ptnup = sum_real_array (pnup, mxpart)
@@ -3049,8 +3072,11 @@ cbak  adjust the green leaf ara of the leaf that is dying
       endif                
          weather % TGROAV = Tcnpy !Average daily canopy temperature (°C)
          slft = ALIN (SENST, SENSF, 4, Tcnpy)
+
        Weather % VPD_TRANSP = vpd_transp
        Weather % VPDF = vpdf
+
+!      TMAX ON SENESCENCE FUNCTION EXTERNALIZED IN SPECIES FILE 
 !      if (TMAX .gt. 34.) then ! note that this factor is not continuous
 !      ! REAL FUNCTION INTERPOLATE (ARRVAR, DEPTH, DS)
 !         slft = 4. - (1.-(TMAX - 34.)/2.)
@@ -3058,10 +3084,19 @@ cbak  adjust the green leaf ara of the leaf that is dying
 !         slft = 1.0
 !      endif
       sfactor = max (slfw, slfn, slft)
- 
+
+      ! Ozone effect on leaf senescence added by BTK, JG
+      if (OZONX .gt. 25.0 ) then
+          SLFO3 = 0.008 * OZONX + 0.8    !Ozone Tolerant cultivars
+          !SLFO3 = 0.04 * OZONX + 0.0     !Ozone Sensitive cultivars
+          !SLFO3 = 0.025 * OZONX + 0.375  !Ozone Intermediate cultivars
+      else
+          SLFO3 = 1.0
+          endif
+      
 cbak increase slan to account for stresses
  
-      leafsen = slan * sfactor
+      leafsen = slan * sfactor * SLFO3
  
       ! More Housekeeping needed here.!!!!!!!!!!!
  
@@ -3396,6 +3431,7 @@ cjh quick fix for maturity stage
 ! SNH4(L)     Ammonium nitrogen in soil layer L, kg N/ha
 ! SNO3(L)     Nitrate content in soil layer L, kg N/ha
 ! SRAD        Daily solar radiation, MJ/M2/day
+! OZONX       Daily 7-hour mean ozone concentration (9:00-15:59), ppb
 ! stemgr      Stem growth before emergence (g/plant) (WHAPS-nwheats.for)
 ! STGDOY(20)  Year and day of year that a growth stage occurred on
 ! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) 
