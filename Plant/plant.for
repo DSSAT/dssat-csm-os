@@ -563,7 +563,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
           call SAMUCA(
      &    CONTROL, ISWITCH,                                       !Input
      &    CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,   !Input
-     &    SOILPROP, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,       !Input
+     &    SOILPROP, ST, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   !Input
      &    RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,          !Input
      $    CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,            !Output
      &    PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,               !Output

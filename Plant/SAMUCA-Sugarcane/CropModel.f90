@@ -1,9 +1,9 @@
-﻿subroutine SAMUCA(CONTROL, ISWITCH,                             &
-         CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,  &  !Input
-         SOILPROP, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,      &  !Input
-         RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,         &  !Input
-         CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,           &  !Output
-         PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,              &  !Output
+﻿subroutine SAMUCA(CONTROL, ISWITCH,                                 &
+         CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,      &  !Input
+         SOILPROP, tsoil, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   &  !Input
+         RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,             &  !Input
+         CANHT, HARVRES, KCAN, KTRANS, MDATE, NSTRES,               &  !Output
+         PORMIN, RLV, RWUMX,SENESCE, STGDOY, UNH4,                  &  !Output
          UNO3, XLAI, XHLAI, EORATIO)
  
     !-------------------------------------------------------------------------
@@ -694,6 +694,11 @@
     real    pol
     real    kc
     real    trasw  
+    real    daylp
+    real    dsinb
+    real    dsinbe
+    real    sc
+    real    dso
     
     character 	(len = 6)	pltype      ! plan	!  Planting type (Ratoon or PlCane)    
     character 	(len = 6)	cropstatus  ! plan	!  Dead or Alive
@@ -747,8 +752,7 @@
     tmax        = WEATHER % TMAX
     tmin        = WEATHER % TMIN
     srad        = WEATHER % SRAD
-    lat_sim     = WEATHER % XLAT
-    
+    lat_sim     = WEATHER % XLAT    
     tmn         = (tmax + tmin) * 0.5
     
     !--- Time Control
@@ -1117,8 +1121,8 @@
     potential_growth    = .true.
     writedcrop          = .true.
     writeactout         = .true.
-    usetsoil            = .false.
-    mulcheffect         = .false.
+    usetsoil            = .true.
+    mulcheffect         = .true.
     ratoon              = .false.
     tillermet           = 2
     metpg               = 2
@@ -2400,7 +2404,8 @@
             !----------------------------------------!
             
             !--- Astrological calculations for difuse and direct PAR interception on hourly-step
-            call astro(doy) 
+            call astro(doy, lat_sim, dayl, daylp, sinld, cosld, dsinb, dsinbe, &
+                    sc, dso) 
                         
             !--- Convert CO2 Assimilation rate to kgCO2 ha-1 h-1
             amax_conv   = amax / 1.e3 * 1.e4 * 3600 * 44.d0 / 1.e6
@@ -3687,8 +3692,12 @@
     !---  DYNAMIC = OUTPUT  ---!
     !--------------------------!
     
-    !--- Passing variables to composite SAMUCA    
-    part    %   STKDM       =   dw_it_AG
+    !--- Passing variables to composite variables of SAMUCA (Following CANEGRO)
+    !--- Outputs to be added:
+    !--- diac
+    !--- 
+    Part    %   STKDM       =   dw_it_AG
+    Part    %   STKWM       =   fw_it_AG
     Out     %   ROOTDM      =   dw_rt
     Growth  %   LAI         =   lai
     Part    %   TOPDM       =   dw_lf

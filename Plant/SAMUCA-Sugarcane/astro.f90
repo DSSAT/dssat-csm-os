@@ -1,4 +1,5 @@
-subroutine astro(doy)
+subroutine astro(doy, lat, dayl, daylp, sinld, cosld, dsinb, dsinbe, &
+                    sc, dso)
 ! ----------------------------------------------------------------------
 ! Subroutine astro (daynr,lat,dayl,daylp,sinld,cosld)
 ! Authors: this routine Astro is based on Sastro (Daniel van Kraalingen)
@@ -40,16 +41,16 @@ subroutine astro(doy)
       character messag*200
       
       !--- DSSAT Coupling
-      real  sinld
-      real  cosld
-      real  lat(50)
-      real  dayl
-      real  daylp
-      real  dsinb
-      real  dsinbe
-      real  dso
+      real      sinld
+      real      cosld
+      real      lat
+      real      dayl
+      real      daylp
+      real      dsinb
+      real      dsinbe
+      real      dso
       integer   doy
-      real :: pi = 3.14159265
+      real ::   pi = 3.14159265
 
       data    angle /-4.0d0/
 ! ----------------------------------------------------------------------
@@ -58,8 +59,8 @@ subroutine astro(doy)
       rad = pi/180.d0
       dec = -asin(sin(23.45d0*rad)*cos(2.d0*pi*dble(doy+10)/365.0d0))
 ! --- some intermediate variables
-      sinld = sin(rad*lat(1))*sin(dec)
-      cosld = cos(rad*lat(1))*cos(dec)
+      sinld = sin(rad*lat)*sin(dec)
+      cosld = cos(rad*lat)*cos(dec)
       aob = sinld/cosld
       !aob = (tan(lat)*tan(dec))
 ! --- calculation of daylenght and photoperiodic daylength
