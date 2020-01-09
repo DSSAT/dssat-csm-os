@@ -98,7 +98,6 @@
     ! Local Variables and Input Parameters                      ! Description                                                                   !
     !-----------------------------------------------------------!-------------------------------------------------------------------------------!
     integer		task                                      		! Model task:           1 = initialization, 2 = step rate and integration of potential rates, 3 = step rate and integration of actual rates
-    integer     method_ws                                       ! Water Stress Method:  1 = linear response; 2 = asymptote response
     integer     method_pop                                      ! Tillering Method:     1 = Cdays; 2 = Cdays + Light Transmission; 3 = Source-Sink
     integer		nseason                                   		! 
     integer		atln                                      		! 
@@ -665,12 +664,11 @@
     logical writeactout         (50)    ! ctrl	!
     logical usetsoil            (50)    ! ctrl	!
     logical mulcheffect                 ! ctrl	!
-    logical ratoon				(50)    ! plan	! 
-    integer tillermet			(50)   	! ctrl  ! 
+    logical ratoon				        ! plan	! 
     integer metpg               (50)    ! ctrl  ! 
     integer seqnow                      ! ctrl  ! 
-    real    rowsp				(50) 	! ctrl  ! 
-    real    plantdepth          (50)    ! ctrl  !
+    real    rowsp				     	! ctrl  ! 
+    real    plantdepth                  ! ctrl  !
     real 	bottom				(nl)   ! soil	!
     real    upper               (nl)   ! soil	!
     real    slthickness         (nl)   ! soil	!
@@ -715,6 +713,7 @@
     real        maxdgl_r
     real        n_lf_when_stk_emerg_r
     real        n_lf_it_form_r   
+    real        ratoon_r
     
     real        CELLSE_DM ! CANEGRO'S Cellulosic DM (t/ha)
     
@@ -753,7 +752,7 @@
     tmin        = WEATHER % TMIN
     srad        = WEATHER % SRAD
     lat_sim     = WEATHER % XLAT    
-    tmn         = (tmax + tmin) * 0.5
+    tmn         = (tmax + tmin) * 0.5    
     
     !--- Time Control
     das         = CONTROL % DAS
@@ -776,55 +775,22 @@
     
 10  continue
     
-    !--- DSSAT coupling ---!
+    !----------------------!
+    !--- DSSAT coupling ---!    
+    !----------------------!
     
-    !--- Notes:
-    !--- Make sure crop variables are readed by DSSAT platform 
-    !--- IMPORTANT LINKAGES:
-    ! CANHT
-    ! K
-    !
-    ! nlay needs to be computed from nl
-    ! 
-    
-    !--- Constants:
-    ! max_sl    = 200
-    ! max_id    = 50
-    ! macp      = 5000
-    ! MABBC     = 20*366
-    ! pi        = 3.14159265
-    ! d_2_r     = pi/180.
-    ! r_2_d     = 180./pi
-    
-    ! IMPORTANT NOTES:
-    
-    ! CUL PARAMETERS ARE DECALRED IN file COMGEM.blk
-    ! tb was declared as tb_sam IN file COMGEM.blk
-    !
-    ! Those parameters are being read as real and then converted to integer
-    ! Their corresponding real variable is decalred in file COMGEM.blk with "_r" suffix
-    !integer nsenesleaf_effect
-	!integer maxgl
-	!integer n_lf_max_ini_la
-	!integer n_lf_when_stk_emerg
-	!integer n_lf_it_form
-	!integer maxdgl
-    
-    ! DYNAMIC calls
-    !INTEGER, PARAMETER :: 
-    !     !Dynamic variable values
-    ! &    RUNINIT  = 1, 
-    ! &    INIT     = 2,  !Will take the place of RUNINIT & SEASINIT
-    !                     !     (not fully implemented)
-    ! &    SEASINIT = 2, 
-    ! &    RATE     = 3,
-    ! &    EMERG    = 3,  !Used for some plant processes.  
-    ! &    INTEGR   = 4,  
-    ! &    OUTPUT   = 5,  
-    ! &    SEASEND  = 6,
-    ! &    ENDRUN   = 7 
-    
-    pathwork = 'C:\DSSATv47'    
+    !--- Notes:    
+    ! CUL PARAMETERS ARE DECLARED IN file COMGEM.blk    
+    ! DYNAMIC calls    
+    ! RUNINIT  = 1, 
+    ! INIT     = 2,  ! Will take the place of RUNINIT & SEASINIT (not fully implemented)
+    ! SEASINIT = 2, 
+    ! RATE     = 3,
+    ! EMERG    = 3,
+    ! INTEGR   = 4,  
+    ! OUTPUT   = 5,  
+    ! SEASEND  = 6,
+    ! ENDRUN   = 7 
     
     !-------------------------------!
     !--- Reading crop parameters ---!
@@ -950,123 +916,6 @@
     n_lf_when_stk_emerg = aint(n_lf_when_stk_emerg_r)
     n_lf_it_form        = aint(n_lf_it_form_r)
     
-!MV call ReadFile(6, inte_host, real_host, pathwork)        ! subroutine from Samuca v2 to read parameters
-    
-    !nsenesleaf_effect        		 = inte_host(  1) ! (I)
-    !maxgl                    		 = inte_host(  2) ! (I)
-    !n_lf_max_ini_la          		 = inte_host(  3) ! (I)
-    !n_lf_when_stk_emerg             = inte_host(  4) ! (I)
-    !n_lf_it_form	 	     		 = inte_host(  5) ! (I)
-    !maxdgl	 	             		 = inte_host(  6) ! (I)
-    !amax                            = real_host(  1) ! (R)
-    !eff                             = real_host(  2) ! (R)
-    !phtmax                          = real_host(  3) ! (R)
-    !parmax                          = real_host(  4) ! (R)
-    !ccmp                            = real_host(  5) ! (R)
-    !ccmax                           = real_host(  6) ! (R)
-    !cceff                           = real_host(  7) ! (R)
-    !rue                             = real_host(  8) ! (R)
-    !tb                              = real_host(  9) ! (R)
-    !tb0pho                          = real_host( 10) ! (R)
-    !tb1pho                          = real_host( 11) ! (R)
-    !tb2pho                          = real_host( 12) ! (R)
-    !tbfpho                          = real_host( 13) ! (R)
-    !tbper                           = real_host( 14) ! (R)
-    !tbMax_per                       = real_host( 15) ! (R)
-    !chustk                          = real_host( 16) ! (R)
-    !chupeak                         = real_host( 17) ! (R)
-    !chudec                          = real_host( 18) ! (R)
-    !chumat                          = real_host( 19) ! (R)
-    !popmat                          = real_host( 20) ! (R)
-    !poppeak                         = real_host( 21) ! (R)
-    !ltthreshold                     = real_host( 22) ! (R)
-    !tillochron                      = real_host( 23) ! (R)
-    !fdeadlf                         = real_host( 24) ! (R)
-    !phyllochron                     = real_host( 25) ! (R)
-    !sla                             = real_host( 26) ! (R)
-    !rdm                             = real_host( 27) ! (R)
-    !srlMax                          = real_host( 28) ! (R)
-    !srlMin                          = real_host( 29) ! (R)
-    !rootdrate                       = real_host( 30) ! (R)
-    !max_rt_dw                       = real_host( 31) ! (R)
-    !end_tt_rt_growth                = real_host( 32) ! (R)
-    !rootleftfrac                    = real_host( 33) ! (R)
-    !kdif                            = real_host( 34) ! (R)
-    !dpercoeff                       = real_host( 35) ! (R)
-    !mla                             = real_host( 36) ! (R)
-    !kc_min                          = real_host( 37) ! (R)
-    !eoratio                         = real_host( 38) ! (R)
-    !rwuep1                          = real_host( 39) ! (R)
-    !rwuep2                          = real_host( 40) ! (R)
-    !t_max_ws_pho                    = real_host( 41) ! (R)
-    !t_mid_ws_pho                    = real_host( 42) ! (R)
-    !t_min_ws_pho                    = real_host( 43) ! (R)
-    !t_max_ws_exp                    = real_host( 44) ! (R)
-    !t_mid_ws_exp                    = real_host( 45) ! (R)
-    !t_min_ws_exp                    = real_host( 46) ! (R)
-    !plastochron                     = real_host( 47) ! (R)
-    !frac_suc_BG                     = real_host( 48) ! (R)
-    !frac_hex_BG                     = real_host( 49) ! (R)
-    !init_leaf_area                  = real_host( 50) ! (R)
-    !max_ini_la                      = real_host( 51) ! (R)
-    !cr_source_sink_ratio_ruse       = real_host( 52) ! (R)
-    !init_plantdepth_ratoon          = real_host( 53) ! (R)
-    !maxlai_eo                       = real_host( 54) ! (R)
-    !gresp                           = real_host( 55) ! (R)
-    !kmr_leaf                        = real_host( 56) ! (R)
-    !kmr_stem                        = real_host( 57) ! (R)
-    !kmr_root                        = real_host( 58) ! (R)
-    !kmr_stor                        = real_host( 59) ! (R)
-    !q10_leaf                        = real_host( 60) ! (R)
-    !q10_stem                        = real_host( 61) ! (R)
-    !q10_root                        = real_host( 62) ! (R)
-    !q10_stor                        = real_host( 63) ! (R)
-    !tref_mr                         = real_host( 64) ! (R)
-    !tbm                             = real_host( 65) ! (R)
-    !threshews                       = real_host( 66) ! (R)
-    !dshootext_BG_rate               = real_host( 67) ! (R)
-    !mid_tt_rt_growth                = real_host( 68) ! (R)
-    !it_struc_tb_ini                 = real_host( 69) ! (R)
-    !it_struc_to1                    = real_host( 70) ! (R)
-    !it_struc_to2                    = real_host( 71) ! (R)
-    !it_struc_tb_end                 = real_host( 72) ! (R)
-    !max_it_dw                       = real_host( 73) ! (R)
-    !mid_tt_it_growth                = real_host( 74) ! (R)
-    !end_tt_it_growth                = real_host( 75) ! (R)
-    !mid_tt_lf_growth                = real_host( 76) ! (R)
-    !end_tt_lf_growth                = real_host( 77) ! (R)
-    !it_struc_pfac_max               = real_host( 78) ! (R)
-    !it_struc_pfac_min               = real_host( 79) ! (R)
-    !it_struc_pfac_tb                = real_host( 80) ! (R)
-    !it_struc_pfac_tm                = real_host( 81) ! (R)
-    !it_struc_pfac_te                = real_host( 82) ! (R)
-    !it_struc_pfac_delta             = real_host( 83) ! (R)
-    !it_struc_pfac_temp_max_red      = real_host( 84) ! (R)
-    !it_struc_pfac_wate_max_red      = real_host( 85) ! (R)
-    !max_it_dw_BG                    = real_host( 86) ! (R)
-    !suc_min                         = real_host( 87) ! (R)
-    !max_per_it                      = real_host( 88) ! (R)
-    !tilleragefac_adjust             = real_host( 89) ! (R)
-    !dswat_ddws                      = real_host( 90) ! (R)
-    !dswat_dsuc                      = real_host( 91) ! (R)
-    !rootshape                       = real_host( 92) ! (R)
-    !hex_min                         = real_host( 93) ! (R)
-    !suc_acc_ini                     = real_host( 94) ! (R)
-    !suc_frac_rate_ts                = real_host( 95) ! (R)
-    !swcon1                          = real_host( 96) ! (R)
-    !swcon2                          = real_host( 97) ! (R)
-    !swcon3                          = real_host( 98) ! (R)
-    !rwumax                          = real_host( 99) ! (R)
-    !pormin                          = real_host(100) ! (R)
-    !tt_chumat_lt                    = real_host(101) ! (R)
-    !res_used_emerg_fac              = real_host(102) ! (R)
-    !agefactor_fac_amax              = real_host(103) ! (R)
-    !agefactor_fac_rue               = real_host(104) ! (R)
-    !agefactor_fac_per               = real_host(105) ! (R)
-    !c_scattering                    = real_host(106) ! (R)
-    !k                               = real_host(107) ! (R)
-    !root_front_size                 = real_host(108) ! (R)
-    
     !--- Species-related response to CO2
     co2_pho_res_end =   270.d0
     co2_pho_res_ini =   0.d0
@@ -1089,17 +938,31 @@
     !--------------------------!
     
     !--- Simulate Water Stress
-    fl_potential      = potential_growth(1)    
+    if(ISWITCH % ISWWAT .eq. 'Y') then
+        fl_potential      = .false.
+    else
+        fl_potential      = .true.
+    endif
     
     !---------------!
     !--- Methods ---!
     !---------------!
     
-    !--- Water Stress Response
-    method_ws         = 2
-    
     !--- Tillering
-    method_pop        = tillermet(1)
+    method_pop      = 2             ! Using light + temperature method
+    
+    !--- Photosynthesis Method
+    metpg           = 2             ! Using 5-point layered canopy as default
+    
+    !--- Use Soil Temperature
+    usetsoil            = .true.    ! Soil Temperature effect is switched on
+    
+    !--- Use mulch effect
+    mulcheffect         = .true.    ! Mulch effect is switched on
+    
+    !--- Outputs
+    writedcrop          = .true.    ! Detailed Crop
+    writeactout         = .true.    ! Write Crop Outputs default is .true. 
             
     !--- Hourly Hour temperature
     a_pl        = 1.607 !Calibrated for Sao Paulo State   (original constants from Parton and Logan paper = 2.000)
@@ -1108,26 +971,28 @@
     
     !----------------------------------!
     !--- Crop States Initialization ---!
-    !----------------------------------!
-    
+    !----------------------------------!    
     dap     =   1
     
     !------------------------!
     !---> DEBUGGING CODE <---!
     !------------------------!
     seqnow              = 1
-    fl_potential        = .true.
-    method_pop          = 2
-    potential_growth    = .true.
-    writedcrop          = .true.
-    writeactout         = .true.
-    usetsoil            = .true.
-    mulcheffect         = .true.
-    ratoon              = .false.
-    tillermet           = 2
-    metpg               = 2
-    rowsp				= 140.
-    plantdepth          = 20.
+    
+    !--- Rowspacing
+    rowsp   = 1.4       ! Default Value in case the below function doesnt find any value
+    call find_inp_sam(rowsp, 'ROWSPC', Control)
+    rowsp   =   rowsp * 100.        ! Convert to [cm]
+    
+    !--- Planting depth
+    plantdepth  = 20.   ! Default Value in case the below function doesnt find any value
+    call find_inp_sam(plantdepth, 'PLDP', Control)
+    
+    !--- Plant or Ratoon?
+    ratoon              = .false.  
+    ratoon_r            = 0.d0
+    call find_inp_sam(ratoon_r, 'RATOON', Control)
+    if(ratoon_r .ge. 0.99) ratoon = .true.
     
     !--- Leaf dry weight at end of life-spam of a leaf grown under optimun conditions [g]
     max_lf_dw       = mla / sla ! Use this while the model considers fixed SLA (PIT)
@@ -1137,10 +1002,10 @@
     init_stalkfw        = 1.5d0 !kg   
     init_stalkht        = 2.d0  !m
     nstalks_planting    = 2.d0  !#
-    ini_nstk            = 5. * 1. / (rowsp(1) / 100.) ! plants m-2 - Assuming 5 emerged stems per 1 linear meter (20 cm between each other)
+    ini_nstk            = 5. * 1. / (rowsp / 100.) ! plants m-2 - Assuming 5 emerged stems per 1 linear meter (20 cm between each other)
     tilleragefac        = 1.
     
-    if(ratoon(seqnow))then
+    if(ratoon)then
         
         !-----------------!
         !--- Ratooning ---!
@@ -1151,7 +1016,7 @@
         !--- Initializing phytomer profile    
         phprof    = 0.d0 
     
-        initcropdepth = min(init_plantdepth_ratoon, plantdepth(1))
+        initcropdepth = min(init_plantdepth_ratoon, plantdepth)
         if(bottom(1) .ge. initcropdepth)then            
             initcropdepth = bottom(1) + 0.01 !Ensure that the ratoon depth shoot is below first soil layer           
         endif
@@ -1165,7 +1030,7 @@
             dw_rt   = max_rt_dw * (1.e4 / 1.e6) ! [ton ha-1]
         
             !--- Substrates for initial growth - Use same as plant cane when ratoon is the first season        
-            dw_it_BG    =   (init_stalkfw / init_stalkht * nstalks_planting) / (rowsp(1)/100.) / 1.e3 * 1.e4 ! [ton ha-1]
+            dw_it_BG    =   (init_stalkfw / init_stalkht * nstalks_planting) / (rowsp/100.) / 1.e3 * 1.e4 ! [ton ha-1]
             
             !--- Considering 70% of water, 15% structural biomass. Substrates reserves are sucrose (13%) and hexoses (2%)
             str_it_BG   =   dw_it_BG *  0.15d0  ! 15% Fiber
@@ -1252,10 +1117,10 @@
         phprof    = 0.d0  
         
         !--- Initial Crop depth as same as the planting depth [cm]
-        initcropdepth = plantdepth(1)         
+        initcropdepth = plantdepth         
             
         !--- Substrates reserve for before emergence is considered as sugars content remaining in the chopped stalks
-        dw_it_BG    =   (init_stalkfw / init_stalkht * nstalks_planting) / (rowsp(1)/100.) / 1.e3 * 1.e4 ! [ton ha-1]
+        dw_it_BG    =   (init_stalkfw / init_stalkht * nstalks_planting) / (rowsp/100.) / 1.e3 * 1.e4 ! [ton ha-1]
         
         !--- Considering 70% of water, 15% structural biomass. Substrates reserves are sucrose (13%) and hexoses (2%)
         str_it_BG   =   dw_it_BG *  0.15d0  ! 15% Fiber
@@ -1380,8 +1245,7 @@
     diac_at_emergence   = 0.d0
     
     !--- Resources used for emergence (reset plant memory)
-    res_used_emerg      = 0.d0
-        
+    res_used_emerg      = 0.d0        
     
     !--------------------!
     !--- Output Files ---!
@@ -1439,6 +1303,25 @@
 26  format('Seq. Ratoon   Year   Year  Simul  Plant      M/M     ha-1h-1      hr       M/M      m-2s-1   m-2s-1    W m-2     W m-2     W m-2 ')
 27  format('---- ------   ----  -----  -----  -----    -------   -------   -------   -------   -------   -------  -------    ------   -------')
           
+    !--- Linking with DSSAT globals
+    CANHT       =   stk_h   ! Canopy height (m)    
+    KCAN        =   k       ! Canopy light extinction coefficient for daily PAR, for equidistant plant spacing, modified when in-row and between row spacing are not equal 
+    KTRANS      =   k       ! Light extinction coefficient used for computation of plant transpiration 
+    NSTRES      =   1.      ! No Nitrogen Stress at this version
+    RLV         =   rld     ! Root length density for soil layer L (cm[root] / cm3[soil])
+    RWUMX       =   rwumax  ! Maximum water uptake per unit root length, constrained by soil water (cm3[water] / cm [root])        
+    XHLAI       =   lai     ! Healthy leaf area index (m2[leaf] / m2[ground])
+    XLAI        =   laimod  ! Leaf area (one side) per unit of ground area (m2[leaf] / m2[ground]) [NOTE: we are following canegro and considering as]
+        
+    !HARVRES     ! Composite variable containing harvest residue amounts for total dry matter, lignin, and N amounts.  Structure of variable is defined in ModuleDefs.for. 
+    !MDATE       ! Harvest maturity date (YYYYDDD)
+    !PORMIN      ! Read in SCSAM047.SPE            
+    !SENESCE     ! Composite variable containing data about daily senesced plant matter. Structure of variable is defined in ModuleDefs.for
+    !STGDOY      ! Day when plant stage I occurred (YYYYDDD)
+    !UNH4        ! Not in use 
+    !UNO3        ! Not in use
+    !EORATIO     ! Read in SCSAM047.SPE            
+    
     return
     
 20  continue    
@@ -1752,6 +1635,7 @@
     tempfac_per      = min(1.,max(0.,tmn - tbper) / (tbMax_per - tbper))
     
     !--- Hourly Temperature
+    !--- Note: DSSAT also computes hourly temp in weather % tairhr
     call TempHour(tmax, tmin, doy, lat_sim, a_pl, b_pl, c_pl, thour)    
     
     !--- Hourly Plant Extension Temperature Factor
@@ -3683,6 +3567,25 @@
     !--- Time control
     dap = dap + 1
     
+    !--- Linking with DSSAT globals
+    CANHT       =   stk_h   ! Canopy height (m)    
+    KCAN        =   k       ! Canopy light extinction coefficient for daily PAR, for equidistant plant spacing, modified when in-row and between row spacing are not equal 
+    KTRANS      =   k       ! Light extinction coefficient used for computation of plant transpiration 
+    NSTRES      =   1.      ! No Nitrogen Stress at this version
+    RLV         =   rld     ! Root length density for soil layer L (cm[root] / cm3[soil])
+    RWUMX       =   rwumax  ! Maximum water uptake per unit root length, constrained by soil water (cm3[water] / cm [root])        
+    XHLAI       =   lai     ! Healthy leaf area index (m2[leaf] / m2[ground])
+    XLAI        =   laimod  ! Leaf area (one side) per unit of ground area (m2[leaf] / m2[ground]) [NOTE: we are following canegro and considering as]
+        
+    !HARVRES     ! Composite variable containing harvest residue amounts for total dry matter, lignin, and N amounts.  Structure of variable is defined in ModuleDefs.for. 
+    !MDATE       ! Harvest maturity date (YYYYDDD)
+    !PORMIN      ! Read in SCSAM047.SPE            
+    !SENESCE     ! Composite variable containing data about daily senesced plant matter. Structure of variable is defined in ModuleDefs.for
+    !STGDOY      ! Day when plant stage I occurred (YYYYDDD)
+    !UNH4        ! Not in use 
+    !UNO3        ! Not in use
+    !EORATIO     ! Read in SCSAM047.SPE    
+    
     return
     
 40  continue
@@ -4045,8 +3948,4 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
 
       RETURN
     END SUBROUTINE PGS
-
-    
-    
-    
     
