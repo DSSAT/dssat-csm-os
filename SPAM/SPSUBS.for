@@ -7,13 +7,14 @@ C  11/16/2001 CHP Written
 C  06/07/2002 GH  Modified for crop rotations
 C  08/20/2002 GH  Modified for Y2K
 C  02/04/2005 CHP Added new variables to Summary.out: EPCM, ESCM
+!  08/11/2009 CHP Added potential root water uptake to output
 C-----------------------------------------------------------------------
 C  Called from:   SPAM
 C  Calls:         None
 C=======================================================================
       SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
 !-----------------------------------------------------------------------
@@ -31,7 +32,7 @@ C=======================================================================
 
       CHARACTER*1  IDETW, ISWWAT, RNMODE
       CHARACTER*8  OUTET
-      CHARACTER*50 FMT
+      CHARACTER*55 FMT
 
       INTEGER DAS, DOY, DYNAMIC, FROP, LUN
       INTEGER NAVWB, RUN, YEAR, YRDOY, L
@@ -42,8 +43,8 @@ C=======================================================================
       REAL CEF, CEM, CEO, CEP, CES, CET
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
       REAL REFA, KCAA, KCBA, KEAA
-      REAL AVTMX, AVTMN, AVSRAD
-      REAL TMAX, TMIN, SRAD
+      REAL AVTMX, AVTMN, AVSRAD, AVRWUP
+      REAL TMAX, TMIN, SRAD, TRWUP
 !      REAL SALB, SWALB, MSALB, CMSALB
       REAL ES_LYR(NL), ES10
       LOGICAL FEXIST
@@ -131,14 +132,14 @@ C-----------------------------------------------------------------------
 !           Include soil evap by soil layer for Suleiman-Ritchie method
 
             IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
-            WRITE(LUN,'("!",T186,
+            WRITE(LUN,'("!",T195,
      &        "Soil evaporation (mm/d) by soil depth (cm):"
-     &        ,/,"!",T181,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
+     &        ,/,"!",T190,10A8)') (SoilProp%LayerText(L), L=1,N_LYR)
 
             WRITE (LUN,120,ADVANCE='NO')
   120       FORMAT('@YEAR DOY   DAS   SRAA  TMAXA  TMINA',
      &      '    REFA    EOAA    EOPA    EOSA    KCAA    KCBA    KEAA',
-     &      '    ETAA    EPAA    ESAA    EFAA    EMAA',
+     &      '    ETAA   EPAA   ESAA   EFAA   EMAA   RWUPA',
      &      '    EOAC    ETAC    EPAC    ESAC    EFAC    EMAC')
 
             IF (N_LYR < 10) THEN
@@ -180,6 +181,7 @@ C-----------------------------------------------------------------------
         KCBA = 0.
         KCAA = 0.
         REFA = 0.
+        AVRWUP= 0.
 
 !***********************************************************************
 !***********************************************************************
@@ -205,6 +207,7 @@ C-----------------------------------------------------------------------
       KCBA   = KCBA   + (EP/REFET)
       KCAA   = KCAA   + (ET/REFET)
       REFA   = REFA   + REFET
+      AVRWUP = AVRWUP + TRWUP * 10.
 
 !***********************************************************************
 !***********************************************************************
@@ -236,12 +239,13 @@ C-----------------------------------------------------------------------
           KCBA  = KCBA  / NAVWB
           KCAA  = KCAA  / NAVWB
           REFA  = REFA  / NAVWB
+          AVRWUP= AVRWUP / NAVWB
 
           CALL YR_DOY(YRDOY, YEAR, DOY) 
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN   ! VSH
             !Daily printout
-            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),12(F8.3),"
+            FMT = "(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),12(F8.3),F9.2,"
             IF (CEO > 1000. .OR. CET > 1000. .OR. CEP > 1000. .OR. 
      &         CES > 1000. .OR. CEF > 1000. .OR. CEM > 1000.) THEN
               FMT = TRIM(FMT) // "6F8.0))"
@@ -258,7 +262,7 @@ C-----------------------------------------------------------------------
             WRITE (LUN,FMT,ADVANCE='NO') YEAR, DOY, DAS, AVSRAD, AVTMX, 
      &        AVTMN, REFA, EOAA, EOPA, EOSA, KCAA, 
      &        KCBA, KEAA, ETAA, EPAA, ESAA, EFAA, EMAA,  
-     &        CEO, CET, CEP, CES, CEF, CEM   
+     &        AVRWUP, CEO, CET, CEP, CES, CEF, CEM   
 !     &        ,SALB, SWALB, MSALB, CMSALB
 !  300     FORMAT(1X,I4,1X,I3.3,1X,I5,3(1X,F6.2),
 !     &      8(F7.3),6(F8.2))     
@@ -309,6 +313,7 @@ C-----------------------------------------------------------------------
           KCBA = 0.
           KCAA = 0.
           REFA = 0.
+          AVRWUP= 0.
 
         ENDIF
       ENDIF
@@ -506,6 +511,37 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !     END SUBROUTINE XTRACT
 C=======================================================================
+
+!=======================================================================
+      SUBROUTINE WaterStress(EOP, RWUEP1, TRWUP, SWFAC, TURFAC)
+!     Calculate daily water stess factors (from SWFACS)
+      
+      USE ModuleDefs
+      IMPLICIT NONE
+
+!     EOP in mm/d
+!     TRWUP and EP1 in cm/d
+      REAL, INTENT(IN) :: EOP       !mm/d
+      REAL, INTENT(IN) :: TRWUP     !cm/d
+      REAL, INTENT(IN) :: RWUEP1
+      REAL, INTENT(OUT):: SWFAC, TURFAC
+      REAL EP1
+      
+      SWFAC  = 1.0
+      TURFAC = 1.0
+
+      IF (EOP .GT. 0.001) THEN
+        EP1 = EOP * 0.1
+        IF (TRWUP / EP1 .LT. RWUEP1) THEN
+          TURFAC = (1./RWUEP1) * TRWUP / EP1
+        ENDIF
+        IF (EP1 .GE. TRWUP) THEN
+          SWFAC = TRWUP / EP1
+        ENDIF
+      ENDIF
+
+      RETURN
+      END SUBROUTINE WaterStress
+!=======================================================================
 !     END SPAM MODULE
 !=======================================================================
-

@@ -59,11 +59,11 @@ C=======================================================================
       IF (INDEX('IE',RNMODE) .GT. 0)  THEN
          CALL CLEAR
          IF (ISWWAT .EQ. 'Y') THEN
-            IF (MEHYD .EQ. 'R') THEN
-              HYMANT = 'RITCHIE HYDROLOGY'
-            ELSE IF (MEHYD .EQ. 'A') THEN
-              HYMANT = 'ADAPT HYDROLOGY  '
-            ENDIF
+            SELECT CASE(MEHYD)
+               CASE ('R');    HYMANT = 'RITCHIE HYDROLOGY'
+               CASE ('A');    HYMANT = 'ADAPT HYDROLOGY  '
+               CASE ('G','C');HYMANT = '2D drip irrig    '
+            END SELECT
          ELSE
             HYMANT   = 'NO WATER BALANCE '
          ENDIF
@@ -779,11 +779,11 @@ C=======================================================================
       IF (INDEX('IE',RNMODE) .GT. 0) THEN
          CALL CLEAR
          IF (ISWWAT .EQ. 'Y') THEN
-            IF (MEHYD .EQ. 'R') THEN
-              HYMANT = 'RITCHIE         '
-            ELSE IF (MEHYD .EQ. 'A') THEN
-              HYMANT = 'ADAPT HYDROLOGY '
-            ENDIF
+            SELECT CASE (MEHYD)
+              CASE ('R');     HYMANT = 'RITCHIE         '
+              CASE ('A');     HYMANT = 'ADAPT HYDROLOGY '
+              CASE ('G','C'); HYMANT = '2D drip irrig   '
+            END SELECT
          ELSE
             HYMANT = 'NO WATER BALANCE'
          ENDIF

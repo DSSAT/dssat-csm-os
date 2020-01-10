@@ -48,12 +48,14 @@
 !                   when N is not simulated.
 !  02/11/2010 CHP No simulation of organic matter when water is not 
 !                   simulated.
+!  07/30/2010 CHP Access bed width for bedded systems for quantities
+!                   conversion between ppm and kg/ha
 !-----------------------------------------------------------------------
 !  Called : SOIL
 !  Calls  : IPSOIL, MULCHLAYER, NCHECK_organic, OpSoilOrg, SoilOrg_init
 !=======================================================================
 
-      SUBROUTINE SoilOrg (CONTROL, ISWITCH, 
+      SUBROUTINE SoilOrg (CONTROL, ISWITCH, CELLS,
      &    FLOODWAT, FLOODN, HARVRES, NH4, NO3, OMAData,   !Input
      &    SENESCE, SOILPROP, SPi_Labile, ST, SW, TILLVALS,!Input
      &    IMM, LITC, MNR, MULCH, newCO2, SomLit, SomLitC, !Output
@@ -61,6 +63,7 @@
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
+      USE Cells_2D
       USE ModuleData
       USE Interface_IpSoil
       USE FloodModule
@@ -68,6 +71,13 @@
 
       IMPLICIT  NONE
       SAVE
+
+!-----------------------------------------------------------------------
+!     Added with 2D model - this routine is not yet 2D, but accounts for
+!     bed width in bedded systems for computing quantities of organic matter
+      Type (CellType) Cells(MaxRows,MaxCols)
+      REAL, DIMENSION(NL) :: BWRATIO
+
 !-----------------------------------------------------------------------
       CHARACTER*1 ISWWAT
       CHARACTER(LEN=2) PREV_CROP
@@ -238,7 +248,19 @@
 
       SWEF = 0.9-0.00038*(DLAYR(1)-30.)**2
 
-      CALL SoilOrg_init(CONTROL, 
+!     If this is a bedded system, need bed width:row width ratio
+      BWRATIO = 1.0
+      IF (BedDimension % RaisedBed) THEN
+        DO L = 1, NLAYR
+          IF (L < BedDimension % FurRow1) THEN
+            BWRATIO(L) = BedDimension % BEDWD / BedDimension % ROWSPC_cm
+          ELSE
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF
+
+      CALL SoilOrg_init(CONTROL, BWRATIO,
      &    HARVRES, PREV_CROP, SOILPROP,                   !Input
      &    CNRAT, FOM, FON, FOP, FPOOL, SSOMC,             !Output
      &    SSOME, MULCH)                                   !Output
@@ -279,6 +301,15 @@
       ENDDO
 
       PREV_CROP = CONTROL % CROP  !Save crop name for harvest residue
+
+      TOMINFOM = 0.0
+      TOMINSOM = 0.0
+      TNIMBSOM = 0.0
+
+!     Transfer daily mineralization values for use by Cassava model
+      CALL PUT('ORGC','TOMINFOM' ,TOMINFOM) !Miner from FOM (kg/ha)
+      CALL PUT('ORGC','TOMINSOM' ,TOMINSOM) !Miner from SOM (kg/ha)
+      CALL PUT('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
 
       ACCCO2 = 0.0 !Cumulative CO2 released from SOM, FOM decomposition
       newCO2_FOM = 0.0
@@ -513,8 +544,8 @@
 !         -----------------
 !         FOM decomposition
 !         -----------------
-          SNO3(L) = NO3(L) / KG2PPM(L)
-          SNH4(L) = NH4(L) / KG2PPM(L)
+          SNO3(L) = NO3(L) / KG2PPM(L) * BWRATIO(L)
+          SNH4(L) = NH4(L) / KG2PPM(L) * BWRATIO(L)
           SNH4NO3(L) = SNO3(L) + SNH4(L)   !No XMIN needed
           SNH4NO3(L) = AMAX1 (SNH4NO3(L), 0.0)
         ENDIF

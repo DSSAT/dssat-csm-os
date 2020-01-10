@@ -210,6 +210,16 @@ C-----------------------------------------------------------------------
      &    MDATE, YRPLT)                                   !Output
       ENDIF
 
+      IF (INDEX('AFRDPWET',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
+!       Calculate irrigation depth for today
+        CALL IRRIG(CONTROL, ISWITCH,
+     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
+     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
+        TILLVALS % TIL_IRR = TIL_IRR
+      ELSE
+          IRRAMT = 0.0
+      ENDIF
+
       CALL Fert_Place (CONTROL, ISWITCH, 
      &  DLAYR, FLOOD, NLAYR, NSTRES, YRPLT,               !Input
      &  FERTDATA)                                         !Output
@@ -221,16 +231,6 @@ C-----------------------------------------------------------------------
       IF (INDEX('YR',ISWTIL) > 0 .AND. NTIL .GT. 0) THEN
         CALL TILLAGE(CONTROL, ISWITCH, SOILPROP,          !Input
      &    TILLVALS, TILLNO)                               !Output
-      ENDIF
-
-      IF (INDEX('AFRDPWET',IIRRI) .GT. 0 .AND. ISWWAT .EQ. 'Y') THEN
-!       Calculate irrigation depth for today
-        CALL IRRIG(CONTROL, ISWITCH,
-     &    RAIN, SOILPROP, SW, MDATE, YRPLT, STGDOY,       !Input
-     &    FLOODWAT, IIRRI, IRRAMT, NAP, TIL_IRR, TOTIR)   !Output
-        TILLVALS % TIL_IRR = TIL_IRR
-      ELSE
-          IRRAMT = 0.0
       ENDIF
 
       IF (ISWCHE .EQ. 'Y' .AND. NCHEM .GT. 0 .) THEN

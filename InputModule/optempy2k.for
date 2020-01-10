@@ -30,6 +30,7 @@ C  06/07/2002 GH  Modifed for Y2K Output
 !  12/09/2008 CHP Remove METMP
 !  08/03/2009 FSR Added numerous variables for CASUPRO
 !  06/30/2010 FSR Added PLF2 variable for CASUPRO
+!  07/27/2010 CHP Drip irrigation emitter can be offset from centerline.
 !  05/19/2011 GH  Updated for sorghum
 !  08/09/2012 GH  Updated cassava model
 !  09/01/2011 CHP Added van Genuchten parameters for ORYZA
@@ -58,7 +59,8 @@ C=======================================================================
       SUBROUTINE OPTEMPY2K (RNMODE, FILEX,PATHEX,
      & YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
      & NYRS,VARNO,VRNAME,CROP,MODEL,RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,
-     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS)
+     & TRTN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS, BEDHT, BEDWD, 
+     & DripLN, DripSpc, DripOfset, DripDep)  
 
       USE ModuleDefs
       IMPLICIT NONE
@@ -82,8 +84,10 @@ C=======================================================================
 
       INTEGER NYRS,RUN,I,EXPN,LUNIO,LINIO,ERRNUM,FROP,YRIC,TRTALL
       INTEGER TRTN,NFORC,NDOF,PMTYPE,ISENS
+      INTEGER DripLN(NDrpLn)
 
-      REAL    PLTFOR
+      REAL    PLTFOR, BEDHT, BEDWD
+      REAL    DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
       REAL    SWINIT(NL),WRESR,WRESND,EFINOC,EFNFIX,INO3(NL),INH4(NL)
 
       PARAMETER (LUNIO = 21)
@@ -269,7 +273,7 @@ C-----------------------------------------------------------------------
       WRITE (LUNIO,40)'*FIELDS             '
       LINIO = LINIO + 1
       WRITE (LUNIO,59,IOSTAT=ERRNUM) FLDNAM,FILEW(1:8),SLOPE,FLOB,DFDRN,
-     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO
+     &       FLDD,SFDRN,FLST,SLTX,SLDP,SLNO,BEDWD,BEDHT,PMALB
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
       WRITE (LUNIO,60,IOSTAT=ERRNUM) XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
      &            , FldHist, FHDur
@@ -344,18 +348,40 @@ C-----------------------------------------------------------------------
       WRITE (LUNIO,40)'*IRRIGATION         '
       LINIO = LINIO + 1
       WRITE (LUNIO,75,IOSTAT=ERRNUM) EFFIRX,DSOILX,THETCX,IEPTX,IOFFX,
-     &       IAMEX,AIRAMX
+     &       IAMEX,AIRAMX,NDPLNO
       IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+C-----------------------------------------------------------------------
+C
+C-----------------------------------------------------------------------      
+      IF (NDPLNO .GT. 0) THEN
+         DO I = 1, NDPLNO
+            WRITE (LUNIO,'(3X,I5,3F6.0)',IOSTAT=ERRNUM) DripLN(I),
+     &             DripSpc(I),DripOfset(I), DripDep(I)
+            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+         END DO
+      END IF
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
       IF (NIRR .GT. 0) THEN
-         DO I = 1, NIRR
-            LINIO = LINIO + 1
-            WRITE (LUNIO,76,IOSTAT=ERRNUM) IDLAPL(I),IRRCOD(I),AMT(I)!,
-     &             !IIRV(I)
-            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
-         END DO
+        DO I = 1, NIRR
+          LINIO = LINIO + 1
+          SELECT CASE(IRRCOD(I)(3:5))
+          CASE('005') !Drip irrig
+            WRITE(LUNIO,'(3X,I7,1X,A5,1X,F5.2,A30)',IOSTAT=ERRNUM) 
+     &        IDLAPL(I), IRRCOD(I), AMT(I), IRRSCHED(I)
+
+          CASE DEFAULT
+            IF (AMT(I) < 999.) THEN
+              WRITE(LUNIO,76,IOSTAT=ERRNUM) 
+     &          IDLAPL(I), IRRCOD(I),AMT(I)   !,IIRV(I)
+            ELSE
+              WRITE(LUNIO,'(3X,I7,1X,A5,1X,I5)',IOSTAT=ERRNUM) 
+     &          IDLAPL(I), IRRCOD(I),NINT(AMT(I))   !,IIRV(I)
+            ENDIF
+          END SELECT
+          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEIO,LINIO)
+        END DO
       ENDIF
 C-----------------------------------------------------------------------
 C
@@ -735,9 +761,10 @@ C-----------------------------------------------------------------------
    56 FORMAT (3X,A2,1X,A6,1X,A16)
 !chp   59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,2(1X,F5.0),
    59 FORMAT (3X,A8,1X,A8,1X,F5.1,1X,F5.0,1X,A5,1X,F5.0,1X,F5.1,
-     &        2(1X,A5),1X,F5.0,1X,A10)
+     &        2(1X,A5),1X,F5.0,1X,A10,2(1X,F5.1), F6.2)
 !chp   60 FORMAT (3X,2(F15.5,1X),F9.2,1X,F17.1,1X,F5.0,2(1X,F5.1))
-   60 FORMAT (3X,2(F15.5,1X),F9.2,1X,F17.1,1X,F5.0,2(1X,F5.1),1X,A5,I6)
+   60 FORMAT (3X,2(F15.5,1X),F9.2,1X,F17.1,1X,F5.0,2(1X,F5.1),1X,A5,I6,
+     &          F6.2)
 C  61 FORMAT (3X,A2,4X,I5,2(1X,F5.0),2(1X,F5.2),1X,F5.1,1X,F5.0,
 C    &        2(1X,F5.2),2(1X,F5.0))
 C-Y2K 61 FORMAT (3X,A2,4X,I5,2(1X,F5.0),2(1X,F5.2),1X,F5.1,1X,I5,
@@ -754,7 +781,7 @@ C-GH   70 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
 C-GH   71 FORMAT (3X,I7,1X,I7,2(1X,F5.1),2(5X,A1),2(1X,F5.0),1X,F5.1,
    71 FORMAT (3X,I7,1X,I7,2F6.1,2(5X,A1),2(1X,F5.0),1X,F5.1,
      &        I6,1X,F5.0,3(1X,F5.1),I6,F6.1,2I6)
-   75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1)
+   75 FORMAT (2X,1X,F5.3,3(1X,F5.0),2(1X,A5),1X,F5.1,1X,I5)
    76 FORMAT (3X,I7,1X,A5,1X,F5.1)
 !chp   76 FORMAT (3X,I7,1X,A5,1X,F5.1,4X,I2)
 C-Y2K 76 FORMAT (3X,I5,1X,A5,1X,F5.1,4X,I2)

@@ -45,9 +45,11 @@ C             CHP Added TRTNUM to CONTROL variable.
 !=======================================================================
 !     Global constants
       INTEGER, PARAMETER :: 
-     &    NL       = 20,  !Maximum number of soil layers 
+     &    NL       = 30,  !Maximum number of soil layers 
      &    TS       = 24,  !Number of hourly time steps per day
      &    NAPPL    = 9000,!Maximum number of applications or operations
+     &    NDrpEvnt = 10,  ! Maximum # of dripper irrigation event entries per day 
+     &    NDrpLn   = 10,  ! Maximum # of drip line entries per treatment 
      &    NCOHORTS = 300, !Maximum number of cohorts
      &    NELEM    = 3,   !Number of elements modeled (currently N & P)
 !            Note: set NELEM to 3 for now so Century arrays will match
@@ -153,15 +155,15 @@ C             CHP Added TRTNUM to CONTROL variable.
         CHARACTER (len=12) TEXTURE(NL)
         CHARACTER (len=17) SOILLAYERTYPE(NL)
         CHARACTER*50 SLDESC, TAXON
-        
+
         LOGICAL COARSE(NL)
-        
+
         REAL ALES, DMOD, SLPF         !DMOD was SLNF
         REAL CMSALB, MSALB, SWALB, SALB      !Albedo 
         REAL, DIMENSION(NL) :: BD, CEC, CLAY, DLAYR, DS, DUL
         REAL, DIMENSION(NL) :: KG2PPM, LL, OC, PH, PHKCL, POROS
         REAL, DIMENSION(NL) :: SAND, SAT, SILT, STONES, SWCN
-        
+
       !Residual water content
         REAL, DIMENSION(NL) :: WCR
 
@@ -255,7 +257,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !======================================================================
 !     Fertilizer application data
       TYPE FertType
-        CHARACTER*7 AppType != 'UNIFORM', 'BANDED ' or 'HILL   '
+        CHARACTER*7 AppType != 'UNIFORM', 'BANDED ', 'HILL   ', 'POINT  ', 'DRIP   '
+        INTEGER DrpRefIdx
         INTEGER FERTDAY, FERTYPE
         INTEGER, DIMENSION(NELEM) :: NAPFER
         REAL FERDEPTH, FERMIXPERC
@@ -313,6 +316,24 @@ C             CHP Added TRTNUM to CONTROL variable.
         INTEGER, DIMENSION(MaxFiles) :: LUN
       End Type
 
+!======================================================================
+!     Drip irrigation data
+      TYPE DripIrrType
+        !INTEGER NDrip   !Total number of drip irrigation data entries
+!        INTEGER NDrip   !Total number of date for which, there is drip irrigation data entries
+        REAL DripSpc    !emitter spacing (cm)
+        REAL DripOfset  !emitter offset from centerline of bed (cm)
+        REAL DripDep    !emitter depth from surface of bed under center line (cm)
+        INTEGER DripLN  !emitter identify number
+        ! following are Drip irrigation data on current day
+        INTEGER DripEvntEntr !Total number of drip irrigation data entries on current day
+        INTEGER, DIMENSION(NDrpEvnt) ::  DripNum !number of drip irrigations per day
+        REAL, DIMENSION(NDrpEvnt) :: DripRate   !emitter rate (ml/s) for each ebent
+        REAL, DIMENSION(NDrpEvnt) :: DripStart  !start time (1.=1am, 12.=noon, 13.5=1:30pm)
+        REAL, DIMENSION(NDrpEvnt) :: DripDur    !duration of ea. irrigation, emitters on (hr)
+        REAL, DIMENSION(NDrpEvnt) :: DripInt    !duration of interval between irrigation (hr)
+        REAL IrrRate    !daily irrigation (mm)
+      END TYPE
 
 !======================================================================
 !      CONTAINS
@@ -411,24 +432,27 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL AGEFAC, PG                   !photosynthese
         REAL CEF, CEM, CEO, CEP, CES, CET !Cumulative ET - mm
         REAL  EF,  EM,  EO,  EP,  ES,  ET !Daily ET - mm/d
+        REAL TRWU, TRWUP                  !root water uptake - cm/d
         REAL  EOP, EVAP                   !Daily mm/d
-        REAL, DIMENSION(NL) :: UH2O       !Root water uptake
+        REAL, DIMENSION(NL) :: UH2O       !Root water uptake - cm/d
         !ASCE reference ET with FAO-56 dual crop coefficient (KRT)
         REAL REFET, SKC, KCBMIN, KCBMAX, KCB, KE, KC
       End Type SPAMType
 
 !     Data transferred from CROPGRO routine 
       TYPE PlantType
-        REAL CANHT, CANWH, DXR57, EXCESS,
-     &    PLTPOP, RNITP, SLAAD, XPOD
-        REAL BIOMAS
+        REAL BEDHT, BEDWD, CANHT, CANWH, DXR57, EXCESS
+        REAL PLTPOP, RNITP, ROWSPC, SLAAD, XPOD   !ROWSPC in m (not cm)
+        REAL PORMIN, RWUMX, RWUEP1 !needed by root water uptake routines
+        REAL RTDEP
+        REAL FreshWt, BIOMAS
         INTEGER NR5, iSTAGE, iSTGDOY
         CHARACTER*10 iSTNAME
       END TYPE PlantType
 
 !     Data transferred from management routine 
       Type MgmtType
-        REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR
+        REAL DEPIR, EFFIRR, FERNIT, IRRAMT, TOTIR, TOTEFFIRR, MgmtWTD, ICWD
         REAL V_AVWAT(20)    ! Create vectors to save growth stage based irrigation
         REAL V_IMDEP(20)
         REAL V_ITHRL(20)
@@ -480,7 +504,9 @@ C             CHP Added TRTNUM to CONTROL variable.
         Type (SoilType)    SOILPROP
         Type (SPAMType)    SPAM
         Type (WatType)     WATER
-        Type (WeathType)   WEATHER
+        Type (DripIrrType) DripIrrig(NDrpLn)
+        Type (WeatherType) WEATHER
+        Type (WeathType)   WEATH
         TYPE (PDLABETATYPE) PDLABETA
       End Type TransferType
 
@@ -501,6 +527,8 @@ C             CHP Added TRTNUM to CONTROL variable.
      &                  , GET_Real_Array_NL
      &                  , GET_Integer
      &                  , GET_Char
+     &                  , GET_DripIrrig
+     &                  , GET_Weather
       END INTERFACE
 
       INTERFACE PUT
@@ -513,6 +541,8 @@ C             CHP Added TRTNUM to CONTROL variable.
      &                  , PUT_Real_Array_NL
      &                  , PUT_Integer
      &                  , PUT_Char
+     &                  , PUT_DripIrrig
+     &                  , PUT_Weather
       END INTERFACE
 
       CONTAINS
@@ -608,6 +638,24 @@ C             CHP Added TRTNUM to CONTROL variable.
 !      END SUBROUTINE PUT_WEATHER
 
 !----------------------------------------------------------------------
+      SUBROUTINE GET_WEATHER(WEATH_ARG)
+!     Stores WEATHER variable 
+      IMPLICIT NONE
+      TYPE (WeatherType) WEATH_ARG
+      WEATH_ARG = SAVE_data % WEATHER
+      RETURN
+      END SUBROUTINE GET_WEATHER
+
+!----------------------------------------------------------------------
+      SUBROUTINE PUT_WEATHER(WEATH_ARG)
+!     Stores WEATHER variable 
+      IMPLICIT NONE
+      TYPE (WeatherType) WEATH_ARG
+      SAVE_data % WEATHER = WEATH_ARG
+      RETURN
+      END SUBROUTINE PUT_WEATHER
+
+!----------------------------------------------------------------------
       Subroutine GET_Real(ModuleName, VarName, Value)
 !     Retrieves real variable from SAVE_data.  Variable must be
 !         included as a component of SAVE_data. 
@@ -637,6 +685,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('EP');     Value = SAVE_data % SPAM % EP
         Case ('ES');     Value = SAVE_data % SPAM % ES
         Case ('ET');     Value = SAVE_data % SPAM % ET
+        Case ('TRWUP');  Value = SAVE_data % SPAM % TRWUP
+        Case ('TRWU');   Value = SAVE_data % SPAM % TRWU
         Case ('EOP');    Value = SAVE_data % SPAM % EOP
         Case ('EVAP');   Value = SAVE_data % SPAM % EVAP
         Case ('REFET');  Value = SAVE_data % SPAM % REFET
@@ -652,14 +702,21 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('PLANT')
         SELECT CASE (VarName)
         Case ('BIOMAS'); Value = SAVE_data % PLANT % BIOMAS
+        Case ('BEDHT') ; Value = SAVE_data % PLANT % BEDHT
+        Case ('BEDWD') ; Value = SAVE_data % PLANT % BEDWD
         Case ('CANHT') ; Value = SAVE_data % PLANT % CANHT
         Case ('CANWH') ; Value = SAVE_data % PLANT % CANWH
         Case ('DXR57') ; Value = SAVE_data % PLANT % DXR57
         Case ('EXCESS'); Value = SAVE_data % PLANT % EXCESS
         Case ('PLTPOP'); Value = SAVE_data % PLANT % PLTPOP
         Case ('RNITP') ; Value = SAVE_data % PLANT % RNITP
+        Case ('ROWSPC'); Value = SAVE_data % PLANT % ROWSPC !m (not cm)
         Case ('SLAAD') ; Value = SAVE_data % PLANT % SLAAD
         Case ('XPOD')  ; Value = SAVE_data % PLANT % XPOD
+        Case ('RWUMX') ; Value = SAVE_data % PLANT % RWUMX
+        Case ('RWUEP1'); Value = SAVE_data % PLANT % RWUEP1
+        Case ('PORMIN'); Value = SAVE_data % PLANT % PORMIN
+        Case ('RTDEP') ; Value = SAVE_data % PLANT % RTDEP
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -671,6 +728,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('DEPIR');  Value = SAVE_data % MGMT % DEPIR
         Case ('IRRAMT'); Value = SAVE_data % MGMT % IRRAMT
         Case ('FERNIT'); Value = SAVE_data % MGMT % FERNIT
+        Case ('WATTAB'); Value = SAVE_data % MGMT % MgmtWTD
+        Case ('ICWD'); Value = SAVE_data % MGMT % ICWD
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -761,6 +820,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('EP');     SAVE_data % SPAM % EP     = Value
         Case ('ES');     SAVE_data % SPAM % ES     = Value
         Case ('ET');     SAVE_data % SPAM % ET     = Value
+        Case ('TRWUP');  SAVE_data % SPAM % TRWUP  = Value
+        Case ('TRWU');   SAVE_data % SPAM % TRWU   = Value
         Case ('EOP');    SAVE_data % SPAM % EOP    = Value
         Case ('EVAP');   SAVE_data % SPAM % EVAP   = Value
         Case ('REFET');  SAVE_data % SPAM % REFET  = Value
@@ -776,14 +837,21 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case ('PLANT')
         SELECT CASE (VarName)
         Case ('BIOMAS'); SAVE_data % PLANT % BIOMAS = Value
+        Case ('BEDHT');  SAVE_data % PLANT % BEDHT  = Value
+        Case ('BEDWD');  SAVE_data % PLANT % BEDWD  = Value
         Case ('CANHT');  SAVE_data % PLANT % CANHT  = Value
         Case ('CANWH');  SAVE_data % PLANT % CANWH  = Value
         Case ('DXR57');  SAVE_data % PLANT % DXR57  = Value
         Case ('EXCESS'); SAVE_data % PLANT % EXCESS = Value
         Case ('PLTPOP'); SAVE_data % PLANT % PLTPOP = Value
         Case ('RNITP');  SAVE_data % PLANT % RNITP  = Value
+        Case ('ROWSPC'); SAVE_data % PLANT % ROWSPC = Value !m (not cm)
         Case ('SLAAD');  SAVE_data % PLANT % SLAAD  = Value
         Case ('XPOD');   SAVE_data % PLANT % XPOD   = Value
+        Case ('PORMIN'); SAVE_data % PLANT % PORMIN = Value
+        Case ('RWUMX');  SAVE_data % PLANT % RWUMX  = Value
+        Case ('RWUEP1'); SAVE_data % PLANT % RWUEP1 = Value
+        Case ('RTDEP') ; SAVE_data % PLANT % RTDEP  = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -795,6 +863,8 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('DEPIR');  SAVE_data % MGMT % DEPIR  = Value
         Case ('IRRAMT'); SAVE_data % MGMT % IRRAMT = Value
         Case ('FERNIT'); SAVE_data % MGMT % FERNIT = Value
+        Case ('WATTAB'); SAVE_data % MGMT % MgmtWTD = Value
+        Case ('ICWD'); SAVE_data % MGMT % ICWD = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -862,7 +932,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 
       CASE ('SPAM')
         SELECT CASE (VarName)
-          CASE ('UH2O'); ; Value = SAVE_data % SPAM % UH2O
+          CASE ('UH2O'); Value = SAVE_data % SPAM % UH2O
           CASE DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -977,6 +1047,42 @@ C             CHP Added TRTNUM to CONTROL variable.
       RETURN
       END SUBROUTINE PUT_Integer
 
+!!----------------------------------------------------------------------
+!      Subroutine Get_CellData (Cell_arg)
+!!     Retrieves CELL variable
+!      IMPLICIT NONE
+!      Type (CellType) Cell_arg
+!      Cell_arg = SAVE_data % CellData
+!      Return
+!      End Subroutine Get_CellData
+!
+!!----------------------------------------------------------------------
+!      Subroutine Put_CellData (Cell_arg)
+!!     Stores CELL variable
+!      IMPLICIT NONE
+!      Type (CellType) Cell_arg
+!      SAVE_data % CellData = Cell_arg
+!      Return
+!      End Subroutine Put_CellData
+
+!----------------------------------------------------------------------
+      Subroutine Get_DripIrrig (Drip_arg)
+!     Retrieves CELL variable
+      IMPLICIT NONE
+      Type (DripIrrType) Drip_arg(NDrpLn)
+      Drip_arg = SAVE_data % DripIrrig
+      Return
+      End Subroutine Get_DripIrrig
+
+!----------------------------------------------------------------------
+      Subroutine Put_DripIrrig (Drip_arg)
+!     Stores CELL variable
+      IMPLICIT NONE
+      Type (DripIrrType) Drip_arg(NDrpLn)
+      SAVE_data % DripIrrig = Drip_arg
+      Return
+      End Subroutine Put_DripIrrig
+
 !----------------------------------------------------------------------
       Subroutine GET_Char(ModuleName, VarName, Value)
 !     Retrieves Integer variable as needed
@@ -991,7 +1097,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SELECT CASE (ModuleName)
       Case ('WEATHER')
         SELECT CASE (VarName)
-        Case ('WSTA');  Value = SAVE_data % WEATHER % WSTAT
+        Case ('WSTA');  Value = SAVE_data % WEATH % WSTAT
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 
@@ -1027,7 +1133,7 @@ C             CHP Added TRTNUM to CONTROL variable.
       SELECT CASE (ModuleName)
       Case ('WEATHER')
         SELECT CASE (VarName)
-        Case ('WSTA');  SAVE_data % WEATHER % WSTAT  = Value
+        Case ('WSTA');  SAVE_data % WEATH % WSTAT  = Value
         Case DEFAULT; ERR = .TRUE.
         END SELECT
 

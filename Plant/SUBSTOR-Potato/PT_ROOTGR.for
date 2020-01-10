@@ -39,7 +39,9 @@ C  RNLF   : Intermediate factor used to calculate distribution of new root
 C           growth in the soil - unitless value between 0 and 1
 C  L,L1   : Loop counter
 C=======================================================================
-
+      ! CHP & JZW considers that there exist a bug: 
+      ! RLV(L) = RLINIT / DLAYR(L) should be RLV/RTDEP
+      ! RLV(L) = RLV(L)+RLDF(L)*RNLF/DLAYR(L)-0.005*RLV(L) where DLAYR should be RTDEP
       SUBROUTINE PT_ROOTGR (DYNAMIC, 
      &    DLAYR, DS, DTT, DUL, FILEIO, GRORT, ISWNIT,     !Input
      &    LL, NH4, NLAYR, NO3, PLTPOP, SHF, SW, SWFAC,    !Input
@@ -104,7 +106,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
 !     Initial root distribution:  
       IF (FIRST) THEN
-
+!     After planting date, call here when Root growth rate >0, this day could be before Emergence date
 !********* TEMPORARY CHP *********************************
 !     RLWR Sensitivity
 !     Write to Overview.out file - can't do it when value is 
@@ -125,7 +127,8 @@ C       DISTRIBUTE ROOT LENGTH EVENLY IN ALL LAYERS TO A DEPTH OF
 C       RTDEPTI (ROOT DEPTH AT EMERGENCE)
 C-------------------------------------------------------------------------
         CUMDEP = 0.
-
+        !1D subroutine, RLINIT is in cm[root]/cm2[ground]
+        !2D subroutine, RLINIT is in cm[root]/cm[row length] 
         DO L = 1,NLAYR
           DEP = MIN(RTDEPI - CUMDEP, DLAYR(L))
    !       RLINIT = WTNEW * FRRT * PLTPOP * RFAC1 * DEP / ( RTDEP *
@@ -143,7 +146,7 @@ C-------------------------------------------------------------------------
         RTDEP = RTDEPI
 
 !***********************************************************************
-      ELSE
+      ELSE ! if not first
 !     Daily root growth and distribution
 
         RLNEW  = GRORT * RLWR * PLTPOP  !CHP    

@@ -98,7 +98,7 @@ C=======================================================================
         CALL YR_DOY(YRDOY, YEAR, DOY)
         WRITE(LUN,'(/,1X,A,"  YEAR DOY = ",I4,1X,I3)')ERRKEY,YEAR,DOY
         DO I = 1, ICOUNT
-          WRITE(LUN,'(1X,A78)') MESSAGE(I)
+            WRITE(LUN,'(1X,A)') MESSAGE(I)
         ENDDO
       ENDIF
 

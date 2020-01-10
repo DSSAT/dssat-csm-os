@@ -118,6 +118,123 @@ C
 
       RETURN
       END SUBROUTINE LMATCH
+C=======================================================================
+
+
+C=======================================================================
+C  LMATCH_MASS, Subroutine
+C
+C  Converts input soil layer data into fixed output soil layers
+!     Use this subroutine for units of mass (kg/ha) where values are 
+!     aggregated rather than averaged.
+C  
+C-----------------------------------------------------------------------
+C  Revision history
+C
+C  05/07/1991 JWJ Written 
+C  05/28/1993 PWW Header revision and minor changes  
+C  08/27/2004 CHP A value of -99 for missing data is preserved in all 
+C                 layers containing any portion of missing layer data.
+!  08/06/2010 CHP Revised LMATCH for mass units. 
+C-----------------------------------------------------------------------
+C  INPUT  : NLAYRI,DI,VI,DLAYR
+C
+C  LOCAL  : J,K,L,VS,ZIL,ZOL,SUMZ,SUMV,ZT,ZB
+C
+C  OUTPUT : DS,VS
+C=======================================================================
+      SUBROUTINE LMATCH_mass (NLAYRI,DSI,VI,NLAYRO,DSO)
+
+      USE ModuleDefs
+      IMPLICIT NONE
+
+      INTEGER  J,K,L,NLAYRI,NLAYRO
+
+      REAL     VI(NL),DSO(NL),VS(NL),DSI(NL)
+      REAL     ZIL,ZOL,SUMV,ZT,ZB, THICK_OLD    !,SUMZ
+
+      LOGICAL MISSING
+
+!      NLAYRO = 0
+      IF (NLAYRI .LT. 1) RETURN
+
+C*----------------------------------------------------------------------
+C     This subroutine assumes that DSI(L) values are depths to the
+C     bottom of layer L
+      VS = -99.
+      K   = 1
+      ZIL = 0.0
+      ZOL = 0.0
+
+      LOOP1: DO L = 1, NLAYRO
+!        SUMZ = 0.0
+        SUMV = 0.0
+
+        MISSING = .FALSE.
+
+        LOOP2: DO WHILE (.TRUE.)
+          THICK_OLD = DSI(K) - ZIL
+          ZT   = MAX (ZOL,ZIL)
+          ZB   = MIN (DSO(L),DSI(K))
+!          SUMZ = SUMZ + (ZB - ZT)
+          SUMV = SUMV + VI(K)*(ZB - ZT)/THICK_OLD
+          IF (ABS(VI(K) + 99.) < 0.001 .AND. ZB > ZT) THEN
+            !missing data if VI=-99
+            MISSING = .TRUE.
+          ENDIF
+
+          IF (DSO(L) .LT. DSI(K)) EXIT LOOP2
+C
+C         Either establish last layer or go to next input layer
+C
+          IF (K .EQ. NLAYRI) GOTO 20
+C
+C         Go to next input layer to add characteristics
+C
+          ZIL = DSI(K)
+          K   = K + 1
+          IF (K .GT. NL) THEN
+            WRITE (*,15) K
+   15       FORMAT(' More than NL layers in soil profile : ',I3,/,
+     &              ' Please fix soil profile.')
+            STOP
+          ENDIF
+        END DO LOOP2
+
+        VS(L) = SUMV
+!        IF (SUMZ .GT. 0.0) THEN
+!          VS(L) = SUMV/SUMZ
+!        ENDIF
+        IF (MISSING) THEN
+          VS(L) = -99.0
+        ENDIF
+        ZOL = DSO(L)
+      END DO LOOP1
+
+!     RETURN
+      GOTO 30
+C
+C     Set last layer characteristics, and depth of profile
+C
+   20 VS(L) = VI(K)
+      IF (ABS(SUMV + 99.0) > 0.001) THEN
+        VS(L) = SUMV
+      ELSE
+        VS(L) = -99.0
+      ENDIF
+
+      VI = -99.
+   30 DO J = 1, NLAYRO
+         VI(J) = VS(J)
+      END DO
+      DO J = NLAYRO+1,NL    
+         VI(J) = -99.
+      ENDDO
+
+      RETURN
+      END SUBROUTINE LMATCH_mass
+
+C=======================================================================
 
 
 C=======================================================================
@@ -293,6 +410,7 @@ C----------------------------------------------------------------------
           CYCLE
 
         ELSEIF (THICKNESS .LT. 2.0) THEN
+!        ELSEIF (THICKNESS .LT. 5.0) THEN
           !Add to next layer if thin
           CYCLE
 
@@ -389,4 +507,116 @@ C----------------------------------------------------------------------
 
       RETURN
       END SUBROUTINE LYRSET3
+C=======================================================================
+
+
+C=======================================================================
+C  LYRSET4, Subroutine
+C
+C  Converts input soil layer data into fixed output soil layers for 2D 
+!    soil module.  Layers are slightly different than for 1D model.
+C  Created by J. W. Jones to create fixed increments for soil
+C  Alternate routine written by CHP splits thick layers into
+!     2, 3, or 4 homogeneous layers -- minimizes interpolation of 
+!     soil factors. 
+!  Top layer 5 cm max. 
+!  No layer thinner than 3 cm.  
+!  No layer thicker than 10 cm.
+C-----------------------------------------------------------------------
+C  Revision history
+C
+C  10/29/2003 CHP Written based on LYRSET
+!  10/26/2007 CHP Only top 2 layers fixed into 5, 10 cm
+!  08/05/2010 CHP Modified from LYRSET2.
+C=======================================================================
+
+      SUBROUTINE LYRSET4 (NLAYRI, ZLAYR,                  !Input
+     &            DS, NLAYRO, DLAYR, DEPMAX)              !Output
+
+      USE ModuleDefs
+      IMPLICIT NONE
+
+      INTEGER  L, M, NLAYRI, NLAYRO
+
+      REAL DS(NL), ZLAYR(NL),DLAYR(NL)
+      REAL DEPMAX, CUMDEP, THICKNESS
+
+      INTENT(IN)  :: NLAYRI, ZLAYR
+      INTENT(OUT) :: DS, NLAYRO, DLAYR, DEPMAX
+C----------------------------------------------------------------------
+!!     Redistribute soil layers.  Keep top two layers at fixed depths.
+!      DS(1) =  5. 
+!      DS(2) = 15. 
+!!      DS(3) = 30. 
+
+!     ZLAYR values are depths to bottom of soil layer (cm).
+!     Top layer should be between 3 and 5 cm thick.
+      IF (ZLAYR(1) < 3. .OR. ZLAYR(1) > 5.) THEN 
+        DS(1) = 5.
+      ELSE
+        DS(1) = ZLAYR(1)
+      ENDIF
+
+!     Remaining soil layers set based on thicknesses read from file.
+!     Split into 2, 3 or 4 equal layers if thickness > 10 cm.
+      CUMDEP = 0.0
+      M = 2
+
+      DO L = 1, NLAYRI
+        CUMDEP = ZLAYR(L)
+        THICKNESS = CUMDEP - DS(M-1)
+
+        IF (CUMDEP .LE. DS(1)) THEN
+          !top fixed-depth layer already set.
+          CYCLE
+
+!       ELSEIF (THICKNESS .LT. 2.0) THEN
+        ELSEIF (THICKNESS .LT. 3.0) THEN
+          !Add to next layer if thin
+          CYCLE
+
+        ELSEIF (THICKNESS .LE. 10.0) THEN
+          !Single layer
+          DS(M) = CUMDEP
+          M = M + 1
+
+        ELSEIF (THICKNESS .LE. 20.0) THEN
+          !Split into two equal layers
+          DS(M)   = CUMDEP - NINT(THICKNESS * 0.50)
+          DS(M+1) = CUMDEP
+          M = M + 2
+
+        ELSEIF (THICKNESS .LE. 30.0) THEN
+          !Split into three equal layers
+          DS(M)   = CUMDEP - NINT(THICKNESS * 0.66667)
+          DS(M+1) = CUMDEP - NINT(THICKNESS * 0.33333)
+          DS(M+2) = CUMDEP
+          M = M + 3
+
+        ELSE
+          !Split into four equal layers
+          DS(M)   = CUMDEP - NINT(THICKNESS * 0.75)
+          DS(M+1) = CUMDEP - NINT(THICKNESS * 0.50)
+          DS(M+2) = CUMDEP - NINT(THICKNESS * 0.25)
+          DS(M+3) = CUMDEP
+          M = M + 4
+        ENDIF
+      ENDDO
+
+      NLAYRO = M - 1
+
+!     Check for thin bottom layer -- add to previous layer
+      IF (ZLAYR(NLAYRI) > DS(NLAYRO)) THEN
+        DS(NLAYRO) = ZLAYR(NLAYRI)
+      ENDIF
+
+      DLAYR(1) = DS(1)
+      DO L = 2, NLAYRO
+        DLAYR(L) = DS(L) - DS(L-1)
+      ENDDO
+
+      DEPMAX = DS(NLAYRO)
+
+      RETURN
+      END SUBROUTINE LYRSET4
 C=======================================================================

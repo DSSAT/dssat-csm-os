@@ -24,7 +24,8 @@ C  07/02/1997 WDB ADDED TILE DRAIN FLOW
 C=======================================================================
 
       SUBROUTINE SATFLO(
-     &    DLAYR, DUL, NLAYR, SAT, SW, SWCN, SWCON,        !Input
+     &    DLAYR, DS, DUL, NLAYR, SAT, SW,                 !Input
+     &    SWCN, SWCON, MgmtWTD,                           !Input
      &    DRAIN, DRN, SWDELTS)                            !Output
 
 !     ------------------------------------------------------------------
@@ -36,9 +37,9 @@ C=======================================================================
       IMPLICIT NONE
 
       INTEGER L, NLAYR
-      REAL DRAIN, HOLD, SWCON, SWOLD
-      REAL DLAYR(NL), DRMX(NL), DRN(NL), DUL(NL), SAT(NL), SW(NL), 
-     &        SWCN(NL), SWDELTS(NL), SWTEMP(NL)
+      REAL DRAIN, HOLD, SWCON, SWOLD, MgmtWTD
+      REAL DLAYR(NL), DRMX(NL), DRN(NL), DS(NL), DUL(NL), SAT(NL), 
+     &        SW(NL), SWCN(NL), SWDELTS(NL), SWTEMP(NL)
 
 !-----------------------------------------------------------------------
       DO L = 1, NLAYR
@@ -51,6 +52,10 @@ C=======================================================================
       DO L = 1,NLAYR
         DRN(L) = 0.0
         DRMX(L) = 0.0
+
+!        IF (DS(L) > MgmtWTD) THEN
+!          EXIT
+!        ENDIF
 
         IF (SWTEMP(L) .GE. (DUL(L) + 0.003)) THEN
           DRMX(L) = (SWTEMP(L) - DUL(L)) * SWCON * DLAYR(L)

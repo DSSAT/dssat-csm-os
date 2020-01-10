@@ -32,6 +32,7 @@
 !  07/14/2006 CHP Put revised DSSAT-Century with P model into CSM v4.6
 !  02/11/2010 CHP No simulation of organic matter when water is not 
 !                   simulated.
+!  08/15/2011 Add arguments of NH4 & NO3 for SoilCNPinit_C
 !-----------------------------------------------------------------------
 !  Called: SOIL
 !  Calls : CE_RATIO_C, DECRAT_C, IMMOBLIMIT_C, INCORPOR_C, LITDEC_C, 
@@ -246,7 +247,7 @@
 
 !     Set initial SOM and nitrogen conditions for each soil layer.
       CALL SoilCNPinit_C (CONTROL, ISWITCH,               !Input 
-     &  N_ELEMS, SOILPROP,                                !Input
+     &  N_ELEMS, SOILPROP, NH4, NO3,                      !Input
      &  ACCCO2, ACCMNR, ADDMETABEFLAG, AMINRL, CEDAM,     !Output
      &  CES1, CES1M, CES1T, CES1X, CES2, CES21I, CES21M,  !Output
      &  CES21S, CES21T, CES21X, CES23LM, CES23LX, CES23M, !Output

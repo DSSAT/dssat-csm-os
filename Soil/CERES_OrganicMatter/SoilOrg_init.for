@@ -37,7 +37,7 @@ C  Called : SOIL_ORG
 C  Calls  : ERROR, FIND
 C=======================================================================
 
-      SUBROUTINE SoilOrg_init(CONTROL, 
+      SUBROUTINE SoilOrg_init(CONTROL, BWRATIO,
      &    HARVRES, PREV_CROP, SOILPROP,                   !Input
      &    CNRAT, FOM, FON, FOP, FPOOL, SSOMC,             !Output
      &    SSOME, MULCH)                                   !Output
@@ -74,6 +74,9 @@ C=======================================================================
       REAL FPOOL(NL,3), KG2PPM(NL), OC(NL), ORGP(NL), pH(NL)
       REAL SSOMC(0:NL), SSOME(0:NL,NELEM), WRN(NL)
       REAL TotOrgN(NL)
+
+!     Added to account for bed width in raised bed system
+      REAL, DIMENSION(NL) :: BWRATIO
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -327,7 +330,7 @@ C         Calculate N and P contributions.
 !       ----------------------------------------------------------------
         DO L = 1, NLAYR
 !         Calculate the stable organic matter pool SSOMC in kg[C] / ha.
-          SSOMC(L) = OC(L) * 1000. * BD(L) * DLAYR(L)
+          SSOMC(L) = OC(L) * 1000. * BD(L) * DLAYR(L) * BWRATIO(L)
 
 !         N initialization
           IF (N_ELEMS > 0) THEN

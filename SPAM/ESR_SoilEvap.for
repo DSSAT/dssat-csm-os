@@ -73,6 +73,8 @@
       DUL   = SOILPROP % DUL
       LL    = SOILPROP % LL
       NLAYR = SOILPROP % NLAYR
+!!      01/23/2010 CHP replace with residual water content
+!      SWAD  = SOILPROP % WCR
 
       ES = 0.0
 

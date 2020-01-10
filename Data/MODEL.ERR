@@ -331,6 +331,15 @@ Error in amount of irrigation input.  Correct input file.
 IPIRR    12
 Error in irrigation code.  Correct input file.
 
+IPIRR    21
+Missing drip line configuration.  Correct input file.
+
+IPIRR    22
+Missing or incorrect drip line reference number.  Correct input file.
+
+IPIRR    23
+Maximum number of drip line is 10.  Correct input file.
+
 IPPARM   21
 Pest parameter input section not found.  Please correct file.
 

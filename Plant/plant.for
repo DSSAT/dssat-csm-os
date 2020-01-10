@@ -57,7 +57,7 @@ C  08/09/2012 GH  Added CSCAS model
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
-     &    EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,       !Input
+     &    CELLS, EO, EOP, EOS, EP, ES, FLOODWAT, HARVFRAC,!Input
      &    NH4, NO3, SKi_Avail, SomLitC, SomLitE,          !Input
      &    SPi_AVAIL, SNOW, SOILPROP, SRFTEMP, ST, SW,     !Input
      &    TRWU, TRWUP, UPPM, WEATHER, YREND, YRPLT,       !Input
@@ -99,6 +99,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
       USE FloodModule
+      USE Cells_2D
 
       IMPLICIT NONE
       SAVE
@@ -119,6 +120,10 @@ C-----------------------------------------------------------------------
       REAL PORMIN, RWUEP1, RWUMX, SRFTEMP, SNOW, IRRAMT
       REAL TMAX, TMIN, TRWU
       REAL TRWUP, TWILEN, XLAI, XHLAI
+
+!     Water stress factors computed in SPAM now for variable time step 
+!       root water uptake model
+      REAL SWFAC, TURFAC
 
       REAL, DIMENSION(2)  :: HARVFRAC
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM  !, RWU
@@ -148,6 +153,9 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       REAL, DIMENSION(0:NL) :: SomLitC
       REAL, DIMENSION(0:NL,NELEM) :: SomLitE
       LOGICAL, PARAMETER :: OR_OUTPUT = .FALSE.
+      
+!     2D variables
+      REAL, DIMENSION(MaxRows,MaxCols) :: RLV_2D, NO3Uptake_2D, NH4Uptake_2D
 
 !-----------------------------------------------------------------------
 !     Constructed variables are defined in ModuleDefs.
@@ -159,6 +167,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       TYPE (FloodWatType) FLOODWAT
       TYPE (FloodNType)   FLOODN
       TYPE (WeatherType)  WEATHER
+      Type (CellType)     CELLS(MaxRows,MaxCols)
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -202,6 +211,16 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
         WRITE(MESSAGE(3),130)
         CALL WARNING(3, ERRKEY, MESSAGE)
       ENDIF
+
+!     Initialize 2D variable for general purpose
+      IF (INDEX('GC',ISWITCH%MEHYD) > 0) THEN
+        CELLS % RATE % NO3Uptake = 0.0
+        CELLS % RATE % NH4Uptake = 0.0
+        CELLS % STATE % RLV = 0.0
+        NO3Uptake_2D = 0.0
+        NH4Uptake_2D = 0.0
+        RLV_2D = 0.0
+      END IF
 
   110 FORMAT('You have specified use of the Leaf-level photosynthesis')
   120 FORMAT('option, which is not available for crop ', A2, '.')
@@ -274,6 +293,10 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       UNO3     = 0.0
       UH2O     = 0.0
 
+!     Initialize stress variables here, needed when water not simulated.
+      SWFAC  = 1.0
+      TURFAC = 1.0
+
 !***********************************************************************
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
@@ -311,8 +334,8 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     CROPGRO model
       CASE('CRGRO')
         CALL CROPGRO(CONTROL, ISWITCH,
-     &    EOP, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
-     &    ST, SW, TRWUP, WEATHER, YREND, YRPLT,           !Input
+     &    EOP, CELLS, HARVFRAC, NH4, NO3, SOILPROP, SPi_AVAIL,   !Input
+     &    ST, SW, SWFAC, TURFAC, TRWUP, WEATHER, YREND, YRPLT,   !Input
      &    CANHT, EORATIO, HARVRES, KSEVAP, KTRANS, MDATE, !Output
      &    NSTRES, PSTRES1,                                !Output
      &    PUptake, PORMIN, RLV, RWUMX, SENESCE,           !Output
@@ -482,11 +505,19 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     -------------------------------------------------
 !     Potato
       CASE('PTSUB')
+        IF (INDEX('GC',ISWITCH%MEHYD) > 0) THEN
+          CALL PT_SUBSTOR_2D(CONTROL, ISWITCH, 
+     &    CO2, EOP, CELLS, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
+     &    ST, SW, TMAX, TMIN,SWFAC, TURFAC, TRWUP, TWILEN, YREND, YRPLT,!Input
+     &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
+     &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
+        else
         CALL PT_SUBSTOR(CONTROL, ISWITCH,
      &    CO2, EOP, HARVFRAC, NH4, NO3, SOILPROP, SRAD,   !Input
      &    ST, SW, TMAX, TMIN, TRWUP, TWILEN, YREND, YRPLT,!Input
      &    CANHT, HARVRES, MDATE, NSTRES, PORMIN, RLV,     !Output
      &    RWUMX, SENESCE, STGDOY, UNH4, UNO3, XLAI)       !Output
+        endif
 
         IF (DYNAMIC .EQ. INTEGR) THEN
           XHLAI = XLAI
@@ -619,7 +650,17 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !***********************************************************************
 !     Processing after calls to crop models:
 !-----------------------------------------------------------------------
-      IF (DYNAMIC .EQ. SEASINIT) THEN
+      IF (DYNAMIC .EQ. RUNINIT) THEN
+!-----------------------------------------------------------------------
+        CALL PUT('PLANT','RWUMX' ,RWUMX)
+        CALL PUT('PLANT','RWUEP1',RWUEP1)
+        CALL PUT('PLANT','PORMIN',PORMIN)
+
+!***********************************************************************
+!***********************************************************************
+!     Processing after calls to crop models:
+!-----------------------------------------------------------------------
+      ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
 ! Zero the value of HARVRES composite variable here
 !!!NOTE: At this time, the variable has already been used to
@@ -640,6 +681,29 @@ c     Total LAI must exceed or be equal to healthy LAI:
           CANHT = 0.5
           FixCanht = .FALSE.
         ENDIF
+
+!       Sync 2D variable for general purpose
+        IF (INDEX('GC',ISWITCH%MEHYD) > 0 .AND.
+     &      MODEL(1:5) .NE. 'CRGRO' .AND.
+     &      MODEL(1:5) .NE. 'PTSUB') THEN
+
+          CALL Interpolate2Cells_2D(
+     &      CELLS%STRUC, SOILPROP, RLV, RLV(1),           !Input
+     &      RLV_2D)                                       !Output
+     
+          CALL SYNC_NUPTAKE_TO2D(
+     &      CELLS, SOILPROP, Cells%State%SNO3,            !Input
+     &      UNO3,                                         !I/O
+     &      NO3Uptake_2D)                                 !Output
+          CALL SYNC_NUPTAKE_TO2D(
+     &      CELLS, SOILPROP, Cells%State%SNH4,            !Input
+     &      UNH4,                                         !I/O
+     &      NH4Uptake_2D)                                 !Output
+          
+          CELLS%RATE%NO3Uptake = NO3Uptake_2D
+          CELLS%RATE%NH4Uptake = NH4Uptake_2D
+          CELLS%STATE%RLV = RLV_2D
+        END IF
 
 !***********************************************************************
       ENDIF
@@ -735,3 +799,81 @@ c     Total LAI must exceed or be equal to healthy LAI:
 ! YREND     Date for end of season (usually harvest date) (YYYYDDD)
 ! YRPLT     Planting date (YYYYDDD)
 !===========================================================================
+
+C=======================================================================
+C  SYNC_NUPTAKE_TO2D, Subroutine
+C
+C  This routine calls convert uptake from 1d layer array to 2d cell array
+C-----------------------------------------------------------------------
+C  Revision history
+C
+C  06/01/2019 MZ create this sub routine
+C=======================================================================
+
+      SUBROUTINE SYNC_NUPTAKE_TO2D(
+     &      CELLS, SOILPROP, NSTATE_2D,            !Input
+     &      Uptake,                                !I/O
+     &      Uptake_2D)                             !Output
+
+C-----------------------------------------------------------------------
+! Each plant module must compute SATFAC, SWFAC, and TURFAC
+C-----------------------------------------------------------------------
+      USE ModuleDefs 
+      USE ModuleData
+      USE Cells_2D
+
+      IMPLICIT NONE
+      
+      TYPE (SoilType) SOILPROP
+      Type (CellType) CELLS(MaxRows,MaxCols)
+      TYPE (CellStrucType) Struc(MaxRows,MaxCols)
+      INTEGER L, J, NLAYR
+      REAL DLAYR(NL)
+      REAL, DIMENSION(NL) :: Uptake
+      REAL, DIMENSION(MaxRows,MaxCols) :: NSTATE_2D, Uptake_2D, ColFrac
+!      REAL CumOverFlow
+      REAL rowAveN
+      INTEGER OverflowFlg
+      
+      Struc = CELLS%STRUC
+      NLAYR = SOILPROP%NLAYR
+      DLAYR = SOILPROP%DLAYR
+      OverflowFlg = 0
+      ColFrac = BedDimension % ColFrac
+      
+      CALL Interpolate2Cells_2D(
+     &      Struc, SOILPROP, Uptake, Uptake(1),    !Input
+     &      Uptake_2D)                             !Output
+     
+      DO L = 1, NRowsTot
+        rowAveN = 0.0
+        DO J = 1, NColsTot
+          SELECT CASE(Struc(L, J) % CellType)
+          CASE(3,4,5)
+            rowAveN = rowAveN + NSTATE_2D(L, J) * ColFrac(L, J)
+          END SELECT
+        END DO
+        DO J = 1, NColsTot
+          SELECT CASE(Struc(L, J) % CellType)
+          CASE(3,4,5)
+            IF (rowAveN .LE. 0) THEN
+              Uptake_2D(L, J) = Uptake_2D(L, J)
+            ELSE
+              Uptake_2D(L, J) = Uptake_2D(L, J) * NSTATE_2D(L, J) / rowAveN
+            END IF
+            
+            IF (NSTATE_2D(L, J) .LT. Uptake_2D(L, J)) THEN
+              OverflowFlg = 1
+!              CumOverFlow = CumOverFlow + (Uptake_2D(L, J) - NSTATE_2D(L, J)) * ColFrac(L, J)
+              Uptake_2D(L, J) = NSTATE_2D(L, J)
+            END IF
+          END SELECT
+        END DO
+      END DO
+     
+      IF (OverflowFlg .GT. 0) THEN
+        CAll Interpolate2Layers_2D(Uptake_2D, Struc, NLAYR,  !input
+     &       Uptake)                                 !Output
+      END IF
+      RETURN
+      END SUBROUTINE

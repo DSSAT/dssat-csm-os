@@ -19,6 +19,8 @@
 !  04/13/2005 CHP Changed name to SOILCNP_C (was SOILNI_C)
 !  04/24/2005 AJG Set the initial value of CES1, CES2, CES3.
 !  04/30/2008 CHP Changed units for SCN, SCP, RCN, RCP to %
+!  08/15/2011 Add arguments of NH4Ini & NO3Ini for SoilCNPinit_C.
+!             NH4Ini & NO3Ini were reading from *.inp. It is wrong for bed soil profile
 !
 !  Called: CENTURY
 !  Calls : ERROR, FIND, OPSOMLIT_C, PARTIT_C, SOMFIX_C, 
@@ -26,7 +28,7 @@
 !***********************************************************************
 
       SUBROUTINE SoilCNPinit_C (CONTROL, ISWITCH, 
-     &  N_ELEMS, SOILPROP,                                !Input
+     &  N_ELEMS, SOILPROP, NH4Ini,NO3Ini,                  !Input  
      &  ACCCO2, ACCMNR, ADDMETABEFLAG, AMINRL, CEDAM,     !Output
      &  CES1, CES1M, CES1T, CES1X, CES2, CES21I, CES21M,  !Output
      &  CES21S, CES21T, CES21X, CES23LM, CES23LX, CES23M, !Output
@@ -85,7 +87,7 @@
      &    FRLRES, LIGC, METABC, RESC, SOM1C, SSOMC, STRUCC
 
       REAL, DIMENSION(1:NL) :: BD, DLAYR, DS, KG2PPM, S1S3, S2S3, 
-     &    SOM2C, SOM23C, SOM3C, TXS1, WRN, NH4I, NO3I, OC
+     &    SOM2C, SOM23C, SOM3C, TXS1, WRN, NH4I, NO3I, OC, NH4Ini,NO3Ini
 
       REAL, DIMENSION(NELEM) :: CEDAM, CESTR, FRDAE, TLITE
 
@@ -163,16 +165,23 @@
         IF (ICRID < 0.01) ICRID = 0.
         IF (ICRID < 0.01) ICRIP = 0.
 
-!       Read initial inorganic N for initialization of organic matter
-!       constituents.  
-        DO L = 1, NLAYR
-          LNUM = LNUM + 1
-          READ(LUNIO, 100, IOSTAT=ERRNUM) NH4I(L),NO3I(L)
-100       FORMAT (14X, 2 (1X, F5.1))
-          IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
-        ENDDO
-        CLOSE (LUNIO)
-
+        IF (ISWITCH % ISWNIT == 'N') THEN
+!         Arbitrary value - N not simulated
+          NH4I = 0.1
+          NO3I = 0.1
+        ELSE
+!!         Read initial inorganic N for initialization of organic matter
+!!         constituents.  
+!          DO L = 1, NLAYR
+!            LNUM = LNUM + 1
+!            READ(LUNIO, 100, IOSTAT=ERRNUM) NH4I(L),NO3I(L)
+!100         FORMAT (14X, 2 (1X, F5.1))
+!            IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY, ERRNUM, FILEIO, LNUM)
+!          ENDDO
+          NH4I = NH4Ini
+          NO3I = NO3Ini
+        ENDIF
+        
         IF (N_ELEMS > 0) THEN
           DO L=1,NLAYR
             AMINRL(L,N) = (NO3I(L) + NH4I(L)) / KG2PPM(L)
@@ -180,6 +189,7 @@
             AMINRL(L,P) = 0.0 !SPi_Labile(L)
           ENDDO 
         ENDIF  
+        CLOSE (LUNIO)
 
 !       ----------------------------------------------------------------
 !       Read the fixed (site- and crop-independent) parameters for the 

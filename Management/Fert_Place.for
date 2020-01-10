@@ -66,7 +66,7 @@ C=======================================================================
      &  LINC, LNUM, LUNIO, MULTI, NAPFER(NELEM), 
      &  NFERT, NLAYR, TIMDIF
       INTEGER YR, YRDIF, YRDNIT, YRDOY, YRPLT, YRSIM
-      INTEGER METFER
+      INTEGER METFER, DrpRefIdx
 
       INTEGER FDAY(NAPPL), FERTYP(NAPPL)
 
@@ -350,7 +350,7 @@ C           Convert character codes for fertilizer method into integer
      &        FERTYPE, FLOOD, METFER, NLAYR, YRDOY,       !Input
      &        ADDFUREA, ADDFNH4, ADDFNO3, ADDOXU, ADDOXH4,!I/O
      &        ADDOXN3, ADDSNH4, ADDSNO3, ADDUREA, ADDSPi, ADDSKi,!I/O
-     &        AppType, FERMIXPERC, FERTDAY, UNINCO)       !Output
+     &        AppType, DrpRefIdx, FERMIXPERC, FERTDAY, UNINCO)   !Output
             ENDIF
 
           ELSEIF (FDAY(I) > YRDOY) THEN
@@ -408,7 +408,7 @@ C           Convert character codes for fertilizer method into integer
      &        FERTYPE, FLOOD, METFER, NLAYR, YRDOY,       !Input
      &        ADDFUREA, ADDFNH4, ADDFNO3, ADDOXU, ADDOXH4,!I/O
      &        ADDOXN3, ADDSNH4, ADDSNO3, ADDUREA, ADDSPi, ADDSKi,!I/O
-     &        AppType, FERMIXPERC, FERTDAY, UNINCO)       !Output
+     &        AppType, DrpRefIdx, FERMIXPERC, FERTDAY, UNINCO)   !Output
             ENDIF
 
           ELSEIF (FDAY(I) > DAP) THEN
@@ -457,7 +457,7 @@ C           Convert character codes for fertilizer method into integer
      &        FERTYPE, FLOOD, METFER, NLAYR, YRDOY,       !Input
      &        ADDFUREA, ADDFNH4, ADDFNO3, ADDOXU, ADDOXH4,!I/O
      &        ADDOXN3, ADDSNH4, ADDSNO3, ADDUREA, ADDSPi, ADDSKi,!I/O
-     &        AppType, FERMIXPERC, FERTDAY, UNINCO)       !Output
+     &        AppType, DrpRefIdx, FERMIXPERC, FERTDAY, UNINCO)   !Output
           ENDIF
         ENDIF
       ENDIF
@@ -485,6 +485,7 @@ C-----------------------------------------------------------------------
 
       FertData % AMTFER  = AMTFER
       FertData % AppType = AppType
+      FertData % DrpRefIdx = DrpRefIdx
       FertData % FERTDAY = FERTDAY
       FertData % FERDEPTH= FERDEPTH
       FertData % FERTYPE = FERTYPE
@@ -513,10 +514,11 @@ C=======================================================================
      &    FERTYPE, FLOOD, METFER, NLAYR, YRDOY,           !Input
      &    ADDFUREA, ADDFNH4, ADDFNO3, ADDOXU, ADDOXH4,    !I/O
      &    ADDOXN3, ADDSNH4, ADDSNO3, ADDUREA, ADDSPi, ADDSKi,!I/O
-     &    AppType, FERMIXPERC, FERTDAY, UNINCO)           !Output
+     &    AppType, DrpRefIdx, FERMIXPERC, FERTDAY, UNINCO)   !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
+      USE ModuleData
       USE FloodModule
       IMPLICIT NONE
       SAVE
@@ -526,7 +528,7 @@ C=======================================================================
       CHARACTER*6, PARAMETER :: ERRKEY = 'FPLACE'
       CHARACTER*7  AppType
 
-      INTEGER FERTDAY, FERTYPE, I, K, IDLAYR, KMAX, L, NLAYR
+      INTEGER FERTDAY, FERTYPE, I, K, IDLAYR, KMAX, L, NLAYR, J
       INTEGER YRDOY
 
       REAL CUMDEP, FERDEPTH, FERNIT, FERPHOS, FERPOT
@@ -537,10 +539,12 @@ C=======================================================================
      &  ADDSNO3(NL), ADDUREA(NL), PROF(NL)
 
       LOGICAL UNINCO
-      INTEGER KD, METFER
+      INTEGER KD, METFER, DrpRefIdx
       REAL FME(10)    !Fertilizer mixing efficiency
       REAL ADDFUREA, ADDFNO3, ADDFNH4
       REAL FLOOD, ADDOXU, ADDOXH4, ADDOXN3
+      
+      TYPE (DripIrrType) DripIrrig(NDrpLn)
 
 !-----------------------------------------------------------------------
 !Fertilizer methods -- METFER
@@ -601,7 +605,7 @@ C     Need to make provision for USG as a source
       FERTDAY = YRDOY
 
       SELECT CASE (METFER)
-        CASE (1,3,5,11)
+        CASE (1,3,11)
 !         Surface placement
           KMAX = 1
           PROF(1) = 1.0
@@ -644,6 +648,13 @@ C     Need to make provision for USG as a source
             CALL WARNING(3, ERRKEY, MSG)
             KD = 2
           ENDIF
+          PROF(KD) = 1.0
+          KMAX     = KD
+          
+        CASE (5)
+!       This is applying with irrigation placement
+!       All fertilizer placed in layer KD with (PROF = 1.0)
+          KD = IDLAYR (NLAYR,DLAYR,FERDEPTH)
           PROF(KD) = 1.0
           KMAX     = KD
 
@@ -796,12 +807,30 @@ C     Need to make provision for USG as a source
           CASE DEFAULT;     FERMIXPERC = 0.
         END SELECT
 
+!       Meng (04/27/2018):
+!       Because fertilizer drip line could be separated from irrigation line,
+!       The handling below is not proper
+!       If there is drip irrigation today, and fertilizer is applied in
+!       irrigation water (AP005) then use AppType = 'DRIP   '
+        Call GET(DripIrrig)
+        
 !       Set the percentage of fertilizer that is applied to the root zone
 !       This is used in the soil inorganic phosphorus routine to compute
 !       P available for uptake by roots.
+        DrpRefIdx = -99
+        AppType = ' '
         SELECT CASE (METFER)
           CASE (3,4,18); AppType = 'BANDED '
-          CASE (7,8,9) ; AppType = 'HILL   '
+          CASE (5)
+            DO J = 1, NDrpLn
+              IF (DripIrrig(J)%DripDep .EQ. FERDEPTH .AND. DripIrrig(J)%IrrRate > 1.E-6) THEN
+                 AppType = 'DRIP   '
+                 DrpRefIdx = J
+                 exit
+              ENDIF
+            Enddo
+!          CASE (7,8,9) ; AppType = 'HILL   '
+          CASE (7,8,9,19,20); AppType = 'POINT  '
           CASE DEFAULT ; AppType = 'UNIFORM'
         END SELECT
 

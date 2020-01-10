@@ -390,9 +390,9 @@ C-----------------------------------------------------------------------
 !           Fraction of fertilizer to root zone
 
 !           ------------------------------------------------------
-            SELECT CASE (FertData % AppType)
+            SELECT CASE (TRIM(FertData % AppType))
 !           Fertilizer applied in bands or hills
-            CASE ('BANDED ','HILL   ')
+            CASE ('BANDED','HILL','POINT','DRIP')
               IF (FracRts(L) < 1.E-5) THEN
 !               Banded fertilizer is applied before root growth in this 
 !               layer.  Set initial minimum root zone for application.

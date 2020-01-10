@@ -13,6 +13,7 @@ C  02/21/2006 GH  Removed crop model selection
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2009 CHP IPSIM separate file.  
 !  02/11/2010 CHP Added checks for P model linked with crop models.
+!  08/15/2011 Add the case of MESEV = 'N'
 
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
@@ -298,14 +299,24 @@ C
 
          SELECT CASE(MESEV)
          CASE('R','r'); MESEV = 'R'
+         CASE('N','n'); MESEV = 'N'
          CASE DEFAULT;  MESEV = 'S'   !Default method -- use NEW
          END SELECT
 
          IF (MEEVP == 'Z' .AND. MEPHO /= 'L') CALL ERROR(ERRKEY,3,' ',0)
 
-         IF (MEHYD .EQ. ' ') THEN
-            MEHYD = 'R'
-         ENDIF
+         IF (INDEX('RGC',MEHYD) < 1) MEHYD = 'R'
+         SELECT CASE(MEHYD)
+         CASE ('G', 'C')
+           MESOL  = 'D'     !2D soil
+           ISWTIL = 'N'
+!           ISWNIT = 'N'
+           MEEVP  = 'R'
+         CASE ('R')
+           IF (INDEX('123',MESOL) < 1) THEN
+              MESOL = '2'
+           ENDIF
+         END SELECT
 
          IF (NSWITCH .LE. 0 .AND. ISWNIT .EQ. 'Y') THEN
            NSWITCH = 1
@@ -1281,11 +1292,24 @@ D     IPX = 23
 
             IF (INDEX('PG' ,MESOM) == 0) MESOM = ' '
             IF (INDEX('123',MESOL) == 0) MESOL = ' '
-            IF (INDEX('RS' ,MESEV) == 0) MESEV = ' '
+            IF (INDEX('RSN',MESEV) == 0) MESEV = ' '
             IF (INDEX('Z'  ,MEEVP)  > 0) MEPHO = 'L'
 !           IF (INDEX('ED' ,METMP) == 0) METMP = 'E' !3/27/2016
             IF (INDEX('ED' ,METMP) == 0) METMP = 'D' !7/21/2016
             IF (INDEX('01' ,MEGHG) == 0) MEGHG = '0'
+
+            IF (INDEX('RGC',MEHYD) == 0) MEHYD = ' '
+            SELECT CASE(MEHYD)
+            CASE ('G', 'C')
+              MESOL  = 'D'     !2D soil
+              ISWTIL = 'N'
+!              ISWNIT = 'N'
+              MEEVP  = 'R'
+            CASE ('R')
+              IF (INDEX('123',MESOL) < 1) THEN
+                 MESOL = '2'
+              ENDIF
+            END SELECT
 
 !         Fourth line of simulation controls
           CASE('@N MAN')

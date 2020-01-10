@@ -40,6 +40,7 @@ C-----------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE CELLS_2D
       IMPLICIT  NONE
       SAVE
 
@@ -48,16 +49,17 @@ C-----------------------------------------------------------------------
       CHARACTER*6, PARAMETER :: ERRKEY = "STEMP "
       CHARACTER*30 FILEIO
 
-      INTEGER DOY, DYNAMIC, I, L, NLAYR
+      INTEGER DOY, DYNAMIC, I, L, NLAYR, NLAYRi
       INTEGER RUN, YRDOY, YEAR
       INTEGER ERRNUM, FOUND, LNUM, LUNIO
 
-      REAL ABD, ALBEDO, ATOT, B, CUMDPT 
+      REAL ABD, ALBEDO, ATOT, B, CUMDPT, BEDHT 
       REAL DP, FX, HDAY, ICWD, PESW, MSALB, SRAD, SRFTEMP 
       REAL TAMP, TAV, TAVG, TBD, TMAX, XLAT, WW
       REAL TDL, TLL, TSW
       REAL TMA(5)
-      REAL, DIMENSION(NL) :: BD, DLAYR, DS, DUL, LL, ST, SW, SWI, DSMID
+      REAL, DIMENSION(NL) :: BD, DLAYR, DS, DSi, DSMID
+      REAL, DIMENSION(NL) :: DUL, LL, ST, SW, SWI
 
 !-----------------------------------------------------------------------
       TYPE (ControlType) CONTROL
@@ -111,6 +113,7 @@ C-----------------------------------------------------------------------
 !         (not yet done in WATBAL, so need to do here)
           OPEN (LUNIO, FILE = FILEIO, STATUS = 'OLD', IOSTAT=ERRNUM)
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,0)
+          REWIND (LUNIO)
           SECTION = '*INITI'
           CALL FIND(LUNIO, SECTION, LNUM, FOUND) 
           IF (FOUND .EQ. 0) CALL ERROR(SECTION, 42, FILEIO, LNUM)
@@ -119,17 +122,39 @@ C-----------------------------------------------------------------------
           READ(LUNIO,'(40X,F6.0)',IOSTAT=ERRNUM) ICWD ; LNUM = LNUM + 1
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
 
-          DO L = 1, NLAYR
-            READ(LUNIO,'(9X,F5.3)',IOSTAT=ERRNUM) SWI(L)
-            LNUM = LNUM + 1
-            IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
-            IF (SWI(L) .LT. LL(L)) SWI(L) = LL(L)
-          ENDDO
+!         Initial soil water content
+          SELECT CASE(ISWITCH%MEHYD)
+          CASE ('G','C')    !2D soils
+            DO L = 1, NL
+              READ(LUNIO,'(F8.0,F6.0)',IOSTAT=ERRNUM) DSi(L), SWI(L)
+              LNUM = LNUM + 1
+              IF (ERRNUM .NE. 0) EXIT
+            ENDDO
+            NLAYRi = L - 1
+            IF (BedDimension%RaisedBed) THEN
+              CALL BedLayerAdjust(SOILPROP, NLAYRi, DSi, SWI, BEDHT)
+            ENDIF
+            DO L = 1, SOILPROP%NLAYR
+!!             Set SW content in bed to DUL
+!              IF (DS(L) < BEDHT) SWI(L) = SOILPROP%DUL(L)
+              IF (SWI(L) < SOILPROP%LL(L)) SWI(L) = SOILPROP%LL(L)
+            ENDDO
+          
+          CASE DEFAULT  !1D soils 
+            DO L = 1, NLAYR
+              READ(LUNIO,'(9X,F5.3)',IOSTAT=ERRNUM) SWI(L)
+              LNUM = LNUM + 1
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEIO,LNUM)
+              IF (SWI(L) .LT. LL(L)) SWI(L) = LL(L)
+            ENDDO
+          END SELECT
 
           CLOSE (LUNIO)
         ELSE
           SWI = DUL
         ENDIF
+        
+        SW = SWI
 
         IF (XLAT .LT. 0.0) THEN
           HDAY =  20.0           !DOY (hottest) for southern hemisphere

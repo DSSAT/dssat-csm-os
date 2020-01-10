@@ -340,7 +340,7 @@ C-----------------------------------------------------------------------
         IF (ISWNIT .EQ. 'Y') THEN
           WRITE (NOUTPN,300) YEAR, DOY, DAS, DAP, (WTNCAN*10.0),
      &            (WTNSD*10.0), (WTNVEG*10.0), PCNGRN, PCNVEG,
-!     &            (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0),
+!     &            (WTNUP*10.0), (WTNLF*10.0), (WTNST*10.0),  !WTNUP in g/m2
      &            WTNUP, (WTNLF*10.0), (WTNST*10.0), !WTNUP in kg/ha
      &            PCNL, PCNST, PCNRT
      &    ,CUMSENSURFN, CUMSENSOILN     

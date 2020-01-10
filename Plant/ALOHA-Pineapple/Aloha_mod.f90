@@ -129,6 +129,7 @@
       CASE(2); EXIT   !End of section 
       END SELECT !ISECT
     ENDDO
+    CLOSE(LUNSPE)
 
     RETURN
 

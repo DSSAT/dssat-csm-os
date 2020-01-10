@@ -20,6 +20,8 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !  08/25/2006 CHP Add SALUS soil evaporation routine, triggered by new
 !                 FILEX parameter MESEV
 !  12/09/2008 CHP Remove METMP
+!  10/20/2009 CHP Soil water stress factors computed in SPAM to accomodate
+!                   2D, variable time step model.
 C-----------------------------------------------------------------------
 C  Called by: Main
 C  Calls:     XTRACT, OPSPAM    (File SPSUBS.for)
@@ -36,7 +38,7 @@ C=======================================================================
      &    SWDELTS, UH2O, WEATHER, WINF, XHLAI, XLAI,      !Input
      &    FLOODWAT, SWDELTU,                              !I/O
      &    EO, EOP, EOS, EP, ES, RWU, SRFTEMP, ST,         !Output
-     &    SWDELTX, TRWU, TRWUP, UPFLOW)                   !Output
+     &    SWDELTX, SWFAC, TRWU, TRWUP, TURFAC, UPFLOW)    !Output
 
 !-----------------------------------------------------------------------
       USE ModuleDefs 
@@ -61,6 +63,7 @@ C=======================================================================
       REAL EOS, EOP, WINF, MSALB, ET_ALB
       REAL XLAT, TAV, TAMP, SRFTEMP
       REAL EORATIO, KSEVAP, KTRANS
+      REAL RWUEP1, SWFAC, TURFAC
 
       REAL DLAYR(NL), DUL(NL), LL(NL), RLV(NL), RWU(NL),  
      &    SAT(NL), ST(NL), SW(NL), SW_AVAIL(NL), !SWAD(NL), 
@@ -158,6 +161,12 @@ C=======================================================================
       SWDELTX = 0.0
       TRWU = 0.0
 
+!     Soil water stress variables
+      SWFAC  = 1.0
+      TURFAC = 1.0
+
+      CALL GET('PLANT','RWUEP1',RWUEP1)
+
 !     ---------------------------------------------------------
       IF (meevp .NE.'Z') THEN   !LPM 02dec14 to use the values from ETPHOT
           SELECT CASE (METMP)
@@ -173,9 +182,17 @@ C=======================================================================
       ENDIF
 !     ---------------------------------------------------------
       IF (MEEVP .NE. 'Z') THEN
-        CALL ROOTWU(SEASINIT,
+        SELECT CASE (CONTROL % MESIC)
+        CASE ('H')
+          CALL ROOTWU_HR(SEASINIT,  
+     &      DLAYR, EOP, ES_LYR, LL, NLAYR, RLV,           !Input
+     &      SAT, SW, WEATHER,                             !Input
+     &      EP, RWU, SWDELTX, SWFAC, TRWU, TRWUP, TURFAC) !Output
+        CASE DEFAULT
+          CALL ROOTWU(SEASINIT,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
-     &      RWU, TRWUP)                           !Output
+     &      RWU, TRWUP)                                   !Output
+        END SELECT
 
 !       Initialize soil evaporation variables
         SELECT CASE (MESEV)
@@ -217,7 +234,7 @@ C=======================================================================
       IF (IDETW .EQ. 'Y') THEN
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
       ENDIF
 
@@ -271,11 +288,35 @@ C=======================================================================
         IF (MEEVP .NE. 'Z') THEN
 C       Calculate potential root water uptake rate for each soil layer
 C       and total potential water uptake rate.
+!          IF (XHLAI .GT. 0.0) THEN
+!            CALL ROOTWU(RATE,
+!     &          DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
+!     &          RWU, TRWUP)                           !Output
+!          ELSE
+!            RWU   = 0.0
+!            TRWUP = 0.0
+!          ENDIF
+
+!         Calculate potential root water uptake rate for each soil layer
+!         and total potential water uptake rate.
           IF (XHLAI .GT. 0.0) THEN
-            CALL ROOTWU(RATE,
+!           temp chp 8/10/2009
+!           use MESIC to trigger hourly ROOTWU_HR
+            SELECT CASE(CONTROL % MESIC)
+            CASE ('H')
+              CALL ROOTWU_HR(RATE,  
+     &         DLAYR, EOP, ES_LYR, LL, NLAYR, RLV,        !Input
+     &         SAT, SW, WEATHER,                          !Input
+     &         EP, RWU, SWDELTX, SWFAC, TRWU, TRWUP, TURFAC) !Output
+
+            CASE DEFAULT
+              CALL ROOTWU(RATE,
      &          DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
-     &          RWU, TRWUP)                           !Output
-          ELSE
+     &          RWU, TRWUP)   
+
+              CALL WaterStress(EOP, RWUEP1, TRWUP, SWFAC, TURFAC)
+            END SELECT
+         ELSE
             RWU   = 0.0
             TRWUP = 0.0
           ENDIF
@@ -423,6 +464,10 @@ C       and total potential water uptake rate.
      &    WEATHER, XLAI,                                 !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
           EVAP = ES  !CHP / BK 7/13/2017
+
+          IF (MEEVP == 'Z') THEN
+            CALL WaterStress(EOP, RWUEP1, TRWUP, SWFAC, TURFAC) 
+          ENDIF
         ENDIF
 
 !-----------------------------------------------------------------------
@@ -440,11 +485,14 @@ C       and total potential water uptake rate.
             ENDDO
           END SELECT
 
-!         Calculate actual soil water uptake and transpiration rates
-          CALL XTRACT(
+          IF (control % MESIC .NE. 'H') THEN
+!           For hourly RWU, already scaled by EP
+!           Calculate actual soil water uptake and transpiration rates
+            CALL XTRACT(
      &      NLAYR, DLAYR, LL, SW, SW_AVAIL, TRWUP, UH2O,  !Input
      &      EP, RWU,                                      !Input/Output
      &      SWDELTX, TRWU)                                !Output
+          ENDIF
         ENDIF   !ISWWAT = 'Y'
       ENDIF
 
@@ -460,6 +508,7 @@ C       and total potential water uptake rate.
       CALL PUT('SPAM', 'ES',  ES)
       CALL PUT('SPAM', 'EOP', EOP)
       CALL PUT('SPAM', 'EVAP',EVAP)
+      CALL PUT('SPAM', 'UH2O',RWU)
 
 !***********************************************************************
 !***********************************************************************
@@ -487,7 +536,7 @@ C KB
       IF (IDETW .EQ. 'Y') THEN
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
       ENDIF
 
@@ -538,7 +587,7 @@ C-----------------------------------------------------------------------
 !
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
       IF (CROP .NE. 'FA' .AND. MEPHO .EQ. 'L') THEN
@@ -558,7 +607,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
      &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
-     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
+     &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, TRWUP, SRAD,
      &    ES_LYR, SOILPROP)
 
 !     ---------------------------------------------------------

@@ -60,11 +60,12 @@ C=======================================================================
       SUBROUTINE IPEXP (MODEL,RUN,RNMODE,FILEX,PATHEX,FILEX_P, FILECTL,
      &           SLNO,NYRS,VARNO, 
      &           CROP,WMODI,FROP,TRTN,EXPP,EXPN,TITLET,TRTALL,
-     &           TRTNUM,ROTNUM, IIRV,FTYPEN,CHEXTR,
+     &           TRTNUM,ROTNUM, FTYPEN,CHEXTR,
      &           NFORC,PLTFOR,NDOF,PMTYPE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           CONTROL, ISWITCH, UseSimCtr, MODELARG)
+     &           CONTROL, ISWITCH, UseSimCtr, MODELARG, 
+     &           BEDHT, BEDWD, DripLN, DripSpc, DripOfset, DripDep)
 
       USE ModuleDefs
       USE ModuleData    
@@ -96,11 +97,12 @@ C=======================================================================
       INTEGER LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,LNCHE,LNCU
       INTEGER LNHAR,LNENV,LNTIL,LNSIM,LINEXP
       INTEGER NYRS,FROP,EXPN,EXPP,TRTN,ERRNUM,IFIND,FTYPEN
-      INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
+      INTEGER PATHL,RUN,ISIM,TRTALL   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
       INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
       REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+      REAL    BEDHT, BEDWD, DripLN(NDrpLn), DripSpc(NDrpLn), DripOfset(NDrpLn), DripDep(NDrpLn)
 
       LOGICAL FEXIST, UseSimCtr, SimLevel
 
@@ -559,8 +561,8 @@ C-----------------------------------------------------------------------
       IF (INDEX('FQ',RNMODE) .LE. 0 .OR. RUN == 1) THEN
 
         CALL IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,
-     &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur)
+     &     SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,BEDHT, BEDWD,
+     &     XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDur, PMALB)
 
 C-----------------------------------------------------------------------
 C     Select soil profile input file
@@ -773,8 +775,9 @@ C-----------------------------------------------------------------------
 C     Call IPIRR
 C-----------------------------------------------------------------------
       CALL IPIRR (LUNEXP,FILEX,LNIR,YRSIM,ISWWAT,
-     &     NIRR,EFFIRX,DSOILX,THETCX,IEPTX,IOFFX,IAMEX,LNSIM,
-     &     NAPW,TOTAPW,AIRAMX,IDLAPL,IRRCOD,AMT,IIRV,IIRRI)
+     &     NIRR,NDPLNO,EFFIRX,DSOILX,THETCX,IEPTX,IOFFX,IAMEX,LNSIM,
+     &     NAPW,TOTAPW,AIRAMX,IDLAPL,IRRCOD,AMT,IIRV,IIRRI,
+     &     MEHYD, IRRSCHED, DripLN, DripSpc, DripOfset, DripDep)
 
 C-----------------------------------------------------------------------
 C     Call IPFERT
@@ -1029,8 +1032,8 @@ C  HDLAY  :
 C=======================================================================
 
       SUBROUTINE IPFLD (LUNEXP,FILEX,LNFLD,FLDNAM,WSTA,WSTA1,SLNO,
-     &           SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP,
-     &           XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDUR)
+     &        SLTX,FLST,SLOPE,DFDRN,FLDD,SFDRN,FLOB,SLDP, BEDHT, BEDWD,
+     &        XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS,FldHist, FHDUR, PMALB)
 
       IMPLICIT NONE
 
@@ -1041,11 +1044,12 @@ C=======================================================================
       CHARACTER*8  FLDNAM
       CHARACTER*10 SLNO
       CHARACTER*12 FILEX
-      CHARACTER*92 CHARTEST
+      CHARACTER*78 MSG(2)
+      CHARACTER*100 CHARTEST
 
       INTEGER LUNEXP,LNFLD,LN,LINEXP,ISECT,IFIND,ERRNUM,I, FHDUR
 
-      REAL    FLDD,SFDRN,FLOB,SLDP,SLOPE
+      REAL    FLDD,SFDRN,FLOB,SLDP,SLOPE, PMALB, BEDHT, BEDWD
       REAL    XCRD,YCRD,ELEV,AREA,SLEN,FLWR,SLAS
 
       PARAMETER (ERRKEY='IPFLD ')
@@ -1084,7 +1088,8 @@ C=======================================================================
       IF (SFDRN .LE. 0.0) THEN
         SFDRN = 100.
       ENDIF
-
+      Write(msg(1),'("Plastic mulch cover albedo =",F7.2)') PMALB 
+      call info(1,errkey,msg)
 C
 C    New section
 C
@@ -1106,9 +1111,35 @@ C
       IF (AREA .LE. 0.0) AREA = 1.0
       IF (FLWR .LE. 0.0) FLWR = 1.0
       IF (SLEN .LE. 0.0) SLEN = SQRT(AREA*FLWR*10000.0)
+      IF (SLEN > 9999.) SLEN = 100.
 
 C
 C    End New section
+
+C
+C    New section (3rd)
+C
+C    Find header and read second line of field information
+C
+      HFNDCH='BDWD'
+      CALL HFIND(LUNEXP,HFNDCH,LINEXP,IFIND)
+      IF (IFIND .EQ. 1) THEN
+ 71     CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
+        IF (ISECT .EQ. 1) THEN
+           READ (CHARTEST,90,IOSTAT=ERRNUM) LN,
+     &                BEDWD,BEDHT,PMALB
+           IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+         ELSE
+           CALL ERROR (ERRKEY,2,FILEX,LINEXP)
+         ENDIF
+         IF (LN .NE. LNFLD) GO TO 71
+      ENDIF
+      IF (BEDWD .LE. 0.0) BEDWD = -99
+      IF (BEDHT .LE. 0.0) BEDHT = -99
+      IF (PMALB .LE. 0.0) PMALB = -99
+
+C
+C    End New section (3rd)
 
       REWIND(LUNEXP)
 
@@ -1120,9 +1151,12 @@ C-----------------------------------------------------------------------
 
  60   FORMAT (I3,A8,1X,2A4,1X,F5.0,1X,F5.0,1X,A5,2(1X,F5.0),
      &         2(1X,A5),1X,F5.0,1X,A10)
+!     &         2(1X,A5),1X,F5.0,1X,A10,2(1x,F5.1), F6.2)
+ !    &         2(1X,A5),1X,F5.0,1X,A10)
 !     chp 7/26/2006
 ! 80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0))
  80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0),1X,A5,I6)
+ 90   FORMAT (I3,2F6.0, F6.2)
 
       END SUBROUTINE IPFLD
 

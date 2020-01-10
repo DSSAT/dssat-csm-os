@@ -195,8 +195,8 @@ C  Calls:     None
      &        PCNL,SHELPC,HIP, NINT(PODWTD*10.),
      &        NINT((PODWTD+PODWT)*10.),SLA,CANHT,CANWH, (RTDEP/100.)
  400        FORMAT (1X,I4,1X,I3.3,2(1X,I5),1X,F6.1,1X,I6,1X,F6.2,
-     &        7(1X,I6),1X,F6.1,1X,F6.3,2(1X,I6),7(1X,F6.3),3(1X,F6.2),
-     &        2(1X,I6),1X,F8.1,2(1X,F6.2),1X,F6.2)
+     &        7(1X,I6),1X,F6.1,1X,F6.3,2(1X,I6),7(1X,F6.3),2(1X,F6.2),
+     &        2(1X,I6),1X,F6.2,1X,F8.1,2(1X,F6.2),1X,F6.2)
 
             WRITE(NOUTDG,402,ADVANCE='NO')(RLV(I),I=1,N_LYR)
  402          FORMAT (10F8.2)
