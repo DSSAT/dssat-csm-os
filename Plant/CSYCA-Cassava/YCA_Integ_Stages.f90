@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_Stages ( &
-        BRSTAGE     , CO2         , DAYL        , DOY         , EP          , ET          , NFP         , TMAX        , &
+        BRSTAGE     , CO2         , DAYL        , DOY         , EP          , ET          , NFP         , TMAX        , & 
         TMIN        , RAIN        , SRAD        , STGYEARDOY   & 
         )
         
@@ -19,8 +19,8 @@
         INTEGER DOY         , STGYEARDOY(0:19) 
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
-        REAL    BRSTAGE     , CO2         , DAYL        , EP          , ET          , NFP         , RAIN        , SRAD          
-        REAL    TMAX        , TMIN        
+        REAL    BRSTAGE     , CO2         , DAYL        , EP          , ET          , NFP                         
+        REAL    RAIN        , SRAD        , TMAX        , TMIN         
        
         !-----------------------------------------------------------------------
         !         Update stages
@@ -58,7 +58,6 @@
             GEDAYSE = GEDAYSE + 1
             TMEANE = TMEANEC/GEDAYSE
         ENDIF
-        
         ! STAGES:Overall development
         IF (DAG>=0) THEN !LPM 10JUL2017 To avoid accumulation of developmental units for branching before germination
             CUMDU = CUMDU + DU
@@ -80,7 +79,7 @@
             ENDIF
         ELSE
             IF (PD(INT(BRSTAGE)) >= 0.0) THEN                                                          ! MSTG = KEYPSNUM
-                TVR1 = FLOAT(INT(BRSTAGE)) + (CUMDU-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE)+1)              ! EQN 004
+                TVR1 = FLOAT(INT(BRSTAGE)) + (DABR-PSTART(INT(BRSTAGE)))/PD(INT(BRSTAGE)+1)              ! EQN 004 !LPM 17JUL19 use DABR instead of CUMDU 
             ELSE
                 TVR1 = FLOAT(INT(BRSTAGE))
             ENDIF        
@@ -158,7 +157,7 @@
         !-----------------------------------------------------------------------
         
         !IF (INT(BRSTAGE) > 10 .OR. INT(BRSTAGE) < 0.AND.GESTAGE > 0.5) THEN !LPM 21MAR2016 To separate germination and emergence
-        IF (INT(BRSTAGE) > 10 .OR. INT(BRSTAGE) < 0.AND.GESTAGE > 1.0) THEN
+        IF (INT(BRSTAGE) > PSX .OR. INT(BRSTAGE) < 0.AND.GESTAGE > 1.0) THEN !LP 23JUL19 to use PSX instead of 10
             OPEN (UNIT = FNUMERR,FILE = 'ERROR.OUT')
             WRITE(fnumerr,*) ' '
             WRITE(fnumerr,*) 'Brstage out of range allowed for branching        '

@@ -635,7 +635,7 @@ C
                CALL ERROR (ERRKEY,12,FILEX,LINEXP)
             ENDIF
             READ (IFTYPE(NFERT)(3:5),'(I3)',IOSTAT=ERRNUM) IFFTYP
-            IF (IFFTYP .LT. 1 .OR. IFFTYP .GE. 60 .OR.
+            IF (IFFTYP .LT. 1 .OR. IFFTYP .GE. 999 .OR.
      &          ERRNUM .NE. 0) THEN
                CALL ERROR (ERRKEY,14,FILEX,LINEXP)
             ENDIF

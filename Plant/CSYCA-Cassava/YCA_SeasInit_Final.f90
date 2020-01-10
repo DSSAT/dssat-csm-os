@@ -201,6 +201,7 @@
             WRITE(fnumwrk,*)'  Ppthr  ',Ppthr   
             WRITE(fnumwrk,*)'  Pps1   ',Dayls(1)
             WRITE(fnumwrk,*)'  Pps2   ',Dayls(2)
+            WRITE(fnumwrk,*)'  Pps3   ',Dayls(3)
             !WRITE(fnumwrk,*)'  Mstg   ',Mstg    !LPM 07MAR15 There is not a maturity stage for cassava
             !DO L = 1,MSTG                      !LPM 07MAR15 MSTG to PSX
             DO L = 0,PSX
@@ -208,7 +209,7 @@
             ENDDO  
             WRITE(fnumwrk,*)' Plant. stick stages '
             WRITE(fnumwrk,*)' CH2O reserves '
-            WRITE(fnumwrk,*)'  Rsfrs  ',rsfrs
+            !WRITE(fnumwrk,*)'  Rsfrs  ',rsfrs !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
             WRITE(fnumwrk,*)'  Rspco  ',rspco
             WRITE(fnumwrk,*)' Radiation use  '
             WRITE(fnumwrk,*)'  Parue  ',Parue

@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 7)
 SET(MODEL 5)
-SET(BUILD 12)
+SET(BUILD 14)
 
 # Get the current working branch
 execute_process(
@@ -178,6 +178,7 @@ set(
         "Management/AUTHAR.for"
         "Management/AUTPLT.for"
         "Management/CHEMICAL.for"
+        "Management/FertType_mod.for"
         "Management/Fert_Place.for"
         "Management/Flood_Irrig.for"
         "Management/IRRIG.for"

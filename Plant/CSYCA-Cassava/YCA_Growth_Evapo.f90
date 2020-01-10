@@ -179,13 +179,13 @@
             ENDIF
           ENDIF
           IF (ISWWATCROP == 'N') WFGE = 1.0
-          
+
 !-----------------------------------------------------------------------
 !         Calculate thermal time
 !-----------------------------------------------------------------------
 
           Tfd = TFAC4(trdv1,tmean,TT)
-          IF (brstage+1.0 < 10.0) &
+          IF (brstage+1.0 < PSX) & !LPM 23JUL19 set as limit PSX instead of 10
            Tfdnext = TFAC4(trdv2,tmean,TTNEXT)
           IF (trgem(3) > 0.0) THEN
             Tfgem = TFAC4(trgem,ST(LSEED),TTGEM)
@@ -198,7 +198,8 @@
           !  Ttlflife = Phints   
           !ELSE  
           !  !Tflflife = TFAC4(trdv1,tmean,TTlflife) 
-            Tflfgrowth = calculateTemperatureFactor(trdv3,tmean,TTlfgrowth)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
+          !LPM 09OCT2019 Remove TFLfgrowth because it is the same than TFG  
+          !Tflfgrowth = calculateTemperatureFactor(trdv3,tmean,TTlfgrowth)                         ! LPM 18MAR15 modified trdv1 to trdv3 to consider the cardinal temperatures for leaf development
             Tflfsize = TFAC4(trdv4,tmean,TTlfsize)                         ! LPM 18MAR15 modified trdv1 to trdv4 to consider different optimum temperature for leaf size
             Tflflife = calculateTemperatureFactor(trlfl,tmean,TTlflife)              !LPM 14SEP2017 Added new cardinal temperatures for leaf life and other for leaf growth (trdv3 or trlfg)
             !ENDIF  

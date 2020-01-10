@@ -94,12 +94,13 @@
                     RAW = RAW + (SWP(L)*DLAYRTMP(L)*RLV(L))
                     TRLV = TRLV + (RLV(L)*DLAYRTMP(L))
                 ENDDO
-                IF (EMRGFR >= 1.0) THEN
+                !IF (EMRGFR >= 1.0) THEN !LPM 03OCT2019 WFG applied after germination, no emergence
                     IF (TRLV > 0.0) THEN
                         RAW = RAW/(TRLV)
                     ELSE
                         !RAW = 0.0 !LPM 11JUL2017 to avoid RAW of 0 with the roots just start to growth at planting
-                        RAW = SWP(LSEED)
+                        !LPM 02OCT2019 use the water stress factor for germination when the roots just start growing
+                        RAW = SWP(LSEED)/WFGEM
                     ENDIF
                     !Linear decrease according SWP
                     IF (WFGU-WFGL > 0.0) &
@@ -122,7 +123,7 @@
                         WFG = 1.0
                         WFP = 1.0
                     ENDIF
-                ENDIF
+                !ENDIF
             ENDIF
 
             

@@ -343,6 +343,7 @@ C-----------------------------------------------------------------------
 !         Need to calculate end of season PESW always (regardless of IDETL)
           IF (ISWWAT .EQ. 'Y') THEN
             CALL SUMSW(NLAYR, DLAYR, SW, TSW)
+            CALL SUMSW(NLAYR, DLAYR, LL, TLL)
             PESW = MAX(0.0, TSW - TLL) / 10.
           ELSE
             PESW = 0.0
