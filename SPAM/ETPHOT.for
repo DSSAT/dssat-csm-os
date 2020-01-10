@@ -430,6 +430,8 @@ C       and sum for day (TS=24 for hourly).
 
 !       Conpute index for mid-day time step added by Bruce Kimball on 9JAN17
         TSV2 = INT(TS/2)
+        
+C     ********** Start of Hourly Loop ***********       
         DO H=1,TS
 
 C         Calculate real and solar time.
@@ -526,7 +528,20 @@ C         and mm/d).
             DO I=1,3
               TSRF(I) = TSRF(I) + TSURF(I,1)
             ENDDO
+
+            IF(LAISL + LAISH .LE. 0.0) THEN
+                TGRO(H) = TAIRHR(H)
+            ELSE
+C         TGRO stuff added by BAK on 10Jan20  
+            TGRO(H)=(TSURF(1,1)*LAISL + TSURF(2,1)*LAISH)
+     &                /(LAISL + LAISH)
+            ENDIF     
+             
+         
             TCANAV = TCANAV + TCAN(H)
+            TGROAV = TGROAV + TGRO(H)
+            
+            IF(DAYTIM) TGRODY = TGRODY + TGRO(H)
             IF (DAYTIM) TCANDY = TCANDY + TCAN(H)
           ENDIF
 
@@ -662,8 +677,9 @@ C next 3 lines added by BAK on 10DEC2015
                 SHEATT(I)=SHEAT(I,1)
                 RNETT(I)=RNET(I,1)
                 ENDDO
-          ENDIF
-        ENDDO !DO H=1,T
+            ENDIF
+      
+        ENDDO !DO H=1,TS   **** End of hourly loop *****
 
 
 C       Assign daily values.
@@ -688,20 +704,18 @@ C       Assign daily values.
           ENDDO
           TCANAV = TCANAV / TS
           TCANDY = TCANDY / NHOUR
-          TGRODY = TCANDY
-          TGROAV = TCANAV
-          DO  I=1,TS
-            TGRO(I) = TCAN(I)
-          ENDDO
+C            TGRO stuff added on 10Jan20 by BAK
+          TGROAV = TGROAV/TS          
+          TGRODY = TGRODY/NHOUR
 
 CSVC - save vars at ETPhot.OUT
 C       If the method to compute ET is energy balance, then
 C       grow the plants at canopy temperature. Else grow them
 C       at air temperature (TGRO initialized to TA in HMET.)
 C       IF added by Bruce Kimball on 9MAR15
-        WEATHER % TGROAV = TCANAV
-        WEATHER % TGRO   = TCAN
-        WEATHER % TGRODY = TCANDY
+         WEATHER % TGROAV = TGROAV
+         WEATHER % TGRO   = TGRO
+         WEATHER % TGRODY = TGRODY
 
 C           Save noon and midnight growth and air temperatures
 C           add by Bruce Kimball on 9MAR15
@@ -850,15 +864,16 @@ C       If the method to compute ET is energy balance, then
 C       grow the plants at canopy temperature. Else grow them
 C       at air temperature (TGRO initialized to TA in HMET.)
 C       IF added by Bruce Kimball on 9MAR15
-      IF(MEEVP .EQ. 'Z') THEN
-        WEATHER % TGROAV = TCANAV
-        WEATHER % TGRO   = TCAN
-        WEATHER % TGRODY = TCANDY
-        ELSE
+C       Removed IF Z on 10Jan20
+C      IF(MEEVP .EQ. 'Z') THEN
+C        WEATHER % TGROAV = TCANAV
+C        WEATHER % TGRO   = TCAN
+C        WEATHER % TGRODY = TCANDY
+C        ELSE
         WEATHER % TGROAV = TGROAV   !I/O
         WEATHER % TGRO   = TGRO     !I/O
         WEATHER % TGRODY = TGRODY
-        ENDIF
+C        ENDIF
 
       RETURN
       END SUBROUTINE ETPHOT
