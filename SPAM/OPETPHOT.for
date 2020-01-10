@@ -124,12 +124,12 @@ CSVC
 CSVC     &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV')
      &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV',
 CSVC     &   '   DAYG   DAYLH  LMLN   DAYSH  DAYRN')
-     &   '   DAYG  DAYLH  DAYSH  DAYRN')
+     &   '   DAYG  DAYLH  DAYSH  DAYRN',
 CSVC
 C
 C   Commented out extra variables on 12Jul17 for
 C     "publication purposes. Bruce Kimball
-C     &   '    ENN    TNN    ETn   WDNN   TCNN   CSHn',
+     &   '    ENN    TNN    ETn   WDNN   TCNN   CSHn')
 C     &   '   CSLn   LSHn   LSLn   ETnt   TEMt   Enit',
 C     &   '   Tnit   WINn   TCnt  TSR1t  TSR2t  TSR3t',
 C     &   '  TSR1n  TSR2n  TSR3n   CSHt   CSLt   LSHt',
@@ -169,9 +169,9 @@ C-----------------------------------------------------------------------
 CSVC     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TS/2), TGROAV
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TS/2), TGROAV,
 CSVC     & DAYG,DAYLH,DAYSH,DAYRN
-     & DAYG,DAYLH,DAYSH,DAYRN
+     & DAYG,DAYLH,DAYSH,DAYRN,
 CSVC
-C     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn,
+     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn
 C     &    CSLnn, LSHnn, LSLnn, ETnit, TEMnit, Enit,
 C     &    Tnit, WINnit, TCnit, TSRnit, TSRFN, CSHnit,
 C     &    CSLnit, LSHnit, LSLnit, GN, LHN, LHEATN,
@@ -189,9 +189,9 @@ C       preveious line added by BAK on 10DEC2015
 CSVC     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
      &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,
 CSVC     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
-     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
+     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,
 CSVC
-C     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.1,1X,F6.1,
+     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.1,1X,F6.1)
 C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
 C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
 C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,

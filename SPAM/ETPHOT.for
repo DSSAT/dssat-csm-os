@@ -37,9 +37,6 @@ C  06/11/2002 GH  Modified for Y2K
 !  10/24/2005 CHP Put weather variables in constructed variable.
 !                 Removed GETPUT_Weather subroutine.
 !  01/11/2007 CHP Changed GETPUT calls to GET and PUT
-!  01/10/2019 CHP Remove KRT changes introduced with pull request #201
-!                 These cause major differences in some CROPGRO experiments
-!                 Roll back for now, need to investigate!
 C-----------------------------------------------------------------------
 C  Called from: SPAM
 C  Calls:       ETIND,ETINP,PGINP,PGIND,RADABS,ETPHR,ROOTWU,SOIL05,SWFACS
@@ -88,7 +85,7 @@ C-----------------------------------------------------------------------
      &  XLAI, TSHRn(NL),
      &  XLMAXT(6),XSW(NL,3),YLMAXT(6),YSCOND(NL,3),YSHCAP(NL,3),TMIN
 CSVC	REAL DAYG,DAYLH,DAYSH,DAYRN
-	     REAL DAYG,DAYLH,DAYSH,DAYRN
+	     REAL DAYG,DAYLH,DAYSH,DAYRN,TCAN1
 CSVC
       REAL SAT(NL),TGRO(TS),TGROAV,TGRODY,TAV,TAMP
       REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR
@@ -284,12 +281,11 @@ CSVC
                TSRF(I) = TA
                TSRFN(I) = TA
             ENDDO
+            SRFTEMP = TSRFN(3)    !LPM 04DEC14 to include the surface temperature as output
 
-!           LPM 04DEC14 to include the surface temperature as output
-            SRFTEMP = TSRFN(3)    
           IF (MEEVP .EQ. 'Z')   !CSVC
      & CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST, TAV, TAMP)
-          
+
           CALL ROOTWU(SEASINIT,YRDOY,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
      &      RWU,  TRWUP)                           !Output
@@ -312,6 +308,7 @@ CSVC
 
         IF (MEPHO .EQ. 'L') THEN
 
+CSVC_output_problem        print*,'DYNAMIC .EQ. SEASINIT ', DAS
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
@@ -341,13 +338,15 @@ CSVC
      & ACCESS='SEQUENTIAL', STATUS='UNKNOWN')
        OPEN(882,FILE='DAILY_ROOTWU.OUT',
      &  STATUS='UNKNOWN')
+       OPEN(883,FILE='An_Gs_CI.OUT',
+     &  STATUS='UNKNOWN')
 
 
       IF(DAS.eq.0 .and. MEEVP.EQ.'Z'.and.TRTNUM.eq.1) THEN
         WRITE (880, *)
-     & 'TRTNUM;YRDOY;INT(HS);RADHR;RNET;RNET1;RNET2;RNET3;',
+     & 'TRTNUM;YRDOY;INT(HS);LAI;RADHR;RNET;RNET1;RNET2;RNET3;',
      & 'LH;LHEAT1;LHEAT2;LHEAT3;SH;SHEAT1;SHEAT2;SHEAT3;G',
-     &  ';TAIRHR;TCAN;TSURF1;TSURF2;TSURF3;TSHR1;TSHR2;WINDHR'
+     &  ';TAIRHR;TCAN;TCAN1;TSURF1;TSURF2;TSURF3;TSHR1;TSHR2;WINDHR;PG'
 
         WRITE (881, *)
      & 'TRTNUM;TIMED;YRDOY;H;DLAYR0;DLAYR1;DLAYR2;',
@@ -356,6 +355,10 @@ CSVC
      & 'DLAY13;TSURF;TSHR1;TSHR2;TSHR3;',
      & 'TSHR4;TSHR5;TSHR6;TSHR7;TSHR8;TSHR9;TSHR10;TSHR11;',
      & 'TSHR12;TBOT'
+
+           WRITE (883, *)
+     & 'CO2HR;CINT;CINT/CO2HR;PNLF;CCO2LF,VPD;VPDEF'
+
        ENDIF
 CSVC
 C***********************************************************************
@@ -493,7 +496,7 @@ C  KJB and SPSUM hourly.
      &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XLAI,        !Input
      &      XLMAXT, YLMAXT, XSW,YSCOND,YSHCAP,            !Input (CSV CXSW,YSCOND,YSHCAP)
      &      AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,  !Output
-     &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H), THR, TSHR, !Output
+     &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H),TCAN1, THR, TSHR, !Output
      &      TSURF,                                        !Output
      &      CONDSH, CONDSL, RA, RB, RSURF, Rnet,          !Output
      &      G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,    !Output
@@ -542,13 +545,13 @@ CSVC--------------------------
      & (RNET(1,1)+RNET(2,1)+RNET(3,1))*0.0036
 
        if(MEEVP .EQ. 'Z') then
-          WRITE (880, 3010)TRTNUM,YRDOY,INT(HS),RADHR(H),
+          WRITE (880, 3010)TRTNUM,YRDOY,INT(HS),LAISL+LAISH,RADHR(H),
      & (RNET(1,1)+RNET(2,1)+RNET(3,1)),RNET(1,1),RNET(2,1),RNET(3,1),
      & LH,LHEAT(1,1),LHEAT(2,1),LHEAT(3,1),
      & SH,SHEAT(1,1),SHEAT(2,1),SHEAT(3,1),G,
-     & TAIRHR(H),TCAN(H),TSURF(1,1),TSURF(2,1),TSURF(3,1),
-     & TSHR(1),TSHR(2),WINDHR(H)
-3010      FORMAT (I2,';',I7,';', I7, 22(';', F6.1))
+     & TAIRHR(H),TCAN(H),TCAN1,TSURF(1,1),TSURF(2,1),TSURF(3,1),
+     & TSHR(1),TSHR(2),WINDHR(H),PGHR * 0.044
+3010      FORMAT (I2,';',I7,';', I7, 25(';', F6.1))
        ENDIF
 
 CSVC -------------------------
@@ -590,16 +593,14 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               DO I=1,3
                 TSRFN(I) = TSURF(I,1)
               ENDDO
-!             LPM 04DEC14 to include the surface temperature as output
-              SRFTEMP = TSRFN(3)           
+              SRFTEMP = TSRFN(3)           !LPM 04DEC14 to include the surface temperature as output
               DO I=1,NLAYR
                   TSHRn(I) = TSHR(I)
               ENDDO
               CALL SOIL05NOT(
      &          TSHRn,0,NLAYR,                                  !Input
      &          STn)                                           !Output
-!             LPM 04DEC14 to include the temperature as output (OPSTEMP)
-              ST = STn           
+              ST = STn           !LPM 04DEC14 to include the temperature as output (OPSTEMP)
 C       The following 8 variales added by Bruce Kimball on 1Dec2014
               Enoon = EHR
               Tnoon = THR
@@ -626,9 +627,9 @@ C     Next 3 lines added by BAK on 10DEC2015
                 ENDDO
 
             ENDIF
-!            Print soil temperature data in STEMP.OUT
-!            CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
-!            BAK 8Jun15 above line commented out because soil output seems to be called too much
+            !     Print soil temperature data in STEMP.OUT
+            !CALL OPSTEMP(CONTROL, ISWITCH, DOY, SRFTEMP, ST)
+            ! BAK 8Jun15 above line commented out because soil output seems to be called too much
           ENDIF
 
 C       Remember midnight values
@@ -692,6 +693,15 @@ C       Assign daily values.
           DO  I=1,TS
             TGRO(I) = TCAN(I)
           ENDDO
+
+CSVC - save vars at ETPhot.OUT
+C       If the method to compute ET is energy balance, then
+C       grow the plants at canopy temperature. Else grow them
+C       at air temperature (TGRO initialized to TA in HMET.)
+C       IF added by Bruce Kimball on 9MAR15
+        WEATHER % TGROAV = TCANAV
+        WEATHER % TGRO   = TCAN
+        WEATHER % TGRODY = TCANDY
 
 C           Save noon and midnight growth and air temperatures
 C           add by Bruce Kimball on 9MAR15
@@ -764,6 +774,7 @@ C         Post-processing for some stress effects (duplicated in PHOTO).
           ENDIF
           PG = PG * EXCESS
 
+CSVC_output_problem       print*,'DYNAMIC.EQ.RATE  ',DAS,TGRO(TS/2)
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
@@ -791,6 +802,8 @@ CSVC
       ELSEIF (DYNAMIC .EQ. SEASEND .OR. DYNAMIC .EQ. OUTPUT) THEN
 !-----------------------------------------------------------------------
         IF (MEPHO .EQ. 'L') THEN
+
+CSVC_output_problem      print*,'DYNAMIC .EQ. SEASEND',DAS,TGRO(TS/2)
 
                 CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
@@ -1779,18 +1792,8 @@ C     Calculate sunlit and shaded leaf area indices.
       ELSE
         LAISL = 0.01 !CSVC ADD 07/13/2018 - CHANGE FROM 0.02 TO 0.01
       ENDIF
-
       LAISH = XLAI - LAISL
       LAISH = MAX(LAISH,0.001) !CSVC 07/13/2018 - CHECK TO PREVENT NEGATIVE LAISH
-
-C-KRT*******************************
-C-KRT  LAISH = XLAI - LAISL
-!-CHP  LAISH = MAX(0.02,XLAI - LAISL)
-!       LAISH = XLAI - LAISL
-!       IF (LAISH < 1.E-6) THEN
-!         LAISH = 1.E-6
-!       ENDIF 
-C-KRT*******************************
       RETURN
       END SUBROUTINE LFEXTN
 
@@ -1860,14 +1863,9 @@ C     (ADDR) and diffuse/scattered (ADDF) components of the direct beam.
         ELSE
           ADDR = 0.0
         ENDIF
-C-KRT****************************
-C-KRT   ADDF = ADIR - ADDR
-!-CHP   ADDF = MAX(0.0,ADIR-ADDR)
+
         ADDF = ADIR - ADDR
-!        IF (ADDF < 0.0) THEN
-!          ADDF = 0.0
-!        ENDIF
-C-KRT****************************
+
         IF ((KDIRBL*SQV*LAISL/FRACSH) .LT. 20.) THEN
           ADIRSL = FRACSH * (1.0-REFDR) * RADDIR *
      &    (1.0-EXP(-KDIRBL*SQV*LAISL/FRACSH))
@@ -1881,20 +1879,9 @@ C-KRT****************************
         ELSE
           ADDRSL = 0.0
         ENDIF
-C-KRT************************************
-C-KRT   ADDFSL = ADIRSL - ADDRSL
-C-KRT   ADDFSH = ADDF - ADDFSL
-!-CHP   ADDFSL = MAX(0.0,ADIRSL - ADDRSL)
-!-CHP   ADDFSH = MAX(0.0,ADDF - ADDFSL)
         ADDFSL = ADIRSL - ADDRSL
-!        IF (ADDFSL < 0.0) THEN
-!          ADDFSL = 0.0
-!        ENDIF
         ADDFSH = ADDF - ADDFSL
-!        IF (ADDFSH < 0.0) THEN
-!          ADDFSH = 0.0
-!        ENDIF
-C-KRT************************************
+
       ELSE
         ADIR   = 0.0
         ADDR   = 0.0
@@ -1929,14 +1916,7 @@ C     extended for both between plants (P) and rows (R).
      &  (1.0-EXP(-KDIFBL*SQV*XLAI/DIFPR))
       ADIFSL = DIFPR * (1.0-REFDF) * RADDIF *
      &  (1.0-EXP(-KDIFBL*SQV*LAISL/DIFPR))
-C-KRT********************************
-C-KRT ADIFSH = ADIF - ADIFSL
-!-CHP ADIFSH = MAX(0.0,ADIF - ADIFSL)
       ADIFSH = ADIF - ADIFSL
-!      IF (ADIFSH < 0.0) THEN
-!        ADIFSH = 0.0
-!      ENDIF
-C-KRT********************************
 
 C     Light reflected from the soil assumed to be isotropic and diffuse.
 C     Absorption handled in the same manner as diffuse skylight.
@@ -1950,14 +1930,7 @@ C     Absorption handled in the same manner as diffuse skylight.
      &  (1.0-EXP(-KDIFBL*SQV*XLAI/DIFPR))
       AREFSH = DIFPR * (1.0-REFDF) * REFSOI *
      &  (1.0-EXP(-KDIFBL*SQV*LAISH/DIFPR))
-C-KRT********************************
-C-KRT AREFSL = AREF - AREFSH
-!-CHP AREFSL = MAX(0.0,AREF - AREFSH)
       AREFSL = AREF - AREFSH
-!      IF (AREFSL < 0.0) THEN
-!        AREFSL = 0.0
-!      ENDIF
-C-KRT********************************
       ATOT = ADIR + ADIF + AREF
       REFTOT = REFDIR + REFDIF + REFSOI - AREF
 

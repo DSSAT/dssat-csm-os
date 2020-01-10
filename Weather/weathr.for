@@ -50,7 +50,8 @@ C=======================================================================
       IMPLICIT NONE
       SAVE
 
-      CHARACTER*1  MEWTH, RNMODE
+C     MEEVP stuff added by Vakhtang on 9Jan20
+      CHARACTER*1  MEWTH, RNMODE, MEEVP
       CHARACTER*6  ERRKEY
       CHARACTER*12 FILEW
       CHARACTER*78 MESSAGE(10)
@@ -104,6 +105,7 @@ C=======================================================================
       REPNO   = CONTROL % REPNO
       YRDOY   = CONTROL % YRDOY
       YRSIM   = CONTROL % YRSIM
+      MEEVP   = ISWITCH % MEEVP
 
 !***********************************************************************
 !***********************************************************************
@@ -425,7 +427,10 @@ C-----------------------------------------------------------------------
       WEATHER % RADHR  = RADHR
       WEATHER % RHUMHR = RHUMHR
       WEATHER % TAIRHR = TAIRHR
+      IF(MEEVP .EQ. "Z") THEN
+      ELSE
       WEATHER % TGRO   = TGRO
+      ENDIF
       WEATHER % WINDHR = WINDHR
 
       CALL OPSTRESS(CONTROL, WEATHER=WEATHER)

@@ -1,6 +1,6 @@
 C=======================================================================
 C  ETPHR, Subroutine, N.B. Pickering
-C  Computes canopy ET (mm/h) and gross photosynthesis (µmol CO2/m2/s)
+C  Computes canopy ET (mm/h) and gross photosynthesis (mmol CO2/m2/s)
 C  for each hour.
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
@@ -26,7 +26,7 @@ C=======================================================================
      &  TMIN, TYPPGL, TYPPGN, WINDHR, XLAI,               !Input
      &  XLMAXT, YLMAXT, XSW,YSCOND,YSHCAP,                !Input (CSV CXSW,YSCOND,YSHCAP)
      &  AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,      !Output
-     &  PGHR, SLWSH, SLWSL, T0HR, TCAN, THR, TSHR,        !Output
+     &  PGHR, SLWSH, SLWSL, T0HR, TCAN, TCAN1, THR, TSHR, !Output
      &  TSURF,                                            !Output
 !     Added by BAK DEC2014
      &  CONDSH, CONDSL, RA, RB, RSURF, RNET,              !Output
@@ -58,8 +58,8 @@ C=======================================================================
      &  SLWREF,SLWSH,SLWSL,SLWSLO,STCOND(NL),SWE,T0HR,TAIRHR,TA,TMIN,
      &  TCAN,TCPREV,THR,TPREV,TSHR(NL),TSUM,TSURF(3,1),USTAR,
      &  WINDHR,XLAI,XLMAXT(6),YLMAXT(6),
-CSVC
-     & TABEX,SW2,YHC(3),YTC(3),XSW(NL,3),YSCOND(NL,3),YSHCAP(NL,3),XC(3)
+     & TABEX,SW2,YHC(3),YTC(3),XSW(NL,3),YSCOND(NL,3)              !CSVC
+     & ,YSHCAP(NL,3),XC(3),TCAN1 ,VPSAT                                  !CSVC
 
 !     Added by BAK
       REAL RB(3),RSURF(3),RNET(3,1),
@@ -97,6 +97,7 @@ C     Initialize.
       TSURF(3,1) = TAIRHR
       STRESS = .FALSE.
 
+
 C     Daylight hours with canopy.
 
       IF (DAYTIM .AND. XLAI .GT. 0.0) THEN
@@ -113,12 +114,12 @@ C       Loop until evapotranspiration and photosynthesis are stable.
      &        CO2HR, FNPGL, FNPGN, LAISH, LAISL, LMXREF,  !Input
      &        LNREF, NSLOPE, PARSH, PARSUN, QEREF, RNITP, !Input
      &        SLAAD, SLWSLO, TMIN, TSURF, TYPPGL, TYPPGN, !Input
-     &        XLMAXT, YLMAXT,                             !Input
+     &        XLMAXT, YLMAXT,RHUMHR,                      !Input
      &        AGEFAC, CONDSH, CONDSL, CSHSTR, CSLSTR,     !Output
      &        LFMXSH, LFMXSL, PCNLSH, PCNLSL, PGHR,       !Output
-     &        SLWREF, SLWSH, SLWSL, STRESS,              !Output
-     &        CCNEFF,CICAD,CMXSF,CQESF,PGPATH,           !Input
-     &        AGEQESL,CO2QESL,QEFFSL)                    !Output
+     &        SLWREF, SLWSH, SLWSL, STRESS,               !Output
+     &        CCNEFF,CICAD,CMXSF,CQESF,PGPATH,MEEVP,      !Input
+     &        AGEQESL,CO2QESL,QEFFSL)                     !Output
             CALL CANPET(
      &        CANHT, CEC, CEN, CLOUDS, CONDSH, CONDSL,    !Input
      &        DLAYR2, FRACSH, FRSHV, KDIRBL, LAISH,       !Input
@@ -132,6 +133,9 @@ C        G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT
 C         RB, RSURF RNET output added DEC2014 by Bruce Kimball
      &        RBSL, RBSL, RBSS)                           !Output
 C          added by BAK on 10DEC2015
+
+
+             IF(ITER.EQ.1) TCAN1=TCAN
 
             TSUM = TSUM + TCAN
             IF (ITER .GT. 5) THEN
@@ -201,11 +205,11 @@ CSVC   HOLD = CSHPRV+(CONDSH-CSHPRV)/(THR-TPREV)*(RWUH-TPREV)
      &        CO2HR, FNPGL, FNPGN, LAISH, LAISL, LMXREF,  !Input
      &        LNREF, NSLOPE, PARSH, PARSUN, QEREF, RNITP, !Input
      &        SLAAD, SLWSLO, TMIN, TSURF, TYPPGL, TYPPGN, !Input
-     &        XLMAXT, YLMAXT,                             !Input
+     &        XLMAXT, YLMAXT, RHUMHR,                     !Input
      &        AGEFAC, CONDSH, CONDSL, CSHSTR, CSLSTR,     !Output
      &        LFMXSH, LFMXSL, PCNLSH, PCNLSL, PGHR,       !Output
      &        SLWREF, SLWSH, SLWSL, STRESS,               !Output
-     &        CCNEFF,CICAD,CMXSF,CQESF,PGPATH,            !Input
+     &        CCNEFF,CICAD,CMXSF,CQESF,PGPATH,MEEVP,      !Input
      &        AGEQESL,CO2QESL,QEFFSL)                     !Output
             STRESS = .FALSE.
           ENDIF
@@ -214,11 +218,11 @@ CSVC   HOLD = CSHPRV+(CONDSH-CSHPRV)/(THR-TPREV)*(RWUH-TPREV)
      &      CO2HR, FNPGL, FNPGN, LAISH, LAISL, LMXREF,    !Input
      &      LNREF, NSLOPE, PARSH, PARSUN, QEREF, RNITP,   !Input
      &      SLAAD, SLWSLO, TMIN, TSURF, TYPPGL, TYPPGN,   !Input
-     &      XLMAXT, YLMAXT,                               !Input
+     &      XLMAXT, YLMAXT, RHUMHR,                       !Input
      &      AGEFAC, CONDSH, CONDSL, CSHSTR, CSLSTR,       !Output
      &      LFMXSH, LFMXSL, PCNLSH, PCNLSL, PGHR,         !Output
      &      SLWREF, SLWSH, SLWSL, STRESS,                 !Output
-     &      CCNEFF,CICAD,CMXSF,CQESF,PGPATH,              !Input
+     &      CCNEFF,CICAD,CMXSF,CQESF,PGPATH,MEEVP,        !Input
      &      AGEQESL,CO2QESL,QEFFSL)                       !Output
         ENDIF
 
@@ -302,7 +306,7 @@ C per version 3.5 of DSSAT
 
 C========================================================================
 C  CANOPG, Subroutine, K.J. Boote, J.W. Jones, G. Hoogenboom
-C  Computes instantaneous canopy photosynthesis (µmol CO2/m2/s) and leaf
+C  Computes instantaneous canopy photosynthesis (mmol CO2/m2/s) and leaf
 C  CO2 conductance (cm/s) of shaded and sunlit leaves.  Uses shaded
 C  and sunlit leaf areas, light intensity on each, and integrates
 C  over leaf angle classes.
@@ -320,30 +324,31 @@ C=======================================================================
      &  CO2HR, FNPGL, FNPGN, LAISH, LAISL, LMXREF,        !Input
      &  LNREF, NSLOPE, PARSH, PARSUN, QEREF, RNITP,       !Input
      &  SLAAD, SLWSLO, TMIN, TSURF, TYPPGL, TYPPGN,       !Input
-     &  XLMAXT, YLMAXT,                                   !Input
+     &  XLMAXT, YLMAXT, RHUMHR,                           !Input
      &  AGEFAC, CONDSH, CONDSL, CSHSTR, CSLSTR,           !Output
      &  LFMXSH, LFMXSL, PCNLSH, PCNLSL, PGHR,             !Output
      &  SLWREF, SLWSH, SLWSL, STRESS,                     !Output
-     &  CCNEFF,CICAD,CMXSF,CQESF,PGPATH,                  !Input
+     &  CCNEFF,CICAD,CMXSF,CQESF,PGPATH,MEEVP,            !Input
      &  AGEQESL,CO2QESL,QEFFSL)                           !Output
 
       IMPLICIT  NONE
       SAVE
 
-      CHARACTER TYPPGN*3,TYPPGL*3
-      INTEGER I
+      CHARACTER TYPPGN*3,TYPPGL*3,MEEVP*1
+      INTEGER I,CIEFFECT,NINT
       LOGICAL STRESS
       REAL AGEFAC,AGMXSH,AGMXSL,CO2HR,CONDSH,CONDSL,CONSUM,CONSUN,
      &  LAISH,LAISL,LMXREF,LFMXSH,LFMXSL,LNREF,NSLOPE,PARSH,
      &  PARSUN(3),PARSL,PGHR,PGSUM,PGSUN,PGSH,PGSL,QEREF,QEFFSH,
      &  QEFFSL,RNITP,SLAAD,TEMPSH,TEMPSL,TSURF(3,1),FNPGN(4),
      &  FNPGL(4),XLMAXT(6),XLAI,YLMAXT(6),CSLSTR,CSHSTR,SLWSL,
-     &  SLWSH,PCNLSL,PCNLSH,SLWSLO,SLWREF,TMIN
+     &  SLWSH,PCNLSL,PCNLSH,SLWSLO,SLWREF,TMIN,
+     &  VPDSL,VPDSH,RHUMHR,VPSAT
 
       CHARACTER PGPATH*2
       REAL CCNEFF, CICAD, CMXSF, CQESF
       REAL AGEQESH, AGEQESL, CO2QESH, CO2QESL
-
+      REAL  CICA,CISL,CISH,CISUN,CISUM,CINT
 
 C     Initialize.
 
@@ -351,7 +356,10 @@ C     Initialize.
       TEMPSH = TSURF(2,1)
       XLAI = LAISL + LAISH
       PARSL = PARSUN(2)
-
+CSVC
+       VPDSL = (VPSAT(TEMPSL)/1000)*(1- (RHUMHR / 100.0))
+       VPDSH = (VPSAT(TEMPSH)/1000)*(1- (RHUMHR / 100.0))
+CSVC
 C     Calculate leaf photosynthesis parameters with separate layering
 C     of SLW and leaf N.  SLW and leaf N decrease linearly with
 C     increasing LAI (Sinclair et al., 1993).  Assume sunlit (SL)
@@ -362,52 +370,85 @@ C     leaves are physically above shaded (SH) leaves.
       PCNLSL = RNITP + 0.5*NSLOPE*LAISH
       PCNLSH = RNITP - 0.5*NSLOPE*LAISL
 
-C     Calulate leaf photosynthesis for SH and SL leaves.
+
+        IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
+           CICA = CICAD
+           CINT = CICA*CO2HR !  CSVC , why?     CINT = CICA*CO2HR + (1.0-CICA)*GAMST
+        ELSE
+           CICA = 0.7
+           CINT = CICA*CO2HR  !  CSVC , why?     CINT = CICA*CO2HR + (1.0-CICA)*GAMST
+        ENDIF
+
+       CISL = CINT
+       CISH = CINT
+
+        IF (MEEVP .EQ. 'Z') THEN
+        NINT=2
+        ELSE
+        NINT=1
+        ENDIF
+
+       DO CIEFFECT=1,NINT
+
+C     Calulate leaf photosynthesis for SL and SH leaves.
+
+      CALL PGLFEQ(
+     &  CO2HR, FNPGL, FNPGN, LMXREF, LNREF, QEREF,        !Input
+     &  PCNLSL, SLWSL, SLWREF, TEMPSL, TMIN, TYPPGL,      !Input
+     &  TYPPGN, XLMAXT, YLMAXT,CISL,                      !Input
+     &  CCNEFF, CICAD, CMXSF,CQESF,PGPATH,MEEVP,          !Input
+     &  AGMXSL, LFMXSL, QEFFSL,CO2QESL,AGEQESL)           !Output
 
       CALL PGLFEQ(
      &  CO2HR, FNPGL, FNPGN, LMXREF, LNREF, QEREF,        !Input
      &  PCNLSH, SLWSH, SLWREF, TEMPSH, TMIN, TYPPGL,      !Input
-     &  TYPPGN, XLMAXT, YLMAXT,                           !Input
-     &  AGMXSH, LFMXSH, QEFFSH,                           !Output
-     &  CCNEFF, CICAD, CMXSF,CQESF,PGPATH,                !Input
-     &  CO2QESH,AGEQESH)                                  !Output
-      CALL PGLFEQ(
-     &  CO2HR, FNPGL, FNPGN, LMXREF, LNREF, QEREF,        !Input
-     &  PCNLSL, SLWSL, SLWREF, TEMPSL, TMIN, TYPPGL,      !Input
-     &  TYPPGN, XLMAXT, YLMAXT,                           !Input
-     &  AGMXSL, LFMXSL, QEFFSL,                           !Output
-     &  CCNEFF, CICAD, CMXSF,CQESF,PGPATH,                !Input
-     &  CO2QESL,AGEQESL)                                  !Output
+     &  TYPPGN, XLMAXT, YLMAXT,CISH,                      !Input
+     &  CCNEFF, CICAD, CMXSF,CQESF,PGPATH,MEEVP,          !Input
+     &  AGMXSH, LFMXSH, QEFFSH,CO2QESH,AGEQESH)           !Output
+
 
 C     Gaussian integration of photosynthesis and leaf CO2 conductance
 C     over three leaf classes for sunlit leaves.
 
       PGSUM = 0.0
       CONSUM = 0.0
+      CISUM =  0.0
+
       DO I=1,3
         CALL PGLEAF(
      &    CO2HR, LFMXSL, PARSUN(I), QEFFSL, TEMPSL,       !Input
-     &    CONSUN, PGSUN,                                  !Output
-     &    CCNEFF,CICAD,PGPATH)                            !Input
+     &    CCNEFF,CICAD,PGPATH,VPDSL,MEEVP,CIEFFECT,       !Input
+     &    CONSUN, PGSUN,CISUN)                            !Output
+
         IF (I .EQ. 2) THEN
           PGSUM = PGSUM + PGSUN*1.6
           CONSUM = CONSUM + CONSUN*1.6
+          CISUM = CISUM + CISUN*1.6
         ELSE
           PGSUM = PGSUM + PGSUN
           CONSUM = CONSUM + CONSUN
+          CISUM = CISUM + CISUN
         ENDIF
       ENDDO
-      PGSL = PGSUM / 3.6
+
+      PGSL   = PGSUM / 3.6
       CONDSL = CONSUM / 3.6
+      CISL   = CISUM / 3.6
 
 C     Compute photosynthesis and leaf CO2 conductance for shaded leaves
 
       CALL PGLEAF(
      &  CO2HR, LFMXSH, PARSH, QEFFSH, TEMPSH,             !Input
-     &  CONDSH, PGSH,                                     !Output
-     &  CCNEFF,CICAD,PGPATH)                              !Input
+     &  CCNEFF,CICAD,PGPATH,VPDSH,MEEVP,CIEFFECT,         !Input
+     &  CONDSH, PGSH,CISH)                                !Output
 
-C     Compute canopy photosynthesis (µmol CO2/m2/s).
+      ENDDO 
+!CSVC - need to do it soon     
+!CSVC - for now soil water is not send signal to stomata 
+!CSVC in the future, send this conductance increase effect under stress to impact CI
+!CSVC when implment that we have to remove the impact bellow
+
+C     Compute canopy photosynthesis (mmol CO2/m2/s).
 
       IF (STRESS) THEN
         IF (CONDSL .GT. 0.0) THEN
@@ -445,32 +486,31 @@ C  Calls:       CURV,TABEX
 C  Notes : Standard conditions and suggested values for QEREF and LXREF.
 C          LXREF is for upper sunlit leaves in the canopy.  Lower
 C          leaves will have a lower rate because of less SLW and N.
-C          QEREF : 30 oC, 350 µL/L CO2, 2% O2, <100 µmol/m2/S PFD
-C                 0.0541 µmol/µmol (Ehleringer and Bjorkman, 1977)
-C                 (converted from 30 oC, 325 µL/L CO2)
-C          LXREF: 30 oC, 350 µL/L CO2, 2% O2, 2000 µmol/m2/S PFD
+C          QEREF : 30 oC, 350 �L/L CO2, 2% O2, <100 �mol/m2/S PFD
+C                 0.0541 �mol/�mol (Ehleringer and Bjorkman, 1977)
+C                 (converted from 30 oC, 325 �L/L CO2)
+C          LXREF: 30 oC, 350 �L/L CO2, 2% O2, 2000 �mol/m2/S PFD
 C                 measured at SLWREF and LNREF
-C                 BEAN=28, PEANUT=28, SOYBEAN=28 µmol/m2/s
+C                 BEAN=28, PEANUT=28, SOYBEAN=28 �mol/m2/s
 C========================================================================
 
       SUBROUTINE PGLFEQ(
      &  CO2HR, FNPGL, FNPGN, LMXREF, LNREF, QEREF,        !Input
      &  RNITP, SLW, SLWREF, TEMPHR, TMIN, TYPPGL,         !Input
-     &  TYPPGN, XLMAXT, YLMAXT,                           !Input
-     &  AGEMXL, LFMAX, QEFF,                              !Output
-     &  CCNEFF, CICAD, CMXSF, CQESF, PGPATH,              !Input
-     &  CO2QE, AGEQE)                                     !Output
+     &  TYPPGN, XLMAXT, YLMAXT,CINTSC,                    !Input
+     &  CCNEFF, CICAD, CMXSF, CQESF, PGPATH,MEEVP,        !Input
+     &  AGEMXL, LFMAX, QEFF, CO2QE, AGEQE)                !Output
 
       USE MODULEDATA
 
       IMPLICIT NONE
       SAVE
 
-      CHARACTER TYPPGN*3,TYPPGL*3
+      CHARACTER TYPPGN*3,TYPPGL*3,MEEVP*1
       REAL AGEMXL,AGEQE,CICA,CINT,CO2HR,CO2MAX,CO2QE,
      &  CURV,FNPGN(4),FNPGL(4),GAMST,LFMAX,LNREF,LMXREF,LXREF,
      &  O2,QEFF, QEREF,RGAS,RNITP,RT,SLW,SLWMAX,SLWREF,TABEX,TAU,
-     &  TEMPHR,TEMPMX,TK,XLMAXT(6),YLMAXT(6),TMIN,CHILL
+     &  TEMPHR,TEMPMX,TK,XLMAXT(6),YLMAXT(6),TMIN,CHILL,CINTSC
 
       CHARACTER PGPATH*2
       REAL CCNEFF, CICAD, CMXSF, CQESF
@@ -479,8 +519,7 @@ C========================================================================
 
       REAL BETALS,PDLA,BETAMX
 
-        
-C     Initialization.  Convert LMXREF from mgCO2/m2/s to µmol/m2/s.
+C     Initialization.  Convert LMXREF from mgCO2/m2/s to �mol/m2/s.
 
       TK = TEMPHR + 273.
       RT = RGAS * TK
@@ -491,17 +530,17 @@ C     Farquhar and Caemmerer's (1982) equation (16.60 a,b) for limiting RuBP,
 C     combined with the temperature effect on the specificity factor (TAU)
 C     and the compensation point in the absence of dark respiration (GAMST).
       !CHP 4/15/03 Prevent overflow
-      IF (RT .GT. 1000.) THEN
+       IF (RT .GT. 1000.) THEN
          if(pgpath .eq. "C4" .or. pgpath .eq. 'c4')then
             tau = exp(-3.949 + 28990.0/RT)*CCNEFF
          else
             TAU = EXP(-3.949 + 28990.0/RT)
          end if
         GAMST = 0.5 * O2 / TAU
-      ELSE
+       ELSE
         TAU = 1E10
         GAMST = 0.0
-      ENDIF
+       ENDIF
 
 C     EFFECTS ON MAXIMUM LEAF PHOTOSYNTHESIS (LMXREF).
 
@@ -511,19 +550,29 @@ C     SLW effect on LMXREF assumed linear (Dornhoff and Shibles, 1970).
 
 C     Temperature and non-saturating CO2.
 
-C     For the computation of LMXREF, Ci/Ca = 0.7 for CO2=350 µL/L.  The factor
-C     7.179 scales CO2MAX to 1.0 at 30 oC and 350 µL/L CO2.
+C     For the computation of LMXREF, Ci/Ca = 0.7 for CO2=350 �L/L.  The factor
+C     7.179 scales CO2MAX to 1.0 at 30 oC and 350 �L/L CO2.
 
 C     CICA = 0.4+0.6*EXP(-0.002*CO2HR)
+
+        IF (MEEVP .EQ. 'Z') THEN
+        CINT = MAX(CINTSC,GAMST)
+        ELSE
+            IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
+            CICA = CICAD
+            CINT = CICA*CO2HR + (1.0-CICA)*GAMST
+            CINT = MAX(CINT,GAMST)
+            ELSE
+            CICA = 0.7
+            CINT = CICA*CO2HR + (1.0-CICA)*GAMST
+            CINT = MAX(CINT,GAMST)
+            ENDIF
+        ENDIF
+
+
         IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
-           CICA = CICAD
-           CINT = CICA*CO2HR + (1.0-CICA)*GAMST
-           CINT = MAX(CINT,GAMST)
            CO2MAX = CMXSF * (CINT-GAMST) / (4.0*CINT+8.0*GAMST)
         ELSE
-           CICA = 0.7
-           CINT = CICA*CO2HR + (1.0-CICA)*GAMST
-           CINT = MAX(CINT,GAMST)
            CO2MAX = 7.179 * (CINT-GAMST) / (4.0*CINT+8.0*GAMST)
         ENDIF
 
@@ -554,14 +603,29 @@ C     EFFECTS ON QUANTUM EFFICIENCY (QEFF).
 C     Temperature and non-saturating CO2.
 
 C     For the computation of QEFF, Ci/Ca = 1.0.  The factor 6.225 scales CO2QE
+C     to 1.0 at 30 oC and 350 �L/L CO2.
+
+
+      IF (MEEVP .EQ. 'Z') THEN
+       CINT = MAX(CINTSC,GAMST)
+      ELSE
+
+C     For the computation of QEFF, Ci/Ca = 1.0.  The factor 6.225 scales CO2QE
 C     to 1.0 at 30 oC and 350 µL/L CO2.
 
-      CINT = MAX(CO2HR,GAMST)
-      IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
-         CO2QE = CQESF * (CINT-GAMST) / (4.*CINT+8.*GAMST)
-      ELSE
-         CO2QE = 6.225 * (CINT-GAMST) / (4.*CINT+8.*GAMST)
+         CINT = MAX(CO2HR,GAMST)
+         IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
+          CO2QE = CQESF * (CINT-GAMST) / (4.*CINT+8.*GAMST)
+         ELSE
+          CO2QE = 6.225 * (CINT-GAMST) / (4.*CINT+8.*GAMST)
+         ENDIF
       ENDIF
+
+       IF (PGPATH .EQ. "C4" .OR. PGPATH .EQ. "c4") THEN
+         CO2QE = CQESF * (CINT-GAMST) / (4.*CINT+8.*GAMST)  !CSVC - why do not have 6.225?
+       ELSE
+         CO2QE = 6.225 * (CINT-GAMST) / (4.*CINT+8.*GAMST)
+       ENDIF
 
 C     Nitrogen effects on QEFF.  Photosynthesis is affected both by
 C     plant nutrition (small in legumes) and age.
@@ -593,7 +657,7 @@ C     Calculate QEFF and LFMAX at ambient conditions.
 C=======================================================================
 C  PGLEAF, Subroutine, K.J.Boote, J.W.Jones, G.Hoogenboom
 C  Calculate instantaneous leaf photosynthesis as a function of PAR
-C  and leaf characteristics (µmol/m2/s).  Leaf conductance calculated
+C  and leaf characteristics (�mol/m2/s).  Leaf conductance calculated
 C  as a function of net photosynthesis and Ci/Ca ratio (cm/s)
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
@@ -607,25 +671,29 @@ C=======================================================================
 
       SUBROUTINE PGLEAF(
      &  CO2HR, LFMAX, PARLF, QEFF, TEMPHR,                !Input
-     &  CONDLF, PGLF,                                     !Output
-     &  CCNEFF, CICAD, PGPATH)                            !Input
+     &  CCNEFF, CICAD, PGPATH,VPDATM,MEEVP,CIEFFECT,      !Input
+     &  CONDLF, PGLF,CINT)                                !Output
 
       IMPLICIT NONE
       SAVE
 
       REAL A,B,C,CICA,CINT,CO2HR,CCO2LF,CONDLF,CVTURE,GAMST,LFMAX,QEFF,
      &  PARLF,PATM,PGLF,PNLF,RGAS,RT,TAU,TEMPHR
+     
+       REAL VPDATM,slpgs,gsmin,DREF
 
-      CHARACTER PGPATH*2
+      CHARACTER PGPATH*2,MEEVP*1
       REAL CCNEFF, CICAD
 
+      INTEGER CIEFFECT
       PARAMETER (CVTURE=0.8, PATM=101300.0, RGAS=8.314)
 
 C     Initialization.
 
+
       RT = RGAS * (TEMPHR+273.0)
 
-C     Calculate leaf photosynthesis (µmol CO2/m2/s) using a non-rectangular
+C     Calculate leaf photosynthesis (�mol CO2/m2/s) using a non-rectangular
 C     hyperbola (Rabinowitch, 1951; Lommen et al, 1971; Evans and Farquhar,
 C     Norman and Arkebauer, Gutschick, In: Boote and Loomis, 1991)
 
@@ -661,17 +729,47 @@ C     Leaf respiration neglected so PNLF=PGLF.
 
 
 C     CICA = 0.4+0.6*EXP(-0.002*CO2HR)
-      if (pgpath .eq. 'C4' .or. pgpath .eq. 'c4') then
-         cica=cicad
-      else
-         CICA = 0.7
-      end if
-      CINT = CICA*CO2HR + (1.0-CICA)*GAMST
-      CCO2LF = MAX(PNLF/(CO2HR-CINT),0.0)
+CSVC - the CO2 concentration that goes into conductance is the CS, CO2 at the leaf surface
+        if (pgpath .eq. 'C4' .or. pgpath .eq. 'c4') then
+           cica=cicad
+        else
+           CICA = 0.7
+        end if
+        CINT = CICA*CO2HR + (1.0-CICA)*GAMST
+CSVC - in future implement equation to compute CS, for now assume it is equal to CA
+      CINT = MAX(CINT,GAMST)
+
+
+       IF (MEEVP .EQ. 'Z') THEN
+
+        slpgs=1.0
+        gsmin=0.01 
+        DREF= 7
+       IF (VPDATM.GT.1) THEN
+c        CCO2LF = MAX(slpgs*PNLF /( (CO2HR-CINT)*(1+VPDATM/DREF) ), gsmin )
+         CCO2LF = MAX(PNLF /( (CO2HR-CINT) ), gsmin )
+       ELSE
+        CCO2LF = MAX(PNLF /( (CO2HR-CINT) ), gsmin )
+       ENDIF
+
+c       CINT = CO2HR - (PNLF/ CCO2LF)
+      
+c       print*,'PGLEAF ',CIEFFECT,CO2HR,CINT,CINT/CO2HR,PNLF,
+c     & CCO2LF,VPDATM,1/(1+VPDATM/DREF)
+      
+
+	     WRITE (883, 3018)CO2HR,CINT,CINT/CO2HR,PNLF,
+     & CCO2LF,VPDATM,1/(1+VPDATM/DREF)
+
+
+3018      FORMAT (6(F7.3,';'),F7.3)      
+       ELSE 
+       CCO2LF = MAX(PNLF/(CO2HR-CINT),0.0)  !(ORIGINAL)
+       ENDIF
 
 C     Convert units from mol/m2/s CO2 to m/s H20.
 
-      CONDLF = 1.6 * CCO2LF * RT / PATM
+       CONDLF = 1.6 * CCO2LF * RT / PATM    
 
       RETURN
       END SUBROUTINE PGLEAF
@@ -780,7 +878,7 @@ C     Calculate NET total by subtracting net (back) longwave radiation.
 
       CALL RADB(
      &  CLOUDS, EAIRHR, FRSHV, LAISHV,                    !Input
-     &  LAISLV, TAIRHR, TCAN,                             !Input
+     &  LAISLV, TAIRHR, TCAN, TSHR1 ,                     !Input
      &  RADBK)                                            !Output
       RNET(1,1) = RABS(1) - RADBK(1)
       RNET(2,1) = RABS(2) - RADBK(2)
@@ -958,7 +1056,7 @@ C     WINDSP = MAX(WINDHR,1.0)
       ZMD = REFHT - D
 
 CSVC   Reference height, taked from WTH, can't be <= Canopy height
-      IF(ZMD.LE.0.5)PRINT*,'WARNING: Canopy height < Ref. height' !CSVC ADD 07/13/2018
+c      IF(ZMD.LE.0.5)PRINT*,'WARNING: Canopy height < Ref. height !CSVC ADD 07/13/2018
       ZMD=max(ZMD,0.5)                                   !CSVC ADD 07/13/2018
 
       LZZ0M = LOG(ZMD/Z0M)
@@ -1021,14 +1119,15 @@ C       DT = TCAN - TAIRHR
         RASAC=(1./WINDSP)*( ( (1./0.4) * LOG((ZMD+Z0M)/Z0M))**2 ) * STC
 
         IF(WINDSP.LT.1.0 .AND. ABS(DT).GT.0.01) THEN
-         RASAC= VHCAIR/( 1.52 * ABS(DT)**(1/3)  )
+         RASAC= VHCAIR/( 1.52 * ABS(DT)**(1./3.)  )
          RASAC=MIN(RASAC,VHCAIR/2.32)
-         print*,'low wind ',RASAC
         ENDIF
 
        IF(DT.LT.0.0 .OR. WINDSP.LT.1.0 ) RA=RASAC  !USE Kimball et al. 2015
 
-CSVC --------------------
+CSVC change for Nebraska
+c        RA=RASAC/2
+        RA=RASAC
 
 C     Canopy calculations.
 
@@ -1118,8 +1217,8 @@ C     Initialize
 
 
 CSVC - at stable conditions there is very low heat flux from soil to atmosphere
-       IF ((TAIRHR-TSHR1).GE.1.0 .AND. XLAI.GT.1.0 ) THEN
-         RAUC= VHCAIR/( 1.52 * ABS(TAIRHR-TSHR1)**(1/3)  )
+       IF ((TAIRHR-TSHR1).GE.1.0 . and . XLAI.GT.1.0 ) THEN
+         RAUC= VHCAIR/( 1.52 * ABS(TAIRHR-TSHR1)**(1./3.)  )
          RAUC=MIN(RAUC,VHCAIR/2.32)
 c       print*,' FOR STABLE CONDITON ',XLAI,RS(3,1),RAUC
 c         RL(3,1)=RAUC
@@ -1191,7 +1290,11 @@ C     Calculate other values.  RBLCN is any off-diagonal element of RS, i.e. RA.
       RBLCN = RS(1,2)
       ECAN = (LH*RBLCN/VP) + EAIRHR
       TCAN = (SH*RBLCN/VHCAIR) + TAIRHR
-      G = STCND1 / DZ1 * (TSURF(3,1)-TSHR1)
+
+CSVC change STCND1 for Nebraska
+CSVC      G = STCND1 / DZ1 * (TSURF(3,1)-TSHR1)
+       G = (STCND1*0.7) / DZ1 * (TSURF(3,1)-TSHR1)
+
 
       RETURN
       END SUBROUTINE ETSOLV
@@ -1453,7 +1556,7 @@ C=======================================================================
 
       SUBROUTINE RADB(
      &  CLOUDS, EAIRHR, FRSHV, LAISHV,                    !Input
-     &  LAISLV, TAIRHR, TCAN,                             !Input
+     &  LAISLV, TAIRHR, TCAN, TSHR1,                            !Input
      &  RADBK)                                            !Output
 
       IMPLICIT NONE
@@ -1461,8 +1564,8 @@ C=======================================================================
 
       REAL CLOUDS,DELT,EMISA,EMISA0,EMISL,EMISS,EMISS0,FRSHV,
      &  LAISHV,LAISLV,RADBK(3),EAIRHR,SBZCON,TAIRHR,TKAIR,TK4SKY,
-     &  TSKY,XLAI,EMISAV,RBKLF,RBACK,TCAN,TK4CAN,ZERO
-      PARAMETER (SBZCON=5.675E-8, DELT=11.0, EMISL=0.97, EMISS0=0.9,
+     &  TSKY,XLAI,EMISAV,RBKLF,RBACK,TCAN,TK4CAN,ZERO, TSHR1
+      PARAMETER (SBZCON=5.675E-8, DELT=11.0, EMISL=0.97, EMISS0=0.95,
      &  ZERO=1.0E-6)
 
 C     Initialize.  Apparent atmospheric emissivity from Brutsaert (1982)
@@ -1470,7 +1573,11 @@ C     and Monteith and Undsworth (1990)
 
       XLAI = LAISLV + LAISHV
       TKAIR = TAIRHR + 273.0
-      TK4CAN = (TCAN+273.0)**4
+
+         TK4CAN = (TCAN+273.0)**4
+CSVC IMPLEMENT, BUT IT HAS SMALL EFFECT
+CSVC      TK4CAN = ((FRSHV*(TCAN+273)) +((1.0-FRSHV)*(TSHR1+273)))**4
+
       EMISA0 = 1.24 * (EAIRHR/100.0/TKAIR)**(1.0/7.0)     !EAIRHR in Pa
       EMISA = CLOUDS*(1.0-(1.0-EMISA0)*4*DELT/TKAIR) +
      &  (1.0-CLOUDS)*EMISA0
@@ -1489,7 +1596,7 @@ C     weighted according to leaf area index.  NEED VIEW FACTOR FOR LEAVES!
         RADBK(1) = 0.0
         RADBK(2) = 0.0
       ELSE
-        RBKLF = FRSHV * RBACK
+        RBKLF    = FRSHV * RBACK
         RADBK(1) = 0.7 * RBKLF
         RADBK(2) = 0.3 * RBKLF
       ENDIF
@@ -1574,7 +1681,8 @@ C     a slowly-varying temperature boundary condition (TA).
           DT = TEMPSS - TSHR(1)
           DZ = 0.5 * DLAYR2(1)/100.0
           SCOND = STCOND(I)
-          INFLOW = DT / DZ * SCOND
+CSVC          INFLOW = DT / DZ * (min(SCOND*,1.1))
+          INFLOW = DT / DZ * (min(SCOND*1.,1.1))
         ELSE
           INFLOW = OUTFLO
         ENDIF
@@ -1582,12 +1690,12 @@ C     a slowly-varying temperature boundary condition (TA).
           DT = TSHR(I) - TA
           DZ = 0.5 * DLAYR2(I)/100.0
           SCOND = STCOND(I)
-          OUTFLO = DT / DZ * SCOND
+          OUTFLO = DT / DZ * (SCOND*1.00)
         ELSE
           DT = TSHR(I) - TSHR(I+1)
           DZ = 0.5 * (DLAYR2(I)+DLAYR2(I+1))/100.0
           SCOND = 0.5 * (STCOND(I)+STCOND(I+1))
-          OUTFLO = DT / DZ * SCOND
+          OUTFLO = DT / DZ * (SCOND*1.)
         ENDIF
 CSVC                WRITE (881,*)TRTNUM,YRDOY,I,TSHR(I) ,VHCAP(I),DZ**2,SCOND,
 CSVC     &   (VHCAP(I)*(DZ**2)/SCOND)/60.
