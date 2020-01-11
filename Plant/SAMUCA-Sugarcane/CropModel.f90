@@ -3610,6 +3610,7 @@
     CaneCrop%   TOTPOP      =   nstk
     Part    %   AERLDM      =   dw_aerial
     WaterBal%   RTDEP       =   rd
+    WaterBal%   RLV         =   rld
     Out     %   GROSSP      =   dtg
     Out     %   DWDT        =   dw_total
     
