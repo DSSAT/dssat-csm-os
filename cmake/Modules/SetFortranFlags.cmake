@@ -52,8 +52,8 @@ ENDIF(CMAKE_Fortran_FLAGS_RELEASE AND CMAKE_Fortran_FLAGS_TESTING AND CMAKE_Fort
 #####################
 
 # Don't add underscores in symbols for C-compatability
-#SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
-#                 Fortran "-fno-underscoring")
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
+                 Fortran "-fno-underscoring")
 
 # Enable special treatment for lines beginning with "d" or "D" in fixed form sources
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
@@ -108,6 +108,17 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
                          "-fpe0"                            # Intel Linux/Mac
                          "-ffpe-trap=invalid,zero,overflow" # GNU
                 )
+####################
+### LINKER FLAGS ###
+####################
+
+SET_COMPILE_FLAG(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}"
+                 Fortran "/FORCE" # MSVC
+                 	        "-cxxlib"      # Intel
+			                "-static"      # GNU
+                            "-Bstatic"     # MacOSX
+                            "-Bdynamic"    # MacOSX
+                )
 
 # Hack to make MacOS happy.
 SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}"
@@ -148,6 +159,7 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG}"
                  Fortran REQUIRED "/Od" # Intel Windows
                                   "-Og" # GNU better debugging flag
                                   "-O0" # All compilers not on Windows
+                                  "-g" # GNU
                 )
 
 # Turn on all warnings 
@@ -205,4 +217,25 @@ SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
                          "-inline"            # Intel
                          "-finline-functions" # GNU
                          "-Minline"           # Portland Group
+                )
+
+# Interprocedural (link-time) optimizations
+#SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
+#                 Fortran "/Qipo"    # Intel Windows
+#                         "-ipo"     # Intel
+#                         "-flto"    # GNU
+#                         "-Mipa"    # Portland Group
+#                )
+
+# Single-file optimizations
+#SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
+#                 Fortran "/Qip" # Intel Windows
+#                         "-ip"  # Intel
+#                )
+
+# Vectorize code
+SET_COMPILE_FLAG(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE}"
+                 Fortran "/Qvec-report0" # Intel Windows
+                         "-vec-report0"  # Intel
+                         "-Mvect"        # Portland Group
                 )

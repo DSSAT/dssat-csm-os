@@ -13,7 +13,7 @@ if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
    						"CMakeCache.txt and CMakeFiles\n")
 endif("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 
-PROJECT(DSSAT-CSM Fortran)
+PROJECT(DSSAT-CSM Fortran CXX)
 
 ##########################################################################################
 # DSSAT_VERSION
@@ -75,7 +75,8 @@ ENDIF(NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
 # This INCLUDE statement executes code that sets the compile flags for DEBUG,
 # RELEASE, and TESTING.  You should  review this file and make sure the flags
 # are to your liking.
-INCLUDE(${CMAKE_MODULE_PATH}/SetFortranFlags.cmake)
+INCLUDE(${CMAKE_MODULE_PATH}/SetFortranFlags.cmake) 
+INCLUDE(${CMAKE_MODULE_PATH}/SetCXXFlags.cmake)
 
 # There is an error in CMAKE with this flag for pgf90.  Unset it
 GET_FILENAME_COMPONENT(FCNAME ${CMAKE_Fortran_COMPILER} NAME)
@@ -111,8 +112,9 @@ ENDIF(WIN32)
 
 # Add the source files
 set(
-    source_list
+    FORTRAN_SRC_LIST
     	"${OSDefinitions}"
+        "FlexibleIO/Interface/FInterface.f90"
         "Utilities/CSMVersion.for"
         "Utilities/ModuleDefs.for"
         "Utilities/DATES.for"
@@ -595,9 +597,24 @@ set(
         "Weather/WGEN.for"
         "Weather/WTHMOD.for"
 )
-ADD_EXECUTABLE(${EXECUTABLE_NAME} ${source_list})
 
-foreach(source IN LISTS source_list)
+set(
+    CXX_SRC_LIST
+        "FlexibleIO/Data/FlexibleIO.cpp" 
+        "FlexibleIO/Interface/CInterface.cpp"
+        "FlexibleIO/Input/InputWeather.cpp" 
+
+)
+
+ADD_LIBRARY( Flexio ${CXX_SRC_LIST})
+
+ADD_EXECUTABLE(${EXECUTABLE_NAME} ${FORTRAN_SRC_LIST})
+
+SET_TARGET_PROPERTIES(${EXECUTABLE_NAME} PROPERTIES LINKER_LANGUAGE Fortran)
+
+TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} Flexio)
+
+foreach(source IN LISTS FORTRAN_SRC_LIST)
     get_filename_component(source_path "${source}" PATH)
     string(REPLACE "/" "\\" source_path_msvc "${source_path}")
     source_group("${source_path_msvc}" FILES "${source}")
@@ -619,10 +636,12 @@ install(DIRECTORY Data/ DESTINATION .
 ##################################################
 
 message( "-- Flags" )
-message( "   FFLAGS       ${CMAKE_Fortran_FLAGS}" )
-message( "   RELEASE      ${CMAKE_Fortran_FLAGS_RELEASE}" )
-message( "   DEBUG        ${CMAKE_Fortran_FLAGS_DEBUG}")
-message( "   LINKER       ${CMAKE_EXE_LINKER_FLAGS}")
+message( "   FORTRAN FLAGS      ${CMAKE_Fortran_FLAGS}" )
+message( "   FORTRAN RELEASE    ${CMAKE_Fortran_FLAGS_RELEASE}" )
+message( "   FORTRAN DEBUG      ${CMAKE_Fortran_FLAGS_DEBUG}" )
+message( "   CXX FLAGS        ${CMAKE_CXX_FLAGS}" )
+message( "   CXX RELEASE      ${CMAKE_CXX_FLAGS_RELEASE}" )
+message( "   CXX DEBUG        ${CMAKE_CXX_FLAGS_DEBUG}" )
 message( "-- Build Info" )
 message( "   BUILD TYPE   ${CMAKE_BUILD_TYPE}" )
 message( "   VERSION      ${MAJOR}.${MINOR}.${MODEL}.${BUILD}" )
