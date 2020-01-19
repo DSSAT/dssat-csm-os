@@ -754,6 +754,11 @@
     lat_sim     = WEATHER % XLAT    
     tmn         = (tmax + tmin) * 0.5    
     
+    !--- Hourly Temperature
+    !--- The original version uses the model described by Parton & Logan (1981) 
+    !--- Now we are using DSSAT's hourly temperature:
+    thour = weather % tairhr
+    
     !--- Time Control
     das         = CONTROL % DAS
     
@@ -767,8 +772,7 @@
     bottom		= SOILPROP % DS
     slthickness = SOILPROP % DLAYR
     upper       = bottom - slthickness
-    dep         = bottom
-        
+    dep         = bottom        
     
     !--- Go to task!
     goto(10,20,30,40,50) task
@@ -1633,10 +1637,6 @@
     !--- Temperature stress on photosynthesis
     tempfac_pho      = temperature_factor(tmn, tb0pho, tb1pho, tb2pho, tbfpho) ! Photosynthesis
     tempfac_per      = min(1.,max(0.,tmn - tbper) / (tbMax_per - tbper))
-    
-    !--- Hourly Temperature
-    !--- Note: DSSAT also computes hourly temp in weather % tairhr
-    call TempHour(tmax, tmin, doy, lat_sim, a_pl, b_pl, c_pl, thour)    
     
     !--- Hourly Plant Extension Temperature Factor
     do hour = 1, 24
@@ -3613,6 +3613,10 @@
     WaterBal%   RLV         =   rld
     Out     %   GROSSP      =   dtg
     Out     %   DWDT        =   dw_total
+    WaterBal%   SWDF1       =   swfacp
+    WaterBal%   SWDF2       =   swface
+    WaterBal%   TRWUP       =   trwup
+    WaterBal%   EOS         =   eop
     
     call sc_opgrow_sam( CONTROL,    &
                         CaneCrop,   &

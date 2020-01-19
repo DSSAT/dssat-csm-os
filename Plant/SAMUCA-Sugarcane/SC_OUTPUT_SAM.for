@@ -81,6 +81,7 @@ c     local ?
 
 c     Soil water content
       REAL SW(NL)
+      real    watdmd
 
 c     CANEGRO variables:
 c     ::::::::::::::::::
@@ -835,6 +836,9 @@ c                     ((area (m2) * LI * number of leaves/area) / total leaf DM)
 c           Total root length density
             RTLD = DOT_PRODUCT(SoilProp%DLAYR(1:SoilProp%NLAYR),
      -                         WaterBal%RLV(1:SoilProp%NLAYR))
+            
+            RTLD = WaterBal%TRWUP
+            watdmd = RTLD / (EOSA/10.)
 
             SWDF30 = WaterBal%SWDF30
             GROSSP = Out%GROSSP
@@ -877,10 +881,10 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
      -                     CaneCrop%GROPHASE,
      -                     LAID, LGDMD, SMFMD, SMDMD, SUCMD, RDMD, 
      -                     BADMD, STKPOPm2, L_SD,   SUID,
-     -                     LDDMD, LAITD, 1.0-WSPD, 1.0-WSGD, 1.0-SWDF30,
+     -                     LDDMD, LAITD, WSPD, WSGD, 1.0-SWDF30,
      -                     CHTD, RDPD,
      -                     WaterBal%RLV(1:10), EOSA, RTLD,
-     -                     LIPD, SLAD, GROSSP, BRDMD, 
+     -                     LIPD, watdmd, GROSSP, BRDMD, 
      -                     Part%FLODGE, TTEBC, TTSPC, TTLEC, SUDMD,
      &              SUFMD, Canecrop%CWSI, PARCE, Part%RESP_G,
      &              Part%RESP_M, CELLSE_DM

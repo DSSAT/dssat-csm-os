@@ -133,7 +133,6 @@
               REAL TLL
               REAL TPESW
               REAL TRWU
-!c             Potential root water uptake:
               REAL TRWUP
               REAL TSW
           END TYPE WaterType
