@@ -24,6 +24,8 @@ C  02/25/2012 JZW add the PHINT data reading from *.cul for RICER
 C  08/09/2012 GH  Updated for cassava
 !  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
+!  01/21/2020 JG added ozone CUL parameters
+!  01/21/2020 JG moved some CUL parameters to ECO file
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -223,14 +225,12 @@ C-LPM  Add CIAT cassava model
 
 !     APSIM-NWheat wheat  **
 !     Tef model based on APSIM-NWheat created by KEP **
+!     JG moved CUL parameters to ECO file 01/21/2020
       CASE ('WHAPS','TFAPS')
         READ (C360,850,IOSTAT=ERRNUM)
      &            VARTY,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1,
+     &            FOZ1,FOZ2,SFOZ1,SFOZ2
 
 !     Ceres Maize: maize, sweet corn **
       CASE ('MZCER','SWCER')
@@ -416,7 +416,7 @@ C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
   821 FORMAT (A6,1X,A16,7X,A6,14F6.0)         !CSYCA        07/15/2019 
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
-  850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 
+  850 FORMAT (A6,1X,A16,7X,A6,13F6.0,A)     !JG added ozone parameters, 01/09/2020
 ! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
  1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 
 !!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)       !02/10/2009 

@@ -6,6 +6,7 @@
 !  Revision history
 !  06/27/2011 FSR created WH_GROSUB.for for APSIM NWheat (WHAPS) adaptation
 !  10/27/2016 BK, JG  added ozone effects
+!  01/21/2020 JG moved some CUL parameters to ECO file
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
 !
@@ -96,6 +97,8 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        EO, ep_nw, ES!JZW add for Canopy T calculation
       REAL        EXNH4
       REAL        EXNO3
+      REAL        FOZ1  ! Added by JG for ozone calculation
+      REAL        FOZ2  ! Added by JG for ozone calculation
       REAL        FREAR
       REAL        GPPES
       REAL        GPPSS
@@ -126,6 +129,8 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL        MXFIL
       REAL        RTDP1
       REAL        RTDP2
+      REAL        SFOZ1  ! Added by JG for ozone calculation, formerly SLFOZ1
+      REAL        SFOZ2  ! Added by JG for ozone calculation, formerly SLFOZ2
       REAL        SLA
       REAL        SLAP1
       REAL        SLAP2 ! nwheat cultivar parameter
@@ -387,6 +392,19 @@ C The statements begining with !*! are refer to APSIM source codes
       CHARACTER*92    FILECC
       CHARACTER*12    FILES
       CHARACTER*12    FILEE 
+
+      ! JG added for ecotype file
+      CHARACTER*92    FILEGC
+      CHARACTER*1     BLANK 
+      PARAMETER (BLANK = ' ')
+      CHARACTER*6     ECOTYP
+      CHARACTER*355   C255  ! JG increased for large ecotype file
+      CHARACTER*16    ECONAM
+      INTEGER     PATHL
+      INTEGER     LUNECO
+      REAL        TBASE,TOPT,ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2
+      REAL        KVAL1,KVAL2  ! JG added for ecotype file
+      
       INTEGER         FOUND  
       REAL        FSLFW
       REAL        FSLFN  
@@ -707,11 +725,8 @@ C The statements begining with !*! are refer to APSIM source codes
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR) 
      &          VARNO,VRNAME,ECONO,VSEN,PPSEN,P1,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,
-     &            P2AF,P3AF,P4AF,P5AF,P6AF,
-     &            ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
-     &            PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &            MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &            STMMX,SLAP1,
+     &            FOZ1,FOZ2,SFOZ1,SFOZ2
 !------------------------------------------------------------------
 ! PNUPR = 0.45; APSIM pot_nuprate =  .45e-6 , g/mm root/day
 ! MNNCR=1.23: APSIM min_grain_nc_ratio = 0.0123
@@ -726,15 +741,58 @@ C The statements begining with !*! are refer to APSIM source codes
 ! p_max_grain_nc_ratio = 0.04
 !-----------------------------------------------------------------     
 !*!1800        FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)
-1800        FORMAT (A6,1X,A16,1X,A6,1X,43F6.0)
+1800        FORMAT (A6,1X,A16,1X,A6,1X,9F6.0,1(1X,F5.4),3(1X,F5.3))
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 
       VSEN = VSEN * 0.0054545 + 0.0003
       PPSEN = PPSEN *0.002
-      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
 
         CLOSE(LUNIO)
+
+!-----------------------------------------------------------------------
+!     Open Ecotype File FILEE
+!-----------------------------------------------------------------------
+          LNUM = 0
+          PATHL  = INDEX(PATHER,BLANK)
+          IF (PATHL .LE. 1) THEN
+            FILEGC = FILEE
+          ELSE
+            FILEGC = PATHER(1:(PATHL-1)) // FILEE
+          ENDIF
+
+!-----------------------------------------------------------------------
+!    Read Ecotype Parameter File
+!-----------------------------------------------------------------------
+          CALL GETLUN('FILEE', LUNECO)
+          OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERRNUM)
+          IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,0)
+          ECOTYP = '      '
+          LNUM = 0
+          DO WHILE (ECOTYP .NE. ECONO)
+            CALL IGNORE(LUNECO, LNUM, ISECT, C255)
+            IF (ISECT .EQ. 1 .AND. C255(1:1) .NE. ' ' .AND.
+     &            C255(1:1) .NE. '*') THEN
+              READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
+     &             ROPT,TTOP, P2O,VREQ,GDDE,DSGFT,RUE1,RUE2,KVAL1,KVAL2,
+     &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
+     &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
+     &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
+     &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
+     &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
+     &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
+     &                2(1X,F5.0))
+              IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
+        
+            ELSEIF (ISECT .EQ. 0) THEN
+              CALL ERROR(ERRKEY,7,FILEE,LNUM)
+            ENDIF
+          ENDDO
+
+      SLAP2 = SLAP2 * 100.          ! convert to mm2/g
+          CLOSE (LUNECO)
 
 !         ************************************************************
 !         ************************************************************
@@ -2089,8 +2147,9 @@ cbak    testing:
 !*!     ce_tops = 3.8 * divide (solrad**0.63, solrad, 0.0)
 !*!     ce_tops = 3.2 * divide (solrad**0.7, solrad, 0.0)
 !*!     ce_tops = u_bound(ce_tops,2.0)
- 
-        ce_tops = 3.8 * (SRAD**0.63 / SRAD)
+! JG added pre- and post-anthesis RUE and kvalue routine
+!        ce_tops = RUE * (SRAD**nwheats_kvalue / SRAD)
+        ce_tops = RUE * (SRAD**0.63 / SRAD)
         ce_tops = MIN(ce_tops,2.0)
  
 !*!   if (nwheats_min_rootfr() .gt. 0.0) then
@@ -2145,7 +2204,8 @@ cbak optimum of 18oc for photosynthesis
 
           !Effect of Ozone on photosynthesis added by BTK, JG
       if (OZONX .gt. 25.0) then
-          FO3 = (-0.0006 * OZONX) + 1.015  !Ozone Tolerant cultivars
+          FO3 = (-FOZ1 * OZONX) + FOZ2
+          !FO3 = (-0.0006 * OZONX) + 1.015  !Ozone Tolerant cultivars
           !FO3 = (-0.005 * OZONX) + 1.125   !Ozone Sensitive cultivars
           !FO3 = (-0.001 * OZONX) + 1.025   !Ozone Intermediate cultivars
       else
@@ -3087,7 +3147,8 @@ cbak  adjust the green leaf ara of the leaf that is dying
 
       ! Ozone effect on leaf senescence added by BTK, JG
       if (OZONX .gt. 25.0 ) then
-          SLFO3 = 0.008 * OZONX + 0.8    !Ozone Tolerant cultivars
+          SLFO3 = SFOZ1 * OZONX + SFOZ2
+          !SLFO3 = 0.008 * OZONX + 0.8    !Ozone Tolerant cultivars
           !SLFO3 = 0.04 * OZONX + 0.0     !Ozone Sensitive cultivars
           !SLFO3 = 0.025 * OZONX + 0.375  !Ozone Intermediate cultivars
       else
