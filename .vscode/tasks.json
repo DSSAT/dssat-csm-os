@@ -1,0 +1,116 @@
+{
+    //Integrate with External Tools via Tasks
+    "version": "2.0.0",
+    "tasks": [
+        {
+        //Configure targets
+            "label": "dssat-csm: Run DSSAT (without debugging)",
+            "options": { "cwd": "/DSSAT47/Maize"},                   //<- Set execution working directory
+            "args": ["C", "UFGA8201.MZX", "1"],                      //<- Set program's arguments
+            //"args": ["A", "UFGA8201.MZX"],
+            "command": "${workspaceRoot}/build/bin/dscsm047.exe",    //<- Set executable target
+            "type": "shell",
+        },
+        {
+        //CMake commands to configure and generate the build
+            "label": "dssat-csm: CMake DEBUG",
+            //Select the platform
+            "windows": {
+                "args": ["-G","MinGW Makefiles",      // <- Select windows CMake Generator is responsible for a native build system. Use quotation marks
+                    "-DCMAKE_BUILD_TYPE=DEBUG",         // DEBUG, RELEASE
+                    "${workspaceRoot}"]},
+            "osx": {
+                "args": ["-G","Unix Makefiles",       // <- Select osx CMake Generator is responsible for a native build system. Use quotation marks
+                    "-DCMAKE_BUILD_TYPE=DEBUG",         // DEBUG, RELEASE
+                    "${workspaceRoot}",]},
+            "linux": {
+                "args": ["-G","Unix Makefiles",       // <- Select linux CMake Generator is responsible for a native build system. Use quotation marks
+                    "-DCMAKE_BUILD_TYPE=DEBUG",         // DEBUG, RELEASE
+                    "${workspaceRoot}"]},
+            "command": "cmake",
+
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "type": "shell", 
+            "dependsOn": "dssat-csm: create build dir",           
+        },
+        {
+        //CMake commands to configure and generate the build
+            "label": "dssat-csm: CMake RELEASE",
+            //Select the platform
+            "windows": {
+                "args": ["-G","MinGW Makefiles",      // <- Select windows CMake Generator is responsible for a native build system. Use quotation marks
+                    "-DCMAKE_BUILD_TYPE=RELEASE",       // DEBUG, RELEASE
+                    "${workspaceRoot}"]},
+            "osx": {
+                "args": ["-G","Unix Makefiles",       // <- Select osx CMake Generator is responsible for a native build system. Use quotation marks
+                    "-DCMAKE_BUILD_TYPE=RELEASE",       // DEBUG, RELEASE
+                    "${workspaceRoot}",]},
+            "linux": {
+                "args": ["-G","Unix Makefiles",       // <- Select linux CMake Generator is responsible for a native build system. Use quotation marks
+                    "-DCMAKE_BUILD_TYPE=RELEASE",       // DEBUG, RELEASE
+                    "${workspaceRoot}"]},
+            "command": "cmake",
+
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "type": "shell", 
+            "dependsOn": "dssat-csm: create build dir",           
+        },
+
+        {
+        // Generate the executable
+            "label": "dssat-csm: Build DEBUG",
+            //Select the platform
+            "windows": {"command": "mingw32-make.exe"}, // <- Select windows tool which controls the generation of executables
+            "osx": {"command": "make"},                 // <- Select osx tool which controls the generation of executables
+            "linux": {"command": "make"},               // <- Select linux tool which controls the generation of executables
+            
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "type": "shell",
+            "dependsOn": "dssat-csm: CMake DEBUG",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }        
+        },
+        {
+        // Generate the executable
+            "label": "dssat-csm: Build RELEASE",
+            //Select the platform
+            "windows": {"command": "mingw32-make.exe"}, // <- Select windows tool which controls the generation of executables
+            "osx": {"command": "make"},                 // <- Select osx tool which controls the generation of executables
+            "linux": {"command": "make"},               // <- Select linux tool which controls the generation of executables
+            
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "type": "shell",
+            "dependsOn": "dssat-csm: CMake RELEASE",        
+        },
+        {
+        // Clean the build workspace
+            "label": "dssat-csm: clean",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "cmake -P distclean.cmake"
+        },
+        {
+        // Only create build directory
+            "label": "dssat-csm: create build dir",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-E",
+                "make_directory",
+                "build"
+            ]
+        }
+    ]
+}
