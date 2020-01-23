@@ -3504,7 +3504,7 @@
         ! LAH 29/06/11 Added automatic as well
         IF (FILEIOT.EQ.'DS4') THEN
 !         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
-          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'G' .OR. 
+          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
      &       (INDEX('FQN',RNMODE) > 0)) THEN
             YEARPLTP = YEARPLTCSM
           ENDIF  
@@ -4987,7 +4987,8 @@
      &       LFWT*(1.0-LSHFR)*RSCLX*CUMDU/(Pd(1)+pd(2)+pd(3)+pd(4)))
             LSHRSWT = AMIN1(RSWT-LLRSWT,
      &       LFWT*LSHFR*RSCLX*CUMDU/(Pd(1)+pd(2)+pd(3)+pd(4)))
-            IF (STWT+CHWT.GT.0.0) THEN
+!           IF (STWT+CHWT.GT.0.0) THEN
+            IF (STWT .GT. 1.E-6 .AND. CHWT .GT. 1.E-6) THEN
               STRSWT = (RSWT-LLRSWT-LSHRSWT)*(STWT-CHWT)/STWT
               CHRSWT = (RSWT-LLRSWT-LSHRSWT)*CHWT/STWT
             ELSE
