@@ -5272,7 +5272,7 @@
         !ENDIF
         IF (FILEIOT.EQ.'DS4') THEN
 !         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
-          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'G' .OR. 
+          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
      &       (INDEX('FQN',RNMODE) > 0)) THEN
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
