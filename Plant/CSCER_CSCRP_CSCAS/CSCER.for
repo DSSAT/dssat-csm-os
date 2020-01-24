@@ -6026,7 +6026,12 @@
           IF (ISTAGE.EQ.5.AND.ISTAGEP.EQ.4) THEN
             WRITE(fnumwrk,*)'Start of linear kernel growth    '
             WRITE(fnumwrk,*)' Original kernel growth rate (G2) ',g2
-            G2 = (G2KWT-(GRWT/GRNUM)*1000.0) / (PD(5)*(6.0-XSTAGE))
+!           chp handle zero divide
+            IF (GRNUM .GT. 1.E-6) THEN
+              G2 = (G2KWT-(GRWT/GRNUM)*1000.0) / (PD(5)*(6.0-XSTAGE))
+            ELSE
+              G2 = (G2KWT) / (PD(5)*(6.0-XSTAGE))
+            ENDIF
             WRITE(fnumwrk,*)' Adjusted kernel growth rate (G2) ',g2
             WRITE(fnumwrk,*)' (Adjustment because growing at lag rate',
      &      ' for overlap into linear filling period)'
