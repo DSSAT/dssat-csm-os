@@ -6,6 +6,7 @@
 !  Revision history
 !  06/27/2011 FSR created WH_GROSUB.for for APSIM NWheat (WHAPS) adaptation
 !  10/27/2016 BK, JG  added ozone effects
+!  01/21/2020 JG added pre- and post-anthesis RUE and kvalue
 !  01/21/2020 JG moved some CUL parameters to ECO file
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
@@ -2148,8 +2149,8 @@ cbak    testing:
 !*!     ce_tops = 3.2 * divide (solrad**0.7, solrad, 0.0)
 !*!     ce_tops = u_bound(ce_tops,2.0)
 ! JG added pre- and post-anthesis RUE and kvalue routine
-!        ce_tops = RUE * (SRAD**nwheats_kvalue / SRAD)
-        ce_tops = RUE * (SRAD**0.63 / SRAD)
+        ce_tops = RUE * (SRAD**nwheats_kvalue / SRAD)
+!        ce_tops = RUE * (SRAD**0.63 / SRAD)
         ce_tops = MIN(ce_tops,2.0)
  
 !*!   if (nwheats_min_rootfr() .gt. 0.0) then
