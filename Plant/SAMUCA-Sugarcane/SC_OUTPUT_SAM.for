@@ -42,7 +42,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE SC_OPGROW_SAM (CONTROL, CaneCrop, Growth,
      - Part, Out, WaterBal, SW, SoilProp,
-     - YRPLT, CELLSE_DM)
+     - YRPLT)
 c     :::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     Define DSSAT composite variables:
 c     [Taken from MZ_CERES.for]
@@ -87,7 +87,7 @@ c     CANEGRO variables:
 c     ::::::::::::::::::
 c     The CaneCrop 'object', an input parameter
 c     :::::::::::::::::::::::::::::::::::::::::
-      TYPE (CaneCropType) CaneCrop
+      TYPE (CaneSamuca) CaneCrop
 c     The growth 'object'
       TYPE (GrothType)    Growth
 c     The Partitioning object
@@ -122,7 +122,7 @@ c     Stalk population per m2
       REAL STKPOPm2 
 
 c     Cellulosic DM (t/ha)
-      REAL, INTENT(IN) ::  CELLSE_DM
+!      REAL, INTENT(IN) ::  CELLSE_DM
 
 c     CANEGRO 3.5 variables:
 c     ::::::::::::::::::::::
@@ -887,7 +887,7 @@ c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
      -                     LIPD, watdmd, GROSSP, BRDMD, 
      -                     Part%FLODGE, TTEBC, TTSPC, TTLEC, SUDMD,
      &              SUFMD, Canecrop%CWSI, PARCE, Part%RESP_G,
-     &              Part%RESP_M, CELLSE_DM
+     &              Part%RESP_M, -99.0
 
 c         Format statement
 c         Original one

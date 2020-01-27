@@ -12,42 +12,9 @@
     !--- The name of the (current) cultivar
       CHARACTER*20 CULTIVAR, SCSTGNAM(20), GROWTHPHASES(5)
 
-      INTEGER  CANESIM, CANEGRO, MAX_TILLER_COHORTS, MAXCOHORTS
-      
-!     Set parameter values:
-      PARAMETER (CANEGRO = 1, CANESIM = 2)
-
-      PARAMETER (MAX_TILLER_COHORTS = 100)
-
-      PARAMETER (MAXCOHORTS = 50)
-
 !     Phenological stages:
 !      INTEGER SEEDCANE, GERMINATED, EMERGED
-
-!!     Sugarcane phenological stage names/numbers
-!!     Inspired by the Maize stage list:
-!      DATA SCSTGNAM /
-!     &  '          ',   !1
-!     &  'Peak pop. ',   !2
-!     &  'Phylswitch',   !3
-!     &  'Stalk emrg',   !4
-!     &  '          ',   !5
-!     &  'Flowr init',   !6
-!     &  'Flowr emrg',   !7
-!     &  'Plant/ratn',   !8
-!     &  'Germinate ',   !9
-!     &  'Emergence ',   !10
-!     &  'Peak popn ',   !11
-!     &  'Maturity  ',   !12
-!     &  '          ',   !13
-!     &  'Start Sim ',   !14
-!     &  'End Sim   ',   !15
-!     &  'Harvest   ',   !16
-!     &  '          ',   !17
-!     &  '          ',   !18
-!     &  '          ',   !19
-!     &  'Harvest   '/   !20
-
+      
 !!     Sugarcane growth phases:
 !      DATA GROWTHPHASES /
 !!       1: emergence
@@ -60,14 +27,8 @@
 !     &  'Stlk.Senes',
 !     &  'FLWR INIT '/
 
-
-!c=======================================================================
-!c     For now, these modules will simply replace the common blocks,
-!c     so will contain the same variables with the same names.
-!
-!c     The climate type:
-!c     :::::::::::::::::
-          TYPE ClimateType
+        !--- Climate type:
+        TYPE ClimateType
               REAL APAN
               REAL DTT
               REAL PAR
@@ -84,11 +45,10 @@
               REAL TWET2
               REAL TWET8
               REAL WINDSP
-          END TYPE ClimateType
-
-!c     The water balance type (this might be problematic in DSSAT)
-!c     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-          TYPE WaterType
+        END TYPE ClimateType
+          
+          !--- WaterBalance
+        TYPE WaterType
               REAL ANAER
               REAL ANAERF
               REAL CANWAT
@@ -103,9 +63,7 @@
               REAL CWSI
               REAL DRAIN
               REAL EO
-!c             Added by MJ, 20070323
               REAL EOS
-!c             Added by MJ, 20070323
               REAL EOP
               REAL EP
               REAL ES
@@ -135,18 +93,16 @@
               REAL TRWU
               REAL TRWUP
               REAL TSW
-          END TYPE WaterType
-
-!c     The canopy/crop type:
-!c     :::::::::::::::::::::
-          TYPE CaneCropType
+        END TYPE WaterType
+          
+        type CaneSamuca
               REAL    AREAMX(70)
               REAL    CANHEIGHT
 !c             Should the ratoon be carried over?
               LOGICAL CARRY_OVER
               REAL CWSI
 !c              REAL    DEDLFN(30)
-              REAL    DEDLFN(MAX_TILLER_COHORTS)
+              !REAL    DEDLFN(MAX_TILLER_COHORTS)
               REAL    DEDSTK
               REAL    EXTCFN
               REAL    EXTCFST
@@ -155,10 +111,10 @@
               INTEGER GROPHASE
 
 !c              REAL    LEN(30,70)
-              REAL    LEN(MAX_TILLER_COHORTS,70)
+              !REAL    LEN(MAX_TILLER_COHORTS,70)
               INTEGER LFMAX
 !c              INTEGER LFN(30)
-              INTEGER LFN(MAX_TILLER_COHORTS)
+!              INTEGER LFN(MAX_TILLER_COHORTS)
               INTEGER LFNMXEXT
               REAL    LMAX(70)
               INTEGER LOSING
@@ -174,20 +130,28 @@
               REAL    popcf(10)
               REAL    poplfn
 !c              REAL    popmax(30)
-              REAL    popmax(MAX_TILLER_COHORTS)
+!              REAL    popmax(MAX_TILLER_COHORTS)
               REAL    POPN
 !            Ratoon: 0 = plant crop, ratoon 1, 2, 3, etc
               INTEGER RATOON
 !            Stalk height
               REAL    SHGT
 !             REAL    TEMPOP(30)
-              REAL    TEMPOP(MAX_TILLER_COHORTS)
+!              REAL    TEMPOP(MAX_TILLER_COHORTS)
               REAL    TMEANDEDLF
               REAL    TMEANLF
               REAL    TOTPOP
               REAL    WIDCOR
               REAL    WIDTH(70)
               REAL    WMAX(70)
+        
+        end type CaneSamuca
+        
+        
+!c     The canopy/crop type:
+!c     :::::::::::::::::::::
+          TYPE CaneCropType
+              
           END TYPE CaneCropType
 
           TYPE CNG_SoilType
@@ -285,9 +249,7 @@
               REAL    CANHGT
               REAL    CDRAIN
               REAL    CHUPI
-!            Cumulative thermal time for stalk population
               REAL    CHUPOP
-!            Cumulative thermal time for emergence
               REAL    CHU_EM
               REAL    CLAI
               REAL    CRUNOF

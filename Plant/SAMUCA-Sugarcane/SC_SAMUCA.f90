@@ -82,14 +82,14 @@
 	Type (ResidueType) SENESCE
 	Type (WeatherType) WEATHER
     
-    !--- Local variables to be exhanged with outputs files
+    !--- Local composite variables:
     TYPE (CNG_SoilType) Soil
     TYPE (WaterType)    WaterBal
-    TYPE (CaneCropType) CaneCrop
     TYPE (GrothType)    Growth
     TYPE (ClimateType)  Climate
     TYPE (PartType)     Part
     TYPE (OutType)      Out
+    type (CaneSamuca)   CaneCrop
     
     logical     cf_err          ! Error flag when reading .CUL and .ECO parameters
     logical     spc_error       ! Error flag when reading .SPE parameters
@@ -607,8 +607,6 @@
     real 	MLA			
     real 	KC_MIN		
     real 	EORATIO		
-    !real 	RWUEP1		
-    !real 	RWUEP2		
     real 	T_MAX_WS_PHO
     real 	T_MID_WS_PHO
     real 	T_MIN_WS_PHO
@@ -640,32 +638,25 @@
     real	SWFACP	
     real	SWFACE	
     real	SWFACT	
-    real	SWFACF	
-    !real	SRAD	
+    real	SWFACF	   
     real	TMN		
-    !real	TMAX	
-    !real	TMIN	
     integer	DOY		
     real	LAT_SIM	
-    !real	CO2		
     integer NDWS	
     integer NDEWS	
-    !real 	EOP		
     logical FLEMERGED	
     integer OUTP		                ! i/o   !
     integer outdph                      ! i/o   !
     integer outd                        ! i/o   !
     integer outdpp                      ! i/o   !
     integer outpfac                     ! i/o   !
-    integer outstres                    ! i/o   !
-    
-    logical potential_growth	(50)	! ctrl	!
-    logical writedcrop          (50)    ! ctrl	!
-    logical writeactout         (50)    ! ctrl	!
-    logical usetsoil            (50)    ! ctrl	!
+    integer outstres                    ! i/o   !    
+    logical writedcrop                  ! ctrl	!
+    logical writeactout                 ! ctrl	!
+    logical usetsoil                    ! ctrl	!
     logical mulcheffect                 ! ctrl	!
     logical ratoon				        ! plan	! 
-    integer metpg               (50)    ! ctrl  ! 
+    integer metpg                       ! ctrl  ! 
     integer seqnow                      ! ctrl  ! 
     real    rowsp				     	! ctrl  ! 
     real    plantdepth                  ! ctrl  !
@@ -678,11 +669,9 @@
     real    rd    
     real    srl                 
     real    thour(24)
-    !real    trwup
     real    tsoil(nl)
     real    dileaf
     real    z               !zero
-    !real    dayl
     real    sinld
     real    cosld
     real    resp
@@ -706,19 +695,22 @@
     character   (len=1000)  pathwork
     character   (len=7)     YRDOY_ch    ! year and doy as character used to extract year and doy from CONTROL%YRDOY
     
+    integer nratoon
+    integer max_ratoon
+    
     
     !--- reading integer parameter as real and convert afterwards
-    !--- This is easier than creating one dedicated subroutine only for that
+    !--- This is easier than creating a dedicated subroutine only for that
     real        maxgl_r
     real        maxdgl_r
     real        n_lf_when_stk_emerg_r
     real        n_lf_it_form_r   
     real        ratoon_r
     
-    real        CELLSE_DM ! CANEGRO'S Cellulosic DM (t/ha)
+    !real        CELLSE_DM ! CANEGRO'S Cellulosic DM (t/ha)
     
     logical     flcropalive
-    logical	    writedetphoto(50)
+    logical	    writedetphoto
     
     save
     
@@ -738,13 +730,23 @@
     ! SEASEND  = 6,
     ! ENDRUN   = 7 
     
+    !---------------------!
+    !--- RUNNING MODES ---!
+    !---------------------!
+    
+    !--- Sequential mode    -> Control%RNMODE .eq. 'Q':
+    !--- The model will pass through the RUNINIT task for every run
+    
+    !--- Seasonal mode      -> Control%RNMODE .eq. 'N':
+    !--- The model will pass through the RUNINIT task only at the first year (Use this for carrying over ratoon)
+    
     !--- Setting up SAMUCA task based on CONTROL DYNAMIC
-    if(dynamic .eq. RUNINIT)    return      ! Not in use by SAMUCA
-    if(dynamic .eq. SEASINIT)   task = 1    ! Crop State Variable Initialization and reading crop parameters
-    if(dynamic .eq. RATE)       task = 3    ! Step-Rate and Integration are in the same block for SAMUCA
-    if(dynamic .eq. INTEGR)     return      ! Embedded in task=3 (consider moving move here)
-    if(dynamic .eq. OUTPUT)     task = 4    ! Write output files
-    if(dynamic .eq. SEASEND)    task = 5    ! Close PlantGro if Ratooning is not carring over
+    if(dynamic .eq. RUNINIT)    task = 1    ! Initialize internal counters
+    if(dynamic .eq. SEASINIT)   task = 2    ! Crop State Variable Initialization and reading crop parameters
+    if(dynamic .eq. RATE)       task = 4    ! Step-Rate and Integration are in the same block for SAMUCA
+    if(dynamic .eq. INTEGR)     return      ! Embedded in task=4 (consider moving move here)
+    if(dynamic .eq. OUTPUT)     task = 5    ! Write output files
+    if(dynamic .eq. SEASEND)    task = 6    ! Close PlantGro if Ratooning is not carring over
     if(dynamic .eq. ENDRUN)     return      ! Not in use by SAMUCA   
         
     !--- Linking Weather Variables
@@ -775,9 +777,24 @@
     dep         = bottom        
     
     !--- Go to task!
-    goto(10,20,30,40,50) task
+    goto(10,20,30,40,50,60) task
     
 10  continue
+    
+    !--- Seasons count
+    seqnow  = 0
+    nseason = 0
+    nratoon = 0
+    
+    !--- Plant or Ratoon from the control file
+    ratoon              = .false.  
+    ratoon_r            = 0.d0
+    call find_inp_sam(ratoon_r, 'RATOON', Control)
+    if(ratoon_r .ge. 0.99) ratoon = .true.
+    
+    return
+    
+20  continue
     
     !----------------------!
     !--- DSSAT coupling ---!    
@@ -924,6 +941,9 @@
     co2_pho_res_end =   270.d0
     co2_pho_res_ini =   0.d0
     
+    !--- Maximum number of sequential ratoons
+    max_ratoon      = 5         ! Make this an ecotype coefficient
+    
     !--- Convert parameters for i/o purpose
     agefactor_fac_amax           = agefactor_fac_amax / 1.e5
     agefactor_fac_rue            = agefactor_fac_rue  / 1.e5
@@ -967,22 +987,11 @@
     !--- Outputs
     writedcrop          = .true.    ! Detailed Crop
     writeactout         = .true.    ! Write Crop Outputs default is .true. 
-            
-    !--- Hourly Hour temperature
-    a_pl        = 1.607 !Calibrated for Sao Paulo State   (original constants from Parton and Logan paper = 2.000)
-    b_pl        = 2.762 !Calibrated for Sao Paulo State   (original constants from Parton and Logan paper = 2.200)
-    c_pl        = 1.179 !Calibrated for Sao Paulo State   (original constants from Parton and Logan paper = -0.17)
     
     !----------------------------------!
     !--- Crop States Initialization ---!
-    !----------------------------------!    
-    dap     =   1
-    
-    !------------------------!
-    !---> DEBUGGING CODE <---!
-    !------------------------!
-    seqnow              = 1
-    
+    !----------------------------------!
+        
     !--- Rowspacing
     rowsp   = 1.4       ! Default Value in case the below function doesnt find any value
     call find_inp_sam(rowsp, 'ROWSPC', Control)
@@ -991,12 +1000,6 @@
     !--- Planting depth
     plantdepth  = 20.   ! Default Value in case the below function doesnt find any value
     call find_inp_sam(plantdepth, 'PLDP', Control)
-    
-    !--- Plant or Ratoon?
-    ratoon              = .false.  
-    ratoon_r            = 0.d0
-    call find_inp_sam(ratoon_r, 'RATOON', Control)
-    if(ratoon_r .ge. 0.99) ratoon = .true.
     
     !--- Leaf dry weight at end of life-spam of a leaf grown under optimun conditions [g]
     max_lf_dw       = mla / sla ! Use this while the model considers fixed SLA (PIT)
@@ -1008,6 +1011,46 @@
     nstalks_planting    = 2.d0  !#
     ini_nstk            = 5. * 1. / (rowsp / 100.) ! plants m-2 - Assuming 5 emerged stems per 1 linear meter (20 cm between each other)
     tilleragefac        = 1.
+    
+    !--- Time and season control
+    dap     = 1        
+        
+    !--- Check if this is a sequential run
+    if((Control%RNMODE .eq. 'N') .or. (Control%RNMODE .eq. 'F'))then
+        
+        !----------------------!
+        !--- Sequential Run ---!
+        !---  Seasonal Mode ---!
+        !----------------------!        
+        
+        seqnow  = seqnow + 1
+        nseason = seqnow
+        
+        !--- First Ratoon
+        if((.not. ratoon) .and. (nseason .gt. 1))then            
+            ratoon = .true.            
+        endif
+                
+        !--- Sequential Ratoon
+        if(ratoon)then
+            
+            !--- Ratoon count
+            nratoon  = nratoon + 1
+            
+            if(nratoon .gt. max_ratoon)then                
+                !--- Reached the maximum number of sequential ratoons
+                nratoon = 0
+                ratoon  = .false. ! This will be carried                
+            endif            
+        endif
+        
+    else
+        
+        !--- Not a sequential run       
+        seqnow              = 1
+        nseason             = 1
+        if(ratoon) nratoon  = 1
+    endif
     
     if(ratoon)then
         
@@ -1024,13 +1067,11 @@
         if(bottom(1) .ge. initcropdepth)then            
             initcropdepth = bottom(1) + 0.01 !Ensure that the ratoon depth shoot is below first soil layer           
         endif
-            
-        nseason = seqnow
-    
+        
         !--- Check root dry weight left from last season
         if(nseason .eq. 1) then
         
-            !--- If ratoonng and 1st season: Assume Laclau & Laclau (2009) Root dryWeight at maturity ~ 120 g m-2 
+            !--- If ratoonng is the 1st season, assume the previous season had the potential growth
             dw_rt   = max_rt_dw * (1.e4 / 1.e6) ! [ton ha-1]
         
             !--- Substrates for initial growth - Use same as plant cane when ratoon is the first season        
@@ -1265,8 +1306,7 @@
                         WaterBal,       &
                         SW,             &
                         SoilProp,       &
-                        YRPLT,          &
-                        CELLSE_DM)
+                        YRPLT)
     
     !--- Crop output header     
     write(outp, 11) 'Plant Growth Simulations for: ', trim(cropfile(1))
@@ -1276,7 +1316,7 @@
     write(outp, 16)
     write(outp, 17)    
     
-    if(writedetphoto(1))then        
+    if(writedetphoto)then        
         
         !!--- Canopy photosynthesis header 
         !write(outdph, 21) 'Photosynthesis Simulations for: ', trim(cropfile(1))
@@ -1328,7 +1368,7 @@
     
     return
     
-20  continue    
+30  continue    
     
     !-----------------------!
     !--- Potential rates ---!
@@ -1339,7 +1379,7 @@
     
     return
     
-30  continue
+40  continue
 	
     !-------------------------------------!
     !--- Time-Step Rate Initialization ---!
@@ -1735,7 +1775,7 @@
     !----------------!
     !--- Age Rate ---!
     !----------------!
-    if(usetsoil(1))then
+    if(usetsoil)then
         
         !----------------------------!
         !--- Use Soil Temperature ---!
@@ -2260,7 +2300,7 @@
         !----------------------!
         
         !--- Select among photosynthesis methods
-        select case(metpg(1))
+        select case(metpg)
         
         case(1)
             
@@ -3460,7 +3500,7 @@
     !--------------------------!
         
     !--- Detailed Photosynthesis output
-    if(writedetphoto(1) .and. flemerged)then
+    if(writedetphoto .and. flemerged)then
                 
         !--- Convert to μmol m-2 s-1 for output purpose
         amax_out = amax_mod * 1.e3 / 1.e4 / 3600 / 44.d0 * 1.e6
@@ -3499,7 +3539,7 @@
     
     
     !--- Detailed Crop Outputs (Phytomer Profile)
-    if(writedcrop(1))then
+    if(writedcrop)then
         do phy = 1, n_ph           
             !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Age'                   , ',', 'Cdays'   , ',', phprof(phy,1)
             !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Total DW'              , ',', 'g'       , ',', phprof(phy,6)
@@ -3536,7 +3576,7 @@
     !--------------------!
     !--- Crop Outputs ---!
     !--------------------!
-    if(writeactout(1))then
+    if(writeactout)then
         !write(outp,109) seqnow,     &
         !                pltype,     &
         !                year,       & 
@@ -3588,7 +3628,7 @@
     
     return
     
-40  continue
+50  continue
         
     !--------------------------!
     !--- Write Output files ---!    
@@ -3626,12 +3666,11 @@
                         WaterBal,   &
                         SW,         &
                         SoilProp,   &
-                        YRPLT,      &
-                        CELLSE_DM)
+                        YRPLT)
     
     return
     
-50  continue
+60  continue
     
     call sc_opgrow_sam( CONTROL,    &
                         CaneCrop,   &
@@ -3641,8 +3680,7 @@
                         WaterBal,   &
                         SW,         &
                         SoilProp,   &
-                        YRPLT,      &
-                        CELLSE_DM)
+                        YRPLT)
     
     return
     
