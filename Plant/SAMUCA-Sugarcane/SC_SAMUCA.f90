@@ -83,12 +83,6 @@
 	Type (WeatherType) WEATHER
     
     !--- Local composite variables:
-    TYPE (CNG_SoilType) Soil
-    TYPE (WaterType)    WaterBal
-    TYPE (GrothType)    Growth
-    TYPE (ClimateType)  Climate
-    TYPE (PartType)     Part
-    TYPE (OutType)      Out
     type (CaneSamuca)   CaneCrop
     
     logical     cf_err          ! Error flag when reading .CUL and .ECO parameters
@@ -193,7 +187,8 @@
     real		cr_source_sink_ratio                      		! 
     real		cr_source_sink_ratio_ruse                 		! 
     real		dage_it_phy                               		! 
-    real		dage_lf_phy                               		! 
+    real		dage_lf_phy                               		!
+    real        ddw                                             
     real		ddw_it                                    		! 
     real		ddw_it_ag                                 		! 
     real		ddw_it_ag_dead                            		! 
@@ -548,6 +543,12 @@
     real		tt_chumat_lt                              		! 
     real		wat_con                                   		! 
     real		wat_it_ag                                 		!
+    real        acc_par
+    real        dacc_par
+    real        drue_calc
+    real        rue_calc
+    real        gstd
+    real        cstat
 
     !--- Arrays Variables
     real        phprof(200,60)                                  ! Phytomer profile and attributes dimensions    
@@ -619,8 +620,7 @@
     real	SWCON1		
     real	SWCON2		
     real	SWCON3		
-    real	RWUMAX		
-    !real	PORMIN		
+    real	RWUMAX			
     real	T_MAX_WS_FPF
     real	T_MID_WS_FPF
     real	T_MIN_WS_FPF
@@ -781,7 +781,7 @@
     
 10  continue
     
-    !--- Seasons count
+    !--- Season count control
     seqnow  = 0
     nseason = 0
     nratoon = 0
@@ -795,24 +795,7 @@
     return
     
 20  continue
-    
-    !----------------------!
-    !--- DSSAT coupling ---!    
-    !----------------------!
-    
-    !--- Notes:    
-    ! CUL PARAMETERS ARE DECLARED IN file COMGEM.blk    
-    ! DYNAMIC calls    
-    ! RUNINIT  = 1, 
-    ! INIT     = 2,  ! Will take the place of RUNINIT & SEASINIT (not fully implemented)
-    ! SEASINIT = 2, 
-    ! RATE     = 3,
-    ! EMERG    = 3,
-    ! INTEGR   = 4,  
-    ! OUTPUT   = 5,  
-    ! SEASEND  = 6,
-    ! ENDRUN   = 7 
-    
+        
     !-------------------------------!
     !--- Reading crop parameters ---!
     !-------------------------------!
@@ -1122,6 +1105,7 @@
         
             cropdstage      =  'Sprout'
             cropstatus      = ' Alive'
+            cstat           = 1.d0
             flcropalive     = .true.        
             
         else
@@ -1189,6 +1173,7 @@
         !--- Crop Stage
         cropdstage      =  'Sprout'
         cropstatus      = ' Alive'
+        cstat           = 1.d0
         flcropalive     = .true.
         
     endif
@@ -1282,6 +1267,9 @@
     dnstk_dead_rate     = 0.d0
     chumat_lt           = 0.d0    
     
+    !--- Growth stage
+    gstd = 0.d0
+    
     !--- Initial root dry weight in g m-2
     ini_dw_rt   =   ini_dw_rt   *   (1.e6 / 1.e4)
     
@@ -1292,6 +1280,11 @@
     !--- Resources used for emergence (reset plant memory)
     res_used_emerg      = 0.d0        
     
+    !--- Light accumulated for photosynthesis (MJ m-2)
+    acc_par             = 0.d0
+    drue_calc           = 0.d0
+    rue_calc            = 0.d0
+    
     !--------------------!
     !--- Output Files ---!
     !--------------------!
@@ -1299,13 +1292,7 @@
     !--- Call the output routine, to initialise output
     !--- *** Borrowing SC_OPGROW.for from CANEGRO ***
     call sc_opgrow_SAM( CONTROL,        &
-                        CaneCrop,       &
-                        Growth,         &
-                        Part,           &
-                        Out,            &
-                        WaterBal,       &
-                        SW,             &
-                        SoilProp,       &
+                        CaneCrop,       &                        
                         YRPLT)
     
     !--- Crop output header     
@@ -1473,6 +1460,9 @@
     dtga                        = 0.d0
     frac_li                     = 0.d0
     li                          = 0.d0
+    dacc_par                    = 0.d0
+    drue_calc                   = 0.d0
+    rue_calc                    = 0.d0
     Acanopy				        = 0.d0
     Qleaf				        = 0.d0
     incpar				        = 0.d0
@@ -1904,7 +1894,7 @@
                 !--- Dead LAI, where the fdeadlf is the fraction of blades of attached dead leaves 
                 dead_lai    = sum(phprof(lf_dpos : (lf_dpos + aint(nsenesleaf_effect)), 5)) * nstk_now * tilleragefac * 1.e-4 * fdeadlf
                 
-                !--- Modified LAI
+                !--- Modified LAI (dry+green leaves)
                 laimod = lai + dead_lai
                 
                 !--- Transmitted Light Through Canopy
@@ -2235,7 +2225,7 @@
         !--- Total substrates needed for crop growth [gCH2O m-2]
         dtcrss = dtitss + dtlfss + dtrtss        
         
-        !--- Total substrates needed for crop growth/maintenance respiration [gCH2O m-2]
+        !--- Total substrates needed for crop growth/maintenance respiration and growth [gCH2O m-2]
         tot_gresp_crop = (tot_gresp_it_AG + tot_gresp_it_BG) + tot_gresp_lf + tot_gresp_rt
         tot_mresp_crop = (tot_mresp_it_AG + tot_mresp_it_BG) + tot_mresp_lf + tot_mresp_rt
         tot_dw_ss_crop = (tot_dw_ss_it_AG + tot_dw_ss_it_BG) + tot_dw_ss_lf + tot_dw_ss_rt
@@ -2370,6 +2360,9 @@
             !--- Convert to ton ha-1
             dtg             = dtg               * 1.e-3
             photo_layer_act = photo_layer_act   * 1.e-3
+            
+            !--- Daily PAR intercepted (MJ m-2)
+            dacc_par        = frac_li * par_rad
             
         case(3)
             
@@ -2849,6 +2842,9 @@
     dsubsres_rt     = exc_dtg_rt - reserves_used_mresp_rt * (1.e4/1.e6) - reserves_used_growth_rt * (1.e4/1.e6)
     dsubsres        = dsubsres_lf + dsubsres_it + dsubsres_rt
     
+    !--- Overall Biomass Gain
+    ddw     =    ddw_rt + (ddw_lf + ddw_lf_appear) + ddw_it + dsubsres
+    
     !--- Ratio Reserves Variation    
     dsubsres_ratio  = 1.d0
     if(subsres .gt. 0.d0) dsubsres_ratio  = (subsres + dsubsres) / subsres
@@ -3171,6 +3167,14 @@
     !--- Leaf Area Index [m2 m-2]
     lai         =   lai     +   dlai_gain   -   dlai_dead   -   dlai_shed   +      dlai_gain_appear
     
+    !--- Light intercepted for photosynthesis (only green leaves)
+    acc_par     =   acc_par  +  dacc_par
+    
+    !--- Calculated RUE
+    if((acc_par .gt. z) .and. (ddw .gt. z))then
+        drue_calc   = (ddw        * 1.e6/1.e4) / dacc_par ! RUE based on daily biomass gain and PAR intercepted [gDW/MJ]
+        rue_calc    = (dw_total   * 1.e6/1.e4) / acc_par  ! RUE based on accumulated biomass and accumulated PAR intercepted [gDW/MJ] (the "normal" way)
+    endif
     !--- Crop Coefficient (EORATIO)
     kc          = kc_min    + (eoratio - kc_min) * lai / (maxlai_eo)
     
@@ -3202,6 +3206,26 @@
     if(flemerged) then
         diacem        = diacem        + di
         diacsoilem    = diacsoilem    + disoil
+        
+        !--- Growth Stages After Emergence
+        if(fl_tiller_increase)then
+            
+            !--- Increase number of tiller
+            gstd    = 2.d0
+            
+            !--- Still tillering but stalk already emerged
+            if(fl_stalk_emerged) gstd    = 3.d0
+            
+        elseif(fl_tiller_decrease)then
+            
+            !--- Decrease number of tiller        
+            gstd    = 4.d0
+            
+        else
+            !--- Stabilize plant population
+            gstd    = 4.d0
+        endif       
+        
     endif    
     
     !--- Memorize how much substrates is needed for emergence
@@ -3471,7 +3495,8 @@
         if(sug_it_BG .le. 0.d0 .and. shootdepth .gt. 0.d0) then                
             !--- Kill the crop before emergence
             flcropalive = .false.
-            cropstatus  = '  Dead'                 
+            cropstatus  = '  Dead'     
+            cstat       = 0.d0
         endif
         
         if(shootdepth .le. 0.d0)then
@@ -3491,10 +3516,10 @@
             cropdstage          = 'Emergd'                                  ! Update Stage ID     
             diac_at_emergence   = diacsoil                                  ! Cdays at Emergence
             lai                 = init_leaf_area * ini_nstk / 1.e4          ! [m2 m-2]
+            gstd                = 1.d0                                      ! Growth Stage (DSSAT)
         endif        
     endif
-       
-    
+           
     !--------------------------!
     !--- Write Step Outputs ---!
     !--------------------------!
@@ -3635,51 +3660,58 @@
     !---  DYNAMIC = OUTPUT  ---!
     !--------------------------!
     
-    !--- Passing variables to composite variables of SAMUCA (Following CANEGRO)
-    !--- Outputs to be added:
-    !--- diac
-    !--- 
-    Part    %   STKDM       =   dw_it_AG
-    Part    %   STKWM       =   fw_it_AG
-    Out     %   ROOTDM      =   dw_rt
-    Growth  %   LAI         =   lai
-    Part    %   TOPDM       =   dw_lf
-    Part    %   SUCMAS      =   suc_it_AG
-    CaneCrop%   SHGT        =   stk_h
-    Growth  %   LI          =   li
-    CaneCrop%   TOTPOP      =   nstk
-    Part    %   AERLDM      =   dw_aerial
-    WaterBal%   RTDEP       =   rd
-    WaterBal%   RLV         =   rld
-    Out     %   GROSSP      =   dtg
-    Out     %   DWDT        =   dw_total
-    WaterBal%   SWDF1       =   swfacp
-    WaterBal%   SWDF2       =   swface
-    WaterBal%   TRWUP       =   trwup
-    WaterBal%   EOS         =   eop
+    !--- Passing variables to composite variables of SAMUCA
+    CaneCrop % seqnow         = seqnow        
+    CaneCrop % pltype         = pltype        
+    CaneCrop % year           = year          
+    CaneCrop % doy            = doy           
+    CaneCrop % das            = das           
+    CaneCrop % dap            = dap           
+    CaneCrop % diac           = diac          
+    CaneCrop % dw_total       = dw_total
+    CaneCrop % dw_aerial      = dw_aerial
+    CaneCrop % dw_BG          = max(0.d0, dw_total - dw_aerial)
+    CaneCrop % dw_it_AG       = dw_it_AG      
+    CaneCrop % dw_lf          = dw_lf         
+    CaneCrop % dw_rt          = dw_rt         
+    CaneCrop % fw_it_AG       = fw_it_AG      
+    CaneCrop % suc_it_AG      = suc_it_AG     
+    CaneCrop % pol            = pol           
+    CaneCrop % lai            = lai           
+    CaneCrop % nstk           = nstk          
+    CaneCrop % stk_h          = stk_h         
+    CaneCrop % n_lf_AG_dewlap = n_lf_AG_dewlap
+    CaneCrop % swface         = swface        
+    CaneCrop % swfacp         = swfacp        
+    CaneCrop % cropstatus     = cropstatus    
+    CaneCrop % cropdstage     = cropdstage  
+    CaneCrop % rd             = rd
+    CaneCrop % rld            = rld
+    CaneCrop % frac_li_pho    = frac_li
+    CaneCrop % frac_li_till   = li
+    CaneCrop % trwup          = trwup * 10 ! [mm]
+    CaneCrop % eop            = eop
+    CaneCrop % dtg            = dtg
+    CaneCrop % drue_calc      = drue_calc 
+    CaneCrop % rue_calc       = rue_calc
+    CaneCrop % tot_gresp_crop = tot_gresp_crop * (1.e4/1.e6) ! [ton ha-1]
+    CaneCrop % tot_mresp_crop = tot_mresp_crop * (1.e4/1.e6) ! [ton ha-1]
+    CaneCrop % gstd           = gstd
+    CaneCrop % nratoon        = nratoon
+    CaneCrop % cstat          = cstat
     
+    !--- Write output
     call sc_opgrow_sam( CONTROL,    &
-                        CaneCrop,   &
-                        Growth,     &
-                        Part,       &
-                        Out,        &
-                        WaterBal,   &
-                        SW,         &
-                        SoilProp,   &
+                        CaneCrop,   &                        
                         YRPLT)
     
     return
     
 60  continue
     
+    !--- Close outputs
     call sc_opgrow_sam( CONTROL,    &
-                        CaneCrop,   &
-                        Growth,     &
-                        Part,       &
-                        Out,        &
-                        WaterBal,   &
-                        SW,         &
-                        SoilProp,   &
+                        CaneCrop,   &                        
                         YRPLT)
     
     return
