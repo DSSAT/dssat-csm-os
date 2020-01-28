@@ -124,7 +124,7 @@ c     String lengths:
         DATA GROHEAD(3,10) /'DMt/ha'/
         DATA GROHEAD(4,10) /'BADMD'/
 		
-        DATA GROHEAD(1,11) /'Below'/
+        DATA GROHEAD(1,11) /'BelowG'/
         DATA GROHEAD(2,11) /'Weight'/
         DATA GROHEAD(3,11) /'DMt/ha'/
         DATA GROHEAD(4,11) /'BBDMD'/
