@@ -939,6 +939,8 @@ WFTD   WATER FAC TRANS Water factor for transpiration (0-1)                     
 WSTD   H2O STRESS,TILR Water stress - tillering (0-1)                           .
 YEAR   YEAR            Year (4 digits)                                          .
 RCANE  Cane Type       PlantCane or Ratoon Cane                                 .
+DDLMD  Dead Leaf Biom. Dead Leaves Biomass (ton/ha)   							.
+DDTMD  Dead Tillers B. Dead Tillers Biomass (ton/ha)							.
 SEQR   Ratoon Seq.     Ratooning Cane Sequence                                  .
 TTTOT  Total TT        Total thermal time accumulated (oCdays)                  .
 BBDMD  Below Ground W  Total below ground dry weight (ton/ha)                   .
