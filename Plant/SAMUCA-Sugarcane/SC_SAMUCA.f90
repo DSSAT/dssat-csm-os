@@ -163,7 +163,10 @@
     real		sug_it_bg                                 		! 
     real		suc_it_bg                                 		! 
     real		hex_it_bg                                 		! 
-    real		dw_it                                     		! 
+    real		dw_it                                     		!
+    real        dw_it_dead                                      !
+    real        dw_it_dead_AG                                   !
+    real        dw_it_dead_BG                                   !
     real		ini_dw_rt                                 		! 
     real		rootleftfrac                              		! 
     real		dw_total	                              		! 
@@ -278,7 +281,8 @@
     real		dtrtss                                    		! 
     real		dw_aerial                                 		! 
     real		dw_it_phy                                 		! 
-    real		dw_lf                                     		! 
+    real		dw_lf                                     		!
+    real        dw_lf_dead                                      !
     real		dw_lf_ag                                  		! 
     real		dw_lf_bg                                  		! 
     real		dw_lf_phy                                 		! 
@@ -1202,6 +1206,10 @@
     nstk_now    			=   ini_nstk
     n_lf_tiller 			=   0.d0
     sug_cont    			=   0.d0
+    dw_it_dead              =   0.d0
+    dw_lf_dead              =   0.d0
+    dw_it_dead_AG           =   0.d0
+    dw_it_dead_BG           =   0.d0
     
     !--- Counters
     n_lf_dead               = 0			
@@ -3044,6 +3052,12 @@
     sug_it_BG   =   sug_it_BG   +   dsug_it_BG  -   dsug_it_BG_dead +   dsubsres
     wat_it_AG   =   wat_it_AG   +   dwat_it_AG  -   dwat_it_AG_dead    
     
+    !--- Dead parts
+    dw_it_dead              =   dw_it_dead          +   ddw_it_dead
+    dw_it_dead_AG           =   dw_it_dead_AG       +   ddw_it_AG_dead
+    dw_it_dead_BG           =   dw_it_dead_BG       +   ddw_it_BG_dead
+    dw_lf_dead              =   dw_lf_dead          +   ddw_lf_dead + ddw_lf_shed
+    
     !--- Upscale Sucrose/Hexose to Field Level [ton ha-1]    
     suc_it_AG   =   suc_it_AG_ref_till * (nstk_now * tilleragefac) * (1.e4 / 1.e6)
     hex_it_AG   =   hex_it_AG_ref_till * (nstk_now * tilleragefac) * (1.e4 / 1.e6)
@@ -3173,7 +3187,7 @@
     !--- Calculated RUE
     if((acc_par .gt. z) .and. (ddw .gt. z))then
         drue_calc   = (ddw        * 1.e6/1.e4) / dacc_par ! RUE based on daily biomass gain and PAR intercepted [gDW/MJ]
-        rue_calc    = (dw_total   * 1.e6/1.e4) / acc_par  ! RUE based on accumulated biomass and accumulated PAR intercepted [gDW/MJ] (the "normal" way)
+        rue_calc    = (dw_total   * 1.e6/1.e4) / acc_par  ! RUE based on accumulated biomass and accumulated PAR intercepted [gDW/MJ] (the "typical" way)
     endif
     !--- Crop Coefficient (EORATIO)
     kc          = kc_min    + (eoratio - kc_min) * lai / (maxlai_eo)
@@ -3598,37 +3612,7 @@
 !    write(outstres, 145) das, dap, trasw, eop, trwup*10.d0, max(trwup/(eop/10.),0.d0), swfacp, swface, swfacf, swfact, tmn, tempfac_pho, tempfac_per, co2, pho_fac_co2, diacem, agefactor_amax, agefactor_per, sug_it_BG, amaxfbfac, dtg*(1.e6/1.e4), per
 
 145     format(1X,I4,3X,i4,3x,200F12.4)  
-    !--------------------!
-    !--- Crop Outputs ---!
-    !--------------------!
-    if(writeactout)then
-        !write(outp,109) seqnow,     &
-        !                pltype,     &
-        !                year,       & 
-        !                doy,        &
-        !                das,        &
-        !                dap,        &
-        !                diac,       &
-        !                dw_total,   &
-        !                dw_it_AG,   &
-        !                dw_lf,      &
-        !                dw_rt,      &
-        !                fw_it_AG,   &
-        !                suc_it_AG,  &
-        !                pol,        &
-        !                lai,        &
-        !                nstk,       &
-        !                stk_h,      &
-        !                n_lf_AG_dewlap*1., &
-        !                swface,     &
-        !                swfacp,     &
-        !                cropstatus, &
-        !                cropdstage, &
-        !                prjname
-    endif
-    
-109     format(I2,3X,A6,3X,I4,4X,I3,3X,I4,4X,I3,1F8.1,2f8.2,3F8.2,8F8.2,3X,A6,2X,A6,2X,A5)  
-    
+        
     !--- Time control
     dap = dap + 1
     
@@ -3661,44 +3645,48 @@
     !--------------------------!
     
     !--- Passing variables to composite variables of SAMUCA
-    CaneCrop % seqnow         = seqnow        
-    CaneCrop % pltype         = pltype        
-    CaneCrop % year           = year          
-    CaneCrop % doy            = doy           
-    CaneCrop % das            = das           
-    CaneCrop % dap            = dap           
-    CaneCrop % diac           = diac          
-    CaneCrop % dw_total       = dw_total
-    CaneCrop % dw_aerial      = dw_aerial
-    CaneCrop % dw_BG          = max(0.d0, dw_total - dw_aerial)
-    CaneCrop % dw_it_AG       = dw_it_AG      
-    CaneCrop % dw_lf          = dw_lf         
-    CaneCrop % dw_rt          = dw_rt         
-    CaneCrop % fw_it_AG       = fw_it_AG      
-    CaneCrop % suc_it_AG      = suc_it_AG     
-    CaneCrop % pol            = pol           
-    CaneCrop % lai            = lai           
-    CaneCrop % nstk           = nstk          
-    CaneCrop % stk_h          = stk_h         
-    CaneCrop % n_lf_AG_dewlap = n_lf_AG_dewlap
-    CaneCrop % swface         = swface        
-    CaneCrop % swfacp         = swfacp        
-    CaneCrop % cropstatus     = cropstatus    
-    CaneCrop % cropdstage     = cropdstage  
-    CaneCrop % rd             = rd
-    CaneCrop % rld            = rld
-    CaneCrop % frac_li_pho    = frac_li
-    CaneCrop % frac_li_till   = li
-    CaneCrop % trwup          = trwup * 10 ! [mm]
-    CaneCrop % eop            = eop
-    CaneCrop % dtg            = dtg
-    CaneCrop % drue_calc      = drue_calc 
-    CaneCrop % rue_calc       = rue_calc
-    CaneCrop % tot_gresp_crop = tot_gresp_crop * (1.e4/1.e6) ! [ton ha-1]
-    CaneCrop % tot_mresp_crop = tot_mresp_crop * (1.e4/1.e6) ! [ton ha-1]
-    CaneCrop % gstd           = gstd
-    CaneCrop % nratoon        = nratoon
-    CaneCrop % cstat          = cstat
+    CaneCrop % seqnow         		= seqnow        
+    CaneCrop % pltype         		= pltype        
+    CaneCrop % year           		= year          
+    CaneCrop % doy            		= doy           
+    CaneCrop % das            		= das           
+    CaneCrop % dap            		= dap           
+    CaneCrop % diac           		= diac          
+    CaneCrop % dw_total       		= dw_total
+    CaneCrop % dw_aerial      		= dw_aerial
+    CaneCrop % dw_BG          		= max(0.d0, dw_total - dw_aerial)
+    CaneCrop % dw_it_AG       		= dw_it_AG      
+    CaneCrop % dw_lf          		= dw_lf         
+    CaneCrop % dw_rt          		= dw_rt         
+    CaneCrop % fw_it_AG       		= fw_it_AG      
+    CaneCrop % suc_it_AG      		= suc_it_AG     
+    CaneCrop % pol            		= pol           
+    CaneCrop % lai            		= lai           
+    CaneCrop % nstk           		= nstk          
+    CaneCrop % stk_h          		= stk_h         
+    CaneCrop % n_lf_AG_dewlap 		= n_lf_AG_dewlap
+    CaneCrop % swface         		= swface        
+    CaneCrop % swfacp         		= swfacp        
+    CaneCrop % cropstatus     		= cropstatus    
+    CaneCrop % cropdstage     		= cropdstage  
+    CaneCrop % rd             		= rd
+    CaneCrop % rld            		= rld
+    CaneCrop % frac_li_pho    		= frac_li
+    CaneCrop % frac_li_till   		= li
+    CaneCrop % trwup          		= trwup * 10 ! [mm]
+    CaneCrop % eop            		= eop
+    CaneCrop % dtg            		= dtg
+    CaneCrop % drue_calc      		= drue_calc 
+    CaneCrop % rue_calc       		= rue_calc
+    CaneCrop % tot_gresp_crop 		= tot_gresp_crop * (1.e4/1.e6) ! [ton ha-1]
+    CaneCrop % tot_mresp_crop 		= tot_mresp_crop * (1.e4/1.e6) ! [ton ha-1]
+    CaneCrop % gstd           		= gstd
+    CaneCrop % nratoon        		= nratoon
+    CaneCrop % cstat          		= cstat
+    CaneCrop % dw_it_dead           = dw_it_dead
+    CaneCrop % dw_it_dead_AG        = dw_it_dead_AG
+    CaneCrop % dw_it_dead_BG        = dw_it_dead_BG
+	CaneCrop % dw_lf_dead           = dw_lf_dead         
     
     !--- Write output
     call sc_opgrow_sam( CONTROL,    &

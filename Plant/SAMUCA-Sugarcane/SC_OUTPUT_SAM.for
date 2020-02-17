@@ -50,7 +50,7 @@ c     DSSAT inputs:
       integer VAR_WIDTH   ! Width of output columns
       
       !--- Number of variables and collumn widht
-      parameter(NUM_OVARS = 43, VAR_WIDTH = 12)
+      parameter(NUM_OVARS = 45, VAR_WIDTH = 12)
       
 c     MJ:
 c     GROHEAD is a 2-dimensional array with each column header stored
@@ -78,217 +78,227 @@ c     String lengths:
         DATA GROHEAD(2,1) /'of'/
         DATA GROHEAD(3,1) /'Simul'/
         DATA GROHEAD(4,1) /'@YEAR'/
-		
+
         DATA GROHEAD(1,2) /'Day'/
         DATA GROHEAD(2,2) /'of'/
         DATA GROHEAD(3,2) /'Year'/
         DATA GROHEAD(4,2) /'DOY'/
-		
+
         DATA GROHEAD(1,3) /'Days'/
         DATA GROHEAD(2,3) /'after'/
         DATA GROHEAD(3,3) /'Simul'/
         DATA GROHEAD(4,3) /'DAS'/
-		
+
         DATA GROHEAD(1,4) /'Days'/
         DATA GROHEAD(2,4) /'after'/
         DATA GROHEAD(3,4) /'Plant'/
         DATA GROHEAD(4,4) /'DAP'/
-		
+
         DATA GROHEAD(1,5) /'PlCane'/
         DATA GROHEAD(2,5) /'or'/
         DATA GROHEAD(3,5) /'Ratoon'/
         DATA GROHEAD(4,5) /'RCANE'/
-		
+
         DATA GROHEAD(1,6) /'Seq'/
         DATA GROHEAD(2,6) /'Ratoon'/
         DATA GROHEAD(3,6) /'Simul'/
         DATA GROHEAD(4,6) /'SEQR'/
-		
+
         DATA GROHEAD(1,7) /'Actual'/
         DATA GROHEAD(2,7) /'Crop'/
         DATA GROHEAD(3,7) /'DStage'/
         DATA GROHEAD(4,7) /'GSTD'/
-		
+
         DATA GROHEAD(1,8) /'Accum'/
         DATA GROHEAD(2,8) /'D.Day'/
         DATA GROHEAD(3,8) /'oC.d'/
         DATA GROHEAD(4,8) /'TTTOT'/
-		
+
         DATA GROHEAD(1,9) /'Plant'/
         DATA GROHEAD(2,9) /'Weight'/
         DATA GROHEAD(3,9) /'DMt/ha'/
         DATA GROHEAD(4,9) /'TDRW'/
-		
+
         DATA GROHEAD(1,10) /'Aerial'/
         DATA GROHEAD(2,10) /'Weight'/
         DATA GROHEAD(3,10) /'DMt/ha'/
         DATA GROHEAD(4,10) /'BADMD'/
-		
+
         DATA GROHEAD(1,11) /'BelowG'/
         DATA GROHEAD(2,11) /'Weight'/
         DATA GROHEAD(3,11) /'DMt/ha'/
         DATA GROHEAD(4,11) /'BBDMD'/
-		
+
         DATA GROHEAD(1,12) /'Stalk'/
         DATA GROHEAD(2,12) /'Weight'/
         DATA GROHEAD(3,12) /'DMt/ha'/
         DATA GROHEAD(4,12) /'SMDMD'/
-		
+
         DATA GROHEAD(1,13) /'Leaves'/
         DATA GROHEAD(2,13) /'Weight'/
         DATA GROHEAD(3,13) /'DMt/ha'/
         DATA GROHEAD(4,13) /'LGDMD'/
-		
+
         DATA GROHEAD(1,14) /'Root'/
         DATA GROHEAD(2,14) /'Weight'/
         DATA GROHEAD(3,14) /'DMt/ha'/
         DATA GROHEAD(4,14) /'RDMD'/
-		
+
         DATA GROHEAD(1,15) /'Stalk'/
         DATA GROHEAD(2,15) /'Weight'/
         DATA GROHEAD(3,15) /'FMt/ha'/
         DATA GROHEAD(4,15) /'SMFMD'/
-		
+
         DATA GROHEAD(1,16) /'Sucros'/
         DATA GROHEAD(2,16) /'Weight'/
         DATA GROHEAD(3,16) /'DMt/ha'/
         DATA GROHEAD(4,16) /'SUCMD'/
-		
-        DATA GROHEAD(1,17) /'Stalk'/
-        DATA GROHEAD(2,17) /'POL'/
-        DATA GROHEAD(3,17) /'%'/
-        DATA GROHEAD(4,17) /'SU%FMD'/
-		
-        DATA GROHEAD(1,18) /'Canopy'/
-        DATA GROHEAD(2,18) /'LAI'/
-        DATA GROHEAD(3,18) /'m2/m2'/
-        DATA GROHEAD(4,18) /'LAIGD'/
-		
-        DATA GROHEAD(1,19) /'Tiller'/
-        DATA GROHEAD(2,19) /'Pop'/
-        DATA GROHEAD(3,19) /'#/m2'/
-        DATA GROHEAD(4,19) /'T#AD'/
-		
-        DATA GROHEAD(1,20) /'Plant'/
-        DATA GROHEAD(2,20) /'Height'/
-        DATA GROHEAD(3,20) /'m'/
-        DATA GROHEAD(4,20) /'SHTD'/
-		
-        DATA GROHEAD(1,21) /'Green'/
-        DATA GROHEAD(2,21) /'Leaves'/
-        DATA GROHEAD(3,21) /'#/Stk'/
-        DATA GROHEAD(4,21) /'L#SD'/
-		
-        DATA GROHEAD(1,22) /'Stress'/
-        DATA GROHEAD(2,22) /'Factor'/
-        DATA GROHEAD(3,22) /'Expans'/
-        DATA GROHEAD(4,22) /'WSGD'/
-		
-        DATA GROHEAD(1,23) /'Stress'/
-        DATA GROHEAD(2,23) /'Factor'/
-        DATA GROHEAD(3,23) /'Photos'/
-        DATA GROHEAD(4,23) /'WSPD'/
-		
-        DATA GROHEAD(1,24) /'Actual'/
-        DATA GROHEAD(2,24) /'Crop'/
-        DATA GROHEAD(3,24) /'Status'/
-        DATA GROHEAD(4,24) /'CSTAT'/
-		
-        DATA GROHEAD(1,25) /'Frac'/
-        DATA GROHEAD(2,25) /'IPAR'/
-        DATA GROHEAD(3,25) /'GLAI'/
-        DATA GROHEAD(4,25) /'GLI%D'/
-		
-        DATA GROHEAD(1,26) /'Frac'/
-        DATA GROHEAD(2,26) /'IPAR'/
-        DATA GROHEAD(3,26) /'TLAI'/
-        DATA GROHEAD(4,26) /'TLI%D'/
-		
-        DATA GROHEAD(1,27) /'Root'/
-        DATA GROHEAD(2,27) /'Depth'/
-        DATA GROHEAD(3,27) /'m'/
-        DATA GROHEAD(4,27) /'RDPD'/
-		
-        DATA GROHEAD(1,28) /'Root_Len.'/
-        DATA GROHEAD(2,28) /'density(1)'/
-        DATA GROHEAD(3,28) /'cm3/cm3'/
-        DATA GROHEAD(4,28) /'RL1D'/
-		
-        DATA GROHEAD(1,29) /'Root_Len.'/
-        DATA GROHEAD(2,29) /'density(2)'/
-        DATA GROHEAD(3,29) /'cm3/cm3'/
-        DATA GROHEAD(4,29) /'RL2D'/
-		
-        DATA GROHEAD(1,30) /'Root_Len.'/
-        DATA GROHEAD(2,30) /'density(3)'/
-        DATA GROHEAD(3,30) /'cm3/cm3'/
-        DATA GROHEAD(4,30) /'RL3D'/
-		
-        DATA GROHEAD(1,31) /'Root_Len.'/
-        DATA GROHEAD(2,31) /'density(4)'/
-        DATA GROHEAD(3,31) /'cm3/cm3'/
-        DATA GROHEAD(4,31) /'RL4D'/
-		
-        DATA GROHEAD(1,32) /'Root_Len.'/
-        DATA GROHEAD(2,32) /'density(5)'/
-        DATA GROHEAD(3,32) /'cm3/cm3'/
-        DATA GROHEAD(4,32) /'RL5D'/
-		
-        DATA GROHEAD(1,33) /'Root_Len.'/
-        DATA GROHEAD(2,33) /'density(6)'/
-        DATA GROHEAD(3,33) /'cm3/cm3'/
-        DATA GROHEAD(4,33) /'RL6D'/
-		
-        DATA GROHEAD(1,34) /'Root_Len.'/
-        DATA GROHEAD(2,34) /'density(7)'/
-        DATA GROHEAD(3,34) /'cm3/cm3'/
-        DATA GROHEAD(4,34) /'RL7D'/
-		
-        DATA GROHEAD(1,35) /'Root_Len.'/
-        DATA GROHEAD(2,35) /'density(8)'/
-        DATA GROHEAD(3,35) /'cm3/cm3'/
-        DATA GROHEAD(4,35) /'RL8D'/
-		
-        DATA GROHEAD(1,36) /'Root_Len.'/
-        DATA GROHEAD(2,36) /'density(9)'/
-        DATA GROHEAD(3,36) /'cm3/cm3'/
-        DATA GROHEAD(4,36) /'RL9D'/
-		
-        DATA GROHEAD(1,37) /'Root_Len.'/
-        DATA GROHEAD(2,37) /'density(10)'/
-        DATA GROHEAD(3,37) /'cm3/cm3'/
-        DATA GROHEAD(4,37) /'RL10D'/
-		
-        DATA GROHEAD(1,38) /'Pot_Root'/
-        DATA GROHEAD(2,38) /'WatUp'/
-        DATA GROHEAD(3,38) /'mm'/
-        DATA GROHEAD(4,38) /'TRWUP'/
-		
-        DATA GROHEAD(1,39) /'Pot'/
-        DATA GROHEAD(2,39) /'Transp'/
-        DATA GROHEAD(3,39) /'mm'/
-        DATA GROHEAD(4,39) /'EOP'/
-		
-        DATA GROHEAD(1,40) /'Gross'/
-        DATA GROHEAD(2,40) /'photos'/
-        DATA GROHEAD(3,40) /'rate t/ha'/
-        DATA GROHEAD(4,40) /'PGRD'/
-		
-        DATA GROHEAD(1,41) /'PARCE'/
-        DATA GROHEAD(2,41) /'RUE'/
-        DATA GROHEAD(3,41) /'Rate'/
-        DATA GROHEAD(4,41) /'PARCE'/
-		
-        DATA GROHEAD(1,42) /'G_RESP'/
-        DATA GROHEAD(2,42) /'Growth'/
-        DATA GROHEAD(3,42) /'Resp.'/
-        DATA GROHEAD(4,42) /'G_RESP'/
-		
-        DATA GROHEAD(1,43) /'M_RESP'/
-        DATA GROHEAD(2,43) /'Resp.'/
-        DATA GROHEAD(3,43) /'Maint.'/
-        DATA GROHEAD(4,43) /'M_RESP'/
 
+        DATA GROHEAD(1,17) /'Dead'/
+        DATA GROHEAD(2,17) /'Leaves'/
+        DATA GROHEAD(3,17) /'DMt/ha'/
+        DATA GROHEAD(4,17) /'DDLMD'/
+
+        DATA GROHEAD(1,18) /'Dead'/
+        DATA GROHEAD(2,18) /'Tillers'/
+        DATA GROHEAD(3,18) /'DMt/ha'/
+        DATA GROHEAD(4,18) /'DDTMD'/
+
+        DATA GROHEAD(1,19) /'Stalk'/
+        DATA GROHEAD(2,19) /'POL'/
+        DATA GROHEAD(3,19) /'%'/
+        DATA GROHEAD(4,19) /'SU%FMD'/
+
+        DATA GROHEAD(1,20) /'Canopy'/
+        DATA GROHEAD(2,20) /'LAI'/
+        DATA GROHEAD(3,20) /'m2/m2'/
+        DATA GROHEAD(4,20) /'LAIGD'/
+
+        DATA GROHEAD(1,21) /'Tiller'/
+        DATA GROHEAD(2,21) /'Pop'/
+        DATA GROHEAD(3,21) /'#/m2'/
+        DATA GROHEAD(4,21) /'T#AD'/
+
+        DATA GROHEAD(1,22) /'Plant'/
+        DATA GROHEAD(2,22) /'Height'/
+        DATA GROHEAD(3,22) /'m'/
+        DATA GROHEAD(4,22) /'SHTD'/
+
+        DATA GROHEAD(1,23) /'Green'/
+        DATA GROHEAD(2,23) /'Leaves'/
+        DATA GROHEAD(3,23) /'#/Stk'/
+        DATA GROHEAD(4,23) /'L#SD'/
+
+        DATA GROHEAD(1,24) /'Stress'/
+        DATA GROHEAD(2,24) /'Factor'/
+        DATA GROHEAD(3,24) /'Expans'/
+        DATA GROHEAD(4,24) /'WSGD'/
+
+        DATA GROHEAD(1,25) /'Stress'/
+        DATA GROHEAD(2,25) /'Factor'/
+        DATA GROHEAD(3,25) /'Photos'/
+        DATA GROHEAD(4,25) /'WSPD'/
+
+        DATA GROHEAD(1,26) /'Actual'/
+        DATA GROHEAD(2,26) /'Crop'/
+        DATA GROHEAD(3,26) /'Status'/
+        DATA GROHEAD(4,26) /'CSTAT'/
+
+        DATA GROHEAD(1,27) /'Frac'/
+        DATA GROHEAD(2,27) /'IPAR'/
+        DATA GROHEAD(3,27) /'GLAI'/
+        DATA GROHEAD(4,27) /'GLI%D'/
+
+        DATA GROHEAD(1,28) /'Frac'/
+        DATA GROHEAD(2,28) /'IPAR'/
+        DATA GROHEAD(3,28) /'TLAI'/
+        DATA GROHEAD(4,28) /'TLI%D'/
+
+        DATA GROHEAD(1,29) /'Root'/
+        DATA GROHEAD(2,29) /'Depth'/
+        DATA GROHEAD(3,29) /'m'/
+        DATA GROHEAD(4,29) /'RDPD'/
+
+        DATA GROHEAD(1,30) /'Root_Len.'/
+        DATA GROHEAD(2,30) /'density(1)'/
+        DATA GROHEAD(3,30) /'cm3/cm3'/
+        DATA GROHEAD(4,30) /'RL1D'/
+
+        DATA GROHEAD(1,31) /'Root_Len.'/
+        DATA GROHEAD(2,31) /'density(2)'/
+        DATA GROHEAD(3,31) /'cm3/cm3'/
+        DATA GROHEAD(4,31) /'RL2D'/
+
+        DATA GROHEAD(1,32) /'Root_Len.'/
+        DATA GROHEAD(2,32) /'density(3)'/
+        DATA GROHEAD(3,32) /'cm3/cm3'/
+        DATA GROHEAD(4,32) /'RL3D'/
+
+        DATA GROHEAD(1,33) /'Root_Len.'/
+        DATA GROHEAD(2,33) /'density(4)'/
+        DATA GROHEAD(3,33) /'cm3/cm3'/
+        DATA GROHEAD(4,33) /'RL4D'/
+
+        DATA GROHEAD(1,34) /'Root_Len.'/
+        DATA GROHEAD(2,34) /'density(5)'/
+        DATA GROHEAD(3,34) /'cm3/cm3'/
+        DATA GROHEAD(4,34) /'RL5D'/
+
+        DATA GROHEAD(1,35) /'Root_Len.'/
+        DATA GROHEAD(2,35) /'density(6)'/
+        DATA GROHEAD(3,35) /'cm3/cm3'/
+        DATA GROHEAD(4,35) /'RL6D'/
+
+        DATA GROHEAD(1,36) /'Root_Len.'/
+        DATA GROHEAD(2,36) /'density(7)'/
+        DATA GROHEAD(3,36) /'cm3/cm3'/
+        DATA GROHEAD(4,36) /'RL7D'/
+
+        DATA GROHEAD(1,37) /'Root_Len.'/
+        DATA GROHEAD(2,37) /'density(8)'/
+        DATA GROHEAD(3,37) /'cm3/cm3'/
+        DATA GROHEAD(4,37) /'RL8D'/
+
+        DATA GROHEAD(1,38) /'Root_Len.'/
+        DATA GROHEAD(2,38) /'density(9)'/
+        DATA GROHEAD(3,38) /'cm3/cm3'/
+        DATA GROHEAD(4,38) /'RL9D'/
+
+        DATA GROHEAD(1,39) /'Root_Len.'/
+        DATA GROHEAD(2,39) /'density(10)'/
+        DATA GROHEAD(3,39) /'cm3/cm3'/
+        DATA GROHEAD(4,39) /'RL10D'/
+
+        DATA GROHEAD(1,40) /'TPRT'/
+        DATA GROHEAD(2,40) /'WatUp'/
+        DATA GROHEAD(3,40) /'mm/d'/
+        DATA GROHEAD(4,40) /'TRWUP'/
+
+        DATA GROHEAD(1,41) /'Pot'/
+        DATA GROHEAD(2,41) /'Transp'/
+        DATA GROHEAD(3,41) /'mm/d'/
+        DATA GROHEAD(4,41) /'EOP'/
+
+        DATA GROHEAD(1,42) /'Gross'/
+        DATA GROHEAD(2,42) /'photos'/
+        DATA GROHEAD(3,42) /'rate t/ha/d'/
+        DATA GROHEAD(4,42) /'PGRD'/
+
+        DATA GROHEAD(1,43) /'PARCE'/
+        DATA GROHEAD(2,43) /'RUE'/
+        DATA GROHEAD(3,43) /'gDW/MJPAR'/
+        DATA GROHEAD(4,43) /'PARCE'/
+
+        DATA GROHEAD(1,44) /'G_RESP'/
+        DATA GROHEAD(2,44) /'Growth'/
+        DATA GROHEAD(3,44) /'tDW/ha'/
+        DATA GROHEAD(4,44) /'G_RESP'/
+
+        DATA GROHEAD(1,45) /'M_RESP'/
+        DATA GROHEAD(2,45) /'Resp.'/
+        DATA GROHEAD(3,45) /'tDW/ha'/
+        DATA GROHEAD(4,45) /'M_RESP'/
+		
 
 c     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 c     ~~~~~~~~ SUBROUTINE CODE ~~~~~~~~
@@ -482,6 +492,8 @@ c         Print daily output:
      &                CaneCrop % dw_rt              ,
      &                CaneCrop % fw_it_AG           ,
      &                CaneCrop % suc_it_AG          ,
+     &                CaneCrop % dw_lf_dead         ,
+     &                CaneCrop % dw_it_dead_AG      ,
      &                CaneCrop % pol                ,
      &                CaneCrop % lai                ,
      &                CaneCrop % nstk               ,
@@ -500,6 +512,7 @@ c         Print daily output:
      &                CaneCrop % drue_calc          ,
      &                CaneCrop % tot_gresp_crop     ,
      &                CaneCrop % tot_mresp_crop
+      
 
           ENDIF
       ENDIF

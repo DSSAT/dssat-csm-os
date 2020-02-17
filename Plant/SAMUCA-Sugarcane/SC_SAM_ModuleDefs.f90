@@ -36,6 +36,10 @@
           real      dw_it_ag
           real      dw_lf
           real      dw_rt
+          real      dw_it_dead
+          real      dw_it_dead_AG
+          real      dw_it_dead_BG
+          real      dw_lf_dead
           real      fw_it_ag
           real      suc_it_ag
           real      pol
