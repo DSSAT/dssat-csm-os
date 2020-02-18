@@ -587,8 +587,6 @@
     real        tiller_senes                                    ! Tiller senescence function    
     
     !--- Coupling to DSSAT
-    integer inte_host(500)                                 ! io 	! to avoid mandatory scalar input variable on readings subroutines   
-    real    real_host(500)                                 ! io 	! to avoid mandatory scalar input variable on readings subroutines
     real 	AMAX		
     real 	EFF			
     real 	PHTMAX		
@@ -936,10 +934,10 @@
     agefactor_fac_rue            = agefactor_fac_rue  / 1.e5
     agefactor_fac_per            = agefactor_fac_per  / 1.e5
         
-    !--- Assume same response for tillering and partitioning factor
+    !--- Assume same response for tillering and partitioning factor (NOT IN USE)
     t_max_ws_fpf    = t_max_ws_exp
     t_mid_ws_fpf    = t_mid_ws_exp
-    t_min_ws_fpf    = t_min_ws_exp    
+    t_min_ws_fpf    = t_min_ws_exp
     t_max_ws_til    = t_max_ws_pho
     t_mid_ws_til    = t_mid_ws_pho
     t_min_ws_til    = t_min_ws_pho
@@ -1297,50 +1295,11 @@
     !--- Output Files ---!
     !--------------------!
     
-    !--- Call the output routine, to initialise output
+    !--- Call the output routine, to initialize output
     !--- *** Borrowing SC_OPGROW.for from CANEGRO ***
     call sc_opgrow_SAM( CONTROL,        &
                         CaneCrop,       &                        
                         YRPLT)
-    
-    !--- Crop output header     
-    write(outp, 11) 'Plant Growth Simulations for: ', trim(cropfile(1))
-    write(outp, 13) !Warning: Put simulation ID here!
-    write(outp, 14)
-    write(outp, 15)
-    write(outp, 16)
-    write(outp, 17)    
-    
-    if(writedetphoto)then        
-        
-        !!--- Canopy photosynthesis header 
-        !write(outdph, 21) 'Photosynthesis Simulations for: ', trim(cropfile(1))
-        !
-        !write(outdph, 24)
-        !write(outdph, 25)
-        !write(outdph, 26)
-        !write(outdph, 27)
-        
-    endif    
-
-    !--- File Headers
-    !--- Crop file Header
-11  format(2A,/) 		
-12  format(2A,/)                                                  
-13  format('Results of plant growth simulation in daily output:')				
-14  format('     PlCane           Day   Days   Days  Accum    Plant   Stalk  Leaves    Root   Stalk  Sucros                           Plant   Green   Stress  Stress                ')
-15  format('       or              of  after  after  D.Day   Weight  Weight  Weight  Weight  Weight  Weight     POL     LAI  Tiller  Height  Leaves   Factor  Factor   Crop    Crop ')      
-16  format('Seq. Ratoon   Year   Year  Simul  Plant   oC.d   DMt/ha  DMt/ha  DMt/ha  DMt/ha  FMt/ha  DMt/ha       %   m2/m2    #/m2       m   #/Stk   Expans  Photos  Status  DStage')
-17  format('---- ------   ----  -----  -----  -----  ------ -------  ------  ------  ------  ------  ------  ------  ------  ------  -------  ------  ------  ------  ------  ------')       
-        
-
-    !--- Detailed Photos Header
-21  format(2A,/) 		
-22  format(2A,/)
-24  format('     PlCane           Day   Days   Days               Amax                 LAI      Qleaf      A       PAR        PAR       PAR  ')
-25  format('       or              of  after  after      LAI     kg(CO2)     Hour     Accum      μmol     μmol    Direct     Difuse    Total ')      
-26  format('Seq. Ratoon   Year   Year  Simul  Plant      M/M     ha-1h-1      hr       M/M      m-2s-1   m-2s-1    W m-2     W m-2     W m-2 ')
-27  format('---- ------   ----  -----  -----  -----    -------   -------   -------   -------   -------   -------  -------    ------   -------')
           
     !--- Linking with DSSAT globals
     CANHT       =   stk_h   ! Canopy height (m)    
@@ -3533,86 +3492,7 @@
             gstd                = 1.d0                                      ! Growth Stage (DSSAT)
         endif        
     endif
-           
-    !--------------------------!
-    !--- Write Step Outputs ---!
-    !--------------------------!
-        
-    !--- Detailed Photosynthesis output
-    if(writedetphoto .and. flemerged)then
-                
-        !--- Convert to μmol m-2 s-1 for output purpose
-        amax_out = amax_mod * 1.e3 / 1.e4 / 3600 / 44.d0 * 1.e6
-        eff_out  = eff_mod  * 1.e3 / 1.e4 / 3600 / 44.d0 * 1.e6 / 4.6
-        
-        do glai = 1 ,5
-            do ghour = 1, 3
-!                write(outdph,111) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', ghour, ',', glai, ',', lai_ass, ',', frac_li, ',', amax_out, ',', eff_out, ',', & 
-!                    Acanopy(ghour+1,1), ',', Acanopy(1,glai+1), ',', Qleaf(ghour+1,glai+1), ',', Acanopy(ghour+1,glai+1), ',', incpar(ghour,2), ',', incpar(ghour,3), ',', incpar(ghour,4)
-            enddo
-        enddo
-    endif
-        
-    
-111 format(     i2,         a1,     &   ! seqnow
-                a6,         a1,     &   ! pltype
-                i4,         a1,     &   ! year
-                i3,         a1,     &   ! doy
-                i4,         a1,     &   ! das
-                i4,         a1,     &   ! dap                   
-                i2,         a1,     &   ! ghour                 [hour of day]
-                i2,         a1,     &   ! glai                  [canopy layer]
-                f20.5,      a1,     &   ! lai                   [m2/m2]
-                f20.5,      a1,     &   ! frac light absorbed   [0-1]
-                f20.5,      a1,     &   ! amax_out              [μmol m-2 s-1]
-                f20.5,      a1,     &   ! eff_out               [μmol(CO2) μmol(photon)-1]
-                f20.5,      a1,     &   ! Acanopy(ghour)        [hour]
-                f20.5,      a1,     &   ! Acanopy(glai)         [m2/m2]
-                f20.5,      a1,     &   ! Qleaf(ghour,glai)     [μmol/m2/s]
-                f20.5,      a1,     &   ! Acanopy(ghour,glai)   [μmol/m2/s]
-                f20.5,      a1,     &   ! incpar(ghour,2)       [direct PAR - W/m2]
-                f20.5,      a1,     &   ! incpar(ghour,3)       [difuse PAR - W/m2]
-                f20.5)                  ! incpar(ghour,4)       [total PAR - W/m2]
-
-        
-    
-    
-    !--- Detailed Crop Outputs (Phytomer Profile)
-    if(writedcrop)then
-        do phy = 1, n_ph           
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Age'                   , ',', 'Cdays'   , ',', phprof(phy,1)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Total DW'              , ',', 'g'       , ',', phprof(phy,6)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Leaf Area'                  , ',', 'cm2'     , ',', phprof(phy,5)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Age'              , ',', 'Cdays'   , ',', phprof(phy,58)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Total DW'         , ',', 'g'       , ',', phprof(phy,50)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Structural DW'    , ',', 'g'       , ',', phprof(phy,51)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Total Sugars DW'  , ',', 'g'       , ',', phprof(phy,52)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sucrose DW'       , ',', 'g'       , ',', phprof(phy,53)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Hexose DW'        , ',', 'g'       , ',', phprof(phy,54)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Length'           , ',', 'mm'      , ',', phprof(phy,16)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Phytomer Age'               , ',', 'Cdays'   , ',', phprof(phy,12)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Fiber Fraction'   , ',', 'Cdays'   , ',', phprof(phy,17)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sugars Fraction'  , ',', 'Cdays'   , ',', phprof(phy,18)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Sucrose Fraction' , ',', 'Cdays'   , ',', phprof(phy,19)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Internode Hexose Fraction'  , ',', 'Cdays'   , ',', phprof(phy,20)
-            !write(outdpp,113) seqnow, ',', pltype, ',', year, ',', doy, ',', das, ',', dap, ',', phy, ',', fl_it_AG(phy), ',', fl_lf_AG(phy), ',', fl_lf_alive(phy), ',', 'Pfac Struc'                 , ',', '0-1'     , ',', phprof(phy,15)
-        enddo
-113     format(i2,a1,a6,a1,i4,a1,i3,a1,i4,a1,i4,a1,i3,a1,l1,a1,l1,a1,l1,a1,a25,a1,a5,a1,f12.4)
-    endif
-    
-    !--- Partitioning Factors Outputs
-    !write(outpfac, 144) das, dap, fl_use_reserves, cr_source_sink_ratio, dtcrss, tot_gresp_crop, tot_mresp_crop, tot_dw_ss_crop, &
-    !    dtg*(1.e6/1.e4), sug_it_BG, subs_avail_growth_crop, supply_used_crop, supply_used_mresp_crop, supply_used_gresp_crop, supply_used_dw_crop, &
-    !    reserves_used_mresp_crop, maintenance_factor_crop, reduc_growth_factor_crop, &
-    !    dr_rtss, dr_lfss, dr_itss, swfacp, str_it_AG, sug_it_AG, frac_li, li
-144     format(1X,I4,3X,i3,3x,l1,3X,200F12.4)  
-        
-        
-    !--- Stress Factors Outputs
-!    write(outstres, 145) das, dap, trasw, eop, trwup*10.d0, max(trwup/(eop/10.),0.d0), swfacp, swface, swfacf, swfact, tmn, tempfac_pho, tempfac_per, co2, pho_fac_co2, diacem, agefactor_amax, agefactor_per, sug_it_BG, amaxfbfac, dtg*(1.e6/1.e4), per
-
-145     format(1X,I4,3X,i4,3x,200F12.4)  
-        
+            
     !--- Time control
     dap = dap + 1
     
@@ -3651,7 +3531,8 @@
     CaneCrop % doy            		= doy           
     CaneCrop % das            		= das           
     CaneCrop % dap            		= dap           
-    CaneCrop % diac           		= diac          
+    CaneCrop % diac           		= diac   
+    CaneCrop % diacem               = diacem
     CaneCrop % dw_total       		= dw_total
     CaneCrop % dw_aerial      		= dw_aerial
     CaneCrop % dw_BG          		= max(0.d0, dw_total - dw_aerial)
@@ -3661,20 +3542,30 @@
     CaneCrop % fw_it_AG       		= fw_it_AG      
     CaneCrop % suc_it_AG      		= suc_it_AG     
     CaneCrop % pol            		= pol           
-    CaneCrop % lai            		= lai           
+    CaneCrop % lai            		= lai   
+    CaneCrop % lai_ass              = lai_ass   
     CaneCrop % nstk           		= nstk          
     CaneCrop % stk_h          		= stk_h         
     CaneCrop % n_lf_AG_dewlap 		= n_lf_AG_dewlap
     CaneCrop % swface         		= swface        
     CaneCrop % swfacp         		= swfacp        
+    CaneCrop % tempfac_pho          = tempfac_pho
+    CaneCrop % tempfac_per          = tempfac_per
+    CaneCrop % co2                  = co2
+    CaneCrop % agefactor_amax       = agefactor_amax
+    CaneCrop % agefactor_per        = agefactor_per
+    CaneCrop % sug_it_BG            = sug_it_BG
+    CaneCrop % amaxfbfac            = amaxfbfac
+    CaneCrop % per                  = per
     CaneCrop % cropstatus     		= cropstatus    
     CaneCrop % cropdstage     		= cropdstage  
     CaneCrop % rd             		= rd
     CaneCrop % rld            		= rld
     CaneCrop % frac_li_pho    		= frac_li
     CaneCrop % frac_li_till   		= li
-    CaneCrop % trwup          		= trwup * 10 ! [mm]
+    CaneCrop % trwup          		= trwup * 10.d0 ! [mm]
     CaneCrop % eop            		= eop
+    CaneCrop % watdmd               = max((CaneCrop % trwup)/(CaneCrop % eop),0.d0)
     CaneCrop % dtg            		= dtg
     CaneCrop % drue_calc      		= drue_calc 
     CaneCrop % rue_calc       		= rue_calc
@@ -3686,12 +3577,41 @@
     CaneCrop % dw_it_dead           = dw_it_dead
     CaneCrop % dw_it_dead_AG        = dw_it_dead_AG
     CaneCrop % dw_it_dead_BG        = dw_it_dead_BG
-	CaneCrop % dw_lf_dead           = dw_lf_dead         
+	CaneCrop % dw_lf_dead           = dw_lf_dead
+    CaneCrop % tmn                  = tmn
+    
+    CaneCrop % flemerged            = flemerged
+    
+    !--- Phytomer level
+    CaneCrop % n_ph                 = n_ph
+    CaneCrop % phprof               = phprof
+    CaneCrop % tillerageprof        = tillerageprof
+    CaneCrop % fl_it_AG             = fl_it_AG
+    CaneCrop % fl_lf_AG             = fl_lf_AG
+    CaneCrop % fl_lf_alive          = fl_lf_alive
+    
+    !--- Convert to μmol m-2 s-1 for output purpose
+    CaneCrop % amax_out             = amax_mod * 1.e3 / 1.e4 / 3600.d0 / 44.d0 * 1.e6
+    CaneCrop % eff_out              = eff_mod  * 1.e3 / 1.e4 / 3600.d0 / 44.d0 * 1.e6 / 4.6
+        
+    !--- Layered Canopy outputs
+    CaneCrop % Acanopy              = Acanopy
+    CaneCrop % Qleaf                = Qleaf
+    CaneCrop % incpar               = incpar
     
     !--- Write output
     call sc_opgrow_sam( CONTROL,    &
                         CaneCrop,   &                        
                         YRPLT)
+    
+    if(writedcrop)then
+        
+        !------------------------!
+        !--- Detailed Outputs ---!
+        !------------------------!
+    
+        
+    endif   
     
     return
     
