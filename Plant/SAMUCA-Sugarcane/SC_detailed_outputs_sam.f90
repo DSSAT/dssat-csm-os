@@ -28,6 +28,7 @@
     CHARACTER*21    OFILE_det       ! Filename detailed (phytomers)
     CHARACTER*21    OFILE_pho       ! Filename photosynthesis (layered canopy)
     CHARACTER*21    OFILE_str       ! Filename crop stresses
+    CHARACTER*50    header_char     ! Filename crop stresses
 
     real            SW(NL)                  ! Soil water content
     real            watdmd                  ! water demand (TRWUP/Transp)
@@ -52,6 +53,11 @@
 
     CHARACTER*10 SKIP_STR, VLEN_STR, WIDTH_STR  ! String equivalents of VLEN and SKIP
     CHARACTER*1024 FMT_STR, T_FMT_STR           ! Runtime format statement:
+    
+    !--- Set files name:
+    parameter(OFILE_det = 'PlantGr_Det.OUT')    ! Must be exactly the same as in OUTPUT.CDE
+    parameter(OFILE_pho = 'Canopy_Phot.OUT')    ! Must be exactly the same as in OUTPUT.CDE
+    parameter(OFILE_str = 'Crop_Stress.OUT')    ! Must be exactly the same as in OUTPUT.CDE
 
     !--- Get dynamic
     DYNAMIC = CONTROL%DYNAMIC
@@ -68,6 +74,16 @@
         !---------------!
         !--- RUNINIT ---!
         !---------------!
+        
+        !--- Get file unit number:
+        CALL GETLUN('SAMPHY', NOUTDG_det)
+        CALL GETLUN('SAMCPH', NOUTDG_pho)
+        CALL GETLUN('SAMSTR', NOUTDG_str)
+        
+        !--- Delete files if they exists        
+        call rm_file(NOUTDG_det, OFILE_det)
+        call rm_file(NOUTDG_pho, OFILE_pho)
+        call rm_file(NOUTDG_str, OFILE_str)
 
     ELSEIF (DYNAMIC.EQ.SEASINIT) THEN
 
@@ -79,51 +95,57 @@
         IDETG = ISWITCH % IDETG
         IF (IDETG .NE. 'Y') RETURN
 
-        !-----------------------!
-        !--- Create PlantGro ---!
-        !-----------------------!
-
-        !--- Set files name:
-        OFILE_det = 'PlantGro_Detailed.OUT'
-        OFILE_pho = 'Canopy_Photos.OUT'
-        OFILE_str = 'Crop_Stresses.OUT'
+        !----------------------!
+        !--- Create Outputs ---!
+        !----------------------!
 
         !--- Get file unit number:
-        CALL GETLUN('OUTG', NOUTDG_det)
-        CALL GETLUN('OUTG', NOUTDG_pho)
-        CALL GETLUN('OUTG', NOUTDG_str)
+        CALL GETLUN('SAMPHY', NOUTDG_det)
+        CALL GETLUN('SAMCPH', NOUTDG_pho)
+        CALL GETLUN('SAMSTR', NOUTDG_str)
 
-        !--- Check that the file exists (LBYL):
-        FILE_EXISTS = .FALSE.
-        INQUIRE(FILE=OFILE_det, EXIST=FILE_EXISTS)
-
-        !--- Open the file
-        IF (FILE_EXISTS) THEN
-            !--- In append mode if the file already exists
-            OPEN (UNIT=NOUTDG_det, FILE=OFILE_det, STATUS='OLD',IOSTAT=ERRNUM, POSITION='APPEND')
-        ELSE
-            !--- A new file if not existing
-            OPEN (UNIT=NOUTDG_det, FILE=OFILE_det, STATUS='NEW',IOSTAT = ERRNUM)
-            WRITE(NOUTDG_det,'("*DETAILED GROWTH ASPECTS OUTPUT FILE")')
-        ENDIF
+        header_char = '("*DETAILED GROWTH ASPECTS OUTPUT FILE")'
+        call open_file(NOUTDG_det, OFILE_det, header_char)
+        
+        header_char = '("*LAYERED CANOPY PHOTOSYNTHESIS")'
+        call open_file(NOUTDG_pho, OFILE_pho, header_char)
+        
+        header_char = '("*ABIOTIC CROP STRESSES")'
+        call open_file(NOUTDG_str, OFILE_str, header_char)
 
         !--- Output a header (treatment / run info, etc)
         CALL HEADER(SEASINIT, NOUTDG_det, RUN)
         CALL HEADER(SEASINIT, NOUTDG_pho, RUN)
         CALL HEADER(SEASINIT, NOUTDG_str, RUN)
 
-        !--- Canopy photosynthesis header
-        write(NOUTDG_pho, 24)
-        write(NOUTDG_pho, 25)
-        write(NOUTDG_pho, 26)
-        write(NOUTDG_pho, 27)
+        !--- write photosynthesis header
+        write(NOUTDG_det, 10)
+        write(NOUTDG_det, 11)
 
         !--- Detailed Photos Header
-24      format('     PlCane           Day   Days   Days               Amax                 LAI      Qleaf      A       PAR        PAR       PAR  ')
-25      format('       or              of  after  after      LAI     kg(CO2)     Hour     Accum      μmol     μmol    Direct     Difuse    Total ')
-26      format('Seq. Ratoon   Year   Year  Simul  Plant      M/M     ha-1h-1      hr       M/M      m-2s-1   m-2s-1    W m-2     W m-2     W m-2 ')
-27      format('---- ------   ----  -----  -----  -----    -------   -------   -------   -------   -------   -------  -------    ------   -------')
-
+10      format('Variables Below:')
+11      format('season, pltype, year, doy, das, dap, phy, above_ground_internode, above_ground_leaf, leaf_alive, phytomer_attribute_name, phytomer_attribute_units, phytomer_attribute_value')
+        
+        !--- write photosynthesis header
+        write(NOUTDG_pho, 20)
+        write(NOUTDG_pho, 21)
+        write(NOUTDG_pho, 22)
+        
+        !--- Detailed Photos Header
+20      format('Variables and Units Below:')
+21      format('season, pltype, year,   doy,   das,   dap, gaus_hour, gaus_lai,   lai, frac_li,         amax, eff, gaus_hour_abs, gaus_lai_abs,  qleaf_layer,      a_layer, dir_par, dif_par, total_par')
+22      format('   dml,    dml, yyyy, 0-366, 0-inf, 0-inf,       0-5,      0-5, m2/m2,     0-1, μmol m-2 s-1,   -,          hour,          lai, μmol m-2 s-1, μmol m-2 s-1,   W m-2,   W m-2,     W m-2')
+        
+        !--- write photosynthesis header
+        write(NOUTDG_str, 30)
+        write(NOUTDG_str, 31)
+        write(NOUTDG_str, 32)
+        
+        !--- Detailed Photos Header
+30      format('Variables and Units Below:')
+31      format('season, pltype, year,   doy,   das,   dap, watdmd, swfacp, swface, tmn, tempfac_pho, tempfac_per, co2, pho_fac_co2, diacem, agefactor_amax, agefactor_per, sug_it_BG, amaxfbfac,      dtg,          per')
+32      format('   dml,    dml, yyyy, 0-366, 0-inf, 0-inf,    0-1,    0-1,    0-1,  oC,         0-1,         0-1, ppm,         0-1, oCdays,            0-1,           0-1,    ton/ha,       0-1,    g m-2,     mm day-1')
+        
         !--- Frenquency of outputs
         FROP   = CONTROL%FROP
 
@@ -278,6 +300,8 @@
 
         IF (IDETG .NE. 'Y') RETURN
         CLOSE(UNIT=NOUTDG_det)
+        CLOSE(UNIT=NOUTDG_pho)
+        CLOSE(UNIT=NOUTDG_str)
 
     ENDIF
 

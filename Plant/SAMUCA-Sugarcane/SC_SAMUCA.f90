@@ -778,6 +778,10 @@
     upper       = bottom - slthickness
     dep         = bottom        
     
+    !--- Detailed output switch
+    writedcrop = .false.
+    if(ISWITCH % IDETL .eq. 'D') writedcrop = .true.
+    
     !--- Go to task!
     goto(10,20,30,40,50,60) task
     
@@ -793,6 +797,9 @@
     ratoon_r            = 0.d0
     call find_inp_sam(ratoon_r, 'RATOON', Control)
     if(ratoon_r .ge. 0.99) ratoon = .true.
+        
+    !--- Delete any detailed file regardless if detailed is switched on
+    call SC_OPGROW_SAM_DETAILED (CONTROL, CaneCrop,YRPLT)
     
     return
     
@@ -968,10 +975,6 @@
     
     !--- Use mulch effect
     mulcheffect         = .true.    ! Mulch effect is switched on
-    
-    !--- Outputs
-    writedcrop          = .true.    ! Detailed Crop
-    writeactout         = .true.    ! Write Crop Outputs default is .true. 
     
     !----------------------------------!
     !--- Crop States Initialization ---!
@@ -1300,6 +1303,11 @@
     call sc_opgrow_SAM( CONTROL,        &
                         CaneCrop,       &                        
                         YRPLT)
+    
+    !------------------------!
+    !--- Detailed Outputs ---!
+    !------------------------!    
+    if(writedcrop) call SC_OPGROW_SAM_DETAILED (CONTROL, CaneCrop, YRPLT)    
           
     !--- Linking with DSSAT globals
     CANHT       =   stk_h   ! Canopy height (m)    
@@ -3604,15 +3612,11 @@
                         CaneCrop,   &                        
                         YRPLT)
     
-    if(writedcrop)then
-        
-        !------------------------!
-        !--- Detailed Outputs ---!
-        !------------------------!
-    
-        
-    endif   
-    
+    !------------------------!
+    !--- Detailed Outputs ---!
+    !------------------------!    
+    if(writedcrop) call SC_OPGROW_SAM_DETAILED (CONTROL, CaneCrop, YRPLT)    
+            
     return
     
 60  continue
