@@ -23,5 +23,5 @@ RLD (as tested for Laclau & Laclau, 2009), this was necessary to avoid changes i
 SPAM subroutine. If DSSAT turns to consider the parameters SWCON1, SWCON2 and SWCON3 as crop specific coefficients, 
 the original parameters SRLMax and SRLMin should hold. Further, as the subroutine of soil temperature is slightly different
 from that used in the simulation shell developed for SAMUCA v2, we increased the shoot elongation rate parameter from
-0.04 cm Cday-1 to 0.68 cm Cday-1.
+0.04 cm Cday-1 to 0.068 cm Cday-1.
 
