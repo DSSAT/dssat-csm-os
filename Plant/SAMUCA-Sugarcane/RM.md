@@ -1,7 +1,7 @@
 ---
 # DSSAT/SAMUCA Release Notes:
 ## DSSAT Development Sprint Jan-2020
-## Murilo Vianna (murilodsv@gmail.com)
+### Murilo Vianna (murilodsv@gmail.com)
 ---
 
 The new version of SAMUCA model was incorporated into the DSSAT CSM.
@@ -25,3 +25,15 @@ the original parameters SRLMax and SRLMin should hold. Further, as the subroutin
 from that used in the simulation shell developed for SAMUCA v2, we increased the shoot elongation rate parameter from
 0.04 cm Cday-1 to 0.068 cm Cday-1.
 
+---
+
+## Detailed Outputs:
+
+Apart of PlantGro.OUT, user's of SAMUCA can get detailed outputs at phytomer level, canopy photosynthesis and crop abiotic stresses when the verbose option (VBOSE) is set to 'D'.
+
+---
+
+## Sample site:
+
+A sample simulation for an experimental site at Piracicaba, Brazil, is provided in the file ESAL1401.SNX. Ancillary and biometric data collected throughout crop growth is also available for model testing and calibration. 
+source: https://www.teses.usp.br/teses/disponiveis/11/11152/tde-01082018-150704/pt-br.php
