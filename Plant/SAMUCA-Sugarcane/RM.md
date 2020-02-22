@@ -17,11 +17,11 @@ Full description of the SAMUCA model can be found at:
 Some parameters had to be adjusted to cope with the slightly different subroutines of DSSAT. 
 
 As DSSAT consider the parameters SWCON1, SWCON2 and SWCON3 as constants, we increased the 
-Specific Root Lengths parameters SRLMax and SRLMin at species files from 22 and 16 to 32 and 26 (m g-1), respectively,
+Specific Root Lengths parameters SRLMax and SRLMin at species files from 22 and 16 to 36 and 30 (m g-1), respectively,
 to increase the RLD and, as a result, increase the root water uptake. Although this will make the model to overpredict
 RLD (as tested for Laclau & Laclau, 2009), this was necessary to avoid changes into the CSM structure, specially at the
 SPAM subroutine. If DSSAT turns to consider the parameters SWCON1, SWCON2 and SWCON3 as crop specific coefficients, 
 the original parameters SRLMax and SRLMin should hold. Further, as the subroutine of soil temperature is slightly different
 from that used in the simulation shell developed for SAMUCA v2, we increased the shoot elongation rate parameter from
-0.04 cm Cday-1 to 0.68 cm Cday-1.
+0.04 cm Cday-1 to 0.068 cm Cday-1.
 
