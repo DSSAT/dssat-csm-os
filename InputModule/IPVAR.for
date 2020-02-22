@@ -350,41 +350,30 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
 !     Simulador Agronomico Modular de Cana-de-Acucar
       CASE ('SCSAM') 
         READ (C360,1070,IOSTAT=ERRNUM) VARTY, VRNAME, ECONO,
-     &      nsenesleaf_effect_r      ,
-     &      maxgl_r                  ,
-     &      n_lf_max_ini_la_r        ,
+     &      maxgl_r       		     ,
      &      n_lf_when_stk_emerg_r    ,
      &      n_lf_it_form_r           ,
-     &      maxdgl_r                 ,
-     &      amax                     ,
-     &      eff                      ,
-     &      tb_sam                   ,
-     &      tb0pho                   ,
-     &      tb1pho                   ,
-     &      tb2pho                   ,
-     &      tbfpho                   ,
-     &      tbper                    ,
-     &      tbMax_per                ,
-     &      phyllochron              ,
-     &      sla                      ,
-     &      mla                      ,
-     &      rwuep1                   ,
-     &      rwuep2                   ,
-     &      t_max_ws_pho             ,
-     &      t_mid_ws_pho             ,
-     &      t_min_ws_pho             ,
-     &      t_max_ws_exp             ,
-     &      t_mid_ws_exp             ,
-     &      t_min_ws_exp             ,
-     &      plastochron              ,
-     &      cr_source_sink_ratio_ruse,
-     &      it_struc_tb_end          ,
+     &      maxdgl_r       		     ,
+     &      amax       			     ,
+     &      eff       			     ,
+     &      chustk       		     ,
+     &      chupeak     		     ,
+     &      chudec     			     ,
+     &      chumat     			     ,
+     &      popmat     			     ,
+     &      poppeak      		     ,
+     &      tillochron      	     ,
+     &      phyllochron     	     ,
+     &      sla       			     ,
+     &      mla       			     ,
+     &      plastochron       	     ,
+     &      init_leaf_area           ,
+     &      max_ini_la       	     ,
      &      max_it_dw                ,
      &      mid_tt_it_growth         ,
      &      end_tt_it_growth         ,
      &      mid_tt_lf_growth         ,
-     &      end_tt_lf_growth         ,
-     &      tt_chumat_lt
+     &      end_tt_lf_growth         
 
 !     Taro, tanier **
       CASE ('TRARO','TNARO')
@@ -462,7 +451,7 @@ C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
 !!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)           ! 02/10/2009 
  ! 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                      ! 02/10/2009 
  1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)                        ! 02/21/2018 
-1070  format (A6,1X,A16,7X,A6,35F15.0)                        ! 01/07/2020 (SAMUCA)
+1070  format (A6,1X,A16,7X,A6,24F15.0)                        ! 01/07/2020 (SAMUCA)
 !1500 FORMAT (A6,1X,A16,1X,A255)
  1500 FORMAT (A6,1X,A16,7X,A)                                 !11/8/07
 

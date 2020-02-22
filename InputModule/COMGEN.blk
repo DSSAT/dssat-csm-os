@@ -41,41 +41,30 @@
      &      TAR0, TDELAY, LER0, SER0, LG_AMBASE, AQP_UP5
 
 	!--- SAMUCA's cultivar parameters	(MV, jan-2020)
-	real 	nsenesleaf_effect_r
-	real 	maxgl_r
-	real 	n_lf_max_ini_la_r
-	real 	n_lf_when_stk_emerg_r
-	real 	n_lf_it_form_r
-	real 	maxdgl_r
-	real	amax
-	real	eff
-	real	tb_sam
-	real	tb0pho
-	real	tb1pho
-	real	tb2pho
-	real	tbfpho
-	real	tbper
-	real	tbMax_per
-	real	phyllochron
-	real	sla
-	real	mla
-	real	rwuep1
-	real	rwuep2
-	real	t_max_ws_pho
-	real	t_mid_ws_pho
-	real	t_min_ws_pho
-	real	t_max_ws_exp
-	real	t_mid_ws_exp
-	real	t_min_ws_exp
-	real	plastochron
-	real	cr_source_sink_ratio_ruse
-	real	it_struc_tb_end
-	real	max_it_dw
-	real	mid_tt_it_growth
-	real	end_tt_it_growth
-	real	mid_tt_lf_growth
-	real	end_tt_lf_growth
-	real	tt_chumat_lt
+	real    maxgl_r
+	real    n_lf_when_stk_emerg_r
+	real    n_lf_it_form_r
+	real    maxdgl_r
+	real    amax
+	real    eff
+	real    chustk
+	real    chupeak
+	real    chudec
+	real    chumat
+	real    popmat
+	real    poppeak
+	real    tillochron
+	real    phyllochron
+	real    sla
+	real    mla
+	real    plastochron
+	real    init_leaf_area
+	real    max_ini_la
+	real    max_it_dw
+	real    mid_tt_it_growth
+	real    end_tt_it_growth
+	real    mid_tt_lf_growth
+	real    end_tt_lf_growth
 
 
       REAL          CSDVAR,PHTHRS(20),SDPDVR,SLAVAR,LFMAX,XFRUIT,WTPSD
@@ -149,39 +138,28 @@
 	  COMMON /GEN14/ THOT, TCLDP, TCLDF
 	  
 !MV	 Add SAMUCA Coefficients
-	  COMMON /GEN15/ 
-     &      nsenesleaf_effect_r         ,
+      COMMON /GEN15/ 
      &      maxgl_r                     ,
-     &      n_lf_max_ini_la_r           ,
      &      n_lf_when_stk_emerg_r       ,
      &      n_lf_it_form_r              ,
-     &      maxdgl_r                    ,
-     &      amax                        ,
-     &      eff                         ,
-     &      tb_sam                      ,
-     &      tb0pho                      ,
-     &      tb1pho                      ,
-     &      tb2pho                      ,
-     &      tbfpho                      ,
-     &      tbper                       ,
-     &      tbMax_per                   ,
-     &      phyllochron                 ,
-     &      sla                         ,
-     &      mla                         ,
-     &      rwuep1                      ,
-     &      rwuep2                      ,
-     &      t_max_ws_pho                ,
-     &      t_mid_ws_pho                ,
-     &      t_min_ws_pho                ,
-     &      t_max_ws_exp                ,
-     &      t_mid_ws_exp                ,
-     &      t_min_ws_exp                ,
-     &      plastochron                 ,
-     &      cr_source_sink_ratio_ruse   ,
-     &      it_struc_tb_end             ,
-     &      max_it_dw                   ,
-     &      mid_tt_it_growth            ,
-     &      end_tt_it_growth            ,
-     &      mid_tt_lf_growth            ,
-     &      end_tt_lf_growth            ,
-     &      tt_chumat_lt                
+     &      maxdgl_r                    ,   
+     &      amax                        ,   
+     &      eff                         ,   
+     &      chustk                      ,   
+     &      chupeak                     ,   
+     &      chudec                      ,   
+     &      chumat                      ,   
+     &      popmat                      ,   
+     &      poppeak                     ,   
+     &      tillochron                  ,   
+     &      phyllochron                 ,   
+     &      sla                         ,   
+     &      mla                         ,   
+     &      plastochron                 ,   
+     &      init_leaf_area              ,   
+     &      max_ini_la                  ,   
+     &      max_it_dw                   ,   
+     &      mid_tt_it_growth            ,   
+     &      end_tt_it_growth            ,   
+     &      mid_tt_lf_growth            ,   
+     &      end_tt_lf_growth                  
