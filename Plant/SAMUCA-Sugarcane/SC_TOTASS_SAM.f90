@@ -1,4 +1,4 @@
-﻿   
+   
 subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanopy,Qleaf,incpar,phot_layer,frac_li)
 ! ----------------------------------------------------------------------
 ! --- calculates daily total gross assimilation (dtga) by performing
@@ -175,12 +175,12 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
               !--- Light intercepted by layer [W/m2]
               visl    = fslla *   visll   +     (1.d0 - fslla) * visshd  !Added, following Goudriaan (2016)              
               
-              !--- Absorbed light (direct + difuse) at lai depth (glai) and time (ghour) [PPFD - μmol m-2 s-1]
+              !--- Absorbed light (direct + difuse) at lai depth (glai) and time (ghour) [PPFD - micromol m-2 s-1]
               Qleaf(1,glai+1)         = laic
               Qleaf(ghour+1, 1)       = hour
               Qleaf(ghour+1, glai+1)  = visl * 4.6
 
-              !--- Assimilation Rate at lai depth (glai) and time (ghour)  [μmol(CO2) m-2 s-1]
+              !--- Assimilation Rate at lai depth (glai) and time (ghour)  [micromol(CO2) m-2 s-1]
               Acanopy(1,glai+1)       = laic
               Acanopy(ghour+1, 1)     = hour
               Acanopy(ghour+1,glai+1) = photl * (1.e3/1.e4) / 3600.d0 / 44.d0 * 1.e6
@@ -214,9 +214,7 @@ subroutine totass(daynr,dayl,amax,eff,lai,kdif,scv,avrad,sinld,cosld,dtga,Acanop
       par_check = par_check * dayl * 3600.d0
       dvisabs   = visabsth  * dayl * 3600.d0
       par_ratio = par_check / avrad             ! This should be around 0.5
-      if(abs(par_ratio - expected_par_ratio) .gt. 0.05)then
-          !write(warn,*) 'PAR ratio (PAR/SRAD) computed from the Gaussian Integration differed more than 0.05 from the expected ratio (',expected_par_ratio , '). '
-      endif
+      
 
       !--- Fraction of light absorbed by the canopy
       frac_li   = dvisabs / par_check

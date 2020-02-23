@@ -1,4 +1,4 @@
-﻿subroutine SAMUCA(CONTROL, ISWITCH,                                 &
+subroutine SAMUCA(CONTROL, ISWITCH,                                 &
          CO2, DAYL, EOP, EP, EO, ES, HARVFRAC, NH4, NO3, SNOW,      &  !Input
          SOILPROP, tsoil, SRAD, SW, TMAX, TMIN, TRWUP, TRWU, EOS,   &  !Input
          RWUEP1, TWILEN, YREND, YRPLT, WEATHER, IRRAMT,             &  !Input
@@ -689,6 +689,7 @@
     real    dsinbe
     real    sc
     real    dso
+    real    watdmd
     
     character 	(len = 6)	pltype      ! plan	!  Planting type (Ratoon or PlCane)    
     character 	(len = 6)	cropstatus  ! plan	!  Dead or Alive
@@ -3569,8 +3570,7 @@
     CaneCrop % frac_li_pho    		= frac_li
     CaneCrop % frac_li_till   		= li
     CaneCrop % trwup          		= trwup * 10.d0 ! [mm]
-    CaneCrop % eop            		= eop
-    CaneCrop % watdmd               = max((CaneCrop % trwup)/(CaneCrop % eop),0.d0)
+    CaneCrop % eop            		= eop    
     CaneCrop % dtg            		= dtg
     CaneCrop % drue_calc      		= drue_calc 
     CaneCrop % rue_calc       		= rue_calc
@@ -3583,9 +3583,15 @@
     CaneCrop % dw_it_dead_AG        = dw_it_dead_AG
     CaneCrop % dw_it_dead_BG        = dw_it_dead_BG
 	CaneCrop % dw_lf_dead           = dw_lf_dead
-    CaneCrop % tmn                  = tmn
-    
+    CaneCrop % tmn                  = tmn    
     CaneCrop % flemerged            = flemerged
+    
+    !--- Water demand
+    if(eop .le. z)then
+        CaneCrop % watdmd   = 1
+    else
+        CaneCrop % watdmd   = max((CaneCrop % trwup)/(CaneCrop % eop),0.d0)
+    endif
     
     !--- Phytomer level
     CaneCrop % n_ph                 = n_ph
@@ -3595,7 +3601,7 @@
     CaneCrop % fl_lf_AG             = fl_lf_AG
     CaneCrop % fl_lf_alive          = fl_lf_alive
     
-    !--- Convert to μmol m-2 s-1 for output purpose
+    !--- Convert to micromol m-2 s-1 for output purpose
     CaneCrop % amax_out             = amax_mod * 1.e3 / 1.e4 / 3600.d0 / 44.d0 * 1.e6
     CaneCrop % eff_out              = eff_mod  * 1.e3 / 1.e4 / 3600.d0 / 44.d0 * 1.e6 / 4.6
         

@@ -1,4 +1,4 @@
-﻿    subroutine SC_OPGROW_SAM_DETAILED (CONTROL, CaneCrop,YRPLT)
+    subroutine SC_OPGROW_SAM_DETAILED (CONTROL, CaneCrop,YRPLT)
 
     !     Define DSSAT composite variables:
     USE ModuleDefs
@@ -133,8 +133,8 @@
         
         !--- Detailed Photos Header
 20      format('Variables and Units Below:')
-21      format('season, pltype, year,   doy,   das,   dap, gaus_hour, gaus_lai,   lai, frac_li,         amax, eff, gaus_hour_abs, gaus_lai_abs,  qleaf_layer,      a_layer, dir_par, dif_par, total_par')
-22      format('   dml,    dml, yyyy, 0-366, 0-inf, 0-inf,       0-5,      0-5, m2/m2,     0-1, μmol m-2 s-1,   -,          hour,          lai, μmol m-2 s-1, μmol m-2 s-1,   W m-2,   W m-2,     W m-2')
+21      format('season, pltype, year,   doy,   das,   dap, gaus_hour, gaus_lai,   lai, frac_li,             amax, eff, gaus_hour_abs, gaus_lai_abs,  qleaf_layer,      a_layer, dir_par, dif_par, total_par')
+22      format('   dml,    dml, yyyy, 0-366, 0-inf, 0-inf,       0-5,      0-5, m2/m2,     0-1, micromol m-2 s-1,   -,          hour,          lai, micromol m-2 s-1, micromol m-2 s-1,   W m-2,   W m-2,     W m-2')
         
         !--- write photosynthesis header
         write(NOUTDG_str, 30)
@@ -250,12 +250,12 @@
                 i2,         a1,     &   ! glai                  [canopy layer]
                 f20.5,      a1,     &   ! lai                   [m2/m2]
                 f20.5,      a1,     &   ! frac light absorbed   [0-1]
-                f20.5,      a1,     &   ! amax_out              [μmol m-2 s-1]
-                f20.5,      a1,     &   ! eff_out               [μmol(CO2) μmol(photon)-1]
+                f20.5,      a1,     &   ! amax_out              [micromol m-2 s-1]
+                f20.5,      a1,     &   ! eff_out               [micromol(CO2) micromol(photon)-1]
                 f20.5,      a1,     &   ! Acanopy(ghour)        [hour]
                 f20.5,      a1,     &   ! Acanopy(glai)         [m2/m2]
-                f20.5,      a1,     &   ! Qleaf(ghour,glai)     [μmol/m2/s]
-                f20.5,      a1,     &   ! Acanopy(ghour,glai)   [μmol/m2/s]
+                f20.5,      a1,     &   ! Qleaf(ghour,glai)     [micromol/m2/s]
+                f20.5,      a1,     &   ! Acanopy(ghour,glai)   [micromol/m2/s]
                 f20.5,      a1,     &   ! incpar(ghour,2)       [direct PAR - W/m2]
                 f20.5,      a1,     &   ! incpar(ghour,3)       [difuse PAR - W/m2]
                 f20.5)                  ! incpar(ghour,4)       [total PAR - W/m2]
