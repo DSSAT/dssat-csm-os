@@ -3499,7 +3499,10 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         endif        
     endif
             
-    !--- Time control
+    !--- Store this day for output
+    CaneCrop % dap  = dap
+    
+    !--- Update next-step
     dap = dap + 1
     
     !--- Linking with DSSAT globals
@@ -3536,7 +3539,6 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     CaneCrop % year           		= year          
     CaneCrop % doy            		= doy           
     CaneCrop % das            		= das           
-    CaneCrop % dap            		= dap           
     CaneCrop % diac           		= diac   
     CaneCrop % diacem               = diacem
     CaneCrop % dw_total       		= dw_total
