@@ -134,25 +134,22 @@ C     RLNEW  = GRORT*PLANTS*1.05
          ENDIF
 
          RLDF(L) = AMIN1(SWDF,RNFAC)*SHF(L)*DLAYR(L)
-
          IF (CUMDEP .GE. RTDEP) THEN
-            RTDEP   = RTDEP + DTT*0.18*AMIN1((SWFAC*1.5),SWDF)
+            !RTDEP   = RTDEP + DTT*0.18*AMIN1((SWFAC*1.5),SWDF) !RICE
+            RTDEP   = RTDEP + DTT*0.18*AMIN1((SWFAC*2.5),SWDF) !Tef
             RTDEP   = AMIN1 (RTDEP,DEPMAX)
             RLDF(L) = RLDF(L)*(1.0-(CUMDEP-RTDEP)/DLAYR(L))
             TRLDF   = TRLDF + RLDF(L)
             EXIT
          ENDIF
-         TRLDF = TRLDF + RLDF(L)
+         TRLDF = TRLDF + RLDF(L) 
       END DO
 
-      IF (TRLDF .LT. RLNEW*0.00001 .OR. TRLDF .LE. 0.0) THEN
-         RETURN
-      ENDIF
-
-      RNLF   = RLNEW/TRLDF
-      CUMDEP = 0.0
-
-      DO L = 1, L1
+      IF (TRLDF .GE. RLNEW*0.00001 .AND. TRLDF .GT. 0.0) THEN
+       RNLF   = AMIN1 ((RLNEW/TRLDF),2.0) !Tef
+      
+       CUMDEP = 0.0
+       DO L = 1, L1
          CUMDEP = CUMDEP + DLAYR(L)
          RLV(L) = RLV(L) + RLDF(L)*RNLF/DLAYR(L)-0.005*RLV(L)
          IF (CUMDEP .GE. 115.0) THEN
@@ -160,8 +157,8 @@ C     RLNEW  = GRORT*PLANTS*1.05
             RLV(L) = AMIN1 (RLV(L),RLVF)
          ENDIF
          RLV(L) = AMAX1 (RLV(L),0.0)
-      END DO
-
+        END DO
+      ENDIF
 !***********************************************************************
 !***********************************************************************
 !     END OF DYNAMIC IF CONSTRUCT
