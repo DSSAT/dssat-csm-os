@@ -674,7 +674,7 @@ C=======================================================================
       CHARACTER*6, PARAMETER :: ERRKEY = 'FPLACE'
       CHARACTER*7  AppType
 
-      INTEGER FERTDAY, FERTYPE, I, K, IDLAYR, KMAX, L, NLAYR
+      INTEGER FERTDAY, FERTYPE, I, K, IDLAYR, KMAX, L, NLAYR, J
 
       REAL CUMDEP, FERDEPTH
       REAL FMIXEFF, FERMIXPERC
