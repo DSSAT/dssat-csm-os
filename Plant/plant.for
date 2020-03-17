@@ -54,6 +54,7 @@ C  08/09/2012 GH  Added CSCAS model
 !  05/10/2017 CHP removed SALUS model
 !  12/01/2015 WDB added Sugarbeet
 !  09/01/2018  MJ modified Canegro interface, IRRAMT added.
+!  03/17/2020  WP Model TEFF from Mulugeta called on plant (added).
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
@@ -496,6 +497,23 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
 !     Rice
       CASE('RICER')
         CALL RICE(CONTROL, ISWITCH,
+     &    CO2, DAYL, EOP, FLOODWAT, HARVFRAC, NH4, NO3,   !Input
+     &    SKi_Avail, SPi_AVAIL,                           !Input
+     &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
+     &    TWILEN, YRPLT,                                  !Input
+     &    FLOODN,                                         !I/O
+     &    CANHT, HARVRES, XLAI, KUptake, MDATE, NSTRES,   !Output
+     &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
+     &    RLV, SENESCE, STGDOY, FracRts, UNH4, UNO3)      !Output
+
+        IF (DYNAMIC .EQ. INTEGR) THEN
+          XHLAI = XLAI
+        ENDIF
+
+!     -------------------------------------------------
+!     CERES-TEFF
+      CASE('TFCER')
+        CALL TEFF(CONTROL, ISWITCH,
      &    CO2, DAYL, EOP, FLOODWAT, HARVFRAC, NH4, NO3,   !Input
      &    SKi_Avail, SPi_AVAIL,                           !Input
      &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
