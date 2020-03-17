@@ -1,5 +1,5 @@
 C=======================================================================
-C  TRNSPL_GROSUB, Subroutine
+C  TEFF_TRNSPL_GROSUB, Subroutine
 C
 C  Allows for transplanting shock and estimates new values for
 C  P1, BIOMAS, RTWT and PLA
@@ -8,7 +8,7 @@ C  Revision history
 C
 C  08/07/1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
-C                     Split TRANSPL into TRNSPL_GROSUB and TRNSPL_PHENOL
+C                     Split TRANSPL into TEFF_TRNSPL_GROSUB and TRNSPL_PHENOL
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
@@ -16,7 +16,7 @@ C  FIELD  : Switch to indicate field simulation of all processes but when
 C           false then growth without stress as in seedbed
 C=======================================================================
 
-      SUBROUTINE TRNSPL_GROSUB (DYNAMIC,  
+      SUBROUTINE TEFF_TRNSPL_GROSUB (DYNAMIC,  
      &    ATEMP, CDTT_TP, FIELD, ISWNIT, ITRANS, NPPH,    !Input
      &    P1T, PANWT, PHINT, PLANTS, SDTT_TP, SDWTPL,     !Input
      &    TAGE, TBASE, TMAX, TPLANTS, XST_TP,             !Input
@@ -149,4 +149,4 @@ C-----------------------------------------------------------------------
       ENDIF
 
       RETURN
-      END SUBROUTINE TRNSPL_GROSUB
+      END SUBROUTINE TEFF_TRNSPL_GROSUB

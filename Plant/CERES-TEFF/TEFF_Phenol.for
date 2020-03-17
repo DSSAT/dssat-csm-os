@@ -110,14 +110,14 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       CALL YR_DOY (YRSIM,YR,ISIM)
-      CALL StnameFill(STNAME)
+      CALL TEFF_StnameFill(STNAME)
 
       CALL TEFF_IPPHEN (CONTROL,                            !Input
 !    &    ATEMP, G4, G5, P1, P2O, P2R, P5, PLME, SDAGE) 
      &    ATEMP, P1, P2O, P2R, P5, PLME, SDAGE,           !Output
      &    THOT, TCLDP, TCLDF)                             !Output
 
-      CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+      CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &    CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
       XSTAGE     = 0.1      
@@ -157,7 +157,7 @@ C=======================================================================
 
       LTRANS = .FALSE.
       PRESOW = .TRUE. 
-      CALL RiceInit(
+      CALL TEFF_RiceInit(
      &    PLME, TAGE, YRDOY, YRPLT, YRSIM, YRSOW,         !Input
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
@@ -209,7 +209,7 @@ C=======================================================================
           CASE (4)
             STGDOY(10) = YRDOY
             ISTAGE     = 8        !GERMINATION
-            CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+            CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
             !FROM PHASEI
@@ -233,7 +233,7 @@ C=======================================================================
              TF_GRO     = .TRUE.
              NDAT       = 0
              IF (ITRANS .EQ. 3 .AND. SUMDTT .GT. P1) THEN
-               CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+               CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &           CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
                !FROM PHASEI
@@ -351,7 +351,7 @@ C=======================================================================
              TF_GRO = .TRUE.
           ENDIF
 
-          CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+          CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
           !FROM PHASEI
@@ -413,7 +413,7 @@ C=======================================================================
              PLANTS  = 0.0
              HARVMAT = SUMDTT
           ENDIF
-           CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+           CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
           SELECT CASE (ISTAGE)
@@ -438,7 +438,7 @@ C=======================================================================
           ENDIF
           STGDOY(ISTAGE) = YRDOY
 
-           CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+           CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
           !FROM PHASEI
@@ -828,7 +828,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
 
-      CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+      CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
       IF (ISTAGE .EQ. 6 .AND .ITRANS .EQ. 3) THEN
@@ -908,7 +908,7 @@ C=======================================================================
 
 
 C=======================================================================
-C  PhaseInit, Subroutine
+C  TEFF_PhaseInit, Subroutine
 C
 C  Initialization at the beginning of every stage
 C-----------------------------------------------------------------------
@@ -919,7 +919,7 @@ C-----------------------------------------------------------------------
 C  Called : TEFF_PHENOL
 C=======================================================================
 
-      SUBROUTINE PhaseInit (CNSD1, CNSD2, CSD1, CSD2, 
+      SUBROUTINE TEFF_PhaseInit (CNSD1, CNSD2, CSD1, CSD2, 
      &    CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
       IMPLICIT NONE
@@ -940,12 +940,12 @@ C=======================================================================
       NEW_PHASE = .TRUE.
 
       RETURN
-      END SUBROUTINE PhaseInit
+      END SUBROUTINE TEFF_PhaseInit
 C=======================================================================
 
 
 C=======================================================================
-C  RiceInit, Subroutine
+C  TEFF_RiceInit, Subroutine
 C
 C  Seasonal initialization
 C-----------------------------------------------------------------------
@@ -956,7 +956,7 @@ C  02/19/2003 CHP Converted dates to YRDOY format
 C-----------------------------------------------------------------------
 C  Called : TEFF_PHENOL
 C=======================================================================
-      SUBROUTINE RiceInit(
+      SUBROUTINE TEFF_RiceInit(
      &    PLME, TAGE, YRDOY, YRPLT, YRSIM, YRSOW,         !Input
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
@@ -1054,12 +1054,12 @@ C=======================================================================
       END SELECT
 
       RETURN
-      END SUBROUTINE RiceInit
+      END SUBROUTINE TEFF_RiceInit
 
 C=======================================================================
 
 C=======================================================================
-C  StnameFill, Subroutine
+C  TEFF_StnameFill, Subroutine
 C
 C  Initialization at the beginning of every stage
 C-----------------------------------------------------------------------
@@ -1070,7 +1070,7 @@ C-----------------------------------------------------------------------
 C  Called : TEFF_PHENOL
 C=======================================================================
 
-      SUBROUTINE StnameFill(STNAME)
+      SUBROUTINE TEFF_StnameFill(STNAME)
 
       IMPLICIT NONE
       CHARACTER*10 STNAME(20)
@@ -1097,7 +1097,7 @@ C=======================================================================
       STNAME(20) = 'Harvest   '
 
       RETURN
-      END SUBROUTINE StnameFill
+      END SUBROUTINE TEFF_StnameFill
 
 C=======================================================================
 C  TEFF_IPPHEN, Subroutine

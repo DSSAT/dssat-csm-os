@@ -315,7 +315,7 @@ C=======================================================================
 
       IF (FIRST) THEN
         FIRST = .FALSE.
-        CALL PlantInit(
+        CALL TEFF_PlantInit(
      &    GRAINN, NPPH, PLPH, ROOTN, STOVN,               !Input
      &    PLANTS, PLTPOP,                                 !I/O
      &    ITRANS, ROWSPC, SEEDNI, SPACE, TPLANTS)         !Output
@@ -1361,7 +1361,7 @@ C-----------------------------------------------------------------------
 C=======================================================================
 
 C=======================================================================
-C  PlantInit, Subroutine
+C  TEFF_PlantInit, Subroutine
 C
 C  Initialization at the beginning of planting
 C-----------------------------------------------------------------------
@@ -1371,7 +1371,7 @@ C  05/07/2002 CHP Written
 C-----------------------------------------------------------------------
 C  Called : TEFF_GROSUB
 C=======================================================================
-      SUBROUTINE PlantInit(
+      SUBROUTINE TEFF_PlantInit(
      &    GRAINN, NPPH, PLPH, ROOTN, STOVN,               !Input
      &    PLANTS, PLTPOP,                                 !I/O
      &    ITRANS, ROWSPC, SEEDNI, SPACE, TPLANTS)         !Output
@@ -1454,7 +1454,7 @@ C     Set up hill population from plant population
       PLTPOP = PLANTS
 
       RETURN
-      END SUBROUTINE PlantInit
+      END SUBROUTINE TEFF_PlantInit
 
 C=======================================================================
 

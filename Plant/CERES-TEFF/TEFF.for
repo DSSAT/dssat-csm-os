@@ -43,9 +43,10 @@ C  04/01/2004 CHP/US New PHEFAC calculation
 !  04/02/2008 CHP/US Added P model
 !  04/02/2008 US Added simple K model
 !  04/24/2019 US/JF/CHP Replace G4, G5 with THOT, TCLDP, TCLDF
+!  03/17/2020 WP subroutine name changed to TEFF
 C=======================================================================
 
-      SUBROUTINE RICE(CONTROL, ISWITCH,
+      SUBROUTINE TEFF(CONTROL, ISWITCH,
      &    CO2, DAYL, EOP, FLOODWAT, HARVFRAC, NH4, NO3,   !Input
      &    SKi_Avail, SPi_AVAIL,                           !Input
      &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
@@ -437,4 +438,4 @@ C-----------------------------------------------------------------------
 
 !***********************************************************************
       RETURN
-      END SUBROUTINE RICE
+      END SUBROUTINE TEFF
