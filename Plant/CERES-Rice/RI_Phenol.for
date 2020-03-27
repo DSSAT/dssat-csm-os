@@ -152,7 +152,6 @@ C=======================================================================
 
       P1T   = P1      
       TBASE = 9.0     !IN SPP FILE MAR17
-      TBASE = 8.0 !TEF
       TAGE  = SDAGE   
 
       LTRANS = .FALSE.
@@ -359,7 +358,6 @@ C=======================================================================
           P8     = 150.0*EXP(-0.055*TEMPM)
           P8     = AMIN1 (P8,85.0)
           P8     = AMAX1 (P8,28.0)
-          P8=20.0 !Tef
           SUMDTT = 0.0
           CUMDTT = 0.0
           NDAS   = 0
@@ -507,9 +505,9 @@ C=======================================================================
           CUMTMP = CUMTMP + TN
           IF (TWILEN .GT. P2O) THEN
           !   RATEIN = 1.0/(136.0+P2R*(HRLT-P2O))
-             RATEIN = 1.0/(45.0+P2R*(TWILEN-P2O))       !TEF    136 (RICE)
+             RATEIN = 1.0/(136.0+P2R*(TWILEN-P2O))
           ELSE
-             RATEIN = 1.0 / 45.0 ! Tef
+             RATEIN = 1.0 / 136.0
           ENDIF
 
 !          IF (ITRANS .NE. 1 .AND. DOY .EQ. ITDATE) THEN
@@ -552,7 +550,7 @@ C=======================================================================
 !               IF (TN .GT. TMPNPI*G5) THEN
              IF (TMPI .LT. TCLDP) THEN  ! AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
                 IF (TN .GT. TCLDP) THEN
-                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15c)
+                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
                 ENDIF
 
 !! temp chp
