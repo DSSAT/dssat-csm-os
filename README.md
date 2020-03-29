@@ -103,6 +103,14 @@ This folder contains data, documentation, DSSAT configuration files, and crop-sp
 
 ## Configuring the build ##
 
+An environment with a fortran compiler is provided with
+a [nix-shell](https://nixos.org/nixos/nix-pills/developing-with-nix-shell.html).
+This step is not needed when the compiler is installed natively.  
+
+```
+$ nix-shell
+```
+
 It is usually preferred that you do an out-of-source build.  To do this, create
 a `build/` directory at the top level of your project and build there.  
 
