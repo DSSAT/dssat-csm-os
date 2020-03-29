@@ -107,14 +107,14 @@ An environment with a fortran compiler is provided with
 a [nix-shell](https://nixos.org/nixos/nix-pills/developing-with-nix-shell.html).
 This step is not needed when the compiler is installed natively.  
 
-```
+```bash
 $ nix-shell
 ```
 
 It is usually preferred that you do an out-of-source build.  To do this, create
 a `build/` directory at the top level of your project and build there.  
 
-``` bash
+```bash
 $ mkdir build
 $ cd build
 $ cmake ..
@@ -126,12 +126,12 @@ As written, this template will allow you to specify one of three different sets
 of compiler flags.  The default is RELEASE.  You can change this using to
 TESTING or DEBUG using
 
-``` bash
+```bash
 $ cmake .. -DCMAKE_BUILD_TYPE=DEBUG
 ```
 or
 
-``` bash
+```bash
 $ cmake .. -DCMAKE_BUILD_TYPE=TESTING
 ```
 
