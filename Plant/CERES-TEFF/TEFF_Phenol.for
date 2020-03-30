@@ -1119,7 +1119,7 @@ C=======================================================================
 
       CHARACTER*1  PLME
       CHARACTER*6  ERRKEY, SECTION
-      PARAMETER (ERRKEY = 'IPRICE')
+      PARAMETER (ERRKEY = 'TEFIPP')
       CHARACTER*30 FILEIO
       INTEGER LINC, LNUM, LUNIO, ERR, FOUND
 

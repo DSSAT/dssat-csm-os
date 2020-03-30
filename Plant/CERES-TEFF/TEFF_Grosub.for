@@ -1476,7 +1476,7 @@ C=======================================================================
 
       CHARACTER*2 CROP
       CHARACTER*6  ERRKEY, SECTION
-      PARAMETER (ERRKEY = 'IPRICE')
+      PARAMETER (ERRKEY = 'TEFIPGR')
       CHARACTER*12 FILEC
       CHARACTER*30 FILEIO
       CHARACTER*80 PATHCR
