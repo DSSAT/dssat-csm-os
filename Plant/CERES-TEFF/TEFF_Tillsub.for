@@ -1,5 +1,5 @@
 C=======================================================================
-C  RI_TILLSUB, Subroutine
+C  TEFF_TILLSUB, Subroutine
 C
 C  Determines tillering
 C-----------------------------------------------------------------------
@@ -9,12 +9,12 @@ C  08/07/1993 PWW Header revision and minor changes
 C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C=======================================================================
 
-      SUBROUTINE RI_TILLSUB (DYNAMIC,
+      SUBROUTINE TEFF_TILLSUB (DYNAMIC,
      &    AGEFAC, DTT, FLOOD, G2, G3, GPP, GRNWT, ISTAGE, !Input
      &    LAI, MGPP, MGROLF, MPLAG, NSTRES, P3, P4, P5,   !Input
      &    RGFILL, RTR, SLFN, SLFT, SLFW, SUMDTT, TCARBO,  !Input
      &    TEMF, TFILL, TGPP, TMPFIL, TSHOCK, TURFAC, XN,  !Input
-     &    PSTRES1, PSTRES2, KSTRES,                       !Input 
+     &    PLANTS, PSTRES1, PSTRES2, KSTRES,               !Input 
      &    TGROGRN, TGROLF, TGROSTM, TPLAG,                !I/O
      &    TILNO, TLFWT, TSTMWT, TPLA)                     !Output
 
@@ -30,7 +30,7 @@ C=======================================================================
       REAL DTT, FLOOD, G2, G3, GPP, GRNWT, LAI, MGROLF, MGPP, MPLAG
       REAL P3, P4, P5, RGFILL, SUMDTT, TCARBO, TFILL, TGROGRN
       REAL TGROLF, TGPP, TGROSTM, TILNO, TLFWT, TMPFIL
-      REAL TPLA,  TPLAG, TSHOCK, TSTMWT, XN, YPTILNO
+      REAL TPLA,  TPLAG, TSHOCK, TSTMWT, XN, YPTILNO, PLANTS
 
       REAL     B,DPTILNO,DTILNO,ECRAT,GNO,PTILNO,RTR,SENTIL,SLFN,SLFT
       REAL     SLFW,SLW,SWTIL,TILS,TILST,TRSM,TSTAGE,TEMF,TSLOPE
@@ -47,6 +47,7 @@ C=======================================================================
       YPTILNO  = 0.0 
       ITDUR    = 0
       TPLA     = 0.5
+      TPLA     = 0.1!TEF
 
 !***********************************************************************
 !***********************************************************************
@@ -59,6 +60,7 @@ C=======================================================================
 
       IF (FLOOD .LE. 0.0) THEN
          SWTIL = 1.5*EXP(TURFAC-1.0)-0.5
+         SWTIL = 1.5*EXP(TURFAC-1.0)-0.25!TEF
       ENDIF
       SWTIL = AMAX1 (SWTIL,0.0)
       IF (ISTAGE .LT. 3 .OR. (ISTAGE .EQ. 3 .AND. SUMDTT .LT. 80.)) THEN
@@ -71,8 +73,8 @@ C=======================================================================
          TSLOPE =  1.35*G3
          PTILNO  = (-0.10+TSLOPE*(XN-4.0/G3)-0.376*(XN-4.0/G3)**2 +
 !     &               0.0458*(XN-4.0/G3)**3)*G3                
-     &               0.0458*(XN-4.0/G3)**3)*(G3**0.5)  !US              
-
+     &               0.0458*(XN-4.0/G3)**3)*(G3**0.5)  !US 
+         PTILNO   = PTILNO * AMIN1 ((1.0 + 2.5*(XN-4.0)),850.0*G3/PLANTS)  !TEF EFFECT OF PLANT POP
          IF (LAI .GT. 7.0) THEN
            TRSM    = EXP (-1.1*(LAI-7.0))
          ELSE 
@@ -88,15 +90,17 @@ C=======================================================================
          TILNO   = TILNO + DTILNO
          TILNO   = AMAX1 (TILNO,0.0)
       ENDIF
-
+ !    WRITE (*,*) 'AGEFAC TEMF TSHOCK DPTILNO DTILNO TILNO',
+ !    & AGEFAC, TEMF, TSHOCK, DPTILNO, DTILNO, TILNO
       IF (MGROLF .GT. 0.0 .AND. MPLAG .GT. 0.0) THEN
         SLW = MGROLF / MPLAG
       ELSEIF (TGROLF .GT. 0.0 .AND. TPLAG .GT. 0.0) THEN
         SLW = TGROLF/TPLAG
       ELSE
-        SLW = 0.0055
+        SLW = 0.0055 !Rice
+        SLW = 0.0120 !Tef
       ENDIF
-
+  !   WRITE(*,*) 'RLTIL SLW', SLW
       SELECT CASE (ISTAGE)
         CASE (1)
           TSTAGE  = 0.
@@ -112,22 +116,28 @@ C=======================================================================
           TGROLF  = TPLAG  * AMAX1 (0.0055,SLW)
           TGROSTM = TCARBO - TGROLF
           TPLA    = TPLA   + TPLAG
-
         CASE (3)
+  !      WRITE(*,*) 'ISTAGE TCARBO', ISTAGE,TCARBO
           TSTAGE  = 0   !1.5+3.0*SUMDTT/P3
           SENTIL  = TILNO*0.010*((SUMDTT/(P3+P4+P5))**2)
           TILS    = AMAX1(TILNO*(1.0-AMIN1(SLFW,SLFT,SLFN)),SENTIL)
           TILNO   = AMAX1(0.0,TILNO-TILS)
-          B       = AMAX1((0.55-0.00005*SUMDTT-0.000002*SUMDTT**2),0.35) 
-          IF (B .GT. 0.15 .AND. SUMDTT .GT. 0.75*P3) THEN
-              B = 0.15
-          ENDIF
+          B       = AMAX1((0.55-0.00005*SUMDTT-0.000002*SUMDTT**2),0.35) !Rice
+          B       = AMAX1((0.75-0.00005*SUMDTT-0.000002*SUMDTT**2),0.35) !Tef
+ !       WRITE (*,*)' SUMDTT B', SUMDTT,B
+         !IF (B .GT. 0.15 .AND. SUMDTT .GT. 0.75*P3) THEN
+          !   B = 0.15
+         !ENDIF   ! use only for Rice
           IF (SLW .LT. 0.0055) THEN
               SLW =0.0055
-          ENDIF
+          ENDIF !Rice
+          IF (SLW .LT. 0.0120) THEN
+              SLW =0.0120
+          ENDIF !Tef
           TPLAG   = B * TCARBO/SLW *
      &	          AMIN1(TURFAC,NSTRES,TEMF, PSTRES1, KSTRES)
-          TGROLF  = TPLAG  * 0.0055
+          TGROLF  = TPLAG  * 0.0055 ! Rice
+          TGROLF  = TPLAG  * 0.0120 ! Tef
           TPLA    = TPLA   + TPLAG
           TGROSTM = TCARBO - TGROLF
 
@@ -143,7 +153,9 @@ C=======================================================================
              TGROLF  = AMIN1 (TGROLF,B*TCARBO)
              TGROSTM = TCARBO - TGROLF
              TPLAG   = TGROLF / 0.0055 * 
-     &		         AMIN1 (TURFAC,NSTRES,TEMF,PSTRES1,KSTRES)
+     &		       AMIN1 (TURFAC,NSTRES,TEMF,PSTRES1,KSTRES) ! Rice
+             TPLAG   = TGROLF / 0.0120 * 
+     &		       AMIN1 (TURFAC,NSTRES,TEMF,PSTRES1,KSTRES) ! Tef
              TPLA    = TPLA   + TPLAG
            ELSE
              TGROSTM = TCARBO
@@ -190,4 +202,4 @@ C=======================================================================
 !***********************************************************************
       ENDIF
       RETURN
-      END SUBROUTINE RI_TILLSUB
+      END SUBROUTINE TEFF_TILLSUB

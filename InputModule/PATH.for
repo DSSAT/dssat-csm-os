@@ -345,6 +345,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'CSYCA') .EQ. 0) .AND.    !Cassava CIAT
      &    (INDEX(MODEL(1:5),'WHAPS') .EQ. 0) .AND.    !APSIM N-wheat
      &    (INDEX(MODEL(1:5),'TFAPS') .EQ. 0) .AND.    !Tef based on  APSIM N-wheat
+     &    (INDEX(MODEL(1:5),'TFCER') .EQ. 0) .AND.    !Tef based on  CERES-Rice
      &    (INDEX(MODEL(1:5),'CRGRO') .EQ. 0) .AND.    !CROPGRO (All
 !                         grain legumes, grasses, vegetables and cotton
      &    (INDEX(MODEL(1:5),'PRFRM') .EQ. 0) .AND.    !FORAGE

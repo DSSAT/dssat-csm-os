@@ -1,5 +1,5 @@
 C=======================================================================
-C  RI_PHENOL, Subroutine
+C  TEFF_PHENOL, Subroutine
 C
 C  Determines phenological stage
 C-----------------------------------------------------------------------
@@ -14,7 +14,7 @@ C  02/19/2003 CHP Converted dates to YRDOY format
 !  04/24/2019 US/JF/CHP Replace G4, G5 with THOT, TCLDP, TCLDF
 C=======================================================================
 
-      SUBROUTINE RI_PHENOL (CONTROL, ISWITCH, 
+      SUBROUTINE TEFF_PHENOL (CONTROL, ISWITCH, 
      &    AGEFAC, BIOMAS, DAYL, LEAFNO, NSTRES, PHEFAC,   !Input
      &    PHINT, SDEPTH, SOILPROP, SRAD, SW, SWFAC,       !Input
      &    TGROGRN, TILNO, TMAX, TMIN, TWILEN, TURFAC,     !Input
@@ -110,14 +110,14 @@ C=======================================================================
       IF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
       CALL YR_DOY (YRSIM,YR,ISIM)
-      CALL StnameFill(STNAME)
+      CALL TEFF_StnameFill(STNAME)
 
-      CALL RI_IPPHEN (CONTROL,                            !Input
+      CALL TEFF_IPPHEN (CONTROL,                            !Input
 !    &    ATEMP, G4, G5, P1, P2O, P2R, P5, PLME, SDAGE) 
      &    ATEMP, P1, P2O, P2R, P5, PLME, SDAGE,           !Output
      &    THOT, TCLDP, TCLDF)                             !Output
 
-      CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+      CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &    CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
       XSTAGE     = 0.1      
@@ -152,11 +152,12 @@ C=======================================================================
 
       P1T   = P1      
       TBASE = 9.0     !IN SPP FILE MAR17
+      TBASE = 8.0 !TEF
       TAGE  = SDAGE   
 
       LTRANS = .FALSE.
       PRESOW = .TRUE. 
-      CALL RiceInit(
+      CALL TEFF_RiceInit(
      &    PLME, TAGE, YRDOY, YRPLT, YRSIM, YRSOW,         !Input
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
@@ -208,7 +209,7 @@ C=======================================================================
           CASE (4)
             STGDOY(10) = YRDOY
             ISTAGE     = 8        !GERMINATION
-            CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+            CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
             !FROM PHASEI
@@ -232,7 +233,7 @@ C=======================================================================
              TF_GRO     = .TRUE.
              NDAT       = 0
              IF (ITRANS .EQ. 3 .AND. SUMDTT .GT. P1) THEN
-               CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+               CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &           CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
                !FROM PHASEI
@@ -350,7 +351,7 @@ C=======================================================================
              TF_GRO = .TRUE.
           ENDIF
 
-          CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+          CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
           !FROM PHASEI
@@ -358,6 +359,7 @@ C=======================================================================
           P8     = 150.0*EXP(-0.055*TEMPM)
           P8     = AMIN1 (P8,85.0)
           P8     = AMAX1 (P8,28.0)
+          P8=20.0 !Tef
           SUMDTT = 0.0
           CUMDTT = 0.0
           NDAS   = 0
@@ -411,7 +413,7 @@ C=======================================================================
              PLANTS  = 0.0
              HARVMAT = SUMDTT
           ENDIF
-           CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+           CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
           SELECT CASE (ISTAGE)
@@ -436,7 +438,7 @@ C=======================================================================
           ENDIF
           STGDOY(ISTAGE) = YRDOY
 
-           CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+           CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
           !FROM PHASEI
@@ -474,7 +476,7 @@ C=======================================================================
           ENDIF
           STGDOY(ISTAGE) = YRDOY
 
-          CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
+          CALL TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
      &      SI1, SI2, SI3, SI4)
 
@@ -505,9 +507,9 @@ C=======================================================================
           CUMTMP = CUMTMP + TN
           IF (TWILEN .GT. P2O) THEN
           !   RATEIN = 1.0/(136.0+P2R*(HRLT-P2O))
-             RATEIN = 1.0/(136.0+P2R*(TWILEN-P2O))
+             RATEIN = 1.0/(45.0+P2R*(TWILEN-P2O))       !TEF    136 (RICE)
           ELSE
-             RATEIN = 1.0 / 136.0
+             RATEIN = 1.0 / 45.0 ! Tef
           ENDIF
 
 !          IF (ITRANS .NE. 1 .AND. DOY .EQ. ITDATE) THEN
@@ -550,7 +552,7 @@ C=======================================================================
 !               IF (TN .GT. TMPNPI*G5) THEN
              IF (TMPI .LT. TCLDP) THEN  ! AVERAGE TN DURING PI < 15 (MAR17 TMPNPI IN SPP FILE)
                 IF (TN .GT. TCLDP) THEN
-                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15Oc)
+                   IDUR1 = IDUR1 + 1  !CHECKING TO SEE IF 2 CONSEC DAYS WITH TN >TMPNPI (15c)
                 ENDIF
 
 !! temp chp
@@ -571,7 +573,7 @@ C=======================================================================
           STRHEAT = 1.0
           SUMHDTT = 0.
 
-          CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
+          CALL TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
      &      SI1, SI2, SI3, SI4)
 
@@ -667,7 +669,7 @@ C=======================================================================
                 ENDIF
              ENDIF
 
-            CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
+            CALL TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &        CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
      &        SI1, SI2, SI3, SI4)
 
@@ -677,7 +679,7 @@ C=======================================================================
 
           ELSE
 
-            CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
+            CALL TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &        CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
      &        SI1, SI2, SI3, SI4)
 
@@ -729,7 +731,7 @@ C=======================================================================
 
           STGDOY(ISTAGE) = YRDOY
 
-          CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
+          CALL TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
      &      SI1, SI2, SI3, SI4)
 
@@ -796,7 +798,7 @@ C=======================================================================
           STGDOY(12) = YRDOY
           TSGRWT = (CUMTMP/IDUR1)   ! NO CULTIVAR EFFECT
 
-          CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
+          CALL TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
      &      SI1, SI2, SI3, SI4)
 
@@ -811,7 +813,7 @@ C=======================================================================
           STGDOY (ISTAGE) = YRDOY
           MDATE  = YRDOY
 
-          CALL RI_Stress (ISTAGE, ISWWAT, ISWNIT,
+          CALL TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &      CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
      &      SI1, SI2, SI3, SI4)
 
@@ -826,7 +828,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
 
-      CALL PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
+      CALL TEFF_PhaseInit(CNSD1, CNSD2, CSD1, CSD2, 
      &        CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
       IF (ISTAGE .EQ. 6 .AND .ITRANS .EQ. 3) THEN
@@ -855,12 +857,12 @@ C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
-      END SUBROUTINE RI_PHENOL
+      END SUBROUTINE TEFF_PHENOL
 C=======================================================================
 
 
 C=======================================================================
-C  RI_Stress, Subroutine
+C  TEFF_Stress, Subroutine
 C
 C  Initialization at the beginning of every stage
 C-----------------------------------------------------------------------
@@ -868,10 +870,10 @@ C  Revision history
 C
 C  05/07/2002 CHP Written
 C-----------------------------------------------------------------------
-C  Called : RI_PHENOL
+C  Called : TEFF_PHENOL
 C=======================================================================
 
-      SUBROUTINE RI_Stress (ISTAGE, ISWWAT, ISWNIT,
+      SUBROUTINE TEFF_Stress (ISTAGE, ISWWAT, ISWNIT,
      &    CNSD1, CNSD2, CSD1, CSD2, ICSDUR,  
      &    SI1, SI2, SI3, SI4)
 
@@ -901,12 +903,12 @@ C=======================================================================
         ENDIF
 
       RETURN
-      END SUBROUTINE RI_Stress
+      END SUBROUTINE TEFF_Stress
 C=======================================================================
 
 
 C=======================================================================
-C  PhaseInit, Subroutine
+C  TEFF_PhaseInit, Subroutine
 C
 C  Initialization at the beginning of every stage
 C-----------------------------------------------------------------------
@@ -914,10 +916,10 @@ C  Revision history
 C
 C  05/07/2002 CHP Written
 C-----------------------------------------------------------------------
-C  Called : RI_PHENOL
+C  Called : TEFF_PHENOL
 C=======================================================================
 
-      SUBROUTINE PhaseInit (CNSD1, CNSD2, CSD1, CSD2, 
+      SUBROUTINE TEFF_PhaseInit (CNSD1, CNSD2, CSD1, CSD2, 
      &    CUMTMP, ICSDUR, IDUR1, NEW_PHASE)
 
       IMPLICIT NONE
@@ -938,12 +940,12 @@ C=======================================================================
       NEW_PHASE = .TRUE.
 
       RETURN
-      END SUBROUTINE PhaseInit
+      END SUBROUTINE TEFF_PhaseInit
 C=======================================================================
 
 
 C=======================================================================
-C  RiceInit, Subroutine
+C  TEFF_RiceInit, Subroutine
 C
 C  Seasonal initialization
 C-----------------------------------------------------------------------
@@ -952,9 +954,9 @@ C
 C  05/07/2002 CHP Written
 C  02/19/2003 CHP Converted dates to YRDOY format
 C-----------------------------------------------------------------------
-C  Called : RI_PHENOL
+C  Called : TEFF_PHENOL
 C=======================================================================
-      SUBROUTINE RiceInit(
+      SUBROUTINE TEFF_RiceInit(
      &    PLME, TAGE, YRDOY, YRPLT, YRSIM, YRSOW,         !Input
      &    FIELD, ITRANS, PRESOW, TF_GRO)                  !Output
 
@@ -1052,12 +1054,12 @@ C=======================================================================
       END SELECT
 
       RETURN
-      END SUBROUTINE RiceInit
+      END SUBROUTINE TEFF_RiceInit
 
 C=======================================================================
 
 C=======================================================================
-C  StnameFill, Subroutine
+C  TEFF_StnameFill, Subroutine
 C
 C  Initialization at the beginning of every stage
 C-----------------------------------------------------------------------
@@ -1065,10 +1067,10 @@ C  Revision history
 C
 C  05/07/2002 CHP Written
 C-----------------------------------------------------------------------
-C  Called : RI_PHENOL
+C  Called : TEFF_PHENOL
 C=======================================================================
 
-      SUBROUTINE StnameFill(STNAME)
+      SUBROUTINE TEFF_StnameFill(STNAME)
 
       IMPLICIT NONE
       CHARACTER*10 STNAME(20)
@@ -1095,17 +1097,17 @@ C=======================================================================
       STNAME(20) = 'Harvest   '
 
       RETURN
-      END SUBROUTINE StnameFill
+      END SUBROUTINE TEFF_StnameFill
 
 C=======================================================================
-C  RI_IPPHEN, Subroutine
+C  TEFF_IPPHEN, Subroutine
 C
 C  Reads FILEIO for RICE routine
 C  05/07/2002 CHP Written
 C  08/12/2003 CHP Added I/O error checking
 C=======================================================================
 
-      SUBROUTINE RI_IPPHEN (CONTROL,                      !Input
+      SUBROUTINE TEFF_IPPHEN (CONTROL,                      !Input
 !    &    ATEMP, G4, G5, P1, P2O, P2R, P5, PLME, SDAGE) 
      &    ATEMP, P1, P2O, P2R, P5, PLME, SDAGE,           !Output
      &    THOT, TCLDP, TCLDF)                             !Output
@@ -1117,7 +1119,7 @@ C=======================================================================
 
       CHARACTER*1  PLME
       CHARACTER*6  ERRKEY, SECTION
-      PARAMETER (ERRKEY = 'IPRICE')
+      PARAMETER (ERRKEY = 'TEFIPP')
       CHARACTER*30 FILEIO
       INTEGER LINC, LNUM, LUNIO, ERR, FOUND
 
@@ -1167,6 +1169,6 @@ C-----------------------------------------------------------------------
 
       CLOSE (LUNIO)
       RETURN
-      END SUBROUTINE RI_IPPHEN
+      END SUBROUTINE TEFF_IPPHEN
 C=======================================================================
 
