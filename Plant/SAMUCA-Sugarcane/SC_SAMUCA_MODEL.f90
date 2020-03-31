@@ -3150,7 +3150,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     acc_par     =   acc_par  +  dacc_par
     
     !--- Calculated RUE
-    if((acc_par .gt. z) .and. (ddw .gt. z))then
+    if((acc_par .gt. z) .and. (ddw .gt. z) .and. (dacc_par .gt. z))then
         drue_calc   = (ddw        * 1.e6/1.e4) / dacc_par ! RUE based on daily biomass gain and PAR intercepted [gDW/MJ]
         rue_calc    = (dw_total   * 1.e6/1.e4) / acc_par  ! RUE based on accumulated biomass and accumulated PAR intercepted [gDW/MJ] (the "typical" way)
     endif
