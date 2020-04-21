@@ -30,7 +30,7 @@ dealing with competition for light and water among the soil, plants, and atmosph
 It is also designed for incorporation into various application packages, ranging from 
 those that help researchers adapt and test the CSM to those that operate the DSSAT /CSM 
 to simulate production over time and space for different purposes 
-[The DSSAT cropping system model](http://abe.ufl.edu/jjones/ABE_5646/Xtra%20files/The%20DSSAT%20Cropping%20System%20Model.pdf).
+[The DSSAT cropping system model](https://www.researchgate.net/publication/222005349_DSSAT_cropping_system_model).
 
 ## Compiling the code ##
 
