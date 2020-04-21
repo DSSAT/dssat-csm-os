@@ -17,7 +17,9 @@ in over 100 countries worldwide.
 
 Read more about DSSAT at http://dssat.net/about
 
-See also: [Non-threatening best practice DSSAT Fortran coding guidelines](https://dssat.net/non-threatening-best-practice-dssat-fortran-coding-guidelines). 
+See also: [The DSSAT Crop Modeling Ecosystem](https://dssat.net/wp-admin/upload.php?item=3727).
+
+and: [Non-threatening best practice DSSAT Fortran coding guidelines](https://dssat.net/non-threatening-best-practice-dssat-fortran-coding-guidelines). 
 
 ## The directory structure ##
 
@@ -30,7 +32,7 @@ dealing with competition for light and water among the soil, plants, and atmosph
 It is also designed for incorporation into various application packages, ranging from 
 those that help researchers adapt and test the CSM to those that operate the DSSAT /CSM 
 to simulate production over time and space for different purposes 
-[The DSSAT cropping system model](https://www.researchgate.net/publication/222005349_DSSAT_cropping_system_model).
+[The DSSAT cropping system model](https://dssat.net/wp-admin/upload.php?item=3939).
 
 ## Compiling the code ##
 
