@@ -534,6 +534,8 @@ set(
         "Soil/GHG/diffusiv.for"
         "Soil/GHG/N2O_mod.for"
         "Soil/GHG/nox_pulse.f90"
+        "Soil/GHG/Methane.for"
+        "Soil/GHG/Methmod.for"
         "Soil/Inorganic_K/OpSoilKi.for"
         "Soil/Inorganic_K/SoilKi.for"
         "Soil/Inorganic_K/SoilK_init.for"
