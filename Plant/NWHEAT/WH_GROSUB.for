@@ -2211,9 +2211,13 @@ cbak optimum of 18oc for photosynthesis
           !FO3 = (-0.001 * OZONX) + 1.025   !Ozone Intermediate cultivars
       else
           FO3 = 1.0
-          Endif
+      Endif
 
-      PRFO3 = min(1.0, (FO3*rue_factor)/swdef(photo_nw)) ! ozone effect added by JG
+      if (swdef(photo_nw) .eq. 0.0) then
+          PRFO3 = min(1.0, (FO3*rue_factor)/(swdef(photo_nw)+0.00001)) ! added to prevent dividing by 0
+      else
+          PRFO3 = min(1.0, (FO3*rue_factor)/swdef(photo_nw)) ! ozone effect added by JG
+      endif
             
           ! --------------- actual -----------------
  
