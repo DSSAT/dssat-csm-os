@@ -47,6 +47,7 @@ C=======================================================================
       USE ModuleDefs     !Definitions of constructed variable types, 
                          ! which contain control information, soil
                          ! parameters, hourly weather data.
+      USE ModuleData
       IMPLICIT NONE
       SAVE
 
@@ -420,6 +421,7 @@ C-----------------------------------------------------------------------
       WEATHER % TAIRHR = TAIRHR
       WEATHER % TGRO   = TGRO  
       WEATHER % WINDHR = WINDHR
+      CALL PUT(WEATHER)
 
       CALL OPSTRESS(CONTROL, WEATHER=WEATHER)
 
