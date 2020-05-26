@@ -890,7 +890,7 @@ C     Write seasonal output
      &    FON, HARVRES, IMM, LITE, MNR, MULCH, N_ELEMS,   !Input
      &    NLAYR, OMADATA, SENESCE, TLITE, TSOME)          !Input
 
-      write(777,'(i8,40f8.2)')
+      write(777,'(i8,60f8.2)')
      &   yrdoy, cn_som(1:nlayr), cn_fom(1:nlayr)
 
 C***********************************************************************
