@@ -503,11 +503,6 @@ C     RATE CALCULATIONS
 C*********************************************************************** 
       CONTROL % DYNAMIC = RATE
       CALL PUT(CONTROL)
-      
-      
-      IF (RUN .EQ. 334 .AND. DAS .EQ. 30) THEN
-          RUN = 334
-      END IF
 
       CALL LAND(CONTROL, ISWITCH, 
      &          YRPLT, MDATE, YREND)
