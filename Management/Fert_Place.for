@@ -659,8 +659,8 @@ C  03/17/2005 CHP pulled N fertilizer distribution from FPLACE
 C=======================================================================
       SUBROUTINE FertLayers(
      &    DLAYR, FERDEPTH, FERTYPE, METFER, NLAYR,            !Input
-     &    AppType, FERMIXPERC, FERTDAY, UNINCO,               !Output
-     &    DrpRefIdx)                                          !Output
+     &    AppType, FERMIXPERC, FMIXEFF, KMAX, PROF, UNINCO,   !Output
+     &    DrpRefIdx)                                          !Output             
 
 !-----------------------------------------------------------------------
       USE ModuleDefs
@@ -674,7 +674,7 @@ C=======================================================================
       CHARACTER*6, PARAMETER :: ERRKEY = 'FPLACE'
       CHARACTER*7  AppType
 
-      INTEGER FERTDAY, FERTYPE, I, K, IDLAYR, KMAX, L, NLAYR, J
+      INTEGER FERTYPE, I, IDLAYR, KMAX, L, NLAYR, J
 
       REAL CUMDEP, FERDEPTH
       REAL FMIXEFF, FERMIXPERC
