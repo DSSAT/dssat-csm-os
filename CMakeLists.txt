@@ -175,6 +175,7 @@ set(
         "InputModule/SETIME.for"
         "InputModule/SEVAR.for"
         "InputModule/SEWTH.for"
+        "InputModule/XFDYEAR.f90"
         "Management/AUTHAR.for"
         "Management/AUTPLT.for"
         "Management/CHEMICAL.for"
