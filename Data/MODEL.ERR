@@ -208,6 +208,9 @@ Environmental modification input level not found. Please correct input file.
 IPENV     2
 Environmental modification input level not found. Please correct input file.
 
+IPENV     3
+Environmental modification input date is defined prior to the start of simulation.
+
 IPEXP     1
 Treatment input section not found.  Please add to input file.
 
@@ -436,6 +439,9 @@ Initial soil analysis section not found.  Please add to input file.
 IPSLAN    2
 Soil analysis input level not found. Please correct input file.
 
+IPSLAN    3
+Soil analysis input date is defined prior to the start of simulation.
+
 IPSLAN   10
 Error in initial bulk density inputs.  Please check data.
 
@@ -450,6 +456,9 @@ Initial soil input section not found.  Please add to input file.
 
 IPSLIN    2
 Initial soil conditions input level not found. Please correct input file.
+
+IPSLIN    3
+Initial conditions date is lower than start simulation date. Please correct input file.
 
 IPSLIN   10
 Error in initial soil water inputs.  Please check data.
@@ -811,3 +820,62 @@ Invalid format in file.
 GENERI   75
 Array size exceeded.
 
+
+XFDYEA    1
+Field level not found. Please correct input file.
+
+XFDYEA    2
+Field input section not found. Please add to input file.
+
+XFDYEA    3
+Weather station input is missing. Please add to input file.
+
+XFDYEA    4
+Error in weather station input. Correct input file.
+
+
+XFDYEA    5
+Simulation Controls level not found. Please correct input file.
+
+XFDYEA    6
+Simulation Controls section not found. Please add to input file.
+
+XFDYEA    7
+Start simulation date (SDATE) input is missing. Please add to input file.
+
+XFDYEA    8
+Error in Start simulation date (SDATE) input. Correct input file.
+
+
+XFDYEA    9
+Weather method section not found. Please add to input file.
+
+XFDYEA   10
+Weather method input is missing. Please add to input file.
+
+XFDYEA   11
+Error in weather method input. Correct input file.
+
+
+XFDYEA   12
+Planting input section not found. Please add to input file.
+
+XFDYEA   13
+Planting input is missing. Please add to input file.
+
+XFDYEA   14
+Error in planting date input. Correct input file.
+
+
+XFDYEA   15
+Start simulation date or planting date missing. Correct input file.
+
+XFDYEA   16
+Incorrect weather method option selected.  Correct input file.
+
+XFDYEA   17
+Error in weather date input. Correct input file.
+
+
+Y4KDOY   18
+YRDOY is not in the range. Check if YRDOY is lower than SDATE.
