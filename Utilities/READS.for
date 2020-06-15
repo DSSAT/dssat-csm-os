@@ -784,6 +784,7 @@ C  Convert dates from READA (text) to ouptut format (integer)
 C-----------------------------------------------------------------------
 C  REVISION HISTORY
 C  05-14-2002 CHP Written.
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C=======================================================================
       SUBROUTINE READA_Dates(XDAT, YRSIM, IDAT)
 
@@ -807,7 +808,10 @@ C=======================================================================
         ENDIF
 
       ELSEIF (IDAT .GT. 0 .AND. IDAT .GE. 1000) THEN
-        CALL Y2K_DOY(IDAT)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+        !CALL Y2K_DOY(IDAT)
+        CALL Y4K_DOY('READA ',1,IDAT)
+        
         !CALL FullYear (IDAT, YR, DOY)
         !IDAT = YR*1000 + DOY
       ENDIF

@@ -1,3 +1,21 @@
+C=======================================================================
+C  for_harv, Subroutine
+C
+C  Description
+C-----------------------------------------------------------------------
+C  Revision history
+C
+C  --/--/---- DP  Written.
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+C-----------------------------------------------------------------------
+C  INPUT  : 
+C
+C  OUTPUT :
+C-----------------------------------------------------------------------
+C  Called :
+C
+C  Calls  :
+C=======================================================================
       SUBROUTINE forage_harvest(CONTROL,FILECC,
      &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
      &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
@@ -199,7 +217,9 @@ C         MOW file has no data for this treatment
             I = I + 1
             READ (MOW80,'(2I6,4F6.0)',IOSTAT=ISECT)
      &                TRNO(I),DATE(I),MOW(I),RSPLF(I),MVS(I),rsht(i)
-            CALL Y2K_DOY(DATE(I))
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY(DATE(I))
+            CALL Y4K_DOY(MOWFILE,I,DATE(I))
           END IF
         END DO
 

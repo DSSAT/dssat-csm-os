@@ -13,7 +13,8 @@ C  02/21/2006 GH  Removed crop model selection
 !  04/28/2008 CHP Added switch for CO2 from file (ICO2)
 !  12/09/2009 CHP IPSIM separate file.  
 !  02/11/2010 CHP Added checks for P model linked with crop models.
-
+!  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
+!  05/07/2020 FO  Added check for SimLevel to set YRSIM using YRPLT
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNSIM
 C
@@ -36,12 +37,12 @@ C
 C  HDLAY  :
 C=======================================================================
 
-      SUBROUTINE IPSIM (LUNEXP,LNSIM,TITSIM,NYRS,RUN,NREPSQ,
+      SUBROUTINE IPSIM (LUNEXP,LNSIM,SimLevel,TITSIM,NYRS,RUN,NREPSQ,
      & ISIMI,PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,
      & PTX,PTTN,DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,
      & SOILNX,NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,
      & RSEED1,LINEXP,AIRAMT,EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
-     & CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
+     & CONTROL,ISWITCH,UseSimCtr,FILECTL,MODELARG,YRPLT)
 
       USE ModuleDefs
       USE ModuleData
@@ -83,7 +84,7 @@ C=======================================================================
       REAL V_IREFF(20)
       INTEGER GSIRRIG, I, STAT, CHARLEN
 
-      LOGICAL UseSimCtr, MulchWarn
+      LOGICAL UseSimCtr, MulchWarn, SimLevel
 
       TYPE (SwitchType)  ISWITCH
       TYPE (ControlType) CONTROL
@@ -93,12 +94,14 @@ C=======================================================================
                  
       DATA MulchWarn /.FALSE./
 
-      IF (LNSIM .EQ. 0) THEN
+      !FO - IF SimLevel is not present set defaults
+      IF (LNSIM .EQ. 0 .OR. .NOT. SimLevel) THEN
          LNSIM   = 0
          NYRS    = 1
          NREPSQ  = 1
          ISIMI   = 'S'
-         YRSIM   = -99
+         !FO - YRPLT was already read and can be updated.
+         YRSIM   = YRPLT
          RSEED1  = 2150
          ISWWAT  = 'Y'
          ISWNIT  = 'Y'
@@ -181,7 +184,10 @@ C=======================================================================
                  RSEED1 = 2150
                ENDIF
             ENDIF
-            CALL Y2K_DOY (YRSIM)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY (YRSIM)
+            CALL Y4K_DOY (FILEX,LINEXP,YRSIM)
+            !Call Error before first weather day (RANGELH(1))
             CALL YR_DOY (YRSIM,YEAR,ISIM)
           ELSE
             BACKSPACE (LUNEXP)
@@ -422,10 +428,18 @@ C
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,PWDINF,PWDINL,
      &           SWPLTL,SWPLTH,SWPLTD,PTX,PTTN
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-            IF (PWDINF .LT. 1000) PWDINF = YEAR * 1000 + PWDINF
-            IF (PWDINL .LT. 1000) PWDINL = YEAR * 1000 + PWDINL
-            CALL Y2K_DOY (PWDINF)
-            CALL Y2K_DOY (PWDINL)
+!            IF (PWDINF .LT. 1000) PWDINF = YEAR * 1000 + PWDINF
+!            IF (PWDINL .LT. 1000) PWDINL = YEAR * 1000 + PWDINL
+            
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY (PWDINF)
+            !CALL Y2K_DOY (PWDINL)
+            CALL Y4K_DOY (FILEX,LINEXP,PWDINF)
+            CALL Y4K_DOY (FILEX,LINEXP,PWDINL)
+            
+            IF(PWDINF .LT. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+            IF(PWDINL .LT. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+            
 C
 C           Read SEVENTH line of simulation control
 C
@@ -522,7 +536,13 @@ C
             READ (CHARTEST,66,IOSTAT=ERRNUM) LN,HDLAY,HLATE,
      &           HPP,HRP
             IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-            CALL Y2K_DOY (HLATE)
+            
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY (HLATE)
+            CALL Y4K_DOY (FILEX,LINEXP,HLATE)
+            
+            IF(HLATE .LE. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+            
             IF (HPP   .LT. 0.0)  HPP   = 100.
             IF (HRP   .LT. 0.0)  HRP   = 0.0
           ELSE
@@ -1148,7 +1168,9 @@ D     IPX = 23
             IF (YRSIM == -99) YRSIM = PLDATE
             CALL CHECK_I('YRSIM', YRSIM, ERRNUM, MSG, NMSG)
             IF (ERRNUM == 0) THEN
-              CALL Y2K_DOY (YRSIM)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+              !CALL Y2K_DOY (YRSIM)
+              CALL Y4K_DOY (FILEX,LINEXP,YRSIM)
               CALL YR_DOY (YRSIM,YEAR,ISIM)
             ENDIF
 
