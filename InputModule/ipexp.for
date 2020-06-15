@@ -99,6 +99,9 @@ C=======================================================================
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
       INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
+      
+      ! Variables - Fabio
+      INTEGER FirstWeatherDay, DOY, YDOY
 
       REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
@@ -404,6 +407,16 @@ C     IF (I .LT. TRTN) GO TO 50
       CALL OPHEAD (RUNINIT,99,0.0,0.0,"                ",0.0,0.0, 
      &     "      ",RUN,"        ",TITLET,WTHSTR, RNMODE,
      &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
+     
+C-----------------------------------------------------------------------
+C
+C-----------------------------------------------------------------------
+!      XFDYEAR - Fabio
+      CALL XFDYEAR(LUNEXP,DSSATP,PATHEX,FILEX_P,FILEX,
+     &             SimLevel,LNSIM,LNPLT,LNFLD)
+         
+      WRITE(*,*) 'XFDYEAR SUBROUTINE FINISHED: '
+      
 C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
@@ -416,6 +429,7 @@ c      ENDIF
 C-----------------------------------------------------------------------
 C     Call input section for cultivar selection
 C-----------------------------------------------------------------------
+      REWIND (LUNEXP)
 
       CALL IPCUL (LUNEXP,FILEX,LNCU,CROP,VARNO)
       IF (CROP   .EQ. '  ') CALL ERROR (ERRKEY,10,FILEX,LINEXP)
@@ -442,19 +456,19 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C     Call IPSIM
 C-----------------------------------------------------------------------
-
-      IF (.NOT. SimLevel) THEN
-        LNSIM = 0
-        YRSIM = YRPLT
-      ENDIF
-
-      CALL IPSIM (LUNEXP,LNSIM,TITSIM,NYRS,RUN,NREPSQ,ISIMI,PWDINF,
-     &     PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,PTX,PTTN,DSOIL,THETAC,
-     &     IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,NEND,RIP,NRESDL,
-     &     DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,LINEXP,AIRAMT,
-     &     EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
-     &     CONTROL, ISWITCH, UseSimCtr, FILECTL, MODELARG, YRPLT)
+      !FO - Removed from ipexp and added into IPSIM
+      !IF (.NOT. SimLevel) THEN
+      !  LNSIM = 0
+      !  YRSIM = YRPLT
+      !ENDIF
       
+      CALL IPSIM (LUNEXP,LNSIM,SimLevel,TITSIM,NYRS,RUN,NREPSQ,ISIMI,
+     &     PWDINF,PWDINL,SWPLTL,NCODE,SWPLTH,SWPLTD,YEAR,PTX,PTTN,
+     &     DSOIL,THETAC,IEPT,IOFF,IAME,DSOILN,SOILNC,YRSIM,SOILNX,
+     &     NEND,RIP,NRESDL,DRESMG,HDLAY,HLATE,HPP,HRP,FTYPEN,RSEED1,
+     &     LINEXP,AIRAMT,EFFIRR,CROP,FROP,MODEL,RNMODE,FILEX,
+     &     CONTROL,ISWITCH,UseSimCtr,FILECTL,MODELARG,YRPLT)
+
 C-----------------------------------------------------------------------
 C        Select crop parameter input file
 C-----------------------------------------------------------------------
@@ -761,7 +775,7 @@ C-----------------------------------------------------------------------
       CALL IPENV (FILEX,LNENV,LUNEXP,CO2ADJ,CO2FAC,DAYADJ,
      &     DAYFAC,DPTADJ,DPTFAC,NEV,PRCADJ,PRCFAC,RADADJ,RADFAC,
      &     TMADJ,TMFAC,TXADJ,TXFAC,WMDATE,WMODI,WNDADJ,WNDFAC,
-     &     WTHADJ)
+     &     WTHADJ,YRSIM)
 
 C-----------------------------------------------------------------------
 C     Call IPHAR
@@ -864,6 +878,7 @@ C  01/01/1990 JWJ Written
 C  05/28/1993 PWW Header revision and minor changes            
 C  02/21/2006 GH  Update 
 C  04/26/2013 GH  Update planting method for cassava
+C  05/07/2020 FO  Added new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  INPUT  : LUNEXP,FILEX,LNPLT
 C
@@ -919,8 +934,13 @@ C
      &      PLPH,SPRLAP,NFORC,PLTFOR,NDOF,PMTYPE
 C New variables for pineapple
             IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
-            CALL Y2K_DOY(YRPLT)
-            CALL Y2K_DOY(IEMRG)
+            
+C 05/07/2020 FO Add new Y4K subroutine call to convert YRDOY
+            !CALL Y2K_DOY(YRPLT)
+            !CALL Y2K_DOY(IEMRG)
+            CALL Y4K_DOY(FILEX,LINEXP,YRPLT)
+            CALL Y4K_DOY(FILEX,LINEXP,IEMRG)
+            
             CALL YR_DOY (YRPLT,YR,IPLT)
           ELSE
             CALL ERROR (ERRKEY,2,FILEX,LINEXP)
