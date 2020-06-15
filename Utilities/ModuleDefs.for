@@ -87,6 +87,11 @@ C             CHP Added TRTNUM to CONTROL variable.
       DATA MonthTxt /'JAN','FEB','MAR','APR','MAY','JUN',
      &               'JUL','AUG','SEP','OCT','NOV','DEC'/
 
+      INTEGER:: FWY = 0
+      INTEGER:: RANGE = 99
+      INTEGER:: RANGELH(2)
+      INTEGER:: NSDATE = 0
+      INTEGER, PARAMETER :: CROVER = 25
 !=======================================================================
 !     Data construct for control variables
       TYPE ControlType
