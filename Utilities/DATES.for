@@ -86,6 +86,74 @@ C=======================================================================
       ENDIF
         
       END SUBROUTINE Y2K_DOY
+      
+C=======================================================================
+C  4-digit Year, Subroutine, Fabio Oliveira, Willingthon Pavan, Gerrit Hoogenboom
+C  Converts YRDOY to YEARDOY
+C-----------------------------------------------------------------------
+C  Input : YRDOY
+C  Output: 
+C=======================================================================
+
+      SUBROUTINE Y4K_DOY(FILE,LINE,YRDOY)
+        
+      USE ModuleDefs
+      IMPLICIT NONE
+      
+      CHARACTER*6  ERRKEY,SECTION
+      CHARACTER*12 FILE
+      CHARACTER*78 MSG(4)
+      
+      INTEGER DOY,YR,YRDOY,LINE
+      INTEGER NWDATE
+      
+      PARAMETER (ERRKEY = 'Y4KDOY')
+      
+      
+      IF (FWY .GT. 0 .AND. YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
+        
+        !Convert dates
+        NWDATE = INT(RANGELH(1)/100000) * 100000 + YRDOY
+        
+        IF(NWDATE .GE. RANGELH(1)) THEN
+          YRDOY = NWDATE
+        ELSE
+          YRDOY = INT(RANGELH(2)/100000) * 100000 + YRDOY
+        ENDIF
+        
+        !FO - This error check was moved to the input variables (YRDOY).
+!        IF(YRDOY .LT. NSDATE) THEN
+!          CALL ERROR (ERRKEY,15,FILE,0)
+!        ENDIF
+        
+        IF(YRDOY .GT. RANGELH(2)) THEN
+          CALL ERROR (ERRKEY,18,FILE,LINE)
+        ELSE IF(YRDOY .GT. NSDATE + CROVER * 1000) THEN
+          WRITE(MSG(1),*) "WARNING - Y4K - Cross-over date"
+          WRITE(MSG(2),*) "Correct the following YRDOY:"
+          WRITE(MSG(3),*) YRDOY
+          CALL WARNING(3,ERRKEY,MSG)
+        ENDIF
+        
+      ELSE IF (YRDOY .LE. 99365) THEN
+        YR  = INT(YRDOY / 1000)
+        DOY = YRDOY - YR * 1000
+        IF (YRDOY .GT. 0) THEN
+!     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
+!     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
+!     CHP 07/06/2017 - change "cross-over" year from 2020 to 2025
+          IF (YR .LE. CROVER) THEN
+            YRDOY = (2000 + YR) * 1000 + DOY
+          ELSE
+            YRDOY = (1900 + YR) * 1000 + DOY
+          ENDIF 
+        ENDIF
+      ENDIF
+      
+      !WRITE(*,*) '                        FILE        LINE       YRDOY'
+      !WRITE(*,*) 'OUTPUT Y4K_DOY: ',FILE,LINE, YRDOY
+      
+      END SUBROUTINE Y4K_DOY
 
 C=======================================================================
 C  Y2K_DOYW, Subroutine, C. Porter, 02/05/2004
