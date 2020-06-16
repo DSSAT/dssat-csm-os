@@ -1092,6 +1092,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             rdm             = min(rdm, bottom(nlay))        
             rd              = rdm
             effective_rd    = initcropdepth
+            rpup            = 0.d0
         
             !--- Equalize to soil layers depth
             rdprof = 0.d0
@@ -1121,7 +1122,10 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             cropdstage      =  'Sprout'
             cropstatus      = ' Alive'
             cstat           = 1.d0
-            flcropalive     = .true.        
+            flcropalive     = .true.    
+            
+            !--- below ground phytomers
+            nphy_BGround = 0
             
         else
             
@@ -1138,6 +1142,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             !--- Note that the last season root depth is not modified
             rdm             = min(rdm, bottom(nlay))       
             effective_rd    = initcropdepth
+            rpup            = 0.d0
             
             !--- Crop Stage
             if(flcropalive) cropdstage  = 'Sprout'
@@ -1183,13 +1188,17 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         !--- Crop Depth [cm]
         rdm             = min(rdm, bottom(nlay))    
         effective_rd    = initcropdepth
-        rd              = initcropdepth    
+        rd              = initcropdepth
+        rpup            = 0.d0
         
         !--- Crop Stage
         cropdstage      =  'Sprout'
         cropstatus      = ' Alive'
         cstat           = 1.d0
         flcropalive     = .true.
+        
+        !--- below ground phytomers
+        nphy_BGround = 0
         
     endif
             
@@ -1208,6 +1217,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     hex_it_AG   			=   0.d0
     nstk					=	0.d0
     lai         			=   0.d0
+    laimod                  =   0.d0
     maxlai                  =   0.d0
     lai_ass     			=   0.d0
     stk_h					=	0.d0
@@ -1245,6 +1255,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     n_lf                    = 1
     n_lf_AG                 = 0
     
+    !--- phytomer stimuli
+    phy_stimuli = 0.d0
+    
     if(.not. (aint(nstk_now) .eq. nstk_now))then
         !--- Increase one tiller to account for decimals
         atln_now    = aint(nstk_now) + 1
@@ -1265,6 +1278,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     phprof(1:n_ph,14) = max_it_dw_BG
     phprof(1:n_ph,11) = kmr_stor
     phprof(1:n_ph,13) = q10_stor
+    
+    !--- initialize tiller age profile
+    tillerageprof = 0.d0
     
     !--- Flags
     fl_use_reserves     = .true.
