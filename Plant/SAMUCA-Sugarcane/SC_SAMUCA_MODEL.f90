@@ -811,6 +811,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     swface              = 1.d0
     STGDOY              = 0
     
+    !--- Update cultivar file
+    call get_cultivar_coeff(maxgl_r,'dummy', CONTROL, CF_ERR)
+    
     call SC_OPHARV_SAM(CONTROL, ISWITCH,  &
     CaneCrop, flemerged, maxlai,          &
     swfacp, swface, STGDOY, XLAI, YRPLT)
