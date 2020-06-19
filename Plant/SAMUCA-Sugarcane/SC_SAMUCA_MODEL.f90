@@ -16,9 +16,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !  Scientific base - dx.doi.org/10.1590/S0103-90162014000100001
     !  Source Code     - murilodsv@bitbucket.org/murilodsv/samuca_standalone.git
     !
-    !  2nd Version:
-    !  Authors: MURILO VIANNA; FABIO MARIN (2018)
-    !  Scientific base - http://www.teses.usp.br/teses/disponiveis/11/11152/tde-01082018-150704/pt-br.php
+    !  2nd Version (latest):
+    !  Authors: MURILO VIANNA; FABIO MARIN (2020)
+    !  Scientific base - doi.org/10.1016/j.compag.2020.105361
     !  Source Code     - murilodsv@bitbucket.org/murilodsv/samuca.git
     !
     !  Dev. History:
