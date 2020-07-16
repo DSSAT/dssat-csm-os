@@ -26,6 +26,8 @@
         REAL    :: RTDEPTMP                ! Root depth,temporary value     cm/d       ! (From Growth)    
 
         INTEGER CSIDLAYR                                                                     ! Integer function call.
+        INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
+        INTEGER :: LF                      ! Loop counter leaves            #          
 
         !-----------------------------------------------------------------------
         !           Reserves growth
@@ -57,14 +59,21 @@
         !-----------------------------------------------------------------------
         !           Height growth
         !-----------------------------------------------------------------------
-
+        CANHTG = 0.0
         IF(GROSTP > 0.0) THEN
-            !LPM06JUL2017 It is assumed an branching angle of 60 from the vertical line (cos(60)=0.5) 
-            IF(BRSTAGE>=1.0) THEN
-                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP)*0.5)
-            ELSE
-                CANHTG = MAX(0.0,SESR*GROSTADJ*((node(BRSTAGE,LNUMSIMSTG(BRSTAGE))%NODEWTG)/GROSTP))
-            ENDIF
+            !LPM06JUL2017 It is assumed a branching angle of 60 from the vertical line (cos(60)=0.5)
+            !LPM 15JUL2020 Adjust canopy height to m instead of cm and use NODLT instead of SESR 
+            DO BR = 0, BRSTAGE                                                                                        !LPM 21MAR15
+                DO LF = 1, LNUMSIMSTG(BR)
+                    IF (isLeafExpanding(node(BR,LF))) THEN
+                        IF(BRSTAGE>=1.0) THEN
+                            CANHTG = CANHTG + MAX(0.0,NODLT*(dailyGrowth()/LLIFGTT)*AMIN1(WFG,node(0,0)%NFLF2)*0.5)/100.0
+                        ELSE
+                            CANHTG = CANHTG + MAX(0.0,NODLT*(dailyGrowth()/LLIFGTT)*AMIN1(WFG,node(0,0)%NFLF2))/100.0
+                        ENDIF
+                    ENDIF
+                ENDDO
+            ENDDO
         ELSE
             CANHTG = 0.0
         !CANHTG = SERX*DU !LPM 06JUL2017 CANHTG modified to avoid fixed maximum height HTSTD                                                                                                !EQN 316
