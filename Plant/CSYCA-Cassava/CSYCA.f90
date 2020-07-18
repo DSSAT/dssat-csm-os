@@ -40,6 +40,7 @@
        SENCALG, SENNALG, SENLALG,                                                             & !Senescence
        RESCALG, RESNALG, RESLGALG,                                                            & !Residues
        STGYEARDOY, BRSTAGE,                                                                   & !Stage dates     !GSTAGE = BRSTAGE
+       WEATHER     , SOILPROP    , CONTROL     ,                                              & 
        DYNAMIC) !, WEATHER)                                                                        !Control
 
     USE ModuleDefs
