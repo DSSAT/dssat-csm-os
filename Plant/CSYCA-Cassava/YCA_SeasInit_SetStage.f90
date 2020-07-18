@@ -72,15 +72,15 @@
 
             
         DO L = 0,PSX  !LPM 04MAR15 used to define PD as PDL (directly from the cultivar file as thermal time) 
-            IF (L <= 3)THEN
+            IF (L <= 4)THEN
                 PD(L) = PDL(L)
             ELSE
-                PD(L) = PDL(3)
+                PD(L) = PDL(4)
             ENDIF
         ENDDO
             
             !IF (MSTG > 2) THEN !LPM 07MAR15 MSTG to PSX
-            IF (PSX > 3) THEN
+            IF (PSX > 4) THEN
                 Ctrnumpd = 0
                 !DO L = 2,MSTG-1  !LPM 04MAR15 It is not necessary the -1 because there is not a MSTG with a different value 
                 DO L = 1,PSX
