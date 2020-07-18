@@ -61,9 +61,9 @@
         !CRRSWAD = CRRSWT*plantPopulation()
                 
         ! Need to CHECK these
-        SENROOTA = SENROOT*10.0*PLTPOP
-        SENCAS = SENCS*10.0*PLTPOP
-        SENLAS = SENLS*10.0*PLTPOP
+        SENROOTA = SENROOT*plantPopulation()
+        SENCAS = SENCS*plantPopulation()
+        SENLAS = SENLS*plantPopulation()
         SENTOPLITTERA = SENTOPLITTER*plantPopulation()
         DO L =1,NLAYR
             RTWTAL(L) = RTWTL(L)*plantPopulation()
@@ -72,7 +72,7 @@
                 
         
                 
-        VWAD = (canopyWeight())*PLTPOP * 10.0                                                                     !EQN 019
+        VWAD = (canopyWeight())*plantPopulation()                                                                    !EQN 019
                 
         SHNUMAD = SHNUM*PLTPOP
                 
@@ -100,7 +100,7 @@
         ! HNUMAD = SRNOPD * PLTPOP ! issue 50
         HNAD = SRNAD
         HNC = SRANC
-        SENNAS = SENNS*10.0*PLTPOP
+        SENNAS = SENNS*plantPopulation()
         SENNAL(0) = SENNL(0)*plantPopulation()
         SENNATC = SENNAL(0)+SENNAS
         DO L =1,NLAYR

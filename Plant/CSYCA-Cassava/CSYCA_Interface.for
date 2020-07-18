@@ -104,7 +104,7 @@ C=======================================================================
       YRHAR = YREND
       WUPT  = TRWUP
 
-      
+      DAYLT = DAYL
       DEWDUR = 12.
       NH4Left = NH4
       NO3Left = NO3
@@ -174,7 +174,6 @@ C=======================================================================
         CALL GET('ORGC','TOMINSOM3',TOMINSOM3)!Miner from SOM3 (kg/ha)
         CALL GET('ORGC','TNIMBSOM', TNIMBSOM) !Immob (kg/ha)
         CALL GET('SPAM','EP',  EP)
-        DAYLT = DAYL
       ELSEIF (DYNAMIC == INTEGR) THEN
         CALL GET('SPAM','ET',  ET)
       ENDIF
@@ -215,6 +214,7 @@ C-----------------------------------------------------------------------
      & SENCALG, SENNALG, SENLALG,                          !Senescence   
      & RESCALG, RESNALG, RESLGALG,                         !Residues     
      & STGYEARDOY, BRSTAGE,                                !Stage dates  
+     & WEATHER     , SOILPROP    , CONTROL     , 
      & DYNAMIC) !, WEATHER)                                !Control         ! MF 10JA15 WEATHER IS NEEDED FOR HOURLY EVALUATIONS
       
       ! MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of

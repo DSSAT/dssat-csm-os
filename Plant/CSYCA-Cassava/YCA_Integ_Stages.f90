@@ -93,9 +93,12 @@
             !ENDIF
             BRDAE(TVR1) = DAG !LPM 10JUL2017 To consider root and stem development after germination and before emergence (planting stick below-ground)
             IF (BRSTAGE == 0.0) THEN
+            IF (BRSTAGE == 0.0) THEN
                 BRNUMST(TVR1) = 1                                                                                    ! BRNUMST          ! Branch number/shoot (>forking) # (Actually the total number of apices)
             ELSEIF (BRSTAGE > 0.0) THEN
-                IF (BRFX(INT(TVR1)) <= 0.0) BRFX(INT(TVR1)) = BRFX(INT(TVR1-1))                                 !LPM 09JUN2015 To avoid number of branches 0 for BRSTAGE>6
+                IF (BRFX(INT(TVR1)) <= 0.0) then 
+                    BRFX(INT(TVR1)) = BRFX(INT(TVR1-1))                 !LPM 09JUN2015 To avoid number of branches 0 for BRSTAGE>6
+                endif                                
                 BRNUMST(TVR1) = BRNUMST(BRSTAGE)*BRFX(INT(TVR1))                                                ! BRFX(PSX)        ! EQN 005 ! # of branches at each fork # (This is where new branch is initiated)
             ENDIF
         ENDIF 

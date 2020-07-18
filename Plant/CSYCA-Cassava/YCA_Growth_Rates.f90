@@ -12,7 +12,9 @@
     
     SUBROUTINE YCA_Growth_Rates ( &
         CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
-        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF  &                                !LPM 26MAR2016 RLV added
+        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF        , & !LPM 26MAR2016 RLV added 
+        !SW          , LL          , DUL , 
+        CONTROL, WEATHER, SOILPROP &   !DA 20ABR2018 SW, LL, DUL added
         )
         USE ModuleDefs
         USE YCA_First_Trans_m
@@ -21,7 +23,9 @@
 
         IMPLICIT NONE
         
-        
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
         REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
         REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
@@ -57,13 +61,11 @@
         ! End of day interception = today's starting interception
         select case(MEPHO)
             case ('R')
-                availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, VPDFP, SLPF, PARI, PLTPOP)
+                availableCH2O = availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WEATHER, CONTROL, SOILPROP)
             case ('I')
                 availableCH2O = availableCarbohydrate_methodI(CO2, CO2AIR, CO2EX, CO2FP, CO2COMPC, PARMJFAC, PARFC, PARI, PARU, PLTPOP, RATM, RCROP, RLFC, RLF, RSFP, SLPF, SRAD, TMAX, TMIN, TFP, WFP)
             case ('M')
                 availableCH2O = availableCarbohydrate_methodM(CO2AIR,PARU, RATM, RCROP,RLFC, RLF, WFP, MJPERE, PARMJFAC, SRAD, TFP, RSFP, SLPF, PARI, PLTPOP)
-            case ('V')
-                availableCH2O = availableCarbohydrate_methodV(TMin, TMax, TDEW, SRAD, PHTV, PHSV, KCANI, LAI, PARUE)
         end select
         CARBOEND = availableCH2O
             

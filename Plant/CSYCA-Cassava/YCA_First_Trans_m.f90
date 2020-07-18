@@ -110,7 +110,7 @@ Module YCA_First_Trans_m
     REAL    :: DAYLPAV(0:19)           ! Daylength (6deg) av for tier   h          ! (From SeasInit)  
     REAL    :: DAYLPC                  ! Daylength (6deg),cumulative    h          ! (From SeasInit)  
     REAL    :: DAYLPREV                ! Daylength previous day         h          ! (From Output)    
-    REAL    :: DAYLS(PSX)                  ! Daylength sensitivity,tier     %/10h      ! (From SeasInit)  
+    REAL    :: DAYLS(0:PSX)             ! Daylength sensitivity,tier     %/10h      ! (From SeasInit)  
     REAL    :: DAYLST(0:PSX)            ! Daylength (6deg) at stage      h          ! (From SeasInit)  
     REAL    :: DAYSUM                  ! Days accumulated in month      #          ! (From SeasInit)  
     INTEGER :: DCDAT(DCNX)             ! Disease control application    YrDoy      ! (From SeasInit)  

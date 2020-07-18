@@ -13,7 +13,7 @@
         ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , RWUPM       , &
         SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
         UH2O        , &
-        !WEATHER     ,                                                                                                       ! MF WEATHER needed for VPD 
+        WEATHER     , SOILPROP, CONTROL, &                                                                                                    ! MF WEATHER needed for VPD 
         WINDSP      , YEAR        , ST          &    !LPM20MAR2016 To consider ST for germination
         )
         
@@ -23,8 +23,9 @@
    
         IMPLICIT NONE
         
-        
-        !TYPE (WeatherType) WEATHER                                                            ! MF Defined in ModuleDefs
+        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs                                                            ! MF Defined in ModuleDefs
 
         INTEGER NLAYR       , YEAR         
         INTEGER CSIDLAYR                                                                      ! Integer function call.
@@ -38,7 +39,6 @@
         CHARACTER(LEN=1) IDETG       , ISWWAT      
         
           IF (PLYEAR <= 0) PLYEAR = YEAR
-
 !-----------------------------------------------------------------------
 !         Calculate potential plant evaporation,water uptake if neeeded
 !-----------------------------------------------------------------------
