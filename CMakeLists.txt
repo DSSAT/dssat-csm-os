@@ -378,7 +378,6 @@ set(
         "Plant/CSYCA-Cassava/YCA_Integ_SeasEnd.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_Stages.f90"
         "Plant/CSYCA-Cassava/YCA_Integ_WthrSum.f90"
-        "Plant/CSYCA-Cassava/YCA_Model_VPD.f90"
         "Plant/CSYCA-Cassava/YCA_Model_VPD_Interface.f90"
         "Plant/CSYCA-Cassava/YCA_Node.f90"
         "Plant/CSYCA-Cassava/YCA_Output.f90"
