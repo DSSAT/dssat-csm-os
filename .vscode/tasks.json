@@ -16,15 +16,15 @@
             "label": "dssat-csm: CMake DEBUG",
             //Select the platform
             "windows": {
-                "args": ["-G","'MinGW Makefiles'",      // <- Select windows CMake Generator is responsible for a native build system. Use quotation marks
+                "args": ["-G","MinGW Makefiles",      // <- Select windows CMake Generator is responsible for a native build system. Use quotation marks
                     "-DCMAKE_BUILD_TYPE=DEBUG",         // DEBUG, RELEASE
                     "${workspaceRoot}"]},
             "osx": {
-                "args": ["-G","'Unix Makefiles'",       // <- Select osx CMake Generator is responsible for a native build system. Use quotation marks
+                "args": ["-G","Unix Makefiles",       // <- Select osx CMake Generator is responsible for a native build system. Use quotation marks
                     "-DCMAKE_BUILD_TYPE=DEBUG",         // DEBUG, RELEASE
                     "${workspaceRoot}",]},
             "linux": {
-                "args": ["-G","'Unix Makefiles'",       // <- Select linux CMake Generator is responsible for a native build system. Use quotation marks
+                "args": ["-G","Unix Makefiles",       // <- Select linux CMake Generator is responsible for a native build system. Use quotation marks
                     "-DCMAKE_BUILD_TYPE=DEBUG",         // DEBUG, RELEASE
                     "${workspaceRoot}"]},
             "command": "cmake",
@@ -40,15 +40,15 @@
             "label": "dssat-csm: CMake RELEASE",
             //Select the platform
             "windows": {
-                "args": ["-G","'MinGW Makefiles'",      // <- Select windows CMake Generator is responsible for a native build system. Use quotation marks
+                "args": ["-G","MinGW Makefiles",      // <- Select windows CMake Generator is responsible for a native build system. Use quotation marks
                     "-DCMAKE_BUILD_TYPE=RELEASE",       // DEBUG, RELEASE
                     "${workspaceRoot}"]},
             "osx": {
-                "args": ["-G","'Unix Makefiles'",       // <- Select osx CMake Generator is responsible for a native build system. Use quotation marks
+                "args": ["-G","Unix Makefiles",       // <- Select osx CMake Generator is responsible for a native build system. Use quotation marks
                     "-DCMAKE_BUILD_TYPE=RELEASE",       // DEBUG, RELEASE
                     "${workspaceRoot}",]},
             "linux": {
-                "args": ["-G","'Unix Makefiles'",       // <- Select linux CMake Generator is responsible for a native build system. Use quotation marks
+                "args": ["-G","Unix Makefiles",       // <- Select linux CMake Generator is responsible for a native build system. Use quotation marks
                     "-DCMAKE_BUILD_TYPE=RELEASE",       // DEBUG, RELEASE
                     "${workspaceRoot}"]},
             "command": "cmake",
