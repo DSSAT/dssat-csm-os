@@ -16,9 +16,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !  Scientific base - dx.doi.org/10.1590/S0103-90162014000100001
     !  Source Code     - murilodsv@bitbucket.org/murilodsv/samuca_standalone.git
     !
-    !  2nd Version:
-    !  Authors: MURILO VIANNA; FABIO MARIN (2018)
-    !  Scientific base - http://www.teses.usp.br/teses/disponiveis/11/11152/tde-01082018-150704/pt-br.php
+    !  2nd Version (latest):
+    !  Authors: MURILO VIANNA; FABIO MARIN (2020)
+    !  Scientific base - doi.org/10.1016/j.compag.2020.105361
     !  Source Code     - murilodsv@bitbucket.org/murilodsv/samuca.git
     !
     !  Dev. History:
@@ -711,7 +711,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     real        n_lf_it_form_r   
     real        ratoon_r
     
-    !real        CELLSE_DM ! CANEGRO'S Cellulosic DM (t/ha)
+    real        maxlai  ! Maximum LAI hit throughout the season (needed for SC_OPHARV_SAM)
     
     logical     flcropalive
     logical	    writedetphoto
@@ -802,6 +802,21 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         
     !--- Delete any detailed file regardless if detailed is switched on
     call SC_OPGROW_SAM_DETAILED (CONTROL, CaneCrop,YRPLT)
+    
+    !--- Prepare for summary outputs
+    flemerged           = .false.
+    maxlai              = 0.d0
+    xlai                = 0.d0    
+    swfacp				= 1.d0
+    swface              = 1.d0
+    STGDOY              = 0
+    
+    !--- Update cultivar file
+    call get_cultivar_coeff(maxgl_r,'dummy', CONTROL, CF_ERR)
+    
+    call SC_OPHARV_SAM(CONTROL, ISWITCH,  &
+    CaneCrop, flemerged, maxlai,          &
+    swfacp, swface, STGDOY, XLAI, YRPLT)
     
     return
     
@@ -1080,6 +1095,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             rdm             = min(rdm, bottom(nlay))        
             rd              = rdm
             effective_rd    = initcropdepth
+            rpup            = 0.d0
         
             !--- Equalize to soil layers depth
             rdprof = 0.d0
@@ -1109,7 +1125,10 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             cropdstage      =  'Sprout'
             cropstatus      = ' Alive'
             cstat           = 1.d0
-            flcropalive     = .true.        
+            flcropalive     = .true.    
+            
+            !--- below ground phytomers
+            nphy_BGround = 0
             
         else
             
@@ -1126,6 +1145,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             !--- Note that the last season root depth is not modified
             rdm             = min(rdm, bottom(nlay))       
             effective_rd    = initcropdepth
+            rpup            = 0.d0
             
             !--- Crop Stage
             if(flcropalive) cropdstage  = 'Sprout'
@@ -1171,13 +1191,17 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         !--- Crop Depth [cm]
         rdm             = min(rdm, bottom(nlay))    
         effective_rd    = initcropdepth
-        rd              = initcropdepth    
+        rd              = initcropdepth
+        rpup            = 0.d0
         
         !--- Crop Stage
         cropdstage      =  'Sprout'
         cropstatus      = ' Alive'
         cstat           = 1.d0
         flcropalive     = .true.
+        
+        !--- below ground phytomers
+        nphy_BGround = 0
         
     endif
             
@@ -1196,6 +1220,8 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     hex_it_AG   			=   0.d0
     nstk					=	0.d0
     lai         			=   0.d0
+    laimod                  =   0.d0
+    maxlai                  =   0.d0
     lai_ass     			=   0.d0
     stk_h					=	0.d0
     diac        			=   0.d0
@@ -1232,6 +1258,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     n_lf                    = 1
     n_lf_AG                 = 0
     
+    !--- phytomer stimuli
+    phy_stimuli = 0.d0
+    
     if(.not. (aint(nstk_now) .eq. nstk_now))then
         !--- Increase one tiller to account for decimals
         atln_now    = aint(nstk_now) + 1
@@ -1252,6 +1281,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     phprof(1:n_ph,14) = max_it_dw_BG
     phprof(1:n_ph,11) = kmr_stor
     phprof(1:n_ph,13) = q10_stor
+    
+    !--- initialize tiller age profile
+    tillerageprof = 0.d0
     
     !--- Flags
     fl_use_reserves     = .true.
@@ -1292,6 +1324,47 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     drue_calc           = 0.d0
     rue_calc            = 0.d0
     
+    !--- Prepare for summary outputs
+    xlai                = 0.d0    
+    swfacp				= 1.d0
+    swface              = 1.d0
+    
+    !---------------------------------------------------!
+    !--- Sugarcane phenological stages names/numbers ---!
+    !---------------------------------------------------!
+    !--- Following CANEGRO (SC_CNG_mods.for at 04/01/2020):
+     ! DATA SCSTGNAM /
+     !&  '          ',   !1
+     !&  'Peak pop. ',   !2
+     !&  'Phylswitch',   !3
+     !&  'Stalk emrg',   !4
+     !&  '          ',   !5
+     !&  'Flowr init',   !6
+     !&  'Flowr emrg',   !7
+     !&  'Plant/ratn',   !8
+     !&  'Germinate ',   !9
+     !&  'Emergence ',   !10
+     !&  'Peak popn ',   !11
+     !&  'Maturity  ',   !12
+     !&  '          ',   !13
+     !&  'Start Sim ',   !14
+     !&  'End Sim   ',   !15
+     !&  'Harvest   ',   !16
+     !&  '          ',   !17
+     !&  '          ',   !18
+     !&  '          ',   !19
+     !&  'Harvest   '/   !20
+    
+    !--- Season Init
+    STGDOY(14) = Control%YRSIM
+
+    !--- Plant/ratoon date (same as season init)
+    STGDOY(8)  = Control%YRDOY
+    
+    call SC_OPHARV_SAM(CONTROL, ISWITCH,        &
+        CaneCrop, flemerged, maxlai,            &
+        swfacp, swface, STGDOY, XLAI, YRPLT)
+    
     !--------------------!
     !--- Output Files ---!
     !--------------------!
@@ -1316,7 +1389,11 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     RWUMX       =   rwumax  ! Maximum water uptake per unit root length, constrained by soil water (cm3[water] / cm [root])        
     XHLAI       =   lai     ! Healthy leaf area index (m2[leaf] / m2[ground])
     XLAI        =   laimod  ! Leaf area (one side) per unit of ground area (m2[leaf] / m2[ground]) [NOTE: we are following canegro and considering as]
-        
+
+    !--- Total LAI must exceed or be equal to healthy LAI
+    !--- Following MJ:
+    XLAI = MAX(XLAI, XHLAI)
+    
     !HARVRES     ! Composite variable containing harvest residue amounts for total dry matter, lignin, and N amounts.  Structure of variable is defined in ModuleDefs.for. 
     !MDATE       ! Harvest maturity date (YYYYDDD)
     !PORMIN      ! Read in SCSAM047.SPE            
@@ -1878,11 +1955,12 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
                     !--- Fisrt time reaching tillering peak
                     fl_tiller_peaked    = .true.
                     fl_tiller_stop      = .true.
-                    
+                                                            
                     !--- Store the peak of population
                     poppeak_lt          = nstk_now
                     chudec_lt           = diacsoil
                     chumat_lt           = chudec_lt + tt_chumat_lt
+                    STGDOY(11)          = Control%YRDOY ! STGDOY(11) is peak population according to CANEGRO (file SC_Poplt3.for)
                     
                     !--- Tillering dead rate [till cdays-1]
                     dnstk_dead_rate     = (popmat - poppeak_lt) / (chumat_lt - chudec_lt)
@@ -3456,6 +3534,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         !--- Check if stalk emerged
         if(n_lf_AG .ge. n_lf_when_stk_emerg)then
             fl_stalk_emerged    = .true.        
+            STGDOY(4)           = Control%YRDOY ! Update devstage
         endif
         
     endif
@@ -3496,6 +3575,7 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
             diac_at_emergence   = diacsoil                                  ! Cdays at Emergence
             lai                 = init_leaf_area * ini_nstk / 1.e4          ! [m2 m-2]
             gstd                = 1.d0                                      ! Growth Stage (DSSAT)
+            STGDOY(10)          = Control%YRDOY                             ! Date of emergence
         endif        
     endif
             
@@ -3514,7 +3594,14 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     RWUMX       =   rwumax  ! Maximum water uptake per unit root length, constrained by soil water (cm3[water] / cm [root])        
     XHLAI       =   lai     ! Healthy leaf area index (m2[leaf] / m2[ground])
     XLAI        =   laimod  ! Leaf area (one side) per unit of ground area (m2[leaf] / m2[ground]) [NOTE: we are following canegro and considering as]
-        
+    
+    !--- Total LAI must exceed or be equal to healthy LAI
+    !--- Following MJ:
+    XLAI = MAX(XLAI, XHLAI)
+    
+    !--- Maximum LAI so far at this season
+    maxlai = max(lai,maxlai)
+    
     !HARVRES     ! Composite variable containing harvest residue amounts for total dry matter, lignin, and N amounts.  Structure of variable is defined in ModuleDefs.for. 
     !MDATE       ! Harvest maturity date (YYYYDDD)
     !PORMIN      ! Read in SCSAM047.SPE            
@@ -3621,11 +3708,31 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     !--- Detailed Outputs ---!
     !------------------------!    
     if(writedcrop) call SC_OPGROW_SAM_DETAILED (CONTROL, CaneCrop, YRPLT)    
+    
+    !--- Update STG in case of last day
+    if(CONTROL%YRDOY == YREND)then
+        STGDOY(16)  = YREND
+        STGDOY(15)  = YREND
+        MDATE       = YREND
+    endif
+    
+    !--- Summary file outputs
+    call SC_OPHARV_SAM(CONTROL, ISWITCH,        &
+        CaneCrop, flemerged, maxlai,            &
+        swfacp, swface, STGDOY, XLAI, YRPLT)
             
     return
     
 60  continue
     
+    !--- Summary file outputs
+    call SC_OPHARV_SAM(CONTROL, ISWITCH,        &
+        CaneCrop, flemerged, maxlai,            &
+        swfacp, swface, STGDOY, XLAI, YRPLT)
+        
+    !--- Update cultivar file flags
+    call get_cultivar_coeff(maxgl_r,'dummy', CONTROL, CF_ERR)
+
     !--- Close outputs
     call sc_opgrow_sam( CONTROL,    &
                         CaneCrop,   &                        
