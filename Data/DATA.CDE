@@ -117,6 +117,7 @@ NIAM   Soil N kg/ha    Inorganic N at maturity (kg [N]/ha)                      
 NICM   Tot N app kg/ha Inorganic N applied (kg [N]/ha)                          .
 NLCM   N leached kg/ha N leached during season (kg [N]/ha)                      .
 NUCM   N uptake kg/ha  N uptake during season (kg [N]/ha)                       .
+NMINC  Net N mineraliz Cumulative seasonal net N mineralization (kg[N]/ha)      .
 OCAM   Organic C kg/ha Organic soil C at maturity (kg/ha)                       .
 OCTAM  Tot Org C kg/ha Total Organic C at maturity, soil and surface (kg/ha)    .
 ONAM   Organic N kg/ha Organic soil N at maturity (kg/ha)                       .
