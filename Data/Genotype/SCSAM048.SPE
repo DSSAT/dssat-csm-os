@@ -1,0 +1,46 @@
+! Crop Parameters for the SAMUCA Model
+
+*Roots Profile
+srlMax             =  36.0
+srlMin             =  30.0
+rootdrate          =  0.048
+max_rt_dw          =  120.0
+end_tt_rt_gro      =  3000.0
+rootleftfrac       =  0.03
+!--------------------------
+*Atmosphere
+kdif               =  1.0
+kc_min             =  0.79
+eoratio            =  1.15
+so2si_useres       =  3.0
+maxlai_eo          =  4.5
+!--------------------------
+*Respiration
+gresp              =  0.242
+kmr_leaf           =  0.0123
+kmr_stem           =  0.0036
+kmr_root           =  0.0086
+kmr_stor           =  0.0022
+q10_leaf           =  1.584
+q10_stem           =  1.804
+q10_root           =  1.804
+q10_stor           =  1.804
+tref_mr            =  25.0
+!--------------------------
+*Crop Development and Factors
+tb                 =  12.0
+tbm                =  50.0
+threshews          =  0.05
+dshoot_ext         =  0.068
+mid_tt_rt_gro      =  1000.0
+max_it_dw_BG       =  5.0
+suc_min            =  0.06584
+tillagefac         =  1.0
+rootshape          =  2.0
+rwumax             =  0.07
+fres_used_em       =  2.0
+agefac_amax        =  -2.0
+agefac_per         =  -5.0
+c_scattering       =  0.15
+k                  =  0.75
+rt_front_size      =  10.0

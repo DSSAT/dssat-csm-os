@@ -346,6 +346,35 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
      &          TO2(2),TM(2),Ph1P,Ph1R,Ph2,Ph3,Ph4,StkHrNO,RTNFAC,
      &          MinGr,empty,RES30C,RLF30C,R30C2,empty,empty
 
+!MV   SAMuCA: Agronomic Modular Simulator for Sugarcane
+!     Simulador Agronomico Modular de Cana-de-Acucar
+      CASE ('SCSAM') 
+        READ (C360,1070,IOSTAT=ERRNUM) VARTY, VRNAME, ECONO,
+     &      maxgl_r       		     ,
+     &      n_lf_when_stk_emerg_r    ,
+     &      n_lf_it_form_r           ,
+     &      maxdgl_r       		     ,
+     &      amax       			     ,
+     &      eff       			     ,
+     &      chustk       		     ,
+     &      chupeak     		     ,
+     &      chudec     			     ,
+     &      chumat     			     ,
+     &      popmat     			     ,
+     &      poppeak      		     ,
+     &      tillochron      	     ,
+     &      phyllochron     	     ,
+     &      sla       			     ,
+     &      mla       			     ,
+     &      plastochron       	     ,
+     &      init_leaf_area           ,
+     &      max_ini_la       	     ,
+     &      max_it_dw                ,
+     &      mid_tt_it_growth         ,
+     &      end_tt_it_growth         ,
+     &      mid_tt_lf_growth         ,
+     &      end_tt_lf_growth         
+
 !     Taro, tanier **
       CASE ('TRARO','TNARO')
         READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
@@ -417,13 +446,13 @@ C 820 FORMAT (A6,1X,A16,7X,A6,22F6.0,A)         !CSCAS        04/25/2013
 
   830 FORMAT (A6,1X,A16,7X,A6,7F6.0,A)          !WHCER, BACER 03/16/2010
   850 FORMAT (A6,1X,A16,7X,A6,43F6.0,A) 
-! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)          !11/8/07
- 1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                   !02/10/2009 
-!!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)       !02/10/2009 
- ! 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                   !02/10/2009 
- 1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)                   !02/21/2018 
-
+! 1050 FORMAT (A6,1X,A16,7X,A6,9F6.0,1X,I5,3F6.0)             ! 11/8/07
+ 1055 FORMAT (A6,1X,A16,7X,A6,44F6.0)                         ! 02/10/2009 
+!!! 1055 FORMAT (A6,1X,A16,7X,A6,37F6.0,G8.0,4F6.1)           ! 02/10/2009 
+ ! 1060 FORMAT (A6,1X,A16,7X,A6,44F15.0)                      ! 02/10/2009 
+ 1060 FORMAT (A6,1X,A16,7X,A6,22F15.0)                        ! 02/21/2018 
+1070  format (A6,1X,A16,7X,A6,24F15.0)                        ! 01/07/2020 (SAMUCA)
 !1500 FORMAT (A6,1X,A16,1X,A255)
- 1500 FORMAT (A6,1X,A16,7X,A)                             !11/8/07
+ 1500 FORMAT (A6,1X,A16,7X,A)                                 !11/8/07
 
       END SUBROUTINE IPVAR

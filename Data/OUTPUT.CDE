@@ -108,3 +108,8 @@ LUN.LST            List of output files generated                     LUNLST
 ! MJ & SK Climate change summary output file
 CCSUMMRY.OUT    CC Climate change summary output file                 OUTCC
 ETSUMMRY.OUT    ET extended summary output file                       OUTEX
+
+! Sugarcane-SAMUCA Detailed outputs
+PlantGr_Det.OUT    Detailed phytomeric outputs                        SAMPHY
+Canopy_Phot.OUT    Layered canopy photosynthesis outputs              SAMCPH
+Crop_Stress.OUT    Crop abiotic stress factors                        SAMSTR
