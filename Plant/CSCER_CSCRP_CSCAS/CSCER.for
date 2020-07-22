@@ -1468,9 +1468,9 @@
 
         IF (DYNAMIC.EQ.RUNINIT) THEN
 
-          MODNAME = 'CSCER047'
+          MODNAME = 'CSCER048'
           VERSION = 010115
-          GENFLCHK(3:15) = 'CER047.08102017'
+          GENFLCHK(3:15) = 'CER048.20200721'
 
           ! Parameters
           STDAY = 20.0    ! TT in standard day
