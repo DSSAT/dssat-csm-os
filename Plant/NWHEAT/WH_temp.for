@@ -258,7 +258,7 @@ cnh to allow watching of these variables
 *     ==================================================================
       ! find actual grain uptake by translocation
       subroutine nwheats_grnit (CONTROL, ISWITCH,                 !Input
-     &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
+     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input ! JG added MXNCR 7/23/20
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        pnout)                                             !Output
@@ -309,9 +309,10 @@ cnh to allow watching of these variables
       real delta_grainC     
       ! JZW add the following
       real gro_wt(mxpart), trans_wt (mxpart) 
-      Real p_max_grain_nc_ratio ! JZW get from crop.apr: 
+      ! Real p_max_grain_nc_ratio ! JZW get from crop.apr: ! JG replaced with MXNCR 7/23/20
       ! max_grain_nc_ratio = 0.04;  0.035=20%;  .04=23% protein, max n:c ratio of grain growth 
-      parameter (p_max_grain_nc_ratio = 0.04)
+      ! parameter (p_max_grain_nc_ratio = 0.04) ! JG replaced with MXNCR 7/23/20
+      Real MXNCR  ! JG added 7/23/20
       real sum_real_array 
       real rgnfil
       REAL g_navl(mxpart) 
@@ -352,7 +353,7 @@ cnh to allow watching of these variables
 !         delta_N_fraction = u_bound (delta_N_fraction
 !     :                              ,p_max_grain_nc_ratio)
          delta_N_fraction = min(delta_N_fraction
-     &                              ,p_max_grain_nc_ratio)
+     &                              ,MXNCR)     ! JG replaced p_max_grain_nc_ratio with MXNCR 7/23/20
          gndmd = delta_N_fraction * delta_grainC
  
               ! -------------- get grain N potential (supply) -----------

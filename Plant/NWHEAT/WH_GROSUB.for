@@ -2892,7 +2892,7 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 *     ==================================================================
       
       call nwheats_grnit (CONTROL, ISWITCH,                       !Input
-     &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
+     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input ! JG added MXNCR 7/23/20
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        pntrans)                                           !Output
