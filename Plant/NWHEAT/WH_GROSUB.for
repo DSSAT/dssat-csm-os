@@ -3141,10 +3141,11 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
 !*! Begin WHAPS Leaf damage due to pests. 
 !*! (Fabio - 09/10/2018; TF - 09/22/2019) 
 !---------------------------------------------------------------------- 
+      LAIDOT = 0
       IF (PLTPOP .GT. 0.0 .AND. plantwt(leaf_part) .GT. 0.0 .AND. 
      &     WLIDOT .GT. 0.0) THEN
-        LAIDOT = WLIDOT * ((pl_la - sen_la) * 100)/
-     &  (plantwt(leaf_part) * PLTPOP)  !cm2/plant/day
+        LAIDOT = WLIDOT * ((pl_la - sen_la) / 100)/
+     &  (plantwt(leaf_part)) !cm2/m2
       ENDIF
       
       IF(PLTPOP.GT.0.0) THEN
@@ -3153,21 +3154,13 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
         plantwt(leaf_part) = plantwt(leaf_part) - WLIDOT/PLTPOP
         plantwt(leaf_part) = MAX(plantwt(leaf_part),0.0)
       ENDIF
-      pl_la = pl_la - LAIDOT / 100
+      pl_la = pl_la - (LAIDOT * 100/PLTPOP) !pl_la mm2/plant
       pl_la = MAX(pl_la, 0.0)
-      LAI = LAI - LAIDOT*PLTPOP/10000
+      LAI = LAI - LAIDOT/10000  ! LAI m2/m2
       LAI = MAX(LAI, 0.0)
 !----------------------------------------------------------------------
 !*! End WHAPS Leaf damage due to pests. 
 !======================================================================
-!*! Begin WHAPS Diseased Leaf Area. (Fabio - 09/19/2018) 
-!---------------------------------------------------------------------- 
-!     IF(DISLA .GT. 0.0) THEN
-!        LAI = MAX(0.0, LAI - (DISLA / 10000))
-!     ENDIF
-!----------------------------------------------------------------------
-!*! End WHAPS Diseased Leaf Area. 
-!======================================================================  
 !---------------------------------------------------------------------- 
 !*! Begin WHAPS Stem damage due to pests. 
 !*! (Fabio - 09/10/2018; TF - 09/22/2019) 
@@ -3192,7 +3185,6 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
      &  (WRIDOT/PLTPOP)/plantwt(root_part)
         plantwt(root_part) = plantwt(root_part) - WRIDOT/PLTPOP
         plantwt(root_part) = MAX(plantwt(root_part), 0.0)
-        WRITE(*,*) "YRDOY: ", YRDOY, "root_part: ", plantwt(root_part), " damage: ", WRIDOT
       ENDIF
 !----------------------------------------------------------------------
 !*! End WHAPS Root damage due to pests. 
@@ -3234,7 +3226,7 @@ cbak  adjust the plsc leaf area array to reflect leaf senesence
       !- WP - Update Leaf Area by Willingthon
       AREALF = LAI * 10000  !cm2/m2
       !---------------------------------------
-!     Added Area of healthy leaves (AREAH) by Thiago (TF - 08/08/2019)
+!     Added Area of healthy leaves (AREAH). (TF - 08/08/2019)
       AREAH  = AREALF - DISLA
       AREAH  = MAX(0.,AREAH)
 
@@ -3290,13 +3282,8 @@ cjh quick fix for maturity stage
              RSTAGE = 0
           ENDIF
 
-          SEEDNO = gpp                ! no. of grains per plant
-!        SLA    = sla_new / 100       ! mm2/g  to  cm2/g
-!        Diseased Area - Thiago TF (08/08/2019)
-         IF (DISLA .GT. 0) THEN
-            SLA    = AREALF / WTLF
-            IF (SLA > 999.) SLA = 0.0
-         ENDIF
+         SEEDNO = gpp                 ! no. of grains per plant
+         SLA    = sla_new / 100       ! mm2/g  to  cm2/g
          XLAI   = LAI                 !Leaf area index, m2/m2
          XHLAI  = AREAH / 10000.  ! XHLAI: Healthy leaf area index used to compute         
                                   ! transpiration in water balance routine, m2/m2
