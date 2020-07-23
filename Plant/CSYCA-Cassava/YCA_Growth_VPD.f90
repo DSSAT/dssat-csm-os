@@ -7,7 +7,6 @@ Module YCA_Growth_VPD
     REAL    :: MNVPDFPHR                  ! Daily mean VPD factor, 0-1MNVPDFPHR
     REAL    :: VPDStartHr    , VPDMaxHr   ! VPD start hour, VPD max hour
     REAL    :: ET0DAY                     ! Daily integral of reference transpiration
-
     contains 
     
 !****************************************************************************************

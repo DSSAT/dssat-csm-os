@@ -11,9 +11,9 @@
     USE ModuleDefs
     type YCA_VPD_type
         
-        TYPE (ControlType) :: CONTROL_    ! Defined in ModuleDefs
-        TYPE (WeatherType) :: WEATHER_    ! Defined in ModuleDefs
-        TYPE (SoilType) :: SOILPROP_   ! Defined in ModuleDefs
+        TYPE (ControlType) :: CONTROL    ! Defined in ModuleDefs
+        TYPE (WeatherType) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (SoilType) :: SOILPROP   ! Defined in ModuleDefs
         
     contains
 
@@ -41,9 +41,9 @@
         TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
-        YCA_VPD_type_constructor%WEATHER_ = WEATHER
-        YCA_VPD_type_constructor%CONTROL_ = CONTROL
-        YCA_VPD_type_constructor%SOILPROP_= SOILPROP
+        YCA_VPD_type_constructor%WEATHER = WEATHER
+        YCA_VPD_type_constructor%CONTROL = CONTROL
+        YCA_VPD_type_constructor%SOILPROP= SOILPROP
         
     end function YCA_VPD_type_constructor    
 
@@ -88,7 +88,7 @@
         implicit none
         class (YCA_VPD_type), intent(in) :: this
         
-        get_YCA_EO = get_Growth_EO(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
+        get_YCA_EO = get_Growth_EO(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP)
         
     end function get_YCA_EO
     
@@ -100,7 +100,7 @@
         implicit none
         class (YCA_VPD_type), intent(in) :: this
         
-        get_YCA_EOP = get_Growth_EOP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
+        get_YCA_EOP = get_Growth_EOP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP)
         
     end function get_YCA_EOP
     
@@ -113,7 +113,7 @@
         class (YCA_VPD_type), intent(in) :: this
         integer, intent(in) :: hour
         
-        get_YCA_VPDFPHR = get_Growth_VPDFPHR(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_, hour)
+        get_YCA_VPDFPHR = get_Growth_VPDFPHR(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP, hour)
         
     end function get_YCA_VPDFPHR
     
@@ -125,7 +125,7 @@
         implicit none
         class (YCA_VPD_type), intent(in) :: this
         
-        get_YCA_VPDFP = get_Growth_VPDFP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER_, this%CONTROL_, this%SOILPROP_)
+        get_YCA_VPDFP = get_Growth_VPDFP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP)
         
     end function get_YCA_VPDFP
     
