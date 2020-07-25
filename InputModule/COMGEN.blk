@@ -56,8 +56,6 @@
 ! 	  For APSIM-wheat (WHAPS)
       REAL  VSEN,GRNO,MXFIL
       REAL  STMMX,SLAP1
-!JG added NWheat ozone coefficients
-      REAL  FOZ1,FOZ2,SFOZ1,SFOZ2
 
 
       COMMON /GEN01/P1,P1V,P1D,P2,P2O,P2R,P3,P4,P5,G1,G2,G3,G4,PHINT,O1,
@@ -97,8 +95,7 @@
 
       COMMON /GEN13/ ! For APSIM-wheat (WHAPS)
      &      VSEN,GRNO,MXFIL,
-     &      STMMX,SLAP1,
-     &      FOZ1,FOZ2,SFOZ1,SFOZ2
+     &      STMMX,SLAP1
 
 !CHP Add new Ceres-rice coefficients
 	  COMMON /GEN14/ THOT, TCLDP, TCLDF

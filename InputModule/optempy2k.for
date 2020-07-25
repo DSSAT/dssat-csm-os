@@ -38,7 +38,6 @@ C  06/07/2002 GH  Modifed for Y2K Output
 !  Apr-May 2015 KJB added G0 and G5 for pearl millet
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 !  03/20/2018 Created new FORMAT to read in CUL file for tef
-!  01/21/2020 JG added ozone CUL parameters
 !  01/21/2020 JG moved some CUL parameters to ECO file
 C-----------------------------------------------------------------------
 C  INPUT  : YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,SWINIT,INH4,INO3,
@@ -623,15 +622,13 @@ C-----------------------------------------------------------------------
         CASE('WHAPS')
                 WRITE (LUNIO,1850,IOSTAT=ERRNUM)
      &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,
-     &            FOZ1,FOZ2,SFOZ1,SFOZ2
+     &            STMMX,SLAP1
 !       Tef based on APSIM NWheat KEP
     !Created new FORMAT to read in CUL file for tef
         CASE('TFAPS')
                 WRITE (LUNIO,1855,IOSTAT=ERRNUM)
      &            VARNO,VRNAME,ECONO,VSEN,PPSEN,P2,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,
-     &            FOZ1,FOZ2,SFOZ1,SFOZ2
+     &            STMMX,SLAP1
 !       Ceres Maize, sweetcorn
         CASE('MZCER','SWCER')
 		  WRITE (LUNIO,1800,IOSTAT=ERRNUM) VARNO,VRNAME,ECONO,
@@ -818,14 +815,12 @@ C     &        1X,F5.2,19(1X,F5.1))
 ! JG modified to move CUL parameters to ECO file
  1850 FORMAT (A6,1X,A16,1X,A6,1X,
  !             1     2     3     4     5     6     7     8     9     0
-     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1, F6.4,
-     &       F6.3, F6.3, F6.3)
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1)
 
 ! JG modified to move CUL parameters to ECO file
  1855 FORMAT (A6,1X,A16,1X,A6,1X,
  !             1     2     3     4     5     6     7     8     9     0
-     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1, F6.4,
-     &       F6.3, F6.3, F6.3)
+     &       F6.2, F6.2, F6.1, F6.1, F6.1, F6.1, F6.2, F6.2, F6.1)
 
  1801 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),2(F6.2),2(F6.1),I4)
  1802 FORMAT (A6,1X,A16,1X,A6,1X,F6.1,F6.3,2(F6.1),5(F6.2))

@@ -15,6 +15,7 @@
 !  04/05/2018 KEP changed transp_eff_coeff from transp_eff_coeff=0.006 to transp_eff_coeff=0.009
 !  09/14/2018 KEP increased the base growth temperature from -4 C to 7.8 C for calculating prft.
 !  01/21/2020 JG moved some CUL parameters to ECO file
+!  07/24/2020 JG moved ozone parameters to ECO file
 !----------------------------------------------------------------------
 !  Called by : TF_APSIM
 !
@@ -726,8 +727,7 @@ C The statements begining with !*! are refer to APSIM source codes
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR)
      &          VARNO,VRNAME,ECONO,VSEN,PPSEN,P1,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,
-     &            FOZ1,FOZ2,SFOZ1,SFOZ2
+     &            STMMX,SLAP1
 !------------------------------------------------------------------
 ! PNUPR = 0.45; APSIM pot_nuprate =  .45e-6 , g/mm root/day
 ! MNNCR=1.23: APSIM min_grain_nc_ratio = 0.0123
@@ -742,7 +742,7 @@ C The statements begining with !*! are refer to APSIM source codes
 ! p_max_grain_nc_ratio = 0.04
 !-----------------------------------------------------------------
 !*!1800        FORMAT (A6,1X,A16,1X,A6,1X,6F6.0)
-1800        FORMAT (A6,1X,A16,1X,A6,1X,9F6.0,1(1X,F5.4),3(1X,F5.3))
+1800        FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
           ENDIF
 
@@ -779,12 +779,13 @@ C The statements begining with !*! are refer to APSIM source codes
      &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0))
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
             ELSEIF (ISECT .EQ. 0) THEN
@@ -2882,10 +2883,11 @@ cnh         dtiln = dtt * 0.005 * (rtsw - 1.)
 
             ! find actual grain uptake by translocation
       !JZW should not call grain before dtage grnfil ??
+      !JG linked MXNCR in nwheats_grnit
 *     ==================================================================
 
       call nwheats_grnit (CONTROL, ISWITCH,                       !Input
-     &        Istage, dtt, gpp, gro_wt, mnc, nfact,               !Input
+     &        Istage, dtt, gpp, gro_wt, mnc, MXNCR, nfact,        !Input
      &        nitmn, npot, optfr, part, pl_la, pl_nit,            !Input
      &        plantwt, sen_la, tempmn, tempmx, trans_wt,          !Input
      &        pntrans)                                           !Output

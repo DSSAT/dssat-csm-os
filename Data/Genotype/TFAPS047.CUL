@@ -21,47 +21,9 @@
 ! MXFIL       Potential kernel growth rate [mg kernel-1 day-1]:  Values between 1.0 and 3.0
 ! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) values 1.0 - 3.0
 ! SLAP1       ratio of leaf area to mass at emergence (cm2/g)
-! SLAP2       ratio of leaf area to mass at end of leaf growth (cm2/g) 
-! TC1P1       for calculating tc1: tiller number from emerg. to term. spik.(=stem elongation) 
-! TC1P2       tc1 = tc1_p1 + tc1_p2 *cumph_nw(istage)
-! DTNP1       for calculating dtiln: tiller number after term. spik.(=stem elongation)
-! PLGP1       for calculating plag: potential leaf growth.  plag= plag_p1*cumph(istage)**plag_p2
-! PLGP2       for calculating plag: potential leaf growth.  plag= plag_p1*cumph(istage)**plag_p2
-! P2AF        threshold AD in a layer becoming effective on root growth
-! P3AF        length of downwards root not effected under aeration deficit
-! P4AF        days to be accumulated before aeration deficit effects root growth
-! P5AF        power term at af1
-! P6AF        days to be accumulated before aeration deficit effects crop growth
-! ADLAI       threshold aeration deficit (AF2) affecting LAI        (set to 1.0 for no stress run)
-! ADTIL       threshold aeration deficit (AF2) effecting tillering  (set to 1.0 for no stress run)
-! ADPHO       threshold aeration deficit (AF2) effecting photosyn.  (set to 1.0 for no stress run)
-! STEMN       0=original C to grain translocation, >0 to 1.0 sets % of C of stem to be transloc. to grain
-! MXNUP       max N uptake per day
-! MXNCR       0.035=20%,   .04=23% protein, max n:c ratio of grain growth
-! WFNU        power term for water effect on N supply
-! PNUPR       potential uptake rate (mg/meter/day)
-! EXNO3       exponent for NO3 supply factor
-! MNNO3       minimum for NO3 supply factor
-! EXNH4       exponent for NH4 supply factor
-! MNNH4       minimum for NH4 supply factor
-! INGWT       initial grain weight  (mg/100 grains)
-! INGNC       % protein, initial grain N conc   (init_grain_nconc or p_init_grain_nconc from APSIM Nwheat)
-! FREAR       fraction between end ear and begin grainfilling, setting min stem weight for remobilisation
-! MNNCR       % protein, min n:c ratio of grain growth
-! GPPSS       gpp_start_stage - Grain per plant: 2=stem elong., 3=end leaf stage at which to start accumo. stem for gpp calc.
-! GPPES       gpp_end_stage - Start grainfilling stage at which to end accumulation stem for Grain per plant calc
-! MXGWT       maximum kernal weight  [100 = no effect]
-! MNRTN       min root n due to grain n initialisation [0 = off] (root_n_min or p_root_n_min from APSIM Nwheat)
-! NOMOB       fraction of accum stem weight that is not mobile [0 = original]
-! RTDP1       sw effect, 0 = old version
-! RTDP2       crop stress effect, 0 = old version
-! FOZ1        (no effect, TFAPS) ozone effect rate on photosynthesis: .0006 = ozone tolerant, 0.001 = intermediate, 0.005 = ozone sensitive
-! FOZ2        (no effect, TFAPS) ozone effect initialization on photosynthesis (dependent on FOZ1): 1.015 = ozone tolerant, 1.025 = intermediate, 1.125 = ozone sensitive
-! SFOZ1       (no effect, TFAPS) ozone effect rate on leaf senescence: 0.008 = ozone tolerant, 0.025 = intermediate, 0.04 = ozone sensitive
-! SFOZ2       (no effect, TFAPS) ozone effect initialization on leaf senescence (dependent on SFOZ1): 0.800 = ozone tolerant, 0.375 = intermediate, 0.0 = ozone sensitive
 
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    13
-@VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1  FOZ1  FOZ2 SFOZ1 SFOZ2
+!                                        1     2     3     4     5     6     7     8     9
+@VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1
 IB0135 Keyh (local)         . IB0004  1.00  18.0 100.0 600.0 110.0  16.0  1.00  3.00 400.0
 IB0136 DZ-974 & Keyh        . IB0004  1.00  18.0 100.0 500.0 105.0  16.0  1.00  1.00 400.0
 IB0157 DZ-Cr-387            . IB0004  1.00  18.0 100.0 100.0 120.0  32.0  1.30  3.00 400.0

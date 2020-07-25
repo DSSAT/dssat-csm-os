@@ -23,6 +23,7 @@
 !             All uses of nwheats_ppfac were changed to ntef_ppfac
 !  05/07/2018 KEP added if statements to ntef_ppfac routine to account for TWILEN < 1
 !  01/21/2020 JG moved some CUL parameters to ECO file
+!  07/24/2020 JG moved ozone parameters to ECO file
 !---------------------------------------------------------------------
 !  Called by : TF_APSIM
 !  when DYNAMIC = RUNINIT, SEASINIT and INTEGRATE only
@@ -363,12 +364,11 @@ C-----------------------------------------------------------------------
           ELSE
             READ (LUNIO,1800,IOSTAT=ERR) VARNO,VRNAME,ECONO,
      &            VSEN,PPSEN,P1,P5,PHINT,GRNO,MXFIL,
-     &            STMMX,SLAP1,
-     &            FOZ1,FOZ2,SFOZ1,SFOZ2
+     &            STMMX,SLAP1
             LNUM = LNUM + 1
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEIO,LNUM)
 
-1800           FORMAT (A6,1X,A16,1X,A6,1X,9F6.0,1(1X,F5.4),3(1X,F5.3))
+1800           FORMAT (A6,1X,A16,1X,A6,1X,9F6.0)
           ENDIF
 
       VSEN = VSEN * 0.0054545 + 0.0003
@@ -535,32 +535,33 @@ C-----------------------------------------------------------------------
      &             SLAP2,TC1P1,TC1P2,DTNP1,PLGP1,PLGP2,P2AF,P3AF,P4AF,
      &             P5AF,P6AF,ADLAI,ADTIL,ADPHO,STEMN,MXNUP,MXNCR,WFNU,
      &             PNUPR,EXNO3,MNNO3,EXNH4,MNNH4,INGWT,INGNC,FREAR,
-     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2
+     &             MNNCR,GPPSS,GPPES,MXGWT,MNRTN,NOMOB,RTDP1,RTDP2,
+     &             FOZ1,FOZ2,SFOZ1,SFOZ2
 3100          FORMAT (A6,1X,A16,1X,10(1X,F5.1),2(1X,F5.2),3(1X,F5.1),
      &                1(1X,F5.3),1(1x,F5.0),11(1X,F5.2),1(1X,F5.3),
      &                1(1X,F5.2),1(1X,F5.3),5(1X,F5.2),3(1X,F5.3),
      &                2(1X,F5.2),1(1X,F5.1),1(1X,F5.2),1(1X,F5.3),
-     &                2(1X,F5.0))
+     &                2(1X,F5.0),1(1X,F5.2),1(1X,F5.3),2(1X,F5.2))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
 
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter.
 !               Default to TSEN = 6.0 if no value given.
                 ! JG changed column numbers to match updated ecotype file
-                IF (C255(303:307) == '     ') THEN
+                IF (C255(327:331) == '     ') THEN
                   TSEN = 6.0
                 ELSE
-                  READ(C255(303:307),'(F5.0)',IOSTAT=ERRNUM) TSEN
+                  READ(C255(327:331),'(F5.0)',IOSTAT=ERRNUM) TSEN
                   IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
                 ENDIF
 
 !               Read optional number of cold days paramter.
 !               Default to CDAY = 15.0 if no value given.
                 ! JG changed column numbers to match updated ecotype file
-                IF (C255(309:313) == '     ') THEN
+                IF (C255(333:337) == '     ') THEN
                   CDAY = 15
                 ELSE
-                  READ(C255(309:313),'(I5)',IOSTAT=ERRNUM) CDAY
+                  READ(C255(333:337),'(I5)',IOSTAT=ERRNUM) CDAY
                   IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 15
                 ENDIF
 
