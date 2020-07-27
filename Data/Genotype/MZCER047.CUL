@@ -222,7 +222,7 @@ KY0017 H612                 . IB0001 130.0 0.500 390.0 825.0 10.15 75.00
 KY0018 KATUMANICOMP-II      . IB0001 125.0 0.500 660.0 450.0 10.50 75.00
 
 !J.B.Naab data 2003-2006, re-calibrated by kjb 1/2/12
-GH0010 OBATAMPA             . IB0001 280.0 0.000 750.0 540.0  7.50 40.00
+GH0010 OBATANPA             . IB0001 280.0 0.000 750.0 540.0  7.50 40.00
 
 !Four Global Futures maize cultivars (3 life cycle by 2 "yield levels")
 !Composite: same maturity as Garst 8808 and WH403), but G2 and G3 mid-way.
