@@ -11,7 +11,7 @@ C  Called from:   WEATHR
 C  Calls:         None
 C=======================================================================
       SUBROUTINE OpWeath(CONTROL, ISWITCH, 
-     &    CLOUDS, CO2, DAYL, OZONX, PAR, RAIN, SRAD,  !Daily values
+     &    CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD,  !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
      &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
@@ -37,7 +37,7 @@ C=======================================================================
       INTEGER RUN, YEAR, YRDOY, REPNO
 
       REAL
-     &  CLOUDS, CO2, DAYL, OZONX, PAR, RAIN, SRAD, 
+     &  CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD, 
      &  TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, WINDSP, VPDF, vpd_transp
 
@@ -103,7 +103,7 @@ C-----------------------------------------------------------------------
           WRITE (LUN,120)
   120     FORMAT('@YEAR DOY   DAS',
      &'   PRED  DAYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND   TAVD',
-     &'   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D   VPDF    VPD  OZONX')
+     &'   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D   VPDF    VPD  OZON7')
           END IF   ! VSH
         ENDIF
 
@@ -132,7 +132,7 @@ C       Generate output for file Weather.OUT
              !TMXD  TMND  TAVD  TDYD   TDWD   TGAD   TGRD   
      &        TMAX, TMIN, TAVG, TDAY, TDEW, TGROAV, TGRODY,
            !  WDSD   CO2D  VPDF  VPD
-     &        WINDSP, CO2, VPDF, vpd_transp, OZONX
+     &        WINDSP, CO2, VPDF, vpd_transp, OZON7
   300     FORMAT(1X,I4,1X,I3.3,1X,I5,
      &        5(1X,F6.1),1X,F6.2,
      &        8(1X,F6.1),F7.1, 1x, F6.2, 1X, F6.2)

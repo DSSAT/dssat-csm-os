@@ -8,7 +8,7 @@
 !  10/27/2016 BK, JG  added ozone effects
 !  01/21/2020 JG added pre- and post-anthesis RUE and kvalue
 !  01/21/2020 JG moved some CUL parameters to ECO file
-!  07/24/2020 JG moved ozone parameters to ECO file
+!  07/24/2020 JG moved ozone parameters to ECO file, replaced OZONX with OZON7
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
 !
@@ -27,7 +27,7 @@ C The statements begining with !*! are refer to APSIM source codes
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR, nh4ppm, no3ppm,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZONX, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input ! OZONX added by BTK, JG
+     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input ! OZON7 added by BTK, JG
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
@@ -241,7 +241,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL nwheats_topsfr ! Senthold alternative to topsfr 
       real nwheats_vfac
       real optfr ! fraction of optimum conditions from stress (0-1)
-      real OZONX    ! ozone concentration  ! added by BTK, JG
+      real OZON7    ! ozone concentration  ! added by BTK, JG
       real part_shift     ! the shift in allocation from leaves to
       REAL plagtf !plant leaf area growth temperature function(?)
       real pot_growt_leaf ! a potential leaf growth before reallocation
@@ -2205,11 +2205,11 @@ cbak optimum of 18oc for photosynthesis
       endif
 
           !Effect of Ozone on photosynthesis added by BTK, JG
-      if (OZONX .gt. 25.0) then
-          FO3 = (-(FOZ1/100) * OZONX) + FOZ2  ! JG divided FOZ1 by 100 to clean parameter value 7/24/20
-          !FO3 = (-0.0006 * OZONX) + 1.015  !Ozone Tolerant cultivars
-          !FO3 = (-0.005 * OZONX) + 1.125   !Ozone Sensitive cultivars
-          !FO3 = (-0.001 * OZONX) + 1.025   !Ozone Intermediate cultivars
+      if (OZON7 .gt. 25.0) then
+          FO3 = (-(FOZ1/100) * OZON7) + FOZ2  ! JG divided FOZ1 by 100 to clean parameter value 7/24/20
+          !FO3 = (-0.0006 * OZON7) + 1.015  !Ozone Tolerant cultivars
+          !FO3 = (-0.005 * OZON7) + 1.125   !Ozone Sensitive cultivars
+          !FO3 = (-0.001 * OZON7) + 1.025   !Ozone Intermediate cultivars
       else
           FO3 = 1.0
       Endif
@@ -3152,11 +3152,11 @@ cbak  adjust the green leaf ara of the leaf that is dying
       sfactor = max (slfw, slfn, slft)
 
       ! Ozone effect on leaf senescence added by BTK, JG
-      if (OZONX .gt. 25.0 ) then
-          SLFO3 = (SFOZ1/10) * OZONX + SFOZ2  ! JG divided SFOZ1 by 10 to clean parameter value 7/24/20
-          !SLFO3 = 0.008 * OZONX + 0.8    !Ozone Tolerant cultivars
-          !SLFO3 = 0.04 * OZONX + 0.0     !Ozone Sensitive cultivars
-          !SLFO3 = 0.025 * OZONX + 0.375  !Ozone Intermediate cultivars
+      if (OZON7 .gt. 25.0 ) then
+          SLFO3 = (SFOZ1/10) * OZON7 + SFOZ2  ! JG divided SFOZ1 by 10 to clean parameter value 7/24/20
+          !SLFO3 = 0.008 * OZON7 + 0.8    !Ozone Tolerant cultivars
+          !SLFO3 = 0.04 * OZON7 + 0.0     !Ozone Sensitive cultivars
+          !SLFO3 = 0.025 * OZON7 + 0.375  !Ozone Intermediate cultivars
       else
           SLFO3 = 1.0
           endif
@@ -3498,7 +3498,7 @@ cjh quick fix for maturity stage
 ! SNH4(L)     Ammonium nitrogen in soil layer L, kg N/ha
 ! SNO3(L)     Nitrate content in soil layer L, kg N/ha
 ! SRAD        Daily solar radiation, MJ/M2/day
-! OZONX       Daily 7-hour mean ozone concentration (9:00-15:59), ppb
+! OZON7       Daily 7-hour mean ozone concentration (9:00-15:59), ppb
 ! stemgr      Stem growth before emergence (g/plant) (WHAPS-nwheats.for)
 ! STGDOY(20)  Year and day of year that a growth stage occurred on
 ! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) 

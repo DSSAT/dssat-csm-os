@@ -121,7 +121,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL            nwheats_kvalue ! NWheat k factor
       REAL            nwheats_topsfr ! Senthold alternative to topsfr
       REAL            nwheats_vfac  ! NWheat vernalization factor
-      REAL            OZONX   ! added by BTK, JG
+      REAL            OZON7   ! added by BTK, JG
       REAL            P3          
       REAL            PCNGRN   
       REAL            PCNVEG     
@@ -298,7 +298,7 @@ C The statements begining with !*! are refer to APSIM source codes
       TMAX   = WEATHER % TMAX
       TMIN   = WEATHER % TMIN
       TWILEN = WEATHER % TWILEN
-      OZONX  = WEATHER % OZONX    ! added by BTK, JG
+      OZON7  = WEATHER % OZON7    ! added by BTK, JG
 
       DO L=1,NL
          dlayr_nw(L) = DLAYR(L) * 10.0
@@ -400,7 +400,7 @@ C-----------------------------------------------------------------------
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZONX, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
@@ -520,7 +520,7 @@ C-----------------------------------------------------------------------
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZONX, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
@@ -602,7 +602,7 @@ C----------------------------------------------------------------------
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZONX, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
@@ -694,7 +694,7 @@ C-----------------------------------------------------------------------
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZONX, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
@@ -762,7 +762,7 @@ C----------------------------------------------------------------------
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZONX, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
@@ -838,7 +838,7 @@ C----------------------------------------------------------------------
      &      fstage, FracRts, ISTAGE, zstage,                  !Input
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
-     &      OZONX, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
+     &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
      &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
@@ -989,7 +989,7 @@ cal unit number for file
 ! NO3(20)     !Nitrate in soil layer L (mg elemental N/kg soil) 
 ! NSTRES      !Nitrogen stress factor affecting growth (0-1) 
 ! NWSTGNAM(20)!Array containing names of various growth stages
-! OZONX       !Daily 7-hour mean ozone concentration (9:00-15:59), ppb
+! OZON7       !Daily 7-hour mean ozone concentration (9:00-15:59), ppb
 ! P1          !Growing degree days (base 8C) from seedling emergence to end of Juvenile phase    
 ! P2          !Photoperiod sensitivity coefficient, 1/hr    
 ! PATHCR  !Path to species filee

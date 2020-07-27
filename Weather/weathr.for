@@ -62,7 +62,7 @@ C=======================================================================
       INTEGER DYNAMIC, YREND
 
       REAL
-     &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZONX, PAR, 
+     &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
      &  RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
      &  TA, TAMP, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDRUN, WINDSP,
@@ -112,7 +112,7 @@ C=======================================================================
       IF (DYNAMIC .EQ. RUNINIT) THEN
 !-----------------------------------------------------------------------
       CALL IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZONX, PAR,   !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
      &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -134,7 +134,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
         IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
           CALL IPWTH(CONTROL,
-     &      CCO2, DCO2, FILEW, FILEWW, MEWTH, OZONX, PAR, !Output
+     &      CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR, !Output
      &      PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,      !Output
      &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
@@ -245,7 +245,7 @@ C     Compute daily normal temperature.
       TA = TAV - SIGN(1.0,XLAT) * TAMP * COS((DOY-20.0)*RAD)
 
       CALL OpWeath(CONTROL, ISWITCH, 
-     &    CLOUDS, CO2, DAYL, OZONX, PAR, RAIN, SRAD,  !Daily values
+     &    CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD,  !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
      &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
@@ -263,7 +263,7 @@ C     Compute daily normal temperature.
 C     Read new weather record.
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZONX, PAR,   !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
      &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -346,7 +346,7 @@ C     Compute daily normal temperature.
       ELSEIF (DYNAMIC .EQ. OUTPUT) THEN
 C-----------------------------------------------------------------------
       CALL OpWeath(CONTROL, ISWITCH, 
-     &    CLOUDS, CO2, DAYL, OZONX, PAR, RAIN, SRAD,  !Daily values
+     &    CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD,  !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
      &    TMIN, TWILEN, WINDSP, WEATHER)      !Daily values
 
@@ -358,7 +358,7 @@ C-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
         CALL IPWTH(CONTROL,
-     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZONX, PAR,   !Output
+     &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
      &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
@@ -366,7 +366,7 @@ C-----------------------------------------------------------------------
       ENDIF
 
       CALL OpWeath(CONTROL, ISWITCH, 
-     &    CLOUDS, CO2, DAYL, OZONX, PAR, RAIN, SRAD,  !Daily values
+     &    CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD,  !Daily values
      &    TAVG, TDAY, TDEW, TGROAV, TGRODY, TMAX,     !Daily values
      &    TMIN, TWILEN, WINDSP, WEATHER)              !Daily values
 
@@ -390,7 +390,7 @@ C-----------------------------------------------------------------------
       WEATHER % CLOUDS = CLOUDS
       WEATHER % CO2    = CO2   
       WEATHER % DAYL   = DAYL  
-      WEATHER % OZONX  = OZONX  
+      WEATHER % OZON7  = OZON7  
       WEATHER % PAR    = PAR   
       WEATHER % RAIN   = RAIN  
       WEATHER % RHUM   = RHUM  
