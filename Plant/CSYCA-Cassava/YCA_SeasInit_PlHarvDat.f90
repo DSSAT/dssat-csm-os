@@ -41,7 +41,8 @@
       ! Upgrade harvest date for seasonal and sequential runs
       yeardoyharf = (plyear+pltoharyr)*1000 +hday
       
-      IF (IPLTI /= 'A') THEN
+!     IF (IPLTI /= 'A') THEN
+      IF (IPLTI /= 'A' .AND. IPLTI /= 'F') THEN
           IF (PLDAY >= DOY) THEN
               PLYEARDOYT = PLYEARTMP*1000 + PLDAY
           ELSEIF (PLDAY < DOY) THEN
