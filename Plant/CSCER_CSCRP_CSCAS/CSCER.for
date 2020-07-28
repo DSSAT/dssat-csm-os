@@ -1800,9 +1800,14 @@
           ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
           ! 09/28/2009 CHP need to account for planting date >> simulation date.
           !  IF (FILEIOT(1:2).EQ.'DS') THEN
-        
-          IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
-            PLYEAR = YEAR
+          !LPM 07/17/20 - account for simulation date when is a year before planting date
+          !Avoid wrong value of yeardoyharf
+          IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
+              IF (YEAR < PLYEARREAD) THEN
+                  PLYEAR = PLYEARREAD
+              ELSE
+                  PLYEAR = YEAR
+              ENDIF
           ENDIF
 
           IF (PLDAY.GE.DOY) THEN
