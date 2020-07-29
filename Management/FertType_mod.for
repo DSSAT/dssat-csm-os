@@ -126,13 +126,13 @@ C  06/15/2014 CHP Written
      &        FertFile(Ftype) % NIDUR, 
      &        FertFile(Ftype) % NRL50, 
      &        FertFile(Ftype) % NRFNC, 
-     &        FertFile(Ftype) % NSIGK
+     &        FertFile(Ftype) % NSIGK,
+     &        FertFile(Ftype) % FertN, 
+     &        FertFile(Ftype) % FertP, 
+     &        FertFile(Ftype) % FertK 
 
 !           The remaining variables are included in the fertilizer 
 !           lookup file, but are not currently used by the model.
-!     &        FertFile(Ftype) % FertN, 
-!     &        FertFile(Ftype) % FertP, 
-!     &        FertFile(Ftype) % FertK, 
 !     &        FertFile(Ftype) % FertS, 
 !     &        FertFile(Ftype) % FerMg, 
 !     &        FertFile(Ftype) % FerCa, 
