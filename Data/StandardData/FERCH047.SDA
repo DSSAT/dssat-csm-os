@@ -66,7 +66,7 @@ FE026 Calcium hydroxide (hydrated lime)          0     0     0     0     0     0
 FE027 NPK - ammonium nitrate                    50    50     0     0     0     0     0     0     0     0   var   var   var     0     0     0     0     0     0     0 
 FE028 NPK - urea                                 0     0   100     0     0     0     0     0     0     0   var   var   var     0     0     0     0     0     0     0 
 FE029 NPK - ammonium nitrate urea               25    25    50     0     0     0     0     0     0     0   var   var   var     0     0     0     0     0     0     0 
-FE030 NPK - user blend                         var   var   var     0     0     0     0     0     0     0   var   var   var     0     0     0     0     0     0     0 
+!E030 NPK - user blend                         var   var   var     0     0     0     0     0     0     0   var   var   var     0     0     0     0     0     0     0 
                                                                                                                                                                      
 !     N fertilizers                                                                                                                                                  
 !     Urea/ammonium nitrate (UAN) solutions:                                                                                                                               
@@ -209,7 +209,18 @@ FE723 Copper compound                            0     0     0     0     0     0
                                                                                                                                                                      
 !     Molybdenum                                                                                                                                                     
 FE740 Sodium molybdonate                         0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 dry
-                                                                                                                                                                     
-!     Generic fertilizer - user to modify values                                                                                                                     
+
+! Generic fertilizer - user to modify values                                
 FE900 Generic fertilizer                       -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99   -99 
-                                                                                                                                                                     
+
+!CDE  Description                             NO3%  NH4% Urea% UIEFF UIDUR NIEFF NIDUR NRL50 NRFNC NSIGK FertN FertP FertK FertC FerMg FertS
+! For testing purposes
+FE901 Urea + SR1                                 0     0   100     0     0     0     0    50   SIG   0.2    46     0     0     0     0     0
+FE902 Urea + SR2                                 0     0   100     0     0     0     0    50   SIG   0.8    46     0     0     0     0     0
+FE903 Urea + SR3                                 0     0   100     0     0     0     0    20   SIG   0.2    46     0     0     0     0     0
+FE904 Urea + SR4                                 0     0   100     0     0     0     0    20   SIG   0.8    46     0     0     0     0     0
+FE905 Urea + UI1                                 0     0   100    99    25     0     0     0   SIG     0    46     0     0     0     0     0
+FE906 Urea + UI2                                 0     0   100    10    25     0     0     0   SIG     0    46     0     0     0     0     0
+FE907 Urea + NI1                                 0     0   100     0     0    50    30     0   SIG     0    46     0     0     0     0     0
+FE908 Urea + NI2                                 0     0   100     0     0    25    10     0   SIG     0    46     0     0     0     0     0
+FE909 Urea + SR1 + UI1 + NI1                     0     0   100    50    25    50    30    50   SIG   0.2    46     0     0     0     0     0
