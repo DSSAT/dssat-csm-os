@@ -1580,10 +1580,10 @@
       
       integer pausenum
 
-      CHARACTER (LEN=128) ARG           ! Argument component
+      CHARACTER (LEN=250) ARG           ! Argument component
       CHARACTER (LEN=6)   CAIC          ! Canopy area index
       CHARACTER (LEN=6)   CANHTC        ! Canopy height
-      CHARACTER (LEN=120) CFGDFILE      ! Configuration directory+file
+      CHARACTER (LEN=250) CFGDFILE      ! Configuration directory+file
       CHARACTER (LEN=1)   CFLFAIL       ! Control flag for failure
       CHARACTER (LEN=1)   CFLFLN        ! Control flag,final leaf # Y/N
       CHARACTER (LEN=1)   CFLHAR        ! Control flag for final harvest
@@ -1598,14 +1598,14 @@
       CHARACTER (LEN=2)   CNCHAR2       ! Crop component (multicrop)
       CHARACTER (LEN=2)   CROP          ! Crop identifier (ie. WH, BA)
       CHARACTER (LEN=2)   CROPPREV      ! Crop identifier,previous run
-      CHARACTER (LEN=93)  CUDIRFLE      ! Cultivar directory+file
-      CHARACTER (LEN=93)  CUDIRFLPREV   ! Cultivar directory+file,prev
+      CHARACTER (LEN=250)  CUDIRFLE      ! Cultivar directory+file
+      CHARACTER (LEN=250)  CUDIRFLPREV   ! Cultivar directory+file,prev
       CHARACTER (LEN=12)  CUFILE        ! Cultivar file
       CHARACTER (LEN=10)  DAPCHAR       ! DAP in character form
       CHARACTER (LEN=6)   DAPWRITE      ! DAP character string -> output
       CHARACTER (LEN=8)   DATEWRITE     ! YEARDOY character string -> op
-      CHARACTER (LEN=93)  ECDIRFLE      ! Ecotype directory+file
-      CHARACTER (LEN=93)  ECDIRFLPREV   ! Ecotype directory+file,prev
+      CHARACTER (LEN=250)  ECDIRFLE      ! Ecotype directory+file
+      CHARACTER (LEN=250)  ECDIRFLPREV   ! Ecotype directory+file,prev
       CHARACTER (LEN=12)  ECFILE        ! Ecotype filename
       CHARACTER (LEN=6)   ECONO         ! Ecotype code
       CHARACTER (LEN=6)   ECONOPREV     ! Ecotype code,previous
@@ -1616,27 +1616,27 @@
       CHARACTER (LEN=10)  EXCODE        ! Experiment code/name
       CHARACTER (LEN=10)  EXCODEPREV    ! Previous experiment code/name
       CHARACTER (LEN=80)  FAPPLINE(30)  ! Fertilizer application details
-      CHARACTER (LEN=120) FILEA         ! Name of A-file
-      CHARACTER (LEN=120) FILEX         ! Name of X-file
-      CHARACTER (LEN=120) FILEIO        ! Name of input file,after check
-      CHARACTER (LEN=120) FILEIOIN      ! Name of input file
-      CHARACTER (LEN=107) FILEADIR      ! Name of A-file directory     
+      CHARACTER (LEN=250) FILEA         ! Name of A-file
+      CHARACTER (LEN=250) FILEX         ! Name of X-file
+      CHARACTER (LEN=250) FILEIO        ! Name of input file,after check
+      CHARACTER (LEN=250) FILEIOIN      ! Name of input file
+      CHARACTER (LEN=250) FILEADIR      ! Name of A-file directory     
       CHARACTER (LEN=3)   FILEIOT       ! Type of input file
-      CHARACTER (LEN=120) FILENEW       ! Temporary name of file
-      CHARACTER (LEN=120) FILET         ! Name of T-file
+      CHARACTER (LEN=250) FILENEW       ! Temporary name of file
+      CHARACTER (LEN=250) FILET         ! Name of T-file
       CHARACTER (LEN=1)   FNAME         ! File name switch (N->standard)
-      CHARACTER (LEN=120) FNAMEERA      ! File name,A-errors
-      CHARACTER (LEN=120) FNAMEERT      ! File name,T-errors
-      CHARACTER (LEN=120) FNAMEEVAL     ! File name,evaluate outputs
-      CHARACTER (LEN=120) FNAMELEAVES   ! File name,leaves outputs
-      CHARACTER (LEN=120) FNAMEMEAS     ! File name,measured outputs
-      CHARACTER (LEN=120) FNAMEOV       ! File name,overview outputs
-      CHARACTER (LEN=120) FNAMEPHASES   ! File name,phases outputs
-      CHARACTER (LEN=120) FNAMEPHENOLM  ! File name,phenology measured
-      CHARACTER (LEN=120) FNAMEPHENOLS  ! File name,phenology outputs
-      CHARACTER (LEN=120) FNAMEPREM     ! File name,responses,measured
-      CHARACTER (LEN=120) FNAMEPRES     ! File name,responses,simulated
-      CHARACTER (LEN=120) FNAMEPSUM     ! File name,plant summary
+      CHARACTER (LEN=250) FNAMEERA      ! File name,A-errors
+      CHARACTER (LEN=250) FNAMEERT      ! File name,T-errors
+      CHARACTER (LEN=250) FNAMEEVAL     ! File name,evaluate outputs
+      CHARACTER (LEN=250) FNAMELEAVES   ! File name,leaves outputs
+      CHARACTER (LEN=250) FNAMEMEAS     ! File name,measured outputs
+      CHARACTER (LEN=250) FNAMEOV       ! File name,overview outputs
+      CHARACTER (LEN=250) FNAMEPHASES   ! File name,phases outputs
+      CHARACTER (LEN=250) FNAMEPHENOLM  ! File name,phenology measured
+      CHARACTER (LEN=250) FNAMEPHENOLS  ! File name,phenology outputs
+      CHARACTER (LEN=250) FNAMEPREM     ! File name,responses,measured
+      CHARACTER (LEN=250) FNAMEPRES     ! File name,responses,simulated
+      CHARACTER (LEN=250) FNAMEPSUM     ! File name,plant summary
       CHARACTER (LEN=35)  GENFLCHK      ! Genotype file name for check
       CHARACTER (LEN=1)   GROUP         ! Flag for type of group
       CHARACTER (LEN=6)   GSTAGEC       ! Growth stage
@@ -1693,9 +1693,9 @@
       CHARACTER (LEN=12)  OUTPG2        ! Growth output file2 code
       CHARACTER (LEN=12)  OUTPGF        ! Growth factors file2 code
       CHARACTER (LEN=12)  OUTPN         ! GrowthN output file code
-      CHARACTER (LEN=80)  PATHCR        ! Path to genotype (CUL) files
-      CHARACTER (LEN=80)  PATHEC        ! Path to genotype (ECO) files
-      CHARACTER (LEN=80)  PATHSP        ! Path to genotype (SPE) files
+      CHARACTER (LEN=250)  PATHCR        ! Path to genotype (CUL) files
+      CHARACTER (LEN=250)  PATHEC        ! Path to genotype (ECO) files
+      CHARACTER (LEN=250)  PATHSP        ! Path to genotype (SPE) files
       CHARACTER (LEN=1)   PLME          ! Planting method (code)        
       CHARACTER (LEN=2)   PPSEN         ! Code,photoperiod sensitivity
       CHARACTER (LEN=5)   PSABV(PSX)    ! Principal stage abbreviation
@@ -1711,8 +1711,8 @@
       CHARACTER (LEN=6)   SENNSC        ! Senesced N added to soil
       CHARACTER (LEN=6)   SENROOTC      ! Senesced OM,soil
       CHARACTER (LEN=6)   SENTOPLITTERAC! Senesced OM added to surface
-      CHARACTER (LEN=64)  SPDIRFLE      ! Species directory+file
-      CHARACTER (LEN=64)  SPDIRFLPREV   ! Species directory+file,last
+      CHARACTER (LEN=250)  SPDIRFLE      ! Species directory+file
+      CHARACTER (LEN=250)  SPDIRFLPREV   ! Species directory+file,last
       CHARACTER (LEN=12)  SPFILE        ! Species filename
       CHARACTER (LEN=5)   SSABV(SSX)    ! Secondary stage abbreviation
       CHARACTER (LEN=5)   SSABVO(SSX)   ! Secondary stage abv,output
@@ -2788,7 +2788,9 @@
 
         ! Planting date information
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'PLANT',iplti)
-        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+!       IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a'.OR.
+     &     IPLTI.EQ.'F'.OR.IPLTI.EQ.'f')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PLAST',pwdinl)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OL',swpltl)
@@ -3011,9 +3013,16 @@
 
         ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
         ! CHP 09/28/2009 account for planting date >> simulation date.
-        IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
-          PLYEAR = YEAR
-          PLYEARTMP = YEAR
+        !LPM 07/17/20 - account for simulation date when is a year before planting date
+        !Avoid wrong value of yeardoyharf
+        IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
+            IF (YEAR < PLYEARREAD) THEN
+                PLYEAR = PLYEARREAD
+                PLYEARTMP = PLYEARREAD
+            ELSE
+                PLYEAR = YEAR
+                PLYEARTMP = YEAR
+            ENDIF
         ENDIF
 
         IF (IDATE1.GT.0.AND.CFLPDATE.EQ.'I') THEN
@@ -3031,7 +3040,8 @@
         ! Upgrade harvest date for seasonal and sequential runs
         yeardoyharf = (plyear+pltoharyr)*1000 +hday
 
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           IF (PLDAY.GE.DOY) THEN
             PLYEARDOYT = PLYEARTMP*1000 + PLDAY
           ELSEIF (PLDAY.LT.DOY) THEN
@@ -4887,7 +4897,8 @@
          WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
          WRITE(fnumwrk,'(A26,A6,2X,A16)')
      &     '  CULTIVAR                ',VARNO,VRNAME
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           WRITE(fnumwrk,'(A23,I7)')
      &     '  PLANTING DATE TARGET:',PLYEARDOYT
         ELSE
@@ -5267,7 +5278,9 @@
         !  PLYEARDOYT = YEARPLTCSM
         !ENDIF
         IF (FILEIOT.EQ.'DS4') THEN
-          IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+!         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
+     &       (INDEX('FQN',RNMODE) > 0)) THEN
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
         ENDIF
@@ -9710,7 +9723,8 @@
           ENDIF ! End ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A'
 
         ELSEIF(YEARDOY.LT.PLYEARDOY.AND.(MOD(DAS,FROPADJ)).EQ.0.AND.
-     &   IPLTI.EQ.'A') THEN
+!    &   IPLTI.EQ.'A') THEN
+     &   (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F')) THEN
      
           ! Automatic planting
           !WRITE (fnumwrk,*) 'Yeardoy ',yeardoy
