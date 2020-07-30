@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 7)
 SET(MODEL 5)
-SET(BUILD 14)
+SET(BUILD 16)
 
 # Get the current working branch
 execute_process(
@@ -489,6 +489,24 @@ set(
         "Plant/NWHEAT/WH_ROOTS.for"
         "Plant/NWHEAT/WH_SW_SUBS.for"
         "Plant/NWHEAT/WH_temp.for"
+        "Plant/SAMUCA-Sugarcane/SC_admit1.f90"
+        "Plant/SAMUCA-Sugarcane/SC_astro.f90"
+        "Plant/SAMUCA-Sugarcane/SC_Det_outputs.f90"
+        "Plant/SAMUCA-Sugarcane/SC_find_inp_sam.for"
+        "Plant/SAMUCA-Sugarcane/SC_functions.f90"
+		"Plant/SAMUCA-Sugarcane/SC_OPHARV_SAM.f90"
+        "Plant/SAMUCA-Sugarcane/SC_OUTPUT_SAM.for"
+        "Plant/SAMUCA-Sugarcane/SC_PGS.f90"
+        "Plant/SAMUCA-Sugarcane/SC_radiat.f90"
+        "Plant/SAMUCA-Sugarcane/SC_rld.f90"
+        "Plant/SAMUCA-Sugarcane/SC_rm_file.f90"
+        "Plant/SAMUCA-Sugarcane/SC_root_profile.f90"
+        "Plant/SAMUCA-Sugarcane/SC_SAMUCA_MODEL.f90"
+        "Plant/SAMUCA-Sugarcane/SC_SAM_ModuleDefs.f90"
+        "Plant/SAMUCA-Sugarcane/SC_substrates_balance.f90"
+        "Plant/SAMUCA-Sugarcane/SC_sucrose_content.f90"
+        "Plant/SAMUCA-Sugarcane/SC_TOTASS_SAM.f90"
+        "Plant/SAMUCA-Sugarcane/SC_water_stress_sugarcane.f90"
         "Plant/SUBSTOR-Potato/PT_GROSUB.for"
         "Plant/SUBSTOR-Potato/PT_NFACTO.for"
         "Plant/SUBSTOR-Potato/PT_NUPTAK.for"
