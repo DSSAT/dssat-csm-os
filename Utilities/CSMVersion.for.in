@@ -17,7 +17,9 @@
         INTEGER :: Build = @BUILD@
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
+!     CMake is not adding the Git branch name here. Go back to manually adding it.
+!     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-Ozone'
 
 !     Version history:  
 !       4.7.5.16 chp 07/30/2020 YCA improvements (new genotype files), planting
