@@ -811,8 +811,10 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
     swface              = 1.d0
     STGDOY              = 0
     
-    !--- Update cultivar file
+    !--- Update flags for reading cultivar/species file 
+    !--- Note: We are borrowing the below subroutines from CANEGRO for the sake of i/o
     call get_cultivar_coeff(maxgl_r,'dummy', CONTROL, CF_ERR)
+    call get_species_coeff(tb,      'dummy', CONTROL, SPC_ERROR)
     
     call SC_OPHARV_SAM(CONTROL, ISWITCH,  &
     CaneCrop, flemerged, maxlai,          &
@@ -3730,8 +3732,9 @@ subroutine SAMUCA(CONTROL, ISWITCH,                                 &
         CaneCrop, flemerged, maxlai,            &
         swfacp, swface, STGDOY, XLAI, YRPLT)
         
-    !--- Update cultivar file flags
+    !--- Update cultivar/species file flags
     call get_cultivar_coeff(maxgl_r,'dummy', CONTROL, CF_ERR)
+    call get_species_coeff(tb,      'dummy', CONTROL, SPC_ERROR)
 
     !--- Close outputs
     call sc_opgrow_sam( CONTROL,    &
