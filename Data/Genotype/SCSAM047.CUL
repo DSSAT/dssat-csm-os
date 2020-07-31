@@ -1,0 +1,5 @@
+! Crop Parameters for SAMUCA model
+! Notes: 
+!	(i)	Values are being read with a precision of 4 decimals
+@VAR#  VAR-NAME........ EXPNO   ECO#          maxgl    n_lf_stk_em   n_lf_it_form         maxdgl           amax            eff         chustk        chupeak         chudec         chumat         popmat        poppeak     tillochron    phyllochron            sla            mla    plastochron   init_lf_area     max_ini_la      max_it_dw  mid_tt_it_gro  end_tt_it_gro  mid_tt_lf_gro  end_tt_lf_gro
+RB7515         RB867515       SC0001           12.0            4.0            3.0            6.0           44.9          0.069          650.0         1400.0         1600.0         3200.0            9.5           22.0           69.0          132.0          120.0          600.0          132.0           15.0          120.0           28.0          400.0         1200.0          700.0         1300.0

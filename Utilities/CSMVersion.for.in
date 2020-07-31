@@ -17,9 +17,16 @@
         INTEGER :: Build = @BUILD@
       END TYPE VersionType
       TYPE (VersionType) Version
-      CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
+      
+!     CMake no longer able to change the branch name, do it manually.      
+!     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
+      CHARACTER(len=*), PARAMETER :: VBranch = '-develop'
 
 !     Version history:  
+!       4.7.5.16 chp 07/30/2020 YCA improvements (new genotype files), planting
+!                               date options for CSCER, CSCRP, CSYCA bug fix 
+!       4.7.5.15 chp 07/28/2020 SAMUCA sugarcane model, safflower improvements, 
+!                               update fertilizer codes
 !       4.7.5.14 chp 12/11/2019 Flexible fertilizer
 !       4.7.5.13 chp 12/11/2019 Cassava photoperiod sensitivity
 !       4.7.5.12 chp 11/13/2019 Soil C balance routines
