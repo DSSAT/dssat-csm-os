@@ -1165,7 +1165,6 @@
             !GRORT = CARBO-GROEAR-GROSTM
               
 !           chp 2019-05-20
-!           IF (GRORT .LE. CARBO*0.85) THEN
             IF (GRORT .LE. CARBO*0.85) THEN
               GRF   = CARBO*0.15/(GROSTM+GROEAR)                  
               GROEAR  = GROLF*GRF
