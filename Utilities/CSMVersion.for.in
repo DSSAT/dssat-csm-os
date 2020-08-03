@@ -17,13 +17,15 @@
         INTEGER :: Build = @BUILD@
       END TYPE VersionType
       TYPE (VersionType) Version
-!     CMake is not adding the Git branch name here. Go back to manually adding it.
+!     CMake no longer able to change the branch name, do it manually.      
 !     CHARACTER(len=*), PARAMETER :: VBranch = '-@BRANCH@'
       CHARACTER(len=*), PARAMETER :: VBranch = '-Ozone'
 
 !     Version history:  
+!       4.7.5.17 chp 07/31/2020 NWheat pest linkage, Maize pest bug fix, 
+!                               SAMUCA initialization bugfix
 !       4.7.5.16 chp 07/30/2020 YCA improvements (new genotype files), planting
-!																date options for CSCER, CSCRP, CSYCA bug fix 
+!                               date options for CSCER, CSCRP, CSYCA bug fix 
 !       4.7.5.15 chp 07/28/2020 SAMUCA sugarcane model, safflower improvements, 
 !                               update fertilizer codes
 !       4.7.5.14 chp 12/11/2019 Flexible fertilizer
