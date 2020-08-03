@@ -83,6 +83,7 @@ S        Suleiman-Ritchie                                                     IB
 *Simulation/Management/Planting
 @CDE     DESCRIPTION                                                          SO
 A        Automatic                                                            IB
+F        Automatic, force planting on last day of window                      IB
 R        On reported date                                                     IB
 
 *Simulation/Management/Irrigation
