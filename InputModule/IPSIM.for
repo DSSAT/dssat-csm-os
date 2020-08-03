@@ -395,7 +395,7 @@ C
               IDETO = 'E'
 !             Seasonal and spatial runs do not get evaluate file when IDETL=0
               IF (INDEX('SN',RNMODE) > 0) IDETO = 'N'
-            ELSEIF (IDETL == 'A') THEN
+            ELSEIF (IDETL == 'A' .OR. IDETL == 'D') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
               IDETO = 'Y'
@@ -1406,7 +1406,7 @@ D     IPX = 23
 !             Seasonal and spatial runs do not get evaluate file when IDETL=0
               IF (INDEX('SN',CONTROL%RNMODE) > 0) IDETO = 'N'
 
-            ELSEIF (IDETL == 'A') THEN
+            ELSEIF (IDETL == 'A' .OR. IDETL == 'D') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
               IDETO = 'Y'
