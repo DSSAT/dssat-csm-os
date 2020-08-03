@@ -571,7 +571,7 @@ C-----------------------------------------------------------------------
           CLOSE (LUNECO)
         ENDIF
 
-!      KEP = KCAN/(1-0.07)*(1-0.25)  ! Not used anywhere
+      KEP = KCAN/(1-0.07)*(1-0.25)
 !----------------------------------------------------------------------
 !*!       Begin WHAPS kvalue calculation 
 !*!       (from APSIM NWheat real function nwheats_kvalue) 
