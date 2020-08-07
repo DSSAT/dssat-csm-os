@@ -99,9 +99,6 @@ C=======================================================================
       INTEGER PATHL,RUN,ISIM,TRTALL,IIRV(NAPPL)   !,CRID
       INTEGER NFORC,NDOF,PMTYPE,YR,ROTN
       INTEGER TRTNUM, ROTNUM!,FREQ(3),CUHT(3) !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
-      
-      ! Variables - Fabio
-      INTEGER FirstWeatherDay, DOY, YDOY
 
       REAL    FLAG,EXP,TRT,PLTFOR,FREQ,CUHT !NEW FORAGE VARIABLES (DIEGO-2/14/2017)
 
@@ -326,7 +323,7 @@ C-----------------------------------------------------------------------
  2750    CONTINUE
          NLOOP = NLOOP + 1
          LINE(1) = ' '
-         IF (NLOOP .GT. 25) CALL ERROR(ERRKEY,3,FILEX,LINEXP)
+         IF (NLOOP .GT. 25) CALL ERROR(ERRKEY,4,FILEX,LINEXP)
          IF (RNMODE .EQ. 'I') THEN
            WRITE (*,2900) TRTN
 C
@@ -349,7 +346,7 @@ C-GH        TRTN   = 1
           ELSEIF (TRT .GT. 0.) THEN
             TRTN = NINT(TRT)
           ELSE
-            CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+            CALL ERROR (ERRKEY,4,FILEX,LINEXP)
          ENDIF
        ELSEIF (INDEX ('Q',RNMODE) .GT. 0) THEN
          !READ (TRNARG(1:6),'(I6)') TRTN
@@ -409,13 +406,10 @@ C     IF (I .LT. TRTN) GO TO 50
      &     CONTROL, ISWITCH, UseSimCtr, PATHEX)
      
 C-----------------------------------------------------------------------
-C
+C     Call MAKEFILEW to read FILEX and 
 C-----------------------------------------------------------------------
-!      XFDYEAR - Fabio
-      CALL XFDYEAR(LUNEXP,DSSATP,PATHEX,FILEX_P,FILEX,
-     &             SimLevel,LNSIM,LNPLT,LNFLD)
-         
-      WRITE(*,*) 'XFDYEAR SUBROUTINE FINISHED: '
+      CALL MAKEFILEW(LUNEXP,DSSATP,PATHEX,FILEX,
+     &               SimLevel,LNSIM,LNPLT,LNFLD)
       
 C-----------------------------------------------------------------------
 C
@@ -938,10 +932,12 @@ C New variables for pineapple
 C 05/07/2020 FO Add new Y4K subroutine call to convert YRDOY
             !CALL Y2K_DOY(YRPLT)
             !CALL Y2K_DOY(IEMRG)
-            CALL Y4K_DOY(FILEX,LINEXP,YRPLT)
-            CALL Y4K_DOY(FILEX,LINEXP,IEMRG)
+            IF(LN .EQ. LNPLT) THEN
+              CALL Y4K_DOY(YRPLT,FILEX,LINEXP,ERRKEY,10)
+              CALL Y4K_DOY(IEMRG,FILEX,LINEXP,ERRKEY,15)
+              CALL YR_DOY (YRPLT,YR,IPLT)
+            ENDIF
             
-            CALL YR_DOY (YRPLT,YR,IPLT)
           ELSE
             CALL ERROR (ERRKEY,2,FILEX,LINEXP)
          ENDIF
