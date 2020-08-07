@@ -667,6 +667,8 @@ C=======================================================================
       INTEGER      NENTRY,I,MENU,YRTEMP,YRT,DOYT,NLOOP
       INTEGER      EDAY(*),ETYPE(*),COUNT,MTYPE(*)
       REAL         EMOUNT(*),EFF,FLAG,TOTAP,EDEPTH(*)
+      
+      PARAMETER (ERRKEY = 'ENTFER')
 
       NLOOP = 0
   100 CONTINUE
@@ -742,7 +744,7 @@ C
           YRTEMP = NINT(EFF)
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           !CALL Y2K_DOY(YRTEMP)
-          CALL Y4K_DOY(ERRKEY,1,YRTEMP)
+          CALL Y4K_DOY(YRTEMP,'ENTFER',0,ERRKEY,1)
           IF (IFERI .EQ. 'R') THEN
             CALL YR_DOY (YRTEMP,YRT,DOYT)
             IF (DOYT > 0 .AND. DOYT <= 366 .AND. YRT < 3000) THEN
@@ -782,7 +784,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           YRTEMP = NINT(EFF)
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
           !CALL Y2K_DOY(YRTEMP)
-          CALL Y4K_DOY(ERRKEY,1,YRTEMP)
+          CALL Y4K_DOY(YRTEMP,'ENTFER',0,ERRKEY,1)
           IF (IFERI .EQ. 'R') THEN
             CALL YR_DOY (YRTEMP,YRT,DOYT)
             IF (DOYT > 0 .AND. DOYT <= 366 .AND.YRT < 3000) THEN
@@ -891,23 +893,24 @@ C-----------------------------------------------------------------------
   200 FORMAT (  9X,'INTERACTIVE DATA ENTRY FOR FERTILIZER',
      &        /,9X,'=====================================')
   250 FORMAT (
-     & 1X,'┌───┬─────────┬────────┬───────┬────────────────────────┬',
-     &    '────────────────────┐',/,
-     & 1X,'│ # │ Date    │ Amount │ Depth │    Fertilizer Type     │',
-     &    ' Application Method │',/,
-     & 1X,'│   │         │  Kg/Ha │   cm  │                        │',
-     &    '                    │',/,
-     & 1X,'├───┼─────────┼────────┼───────┼────────────────────────┼',
-     &    '────────────────────┤')
+     & 1X,'|---|---------|--------|-------|------------------------|',
+     &    '--------------------|',/,
+     & 1X,'| # | Date    | Amount | Depth |    Fertilizer Type     |',
+     &    ' Application Method |',/,
+     & 1X,'|   |         |  Kg/Ha |   cm  |                        |',
+     &    '                    |',/,
+     & 1X,'|---|---------|--------|-------|------------------------|',
+     &    '-------------------|')
   275 FORMAT (
-     & 1X,'└───┴─────────┴────────┴───────┴────────────────────────┴',
-     &    '────────────────────┘')
+     & 1X,'|---|---------|--------|-------|------------------------|',
+     &    '--------------------|')
+      
 
   285 FORMAT (
-     & 1X,'│',I2,1X,'│',I4,1X,I3,1X,'│',F7.1,1X,'│',F6.1,1X,'│ ',
-     &          A23,'│ ',A19,'│')
+     & 1X,'|',I2,1X,'|',I4,1X,I3,1X,'|',F7.1,1X,'|',F6.1,1X,'| ',
+     &          A23,'| ',A19,'|')
   295 FORMAT (/9X,
-     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (──┘ = Done) ', $)
+     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (Enter = Done)',$)
   296 FORMAT (//,9X,
      &    'This option is not available for the current N-fertilizer',/,
      & 9X,'management selection.  Please change selection first.', $)
@@ -928,18 +931,18 @@ C-----------------------------------------------------------------------
   900 FORMAT (/,9X,'Fertilizer application depth ===>',1X,F10.3,' cm',
      &        /,9X,'New fertilizer depth  ?      --->',3X,' ',$)
  1700 FORMAT (/,15X,'There are more entries .. Press any key ..')
- 4900 FORMAT (//,9X,'┌───┬───────────────────────────┐',/,
-     &           9X,'│ # │   Fertilizer Type         │',/,
-     &           9X,'├───┼───────────────────────────┤',/,
-     &           17(9X,'│',I2,' │',1X,A25,' │',/),
-     &           9X,'└───┴───────────────────────────┘',//,
+ 4900 FORMAT (//,9X,'|---|---------------------------|',/,
+     &           9X,'| # |   Fertilizer Type         |',/,
+     &           9X,'|---|---------------------------|',/,
+     &           17(9X,'|',I2,' |',1X,A25,' |',/),
+     &           9X,'|---|---------------------------|',//,
      &              9X,'Fertilizer type selected ===>',1X,I3,
      &            /,9X,'New type ?               --->  ',$)
- 4950 FORMAT (//,9X,'┌───┬',35('─'),'┐',/,
-     &           9X,'│ # │ Application Method',16X,'│',/,
-     &           9X,'├───┼',35('─'),'┤',/,
-     &           18(9X,'│',I2,' │',1X,A34,'│',/),
-     &           9X,'└───┴',35('─'),'┘',//,
+ 4950 FORMAT (//,9X,'|---|',35('─'),'|',/,
+     &           9X,'| # | Application Method',16X,'|',/,
+     &           9X,'|---|',35('─'),'|',/,
+     &           18(9X,'|',I2,' |',1X,A34,'|',/),
+     &           9X,'|---|',35('─'),'|',//,
      &              9X,'Application method selected ===>',1X,I3,
      &            /,9X,'New method ?                --->  ',$)
 

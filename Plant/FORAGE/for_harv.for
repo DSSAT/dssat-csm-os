@@ -74,6 +74,8 @@ C=======================================================================
       logical exists
       
       TYPE(CONTROLTYPE) CONTROL
+      
+      PARAMETER  (ERRKEY = 'FRHARV')
 
       YRDOY  = CONTROL % YRDOY
       crop   = control % crop
@@ -82,7 +84,6 @@ C=======================================================================
       ename  = control % ename
       mowfile = control % filex
       mowfile(10:12) = 'MOW'
-      ERRKEY = 'FRHARV'
       
 !      YHT=canht
 !      do j=1,size(canht); YHT(size(canht))=canht; end do
@@ -219,7 +220,7 @@ C         MOW file has no data for this treatment
      &                TRNO(I),DATE(I),MOW(I),RSPLF(I),MVS(I),rsht(i)
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !CALL Y2K_DOY(DATE(I))
-            CALL Y4K_DOY(MOWFILE,I,DATE(I))
+            CALL Y4K_DOY(DATE(I),MOWFILE,I,ERRKEY,1)
           END IF
         END DO
 

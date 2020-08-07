@@ -146,7 +146,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         !CALL Y2K_DOY(YRPST)
-        CALL Y4K_DOY(FILET,LNUM,YRPST)
+        CALL Y4K_DOY(YRPST,FILET,LNUM,ERRKEY,1)
         CALL YR_DOY(YRPST,YR,IPST)               !GH - Fix to handle
         YRPST = (YR + MULTI - 1) * 1000 + IPST   !GH - multiple years.
 

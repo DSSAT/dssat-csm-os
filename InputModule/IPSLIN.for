@@ -104,11 +104,11 @@ C
       
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
       !CALL  Y2K_DOY (YRIC)
-      CALL  Y4K_DOY (YRIC,FILEX,LINEXP,ERRKEY)
-      IF (YRIC .LT. YRSIM) THEN
-        !FO - Initial Condition raise an error if is lower than YRSIM.
-        CALL ERROR (ERRKEY,3,FILEX,LINEXP)
-      ENDIF
+      CALL  Y4K_DOY (YRIC,FILEX,LINEXP,ERRKEY,3)
+!      IF (YRIC .LT. YRSIM) THEN
+!        !FO - Initial Condition raise an error if is lower than YRSIM.
+!        CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+!      ENDIF
       
       IF (ISWITCH%ISWNIT .EQ. 'Y') THEN
          WRESR = MAX(WRESR,0.0)
@@ -292,10 +292,10 @@ C=======================================================================
       
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
       !CALL Y2K_DOY (SADAT)
-      CALL Y4K_DOY (FILEX,LINEXP,SADAT)
-      IF(SADAT .LT. YRSIM) THEN
-        CALL ERROR (ERRKEY,3,FILEX,LINEXP)
-      ENDIF
+      CALL Y4K_DOY (SADAT,FILEX,LINEXP,ERRKEY,3)
+!      IF(SADAT .LT. YRSIM) THEN
+!        CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+!      ENDIF
       
 C
 C     Read layer information for the correct soil analysis number

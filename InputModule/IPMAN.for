@@ -115,9 +115,12 @@ C
      &         CALL ERROR (ERRKEY,10,FILEX,LINEXP)
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !IF (IIRRI .NE. 'D') CALL Y2K_DOY (IDLAPL(NIRR))
-            IF (IIRRI .NE. 'D') CALL Y4K_DOY (FILEX,LINEXP,IDLAPL(NIRR))
-            IF (IIRRI .EQ. 'R' .AND. IDLAPL(NIRR) .LT. YRSIM) 
-     &          CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+            IF (IIRRI .NE. 'D') THEN
+              CALL Y4K_DOY (IDLAPL(NIRR),FILEX,LINEXP,ERRKEY,3)
+            ENDIF
+!            IF (IIRRI .EQ. 'R' .AND. IDLAPL(NIRR) .LT. YRSIM) 
+!     &          CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+     
             IF (IIRRI .EQ. 'D' .AND. IDLAPL(NIRR) .LT. 0) GO TO 70
 
 !           chp 04/18/2013 remove this requirement. For puddling event, 
@@ -339,11 +342,12 @@ C-PW        RESIDUE(NRESAP) = MAX (RESIDUE(NRESAP),10.0)
             IF (IRESI .EQ. 'R') THEN
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               !CALL Y2K_DOY (RESDAY(NRESAP))
-              CALL Y4K_DOY (FILEX,LINEXP,RESDAY(NRESAP))
+              CALL Y4K_DOY (RESDAY(NRESAP),FILEX,LINEXP,ERRKEY,3)
             ENDIF
-            IF (IRESI .EQ. 'R' .AND. RESDAY(NRESAP) .LT. YRSIM) THEN
-                CALL ERROR (ERRKEY,3,FILEX,LINEXP)
-            ENDIF
+!            IF (IRESI .EQ. 'R' .AND. RESDAY(NRESAP) .LT. YRSIM) THEN
+!                CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+!            ENDIF
+            
             IF (RESIDUE(NRESAP) .LT. 0.0 .OR. RESIDUE(NRESAP)
      &           .GT. 99999.) THEN
                CALL ERROR (ERRKEY,11,FILEX,LINEXP)
@@ -516,7 +520,7 @@ C
             IF (IFERI .EQ. 'R') THEN
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               !CALL Y2K_DOY(FDAY(NFERT))
-              CALL Y4K_DOY(FILEX,LINEXP,FDAY(NFERT))
+              CALL Y4K_DOY(FDAY(NFERT),FILEX,LINEXP,ERRKEY,3)
             ENDIF
             IF (IFERI .EQ. 'R' .AND. FDAY(NFERT) .LT. YRSIM)  THEN
                CALL ERROR (ERRKEY,3,FILEX,LINEXP)
@@ -667,9 +671,10 @@ C
          IF (IHARI .EQ. 'R') THEN
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
            !CALL Y2K_DOY(HDATE(NHAR))
-           CALL Y4K_DOY(FILEX,LINEXP,HDATE(NHAR))
+           CALL Y4K_DOY(HDATE(NHAR),FILEX,LINEXP,ERRKEY,6)
          ENDIF
-         IF (IHARI .EQ. 'R' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
+!         IF (IHARI .EQ. 'R' .AND. HDATE(NHAR) .LT. YRSIM) GO TO 50
+
 !        Harvested product defaults to 100%
          IF (HPC(NHAR) .LT. -1.E-4) THEN
              HPC(NHAR) = 100.0

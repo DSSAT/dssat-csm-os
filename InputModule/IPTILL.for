@@ -79,11 +79,11 @@ C
             
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !CALL Y2K_DOY(TDATE(NTIL))
-            CALL Y4K_DOY(FILEX,LINEXP,TDATE(NTIL))
+            CALL Y4K_DOY(TDATE(NTIL),FILEX,LINEXP,ERRKEY,3)
 
-            IF (TDATE(NTIL) .LT. YRSIM) THEN
-	             CALL ERROR (ERRKEY,3,FILEX,LINEXP)
-            ENDIF
+!            IF (TDATE(NTIL) .LT. YRSIM) THEN
+!	             CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+!            ENDIF
 
             IF (TDEP(NTIL) .LT. 0) CALL ERROR (ERRKEY,11,FILEX,LINEXP)
             NTIL = NTIL + 1

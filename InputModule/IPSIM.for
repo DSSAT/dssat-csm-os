@@ -186,7 +186,7 @@ C=======================================================================
             ENDIF
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !CALL Y2K_DOY (YRSIM)
-            CALL Y4K_DOY (FILEX,LINEXP,YRSIM)
+            CALL Y4K_DOY (YRSIM,FILEX,LINEXP,ERRKEY,8)
             !Call Error before first weather day (RANGELH(1))
             CALL YR_DOY (YRSIM,YEAR,ISIM)
           ELSE
@@ -434,11 +434,8 @@ C
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !CALL Y2K_DOY (PWDINF)
             !CALL Y2K_DOY (PWDINL)
-            CALL Y4K_DOY (FILEX,LINEXP,PWDINF)
-            CALL Y4K_DOY (FILEX,LINEXP,PWDINL)
-            
-            IF(PWDINF .LT. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
-            IF(PWDINL .LT. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+            CALL Y4K_DOY (PWDINF,FILEX,LINEXP,ERRKEY,9)
+            CALL Y4K_DOY (PWDINL,FILEX,LINEXP,ERRKEY,9)
             
 C
 C           Read SEVENTH line of simulation control
@@ -539,9 +536,9 @@ C
             
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !CALL Y2K_DOY (HLATE)
-            CALL Y4K_DOY (FILEX,LINEXP,HLATE)
+            CALL Y4K_DOY (HLATE,FILEX,LINEXP,ERRKEY,10)
             
-            IF(HLATE .LE. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+!            IF(HLATE .LE. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
             
             IF (HPP   .LT. 0.0)  HPP   = 100.
             IF (HRP   .LT. 0.0)  HRP   = 0.0
@@ -1170,7 +1167,7 @@ D     IPX = 23
             IF (ERRNUM == 0) THEN
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
               !CALL Y2K_DOY (YRSIM)
-              CALL Y4K_DOY (FILEX,LINEXP,YRSIM)
+              CALL Y4K_DOY (YRSIM,FILEX,LINEXP,ERRKEY,1)
               CALL YR_DOY (YRSIM,YEAR,ISIM)
             ENDIF
 

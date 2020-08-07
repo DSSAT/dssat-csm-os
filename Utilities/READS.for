@@ -790,13 +790,15 @@ C=======================================================================
 
       IMPLICIT NONE
 
-      CHARACTER*6 XDAT
+      CHARACTER*6 XDAT,ERRKEY
       REAL        RDAT
       INTEGER     ERRNUM, IDAT, ISIM, YR, YRSIM
+      
+      PARAMETER (ERRKEY = 'RADATE')
 
       CALL YR_DOY(YRSIM, YR, ISIM)
       READ(XDAT(1:6),1000,IOSTAT=ERRNUM) RDAT
-      IF (ERRNUM .NE. 0) CALL ERROR('READA ',2,'FILEA',0)
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,2,'FILEA',0)
  1000 FORMAT(F6.0)
       IDAT = INT(RDAT)
 
@@ -810,7 +812,7 @@ C=======================================================================
       ELSEIF (IDAT .GT. 0 .AND. IDAT .GE. 1000) THEN
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         !CALL Y2K_DOY(IDAT)
-        CALL Y4K_DOY('READA ',1,IDAT)
+        CALL Y4K_DOY(IDAT,'READA ',0,ERRKEY,1)
         
         !CALL FullYear (IDAT, YR, DOY)
         !IDAT = YR*1000 + DOY

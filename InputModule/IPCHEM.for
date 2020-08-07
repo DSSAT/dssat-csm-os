@@ -88,11 +88,11 @@ C    &            CHDEP(NCHEM),CHT(NCHEM)
             
 C  FO 05/07/2020 - Add new Y4K subroutine call to convert YRDOY
 	          !CALL Y2K_DOY (CDATE(NCHEM))
-            CALL Y4K_DOY (FILEX,LINEXP,CDATE(NCHEM))
-
-            IF (CDATE(NCHEM) .LT. YRSIM) THEN
-	             CALL ERROR (ERRKEY,3,FILEX,LINEXP)
-            ENDIF
+            CALL Y4K_DOY (CDATE(NCHEM),FILEX,LINEXP,ERRKEY,3)
+!            IF (CDATE(NCHEM) .LT. YRSIM) THEN
+!	             CALL ERROR (ERRKEY,3,FILEX,LINEXP)
+!            ENDIF
+            
             IF ((CHAMT(NCHEM) .LT. 0.0) .OR.
      &          (CHAMT(NCHEM) .GT. 9999999.)) THEN
                CALL ERROR (ERRKEY,11,FILEX,LINEXP)

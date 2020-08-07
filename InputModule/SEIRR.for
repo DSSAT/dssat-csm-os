@@ -518,7 +518,7 @@ C
 	     YRTEMP = NINT(EFF)
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 	     !CALL Y2K_DOY(YRTEMP)
-       CALL Y4K_DOY(ERRKEY,1,YRTEMP)
+       CALL Y4K_DOY(YRTEMP,'ENTIRR',1,ERRKEY,1)
 	     IF (INDEX('RPW',IIRRI) .GT. 0) THEN
 	       CALL YR_DOY (YRTEMP,YRT,DOYT)
 	       IF (DOYT .GT. 0 .AND. DOYT .LE. 366 .AND. YRT .LT. 3000)
@@ -559,7 +559,7 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 	    YRTEMP = NINT(EFF)
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
       !CALL Y2K_DOY(YRTEMP)
-	    CALL Y4K_DOY(ERRKEY,1,YRTEMP)
+	    CALL Y4K_DOY(YRTEMP,'ENTIRR',0,ERRKEY,1)
 	   IF (INDEX('RPW',IIRRI) .GT. 0) THEN
 	     CALL YR_DOY (YRTEMP,YRT,DOYT)
 	     IF (DOYT .GT. 0 .AND. DOYT .LE. 366 .AND.YRT .LT. 3000) THEN
@@ -629,15 +629,15 @@ C-----------------------------------------------------------------------
      &    10X,'INTERACTIVE DATA ENTRY FOR IRRIGATION',/,
      &    10X,'=====================================')
   250 FORMAT (
-     & 9X,'┌───┬─────────┬─────────────┬──────────────────────────┐',/,
-     & 9X,'│ # │ Date    │ Amount (mm) │    Irrigation Type       │',/,
-     & 9X,'├───┼─────────┼─────────────┼──────────────────────────┤')
+     & 9X,'|---|---------|-------------|--------------------------|',/,
+     & 9X,'| # | Date    | Amount (mm) |    Irrigation Type       |',/,
+     & 9X,'|---|---------|-------------|--------------------------|')
   275 FORMAT (
-     & 9X,'└───┴─────────┴─────────────┴──────────────────────────┘')
+     & 9X,'|---|---------|-------------|--------------------------|')
   285 FORMAT (
      & 9X,'│',I2,1X,'│',I4,1X,I3,1X,'│',F9.1,4X,'│ ',A25,'│')
   295 FORMAT (/9X,
-     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (──┘ = Done) ', $)
+     &     '(E)dit, (A)dd an event, (D)elete, (Q)uit (Enter = Done)',$)
   296 FORMAT (//,9X,
      &    'This option is not available for the current irrigation',/,
      & 9X,'management selection.  Please change selection first.', $)
@@ -655,11 +655,11 @@ C-----------------------------------------------------------------------
   600 FORMAT (/, 9X,'ERROR! Values are out of range',/)
   800 FORMAT (/, 9X,'Please enter entry number to delete ',$)
   850 FORMAT (/, 9X,'Please enter entry number to edit   ',$)
-  900 FORMAT (//,9X,'┌───┬───────────────────────────┐',/,
-     &           9X,'│ # │   Irrigation Type         │',/,
-     &           9X,'├───┼───────────────────────────┤',/,
-     &           10(9X,'│',I2,' │',1X,A25,' │',/),
-     &           9X,'└───┴───────────────────────────┘',//,
+  900 FORMAT (//,9X,'|---|---------------------------|',/,
+     &           9X,'| # |   Irrigation Type         |',/,
+     &           9X,'|---|---------------------------|',/,
+     &           10(9X,'|',I2,' |',1X,A25,' |',/),
+     &           9X,'|---|---------------------------|',//,
      &           9X,'Irrigation type selected ===>',1X,I3,/,
      &           9X,'New type ?               --->  ',$)
  1700 FORMAT (/,15X,'There are more entries .. Press any key ..')
