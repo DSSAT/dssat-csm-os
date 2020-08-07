@@ -223,7 +223,7 @@ C     The components are copied into local variables for use here.
           SELECT CASE(ISECT)
           CASE(0); CALL ERROR (ERRKEY,10,FILEW,LINWTH) !End of file 
           CASE(1)
-            IF(FWY .EQ. 0) THEN
+            IF(FirstWeatherDate .EQ. -99) THEN
               CALL ERROR (ERRKEY,10,FILEW,LINWTH) !Data record 
             ENDIF
           CASE(2); CYCLE                               !End of section 
@@ -783,7 +783,7 @@ C         Read in weather file header.
 !         CHP 1/2/2008
 !         Require date in col 1-5 regardless of header
 ! FO - 06/09/2020 - Update to handle Y4K dates.
-          IF(FWY .GT. 0) THEN
+          IF(FirstWeatherDate .GT. 0) THEN
             READ (LINE,'(I7)',IOSTAT=ERR) YRDOYW
           ELSE
             READ (LINE,'(I5)',IOSTAT=ERR) YRDOYW
