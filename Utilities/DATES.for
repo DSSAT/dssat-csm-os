@@ -95,63 +95,78 @@ C  Input : YRDOY
 C  Output: 
 C=======================================================================
 
-      SUBROUTINE Y4K_DOY(FILE,LINE,YRDOY)
+      SUBROUTINE Y4K_DOY(YRDOY,FILE,LINE,IERRKEY,IERRNUM)
         
       USE ModuleDefs
       IMPLICIT NONE
       
-      CHARACTER*6  ERRKEY,SECTION
-      CHARACTER*12 FILE
-      CHARACTER*78 MSG(4)
+      CHARACTER*6   ERRKEY,IERRKEY
+      CHARACTER*(*) FILE
+      CHARACTER*78  MSG(4)
       
-      INTEGER DOY,YR,YRDOY,LINE
-      INTEGER NWDATE
+      INTEGER DOY,YR,YRDOY,LINE,IERRNUM
+      INTEGER NEWYRDOY,CROVER
       
       PARAMETER (ERRKEY = 'Y4KDOY')
+      PARAMETER (CROVER = 25)
       
-      
-      IF (FWY .GT. 0 .AND. YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
+!-----------------------------------------------------------------------
+!    Convert input date (YRDOY) to 7-digit
+!-----------------------------------------------------------------------  
+      IF (FirstWeatherDate .GT. 0 .AND. 
+     &    YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
         
         !Convert dates
-        NWDATE = INT(RANGELH(1)/100000) * 100000 + YRDOY
+        NEWYRDOY = INT(FirstWeatherDate/100000) * 100000 + YRDOY
         
-        IF(NWDATE .GE. RANGELH(1)) THEN
-          YRDOY = NWDATE
+        IF(NEWYRDOY .GE. FirstWeatherDate) THEN
+          YRDOY = NEWYRDOY
         ELSE
-          YRDOY = INT(RANGELH(2)/100000) * 100000 + YRDOY
+          YRDOY = INT((FirstWeatherDate+99000)/100000) * 100000 + YRDOY
         ENDIF
         
-        !FO - This error check was moved to the input variables (YRDOY).
-!        IF(YRDOY .LT. NSDATE) THEN
-!          CALL ERROR (ERRKEY,15,FILE,0)
-!        ENDIF
-        
-        IF(YRDOY .GT. RANGELH(2)) THEN
-          CALL ERROR (ERRKEY,18,FILE,LINE)
-        ELSE IF(YRDOY .GT. NSDATE + CROVER * 1000) THEN
-          WRITE(MSG(1),*) "WARNING - Y4K - Cross-over date"
-          WRITE(MSG(2),*) "Correct the following YRDOY:"
-          WRITE(MSG(3),*) YRDOY
-          CALL WARNING(3,ERRKEY,MSG)
+!-----------------------------------------------------------------------
+!    Check the new YRDOY converted
+!-----------------------------------------------------------------------          
+        ! Error Checking
+        IF(YRDOY .LT. FirstWeatherDate .OR. 
+     &     YRDOY .GT. FirstWeatherDate+99000) THEN
+          CALL ERROR (ERRKEY,1,FILE,LINE)
         ENDIF
         
-      ELSE IF (YRDOY .LE. 99365) THEN
+        IF(YRDOY .LT. NEWSDATE) THEN
+          CALL ERROR (IERRKEY,IERRNUM,FILE,LINE)
+        ENDIF
+        
+        IF(YRDOY .GT. NEWSDATE + CROVER * 1000) THEN
+          WRITE(MSG(1),*) "WARNING - Y4K Date - Cross-over"
+          WRITE(MSG(2),*) "Please check file: ",FILE
+          WRITE(MSG(3),*) "Line: ",LINE
+          WRITE(MSG(4),*) "Date: ",YRDOY
+          CALL WARNING(4,IERRKEY,MSG)
+        ENDIF
+        
+!-----------------------------------------------------------------------
+!    Convert input date (YRDOY) to 7-digit using the old code
+!-----------------------------------------------------------------------           
+      ELSE IF (YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
         YR  = INT(YRDOY / 1000)
         DOY = YRDOY - YR * 1000
         IF (YRDOY .GT. 0) THEN
 !     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
 !     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
 !     CHP 07/06/2017 - change "cross-over" year from 2020 to 2025
-          IF (YR .LE. CROVER) THEN
+          IF (YR .LE. 25) THEN
             YRDOY = (2000 + YR) * 1000 + DOY
           ELSE
             YRDOY = (1900 + YR) * 1000 + DOY
           ENDIF 
         ENDIF
+        
+        IF(YRDOY .LT. NEWSDATE) THEN
+          CALL ERROR (IERRKEY,IERRNUM,FILE,LINE)
+        ENDIF
       ENDIF
-      
-      !WRITE(*,*) '                        FILE        LINE       YRDOY'
-      !WRITE(*,*) 'OUTPUT Y4K_DOY: ',FILE,LINE, YRDOY
       
       END SUBROUTINE Y4K_DOY
 
