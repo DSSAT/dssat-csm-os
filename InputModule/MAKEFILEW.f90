@@ -209,11 +209,6 @@
         !Error - If both (SM, PLT) are not found
         CALL ERROR (ERRKEY,5,FILEX,LNUM)
       ENDIF
-      
-      WRITE(*,*) 'WSTA: ',WSTA
-      WRITE(*,*) 'SDATE: ',SDATE
-      WRITE(*,*) 'WTHER: ',WTHER
-      WRITE(*,*) 'PDATE: ',PDATE
 
 !-----------------------------------------------------------------------
 !    Converts SDATE or PDATE to YR and DOY
@@ -228,9 +223,7 @@
       
       !FO - Converts YRDOY to YR and DOY  
       YR  = INT(YRDOY / 1000)
-      DOY = YRDOY - YR * 1000 
-      
-      WRITE(*,*) 'YR: ',YR, 'DOY:',DOY    
+      DOY = YRDOY - YR * 1000   
       
 !-----------------------------------------------------------------------
 !    Create WTH file name and path
@@ -258,8 +251,6 @@
       ELSE
          CALL ERROR (ERRKEY,16,FILEX,LINEXP)
       ENDIF
-      
-      WRITE(*,*) 'FILEW:',FILEW
             
 !     Check weather filename in current directory
       INQUIRE (FILE = FILEW,EXIST = FEXIST)
