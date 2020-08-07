@@ -83,6 +83,7 @@ S        Suleiman-Ritchie                                                     IB
 *Simulation/Management/Planting
 @CDE     DESCRIPTION                                                          SO
 A        Automatic                                                            IB
+F        Automatic, force planting on last day of window                      IB
 R        On reported date                                                     IB
 
 *Simulation/Management/Irrigation
@@ -181,6 +182,7 @@ PTSUB    PT   SUBSTOR-Potato
 RICER    RI   CERES-Rice
 SCCAN    SC   CANEGRO-Sugarcane
 SCCSP    SC   CASUPRO-Sugarcane
+SCSAM    SC   SAMUCA-Sugarcane
 SGCER    SG   CERES-Sorghum
 SWCER    SW   CERES-Sweetcorn
 PIALO    PI   ALOHA-Pineapple
@@ -193,4 +195,3 @@ PRFRM    BR   FORAGE-Brachiaria
 PRFRM    BH   FORAGE-Bahiagrass
 PRFRM    G0   FORAGE-Generic
 PRFRM    AL   FORAGE-Alfalfa
-PRFRM    RG   PRFRM-Ryegrass

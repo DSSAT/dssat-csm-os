@@ -210,7 +210,7 @@
       REAL          AMDAYM        ! Anthesis-maturity period,meas  d
       REAL          AMDAYS        ! Anthesis-maturity period,sim   d
       REAL          ANDEM         ! Crop N demand                  kg/ha
-      CHARACTER*128 ARG           ! Argument component             text
+      CHARACTER*250 ARG           ! Argument component             text
       INTEGER       ARGLEN        ! Argument component length      #
       REAL          ASTAGE        ! Stage,start of anthesis/silk   #
       REAL          ASTAGEND      ! Stage at end of anthesis       #
@@ -236,7 +236,7 @@
       REAL          CARBOAT       ! Carbohydrate available,tops    g/p
       REAL          CARBOC        ! Carbohydrate assimilated,cum   g/p
       INTEGER       CCOUNTV       ! Counter for days after max lf# #
-      CHARACTER*120 CFGDFILE      ! Configuration directory+file   text
+      CHARACTER*250 CFGDFILE      ! Configuration directory+file   text
       CHARACTER*1   CFLFAIL       ! Control flag for failure       text
       CHARACTER*1   CFLHEAD       ! Control flag to write headers  code
       CHARACTER*1   CFLINIT       ! Control flag for initiation    text
@@ -280,8 +280,8 @@
       CHARACTER*1   CSWDIS        ! Control switch,disease         code
       INTEGER       CSYDOY        ! Yr+Doy output from function    #
       INTEGER       CSYEARDOY     ! Cropsim function ouptut        #
-      CHARACTER*93  CUDIRFLE      ! Cultivar directory+file        text
-      CHARACTER*93  CUDIRFLP      ! Cultivar directory+file,prev   text
+      CHARACTER*250 CUDIRFLE      ! Cultivar directory+file        text
+      CHARACTER*250 CUDIRFLP      ! Cultivar directory+file,prev   text
       CHARACTER*12  CUFILE        ! Cultivar file                  text
       REAL          CUMDEP        ! Cumulative depth               cm
       REAL          CUMDU         ! Cumulative development units   #
@@ -352,8 +352,8 @@
       REAL          DUL(20)       ! Drained upper limit for soil   #
       INTEGER       DYNAMIC       ! Program control variable       text
       INTEGER       DYNAMICI      ! Module control,internal        code
-      CHARACTER*64  ECDIRFLE      ! Ecotype directory+file         text
-      CHARACTER*64  ECDIRFLP      ! Ecotype directory+file,prev    text
+      CHARACTER*250 ECDIRFLE      ! Ecotype directory+file         text
+      CHARACTER*250 ECDIRFLP      ! Ecotype directory+file,prev    text
       CHARACTER*12  ECFILE        ! Ecotype filename               text
       CHARACTER*6   ECONO         ! Ecotype code                   text
       CHARACTER*6   ECONOP        ! Ecotype code,previous          text
@@ -391,14 +391,14 @@
       LOGICAL       FEXISTA       ! File A existence indicator     code
       LOGICAL       FEXISTT       ! File T existence indicator     code
       LOGICAL       FFLAG         ! Temp file existance indicator  code
-      CHARACTER*120 FILEA         ! Name of A-file                 text
-      CHARACTER*107 FILEADIR      ! Name of A-file directory       text
-      CHARACTER*120 FILEIO        ! Name of input file,after check text
-      CHARACTER*120 FILEIOIN      ! Name of input file             text
+      CHARACTER*250 FILEA         ! Name of A-file                 text
+      CHARACTER*250 FILEADIR      ! Name of A-file directory       text
+      CHARACTER*250 FILEIO        ! Name of input file,after check text
+      CHARACTER*250 FILEIOIN      ! Name of input file             text
       CHARACTER*3   FILEIOT       ! Type of input file             text
       INTEGER       FILELEN       ! Length of file name            #
-      CHARACTER*120 FILENEW       ! Temporary name of file         text
-      CHARACTER*120 FILET         ! Name of T-file                 text
+      CHARACTER*250 FILENEW       ! Temporary name of file         text
+      CHARACTER*250 FILET         ! Name of T-file                 text
       REAL          FLN           ! Final leaf number,Aitken calc. #
       REAL          FLNMODEL      ! Final leaf number              #
       CHARACTER*1   FNAME         ! File name switch (N->standard) code
@@ -813,7 +813,7 @@
       REAL          PARIUEM       ! PARUE,actual,at maturity       g/MJ
       REAL          PARUR         ! PAR utilization effic,reprod   g/MJ
       REAL          PARUV         ! PAR utilization effic,veg      g/MJ
-      CHARACTER*80  PATHCR        ! Path to genotype files         text
+      CHARACTER*250 PATHCR        ! Path to genotype files         text
       INTEGER       PATHL         ! Path length                    #
       REAL          PCARB         ! Potential carbon fixation      g/p
       REAL          PD(0:10)      ! Phase durations                deg.d
@@ -1049,8 +1049,8 @@
       REAL          SNPCMN(0:9)    ! Stem minimum N conc,stage     %
       REAL          SNPCS(0:9)    ! Stem standard N conc,stage     %
       INTEGER       SPDATM        ! Spike emergence date,measured  #
-      CHARACTER*64  SPDIRFLE      ! Species directory+file         text
-      CHARACTER*64  SPDIRFLP      ! Species directory+file,last    text
+      CHARACTER*250 SPDIRFLE      ! Species directory+file         text
+      CHARACTER*250 SPDIRFLP      ! Species directory+file,last    text
       CHARACTER*12  SPFILE        ! Species filename               text
       REAL          SRAD          ! Solar radiation                MJ/m2
       REAL          SRAD20        ! Solar radiation av,20 days     MJ/m2
@@ -1756,7 +1756,8 @@
 
         ! Planting information
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'PLANT',iplti)
-        IF(IPLTI.EQ.'A')THEN
+!       IF(IPLTI.EQ.'A')THEN
+        IF(IPLTI.EQ.'A' .OR. IPLTI.EQ.'F')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
           !PWDINF = CSYEARDOY(pwdinf)
           CALL Y4K_DOY(pwdinf,FILEIO,0,ERRKEY,3)
@@ -1811,9 +1812,14 @@
           ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
           ! 09/28/2009 CHP need to account for planting date >> simulation date.
           !  IF (FILEIOT(1:2).EQ.'DS') THEN
-        
-          IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
-            PLYEAR = YEAR
+          !LPM 07/17/20 - account for simulation date when is a year before planting date
+          !Avoid wrong value of yeardoyharf
+          IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
+              IF (YEAR < PLYEARREAD) THEN
+                  PLYEAR = PLYEARREAD
+              ELSE
+                  PLYEAR = YEAR
+              ENDIF
           ENDIF
 
           IF (PLDAY.GE.DOY) THEN
@@ -2499,7 +2505,8 @@
         WRITE(fnumwrk,'(A23,A10)')'  EXPERIMENT           ',excode
         WRITE(fnumwrk,'(A21, I3)')'  TREATMENT          ',tn
         WRITE(fnumwrk,'(A23,I1)') '  CROP COMPONENT       ',CN
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           WRITE(fnumwrk,'(A23,I7)') '  PLANTING DATE TARGET ',YEARPLTP
         ELSE  
           WRITE(fnumwrk,'(A40)')
@@ -3517,7 +3524,9 @@
         ! YEARPLTCSM established by CSM;brought across in argument list.
         ! LAH 29/06/11 Added automatic as well
         IF (FILEIOT.EQ.'DS4') THEN
-          IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+!         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
+     &       (INDEX('FQN',RNMODE) > 0)) THEN
             YEARPLTP = YEARPLTCSM
           ENDIF  
         ENDIF
@@ -5000,7 +5009,8 @@
      &       LFWT*(1.0-LSHFR)*RSCLX*CUMDU/(Pd(1)+pd(2)+pd(3)+pd(4)))
             LSHRSWT = AMIN1(RSWT-LLRSWT,
      &       LFWT*LSHFR*RSCLX*CUMDU/(Pd(1)+pd(2)+pd(3)+pd(4)))
-            IF (STWT+CHWT.GT.0.0) THEN
+!           IF (STWT+CHWT.GT.0.0) THEN
+            IF (STWT .GT. 1.E-6 .AND. CHWT .GT. 1.E-6) THEN
               STRSWT = (RSWT-LLRSWT-LSHRSWT)*(STWT-CHWT)/STWT
               CHRSWT = (RSWT-LLRSWT-LSHRSWT)*CHWT/STWT
             ELSE
@@ -6038,7 +6048,12 @@
           IF (ISTAGE.EQ.5.AND.ISTAGEP.EQ.4) THEN
             WRITE(fnumwrk,*)'Start of linear kernel growth    '
             WRITE(fnumwrk,*)' Original kernel growth rate (G2) ',g2
-            G2 = (G2KWT-(GRWT/GRNUM)*1000.0) / (PD(5)*(6.0-XSTAGE))
+!           chp handle zero divide
+            IF (GRNUM .GT. 1.E-6) THEN
+              G2 = (G2KWT-(GRWT/GRNUM)*1000.0) / (PD(5)*(6.0-XSTAGE))
+            ELSE
+              G2 = (G2KWT) / (PD(5)*(6.0-XSTAGE))
+            ENDIF
             WRITE(fnumwrk,*)' Adjusted kernel growth rate (G2) ',g2
             WRITE(fnumwrk,*)' (Adjustment because growing at lag rate',
      &      ' for overlap into linear filling period)'

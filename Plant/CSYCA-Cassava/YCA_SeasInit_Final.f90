@@ -166,7 +166,8 @@
         WRITE(fnumwrk,'(A26,I1)') ' '
         WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
         WRITE(fnumwrk,'(A26,A6,2X,A16)')'  CULTIVAR                ',VARNO,VRNAME
-        IF (IPLTI /= 'A') THEN
+!       IF (IPLTI /= 'A') THEN
+        IF (IPLTI /= 'A' .AND. IPLTI /= 'F') THEN
             WRITE(fnumwrk,'(A23,I7)')'  PLANTING DATE TARGET:',PLYEARDOYT
         ELSE
             WRITE(fnumwrk,'(A23)')'  AUTOMATIC PLANTING   '              
