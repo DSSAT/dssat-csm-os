@@ -126,7 +126,8 @@
         STAI = STAI + STAIG - STAIS                                                                                    !EQN 467
         
         SAID = STAI+LPEAI                                                                                              !EQN 468
-        CAID = LAI + SAID                                                                                              !EQN 469
+        !LPM 24JUL2020 Keep CAID just as LAI
+        CAID = LAI                                                                                                     !EQN 469
         
         !-----------------------------------------------------------------------
         !         Update height
