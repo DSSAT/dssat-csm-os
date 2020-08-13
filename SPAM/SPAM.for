@@ -294,12 +294,18 @@ C       and total potential water uptake rate.
           ELSE
             ET_ALB = MSALB
           ENDIF
-
-          CALL PET(CONTROL, 
-     &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
-     &      EORATIO, !Needed by Penman-Monteith
-     &      CANHT,   !Needed by dynamic Penman-Monteith
-     &      EO)      !Output
+          
+          SELECT CASE (CONTROL % MODEL(1:5))
+            CASE ('CSYCA')    !CSYCA cassava
+               EO =  YCA_VPD % get_YCA_EOP()
+                
+          CASE DEFAULT
+           CALL PET(CONTROL, 
+     &       ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
+     &       EORATIO, !Needed by Penman-Monteith
+     &       CANHT,   !Needed by dynamic Penman-Monteith
+     &       EO)      !Output
+          END SELECT
 
 !-----------------------------------------------------------------------
 !         POTENTIAL SOIL EVAPORATION
@@ -386,18 +392,11 @@ C       and total potential water uptake rate.
 !
 !              TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
 !              EOP = EOP * TRAT
-            SELECT CASE (CONTROL % MODEL(1:5))
-            CASE ('CSYCA')    !CSYCA cassava
-               EOP =  YCA_VPD % get_YCA_EOP()
-                
-            CASE DEFAULT
-!             For all models except ORYZA
-!             For all models except CSYCA-Manihot
+
               CALL TRANS(RATE, 
      &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
      &        WINDSP, XHLAI,                              !Input
      &        EOP)                                        !Output
-            END SELECT
             
           ELSE
             EOP = 0.0
