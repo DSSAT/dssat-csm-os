@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_HstFail ( &   
-        BRSTAGE     , DOY         , STGYEARDOY  , SW          , YEAR        & 
+        BRSTAGE     , DOY         , STGYEARDOY  , SW          , YEAR        , LAI       & 
         )
         
         USE ModuleDefs
@@ -16,8 +16,8 @@
         
         IMPLICIT NONE
         
-        INTEGER DOY         , STGYEARDOY(0:19)            , YEAR 
-        REAL    BRSTAGE     , SW(NL)        
+        INTEGER DOY         , STGYEARDOY(0:19)            , YEAR  
+        REAL    BRSTAGE     , SW(NL)      , LAI  
         
     ! Harvesting conditions
         !IF (IHARI == 'A' .AND. CUMDU >= PSTART(MSTG)) THEN !LPM 04MAR15 MSTG TO PSX

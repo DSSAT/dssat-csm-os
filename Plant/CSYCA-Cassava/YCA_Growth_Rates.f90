@@ -12,8 +12,8 @@
     
     SUBROUTINE YCA_Growth_Rates ( &
         CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , PARIP       , &
-        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF  &                                !LPM 26MAR2016 RLV added
-        )
+        PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , SRAD        , SLPF        , &                                !LPM 26MAR2016 RLV added
+        LAI         )
         USE ModuleDefs
         USE YCA_First_Trans_m
         USE YCA_Control_Photosyntesis
@@ -25,7 +25,7 @@
         REAL    CO2         , EOP         , KCAN        , NFP         , PARIP       , PARIPA      , TDEW        , TMAX        
         REAL    TMIN        , TRWUP       , RLV(NL)     , SRAD        , SLPF
         REAL    CSVPSAT     , TFAC4       , YVALXY                                    ! Real function calls !LPM 19SEP2017 Added tfac5
-        REAL    availableCH2O
+        REAL    availableCH2O , LAI
         
         CHARACTER(LEN=1) ISWDIS      , ISWNIT      , ISWWAT      
 

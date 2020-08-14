@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Growth_Part ( &
-        BRSTAGE     , ISWNIT      , NFP         &
+        BRSTAGE     , ISWNIT      , NFP        , LAI          &
         )
     
         USE ModuleDefs
@@ -20,7 +20,7 @@
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         REAL    :: Lcount                   ! counter for iterations in leafs (Lcount)
         CHARACTER(LEN=1) ISWNIT      
-        REAL    BRSTAGE     , NFP         
+        REAL    BRSTAGE     , NFP      , LAI    
 
         REAL    CSYVAL      , TFAC4     , TFAC5                                                           ! Real function call !LPM 19SEP2017 Added tfac5
         

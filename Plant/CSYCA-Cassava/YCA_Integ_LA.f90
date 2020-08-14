@@ -9,7 +9,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Integ_LA ( &
-        CAID        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        , BRSTAGE    & 
+        LAI        , CANHT       , DEPMAX      , DLAYR       , NLAYR       , RLV        , BRSTAGE    & 
         )
         
         USE ModuleDefs
@@ -23,7 +23,7 @@
         INTEGER :: BR                      ! Index for branch number/cohorts#          ! (From SeasInit)  
         INTEGER :: LF                      ! Loop counter leaves            #          !LPM 21MAR15 to add a leaf counter
         
-        REAL    CAID        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
+        REAL    LAI        , CANHT       , DEPMAX      , DLAYR(NL)   , RLV(NL)    , BRSTAGE     
         REAL    :: leafAreaSenesced                 !PLASTMP Leaf area senesced,temporary   cm2/p      ! (From Integrate) 
        
         !-----------------------------------------------------------------------
@@ -126,8 +126,7 @@
         STAI = STAI + STAIG - STAIS                                                                                    !EQN 467
         
         SAID = STAI+LPEAI                                                                                              !EQN 468
-        !LPM 24JUL2020 Keep CAID just as LAI
-        CAID = LAI                                                                                                     !EQN 469
+        CAID = LAI + SAID                                                                                                    !EQN 469
         
         !-----------------------------------------------------------------------
         !         Update height

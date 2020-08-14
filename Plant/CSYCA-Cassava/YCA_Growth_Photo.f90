@@ -10,7 +10,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Growth_Photo ( &
-        CO2         , NFP         , SLPF        , SRAD        , TAIRHR      , TDEW        , TMAX        , TMIN         &
+        CO2         , NFP         , SLPF        , SRAD        , TAIRHR      , TDEW        , TMAX        , TMIN         , LAI      &
         )
         
         USE ModuleDefs
@@ -21,7 +21,7 @@
         IMPLICIT  NONE
         
         REAL    CO2         , NFP         , SLPF        , SRAD        , TAIRHR(24)  , TDEW        , TMAX        , TMIN        
-        REAL    CSVPSAT                                                                            ! REAL function call
+        REAL    CSVPSAT     , LAI                                                                       ! REAL function call
         real availableCH2O
           
         SAVE

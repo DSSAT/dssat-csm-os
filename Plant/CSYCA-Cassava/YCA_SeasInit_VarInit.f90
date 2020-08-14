@@ -8,7 +8,7 @@
 !**********************************************************************************************************************
     
     SUBROUTINE YCA_SeasInit_VarInit( &
-        BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
+        BRSTAGE     , LAI         , CANHT       , DEWDUR      , LAIL        , LAILA       , NFP         , PARIP       , &
         PARIPA      , RESCALG     , RESLGALG    , RESNALG     , RLV         , SENCALG     , SENLALG     , SENNALG     , &
         STGYEARDOY  , TRWUP       , UH2O        , UNH4        , UNO3         &
         )  
@@ -20,7 +20,7 @@
         
         INTEGER STGYEARDOY(0:19)            
         
-        REAL    BRSTAGE     , CAID        , CANHT       , DEWDUR      , LAIL(30)    , LAILA(30)   , NFP         , PARIP       
+        REAL    BRSTAGE     , LAI        , CANHT       , DEWDUR      , LAIL(30)    , LAILA(30)   , NFP         , PARIP       
         REAL    PARIPA      , RESCALG(0:NL)             , RESLGALG(0:NL)            , RESNALG(0:NL)             , RLV(NL)     
         REAL    SENCALG(0:NL)             , SENLALG(0:NL)             , SENNALG(0:NL)             , TRWUP       , UH2O(NL)    
         REAL    UNH4(NL)    , UNO3(NL)    
@@ -36,7 +36,7 @@
         amtnit = 0.0
         andem = 0.0
         brnumst = 1.0
-        caid = 0.0
+        lai = 0.0
         canht = 0.0
         canhtg = 0.0
         carboadj = 0.0

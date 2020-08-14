@@ -42,7 +42,8 @@ Module YCA_First_Trans_m
     REAL    :: BRNUMST(0:PSX)          ! Branch number/shoot (>forking) #          ! (From RunInit) !LPM 23MAR15 to have the apex number by branch level   
     REAL    :: BRNUMSTPREV(0:PSX)      ! Branch number/shoot,previous   #          ! (From Output)  !LPM 23MAR15 to have the apex number by branch level      
     INTEGER :: BROLDESTA               ! Br with Leaf  ,oldest active   #          ! (From Integrate)
-    REAL    :: BRSTAGEPREV             ! Branching stage,previous       #          ! (From SeasInit)  
+    REAL    :: BRSTAGEPREV             ! Branching stage,previous       #          ! (From SeasInit)
+    REAL    :: CAID                    ! Canopy leaf area index         #          ! (From SeasInit)
     REAL    :: CANHTG                  ! Canopy height growth           cm         ! (From SeasInit)  
     REAL    :: CARBOADJ                ! Ch2o adjustment for LAI change g/p        ! (From SeasInit)  
     REAL    :: CARBOBEG                ! Ch2o available,beginning day   g/p        ! (From SeasInit)  
@@ -344,7 +345,7 @@ Module YCA_First_Trans_m
     INTEGER :: L1                      ! Loop counter                   #          ! (From SeasInit)  
     INTEGER :: L2                      ! Loop counter                   #          ! (From Output)    
     REAL    :: LA1S                    ! Area of leaf 1,standard        cm2        ! (From SeasInit)  
-    REAL    :: LAI                     ! Leaf area index                #          ! (From SeasInit)  
+    !REAL    :: LAI                     ! Leaf area index                #          ! (From SeasInit)  
     REAL    :: LAIA                    ! Leaf area index,active         #          ! (From Output)    
     INTEGER :: LAIDCOL                 ! Leaf area index column         #          ! (From Output)    
     REAL    :: LAIPREV                 ! Leaf area index,previous day   #          ! (From SeasInit)  
@@ -1227,6 +1228,7 @@ Module YCA_First_Trans_m
         amtnit = 0.0
         andem = 0.0
         brnumst = 1.0
+        caid = 0.0
         canhtg = 0.0
         carboadj = 0.0
         carbobeg = 0.0
@@ -1370,7 +1372,6 @@ Module YCA_First_Trans_m
         hyeardoy = -99
         idetgnum = 0
         irramtc = 0.0
-        lai = 0.0
         laiprev = 0.0
         laistg = 0.0
         laix = 0.0
