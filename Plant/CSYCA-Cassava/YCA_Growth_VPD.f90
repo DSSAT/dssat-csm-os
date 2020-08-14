@@ -32,13 +32,13 @@ Module YCA_Growth_VPD
         
         REAL, DIMENSION(TS) ::   TAIRHR, PARHR   , RADHR  , RHUMHR  , VPDHR ! These are all declared in ModuleDefs
         REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
-        REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
+        REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN, XELEV
         REAL    VPDFPPREV   , VPDMAXHRPREV
         REAL    CSVPSAT                                                                            ! REAL function
         REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
         REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
         INTEGER hour                                                                                  ! Loop counter
-        REAL ALBEDO
+        REAL ALBEDO , PATM
         REAl VPDFP, INTEG_1, INTEG_2
         
         SAVE
@@ -55,6 +55,7 @@ Module YCA_Growth_VPD
         SNUP = WEATHER % SNUP
         SNDN   = WEATHER % SNDN
         SRAD   = WEATHER % SRAD
+        XELEV  = WEATHER % XELEV
         MSALB  = SOILPROP% MSALB
         ! Reference ET calculated hourly using the Priestley-Taylor formulation based on the calculated hourly air temperature, TAIRHR
         AlphaPT = 1.26                                                               ! Priestley-Taylor advectivity constant, ?. 
@@ -67,12 +68,13 @@ Module YCA_Growth_VPD
         
         ! Calculate the hourly variables, and reference transpiration using formulae and constants from http://agsys.cra-cin.it/tools
         ! Integrate the hourly data for the day.
+        PATM = 101.3 * ((293.0 - 0.0065 * XELEV)/293.0) ** 5.26 !kPa !     Atmospheric pressure (ASCE Standard Eq. 3)
         ET0DAY = 0.0
         DO hour = 1,TS !
             DeltaVP = 4098 * (0.6108 * EXP(17.27 * TAIRHR(hour)/(TAIRHR(hour) + 237.3)))/((TAIRHR(hour) + 237.3)**2)
                                                                                      ! Slope of the saturation vapor pressure–temperature relation, delta (kPa/°C).
             LambdaLH = 2.501 - 0.002361 * TAIRHR(hour)                                  ! Latent heat of vaporization of water, lambda (MJ/kg)
-            GammaPS = 0.001013 * 101.325 / (0.622 * LambdaLH)                        ! Psychrometric constant, gamma (kPa/°C)
+            GammaPS = 0.001013 * PATM / (0.622 * LambdaLH)                        ! Psychrometric constant, gamma (kPa/°C)
                                      ! The figure for the specific heat of moist air at constant pressure (Cp = 0.001013 MJ/kg/°C) is correct.
                                      ! GammaPS is affected by atmospheric pressure (101.325 kPa), so it should be adjusted to take account 
                                      ! of the site's elevation.
