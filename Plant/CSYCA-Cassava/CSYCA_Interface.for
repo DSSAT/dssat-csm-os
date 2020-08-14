@@ -42,7 +42,7 @@ C=======================================================================
       REAL NSTRES, XLAI, NFP, MSALB, ALBEDOS                            ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS 
       REAL DAYL, RWUPM, RAIN, RWUMX, SRFTEMP, TWILEN                    ! MF 26OC14 REPLACED PORMIN WITH RWUMP
       REAL CANHT, EO, WINDSP, PARIP, PARIPA   
-      REAL BRSTAGE, CAID                                                ! MF 26OC14 REPLACED GSTAGE WITH BRSTAGE
+      REAL BRSTAGE, LAI                                                ! MF 26OC14 REPLACED GSTAGE WITH BRSTAGE
       REAL TAIRHR(TS), TDEW, SLPF
 !      REAL LAIL, LAILA, TWILEN
 
@@ -209,7 +209,7 @@ C-----------------------------------------------------------------------
      & TOMINFOM, TOMINSOM, TOMINSOM1, TOMINSOM2, TOMINSOM3,!N components
      & YRPLT, HARVFRAC,                                    !Pl.date         !LPM 06MAR2016 Use YRPLT instead of YEARPLTCSM 
      & PARIP, PARIPA, EOP, EP, ET, TRWUP, ALBEDOS,         !Resources       ! MF 26OC14 REPLACED ALBEDO WITH ALBEDOS
-     & CAID, KCAN, KEP,                                    !States       
+     & LAI, KCAN, KEP,                                    !States           !LPM 14AUG20 use LAI instead of CAID
      & RLV, NFP, RWUPM, RWUMX, CANHT, LAIL, LAILA,         !States          ! MF 26OC14 REPLACED PORMIN WITH RWUPM
      & UNO3, UNH4, UH2O,                                   !Uptake       
      & SENCALG, SENNALG, SENLALG,                          !Senescence   
@@ -220,7 +220,7 @@ C-----------------------------------------------------------------------
       ! MF 26OC14 There are 92 actual variables in the call to CSCAS. The only variables that need to be passed are the dummy variables of
       !    CSCAS_Interface of which there are only 31. The others can be passed in a Module (20JA15 still to do).
 
-      XLAI   = CAID
+      XLAI   = LAI
       NSTRES = NFP
 
       STGDOY = STGYEARDOY

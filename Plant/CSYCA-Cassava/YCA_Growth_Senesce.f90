@@ -7,7 +7,7 @@
 ! Subroutine YCA_Growth_Senesce calculates senescence and remobilization.
 !***************************************************************************************************************************
     SUBROUTINE YCA_Growth_Senesce ( &
-        ISWNIT      , ISWWAT,     BRSTAGE      & 
+        ISWNIT      , ISWWAT,     BRSTAGE      , LAI       & 
         )
     
         USE YCA_First_Trans_m
@@ -21,7 +21,8 @@
         REAL    :: Bcount                  ! counters for iterations in branches (Bcount)
         CHARACTER(LEN=1) ISWNIT      , ISWWAT
         REAL BRSTAGE
-        REAL    :: LAPSTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Growth)    
+        REAL    :: LAPSTMP                 ! Leaf area senesced,temporary   cm2/p      ! (From Growth)
+        REAL LAI
     
         !-----------------------------------------------------------------------
         !           Calculate senescence of leaves,stems,etc..

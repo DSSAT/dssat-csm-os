@@ -14,7 +14,7 @@
         SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
         UH2O        , &
         !WEATHER     ,                                                                                                       ! MF WEATHER needed for VPD 
-        WINDSP      , YEAR        , ST          &    !LPM20MAR2016 To consider ST for germination
+        WINDSP      , YEAR        , ST         , LAI          &    !LPM20MAR2016 To consider ST for germination
         )
         
         USE ModuleDefs
@@ -34,6 +34,7 @@
         REAL    SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       , UH2O(NL)    , WINDSP      
         REAL    ST(NL)                                  !LPM20MAR2016 To consider ST for germination
         REAL    CSVPSAT     , TFAC4                     ! Real function call.  !LPM 19SEP2017 Added tfac5
+        REAL    LAI
         
         CHARACTER(LEN=1) IDETG       , ISWWAT      
         
