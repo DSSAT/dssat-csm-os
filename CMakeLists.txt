@@ -355,7 +355,6 @@ set(
         "Plant/CSYCA-Cassava/YCA_Control_Leaf.f90"
         "Plant/CSYCA-Cassava/YCA_Control_Photosynthesis.f90"
         "Plant/CSYCA-Cassava/YCA_Control_Plant.f90"
-        "Plant/CSYCA-Cassava/YCA_Control_VPDEffect.f90"
         "Plant/CSYCA-Cassava/YCA_First_Trans_m.f90"
         "Plant/CSYCA-Cassava/YCA_Formats_m.f90"
         "Plant/CSYCA-Cassava/YCA_Growth.f90"
