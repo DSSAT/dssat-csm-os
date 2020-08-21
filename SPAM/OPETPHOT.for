@@ -13,7 +13,7 @@ C=======================================================================
       SUBROUTINE OpETPhot(CONTROL, ISWITCH,
      &   PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &   PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,        !Output
+     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CWSHn, CWSLn,        !Output
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
@@ -21,12 +21,13 @@ C=======================================================================
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
+C     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
 CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
      &        AGEQESLN, CO2QESLN, QEFFSLN,
 CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
-     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN,RNn,
+     &    PARn,RADn, CISLn, CISHn,C2SHn,C2SLn) !Output
 CSVC
 
 
@@ -55,7 +56,7 @@ CSVC CHARACTER*1  MEEVP
       REAL SLWSLN, SLWSHN, PNLSLN, PNLSHN, LMXSLN, LMXSHN
       REAL TGRO(TS), TGROAV
 !           changed from 24 to TS by Bruce Kimball on 9JAN17
-      REAL Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn, CSLnn,
+      REAL Enoon, Tnoon, ETNOON, WINDN, TCANn, CWSHn, CWSLn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit(3), TSRFN(3), CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN(3,1), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3,1),
@@ -63,12 +64,12 @@ CSVC CHARACTER*1  MEEVP
 C         previous five output lines added by Bruce Kimball DEC14
       Real TGROnn,TGROnit,TAnn,TAnit,TGRODY
 C           previous line added by Bruce Kimball on 9MAR15
-      Real RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
+      Real RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,C2SHn,C2SLn
 C       preveious line added by BAK on 10DEC2015
-      real  AGEQESLN, CO2QESLN, QEFFSLN
+      real  AGEQESLN, CO2QESLN, QEFFSLN, RNn, PARn, RADn
 
 CSVC      REAL DAYG,DAYLH,DAYSH,DAYRN !Output
-      REAL DAYG,DAYLH,DAYSH,DAYRN !Output
+      REAL DAYG,DAYLH,DAYSH,DAYRN,CISHn,CISLn,VPDSL,VPDSH !Output
 CSVC
       LOGICAL FEXIST
 
@@ -123,23 +124,14 @@ CSVC
      &   '    LI%D   PHAD   PHAN    LI%N   SLLN   SLHN',
 CSVC     &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV')
      &   '   N%LN   N%HN   LMLN   LMHN   TGON   TGAV',
+     &   '  CISLn  CISHn  C2SLn  C2SHn  CWSLn  CWSHn',
+     &   '   RADn   PARn',     
 CSVC     &   '   DAYG   DAYLH  LMLN   DAYSH  DAYRN')
-     &   '   DAYG  DAYLH  DAYSH  DAYRN',
+     &   '   DAYG  DAYLH  DAYSH  DAYRN     Gn    LHn',
+     &   '    SHn    RNn  TCANn TSRFn1 TSRFn2 TSRFn3')
 CSVC
 C
-C   Commented out extra variables on 12Jul17 for
-C     "publication purposes. Bruce Kimball
-     &   '    ENN    TNN    ETn   WDNN   TCNN   CSHn')
-C     &   '   CSLn   LSHn   LSLn   ETnt   TEMt   Enit',
-C     &   '   Tnit   WINn   TCnt  TSR1t  TSR2t  TSR3t',
-C     &   '  TSR1n  TSR2n  TSR3n   CSHt   CSLt   LSHt',
-C     &   '   LSLt     GN    LHN   LH1N   LH2N   LH3N',
-C     &   '   RSHN   RSLN   RSSN    SHN   SH1N   SH2N',
-C     &   '   SH3N    GMT    LHT   LH1T   LH2T  LHE3T',
-C     &   '   RSHT   RSLT   RSST    SHT   SH1T   SH2T',
-C     &   '   SH3T   TAnn   TAnt   TG12   TG24   TGDY',
-C     &   '  RBSHN  RBSLN   BSSN  RBSHT  RBSLT  RBSST',
-C     &   '   N%LN   N%HN   LMLN   LMHN   TGNN   TGAV')
+
         END IF   ! VSH
 !***********************************************************************
 !***********************************************************************
@@ -164,17 +156,21 @@ C-----------------------------------------------------------------------
           CALL YR_DOY(YRDOY, YEAR, DOY)
 
           IF (FMOPT == 'A' .OR. FMOPT == ' ') THEN      ! VSH
+              TSV2 = INT(TS/2)
           WRITE (NOUTDC,300) YEAR, DOY, DAS,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
 CSVC     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TS/2), TGROAV
-     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TS/2), TGROAV,
+     &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO(TSV2), TGROAV,
+     &        CISLn, CISHn,C2SLn,C2SHn,CWSLn, CWSHn, RADn, PARn,
 CSVC     & DAYG,DAYLH,DAYSH,DAYRN
-     & DAYG,DAYLH,DAYSH,DAYRN,
+     &     DAYG,DAYLH,DAYSH,DAYRN,Gn,LHn, SHn, RNn,
+     &        TCANn,TSRFN(1),TSRFN(2),TSRFN(3)
+C         above line added on 4Aug20 BAK
 CSVC
-     &    Enoon, Tnoon, ETNOON, WINDN, TCANn, CSHnn
-C     &    CSLnn, LSHnn, LSLnn, ETnit, TEMnit, Enit,
-C     &    Tnit, WINnit, TCnit, TSRnit, TSRFN, CSHnit,
-C     &    CSLnit, LSHnit, LSLnit, GN, LHN, LHEATN,
+C     &    Enoon, Tnoon, ETNOON, , VPDSHn VPDSLn CiSLn CiSHn PPFDn RADHn
+C     &    , ETnit, TEMnit, Enit,
+C     &    Tnit, WINnit, TCnit, TSRnit, TSRFN,
+C     &    , GN, LHN, LHEATN,
 C     &    RSSHN, RSSLN, RSSSN, SHN, SHEATN,GMT,
 C     &    LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT,
 C     &    SHEATT,
@@ -189,10 +185,12 @@ C       preveious line added by BAK on 10DEC2015
 CSVC     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
      &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,
 CSVC     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
-     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,
+     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
+     &      1X,F6.1,1X,F6.1,
 CSVC
-     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.1,1X,F6.1)
-C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
+     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.1,1X,F6.1,
+     &      1X,F6.1,1X,F6.1,
+     &      1X,F6.2,1X,F6.2,1X,F6.2,1X,F6.2)
 C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
 C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,
 C     &      1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,1X,F6.3,

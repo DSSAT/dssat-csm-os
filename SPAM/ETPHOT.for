@@ -46,7 +46,7 @@ C========================================================================
      &    PORMIN, PSTRES1, RLV, RWUMX, SOILPROP, ST, SW,  !Input
      &    WEATHER, XLAI,                                  !Input
      &    EOP, EP, ES, RWU, TRWUP)                        !Output
-C     &    Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,        !Output
+C     &    Enoon, Tnoon, WINDN, TCANn, CWSHn, CWSLn,        !Output
 C     &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,!Output
 C     &    TCnit, TSRnit, CSHnit, CSLnit, LSHnit, LSLnit)  !Output
 C         previous three output lines added by Bruce Kimball on 2DEC14
@@ -61,7 +61,7 @@ C-----------------------------------------------------------------------
       CHARACTER FILEIO*30,ISWWAT*1,MEEVP*1,MEPHO*1,METEMP*1,
      &  TYPPGN*3,TYPPGL*3, CROP*2
       INTEGER DAS,DYNAMIC,H,I,NELAYR,NHOUR, DOY, YRDOY, YEAR,
-     &  NLAYR,NR5, LUNIO, TSV2,TRTNUM
+     &  NLAYR,NR5, LUNIO, TSV2,TRTNUM,RUN
 !         TSV2 = index for mid-day hour added by Bruce Kimball on 9JAN17
       LOGICAL DAYTIM
       REAL AGEFAC,AWEV1,AZIR,AZZON(TS),BETA(TS),BETN,
@@ -76,7 +76,7 @@ C-----------------------------------------------------------------------
      &  PCINPN,PCINRD,PCINRN,PCINTP,PCINTR,PCNLSH,PCNLSL,PG,PGCO2,
      &  PGDAY,SLPF,PGHR,PGNOON,PNLSHN,PNLSLN,QEREF,RABS(3),
      &  RADHR(TS),RADN,RCUTIC,REFHT,RHUMHR(TS),RLV(NL),RNITP,ROWSPC,
-     &  RWU(NL),RWUH,SALB,SCVIR,SCVP,SHCAP(NL),SLAAD,SLWREF,
+     &  RWU(NL),RWUH,SWEH,SWTD,SALB,SCVIR,SCVP,SHCAP(NL),SLAAD,SLWREF,
      &  SLWSH,SLWSHN,
      &  SLWSL,SLWSLN,SLWSLO,SNDN,SNUP,ST(NL),STn(NL),ST2(NL),STCOND(NL),
      &  SW(NL),SW2(NL),SWFAC,SWE,SWEF,T0HR,TAIRHR(TS),TA,
@@ -84,26 +84,26 @@ C-----------------------------------------------------------------------
      &  TSHR(NL), TSRF(3),TSRFN(3),TSURF(3,1),HOLDWH,WINDHR(TS),
      &  XLAI, TSHRn(NL),
      &  XLMAXT(6),XSW(NL,3),YLMAXT(6),YSCOND(NL,3),YSHCAP(NL,3),TMIN
-CSVC	REAL DAYG,DAYLH,DAYSH,DAYRN
-	     REAL DAYG,DAYLH,DAYSH,DAYRN,TCAN1
+CSVC	REAL DAYG,DAYLH,DAYSH,DAYRN,EMISAV,TK4CAN,TK4SKY
+      REAL DAYG,DAYLH,DAYSH,DAYRN,TCAN1,PGSH,PGSL,CISH,CISL,VPDSL,VPDSH
 CSVC
-      REAL SAT(NL),TGRO(TS),TGROAV,TGRODY,TAV,TAMP
-      REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR
+      REAL SAT(NL),TGRO(TS),TGROAV,TGRODY,TAV,TAMP,TANN
+      REAL PGXX,DXR57,EXCESS,XPOD,CUMSTR,COLDSTR,TGROUT
 !      PARAMETER (TINCR=24.0/TS)
 !                TINCR is the lenfth of a time increment in hours
-      REAL PHTHRS10, PLTPOP
+      REAL PHTHRS10, PLTPOP, CISLn, CISHn
       REAL PORMIN, RWUMX
       REAL PALBW, SALBW, SRAD, DayRatio
 
       REAL CONDSH, CONDSL, RA, RB(3), RSURF(3), Rnet(3,1)
-      REAL Enoon, Tnoon, WINDN, TCANn, CSHnn, CSLnn,
+      REAL Enoon, Tnoon, WINDN, TCANn, CWSHn, CWSLn,C2SHn,C2SLn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit, TCnit,
      &    TSRnit(3), CSHnit, CSLnit, LSHnit, LSLnit, SRFTEMP,
      &    G, LH, LHEAT(3,1), RSSH, RSSL, RSSS, SH, SHEAT(3,1),
      &     GN, LHN, LHEATN(3), RSSHN, RSSLN, RSSSN, SHN, SHEATN(3),
      &     GMT, LHT, LHEATT(3), RSSHT, RSSLT, RSSST, SHT, SHEATT(3),
-     &     RNETN(3),RNETT(3),
-     &     TAnn, TAnit, TGROnn, TGROnit,
+     &     RNETN(3),RNETT(3),DIFPR,RNN,
+     &     TAnit, TGROnn, TGROnit,EMISAV,TK4CAN,TK4SKY,
 C         previous 7 lines added by Bruce Kimball on 2DEC14
      &     RBSH,RBSL,RBSS,RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST
 C         added by BAK on 10DEC2015
@@ -112,6 +112,7 @@ C         added by BAK on 10DEC2015
 
       CHARACTER(len=2) PGPATH
       character(len=8) model
+      CHARACTER TGROM*1
       REAL CCNEFF, CICAD, CMXSF, CQESF
       REAL AGEQESL, AGEQESLN, CO2QESL, CO2QESLN, QEFFSL, QEFFSLN
 
@@ -140,7 +141,7 @@ C         added by BAK on 10DEC2015
       LUNIO   = CONTROL % LUNIO
       model   = control % model
 
-CSVC TRTNUM=CONTROL%TRTNUM
+      RUN=CONTROL%RUN
       TRTNUM=CONTROL%TRTNUM
 
       BD     = SOILPROP % BD
@@ -238,21 +239,16 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon, ETNOON, WINDn,TCANn, CSHnn, CSLnn,
+     &        Enoon,Tnoon, ETNOON, WINDn,TCANn, CWSHn, CWSLn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
      &    GMT, LHT, LHEATT, RSSHT, RSSLT, RSSST, SHT, SHEATT,
-C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
-C           previous line added by Bruce Kimall on 9MAR15
-     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
-C            added by BAK on 10DEC2015
-CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
+C     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
      &        AGEQESLN, CO2QESLN, QEFFSLN,
-CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
-     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
-CSVC
+     &	DAYG,DAYLH,DAYSH,DAYRN,RNn,
+     &    PARn,RADn, CISLn, CISHn,C2SHn,C2SLn)   !Output
 
         ENDIF
 
@@ -313,7 +309,7 @@ CSVC_output_problem        print*,'DYNAMIC .EQ. SEASINIT ', DAS
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
+     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CWSHn, CWSLn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
@@ -321,17 +317,22 @@ CSVC_output_problem        print*,'DYNAMIC .EQ. SEASINIT ', DAS
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
+C     &     RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C            added by BAK on 10DEC2015
 CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
      &        AGEQESLN, CO2QESLN, QEFFSLN,
 CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
-     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN,RNn,
+     &    PARn,RADn, CISLn, CISHn,C2SHn,C2SLn) !Output
 CSVC
 
         ENDIF
 
-CSVC
+
+
+CSVC - Files add for EBL
+      IF(DAS.eq.0 .and. MEEVP.EQ.'Z'.and.RUN.eq.1) THEN
+
        OPEN(880,FILE='HOURLY_ENERGY.OUT',
      & ACCESS='SEQUENTIAL', STATUS='UNKNOWN')
        OPEN(881,FILE='HOURLY_HSOILT.OUT',
@@ -341,12 +342,14 @@ CSVC
        OPEN(883,FILE='An_Gs_CI.OUT',
      &  STATUS='UNKNOWN')
 
-
-      IF(DAS.eq.0 .and. MEEVP.EQ.'Z'.and.TRTNUM.eq.1) THEN
         WRITE (880, *)
-     & 'TRTNUM;YRDOY;INT(HS);LAI;RADHR;RNET;RNET1;RNET2;RNET3;',
-     & 'LH;LHEAT1;LHEAT2;LHEAT3;SH;SHEAT1;SHEAT2;SHEAT3;G',
-     &  ';TAIRHR;TCAN;TCAN1;TSURF1;TSURF2;TSURF3;TSHR1;TSHR2;WINDHR;PG'
+     & 'TRTNUM;YRDOY;INT(HS);LAI;LAISL;LAISH;RADHR;RNET;RNET1;RNET2;',
+     & 'RNET3;EMISAV;TKCAN;TKSKY;',
+     & 'LH;LHEAT1;LHEAT2;LHEAT3;SH;SHEAT1;SHEAT2;SHEAT3;G;',
+     & 'TAIRHR;TCAN;TCAN1;TGRO;TSURF1;TSURF2;TSURF3;TSHR1;TSHR2;',
+     & 'WINDHR;RWUH;SWEH;PG;PGSL;PGSH;CiCa_SL;CiCa_SH;VPDSL;VPDSH;',
+     & 'CONDSL;CONDSH;CONDTL;CONDSHsm;CONDSLsm;RA;RB1;RB2;RB3;RSSS;',
+     & 'RHUMHR'
 
         WRITE (881, *)
      & 'TRTNUM;TIMED;YRDOY;H;DLAYR0;DLAYR1;DLAYR2;',
@@ -357,7 +360,7 @@ CSVC
      & 'TSHR12;TBOT'
 
            WRITE (883, *)
-     & 'CO2HR;CINT;CINT/CO2HR;PNLF;CCO2LF,VPD;VPDEF'
+     & 'CO2HR;CINT;CINT/CO2HR;PNLF;CCO2LF;VPD;VPDEF'
 
        ENDIF
 CSVC
@@ -383,6 +386,9 @@ C     Initialize DAILY parameters.
         NHOUR = 0
         TCANAV = 0.0
         TCANDY = 0.0
+        TGROAV = 0.0
+        TGRODY = 0.0
+
         IF (XLAI.GT.0.0 .AND. XLAI.LT.0.01) XLAI = 0.002 !CKJB change from 0.01
         IF (CANHT.GT.0.0 .AND. CANHT.LT.0.01) CANHT = 0.01
         IF (CANWH.GT.0.0 .AND. CANWH.LT.0.01) CANWH = 0.01
@@ -393,11 +399,9 @@ C     Initialize DAILY parameters.
      &      CEN,DAYRAD,DLAYR2,DULE,DYABSR,DYINTR,EDAY,    !Output
      &      EOP,ETNOON,FRDFRN,LLE,NELAYR,NLAYR,PCABRN,    !Output
      &      PCINRN,RADN,RLV2, SALB, SHCAP,ST2,STCOND,SW2, !Output
-CSVC C    &      SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP)
-     &      SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP,
-CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &      SWE,SWTD, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP,
      &	DAYG,DAYLH,DAYSH,DAYRN) !Output
-CSVC
+
           CALL ROOTWU(RATE,YRDOY,
      &      DLAYR, LL, NLAYR, PORMIN, RLV, RWUMX, SAT, SW,!Input
      &      RWU, TRWUP)                           !Output
@@ -418,6 +422,12 @@ C         instantaeous vs. daily rates and convert to mm/h.
      &      SLWSHN, SW2)                              !Output
         ENDIF
 
+C CSVC - If we sent this ammount to E e need to reducer T 
+C 1st - plants would have preferential access to water
+c      IF((TRWUP-(SWE/10.)).GT.(SWE/10.)) THEN
+c        TRWUP = TRWUP - (SWE/10.)
+c      ENDIF
+
 C       Compute hourly rates of canopy photosynthesis and evapotranspiration
 C       and sum for day (TS=24 for hourly).
 
@@ -425,14 +435,20 @@ C       and sum for day (TS=24 for hourly).
 !       is used by daily model.  The 2.0 accounts for lower transpiration
 !       during early morning hours, with high relative humidity.
         DayRatio = 24.0 / (WEATHER % DAYL - 2.0)
+C CSVC -    DayRatio must be the integral for all day     
+        DayRatio = 0.0
+        DO H=1,TS
+         DayRatio=DayRatio  + ((RADHR(H)*TINCR*3600.) / (SRAD * 1.E6))
+        ENDDO
 !                 Note that DayRatio will blow up when DAYL is two hours, but this would only occur at high and low lattitudes
 !                 on each side of winter when temperatures likely are too cold for crop growth. BAK.
 
 !       Conpute index for mid-day time step added by Bruce Kimball on 9JAN17
         TSV2 = INT(TS/2)
-        
-C     ********** Start of Hourly Loop ***********       
         DO H=1,TS
+
+        PGSL = 0.0
+        PGSH = 0.0
 
 C         Calculate real and solar time.
 
@@ -453,7 +469,7 @@ C         Calculate hourly radiation absorption by canopy/soil.
      &      ROWSPC, SALB, SCVIR, SCVP, XLAI,             !Input
      &      FRACSH, FRSHV, KDIRBL, KDRBLV, LAISH, LAISHV, !Output
      &      LAISL, LAISLV, PARSH, PARSUN, PCABSP, PCABSR, !Output
-     &      PCINTP, PCINTR, RABS)                         !Output
+     &      PCINTP, PCINTR, RABS,DIFPR)                         !Output
 
 C         Calculate canopy ET/photosynthesis.
 
@@ -481,11 +497,12 @@ C  KJB and SPSUM hourly.
 !         RWUH = TRWUP * RADHR(H) / SRAD * 3600. / 1.E6 * 10.
 !         mm/h = cm/d *  J/m2-s  / MJ/m2-d  * s/hr / J/MJ * mm/cm
           RWUH = (TRWUP*10.) * ((RADHR(H)*TINCR*3600.) / (SRAD * 1.E6))
-! mm/time step =  cm/d * mm/cm    J/s-m2* h/timestep * s/h / (MJ/m2-d * J/MJ)
+! mm/time step = (cm/d *10 mm/cm) J/m2.s* s/timestep   / (MJ/m2-d * 10^6 J/MJ)
 !        changed by Bruce Kimball on 10Jan17
-
+        
 !         Need multiplier to account for hourly : daily uptake rate
           RWUH = RWUH * DayRatio
+
 
           CALL ETPHR(CONTROL,H,
      &      CANHT, CEC, CEN, CLOUDS, CO2HR, DAYTIM,       !Input
@@ -494,20 +511,20 @@ C  KJB and SPSUM hourly.
      &      LMXREF, LNREF, LWIDTH, MEEVP, MEPHO, NLAYR,   !Input
      &      NSLOPE, PARSH, PARSUN, QEREF, RABS, RCUTIC,   !Input
      &      REFHT, RHUMHR(H), RNITP, RWUH, SHCAP, SLAAD,  !Input
-     &      SLWREF, SLWSLO, STCOND, SWE, TAIRHR(H), TA,   !Input
+     &      SLWREF, SLWSLO, STCOND, SWE,SWTD, TAIRHR(H), TA,   !Input
      &      TMIN, TYPPGL, TYPPGN, WINDHR(H), XLAI,        !Input
      &      XLMAXT, YLMAXT, XSW,YSCOND,YSHCAP,            !Input (CSV CXSW,YSCOND,YSHCAP)
      &      AGEFAC, EHR, LFMXSH, LFMXSL, PCNLSH, PCNLSL,  !Output
-     &      PGHR, SLWSH, SLWSL, T0HR, TCAN(H),TCAN1, THR, TSHR, !Output
-     &      TSURF,                                        !Output
+     &      PGHR,PGSL,PGSH, SLWSH, SLWSL, T0HR, TCAN(H),  !Output  
+     &      TCAN1, THR, TSHR, TSURF, SWEH,                !Output
      &      CONDSH, CONDSL, RA, RB, RSURF, Rnet,          !Output
      &      G, LH, LHEAT, RSSH, RSSL, RSSS, SH, SHEAT,    !Output
 C       CONDSH, CONDSL, RA, RB, RSURF, RNET output added by
 C           Bruce Kimball on 2DEC14
-     &     RBSH, RBSL, RBSS,                              !Output
+     &     RBSH, RBSL, RBSS,EMISAV,TK4CAN,TK4SKY,         !Output
 C            added by BAK on 10DEC2015
-     &      CCNEFF, CICAD, CMXSF, CQESF, PGPATH,          !Input
-     &      AGEQESL, CO2QESL, QEFFSL)                     !Output
+     &      CCNEFF, CICAD, CMXSF, CQESF, PGPATH,DIFPR,          !Input
+     &      AGEQESL, CO2QESL, QEFFSL,CISH,CISL,VPDSL,VPDSH)   !Output
 
 C         Integrate instantaneous canopy photoynthesis (\B5mol CO2/m2/s)
 C         and evapotranspiration (mm/h) to get daily values (g CO2/m2/d
@@ -529,20 +546,31 @@ C         and mm/d).
               TSRF(I) = TSRF(I) + TSURF(I,1)
             ENDDO
 
-            IF(LAISL + LAISH .LE. 0.0) THEN
-                TGRO(H) = TAIRHR(H)
-            ELSE
-C         TGRO stuff added by BAK on 10Jan20  
+
+C         TGRO added by BAK on 10Jan20  
+
+            TGRO(H) = TAIRHR(H)
+
+          TGROM='L' !KEN, PLEASE TAKE THIS KEY TO .X FLIE 
+
+          IF((LAISL + LAISH).GT.0.01) THEN
+           IF( TGROM.EQ.'L') THEN              !GROW DRIVED BY TEMP AT LEAVES    
             TGRO(H)=(TSURF(1,1)*LAISL + TSURF(2,1)*LAISH)
      &                /(LAISL + LAISH)
-            ENDIF     
-             
-         
-            TCANAV = TCANAV + TCAN(H)
-            TGROAV = TGROAV + TGRO(H)
-            
-            IF(DAYTIM) TGRODY = TGRODY + TGRO(H)
-            IF (DAYTIM) TCANDY = TCANDY + TCAN(H)
+           ELSEIF(TGROM.EQ.'C') THEN               !GROW DRIVED BY TEMP AT CANOPY AIR
+             TGRO(H)=TCAN(H)  
+           ENDIF     
+          ENDIF   
+
+c        if(H.eq.12) print*,TGRO(H),TCAN(H) 
+
+          TCANAV = TCANAV + TCAN(H)
+          IF (DAYTIM) TCANDY = TCANDY + TCAN(H)
+
+          TGROAV = TGROAV + TGRO(H)             !CSVC
+          IF (DAYTIM) TGRODY = TGRODY + TGRO(H)
+
+
           ENDIF
 
           DAYPAR = DAYPAR + TINCR*PARHR(H)*0.0036
@@ -560,13 +588,36 @@ CSVC--------------------------
      & (RNET(1,1)+RNET(2,1)+RNET(3,1))*0.0036
 
        if(MEEVP .EQ. 'Z') then
-          WRITE (880, 3010)TRTNUM,YRDOY,INT(HS),LAISL+LAISH,RADHR(H),
+
+C      Converting resistance s/m to mol/m2/s
+C      Changed 44 to 18 on 2020 08 17 for H2O rather than CO2 BAK
+       CONDSL = CONDSL/( 1/(18.02*(273/(273+TSURF(1,1)))))
+       CONDSH = CONDSH/( 1/(18.02*(273/(273+TSURF(2,1)))))
+
+       if((LAISL+LAISH).gt.0.0) then
+        TGROUT=(LAISL*TSURF(1,1)+LAISH*TSURF(2,1))/(LAISL+LAISH)
+        else
+       TGROUT=TAIRHR(H)
+       endif
+
+          
+          WRITE (880, 3010)TRTNUM,YRDOY,INT(HS),LAISL+LAISH,LAISL,LAISH,
+     &  RADHR(H),
      & (RNET(1,1)+RNET(2,1)+RNET(3,1)),RNET(1,1),RNET(2,1),RNET(3,1),
+     & EMISAV,TK4CAN**0.25,TK4SKY**0.25,
      & LH,LHEAT(1,1),LHEAT(2,1),LHEAT(3,1),
      & SH,SHEAT(1,1),SHEAT(2,1),SHEAT(3,1),G,
-     & TAIRHR(H),TCAN(H),TCAN1,TSURF(1,1),TSURF(2,1),TSURF(3,1),
-     & TSHR(1),TSHR(2),WINDHR(H),PGHR * 0.044
-3010      FORMAT (I2,';',I7,';', I7, 25(';', F6.1))
+     & TAIRHR(H),TCAN(H),TCAN1, TGROUT,
+     & TSURF(1,1),TSURF(2,1),TSURF(3,1),
+     & TSHR(1),TSHR(2),WINDHR(H),RWUH,SWEH,PGHR,
+     & PGSL,PGSH,CISL/CO2,CISH/CO2,VPDSL,VPDSH,CONDSL,CONDSH,
+     & CONDSL*LAISL+CONDSH*LAISH,
+C       change 44 to 18 for H2O BAK
+     & CONDSL*( 1/(18.02*(273/(273+TSURF(1,1))))),
+     & CONDSH*( 1/(18.02*(273/(273+TSURF(1,1))))),
+     & RA,RB(1),RB(2),RB(3),RSURF(3),RHUMHR(H)
+       
+3010      FORMAT (I2,';',I7,';', I7, 50(';', F10.3))
        ENDIF
 
 CSVC -------------------------
@@ -586,6 +637,7 @@ C KJB WE COULD, BUT DON'T NEED, TO REMEMBER A MID-DAY WATER STRESS FACTOR?
               LMXSLN = LFMXSL * 0.044
               LMXSHN = LFMXSH * 0.044
               PARN = PARHR(H)
+              RADN = RADHR(H)
               PCINPN = PCINTP
               PCABPN = PCABSP
               PGNOON = PGHR * 0.044
@@ -621,13 +673,18 @@ C       The following 8 variales added by Bruce Kimball on 1Dec2014
               Tnoon = THR
               WINDN = WINDHR(H)
               TCANn = TCAN(H)
-              CSHnn = CONDSH
-              CSLnn = CONDSL
+              CWSHn = CONDSH ! for H2O
+              CWSLn = CONDSL
+              C2SHn = CWSHn/1.6  ! for CO2
+              C2SLn = CWSLn/1.6  
               LSHnn = LAISH
               LSLnn = LAISL
+              CISLn = CISL/CO2
+              CISHn = CISH/CO2
               GN = G
               LHN = LH
               SHN = SH
+              RNN = RNET(1,1)+RNET(2,1)+RNET(3,1)
               RSSHN = RSSH
               RSSLN = RSSL
               RSSSN = RSSS
@@ -677,9 +734,8 @@ C next 3 lines added by BAK on 10DEC2015
                 SHEATT(I)=SHEAT(I,1)
                 RNETT(I)=RNET(I,1)
                 ENDDO
-            ENDIF
-      
-        ENDDO !DO H=1,TS   **** End of hourly loop *****
+          ENDIF
+        ENDDO !DO H=1,T
 
 
 C       Assign daily values.
@@ -704,18 +760,20 @@ C       Assign daily values.
           ENDDO
           TCANAV = TCANAV / TS
           TCANDY = TCANDY / NHOUR
-C            TGRO stuff added on 10Jan20 by BAK
-          TGROAV = TGROAV/TS          
-          TGRODY = TGRODY/NHOUR
+          TGRODY = TCANDY
+          TGROAV = TCANAV
+          DO  I=1,TS
+            TGRO(I) = TCAN(I)
+          ENDDO
 
 CSVC - save vars at ETPhot.OUT
 C       If the method to compute ET is energy balance, then
 C       grow the plants at canopy temperature. Else grow them
 C       at air temperature (TGRO initialized to TA in HMET.)
 C       IF added by Bruce Kimball on 9MAR15
-         WEATHER % TGROAV = TGROAV
-         WEATHER % TGRO   = TGRO
-         WEATHER % TGRODY = TGRODY
+        WEATHER % TGROAV = TCANAV
+        WEATHER % TGRO   = TCAN
+        WEATHER % TGRODY = TCANDY
 
 C           Save noon and midnight growth and air temperatures
 C           add by Bruce Kimball on 9MAR15
@@ -793,7 +851,7 @@ CSVC_output_problem       print*,'DYNAMIC.EQ.RATE  ',DAS,TGRO(TS/2)
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
+     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CWSHn, CWSLn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
@@ -801,12 +859,13 @@ CSVC_output_problem       print*,'DYNAMIC.EQ.RATE  ',DAS,TGRO(TS/2)
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
+C     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
 CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
      &        AGEQESLN, CO2QESLN, QEFFSLN,
 CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
-     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN,RNn,
+     &    PARn,RADn, CISLn, CISHn,C2SHn,C2SLn) !Output
 CSVC
         ENDIF
 !***********************************************************************
@@ -822,7 +881,7 @@ CSVC_output_problem      print*,'DYNAMIC .EQ. SEASEND',DAS,TGRO(TS/2)
                 CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
      &        PNLSLN, PNLSHN, LMXSLN, LMXSHN, TGRO, TGROAV,
-     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CSHnn, CSLnn,
+     &        Enoon,Tnoon,ETNOON, WINDn,TCANn, CWSHn, CWSLn,
      &    LSHnn, LSLnn, ETnit, TEMnit, Enit, Tnit, WINnit,
      &    TCnit, TSRnit, TSRFN, CSHnit, CSLnit, LSHnit, LSLnit,
      &    GN, LHN, LHEATN, RSSHN, RSSLN, RSSSN, SHN, SHEATN,
@@ -830,12 +889,13 @@ CSVC_output_problem      print*,'DYNAMIC .EQ. SEASEND',DAS,TGRO(TS/2)
 C         previous five output lines added by Bruce Kimball DEC14
      &      TAnn,TAnit,TGROnn,TGROnit,TGRODY,
 C           previous line added by Bruce Kimall on 9MAR15
-     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
+C     &   RBSHN,RBSLN,RBSSN,RBSHT,RBSLT,RBSST,
 C       preveious line added by BAK on 10DEC2015
 CSVC     &        AGEQESLN, CO2QESLN, QEFFSLN)
      &        AGEQESLN, CO2QESLN, QEFFSLN,
 CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
-     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &	DAYG,DAYLH,DAYSH,DAYRN,RNn,
+     &    PARn,RADn, CISLn, CISHn,C2SHn,C2SLn) !Output
 CSVC
 
         ENDIF
@@ -864,16 +924,15 @@ C       If the method to compute ET is energy balance, then
 C       grow the plants at canopy temperature. Else grow them
 C       at air temperature (TGRO initialized to TA in HMET.)
 C       IF added by Bruce Kimball on 9MAR15
-C       Removed IF Z on 10Jan20
-C      IF(MEEVP .EQ. 'Z') THEN
-C        WEATHER % TGROAV = TCANAV
-C        WEATHER % TGRO   = TCAN
-C        WEATHER % TGRODY = TCANDY
-C        ELSE
+      IF(MEEVP .EQ. 'Z') THEN
+        WEATHER % TGROAV = TCANAV
+        WEATHER % TGRO   = TCAN
+        WEATHER % TGRODY = TCANDY
+        ELSE
         WEATHER % TGROAV = TGROAV   !I/O
         WEATHER % TGRO   = TGRO     !I/O
         WEATHER % TGRODY = TGRODY
-C        ENDIF
+        ENDIF
 
       RETURN
       END SUBROUTINE ETPHOT
@@ -996,7 +1055,7 @@ C     Initialize some parameters.
         BETN = 0.0
       ENDIF
 
-      NELAYR = 1
+      NELAYR = 2
       LWIDTH = 0.02
       RCUTIC = 5000.0
       DO I = 1,NLAYR
@@ -1010,17 +1069,11 @@ C     Transform soil layers from 5,15,etc. to 10,10,etc. (10 in top layer
 C     is necessary to prevent instability in ETPHOT).
 
 
-CSVC	print*,DLAYR
-CSVC	print*,NLAYR
-CSVC	print*,DLAYR2
+
       CALL SOIL10NOT(
      &  DLAYR,                                            !Input
      &  1,NLAYR,DLAYR2)                                   !Output
 
-CSVC	print*,DLAYR
-CSVC	print*,NLAYR
-CSVC	print*,DLAYR2
-CSVC	stop
 
       CALL SOIL10NOT(
      &  LL,                                               !Input
@@ -1050,8 +1103,7 @@ C     at 0.1 * the 1st stage evaporation amount.
         DULE = DULE + DUL2(I)*DLAYR2(I)*10.0
         LLE = LLE + LL2(I)*DLAYR2(I)*10.0
       ENDDO
-C     CEC = 0.45 * U / (DULE-LLE) * 100.0
-      CEC = 0.0
+      CEC = 0.2*100 !  
 
 C     Calculate soil thermal properties.  Arrays YSHCAP and YSCOND store
 C     results for daily table lookup as a function of moisture content.
@@ -1077,6 +1129,7 @@ C       using De Vries (1963) for dry, field capacity and saturated
 C       moisture contents (XSW).
 
         DO J=1,3
+
 
 C         Dry soil.
 
@@ -1110,8 +1163,12 @@ C         Saturated soil.
           YSCOND(I,J) = (KSOIL*XSOIL*TCNDS2(I)+XWATER*TCWATR+XAIR*TCAIR)
      &      / (KSOIL*XSOIL+XWATER+XAIR) * CORRN
 
+         YSHCAP(I,J) = YSHCAP(I,J)
+         YSCOND(I,J) = YSCOND(I,J)
+
         ENDDO
       ENDDO
+      
 
 C     Compute leaf angles in three classes (0-30, 30-60, 60-90) using
 C     the ellipsoidal distribution.  Approx. eqn. for CDF at 30 and 60 deg.
@@ -1307,11 +1364,9 @@ C=======================================================================
      &  CEN,DAYRAD,DLAYR2,DULE,DYABSR,DYINTR,EDAY,        !Output
      &  EOP,ETNOON,FRDFRN,LLE,NELAYR,NLAYR,PCABRN,        !Output
      &  PCINRN,RADN,RLV2, SALB, SHCAP,ST2,STCOND,SW2,     !Output
-CSVC     &  SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP)     !Output
-     &  SWE, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP,     !Output
-CSVC     &	DAYG,DAYLH,DAYSH,DAYRN) !Output
+     &  SWE,SWTD, TDAY,TEMPN,TSRF,TSRFN,XSW,YSCOND,YSHCAP,     !Output
      &	DAYG,DAYLH,DAYSH,DAYRN) !Output
-CSVC
+
 
 !     ------------------------------------------------------------------
       USE ModuleDefs     !Definitions of constructed variable types,
@@ -1327,7 +1382,7 @@ CSVC
      &  LLE,PCINRN,PCABRN,RADN,SHCAP(NL),ST2(NL),STCOND(NL),
      &  SW(NL),SW2(NL),SWE,EOP,TABEX,TDAY,TEMPN,TSRF(3),
      &  TSRFN(3),XC(3),XSW(NL,3),YHC(3),YTC(3),YSCOND(NL,3),
-     &  YSHCAP(NL,3)
+     &  YSHCAP(NL,3),SWTD
 
 CSVC	REAL DAYG,DAYLH,DAYSH,DAYRN
 	REAL DAYG,DAYLH,DAYSH,DAYRN
@@ -1377,8 +1432,10 @@ C     Calculate SW in the evaporation zone, soil heat capacity,
 C     and soil thermal conductivity by layer.
 
       SWE = 0.0
+      SWTD = 0.0
       DO I = 1,NELAYR
         SWE = SWE + SW2(I)*DLAYR2(I)*10.0
+        SWTD = SWTD + DLAYR2(I)
       ENDDO
       CEN = MIN(MAX((DULE-SWE)/(DULE-LLE)*100.0,0.0),100.0)
       DO I=1,NLAYR
@@ -1390,6 +1447,8 @@ C     and soil thermal conductivity by layer.
         SHCAP(I) = TABEX(YHC,XC,SW2(I),3)
         STCOND(I) = TABEX(YTC,XC,SW2(I),3)
       ENDDO
+
+C CSVC_TEST FOR SOIL TEMP CALIBRATION      STCOND(1) = STCOND(1)*0.85
 
 C     Calulation of albedo as a function of SW.
 
@@ -1489,7 +1548,7 @@ C=======================================================================
      &  ROWSPC, SALB, SCVIR, SCVP, XLAI,                 !Input
      &  FRACSH, FRSHV, KDIRBL, KDRBLV, LAISH, LAISHV,     !Output
      &  LAISL, LAISLV, PARSH, PARSUN, PCABSP, PCABSR,     !Output
-     &  PCINTP, PCINTR, RABS)                             !Output
+     &  PCINTP, PCINTR, RABS,DIFPR)                             !Output
 
       IMPLICIT NONE
       SAVE
@@ -1502,7 +1561,7 @@ C=======================================================================
      &  FRSHV,KDIFBL,KDIRBL,KDRBLV,LAISH,LAISL,LAISHV,LAISLV,
      &  LFANGD(3),PALB,PARHR,PARSH,PARSUN(3),PARSL,PARSS,PCINTP,
      &  PCABSP,PCINTR,PCABSR,PCREFP,PCREFR,RADHR,RABS(3),RNG,
-     &  PTOT,RTOT,ROWSPC,SALB,SCVP,SCVIR,XLAI,PARQC,PARW,IRHR,
+     &  PTOT,RTOT,ROWSPC,SALB,SCVP,SCVIR,XLAI,PARQC,PARW,IRHR,DIFPR,
      &  IRALB,FRDIFI,PCABSI,PCINTI,PCREFI,IRSH,IRSUN(3),IRSL,IRSS
       PARAMETER (PARQC=4.6)
 
@@ -1532,6 +1591,8 @@ C     Initialize.
       RABS(1) = 0.0
       RABS(2) = 0.0
       RABS(3) = 0.0
+       DIFPR = 0.0
+
 
       IF (XLAI .GT. 1.E-4) THEN
 
@@ -1565,7 +1626,7 @@ C         Calculate PAR absorbed by canopy during day.
      &        FRDIFP, KDIFBL, KDIRBL, LAISH, LAISL, PARHR,!Input
      &        RNG, ROWSPC, SCVP,                          !Input
      &        PCABSP, PCINTP, PCREFP, PARSH, PARSS,       !Output
-     &        PARSUN)                                     !Output
+     &        PARSUN,DIFPR)                                     !Output
             PARSL = PARSUN(2)
           ENDIF
 
@@ -1591,7 +1652,7 @@ C         Calculate infrared radiation absorbed by canopy during day.
      &        FRDIFI, KDIFBL, KDIRBL, LAISH, LAISL, IRHR, !Input
      &        RNG, ROWSPC, SCVIR,                         !Input
      &        PCABSI, PCINTI, PCREFI, IRSH, IRSS,         !Output
-     &        IRSUN)                                      !Output
+     &        IRSUN,DIFPR)                                      !Output
             IRSL = IRSUN(2)
 
 C           Convert total radiation to land area basis.
@@ -1828,7 +1889,7 @@ C=======================================================================
      &  ALBEDO, BETA, BETN, CANHT, CANWH, FRACSH,
      &  FRDIF, KDIFBL, KDIRBL, LAISH, LAISL, RADHR,
      &  RNG, ROWSPC, SCVR,
-     &  PCTABS, PCTINT, PCTREF, RADSH, RADSS, RADSUN)
+     &  PCTABS, PCTINT, PCTREF, RADSH, RADSS, RADSUN,DIFPR)
 
       IMPLICIT NONE
       SAVE
