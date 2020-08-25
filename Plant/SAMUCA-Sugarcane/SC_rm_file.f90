@@ -15,7 +15,7 @@
 
     !--- Check that the file exists (LBYL):
     file_exists = .false.
-    inquire(file=io, exist=file_exists)
+    inquire(file=filename, exist=file_exists)
 
     !--- Delete it if file exists
     if(file_exists)then
@@ -47,7 +47,7 @@
 
     !--- Check that the file exists (LBYL):
     file_exists = .false.
-    inquire(file=io, exist=file_exists)
+    inquire(file=filename, exist=file_exists)
 
     !--- Open the file
     IF (FILE_EXISTS) THEN
