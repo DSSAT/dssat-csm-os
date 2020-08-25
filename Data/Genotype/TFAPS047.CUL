@@ -21,65 +21,28 @@
 ! MXFIL       Potential kernel growth rate [mg kernel-1 day-1]:  Values between 1.0 and 3.0
 ! STMMX       Potential final dry weight of a single tiller (excluding grain) (g stem-1) values 1.0 - 3.0
 ! SLAP1       ratio of leaf area to mass at emergence (cm2/g)
-! SLAP2       ratio of leaf area to mass at end of leaf growth (cm2/g) 
-! TC1P1       for calculating tc1: tiller number from emerg. to term. spik.(=stem elongation) 
-! TC1P2       tc1 = tc1_p1 + tc1_p2 *cumph_nw(istage)
-! DTNP1       for calculating dtiln: tiller number after term. spik.(=stem elongation)
-! PLGP1       for calculating plag: potential leaf growth.  plag= plag_p1*cumph(istage)**plag_p2
-! PLGP2       for calculating plag: potential leaf growth.  plag= plag_p1*cumph(istage)**plag_p2
-! P2AF        threshold AD in a layer becoming effective on root growth
-! P3AF        length of downwards root not effected under aeration deficit
-! P4AF        days to be accumulated before aeration deficit effects root growth
-! P5AF        power term at af1
-! P6AF        days to be accumulated before aeration deficit effects crop growth
-! ADLAI       threshold aeration deficit (AF2) affecting LAI        (set to 1.0 for no stress run)
-! ADTIL       threshold aeration deficit (AF2) effecting tillering  (set to 1.0 for no stress run)
-! ADPHO       threshold aeration deficit (AF2) effecting photosyn.  (set to 1.0 for no stress run)
-! STEMN       0=original C to grain translocation, >0 to 1.0 sets % of C of stem to be transloc. to grain
-! MXNUP       max N uptake per day
-! MXNCR       0.035=20%,   .04=23% protein, max n:c ratio of grain growth
-! WFNU        power term for water effect on N supply
-! PNUPR       potential uptake rate (mg/meter/day)
-! EXNO3       exponent for NO3 supply factor
-! MNNO3       minimum for NO3 supply factor
-! EXNH4       exponent for NH4 supply factor
-! MNNH4       minimum for NH4 supply factor
-! INGWT       initial grain weight  (mg/100 grains)
-! INGNC       % protein, initial grain N conc   (init_grain_nconc or p_init_grain_nconc from APSIM Nwheat)
-! FREAR       fraction between end ear and begin grainfilling, setting min stem weight for remobilisation
-! MNNCR       % protein, min n:c ratio of grain growth
-! GPPSS       gpp_start_stage - Grain per plant: 2=stem elong., 3=end leaf stage at which to start accumo. stem for gpp calc.
-! GPPES       gpp_end_stage - Start grainfilling stage at which to end accumulation stem for Grain per plant calc
-! MXGWT       maximum kernal weight  [100 = no effect]
-! MNRTN       min root n due to grain n initialisation [0 = off] (root_n_min or p_root_n_min from APSIM Nwheat)
-! NOMOB       fraction of accum stem weight that is not mobile [0 = original]
-! RTDP1       sw effect, 0 = old version
-! RTDP2       crop stress effect, 0 = old version
 
-!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22    23    24    25    26    27    28    29    30    31    32    33    34    35    36    37    38    39    40    41    42    43
-@VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1 SLAP2 TC1P1 TC1P2 DTNP1 PLGP1 PLGP2  P2AF  P3AF  P4AF  P5AF  P6AF ADLAI ADTIL ADPHO STEMN MXNUP MXNCR  WFNU PNUPR EXNO3 MNNO3 EXNH4 MNNH4 INGWT INGNC FREAR MNNCR GPPSS GPPES MXGWT MNRTN NOMOB RTDP1 RTDP2
-IB0135 Keyh (local)         . IB0004  1.00  18.0 100.0 600.0 110.0  16.0  1.00  3.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0136 DZ-974 & Keyh        . IB0004  1.00  18.0 100.0 500.0 105.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0157 DZ-Cr-387            . IB0004  1.00  18.0 100.0 100.0 120.0  32.0  1.30  3.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0161 DZ-01-354            . IB0004  1.00  18.0 100.0 550.0 100.0  16.0  1.00  3.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0221 UK Brown             . IB0004  1.00  16.5 100.0 450.0 100.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0244 PI 193508            . IB0004  1.00  19.0 100.0 200.0 100.0  28.0  1.10  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0245 PI 193514            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0246 PI 557457            . IB0004  1.00  17.0 100.0 600.0  75.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0247 PI 494366            . IB0004  1.00  14.0 100.0 700.0  70.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0248 UK White             . IB0004  1.00  18.0 100.0 450.0  85.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0249 PI 494465            . IB0004  1.00  19.0 100.0 140.0 120.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0250 PI 273889            . IB0004  1.00  19.0 100.0 190.0 105.0  27.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0251 Dessie               . IB0004  1.00  16.5 100.0 500.0  80.0  32.0  1.20  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0252 PI 347632            . IB0004  1.00  19.0 100.0 190.0 105.0  32.0  1.80  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0253 PI 494432            . IB0004  1.00  15.5 100.0 500.0 100.0  26.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+!                                        1     2     3     4     5     6     7     8     9
+@VAR#  VRNAME.......... EXPNO   ECO#  VSEN PPSEN    P1    P5 PHINT  GRNO MXFIL STMMX SLAP1
+IB0135 Keyh (local)         . IB0004  1.00  18.0 100.0 600.0 110.0  16.0  1.00  3.00 400.0
+IB0136 DZ-974 & Keyh        . IB0004  1.00  18.0 100.0 500.0 105.0  16.0  1.00  1.00 400.0
+IB0157 DZ-Cr-387            . IB0004  1.00  18.0 100.0 100.0 120.0  32.0  1.30  3.00 400.0
+IB0161 DZ-01-354            . IB0004  1.00  18.0 100.0 550.0 100.0  16.0  1.00  3.00 400.0
+IB0221 UK Brown             . IB0004  1.00  16.5 100.0 450.0 100.0  16.0  1.00  1.00 400.0
+IB0244 PI 193508            . IB0004  1.00  19.0 100.0 200.0 100.0  28.0  1.10  1.00 400.0
+IB0245 PI 193514            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0
+IB0246 PI 557457            . IB0004  1.00  17.0 100.0 600.0  75.0  16.0  1.00  1.00 400.0
+IB0247 PI 494366            . IB0004  1.00  14.0 100.0 700.0  70.0  16.0  1.00  1.00 400.0
+IB0248 UK White             . IB0004  1.00  18.0 100.0 450.0  85.0  16.0  1.00  1.00 400.0
+IB0249 PI 494465            . IB0004  1.00  19.0 100.0 140.0 120.0  16.0  1.00  1.00 400.0
+IB0250 PI 273889            . IB0004  1.00  19.0 100.0 190.0 105.0  27.0  1.00  1.00 400.0
+IB0251 Dessie               . IB0004  1.00  16.5 100.0 500.0  80.0  32.0  1.20  1.00 400.0
+IB0252 PI 347632            . IB0004  1.00  19.0 100.0 190.0 105.0  32.0  1.80  1.00 400.0
+IB0253 PI 494432            . IB0004  1.00  15.5 100.0 500.0 100.0  26.0  1.00  1.00 400.0
 
-IB0254 PI 195932            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0255 PI 329680            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0256 PI 494479            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-IB0257 PI 494433            . IB0004  1.00  19.0 100.0 140.0 120.0  16.0  1.00  1.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
+IB0254 PI 195932            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0
+IB0255 PI 329680            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0
+IB0256 PI 494479            . IB0004  1.00  19.0 100.0 200.0 105.0  16.0  1.00  1.00 400.0
+IB0257 PI 494433            . IB0004  1.00  19.0 100.0 140.0 120.0  16.0  1.00  1.00 400.0
 
-IB0304 Wajera (local)       . IB0004  1.00  18.0 100.0 200.0 80.00  36.0  1.00  3.00 400.0 300.0  2.50  0.60 0.005 1400.  0.60  0.60  50.0  3.00  1.00  3.00  1.00  1.00  1.00  0.00  0.60 0.040  2.00 0.450  6.75  0.00  6.50  0.00  2.47 0.030 0.250 1.230  2.00  5.00  55.0  4.50 0.250     1     1
-
-
-
+IB0304 Wajera (local)       . IB0004  1.00  18.0 100.0 200.0 80.00  36.0  1.00  3.00 400.0

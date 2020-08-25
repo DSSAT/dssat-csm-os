@@ -2344,7 +2344,9 @@
 
         ! Planting date information
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'PLANT',iplti)
-        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+!       IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a'.OR.
+     &     IPLTI.EQ.'F'.OR.IPLTI.EQ.'f')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PLAST',pwdinl)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OL',swpltl)
@@ -2530,9 +2532,16 @@
 
         ! CHP 5/4/09 - for DSSAT runs, always set PLYEAR = YEAR
         ! CHP 09/28/09 - account for planting date >> simulation date.
-        IF (FILEIOT(1:2).EQ.'DS' .AND. YEAR > PLYEAR) THEN
-          PLYEAR = YEAR
-          PLYEARTMP = YEAR
+        !LPM 07/17/20 - account for simulation date when is a year before planting date
+        !Avoid wrong value of yeardoyharf
+        IF (FILEIOT(1:2) == 'DS' .AND. YEAR > PLYEAR) THEN
+            IF (YEAR < PLYEARREAD) THEN
+                PLYEAR = PLYEARREAD
+                PLYEARTMP = PLYEARREAD
+            ELSE
+                PLYEAR = YEAR
+                PLYEARTMP = YEAR
+            ENDIF
         ENDIF
 
         ! Check final harvest date for seasonal runs        
@@ -2541,7 +2550,8 @@
         ! Upgrade harvest date for seasonal and sequential runs
         yeardoyharf = (plyear+pltoharyr)*1000 +hday
 
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           IF (PLDAY.GE.DOY) THEN
             PLYEARDOYT = PLYEARTMP*1000 + PLDAY
           ELSEIF (PLDAY.LT.DOY) THEN
@@ -3703,7 +3713,8 @@ C-GH As per Tony Hunt 2017 for GenCalc
          WRITE(fnumwrk,'(A26,I1)') '  CROP COMPONENT          ',CN
          WRITE(fnumwrk,'(A26,A6,2X,A16)')
      &     '  CULTIVAR                ',VARNO,VRNAME
-        IF (IPLTI.NE.'A') THEN
+!       IF (IPLTI.NE.'A') THEN
+        IF (IPLTI.NE.'A' .AND. IPLTI.NE.'F') THEN
           WRITE(fnumwrk,'(A23,I7)')
      &     '  PLANTING DATE TARGET:',PLYEARDOYT
         ELSE
@@ -3979,7 +3990,9 @@ C-GH As per Tony Hunt 2017 for GenCalc
 
         ! YEARPLTCSM established by CSM and brought across in argument.
         IF (FILEIOT.EQ.'DS4') THEN
-          IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+!         IF (IPLTI.EQ.'A' .OR. (INDEX('FQN',RNMODE) > 0)) THEN
+          IF (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F' .OR. 
+     &       (INDEX('FQN',RNMODE) > 0)) THEN
             PLYEARDOYT = YEARPLTCSM
           ENDIF  
         ENDIF
@@ -7139,7 +7152,8 @@ c           ENDIF
           ENDIF ! End ((IDETG.NE.'N'.AND.IDETL.NE.'0').OR.IDETL.EQ.'A'
 
         ELSEIF(YEARDOY.LT.PLYEARDOY.AND.(MOD(DAS,FROPADJ)).EQ.0.AND.
-     &   IPLTI.EQ.'A') THEN
+!    &   IPLTI.EQ.'A') THEN
+     &   (IPLTI.EQ.'A' .OR. IPLTI.EQ.'F')) THEN
      
           ! Automatic planting
           !WRITE (fnumwrk,*) 'Yeardoy ',yeardoy

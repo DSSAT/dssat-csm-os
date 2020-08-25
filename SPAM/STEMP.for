@@ -143,8 +143,8 @@ C-----------------------------------------------------------------------
         TDL = 0.0
         CUMDPT = 0.0
         DO L = 1, NLAYR
-          DSMID(L) = CUMDPT + DLAYR(L)* 5.0
-          CUMDPT   = CUMDPT + DLAYR(L)*10.0
+          DSMID(L) = CUMDPT + DLAYR(L)* 5.0   !mm depth to midpt of lyr
+          CUMDPT   = CUMDPT + DLAYR(L)*10.0   !mm profile depth 
           TBD = TBD + BD(L)  * DLAYR(L)       !CHP
           TLL = TLL + LL(L)  * DLAYR(L)
           TSW = TSW + SWI(L) * DLAYR(L)

@@ -395,7 +395,7 @@ C
               IDETO = 'E'
 !             Seasonal and spatial runs do not get evaluate file when IDETL=0
               IF (INDEX('SN',RNMODE) > 0) IDETO = 'N'
-            ELSEIF (IDETL == 'A') THEN
+            ELSEIF (IDETL == 'A' .OR. IDETL == 'D') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
               IDETO = 'Y'
@@ -653,7 +653,7 @@ C-----------------------------------------------------------------------
 !     Check for N model compatible with crop model
       IF (ISWNIT /= 'N') THEN
         SELECT CASE(MODEL(1:5))
-        CASE ('SALUS', 'SCCAN', 'SCCSP')
+        CASE ('SALUS', 'SCCAN', 'SCCSP', 'SCSAM')
 !           N model has NOT been linked for these models
 !           Print a warning message.
             CALL GET_CROPD(CROP, CROPD)
@@ -1406,7 +1406,7 @@ D     IPX = 23
 !             Seasonal and spatial runs do not get evaluate file when IDETL=0
               IF (INDEX('SN',CONTROL%RNMODE) > 0) IDETO = 'N'
 
-            ELSEIF (IDETL == 'A') THEN
+            ELSEIF (IDETL == 'A' .OR. IDETL == 'D') THEN
 !             VBOSE = 'A', generate all output
               IDETS = 'A'
               IDETO = 'Y'

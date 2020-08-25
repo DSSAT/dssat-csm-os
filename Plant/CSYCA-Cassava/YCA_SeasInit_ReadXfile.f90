@@ -42,7 +42,8 @@
 
         ! Planting date information
         CALL XREADC(FILEIO,TN,RN,SN,ON,CN,'PLANT',iplti)
-        IF(IPLTI == 'A'.OR.IPLTI == 'a')THEN
+!       IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a')THEN
+        IF(IPLTI.EQ.'A'.OR.IPLTI.EQ.'a'.OR.IPLTI.EQ.'F'.OR.IPLTI.EQ.'f')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PLAST',pwdinl)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OL',swpltl)

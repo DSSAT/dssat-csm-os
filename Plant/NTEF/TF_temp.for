@@ -654,10 +654,10 @@
       !*! subroutine nwheats_nuptk (snuptk_no3, snuptk_nh4, pnuptk)
 *      subroutine nwheats_nuptk (SOILPROP,                         !Input
 *     &      carbh, cnc, EXNH4,     EXNO3,                         !Input
-*     &      g_uptake_source, gro_wt, MNNH4, MNNO3,                !Input
+*     &      g_uptake_source, gro_wt, MNNH4, MNNO3, MXNUP,          !Input
 *     &      pcarbo, pl_nit,  plantwt, PLTPOP,                     !Input
 *     &      PNUPR,         rlv_nw, snh4, sno3, swdep,             !Input
-*     &      WFNU, xstag_nw, MXNUP,                                !Input
+*     &      WFNU, xstag_nw,                                       !Input
 *     &      pnup, snup_nh4, snup_no3)                            !Output
 **     ==================================================================
 *
