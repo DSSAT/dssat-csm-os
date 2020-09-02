@@ -113,7 +113,7 @@
         class (YCA_VPD_type), intent(in) :: this
         integer, intent(in) :: hour
         
-        get_YCA_VPDFPHR = get_Growth_VPDFPHR(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP, hour)
+        get_YCA_VPDFPHR = get_Growth_VPDFPHR(get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER % TDEW, this%WEATHER % TMIN, this%WEATHER % TAIRHR,hour)
         
     end function get_YCA_VPDFPHR
     

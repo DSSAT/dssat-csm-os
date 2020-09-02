@@ -98,21 +98,16 @@ Module YCA_Growth_VPD
 ! Hourly VPD Factor for Photosynthesis function
 !****************************************************************************************
     
-    REAL function get_Growth_VPDFPHR (DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP, targetHour)
+    REAL function get_Growth_VPDFPHR (PHSV, PHTV, TDEW, TMIN, TAIRHR, targetHour)
     
     USE ModuleDefs
         
         IMPLICIT NONE
         SAVE
 
-        INTEGER, intent (in) :: DAP
         INTEGER, intent (in) :: targetHour
-        REAL, intent (in) :: LAI
         REAL, intent (in) :: PHSV
         REAL, intent (in) :: PHTV
-        TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
-        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
-        TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
         
         REAL, DIMENSION(TS) ::   TAIRHR, PARHR   , RADHR  , RHUMHR  , VPDHR ! These are all declared in ModuleDefs
@@ -130,17 +125,6 @@ Module YCA_Growth_VPD
         
 !     Transfer values from constructed data types into local variables.
 
-        TDEW   = WEATHER % TDEW
-        PARHR  = WEATHER % PARHR
-        TMAX   = WEATHER % TMAX
-        TMIN   = WEATHER % TMIN
-        RADHR  = WEATHER % RADHR
-        RHUMHR = WEATHER % RHUMHR
-        TAIRHR = WEATHER % TAIRHR
-        SNUP = WEATHER % SNUP
-        SNDN   = WEATHER % SNDN
-        SRAD   = WEATHER % SRAD
-        MSALB  = SOILPROP% MSALB
         
         
                 
@@ -218,8 +202,15 @@ Module YCA_Growth_VPD
         REAl VPDFP, INTEG_1, INTEG_2
         
         SAVE
-
-        VPDFPHR(1) = get_Growth_VPDFPHR(DAP, LAI, PHSV, PHTV, WEATHER, CONTROL, SOILPROP,1)
+        TDEW   = WEATHER % TDEW
+        TMAX   = WEATHER % TMAX
+        TMIN   = WEATHER % TMIN
+        RADHR  = WEATHER % RADHR
+        TAIRHR = WEATHER % TAIRHR
+        SRAD   = WEATHER % SRAD
+        MSALB  = SOILPROP% MSALB
+        
+        VPDFPHR(1) = get_Growth_VPDFPHR(PHSV, PHTV, TDEW, TMIN, TAIRHR, 1)
         ! Calculate mean VPD photosynthesis factor for the day 
         ! For comparison only with hourly calculations.
         INTEGVPDFPHR = 0.0
@@ -297,7 +288,7 @@ Module YCA_Growth_VPD
         EOP = 0.0
         DO hour =1, TS
              
-             ET0(hour) = ET0(hour) * VPDFPHR(hour)
+             ET0(hour) = ET0(hour) !* VPDFPHR(hour)
              EOP = EOP + ET0(hour)
         END DO
         

@@ -42,7 +42,6 @@ C=======================================================================
       USE ModuleDefs 
       USE ModuleData
       USE FloodModule
-      USE YCA_Model_VPD_Interface
 
       IMPLICIT NONE
       SAVE
@@ -91,7 +90,6 @@ C=======================================================================
       TYPE (FloodWatType) FLOODWAT
       TYPE (MulchType)   MULCH
       TYPE (WeatherType)  WEATHER
-      TYPE (YCA_VPD_Type) :: YCA_VPD
 
 !     Transfer values from constructed data types into local variables.
       CROP    = CONTROL % CROP
@@ -124,8 +122,6 @@ C=======================================================================
       TMIN   = WEATHER % TMIN  
       WINDSP = WEATHER % WINDSP
       XLAT   = WEATHER % XLAT  
-      
-      YCA_VPD = YCA_VPD_Type(WEATHER, CONTROL, SOILPROP)
 
 !***********************************************************************
 !***********************************************************************
@@ -295,17 +291,11 @@ C       and total potential water uptake rate.
             ET_ALB = MSALB
           ENDIF
           
-          SELECT CASE (CONTROL % MODEL(1:5))
-            CASE ('CSYCA')    !CSYCA cassava
-               EO =  YCA_VPD % get_YCA_EOP()
-                
-          CASE DEFAULT
            CALL PET(CONTROL, 
      &       ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
      &       EORATIO, !Needed by Penman-Monteith
      &       CANHT,   !Needed by dynamic Penman-Monteith
      &       EO)      !Output
-          END SELECT
 
 !-----------------------------------------------------------------------
 !         POTENTIAL SOIL EVAPORATION

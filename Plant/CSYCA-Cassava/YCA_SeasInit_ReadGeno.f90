@@ -15,6 +15,7 @@
         )
 
         USE ModuleDefs
+        USE ModuleData
         USE YCA_First_Trans_m
         
         IMPLICIT NONE
@@ -499,4 +500,7 @@
         CALL SPREADCA (SPDIRFLE,'PSTYP','20',pstyp)
         LNUMSIMTOSTG = 0.0 !LPM 12SEP2017 defining again LNUMSIMTOSTG to avoid strange values in Linux
         
+        !Put VPD parameters in SPAM
+        CALL PUT('SPAM', 'PHSV' ,phsv)
+        CALL PUT('SPAM', 'PHTV' ,phtv)
     END SUBROUTINE YCA_SeasInit_ReadGeno
