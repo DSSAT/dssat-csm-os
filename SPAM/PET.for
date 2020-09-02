@@ -20,6 +20,9 @@
 !   P  PETPNO  FAO Penman (FAO-24) potential evapotranspiration 
 !   M  PETMEY  "Standard reference evaporation calculation for inland 
 !                south eastern Australia" By Wayne Meyer 1993
+!   E  PETPTH Calculates Priestly-Taylor potential evapotranspiration
+!             using hourly temperature and radiation. Also includes a VPD 
+!             effect to the transpiration
 
 !  Also includes these subroutines:
 !      PSE        Potential soil evaporation
@@ -35,6 +38,7 @@ C=======================================================================
      &      ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
      &      EORATIO, !Needed by Penman-Monteith
      &      CANHT,   !Needed by dynamic Penman-Monteith
+     &      KSEVAP,  !Needed by hourly Priestly-Taylor
      &      EO)      !Output
 
       USE ModuleDefs
@@ -48,7 +52,7 @@ C=======================================================================
       REAL CANHT, CLOUDS, EO, EORATIO, ET_ALB, SRAD, TAVG
       REAL, DIMENSION(TS)    ::RADHR, TAIRHR
       REAL TDEW, TMAX, TMIN, VAPR, WINDHT, WINDSP, XHLAI
-      REAL WINDRUN, XLAT, XELEV
+      REAL WINDRUN, XLAT, XELEV, KSEVAP
       
       CLOUDS = WEATHER % CLOUDS
       SRAD   = WEATHER % SRAD  
@@ -124,7 +128,7 @@ C=======================================================================
           !including a VPD effect on transpiration
           CASE ('V')
               CALL PETPTH(
-     &        ET_ALB, SRAD, TMAX, TMIN, XHLAI,          !Input
+     &        KSEVAP, ET_ALB, SRAD, TMAX, TMIN, XHLAI,  !Input
      &        RADHR, TAIRHR, TDEW,                      !Input
      &        EO)                                       !Output
 !         ------------------------
@@ -1281,7 +1285,7 @@ C  09/01/1999 GH  Incorporated into CROPGRO
 !  Calls:       None
 C=======================================================================
       SUBROUTINE PETPTH(
-     &    MSALB, SRAD, TMAX, TMIN, XHLAI,                 !Input
+     &    KSEVAP, MSALB, SRAD, TMAX, TMIN, XHLAI,         !Input
      &    RADHR, TAIRHR, TDEW,                            !Input
      &    EO)                                             !Output
 
@@ -1293,7 +1297,7 @@ C=======================================================================
 
 !-----------------------------------------------------------------------
 !     INPUT VARIABLES:
-      REAL MSALB, SRAD, TMAX, TMIN, TDEW, XHLAI
+      REAL KSEVAP, MSALB, SRAD, TMAX, TMIN, TDEW, XHLAI
       REAL, DIMENSION(TS)    ::RADHR, TAIRHR
 !-----------------------------------------------------------------------
 !     OUTPUT VARIABLES:
@@ -1303,6 +1307,7 @@ C=======================================================================
       REAL ALBEDO, EEQ, SLANG
       INTEGER hour
       REAL PHSV, PHTV
+      REAL EOS, EOP
 !-----------------------------------------------------------------------
 
       CALL GET('SPAM', 'PHSV' ,phsv)
@@ -1314,6 +1319,8 @@ C=======================================================================
       ENDIF
 
       EO = 0.0
+      EOS = 0.0
+      EOP = 0.0 
       DO hour = 1,TS 
           SLANG = (RADHR(hour)*3.6/1000.)*23.923
           EEQ = SLANG*(2.04E-4-1.83E-4*ALBEDO)*(TAIRHR(hour)+29.0)
@@ -1325,7 +1332,11 @@ C=======================================================================
           ENDIF
           VPDFPHR(hour) =  get_Growth_VPDFPHR(PHSV, PHTV, TDEW, 
      &                     TMIN, TAIRHR, hour)
-          ET0(hour) = ET0(hour) * VPDFPHR(hour)
+          EOSH(hour) = ET0(hour)*EXP(-KSEVAP*XHLAI)
+          EOPH(hour) = (ET0(hour) - EOSH(hour)) * VPDFPHR(hour)
+          ET0(hour) = EOSH(hour) + EOPH(hour)
+          EOS = EOS + EOSH(hour)
+          EOP = EOP + EOPH(hour)
           EO = EO + ET0(hour)
       ENDDO
 
@@ -1333,6 +1344,10 @@ C=======================================================================
 
 !###  EO = MAX(EO,0.0)   !gives error in DECRAT_C
       EO = MAX(EO,0.0001)
+      EOS = MAX(EOS,0.0)
+      EOP = MAX(EOP,0.0)
+      CALL PUT('SPAM', 'EOS' ,EOS)
+      CALL PUT('SPAM', 'EOP' ,EOP)
 
 !-----------------------------------------------------------------------
       RETURN

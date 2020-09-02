@@ -195,7 +195,7 @@ C=======================================================================
         END SELECT
 
 !       Initialize plant transpiration variables
-        CALL TRANS(DYNAMIC, 
+        CALL TRANS(DYNAMIC, MEEVP, 
      &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
      &    WINDSP, XHLAI,                                  !Input
      &    EOP)                                            !Output
@@ -295,6 +295,7 @@ C       and total potential water uptake rate.
      &       ET_ALB, XHLAI, MEEVP, WEATHER,  !Input for all
      &       EORATIO, !Needed by Penman-Monteith
      &       CANHT,   !Needed by dynamic Penman-Monteith
+     &       KSEVAP,  !Needed by hourly Priestly-Taylor
      &       EO)      !Output
 
 !-----------------------------------------------------------------------
@@ -304,7 +305,11 @@ C       and total potential water uptake rate.
 !         This was important for Canegro and affects CROPGRO crops
 !             only very slightly (max 0.5% yield diff for one peanut
 !             experiment).  No difference to other crop models.
-          CALL PSE(EO, KSEVAP, XLAI, EOS)
+          IF (meevp .NE.'V') THEN
+              CALL PSE(EO, KSEVAP, XLAI, EOS)
+          ELSE
+              CALL GET('SPAM', 'EOS' ,EOS)
+          ENDIF
 
 !-----------------------------------------------------------------------
 !         ACTUAL SOIL, MULCH AND FLOOD EVAPORATION
@@ -383,7 +388,7 @@ C       and total potential water uptake rate.
 !              TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
 !              EOP = EOP * TRAT
 
-              CALL TRANS(RATE, 
+              CALL TRANS(RATE, MEEVP, 
      &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
      &        WINDSP, XHLAI,                              !Input
      &        EOP)                                        !Output

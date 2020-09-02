@@ -3,7 +3,9 @@ Module YCA_Growth_VPD
     USE ModuleDefs
     
     REAL, DIMENSION(TS)    :: VPDFPHR                ! Hourly VPD factor, 0-1
-    REAL, DIMENSION(TS)    :: ET0                    ! Hourly reference transpiration
+    REAL, DIMENSION(TS)    :: ET0                    ! Hourly potential evapotranspiration
+    REAL, DIMENSION(TS)    :: EOPH                   ! Hourly potential transpiration
+    REAL, DIMENSION(TS)    :: EOSH                   ! Hourly potential evaporation
     REAL    :: MNVPDFPHR                  ! Daily mean VPD factor, 0-1MNVPDFPHR
     REAL    :: VPDStartHr    , VPDMaxHr   ! VPD start hour, VPD max hour
     REAL    :: ET0DAY                     ! Daily integral of reference transpiration
@@ -34,7 +36,7 @@ Module YCA_Growth_VPD
         REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
         REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN, XELEV
         REAL    VPDFPPREV   , VPDMAXHRPREV
-        REAL    CSVPSAT                                                                            ! REAL function
+        REAL    VPSAT                                                                            ! REAL function
         REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
         REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
         INTEGER hour                                                                                  ! Loop counter
@@ -114,7 +116,7 @@ Module YCA_Growth_VPD
         REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
         REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
         REAL    VPDFPPREV   , VPDMAXHRPREV
-        REAL    CSVPSAT                                                                            ! REAL function
+        REAL    VPSAT                                                                            ! REAL function
         REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
         REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
         INTEGER hour                                                                                  ! Loop counter
@@ -136,7 +138,7 @@ Module YCA_Growth_VPD
             TDEW = TMIN
         ENDIF
         DO hour =1, TS
-            VPDHR(hour) = (CSVPSAT(TAIRHR(hour)) - CSVPSAT(TDEW))/1000.0                   ! VPDHR = VPD, hourly (kPa) 
+            VPDHR(hour) = (VPSAT(TAIRHR(hour)) - VPSAT(TDEW))/1000.0                   ! VPDHR = VPD, hourly (kPa) 
         END DO 
         
         
@@ -194,7 +196,7 @@ Module YCA_Growth_VPD
         REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
         REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
         REAL    VPDFPPREV   , VPDMAXHRPREV
-        REAL    CSVPSAT                                                                            ! REAL function
+        REAL    VPSAT                                                                            ! REAL function
         REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
         REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
         INTEGER hour                                                                                  ! Loop counter
@@ -256,7 +258,7 @@ Module YCA_Growth_VPD
         REAL    INTEGVPDFPHR                                                                         ! Added for VPD response of transpiration
         REAL    SNDN        , SNUP        , TDEW        , TMAX        , TMIN
         REAL    VPDFPPREV   , VPDMAXHRPREV
-        REAL    CSVPSAT                                                                            ! REAL function
+        REAL    VPSAT                                                                            ! REAL function
         REAL    AlphaPT     , DeltaVP     , GammaPS     , LambdaLH                                 ! Added for formulation of Priestley-Taylor
         REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
         INTEGER hour                                                                                  ! Loop counter

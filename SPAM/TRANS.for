@@ -26,7 +26,7 @@ C  02/06/2003 KJB/CHP Replaced KCAN with KEP
 !  Called by: WATBAL
 !  Calls:     None
 C=======================================================================
-      SUBROUTINE TRANS(DYNAMIC, 
+      SUBROUTINE TRANS(DYNAMIC, MEEVP,
      &    CO2, CROP, EO, EVAP, KTRANS, TAVG,              !Input
      &    WINDSP, XHLAI,                                  !Input
      &    EOP)                                            !Output
@@ -37,6 +37,7 @@ C=======================================================================
       IMPLICIT NONE
 
       CHARACTER*2  CROP
+      CHARACTER*1  MEEVP
 
       INTEGER DYNAMIC
 
@@ -81,8 +82,12 @@ C       soil water balance and predicting measured ET.
         IF (KCB .GE. 0.0) THEN
           EOP = KCB * REFET !KRT added for ASCE dual Kc ET approach
         ELSE  
-          FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
-          EOP = EO * FDINT
+          IF (meevp .NE.'V') THEN
+            FDINT = 1.0 - EXP(-(KTRANS) * XHLAI)  
+            EOP = EO * FDINT
+          ELSE
+              CALL GET('SPAM', 'EOP' ,EOP)
+          ENDIF
           EOP_reduc = EOP * (1. - TRAT)  
           EOP = EOP * TRAT
 
