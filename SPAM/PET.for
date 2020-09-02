@@ -1358,13 +1358,22 @@ C=======================================================================
 ! ALBEDO  Reflectance of soil-crop surface (fraction)
 ! EEQ     Equilibrium evaporation (mm/d)
 ! EO      Potential evapotranspiration rate (mm/d)
+! EOPH    Hourly potential transpiration (mm/h)
+! EOSH    Hourly potential evaporation (mm/h)
+! EOP     Potential transpiration (mm/h)
+! EOS     Potential evaporation (mm/h)
+! ET0     Hourly reference transpiration (mm/m2/hr)
 ! MSALB   Soil albedo with mulch and soil water effects (fraction)
+! PHTV          VPD response threshold, kPa                (set in CSCAS046.SPE. PHTV >= 5 shuts off the response. In YCA_First_Trans_m)
+! PHSV          Slope of VPD response, #/kPa               (negative, set in CSCAS046.SPE. In YCA_First_Trans_m)
+! RADHR         Solar radiation, hourly                    (from WEATHER % RADHR  in ModuleDefs)
 ! SLANG   Solar radiation 
-! SRAD    Solar radiation (MJ/m2-d)
-! TD      Approximation of average daily temperature (ºC)
+! TAIRHR        Air temperature, hourly, °C                (from WEATHER % TAIRHR in ModuleDefs)
+! TDEW          Dew point tempreature,°C                   (from WEATHER % TDEW   in ModuleDefs)
 ! TMAX    Maximum daily temperature (°C)
 ! TMIN    Minimum daily temperature (°C)
 ! XHLAI   Leaf area index (m2[leaf] / m2[ground])
+! VPDFPHR       VPD factor, hourly (#, 0-1)                (Defined in CS_VPD_m)
 !-----------------------------------------------------------------------
 !     END SUBROUTINE PETPTH
 C=======================================================================

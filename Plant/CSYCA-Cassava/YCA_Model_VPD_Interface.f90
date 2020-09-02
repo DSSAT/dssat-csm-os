@@ -17,8 +17,6 @@
         
     contains
 
-        procedure, pass (this) :: get_YCA_EO
-        procedure, pass (this) :: get_YCA_EOP
         procedure, pass (this) :: get_YCA_VPDFPHR
         procedure, pass (this) :: get_YCA_VPDFP
         
@@ -80,29 +78,7 @@
         get_YCA_PHTV = PHTV
     end function get_YCA_PHTV
     
-    ! get_YCA_ EO
-    real function get_YCA_EO(this)
-        USE ModuleDefs
-        Use YCA_Growth_VPD
-        
-        implicit none
-        class (YCA_VPD_type), intent(in) :: this
-        
-        get_YCA_EO = get_Growth_EO(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP)
-        
-    end function get_YCA_EO
     
-    ! get_YCA_ EOP
-    real function get_YCA_EOP(this)
-        USE ModuleDefs
-        Use YCA_Growth_VPD
-        
-        implicit none
-        class (YCA_VPD_type), intent(in) :: this
-        
-        get_YCA_EOP = get_Growth_EOP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP)
-        
-    end function get_YCA_EOP
     
     ! get_YCA_ VPDFPHR
     real function get_YCA_VPDFPHR(this, hour)
