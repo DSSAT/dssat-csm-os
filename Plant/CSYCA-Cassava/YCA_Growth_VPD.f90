@@ -23,6 +23,7 @@ Module YCA_Growth_VPD
         
         IMPLICIT NONE
         SAVE
+        TYPE (WeatherType) WEATHER 
 
         INTEGER, intent (in) :: targetHour
         REAL, intent (in) :: PHSV
@@ -38,7 +39,7 @@ Module YCA_Growth_VPD
         REAL    MSALB       , SRAD        , DTEMP       , ETPT        , EOP                        ! Added for formulation of Priestley-Taylor
         INTEGER hour                                                                                  ! Loop counter
         REAL ALBEDO
-        REAl VPDFP, INTEG_1, INTEG_2
+        REAL VPDFP, INTEG_1, INTEG_2, VPD_TRANSP
         
         SAVE
         
@@ -54,10 +55,12 @@ Module YCA_Growth_VPD
         IF (TDEW <= -98.0) THEN ! validating if it is -99
             TDEW = TMIN
         ENDIF
+        VPD_TRANSP = 0.0
         DO hour =1, TS
             VPDHR(hour) = (VPSAT(TAIRHR(hour)) - VPSAT(TDEW))/1000.0                   ! VPDHR = VPD, hourly (kPa) 
+            VPD_TRANSP = VPD_TRANSP + VPDHR(hour)
         END DO 
-        
+        VPD_TRANSP = VPD_TRANSP/TS
         
         ! If VPD > PHTV, reduce VPFPHR by the amount it exceeds PHVT (the threshold), scaled by PHSV (the slope).
         VPDFPHR = 1.0                                                                ! VPDFPHR = VPD factor, hourly (#) 
@@ -87,7 +90,6 @@ Module YCA_Growth_VPD
         get_Growth_VPDFPHR = VPDFPHR(targetHour)
         
     END function get_Growth_VPDFPHR
-    
         
 !****************************************************************************************
 ! VPD Factor for Photosynthesis function
@@ -145,7 +147,7 @@ Module YCA_Growth_VPD
         END DO
 
         
-        get_Growth_VPDFP = INTEGVPDFPHR
+        get_Growth_VPDFP = INTEGVPDFPHR/TS
         
     END function get_Growth_VPDFP
     

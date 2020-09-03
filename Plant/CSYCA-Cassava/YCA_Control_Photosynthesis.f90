@@ -37,37 +37,40 @@
         
         real, intent (in) :: PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP
         TYPE (ControlType), intent (in) :: CONTROL    ! Defined in ModuleDefs
-        TYPE (WeatherType), intent (in) :: WEATHER    ! Defined in ModuleDefs
+        TYPE (WeatherType) WEATHER    ! Defined in ModuleDefs
         TYPE (SoilType), intent (in) ::   SOILPROP   ! Defined in ModuleDefs
         
         TYPE (YCA_VPD_Type) :: VPD
         real :: CARBOTMPR = 0
-        real :: VPDFP= 1.0
-        real, DIMENSION(TS) :: VPDFPHR, CARBOTMPRHR, RADHR
+        REAL VPDF, VPD_TRANSP, VPSAT, TDEW 
+        real, DIMENSION(TS) :: VPDFPHR, CARBOTMPRHR, RADHR, VPDHR, TAIRHR
         integer :: hour = 1
         
         RADHR  = WEATHER % RADHR
+        TAIRHR = WEATHER % TAIRHR
+        TDEW   = WEATHER % TDEW
+        
         
         VPD = YCA_VPD_Type(WEATHER, CONTROL, SOILPROP)
         !VPDFP = VPD%get_YCA_VPDFP()
         
         CARBOTMPR = 0.0
-        !DO L = 1, TS
-        !    CARBOTMPRHR(L) = AMAX1(0.0,(PARMJFAC*RADHR(L)*3.6/1000.)*PARU*CO2FP*TFP* WFP * NFP * RSFP * VPDFPHR(L) * SLPF)       ! MF 17SE14 RADHR is in J/m2/s. Multiply by 3600 for hour, divide by 10^6 for MJ.
-        !    CARBOTMPR = CARBOTMPR + CARBOTMPRHR(L)
-        !END DO
-        !  
-        !CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP* WFP * NFP * RSFP * VPDFP * SLPF) !LPM 02SEP2016 Deleted WFP and NFP 
-        
-        
-        !CARBOTMPR = AMAX1(0.0,(PARMJFAC*SRAD)*PARU*CO2FP*TFP* RSFP * VPDFP * SLPF) ! @danipilze 05DIC2018 deleted and changed back to hourly
-        
+        VPD_TRANSP = 0.0
+
         DO hour = 1, TS
+            VPDHR(hour) = (VPSAT(TAIRHR(hour)) - VPSAT(TDEW))/1000.0                   ! VPDHR = VPD, hourly (kPa) 
+            VPD_TRANSP = VPD_TRANSP + VPDHR(hour)
             CARBOTMPRHR(hour) = AMAX1(0.0,(PARMJFAC*RADHR(hour)*3.6/1000.)*PARU*CO2FP*TFP* RSFP * VPD%get_YCA_VPDFPHR(hour) * SLPF)       ! MF 17SE14 RADHR is in J/m2/s. Multiply by 3600 for hour, divide by 10^6 for MJ.
             CARBOTMPR = CARBOTMPR + CARBOTMPRHR(hour)
         END DO
         
         availableCarbohydrate_methodR = CARBOTMPR * PARI / PLTPOP                   !EQN 259
+        
+        VPD_TRANSP = VPD_TRANSP/TS
+        
+        VPDF = AMAX1(0.0,(1.0 - VPD%get_YCA_VPDFP()))
+        Weather % VPDF = vpdf
+        Weather % VPD_TRANSP = VPD_TRANSP
         
     end function availableCarbohydrate_methodR
         
