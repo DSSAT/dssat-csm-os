@@ -18,7 +18,7 @@
         SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
         TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
         WEATHER     , SOILPROP    , CONTROL     , &                                                                                                      ! MF WEATHER needed for VPD
-        WINDSP      , YEAR        , YEARPLTCSM  , &         !LPM 06MAR2016 Added to keep automatic planting
+        WINDSP      , YEAR        , YEARPLTCSM  , LAI         ,&         !LPM 06MAR2016 Added to keep automatic planting
         IDETG         )
     
         USE ModuleDefs
@@ -38,7 +38,7 @@
         REAL    NO3LEFT(NL) , PARIP       , PARIPA      , RLV(NL)     , RWUMX       , RWUPM       , SAT(NL)      
         REAL    SENCALG(0:NL)             , SENLALG(0:NL)             , SENNALG(0:NL)             , SHF(NL)     , SLPF        
         REAL    SRAD        , ST(NL)      , SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       
-        REAL    UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP
+        REAL    UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP      , LAI
         
         REAL    CSVPSAT     , CSYVAL      , TFAC4                                                                          ! Real function calls 
         REAL    YVALXY      , TFAC5                                                                                        ! Real function calls !LPM 15sep2017 Added TFAC5 
@@ -68,7 +68,7 @@
                 SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
                 UH2O        , & 
                 WEATHER     , SOILPROP    , CONTROL      , &
-                WINDSP      , YEAR        , ST          &         !LPM20MAR2016 To consider ST for germination
+                WINDSP      , YEAR        , ST          , LAI         &         !LPM20MAR2016 To consider ST for germination
                 )
             
             !=============================================================================================================
@@ -88,7 +88,7 @@
                 CALL YCA_Growth_Rates ( &
                     CO2         , EOP         , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , NFP         , &
                     PARIP       , PARIPA      , TDEW        , TMAX        , TMIN        , TRWUP       , RLV         , &
-                    SRAD        , SLPF        , CONTROL     , WEATHER     , &
+                    SRAD        , SLPF        , LAI         , CONTROL     , WEATHER     , &
                     SOILPROP  &
                     )
         
@@ -96,7 +96,7 @@
                 !           Calculate senescence of leaves,stems,etc..
                 !-----------------------------------------------------------------------
                 CALL YCA_Growth_Senesce ( &
-                    ISWNIT      , ISWWAT      , BRSTAGE      & 
+                    ISWNIT      , ISWWAT      , BRSTAGE      , LAI & 
                     )
                 
                 
@@ -106,14 +106,13 @@
                 
                 CALL YCA_Growth_Photo ( &
                     CO2         , NFP         , SLPF        , SRAD        , TAIRHR      , TDEW        , TMAX        , &
-                    TMIN        , CONTROL     , WEATHER     , SOILPROP &
-                    )
+                    TMIN        , LAI        , CONTROL     , WEATHER     , SOILPROP &                    )
                 
                 !-----------------------------------------------------------------------
                 !           Partition C to above ground and roots (minimum) 
                 !-----------------------------------------------------------------------
                 CALL YCA_Growth_Part ( &
-                    BRSTAGE     , ISWNIT      , NFP         &
+                    BRSTAGE     , ISWNIT      , NFP         , LAI         &
                     )
                 
                 !-----------------------------------------------------------------------

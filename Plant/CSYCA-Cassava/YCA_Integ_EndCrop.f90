@@ -9,7 +9,7 @@
     
     SUBROUTINE YCA_Integ_EndCrop ( &
         ALBEDOS     , DLAYR       , EOP         , FERNIT      , ISWWAT      , LL          , NLAYR       , STGYEARDOY  , &
-        SW          & 
+        SW          , LAI         & 
         )
         
         USE ModuleDefs
@@ -22,7 +22,7 @@
         
         INTEGER NLAYR       , STGYEARDOY(0:19)
         
-        REAL    ALBEDOS     , DLAYR(NL)   , EOP         , FERNIT      , LL(NL)      , SW(NL)        
+        REAL    ALBEDOS     , DLAYR(NL)   , EOP         , FERNIT      , LL(NL)      , SW(NL)     , LAI    
     
         !-----------------------------------------------------------------------
         !         Determine if nitrogen fertilizer applied

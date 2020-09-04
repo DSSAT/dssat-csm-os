@@ -54,14 +54,7 @@
         get_YCA_DAP = DAP
     end function get_YCA_DAP
     
-    ! get_YCA_ LAI
-    real function get_YCA_LAI()
-        USE YCA_First_Trans_m
-        implicit none
-        
-        get_YCA_LAI = LAI
-    end function get_YCA_LAI
-    
+   
     ! get_YCA_ PHSV
     real function get_YCA_PHSV()
         USE YCA_First_Trans_m
@@ -93,14 +86,15 @@
     end function get_YCA_VPDFPHR
     
     ! get_YCA_ VPDFP
-    real function get_YCA_VPDFP(this)
+    real function get_YCA_VPDFP(this,LAI)
         USE ModuleDefs
         Use YCA_Growth_VPD
         
         implicit none
         class (YCA_VPD_type), intent(in) :: this
+        REAL LAI
         
-        get_YCA_VPDFP = get_Growth_VPDFP(get_YCA_DAP(), get_YCA_LAI(), get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP)
+        get_YCA_VPDFP = get_Growth_VPDFP(get_YCA_DAP(), LAI, get_YCA_PHSV(), get_YCA_PHTV(),  this%WEATHER, this%CONTROL, this%SOILPROP)
         
     end function get_YCA_VPDFP
     

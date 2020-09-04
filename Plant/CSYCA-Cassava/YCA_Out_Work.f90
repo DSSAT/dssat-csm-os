@@ -9,7 +9,7 @@
     
     SUBROUTINE YCA_Out_Work ( & 
         BRSTAGE     , CN          , CO2         , DOY         , EO          , IDETL       , IRRAMT      , NFP         , &
-        RAIN        , WINDSP      , YEAR        &
+        RAIN        , WINDSP      , YEAR        , LAI         &
         )
         
         USE YCA_First_Trans_m
@@ -21,7 +21,7 @@
      
         INTEGER :: CN          , DOY         , YEAR       
 
-        REAL    :: BRSTAGE     , CO2         , EO          , IRRAMT      , NFP         , RAIN        , WINDSP      
+        REAL    :: BRSTAGE     , CO2         , EO          , IRRAMT      , NFP         , RAIN        , WINDSP  , LAI     
 
         CHARACTER(LEN=1)  :: IDETL       
         

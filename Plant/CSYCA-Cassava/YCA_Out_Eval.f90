@@ -10,7 +10,7 @@
     SUBROUTINE YCA_Out_Eval ( & 
         CN          , DOY         , DYNAMIC     , IDETG       , IDETL       , IDETO       , ISWNIT      , ISWWAT      , &
         MESOM       , ON          , RN          , RUN         , RUNI        , SN          , STGYEARDOY  , TN          , &
-        TNIMBSOM    , TOMINSOM1   , YEAR        &
+        TNIMBSOM    , TOMINSOM1   , YEAR        , LAI         &
         )
         
         USE ModuleDefs                                                                        ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
@@ -23,7 +23,7 @@
         INTEGER :: STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: CSTIMDIF    , CSYDOY      , DAPCALC     , TVICOLNM    , TVILENT            ! Integer function calls
 
-        REAL    :: TNIMBSOM    , TOMINSOM1          
+        REAL    :: TNIMBSOM    , TOMINSOM1   , LAI       
         REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
         REAL    :: HIAMMTMP                ! Harvest index,mature,temporary #          ! (From Output)    
 

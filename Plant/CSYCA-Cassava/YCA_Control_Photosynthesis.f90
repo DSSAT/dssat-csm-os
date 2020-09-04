@@ -28,7 +28,7 @@
     
 
     ! Conventional method using PAR utilization efficiency (P)
-    real function availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, WEATHER, CONTROL, SOILPROP)
+    real function availableCarbohydrate_methodR(PARMJFAC, SRAD, PARU, CO2FP, TFP, RSFP, SLPF, PARI, PLTPOP, LAI, WEATHER, CONTROL, SOILPROP)
         USE ModuleDefs
         USE YCA_Model_VPD_Interface
         
@@ -42,7 +42,7 @@
         
         TYPE (YCA_VPD_Type) :: VPD
         real :: CARBOTMPR = 0
-        REAL VPDF, VPD_TRANSP, VPSAT, TDEW 
+        REAL VPDF, VPD_TRANSP, VPSAT, TDEW, LAI
         real, DIMENSION(TS) :: VPDFPHR, CARBOTMPRHR, RADHR, VPDHR, TAIRHR
         integer :: hour = 1
         
@@ -68,7 +68,7 @@
         
         VPD_TRANSP = VPD_TRANSP/TS
         
-        VPDF = AMAX1(0.0,(1.0 - VPD%get_YCA_VPDFP()))
+        VPDF = AMAX1(0.0,(1.0 - VPD%get_YCA_VPDFP(LAI)))
         Weather % VPDF = vpdf
         Weather % VPD_TRANSP = VPD_TRANSP
         

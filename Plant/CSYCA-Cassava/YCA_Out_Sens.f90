@@ -8,7 +8,7 @@
 !***************************************************************************************************************************
     
     SUBROUTINE YCA_Out_Sens ( & 
-        CN          , DOY         , RNMODE      , STGYEARDOY  , TN          , YEAR        &
+        CN          , DOY         , RNMODE      , STGYEARDOY  , TN          , YEAR        , LAI      &
         )
         
         USE ModuleDefs                                                                        ! MF 31AU14 ADDED FOR ACCESS TO WEATHER
@@ -20,8 +20,8 @@
         INTEGER :: CN          , DOY         , STGYEARDOY(0:19)            , TN          , YEAR
         INTEGER :: DAPCALC                                                                    ! Integer function calls
         
-        REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output)    
-
+        REAL    :: CNCTMP                  ! Canopy N concentration,tempry  %          ! (From Output) 
+        REAL    :: LAI
         CHARACTER(LEN=1)  :: RNMODE      
 
         !-----------------------------------------------------------------------------------------------------------
