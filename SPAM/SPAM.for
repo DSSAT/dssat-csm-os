@@ -305,11 +305,7 @@ C       and total potential water uptake rate.
 !         This was important for Canegro and affects CROPGRO crops
 !             only very slightly (max 0.5% yield diff for one peanut
 !             experiment).  No difference to other crop models.
-          IF (meevp .NE.'V') THEN
-              CALL PSE(EO, KSEVAP, XLAI, EOS)
-          ELSE
-              CALL GET('SPAM', 'EOS' ,EOS)
-          ENDIF
+          CALL PSE(EO, KSEVAP, XLAI, EOS)
 
 !-----------------------------------------------------------------------
 !         ACTUAL SOIL, MULCH AND FLOOD EVAPORATION
@@ -388,10 +384,13 @@ C       and total potential water uptake rate.
 !              TRAT = TRATIO(CROP, CO2, TAVG, WINDSP, XHLAI)
 !              EOP = EOP * TRAT
 
+!            CASE DEFAULT
+!             For all models except ORYZA
               CALL TRANS(RATE, MEEVP, 
      &        CO2, CROP, EO, EVAP, KTRANS, TAVG,          !Input
      &        WINDSP, XHLAI,                              !Input
      &        EOP)                                        !Output
+!            END SELECT
             
           ELSE
             EOP = 0.0

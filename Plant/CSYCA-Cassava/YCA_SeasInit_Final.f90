@@ -104,13 +104,15 @@
                 ENDIF        
             ENDIF        
         ENDIF        
-        IF (MEPHO /= 'I'.AND. MEPHO /= 'M' .AND. MEPHO /='R' .AND. MEPHO /='V') THEN ! if photosynthesis method doesn't exists
-                    WRITE(MESSAGE(1),'(A22,A1,A15,A19)')'Photosynthesis method ',MEPHO,' not an option ',' Changed to R (RUE)'
+        IF (MEPHO /='R' .AND. MEPHO /='V') THEN ! if photosynthesis method doesn't exists
+                    WRITE(MESSAGE(1),'(A22,A1,A15)')'Photosynthesis method ',MEPHO,' not an option '
+                    WRITE(MESSAGE(2),'(A42)')' changed to V (RUE with hourly VPD effect)'
                     
-                    CALL WARNING(1,'CSYCA',MESSAGE)
+                    CALL WARNING(2,'CSYCA',MESSAGE)
                     WRITE(FNUMWRK,*)' '
-                    WRITE(FNUMWRK,'(A23,A1,A15,A19)')'Photosynthesis method ',MEPHO,' not an option ',' Changed to R (RUE)'
-                    MEPHO = 'R'
+                    WRITE(FNUMWRK,'(A23,A1,A15)')'Photosynthesis method ',MEPHO,' not an option '
+                    WRITE(FNUMWRK,'(A42)')' changed to V (RUE with hourly VPD effect)'
+                    MEPHO = 'V'
         ENDIF
         ! Other CSM codes are:
         !  C Canopy photosynthesis curve.

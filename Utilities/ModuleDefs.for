@@ -411,7 +411,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL AGEFAC, PG                   !photosynthese
         REAL CEF, CEM, CEO, CEP, CES, CET !Cumulative ET - mm
         REAL  EF,  EM,  EO,  EP,  ES,  ET !Daily ET - mm/d
-        REAL  EOP, EVAP, EOS              !Daily mm/d
+        REAL  EOP, EVAP                   !Daily mm/d
         REAL, DIMENSION(NL) :: UH2O       !Root water uptake
         !ASCE reference ET with FAO-56 dual crop coefficient (KRT)
         REAL REFET, SKC, KCBMIN, KCBMAX, KCB, KE, KC
@@ -636,7 +636,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('EF');     Value = SAVE_data % SPAM % EF
         Case ('EM');     Value = SAVE_data % SPAM % EM
         Case ('EO');     Value = SAVE_data % SPAM % EO
-        Case ('EOS');    Value = SAVE_data % SPAM % EOS
         Case ('EP');     Value = SAVE_data % SPAM % EP
         Case ('ES');     Value = SAVE_data % SPAM % ES
         Case ('ET');     Value = SAVE_data % SPAM % ET
@@ -763,7 +762,6 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('EF');     SAVE_data % SPAM % EF     = Value
         Case ('EM');     SAVE_data % SPAM % EM     = Value
         Case ('EO');     SAVE_data % SPAM % EO     = Value
-        Case ('EOS');    SAVE_data % SPAM % EOS    = Value    
         Case ('EP');     SAVE_data % SPAM % EP     = Value
         Case ('ES');     SAVE_data % SPAM % ES     = Value
         Case ('ET');     SAVE_data % SPAM % ET     = Value

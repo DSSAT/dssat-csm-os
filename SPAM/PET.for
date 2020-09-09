@@ -20,7 +20,7 @@
 !   P  PETPNO  FAO Penman (FAO-24) potential evapotranspiration 
 !   M  PETMEY  "Standard reference evaporation calculation for inland 
 !                south eastern Australia" By Wayne Meyer 1993
-!   E  PETPTH Calculates Priestly-Taylor potential evapotranspiration
+!   V  PETPTH Calculates Priestly-Taylor potential evapotranspiration
 !             using hourly temperature and radiation. Also includes a VPD 
 !             effect to the transpiration
 
@@ -1307,7 +1307,7 @@ C=======================================================================
       REAL ALBEDO, EEQ, SLANG
       INTEGER hour
       REAL PHSV, PHTV
-      REAL EOS, EOP
+      REAL EOP
 !-----------------------------------------------------------------------
 
       CALL GET('SPAM', 'PHSV' ,phsv)
@@ -1319,7 +1319,6 @@ C=======================================================================
       ENDIF
 
       EO = 0.0
-      EOS = 0.0
       EOP = 0.0 
       DO hour = 1,TS 
           SLANG = (RADHR(hour)*3.6/1000.)*23.923
@@ -1334,8 +1333,6 @@ C=======================================================================
      &                     TMIN, TAIRHR, hour)
           EOSH(hour) = ET0(hour)*EXP(-KSEVAP*XHLAI)
           EOPH(hour) = (ET0(hour) - EOSH(hour)) * VPDFPHR(hour)
-          ET0(hour) = EOSH(hour) + EOPH(hour)
-          EOS = EOS + EOSH(hour)
           EOP = EOP + EOPH(hour)
           EO = EO + ET0(hour)
       ENDDO
@@ -1344,9 +1341,7 @@ C=======================================================================
 
 !###  EO = MAX(EO,0.0)   !gives error in DECRAT_C
       EO = MAX(EO,0.0001)
-      EOS = MAX(EOS,0.0)
       EOP = MAX(EOP,0.0)
-      CALL PUT('SPAM', 'EOS' ,EOS)
       CALL PUT('SPAM', 'EOP' ,EOP)
 
 !-----------------------------------------------------------------------
