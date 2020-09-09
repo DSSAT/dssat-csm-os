@@ -528,6 +528,8 @@ Module YCA_First_Trans_m
     INTEGER :: PDATE                   ! Planting Yrdoy from X-file     #          ! (From SeasInit)  
     INTEGER :: PDAYS(0:PSX)             ! Tier durations                 PVoCd      ! (From SeasInit)  
     REAL    :: PDL(0:PSX)              ! Tier durations,phint units     #          ! (From SeasInit)  
+    REAL    :: PDSV                    ! Phs,fr reduction with VPD daily  /KPa    ! (From SeasInit)  
+    REAL    :: PDTV                    ! Phs,threshold VPD for reduction daily KPa! (From SeasInit)  
     REAL    :: PECM                    ! Emergence duration             Cd/cm      ! (From SeasInit)  
     !REAL    :: PEGD                    ! Duration,germ                  deg.d      ! (From SeasInit) !LPM 21MAR2016 Deleted, instead use PGERM 
     REAL    :: PEMRG                   ! Reserves use by TT for emerg   g/Cd       ! (From SeasInit)
@@ -543,8 +545,8 @@ Module YCA_First_Trans_m
     REAL    :: PHINTFAC                ! Phylochron interval factor     #          ! (From SeasInit)  
     !REAL    :: PHINTS                  ! Phylochron interval,standard   deg.d      ! (From SeasInit) !LPM 21MAY2015 PHINT is not used 
     REAL    :: PHOTQR                  ! Photon requirement,calculated  E/mol      ! (From SeasInit)  
-    REAL    :: PHSV                    ! Phs,fr reduction with VPD       /KPa      ! (From SeasInit)  
-    REAL    :: PHTV                    ! Phs,threshold VPD for reduction KPa       ! (From SeasInit)  
+    REAL    :: PHSV                    ! Phs,fr reduction with VPD hourly  /KPa    ! (From SeasInit)  
+    REAL    :: PHTV                    ! Phs,threshold VPD for reduction hourly KPa! (From SeasInit)  
     REAL    :: PLA                     ! Plant leaf area                cm2        ! (From SeasInit)  
     !REAL    :: PLAGS2                  ! Plant lf area g,sh+br,H2oNT cm2/p         ! (From SeasInit) !LPM 23MAR15 non necessary PLAGSB2 considers all the branches and shoots  
     REAL    :: PLAGSB2                 ! Plant lf area g,sh+br,H2oNT    cm2/p      ! (From SeasInit)!LPM 23MAR15  

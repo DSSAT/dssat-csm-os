@@ -63,7 +63,6 @@
         
         
         VPD = YCA_VPD_Type(WEATHER, CONTROL, SOILPROP)
-        !VPDFP = VPD%get_YCA_VPDFP()
         
         CARBOTMPR = 0.0
         VPD_TRANSP = 0.0

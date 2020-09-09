@@ -1,4 +1,4 @@
-$SPECIES:CSYCA047.08102017    Last edit: 01/11/2018 DA,LPM 
+$SPECIES:CSYCA047.09092020    Last edit: 09/09/2020 LPM
 
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
@@ -9,22 +9,15 @@ $SPECIES:CSYCA047.08102017    Last edit: 01/11/2018 DA,LPM
 
 ! RDGS  = RER/17.0*20.0
 ! RLWR  = RLW/10000
-! SERX  = SER/17.0*20.0
-! PTFMN = 0.87 From root/shoot function in original model
-! PTFMX = 0.90 From root/shoot function in original model
-! (Root/shoot = 0.1+0.05*EXP(-0.0085*Lnum)
-! KCAN  = 0.27 From embeded parameter in original model
-! PHSV = PHSV = -0.35
-! PHTV = PHTV = 2.0    Changed to 5 to eliminate effect temporarily
 
 ! Users should be extremely cautious in changing the stress response
-! thresholds (WFPU,LNCPU,etc). It is possible that there are differences
+! thresholds (WFGU,WFPU, etc). It is possible that there are differences
 ! in these characteristics, but the extent of such differences is not
 ! well understood.
 
 ! Users should also be aware that the algorithms using the following coefficients
 ! are being worked upon, but have not yet been implemented in the model:
-! RATM,RCROP; LLOSA; SLATS,SLATR,SLAWR; RWUPM,WFS
+! RATM,RCROP; LLOSA; SLATS,SLATR; RWUPM,WFS
 ! Further,the coefficient SDSZ is a default that is used only if no planting-stick
 ! size is entered in the experiment details file.
 
@@ -95,10 +88,9 @@ $SPECIES:CSYCA047.08102017    Last edit: 01/11/2018 DA,LPM
 ! g/cm     d     %
    3.0    20    20
 ! Photosynthesis
-@ PHTV  PHSV  ! VPD sensitivity aspects
+@ PDTV  PDSV  ! VPD sensitivity aspects (daily effect)
 ! kPa fr/kPa
    0.8 -0.23
-!   0.8 -0.31
 @CO2RF  CO2F  ! CO2 response
 !  vpm     # 
      0  0.00
@@ -112,10 +104,9 @@ $SPECIES:CSYCA047.08102017    Last edit: 01/11/2018 DA,LPM
    990  1.43
   9999  1.50
 CH2O distribution/mobilization
-@PTFA  ! Partition to tops (max,min,adjustment)
+@PTFA  ! Partition to feeder roots
 !   fr
   0.10
-!  0.77  0.80  0.10 !LPM05SEP2015 Modified to define partitioning fraction for feeder roots
 ! Temperature responses
 @RRATE TRGEM TRDV1 TRLFG TRLFL TRPHS TRBRG  ! Germination/emergence,development,leaf growth,leaf life,phsis, branching
 !    #    oC    oC    oC    oC    oC    oC
@@ -130,15 +121,12 @@ CH2O distribution/mobilization
 !   fr cm3/cm.d
   0.00  0.06 
 ! Water shortage effects
-! 1. Based on ratio of soil water content to field capacity 
+! Based on ratio of soil water content to field capacity 
 @ WFGU  WFGL  WFPU  WFPL  WFSU  WFEU  ! Growth,phs,senescence,evap
 !   fr    fr    fr    fr    fr    fr
    1.0   0.0   0.5   0.0   0.6   1.5
-!   1.0   0.0   1.0   0.0   0.6   1.5 !LPM 25MAR2016 WFGU modified
-! 2. Based on soil water content as a fraction of DUL-LL or SAT-DUL
 @WFGEM WFRGU  ! Germination/emergence, root growth
 !   fr    fr
-!  0.25  0.25 !LPM 25MAR2016 WFGEM modified
   0.50  0.25
 
 ! NITROGEN uptake,distribution,etc.
@@ -214,10 +202,10 @@ CH2O distribution/mobilization
 ! NTUPF   N top-up fraction (/d)
 ! PARFC   Maximum photosynthesis relative to phs at 330 vpm CO2 (#)
 ! PARIX   PAR interception beyond which accelerated ageing (fr)
+! PDSV    Photosynthesis,sensitivity to VPD (fr/kPa)
+! PDTV    Photosynthesis,threshold VPD for reduction in rate (kPa)
 ! PEMRG   Rate of reserves use by unit of thermal time during emergence (gCH2O/TT)
 ! PGERM   Germination phase duration (Hydrothermal units)
-! PHSV    Photosynthesis,sensitivity to VPD (fr/kPa)
-! PHTV    Photosynthesis,threshold VPD for reduction in rate (kPa)
 ! PPFPE   Photoperiod factor,pre emergence (#,0-1,0=No development)
 ! PPSEN   Photoperiod sensitivity (SL=Short day response linear,LQ= long day quadratic, LL=long day linear)
 ! PPTHR   Photoperiod threshold (h below which no effect)

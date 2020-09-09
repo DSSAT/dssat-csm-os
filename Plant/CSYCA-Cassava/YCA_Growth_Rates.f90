@@ -183,11 +183,11 @@
             Tfb = TFAC4(trbrg,tmean,TTB)                                                                               !EQN 058 LPM 19APR2016 TTB will be estimated using trbrg 
             ! Vapour pressure
             VPDFP = 1.0
-            IF (PHTV > 0.0) THEN
+            IF (PDTV > 0.0) THEN
               IF (TDEW <= -98.0) TDEW = TMIN
               VPD = CSVPSAT(tmax) - CSVPSAT(TDEW)    ! Pa                                                              !EQN 262
-              IF (VPD/1000.0 > PHTV) &
-               VPDFP = AMAX1(0.0,1.0+PHSV*(VPD/1000.0-PHTV))                                                           !EQN 263
+              IF (VPD/1000.0 > PDTV) &
+               VPDFP = AMAX1(0.0,1.0+PDSV*(VPD/1000.0-PDTV))                                                           !EQN 263
             ENDIF
 
             ! CO2 factor using look-up table
