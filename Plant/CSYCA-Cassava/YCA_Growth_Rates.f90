@@ -105,19 +105,9 @@
                     !Linear decrease according SWP
                     IF (WFGU-WFGL > 0.0) &
                         WFG = AMAX1(0.0,AMIN1(1.0,(RAW-WFGL)/(WFGU-WFGL)))                                                   !EQN 147
-                    IF (WFPU-WFPL > 0.0) &
-                        WFP = AMAX1(0.0,AMIN1(1.0,(RAW-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
+                    !IF (WFPU-WFPL > 0.0) &
+                    !    WFP = AMAX1(0.0,AMIN1(1.0,(RAW-WFPL)/(WFPU-WFPL)))                                                   !EQN 145
                     
-                    !Fix factor of 0.5 when SWP<0.5
-                    !IF (RAW <= 0.5) THEN
-                    !    IF (WFGU-WFGL > 0.0) &
-                    !        WFG = 0.5                                                   !EQN 147
-                    !    IF (WFPU-WFPL > 0.0) &
-                    !        WFP = 0.5                                                 !EQN 145
-                    !ELSE
-                    !    WFG = 1.0
-                    !    WFP = 1.0 
-                    !ENDIF
                     
                     IF (ISWWATEARLY == 'N') THEN
                         WFG = 1.0

@@ -1027,10 +1027,10 @@ Module YCA_First_Trans_m
     REAL    :: WFP                     ! Water factor,photosynthsis 0-1 #          ! (From SeasInit)  
     REAL    :: WFPCAV                  ! Water factor,phs,av 0-1,cycle  #          ! (From SeasInit)  
     REAL    :: WFPCC                   ! H20 factor,phs,cycle sum       #          ! (From SeasInit)  
-    REAL    :: WFPL                    ! Water factor,phs,lower         #          ! (From SeasInit)  
+    !REAL    :: WFPL                    ! Water factor,phs,lower         #          ! (From SeasInit) !LPM 15SEP2020 No water stress factor on photosynthesis 
     REAL    :: WFPPAV(0:19)            ! Water factor,phs,average 0-1   #          ! (From SeasInit)  
     REAL    :: WFPPC                   ! Water factor,phs,cumulative    #          ! (From SeasInit)  
-    REAL    :: WFPU                    ! Water factor,phs,upper         #          ! (From SeasInit)  
+    !REAL    :: WFPU                    ! Water factor,phs,upper         #          ! (From SeasInit)  
     REAL    :: WFRG                    ! Water factor,root growth,0-1   #          ! (From Growth)    
     REAL    :: WFRTG                   ! Water factor,root gr           #          ! (From SeasInit)  
     REAL    :: WFSU                    ! Water fac,senescence,upper 0-1 #          ! (From SeasInit)  

@@ -428,8 +428,8 @@
         CALL SPREADR (SPDIRFLE,'WFGEM',wfgem)!LPM 25MAR2016 To keep value in the code and SPE file
         CALL SPREADR (SPDIRFLE,'WFGU' ,wfgu)
         CALL SPREADR (SPDIRFLE,'WFGL' ,wfgl)
-        CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
-        CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
+        !CALL SPREADR (SPDIRFLE,'WFPU' ,wfpu)
+        !CALL SPREADR (SPDIRFLE,'WFPL' ,wfpl)
         CALL SPREADR (SPDIRFLE,'WFRGU',wfrtg)
         CALL SPREADR (SPDIRFLE,'WFSU' ,wfsu)
         CALL SPREADR (SPDIRFLE,'NLAB%',nlabpc)

@@ -151,8 +151,8 @@
         IF (RSEN < 0.0) RSEN = 5.0
         
         ! Reduction factor limits
-        IF (WFPL < 0.0) WFPL = 0.0
-        IF (WFPU < 0.0) WFPU = 1.0
+        !IF (WFPL < 0.0) WFPL = 0.0
+        !IF (WFPU < 0.0) WFPU = 1.0
         IF (WFGL < 0.0) WFGL = 0.0
         IF (WFGU < 0.0) WFGU = 1.0
         IF (NFPL < 0.0) NFPL = 0.0
@@ -269,7 +269,7 @@
         IF (ISWWATCROP == 'N') THEN
             ! Plant water status effects on growth turned off
             WFGU = 0.0
-            WFPU = 0.0
+            !WFPU = 0.0
             WFSU = 0.0
             WFRTG = 0.0
         ENDIF
