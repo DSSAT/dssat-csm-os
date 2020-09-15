@@ -404,7 +404,6 @@
         CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)
         CALL SPREADR (SPDIRFLE,'RATM' ,ratm)
         CALL SPREADR (SPDIRFLE,'RCROP',rcrop)
-        CALL SPREADR (SPDIRFLE,'RWULF',rlfwu)
         CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
         CALL SPREADR (SPDIRFLE,'RS%O' ,rspco)
@@ -426,7 +425,6 @@
         CALL SPREADR (SPDIRFLE,'SGRO2',shgr(2))
         CALL SPREADR (SPDIRFLE,'TPAR' ,tpar)
         CALL SPREADR (SPDIRFLE,'TSRAD',tsrad)
-        CALL SPREADR (SPDIRFLE,'WFEU' ,wfeu)
         CALL SPREADR (SPDIRFLE,'WFGEM',wfgem)!LPM 25MAR2016 To keep value in the code and SPE file
         CALL SPREADR (SPDIRFLE,'WFGU' ,wfgu)
         CALL SPREADR (SPDIRFLE,'WFGL' ,wfgl)

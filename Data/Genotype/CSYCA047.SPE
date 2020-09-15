@@ -53,12 +53,12 @@ $SPECIES:CSYCA047.09092020    Last edit: 09/09/2020 LPM
 !    %  cm/g     %    fr cm/d                                        
   10.0   1.0   1.0  0.15  2.6 
 ! Leaves
-@LLIG% LPEAW ! Lignin%
+@LLIG% LPEAW ! Lignin%, petiole area/wt
 !    %  cm/g
   10.0    45 
-@LLIFG LLIFS LLIFX  ! Growing,senescence durations;max.acceleration in shade 
-!   Tu    Tu    Tu
- 100.0  70.0 180.0
+@LLIFG LLIFS  ! Growing,senescence durations
+!   Tu    Tu
+ 100.0  70.0
 @LLOSA LWLOS  ! Loss when accelerated,normal senescence   
 !   fr    fr
    1.0  0.30  
@@ -80,8 +80,8 @@ $SPECIES:CSYCA047.09092020    Last edit: 09/09/2020 LPM
 !   %    fr 
   2.0   0.1 
 ! Stems
-@SLIG%  SESR ! Lignin%, area/weight, elongation rate (stem), elongation rate (shoot)
-!    %  cm/gCH2O  !LPM 21MAR2016 added SESR for emergence
+@SLIG%  SESR ! Lignin%, elongation rate (shoot)
+!    %  cm/gCH2O 
   10.0   4.0
 ! Seed
 @ SDSZ SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole seed)
@@ -122,9 +122,9 @@ CH2O distribution/mobilization
   0.00  0.06 
 ! Water shortage effects
 ! Based on ratio of soil water content to field capacity 
-@ WFGU  WFGL  WFPU  WFPL  WFSU  WFEU  ! Growth,phs,senescence,evap
-!   fr    fr    fr    fr    fr    fr
-   1.0   0.0   0.5   0.0   0.6   1.5
+@ WFGU  WFGL  WFPU  WFPL  WFSU  ! Growth,phs,senescence
+!   fr    fr    fr    fr    fr
+   1.0   0.0   0.5   0.0   0.6
 @WFGEM WFRGU  ! Germination/emergence, root growth
 !   fr    fr
   0.50  0.25
@@ -139,7 +139,7 @@ CH2O distribution/mobilization
 !   fr
   0.10
 ! Nitrogen concentrations
-@ SDN% ! Seed
+@ SDN% ! Planting stick
 !    %
    1.9
 @ LN%S LN%MN  SN%S SN%MN  RN%S RN%MN  ! Standard,minima N% leaves,stems,roots
@@ -163,17 +163,10 @@ CH2O distribution/mobilization
 !  ppm 
     30 
 
-! Photosynthesis (Alternative function)
-@PARFC CO2CC CO2EX  ! CO2 response function parameters 
-  2.05    80 0.005
-
 ! Evapotranspiration (Resistances only used for comparison)
 @ RATM RCROP  ! Atmospheric,canopy resistances 
    300   150 
 
-! Water uptake  (RWULF only used in stand-alone Cropsim)
-@RWULF ! Length factor
-   0.5 
 
 ! COEFF   DEFINITION
 ! =====   ==========

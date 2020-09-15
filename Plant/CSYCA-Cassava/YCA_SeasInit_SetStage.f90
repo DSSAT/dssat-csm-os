@@ -168,7 +168,6 @@
         IF (PARIX <= 0.0) PARIX = 0.995
         IF (NTUPF < 0.0) NTUPF = 0.2
         IF (PPEXP < 0.0) PPEXP = 2.0
-        IF (RLFWU < 0.0) RLFWU = 0.5  
         IF (RTUFR < 0.0) RTUFR = 0.05
         IF (SHGR(20) < 0.0) THEN 
             DO L = 3,22
