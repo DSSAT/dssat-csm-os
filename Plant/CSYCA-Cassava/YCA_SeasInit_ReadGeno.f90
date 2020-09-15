@@ -402,8 +402,6 @@
         CALL SPREADR (SPDIRFLE,'PDTV' ,pdtv)
         CALL SPREADR (SPDIRFLE,'PPTHR',ppthr)
         CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)
-        CALL SPREADR (SPDIRFLE,'RATM' ,ratm)
-        CALL SPREADR (SPDIRFLE,'RCROP',rcrop)
         CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
         CALL SPREADR (SPDIRFLE,'RS%O' ,rspco)

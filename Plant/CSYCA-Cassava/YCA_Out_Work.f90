@@ -43,12 +43,6 @@
                 WRITE(fnumwrk,'(A34,F7.1,I7)')' Laminae area end day /m2,/plant  ',lai,NINT(plantGreenLeafArea())
             ENDIF
             WRITE(fnumwrk,'(A25,I1,A7,2F7.3)')' PARI,competition model,C',CN,' 1-crop',PARI,PARI1
-            IF (Rlf > 0.0) THEN
-                WRITE(fnumwrk,'(A34,2F7.1,2F7.1)')' Ratm,Rcrop,Rcrop*Rco2/R,*H2o     ',ratm,rcrop,rcrop*rlfc/rlf, &
-                    rcrop*rlfc/rlf*(1.0-(1.0-wfp))
-            ELSE
-                WRITE(fnumwrk,'(A34,2F7.1)')' Ratm,Rcrop                       ',ratm,rcrop                         
-            ENDIF
             IF (FILEIOT /= 'XFL') THEN
                 IF (IDETL == 'D'.OR.IDETL == 'A') THEN
                     IF (meevp == 'R')THEN
