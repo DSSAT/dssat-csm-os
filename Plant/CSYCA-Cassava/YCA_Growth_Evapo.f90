@@ -10,7 +10,7 @@
 
     SUBROUTINE YCA_Growth_Evapo ( & 
         ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR       , DUL         , EO          , EOP         , &
-        ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , RWUPM       , &
+        ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , &
         SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
         UH2O        , &
         WEATHER     , SOILPROP, CONTROL, &                                                                                                    ! MF WEATHER needed for VPD 
@@ -31,7 +31,7 @@
         INTEGER CSIDLAYR                                                                      ! Integer function call.
         
         REAL    ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR(NL)   , DUL(NL)     , EO          , EOP         
-        REAL    ES          , KEP         , LL(NL)      , RLV(NL)     , RWUMX       , RWUPM       , SAT(NL)     , SRAD        
+        REAL    ES          , KEP         , LL(NL)      , RLV(NL)     , RWUMX       , SAT(NL)     , SRAD        
         REAL    SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       , UH2O(NL)    , WINDSP      
         REAL    ST(NL)                                  !LPM20MAR2016 To consider ST for germination
         REAL    CSVPSAT     , TFAC4                     ! Real function call.  !LPM 19SEP2017 Added tfac5
@@ -91,13 +91,7 @@
                 IF (EOMPCRP > 0.0) TRATIO = EOMPCRPCO2 / EOMPCRP
             ENDIF
             
-            IF (fileiot(1:2) /= 'DS') THEN
-              ! Calculate plant potential evaporation 
-              EOP = MAX(0.0,EO/EOMPEN*EOMPCRPCO2 * (1.0-EXP(-LAI*KEP)))
-              ! Ratio necessary because EO method may not be Monteith
-              CALL CSCRPROOTWU(ISWWAT,NLAYR, DLAYR, LL, SAT, WFEU, MEWNU,EOP, RLV, RWUPM, RLFWU, RWUMX, RTDEP, &
-                  SW, WTDEP, uh2o, trwup, trwu)
-            ENDIF
+
             
             
             ! Call 4 Using rcrop adjusted for CO2 & H2O effect     

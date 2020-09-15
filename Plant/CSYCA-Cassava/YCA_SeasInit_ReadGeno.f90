@@ -378,8 +378,8 @@
         !-----------------------------------------------------------------------------------------------------------------------
         
         CALL FVCHECK(SPDIRFLE,GENFLCHK)
-        CALL SPREADR (SPDIRFLE,'CO2CC',co2compc) 
-        CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
+        !CALL SPREADR (SPDIRFLE,'CO2CC',co2compc) 
+        !CALL SPREADR (SPDIRFLE,'CO2EX',co2ex) 
         CALL SPREADR (SPDIRFLE,'HDUR' ,hdur)
         !CALL SPREADR (SPDIRFLE,'SLAFF',lawff) !LPM 12DEC2016 Delete temperature, water and leaf position factors in SLA
         CALL SPREADR (SPDIRFLE,'SLATR',lawtr)
@@ -396,7 +396,7 @@
         CALL SPREADR (SPDIRFLE,'NTUPF',ntupf)
         CALL SPREADR (SPDIRFLE,'PARIX',parix)
         CALL SPREADR (SPDIRFLE,'LAIXX',laixx)
-        CALL SPREADR (SPDIRFLE,'PARFC',parfc)
+        !CALL SPREADR (SPDIRFLE,'PARFC',parfc)
         CALL SPREADR (SPDIRFLE,'PEMRG',pemrg) !LPM 22MAR2016 To use the same name than in the SPE file (no PECM)  
         CALL SPREADR (SPDIRFLE,'PDSV' ,pdsv)
         CALL SPREADR (SPDIRFLE,'PDTV' ,pdtv)
