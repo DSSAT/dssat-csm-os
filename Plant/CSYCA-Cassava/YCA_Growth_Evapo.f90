@@ -10,7 +10,7 @@
 
     SUBROUTINE YCA_Growth_Evapo ( & 
         ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR       , DUL         , EO          , EOP         , &
-        ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , &
+        ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , &
         SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
         UH2O        , &
         WEATHER     , SOILPROP, CONTROL, &                                                                                                    ! MF WEATHER needed for VPD 
@@ -31,7 +31,7 @@
         INTEGER CSIDLAYR                                                                      ! Integer function call.
         
         REAL    ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR(NL)   , DUL(NL)     , EO          , EOP         
-        REAL    ES          , KEP         , LL(NL)      , RLV(NL)     , RWUMX       , SAT(NL)     , SRAD        
+        REAL    ES          , KEP         , LL(NL)      , RLV(NL)     , SAT(NL)     , SRAD        
         REAL    SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       , UH2O(NL)    , WINDSP      
         REAL    ST(NL)                                  !LPM20MAR2016 To consider ST for germination
         REAL    CSVPSAT     , TFAC4                     ! Real function call.  !LPM 19SEP2017 Added tfac5

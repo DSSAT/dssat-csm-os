@@ -192,7 +192,7 @@
                 ALBEDOS     , BD          , BRSTAGE     ,  CLOUDS     , CO2         , DAYL        , DLAYR       , DOY         , &
                 DUL         , EO          , EOP         , ES          , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
                 KEP         , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , &
-                RLV         , RNMODE      , RWUMX       , SAT         , SENCALG     , SENLALG     , SENNALG     , &
+                RLV         , RNMODE      , SAT         , SENCALG     , SENLALG     , SENNALG     , &
                 SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
                 TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
                 WEATHER     , SOILPROP    , CONTROL     , &  

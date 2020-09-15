@@ -14,7 +14,7 @@
         ALBEDOS     , BD          , BRSTAGE     ,  CLOUDS     , CO2         , DAYL        , DLAYR       , DOY         , &
         DUL         , EO          , EOP         , ES          , ISWDIS      , ISWNIT      , ISWWAT      , KCAN        , &
         KEP         , LL          , NFP         , NH4LEFT     , NLAYR       , NO3LEFT     , PARIP       , PARIPA      , &
-        RLV         , RNMODE      , RWUMX       , SAT         , SENCALG     , SENLALG     , SENNALG     , &
+        RLV         , RNMODE      , SAT         , SENCALG     , SENLALG     , SENNALG     , &
         SHF         , SLPF        , SRAD        , ST          , STGYEARDOY  , SW          , TAIRHR      , TDEW        , &
         TMAX        , TMIN        , TRWUP       , UH2O        , UNH4        , UNO3        , &
         WEATHER     , SOILPROP    , CONTROL     , &                                                                                                      ! MF WEATHER needed for VPD
@@ -35,7 +35,7 @@
 
         REAL    ALBEDOS     , BD(NL)      , BRSTAGE     , CLOUDS      , CO2         , DAYL        , DLAYR(NL)   , DUL(NL)     
         REAL    EO          , EOP         , ES          , KCAN        , kep         , LL(NL)      , NFP         , NH4LEFT(NL) 
-        REAL    NO3LEFT(NL) , PARIP       , PARIPA      , RLV(NL)     , RWUMX       , SAT(NL)      
+        REAL    NO3LEFT(NL) , PARIP       , PARIPA      , RLV(NL)     , SAT(NL)      
         REAL    SENCALG(0:NL)             , SENLALG(0:NL)             , SENNALG(0:NL)             , SHF(NL)     , SLPF        
         REAL    SRAD        , ST(NL)      , SW(NL)      , TAIRHR(24)  , TDEW        , TMAX        , TMIN        , TRWUP       
         REAL    UH2O(NL)    , UNH4(NL)    , UNO3(NL)    , WINDSP      , LAI
@@ -64,7 +64,7 @@
             
             CALL YCA_Growth_Evapo ( & 
                 ALBEDOS     , BRSTAGE     , CLOUDS      , CO2         , DLAYR       , DUL         , EO          , EOP         , &
-                ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , RWUMX       , &
+                ES          , ISWWAT      , KEP         , LL          , NLAYR       , RLV         , &
                 SAT         , SRAD        , SW          , TAIRHR      , TDEW        , TMAX        , TMIN        , TRWUP       , &
                 UH2O        , & 
                 WEATHER     , SOILPROP    , CONTROL      , &
