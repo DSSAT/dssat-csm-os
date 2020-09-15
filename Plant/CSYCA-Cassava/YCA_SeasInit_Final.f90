@@ -212,7 +212,7 @@
             WRITE(fnumwrk,*)' Plant. stick stages '
             WRITE(fnumwrk,*)' CH2O reserves '
             !WRITE(fnumwrk,*)'  Rsfrs  ',rsfrs !LPM 09OCT2019 Remove the reserve fraction to the stems (RSFRS)
-            WRITE(fnumwrk,*)'  Rspco  ',rspco
+            !WRITE(fnumwrk,*)'  Rspco  ',rspco
             WRITE(fnumwrk,*)' Radiation use  '
             WRITE(fnumwrk,*)'  Parue  ',Parue
             WRITE(fnumwrk,*)'  Paru2  ',Paru2

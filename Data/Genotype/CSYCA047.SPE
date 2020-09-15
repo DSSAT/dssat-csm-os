@@ -76,9 +76,9 @@ $SPECIES:CSYCA047.09152020    Last edit: 09/15/2020 LPM
 !   fr
   1.00     
 ! Reserves   
-@RS%O RSUSE  ! Standard concs (overall), fr utilizeable/day
-!   %    fr 
-  2.0   0.1 
+@RSUSE  ! fr utilizeable/day
+!   fr 
+   0.1 
 ! Stems
 @SLIG%  SESR ! Lignin%, elongation rate (shoot)
 !    %  cm/gCH2O 
@@ -206,7 +206,6 @@ $SPECIES:CSYCA047.09152020    Last edit: 09/15/2020 LPM
 ! RN%S    Root N concentration,maximum,stage (fr)
 ! RRATE   Relative process rate (#)
 ! RRESP   Root respiration fraction (fr)
-! RS%O    Reserves concentration above which overflow to storage root (%)
 ! RSEN    Root senescence rate (%/standard day)
 ! RSUSE   Reserves utilisation fraction,vegetative phases (fr)
 ! RTNO3   NO3 uptake/root length  (mg N/cm.day)

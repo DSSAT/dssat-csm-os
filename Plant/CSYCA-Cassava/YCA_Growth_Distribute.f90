@@ -48,14 +48,12 @@
         IF(TVR1 < 0.0.AND.TVR1 > -1.0E-07) THEN
             TVR1 = 0.0
         END IF
-        IF (TVR1 > RSPCO/100.0) THEN   ! If potential>standard 
-            TVR2 = RSWT+GRORS             ! What rswt could be                                                         !EQN 311
-            TVR3 =   ((RSPCO/100.0)*(LFWT+GROLFADJ-leafTotalSenescedWeight()+woodyWeight()+GROSTADJ+GROCRADJ))/(1.0-(RSPCO/100.0))! What rswt should be     !EQN 312
-            SRWTGRS = (TVR2 - TVR3)                                                                                    !EQN 313
-            ! Determine FINAL new concentration
-            IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
-                (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
-        ENDIF
+        
+        SRWTGRS = RSWT+GRORS
+        ! Determine FINAL new concentration
+        IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) TVR5 = (RSWT+GRORS-SRWTGRS)/((LFWT+GROLFADJ-leafTotalSenescedWeight())+ &             !EQN 314
+            (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS-SRWTGRS))
+
         
                 
         !-----------------------------------------------------------------------

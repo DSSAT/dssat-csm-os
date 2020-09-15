@@ -196,7 +196,7 @@
         pdl = 0.0
         
         ! Ecotype coefficients re-set
-        rspco = -99
+        !rspco = -99
         dayls = -99
         srnpcs = -99
         srprs = -99
@@ -404,7 +404,6 @@
         CALL SPREADR (SPDIRFLE,'PTFA' ,ptfa)
         CALL SPREADR (SPDIRFLE,'RLIG%',rligp)
         CALL SPREADR (SPDIRFLE,'RRESP',rresp)
-        CALL SPREADR (SPDIRFLE,'RS%O' ,rspco)
         CALL SPREADR (SPDIRFLE,'RSEN' ,rsen)
         IF (RSEN < 0.0) CALL SPREADR (SPDIRFLE,'RSEN%' ,rsen)
         CALL SPREADR (SPDIRFLE,'RSFPL',rsfpl)
