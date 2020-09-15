@@ -67,8 +67,8 @@ Module YCA_First_Trans_m
     REAL    :: CO2AIR                  ! CO2 concentration in air       g/m3       ! (From Growth)    
     REAL    :: CO2CAV                  ! Average co2 for crop cycle     vpm        ! (From Integrate) 
     REAL    :: CO2CC                   ! CO2 sum for cycle              vpm        ! (From SeasInit)  
-    REAL    :: CO2COMPC                ! CO2 compensation conc (vpm)    #          ! (From SeasInit)  
-    REAL    :: CO2EX                   ! Exponent for CO2-phs function  #          ! (From SeasInit)  
+    !REAL    :: CO2COMPC                ! CO2 compensation conc (vpm)    #          ! (From SeasInit)  
+    !REAL    :: CO2EX                   ! Exponent for CO2-phs function  #          ! (From SeasInit)  
     REAL    :: CO2F(10)                ! CO2 factor rel values 0-2      #          ! (From SeasInit)  
     REAL    :: CO2FP                   ! CO2 factor,photosynthesis      #          ! (From SeasInit)  
     REAL    :: CO2FPI                  ! CO2 factor,phs,internal Co2    #          ! (From Growth)    
@@ -383,7 +383,7 @@ Module YCA_First_Trans_m
     REAL    :: LLIFGTT                 ! Leaf expansion duration        C.d        ! (From SeasInit)  
     REAL    :: LLIFS                   ! Leaf senescence dur,as read    d          ! (From SeasInit)  
     REAL    :: LLIFSTT                 ! Leaf senescence duration,Ttime C.d        ! (From SeasInit)  
-    REAL    :: LLIFX                   ! Leaf ageing acceleration,max   Tu         ! (From SeasInit)  
+    !REAL    :: LLIFX                   ! Leaf ageing acceleration,max   Tu         ! (From SeasInit)  
     !REAL    :: LLIFXUnused             ! Leaf ageing accel.unused       Tu         ! (From Integrate) 
     REAL    :: LLIGP                   ! Leaf lignin percentage         #          ! (From SeasInit)  
     REAL    :: LLNAD                   ! Leaf lamina nitrogen           kg/ha      ! (From SeasInit)  
@@ -506,7 +506,7 @@ Module YCA_First_Trans_m
     INTEGER :: ONI                     ! Option number,initial value    #          ! (From SeasInit)  
     INTEGER :: OUTCHOICE               ! Output choice (+reserves,etc)  #          ! (From SeasInit)  
     INTEGER :: OUTCOUNT                ! Output counter                 #          ! (From Output)    
-    REAL    :: PARFC                   ! Max photosynthesis/phs at 330  #          ! (From SeasInit)  
+    !REAL    :: PARFC                   ! Max photosynthesis/phs at 330  #          ! (From SeasInit)  
     REAL    :: PARI                    ! PAR interception fraction      #          ! (From SeasInit)  
     REAL    :: PARI1                   ! PAR interception fr,1-crop mdl #          ! (From SeasInit)  
     REAL    :: PARIOUT                 ! PAR interception fr for output #          ! (From Output)    
@@ -711,7 +711,7 @@ Module YCA_First_Trans_m
     REAL    :: SDNPCI                  ! Seed N concentration,initial   %          ! (From SeasInit)  
     REAL    :: SDRATE                  ! Seeding 'rate'                 kg/ha      ! (From SeasInit)  
     REAL    :: SDRS                    ! Seed reserves fraction of seed #          ! (From SeasInit)  !LPM 22MAR2016 Keep value SDRS  
-    REAL    :: SDSZ                    ! Seed size                      g          ! (From SeasInit) !LPM 22MAR2016 Keep value SDWT  
+    REAL    :: SDSZ                    ! Seed size                      g/cm       ! (From SeasInit) !LPM 22MAR2016 Keep value SDWT  
     REAL    :: SDWAD                   ! Seed/Stick weight              kg/ha      ! (From SeasInit)  
     REAL    :: SDWADOUT                ! Seed/Stick weight for output   kg/ha      ! (From Output)    
     REAL    :: SDWAM                   ! Seed at maturity               kg/ha      ! (From SeasInit)  

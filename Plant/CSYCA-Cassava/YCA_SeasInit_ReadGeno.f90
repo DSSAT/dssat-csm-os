@@ -386,7 +386,7 @@
         CALL SPREADR (SPDIRFLE,'SLATS',lawts)
         CALL SPREADR (SPDIRFLE,'LLIFG',llifg)
         CALL SPREADR (SPDIRFLE,'LLIFS',llifs)
-        CALL SPREADR (SPDIRFLE,'LLIFX',llifx)
+        !CALL SPREADR (SPDIRFLE,'LLIFX',llifx) !LPM 14SEP2020 No longer used
         CALL SPREADR (SPDIRFLE,'LLIG%',lligp)
         CALL SPREADR (SPDIRFLE,'LLOSA',llosa)
         CALL SPREADR (SPDIRFLE,'LWLOS',lwlos)

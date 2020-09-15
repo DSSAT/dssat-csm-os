@@ -39,6 +39,8 @@
 
         ! Reserves to STORAGE ROOT if conc too great (overflow!)
         SRWTGRS = 0.0
+        !LPM 14SEP2020 initialize temporary variable
+        TVR1 = 0.0 
         ! Determine potential new concentration
         IF (LFWT+GROLFADJ+woodyWeight()+GROSTADJ+GROCRADJ > 0.0) THEN
             TVR1 = (RSWT+GRORS)/((LFWT+GROLFADJ-leafTotalSenescedWeight()) + (STWT+GROSTADJ+CRWT+GROCRADJ)+(RSWT+GRORS))  !EQN 310

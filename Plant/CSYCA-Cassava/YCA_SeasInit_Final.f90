@@ -236,7 +236,7 @@
             WRITE(fnumwrk,*)'  Slatr,Slats  ',Lawtr,Lawts
             WRITE(fnumwrk,*)'  Lpefr        ',Lpefr
             !WRITE(fnumwrk,*)'  Phints,Phntf ',Phints,Phintfac  !LPM 21MAY2015 PHINTS is not used           
-            WRITE(fnumwrk,*)'  Llifg,a,s,x  ',Llifg,Llifa,Llifs,Llifx  
+            WRITE(fnumwrk,*)'  Llifa,s,',Llifa,Llifs  
             WRITE(fnumwrk,*)'  Lwlos  ',Lwlos                
             WRITE(fnumwrk,*)'  Laixx,Parix  ',Laixx,Parix       
             WRITE(fnumwrk,*)' Stems      '
