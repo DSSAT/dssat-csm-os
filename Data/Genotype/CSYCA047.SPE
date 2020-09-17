@@ -86,7 +86,7 @@ $SPECIES:CSYCA047.09152020    Last edit: 09/15/2020 LPM
 ! Planting stick
 @ SDSZ SDDUR SDRS% ! Reserves by unit of length (stake), duration, reserves (% whole stake)
 ! g/cm     d     %
-   3.0    20    20
+   3.0    20  60.1
 ! Photosynthesis
 @ PDTV  PDSV  ! VPD sensitivity aspects (daily effect)
 ! kPa fr/kPa
