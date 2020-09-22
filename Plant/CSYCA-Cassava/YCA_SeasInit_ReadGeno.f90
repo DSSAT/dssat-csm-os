@@ -362,6 +362,7 @@
         IF (LAWS <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'SLAS',laws)
         ! Roots
         IF (RDGS <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'RDGS',rdgs)
+        IF (RLWR <= 0.0) CALL ECREADR (ECDIRFLE,ECONO,'RLWR',rlwr)
         ! Reduction factors
         IF (NFGU < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGU',nfgu)
         IF (NFGL < 0.0) CALL ECREADR (ECDIRFLE,ECONO,'NFGL',nfgl)
@@ -433,9 +434,9 @@
         ! Following may be temporarily in ECO or CUL file
         IF (PD(9) <= 0.0) CALL SPREADR (SPDIRFLE,'P9',pd(9))
         IF (LLIFA <= 0.0) CALL SPREADR (SPDIRFLE,'LLIFA',llifa)
-        IF (RDGS <= 0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
+        !IF (RDGS <= 0.0) CALL SPREADR (SPDIRFLE,'RDGS',rdgs)
         IF (LAXS <= 0.0) CALL SPREADR (SPDIRFLE,'LAXS',laxs)
-        IF (RLWR <= 0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
+        !IF (RLWR <= 0.0) CALL SPREADR (SPDIRFLE,'RLWR',rlwr)
         IF (NFGL < 0.0) CALL SPREADR (SPDIRFLE,'NFGL',nfgl)
         IF (NLLG <= 0.0) CALL SPREADR (SPDIRFLE,'NLLG',nllg)
         IF (NFGU <= 0.0) CALL SPREADR (SPDIRFLE,'NFGU',nfgu)

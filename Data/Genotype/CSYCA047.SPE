@@ -1,17 +1,14 @@
-$SPECIES:CSYCA047.09152020    Last edit: 09/15/2020 LPM
+$SPECIES:CSYCA047.09222020    Last edit: 09/22/2020 LPM
 
 
 ! Coefficients differ from those used in the DSSAT V3.5 cassava model.
 ! They have been developed from coefficients used in,and from 'parameters'
 ! embedded in the code of, the earlier model,and from the literature.
 ! They may change as experience is gained,and should not be taken as
-! 'fixed'. Some equivalences with the earlier model are:
-
-! RDGS  = RER/17.0*20.0
-! RLWR  = RLW/10000
+! 'fixed'. 
 
 ! Users should be extremely cautious in changing the stress response
-! thresholds (WFGU,WFPU, etc). It is possible that there are differences
+! thresholds (WFGU,etc). It is possible that there are differences
 ! in these characteristics, but the extent of such differences is not
 ! well understood.
 
@@ -49,9 +46,9 @@ $SPECIES:CSYCA047.09152020    Last edit: 09/15/2020 LPM
 !  0-1     h  Code                                  
    1.0  15.5    LL 
 ! Roots
-@RLIG%  RLWR  RSEN RRESP  RDGS   ! Lignin%,length/wt;sen,resp;dpth growth
-!    % m/10mg    %    fr  cm/d                                        
-  10.0   1.0   1.0  0.15   2.6 
+@RLIG%  RSEN RRESP   ! Lignin%,sen,resp
+!    %     %    fr                                        
+  10.0   1.0  0.15 
 ! Leaves
 @LLIG% LPEAW ! Lignin%, petiole area/wt
 !    % cm2/g
@@ -199,9 +196,7 @@ $SPECIES:CSYCA047.09152020    Last edit: 09/15/2020 LPM
 ! PSNO    Principal stage number (#)
 ! PSTYP   Principal stage type (code;K=key,S=standard)
 ! PTFA    Partition fraction to the feeder roots (fr)
-! RDGS    Root depth growth rate,standard (cm/standard day)
 ! RLIG%   Root lignin (%)
-! RLWR    Root length/weight ratio (m/10mg)
 ! RN%MN   Root N concentration,minimum (fr)
 ! RN%S    Root N concentration,maximum,stage (fr)
 ! RRATE   Relative process rate (#)
