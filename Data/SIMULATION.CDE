@@ -1,5 +1,5 @@
 *Codes for Simulations Options
-! DSSAT v4.7; 09/01/2017
+! DSSAT v4.7; 09/18/2020
 !
 ! Codes currently used for simulation options for the DSSAT crop simulation
 ! models.
@@ -164,6 +164,7 @@ CRGRO    NP   CROPGRO-Napier grass
 CRGRO    PN   CROPGRO-Peanut
 CRGRO    PP   CROPGRO-Pigeonpea
 CRGRO    PR   CROPGRO-Bellpepper
+CRGRO    QU   CROPGRO-Quinoa
 CRGRO    SF   CROPGRO-Safflower
 CRGRO    SB   CROPGRO-Soybean
 CRGRO    SU   CROPGRO-Sunflower
@@ -188,7 +189,7 @@ SWCER    SW   CERES-Sweetcorn
 PIALO    PI   ALOHA-Pineapple
 TRARO    TR   AROIDS-Taro
 TNARO    TN   AROIDS-Tanier
-TFAPS    TF   NWHEAT-Tef
+TFAPS    TF   NWHEAT-Teff
 WHAPS    WH   NWHEAT-Wheat
 PRFRM    BM   FORAGE-Bermudagrass
 PRFRM    BR   FORAGE-Brachiaria
