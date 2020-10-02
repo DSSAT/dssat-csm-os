@@ -1759,6 +1759,7 @@
 !       IF(IPLTI.EQ.'A')THEN
         IF(IPLTI.EQ.'A' .OR. IPLTI.EQ.'F')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY          
           !PWDINF = CSYEARDOY(pwdinf)
           CALL Y4K_DOY(pwdinf,FILEIO,0,ERRKEY,3)
 !          CALL CSYR_DOY(PWDINF,PWYEARF,PWDOYF)
@@ -1936,6 +1937,7 @@
 
         CALL XREADI (FILEIO,TN,RN,SN,ON,CN,'HDATE',yrharf)
         !YEARHARF = CSYEARDOY(yrharf)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY        
         CALL Y4K_DOY(yrharf,FILEIO,0,ERRKEY,3)
 !        CALL CSYR_DOY(YRHARF,HYEAR,HDAY)
         CALL YR_DOY(YRHARF,HYEAR,HDAY)
@@ -1961,6 +1963,7 @@
         NFERT = 0
         DO I = 1, 200
           IF (anfer(I).LE.0.0) EXIT
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY          
           !FDAY(I) = CSYEARDOY(fday(i))
           CALL Y4K_DOY(fday(i),FILEIO,0,ERRKEY,3)
           NFERT = NFERT + 1
@@ -3547,8 +3550,10 @@
           AVGSW = 0.0
           IF(YEARPLTP.GT.0 .AND. YEARPLTP.LT.9000000)THEN
             IF(YEARDOY.EQ.YEARPLTP)THEN
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY              
               !YEARPLT = CSYEARDOY(YEARPLTP)
               CALL Y4K_DOY(YEARPLTP,FILEIO,0,ERRKEY,3)
+              YEARPLT = YEARPLTP
               PLTPOP = PLTPOPP
               TNUM = 1.0
             ENDIF

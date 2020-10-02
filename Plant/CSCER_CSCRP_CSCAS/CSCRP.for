@@ -2865,8 +2865,10 @@
             hnumber = i - 1
             EXIT  
           ENDIF
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY          
           !hyeardoy(i) = CSYEARDOY(hyrdoy(i))
           CALL Y4K_DOY(hyrdoy(i),FILEX,0,ERRKEY,3)
+          hyeardoy(i) = hyrdoy(i)
         ENDDO
         IF (hnumber.LE.1) HOP(1) = 'F' 
         yeardoyharf = -99
@@ -2977,6 +2979,7 @@
         GENFLCHK = CROP//GENFLCHK(3:15)
         CALL CSUCASE (EXCODE)
 
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
         !HLAST = CSYEARDOY(hlast)
         CALL Y4K_DOY(hlast,FILEX,0,ERRKEY,3)
         !HFIRST = CSYEARDOY(hfirst)
