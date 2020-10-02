@@ -434,8 +434,13 @@ C
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !CALL Y2K_DOY (PWDINF)
             !CALL Y2K_DOY (PWDINL)
-            CALL Y4K_DOY (PWDINF,FILEX,LINEXP,ERRKEY,9)
-            CALL Y4K_DOY (PWDINL,FILEX,LINEXP,ERRKEY,9)
+            IF(IPLTI .EQ. 'A' .OR. IPLTI .EQ. 'F') THEN
+              CALL Y4K_DOY (PWDINF,FILEX,LINEXP,ERRKEY,9)
+              CALL Y4K_DOY (PWDINL,FILEX,LINEXP,ERRKEY,9)
+            ELSE
+              PWDINF = -99
+              PWDINL = -99
+            ENDIF
             
 C
 C           Read SEVENTH line of simulation control
@@ -536,9 +541,12 @@ C
             
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
             !CALL Y2K_DOY (HLATE)
-            CALL Y4K_DOY (HLATE,FILEX,LINEXP,ERRKEY,10)
-            
 !            IF(HLATE .LE. YRSIM) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
+            IF(IHARI .EQ. 'A' .OR. IHARI .EQ. 'F') THEN
+              CALL Y4K_DOY (HLATE,FILEX,LINEXP,ERRKEY,10)
+            ELSE
+              HLATE = -99
+            ENDIF
             
             IF (HPP   .LT. 0.0)  HPP   = 100.
             IF (HRP   .LT. 0.0)  HRP   = 0.0

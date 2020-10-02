@@ -248,6 +248,9 @@
           WRITE (FILEW(1:12),'(A8,A4)') WSTA,'.WTG'
         ENDIF
         PROCOD = 'WGD'
+      ELSEIF (WTHER .EQ. 'S' .OR. WTHER .EQ. 'W') THEN
+         WRITE (FILEW(1:12),'(A4,A8)') WSTA,'.CLI    '
+         PROCOD = 'CLD'
       ELSE
          CALL ERROR (ERRKEY,16,FILEX,LINEXP)
       ENDIF
@@ -350,9 +353,9 @@
               YEARDOY = YEAR * 1000 + DOY
               
               EXIT
-          ENDIF
-        
-        ENDIF    
+            ENDIF
+          ENDIF  
+          
       ENDDO
       
       CLOSE(LUNWTH)
@@ -382,6 +385,17 @@
         MSG(2) = 'Not able to find 7-digits first weather date'
         MSG(3) = 'Set simulation to 5-digits first weather date'
         FirstWeatherDate = -99
+        
+        YR  = INT(YRDOY / 1000)
+        DOY = YRDOY - YR * 1000
+        
+        IF (YRDOY .GT. 0) THEN
+          IF (YR .LE. 25) THEN
+            YRDOY = (2000 + YR) * 1000 + DOY
+          ELSE
+            YRDOY = (1900 + YR) * 1000 + DOY
+          ENDIF 
+        ENDIF
         
         !FO - Set NEWSDATE because generic Y4K_DOY subroutine.
         NEWSDATE = YRDOY
