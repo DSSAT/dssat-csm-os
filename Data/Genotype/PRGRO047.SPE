@@ -130,6 +130,10 @@
 
 !*EVAPOTRANSPIRATION
   0.75   1.0       KEP, EORATIO
+  
+                              
+*FRESH WEIGHT
+     Y                      Switch for fresh weight option
 
 *PHOSPHORUS CONTENT Copied from Soybean! Need to set for pepper
 ! Two options for Optimum and minimum P concentrations for shoots: 
