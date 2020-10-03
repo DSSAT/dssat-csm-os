@@ -5014,8 +5014,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &       LFWT*(1.0-LSHFR)*RSCLX*CUMDU/(Pd(1)+pd(2)+pd(3)+pd(4)))
             LSHRSWT = AMIN1(RSWT-LLRSWT,
      &       LFWT*LSHFR*RSCLX*CUMDU/(Pd(1)+pd(2)+pd(3)+pd(4)))
-!           IF (STWT+CHWT.GT.0.0) THEN
-            IF (STWT .GT. 1.E-6 .AND. CHWT .GT. 1.E-6) THEN
+            IF (STWT.GT.0.0) THEN
+!-GH        IF (STWT+CHWT.GT.0.0) THEN
               STRSWT = (RSWT-LLRSWT-LSHRSWT)*(STWT-CHWT)/STWT
               CHRSWT = (RSWT-LLRSWT-LSHRSWT)*CHWT/STWT
             ELSE
