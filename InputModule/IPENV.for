@@ -104,9 +104,6 @@ C
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
 	             !CALL Y2K_DOY (WMDATE(NEV))
                CALL Y4K_DOY (WMDATE(NEV),FILEX,LINEXP,ERRKEY,3)
-!               IF(WMDATE(NEV) .LT. YRSIM) THEN
-!                 CALL ERROR (ERRKEY,3,FILEX,LINEXP)
-!               ENDIF
 
                IF (DAYADJ(NEV) .LE. -90.) DAYADJ(NEV) = 0.0
                IF (RADADJ(NEV) .LE. -90.) RADADJ(NEV) = 0.0

@@ -386,20 +386,6 @@
         MSG(3) = 'Set simulation to 5-digits first weather date'
         FirstWeatherDate = -99
         
-        YR  = INT(YRDOY / 1000)
-        DOY = YRDOY - YR * 1000
-        
-        IF (YRDOY .GT. 0) THEN
-          IF (YR .LE. 25) THEN
-            YRDOY = (2000 + YR) * 1000 + DOY
-          ELSE
-            YRDOY = (1900 + YR) * 1000 + DOY
-          ENDIF 
-        ENDIF
-        
-        !FO - Set NEWSDATE because generic Y4K_DOY subroutine.
-        NEWSDATE = YRDOY
-        
         CALL WARNING(3,ERRKEY,MSG)
       ENDIF
       

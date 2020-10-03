@@ -163,9 +163,6 @@ C=======================================================================
           ENDIF 
         ENDIF
         
-        IF(YRDOY .LT. NEWSDATE) THEN
-          CALL ERROR (IERRKEY,IERRNUM,FILE,LINE)
-        ENDIF
       ENDIF
       
       END SUBROUTINE Y4K_DOY

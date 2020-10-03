@@ -293,9 +293,6 @@ C=======================================================================
 C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
       !CALL Y2K_DOY (SADAT)
       CALL Y4K_DOY (SADAT,FILEX,LINEXP,ERRKEY,3)
-!      IF(SADAT .LT. YRSIM) THEN
-!        CALL ERROR (ERRKEY,3,FILEX,LINEXP)
-!      ENDIF
       
 C
 C     Read layer information for the correct soil analysis number
