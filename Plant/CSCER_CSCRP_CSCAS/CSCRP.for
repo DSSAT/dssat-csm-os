@@ -12681,8 +12681,8 @@ C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
      &'-Nitrogen--|--Phosphorus-|',/,
      &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
      &'to         Photo',/,
-     &25X,'days    �C    �C MJ/m2     hr     mm     mm  synth Growth  ',
-     &'synth Growth  synth Growth',/,110('-'))
+     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth ',
+     &' synth Growth  synth Growth',/,110('-'))
   270 FORMAT(/,'------------------------------------------------------',
      &'--------------------------------------------------------')
   300 FORMAT(/,10X,A," YIELD : ",I8," kg/ha    [",F4.1,"%Moisture] ",/)
