@@ -151,6 +151,7 @@ set(
         "InputModule/IPSOIL_Inp.for"
         "InputModule/IPTILL.for"
         "InputModule/IPVAR.for"
+        "InputModule/MAKEFILEW.f90"
         "InputModule/OPGEN.for"
         "InputModule/OPHEAD.for"
         "InputModule/OPTEMPXY2K.for"

@@ -87,6 +87,9 @@ C             CHP Added TRTNUM to CONTROL variable.
       DATA MonthTxt /'JAN','FEB','MAR','APR','MAY','JUN',
      &               'JUL','AUG','SEP','OCT','NOV','DEC'/
 
+!     MAKEFILEW VARIABLES 
+      INTEGER:: FirstWeatherDate = -99
+      INTEGER:: NEWSDATE = -99
 !=======================================================================
 !     Data construct for control variables
       TYPE ControlType

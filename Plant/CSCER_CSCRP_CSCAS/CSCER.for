@@ -182,6 +182,7 @@
       PARAMETER     (LNUMX = 100) ! Maximum number of leaves       #
       INTEGER       SUMNUM        ! Number of variables passed     #
       PARAMETER     (SUMNUM = 37) ! Number of variables passed     #
+      CHARACTER*6   ERRKEY
 
       INTEGER       A1DATM        ! Apex 1cm date,measured         #
       INTEGER       ADAP          ! Anthesis,days after planting   d
@@ -1390,6 +1391,7 @@
       PARAMETER     (INTEGR = 4)
       PARAMETER     (OUTPUT = 5)
       PARAMETER     (SEASEND = 6)
+      PARAMETER     (ERRKEY = 'CSCER ')
 
       ! Condition at end of phase
       DATA BASTGNAM/'Max Prim  ','End Veg   ','End Ear Gr',
@@ -1757,22 +1759,31 @@
 !       IF(IPLTI.EQ.'A')THEN
         IF(IPLTI.EQ.'A' .OR. IPLTI.EQ.'F')THEN
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PFRST',pwdinf)
-          PWDINF = CSYEARDOY(pwdinf)
-          CALL CSYR_DOY(PWDINF,PWYEARF,PWDOYF)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY          
+          !PWDINF = CSYEARDOY(pwdinf)
+          CALL Y4K_DOY(pwdinf,FILEIO,0,ERRKEY,3)
+!          CALL CSYR_DOY(PWDINF,PWYEARF,PWDOYF)
+          CALL YR_DOY(PWDINF,PWYEARF,PWDOYF)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PLAST',pwdinl)
-          PWDINL = CSYEARDOY(pwdinl)
-          CALL CSYR_DOY(PWDINL,PWYEARL,PWDOYL)
+          !PWDINL = CSYEARDOY(pwdinl)
+          CALL Y4K_DOY(pwdinl,FILEIO,0,ERRKEY,3)
+!          CALL CSYR_DOY(PWDINL,PWYEARL,PWDOYL)
+          CALL YR_DOY(PWDINL,PWYEARL,PWDOYL)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OL',swpltl)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OU',swplth)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PH2OD',swpltd)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PSTMX',ptx)
           CALL XREADR(FILEIO,TN,RN,SN,ON,CN,'PSTMN',pttn)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'HFRST',hfirst)
-          HFIRST = CSYEARDOY(hfirst)
-          CALL CSYR_DOY(HFIRST,HYEARF,HDOYF)
+          !HFIRST = CSYEARDOY(hfirst)
+          CALL Y4K_DOY(hfirst,FILEIO,0,ERRKEY,3)
+!          CALL CSYR_DOY(HFIRST,HYEARF,HDOYF)
+          CALL YR_DOY(HFIRST,HYEARF,HDOYF)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'HLAST',hlast)
-          HLAST = CSYEARDOY(hlast)
-          CALL CSYR_DOY(HLAST,HYEARL,HDOYL)
+          !HLAST = CSYEARDOY(hlast)
+          CALL Y4K_DOY(hlast,FILEIO,0,ERRKEY,3)
+!          CALL CSYR_DOY(HLAST,HYEARL,HDOYL)
+          CALL YR_DOY(HLAST,HYEARL,HDOYL)
           !IF (DYNAMIC.EQ.SEASINIT) THEN
           ! IF (PWDINF.GT.0 .AND. PWDINF.LT.YEARDOY) THEN
           !   WRITE (fnumwrk,*) ' '
@@ -1791,7 +1802,8 @@
         ELSE
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'PDATE',pdate)
           CALL XREADI(FILEIO,TN,RN,SN,ON,CN,'EDATE',emdatm)
-          CALL CSYR_DOY(PDATE,PLYEAR,PLDAY)
+!          CALL CSYR_DOY(PDATE,PLYEAR,PLDAY)
+          CALL YR_DOY(PDATE,PLYEAR,PLDAY)
           PLYEARREAD = PLYEAR
           
           ! CHP 2/13/2009 - increment yr for seasonal and sequence runs
@@ -1924,8 +1936,11 @@
         CALL UCASE (EXCODE)
 
         CALL XREADI (FILEIO,TN,RN,SN,ON,CN,'HDATE',yrharf)
-        YEARHARF = CSYEARDOY(yrharf)
-        CALL CSYR_DOY(YRHARF,HYEAR,HDAY)
+        !YEARHARF = CSYEARDOY(yrharf)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY        
+        CALL Y4K_DOY(yrharf,FILEIO,0,ERRKEY,3)
+!        CALL CSYR_DOY(YRHARF,HYEAR,HDAY)
+        CALL YR_DOY(YRHARF,HYEAR,HDAY)
         PLTOHARYR = HYEAR - PLYEARREAD
         ! Upgrade harvest date for seasonal and sequential runs
         yearharf = (plyear+pltoharyr)*1000 +hday
@@ -1948,7 +1963,9 @@
         NFERT = 0
         DO I = 1, 200
           IF (anfer(I).LE.0.0) EXIT
-          FDAY(I) = CSYEARDOY(fday(i))
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY          
+          !FDAY(I) = CSYEARDOY(fday(i))
+          CALL Y4K_DOY(fday(i),FILEIO,0,ERRKEY,3)
           NFERT = NFERT + 1
         ENDDO
 
@@ -2497,9 +2514,11 @@
         ELSE  
           WRITE(fnumwrk,'(A40)')
      &      '  AUTOMATIC PLANTING.  THRESHOLD DAYS:  '
-          CALL CSYR_DOY(PWDINF,TVI1,TVI2)
+!          CALL CSYR_DOY(PWDINF,TVI1,TVI2)
+          CALL YR_DOY(PWDINF,TVI1,TVI2)
           WRITE(fnumwrk,'(A14,I7)') '   EARLIEST   ',TVI2
-          CALL CSYR_DOY(PWDINL,TVI1,TVI2)
+!          CALL CSYR_DOY(PWDINL,TVI1,TVI2)
+          CALL YR_DOY(PWDINL,TVI1,TVI2)
           WRITE(fnumwrk,'(A14,I7)') '   LATEST     ',TVI2
         ENDIF
         
@@ -3531,7 +3550,10 @@
           AVGSW = 0.0
           IF(YEARPLTP.GT.0 .AND. YEARPLTP.LT.9000000)THEN
             IF(YEARDOY.EQ.YEARPLTP)THEN
-              YEARPLT = CSYEARDOY(YEARPLTP)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY              
+              !YEARPLT = CSYEARDOY(YEARPLTP)
+              CALL Y4K_DOY(YEARPLTP,FILEIO,0,ERRKEY,3)
+              YEARPLT = YEARPLTP
               PLTPOP = PLTPOPP
               TNUM = 1.0
             ENDIF
@@ -6782,20 +6804,24 @@
               CNCHAR2(1:1) = CNCHAR(1:1)
             ENDIF
             
-            CALL CSYR_DOY (STGDOY(7),PLYEAR,PLDAY)
+!            CALL CSYR_DOY (STGDOY(7),PLYEAR,PLDAY)
+            CALL YR_DOY (STGDOY(7),PLYEAR,PLDAY)
             IF (ADAT.GT.0) THEN
-              CALL CSYR_DOY (ADAT,AYEAR,ADAY)
+!              CALL CSYR_DOY (ADAT,AYEAR,ADAY)
+              CALL YR_DOY (ADAT,AYEAR,ADAY)
             ELSE
               AYEAR = -99
               ADAY = -99
             ENDIF
             IF (STGDOY(5).GT.0) THEN
-              CALL CSYR_DOY (STGDOY(5),MYEAR,MDAY)
+!              CALL CSYR_DOY (STGDOY(5),MYEAR,MDAY)
+              CALL YR_DOY (STGDOY(5),MYEAR,MDAY)
             ELSE
               MYEAR = -99
               MDAY = -99
             ENDIF
-            CALL CSYR_DOY (STGDOY(11),HAYEAR,HADAY)
+!            CALL CSYR_DOY (STGDOY(11),HAYEAR,HADAY)
+            CALL YR_DOY (STGDOY(11),HAYEAR,HADAY)
             
 !-----------------------------------------------------------------------
             
@@ -7625,7 +7651,8 @@
               WRITE(*,9588)
               WRITE(*,9600)
               DO L = 7, 9
-                CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
+!                CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
+                CALL YR_DOY(STGDOY(L),YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWADSTG(L).GT..0) CNCTMP = CNADSTG(L)/CWADSTG(L)*100
@@ -7637,7 +7664,8 @@
      &           NINT(CNADSTG(L)),CNCTMP,1.0-WFPAV(L),1.0-NFPAV(L)
               ENDDO
               DO L = 1, 6
-                CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
+!                CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
+                CALL YR_DOY(STGDOY(L),YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWADSTG(L).GT..0) CNCTMP = CNADSTG(L)/CWADSTG(L)*100
@@ -7972,7 +8000,8 @@
               WRITE(fnumtmp,9588)
               WRITE(fnumtmp,9600)
               DO L = 7, 9
-                 CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
+!                 CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
+                 CALL YR_DOY(STGDOY(L),YEAR,DOY)
                  CALL Calendar(year,doy,dom,month)
                  CNCTMP = 0.0
                  IF (CWADSTG(L).GT.0.0) 
@@ -7985,7 +8014,8 @@
      &            NINT(CNADSTG(L)),CNCTMP,1.0-WFPAV(L),1.0-NFPAV(L)
               ENDDO
               DO L = 1, 6
-                CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
+!                CALL CSYR_DOY(STGDOY(L),YEAR,DOY)
+                CALL YR_DOY(STGDOY(L),YEAR,DOY)
                 CALL Calendar(year,doy,dom,month)
                 CNCTMP = 0.0
                 IF (CWADSTG(L).GT.0.0)CNCTMP = CNADSTG(L)/CWADSTG(L)*100
@@ -9043,8 +9073,8 @@
      &'-Nitrogen--|--Phosphorus-|',/,
      &25X,'Span   Max   Min   Rad  [day]   Rain  Trans  Photo',9X,'Pho',
      &'to         Photo',/,
-     &25X,'days    øC    øC MJ/m2     hr     mm     mm  synth Growth  ',
-     &'synth Growth  synth Growth',/,110('-'))
+     &25X,'days    Ã¸C    Ã¸C MJ/m2     hr     mm     mm  synth Growth ',
+     &' synth Growth  synth Growth',/,110('-'))
 
  9588       FORMAT(
      &      /,' ...... DATE ......  GROWTH STAGE BIOMASS   LEAF  
