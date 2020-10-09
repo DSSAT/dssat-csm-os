@@ -135,7 +135,7 @@ C       Generate output for file Weather.OUT
      &        WINDSP, CO2, VPDF, vpd_transp, OZON7
   300     FORMAT(1X,I4,1X,I3.3,1X,I5,
      &        5(1X,F6.1),1X,F6.2,
-     &        8(1X,F6.1),F7.1, 1x, F6.2, 1X, F6.2)
+     &        8(1X,F6.1),F7.1, 1x, F6.2, 1X, F6.2, F7.2)
           END IF   ! VSH
           
 !     VSH
