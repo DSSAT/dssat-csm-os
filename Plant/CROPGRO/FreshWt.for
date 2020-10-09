@@ -1,11 +1,12 @@
 !=======================================================================
-!  FreshWt, Subroutine, C.H.Porter, K.J.Boote, J.I.Lizaso
+!  FreshWt, Subroutine, C.H.Porter, K.J.Boote, J.I.Lizaso, G. Hoogenboom
 !-----------------------------------------------------------------------
 !  Computes fresh pod weigt
 !-----------------------------------------------------------------------
 !  REVISION       HISTORY
 !  05/09/2007     Written. KJB, CHP, JIL, RR
 !  02/27/2008     Added pod quality for snap bean. JIL
+!  10/02/2020     Add fresh weight for bell pepper
 !-----------------------------------------------------------------------
 !  Called from:  PODS
 !=======================================================================
@@ -62,7 +63,7 @@
 
 !     Currently only works for tomato.  Add other crops later. 
 !     Send a message if not available crop
-      IF (INDEX('TM,GB',CROP) < 0) THEN
+      IF (INDEX('TM,GB,PR',CROP) < 0) THEN
         CALL GET_CROPD(CROP, CROPD)
         WRITE(MSG(1),'(A)') 
      &  "Fresh weight calculations not currently available for "
@@ -97,6 +98,8 @@
             WRITE (NOUTPF,230)
           CASE ('GB')       ! Snap bean
             WRITE (NOUTPF,231)
+            CASE ('PR')       ! Bell pepper
+         WRITE (NOUTPF,230)
         END SELECT
 
   230 FORMAT('@YEAR DOY   DAS   DAP',
@@ -149,6 +152,9 @@
           CASE ('GB')       ! Snap bean
 !           DMC(NPP) = 0.0465 + 0.0116 * EXP(0.161 * PAGE)
             DMC(NPP) = 0.023 + 0.0277 * EXP(0.116 * PAGE)
+          CASE ('PR')       ! Snap bean
+! GB        DMC(NPP) = 0.023 + 0.0277 * EXP(0.116 * PAGE)
+            DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
         END SELECT
 
 !       Fresh weight (g/pod)
@@ -241,6 +247,10 @@
 
         SELECT CASE (CROP)
           CASE ('TM')       ! Tomato
+            WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
+     &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
+     &      PodAge
+      CASE ('PR')           ! Bell pepper
             WRITE(NOUTPF, 1000) YEAR, DOY, DAS, DAP, 
      &      NINT(TFPW * 10.), AvgDMC, AvgFPW, AvgDPW, 
      &      PodAge

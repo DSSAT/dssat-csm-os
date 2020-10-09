@@ -511,6 +511,7 @@ C  03/11/2005 GH  Remove ANS, RNMODE and NYRS
 !  02/06/2007 CHP Added alternate sugarcane parameters for CASUPRO
 !  11/26/2007 CHP THRESH, SDPRO, SDLIP moved from eco to cul file
 C  08/09/2012 GH  Updated for cassava
+C  09/18/2020 GH  Update for quinoa, safflower, sunflower
 C-----------------------------------------------------------------------
 C  INPUT  : IDETO,NOUTDO,NYRS,LL,DUL,SAT,DLAYR,SWINIT,DS,NLAYR,ESW
 C           SHF,BD,PH,INO3,INH4,OC,TLL,TDUL,TSAT,TPESW,TSWINI,AINO3,AINH4
@@ -617,13 +618,14 @@ C=======================================================================
 !     CROPGRO
       CASE ('CRGRO','PRFRM')
 !      IF (INDEX (MODEL, 'CRGRO') > 0) THEN
-        IF (INDEX ('BN,PN,SB,PE,CH,PP,VB,CP,BR,FB,NP,GB,PE,LT',CROP) 
+        IF (INDEX ('BN,CH,CP,FB,GB,LT,PE,PN,PP,SB,VB',CROP) 
      &    > 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),851) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
 
-        ELSEIF (INDEX ('TM,PR,CB,CO,CT,CN',CROP) .GT. 0) THEN
+        ELSEIF (INDEX ('BH,BM,BR,CB,CN,CO,NP,PR,QU,SF,SU,TM',CROP)
+     &          .GT. 0) THEN
            WRITE (HEADER(I), 850) CSDVAR,PPSEN,PH2T5,
      &                        PHTHRS(8),PHTHRS(10); I=I+1
            WRITE (HEADER(I),852) WTPSD,SDPDVR,SFDUR,PODUR,XFRUIT; I=I+1
