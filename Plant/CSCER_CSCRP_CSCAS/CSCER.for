@@ -4183,10 +4183,25 @@
               RTWTGRS = 0.0
               ! Determine potential new concentration
               ! NB. Chaff is simply a part of stem;hence not separate here
-              IF (LFWT+GROLF+STWT+GROST.GT.0.0) TVR1 = ! Conc
-     &          (RSWT+GRORS-SENRS)/
-     &          ((LFWT+GROLF-SENLFG-SENLFGRS)
-     &          +(STWT+GROST)+(RSWT+GRORS))
+
+!----------------------------------------------------------------
+! palderman commit of 2019-07-29 in private repo e5c680514bce4af85d9f463c11a3e5ad522252f8
+!              IF (LFWT+GROLF+STWT+GROST.GT.0.0) TVR1 = ! Conc
+!     &          (RSWT+GRORS-SENRS)/
+!     &          ((LFWT+GROLF-SENLFG-SENLFGRS)
+!     &          +(STWT+GROST)+(RSWT+GRORS))
+
+              IF (((LFWT+GROLF-SENLFG-SENLFGRS) ! Prevent divide by zero
+     &              +(STWT+GROST)+(RSWT+GRORS)) .GT. 0.0)THEN
+                  TVR1 = ! Conc
+     &              (RSWT+GRORS-SENRS)/
+     &              ((LFWT+GROLF-SENLFG-SENLFGRS)
+     &              +(STWT+GROST)+(RSWT+GRORS))
+              ELSE
+                  TVR1 = 0.0
+              END IF
+!----------------------------------------------------------------
+
               IF(TVR1.LT.0.0.AND.TVR1.GT.-1.0E-07) TVR1 = 0.0
               IF (TVR1.GT.RSPCX/100.0) THEN   ! If potential>max        
                 TVR2 = RSWT+GRORS-SENRS       ! What rswt could be
@@ -4992,8 +5007,8 @@
      &       LFWT*(1.0-LSHFR)*RSCLX*CUMDU/(Pd(1)+pd(2)+pd(3)+pd(4)))
             LSHRSWT = AMIN1(RSWT-LLRSWT,
      &       LFWT*LSHFR*RSCLX*CUMDU/(Pd(1)+pd(2)+pd(3)+pd(4)))
-!           IF (STWT+CHWT.GT.0.0) THEN
-            IF (STWT .GT. 1.E-6 .AND. CHWT .GT. 1.E-6) THEN
+            IF (STWT.GT.0.0) THEN
+!-GH        IF (STWT+CHWT.GT.0.0) THEN
               STRSWT = (RSWT-LLRSWT-LSHRSWT)*(STWT-CHWT)/STWT
               CHRSWT = (RSWT-LLRSWT-LSHRSWT)*CHWT/STWT
             ELSE

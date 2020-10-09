@@ -4,6 +4,8 @@
     !--- Delete existing file --------!
     !--- Murilo Vianna, Feb-2020 -----!
     !---------------------------------!
+    !  REVISION HISTORY
+    !  10/03/2020 FO Changed inquire units args
     
     implicit none
 
@@ -34,7 +36,9 @@
     !--------- Open file -------------!
     !--- Murilo Vianna, Feb-2020 -----!
     !---------------------------------!
-    
+    !  REVISION HISTORY
+    !  10/03/2020 FO Changed inquire units args
+        
     implicit none
 
     integer         io
