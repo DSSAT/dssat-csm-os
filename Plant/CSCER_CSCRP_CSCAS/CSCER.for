@@ -4183,10 +4183,25 @@
               RTWTGRS = 0.0
               ! Determine potential new concentration
               ! NB. Chaff is simply a part of stem;hence not separate here
-              IF (LFWT+GROLF+STWT+GROST.GT.0.0) TVR1 = ! Conc
-     &          (RSWT+GRORS-SENRS)/
-     &          ((LFWT+GROLF-SENLFG-SENLFGRS)
-     &          +(STWT+GROST)+(RSWT+GRORS))
+
+!----------------------------------------------------------------
+! palderman commit of 2019-07-29 in private repo e5c680514bce4af85d9f463c11a3e5ad522252f8
+!              IF (LFWT+GROLF+STWT+GROST.GT.0.0) TVR1 = ! Conc
+!     &          (RSWT+GRORS-SENRS)/
+!     &          ((LFWT+GROLF-SENLFG-SENLFGRS)
+!     &          +(STWT+GROST)+(RSWT+GRORS))
+
+              IF (((LFWT+GROLF-SENLFG-SENLFGRS) ! Prevent divide by zero
+     &              +(STWT+GROST)+(RSWT+GRORS)) .GT. 0.0)THEN
+                  TVR1 = ! Conc
+     &              (RSWT+GRORS-SENRS)/
+     &              ((LFWT+GROLF-SENLFG-SENLFGRS)
+     &              +(STWT+GROST)+(RSWT+GRORS))
+              ELSE
+                  TVR1 = 0.0
+              END IF
+!----------------------------------------------------------------
+
               IF(TVR1.LT.0.0.AND.TVR1.GT.-1.0E-07) TVR1 = 0.0
               IF (TVR1.GT.RSPCX/100.0) THEN   ! If potential>max        
                 TVR2 = RSWT+GRORS-SENRS       ! What rswt could be

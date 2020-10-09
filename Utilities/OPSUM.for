@@ -767,7 +767,7 @@ C-------------------------------------------------------------------
           WRITE(*,'(3I6)',ADVANCE='NO') CWAM, NINT(HWAH), PRCM
         ENDIF
 
-        WRITE(*,'(6I6,I7,I5)') IRCM, ETCM, SWXM, NUCM, NIAM, 
+        WRITE(*,'(5I6,I7,I5)') IRCM, ETCM, SWXM, NUCM, NIAM, 
      &      ONAM, NINT(OCAM/1000.)
         NLINES=NLINES+1
       ENDIF
