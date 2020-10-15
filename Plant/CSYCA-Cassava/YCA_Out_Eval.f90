@@ -689,7 +689,8 @@
                         WRITE(FNUMOV,*) ' '
                         CALL Calendar (plyear,plday,dom,month)
                         WRITE (FNUMOV, FMT208)month,dom,plyeardoy,NINT(pltpop),NINT(rowspc)
-                        CALL CSYR_DOY(EYEARDOY,YEAR,DOY)
+!                        CALL CSYR_DOY(EYEARDOY,YEAR,DOY)
+                        CALL YR_DOY(EYEARDOY,YEAR,DOY)
                         CALL Calendar(year,doy,dom,month)
                         WRITE(FNUMOV, '(A, A3, I3, I8)') ' EMERGENCE        ', month, dom, eyeardoy                  
                         WRITE(FNUMOV,*) ' '
@@ -723,7 +724,8 @@
                     DO L = 0, PSNUM
                         CALL Csopline(laic,laistg(l))
                         IF (STGYEARDOY(L) < 9999999.AND.L /= PSX.AND.L /= PSX+1) THEN
-                            CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+!                            CALL CSYR_DOY(STGYEARDOY(L),YEAR,DOY)
+                            CALL YR_DOY(STGYEARDOY(L),YEAR,DOY)
                             CALL Calendar(year,doy,dom,month)
                             CNCTMP = -99
                             IF (CNADSTG(L) > 0.0 .AND. CWADSTG(L) > 0.0) CNCTMP = CNADSTG(L)/CWADSTG(L)*100
@@ -736,7 +738,8 @@
                     IF (YEARDOYHARF == YEARDOY) THEN
                                 
                         CALL Csopline(laic,lai)
-                        CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+!                        CALL CSYR_DOY(YEARDOYHARF,YEAR,DOY)
+                        CALL YR_DOY(YEARDOYHARF,YEAR,DOY)
                         CALL Calendar(year,doy,dom,month)
                         CNCTMP = -99
                         IF (CNAD>0.0 .AND. CWAD > 0.0)CNCTMP = CNAD/CWAD*100

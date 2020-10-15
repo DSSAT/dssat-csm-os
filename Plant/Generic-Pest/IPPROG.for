@@ -13,6 +13,7 @@ C 11/14/2002 CHP Added date correction for sequenced runs
 C 05/09/2003 CHP Increased number of pest observations to 200
 C 09/28/2004 CHP Fixed problem with reading multiple tiers of pest
 C                  data from FILET.
+C 05/07/2020 FO  Add new Y4K subroutine call to convert YRDOY
 C-----------------------------------------------------------------------
 C  Called by: PEST
 C  Calls:     None
@@ -144,7 +145,9 @@ C-----------------------------------------------------------------------
           IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,T_PATH_FILE,LNUM)
           IF (TR .NE. TRTNUM) GOTO 500
 C-----------------------------------------------------------------
-          CALL Y2K_DOY(YRPST)
+C  FO - 05/07/2020 Add new Y4K subroutine call to convert YRDOY
+          !CALL Y2K_DOY(YRPST)
+          CALL Y4K_DOY(YRPST,T_PATH_FILE,LNUM,ERRKEY,1)
           CALL YR_DOY(YRPST,YR,IPST)               !GH - Fix to handle
           YRPST = (YR + MULTI - 1) * 1000 + IPST   !GH - multiple yrs
 

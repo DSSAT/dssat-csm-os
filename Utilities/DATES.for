@@ -86,6 +86,86 @@ C=======================================================================
       ENDIF
         
       END SUBROUTINE Y2K_DOY
+      
+C=======================================================================
+C  4-digit Year, Subroutine, Fabio Oliveira, Willingthon Pavan, Gerrit Hoogenboom
+C  Converts YRDOY to YEARDOY
+C-----------------------------------------------------------------------
+C  Input : YRDOY
+C  Output: 
+C=======================================================================
+
+      SUBROUTINE Y4K_DOY(YRDOY,FILE,LINE,IERRKEY,IERRNUM)
+        
+      USE ModuleDefs
+      IMPLICIT NONE
+      
+      CHARACTER*6   ERRKEY,IERRKEY
+      CHARACTER*(*) FILE
+      CHARACTER*78  MSG(4)
+      
+      INTEGER DOY,YR,YRDOY,LINE,IERRNUM
+      INTEGER NEWYRDOY,CROVER
+      
+      PARAMETER (ERRKEY = 'Y4KDOY')
+      PARAMETER (CROVER = 25)
+      
+!-----------------------------------------------------------------------
+!    Convert input date (YRDOY) to 7-digit
+!-----------------------------------------------------------------------  
+      IF (FirstWeatherDate .GT. 0 .AND. 
+     &    YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
+        
+        !Convert dates
+        NEWYRDOY = INT(FirstWeatherDate/100000) * 100000 + YRDOY
+        
+        IF(NEWYRDOY .GE. FirstWeatherDate) THEN
+          YRDOY = NEWYRDOY
+        ELSE
+          YRDOY = INT((FirstWeatherDate+99000)/100000) * 100000 + YRDOY
+        ENDIF
+        
+!-----------------------------------------------------------------------
+!    Check the new YRDOY converted
+!-----------------------------------------------------------------------          
+        ! Error Checking
+        IF(YRDOY .LT. FirstWeatherDate .OR. 
+     &     YRDOY .GT. FirstWeatherDate+99000) THEN
+          CALL ERROR (ERRKEY,1,FILE,LINE)
+        ENDIF
+        
+        IF(YRDOY .LT. NEWSDATE) THEN
+          CALL ERROR (IERRKEY,IERRNUM,FILE,LINE)
+        ENDIF
+        
+        IF(YRDOY .GT. NEWSDATE + CROVER * 1000) THEN
+          WRITE(MSG(1),*) "WARNING - Y4K Date - Cross-over"
+          WRITE(MSG(2),*) "Please check file: ",FILE
+          WRITE(MSG(3),*) "Line: ",LINE
+          WRITE(MSG(4),*) "Date: ",YRDOY
+          CALL WARNING(4,IERRKEY,MSG)
+        ENDIF
+        
+!-----------------------------------------------------------------------
+!    Convert input date (YRDOY) to 7-digit using the old code
+!-----------------------------------------------------------------------           
+      ELSE IF (YRDOY .GT. 0 .AND. YRDOY .LE. 99365) THEN
+        YR  = INT(YRDOY / 1000)
+        DOY = YRDOY - YR * 1000
+        IF (YRDOY .GT. 0) THEN
+!     CHP 09/11/2009 - change "cross-over" year from 2010 to 2015
+!     CHP 03/26/2014 - change "cross-over" year from 2015 to 2020
+!     CHP 07/06/2017 - change "cross-over" year from 2020 to 2025
+          IF (YR .LE. 25) THEN
+            YRDOY = (2000 + YR) * 1000 + DOY
+          ELSE
+            YRDOY = (1900 + YR) * 1000 + DOY
+          ENDIF 
+        ENDIF
+        
+      ENDIF
+      
+      END SUBROUTINE Y4K_DOY
 
 C=======================================================================
 C  Y2K_DOYW, Subroutine, C. Porter, 02/05/2004

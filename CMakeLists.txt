@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 7)
 SET(MODEL 5)
-SET(BUILD 19)
+SET(BUILD 21)
 
 # Get the current working branch
 execute_process(
@@ -151,6 +151,7 @@ set(
         "InputModule/IPSOIL_Inp.for"
         "InputModule/IPTILL.for"
         "InputModule/IPVAR.for"
+        "InputModule/MAKEFILEW.f90"
         "InputModule/OPGEN.for"
         "InputModule/OPHEAD.for"
         "InputModule/OPTEMPXY2K.for"
