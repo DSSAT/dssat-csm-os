@@ -11,7 +11,7 @@ C  12/01/2001 WDB Further modular conversion
 !  02/25/2005 CHP Check for NFAC < 0.                   
 C----------------------------------------------------------------------
 C
-C  Called : MZ_GROSUB
+C  Called : SU_GROSUB
 C
 C  Calls  : None
 C----------------------------------------------------------------------

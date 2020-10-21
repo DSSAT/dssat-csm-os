@@ -7,7 +7,7 @@
 !  ALL RIGHTS RESERVED
 !=======================================================================
 !======================================================================
-!  Various MAIZE Subroutines
+!  Various oilcropsun Subroutines
 !
 !  Maize growth routine that coordinates calling of GROSUB, PHENOL and
 !  ROOTGR. Prepared for the modular version of Generic CERES.
@@ -203,7 +203,11 @@ C      REAL            PRLF
       REAL    SWIDOT,WSHIDT,ASMDOT,DISLA,NPLTD,PPLTD
       REAL    WLIDOT,WRIDOT,WSIDOT
       INTEGER NR2
-
+!     FV added for SUOIL
+      REAL ABIOMS,APLA,EMBWT,EMBWTE,GRFACTOR,GRAINN,HEADWT
+      REAL LAI,MAXLAI,PERWT,PERWTE,PLA,PLAMX,POTGROPER
+      REAL POTHEADWT,PPP,PSKER,RI1,RM,BIOMAS,GRNWTE
+      INTEGER IDURP 
 !     CHP added for P model 
       REAL PUptake(NL), SPi_AVAIL(NL), FracRts(NL)       
       REAL SeedFrac, VegFrac, PSTRES1, PSTRES2
@@ -733,7 +737,7 @@ C----------------------------------------------------------------------
         SENESCE % ResE     = 0.0
 
       ENDIF
-
+      endif
       RETURN
       END SUBROUTINE SU_CERES
 

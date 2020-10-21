@@ -69,8 +69,10 @@ C=======================================================================
             CASE('BN','PN','SB','TM','PE','CH','PP','PR','C3','C4','BH',
      &              'BR','SC','VB','CP','CB','FB','CO','CT','NP','GB',
 c**WDB 12/2015     &              'WH','BA','MZ','SG','ML','LT','CS')
-C**WDB   Added sugarbeet crop code BS           
-     &              'WH','BA','MZ','SG','ML','LT','CS','BS')                  
+C**WDB   Added sugarbeet crop code BS  
+!added sunflower code SU   10/20/2020
+         
+     &              'WH','BA','MZ','SG','ML','LT','CS','BS','SU')                  
            WRITE (*, 210) ECOTYP,ECONAM
           END SELECT
 !         ENDIF
@@ -133,9 +135,10 @@ C
           CASE ('CRGRO','PRFRM')
             CALL INVRLE (FILEG,RNMODE,VARTY,VRNAME,PATHGE,ECONO)
 C**WDB 12/8/2015 added BSCER to case statement for sugarbeet model
+! added SUOIL to case statement, FV 10/20/2020
           CASE('MLCER','MZCER','SWCER','MZIXM','SGCER',
      &         'PTSUB','RICER','TRARO','TNARO',
-     &         'SCCAN','SCCSP','BSCER')
+     &         'SCCAN','SCCSP','BSCER','SUOIL')
             CALL INVRCE (CROP, MODEL)
           CASE ('CSCER','CSCAS','CSYCA')
 !           CALL INVRCS

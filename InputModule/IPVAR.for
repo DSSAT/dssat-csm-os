@@ -25,6 +25,7 @@ C  08/09/2012 GH  Updated for cassava
 !  04/16/2013 CHP/KAD Added SALUS model
 !  05/09/2013 CHP/FR/JZW Added N-wheat module
 !  01/21/2020 JG moved some CUL parameters to ECO file
+!  10/20/2020 FV added SUOIL (OilcropSun)
 C-----------------------------------------------------------------------
 C  INPUT  : FILEG,NSENS,VARNO,VARTY,VRNAME,PATHGE,ECONO
 C
@@ -379,9 +380,9 @@ C-GH &            P1,P2O,P2R,P5,G1,G2,PHINT,P3,P4
      &           P1,P3,P4,P5,G3,G4,PHINT,PCINT,PCGRD
 
 !!     Sunflower **
-!      CASE ('SUOIL')
-!        READ (C360,800,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
-!     &           P1,P2,P5,G2,G3,O1
+       CASE ('SUOIL')
+         READ (C360,802,IOSTAT=ERRNUM) VARTY,VRNAME,ECONO,
+     &           P1,P2,P5,G2,G3,O1
 !
 !     Pineapple **
       CASE ('PIALO')
@@ -432,7 +433,8 @@ C-----------------------------------------------------------------------
   510 FORMAT (6X,'ERROR! Variety Selection must be an INTEGER value',/)
 
   800 FORMAT (A6,1X,A16,7X,A6,21F6.0)      !11/8/07
-
+  802 FORMAT (A6,1X,A16,7X,A6,1X,F5.1,1X,F5.2,1X,F5.1,1X,F5.0,1X,F5.2,
+     &        1X,F5.2)      !10/20/2020 SUOIL
   810 FORMAT (A6,1X,A16,7X,A6,20F6.0,A)    !WHCRP, BACRP 03/16/2010
   820 FORMAT (A6,1X,A16,7X,A6,21F6.0,A)    !CSCAS        02/18/2014
   821 FORMAT (A6,1X,A16,7X,A6,14F6.0)      !CSYCA        07/15/2019 

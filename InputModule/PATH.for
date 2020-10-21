@@ -14,6 +14,7 @@ C  04/16/2013 CHP/KAD Added codes for SALUS model
 C  06/03/2015 LPM Added codes for CSYCA CIAT cassava model
 C  06/18/2015 GH  Add error code for configuration file issues
 C  09/26/2017 WP  Add DSSAT_HOME environment variable configuration
+C  10/20/2020 FV add OilcropSun
 C-----------------------------------------------------------------------
 C  INPUT  : PROCOD,PFLAG
 C
@@ -364,6 +365,7 @@ C=======================================================================
      &    (INDEX(MODEL(1:5),'SWCER') .EQ. 0) .AND. !Sweet corn
      &    (INDEX(MODEL(1:5),'TNARO') .EQ. 0) .AND. !Tanier
      &    (INDEX(MODEL(1:5),'TRARO') .EQ. 0) .AND. !Taro
+     &    (INDEX(MODEL(1:5),'SUOIL') .EQ. 0) .AND. !Sunflower OilcropSun
      &    (INDEX(MODEL(1:5),'SALUS') .EQ. 0)       !Salus generic
      &    ) THEN
 !       Invalid module name = error 5
