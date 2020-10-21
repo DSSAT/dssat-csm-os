@@ -413,7 +413,8 @@ C             CHP Added TRTNUM to CONTROL variable.
 !     Data transferred from hourly energy balance 
       Type SPAMType
         REAL AGEFAC, PG                   !photosynthese
-        REAL CEF, CEM, CEO, CEP, CES, CET !Cumulative ET - mm
+        REAL CEF, CEM, CEO, CEP, CES      !Cumulative ET - mm
+        REAL CET, CEVAP                   !Cumulative ET - mm
         REAL  EF,  EM,  EO,  EP,  ES,  ET !Daily ET - mm/d
         REAL  EOP, EVAP                   !Daily mm/d
         REAL, DIMENSION(NL) :: UH2O       !Root water uptake
@@ -635,6 +636,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('CEP');    Value = SAVE_data % SPAM % CEP
         Case ('CES');    Value = SAVE_data % SPAM % CES
         Case ('CET');    Value = SAVE_data % SPAM % CET
+        Case ('CEVAP');  Value = SAVE_data % SPAM % CEVAP
         Case ('EF');     Value = SAVE_data % SPAM % EF
         Case ('EM');     Value = SAVE_data % SPAM % EM
         Case ('EO');     Value = SAVE_data % SPAM % EO
@@ -759,6 +761,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         Case ('CEP');    SAVE_data % SPAM % CEP    = Value
         Case ('CES');    SAVE_data % SPAM % CES    = Value
         Case ('CET');    SAVE_data % SPAM % CET    = Value
+        Case ('CEVAP');  SAVE_data % SPAM % CEVAP  = Value
         Case ('EF');     SAVE_data % SPAM % EF     = Value
         Case ('EM');     SAVE_data % SPAM % EM     = Value
         Case ('EO');     SAVE_data % SPAM % EO     = Value

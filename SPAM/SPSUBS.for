@@ -12,7 +12,7 @@ C  Called from:   SPAM
 C  Calls:         None
 C=======================================================================
       SUBROUTINE OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
+     &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
 
@@ -39,7 +39,7 @@ C=======================================================================
 
       REAL EF, EM, EO, EP, ES, ET, EOS, EOP, TRWU !JZW add TRWU
       REAL REFET, KCB, KE, KC
-      REAL CEF, CEM, CEO, CEP, CES, CET
+      REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP
       REAL ESAA, EMAA, EPAA, ETAA, EFAA, EOAA, EOPA, EOSA
       REAL REFA, KCAA, KCBA, KEAA
       REAL AVTMX, AVTMN, AVSRAD
@@ -325,7 +325,7 @@ C-----------------------------------------------------------------------
 !           saved aS real numbers for placement in real array.
             LABEL(1)  = 'ETCM'; VALUE(1)  = CET
             LABEL(2)  = 'EPCM'; VALUE(2)  = CEP
-            LABEL(3)  = 'ESCM'; VALUE(3)  = CES
+            LABEL(3)  = 'ESCM'; VALUE(3)  = CEVAP
 
             !Send labels and values to OPSUM
             CALL SUMVALS (SUMNUM, LABEL, VALUE) 

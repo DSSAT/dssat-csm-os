@@ -20,6 +20,7 @@ C  04/01/2004 CHP/US Added Penman - Meyer routine for potential ET
 !  08/25/2006 CHP Add SALUS soil evaporation routine, triggered by new
 !                 FILEX parameter MESEV
 !  12/09/2008 CHP Remove METMP
+!  10/16/2020 CHP Cumulative "soil" evaporation includes mulch and flood evap
 C-----------------------------------------------------------------------
 C  Called by: Main
 C  Calls:     XTRACT, OPSPAM    (File SPSUBS.for)
@@ -56,8 +57,9 @@ C=======================================================================
 
       REAL CANHT, CO2, SRAD, TAVG, 
      &    TMAX, TMIN, WINDSP, XHLAI, XLAI
-      REAL CEF, CEM, CEO, CEP, CES, CET, EF, EM, EO, EP, ES, ET, EVAP, 
-     &    TRWU, TRWUP, U
+      REAL CEF, CEM, CEO, CEP, CES, CET, CEVAP 
+      REAL EF, EM, EO, EP, ES, ET, EVAP 
+      REAL TRWU, TRWUP, U
       REAL EOS, EOP, WINF, MSALB, ET_ALB
       REAL XLAT, TAV, TAMP, SRFTEMP
       REAL EORATIO, KSEVAP, KTRANS
@@ -148,12 +150,13 @@ C=======================================================================
 !***********************************************************************
       ELSEIF (DYNAMIC .EQ. SEASINIT) THEN
 !-----------------------------------------------------------------------
-      EF   = 0.0; CEF = 0.0
-      EM   = 0.0; CEM = 0.0
+      EF   = 0.0; CEF  = 0.0
+      EM   = 0.0; CEM  = 0.0
       EO   = 0.0; CEO  = 0.0
-      EP   = 0.0; EOP = 0.0; CEP  = 0.0
-      ES   = 0.0; EOS = 0.0; CES  = 0.0
+      EP   = 0.0; EOP  = 0.0; CEP  = 0.0
+      ES   = 0.0; EOS  = 0.0; CES  = 0.0
       ET   = 0.0; CET  = 0.0
+      EVAP = 0.0; CEVAP =0.0
       ES_LYR = 0.0
       SWDELTX = 0.0
       TRWU = 0.0
@@ -216,7 +219,7 @@ C=======================================================================
 !     Call OPSPAM to open and write headers to output file
       IF (IDETW .EQ. 'Y') THEN
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
+     &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
       ENDIF
@@ -228,6 +231,7 @@ C=======================================================================
       CALL PUT('SPAM', 'CEP', CEP)
       CALL PUT('SPAM', 'CES', CES)
       CALL PUT('SPAM', 'CET', CET)
+      CALL PUT('SPAM', 'CEVAP',CEVAP)
       CALL PUT('SPAM', 'EF',  EF)
       CALL PUT('SPAM', 'EM',  EM)
       CALL PUT('SPAM', 'EO',  EO)
@@ -475,6 +479,7 @@ C       and total potential water uptake rate.
         CEO = CEO + EO
         CEP = CEP + EP
         CES = CES + ES
+        CEVAP=CEVAP + EVAP
 C JULY 11 2017, KB AND BK TO GET CUM ET OUT  
             !    IF (MEEVP .EQ. 'Z') THEN
             !      CET = CET + EP + ES
@@ -486,7 +491,7 @@ C KB
 
       IF (IDETW .EQ. 'Y') THEN
         CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
+     &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
       ENDIF
@@ -499,6 +504,7 @@ C KB
       CALL PUT('SPAM', 'CES', CES)
       CALL PUT('SPAM', 'CET', CET)
       CALL PUT('SPAM', 'ET',  ET)
+      CALL PUT('SPAM', 'CEVAP', CEVAP)
 
 !***********************************************************************
 !***********************************************************************
@@ -537,7 +543,7 @@ C-----------------------------------------------------------------------
 !      END SELECT
 !
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
+     &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
 
@@ -557,7 +563,7 @@ C-----------------------------------------------------------------------
       ELSEIF (DYNAMIC .EQ. SEASEND) THEN
 C-----------------------------------------------------------------------
       CALL OPSPAM(CONTROL, ISWITCH, FLOODWAT, TRWU,
-     &    CEF, CEM, CEO, CEP, CES, CET, EF, EM, 
+     &    CEF, CEM, CEO, CEP, CES, CET, CEVAP, EF, EM, 
      &    EO, EOP, EOS, EP, ES, ET, TMAX, TMIN, SRAD,
      &    ES_LYR, SOILPROP)
 
@@ -590,6 +596,7 @@ C-----------------------------------------------------------------------
       CALL PUT('SPAM', 'CES', CES)
       CALL PUT('SPAM', 'CET', CET)
       CALL PUT('SPAM', 'ET',  ET)
+      CALL PUT('SPAM', 'CEVAP', CEVAP)
 
 !      CALL OPSTRESS(CONTROL, ET=ET, EP=EP)
 
