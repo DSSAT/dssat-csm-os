@@ -19,7 +19,7 @@ C                   as defined in ModuleDefs.for
 !                     calculation in MZ_GROSUB (from 5% to .5%)
 !  03/30/2006 CHP Added composition of senesced matter for SOM modules
 C----------------------------------------------------------------------
-C  Called : MZ_GROSUB 
+C  Called : SU_GROSUB 
 C
 C  Calls  : None
 C----------------------------------------------------------------------
@@ -86,7 +86,13 @@ C----------------------------------------------------------------------
       REAL        XMIN        
       REAL        XNDEM       
       REAL        XSTAGE      
-
+!     FV OCTOBER 2020 ADDED MORE VARIABLES
+      REAL DHEADN,DLEAFN,DNGE,DNGH,DNGL,DNGP,DNGS,DNSH
+      REAL DNSL,DNSS,DSTEMN,EMBWT,ENP,GLFWT,GROEMP,GROPER
+      REAL HEADWT,PDWIH,PDFIL,PDWIS,PERWT,PNP,PTF2,PTFE
+      REAL PTFH,PTFL,PTFS,STMWT,TOTWT2,XENDEM,XHANC,XHCNP
+      REAL XHEADN,XHNDEM,XLANC,XLCNP,XLEAFN,XLNDEM,XNGLF,XNSLF
+      REAL XPNDEM,XSANC,XSCNP,XSNDEM,XSTEMN,GROEMB,PTFP,PDWIL
       TYPE (ResidueType) SENESCE
 
 !----------------------------------------------------------------------
@@ -137,8 +143,8 @@ C-----------------------------------------------------------------------
       IF (PDWI .EQ. 0.0) THEN
          PDWI = 1.0
       ENDIF
-     ! Demand of N for new growth of the plant parts
-      !
+! Demand of N for new growth of the plant parts
+
       DNGP   = GROPER * PNP
       DNGE   = GROEMB * ENP
       DNGL   = PDWIL  * XLCNP
@@ -147,33 +153,33 @@ C-----------------------------------------------------------------------
       DNSL   = GLFWT  * (XLCNP - XLANC)
       DNSS   = STMWT  * (XSCNP - XSANC)
       DNSH   = HEADWT * (XHCNP - XHANC)
-      !
-      ! N demand for new growth
-      !
+
+!     N demand for new growth
+
       DNG    = DNGL + DNGS + DNGH + DNGE + DNGP  
 
-     ! Total N demand for the plant parts
-      !
+!     Total N demand for the plant parts
+
       XLNDEM = DNSL + DNGL
       XSNDEM = DNSS + DNGS
       XHNDEM = DNSH + DNGH
       IF (PERWT .GT. 0.0) THEN
 C        XPNDEM = PERWT*(0.015-PERN/PERWT)+DNGP
          XPNDEM = DNGP
-       ELSE
+      ELSE
          IF (GROPER .GT. 0.0) THEN
             XPNDEM = DNGP
-          ELSE
+         ELSE
             XPNDEM = 0.0
          ENDIF
       ENDIF
       IF (EMBWT .GT. 0.0) THEN
 
          XENDEM = DNGE
-       ELSE
+      ELSE
          IF (GROEMB .GT. 0.0) THEN
             XENDEM = DNGE
-          ELSE
+         ELSE
             XENDEM = 0.0
          ENDIF
       ENDIF
@@ -233,7 +239,7 @@ C-----------------------------------------------------------------------
       IF (ANDEM .LE. 0.0) THEN
          TRNU  = 0.0
          NUF   = 0.0
-       ELSE
+      ELSE
          ANDEM = AMIN1 (ANDEM,TRNU)
          IF (TRNU .EQ. 0.0) RETURN
          NUF   = ANDEM/TRNU
@@ -266,18 +272,18 @@ C     Update stover and root N
 C-----------------------------------------------------------------------
 
       IF (NDEM .GT. TRNU) THEN
-          XNDEM  = TRNU
-          FACTOR = XNDEM / NDEM
-          NDEM   = XNDEM
-                   ! Reduce demand to potential N supply
+        XNDEM  = TRNU
+        FACTOR = XNDEM / NDEM
+        NDEM   = XNDEM
+        ! Reduce demand to potential N supply
          
-          XLNDEM = XLNDEM * FACTOR
-          XSNDEM = XSNDEM * FACTOR
-          XHNDEM = XHNDEM * FACTOR
-          XENDEM = XENDEM * FACTOR
-          XPNDEM = XPNDEM * FACTOR
-          TNDEM  = TNDEM * FACTOR
-          RNDEM  = RNDEM * FACTOR
+        XLNDEM = XLNDEM * FACTOR
+        XSNDEM = XSNDEM * FACTOR
+        XHNDEM = XHNDEM * FACTOR
+        XENDEM = XENDEM * FACTOR
+        XPNDEM = XPNDEM * FACTOR
+        TNDEM  = TNDEM * FACTOR
+        RNDEM  = RNDEM * FACTOR
       ENDIF
       !
       ! Fractions of organs over the whole plant weight
@@ -291,7 +297,7 @@ C-----------------------------------------------------------------------
       IF (NDEM .LE. 0.0 .OR. TRNU .LE. 0.0) THEN
          DSTOVN = 0.0
          DROOTN = 0.0
-       ELSE
+      ELSE
          !
          ! Calculate root senescence losses @ 0.5%/day
          !
@@ -324,11 +330,11 @@ C-----------------------------------------------------------------------
 
          ! Adjust DSTOVN and DROOTN to compensate for N lost to FON
          IF(NDEM.GT.0.0.AND.PLTPOP.GT.0.0) THEN
-         DLEAFN = XLNDEM/NDEM*TRNU - PTFL*TRNLOS/(PLTPOP)
-         DSTEMN = XSNDEM/NDEM*TRNU - PTFS*TRNLOS/(PLTPOP)
-         DHEADN = XHNDEM/NDEM*TRNU - PTFH*TRNLOS/(PLTPOP)
-         DSTOVN = DLEAFN + DSTEMN + DHEADN
-         DROOTN = RNDEM /NDEM*TRNU - (1.0-PTF)*TRNLOS/(PLTPOP)!          g N/pl =   fraction  *g N/pl- fraction*g N/m2/(pl/m2) 
+           DLEAFN = XLNDEM/NDEM*TRNU - PTFL*TRNLOS/(PLTPOP)
+           DSTEMN = XSNDEM/NDEM*TRNU - PTFS*TRNLOS/(PLTPOP)
+           DHEADN = XHNDEM/NDEM*TRNU - PTFH*TRNLOS/(PLTPOP)
+           DSTOVN = DLEAFN + DSTEMN + DHEADN
+           DROOTN = RNDEM /NDEM*TRNU - (1.0-PTF)*TRNLOS/(PLTPOP)!          g N/pl =   fraction  *g N/pl- fraction*g N/m2/(pl/m2) 
          ENDIF
       ENDIF
 C     Cumulative N amount per organ
@@ -346,7 +352,7 @@ C     Cumulative N amount per organ
      &   RANC  = ROOTN / (RTWT-0.01*RTWT)
       
       RETURN
-      END SUBROUTINE MZ_NUPTAK
+      END SUBROUTINE SU_NUPTAK
 
 
 C--------------------------------------------------------------------------------------------------

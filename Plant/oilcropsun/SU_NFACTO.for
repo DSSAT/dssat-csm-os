@@ -1,7 +1,7 @@
 C======================================================================
 C  SU_NFACTO, Subroutine
 C
-C  Determines N deficit in Maize
+C  Determines N deficit in Sunflower
 C----------------------------------------------------------------------
 C  Revision history
 C  xx/xx/19xx     Written
@@ -17,7 +17,7 @@ C  Calls  : None
 C----------------------------------------------------------------------
 
       SUBROUTINE SU_NFACTO(DYNAMIC,               !Control
-     %    TANC,TCNP,TMNC,                         !Inputs
+     %    TANC,TCNP,TMNC,xlanc,xlcnp,xlmnc,       !Inputs
      %    AGEFAC,NDEF3,NFAC,NSTRES)               !Outputs
       
       USE ModuleDefs
@@ -33,7 +33,8 @@ C----------------------------------------------------------------------
       REAL        TANC        
       REAL        TCNP        
       REAL        TMNC           
-      INTEGER     DYNAMIC     
+      INTEGER     DYNAMIC
+      REAL        xlanc,xlcnp,xlmnc     
 C     ----------------------------------------------------------------
 
 
@@ -57,7 +58,7 @@ C     ----------------------------------------------------------------
 ! based on proportion nitrogen below critical level (TCNP-TANC) and 
 ! total nitrogen between the critical level and minimum 
 ! level (TCNP-TMNC). 
-      NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)  
+        NFAC   = 1.0 - (TCNP-TANC)/(TCNP-TMNC)  
 
           NFAC   = AMIN1 (NFAC,1.0)
           NFAC   = AMAX1 (NFAC,0.001)
@@ -68,29 +69,32 @@ C     ----------------------------------------------------------------
           AGEFAC = AMIN1 (AGEFAC,1.0)
 
           !Make grain per plant calculation less sensitive to N stress
-          NDEF3  = 1.0
-          IF (NFAC .LT. 0.8) THEN
-              NDEF3 = 0.2 + NFAC
-          ENDIF
-          NDEF3  = AMIN1 (NDEF3, 1.0)
-
-
-          !Compute nitrogen stress factor for screen output only?
-          !Note that NSTRES is not used to modify any processes
-          NSTRES =  1.0 - (XLCNP-XLANC)/(XLCNP-XLMNC)
+        NDEF3  = 1.0
+        IF (NFAC .LT. 0.8) THEN
+          NDEF3 = AMIN1 (0.2 + NFAC,1.0)
+        ENDIF
           
-          NSTRES = 1.0
-          NSTRES = NFAC*1.2 + 0.2
-          IF (NFAC .GT. 0.5) THEN
-              NSTRES = NFAC*0.4 + 0.6
-          ENDIF
-      ENDIF
 
- 
+
+          !Compute nitrogen stress factor for PHOTOSYNTHESIS
+          
+        NSTRES =  1.0 - (XLCNP-XLANC)/(XLCNP-XLMNC)
+        IF (NSTRES .GT. 0.5)  THEN
+          NSTRES = NSTRES * 0.4  + 0.6
+        ELSE
+          IF (NSTRES .GT. 0.0) THEN
+            NSTRES = NSTRES * 1.2  + 0.2
+          ELSE
+            NSTRES = 0.2
+          ENDIF
+        ENDIF
+        NSTRES = AMIN1 (NSTRES,1.0)
+
+      ENDIF 
  
       RETURN
 
-      END SUBROUTINE MZ_NFACTO
+      END SUBROUTINE SU_NFACTO
 
 
 C----------------------------------------------------------------------

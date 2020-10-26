@@ -227,15 +227,15 @@ C  Calls:     None
             
  !    VSH CSV output corresponding to PlantGro.OUT
       IF (FMOPT == 'C') THEN    
-         CALL CsvOut_SUCER(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
+         CALL CsvOut_SUOIL(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
      &VSTAGE, RSTAGE, XLAI, WTLF, STMWTO, SDWT, RTWT, PLTPOP, VWAD, 
      &TOPWT, SEEDNO, SDSIZE, HI, PODWT, PODNO, SWF_AV, TUR_AV, NST_AV, 
      &EXW_AV, PS1_AV, PS2_AV, KST_AV, PCNL, SHELPC, HIP, PODWTD, SLA,
      &CANHT, CANWH, RTDEP, N_LYR, RLV, WTCO, WTLO, WTSO, CUMSENSURF, 
-     &CUMSENSOIL, DTT, vCsvlineSUCER, vpCsvlineSUCER, vlngthSUCER)
+     &CUMSENSOIL, DTT, vCsvlineSUOIL, vpCsvlineSUOIL, vlngthSUOIL)
     
-         CALL LinklstSUCER(vCsvlineSUCER)
+         CALL LinklstSUOIL(vCsvlineSUOIL)
       END IF
   
           ENDIF

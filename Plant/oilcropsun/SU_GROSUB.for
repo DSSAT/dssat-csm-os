@@ -370,7 +370,17 @@
       REAL FACHN,FACLN,FACPOOL,FACSN,FCP,FCP2,FPOOL1,FPOOL2
       REAL FRCARB,FSINK1,FSINK2,GF1,GLFWT,GPLA,GROEMB,GROPER
       REAL GROHEAD,HWMAX,HWMIN,INCPLA,K1,K2,LER,MAXGROLF
-      REAL MAXGROSTM,MAXLA,MINGROLF
+      REAL MAXGROSTM,MAXLA,MINGROLF,NPL1H,NPL1S,NPL1L,NGRO
+      REAL NPL2L,NPL2R,NSINK1,NSINK2,O1,OIL,OILFRAC,OILINC
+      REAL P3P,P9,PDWIH,PDWIL,PDWIS,PEPE,PERN,PHY,PO,PR,QD,QN
+      REAL RFR,RI,RONL,SDN,SENCODE,SENRATESENTIME,SLAMAX,SLAMIN
+      REAL SLAN1,SLAN2,SLAN22,SLAX,SLAY,SLFWT,SLOPEPE,SPLA,SUMDT8
+      REAL TLNOI,TTMP,WLAN2,WWWW,X,XCUMPH,XHANC,XHCNP,XHEADN
+      REAL XHMNC,XHY,XI,XLANC,XLAY,XLCNP,XLEAFN,XLMNC,XLN
+      REAL XNGLF,XNSLF,XPEPE,XRAT,XSANC,XSCNP,XSMNC,XSTEMN
+      REAL XXX,YLNOI,YRAT,YYY,Z,ZLNOI,ZZZ,C2,CPOOL,CUMDTT
+      REAL OILPERC,PNP,SENRATE,SENTIME,TMFAC1(10),SGRO(12)
+      
       INTEGER IDURP,I,JPEPE
     
        
@@ -846,7 +856,7 @@
 
         IF (ISWNIT .NE. 'N') THEN
           CALL SU_NFACTO(DYNAMIC,TANC,TCNP,TMNC,
-     %    AGEFAC,NDEF3,NFAC,NSTRES)         
+     %    xlanc,xlcnp,xlmnc,AGEFAC,NDEF3,NFAC,NSTRES)         
         ELSE
           AGEFAC = 1.0
           NSTRES = 1.0
@@ -953,7 +963,9 @@
           PLA     = PLAE
           SENLA  = 0.0
           LAI    = PLTPOP*PLA*0.0001 
-          CUMPH   = 0.514
+          CUMPH   = 0.0
+          P3       = 400.0
+          TLNO     = IFIX (2.0+(P1+30.0+30.0*P2)/14.0)
           IF (ISWNIT .NE. 'N') THEN
             GRAINN = 0.000
             TANC = TANCE
@@ -1016,7 +1028,7 @@
         !-------------------------------------------------------------
         IF (ISWNIT .NE. 'N' .AND. ISTAGE .LT. 7) THEN
           CALL SU_NFACTO(DYNAMIC,                 !Control
-     %    TANC,TCNP,TMNC,                         !Inputs
+     %    TANC,TCNP,TMNC,xlanc,xlcnp,xlmnc,       !Inputs
      %    AGEFAC,NDEF3,NFAC,NSTRES)               !Outputs
         ELSE
           AGEFAC = 1.0
@@ -1188,7 +1200,7 @@
           XLN      = XLN + DTT/PHY
 
           IF (XLN .GT. TLNO) THEN
-            LEAFNO = TLNO
+            LEAFNO = INT(TLNO)
           ELSE
             LEAFNO = INT(XLN)
           ENDIF

@@ -140,13 +140,13 @@ C  Calls:     None
      
  !    VSH CSV output corresponding to PlantN.OUT
       IF (FMOPT == 'C') THEN    
-         CALL CsvOutPlNSUCer(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
+         CALL CsvOutPlNSUOIL(EXPNAME,CONTROL%RUN,CONTROL%TRTNUM, 
      &CONTROL%ROTNUM,CONTROL%REPNO, YEAR, DOY, DAS, DAP, 
      &WTNCAN, WTNSD, WTNVEG, PCNGRN, PCNVEG, WTNUP, WTNLF,  
      &WTNST, PCNL, PCNST, PCNRT, CUMSENSURFN, CUMSENSOILN,  
-     &vCsvlinePlNSUCER, vpCsvlinePlNSUCER, vlngthPlNSUCER)
+     &vCsvlinePlNSUOIL, vpCsvlinePlNSUOIL, vlngthPlNSUOIL)
     
-         CALL LinklstPlNSUCER(vCsvlinePlNSUCER)
+         CALL LinklstPlNSUOIL(vCsvlinePlNSUOIL)
       END IF 
      
           ENDIF

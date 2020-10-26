@@ -22,15 +22,15 @@
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
      &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
      &    XN,YRDOY,YRSIM,                                         !I
-     &    HEADWT,POTHEADWT,PLAMX,	SUMP,IDURP,BIOMAS,LAI,
-     &    RTWT,PLA,											!I
-     &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    HEADWT,POTHEADWT,PLAMX,IDURP,BIOMAS,LAI,
+     &    RTWT,PLA,                                 !I
+     &    CUMDTT,DTT,EARS,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac,																			!O
-     &    PPP,PERWT,HEADWT,POTGROPER,															!O	
+     &    SeedFrac,VegFrac,                                                         !O
+     &    PPP,PERWT,POTGROPER,                                             !O   
      &    GRFACTOR,MAXLAI,ABIOMS,APLA,PSKER,
-     &    RM,RI1,PERWT,EMBWT,PERWTE,EMBWTE,GRNWTE,
-     &    GRNWT,GRAINN)        !O                              !O
+     &    RM,RI1,EMBWT,PERWTE,EMBWTE,GRNWTE,
+     &    GRNWT,GRAINN)        !O   
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -38,9 +38,7 @@
 !----------------------------------------------------------------------
 !                             Define Variables
 !----------------------------------------------------------------------
-      INTEGER         DYNAMIC         
-
-!      REAL            ABSTRES         
+      INTEGER         DYNAMIC               
       REAL            ACOEF           
       REAL            BARFAC 
       CHARACTER*1     BLANK         
@@ -97,7 +95,7 @@
       REAL            P2             
       REAL            P2O            
       REAL            P3   
-      REAL						P3P          
+      REAL                  P3P          
       REAL            P5             
       REAL            P9             
       CHARACTER*80    PATHCR 
@@ -106,7 +104,7 @@
       REAL            PDTT
       REAL            PHINT          
       REAL            PLTPOP 
-      REAL						PPP        
+      REAL                  PPP        
       REAL            PSKER          
       REAL            RATEIN         
       REAL            ROPT           
@@ -130,8 +128,7 @@
       REAL            SWSD           
       REAL            TBASE          
       REAL            TDSOIL         
-      REAL            TEMPCN         
-                                     
+      REAL            TEMPCN                                              
       REAL            TEMPCR         
       REAL            TEMPCX         
       REAL            TH             
@@ -149,44 +146,40 @@
       REAL            XNTI           
       REAL            XS             
       REAL            XSTAGE  
-			REAL						HEADWT
-			REAL 						POTHEADWT
-			REAL						PLAMX
-			REAL						SUMP
-			REAL						BIOMAS
-			REAL						LAI
-			REAL						RTWT
-			REAL 						PLA
-			INTEGER					IDURP
-			REAL						PPP
-			REAL						PERWT
-			REAL						HEADWT
-			REAL						POTGROPER
-			REAL						GRFACTOR
-			REAL						MAXLAI
-			REAL						ABIOMS
-			REAL						APLA
-			REAL						PSKER
-			REAL						RM
-			REAL						RI1
-			REAL						PERWT
-			REAL						EMBWT
-			REAL						PERWTE
-			REAL						EMBWTE
-			REAL						GRNWT
-			REAL						GRNWTE
-			REAL						GRAINN      
-                
+      REAL                        HEADWT
+      REAL                         POTHEADWT
+      REAL                        PLAMX
+      REAL                        BIOMAS
+      REAL      LAI
+      REAL      RTWT
+      REAL                   PLA
+      REAL                  POTGROPER
+      REAL                  GRFACTOR
+      REAL                  MAXLAI
+      REAL                  ABIOMS
+      REAL                  APLA
+      REAL                  RM
+      REAL                  RI1
+      REAL                  PERWT
+      REAL                  EMBWT
+      REAL                  PERWTE
+      REAL                  EMBWTE
+      REAL                  GRNWT
+      REAL                  GRNWTE
+      REAL GRAINN,ALF,ALF1,EMBN,GPSM,GRAINN1,GRAINNE
+      REAL O1,PS,PERN,ZZZ
+      
+                            
       INTEGER         YRDOY          
       INTEGER         YREMRG         
       INTEGER         YRSIM
       INTEGER ISDATE          
-
       INTEGER PATHL
       PARAMETER (BLANK = ' ')
       INTEGER LUNECO
 
       CHARACTER*6 ECOTYP
+      CHARACTER*1 ISWNIT
       INTEGER ISECT
       CHARACTER*255 C255
       CHARACTER*16  ECONAM
@@ -320,7 +313,7 @@
      &            C255(1:1) .NE. '*') THEN
               READ(C255,3100,IOSTAT=ERRNUM) ECOTYP,ECONAM,TBASE,TOPT,
      &             ROPT,P2O,DJTI,GDDE,DSGFT,RUE, KCAN
-3100          FORMAT (A6,1X,A16,1X,9(1X,F5.1))
+ 3100          FORMAT (A6,1X,A16,1X,9(1X,F5.1))
               IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEE,LNUM)
         
               IF (ECOTYP .EQ. ECONO) THEN
@@ -404,7 +397,7 @@
       PDTT = 0.0
       P9 = 0.0
       P3 = 0.0
-			P3P=0.0
+         P3P=0.0
       NDAS = 0.0
       L0 = 0.0
       L = 0
@@ -444,7 +437,7 @@
           ! snow cover. Crown temperature is higher than TAVG due
           ! to energy balance of snow pack.
           !------------------------------------------------------------
-					! REMOVED FV 2018
+               ! REMOVED FV 2018
           !IF (TMIN .LT. 0.0) THEN
           !    TEMPCN = 2.0 + TMIN*(0.4+0.0018*(XS-15.0)**2)
           !ENDIF
@@ -475,7 +468,7 @@
               DTT = 0.0
           ELSEIF (TMIN .GT. DOPT) THEN
           !   !
-       !This statement replaces DTT = TOPT .. GoL and LAH, CIMMYT, 1999
+!   This statement replaces DTT = TOPT .. GoL and LAH, CIMMYT, 1999
           !   !
               DTT = DOPT - TBASE
           !   !
@@ -550,17 +543,17 @@
 !     ------------------------------------------------------------------
 !           ISTAGE Definitions
 !
-     !  ีอออออออออออออออออออออออออออออออออออออธ
-      !  ณ7 - Sowing date                      ณ
-      !  ณ8 - Germination                      ณ
-      !  ณ9 - Emergence                        ณ
-      !  ณ1 - End juvenile                     ณ
-      !  ณ2 - Floret initiation              ณ
-      !  ณ3 - Flowering                ณ
-      !  ณ4 - End pollination              ณ
-      !  ณ5 - Start embryo fill                       ณ
-      !  ณ6 - Maturity                         ณ
-      !  ิอออออออออออออออออออออออออออออออออออออพ
+!  ีอออออออออออออออออออออออออออออออออออออธ
+!  ณ7 - Sowing date                      ณ
+!  ณ8 - Germination                      ณ
+!  ณ9 - Emergence                        ณ
+!  ณ1 - End juvenile                     ณ
+!  ณ2 - Floret initiation              ณ
+!  ณ3 - Flowering                ณ
+!  ณ4 - End pollination              ณ
+!  ณ5 - Start embryo fill                       ณ
+!  ณ6 - Maturity                         ณ
+!  ิอออออออออออออออออออออออออออออออออออออพ
 
 
       !---------------------------------------------------------
@@ -637,10 +630,10 @@
               ! Emerge when P9 GDD's have been accumulated
 !              IF (SUMDTT .LT. P9) RETURN 
               IF (YREMRG .LE. 0) THEN
-	          IF (SUMDTT .LT. P9) RETURN
-	        ELSE
-	          IF (YRDOY .LT. YREMRG) RETURN
-	        ENDIF
+             IF (SUMDTT .LT. P9) RETURN
+           ELSE
+             IF (YRDOY .LT. YREMRG) RETURN
+           ENDIF
               ! If GDD's pass a threshold, terminate model run
 
               IF (P9 .GT. DGET) THEN
@@ -754,11 +747,11 @@
               ENDIF
               PDTT   = 1.0   
               SIND = SIND + RATEIN*PDTT
-							XSTAGE = 1.0 + 0.5*SIND !      Used to compute N demand.
+                     XSTAGE = 1.0 + 0.5*SIND !      Used to compute N demand.
               !Return if FLORET initiation has not been reached
               IF (SIND .LT. 1.0) RETURN           
 
-							P3P  = 2.0*P1
+                     P3P  = 2.0*P1
           !
           ! P3P will define the start of anthesis
               !---------------------------------------------------------
@@ -791,7 +784,7 @@
               ! XSTAGE - noninteger growth stage (1.5-4.5)
               !    Used to compute N demand.
               XSTAGE = 1.5 + 3.0*SUMDTT/P3 
- 					
+                
 !             chp 9/23/2004
 !             For P model, we need to estimate the fraction of time 
 !             completed between tassel initiation and physiological 
@@ -810,7 +803,7 @@
               !---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY
               ISDATE = YRDOY      
-              ISTAGE = 4					!FIRST ANTHESIS, END OF LEAF GROWTH
+              ISTAGE = 4               !FIRST ANTHESIS, END OF LEAF GROWTH
               SUMDTT = SUMDTT - P3P
               IDURP  = 0
               ISDATE = YRDOY
@@ -979,8 +972,8 @@
 !     Format Strings
 !-----------------------------------------------------------------------
 
-1399  FORMAT (10X,'Seed ran out of metabolite due to deep planting')
-3500  FORMAT ('Crop failure because of lack of germination ',
+ 1399  FORMAT (10X,'Seed ran out of metabolite due to deep planting')
+ 3500  FORMAT ('Crop failure because of lack of germination ',
      &           'within 15 days of sowing')
 
       END SUBROUTINE SU_PHENOL
