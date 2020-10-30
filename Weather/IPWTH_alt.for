@@ -354,13 +354,34 @@ C       Substitute default values if REFHT or WINDHT are missing.
 
       ELSEIF (LongFile .AND. YRDOY < FirstWeatherDay) THEN
 !       Starting over with long file -- same file, but need to read from top
-        REWIND(LUNWTH)
+        INQUIRE(FILE=FILEWW,EXIST=FEXIST)
+        
+        IF (.NOT. FEXIST) THEN
+          ErrCode = 30
+          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
+          RETURN
+        ENDIF
+        
+        OPEN (LUNWTH,FILE=FILEWW,STATUS='OLD',IOSTAT=ERR)
+        IF (ERR /= 0) THEN
+          ErrCode = 29
+          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
+          RETURN
+        ENDIF
+        
+        !INQUIRE(UNIT=LUNWTH,EXIST=FEXIST)
+        !REWIND(LUNWTH, IOSTAT=ErrCode, ERR=722)
+        
+  722   IF(ErrCode .NE. 0) CALL ERROR(ERRKEY,30,FILEW,LINWTH)
+        
+
+        
   200   CONTINUE
         CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
         IF (FOUND == 2) GO TO 200
         IF (FOUND == 0) CALL ERROR(ERRKEY,-1,FILEW,LINWTH)
         NRecords = 0
-
+        
       ELSEIF (LongFile .AND. YRDOY > LastWeatherDay) THEN
 !       Need to get next batch of records from long file
         NRecords = 0
