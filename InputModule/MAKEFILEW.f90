@@ -304,8 +304,6 @@
 !-----------------------------------------------------------------------
 !    Open and Read Weather file data
 !-----------------------------------------------------------------------
-      CALL GETLUN('FILEW', LUNWTH)
-      
       PATHL  = INDEX(PATHWT,BLANK)
       IF (PATHL .LE. 1) THEN
          FILEWW = FILEW
@@ -319,17 +317,20 @@
       YEARDOY = -99
       
       !FO - Rewind file because of BatchFiles runs that keep the same unit.
-      INQUIRE(FILE = FILEWW,NUMBER = UNIT)
-      IF(UNIT .LT. 0) THEN
-        OPEN (LUNWTH, FILE = FILEWW,STATUS = 'OLD',IOSTAT=ERRNUM)
-      ELSE
-        REWIND(LUNWTH)
-      ENDIF
+      CALL GETLUN('FILEW', UNIT)
       
-      IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,18,FILEW,0)
+      INQUIRE(FILE=FILEWW, EXIST = FEXIST)
+      
+      
+      IF(FEXIST) THEN
+        OPEN (UNIT, FILE = FILEWW,STATUS = 'OLD',IOSTAT=ERRNUM)
+        IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,18,FILEW,0)
+      ELSE
+        CALL ERROR (ERRKEY,18,FILEW,0)
+      ENDIF
             
       DO WHILE (ERRNUM .EQ. 0)
-        READ (LUNWTH,'(A)', IOSTAT=ERRNUM) LINE
+        READ (UNIT,'(A)', IOSTAT=ERRNUM) LINE
         
         !FO - Look for 1st header line beginning with '$'
         IF(INDEX(LINE, '$WEATHER') .GT. 0 .AND. ICASAF .EQ. 0) THEN
@@ -341,13 +342,13 @@
           !FO - Look for header lines beginning with '@'  
           IF(LINE(1:1) .EQ. '@' .AND. INDEX(LINE, 'DATE') .GT. 0) THEN
               !FO - Read 7-digit First Weather YEAR
-              READ (LUNWTH,'(I7)', IOSTAT=ERRNUM) YEARDOY
+              READ (UNIT,'(I7)', IOSTAT=ERRNUM) YEARDOY
               IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,17,FILEW,0)
               
               EXIT
           ELSE IF(LINE(1:1) .EQ. '@' .AND. INDEX(LINE, 'YEAR') .GT. 0) THEN
               !FO - Read ICASA format
-              READ (LUNWTH,'(I4,1X,I3)', IOSTAT=ERRNUM) YEAR, DOY 
+              READ (UNIT,'(I4,1X,I3)', IOSTAT=ERRNUM) YEAR, DOY 
               IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,17,FILEW,0)
               
               YEARDOY = YEAR * 1000 + DOY
@@ -358,7 +359,7 @@
           
       ENDDO
       
-      CLOSE(LUNWTH)
+      CLOSE(UNIT)
       
 !-----------------------------------------------------------------------
 !    Convert SDATE to 7-digits and check if is in the date range 
