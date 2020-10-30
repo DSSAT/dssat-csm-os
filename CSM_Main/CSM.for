@@ -94,7 +94,7 @@ C-----------------------------------------------------------------------
       CHARACTER*130 CHARTEST
 
       INTEGER       YRDOY,YRSIM,YRPLT,MDATE,YREND,YR,ISIM, YR0, ISIM0
-      INTEGER       MULTI,NYRS,INCYD,YEAR,DOY,DAS,TIMDIF
+      INTEGER       MULTI,NYRS,INCYD,YEAR,DOY,DAS,TIMDIF,ENDYRS
       INTEGER       ERRNUM,LUNIO,TRTALL,TRTNUM,EXPNO,I,RUN
       INTEGER       YRSIM_SAVE, YRDIF, YRDOY_END !IP,IPX, 
       INTEGER       LUNBIO,LINBIO,ISECT,IFIND,LN
@@ -165,6 +165,7 @@ C          treatments
 C      Q - Sequence analysis. Use Batch file to define experiment
 C      S - Spatial.  Use Batch file to define experiment
 C      T - Gencalc. Use Batch file to define experiments and treatment
+C      Y - Yield forecast mode. Use batch file.
 C-----------------------------------------------------------------------
 
       RNMODE = UPCASE(RNMODE)
@@ -185,9 +186,9 @@ C-----------------------------------------------------------------------
         READ(TRNARG,'(I6)') TRTNUM
 
 !     Get experiment and treatment from batch file
-      CASE('B','N','Q','S','F','T','E','L')
+      CASE('B','N','Q','S','F','T','E','L','Y')
 !           Batch, seasoNal, seQuence, Spatial, 
-!           Farm, Gencalc(T), sEnsitivity, Locus 
+!           Farm, Gencalc(T), sEnsitivity, Locus, Yield forecast
         CALL GETARG(NARG+1,FILEB)   !,IP   !Batch file name
         CALL GETARG(NARG+2,FILECTL) !,IP   !Simulation control file name
 
@@ -226,7 +227,7 @@ C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
 C    Open BATCH file
 C-----------------------------------------------------------------------
-        IF (INDEX('NQSFBET',RNMODE) .GT. 0) THEN
+        IF (INDEX('NQSFBETY',RNMODE) .GT. 0) THEN
            CALL GETLUN('BATCH ', LUNBIO)
            FINDCH='$BATCH'
            OPEN (LUNBIO, FILE = FILEB,STATUS = 'UNKNOWN',IOSTAT=ERRNUM)
@@ -254,7 +255,7 @@ C***********************************************************************
       CONTROL % YRDOY = 0
       CALL PUT(CONTROL)
 
-      IF ((INDEX('NSFBT',RNMODE) .GT. 0) .OR. (INDEX('E',RNMODE) .GT.
+      IF ((INDEX('NSFBTY',RNMODE) .GT. 0) .OR. (INDEX('E',RNMODE) .GT.
      &     0 .AND. RUN .EQ. 1)) THEN
         CALL IGNORE (LUNBIO,LINBIO,ISECT,CHARTEST)
         IF (ISECT .EQ. 1) THEN
@@ -358,6 +359,7 @@ C-----------------------------------------------------------------------
 
       MULTI  = 0
       YRDIF  = 0
+      ENDYRS = 0
       
       IF (INDEX('FQ',RNMODE).GT. 0 .AND. RUN .GT. 1) THEN
          YRSIM = INCYD(YRDOY,1)
@@ -404,12 +406,16 @@ C     BEGINNING of SEASONAL SIMULATION loop
 C-----------------------------------------------------------------------
 C     SEASONAL INITIALIZATION
 C*********************************************************************** 
-      SEAS_LOOP: DO WHILE (MULTI .NE. NYRS)
+      SEAS_LOOP: DO WHILE (ENDYRS .NE. NYRS)
 C***********************************************************************
       IF (NYRS .GT. 1) THEN 
-        MULTI = MULTI + 1
+        ENDYRS = ENDYRS + 1
+        IF (RNMODE .NE. 'Y') THEN
+          MULTI = MULTI + 1
+        ENDIF
       ELSE
         MULTI = 1
+        ENDYRS = 1
       ENDIF
       IF (MULTI .GT. 1) THEN
         RUN   = RUN + 1

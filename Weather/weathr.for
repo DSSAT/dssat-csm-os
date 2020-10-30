@@ -61,6 +61,9 @@ C=======================================================================
       INTEGER RSEED1, RSEED(4), REPNO
       INTEGER DYNAMIC, YREND
 
+!     Yield forecast variables
+      INTEGER FODAT, SIMYEAR, SIMDOY, ENSEMBLE_YEAR
+
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
      &  RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
@@ -259,6 +262,15 @@ C     Compute daily normal temperature.
       ELSEIF (DYNAMIC .EQ. RATE) THEN
       YYDDD = YRDOY
       CALL YR_DOY(YYDDD, YEAR, DOY)
+
+!     Yield forecast mode
+      IF (RNMODE .EQ. 'Y') THEN
+        IF (YRDOY > FODAT-1) THEN
+          CALL YR_DOY(YRSIM, SIMYEAR, SIMDOY)
+          ENSEMBLE_YEAR = SIMYEAR – NYRS + CONTROL % RUN – 1
+          YYDDD = ENSEMBLE_YEAR * 1000 + DOY
+        ENDIF
+      ENDIF
 !-----------------------------------------------------------------------
 C     Read new weather record.
       IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN

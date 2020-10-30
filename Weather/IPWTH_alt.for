@@ -33,6 +33,7 @@ C=======================================================================
 !-----------------------------------------------------------------------
       USE ModuleDefs
       USE ModuleData
+      USE Forecast
       IMPLICIT NONE
       SAVE
 
@@ -184,6 +185,22 @@ C     The components are copied into local variables for use here.
 
       IF (YRDOY == YRSIM) THEN
         YRDOY_WY = INCYD(YRSIM,-1)
+      ENDIF
+
+      
+      WSTAT = FILEW(1:8)
+      CALL PUT('WEATHER','WSTA',WSTAT)
+
+!     Check for forecast mode RNMODE = 'Y'
+      IF (RNMODE .EQ. 'Y') THEN
+        CALL FCAST_COUNT(YRSIM, FODAT)
+        CALL READWEATHER(FILEWW, Obs_YRDOY, 
+     &    FirstWeatherDay, LastWeatherDay, EOF, LNUM, NRECORDS, 
+     &    ERRYRDOY, ErrCode)
+
+        IF (ErrCode > 0) THEN
+           !Take drastic action
+        ENDIF
       ENDIF
 
       IF (FILEW /= LastFileW) THEN
