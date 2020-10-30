@@ -609,6 +609,7 @@ set(
         "Weather/HMET.for"
         "Weather/IPWTH_alt.for"
         "Weather/OPWEATH.for"
+        "Weather/ModForecast.f90"
         "Weather/SOLAR.for"
         "Weather/weathr.for"
         "Weather/WGEN.for"

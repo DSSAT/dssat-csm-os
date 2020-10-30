@@ -164,7 +164,16 @@ C       Set default values FOR REFHT AND WINDHT
           CALL ERROR(ERRKEY,1,' ',0)
         ENDIF
 
-      IF (INDEX('QFN',RNMODE) .LE. 0 .OR. 
+!       For yield forecast mode, initialize the weather generator
+        IF (RNMODE .EQ. 'Y') THEN
+          CALL WGEN (CONTROL,
+     &      FILEW, MEWTH, MULTI, RUN, PATHWT, REPNO,        !Input
+     &      RNMODE, RSEED1, YRDOY, YRSIM,                   !Input
+     &      PAR, RAIN, RSEED, SRAD, TAMP, TAV, TDEW,        !Output
+     &      TMAX, TMIN, WINDSP, XLAT, XLONG, YREND)         !Output
+        ENDIF
+
+      IF (INDEX('QFNY',RNMODE) .LE. 0 .OR. 
      &            (RUN .EQ. 1 .AND. REPNO .EQ. 1)) THEN
 C       Substitute default values if TAV or TAMP are missing.  Write a
 C         message to the WARNING.OUT file.
@@ -273,7 +282,7 @@ C     Compute daily normal temperature.
       ENDIF
 !-----------------------------------------------------------------------
 C     Read new weather record.
-      IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
+      IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G' ) THEN
         CALL IPWTH(CONTROL,
      &    CCO2, DCO2, FILEW, FILEWW, MEWTH, OZON7, PAR,   !Output
      &    PATHWT, RAIN, REFHT, RHUM, RSEED1, SRAD,        !Output
