@@ -353,28 +353,8 @@ C       Substitute default values if REFHT or WINDHT are missing.
         NRecords = 0
 
       ELSEIF (LongFile .AND. YRDOY < FirstWeatherDay) THEN
-!       Starting over with long file -- same file, but need to read from top
-        INQUIRE(FILE=FILEWW,EXIST=FEXIST)
-        
-        IF (.NOT. FEXIST) THEN
-          ErrCode = 30
-          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
-          RETURN
-        ENDIF
-        
-        OPEN (LUNWTH,FILE=FILEWW,STATUS='OLD',IOSTAT=ERR)
-        IF (ERR /= 0) THEN
-          ErrCode = 29
-          CALL WeatherError(CONTROL, ErrCode, FILEWW, 0, YRDOYWY, YREND)
-          RETURN
-        ENDIF
-        
-        !INQUIRE(UNIT=LUNWTH,EXIST=FEXIST)
-        !REWIND(LUNWTH, IOSTAT=ErrCode, ERR=722)
-        
-  722   IF(ErrCode .NE. 0) CALL ERROR(ERRKEY,30,FILEW,LINWTH)
-        
-
+!       Starting over with long file -- same file, but need to read from tops
+        REWIND(LUNWTH)
         
   200   CONTINUE
         CALL IGNORE(LUNWTH,LINWTH,FOUND,LINE)
