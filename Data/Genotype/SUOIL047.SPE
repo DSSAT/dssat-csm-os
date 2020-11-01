@@ -44,13 +44,13 @@
   PORM    0.02      !Minimum volume required for supplying oxygen to roots for optimum growth (1-1.0)
   RWMX    0.03      !Not used in ceres, but passed through AltPlant for use elsewhere
   RLWR    1.70      !Root length to weight ratio (cm/g * 1E-4)
-  RWUEP1  1.50  		
+  RWUEP1  1.50  
 
-*PLANT COMPOSITION VALUES
-  PLIGLF  0.070     !Leaf lignin fraction
-  PLIGST  0.070     !Stem lignin fraction 
-  PLIGRT  0.070     !Root lignin fraction 
-  PLIGSH  0.280     !Shell lignin fraction 
+*PLANT COMPOSITION VALUES  ok FV 11/1/2020
+  PLIGLF  0.100     !Leaf lignin fraction
+  PLIGST  0.15     !Stem lignin fraction 
+  PLIGRT  0.100     !Root lignin fraction 
+  PLIGSH  0.220     !Shell lignin fraction 
   PLIGSD  0.020     !Seed lignin fraction 
 
 *PHOSPHORUS CONTENT (g [P]/g [shoot])       ok                                                            

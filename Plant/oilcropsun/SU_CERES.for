@@ -75,7 +75,6 @@
       REAL            ESW(NL)     
       CHARACTER*30    FILEIO
       INTEGER         FROP    
-      REAL            GDDAE
       REAL            GNUP      
       REAL            GPP    
       REAL            GPSM     
@@ -119,9 +118,6 @@
       REAL            PODWT   
       REAL            PORMIN  
       REAL            PLTPOP    
-      REAL            PEAR
-C      REAL            PRLF
-      REAL            PSTM
       REAL            PTF        
       REAL            RLV(NL)   
       REAL            RLWR      
@@ -190,7 +186,6 @@ C      REAL            PRLF
       INTEGER         YREMRG   
       INTEGER         YRPLT 
       INTEGER         YRSIM    
-	REAL            Z2STAGE
 
 !     Added by W.D.B. for pest damage at CIMMYT 4/14/2001
 
@@ -204,9 +199,9 @@ C      REAL            PRLF
       REAL    WLIDOT,WRIDOT,WSIDOT
       INTEGER NR2
 !     FV added for SUOIL
-      REAL ABIOMS,APLA,EMBWT,EMBWTE,GRFACTOR,GRAINN,HEADWT
-      REAL LAI,MAXLAI,PERWT,PERWTE,PLA,PLAMX,POTGROPER
-      REAL POTHEADWT,PPP,PSKER,RI1,RM,BIOMAS,GRNWTE
+      REAL EMBWT,EMBWTE,HEADWT
+      REAL PERWT,PERWTE,POTGROPER
+      REAL POTHEADWT,PPP,PSKER,GRNWTE
       INTEGER IDURP 
 !     CHP added for P model 
       REAL PUptake(NL), SPi_AVAIL(NL), FracRts(NL)       
@@ -315,20 +310,15 @@ C----------------------------------------------------------------------
           !-------------------------------------------------------------
           !Call phenology routine
           !-------------------------------------------------------------
-          IF(MODEL(1:5).EQ.'SUCER') THEN
-					CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
+          IF(MODEL(1:5).EQ.'SUOIL') THEN
+          CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
      &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
      &    XN,YRDOY,YRSIM,                                         !I
-     &    HEADWT,POTHEADWT,PLAMX,	SUMP,IDURP,BIOMAS,LAI,
-     &    RTWT,PLA,											!I
-     &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    IDURP,                                !I
+     &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac,																			!O
-     &    PPP,PERWT,HEADWT,POTGROPER,															!O	
-     &    GRFACTOR,MAXLAI,ABIOMS,APLA,PSKER,
-     &    RM,RI1,PERWT,EMBWT,PERWTE,EMBWTE,GRNWTE,
-     &    GRNWT,GRAINN)        !O                              !O					ENDIF
+     &    SeedFrac,VegFrac)
 
           !-------------------------------------------------------------
           !Call growth routine
@@ -353,8 +343,10 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
- 
+     &      KUptake, KSTRES,                                  !Output
+     &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
+     &      POTHEADWT,PPP,PSKER,GRNWTE)
+
 
           !-------------------------------------------------------------
           !Call Root routine
@@ -426,19 +418,14 @@ C-----------------------------------------------------------------------
           MDATE      = -99      
 
 
-					CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
+          CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
      &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
      &    XN,YRDOY,YRSIM,                                         !I
-     &    HEADWT,POTHEADWT,PLAMX,	SUMP,IDURP,BIOMAS,LAI,
-     &    RTWT,PLA,											!I
-     &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    IDURP,                                !I
+     &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac,																			!O
-     &    PPP,PERWT,HEADWT,POTGROPER,															!O	
-     &    GRFACTOR,MAXLAI,ABIOMS,APLA,PSKER,
-     &    RM,RI1,PERWT,EMBWT,PERWTE,EMBWTE,GRNWTE,
-     &    GRNWT,GRAINN)        !O                              !O
+     &    SeedFrac,VegFrac)
      
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
      &      ASMDOT, CDAY, CO2, DLAYR, DS, DTT, EOP, FILEIO,   !Input
@@ -460,8 +447,10 @@ C-----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
- 
+     &      KUptake, KSTRES,                                  !Output
+     &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
+     &      POTHEADWT,PPP,PSKER,GRNWTE)
+
                          
           CALL SU_ROOTGR (DYNAMIC,ISWNIT,                         !C
      &        CUMDEP,CUMDTT,DEPMAX,DLAYR,DTT,ESW,GRORT,ISTAGE,    !I
@@ -539,19 +528,14 @@ C----------------------------------------------------------------------
         IF (YRDOY .EQ. YRPLT .OR. ISTAGE .NE. 7) THEN               
           IF (CROP .NE. 'FA') THEN
             
-					CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
+          CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
      &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
      &    XN,YRDOY,YRSIM,                                         !I
-     &    HEADWT,POTHEADWT,PLAMX,	SUMP,IDURP,BIOMAS,LAI,
-     &    RTWT,PLA,											!I
-     &    CUMDTT,DTT,EARS,GPP,ISDATE, ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    IDURP,                                !I
+     &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac, VegFrac,																			!O
-     &    PPP,PERWT,HEADWT,POTGROPER,															!O	
-     &    GRFACTOR,MAXLAI,ABIOMS,APLA,PSKER,
-     &    RM,RI1,PERWT,EMBWT,PERWTE,EMBWTE,GRNWTE,
-     &    GRNWT,GRAINN)        !O                              !O	      
+     &    SeedFrac,VegFrac)
           ENDIF
         ENDIF
           !------------------------------------------------------------
@@ -579,7 +563,9 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES,                                  !Output
+     &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
+     &      POTHEADWT,PPP,PSKER,GRNWTE)
 
 
         ELSE
@@ -636,7 +622,9 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES,                                  !Output
+     &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
+     &      POTHEADWT,PPP,PSKER,GRNWTE)
 
         ENDIF   
 
@@ -700,7 +688,9 @@ C----------------------------------------------------------------------
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES,                                  !Output
+     &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
+     &      POTHEADWT,PPP,PSKER,GRNWTE)
 
 
         CALL SU_OPGROW(CONTROL, ISWITCH,  

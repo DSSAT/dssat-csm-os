@@ -31,6 +31,7 @@
 !  07/13/2006 CHP Added P model
 !  10/31/2007 CHP Added simple K model.
 !  01/03/2013 CHP Initialization for RLV prevents carryover 
+!  11/01/2020 fv Added specific code for sunflower
 !----------------------------------------------------------------------
 !
 !  Called : Sunflower
@@ -58,7 +59,9 @@
      &      STOVN, STOVWT, SUMP, SWFAC, TOPWT, TURFAC, UNH4,  !Output
      &      UNO3, VSTAGE, WTLF, WTNCAN, WTNLF, WTNSD, WTNST,  !Output
      &      WTNUP, WTNVEG, XGNP, XHLAI, XLAI, XN, YIELD,      !Output
-     &      KUptake, KSTRES)                                  !Output
+     &      KUptake, KSTRES,                                  !Output
+     &      PERWT,EMBWT,PERWTE,EMBWTE,HEADWT,POTGROPER,
+     &      POTHEADWT,PPP,PSKER,GRNWTE)
 
       USE ModuleDefs
       USE Interface_SenLig_Ceres
@@ -71,7 +74,6 @@
       REAL        AGEFAC            
       REAL        APTNUP      
       REAL        AREALF
-      REAL        ASGDD
       REAL        ASMDOT
       REAL        BIOMAS 
       REAL        BSGDD
@@ -91,7 +93,7 @@
       REAL        CNSD2        
       REAL        CPSD1       
       REAL        CPSD2        
-      REAL        CUMPH       
+      INTEGER        CUMPH       
       REAL        CO2X(10)    
       REAL        CO2Y(10)    
       REAL        CO2         
@@ -370,18 +372,20 @@
       REAL FACHN,FACLN,FACPOOL,FACSN,FCP,FCP2,FPOOL1,FPOOL2
       REAL FRCARB,FSINK1,FSINK2,GF1,GLFWT,GPLA,GROEMB,GROPER
       REAL GROHEAD,HWMAX,HWMIN,INCPLA,K1,K2,LER,MAXGROLF
-      REAL MAXGROSTM,MAXLA,MINGROLF,NPL1H,NPL1S,NPL1L,NGRO
+      REAL MAXGROSTM,MAXLA,MINGROLF,NPL1H,NPL1S,NPL1L
       REAL NPL2L,NPL2R,NSINK1,NSINK2,O1,OIL,OILFRAC,OILINC
       REAL P3P,P9,PDWIH,PDWIL,PDWIS,PEPE,PERN,PHY,PO,PR,QD,QN
-      REAL RFR,RI,RONL,SDN,SENCODE,SENRATESENTIME,SLAMAX,SLAMIN
+      REAL RFR,RI,RONL,SDN,SENCODE,SENTIME,SLAMAX,SLAMIN
       REAL SLAN1,SLAN2,SLAN22,SLAX,SLAY,SLFWT,SLOPEPE,SPLA,SUMDT8
       REAL TLNOI,TTMP,WLAN2,WWWW,X,XCUMPH,XHANC,XHCNP,XHEADN
       REAL XHMNC,XHY,XI,XLANC,XLAY,XLCNP,XLEAFN,XLMNC,XLN
       REAL XNGLF,XNSLF,XPEPE,XRAT,XSANC,XSCNP,XSMNC,XSTEMN
       REAL XXX,YLNOI,YRAT,YYY,Z,ZLNOI,ZZZ,C2,CPOOL,CUMDTT
-      REAL OILPERC,PNP,SENRATE,SENTIME,TMFAC1(10),SGRO(12)
+      REAL OILPERC,PNP,SENRATE,TMFAC1(10),SGRO(12)
+      REAL ALF,ALF1,GRAINN1,GRAINNE
+      REAL PS
       
-      INTEGER IDURP,I,JPEPE
+      INTEGER IDURP,I,JPEPE,NGRO
     
        
       TYPE (ResidueType) SENESCE 
@@ -694,8 +698,6 @@
 !       JIL 08/01/2006 parameters for ear growth 
 !**     Read in SPE file?
 
-        ASGDD = 100.0        !Ending of ear growth (gdd)
-        BSGDD = 250.0        !Beginning of ear growth (gdd)
 
         APTNUP = 0.0
         AREALF = 0.0
@@ -703,8 +705,8 @@
         BIOMAS = 0.0
         CANHT  = 0                
 !**
-!       set to 1.6 m, need to become user-input; RS 26May04   
-        CANHT_POT = 1.6              
+!       set to 1.5 m, fv 11/1/2020
+        CANHT_POT = 1.5              
 !**
         CANNAA = 0.0
         CANWAA = 0.0
@@ -717,7 +719,7 @@
         CumLeafSenes = 0.0
         CumLeafSenesY = 0.0
         CumLfNSenes = 0.0
-        CUMPH  = 0.0
+        CUMPH  = 0
 !       DM     = 0.0
         DUMMY  = 0.0
         EARS   = 0.0 
@@ -948,14 +950,83 @@
           VMNC   = TMNC       
           EMAT   = 0
           ICSDUR = 1
+
+          MAXLAI = PLAMX*PLTPOP/10000.0
+          APLA   = LAI*10000.0/PLTPOP
+          ABIOMS = BIOMAS
+          PSKER  = SUMP / IDURP
+          PSKER  = AMAX1 (PSKER,0.1)                 ! Set PSKER to min of 0.1
+          !
+          ! Include calculations to correct RUE after anthesis
+          ! mantainance respiration
+          !
+          RM  = (BIOMAS+RTWT*PLTPOP)*0.008*0.729
+          RI1 = 1.0 + RM/PSKER/PLTPOP       
+          !
+          ! Pericarp number calculated according to Soriano
+          ! FV - 12/12/97
+          !
+          PPP = 1250.0 + (PLA-750.0)*750.0/1500.0
+          PPP = AMIN1 (PPP,G2)
+
+          ZZZ       = AMIN1 (1.0,HEADWT/POTHEADWT)
+          GRFACTOR  = 0.6 + 0.4 * ZZZ
+          GRFACTOR  = AMIN1 (GRFACTOR,1.0)
+          PERWT     = PPP * 0.002                     ! Pericarp starts with 2 mg
+          HEADWT    = HEADWT - PERWT
+          ALF       = 0.22
+          ALF1      = (ALF*G3/24.*(P5-170.)-2.*(1.-ALF))/270./(1.-ALF)
+          POTGROPER = 24.0*ALF1*PPP/1000.0
         ENDIF
+        IF(YRDOY.EQ.STGDOY(5)) THEN
+             ! Include calculations to correct RUE after anthesis
+             ! mantainence respiration
+             !
+             PS    = RM/(RI1-1.0)
+             RM    = (BIOMAS+RTWT*PLTPOP)*0.008*0.729
+             RI1   = 1.0 + RM/PS
+             PSKER = SUMP / IDURP
 
-
+             !
+             ! Grain number calculated according to Soriano
+             ! FV - 12/12/97
+             !
+             GPP = 500.0 + PLA*750.0/6000.0
+             GPP = AMIN1 (GPP,PPP)
+             IF (GPP .GT. 0.0) THEN
+                PERWTE  = (PPP - GPP) * PERWT / PPP
+                EMBWTE  = (PPP - GPP) * EMBWT / PPP
+                GRNWTE  = PERWTE + EMBWTE
+                IF (ISWNIT .EQ. 'Y') THEN
+                   GRAINN1 = GRAINN * (1.0 - GRNWTE / GRNWT)
+                   GRAINNE = GRAINN - GRAINN1
+                   PERN    = PERN   * GRAINN1 / GRAINN
+                   EMBN    = EMBN   * GRAINN1 / GRAINN
+                   GRAINN  = GRAINN1
+                ENDIF
+                GRNWT   = GRNWT  - GRNWTE
+                PERWT   = PERWT  - PERWTE
+                EMBWT   = EMBWT  - EMBWTE
+                
+              ELSE
+                PERWTE  = PERWT
+                EMBWTE  = EMBWT
+                GRNWTE  = PERWTE + EMBWTE
+                GRAINN1 = 0.0
+                GRAINNE = GRAINN
+                EMBN    = 0.0
+                GRNWT   = 0.0
+                EMBWT   = 0.0
+                GPSM    = 0.0
+             ENDIF
+        ENDIF
+        
         IF(YRDOY.EQ.STGDOY(9)) THEN
           !Emergence
           STMWT   = STMWTE          
           RTWT    = RTWTE        
-          LFWT    = LFWTE         
+          LFWT    = LFWTE   
+          GPP=0.      
           STOVWT  = LFWT+STMWT     
           SEEDRV  = SEEDRVE
           BIOMAS = STOVWT
@@ -963,9 +1034,9 @@
           PLA     = PLAE
           SENLA  = 0.0
           LAI    = PLTPOP*PLA*0.0001 
-          CUMPH   = 0.0
+          CUMPH   = 0
           P3       = 400.0
-          TLNO     = IFIX (2.0+(P1+30.0+30.0*P2)/14.0)
+          TLNO     =  (2.0+(P1+30.0+30.0*P2)/14.0)
           IF (ISWNIT .NE. 'N') THEN
             GRAINN = 0.000
             TANC = TANCE
@@ -1110,7 +1181,7 @@
           PCO2  = TABEX (CO2Y,CO2X,CO2,10)
 
 
-                QN  = 1.0 - EXP(-0.86*LAI)
+          QN  = 1.0 - EXP(-0.86*LAI)
           QD  = 2.0*QN/(1.0 + QN)
 
           IF (LAI .GT. 0.001) THEN
@@ -1215,7 +1286,7 @@
               CUMPH  = INT(XCUMPH)
             ENDIF
           ELSE
-            CUMPH = TLNO
+            CUMPH = INT(TLNO)
           ENDIF
 
           XN = CUMPH + 1.0

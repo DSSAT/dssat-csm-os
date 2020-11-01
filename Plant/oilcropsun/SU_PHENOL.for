@@ -20,17 +20,13 @@
 !----------------------------------------------------------------------
       SUBROUTINE SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+     &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
      &    XN,YRDOY,YRSIM,                                         !I
-     &    HEADWT,POTHEADWT,PLAMX,IDURP,BIOMAS,LAI,
-     &    RTWT,PLA,                                 !I
-     &    CUMDTT,DTT,EARS,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
+     &    IDURP,                                !I
+     &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
      &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
-     &    SeedFrac,VegFrac,                                                         !O
-     &    PPP,PERWT,POTGROPER,                                             !O   
-     &    GRFACTOR,MAXLAI,ABIOMS,APLA,PSKER,
-     &    RM,RI1,EMBWT,PERWTE,EMBWTE,GRNWTE,
-     &    GRNWT,GRAINN)        !O   
+     &    SeedFrac,VegFrac)
+   
 
       USE ModuleDefs
       IMPLICIT  NONE
@@ -40,7 +36,6 @@
 !----------------------------------------------------------------------
       INTEGER         DYNAMIC               
       REAL            ACOEF           
-      REAL            BARFAC 
       CHARACTER*1     BLANK         
       REAL            C1   
       INTEGER         CDAY 
@@ -57,7 +52,6 @@
       REAL            DSGFT
       REAL            DTT             
       REAL            DUMMY           
-      REAL            EARS            
       CHARACTER*6     ECONO           
       INTEGER         ERR             
       CHARACTER*6     ERRKEY          
@@ -103,8 +97,7 @@
       CHARACTER*80    PATHER        
       REAL            PDTT
       REAL            PHINT          
-      REAL            PLTPOP 
-      REAL                  PPP        
+      REAL            PLTPOP       
       REAL            PSKER          
       REAL            RATEIN         
       REAL            ROPT           
@@ -146,28 +139,8 @@
       REAL            XNTI           
       REAL            XS             
       REAL            XSTAGE  
-      REAL                        HEADWT
-      REAL                         POTHEADWT
-      REAL                        PLAMX
-      REAL                        BIOMAS
       REAL      LAI
-      REAL      RTWT
-      REAL                   PLA
-      REAL                  POTGROPER
-      REAL                  GRFACTOR
-      REAL                  MAXLAI
-      REAL                  ABIOMS
-      REAL                  APLA
-      REAL                  RM
-      REAL                  RI1
-      REAL                  PERWT
-      REAL                  EMBWT
-      REAL                  PERWTE
-      REAL                  EMBWTE
-      REAL                  GRNWT
-      REAL                  GRNWTE
-      REAL GRAINN,ALF,ALF1,EMBN,GPSM,GRAINN1,GRAINNE
-      REAL O1,PS,PERN,ZZZ
+      REAL O1
       
                             
       INTEGER         YRDOY          
@@ -179,7 +152,6 @@
       INTEGER LUNECO
 
       CHARACTER*6 ECOTYP
-      CHARACTER*1 ISWNIT
       INTEGER ISECT
       CHARACTER*255 C255
       CHARACTER*16  ECONAM
@@ -375,12 +347,12 @@
       CUMDTT = 0.0
       SUMDTT = 0.0
       DTT = 0.0
-      GPP = 0.0
+      
       ISTAGE = 7
       XSTAGE = 0.1
       MDATE      = -99
       DUMMY = 0
-
+      GPP=0.
       ISDATE = 0
       TNSOIL = 0.0
       TMSOIL = 0.0
@@ -397,7 +369,7 @@
       PDTT = 0.0
       P9 = 0.0
       P3 = 0.0
-         P3P=0.0
+      P3P=0.0
       NDAS = 0.0
       L0 = 0.0
       L = 0
@@ -543,17 +515,17 @@
 !     ------------------------------------------------------------------
 !           ISTAGE Definitions
 !
-!  ÕÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¸
-!  ³7 - Sowing date                      ³
-!  ³8 - Germination                      ³
-!  ³9 - Emergence                        ³
-!  ³1 - End juvenile                     ³
-!  ³2 - Floret initiation              ³
-!  ³3 - Flowering                ³
-!  ³4 - End pollination              ³
-!  ³5 - Start embryo fill                       ³
-!  ³6 - Maturity                         ³
-!  ÔÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¾
+!  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¸
+!  ï¿½7 - Sowing date                      ï¿½
+!  ï¿½8 - Germination                      ï¿½
+!  ï¿½9 - Emergence                        ï¿½
+!  ï¿½1 - End juvenile                     ï¿½
+!  ï¿½2 - Floret initiation              ï¿½
+!  ï¿½3 - Flowering                ï¿½
+!  ï¿½4 - End pollination              ï¿½
+!  ï¿½5 - Start embryo fill                       ï¿½
+!  ï¿½6 - Maturity                         ï¿½
+!  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¾
 
 
       !---------------------------------------------------------
@@ -807,32 +779,7 @@
               SUMDTT = SUMDTT - P3P
               IDURP  = 0
               ISDATE = YRDOY
-          MAXLAI = PLAMX*PLTPOP/10000.0
-          APLA   = LAI*10000.0/PLTPOP
-          ABIOMS = BIOMAS
-          PSKER  = SUMP / IDURP
-          PSKER  = AMAX1 (PSKER,0.1)                 ! Set PSKER to min of 0.1
-          !
-          ! Include calculations to correct RUE after anthesis
-          ! mantainance respiration
-          !
-          RM  = (BIOMAS+RTWT*PLTPOP)*0.008*0.729
-          RI1 = 1.0 + RM/PSKER/PLTPOP       
-          !
-          ! Pericarp number calculated according to Soriano
-          ! FV - 12/12/97
-          !
-          PPP = 1250.0 + (PLA-750.0)*750.0/1500.0
-          PPP = AMIN1 (PPP,G2)
 
-          ZZZ       = AMIN1 (1.0,HEADWT/POTHEADWT)
-          GRFACTOR  = 0.6 + 0.4 * ZZZ
-          GRFACTOR  = AMIN1 (GRFACTOR,1.0)
-          PERWT     = PPP * 0.002                     ! Pericarp starts with 2 mg
-          HEADWT    = HEADWT - PERWT
-          ALF       = 0.22
-          ALF1      = (ALF*G3/24.*(P5-170.)-2.*(1.-ALF))/270./(1.-ALF)
-          POTGROPER = 24.0*ALF1*PPP/1000.0
           
 
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
@@ -869,48 +816,8 @@
               STGDOY(ISTAGE) = YRDOY
               ISTAGE = 5
 
-             !
-             ! Include calculations to correct RUE after anthesis
-             ! mantainence respiration
-             !
-             PS    = RM/(RI1-1.0)
-             RM    = (BIOMAS+RTWT*PLTPOP)*0.008*0.729
-             RI1   = 1.0 + RM/PS
-             PSKER = SUMP / IDURP
+         ENDIF
 
-             !
-             ! Grain number calculated according to Soriano
-             ! FV - 12/12/97
-             !
-             GPP = 500.0 + PLA*750.0/6000.0
-             GPP = AMIN1 (GPP,PPP)
-             IF (GPP .GT. 0.0) THEN
-                PERWTE  = (PPP - GPP) * PERWT / PPP
-                EMBWTE  = (PPP - GPP) * EMBWT / PPP
-                GRNWTE  = PERWTE + EMBWTE
-                IF (ISWNIT .EQ. 'Y') THEN
-                   GRAINN1 = GRAINN * (1.0 - GRNWTE / GRNWT)
-                   GRAINNE = GRAINN - GRAINN1
-                   PERN    = PERN   * GRAINN1 / GRAINN
-                   EMBN    = EMBN   * GRAINN1 / GRAINN
-                   GRAINN  = GRAINN1
-                ENDIF
-                GRNWT   = GRNWT  - GRNWTE
-                PERWT   = PERWT  - PERWTE
-                EMBWT   = EMBWT  - EMBWTE
-                
-              ELSE
-                PERWTE  = PERWT
-                EMBWTE  = EMBWT
-                GRNWTE  = PERWTE + EMBWTE
-                GRAINN1 = 0.0
-                GRAINNE = GRAINN
-                EMBN    = 0.0
-                GRNWT   = 0.0
-                EMBWT   = 0.0
-                GPSM    = 0.0
-             ENDIF
-          ENDIF
 
 !             CHP 5/11/2005
 !     CHP 5/25/2007 Move inflection point back to end of stage 3
@@ -981,7 +888,7 @@
 ! DYNAMIC    Modular control
 ! ABSTRES    Maximum of water stress stage 1 and 3
 ! ACOEF      Coefficient
-! BARFAC     Factor to reduce ears/plant under high populations (barrenn
+
 ! C1         Used to comptue daylength (computed in maize.for)
 ! CUMDEP     Cumulative depth of soil, cm
 ! CUMDTT     Cumulative daily thermal time after germination, C
@@ -998,7 +905,7 @@
 ! DSGT       Maximum number of days from sowing to germination before crop failure occurs.
 ! DTT        Growing degree days today, C
 ! DUMMY      Temporary variable
-! EARS       Ears per m2, computed here and used in grosub.
+
 ! ECONO      Ecotype number for the variety (not really used in maize ye
 ! ERR        Determines if error in reading file (0=ok, 1=error)
 ! ERRKEY     Variable containing routine where error occurred
