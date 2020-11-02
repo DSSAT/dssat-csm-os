@@ -112,8 +112,7 @@
       REAL            PCNL   
       REAL            PCNST     
       REAL            PCNRT
-      REAL            SLPF    
-      REAL            PHINT    
+      REAL            SLPF     
       REAL            PODNO      
       REAL            PODWT   
       REAL            PORMIN  
@@ -313,11 +312,11 @@ C----------------------------------------------------------------------
           IF(MODEL(1:5).EQ.'SUOIL') THEN
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
-     &    XN,YRDOY,YRSIM,                                         !I
+     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+     &    YRDOY,YRSIM,                                         !I
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &    SeedFrac,VegFrac)
 
           !-------------------------------------------------------------
@@ -335,7 +334,7 @@ C----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
+     &      PCNVEG, PODNO, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
@@ -420,11 +419,11 @@ C-----------------------------------------------------------------------
 
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
-     &    XN,YRDOY,YRSIM,                                         !I
+     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+     &    YRDOY,YRSIM,                                         !I
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &    SeedFrac,VegFrac)
      
           CALL SU_GROSUB (DYNAMIC, ISWITCH, 
@@ -439,7 +438,7 @@ C-----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
+     &      PCNVEG, PODNO, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
@@ -530,11 +529,11 @@ C----------------------------------------------------------------------
             
           CALL SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
-     &    SI1,SI3,SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
-     &    XN,YRDOY,YRSIM,                                         !I
+     &    SNOW, SRAD,SUMP,SW,TMAX,TMIN, TWILEN,           !I
+     &    YRDOY,YRSIM,                                         !I
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &    SeedFrac,VegFrac)
           ENDIF
         ENDIF
@@ -555,7 +554,7 @@ C----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
+     &      PCNVEG,  PODNO, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
@@ -614,7 +613,7 @@ C----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
+     &      PCNVEG, PODNO, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
@@ -680,7 +679,7 @@ C----------------------------------------------------------------------
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
+     &      PCNVEG, PODNO, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
@@ -828,7 +827,6 @@ C----------------------------------------------------------------------
 !              point J 
 ! PID(I)     Pest identification header from FILE
 ! PL(I)             Pest level for pest I today
-! PHINT       !Phylochron interval. Number of GDD for new leaf emergence, degrees C 
 ! PHTIM      Not used in CERES except to pass 0 into pest.for
 ! PLTPOP      !Plant Population, Pl/m  
 ! PODNO       !Ear number, #/m2

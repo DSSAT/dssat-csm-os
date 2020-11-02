@@ -51,7 +51,7 @@
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
      &      LEAFNO, NSTRES, PCNGRN, PCNL, PCNRT, PCNST,       !Output
-     &      PCNVEG, PHINT, PODNO, PConc_Root, PConc_Seed,     !Output
+     &      PCNVEG, PConc_Root, PConc_Seed,     !Output
      &      PConc_Shel, PConc_Shut, PODWT, PORMIN, PSTRES1,   !Output
      &      PSTRES2, PTF, PUptake, RLWR, ROOTN, RSTAGE, RTWT, !Output
      &      RTWTO, RWUMX, SATFAC, SDWT, SEEDNO, SENESCE,      !Output
@@ -76,7 +76,6 @@
       REAL        AREALF
       REAL        ASMDOT
       REAL        BIOMAS 
-      REAL        BSGDD
       CHARACTER*80 C80
       REAL        CANHT     
 !**
@@ -150,7 +149,6 @@
       CHARACTER*1 ISWNIT
       CHARACTER*1 ISWWAT      
       CHARACTER*1 ISWPOT      
-!      REAL        K1
       REAL        KG2PPM(NL)   
       INTEGER     L
       REAL        LAI         
@@ -192,8 +190,7 @@
       REAL        PARSR
       CHARACTER*80    PATHCR 
       CHARACTER*80    PATHSR
-      CHARACTER*80    PATHER 
-      REAL        PC          
+      CHARACTER*80    PATHER          
       REAL        PCARB
       REAL        PCNGRN
       REAL        PCNL 
@@ -207,14 +204,12 @@
       REAL        PHY2      
       REAL        PRFTC(4)
       REAL        SLPF
-      REAL        PGRORT      
-      REAL        PHINT       
+      REAL        PGRORT           
       REAL        PLA    
       REAL        PLAE     
       REAL        PLAG        
       REAL        PLAS        
       REAL        PLTPOP      
-      REAL        PODNO
       REAL        PODWT
       REAL        PORMIN
       REAL        PPLTD 
@@ -293,7 +288,8 @@
       REAL        TAVGD       
       REAL        TCNP        
       REAL        TEMPM       
-      REAL        TFAC        
+      REAL        TFAC  
+      REAL        TFACLG  ! fv 11/1/2020      
       REAL        TI         
       REAL        TLNO        
       REAL        TMAX        
@@ -367,18 +363,18 @@
       REAL ABIOMS,APLA,EMBWT,EMBWTE,GRFACTOR,HEADWT
       REAL PERWT,PERWTE,PLAMX,POTGROPER
       REAL POTHEADWT,PPP,PSKER,RI1,RM,GRNWTE
-      REAL BIOMAS_R,C1,C1P,CDEMAND,CDGR,CPOOL1,CPOOL2,CUMPHTOT
+      REAL BIOMAS_R,C1,CDEMAND,CDGR,CPOOL1,CPOOL2
       REAL DM,DSLAN1,DSLAN2,DSLANW,ELO,ELOFT,EMBN,ENP,EXCESS
       REAL FACHN,FACLN,FACPOOL,FACSN,FCP,FCP2,FPOOL1,FPOOL2
       REAL FRCARB,FSINK1,FSINK2,GF1,GLFWT,GPLA,GROEMB,GROPER
-      REAL GROHEAD,HWMAX,HWMIN,INCPLA,K1,K2,LER,MAXGROLF
+      REAL GROHEAD,HWMAX,HWMIN,INCPLA,K2,LER,MAXGROLF
       REAL MAXGROSTM,MAXLA,MINGROLF,NPL1H,NPL1S,NPL1L
       REAL NPL2L,NPL2R,NSINK1,NSINK2,O1,OIL,OILFRAC,OILINC
       REAL P3P,P9,PDWIH,PDWIL,PDWIS,PEPE,PERN,PHY,PO,PR,QD,QN
       REAL RFR,RI,RONL,SDN,SENCODE,SENTIME,SLAMAX,SLAMIN
       REAL SLAN1,SLAN2,SLAN22,SLAX,SLAY,SLFWT,SLOPEPE,SPLA,SUMDT8
       REAL TLNOI,TTMP,WLAN2,WWWW,X,XCUMPH,XHANC,XHCNP,XHEADN
-      REAL XHMNC,XHY,XI,XLANC,XLAY,XLCNP,XLEAFN,XLMNC,XLN
+      REAL XHMNC,XI,XLANC,XLAY,XLCNP,XLEAFN,XLMNC,XLN
       REAL XNGLF,XNSLF,XPEPE,XRAT,XSANC,XSCNP,XSMNC,XSTEMN
       REAL XXX,YLNOI,YRAT,YYY,Z,ZLNOI,ZZZ,C2,CPOOL,CUMDTT
       REAL OILPERC,PNP,SENRATE,TMFAC1(10),SGRO(12)
@@ -742,7 +738,6 @@
         ICOLD  = 0
         ICSDUR = 0
         IPAR   = 0.0
-!       K1     = 0.0
         LAI    = 0.0
         LAIDOT = 0.0
         LEAFNO = 0
@@ -765,8 +760,6 @@
         PLA = 0.0
         PLAG   = 0.0
         PLAS = 0.0
-        PODNO  = 0.0
-        PODWT  = 0.0
         PRFT   = 0.0
         PPLTD  = 0.0  
         PTF    = 0.0
@@ -820,6 +813,7 @@
         TCNP   = 0.0
         TEMPM  = 0.0
         TFAC   = 0.0
+        TFACLG = 0.0
         TI     = 0.0
         TLNO   = 0.0
         TNLAB  = 0.0
@@ -878,7 +872,7 @@
 
         CALL P_Ceres (DYNAMIC, ISWPHO,                    !Input
      &  CumLeafSenes, DLAYR, DS, FILECC, MDATE, NLAYR,  !Input
-     &  PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
+     &        PCNVEG, PLTPOP, PODWT, RLV, RTDEP, RTWTO,       !Input
      &  SDWT, SWIDOT, SeedFrac, SPi_AVAIL, Stem2Ear,    !Input
      &  STMWTO, VegFrac, WLIDOT, WRIDOT, WSIDOT,        !Input
      &  WTLF, YRPLT,                                    !Input
@@ -926,16 +920,14 @@
 
         IF(YRDOY.EQ.STGDOY(2)) THEN
 
-! JIL 05/02/2006 Assuming initially 1 ear/plant (later is calculated)
-          EARS   = PLTPOP
+!         Assuming  1 head/plant. we use EARS for number of heads per m2
+          EARS   = PLTPOP  
         ENDIF
 
 
         IF(YRDOY.EQ.STGDOY(3)) THEN
-! JIL 03/07/2006 remove ear DW initialization
-!         EARWT  = 0.167*STMWT    
-!         STMWT  = STMWT - EARWT      
-
+   
+          XNTI=LEAFNO
           SWMIN  = STMWT*0.85         
           SUMP   = 0.0
 
@@ -1194,9 +1186,9 @@
           IF (ISTAGE .GT. 4) THEN
             K2 = 1.0
           ENDIF
-          K1  = 1.4 + 1.8*(1.0-EXP(-0.5*PLA*PLTPOP/10000.0))
-          K1  = AMIN1 (K1,3.0)
-          C1P = K1
+
+          RUE  = 1.4 + 1.8*(1.0-EXP(-0.5*PLA*PLTPOP/10000.0))
+          RUE  = AMIN1 (RUE,3.0)
           RI  = PAR*(1.0-EXP(-K2*LAI))
           !
           ! RUE changes when oil starts to accumulate
@@ -1216,10 +1208,10 @@
           ENDIF
 
           IF (ISTAGE .LT. 4) THEN
-            PCARB = PCO2*K1 * RI/PLTPOP
+            PCARB = PCO2*RUE * RI/PLTPOP
           ELSE
             IF (RI .GT. 0) THEN
-              PCARB = (PCO2*(RI*RI1*C2/C1*K1)-RM)/PLTPOP
+              PCARB = (PCO2*(RI*RI1*C2/C1*RUE)-RM)/PLTPOP
             ELSE
               PCARB = 0.0
             ENDIF
@@ -1261,13 +1253,7 @@
               ELSE
             PHY = PHY2
           ENDIF
-          IF (CUMPH .LT. 6) THEN
-            XHY = PHY1
-          ELSE
-            XHY = PHY2
-          ENDIF
 
-          CUMPHTOT = INT ((CUMDTT-P9)/PHY)
           XLN      = XLN + DTT/PHY
 
           IF (XLN .GT. TLNO) THEN
@@ -1282,7 +1268,7 @@
             IF ((CUMDTT-P9) .LT. (TTE+PHY1)) THEN
               CUMPH  = 0
             ELSE
-              XCUMPH = XCUMPH + DTT/XHY
+              XCUMPH = XCUMPH + DTT/PHY
               CUMPH  = INT(XCUMPH)
             ENDIF
           ELSE
@@ -1302,12 +1288,12 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
           PLAG =   0.00
 
           IF (TEMPM .LT. 4.0 .OR. TEMPM .GT. 40.0) THEN
-            TFAC = 0.0
+            TFACLG = 0.0
           ELSE
             IF (TEMPM .LT. 24.0) THEN
-              TFAC = (TEMPM - 4.0)/20.0
+              TFACLG = (TEMPM - 4.0)/20.0
             ELSE
-              TFAC = 1.0 - (TEMPM - 24.0)/16.0
+              TFACLG = 1.0 - (TEMPM - 24.0)/16.0
             ENDIF
           ENDIF      
 
@@ -1332,7 +1318,7 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             MAXLA = 1.0
           ENDIF
 
-          LER   = MAXLA * TFAC / 18.0
+          LER   = MAXLA * TFACLG / 18.0
           PLAG  = PLAG + LER
         ENDDO
 
@@ -1634,8 +1620,11 @@ C         CALCULATE MAXIMUM LEAF AREA GROWTH
             ! Grain n allowed to vary between .02 and .038.
             ! High temp., low soil water, and high n increase grain n
             !
+                  SFAC   = 1.125 - 0.1250*TURFAC                      !
+                  TFAC   = 0.690 + 0.0125*TEMPM                       !
+! 
  
-            PNP = (0.0050 + 0.0100*NFAC)                   ! SUN Pericarp N conc.
+            PNP = (0.0050 + 0.0100*NFAC)*AMAX1(SFAC,TFAC)            ! SUN Pericarp N conc.
 
             OILFRAC = 0.0
             NSINK1 = 0.0
@@ -1935,9 +1924,12 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
             IF (ISWNIT .EQ. 'Y') THEN
               ! Grain n allowed to vary between .02 and .038.
               ! High temp., low soil water, and high n increase grain n
+                  SFAC   = 1.125 - 0.1250*TURFAC                      !
+                  TFAC   = 0.690 + 0.0125*TEMPM                       !
+! 
              
-              ENP = (0.0225 + 0.0200*NFAC)                   ! SUN Emryo N conc.
-              PNP = (0.0050 + 0.0100*NFAC)                   ! SUN Pericarp N conc.
+              ENP = (0.0225 + 0.0200*NFAC)*AMAX1(SFAC,TFAC)           ! SUN Emryo N conc.
+              PNP = (0.0050 + 0.0100*NFAC)*AMAX1(SFAC,TFAC)           ! SUN Pericarp N conc.
 
               IF (GROEMB.GT.0.0.AND.SUMDTT.GT.230.0) THEN
                 PR = 1000.0*GROEMB/GPP/G3
@@ -2089,7 +2081,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
         PGRORT = GRORT
         SLFN   = 0.95 + 0.05*AGEFAC
         SLFT   = 1.0
-        IF (TMIN .GT. -3.0) THEN
+        IF (TMIN .GT. TSEN) THEN
           ICOLD = 0
         ELSE
           ICOLD = ICOLD + 1
@@ -2103,7 +2095,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
         PLAMX  = AMAX1 (PLAMX,PLA-SENLA)
 
         IF (((LEAFNO.GT.3).AND.(LAI.LE.0.0).AND.(ISTAGE.LE.4))
-     &                      .OR. (ICOLD .GE. 7)) THEN
+     &                      .OR. (ICOLD .GE. CDAY)) THEN
           WRITE (*,2800)
           IF (IDETO .EQ. 'Y') THEN
             WRITE (NOUTDO,2800)
@@ -2163,7 +2155,33 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
       SENLA = AMIN1 (SENLA,PLA)         
       LAI   = (PLA-SENLA)*PLTPOP*0.0001
       PLAMX  = AMAX1 (PLAMX,PLA-SENLA)
- 
+      
+!     the section below is added similar to that of Ceres-Maize      
+           !------------------------------------------------------------
+          !CROP GROWTH FAILURE DUE TO SEVERE WATER STRESS  
+          !End growth and module run if water stress days 
+          !exceeds 10 days before Effective grain Filling Period if 
+          !LAI <= 0.0
+          !------------------------------------------------------------
+
+          IF (SWFAC .GT. 0.1) THEN
+              NWSD = 0                                                  
+          ELSE
+              NWSD = NWSD + 1
+          ENDIF
+
+          IF (LAI .LE. 0.1 .AND. ISTAGE .LT. 4
+     &                 .AND. NWSD .GT. 10) THEN
+              WRITE(MESSAGE(1),2800)
+              CALL WARNING(1,ERRKEY, MESSAGE)
+              WRITE (*,2800)
+              IF (IDETO .EQ. 'Y') THEN
+                  WRITE (NOUTDO,2800)
+              ENDIF   
+              ISTAGE = 6           
+              MDATE = YRDOY
+          ENDIF
+
 
 !--------------------------------------------------------------
 !  APPLY PEST DAMAGE
@@ -2595,7 +2613,7 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
 ! HIP         !Ratio of pod weight (PODWT) to weight of above-ground portion of 
 !              plant (TOPWT) (g[pods] / g[tops])
 ! I           !Counter
-! ICOLD       !Cumulative number of days when TMIN is less than 6 C
+! ICOLD       !Cumulative number of days when TMIN is less than -3 C
 ! ICSDUR      !Calendar day accumulator for each growth stage   
 ! IDETO*1     !Screen output switch, (Y/N)
 ! INTEGR      !Program control variable to execute code to integrate daily rate variables (value=4)
@@ -2642,7 +2660,8 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
 ! SLPF        !Relative reduction in growth due to poor soil fertility (0-1.0) that is
 !              not related to nitrogen.
 ! PGRORT      !Potential increment in new root growth, g/plant
-! PHINT       !Phyllochron interval. Number of GDD required for new leaf emergence, C.
+! PHY1        !Phyllochron interval up to leaf 6
+! PHY2        !Phyllochron interval from leaf 7
 ! PLA         !Plant leaf area, cm2/plant
 ! PLAE        !Plant leaf area at emergence, cm2/plant
 ! PLAG        !Leaf area growth, cm2/plant
@@ -2725,6 +2744,8 @@ c           GROPER = GROPER*(.7+.3*SWDF1)
 ! TCNP        !Critical nitrogen concentration in tops, g N/g dry weight
 ! TEMPM       !Mean daily temperature, C
 ! TFAC        !Temperature stress factor for grain nitrogen concentration
+! TFACLG      !
+ 
 ! TI          !Fraction of a phyllochron interval which occurred as a fraction of today's daily thermal time
 ! TLNO        !Total number of leaves that the plant produces
 ! TMAX        !Maximum daily temperture, C

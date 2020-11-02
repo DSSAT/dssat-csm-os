@@ -21,10 +21,10 @@
       SUBROUTINE SU_PHENOL(DYNAMIC,ISWWAT,FILEIO,IDETO,    !C
      &    CUMDEP,DAYL,DLAYR,LEAFNO,LL,NLAYR,PLTPOP,SDEPTH,  !I
      &    SNOW, SRAD,SW,TMAX,TMIN, TWILEN,           !I
-     &    XN,YRDOY,YRSIM,                                         !I
+     &    YRDOY,YRSIM,                                         !I
      &    IDURP,                                !I
      &    CUMDTT,DTT,GPP,ISDATE,ISTAGE,MDATE,STGDOY,SUMDTT, !O
-     &    XNTI,TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
+     &    TLNO,XSTAGE,YREMRG,RUE,KCAN,KEP, P3, TSEN, CDAY,   !O
      &    SeedFrac,VegFrac)
    
 
@@ -96,7 +96,6 @@
       CHARACTER*80    PATHSR
       CHARACTER*80    PATHER        
       REAL            PDTT
-      REAL            PHINT          
       REAL            PLTPOP       
       REAL            PSKER          
       REAL            RATEIN         
@@ -105,8 +104,6 @@
       REAL            SDEPTH         
       CHARACTER*6     SECTION        
       REAL            S1    
-      REAL            SI1(6)         
-      REAL            SI3(6)         
       REAL            SIND           
       REAL            SNDN           
       REAL            SNOW           
@@ -114,8 +111,7 @@
       REAL            SRAD           
       INTEGER         STGDOY(20)     
       REAL            SUMDTT
-      REAL            SUMDTT_2 !introduced for plant P routine         
-      REAL            SUMP           
+      REAL            SUMDTT_2 !introduced for plant P routine                
       REAL            SW(NL)         
       REAL            SWCG
       REAL            SWSD           
@@ -134,12 +130,9 @@
       REAL            TSEN  !10/12/2005 chp         
       REAL            TWILEN         
       CHARACTER*6     VARNO          
-      CHARACTER*16    VRNAME                  
-      REAL            XN             
-      REAL            XNTI           
+      CHARACTER*16    VRNAME                              
       REAL            XS             
       REAL            XSTAGE  
-      REAL      LAI
       REAL O1
       
                             
@@ -290,21 +283,21 @@
         
               IF (ECOTYP .EQ. ECONO) THEN
 !               Read optional cold sensitivity paramter. 
-!               Default to TSEN = 6.0 if no value given.
+!               Default to TSEN = -3.0 if no value given.
                 IF (C255(80:84) == '     ') THEN
-                  TSEN = 0.0
+                  TSEN = -3.0
                 ELSE
                   READ(C255(80:84),'(F5.0)',IOSTAT=ERRNUM) TSEN
-                  IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = 6.0
+                  IF (ERRNUM .NE. 0 .OR. TSEN < 1.E-6) TSEN = -3.0
                 ENDIF
         
 !               Read optional number of cold days paramter. 
-!               Default to CDAY = 30.0 if no value given.
+!               Default to CDAY = 7 if no value given.
                 IF (C255(86:90) == '     ') THEN
-                  CDAY = 30
+                  CDAY = 7
                 ELSE
                   READ(C255(86:90),'(I5)',IOSTAT=ERRNUM) CDAY
-                  IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 30
+                  IF (ERRNUM .NE. 0 .OR. CDAY < 0) CDAY = 7
                 ENDIF
         
                 EXIT
@@ -730,13 +723,7 @@
               !   New Growth Stage Occurred Today. Initialize Some Varia
               !---------------------------------------------------------
               STGDOY(ISTAGE) = YRDOY          
-              ISTAGE = 3
-              XNTI   = SUMDTT/43.0
-               
-           !Next 2 lines: Change implemented at CIMMYT 1999 - JTR,US
-              TLNO    = SUMDTT/(PHINT*0.5)+ 5.0           
-              P3      = ((TLNO + 0.5) * PHINT) - SUMDTT 
-              XNTI    = XN
+              ISTAGE = 3               
 
 !             chp 5/11/2005
               SUMDTT_2 = SUMDTT   !SUMDTT_2 = P1 + P2
@@ -744,8 +731,6 @@
 
               SUMDTT  = 0.0
 
-!             chp 9/23/2004, removed 5/11/2005
-!              VegFrac = 1.0
  
       !-----------------------------------------------------------------
       !       ISTAGE = 3 - Tassel Initiation to End of Leaf Growth
@@ -922,7 +907,7 @@
 ! IDURP      Duration of ISTAGE 4, calendar days
 ! ISTAGE     Growth stage
 ! ISWWAT     Water balance switch (Y/N)
-! LEAFNO     Number of oldest leaf per plant (same as XN)
+! LEAFNO     Number of oldest leaf per plant 
 ! L          Loop counter
 ! L0         Temporary soil layer number
 ! LINC       Indicates if a line is a good line
@@ -942,7 +927,6 @@
 ! P9         Growing degree days from germination to emergence, C
 ! PATHCR     Pathname of species file
 ! DTT
-! PHINT      Phyllochron interval. Number of GDD required for new leaf e
 ! PLTPOP     Plant population, no./m2
 ! PSKER      Average rate of photosynthesis during ISTAGE 4
 ! RATEIN     Rate of floral induction
@@ -950,8 +934,6 @@
 ! SDEPTH     Sowing depth, cm
 ! SECTION    Temporary variable used to identify section in a file
 ! S1         Used to compute daylength (computed in maize.for)
-! SI1(6)     Water stress during a growth stage used for output
-! SI3(6)     Water stress during a growth stage used for output
 ! SIND       Summed photoperiod induction rate
 ! SNDN       Sun down
 ! SNOW       Snow, mm
@@ -959,7 +941,6 @@
 ! SRAD       Daily solar radiation, MJ/m2/day
 ! STGDOY(20) Year and day of year that a growth stage occurred on
 ! SUMDTT     Sum of GDD for a given stage, C
-! SUMP       Cumulative plant growth during ISTAGE 4, g/plant
 ! SW(NL)     Soil water content in layer, cm3/cm3
 ! SWCG       Minimum soil water available required for germination to occur, cm3/cm3
 ! SWSD       Modified soil water content for computing emergence
@@ -982,8 +963,6 @@
 ! WTHADJ(2,8)Note, used here, but not passed into maize.for from cropgro
 ! WMODB*1    Note, used here, but not passed into maize.for from cropgro
 ! XLAT       Latitude
-! XN         Number of oldest expanding leaf
-! XNTI       Number of leaves at tassel initiation (used in grosub)
 ! XS         Temporary snow depth variable
 ! XSTAGE     Non-integer growth stage indicator
 ! YRDOY      Year and day of year
